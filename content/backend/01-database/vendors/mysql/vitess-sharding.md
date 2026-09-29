@@ -6,7 +6,7 @@ weight: 18
 tags: ["backend", "database", "mysql", "vitess", "sharding", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *Vitess sharding* — 4 個 component 協作的完整 sharding 系統。
+> 這篇涵蓋 Vitess sharding：VTGate、VTTablet、VReplication、VSchema 協作的完整 sharding 系統。
 
 ---
 
@@ -18,11 +18,11 @@ MySQL primary 單機極限大致 50K-100K WPS（依 schema / hardware）。超�
 2. *Vitess*：proxy layer 自動 routing、cross-shard query 可選自動 split、resharding 自動化
 3. *Distributed SQL*（CockroachDB / Spanner / Aurora DSQL）：跟 MySQL 不同 engine、application 改 driver
 
-選 Vitess 的核心 driver：*保留 MySQL wire protocol + 應用層幾乎不必改 + 透明分片*。代價是 4 個 component 的 operational complexity — Vitess 的責任範圍是完整分散式系統，而非單純 proxy。
+選 Vitess 的核心 driver：*保留 MySQL wire protocol + 應用層幾乎不必改 + 透明分片*。代價是 VTGate、VTTablet、VReplication、VSchema 加上存放 metadata 的 topology service 一起運作的 operational complexity — Vitess 的責任範圍是完整分散式系統，而非單純 proxy。
 
 閱讀本文前可先對齊 [Database Sharding](/backend/knowledge-cards/database-sharding/) 的 shard key、routing、resharding 與 cross-shard query 語意；容量失衡時再接 [Hot Partition](/backend/knowledge-cards/hot-partition/)。
 
-## Vitess 四件套：每個 component 的責任
+## VTGate、VTTablet、VReplication、VSchema 各自的責任
 
 ```text
                         ┌─────────────────┐
@@ -82,7 +82,7 @@ VReplication 是 Vitess *跨 shard / 跨 keyspace / 跨 cluster* 資料移動引
 - *MoveTables*：跨 keyspace 移 table（schema-level migration）
 - *VStream*：CDC、binlog event 對外輸出（可接 Kafka / Debezium）
 
-VReplication 的主要使用者是 *Vitess operator*，它和 application 行為直接相關（resharding 期間有 write split 行為）。
+操作 VReplication 的是 Vitess operator（下 Reshard、MoveTables 指令的人）；application 也會受 VReplication 影響：resharding 切流量的那一刻，寫入的去處從舊 shard 換到新 shard（見下方〈Resharding 切流量瞬間 deadlock〉）。
 
 ### VSchema — sharding metadata
 
@@ -201,11 +201,20 @@ vtctldclient Reshard --workflow=initial-shard complete
 
 實際 production 走 *Vitess Kubernetes operator*、用 `VitessCluster` CRD 宣告 desired state、operator 自動操作上面這些 step。
 
-## 5 個 Production 踩雷
+## Production 踩雷：cross-shard transaction、VStream lag、Vindex 不均勻、resharding 切流、VReplication 卡住
 
-### 1. Cross-shard transaction — Vitess 不支援 atomic（預設）
+### Cross-shard transaction — Vitess 不支援 atomic（預設）
 
-兩個 user 的 order 在不同 shard、`BEGIN; UPDATE orders WHERE user_id=1; UPDATE orders WHERE user_id=2; COMMIT;` 跨兩個 shard。Vitess 預設 *不保證 atomic* — 兩個 shard 各自 commit、可能一個成功一個失敗、application 看到 partial state。
+user 1 與 user 2 的 order 被 `hash` Vindex 分到不同 shard，下面這個 transaction 因此跨兩個 shard：
+
+```sql
+BEGIN;
+UPDATE orders SET status = 'paid' WHERE user_id = 1;  -- 落在 user 1 的 shard
+UPDATE orders SET status = 'paid' WHERE user_id = 2;  -- 落在 user 2 的 shard
+COMMIT;                                               -- 兩個 shard 各自 commit
+```
+
+Vitess 預設 *不保證 atomic* — 兩個 shard 各自 commit、可能一個成功一個失敗、application 看到 partial state。
 
 修法：
 
@@ -213,7 +222,7 @@ vtctldclient Reshard --workflow=initial-shard complete
 - 啟用 *atomic 2-phase commit*（Vitess `transaction_mode=TWOPC`、實驗性、performance penalty 大）
 - 大規模需要 atomic 的場景應該換 distributed SQL（CockroachDB / Spanner），讓資料庫層承擔跨節點一致性
 
-### 2. VStream lag — Resharding 期間 CDC 落後
+### VStream lag — Resharding 期間 CDC 落後
 
 Resharding 過程 VReplication 大量寫 binlog event、application *本來在用* 的 VStream（接 Kafka 等）共享同 binlog stream、可能 lag。Downstream consumer 看到 stale data 1-2 小時。
 
@@ -223,7 +232,7 @@ Resharding 過程 VReplication 大量寫 binlog event、application *本來在�
 - 確認 binlog disk capacity > resharding 期間預估 binlog 量 × 2（buffer）
 - Resharding 完成後 *手動驗證* VStream offset 已 catch up，把驗證結果留成 cutover evidence
 
-### 3. Vindex 不均勻 — Hot shard
+### Vindex 不均勻 — Hot shard
 
 Vindex 預設 `hash` 對 *primary key 均勻分布*、但對 *natural key*（country / region / company_id 等）可能不均勻。10 個 country、其中 1 個 country 佔 80% traffic、單一 shard 永遠 hot。
 
@@ -231,10 +240,10 @@ Vindex 預設 `hash` 對 *primary key 均勻分布*、但對 *natural key*（cou
 
 - *Composite Vindex*：combine `country + user_id` 兩 column 作為 shard key、user-level 仍均勻
 - *Synthetic shard key*：application 層加 `sharding_key=hash(actual_key) % N`、控制分布
-- 監控 *per-shard QPS*：`vtctldclient ShowVDiff` + Prometheus exporter
+- 監控 *per-shard QPS*：各 VTTablet 匯出給 Prometheus 的 query metrics，逐 shard 比較
 - Hot shard 出現後 Vitess 可以 resharding 解（split hot shard 為 2 個小 shard）、但工作量大
 
-### 4. Resharding 切流量瞬間 deadlock
+### Resharding 切流量瞬間 deadlock
 
 Resharding 最後的 SwitchTraffic 切 primary 階段、舊 shard 仍接 write、Vitess 切 routing、Application 一瞬間連兩個 shard、相同 user_id 寫入可能跑兩邊、deadlock 或 lost update。
 
@@ -245,7 +254,7 @@ Resharding 最後的 SwitchTraffic 切 primary 階段、舊 shard 仍接 write�
 - VTGate `--retry-count=2` + `--track-vtgate-deadlock-events`：deadlock 自動 retry、不暴露給 application
 - 真的失敗用 `Reshard cancel` 回 old state，讓 workflow 回到可驗證狀態
 
-### 5. VReplication workflow 卡住 — cancel 前需要保護狀態
+### VReplication workflow 卡住 — cancel 前需要保護狀態
 
 VReplication workflow 跑到 50% 但 *某個 row 解析錯誤*（schema mismatch / blob 大小超過 limit）、workflow stuck、進度條卡住、無 timeout。整個 resharding flow halt。
 
@@ -258,17 +267,17 @@ VReplication workflow 跑到 50% 但 *某個 row 解析錯誤*（schema mismatch
 
 ## Vitess 跟自管 sharding 對照
 
-| 維度                       | Vitess                            | Application-level sharding                        |
-| -------------------------- | --------------------------------- | ------------------------------------------------- |
-| Application 改動           | 幾乎不必（保留 MySQL wire）       | 大改（routing logic 寫 application）              |
-| Cross-shard query          | VTGate 自動 split（受限）         | Application 自己處理                              |
-| Resharding                 | VReplication 自動                 | 手寫腳本、操作複雜                                |
-| Online schema change       | Vitess 內建（VReplication-based） | 用 gh-ost / pt-osc                                |
-| Failover                   | VTOrc 整合                        | 自管 Orchestrator                                 |
-| Operational cost           | 高（4 component 要懂）            | 中（fewer abstractions、但 application logic 多） |
-| Cross-keyspace 共用 vindex | 內建（lookup_hash 跨 keyspace）   | 自寫                                              |
+| 維度                       | Vitess                                                  | Application-level sharding                        |
+| -------------------------- | ------------------------------------------------------- | ------------------------------------------------- |
+| Application 改動           | 幾乎不必（保留 MySQL wire）                             | 大改（routing logic 寫 application）              |
+| Cross-shard query          | VTGate 自動 split（受限）                               | Application 自己處理                              |
+| Resharding                 | VReplication 自動                                       | 手寫腳本、操作複雜                                |
+| Online schema change       | Vitess 內建（VReplication-based）                       | 用 gh-ost / pt-osc                                |
+| Failover                   | VTOrc 整合                                              | 自管 Orchestrator                                 |
+| Operational cost           | 高（VTGate / VTTablet / VReplication / VSchema 都要懂） | 中（fewer abstractions、但 application logic 多） |
+| Cross-keyspace 共用 vindex | 內建（lookup_hash 跨 keyspace）                         | 自寫                                              |
 
-Vitess 的 *operational complexity* 是它的代價。10-20 人 SRE 團隊撐得住、5 人團隊用 *managed Vitess（PlanetScale）* 更實際。
+Vitess 的 *operational complexity* 是它的代價：有 10-20 人的 SRE 團隊時自管得起來，5 人的團隊用 *managed Vitess（PlanetScale）* 更實際。
 
 ## 跟其他模組整合
 
@@ -297,7 +306,7 @@ Vitess 用 *VTOrc*（fork of Orchestrator）作 failover、跟 Vitess topology m
 
 ### 跟 PlanetScale（managed Vitess）
 
-PlanetScale 是 *Vitess managed service*、隱藏 4 component operational complexity、加 branch-based schema workflow。詳見 [PlanetScale migration playbook](/backend/01-database/vendors/mysql/migrate-to-planetscale/)。
+PlanetScale 是 *Vitess managed service*、隱藏 VTGate / VTTablet / VReplication / VSchema 的 operational complexity、加 branch-based schema workflow。詳見 [PlanetScale migration playbook](/backend/01-database/vendors/mysql/migrate-to-planetscale/)。
 
 ### 跟 Aurora MySQL
 
@@ -322,7 +331,7 @@ Vitess 的 sibling 路由是 [PostgreSQL Citus Distributed](/backend/01-database
 | ------------------------------------------- | ------------------------------------ |
 | 流量 > 50K WPS、單 primary 撐不住           | 是 Vitess scope                      |
 | 已有大量 MySQL 投資、不想換 distributed SQL | 是                                   |
-| 有 5-10 人 SRE / DBA 團隊                   | 是                                   |
+| 有 10-20 人 SRE / DBA 團隊                  | 是                                   |
 | 流量 < 10K WPS                              | 否（過度設計、用單 MySQL + replica） |
 | 5 人團隊、不想養 DBA                        | 否（用 PlanetScale managed）         |
 | 必須 multi-region 強一致 transaction        | 否（CockroachDB / Spanner 才對）     |

@@ -6,7 +6,7 @@ weight: 14
 tags: ["backend", "database", "postgresql", "connection", "pooler", "scaling", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *connection scaling 的根因* — 為什麼 PG 比多數 DB 更需要 pooler、跟 [pgbouncer-config](/backend/01-database/vendors/postgresql/pgbouncer-config/) 是 *根因 vs 配置* 的關係。
+> 這篇涵蓋 PostgreSQL connection scaling 的根因：為什麼 PG 比多數 DB 更需要 pooler，跟 [pgbouncer-config](/backend/01-database/vendors/postgresql/pgbouncer-config/) 是根因與配置的關係。
 
 ---
 
@@ -51,7 +51,7 @@ CPU 層面、`fork()` 系統呼叫在 Linux 通常 1-3ms、context switch ~3-5μ
 PG 的 memory 規劃由這三個 GUC 互動決定、不能獨立調：
 
 ```text
-total_RAM ≈ shared_buffers + (max_connections × work_mem 高水位) + OS overhead
+total_RAM ≈ shared_buffers + max_connections × (process_private + work_mem 高水位) + OS overhead
 ```
 
 實務 sizing 規則（16GB instance、OLTP workload）：
@@ -118,11 +118,11 @@ PostgreSQL primary
 
 Application pool 救 fork cost、PgBouncer 救 backend 總量、兩層各做各的事不衝突。
 
-**雙層 pool 配置容易出錯**：application pool size 5 + PgBouncer default_pool_size 50 + 100 個 app instance、application 願意開 500 connection、PgBouncer 只給 50 個 backend — 多 450 個 application connection wait、看起來像「DB 慢」但實際是 pool 不足。
+**雙層 pool 配置容易出錯**：application pool size 5 + PgBouncer default_pool_size 50 + 100 個 app instance、application 最多開 500 個 connection、PgBouncer 只給 50 個 backend。transaction pool 下，500 個 connection 本身不會等待，會等待的是同時進行中的 transaction：超過 50 個時，多出來的 transaction 在 PgBouncer 排隊，看起來像「DB 慢」但實際是 pool 不足。所以同樣是 500 對 50，上面的典型拓撲成立與否，取決於同時進行中的 transaction 有沒有超過 50。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### Case 1：Connection storm（重啟 / autoscale 同時打進來）
+### Connection storm（重啟 / autoscale 同時打進來）
 
 **情境**：Kubernetes rolling restart、200 個 pod 同時重連、每 pod 開 20 個 connection、瞬間 4000 個 connection 嘗試打到 PG。
 
@@ -131,10 +131,10 @@ PG `max_connections = 500` 直接拒絕 3500 個、application 看到 `FATAL: so
 修法：
 
 - PgBouncer 在前面、application 連 PgBouncer 不直連 PG
-- `reserve_pool_size = 5` 給管理流量留 buffer
+- `reserve_pool_size = 5` 配 `reserve_pool_timeout`：client 等候超過 timeout 時，PgBouncer 對這個 pool 再多開最多 5 個 backend 消化重連尖峰
 - Application 端加 jittered exponential backoff、避免 retry 同步
 
-### Case 2：fork() cost 在 burst 流量
+### fork() cost 在 burst 流量
 
 **情境**：Cron job 每分鐘整點觸發、500 個 worker 同時開 short-lived connection 跑 30ms query、結束關閉。
 
@@ -145,11 +145,11 @@ PG `max_connections = 500` 直接拒絕 3500 個、application 看到 `FATAL: so
 - Worker 改 connect 到 PgBouncer transaction pool、backend 重用、fork 只在 PgBouncer 首次拓展時
 - 或 worker 改成 long-lived process + 內部 task queue、避免每分鐘重 fork
 
-### Case 3：shared_buffers 跟 max_connections 互相壓縮
+### shared_buffers 跟 max_connections 互相壓縮
 
 **情境**：16GB instance、`shared_buffers = 8GB`（50%）、`max_connections = 800`、`work_mem = 16MB`。
 
-預估 RAM：8GB + 800 × ~30MB = 32GB ≫ 16GB instance、OOM kill 來訪。
+預估 RAM：8GB + 800 × ~30MB = 32GB ≫ 16GB instance，connection 全數用上時 Linux OOM killer 會殺掉 backend process。
 
 修法（重新分配）：
 
@@ -163,7 +163,7 @@ maintenance_work_mem = 512MB
 
 關鍵：`max_connections` 不是調更大救 connection 不足、是調 *PgBouncer pool size* 拓展 application 容量。
 
-### Case 4：Double-pool 配置失敗
+### Double-pool 配置失敗
 
 **情境**：Application HikariCP pool size = 50、50 個 instance、PgBouncer `default_pool_size = 20`、PG `max_connections = 100`。
 
@@ -175,7 +175,7 @@ Application 願意開 2500 個 connection、PgBouncer 只給 20 個 backend、ap
 - 通常 `application_total_connection ≪ pgbouncer_max_client_conn` + `pgbouncer_default_pool_size + reserve ≪ pg_max_connections`
 - Monitor PgBouncer `SHOW POOLS` 的 `cl_waiting`、長期 > 0 表示 pool 不足
 
-### Case 5：max_connections 設太大反而慢
+### max_connections 設太大反而慢
 
 **情境**：team 看到 `connection refused`、把 `max_connections` 從 200 調到 2000、想說「給更多 connection 應該更好」。
 
@@ -207,17 +207,17 @@ MySQL thread-per-connection model 讓它在 high-connection-count workload 上 *
 
 ## PG 17+ 的 connection 進展
 
-PG 17（2024）對 connection 仍維持 process-per-connection、但有幾個減壓改進：
+PG 17（2024）對 connection 仍維持 process-per-connection。對照 PG 17 的官方 release notes，這一版沒有降低每條 connection 記憶體或 process 數的條目；與 backend 負載相關的改進在 I/O 側：
 
-- **Per-process memory 降低**：catalog cache 改 generational allocator、idle backend RAM 降 ~20%
-- **Subscriber-side parallel apply**：logical replication 減少 connection 開銷
-- **`io_combine_limit`**：buffered read 合併、降 syscall overhead
+- **`io_combine_limit`**：把相鄰 block 的檔案系統讀取合併成一次，降低 syscall 次數；每條 connection 仍是一個 backend process
+
+logical replication subscriber 的 parallel apply（`CREATE SUBSCRIPTION ... WITH (streaming = parallel)`，由 parallel apply worker 套用大交易）是 PG 16（2023）加入的功能。
 
 但 *process-per-connection model 本身* 沒換 — 短期內 PG 仍需 pooler。長期方向（PG 18+ 討論）可能引入 thread-based backend、但目前是 experimental patch。
 
 ## 相關連結
 
-- [pgbouncer-config](/backend/01-database/vendors/postgresql/pgbouncer-config/)：PgBouncer 操作配置 + 5 case
+- [pgbouncer-config](/backend/01-database/vendors/postgresql/pgbouncer-config/)：PgBouncer 操作配置與 production 踩雷
 - [replication-topology](/backend/01-database/vendors/postgresql/replication-topology/)：Read replica + connection 分流
 - [query-optimization](/backend/01-database/vendors/postgresql/query-optimization/)：`work_mem` 影響 plan
 - [mvcc-lock-model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)：connection idle in transaction 卡 vacuum

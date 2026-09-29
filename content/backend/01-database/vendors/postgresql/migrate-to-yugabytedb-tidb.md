@@ -8,7 +8,7 @@ tags: ["backend", "database", "postgresql", "migration", "distributed-sql"]
 
 PostgreSQL to YugabyteDB / TiDB migration 的核心責任是處理從 single-primary PostgreSQL 走向 distributed SQL 的資料拓撲變更。這條路線通常由 multi-region write、horizontal scale、tenant sharding、availability 或 single-node capacity ceiling 觸發；其中 YugabyteDB 走 PostgreSQL-compatible YSQL 路線，TiDB 走 MySQL-compatible distributed SQL 路線，兩者的 application diff audit 不同。
 
-本文的判讀錨點是：API compatibility 解決的只有入口語法，distributed operation 帶來的差異要另外審查。YugabyteDB 要審查 PostgreSQL 相容與 distributed operation 差異；TiDB 要額外處理 PostgreSQL → MySQL dialect / driver / tooling 轉換。Distributed SQL 會改變 transaction latency、placement、index cost、DDL、sequence、lock、backup、observability 與 incident route。
+本文的範圍是從 single-primary PostgreSQL 遷到 YugabyteDB 或 TiDB 時的官方文件路徑、driver check、compatibility audit、data topology、migration phases、application changes 與 no-go conditions。
 
 ## Official Documentation Route
 
@@ -16,7 +16,7 @@ Official documentation route 的核心責任是把 compatibility claim 固定到
 
 ## Driver Check
 
-Driver check 的核心責任是確認 distributed SQL 解決的是核心問題。
+Driver check 的核心責任是確認促成這次遷移的需求屬於資料拓撲問題：寫入位置、資料分布與節點故障容忍這類 single-primary PostgreSQL 靠 read replica、pooler 或 index 解不了的需求。
 
 | Driver                    | 代表需求                       | 審查問題                            |
 | ------------------------- | ------------------------------ | ----------------------------------- |
@@ -43,7 +43,7 @@ Compatibility audit 的核心責任是把 PostgreSQL behavior 逐項對照 targe
 | Extension      | PostGIS、pgvector、custom extension；TiDB 路線需改寫或拆出 |
 | Tooling        | migration tool、CDC、backup、monitoring                    |
 
-Compatibility audit 要用 application query suite。只看 schema import 會漏掉 transaction retry、query planner、distributed index、dialect rewrite 與 latency。TiDB 路線還要加 PostgreSQL driver / SQL / type / migration tool 轉 MySQL ecosystem 的審查。
+Compatibility audit 要用 application query suite。只看 schema import 會漏掉 transaction retry、query planner、distributed index、dialect rewrite 與 latency。TiDB 路線還要審查 dialect 轉換，範圍涵蓋 driver、SQL、type 與 migration tool。API compatibility 解決的只有入口語法，distributed operation 帶來的 transaction latency、placement、index cost、DDL、sequence、lock、backup、observability 與 incident route 差異要另外審查。
 
 ## Data Topology
 
@@ -85,7 +85,7 @@ Application changes 的核心責任是讓程式接受 distributed system 的錯�
 4. Pagination / ordering：distributed query 的排序成本要審查。
 5. Connection / driver：target driver、TLS、pooling、load balancing 要測。
 
-Application 若假設 single-node low-latency transaction，遷移後會在 tail latency 與 retry 行為上出現落差。TiDB 路線還會出現 driver、placeholder、SQL function、type mapping 與 error code 的轉換成本；這些要在 staging failure injection 先看到。
+Application 若假設 single-node low-latency transaction，遷移後會在 tail latency 與 retry 行為上出現落差。TiDB 路線的 dialect 轉換落到 application 端，是 driver、placeholder、SQL function、type mapping 與 error code 的改寫成本；這些要在 staging failure injection 先看到。
 
 ## No-Go Conditions
 

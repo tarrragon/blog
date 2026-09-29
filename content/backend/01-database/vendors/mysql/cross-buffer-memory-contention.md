@@ -8,7 +8,7 @@ tags: ["backend", "database", "mysql", "memory", "performance"]
 
 MySQL cross-buffer memory contention 的核心責任是把 MySQL memory tuning 從單一 buffer pool 參數擴展到整體記憶體競爭。InnoDB buffer pool、redo log buffer、sort buffer、join buffer、tmp table、thread stack、connection memory、OS page cache 與 container limit 會共同決定 latency 與 OOM 風險。
 
-本文的判讀錨點是：MySQL memory 問題常來自[「每連線 / 每操作」記憶體](/backend/knowledge-cards/per-connection-memory/)乘上 concurrency，而非只來自全域 buffer pool。調大單一 buffer 前，要先看 workload 與同時執行的 query。
+這篇整理 MySQL 記憶體競爭的判讀：會互相競爭的記憶體來源、memory pressure 的訊號、安全的調整順序、吃記憶體的查詢形態，以及 memory incident 的 runbook。
 
 ## Memory Surfaces
 
@@ -25,6 +25,8 @@ Memory surfaces 的核心責任是列出會互相競爭的記憶體來源。
 | OS page cache       | system                  | file、backup、binlog、tmp           |
 
 Per-session buffer 是最容易誤調的項目。把 sort / join buffer 全域調大，會在高 concurrency 下造成 memory spike。
+
+MySQL memory 問題常來自[「每連線 / 每操作」記憶體](/backend/knowledge-cards/per-connection-memory/)乘上 concurrency，全域 buffer pool 只是其中一個來源。調大單一 buffer 前，要先看 workload 與同時執行的 query。
 
 ## Contention Signals
 
@@ -66,7 +68,7 @@ Query patterns 的核心責任是找出 memory heavy 查詢。
 | Large transaction  | undo / lock / memory     | batch、縮短 transaction             |
 | Many idle sessions | connection memory        | pooler、timeout、max connection     |
 
-Memory tuning 要服務 query design。若 query 本身無界，memory 只會把問題延後到更大資料量。
+Memory tuning 要服務 query design。若 query 本身讀取與排序的列數沒有上限，調大 memory 只會把 disk spill 或 OOM 延後到資料量更大的時候。
 
 ## Runbook
 

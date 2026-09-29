@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "hands-on", "migration", "fixture"]
 
 SQLite migration fixture lab 的核心責任是把 schema migration 與 test fixture 放進同一個可重建流程。這篇承接 [Schema Migration / Versioning](/backend/01-database/vendors/sqlite/schema-migration-versioning/) 與 [Test Fixture Best Practice](/backend/01-database/vendors/sqlite/test-fixture-best-practice/)，讓 migration 有版本、snapshot、validation 與 rollback note。
 
-本文的驗收標準是：你能建立 v1 fixture、套用 v2 migration、產生 v2 snapshot，並用 validation query 證明資料合約仍成立。
+本篇的範圍從建立 `user_version = 1` 的 fixture 開始，經過 migration 前的 snapshot、add column 與 table rebuild 兩種 migration、migration 後的 validation query，到 CI 使用這份 fixture 的方式與 rollback note。
 
 ## Create Fixture
 

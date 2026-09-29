@@ -1,14 +1,16 @@
 ---
-title: "從 Firestore 遷往自建 relational：撞牆驅動的 Type E 重建模、存取模型反轉與並行期"
+title: "從 Firestore 遷往自建 relational：撞牆驅動的 paradigm shift 重建模、存取模型反轉與並行期"
 date: 2026-06-16
-description: "Firestore → 自建後端 + relational 不是匯資料而是反轉存取模型：client 直連變 API 中介、Security Rules 授權變後端授權、document 反正規化變正規 schema、realtime listener 與 offline 同步要重建；本文走 Type E paradigm shift 結構、展開為何字面遷移不成立、哪些該遷哪些先留、dual-write + shadow read 階段化與遷出代價判讀"
+description: "Firestore → 自建後端 + relational 不是匯資料而是反轉存取模型：client 直連變 API 中介、Security Rules 授權變後端授權、document 反正規化變正規 schema、realtime listener 與 offline 同步要重建；涵蓋為何只搬資料的遷移不成立、哪些能力該遷哪些先留在平台、dual-write + shadow read 的階段化與遷出代價判讀"
 weight: 11
 tags: ["backend", "database", "firestore", "migration", "paradigm-shift", "migration-playbook", "baas"]
 ---
 
-> 本文是 [Firestore](/backend/01-database/vendors/firestore/) overview 的 migration playbook。寫作參照 [Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/)。BaaS 託管平台整場遷出的資產線盤點與並行期總覽見 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)；本文聚焦資料層的跨 paradigm 重建模。
+> BaaS 託管平台整場遷出的資產線盤點與並行期總覽見 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)；本文聚焦資料層的跨 paradigm 重建模。
 
-「我們把 Firestore 整包匯出，匯進 PostgreSQL 就好。」這句話低估了遷移的真正內容 — Firestore 遷往自建 relational 的難點是**反轉整個存取模型**，搬資料只是其中最容易的一條線。Firestore 是 client 用 SDK 直連資料庫、授權寫在 Security Rules；自建 relational 是 client 打自己的後端 API、授權在後端中介層。資料可以匯出，但反正規化的 document 形狀、沿查詢限制長出來的資料模型、realtime listener 與 offline 同步能力，都沒有 1:1 的對應物。字面意義的「匯出再匯入」只搬走了資料，存取模型的反轉與授權位置的搬遷都還沒有處理本文走 paradigm shift 結構：先講為何字面遷移不成立、再講哪些該遷哪些先留、最後才是階段化執行。
+這篇整理資料層從 Firestore 遷往自建後端 + relational 資料庫時的差異盤點與階段化，範圍從確認遷移的 driver 開始，到 cutover 之後的長期混合架構為止。
+
+Firestore 遷往自建 relational 的難點是**反轉整個存取模型**：Firestore 是 client 用 SDK 直連資料庫、授權寫在 Security Rules；自建 relational 是 client 打自己的後端 API、授權在後端中介層。資料可以匯出，但反正規化的 document 形狀、沿查詢限制長出來的資料模型、realtime listener 與 offline 同步能力，都沒有 1:1 的對應物。把 Firestore 整包匯出、匯進 PostgreSQL，只搬走了資料，存取模型的反轉與授權位置的搬遷都還沒有處理。
 
 ## 遷移的 driver：三面牆，不是「relational 比較好」
 
@@ -37,7 +39,7 @@ Firestore 遷往自建很少因為「relational 比較好」這種空泛動機�
 | Application change | 前端拔 SDK 改打 API、realtime / offline 要重建                      | High   |
 | Data topology      | 平台複製 → 自己設計 replica / 多 region / DR                        | Medium |
 
-主導維度是 **paradigm 與 application change**：六維裡五維落在 High。這定義了結構 — **Type E paradigm shift**（排除 schema 翻譯 Type A 和 drop-in Type B）：存取模型反轉、部分能力重建、可能長期混合（資料層自建、認證仍留平台）。
+主導維度是 **paradigm 與 application change**：六維裡五維落在 High。這決定了這份 playbook 走 **paradigm shift** 結構（migration playbook 方法論的代號是 Type E），而不是逐項翻譯 schema 的結構（Type A）或直接替換的 drop-in 結構（Type B）：存取模型反轉、部分能力重建、可能長期混合（資料層自建、認證仍留平台）。
 
 ## 為什麼字面遷移不成立：存取模型反轉
 
@@ -68,15 +70,15 @@ Firestore 的存取模型是 *前端即客戶端、資料庫直接面向公網�
 
 ## 哪些該遷、哪些先留（逐能力混合）
 
-Type E 的本質是不收斂 — 不必把所有 Firebase 能力一次搬完。判讀標準：
+paradigm shift 遷移不要求收斂到單一平台 — 不必把所有 Firebase 能力一次搬完。判讀標準：
 
-| Workload / 能力特徵                           | 去向                                            |
-| --------------------------------------------- | ----------------------------------------------- |
-| 需要報表 / JOIN / aggregation 的資料          | 遷自建 relational                               |
-| 讀取量大、成本敏感、access pattern 穩定的資料 | 遷自建 + [應用層快取](/backend/02-cache-redis/) |
-| 仍以 realtime 同步為核心、查詢簡單的資料      | 先留 Firestore / 或最後再遷                     |
-| 認證（Firebase Auth）                         | 可留平台、逐能力決定（見 0.22）                 |
-| 檔案儲存（Firebase Storage）                  | 可留平台、與資料層解耦後再評估                  |
+| Workload / 能力特徵                           | 去向                                                                                                     |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| 需要報表 / JOIN / aggregation 的資料          | 遷自建 relational                                                                                        |
+| 讀取量大、成本敏感、access pattern 穩定的資料 | 遷自建 + [應用層快取](/backend/02-cache-redis/)                                                          |
+| 仍以 realtime 同步為核心、查詢簡單的資料      | 先留 Firestore / 或最後再遷                                                                              |
+| 認證（Firebase Auth）                         | 可留平台、逐能力決定（見 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/)） |
+| 檔案儲存（Firebase Storage）                  | 可留平台、與資料層解耦後再評估                                                                           |
 
 [0.22 的成長期 SaaS](/backend/00-service-selection/capability-buy-vs-build/) 是這個判讀的 case anchor：撞牆的是資料層的 query 複雜度與成本，遷的就是資料層，認證留在原地。混合不是過渡失敗，是逐能力選型的穩態。
 
@@ -84,27 +86,27 @@ Type E 的本質是不收斂 — 不必把所有 Firebase 能力一次搬完。�
 
 paradigm shift 的階段化把不可逆動作放到最後、每階段有獨立驗證門檻：
 
-#### Phase 1：依賴面盤點
+#### 依賴面盤點
 
 列出 application 對 Firestore 的所有讀寫路徑、Security Rules 授權條件、realtime 訂閱點、offline 行為。標每項的頻率、安全敏感度、是否可重建。這份清單不完整不進下一階段。
 
-#### Phase 2：relational 重建模
+#### relational 重建模
 
 把反正規化 document 設計回正規 schema、決定哪些巢狀結構用 JSONB 保留。同步設計後端 API 的端點與授權檢查、把 Security Rules 逐條翻譯成服務層權限。對應 [1.2 schema design](/backend/01-database/schema-design/) 與 [1.5 資料層紅隊](/backend/01-database/red-team-data-layer/)。
 
-#### Phase 3：自建後端 + dual-write
+#### 自建後端 + dual-write
 
 立起自建後端 API 與資料庫，前端關鍵寫入路徑同時寫 Firestore 與新後端。Firestore 仍是 source of truth、新庫累積資料。dual-write 要處理一邊失敗的補償（對應 [1.9 Reconciliation](/backend/01-database/reconciliation-data-repair/)）。
 
-#### Phase 4：backfill 歷史資料
+#### backfill 歷史資料
 
 把 Firestore 既有 document 按新 schema 轉換寫入新庫。backfill 與 dual-write 並行時要處理覆蓋順序，backfill 不能蓋掉 dual-write 的新值。轉換過程記 checksum / row count 對照。
 
-#### Phase 5：shadow read 驗證
+#### shadow read 驗證
 
 讀路徑同時打 Firestore 與新後端、比對結果、記錄差異但仍以 Firestore 回應用戶。差異率降到可接受才進 cutover。對應 [1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/) 的 evidence 方法。
 
-#### Phase 6：漸進 cutover + 重建即時層
+#### 漸進 cutover + 重建即時層
 
 前端逐步把讀寫從 Firestore SDK 切到自建 API（按比例 / 按功能模組），保留切回能力。若產品需要 realtime，這階段要把 snapshot listener 換成自建即時層（WebSocket / SSE）並驗證延遲與斷線重連。cutover 完成後資料層的 source of truth 轉到自建；未遷的能力（認證、儲存）仍在平台 — 混合架構成立。
 
@@ -114,7 +116,7 @@ paradigm shift 的階段化把不可逆動作放到最後、每階段有獨立�
 
 | 階段        | Evidence                                                                       |
 | ----------- | ------------------------------------------------------------------------------ |
-| dual-write  | 雙寫成功率、寫入失敗補償紀錄、兩邊 document / row 數差異                       |
+| dual-write  | 雙寫成功率、寫入失敗補償紀錄、Firestore 與新庫的 document / row 數差異         |
 | backfill    | 已轉換比例、轉換錯誤數、checksum 對照、反正規化還原正確性抽查                  |
 | shadow read | 新舊結果差異率、差異分類（建模差異 vs 真錯誤）、授權翻譯漏洞掃描               |
 | cutover     | 切流比例、新 API latency p99、error rate、realtime 推送延遲、rollback 是否觸發 |
@@ -134,7 +136,7 @@ paradigm shift 的階段化把不可逆動作放到最後、每階段有獨立�
 
 ## Cleanup 與長期混合
 
-Type E 的 cleanup 通常不是「關掉整個 Firebase」— 多數情況認證、儲存仍留平台：
+paradigm shift 遷移的 cleanup 通常不是「關掉整個 Firebase」— 多數情況認證、儲存仍留平台：
 
 - 已遷資料路徑的 Firestore collection、Security Rules、dual-write code path 退役
 - shadow read 比對 code 移除
@@ -148,23 +150,23 @@ Type E 的 cleanup 通常不是「關掉整個 Firebase」— 多數情況認證
 
 production 常見的 5 個踩雷：
 
-#### Case 1：只匯資料、漏了存取模型反轉
+#### 只匯資料、漏了存取模型反轉
 
-把 Firestore 匯出匯進 PostgreSQL 就以為遷完、忘了前端還在打 SDK、授權還在 Security Rules。修法：依賴面盤點是 Phase 1、資料搬運只是其中一條線，存取模型反轉才是主體。
+把 Firestore 匯出匯進 PostgreSQL 就以為遷完、忘了前端還在打 SDK、授權還在 Security Rules。修法：遷移從依賴面盤點開始，資料搬運只是盤點出來的其中一項依賴，存取模型反轉才是主體。
 
-#### Case 2：Security Rules 翻譯漏洞
+#### Security Rules 翻譯漏洞
 
 把規則翻成後端授權時漏一條、開了越權查詢的洞、上線後資料外洩。修法：授權翻譯要逐條對照 + 紅隊驗證（[1.5 攻擊者視角（紅隊）：資料層弱點判讀](/backend/01-database/red-team-data-layer/)）、當成 cutover gate 條件、不是功能 bug。
 
-#### Case 3：反正規化還原錯誤
+#### 反正規化還原錯誤
 
-document 的冗餘副本拆回 table 時還原錯關係、新庫資料關聯接錯。修法：Phase 2 先讀懂當初為何反正規化、backfill 後抽查還原正確性、shadow read 比對抓出建模差異。
+document 的冗餘副本拆回 table 時還原錯關係、新庫資料關聯接錯。修法：relational 重建模階段先讀懂當初為何反正規化、backfill 後抽查還原正確性、shadow read 比對抓出建模差異。
 
-#### Case 4：低估 realtime / offline 重建工作量
+#### 低估 realtime / offline 重建工作量
 
 以為遷資料庫就好、上線才發現 snapshot listener 與 offline 同步整層要自己重建、進度爆炸。修法：依賴面盤點就把 realtime 訂閱點與 offline 行為標出來、列入工作量、必要時這層最後遷或先保留。
 
-#### Case 5：dual-write 一邊失敗沒補償
+#### dual-write 一邊失敗沒補償
 
 dual-write 時新庫寫成功 Firestore 失敗（或反之）、兩邊分歧、cutover 後資料不完整。修法：dual-write 要有失敗補償（記錄、重試、標記人工[對帳](/backend/knowledge-cards/data-reconciliation/)），對應 [1.9 Reconciliation](/backend/01-database/reconciliation-data-repair/)。
 
@@ -192,7 +194,7 @@ dual-write 時新庫寫成功 Firestore 失敗（或反之）、兩邊分歧、c
 
 ### Sibling 與 cross-link
 
-- [Firestore overview](/backend/01-database/vendors/firestore/) — 服務定位與查詢邊界
+- [Firestore overview](/backend/01-database/vendors/firestore/)
 - [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/) — 通用 dual-write / shadow read / cutover 框架
 - [1.5 資料層紅隊](/backend/01-database/red-team-data-layer/) — Security Rules 授權翻譯的安全驗證
 - [1.9 Reconciliation 與 Data Repair](/backend/01-database/reconciliation-data-repair/) — dual-write 失敗補償與資料對帳

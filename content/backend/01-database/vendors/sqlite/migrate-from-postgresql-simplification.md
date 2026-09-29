@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "postgresql", "migration"]
 
 PostgreSQL to SQLite simplification 的核心責任是處理反向路線：服務責任縮小後，評估 SQLite 是否能降低操作成本。這條路線適合 single-user app、CLI、desktop app、內部工具、read-mostly artifact store、demo environment、local-first prototype 或 edge-local utility。
 
-本文的判讀錨點是：降級到 SQLite 是責任縮小，也是讓資料模型回到 single-process / file-owned / local-state 的工程選擇。只要正式需求從 multi-user server DB 回到這個範圍，SQLite 可以提供更低元件數、更容易搬移與更低維護成本。
+本文的範圍是 PostgreSQL 退到 SQLite 時的 simplification driver 與 no-go 條件、PostgreSQL feature 的 diff audit、phase plan 與 data movement、runbook 轉移、舊資料庫的 cleanup 與 retention，以及保持可逆的 decision route。
 
 ## Simplification Drivers
 
@@ -25,7 +25,7 @@ Driver 要連到 ownership。SQLite 適合「這份資料由某個 process / dev
 
 ## No-Go Conditions
 
-No-go condition 的核心責任是保護仍需要 server DB 的服務。若 PostgreSQL 的核心能力仍被業務依賴，遷到 SQLite 會把風險轉移到 application code、file backup 與人工流程。
+No-go condition 的核心責任是保護仍需要 server DB 的服務。若 PostgreSQL 的核心能力仍被業務依賴，遷到 SQLite 之後這些能力要改由 application code、file backup 與人工流程承擔。
 
 | No-go 訊號                          | 代表責任                          | 保留路由                            |
 | ----------------------------------- | --------------------------------- | ----------------------------------- |
@@ -73,8 +73,14 @@ Scope reduction 是第一關。若資料仍被多個服務寫入，應先拆出 
 Data movement 的核心責任是把 PostgreSQL snapshot 轉成 SQLite file 並保留驗證。可用 `COPY` / CSV、application ETL 或 dedicated migration tool；選擇取決於 type conversion 與資料量。
 
 ```bash
+# PostgreSQL 端：把 orders 匯出成帶標題列的 CSV
+#   NULL 印成空欄位；timestamptz 印成 2025-12-31 16:00:00+00 這種格式，不是 ISO 8601 的 T 分隔
 psql "$DATABASE_URL" -c "\\copy orders TO 'orders.csv' CSV HEADER"
+# SQLite 端：orders 表要先在 Schema rewrite 階段建好
+#   表不存在時，.import 會拿跳過標題列之後的第一筆資料當欄名建表，那一筆因此不會被匯入
+#   CSV 裡的空欄位匯進來是空字串 ''，不是 NULL
 sqlite3 app.db ".mode csv" ".import --skip 1 orders.csv orders"
+# 回 ok 表示檔案結構完整
 sqlite3 app.db "PRAGMA integrity_check;"
 ```
 

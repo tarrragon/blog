@@ -14,11 +14,11 @@ tags: ["backend", "database", "postgresql", "aurora-dsql", "migration", "distrib
 
 PG → DSQL 不是「自然演進」、是 *application 需求超出 single-primary 模型* 時的 paradigm 換軌。三條典型 driver 各自對應一種 application 約束、不是「三選一」、而是「至少其中一條剛性、其他兩條是 bonus」：
 
-| Driver                     | 觸發場景                                                                                                     |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| **Global write**           | Application 需要多 region active-active write（不是 Aurora PG 的 single-writer + read replica）              |
-| **Operational zero-touch** | 不想管 Patroni / PgBouncer / autovacuum / failover / backup retention、Aurora PG 已減一半、DSQL 進一步零接觸 |
-| **Region resiliency**      | 整 region 失效時應用無感切換（Aurora PG 是 cross-region replica 異步、DSQL 是 strong consistency 多 region） |
+| Driver                     | 觸發場景                                                                                                                            |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Global write**           | Application 需要多 region active-active write（不是 Aurora PG 的 single-writer + read replica）                                     |
+| **Operational zero-touch** | 不想管 Patroni / PgBouncer / autovacuum / failover / backup retention、Aurora PG 已代管其中的 failover 與 backup、DSQL 進一步零接觸 |
+| **Region resiliency**      | 整 region 失效時應用無感切換（Aurora PG 是 cross-region replica 異步、DSQL 是 strong consistency 多 region）                        |
 
 反向 driver（DSQL → Aurora PG）也存在：
 
@@ -51,20 +51,20 @@ DSQL 是 PG wire-compatible（用 `psql` 連得上）、但內部是 *distribute
 
 DSQL 是 PG-compatible *subset*、有幾類功能不支援：
 
-| 類別                          | PG 支援 | DSQL 支援                                    |
-| ----------------------------- | ------- | -------------------------------------------- |
-| Extension                     | 是      | 否（沒 `CREATE EXTENSION`）                  |
-| Foreign key constraint        | 是      | 否（application 維護 referential integrity） |
-| View / Materialized view      | 是      | View 部分 / Materialized view 否             |
-| JSON / JSONB                  | 是      | 部分（無 GIN index 加速）                    |
-| Foreign data wrapper          | 是      | 否                                           |
-| Stored procedure（PL/pgSQL）  | 是      | 部分（限制多）                               |
-| Trigger                       | 是      | 部分                                         |
-| LISTEN / NOTIFY               | 是      | 否                                           |
-| `SELECT ... FOR UPDATE`       | 是      | 部分（DSQL OCC semantic）                    |
-| Sequence（serial / identity） | 是      | 支援、但高吞吐有 coordination overhead       |
-| Table partition               | 是      | 部分                                         |
-| Logical replication slot      | 是      | 否                                           |
+| 類別                          | PG 支援 | DSQL 支援                                                                                                                                                         |
+| ----------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Extension                     | 是      | 否（沒 `CREATE EXTENSION`）                                                                                                                                       |
+| Foreign key constraint        | 是      | 是（截至 2026-09 的官方遷移指南：建表時宣告，DSQL 會檢查關聯列存在）                                                                                              |
+| View / Materialized view      | 是      | View 部分 / Materialized view 否                                                                                                                                  |
+| JSON / JSONB                  | 是      | 部分（無 GIN index 加速）                                                                                                                                         |
+| Foreign data wrapper          | 是      | 否                                                                                                                                                                |
+| Stored procedure（PL/pgSQL）  | 是      | 部分（限制多）                                                                                                                                                    |
+| Trigger                       | 是      | 部分                                                                                                                                                              |
+| LISTEN / NOTIFY               | 是      | 否                                                                                                                                                                |
+| `SELECT ... FOR UPDATE`       | 是      | 部分（DSQL OCC semantic）                                                                                                                                         |
+| Sequence（serial / identity） | 是      | 支援 `CREATE SEQUENCE` 與 identity column（截至 2026-09 的官方文件：限 `bigint`、`CACHE` 必須明寫為 1 或 ≥ 65536）；`CACHE 1` 在高併發下 coordination overhead 高 |
+| Table partition               | 是      | 部分                                                                                                                                                              |
+| Logical replication slot      | 是      | 否                                                                                                                                                                |
 
 **Migration 必做 schema audit**：
 
@@ -85,7 +85,7 @@ SELECT * FROM pg_foreign_server;
 SELECT * FROM pg_trigger WHERE NOT tgisinternal;
 ```
 
-任何項目命中、都是 migration blocker。
+extension、materialized view、FDW 命中是 migration blocker（schema gap 表中 DSQL 不支援）；trigger 與 sequence 在同一張表屬部分支援或有吞吐限制，命中後逐一確認，sequence 的判斷見〈Sequence 高吞吐撞 Coordination Overhead〉。
 
 ## Operational Redesign
 
@@ -102,17 +102,17 @@ SELECT * FROM pg_trigger WHERE NOT tgisinternal;
 | Monitoring            | Prometheus / pg_stat_* | CloudWatch + Performance Insights | CloudWatch（簡化）                 |
 | 預期 SRE FTE          | 0.5-2                  | 0.2-0.5                           | < 0.1                              |
 
-## Migration 流程：Type E Phased Plan
+## Migration 流程：Paradigm Shift 的分階段計畫
 
-Type E paradigm shift 的 phased plan、跟 [migrate-to-cockroachdb](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/) 結構類似：
+Paradigm shift 的分階段計畫、跟 [migrate-to-cockroachdb](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/) 結構類似：
 
-### Phase 1：Schema / Application Audit
+### Schema / Application Audit
 
 - 跑 schema audit（extension / MV / FDW / sequence / trigger）
 - 識別 application 哪些 query / transaction pattern 需重設計
 - 估算 *能直接遷的 % vs 需重寫的 %*、典型 60-80% / 20-40%
 
-### Phase 2：Application 改造（不上 DSQL、先在 PG 跑）
+### Application 改造（不上 DSQL、先在 PG 跑）
 
 - 加 transaction retry middleware（攔截 `40001`、exponential backoff）
 - 用 UUID 替代 serial / bigserial
@@ -121,28 +121,28 @@ Type E paradigm shift 的 phased plan、跟 [migrate-to-cockroachdb](/backend/01
 - Stored procedure 改 application code
 - 在 PG 上跑 staging、確認新 application code 還對
 
-### Phase 3：DSQL Cluster 建立 + Schema 遷
+### DSQL Cluster 建立 + Schema 遷
 
 - DSQL cluster create
 - DDL apply（subset of PG schema、無 extension）
 - DMS（Database Migration Service）initial load + ongoing replication
-- 兩邊跑 shadow traffic、比對 query 結果
+- PG 與 DSQL 同時接 shadow traffic、比對兩者的 query 結果
 
-### Phase 4：Cutover
+### Cutover
 
 - Application 切 connection string 到 DSQL
 - 保留 PG read-only 一週、出狀況 rollback
 - Monitor `40001` retry rate、scaling event 行為
 
-### Phase 5：多 region 拓展（如適用）
+### 多 region 拓展（如適用）
 
 - 加第二 region endpoint
 - Application 改 multi-region routing（latency-based）
 - Test region failure / network partition 行為
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### Case 1：Transaction Retry 沒處理
+### Transaction Retry 沒處理
 
 **情境**：PG 上「兩個 transaction 都 update 同 row」走 lock + wait；DSQL 同情境一個會收 `40001 serialization_failure`、application 沒 catch、user 看到 500 error。
 
@@ -163,7 +163,7 @@ def with_retry(fn, max_attempts=5):
             time.sleep((2 ** attempt) * 0.05 + random.random() * 0.05)
 ```
 
-### Case 2：Extension 缺位、Feature 整段掉
+### Extension 缺位、Feature 整段掉
 
 **情境**：production PG 用 pgvector 做 RAG search、PostGIS 做 store locator、TimescaleDB 做 metrics — 切 DSQL 後三 feature 全沒。
 
@@ -177,16 +177,16 @@ def with_retry(fn, max_attempts=5):
 
 實務常見拓撲：DSQL 跑 transactional core、附 PG（vector） + PG（GIS） + Timestream（metrics）。
 
-### Case 3：Sequence 高吞吐撞 Coordination Overhead
+### Sequence 高吞吐撞 Coordination Overhead
 
 **情境**：`SERIAL` / `GENERATED AS IDENTITY` PK 在 DSQL 用、insert 量 1000+/s 時 sequence nextval 變成 bottleneck、insert latency 從 5ms 跳到 80-100ms+。
 
-DSQL 有支援 sequence、但不是「local atomic counter」、是分散式 counter — 每次 nextval 需跨 region coordination 保證唯一性。低吞吐 OK、高吞吐撞牆。
+DSQL 有支援 sequence，而 sequence 操作需要 coordination。截至 2026-09 的官方文件要求建立 sequence 時明寫 `CACHE`、只接受 `CACHE = 1` 或 `CACHE >= 65536`：`CACHE = 1` 時每次 nextval 都走 coordination，併發一高就成為瓶頸；`CACHE >= 65536` 時每個 session 從本地預先配置的區段取值，吞吐較高，代價是值會有空洞、跨 session 不保證嚴格遞增。
 
 修法：
 
-- 高吞吐表 PK 換 UUID v7（time-sortable、無 coordination）：`gen_random_uuid()` 或 application-side UUID v7 library
-- 或 application-side ULID（time-sortable、12-byte 緊湊）
+- 高吞吐表 PK 換 UUID（無 coordination）：`gen_random_uuid()` 產生的是 random 的 UUID v4；要 time-sortable 就在 application 端用 UUID v7 library
+- 或 application-side ULID（time-sortable、128-bit，與 UUID 同長度）
 - 完全避免依賴「連續 integer PK」的 application 邏輯（reporting / paging 改用 `ORDER BY created_at, id`）
 
 ```sql
@@ -199,17 +199,17 @@ CREATE TABLE orders (
 
 低吞吐表（settings / config）保留 sequence OK；high-volume transactional 表（orders / events）建議 UUID。
 
-### Case 4：Aurora PG 直升 DSQL 想當 in-place
+### Aurora PG 直升 DSQL 想當 in-place
 
 **情境**：team 以為「Aurora PG 跟 Aurora DSQL 都是 Aurora、應該能直升」、申請 cluster modify、發現完全是兩個 service。
 
 修法：
 
 - 不是 in-place upgrade、是 full migration（DMS + cutover）
-- 把 DSQL 當完全新的 cluster type、走 Phase 1-4 完整流程
+- 把 DSQL 當完全新的 cluster type、走從 schema / application audit 到 cutover 的完整流程
 - Aurora PG → Aurora DSQL 不比 PG → CRDB 容易、wire-compatible 只解 application connect 問題、不解 schema / paradigm 差異
 
-### Case 5：Region Failover Semantic
+### Region Failover Semantic
 
 **情境**：team 以為「DSQL multi-region 等於高可用」、設計時假設「整 region 掛還是能寫」、實測發現「網絡分割時 DSQL 走 quorum、可能 reject write」。
 
@@ -265,13 +265,13 @@ DSQL 計費跟 Aurora PG 差很多：
 
 ## 相關連結
 
-- [migrate-to-aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/)：Aurora PG 對比（Type C）
-- [migrate-to-cockroachdb](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/)：CRDB 對比（Type E）
+- [migrate-to-aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/)：Aurora PG 對比（protocol drop-in + operational redesign）
+- [migrate-to-cockroachdb](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/)：CRDB 對比（paradigm shift）
 - [extension-ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/)：DSQL 不支援的 extension
 - [connection-scaling](/backend/01-database/vendors/postgresql/connection-scaling/)：DSQL 內建 pool 跟 PgBouncer 對比
 
 ## 下一步
 
 - 看 [Aurora overview](/backend/01-database/vendors/aurora/) 認識 Aurora family
-- 看 [migrate-to-cockroachdb](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/) 對比另一個 Type E migration
+- 看 [migrate-to-cockroachdb](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/) 對比另一個 paradigm shift 型 migration
 - 回 [PostgreSQL overview](/backend/01-database/vendors/postgresql/) 看全圖

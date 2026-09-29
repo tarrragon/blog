@@ -7,7 +7,7 @@ tags: ["backend", "database", "postgresql", "hands-on", "failover"]
 
 PostgreSQL HA failover drill 的核心責任是讓讀者觀察 primary promotion 對 application、pooler 與 incident decision 的影響。這篇承接 [Patroni HA](../../patroni-ha/) 與 [Cross-region DR](../../cross-region-dr/)。
 
-本文的驗收標準是：你能記錄 failover timeline、replication lag snapshot、client error sample、data validation query 與 incident decision log entry。實際觸發方式依 Patroni、managed PostgreSQL 或雲平台而異；lab 重點是 evidence。
+本篇整理 primary promotion 演練要留的 evidence：failover timeline、replication lag snapshot、client error sample、data validation query 與 incident decision log entry。實際觸發方式依 Patroni、managed PostgreSQL 或雲平台而異，本篇只列出觸發時要記下的欄位。
 
 ## Pre-Failover Baseline
 
@@ -31,7 +31,7 @@ Baseline 要保存 primary host、standby host、replication lag、application c
 
 ## Client Workload
 
-Client workload 的核心責任是讓 failover 對 application 的影響可見。
+Client workload 的核心責任是讓 failover 對 application 的影響可見。迴圈寫入的 `restore_markers` 是 [PITR Restore Drill](../pitr-restore-drill/) 建的表；沒跑過那一篇，先用那一篇 Prepare Recovery Point 段的 `CREATE TABLE` 建表。
 
 ```bash
 while true; do

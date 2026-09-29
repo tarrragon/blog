@@ -6,11 +6,11 @@ weight: 33
 tags: ["backend", "database", "postgresql", "partitioning", "performance", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明大表（> 1TB）需要 partitioning、本文聚焦 *partition 真實價值在哪、為什麼多數人第一次 partition 都做錯*。
+> 這篇涵蓋 partition 的價值來自的兩個機制（planner pruning 與縮小 maintenance scope）、partition key 怎麼選，以及 ATTACH、DETACH 與 partition 數量的維運。
 
 ## Partition 不是「把大表切小」、是「讓 planner pruning + 縮小 maintenance scope」
 
-剛開始學 partitioning 的人多半從「表太大、切小一點」直覺出發；切了之後發現 — *query 變慢*（planner 還在看所有 partition）、*INSERT 變慢*（trigger / partition routing overhead）、*backup 沒變短*（總資料量沒變）。直覺錯了：partition 的工程價值來自兩個機制、跟「切小」沒直接關係：
+只為了「表太大、切小一點」而 partition，得到的是：*query 變慢*（WHERE 不含 partition key 時 planner 要看所有 partition）、*INSERT 變慢*（每一列要先 routing 到對應的 partition）、*backup 沒變短*（總資料量沒變）。partition 的工程價值來自下面兩個機制、跟「切小」沒直接關係：
 
 1. **Query planner pruning**：planner 在 planning 階段 *跳過* 不可能命中 partition key 的 partition、查詢只 scan 相關 partition；前提是 *WHERE 條件含 partition key*、否則 planner 看完所有 partition、效能反而比單表差
 2. **Maintenance scope 縮小**：vacuum / index rebuild / DROP / archive 只動單一 partition、不掃整表；vacuum 12 小時變 30 分鐘 / DROP 老資料 0.01 秒、是 partition 真正回本的地方
@@ -52,8 +52,8 @@ CREATE TABLE users_0 PARTITION OF users
 
 策略選擇關鍵：
 
-- **RANGE** 適合 *時間 / 有序值* — query 多半帶 `WHERE event_time >= X`、prune 效率最高；archive / drop 老資料是 `DROP PARTITION` 0.01 秒
-- **LIST** 適合 *離散 enum / tenant* — query 帶 `WHERE tenant_id = X` prune；缺點是 tenant 增長要手動 ALTER ADD PARTITION
+- **RANGE** 適合 *時間 / 有序值* — query 多半帶 `WHERE event_time >= X`、prune 效率最高；archive / drop 老資料是對那個 partition 跑 `DETACH PARTITION` 再 `DROP TABLE`（見下方 DETACH 那一段的完整流程），0.01 秒量級
+- **LIST** 適合 *離散 enum / tenant* — query 帶 `WHERE tenant_id = X` prune；缺點是每加一批 tenant 都要手動 `CREATE TABLE ... PARTITION OF orders FOR VALUES IN (...)` 建新 partition
 - **HASH** 適合 *均勻分散、沒自然 key* — query 多半 by-PK lookup、HASH 讓單 partition 大小均勻；prune 只在 `WHERE hash_key = X` 等值查詢觸發
 
 ### 選錯 partition key 是最常見的錯誤
@@ -69,10 +69,13 @@ EXPLAIN (ANALYZE, BUFFERS)
 SELECT * FROM events
 WHERE event_time >= '2026-05-01' AND event_time < '2026-05-15';
 
--- 期望輸出包含：
---  Append (cost=...)
---    -> Seq Scan on events_2026_05  (cost=...)
--- (只 scan 一個 partition、其他 partition pruned)
+-- 只剩一個 partition 時，planner 連 Append 都省掉，直接 scan 那一個 partition：
+--  Seq Scan on events_2026_05 events
+--    Filter: ((event_time >= ...) AND (event_time < ...))
+-- 範圍跨兩個月（例如 >= '2026-04-20'）時才出現 Append，底下只列命中的兩個 partition：
+--  Append
+--    ->  Seq Scan on events_2026_04 events_1
+--    ->  Seq Scan on events_2026_05 events_2
 ```
 
 pruning 觸發條件：
@@ -97,7 +100,7 @@ SELECT * FROM events e JOIN events_metadata m
 
 ## Production 故障演練
 
-### Case 1：partition key 選錯，query 變慢
+### partition key 選錯，query 變慢
 
 **徵兆**：partition 後特定查詢從 200ms 變成 2000ms；EXPLAIN 顯示 `Append` 下面所有 partition 都被 scan、沒 partition 被 prune。
 
@@ -109,7 +112,7 @@ SELECT * FROM events e JOIN events_metadata m
 2. **修正**：DROP partition strategy、改 partition by `created_at` RANGE；遷移用 `pg_dump --section=data` per-partition 重灌
 3. **避免**：partitioning 不可逆、設計階段 query pattern 沒看清楚不要動
 
-### Case 2：cross-partition unique constraint 不 enforce
+### cross-partition unique constraint 不 enforce
 
 **徵兆**：partition 後發現 application code 寫死 duplicate user_email、但 unique constraint 沒擋；DB 內有同 email 多筆。
 
@@ -121,11 +124,11 @@ SELECT * FROM events e JOIN events_metadata m
 2. **替代**：用 *non-partitioned* 表存唯一性目標（user_email_registry）、做寫入前 lookup
 3. **設計階段檢查**：partition by X、unique constraint 必須含 X；若業務要求 unique 不含 X、partition strategy 錯
 
-### Case 3：ATTACH PARTITION 鎖表太久
+### ATTACH PARTITION 的 lock 持有太久
 
-**徵兆**：新 month partition `ATTACH PARTITION` 跑 30 秒、期間整個 events 表 read 阻塞、application timeout 大量。
+**徵兆**：新 month partition `ATTACH PARTITION` 跑 30 秒，期間同一張 events 表上的其他 DDL 與 VACUUM 都在排隊。
 
-**根因**：`ATTACH PARTITION` 預設加 `ACCESS EXCLUSIVE` lock 在 parent table、scan 整個新 partition 驗證 CHECK constraint；大 partition + 沒 CHECK constraint 預先驗證 → 鎖時間爆。
+**根因**：PG 12 起，`ATTACH PARTITION` 對 parent table 拿 `SHARE UPDATE EXCLUSIVE`（parent 的讀寫照常進行），對被 attach 的表拿 `ACCESS EXCLUSIVE`；被 attach 的表沒有預先驗證過、涵蓋 partition 範圍的 CHECK constraint 時，ATTACH 要掃完整張表確認每一列都落在範圍內，大 partition 的 lock 持有時間因此拉長。`SHARE UPDATE EXCLUSIVE` 與自己互斥，所以這段期間 parent 上的其他 ATTACH / DETACH 與 VACUUM 都要等。
 
 **修法**：
 
@@ -143,7 +146,7 @@ ALTER TABLE events ATTACH PARTITION events_2026_06
 -- ATTACH 變 instant
 ```
 
-### Case 4：partition 數爆炸，planner planning time 爆
+### partition 數爆炸，planner planning time 爆
 
 **徵兆**：partition 累積到 500+（daily partition 跑 1-2 年）、簡單 query EXPLAIN 顯示 planning_time 從 1ms 漲到 200ms、application response 變慢。
 
@@ -156,7 +159,7 @@ ALTER TABLE events ATTACH PARTITION events_2026_06
 3. **`enable_partition_pruning`** 預設 on、確保啟用
 4. **PG 12+**：planner 對 partition table 的 list 處理優化、planning time 上限拉高、但仍要控
 
-### Case 5：DETACH 後磁碟空間沒回收
+### DETACH 後磁碟空間沒回收
 
 **徵兆**：DETACH PARTITION 後 `pg_database_size` 沒下降、預期釋放 50GB；磁碟仍滿。
 
@@ -218,7 +221,7 @@ partitioning 是 autovacuum 問題的長期解：
 
 partition table 的 index 處理：
 
-1. PG 11+ 全域 index：`CREATE INDEX ON partitioned_table (...)` 自動在每 partition 建 local index
+1. PG 11+ partitioned index：`CREATE INDEX ON partitioned_table (...)` 在 parent 上建一個 partitioned index，並自動在每個 partition 建 local index；PostgreSQL 沒有跨 partition 的全域 index
 2. **不存在跨 partition unique** — 只能 partition-local
 3. **partition-wise index scan**：PG 11+ 跟 partition-wise join 一起、index lookup 平行
 
@@ -239,6 +242,6 @@ partition 不是 backup 替代品 — 但能加速 *partial restore*：
 
 - 上游 vendor 頁：[PostgreSQL](/backend/01-database/vendors/postgresql/)
 - 上游 chapter：[Schema Design](/backend/01-database/schema-design/) — partition 是 schema 決策
-- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [autovacuum tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/) / [TimescaleDB Deep Dive](/backend/01-database/vendors/postgresql/timescaledb-deep-dive/)（hypertable 是 partition 自動化）
+- PostgreSQL 的其他主題：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [autovacuum tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/) / [TimescaleDB Deep Dive](/backend/01-database/vendors/postgresql/timescaledb-deep-dive/)（hypertable 是 partition 自動化）
 - 後續路由：[Partition Redesign](/backend/01-database/vendors/postgresql/partition-redesign/)（重排 partition strategy 的 migration playbook）
 - Methodology：[Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/)

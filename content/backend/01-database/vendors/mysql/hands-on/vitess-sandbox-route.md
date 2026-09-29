@@ -7,7 +7,7 @@ tags: ["backend", "database", "mysql", "hands-on", "vitess"]
 
 MySQL Vitess sandbox route 的核心責任是讓讀者用 sandbox 理解 Vitess 如何把 MySQL 拓展成 sharded database platform。這篇承接 [Vitess Sharding](../../vitess-sharding/) 與 [MySQL to PlanetScale](../../migrate-to-planetscale/)。
 
-本文的驗收標準是：你能建立 sandbox、辨識 keyspace / shard / tablet / vtgate、跑基本 query，並記錄 resharding preview 的 evidence。
+本篇的範圍是用 Vitess 官方 local example 起 sandbox、辨識 keyspace / shard / tablet / vtgate、透過 vtgate 跑基本 query，並整理 VSchema review 與 resharding preview 要留的 evidence。
 
 官方文件路由的核心責任是固定 sandbox 指令。實作前先查 [Vitess local install docs](https://vitess.io/docs/21.0/get-started/local/)；本文最後檢查日是 2026-05-22。
 

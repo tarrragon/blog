@@ -6,7 +6,7 @@ weight: 71
 tags: ["backend", "database", "cosmosdb", "change-feed", "cdc", "deep-article"]
 ---
 
-本文是 [Cosmos DB](/backend/01-database/vendors/cosmosdb/) overview 的 deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Change Feed 是 Cosmos DB 把 container 內每次寫入按 logical partition 順序持久化成一條可重讀變更序列的能力、對應 [Change Data Capture](/backend/knowledge-cards/change-data-capture/) 的概念分層。它讓「寫入後要做的後續工作」（投影、cache 失效、事件發布、跨 store 同步）從 application 寫入路徑解耦出來、由獨立 consumer 按自己的進度消費。本文先講 Change Feed 的精確語義與兩種模式、再進 change feed processor 與 Azure Functions trigger 的操作流程、最後拆失敗模式與跟 DynamoDB Streams 的對照。
+這篇整理 Cosmos DB SQL API container 的 Change Feed：它的順序與進度語義、latest-version 與 all-versions-and-deletes 兩種模式、用 change feed processor 與 Azure Functions trigger 消費的做法、常見失敗模式，以及它跟 DynamoDB Streams 的語義差。Change Feed 是 Cosmos DB 把 container 內每次寫入按 logical partition 順序持久化成一條可重讀變更序列的能力、對應 [Change Data Capture](/backend/knowledge-cards/change-data-capture/) 的概念分層。它讓「寫入後要做的後續工作」（投影、cache 失效、事件發布、跨 store 同步）從 application 寫入路徑解耦出來、由獨立 consumer 按自己的進度消費。
 
 Case anchor 是 [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（85,000 SKU、每週新增 5,000 件的高更新頻率 catalog、寫入後需要 search index / 推薦排序投影）。ASOS case 本身沒有揭露 Change Feed 的實作細節、本文只取它的 catalog 寫入投影壓力當情境 anchor、機制以 Azure vendor 規格與通用工程展開。
 
@@ -25,7 +25,7 @@ Case anchor 是 [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-
 
 ## 核心機制：partition-scoped persistent change log
 
-Change Feed 是 container 的內建能力、把每個 logical partition 內的寫入按發生順序記錄成一條持久序列。它的關鍵語義有幾個面向。
+Change Feed 是 container 的內建能力、把每個 logical partition 內的寫入按發生順序記錄成一條持久序列。它的語義要分開看順序保證的範圍、消費進度的表達方式、以及讀取由哪一方發起。
 
 順序保證是 *per logical partition*、不是 container 全域。同一 partition key 內的變更嚴格有序、跨 partition 之間沒有全域順序 — 這跟 [partition-key-design](../partition-key-design/) 的設計直接相關、consumer 必須假設不同 partition 的事件可能交錯到達。
 
@@ -35,7 +35,7 @@ Change Feed 是 container 的內建能力、把每個 logical partition 內的�
 
 ### 兩種模式：latest-version vs all-versions-and-deletes
 
-Change Feed 有兩種模式、語義差很大、選錯會在 audit / 補償場景出問題（模式名稱與可用性屬時間敏感、查 [最新文件](https://learn.microsoft.com/azure/cosmos-db/change-feed)）。
+Change Feed 有兩種模式、差在是否交付中間版本與刪除事件；把 latest-version 模式用在 audit 或補償流程上，這些流程會收不到它們需要的中間版本與刪除事件（模式名稱與可用性屬時間敏感、查 [最新文件](https://learn.microsoft.com/azure/cosmos-db/change-feed)）。
 
 Latest-version 模式（過去稱 incremental feed）只給每個 document 的 *最新狀態*。同一 document 在兩次消費之間改了三次、consumer 只會看到最後一個版本、中間版本看不到；delete 也看不到（document 消失、feed 裡沒有對應的 tombstone）。這個模式適合「我只要把最終狀態投影到下游」的場景 — search index 同步、cache 刷新、物化視圖更新。
 
@@ -118,7 +118,7 @@ Functions trigger 底層就是 change feed processor、lease 與 scale-out 由 F
 
 ### Rollback boundary
 
-Change Feed 是讀取側機制、停掉 consumer 不影響寫入。要重放：刪掉 lease container 的對應 lease（或建新 processor name）會從 container 起點或指定時間點重讀。重放前確認下游投影是 idempotent、否則重放會重複寫。
+Change Feed 是讀取側機制、停掉 consumer 不影響寫入。要重放：刪掉 lease container 的對應 lease（或換一個新的 processor name），再以 `WithStartTime` 指定起點重建 processor——傳 `DateTime.MinValue.ToUniversalTime()` 從 container 起點讀，傳一個時間點從那個時間之後讀。沒有設 `WithStartTime` 時，processor 第一次初始化 lease 之後只讀得到初始化之後的變更，之前的變更讀不到；而 lease container 一旦初始化過，再改 `WithStartTime` 也不會生效，所以起點要在刪掉 lease 之後、重建時設定。這個起點設定只適用於 latest-version 模式。重放前確認下游投影是 idempotent、否則重放會重複寫。
 
 ## 失敗模式
 
@@ -152,14 +152,14 @@ consumer 假設事件按全域時間到達、做了依賴順序的邏輯（例�
 
 ## 邊界與整合
 
-- Sibling deep articles：[stored-procedure-trigger](../stored-procedure-trigger/)（partition 內同步邏輯 vs Change Feed 的非同步解耦）、[synapse-link-federation](../synapse-link-federation/)（分析 workload 用 analytical store、不要用 Change Feed 自己搭 analytics pipeline）、[partition-key-design](../partition-key-design/)（per-partition 順序的來源）、[ru-cost-model-sizing](../ru-cost-model-sizing/)（Change Feed + lease container 的 RU 成本）
+- 同 vendor 的其他文章：[stored-procedure-trigger](../stored-procedure-trigger/)（partition 內同步邏輯 vs Change Feed 的非同步解耦）、[synapse-link-federation](../synapse-link-federation/)（分析 workload 用 analytical store、不要用 Change Feed 自己搭 analytics pipeline）、[partition-key-design](../partition-key-design/)（per-partition 順序的來源）、[ru-cost-model-sizing](../ru-cost-model-sizing/)（Change Feed + lease container 的 RU 成本）
 - 跟 DynamoDB Streams 對照：兩者都是 partition-ordered 變更 log + at-least-once consumer。差異在 DynamoDB Streams 有固定 24 小時 retention、原生發 INSERT / MODIFY / REMOVE（含 delete）；Cosmos DB latest-version 模式預設不發 delete、要 all-versions-and-deletes 模式才有完整事件與 delete。從 DynamoDB Streams 思維過來的 team 容易假設「delete 一定看得到」、要先確認模式。對照 [DynamoDB vendor](/backend/01-database/vendors/dynamodb/)
 - Knowledge card：[Change Data Capture](/backend/knowledge-cards/change-data-capture/) / [idempotency](/backend/knowledge-cards/idempotency/)
-- 回 overview：[Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) 的「忽略 Change Feed」常見陷阱
+- 回 overview：[Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) 列出本 vendor 的其他深度文章
 
 ## 相關連結
 
-- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — 本文是該頁尾 Change Feed backlog 的深度展開
+- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
 - [9.C21 ASOS case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 高更新頻率 catalog 投影壓力的情境 anchor
 - [stored-procedure-trigger](../stored-procedure-trigger/) — partition 內同步邏輯的對照
 - [partition-key-design](../partition-key-design/) — per-partition 順序的設計來源

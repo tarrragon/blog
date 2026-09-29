@@ -8,7 +8,7 @@ tags: ["backend", "database", "postgresql", "partitioning", "pg-partman"]
 
 PostgreSQL pg_partman advanced 的核心責任是把 [declarative partitioning](/backend/knowledge-cards/table-partitioning/) 的日常維護自動化。pg_partman 可以協助建立未來 partition、管理 retention、執行 maintenance job，讓 time-based 或 serial-based partition 不再依賴人工 DDL。
 
-本文的判讀錨點是：pg_partman 解決的是 partition lifecycle operation，而非 partition strategy 本身。Partition key、query pattern、retention、index、foreign key 與 migration 仍要先在 [Declarative Partitioning](../declarative-partitioning/) 與 [Partition Redesign](../partition-redesign/) 做對。
+本文的範圍是 pg_partman 跟 PostgreSQL 原生 partition 的責任分界、pg_partman 的 operation vocabulary、setup pattern、maintenance runbook、既有大表的 migration 與 backfill，以及 failure modes。
 
 ## Responsibility Boundary
 
@@ -22,7 +22,7 @@ Responsibility boundary 的核心責任是區分 PostgreSQL 原生 partition 和
 | DBA / platform                      | monitoring、backup、DDL review                   |
 | Application                         | query pattern、partition key 使用                |
 
-pg_partman 的價值在於減少重複 DDL。它不會替 application 選出正確 partition key，也不會自動修復跨 partition query 設計。
+pg_partman 的價值在於減少重複 DDL。它不會替 application 選出正確 partition key，也不會自動修復跨 partition query 設計。Partition key、query pattern、retention、index、foreign key 與 migration 這些 partition strategy 的決定，仍要先在 [Declarative Partitioning](../declarative-partitioning/) 與 [Partition Redesign](../partition-redesign/) 做對。
 
 ## Core Concepts
 
@@ -56,7 +56,32 @@ CREATE TABLE events (
 ) PARTITION BY RANGE (created_at);
 ```
 
-實際建立 partman config 要依 pg_partman 版本與 provider 支援文件執行。Managed PostgreSQL 可能限制 extension version、background worker 或 scheduler，因此 setup 前要先確認 provider boundary。
+以 pg_partman 5.x 為例，下面這段把上方的 `events` 交給 pg_partman 管理（4.x 的 `create_parent` 參數不同，照手上版本的文件寫）：
+
+```sql
+CREATE SCHEMA partman;
+CREATE EXTENSION pg_partman SCHEMA partman;
+
+-- 以 created_at 按日切；premake 7：maintenance 維持今天之後 7 天的 partition 已經建好
+SELECT partman.create_parent(
+  p_parent_table := 'public.events',
+  p_control      := 'created_at',
+  p_interval     := '1 day',
+  p_premake      := 7
+);
+
+-- retention：超過 90 天的 partition 由 maintenance drop 掉（retention_keep_table = false 表示不保留成獨立 table）
+UPDATE partman.part_config
+SET retention = '90 days', retention_keep_table = false
+WHERE parent_table = 'public.events';
+
+-- maintenance：補建未來 partition、執行 retention；scheduler 定期呼叫的就是這一行
+CALL partman.run_maintenance_proc();
+-- 跑完之後 events 底下有 events_default 與今天前後各 7 天的 events_pYYYYMMDD，共 16 個 child
+-- created_at 落在已建 partition 之外（例：30 天後）的列進 events_default
+```
+
+Managed PostgreSQL 可能限制 extension version、background worker 或 scheduler，因此 setup 前要先確認 provider boundary。
 
 最小 setup evidence：
 

@@ -6,7 +6,7 @@ weight: 60
 tags: ["backend", "database", "cockroachdb", "distributed-sql", "locality", "multi-region", "data-residency", "deep-article"]
 ---
 
-> 本文是 [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/) 的 implementation-layer deep article。Overview 已界定 CockroachDB 的 multi-region 能力、本文聚焦 *locality 配置怎麼解合規地理邊界 + 跨 boundary 業務邏輯需求* — 用 Hard Rock Digital 跨 8 州單一邏輯 cluster 作為 concrete framing。Replica placement 機制屬前置、見 [HLC + Raft consensus](../hlc-raft-consensus/)、survival goal 互動見 [survival goals](../survival-goals/)。
+> 本文整理 CockroachDB 的 locality 配置怎麼同時滿足合規地理邊界與跨 boundary 的業務邏輯需求，以 Hard Rock Digital 跨 8 州、邏輯上只有一個 cluster 的 sportsbook 為例。Replica placement 機制屬前置、見 [HLC + Raft consensus](../hlc-raft-consensus/)、survival goal 互動見 [survival goals](../survival-goals/)。
 
 ---
 
@@ -48,7 +48,7 @@ CockroachDB 用 [Range Sharding](/backend/knowledge-cards/range-sharding/) 把 m
 `REGIONAL BY ROW` 是 Hard Rock 場景的主要選擇。每 row 自動帶一個 `crdb_region` 隱含欄位、根據這個欄位把 row 對應的 range 釘在指定 region：
 
 ```sql
-ALTER DATABASE sportsbook PRIMARY REGION "us-east1-az";
+ALTER DATABASE sportsbook PRIMARY REGION "us-east1-virginia";
 ALTER DATABASE sportsbook ADD REGION "us-east1-nj";
 ALTER DATABASE sportsbook ADD REGION "us-east1-fl";
 
@@ -65,10 +65,10 @@ CockroachDB planner 自動感知 `crdb_region`、把 read / write 路由到 row 
 
 `GLOBAL` table 適合 *reference data* — 變更少、read 頻繁、需要全球 local read latency：
 
-- read：每 region 都有 leaseholder、本地 read p99 跟 single-region 一樣
-- write：跨 region quorum、p99 100ms+
+- read：range 仍只有一個 leaseholder（在 primary region），但每個 region 都有 replica，而 `GLOBAL` table 允許這些 replica 直接回應讀取，所以本地 read p99 跟 single-region 一樣
+- write：寫入要複製到每個 region，再加 non-blocking transaction 的 commit-wait，p99 100ms+（commit-wait 長度隨 `--max-offset` 設定而變）
 
-實務上 `GLOBAL` 只放國家代碼、貨幣表、規則 lookup 等 *變更頻率低* 的 reference data。把 high-write workload 設成 `GLOBAL` 是典型錯配（見失敗模式段）。
+實務上 `GLOBAL` 只放國家代碼、貨幣表、規則 lookup 等 *變更頻率低* 的 reference data。把 high-write workload 設成 `GLOBAL` 是典型錯配（見〈`GLOBAL` table write 太慢〉）。
 
 ### Follower read：non-voting replica 提供本地 read
 
@@ -94,7 +94,7 @@ ALTER TABLE country_codes SET LOCALITY GLOBAL;
 ALTER TABLE orders_us SET LOCALITY REGIONAL BY TABLE IN "us-east1";
 
 -- 驗證
-SHOW LOCALITY FROM TABLE users;
+SHOW CREATE TABLE users;  -- 結尾的 LOCALITY 子句就是這張表的 locality
 SHOW RANGES FROM TABLE users;  -- 看 replica 分佈
 EXPLAIN ANALYZE SELECT * FROM users WHERE id = 1;  -- 看 query plan 是否 local
 ```
@@ -105,7 +105,7 @@ EXPLAIN ANALYZE SELECT * FROM users WHERE id = 1;  -- 看 query plan 是否 loca
 
 ### 配置 multi-region database
 
-第一步是把所有 region 加入 database：
+配置的起點是把所有 region 加入 database：
 
 ```sql
 -- 假設 cluster 已跨 8 個州（透過 AWS Outposts 在每州內）
@@ -155,11 +155,11 @@ VALUES (..., ..., 'NJ', 100.00);  -- crdb_region 自動填 gateway 端
 
 ### Rollback 邊界
 
-locality 變更即時生效、Raft 自動 rebalance — 無不可逆動作。但 rebalance 期間 cross-region traffic 暴增、p99 短期 spike。production 環境改 locality 應該選低流量時段、並監控 rebalance queue。
+locality 變更由背景的 schema change job 完成、Raft 自動 rebalance — 無不可逆動作。但 rebalance 期間 cross-region traffic 暴增、p99 短期 spike。production 環境改 locality 應該選低流量時段、並監控 rebalance queue。
 
 ## 失敗模式
 
-### 「拆獨立 cluster 解合規但破壞業務邏輯」反模式（Hard Rock 對比 Standard Chartered、F4.10）
+### 「拆獨立 cluster 解合規但破壞業務邏輯」反模式（Hard Rock 對比 Standard Chartered）
 
 直覺路徑是「合規要求資料留某地理邊界 → 每邊界開一個獨立 cluster」、合規上沒問題。但獨立 cluster 之間：
 
@@ -178,9 +178,9 @@ Hard Rock 選擇 *邏輯一個 cluster + 物理跨州 Outpost placement* — 合
 - 跨 boundary 業務邏輯需求強度（強 → CockroachDB locality / 弱 → 拆獨立 cluster 可行）
 - 團隊運維能力（CockroachDB 邏輯一個 cluster vs Aurora 多 cluster fleet 的人月成本）
 
-### 「Outposts 是 latency 工具」動機誤判（F4.13、case 反直覺判讀）
+### 「Outposts 是 latency 工具」動機誤判
 
-AWS Outposts 主要為「資料留某地理邊界」存在、latency 改善是 *副作用*。Hard Rock 策略段 2 明確警告：「決策時先看合規驅動力、latency 改善列為 bonus」。
+AWS Outposts 主要為「資料留某地理邊界」存在、latency 改善是 *副作用*。Hard Rock case 的〈策略〉段明確警告：「決策時先看合規驅動力、latency 改善列為 bonus」。
 
 若把 Outposts 當跨州 latency 改善工具、會在沒合規驅動的場景過度投資 — Outposts 硬體成本 + 維運複雜度遠高於純 AWS region 部署。實務判讀：
 
@@ -190,7 +190,7 @@ AWS Outposts 主要為「資料留某地理邊界」存在、latency 改善是 *
 
 ### `GLOBAL` table write 太慢
 
-`GLOBAL` table 每次 write 跨 region quorum、p99 100ms+。用在 high-write workload 是典型錯配 — 該用在 reference data（國家代碼、貨幣表、規則 lookup）。
+`GLOBAL` table 每次 write 都要複製到每個 region 並做 commit-wait、p99 100ms+。用在 high-write workload 是典型錯配 — 該用在 reference data（國家代碼、貨幣表、規則 lookup）。
 
 判讀：
 
@@ -258,7 +258,7 @@ bet placement / settlement / account management 都需要跨州資料存取 + �
 
 - cross-region traffic = `GLOBAL` table write QPS × region count
 - `REGIONAL BY ROW` 跨 region read = follower read rate × QPS
-- storage 用量 = base storage × replication factor × (voting + non-voting replica count)
+- storage 用量 = base storage × replica 總數（voting + non-voting）
 
 ### 容量上限
 
@@ -273,7 +273,7 @@ bet placement / settlement / account management 都需要跨州資料存取 + �
 
 ## 邊界與整合
 
-### Sibling deep articles
+### 同 vendor 的其他文章
 
 - [survival goals](../survival-goals/)：locality + survival goal 一起決定 replica placement
 - [transaction retry pattern](../transaction-retry-pattern/)：partition 降低 hot row contention 的 schema 路徑
@@ -285,7 +285,7 @@ Aurora 不支援 row-level locality — 跨 region 只能 cluster-per-region + a
 
 ### 跟 Spanner interleaved tables 對照
 
-Spanner 的 [Interleaved Table](/backend/knowledge-cards/interleaved-table/) 跟 CockroachDB 的 `REGIONAL BY ROW` 概念類似（parent-child row co-location）、語法不同。Spanner 在 GCP region 內 placement、無 Outposts 等效 — Hard Rock 場景下 Spanner 不能直接套用。
+Spanner 的 [Interleaved Table](/backend/knowledge-cards/interleaved-table/) 解的是 parent-child row co-location（子表的 row 跟父表的 row 存在一起），CockroachDB 的 `REGIONAL BY ROW` 解的是每個 row 放在哪個 region，兩者處理的不是同一個問題。Spanner 在 GCP region 內 placement、無 Outposts 等效 — Hard Rock 場景下 Spanner 不能直接套用。
 
 ### Aurora DSQL / Spanner 對比
 

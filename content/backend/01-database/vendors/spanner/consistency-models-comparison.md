@@ -1,12 +1,12 @@
 ---
 title: "Spanner Consistency Models 對照：external consistency vs serializability vs linearizability"
 date: 2026-05-27
-description: "external consistency、serializability、linearizability 是三個常被混用的概念。本文先精確定義三者差異、再用 line-rate scaling 對照表（PG SSI / CockroachDB / Spanner / Aurora DSQL）回答為什麼 Spanner 不只是『更強的 serializable』、最後用 9.C10 揭露的 cross-region quorum 100-200ms 物理硬限解釋『強一致 + 全球部署』的真實 cost"
+description: "external consistency、serializability、linearizability 是三個常被混用的概念。本文先精確定義三者差異、再用 line-rate scaling 對照表（PG SSI / CockroachDB / Spanner / Aurora DSQL）回答為什麼 Spanner 不只是『更強的 serializable』、最後用 Google 內部 Spanner 案例揭露的 cross-region quorum 100-200ms 物理硬限解釋『強一致 + 全球部署』的真實 cost"
 weight: 31
 tags: ["backend", "database", "spanner", "global-sql", "consistency", "external-consistency", "linearizability", "deep-article"]
 ---
 
-> 本文是 [Cloud Spanner](/backend/01-database/vendors/spanner/) overview 的 concept-layer deep article。Overview 已說明 Spanner 在強一致 SQL 譜系的定位、本文聚焦 *consistency model* — 三個常被混用的概念（external consistency / serializability / linearizability）的精確差異、line-rate scaling 對照、跟 cross-region quorum 的物理硬限。
+本文的範圍是 external consistency、serializability 與 linearizability 的精確差異，line-rate scaling 的對照，cross-region quorum 100-200ms 的物理下限，以及驗證 consistency 等級的操作流程、把 transaction 當強一致的誤用與各一致性等級的 latency 量化。
 
 ---
 
@@ -16,7 +16,7 @@ tags: ["backend", "database", "spanner", "global-sql", "consistency", "external-
 
 真實壓力場景：金融帳本 — A 在台北轉帳給 B、B 在東京立即收到通知然後查餘額、結果查到「轉帳前」的餘額。serializable 允許這種行為（兩 transaction 可以排成任意順序、不要求跟 wall clock 一致）、external consistency 不允許（必須等 commit 後的順序符合 real-time）。混用兩個詞會讓選型結論在系統實作後才被推翻、那時候改架構成本已經高了。
 
-Case anchor：[9.C10 Cloud Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) — Google Ads 計費需要 external consistency；對照 PostgreSQL SSI、CockroachDB HLC、Aurora DSQL。**dogfood 邊界明示**：9.C10 是 Google 內部 dogfood case、不是 customer-facing capacity 參考；本文引用其 line-rate scaling 數字時要附「Google internal dogfood 揭露的設計目標、不是客戶 SLA」邊界。
+本篇引用的數字來自 [9.C10 Cloud Spanner：每秒 10 億請求的全球一致性資料庫](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)，以下稱 **Google 內部 Spanner 案例**：Google Ads 計費需要 external consistency，本篇拿它對照 PostgreSQL SSI、CockroachDB HLC 與 Aurora DSQL。**dogfood 邊界**：這個案例是 Google 內部 dogfood，揭露的是 Spanner 的設計目標，不是 customer-facing 的 capacity 參考，也不是客戶 SLA。
 
 ## 三個概念的精確定義
 
@@ -30,7 +30,7 @@ transaction 的執行結果等同於 *某個* 序列順序執行；不要求順�
 
 單一 object 操作有全序、且全序跟 real-time wall-clock 一致。只談 single-object、不談跨 object transaction。DynamoDB strongly consistent read 是 single-item linearizability、Redis `INCR` 是 single-key linearizability。對應 [linearizability](/backend/knowledge-cards/linearizability/) 卡。
 
-linearizability 跟 serializability 是 *正交* 的兩個概念 — linearizability 講「單一 object 的 real-time 順序」、serializability 講「transaction 的 anomaly-free 執行」。一個系統可以是 linearizable 但不 serializable（單 object 強保證、跨 object transaction 沒有）、也可以是 serializable 但不 linearizable（PostgreSQL SSI single-node 在 replica lag 後就不 linearizable）。
+linearizability 跟 serializability 是 *正交* 的兩個概念 — linearizability 講「單一 object 的 real-time 順序」、serializability 講「transaction 的 anomaly-free 執行」。一個系統可以是 linearizable 但不 serializable（單 object 強保證、跨 object transaction 沒有）、也可以是 serializable 但不 linearizable（PostgreSQL SSI 的 primary 掛上 async read replica 之後，從 replica 讀可能讀到落後的資料，那條讀取路徑就不 linearizable）。
 
 ### External consistency / Strict serializability
 
@@ -40,36 +40,36 @@ transaction 層級的 serializability + 全序跟 real-time 一致 — 等同於
 
 ## Line-rate scaling 對照：為什麼 PG serializable 在 multi-node 拿不到 line-rate
 
-這段的核心責任是回答「為什麼 Spanner 不只是『更強的 serializable』、是『coordinator 換拓樸』的 paradigm shift」、扣 [truetime-api-depth](../truetime-api-depth/) 的商業邏輯先行 frame。讀者選 consistency 等級時、實際在選「系統的 scaling 路徑」、不只是「應用層 anomaly 哪些被排除」。
+Spanner 的 external consistency 跟「更強的 serializable」差在 coordinator 的拓樸：跨節點交易的順序由誰決定，決定了加節點能不能線性換到 throughput。所以選 consistency 等級時，實際在選系統的 scaling 路徑，不只是選應用層要排除哪些 anomaly。TrueTime 怎麼讓多個 leader 對齊 commit 順序，在 [truetime-api-depth](../truetime-api-depth/)。
 
-### 9.C10 揭露的線性擴展數字
+### Google 內部 Spanner 案例的線性擴展數字
 
 「2 nodes → 45K reads/sec、4 nodes → 90K reads/sec」這條線性 scaling 揭露 Spanner external consistency 不是「加強版 serializable」、是把跨節點 coordinator 從 single-point 換成「拓樸感知的多 leader（每個 split 自己的 Paxos group）」、所以擴 node 數可以線性拿 throughput。
 
-**Dogfood 邊界明示**：9.C10 數字是 Google internal dogfood、不是 customer-facing capacity 承諾。客戶能拿到的 line-rate 受 instance config、region layout、workload shape 影響、不會自動複製 Google 內部曲線。
+**Dogfood 邊界**：這組數字來自 Google 內部 Spanner 案例、不是 customer-facing capacity 承諾。客戶能拿到的 line-rate 受 instance config、region layout、workload shape 影響、不會自動複製 Google 內部曲線。
 
 ### 對照表：四個系統的 scaling 路徑
 
-| 系統           | Isolation / Consistency 等級        | Multi-node scaling 路徑        | 為什麼撞天花板（或不撞）                                                                                        |
-| -------------- | ----------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| PostgreSQL SSI | Serializable                        | single-primary + read replica  | 寫只能 single primary、跨節點交易要 2PC + coordinator、replica 寫不了；scaling 路徑停在 single-primary 容量上限 |
-| CockroachDB    | Serializable + per-key linearizable | range-based + HLC              | range coordinator 仍存在、但 range 拆細了；retry contract 接住跨 range conflict、扣 serializable restart cost   |
-| Spanner        | External consistency                | split-based + Paxos + TrueTime | coordinator 變多 leader、TrueTime 對齊 commit 順序、線性擴展是設計目標（9.C10 揭露 dogfood 線性模式）           |
-| Aurora DSQL    | Strong consistency（2024 推出）     | 文件未完全公開、查最新 docs    | 時間敏感 claim、本文不擴寫；讀者實作前查官方文件確認最新 scaling 模型                                           |
+| 系統           | Isolation / Consistency 等級        | Multi-node scaling 路徑        | 為什麼撞天花板（或不撞）                                                                                                |
+| -------------- | ----------------------------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| PostgreSQL SSI | Serializable                        | single-primary + read replica  | 寫只能 single primary、跨節點交易要 2PC + coordinator、replica 寫不了；scaling 路徑停在 single-primary 容量上限         |
+| CockroachDB    | Serializable + per-key linearizable | range-based + HLC              | range coordinator 仍存在、但 range 拆細了；retry contract 接住跨 range conflict、扣 serializable restart cost           |
+| Spanner        | External consistency                | split-based + Paxos + TrueTime | coordinator 變多 leader、TrueTime 對齊 commit 順序、線性擴展是設計目標（Google 內部 Spanner 案例的 dogfood 數字呈線性） |
+| Aurora DSQL    | Strong consistency（2024 推出）     | 文件未完全公開、查最新 docs    | 時間敏感 claim、本文不擴寫；讀者實作前查官方文件確認最新 scaling 模型                                                   |
 
 每個欄位都要回到具體的 scaling 機制讀。PostgreSQL SSI 跟「single-primary」綁定 — 想 scale write 只能 sharding；CockroachDB 把 range 拆細、coordinator 分布到 range 層、但跨 range conflict 還是會 trigger retry；Spanner 用 Paxos group per split、commit timestamp 用 TrueTime 對齊、不需要全局 coordinator 來決定順序；Aurora DSQL 是新系統、機制細節隨版本演進。
 
-### 為什麼這個對照寫進 consistency 文章、不是純機制文章
+### external consistency 的代價與收益要放在一起比
 
-讀者選 consistency 等級時、實際在選「系統的 scaling 路徑」、不只是「應用層 anomaly 哪些被排除」。external consistency 的 cost 包含 commit wait latency、但 benefit 包含 line-rate scaling — 兩者要一起講、不能拆開。把對照表放這裡、讓 consistency 跟 scaling 在同一段被讀者一起判讀、避免「我們需要強一致」這種需求被翻譯成「升級到 Spanner」這種跳號決策。
+external consistency 的代價包含 commit wait latency，收益包含 line-rate scaling。只看代價，會把 Spanner 當成只是比較慢的 serializable；只看收益，「我們需要強一致」這個需求就會直接變成「升級到 Spanner」的決定，跳過 single-object 還是 multi-object、single region 還是 multi region 這些該先問的問題。
 
 ## Cross-region quorum 100-200ms 物理硬限：強一致 + 全球不是免費
 
 [Cross-Region Quorum](/backend/knowledge-cards/cross-region-quorum/) + external consistency + multi-region 不是「免費全球」、是「用 latency 換 consistency」。讀者若沒看到具體數量級、會誤把 Spanner 當作「強一致 + 全球 + 低延遲」的奇蹟、實際 cross-region write 在物理光速硬限下必須付跨洲 round-trip cost。
 
-### 9.C10 揭露的數量級
+### Google 內部 Spanner 案例揭露的跨洲延遲數量級
 
-「external consistency 必須等多區 quorum、跨洲交易延遲可達 100-200ms」 — 這是 9.C10 case 直接揭露的工程數字、不是本章 derive。**Dogfood 邊界明示**：9.C10 case 揭露的是 Google internal dogfood 觀察到的數量級、不是 SLA 承諾；實際客戶的 cross-region write latency 隨 voting region 配置、network path 變化。
+「external consistency 必須等多區 quorum、跨洲交易延遲可達 100-200ms」 — 這是 Google 內部 Spanner 案例直接揭露的工程數字、不是本篇推導的。**Dogfood 邊界**：它是 Google internal dogfood 觀察到的數量級、不是 SLA 承諾；實際客戶的 cross-region write latency 隨 voting region 配置、network path 變化。
 
 ### Latency 拆解模型（cross-region write）
 
@@ -82,11 +82,11 @@ total write latency ≈ 2ε（[Commit Wait](/backend/knowledge-cards/commit-wait
                     + Spanner internal processing
 ```
 
-跨洲 quorum 在這個模型裡是 *dominant term*、不是 [commit wait](/backend/knowledge-cards/commit-wait/) — 判讀時要明示「commit wait 跟跨 region quorum 是兩個獨立的物理 cost、不能混用一個 latency 數字解釋兩者」。讀者常見的誤解是把 100-200ms 寫成「Spanner commit wait」、實際 commit wait 只是其中 2-14ms、剩下 100ms+ 是物理光速限定的 quorum RTT。
+跨洲 quorum 在這個模型裡是 *dominant term*、不是 [commit wait](/backend/knowledge-cards/commit-wait/) — 判讀時要明示「commit wait 跟跨 region quorum 是兩個獨立的物理 cost、不能混用一個 latency 數字解釋兩者」。讀者常見的誤解是把 100-200ms 寫成「Spanner commit wait」、實際 commit wait 約 2-14ms，而且通常與 Paxos 通訊重疊進行、在跨洲配置下被 quorum RTT 蓋過，100ms+ 的主體是物理光速限定的 quorum RTT。
 
 ### Scope warning：實際 latency 依 region 配置
 
-100-200ms 是 9.C10 case 揭露的範圍、實際 latency 隨 voting region 配置變化：
+100-200ms 是 Google 內部 Spanner 案例揭露的範圍、實際 latency 隨 voting region 配置變化：
 
 | Instance config 類型          | Voting region 散布 | 典型 write p99 |
 | ----------------------------- | ------------------ | -------------- |
@@ -96,18 +96,9 @@ total write latency ≈ 2ε（[Commit Wait](/backend/knowledge-cards/commit-wait
 
 引用要附條件「跨洲多 region instance、實際數字依 region 配置」、不能寫成「Spanner cross-region write 一律 100-200ms」。讀者拿這條 latency anchor 做 capacity planning 時、必須先 audit 自家 instance 是哪種 config、不能套用 100-200ms 當基線。
 
-## SSoT 對齊：Strong + multi-region 互斥議題不在此處展開
+## Strong consistency 能不能配 multi-region write，由 consistency level 的選擇決定
 
-Strong consistency + multi-region 互斥議題（包含 Cosmos DB 5 levels 的 Strong + multi-region 限制）的 SSoT 是 [Cosmos DB multi-region-write-conflict](/backend/01-database/vendors/cosmosdb/multi-region-write-conflict/)。本篇 cross-link 不展開、避免重複展開同議題。
-
-本篇展開的子議題：
-
-- external consistency / serializability / linearizability 的精確定義差異
-- Spanner external consistency 的 TrueTime 實作機制（細節在 [truetime-api-depth](../truetime-api-depth/)）
-- cross-region quorum 的物理 cost 數量級
-- line-rate scaling 對照表（為什麼 single-primary 系統拿不到線性）
-
-兩個 SSoT 處理同一個讀者問題（強一致 vs multi-region）的不同切面 — 本篇從 *系統 scaling 路徑* 切入、Cosmos DB 文章從 *consistency level 選擇* 切入。讀者讀完本篇後若還在問「為什麼 Cosmos DB strong consistency 不能配 multi-region write」、跳 Cosmos DB SSoT。
+同一個問題「強一致與 multi-region 能不能並存」有兩個切入點。本篇從系統的 scaling 路徑切入：Spanner 讓 multi-region instance 也維持 external consistency，代價是跨洲 cross-region quorum 可達 100-200ms 的寫入延遲。另一個切入點是 consistency level 的選擇：Cosmos DB 的五個 consistency level 裡，Strong 不能與 multi-region write 同時啟用，理由與取捨在 [Cosmos DB multi-region-write-conflict](/backend/01-database/vendors/cosmosdb/multi-region-write-conflict/)。
 
 ## 操作流程：怎麼驗證 consistency 等級
 
@@ -168,21 +159,21 @@ dashboard / analytics 強寫 strong read、付不必要的 latency tax。修法�
 
 ## 容量與觀測：一致性等級的 latency 量化
 
-| 一致性等級                     | latency 影響                                | 適用場景                      |
-| ------------------------------ | ------------------------------------------- | ----------------------------- |
-| External consistency（strong） | baseline = 2ε + quorum RTT                  | critical path、金融帳本、計費 |
-| Bounded staleness（5-10s）     | 省 commit wait（10-50ms）、可讀本地 replica | dashboard、reporting          |
-| Eventual                       | 砍 quorum RTT、只讀本地 replica             | analytics、推薦               |
+| 一致性等級                     | latency 影響                                                                                                                  | 適用場景                      |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| External consistency（strong） | 寫入 baseline = quorum RTT（commit wait 約 2ε、通常與 Paxos 通訊重疊）；strong read 可能多一次向 leader 確認 timestamp 的 RPC | critical path、金融帳本、計費 |
+| Bounded staleness（5-10s）     | 不必讀到最新 commit、可讀本地 replica                                                                                         | dashboard、reporting          |
+| Eventual                       | 砍 quorum RTT、只讀本地 replica                                                                                               | analytics、推薦               |
 
-跨 region 延遲量化（finding F3.15、來源 9.C10）：external consistency + multi-region instance config、跨洲 quorum 把 write latency 推到 100-200ms 數量級；單 region instance 的 commit wait 是 baseline（≈ 2ε ≈ 2-14ms）、跨 region quorum 是額外 dominant cost。
+跨 region 延遲量化（來源：Google 內部 Spanner 案例）：external consistency + multi-region instance config、跨洲 quorum 把 write latency 推到 100-200ms 數量級；單 region instance 的 commit wait 是 baseline（≈ 2ε ≈ 2-14ms）、跨 region quorum 是額外 dominant cost。
 
-Cloud Monitoring：`spanner.googleapis.com/instance/clock_skew_ms` 觀察 ε、`api/api_request_latencies` for `Commit` 觀察 commit latency 分布；CockroachDB 觀察 `sql.txn.restart.serializable` 計數（serializable restart 率）。回到 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 把一致性等級當 release gate 的一部分。
+Cloud Monitoring：截至 2026-09 的 Spanner metric 清單沒有揭露 ε 的指標，用 `spanner.googleapis.com/api/request_latencies` 以 `method` label 篩出 `Commit` 觀察 commit latency 分布；CockroachDB 觀察 `sql.txn.restart.serializable` 計數（serializable restart 率）。回到 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 把一致性等級當 release gate 的一部分。
 
 Capacity 觀點：external consistency 的 commit wait 是「無法 scale away 的 latency 支出」、capacity planning 要先扣這部分；跨 region instance 的 quorum RTT 也是物理硬限、不能透過加 node 解。
 
 ## 邊界與整合：sibling 路由跟 anti-recommendation
 
-### Sibling deep articles
+### 相關的 Spanner 文章
 
 - [truetime-api-depth](../truetime-api-depth/)：external consistency 的硬體基礎、TrueTime ε / commit wait 數學、商業邏輯先行 frame
 - [schema-migration-interleaved-tables](../schema-migration-interleaved-tables/)：schema change 的版本一致性也用 TrueTime
@@ -194,7 +185,7 @@ Strong consistency + multi-region 互斥議題的 SSoT 在 [Cosmos DB multi-regi
 
 ### 跟 1.x 章節的互引
 
-- [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)：Spanner 是 PC 系統的代表
+- [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)：Spanner 是 PACELC 分類裡 PC/EC 系統（partition 時選 consistency、平時也選 consistency 而付出 latency）的代表
 - [transaction boundary](/backend/knowledge-cards/transaction-boundary/)：跨 transaction 順序保證
 
 ### Knowledge card 雙引用

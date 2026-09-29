@@ -1,12 +1,12 @@
 ---
-title: "PostgreSQL Full-Text Search：tsvector / tsquery / GIN index 跟 pg_trgm fuzzy 三層搜尋"
+title: "PostgreSQL Full-Text Search：tsvector / tsquery、GIN index 與 pg_trgm fuzzy match"
 date: 2026-05-19
 description: "PG 內建 full-text search 用 *tsvector / tsquery / GIN index* 三件組、適合中小規模搜尋（< 100M 文件）；pg_trgm 提供 fuzzy match。本文走 FTS 機制（tsvector 是 lexeme + position 的 vector）、3 種 query（match / ranking / weighted）、multi-language support、跟 pg_trgm fuzzy match 互補、5 production 踩雷（dictionary 選錯 / GIN 跟 GiST 取捨 / ranking 評分權重 / multi-language column 處理 / 何時不該用 PG FTS 改 Elasticsearch）"
 weight: 27
 tags: ["backend", "database", "postgresql", "full-text-search", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *full-text search* — 內建 tsvector / tsquery + pg_trgm fuzzy match。
+> 這篇涵蓋 PostgreSQL 的 full-text search：內建 tsvector / tsquery + pg_trgm fuzzy match。
 
 ---
 
@@ -61,6 +61,8 @@ WHERE to_tsvector('english', title || ' ' || body) @@ to_tsquery('english', 'pos
 ALTER TABLE articles ADD COLUMN fts tsvector
 GENERATED ALWAYS AS (to_tsvector('english', coalesce(title, '') || ' ' || coalesce(body, ''))) STORED;
 
+-- 換成對預存欄位建 index；原本對 to_tsvector(...) expression 建的 idx_articles_fts 不再需要，先刪掉以免撞名
+DROP INDEX idx_articles_fts;
 CREATE INDEX idx_articles_fts ON articles USING GIN (fts);
 
 -- Query 簡化
@@ -84,14 +86,19 @@ ORDER BY rank DESC LIMIT 10;
 加權（A > B > C > D）：
 
 ```sql
--- Title 比 body 重要
-UPDATE articles SET fts =
+-- Title 比 body 重要：fts 是 generated column，不能 UPDATE，要改掉它的定義
+-- DROP COLUMN 會連同欄位上的 idx_articles_fts 一起刪掉，所以重建 index
+ALTER TABLE articles DROP COLUMN fts;
+ALTER TABLE articles ADD COLUMN fts tsvector GENERATED ALWAYS AS (
     setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
-    setweight(to_tsvector('english', coalesce(body, '')), 'B');
+    setweight(to_tsvector('english', coalesce(body, '')), 'B')
+) STORED;
+CREATE INDEX idx_articles_fts ON articles USING GIN (fts);
 
 -- Query 用加權 ranking
+-- 標題含 postgres 的列 rank 0.378、只有內文含 postgres 的列 rank 0.196
 SELECT id, title,
-       ts_rank(fts, query, 32 /* normalize by document length */) AS rank
+       ts_rank(fts, query, 32 /* rank / (rank + 1)，把分數壓到 0 到 1 之間 */) AS rank
 FROM articles, to_tsquery('english', 'postgres') AS query
 WHERE fts @@ query
 ORDER BY rank DESC;
@@ -99,9 +106,11 @@ ORDER BY rank DESC;
 
 `ts_rank` 第三 parameter 是 normalization flag：
 
-- 0：no normalization
-- 1：divide by document length
-- 32：divide by uniqueness（避免短 doc 一律 rank 高）
+- 0（預設）：不考慮文件長度
+- 1：除以 1 + log(文件長度)
+- 2：除以文件長度（避免長文件因為出現次數多而一律 rank 高）
+- 8：除以文件中 unique word 的數量
+- 32：除以 rank + 1，把分數壓到 0 到 1 之間
 
 ## Multi-language Support
 
@@ -138,7 +147,9 @@ CREATE INDEX idx_users_name_trgm ON users USING GIN (name gin_trgm_ops);
 
 -- Fuzzy match（similarity threshold 預設 0.3）
 SELECT * FROM users WHERE name % 'jhon';
--- → 找到 'John'、'Johan'、'Johnny' 等 similar string
+-- → 找到 'Jhon'（similarity 1）、'Jhonny'（0.5）
+-- 'John'（0.11）、'Johan'（0.1）、'Johnny'（0.09）低於 0.3 門檻，找不到：
+-- 字母對調會同時改掉好幾個 trigram，'jhon' 與 'john' 只共用開頭的 '  j'
 
 -- 顯式 similarity score
 SELECT name, similarity(name, 'jhon') FROM users
@@ -156,19 +167,19 @@ ORDER BY similarity(name, 'jhon') DESC LIMIT 5;
 - FTS：full document search、tokenize / stemming / ranking
 - pg_trgm：short string similarity、typo tolerance
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Dictionary 選錯 — 中文搜不到
+### Dictionary 選錯 — 中文搜不到
 
 對中文 column 用 `to_tsvector('english', text)`、不分詞、整段當一個 token、搜不到任何結果。
 
 修法：
 
 - 中文用 `zhparser` / `pgroonga`
-- 多語言 column 拆 *per-language column* 或用 `simple` dictionary（不 stemming、字元級 match）
+- 多語言 column 拆 *per-language column*；`simple` dictionary 只轉小寫、不做 stemming，但仍用同一個 parser 以空白與標點切詞，連續的中文字串仍是一個 token，救不了中文
 - 確認 dictionary 選對：`SELECT to_tsvector('chinese', '...')` 看分詞結果
 
-### 2. GIN vs GiST 取捨選錯
+### GIN vs GiST 取捨選錯
 
 PG FTS 有兩種 index access method：
 
@@ -183,9 +194,9 @@ PG FTS 有兩種 index access method：
 - 寫吞吐 > 10K WPS 場景考慮 GiST 或 *bulk index*（先 disable index、bulk insert、重建 index）
 - GIN 有 `fastupdate` option、buffering 加速寫入（trade-off：read 慢）
 
-### 3. Ranking 評分權重不對齊 business
+### Ranking 評分權重不對齊 business
 
-`ts_rank` 預設不考慮 *field weight*、`ts_rank_cd` 考慮 cover density、兩者結果不同。Application 不知道 *自己 query 對應哪個 rank function*、結果隨機。
+`ts_rank` 依 lexeme 出現的頻率計分，`ts_rank_cd` 依 cover density（查詢詞彼此靠多近）計分，兩者都套用 A / B / C / D 權重（預設 {0.1, 0.2, 0.4, 1.0} 對應 D / C / B / A），結果不同。Application 不知道 *自己 query 對應哪個 rank function*、結果隨機。
 
 修法：
 
@@ -193,7 +204,7 @@ PG FTS 有兩種 index access method：
 - 設 *field weight*（A > B > C > D）反映 business priority（title > body > tags）
 - 對 *搜尋結果* 用 A/B test 評估 ranking 質量、不靠直覺
 
-### 4. Multi-language column 處理
+### Multi-language column 處理
 
 Application 同表存多語言 row（user-generated content、不同 language）、用單一 `to_tsvector('english', ...)` 對中文 row 搜不到、對 french row 也 stem 錯。
 
@@ -203,6 +214,10 @@ Application 同表存多語言 row（user-generated content、不同 language）
 - 用 dynamic dictionary：
 
    ```sql
+   -- 'chinese' 要先照 Multi-language Support 那一節用 zhparser 建好，否則 'chinese'::regconfig 報錯
+   ALTER TABLE articles ADD COLUMN language text;
+   -- fts 已經是 generated column，改定義要先刪掉再加回（index 要重建）
+   ALTER TABLE articles DROP COLUMN fts;
    ALTER TABLE articles ADD COLUMN fts tsvector
    GENERATED ALWAYS AS (
        to_tsvector(
@@ -216,7 +231,7 @@ Application 同表存多語言 row（user-generated content、不同 language）
 
 - Query 時用對應語言 `to_tsquery`
 
-### 5. 何時不該用 PG FTS — 應該換 Elasticsearch / OpenSearch
+### 超出 PG FTS 範圍的 workload 換 Elasticsearch / OpenSearch
 
 PG FTS 適合 *中小規模搜尋*、不適合：
 

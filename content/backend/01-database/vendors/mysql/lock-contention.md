@@ -6,7 +6,7 @@ weight: 24
 tags: ["backend", "database", "mysql", "lock", "deadlock", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *lock contention* — 5 種 lock type + isolation level 互動 + production debug。
+> 這篇涵蓋 InnoDB 的 lock contention：record / gap / next-key / insert intention / auto-inc 這幾種 lock、isolation level 對它們的影響，以及 production debug。
 
 ---
 
@@ -46,15 +46,15 @@ trx id 12346 lock_mode X waiting
 *** WE ROLL BACK TRANSACTION (1)
 ```
 
-兩個 transaction 各自拿了一邊 lock、互相等對方的、deadlock。為什麼 staging 重現過、production 6 個月才爆？因為 **lock contention 是 *可能性* 不是 *確定性*** — staging 重現等於確認「程式邏輯有 deadlock risk」、production 6 個月平安等於「concurrency 還沒撞到」。Traffic 上升把 *機率乘以 N*、原本每天 0 次變每分鐘 5 次。
+transaction (2) 持有 `orders` id=500 的 record lock、在等 `payments` 的 `idx_order_id`；transaction (1) 在等 `orders` id=500 那一列。InnoDB 判定成 deadlock，代表 (2) 在等的 `payments` lock 握在 (1) 手上——這份輸出只列出了 (2) 的 HOLDS 段。為什麼 staging 重現過、production 6 個月才爆？因為 **lock contention 是 *可能性* 不是 *確定性*** — staging 重現等於確認「程式邏輯有 deadlock risk」、production 6 個月平安等於「concurrency 還沒撞到」。Traffic 上升把 *機率乘以 N*、原本每天 0 次變每分鐘 5 次。
 
 這個 case 揭露 MySQL lock 教學的核心：理解 lock 不只是 *debug 跑 deadlock 報錯* 的能力、是 *讀 query 預測 lock pattern* 的能力。
 
-## InnoDB 5 種 Lock 類型
+## InnoDB 的 Lock 類型
 
 InnoDB 不是 *簡單 row lock*、有 5 個獨立 lock concept：
 
-### 1. Record Lock — 鎖 row
+### Record Lock — 鎖 row
 
 `SELECT ... FOR UPDATE` / UPDATE / DELETE 對 *被 match 的 row* 加 record lock。
 
@@ -67,7 +67,7 @@ SELECT * FROM orders WHERE id = 100 FOR UPDATE;
 
 Transaction 2 試 `UPDATE orders WHERE id = 100` 必須等。
 
-### 2. Gap Lock — 鎖 row 之間的「空隙」
+### Gap Lock — 鎖 row 之間的「空隙」
 
 InnoDB 在 *REPEATABLE READ* (預設) 下、`SELECT ... FOR UPDATE WHERE col > 100` 不只 lock 符合的 row、*也 lock 該 range 內的「空隙」*、防其他 transaction INSERT 進這個 range。
 
@@ -82,22 +82,22 @@ Transaction 2 試 `INSERT INTO orders (id) VALUES (150)` 必須等 — 即使 id
 
 **Gap lock 是 deadlock 最常見來源** — application logic 看 row、但 lock 卻 cover row 之外的空隙、難預測。
 
-### 3. Next-Key Lock — Record + Gap 組合
+### Next-Key Lock — Record + Gap 組合
 
-預設 lock 行為。`SELECT ... FOR UPDATE WHERE col = 100` 對 id=100 的 record lock + id=100 之前的 gap lock。
+REPEATABLE READ 下的預設 lock 行為：InnoDB 掃描 index 時，對每一筆掃到的 record 加 next-key lock，也就是那筆 record 加上它前面的 gap。唯一 index 上用等號查到一筆存在的 row 是例外，只加 record lock；開場 deadlock 輸出裡的 `locks rec but not gap` 就是這一種。
 
-Lock 的範圍實際是 *半開區間* (previous_id, current_id]：
+Next-key lock 的範圍是 *半開區間* (previous_id, current_id]。下面是 MySQL 8.4 在 `performance_schema.data_locks` 看到的結果（`LOCK_MODE` 為 `X` 是 next-key lock、`X,GAP` 是只鎖 gap、`X,REC_NOT_GAP` 是只鎖 record）：
 
 ```text
-Records: 100, 200, 300
+Records（PRIMARY KEY id）: 100, 200, 300；secondary index user_id: 10, 20, 30
 
-WHERE id = 100 FOR UPDATE → next-key lock (-inf, 100]
-WHERE id = 200 FOR UPDATE → next-key lock (100, 200]
-WHERE id = 300 FOR UPDATE → next-key lock (200, 300]
-WHERE id BETWEEN 150 AND 250 FOR UPDATE → next-key lock (100, 200] + (200, 300]
+WHERE id = 200 FOR UPDATE                → X,REC_NOT_GAP 200：只鎖 id=200 這一列，不鎖 gap
+WHERE id > 100 AND id < 300 FOR UPDATE   → X 200 + X,GAP 300：next-key (100, 200] + gap (200, 300)
+WHERE id BETWEEN 150 AND 250 FOR UPDATE  → X 200 + X,GAP 300：next-key (100, 200] + gap (200, 300)，id=300 這一列本身沒被鎖
+WHERE user_id = 15 FOR UPDATE（查無資料）  → X,GAP 在 user_id index 的 (20, 200)：gap (10, 20)
 ```
 
-### 4. Insert Intention Lock — INSERT 之前的 gap lock
+### Insert Intention Lock — INSERT 之前的 gap lock
 
 `INSERT` 不直接 lock 整個 gap、而是 *insert intention lock* — 比 gap lock 弱、允許多個 INSERT 同 gap 並行（不同 id）。
 
@@ -111,7 +111,7 @@ INSERT INTO orders (id) VALUES (175);
 
 但如果 Transaction 1 已 hold gap lock（through SELECT FOR UPDATE）、Transaction 2 INSERT 必須等。
 
-### 5. Auto-Inc Lock — Auto-Increment column 專用
+### Auto-Inc Lock — Auto-Increment column 專用
 
 `INSERT INTO orders (id) VALUES (DEFAULT)` 取得 auto-increment value 時 lock。Mode：
 
@@ -142,7 +142,7 @@ InnoDB 4 個 isolation level、lock 行為完全不同：
 
 - 優點：無 gap lock、deadlock 大降、寫吞吐上升
 - 缺點：transaction 內讀同 query 結果可能不同（non-repeatable read）
-- 重要：*binlog format 必須 ROW*（STATEMENT 在 READ COMMITTED 下 replication 行為不一致）
+- 重要：*binlog format 必須 ROW*（`binlog_format=STATEMENT` 時，InnoDB 在 READ COMMITTED 下直接拒絕寫入，回 ERROR 1665）
 - 多數 MySQL production 用 READ COMMITTED 跑 OLTP、REPEATABLE READ 留給特殊 case
 
 **對比 PostgreSQL**：
@@ -181,9 +181,9 @@ trx id 12345 lock_mode X locks gap before rec  -- gap lock
 
 `SELECT * FROM information_schema.INNODB_TRX` / `INNODB_LOCKS` (5.7) / `performance_schema.data_locks` (8.0) 給 *structured* lock 視圖。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Gap lock 阻塞 INSERT — 「Lock 不存在的 row」
+### Gap lock 阻塞 INSERT — 「Lock 不存在的 row」
 
 ```sql
 -- Transaction 1
@@ -204,7 +204,7 @@ INSERT INTO orders (user_id, amount) VALUES (100, 50);
 - 或不用 `SELECT ... FOR UPDATE` on empty result、改 *application 層 check + INSERT* pattern
 - 用 `INSERT ... ON DUPLICATE KEY UPDATE` 或 `INSERT IGNORE` 避免 SELECT FOR UPDATE
 
-### 2. Auto-Inc Lock Contention — 大量並行 INSERT
+### Auto-Inc Lock Contention — 大量並行 INSERT
 
 `innodb_autoinc_lock_mode=0` 或 `=1` 模式下、大量並行 INSERT 撞 auto-inc lock、寫吞吐 cap。
 
@@ -214,7 +214,7 @@ INSERT INTO orders (user_id, amount) VALUES (100, 50);
 - 確認 `binlog_format=ROW`（mode=2 必須）
 - 接受 auto-inc value 不連續（id 可能跳號）
 
-### 3. FK Lock Cascading — 父子 transaction 互鎖
+### FK Lock Cascading — 父子 transaction 互鎖
 
 ```sql
 -- orders 表有 customer_id FK → customers.id
@@ -226,7 +226,7 @@ INSERT INTO orders (customer_id, amount) VALUES (100, 50);
 -- FK check 需要 lock customers row id=100、等 Transaction 1
 ```
 
-FK 強制 *每個 INSERT child 都要 shared lock parent*、parent 的任何 UPDATE 都會 lock 所有 child INSERT。
+FK 檢查讓每個 child INSERT 對它參照的那一列 parent 加 shared record lock（`S,REC_NOT_GAP`）。parent 那一列正被 UPDATE 持有 X lock 時，參照同一列的 child INSERT 要等；參照其他 parent 列的 INSERT 不受影響。
 
 修法：
 
@@ -234,7 +234,7 @@ FK 強制 *每個 INSERT child 都要 shared lock parent*、parent 的任何 UPD
 - 短 transaction 縮短 lock 時間
 - FK 設計時讓 *parent UPDATE 少* / *child INSERT 多*（parent 是穩定資料）
 
-### 4. Large Transaction Lock Holding — 1 個 transaction 拖全 cluster
+### Large Transaction Lock Holding — 1 個 transaction 拖全 cluster
 
 ```sql
 BEGIN;
@@ -252,25 +252,34 @@ COMMIT;
 - 把 batch operation *拆 chunk*（每 chunk 1000 row、commit、繼續）：
 
     ```sql
-    DO {
-      START TRANSACTION;
-      UPDATE orders SET status = 'archived'
-      WHERE created_at < '2024-01-01' AND status != 'archived'
-      LIMIT 1000;
-      COMMIT;
-    } WHILE rows_affected > 0;
+    DELIMITER //
+    CREATE PROCEDURE archive_old_orders()
+    BEGIN
+      DECLARE n INT DEFAULT 1;
+      WHILE n > 0 DO
+        START TRANSACTION;
+        UPDATE orders SET status = 'archived'
+        WHERE created_at < '2024-01-01' AND status != 'archived'
+        LIMIT 1000;           -- 每個 transaction 最多改 1000 列，持鎖時間跟著縮短
+        SET n = ROW_COUNT();  -- 這一輪實際改到的列數；0 代表已經沒有要改的列
+        COMMIT;               -- 每一輪 commit，釋放這一批 row lock
+      END WHILE;
+    END //
+    DELIMITER ;
+
+    CALL archive_old_orders();
     ```
 
 - 用 *pt-archiver* tool（Percona）對 batch UPDATE / DELETE 自動 chunked
 - 監控 `information_schema.innodb_trx` 找出 long-running transaction
 
-### 5. READ COMMITTED + Binlog ROW Interaction
+### READ COMMITTED + Binlog ROW Interaction
 
 READ COMMITTED isolation 改善 deadlock、但對 *binlog format* 有要求：
 
-- `binlog_format=STATEMENT`：READ COMMITTED 下 transaction 看到不同 snapshot、replicate 後 replica 結果可能 *不同於 primary*（broken replication semantically）
+- `binlog_format=STATEMENT`：InnoDB 在 READ COMMITTED 下只能寫 row-based binlog，寫入語句在 primary 上就被拒絕（ERROR 1665）、不會進 binlog
 - `binlog_format=ROW`：每個 row event 都 explicit、READ COMMITTED 跟 ROW 兼容、replica 結果一致
-- `binlog_format=MIXED`：部分 case 仍可能 fall back STATEMENT、不推薦
+- `binlog_format=MIXED`：InnoDB 在 READ COMMITTED 下會把寫入記成 row event，InnoDB 表的效果與 ROW 相同；要讓全 cluster 的設定一致，仍以明確設成 ROW 最清楚
 
 修法：
 
@@ -298,7 +307,7 @@ Slow query 持 lock 久、放大 contention。`EXPLAIN ANALYZE` 看實際執行�
 
 ### 跟 InnoDB Tuning
 
-`innodb_lock_wait_timeout=50`（預設 50 秒）— lock wait 超時 transaction 自動 rollback、避免無限等。production 建議調短（10-20 秒）、快 fail 給 application retry。詳見 [InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)。
+`innodb_lock_wait_timeout=50`（預設 50 秒）— lock wait 超時時 InnoDB 回 ERROR 1205，只 rollback 等待中的那一個 statement；transaction 仍然開著、前面已執行的語句還在，要由 application 決定 rollback 或重試（`innodb_rollback_on_timeout=ON` 才會 rollback 整個 transaction）。production 建議調短（10-20 秒）、快 fail 給 application retry。詳見 [InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)。
 
 ## 跟 PostgreSQL Lock model 對比
 
@@ -318,7 +327,7 @@ PG 用 MVCC 跑大部分並行 control、少數 case 才用 explicit lock、整�
 Production 持續 monitor：
 
 - `Innodb_row_lock_waits` / `_time` → lock wait 累計
-- `Innodb_deadlocks` → deadlock 次數（5.7+ 有、之前要 parse SHOW ENGINE）
+- `information_schema.innodb_metrics` 的 `lock_deadlocks` → deadlock 累計次數（`SHOW GLOBAL STATUS` 裡沒有 `Innodb_deadlocks`）
 - `performance_schema.data_lock_waits` → 即時 lock wait 視圖（8.0+）
 - `information_schema.innodb_trx` → long-running transaction
 - `slow_query_log` → 看 query 是否花太多 time 在 lock wait

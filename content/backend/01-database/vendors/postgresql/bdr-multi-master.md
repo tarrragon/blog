@@ -1,12 +1,12 @@
 ---
-title: "PostgreSQL BDR / Multi-Master：active-active 寫入的 3 種路徑跟 conflict 治理"
+title: "PostgreSQL BDR / Multi-Master：用 BDR、pgEdge、Bucardo 做 active-active 寫入跟 conflict 治理"
 date: 2026-05-19
 description: "PG 預設是 single-primary、active-active 多寫入入口需要 *BDR (EDB)* / *pgEdge* / *Bucardo* 等 extension。本文走 3 種 multi-master 方案對比、conflict detection + resolution model、async vs sync 取捨、配置 step-by-step（pgEdge 為主）、5 production 踩雷（last-write-wins data loss / sequence collision / DDL replication / conflict log 治理 / failover 後 timeline 分歧）、跟 MySQL Group Replication sibling 對比"
 weight: 20
 tags: ["backend", "database", "postgresql", "multi-master", "bdr", "active-active", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *multi-master / active-active replication* — 不是 PG 預設、需要 extension。
+> 這篇涵蓋 PostgreSQL 靠 extension 做到的 multi-master / active-active replication：BDR、pgEdge、Bucardo 的對比、conflict model、配置與 production 踩雷。
 
 ---
 
@@ -30,9 +30,9 @@ PG core 是 *single-primary streaming replication*：
 
 跟 [MySQL Group Replication](/backend/01-database/vendors/mysql/group-replication/) 對比：MySQL GR 是 *官方內建*（5.7+）、PG 沒對應內建選項。MySQL 用戶 GR / InnoDB Cluster 直接套、PG 用戶要選 extension + license trade-off。
 
-## Multi-master 三方案對比
+## BDR、pgEdge、Bucardo 對比
 
-### 方案 1：BDR (EDB Postgres Distributed)
+### BDR (EDB Postgres Distributed)
 
 EDB 商業 distributed 方案、跑在 EDB Postgres Advanced Server 或 PG community 上。
 
@@ -49,7 +49,7 @@ EDB 商業 distributed 方案、跑在 EDB Postgres Advanced Server 或 PG commu
 - 對 cross-region multi-master 成熟（北美 enterprise 廣用）
 - 對 *新 PG version* 通常滯後幾個月
 
-### 方案 2：pgEdge（基於 Spock extension）
+### pgEdge（基於 Spock extension）
 
 pgEdge 開源 multi-master、基於 *Spock* extension（從 BDR 衍生）：
 
@@ -66,7 +66,7 @@ pgEdge 開源 multi-master、基於 *Spock* extension（從 BDR 衍生）：
 - Conflict resolution policy 比 BDR 簡單
 - 部分 EDB 商業 feature 沒對應
 
-### 方案 3：Bucardo
+### Bucardo
 
 PG community async multi-master、Perl 寫、trigger-based：
 
@@ -98,7 +98,7 @@ WHERE id=100                  WHERE id=100
    合併？哪個贏？
 ```
 
-跨 region 兩地各自 commit、replication lag 期間發現 conflict、必須 *自動 resolve*（不能丟給 application）。
+兩個 region 各自 commit 之後，extension 在套用對方送來的變更時才發現同一 row 已被本地改過；這時由 extension 照事先設定的 resolution 策略處理，下面四種策略裡 LWW、column-level 與 user-defined trigger 由 extension 自動處理，manual reconciliation 則把 conflict 寫進 log table 交給人處理。
 
 ### Conflict Resolution Strategies
 
@@ -137,7 +137,7 @@ WHERE id=100                  WHERE id=100
 
 pgEdge 開源、最常見的 self-hosted 選擇。
 
-### Step 1：在每個 region node 裝 pgEdge
+### 在每個 region node 裝 pgEdge
 
 ```bash
 # Install pgEdge CLI
@@ -148,7 +148,7 @@ curl -fsSL https://pgedge-upstream.s3.amazonaws.com/REPO/install.py | python3
 ./pgedge install spock
 ```
 
-### Step 2：配置每個 node
+### 在每個 node 建立 Spock node
 
 ```sql
 -- 在 node1（us-east） 跑
@@ -158,11 +158,11 @@ SELECT spock.node_create(node_name := 'node1', dsn := 'host=node1.example.com po
 SELECT spock.node_create(node_name := 'node2', dsn := 'host=node2.example.com port=5432 dbname=production');
 ```
 
-### Step 3：建 replication set + subscribe
+### 建 replication set 並互相 subscribe
 
 ```sql
 -- 在 node1 建 default replication set + 加 tables
-SELECT spock.repset_add_all_tables('default');
+SELECT spock.repset_add_all_tables('default', ARRAY['public']);
 
 -- 在 node1 subscribe node2
 SELECT spock.sub_create(
@@ -177,17 +177,15 @@ SELECT spock.sub_create(
 );
 ```
 
-### Step 4：設 conflict resolution
+### 設 conflict resolution
 
 ```sql
--- 設 LWW（預設）
-SELECT spock.conflict_resolution_setting_set(
-    conflict_type := 'update_origin_change',
-    resolution_setting := 'apply_remote'
-);
+-- 設 LWW（預設；截至 2026-09 的 Spock 文件，last_update_wins 是唯一支援的值，需要 track_commit_timestamp = on）
+ALTER SYSTEM SET spock.conflict_resolution = 'last_update_wins';
+SELECT pg_reload_conf();
 ```
 
-### Step 5：驗證
+### 驗證 subscription 狀態與 replication lag
 
 ```sql
 -- 看 subscription 狀態
@@ -197,9 +195,9 @@ SELECT * FROM spock.subscription;
 SELECT * FROM pg_stat_replication;
 ```
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. LWW data loss — Application 沒設計 commutative
+### LWW data loss — Application 沒設計 commutative
 
 LWW 預設、兩 region 同時 UPDATE 同 row → 晚的 commit 贏、早的丟失。Application 看不到「我寫的不見了」、debug 困難。
 
@@ -210,17 +208,34 @@ LWW 預設、兩 region 同時 UPDATE 同 row → 晚的 commit 贏、早的丟�
 - 重要寫入加 *audit log* — conflict 仍寫到 audit、application 看 audit 知道發生過
 - 真的需要 strict consistency 別用 multi-master、用 single-primary + reader 或 distributed SQL
 
-### 2. Sequence collision — Two region 各自 next 同號
+### Sequence collision — 兩個 region 各自 nextval 拿到同號
 
 `SERIAL` / `IDENTITY` 用 sequence、兩 region 各自 nextval 可能拿到同 number、INSERT 衝突（PK duplicate）。
 
 修法：
 
-- 用 *staggered sequence range*：node1 用 1-1M、node2 用 1M+1 到 2M（用 `setval`）
-- 或用 *UUID*（v4 / v7）作 PK、跨 node 無 collision
-- 或 *sequence per-node namespace*：`CREATE SEQUENCE orders_id_node1 START 1 INCREMENT 2`（odd vs even）
+- 用 *staggered sequence range*：每個 node 的 sequence 設上下限，node1 發 1 到 1,000,000、node2 發 1,000,001 到 2,000,000。只用 `setval` 設起點不會擋住 node1 發到 1,000,001，上限要用 `MAXVALUE` 設：
 
-### 3. DDL replication 不自動
+  ```sql
+  -- node1：orders.id 只發 1 到 1,000,000
+  ALTER SEQUENCE orders_id_seq MAXVALUE 1000000;
+  -- node2：orders.id 只發 1,000,001 到 2,000,000
+  ALTER SEQUENCE orders_id_seq MINVALUE 1000001 MAXVALUE 2000000 START 1000001 RESTART;
+  -- 範圍用完時 INSERT 失敗：
+  -- ERROR:  nextval: reached maximum value of sequence "orders_id_seq" (1000000)
+  ```
+
+- 或用 *UUID*（v4 / v7）作 PK、跨 node 無 collision
+- 或 *sequence per-node namespace*：起點錯開、步長等於 node 數，兩個 node 分別發奇數與偶數：
+
+  ```sql
+  -- node1：1, 3, 5, ...
+  CREATE SEQUENCE orders_id_node1 START 1 INCREMENT 2;
+  -- node2：2, 4, 6, ...
+  CREATE SEQUENCE orders_id_node2 START 2 INCREMENT 2;
+  ```
+
+### Logical replication 不自動 replicate DDL
 
 PG logical replication（pgEdge / BDR 基礎）*不自動 replicate DDL*。每 node `CREATE TABLE` / `ALTER TABLE` 必須 *分別跑*。
 
@@ -231,9 +246,9 @@ PG logical replication（pgEdge / BDR 基礎）*不自動 replicate DDL*。每 n
 - BDR Enterprise 有 *DDL replication*（商業 feature）
 - DDL 變更前確認 *所有 node 都健康*、減少 partial state
 
-### 4. Conflict log 治理 — Log table 爆滿
+### Conflict log table 沒有 retention 而撐爆 disk
 
-每個 conflict 寫進 `spock.conflict_log` / `bdr.conflict_history` 等 table、log 累積 disk 爆。
+開啟 `spock.save_resolutions` 之後，每個 conflict 寫進 `spock.resolutions`（BDR / PGD 是 `bdr.conflict_history`）等 table、log 累積 disk 爆。
 
 修法：
 
@@ -241,9 +256,9 @@ PG logical replication（pgEdge / BDR 基礎）*不自動 replicate DDL*。每 n
 - 監控 conflict rate — 高 conflict rate 是 application 設計問題（不是 ops 問題）
 - 對 *strict business* conflict 寫進 application-level audit table、不只 system log
 
-### 5. Failover 後 timeline 分歧
+### Failover 後 timeline 分歧
 
-Multi-master 設計上 *每 region 是 primary*、Region A 掛了 Region B 接管 — 但 Region A 復活後 *仍認為自己是 primary*。如果 Region A 復活前已有寫入沒 replicate 出去、resolution 跟 LWW 衝突。
+Multi-master 設計上 *每 region 是 primary*、Region A 掛了 Region B 接管 — 但 Region A 復活後 *仍認為自己是 primary*。Region A 掛掉前已 commit、還沒 replicate 出去的寫入，要等 A 復活才送到 Region B，而 B 在接管期間可能已經改過同一批 row；這時兩邊的版本交給 LWW 比 commit timestamp，A 掛掉前那批較早的寫入被 B 接管期間的寫入覆蓋，沒有人收到通知。
 
 修法：
 

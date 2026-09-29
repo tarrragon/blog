@@ -5,11 +5,9 @@ description: "SQLite 作為 test fixture、repository contract test、production
 tags: ["backend", "database", "sqlite", "testing", "fixture", "deep-article"]
 ---
 
-> 本文是 [SQLite](/backend/01-database/vendors/sqlite/) overview 的 implementation-layer deep article。Overview 已說明 SQLite 適合作為 test fixture；本文聚焦 *如何用 SQLite 加速測試，同時保留 production database 的語意邊界*。
-
 SQLite test fixture 的核心責任是讓 repository / adapter 測試快速、可重複、可攜帶。SQLite 的單檔特性讓 CI 可以快速建立 DB、載入 seed、跑 contract test；但它的 type affinity、SQL dialect、locking 與 constraint behavior 和 PostgreSQL / MySQL 不完全相同，因此 fixture 要被定位為一層測試工具，而非 production equivalence。
 
-本文的判讀錨點是：SQLite fixture 適合驗證 application contract，不適合取代 production database compatibility test。若測試目標是 repository error mapping、domain invariant、migration fixture 或 deterministic seed，SQLite 很划算；若測試目標是 PostgreSQL extension、MySQL lock、query planner 或 SQL dialect，應使用 production-like container。
+本文的範圍是 SQLite fixture 在測試分層裡該承擔的那一層、fixture 的建立與版本管理、它和 production database 的 dialect gap，以及 contract test 與 CI evidence 的設計。判斷一個測試放不放在 SQLite 上，看測試目標：repository error mapping、domain invariant、migration fixture 或 deterministic seed 用 SQLite；PostgreSQL extension、MySQL lock、query planner 或 SQL dialect 用 production-like container。
 
 ## Test fixture 的位置
 
@@ -23,11 +21,11 @@ SQLite fixture 的服務責任是提供快、穩定、可重建的本地資料�
 | Production compatibility | 低            | 用 PostgreSQL / MySQL container 或 staging DB       |
 | Migration smoke          | 中            | 適合 fixture migration，不代表 production DDL       |
 
-這張表的重點是把測試目的說清楚。SQLite fixture 讓語言教材與 backend 教材接起來；語言端測 interface / adapter，backend 端保留 production database 的深度文章與 migration playbook。
+這張表的重點是把測試目的說清楚：SQLite fixture 承擔 repository adapter 的 interface 與 contract 測試，production database 的行為留給 production-like container 或 staging DB 驗證。
 
 ## Fixture lifecycle
 
-Fixture lifecycle 的核心責任是讓每次測試拿到已知資料狀態。常見策略有三種：每 test 建新 in-memory DB、每 suite 複製 template file、每 CI job 產生 versioned fixture。
+Fixture lifecycle 的核心責任是讓每次測試拿到已知資料狀態。常見策略按 fixture 的建立方式分：每 test 建新 in-memory DB、每 suite 複製 template file、每 CI job 產生 versioned fixture，以及查詢與 report 測試共用的 read-only fixture。
 
 | 策略                | 適合情境                           | 優點                      | 邊界                         |
 | ------------------- | ---------------------------------- | ------------------------- | ---------------------------- |
@@ -85,19 +83,19 @@ CI 產物不一定要很複雜，但要能被下一個維護者重建。SQLite f
 
 ## Production 踩雷
 
-### Case 1：共用同一個 `.db` 檔跑平行測試
+### 平行測試共用同一個 `.db` 檔，test runner 製造出 production 沒有的 writer collision
 
 平行測試共用檔案的核心風險是 test runner 製造和 production 不同的 writer collision。測試偶發 `SQLITE_BUSY`，團隊可能以為 application 有 race；實際上是測試隔離不足。
 
 修正方向是 per-test temp DB 或 read-only template copy。需要測 WAL / busy 行為時，用專門 hands-on lab，讓一般 contract test 專注在 repository contract。
 
-### Case 2：忘記開 foreign keys
+### Fixture 忘記開 foreign keys，constraint bug 被隱藏
 
 Foreign key pragma 漏開的核心風險是 constraint bug 被 fixture 隱藏。SQLite foreign key enforcement 需要明確啟用；若 production DB 一定 enforce FK，fixture 也要在 connection initialization 中開啟。
 
 修正方向是 baseline PRAGMA 和 startup assertion。每個 test DB open 後都跑 `PRAGMA foreign_keys` 並驗證結果。
 
-### Case 3：SQLite fixture 掩蓋 vendor-specific SQL
+### SQLite fixture 掩蓋 vendor-specific SQL，query 到 production 才失敗
 
 Vendor-specific SQL 被 SQLite 掩蓋的核心風險是 query 到 production 才失敗。例如 PostgreSQL JSONB、partial index、full-text search 或 MySQL generated column、optimizer hint 都應在 vendor DB 測。
 

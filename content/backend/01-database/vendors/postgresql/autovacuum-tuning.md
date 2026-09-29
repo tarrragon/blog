@@ -1,14 +1,14 @@
 ---
-title: "PostgreSQL autovacuum tuning：為什麼你的 autovacuum 永遠追不上 bloat"
+title: "PostgreSQL autovacuum tuning：預設 cost-based throttle 在 write-heavy 表上追不上 bloat"
 date: 2026-05-18
 description: "MVCC 怎麼產生 dead tuple、autovacuum cost-based throttle 為什麼預設保守、per-table tuning 怎麼設、5 個 production 踩雷（cost_limit 太低 / 長 transaction blocks vacuum / anti-wraparound 在 peak / partition vacuum 滿 worker / index bloat 沒處理）、跟 partitioning + monitoring 整合"
 weight: 32
 tags: ["backend", "database", "postgresql", "autovacuum", "vacuum", "performance", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PostgreSQL MVCC 的 vacuum 必要性、本文聚焦 *autovacuum 在 production write-heavy workload 為什麼追不上* 的根因 + 各維度 tuning。
+> 這篇涵蓋 autovacuum 在 production write-heavy workload 為什麼追不上的根因，以及 cost-based throttle 與 trigger threshold 的 tuning。
 
-## 你的 autovacuum 永遠追不上 bloat — 為什麼
+## 預設 cost-based throttle 下，autovacuum 的清理速度慢於 write-heavy 表的 dead tuple 產生速度
 
 write-heavy table 的常見故事：上線時表 10GB、3 個月後 30GB、6 個月 80GB；DBA 看 `pg_stat_user_tables` 發現 `n_dead_tup` 比 `n_live_tup` 還多、`pg_stat_progress_vacuum` 顯示 autovacuum 一直在跑、但 dead tuple 從沒清乾淨。表本身才 5M row、實際磁碟卻佔 80GB。
 
@@ -21,7 +21,7 @@ PostgreSQL MVCC：每次 UPDATE 都是 *insert new row + mark old row as deleted
 1. **回收 dead tuple 空間** 供新 row reuse（不縮 table 大小、是 free space map）
 2. **更新 visibility map** 讓 index-only scan 跳過 heap fetch
 3. **凍結老 row 的 xid**（freeze）避免 xid wraparound 災難
-4. **重整 index B-tree** 標記 dead pointer（不刪 index page）
+4. **清掉 index 裡指向 dead tuple 的 entry**：整頁清空的 B-tree page 會被回收，只清掉部分 entry 的 page 留在原位、不跟相鄰 page 合併
 
 Vacuum 不縮表 — 真要縮要跑 `VACUUM FULL`（全表 exclusive lock、production 不能跑）或 `pg_repack`（online repack tool）。預期 vacuum 只能 *讓表停止長大*、不能 *讓表變小*。
 
@@ -59,7 +59,7 @@ ALTER TABLE events SET (
 -- 對 append-only 表（log table）降頻
 ALTER TABLE audit_log SET (
   autovacuum_vacuum_scale_factor = 0.5,        -- 50% dead 才觸發（極少 UPDATE / DELETE）
-  autovacuum_freeze_max_age = 1000000000       -- freeze 延後
+  autovacuum_freeze_max_age = 1000000000       -- freeze 延後；instance 層的 autovacuum_freeze_max_age 也要 >= 1B 才生效
 );
 ```
 
@@ -67,7 +67,7 @@ ALTER TABLE audit_log SET (
 
 ## Production 故障演練
 
-### Case 1：write-heavy hot table，autovacuum 永遠跑不完
+### write-heavy hot table，autovacuum 永遠跑不完
 
 **徵兆**：`pg_stat_user_tables.n_dead_tup` 持續高於 `n_live_tup`、`pg_stat_progress_vacuum` 顯示某表 vacuum 跑了 6+ 小時還在 `scanning heap`、表 size 持續長大。
 
@@ -80,7 +80,7 @@ ALTER TABLE audit_log SET (
 3. 短期：手動 `VACUUM (VERBOSE, ANALYZE) events;` 在 maintenance window 跑、catch up
 4. 長期：考慮 partitioning — partition 後 vacuum 只動最近 partition、不掃整表
 
-### Case 2：長 transaction 卡住 vacuum 的 xmin horizon
+### 長 transaction 卡住 vacuum 的 xmin horizon
 
 **徵兆**：autovacuum 看似有跑、但 `n_dead_tup` 不降；`pg_stat_activity` 看到一個跑了 8 小時的 SELECT（report query 或 idle in transaction）。
 
@@ -90,14 +90,14 @@ ALTER TABLE audit_log SET (
 
 1. **預防**：application 端用 `statement_timeout` + `idle_in_transaction_session_timeout`（30 分鐘）強制終止 long transaction
 2. **偵測**：`SELECT pid, now() - xact_start FROM pg_stat_activity WHERE state = 'idle in transaction'` 定期掃
-3. **臨時**：kill 長 transaction（`pg_cancel_backend(pid)` / `pg_terminate_backend(pid)`）、autovacuum 下次跑就能回收
+3. **臨時**：用 `pg_terminate_backend(pid)` 結束持有長 transaction 的連線、autovacuum 下次跑就能回收；`pg_cancel_backend(pid)` 只取消正在執行的 query，對 idle in transaction 的連線沒有作用，transaction 仍然開著
 4. **架構**：報表 query 跑在 standby、不要在 primary 開 long transaction
 
-### Case 3：Anti-wraparound vacuum 在 peak 觸發
+### Anti-wraparound vacuum 在 peak 觸發
 
 **徵兆**：production 流量高峰時 PostgreSQL CPU 100%、`pg_stat_progress_vacuum` 顯示 anti-wraparound vacuum 正在跑、application latency 暴漲；log 出現 `database "myapp" must be vacuumed within X transactions`。
 
-**根因**：autovacuum_freeze_max_age（預設 200M）到了、PostgreSQL *強制* 跑 anti-wraparound vacuum（即使在 peak）；這個 vacuum *不受 cost_limit 限制*、跑到完才停、表大時要幾小時、跟 OLTP query 搶 IO。
+**根因**：autovacuum_freeze_max_age（預設 200M）到了、PostgreSQL *強制* 跑 anti-wraparound vacuum（即使在 peak）；其他 session 要拿衝突的 lock 時，一般的 autovacuum 會被中斷讓路，這個 vacuum 不會、跑到完才停，表大時要幾小時、跟 OLTP query 搶 IO。它仍受 cost-based throttle 限速；表的 `relfrozenxid` age 超過 `vacuum_failsafe_age`（預設 16 億）觸發 failsafe 之後，cost-based delay 才停用。
 
 **修法**：
 
@@ -106,11 +106,11 @@ ALTER TABLE audit_log SET (
 3. **緊急**：手動跑 `VACUUM (FREEZE, VERBOSE) table_name;` 在 maintenance window 預先 freeze
 4. **監測**：`SELECT relname, age(relfrozenxid) FROM pg_class WHERE relkind = 'r' ORDER BY age(relfrozenxid) DESC LIMIT 20;` 看哪些表逼近 wraparound
 
-### Case 4：Partition table 把 autovacuum_max_workers 跑滿
+### Partition table 把 autovacuum_max_workers 跑滿
 
 **徵兆**：partition 後（時間 partition、12 個月分區）、autovacuum 跑很慢、`pg_stat_activity` 看到 3 個 autovacuum worker 都在跑 partition 表、其他 hot table queue 等很久。
 
-**根因**：`autovacuum_max_workers=3` 預設、每個 partition 算獨立 table；100 個 partition 中 50 個都需要 vacuum、worker 滿、其他 table 排隊。
+**根因**：`autovacuum_max_workers=3` 預設、每個 partition 算獨立 table；多個 partition 同時達到觸發門檻時，3 個 worker 全被 partition 佔住、其他 table 排隊。
 
 **修法**：
 
@@ -118,18 +118,18 @@ ALTER TABLE audit_log SET (
 2. cold partition 設 `autovacuum_enabled = false`（已不寫的舊 partition）、減少 worker 競爭
 3. partition 數量本身要克制 — 100+ partition 是訊號該重新評估 partition strategy
 
-### Case 5：Index bloat 沒被 vacuum 處理
+### Vacuum 清掉 index entry 之後 index 仍然不縮
 
 **徵兆**：表 vacuum 跑完了、`n_dead_tup` 為 0、但 index size 持續長大；query 用該 index 越來越慢、跟 sequential scan 差不多。
 
-**根因**：autovacuum 只處理 *heap*（table data）跟 *index leaf pages*；index B-tree 內部結構 fragmentation 不被 vacuum 處理。dead pointer 留在 index leaf page、查詢仍 traverse 過、IO 多。
+**根因**：vacuum 會刪掉 index 裡指向 dead tuple 的 entry，但只回收整頁清空的 leaf page；只刪掉部分 entry 的 leaf page 留在原位、不跟相鄰 page 合併。大量 UPDATE / DELETE 分散在整個 key 範圍時，每一頁只剩少數有效 entry，index 的頁數與檔案大小都不降，查詢走這個 index 要讀的 page 數跟著變多。
 
 **修法**：
 
 1. `REINDEX CONCURRENTLY` 線上重建 index（PG 12+）、不鎖表
-2. 監測 index bloat：`pgstattuple_approx` extension 或 `pg_repack`
+2. 監測 index bloat：`pgstattuple` extension 的 `pgstatindex('index_name')`，`avg_leaf_density` 遠低於建 index 時的值（B-tree 預設約 90）代表 leaf page 大半是空的
 3. 預防：B-tree index 設計避免 high cardinality + 大量 UPDATE 同欄位（typical 場景：status column update）；考慮 *partial index* 或 *hash index*（PG 10+ logged）
-4. 大量 bloat index 用 `pg_repack` 重建（不需要 superuser、不鎖表）
+4. 大量 bloat index 用 `pg_repack` 重建（superuser 或 table 與 index 的 owner 才能執行，owner 執行要加 `--no-superuser-check`；開頭與結尾各要短暫取得一次 exclusive lock）
 
 ## 容量規劃
 
@@ -148,7 +148,7 @@ vacuum capacity 用 *跟得上 dead tuple 產生速度* 衡量：
 
 - OLTP write-heavy（事件 / 訂單）：cost_limit 2000-5000、scale_factor 0.05、freeze_max_age 100M
 - OLTP read-heavy（user / config）：default 即可
-- Append-only log：scale_factor 0.5、freeze_max_age 800M、`autovacuum_enabled = false` for cold partition
+- Append-only log：scale_factor 0.5、freeze_max_age 800M（instance 層的 autovacuum_freeze_max_age 要先拉到 800M 以上才生效）、`autovacuum_enabled = false` for cold partition
 
 ## 整合 / 下一步
 
@@ -198,5 +198,5 @@ VACUUM FREEZE 在 backup 前跑能減少 backup size（freeze tuple 不需要 sp
 
 - 上游 vendor 頁：[PostgreSQL](/backend/01-database/vendors/postgresql/)
 - 上游 chapter：[High Concurrency Access](/backend/01-database/high-concurrency-access/) — vacuum 是 concurrency 治理一環
-- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [Declarative Partitioning](/backend/01-database/vendors/postgresql/declarative-partitioning/) / [MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)（為什麼會有 dead tuple、跟 lock 互動）
+- PostgreSQL 的其他主題：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [Declarative Partitioning](/backend/01-database/vendors/postgresql/declarative-partitioning/) / [MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)（為什麼會有 dead tuple、跟 lock 互動）
 - Methodology：[Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/)

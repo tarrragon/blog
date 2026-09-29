@@ -6,7 +6,7 @@ weight: 18
 tags: ["backend", "database", "postgresql", "citus", "sharding", "distributed", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *Citus distributed extension* — 把 PG 變成 sharded cluster 的方式。
+> 這篇涵蓋 Citus distributed extension 把 PG 變成 sharded cluster 的方式。
 
 ---
 
@@ -58,7 +58,7 @@ tags: ["backend", "database", "postgresql", "citus", "sharding", "distributed", 
 - 每 shard 是 worker 上的 *physical PG table*（含 `_<shardid>` 後綴）
 - 行為跟一般 PG table 一樣、可以直接連 worker 用 PG 工具 access
 
-## 3 種 Table Type
+## Table Type：distributed、reference、local
 
 ### Distributed table — 跨 shard 切分
 
@@ -136,7 +136,7 @@ Colocate 是 Citus 設計的核心 *跨 table 一致性* 機制。沒 colocate �
 
 Production 用 Citus Cloud（Microsoft 託管）或 Azure Cosmos DB for PostgreSQL（同 engine）。Self-hosted：
 
-### Step 1：Coordinator + worker 都裝 PG + Citus
+### Coordinator 與 worker 都裝 PG 與 Citus
 
 ```bash
 # 在每個 node（coordinator + 2 worker）
@@ -154,7 +154,7 @@ systemctl restart postgresql
 CREATE EXTENSION citus;
 ```
 
-### Step 2：Coordinator 註冊 worker
+### Coordinator 註冊 worker
 
 ```sql
 -- 在 coordinator 跑
@@ -165,7 +165,7 @@ SELECT citus_add_node('worker2.example.com', 5432);
 SELECT * FROM citus_get_active_worker_nodes();
 ```
 
-### Step 3：建 distributed table
+### 建 distributed table
 
 ```sql
 CREATE TABLE orders (
@@ -181,7 +181,7 @@ SELECT create_distributed_table('orders', 'user_id');
 
 Citus 自動把 `orders` 拆成 32 個 shard（`orders_102008` 等）、分配到 worker。
 
-### Step 4：Application 連 coordinator
+### Application 連 coordinator
 
 Application connection string 連 coordinator IP / port（不必知道 worker 存在）。
 
@@ -197,9 +197,9 @@ SELECT count(*) FROM orders;
 -- → Cross-shard aggregation、Citus 並行跑、合併結果
 ```
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Distribution column 選錯 — Cross-shard query 變主流
+### Distribution column 選錯 — Cross-shard query 變主流
 
 選 `created_at` 或 `id`（auto increment）作 distribution column、看起來均勻、實際 *application query 多以 user_id 為主*、變成 *每個 query 都 cross-shard*、performance 雪崩。
 
@@ -209,21 +209,21 @@ SELECT count(*) FROM orders;
 - Audit application top query、確認 distribution column 對齊 query pattern
 - 改 distribution column 要 *rewrite 所有 shard*、像 resharding、大工程
 
-### 2. Cross-shard transaction 限制
+### Cross-shard transaction 限制
 
 跨多 shard 的 transaction（如：UPDATE 兩個 user_id 不同的 row）Citus 用 *2PC*（two-phase commit）但有限制：
 
-- Multi-statement transaction 跨 shard 需明確開 `SET citus.multi_shard_modify_mode = 'sequential'`
+- Multi-statement transaction 跨 shard 在預設的 `citus.multi_shard_modify_mode = 'parallel'` 下就能執行，不必先切成 `sequential`
 - 部分 isolation level 不保證 serializable across shards
 - DDL 跨 shard 是 sequential
 
 修法：
 
 - Schema design 避免 cross-shard transaction（同 colocation group 內 transaction 沒問題）
-- 必要 cross-shard 場景明確設 multi-shard mode
+- 必要的 cross-shard transaction 保持短小，減少 2PC 期間持有 lock 的時間
 - 對 *strict cross-shard consistency*、考慮 distributed SQL（CockroachDB / Aurora DSQL）
 
-### 3. Reference table 過大 — 寫入廣播 cost 爆
+### Reference table 過大 — 寫入廣播 cost 爆
 
 Reference table 在每 worker 都有 copy、寫入 *廣播給所有 worker*。Reference table 100K row + 高頻寫入 → 寫一次寫 N worker、cost N x。
 
@@ -233,14 +233,14 @@ Reference table 在每 worker 都有 copy、寫入 *廣播給所有 worker*。Re
 - 超大表不該是 reference table、考慮 distributed
 - 監控 reference table 寫入 rate、超 threshold 重新評估
 
-### 4. Colocate 沒對齊 — 隱性 cross-shard JOIN
+### Colocate 沒對齊 — 隱性 cross-shard JOIN
 
 ```sql
 -- 看似可以、實際 cross-shard 慢
 SELECT * FROM orders o JOIN user_addresses ua ON o.user_id = ua.user_id;
 ```
 
-若 `user_addresses` 沒 `colocate_with => 'orders'`、兩表 shard 分配獨立、JOIN 跨 worker。
+兩表的 distribution column 型別不同（例如 `orders.user_id` 是 `BIGINT`、`user_addresses.user_id` 是 `INT`）、shard count 不同、或建表時指定了 `colocate_with => 'none'`，Citus 就不會自動 colocate，兩表 shard 分配獨立、JOIN 跨 worker。
 
 修法：
 
@@ -248,7 +248,7 @@ SELECT * FROM orders o JOIN user_addresses ua ON o.user_id = ua.user_id;
 - 用 `SELECT * FROM citus_tables` 看 colocation_id、確認對齊
 - 跨非 colocate table 的 JOIN 用 *materialized view* 或 application 層拆 query 避開
 
-### 5. Worker failover — Coordinator 必須知道
+### Worker failover — Coordinator 必須知道
 
 Worker 故障、Citus 預設 *coordinator 看到 query 失敗、不自動 failover*。
 
@@ -287,18 +287,18 @@ Coordinator + worker 各跑 PG streaming replication、Citus 不取代 PG replic
 
 ### 跟 PG Extensions
 
-Citus 跟其他 PG extension 多數兼容（pgvector / TimescaleDB / pg_stat_statements）— 它維持 *extension* 形態，保留 PostgreSQL 生態接點。詳見 *PG Extension Ecosystem* 篇（待寫）。
+Citus 跟其他 PG extension 多數兼容（pgvector / TimescaleDB / pg_stat_statements）— 它維持 *extension* 形態，保留 PostgreSQL 生態接點。詳見 [PostgreSQL Extension Ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/)。
 
 ### 跟 MySQL Vitess
 
-| 維度             | Citus                             | Vitess                            |
-| ---------------- | --------------------------------- | --------------------------------- |
-| 部署模型         | PG extension                      | 獨立 proxy + tablet               |
-| 主要場景         | Multi-tenant SaaS                 | 超大規模分片                      |
-| Cross-shard JOIN | colocate 對齊 + reference table   | VTGate 自動 split + aggregate     |
-| FK               | 同 colocation 內可用              | Vitess 18+ 支援、cross-shard 限制 |
-| HA               | 依賴 Patroni + replication factor | VTOrc + replication               |
-| 學習曲線         | 中（PG ops 經驗夠）               | 高（4 component）                 |
+| 維度             | Citus                             | Vitess                                                      |
+| ---------------- | --------------------------------- | ----------------------------------------------------------- |
+| 部署模型         | PG extension                      | 獨立 proxy + tablet                                         |
+| 主要場景         | Multi-tenant SaaS                 | 超大規模分片                                                |
+| Cross-shard JOIN | colocate 對齊 + reference table   | VTGate 自動 split + aggregate                               |
+| FK               | 同 colocation 內可用              | Vitess 18+ 支援、cross-shard 限制                           |
+| HA               | 依賴 Patroni + replication factor | VTOrc + replication                                         |
+| 學習曲線         | 中（PG ops 經驗夠）               | 高（VTGate / VTTablet / VReplication / VSchema 要一起維運） |
 
 Citus 對 *PG-native* 場景更平順、Vitess 對 *MySQL-native* 場景更平順、不直接競爭。詳見 [MySQL Vitess Sharding](/backend/01-database/vendors/mysql/vitess-sharding/)。
 

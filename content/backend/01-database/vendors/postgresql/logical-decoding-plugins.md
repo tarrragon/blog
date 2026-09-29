@@ -8,7 +8,7 @@ tags: ["backend", "database", "postgresql", "cdc", "logical-decoding"]
 
 PostgreSQL logical decoding plugins 的核心責任是把 WAL 中的變更轉成外部消費者可理解的事件格式。PostgreSQL 官方 logical decoding 文件說明，logical decoding 透過 [replication slot](/backend/knowledge-cards/replication-slot/) 將 WAL 變更解碼成 plugin output；output plugin 決定外部看到的是 PostgreSQL protocol、JSON、測試文字或自訂格式。
 
-本文的判讀錨點是：plugin 選型是 CDC contract 決策。它影響 schema evolution、事件欄位、delete 表示、transaction boundary、consumer compatibility、slot lag 與故障復原。
+本文涵蓋 output plugin 的選項、logical slot 的維運責任、CDC 事件的欄位約定、connector 的接法與故障模式。選哪個 plugin 會決定下游拿到的事件欄位、delete 的表示方式、transaction boundary 與 schema evolution 的通知方式，也決定 slot lag 與故障復原由誰負責。
 
 ## Plugin Boundary
 

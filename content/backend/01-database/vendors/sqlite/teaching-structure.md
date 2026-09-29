@@ -9,7 +9,7 @@ SQLite teaching structure 的核心責任是把 SQLite 從單篇 vendor overview
 
 ## 完成標準
 
-SQLite 章節群的完成標準是讀者能回答三個問題。第一，SQLite 何時是正式狀態而非臨時檔案；第二，SQLite production 化後要如何處理 WAL、backup、restore、migration、測試與觀測；第三，SQLite 成長後該升到 PostgreSQL / MySQL、Cloudflare D1、Turso / libSQL、Litestream / LiteFS 或 mobile sync。
+SQLite 章節群的完成標準是讀者能回答這些問題：SQLite 何時是正式狀態而非臨時檔案、SQLite production 化後要如何處理 WAL、backup、restore、migration、測試與觀測，以及 SQLite 成長後該升到 PostgreSQL / MySQL、Cloudflare D1、Turso / libSQL、Litestream / LiteFS 或 mobile sync。
 
 | 層級              | SQLite 對應文件                                                                                         | 教學責任                                                      |
 | ----------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
@@ -61,7 +61,7 @@ SQLite 章節群的檔名用服務責任命名，product-first 命名只留給 D
 
 ## Cross-module 路由
 
-SQLite 章節群要固定連到四個 backend 模組。Backup / restore 連到 04 evidence 與 08 incident；test fixture 連到語言教材與 repository adapter；edge / local-first 連到 05 deployment / 07 data protection；performance tuning 連到 09 capacity。
+SQLite 章節群要固定連到相鄰的 backend 模組與語言教材。Backup / restore 連到可觀測性平台的 evidence package 與事故處理與復盤的 decision log；test fixture 連到語言教材與 repository adapter；edge / local-first 連到部署平台與網路入口、資安與資料保護；performance tuning 連到效能工程與容量規劃。
 
 | SQLite 議題        | 主要跨模組路由                                                                                                                                                             |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -73,4 +73,4 @@ SQLite 章節群要固定連到四個 backend 模組。Backup / restore 連到 0
 
 ## 後續審查點
 
-SQLite 章節群完稿後要特別審查三個偏誤。第一是把 SQLite 過度美化成 production SQL 替代品；第二是把 edge SQLite 產品跟本地 SQLite 混成同一種能力；第三是把 test fixture 的便利性誤寫成 production equivalence。
+SQLite 章節群完稿後要特別審查這些偏誤：把 SQLite 過度美化成 production SQL 替代品、把 edge SQLite 產品跟本地 SQLite 混成同一種能力，以及把 test fixture 的便利性誤寫成 production equivalence。

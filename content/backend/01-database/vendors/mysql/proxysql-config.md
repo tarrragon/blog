@@ -6,7 +6,7 @@ weight: 14
 tags: ["backend", "database", "mysql", "proxysql", "connection-pool", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *ProxySQL 配置* — connection pool + query routing 的 4 段 lifecycle 跟 rule chain 設計。
+> 這篇涵蓋 ProxySQL 的配置：query 從 connection 接入、query parse 與 rule match、backend route 到 response 返回的 lifecycle，以及 rule chain 設計。
 
 ---
 
@@ -21,11 +21,11 @@ tags: ["backend", "database", "mysql", "proxysql", "connection-pool", "deep-arti
 4. Response 返回          →  將 result set 回 application、connection 可被 reuse
 ```
 
-每段都有獨立配置 + failure mode + 觀測 metric。ProxySQL 不是 *簡單的 connection pool*、是 *query-aware proxy* — 看得到 SQL 內容才能做 [read/write split](/backend/knowledge-cards/read-write-split/)、replica lag-aware routing、query mirroring。
+lifecycle 的每一段都有自己的配置、failure mode 與觀測 metric。ProxySQL 不是 *簡單的 connection pool*、是 *query-aware proxy* — 看得到 SQL 內容才能做 [read/write split](/backend/knowledge-cards/read-write-split/)、replica lag-aware routing、query mirroring。
 
 跟 [PostgreSQL pgBouncer](/backend/01-database/vendors/postgresql/pgbouncer-config/) 比、pgBouncer 是 *transaction-level pool*（只看連線、不看 SQL）、ProxySQL 是 *query-level proxy*（看 SQL、做 routing decision）。能力不同、target use case 不同。
 
-## Stage 1：Connection 接入 — Hostgroup / Server / User 三層 schema
+## Connection 接入：Hostgroup / Server / User 三層 schema
 
 ProxySQL 不直接 expose backend MySQL、用 *hostgroup* 作為 routing 抽象。Application 不知道有幾個 backend、只知道 ProxySQL。
 
@@ -55,9 +55,9 @@ VALUES
 INSERT INTO mysql_replication_hostgroups(writer_hostgroup, reader_hostgroup, comment)
 VALUES (10, 20, 'production cluster');
 
--- 設 application user、預設走 reader（保守）
+-- 設 application user、default_hostgroup 設 10（writer）：沒被任何 query rule 命中的 INSERT / UPDATE / DELETE 落到這裡
 INSERT INTO mysql_users(username, password, default_hostgroup, max_connections)
-VALUES ('app', 'app_password', 20, 1000);
+VALUES ('app', 'app_password', 10, 1000);
 
 -- 套用設定到 runtime
 LOAD MYSQL SERVERS TO RUNTIME;
@@ -70,7 +70,7 @@ SAVE MYSQL USERS TO DISK;
 
 注意 ProxySQL 的 *三層 state*：`disk`（持久化）→ `memory`（編輯區）→ `runtime`（實際運作）。每次改完要 `LOAD ... TO RUNTIME` 才生效、`SAVE ... TO DISK` 才能 reboot 保留。沒 `SAVE` 重啟後 config 消失是新手最常踩的雷。
 
-## Stage 2：Query Parse + Rule Match — query rule engine
+## Query Parse 與 Rule Match：query rule engine
 
 ProxySQL 不只 forward connection、看 *SQL 內容* 決定怎麼 route。Query rule 是 *ordered chain*、match 第一個符合的 rule。
 
@@ -109,7 +109,7 @@ SAVE MYSQL QUERY RULES TO DISK;
 
 **Rule 順序很重要**：`rule_id` 100 先 match、200 再 match、依此類推。Rule 200 比 100 寬鬆（任何 SELECT）、所以 `FOR UPDATE` 必須先 match rule 100 才不會誤送 replica。
 
-## Stage 3：Backend Route — replica lag-aware + circuit breaker
+## Backend Route：replica lag-aware 與 circuit breaker
 
 Rule match 後 ProxySQL 從 hostgroup 內挑一個 server。Backend selection 不是 pure round-robin、考慮：
 
@@ -133,7 +133,7 @@ ProxySQL 內部用 *monitor module* 定期跑 `SHOW SLAVE STATUS`、lag 超過 5
 
 **Circuit breaker（自動 shun）**：server 連續失敗 → ProxySQL 自動 `SHUNNED`、避免持續打 broken server。但 *application 層仍要處理 retry*、ProxySQL 不保證 query 100% 成功。
 
-## Stage 4：Response 返回 — connection multiplexing
+## Response 返回：connection multiplexing
 
 ProxySQL 對 application connection 跟 backend connection 是 *N:M 多工*：
 
@@ -151,9 +151,9 @@ ProxySQL 對 application connection 跟 backend connection 是 *N:M 多工*：
 
 ## 5 個 Production 踩雷
 
-### 1. Query rule 順序錯亂 — `FOR UPDATE` 被 SELECT route 到 replica
+### Query rule 順序錯亂：`FOR UPDATE` 被一般 SELECT rule 送到 replica
 
-Rule 200（`^SELECT`）寫在 rule 100（`^SELECT.*FOR UPDATE$`）之前、ProxySQL match 第一個 rule（rule 200）就停、`SELECT ... FOR UPDATE` 被送 replica、replica 沒 lock、application 假設有 lock 跑 race condition。
+寬鬆的 `^SELECT` rule 拿到比 `^SELECT.*FOR UPDATE$` 更小的 `rule_id`（例如寬鬆 rule 編成 100、精確 rule 編成 200）。ProxySQL 依 `rule_id` 由小到大比對，`SELECT ... FOR UPDATE` 先命中寬鬆 rule，而那條 rule 的 `apply=1` 讓比對停下，query 被送到 replica；replica 上沒有對應的 row lock，application 以為自己持有 lock，併發交易之間出現 race condition。
 
 修法：
 
@@ -161,17 +161,17 @@ Rule 200（`^SELECT`）寫在 rule 100（`^SELECT.*FOR UPDATE$`）之前、Proxy
 - 用 `apply=1` 強制停 chain、不要讓 query 繼續往下 match
 - 跑 ProxySQL `SHOW PROCESSLIST` + audit log 確認 routing 正確
 
-### 2. Connection 漂移 — Multiplexing 把 session variable 弄丟
+### Connection 漂移：multiplexing 換了 backend connection 之後的 session variable
 
-Application 跑 `SET sql_mode=...`、ProxySQL 把這 connection 暫時黏死 backend 1。下個 query ProxySQL forget、把 connection unstick、實際 forward 到 backend 2（沒 `SET sql_mode`）、SQL 解析行為不同、application bug。
+Application 跑 `SET sql_mode=...` 之後，下一個 SELECT 被 query rule 送到 reader hostgroup，用的是另一條 backend connection。ProxySQL 對 `sql_mode` 這類它有追蹤的 session 變數，會把值記在 client session 上，換到另一條 backend connection 時先在那條連線上補設同一個值：`SET sql_mode='ANSI_QUOTES'` 在 hostgroup 10 執行之後，接著送到 hostgroup 20 的 `SELECT @@sql_mode` 回的仍是 `ANSI_QUOTES`。漂移發生在 ProxySQL 沒有追蹤的 session 狀態上；追蹤清單隨 ProxySQL 版本變動，以手上版本的官方文件為準。
 
 修法：
 
 - 用 `mysql-multiplexing=false` 全 disable（最簡單但浪費 connection pool 效率）
-- 或在 application init 連線後跑的 `SET` 全列在 `mysql_users.connect_init`（每個 connection ProxySQL 自動跑、不會漂移）
-- 避免 application 中途改 session variable、改成全部走 ProxySQL connect_init
+- 或把 application 每條連線都要先跑的 `SET` 寫進全域變數 `mysql-init_connect`，ProxySQL 每開一條 backend connection 就先執行它
+- 避免 application 中途改 session variable，改成全部走 `mysql-init_connect`
 
-### 3. Write 不小心 route 到 replica — `default_hostgroup` 設錯
+### Write 不小心 route 到 replica：`default_hostgroup` 設錯
 
 Application user `default_hostgroup` 設 20 (reader)、INSERT / UPDATE / DELETE 沒 match 到任何 rule（沒寫 catch-all write rule）、走 default → 送 replica → replica 是 read-only → error。或更糟：replica 不是 read-only mode、寫入 *寫到 replica 上*、replication 反向不同步、data corruption。
 
@@ -181,7 +181,7 @@ Application user `default_hostgroup` 設 20 (reader)、INSERT / UPDATE / DELETE 
 - Replica MySQL 一定要 `read_only=1`（防 stale write 寫到 replica）
 - 監控 `mysql_query_rules` match 率、寫入 query 應該大部分透過 default_hostgroup 路由、不是個別 rule
 
-### 4. Runtime / disk schema drift — 改了 runtime 沒 save、重啟 config 消失
+### Runtime / disk schema drift：改了 runtime 沒 save、重啟 config 消失
 
 `LOAD ... TO RUNTIME` 跟 `SAVE ... TO DISK` 是兩個獨立操作。On-call 在事故中改 ProxySQL 配置（add server、調 query rule）、`LOAD` 套到 runtime 但忘記 `SAVE`、隔天 ProxySQL 重啟（OS update / crash）、config 回到 disk 版本、半夜 alert。
 
@@ -189,9 +189,9 @@ Application user `default_hostgroup` 設 20 (reader)、INSERT / UPDATE / DELETE 
 
 - 每次 `LOAD ... TO RUNTIME` 後立刻 `SAVE ... TO DISK`（變成 habit）
 - 用 IaC（Terraform / Ansible）管 ProxySQL config、不要手動改 admin
-- 監控：對比 `runtime_mysql_servers` 跟 `mysql_servers`（disk）、有 diff 即告警
+- 監控：對比 `runtime_mysql_servers` 跟 `disk.mysql_servers`、有 diff 即告警（`main.mysql_servers` 是 memory 那一層，`LOAD` 之後它與 runtime 一致、比不出沒有 `SAVE` 的情形）
 
-### 5. Mirror traffic 副作用 — INSERT 鏡像到 staging 寫了兩次
+### Mirror traffic 副作用：INSERT 鏡像到 staging 寫了兩次
 
 `mirror_hostgroup` 把 query 鏡像送到第二個 hostgroup（不等 response、用於 shadow test 新 schema）。但 *鏡像是真實執行*、不是 dry-run。鏡像 INSERT 到 staging hostgroup → staging 真的多了 row。如果 staging hostgroup 接到 production 表（誤接）、production 寫入 doubled。
 
@@ -225,7 +225,7 @@ ProxySQL 透過 *monitor module* 自動偵測 primary（檢查 `read_only` flag�
 
 Orchestrator 自動 failover 後新 primary 的 `read_only` flag 變 0、舊 primary 變 1。ProxySQL monitor 偵測到、自動把 hostgroup 10（writer）的 server 切換、application 不必改 connection string。
 
-詳見 *Orchestrator failover 設計* 篇（待寫）。
+Orchestrator 自己怎麼做 HA 與怎麼挑新 primary，見 [MySQL Orchestrator Failover](/backend/01-database/vendors/mysql/orchestrator-failover/)。
 
 ### 跟 OSC tool（gh-ost / pt-osc）
 

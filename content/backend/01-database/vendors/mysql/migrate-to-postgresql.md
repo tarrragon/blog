@@ -1,14 +1,14 @@
 ---
-title: "MySQL → PostgreSQL：從 SQL dialect diff 跑出來的 Type A 6-phase migration"
+title: "MySQL → PostgreSQL：從 SQL dialect diff 跑出來的 Type A phased translation migration"
 date: 2026-05-19
-description: "MySQL → PostgreSQL 是 Type A 高 schema 差 migration 的標準形態 — SQL dialect / collation / case sensitivity / replication 模型差異主導；用 pgloader / AWS DMS / 自管 dual-write 三條 path、5 個 production 踩雷（auto_increment vs SERIAL / charset 跟 collation / case sensitivity / index syntax / triggers）"
+description: "MySQL → PostgreSQL 是 Type A 高 schema 差 migration 的標準形態 — SQL dialect / collation / case sensitivity / replication 模型差異主導；用 pgloader / AWS DMS / 自管 dual-write 三條 path；production 踩雷涵蓋 auto_increment vs SERIAL、charset 跟 collation、identifier 大小寫、CDC pipeline 重建、FULLTEXT 對應 tsvector"
 weight: 11
 tags: ["backend", "database", "mysql", "postgresql", "migration", "schema-diff", "type-a"]
 ---
 
 > 本文是跨 vendor migration playbook、cross-link 到 [MySQL](/backend/01-database/vendors/mysql/) 跟 [PostgreSQL](/backend/01-database/vendors/postgresql/)。本文是 [Migration playbook methodology](/posts/migration-playbook-methodology/) Type A 的標準形態實證。
 
-## 三類 SQL dialect diff sample：先看具體差距
+## SQL dialect diff sample：自增主鍵、字串串接、UPSERT、index hint、JSON path
 
 ```sql
 -- 1. Auto increment / sequence
@@ -24,7 +24,9 @@ CREATE TABLE users (id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY);
 SELECT CONCAT(first_name, ' ', last_name) FROM users;
 -- PostgreSQL: a || b 或 CONCAT(a, b)
 SELECT first_name || ' ' || last_name FROM users;
--- 注意: PostgreSQL 對 NULL || x = NULL、MySQL CONCAT 對 NULL 處理不同
+-- 注意: MySQL CONCAT 遇到 NULL 回 NULL，PG 的 || 遇到 NULL 也回 NULL；
+--       PG 的 CONCAT 會略過 NULL。MySQL CONCAT 改寫成 PG CONCAT 時，
+--       含 NULL 的列結果會從 NULL 變成字串
 
 -- 3. UPSERT
 -- MySQL
@@ -58,7 +60,7 @@ SELECT data->>'name' FROM events;  -- 取出 text
 | Number of components   | 同 1 個                                                | Low      |
 | Application change     | ORM 多數能 cover、raw SQL 必改                         | Medium   |
 
-主導維度 Schema = High、走 [Type A 6-phase playbook](/posts/migration-playbook-methodology/) 標準結構。
+主導維度 Schema = High、走 [Type A phased translation playbook](/posts/migration-playbook-methodology/) 標準結構：rule audit、schema 對位、translation pipeline、parallel run、cutover、cleanup。
 
 ## Phase 0：rule audit + SQL surface 盤點
 
@@ -108,7 +110,7 @@ Audit 主要產出三類清單：
 
 Schema 對位表存版控、application code refactor 時對照。
 
-## Phase 2：Translation pipeline（3-tier 跟 Splunk → Elastic 類似）
+## Phase 2：Translation pipeline（工具轉換、自家 SQL refactor、tricky case 手動改寫）
 
 ### Tier 1：vendor / community tool
 
@@ -130,7 +132,20 @@ pgloader mysql://user:pass@mysql-host/dbname \
 
 ### Tier 3：tricky case manual
 
-例：MySQL `SELECT * FROM t1, t2 WHERE t1.id = t2.id GROUP BY t1.id`（implicit GROUP BY 寬鬆）— PG 嚴格 GROUP BY 必須 list 所有 non-aggregate column；application code refactor 必要。
+例：同一段 GROUP BY 查詢，MySQL 接受、PG 拒絕。兩邊都認得「GROUP BY 某張表的主鍵之後，那張表的其他欄位由主鍵決定」（functional dependency），差別在 MySQL 也會沿著 `WHERE` 的等值條件把 `t2` 的欄位判成由 `t1.id` 決定，PG 只認被 GROUP BY 的那張表自己的主鍵：
+
+```sql
+-- t1、t2 的 id 都是主鍵
+SELECT * FROM t1, t2 WHERE t1.id = t2.id GROUP BY t1.id;
+-- MySQL 8.0 / 8.4（預設 sql_mode 含 ONLY_FULL_GROUP_BY）：接受
+-- PG 16：ERROR: column "t2.id" must appear in the GROUP BY clause
+--        or be used in an aggregate function
+
+-- PG 端的改寫：把 t2 的主鍵也列進 GROUP BY
+SELECT * FROM t1, t2 WHERE t1.id = t2.id GROUP BY t1.id, t2.id;
+```
+
+MySQL 端執行這段查詢不會有任何警告，要搬到 PG 才報錯，所以只能靠 application code refactor 逐條找出來。
 
 ## Phase 3：Parallel run
 
@@ -148,7 +163,7 @@ Application ──→ MySQL (write + read primary)
 ## Phase 4：Cutover
 
 - 設 application maintenance window（30 分鐘）
-- Drain MySQL write、等 last LSN propagated to PG
+- Drain MySQL write、等 MySQL 最後一筆寫入同步到 PG
 - Application switch connection string → PG
 - 解除 maintenance、monitor 24-48 hours
 
@@ -159,7 +174,7 @@ Application ──→ MySQL (write + read primary)
 
 ## Production 故障演練
 
-### Case 1：Auto_increment vs SERIAL 跨 transaction 行為差
+### Auto_increment vs SERIAL 跨 transaction 行為差
 
 **徵兆**：cutover 後某 batch job 跑得比 MySQL 慢 5-10x、PG log 顯示 sequence 競爭。
 
@@ -171,19 +186,27 @@ Application ──→ MySQL (write + read primary)
 2. **bigserial + cache**：`CREATE SEQUENCE ... CACHE 100`、batch 預取 100 個 ID 降 contention
 3. **批量 insert 改 COPY**：`COPY t FROM STDIN` 是 PG 對 batch 最快路徑
 
-### Case 2：Charset / collation 跑出 unicode 異常
+### Charset / collation 跑出 unicode 異常
 
 **徵兆**：cutover 後某些用戶名 / 中文文字 query 對不到結果、`SELECT * WHERE name = '張三'` 返回空。
 
-**根因**：MySQL default `utf8mb3`（3-byte UTF-8、不能存 emoji / 部分 unicode）、PG default `UTF8` 全 unicode；資料遷移時 MySQL 端的 utf8mb3 column 帶到 PG 後 *bytes 不變* 但 *collation rule 變*；string comparison 結果差。
+**根因**：MySQL 端若有 `utf8mb3` column（3-byte UTF-8、不能存 emoji / 部分 unicode；MySQL 8.0 起 server 預設字元集是 `utf8mb4`，`utf8mb3` 多半是舊 schema 明確指定的）、PG default `UTF8` 全 unicode；資料遷移時 MySQL 端的 utf8mb3 column 帶到 PG 後 *bytes 不變* 但 *collation rule 變*；string comparison 結果差。
 
 **修法**：
 
 1. **Pre-migration audit**：MySQL 強制 `utf8mb4`、avoid utf8mb3 data
-2. **Collation 對位**：MySQL `utf8mb4_unicode_ci` → PG `LC_COLLATE = 'C.utf8'` 或 ICU collation
+2. **Collation 對位**：MySQL `utf8mb4_unicode_ci` 比較字串時不分大小寫；PG 的 `C.utf8` 與一般 ICU collation 都是 deterministic、分大小寫。要保留 `_ci` 的比較語意，在 PG 建 nondeterministic ICU collation：
+
+   ```sql
+   -- PG 12+：level2 忽略大小寫、deterministic = false 讓 = 依 collation 判等
+   CREATE COLLATION ci (provider = icu, locale = 'und-u-ks-level2', deterministic = false);
+   SELECT 'Alice' = 'alice' COLLATE "C.utf8";  -- f
+   SELECT 'Alice' = 'alice' COLLATE ci;        -- t
+   ```
+
 3. **Application encoding contract**：明示 UTF-8 全範圍、不接受 utf8mb3-only client
 
-### Case 3：Case sensitivity 反轉
+### Case sensitivity 反轉
 
 **徵兆**：cutover 後 application query `SELECT * FROM users` 報錯 `relation does not exist`；但 `SELECT * FROM "Users"` works。
 
@@ -195,7 +218,7 @@ Application ──→ MySQL (write + read primary)
 2. **Application code refactor**：grep raw SQL 找 mixed case identifier、改 lowercase
 3. **ORM 端設定 `naming_strategy`**：JPA / Hibernate 等明示 lowercase mapping
 
-### Case 4：Replication 行為差、CDC pipeline 失效
+### Replication 行為差、CDC pipeline 失效
 
 **徵兆**：MySQL 端 binlog-based CDC（Debezium MySQL connector）跑得好好的、cutover 後 PG 端要重建 CDC pipeline、初期 1-2 週 message 模式異常。
 
@@ -207,7 +230,7 @@ Application ──→ MySQL (write + read primary)
 2. **Schema registry 同步**：Avro schema 從 MySQL 端 export、註冊 PG 端 connector 用同 schema
 3. **Consumer 端 idempotent**：cutover 期間 dual-source、consumer 必須 idempotent 避免 duplicate
 
-### Case 5：FULLTEXT INDEX 對應 tsvector、application search broken
+### FULLTEXT INDEX 對應 tsvector、application search broken
 
 **徵兆**：cutover 後 application 全文搜尋功能失效、`MATCH(name) AGAINST('xxx')` 不被 PG 認；application 端 raw SQL 對 search 寫死。
 

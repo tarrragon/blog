@@ -6,23 +6,23 @@ weight: 34
 tags: ["backend", "database", "postgresql", "logical-replication", "debezium", "cdc", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 提到 logical decoding / Debezium CDC、本文聚焦 *replication slot 生命週期 + 5 個 production failure mode 跟 recovery* 的對照。
+> 這篇涵蓋 logical replication 與 Debezium CDC 共用的 replication slot 生命週期，以及 consumer lag、zombie slot、schema change 斷流、initial COPY、replay storm 這些 production failure mode 跟 recovery 的對照。
 
 ## Replication slot × Failure × Recovery 對照
 
 Logical replication 跟 Debezium CDC 的 production 議題集中在 *replication slot* — 它是 PostgreSQL 內保證 WAL 不被回收的 anchor point；slot 設不對、整個 CDC pipeline 失效。各 failure mode 對 slot 的影響跟 recovery 路徑：
 
-| Failure mode                          | 對 slot 影響                            | Primary 端徵兆                           | Recovery 路徑                                             |
-| ------------------------------------- | --------------------------------------- | ---------------------------------------- | --------------------------------------------------------- |
-| Consumer 卡住 / lag                   | slot LSN 不前進、WAL 留著               | `pg_wal` 目錄持續長大、disk 撐爆         | 修 consumer / 加 throttle / 必要時 drop slot              |
-| Consumer crash 無 restart             | slot 留在 active state                  | 跟 lag 同、不會自動清                    | 手動 `SELECT pg_drop_replication_slot('name')`            |
-| Schema change（ADD COLUMN）           | 多數 plugin 自動處理、無感              | 通常無感                                 | -                                                         |
-| Schema change（DROP / RENAME COLUMN） | 多數 plugin 直接斷                      | Consumer log 報錯、slot active 卻不前進  | 重建 publication / 重 init load                           |
-| Initial COPY                          | slot 建立時跑 snapshot、long-running tx | 大表 COPY 期間鎖跟 WAL 都受影響          | 用 `CREATE_REPLICATION_SLOT ... NOEXPORT_SNAPSHOT` 分階段 |
-| Promotion (failover)                  | physical slot 跟 logical slot 處理不同  | logical slot 在 PG 16- 不跨 failover     | PG 16+ logical slot 持久化、或 consumer 重 init load      |
-| Replay storm（offset 重置）           | slot 不變、consumer 重讀                | Kafka 端流量爆、application 看 duplicate | Idempotent consumer 設計、或 transactional outbox         |
+| Failure mode                          | 對 slot 影響                            | Primary 端徵兆                           | Recovery 路徑                                                                     |
+| ------------------------------------- | --------------------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------- |
+| Consumer 卡住 / lag                   | slot LSN 不前進、WAL 留著               | `pg_wal` 目錄持續長大、disk 撐爆         | 修 consumer / 加 throttle / 必要時 drop slot                                      |
+| Consumer crash 無 restart             | slot 留在 active state                  | 跟 lag 同、不會自動清                    | 手動 `SELECT pg_drop_replication_slot('name')`                                    |
+| Schema change（ADD COLUMN）           | 多數 plugin 自動處理、無感              | 通常無感                                 | -                                                                                 |
+| Schema change（DROP / RENAME COLUMN） | 多數 plugin 直接斷                      | Consumer log 報錯、slot active 卻不前進  | 重建 publication / 重 init load                                                   |
+| Initial COPY                          | slot 建立時跑 snapshot、long-running tx | 大表 COPY 期間鎖跟 WAL 都受影響          | 用 `CREATE_REPLICATION_SLOT ... NOEXPORT_SNAPSHOT` 分階段                         |
+| Promotion (failover)                  | physical slot 跟 logical slot 處理不同  | logical slot 在 PG 16- 不跨 failover     | PG 17+ 用 `failover` 選項把 logical slot 同步到 standby、或 consumer 重 init load |
+| Replay storm（offset 重置）           | slot 不變、consumer 重讀                | Kafka 端流量爆、application 看 duplicate | Idempotent consumer 設計、或 transactional outbox                                 |
 
-每個 failure mode 對應的詳細配置 + recovery 步驟、下面分段展開。
+Consumer 卡住、zombie slot、DROP / RENAME COLUMN 斷流、initial COPY 與 replay storm 的配置與 recovery 步驟在〈Production 故障演練〉逐一展開；Promotion 的處理在〈跟 Patroni HA 整合〉。
 
 ## Logical replication 基礎：publication + subscription + slot
 
@@ -70,7 +70,7 @@ snapshot.mode=initial                            # 起始 snapshot 後 streaming
 
 ## Production 故障演練
 
-### Case 1：consumer lag、slot LSN 不前進、primary disk 爆
+### Consumer lag、slot LSN 不前進、primary disk 爆
 
 **徵兆**：primary `pg_wal` 目錄持續長大、`df -h` 看磁碟 90%+；`pg_replication_slots` 看 `confirmed_flush_lsn` 卡在某 LSN、`pg_wal_lsn_diff(pg_current_wal_lsn(), confirmed_flush_lsn)` 數十 GB。
 
@@ -83,7 +83,7 @@ snapshot.mode=initial                            # 起始 snapshot 後 streaming
 3. **緊急**：`SELECT pg_drop_replication_slot('debezium_app')` 釋放 WAL — 但 consumer 必須重 init load（資料缺一塊）
 4. **架構**：用 *max_slot_wal_keep_size*（PG 13+）設 slot 能保留 WAL 上限、超出自動 invalidate slot、保護 primary disk
 
-### Case 2：consumer crash 後 slot 變 zombie
+### Consumer crash 後 slot 變 zombie
 
 **徵兆**：Debezium pod OOM crash、新 pod 起來時報 `slot is active for PID X`、無法 attach；primary 端 `pg_replication_slots.active = true`、`active_pid` 指向已經死掉的 process。
 
@@ -105,11 +105,26 @@ SELECT pg_drop_replication_slot('debezium_app');
 1. PostgreSQL `tcp_keepalives_idle / interval / count` 設較短（300 / 60 / 6）、network drop 較快被發現
 2. Consumer 端用 *graceful shutdown* + `pg_terminate_backend(active_pid)` 在 startup 前主動清 stale connection
 
-### Case 3：schema change（DROP / RENAME COLUMN）斷流
+### Schema change（DROP / RENAME COLUMN）斷流
 
 **徵兆**：Debezium consumer 突然停 produce 訊息、log 報 `column XYZ does not exist`；primary 端 slot 還 active、但 `confirmed_flush_lsn` 不前進。
 
-**根因**：pgoutput plugin 把 WAL 解成 row event 時、用的 schema 是 *當下 catalog*；如果中間 DROP COLUMN、之前 WAL 內的 row event 含已不存在欄位、解析失敗。
+**根因**：logical decoding 解 WAL 時用的是 *那筆變更發生當時的 catalog*（historic snapshot），DROP COLUMN 之前的 row event 照樣帶著舊欄位解出來，primary 端的解碼本身不會失敗。斷在 consumer 端：consumer 手上的 table schema 跟事件帶來的欄位對不上。PG-to-PG subscription 可以直接重現：
+
+```sql
+-- primary（database postgres）
+CREATE TABLE src (id int PRIMARY KEY, keep text);
+CREATE PUBLICATION pub_src FOR TABLE src;
+-- subscriber（database sub）建同樣的 src 表、訂閱 pub_src
+
+-- primary 改欄名後再寫一筆
+ALTER TABLE src RENAME COLUMN keep TO kept;
+INSERT INTO src VALUES (2, 'b');
+
+-- subscriber 的 apply worker log（反覆重試、每次同一個錯）：
+--   ERROR:  logical replication target relation "public.src" is missing replicated column: "kept"
+-- subscriber 的 src 停在改名前的資料，primary 上這個 slot 的 confirmed_flush_lsn 不再前進
+```
 
 **修法**：
 
@@ -119,9 +134,9 @@ SELECT pg_drop_replication_slot('debezium_app');
    - Phase 3: 等 consumer catch up old column 訊息
    - Phase 4: DROP COLUMN old_col（此時無 in-flight WAL 帶 old_col）
 2. **緊急**：DROP existing slot、重建 publication 跟 slot、consumer 重 init load
-3. **長期**：用 Debezium *snapshot.mode=schema_only_recovery* 在 schema 變動時不重灌資料、只 reset schema
+3. **長期**：Debezium PostgreSQL connector 從 logical decoding plug-in 送來的 event 取得 table schema、沒有 schema history topic，截至 2026-09 的官方文件 `snapshot.mode` 也沒有 `schema_only_recovery` 這個值；重建 slot 之後不想重灌既有資料時設 `snapshot.mode=no_data`，connector 只從新 slot 的位置開始 streaming，slot 重建之前的變更不會補送
 
-### Case 4：initial COPY 大表鎖太久
+### Initial COPY 大表鎖太久
 
 **徵兆**：對 1TB 表跑 `CREATE SUBSCRIPTION ... WITH (copy_data=true)` 後、application 對該表 query / write 阻塞 30+ 分鐘；application timeout 大量。
 
@@ -145,10 +160,10 @@ CREATE SUBSCRIPTION app_sub
 -- 或用 pg_dump / pg_basebackup 拿 snapshot
 ```
 
-2. **PG 16+ parallel init**：`max_sync_workers_per_subscription = 4` 平行 COPY 多個表
+2. **Parallel init**：`max_sync_workers_per_subscription`（PG 10 起就有、預設 2）調到 4，平行 COPY 多個表
 3. **Debezium replacement**：用 incremental snapshot（Debezium 1.6+）、background trickle copy、不鎖長 transaction
 
-### Case 5：replay storm 後 consumer offset reset
+### Replay storm 後 consumer offset reset
 
 **徵兆**：Debezium 修 bug / 重 deploy 後、`snapshot.mode=initial` 觸發整個資料重灌；Kafka topic 流量爆 10x、下游 application 看到大量 duplicate event。
 
@@ -184,7 +199,7 @@ CREATE SUBSCRIPTION app_sub
 logical slot 在 PG 16- 不跨 failover、是長期痛點：
 
 1. **PG 16-**：failover 後 logical consumer 必須重 init（slot 在新 leader 上不存在）
-2. **PG 16+**：`failover` parameter 讓 logical slot 在 standby 同步、failover 後 consumer 直接接
+2. **PG 17+**：`failover` parameter 讓 logical slot 在 standby 同步、failover 後 consumer 直接接
 3. Patroni 16+ 支援 logical slot persistence 配置、配合用
 
 ### 跟 Kafka outbox pattern
@@ -223,5 +238,5 @@ partitioned table 的 logical replication：
 
 - 上游 vendor 頁：[PostgreSQL](/backend/01-database/vendors/postgresql/)
 - 上游 chapter：[Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/) — schema change × CDC 對應
-- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [PITR + WAL Archiving](/backend/01-database/vendors/postgresql/pitr-wal-archiving/) / [Replication Slot Management](/backend/01-database/vendors/postgresql/replication-slot-management/)（slot lifecycle / orphan / failover sync）/ [Replication Topology](/backend/01-database/vendors/postgresql/replication-topology/)（streaming + LSN 基礎）
+- PostgreSQL 的其他主題：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [PITR + WAL Archiving](/backend/01-database/vendors/postgresql/pitr-wal-archiving/) / [Replication Slot Management](/backend/01-database/vendors/postgresql/replication-slot-management/)（slot lifecycle / orphan / failover sync）/ [Replication Topology](/backend/01-database/vendors/postgresql/replication-topology/)（streaming + LSN 基礎）
 - Methodology：[Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/)

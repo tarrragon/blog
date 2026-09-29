@@ -1,20 +1,20 @@
 ---
-title: "PostgreSQL Query Optimization：EXPLAIN ANALYZE / pg_hint_plan / auto_explain 三層工具跟 4 個 case"
+title: "PostgreSQL Query Optimization：EXPLAIN、auto_explain、pg_hint_plan 與 planner 選錯 plan 的 production case"
 date: 2026-05-19
-description: "PG query 慢的根因常是 *planner 選錯 plan 或 statistics 過時*。本文從 4 個 production case 開場（seq scan vs index / hash vs nested loop / 多 column 統計缺 / parallel query 沒觸發）、走 EXPLAIN / EXPLAIN ANALYZE / auto_explain 三層工具、pg_hint_plan extension 跟 planner GUC 取捨、5 production 踩雷（ANALYZE 過時 / multi-column statistics / cost-base setting 不對齊硬體 / random_page_cost SSD 沒調 / parallel query 配置）、跟 MySQL query-optimization sibling 對比"
+description: "PG query 慢的根因常是 *planner 選錯 plan 或 statistics 過時*。本文從 production case 開場（seq scan vs index / hash vs nested loop / 多 column 統計缺 / parallel query 沒觸發）、走 EXPLAIN / EXPLAIN ANALYZE / auto_explain、pg_hint_plan extension 跟 planner GUC 取捨、production 踩雷（ANALYZE 過時 / multi-column statistics / random_page_cost 沿用 HDD 預設 / effective_cache_size 不對齊 RAM / parallel query 配置）、跟 MySQL query-optimization sibling 對比"
 weight: 21
 tags: ["backend", "database", "postgresql", "query-optimization", "explain", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *query optimization* — EXPLAIN ANALYZE / auto_explain / pg_hint_plan 三層工具跟 4 個實際 case。
+本文的範圍是 PostgreSQL 的 query optimization：從 planner 選錯 plan 的 production case 開始，再走 EXPLAIN、EXPLAIN ANALYZE、auto_explain，以及 pg_hint_plan 與 planner GUC 的取捨，最後是 production 踩雷、觀測 metric 與跟 MySQL 的對照。
 
 ---
 
-## 4 個常見 production case
+## 常見 production case：planner 選錯 plan
 
-PG query 慢的 root cause 多數是 *planner 選錯 plan*。從以下 4 個 case 進入 query optimization：
+PG query 慢的 root cause 多數是 *planner 選錯 plan*。以下 case 各自對應一種選錯的來源：缺 index、row count 估錯、多欄相關性沒進統計、parallel 設定太保守。
 
-### Case 1：5 秒 → 50ms — Seq scan vs index
+### 5 秒 → 50ms：Seq scan vs index
 
 ```sql
 -- 慢 (5 秒)
@@ -38,12 +38,12 @@ Hash Join  (cost=20000..50000 rows=100 width=...) (actual time=4900..5000 rows=1
 
 ```sql
 CREATE INDEX CONCURRENTLY idx_customers_region ON customers(region);
-ANALYZE customers;  -- 更新 statistics、讓 planner 看到新 index
+ANALYZE customers;  -- 更新 region 欄位的值分佈統計；新 index 建好後 planner 不必等 ANALYZE 就會考慮它
 ```
 
 加完 5 秒降 50ms。
 
-### Case 2：30 秒 → 200ms — Hash join 沒觸發、用 nested loop
+### 30 秒 → 200ms：Hash join 沒觸發、用 nested loop
 
 ```sql
 SELECT u.name, count(o.id)
@@ -65,7 +65,7 @@ ANALYZE orders;
 
 統計精度提升、planner 估 row count 準、自動切 hash join。
 
-### Case 3：8 秒 → 100ms — Multi-column 統計缺
+### 8 秒 → 100ms：Multi-column 統計缺
 
 ```sql
 SELECT * FROM orders WHERE status = 'pending' AND region = 'TW';
@@ -73,7 +73,7 @@ SELECT * FROM orders WHERE status = 'pending' AND region = 'TW';
 
 `status = 'pending'` 5% row、`region = 'TW'` 10% row。Planner 假設兩 column 獨立、估 0.5% (5K row)。實際 status='pending' 跟 region='TW' 強相關（TW 訂單多 pending）、實際 4% (40K row)。Planner 估錯 8x、選錯 plan。
 
-修法（PG 10+）：
+修法（`CREATE STATISTICS` 是 PG 10+；下面用到的 `mcv` 種類要 PG 12+）：
 
 ```sql
 CREATE STATISTICS stats_orders_status_region (dependencies, ndistinct, mcv)
@@ -82,7 +82,7 @@ ANALYZE orders;
 -- 之後 planner 知道 status+region 相關度、估準
 ```
 
-### Case 4：20 秒 → 5 秒 — Parallel query 沒觸發
+### 20 秒 → 5 秒：Parallel query 沒觸發
 
 ```sql
 SELECT region, count(*), sum(amount) FROM orders GROUP BY region;
@@ -105,9 +105,9 @@ parallel_tuple_cost = 0.01       # 預設 0.1
 
 並行後 5 秒。
 
-## EXPLAIN 三層工具
+## EXPLAIN、EXPLAIN ANALYZE 與 auto_explain
 
-### Tool 1：EXPLAIN — Plan preview
+### EXPLAIN：Plan preview
 
 ```sql
 EXPLAIN SELECT ...;
@@ -122,13 +122,13 @@ EXPLAIN SELECT ...;
 - `rows`：估計 output row 數
 - `width`：每 row average byte（影響 sort / hash memory）
 
-### Tool 2：EXPLAIN ANALYZE — 實際執行 + 對比 estimate
+### EXPLAIN ANALYZE：實際執行 + 對比 estimate
 
 ```sql
 EXPLAIN (ANALYZE, BUFFERS, VERBOSE) SELECT ...;
 ```
 
-差別：實際 *跑 query*、輸出實際 row count / time、跟 estimate 對比：
+EXPLAIN 只印 planner 的估計；EXPLAIN ANALYZE 會實際 *跑 query*、輸出實際 row count / time、跟 estimate 對比：
 
 ```text
 Hash Join  (cost=20000..50000 rows=100) (actual time=400..500 rows=10000 loops=1)
@@ -144,7 +144,7 @@ EXPLAIN ANALYZE UPDATE orders SET status = 'x' WHERE ...;
 ROLLBACK;
 ```
 
-### Tool 3：auto_explain — Production query 自動 capture
+### auto_explain：Production query 自動 capture
 
 `auto_explain` extension 自動 log slow query 的 plan：
 
@@ -196,9 +196,9 @@ Hint 形態：
 - 單 query 行為：用 pg_hint_plan（不污染其他 query）
 - 不要過度 hint — planner 多數時候 *是對的*、hint 是 last resort
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Statistics 過時 — Planner 估錯 row count
+### Statistics 過時：Planner 估錯 row count
 
 `ANALYZE` 是 autovacuum 一部分、預設 *autovacuum_analyze_scale_factor=0.1*（10% row 變動才 analyze）。對 *快速 grow 的表*（log / event）、ANALYZE 跟不上、planner 用過時 statistics。
 
@@ -213,9 +213,9 @@ Hint 形態：
 - 對 *大批量寫入後*、手動 `ANALYZE events;`
 - 監控 `pg_stat_user_tables.last_analyze` — 跟 row count 比、判定是否需手動 trigger
 
-### 2. Multi-column statistics — Planner 假設 column 獨立
+### Multi-column statistics：Planner 假設 column 獨立
 
-如 Case 3、單 column statistics 對 *相關 column* 估錯。
+如〈8 秒 → 100ms：Multi-column 統計缺〉那個 case 的 status 與 region，單 column statistics 對 *相關 column* 估錯。
 
 修法：
 
@@ -223,7 +223,7 @@ Hint 形態：
 - 3 種 type：`dependencies`（functional dependency）、`ndistinct`（multi-column distinct count）、`mcv`（most common value combinations）
 - 設完 *必須跑 ANALYZE* 才生效
 
-### 3. Cost-base setting 不對齊硬體 — Planner 偏 seq scan
+### Cost-base setting 不對齊硬體：Planner 偏 seq scan
 
 預設 `random_page_cost = 4`、`seq_page_cost = 1` 是 *HDD assumption*（random IO 比 sequential 慢 4x）。SSD / NVMe random / seq IO 差別小、planner 不該 4x penalty random。
 
@@ -241,7 +241,7 @@ SELECT pg_reload_conf();
 
 `random_page_cost` 改了 planner 對 index scan 的 cost 估計更準、自動選 index 更積極。
 
-### 4. `effective_cache_size` 不對齊實際 RAM
+### `effective_cache_size` 不對齊實際 RAM
 
 `effective_cache_size` 預設 4 GB、planner 假設 buffer pool + OS cache 共 4 GB。實際 server 64 GB RAM、`shared_buffers = 16GB`、OS page cache ~30 GB、實際可用 cache 46 GB。
 
@@ -253,7 +253,7 @@ ALTER SYSTEM SET effective_cache_size = '46GB';  -- shared_buffers + OS cache �
 
 提升後 planner 估 query 多數 page 在 cache、降低 *估計 random IO cost*、選 index 更積極。
 
-### 5. Parallel query 不觸發
+### Parallel query 不觸發
 
 預設 `max_parallel_workers_per_gather = 2`、有些 workload 不夠。或 *table size 太小*、`min_parallel_table_scan_size = 8MB` 預設、小表不 parallel。
 

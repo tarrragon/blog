@@ -6,34 +6,34 @@ weight: 41
 tags: ["backend", "database", "postgresql", "aurora", "migration", "cloud-managed"]
 ---
 
-> 本文是跨 vendor [migration](/backend/knowledge-cards/migration/) playbook、cross-link 到 [PostgreSQL](/backend/01-database/vendors/postgresql/)（self-managed source）跟 [Aurora](/backend/01-database/vendors/aurora/)（cloud-managed target）。跟前兩篇 migration（[Splunk → Elastic](/backend/07-security-data-protection/vendors/splunk/migrate-to-elastic-security/) 高 schema 差 / [Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/) drop-in）對照、本篇是 *middle ground*：wire protocol drop-in、但 operational model 重設計。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關。
+> 本文是跨 vendor [migration](/backend/knowledge-cards/migration/) playbook、cross-link 到 [PostgreSQL](/backend/01-database/vendors/postgresql/)（self-managed source）跟 [Aurora](/backend/01-database/vendors/aurora/)（cloud-managed target）。跟另外兩篇 migration playbook（[Splunk → Elastic](/backend/07-security-data-protection/vendors/splunk/migrate-to-elastic-security/) 高 schema 差 / [Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/) drop-in）對照、本篇是 *middle ground*：wire protocol drop-in、但 operational model 重設計。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關。
 
 ## 為什麼遷：operational cost / HA / DR 三條 driver
 
-| Driver               | 觸發場景                                                                                                                            |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| **Operational cost** | self-managed PostgreSQL + Patroni HA + pgBackRest backup + monitoring 需 0.5-2 FTE；Aurora 把這層責任轉嫁 AWS、SRE 專注 application |
-| **HA reliability**   | Patroni split-brain / DCS quorum 偶爾踩雷、production failover 4-15s；Aurora 自動 multi-AZ failover < 30s、shared storage 不丟資料  |
-| **DR / backup**      | 自管 PITR + cross-region replication 複雜；Aurora 內建 PITR + global database + backup retention 簡化                               |
+| Driver               | 觸發場景                                                                                                                                                                      |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Operational cost** | self-managed PostgreSQL + Patroni HA + pgBackRest backup + monitoring 需 0.5-2 FTE；Aurora 把這層責任轉嫁 AWS、SRE 專注 application                                           |
+| **HA reliability**   | Patroni split-brain / DCS quorum 偶爾踩雷；Aurora 自動 multi-AZ failover、shared storage 不丟資料（兩者的 failover 時間見〈Operational redesign 對位〉表的 Failover time 列） |
+| **DR / backup**      | 自管 PITR + cross-region replication 複雜；Aurora 內建 PITR + global database + backup retention 簡化                                                                         |
 
-反向 driver（Aurora → self-managed）也存在 — 主要是 *cost 在 10TB+ 規模時 Aurora 反而更貴*、或 *需要 PostgreSQL extension Aurora 不支援*（pg_partman / pg_repack / TimescaleDB 等）。
+反向 driver（Aurora → self-managed）也存在 — 主要是 *cost 在 10TB+ 規模時 Aurora 反而更貴*、或 *需要 PostgreSQL extension Aurora 不支援*（TimescaleDB / Citus 等；截至 2026-09 的 AWS 文件，pg_partman 與 pg_repack 都在 Aurora PostgreSQL 的支援清單內）。
 
 ## 結構：protocol 相容 + operational phased 的混合
 
-跟前兩篇對照、Aurora migration 結構是 *protocol drop-in*（application 不改 SQL）+ *operational redesign*（HA / backup / monitoring 全換）：
+跟 Splunk → Elastic 與 Redis → DragonflyDB 兩篇對照、Aurora migration 結構是 *protocol drop-in*（application 不改 SQL）+ *operational redesign*（HA / backup / monitoring 全換）：
 
-| 維度                | Splunk → Elastic（高 schema 差） | Redis → DragonflyDB（drop-in） | PostgreSQL → Aurora（middle）                     |
-| ------------------- | -------------------------------- | ------------------------------ | ------------------------------------------------- |
-| Wire protocol       | 完全不同（SPL vs KQL）           | 完全相同（RESP）               | 完全相同（PostgreSQL wire）                       |
-| Schema / data model | 高差異（CIM vs ECS）             | 完全相同                       | 完全相同                                          |
-| Application code    | 必改                             | 不改                           | 不改                                              |
-| Operational model   | 不同                             | 相似                           | **大差**                                          |
-| HA / replication    | 不同                             | 相似                           | **完全重設計**                                    |
-| Backup model        | 不同                             | 簡化                           | **完全換 AWS-native**                             |
-| Migration 週期      | 4-9 個月                         | 1-4 週                         | 6-12 週                                           |
-| Phased 結構需要     | 6-phase 明顯                     | 不需要                         | **混合**（3 operational phase + drop-in cutover） |
+| 維度                | Splunk → Elastic（高 schema 差） | Redis → DragonflyDB（drop-in） | PostgreSQL → Aurora（middle）                        |
+| ------------------- | -------------------------------- | ------------------------------ | ---------------------------------------------------- |
+| Wire protocol       | 完全不同（SPL vs KQL）           | 完全相同（RESP）               | 完全相同（PostgreSQL wire）                          |
+| Schema / data model | 高差異（CIM vs ECS）             | 完全相同                       | 完全相同                                             |
+| Application code    | 必改                             | 不改                           | 不改                                                 |
+| Operational model   | 不同                             | 相似                           | **大差**                                             |
+| HA / replication    | 不同                             | 相似                           | **完全重設計**                                       |
+| Backup model        | 不同                             | 簡化                           | **完全換 AWS-native**                                |
+| Migration 週期      | 4-9 個月                         | 1-4 週                         | 6-12 週                                              |
+| Phased 結構需要     | 6-phase 明顯                     | 不需要                         | **混合**（operational 準備分階段 + drop-in cutover） |
 
-**Hypothesis 驗證**：migration playbook 結構由 *最大差異維度* 決定 — Splunk → Elastic 是 schema 差導向 phased、Aurora migration 是 operational 差導向局部 phased。
+Splunk → Elastic 的分階段計畫由 schema 差異驅動；Aurora migration 的 schema 與 application code 不變，只有 operational 那幾項需要分階段準備，資料切換本身是一次 drop-in cutover。
 
 ## Operational redesign 對位
 
@@ -55,16 +55,16 @@ tags: ["backend", "database", "postgresql", "aurora", "migration", "cloud-manage
 
 每一條 operational concept 都需要 migration plan、application code 不變但 *運維知識體系全換*。
 
-## Migration 流程：3 phase operational + drop-in cutover
+## Migration 流程：operational 準備分階段 + drop-in cutover
 
-### Phase 0：Pre-migration audit（1-2 週）
+### Pre-migration audit（1-2 週）
 
 1. **Extension 清單對位**：
 
 ```sql
 SELECT extname, extversion FROM pg_extension;
 -- 對照 Aurora supported extensions list
--- 不支援的（pg_repack / pg_partman 部分 / TimescaleDB / Citus）需替代方案
+-- 不支援的（TimescaleDB / Citus 等）需替代方案；pg_repack、pg_partman 在支援清單內，但版本隨 Aurora 版本而定
 ```
 
 2. **Custom config 清單**：
@@ -83,7 +83,7 @@ SELECT name, setting FROM pg_settings WHERE source != 'default';
 - PgBouncer 配置是否能直接搬到 RDS Proxy
 - Connection string + IAM 認證準備
 
-### Phase 1：Operational infrastructure 準備（2-3 週）
+### Operational infrastructure 準備（2-3 週）
 
 1. 建 Aurora cluster（Terraform / CloudFormation）
 2. 設 Parameter Group、對位 self-managed 配置
@@ -92,11 +92,11 @@ SELECT name, setting FROM pg_settings WHERE source != 'default';
 5. CloudWatch alert + Performance Insights baseline
 6. Backup retention + PITR window 設定
 
-### Phase 2：Data migration（取決於 dataset 大小）
+### Data migration（取決於 dataset 大小）
 
 兩條路：
 
-#### 路線 A：AWS DMS（推薦中等規模 < 5TB）
+#### AWS DMS（推薦中等規模 < 5TB）
 
 ```text
 self-managed Postgres ──(DMS)──→ Aurora
@@ -108,7 +108,7 @@ self-managed Postgres ──(DMS)──→ Aurora
 - 跑 full load 估算（100GB ~ 1-3 小時依 instance class）
 - CDC 持續直到 cutover
 
-#### 路線 B：Logical replication（推薦 5TB+ 或要精準控制）
+#### Logical replication（推薦 5TB+ 或要精準控制）
 
 ```sql
 -- Source：建 publication
@@ -123,7 +123,7 @@ CREATE SUBSCRIPTION migrate_sub
 - Initial COPY 跑完後 streaming
 - 詳見 [Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)
 
-### Phase 3：Cutover 跟 verification
+### Cutover 跟 verification
 
 ```text
 1. Application 端設 maintenance mode（block writes）
@@ -142,22 +142,22 @@ Cutover window 視 dataset 大小：
 
 ## Production 故障演練
 
-### Case 1：Extension 不支援、application 直接壞
+### Extension 不支援、application 直接壞
 
-**徵兆**：cutover 後 application 某些 query 報 `extension "pg_repack" not available`、batch job 壞。
+**徵兆**：cutover 後 application 某些 query 報 `extension "timescaledb" is not available`、batch job 壞。
 
-**根因**：Phase 0 audit 漏掉 application 用 pg_repack 做 maintenance；Aurora 不支援、self-managed 端的 cron job 改不過去。
+**根因**：pre-migration audit 漏掉 application 依賴 TimescaleDB 的 hypertable；Aurora 不支援這個 extension、self-managed 端的 schema 與 cron job 改不過去。
 
 **修法**：
 
 1. **Pre-migration audit 必做**：`SELECT extname FROM pg_extension` 對照 [Aurora extension whitelist](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Extensions.html)
 2. **替代方案**：
-   - pg_repack → Aurora 自家 vacuum + storage auto-resize
+   - pg_repack → Aurora PostgreSQL 支援清單內有 pg_repack，要對的是 Aurora 版本對應的 extension 版本與 client 端 pg_repack 程式版本
    - TimescaleDB → 改 declarative partitioning 或換 Timestream
    - Citus → 評估保留 self-managed 或重設計 schema
 3. **退役策略**：Extension 是 application 必要的、評估暫不遷或選 alternative cloud（如 AlloyDB / Citus on Azure）
 
-### Case 2：Replication slot 不直通
+### Replication slot 不直通
 
 **徵兆**：self-managed 端有 Debezium CDC 接 application 事件、cutover 後 CDC pipeline 直接壞、Kafka 端訊息斷流。
 
@@ -172,7 +172,7 @@ Cutover window 視 dataset 大小：
    - 重設計 CDC：application 寫 outbox 表、Aurora trigger 發 SNS → Lambda → Kafka
 3. **接受代價**：CDC pipeline 重建是 2-4 週工作、納入 migration scope
 
-### Case 3：Autovacuum 行為跟 self-managed 不同
+### Autovacuum 行為跟 self-managed 不同
 
 **徵兆**：cutover 後幾天、特定 hot table 的 bloat 數據異常、application 端 query latency p99 漲；CloudWatch Performance Insights 顯示 autovacuum 跑頻率比 self-managed 端高 3 倍。
 
@@ -184,7 +184,7 @@ Cutover window 視 dataset 大小：
 2. **per-table tuning**：hot table 的 `ALTER TABLE SET (autovacuum_*)` 可遷過去
 3. **接受差異**：Aurora storage 設計讓 vacuum 不一定要跟 self-managed 同 cadence、SRE 心智模型要調
 
-### Case 4：IAM 認證強制、application 端改 connection logic
+### IAM 認證強制、application 端改 connection logic
 
 **徵兆**：production 切到 Aurora 後、application 仍用 password authentication、SOC team 要求改 IAM 認證（compliance）；application 連線 logic 大改、token rotation 邏輯也要加。
 
@@ -196,7 +196,7 @@ Cutover window 視 dataset 大小：
 2. **SDK 整合**：用 AWS SDK + RDS Proxy 抽象 token rotation、application 不直接管 token
 3. **Hybrid 期間**：保留 password auth 直到 application 全切 IAM、再 disable password auth
 
-### Case 5：Cost model 預估錯、月底帳單炸
+### Cost model 預估錯、月底帳單炸
 
 **徵兆**：第一個月 Aurora 帳單比預估高 50-80%；IOPS / backup storage / I/O cost 都比預期多。
 
@@ -236,7 +236,7 @@ self-managed 端習慣 *fixed EC2 + EBS* cost、Aurora I/O-based 計費對 high-
 Patroni 在 Aurora migration 後 *退役* — Aurora 自家 failover 取代；但 SRE 心智模型要調：
 
 - Patroni 的 `pg_rewind` 概念不存在（shared storage）
-- Patroni 的 `synchronous_commit` 行為 Aurora 隱藏在 storage layer
+- Patroni 的 synchronous mode（搭配 PostgreSQL 的 `synchronous_commit`）在 Aurora 由 storage layer 取代、設定上看不到
 - Aurora 跨 region 用 *Global Database*、不是 Patroni cross-region setup
 
 ### 跟 [PITR](/backend/01-database/vendors/postgresql/pitr-wal-archiving/) 對位
@@ -273,5 +273,5 @@ PgBouncer 多數情境可換 RDS Proxy：
 - Target vendor：[Aurora](/backend/01-database/vendors/aurora/)
 - 平行 migration playbook：[Splunk → Elastic Security](/backend/07-security-data-protection/vendors/splunk/migrate-to-elastic-security/) / [Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/)
 - Aurora family 內進一步遷移：[→ Aurora DSQL](/backend/01-database/vendors/postgresql/migrate-to-aurora-dsql/)（從 Aurora PG 升 DSQL active-active distributed、Type E paradigm shift）
-- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [PITR + WAL Archiving](/backend/01-database/vendors/postgresql/pitr-wal-archiving/) / [Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)
+- PostgreSQL 的其他主題：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [PITR + WAL Archiving](/backend/01-database/vendors/postgresql/pitr-wal-archiving/) / [Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)
 - Methodology：[Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/)

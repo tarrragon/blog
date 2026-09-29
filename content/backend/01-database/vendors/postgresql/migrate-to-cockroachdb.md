@@ -1,16 +1,14 @@
 ---
-title: "PostgreSQL → CockroachDB：三維皆 High 的多重歸類 migration"
+title: "PostgreSQL → CockroachDB Migration：分散式 transaction、SQL 相容缺口與 operational 重設計"
 date: 2026-05-19
-description: "PostgreSQL → CockroachDB 是 Schema / Operational / Paradigm 三維皆 High 的 multi-axis migration、實證 [#127](/report/content-structure-by-max-diff-dimension/) 的「多重歸類跟 tie-breaking」規則；主結構走 Type E paradigm shift、Schema 差 + Operational redesign 抽出獨立段；涵蓋 transaction model 重設計、SQL dialect gap、5 個 production 踩雷"
+description: "PostgreSQL → CockroachDB 要同時處理 paradigm（分散式 Serializable transaction 與 retry）、SQL feature 相容缺口與 operational 模型的替換；本文涵蓋 transaction model 重設計、SQL dialect gap、operational 對位、分階段並保留混合架構的遷移流程，以及 production 踩雷"
 weight: 43
 tags: ["backend", "database", "postgresql", "cockroachdb", "migration", "multi-axis", "paradigm-shift"]
 ---
 
-> 本文是跨 vendor [migration](/backend/knowledge-cards/migration/) playbook、cross-link 到 [PostgreSQL](/backend/01-database/vendors/postgresql/) 跟 [CockroachDB](/backend/01-database/vendors/cockroachdb/)。本文是 [#127 多重歸類跟 tie-breaking](/report/content-structure-by-max-diff-dimension/) 規則的實證 — 三維皆 High 配對的處理方式不是「選 type A 或 type C 或 type E」、是 *主導維度走 Type E、其他高維度獨立加段*。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關。
+> 本文是跨 vendor [migration](/backend/knowledge-cards/migration/) playbook、cross-link 到 [PostgreSQL](/backend/01-database/vendors/postgresql/) 跟 [CockroachDB](/backend/01-database/vendors/cockroachdb/)，整理 paradigm、SQL feature 與 operational model 三個面向同時改變時的遷移做法。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關。
 
-## 三維皆 High：決策矩陣
-
-跑 [diff dimension audit](/report/content-structure-by-max-diff-dimension/) 對 PostgreSQL → CockroachDB：
+## PostgreSQL 與 CockroachDB 差在哪些面向
 
 | 維度                   | 評估                                                                                                                     | 等級     |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------- |
@@ -20,56 +18,26 @@ tags: ["backend", "database", "postgresql", "cockroachdb", "migration", "multi-a
 | Number of components   | 同 1 個 DB cluster                                                                                                       | Low      |
 | Application change     | Transaction retry pattern 必須改、ORM 可能需 patch                                                                       | Medium   |
 
-3 維 High + 1 維 Medium。按 [methodology audit Step 5](/posts/migration-playbook-methodology/) 的多重歸類處理規則：
+schema、operational 與 paradigm 三個面向的差異都大。其中 paradigm 從單機 transaction 換成分散式 Serializable Snapshot Isolation 是根本的轉變；operational 的差異多半是它的下游：Raft consensus、自動 rebalance、沒有 single primary，都來自分散式架構。
 
-```text
-主導維度判讀 (優先序): Schema > Paradigm > Operational > Components
-
-實際應用: Schema High + Paradigm High + Operational High
-- Schema 是 High、但 CRDB 提供 PostgreSQL wire protocol 兼容
-- Paradigm 是 High、是 *單機 → 分散式* 的根本轉變、讀者最關心
-- Operational 是 High、但很大程度是 Paradigm 的 downstream
-
-→ 主結構選 Paradigm（Type E）、Schema + Operational 抽獨立段補充
-```
-
-不強迫單一 type 標籤 — 本文是 *Type E 為主 + Type A / C 高維度增補* 的 multi-axis 形態。
-
-## 結構 differentiator：Type E 主結構 + 多軸增補段
-
-跟前批 5 個 migration playbook 對照：
-
-| 結構元素                  | Type A Splunk → Elastic | Type B Redis → DragonflyDB | Type C PostgreSQL → Aurora | Type D Datadog → Grafana | Type E Kafka ↔ NATS | **本文（三維 High）**    |
-| ------------------------- | ----------------------- | -------------------------- | -------------------------- | ------------------------ | ------------------- | ------------------------ |
-| Phased translation        | yes                     | -                          | -                          | -                        | -                   | partial                  |
-| Compatibility audit       | -                       | yes                        | -                          | -                        | -                   | yes                      |
-| Operational redesign 對位 | -                       | -                          | yes                        | -                        | -                   | **yes（獨立段）**        |
-| Schema gap 對位           | -                       | -                          | -                          | -                        | -                   | **yes（獨立段）**        |
-| Parallel streams          | -                       | -                          | -                          | yes                      | -                   | -                        |
-| Paradigm contrast         | -                       | -                          | -                          | -                        | yes                 | yes                      |
-| Application 重設計        | -                       | -                          | -                          | -                        | yes                 | yes                      |
-| 混合架構 long-term        | -                       | -                          | -                          | -                        | yes                 | partial（部分 workload） |
-
-本文是「Type E 為主 + Type A schema gap 段 + Type C operational redesign 段」混合形態、9-10 章節、260-300 行。
-
-## 維度 1：Paradigm shift（主導）
+## Paradigm shift（主導）
 
 CRDB 是 *distributed SQL DB*、不是「PostgreSQL 多節點版」。核心差異：
 
-| 概念                  | PostgreSQL                       | CockroachDB                                                |
-| --------------------- | -------------------------------- | ---------------------------------------------------------- |
-| Transaction isolation | MVCC、Read Committed default     | Serializable Snapshot Isolation (SSI)、強一致              |
-| Transaction conflict  | First writer wins                | Retry-on-conflict、application 必須處理 `40001` retry code |
-| Replication           | Streaming replication + standby  | Raft consensus、每筆寫 quorum + 自動 rebalance             |
-| Partition             | Declarative partitioning（手動） | Automatic range-based + locality-aware                     |
-| Latency p99           | 1-10ms（單 region）              | 5-50ms（cross-AZ Raft quorum）                             |
-| Throughput limit      | 單 primary 上限 ~10-50K TPS      | Linear scale by adding node、~5K TPS / node                |
+| 概念                  | PostgreSQL                                                                                                                  | CockroachDB                                                |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Transaction isolation | MVCC、Read Committed default                                                                                                | Serializable Snapshot Isolation (SSI)、強一致              |
+| Transaction conflict  | Read Committed：後到的 writer 等 row lock，前一筆 commit 後在新版本上套用；Repeatable Read 以上：後到的 writer 收到 `40001` | Retry-on-conflict、application 必須處理 `40001` retry code |
+| Replication           | Streaming replication + standby                                                                                             | Raft consensus、每筆寫 quorum + 自動 rebalance             |
+| Partition             | Declarative partitioning（手動）                                                                                            | Automatic range-based + locality-aware                     |
+| Latency p99           | 1-10ms（單 region）                                                                                                         | 5-50ms（cross-AZ Raft quorum）                             |
+| Throughput limit      | 單 primary 上限 ~10-50K TPS                                                                                                 | Linear scale by adding node、~5K TPS / node                |
 
-關鍵 paradigm 改變：*transaction 是 retry-able 操作、不是 atomic guaranteed*。所有 transaction code 需要包 retry loop（CRDB 提供 `cockroach_restart` savepoint）。
+關鍵 paradigm 改變：*transaction 可能在 commit 前因衝突被 abort、要由 application 重試*，atomicity 不變。所有 transaction code 需要包 retry loop（CRDB 提供 `cockroach_restart` savepoint）。
 
-## 維度 2：Schema gap（PostgreSQL features CRDB 不支援）
+## Schema gap（PostgreSQL features CRDB 不支援）
 
-CRDB 號稱 PostgreSQL-compatible、但 *covergence rate 80-90%*；常見 gap：
+CRDB 號稱 PostgreSQL-compatible、但 PostgreSQL 的 SQL feature 並未全數支援；常見 gap：
 
 | PostgreSQL feature                             | CRDB 狀態                              | 影響                                                    |
 | ---------------------------------------------- | -------------------------------------- | ------------------------------------------------------- |
@@ -85,7 +53,7 @@ CRDB 號稱 PostgreSQL-compatible、但 *covergence rate 80-90%*；常見 gap：
 
 Migration 必須 *先 audit 完整 SQL feature 使用*、列出 gap、評估解法或退役。
 
-## 維度 3：Operational redesign
+## Operational redesign
 
 CRDB operational model 完全不同：
 
@@ -136,7 +104,7 @@ Phase 4: 長期混合架構
 
 ## Production 故障演練
 
-### Case 1：Transaction retry 沒處理、application 大量 `40001` error
+### Transaction retry 沒處理、application 大量 `40001` error
 
 **徵兆**：cutover 後 application 5-10% transaction 報 `restart transaction: TransactionRetryWithProtoRefreshError`、業務 fail。
 
@@ -160,7 +128,7 @@ for retries := 0; retries < 10; retries++ {
 
 framework-level：用 CRDB-provided client lib（go-cockroachdb / crdb-jdbc）有 retry helper。
 
-### Case 2：Extension 缺位、application feature 整段掉
+### Extension 缺位、application feature 整段掉
 
 **徵兆**：cutover 後 application 某個地理計算功能直接報錯、PostGIS 函數不存在；migrate 計畫漏看。
 
@@ -172,19 +140,19 @@ framework-level：用 CRDB-provided client lib（go-cockroachdb / crdb-jdbc）�
 2. **PostGIS 替代**：CRDB native ST_* functions、部分 syntax 對齊但 spatial index 不同
 3. **退役不能換的 feature**：評估保留 PostgreSQL（混合架構）
 
-### Case 3：Sequential PK 撞 Raft quorum 瓶頸
+### Sequential PK 撞 Raft quorum 瓶頸
 
 **徵兆**：cutover 後寫入吞吐量 / latency 不如預期、CRDB cluster CPU < 30% 但 write latency p99 high。
 
-**根因**：application 用 `AUTO_INCREMENT` / `SERIAL` 連續 PK；CRDB 把連續 key 放 *同一 range* / 同一 Raft group、寫入串行化、無法平行 scale。
+**根因**：application 用 `SERIAL` / `IDENTITY` 產生連續 PK；CRDB 把連續 key 放 *同一 range* / 同一 Raft group、寫入串行化、無法平行 scale。
 
 **修法**：
 
-1. **改 UUID v7 / `unique_rowid()`**：時序排序但散佈跨 range、自動 partition by hash
+1. **改 UUID v4（`gen_random_uuid()`）或 hash-sharded index**：CockroachDB 的 `SERIAL` 預設（`serial_normalization = rowid`）就是 `DEFAULT unique_rowid()`，值由時間戳與 node ID 組成、隨時間遞增，UUID v7 同樣隨時間遞增，`unique_rowid()` 與 UUID v7 的寫入都集中在 key 範圍尾端的 range；UUID v4 把 key 散到各 range，必須保留時序 key 時改用 hash-sharded index 把連續寫入分到多個 range
 2. **`PRIMARY KEY (region, id)`**：multi-region 場景 multi-tenancy 自然拆分
 3. **不適合的 workload 留 PostgreSQL**：不是所有 schema 都適合 distributed
 
-### Case 4：Long transaction 對 Raft 衝擊
+### Long transaction 對 Raft 衝擊
 
 **徵兆**：跨 1 分鐘+ 的 transaction（batch processing / 大 ETL）大量 retry、最後失敗；同期間其他短 transaction 也 retry rate 上升。
 
@@ -196,7 +164,7 @@ framework-level：用 CRDB-provided client lib（go-cockroachdb / crdb-jdbc）�
 2. **Heavy ETL 不跑 CRDB**：用 CRDB CDC export 到 OLAP（Snowflake / BigQuery）跑 batch
 3. **Read-only long transaction 用 follower read**：`AS OF SYSTEM TIME` 不 hold intent、適合 reporting
 
-### Case 5：Backup / restore 行為跟 PostgreSQL 不同、SRE runbook 失效
+### Backup / restore 行為跟 PostgreSQL 不同、SRE runbook 失效
 
 **徵兆**：DBA 嘗試 `pg_restore` 失敗、CRDB 端 backup format 完全不同；incident response 卡關 1-2 小時。
 
@@ -245,5 +213,5 @@ CRDB 強制 application 改 transaction code、retry loop 必加。團隊心智�
 
 - Source / target vendor：[PostgreSQL](/backend/01-database/vendors/postgresql/) / [CockroachDB](/backend/01-database/vendors/cockroachdb/)
 - 對位 migration：[PostgreSQL → Aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/)（另一條 PostgreSQL 出路）
-- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)
-- Methodology：[Migration playbook methodology](/posts/migration-playbook-methodology/) / [#127 Process content 結構由最大差異維度決定](/report/content-structure-by-max-diff-dimension/)（本文驗證 *多重歸類 multi-axis 處理*）
+- PostgreSQL 的其他主題：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)
+- Methodology：[Migration playbook methodology](/posts/migration-playbook-methodology/) / [Process content 結構由最大差異維度決定](/report/content-structure-by-max-diff-dimension/)

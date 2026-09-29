@@ -6,7 +6,7 @@ weight: 72
 tags: ["backend", "database", "cosmosdb", "stored-procedure", "trigger", "deep-article"]
 ---
 
-本文是 [Cosmos DB](/backend/01-database/vendors/cosmosdb/) overview 的 deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Cosmos DB 的 stored procedure、trigger 與 user-defined function 是用 JavaScript 寫、執行在 Cosmos DB engine 內的 server-side 邏輯。它最有價值的能力是把同一 logical partition 內的多個操作包成一個原子交易 — 這是 application 層無法用 SDK 單獨做到的。本文先講這層 server-side 邏輯的精確語義與限制、再進操作流程、最後重點放在「何時用、何時不用」的判斷標準 — 因為多數應用邏輯放在 application 層更好維護、stored procedure 應該是少數有明確理由的場景。
+這篇整理 Cosmos DB 的 stored procedure、pre/post trigger 與 UDF：它們的交易邊界與 bounded execution、怎麼寫與呼叫、何時值得用、何時該讓 application 層處理。Cosmos DB 的 stored procedure、trigger 與 user-defined function 是用 JavaScript 寫、執行在 Cosmos DB engine 內的 server-side 邏輯。它最有價值的能力是把同一 logical partition 內的多個操作包成一個原子交易，而且操作之間可以夾判斷邏輯（讀到庫存再決定扣不扣）。同一 partition 內「一組事先決定好的操作一起成功或一起失敗」，SDK 的 transactional batch 也做得到；stored procedure 多出來的是交易中途依讀到的值做判斷。多數應用邏輯放在 application 層更好維護、stored procedure 應該是少數有明確理由的場景。
 
 本文沒有專屬 production case anchor：stored procedure 的設計取捨在公開 case 庫覆蓋稀薄、機制以 Azure vendor 規格與通用工程展開、情境用 partition 內原子交易這個具體需求驅動。
 
@@ -23,11 +23,11 @@ tags: ["backend", "database", "cosmosdb", "stored-procedure", "trigger", "deep-a
 - 「想在寫入時自動加 timestamp / 算衍生欄位、用 pre-trigger 行不行」
 - 「stored procedure 能不能跨 partition 做交易」（不行 — 這是常見誤解）
 
-真實壓力：Cosmos DB 的 transaction 邊界是 *single logical partition*、跨 partition 沒有原生 ACID 交易。partition 內需要原子性時、SDK 多次 round-trip 無法保證、stored procedure 是 vendor 提供的 partition-scoped transaction 機制。但這個能力有強約束、且容易被濫用成「把業務邏輯都搬進 DB」。
+真實壓力：Cosmos DB 的 transaction 邊界是 *single logical partition*、跨 partition 沒有原生 ACID 交易。partition 內需要原子性時、SDK 各自獨立的多次 round-trip 無法保證；vendor 提供的 partition-scoped transaction 機制有兩種：SDK 的 transactional batch（一組事先決定好的 point operation，上限 100 個操作）與 stored procedure（交易中途可以依讀到的值做判斷）。但這個能力有強約束、且容易被濫用成「把業務邏輯都搬進 DB」。
 
 ## 核心機制：partition-scoped JavaScript execution
 
-Cosmos DB 的 server-side 邏輯有三類、責任不同。
+Cosmos DB 的 server-side 邏輯分 stored procedure、trigger、UDF，責任不同。
 
 Stored procedure 是執行在單一 logical partition 內的 JavaScript 函式、它內部對該 partition 的所有 document 操作包在一個 *隱式交易* 裡 — 全部成功 commit、任一失敗整個 rollback。呼叫時必須指定 partition key、procedure 的所有操作都限定在那個 partition。
 
@@ -122,12 +122,12 @@ stored procedure 本身的交易是 all-or-nothing、procedure 內拋例外即�
 
 ## 何時用、何時不用
 
-這是本文的主判讀段：多數應用邏輯放在 application 層更好、stored procedure 只有少數場景值得。
+多數應用邏輯放在 application 層更好、stored procedure 只有少數場景值得。
 
 值得用 stored procedure 的條件：
 
-- *partition 內的多步原子交易* — read-modify-write、需要 all-or-nothing、且相關資料確實在同一 partition。這是 stored procedure 不可替代的能力。
-- *省 round-trip 的批次操作* — 一次寫入幾百筆同 partition document、用 stored procedure 比幾百次 SDK 呼叫省 latency 與部分 RU overhead。
+- *partition 內、中途要依讀到的值做判斷的多步原子交易* — read-modify-write、需要 all-or-nothing、且相關資料確實在同一 partition。操作是一組事先決定好的寫入、不需要中途判斷時，SDK 的 transactional batch 就做得到，不必用 stored procedure。
+- *省 round-trip 的批次操作* — 一次寫入幾百筆同 partition document、用 stored procedure 比幾百次 SDK 呼叫省 latency 與部分 RU overhead；100 筆以內的同 partition 寫入，transactional batch 同樣是一次 round-trip。
 
 讓 application 層處理的條件（多數情況）：
 
@@ -166,14 +166,14 @@ team 把多個不同 partition key 的寫入放進一個 stored procedure、期�
 
 ## 邊界與整合
 
-- Sibling deep articles：[change-feed-cdc](../change-feed-cdc/)（寫入後的非同步工作走 Change Feed、不要塞 stored procedure）、[partition-key-design](../partition-key-design/)（transaction 邊界 = partition 邊界、跨 partition 原子需求要重設計 partition key）、[ru-cost-model-sizing](../ru-cost-model-sizing/)（複合交易的 RU 估算）、[consistency-levels-engineering](../consistency-levels-engineering/)（partition 內原子性 vs 跨 session consistency 是兩個不同議題）
+- 同 vendor 的其他文章：[change-feed-cdc](../change-feed-cdc/)（寫入後的非同步工作走 Change Feed、不要塞 stored procedure）、[partition-key-design](../partition-key-design/)（transaction 邊界 = partition 邊界、跨 partition 原子需求要重設計 partition key）、[ru-cost-model-sizing](../ru-cost-model-sizing/)（複合交易的 RU 估算）、[consistency-levels-engineering](../consistency-levels-engineering/)（partition 內原子性 vs 跨 session consistency 是兩個不同議題）
 - 跟 Spanner 對照：需要 *跨 partition / 全域* ACID 交易時、Cosmos DB stored procedure 做不到 — 轉 [Spanner vendor](/backend/01-database/vendors/spanner/) 或 Aurora DSQL
 - 跟 DynamoDB 對照：DynamoDB 的 TransactWriteItems 提供跨 item（含跨 partition、有上限）的交易、語義跟 Cosmos DB 的 single-partition stored procedure 不同 — 從 DynamoDB transaction 過來的 team 要注意 Cosmos DB 沒有等價的開箱跨 partition 交易、見 [DynamoDB vendor](/backend/01-database/vendors/dynamodb/)
-- 回 overview：[Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) 的「跨 partition transaction 要改 workflow / stored procedure 邊界」
+- 回 overview：[Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) 列出本 vendor 的其他深度文章
 
 ## 相關連結
 
-- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — 本文是該頁尾 stored procedure / trigger backlog 的深度展開
+- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
 - [change-feed-cdc](../change-feed-cdc/) — 寫入後非同步工作的對照路徑
 - [partition-key-design](../partition-key-design/) — transaction 邊界 = partition 邊界
 - [ru-cost-model-sizing](../ru-cost-model-sizing/) — 複合交易 RU 估算

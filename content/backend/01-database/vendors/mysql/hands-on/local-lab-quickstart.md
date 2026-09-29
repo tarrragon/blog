@@ -5,9 +5,9 @@ description: "MySQL local lab 的 Docker Compose、schema seed、sample workload
 tags: ["backend", "database", "mysql", "hands-on"]
 ---
 
-MySQL local lab quickstart 的核心責任是建立後續 ProxySQL、OSC、replication、backup 與 Vitess sandbox 共用的本地環境。這個 lab 提供可重建 MySQL instance、baseline schema、seed data 與 basic evidence。
+MySQL local lab quickstart 的核心責任是建立後續 ProxySQL、OSC、replication 與 backup 演練共用的本地環境。這個 lab 提供可重建 MySQL instance、baseline schema、seed data 與 basic evidence。
 
-本文的驗收標準是：你能啟動 MySQL、套用 schema、跑 sample workload、取得 processlist / InnoDB status / table count，並能 teardown 重建。
+本篇的範圍是用 Docker Compose 起一個 MySQL 8.4 instance、套用 baseline schema 與 seed data、取得 processlist、table status 與 InnoDB status 當 baseline evidence，最後 teardown 重建。
 
 ## Docker Compose
 
@@ -87,9 +87,11 @@ SQL
 Basic evidence：
 
 ```bash
+# app_user 沒有 PROCESS 權限，processlist 只列得出 app_user 自己的連線
 mysql -h 127.0.0.1 -P 33069 -u app_user appdb -e "SHOW FULL PROCESSLIST;"
 mysql -h 127.0.0.1 -P 33069 -u app_user appdb -e "SHOW TABLE STATUS;"
-mysql -h 127.0.0.1 -P 33069 -u app_user appdb -e "SHOW ENGINE INNODB STATUS\\G"
+# SHOW ENGINE INNODB STATUS 需要 PROCESS 權限，用 root 連線（-p 蓋過上面 export 的 MYSQL_PWD）
+mysql -h 127.0.0.1 -P 33069 -u root -proot_pw -e "SHOW ENGINE INNODB STATUS\\G"
 ```
 
 ## Teardown

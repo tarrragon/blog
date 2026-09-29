@@ -6,13 +6,13 @@ weight: 30
 tags: ["backend", "database", "postgresql", "pgvector", "vector-search", "embedding", "extension", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *pgvector extension* — 用 PG 解 vector search workload 的路徑、是 [extension-ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/) 內最受關注的 extension。
+本文的範圍是 pgvector extension：ANN index 在 vector search 裡的角色，IVFFlat 與 HNSW index，vector 加 filter 的 hybrid search，quantization 與 dimension reduction，production 踩雷，以及跟專業 vector DB 的對比。PostgreSQL extension 生態的全景在 [extension-ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/)。
 
 ---
 
 ## pgvector 是 PG 變 Vector DB 的最短路徑
 
-pgvector 加兩件事：
+pgvector 加兩件事：`vector` 型別，以及比較兩個 vector 的 distance operator：
 
 ```sql
 CREATE EXTENSION vector;
@@ -150,7 +150,7 @@ LIMIT 10;
 1. **Pre-filter**（planner 選）：先 filter 出符合條件的 row、再對 subset 跑 vector ordering → 不用 ANN index、可能慢
 2. **Post-filter**：用 ANN index 找 top-N、再 filter、可能 N 不夠補
 
-pgvector 0.8+（2024-10 release）加入 *iterative index scan*：HNSW / IVFFlat 一邊掃 graph 一邊 filter、效能比 pre-filter 好 5-10x。0.7+（2024-07）加 halfvec / binary quantization / parallel HNSW build。
+pgvector 0.8+（2024-10 release）加入 *iterative index scan*：HNSW / IVFFlat 一邊掃 graph 一邊 filter、效能比 pre-filter 好 5-10x。iterative scan 預設關閉，要先 `SET hnsw.iterative_scan = strict_order`（或 `relaxed_order`；IVFFlat 用 `ivfflat.iterative_scan`）才會生效。0.7.0（2024-04）加 halfvec、`bit` 型別的 index 與 `binary_quantize`；parallel HNSW build 在更早的 0.6.0（2024-01）加入。
 
 實務：filter selectivity 高（< 10%）時、考慮對 filter column 加 index 走 pre-filter；selectivity 低（> 50%）走 iterative scan。
 
@@ -171,8 +171,9 @@ CREATE TABLE documents (
 ### Binary quantization
 
 ```sql
--- 把每維壓成 1 bit
-CREATE INDEX ON documents USING hnsw (embedding bit_hamming_ops);
+-- 把每維壓成 1 bit：binary_quantize 把 vector 轉成 bit，bit(1536) 對應 embedding 的維度
+-- bit_hamming_ops 只接受 bit 型別，所以 index 建在這個運算式上、不是直接建在 embedding 上
+CREATE INDEX ON documents USING hnsw ((binary_quantize(embedding)::bit(1536)) bit_hamming_ops);
 ```
 
 Recall 下降明顯（85-90%）、但 storage 1/32、適合「先粗篩再 rerank」hybrid pipeline。
@@ -181,13 +182,13 @@ Recall 下降明顯（85-90%）、但 storage 1/32、適合「先粗篩再 reran
 
 訓練 PCA / Matryoshka model 把 1536 dim 降到 256-512 dim、recall 通常損失 < 3%、storage 1/3-1/6。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### Case 1：Dimension 超 2000 限制
+### Dimension 超過 index 的 2000 維上限
 
-**情境**：要用 OpenAI text-embedding-3-large（3072 dim）、`CREATE TABLE ... embedding vector(3072)` 報錯。
+**情境**：要用 OpenAI text-embedding-3-large（3072 dim），`CREATE TABLE ... embedding vector(3072)` 建得起來，接著建 HNSW index 報錯：`column cannot have more than 2000 dimensions for hnsw index`。
 
-pgvector `vector` type 上限 2000 dim（IVFFlat / HNSW index 限制）。
+2000 dim 是 IVFFlat / HNSW index 對 `vector` 型別的上限，`vector` 型別本身存得下更多維。
 
 修法：
 
@@ -195,21 +196,19 @@ pgvector `vector` type 上限 2000 dim（IVFFlat / HNSW index 限制）。
 - 用 Matryoshka 截斷到 2000 dim 以下
 - 換 embedding model（OpenAI text-embedding-3-small 1536 dim / 可截斷到 256-1024）
 
-### Case 2：HNSW build 太慢
+### HNSW build 太慢
 
 **情境**：1M row build HNSW、跑 8 小時、blocking production。
 
 修法：
 
 ```sql
--- 用 CONCURRENTLY 不 block
-CREATE INDEX CONCURRENTLY ON documents USING hnsw (...);
-
--- 開 maintenance_work_mem
+-- 先調高這個 session 的 maintenance_work_mem 與 parallel worker，後面的 CREATE INDEX 才會用到
 SET maintenance_work_mem = '8GB';
-
--- 開 parallel
 SET max_parallel_maintenance_workers = 7;
+
+-- 用 CONCURRENTLY 不 block 寫入
+CREATE INDEX CONCURRENTLY ON documents USING hnsw (embedding vector_cosine_ops);
 ```
 
 仍慢的話、考慮：
@@ -218,7 +217,7 @@ SET max_parallel_maintenance_workers = 7;
 - 用 IVFFlat 短期上線、之後再切 HNSW
 - 改用 cloud managed pgvector（提供更大 instance）
 
-### Case 3：IVFFlat 不重建 recall 漂移
+### IVFFlat 不重建 recall 漂移
 
 **情境**：IVFFlat build 時資料 100K、現在 500K、新資料 recall 從 92% 降到 75%、user 抱怨「找不到相關文件」。
 
@@ -228,18 +227,18 @@ SET max_parallel_maintenance_workers = 7;
 - 設定 reindex policy：每 100K 新 row 或每月 reindex
 - 換 HNSW：insert 漸進維護、不需 reindex（trade-off：build 更慢）
 
-### Case 4：Hybrid search filter selectivity 沒設計
+### Hybrid search filter selectivity 沒設計
 
-**情境**：query `WHERE user_id = ? ORDER BY embedding <=> ?`、user_id 高選擇性（1/1M）、planner 選 vector index scan、掃到 top-K 全不符 user_id、補抓無止盡。
+**情境**：query `WHERE user_id = ? ORDER BY embedding <=> ?`、user_id 高選擇性（1/1M）、planner 選 vector index scan：HNSW 只回 `hnsw.ef_search`（預設 40）個候選，filter 掉 user_id 不符的之後，剩下的列少於 LIMIT，常常一列都不剩。
 
 修法：
 
 - `EXPLAIN` 看 planner 選 pre-filter 還是 vector-first
 - 對 `user_id` 加 B-tree index、強 planner pre-filter（hint 不容易、用 statistics）
-- pgvector 0.8+ 用 iterative scan、自動處理
+- pgvector 0.8+ 設 `hnsw.iterative_scan`（預設關閉），讓 index scan 在候選不足時繼續往下掃
 - 設計 schema：高選擇性 filter（user_id）建議走 pre-filter；低選擇性（category）走 iterative
 
-### Case 5：Memory budget 沒抓
+### Memory budget 沒抓
 
 **情境**：1M vector × 1536 dim × HNSW（m=16）= ~12GB index、shared_buffers 8GB、index 不在 cache、每 query disk IO、latency 100ms+。
 
@@ -278,7 +277,7 @@ SET max_parallel_maintenance_workers = 7;
 - 需要 multi-tenant SaaS
 - Throughput 要求極高（> 10K QPS）
 - 不想自管 HNSW build / memory budget / recall drift（managed Pinecone 把這層 ops 轉嫁、cost 換 ops 時間）
-- 需要 dim > 2000（pgvector vector type 限制、halfvec 可到 4000、再大需 dimension reduction）
+- 需要 dim > 2000（pgvector 對 vector 建 index 的上限、halfvec 的 index 可到 4000、再大需 dimension reduction）
 
 ## 相關連結
 
@@ -290,4 +289,4 @@ SET max_parallel_maintenance_workers = 7;
 ## 下一步
 
 - 看 [extension-ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/) 探索其他 PG 擴展可能
-- 回 [PostgreSQL overview](/backend/01-database/vendors/postgresql/) 看全圖
+- 回 [PostgreSQL 服務總覽](/backend/01-database/vendors/postgresql/)

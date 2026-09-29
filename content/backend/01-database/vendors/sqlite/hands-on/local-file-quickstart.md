@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "hands-on"]
 
 SQLite local file quickstart 的核心責任是建立後續 backup、WAL、migration 與 fixture lab 共用的 database file。這個 lab 把 SQLite 從抽象服務選型轉成可觀察的檔案、schema、PRAGMA、transaction 與 sidecar artifact。
 
-本文的驗收標準是：你能建立一個可重建的 `app.db`，知道它的 schema version、journal mode、foreign key 設定、seed data 與 cleanup 路徑。
+本篇的範圍是在 `/tmp/sqlite-lab` 建出一個可重建的 `app.db`：schema、seed data、PRAGMA 設定的查驗、一筆 transaction、`.db` 與 sidecar 檔案的觀察，以及刪除重來的 cleanup 路徑。
 
 ## Lab Directory
 
@@ -102,6 +102,8 @@ sqlite3 app.db <<'SQL'
 .mode column
 PRAGMA journal_mode;
 PRAGMA foreign_keys;
+PRAGMA foreign_keys = ON;
+PRAGMA foreign_keys;
 PRAGMA user_version;
 PRAGMA integrity_check;
 SQL
@@ -109,12 +111,12 @@ SQL
 
 驗收重點如下：
 
-| 欄位           | 期望結果 | 意義                      |
-| -------------- | -------- | ------------------------- |
-| `journal_mode` | `wal`    | 後續可觀察 `-wal` sidecar |
-| `foreign_keys` | `1`      | constraint 在連線上已啟用 |
-| `user_version` | `1`      | migration 起點清楚        |
-| integrity      | `ok`     | database file 基本健康    |
+| 欄位           | 期望結果                                 | 意義                                                                     |
+| -------------- | ---------------------------------------- | ------------------------------------------------------------------------ |
+| `journal_mode` | `wal`                                    | 寫在 database file 裡，新 connection 仍是 WAL，後續可觀察 `-wal` sidecar |
+| `foreign_keys` | 第一次查 `0`，執行 `= ON` 之後再查是 `1` | FK 是 connection 層設定，每個新 connection 都要自己開                    |
+| `user_version` | `1`                                      | migration 起點清楚                                                       |
+| integrity      | `ok`                                     | database file 基本健康                                                   |
 
 ## Transaction Sample
 
@@ -137,10 +139,14 @@ SQL
 File artifact check 的核心責任是讓讀者看到 SQLite 由 `.db` 與可能存在的 sidecar 共同構成。WAL mode 可能建立 `-wal` 與 `-shm` sidecar，backup / copy / restore runbook 要理解這些檔案。
 
 ```bash
+# 在背景開一個 connection 並讓它停留 3 秒，趁它還開著時列出檔案
+{ echo "SELECT count(*) FROM accounts;"; sleep 3; } | sqlite3 app.db &
+sleep 1
 ls -lh app.db app.db-wal app.db-shm
+wait
 ```
 
-若 sidecar 暫時未出現，可以再寫入一筆資料或保持連線開啟。Sidecar 是否存在取決於 WAL 狀態、checkpoint 與 connection lifecycle。
+Sidecar 只在有 connection 開著的期間存在：最後一個 connection 關閉時，SQLite 會把 `-wal` 的內容 checkpoint 回 `.db`，再刪掉 `-wal` 與 `-shm`。上面每一步 `sqlite3 app.db <<'SQL'` 執行完就關閉 connection，所以單獨跑 `ls` 通常只看得到 `app.db`；再寫入一筆資料也一樣，寫完 connection 就關了。macOS 內建的 `sqlite3` 例外，它在 connection 關閉後仍保留這兩個檔案，所以在 macOS 上單獨跑 `ls` 也看得到。
 
 ## Cleanup
 

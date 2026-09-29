@@ -6,7 +6,7 @@ weight: 19
 tags: ["backend", "database", "postgresql", "sql-features", "baseline", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *SQL features baseline* — PG 早期就有的、MySQL 8.0 才補的、PG 仍領先的、給從 MySQL 評估 PG 的讀者 reference。
+本文的範圍是 PostgreSQL 的 SQL feature：PG 早期就有而 MySQL 沒有或只有弱對應的特性、MySQL 8.0 才補齊的特性、PG 仍領先的特性，以及從 MySQL 評估 PG 時的讀法。
 
 ---
 
@@ -16,11 +16,11 @@ PG 在 SQL feature 上長期領先 MySQL：
 
 - 2009 (PG 8.4)：CTE / window function / recursive query
 - 2013 (PG 9.3)：lateral derived table / materialized view
-- 2014 (PG 9.4)：JSONB / partial index 早就有 / GIN index
+- 2014 (PG 9.4)：JSONB（partial index 與 GIN index 在更早的版本就已經有）
 - 2015 (PG 9.5)：UPSERT (`ON CONFLICT`)
 - 2017 (PG 10)：declarative partitioning / logical replication / multi-column statistics
 
-MySQL 8.0（2018）才補 CTE / window / lateral / JSON_TABLE / hash join — *PG 早 9 年起步*。
+MySQL 8.0 系列才補 CTE / window / lateral / JSON_TABLE / hash join（8.0 GA 在 2018，lateral 到 8.0.14、hash join 到 8.0.18 才加入）— *PG 早 9 年起步*。
 
 對 *從 MySQL 評估 PG* 的讀者來說、PG 的 SQL 工程深度不只是「該有的都有」、更多是「PG 結構性領先的特性 + MySQL 8.0 補了哪些 + PG 仍領先哪些」。
 
@@ -31,7 +31,7 @@ MySQL 8.0（2018）才補 CTE / window / lateral / JSON_TABLE / hash join — *P
 
 ## PG 結構性領先特性（MySQL 沒對應 / 弱對應）
 
-### 1. Materialized View
+### Materialized View
 
 PG 9.3+ 內建 materialized view：
 
@@ -43,6 +43,8 @@ FROM orders GROUP BY user_id;
 -- 手動 refresh
 REFRESH MATERIALIZED VIEW orders_summary;
 -- 或 concurrent refresh（PG 9.4+、不 lock read）
+-- CONCURRENTLY 靠 unique index 比對新舊 row，materialized view 上要先有一個不帶 WHERE 的 unique index
+CREATE UNIQUE INDEX ON orders_summary (user_id);
 REFRESH MATERIALIZED VIEW CONCURRENTLY orders_summary;
 ```
 
@@ -60,7 +62,7 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY orders_summary;
 
 MySQL 8.0+ 仍無原生 materialized view。
 
-### 2. Partial Index
+### Partial Index
 
 PG 預設支援 partial index — 對 *滿足條件的 row* 才建 index：
 
@@ -83,7 +85,7 @@ SELECT * FROM users WHERE status = 'active' AND email = 'x@y.com';
 - Generated column + index（接近、但維護複雜）
 - 或接受 full index cost
 
-### 3. Foreign Data Wrapper (FDW)
+### Foreign Data Wrapper (FDW)
 
 PG FDW 讓 query 跨外部資料源：
 
@@ -106,7 +108,7 @@ SELECT * FROM remote_orders WHERE id = 100;
 
 **MySQL 對應**：MySQL 8.0+ 有 FEDERATED engine（受限、不推薦）。實務上 MySQL 跨 DB query 用 application 層處理。
 
-### 4. JSONB + GIN Index（PG 結構性優勢）
+### JSONB + GIN Index（PG 結構性優勢）
 
 PG JSONB 是 *binary 儲存* + 可 *直接 GIN index*：
 
@@ -121,18 +123,21 @@ CREATE INDEX idx_products_metadata ON products USING GIN (metadata);
 
 -- 快 query
 SELECT * FROM products WHERE metadata @> '{"category": "shoes"}';
-SELECT * FROM products WHERE metadata @? '$.variants[*].price > 100';
+SELECT * FROM products WHERE metadata @? '$.variants[*] ? (@.price > 100)';  -- 有任一 variant 價格 > 100
 ```
 
 **MySQL 對應**：MySQL 8.0 JSON_TABLE 是 SQL standard、但 *index 必須 generated column workaround*（不能 GIN index over JSON）。
 
 詳見 [MySQL Modern SQL Features](/backend/01-database/vendors/mysql/modern-sql-features/) JSON_TABLE vs PG JSONB 對比段。
 
-### 5. Range Types + Exclusion Constraints
+### Range Types + Exclusion Constraints
 
 PG range types + exclusion constraints 防止 *時間範圍重疊*：
 
 ```sql
+-- room_id 是 INT，GiST 沒有 INT 的預設 operator class，要先裝 btree_gist 才能在 GiST 約束裡用 =
+CREATE EXTENSION btree_gist;
+
 CREATE TABLE reservations (
     id SERIAL PRIMARY KEY,
     room_id INT,
@@ -150,7 +155,7 @@ VALUES (1, '[2026-05-19 11:00, 2026-05-19 13:00)');
 
 **MySQL 對應**：完全沒對應、必須 application 層 enforce。
 
-### 6. CHECK Constraint + Domain Type
+### CHECK Constraint + Domain Type
 
 PG `CHECK` constraint 真執行（MySQL 8.0 才補）+ user-defined `DOMAIN`：
 
@@ -165,7 +170,7 @@ CREATE TABLE orders (
 
 **MySQL 對應**：8.0+ 有 CHECK constraint enforcement（5.7 可寫但不執行）。沒 user-defined DOMAIN。
 
-### 7. Extension Ecosystem
+### Extension Ecosystem
 
 PG extension 是 *結構優勢*：
 
@@ -178,7 +183,7 @@ PG extension 是 *結構優勢*：
 - `TimescaleDB`：time-series
 - `Citus`：sharding
 
-**MySQL 對應**：MySQL plugin 機制有、生態遠遠不如。詳見 *PG Extension Ecosystem* 篇（待寫）。
+**MySQL 對應**：MySQL plugin 機制有、生態遠遠不如。各 extension 的用途與取捨見 [PG Extension Ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/)。
 
 ## MySQL 8.0 補齊的 PG 既有特性
 
@@ -200,22 +205,22 @@ MySQL 8.0 是 *補齊 9 年 SQL standard 落後*、不是 *新領先 PG*。
 
 對應「MySQL 8.0 補了 → PG 仍沒輸」的視角。以下 14 條中、*production 影響最大* 的是 Materialized view / Partial index / JSONB GIN / Full-text search 跟 Range / Exclusion constraints（schema-level expressiveness）；*次要但常用* 的是 Multi-column statistics 跟 Procedural language；*非典型但 niche 重要* 的是 User-defined DOMAIN / Generic table inheritance（讀者不必然知道、但 ORM 跟 schema migration 工具會用）：
 
-| PG 領先特性               | MySQL 對應狀態                              | 補充                                  |
-| ------------------------- | ------------------------------------------- | ------------------------------------- |
-| Materialized view         | 無原生                                      | application-side 重算成本高           |
-| Partial index             | 無（functional index 不等同）               | 對 boolean / status column 救 storage |
-| FDW                       | 弱（FEDERATED engine 不推薦）               | 跨 DB query escape hatch              |
-| JSONB GIN index           | 無（generated column workaround）           | JSON workload 結構性差                |
-| Range types               | 無                                          | booking / availability schema 救命    |
-| Exclusion constraints     | 無                                          | range overlap 防護                    |
-| User-defined DOMAIN       | 無                                          | column-level type constraint          |
-| Extension ecosystem       | 弱                                          | pgvector / TimescaleDB / PostGIS      |
-| Full-text search 成熟     | InnoDB FTS 較弱                             | tsvector + GIN + pg_trgm 三層         |
-| Multi-column statistics   | 8.0 histograms 部分對應、PG 更廣            | planner 更準                          |
-| Procedural language       | PL/pgSQL + 多語言（PL/Python / PL/Perl 等） | Stored procedure（不擴語言）          |
-| Recursive CTE 深度        | Unlimited                                   | 1000（cte_max_recursion_depth）       |
-| LSN-based replication     | 簡潔                                        | binlog file+position（GTID 緩解）     |
-| Generic table inheritance | 早就有                                      | 無（multi-tenant schema 結構用）      |
+| PG 領先特性               | MySQL 對應狀態                        | 補充                                    |
+| ------------------------- | ------------------------------------- | --------------------------------------- |
+| Materialized view         | 無原生                                | application-side 重算成本高             |
+| Partial index             | 無（functional index 不等同）         | 對 boolean / status column 救 storage   |
+| FDW                       | 弱（FEDERATED engine 不推薦）         | 跨 DB query escape hatch                |
+| JSONB GIN index           | 無（generated column workaround）     | JSON workload 結構性差                  |
+| Range types               | 無                                    | booking / availability schema 救命      |
+| Exclusion constraints     | 無                                    | range overlap 防護                      |
+| User-defined DOMAIN       | 無                                    | column-level type constraint            |
+| Extension ecosystem       | 弱                                    | pgvector / TimescaleDB / PostGIS        |
+| Full-text search 成熟     | InnoDB FTS 較弱                       | tsvector + GIN + pg_trgm 三層           |
+| Multi-column statistics   | 8.0 histograms 部分對應、PG 更廣      | planner 更準                            |
+| Procedural language       | Stored procedure（只有 SQL 一種語言） | PG：PL/pgSQL + PL/Python / PL/Perl 等   |
+| Recursive CTE 深度        | `cte_max_recursion_depth` 預設 1000   | PG 沒有內建遞迴深度上限                 |
+| LSN-based replication     | binlog file+position（GTID 緩解）     | PG 用單一 LSN 追進度                    |
+| Generic table inheritance | 無                                    | PG 早就有（multi-tenant schema 結構用） |
 
 ## 對「從 MySQL 評估 PG」的讀者
 
@@ -223,14 +228,14 @@ MySQL 8.0 是 *補齊 9 年 SQL standard 落後*、不是 *新領先 PG*。
 
 ### PG 比 MySQL 強
 
-- *SQL 工程深度*：上面列的 7 個結構優勢
+- *SQL 工程深度*：materialized view、partial index、FDW、JSONB + GIN、range types + exclusion constraints、CHECK + DOMAIN、extension ecosystem
 - *Extension ecosystem*：pgvector / TimescaleDB / Citus / pg_partman 等
 - *Optimizer*：planner 對複雜 query 更成熟
 - *Concurrency model*：MVCC + 少 lock（[MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)）
 
 ### PG 比 MySQL 弱
 
-- *Replication 機制簡潔度*：MySQL GTID 比 PG WAL + replication slot 配置簡單（[Replication Topology](/backend/01-database/vendors/postgresql/replication-topology/)）
+- *Replication 配置步驟*：MySQL GTID 的設定比 PG WAL + replication slot 少（進度追蹤本身則是 PG 的單一 LSN 較簡單，見〈PG 仍領先的特性〉表的 LSN-based replication 列）（[Replication Topology](/backend/01-database/vendors/postgresql/replication-topology/)）
 - *Sharding ecosystem*：Vitess / PlanetScale 比 Citus 規模驗證高
 - *Operational tooling 廣度*：pt-toolkit / gh-ost / Orchestrator 等
 - *VACUUM 維護*：PG MVCC 必須 VACUUM、autovacuum 配錯議題多（[Autovacuum Tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/)）

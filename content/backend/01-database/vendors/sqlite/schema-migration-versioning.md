@@ -5,11 +5,9 @@ description: "SQLite schema migration、user_version、table rebuild、ALTER TAB
 tags: ["backend", "database", "sqlite", "migration", "schema", "deep-article"]
 ---
 
-> 本文是 [SQLite](/backend/01-database/vendors/sqlite/) overview 的 implementation-layer deep article。Overview 已說明 SQLite 的 embedded / single-file 定位；本文聚焦 *schema version、ALTER TABLE boundary、table rebuild migration 與 application release compatibility*。
-
 SQLite schema migration 的核心責任是讓單檔資料庫隨 application release 安全演進。SQLite 沒有獨立 database server，也沒有 DBA 在 server 端統一套 migration；migration 常在 application startup、CLI command、mobile app upgrade 或 desktop app launch 時發生，因此 schema version、binary compatibility、backup 與 rollback 要放在同一個 release contract 中設計。
 
-本文的判讀錨點是：SQLite migration 同時改資料庫檔案與 application 能讀的資料格式。只要使用者或服務可能拿舊 binary 打開新 database，或新 binary 打開舊 database，migration 就要處理 forward / backward compatibility，而不只是 SQL 成功執行。
+SQLite migration 同時改資料庫檔案與 application 能讀的資料格式，所以本文的範圍從 SQL 成功執行之後才開始：database file 怎麼記錄自己的 schema version、ALTER TABLE 做不到的變更怎麼用 table rebuild 完成、舊 binary 打開新 database 或新 binary 打開舊 database 時的相容策略，以及 migration 完成要留下哪些 evidence。
 
 ## Version model
 
@@ -46,8 +44,9 @@ SQLite schema 存在 `sqlite_schema` 的 SQL text 中；這讓檔案格式簡潔
 Table rebuild migration 的服務責任是安全完成 SQLite 直接 ALTER 難以表達的變更。官方 ALTER TABLE 文件建議的 generalized procedure 是建立新 table、copy data、drop old、rename new、重建 index / trigger / view、跑 foreign key check、commit。
 
 ```sql
-BEGIN;
+-- 在交易之外關掉 FK：交易進行中執行 PRAGMA foreign_keys 不會生效
 PRAGMA foreign_keys = OFF;
+BEGIN;
 
 CREATE TABLE new_orders (
   id INTEGER PRIMARY KEY,
@@ -62,6 +61,8 @@ FROM orders;
 DROP TABLE orders;
 ALTER TABLE new_orders RENAME TO orders;
 
+-- 有輸出列就代表重建弄壞了 FK reference；SQL 腳本本身不會因此中止，
+-- 執行 migration 的程式要讀這個結果，有列就 ROLLBACK 而不是 COMMIT
 PRAGMA foreign_key_check;
 PRAGMA user_version = 2026052101;
 COMMIT;
@@ -100,19 +101,19 @@ Migration evidence 的責任是證明 schema 變更已完成且資料仍可用�
 
 ## Production 踩雷
 
-### Case 1：startup migration 讓 app 啟動卡住
+### Startup migration 把長時間 table rebuild 放進啟動路徑，讓 app 啟動卡住
 
 Startup migration 的核心風險是把長時間 table rebuild 放在使用者啟動路徑。小表新增 column 可能很快；大表 rebuild、index 重建或 vacuum 類操作會讓 app 啟動、CLI command 或 API cold start 變慢。
 
 修正方向是先估資料量。短 migration 可在 startup；長 migration 要有 explicit command、progress、backup 與 rollback route。
 
-### Case 2：fixture schema 升級漏掉 production gap
+### Fixture schema 與 production database 的 dialect 與 constraint 不一致
 
 Fixture schema drift 的核心風險是測試 DB 和 production DB 的 dialect / constraint 不一致。SQLite fixture 很快，但 production 若是 PostgreSQL / MySQL，type、date、NULL、constraint 與 transaction 行為都可能不同。
 
 修正方向是把 SQLite fixture 明確標成 contract test 層。Repository error mapping、domain invariant 可以用 SQLite；production-specific SQL 要用 production database container 驗證。
 
-### Case 3：直接改 `sqlite_schema`
+### 直接改 `sqlite_schema` 產生語法正確而語意破壞的 database file
 
 直接改 `sqlite_schema` 的核心風險是產生語法正確但語意破壞的 database file。SQLite 官方文件提供 writable schema route，但同時強調錯誤修改可能讓 database corrupt / unreadable。
 

@@ -5,9 +5,9 @@ description: "PostgreSQL local lab 的 Docker Compose、schema seed、sample wor
 tags: ["backend", "database", "postgresql", "hands-on"]
 ---
 
-PostgreSQL local lab quickstart 的核心責任是建立後續 connection、migration、backup 與 failover 演練共用的本地環境。這個 lab 提供一個可重建的 PostgreSQL instance、app-facing user、baseline schema、seed data 與 basic evidence。
+PostgreSQL local lab quickstart 的核心責任是建立後續 connection、migration、backup 與 failover 演練共用的本地環境。這個 lab 提供一個可重建的 PostgreSQL instance、baseline schema、seed data 與 basic evidence；lab 裡所有連線都用 compose 建立的 `lab_admin`。
 
-本文的驗收標準是：你能啟動本地 PostgreSQL，套用 schema，跑 sample workload，取得 `pg_stat_activity` / `pg_stat_database` snapshot，最後 teardown 並重建。
+本篇的範圍是用 Docker Compose 起本地 PostgreSQL 16、套用 baseline schema、寫入 seed 並跑 sample workload、取得 `pg_stat_activity` / `pg_stat_database` snapshot，最後 teardown 並重建。
 
 ## Docker Compose
 

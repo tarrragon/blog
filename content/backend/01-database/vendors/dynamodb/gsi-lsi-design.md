@@ -1,16 +1,16 @@
 ---
 title: "DynamoDB GSI 與 LSI 設計：access pattern 補位、projection、consistency 跟 DAX 補位"
 date: 2026-05-27
-description: "GSI / LSI 是 single-table 沒覆蓋的 access pattern 補位、不是萬靈丹；本文涵蓋 projection 三型選擇、sparse index、GSI 自己會 hot partition、DAX 讀峰值補位的觸發條件（含 Capcom 是 derive vs Lemino 是 case fact 的分層）"
+description: "GSI / LSI 是 single-table 沒覆蓋的 access pattern 補位、不是萬靈丹；本文涵蓋 projection 在 KEYS_ONLY、INCLUDE 與 ALL 之間的選擇、sparse index、GSI 自己會 hot partition、DAX 讀峰值補位的觸發條件"
 weight: 32
 tags: ["backend", "database", "dynamodb", "gsi", "lsi", "dax", "deep-article"]
 ---
 
-> 本文是 [DynamoDB](/backend/01-database/vendors/dynamodb/) overview 的 implementation-layer deep article。寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+這篇整理 [DynamoDB](/backend/01-database/vendors/dynamodb/) 在 single-table design 之上用 GSI 與 LSI 補足主表 PK / SK 查不到的 access pattern：兩種 secondary index 的差別、projection 的選擇、sparse index，以及什麼時候該加 DAX 分擔讀峰值。
 
-single-table design 上線後第三個月、PM 提了三個新 query 需求：「依商品分類查訂單」、「依 status 查 user」、「依時間 range 取最近活動」。team 第一反應是加 GSI、結果 GSI 從 1 個變 6 個、cost 跟 latency 一起上升。打開 AWS Cost Explorer 一看、GSI 的 storage + WCU 合計已經超過 base table。這時 team 開始懷疑「single-table 是不是錯了」— 那是 *誤判*。GSI 多到 cost 超過 base table 通常是 *主 PK 沒設計好*、不是 single-table 錯。本文展開 GSI / LSI 的正確補位、projection 的三型選擇、sparse index、以及 DAX 作為讀峰值補位的觸發條件。
+每個 GSI 都另外收 storage 與 WCU，GSI 加到 cost 超過 base table 時，常見的成因是主表 PK 沒有依 access pattern 設計，讓原本可以用主表 `Query` 解的查詢都落到 GSI 上；這時該回頭檢查的是主表的 PK 設計，single-table 本身不是成因。
 
-> **DynamoDB workload 適配判讀（基本 4 軸）**：PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定 — 判讀軸詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀4-軸)。本文聚焦 GSI / LSI 補位操作層、是 *已選 DynamoDB + access pattern 已穩定* 的 schema 設計議題。
+> **DynamoDB workload 適配判讀（基本 4 軸）**：PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定 — 判讀軸詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀)。本文聚焦 GSI / LSI 補位操作層、是 *已選 DynamoDB + access pattern 已穩定* 的 schema 設計議題。
 
 ## 核心機制：GSI vs LSI 的工程差異
 
@@ -42,11 +42,11 @@ DynamoDB 的兩種 secondary index 解的問題不同：
 
 ## DAX 作為讀峰值補位
 
-DAX（DynamoDB Accelerator）不是 GSI / LSI 同層方案、不是 DynamoDB 預設配置、是「讀峰值持續高時的補位」。寫進你的設計前先看觸發條件：
+DAX（DynamoDB Accelerator）不是 GSI / LSI 同層方案、不是 DynamoDB 預設配置、是「讀峰值持續高時的補位」。決定加 DAX 之前要先確認觸發條件：
 
-**`9.C29 Lemino` 揭露**（case fact）：「DAX 是 DynamoDB 讀 cache 的標準解法」、觸發條件是「當讀峰值持續高、加 DAX 減少 DynamoDB 讀次數、降低成本」（熱門節目首播時段、共用 metadata）。Lemino 是 case 直接揭露使用 DAX。
+**Lemino 案例公開使用 DAX**：「DAX 是 DynamoDB 讀 cache 的標準解法」、觸發條件是「當讀峰值持續高、加 DAX 減少 DynamoDB 讀次數、降低成本」（熱門節目首播時段、共用 metadata）。
 
-**`9.C19 Capcom` 是判讀層 derive、不是 case fact**：原 finding 從「single-digit ms」latency 反推 Capcom 必須用 sub-region cache + DynamoDB DAX、不能單靠 DynamoDB；但 `9.C19` case *沒有公開揭露* 使用 DAX。引用 Capcom 時要明示「DAX 是作者判讀層推論、Capcom 沒公開使用」、避免把推論寫成 case 揭露。
+**Capcom 案例沒有公開使用 DAX**：Capcom 的 latency 要求是 single-digit ms，由此可以推論它需要 sub-region cache 或 DAX 這類讀路徑加速、不能單靠 DynamoDB；這是推論，案例本身沒有公開使用 DAX。
 
 **跟 GSI / LSI 的職責分離**：
 
@@ -62,14 +62,14 @@ DAX（DynamoDB Accelerator）不是 GSI / LSI 同層方案、不是 DynamoDB 預
 **DAX 不適用情境**：
 
 - 寫密集 workload（cache invalidation 開銷 > cache 收益）
-- 每次讀都不同 key（cache hit rate < 30%、加 DAX 等於白花錢）
+- 每次讀都不同 key（cache hit rate 預期 < 50%、加 DAX 等於白花錢）
 - read-your-write 場景（DAX 仍是 eventual cache、staleness 視 cache TTL 而定）
 
 ## 設計流程
 
-從 access pattern 補位到 DAX 評估的 6 步流程。
+從 access pattern 補位到 DAX 評估的設計流程：標記最小成本路徑、選 LSI 還是 GSI、設計 projection、用 sparse index 縮小索引、驗證 query 走的 index、評估 DAX。
 
-#### Step 1：標記最小成本路徑
+#### 標記最小成本路徑
 
 每個 access pattern 標記能用最便宜路徑解：
 
@@ -77,11 +77,11 @@ DAX（DynamoDB Accelerator）不是 GSI / LSI 同層方案、不是 DynamoDB 預
 - 同 PK 內不同 SK 排序 + 需要 strong read → LSI（同 partition、strong）
 - 跨 PK 或 base table 已建好 → GSI（額外 storage + WCU）
 
-#### Step 2：選 LSI 還是 GSI
+#### 選 LSI 還是 GSI
 
 LSI 只能在 create table 時定義、不能後加。team 經常踩雷：上線後想加 strongly consistent 索引、發現只能重建 table。建 table 前列完 access pattern、不確定走 GSI 不走 LSI 是保守選擇（GSI 隨時可加可移）。
 
-#### Step 3：projection 設計
+#### 設計 projection
 
 每個 GSI 單獨設 projection、不要全用 `ALL`：
 
@@ -89,7 +89,7 @@ LSI 只能在 create table 時定義、不能後加。team 經常踩雷：上線
 - query 需要常見 3-5 個欄位 → `INCLUDE`（列出實際 column、storage 跟 query 效率平衡）
 - 用 GSI 直接顯示資料（不回 base table） → `ALL`（storage 跟 WCU 都翻倍、慎用）
 
-#### Step 4：sparse index pattern
+#### sparse index pattern
 
 GSI PK 只在某 attribute 存在時填、自動「只索引子集」、節省 storage：
 
@@ -105,9 +105,9 @@ def write_order(order_id: str, status: str):
 
 GSI1 只索引 active order、archive order 不進 GSI。當 active order 是 10%、storage 節省約 90%。
 
-> **Scope warning**：「50-90% storage 節省」具體節省比例屬通用工程估算、依 active subset 比例變動、case 未揭露 sparse index 具體數字。
+> **Scope warning**：「storage 節省約 90%」是假設 active order 佔 10% 推算出的通用工程估算、依 active subset 比例變動、case 未揭露 sparse index 具體數字。
 
-#### Step 5：驗證點
+#### 驗證 query 走的是哪個 index
 
 ```python
 response = table.query(
@@ -118,9 +118,9 @@ response = table.query(
 print(response["ConsumedCapacity"])
 ```
 
-CloudWatch GSI metric：看每個 GSI 的 WCU usage 跟主表的比例；GSI WCU > base table WCU 通常是設計訊號。
+CloudWatch GSI metric：看每個 GSI 的 WCU usage 跟主表的比例；GSI WCU > base table WCU 通常是 GSI 設計需要重新檢查的訊號。
 
-#### Step 6：DAX 評估
+#### 評估 DAX
 
 讀峰值持續高 + cache hit rate 可預期、才加 DAX；不要把 DAX 當預設配置（Lemino 揭露的觸發條件）。先觀察 base 路徑的 read pattern、判斷 cache hit rate 預期值、再決定加 DAX。
 
@@ -130,49 +130,48 @@ CloudWatch GSI metric：看每個 GSI 的 WCU usage 跟主表的比例；GSI WCU
 
 7 個 production 常見踩雷：
 
-#### Case 1：GSI 寫入 throttle 拖累主表 write
+#### GSI 寫入 throttle 拖累主表 write
 
 GSI 用了集中型 PK（如 `STATUS#active` 所有 active order 集中）、單 partition 上限 1000 WCU 撞牆、GSI replication 失敗、主表 write retry、整體 latency 上升。修法：GSI PK 設計獨立 review、不可繼承主表 PK 的均勻假設（base PK 均勻 ≠ GSI PK 均勻）；GSI PK 也要做 [partition key 均勻度判讀](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)。
 
-#### Case 2：GSI eventual read 餵錯資料
+#### GSI eventual read 餵錯資料
 
 application 用 GSI 讀「user 最新 status」、code 假設 strong 一致；實際 100-500ms staleness 導致 UI 顯示舊狀態。修法：read-your-write 場景改回主表 query（主表支援 strong）、或加 application-side write-through cache。
 
 > **Scope warning**：「100-500ms staleness」具體數字屬通用工程估算、case 未揭露 GSI replication latency 具體 p99 數字。
 
-#### Case 3：projection ALL 把 cost 翻倍
+#### projection ALL 把 cost 翻倍
 
 圖省事所有 GSI 用 `ALL`、實際 query 只需要 3 個 column；storage + WCU 都浪費。修法：每個 GSI 單獨設 projection、`INCLUDE` 列出實際 column；只在「用 GSI 直接顯示資料、不回主表」場景才用 `ALL`。
 
-> **Scope warning**：「cost 翻 3 倍」具體數字屬通用工程估算、case 未揭露具體 cost ratio。
+> **Scope warning**：「cost 翻倍」屬通用工程估算、case 未揭露具體 cost ratio。
 
-#### Case 4：LSI 用完了才發現要的是 GSI
+#### LSI 用完了才發現要的是 GSI
 
 LSI 上限受 vendor 規格限制（建議 cross-verify AWS doc 當前數字）且建 table 時定、半年後想加 strongly consistent 索引發現要重建 table。修法：建 table 前列完 access pattern、不確定就走 GSI（隨時可加可移）；LSI 留給「明確需要同 PK + strong read」場景。
 
-#### Case 5：GSI 反向 scan 取代 query
+#### GSI 反向 scan 取代 query
 
 application 用 GSI 做 `Scan` 而非 `Query`、全 GSI 掃過去、cost 跟 latency 都炸。修法：`Scan` 是 *程式碼錯誤訊號*、不是 capacity 不夠；review code 看 GSI 為什麼沒被當 query 路徑用、通常是 GSI PK 設計沒對齊 access pattern。
 
-#### Case 6：把 DAX 當預設配置
+#### 把 DAX 當預設配置
 
-寫密集 workload / cache hit rate 低的場景加 DAX、cache invalidation 成本超過 cache 收益、cost 上升 latency 沒降。修法：DAX 是「讀峰值持續高」的補位、不是預設（Lemino 揭露的觸發條件、Capcom 是 derive 不是 case fact）；先觀察 read pattern + 評估 cache hit rate 預期、再決定。
+寫密集 workload / cache hit rate 低的場景加 DAX、cache invalidation 成本超過 cache 收益、cost 上升 latency 沒降。修法：DAX 是「讀峰值持續高」的補位、不是預設（觸發條件來自 Lemino 案例；Capcom 案例沒有公開使用 DAX）；先觀察 read pattern + 評估 cache hit rate 預期、再決定。
 
-#### Case 7：GSI capacity mode 跟 base table 不一致
+#### GSI 的 provisioned capacity 跟 base table 沒有對齊
 
-GSI 的 capacity mode 跟 base table 是 *獨立* 設定、不會自動繼承 — base table 是 provisioned + auto-scaling、開新 GSI 預設仍是 provisioned 但 WCU / RCU 預設值跟 base table 不同步、或誤把某個 GSI 切 on-demand 而 base table 維持 provisioned、實際 production 寫入 throttle / 成本失衡都會出現。屬通用工程議題、case 未直接揭露具體 mode 錯配狀況。
+GSI 繼承 base table 的 capacity mode，而 provisioned mode 下每個 GSI 的 RCU / WCU 與 auto-scaling policy 跟 base table 各自獨立設定。base table 調高了 WCU、或 auto-scaling 只設在 base table 上，GSI 的 WCU 沒有跟上時，GSI 的寫入被 throttle，base table 的寫入也跟著被 throttle。屬通用工程議題、case 未直接揭露具體錯配狀況。
 
 徵兆：
 
 - Base table `ConsumedWriteCapacityUnits` 健康、卻看到 GSI `WriteThrottleEvents` 持續觸發、application 端寫入 latency p99 拉高
-- GSI 切 on-demand 後成本「不知為何」翻 X 倍、查 Cost Explorer 才發現 GSI WCU 計費跟 base table 的 provisioned 是完全不同帳單路徑
 - Auto-scaling policy 只設了 base table、GSI 沒設、流量上來時 base table 自動擴、GSI 卻 throttle
 
 修法：
 
-- 建 GSI 時把 capacity mode 當成獨立決策、不要假設「base 怎麼設、GSI 跟著走」
-- 流量穩定 workload 同時把 base + GSI 都設 provisioned + auto-scaling、auto-scaling target 對齊
-- Spiky workload 改 on-demand 時整批切（base table + 全部 GSI 同時切）、避免單側切換造成 partial throttle
+- 建 GSI 時把它的 provisioned RCU / WCU 與 auto-scaling policy 當成獨立決策；GSI 的 provisioned WCU 至少等於 base table 的 WCU
+- 流量穩定 workload 把 base + 每個 GSI 都設 auto-scaling、auto-scaling target 對齊
+- Spiky workload 改 on-demand 時以 table 為單位切換，GSI 隨 base table 一起變成 on-demand
 - CloudWatch alarm 對每個 GSI 獨立設 `WriteThrottleEvents` / `ReadThrottleEvents`、不要只盯 base table
 - 詳細 mode 切換時機看 sibling [on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)
 
@@ -183,8 +182,8 @@ GSI 的 capacity mode 跟 base table 是 *獨立* 設定、不會自動繼承 �
 CloudWatch metric：
 
 - 每個 GSI 獨立 `ConsumedReadCapacityUnits` / `ConsumedWriteCapacityUnits`
-- `ReplicationLatency`：GSI async replication 延遲、p99 通常 < 1s（無 SLA）
-- DAX：`CacheHits` / `CacheMisses` / `CacheHitRate`、`ItemCacheHits` / `QueryCacheHits`
+- GSI 的非同步傳播延遲：官方文件寫正常情況下 base table 的變更在一秒內傳到 GSI、罕見故障時會更久（無 SLA），截至 2026-09 沒有對應的 CloudWatch metric；`ReplicationLatency` 屬 Global Tables 的跨 region 複寫、量不到 GSI。GSI 寫不進去造成的回壓看帶 `GlobalSecondaryIndexName` 維度的 `WriteThrottleEvents`
+- DAX：`ItemCacheHits` / `ItemCacheMisses` / `QueryCacheHits` / `QueryCacheMisses`（DAX 沒有現成的 hit rate metric，由這四個自己算）
 
 `ReturnConsumedCapacity` flag：query 時帶 `INDEXES` 看 GSI consumption；`TOTAL` 看 base + GSI 合計、debug 時切換用。
 
@@ -196,9 +195,9 @@ CloudWatch metric：
 
 > **Scope warning**：「GSI 多時 cost 超過 base table」屬通用工程知識、`9.C27 Disney+` / `9.C19 Capcom` case 沒揭露具體 GSI cost ratio。
 
-**DAX 觀測重點**（新增）：
+**DAX 觀測重點**：
 
-- `CacheHitRate` < 70% 應重新評估 DAX 是否該存在
+- 算出的 hit rate < 70% 應重新評估 DAX 是否該存在
 - cache size utilization 看 DAX instance class 是否足夠
 - 觀察 cache miss 後 fallback 到 DynamoDB 的 latency、確認 DAX 真的減少 base 路徑壓力
 
@@ -215,7 +214,7 @@ CloudWatch metric：
 - Disney+ watchlist + 播放進度 + cross-device sync 全用主表 + 少量 GSI、避免 GSI 爆炸；cross-device sync 透過 [Global Tables](/backend/01-database/vendors/dynamodb/global-tables-conflict/) 處理、不是 GSI
 - Capcom 玩家 leaderboard / 戰績用 GSI 反向查詢（跨遊戲共用平台、player_id 為 base PK、game_id 為 GSI PK）；leaderboard 是否該走 GSI 還是 Redis sorted set 是另一個取捨
 
-兩個 case 都 *沒有公開揭露* 具體 GSI 數量、projection 配置、DAX 是否使用。引用 case 時要分層 — 概念是 case 揭露、實作數字是通用工程估算。
+Disney+ 與 Capcom 都 *沒有公開揭露* 具體 GSI 數量、projection 配置、DAX 是否使用；上面兩條裡的 index 配置是依案例公開的 access pattern 所做的通用工程推論。
 
 ### Sibling 與 cross-link
 
@@ -224,5 +223,5 @@ CloudWatch metric：
 - [consistency-model-optimization](/backend/01-database/vendors/dynamodb/consistency-model-optimization/) — GSI 強制 eventual、對應 consistency 軸
 - [on-demand-vs-provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/) — GSI 多時 cost 跟 mode 互動
 - 替代路由：access pattern 變動頻繁 → 考慮 OpenSearch / Aurora、單純 search 不要拿 GSI 當 inverted index
-- 跟 [Capcom 9.C19](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) 互引：leaderboard 用 GSI vs Redis sorted set 的選擇；DAX 是 derive 不是 case fact、引用要明示
-- 跟 [Lemino 9.C29](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) 互引：DAX 作為讀峰值補位的 case 揭露
+- [Capcom：Resident Evil / Monster Hunter 在 DynamoDB + EKS 上的遊戲後端](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/)：leaderboard 用 GSI vs Redis sorted set 的選擇；案例沒有公開使用 DAX
+- [NTT DOCOMO Lemino：3 個月達 500 萬 MAU 的串流後端](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)：DAX 作為讀峰值補位的案例來源

@@ -7,7 +7,7 @@ tags: ["backend", "database", "postgresql", "hands-on", "pitr"]
 
 PostgreSQL PITR restore drill 的核心責任是證明 backup 可以還原到指定時間點。這篇承接 [PITR + WAL Archiving](../../pitr-wal-archiving/)，把備份從存在狀態推進到可恢復證據。
 
-本文的驗收標準是：你能記錄 base backup 時間、target time、restore duration、validation query 與 RPO / RTO note。實際命令會依 pgBackRest、Barman、cloud snapshot 或 managed service 而變；本文提供 vendor-neutral drill frame。
+本篇整理一次 PITR 還原演練要留的 evidence：base backup 時間、target time、restore duration、validation query 與 RPO / RTO note。實際 restore 命令依 pgBackRest、Barman、cloud snapshot 或 managed service 而變，本篇只給 vendor-neutral 的演練框架。
 
 ## Prepare Recovery Point
 
@@ -23,10 +23,12 @@ CREATE TABLE IF NOT EXISTS restore_markers (
 
 INSERT INTO restore_markers(marker) VALUES ('before-bad-change');
 SELECT id, marker, created_at FROM restore_markers ORDER BY id DESC LIMIT 1;
+-- psql 逐句送出、逐句 autocommit：這一句執行時，上一句的 INSERT 已經 commit
+SELECT clock_timestamp() AS target_time;
 SQL
 ```
 
-把 `created_at` 記為 target time。正式 drill 要用 UTC，並記錄 timezone、operator、backup set 與 WAL archive status。
+把 `target_time` 記為 target time，保留到 microsecond。`recovery_target_time` 比對的是 transaction 的 commit 時間，而 `created_at` 是 INSERT 執行當下的時間，早於同一個 transaction 的 commit；拿 `created_at` 當 target，recovery 停在 marker 的 commit 之前，還原出來的 `restore_markers` 是空的。截到秒的時間同樣可能落在 marker 的 commit 之前。正式 drill 要用 UTC，並記錄 timezone、operator、backup set 與 WAL archive status。
 
 ## Create Bad Change
 

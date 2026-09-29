@@ -8,7 +8,7 @@ tags: ["backend", "database", "postgresql", "managed-service"]
 
 Managed PostgreSQL comparison 的核心責任是把「都是 PostgreSQL」拆成不同的操作責任邊界。Managed service 可能代管 backup、patch、replica、minor upgrade、monitoring、connection proxy、serverless scaling 或 branch workflow；但 application schema、query、migration、role、cost 與 incident decision 仍需要 team 承擔。
 
-本文的判讀錨點是：managed PostgreSQL 是 operation trade-off，而非 vendor-neutral checkbox。選型要看 workload、合規、extension、HA / DR、connection、cost visibility、exit route 與 team skill。
+本文涵蓋 provider 的責任邊界、評估維度、workload fit、migration 與 exit、成本審查與選型路由。選型要看 workload、合規、extension、HA / DR、connection、cost visibility、exit route 與 team skill。
 
 官方文件路由的核心責任是固定 provider claim。實作前分別查 [AlloyDB docs](https://docs.cloud.google.com/alloydb/docs)、[Cloud SQL for PostgreSQL](https://cloud.google.com/sql/postgresql)、[Azure Database for PostgreSQL Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview) 與 [Supabase branching docs](https://supabase.com/docs/guides/deployment/branching)；本文最後檢查日是 2026-05-22。
 
@@ -101,7 +101,7 @@ Decision route 的核心責任是把 provider 選型導向具體路線。
 | Extension / PG 專業支援     | specialist managed PG           |
 | 完整控制與特殊 extension    | self-managed PostgreSQL         |
 
-Managed provider 的最終選擇要回到 team skill。少維護元件是價值；把尚未理解的限制外包給 vendor，會在 incident 和 migration 時回來。
+Managed provider 的最終選擇要回到 team skill。少維護元件是價值；把尚未理解的 provider 限制一起交給 vendor，那些限制會在 incident 和 migration 時變成 team 要處理的問題。
 
 ## 下一步路由
 

@@ -1,12 +1,12 @@
 ---
 title: "PostGIS Deep Dive：Geometry / Geography 型別、GiST 空間索引跟 ST_* 函式生態"
 date: 2026-05-19
-description: "PostGIS 是 PG extension、加 *geometry* / *geography* 型別、GiST 空間索引跟 1000+ ST_* 函式、把 PG 變成功能完整 GIS DB（跟 Oracle Spatial / SQL Server geography 並列）。本文走 geometry vs geography 取捨、SRID 跟投影系統、GiST 空間索引機制、5 production 踩雷（geometry 用錯 SRID / geography 不能用所有 ST_ 函式 / GiST index 不對 ST_DWithin 生效 / cluster on geom 後 BRIN 失效 / EWKB vs WKB 跨工具相容）、GIS workload 的 PG vs 專業 GIS DB 對比"
+description: "PostGIS 是 PG extension、加 *geometry* / *geography* 型別、GiST 空間索引跟 1000+ ST_* 函式、把 PG 變成功能完整 GIS DB（跟 Oracle Spatial / SQL Server geography 並列）。本文走 geometry vs geography 取捨、SRID 跟投影系統、GiST 空間索引機制、production 踩雷（geometry 用錯 SRID / geography 不能用所有 ST_ 函式 / GiST index 不對 ST_Distance 生效 / cluster on geom 後 BRIN 失效 / EWKB vs WKB 跨工具相容）、GIS workload 的 PG vs 專業 GIS DB 對比"
 weight: 31
 tags: ["backend", "database", "postgresql", "postgis", "gis", "spatial", "extension", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *PostGIS extension* — PG 變 GIS DB 的標配、跟 [extension-ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/) 是 *單一 extension 細節 vs ecosystem 全景* 的關係。
+本文的範圍是 PostGIS extension：geometry 與 geography 型別的選擇、SRID 與 projection、GiST 空間索引、ST_* 函式、production 踩雷，以及跟專業 GIS DB 的對比。PostgreSQL extension 生態的全景在 [extension-ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/)。
 
 ---
 
@@ -20,7 +20,7 @@ CREATE EXTENSION postgis;
 
 加完後 PG 多兩件事：
 
-1. **空間型別**：`geometry`（平面）/ `geography`（地球曲面）/ `raster`（柵格）
+1. **空間型別**：`geometry`（平面）/ `geography`（地球曲面）；柵格型別 `raster` 在 PostGIS 3 起拆成另一個 extension，要再 `CREATE EXTENSION postgis_raster`
 2. **1000+ 函式**：`ST_Distance` / `ST_Within` / `ST_Buffer` / `ST_Intersects` 等
 
 用 PostGIS 解的典型 workload：
@@ -41,7 +41,7 @@ PostGIS 提供兩種空間型別、用途完全不同：
 | 距離單位    | 座標系統決定（meter / degree） | 永遠 meter           |
 | 跨經度 180° | 不處理                         | 自動處理             |
 | 適用範圍    | 小區域（單一城市 / 國家）      | 全球                 |
-| 函式覆蓋    | 1000+ 函式                     | 約 300 函式          |
+| 函式覆蓋    | 幾乎全部 ST_* 函式             | 約 30 個 ST_* 函式   |
 | 效能        | 快（平面計算）                 | 慢 2-5x（球面計算）  |
 | Index 行為  | GiST 直接                      | GiST 直接            |
 
@@ -87,13 +87,13 @@ SELECT ST_Distance(
 SELECT ST_Distance(
     ST_Transform(ST_SetSRID(ST_MakePoint(121.5654, 25.0330), 4326), 3826),
     ST_Transform(ST_SetSRID(ST_MakePoint(121.5170, 25.0478), 4326), 3826)
-);  -- ~5300（米）
+);  -- ~5150（米）
 
 -- 或用 geography cast
 SELECT ST_Distance(
     ST_SetSRID(ST_MakePoint(121.5654, 25.0330), 4326)::geography,
     ST_SetSRID(ST_MakePoint(121.5170, 25.0478), 4326)::geography
-);  -- ~5300（米）
+);  -- ~5150（米）
 ```
 
 **典型 schema 設計**（台灣 application）：
@@ -140,14 +140,14 @@ LIMIT 10;
 
 **index 用沒用到的關鍵**：
 
-| Query 寫法                     | 走 index？         |
-| ------------------------------ | ------------------ |
-| `ST_DWithin(a, b, dist)`       | 是                 |
-| `ST_Distance(a, b) < dist`     | 否（必 full scan） |
-| `a && bbox`                    | 是                 |
-| `ST_Intersects(a, bbox)`       | 是                 |
-| `a <-> b ORDER BY ... LIMIT n` | 是（k-NN）         |
-| `ST_Equals(a, b)`              | 否                 |
+| Query 寫法                     | 走 index？              |
+| ------------------------------ | ----------------------- |
+| `ST_DWithin(a, b, dist)`       | 是                      |
+| `ST_Distance(a, b) < dist`     | 否（必 full scan）      |
+| `a && bbox`                    | 是                      |
+| `ST_Intersects(a, bbox)`       | 是                      |
+| `a <-> b ORDER BY ... LIMIT n` | 是（k-NN）              |
+| `ST_Equals(a, b)`              | 是（先用 `~=` 比 bbox） |
 
 Production 寫法守則：能用 `ST_DWithin` 就不用 `ST_Distance(...) < ?`、語意一樣但 index 行為差很多。
 
@@ -171,16 +171,19 @@ PostGIS 1000+ 函式分類（典型用到的）：
 
 ```sql
 -- 給定 z/x/y tile、找這個 tile 內的所有 POI
-SELECT id, name, ST_AsMVTGeom(location_3857, ST_TileEnvelope(z, x, y)) AS geom
+-- ST_TileEnvelope 回的是 3857（Web Mercator）座標的 tile 範圍；pois 存的是 4326 與 3826，
+-- 篩選時把 tile 範圍轉成 4326 去比 location_4326（location_4326 要另建 GiST index 才走 index），
+-- 產 MVT 幾何時再把點轉成 3857
+SELECT id, name, ST_AsMVTGeom(ST_Transform(location_4326, 3857), ST_TileEnvelope(z, x, y)) AS geom
 FROM pois
-WHERE location_3857 && ST_TileEnvelope(z, x, y);
+WHERE location_4326 && ST_Transform(ST_TileEnvelope(z, x, y), 4326);
 ```
 
 `ST_AsMVTGeom` + `ST_AsMVT` 直接產 Mapbox Vector Tile binary、給前端 Leaflet / Mapbox GL JS 用。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### Case 1：Geometry 用錯 SRID
+### Geometry 用錯 SRID
 
 **情境**：app 寫入時用 4326、query 時用 3826 ST_Transform、忘記給某個 column 設 SRID、index 失效。
 
@@ -199,11 +202,11 @@ ALTER TABLE pois ADD CONSTRAINT chk_location_srid
 CHECK (ST_SRID(location) = 4326);
 ```
 
-### Case 2：Geography 不能用所有 ST_* 函式
+### Geography 不能用所有 ST_* 函式
 
-**情境**：用 `geography` 想跑 `ST_Buffer`、報錯或結果不對。
+**情境**：用 `geography` 想跑 `ST_VoronoiPolygons` 這類運算、報函式不存在；或 `ST_Buffer` 跑得出來、結果卻跟同一筆資料用 geometry 算的不一致。
 
-`ST_Buffer` 對 geography 走 spheroid 近似、邊界 case 結果跟 geometry 不一致；很多函式（`ST_Voronoi` / `ST_Delaunay` 等）只支援 geometry。
+`ST_Buffer` 接受 geography，但算法是把資料轉到一個平面投影上 buffer 再轉回來，結果是近似值；很多函式（`ST_VoronoiPolygons` / `ST_DelaunayTriangles` 等）沒有 geography 版本、只支援 geometry。
 
 修法：
 
@@ -211,7 +214,7 @@ CHECK (ST_SRID(location) = 4326);
 - 複雜空間運算用 geometry + 適合 projection
 - 不確定哪些函式支援 geography、看 PostGIS docs *Geography Support Functions* 清單
 
-### Case 3：GiST index 不對 ST_Distance 生效
+### GiST index 不對 ST_Distance 生效
 
 **情境**：query `ST_Distance(location, ?) < 1000`、`EXPLAIN` 顯示 full scan、加 index 也沒用。
 
@@ -222,7 +225,7 @@ CHECK (ST_SRID(location) = 4326);
 - 改 `ST_DWithin(location, ?, 1000)` — 語意一樣、會走 GiST
 - 確認 index 是對 *被 query 的 column* 建的（不是 transform 後的 expression）
 
-### Case 4：CLUSTER on geom 後 BRIN 失效
+### CLUSTER on geom 後 BRIN 失效
 
 **情境**：對 `pois` 跑 `CLUSTER pois USING idx_pois_geom` 想加速空間查、但同時對 `created_at` 用 BRIN index、BRIN 完全失效。
 
@@ -234,9 +237,9 @@ CLUSTER 重組 physical order 跟 GiST 對齊、`created_at` physical order corr
 - 換 partition by time + GiST per-partition（取兩者）
 - 看 [index-selection](/backend/01-database/vendors/postgresql/index-selection/) 的 BRIN 段
 
-### Case 5：EWKB vs WKB 跨工具相容
+### EWKB vs WKB 跨工具相容
 
-**情境**：用 PostGIS export 給其他 GIS 工具（QGIS / Shapely / ogr2ogr）、resort 抱怨格式不對。
+**情境**：用 PostGIS export 給其他 GIS 工具（QGIS / Shapely / ogr2ogr）、接收端的工具回報格式不對。
 
 PostGIS 內部用 EWKB（Extended Well-Known Binary）— 多帶 SRID。多數 GIS 工具讀 WKB（標準）。
 
@@ -289,4 +292,4 @@ SELECT ST_AsGeoJSON(geom) FROM pois;
 ## 下一步
 
 - 看 [extension-ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/) 探索其他 PG 擴展可能
-- 回 [PostgreSQL overview](/backend/01-database/vendors/postgresql/) 看全圖
+- 回 [PostgreSQL 服務總覽](/backend/01-database/vendors/postgresql/)

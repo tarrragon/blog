@@ -1,12 +1,14 @@
 ---
 title: "Firestore Security Rules 授權建模與可測試化：把規則當程式碼治理"
 date: 2026-06-16
-description: "Firestore client 直連模型把整個授權控制面壓在 Security Rules 這套 DSL 裡；本文展開規則的求值模型、把授權拆成可組合 function、用 emulator 寫單元測試、五個把規則寫成資安漏洞的 production 踩坑，以及規則複雜度撞牆時把授權拉回後端的邊界"
+description: "Firestore client 直連模型把整個授權控制面壓在 Security Rules 這套 DSL 裡；本文展開規則的求值模型、把授權拆成可組合 function、用 emulator 寫單元測試、把規則寫成資安漏洞的 production 事故（`if true` 上線沒收、`read` 沒拆 `get` 與 `list`、寫入內容沒驗證、遞迴萬用 `match` 蓋掉嚴格規則、規則複雜到沒人能 review），以及規則複雜度撞牆時把授權拉回後端的邊界"
 weight: 12
 tags: ["backend", "database", "firestore", "security-rules", "authorization"]
 ---
 
-> 本文是 [Firestore](/backend/01-database/vendors/firestore/) overview 的 deep article。寫作參照 [Vendor 深度技術文章寫作方法論](/posts/vendor-deep-article-methodology/)。規則語法以 [官方 Security Rules 文件](https://firebase.google.com/docs/firestore/security/get-started) 為準、最後檢查日 2026-06-16。
+這篇整理 Firestore Security Rules 的授權建模：規則的求值模型、把授權拆成可組合 function、用 emulator 把規則寫成單元測試、把規則寫成漏洞的 production 事故、`get()` 計費與規則複雜度上限，以及規則不敷使用時把授權拉回後端的邊界。
+
+> 規則語法以 [官方 Security Rules 文件](https://firebase.google.com/docs/firestore/security/get-started) 為準、最後檢查日 2026-06-16。
 
 ## 問題情境：授權沒有後端可以藏
 
@@ -51,7 +53,7 @@ service cloud.firestore {
 }
 ```
 
-骨架裡每一條 `allow` 讀的 document 狀態不同，每一行上方的註解標了它看哪一個：`read` 與 `delete` 只有寫入前的狀態，`create` 只有寫入後的狀態，`update` 兩者都要看——只看寫入前的話，擁有者可以把 `ownerId` 改成別人。把 `read`、`create`、`update`、`delete` 分開寫是建模的起點，混成一條 `allow read, write` 是後面所有漏洞的源頭。
+骨架裡每一條 `allow` 讀的 document 狀態不同，每一行上方的註解標了它看哪一個：`read` 與 `delete` 只有寫入前的狀態，`create` 只有寫入後的狀態，`update` 兩者都要看——只看寫入前的話，擁有者可以把 `ownerId` 改成別人。把 `read`、`create`、`update`、`delete` 分開寫是建模的起點，混成一條 `allow read, write` 時四種操作共用同一個條件，而四種操作讀得到的 document 狀態並不相同。
 
 ## 配置：把授權拆成可組合 function
 
@@ -80,15 +82,15 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/projects/$(projectId)/members/$(request.auth.uid)).data.role == role;
     }
 
-    // 寫入時欄位白名單：禁止 client 竄改 ownerId / createdAt
-    function fieldsUnchanged(fields) {
+    // 寫入時欄位白名單：這次 update 只准改動 fields 列出的欄位，ownerId / createdAt 不在清單裡就改不動
+    function onlyChanges(fields) {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
     }
 
     match /projects/{projectId} {
       allow read: if isProjectMember(projectId);
       allow update: if hasRole(projectId, 'admin')
-                    && fieldsUnchanged(['name', 'description', 'updatedAt']);
+                    && onlyChanges(['name', 'description', 'updatedAt']);
       allow delete: if hasRole(projectId, 'owner');
 
       match /tasks/{taskId} {
@@ -102,7 +104,7 @@ service cloud.firestore {
 }
 ```
 
-這裡有三個建模手段值得展開。第一，`isProjectMember` / `hasRole` 把「成員資格」與「角色」的判斷集中成單一定義，授權邏輯改一處全站生效，避免同一條規則散落在十個 collection。第二，`fieldsUnchanged` 用 `diff().affectedKeys().hasOnly()` 把「這次 update 只准動哪些欄位」寫成白名單——這擋掉 client 直接改 `ownerId` 把別人的資料佔為己有的攻擊，是 client 直連模型必備的欄位級防護。第三，custom claims（`request.auth.token.role`）適合放跨專案、低頻變動的全域角色；per-resource 的成員資格用 `get()` 查 membership document，因為 claims 改動要等 token 刷新、不適合表達即時變動的權限。
+這裡有三個建模手段值得展開。第一，`isProjectMember` / `hasRole` 把「成員資格」與「角色」的判斷集中成單一定義，授權邏輯改一處全站生效，避免同一條規則散落在十個 collection。第二，`onlyChanges` 用 `diff().affectedKeys().hasOnly()` 把「這次 update 只准動哪些欄位」寫成白名單——這擋掉 client 直接改 `ownerId` 把別人的資料佔為己有的攻擊，是 client 直連模型必備的欄位級防護。第三，custom claims（`request.auth.token.role`）適合放跨專案、低頻變動的全域角色；per-resource 的成員資格用 `get()` 查 membership document，因為 claims 改動要等 token 刷新、不適合表達即時變動的權限。
 
 ## 配置：用 emulator 把規則寫成單元測試
 
@@ -162,27 +164,27 @@ test('client 不能竄改 ownerId', async () => {
 
 啟動方式 `firebase emulators:exec --only firestore "npm test"`，讓測試在 CI 跑。測試要覆蓋的不只是 happy path——每條規則至少要有「正向放行」「越權拒絕」「未登入拒絕」「欄位竄改拒絕」四類斷言。`assertFails` 比 `assertSucceeds` 更重要：它證明的是「該擋的有擋住」，正是滲透測試會打的點。把這套測試接進 release gate，規則變更才有 evidence 可交（對應 [6.8 release gate](/backend/06-reliability/release-gate/)）。
 
-## 故障演練：五個把規則寫成漏洞的 production 踩坑
+## 故障演練：把規則寫成漏洞的 production 事故
 
-#### Case 1：`allow read, write: if true` 上線沒收
+#### `allow read, write: if true` 上線沒收
 
 開發期為了快，把規則開全放，上線忘改。任何人用公開的 project config（前端 bundle 裡就有）就能 REST 拉整個資料庫。修法：規則預設從 deny 起手，開發期的寬鬆規則進不了 main branch；CI 跑一條 lint 掃 `if true`，命中即 fail。這是 [1.5 資料層紅隊](/backend/01-database/red-team-data-layer/) 越權查詢路徑的最便宜目標。
 
-#### Case 2：`read` 沒拆 `get` 與 `list`
+#### `read` 沒拆 `get` 與 `list`
 
 `allow read` 同時涵蓋讀單一 document（`get`）與查整個 collection（`list`）。規則只想開「讀自己那筆」，卻因為沒拆 `list`，讓 client 能 `list` 整個 collection 撈別人的資料。修法：對 collection-level query 敏感的 path，把 `read` 拆成 `allow get` 與 `allow list`，`list` 條件更嚴或直接關閉、改走後端彙整。
 
-#### Case 3：信任 `request.resource.data` 的內容沒驗證
+#### 信任 `request.resource.data` 的內容沒驗證
 
 `create` 規則只檢查 `request.auth != null`，沒驗證寫入內容。client 自己塞 `role: 'admin'` 或 `balance: 999999` 進 document。修法：寫入規則要驗證關鍵欄位的值與型別（`request.resource.data.role == 'member'`、`request.resource.data.amount is int`），敏感欄位（角色、金額、狀態）的權威值不該由 client 寫入、改由 Cloud Function 或後端寫。
 
-#### Case 4：遞迴 `match /{document=**}` 蓋掉嚴格規則
+#### 遞迴 `match /{document=**}` 蓋掉嚴格規則
 
 頂層放一條 `match /{document=**} { allow read: if isSignedIn(); }` 圖方便，結果它遞迴命中所有 subcollection，把底下本來該按成員資格嚴格控管的 `members` collection 也開成「登入即可讀」。修法：避免寬鬆的遞迴萬用規則；授權顆粒不同的 path 各自寫明確 `match`。
 
-#### Case 5：規則複雜到沒人能 review
+#### 規則複雜到沒人能 review
 
-授權邏輯長到幾百行、巢狀 `get()` 互相依賴，改一條沒人敢保證沒開新洞、也沒有測試。修法：這是規則已經不敷使用的訊號（見下方邊界段）——超過這個複雜度，授權該拉回後端中介層，而不是繼續在 DSL 裡長。
+授權邏輯長到幾百行、巢狀 `get()` 互相依賴，改一條沒人敢保證沒開新洞、也沒有測試。修法：這是規則已經不敷使用的訊號（見〈邊界與整合：規則不敷使用時把授權拉回後端〉一節）——超過這個複雜度，授權該拉回後端中介層，而不是繼續在 DSL 裡長。
 
 ## 容量與觀測：`get()` 計費與規則複雜度上限
 
@@ -201,7 +203,7 @@ Security Rules 適合表達「資源的擁有者與成員能做什麼」這類 r
 
 ## 下一步路由
 
-- 上層：[Firestore overview](/backend/01-database/vendors/firestore/)（服務定位與查詢邊界）
+- 上層：[Firestore overview](/backend/01-database/vendors/firestore/)
 - 安全驗證：[1.5 資料層紅隊](/backend/01-database/red-team-data-layer/)（越權查詢與資料外洩路徑）
 - 遷移 driver：[Firestore → 自建 relational](/backend/01-database/vendors/firestore/migrate-to-relational/)（授權控制面失控的退場）
 - 發布證據：[6.8 release gate](/backend/06-reliability/release-gate/)（規則測試接進 gate）

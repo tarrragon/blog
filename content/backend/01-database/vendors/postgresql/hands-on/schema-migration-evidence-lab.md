@@ -7,7 +7,7 @@ tags: ["backend", "database", "postgresql", "hands-on", "migration"]
 
 PostgreSQL schema migration evidence lab 的核心責任是把 schema change 轉成 release gate 可使用的 evidence。這篇承接 [Online Schema Change](../../online-schema-change/) 與 [Database Migration Playbook](/backend/01-database/database-migration-playbook/)。
 
-本文的驗收標準是：你能設計 expand migration、量測 lock、跑 backfill validation、建立 contract migration 的 [fail-forward](/backend/knowledge-cards/fail-forward/) / rollback 判斷標準。
+本篇的範圍是在 local lab 的 `accounts` 上走一次 expand migration：加 nullable 欄位並觀察 lock、backfill 與 validation、用 `NOT VALID` 分開加 constraint、保存 query plan，最後整理 contract migration 的 [fail-forward](/backend/knowledge-cards/fail-forward/) / rollback 判斷標準。
 
 ## Expand Migration
 
@@ -26,7 +26,18 @@ SQL
 
 ## Lock Evidence
 
-Lock evidence 的核心責任是讓 migration 的阻塞風險可見。開另一個 terminal，在 migration 前後查 lock。
+Lock evidence 的核心責任是讓 migration 的阻塞風險可見。上面的 expand migration 在幾百毫秒內就 commit，`ALTER TABLE` 拿的 lock 隨 commit 釋放，在它前後查 `pg_locks` 都是零列；要看到這個 lock，讓一次同類的 ALTER 停在 commit 之前。
+
+在 migration terminal 用互動式 psql 執行：
+
+```sql
+-- migration terminal：同類的 ALTER，先不 COMMIT
+BEGIN;
+ALTER TABLE accounts ADD COLUMN lock_probe text;
+-- 停在這裡，切到另一個 terminal 查 pg_locks；查完回來執行 ROLLBACK，lock_probe 不會留下
+```
+
+另一個 terminal 查：
 
 ```bash
 psql "$DATABASE_URL" <<'SQL'
@@ -35,7 +46,11 @@ FROM pg_locks
 WHERE relation IN ('accounts'::regclass, 'ledger_entries'::regclass)
 ORDER BY granted, mode;
 SQL
+# migration terminal 的 transaction 開著時：accounts 的 AccessExclusiveLock，granted = t
+# ROLLBACK 之後再查：0 rows
 ```
+
+`AccessExclusiveLock` 擋住 `accounts` 上所有讀寫，包括單純的 `SELECT`；migration 的 transaction 開多久，這些查詢就等多久。
 
 Release gate 要保存 lock mode、duration、blocked session 與 application impact。高風險 DDL 要先改成 expand / backfill / contract。
 

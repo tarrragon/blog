@@ -1,12 +1,12 @@
 ---
 title: "MySQL Online Schema Change：gh-ost 跟 pt-online-schema-change 兩條完全不同的 ghost table 路徑"
 date: 2026-05-19
-description: "MySQL ALTER TABLE 可能鎖整張表，production 需要 online schema change 流程。gh-ost（GitHub）跟 pt-online-schema-change（Percona）都用 ghost table 解決、但底層機制完全不同：pt-osc 用 trigger 同步、gh-ost 用 binlog stream 同步。本文走兩工具機制對照表 → trigger vs binlog 各自取捨 → 配置 step-by-step → 5 production 踩雷（trigger overhead / binlog 延遲 / FK constraint / hot trigger lock / 切換瞬間 deadlock）→ 何時用哪一個"
+description: "MySQL ALTER TABLE 可能鎖整張表，production 需要 online schema change 流程。gh-ost（GitHub）跟 pt-online-schema-change（Percona）都用 ghost table 解決、但底層機制完全不同：pt-osc 用 trigger 同步、gh-ost 用 binlog stream 同步。本文走兩工具機制對照表 → trigger vs binlog 各自取捨 → 配置 step-by-step → production 踩雷（trigger overhead / binlog 追不上寫入 / FK constraint / 跟既有 trigger 共存 / cut-over 等 metadata lock）→ 何時用哪一個"
 weight: 13
 tags: ["backend", "database", "mysql", "schema-migration", "online-ddl", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *online schema change* — gh-ost 跟 pt-online-schema-change 兩條工具路徑的機制對比。
+> 這篇涵蓋 MySQL 的 online schema change：gh-ost 跟 pt-online-schema-change 兩條工具路徑的機制對比。
 
 ---
 
@@ -14,10 +14,10 @@ tags: ["backend", "database", "mysql", "schema-migration", "online-ddl", "deep-a
 | --------------------- | ----------------------------------------------------------- | ----------------------------------------------- |
 | 同步機制              | **MySQL trigger**（原表 INSERT/UPDATE/DELETE 觸發寫 ghost） | **Binlog stream**（讀 primary binlog 寫 ghost） |
 | Primary 寫入 overhead | trigger 觸發成本（同 transaction 內）                       | 0（binlog 已存在）                              |
-| Replica lag 影響      | trigger 在 primary 跑、replica 自然 lag                     | 從 replica 讀 binlog、可主動 throttle           |
+| Replica lag 影響      | trigger 讓 row event 變多；`--max-lag` 只暫停 chunk copy    | 從 replica 讀 binlog、可主動 throttle           |
 | Foreign key           | 部分支援（drop/recreate strategy）                          | 不支援（必須先 drop FK）                        |
 | Roll back（過程中）   | 困難（trigger 已建、要清乾淨）                              | 容易（drop ghost table 即可）                   |
-| 暫停 / resume         | 不支援                                                      | 支援（gh-ost interactive command）              |
+| 暫停 / resume         | `--pause-file` 指定的檔存在時暫停、刪掉後繼續               | 支援（gh-ost interactive command）              |
 | 切換時 lock 持續      | rename 期間 metadata lock（毫秒級）                         | rename 期間 metadata lock（毫秒級）             |
 | 工具 binary           | Perl 腳本（Percona Toolkit）                                | Go binary（單一可執行檔）                       |
 | 推出年份              | 2011                                                        | 2016                                            |
@@ -39,7 +39,7 @@ MySQL 8.0 加 *Instant DDL*（部分 ALTER 不 rebuild、只改 metadata、毫�
 
 pt-osc 流程：
 
-1. CREATE ghost table（跟原表同 schema + 你要的 ALTER）
+1. CREATE ghost table（跟原表同 schema + 要套用的 ALTER）
 2. 在原表上 *建 3 個 trigger*：INSERT / UPDATE / DELETE
 3. 任何寫入原表的 transaction *同時觸發 trigger* 寫對應 ghost
 4. 背景 chunk-by-chunk copy 既有 row 到 ghost
@@ -49,7 +49,7 @@ pt-osc 流程：
 **Trade-off**：
 
 - *寫入 overhead*：每個 primary 寫入 transaction 都多一次 trigger 執行、寫吞吐降 10-30%
-- *Replica lag*：trigger 跟原寫入同 transaction、replica 上每個 row 也跑 trigger、replica lag 可能暴增（缺少主動 throttle）
+- *Replica lag*：trigger 跟原寫入同 transaction、每筆寫入多寫一份 ghost table，binlog 的 row event 跟著變多、replica 要 apply 的量變大；`--max-lag` 在 replica lag 超過門檻時暫停 chunk copy，但 trigger 產生的寫入跟著 application transaction 走、不受它節流
 - *Roll back 困難*：tool 跑到一半失敗、trigger 已建、要手動清掉才能 retry
 - *FK 處理*：原表有 FK 指向時、ghost table 要先 drop FK 再 recreate、操作複雜
 
@@ -57,13 +57,13 @@ pt-osc 流程：
 
 - 寫吞吐 < 50% capacity（有 buffer 撐 trigger overhead）
 - 無 FK 或 FK 簡單
-- 沒有 replica lag 敏感的 read（trigger 在 replica 也跑）
+- 沒有 replica lag 敏感的 read（trigger 產生的額外 row event 也要在 replica apply）
 
 **不適用**：
 
 - 高寫吞吐（> 80% capacity）— trigger overhead 直接 saturate
 - 大量 FK 結構
-- 需要 throttle / pause / resume
+- 需要在執行中調整 chunk size 或 cut-over 時點
 
 ## gh-ost：用 binlog stream 同步寫入
 
@@ -101,21 +101,31 @@ gh-ost 流程：
 ### gh-ost 一個 ALTER 命令
 
 ```bash
+# 反斜線續行的每一行不能再接註解，各選項的用途寫在這裡：
+# --host：連 replica，從 replica 讀 binlog
+# --allow-on-master=false：不直接連 primary 讀 binlog
+# --chunk-size：每批 copy 1000 row
+# --max-load：primary load 限制（Threads_running 超過 50 就 throttle）
+# --critical-load：Threads_running 超過 200 直接 abort
+# --max-lag-millis：replica lag 限制（毫秒）
+# --throttle-additional-flag-file：touch 這個檔就 throttle
+# --postpone-cut-over-flag-file：touch 這個檔就延後 cut-over
+# --execute：真的執行（沒有這個只 dry-run）
 gh-ost \
-  --host=replica.example.com \           # 從 replica 讀 binlog
+  --host=replica.example.com \
   --user=ghost \
   --password=... \
   --database=production \
   --table=orders \
   --alter='ADD COLUMN status VARCHAR(20) DEFAULT NULL, ADD INDEX idx_status (status)' \
-  --allow-on-master=false \              # 不直接連 primary 讀 binlog
-  --chunk-size=1000 \                    # 每批 copy 1000 row
-  --max-load='Threads_running=50' \      # primary load 限制
-  --critical-load='Threads_running=200' \ # 超過直接 abort
-  --max-lag-millis=1500 \                # replica lag 限制
-  --throttle-additional-flag-file=/tmp/throttle \  # touch 此檔 throttle
-  --postpone-cut-over-flag-file=/tmp/postpone \    # touch 此檔延後 cut-over
-  --execute                              # 真的執行（沒這個只 dry-run）
+  --allow-on-master=false \
+  --chunk-size=1000 \
+  --max-load='Threads_running=50' \
+  --critical-load='Threads_running=200' \
+  --max-lag-millis=1500 \
+  --throttle-additional-flag-file=/tmp/throttle \
+  --postpone-cut-over-flag-file=/tmp/postpone \
+  --execute
 ```
 
 ### Interactive command（gh-ost 跑起來後）
@@ -136,6 +146,9 @@ echo "panic" | nc -U /tmp/gh-ost.production.orders.sock
 對比 gh-ost 的 binlog reader、pt-osc 命令更短但配置義務同樣多：
 
 ```bash
+# --max-lag：replica lag 超過 1.5 秒就暫停 chunk copy
+# --check-replication-filters：任一台 server 設了 replication filter 就中止，防 filter 漏掉 trigger 的寫入
+# --alter-foreign-keys-method：auto / rebuild_constraints / drop_swap / none
 pt-online-schema-change \
   --host=primary.example.com \
   --user=ghost \
@@ -146,16 +159,16 @@ pt-online-schema-change \
   --max-load='Threads_running=50' \
   --critical-load='Threads_running=200' \
   --max-lag=1.5 \
-  --check-replication-filters \           # 防 binlog filter 漏 trigger
-  --alter-foreign-keys-method=auto \      # auto / rebuild_constraints / drop_swap / none
+  --check-replication-filters \
+  --alter-foreign-keys-method=auto \
   --execute
 ```
 
-`--alter-foreign-keys-method` 是 pt-osc 對 FK 處理的策略選項、四種選擇對 production 影響非常不同（rebuild 重建 FK / drop_swap 用更快但少了 atomic、none 是不處理）。
+`--alter-foreign-keys-method` 是 pt-osc 對 FK 處理的策略選項，四個值對 production 影響非常不同：`rebuild_constraints` 用 `ALTER TABLE` 把子表的 FK 改指向新表；`drop_swap` 關掉 `FOREIGN_KEY_CHECKS`、先 drop 原表再把新表 rename 過去，比較快但不是 atomic；`none` 不處理，子表的 FK 會指向已不存在的表；`auto` 能用 `rebuild_constraints` 就用、不能就改用 `drop_swap`。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. pt-osc trigger overhead 不可預期
+### pt-osc trigger overhead 不可預期
 
 `--max-load='Threads_running=50'` 看起來保護了 server、但 trigger 在 transaction 內、production 的 *每個寫入* 都加 trigger 開銷。`Threads_running` 是 *當下* 數字、看不到 trigger 累積 latency。常見場景：高峰時段下 pt-osc、預期 30% overhead、實際 60%、p99 飆 5x。
 
@@ -165,7 +178,7 @@ pt-online-schema-change \
 - 用 *staging environment* 跑 production-like load 預估 trigger overhead
 - 對寫吞吐 > 50% capacity 的 server 改用 gh-ost
 
-### 2. gh-ost binlog lag 跟 primary 寫入率追不上
+### gh-ost binlog lag 跟 primary 寫入率追不上
 
 gh-ost 從 replica 讀 binlog、binlog event 進來速度有上限。如果 *primary 寫入率超過 gh-ost binlog consume 速度*（每秒幾千 transaction 對某些 server 已是 ceiling）、gh-ost 永遠追不上、cut-over 會長時間卡住。
 
@@ -175,23 +188,23 @@ gh-ost 從 replica 讀 binlog、binlog event 進來速度有上限。如果 *pri
 - 提高 `--chunk-size` 加快 copy（同時用 `--max-load` 防過載）
 - 真的追不上、考慮 *暫停部分寫入流量*（throttle traffic，而非 throttle tool）
 
-### 3. Foreign key constraint — 兩工具都尷尬
+### Foreign key constraint — 兩工具都尷尬
 
 原表有 FK 指向（其他 table FK references 這張表）、ghost table 切換時 *新 ghost 沒有那些 FK 指向*。Cut-over 一瞬間、FK 從指向「原表」變成指向「archive 表」、外部 constraint 失效。
 
 修法（pt-osc）：
 
 - 用 `--alter-foreign-keys-method=rebuild_constraints`：先 ALTER 外部 table FK 指向 ghost、再 cut-over
-- 或 `drop_swap`：cut-over 前 drop FK、cut-over 後 recreate（更快但 cut-over 期間 FK 失效）
+- 或 `drop_swap`：關掉 `FOREIGN_KEY_CHECKS`、先 drop 原表再把新表 rename 成原表名（更快，但 drop 與 rename 之間原表不存在、對它的查詢會報錯；rename 失敗時原表已經刪掉、無法 abort）
 
 修法（gh-ost）：
 
 - gh-ost 不支援 — 手動 drop FK / 重 setup FK
 - 或維護 schema 改 FK 結構（FK 改在 application 層 enforce）
 
-### 4. pt-osc trigger 跟 application 既有 trigger 衝突
+### pt-osc trigger 跟 application 既有 trigger 共存
 
-原表上已經有 application 自建 trigger、pt-osc 在原表 *再加 3 個 trigger*、新舊 trigger 執行順序 MySQL 不保證（多 trigger 同事件按 *未定義順序*）。Application 行為可能 subtly broken。
+原表上已經有 application 自建 trigger 時，pt-osc 預設直接拒絕執行、要求加 `--preserve-triggers`；加了之後 pt-osc 在原表 *再加 3 個 trigger*，並把原有的 trigger 複製到新表。同一個事件的多個 trigger 依建立順序執行（`information_schema.TRIGGERS` 的 `ACTION_ORDER`），pt-osc 後建的 trigger 排在 application trigger 之後；兩組 trigger 在同一個 transaction 裡執行，application trigger 的副作用要在 staging 跑過一次確認。
 
 修法：
 
@@ -199,7 +212,7 @@ gh-ost 從 replica 讀 binlog、binlog event 進來速度有上限。如果 *pri
 - 如果有 application trigger、考慮 *暫時 disable 再 ALTER* 或改 gh-ost
 - gh-ost 不在原表加 trigger、不會碰到這個問題
 
-### 5. Cut-over 瞬間 deadlock — 兩工具都有但表現不同
+### Cut-over 瞬間等 metadata lock — 兩工具都有但表現不同
 
 Cut-over 用 `RENAME TABLE original TO archive, ghost TO original`（atomic operation）。但 cut-over 瞬間需要 *metadata lock*、跟 *進行中的 long-running transaction* 衝突會 wait。Long-running transaction 持續、cut-over 永遠 wait、最後 timeout 失敗。
 
@@ -217,13 +230,13 @@ Cut-over 用 `RENAME TABLE original TO archive, ghost TO original`（atomic oper
 
 對 100 GB 表、ALTER 加 column + 加 index 為例：
 
-| 維度          | pt-osc                            | gh-ost                        |
-| ------------- | --------------------------------- | ----------------------------- |
-| 估算總時間    | 6-12 小時（依 chunk size + load） | 5-10 小時（同上、可動態調整） |
-| 寫吞吐影響    | -10% ~ -30%（trigger overhead）   | < 5%（binlog 已存在）         |
-| Replica lag   | 1-10 秒（trigger 在 replica 跑）  | 自動 throttle 在 threshold 內 |
-| Disk 額外需求 | ~原表大小 + index（ghost 用）     | 同左                          |
-| Rollback 成本 | 中（清 trigger）                  | 低（drop ghost）              |
+| 維度          | pt-osc                                  | gh-ost                        |
+| ------------- | --------------------------------------- | ----------------------------- |
+| 估算總時間    | 6-12 小時（依 chunk size + load）       | 5-10 小時（同上、可動態調整） |
+| 寫吞吐影響    | -10% ~ -30%（trigger overhead）         | < 5%（binlog 已存在）         |
+| Replica lag   | 1-10 秒（trigger 產生的額外 row event） | 自動 throttle 在 threshold 內 |
+| Disk 額外需求 | ~原表大小 + index（ghost 用）           | 同左                          |
+| Rollback 成本 | 中（清 trigger）                        | 低（drop ghost）              |
 
 兩工具總時間接近、*影響 production 的差異大*。
 
@@ -239,7 +252,7 @@ Cut-over 用 `RENAME TABLE original TO archive, ghost TO original`（atomic oper
 
 ### 跟 Vitess
 
-Vitess 有自己的 *VReplication-based online DDL*、不用 gh-ost 或 pt-osc。Vitess online DDL 在 shard 內部用類似 gh-ost 的 binlog stream 機制、但有 Vitess-aware schema management。詳見 *Vitess sharding 設計* 篇（待寫）。
+Vitess 有自己的 *VReplication-based online DDL*、不用 gh-ost 或 pt-osc。Vitess online DDL 在 shard 內部用類似 gh-ost 的 binlog stream 機制、但有 Vitess-aware schema management。詳見 [Vitess sharding 設計](/backend/01-database/vendors/mysql/vitess-sharding/)。
 
 ### 跟 Aurora MySQL
 
@@ -262,10 +275,10 @@ gh-ost workflow 的 sibling 路由是 [PostgreSQL Online Schema Change](/backend
 | 情境                                                         | 選擇              | 原因                                   |
 | ------------------------------------------------------------ | ----------------- | -------------------------------------- |
 | 標準 production write < 50% capacity                         | gh-ost（預設）    | 寫入 overhead 0、控制更細              |
-| 高寫吞吐 (> 80% capacity)                                    | gh-ost（必須）    | pt-osc trigger overhead 直接 OOM       |
+| 高寫吞吐 (> 80% capacity)                                    | gh-ost（必須）    | pt-osc trigger overhead 吃滿寫入容量   |
 | 有 FK constraint 需要保留                                    | pt-osc            | gh-ost 不處理 FK                       |
 | 有 application-side trigger 在原表                           | gh-ost            | pt-osc trigger 跟既有 trigger 不可預期 |
-| 需要 pause / resume 能力                                     | gh-ost            | pt-osc 不支援                          |
+| 需要執行中調整 throttle 與 cut-over 時點                     | gh-ost            | pt-osc 只能用 pause file 暫停          |
 | 已用 Percona Toolkit 整套（pt-table-checksum / pt-archiver） | pt-osc            | 工具鏈一致                             |
 | 已用 Vitess                                                  | Vitess online DDL | 維持 Vitess schema workflow            |
 | 已用 PlanetScale                                             | branch-based      | 維持 PlanetScale schema workflow       |

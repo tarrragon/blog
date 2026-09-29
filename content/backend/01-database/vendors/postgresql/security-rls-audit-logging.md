@@ -8,7 +8,7 @@ tags: ["backend", "database", "postgresql", "security", "rls", "audit"]
 
 PostgreSQL security / RLS / audit logging 的核心責任是把資料庫安全拆成存取邊界、資料列可見性與操作證據。PostgreSQL role / grant 決定誰能連線與操作 schema；[Row Level Security](/backend/knowledge-cards/row-level-security/) 決定同一張表中哪些 row 對某個 role 可見；audit logging 則把敏感操作轉成可查詢、可保留、可告警的證據。
 
-本文的判讀錨點是：資料庫安全是 application auth 的下游防線。Application 仍要負責身份、session、租戶與 workflow；PostgreSQL security layer 負責在資料邊界補上 least privilege、tenant isolation 與 forensic evidence。
+本文的範圍是 PostgreSQL 的 role 與 grant baseline、Row Level Security、audit logging、PII 與 data protection 的邊界、security 設定的 operational evidence，以及常見 failure modes。
 
 ## Role and Grant Baseline
 
@@ -45,7 +45,23 @@ USING (tenant_id = current_setting('app.tenant_id')::uuid)
 WITH CHECK (tenant_id = current_setting('app.tenant_id')::uuid);
 ```
 
-這段 policy 依賴 application 在 transaction 內設定 `app.tenant_id`。使用 connection pooler 時，設定必須跟 transaction boundary 對齊，避免 session state 漂移。
+這段 policy 依賴 application 在 transaction 內設定 `app.tenant_id`。使用 connection pooler 時，設定必須跟 transaction boundary 對齊：用 `SET LOCAL`，值只活到這個 transaction 結束，同一條連線被 pooler 交給下一個 request 時不會帶著上一個 tenant 的設定。
+
+```sql
+-- application 以非 owner 的 app_user 連線（table owner 與 superuser 不受 policy 限制）
+BEGIN;
+SET LOCAL app.tenant_id = '11111111-1111-1111-1111-111111111111';
+SELECT id, amount FROM invoices;   -- 只回 tenant_id 等於這個值的 row
+INSERT INTO invoices VALUES (3, '22222222-2222-2222-2222-222222222222', 300);
+                                   -- 別的 tenant 的 row 被 WITH CHECK 擋下：
+                                   -- ERROR: new row violates row-level security policy for table "invoices"
+ROLLBACK;
+
+-- transaction 結束後 SET LOCAL 的值失效，同一條連線沒重設就查，policy 的 cast 直接報錯，不會回別的 tenant 的 row
+SELECT id FROM invoices;           -- ERROR: invalid input syntax for type uuid: ""
+```
+
+資料庫安全是 application auth 的下游防線：這段 policy 用的 `app.tenant_id` 由 application 設定，身份、session、租戶與 workflow 仍由 application 負責；PostgreSQL security layer 在資料邊界補上 least privilege、tenant isolation 與 forensic evidence。
 
 ## Audit Logging
 

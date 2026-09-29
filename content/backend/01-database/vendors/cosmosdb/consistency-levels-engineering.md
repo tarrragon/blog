@@ -6,11 +6,11 @@ weight: 70
 tags: ["backend", "database", "cosmosdb", "consistency", "session-token", "deep-article"]
 ---
 
-Cosmos DB 文件列 *5 個 consistency level*（Strong / Bounded staleness / Session / Consistent prefix / Eventual）、用 [PACELC](/backend/knowledge-cards/pacelc/) 講概念、但沒給具體工程判斷標準。team 啟動 Cosmos DB 第一個要決定的就是 account 預設 level、再決定哪些 query 要 per-request override。本文先講 5 個 level 的精確語義、再進 Session 為什麼是 production 預設、再進「同一 application 內不同操作選不同 level」的進階策略；*Strong + multi-region write 互斥*議題 cross-link 到 [multi-region-write-conflict](../multi-region-write-conflict/)、本篇不展開。
+Cosmos DB 文件列 *5 個 consistency level*（Strong / Bounded staleness / Session / Consistent prefix / Eventual）、用 [PACELC](/backend/knowledge-cards/pacelc/) 講概念、但沒給具體工程判斷標準。這篇整理 Cosmos DB account 預設 level 與 per-request override 的選法：五個 level 各自保證什麼、Session 為什麼是多數互動式產品的預設、同一個 application 內不同操作怎麼分到不同 level；Strong 與 multi-region write 不能並用的理由在 [multi-region-write-conflict](../multi-region-write-conflict/)。
 
-本文不是 Cosmos DB overview（請看 [Cosmos DB vendor 頁](/backend/01-database/vendors/cosmosdb/)）— 而是 *consistency level 工程選擇邏輯* 的深度展開。Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（用 session consistency 撐 AR 全球同步、5 level 跨 collection 分流）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 用較弱 consistency 換 throughput）。
+Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（用 session consistency 撐 AR 全球同步、5 level 跨 collection 分流）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 用較弱 consistency 換 throughput）。
 
-> **Cosmos DB workload 適配判讀（四層 framing）**：API model 三型遷移路徑 / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in — 判讀軸詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)。本文聚焦 consistency level 選擇操作層、是 *已選 Cosmos DB 後* 的 read / write 語義決策；若 workload 不適用 Cosmos DB、level 選擇無法救回 vendor 選錯的取捨。
+> **Cosmos DB workload 適配判讀（四層 framing）**：遷移路徑是保留 + 補周邊、同 DB 換託管還是同 model 換 vendor / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in — 判讀軸詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)。本文聚焦 consistency level 選擇操作層、是 *已選 Cosmos DB 後* 的 read / write 語義決策；若 workload 不適用 Cosmos DB、level 選擇無法救回 vendor 選錯的取捨。
 
 ## 問題情境
 
@@ -42,7 +42,7 @@ consistency level 選錯不是 config 問題、是 *影響 user-facing 行為* �
 
 ### Bounded staleness
 
-- 機制：read 落後 *不超過 K 個 version 或 T 秒*（取較嚴格者）；單 region 內 linearizable、跨 region 有 bounded lag、跟 [Freshness Token](/backend/knowledge-cards/freshness-token/) 是兩種「跨層 read-after-write」協議的選擇（前者 vendor 內建、後者 application-level）
+- 機制：read 落後 *不超過 K 個 version 或 T 秒*（取較嚴格者）；單 region 內 linearizable、跨 region 有 bounded lag、跟 [Freshness Token](/backend/knowledge-cards/freshness-token/) 是兩種「跨層 read-after-write」協議的選擇（Bounded staleness 由 Cosmos DB 內建、Freshness Token 由 application 自己帶）
 - 設定：K（version 上限）+ T（時間上限）兩個參數
 - 適合：multi-region 但需要「有 bound 的 staleness 保證」、如 trading system 跨 region read with SLA
 
@@ -54,8 +54,8 @@ consistency level 選錯不是 config 問題、是 *影響 user-facing 行為* �
 
 ### Consistent prefix
 
-- 機制：read 不會看到亂序的寫入（看到 A→B→C、不會看到 A→C→B）、但可能落後
-- 適合：時序敏感但可 stale 的場景（如新聞 feed 不能跳序、但可以晚幾秒）
+- 機制：同一筆交易（transactional batch）裡寫入的多份 document 一起可見，讀者不會只看到其中一部分的新版本；單一 document 的寫入在這個 level 下是 eventual
+- 適合：多份 document 用同一筆交易寫入、讀取時要看到一致的一組版本的場景
 - 風險：常被誤用為 Session 替代、跨 session 一樣 stale、但比 Eventual 多保證 *順序*
 
 ### Eventual
@@ -67,12 +67,12 @@ consistency level 選錯不是 config 問題、是 *影響 user-facing 行為* �
 
 - account 預設一個 level
 - 單一 request 可以 *降級*（讀更弱 level）、*不可升級*（讀更強）
-- container 層 *無法獨立設定 consistency level*（時間敏感、查最新文件）— 分流靠 *collection 切分* + *per-request override*
+- container 層 *無法獨立設定 consistency level*（時間敏感、查最新文件）— 分流靠 *拆成不同 account* + *per-request override*
 
 ### RU 成本差異
 
 - Strong / Bounded read ≈ 2x Session / Eventual 的 [Request Unit](/backend/knowledge-cards/request-unit/)
-- write 成本不直接受 read level 影響、但 multi-region replication 開銷會（每多一個 region、寫成本 ×N）
+- write 成本不直接受 read level 影響、但 multi-region replication 開銷會（寫入成本隨 region 數倍增：N 個 region 就是單一 region 的 N 倍）
 - selection 階段要把 consistency level 當「RU 倍數」進入容量公式、見 [ru-cost-model-sizing](../ru-cost-model-sizing/)
 
 ### 跟通用 consistency 卡片的對應
@@ -85,23 +85,23 @@ Cosmos DB 是 *少數把 5 level 都商品化* 的服務、其他系統通常只
 
 ## 進階設計策略：同一 application 內不同操作選不同 level
 
-9.C11 Minecraft Earth 案例的平台特性段揭露「一致性是 spectrum、不是 binary」 — AR 遊戲玩家位置稍 stale OK（用 session / eventual）、庫存交易需要 strong；*同一 application 內不同 collection / container 配不同 consistency 是進階策略*、不一定是 account 一刀切。
+9.C11 Minecraft Earth 案例的平台特性段揭露「一致性是 spectrum、不是 binary」 — AR 遊戲玩家位置稍 stale OK（用 session / eventual）、庫存交易需要 strong；*同一 application 內不同資料配不同 consistency 是進階策略*、不一定是 account 一刀切。
 
 container 層無法獨立設定 consistency level（時間敏感、查最新文件）、所以分流靠：
 
-- **Collection / container 切分**：高一致需求的資料放獨立 account、預設 Strong；低一致需求放另一 account、預設 Session
-- **Per-request override**：account 預設 Session、特定「寫入後立即讀」場景升 Bounded、批次分析降 Eventual；用 SDK 的 `RequestOptions.ConsistencyLevel`
+- **Account 切分**：高一致需求的資料放獨立 account、預設 Strong；低一致需求放另一 account、預設 Session
+- **Per-request override**：account 預設設成需要的最強 level（例如 Bounded staleness）、一般互動讀取降到 Session、批次分析降到 Eventual；用 SDK 的 `RequestOptions.ConsistencyLevel`
 
 ### Per-request override 範例（C# SDK）
 
 ```csharp
-// account 預設 Session
-// 但這個 read 需要 Bounded staleness
+// account 預設 Bounded staleness（需要的最強 level）
+// 一般互動讀取降到 Session
 var response = await container.ReadItemAsync<Item>(
     id: "item-123",
     partitionKey: new PartitionKey("user-456"),
     requestOptions: new ItemRequestOptions {
-        ConsistencyLevel = ConsistencyLevel.BoundedStaleness
+        ConsistencyLevel = ConsistencyLevel.Session
     });
 
 // 批次分析、降到 Eventual 換成本
@@ -127,7 +127,7 @@ az cosmosdb update --name mycosmos --resource-group myrg \
   --default-consistency-level Session
 ```
 
-切換 level 是即時生效、但 production 切換需要 audit 所有 client 的 session 邏輯（特別是 Strong → Session 的降級會讓「跨 session read 變 stale」）。
+account 預設 level 可以隨時修改，但已經在跑的 SDK client 要重新建立（重啟 application）才會用上新的預設；production 切換另外需要 audit 所有 client 的 session 邏輯（特別是 Strong → Session 的降級會讓「跨 session read 變 stale」）。
 
 ### Request 層 override
 
@@ -135,11 +135,11 @@ SDK 傳 `RequestOptions.ConsistencyLevel`（C# / Java / Node SDK 行為一致）
 
 ### Session token 管理
 
-每個 read response 帶 session token、client 下次 read 帶回去；跨 service 共享 token 需要顯式傳遞（不然每個 service 自己一個 session）。
+每次寫入之後，Cosmos DB 在 response 裡回一個更新過的 session token；client 讀取時帶上它，讀到的至少是那次寫入之後的版本。跨 service 共享 token 需要顯式傳遞（不然每個 service 自己一個 session）。
 
 ```csharp
-// 拿到 session token
-var response = await container.ReadItemAsync<Item>(id, pk);
+// 寫入的 response 帶回這次寫入之後的 session token
+var response = await container.UpsertItemAsync<Item>(item, pk);
 var sessionToken = response.Headers["x-ms-session-token"];
 
 // 跨 service 傳遞（如 HTTP header）
@@ -160,7 +160,7 @@ account 預設可改、但 production 切換 level 需要 audit 所有 client �
 
 ## 失敗模式
 
-### Failure 1：全用 Strong consistency
+### 全用 Strong consistency
 
 互動式產品 Session 即足夠、用 Strong 浪費 2x RU + 限制 multi-region write、cost 暴漲且 multi-region 配置受限。徵兆是「RU consumption 明顯偏高、且 multi-region write 開不起來」 — 才發現預設選 Strong。
 
@@ -170,7 +170,7 @@ account 預設可改、但 production 切換 level 需要 audit 所有 client �
 - 把需要 Strong 的少數 collection 拆獨立 account、其他 default Session
 - 計算 cost：Session vs Strong 在多數 workload 差距 1.5-2x、長期成本顯著
 
-### Failure 2：Session token 沒回傳
+### Session token 沒回傳
 
 read 後拿 token、下次 read 沒帶、實際變 Eventual；徵兆是「自己的寫立刻 read 看不到」、debug 才發現 SDK 設定漏。SDK 預設會自動管理 session token、但跨 service 傳遞時容易漏。
 
@@ -180,7 +180,7 @@ read 後拿 token、下次 read 沒帶、實際變 Eventual；徵兆是「自己
 - 跨 service 通信時把 session token 隨 HTTP header 傳遞
 - 或改 account 層 Bounded staleness（提供跨 session 的 K/T bound、不依賴 token）
 
-### Failure 3：跨 service 共享 session 假設
+### 跨 service 共享 session 假設
 
 service A 寫、service B 讀、B 沒拿到 A 的 session token → 看不到 A 的寫。常見場景：order service 寫訂單、notification service 立刻 read 訂單寄通知 — notification 沒拿到 order 的 token、讀到舊狀態（或讀不到）。
 
@@ -190,25 +190,25 @@ service A 寫、service B 讀、B 沒拿到 A 的 session token → 看不到 A 
 - B 用 token 做 read、保證讀到 A 的寫
 - 或業務上接受 eventual、design notification 有 retry / reconcile 機制
 
-### Failure 4：Bounded staleness 設太鬆
+### Bounded staleness 設太鬆
 
-K = 100,000、T = 1 hour、實際等於 Eventual、team 以為自己有保護。bounded staleness 的 K/T 要對應業務 SLA、不是 vendor 預設值。
+K 與 T 設得遠大於業務能接受的延遲時，Bounded staleness 的上限永遠碰不到，行為跟 Session 以下的 level 分不出來，team 卻以為自己有保護。K/T 有平台下限：single-region account 最小是 10 次寫入或 5 秒，multi-region account 最小是 100,000 次寫入或 300 秒（時間敏感、查最新文件）。
 
 修：
 
-- 根據業務 read-after-write SLA 設 T（如「5 秒內必須讀到」設 T=5）
+- 根據業務 read-after-write SLA 設 T，並先確認這個 SLA 高於 account 的 T 下限；multi-region account 要求 300 秒以內的 read-after-write 時，Bounded staleness 給不了，改用 Session token 或 Strong
 - K 通常設成「peak QPS × T」的合理倍數
 - 量測：production 觀察實際 staleness 分布、調整 K/T
 
-### Failure 5：multi-region write 配 Strong
+### multi-region write 配 Strong
 
 文件不允許 / 行為退化（時間敏感、查最新）— 必須改 Bounded / Session。這是 *AP 取捨的硬約束*、不是 config 問題；詳見 [multi-region-write-conflict](../multi-region-write-conflict/) 的 AP 取捨段。
 
 修：在 selection 階段就決定「要 active-active write 還是要 Strong」、不能事後補；要全球 linearizable 轉 Spanner / Aurora DSQL、要 active-active 接受 eventual / session / bounded。
 
-### Failure 6：Consistent prefix 誤用
+### Consistent prefix 誤用
 
-把它當 Session 用、跨 session read 還是 stale、但比 Eventual 多一個順序保證；用錯地方等於浪費。常見誤判：「我要『順序對』、所以選 Consistent prefix」 — 但實際業務需求是「自己讀到自己寫的」、應該是 Session 而非 Consistent prefix。
+把它當 Session 用、跨 session read 還是 stale；它比 Eventual 多的保證只限於同一筆交易寫入的多份 document 一起可見。常見誤判：「我要『順序對』、所以選 Consistent prefix」 — 但實際業務需求是「自己讀到自己寫的」、應該是 Session 而非 Consistent prefix。
 
 修：
 
@@ -229,18 +229,18 @@ K = 100,000、T = 1 hour、實際等於 Eventual、team 以為自己有保護。
 
 ## 邊界與整合
 
-- Sibling deep articles：[partition-key-design](../partition-key-design/)（partition key 跟 consistency 共同決定真實一致性體驗）、[ru-cost-model-sizing](../ru-cost-model-sizing/)（RU 倍數量化）、[multi-region-write-conflict](../multi-region-write-conflict/)（multi-region 下 consistency 的特殊行為、Strong + multi-region 互斥的 SSoT 主寫位置）、[mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/)（MongoDB read concern → Cosmos DB consistency level 對應）
+- 同 vendor 的其他文章：[partition-key-design](../partition-key-design/)（partition key 跟 consistency 共同決定真實一致性體驗）、[ru-cost-model-sizing](../ru-cost-model-sizing/)（RU 倍數量化）、[multi-region-write-conflict](../multi-region-write-conflict/)（multi-region 下 consistency 的特殊行為、Strong 與 multi-region write 為什麼不能並用）、[mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/)（MongoDB read concern → Cosmos DB consistency level 對應）
 - 跟 [Spanner vendor](/backend/01-database/vendors/spanner/) 對比：external consistency vs Cosmos DB Strong 不是同一個 thing
 - 跟 [DynamoDB vendor](/backend/01-database/vendors/dynamodb/) 對比：DynamoDB 只 strong / eventual 兩級、Cosmos DB 5 級提供細粒度
-- 跟 1.x 章節：[1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)（Cosmos DB 5 level 跟 Spanner external consistency 並陳）
+- 主章節：[1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)（Cosmos DB 5 level 跟 Spanner external consistency 並陳）
 - Knowledge cards：[consistency-level](/backend/knowledge-cards/consistency-level/) / [linearizability](/backend/knowledge-cards/linearizability/) / [stale-read](/backend/knowledge-cards/stale-read/)
 - Anti-recommendation：別把 Cosmos DB Strong 跟 Spanner external consistency 等同視之；產品需要真正全球 linearizable transaction 時、Cosmos DB 不是替代品 — 轉 Spanner / Aurora DSQL
 
 ## 相關連結
 
-- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — 本文是該頁尾 5 consistency levels backlog 的深度展開
+- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
 - [9.C11 Minecraft Earth case](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — session consistency + 跨 collection 分流主案例
 - [9.C21 ASOS case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 高 throughput + 較弱 level 補充
-- [multi-region-write-conflict](../multi-region-write-conflict/) — Strong + multi-region 互斥的 SSoT 主寫位置
+- [multi-region-write-conflict](../multi-region-write-conflict/) — Strong 與 multi-region write 為什麼不能並用、multi-region write 的 conflict 怎麼解
 - [Consistency Level 卡片](/backend/knowledge-cards/consistency-level/) / [Linearizability 卡片](/backend/knowledge-cards/linearizability/) / [Stale Read 卡片](/backend/knowledge-cards/stale-read/) — 概念基底
 - 官方：[Cosmos DB consistency levels](https://learn.microsoft.com/azure/cosmos-db/consistency-levels) / [Consistency level overrides](https://learn.microsoft.com/azure/cosmos-db/how-to-manage-consistency)

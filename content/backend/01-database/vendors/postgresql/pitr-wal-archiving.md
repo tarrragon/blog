@@ -1,12 +1,12 @@
 ---
 title: "PostgreSQL PITR + WAL archiving：從 base backup 到 point-in-time recovery 的完整鏈"
 date: 2026-05-18
-description: "Base backup + WAL archive 構成 PITR 的雙軌資料、archive_command + restore_command 配置、用 pgBackRest / WAL-G 替代手寫腳本、5 個 production 踩雷（archive 靜默失敗 / archive lag / 錯誤 target time / base backup 過期未清 / timeline 分歧 recovery 模糊）、跟 Patroni + monitoring 整合"
+description: "Base backup + WAL archive 構成 PITR 的雙軌資料、archive_command + restore_command 配置、用 pgBackRest / WAL-G 替代手寫腳本、production 踩雷（archive 靜默失敗 / archive lag / 錯誤 target time / base backup 過期未清 / timeline 分歧 recovery 模糊）、跟 Patroni + monitoring 整合"
 weight: 35
 tags: ["backend", "database", "postgresql", "pitr", "backup", "wal-archive", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 backup / recovery 是 OLTP 必備能力、本文聚焦 *PITR（Point-In-Time Recovery）的雙軌資料設計 + production 5 個 failure mode*。
+本文的範圍是 PostgreSQL PITR（Point-In-Time Recovery）的 base backup 加 WAL archive 雙軌設計與配置步驟，production 上 archive_command 靜默失敗、archive 積壓、recovery target 設錯、backup 保留期沒設、timeline 分歧這些 failure mode，以及容量與 cost 規劃。
 
 ## 問題情境
 
@@ -33,10 +33,10 @@ PITR 是這類 *logical disaster* 的標準解 — 不還原到 backup 時間點
 1. **Base backup**：某時刻整個 data dir 的 snapshot。`pg_basebackup` / `pgBackRest` / `WAL-G` 都產這個；通常 *每天 / 每週* 跑一次
 2. **WAL archive**：base backup 之後每段 WAL 都 push 到外部 storage（S3 / GCS / NFS）。`archive_command` 觸發、PostgreSQL 等到 archive 成功才 *回收* 那段 WAL
 
-兩者組合決定 RPO（recovery point objective）：
+RPO（recovery point objective）由 WAL archive 的推送頻率決定，base backup 的頻率不影響它：
 
-- RPO ≈ WAL archive frequency（streaming 即時、`archive_timeout` 預設 1 分鐘）
-- RPO 不是 base backup frequency — daily base backup + 每分鐘 archive WAL → RPO 1 分鐘
+- RPO ≈ WAL archive 的推送頻率：用 streaming 接收 WAL 時接近即時；只靠 `archive_command` 時，一個 segment 寫滿或 `archive_timeout` 到期才送出，而 `archive_timeout` 的預設值是 0（不強制切換），要自己設
+- daily base backup + 每分鐘 archive WAL → RPO 約 1 分鐘
 
 RTO（recovery time objective）跟 *base backup size + WAL replay 量* 相關：
 
@@ -52,7 +52,7 @@ RTO（recovery time objective）跟 *base backup size + WAL replay 量* 相關�
 wal_level = replica                          # 預設 replica、PITR 需要
 archive_mode = on                            # 啟用 archive
 archive_command = 'wal-g wal-push %p'        # 或 pgBackRest / 自寫 script
-archive_timeout = 60                         # 60s 無 WAL 時強制切 segment
+archive_timeout = 60                         # 距上次切 segment 60s 且期間有寫入時，強制切 segment 送去 archive
 max_wal_size = 4GB
 checkpoint_timeout = 15min
 ```
@@ -81,8 +81,10 @@ pg1-path=/var/lib/postgresql/16/main
 ```bash
 # 跑 full backup
 pgbackrest --stanza=main backup --type=full
+```
 
-# archive_command 用 pgbackrest 內建
+```ini
+# postgresql.conf：archive_command 改用 pgBackRest 內建的 archive-push
 archive_command = 'pgbackrest --stanza=main archive-push %p'
 ```
 
@@ -102,7 +104,7 @@ pgbackrest --stanza=main --type=time \
 pg_ctl promote
 ```
 
-Recovery target 三種：
+常用的 recovery target（另有 `recovery_target_name` 對應 `pg_create_restore_point()` 建的還原點、`recovery_target = 'immediate'` 停在 base backup 一致的那一刻）：
 
 - **`recovery_target_time`**：到某 timestamp
 - **`recovery_target_xid`**：到某 transaction ID（log 有 xid 才好定位）
@@ -112,11 +114,20 @@ production 多用 timestamp、application log 有時間戳容易定位。
 
 ## 故障演練 / 邊界 case
 
-### Case 1：archive_command 靜默失敗
+### archive_command 靜默失敗
 
 **徵兆**：DBA 發現某 PITR test 時、最近 3 天的 WAL 在 S3 上沒有；但 PostgreSQL 沒 alert、`pg_wal` 也沒堆積（早就被回收？）。
 
-**根因**：archive_command 寫成 `aws s3 cp %p s3://bucket/... 2>/dev/null` — 錯誤訊息被吞、exit code 卻是 0（cp 失敗但 redirect 後 shell wrapper 不傳 fail code）；PostgreSQL 以為成功、繼續 advance WAL pointer、舊 WAL 已回收、archive 上實際沒有。
+**根因**：archive_command 在吞掉錯誤訊息的同時把 exit code 蓋成 0。只寫 `2>/dev/null` 不會造成靜默失敗——它只丟掉 stderr，exit code 仍是 cp 的非 0；蓋掉 exit code 的是接在後面的 `|| true`（或 `; exit 0`）：
+
+```ini
+# 只丟掉錯誤訊息：exit code 仍是 cp 的非 0，PostgreSQL 記為失敗、這段 WAL 留在 pg_wal 等重試
+archive_command = 'aws s3 cp %p s3://bucket/%f 2>/dev/null'
+# 丟掉錯誤訊息又把 exit code 蓋成 0：cp 失敗也回 0，PostgreSQL 記為已封存並回收這段 WAL
+archive_command = 'aws s3 cp %p s3://bucket/%f 2>/dev/null || true'
+```
+
+加了 `|| true` 的寫法下 PostgreSQL 以為成功、繼續 advance WAL pointer、舊 WAL 已回收、archive 上實際沒有。
 
 **修法**：
 
@@ -125,14 +136,15 @@ production 多用 timestamp、application log 有時間戳容易定位。
 3. **monitoring**：對 archive lag 寫 alert
 
 ```sql
-SELECT pg_last_archived_xact_time(), now() - pg_last_archived_xact_time() AS lag;
+-- 最後一次成功封存距今多久（pg_stat_archiver 每個 cluster 一列）
+SELECT last_archived_time, now() - last_archived_time AS lag FROM pg_stat_archiver;
 ```
 
 alert if lag > 5 minutes
 
 4. **定期測試 restore**：每月跑一次 PITR drill、實際從 archive restore + 驗證 timestamp
 
-### Case 2：WAL archive lag、primary disk 壓力
+### WAL archive 積壓、primary disk 壓力
 
 **徵兆**：`pg_wal` 目錄持續長大、`df -h` 90%+；`pg_stat_archiver` 顯示 `failed_count` 累積、`last_failed_time` 是 30 分鐘前；archive_command 寫不出去（S3 throttle / network 慢）。
 
@@ -145,7 +157,7 @@ alert if lag > 5 minutes
 3. **緊急**：暫時改 archive_command 寫 local NFS / 其他 storage、等 S3 恢復再同步；不要直接 disable archive（會丟資料）
 4. **架構**：archive storage 至少跨 region 兩份、單一 storage 故障不影響 archive
 
-### Case 3：recovery 跑到 wrong target time
+### recovery 跑到錯誤的 target time
 
 **徵兆**：PITR 還原後資料看起來 *缺一塊*；DBA 後悔 — target time 設早了 30 分鐘、recovery 已 promote、後續 WAL 在新 timeline 上、回不去。
 
@@ -153,7 +165,7 @@ alert if lag > 5 minutes
 
 **修法**：
 
-1. **`recovery_target_action = pause`**（PG 13+）：到 target time 後 *暫停*、不自動 promote；DBA 手動 query 確認資料對才 promote
+1. **`recovery_target_action = pause`**：到 target time 後 *暫停*、不自動 promote；DBA 手動 query 確認資料對才 promote。`pause` 是這個參數的預設值，明寫出來是防止別的設定把它改成 `promote`
 
 ```ini
 recovery_target_time = '2026-05-18 14:30:00+00'
@@ -163,7 +175,7 @@ recovery_target_action = pause
 2. **多次 PITR 試錯**：用 *獨立 staging cluster* restore、驗證 target time 對、再對 production 跑
 3. **記錄 target time 來源**：application log / event timestamp 多比對、避免時區錯亂（`+00` UTC 跟 local time 差）
 
-### Case 4：base backup 過期未清、storage 爆
+### base backup 過期未清、storage 爆
 
 **徵兆**：S3 backup bucket size 半年內從 200GB 漲到 5TB；DBA 才發現 retention 沒設、daily base backup 留 180 天。
 
@@ -185,7 +197,7 @@ storage budgeting：
 - 4-week retention → ~30-60x DB size storage
 - 跨 region replication → 2-3x
 
-### Case 5：timeline 分歧後 recovery 模糊
+### timeline 分歧後 recovery 模糊
 
 **徵兆**：production 經歷一次 failover（Patroni promote）+ 之後又 PITR 一次；現在要再 PITR 到 failover 前一刻、archive 上有兩個 timeline、recovery target 搞不清要哪個。
 
@@ -227,7 +239,7 @@ recovery_target_timeline = '3'                 # 要 follow timeline 3
 
 Patroni 不管 backup，但 promotion 後 timeline 切換影響 archive：
 
-1. archive_command 用 `%t`（timeline）+ `%f`（filename）路徑、避免不同 timeline WAL 覆蓋
+1. archive_command 只認 `%p`（WAL 檔的路徑）、`%f`（WAL 檔名）與代表字面 `%` 的 `%%`；WAL 檔名開頭的 8 個十六進位字元就是 timeline ID，所以 archive 上用 `%f` 當檔名，不同 timeline 的 WAL 就不會互相覆蓋
 2. Patroni `recovery_conf` 包含 `restore_command`、standby clone 從 archive 拉
 3. 每次 Patroni failover 後跑 *full backup*、簡化未來 PITR
 
@@ -249,7 +261,10 @@ PITR 跟 logical replication 服務不同 use case：
 SELECT * FROM pg_stat_archiver;
 -- archived_count, failed_count, last_archived_wal, last_archived_time
 
--- WAL 在 pg_wal 等待 archive 量
+-- WAL 在 pg_wal 等待 archive 量：archive_status 目錄裡每個 .ready 檔對應一段還沒封存成功的 WAL
+SELECT count(*) FROM pg_ls_archive_statusdir() WHERE name LIKE '%.ready';
+
+-- 對照：pg_wal 裡全部的 WAL segment，含已封存、等著被回收或重用的
 SELECT count(*) FROM pg_ls_waldir() WHERE name ~ '^[0-9A-F]{24}$';
 
 -- base backup 上次跑時間
@@ -269,5 +284,5 @@ Prometheus alert 三條：archive failed_count 增、archive lag > 5min、base b
 
 - 上游 vendor 頁：[PostgreSQL](/backend/01-database/vendors/postgresql/)
 - 上游 chapter：[Database Migration Playbook](/backend/01-database/database-migration-playbook/) — PITR 是 migration 的失敗回退
-- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/) / [autovacuum tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/)
+- PostgreSQL 的其他主題：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/) / [autovacuum tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/)
 - Methodology：[Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/)

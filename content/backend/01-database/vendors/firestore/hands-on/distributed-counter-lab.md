@@ -5,11 +5,11 @@ description: "在 emulator 上實作 distributed counter：建立 N 個 shard、
 tags: ["backend", "database", "firestore", "hands-on", "distributed-counter"]
 ---
 
-> 本文是 [Firestore Hands-on 操作路線](/backend/01-database/vendors/firestore/hands-on/) 的 lab，實作 [distributed counter 高頻寫入](/backend/01-database/vendors/firestore/distributed-counter-high-frequency-write/) deep article 的機制。前置環境見 [Local emulator quickstart](/backend/01-database/vendors/firestore/hands-on/local-emulator-quickstart/)。
+> 本文實作 [distributed counter 高頻寫入](/backend/01-database/vendors/firestore/distributed-counter-high-frequency-write/) 一文的分片計數機制。前置環境見 [Local emulator quickstart](/backend/01-database/vendors/firestore/hands-on/local-emulator-quickstart/)。
 
 Firestore distributed counter lab 的核心責任是把「分片計數」從概念變成可觀察的寫入分佈與彙總結果。這個 lab 在 emulator 上建立 N 個 shard、隨機分片寫入大量 increment、檢查寫入是否均勻打散到各 shard、再讀取彙總驗證總和正確。
 
-本文的驗收標準是：你能跑出一個 sharded counter、看到 N 個 shard 各自累積了大致均勻的 partial count、彙總後等於總寫入次數，並理解 emulator 能驗什麼、不能驗什麼。
+範圍包括 emulator 在這個 lab 驗得到與驗不到的特性、sharded counter 的實作、寫入分佈的觀察、shard 數對讀取成本的對照實驗，以及回到 production 要另外確認的判讀。
 
 ## 先講清楚 emulator 的邊界
 
@@ -33,10 +33,10 @@ counter 的核心責任是把一個邏輯計數拆成 N 個 shard document。寫
 
 ```bash
 cat > counter.js <<'JS'
-const admin = require('firebase-admin');
-admin.initializeApp({ projectId: 'demo-firestore-lab' });
-const db = admin.firestore();
-const FieldValue = admin.firestore.FieldValue;
+const { initializeApp } = require('firebase-admin/app');
+const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+initializeApp({ projectId: 'demo-firestore-lab' });
+const db = getFirestore();
 
 const NUM_SHARDS = 10;
 const counterRef = db.collection('counters').doc('likes');
@@ -67,7 +67,7 @@ module.exports = { createCounter, incrementOnce, getCount, NUM_SHARDS };
 JS
 ```
 
-三個設計點對應 deep article：用 `FieldValue.increment(1)` 而非讀-改-寫（避開 race）；隨機選 shard 讓寫入均勻打散；讀取要讀 N 個 shard 加總（這是分片的代價）。
+三個設計點對應 distributed counter 高頻寫入一文的做法：用 `FieldValue.increment(1)` 而非讀-改-寫（避開 race）；隨機選 shard 讓寫入均勻打散；讀取要讀 N 個 shard 加總（這是分片的代價）。
 
 ## 跑寫入並觀察分佈
 
@@ -117,14 +117,27 @@ min=88 max=112 spread=24 (expected mean ~100)
 
 ## 對照實驗：讀取成本隨 shard 數成長
 
-讀取的核心代價是讀 N 個 document。把 `NUM_SHARDS` 改大（例如 100）重跑，`getCount` 要讀的 document 從 10 變 100——這就是 deep article 講的「寫入便宜了、讀取乘以 N」的取捨。在 production 這直接反映成 read 計費。
+讀取的核心代價是讀 N 個 document。把 `NUM_SHARDS` 改大（例如 100）重跑，`getCount` 要讀的 document 從 10 變 100——這就是 distributed counter 高頻寫入一文講的「寫入便宜了、讀取乘以 N」的取捨。在 production 這直接反映成 read 計費。
 
 ```bash
-# 編輯 counter.js 把 NUM_SHARDS 改為 100、重跑 run.js
-# 觀察 per-shard counts 物件變成 100 個 key、getCount 讀取量 10x
+# 把 counter.js 的 NUM_SHARDS 從 10 改成 100（-i.bak 在 macOS 與 Linux 的 sed 都能用，順便留一份原檔）
+sed -i.bak 's/NUM_SHARDS = 10;/NUM_SHARDS = 100;/' counter.js
+node run.js
+# createCounter 重新把 0 到 99 號 shard 設成 0，所以前一次的計數不會混進來
 ```
 
-這個對照讓「shard 數是寫入分散與讀取成本的取捨」從文字變成可觀察：多 shard 寫入更分散（每 shard 更少），但讀取要加總更多筆。高寫入高讀取的場景該配 summary 彙總（deep article 的進階手段），而非無限加 shard。
+預期輸出類似（數字每次不同）：
+
+```text
+created 100 shards
+per-shard counts: { '0': 9, '1': 10, ... }
+total = 1000 (expected 1000)
+min=3 max=18 spread=15 (expected mean ~10)
+```
+
+`per-shard counts` 從 10 個 key 變成 100 個，`getCount` 讀的 document 數也從 10 變成 100；總數仍然是 1000，每個 shard 平均只分到 10 次寫入。
+
+這個對照讓「shard 數是寫入分散與讀取成本的取捨」從文字變成可觀察：多 shard 寫入更分散（每 shard 更少），但讀取要加總更多筆。高寫入高讀取的場景該配 summary 彙總（distributed counter 高頻寫入一文的進階手段），而非無限加 shard。
 
 ## Artifact 與驗收
 
@@ -136,7 +149,7 @@ min=88 max=112 spread=24 (expected mean ~100)
 
 ## 回到 production 判讀
 
-emulator lab 證明了機制正確，但三個 production 判讀要回雲端確認：單 document 寫入軟上限（決定 shard 數要多少）、read 計費（決定 shard 數別太多 / 要不要 summary）、shard 選擇在真實流量下是否仍均勻。把 emulator 的機制驗證當第一道關，production 的容量與成本判讀見 [deep article 的容量段](/backend/01-database/vendors/firestore/distributed-counter-high-frequency-write/#容量與觀測shard-數的估算與監控)。
+emulator lab 證明了機制正確，但三個 production 判讀要回雲端確認：單 document 寫入軟上限（決定 shard 數要多少）、read 計費（決定 shard 數別太多 / 要不要 summary）、shard 選擇在真實流量下是否仍均勻。把 emulator 的機制驗證當第一道關，production 的容量與成本判讀見 [distributed counter 高頻寫入的〈容量與觀測〉一節](/backend/01-database/vendors/firestore/distributed-counter-high-frequency-write/#容量與觀測shard-數的估算與監控)。
 
 ## Cleanup
 
@@ -148,6 +161,6 @@ rm -rf /tmp/firestore-lab
 ## 引用路徑
 
 - 上游：[Firestore Hands-on 操作路線](/backend/01-database/vendors/firestore/hands-on/)
-- Deep article：[高頻寫入與 distributed counter](/backend/01-database/vendors/firestore/distributed-counter-high-frequency-write/)
+- 對應的機制文章：[高頻寫入與 distributed counter](/backend/01-database/vendors/firestore/distributed-counter-high-frequency-write/)
 - 一致性邊界：[1.3 transaction 與一致性邊界](/backend/01-database/transaction-boundary/)
 - 官方：[Distributed counters](https://firebase.google.com/docs/firestore/solutions/counters)、[Firestore best practices](https://firebase.google.com/docs/firestore/best-practices)

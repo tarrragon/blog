@@ -7,7 +7,7 @@ tags: ["backend", "database", "postgresql", "hands-on", "connection-pool"]
 
 PostgreSQL connection pool lab 的核心責任是讓讀者看到 connection pressure 如何從 application pool 傳到 PostgreSQL backend process。這篇承接 [Connection Scaling](../../connection-scaling/) 與 [PgBouncer Config](../../pgbouncer-config/)。
 
-本文的驗收標準是：你能比較 direct connection 與 PgBouncer transaction pooling，取得 `pg_stat_activity`、PgBouncer `SHOW POOLS`、latency / error sample 與 failure note。
+本篇的範圍是在 local lab 上比較 application 直連 PostgreSQL 與經過 PgBouncer transaction pooling 時的 backend 數、重現 pool exhaustion 時 client 在 pooler 排隊，並把 `pg_stat_activity` 與 PgBouncer `SHOW POOLS` 的結果寫成 failure note。
 
 ## Baseline Direct Connections
 
@@ -18,13 +18,14 @@ export DATABASE_URL="postgres://lab_admin:lab_admin_pw@localhost:54329/appdb?ssl
 psql "$DATABASE_URL" -c "SELECT count(*) FROM pg_stat_activity WHERE datname = current_database();"
 ```
 
-用多個 terminal 或簡單 workload 產生 idle connection：
+用背景 psql 開五個同時在執行 `pg_sleep(10)` 的 session：
 
 ```bash
 for i in 1 2 3 4 5; do
   psql "$DATABASE_URL" -c "SELECT pg_sleep(10);" &
 done
 psql "$DATABASE_URL" -c "SELECT state, count(*) FROM pg_stat_activity WHERE datname = current_database() GROUP BY state;"
+# state 是 active 的有 6 個：五個 pg_sleep session，加上這一句查詢自己
 ```
 
 這一步證明每個 client session 會占用 PostgreSQL backend process。
@@ -44,6 +45,10 @@ Add PgBouncer 的核心責任是把 client connection 與 server connection 拆�
       POOL_MODE: transaction
       MAX_CLIENT_CONN: 100
       DEFAULT_POOL_SIZE: 5
+      # PostgreSQL 16 的密碼以 SCRAM 儲存；image 預設 md5 時 PgBouncer 連 backend 回 wrong password type
+      AUTH_TYPE: scram-sha-256
+      # admin console（pgbouncer 虛擬 database）只允許這裡列的 user，image 預設只有 postgres
+      ADMIN_USERS: lab_admin
     ports:
       - "64329:5432"
 ```
@@ -65,7 +70,7 @@ done
 psql "$DATABASE_URL" -c "SELECT state, count(*) FROM pg_stat_activity WHERE datname = current_database() GROUP BY state;"
 ```
 
-再進 PgBouncer admin console，實際命令依 image 設定調整：
+再進 PgBouncer admin console；compose 裡的 `ADMIN_USERS: lab_admin` 讓 lab_admin 能連 `pgbouncer` 這個虛擬 database：
 
 ```bash
 psql "postgres://lab_admin:lab_admin_pw@localhost:64329/pgbouncer?sslmode=disable" -c "SHOW POOLS;"
@@ -75,7 +80,7 @@ psql "postgres://lab_admin:lab_admin_pw@localhost:64329/pgbouncer?sslmode=disabl
 
 ## Pool Exhaustion
 
-Pool exhaustion 的核心責任是看過載時的錯誤與等待。
+Pool exhaustion 的核心責任是看過載時 client 在 pooler 排隊等待。這組參數下 50 個 client 全部成功，看得到的是 `SHOW POOLS` 的 `cl_waiting` 與 psql 印出的 `No server connection available in postgres backend, client being queued`；錯誤要等 client 在隊伍裡待超過 PgBouncer 的 `query_wait_timeout`（預設 120 秒）才出現。
 
 ```bash
 for i in $(seq 1 50); do

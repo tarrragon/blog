@@ -6,9 +6,9 @@ weight: 70
 tags: ["backend", "database", "aurora", "migration", "playbook", "postgresql", "mysql", "deep-article"]
 ---
 
-從自管 PostgreSQL / MySQL 遷到 Aurora 是 *operational redesign hybrid*（Type C [migration](/backend/knowledge-cards/migration/)）— wire protocol 相容、application 不改、但 HA / backup / monitoring / capacity 模型完全不同。本 playbook 走 [migration playbook 6 規格面](/posts/migration-playbook-methodology/)（Driver / Diff audit / Phase plan / Evidence / Cutover / Cleanup）、補三個 Aurora-specific 議題：(1) 合規禁止跨境複製的 no-go condition、(2) 合規驅動遷移的時程模型（市場數 × 平均審查月份）、(3) Aurora 不是 all-purpose store 邊界。每階段進入下一步前都要過 [migration gate](/backend/knowledge-cards/migration-gate/) — Evidence 段列出的證據是 gate 條件、不是 nice-to-have。
+從自管 PostgreSQL / MySQL 遷到 Aurora 是 *operational redesign hybrid*（Type C [migration](/backend/knowledge-cards/migration/)）— wire protocol 相容、application 多數不改、但 HA / backup / monitoring / capacity 模型完全不同。本 playbook 走 [migration playbook 6 規格面](/posts/migration-playbook-methodology/)（Driver / Diff audit / Phase plan / Evidence / Cutover / Cleanup）、補三個 Aurora-specific 議題：(1) 合規禁止跨境複製的 no-go condition、(2) 合規驅動遷移的時程模型（市場數 × 平均審查月份）、(3) Aurora 不是 all-purpose store 邊界。每階段進入下一步前都要過 [migration gate](/backend/knowledge-cards/migration-gate/) — Evidence 段列出的證據是 gate 條件、不是 nice-to-have。
 
-本 playbook 不重複 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 前置閱讀建議 [Aurora storage architecture](../storage-architecture/)（理解為什麼 operational redesign）、[Aurora cross-AZ failover RTO](../cross-az-failover-rto/)（HA redesign 主項）、[Aurora read replica scaling](../read-replica-scaling/)（fleet 治理 SSoT、含合規 driver）。
+operational model 為什麼要重做，由 storage 設計決定，在 [Aurora storage architecture](../storage-architecture/)；HA 重做的主項是 failover 流程，在 [Aurora cross-AZ failover RTO](../cross-az-failover-rto/)；拆幾個 cluster（含合規驅動的拆分），在 [Aurora read replica scaling](../read-replica-scaling/)。
 
 ## Migration type 判定
 
@@ -31,7 +31,7 @@ tags: ["backend", "database", "aurora", "migration", "playbook", "postgresql", "
 
 - 團隊規模成長、DBA bandwidth 飽和、backup / failover / patch 操作負擔超過產品價值
 - Read replica scaling 需求（傳統 streaming replication lag 秒級、Aurora 10-30ms — 詳見 [Aurora read replica scaling](../read-replica-scaling/)）
-- Storage growth 痛點（local SSD 上限、resize 要 downtime、Aurora 自動 grow 到 128 TB）
+- Storage growth 痛點（local SSD 上限、resize 要 downtime、Aurora 自動 grow 到 cluster volume 上限，依引擎版本是 128 或 256 TiB）
 
 ### 次要 driver
 
@@ -43,13 +43,13 @@ tags: ["backend", "database", "aurora", "migration", "playbook", "postgresql", "
 
 跨雲 / on-prem 需求觸動 [vendor lock-in](/backend/knowledge-cards/vendor-lock-in/) — Aurora storage layer 是 AWS 專屬、wire protocol 相容不代表退出成本低、long-term 跨雲策略未定時 self-managed PG / MySQL 反而保留路徑。
 
-| 條件                      | 為什麼是 no-go                                                                                                                                                |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 跨雲 / on-prem 需求       | Aurora AWS-only、wire protocol 相容但 storage 是 AWS 專屬                                                                                                     |
-| 需要 latest upstream 特性 | Aurora 通常落後 upstream PostgreSQL / MySQL 1-2 major version                                                                                                 |
-| 預算極敏感                | Aurora 比 self-managed PostgreSQL / MySQL 貴 20-30%                                                                                                           |
-| 合規禁止跨境複製          | 受監管市場 [Data Residency](/backend/knowledge-cards/data-residency/) *禁止跨境複製*、Aurora Global Database 在這種場景 *違反合規* — 要改用每市場獨立 cluster |
-| 客製化 storage / I/O      | Aurora storage 是 AWS managed、不能客製化（vs self-managed 可以做 cgroup / quota / 自訂 storage 配置）                                                        |
+| 條件                      | 為什麼是 no-go                                                                                                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 跨雲 / on-prem 需求       | Aurora AWS-only、wire protocol 相容但 storage 是 AWS 專屬                                                                                                                                  |
+| 需要 latest upstream 特性 | 新 major version 要等社群發布後一段時間才上 Aurora：截至 2026-09 的官方文件，PostgreSQL 在社群 <major>.1 後 8 個月內、MySQL 只跟 LTS major 且在 12 個月內，MySQL innovation release 不提供 |
+| 預算極敏感                | Aurora 比 self-managed PostgreSQL / MySQL 貴 20-30%                                                                                                                                        |
+| 合規禁止跨境複製          | 受監管市場 [Data Residency](/backend/knowledge-cards/data-residency/) *禁止跨境複製*、Aurora Global Database 在這種場景 *違反合規* — 要改用每市場獨立 cluster                              |
+| 客製化 storage / I/O      | Aurora storage 是 AWS managed、不能客製化（vs self-managed 可以做 cgroup / quota / 自訂 storage 配置）                                                                                     |
 
 **合規禁止跨境複製 no-go**（[9.C14 Standard Chartered 揭露](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)）：
 
@@ -69,21 +69,21 @@ tags: ["backend", "database", "aurora", "migration", "playbook", "postgresql", "
 
 **Netflix scope warning（必引用）**：
 
-- [case「需要警惕」段第 2 點原文](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)：「Netflix 數據層遠不止 Aurora — 還有 Cassandra（playback metadata）、EVCache（cache layer）、Iceberg（data warehouse）。Aurora 主要是『需要 ACID 的 OLTP 工作負載』、不是『all-purpose store』」
+- [Netflix case 的「需要警惕」段原文](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)：「Netflix 數據層遠不止 Aurora — 還有 Cassandra（playback metadata）、EVCache（cache layer）、Iceberg（data warehouse）。Aurora 主要是『需要 ACID 的 OLTP 工作負載』、不是『all-purpose store』」
 - 工程含義：consolidation 是 *ACID OLTP 整合到 Aurora*、不是 *所有 store 整合到 Aurora*
 - 讀者規劃整合範圍時要明示什麼 workload 不在範圍（cache、analytics、time-series、search、KV 高峰）
 - 「+75% performance improvement 是跨多 workload 的最大改善幅度、不是『每個 workload 都 +75%』。實際每個 workload 改善幅度從 10% 到 75% 不等」（case「需要警惕」段第 1 點）
 
 ## Diff audit：6 維 source / target 差異盤點
 
-| 維度        | 差異                                                                                                                                                                                                              | 主導程度   |
-| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| Schema      | PostgreSQL extension 相容性（pg_cron 改 Lambda / Step Functions、pg_partman 改 manual / native partitioning、TimescaleDB 不支援、PostGIS 支援）；MySQL plugin（HandlerSocket 不支援、audit plugin 改 CloudTrail） | 中         |
-| Operational | HA model、backup、monitoring、parameter management（postgresql.conf → DB parameter group / cluster parameter group）                                                                                              | 高（主導） |
-| Paradigm    | 保留（single-primary SQL、ACID transaction、wire protocol）                                                                                                                                                       | 無變動     |
-| Components  | connection pool（PgBouncer → RDS Proxy 或保留 PgBouncer in front of Aurora）、logical replication（pglogical / Debezium → Aurora 原生支援、但有版本限制）                                                         | 中         |
-| Application | 保留（connection string 改 endpoint、SSL config 改 RDS CA、driver 不改）                                                                                                                                          | 低         |
-| Topology    | 保留（single-region scaling、若要 multi-region 走另一條 playbook to DSQL）；fleet 拓樸決策（拆幾個 cluster）詳見 [read replica scaling](../read-replica-scaling/) fleet SSoT                                      | 中-高      |
+| 維度        | 差異                                                                                                                                                                         | 主導程度   |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| Schema      | PostgreSQL extension 相容性（pg_cron、pg_partman、pglogical、PostGIS 支援，TimescaleDB 不支援）；MySQL plugin（HandlerSocket 不支援、audit plugin 改內建 Advanced Auditing） | 中         |
+| Operational | HA model、backup、monitoring、parameter management（postgresql.conf → DB parameter group / cluster parameter group）                                                         | 高（主導） |
+| Paradigm    | 保留（single-primary SQL、ACID transaction、wire protocol）                                                                                                                  | 無變動     |
+| Components  | connection pool（PgBouncer → RDS Proxy 或保留 PgBouncer in front of Aurora）、logical replication（pglogical / Debezium → Aurora 原生支援、但有版本限制）                    | 中         |
+| Application | 保留（connection string 改 endpoint、SSL config 改 RDS CA、driver 不改）                                                                                                     | 低         |
+| Topology    | 保留（single-region scaling、若要 multi-region 走另一條 playbook to DSQL）；fleet 拓樸決策（拆幾個 cluster）詳見 [read replica scaling](../read-replica-scaling/) fleet SSoT | 中-高      |
 
 **主導差異**：Operational layer（HA / backup / monitoring）、不是 schema 或 application。
 
@@ -91,21 +91,21 @@ tags: ["backend", "database", "aurora", "migration", "playbook", "postgresql", "
 
 **PostgreSQL → Aurora PostgreSQL**：
 
-| Extension   | Aurora 支援  | Migration 策略                                               |
-| ----------- | ------------ | ------------------------------------------------------------ |
-| pg_cron     | 不支援       | 改 Lambda 排程 + RDS event 或 Step Functions                 |
-| pg_partman  | 不支援       | 改 native declarative partitioning（PostgreSQL 11+）         |
-| TimescaleDB | 不支援       | 改 native partition + materialized view、或保留 self-managed |
-| PostGIS     | 支援         | 直接遷                                                       |
-| pgvector    | 支援（新版） | 確認 Aurora PostgreSQL version、可能需要升級                 |
-| pglogical   | 不支援       | 改 Aurora 原生 logical replication（有版本限制）             |
+| Extension   | Aurora 支援  | Migration 策略                                                |
+| ----------- | ------------ | ------------------------------------------------------------- |
+| pg_cron     | 支援         | 直接遷、確認目標 Aurora PostgreSQL 版本附帶的 pg_cron 版本    |
+| pg_partman  | 支援         | 直接遷、確認目標 Aurora PostgreSQL 版本附帶的 pg_partman 版本 |
+| TimescaleDB | 不支援       | 改 native partition + materialized view、或保留 self-managed  |
+| PostGIS     | 支援         | 直接遷                                                        |
+| pgvector    | 支援（新版） | 確認 Aurora PostgreSQL version、可能需要升級                  |
+| pglogical   | 支援         | 直接遷、確認目標 Aurora PostgreSQL 版本附帶的 pglogical 版本  |
 
 **MySQL → Aurora MySQL**：
 
 | Plugin         | Aurora 支援 | Migration 策略                              |
 | -------------- | ----------- | ------------------------------------------- |
 | HandlerSocket  | 不支援      | 改 SQL access 或 Aurora-specific KV cache   |
-| Vault audit    | 不支援      | 改 AWS CloudTrail + RDS audit log           |
+| audit plugin   | 不支援自裝  | 改 Aurora MySQL 內建 Advanced Auditing      |
 | MyRocks engine | 不支援      | 改 InnoDB（Aurora 預設）、評估 storage 成本 |
 | MaxScale       | 不支援      | 改 Aurora reader endpoint 或 RDS Proxy      |
 
@@ -136,7 +136,7 @@ Application 改動量小：connection string 換 endpoint、SSL CA 換 RDS CA、
 
 ## Phase plan：階段切換
 
-### Phase 0：Pre-migration audit（2-4 週）
+### Pre-migration audit（2-4 週）
 
 工作：
 
@@ -152,7 +152,7 @@ Output：
 - Aurora cluster sizing 估算
 - Extension migration plan（each extension 對應的策略）
 
-### Phase 1：Aurora infra 準備（1-2 週）
+### Aurora infra 準備（1-2 週）
 
 工作：
 
@@ -168,32 +168,32 @@ Output：
 - Aurora cluster 待 data load
 - Monitoring 已 ready、能對照 source 跟 target
 
-### Phase 2：Data migration（2-8 週、依資料量）
+### Data migration（2-8 週、依資料量）
 
 三條 path、依場景選：
 
-#### Path A：AWS DMS full load + CDC
+#### AWS DMS full load + CDC
 
 - 適合：< 1 TB、可接受 read-only 短窗口
 - 流程：DMS full load → DMS CDC → application cutover
 - 優點：managed、validation 工具齊全
 - 缺點：CDC lag 受 DMS task config 影響、bulk DDL 不友善
 
-#### Path B：pg_dump / mysqldump + logical replication catch-up
+#### pg_dump / mysqldump + logical replication catch-up
 
 - 適合：> 1 TB、要長 CDC 期、預算敏感
 - 流程：snapshot → pg_dump / mysqldump → restore to Aurora → logical replication catch-up → application cutover
 - 優點：成本低、可控性高
 - 缺點：手動步驟多、要自己管 CDC lag
 
-#### Path C：Snapshot restore
+#### Snapshot restore
 
 - 適合：已在 RDS PostgreSQL / MySQL
 - 流程：RDS snapshot → Aurora restore-from-snapshot → catch-up → application cutover
 - 優點：最快、AWS-internal 操作
 - 缺點：只適用 RDS source、不適用 self-managed
 
-### Phase 3：Dual-read validation（1-2 週）
+### Dual-read validation（1-2 週）
 
 工作：
 
@@ -207,7 +207,7 @@ Output：
 - Validation report：query 結果差異、latency 對照
 - [Go/no-go](/backend/knowledge-cards/go-no-go/) decision for cutover
 
-### Phase 4：Cutover（< 1 小時 window）
+### Cutover（< 1 小時 window）
 
 工作：
 
@@ -222,7 +222,7 @@ Output：
 - Cutover complete
 - Source 切到 read-only、保留作為 rollback 餘地
 
-### Phase 5：Cleanup（4-8 週）
+### Cleanup（4-8 週）
 
 工作：
 
@@ -255,12 +255,12 @@ Output：
 
 ### 合規時程組合
 
-| 軸                   | 時程估算                                                  | 不可壓縮原因                                                |
-| -------------------- | --------------------------------------------------------- | ----------------------------------------------------------- |
-| 技術遷移             | 2-8 週 data migration + < 1 小時 cutover                  | 工程可控                                                    |
-| 單市場合規審查       | 3-12 個月（Standard Chartered case 揭露）                 | 監管機構 lead time、不是技術問題                            |
-| 多市場合規 lead time | 市場數 × 平均審查月份（7 市場 × 6 個月 ≈ 3.5 年最壞情況） | 各市場各自審、平行度受監管機構文化影響                      |
-| 跨境複製禁令審查     | 包含在合規審查內、可能讓 Global Database 從候選變反指標   | 監管要求 data residency、無 cross-region replication option |
+| 軸                   | 時程估算                                                                                | 不可壓縮原因                                                |
+| -------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| 技術遷移             | 2-8 週 data migration + < 1 小時 cutover                                                | 工程可控                                                    |
+| 單市場合規審查       | 3-12 個月（Standard Chartered case 揭露）                                               | 監管機構 lead time、不是技術問題                            |
+| 多市場合規 lead time | 市場數 × 平均審查月份（7 市場 × 平均 6 個月 ≈ 3.5 年；每市場都到 12 個月上限時 ≈ 7 年） | 各市場各自審、平行度受監管機構文化影響                      |
+| 跨境複製禁令審查     | 包含在合規審查內、可能讓 Global Database 從候選變反指標                                 | 監管要求 data residency、無 cross-region replication option |
 
 ### 讀者判讀
 
@@ -274,14 +274,14 @@ Output：
 
 ## Evidence：每階段驗證資料
 
-| Phase   | Evidence                                                                                      |
-| ------- | --------------------------------------------------------------------------------------------- |
-| Phase 0 | extension list、parameter diff、application SQL 抽樣 test on Aurora dev cluster               |
-| Phase 1 | Aurora cluster ready、monitoring dashboard 跟 source 對照                                     |
-| Phase 2 | DMS row count match、checksum（per-table MD5）、CDC replication lag < 5 秒                    |
-| Phase 3 | query result diff < 0.01%、p99 latency Aurora ≤ source × 1.2、application error rate baseline |
-| Phase 4 | cutover 完成後 1 小時內 error rate < baseline × 2、write success rate 100%                    |
-| Phase 5 | 30 天無 rollback trigger、cost 月帳對齊預估                                                   |
+| 階段                 | Evidence                                                                                      |
+| -------------------- | --------------------------------------------------------------------------------------------- |
+| Pre-migration audit  | extension list、parameter diff、application SQL 抽樣 test on Aurora dev cluster               |
+| Aurora infra 準備    | Aurora cluster ready、monitoring dashboard 跟 source 對照                                     |
+| Data migration       | DMS row count match、checksum（per-table MD5）、CDC replication lag < 5 秒                    |
+| Dual-read validation | query result diff < 0.01%、p99 latency Aurora ≤ source × 1.2、application error rate baseline |
+| Cutover              | cutover 完成後 1 小時內 error rate < baseline × 2、write success rate 100%                    |
+| Cleanup              | 30 天無 rollback trigger、cost 月帳對齊預估                                                   |
 
 **受監管追加 evidence**：
 
@@ -397,7 +397,7 @@ Output：
 - [PG → CockroachDB](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/) — cross-cloud、paradigm shift
 - [PG → Aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/) — 既有 PG-specific playbook、可對照本 playbook 的 vendor-neutral 版本
 
-**Sibling deep article**：
+**同 vendor 的其他文章**：
 
 - [Aurora storage architecture](../storage-architecture/) — 理解 storage 設計才知道為什麼 operational redesign
 - [Aurora cross-AZ failover RTO](../cross-az-failover-rto/) — HA redesign 主項
@@ -411,12 +411,12 @@ Output：
 **何時不用本 playbook**：
 
 - 從 Aurora 遷到別處（反向、走對應的反向 playbook）
-- 從 RDS PostgreSQL 升 Aurora PostgreSQL 是 in-place upgrade、用 RDS console「Convert to Aurora」即可、不需要這套 playbook
+- 從 RDS PostgreSQL 到 Aurora PostgreSQL 有 AWS 原生的兩條路徑：從 DB snapshot 建 Aurora cluster，或建 Aurora read replica、lag 歸零後升為獨立 cluster（截至 2026-09 的官方文件），兩條都會建出新的 cluster、不是 in-place upgrade；Aurora 的 operational 差異仍要照本 playbook 的 Diff audit 盤點，資料搬移那一段改用這兩條路徑
 - 跨雲遷移：本 playbook 不涵蓋 GCP / Azure SQL → Aurora 流程
 
 ## 相關連結
 
-- [Aurora vendor overview](/backend/01-database/vendors/aurora/) — 服務定位、適用 / 不適用場景
+- [Aurora vendor overview](/backend/01-database/vendors/aurora/)
 - [Failover 卡片](/backend/knowledge-cards/failover/) — 概念基底
 - [Replication Lag 卡片](/backend/knowledge-cards/replication-lag/) — operational diff 主軸
 - [Rollback Window 卡片](/backend/knowledge-cards/rollback-window/) — cutover decision
@@ -424,5 +424,5 @@ Output：
 - [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — operational consolidation 跟 Aurora 非 all-purpose store 邊界
 - [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — fleet 拓樸 redesign
 - [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 合規 lead time + 跨境複製禁令
-- [Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/) — 本文遵循的 6 規格面寫作模板
+- [Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/) — 遷移 playbook 從 Driver、Diff audit、Phase plan、Evidence、Cutover 到 Cleanup 的寫法
 - 官方：[Aurora migration documentation](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Migrating.html)

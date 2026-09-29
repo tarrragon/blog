@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "postgresql", "migration"]
 
 SQLite to PostgreSQL migration 的核心責任是把 embedded single-file state 升級成 server SQL operational model。這條路線通常由 multi-user access、HA、central audit、permission、online schema governance、write concurrency 或 team handoff 壓力觸發。
 
-本文的判讀錨點是：升級到 PostgreSQL 是服務責任擴大，而非單純換 driver。Migration 要同時處理 schema 語意、資料搬遷、application adapter、backup / PITR、role、observability、cutover 與 rollback。
+本文的範圍是 SQLite 升級到 PostgreSQL 時的 migration driver、SQLite 到 PostgreSQL 的 diff audit、phase plan、data movement 與驗證、cutover、cutover 前要完成的 PostgreSQL operation gate，以及 no-go 條件。
 
 ## Migration Drivers
 
@@ -65,13 +65,31 @@ Shadow read 適合先驗證 read contract。正式寫入仍留在 SQLite 時，b
 Data movement 的核心責任是讓搬遷結果可驗證。SQLite database file 可以透過 `.dump`、CSV export、application-level export 或 custom ETL 搬入 PostgreSQL；選擇取決於資料量、型別轉換、FK order 與 downtime window。
 
 ```bash
+# SQLite 端：依 id 排序，匯出成帶標題列的 CSV
+#   NULL 印成空欄位，空字串印成 ""，含逗號或引號的值加引號跳脫
 sqlite3 app.db ".mode csv" ".headers on" ".once orders.csv" "SELECT * FROM orders ORDER BY id;"
+# PostgreSQL 端：orders 表要先在 Schema rewrite 階段建好，表不存在時回 relation "orders" does not exist
+#   沒寫欄位清單時依位置對應，HEADER 只負責跳過標題列、不比對欄名，
+#   所以 SELECT * 的欄位順序要與 PostgreSQL 表的欄位順序相同，順序不同時資料會靜默填進別的欄位
+#   CSV 格式下沒加引號的空欄位讀成 NULL，"" 讀成空字串，兩者搬過去仍分得開
 psql "$DATABASE_URL" -c "\\copy orders FROM 'orders.csv' CSV HEADER"
 ```
 
 這段命令是教學骨架。正式 migration 要處理 quoting、NULL、timezone、large object、FK order、batch size、transaction size、retry、import log 與 sensitive data handling。
 
-Row count 是基本證據，checksum 是更強證據。可以針對每張表計算穩定排序後的 hash，或在 application layer 對 domain key 與重要欄位做 checksum。
+Row count 是基本證據，checksum 是更強證據。逐列的 checksum 可以在兩端用同一段依主鍵排序的查詢輸出 CSV，再各算一次 hash：
+
+```bash
+# SQLite 端：依 id 排序輸出 CSV，交給 shasum 算 SHA-256
+sqlite3 -csv app.db "SELECT id, total_cents FROM orders ORDER BY id;" | shasum -a 256
+# PostgreSQL 端：同一段查詢經 \copy 輸出成 CSV，再算一次
+psql "$DATABASE_URL" -c "\\copy (SELECT id, total_cents FROM orders ORDER BY id) TO STDOUT CSV" | shasum -a 256
+# 兩行印出同一個 hash，代表每一列每一欄印成的文字都相同
+# 搬遷時換過型別的欄位，兩端印出的文字不同，hash 就對不上：
+#   SQLite 的 REAL 1.5 印成 1.5，PostgreSQL 的 numeric(10,2) 印成 1.50
+```
+
+換過型別的欄位要在查詢裡先轉成同一種文字格式再算，或改在 application layer 對 domain key 與重要欄位做 checksum。
 
 ```sql
 SELECT COUNT(*) FROM orders;

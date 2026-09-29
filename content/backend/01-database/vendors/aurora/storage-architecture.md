@@ -6,9 +6,9 @@ weight: 30
 tags: ["backend", "database", "aurora", "storage", "quorum", "replication", "deep-article"]
 ---
 
-Aurora 把 storage 從「block device + WAL on local disk」重寫成跨 AZ 分散式 log service、compute node 只負責 process query 跟 generate redo log records。這個設計直接決定 read replica、failover、backup 跟跨 AZ replication 的物理上限 — 不理解 storage layer 設計、就無法解釋為什麼 [9.C23 Netflix consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 拿到 +75% 效能、為什麼 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) replication lag 從 30 秒降到 10-30ms、為什麼 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 能同時把韌性跟性能當成單一目標。
+這篇整理 Aurora storage layer 的設計：quorum-based replication 的工程含義、「韌性即性能」frame 為什麼成立、OLTP workload 在這套 storage 設計下的讀寫雙峰錯位，以及它給容量規劃的判讀槓桿。
 
-本文不是 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 而是 storage-level 設計的實作層教學。覆蓋 quorum-based replication 的工程含義、「韌性即性能」frame 為什麼成立、OLTP workload 在 storage 設計下的讀寫雙峰錯位、跟容量規劃的判讀槓桿。
+Aurora 把 storage 從「block device + WAL on local disk」重寫成跨 AZ 分散式 log service、compute node 只負責 process query 跟 generate redo log records。這個設計直接決定 read replica、failover、backup 跟跨 AZ replication 的物理上限，也是三個案例數字的來源：[9.C23 Netflix consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 拿到 +75% 效能、[9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) replication lag 從 30 秒降到 10-30ms、[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 能同時把韌性跟性能當成單一目標。
 
 ## 問題情境
 
@@ -21,7 +21,7 @@ Aurora 把 storage 從「block device + WAL on local disk」重寫成跨 AZ 分�
 - 「6 個 storage node 失去 2 個還能寫嗎？失去 3 個呢？」
 - 「Aurora 文件講『韌性』跟『性能』都用 storage 設計解釋、是同一件事還是兩件事？」
 
-進一步問題：傳統工程文化把可靠性跟性能視為對立 — HA 投資（跨 AZ replication、failover 演練）通常被當成性能成本、不被視為性能來源。Aurora 設計反這個直覺、但讀者需要看到具體機制才能信。Standard Chartered case 揭露這個 frame 在受監管銀行業務（要求兩者同時達標）的價值；DraftKings 揭露具體數字（讀 < 1ms、寫 6ms）。
+進一步問題：傳統工程文化把可靠性跟性能視為對立 — HA 投資（跨 AZ replication、failover 演練）通常被當成性能成本、不被視為性能來源。Aurora 設計反這個直覺、但讀者需要看到具體機制才能信。Standard Chartered case 揭露「韌性即性能」這個 frame 在受監管銀行業務（要求兩者同時達標）的價值；DraftKings 揭露具體數字（讀 < 1ms、寫 6ms）。
 
 ## 核心機制：quorum-based 分散式 log
 
@@ -32,7 +32,7 @@ Aurora storage 的 first-class concept 是 *quorum 寫入 + 6-way 跨 AZ replica
 **Quorum 設定**：
 
 - Write quorum：4-of-6（4 個 storage node 確認寫入才算 commit）— 容忍 1 AZ 失效 + 1 node 失效仍能寫
-- Read quorum：3-of-6（讀 3 個 node 取最新版本）— 比 write 小、降低 read latency
+- Read quorum：3-of-6 只在 recovery 重建狀態時使用；正常讀取不走 quorum，database 記錄每個 storage node 已寫到哪個 LSN，把讀取送到一個已涵蓋 read point 的 node（通常是回應最快的那個）
 - 算術不對稱：寫嚴讀鬆是設計選擇、不是 marketing — durability 由寫端保證、讀端可以放寬
 
 **Write path 跟傳統 PostgreSQL 的差異**：
@@ -108,7 +108,7 @@ aws rds describe-db-clusters \
 **CloudWatch metric**（cluster-level）：
 
 ```text
-VolumeBytesUsed           # 當前 storage 用量、接近 128 TB 上限要警告
+VolumeBytesUsed           # 當前 storage 用量、接近 cluster volume 上限要警告
 VolumeReadIOPs            # storage 層讀 IOPS、判斷 I/O-Optimized ROI
 VolumeWriteIOPs           # storage 層寫 IOPS、跟 compute 層 WriteIOPS 對照
 AuroraVolumeBytesLeftTotal # 剩餘可用 storage
@@ -125,19 +125,19 @@ db.IO.aurora_storage_xx       # storage layer I/O 細節
 
 - 寫入 latency p99：PostgreSQL primary 1-3ms vs Aurora 3-6ms、跨 AZ network round-trip 是物理下界
 - Read latency p99：Aurora < 1ms（從共享 storage 讀、不跨 AZ）
-- Storage autoscale event：128 TB 上限前自動 grow per 10GB
+- Storage autoscale event：cluster volume 上限前自動 grow per 10GB
 
 **Rollback boundary**：Aurora storage 是 cluster-level、無法回滾 storage 設計；唯一 rollback 是切回 RDS / 自管（走 migration playbook、不是配置層 rollback）。
 
 ## 故障模式 / 邊界 case
 
-### Case 1：誤以為 Aurora 寫入一定比 PostgreSQL primary 快
+### 誤以為 Aurora 寫入一定比 PostgreSQL primary 快
 
 徵兆：團隊期待 Aurora 寫入比自管 PostgreSQL 快、實測 p99 寫入 latency 沒明顯改善、甚至小 row + 單筆 commit 場景 Aurora 反而慢。
 
-原因：跨 AZ network round-trip 是 3-5ms 物理下界、4-of-6 quorum 至少要等 4 個 storage node ack、單筆小寫場景 local SSD primary 仍有 latency 優勢。Aurora 的寫入優勢在 *壓力下* 才顯現 — write throughput 高峰時 PostgreSQL primary 受限於 dirty page flush + WAL fsync + replica catch-up、Aurora 的 storage layer 各自獨立處理 redo log apply。
+原因：跨 AZ network round-trip 是寫入 latency 的物理下界、4-of-6 quorum 至少要等 4 個 storage node ack、單筆小寫場景 local SSD primary 仍有 latency 優勢。Aurora 的寫入優勢在 *壓力下* 才顯現 — write throughput 高峰時 PostgreSQL primary 受限於 dirty page flush + WAL fsync + replica catch-up、Aurora 的 storage layer 各自獨立處理 redo log apply。
 
-> **數字口徑**：「跨 AZ round-trip 3-5ms」屬通用工程估算（光速下界 + AWS 區內 AZ 物理距離）、case 未直接量化、實際值依 region / AZ pair / instance 類型而異、要看 AWS 官方 latency table 或自家 benchmark 校正。下方 DraftKings 6ms 寫入是 case 揭露的 production reference、可作為對照基線。
+> **數字口徑**：AWS 官方只公開同一 region 的 AZ 彼此相距 100 km 以內（截至 2026-09 的 Regions and Availability Zones 頁），光纖中 100 km 的往返傳播約 1ms，光速給出的下界在 1ms 左右；case 未直接量化跨 AZ round-trip，實際值依 region / AZ pair / instance 類型而異，要用自家 benchmark 量。下方 DraftKings 6ms 寫入是 case 揭露的 production reference、可作為對照基線。
 
 修：
 
@@ -145,7 +145,7 @@ db.IO.aurora_storage_xx       # storage layer I/O 細節
 - 寫入 latency 不是 Aurora 的核心賣點、是 *可預測的 read replica lag + 韌性* 才是
 - DraftKings 6ms 寫入是 production reference：跨 AZ quorum 的物理下界、不是 Aurora 慢
 
-### Case 2：AZ-level outage 期間寫入 latency spike
+### AZ-level outage 期間寫入 latency spike
 
 徵兆：1 個 AZ 失效後、寫入 p99 從 6ms spike 到 30-50ms、application timeout 增加。
 
@@ -157,19 +157,19 @@ db.IO.aurora_storage_xx       # storage layer I/O 細節
 - application 端做 retry + circuit breaker、不要假設寫入永遠 6ms
 - 確認 cluster 至少跨 3 AZ deploy、單 AZ outage 才有 quorum 餘地
 
-### Case 3：I/O-Optimized 費用誤判
+### I/O-Optimized 費用誤判
 
 徵兆：team 看 Aurora I/O-Optimized「無 I/O 收費」直接切過去、月帳變高 25%、沒看到 ROI。
 
-原因：Standard storage 按 I/O 收費、I/O-Optimized 月費比 Standard 高 30%。只有 *write-heavy + scan-heavy* workload（I/O 月費接近 instance 費用）才划算；read-light + write-light workload 反而吃虧。
+原因：Standard storage 按 I/O 收費、I/O-Optimized 月費比 Standard 高 30%。只有 *write-heavy + scan-heavy* workload（I/O 費用佔 Aurora 總費用 25% 以上，截至 2026-09 的官方門檻）才划算；read-light + write-light workload 反而吃虧。
 
 修：
 
-- 先量測 baseline I/O：`VolumeReadIOPs + VolumeWriteIOPs × $0.20 per million I/O` vs Standard 月費
-- I/O 費用 > instance 費用 30% 才切 I/O-Optimized
+- 先量測 baseline I/O：`(VolumeReadIOPs + VolumeWriteIOPs) × $0.20 per million I/O` vs Standard 月費
+- I/O 費用佔 Aurora 總費用 25% 以上才切 I/O-Optimized（截至 2026-09 的官方文件門檻）
 - DraftKings 用 I/O-Optimized 是因為金融帳本 write-heavy + balance query scan-heavy、ROI 明顯
 
-### Case 4：Storage autoscale 假設
+### 以為 storage 會自動縮回
 
 徵兆：TRUNCATE / DROP 大表釋放 50% storage、但下月帳單沒回落。
 
@@ -181,7 +181,7 @@ db.IO.aurora_storage_xx       # storage layer I/O 細節
 - 用 partition + DETACH 而非 DROP TABLE、partition 可以單獨 archive
 - 接受 storage 用量是 *peak watermark* 而非 *current usage*
 
-### Case 5：Replication lag 誤解
+### 把可預測的 replication lag 當成零
 
 徵兆：read replica lag 10-30ms 看起來夠快、application 假設 read-after-write consistency、用戶下注後立刻查 balance 偶發看到舊資料。
 
@@ -189,7 +189,7 @@ db.IO.aurora_storage_xx       # storage layer I/O 細節
 
 修：
 
-- 用戶寫操作後 N 秒內走 primary（N 由 lag p99 決定、典型 100ms）
+- 用戶寫操作後的一段時間 N 內走 primary（N 由 lag p99 決定、典型 100ms）
 - Aurora 提供 session pinning：寫完同 session 短期內走 primary
 - 不能假設「Aurora replication lag 小到可以忽略」、要看 application 容忍度
 
@@ -198,7 +198,7 @@ db.IO.aurora_storage_xx       # storage layer I/O 細節
 **核心 metric**：
 
 ```text
-VolumeBytesUsed           # storage 用量、128 TB 上限預警
+VolumeBytesUsed           # storage 用量、cluster volume 上限預警
 AuroraReplicaLag          # replica lag、判斷讀寫分流可行性
 db.IO.aurora_redo_log_flush # quorum write 等待、storage 瓶頸訊號
 ```
@@ -215,7 +215,7 @@ db.IO.aurora_redo_log_flush # quorum write 等待、storage 瓶頸訊號
 
 **容量上限**：
 
-- 128 TB / cluster（超過要拆 cluster、見 [Aurora read replica scaling](../read-replica-scaling/) fleet 治理 SSoT）
+- Cluster volume 上限依引擎版本：Aurora PostgreSQL 17.5+ / 16.9+ / 15.13+ 與 Aurora MySQL 3.10+ 是 256 TiB，更早的版本是 128 TiB（截至 2026-09 的 AWS 文件；超過就要拆 cluster，拆法見 [Aurora read replica scaling](../read-replica-scaling/) 的 fleet 治理）
 - 15 read replica / region（[Aurora read replica scaling](../read-replica-scaling/) 展開）
 - Storage 自動 grow per 10GB
 
@@ -244,7 +244,7 @@ db.IO.aurora_redo_log_flush # quorum write 等待、storage 瓶頸訊號
 
 ## Fleet 治理（cross-link、不展開）
 
-Production scale 不是「單一巨型 Aurora cluster」而是 *fleet of clusters* — 5 case 揭露同一 frame：
+Production scale 是 *fleet of clusters*，不是「單一巨型 Aurora cluster」——DraftKings、Netflix 與 Standard Chartered 三個案例揭露同一 frame：
 
 - DraftKings 200 個獨立 cluster（按業務切分）
 - Netflix 多 cluster（微服務私有 store）
@@ -254,7 +254,7 @@ Production scale 不是「單一巨型 Aurora cluster」而是 *fleet of cluster
 
 ## 邊界與整合 / 下一步
 
-**Sibling deep articles**：
+**同 vendor 的其他文章**：
 
 - [Aurora cross-AZ failover RTO](../cross-az-failover-rto/) — storage 設計如何加速 failover（replica 不需要 catch-up）
 - [Aurora read replica scaling](../read-replica-scaling/) — 共享 storage 為什麼能養 15 replica + fleet 治理 SSoT
@@ -269,12 +269,12 @@ Production scale 不是「單一巨型 Aurora cluster」而是 *fleet of cluster
 - [1.3 Transaction Boundary](/backend/01-database/transaction-boundary/) — quorum 寫入 vs single-primary transaction 邊界
 - [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) — Aurora storage 是 single-region scaling、不是 distributed SQL
 
-**何時不用本文**：single-region OLTP 用 RDS 仍足夠、storage architecture 細節不影響容量規劃時可跳過、看 [Aurora vendor overview](/backend/01-database/vendors/aurora/) 即可。
+**何時不用本文**：single-region OLTP 用 RDS 仍足夠、storage architecture 細節不影響容量規劃時可跳過。
 
 ## 相關連結
 
-- [Aurora vendor overview](/backend/01-database/vendors/aurora/) — 服務定位、適用 / 不適用場景
+- [Aurora vendor overview](/backend/01-database/vendors/aurora/)
 - [Quorum 卡片](/backend/knowledge-cards/quorum/) — 概念基底
 - [Replication Lag 卡片](/backend/knowledge-cards/replication-lag/) — 對照通用 replication lag 模型
-- [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — 本文遵循的 6 規格面寫作模板
+- [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — vendor 深度文章從問題情境、核心機制、操作流程、失敗模式、容量與觀測到邊界與整合的寫法
 - 官方：[Aurora storage architecture](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.StorageReliability.html)

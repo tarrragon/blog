@@ -6,13 +6,13 @@ weight: 17
 tags: ["backend", "database", "mysql", "binlog", "cdc", "debezium", "maxwell", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *CDC* — Maxwell / Debezium 怎麼讀 binlog 產生 event stream。
+這篇整理 MySQL CDC 怎麼讀 binlog 產生 event stream：binlog 的 STATEMENT / ROW / MIXED format、ROW format 的 raw event 結構、Maxwell 與 Debezium 的對比與配置、production 踩雷與容量規劃，以及它跟 replication topology、OSC tool、PostgreSQL logical replication、Aurora MySQL 的整合。
 
 ---
 
 MySQL CDC 的核心定位是 *binlog consumer*。
 
-這個誤解來自跟 PostgreSQL CDC（[Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)）混用名詞。PG 的 logical decoding 是 *MySQL 沒有的能力* — PG 有 logical event（INSERT / UPDATE / DELETE 加上欄位 metadata）、輸出格式是 logical（人可讀、schema-aware）。MySQL 的 binlog 是 *physical* — 紀錄的是 row 的 binary image、不帶 schema 資訊。
+把 MySQL CDC 當成 PostgreSQL 式的 logical decoding，是跟 PostgreSQL CDC（[Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)）混用名詞造成的誤解。PG 的 logical decoding 是 *MySQL 沒有的能力* — PG 有 logical event（INSERT / UPDATE / DELETE 加上欄位 metadata）、輸出格式是 logical（人可讀、schema-aware）。MySQL 的 binlog 是 *physical* — 紀錄的是 row 的 binary image，預設設定下不帶欄位名稱。
 
 Maxwell / Debezium 對 MySQL 是 *binlog 第二消費者*：
 
@@ -40,7 +40,6 @@ ROW 是 CDC 唯一選擇、production 強制：
 ```ini
 binlog_format = ROW
 binlog_row_image = FULL  # FULL (all columns) / MINIMAL (only changed) / NOBLOB
-log_bin_use_v1_row_events = 0  # 用新版 event format
 ```
 
 `binlog_row_image` 取捨：
@@ -71,11 +70,11 @@ CDC consumer（Maxwell / Debezium）必須：
 3. 看到 `WRITE/UPDATE/DELETE_ROWS_EVENT` 用 table id 反查 schema、把 binary 解析成 column value
 4. 包成 JSON / Avro / Protobuf 推到 Kafka
 
-關鍵：*table schema 不在 binlog 內*、CDC consumer 必須 *獨立查 information_schema*。如果 schema 變了（ALTER TABLE）、CDC 必須 invalidate cache、重新查、否則新 column 的 row event 解析錯亂。
+關鍵：預設的 `binlog_row_metadata=MINIMAL` 下，`TABLE_MAP_EVENT` 只帶欄位型別、不帶欄位名稱，CDC consumer 必須 *自己取得 table schema* — 從 information_schema 查，或像 Debezium 那樣用 schema history topic 自己追蹤（見〈DDL event 處理〉那條踩雷）。MySQL 8.0 起可以把 `binlog_row_metadata` 設成 `FULL`，欄位名稱與主鍵會一起寫進 `TABLE_MAP_EVENT`。如果 schema 變了（ALTER TABLE）、CDC 必須 invalidate cache、重新查、否則新 column 的 row event 解析錯亂。
 
 ## Maxwell vs Debezium
 
-兩個是 MySQL CDC 主流選擇、不同設計取捨：
+Maxwell 與 Debezium 是 MySQL CDC 的主流選擇，兩者的設計取捨不同：
 
 | 維度            | Maxwell                              | Debezium MySQL                                     |
 | --------------- | ------------------------------------ | -------------------------------------------------- |
@@ -116,11 +115,11 @@ Debezium 是 Kafka Connect plugin、整套 stack：
     "database.include.list": "orders_db",
     "table.include.list": "orders_db.orders,orders_db.payments",
 
-    "database.history.kafka.bootstrap.servers": "kafka:9092",
-    "database.history.kafka.topic": "dbhistory.orders",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",   # Debezium 2.x（1.x 用 database.history.*）
+    "schema.history.internal.kafka.topic": "dbhistory.orders",
     "include.schema.changes": "true",
 
-    "snapshot.mode": "initial",              # 或 schema_only / when_needed / never
+    "snapshot.mode": "initial",              # 或 no_data / when_needed / recovery（截至 2026-09 的官方文件，schema_only 已改名 no_data）
     "snapshot.locking.mode": "minimal",      # 避免 FLUSH TABLES WITH READ LOCK
 
     "gtid.source.includes": "...",           # 可選 GTID filter
@@ -142,7 +141,7 @@ Output topic：`production.orders_db.orders` / `production.orders_db.payments` �
 
 ## 配置 step-by-step（Maxwell）
 
-Maxwell 簡單很多：
+Maxwell 是 standalone process、不需要 Kafka Connect cluster，一條指令就能啟動：
 
 ```bash
 maxwell \
@@ -175,9 +174,9 @@ Maxwell event format：
 
 Debezium 對應的 event 格式更複雜（envelope + before + after + source + ts_ms 各 nested）、但跟 schema registry 整合好。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Binlog retention 太短 — CDC consumer 落後就 re-bootstrap
+### Binlog retention 太短 — CDC consumer 落後就 re-bootstrap
 
 CDC consumer 失聯（Kafka Connect cluster down、network issue）超過 binlog retention（預設 `binlog_expire_logs_seconds=2592000`、30 天、但有些 production 縮短到 1 天）、需要的 binlog event 已被 purge、consumer error。
 
@@ -188,14 +187,14 @@ CDC consumer 失聯（Kafka Connect cluster down、network issue）超過 binlog
 - CDC consumer 失聯 alert 設 *早於 retention 期*（例如 6 天告警、給 24 小時修）
 - 真的 missed binlog、必須 *re-snapshot table*（用 Debezium `snapshot.new.tables`）— 24 小時級工作
 
-### 2. DDL event 處理 — schema change 跟 row event 對齊
+### DDL event 處理 — schema change 跟 row event 對齊
 
 `ALTER TABLE orders ADD COLUMN status VARCHAR(20)` 之後、`UPDATE_ROWS_EVENT` 多一個 column。CDC consumer 如果還用舊 schema cache、解析 row 時欄位數對不上、event 丟。
 
 修法（Debezium）：
 
 - `include.schema.changes=true`：DDL 進獨立 topic、consumer 監聽更新自己的 schema cache
-- `database.history.kafka.topic`：Debezium 自己 track schema 歷史
+- `schema.history.internal.kafka.topic`（Debezium 1.x 叫 `database.history.kafka.topic`）：Debezium 自己 track schema 歷史
 
 修法（Maxwell）：
 
@@ -207,7 +206,7 @@ CDC consumer 失聯（Kafka Connect cluster down、network issue）超過 binlog
 - 用 [Online Schema Change Tools](/backend/01-database/vendors/mysql/online-schema-change-tools/) 取代直接 ALTER — 工具操作的 DDL 對 CDC consumer 更可預期
 - Schema 改動 *優先 add column 為 nullable*、避免 backfill 期間 CDC consumer 看到 mid-state
 
-### 3. `binlog_row_image=MINIMAL` 讓下游錯亂
+### `binlog_row_image=MINIMAL` 讓下游錯亂
 
 `MINIMAL` 省 binlog 空間、但 row event 只含 changed column。下游 *search index 重建* 需要 *full row payload* 的場景下、`MINIMAL` 看不到未變的 column、index 缺欄位。
 
@@ -217,7 +216,7 @@ CDC consumer 失聯（Kafka Connect cluster down、network issue）超過 binlog
 - 如果空間真緊、考慮 `NOBLOB`（BLOB / TEXT 只在 changed 時包含、其他 column 仍 FULL）
 - *統一設定*：production 全部 server 同一 binlog_row_image 設定
 
-### 4. Kafka producer 跟 binlog reader 速度差 — lag 累積
+### Kafka producer 跟 binlog reader 速度差 — lag 累積
 
 Binlog reader 從 MySQL 讀 1000 event/sec、Kafka producer 寫得只有 800 event/sec、CDC consumer 自身 lag 累積、最終 disk 滿（producer 內部 buffer）。
 
@@ -228,7 +227,7 @@ Binlog reader 從 MySQL 讀 1000 event/sec、Kafka producer 寫得只有 800 eve
 - Kafka broker capacity：partition 數量 ≥ Debezium task 數量、避免 partition 瓶頸
 - 避免把 *過多 table* 給單一 Debezium connector — 用 *table grouping*（按 traffic 拆 connector）
 
-### 5. Schema change 跟 downstream consumer 不同步
+### Schema change 跟 downstream consumer 不同步
 
 CDC producer（Debezium）正確處理了 schema change、但 *downstream Kafka consumer* 用舊 schema deserialize、新 column 看不到 / type 解析錯。
 
@@ -241,13 +240,13 @@ CDC producer（Debezium）正確處理了 schema change、但 *downstream Kafka 
 
 ## 容量規劃要點
 
-| 元件                       | 容量考量                                                                     |
-| -------------------------- | ---------------------------------------------------------------------------- |
-| MySQL binlog disk          | retention × 寫吞吐 × event size（5K WPS × 1 KB × 7 天 ~= 3 GB / 天 = 21 GB） |
-| Debezium / Maxwell process | 1 vCPU + 2-4 GB RAM（per connector、視 throughput）                          |
-| Kafka topic partition      | 每 table 1-10 partition（依寫吞吐）、保 key-based ordering                   |
-| Kafka 保留期               | 7-30 天（讓 downstream consumer 有 recover window）                          |
-| Schema Registry            | < 100 MB storage、replicate 跨 3 broker                                      |
+| 元件                       | 容量考量                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------ |
+| MySQL binlog disk          | retention × 寫吞吐 × event size（5K WPS × 1 KB ≈ 5 MB/s ≈ 430 GB / 天，7 天約 3 TB） |
+| Debezium / Maxwell process | 1 vCPU + 2-4 GB RAM（per connector、視 throughput）                                  |
+| Kafka topic partition      | 每 table 1-10 partition（依寫吞吐）、保 key-based ordering                           |
+| Kafka 保留期               | 7-30 天（讓 downstream consumer 有 recover window）                                  |
+| Schema Registry            | < 100 MB storage、replicate 跨 3 broker                                              |
 
 對 100K WPS server、CDC pipeline cost 大致是 *MySQL infra 的 5-10%*。
 
@@ -264,7 +263,7 @@ CDC 是 *binlog 第二消費者*、需要 *GTID + binlog ROW format*（[Replicat
 修法：
 
 - CDC consumer 過濾 *ghost table prefix*（`_orders_new` / `_orders_gho`）— 不發 downstream
-- 或暫停 CDC 期間跑 OSC（用 Debezium pause API）
+- 暫停 connector（Debezium pause API）不能取代過濾：暫停只延後讀取，OSC 期間寫進 binlog 的 ghost table row event 仍留在 binlog 裡，connector 恢復之後照樣讀到
 
 ### 跟 PostgreSQL Logical Replication + Debezium
 

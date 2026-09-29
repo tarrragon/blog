@@ -1,16 +1,16 @@
 ---
 title: "MySQL PITR + Backup Strategy：備份不是「拷貝資料」、是 N 點任意 restore 的能力"
 date: 2026-05-19
-description: "MySQL backup 不只是 mysqldump、是 *full backup + binlog 連續流* 組合才能達成 PITR（point-in-time recovery）。本文走「PITR 是能力、不是動作」、3 種 backup tool 對比（mysqldump / Percona XtraBackup / MyDumper）、binlog-based recovery 流程、配置 step-by-step、5 production 踩雷（GTID 處理不一致 / binlog gap / backup 沒 verify / RPO 不到 1 分鐘的代價 / encryption key 沒備份）、跟 PG pitr-wal-archiving sibling 對比"
+description: "MySQL backup 不只是 mysqldump、是 *full backup + binlog 連續流* 組合才能達成 PITR（point-in-time recovery）。本文走「PITR 是能力、不是動作」、完整備份工具對比（mysqldump / Percona XtraBackup / MyDumper / LVM・EBS snapshot）、binlog-based recovery 流程、配置 step-by-step、5 production 踩雷（GTID 處理不一致 / binlog gap / backup 沒 verify / RPO 不到 1 分鐘的代價 / encryption key 沒備份）、跟 PG pitr-wal-archiving sibling 對比"
 weight: 23
 tags: ["backend", "database", "mysql", "backup", "pitr", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *backup + PITR* — 不是「拷貝資料」、是「N 點任意 restore 的能力」。
+> 這篇整理自管 MySQL 做到 point-in-time recovery 所需的備份組合：完整備份工具的選法、binlog 的持續保存、把兩者重放到指定時間點的還原流程，以及這套組合在 production 常見的失效方式。
 
 ---
 
-「我們每天 mysqldump 一次、放 S3、沒問題吧」是個常見錯誤。問「能不能 restore 到 5 分鐘前」、答案會是 *不能*。Dump-based backup 只能 restore 到 *dump 那個瞬間*、5 分鐘前的事故無法 recover、必須等下次 dump。
+只靠定期 mysqldump 的備份，能還原到的時間點只有每次 dump 取得快照的那一刻；兩次 dump 之間發生的事故，要還原到事故前 5 分鐘，需要 dump 之後的 binlog。
 
 **真正的 backup strategy 是 [PITR（point-in-time recovery）](/backend/knowledge-cards/point-in-time-recovery/)**：
 
@@ -18,7 +18,7 @@ tags: ["backend", "database", "mysql", "backup", "pitr", "deep-article"]
 - 由 *full backup 基線* + *binlog 連續流*（從 backup 點到目標時間點的 incremental delta）組成
 - Restore 過程：先 restore full backup → 再 apply binlog 到目標 timestamp 或 GTID
 
-這篇 deep article 把 backup *拆解成能力*、然後展開達到此能力需要的工具鏈跟工程紀律。
+PITR 能不能成立，取決於下面三層責任各自有沒有做到。
 
 ## Backup 三層責任
 
@@ -35,12 +35,12 @@ Layer 3: Restore + Replay 流程
          (能 restore full + 能 apply binlog 到目標時間點)
 ```
 
-每層的 *backup* 不夠 — 必須有 *測試 restore 流程* 才算真的有 backup。「dump 在 S3」加「沒有 verified restore」= no backup。
+只做到完整備份與 binlog 保存、沒有實際演練過還原重放，PITR 仍不成立：S3 上有 dump 而從沒還原成功過一次，等同沒有備份。
 
-## Tool 1：mysqldump — 邏輯備份、最廣容、最慢
+## mysqldump — 邏輯備份、最廣容、最慢
 
 ```bash
-mysqldump --single-transaction --master-data=2 --gtid-purged=ON \
+mysqldump --single-transaction --source-data=2 --set-gtid-purged=ON \
   --triggers --routines --events \
   --all-databases > full-backup.sql
 ```
@@ -65,7 +65,7 @@ mysqldump --single-transaction --master-data=2 --gtid-purged=ON \
 - > 500 GB DB（restore 跑 days）
 - 高吞吐 production（dump 跑時 hold MVCC read view、bloat）
 
-## Tool 2：Percona XtraBackup — 物理備份、快、production 標準
+## Percona XtraBackup — 物理備份、快、production 標準
 
 ```bash
 xtrabackup --backup --target-dir=/backup/full-2026-05-19 \
@@ -111,7 +111,7 @@ xtrabackup --prepare --target-dir=/backup/full-day1
 - Schema-only dump（用 mysqldump 更簡單）
 - 跨 major version restore
 
-## Tool 3：MyDumper — 並行邏輯備份
+## MyDumper — 並行邏輯備份
 
 ```bash
 mydumper --user=backup --password=... \
@@ -133,7 +133,7 @@ mydumper --user=backup --password=... \
 - 100 GB - 1 TB 範圍
 - 中型 production、想要邏輯備份的可讀性 + 並行加速
 
-## Tool 4：LVM / EBS Snapshot — 物理 file system 層
+## LVM / EBS Snapshot — 物理 file system 層
 
 ```bash
 # 1. Freeze MySQL（讓 write 暫停）
@@ -197,7 +197,7 @@ xtrabackup --copy-back --target-dir=/backup/full-2026-05-18  # 前一天 full
 systemctl start mysqld
 
 # Step 3: 查 full backup 結束時的 GTID
-mysql> SHOW MASTER STATUS;
+mysql> SHOW BINARY LOG STATUS;   -- 8.4 的寫法；8.0 是 SHOW MASTER STATUS
 +------------------+----------+------------------------------------------+
 | File             | Position | Executed_Gtid_Set                        |
 +------------------+----------+------------------------------------------+
@@ -213,7 +213,7 @@ mysqlbinlog --start-datetime="2026-05-18 03:00:00" \
             | mysql -u root -p
 
 # Step 5: 驗證 GTID set 到目標時間點對應的位置
-mysql> SHOW MASTER STATUS;
+mysql> SHOW BINARY LOG STATUS;
 # Executed_Gtid_Set 應包含到目標時間點的 transaction
 ```
 
@@ -224,19 +224,19 @@ mysqlbinlog --include-gtids='server-uuid:1-50000' \
             /backup/binlog/mysql-bin.000150 ... | mysql -u root -p
 ```
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. GTID 處理不一致 — Restore 後 replication broken
+### GTID 處理不一致 — Restore 後 replication broken
 
-XtraBackup restore 時 `--slave-info` 紀錄 GTID purged set、mysqldump 用 `--gtid-purged=ON`。如果 restore 後沒正確 set `gtid_purged`、replica re-attach 時 GTID gap error。
+XtraBackup 備份時把 GTID set 寫進 `xtrabackup_binlog_info`、mysqldump 用 `--set-gtid-purged=ON` 把它寫進 dump file。如果 restore 後沒正確 set `gtid_purged`、replica re-attach 時 GTID gap error。
 
 修法：
 
 - XtraBackup restore：用 `xtrabackup_binlog_info` 內的 GTID set 設 `SET GLOBAL gtid_purged='...';`
 - mysqldump：dump file 內已有 `SET @@GLOBAL.GTID_PURGED='...';`、執行 dump 自動 set
-- Restore 後 *先驗證 `Executed_Gtid_Set`* 跟 source 預期對齊、再 START SLAVE
+- Restore 後 *先驗證 `Executed_Gtid_Set`* 跟 source 預期對齊、再 `START REPLICA`（8.4 已移除 `START SLAVE`）
 
-### 2. Binlog gap — 中間遺漏 file 直接 restore fail
+### Binlog gap — 中間遺漏 file 直接 restore fail
 
 Binlog stream 失聯（network blip / disk full）+ binlog rotate、`mysql-bin.000156` 不在 backup storage 內。PITR 試圖跨過該 file restore、跳過已 commit transaction、結果 *資料不一致*（不是錯誤、是 *silently incorrect*）。
 
@@ -244,10 +244,10 @@ Binlog stream 失聯（network blip / disk full）+ binlog rotate、`mysql-bin.0
 
 - *Binlog stream 必須持續*、失聯 → alert
 - 監控 backup storage 內 binlog 連續性（file name 連號、無 gap）
-- Restore 前 *先驗證 binlog 完整性*：`mysqlbinlog --verify-binlog-checksum *.bin > /dev/null`
+- Restore 前 *先驗證 binlog 完整性*：`mysqlbinlog --verify-binlog-checksum mysql-bin.[0-9]* > /dev/null`（binlog 檔名是 `log_bin` 設的前綴加六位序號，沒有 `.bin` 副檔名）
 - 對 missing binlog *中止 PITR*、不繼續 partial restore
 
-### 3. Backup 沒 verify — 真事故時才發現 restore broken
+### Backup 沒 verify — 真事故時才發現 restore broken
 
 每天備份成功、storage 用了 5 TB、實際 *從未 restore 過*。事故發生 restore 才知道 backup file corrupt / GTID 錯 / binlog gap、整套無用。
 
@@ -257,7 +257,7 @@ Binlog stream 失聯（network blip / disk full）+ binlog rotate、`mysql-bin.0
 - 驗證 restore 後 row count 跟 production 接近、`CHECKSUM TABLE` 比對主要 table
 - 真的事故時 RTO 才不會 surprise
 
-### 4. RPO 不到 1 分鐘的代價
+### RPO 不到 1 分鐘的代價
 
 「我要 RPO < 1 分鐘」聽起來合理、但實現需要：
 
@@ -274,7 +274,7 @@ Binlog stream 失聯（network blip / disk full）+ binlog rotate、`mysql-bin.0
 - *RPO budget = 寫吞吐 trade-off + ops cost*、不是 free
 - 用 [Aurora](/backend/01-database/vendors/aurora/) / managed offering 把 RPO 議題 outsource（Aurora < 1 秒 RPO + 自動 cross-AZ）
 
-### 5. Encryption key 沒備份 — Restore 後解不開資料
+### Encryption key 沒備份 — Restore 後解不開資料
 
 啟用 *encryption at rest*（MySQL 8.0+ `default_table_encryption=ON` + keyring plugin / component；MariaDB 用 `innodb_encrypt_tables`）後、所有 InnoDB tablespace 都加密。Master key 在 *keyring file* 或 KMS-backed component。如果 backup 只 backup MySQL data file、沒備 keyring、restore 後資料 *encrypted 但無 key、無法讀*。
 
@@ -304,7 +304,7 @@ Replication replica 不能取代 backup — replica 上的 DROP TABLE 也會被 
 
 ### 跟 InnoDB Tuning
 
-`innodb_flush_log_at_trx_commit=1` + `sync_binlog=1` 是 backup-friendly 的設定（zero loss）、但寫吞吐降。如果為了寫吞吐放寬 durability、必須接受 *PITR window* 也 widening。詳見 [InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)。
+`innodb_flush_log_at_trx_commit=1` + `sync_binlog=1` 是 backup-friendly 的設定（zero loss）、但寫吞吐降。如果為了寫吞吐放寬這兩個設定，primary 當機時最後一段已 commit 的交易可能還沒寫進磁碟上的 binlog，PITR 能還原到的最新時間點就跟著往前退。詳見 [InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)。
 
 ### 跟 Aurora MySQL
 

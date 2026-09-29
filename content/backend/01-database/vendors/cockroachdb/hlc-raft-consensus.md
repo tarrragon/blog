@@ -6,13 +6,13 @@ weight: 30
 tags: ["backend", "database", "cockroachdb", "distributed-sql", "consensus", "raft", "hlc", "deep-article"]
 ---
 
-> 本文是 [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/) 的 implementation-layer deep article。Overview 已界定 CockroachDB 在 distributed SQL 譜系的定位、本文聚焦 *HLC + Raft + range + leaseholder 四層機制* — 解釋為什麼 distributed SQL 的 latency / 容量曲線跟 PostgreSQL single-primary 完全不同、以及怎麼從 production 訊號倒推它對團隊的成本結構。寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+> 本文整理 CockroachDB 的 HLC + Raft + range + leaseholder 四層機制：為什麼 distributed SQL 的 latency / 容量曲線跟 PostgreSQL single-primary 完全不同、以及怎麼從 production 訊號倒推它對團隊的成本結構。
 
 ---
 
-## 為什麼這篇先講 HLC + Raft
+## HLC + Raft 是 survival goal、locality 與 transaction retry 的共同前提
 
-團隊評估 CockroachDB 替代 PostgreSQL streaming replication 時、會同時看到兩個訊號：「跨 region 強一致」很吸引人、「每次寫都經過 Raft majority」又讓人害怕。前者是賣點、後者是成本結構 — 不先把 HLC / Raft / range / leaseholder 拆清楚、後面講 survival goal、locality、transaction retry 都會卡在「為什麼這個機制存在」這層。
+團隊評估 CockroachDB 替代 PostgreSQL streaming replication 時、會同時看到兩個訊號：「跨 region 強一致」很吸引人、「每次寫都經過 Raft majority」又讓人害怕。跨 region 強一致是賣點、每次寫都經過 Raft majority 是成本結構 — survival goal、locality、transaction retry 這幾個機制為什麼存在，都要從 HLC / Raft / range / leaseholder 的運作推出來。
 
 讀者最常問的三題：
 
@@ -43,7 +43,7 @@ Node A 收到 RPC from B at wall=12:00:00.140, B.HLC=(12:00:00.200, 5)
   → HLC = (12:00:00.200, 6)
 ```
 
-HLC 的契約 *只要節點間時鐘差不超過 max-offset、所有 transaction 仍是 linearizable*。production 必跑 NTP / chronyd — 一旦本機時鐘飄超過 500ms、節點自動 panic 保護 cluster 一致性、不會發出錯誤 commit。
+HLC 的契約 *只要節點間時鐘差不超過 max-offset、同一個 key 上因果相依的 transaction 就維持 linearizable*；serializable 隔離則不論時鐘偏移都成立。Cockroach Labs 截至 2026-09 的官方說法只宣稱 serializability 與 single-key linearizability，跨 key 的 strict serializability 不在保證內。production 必跑 NTP / chronyd — 一旦本機時鐘飄超過 500ms、節點自動 panic 保護 cluster 一致性、不會發出錯誤 commit。
 
 跟 Spanner TrueTime 對比：
 
@@ -87,7 +87,7 @@ CockroachDB 用 [Range Sharding](/backend/knowledge-cards/range-sharding/) 把�
 - Spanner split：類似 range、但配置 / placement 語法不同
 - Vitess keyspace：application 端決定 shard key、不透明 split
 
-CockroachDB range 是 *系統內建透明* 的 — application 只看到 SQL table、不需要 shard key 設計。但 hot range 仍會發生（後面 failure mode 段展開）。
+CockroachDB range 是 *系統內建透明* 的 — application 只看到 SQL table、不需要 shard key 設計。但 hot range 仍會發生（見〈Hot range：leaseholder 節點 CPU 飽和〉）。
 
 ### Leaseholder：每個 range 的 read / write entry point
 
@@ -103,7 +103,7 @@ leaseholder 概念對 production 訊號的影響：
 
 ### Cluster 起手配置
 
-最小可運行配置是 3 節點（Raft quorum 下界）、production 通常 9 節點以上（3 region × 3 replica）。每個節點啟動時必須帶 locality tag、讓 Raft placement 知道副本怎麼分佈：
+最小可運行配置是 3 節點（Raft quorum 下界）、production 通常 9 節點以上（3 region × 每 region 3 節點）。每個節點啟動時必須帶 locality tag、讓 Raft placement 知道副本怎麼分佈：
 
 ```bash
 cockroach start --insecure \
@@ -112,7 +112,7 @@ cockroach start --insecure \
   --join=node1:26257,node2:26257,node3:26257
 ```
 
-`--max-offset` 是 HLC 容忍上界、超過會 panic — 不要為了「避免 panic」加大這個值、會犧牲 linearizability 保證。
+`--max-offset` 是 HLC 容忍上界：節點偵測到自己跟其他節點的時鐘差過大就自行終止。加大這個值能讓節點容忍更大的時鐘差，代價是 uncertainty 造成的讀取重啟變多、global table 的寫入 latency 變高；時鐘漂移本身仍要從 NTP 修。所有節點要設同一個值。
 
 NTP / chronyd 是 *必要前置*、不是 nice-to-have。production 應該在每個節點配置：
 
@@ -122,25 +122,26 @@ NTP / chronyd 是 *必要前置*、不是 nice-to-have。production 應該在每
 ### 驗證點
 
 ```sql
--- 看每節點當前 clock offset 跟 cluster 其他節點
-SELECT node_id, address, offset_min_nanos, offset_max_nanos
-FROM crdb_internal.gossip_nodes;
+-- crdb_internal 在 v26.3 預設禁止查詢，要先開這個 session 變數（官方標示為不支援的內部介面）
+SET allow_unsafe_internals = true;
 
--- 看 Raft 健康（每個 range 的 leaseholder 跟 replica 分佈）
+-- 連線所在節點量到的時鐘偏移（相對其他節點，單位 ns）
+SELECT name, value FROM crdb_internal.node_metrics
+WHERE name LIKE 'clock-offset%';
+
+-- 看 Raft 健康（orders 每個 range 的 leaseholder 跟 replica 分佈）
 SELECT range_id, lease_holder, replicas
-FROM crdb_internal.ranges
-WHERE table_name = 'orders'
+FROM [SHOW RANGES FROM TABLE orders WITH DETAILS]
 LIMIT 5;
 
--- 看 cluster max-offset 設定
-SHOW CLUSTER SETTING server.clock.persist_upper_bound_interval;
+-- max-offset 是啟動旗標 --max-offset，不是 cluster setting，SHOW CLUSTER SETTING 查不到它
 ```
 
 ### Rollback 邊界
 
 HLC + Raft 對 rollback 的態度跟 PostgreSQL 不同：
 
-- HLC 時鐘前進不可回滾 — 不能「改一下 max-offset 後重啟試試看」
+- HLC 時鐘前進不可回滾
 - Raft commit 不可回滾 — 一旦 majority ack、log entry 持久化
 - 想還原業務狀態 *只能新交易補償*、不能 reverse Raft log
 
@@ -160,7 +161,7 @@ HLC + Raft 對 rollback 的態度跟 PostgreSQL 不同：
 
 ### Raft majority lost
 
-3 節點 cluster 失去 2 個、剩 1 個無法 commit、cluster 全 read-only（甚至連 read 都可能受影響、因為 leaseholder 拿不到 valid lease）。對比 PostgreSQL primary 失效後 streaming replica 仍可 read、CockroachDB 的 fault tolerance 是 *quorum-based*、不是 *primary-replica*。
+3 節點 cluster 失去 2 個、剩 1 個無法 commit；leaseholder 也拿不到有效的 lease，所以這些 range 的寫入與讀取都停下來，影響比 read-only 更大。對比 PostgreSQL primary 失效後 streaming replica 仍可 read、CockroachDB 的 fault tolerance 是 *quorum-based*、不是 *primary-replica*。
 
 production 規劃要點：跨 AZ / region 分佈時、必須保證任何 *單一 failure domain* 失敗後仍有 majority 存活。3 節點配 1 AZ → AZ 失敗 = cluster down。最小 production 配置是 3 AZ × 1 node 或 3 region × 3 node。
 
@@ -196,7 +197,7 @@ serializable contention 嚴重時 application 端 retry loop、CPU 雪崩。這�
 - `HLC offset distribution`：時鐘同步健康
 - `Transaction retry rate`：contention 訊號（細節在 [transaction retry pattern](../transaction-retry-pattern/)）
 
-### Per-cluster 容量規劃顆粒（9.C40 Netflix 揭露、F4.7）
+### Per-cluster 容量規劃顆粒（9.C40 Netflix）
 
 Netflix 的 380+ cluster 模型揭露一個反直覺結論：production scale 不是「全公司一條容量曲線」、而是 *artery of small DBs*。每個 cluster 對應一個 application boundary、cluster sizing 從幾個 node 到 60 nodes 不等、最大單區 60 nodes / 26.5 TB（case 觀察段表格揭露）。
 
@@ -208,27 +209,24 @@ Netflix 的 380+ cluster 模型揭露一個反直覺結論：production scale �
 
 但也帶來 ops 成本：380+ cluster 需要 *專屬 Database Platform Team*（含 backup、upgrade、incident response、capacity review）— Netflix case 直接揭露這個前置條件。沒這量級團隊就走 Cockroach Cloud managed、不要 self-host。
 
-per-app cluster vs shared cluster 的決策軸主寫於 [aurora-dsql-spanner-decision-tree](../aurora-dsql-spanner-decision-tree/)、本篇 cross-link 不展開。
+per-app cluster vs shared cluster 的判讀軸（服務隔離度、跨服務 query 需求、blast radius、平台團隊要求）見 [aurora-dsql-spanner-decision-tree](../aurora-dsql-spanner-decision-tree/) 的〈Cluster boundary 顆粒〉一節。
 
 ### 寫入 latency 預算（屬通用工程估算、case 未揭露具體數字）
 
-以下數字屬通用工程估算 / 物理光速下界推導、**DoorDash / Netflix / Hard Rock 三個 direct case 都沒揭露單一 cluster p99 latency**。引用時必須明示來源層次：
+以下數字屬通用工程估算 / 物理光速下界推導、**DoorDash / Netflix / Hard Rock 三個 direct case 都沒揭露單一 cluster p99 latency**：
 
 - single-region 3-replica write p99 3-5ms（通用估算、跨 AZ Raft round trip）
-- multi-region 跨洲 write p99 100-150ms（光速下界 — 跨洲 round trip 物理 ~70-80ms × 2）
+- multi-region 跨洲 write p99 100-150ms（光速下界 — 跨洲 round trip 物理 ~70-80ms 起跳）
 - 單一 range 寫 throughput ~1000 QPS（通用估算、實際依 row size / contention 而定）
 - 整 cluster scale-out 加 range、寫入吞吐近線性擴展（理論、實際依 hot range 分佈）
 
 這些是「合理的工程估算量級」、不是 case 揭露的 p99 數字。讀者用這些做容量規劃時、應該 *自己 benchmark* 而不是直接套。
 
-### DoorDash 1.636 M QPS 引用紀律（F4.1、case 自帶警示）
+### DoorDash 1.636 M QPS 是 Aurora 的撞牆訊號、不是 CockroachDB 的容量證明
 
-DoorDash case 揭露的 1.636 M QPS 是 *Aurora Postgres single-primary 在 2020-04-17 高峰撞牆的痛點*（multi-hour outage）、**不是 CockroachDB throughput claim**。case 明確警告不要把這個數字當「CockroachDB 撐 1.636 M QPS 的證據」。case 沒揭露遷移後單一 CockroachDB cluster 的峰值、只說「跑更多 cluster、alert volume 反而下降」。
+1.636 M QPS 是 Aurora Postgres single-primary 在 2020-04-17 高峰撞牆時的負載（multi-hour outage），不是 CockroachDB 的 throughput。這個數字對容量規劃給的是 single-primary 撞牆前的判讀訊號：
 
-引用這個數字時的口徑：
-
-- 寫成「Aurora 撞牆訊號」、不寫成「CockroachDB 容量證明」
-- single-primary 撞牆的轉折點是 *primary CPU + WAL flush rate*（DoorDash 策略段 1）、不是 IOPS
+- single-primary 撞牆的轉折點是 *primary CPU + WAL flush rate*（DoorDash case 的〈策略〉段）、不是 IOPS
 - 「換引擎」前先評估「兩階段紓壓」— DoorDash 路徑是先把 hot table 拆到獨立 Aurora cluster（紓壓）、再規劃 Aurora → CockroachDB 換引擎（[1.6 database migration playbook](/backend/01-database/database-migration-playbook/)）
 
 ### 回路徑
@@ -239,7 +237,7 @@ DoorDash case 揭露的 1.636 M QPS 是 *Aurora Postgres single-primary 在 2020
 
 ## 邊界與整合
 
-### Sibling deep articles
+### 同 vendor 的其他文章
 
 - [CockroachDB survival goals](../survival-goals/)：Raft replica 怎麼分佈到 zone / region、決定 RTO / RPO
 - [CockroachDB transaction retry pattern](../transaction-retry-pattern/)：serializable default 對 application 契約的重塑

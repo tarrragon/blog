@@ -8,7 +8,7 @@ tags: ["backend", "database", "postgresql", "operations", "ownership"]
 
 PostgreSQL developer / DBA responsibility split 的核心責任是把資料庫決策拆成 application ownership、database operation 與 platform governance。PostgreSQL 功能深，事故常跨 query、schema、connection、backup、replication 與 capacity；若責任分工模糊，問題會在 release 與 incident 時放大。
 
-本文的判讀錨點是：developer 和 DBA 分工要讓每個決策有清楚 owner、evidence、review gate 與 rollback，而非把資料庫丟給某一方。
+本文涵蓋 developer 與 DBA / platform 的 ownership map、schema 與 migration 的分工、query 與 capacity 的 review、事故時的角色、review 節奏，以及交接文件。
 
 ## Ownership Map
 
@@ -23,7 +23,7 @@ Ownership map 的核心責任是定義誰能改什麼、誰要驗證什麼。
 | Backup / DR       | restore smoke test              | WAL archive、PITR、replica            | restore drill    |
 | Security          | tenant / workflow intent        | role、RLS、audit、grant               | access review    |
 
-這張表的重點是 shared gate。Developer 最懂產品語意，DBA / platform 最懂資料庫風險；正式變更需要兩邊的 evidence 合併。
+這張表的重點是 shared gate。Developer 最懂產品語意，DBA / platform 最懂資料庫風險；正式變更需要 developer 的產品語意 evidence 與 DBA / platform 的資料庫風險 evidence 合併。
 
 ## Schema and Migration
 

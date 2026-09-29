@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "hands-on", "backup"]
 
 SQLite backup restore drill 的核心責任是證明單檔 database 可以被一致備份並還原。這篇承接 [File lifecycle / backup boundary](/backend/01-database/vendors/sqlite/file-lifecycle-backup-boundary/)，把備份從概念轉成 artifact、validation query 與 RPO / RTO note。
 
-本文的驗收標準是：你能從 live `app.db` 建立 backup，將它還原到隔離路徑，通過 `integrity_check` 與核心查詢，並記錄 restore duration。
+本篇的範圍是對 local file quickstart 建出的 live `app.db` 做一次備份與還原演練：用 `.backup` 與 `VACUUM INTO` 建立 backup、備份後再寫入 source 以確認 backup 停在建立的時間點、還原到隔離路徑跑 `integrity_check` 與核心查詢，並記錄 restore duration。
 
 ## Prepare Source
 
@@ -82,11 +82,14 @@ RPO / RTO note 的核心責任是把演練結果轉成服務承諾。RPO 是可�
 | RPO  | backup 建立時間到事故時間的資料差距      |
 | RTO  | 從取得 backup 到 app smoke test 成功耗時 |
 
-可以用 shell 的 `time` 記錄 restore duration。
+shell 的 `time` 可以量 restore 裡 SQLite 那一段的耗時：把 backup 複製到 restore path，再跑 `integrity_check`。
 
 ```bash
-time sqlite3 restore/app-restored.db "PRAGMA integrity_check;"
+# 括號讓 time 量整段：複製 backup 加上 integrity_check
+time (cp backup/app-backup.db restore/app-restored.db && sqlite3 restore/app-restored.db "PRAGMA integrity_check;")
 ```
+
+這個數字只涵蓋檔案複製與 integrity check；表中的 RTO 還包含 application 指向 restore file 啟動、跑完 smoke test 的時間，那一段要在 application 端另外量。
 
 正式服務要把 RPO / RTO 寫進 [observability / runbook](/backend/01-database/vendors/sqlite/observability-runbook/)。
 

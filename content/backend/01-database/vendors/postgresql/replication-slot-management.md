@@ -1,18 +1,18 @@
 ---
 title: "PostgreSQL Replication Slot Management：Physical / Logical / Failover Slot 治理"
 date: 2026-05-19
-description: "PG replication slot 是 *primary 端的 standby 進度紀錄*、防 WAL premature deletion。但 orphan slot 會吃 disk、failover 後 logical slot 不會自動跟新 primary、是 PG 操作的 hidden complexity。本文走 physical / logical slot 差異、slot lifecycle、failover slot synchronization（PG 17+ 新特性）、orphan slot 治理、5 production 踩雷（orphan slot disk 爆 / logical slot lag / failover 後 slot 丟 / wal_keep_size 跟 slot 衝突 / connection 同時打 slot 數量限制）"
+description: "PG replication slot 是 *primary 端的 standby 進度紀錄*、防 WAL premature deletion。但 orphan slot 會吃 disk、failover 後 logical slot 不會自動跟新 primary、是 PG 操作的 hidden complexity。本文走 physical / logical slot 差異、slot lifecycle、failover slot synchronization（PG 17+ 新特性）、orphan slot 治理、production 踩雷（orphan slot disk 爆 / logical slot lag / failover 後 slot 丟 / wal_keep_size 跟 slot 衝突 / connection 同時打 slot 數量限制）"
 weight: 28
 tags: ["backend", "database", "postgresql", "replication-slot", "logical-replication", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *replication slot management* — physical / logical / failover slot 三類治理。
+本文的範圍是 PostgreSQL replication slot 的治理：physical 與 logical slot、slot lifecycle、PG 17 起 logical slot 在 failover 時同步到新 primary 的 failover slot synchronization、orphan slot 治理、production 踩雷、slot naming convention 與監控 metric。
 
 ---
 
-## Replication Slot 兩大類
+## Physical 與 Logical Replication Slot
 
-PG 兩種 replication slot：
+PG 的 replication slot 依 consumer 讀 WAL 的方式分成 physical（整段 WAL byte 複製）與 logical（解碼成逐筆變更）：
 
 ### Physical Replication Slot
 
@@ -82,11 +82,9 @@ PG 17 加 *failover slot synchronization*：
 
 ```sql
 -- PG 17+：標 slot 為 failover-tracked
--- signature: pg_create_logical_replication_slot(slot_name, plugin, temporary, two_phase, failover)
-SELECT pg_create_logical_replication_slot('my_slot', 'pgoutput', false, false, true);
---                                                                          ↑
---                                                                     failover=true（第 5 個參數）
--- 注意：第 4 個參數是 two_phase（這裡 false）、第 5 個才是 failover
+-- signature: pg_create_logical_replication_slot(slot_name, plugin, temporary, twophase, failover)
+-- 用具名參數指定 failover，temporary 與 twophase 沿用預設的 false
+SELECT pg_create_logical_replication_slot('my_slot', 'pgoutput', failover => true);
 
 -- Standby 上 enable sync_replication_slots
 ALTER SYSTEM SET sync_replication_slots = on;
@@ -140,9 +138,9 @@ SELECT pg_drop_replication_slot('old_standby_slot');
 
 DR runbook 必須包含 *standby 退役流程*：先 standby fence、再 primary drop slot。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Orphan slot disk 爆
+### Orphan slot disk 爆
 
 最經典 PG 事故：standby decomission 沒 drop slot、primary 持續保留 WAL、`pg_wal/` 累積到 disk full、primary 也掛。
 
@@ -153,7 +151,7 @@ DR runbook 必須包含 *standby 退役流程*：先 standby fence、再 primary
 - Standby 退役 runbook 強制 *先 fence、再 drop slot*
 - Cron job 自動 alert orphan slot
 
-### 2. Logical slot lag — CDC consumer 跟不上
+### Logical slot lag：CDC consumer 跟不上
 
 Logical decoding 比 physical replication 慢（per-transaction logical event 重組）。CDC consumer（Debezium）跟不上 → slot lag 累積。
 
@@ -166,13 +164,13 @@ Logical decoding 比 physical replication 慢（per-transaction logical event �
 
 詳見 [Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)。
 
-### 3. Failover 後 logical slot 丟（PG 16 之前）
+### Failover 後 logical slot 丟（PG 16 及更早）
 
-PG 16 之前、failover promote standby、新 primary 沒有原 logical slot。CDC consumer 試連、ERROR: `replication slot "xxx" does not exist`。
+PG 16 及更早的版本、failover promote standby、新 primary 沒有原 logical slot。CDC consumer 試連、ERROR: `replication slot "xxx" does not exist`。
 
 修法（PG 17+）：
 
-- 用 *failover slot synchronization*（如上）
+- 用 *failover slot synchronization*（見〈Failover Slot Synchronization (PG 17+)〉）
 - `pg_create_logical_replication_slot(...,  failover := true)`
 - Standby `sync_replication_slots = on`
 
@@ -182,7 +180,7 @@ PG 16 之前、failover promote standby、新 primary 沒有原 logical slot。C
 - Failover runbook 包含 *新 primary 重建 logical slot*（CDC consumer 重 snapshot）
 - Pre-create slot on standby + manual sync（早期 workaround）
 
-### 4. `wal_keep_size` 跟 slot 衝突
+### `wal_keep_size` 跟 slot 衝突
 
 `wal_keep_size`（PG 13+）/ `wal_keep_segments`（< 13）跟 slot 都會保留 WAL：
 
@@ -197,7 +195,7 @@ PG 16 之前、failover promote standby、新 primary 沒有原 logical slot。C
 - 主要靠 slot 動態保留 — 給 active consumer
 - 監控 `pg_wal/` 大小 + 拆解 retention source（`wal_keep_size` vs slot 各佔多少）
 
-### 5. Slot 數量上限
+### Slot 數量上限
 
 `max_replication_slots` 預設 10、不夠時新 slot 建不出來、報錯。
 
@@ -248,5 +246,5 @@ Production 持續監控：
 - [PG Replication Topology](/backend/01-database/vendors/postgresql/replication-topology/)（physical slot 用途）
 - [PG Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)（logical slot 用途）
 - [PG BDR / Multi-Master](/backend/01-database/vendors/postgresql/bdr-multi-master/)（multi-master 大量 slot）
-- [PG PITR + WAL Archiving](/backend/01-database/vendors/postgresql/pitr-wal-archiving/)（WAL retention 兩種機制）
+- [PG PITR + WAL Archiving](/backend/01-database/vendors/postgresql/pitr-wal-archiving/)（WAL archive 與 slot 兩種 WAL retention 機制）
 - 官方：[PG Replication Slots](https://www.postgresql.org/docs/current/warm-standby.html#STREAMING-REPLICATION-SLOTS) / [Logical Replication Slot](https://www.postgresql.org/docs/current/logicaldecoding.html)

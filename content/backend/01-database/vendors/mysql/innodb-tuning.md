@@ -1,12 +1,12 @@
 ---
 title: "MySQL InnoDB Tuning：為什麼一個 100 GB DB 在 64 GB RAM server 上 query 慢 5 倍"
 date: 2026-05-19
-description: "InnoDB 是 MySQL 預設 storage engine、預設值給 256 MB buffer pool（早期 default）。本文從一個常見痛點開場（DB > RAM 但 server 仍 swap）、走 4 個 critical knob（buffer pool / redo log / flush method / IO capacity）、各自如何影響讀寫吞吐、配置 step-by-step、5 production 踩雷（buffer pool warm-up / log file 大小 / 設 sync_binlog=0 換速度 / IO scheduler / undo log 膨脹）、跟 SSD / NVMe / EBS 的 IO 假設"
+description: "InnoDB 是 MySQL 預設 storage engine、預設值給 128 MB buffer pool。本文從一個常見痛點開場（DB > RAM 但 server 仍 swap）、走 4 個 critical knob（buffer pool / redo log / flush method / IO capacity）、各自如何影響讀寫吞吐、配置 step-by-step、5 production 踩雷（buffer pool warm-up / log file 大小 / 設 sync_binlog=0 換速度 / IO scheduler / undo log 膨脹）、跟 SSD / NVMe / EBS 的 IO 假設"
 weight: 16
 tags: ["backend", "database", "mysql", "innodb", "performance", "tuning", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *InnoDB engine tuning* — 4 個影響最大的 knob 跟對應 production 行為。
+> 這篇涵蓋 InnoDB engine tuning：buffer pool、redo log、commit 時的 flush 設定、IO capacity 這幾個影響最大的 knob 跟對應的 production 行為。
 
 ---
 
@@ -18,7 +18,7 @@ tags: ["backend", "database", "mysql", "innodb", "performance", "tuning", "deep-
 
 這個案例展示 InnoDB tuning 的核心：MySQL 預設值是 *為 16 GB RAM 設計*、production server RAM 越大、預設值離 optimal 越遠。
 
-## 4 個 critical knob
+## Critical knob
 
 對 90% production case、調這 4 個就解決大部分 InnoDB 性能問題：
 
@@ -29,9 +29,9 @@ tags: ["backend", "database", "mysql", "innodb", "performance", "tuning", "deep-
 | `innodb_flush_log_at_trx_commit` | 1 (full ACID)    | 1（金融 / 訂單）/ 2（高吞吐可容 1 秒 loss）               | 寫吞吐 vs durability     |
 | `innodb_io_capacity` + `_max`    | 200 / 2000       | SSD: 2000 / 20000; NVMe: 10000 / 40000                    | flush 速度（適配儲存）   |
 
-其他 knob（`innodb_thread_concurrency` / `innodb_buffer_pool_instances` / `innodb_read_io_threads` 等）也有影響、但對多數 case *先把這 4 個調對* 比微調其他 20 個重要。
+其他 knob（`innodb_thread_concurrency` / `innodb_buffer_pool_instances` / `innodb_read_io_threads` 等）也有影響、但對多數 case *先把 buffer pool、redo log、commit flush、IO capacity 調對* 比微調其餘 knob 重要。
 
-## Knob 1：Buffer pool — 把 working set 拉進 RAM
+## Buffer pool — 把 working set 拉進 RAM
 
 [InnoDB buffer pool](/backend/knowledge-cards/buffer-pool/) 是 *page cache* — 從 disk 讀過的 16 KB page 快取在 RAM、下次 query 直接 RAM 讀。Buffer pool 越大、cache hit ratio 越高、disk IO 越少。
 
@@ -47,7 +47,7 @@ innodb_buffer_pool_size = 48G
 innodb_buffer_pool_instances = 8  # 分 8 個 instance 降 mutex contention（每 instance 6 GB）
 ```
 
-**Buffer pool warm-up**：MySQL 重啟後 buffer pool 是空的、要慢慢從 disk 把熱資料拉回 RAM。預設 5.7+ MySQL 啟動時 *dump buffer pool LRU list 到 disk*、重啟時 *自動 restore*：
+**Buffer pool warm-up**：MySQL 重啟後 buffer pool 是空的、要慢慢從 disk 把熱資料拉回 RAM。MySQL 8.0 與 8.4 預設在 *關機時把 buffer pool 的 page list dump 到 disk*、啟動時 *自動 load 回來*；下面前兩行是預設值，`innodb_buffer_pool_dump_pct` 的預設是 25，這裡調成 75：
 
 ```ini
 innodb_buffer_pool_dump_at_shutdown = 1
@@ -57,7 +57,7 @@ innodb_buffer_pool_dump_pct = 75  # 只 dump 最 hot 的 75% page list
 
 沒這個 warm-up、重啟後第 1 個小時 query latency 都偏高、application 看到 p99 spike。
 
-## Knob 2：Redo log — flush 頻率跟寫吞吐
+## Redo log — flush 頻率跟寫吞吐
 
 InnoDB 寫入 *先寫 redo log（順序寫）*、再非同步寫到 data file（隨機寫）。Redo log 滿了強迫 flush data file、flush 期間寫吞吐降。
 
@@ -76,9 +76,9 @@ innodb_log_buffer_size = 64M    # log 寫 disk 前的 RAM buffer
 
 **Trade-off**：log file 越大、recovery 時間越長（crash 後 InnoDB 要 replay 全部 log）。1 GB log 通常 < 1 分鐘 recovery、4 GB 可能 5 分鐘以上。SSD / NVMe 這個 trade-off 不嚴重、HDD 要注意。
 
-MySQL 8.0+ 改進：log file 可動態調整（不用重啟）、且 *automatic redo log writer threads* 降低 mutex contention。
+MySQL 8.0.30 起改用 `innodb_redo_log_capacity`，可以用 `SET GLOBAL` 動態調整（不用重啟）；`innodb_log_file_size` 仍是 read-only、改了要重啟才生效。另外 8.0 起 *automatic redo log writer threads* 降低 mutex contention。
 
-## Knob 3：Flush method — ACID vs 吞吐
+## Commit 時的 flush — ACID vs 吞吐
 
 `innodb_flush_log_at_trx_commit` 控制 *每個 transaction commit 時要不要 flush log 到 disk*：
 
@@ -103,7 +103,7 @@ MySQL 8.0+ 改進：log file 可動態調整（不用重啟）、且 *automatic 
 
 多數 production 用 `1 + 1`、雖然慢但 *簡單可預測*。改成 `2 + 1` 之前要明確 *能容忍 1 秒 data loss*、且通常 review 過 Disaster Recovery Plan。
 
-## Knob 4：IO capacity — 適配儲存
+## IO capacity — 適配儲存
 
 InnoDB 後台 flush 速度受 `innodb_io_capacity` 限制：
 
@@ -129,30 +129,30 @@ innodb_io_capacity_max = 40000
 innodb_flush_neighbors = 0  # NVMe 不需要 group flush 相鄰 page
 ```
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Buffer pool 沒 warm-up — 重啟後 1 小時 p99 飆
+### Buffer pool 沒 warm-up — 重啟後 1 小時 p99 飆
 
 MySQL 重啟（OS upgrade / config change / failover）後、buffer pool 是空的、所有 query 第一次都 disk 讀、p99 latency 飆 5-10x、application 看到 timeout。
 
 修法：
 
 - 啟用 `innodb_buffer_pool_dump_at_shutdown=1` + `innodb_buffer_pool_load_at_startup=1`
-- 對 *沒 graceful shutdown* 的 crash（OOM / kernel panic）、buffer pool 沒 dump、warm-up 後第一個小時仍辛苦
+- 對 *沒 graceful shutdown* 的 crash（OOM / kernel panic）、buffer pool 沒 dump、重啟後的第一個小時 p99 仍然偏高
 - 重要 server 重啟前手動 dump：`SET GLOBAL innodb_buffer_pool_dump_now=ON`
 - 對於不能容忍 cold cache 的場景、failover 前 *先 pre-warm new primary*（用 query replay 把 hot data 拉到 buffer pool）
 
-### 2. Log file size 設太小 — checkpoint storm
+### Log file size 設太小 — checkpoint storm
 
-`innodb_log_file_size=48M` 預設、高寫吞吐 server log 每分鐘 flush 一次、flush 期間 *checkpoint storm* — 寫吞吐降 50%、p99 暴增。錯誤訊號是 `innodb_log_waits` 持續 > 0。
+`innodb_log_file_size=48M` 預設、高寫吞吐 server log 每分鐘 flush 一次、flush 期間 *checkpoint storm* — 寫吞吐降 50%、p99 暴增。redo log 容量吃緊的訊號是 checkpoint age——`Innodb_redo_log_current_lsn` 減 `Innodb_redo_log_checkpoint_lsn`——長時間貼近 redo log 容量；`Innodb_log_waits` 量的是 log buffer 太小，不是 redo log 容量。
 
 修法：
 
-- 監控 `SHOW STATUS LIKE 'Innodb_log_waits'` — 應該長期接近 0
+- 監控 `SHOW STATUS LIKE 'Innodb_redo_log_%_lsn'`，把 `current_lsn` 減 `checkpoint_lsn` 的差距畫成趨勢，長期貼近 redo log 容量就是容量不夠
 - 提高 `innodb_log_file_size` 到 1-4 GB（依寫吞吐）
-- 8.0+ 可動態調整、5.7 需要 *正常 shutdown* 後改、開啟前先 dump buffer pool（避免 cold cache）
+- 8.0.30+ 用 `SET GLOBAL innodb_redo_log_capacity` 動態調整；更早的版本（含 5.7）改 `innodb_log_file_size` 需要 *正常 shutdown* 後改、開啟前先 dump buffer pool（避免 cold cache）
 
-### 3. `sync_binlog=0` 換速度 — replication 永久 broken 風險
+### `sync_binlog=0` 換速度 — replication 永久 broken 風險
 
 開發 / staging 改 `sync_binlog=0`（加快寫入）、後來複製到 production 配置、production 同樣 `sync_binlog=0`。OS crash 後 binlog 缺最後幾秒 transaction、replica 跟 primary GTID set diverge、replication broken、要 *重建 replica from base backup*（小時級 recovery）。
 
@@ -162,7 +162,7 @@ MySQL 重啟（OS upgrade / config change / failover）後、buffer pool 是空�
 - 開發 / staging 配置跟 production 隔離、不要直接 copy config
 - Replica 失聯後 *用 GTID 自動 re-attach*（不是 binlog position）— 仍然需要 binlog 完整、`sync_binlog=0` 仍是風險
 
-### 4. IO scheduler — 不是 InnoDB tuning 但影響大
+### IO scheduler — 不是 InnoDB tuning 但影響大
 
 Linux `noop` / `deadline` / `cfq` IO scheduler 對 SSD / NVMe 影響大：
 
@@ -180,7 +180,7 @@ cat /sys/block/sda/queue/scheduler
 
 不是 InnoDB knob、但影響 InnoDB IO behavior > 30%。InnoDB tuning 前先確認 OS-level IO scheduler 對。
 
-### 5. Undo log 膨脹 — purge 跟不上
+### Undo log 膨脹 — purge 跟不上
 
 Undo log 紀錄 *未來可能 rollback 需要的舊版本 row*。長 transaction（hours-level）讓 undo log 持續累積、不能 purge、最後 InnoDB tablespace 膨脹幾 GB、disk 滿。
 
@@ -267,7 +267,7 @@ InnoDB tuning 不直接影響 OSC 工具行為、但 *log file size 太小* 時 
 `SHOW STATUS LIKE` + Performance Schema 提供：
 
 - `Innodb_buffer_pool_read_requests` / `_reads` → cache hit ratio = `1 - reads/read_requests`、應該 > 99%
-- `Innodb_log_waits` → checkpoint pressure、應該 = 0
+- `Innodb_log_waits` → log buffer 太小而等待 flush 的次數（調 `innodb_log_buffer_size` 的訊號）、應該 = 0
 - `Innodb_log_write_requests` / `_writes` → log buffer 效率
 - `Innodb_rows_inserted` / `_updated` / `_read` → workload 形狀
 - `Innodb_row_lock_waits` / `_time` → lock contention

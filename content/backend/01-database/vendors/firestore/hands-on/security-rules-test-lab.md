@@ -5,11 +5,11 @@ description: "用 @firebase/rules-unit-testing 在 emulator 上把 Security Rule
 tags: ["backend", "database", "firestore", "hands-on", "security-rules", "testing"]
 ---
 
-> 本文是 [Firestore Hands-on 操作路線](/backend/01-database/vendors/firestore/hands-on/) 的 lab，實作 [Security Rules 授權建模](/backend/01-database/vendors/firestore/security-rules-authz-modeling/) deep article 的測試方法。前置環境見 [Local emulator quickstart](/backend/01-database/vendors/firestore/hands-on/local-emulator-quickstart/)。測試 API 以 [Rules unit testing 文件](https://firebase.google.com/docs/rules/unit-tests) 為準、最後檢查日 2026-06-16。
+> 本文實作 [Security Rules 授權建模](/backend/01-database/vendors/firestore/security-rules-authz-modeling/) 一文的測試方法。前置環境見 [Local emulator quickstart](/backend/01-database/vendors/firestore/hands-on/local-emulator-quickstart/)。測試 API 以 [Rules unit testing 文件](https://firebase.google.com/docs/rules/unit-tests) 為準、最後檢查日 2026-06-16。
 
 Firestore Security Rules test lab 的核心責任是把授權規則變成可自動驗證的測試。規則是 client 直連模型的整個控制面，改一條就要證明沒開新洞——這個 lab 用 `@firebase/rules-unit-testing` 在 emulator 上對規則跑斷言，產出可接進 CI 與 release gate 的測試 evidence。
 
-本文的驗收標準是：你能對一組規則寫出「放行 / 越權拒絕 / 未登入拒絕 / 欄位竄改拒絕」四類斷言、用 `firebase emulators:exec` 一鍵跑完、並看到 `assertFails` 確實證明該擋的有擋住。
+範圍包括在規則裡加入欄位竄改防護、寫放行、越權拒絕、未登入拒絕與欄位竄改拒絕的測試、用 `emulators:exec` 一鍵跑、故意改壞規則驗證測試有效，以及把規則測試接進 release gate。
 
 ## Lab 環境與依賴
 
@@ -56,7 +56,7 @@ RULES
 
 `onlyChanges(['text', 'updatedAt'])` 是這版的重點：update 只准動 `text` 與 `updatedAt`，碰 `ownerId` 直接拒絕。下面的測試會驗證它。
 
-## 寫測試：四類斷言
+## 寫測試：放行、越權拒絕、未登入拒絕、欄位竄改拒絕
 
 測試的核心責任是覆蓋「該放行的放行、該拒絕的拒絕」。`initializeTestEnvironment` 載入規則、`authenticatedContext` 模擬登入身分、`assertSucceeds` / `assertFails` 對操作斷言。預先種資料用 `withSecurityRulesDisabled` 繞過規則。
 
@@ -117,19 +117,18 @@ test('owner can edit text', async () => {
 JS
 ```
 
-四類斷言裡 `assertFails` 比 `assertSucceeds` 更重要——它證明的是攻擊路徑被擋住，正是滲透測試會打的點。每條規則至少要有「正向放行 + 至少一條拒絕」配對，光測 happy path 證明不了授權安全。
+越權拒絕、未登入拒絕、欄位竄改拒絕這幾個測試用的 `assertFails`，比放行測試用的 `assertSucceeds` 更重要——`assertFails` 證明的是攻擊路徑被擋住，正是滲透測試會打的點。每條規則至少要有「正向放行 + 至少一條拒絕」配對，光測 happy path 證明不了授權安全。
 
 ## 一鍵跑：emulators:exec
 
 跑測試的核心責任是讓它在乾淨 emulator 上自動化執行。`firebase emulators:exec` 啟動 emulator、跑指定命令、結束後關閉——適合 CI，不需要手動開關 emulator。
 
 ```bash
-cat > package.json.test <<'JSON'
-{ "scripts": { "test:rules": "jest rules.test.js" } }
-JSON
-# 把 test:rules script 併進既有 package.json 後執行：
+# 把 test:rules 這個 script 寫進工作區既有的 package.json
+npm pkg set scripts.test:rules="jest rules.test.js"
 
-firebase emulators:exec --only firestore --project demo-firestore-lab "npx jest rules.test.js"
+# emulators:exec 啟動 emulator、執行引號裡的指令、結束後關閉 emulator
+firebase emulators:exec --only firestore --project demo-firestore-lab "npm run test:rules"
 ```
 
 預期輸出五個測試全 pass：
@@ -150,7 +149,7 @@ Tests:       5 passed, 5 total
 
 ## 故意改壞驗證測試有效
 
-測試的價值在於它會抓到回歸。把規則改回 `allow read, write: if true` 再跑，應看到「越權拒絕」「未登入拒絕」「欄位竄改拒絕」三個測試 fail——這證明測試確實守在攻擊路徑上，而不是恆綠的假測試。
+測試的價值在於它會抓到回歸。把規則換成全放行的 `allow read, write: if true` 再跑，應看到「越權拒絕」「未登入拒絕」「欄位竄改拒絕」三個測試 fail——這證明測試確實守在攻擊路徑上，而不是恆綠的假測試。
 
 ```bash
 # 暫時把規則改成全放行
@@ -162,11 +161,11 @@ firebase emulators:exec --only firestore --project demo-firestore-lab "npx jest 
 
 ## Artifact 與驗收
 
-| Artifact   | 來源                  | 驗收                         |
-| ---------- | --------------------- | ---------------------------- |
-| 規則測試檔 | `rules.test.js`       | 四類斷言 + 正向 update       |
-| 測試結果   | `emulators:exec` 輸出 | 正確規則下全 pass            |
-| 回歸證明   | 改壞後重跑            | 3 個 assertFails 測試轉 fail |
+| Artifact   | 來源                  | 驗收                                                            |
+| ---------- | --------------------- | --------------------------------------------------------------- |
+| 規則測試檔 | `rules.test.js`       | 放行、越權拒絕、未登入拒絕、欄位竄改拒絕斷言 + 正當 update 放行 |
+| 測試結果   | `emulators:exec` 輸出 | 正確規則下全 pass                                               |
+| 回歸證明   | 改壞後重跑            | 越權拒絕、未登入拒絕、欄位竄改拒絕三個測試轉 fail               |
 
 ## 接進 release gate
 
@@ -182,7 +181,7 @@ rm -rf /tmp/firestore-lab
 ## 引用路徑
 
 - 上游：[Firestore Hands-on 操作路線](/backend/01-database/vendors/firestore/hands-on/)
-- Deep article：[Security Rules 授權建模與可測試化](/backend/01-database/vendors/firestore/security-rules-authz-modeling/)
+- 對應的機制文章：[Security Rules 授權建模與可測試化](/backend/01-database/vendors/firestore/security-rules-authz-modeling/)
 - 安全驗證：[1.5 資料層紅隊](/backend/01-database/red-team-data-layer/)
 - 發布證據：[6.8 release gate](/backend/06-reliability/release-gate/)
 - 官方：[Rules unit testing](https://firebase.google.com/docs/rules/unit-tests)、[emulators:exec](https://firebase.google.com/docs/emulator-suite/install_and_configure)

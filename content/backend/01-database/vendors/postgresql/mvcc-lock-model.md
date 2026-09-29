@@ -6,7 +6,7 @@ weight: 24
 tags: ["backend", "database", "postgresql", "lock", "mvcc", "concurrency", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *MVCC + lock model* — PG 並行控制機制跟跟 MySQL lock-based 不同。
+本文的範圍是 PostgreSQL 的並行控制：MVCC 每次更新新增 tuple 的做法，row-level、table-level、advisory 與 predicate lock，預設的 READ COMMITTED isolation，production 踩雷與觀測 metric，以及跟 MySQL lock-based 模型的對比。
 
 ---
 
@@ -23,10 +23,10 @@ PG 的並行控制核心是 *Multi-Version Concurrency Control* — UPDATE 不�
 
 `xmin` / `xmax` 是 *creator transaction id* / *destroyer transaction id*。每個 SELECT 用 *snapshot*（含當下 active transaction list）判斷哪些 tuple 對自己可見：
 
-- 自己 transaction id > tuple.xmin 且 (tuple.xmax = NULL 或自己 transaction id < tuple.xmax) → 可見
-- 否則 → 看不到（過去 / 未來版本）
+- tuple.xmin 在 snapshot 建立前已經 commit（不在 active transaction list 裡、也不比 snapshot 新），而且 tuple.xmax 是 NULL、或 xmax 的 transaction 對這個 snapshot 還不算數（仍在 active list 裡、比 snapshot 新、或已 abort）→ 可見
+- 否則 → 看不到（還沒 commit 或比 snapshot 新的版本，以及已經被 commit 的 UPDATE / DELETE 取代的舊版本）
 
-**結果**：
+**MVCC 對讀寫並行的效果**：
 
 - *Readers 不 lock writers*：SELECT 看 snapshot、不 block UPDATE
 - *Writers 不 lock readers*：UPDATE 寫新 tuple、不影響正在跑的 SELECT snapshot
@@ -35,43 +35,43 @@ PG 的並行控制核心是 *Multi-Version Concurrency Control* — UPDATE 不�
 跟 MySQL InnoDB *lock-based*（[Lock Contention](/backend/01-database/vendors/mysql/lock-contention/)）對比：
 
 - MySQL：SELECT FOR UPDATE 用 gap lock 防 phantom、deadlock 機率高
-- PG：MVCC + snapshot 自然防 phantom（read 看 snapshot）、deadlock 少
+- PG：REPEATABLE READ 以上的 transaction 整段讀同一個 snapshot，看不到別人新 commit 的列，phantom 不出現；預設的 READ COMMITTED 每個 statement 拿新的 snapshot，同一個 transaction 裡兩次查詢可以看到不同的列。deadlock 少
 
 但 PG 代價是 *VACUUM 治理* — dead tuple 不清理會佔 disk + 影響 query 效率。詳見 [Autovacuum Tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/)。
 
-## PG 4 種 lock
+## PG 的 lock：row-level、table-level、advisory、predicate
 
 PG 仍有 lock、但場景跟 MySQL 不同：
 
-### 1. Row-level lock — 主要由 UPDATE / DELETE / SELECT FOR UPDATE 取
+### Row-level lock — 主要由 UPDATE / DELETE / SELECT FOR UPDATE 取
 
 ```sql
 BEGIN;
 SELECT * FROM orders WHERE id = 100 FOR UPDATE;
--- 對 id=100 row 加 ROW EXCLUSIVE lock
+-- 對 id=100 這一列加 row-level 的 FOR UPDATE lock；table 層級拿的是 ROW SHARE（pg_locks 裡的 RowShareLock）
 -- 其他 transaction 試 UPDATE / DELETE id=100 必須等
 ```
 
 Row-level lock *不 block reader*（SELECT 看 snapshot、不檢查 lock）。
 
-### 2. Table-level lock — DDL 跟少數 SELECT FOR 場景
+### Table-level lock — DDL 跟少數 SELECT FOR 場景
 
 PG 有 8 種 table lock mode、嚴重程度遞增：
 
-| Mode                   | 行為                                         | 衝突                     |
-| ---------------------- | -------------------------------------------- | ------------------------ |
-| ACCESS SHARE           | SELECT 跑                                    | 跟 ACCESS EXCLUSIVE 衝突 |
-| ROW SHARE              | SELECT FOR UPDATE / FOR SHARE                | 跟 EXCLUSIVE 衝突        |
-| ROW EXCLUSIVE          | UPDATE / DELETE / INSERT                     | 跟 SHARE 衝突            |
-| SHARE UPDATE EXCLUSIVE | VACUUM / ANALYZE / CREATE INDEX CONCURRENTLY | 跟同 mode + 高 mode 衝突 |
-| SHARE                  | CREATE INDEX（non-concurrent）               | 跟 ROW EXCLUSIVE 衝突    |
-| SHARE ROW EXCLUSIVE    | CREATE TRIGGER / 某些 ALTER                  | 跟 ROW EXCLUSIVE 衝突    |
-| EXCLUSIVE              | REFRESH MATERIALIZED VIEW                    | 跟所有 + 自身衝突        |
-| ACCESS EXCLUSIVE       | DROP / ALTER TABLE / VACUUM FULL             | 跟所有衝突               |
+| Mode                   | 行為                                                                            | 衝突                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| ACCESS SHARE           | SELECT 跑                                                                       | ACCESS EXCLUSIVE                                                                        |
+| ROW SHARE              | SELECT FOR UPDATE / FOR SHARE                                                   | EXCLUSIVE、ACCESS EXCLUSIVE                                                             |
+| ROW EXCLUSIVE          | UPDATE / DELETE / INSERT                                                        | SHARE、SHARE ROW EXCLUSIVE、EXCLUSIVE、ACCESS EXCLUSIVE                                 |
+| SHARE UPDATE EXCLUSIVE | VACUUM / ANALYZE / CREATE INDEX CONCURRENTLY                                    | SHARE UPDATE EXCLUSIVE、SHARE、SHARE ROW EXCLUSIVE、EXCLUSIVE、ACCESS EXCLUSIVE         |
+| SHARE                  | CREATE INDEX（non-concurrent）                                                  | ROW EXCLUSIVE、SHARE UPDATE EXCLUSIVE、SHARE ROW EXCLUSIVE、EXCLUSIVE、ACCESS EXCLUSIVE |
+| SHARE ROW EXCLUSIVE    | CREATE TRIGGER / 某些 ALTER                                                     | ACCESS SHARE 與 ROW SHARE 以外的所有 mode（含自身）                                     |
+| EXCLUSIVE              | REFRESH MATERIALIZED VIEW CONCURRENTLY                                          | ACCESS SHARE 以外的所有 mode（含自身）                                                  |
+| ACCESS EXCLUSIVE       | DROP / ALTER TABLE / VACUUM FULL / REFRESH MATERIALIZED VIEW（非 CONCURRENTLY） | 所有 mode（含 ACCESS SHARE）                                                            |
 
 DDL（ALTER / DROP）拿 ACCESS EXCLUSIVE、跟所有衝突。Production 跑 ALTER 必須短時間或走 [Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/)。
 
-### 3. Advisory lock — Application 自己控
+### Advisory lock — Application 自己控
 
 PG 提供 *advisory lock* 給 application 用、不關 row / table 結構：
 
@@ -93,18 +93,25 @@ SELECT pg_try_advisory_lock(12345);  -- 試取、不阻塞、返回 false
 
 跟 row lock 不同：advisory lock 不關 row、application 自定義 lock ID 語義。
 
-### 4. Predicate lock — SERIALIZABLE isolation 才用
+### Predicate lock — SERIALIZABLE isolation 才用
 
 PG SERIALIZABLE 用 *Serializable Snapshot Isolation (SSI)*、追蹤 *predicate*（query 條件）而不是 *row*：
 
 ```sql
-SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-BEGIN;
--- Predicate lock 紀錄這個 query 看了哪些 predicate
-SELECT * FROM orders WHERE status = 'pending';
--- 其他 transaction INSERT pending order
--- 提交時：PG 偵測 anomaly、rollback 之一
+-- 兩個 session 照同一條規則下單：先數 pending 訂單，再新增一張 pending 訂單
+-- Session A
+BEGIN ISOLATION LEVEL SERIALIZABLE;
+SELECT count(*) FROM orders WHERE status = 'pending';  -- SSI 記下這個 query 讀過的範圍（pg_locks 裡的 SIReadLock）
+INSERT INTO orders VALUES (200, 'pending');
+COMMIT;                                                -- 先 commit 的 A 成功
+
+-- Session B：在 A commit 之前開始，數到的是同一個舊的 count
+BEGIN ISOLATION LEVEL SERIALIZABLE;
+SELECT count(*) FROM orders WHERE status = 'pending';
+INSERT INTO orders VALUES (201, 'pending');
 COMMIT;
+-- ERROR:  could not serialize access due to read/write dependencies among transactions
+-- SQLSTATE 40001：兩邊各自讀了對方寫入的範圍，沒有任何一種先後順序能得到這個結果，B 被 rollback、要整段重試
 ```
 
 跟 MySQL gap lock 不同：
@@ -133,21 +140,21 @@ PG 預設 READ COMMITTED、跟 MySQL InnoDB 預設 REPEATABLE READ 不同：
 
 實務 PG production：用預設 READ COMMITTED 即可、SERIALIZABLE 留給 *strict consistency 需求*（金融 / 訂單）但接受 retry。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Idle transaction 卡 vacuum — Bloat 暴增
+### Idle transaction 卡 vacuum — Bloat 暴增
 
-PG MVCC 仰賴 *VACUUM 清理 dead tuple*。VACUUM 只清理 *沒 active transaction 看得到的 dead tuple*。如果有 *idle in transaction* session 持續開著（application connection pool 連線忘關 transaction）、VACUUM 看不到 *該 transaction snapshot 之後的 dead tuple*、累積 bloat。
+PG MVCC 仰賴 *VACUUM 清理 dead tuple*。VACUUM 只清理 *已經沒有任何 transaction 看得到的 dead tuple*。如果有 *idle in transaction* session 持續開著（application connection pool 連線忘關 transaction），而這個 transaction 已經寫過資料（持有 transaction ID）或跑在 REPEATABLE READ 以上（持有 snapshot），VACUUM 就不能清掉在它開始之後才變成 dead 的 tuple，bloat 跟著累積。只讀過資料的 READ COMMITTED transaction 在兩個 statement 之間不持有 snapshot，閒置時不擋 vacuum。
 
 修法：
 
 - 監控 `pg_stat_activity` 看 `state = 'idle in transaction'` 持續時間
 - 設 `idle_in_transaction_session_timeout = '5min'` — 超時 PG 自動 kill 該 session
-- Application connection pool 配置 *不留 transaction 開著*（如：pgBouncer transaction pool 自動 commit / rollback）
+- Application 在每條程式路徑的結尾都 commit 或 rollback；經過 pgBouncer 時可再設 `idle_transaction_timeout`，client 在 transaction 裡閒置超過這個秒數就被 pgBouncer 斷線
 
-### 2. SELECT FOR UPDATE 跨 transaction — Application retry 麻煩
+### SELECT FOR UPDATE 的 transaction 跨過使用者操作 — lock 等待與 idle in transaction
 
-跟 MySQL 不同：PG SELECT FOR UPDATE 不會 *block 其他 SELECT*（讀仍可繼續）、但 *block 其他 UPDATE / FOR UPDATE*。若 application 在 transaction 內 SELECT FOR UPDATE、其他 transaction 等。
+PG 的 SELECT FOR UPDATE 不會 *block 其他普通 SELECT*（讀仍可繼續）、但 *block 其他 UPDATE / FOR UPDATE*。若 application 在 transaction 內 SELECT FOR UPDATE、其他 transaction 等。
 
 如果 application 設計 *跨 transaction 持 lock*（如：取 lock + return UI + 等用戶操作 + commit）、容易撞 idle in transaction 跟其他 transaction wait。
 
@@ -156,28 +163,28 @@ PG MVCC 仰賴 *VACUUM 清理 dead tuple*。VACUUM 只清理 *沒 active transac
 - *Transaction 短*：取 FOR UPDATE → 立刻處理 → commit、不跨 user interaction
 - 跨 user interaction 用 *advisory lock* 或 application-level state machine、不依賴 row lock
 
-### 3. Advisory lock 沒釋放 — Session 結束才自動釋放
+### Advisory lock 沒釋放 — Session 結束才自動釋放
 
 `pg_advisory_lock()` 拿了、沒 `pg_advisory_unlock()`、lock 直到 *session 結束* 才自動釋放。Connection pool 重複使用同 connection、可能繼承前面留的 lock。
 
 修法：
 
 - 用 `pg_advisory_lock` 必 `try/finally pg_advisory_unlock`
-- 或用 *session-level* 用 transaction-scoped：`pg_advisory_xact_lock()` — commit / rollback 自動釋放
+- 或把 session-level 的 `pg_advisory_lock()` 換成 transaction-level 的 `pg_advisory_xact_lock()`：lock 在 commit / rollback 時自動釋放
 - 監控 `pg_locks` 看 advisory lock count、長期累積是警訊
 
-### 4. Bloat 不只是 vacuum 沒跑、是 *active transaction 阻擋 vacuum*
+### Bloat 的成因是 xmin horizon 擋住 vacuum、不只是 vacuum 沒跑
 
-第 #1 點延伸：vacuum 已跑、但 bloat 仍持續成長、原因不是 vacuum 不夠、是 *active transaction 阻擋 vacuum 看 dead tuple*。
+這是〈Idle transaction 卡 vacuum〉的一般形態：vacuum 已經跑過、bloat 仍持續成長，原因是某個 session 的 xmin horizon 停在舊位置。xmin horizon 是官方文件對 `pg_stat_activity.backend_xmin` 的稱呼，指這個 session 還需要的最舊 transaction；比它新才變成 dead 的 tuple，vacuum 一律不能清。
 
 修法：
 
 - 不只看 `last_vacuum`、看 *VACUUM 跑了但沒收回多少*
 - `SELECT * FROM pg_stat_progress_vacuum` 看 VACUUM 進度
-- `SELECT * FROM pg_stat_activity WHERE backend_xmin IS NOT NULL ORDER BY backend_xmin` — 看誰阻擋 vacuum
+- `SELECT pid, state, backend_xid, backend_xmin FROM pg_stat_activity WHERE backend_xid IS NOT NULL OR backend_xmin IS NOT NULL ORDER BY greatest(age(backend_xid), age(backend_xmin)) DESC` — 看誰阻擋 vacuum：排最前面的 session 持有最舊的 transaction ID 或 snapshot。`xid` 型別沒有排序運算子，直接 `ORDER BY backend_xmin` 會報錯，所以用 `age()` 換成數字再排；寫過資料的 transaction 只有 `backend_xid` 有值，兩欄都要看
 - 詳見 [Autovacuum Tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/)
 
-### 5. SERIALIZABLE 下 transaction rollback — Application 必須 retry
+### SERIALIZABLE 下 transaction rollback — Application 必須 retry
 
 `SET TRANSACTION ISOLATION LEVEL SERIALIZABLE` 後、PG SSI 偵測到 anomaly 會 *rollback transaction*、application 看到 `serialization failure`、必須 retry。
 
@@ -211,7 +218,7 @@ Production 監控：
 | 成本               | Dead tuple + VACUUM 治理             | Lock contention 治理       |
 | Application code   | SERIALIZABLE 需 retry                | 寫得不錯多數時 OK          |
 
-兩者解決同一問題（並行控制）、用不同策略。PG 用 *空間換時間*（保留多版本 tuple、讀寫不互鎖、但需 VACUUM 清理）、MySQL 用 *時間換空間*（lock 等待、但不必清舊版本）。
+兩者解決同一問題（並行控制）、用不同策略。PG 把舊版本 tuple 留在 table 裡：讀寫不互鎖，代價是要靠 VACUUM 清理。InnoDB 把舊版本放在 undo log、由背景的 purge 清掉，REPEATABLE READ 下的 locking read 用 gap lock 擋 phantom，代價是 lock 等待。
 
 **選擇判讀**：
 
@@ -234,11 +241,11 @@ MVCC 仰賴 VACUUM、autovacuum 是 PG 並行控制的 *維護成本*。VACUUM �
 
 ### 跟 Connection Pool
 
-pgBouncer transaction pooling 模式下、advisory lock / SELECT FOR UPDATE 跨 transaction 行為 *broken*（不同 transaction 可能進不同 backend connection）。詳見 [pgBouncer Config](/backend/01-database/vendors/postgresql/pgbouncer-config/)。
+pgBouncer transaction pooling 模式下、session-level advisory lock（`pg_advisory_lock`）會失效：lock 綁在 backend connection 上，同一個 client 的下一個 transaction 可能進不同的 backend，unlock 落在沒有持有 lock 的 connection 上。`pg_advisory_xact_lock` 與 SELECT FOR UPDATE 的 lock 都在 transaction 結束時釋放，不受 pool mode 影響。詳見 [pgBouncer Config](/backend/01-database/vendors/postgresql/pgbouncer-config/)。
 
 ### 跟 Query Optimization
 
-長 transaction 跑慢 query 期間、其他 transaction 看到 snapshot bloat、planner 估錯 dead tuple ratio。詳見 [Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)。
+長 transaction 持有的 xmin horizon 讓 vacuum 清不掉 dead tuple，table 與 index 裡累積的 dead tuple 讓 query 要多讀 page。詳見 [Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)。
 
 ## 相關連結
 
@@ -247,7 +254,7 @@ pgBouncer transaction pooling 模式下、advisory lock / SELECT FOR UPDATE 跨 
 - [PG Replication Topology](/backend/01-database/vendors/postgresql/replication-topology/)（hot_standby_feedback 影響）
 - [PG pgBouncer](/backend/01-database/vendors/postgresql/pgbouncer-config/)（transaction pooling 跟 lock 互動）
 - [PG Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/)（DDL lock 議題）
-- [PG Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)（snapshot bloat 影響 planner）
+- [PG Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)（xmin horizon 造成的 dead tuple 讓 query 變慢）
 - [MySQL Lock Contention](/backend/01-database/vendors/mysql/lock-contention/)（sibling、不同模型）
 - [Isolation Level 卡片](/backend/knowledge-cards/isolation-level/)
 - 官方：[PG MVCC](https://www.postgresql.org/docs/current/mvcc.html) / [PG Concurrency Control](https://www.postgresql.org/docs/current/transaction-iso.html) / [Explicit Locking](https://www.postgresql.org/docs/current/explicit-locking.html)

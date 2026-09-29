@@ -1,12 +1,14 @@
 ---
 title: "Firestore 高頻寫入與 distributed counter：單 document contention 邊界與分片計數"
 date: 2026-06-16
-description: "Firestore 單一 document 有持續寫入的軟上限、高頻計數寫爆 contention 是常見事故；本文展開寫入 contention 的成因、distributed counter 分片計數的實作與讀取彙總、shard 數量與讀寫成本的取捨、五個高頻寫入踩坑，以及計數需求超過分片能處理時改走外部聚合的邊界"
+description: "Firestore 單一 document 有持續寫入的軟上限、高頻計數寫爆 contention 是常見事故；本文展開寫入 contention 的成因、distributed counter 分片計數的實作與讀取彙總、shard 數量與讀寫成本的取捨、高頻寫入事故（直接 increment 單一 document、shard 數估太少或太多、選 shard 有偏、把分片計數當強一致餘額用），以及計數需求超過分片能處理時改走外部聚合的邊界"
 weight: 13
 tags: ["backend", "database", "firestore", "distributed-counter", "high-frequency-write"]
 ---
 
-> 本文是 [Firestore](/backend/01-database/vendors/firestore/) overview 的 deep article。寫作參照 [Vendor 深度技術文章寫作方法論](/posts/vendor-deep-article-methodology/)。寫入限制以 [官方 best practices](https://firebase.google.com/docs/firestore/best-practices) 為準、最後檢查日 2026-06-16。
+這篇整理 Firestore 單一 document 高頻寫入的處理：寫入 contention 的成因、distributed counter 分片計數的實作、高頻寫入事故、shard 數的估算與監控，以及什麼計數不該用分片、什麼時候該離開 Firestore。
+
+> 寫入限制以 [官方 best practices](https://firebase.google.com/docs/firestore/best-practices) 為準、最後檢查日 2026-06-16。
 
 ## 問題情境：一個讚數欄位拖垮整條寫入
 
@@ -33,8 +35,8 @@ distributed counter 的核心是把「一個計數」拆成 N 個 shard document
 ```javascript
 // counter.js（用 Firebase Web SDK v9 modular API）
 import {
-  doc, collection, runTransaction, getDocs,
-  writeBatch, increment,
+  doc, collection, getDocs, setDoc,
+  writeBatch, increment, serverTimestamp,
 } from 'firebase/firestore';
 
 const NUM_SHARDS = 10;
@@ -81,25 +83,25 @@ export async function aggregateToSummary(db, counterRef) {
 
 這把「即時精確」換成「近即時」：summary 有刷新間隔的延遲，但讀取從 N 筆降回 1 筆。讚數、觀看數這類「差幾個不影響體驗」的計數，這個取捨幾乎總是對的。
 
-## 故障演練：五個高頻寫入踩坑
+## 故障演練：高頻寫入事故
 
-#### Case 1：直接 `increment` 單一 document 沒分片
+#### 直接 `increment` 單一 document 沒分片
 
 最常見的起手——以為 `FieldValue.increment()` 就解決了並行，忽略它仍在單一 document 的寫入熱點上。低流量沒事、熱門事件寫爆。修法：判斷該計數的峰值寫入頻率，超過單 document 軟上限就上 distributed counter；不確定峰值就先分片，分片對低流量無害（只是多讀幾筆）。
 
-#### Case 2：shard 數量拍腦袋定太小
+#### shard 數量拍腦袋定太小
 
 設了 3 個 shard，峰值流量下每個 shard 仍每秒上百寫入、照樣 contention。修法：shard 數要對齊峰值寫入頻率除以單 shard 安全寫入率（每秒個位數）。預期峰值每秒 500 寫入、單 shard 安全 5/s，就需要約 100 個 shard。寧可估高。
 
-#### Case 3：shard 太多拖垮讀取
+#### shard 太多拖垮讀取
 
 反向錯誤——為了保險設 1000 個 shard，結果每次讀計數要讀 1000 個 document，讀取計費與延遲爆炸。修法：shard 數是寫入分散與讀取成本的取捨；高寫入低讀取用多 shard + 直接加總，高寫入高讀取用多 shard + summary 彙總，別用「讀 N 筆加總」硬扛高頻讀取。
 
-#### Case 4：選 shard 有偏導致熱點復現
+#### 選 shard 有偏導致熱點復現
 
 用 `userId` 的 hash 選 shard、但活躍 user 集中在少數，寫入仍打在某幾個 shard 上。修法：shard 選擇要與寫入來源無關的隨機分佈，不要綁任何可能傾斜的 key。
 
-#### Case 5：把分片計數當強一致餘額用
+#### 把分片計數當強一致餘額用
 
 把 distributed counter 拿來記帳戶餘額、庫存這類需要強一致與精確讀的值。分片計數的讀取是「加總當下各 shard」，並行寫入下讀到的是近似值，不適合做扣款判斷。修法：強一致的計數（餘額、庫存、配額）不該用分片計數，也通常不該用 Firestore 的單欄位累加——這類值要走 transaction 嚴格控制、或放關聯式資料庫用 row lock，見邊界段。
 
@@ -123,7 +125,7 @@ distributed counter 解的是「高頻、可接受近似、不需強一致」的
 
 ## 下一步路由
 
-- 上層：[Firestore overview](/backend/01-database/vendors/firestore/)（容量特性與寫入熱點）
+- 上層：[Firestore overview](/backend/01-database/vendors/firestore/)
 - 一致性邊界：[1.3 transaction 與一致性邊界](/backend/01-database/transaction-boundary/)（強一致計數的去處）
 - 容量背景：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)
 - 觀測：[4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)（寫入失敗率與 contention 監控）

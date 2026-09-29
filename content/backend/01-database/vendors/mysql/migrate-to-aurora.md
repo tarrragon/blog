@@ -1,7 +1,7 @@
 ---
 title: "MySQL → Aurora MySQL：storage layer 轉手到 AWS、replication / HA / backup 全部 outsource"
 date: 2026-05-19
-description: "自管 MySQL → Aurora MySQL 是 Type C operational hybrid migration — wire protocol 一致、ops 責任轉到 AWS。本文走 6 維 audit（Operational High）、Aurora storage architecture 衝擊、4-phase migration、5 production 踩雷、何時維持原路線。"
+description: "自管 MySQL → Aurora MySQL 是 Type C operational hybrid migration — wire protocol 一致、ops 責任轉到 AWS。本文涵蓋差異維度盤點（operational 為主）、從 Aurora 作為 external replica 到退役自管 MySQL 的階段切換、parameter group / IAM auth / Aurora-only feature / reader endpoint / 跨 region 寫入模型的踩雷，以及何時維持原路線。"
 weight: 26
 tags: ["backend", "database", "mysql", "vendor", "migration", "type-c", "operational-hybrid", "aurora"]
 ---
@@ -37,7 +37,7 @@ tags: ["backend", "database", "mysql", "vendor", "migration", "type-c", "operati
 | App change  | Low        | 主要 connection string + connection pool 設定                |
 | Topology    | Low-Medium | single-region scaling、跨 region 走 Global Database          |
 
-Operational = High（其他 Low） → **Type C operational hybrid**。Migration 路徑用 *4-phase drop-in cutover* + *operational re-onboarding*。
+Operational = High（其他 Low） → **Type C operational hybrid**。Migration 路徑是 *drop-in cutover* 加 *operational re-onboarding*：Aurora 先作為 external read replica 追上 production、讀流量切到 Aurora reader endpoint、cutover 把 Aurora 提升為 primary、最後退役自管 MySQL。
 
 ## Driver：TCO + Multi-AZ HA + AWS integration
 
@@ -50,7 +50,7 @@ Operational = High（其他 Low） → **Type C operational hybrid**。Migration
 
 不適合 *已用 Percona Server fork* 或 *需要 cross-cloud portability* 的 org — Aurora MySQL 是 AWS-only、且 fork 自 MySQL 5.7/8.0、跟 Percona 特性不完全一致。
 
-## 4-phase migration
+## Migration 階段：external replica、讀切換、cutover、退役自管
 
 ### Phase 1：Aurora cluster 起來作為 read replica
 
@@ -133,9 +133,9 @@ CALL mysql.rds_reset_external_master;
 
 完成標準：自管 EC2 instance terminate、EBS volume snapshot 後 delete、cost 對比驗證符合預期。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Parameter group 沒對齊 — `innodb_flush_log_at_trx_commit` 等行為差
+### Parameter group 沒對齊 — `innodb_flush_log_at_trx_commit` 等行為差
 
 Aurora 的 *parameter group* 取代 my.cnf。預設 parameter group 不一定跟自管 MySQL 一致：
 
@@ -146,20 +146,26 @@ Aurora 的 *parameter group* 取代 my.cnf。預設 parameter group 不一定跟
 
 修法：
 
-- Phase 1 完成後 *逐 row 對比 parameter group*：
+- Aurora 作為 external replica 追上 production 之後，在自管 primary 與 Aurora writer 各跑一次同一段查詢、*逐 row 對比兩邊的參數值*：
 
    ```sql
-   SELECT @@global.variable_name FROM ...
+   -- 列出 parameter group 最常沒對齊的參數在這台 server 的實際值
+   -- 自管 primary 與 Aurora writer 各跑一次，逐列比對 VARIABLE_VALUE
+   SELECT VARIABLE_NAME, VARIABLE_VALUE
+   FROM performance_schema.global_variables
+   WHERE VARIABLE_NAME IN ('innodb_flush_log_at_trx_commit', 'sync_binlog',
+                           'time_zone', 'character_set_server', 'collation_server')
+   ORDER BY VARIABLE_NAME;
    ```
 
 - 建 *custom DB cluster parameter group*、匹配自管設定
 - 重啟 Aurora primary 套 parameter group 改變（部分 parameter 需要重啟）
 
-### 2. IAM authentication — application 沒準備
+### IAM authentication — application 沒準備
 
 Aurora 提供 *IAM authentication*（不用 password、用 AWS IAM role + temporary token）。Application 用 IAM auth 不必管 password rotation、但程式碼必須 *call AWS SDK 取 token、放 connection 設定*。
 
-如果 Phase 2-3 期間沒 reverse engineer application connection logic、cutover 後 application 仍試用 password auth、Aurora 拒絕、production down。
+如果從讀流量切到 Aurora 到 cutover 這段期間沒 reverse engineer application connection logic、cutover 後 application 仍試用 password auth、Aurora 拒絕、production down。
 
 修法：
 
@@ -168,9 +174,9 @@ Aurora 提供 *IAM authentication*（不用 password、用 AWS IAM role + tempor
    - Java：`com.amazonaws.services.rds.auth.RdsIamAuthTokenGenerator`
    - Python：`boto3.client('rds').generate_db_auth_token(...)`
    - Go：`aws-sdk-go-v2/feature/rds/auth`
-- Phase 2 期間 application 對 Aurora 用 IAM token、self-managed 仍 password — 雙 path code
+- 讀流量切到 Aurora reader endpoint 的期間，application 對 Aurora 用 IAM token、對自管 MySQL 仍用 password — 兩條連線路徑的程式碼並存
 
-### 3. Aurora-only feature 寫進 application、rollback 成本升高
+### Aurora-only feature 寫進 application、rollback 成本升高
 
 Migration 過程開發發現 Aurora 有 *Aurora-only feature*（Backtrack、Performance Insights、Aurora Global Database）、誘惑使用。一旦 application 用了 Aurora-only feature、要 rollback 自管 MySQL 變不可能（feature 不存在、query 失敗）。
 
@@ -183,11 +189,11 @@ Migration 過程開發發現 Aurora 有 *Aurora-only feature*（Backtrack、Perf
 
 修法：
 
-- *Phase 1-3 期間禁用 Aurora-only feature*、保留 rollback option
-- *Phase 4 完成後* 才開始 evaluate Aurora-only feature、加進來時 *明確記錄不可 rollback decision*
+- *從 Aurora 作為 external replica 到 cutover 這段期間禁用 Aurora-only feature*、保留 rollback option
+- *自管 MySQL 退役完成後* 才開始 evaluate Aurora-only feature、加進來時 *明確記錄不可 rollback decision*
 - 把 Aurora-only feature 跟 *Aurora 特定 cluster* 綁定，避免 application 邏輯依賴 Aurora-only
 
-### 4. Read replica endpoint behavior — Application 不知道 reader endpoint round-robin
+### Read replica endpoint behavior — Application 不知道 reader endpoint round-robin
 
 Aurora reader endpoint（`prod-aurora.cluster-ro-xxx`）是 *DNS-based load balancer*、每次 DNS query 給不同 replica IP。Application connection pool 連續開 10 個 connection、可能全部連同一個 replica（DNS cache）、不均勻。
 
@@ -197,7 +203,7 @@ Aurora reader endpoint（`prod-aurora.cluster-ro-xxx`）是 *DNS-based load bala
 - 或用 *RDS Proxy*（managed connection pool）放在前面、不直接連 reader endpoint
 - 或用 *Route 53 latency-based routing* 配 Aurora reader endpoint per AZ、application 連最近 AZ
 
-### 5. Region failover — Aurora Global Database vs 自管 chained replication
+### Region failover — Aurora Global Database vs 自管 chained replication
 
 自管 cross-region replication 是 *chained replication*（primary → region2 replica → region2 cascading replica）。Aurora Global Database 是 *storage-level replication*（storage page 直接 ship，而非 binlog）、跨 region < 1 秒 lag、failover < 1 分鐘。
 
@@ -232,10 +238,10 @@ Aurora reader endpoint（`prod-aurora.cluster-ro-xxx`）是 *DNS-based load bala
 | EBS / Aurora storage | io2 100 GB + 5000 IOPS = ~$70/mo | Aurora storage 100 GB = ~$10/mo + I/O $0.20/M |
 | Replica × 3          | 3 × r5.2xlarge = $1080/mo        | 3 × db.r6g.large = $540/mo                    |
 | Backup storage       | S3 + 自己 cron mysqldump ~$50/mo | Aurora backup 100 GB 免費 + 額外 $0.021/GB    |
-| Ops headcount        | 1-2 FTE × $150K = $300-500K/yr   | < 0.5 FTE × $150K = $75K/yr                   |
+| Ops headcount        | 1-2 FTE × $150K = $150-300K/yr   | < 0.5 FTE × $150K = < $75K/yr                 |
 | **Total infra**      | ~$1500/mo + 大 ops cost          | ~$2000-3000/mo + 小 ops cost                  |
 
-Pure infra cost Aurora 貴 30-50%、但 *ops cost 降幅大過 infra increase* — 200 人 eng team 養 1.5 FTE DBA 是 $300K-400K/yr、Aurora 換成 0.3 FTE 是 $60K-100K/yr、差距 $200K+ 抵 infra increase。
+對照表的月費是自管 ~$1500、Aurora ~$2000-3000，Aurora 的 pure infra cost 貴三成到一倍、但 *ops cost 降幅大過 infra increase* — 以對照表的 $150K/FTE 計，200 人 eng team 養 1.5 FTE DBA 約 $225K/yr、Aurora 換成 0.3 FTE 約 $45K/yr、差距約 $180K/yr，infra 每月多出的 $500-1500（一年 $6K-18K）抵得過。
 
 小團隊 / 小 deployment Aurora 不一定划算 — 50 人 eng team 沒有 dedicated DBA、自管 MySQL 也只佔某人 20% 時間、Aurora migration 的 ops saving 不存在。
 
@@ -257,7 +263,7 @@ Netflix case 的 sibling 路由是 [Aurora vendor page](/backend/01-database/ven
 
 ## 相關連結
 
-- 平行 batch：→ PlanetScale migration playbook（同 MySQL backlog、不同 target paradigm）
+- 同樣從自管 MySQL 出發、目標換成 managed Vitess 加 branch-based schema workflow：[MySQL → PlanetScale](/backend/01-database/vendors/mysql/migrate-to-planetscale/)
 - 上游：[MySQL vendor overview](/backend/01-database/vendors/mysql/) / [Aurora vendor page](/backend/01-database/vendors/aurora/)
 - 跨章節：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) — Aurora cost forecast
 - 既有 case：[9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — Netflix 從多套 RDBMS 統一到 Aurora 的 migration evidence

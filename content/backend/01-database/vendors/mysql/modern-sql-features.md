@@ -1,26 +1,20 @@
 ---
-title: "MySQL 8.0 Modern SQL：CTE / window function / JSON_TABLE 不是「終於跟上 PG」、是進入 SQL 工程深度的入場券"
+title: "MySQL 8.0 Modern SQL：CTE / window function / JSON_TABLE 的行為與 PostgreSQL 對應特性的差異"
 date: 2026-05-19
-description: "MySQL 8.0 在 SQL 特性上 *終於補齊* CTE、window function、lateral derived table、JSON_TABLE、hash join 等現代 SQL 特性。本文走 5 個關鍵特性、各自實際 production 場景、跟 PostgreSQL 對應特性的行為差異（特別是 JSON_TABLE vs PG JSONB / jsonb_path_query）、配置 / migration 注意事項、5 production 踩雷（CTE 不 materialize / window function 大量 sort spill / JSON_TABLE 跟 generated column 取捨 / hash join 預設沒開 / recursive CTE 深度上限）"
+description: "MySQL 8.0 補齊 CTE、window function、lateral derived table、JSON_TABLE、hash join 等現代 SQL 特性。本文涵蓋這些特性的 production 場景、跟 PostgreSQL 對應特性的行為差異（特別是 JSON_TABLE vs PG JSONB / jsonb_path_query）、5.7 → 8.0 的配置注意事項，以及 CTE 多次引用的 materialize 行為、window function sort spill、JSON_TABLE 跟 generated column 取捨、hash join 沒觸發、recursive CTE 深度上限等踩雷"
 weight: 19
 tags: ["backend", "database", "mysql", "sql-features", "json", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *8.0 modern SQL 特性* — 5 個關鍵能力 + 跟 PostgreSQL 對應特性的對比。
+這篇整理 MySQL 8.0（2018 推出）補進的現代 SQL 特性——CTE、window function、lateral derived table、JSON_TABLE、hash join——各自的用法、跟 PostgreSQL 對應特性的行為差異，以及 5.7 升 8.0 時要處理的設定。
 
----
-
-「MySQL 是 SQL 簡單版」是個過時觀念。
-
-這個觀念的來源很合理：MySQL 5.x 時代沒 CTE、window function 要嗑 hack、recursive query 寫不出來、JSON 處理是字串 substring 拼接、複雜分析 query 只能丟去 PostgreSQL 或 Snowflake。整整 10 年 SQL 進階特性 MySQL 全缺、PostgreSQL 全有。
-
-MySQL 8.0（2018 推出）改變這件事。CTE / window function / lateral derived table / JSON_TABLE / hash join / atomic DDL / role-based authentication / common table expression 全部進來。**這不是「終於跟上 PG」、是 MySQL 第一次有資格進入 SQL 工程深度討論**。但有 caveats：每個特性的 *行為實現* 跟 PostgreSQL 對應特性都有 *微妙差異*、不能假設 PG 經驗直接套用。
+MySQL 5.x 沒有 CTE 與 window function，recursive query 寫不出來；JSON 到 5.7 才有原生型別，但沒有把 JSON array 展開成列的 JSON_TABLE；複雜分析 query 只能交給 PostgreSQL 或 Snowflake。8.0 補進這些特性、另外加了 atomic DDL 與 role，而每個特性的 *行為實現* 跟 PostgreSQL 對應特性仍有差異，PG 的使用經驗要逐項對照才能套用。
 
 對從 PostgreSQL 過來評估 MySQL 的讀者：本文是 *特性對等驗證* — 哪些 8.0 特性真的可以 production 用、哪些是 marketing 但實作有 gap。對既有 MySQL 5.7 user：本文是 *upgrade 5.7 → 8.0 的具體 ROI* — 從 SQL feature 角度看升級值不值得。
 
-## 5 個關鍵特性 + PG 對比
+## 關鍵特性與 PG 對比
 
-### 特性 1：CTE（Common Table Expression）
+### CTE（Common Table Expression）
 
 MySQL 8.0 / PG 8.4+ 都支援。
 
@@ -39,7 +33,7 @@ WHERE os.total > 1000;
 
 **行為差異**：
 
-- **MySQL 8.0**：CTE *不 materialize 為預設*、optimizer 把 CTE 視為 *inlined subquery*、CTE 引用兩次以上會 *重複計算*
+- **MySQL 8.0**：CTE 只被引用一次時，optimizer 可以把它 merge 進外層查詢、外層條件直接套到 CTE 的來源表；被引用兩次以上時 *materialize 一次*、各個引用共用同一份暫存結果（計畫輸出見〈Production 踩雷〉的 CTE 一段）
 - **PostgreSQL（< 12）**：CTE *fence by default*（materialize barrier）、optimizer 不 push predicate 進 CTE
 - **PostgreSQL（12+）**：CTE 行為跟 MySQL 接近、有 `MATERIALIZED` / `NOT MATERIALIZED` keyword 明示
 
@@ -60,7 +54,7 @@ SELECT * FROM org_chart WHERE depth <= 10;
 
 兩家都支援、但 MySQL 8.0 有 *深度上限*（`cte_max_recursion_depth=1000`、預設 1000、PG 預設 unlimited）。複雜 hierarchical query（深度 > 1000）MySQL 需要顯式提高 limit。
 
-### 特性 2：Window Function
+### Window Function
 
 MySQL 8.0 / PG 8.4+ 都支援、語法同 SQL standard。
 
@@ -77,14 +71,12 @@ FROM orders;
 **行為差異**：
 
 - **執行 plan**：MySQL 8.0 用 *window iterator*、單 partition 內 sort、外加 in-memory window buffer。PostgreSQL 有更成熟的 *WindowAgg node*、複雜 frame spec 處理更好
-- **Frame spec 支援度**：兩家都支援 ROWS / RANGE / GROUPS、但 *GROUPS frame* MySQL 是 8.0.16+ 才補進、PG 11+ 才補
-- **大資料量 spill behavior**：MySQL window function 超過 `sort_buffer_size`（預設 256K）會 spill 到 disk、Performance 雪崩。PG 用 `work_mem`（預設 4MB）、寬裕些但也會 spill
+- **Frame spec 支援度**：MySQL 支援 ROWS / RANGE、不支援 *GROUPS frame*；PG 11+ 三種都支援，PG 用 GROUPS 寫的 frame 搬到 MySQL 要改寫成 ROWS 或 RANGE
+- **大資料量 spill behavior**：MySQL window function 要先依 PARTITION BY / ORDER BY 排序，排序資料超過 `sort_buffer_size`（預設 262144 bytes）就分批寫到 disk 再 merge、執行時間大幅拉長。PG 用 `work_mem`（預設 4MB）、寬裕些但也會 spill
 
 對長期用 PG window function 寫複雜 reporting query 的 user：MySQL 8.0 可以做、但 *效能 tune* 工作量大、不是 drop-in。
 
-### 特性 3：JSON_TABLE（PG 主要賣點對比）
-
-這是 user 點到的對比重點。
+### JSON_TABLE（PG 主要賣點對比）
 
 **MySQL 8.0 的 JSON_TABLE**：
 
@@ -118,20 +110,21 @@ PG 17+ 有 `JSON_TABLE`（SQL:2016 standard、跟 MySQL 同語法）、但歷史
 2. **jsonb_path_query**（PG 12+）：
 
     ```sql
-    SELECT t.id, v.name, v.price
+    -- v 是每個 variant 的 jsonb 值，用 ->> 取欄位（結果是 text）
+    SELECT t.id, v->>'name' AS name, (v->>'price')::numeric AS price
     FROM products t,
          jsonb_path_query(t.metadata, '$.variants[*]') AS v;
     ```
 
 **核心差異**：
 
-| 維度                    | MySQL JSON_TABLE                                                                    | PG JSONB operator                         | PG jsonb_path_query         |
-| ----------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------- | --------------------------- |
-| Index                   | 必須對 JSON column 建 *generated column + 一般 index*、不能直接 GIN index JSON path | **GIN index 直接 over JSONB**（業界唯一） | 可以走 GIN expression index |
-| Storage                 | JSON column = LONGTEXT 包裝                                                         | JSONB = binary、壓縮、index 友善          | 同左                        |
-| Query 效率（複雜 path） | 中等（需要 generated column 加速）                                                  | 高（GIN index 直接）                      | 高                          |
-| SQL standard 對齊       | 高（JSON_TABLE 是 standard）                                                        | 低（JSONB operator 是 PG 專有）           | 中（jsonpath 是 standard）  |
-| 大 JSON（> 1 MB）       | LONGTEXT 仍可、但 query 慢                                                          | JSONB 壓縮 + 部分 read                    | 同左                        |
+| 維度                    | MySQL JSON_TABLE                                                                                                                 | PG JSONB operator                                           | PG jsonb_path_query         |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | --------------------------- |
+| Index                   | 對每條常查的 path 建 functional index（8.0.13+）或對 JSON array 建 multi-valued index（8.0.17+）、沒有涵蓋整份 document 的 index | **GIN index 直接 over JSONB**、一個 index 涵蓋整份 document | 可以走 GIN expression index |
+| Storage                 | JSON column = binary 格式、大小上限同 LONGTEXT                                                                                   | JSONB = binary、壓縮、index 友善                            | 同左                        |
+| Query 效率（複雜 path） | 中等（需要 generated column 加速）                                                                                               | 高（GIN index 直接）                                        | 高                          |
+| SQL standard 對齊       | 高（JSON_TABLE 是 standard）                                                                                                     | 低（JSONB operator 是 PG 專有）                             | 中（jsonpath 是 standard）  |
+| 大 JSON（> 1 MB）       | 可存、但 query 慢                                                                                                                | JSONB 壓縮 + 部分 read                                      | 同左                        |
 
 **選型結論**：
 
@@ -139,9 +132,9 @@ PG 17+ 有 `JSON_TABLE`（SQL:2016 standard、跟 MySQL 同語法）、但歷史
 - **MySQL 是 document-heavy workload**（大量 JSON-driven query / 複雜 path / 高 selectivity）：PG JSONB GIN index 仍是 *clearly winner*、或直接用 MongoDB
 - **MySQL 8.0 JSON 不是 PG JSONB 替代**：JSON_TABLE 是 *SQL standard 對齊*、好 portable、但 *index 跟 storage 仍弱*
 
-對「JSON 是 PG 主要賣點」的判斷：JSONB binary storage + GIN index 是 PG 在 JSON workload 的 *結構性優勢*、MySQL 8.0 補了 SQL_TABLE 但 *index 那層沒補*。8.0 後 JSON 議題 *不是 deal-breaker for MySQL*（不像 5.7 時代直接 disqualify）、但仍不是 MySQL 主場。
+對「JSON 是 PG 主要賣點」的判斷：JSONB binary storage + GIN index 是 PG 在 JSON workload 的 *結構性優勢*、MySQL 8.0 補了 JSON_TABLE，index 只補到逐條 path 的 functional index 與 JSON array 的 multi-valued index、沒有一個 index 涵蓋整份 document 的做法。8.0 後 JSON 議題 *不是 deal-breaker for MySQL*（不像 5.7 時代直接 disqualify）、但仍不是 MySQL 主場。
 
-### 特性 4：Lateral Derived Table
+### Lateral Derived Table
 
 MySQL 8.0.14+ / PG 9.3+ 都支援。
 
@@ -166,13 +159,37 @@ Lateral 讓 subquery 可以 *引用外部 reference column*（`u.id`）、不可
 
 對 PG-experienced 使用 lateral 寫 reporting query 的 user：MySQL 8.0 可以、但有時候要 hint optimizer 達到最佳 plan。
 
-### 特性 5：Hash Join
+### Hash Join
 
 MySQL 8.0.18+ / PG 早已有。
 
 **MySQL 8.0 之前**：只有 *nested loop join*、大表 JOIN 完全失控（n × m row scan）。8.0.18 加 hash join、optimizer 在預估 row count 大時自動切。
 
-**注意**：MySQL 8.0 hash join 預設 *不對所有 join 開*、只在 `optimizer_switch='hash_join=on'` 且 join condition 是 *equality on indexed column* 時觸發。常見錯估：複雜 join 條件不觸發 hash join、optimizer fallback nested loop、query 永遠跑不完。
+**注意**：MySQL 8.0 的 hash join 用在 join 欄位 *沒有可用 index* 的時候；join 欄位有 index 時 optimizer 通常選 nested loop 加 index lookup。join 條件不是單純等值也照樣走 hash join，非等值的部分在 hash join 之後以 filter 套用：
+
+```sql
+-- MySQL 8.0.46 / 8.4.11 實測，a、b 兩表的 id 都沒有 index
+CREATE TABLE a (id INT, v INT);
+CREATE TABLE b (id INT, v INT);
+INSERT INTO a VALUES (1, 1), (2, 2), (3, 3);
+INSERT INTO b VALUES (1, 1), (2, 2), (4, 4);
+
+EXPLAIN FORMAT=TREE SELECT * FROM a JOIN b ON a.id = b.id;
+-- -> Inner hash join (b.id = a.id)
+EXPLAIN FORMAT=TREE SELECT * FROM a JOIN b ON a.id = b.id + 1;
+-- -> Inner hash join (a.id = (b.id + 1))
+EXPLAIN FORMAT=TREE SELECT * FROM a JOIN b ON a.id < b.id;
+-- -> Filter: (a.id < b.id)
+--     -> Inner hash join (no condition)
+
+CREATE INDEX ib ON b(id);
+ANALYZE TABLE a, b;
+EXPLAIN FORMAT=TREE SELECT * FROM a JOIN b ON a.id = b.id;
+-- -> Nested loop inner join
+--     -> Index lookup on b using ib (id=a.id)
+```
+
+`optimizer_switch` 裡的 `hash_join` 旗標在這兩個版本設成 off 也不改變計畫（仍是 `Inner hash join`）。
 
 **PG 對應**：PG 一直有 hash join、optimizer 預設 cover 廣、且有 *parallel hash join*（PG 11+）大表 JOIN 並行加速。
 
@@ -180,8 +197,8 @@ MySQL hash join 是 *補洞*、不是 *並肩特性*。複雜 OLAP query MySQL �
 
 ## 其他 8.0 特性（一句話帶過）
 
-- **Atomic DDL**：CREATE TABLE / DROP / ALTER 變 transactional、crash recovery 不會留 orphan table（PG 早就 atomic）
-- **Role-based authentication**：role 取代 group-level grant、user 可繼承 role（PG 早就 role 系統）
+- **Atomic DDL**：單一 CREATE TABLE / DROP / ALTER statement 變 atomic、crash recovery 不會留 orphan table；DDL 仍會 implicit commit、不能在 transaction 裡 rollback（PG 的 DDL 可以在 transaction 內 rollback）
+- **Role**：權限先授給 role、再把 role 授給 user（PG 早就 role 系統）
 - **CHECK constraint enforcement**：5.7 可寫但不執行、8.0 真的 enforce（PG 一直執行）
 - **invisible index**：建 index 但 optimizer 暫不用、適合 staging query plan 測試（PG 沒原生對應）
 - **Resource Group**：query 跑時可分配 CPU thread 給特定 user group（PG 沒原生對應）
@@ -193,29 +210,31 @@ MySQL hash join 是 *補洞*、不是 *並肩特性*。複雜 OLAP query MySQL �
 
 1. **`character_set_server=utf8mb4`**：8.0 預設 utf8mb4（5.7 預設 latin1）、character set 不一致導致 query 行為微差
 2. **`default_authentication_plugin=mysql_native_password`**：8.0 預設 caching_sha2_password、舊 client 連不上、cluster upgrade 期間用 native_password 保兼容
-3. **`optimizer_switch='hash_join=on'`**：確認 hash join 啟用、預設應該已 ON
-4. **`cte_max_recursion_depth=10000`**：複雜 recursive CTE 需要時提高
-5. **重新 review 所有 ORM-generated SQL**：8.0 keywords 變多（WINDOW、RANK、LATERAL 等變成 reserved word）、5.7 識別碼可能變 syntax error
+3. **`cte_max_recursion_depth=10000`**：複雜 recursive CTE 需要時提高
+4. **重新 review 所有 ORM-generated SQL**：8.0 keywords 變多（WINDOW、RANK、LATERAL 等變成 reserved word）、5.7 識別碼可能變 syntax error
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. CTE 引用兩次 = 跑兩次
+### CTE 引用兩次時只 materialize 一次
 
 ```sql
-WITH expensive AS (SELECT ... heavy aggregation ...)
-SELECT * FROM expensive WHERE ...
+-- MySQL 8.0.46 / 8.4.11 實測：同一個 CTE 在 UNION ALL 兩側各引用一次
+EXPLAIN ANALYZE
+WITH expensive AS (
+    SELECT user_id, SUM(amount) AS total FROM orders GROUP BY user_id
+)
+SELECT * FROM expensive WHERE total > 100
 UNION ALL
-SELECT * FROM expensive WHERE other_condition;
+SELECT * FROM expensive WHERE total <= 100;
+-- 第一個引用：Materialize CTE expensive if needed ... (actual ... loops=1)
+--   → 彙總跑一次，結果寫進暫存表
+-- 第二個引用：Materialize CTE expensive if needed (query plan printed elsewhere) ... (never executed)
+--   → 直接讀第一個引用建好的暫存表
 ```
 
-預期 CTE 跑一次、實際 MySQL 跑兩次。Query 時間 doubled。
+多次引用的 CTE 在 MySQL 不會重複計算，把結果先 INSERT 進 temporary table 手動 materialize 省不到時間。要檢查的是只被引用一次的 CTE：它可能被 merge 進外層查詢，用 `EXPLAIN FORMAT=TREE` 看計畫裡有沒有 `Materialize CTE` 節點，就知道它是被 merge 還是 materialize。
 
-修法：
-
-- 把 CTE 結果先 INSERT 進 *temporary table*、SELECT 兩次走 temp table（手動 materialize）
-- 或 PG 用 `MATERIALIZED` keyword（MySQL 沒對應 hint、要手動 temp table）
-
-### 2. Window function 大 partition spill 到 disk
+### Window function 排序資料 spill 到 disk
 
 ```sql
 SELECT order_id,
@@ -223,14 +242,32 @@ SELECT order_id,
 FROM orders;  -- 1 億 row
 ```
 
-`sort_buffer_size=256K` 預設、單 partition > 256K row 開始 spill disk、執行從秒級變分鐘級。
+window function 要先依 `PARTITION BY user_id ORDER BY created_at` 把資料排序；`sort_buffer_size` 預設是 262144 bytes（256 KB，單位是 bytes 不是 row），排序資料超過它就分批寫到 disk 再 merge，`Sort_merge_passes` 跟著增加，執行從秒級變分鐘級：
+
+```sql
+-- MySQL 8.4.11 實測：orders 20 萬列、user_id 三種值
+FLUSH STATUS;
+SELECT COUNT(*) FROM (
+    SELECT order_id, SUM(amount) OVER (PARTITION BY user_id ORDER BY created_at) AS rt
+    FROM orders
+) x;
+SHOW SESSION STATUS LIKE 'Sort_merge_passes';  -- 預設 sort_buffer_size：7
+
+SET SESSION sort_buffer_size = 64 * 1024 * 1024;
+FLUSH STATUS;
+SELECT COUNT(*) FROM (
+    SELECT order_id, SUM(amount) OVER (PARTITION BY user_id ORDER BY created_at) AS rt
+    FROM orders
+) x;
+SHOW SESSION STATUS LIKE 'Sort_merge_passes';  -- 64 MB：0
+```
 
 修法：
 
 - 提高 `sort_buffer_size`（per-connection、不要設太大、connection × buffer 會吃 RAM）
 - 加 INDEX 包含 `user_id, created_at`、optimizer 可直接用 sorted index、不必額外 sort
 
-### 3. JSON_TABLE 跟 generated column 取捨錯誤
+### JSON_TABLE 跟 generated column 取捨錯誤
 
 直接 JSON_TABLE on every query：
 
@@ -255,21 +292,21 @@ JSON_TABLE(metadata, '$.variants[*]' COLUMNS (...));
 - JSON_TABLE 用於 *ad-hoc query*、不要當熱 path
 - 跟 PG JSONB GIN 對比：PG 不必預先建 generated column、GIN index 直接 over JSONB
 
-### 4. Hash join 沒觸發 — Optimizer 預估錯 row count
+### Hash join 沒觸發 — Optimizer 預估錯 row count
 
 JOIN 大表預期 hash join、實際 MySQL 跑 nested loop、query 跑不完。常見原因：
 
 - Table statistics 過時（沒跑 `ANALYZE TABLE`）
-- Join condition 不是 pure equality（`a.id = b.id + 1` 等）
+- join 欄位有 index、optimizer 估計 index lookup 比建 hash table 便宜而選 nested loop
 - 一邊有 LIMIT、optimizer 估 small set、選 nested loop
 
 修法：
 
 - 跑 `ANALYZE TABLE` 更新 statistics
 - 用 `EXPLAIN ANALYZE` 看實際 row count vs 估計
-- 用 `optimizer_hint`（如 `/*+ HASH_JOIN(t1 t2) */`）強制
+- 用 optimizer hint 讓 optimizer 不走那個 index（如 `/*+ NO_INDEX(t2 idx_name) */`），join 就改成 hash join；`HASH_JOIN` hint 實測不改變計畫
 
-### 5. Recursive CTE 深度上限 — Production query 突然 fail
+### Recursive CTE 深度上限 — Production query 突然 fail
 
 `cte_max_recursion_depth=1000` 預設、organization hierarchy / tree query 超過 1000 層直接 fail（`ER_CTE_MAX_RECURSION_DEPTH_EXCEEDED`）。
 
@@ -281,23 +318,23 @@ JOIN 大表預期 hash join、實際 MySQL 跑 nested loop、query 跑不完。�
 
 ## MySQL 8.0 vs PG SQL 特性 cross-reference
 
-| 特性                 | MySQL 8.0           | PostgreSQL           | 差異                                                         |
-| -------------------- | ------------------- | -------------------- | ------------------------------------------------------------ |
-| CTE                  | 8.0+                | 8.4+                 | PG 2009 即支援、MySQL 2018 才支援、約晚 9 年                 |
-| Recursive CTE        | 8.0+（depth 限）    | 8.4+（unlimited）    | PG 無深度上限                                                |
-| Window function      | 8.0+                | 8.4+                 | Frame spec 兩家略不同（GROUPS frame 推出時點）               |
-| Lateral              | 8.0.14+             | 9.3+                 | PG plan 較成熟                                               |
-| JSON_TABLE           | 8.0+                | 17+                  | MySQL 早 6 年（SQL:2016 standard）                           |
-| JSONB index          | 無原生              | GIN index over JSONB | **PG 結構優勢**                                              |
-| Hash join            | 8.0.18+             | 早                   | PG parallel hash join                                        |
-| Atomic DDL           | 8.0+                | 早                   | PG 一直 atomic                                               |
-| Common keyword       | 補齊                | 完整                 | -                                                            |
-| Role-based auth      | 8.0+                | 早                   | -                                                            |
-| Materialized view    | 無原生              | 9.3+                 | **PG 結構優勢**（MySQL 用 trigger / scheduled refresh 模擬） |
-| Partial index        | 無                  | 早                   | **PG 結構優勢**                                              |
-| Expression index     | 8.0.13+             | 早                   | MySQL 後加                                                   |
-| Full-text search     | 內建（InnoDB 5.6+） | 內建（tsvector）     | PG full-text 更成熟                                          |
-| Foreign data wrapper | 無原生              | 早（FDW）            | **PG 結構優勢**                                              |
+| 特性                 | MySQL 8.0                                    | PostgreSQL                            | 差異                                                         |
+| -------------------- | -------------------------------------------- | ------------------------------------- | ------------------------------------------------------------ |
+| CTE                  | 8.0+                                         | 8.4+                                  | PG 2009 即支援、MySQL 2018 才支援、約晚 9 年                 |
+| Recursive CTE        | 8.0+（depth 限）                             | 8.4+（unlimited）                     | PG 無深度上限                                                |
+| Window function      | 8.0+                                         | 8.4+                                  | MySQL 不支援 GROUPS frame（PG 11+ 支援）                     |
+| Lateral              | 8.0.14+                                      | 9.3+                                  | PG plan 較成熟                                               |
+| JSON_TABLE           | 8.0+                                         | 17+                                   | MySQL 早 6 年（SQL:2016 standard）                           |
+| JSON index           | functional / multi-valued index（逐條 path） | GIN index over JSONB（整份 document） | **PG 結構優勢**                                              |
+| Hash join            | 8.0.18+                                      | 早                                    | PG parallel hash join                                        |
+| Atomic DDL           | 8.0+                                         | 早                                    | PG 一直 atomic                                               |
+| Common keyword       | 補齊                                         | 完整                                  | -                                                            |
+| Role                 | 8.0+                                         | 早                                    | -                                                            |
+| Materialized view    | 無原生                                       | 9.3+                                  | **PG 結構優勢**（MySQL 用 trigger / scheduled refresh 模擬） |
+| Partial index        | 無                                           | 早                                    | **PG 結構優勢**                                              |
+| Expression index     | 8.0.13+                                      | 早                                    | MySQL 後加                                                   |
+| Full-text search     | 內建（InnoDB 5.6+）                          | 內建（tsvector）                      | PG full-text 更成熟                                          |
+| Foreign data wrapper | 無原生                                       | 早（FDW）                             | **PG 結構優勢**                                              |
 
 8.0 補了 *語法層* 大部分缺漏、*storage / index / extensibility 層* 仍是 PG 結構優勢。對「先選 SQL 工程深度」的 org、PG 仍領先；對「先選 ecosystem / replication / sharding」的 org、MySQL 已不是 disqualifier。
 
@@ -305,11 +342,11 @@ JOIN 大表預期 hash join、實際 MySQL 跑 nested loop、query 跑不完。�
 
 ### 跟 InnoDB Tuning
 
-JSON column 在 InnoDB 是 LONGTEXT 包裝、大 JSON 進 off-page storage（`innodb_default_row_format=DYNAMIC` 才行、Antelope format 不支援）。Buffer pool 對 LONGTEXT 較不友善、大 JSON workload 可能要更大 buffer pool。詳見 [InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)。
+JSON column 在 InnoDB 以 binary 格式存、大 JSON 進 off-page storage（`innodb_default_row_format=DYNAMIC` 才行、Antelope format 不支援）。Buffer pool 對 LONGTEXT 較不友善、大 JSON workload 可能要更大 buffer pool。詳見 [InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)。
 
 ### 跟 Query Optimization
 
-8.0 新 hash join + lateral derived 讓 *EXPLAIN ANALYZE* 結果更複雜。優化複雜 query 需要熟 *新 plan node 類型*。詳見 *Query Optimization deep dive* 篇（待寫）。
+8.0 新 hash join + lateral derived 讓 *EXPLAIN ANALYZE* 結果更複雜。優化複雜 query 需要熟 *新 plan node 類型*。詳見 [Query Optimization](/backend/01-database/vendors/mysql/query-optimization/)。
 
 ### 跟 Online Schema Change
 
@@ -317,7 +354,7 @@ JSON column 跟 generated column 的 schema change 走 gh-ost / pt-osc 沒問題
 
 ### 跟 Replication
 
-Window function / CTE / JSON_TABLE 的 query *結果* replicate（row-level binlog 紀錄結果）、不 replicate *query 本身*。所以 replica apply 不會重新跑 window function、效率 OK。詳見 [Replication Topology](/backend/01-database/vendors/mysql/replication-topology/)。
+用到 window function / CTE / JSON_TABLE 的 DML（例如 `INSERT ... SELECT`）在 ROW format binlog 裡記的是被改動的列、不是 query 本身，所以 replica apply 時不會重新跑 window function、效率 OK；單純的 SELECT 不寫 binlog、不會 replicate。詳見 [Replication Topology](/backend/01-database/vendors/mysql/replication-topology/)。
 
 ## 何時 SQL 特性是 MySQL 選型 driver
 

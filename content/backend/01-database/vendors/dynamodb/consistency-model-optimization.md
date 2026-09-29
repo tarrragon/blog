@@ -1,12 +1,12 @@
 ---
 title: "DynamoDB Strongly Consistent → Eventually Consistent：same protocol, different contract"
 date: 2026-05-19
-description: "DynamoDB consistency model 從 strongly consistent read 改 eventually consistent read 是 50% cost 優化但風險集中在 application contract — 同 vendor / 同 protocol / 同 table / 不同 read consistency；驗證 [#128](/report/data-topology-as-audit-dimension/) self-aware limitation 提出的 consistency axis 候選；涵蓋 read pattern audit / 5 個 production 踩雷"
+description: "DynamoDB consistency model 從 strongly consistent read 改 eventually consistent read 是 50% cost 優化但風險集中在 application contract — 同 vendor / 同 protocol / 同 table / 不同 read consistency；驗證 [#128](/report/data-topology-as-audit-dimension/) self-aware limitation 提出的 consistency axis 候選；涵蓋 read site audit、分階段切換，以及 read-your-write 失效、跨 record 寫入未綁交易、background job 重複處理、成本反升與 strong read 單獨失效這幾種 production 踩雷"
 weight: 11
 tags: ["backend", "database", "dynamodb", "consistency", "migration", "axis-candidate"]
 ---
 
-> 本文是 [DynamoDB](/backend/01-database/vendors/dynamodb/) overview 的 implementation-layer deep article。同時是 [#128 self-aware limitation](/report/data-topology-as-audit-dimension/) 第 1 點「6 維仍可能漏類（identity / consistency / residency 三軸候選）」的 *consistency 軸驗證*。
+這篇整理 [DynamoDB](/backend/01-database/vendors/dynamodb/) 把 read 從 strongly consistent 改成 eventually consistent 時要做的事：兩種 read 的差別、逐個 read site 的審查、分階段切換與切換後的故障情境。範圍限於同一張 table 內 `ConsistentRead` 的設定。
 
 ## Same protocol, different contract：consistency model 對照
 
@@ -36,19 +36,19 @@ DynamoDB 的 read 操作支援兩種 consistency：
 | Data topology            | 同 partition / replication                         | Low      |
 | **Consistency contract** | **strong → eventual、application semantic 完全改** | **High** |
 
-6 維 audit 抓不到「Consistency contract = High」這軸。用既有 6 維歸類、會走 Type B drop-in + application change 中維獨立段；但這個歸類 *漏掉真正的工作量*：
+diff dimension audit 的既有維度裡沒有一個對應「Consistency contract = High」。只用既有維度歸類，這次遷移會被歸成 drop-in 型遷移（Type B：換設定、不換 vendor 與 schema），application change 評為 Medium；這個歸類漏掉了主要的工作量：
 
 - Application code change（加 ConsistentRead flag）：~10%
 - Operational verification：~5%
 - **Application contract review（每個 read site 評估 staleness 是否可接受）：~85%**
 
-工作量主軸在 *contract semantic 重審*、不在既有 6 維任一個。Consistency 是 *候選的第 7 維*（或 8 維、跟 identity 並列）。
+工作量主軸在 *contract semantic 重審*，不在 diff dimension audit 的任何既有維度。Consistency 因此是 diff dimension audit 的候選新維度；identity 是另一個候選新維度。
 
-## Consistency axis 是否獨立：3 個論據
+## Consistency axis 是否獨立：支持與反對的論據
 
 **Yes、consistency 是獨立軸**：
 
-1. **Schema / paradigm / operational 不變 → consistency 仍可變**：同 DynamoDB table、同 application、同 IAM、只改 `ConsistentRead` flag、cost 砍半但 application contract 改；其他 6 維皆 Low、但工作量 80%+ 在 contract review
+1. **Schema / paradigm / operational 不變 → consistency 仍可變**：同 DynamoDB table、同 application、同 IAM、只改 `ConsistentRead` flag、cost 砍半但 application contract 改；diff dimension audit 的既有維度皆 Low、但工作量 80%+ 在 contract review
 2. **Paradigm 是 high-level、consistency 是 low-level**：Kafka ↔ NATS 是 paradigm 差（log-based vs subject-based）；DynamoDB strong → eventual 是 *同 paradigm 內的 consistency 子議題*；歸 paradigm 維度太粗
 3. **可獨立發生**：PostgreSQL `READ COMMITTED → SERIALIZABLE` migration 同 vendor 同 schema 同 operational、只改 isolation level；Cassandra `LOCAL_QUORUM → EACH_QUORUM` 同 vendor、只改 consistency level — 都是 consistency 獨立變動的 case
 
@@ -57,24 +57,7 @@ DynamoDB 的 read 操作支援兩種 consistency：
 - 反論：consistency 是 paradigm 的子議題
 - 拒絕：paradigm 涵蓋 *核心抽象*（OLTP / log / pub-sub / document）、consistency 是 *正確性 contract* 屬不同 axis
 
-實證：本文 migration 工作量 85% 在 contract review、確認 consistency 是 *獨立工作量主軸*。
-
-## 結構：類 Type B + consistency contract review 獨立段
-
-跟既有 Type B [Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/) 對照、本文多出 *consistency contract review* 獨立段：
-
-```text
-1. Same protocol, different contract（consistency axis 對照表開頭）
-2. Consistency axis 是否獨立的論據
-3. 結構 differentiator（類 Type B + contract review）
-4. Read site audit (per-call site review)
-5. Migration 流程（dual-read 觀察 + canary cutover）
-6. Production 故障演練
-7. Capacity / cost
-8. 整合 / 下一步
-```
-
-8 章節、200-260 行。比標準 Type B 多 1 段（contract review）+ 1 段（axis 獨立論據）。
+本文估算的工作量分配（contract review 約 85%）支持 consistency 是 *獨立工作量主軸*；這個比例是估算，不是量測。
 
 ## Read site audit：per-call site contract review
 
@@ -108,13 +91,13 @@ audit 完後 application 端 60-80% read site 可改 eventual、剩餘 20-40% �
 
 ## Migration 流程
 
-### Phase 0：Audit + classify
+### 審查並分類每個 read site
 
 - Grep application code 找所有 read site
 - per-site contract review、決定 strong / eventual
 - 估計 RCU saving
 
-### Phase 1：低風險 site 切換
+### 先切換低風險的 read site
 
 ```python
 # Before
@@ -132,13 +115,13 @@ response = table.get_item(
 
 從 *background job / search result* 開始（低風險、staleness impact 低）、跑 1 週觀察 application metric。
 
-### Phase 2：中風險 site 切換
+### 再切換中風險的 read site
 
 - User-facing list query
 - Dashboard refresh
 - 配 application-side 「last updated X seconds ago」hint 讓 user 知道是 cached/stale
 
-### Phase 3：審慎 site 保留 strong
+### 需要 strong read 的 site 保留不動
 
 - Read-your-write pattern
 - Transactional read
@@ -148,7 +131,7 @@ Decision document 寫進 ADR、之後新 read site 直接套規則。
 
 ## Production 故障演練
 
-### Case 1：Read-your-write 失效、user 看到自己沒提交的舊資料
+### Read-your-write 失效：user 提交修改後仍看到修改前的資料
 
 **徵兆**：user 在 settings page 改了 email、submit 後跳轉首頁、首頁 widget 顯示舊 email 5-30 秒；user feedback「我改了但沒生效」。
 
@@ -160,7 +143,7 @@ Decision document 寫進 ADR、之後新 read site 直接套規則。
 2. **Application-side cache invalidation**：write 後立刻 invalidate local cache、避免 stale read 餵 user
 3. **Routing**：user-self-fetch 路由到 strong read、其他 user 看 user 用 eventual read（90% 流量仍便宜）
 
-### Case 2：跨 record consistency 假設失效
+### 跨 record consistency 假設失效
 
 **徵兆**：application 寫 order + 寫 inventory（兩個 record）、之後 read order + read inventory；發現有時 order 已寫 inventory 沒寫、application 顯示「order created but inventory not updated」、business state inconsistent。
 
@@ -172,7 +155,7 @@ Decision document 寫進 ADR、之後新 read site 直接套規則。
 2. **read 端 saga pattern**：accept eventual + application-level retry/reconcile
 3. **eventual consistency 不是 root cause**：strong read 也會看到 inconsistency、修跨 record write 是根因解
 
-### Case 3：Background job retry 跑舊資料
+### Background job retry 跑舊資料
 
 **徵兆**：background job 每 5 分鐘掃 unprocessed orders、用 `ConsistentRead=False`；偶爾 job retry 2 次都 process 同 order、duplicate processing。
 
@@ -184,7 +167,7 @@ Decision document 寫進 ADR、之後新 read site 直接套規則。
 2. **Conditional write**：`UpdateItem` 加 `ConditionExpression: attribute_not_exists(processed_at)`、duplicate 由 DynamoDB 拒絕
 3. **不切 strong**：background job 切 strong 也只是 *減少* duplicate 機率、不解決；用 idempotent + conditional 才對
 
-### Case 4：Cost 沒降反升、application 改錯方向
+### Cost 沒降反升、application 改錯方向
 
 **徵兆**：切換 6 個月後 RCU 成本反而上升 20%；audit 後發現 application 加了大量 background scan 用 `ConsistentRead=False`、scan 本身就比 query 貴、cost 飆。
 
@@ -196,7 +179,7 @@ Decision document 寫進 ADR、之後新 read site 直接套規則。
 2. **Cost monitoring 在切換前 baseline**：對齊原 RCU usage、新 read 出現必須單獨 review
 3. **Scan vs Query**：跑 sample data、確認 application 用 Query 不是 Scan（Scan 對所有 partition 讀 / Query 對 partition key 讀）
 
-### Case 5：故障期間 eventual read 還能 work、應變流程沒覆蓋
+### 故障期間 eventual read 還能 work、應變流程沒覆蓋
 
 **徵兆**：us-east-1 partial outage、strong read 開始 timeout、application 切到 fallback；但 fallback 邏輯只 cover「全 region fail」、沒 cover「strong fail / eventual ok」中間狀態；流量打到 fallback 路徑、出乎預期慢。
 
@@ -235,15 +218,9 @@ Cassandra tunable consistency 是另一個 consistency 獨立軸 case；EACH_QUO
 
 Aurora read replica 也涉 eventual read decision；application 路由策略類似但 mechanism 不同（DNS-based vs API flag）。
 
-### 下一步議題
-
-- **Consistency axis 升級為第 7 維 audit dimension**：累積 PostgreSQL isolation level / Cassandra tunable consistency / Aurora reader endpoint 3-5 個 case 後評估
-- **Sub-dimension proposal**：consistency axis 可拆 sub-dimension - read consistency / write consistency / replication lag tolerance / serialization level
-- **跟 paradigm 軸的邊界釐清**：CRDT / event sourcing 是 paradigm 還是 consistency model 選擇？
-
 ## 相關連結
 
 - 上游 vendor 頁：[DynamoDB](/backend/01-database/vendors/dynamodb/)
-- 平行 deep article：[Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/)（Type B drop-in 對照）
+- 平行 migration playbook：[Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/)（Type B drop-in 對照）
 - 平行 axis 候選驗證 (sibling)：[Vault → AWS Secrets Manager](/backend/07-security-data-protection/vendors/hashicorp-vault/migrate-to-aws-secrets-manager/)（identity 候選） / [PostgreSQL Multi-Region GDPR Rollout](/backend/01-database/vendors/postgresql/multi-region-gdpr-rollout/)（residency 候選）
-- Methodology：[Migration playbook methodology](/posts/migration-playbook-methodology/) / [#128 self-aware limitation 第 1 點](/report/data-topology-as-audit-dimension/)（consistency axis 候選驗證、本文是該驗證的 dogfood）
+- Methodology：[Migration playbook methodology](/posts/migration-playbook-methodology/) / [Data topology 是 process content 的第 6 audit 維度](/report/data-topology-as-audit-dimension/)（該卡的 self-aware limitation 列出 consistency 是既有維度可能漏掉的一軸）

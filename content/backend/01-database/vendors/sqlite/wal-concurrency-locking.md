@@ -5,11 +5,9 @@ description: "SQLite WAL mode 如何降低 reader / writer 衝突、保留 singl
 tags: ["backend", "database", "sqlite", "wal", "locking", "deep-article"]
 ---
 
-> 本文是 [SQLite](/backend/01-database/vendors/sqlite/) overview 的 implementation-layer deep article。Overview 已說明 SQLite 的 single-file / embedded 定位；本文聚焦 *WAL concurrency、single writer boundary、`SQLITE_BUSY` 與 checkpoint strategy*。
-
 SQLite WAL concurrency 的核心責任是讓 reader / writer 衝突下降，同時保留單檔案資料庫的寫入邊界。[WAL mode](/backend/knowledge-cards/write-ahead-log/) 把寫入 append 到 `-wal` sidecar file，reader 可以從 main database file 加 WAL snapshot 讀取一致視圖；這讓 read-heavy workload 能比 rollback journal mode 更順。但 SQLite 仍遵循 [single writer model](/backend/knowledge-cards/single-writer-model/)、只有一條 writer path，長交易、背景 migration、慢 disk 或多 process 寫入都會在這條 path 上排隊。
 
-本文的判讀錨點是：WAL 提升的是 reader concurrency，治理的是 writer queue。當服務看到 `SQLITE_BUSY`、WAL file 持續變大、checkpoint duration 變長或偶發 commit latency spike，問題通常在 transaction duration、checkpoint cadence、filesystem lock 或 process ownership，而非單純「資料庫太小」。
+本文的範圍是 WAL mode 下的 locking model、`SQLITE_BUSY` 與 busy timeout、checkpoint strategy 與 checkpoint starvation，以及 filesystem 與部署方式對 WAL 的限制。服務看到 `SQLITE_BUSY`、WAL file 持續變大、checkpoint duration 變長或偶發 commit latency spike 時，各節依序對到的成因是 transaction duration、checkpoint cadence、filesystem lock 與 process ownership。
 
 ## WAL mode 的服務責任
 
@@ -108,31 +106,31 @@ Deployment review 要問的第一個問題是「同一時間誰會寫這個檔�
 
 ## Production 踩雷
 
-### Case 1：多個 worker 同時寫同一個 SQLite 檔
+### 多個 worker 同時寫同一個 SQLite 檔，writer ownership 消失
 
 多 worker 寫入同一個 SQLite 檔的核心風險是 writer ownership 消失。常見情境是小型服務從單 instance 擴到多 instance，但仍把 database file 放在 shared volume；早期看起來可運作，流量上升後開始出現 busy timeout、WAL growth 與偶發資料修復壓力。
 
 修正方向是重新定義 writer。若服務仍是 small backend，可以收斂到單 writer process + queue；若 multi-instance 是長期需求，應遷移到 [PostgreSQL](/backend/01-database/vendors/postgresql/) 或 [MySQL](/backend/01-database/vendors/mysql/)。
 
-### Case 2：長讀取卡住 checkpoint，磁碟被 WAL 吃滿
+### Checkpoint starvation 讓 WAL 吃滿磁碟，而 main database file 沒有增長
 
 長讀取卡 checkpoint 的核心風險是 WAL file 成為隱性容量消耗。讀者可能只看到 disk usage 增長，誤以為是資料量變大；實際上 main database file 沒有明顯增長，`-wal` sidecar 持續膨脹。
 
 修正方向是先找到長 reader，再調整 query lifecycle。Reporting query、background sync、streaming response、互動式 UI 大列表都要有 pagination、timeout 或低流量窗口；checkpoint 只負責收斂 WAL，application 仍要主動結束長讀取。
 
-### Case 3：把 busy timeout 當成擴容策略
+### 把 busy timeout 當成擴容策略，延遲被藏進使用者路徑
 
 Busy timeout 被當成擴容策略的核心風險是延遲被隱藏到使用者路徑。短暫 lock collision 可以等待；長期 write queue 則會把 API p99、UI freeze 或 worker backlog 拉高。
 
 修正方向是把 busy wait 當 metric。設定 timeout 後要記錄等待時間與超時率；當 busy wait 成為常態，下一步是拆交易、調整 writer process、移走 batch job，或升級到 server database。
 
-### Case 4：checkpoint 放在高流量 commit path
+### Checkpoint 放在高流量 commit path，少數 commit 變得很慢
 
 Checkpoint 放在高流量 commit path 的核心風險是少數 commit 變得很慢。SQLite 預設 auto-checkpoint 對多數場景合理，但互動式服務可能看到偶發 latency spike；這時可以把 checkpoint 移到背景 thread / process 或低流量窗口。
 
 修正方向是把 checkpoint duration 變成 evidence。觀察 WAL size、checkpoint return、commit latency 與 disk sync；若尖峰可接受，維持預設；若尖峰影響 UX，調整 checkpoint cadence。
 
-### Case 5：WAL mode 版本與部署條件未納入維護
+### SQLite runtime version 沒有被當成 dependency 維護
 
 WAL mode 的維護責任包含 SQLite runtime version、filesystem、sidecar file 與 release notes。SQLite 官方 WAL 文件記錄 2026-03 修正過罕見 WAL-reset bug；雖然觸發條件很窄，production runbook 仍應記錄 SQLite version、runtime package 與更新策略。
 

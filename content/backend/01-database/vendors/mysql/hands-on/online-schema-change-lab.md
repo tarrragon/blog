@@ -7,7 +7,7 @@ tags: ["backend", "database", "mysql", "hands-on", "schema-migration"]
 
 MySQL online schema change lab 的核心責任是讓讀者看到 schema change 的 metadata lock、algorithm、copy / cutover 與 validation evidence。這篇承接 [Online Schema Change Tools](../../online-schema-change-tools/) 與 [Metadata Lock Deep Dive](../../metadata-lock-deep-dive/)。
 
-本文的驗收標準是：你能跑一個低風險 ALTER、觀察 metadata lock、記錄 validation query，並理解 gh-ost / pt-osc 的 cutover evidence。
+本篇的範圍是在 local lab 的 `accounts` 上跑一次直接 `ALTER TABLE`、另開 session 重現 long transaction 讓 DDL 卡在 metadata lock、跑 validation query；gh-ost / pt-osc 只整理 cutover 要留的 evidence，不安裝工具。
 
 ## Direct ALTER Baseline
 
@@ -26,28 +26,36 @@ SQL
 
 Metadata lock observation 的核心責任是看到 blocker。
 
-開 Session A：
+這段 lab 開三個 terminal，各自扮演一個角色：持有 transaction 的讀取 session、執行 ALTER 的 DDL session、查 `performance_schema` 的觀察 session。
+
+讀取 session 用 app_user 連線，開 transaction 讀一列之後不 commit：
 
 ```sql
+-- 讀取 session（app_user）
 START TRANSACTION;
 SELECT * FROM accounts WHERE id = 1;
+-- 讀到之後停在這裡，transaction 保持開啟
 ```
 
-保持 transaction 開啟。Session B 執行：
+DDL session 同樣用 app_user 連線執行 ALTER，這一句會停住不回：
 
 ```sql
+-- DDL session（app_user）
 ALTER TABLE accounts ADD COLUMN note VARCHAR(255) NULL;
 ```
 
-Session C 查：
+觀察 session 要用 root 連線：`performance_schema.metadata_locks` 需要 SELECT 權限，app_user 只有 `appdb` 的權限，用它查會回 `ERROR 1142`。
 
 ```sql
+-- 觀察 session（root）
 SELECT OBJECT_SCHEMA, OBJECT_NAME, LOCK_TYPE, LOCK_STATUS, OWNER_THREAD_ID
 FROM performance_schema.metadata_locks
 WHERE OBJECT_SCHEMA = 'appdb';
+-- accounts  SHARED_READ  GRANTED：讀取 session 持有
+-- accounts  EXCLUSIVE    PENDING：DDL session 在等讀取 session 放掉
 ```
 
-完成觀察後，Session A `COMMIT`。這段 lab 展示 long transaction 如何讓 DDL 等待。
+完成觀察後，在讀取 session 執行 `COMMIT`，DDL session 的 ALTER 隨即完成。這段 lab 展示 long transaction 如何讓 DDL 等待。
 
 ## OSC Frame
 

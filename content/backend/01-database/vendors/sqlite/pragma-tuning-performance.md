@@ -5,11 +5,9 @@ description: "SQLite journal_mode、synchronous、busy_timeout、wal_autocheckpo
 tags: ["backend", "database", "sqlite", "performance", "pragma", "deep-article"]
 ---
 
-> 本文是 [SQLite](/backend/01-database/vendors/sqlite/) overview 的 implementation-layer deep article。Overview 已說明 SQLite 的容量規劃要點；本文聚焦 *PRAGMA 設定如何變成 durability、latency、檔案大小與 restore risk 的取捨*。
-
 SQLite PRAGMA tuning 的核心責任是把單檔資料庫的行為固定成可重複、可觀測、可回退的操作契約。SQLite 的許多重要行為由 connection-level 或 database-level PRAGMA 控制；這些設定看起來像小開關，實際上會影響 crash recovery、commit latency、reader / writer 衝突、檔案大小與測試一致性。
 
-本文的判讀錨點是：PRAGMA 是 durability / latency / maintenance 的顯性取捨，而非效能魔法。Production runbook 要記錄設定值、設定時機、驗證 query 與回退條件，避免不同 process、test runner 或 migration tool 用不同 SQLite 行為。
+本文的範圍是 `journal_mode`、`synchronous`、`busy_timeout`、`wal_autocheckpoint`、`cache_size`、`mmap_size` 與 `auto_vacuum` 這幾個 PRAGMA 各自在 durability、latency 與 maintenance 之間的取捨，以及 production runbook 要為每一個記錄的設定值、設定時機、驗證 query 與回退條件——這份記錄讓不同 process、test runner 與 migration tool 用同一組 SQLite 行為。
 
 ## Baseline PRAGMA
 
@@ -90,25 +88,25 @@ Vacuum 設定的核心責任是控制 delete 後的空間回收。SQLite delete 
 
 ## Production 踩雷
 
-### Case 1：PRAGMA 只在某個 connection 設定
+### PRAGMA 只在某個 connection 設定，不同程式路徑跑出不同行為
 
-Connection-level PRAGMA 的核心風險是不同程式路徑行為不一致。Application 啟動時設了 `foreign_keys=ON`，migration tool 或 test runner 沒設，就會出現 production / migration / test 三種語意。
+Connection-level PRAGMA 的核心風險是不同程式路徑行為不一致。Application 啟動時設了 `foreign_keys=ON`，migration tool 或 test runner 沒設，同一個資料庫在 production、migration 與 test 三條路徑上就有不同的 foreign key 行為：application 的 connection 會拒絕違反 FK 的寫入，另外兩條路徑照收。
 
 修正方向是把 baseline PRAGMA 放進 shared DB open path，並在 startup health check 印出設定值。Migration CLI、background worker、test fixture 都要共用同一份 connection initialization。
 
-### Case 2：`synchronous=OFF` 從測試環境流到正式資料
+### `synchronous=OFF` 從測試環境流到正式資料，損失只在 OS crash 或斷電後出現
 
-快速測試設定外流的核心風險是資料損失只在 crash 後出現。平常 query 都正常，直到 power loss、container kill 或 host crash 後，資料庫出現落差。
+快速測試設定外流的核心風險是資料損失只在 OS crash 或斷電後出現。`synchronous=OFF` 讓 SQLite 把資料交給作業系統之後不等它寫進磁碟，所以平常 query 都正常，application process 自己 crash 也不會掉資料；直到 power loss 或 host crash，還留在 OS 快取、沒寫進磁碟的交易會遺失，資料庫檔案也可能損毀。
 
 修正方向是設定分層。Test / benchmark 可以用 faster profile；formal state profile 要用 `NORMAL` 或 `FULL`，並要求 restore drill。
 
-### Case 3：WAL growth 被誤判成資料成長
+### WAL growth 被誤判成資料成長，擴 disk 蓋住了 checkpoint 問題
 
 WAL growth 的核心風險是 checkpoint 問題被當成容量問題。Disk alert 看到 `db-wal` 變大，若只擴 disk，長 reader 或 checkpoint starvation 仍會持續。
 
 修正方向是把 WAL size、checkpoint return 與 long reader 一起看。先找 reader lifecycle，再調 checkpoint cadence。
 
-### Case 4：Vacuum 在高峰期執行
+### Vacuum 在高峰期執行，把 maintenance I/O 放到使用者路徑
 
 Vacuum 的核心風險是把 maintenance I/O 放到使用者路徑。檔案縮小是好事，但 full vacuum 會消耗 I/O 與時間，對 mobile / desktop / small backend 都可能造成卡頓。
 

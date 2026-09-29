@@ -8,19 +8,19 @@ tags: ["backend", "database", "mysql", "metadata-lock", "ddl"]
 
 MySQL metadata lock deep dive 的核心責任是說明 DDL、transaction 與 table metadata 之間的阻塞關係。MySQL 在查詢 table 時會取得 [metadata lock](/backend/knowledge-cards/metadata-lock/)；DDL 需要等待既有 metadata lock 釋放，等待中的 DDL 又會阻塞後續查詢，形成 production 常見雪崩。
 
-本文的判讀錨點是：MDL 事故通常來自 DDL 排隊在長交易後面，並把後續 query 一起擋住。解法要同時處理 long transaction、DDL window、OSC 工具與 observability。
+本文涵蓋 MDL 的 lock lifecycle、找出誰持鎖與誰等待的偵測查詢、DDL 變更前的風險審查、事故 runbook、與 online schema change 工具的互動，以及事前預防。
 
 ## Lock Lifecycle
 
 Lock lifecycle 的核心責任是建立 MDL 心智模型。
 
-| 行為                 | MDL 影響                               |
-| -------------------- | -------------------------------------- |
-| `SELECT` / DML       | 取得 table metadata lock，交易結束釋放 |
-| Long transaction     | 延長 metadata lock 持有時間            |
-| `ALTER TABLE`        | 等待相容鎖，期間可能阻塞後續 query     |
-| Online schema change | 仍需 metadata lock 進行切換 / rename   |
-| Idle transaction     | 看似無操作，仍可能持有 metadata lock   |
+| 行為                 | MDL 影響                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------- |
+| `SELECT` / DML       | 取得 table metadata lock，交易結束釋放                                                         |
+| Long transaction     | 延長 metadata lock 持有時間                                                                    |
+| `ALTER TABLE`        | 先持有 `SHARED_UPGRADABLE`，升級成 `EXCLUSIVE` 時等既有的鎖釋放；等待期間後續 query 排在它後面 |
+| Online schema change | 仍需 metadata lock 進行切換 / rename                                                           |
+| Idle transaction     | 看似無操作，仍可能持有 metadata lock                                                           |
 
 MDL 的風險在於排隊。當 `ALTER TABLE` 等待 long transaction 時，後續新的 query 可能排在 DDL 後面，讓原本小變更變成服務不可用。
 
@@ -34,6 +34,18 @@ FROM performance_schema.metadata_locks
 WHERE OBJECT_SCHEMA = 'appdb'
 ORDER BY OBJECT_NAME, LOCK_STATUS;
 ```
+
+一個交易 `SELECT` 過 `t` 之後沒有 `COMMIT`、另一個 session 對 `t` 下 `ALTER TABLE`、再來一個 session `SELECT * FROM t` 時，上面這段查詢在 MySQL 8.4 回的是下面幾列（只留 `t` 本身的鎖；ALTER 的暫存表 `#sql-…` 與 schema 層的鎖省略）：
+
+```text
+OBJECT_NAME  LOCK_TYPE          LOCK_STATUS  OWNER_THREAD_ID
+t            SHARED_READ        GRANTED      50   -- 長交易：SELECT 之後沒 COMMIT，鎖持有到交易結束
+t            SHARED_UPGRADABLE  GRANTED      51   -- ALTER TABLE 先拿到可升級的共享鎖
+t            EXCLUSIVE          PENDING      51   -- ALTER TABLE 要升級成 EXCLUSIVE，等 thread 50 釋放
+t            SHARED_READ        PENDING      52   -- 後來的 SELECT 排在 pending 的 EXCLUSIVE 後面
+```
+
+`LOCK_STATUS = PENDING` 的列就是被擋住的 session；它們的 `OWNER_THREAD_ID` 與持有鎖的那一列（`GRANTED` 而不屬於 DDL 的 thread）放在一起讀，就是誰擋誰。同一時間 processlist 裡 ALTER 與後來的 SELECT 兩條的 `State` 都是 `Waiting for table metadata lock`。
 
 搭配 processlist：
 

@@ -6,7 +6,7 @@ weight: 21
 tags: ["backend", "database", "mysql", "query-optimization", "explain", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *query optimization* — EXPLAIN / optimizer trace / hint 三層工具跟 5 個實際 case。
+> 這篇涵蓋 MySQL 的 query optimization：EXPLAIN、optimizer trace 與 hint 這幾種工具的用法，以及常見的 production case。
 
 ---
 
@@ -14,7 +14,7 @@ tags: ["backend", "database", "mysql", "query-optimization", "explain", "deep-ar
 
 production 上 query 慢、root cause 幾乎都是 *optimizer 選錯 plan*。從以下 5 個 case 進入 query optimization：
 
-### Case 1：5 秒 → 50ms — JOIN 順序選錯
+### 5 秒 → 50ms：`customers.region` 缺 index
 
 ```sql
 -- 慢 (5 秒)：optimizer 選 customers 為 outer table、scan 全 1M row
@@ -45,7 +45,7 @@ ANALYZE TABLE customers;  -- 更新 statistics
 
 加 index 後 optimizer 切 plan：先 scan `customers` 用 `idx_region` 篩 100K row、再 join `orders`。從 5 秒降到 50ms。
 
-### Case 2：30 秒 → 200ms — Range scan 退化 ALL
+### 30 秒 → 200ms：Range scan 退化 ALL
 
 ```sql
 SELECT * FROM events
@@ -73,7 +73,7 @@ ALTER TABLE events ADD INDEX idx_user_created (user_id, created_at);
 
 Composite index 讓 optimizer 看到 *單一 index 直接 satisfy 兩個 predicate*、走 range scan + index condition pushdown。30 秒降到 200ms。
 
-### Case 3：8 秒 → 30ms — Subquery 沒 unnest
+### 8 秒 → 30ms：Subquery 沒 unnest
 
 ```sql
 SELECT * FROM orders
@@ -116,7 +116,7 @@ WHERE EXISTS (
 
 不同寫法 plan 差異需用 EXPLAIN 驗證、不能假設「JOIN 一定比 IN 快」。
 
-### Case 4：2 秒 → 100ms — Derived table 沒 materialize
+### Derived table 帶 GROUP BY：MySQL materialize 一次，不會每列重算
 
 ```sql
 SELECT * FROM orders o
@@ -128,23 +128,22 @@ JOIN (
 WHERE counts.order_count > 10;
 ```
 
-5.6 之前 derived table（FROM subquery）每次 query 都 re-run、慢。5.7+ 有 *derived table materialization*、但 optimizer 有時不觸發。
-
-EXPLAIN 顯示：
+MySQL 處理 FROM 裡的子查詢（derived table）有兩種方式：merge 進外層查詢，或 materialize 成一張內部暫存表、整個查詢只算一次。帶 `GROUP BY` 的 derived table 無法 merge，一律 materialize；EXPLAIN 出現 `select_type=DERIVED` 那一列，代表它被 materialize 了。MySQL 8.4 對上面這段查詢的 `EXPLAIN FORMAT=TREE`（orders 兩萬列、兩千個 customer_id）：
 
 ```text
-+----+-------------+-------+------+
-| id | select_type | table | type |
-+----+-------------+-------+------+
-|  1 | PRIMARY     | o     | ALL  |
-|  2 | DERIVED     | orders| ALL  |  -- 沒 materialize、每次 join 都跑
-+----+-------------+-------+------+
+-> Nested loop inner join  (cost=70352 rows=194656)
+    -> Filter: (counts.customer_id is not null)  (cost=4170..2222 rows=19731)
+        -> Table scan on counts  (cost=4170..4198 rows=2000)
+            -> Materialize  (cost=4170..4170 rows=2000)                  -- derived table 算一次、存成暫存表
+                -> Filter: (count(0) > 10)  (cost=3970 rows=2000)        -- 外層的 order_count > 10 被推進 derived table 裡過濾
+                    -> Group aggregate: count(0)  (cost=3970 rows=2000)
+                        -> Covering index scan on orders using idx_cust_id  (cost=1997 rows=19731)
+    -> Index lookup on o using idx_cust_id (customer_id=counts.customer_id)  (cost=2.47 rows=9.87)  -- 外層每個 customer_id 走 index 回 orders
 ```
 
-修法：
+改寫成 CTE 得到同一份計畫，差別只在 materialize 節點的名稱變成 `Materialize CTE counts`：
 
 ```sql
--- 顯式用 CTE + 改寫
 WITH counts AS (
     SELECT customer_id, COUNT(*) AS order_count
     FROM orders GROUP BY customer_id
@@ -154,7 +153,7 @@ JOIN counts ON o.customer_id = counts.customer_id
 WHERE counts.order_count > 10;
 ```
 
-但記得 MySQL CTE 也不 materialize 預設、可能要 *temporary table* 才強制 cache：
+這段查詢慢的時候，要看的是 materialize 本身的成本（derived table 掃了多少列）與外層 join 走不走 index，而不是 derived table 有沒有被 materialize。改用 temporary table 做的是同一個 materialize 動作，差別在暫存表由 application 建立與清除，可以在多段查詢之間重用：
 
 ```sql
 CREATE TEMPORARY TABLE counts AS
@@ -164,7 +163,7 @@ WHERE counts.order_count > 10;
 DROP TEMPORARY TABLE counts;
 ```
 
-### Case 5：10 秒 → 100ms — Optimizer 選 index 不對
+### 10 秒 → 100ms：Optimizer 選 index 不對
 
 ```sql
 SELECT * FROM users WHERE age > 30 AND active = 1;
@@ -201,7 +200,7 @@ Composite index 是最持久解（不依賴 hint）。Index hint 是 quick fix�
 
 ## EXPLAIN 三層工具
 
-### Tool 1：EXPLAIN — query plan preview
+### EXPLAIN：query plan preview
 
 ```sql
 EXPLAIN SELECT ...;
@@ -216,7 +215,7 @@ EXPLAIN SELECT ...;
 - `rows`：估計 scan row 數
 - `Extra`：`Using filesort` / `Using temporary` / `Using index condition` 等行為標記
 
-### Tool 2：EXPLAIN ANALYZE — 實際執行統計
+### EXPLAIN ANALYZE：實際執行統計
 
 8.0+ 加的。差別：實際 run query、回實際 row count / time、跟 estimate 對比。
 
@@ -234,7 +233,7 @@ EXPLAIN ANALYZE SELECT ...;
 
 關鍵：對比 `cost / rows`（estimate） vs `actual time / rows`。如果 estimate=100K / actual=10M、optimizer 嚴重低估、可能選錯 plan。
 
-### Tool 3：Optimizer Trace — 看 optimizer 為何選這個 plan
+### Optimizer Trace：看 optimizer 為何選這個 plan
 
 ```sql
 SET optimizer_trace='enabled=on';
@@ -287,7 +286,7 @@ SELECT /*+ NO_INDEX_MERGE(table) */ ... FROM table WHERE ...;
 
 ## 5 個 Production 踩雷
 
-### 1. Statistics 過時 — optimizer 估錯 row count
+### Statistics 過時：optimizer 估錯 row count
 
 `information_schema.STATISTICS` 紀錄每個 index 的 cardinality。如果 *過 1 個月沒 ANALYZE*、statistics 跟實際資料 distribution 嚴重偏差、optimizer 估計錯。
 
@@ -295,9 +294,9 @@ SELECT /*+ NO_INDEX_MERGE(table) */ ... FROM table WHERE ...;
 
 - 定期跑 `ANALYZE TABLE`（大表改 nightly cron）
 - 8.0+ `innodb_stats_auto_recalc=ON` 預設、但變更超過 10% row 才觸發
-- 設 `innodb_stats_persistent=ON`（預設、把 statistics 存 disk）+ `innodb_stats_persistent_sample_pages=20`（提高 sample 精度）
+- `innodb_stats_persistent=ON`（預設、把 statistics 存 disk）；要提高 sample 精度就把 `innodb_stats_persistent_sample_pages` 調到預設值 20 以上，代價是 `ANALYZE TABLE` 讀的 page 變多、跑得較久
 
-### 2. Forced index 用錯 — Hint 比沒 hint 還慢
+### Forced index 用錯：hint 比沒 hint 還慢
 
 `FORCE INDEX (idx)` 強制 optimizer 用、但 *idx 不是最佳* 時、query 變慢。常見：開發 staging 試出 `FORCE INDEX` 有效、production 資料 distribution 不同、forced index 反而慢。
 
@@ -307,21 +306,31 @@ SELECT /*+ NO_INDEX_MERGE(table) */ ... FROM table WHERE ...;
 - 不依賴 hint、用 composite index / 重寫 query 達到目的
 - 已用 hint 的 query 進 *staging review 機制*、確認 plan 仍合理
 
-### 3. Hash join 沒觸發 — Equality 是 expression
+### Join 條件是 expression：optimizer 選 nested loop 是因為另一側有 index
 
 ```sql
 SELECT ... FROM a JOIN b ON a.id = b.parent_id + 1;
 ```
 
-`b.parent_id + 1` 是 expression、不是 raw column、optimizer 不選 hash join、用 nested loop。
+條件的一側是 expression（`b.parent_id + 1`）不妨礙 hash join。optimizer 選 nested loop 的原因在 `a.id` 上有 index：對 b 的每一列算出 `b.parent_id + 1`，再到 a 的 PRIMARY 上做單列 lookup。同樣的條件換成一張 `id` 沒有 index 的表，計畫就變成 hash join。MySQL 8.4 實測（兩表各約兩萬列）：
 
-修法：
+```text
+-- a.id 是 PRIMARY KEY：nested loop，每列一次 PRIMARY lookup
+-> Nested loop inner join  (cost=8287 rows=18362)
+    -> Table scan on b  (cost=1860 rows=18362)
+    -> Filter: (a.id = (b.parent_id + 1))  (cost=0.25 rows=1)
+        -> Single-row covering index lookup on a using PRIMARY (id=(b.parent_id + 1))  (cost=0.25 rows=1)
 
-- Schema 改：把 `parent_id + 1` 變成 *generated column*
-- Query 改：JOIN 之前 *預計算 expression* 存 temp table
-- 或 `/*+ HASH_JOIN(a b) */` 顯式（但 plan 仍可能拒絕）
+-- a2.id 沒有 index：同一個 expression 條件走 hash join
+-> Inner hash join (a2.id = (b.parent_id + 1))  (cost=37.4e+6 rows=37.4e+6)
+    -> Table scan on a2  (cost=0.0129 rows=20385)
+    -> Hash
+        -> Table scan on b  (cost=1860 rows=18362)
+```
 
-### 4. Range scan 退化 ALL — Cardinality 估計太低
+有 index 的那一份計畫通常就是這段 join 該有的計畫，加 `/*+ HASH_JOIN(a b) */` 也不會改變它（實測計畫相同）。要檢查的是 b 那一側的 table scan 能不能靠 b 上的 WHERE 條件與 index 縮小。
+
+### 大 IN 清單讓 range scan 退化 ALL：cardinality 估計失準
 
 ```sql
 SELECT ... FROM t WHERE col IN (1, 2, 3, ..., 1000);
@@ -339,12 +348,12 @@ SELECT ... FROM t WHERE col IN (1, 2, 3, ..., 1000);
     SELECT t.* FROM t JOIN in_values iv ON t.col = iv.val;
     ```
 
-- 或 `optimizer_switch='index_merge=on'`（multi-value IN 可能走 index merge）
+- `IN` 清單的值數達到 `eq_range_index_dive_limit`（預設 200）時，optimizer 不再逐值對 index 做 dive，改用 index statistics 估算列數；估算失準時可以調高這個上限，或先跑 `ANALYZE TABLE` 更新 statistics
 - 或大 `IN` 改 application 層拆批 query
 
-### 5. Derived table materialization off — 重複 scan
+### Derived table 被 merge 之後計畫變差
 
-`optimizer_switch='derived_merge=on'`（預設 ON、derived table 自動 inline merge）某些 query 反而慢（merge 後 plan 變複雜）。或 *反向問題*：derived table *沒* materialize、每次都 re-run。
+`optimizer_switch='derived_merge=on'`（預設 ON、可以 merge 的 derived table 自動 inline 進外層查詢）某些 query 反而慢（merge 後外層的 join 順序與條件組合變複雜，plan 變差）。這時要讓那個 derived table 改回 materialize、只算一次。
 
 修法：
 
@@ -383,11 +392,11 @@ ProxySQL query rule 不影響 optimizer plan、但可以 *rewrite query*（rule 
 
 ### 跟 Lock Contention
 
-Slow query 持有 lock 久、其他 query wait、整個 cluster lock contention 爆。Query optimization 不只是 latency 問題、也是 *lock 影響範圍* 問題。詳見 *Lock Contention deep dive* 篇（待寫）。
+Slow query 持有 lock 久、其他 query wait、整個 cluster lock contention 爆。Query optimization 不只是 latency 問題、也是 *lock 影響範圍* 問題。lock 怎麼被持有、deadlock 怎麼判讀，見 [MySQL Lock Contention](/backend/01-database/vendors/mysql/lock-contention/)。
 
 ### 跟 Partitioning
 
-Partition pruning 是 optimizer 決定的、`EXPLAIN PARTITIONS` 看 partition 命中。partition + index 組合可能比 single big table + index 慢（cross-partition query overhead）。詳見 *Partitioning* 篇（待寫）。
+Partition pruning 是 optimizer 決定的，`EXPLAIN` 輸出的 `partitions` 欄列出查詢命中的 partition（`EXPLAIN PARTITIONS` 這個寫法在 8.0 已移除，8.4 執行會回語法錯誤）。partition + index 組合可能比 single big table + index 慢（cross-partition query overhead）。partition 怎麼切、pruning 什麼時候失效，見 [MySQL Partitioning](/backend/01-database/vendors/mysql/partitioning/)。
 
 ## 觀測 metric
 

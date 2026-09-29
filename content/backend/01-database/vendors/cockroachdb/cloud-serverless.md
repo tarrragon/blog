@@ -6,7 +6,7 @@ weight: 80
 tags: ["backend", "database", "cockroachdb", "distributed-sql", "serverless", "cockroach-cloud", "deep-article"]
 ---
 
-> 本文是 [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/) 的 implementation-layer deep article。寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。本文聚焦 *Cockroach Cloud serverless 與 dedicated 的取捨判讀、RU 計費結構、冷啟動 / scale 行為、何時用 serverless*。Self-managed 規模化的運維責任（Netflix Platform Team 養 380+ cluster）跟賽季型擴縮（Hard Rock 100 ↔ 33 node）作為 *對照軸* 引用、不重展 self-host 運維細節。
+> 本文整理 Cockroach Cloud 的 serverless 與 dedicated 兩種 managed 形態怎麼選：RU 計費結構、scale-to-zero 與冷啟動、何時用 serverless。Self-managed 的運維責任（Netflix Platform Team 養 380+ cluster）與賽季型擴縮（Hard Rock 100 ↔ 33 node）只作為對照引用，不展開 self-host 的運維細節。
 
 ---
 
@@ -67,29 +67,29 @@ scale-to-zero 的代價是冷啟動 — 從近零狀態接到請求時，要先�
 
 ## 操作流程：選型判讀、配置、用量驗證
 
-### 第一步：用流量形狀做 serverless / dedicated 初判
+### 用流量形狀做 serverless / dedicated 初判
 
 選型的判讀軸是 workload 的 *流量形狀*，不是規模大小。
 
 - 流量突發 + 長閒置（dev / test、低流量產品、不可預測早期 workload）→ serverless 的 scale-to-zero 與按用量計費直接受益。
 - 流量穩定 + 可預測 + 需要性能可預測 → dedicated 的固定容量與可預算成本更合適。
-- 流量大 + 有專屬 Platform Team + 需要跨雲 / on-prem / 特定部署位置（如 Hard Rock 的合規 Outposts）→ 兩種 managed 都不對，走 self-managed（見 vendor overview 的容量規劃段）。
+- 流量大 + 有專屬 Platform Team + 需要跨雲 / on-prem / 特定部署位置（如 Hard Rock 的合規 Outposts）→ serverless 與 dedicated 都不對，走 self-managed。
 
 判讀訊號：把過去一段時間的 QPS 畫成時間序列，看「活躍時段佔比」與「峰谷比」。活躍佔比低、峰谷比高 → serverless;活躍佔比高、波動平緩 → dedicated。
 
-### 第二步：serverless 建立 cluster 並設成本上限
+### serverless 建立 cluster 並設成本上限
 
 serverless 的成本風險來自用量浮動，所以建立後第一件事是設 *消費上限*，把「用量暴衝 = 帳單暴衝」的尾部風險封住。
 
 驗證點：cluster 建立後，確認消費上限已設、且設了接近上限的告警閾值（例如達上限 80% 告警）。沒設上限的 serverless cluster 等於把成本曝險完全交給 workload 行為。
 
-### 第三步：驗證 RU 消耗與預期一致
+### 驗證 RU 消耗與預期一致
 
-上線後監控 RU 消耗速率，對照第一步的流量形狀預估。
+上線後監控 RU 消耗速率，對照選型初判時做的流量形狀預估。
 
 驗證點：RU 消耗速率若遠高於預估，通常是某類 query 的資源消耗被低估（全表掃描、缺索引、N+1 查詢）。這時要回到 query 層優化，而非直接加預算 — serverless 的計費把「低效 query」直接翻譯成「高帳單」，是一個比 dedicated 更直接的成本訊號。
 
-### 第四步：評估冷啟動對 production 路徑的影響
+### 評估冷啟動對 production 路徑的影響
 
 若 serverless cluster 服務面向用戶的 production 路徑，驗證閒置後第一個請求的延遲是否在 SLO 內。
 
@@ -97,16 +97,16 @@ serverless 的成本風險來自用量浮動，所以建立後第一件事是設
 
 ## 失敗模式：成本失控與選型誤判
 
-### RU 用量暴衝、帳單失控（高代價情境的回退敘事）
+### RU 用量暴衝、帳單失控
 
 serverless 最常見的事故是 *帳單暴衝* — 一波非預期流量、一個低效查詢上線、一次爬蟲，把 RU 消耗推到遠超預算。跟 dedicated「成本上限 = provisioned 容量」不同，serverless 的成本上限要靠人為設定，沒設就沒有天花板。
 
-這個情境的回退代價特殊之處在於 *成本已經發生*：rebalance 可以暫停、locality 可以改回，但已計的 RU 帳單不會退回。所以 serverless 成本失控的「回退」重點在 *事前封頂* 與 *事中熔斷*，而非事後補救。
+帳單暴衝的回退代價特殊之處在於 *成本已經發生*：失控的查詢與流量在發現之後可以止住，已經計入帳單的 RU 不會退回。所以 serverless 成本失控的「回退」重點在 *事前封頂* 與 *事中熔斷*，而非事後補救。
 
 回退與防護要素：
 
 - 事前一定設消費上限與分級告警（接近上限前就要收到訊號），把尾部風險封在可承受範圍。
-- 事中發現 RU 暴衝，先定位來源 — 是流量真的漲（業務事件），還是某個 query 模式失控（缺索引、全表掃描、無 LIMIT）。前者考慮是否該轉 dedicated，後者回 query 層修。
+- 事中發現 RU 暴衝，先定位來源 — 是流量真的漲（業務事件），還是某個 query 模式失控（缺索引、全表掃描、無 LIMIT）。流量真的漲，考慮是否該轉 dedicated；query 模式失控，回 query 層修。
 - 設「RU 消耗速率超過閾值就告警 + 自動限流」的 tripwire，避免單一失控 query 在無人值守時段燒完整月預算。
 - 若 workload 已穩定成長到「serverless 浮動成本 > dedicated 固定成本」的交叉點，規劃轉 dedicated。
 
@@ -114,7 +114,7 @@ serverless 最常見的事故是 *帳單暴衝* — 一波非預期流量、一�
 
 當 workload 從「突發長尾」成長為「穩定高量」，serverless 的按用量成本會超過 dedicated 的固定成本，此時要遷移。這個遷移不是改個開關 — serverless 與 dedicated 是不同的 cluster 形態，遷移意味著資料搬遷與 cutover，要走 backup / restore 或資料複製流程，並承擔 cutover 窗口。
 
-回退敘事：把 serverless → dedicated 當成一次小型 migration 規劃 — 估資料量與遷移窗口、雙寫或 backup/restore 路徑、cutover 條件與回退條件，而非「線上無痛切換」。提早在用量逼近成本交叉點時規劃，避免在帳單已經失控時倉促遷移。
+回退規劃：把 serverless → dedicated 當成一次小型 migration 規劃 — 估資料量與遷移窗口、雙寫或 backup/restore 路徑、cutover 條件與回退條件，而非「線上無痛切換」。提早在用量逼近成本交叉點時規劃，避免在帳單已經失控時倉促遷移。
 
 Anti-recommendation：不要因為「serverless 聽起來更現代」就把已知穩定、可預測、高流量的 production workload 開在 serverless。這類 workload 的可預算性與性能可預測性，dedicated 給得更直接，serverless 反而引入成本浮動與冷啟動兩個非必要風險。
 
@@ -143,7 +143,7 @@ scale-to-zero 的 serverless cluster 服務面向用戶 production，閒置後�
 
 - serverless 月成本 ≈ Σ(各 query RU × 頻率)，所以成本優化等於 query 效率優化 — 缺索引、全表掃描在 serverless 直接體現為帳單。
 - serverless / dedicated 成本交叉點 ≈ 「serverless 浮動成本」與「dedicated 固定容量成本」相等的用量水準，逼近交叉點是規劃遷移的訊號。
-- dedicated 的容量規劃回到節點數 × replica × latency budget（見 vendor overview 容量規劃段）。
+- dedicated 的容量規劃回到節點數 × replica × latency budget：Raft quorum 至少要 3 個節點，multi-region 部署常見 9 個以上（3 個 region、每個 region 3 個節點）。
 
 > **Scope warning**：RU 換算係數、免費額度、serverless 的規模 / region / 一致性上限、serverless ↔ dedicated 成本交叉點的具體用量水準，均為 Cockroach Cloud 計費與規格、隨方案版本變動，非 case 揭露數字，成本建模前以 [Cockroach Cloud 文件](https://www.cockroachlabs.com/docs/cockroachcloud/) cross-verify。
 
@@ -154,15 +154,15 @@ scale-to-zero 的 serverless cluster 服務面向用戶 production，閒置後�
 
 ## 邊界與整合
 
-### Sibling deep articles
+### 同 vendor 的其他文章
 
-- [survival goals](../survival-goals/)：managed 形態下 survival goal 仍是團隊決策 — serverless / dedicated 都要對齊業務 RTO / RPO，存活機制以該文為 SSoT。
+- [survival goals](../survival-goals/)：managed 形態下 survival goal 仍是團隊決策 — serverless / dedicated 都要對齊業務 RTO / RPO，存活機制見該文。
 - [multi-region table config](../multi-region-table-config/)：serverless 與 dedicated 對 multi-region table locality 的支援邊界不同，跨 region 強一致需求要先確認所選 managed 形態是否覆蓋。
-- [aurora-dsql-spanner-decision-tree](../aurora-dsql-spanner-decision-tree/)：Aurora DSQL 本身是 serverless distributed SQL，三家 managed distributed SQL 的選型對比以該文為 SSoT，本文不重展。
+- [aurora-dsql-spanner-decision-tree](../aurora-dsql-spanner-decision-tree/)：Aurora DSQL 本身是 serverless distributed SQL，三家 managed distributed SQL 的選型對比見該文。
 
 ### 跟 Aurora DSQL / Spanner serverless 對照
 
-Aurora DSQL（AWS）以 serverless 為核心形態、AWS-only；Spanner 提供 managed 但計費與 scale 模型不同。三家在 serverless / managed 維度的完整對比是 [aurora-dsql-spanner-decision-tree](../aurora-dsql-spanner-decision-tree/) 的 SSoT，本文只處理 Cockroach Cloud 自身的 serverless / dedicated 取捨。
+Aurora DSQL（AWS）以 serverless 為核心形態、AWS-only；Spanner 提供 managed 但計費與 scale 模型不同。三家在 serverless / managed 維度的完整對比見 [aurora-dsql-spanner-decision-tree](../aurora-dsql-spanner-decision-tree/)；本文只處理 Cockroach Cloud 自身的 serverless / dedicated 取捨。
 
 ### 跟 self-managed 對照
 
@@ -175,8 +175,8 @@ self-managed（如 Netflix 380+ cluster、Hard Rock 合規 Outposts）給最大�
 
 ### 何時不用本文
 
-- 已決定 self-managed（有 Platform Team 或需要 on-prem / 合規 Outposts）→ 看 vendor overview 容量規劃段與 self-host 運維，本文的 serverless / dedicated 取捨不適用。
-- single-region 小 workload 且 PostgreSQL 已夠用 → 先確認是否真需要 distributed SQL，見 vendor overview 不適用場景。
+- 已決定 self-managed（有 Platform Team 或需要 on-prem / 合規 Outposts）→ 本文的 serverless / dedicated 取捨不適用；self-managed 要承擔的運維責任（backup、upgrade、incident response、capacity review）見 [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)。
+- single-region 小 workload 且 PostgreSQL 已夠用 → 先確認是否真需要 distributed SQL：CockroachDB 每筆寫入都經過 Raft 複製、叢集至少要 3 個節點，single-instance PostgreSQL 沒有這兩項成本。
 
 ## 相關連結
 

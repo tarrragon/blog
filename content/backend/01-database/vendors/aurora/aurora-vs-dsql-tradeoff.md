@@ -6,7 +6,7 @@ weight: 34
 tags: ["backend", "database", "aurora", "aurora-dsql", "distributed-sql", "decision", "deep-article"]
 ---
 
-> 本文是 Aurora family 內的決策取捨文章。聚焦 *standard Aurora（Aurora PostgreSQL / MySQL，single-region managed SQL）* 跟 *Aurora DSQL（active-active distributed SQL）* 之間的升級門檻判斷。兩個既有 SSoT 不在本篇重複：「PG → DSQL 怎麼遷」見 [migrate-to-aurora-dsql](/backend/01-database/vendors/postgresql/migrate-to-aurora-dsql/)；「DSQL vs Spanner vs CockroachDB 三方 distributed SQL 選型」見 [aurora-dsql-spanner-decision-tree](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/)。本篇只回答「standard Aurora 夠不夠、要不要跨過去」。
+本篇回答 standard Aurora（Aurora PostgreSQL / MySQL，single-region managed SQL）什麼時候夠用、什麼條件下要跨到 Aurora DSQL（active-active distributed SQL）。決定跨過去之後怎麼從 PostgreSQL 遷到 DSQL，在 [migrate-to-aurora-dsql](/backend/01-database/vendors/postgresql/migrate-to-aurora-dsql/)；DSQL、Spanner 與 CockroachDB 之間怎麼選，在 [aurora-dsql-spanner-decision-tree](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/)。
 
 多數團隊不需要 Aurora DSQL。Aurora PostgreSQL / MySQL 已經是 managed SQL、storage / compute 分離、跨 AZ 高可用、read replica 擴讀——絕大多數 OLTP workload 在這層就解決了。Aurora DSQL 是 2024-12 re:Invent preview、2025-05 GA 的 *不同 paradigm* 產品：PG wire-compatible 但底層是 active-active distributed、OCC + snapshot isolation、multi-region strong consistency。它解的是 standard Aurora *解不了* 的特定問題，代價是 SQL 相容性縮成 PG 子集（多數 extension 缺位）、交易改成 OCC 而衝突要由 application retry。要不要跨過去，看 workload 是否真的撞到 standard Aurora 的結構上限。
 
@@ -53,19 +53,19 @@ standard Aurora 的 storage 層雖然分散，*compute 寫入仍是 single write
 
 從需求判讀到路徑選擇的流程：
 
-#### Step 1：確認是不是 global write 需求
+#### 確認是不是 global write 需求
 
-寫入是否真的需要多 region 同時低延遲？還是只需要多 region 讀 + 單 region 寫？後者 standard Aurora（+ Global Database 讀副本）就解。
+寫入是否真的需要多 region 同時低延遲？還是只需要多 region 讀 + 單 region 寫？只需要多 region 讀、寫入集中在單一 region 的，standard Aurora（+ Global Database 讀副本）就解。
 
-#### Step 2：確認 single-writer 是否真的撞牆
+#### 確認 single-writer 是否真的撞牆
 
 當前寫入量 vs 最大 instance class 上限、是否已嘗試過 read/write 分離、是否能用 application 層 sharding。撞牆才考慮 DSQL；沒撞牆是過早優化。
 
-#### Step 3：檢查相容性代價
+#### 檢查 DSQL 的相容性代價
 
 清點對 PG extension、長交易、特定 SQL 功能的依賴。依賴重 → DSQL 相容性子集會擋路、留 standard Aurora。
 
-#### Step 4：若決定跨，走既有 SSoT
+#### 決定跨過去之後：遷移與選型各有專篇
 
 - 「PG → DSQL 怎麼遷」（protocol drop-in + paradigm shift、transaction retry 處理、extension 缺位）→ [migrate-to-aurora-dsql](/backend/01-database/vendors/postgresql/migrate-to-aurora-dsql/)
 - 「DSQL vs Spanner vs CockroachDB 哪個 distributed SQL」→ [aurora-dsql-spanner-decision-tree](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/)
@@ -83,6 +83,6 @@ standard Aurora → DSQL 不是版本升級、是 paradigm 切換。Aurora PG/My
 - [storage-architecture](/backend/01-database/vendors/aurora/storage-architecture/) — standard Aurora 的 storage 分散但 compute single-writer 的結構上限根源
 - [global-database-multi-region](/backend/01-database/vendors/aurora/global-database-multi-region/) — standard Aurora 的多 region 方案（非同步副本）、global write 需求前先確認這層夠不夠
 - [migrate-to-aurora-dsql](/backend/01-database/vendors/postgresql/migrate-to-aurora-dsql/) — 決定跨之後的遷移 playbook（SSoT）
-- [aurora-dsql-spanner-decision-tree](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/) — 三方 distributed SQL 選型（SSoT）
+- [aurora-dsql-spanner-decision-tree](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/) — Aurora DSQL、Spanner 與 CockroachDB 之間的 distributed SQL 選型
 - 替代路由：single-region 夠 → 留 standard Aurora；KV access pattern → [DynamoDB](/backend/01-database/vendors/dynamodb/)
 - 跟 [Standard Chartered 9.C14](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) / [DraftKings 9.C4](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 互引：高一致 OLTP 在 standard Aurora 已足夠的訊號

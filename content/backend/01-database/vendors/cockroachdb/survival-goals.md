@@ -6,7 +6,7 @@ weight: 40
 tags: ["backend", "database", "cockroachdb", "distributed-sql", "survival-goals", "rto", "rpo", "deep-article"]
 ---
 
-> 本文是 [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/) 的 implementation-layer deep article。Overview 已界定 CockroachDB 的 multi-region 能力、本文聚焦 *survival goal 配置怎麼從業務 SLO 倒推、怎麼避開「cross-region = 更快」的動機誤判*。Raft replica 分佈機制屬前置、見 [HLC + Raft consensus](../hlc-raft-consensus/)。
+> 本文整理 CockroachDB 的 survival goal 怎麼從業務 SLO 倒推、以及為什麼跨 region 配置換到的是 region 失效時不停服而不是更低的延遲。Raft replica 的分佈機制是前置知識，見 [HLC + Raft consensus](../hlc-raft-consensus/)。
 
 ---
 
@@ -14,13 +14,13 @@ tags: ["backend", "database", "cockroachdb", "distributed-sql", "survival-goals"
 
 multi-region CockroachDB cluster 上線時、團隊最常踩的兩個錯誤期待：
 
-- *「default 配置應該就好、上線後再說」*：default 是 `SURVIVE ZONE FAILURE`、一旦遇到 region failure 整 cluster 變 read-only、客訴湧入才發現要重新配
+- *「default 配置應該就好、上線後再說」*：default 是 `SURVIVE ZONE FAILURE`，voting replica 全部放在 database 的 primary region，primary region 一失效、這個 database 的寫入就停擺，客訴湧入才發現要重新配
 - *「跨 region 應該會讓全球用戶都更快」*：跨 region quorum 物理上必然 *增* 寫入 latency、把 multi-region 動機誤判成 latency 優化會在 production 撞牆
 
 讀者進來最常問：
 
 - `SURVIVE ZONE FAILURE` 跟 `SURVIVE REGION FAILURE` 差在哪？
-- 為什麼 region survival 寫入 latency 是 zone survival 的 3 倍？
+- 為什麼 region survival 的寫入 latency 比 zone survival 高？
 - Default 配置是什麼、上線前該不該改？
 
 要回答這三題、必須先把 survival goal 跟業務 SLO 的對應關係講清楚。
@@ -29,13 +29,13 @@ multi-region CockroachDB cluster 上線時、團隊最常踩的兩個錯誤期�
 
 [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 則提供反直覺判讀：60+ multi-region cluster 主要動機是 *region failure 0 downtime*、不是降 latency。Gaming cluster 48-node 跨 4 region 就是為了「region failover 不停服」、不是讓玩家延遲變低。
 
-對照 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 走另一條路：銀行受監管市場資料 *不能跨境*、不可用 region survival、必須拆每市場獨立 Aurora cluster + zone survival。這個 anti-recommendation 提醒「survival goal 不是越強越好、合規邊界優先於技術 HA 配置」。
+對照 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 走另一條路：銀行受監管市場資料 *不能跨境*、不可用 region survival、必須拆每市場獨立 Aurora cluster + 多 AZ 部署。這個 anti-recommendation 提醒「survival goal 不是越強越好、合規邊界優先於技術 HA 配置」。
 
 ## 核心機制：兩種 survival goal + replica placement
 
 ### 兩種宣告式配置
 
-CockroachDB 把 HA 配置抽象成兩個 database-level（或 table-level）宣告：
+CockroachDB 把 HA 配置抽象成兩個 database-level 宣告：
 
 - **`SURVIVE ZONE FAILURE`**（default）：失去 1 個 AZ 仍能寫入。replica 跨 AZ 分佈、但可能集中在同一個 region 內。對應 RTO ~ 數秒（Raft + [Leaseholder](/backend/knowledge-cards/leaseholder/) 自動 failover）、RPO = 0（已 commit 資料不丟）
 - **`SURVIVE REGION FAILURE`**：失去 1 個整個 region 仍能寫入。voting replica 強制跨 region、需要至少 3 個 region。對應 RTO ~ 數秒、RPO = 0、但寫入 latency 因跨 region quorum 結構性增加
@@ -49,16 +49,13 @@ region survival 模式下、CockroachDB 區分兩種 replica：
 - **Voting replica**：參與 Raft majority 決策、commit 必須等 voting majority ack。region survival 下 voting replica 強制跨 region — 這就是 [Cross-Region Quorum](/backend/knowledge-cards/cross-region-quorum/) 拓樸、commit latency 受跨洲 RTT 物理硬限主導
 - **Non-voting replica**：只用來 serve [Follower Read](/backend/knowledge-cards/follower-read/)、不參與 Raft commit。可以放在「不想列入 quorum 但希望本地 read 快」的 region
 
-實務影響：region survival 下、跨 3 region 配置最少 3 voting replica（每 region 1 個）、寫入要等其中 2 個 region 的 ack。若想讓第 4 個 region 也能本地 read、可以加 non-voting replica、不影響 commit latency 但增加 storage cost。
+實務影響：region survival 下、CockroachDB 為每個 range 放 5 個 voting replica，其中 2 個在 primary region、其餘分到其他 region（每個 region 至少 1 個）。majority 是 3，所以寫入要等 primary region 的 2 個 replica 加上另一個 region 至少 1 個 replica 的 ack，也就是至少一次到最近 region 的 round trip。若想讓第 4 個 region 也能本地 read、可以加 non-voting replica、不影響 commit latency 但增加 storage cost。
 
 ### 配置語法
 
 ```sql
--- Database-level
+-- survival goal 只能設在 database 上，table 沒有自己的 survival goal
 ALTER DATABASE mydb SURVIVE REGION FAILURE;
-
--- Table-level（覆蓋 database 設定）
-ALTER TABLE orders SURVIVE ZONE FAILURE;
 
 -- 驗證
 SHOW SURVIVAL GOAL FROM DATABASE mydb;
@@ -67,13 +64,13 @@ SHOW ZONE CONFIGURATION FOR DATABASE mydb;
 
 對應 [quorum 卡](/backend/knowledge-cards/quorum/)、[rto 卡](/backend/knowledge-cards/rto/)、[rpo 卡](/backend/knowledge-cards/rpo/)、[blast radius 卡](/backend/knowledge-cards/blast-radius/) 的具體機制實現。
 
-### 為什麼選 region survival 是業務動機判讀、不是技術 fact（F4.8）
+### 為什麼選 region survival 是業務動機判讀、不是技術 fact
 
-Netflix 60+ multi-region cluster 揭露的反直覺結論：*主要動機是 region failure 0 downtime、不是降 latency*。跨 region quorum 物理上必然增 latency — 跨洲 round trip 物理 ~70-80ms、Raft majority 需要 2 個 region ack、寫入 p99 因此被光速下界限制。
+Netflix 60+ multi-region cluster 揭露的反直覺結論：*主要動機是 region failure 0 downtime、不是降 latency*。跨 region quorum 物理上必然增 latency — 跨洲 round trip 物理 ~70-80ms、Raft majority 要等 primary region 以外至少一個 region 的 ack、寫入 p99 因此被光速下界限制。
 
 Gaming cluster 48-node 跨 4 region 就是為了「region failover 不停服」、不是讓玩家延遲變低。**Scope warning**：case 沒揭露 Gaming cluster 具體 p99 數字、只揭露「48-node、跨 4 region、region failure 不停服」這個拓樸 fact 跟業務動機釐清。
 
-引用時若提到「region survival 怎麼提升用戶體驗」、要 *釐清成 survival、不是 latency 優化*。讓讀者誤把跨 region 當成 latency 解法、是這條決策最常見的源頭錯誤。
+region survival 對用戶體驗的貢獻是 region 失效時服務不中斷，不是延遲變低；把跨 region 配置當成降低延遲的手段，是選 survival goal 時最常見的錯誤起點。
 
 ## 操作流程：從業務 SLO 倒推 survival goal
 
@@ -96,7 +93,7 @@ cockroach start --locality=region=us-west2,zone=us-west2-a ...
 cockroach start --locality=region=eu-west1,zone=eu-west1-a ...
 ```
 
-### 從業務 SLO 倒推（9.C41 Hard Rock 揭露、F4.11）
+### 從業務 SLO 倒推（9.C41 Hard Rock）
 
 Hard Rock Digital sportsbook 揭露的 5 步倒推流程：
 
@@ -129,22 +126,24 @@ zone survival → region survival 是 *非破壞性* 配置變更、Raft 自動 
 
 ```sql
 -- 看 range 數量變化跟 rebalance queue
+-- crdb_internal 在 v26.3 預設禁止查詢，要先開這個 session 變數（官方標示為不支援的內部介面）
+SET allow_unsafe_internals = true;
 SELECT range_count, used FROM crdb_internal.kv_store_status;
 
 -- CockroachDB Console「Rebalance queue size」應該歸零
 ```
 
-Rollback：survival goal 可即時降級（region → zone）、replica 自動 rebalance、無不可逆動作。但 application 端如果已經依賴 region failover 0 downtime、降級回 zone survival 後 region failure 會讓 cluster 變 read-only — 配置 rollback 容易、業務 SLO rollback 不容易。
+Rollback：survival goal 可即時降級（region → zone）、replica 自動 rebalance、無不可逆動作。但 application 端如果已經依賴 region failover 0 downtime、降級回 zone survival 後 voting replica 回到只在 primary region，primary region 失效時這個 database 的寫入會停擺 — 配置 rollback 容易、業務 SLO rollback 不容易。
 
-## 失敗模式：5 種典型錯配
+## 失敗模式：survival goal 跟 region 數、成本、locality 與合規的錯配
 
 ### Default zone survival 期待 region survival
 
-最常見：上線後一個 region 掛、cluster 變 read-only、客訴。要在 production 前 *明確選* survival goal、不依賴 default。
+最常見：上線後 primary region 掛、這個 database 的寫入停擺、客訴。要在 production 前 *明確選* survival goal、不依賴 default。
 
 ### Region survival 但只配 2 region
 
-Raft majority 需要 3 個獨立 fault domain。2 region 配置實際是 zone survival — 任一 region 失敗剩 1 region 拿不到 majority。要 region survival *至少* 3 region。
+Raft majority 需要 3 個獨立 fault domain：只有 2 個 region 時，任一 region 失敗，剩下那個 region 的 replica 拿不到 majority。CockroachDB 因此直接拒絕這個配置，database 只有 2 個 region 時 `ALTER DATABASE ... SURVIVE REGION FAILURE` 回錯誤 `at least 3 regions are required for surviving a region failure`。要 region survival *至少* 3 region。
 
 ### Cross-region cost 暴漲
 
@@ -162,7 +161,7 @@ production 前必須估：
 
 ### 合規邊界 violation
 
-受監管市場（金融 / 醫療 / 博彩）資料 *不能跨境*、但 region survival 強制 voting replica 跨 region — 這直接違反合規。對照 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 走的是「每市場獨立 Aurora cluster + zone survival」、不是 region survival。
+受監管市場（金融 / 醫療 / 博彩）資料 *不能跨境*、但 region survival 強制 voting replica 跨 region — 這直接違反合規。對照 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 走的是「每市場獨立 Aurora cluster + 多 AZ 部署」、不是 region survival。
 
 合規邊界判讀：
 
@@ -184,15 +183,15 @@ production 前必須估：
 
 - region survival 最小：region count × 3 nodes
 - replica factor 預設 3、storage 用量 × replication factor
-- cross-region traffic = write QPS × row size × (region count - 1)
+- cross-region traffic = write QPS × row size × primary region 以外的 replica 數（3 region 的 region survival 預設是 3）
 
 ### Write latency 預算（屬通用工程估算、case 未揭露具體 latency 數字）
 
-**Scope warning**：以下數字屬通用工程估算（跨 region 物理光速下界推導）、**Netflix / Hard Rock case 都沒揭露 zone / region survival 的 p99 latency 數字**。引用時必須明示來源層次：
+**Scope warning**：以下數字屬通用工程估算（跨 region 物理光速下界推導）、**Netflix / Hard Rock case 都沒揭露 zone / region survival 的 p99 latency 數字**：
 
 - zone survival single-region 寫入 p99 5-10ms（跨 AZ Raft round trip）
 - region survival 同洲跨 region p99 30-60ms（跨 region round trip × Raft majority）
-- region survival 跨洲 p99 100-150ms（跨洲光速下界 ~70-80ms × 2）
+- region survival 跨洲 p99 100-150ms（跨洲 round trip ~70-80ms 起跳）
 
 數字屬「合理的工程估算量級」、不是 case 揭露的 p99。讀者用這些做容量規劃時應該自己 benchmark、不要直接套。
 
@@ -214,7 +213,7 @@ sportsbook 業務年度循環：NFL / NBA 季初季末流量結構性差異 — 
 
 ## 邊界與整合
 
-### Sibling deep articles
+### 同 vendor 的其他文章
 
 - [HLC + Raft consensus](../hlc-raft-consensus/)：Raft 機制是 survival goal 的基礎
 - [locality-aware schema](../locality-aware-schema/)：locality + survival 一起決定 placement
@@ -226,7 +225,7 @@ sportsbook 業務年度循環：NFL / NBA 季初季末流量結構性差異 — 
 - Aurora Global Database：跨 region async replication、不是 sync — region failure 仍會丟 last seconds
 - CockroachDB region survival：sync majority、region failure RPO = 0
 
-Aurora 沒有 row-level locality 配置、跨 region 強一致要走 Aurora DSQL（AWS 2024 GA）。
+Aurora 沒有 row-level locality 配置、跨 region 強一致要走 Aurora DSQL（AWS 2024-12 re:Invent 發表 preview、2025-05-27 GA）。
 
 ### Aurora DSQL / Spanner 對比
 

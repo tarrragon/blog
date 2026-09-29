@@ -1,12 +1,12 @@
 ---
 title: "PostgreSQL Partition Redesign：當 monthly partition 越跑越慢"
 date: 2026-05-19
-description: "PostgreSQL partition redesign 是 Type F「topology re-layout」第 2 個 dogfood — 從 monthly partition 改 daily / 從 range 改 list / 從單軸改 sub-partition；6 維 audit 皆 Low + topology 軸 High；涵蓋 partition 不平衡偵測、ATTACH/DETACH 線上重劃、5 個 production 踩雷、跟 partition_pruning + autovacuum 整合"
+description: "PostgreSQL partition redesign 屬於 Type F「topology re-layout」：從 monthly partition 改 daily / 從 range 改 list / 從單軸改 sub-partition，diff dimension audit 裡只有 data topology 是 High；涵蓋 partition 不平衡偵測、建新 partition tree 搬資料再 rename swap 的線上重劃、backfill 卡 vacuum / dual-write latency / pruning 失效 / unique 範圍 / DROP 舊 partition 這些 production 踩雷、跟 partition_pruning + autovacuum 整合"
 weight: 44
 tags: ["backend", "database", "postgresql", "partition", "topology", "type-f", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。對應 [#127 Type F「Topology re-layout」](/report/content-structure-by-max-diff-dimension/) 第 2 個 dogfood（第 1 個是 [Redis cluster re-sharding](/backend/02-cache-redis/vendors/redis/cluster-resharding/)）— 驗證 Type F anatomy 在不同 vendor 上的通用性。
+> 本文的範圍是把既有的 monthly range partition 重劃成 daily partition：量化現有 partition、建新 partition tree 並搬資料、cutover，以及過程中的 production 故障與容量取捨。只改資料分布、其餘面向不變的變更在 [diff dimension audit](/report/content-structure-by-max-diff-dimension/) 裡屬於 Type F「Topology re-layout」，[Redis cluster re-sharding](/backend/02-cache-redis/vendors/redis/cluster-resharding/) 是同一類在另一個 vendor 上的案例。
 
 ## 為什麼 monthly partition 越跑越慢
 
@@ -30,7 +30,7 @@ partition 設計需要 *redesign*、不是「optimize」 — 從 monthly range p
 | Application change | 不改（partition_pruning 透明）                   | Low      |
 | **Data topology**  | **Partition strategy 從 monthly → daily**        | **High** |
 
-6 維皆 Low + topology High = [Type F「Topology re-layout」](/report/content-structure-by-max-diff-dimension/)。
+Data topology 以外的維度都是 Low、只有 data topology 是 High，這個組合在 diff dimension audit 裡對應 [Type F「Topology re-layout」](/report/content-structure-by-max-diff-dimension/)。
 
 ## Pre-layout analysis：partition 不平衡偵測
 
@@ -53,7 +53,8 @@ ORDER BY pg_relation_size(child.oid) DESC;
 EXPLAIN (ANALYZE, BUFFERS)
 SELECT count(*) FROM events
 WHERE event_time BETWEEN '2026-05-01' AND '2026-05-15';
--- 期望: 只 scan 1 partition (target: daily) 或 1 partition (current: monthly)
+-- monthly 設計：pruning 後只剩 events_2026_05 一個 partition，但要掃完整個月份的資料
+-- daily 設計：pruning 後剩 05-01 到 05-15 共 15 個 partition，掃的資料量是半個月
 -- 觀察: monthly 設計下、即使 query 只跨 15 天、planner 仍 scan 整月 partition (~500GB)
 
 -- 3. 找 partition imbalance
@@ -68,12 +69,12 @@ ORDER BY 2 DESC;
 
 Pre-layout 階段的 output：
 
-- **當前 topology 量化**：36 monthly partition、總 size 1.8TB、最大 partition 500GB、最小 50GB
+- **當前 topology 量化**：上線 18 個月、18 個 monthly partition，最大 partition 500GB、最小 50GB
 - **Hot key 分佈**：80% 流量集中最近 3 個月
-- **Redesign 目標**：daily partition、最近 3 個月 hot daily / 3 個月 + 之前 cold weekly / 1 年 + 之前 monthly（sub-partition strategy）
+- **Redesign 目標**：daily partition、最近 3 個月 hot daily / 3 個月 + 之前 cold weekly / 1 年 + 之前 monthly（混合粒度：同一個 partition tree 裡的 range 寬窄不同）
 - **Migration scope**：1095 個 partition 不直接全建、按 retention policy 階段性
 
-## Re-layout 機制：ATTACH / DETACH 線上重劃
+## Re-layout 機制：建新 partition tree、搬資料、rename swap
 
 PostgreSQL 不支援「直接改 partition strategy」、必須走 *新 partition tree + 資料搬遷*：
 
@@ -85,13 +86,15 @@ CREATE TABLE events_daily (
   payload jsonb
 ) PARTITION BY RANGE (event_time);
 
--- 2. 預建未來 90 天 daily partition
+-- 2. 從要保留的最早一天（這裡用 2026-05-01）建到未來 90 天的 daily partition
+--    SELECT 只產生 CREATE TABLE 字串；結尾的 \gexec 讓 psql 把每一列當成一條指令執行
 SELECT
   format(
     'CREATE TABLE events_daily_%s PARTITION OF events_daily FOR VALUES FROM (%L) TO (%L)',
     to_char(d, 'YYYY_MM_DD'), d, d + interval '1 day'
   )
-FROM generate_series(current_date, current_date + interval '90 days', interval '1 day') AS d;
+FROM generate_series(DATE '2026-05-01', current_date + interval '90 days', interval '1 day') AS d
+\gexec
 
 -- 3. dual-write phase: application 同寫 events + events_daily
 -- (用 trigger 或 application-side)
@@ -128,19 +131,19 @@ COMMIT;
 
 5 段、每段含 rollback boundary：
 
-| Step             | 動作                                                           | Rollback boundary                                      |
-| ---------------- | -------------------------------------------------------------- | ------------------------------------------------------ |
-| 1 預建 partition | 建 events_daily + 90 天 partition、不影響 production           | DROP events_daily、無 impact                           |
-| 2 Dual-write     | 加 trigger 同寫兩端、observe diff                              | DROP trigger、events_daily 留作 cleanup                |
-| 3 Backfill       | 逐日 backfill 歷史資料、用 CHECK constraint 確保完整性         | DROP backfilled partition、不影響 source events        |
-| 4 Verify         | 對 sample query 跑 events vs events_daily、確認 row count 一致 | 仍在 dual-write、發現 diff 可暫停 cutover              |
-| 5 Cutover        | Rename swap                                                    | **不可逆**、回退需 reverse rename + dual-write restart |
+| Step             | 動作                                                                    | Rollback boundary                                      |
+| ---------------- | ----------------------------------------------------------------------- | ------------------------------------------------------ |
+| 1 預建 partition | 建 events_daily + 最早保留日到未來 90 天的 partition、不影響 production | DROP events_daily、無 impact                           |
+| 2 Dual-write     | 加 trigger 同寫兩端、observe diff                                       | DROP trigger、events_daily 留作 cleanup                |
+| 3 Backfill       | 逐日 backfill 歷史資料、用 CHECK constraint 確保完整性                  | DROP backfilled partition、不影響 source events        |
+| 4 Verify         | 對 sample query 跑 events vs events_daily、確認 row count 一致          | 仍在 dual-write、發現 diff 可暫停 cutover              |
+| 5 Cutover        | Rename swap                                                             | **不可逆**、回退需 reverse rename + dual-write restart |
 
-Step 5 是不可逆邊界、應該排在 *低流量 maintenance window* 跑、且 cutover 前必須有 backup checkpoint。
+Cutover 是不可逆邊界、應該排在 *低流量 maintenance window* 跑、且 cutover 前必須有 backup checkpoint。
 
 ## Production 故障演練
 
-### Case 1：Backfill 期間 long transaction 阻塞 vacuum
+### Backfill 期間 long transaction 阻塞 vacuum
 
 **徵兆**：backfill 跑 6 小時的 `INSERT INTO events_daily SELECT * FROM events WHERE ...`、期間 events 表的 autovacuum 完全不跑、dead tuple 累積、production query 變慢。
 
@@ -149,10 +152,10 @@ Step 5 是不可逆邊界、應該排在 *低流量 maintenance window* 跑、�
 **修法**：
 
 1. **拆 batch INSERT**：每日 backfill 拆成 small batch（10 萬 row 一個 transaction）、每個 commit 釋放 xmin
-2. **用 COPY 不用 INSERT**：`COPY events_daily FROM (SELECT * FROM events WHERE ...)` 是 PG 對 batch 最快 + 對 vacuum 影響小
+2. **用 COPY 搬資料**：`COPY` 沒有 `FROM (SELECT ...)` 的寫法，要把兩條 COPY 用管線串起來：`psql -c "COPY (SELECT * FROM events WHERE ...) TO STDOUT" | psql -c 'COPY events_daily FROM STDIN'`。每條 COPY 仍是一個 transaction，範圍一樣要切小，才不會變成另一個 long transaction
 3. **Backfill 跑在 standby**：用 logical replication 從 standby 拉資料、不在 primary 跑長 transaction
 
-### Case 2：Trigger dual-write 對 application 造成 latency
+### Trigger dual-write 對 application 造成 latency
 
 **徵兆**：加 trigger 後 application 寫入 latency p99 從 5ms 漲到 25-50ms；high-throughput batch job 直接 timeout。
 
@@ -164,7 +167,7 @@ Step 5 是不可逆邊界、應該排在 *低流量 maintenance window* 跑、�
 2. **用 logical replication slot**：events → events_daily 用 logical replication 取代 trigger、降 IO 衝擊
 3. **dual-write 時間最小化**：trigger 只在 backfill + verify 期間打開、cutover 前關掉
 
-### Case 3：Partition_pruning 沒命中、planner 仍掃所有 partition
+### Partition_pruning 沒命中、planner 仍掃所有 partition
 
 **徵兆**：cutover 完成後、application 端某些 query latency 從 200ms 跳到 5000ms；EXPLAIN 顯示 `Append` 下面所有 1095 個 partition 都被 scan。
 
@@ -174,22 +177,22 @@ Step 5 是不可逆邊界、應該排在 *低流量 maintenance window* 跑、�
 
 1. **`enable_partition_pruning = on`** 預設、確認沒被 disable
 2. **PG 11+ runtime pruning**：prepared statement 用 generic plan、runtime pruning 補位
-3. **Sub-partition strategy**：1095 個 daily 太多、改 *最近 90 天 daily / 之前 monthly* 混合 strategy、減 partition count
+3. **混合粒度**：1095 個 daily 太多、改 *最近 90 天 daily / 之前 monthly*，同一個 partition tree 裡的 range 寬窄不同，減 partition count
 4. **Planner statistics**：跑 `ANALYZE` 重建 statistics、partition 樹太大時 planner 需新 stats
 
-### Case 4：Constraint exclusion 失敗、跨 partition unique 不 enforce
+### 跨 partition 的 unique 不 enforce：UNIQUE 必須包含 partition key
 
-**徵兆**：cutover 後發現某 user 的 event 在多個 partition 都有、unique constraint `(user_id, event_id)` 沒 enforce；data audit 抓到 duplicate。
+**徵兆**：cutover 後的 data audit 抓到同一個 `(user_id, event_id)` 出現在多列、`event_time` 各不相同；schema 上看起來有 `(user_id, event_id)` 的 unique constraint，重複卻沒有被擋下。
 
-**根因**：PostgreSQL partition table 的 `UNIQUE` constraint *必須包含 partition key*；本來 monthly partition 下 `UNIQUE (user_id, event_id)` 加上 `event_time`（partition key）變 `UNIQUE (user_id, event_id, event_time)`、實際語意是「同月同 user 同 event_id 唯一」；改 daily 後變「同日同 user 同 event_id 唯一」— unique scope 從月變天、原本月內跨日 dedup 失效。
+**根因**：PostgreSQL partitioned table 的 `UNIQUE` constraint *必須包含 partition key*，所以 `(user_id, event_id)` 的唯一性只能宣告成 `UNIQUE (user_id, event_id, event_time)`。這個 constraint 只擋三個欄位全部相同的列：同一個 user、同一個 event_id 只要 `event_time` 不同就不衝突，不論 partition 按月還是按日切。monthly 設計下這個缺口已經存在，同月不同日的重複一樣擋不住；redesign 沒有改變 constraint 的語意，是 redesign 時重新檢查 constraint 才看見它。
 
 **修法**：
 
-1. **Pre-redesign**：明示 unique constraint 的 *時間 scope*、redesign 後 scope 縮小是否可接受
+1. **Pre-redesign**：列出每個 partitioned table 的 UNIQUE / PRIMARY KEY，確認為了包含 partition key 而加進去的時間欄位，讓原本要的唯一性變成了什麼
 2. **Application-side dedup**：跨 partition 唯一性走 application 層 lookup（用 Redis SETEX 暫存 key）
 3. **退到 non-partitioned dedup 表**：建獨立 user_events_dedup 表、application 寫入前先 lookup
 
-### Case 5：DROP 老 partition 太頻繁、shared_buffers cache miss 爆
+### DROP 老 partition 太頻繁、shared_buffers cache miss 爆
 
 **徵兆**：daily partition 上線後、每天凌晨 cron DROP `events_2025_05_18`（90 天前）；DROP 後 shared_buffers 大量 invalidate、application 端 query latency p99 從 10ms 跳到 100-200ms 持續 30 分鐘。
 
@@ -241,6 +244,6 @@ Failover 期間 partition migration 不能跑、必須在 stable cluster state �
 ## 相關連結
 
 - 上游 vendor 頁：[PostgreSQL](/backend/01-database/vendors/postgresql/)
-- 平行 deep article：[Declarative Partitioning](/backend/01-database/vendors/postgresql/declarative-partitioning/)（partition 基礎）/ [Autovacuum Tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/)
-- 平行 Type F dogfood：[Redis Cluster Re-sharding](/backend/02-cache-redis/vendors/redis/cluster-resharding/)（dogfood #1）/ [MongoDB Shard + Multi-DC](/backend/01-database/vendors/mongodb/shard-expansion-multi-dc/)（dogfood #3、F-multi-region sub-type）
+- PostgreSQL 的其他主題：[Declarative Partitioning](/backend/01-database/vendors/postgresql/declarative-partitioning/)（partition 基礎）/ [Autovacuum Tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/)
+- 平行 Type F 案例：[Redis Cluster Re-sharding](/backend/02-cache-redis/vendors/redis/cluster-resharding/)（單一 cluster 內的 re-sharding）/ [MongoDB Shard + Multi-DC](/backend/01-database/vendors/mongodb/shard-expansion-multi-dc/)（跨 region 的 Type F）
 - Methodology：[Migration playbook methodology](/posts/migration-playbook-methodology/) / [#127 Process content 結構由最大差異維度決定](/report/content-structure-by-max-diff-dimension/) / [#128 Data topology 是第 6 audit 維度](/report/data-topology-as-audit-dimension/)

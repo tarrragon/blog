@@ -6,13 +6,11 @@ weight: 34
 tags: ["backend", "database", "dynamodb", "global-tables", "multi-region", "conflict-resolution", "deep-article"]
 ---
 
-> 本文是 [DynamoDB](/backend/01-database/vendors/dynamodb/) overview 的 implementation-layer deep article。寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+這篇整理 [DynamoDB](/backend/01-database/vendors/dynamodb/) Global Tables 的 multi-region active-active 設計：決定要不要上 Global Tables 的業務 driver、cross-device sync 與 global read 這類正向用例、LWW（Last Writer Wins）conflict resolution，以及 application 端的 conflict 偵測與 [reconciliation](/backend/knowledge-cards/data-reconciliation/)。
 
-B2B SaaS 跟客戶 SLA 寫 99.99%、單 region 跑了一年遇過兩次 region-level outage、合計 downtime 已逼近 SLA 上限。team 要把核心 table 改 Global Tables active-active、首問是「multi-region write 之後資料還會一致嗎」。這個問題的答案是：*不會、但有工程解法*；DynamoDB Global Tables 用 LWW（Last Writer Wins）跨 region async 同步、conflict 偵測跟 [reconciliation](/backend/knowledge-cards/data-reconciliation/) 要 application 自己加。
+Global Tables 用 LWW 在 region 之間非同步複寫，多個 region 同時寫入同一筆資料時，資料不會自動保持一致，conflict 的偵測與 reconciliation 要由 application 自己加。同一個機制也承擔正向用例：Disney+ 用它做跨裝置的播放進度同步，Genesys 用它在 15 個 region 撐起 99.999% 可用性的 B2B 客服平台。
 
-但 Global Tables 不只是 conflict 痛點。Disney+ 用同一個機制處理 cross-device sync（手機看一半回家用電視繼續）、Genesys 用同一個機制做 15 region B2B 客服平台的 99.999% 可用性。本文先講正向 access pattern（避免讓讀者誤以為 Global Tables 只是「跨 region 寫入會 conflict、所以痛苦」）、再展開 conflict resolution 跟 reconciliation 設計。
-
-> **Workload 適配本 vendor 才繼續**：DynamoDB 4 軸判讀（PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定）軸見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀4-軸)。Global Tables 是 *已選 DynamoDB 後* 的拓樸決策；strong global consistency 必要的 workload 應走 Spanner / Cosmos DB strong consistency level、不是用 LWW 補。
+> **Workload 適配本 vendor 才繼續**：DynamoDB 4 軸判讀（PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定）軸見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀)。Global Tables 是 *已選 DynamoDB 後* 的拓樸決策；strong global consistency 必要的 workload 應走 Spanner / Cosmos DB strong consistency level、不是用 LWW 補。
 
 ## B2B SaaS vs B2C 業務 driver 對比
 
@@ -30,9 +28,9 @@ Global Tables 不是預設選擇、是 *業務性質* 決定的工程投資。`9
 
 **客服平台類** 99.999% 是極端可用性目標、年停機 5.26 分鐘、Genesys 撐 8000+ orgs 的客服平台、客戶停線損失極大、跨 15 region 的 active-active 是合理投資。但 *不是每個 SaaS 都該追 99.999%*、是 *業務性質決定下限*。
 
-**成本對比**（`9.C24` 揭露）：15 region 成本約 = 1 region 的 15x（base table cost）+ 跨 region replication WCU。每多一個 9、容量規劃跟運維成本指數成長。
+**成本對比**（Genesys 案例揭露）：15 region 成本約 = 1 region 的 15x（base table cost）+ 跨 region replication WCU。每多一個 9、容量規劃跟運維成本指數成長。
 
-> **Scope warning（指標口徑紀律）**：99.999% 是「12 個月滾動歷史值、不代表未來持續達成」（`9.C24` 警惕段第 1 條）。可用性是滾動指標、不是恆久承諾。引用 Genesys 99.999% 數字時要明示口徑（滾動 / customer-facing），不要寫成「DynamoDB 保證 99.999%」。
+> **Scope warning（指標口徑紀律）**：99.999% 是「12 個月滾動歷史值、不代表未來持續達成」（Genesys 案例頁的警示段）。可用性是滾動指標、不是恆久承諾。引用 Genesys 99.999% 數字時要明示口徑（滾動 / customer-facing），不要寫成「DynamoDB 保證 99.999%」。
 
 ## 正向 access pattern：不只 conflict 議題
 
@@ -51,7 +49,7 @@ Global Tables 不只是 DR / availability、也是正向 access pattern 的工�
 Global Tables 的 first-class concept：
 
 - **Multi-region active-active**：每個 region 都能寫、async replication；typical replication latency < 1s 但 *無 SLA*
-- **LWW by wall clock**：conflict 由 attribute `aws:rep:updatetime` 決定、純物理時間；不是 logical clock、不是 vector clock
+- **LWW by 內部 timestamp**：conflict 由 DynamoDB 逐 item 比較寫入的內部 timestamp 決定、timestamp 最新的寫入勝出；不是 logical clock、不是 vector clock。`aws:rep:updatetime` 這組屬性由 2017.11.29（Legacy）版本自動寫進每個 item，截至 2026-09 的官方文件建議新 global table 一律用 2019.11.21（Current）版，Current 版的文件沒有列出這組屬性
 - **同 region read-your-write**：本 region 寫立即可讀（同 region quorum 內）、其他 region 看到要等 replication
 - **Capacity 獨立**：每個 region 自己的 RCU/WCU、`ReplicatedWriteCapacityUnits` 是跨 region replication 額外 WCU、按 region 數倍計
 
@@ -59,9 +57,9 @@ Global Tables 的 first-class concept：
 
 ## 設計流程
 
-從 access pattern 分類到 reconciliation pipeline 的 6 步流程。
+從 access pattern 分類到 reconciliation pipeline 的設計流程：分類 access pattern、啟用 Global Tables、選寫入策略、設計 idempotency、偵測 conflict、建 reconciliation pipeline。
 
-#### Step 1：access pattern 分類
+#### 分類 access pattern
 
 把 table 中的資料分兩類：
 
@@ -70,7 +68,7 @@ Global Tables 的 first-class concept：
 
 不是所有 table 都該上 Global Tables；user profile 跨 region 同步、但用戶交易紀錄可能該 pin 在合規 region。
 
-#### Step 2：啟用 Global Tables
+#### 啟用 Global Tables
 
 ```bash
 aws dynamodb update-table \
@@ -81,7 +79,7 @@ aws dynamodb update-table \
 
 加 region 後 vendor 自動 backfill；backfill 期間 capacity 雙倍（原 region + 新 region 同步流量）、要預留 capacity buffer。
 
-#### Step 3：application 寫入策略
+#### 選 application 寫入策略
 
 兩種寫入策略：
 
@@ -96,7 +94,7 @@ aws dynamodb update-table \
 | cross-device sync   | nearest region write | 用戶在不同裝置同時操作、容忍 LWW |
 | 訂單 / 金流         | home region write    | 業務不容許 conflict 損失         |
 
-#### Step 4：idempotency 設計
+#### 設計 idempotency
 
 每筆 write 加 `request_id` 或 `client_timestamp`、application 端去重：
 
@@ -115,16 +113,18 @@ def write_with_idempotency(user_id, action, request_id):
 
 `ConditionExpression` 在同一 region 內擋重複；跨 region eventual 仍可能 race，conflict 落到 LWW + reconciliation。
 
-> **Scope warning（重要）**：「加 request_id 或 client_timestamp」具體實作屬通用工程知識、`9.C26 PayPay` case 揭露「通知不可丟失」的需求分層、*沒有* 揭露具體 idempotency 實作。引用 PayPay 時要降溫成「PayPay 揭露需求分層（通知 vs 訊息）、idempotency 為通用工程實作」、不寫成「PayPay 使用 request_id」（陷阱 4：把通用工程實作寫成 case 揭露）。
+> **Scope warning**：用 `request_id` 或 `client_timestamp` 去重屬通用工程實作。PayPay 案例公開的是需求分層（通知不可丟失、訊息另行處理），沒有公開它的 idempotency 實作。
 
-#### Step 5：conflict detection
+#### 偵測 conflict
 
-DynamoDB Streams 訂閱、Lambda 比較 `aws:rep:updatetime` 跟 application timestamp、抓出可疑 conflict 進 reconciliation queue：
+DynamoDB Streams 訂閱、Lambda 比較 stream record 的 `ApproximateCreationDateTime` 跟 application timestamp、抓出可疑 conflict 進 reconciliation queue（2019.11.21 版的 item 上沒有 `aws:rep:updatetime` 可讀，時間改取 stream record 自帶的建立時間，精度到秒）：
 
 ```python
 def detect_conflict(stream_event):
     new_image = stream_event["dynamodb"]["NewImage"]
-    repl_time = new_image["aws:rep:updatetime"]["S"]
+    repl_time = datetime.fromtimestamp(
+        stream_event["dynamodb"]["ApproximateCreationDateTime"], tz=timezone.utc
+    ).isoformat()
     app_time = new_image["client_timestamp"]["S"]
 
     if abs(parse(repl_time) - parse(app_time)) > timedelta(seconds=5):
@@ -135,9 +135,9 @@ def detect_conflict(stream_event):
         )
 ```
 
-> **Scope warning**：DynamoDB Streams 用法屬通用工程實作、`9.C26 PayPay` case *沒有* 明示用 Streams、引用時要分層（PayPay 揭露需求、Streams 是工程實作的標準解）。
+> **Scope warning**：用 DynamoDB Streams 偵測 conflict 屬通用工程實作；PayPay 案例沒有公開是否使用 Streams。
 
-#### Step 6：reconciliation pipeline
+#### 建 reconciliation pipeline
 
 ```text
 Conflict event → SQS queue → Lambda / human review → merge logic → write back
@@ -157,25 +157,25 @@ merge logic 視業務而定：
 
 實際部署常見的 5 種失敗：
 
-#### Case 1：LWW 默默吃掉 write
+#### LWW 默默吃掉 write
 
 跨 region 同一 record concurrent update、後到的 write 因 timestamp 較大蓋過先到的；business 看到「我送出的更新沒了」、稽核 log 才發現 conflict。修法：critical write 加 `ConditionExpression` 比較 `version` attribute、conflict 時 application 端 retry + merge；不要依賴 LWW 作為 conflict 解。
 
-#### Case 2：Clock skew 讓 LWW 倒置
+#### Clock skew 讓 LWW 倒置
 
-region A 寫入 timestamp 因 NTP skew 比 region B 後寫快 200ms、結果舊資料贏。修法：依靠 application timestamp + monotonic counter、不依賴 server wall clock；critical write 用 conditional version + retry。
+一個 region 的時鐘因 NTP skew 快了 200ms，它先寫入的那筆帶著較大的 timestamp，另一個 region 稍後對同一筆的寫入 timestamp 反而較小，LWW 於是讓較舊的寫入贏。修法：依靠 application timestamp + monotonic counter、不依賴 server wall clock；critical write 用 conditional version + retry。
 
 > **Scope warning**：「200ms NTP skew」具體數字屬通用工程估算、case 未揭露具體 skew 範圍。
 
-#### Case 3：Replication lag 撞 SLO
+#### Replication lag 撞 SLO
 
 大 batch write 期間 replication lag 從 1s 變 30s、跨 region read 看到 30s 前資料、application 端 user 操作異常。修法：偵測 `ReplicationLatency` 升高時 application 端切 home region read、避免跨 region eventual read；把 replication lag 加進 SLO 監控、設 alarm。
 
-#### Case 4：DR 切換後 stale data 持續 propagate
+#### DR 切換後 stale data 持續 propagate
 
 primary region outage 切到 secondary、舊 primary 恢復後仍把 outdated data 推回去、覆蓋 secondary 期間的新寫入。修法：DR runbook 含「舊 primary 恢復後人工 reconciliation 或重建」step、不可全自動 catch-up；舊 primary 恢復前先確認 replication 方向是「從 secondary catch up」而非「推舊資料回 secondary」。
 
-#### Case 5：跨 region transaction 失敗
+#### 跨 region transaction 失敗
 
 application 試圖跨 region `TransactWriteItems`、API 不支援跨 region transaction、原子性破裂。修法：transaction 限同 region 內、跨 region 用 [saga](/backend/knowledge-cards/saga/) + idempotent + reconciliation；不要把同 region 的 transaction 假設搬到跨 region。
 
@@ -197,7 +197,7 @@ DynamoDB Streams + Lambda：抓 conflict event、寫進獨立 audit table；reco
 
 - Global Tables cost ≈ N region × base cost + replication WCU
 - 4 region 成本約 4.5x single region；15 region（Genesys 規模）約 15x
-- 每多一個 region 都要重新算 ROI（軸 6 vendor crossover 的延伸）
+- 每多一個 region 都要重新算 ROI（[On-Demand vs Provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/) 裡 DynamoDB 與自管 cluster 的 cost crossover 判讀的延伸）
 
 **指標口徑紀律**（重要）：99.99% / 99.999% SLA 是 *滾動指標 + 歷史值*、不是永久承諾；引用 Genesys 99.999% 時明示「12 個月滾動 / customer-facing」、不寫成「DynamoDB 保證 99.999%」。
 
@@ -205,7 +205,7 @@ DynamoDB Streams + Lambda：抓 conflict event、寫進獨立 audit table；reco
 
 ## 邊界與整合
 
-### Frame 5：region-pinned Global Tables 吸收合規邊界
+### region-pinned Global Tables 吸收合規邊界
 
 Global Tables 不只是高可用工具、也是 *合規邊界*（[Data Residency](/backend/knowledge-cards/data-residency/) 拓樸）的吸收層。DynamoDB 在 vendor capability 層級支援 *region-pinned replication* — 每張 table 可獨立決定哪些 region 參與 replication group、部分 region 可不加入。這個 capability 同時服務三類場景：合規分離（受監管市場資料不跨境）、cost / latency 取捨（資料只在主要服務 region 同步）、災備拓樸（少數 region 純讀備援）。`9.C24 Genesys` 15 region 揭露的是 *延遲就近接入* 的 B2B SaaS 拓樸（客戶服務延遲敏感、必須在客戶所在地有 region）— case 原文沒明示合規應用、但 region-pinned capability 在 Genesys 規模下天然能容納合規市場分離、是同 capability 的 *可能應用維度*、不是 case 已驗證的具體實踐。
 
@@ -218,27 +218,27 @@ Global Tables 不只是高可用工具、也是 *合規邊界*（[Data Residency
 | CockroachDB         | locality + placement（邏輯一個 cluster + region pinning + Outposts）    | 單 logical cluster、physical row 鎖在合規 region     |
 | MongoDB / Cosmos DB | cluster-per-region（無 row-level locality 等價物、整 cluster 切割）     | 各 region 獨立 cluster、application 層做市場 routing |
 
-**為什麼 DynamoDB 在這個 frame 退化得最輕**：Global Tables 的 region 開關是 *attribute 級* 設計（每張 table 可獨立決定哪些 region 參與）、不像 Aurora 必須整 cluster 拆。讀者要把「跨境合規 + 高可用」雙重需求兼顧時、DynamoDB 是最少結構性改造的路徑 — 但代價是 LWW conflict 跟 reconciliation 設計仍要自己做。
+**為什麼跨境合規在 DynamoDB 上需要的結構改造最少**：Global Tables 的 region 開關是 *table 級* 設計（每張 table 可獨立決定哪些 region 參與）、不像 Aurora 必須整 cluster 拆。讀者要把「跨境合規 + 高可用」雙重需求兼顧時、DynamoDB 是最少結構性改造的路徑 — 但代價是 LWW conflict 跟 reconciliation 設計仍要自己做。
 
 **何時 region-pinned 而非 active-active**：受監管金融 / 個資跨境禁止的市場（如 GDPR strict 條款區、中國個資法 PIPL、巴西 LGPD）— 該 region 仍開 DynamoDB table、但 *不加入 Global Tables replication group*、跟其他 region 完全切割。capability 設計上支援這種按 region 開關 replication 的拓樸；具體是否套用、要看 *讀者自己的市場合規清單*、不是把 Genesys 規模當必然證據（Genesys case 揭露的是延遲就近接入、未明示合規分離實踐）。
 
-### Disney+ vs Genesys：兩種 Global Tables 工程動機
+### Disney+ vs Genesys：UX driver 與合約 driver
 
 `9.C27 Disney+` 跟 `9.C24 Genesys` 是 Global Tables 兩種不同的工程動機：
 
 - **Disney+**：cross-device sync 是 user-facing UX、watchlist + 播放進度跨裝置同步、B2C 但 sync 是 core experience
 - **Genesys**：99.999% B2B SaaS 合約義務、15 region active-active、客服平台停線損失極大
 
-兩個 case 都用 Global Tables、但動機完全不同 — Disney+ 是 UX driver、Genesys 是合約 driver。寫進你自己的設計時要明示自己屬哪一型，因為兩種型別的 cost 容忍度跟 conflict 容忍度完全不同。
+兩個 case 都用 Global Tables、但動機完全不同 — Disney+ 是 UX driver、Genesys 是合約 driver。設計文件要寫明這張 table 的 Global Tables 屬於 UX driver 還是合約 driver，兩者的 cost 容忍度跟 conflict 容忍度完全不同。
 
 ### Sibling 與 cross-link
 
 - [consistency-model-optimization](/backend/01-database/vendors/dynamodb/consistency-model-optimization/) — 同 region eventual / strong 取捨、本篇是跨 region 延伸
-- [on-demand-vs-provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/) — 多 region capacity 規劃放大、軸 5 工時釋放在 multi-region 更顯著
+- [on-demand-vs-provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/) — 多 region capacity 規劃放大、DBA / SRE 工時釋放在 multi-region 更顯著
 - [partition-key-antipatterns](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/) — hot partition 跨 region 同樣存在、每個 region 的 partition 都要均勻
 - [single-table-design-pattern](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) — single-table 設計在 multi-region 仍適用、access pattern 反推 PK/SK 不變
 - 替代路由：global strong consistency 必要 → Spanner / Cosmos DB strong consistency level
 - Migration playbook：single-region → Global Tables 屬 topology re-layout、對應 [migration playbook methodology](/posts/migration-playbook-methodology/) Type F
-- 跟 [Genesys 9.C24](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 互引：15 region 5 個 9 可用性的工程實踐 + B2B SaaS 業務 driver
-- 跟 [Disney+ 9.C27](/backend/09-performance-capacity/cases/disney-plus-content-metadata/) 互引：cross-device sync 作為正向 access pattern
-- 跟 [PayPay 9.C26](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) 互引：揭露需求分層（通知 vs 訊息）、idempotency / Streams 為通用工程實作、PayPay 未公開揭露具體實作
+- [Genesys：用 DynamoDB 在 15 region 跑出 99.999% 可用性](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)：B2B SaaS 合約 driver 下的多 region 可用性工程
+- [Disney+：DynamoDB 撐每日數十億動作的觀看歷史](/backend/09-performance-capacity/cases/disney-plus-content-metadata/)：cross-device sync 作為正向 access pattern
+- [PayPay：行動支付每日 3 億訊息的 DynamoDB 後端](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)：需求分層（通知 vs 訊息）；本篇的 idempotency 與 Streams 寫法是通用工程實作，PayPay 沒有公開具體實作

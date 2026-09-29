@@ -1,16 +1,16 @@
 ---
-title: "CockroachDB vs Aurora DSQL vs Spanner：撞牆訊號分型 + 七問題決策樹"
+title: "CockroachDB vs Aurora DSQL vs Spanner：撞牆訊號分型 + 選型決策樹"
 date: 2026-05-27
-description: "Distributed SQL 三選一決策樹。先用撞牆訊號分型識別 driver path（DoorDash 單主寫入撞牆 / Netflix Cassandra 缺口 / Hard Rock 合規驅動）、再走七問題（跨雲 / 雲商生態 / 風險預算 / PG 相容 / 管理負擔 / team size / vendor sizing barrier）。PostgreSQL 相容性 audit checklist 4 項、Spanner 100 pu sizing barrier、Hard Rock 「省 10-20 工程師」機會成本警示、Netflix Database Platform Team 規模"
+description: "Distributed SQL 三選一決策樹。先用撞牆訊號分型識別 driver path（DoorDash 單主寫入撞牆 / Netflix Cassandra 缺口 / Hard Rock 合規驅動）、再走跨雲、雲商生態、風險預算、PG 相容、管理負擔、team size、vendor sizing barrier 各題。含 PostgreSQL 相容性 audit checklist、Spanner 100 pu sizing barrier、Hard Rock 「省 10-20 工程師」機會成本警示、Netflix Database Platform Team 規模"
 weight: 100
 tags: ["backend", "database", "cockroachdb", "aurora-dsql", "spanner", "distributed-sql", "decision-tree", "deep-article"]
 ---
 
-> 本文是 DB4 distributed SQL 選型的 *entry point* deep article — 讀者進來時還沒決定哪個 vendor、甚至還沒釐清「我是不是該換 distributed SQL」。本文先用 *撞牆訊號分型* 幫讀者識別自己屬哪條 driver path、再進三軸 vendor 對比、最後落到 team size + sizing 邊界檢查。配合 [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/) + [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) 閱讀。寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+> 本文整理 distributed SQL 的選型：先用撞牆訊號分型識別自己屬於哪條 driver path、再做三家 vendor 對比、最後檢查 team size 與 vendor 的 sizing 邊界。上游的全球分散式 OLTP 取捨見 [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)。
 
 ---
 
-## 為什麼先講 driver path、不直接比 vendor
+## 先識別 driver path、再比 vendor
 
 團隊評估「全球分散式 OLTP 三選一」時最常見的源頭錯誤：先比 vendor、再回頭問「我為什麼要 distributed SQL」。三家 vendor 文件都說「跨 region 強一致 SQL」、看不出實際取捨；做錯選擇後遷移成本極高。
 
@@ -22,37 +22,37 @@ tags: ["backend", "database", "cockroachdb", "aurora-dsql", "spanner", "distribu
 - Spanner 在 Google 跑了 10 年、CockroachDB 跟 DSQL 比較新、成熟度差多少？
 - 我有 PostgreSQL 應用、三家相容性差在哪？
 - 跨雲是硬需求還是被 fear 推的？
-- DSQL 2024 才 GA、production 風險多大？
+- DSQL 2025-05 才 GA、production 風險多大？
 - 我團隊 50 人能不能養 self-managed CockroachDB？
 - Spanner 100 pu 起跳對我中小 PG workload 划算嗎？
 
-7 題本文都會回答、但先回答「你是哪條 driver path」這個前置問題 0。
+這些問題本文都會回答，但要先回答「為什麼要評估 distributed SQL」——也就是自己屬於哪條 driver path。
 
 ### 三條 driver path 的 case anchor
 
-- [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)：Aurora Postgres 1.636 M QPS single-primary 撞牆 → 換 multi-primary、PostgreSQL wire 相容降低遷移阻力（F4.1 / F4.2 / F4.4）
-- [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)：Cassandra eventual consistency 撐不住 transactional → 補 distributed SQL、self-managed 380+ cluster + Database Platform Team（F4.6 / F4.9）
-- [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)：Wire Act 合規驅動 + 50 人 tech team + Outposts 混合部署（F4.10 / F4.14）
+- [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)：Aurora Postgres 1.636 M QPS single-primary 撞牆 → 換 multi-primary、PostgreSQL wire 相容降低遷移阻力
+- [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)：Cassandra eventual consistency 撐不住 transactional → 補 distributed SQL、self-managed 380+ cluster + Database Platform Team
+- [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)：Wire Act 合規驅動 + 50 人 tech team + Outposts 混合部署
 
-對照 [9.C10 Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 提供 Spanner ground truth（含 sizing barrier、F3.16）、[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 提供 Aurora 受監管金融的另一條路徑、[9.C4 DraftKings Aurora financial ledger](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 提供 Aurora 內 business sharding 路徑（不換引擎）。
+對照 [9.C10 Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 提供 Spanner ground truth（含 sizing barrier）、[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 提供 Aurora 受監管金融的另一條路徑、[9.C4 DraftKings Aurora financial ledger](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 提供 Aurora 內 business sharding 路徑（不換引擎）。
 
-## 撞牆訊號分型：你的 driver path 是哪一條（前置問題 0、F4 Frame 1）
+## 撞牆訊號分型：識別自己的 driver path
 
 讀者進來前先回答：你 *為什麼* 要評估 distributed SQL？三條 driver path 各自的訊號、適配 vendor、決策路徑都不同。
 
-### Path A — single-primary 寫入撞牆（9.C39 DoorDash 路徑、F4.2 + F4.6）
+### single-primary 寫入撞牆（9.C39 DoorDash 路徑）
 
 訊號：
 
 - 寫入量持續成長、Aurora / RDS / Cloud SQL primary CPU + WAL flush rate 接近上限
-- 轉折點 *不是 IOPS、是 primary CPU + WAL flush rate*（F4.2、DoorDash 策略段 1）
+- 轉折點 *不是 IOPS、是 primary CPU + WAL flush rate*（DoorDash case 的〈策略〉段）
 - 已嘗試 vertical scale primary、撞 instance ceiling
 
-DoorDash concrete reference：2020-04-17 高峰 > 1.636 M QPS、multi-hour outage（觀察段表格）。**Scope warning（F4.1、case 自帶警示）**：1.636 M QPS 是 *Aurora 撞牆的痛點* — 不是「CockroachDB throughput claim」、case 沒揭露遷移後單一 CockroachDB cluster 的峰值、只說「跑更多 cluster、alert volume 反而下降」。
+DoorDash concrete reference：2020-04-17 高峰 > 1.636 M QPS、multi-hour outage（觀察段表格）。**Scope warning（case 自帶警示）**：1.636 M QPS 是 *Aurora 撞牆的痛點* — 不是「CockroachDB throughput claim」、case 沒揭露遷移後單一 CockroachDB cluster 的峰值、只說「跑更多 cluster、alert volume 反而下降」。
 
 適配 vendor：CockroachDB / Aurora DSQL / Spanner 都解、選擇看其他軸。
 
-### Path B — eventual consistency 缺口（9.C40 Netflix 路徑、F4.6）
+### eventual consistency 缺口（9.C40 Netflix 路徑）
 
 訊號：原本用 Cassandra / Riak / DynamoDB eventual consistency、遇到 *5 條件並存* 需求：
 
@@ -62,11 +62,11 @@ DoorDash concrete reference：2020-04-17 高峰 > 1.636 M QPS、multi-hour outag
 4. open source
 5. SQL
 
-Cassandra 在 transactional 場景下 *湊不齊* 這五項。Netflix 2019 評估後選 CockroachDB（5 條件 case 直接列出、判讀段 1）。具體場景：Studio Cloud Drive（強一致 metadata + 全球可寫）、Open Connect 控制平面、Spinnaker（持續交付）、Maestro（ML / 資料 workflow）、Gaming 控制平面。
+Cassandra 在 transactional 場景下 *湊不齊* 這五項。Netflix 2019 評估後選 CockroachDB（case 的〈判讀〉段列出這五項條件）。具體場景：Studio Cloud Drive（強一致 metadata + 全球可寫）、Open Connect 控制平面、Spinnaker（持續交付）、Maestro（ML / 資料 workflow）、Gaming 控制平面。
 
 適配 vendor：CockroachDB（open source + SQL 兩條件硬卡）、Spanner（若 GCP-only 可放鬆 open source 要求）。
 
-### Path C — 合規驅動的地理邊界 + 跨 boundary 業務邏輯需求（9.C41 Hard Rock 路徑、F4.10）
+### 合規驅動的地理邊界 + 跨 boundary 業務邏輯需求（9.C41 Hard Rock 路徑）
 
 訊號：
 
@@ -92,7 +92,7 @@ Hard Rock concrete reference：跨 8 州（AZ / IN / TN / FL / OH / IL / NJ / VA
 
 完成 driver path 識別後、進三軸 vendor 對比。
 
-### 軸 1 — 部署 topology
+### 部署 topology
 
 | Vendor      | 部署                                    | 何時是硬條件                 |
 | ----------- | --------------------------------------- | ---------------------------- |
@@ -100,19 +100,19 @@ Hard Rock concrete reference：跨 8 州（AZ / IN / TN / FL / OH / IL / NJ / VA
 | Spanner     | GCP-only                                | 不適合非 GCP 環境            |
 | Aurora DSQL | AWS-only                                | 不適合非 AWS 環境            |
 
-Path C 場景（Hard Rock Outposts hybrid）強制走 CockroachDB — 另兩家不提供等效部署。
+合規驅動 path 的場景（Hard Rock Outposts hybrid）強制走 CockroachDB — Spanner 與 Aurora DSQL 不提供等效部署。
 
-### 軸 2 — Managed 成熟度
+### Managed 成熟度
 
 **Scope warning（來源分層）**：3 case 都沒揭露成熟度比對、本軸依 case + vendor 公開文件 + 外部知識合成：
 
 - **Spanner**：10+ 年 Google 內部 + 外部 GA（依 9.C10 case + Google research paper、屬 vendor 公開文件 + dogfood frame）
 - **CockroachDB**：自管 + Cockroach Cloud（managed 較新、依 Cockroach Labs 公告）
-- **Aurora DSQL**：2024-05 GA（依 AWS 公告）
+- **Aurora DSQL**：2024-12 re:Invent 發表 preview、2025-05-27 GA（依 AWS 公告）
 
-引用紀律：「Spanner 10+ 年」是 vendor 公開 + Google dogfood 的合成、不是 case 直接揭露的 production stability 數字。Aurora DSQL「2024-05 GA」屬 AWS 公開公告、production case ground truth 還在累積。引用時要明示來源層次。
+「Spanner 10+ 年」是 vendor 公開資訊與 Google 內部使用經驗的合成、不是 case 揭露的 production stability 數字；Aurora DSQL 的 GA 時間取自 AWS 公告，production case 還在累積。
 
-### 軸 3 — SQL 相容性
+### SQL 相容性
 
 | Vendor      | SQL                                     | 相容程度                                |
 | ----------- | --------------------------------------- | --------------------------------------- |
@@ -120,7 +120,7 @@ Path C 場景（Hard Rock Outposts hybrid）強制走 CockroachDB — 另兩家�
 | Spanner     | GoogleSQL + 部分 PostgreSQL 方言        | GoogleSQL native、PG 方言是子集         |
 | Aurora DSQL | PostgreSQL（AWS managed control plane） | PostgreSQL-compatible、AWS 操作模型     |
 
-### PostgreSQL 相容性 audit checklist 4 項（F4.4、DoorDash 揭露）
+### PostgreSQL 相容性 audit checklist（DoorDash 揭露的警語展開）
 
 DoorDash case 揭露 PG wire *protocol-level* 相容、SQL 行為「仍要驗證」。把這個警語展開成 audit checklist：
 
@@ -129,7 +129,7 @@ DoorDash case 揭露 PG wire *protocol-level* 相容、SQL 行為「仍要驗證
 3. **Partial index**：CockroachDB 支援程度與 PG 有差異、application 用到的 partial index 要逐一驗證。Spanner GoogleSQL 跟 PG 行為不同。
 4. **其他 SQL 行為**：sequence、auto-increment、stored procedure、custom function、extension 等都需 case-by-case audit。
 
-引用紀律：DoorDash 揭露的是「PG wire protocol-level 相容、SQL 行為要 audit」這個 fact、本章把 audit 內容展開成 4 項屬通用工程議題、不是 DoorDash case 直接揭露。
+DoorDash case 揭露的是「PG wire protocol-level 相容、SQL 行為要 audit」這個 fact；上面 checklist 的內容是通用工程整理，不是 DoorDash case 直接揭露。
 
 ### Consensus 機制差
 
@@ -139,14 +139,14 @@ DoorDash case 揭露 PG wire *protocol-level* 相容、SQL 行為「仍要驗證
 | Spanner     | TrueTime + Paxos                                                              | GPS + atomic clock             |
 | Aurora DSQL | 類 Spanner 概念、AWS 專屬                                                     | AWS timing infra（未完全公開） |
 
-三家共識機制的差異直接決定 [external consistency](/backend/knowledge-cards/external-consistency/) 的實作路徑：Spanner 用 TrueTime + commit-wait 撐 external consistency；CockroachDB 用 HLC + max-offset 撐 linearizability、不保證 external consistency；Aurora DSQL 走類 Spanner 路徑但細節未完全公開。三家 multi-region 配置都吃 [Cross-Region Quorum](/backend/knowledge-cards/cross-region-quorum/) 的物理 latency tax。詳細機制見 [HLC + Raft consensus](../hlc-raft-consensus/)。
+三家共識機制的差異直接決定 [external consistency](/backend/knowledge-cards/external-consistency/) 的實作路徑：Spanner 用 TrueTime + commit-wait 撐 external consistency；CockroachDB 用 HLC + max-offset 撐 serializability 與 single-key linearizability、不保證 external consistency（strict serializability）；Aurora DSQL 走類 Spanner 路徑但細節未完全公開。三家 multi-region 配置都吃 [Cross-Region Quorum](/backend/knowledge-cards/cross-region-quorum/) 的物理 latency tax。詳細機制見 [HLC + Raft consensus](../hlc-raft-consensus/)。
 
 ### Pricing model 差
 
 - **CockroachDB self-managed**：node × resource、cluster 至少 3 node
 - **Cockroach Cloud / Spanner / DSQL**：consumption-based（read / write / storage / network）
 
-### Sizing barrier 邊界（F3.16、9.C10 Spanner case 揭露）
+### Sizing barrier 邊界（9.C10 Spanner case 揭露）
 
 Spanner 100 processing unit 起跳是 *最小 footprint* — 對中小 PostgreSQL workload 是 cost 邊界：
 
@@ -158,14 +158,14 @@ Spanner 100 processing unit 起跳是 *最小 footprint* — 對中小 PostgreSQ
 
 對應 [distributed SQL 卡](/backend/knowledge-cards/distributed-sql/)、[quorum 卡](/backend/knowledge-cards/quorum/)、[vendor lock-in 卡](/backend/knowledge-cards/vendor-lock-in/)。
 
-## 決策樹：七問題
+## 決策樹：從跨雲需求到 vendor sizing
 
-前置問題 0 在 *撞牆訊號分型* 段已回答（你的 driver path 是 A / B / C 哪一條）。以下進三家 vendor 對比的七個問題。
+撞牆訊號分型已經確定 driver path（single-primary 寫入撞牆、eventual consistency 缺口、合規驅動）。以下依序問跨雲、雲商生態、風險預算、PG 相容、管理負擔、team size、vendor sizing，在三家 vendor 裡篩出選擇。
 
-### 問題 1：是否硬需求跨雲 / on-prem？
+### 是否硬需求跨雲 / on-prem？
 
 - **Yes** → CockroachDB（唯一選項；對應 9.C40 Netflix 跨 AWS region、9.C41 Hard Rock AWS Outposts 混合）
-- **No** → 進問題 2
+- **No** → 看〈已在 AWS 還是 GCP 還是中立？〉
 
 跨雲是 *硬需求* 而不是 *fear-driven* 訊號：
 
@@ -174,7 +174,7 @@ Spanner 100 processing unit 起跳是 *最小 footprint* — 對中小 PostgreSQ
 
 > **數字口徑**：本段「多數公司 single-cloud」屬通用工程估算、case 未揭露明確比例、實際分佈依產業 / 監管 / 規模而異。判斷自己是否需要跨雲時、看具體規範跟 risk 條款、不直接套通用比例。
 
-### 問題 2：已在 AWS 還是 GCP 還是中立？
+### 已在 AWS 還是 GCP 還是中立？
 
 - **AWS 深** → Aurora DSQL（操作模型對齊、PostgreSQL 相容）
 - **GCP 深** → Spanner（10 年成熟、Google 內部驗證）
@@ -182,56 +182,53 @@ Spanner 100 processing unit 起跳是 *最小 footprint* — 對中小 PostgreSQ
 
 雲商生態深度判讀：IAM / VPC / monitoring / cost mgmt 已深度整合 AWS → Aurora DSQL 整合阻力低；同樣道理 GCP → Spanner。
 
-### 問題 3：production 風險預算？
+### production 風險預算有多少？
 
 - **低**（金融 / 醫療）→ Spanner（最成熟）或 CockroachDB（>5 年外部 production case）
 - **中** → 三者皆可
-- **高**（願意當 early adopter）→ Aurora DSQL（2024 GA）
+- **高**（願意當 early adopter）→ Aurora DSQL（2025-05 GA）
 
-風險預算對應的不是「會不會掛」、是「邊界 case 文件成熟度 + production troubleshooting case 量」。Aurora DSQL 2024 GA、production case 累積中、邊界 case 仍在被發現。
+風險預算對應的不是「會不會掛」、是「邊界 case 文件成熟度 + production troubleshooting case 量」。Aurora DSQL 2025-05 GA、production case 累積中、邊界 case 仍在被發現。
 
-### 問題 4：PostgreSQL 相容性是 hard requirement？
+### PostgreSQL 相容性是不是 hard requirement？
 
 - **Yes**（既有 application）→ CockroachDB 或 Aurora DSQL（兩者都做 PG 相容、但走 audit checklist 驗證 SQL 行為）
 - **No** → Spanner（GoogleSQL 也可）
 
 PG hard requirement 訊號：application 用 PostgreSQL-specific feature（partial index、JSONB operator、PostGIS、PG extension 生態）、ORM / driver 深度綁 PostgreSQL wire。
 
-### 問題 5：管理負擔誰承擔？
+### 管理負擔誰承擔？
 
 - **自管** → CockroachDB（唯一可自管）
 - **Managed** → 都行、依雲商生態
 
 自管 vs managed 不只是「省人月」、是「邊界 case 出現時誰修」— managed 的 vendor 負責、自管的自己負責。
 
-### 問題 6：team size 夠不夠自管（F4.14、9.C41 Hard Rock + 9.C40 Netflix 揭露）
+### team size 夠不夠自管（9.C41 Hard Rock + 9.C40 Netflix 揭露）
 
 distributed SQL 的 ops 槓桿來自系統內建 Raft / placement 把「DBA 養單區、跨區 sync 養運維」工作量壓進系統內。
 
-Hard Rock 50 人 tech team 估「若用 PostgreSQL 需多加 10-20 工程師」（觀察段表格 + 策略段 4）。**Case 自帶警示**：「省了 10-20 工程師」是 *機會成本*（沒招那麼多 DBA）、*不是* 節省支出（已 hire 後解雇）。引用必須明示口徑：
+Hard Rock 50 人 tech team 估「若用 PostgreSQL 需多加 10-20 工程師」（case 的〈觀察〉表格與〈策略〉段）。**Case 自帶警示**：「省了 10-20 工程師」是 *機會成本*（沒招那麼多 DBA）、*不是* 節省支出（已 hire 後解雇）。distributed SQL 對小團隊的 ops 槓桿是不必招那麼多 DBA，不是上 CockroachDB 就能裁員或省下既有的人月支出。
 
-- 正確：「distributed SQL 對小團隊的 ops 槓桿 = 不必招那麼多 DBA」
-- 錯誤：「上 CockroachDB 可裁員」、「節省人月支出」
-
-Self-managed 規模化的另一極：Netflix 養 380+ cluster 需要 *專屬 Database Platform Team*（含 backup / upgrade / incident response / capacity review、F4.9）。沒這量級團隊直接 self-host 大規模 cluster 是 ops 自殺、Cockroach Cloud 才是合理路徑。判讀訊號：「self-managed cluster 數量 vs 平台團隊規模」轉折點 case 沒講具體閾值、引用時不可宣稱閾值、但方向清楚：
+Self-managed 規模化的另一極：Netflix 養 380+ cluster 需要 *專屬 Database Platform Team*（含 backup / upgrade / incident response / capacity review）。沒這量級團隊直接 self-host 大規模 cluster，運維負擔會超出團隊能承擔的量，Cockroach Cloud 才是合理路徑。「self-managed cluster 數量 vs 平台團隊規模」的轉折點 case 沒有給出具體閾值，方向是：
 
 - team size 小（< 100 人 tech team、無專屬 DB platform team）→ Cockroach Cloud / Spanner / DSQL（managed）優先
 - team size 大 + 有專屬 DB platform team → self-managed CockroachDB 可考慮
 - team size 中等但要 self-host 大規模 cluster → 評估專屬 platform team 投資後再決定
 
-### 問題 7：sizing 達不達得到 vendor minimum（F3.16）
+### sizing 達不達得到 vendor minimum？
 
 - Spanner 100 processing unit 起跳對中小 PG workload 是成本門檻、月寫入 < 某 baseline 時付 Spanner 起跳費不划算
 - 中小 workload 但需 multi-region 強一致 → CockroachDB 3 node 起 / Aurora DSQL consumption-based 較友善
-- 大 workload（已過 single-primary 撞牆訊號）→ 三家皆可、進問題 1-6 再篩
+- 大 workload（已過 single-primary 撞牆訊號）→ 三家皆可、回到跨雲、雲商生態、風險預算、PG 相容、管理負擔、team size 各題再篩
 
-## Cluster boundary 顆粒：per-app cluster vs 邏輯一個 cluster（CockroachDB cluster boundary SSoT）
+## Cluster boundary 顆粒：per-app cluster vs 邏輯一個 cluster
 
-> **位置標**：本段是 _module-outline.md Section G「CockroachDB cluster boundary 顆粒」的 SSoT 主寫段、是 *已選 CockroachDB 後* 的拓樸決策（跟前面七問題 vendor 選擇分流）。其他 vendor cluster boundary 議題不在本段重複展開 — Aurora fleet 治理（business sharding / 200 cluster 模式）見 [aurora/read-replica-scaling](../../aurora/read-replica-scaling/)、MongoDB blast radius 切多 cluster（Toyota 20 DB 模式）見 [mongodb/shard-key-selection](../../mongodb/shard-key-selection/)。
+> 本段談的是 *已選 CockroachDB 之後* 的拓樸決策。其他 vendor 的 cluster boundary：Aurora fleet 治理（business sharding / 200 cluster 模式）見 [aurora/read-replica-scaling](../../aurora/read-replica-scaling/)、MongoDB 按 blast radius 切多 cluster（Toyota 20 DB 模式）見 [mongodb/shard-key-selection](../../mongodb/shard-key-selection/)。
 
-選完 vendor 還有一個正交的拓樸決策：CockroachDB cluster 的「顆粒」要切多細。一個微服務一個 cluster（per-app）、還是多個微服務共用一個邏輯 cluster（shared / 邏輯一個 cluster）。這條軸的判讀獨立於跨雲 / 風險預算 / 管理負擔等七問題、是 *cluster 拓樸* 議題、不是 vendor 選擇議題。判讀核心是 [blast radius](/backend/knowledge-cards/blast-radius/) 的取捨 — 是把故障半徑限縮在單服務（per-app）、還是接受邏輯 cluster 內事故跨業務影響但換 transactional cross-domain 能力（邏輯一個 cluster）。本段是 CockroachDB cluster boundary 顆粒的主寫位置、其他 sibling 文章（[hlc-raft-consensus](../hlc-raft-consensus/)、[survival-goals](../survival-goals/)、[locality-aware-schema](../locality-aware-schema/)）cross-link 不重複展開。
+選完 vendor 還有一個正交的拓樸決策：CockroachDB cluster 的「顆粒」要切多細。一個微服務一個 cluster（per-app）、還是多個微服務共用一個邏輯 cluster（shared / 邏輯一個 cluster）。這條軸的判讀獨立於跨雲 / 風險預算 / 管理負擔等 vendor 選擇問題、是 *cluster 拓樸* 議題。判讀核心是 [blast radius](/backend/knowledge-cards/blast-radius/) 的取捨 — 是把故障半徑限縮在單服務（per-app）、還是接受邏輯 cluster 內事故跨業務影響但換 transactional cross-domain 能力（邏輯一個 cluster）。
 
-### Per-app cluster（Netflix 380+ 路徑、F4.7 揭露）
+### Per-app cluster（Netflix 380+ 路徑）
 
 每個微服務 / 每個業務邊界各自獨立 cluster。Netflix 揭露的具體形貌：380+ cluster、每個 cluster 規模小（屬「artery of small DBs」哲學、不是巨型 DB）、每個服務 own 自己的 schema 跟容量。
 
@@ -240,11 +237,11 @@ Self-managed 規模化的另一極：Netflix 養 380+ cluster 需要 *專屬 Dat
 - 服務之間資料 *硬隔離*（compliance / blast radius / 不同 SLA tier）— 共用 cluster 一旦 schema migration / hot range 出事、影響面跨服務
 - 跨服務 query 需求低（沒有 cross-domain JOIN 場景）
 - 容量規劃可以 per-cluster（每個服務自己估、不需共池）
-- 有專屬 Database Platform Team 養 cluster lifecycle（backup / upgrade / incident response / capacity review、F4.9）— ops surface area 隨 cluster 數 *線性成長*
+- 有專屬 Database Platform Team 養 cluster lifecycle（backup / upgrade / incident response / capacity review）— ops surface area 隨 cluster 數 *線性成長*
 
-代價：ops surface area 大、每個 cluster 都要獨立 upgrade / monitoring / capacity review。沒這量級平台團隊直接 self-host 380 cluster 是 ops 自殺。
+代價：ops surface area 大、每個 cluster 都要獨立 upgrade / monitoring / capacity review。沒這量級的平台團隊直接 self-host 380 個 cluster，運維負擔會超出團隊能承擔的量。
 
-### 邏輯一個 cluster（Hard Rock 路徑、F4.10 揭露）
+### 邏輯一個 cluster（Hard Rock 路徑）
 
 業務邏輯上是 *一個* CockroachDB cluster、物理上跨多地理 placement（locality + replication zone 把 range 釘到特定 region / AZ / Outpost）。Hard Rock 揭露的具體形貌：跨 8 州 + AWS Outposts、邏輯一個 cluster、跨州統一帳戶 / 跨州 reporting / 欺詐偵測在同一 cluster 內做 transactional query。
 
@@ -272,7 +269,7 @@ Self-managed 規模化的另一極：Netflix 養 380+ cluster 需要 *專屬 Dat
 
 ### 跟 Aurora fleet 治理的本質差異
 
-Aurora [fleet 治理 SSoT](../../aurora/read-replica-scaling/)（read-replica-scaling 邊界段）展開的是 *Aurora cluster 之間* 怎麼拆（business sharding / blast radius / read fanout），cluster 是 single-primary 抽象、拆 cluster 是 *繞過* single-primary 上限。
+Aurora 的 [fleet 治理](../../aurora/read-replica-scaling/)（read-replica-scaling 的邊界段）展開的是 *Aurora cluster 之間* 怎麼拆（business sharding / blast radius / read fanout），cluster 是 single-primary 抽象、拆 cluster 是 *繞過* single-primary 上限。
 
 CockroachDB cluster boundary 的問題不一樣 — CockroachDB 本身就是 distributed、單 cluster 內可橫向擴展、cluster boundary 是 *業務 / 合規 / blast radius 邊界*、不是繞 single-primary。
 
@@ -290,7 +287,7 @@ CockroachDB cluster boundary 的問題不一樣 — CockroachDB 本身就是 dis
 - **Aurora fleet**（DraftKings 200 cluster）— business sharding 繞 single-primary 上限、每 cluster 仍可多 service、平均負載低（[9.C4 case](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 揭露單 cluster ~80 ops/sec、200 cluster 加總 17K ops/sec）
 - **CockroachDB per-app**（Netflix 380+）— 微服務級拆 cluster、artery of small DBs、需要專屬 Database Platform Team；單 cluster 內 [Range Sharding](/backend/knowledge-cards/range-sharding/) + [Leaseholder](/backend/knowledge-cards/leaseholder/) 負責內部 scaling
 - **CockroachDB 邏輯一個**（Hard Rock）— 跨地理單一 cluster、locality + placement 撐合規 + transactional 跨域、本地化讀靠 [Follower Read](/backend/knowledge-cards/follower-read/) 降低跨 region cost
-- **CockroachDB fleet per-jurisdiction**（Standard Chartered）— 每監管市場一個 cluster、合規 *禁止* 跨市場資料流動時的 forced pattern、跟 Hard Rock 對照（合規顆粒粗到要拆 vs 細到能用 placement）
+- **Aurora fleet per-jurisdiction**（Standard Chartered）— 每監管市場一個 Aurora cluster、合規 *禁止* 跨市場資料流動時的 forced pattern、跟 Hard Rock 對照（合規顆粒粗到要拆 vs 細到能用 placement）
 
 進階閱讀：合規驅動的 cluster boundary 選擇見 [locality-aware-schema](../locality-aware-schema/)；單 cluster 容量規劃見 [hlc-raft-consensus](../hlc-raft-consensus/) 容量與觀測段。
 
@@ -298,7 +295,7 @@ CockroachDB cluster boundary 的問題不一樣 — CockroachDB 本身就是 dis
 
 ### 過度 fear AWS / GCP lock-in
 
-承接 *問題 1：是否硬需求跨雲* 段的 fear-driven 訊號（多數場景單雲、跨雲是想像中需求）— 把 fear 當硬需求選 CockroachDB，付 portability premium（自管 ops + Cockroach Cloud 較新）卻沒實際 multi-cloud 部署，結果付的是 lock-in 保險、實際沒用上。
+承接〈是否硬需求跨雲 / on-prem？〉的 fear-driven 訊號（多數場景單雲、跨雲是想像中需求）— 把 fear 當硬需求選 CockroachDB，付 portability premium（自管 ops + Cockroach Cloud 較新）卻沒實際 multi-cloud 部署，結果付的是 lock-in 保險、實際沒用上。
 
 判讀：跨雲訊號要 *具體場景*（acquisition 後整合 / 法規明文 / vendor risk 政策強制）、不是 fear。
 
@@ -310,11 +307,11 @@ CockroachDB cluster boundary 的問題不一樣 — CockroachDB 本身就是 dis
 
 Spanner PostgreSQL interface 是 *子集*、部分 PostgreSQL feature 不支援。應用 migration 仍需 audit、不可直接 lift-and-shift。
 
-### Self-managed CockroachDB 低估 ops cost（9.C40 Netflix concrete reference、F4.9）
+### Self-managed CockroachDB 低估 ops cost（9.C40 Netflix）
 
 Raft / backup / upgrade / monitoring 自管比 PostgreSQL 複雜、DBA bandwidth 沒到位變 disaster。Netflix 養 380+ cluster 需要 *專屬 Database Platform Team* — 含 backup、upgrade、incident response、capacity review。
 
-判讀訊號：「self-managed cluster 數量 vs 平台團隊規模」轉折點 case 沒講具體閾值、引用時不可宣稱閾值、但方向清楚 — 小規模 self-managed 不需要、大規模一定需要、之間有 grey zone 要實際評估團隊能力。
+判讀訊號：「self-managed cluster 數量 vs 平台團隊規模」的轉折點 case 沒有給出具體閾值，方向是 — 小規模 self-managed 不需要、大規模一定需要、之間有 grey zone 要實際評估團隊能力。
 
 ### 用 distributed SQL 解 single-region OLTP
 
@@ -324,11 +321,11 @@ Raft / backup / upgrade / monitoring 自管比 PostgreSQL 複雜、DBA bandwidth
 
 受監管市場可能 *不能* 用任何跨境 distributed SQL（Standard Chartered 模式）、要拆每市場獨立 cluster。反過來、合規顆粒小（跨州 vs 跨國）+ 跨 boundary 業務邏輯需求高（跨州統一帳戶）時、Standard Chartered fleet 拓樸不適合、需走 Hard Rock locality + placement 路徑（細節見 [locality-aware schema](../locality-aware-schema/)）。
 
-### Sizing barrier 誤判（F3.16）
+### Sizing barrier 誤判
 
 中小 PG workload 直接套 Spanner 100 pu 起跳、付的是不必要的 minimum cost。中小規模的硬一致 multi-region workload、CockroachDB 3 node / Aurora DSQL consumption-based 更划算。
 
-### Team size 誤判（F4.14）
+### Team size 誤判
 
 把「省 10-20 工程師」當已 hire 後可裁員的節省支出、實際是 *機會成本*（沒招那麼多 DBA）。上 CockroachDB 不代表可裁掉現有 DBA — 現有 DBA 反而要轉型成 distributed SQL 運維。
 
@@ -365,7 +362,7 @@ write QPS × replication factor × cross-region latency = required node / capaci
 
 ## 邊界與整合
 
-### Sibling deep articles
+### 同 vendor 的其他文章
 
 - [HLC + Raft consensus](../hlc-raft-consensus/)（軟體時鐘 vs TrueTime）
 - [locality-aware schema](../locality-aware-schema/)（locality model 對比）
@@ -398,9 +395,9 @@ write QPS × replication factor × cross-region latency = required node / capaci
 ## 相關連結
 
 - [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/)
-- [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)（Path A — single-primary 寫入撞牆）
-- [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（Path B — Cassandra 缺口、Database Platform Team）
-- [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)（Path C — 合規驅動 + team size 槓桿）
+- [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)（single-primary 寫入撞牆）
+- [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（Cassandra 缺口、Database Platform Team）
+- [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)（合規驅動 + team size 槓桿）
 - [9.C10 Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)（Spanner ground truth + sizing barrier）
 - [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)（合規邊界 anti-recommendation）
 - [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)（Aurora sharding 不換引擎路徑）

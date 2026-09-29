@@ -6,17 +6,17 @@ weight: 35
 tags: ["backend", "database", "spanner", "global-sql", "postgresql-dialect", "googlesql", "deep-article"]
 ---
 
-> 本文是 [Cloud Spanner](/backend/01-database/vendors/spanner/) overview 的 implementation-layer deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Overview 已說明 Spanner 在全球 OLTP 譜系的定位、本文聚焦 *PostgreSQL dialect* — Spanner 為降低 PostgreSQL 生態遷入門檻提供的 PG-compatible 介面、跟原生 GoogleSQL dialect 的差異與邊界。
+本文的範圍是 Spanner 的 PostgreSQL dialect：這個 PG-compatible 介面跟原生 GoogleSQL dialect 的差異、相容子集的邊界、建立 PG dialect database 與驗證相容性的流程、失敗模式與容量觀測，以及何時選 PG dialect、何時選 GoogleSQL。
 
 ---
 
 ## 核心定位：PG dialect 是介面層、不是換引擎
 
-Spanner PostgreSQL dialect 的責任是讓 PostgreSQL 生態的語法、型別系統與 wire protocol 能跑在 Spanner 的分散式引擎之上、降低團隊既有 PostgreSQL 知識與工具的遷移成本。它改變的是 *query 語言與 client 介面*、不改變底層的 split-based 儲存、Paxos 複製、TrueTime commit 與 external consistency — 這些 Spanner 的分散式語意在兩種 dialect 下完全一致。
+Spanner PostgreSQL dialect 的責任是讓 PostgreSQL 生態的語法、型別系統與 wire protocol 能跑在 Spanner 的分散式引擎之上、降低團隊既有 PostgreSQL 知識與工具的遷移成本。它改變的是 *query 語言與 client 介面*、不改變底層的 split-based 儲存、Paxos 複製、TrueTime commit 與 external consistency — 這些 Spanner 的分散式語意在 PostgreSQL 與 GoogleSQL 兩種 dialect 下完全一致。
 
-把這條定位放在最前面、是因為最常見的誤解是「選了 PG dialect 就等於用 PostgreSQL」。實際上 PG dialect 是「用 PostgreSQL 的方言跟 Spanner 對話」、不是「在 Spanner 裡裝一個 PostgreSQL」。team 帶著 PostgreSQL 的 `psql`、libpq driver、PG 語法進來、但要寫的仍是 Spanner — 一個沒有 single-primary、沒有本地 sequence、partition 由系統管理的分散式 SQL。
+選了 PG dialect，用的仍然是 Spanner、不是 PostgreSQL：PG dialect 是「用 PostgreSQL 的方言跟 Spanner 對話」、不是「在 Spanner 裡裝一個 PostgreSQL」。team 帶著 PostgreSQL 的 `psql`、libpq driver、PG 語法進來、但要寫的仍是 Spanner — 一個沒有 single-primary、沒有本地 sequence、partition 由系統管理的分散式 SQL。
 
-GoogleSQL dialect 是 Spanner 原生方言、語法接近 BigQuery 的 GoogleSQL、攜帶 Spanner-specific 的 `INTERLEAVE IN PARENT`、array 型別、`PENDING_COMMIT_TIMESTAMP` 等原生概念。兩種 dialect 是 instance / database 建立時就固定的選擇、之後不可變更。
+GoogleSQL dialect 是 Spanner 原生方言、語法接近 BigQuery 的 GoogleSQL、攜帶 Spanner-specific 的 `INTERLEAVE IN PARENT`、array 型別、`PENDING_COMMIT_TIMESTAMP` 等原生概念。兩種 dialect 是 database 建立時就固定的選擇、之後不可變更。
 
 ## 問題情境：PostgreSQL 團隊想遷入 Spanner、但不想重寫所有 SQL
 
@@ -24,7 +24,7 @@ PostgreSQL dialect 的存在價值、在「既有 PostgreSQL 應用要拿到 Spa
 
 真實壓力場景：一個建在 Cloud SQL for PostgreSQL 上的金融 ledger、撞到 single-primary 寫入上限、需要遷到 Spanner 拿跨 region 強一致;團隊有數萬行 PostgreSQL SQL、用 libpq-based driver、若 target 是 GoogleSQL、application 層改動範圍會大到讓遷移 ROI 不成立。PG dialect 把這個改動範圍縮小到「相容子集邊界內的 SQL 多數可沿用、邊界外的功能需要改寫」。
 
-Case anchor：本主題在 case 庫覆蓋稀薄。9.C10 是 Google internal dogfood case、未展開 dialect 選擇細節、且不是 customer-facing 參考。本文 dialect 機制、相容子集邊界、wire protocol 行為均以 GCP vendor 規格 + 通用遷移工程展開、case 僅作「為什麼 PostgreSQL 團隊要遷 Spanner」的壓力 anchor。延伸的遷移流程在 sibling [migrate-from-cloud-sql-pg](../migrate-from-cloud-sql-pg/)。
+Case anchor：本主題沒有公開的客戶案例可以引用。Google 內部 Spanner 案例（[9.C10 Cloud Spanner：每秒 10 億請求的全球一致性資料庫](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）是 Google internal dogfood case、未展開 dialect 選擇細節、且不是 customer-facing 參考。本文 dialect 機制、相容子集邊界、wire protocol 行為均以 GCP vendor 規格 + 通用遷移工程展開、case 僅作「為什麼 PostgreSQL 團隊要遷 Spanner」的壓力 anchor。延伸的遷移流程在 sibling [migrate-from-cloud-sql-pg](../migrate-from-cloud-sql-pg/)。
 
 ## 相容子集邊界：哪些 PostgreSQL 功能不在範圍內
 
@@ -46,7 +46,7 @@ PostgreSQL 的 `SERIAL` / `bigserial` 在分散式系統下會製造熱點（單
 
 ## 操作流程：建立 PG dialect database、連線、驗證相容性
 
-### Step 1：建立 PG dialect database
+### 建立 PG dialect database
 
 dialect 在建立 database 時指定、不可事後變更。建立時明確選 PostgreSQL dialect：
 
@@ -56,9 +56,9 @@ gcloud spanner databases create my-pg-db \
   --database-dialect=POSTGRESQL
 ```
 
-驗證：查 database metadata 確認 dialect 是 POSTGRESQL。這步若選錯、唯一修法是建新 database 重遷、沒有 in-place 轉換 — 這是本文反覆強調的不可逆決策。
+驗證：查 database metadata 確認 dialect 是 POSTGRESQL。這步若選錯、唯一修法是建新 database 重遷、沒有 in-place 轉換，dialect 的選擇不可逆。
 
-### Step 2：用 PostgreSQL client 連線
+### 用 PostgreSQL client 連線
 
 PG dialect 接受 PostgreSQL wire protocol、可用 `psql` 或 libpq-based driver 連線（透過 PGAdapter proxy 或支援的 client library）。
 
@@ -69,13 +69,13 @@ psql -h localhost -p 5432 -d my-pg-db
 
 驗證：跑一個簡單 `SELECT 1`、確認 wire protocol 通;再跑一個帶 PG 型別的 query、確認型別映射正確。
 
-### Step 3：相容性 audit — 跑既有 SQL 測邊界
+### 相容性 audit：跑既有 SQL 測邊界
 
 把既有 PostgreSQL application 的 SQL 集合在 PG dialect database 上跑一遍、標出哪些直接通過、哪些報不支援。這步是遷移評估的核心 evidence — 它把「相容子集邊界」從文件文字變成「我的 SQL 有多少落在邊界內」的具體數字。
 
-驗證點：統計通過率、把不通過的 SQL 分類（用 different way 達成 vs 根本不支援）、對「根本不支援」的部分評估改寫成本。若改寫成本過高、這是 PG dialect 路徑的 no-go 訊號。
+驗證點：統計通過率、把不通過的 SQL 分成「Spanner 用不同方式達成」與「根本不存在」兩類（分類依據見〈相容子集邊界〉一節）、對「根本不存在」那一類評估改寫成本。若改寫成本過高、這是 PG dialect 路徑的 no-go 訊號。
 
-### Step 4：rollback boundary
+### rollback boundary
 
 dialect 不可變更、所以 rollback boundary 在「遷移評估階段」、不在「上線後」。決策樹是：相容性 audit 通過率高 + 改寫成本可控 → 選 PG dialect;通過率低 + 大量 Spanner-only 優化需求 → 直接學 GoogleSQL。一旦 database 建好、dialect 就鎖定、rollback 等於重建 database 重遷。
 
@@ -87,7 +87,7 @@ dialect 不可變更、所以 rollback boundary 在「遷移評估階段」、�
 
 ### Dialect 鎖定後才發現需要另一種 dialect
 
-dialect 是 database 建立時的不可逆選擇、團隊選了 PG dialect、後續發現需要 GoogleSQL 才有的某個原生能力（或反之）、唯一路徑是建新 database 重遷全部資料。這個失敗的代價遠高於一般 config 錯誤 — 它不是改一行設定、是一次完整的資料遷移 + application cutover + 驗證 + rollback 規劃。回退路徑是把它當成一次 Type E migration（見 [migrate-from-cloud-sql-pg](../migrate-from-cloud-sql-pg/) 的 paradigm shift 結構）、不能當成 hotfix。預防勝於回退：在 Step 3 的相容性 audit 階段就要把「未來可能需要哪種 dialect 的能力」一起評估、而不是只看當下的 SQL 通過率。
+dialect 是 database 建立時的不可逆選擇、團隊選了 PG dialect、後續發現需要 GoogleSQL 才有的某個原生能力（或反之）、唯一路徑是建新 database 重遷全部資料。這個失敗的代價遠高於一般 config 錯誤 — 它不是改一行設定、是一次完整的資料遷移 + application cutover + 驗證 + rollback 規劃。回退路徑是把它當成一次 paradigm shift 級的遷移（遷移方法論裡的 Type E，階段規劃見 [migrate-from-cloud-sql-pg](../migrate-from-cloud-sql-pg/)）、不能當成 hotfix。預防勝於回退：在相容性 audit 階段就要把「未來可能需要哪種 dialect 的能力」一起評估、而不是只看當下的 SQL 通過率。
 
 ### 以為換了 PG dialect 就不用懂 Spanner 分散式語意
 
@@ -108,7 +108,7 @@ commit_latencies               → external consistency 的 commit wait、兩 di
 
 容量規劃路由回 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) — sizing 邏輯跟 dialect 無關。觀測接 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
 
-> **Scope warning**：PGAdapter 的部署模型（sidecar / standalone proxy）與其延遲特性屬 GCP 規格、cross-verify 官方文件、非 9.C10 case 揭露。
+> **Scope warning**：PGAdapter 的部署模型（sidecar / standalone proxy）與其延遲特性屬 GCP 規格、cross-verify 官方文件、非 Google 內部 Spanner 案例揭露。
 
 ## 邊界與整合：何時選 PG dialect、何時選 GoogleSQL
 
@@ -124,7 +124,7 @@ commit_latencies               → external consistency 的 commit wait、兩 di
 
 若 workload 是單 region、不需要全球強一致、PostgreSQL dialect 的相容性吸引力不該成為升 Spanner 的理由 — Cloud SQL for PostgreSQL 是真正的 PostgreSQL、相容性 100%、成本更低。Anti-recommendation 的判斷標準是：PG dialect 的價值在「已經要遷 Spanner、想降低遷移成本」、不在「因為它像 PostgreSQL 所以選 Spanner」。把 dialect 相容性當升級理由是把次要因素當主要決策。
 
-### Sibling deep articles 路由
+### 相關的 Spanner 文章
 
 - [migrate-from-cloud-sql-pg](../migrate-from-cloud-sql-pg/)：PG dialect 是 Cloud SQL → Spanner 遷移降低改動成本的關鍵、本文的相容子集邊界對應該 playbook 的 diff audit
 - [schema-migration-interleaved-tables](../schema-migration-interleaved-tables/)：PG dialect 下 DDL 仍是 Spanner long-running operation、interleaved table 在兩 dialect 都要懂

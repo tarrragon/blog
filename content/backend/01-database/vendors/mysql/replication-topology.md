@@ -6,11 +6,11 @@ weight: 12
 tags: ["backend", "database", "mysql", "replication", "gtid", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *replication topology* — 從 single primary 到 multi-replica 部署的 3 個 trade-off 軸跟 5 段配置。
+> 這篇涵蓋 MySQL 的 replication topology：從 single primary 到 multi-replica 部署時 durability、latency、consistency 三個 trade-off 軸怎麼取捨，以及 Loss-Less semi-sync + GTID 的配置。文中的 SQL 用 MySQL 8.0 的語法；MySQL 8.4 已移除 `CHANGE MASTER TO`、`START SLAVE`、`SHOW SLAVE STATUS` 與 `binlog_transaction_dependency_tracking`，對應的語法是 `CHANGE REPLICATION SOURCE TO`、`START REPLICA`、`SHOW REPLICA STATUS`。
 
 ---
 
-## Replication 的 3 個 trade-off 軸 + mode 選擇
+## Durability、latency、consistency 三個 trade-off 軸與 mode 選擇
 
 Replication mode 選擇看起來是「選 async 還是 semi-sync」、但決策實際是 3 個獨立 trade-off 軸的權衡、async / semi-sync 是這些軸的兩個常見組合 *名稱*：
 
@@ -60,14 +60,14 @@ Semi-sync 在 async 基礎上加 *primary 等至少 N 個 replica ack 才 commit
 
 **Trade-off**：
 
-- Durability：至少 N 個 replica 收到 binlog（不一定 apply）、primary crash 後 replica 還有 binlog 可 promote、保證 zero data loss（但是 *binlog-level*、不是 *applied-level*）
+- Durability：至少 N 個 replica 收到 binlog（不一定 apply）、primary crash 後 replica 還有 binlog 可 promote；zero data loss 的保證只在兩個條件下成立：用的是 Loss-Less semi-sync（`AFTER_SYNC`），而且 semi-sync 沒有因為 ack 超時退回 async（退回的情形見下方〈Semi-sync timeout fallback 成 async〉）。保證的層級是 *binlog-level*、不是 *applied-level*
 - Latency：client 等 primary + 一輪 replica ack RTT；跨 AZ 通常 +1-3ms、跨 region 可能 +50-200ms
 - Consistency：跟 async 一樣、replica apply 仍 async、application 讀 replica 仍可能 stale
 
 **MySQL 5.7+ 區分 *standard* 跟 *Loss-Less* semi-sync**：
 
-- Standard semi-sync（5.5-5.6）：primary 先 commit 再等 ack、ack 超時 fallback 成 async — *仍可能 lose data*
-- Loss-Less semi-sync（5.7+、`rpl_semi_sync_master_wait_point=AFTER_SYNC`）：primary 寫完 binlog 但 *先等 ack 再 commit*、ack 超時 fallback async 之前已寫 binlog 仍保證 durable
+- Standard semi-sync（5.5-5.6 的行為，5.7+ 對應 `rpl_semi_sync_master_wait_point=AFTER_COMMIT`）：primary 先 commit 到 storage engine 再等 ack；等 ack 的期間其他 session 已經讀得到這筆 transaction，primary 在這時 crash 而 replica 沒收到，promote 之後這筆已經被讀過的資料不存在 — *仍可能 lose data*
+- Loss-Less semi-sync（5.7+、`rpl_semi_sync_master_wait_point=AFTER_SYNC`）：primary 寫完並 sync binlog 之後 *先等 ack 再 commit 到 storage engine*，其他 session 讀得到這筆 transaction 的時候，至少一個 replica 已經收到它；ack 超時之後一樣退回 async，退回期間這個保證不存在
 
 Production 場景必須用 Loss-Less semi-sync、不是 standard。
 
@@ -93,41 +93,50 @@ GTID 把每個 transaction 標一個全域 ID：`<server_uuid>:<transaction_id>`
 - **Consistency check 容易**：兩個 server 對 GTID set、就知道誰落後、有無 gap
 - **跟 group replication / MySQL Cluster 必需**：5.7+ 多 primary 場景 GTID 是前提
 
-**設定流程**（兩階段、不能直接開）：
+**設定流程**（`gtid_mode` 只能逐級切換，不能直接開）：
 
-1. **Phase 1 (預備、所有 server 同 mode)**：
+`gtid_mode` 的值依序是 `OFF`、`OFF_PERMISSIVE`、`ON_PERMISSIVE`、`ON`。線上用 `SET GLOBAL` 一次只能往相鄰的值移一級，而且每一級要在所有 server 上都完成才進下一級；從 `OFF` 直接切到 `ON` 會被拒絕：
 
-    ```ini
-    gtid_mode = ON_PERMISSIVE  -- 接受 GTID 跟 non-GTID transaction
-    enforce_gtid_consistency = ON  -- 拒絕無法用 GTID 表達的 statement（CREATE TABLE...SELECT 等）
-    ```
+```sql
+SET GLOBAL gtid_mode = ON;
+-- ERROR 1788 (HY000): The value of @@GLOBAL.GTID_MODE can only be changed one step at a time:
+-- OFF <-> OFF_PERMISSIVE <-> ON_PERMISSIVE <-> ON. Also note that this value must be stepped up
+-- or down simultaneously on all servers. See the Manual for instructions.
+```
 
-2. **Phase 2 (rolling、全部 server 都 Phase 1 後)**：
+所有 server 先切到 `OFF_PERMISSIVE`，再全部切到 `ON_PERMISSIVE`。停在 `ON_PERMISSIVE` 的過渡期，my.cnf 是：
 
-    ```ini
-    gtid_mode = ON  -- 只接受 GTID transaction
-    ```
+```ini
+gtid_mode = ON_PERMISSIVE          # 接受 GTID 跟 non-GTID transaction
+enforce_gtid_consistency = ON      # 拒絕無法用 GTID 表達的 statement
+```
 
-跳 phase 直接 `gtid_mode=ON` 會讓 replication break（既有 non-GTID transaction 無法處理）。Production 啟用 GTID 要排 maintenance window、跑完 phase 1 觀察 1-2 天再進 phase 2。
+全部 server 都進過渡期之後，逐台切到只接受 GTID transaction：
+
+```ini
+gtid_mode = ON                     # 只接受 GTID transaction
+```
+
+my.cnf 的行尾註解用 `#`。寫成 `--` 時，`--` 之後的文字會被當成值的一部分，mysqld 啟動時報 `Error while setting value 'ON_PERMISSIVE  -- ...' to 'gtid_mode'` 然後中止。Production 啟用 GTID 要排 maintenance window、過渡期觀察 1-2 天再切到 `ON`。
 
 ## 配置 step-by-step（Loss-Less semi-sync + GTID 組合）
 
 實務最常見組合：Loss-Less semi-sync + GTID。配置順序：
 
-### Step 1：Primary + replica 都開 GTID（兩 phase 跑完）
+### Primary 與 replica 的 my.cnf（GTID 逐級切到 ON 之後）
 
 ```ini
 # my.cnf on primary AND replica
 gtid_mode = ON
 enforce_gtid_consistency = ON
 log_bin = mysql-bin
-log_slave_updates = 1  -- replica 也記 binlog (chained replication 需要)
-binlog_format = ROW    -- ROW 比 STATEMENT 安全
-sync_binlog = 1        -- 每次 commit fsync binlog
-innodb_flush_log_at_trx_commit = 1  -- 每次 commit fsync InnoDB log
+log_slave_updates = 1              # replica 也記 binlog（chained replication 需要）
+binlog_format = ROW                # ROW 比 STATEMENT 安全
+sync_binlog = 1                    # 每次 commit fsync binlog
+innodb_flush_log_at_trx_commit = 1 # 每次 commit fsync InnoDB log
 ```
 
-### Step 2：Primary 安裝 semi-sync plugin
+### Primary 安裝 semi-sync plugin
 
 ```sql
 INSTALL PLUGIN rpl_semi_sync_master SONAME 'semisync_master.so';
@@ -137,7 +146,7 @@ SET GLOBAL rpl_semi_sync_master_wait_point = AFTER_SYNC;   -- Loss-Less
 SET GLOBAL rpl_semi_sync_master_timeout = 10000;           -- 10s timeout、超時 fallback async
 ```
 
-### Step 3：Replica 安裝 semi-sync plugin
+### Replica 安裝 semi-sync plugin
 
 ```sql
 INSTALL PLUGIN rpl_semi_sync_slave SONAME 'semisync_slave.so';
@@ -146,7 +155,7 @@ STOP SLAVE IO_THREAD;
 START SLAVE IO_THREAD;  -- 重啟 IO thread 啟用 semi-sync
 ```
 
-### Step 4：Replica attach primary
+### Replica 用 GTID auto-position 接上 primary
 
 ```sql
 CHANGE MASTER TO
@@ -158,7 +167,7 @@ CHANGE MASTER TO
 START SLAVE;
 ```
 
-### Step 5：驗證
+### 驗證 semi-sync 與 GTID 生效
 
 ```sql
 -- Primary: 確認 semi-sync 啟用 + 有 active client
@@ -175,11 +184,11 @@ SHOW SLAVE STATUS\G
 -- Seconds_Behind_Master: 觀察 lag
 ```
 
-## 5 個 Production 踩雷
+## Production 踩雷：lag 暴衝、semi-sync 退回 async、GTID gap、loss-less 的邊界、chained replication 雪崩
 
-### 1. Replication lag 暴衝 — 單 SQL thread bottleneck
+### Replication lag 暴衝 — apply 並行度不足
 
-預設 replica 的 SQL thread 是 *單 thread* apply、primary 多 thread 寫入時 replica 跟不上、lag 從 < 100ms 飆到分鐘級。常見觸發：批次 UPDATE / DELETE、大 transaction、index rebuild。
+MySQL 8.0.27 之前，replica 的 SQL thread 預設是 *單 thread* apply（`slave_parallel_workers = 0`）；8.0.27 起預設改成 4 個 worker、`LOGICAL_CLOCK`。單 thread apply 或 worker 數不夠時，primary 多 thread 寫入、replica 跟不上、lag 從 < 100ms 飆到分鐘級。常見觸發：批次 UPDATE / DELETE、大 transaction、index rebuild。
 
 修法：
 
@@ -189,7 +198,7 @@ SHOW SLAVE STATUS\G
 
 監控：`Seconds_Behind_Master` 是 *表面指標*、實際看 `Executed_Gtid_Set` 跟 primary 對比的 GTID gap 更準。
 
-### 2. Semi-sync timeout fallback 成 async（沒監控就看不見）
+### Semi-sync timeout fallback 成 async（沒監控就看不見）
 
 `rpl_semi_sync_master_timeout` 預設 10000ms（10 秒）、超時後 *自動 fallback async*、直到 replica 重連。Application 視角看不到任何 error、但 *durability guarantee 已失效*。
 
@@ -200,7 +209,7 @@ SHOW SLAVE STATUS\G
 - Alert 規則：5 分鐘內 `no_tx` 增加 > 0 即告警
 - Timeout 設太短（< 5s）容易 false positive、設太長（> 30s）crash 時 data loss 風險增
 
-### 3. GTID gap — replica 無法 attach
+### GTID gap — replica 無法 attach
 
 Replica 重新 attach primary 時報 `ERROR 1236: ... transactions you need from master are purged`、原因是 primary 的 `binlog_expire_logs_seconds` 過短、需要的 binlog 已被清掉。GTID 模式下這個錯誤更明顯（直接看 GTID gap）、但 binlog position 模式下也一樣。
 
@@ -210,7 +219,7 @@ Replica 重新 attach primary 時報 `ERROR 1236: ... transactions you need from
 - 大流量 server 確認 disk 容量能撐 7 天 binlog（一個高峰小時 binlog 可能 GB 級）
 - 真的 gap 太大時用 *base backup + replay binlog* 重建 replica、不要硬 reset GTID
 
-### 4. Loss-Less semi-sync 不一定真的 loss-less
+### Loss-Less semi-sync 不一定真的 loss-less
 
 `AFTER_SYNC` 模式 *primary 寫 binlog → 等 ack → commit*、看起來 zero loss。但 *primary 寫完 binlog 還沒等 ack 時 crash* + replica *剛好沒收到那個 binlog event* + replica promote — 這個 binlog event 在新 primary 不存在、但舊 primary 的 binlog 仍紀錄為 *已寫 binlog 未 commit*。client 收到 *connection lost*、不知道 transaction 是否成功。
 
@@ -220,7 +229,7 @@ Replica 重新 attach primary 時報 `ERROR 1236: ... transactions you need from
 - Loss-Less semi-sync 保證的是 *已 commit transaction 不會丟*、不是 *所有寫入都 ack-and-tell*
 - 真的 zero unknown state 需要 group replication / Galera Cluster / MySQL Cluster（synchronous multi-primary）
 
-### 5. Chained replication 雪崩
+### Chained replication 雪崩
 
 Topology 是 `primary → replica1 → replica2 → ...`（hub-and-spoke 之外的選擇、節省 primary 出口頻寬）。Replica1 SQL thread 卡住、replica2 跟 replica3 都被 block、整條 chain 雪崩。
 
@@ -228,7 +237,7 @@ Topology 是 `primary → replica1 → replica2 → ...`（hub-and-spoke 之外�
 
 - 避免超過 2 層 chain（primary → tier1 replica → tier2 replica 是上限）
 - 用 *parallel binary log relay*（5.7+ `slave_pending_jobs_size_max` + parallel workers）讓 chain 中段不阻塞
-- 規模真的大、改用 *binlog server*（如 Maxwell / MaxScale）解耦 chain dependency
+- 規模真的大、改用 *binlog server*（如 MaxScale 的 binlog router）解耦 chain dependency
 - 跨 region 用 *region-local hub + cross-region async*、不是長 chain
 
 ## 容量 / cost 對照
@@ -255,25 +264,25 @@ trade-off 軸的 *durability* 完全交給 Aurora、application 只關心 *laten
 
 Vitess shard 內部仍用 MySQL replication（async or semi-sync）、Vitess 不取代 replication topology、是 *上層 routing*。Vitess `vttablet` 每個 shard 有自己的 primary + replica、跟本文 topology 設計一致。
 
-Vitess 比較大議題在 *cross-shard transaction*（VReplication 跨 shard binlog stream）、不是 replication topology — 詳見 MySQL backlog 中 *Vitess sharding 設計* 篇（待寫）。
+Vitess 比較大的議題在 *cross-shard transaction*（預設不保證 atomic）與 *VReplication*（resharding 時跨 shard 搬移資料的 binlog stream），兩者都不屬於 replication topology — 詳見 [MySQL Vitess Sharding](/backend/01-database/vendors/mysql/vitess-sharding/)。
 
 ### ProxySQL（read replica routing）
 
 ProxySQL 是 MySQL 生態的 *connection pool + query routing* 標準、按 query type（SELECT vs DML）跟 replica lag 自動 route。寫入路 primary、讀走 replica、replica lag > N 秒時暫時退路 primary 維持 consistency。
 
-ProxySQL 跟本文 replication topology 是 *互補不重疊* — replication 設定哪些 server 有什麼資料、ProxySQL 設定 query 怎麼分配。詳見 MySQL backlog 中 *ProxySQL 配置* 篇（待寫）。
+ProxySQL 跟本文 replication topology 是 *互補不重疊* — replication 設定哪些 server 有什麼資料、ProxySQL 設定 query 怎麼分配。詳見 [MySQL ProxySQL 配置](/backend/01-database/vendors/mysql/proxysql-config/)。
 
 ### Orchestrator（HA failover）
 
 Orchestrator 是 MySQL HA topology 管理 + 自動 failover 工具、用 GTID 偵測 replica 進度、failover 時自動 promote 最新 replica。對比 PostgreSQL 的 Patroni（詳見 [Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/)）— 兩者角色相同、Orchestrator 需要 GTID + 對 MySQL 行為熟、Patroni 需要 DCS（etcd / Consul）+ 對 PG 行為熟。
 
-詳見 MySQL backlog 中 *Orchestrator failover 設計* 篇（待寫）。
+詳見 [MySQL Orchestrator Failover](/backend/01-database/vendors/mysql/orchestrator-failover/)。
 
 ### CDC（Maxwell / Debezium）
 
 Maxwell（Zendesk 出品、MySQL-only）跟 Debezium（Red Hat、MySQL / PG / MongoDB 都支援）都讀 MySQL binlog 轉成 event stream（Kafka / Kinesis / Pulsar）。Binlog 必須 `ROW` format、GTID 啟用後 *exactly-once* delivery 更好維護（不需算 binlog position）。
 
-跟 PG logical replication + Debezium 對比、MySQL 用 binlog（physical / row-level）不是 logical decoding、所以 schema change 時 *CDC consumer 要 schema-aware* 處理。詳見 MySQL backlog 中 *Binary log + Maxwell / Debezium CDC* 篇（待寫）。
+跟 PG logical replication + Debezium 對比、MySQL 用 binlog（physical / row-level）不是 logical decoding、所以 schema change 時 *CDC consumer 要 schema-aware* 處理。詳見 [MySQL Binary Log + CDC](/backend/01-database/vendors/mysql/binlog-cdc/)。
 
 ## 相關連結
 

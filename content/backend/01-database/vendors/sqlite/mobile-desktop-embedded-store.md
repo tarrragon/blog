@@ -5,11 +5,9 @@ description: "SQLite 在 mobile、desktop、CLI、browser profile 與 embedded d
 tags: ["backend", "database", "sqlite", "mobile", "embedded", "deep-article"]
 ---
 
-> 本文是 [SQLite](/backend/01-database/vendors/sqlite/) overview 的 implementation-layer deep article。Overview 已說明 SQLite 適合 mobile、desktop、CLI 與 embedded device；本文聚焦 *device-local formal state 的資料責任、backup、privacy 與 sync boundary*。
-
 SQLite embedded store 的核心責任是讓 application process 在本機持有正式狀態。Mobile app、desktop app、browser profile、CLI tool 與 embedded device 常用 SQLite 保存 local data；這些資料可能只是 cache，也可能是使用者唯一資料來源。教學上要先判斷它是否承擔 [source of truth](/backend/knowledge-cards/source-of-truth/)，再決定 backup、sync、privacy 與 migration 責任。
 
-本文的判讀錨點是：embedded SQLite 的 production boundary 在 device lifecycle，database server 層的邊界在這裡不適用。OS backup、app upgrade、device loss、profile corruption、local PII、multi-device sync 與 user export / delete 都是資料庫責任的一部分。
+本文的範圍是 SQLite 在 mobile app、desktop app、CLI、browser profile 與 embedded device 上保存正式狀態時的資料責任：embedded state model、backup 與 export、privacy 與 local PII、app upgrade 與 schema compatibility、sync boundary，以及 production 踩雷。
 
 ## Embedded state model
 
@@ -40,7 +38,7 @@ Backup 設計要先決定 restore target。Restore 到同 app version、未來 a
 
 ## Privacy 與 local PII
 
-Embedded SQLite 的 privacy 責任是治理 device-local data。資料在 server DB 中通常有 access log、IAM、DLP 與 retention policy；進入 SQLite file 後，風險轉到 device encryption、app sandbox、backup retention、debug export 與 support bundle。
+Embedded SQLite 的 privacy 責任是治理 device-local data。資料在 server DB 中通常有 access log、IAM、DLP 與 retention policy；進入 SQLite file 後，這份資料的保護落在 device encryption、app sandbox、backup retention、debug export 與 support bundle 這些環節上。
 
 | 風險           | 真實情境                         | 控制方向                                     |
 | -------------- | -------------------------------- | -------------------------------------------- |
@@ -49,7 +47,7 @@ Embedded SQLite 的 privacy 責任是治理 device-local data。資料在 server
 | Support bundle | 使用者回報問題附上 DB            | scrub / redaction、只匯出必要 table          |
 | Delete request | server 刪除但 device local 留存  | sync delete、local purge、retention evidence |
 
-SQLite file 要進入資料保護盤點。若 local DB 保存敏感資料，應連到 [Data Protection](/backend/07-security-data-protection/data-protection-and-masking-governance/) 與 [Audit Log](/backend/knowledge-cards/audit-log/) 的相同問題，只是控制面改在 device / app。
+SQLite file 要進入資料保護盤點。若 local DB 保存敏感資料，應照 [Data Protection](/backend/07-security-data-protection/data-protection-and-masking-governance/) 與 [Audit Log](/backend/knowledge-cards/audit-log/) 對 server 端資料的同一組盤點問題檢查，控制措施則落在 device / app 上。
 
 ## App upgrade 與 schema compatibility
 
@@ -79,19 +77,19 @@ Sync boundary 的核心責任是把 single-device SQLite 和 multi-device state 
 
 ## Production 踩雷
 
-### Case 1：把 cache 當正式資料
+### 把 cache 當正式資料
 
 Cache 被誤當正式資料的核心風險是清除 local DB 會造成不可恢復資料損失。許多 app 初期把 SQLite 當 cache；後來加入 draft、offline action 或 local-only setting，資料責任就改變了。
 
 修正方向是逐 table 標示資料角色。Cache table 可清；formal state table 要 backup、migration、export 與 delete policy。
 
-### Case 2：OS backup 帶走敏感資料
+### OS backup 帶走敏感資料
 
 OS backup 的核心風險是 device-local PII 進入使用者或平台雲端備份。Server 端已刪除的資料，可能仍存在 device backup。
 
 修正方向是決定哪些資料可被備份。Token、secret、敏感 PII 可排除或加密；user-owned content 則要提供 export / restore 語意。
 
-### Case 3：App upgrade migration 失敗讓使用者卡在啟動頁
+### App upgrade migration 失敗讓使用者卡在啟動頁
 
 Startup migration 失敗的核心風險是使用者卡在 app 啟動前，且修復能力有限。SQLite file 在使用者裝置上，SRE 通常需要透過 app update、support bundle 或 restore flow 處理。
 

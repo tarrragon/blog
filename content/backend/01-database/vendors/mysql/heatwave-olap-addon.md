@@ -8,9 +8,9 @@ tags: ["backend", "database", "mysql", "heatwave", "olap"]
 
 MySQL HeatWave OLAP add-on 的核心責任是判斷 OLTP database 內建 analytics 加速何時比拆出 OLAP 系統更划算。HeatWave 這類 add-on 的價值是降低資料搬運與平台數量，但它也把 analytics workload、成本、freshness 與 query governance 帶回 MySQL 生態。
 
-本文的判讀錨點是：OLAP add-on 做的是把分析查詢從 OLTP 路徑[卸載](/backend/knowledge-cards/olap-offload/)到專用引擎，解決特定 analytics workload 的 proximity 問題，而非 data warehouse 的完整替代。選型要看資料量、query pattern、freshness、concurrency、成本與團隊能力。
+本文涵蓋 HeatWave 類 OLAP add-on 的 workload fit、與 OLTP 的邊界、分析結果的 freshness 與量測、與獨立 warehouse 的成本比較，以及不適用的條件。
 
-官方文件路由的核心責任是固定 HeatWave claim。實作前先查 [MySQL HeatWave User Guide](https://dev.mysql.com/doc/heatwave/en/index.html)；本文最後檢查日是 2026-05-22。
+本文對 HeatWave 功能與行為的描述以官方文件為準。實作前先查 [MySQL HeatWave User Guide](https://dev.mysql.com/doc/heatwave/en/index.html)；本文最後檢查日是 2026-05-22。
 
 ## Workload Fit
 
@@ -24,6 +24,8 @@ Workload fit 的核心責任是找出 HeatWave 類 OLAP add-on 的合理位置�
 | Team 想降低平台數        | MySQL 生態內完成 transactional + analytics |
 
 適合的 workload 通常是「MySQL 內資料、分析需求清楚、資料量可控」。若需要跨多資料源、複雜 semantic layer、長期資料湖與 ML feature store，warehouse / lakehouse 仍然更合適。
+
+OLAP add-on 做的是把分析查詢從 OLTP 路徑[卸載](/backend/knowledge-cards/olap-offload/)到專用引擎，讓特定 analytics workload 直接分析 MySQL 內的資料、不必先搬到另一個系統；選型要看資料量、query pattern、freshness、concurrency、成本與團隊能力。
 
 ## Boundary with OLTP
 
@@ -77,7 +79,7 @@ No-go conditions 的核心責任是避免把 OLAP add-on 推到資料平台的�
 | ML feature / offline training           | feature store / lakehouse    |
 | 成本需要獨立 chargeback                 | separate OLAP environment    |
 
-HeatWave 類能力適合 MySQL-centered analytics。當分析需求超出單一 OLTP source，資料平台會比 add-on 更清楚。
+HeatWave 類能力適合 MySQL-centered analytics。當分析需求超出單一 OLTP source，資料來源、governance 與成本歸屬放在獨立的資料平台上，會比放在 add-on 裡清楚。
 
 ## 下一步路由
 

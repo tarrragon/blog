@@ -6,7 +6,7 @@ weight: 37
 tags: ["backend", "database", "spanner", "global-sql", "bigquery", "federation", "olap", "deep-article"]
 ---
 
-> 本文是 [Cloud Spanner](/backend/01-database/vendors/spanner/) overview 的 implementation-layer deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Overview 已說明 Spanner 在全球 OLTP 譜系的定位、本文聚焦 *Spanner ↔ BigQuery federation* — OLTP 與 OLAP 的責任分工、以及讓分析查詢存取 OLTP 活資料的整合機制。
+本文的範圍是 Spanner 與 BigQuery 的整合：OLTP 與 OLAP 的責任分工、分析查詢拖垮交易系統的情境、external dataset federated query 與 Data Boost 的機制與操作流程、失敗模式、容量與觀測，以及何時把分析 workload 完全分出去。
 
 ---
 
@@ -14,7 +14,7 @@ tags: ["backend", "database", "spanner", "global-sql", "bigquery", "federation",
 
 Spanner ↔ BigQuery federation 的責任是讓「分析查詢」存取「交易資料」、同時把 OLTP 與 OLAP 兩種根本不同的工作負載分開、各自用適合的引擎與運算資源。Spanner 承擔交易責任 — 低延遲、高並發、行級讀寫、強一致;BigQuery 承擔分析責任 — 掃描大量資料、複雜聚合、欄式儲存、吞吐優先。federation 是讓這兩種責任協作的橋、不是讓一個引擎兼做兩件事。
 
-把這條分工放最前面、是因為最常見的反模式是「在 OLTP 庫上直接跑分析查詢」。一個掃描全表做月度營收聚合的查詢、跑在 Spanner 上會吃掉本該服務交易的 CPU、把 OLTP 的 p99 latency 拖垮。federation 的價值是讓分析查詢「邏輯上看得到 OLTP 資料、物理上不搶 OLTP 資源」。理解這點、才能正確判斷哪些查詢該留在 Spanner、哪些該推到 BigQuery。
+OLTP 與 OLAP 的分工最常被違反的形式是「在 OLTP 庫上直接跑分析查詢」。一個掃描全表做月度營收聚合的查詢、跑在 Spanner 上會吃掉本該服務交易的 CPU、把 OLTP 的 p99 latency 拖垮。federation 的價值是讓分析查詢「邏輯上看得到 OLTP 資料、物理上不搶 OLTP 資源」。理解這點、才能正確判斷哪些查詢該留在 Spanner、哪些該推到 BigQuery。
 
 ## 問題情境：分析查詢正在拖垮交易系統
 
@@ -22,11 +22,11 @@ federation 的價值、在「分析需求與交易需求共用同一個 OLTP 庫
 
 真實壓力場景：全球電商把訂單寫進 Spanner、營運團隊要即時看「過去一小時各區域的訂單趨勢」。這個查詢需要近即時的活資料（不能等隔日 batch）、又是掃描大量 row 的聚合（不該跑在 OLTP 上）。兩個需求拉扯：要新鮮就得查 Spanner 活資料、要不干擾交易就得分到分析引擎。federation + Data Boost 正是為了同時滿足這兩端 — 查 Spanner 的活資料、但用獨立運算資源。
 
-Case anchor：[9.C10 Cloud Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 提供「Spanner 定位在 OLTP、analytics workload 交給 BigQuery」的分工 anchor — overview 已指出 Spanner 的不適用場景包含「需要 OLAP 分析能力」、替代是跟 BigQuery 整合。**dogfood 邊界明示**：9.C10 是 Google 內部 dogfood case、未展開 federation 實作細節;本文 federation 機制、Data Boost 行為均以 GCP vendor 規格 + 通用 OLTP/OLAP 工程展開、case 僅作分工壓力 anchor。
+Case anchor：[9.C10 Cloud Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 提供「Spanner 定位在 OLTP、analytics workload 交給 BigQuery」的分工 anchor。**dogfood 邊界明示**：9.C10 是 Google 內部 dogfood case、未展開 federation 實作細節;本文 federation 機制、Data Boost 行為均以 GCP vendor 規格 + 通用 OLTP/OLAP 工程展開、case 僅作分工壓力 anchor。
 
 ## 核心機制：external dataset federated query 與 Data Boost
 
-federation 讓 BigQuery 把 Spanner database 註冊成 *external dataset*、之後用標準 BigQuery SQL 直接查 Spanner 的表、查詢在執行時把資料從 Spanner 拉進 BigQuery 的執行引擎。資料不複製、查的是 Spanner 當前狀態 — 這是 federation 跟「定期 export 一份 copy 到 BigQuery」的根本差異:federated query 看到的是活資料、export 看到的是某個時間點的快照。
+federation 讓 BigQuery 把 Spanner database 註冊成 *external dataset*、之後用標準 BigQuery SQL 直接查 Spanner 的表、查詢在執行時把資料從 Spanner 拉進 BigQuery 的執行引擎。另一個入口是 external connection 配 `EXTERNAL_QUERY`：引號裡那段是 Spanner 的 SQL、送到 Spanner 執行，外層的 SQL 再由 BigQuery 處理它回傳的列；下面的例子與操作流程用的是 `EXTERNAL_QUERY` 這個入口。資料不複製、查的是 Spanner 當前狀態 — 這是 federation 跟「定期 export 一份 copy 到 BigQuery」的根本差異:federated query 看到的是活資料、export 看到的是某個時間點的快照。
 
 ```sql
 -- BigQuery 端：透過 external connection 查 Spanner 活資料
@@ -42,7 +42,7 @@ GROUP BY region;
 
 federated query 直接查 Spanner、預設仍消耗 Spanner instance 的運算資源 — 大分析查詢還是會干擾 OLTP。Data Boost 解的就是這層:它讓分析查詢用 *獨立的、按需配置的運算資源* 讀 Spanner 資料、不消耗服務交易的 instance CPU。Data Boost 讀的是同一份 storage、但用獨立 compute、所以「分析查詢看活資料」與「不干擾 OLTP」可以同時成立。
 
-這是 federation 整套機制的關鍵 — 沒有 Data Boost、federated query 只是把查詢入口換到 BigQuery、底層仍搶 Spanner CPU;有了 Data Boost、workload 隔離才真正成立。Data Boost 適合 batch / ad-hoc 的大型分析讀取、按使用量計費、不需要預先 provision。
+Data Boost 是 federation 整套機制的關鍵 — 沒有 Data Boost、federated query 只是把查詢入口換到 BigQuery、底層仍搶 Spanner CPU;有了 Data Boost、workload 隔離才真正成立。Data Boost 適合 batch / ad-hoc 的大型分析讀取、按使用量計費、不需要預先 provision。
 
 > **Scope warning**：external dataset / EXTERNAL_QUERY 的語法、Data Boost 的計費模型與資源隔離邊界屬 GCP 規格、逐版本演進。實作前 cross-verify [BigQuery Spanner federation](https://cloud.google.com/bigquery/docs/spanner-federated-queries) 與 [Data Boost 官方文件](https://cloud.google.com/spanner/docs/databoost/databoost-overview)、不可依本文當最終依據。
 
@@ -59,19 +59,19 @@ federation 是「需要時去查」、change stream 是「持續推一份到 Big
 
 ## 操作流程：建立 connection、federated query、啟用 Data Boost
 
-### Step 1：建立 BigQuery → Spanner external connection
+### 建立 BigQuery → Spanner external connection
 
 在 BigQuery 建立指向 Spanner 的 external connection、設定 IAM 讓 BigQuery service account 有讀 Spanner 的權限。驗證：用 `EXTERNAL_QUERY` 跑一個簡單 `SELECT 1` 確認 connection 通、權限正確。
 
-### Step 2：跑 federated query 並確認查的是活資料
+### 跑 federated query 並確認查的是活資料
 
-跑一個帶時間條件的 federated query、在 Spanner 端寫一筆新資料、立即用 federated query 確認讀得到 — 驗證它查的是活資料、不是快照。這步確立 federation 的核心性質。
+跑一個帶時間條件的 federated query、在 Spanner 端寫一筆新資料、立即用 federated query 確認讀得到 — 驗證它查的是活資料、不是快照。這個實驗確認的是 federation 讀的是 Spanner 的活資料，而不是某個時間點的快照。
 
-### Step 3：對大分析查詢啟用 Data Boost 並驗證隔離
+### 對大分析查詢啟用 Data Boost 並驗證隔離
 
 對會掃描大量資料的分析查詢啟用 Data Boost、然後在跑分析查詢的同時觀測 Spanner OLTP 的 CPU 與 p99 latency。驗證點：開 Data Boost 後、大分析查詢執行期間 Spanner OLTP CPU 不應 spike、交易 p99 不應退化。這是 Data Boost 隔離是否生效的直接 evidence — 若 OLTP CPU 仍 spike、表示查詢沒走 Data Boost。
 
-### Step 4：rollback boundary
+### Rollback boundary
 
 federation 是讀取路徑、不改 Spanner 資料、rollback 成本低 — 停掉 federated query 即可、不影響 OLTP。決策的回退在「分析需求是否該用 federation」:若 federated query 即使開 Data Boost 仍無法滿足效能 / 成本、回退路徑是改用 change stream 把資料落地 BigQuery、用 BigQuery 原生效能查。
 
@@ -102,7 +102,7 @@ BigQuery federated query bytes 處理量 → federation 拉取成本的計費基
 分析查詢 latency vs OLTP p99 抖動相關性 → 隔離失效會讓兩者正相關
 ```
 
-核心容量判讀是「分析查詢執行期間、OLTP CPU 與 p99 是否穩定」 — 若穩定、Data Boost 隔離生效;若兩者正相關、隔離失效、分析查詢正在消耗本該服務 OLTP 的資源。用 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 把「分析查詢時段」跟「OLTP p99」配成 evidence pair。容量規劃上、若走 federation + Data Boost、OLTP sizing 不需為分析加碼（Data Boost 用獨立 compute）;若 federated query 未隔離、OLTP sizing 要把分析尖峰算進去、回 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)。
+核心容量判讀是「分析查詢執行期間、OLTP CPU 與 p99 是否穩定」 — 若穩定、Data Boost 隔離生效;若分析查詢的執行時段與 OLTP p99 的抖動正相關、隔離失效、分析查詢正在消耗本該服務 OLTP 的資源。用 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 把「分析查詢時段」跟「OLTP p99」配成 evidence pair。容量規劃上、若走 federation + Data Boost、OLTP sizing 不需為分析加碼（Data Boost 用獨立 compute）;若 federated query 未隔離、OLTP sizing 要把分析尖峰算進去、回 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)。
 
 > **Scope warning**：Data Boost 的計費單位、federated query 的 bytes 計費、隔離的資源邊界屬 GCP 規格、隨版本演進、cross-verify 官方文件、非 9.C10 case 揭露的 production 數字。
 
@@ -120,7 +120,7 @@ BigQuery federated query bytes 處理量 → federation 拉取成本的計費基
 
 若分析需求很小、Spanner 本身的 read capacity 有餘、偶爾在低峰跑個聚合不影響交易 — 不需要引入 federation 的額外設定。Anti-recommendation 的判斷標準是:federation / Data Boost 的價值隨「分析與交易互相干擾的程度」上升;若兩者本來就不打架、保持簡單。
 
-### Sibling deep articles 路由
+### 相關的 Spanner 文章
 
 - [change-streams-cdc](../change-streams-cdc/)：federation 的互補路線、高頻分析用 change stream 把資料落地 BigQuery、跟 federation 的「需要時去查」是兩種整合取捨
 - [consistency-models-comparison](../consistency-models-comparison/)：federated query 的快照一致性鬆於 OLTP transaction 的 external consistency、對帳場景的差異對應該文的一致性等級定義

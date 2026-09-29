@@ -8,7 +8,7 @@ tags: ["backend", "database", "postgresql", "dr", "replication"]
 
 PostgreSQL cross-region DR 的核心責任是把區域性事故下的資料恢復、服務切換與資料一致性風險寫成可演練流程。跨區 DR 通常由法規、業務連續性、雲區故障、區域隔離或高可用承諾觸發。
 
-本文的判讀錨點是：cross-region DR 是恢復策略，而非自動等同 multi-region active-active。PostgreSQL 可以透過 backup / WAL archive、physical standby、logical replication、managed service replica 或 application-level replication 支援不同 RPO / RTO；每種路線都有資料延遲、切換與回切成本。
+本文涵蓋 DR 路線與 RPO / RTO 的對應、physical standby 與 logical replication 的差別、failover runbook、切換後的資料對帳、演練設計，以及不適用的條件。
 
 ## DR Strategy
 
@@ -22,7 +22,7 @@ DR strategy 的核心責任是把恢復目標和技術路線對齊。
 | Managed global DB    | 雲平台提供跨區 replica             | 希望降低自管複製與 promote 維運   |
 | Application replay   | event / queue 重建狀態             | domain event 已是 source of truth |
 
-RPO 要由業務定義。若付款、訂單、庫存只允許秒級遺失，backup-only 路線通常成本不足；若是內部報表或可重建資料，backup + WAL archive 可能足夠。
+RPO 要由業務定義。若付款、訂單、庫存只允許秒級遺失，只靠 backup 的路線 RPO 通常達不到；若是內部報表或可重建資料，backup + WAL archive 可能足夠。
 
 ## Physical vs Logical
 
@@ -94,8 +94,8 @@ No-go conditions 的核心責任是指出 PostgreSQL cross-region DR 的邊界�
 | Team 缺少 DR 演練能力       | managed service + vendor runbook                      |
 | 數據 residency 限制跨區複製 | regional shard / policy-driven replication            |
 
-Cross-region DR 要誠實面對延遲。把每個 region 都變成 writer 需要 distributed transaction 模型；PostgreSQL DR 路線主要提供恢復與切換。
+Cross-region DR 的每條路線都要承擔跨區延遲：非同步複製的代價是 replication lag 期間 commit 的交易在 failover 後可能遺失，同步複製的代價是每筆 commit 都要等跨區往返。把每個 region 都變成 writer 需要 distributed transaction 模型；PostgreSQL DR 路線主要提供恢復與切換。
 
 ## 下一步路由
 
-Cross-region DR 完成後，恢復實作讀 [PITR / WAL Archiving](../pitr-wal-archiving/)；replication 架構讀 [Replication Topology](../replication-topology/)；跨區 rollout 的資料政策讀 [Multi-region GDPR Rollout](../multi-region-gdpr-rollout/)。
+選定 DR 路線之後，backup + WAL archive 的恢復實作讀 [PITR / WAL Archiving](../pitr-wal-archiving/)；replication 架構讀 [Replication Topology](../replication-topology/)；跨區 rollout 的資料政策讀 [Multi-region GDPR Rollout](../multi-region-gdpr-rollout/)。

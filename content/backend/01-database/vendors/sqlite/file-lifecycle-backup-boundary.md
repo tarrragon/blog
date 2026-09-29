@@ -5,11 +5,9 @@ description: "把 SQLite 單檔案正式狀態拆成 WAL、backup API、restore 
 tags: ["backend", "database", "sqlite", "backup", "wal", "deep-article"]
 ---
 
-> 本文是 [SQLite](/backend/01-database/vendors/sqlite/) overview 的 implementation-layer deep article。Overview 已說明 SQLite 適合 embedded、local-first、edge 與低操作成本場景；本文聚焦 *SQLite 檔案生命週期 + backup / restore 邊界*。
-
 SQLite 的 file lifecycle 是把「一個資料庫檔案」升級成正式狀態的操作契約。SQLite 省掉 server process、帳號管理與網路連線，但它把 durability、backup、restore、locking 與 corruption recovery 放回 application process、filesystem 與 runbook；讀者要判斷的是這些責任是否已經有人承擔。
 
-這篇文章適合三種情境。第一種是 CLI、desktop、mobile 或 edge service 已經用 SQLite 保存正式資料；第二種是 single-instance backend 想用 SQLite 降低操作成本；第三種是 test fixture 用 SQLite，但需要知道哪些差異會讓 production database 的 bug 漏掉。
+本文的範圍是 SQLite 已經或準備保存正式資料的部署：CLI、desktop、mobile 或 edge service 在本地保存正式資料，以及 single-instance backend 為了降低操作成本改用 SQLite。SQLite 當 test fixture 時哪些差異會讓 production database 的 bug 漏掉，在 [SQLite test fixture best practice](/backend/01-database/vendors/sqlite/test-fixture-best-practice/)。
 
 ## 核心模型：資料庫檔案是一組受 SQLite 管理的狀態檔
 
@@ -70,7 +68,7 @@ Restore drill 的交付物應接回 [Observability Evidence Package](/backend/04
 
 ## Corruption recovery：先保全證據，再決定修復或還原
 
-SQLite [corruption recovery](/backend/knowledge-cards/corruption-recovery/) 的核心責任是區分「資料庫檔案本身受損」與「application 寫入了錯誤資料」。前者要走 file-level evidence、`.recover`、backup restore 與 filesystem / hardware investigation；後者要走資料修復、migration rollback 或 business [reconciliation](/backend/knowledge-cards/data-reconciliation/)。
+SQLite [corruption recovery](/backend/knowledge-cards/corruption-recovery/) 的核心責任是區分「資料庫檔案本身受損」與「application 寫入了錯誤資料」。資料庫檔案受損要走 file-level evidence、`.recover`、backup restore 與 filesystem / hardware investigation；application 寫入了錯誤資料則要走資料修復、migration rollback 或 business [reconciliation](/backend/knowledge-cards/data-reconciliation/)。
 
 | 觀察訊號                      | 優先判讀                    | 下一步路由                                                                                                          |
 | ----------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------- |

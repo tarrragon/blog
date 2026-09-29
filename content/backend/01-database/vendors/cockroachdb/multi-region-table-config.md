@@ -6,7 +6,7 @@ weight: 70
 tags: ["backend", "database", "cockroachdb", "distributed-sql", "multi-region", "table-locality", "deep-article"]
 ---
 
-> 本文是 [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/) 的 implementation-layer deep article。寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。本文聚焦 *三種 table locality 怎麼選、選錯的 latency / 一致性後果與重配代價*。Schema 怎麼配合 locality 設計（合規 boundary、跨州業務邏輯、Outposts 拓樸）主寫於 [locality-aware schema](../locality-aware-schema/)、survival goal 的存活機制主寫於 [survival goals](../survival-goals/)、本文兩者都 cross-link、不重複展開。
+> 本文整理 CockroachDB 三種 table locality 怎麼選、選錯的 latency / 一致性後果與重配代價。Schema 怎麼配合 locality 設計（合規 boundary、跨州業務邏輯、Outposts 拓樸）見 [locality-aware schema](../locality-aware-schema/)，survival goal 的存活機制見 [survival goals](../survival-goals/)。
 
 ---
 
@@ -52,11 +52,11 @@ multi-region table locality 是 *把「資料的地理歸屬」跟「讀寫路�
 
 `REGIONAL BY ROW` 適合 *每一 row 跟某個地理位置強綁定、但整張表跨多 region* 的情況。玩家帳戶、訂單、下注紀錄都屬於這類 — 每筆資料屬於某個用戶所在 region，但整張表服務所有 region 的用戶。row 透過隱含的 `crdb_region` 欄位決定歸屬，leaseholder 跟著 row 走。判讀訊號：同一張表的不同 row，讀寫熱點是否分散在不同 region。是的話，row 級歸屬讓每個 row 都貼著自己的用戶。
 
-`GLOBAL` 適合 *讀遠多於寫、且每個 region 都要本地快讀* 的 reference data。國家代碼、貨幣表、運動賽事 metadata 這類資料變更稀少、但每個 region 的每次查詢都要用到。`GLOBAL` 讓每個 region 都能本地讀（讀到 closed timestamp 前的一致快照），代價是寫入要跨 region 達成共識。判讀訊號：寫入頻率是否低到「跨區寫的慢可以忽略」。
+`GLOBAL` 適合 *讀遠多於寫、且每個 region 都要本地快讀* 的 reference data。國家代碼、貨幣表、運動賽事 metadata 這類資料變更稀少、但每個 region 的每次查詢都要用到。`GLOBAL` 讓每個 region 都能本地讀（讀到的是當下時間點的一致資料），代價是寫入要複製到每個 region 並做 commit-wait。判讀訊號：寫入頻率是否低到「跨區寫的慢可以忽略」。
 
 ### 為什麼不全部設 GLOBAL
 
-`GLOBAL` 的「每區讀都快」看似適合全表套用，但它對 *寫入* 收取跨 region quorum 的全額成本。`GLOBAL` table 的讀之所以能本地完成，是因為 CockroachDB 維護一個全球同步的 closed timestamp，讓每個 region 都能安全地本地讀稍早的快照；維護這個 timestamp 的代價是每次寫入都要跟所有 region 協調。
+`GLOBAL` 的「每區讀都快」看似適合全表套用，但它對 *寫入* 收取跨 region quorum 的全額成本。`GLOBAL` table 的讀之所以能本地完成，是因為 CockroachDB 對它的寫入改用 non-blocking transaction：寫入 transaction 的 timestamp 被推到未來，寫入複製到每個 region 之後再做 commit-wait，等時鐘走過那個 timestamp 才回報成功，所以每個 region 的 replica 都能本地回應當下時間點的一致讀取。這套機制的代價落在寫入：每次寫入都要跨 region 複製並付 commit-wait，寫入延遲隨 `--max-offset` 設定而變。
 
 > **Scope warning**：`GLOBAL` table 的跨 region 寫入 p99、`REGIONAL BY ROW` 的本地寫入 p99、closed timestamp 的傳播間隔等具體數字，屬 vendor 規格與部署拓樸（region 距離、replica 數）的函數，三個 anchor case（DoorDash / Netflix / Hard Rock）都未揭露單一 table 的 latency 數字。本文只給量級判讀（本地 quorum vs 跨洲 quorum 差一到兩個數量級），具體值需 benchmark 自身拓樸並 cross-verify [CockroachDB Table Localities 文件](https://www.cockroachlabs.com/docs/stable/table-localities.html)。
 
@@ -66,13 +66,13 @@ multi-region table locality 是 *把「資料的地理歸屬」跟「讀寫路�
 
 table locality 決定 *leaseholder 放哪、讀寫走哪條路徑*；survival goal 決定 *副本要分佈到幾個 failure domain 才能在故障後存活*。兩者一起決定每張 table 的副本拓樸。
 
-survival goal 的存活機制本身（`SURVIVE ZONE FAILURE` vs `SURVIVE REGION FAILURE`、怎麼從業務 SLO 倒推、RTO / RPO 怎麼算）是 [survival goals](../survival-goals/) 的 SSoT，本文不重複展開。本文只取兩者 *互動* 的一個關鍵後果：把 `SURVIVE REGION FAILURE` 套到 `REGIONAL BY ROW` table 時，每個 region 的 row 不只需要本地 voting replica，還需要在 *其他 region* 放足夠的 voting replica 才能在整個 region 失效後仍達成 quorum。這會把跨 region 的 voting replica 數量推高，間接增加寫入要協調的範圍。
+survival goal 的存活機制本身（`SURVIVE ZONE FAILURE` vs `SURVIVE REGION FAILURE`、怎麼從業務 SLO 倒推、RTO / RPO 怎麼算）見 [survival goals](../survival-goals/)。這裡談的是兩者 *互動* 的一個關鍵後果：把 `SURVIVE REGION FAILURE` 套到 `REGIONAL BY ROW` table 時，每個 region 的 row 不只需要本地 voting replica，還需要在 *其他 region* 放足夠的 voting replica 才能在整個 region 失效後仍達成 quorum。這會把跨 region 的 voting replica 數量推高，間接增加寫入要協調的範圍。
 
 判讀路線：先依業務的資料歸屬與讀寫熱點選 locality（本文），再依業務的 region failure 容忍度選 survival goal（[survival goals](../survival-goals/)），兩者疊加後才得到最終副本拓樸與 latency 結構。
 
 ## 操作流程：配置、驗證、每步檢查生效
 
-### 第一步：確認 database 已加入所有 region
+### 確認 database 已加入所有 region
 
 table locality 的前提是 database 已宣告 region。先確認 region 列表正確，再設 table locality。
 
@@ -83,7 +83,7 @@ SHOW REGIONS FROM DATABASE mydb;
 
 驗證點：輸出的 region 數量與名稱要對齊實際部署的 region。少一個 region，後面把 table 設成該 region 的 `REGIONAL BY TABLE` 會直接報錯。
 
-### 第二步：依判讀軸設定每張 table 的 locality
+### 依判讀軸設定每張 table 的 locality
 
 ```sql
 -- 整張表服務單一市場
@@ -103,7 +103,7 @@ ALTER TABLE currency_codes SET LOCALITY GLOBAL;
 SHOW CREATE TABLE accounts;   -- locality 子句會出現在輸出尾段
 ```
 
-### 第三步：驗證讀寫路徑真的走本地
+### 驗證讀寫路徑真的走本地
 
 設了 locality 不代表查詢真的走本地路徑 — 寫入時 row 的 `crdb_region` 沒設對、或 query 沒帶上對應條件，仍會跨區。用 `EXPLAIN ANALYZE` 看實際 plan。
 
@@ -114,14 +114,14 @@ EXPLAIN ANALYZE SELECT * FROM accounts WHERE id = $1;
 
 驗證點：plan 中不應出現大量跨 region 的 distributed scan；`REGIONAL BY ROW` 的點查應落在 row 歸屬 region 的單一 leaseholder。
 
-### 第四步：驗證副本分佈符合 locality + survival goal
+### 驗證副本分佈符合 locality + survival goal
 
 ```sql
 -- 看每張 table 的 range 副本實際分佈在哪些 region
 SHOW RANGES FROM TABLE accounts;
 ```
 
-驗證點：副本分佈要同時滿足 locality（leaseholder 在歸屬 region）跟 survival goal（跨足夠 failure domain）。兩者衝突時，CockroachDB 以 survival goal 為硬約束調整副本數，這會反過來影響 latency — 對應 [survival goals](../survival-goals/) 的 latency 暴漲失敗模式。
+驗證點：副本分佈要同時滿足 locality（leaseholder 在歸屬 region）跟 survival goal（跨足夠 failure domain）。兩者衝突時，CockroachDB 以 survival goal 為硬約束調整副本數，這會反過來影響 latency — 對應 [survival goals](../survival-goals/) 的〈Locality 跟 survival goal 衝突〉失敗模式。
 
 ## 失敗模式：locality 選錯的高代價回退
 
@@ -139,7 +139,7 @@ Anti-recommendation：reference data 之外的任何 table，預設都不要設 
 
 修法：寫入時顯式指定 `crdb_region` 為用戶所在 region，並用 NOT NULL + CHECK constraint 把可選值鎖死。
 
-### 選錯 locality 的重配代價（高代價不可逆情境的回退敘事）
+### 選錯 locality 的重配代價
 
 table locality 選錯，重配本身語法上一行就能改（`ALTER TABLE ... SET LOCALITY ...`），但 *資料層面的重配代價高且有持續影響*，需要專屬回退計畫，不能比照「改個 config 重啟」對待。
 
@@ -174,7 +174,7 @@ Anti-recommendation：不要在 production 高峰時段直接對大 table 改 lo
 ### 容量判讀
 
 - `GLOBAL` table 的跨區寫入成本 ≈ 寫入 QPS × region 數，region 越多成本越高，所以 `GLOBAL` 只放低寫入 reference data。
-- `REGIONAL BY ROW` 的跨區讀成本 ≈ 落到非歸屬 region 的讀 QPS，這部分若高，代表 `crdb_region` 歸屬與實際讀熱點不一致。
+- `REGIONAL BY ROW` 的跨區讀成本 ≈ 落到非歸屬 region 的讀 QPS；這個讀 QPS 若高，代表 `crdb_region` 歸屬與實際讀熱點不一致。
 - region 數量建議維持精簡 — 每多一個 region，跨區協調與重配窗口都變長。
 
 > **Scope warning**：region 數量上限建議、單 range 寫入吞吐量級、closed timestamp 傳播間隔等為 vendor 通用估算，非 case 揭露數字，容量規劃前以 [CockroachDB Multi-Region 文件](https://www.cockroachlabs.com/docs/stable/multiregion-overview.html) cross-verify 並 benchmark 自身拓樸。
@@ -187,15 +187,15 @@ Anti-recommendation：不要在 production 高峰時段直接對大 table 改 lo
 
 ## 邊界與整合
 
-### Sibling deep articles
+### 同 vendor 的其他文章
 
-- [locality-aware schema](../locality-aware-schema/)：schema 怎麼配合 locality 設計 — 合規 boundary、跨州業務邏輯、Outposts 拓樸、`crdb_region` 作為合規欄位的管理。本文是「三種 locality 怎麼選」、該文是「選好後 schema 怎麼配合」，兩者互補不重複。
-- [survival goals](../survival-goals/)：survival goal 的存活機制與 SLO 倒推 — 本文只取「survival goal 與 locality 互動如何影響副本拓樸」這一個交點，存活機制本身以該文為 SSoT。
+- [locality-aware schema](../locality-aware-schema/)：選好 locality 之後 schema 怎麼配合 — 合規 boundary、跨州業務邏輯、Outposts 拓樸、`crdb_region` 作為合規欄位的管理。
+- [survival goals](../survival-goals/)：survival goal 的存活機制與從業務 SLO 倒推的流程。
 - [HLC + Raft consensus](../hlc-raft-consensus/)：leaseholder 與 range 機制 — locality 決定 leaseholder 放哪，前置機制在該文。
 
 ### 跟 Spanner / Aurora 對照
 
-Spanner 在 GCP region 內做 placement，無 AWS Outposts 等效；Aurora 不支援 row-level locality，跨 region 只能 cluster-per-region + async replication。完整三家 distributed SQL 在 multi-region placement 的選型對比，是 [aurora-dsql-spanner-decision-tree](../aurora-dsql-spanner-decision-tree/) 的 SSoT，本文不重展三方對比。
+Spanner 在 GCP region 內做 placement，無 AWS Outposts 等效；Aurora 不支援 row-level locality，跨 region 只能 cluster-per-region + async replication。完整三家 distributed SQL 在 multi-region placement 的選型對比見 [aurora-dsql-spanner-decision-tree](../aurora-dsql-spanner-decision-tree/)。
 
 ### 1.x 章節互引
 

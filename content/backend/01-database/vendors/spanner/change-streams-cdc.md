@@ -6,7 +6,7 @@ weight: 34
 tags: ["backend", "database", "spanner", "global-sql", "change-streams", "cdc", "deep-article"]
 ---
 
-> 本文是 [Cloud Spanner](/backend/01-database/vendors/spanner/) overview 的 implementation-layer deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Overview 已說明 Spanner 在全球 OLTP 譜系的定位、本文聚焦 *Change Streams* — Spanner 把 commit 後的 row mutation 變成下游可消費事件流的 [CDC](/backend/knowledge-cards/change-data-capture/) 機制。
+本文的範圍是 Spanner Change Streams：把 commit 後的 row mutation 變成下游可消費事件流的 [CDC](/backend/knowledge-cards/change-data-capture/) 機制，包括 data change record、partition token 與 commit timestamp，從建立 change stream 到 Dataflow 下游的操作流程，retention 過期與 DELETE 漏處理這類失敗模式，以 consumer lag 為核心的觀測，以及跟 DynamoDB Streams 的對照。
 
 ---
 
@@ -35,7 +35,7 @@ CREATE CHANGE STREAM orders_stream
   FOR orders(status, total_amount), inventory(available_qty)
   OPTIONS (
     retention_period = '7d',
-    value_capture_type = 'NEW_AND_OLD_VALUES'
+    value_capture_type = 'OLD_AND_NEW_VALUES'
   );
 ```
 
@@ -55,13 +55,13 @@ CREATE CHANGE STREAM orders_stream
 
 Change stream 的讀取單位是 *partition*、不是整條流。Spanner 把 change stream 依底層 key range 切成多個 partition、每個 partition 用一個 *partition token* 標識、消費者對每個 token 各開一個 `read` 呼叫並行讀。當底層資料 split 或 merge（Spanner 自動 re-balance key range）、partition 會產生 *child partition* — 父 partition 的 record 讀到結束時回傳 child partition token、消費者要接著去讀 child token、才不會漏掉 split 後的變更。
 
-這個 child partition 的接力機制是 change stream 消費的核心複雜度。手刻消費者必須維護一張 partition token 的 watermark 表、處理 parent 結束 → child 開始的交棒、保證每個 token 只被一個 worker 讀。多數團隊不該手刻這層、應走 Dataflow connector（下節）讓它代管 partition 生命週期。
+這個 child partition 的接力機制是 change stream 消費的核心複雜度。手刻消費者必須維護一張 partition token 的 watermark 表、處理 parent 結束 → child 開始的交棒、保證每個 token 只被一個 worker 讀。多數團隊不該手刻這層、應走 Dataflow connector 讓它代管 partition 生命週期（它與另外兩條消費路徑的比較在〈選消費路徑 — Dataflow connector 為預設〉）。
 
 > **Scope warning**：本節 data change record 欄位、value_capture_type 選項、child partition 接力語意均屬 GCP Spanner change streams 規格、實作前 cross-verify [Spanner change streams 官方文件](https://cloud.google.com/spanner/docs/change-streams)。retention_period、partition 切分行為隨版本演進、非 9.C10 case 揭露。
 
 ## 操作流程：建立 change stream 到 Dataflow 下游
 
-### Step 1：建立 change stream 並驗證
+### 建立 change stream 並驗證
 
 用 DDL 建立 change stream 後、用 information schema 確認它存在、並用 metadata 查詢確認監看範圍正確。
 
@@ -73,7 +73,7 @@ CREATE CHANGE STREAM orders_stream
 
 驗證：查 `INFORMATION_SCHEMA.CHANGE_STREAMS` 確認 stream 已建立、查 `CHANGE_STREAM_TABLES` 確認監看的 table 集合符合預期。若監看範圍寫錯（漏了某 table）、下游會靜默漏掉那張表的變更、這是高代價的靜默失敗、必須在這步驗證。
 
-### Step 2：選消費路徑 — Dataflow connector 為預設
+### 選消費路徑 — Dataflow connector 為預設
 
 消費 change stream 有三條路徑、對應不同的下游能力與運維成本：
 
@@ -85,11 +85,11 @@ CREATE CHANGE STREAM orders_stream
 
 Dataflow connector 是預設路徑、因為它代管 partition token 的 split / merge 接力、提供 checkpoint 與 exactly-once 到下游 sink。
 
-### Step 3：部署 Dataflow pipeline 並驗證 end-to-end
+### 部署 Dataflow pipeline 並驗證 end-to-end
 
 用官方 Spanner-to-BigQuery 或 Spanner-to-PubSub Dataflow template 部署。驗證 end-to-end：在 Spanner 寫一筆變更、量它多久出現在下游、確認 commit timestamp 在下游被保留、確認 INSERT / UPDATE / DELETE 三種 mod type 都被正確處理（DELETE 特別容易在下游被漏掉、要專門測）。
 
-### Step 4：rollback boundary
+### Rollback boundary
 
 Change stream 是可加可刪的 schema 物件、`DROP CHANGE STREAM orders_stream` 即停止捕捉、不影響主表寫入。rollback boundary 在「停掉 Dataflow pipeline + 標記下游資料為 stale」、不是「改主庫 schema」 — change stream 本身對 OLTP write path 的影響極小、刪除它不需要 cutover window。
 
@@ -144,13 +144,13 @@ Alert 建議：
 
 Change Streams 跟 DynamoDB Streams 都是 managed CDC、但 partition 模型、ordering 範圍、retention 的設計取捨不同、選型時這三軸最關鍵。
 
-| 軸             | Spanner Change Streams                               | DynamoDB Streams                                       |
-| -------------- | ---------------------------------------------------- | ------------------------------------------------------ |
-| Ordering 範圍  | commit timestamp 全序（繼承 external consistency）   | 每個 shard / partition key 內有序、跨 partition 無全序 |
-| Partition 模型 | 隨底層 key range split / merge、child partition 接力 | 對應 DynamoDB partition、shard 隨 partition 變化       |
-| Retention      | retention_period 可設（天級、查官方上限）            | 固定 24 小時                                           |
-| 消費路徑       | Dataflow / Pub/Sub / client library                  | Lambda trigger / Kinesis Adapter                       |
-| Payload 控制   | value_capture_type 三選                              | StreamViewType 四選（KEYS_ONLY / NEW / OLD / BOTH）    |
+| 軸             | Spanner Change Streams                                          | DynamoDB Streams                                       |
+| -------------- | --------------------------------------------------------------- | ------------------------------------------------------ |
+| Ordering 範圍  | commit timestamp 全序（繼承 external consistency）              | 每個 shard / partition key 內有序、跨 partition 無全序 |
+| Partition 模型 | 隨底層 key range split / merge、child partition 接力            | 對應 DynamoDB partition、shard 隨 partition 變化       |
+| Retention      | retention_period 可設（天級、查官方上限）                       | 固定 24 小時                                           |
+| 消費路徑       | Dataflow / Pub/Sub / client library                             | Lambda trigger / Kinesis Adapter                       |
+| Payload 控制   | value_capture_type（OLD_AND_NEW_VALUES / NEW_VALUES / NEW_ROW） | StreamViewType 四選（KEYS_ONLY / NEW / OLD / BOTH）    |
 
 關鍵差異在 ordering：Spanner change stream 繼承 external consistency、跨 partition 的 record 可用 commit timestamp 排出全序;DynamoDB Streams 只保證單 partition key 內有序、跨 partition 重組需要下游自己處理。retention 上 DynamoDB Streams 固定 24 小時、Spanner 可設更長、對「下游可能長時間停機」的場景 Spanner 較有彈性。消費模型上 DynamoDB Streams 跟 Lambda 整合最順、Spanner 跟 Dataflow / BigQuery 生態整合最順。
 
@@ -158,9 +158,9 @@ Change Streams 跟 DynamoDB Streams 都是 managed CDC、但 partition 模型、
 
 ### 何時不用 change streams
 
-單純需要「下游讀到最新狀態、不在意中間每筆變更」、且主庫變更率低、定期 batch export 反而更簡單、不必引入 change stream + Dataflow 的運維成本。對延遲不敏感的分析、走 BigQuery federation 直接查 Spanner（見 sibling）比建 CDC 管線更省。Anti-recommendation 的判斷標準是：若下游不需要「每一筆變更的順序」、只需要「定期最新快照」、CDC 是過度工程。
+單純需要「下游讀到最新狀態、不在意中間每筆變更」、且主庫變更率低、定期 batch export 反而更簡單、不必引入 change stream + Dataflow 的運維成本。低頻、ad-hoc 的分析、走 [BigQuery federation](../bigquery-federation/) 直接查 Spanner 比建 CDC 管線更省。Anti-recommendation 的判斷標準是：若下游不需要「每一筆變更的順序」、只需要「定期最新快照」、CDC 是過度工程。
 
-### Sibling deep articles 路由
+### 相關的 Spanner 文章
 
 - [bigquery-federation](../bigquery-federation/)：不想建 CDC 管線、直接 federated query 查 Spanner 的 OLAP 路徑、跟 change stream → BigQuery 是兩條互補的整合方式
 - [truetime-api-depth](../truetime-api-depth/)：change stream 的 commit timestamp 全序來自 TrueTime、理解順序保證的物理基礎

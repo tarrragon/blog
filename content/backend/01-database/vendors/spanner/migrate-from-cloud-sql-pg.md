@@ -1,12 +1,12 @@
 ---
 title: "Migration Playbook：Cloud SQL for PostgreSQL → Cloud Spanner"
 date: 2026-05-27
-description: "Cloud SQL → Spanner 是 paradigm shift 級遷移、不是 drop-in。本 playbook 走 6 規格面 Driver / Diff / Phase / Evidence / Cutover / Cleanup：Driver 段明示 sizing barrier（100 pu 起跳）跟 < 50ms write latency 兩條 no-go；Diff 段加 sizing / cost 第 7 規格面；Phase 0 含 sizing audit；Evidence 段補 cost crossover 報告；對照 9.C10 Google internal dogfood 邊界跟 Standard Chartered 受監管 banking case"
+description: "Cloud SQL → Spanner 是 paradigm shift 級遷移、不是 drop-in。本 playbook 依 Driver / Diff / Phase / Evidence / Cutover / Cleanup 各段展開：Driver 段明示 sizing barrier（100 pu 起跳）跟 < 50ms write latency 兩條 no-go；Diff 段在 schema、operational、paradigm、component、application、data topology 之外加比 sizing / cost；Phase 0 含 sizing audit；Evidence 段補 cost crossover 報告；對照 Google 內部 Spanner 案例的 dogfood 邊界跟 Standard Chartered 受監管 banking case"
 weight: 33
 tags: ["backend", "database", "spanner", "global-sql", "migration", "playbook", "postgresql", "cloud-sql", "deep-article"]
 ---
 
-> 本文是 [Cloud Spanner](/backend/01-database/vendors/spanner/) overview 的 [migration](/backend/knowledge-cards/migration/) playbook。走 [vendor-article-spec](/backend/01-database/vendor-article-spec/) Migration Playbook 規格 + [migration-playbook-methodology](/posts/migration-playbook-methodology/) Type E（paradigm shift）。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關 — Evidence 段列的證據是 gate 通過條件、不是 nice-to-have。
+本文的範圍是從 Cloud SQL for PostgreSQL 遷到 Cloud Spanner 的 driver 與不該遷的條件、diff audit、phase plan、每階段的 evidence、cutover 與 rollback 決策，以及 cleanup。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關，Evidence 一節列的證據就是 gate 的通過條件。
 
 ---
 
@@ -29,9 +29,9 @@ single-region Cloud SQL PostgreSQL primary 觸到容量上限（connection、wri
 
 ### No-go condition（sizing barrier）
 
-小 / 中型 PostgreSQL workload 的成本門檻 — Spanner 早期最小單位 100 processing units（≈ 1 node）對中小負載偏貴、過去是 sizing barrier；2021+ 推出 100 pu 起跳的 granular sizing 後雖然可從小開始、但 100 pu × per-pu monthly cost 加上跨 region replication 仍可能比 Cloud SQL HA 設定貴數倍。
+小 / 中型 PostgreSQL workload 的成本門檻 — Spanner 早期最小單位是 1 node（1 node = 1000 processing units）、對中小負載偏貴、過去是 sizing barrier；2021+ 推出以 100 pu 為最小單位的 granular sizing 後雖然可從小開始、但 100 pu × per-pu monthly cost 加上跨 region replication 仍可能比 Cloud SQL HA 設定貴數倍。
 
-**來源 9.C10「判讀」段第 3 點**：Spanner 早期 100 pu 起跳是 sizing barrier、後來推出 granular sizing 才讓中小負載可從小開始。**Dogfood 邊界明示**：9.C10 case 揭露的 sizing 結構是 Google 內部 dogfood 的 capacity 規劃語言、不是 customer-facing pricing 承諾；客戶實際成本要看當期 Spanner pricing + region + replication config。
+**來源：Google 內部 Spanner 案例（9.C10）的判讀段**：Spanner 早期以整個 node 起跳是 sizing barrier、後來推出 granular sizing 才讓中小負載可從小開始。**Dogfood 邊界明示**：這個案例揭露的 sizing 結構是 Google 內部 dogfood 的 capacity 規劃語言、不是 customer-facing pricing 承諾；客戶實際成本要看當期 Spanner pricing + region + replication config。
 
 觸發 sizing no-go 的條件：
 
@@ -48,7 +48,7 @@ single-region Cloud SQL PostgreSQL primary 觸到容量上限（connection、wri
 
 應用層延遲容忍 < 50ms write 的 workload 不該升 Spanner — 跨 region Spanner write 在物理光速硬限下達 100-200ms（[consistency-models-comparison](../consistency-models-comparison/) 的 cross-region quorum 段）。延遲敏感 workload 升級後會在 p99 直接撞牆、回退時資料已經寫進 Spanner、roll back 成本巨大。
 
-**來源 9.C10「判讀」段第 2 點 + 「策略」段第 3 點**：「external consistency 必須等多區 quorum、跨洲交易延遲可達 100-200ms」。**Dogfood 邊界明示**：9.C10 揭露的數量級是 Google internal observation、客戶實際 latency 隨 voting region 配置變化、引用時要附條件。
+**來源：Google 內部 Spanner 案例的判讀段與策略段**：「external consistency 必須等多區 quorum、跨洲交易延遲可達 100-200ms」。**Dogfood 邊界明示**：9.C10 揭露的數量級是 Google internal observation、客戶實際 latency 隨 voting region 配置變化、引用時要附條件。
 
 觸發 latency no-go 的場景：
 
@@ -67,11 +67,11 @@ single-region Cloud SQL PostgreSQL primary 觸到容量上限（connection、wri
 
 ### Case anchor + dogfood 邊界
 
-**無強 customer case**。9.C10 是 Google 內部 dogfood、不是公開遷移 case；本 playbook 用 Spanner overview 的 PostgreSQL dialect 路徑 + 官方 migration guide + 通用 pattern。引用時必須明示「9.C10 揭露的線性 scaling / line-rate 設計目標是 Spanner 設計依據、不等於客戶遷移後可獲得的 capacity」。
+**無強 customer case**。Google 內部 Spanner 案例是 Google 內部 dogfood、不是公開遷移 case；本 playbook 用 Spanner 的 [PostgreSQL dialect](/backend/01-database/vendors/spanner/postgresql-dialect/) 路徑 + 官方 migration guide + 通用 pattern。引用時必須明示「這個案例揭露的線性 scaling / line-rate 設計目標是 Spanner 設計依據、不等於客戶遷移後可獲得的 capacity」。
 
 對照 case：[9.C14 Standard Chartered Aurora 受監管 banking](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 雖然是 Aurora、不是 Spanner、但揭露「受監管 OLTP 遷移要算合規 lead time」「資料駐留限制 = 容量規劃 per-市場」這兩條結論在 Spanner 遷移同樣適用。讀者若是受監管產業、跨 region instance config 還要疊上 voting region 是否落在合規市場的 audit。
 
-## Diff Audit（6 規格面 + sizing / cost 第 7 面）
+## Diff Audit：schema、operational、paradigm、component、application、data topology 與 sizing / cost
 
 ### Schema diff
 
@@ -112,7 +112,7 @@ interleaved table 設計參考 [schema-migration-interleaved-tables](../schema-m
 
 從 single-primary OLTP → 跨 region distributed SQL：
 
-- transaction commit latency：< 5ms → 50-200ms（跨洲、含 [Commit Wait](/backend/knowledge-cards/commit-wait/) + cross-region quorum）
+- transaction commit latency：< 5ms → 跨洲 multi-region instance 可達 100-200ms（含 [Commit Wait](/backend/knowledge-cards/commit-wait/) + cross-region quorum；同大陸的 dual-region 較低）
 - external consistency 是 default（不再是 isolation level 選擇題）
 - transaction 上限：Cloud SQL 無硬限 → Spanner 10s timeout、要重構成短交易
 - read consistency：default eventual → default strong、需顯式選 bounded staleness
@@ -147,7 +147,7 @@ interleaved table 設計參考 [schema-migration-interleaved-tables](../schema-m
 | Cursor / prepared statement | 全支援                               | 部分支援、查 SDK 文件                                    |
 | Stored procedure            | 全支援                               | 少數支援、業務邏輯改應用層                               |
 
-ORM 兼容性是 time-sensitive claim — JPA / Hibernate / SQLAlchemy 在 Spanner PostgreSQL dialect 上的行為隨 dialect 版本演進、實作前查最新 vendor docs。讀者要把 ORM 兼容測試放 Phase 0、不能假設「PostgreSQL ORM 直接搬到 Spanner」。
+ORM 兼容性是 time-sensitive claim — JPA / Hibernate / SQLAlchemy 在 Spanner PostgreSQL dialect 上的行為隨 dialect 版本演進、實作前查最新 vendor docs。讀者要把 ORM 兼容測試放進 Phase 0 的 compatibility audit、不能假設「PostgreSQL ORM 直接搬到 Spanner」。
 
 ### Data topology diff
 
@@ -155,13 +155,13 @@ ORM 兼容性是 time-sensitive claim — JPA / Hibernate / SQLAlchemy 在 Spann
 - Primary key 設計：避免單調遞增（SERIAL）造成 hot split、改 UUID 或 bit-reversed
 - Partition：PostgreSQL declarative partition → Spanner 不需要顯式 partition（自動 split）
 
-### Sizing / cost diff（第 7 規格面）
+### Sizing / cost diff
 
 | 維度                  | Cloud SQL                                              | Spanner                                                         |
 | --------------------- | ------------------------------------------------------ | --------------------------------------------------------------- |
-| 計費單位              | instance class（vCPU / RAM）+ storage IOPS + HA add-on | 100 processing units 起跳 ≈ 1 node                              |
+| 計費單位              | instance class（vCPU / RAM）+ storage IOPS + HA add-on | processing unit，最小 100 pu（1 node = 1000 pu）                |
 | 起跳成本              | 小型 instance 月成本可控（小型 HA $50-200/月）         | 100 pu × per-pu monthly rate、月成本是 Cloud SQL 小型 HA 的數倍 |
-| Storage               | 獨立計費（GB / month）                                 | 含在 node count 內、無單獨 storage charge                       |
+| Storage               | 獨立計費（GB / month）                                 | 依實際使用量計費（GB / month）、不含在 compute capacity 內      |
 | Throughput cap        | 隨 instance class                                      | 隨 pu 線性擴展                                                  |
 | 跨 region replication | 額外 read replica cost                                 | 含在 multi-region instance config 內                            |
 | Egress                | 跨 region 額外                                         | 跨 region 額外                                                  |
@@ -177,7 +177,7 @@ Cost crossover 不是「Spanner 成本必須低於 Cloud SQL」、是「Spanner 
 
 **Type E（paradigm shift）**、不是 drop-in。schema / app / operation / data topology / cost 五軸都動、不能用 Type B（drop-in）思路規劃 phase。詳細 type 判定方法看 [migration-playbook-methodology](/posts/migration-playbook-methodology/)。
 
-## Phase Plan：9 段、每段有驗證門檻
+## Phase Plan：從相容性 audit 到 cleanup，每段有驗證門檻
 
 ### Phase 0 — Compatibility audit + sizing audit
 
@@ -189,7 +189,7 @@ Cost crossover 不是「Spanner 成本必須低於 Cloud SQL」、是「Spanner 
 - 做 Cloud SQL HA cost vs Spanner cost crossover 分析
 - 若 cost crossover 證明不出來 → halt migration、回到 driver 段重審
 
-Phase 0 是 migration 的決策閘門 — 不過閘門就停、不浪費 Phase 1+ 的 engineering effort。
+Phase 0 是 migration 的決策閘門 — 不過閘門就停、不浪費 target schema design 之後各 phase 的 engineering effort。
 
 ### Phase 1 — Target schema design
 
@@ -231,21 +231,21 @@ read-only window（< 5 min）→ 最後 catch-up → switch source-of-truth → 
 
 退役 Cloud SQL primary、保留 backup、清 PgBouncer / Patroni / 監控 dashboard。
 
-### Stage 0 variant 規劃
+### 不能停機時的 cutover 變體
 
 若 read-only window 不可接受（24/7 不能停機的金融 / 醫療系統）、Phase 6 dual write 期間做 conflict resolution（last-writer-wins + manual reconcile）、進入 [fail-forward](/backend/knowledge-cards/fail-forward/) 模式、不走 read-only cutover。
 
 ## Evidence：每階段驗證材料
 
-| Phase   | Evidence                                                                                                                                                           |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Phase 0 | incompatible feature 清單、預估改動 SP、hot key 風險 row count、**sizing audit 報告**（target pu 數估算 + Cloud SQL HA vs Spanner cost crossover 月 / 年成本對比） |
-| Phase 1 | DDL diff report、預估 backfill 時間（基於 row count + Spanner 文件）                                                                                               |
-| Phase 3 | row count 對齊、column-level checksum、payload sample diff                                                                                                         |
-| Phase 4 | CDC lag < 1s sustained 24h、error rate < 0.01%                                                                                                                     |
-| Phase 5 | shadow read divergence rate < 0.1%、p99 latency Spanner < 1.5x Cloud SQL                                                                                           |
-| Phase 6 | dual write divergence < 0.01%、reconcile queue 不積壓                                                                                                              |
-| Phase 7 | cutover window 內 write 一致性、回到 Phase 6 的條件（rollback path）                                                                                               |
+| Phase                                | Evidence                                                                                                                                                                       |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Phase 0 compatibility + sizing audit | incompatible feature 清單、預估改動的 story points、hot key 風險 row count、**sizing audit 報告**（target pu 數估算 + Cloud SQL HA vs Spanner cost crossover 月 / 年成本對比） |
+| Phase 1 target schema design         | DDL diff report、預估 backfill 時間（基於 row count + Spanner 文件）                                                                                                           |
+| Phase 3 bulk initial load            | row count 對齊、column-level checksum、payload sample diff                                                                                                                     |
+| Phase 4 CDC catch-up                 | CDC lag < 1s sustained 24h、error rate < 0.01%                                                                                                                                 |
+| Phase 5 shadow read                  | shadow read divergence rate < 0.1%、p99 latency Spanner < 1.5x Cloud SQL                                                                                                       |
+| Phase 6 dual write                   | dual write divergence < 0.01%、reconcile queue 不積壓                                                                                                                          |
+| Phase 7 cutover                      | cutover window 內 write 一致性、退回 Phase 6 dual write 的條件（rollback path）                                                                                                |
 
 **Cost crossover 報告**（Phase 0 必交付）：
 
@@ -253,16 +253,16 @@ read-only window（< 5 min）→ 最後 catch-up → switch source-of-truth → 
 Item                          | Cloud SQL HA | Spanner 100 pu | Delta
 ------------------------------|--------------|----------------|------
 Compute monthly               | $X           | $Y             | $Y-X
-Storage monthly               | $A           | (included)     | -$A
+Storage monthly               | $A           | $S             | $S-A
 Cross-region replication      | $B           | (included)     | -$B
 Egress (est)                  | $C           | $C             | $0
-Total monthly                 | $X+A+B+C     | $Y+C           | $Y-X-A-B
+Total monthly                 | $X+A+B+C     | $Y+S+C         | $Y+S-X-A-B
 Annual                        | 12*above     | 12*above       | -
 Benefit (qualitative)         | -            | multi-region write residency / external consistency | -
 Crossover verdict             | -            | proceed / halt | -
 ```
 
-Verdict = `proceed` 才進 Phase 1；`halt` → 回到 Driver 段重審 driver 是否成立。
+Verdict = `proceed` 才進 Phase 1 target schema design；`halt` → 回到 Driver 段重審 driver 是否成立。
 
 所有 evidence 進 incident decision log、回 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
 
@@ -284,7 +284,7 @@ DB lead + product lead + on-call SRE 共同 sign-off。受監管產業多加合�
 
 ### Rollback 機制
 
-保留 Cloud SQL 為 read-only mirror 14 天、Spanner 改 read-only、reverse CDC（Spanner → Cloud SQL）需事先準備。Reverse CDC 在 Phase 4-6 期間就要 dry-run 過、不能 cutover 才第一次試。
+保留 Cloud SQL 為 read-only mirror 14 天、Spanner 改 read-only、reverse CDC（Spanner → Cloud SQL）需事先準備。Reverse CDC 在 CDC catch-up 到 dual write 期間（Phase 4-6）就要 dry-run 過、不能 cutover 才第一次試。
 
 連結 [rollback-window](/backend/knowledge-cards/rollback-window/)、[rollback-condition](/backend/knowledge-cards/rollback-condition/)。
 
@@ -301,7 +301,7 @@ DB lead + product lead + on-call SRE 共同 sign-off。受監管產業多加合�
 
 ### 監控清理
 
-postgres-specific dashboard（exporter / wal lag / autovacuum）改成 Spanner dashboard（commit_latencies / clock_skew_ms / cpu_utilization_by_priority）。
+postgres-specific dashboard（exporter / wal lag / autovacuum）改成 Spanner dashboard（`api/request_latencies` 篩 method=Commit 看 commit 延遲、`instance/cpu/utilization_by_priority` 看 CPU）。
 
 ### 文件 / runbook 更新
 
@@ -318,11 +318,11 @@ postgres operation runbook 標記 deprecated、Spanner runbook 上線。新 runb
 
 ## 邊界與整合：sibling、對照、anti-recommendation
 
-### Sibling deep articles
+### 相關的 Spanner 文章
 
-- [truetime-api-depth](../truetime-api-depth/)：app 對 timestamp 假設審計（Phase 2 必讀）
+- [truetime-api-depth](../truetime-api-depth/)：app 對 timestamp 假設審計（Phase 2 application dual-target preparation 必讀）
 - [schema-migration-interleaved-tables](../schema-migration-interleaved-tables/)：Phase 1 target schema 設計
-- [consistency-models-comparison](../consistency-models-comparison/)：Phase 0 應用層一致性要求釐清、Driver 段 latency no-go 的物理硬限
+- [consistency-models-comparison](../consistency-models-comparison/)：Phase 0 compatibility audit 時釐清應用層一致性要求、Driver 段 latency no-go 的物理硬限
 
 ### 跟其他 migration 對照
 

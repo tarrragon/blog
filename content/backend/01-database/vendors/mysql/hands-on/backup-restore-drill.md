@@ -7,7 +7,7 @@ tags: ["backend", "database", "mysql", "hands-on", "backup"]
 
 MySQL backup restore drill 的核心責任是證明資料可以從 backup 回到可用狀態。這篇承接 [PITR / Backup](../../pitr-backup/)，用 logical dump 建立最小演練框架，並保留 physical backup / binlog PITR 的 evidence 欄位。
 
-本文的驗收標準是：你能產出 dump、記錄 binlog position、還原到隔離 database、跑 validation query，並寫下 RPO / RTO note。
+本篇的範圍是對 local lab 的 `appdb` 做一次 logical dump 演練：產出 dump 並記下它對應的 binlog position、在 dump 之後寫入一筆、還原到隔離的 `appdb_restore` 跑 validation query，並寫下 RPO / RTO note。
 
 ## Create Backup
 
@@ -15,16 +15,22 @@ Create backup 的核心責任是建立可還原 artifact。
 
 ```bash
 mkdir -p /tmp/mysql-backup-lab
-mysqldump -h 127.0.0.1 -P 33069 -u app_user -papp_pw \
-  --single-transaction --routines --triggers appdb \
+# --source-data=2：把 dump snapshot 對應的 binlog file / position 以註解寫進 dump 開頭
+# 這個選項要 RELOAD 權限，app_user 沒有，所以用 root 執行
+mysqldump -h 127.0.0.1 -P 33069 -u root -proot_pw \
+  --single-transaction --source-data=2 --routines --triggers appdb \
   > /tmp/mysql-backup-lab/appdb.sql
 ```
 
-記錄 binlog 狀態：
+記錄 binlog position：從 dump 開頭取出 `--source-data=2` 寫進去的那一行。
 
 ```bash
-mysql -h 127.0.0.1 -P 33069 -u root -proot_pw -e "SHOW BINARY LOG STATUS;"
+grep -m1 'CHANGE REPLICATION SOURCE' /tmp/mysql-backup-lab/appdb.sql
+# 輸出形如：-- CHANGE REPLICATION SOURCE TO SOURCE_LOG_FILE='mysql-bin.000003', SOURCE_LOG_POS=1994;
+# file 名稱與 position 以自己跑出來的為準
 ```
+
+dump 跑完之後才執行 `SHOW BINARY LOG STATUS`，回的是查詢那一刻的 binlog 位置；dump 期間 source 若有寫入，這個位置會落在 dump snapshot 之後，從它開始補 binlog 會漏掉那段寫入。`--source-data=2` 記下的位置與 `--single-transaction` 取的 snapshot 是同一個時間點。
 
 `--single-transaction` 適合 InnoDB consistent dump。大型 production 要評估 physical backup、backup lock、replication lag 與 binlog retention。
 

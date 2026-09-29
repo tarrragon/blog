@@ -7,7 +7,7 @@ tags: ["backend", "database", "mysql", "hands-on", "replication", "failover"]
 
 MySQL replication failover lab 的核心責任是讓讀者觀察 source / replica 拓撲在 promotion 時的資料與 client route。這篇承接 [Replication Topology](../../replication-topology/) 與 [Orchestrator Failover](../../orchestrator-failover/)。
 
-本文的驗收標準是：你能記錄 replication status、lag、promotion timeline、client error sample、validation query 與 incident decision log。
+本篇整理 source / replica failover 演練要留的 evidence：replication status 與 lag、promotion timeline、client error sample、validation query 與 incident log；replication 本身怎麼建立不在範圍內。
 
 ## Baseline Replication
 
@@ -31,14 +31,18 @@ Baseline 要記錄：
 Client workload 的核心責任是讓 failover 對 application 可見。
 
 ```bash
+# MYSQL_WRITE_HOST：application 寫入用的 endpoint（直連 source、ProxySQL writer 或 DNS 名稱）
+i=0
 while true; do
+  i=$((i+1))
+  # idempotency key 由迴圈計數產生，validation 時可以逐號比對
   mysql -h "$MYSQL_WRITE_HOST" -u app_user -papp_pw appdb \
-    -e "INSERT INTO ledger_entries(account_id, amount_cents, idempotency_key) VALUES (1, 1, UUID());"
+    -e "INSERT INTO ledger_entries(account_id, amount_cents, idempotency_key) VALUES (1, 1, 'failover-drill-$i');"
   sleep 1
 done
 ```
 
-這個 synthetic workload 產生成功、timeout、duplicate、read-only 或 connection error。正式演練要避免碰 production side effect。
+這個 synthetic workload 在 failover 期間會出現成功、timeout、read-only 或 connection error。idempotency key 由 client 端的迴圈計數產生（`failover-drill-1`、`failover-drill-2`……），validation 時比對新 source 上有哪些編號，就知道哪幾筆寫入沒有進去；同一個編號重送時撞到 `uk_ledger_idempotency`，回 `ERROR 1062`，這就是 duplicate error 的來源。key 由 server 端的 `UUID()` 產生時，每次送出都是新值，同一筆寫入重送也不會撞到 unique key。正式演練要避免碰 production side effect。
 
 ## Promotion Frame
 

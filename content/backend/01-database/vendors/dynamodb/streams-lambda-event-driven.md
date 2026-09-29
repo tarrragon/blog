@@ -1,16 +1,16 @@
 ---
 title: "DynamoDB Streams 與 Lambda 事件驅動：CDC、shard 順序保證、消費模式與失敗處理"
 date: 2026-06-02
-description: "DynamoDB Streams 不是免費的可靠事件流；本文展開 stream record 的四種 view type、shard 對應 partition 的順序保證邊界、Lambda event source mapping vs Kinesis 消費模式、at-least-once 下游冪等需求，以及 batch 失敗時的 bisect / DLQ 處理"
+description: "DynamoDB Streams 不是免費的可靠事件流；本文展開 stream record 的 view type（KEYS_ONLY / NEW_IMAGE / OLD_IMAGE / NEW_AND_OLD_IMAGES）、shard 對應 partition 的順序保證邊界、Lambda event source mapping vs Kinesis 消費模式、at-least-once 下游冪等需求，以及 batch 失敗時的 bisect / DLQ 處理"
 weight: 37
 tags: ["backend", "database", "dynamodb", "streams", "cdc", "event-driven", "lambda", "deep-article"]
 ---
 
-> 本文是 [DynamoDB](/backend/01-database/vendors/dynamodb/) overview 的 implementation-layer deep article。寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+這篇整理 [DynamoDB](/backend/01-database/vendors/dynamodb/) Streams 把 table 的資料變更送到下游的機制：stream record 與 view type、順序保證的範圍、Lambda 與 Kinesis 兩種消費模式，以及 batch 失敗的處理。
 
-訂單寫進 DynamoDB 後、搜尋索引要更新、快取要失效、要推一筆通知、要寫一筆 audit。第一版 application 在寫訂單的同一段 code 裡同步做完這四件事、結果單一步驟（推通知的外部 API）變慢、整個寫訂單路徑被拖垮。第二版改成「另一個 service 每 10 秒輪詢 table 撈新資料」、輪詢既貴（全表 scan）又慢（最差 10 秒延遲）。兩個痛點都指向同一個缺口 — 資料變更需要一條可靠、低延遲、不污染寫路徑的下游通道。這正是 DynamoDB Streams 的責任。本文展開 Streams 的 record 結構、順序保證的真實邊界、消費模式選擇與失敗處理。
+資料寫進 table 之後，搜尋索引更新、快取失效、推播通知、audit 這類下游動作，放在寫入路徑裡同步做，任何一個下游變慢都會拖垮寫入；改成另一個 service 定期輪詢 table，則要全表 scan、延遲也受輪詢間隔限制。DynamoDB Streams 承擔的是第三條路：一條可靠、低延遲、不佔寫入路徑的下游通道。
 
-> **事件機制前提：先確認 workload 適配 DynamoDB**：事件驅動機制是已選 DynamoDB 後的議題；選型本身先過 workload 適配 4 軸 — PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定。判讀軸詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀4-軸)。本文聚焦 *已選 DynamoDB* 後、把資料變更導向下游的事件機制。
+> **事件機制前提：先確認 workload 適配 DynamoDB**：事件驅動機制是已選 DynamoDB 後的議題；選型本身先過 workload 適配 4 軸 — PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定。判讀軸詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀)。本文聚焦 *已選 DynamoDB* 後、把資料變更導向下游的事件機制。
 
 ## 核心機制：Stream record 與 view type
 
@@ -18,12 +18,12 @@ DynamoDB Streams 是 table 的 [change data capture](/backend/knowledge-cards/ch
 
 **view type 決定 record 帶什麼**：
 
-| StreamViewType       | record 內容          | 典型用途                    |
-| -------------------- | -------------------- | --------------------------- |
-| `KEYS_ONLY`          | 只有被改 item 的 key | 下游自己回查、最省          |
-| `NEW_IMAGE`          | 寫入後的完整新 item  | 同步到搜尋索引 / 快取       |
-| `OLD_IMAGE`          | 寫入前的舊 item      | audit「改了什麼」、刪除留底 |
-| `NEW_AND_OLD_IMAGES` | 新舊都帶             | 算 diff、條件性下游處理     |
+| StreamViewType       | record 內容          | 典型用途                   |
+| -------------------- | -------------------- | -------------------------- |
+| `KEYS_ONLY`          | 只有被改 item 的 key | 下游自己回查、最省         |
+| `NEW_IMAGE`          | 寫入後的完整新 item  | 同步到搜尋索引 / 快取      |
+| `OLD_IMAGE`          | 寫入前的舊 item      | 保存寫入前的版本、刪除留底 |
+| `NEW_AND_OLD_IMAGES` | 新舊都帶             | 算 diff、條件性下游處理    |
 
 view type 在開 stream 時定、改要重開 stream。選 `NEW_AND_OLD_IMAGES` 最方便但 record 最大（影響 Lambda payload 與成本）；下游只需 key 就回查的、選 `KEYS_ONLY`。
 
@@ -57,13 +57,13 @@ Lambda 消費 stream 是 *at-least-once* — 同一筆 record 可能被送兩次
 
 兩條主要消費路徑、責任與運維成本不同：
 
-| 維度      | Lambda event source mapping  | Kinesis Data Streams for DynamoDB |
-| --------- | ---------------------------- | --------------------------------- |
-| 模式      | push（DynamoDB 觸發 Lambda） | pull（消費端自己拉）              |
-| retention | stream 原生較短              | 較長（可重播更久）                |
-| 消費者數  | 適合單一 / 少量消費者        | 適合多消費者 fan-out              |
-| 運維      | 幾乎零（managed trigger）    | 要管 Kinesis consumer / KCL       |
-| 重播能力  | 受 stream retention 限制     | retention 內可重播                |
+| 維度      | Lambda event source mapping                          | Kinesis Data Streams for DynamoDB |
+| --------- | ---------------------------------------------------- | --------------------------------- |
+| 模式      | poll（Lambda 服務輪詢 stream shard 後呼叫 function） | pull（消費端自己拉）              |
+| retention | stream 原生較短                                      | 較長（可重播更久）                |
+| 消費者數  | 適合單一 / 少量消費者                                | 適合多消費者 fan-out              |
+| 運維      | 幾乎零（managed trigger）                            | 要管 Kinesis consumer / KCL       |
+| 重播能力  | 受 stream retention 限制                             | retention 內可重播                |
 
 多數「寫入後觸發一個下游動作」用 Lambda event source mapping 最簡單。需要長 retention、多消費者 fan-out、或要重播歷史變更的、用 Kinesis Data Streams for DynamoDB。
 
@@ -77,13 +77,13 @@ Lambda 消費 stream 是 *at-least-once* — 同一筆 record 可能被送兩次
 
 ## 操作流程
 
-從開 stream 到下游上線的 6 步流程。
+從開 stream 到下游上線的操作流程：選 view type、開 stream、接 Lambda event source mapping、設定 batch 與失敗處理、設計下游冪等、驗證下游收到 record 與失敗隔離。
 
-#### Step 1：選 view type
+#### 選 view type
 
 依下游需要什麼決定。同步到搜尋索引要完整新 item → `NEW_IMAGE`；audit 要看改動 → `NEW_AND_OLD_IMAGES`；下游自己回查 → `KEYS_ONLY`。
 
-#### Step 2：開 stream
+#### 開 stream
 
 ```bash
 aws dynamodb update-table \
@@ -91,7 +91,7 @@ aws dynamodb update-table \
   --stream-specification StreamEnabled=true,StreamViewType=NEW_AND_OLD_IMAGES
 ```
 
-#### Step 3：接 Lambda event source mapping
+#### 接 Lambda event source mapping
 
 ```python
 def handler(event, context):
@@ -107,7 +107,7 @@ def handler(event, context):
         seq = record["dynamodb"]["SequenceNumber"]
 ```
 
-#### Step 4：設定 batch 與失敗處理
+#### 設定 batch 與失敗處理
 
 ```text
 BatchSize: 依下游處理能力與延遲目標
@@ -117,11 +117,11 @@ MaximumRetryAttempts: 有限次       # 避免毒丸 record 無限重試
 DestinationConfig.OnFailure: DLQ   # 超過重試送 DLQ
 ```
 
-#### Step 5：下游冪等設計
+#### 下游冪等設計
 
 下游 upsert 用業務鍵（PK）做 idempotent write、刪除用「刪不存在不報錯」；確保同一 record 處理兩次結果相同。
 
-#### Step 6：驗證點
+#### 驗證下游收到 record 與失敗隔離
 
 ```python
 # 灌一筆寫入、確認下游在預期延遲內收到對應 record
@@ -135,25 +135,25 @@ DestinationConfig.OnFailure: DLQ   # 超過重試送 DLQ
 
 production 常見的 5 個踩雷：
 
-#### Case 1：下游非冪等、重送導致重複副作用
+#### 下游非冪等、重送導致重複副作用
 
 at-least-once 重送、下游每次都發一筆通知、用戶收到重複推播。修法：下游用業務鍵冪等、sequence number 去重；副作用（發通知 / 扣款）必須 idempotent。
 
-#### Case 2：依賴跨實體全域順序
+#### 依賴跨實體全域順序
 
 下游假設「所有訂單事件按全域時間到達」、實際跨 shard 無此保證、算錯聚合。修法：只依賴「同 PK 內有序」；需要跨實體順序的、在下游用 event timestamp 重排、或重新設計不依賴全域順序。
 
-#### Case 3：毒丸 record 卡住整個 shard
+#### 毒丸 record 卡住整個 shard
 
 某筆 record 讓 Lambda 永遠拋例外、預設行為是重試整個 batch、shard 卡死、IteratorAge 無限上升。修法：開 `BisectBatchOnFunctionError` + `MaximumRetryAttempts` + DLQ、隔離壞 record 讓其餘繼續。
 
-#### Case 4：consumer 落後、record 過期遺失
+#### consumer 落後、record 過期遺失
 
-下游處理太慢、IteratorAge 超過 stream retention、未處理 record 被清掉。這個 Case 的代價跟前三個不同層級：前三個是「重複副作用 / 算錯聚合 / shard 卡住」、都還在 stream 裡留有 record、修好邏輯後可重新消費或從 DLQ 重放。Case 4 是 record 本身已被 retention 清除、那段時間的資料變更在 stream 這條通道上永久消失、沒有回退路徑。要補回只能反向比對 table 當前狀態跟下游狀態（若下游存得了），或在源頭重跑一次寫入觸發新 record — 兩者都是事故後的人工修復、成本遠高於前三個 Case 的設定旋鈕。
+下游處理太慢、IteratorAge 超過 stream retention、未處理 record 被清掉。record 過期遺失的代價跟本節其他踩雷不同層級：下游非冪等造成重複副作用、依賴全域順序算錯聚合、毒丸 record 卡住 shard，這三種都還在 stream 裡留有 record、修好邏輯後可重新消費或從 DLQ 重放。record 過期遺失則是 record 本身已被 retention 清除、那段時間的資料變更在 stream 這條通道上永久消失、沒有回退路徑。要補回只能反向比對 table 當前狀態跟下游狀態（若下游存得了），或在源頭重跑一次寫入觸發新 record — 兩者都是事故後的人工修復、成本遠高於其他踩雷靠調整設定就能修復的做法。
 
 因為不可逆、防線要前置在「逼近 retention 之前」而非「過期之後」：IteratorAge alarm 的閾值設在遠低於 retention 的水位、留出擴容反應時間；吞吐不足時加 parallelization factor 或改 Kinesis（更長 retention、爭取更大的落後緩衝）；下游設計要能水平擴、讓落後可被快速追平。
 
-#### Case 5：parallelization factor 開了還抱怨順序錯
+#### parallelization factor 開了還抱怨順序錯
 
 為提吞吐把 factor 開 > 1、又依賴 shard 內嚴格順序、兩者矛盾。修法：需要嚴格順序維持 factor = 1；要並行吞吐就接受順序放寬、或把順序敏感的處理移到下游用 PK 分組。
 
@@ -180,7 +180,7 @@ CloudWatch metric：
 
 ## 邊界與整合
 
-### Streams 跟 03 訊息佇列的責任切分
+### Streams 跟訊息佇列的責任切分
 
 DynamoDB Streams 是 *資料庫變更* 的 CDC 通道、不是通用訊息佇列。兩者責任不同：
 
@@ -196,4 +196,4 @@ DynamoDB Streams 是 *資料庫變更* 的 CDC 通道、不是通用訊息佇列
 - [global-tables-conflict](/backend/01-database/vendors/dynamodb/global-tables-conflict/) — Global Tables 跨 region 複製本身基於 stream 機制
 - 替代路由：通用業務事件 / 多消費者扇出 / 長 retention → [03 訊息佇列模組](/backend/03-message-queue/)
 - 搜尋索引同步下游 → OpenSearch / Elasticsearch（DynamoDB 不適合做全文檢索）
-- 跟 [PayPay 9.C26](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) 互引：訊息事件 message_id 天然冪等、適合 stream 下游處理
+- [PayPay：行動支付每日 3 億訊息的 DynamoDB 後端](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)：訊息事件帶獨立 message_id、可以直接當冪等鍵，適合 stream 下游處理

@@ -6,7 +6,7 @@ weight: 75
 tags: ["backend", "database", "cosmosdb", "synapse-link", "federation", "htap", "deep-article"]
 ---
 
-本文是 [Cosmos DB](/backend/01-database/vendors/cosmosdb/) overview 的 deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Azure Synapse Link 把 Cosmos DB 的交易型資料自動同步到一個 column-oriented 的 analytical store、讓 Synapse（或其他 analytics engine）直接查分析資料、而 *不消耗 OLTP 的 RU、不打 transactional store*。它是一種 [federation](/backend/knowledge-cards/federation/) — 同一份資料的 OLTP 與 OLAP 存取被分到兩個各自最佳化的 store、由平台保持同步。本文先講 analytical store 與 HTAP federation 的精確語義、再進啟用流程、最後拆「何時把分析 workload 分出去、何時 federate 到專用 OLAP」的判斷標準。
+這篇整理 Azure Synapse Link for Cosmos DB：analytical store 怎麼同步與隔離 RU、怎麼啟用與查詢、何時用它做分析、何時把分析交給專用 OLAP。Azure Synapse Link 把 Cosmos DB 的交易型資料自動同步到一個 column-oriented 的 analytical store、讓 Synapse（或其他 analytics engine）直接查分析資料、而 *不消耗 OLTP 的 RU、不打 transactional store*。它是一種 [federation](/backend/knowledge-cards/federation/) — 同一份資料的 OLTP 與 OLAP 存取被分到兩個各自最佳化的 store、由平台保持同步。
 
 Case anchor 是 [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Microsoft 自家把使用分析平台建在 Cosmos DB 上、planet-scale 全球分散式分析。case 自承沒揭露具體 throughput / latency / cost 數字、也沒明說用了 Synapse Link、本文只取「analytics workload 建在 Cosmos 上」這個情境 anchor、機制以 Azure vendor 規格與 HTAP / federation 通用工程展開。
 
@@ -80,7 +80,7 @@ Synapse Link 是讀取側 federation、停用不影響 transactional store 的 O
 
 ## 何時分出去、何時 federate 到專用 OLAP
 
-這是本文主判讀段。Synapse Link 在「OLTP 資料要近即時分析、但不想犧牲 OLTP 容量也不想搭 ETL」的場景成立；它不是所有分析需求的答案。
+截至 2026-09 的 Microsoft 官方文件標示 Synapse Link for Cosmos DB 不再支援新專案，新專案要做同一件事改用 Azure Cosmos DB Mirroring for Microsoft Fabric（同樣是 zero-ETL、已 GA）；本節的選用條件用來評估已經在用 Synapse Link 的既有部署。Synapse Link 在「OLTP 資料要近即時分析、但不想犧牲 OLTP 容量也不想搭 ETL」的場景成立；它不是所有分析需求的答案。
 
 用 Synapse Link（在 Cosmos federation 內做分析）的條件：
 
@@ -95,13 +95,13 @@ Synapse Link 是讀取側 federation、停用不影響 transactional store 的 O
 - 分析是重型 data warehouse workload（複雜多表 join、長期歷史、大規模 transform）— 專用 OLAP 的引擎與成本模型更合適
 - 已有成熟的 data platform（Snowflake / BigQuery / lakehouse）、Cosmos 只是其中一個 source — 把 Cosmos 資料用 Change Feed / connector 餵進既有 platform、不另起 Synapse Link
 
-判讀句：Synapse Link 是 *Cosmos 單源、近即時、column-oriented* 分析的省力路徑；分析需求一旦跨源、變重型 warehouse、或已有集中 data platform、就 federate 到專用 OLAP。Cosmos DB overview 已標明「純 OLAP 分析」交給 Synapse / BigQuery / Snowflake — Synapse Link 是兩者之間的橋、不是把 Cosmos 變成 data warehouse。
+判讀句：Synapse Link 是 *Cosmos 單源、近即時、column-oriented* 分析的省力路徑；分析需求一旦跨源、變重型 warehouse、或已有集中 data platform、就 federate 到專用 OLAP。純 OLAP 分析本來就不是 Cosmos DB 的適用場景，要交給 Synapse / BigQuery / Snowflake 這類 data warehouse；Synapse Link 是 Cosmos OLTP 與 data warehouse 之間的橋、不是把 Cosmos 變成 data warehouse。
 
 ## 失敗模式
 
 ### 不啟用 Synapse Link、直接在 OLTP 跑分析
 
-team 在 OLTP container 直接跑全表聚合報表、分析 query 吃光 provisioned RU、線上交易 429。徵兆是「跑月報的時段、線上交易 latency 飆 / 出現 throttle」。修法是啟用 analytical store + Synapse Link、分析 query 改打 analytical store、RU 隔離後 OLTP 不再受影響；或退一步、把分析 query 移到離峰、但這只是緩解、根本解是 federation 隔離。
+team 在 OLTP container 直接跑全表聚合報表、分析 query 吃光 provisioned RU、線上交易 429。徵兆是「跑月報的時段、線上交易 latency 飆 / 出現 throttle」。修法是讓分析 query 離開 transactional store：新專案用 Cosmos DB Mirroring for Microsoft Fabric、既有部署啟用 analytical store + Synapse Link、分析 query 改打 analytical store、RU 隔離後 OLTP 不再受影響；或退一步、把分析 query 移到離峰、但這只是緩解、根本解是 federation 隔離。
 
 ### 期待 analytical store 即時反映寫入
 
@@ -109,7 +109,7 @@ team 在 OLTP container 直接跑全表聚合報表、分析 query 吃光 provis
 
 ### 把 Synapse Link 當跨源 data warehouse
 
-分析需要 join Cosmos 資料與其他系統的資料、期待 Synapse Link 解決、發現 analytical store 只有 Cosmos 單一 container / account 的資料。徵兆是「分析做到一半發現缺其他系統的維度資料、Synapse Link 帶不進來」。修法是跨源分析用獨立 warehouse（BigQuery / Snowflake / Synapse dedicated pool）集中、Cosmos 資料用 Synapse Link 或 Change Feed 餵進去當其中一個 source、不期待 Synapse Link 自己做跨源 join。
+分析需要 join Cosmos 資料與其他系統的資料、期待 Synapse Link 解決、發現 analytical store 只有 Cosmos 單一 container / account 的資料。徵兆是「分析做到一半發現缺其他系統的維度資料、Synapse Link 帶不進來」。修法是跨源分析用獨立 warehouse（BigQuery / Snowflake / Synapse dedicated pool）集中、Cosmos 資料用 Change Feed 匯進去，或先由 Synapse serverless SQL pool / Spark pool 從 analytical store 讀出再寫進去，當其中一個 source（截至 2026-09 的官方 Limitations：dedicated SQL pool 不能直接讀 analytical store）、不期待 Synapse Link 自己做跨源 join。
 
 ### 既有 container 才想開、發現要重建
 
@@ -122,22 +122,22 @@ analytical store 通常要建 container 時啟用、production 跑一陣子才�
 ## 容量與觀測
 
 - 必看 metric：OLTP container 的 `NormalizedRUConsumption`（驗證分析 query 沒污染它）、analytical store 同步延遲、Synapse 端 query 的掃描量與成本
-- 成本模型分離：analytical store 有獨立的 storage + 寫入計費、Synapse query 有自己的計費（serverless 按掃描量、dedicated 按 pool）— 跟 OLTP 的 RU 完全分開、不要混進 [ru-cost-model-sizing](../ru-cost-model-sizing/) 的 RU 公式、那篇主寫 transactional store 的 RU
+- 成本模型分離：analytical store 有獨立的 storage + 寫入計費、Synapse query 有自己的計費（serverless SQL pool 按掃描量、Spark pool 按節點時間）— 跟 OLTP 的 RU 完全分開、不要混進 [ru-cost-model-sizing](../ru-cost-model-sizing/) 的 RU 公式、那篇主寫 transactional store 的 RU
 - federation 的隔離證據：跑重型分析時 OLTP RU 平穩、就是 federation 生效；若 OLTP RU 仍隨分析波動、表示分析 query 其實打到了 transactional store、要檢查 query 是否真的走 analytical store
 - 回 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)：OLTP 容量與 analytical 容量分兩條 budget 規劃、這正是 federation 的容量規劃價值 — 兩個 workload 不再互相競爭資源
 - Alert：analytical store 同步延遲異常增長、OLTP RU 出現非預期的分析時段波動（隔離失效）
 
 ## 邊界與整合
 
-- Sibling deep articles：[change-feed-cdc](../change-feed-cdc/)（自訂 transform / 跨源 routing 用 Change Feed、近即時 Cosmos 單源分析用 Synapse Link）、[ru-cost-model-sizing](../ru-cost-model-sizing/)（analytical store 成本獨立於 OLTP RU、不混算）、[consistency-levels-engineering](../consistency-levels-engineering/)（analytical store 是分鐘級延遲的衍生複本、不適用 OLTP 的 consistency level 語義）
+- 同 vendor 的其他文章：[change-feed-cdc](../change-feed-cdc/)（自訂 transform / 跨源 routing 用 Change Feed、近即時 Cosmos 單源分析用 Synapse Link）、[ru-cost-model-sizing](../ru-cost-model-sizing/)（analytical store 成本獨立於 OLTP RU、不混算）、[consistency-levels-engineering](../consistency-levels-engineering/)（analytical store 是分鐘級延遲的衍生複本、不適用 OLTP 的 consistency level 語義）
 - federation 概念：[federation](/backend/knowledge-cards/federation/) — OLTP / OLAP 各自最佳化 store + 平台同步
-- 跨源 / 重型分析的升級路由：Synapse dedicated pool / BigQuery / Snowflake — Cosmos DB overview「純 OLAP 分析」段已標明
-- 回 overview：[Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) 的「跟 Azure Synapse Link 整合（OLTP / OLAP federation）」backlog 與「純 OLAP 分析」不適用場景
+- 跨源 / 重型分析的升級路由：Synapse dedicated pool / BigQuery / Snowflake
+- 回 overview：[Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) 列出本 vendor 的其他深度文章
 - Microsoft 365 analytics 主 anchor：[9.C30](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — analytics workload 建在 Cosmos 上的情境
 
 ## 相關連結
 
-- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — 本文是該頁尾 Synapse Link backlog 的深度展開
+- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
 - [9.C30 Microsoft 365 case](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Cosmos 上的全球分析平台情境 anchor
 - [change-feed-cdc](../change-feed-cdc/) — 自訂 pipeline 的對照路徑
 - [ru-cost-model-sizing](../ru-cost-model-sizing/) — OLTP RU 與 analytical 成本的分離

@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "replication", "litestream"]
 
 Litestream / LiteFS replication 的核心責任是把 SQLite 的 single-file operation 補成可恢復、可部署、可讀擴展的服務形狀。這類工具延伸 SQLite，但它們解決的問題不同：Litestream 主要把 WAL 變化持續送到 replica storage，強化 backup 與 restore；LiteFS 主要在 Fly.io 生態中透過 primary lease 與 filesystem layer 支援 replicated SQLite deployment。
 
-本文的判讀錨點是：replicated SQLite 要先說明 replica 的服務責任。它可能是 continuous backup、warm restore source、read replica、primary failover helper 或 deployment topology；每一種責任都有不同的 RPO、RTO、freshness 與 incident runbook。
+本文把 replicated SQLite 的 replica 按它承擔的服務責任分開——continuous backup、read replica、warm standby、primary lease——每一種責任各有不同的 RPO、RTO、freshness 與 incident runbook；範圍涵蓋 Litestream 與 LiteFS 各自承擔哪一種、各自的 failure mode，以及需求何時超出 SQLite replication 而要改走 distributed OLTP。
 
 ## Replication Taxonomy
 
@@ -99,7 +99,7 @@ No-go 條件要在 design review 階段列出。SQLite replication 的好處是�
 
 ## Decision Route
 
-Decision route 的核心責任是把資料保護、讀擴展與高可用分開選型。Litestream / LiteFS 位置清楚時，SQLite 可以保持簡潔；位置混淆時，系統會同時缺 backup evidence 與 transaction guarantee。
+Decision route 的核心責任是把資料保護、讀擴展與高可用分開選型。Litestream 與 LiteFS 各自承擔資料保護、讀擴展還是高可用寫得清楚時，SQLite 可以保持簡潔；把 Litestream 的 backup replica 當成 active-active database、或用 WAL shipping 取代 distributed OLTP 時，系統會同時缺 backup evidence 與 transaction guarantee。
 
 | 需求                                      | 建議路由                                                                                          |
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------- |

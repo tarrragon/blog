@@ -6,9 +6,9 @@ weight: 60
 tags: ["backend", "database", "aurora", "global-database", "multi-region", "dr", "deep-article"]
 ---
 
-Aurora Global Database 是 *跨 region async replication*、< 1 秒 typical lag、最多 5 個 secondary region — 看起來是 multi-region OLTP 的標準解、但 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 揭露一個受監管產業的 anti-recommendation：合規禁止跨境複製場景下、Global Database *違反合規*、要改用每市場獨立 cluster + 應用層市場切換。本文展開 Global Database 適用條件、跟 cross-AZ failover 的 RTO 數量級差、合規邊界、跟 Aurora DSQL / Spanner / CockroachDB 的決策樹。
+這篇整理 Aurora Global Database 的適用條件、它的 region failover 與 cross-AZ failover 在 RTO 上的數量級差、合規邊界，以及它跟 Aurora DSQL / Spanner / CockroachDB 之間怎麼選。storage-level replication 的機制在 [Aurora storage architecture](../storage-architecture/)，單 region 內的 failover 在 [Aurora cross-AZ failover RTO](../cross-az-failover-rto/)。
 
-本文不是 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 而是 Global Database 的實作層教學。前置閱讀建議 [Aurora storage architecture](../storage-architecture/)（理解 storage-level replication）、[Aurora cross-AZ failover RTO](../cross-az-failover-rto/)（對照單 region failover）。
+Aurora Global Database 是 *跨 region async replication*、< 1 秒 typical lag、最多 5 個 secondary region，看起來是 multi-region OLTP 的標準解；[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 揭露一個受監管產業的 anti-recommendation：合規禁止跨境複製的場景下，Global Database *違反合規*，要改用每市場獨立 cluster + 應用層市場切換。
 
 ## 問題情境
 
@@ -59,7 +59,7 @@ Secondary region storage
 | Planned failover   | < 2 分鐘  | managed graceful failover、無資料丟失       |
 | Unplanned failover | 5-15 分鐘 | 整 region 失效、手動 promote secondary      |
 
-數量級不同 — cross-AZ 是 *seconds*、cross-region planned 是 *minutes*、unplanned 是 *tens of minutes*。
+數量級不同 — cross-AZ 是 *seconds*、cross-region planned 是 *minutes*、unplanned 是 *5-15 分鐘*。
 
 **對應 knowledge card**：[stale-read](/backend/knowledge-cards/stale-read/)、[rpo](/backend/knowledge-cards/rpo/)、[rto](/backend/knowledge-cards/rto/)。
 
@@ -113,7 +113,7 @@ aws rds failover-global-cluster \
   --target-db-cluster-identifier arn:aws:rds:eu-west-1:123:cluster:secondary-cluster
 ```
 
-切換後 application 端要 *reconfigure connection string* — DNS 不自動切跨 region（vs cross-AZ failover writer endpoint 自動跟）。
+切換後要不要改 connection string，取決於 application 連的是哪個 endpoint：連 Global Database 的 global writer endpoint 時不必改，截至 2026-09 的官方文件，managed switchover / failover 之後 Aurora 會把這個 endpoint 指到新的 primary cluster（生效時間受 DNS cache 影響）；連 primary cluster 自己的 cluster endpoint 時，application 端要 *reconfigure connection string*。
 
 **Application reconfiguration 模式**：
 
@@ -131,7 +131,7 @@ aws rds failover-global-cluster \
 
 ## 故障模式 / 邊界 case
 
-### Case 1：期待 multi-region active-active write
+### 期待 multi-region active-active write
 
 徵兆：team 在 secondary region application 直連 secondary cluster 寫資料、收到 `cannot execute INSERT in a read-only transaction` 錯誤。
 
@@ -143,11 +143,11 @@ aws rds failover-global-cluster \
 - 寫操作永遠路由到 primary region、容忍跨 region write latency
 - 真的需要 active-active write 才考慮 Aurora DSQL（2024-12 preview / 2025-05 GA）
 
-### Case 2：DNS 不跨 region 自動切
+### 連 cluster endpoint 時 DNS 不跨 region 自動切
 
 徵兆：手動 failover trigger 後、application 端 connection string 仍指向舊 primary region、寫操作全失敗。
 
-原因：cross-AZ failover writer endpoint DNS 自動跟、cross-region 不會 — Global Database 切換要 application 端管 region-specific connection string。
+原因：每個 cluster 自己的 cluster endpoint 只在同一個 region 內跟著 failover 走；application 連的是這種 region-specific endpoint 而不是 global writer endpoint 時，Global Database 切換後要 application 端自己換 connection string。global writer endpoint 會在 managed switchover / failover 後指到新的 primary cluster（截至 2026-09 的官方文件），但 DNS 更新的生效時間受 DNS cache 長度影響，而且 application 要能連到新 primary region 的 VPC。
 
 修：
 
@@ -155,7 +155,7 @@ aws rds failover-global-cluster \
 - 部署 region-aware DNS（Route53 latency-based routing + health check）
 - Failover 演練要包含 application reconfiguration step、不只是 DB layer
 
-### Case 3：跨 region read 假設 strong consistency
+### 跨 region read 假設 strong consistency
 
 徵兆：用戶在 primary region 寫資料、隨即在 secondary region read、看到舊資料、客訴 inconsistency。
 
@@ -167,7 +167,7 @@ aws rds failover-global-cluster \
 - 接受最終一致性、application 端做 versioning / timestamp 比對
 - 強一致性需求改 Aurora DSQL / Spanner
 
-### Case 4：Lag spike during bulk operation
+### Bulk operation 期間跨 region lag spike
 
 徵兆：DDL 或 bulk insert 期間 cross-region lag 從 < 1 秒跳到秒級到分鐘級、secondary region read 大量 stale。
 
@@ -177,9 +177,9 @@ aws rds failover-global-cluster \
 
 - DDL 跟 bulk insert 在低峰期跑、避開跨 region read traffic
 - 監測 `AuroraGlobalDBReplicationLag`、spike 超過閾值 trigger application 端 fallback（read 切回 primary region）
-- 重要 DDL 用 [pg_repack](https://github.com/reorg/pg_repack) 避免長時間 lag
+- 重建整張表的維護作業同樣是 heavy write：[pg_repack](https://github.com/reorg/pg_repack) 只移除表與索引的 bloat、不執行 schema 變更，它重建表的期間會拉高跨 region lag，一併排進低峰期並先量測 lag
 
-### Case 5：合規邊界誤用 Global Database — Standard Chartered anti-pattern
+### 合規邊界誤用 Global Database — Standard Chartered anti-pattern
 
 徵兆：team 以為 Global Database 是受監管金融的標準 DR 解、配置完才發現監管機構不接受跨境資料複製、被迫拆掉 Global Database 重建獨立 cluster。
 
@@ -196,7 +196,7 @@ aws rds failover-global-cluster \
 
 **scope warning（必明示）**：Standard Chartered case 未公開是 PostgreSQL 還是 MySQL、未公開具體 cost 數字、屬「相關 case study」匿名對照。引用時不能擴寫具體 engine。
 
-### Case 6：Cost trap — cross-region data transfer
+### Cost trap — cross-region data transfer
 
 徵兆：開了 Global Database 後月帳變高 50%、發現 cross-region data transfer 是主要費用、不是 instance。
 
@@ -208,7 +208,7 @@ aws rds failover-global-cluster \
 - Write-heavy workload 評估 Global Database ROI（保險、低費用版本是用 cross-region snapshot 做冷備）
 - Cost 跟 RTO 一起看 — 如果接受 hours RTO、cross-region snapshot 更便宜
 
-### Case 7：FanDuel 雙峰 case 對照（避免 over-extrapolate）
+### FanDuel 雙峰 case 對照（避免 over-extrapolate）
 
 如果 team 引用 [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 規劃 multi-region 部署、要明示 scope warning。
 
@@ -290,7 +290,7 @@ Write 量大的 workload 月費可能 doubled（primary region + secondary regio
 
 ## 邊界與整合 / 下一步
 
-**Sibling deep articles**：
+**同 vendor 的其他文章**：
 
 - [Aurora storage architecture](../storage-architecture/) — cross-region replication 是 storage-level 延伸
 - [Aurora cross-AZ failover RTO](../cross-az-failover-rto/) — cross-AZ 跟 cross-region failover RTO 數量級對比
@@ -304,14 +304,14 @@ Write 量大的 workload 月費可能 doubled（primary region + secondary regio
 
 - [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) — Global Database vs distributed SQL 對比
 
-**何時不用本文**：single-region OLTP、無跨 region DR / read 需求時可跳過、看 [Aurora vendor overview](/backend/01-database/vendors/aurora/) 即可。
+**何時不用本文**：single-region OLTP、無跨 region DR / read 需求時可跳過。
 
 ## 相關連結
 
-- [Aurora vendor overview](/backend/01-database/vendors/aurora/) — 服務定位、適用 / 不適用場景
+- [Aurora vendor overview](/backend/01-database/vendors/aurora/)
 - [Stale Read 卡片](/backend/knowledge-cards/stale-read/) — read-after-write 容忍度
 - [RPO 卡片](/backend/knowledge-cards/rpo/) — DR RPO 判讀
 - [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 合規驅動的 Global Database anti-pattern
 - [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) — 雙 SLO 並行的 multi-region 策略對照
-- [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — 本文遵循的 6 規格面寫作模板
+- [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — vendor 深度文章從問題情境、核心機制、操作流程、失敗模式、容量與觀測到邊界與整合的寫法
 - 官方：[Aurora Global Database](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html)

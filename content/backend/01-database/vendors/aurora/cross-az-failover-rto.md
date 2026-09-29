@@ -1,14 +1,14 @@
 ---
 title: "Aurora Cross-AZ Failover：RTO 量測、endpoint routing 與 application reconnect 契約"
 date: 2026-05-27
-description: "Aurora cross-AZ failover lifecycle（detection / promotion / DNS update）、< 30 秒 RTO、application DNS cache 跟 connection pool 對齊、Standard Chartered 受監管場景為什麼用獨立 cluster 而非 Global Database failover"
+description: "Aurora cross-AZ failover lifecycle（detection / promotion / DNS update）、官方寫的「通常 60 秒內、常常不到 30 秒」RTO、application DNS cache 跟 connection pool 對齊、Standard Chartered 受監管場景為什麼用獨立 cluster 而非 Global Database failover"
 weight: 40
 tags: ["backend", "database", "aurora", "failover", "rto", "ha", "deep-article"]
 ---
 
-Aurora cross-AZ failover 的 RTO 文件數字是「< 30 秒」、但 application 端實測常常看到 60-120 秒 — 這個落差不是 Aurora 慢、是 *DNS cache + connection pool + retry policy* 的對齊問題。本文展開 failover lifecycle 三段（detection / promotion / DNS update）、application 端 reconnect 契約、量測真實 RTO 的流程、跟 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 受監管銀行業務為什麼選獨立 cluster 而非 Global Database failover 的合規 driver。
+這篇整理 Aurora 單一 cluster 內 cross-AZ failover 的流程：failover lifecycle 的 detection、promotion 與 DNS update，application 端的 reconnect 契約，量測真實 RTO 的做法，以及 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 受監管銀行業務為什麼選獨立 cluster 而非 Global Database failover。Aurora failover 為什麼不需要 data catch-up，在 [Aurora storage architecture](../storage-architecture/)。
 
-本文不是 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 而是 failover 流程的實作層教學。前置閱讀建議 [Aurora storage architecture](../storage-architecture/)（理解為什麼 Aurora failover 不需要 data catch-up）。
+Aurora cross-AZ failover 的 RTO 在官方文件的寫法是「通常 60 秒內恢復、常常不到 30 秒」（截至 2026-09），application 端實測常常看到 60-120 秒。落差來自 application 端的 *DNS cache + connection pool + retry policy* 沒有跟 failover 對齊，Aurora 端的 promotion 本身不慢。
 
 ## 問題情境
 
@@ -19,13 +19,13 @@ Aurora cross-AZ failover 的 RTO 文件數字是「< 30 秒」、但 application
 - 「Failover trigger 後新 connection 還連到舊 primary、為什麼？」
 - 「Writer endpoint DNS 切換了、application 還沒重連、什麼時候會切？」
 - 「Failover 期間 in-flight transaction 是全 abort 還是部分 commit？」
-- 「我手動測 failover RTO 量出 90 秒、AWS 文件講 < 30 秒、誰錯？」
+- 「我手動測 failover RTO 量出 90 秒、AWS 文件講通常 60 秒內、常常不到 30 秒，誰錯？」
 
-進一步問題：失敗模式分布在 *application 端的 connection state*、不只是 Aurora 端的 promotion 流程。Aurora 端的 promotion 在 storage 共享下確實 < 30 秒（不需要等 data catch-up）、但 application reconnect 受 JVM DNS cache、connection pool validation、retry policy 影響、容易把總體 RTO 拉長到 2-3 倍。
+進一步問題：失敗模式分布在 *application 端的 connection state*、不只是 Aurora 端的 promotion 流程。Aurora 端的服務恢復在 storage 共享下通常 60 秒內、常常不到 30 秒（官方文件的寫法，不需要等 data catch-up）、但 application reconnect 受 JVM DNS cache、connection pool validation、retry policy 影響、容易把總體 RTO 拉長到 2-3 倍。
 
 對 Standard Chartered 這種受監管銀行業務、failover 還有合規維度：受監管市場資料 *不能跨境複製*、Global Database 在這種場景違反合規、必須用每市場獨立 cluster 的 cross-AZ failover 吸收 RTO 預算。這個 driver 跟一般工程「跨 region failover 更好」的直覺相反。
 
-## 核心機制：failover lifecycle 三段
+## 核心機制：failover lifecycle 的 detection、promotion 與 DNS update
 
 Aurora cross-AZ failover 的 first-class concept 是 *failover lifecycle 三段*：detection → promotion → DNS update。每一段有自己的 SLA 跟可調維度。
 
@@ -45,12 +45,12 @@ Aurora cross-AZ failover 的 first-class concept 是 *failover lifecycle 三段*
 
 - Cluster endpoint / writer endpoint DNS 切到新 primary
 - Aurora endpoint DNS TTL 是 5 秒、AWS DNS infrastructure 通常 5-15 秒 propagate 完
-- 但 application 端的 DNS cache 可能 cache 更久 — JVM `networkaddress.cache.ttl` 預設 -1（cache forever）就會卡在這層
+- 但 application 端的 DNS cache 可能 cache 更久 — JVM `networkaddress.cache.ttl` 預設 -1（cache forever）時，application 會一直連到 cache 裡的舊 primary IP
 
 **Endpoint 類型跟 failover 行為**：
 
 - **Writer endpoint**：跟著 failover 走、DNS 切到新 primary、application 寫操作用這個
-- **Reader endpoint**：load-balance 到所有 replica；failover 期間短暫包含 promoted replica（已升 primary）、reader query 可能打到 primary、引起寫鎖競爭
+- **Reader endpoint**：load-balance 到所有 replica；failover 期間短暫包含 promoted replica（已升 primary）、reader query 可能打到 primary、分走新 primary 的 CPU 與連線數（PostgreSQL 的 MVCC 下讀取不取寫鎖，不會跟寫入搶鎖）
 - **Custom endpoint**：用戶自定 routing rule、failover 期間行為要驗證、不能假設自動跟隨
 
 **跟通用 failover 差在哪**：Aurora 不需要 data catch-up phase、failover 主要瓶頸是 DNS propagation + application reconnect、不是 promotion 本身。傳統 PostgreSQL streaming replication failover 要等 replica WAL catch-up（heavy write 期間可能秒級延遲）、Aurora 在 storage 設計下消除這段等待。
@@ -72,9 +72,9 @@ aws rds modify-db-instance \
   --db-instance-identifier my-replica-az-b \
   --promotion-tier 0
 
-# 跨 region replica 預設 tier 15（不優先升、避免 failover 跨 region）
+# 規格較小、不適合接寫入的 replica 設成 tier 15（最不優先升）
 aws rds modify-db-instance \
-  --db-instance-identifier my-cross-region-replica \
+  --db-instance-identifier my-small-reporting-replica \
   --promotion-tier 15
 ```
 
@@ -131,7 +131,7 @@ echo "Failover triggered at $START ms"
 
 ## 故障模式 / 邊界 case
 
-### Case 1：DNS cache 把 RTO 從 30 秒拉到 120 秒
+### DNS cache 把 RTO 從 30 秒拉到 120 秒
 
 徵兆：手動 failover 後、CloudWatch `FailoverEvent` 1 秒內出現、但 application log 顯示寫操作 120 秒後才恢復。
 
@@ -143,7 +143,7 @@ echo "Failover triggered at $START ms"
 - 或在 `$JAVA_HOME/lib/security/java.security` 改 `networkaddress.cache.ttl=5`
 - Python application 通常沒這問題（DNS resolve per connection）、但要確認 SQLAlchemy 用 `pool_pre_ping=True`
 
-### Case 2：Connection pool cached connection 全 stale
+### Connection pool cached connection 全 stale
 
 徵兆：DNS 切換 OK、但 application 寫操作 timeout 10-30 秒後才觸發 reconnect、p99 latency spike。
 
@@ -155,11 +155,11 @@ echo "Failover triggered at $START ms"
 - SQLAlchemy：`pool_pre_ping=True` + `pool_recycle=1800`
 - failover 演練後驗證 connection pool 在 30 秒內 evict 完所有 stale connection
 
-### Case 3：Reader endpoint failover 期間打到新 primary
+### Reader endpoint failover 期間打到新 primary
 
-徵兆：failover 期間 application read query 偶發出現 `cannot execute SELECT in a read-only transaction` 或寫鎖競爭、用戶看到 inconsistent state。
+徵兆：failover 期間 application read query 偶發打到剛升為 primary 的那台、新 primary 在恢復期間多承擔一份讀負載，應該走 replica 的查詢與寫入共用同一台的 CPU 與連線數。
 
-原因：reader endpoint 是 DNS-based load balance 到所有 replica、failover 期間 *短暫* 包含已升 primary 的 replica（DNS propagation 期間 reader 跟 writer endpoint 都指向同一台）。Read query 打到 primary 後、跟正在寫的 transaction 競爭。
+原因：reader endpoint 是 DNS-based load balance 到所有 replica、failover 期間 *短暫* 包含已升 primary 的 replica（DNS propagation 期間 reader 跟 writer endpoint 都指向同一台）。Read query 打到 primary 後分走新 primary 的 CPU 與連線數；PostgreSQL 的 MVCC 下讀取不取寫鎖，負載是它唯一的代價。
 
 修：
 
@@ -167,7 +167,7 @@ echo "Failover triggered at $START ms"
 - Failover 期間 application 端做 SQL error type 偵測、`read-only transaction` 錯誤觸發 retry
 - 用 custom endpoint group 特定 replica、failover 期間 custom endpoint 行為更可控
 
-### Case 4：In-flight transaction 全 abort
+### In-flight transaction 全 abort
 
 徵兆：failover 期間正在執行的 transaction *全部 abort*、application 看到 `connection reset` 或 `server closed connection`、commit 沒成功。
 
@@ -179,17 +179,17 @@ echo "Failover triggered at $START ms"
 - 在 application 層做 transaction-level retry、不在 connection 層 retry
 - 重要寫入做 *write-then-verify* 模式：commit 後立刻 SELECT 確認、失敗才 retry
 
-### Case 5：PromotionTier 配置忽略
+### 升為 primary 的 replica 規格太小
 
-徵兆：failover 後 application latency 暴漲、發現升 primary 的是 cross-region replica。
+徵兆：failover 後寫入 latency 暴漲、CPU 飽和，發現升 primary 的是一台原本只接報表查詢的小規格 replica。
 
-原因：cross-region replica 預設 PromotionTier 是 1（或忘記改）、failover 時優先升、application 跟新 primary 跨 region、latency 從 5ms 變 100ms+。
+原因：同 cluster failover 只在同一個 region 的 Aurora Replica 之間挑選，順序先看 promotion tier（0 最優先），同 tier 再挑規格最大的；小規格 replica 沒調 tier 就可能被升為 writer。跨 region 的副本屬於另一個 cluster（Global Database 的 secondary cluster），不會被同 cluster failover 升為 primary，跨 region 切換要走 Global Database 的 switchover / failover。
 
 修：
 
-- cross-region replica `--promotion-tier 15`（不優先升）
-- 同 region 跨 AZ replica `--promotion-tier 0` 或 `1`
-- Multi-AZ deployment 至少配 2 個 same-region replica、避免 cross-region 被升
+- 規格與 writer 相同的同 region 跨 AZ replica `--promotion-tier 0` 或 `1`
+- 小規格或專用於報表的 replica `--promotion-tier 15`（不優先升）
+- Multi-AZ deployment 至少配 2 個與 writer 同規格的 replica、分散在不同 AZ
 
 ## Standard Chartered 為什麼選獨立 cluster 而非 Global Database
 
@@ -253,11 +253,11 @@ db_retry_count                          # retry policy 觸發頻率
 
 ## 邊界與整合 / 下一步
 
-**Sibling deep articles**：
+**同 vendor 的其他文章**：
 
 - [Aurora storage architecture](../storage-architecture/) — 理解為什麼 Aurora failover 不需要 data catch-up（storage 跨 AZ 共享）
 - [Aurora read replica scaling](../read-replica-scaling/) — replica 升 primary 流程跟 fleet 治理 SSoT
-- [Aurora Global Database](../global-database-multi-region/) — 跨 region failover RTO 不同數量級（2-15 分鐘 vs cross-AZ < 30 秒）
+- [Aurora Global Database](../global-database-multi-region/) — 跨 region failover RTO 不同數量級（2-15 分鐘 vs cross-AZ 通常 60 秒內）
 
 **Migration playbook**：
 
@@ -268,12 +268,12 @@ db_retry_count                          # retry policy 觸發頻率
 - [1.3 Transaction Boundary](/backend/01-database/transaction-boundary/) — failover 期間 in-flight transaction abort 對 application 契約的影響
 - [8.x incident response](/backend/08-incident-response/) — failover decision log
 
-**何時不用本文**：non-critical workload、RTO 預算 > 5 分鐘、Multi-AZ 預設配置足夠時可跳過、看 [Aurora vendor overview](/backend/01-database/vendors/aurora/) 即可。
+**何時不用本文**：non-critical workload、RTO 預算 > 5 分鐘、Multi-AZ 預設配置足夠時可跳過。
 
 ## 相關連結
 
-- [Aurora vendor overview](/backend/01-database/vendors/aurora/) — 服務定位、適用 / 不適用場景
+- [Aurora vendor overview](/backend/01-database/vendors/aurora/)
 - [Failover 卡片](/backend/knowledge-cards/failover/) — 概念基底
 - [RTO 卡片](/backend/knowledge-cards/rto/) — RTO 量測判讀
-- [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — 本文遵循的 6 規格面寫作模板
+- [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — vendor 深度文章從問題情境、核心機制、操作流程、失敗模式、容量與觀測到邊界與整合的寫法
 - 官方：[Aurora high availability](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraHighAvailability.html)

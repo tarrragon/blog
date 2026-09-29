@@ -6,9 +6,9 @@ weight: 33
 tags: ["backend", "database", "aurora", "rds-proxy", "connection-pool", "serverless", "deep-article"]
 ---
 
-Lambda 函式在流量尖峰被同時拉起幾百個實例、每個各自開一條到 Aurora 的連線、Aurora 的 connection 上限瞬間被打爆、新請求拿不到連線、整批失敗。根因是 *連線管理* 缺位、Aurora 容量本身夠用——serverless 與高並發短連線 workload 製造的連線數遠超過資料庫該同時維持的後端連線。RDS Proxy 在 application 與 Aurora 之間做 connection multiplexing，把大量 client 連線收斂成少量後端連線。但它不是「連上去就自動省」——某些 session 操作會讓連線被 pin 住、multiplexing 失效。
+這篇整理 RDS Proxy 在 Aurora 前面做的連線管理：connection multiplexing 的機制、讓 multiplexing 失效的 pinning、failover 期間 proxy 怎麼縮短中斷，以及它與自管 pooler 的責任切分。Aurora 的服務定位與適用場景在 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)。
 
-本文不是 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 而是 RDS Proxy 連線管理機制與陷阱的實作層教學。
+serverless 與高並發短連線的 workload 製造的連線數，會遠超過資料庫該同時維持的後端連線：Lambda 函式在流量尖峰被同時拉起幾百個實例、每個各自開一條到 Aurora 的連線，Aurora 的 connection 上限被打爆，新請求拿不到連線而整批失敗，而 Aurora 的運算容量本身夠用。RDS Proxy 在 application 與 Aurora 之間做 connection multiplexing，把大量 client 連線收斂成少量後端連線；某些 session 操作會讓後端連線被 pin 在單一 client 上，那條連線就不再參與 multiplexing。
 
 ## 核心機制：connection multiplexing
 
@@ -51,7 +51,7 @@ pinning 的後果是「明明裝了 RDS Proxy、後端連線數卻沒降下來�
 
 ## Failover 加速
 
-RDS Proxy 的第二個價值是縮短 failover 對 application 的中斷。沒有 proxy 時，writer failover 會讓所有 client 連線斷掉、application 要偵測、重連、重建連線池；有 proxy 時，proxy 保持與 client 的連線、在後端把流量切到新 writer，client 端感知到的中斷時間縮短。
+RDS Proxy 在 connection multiplexing 之外，還能縮短 failover 對 application 的中斷。沒有 proxy 時，writer failover 會讓所有 client 連線斷掉、application 要偵測、重連、重建連線池；有 proxy 時，proxy 保持與 client 的連線、在後端把流量切到新 writer，client 端感知到的中斷時間縮短。
 
 這對連線建立成本高、或 failover 期間不能大量重連的 workload 特別有價值。但 proxy 不消除 failover 本身——in-flight 的交易仍會失敗、application 仍要有 retry；proxy 縮短的是「重建連線」這段，不是「交易不中斷」。
 
@@ -59,17 +59,17 @@ RDS Proxy 的第二個價值是縮短 failover 對 application 的中斷。沒�
 
 從連線壓力判讀到上線的 6 步流程。
 
-#### Step 1：確認是不是連線問題
+#### 確認是不是連線問題
 
-先區分「Aurora 容量不夠」vs「連線管理問題」。看 `DatabaseConnections` 是否逼近上限、且 CPU/IOPS 還有餘量——後者是典型的連線數問題、proxy 能解；若是 CPU/IOPS 飽和，proxy 不解。
+先區分「Aurora 容量不夠」vs「連線管理問題」。看 `DatabaseConnections` 是否逼近上限、且 CPU/IOPS 還有餘量——連線數逼近上限而 CPU/IOPS 有餘量，是典型的連線管理問題，proxy 能解；CPU/IOPS 飽和是容量問題，proxy 不解。
 
-#### Step 2：判斷 workload 是否適合 proxy
+#### 判斷 workload 是否適合 proxy
 
 - serverless / Lambda / 高並發短連線 → 適合（連線爆炸是主問題）
 - 少量長連線、穩定的 application server → proxy 效益有限（連線數本就可控）
 - 大量 session 狀態 workload → pinning 會吃掉 multiplexing 效益、要先評估
 
-#### Step 3：建立 proxy
+#### 建立 proxy
 
 ```bash
 aws rds create-db-proxy \
@@ -82,18 +82,18 @@ aws rds create-db-proxy \
 
 application 連到 proxy endpoint 而非直連 cluster endpoint。
 
-#### Step 4：減少 pinning
+#### 減少 pinning
 
 review application 的 session 狀態使用、移除不必要的 `SET` / temp table；連線池設定避免長時間持有閒置連線。
 
-#### Step 5：驗證 multiplexing 生效
+#### 驗證 multiplexing 生效
 
 ```text
 # 對照後端連線數：裝 proxy 後 Aurora 的 DatabaseConnections 應顯著低於 client 並發數
 # 看 DatabaseConnectionsCurrentlySessionPinned：pinning 比例高代表 multiplexing 沒發揮
 ```
 
-#### Step 6：驗證 failover 行為
+#### 驗證 failover 行為
 
 主動觸發一次 failover、測量 application 感知到的中斷時間、確認 retry 邏輯能吸收 in-flight 交易失敗。
 
@@ -103,23 +103,23 @@ review application 的 session 狀態使用、移除不必要的 `SET` / temp ta
 
 production 常見的 5 個踩雷：
 
-#### Case 1：裝了 proxy 但 pinning 比例高、連線沒降
+#### 裝了 proxy 但 pinning 比例高、連線沒降
 
 application 大量用 session variable / temp table、多數連線被 pin、後端連線數沒降、proxy 白裝。修法：監控 pinning 比例、減少 session 狀態；理解 proxy 的省連線前提是連線可被借走。
 
-#### Case 2：把 proxy 當「Aurora 容量擴充」
+#### 把 proxy 當「Aurora 容量擴充」
 
 連線數沒問題、是 CPU/IOPS 飽和、卻裝 proxy 期待變快。修法：proxy 解連線管理、不解運算容量；容量問題要擴 instance / 加 replica。
 
-#### Case 3：以為 proxy 讓 failover 零中斷
+#### 以為 proxy 讓 failover 零中斷
 
 裝了 proxy 就拿掉 application 的 retry、failover 時 in-flight 交易失敗沒處理。修法：proxy 縮短重連時間、不保證交易不中斷；application 仍要 retry in-flight 交易。
 
-#### Case 4：少量長連線 workload 強裝 proxy
+#### 少量長連線 workload 強裝 proxy
 
 穩定的 application server 連線數本就可控、裝 proxy 多一跳延遲、效益有限。修法：proxy 的價值在連線爆炸場景（serverless / 高並發短連線）；連線可控的 workload 不必加。
 
-#### Case 5：proxy 與自管 pooler 疊加未理清責任
+#### proxy 與自管 pooler 疊加未理清責任
 
 application 已有自管連線池（如語言層 pool）、又加 RDS Proxy、兩層 pool 互相打架、連線數行為難預測。修法：理清兩層職責——application 層 pool 管「app 到 proxy」、proxy 管「proxy 到 Aurora」；兩層設定要協調、不是各設各的。
 

@@ -5,11 +5,9 @@ description: "SQLite local-first app、multi-device sync、server authority、co
 tags: ["backend", "database", "sqlite", "local-first", "sync", "deep-article"]
 ---
 
-> 本文是 [SQLite](/backend/01-database/vendors/sqlite/) overview 的 implementation-layer deep article。Overview 已說明 SQLite 適合 local-first / offline-first 場景；本文聚焦 *SQLite local store 與 multi-device sync protocol 的責任分界*。
-
 SQLite local-first sync boundary 的核心責任是把「本機可用」和「多端一致」分成兩個問題。SQLite 很適合保存 device-local state；但它不提供 identity、transport、[conflict resolution](/backend/knowledge-cards/conflict-resolution/)、delete propagation、server authority 或 audit trail。當資料要跨裝置、跨使用者或跨服務同步時，SQLite 只是 local replica / working copy。
 
-本文的判讀錨點是：[local-first](/backend/knowledge-cards/local-first/) 的產品價值來自離線可用，工程成本來自同步語意。SQLite 解的是 local durability；sync layer 解的是資料合併、順序、權威來源與錯誤修復。
+本文的範圍是 [local-first](/backend/knowledge-cards/local-first/) app 裡 SQLite local store 與 sync layer 的責任分界：SQLite 負責 local durability，sync layer 負責資料合併、順序、權威來源與錯誤修復；各節依序處理本機資料角色、衝突時的 authority model、pending mutation 的傳送、conflict resolution 與 delete propagation。
 
 ## Local state taxonomy
 
@@ -27,7 +25,7 @@ Local-first 設計的第一步是標記本機資料角色。不同資料角色�
 
 ## Authority boundary
 
-Authority boundary 的核心責任是決定衝突時誰說了算。Local-first app 可以讓 device、server、field-level merge 或 CRDT 成為不同層的 authority；SQLite 本身只保存狀態，不替系統決策。
+Authority boundary 的核心責任是決定衝突時誰說了算。Local-first app 可以依資料角色，讓 device、server、field-level merge 或 CRDT 分別成為那一類資料的 authority；SQLite 本身只保存狀態，不替系統決策。
 
 | Authority model      | 適合情境                    | 代價                                |
 | -------------------- | --------------------------- | ----------------------------------- |
@@ -64,7 +62,7 @@ CREATE TABLE pending_mutations (
 | compaction                                                      | 已同步 local log 何時清除                 |
 | [reconciliation](/backend/knowledge-cards/data-reconciliation/) | server / local 差異如何修復               |
 
-這裡和 backend queue 概念相通：pending mutation table 是本機版 durable queue。它需要 [idempotency](/backend/knowledge-cards/idempotency/)、retry 與 replay 思維，而不只是「存一張表」。
+Pending mutation table 和 backend queue 的概念相通：它是本機版 durable queue。它需要 [idempotency](/backend/knowledge-cards/idempotency/)、retry 與 replay 思維，而不只是「存一張表」。
 
 ## Conflict resolution
 
@@ -93,19 +91,19 @@ Delete propagation 的核心責任是讓 server、device、backup 與 sync queue
 
 ## Production 踩雷
 
-### Case 1：pending mutation 沒有 idempotency key
+### Pending mutation 沒有 idempotency key，重送造成重複副作用
 
 Pending mutation 沒有 idempotency key 的核心風險是重送造成重複副作用。網路 timeout 後 worker 重送，server 已經處理第一次請求，第二次又建立一筆資料或扣一次庫存。
 
 修正方向是每個 mutation 生成 stable id，server 以 idempotency key 去重，local SQLite 保存 retry state 與 server ack。
 
-### Case 2：LWW 覆蓋使用者資料
+### LWW 把衝突靜默變成使用者資料遺失
 
 Last-write-wins 的核心風險是把衝突靜默變成資料遺失。Preference 類資料可接受；草稿、文件、表單、付款資料通常需要更清楚的 conflict handling。
 
 修正方向是依資料價值分層。低價值設定用 LWW；高價值內容用 field merge、manual conflict 或 operation log。
 
-### Case 3：delete 沒傳到離線裝置
+### Delete 沒傳到離線裝置，重新上線時把已刪資料同步回來
 
 Delete propagation 失敗的核心風險是 privacy / compliance 失效。使用者刪除 server 資料後，一台長期離線裝置重新上線又把舊資料同步回來。
 

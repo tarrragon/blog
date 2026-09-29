@@ -6,7 +6,7 @@ weight: 26
 tags: ["backend", "database", "postgresql", "extension", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *extension ecosystem* — PG 結構性產品線擴張的機制。
+> 這篇涵蓋 PostgreSQL 的 extension ecosystem：PG 結構性產品線擴張的機制。
 
 ---
 
@@ -34,7 +34,9 @@ PG extension 機制讓 *第三方加新 type / function / operator / index acces
 SELECT * FROM pg_available_extensions;
 
 -- 安裝（在 OS 層、要有對應 package）
--- apt install postgresql-14-pg-stat-statements
+-- pg_stat_statements 屬 contrib，隨 PostgreSQL server 套件一起裝好，不必另裝；
+-- 第三方 extension 才要另裝 OS package，例如 Debian / Ubuntu 的 apt.postgresql.org 套件：
+-- apt install postgresql-16-pgvector
 
 -- Enable in DB
 CREATE EXTENSION pg_stat_statements;
@@ -51,14 +53,14 @@ DROP EXTENSION pg_stat_statements;
 
 每個 extension 有：
 
-- *Version* — 跟 PG version 綁定（如 pg_stat_statements 14 / 15 / 16）
+- *Version* — extension 有自己的版本號（PG 16 附帶的 pg_stat_statements 是 1.10），每個版本各自支援特定幾個 PG major version
 - *Schema* — 安裝到 `public` 或專屬 schema
-- *Dependencies* — 部分 extension 依賴其他（如 PostGIS 依賴 pg_trgm）
+- *Dependencies* — 部分 extension 在 control 檔的 `requires` 宣告依賴其他 extension（如 `postgis_topology`、`postgis_raster` 依賴 `postgis`）
 - *Trusted vs untrusted* — trusted 可以 non-superuser 安裝（PG 13+）
 
-## 6 個 Production-Critical Extension
+## Production-Critical Extension
 
-### 1. pg_stat_statements — Query stats（必裝）
+### pg_stat_statements — Query stats（必裝）
 
 任何 production PG cluster 都該裝：
 
@@ -80,7 +82,7 @@ ORDER BY total_exec_time DESC LIMIT 10;
 
 對應 MySQL `events_statements_summary_by_digest`。詳見 [Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)。
 
-### 2. pg_partman — 自動 partition lifecycle
+### pg_partman — 自動 partition lifecycle
 
 PG declarative partitioning 需要 *手動建 / drop partition*。pg_partman 自動化：
 
@@ -103,11 +105,11 @@ SELECT partman.run_maintenance(p_analyze => false);
 
 對 *time-series partition* workload 必裝。詳見 [Declarative Partitioning](/backend/01-database/vendors/postgresql/declarative-partitioning/)。
 
-### 3. pg_repack — Online table rewrite
+### pg_repack — Online table rewrite
 
 詳見 [Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/)。
 
-### 4. pgvector — Vector similarity search
+### pgvector — Vector similarity search
 
 LLM embedding / semantic search 場景必裝：
 
@@ -133,7 +135,7 @@ LIMIT 5;
 
 對 *超大規模* vector workload（> 1 億 vector）考慮 pgvectorscale（pgvector 的 streaming variant）或專業 vector DB。
 
-### 5. TimescaleDB — Time-series 擴展
+### TimescaleDB — Time-series 擴展
 
 把 PG 變 time-series DB：
 
@@ -160,7 +162,7 @@ GROUP BY bucket, device_id;
 
 對 IoT / monitoring / financial tick data 場景、TimescaleDB 比純 PG 寫吞吐高 10x+。
 
-### 6. PostGIS — GIS extension
+### PostGIS — GIS extension
 
 地理 / 空間 query 業界標準：
 
@@ -184,7 +186,7 @@ PostGIS 是 GIS workload 業界標準、其他 DB GIS 能力都對標 PostGIS。
 
 ## 其他常用 extension
 
-除 6 個 production-critical 之外、以下是 *特定場景常用* 的 extension — 分四類：排程跟 utility（`pg_cron` / `pg_trgm` / `uuid-ossp`）、type 擴展（`hstore` / `citext` / `pgcrypto`）、跨 DB 整合（`postgres_fdw` / `mysql_fdw`）、observability / debug 工具（`pg_buffercache` / `pg_visibility` / `auto_explain`）：
+除 pg_stat_statements、pg_partman、pg_repack、pgvector、TimescaleDB、PostGIS 之外、以下是 *特定場景常用* 的 extension — 分四類：排程跟 utility（`pg_cron` / `pg_trgm` / `uuid-ossp`）、type 擴展（`hstore` / `citext` / `pgcrypto`）、跨 DB 整合（`postgres_fdw` / `mysql_fdw`）、observability / debug 工具（`pg_buffercache` / `pg_visibility` / `auto_explain`）：
 
 | Extension        | 用途                                    |
 | ---------------- | --------------------------------------- |
@@ -207,9 +209,9 @@ PostGIS 是 GIS workload 業界標準、其他 DB GIS 能力都對標 PostGIS。
 
 實務組合：observability 三件套（`pg_stat_statements` + `auto_explain` + `pg_buffercache`）幾乎是 production 標配；FDW 是「跨 DB query」的 escape hatch、但 cross-DB query 效能差、適合 reporting 不適合 OLTP。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Extension version 跟 PG version 對齊
+### Extension version 跟 PG version 對齊
 
 PG cluster 升 14 → 15 後、extension（pg_stat_statements / pg_partman / pgvector 等）必須有對應 15 版本。早期升級 / niche extension 可能還沒釋出。
 
@@ -219,7 +221,7 @@ PG cluster 升 14 → 15 後、extension（pg_stat_statements / pg_partman / pgv
 - 升完 PG cluster *立即跑 `ALTER EXTENSION xxx UPDATE`*
 - Upgrade runbook 紀錄每個 extension 的版本兼容狀態
 
-### 2. Managed PG 限制 extension 列表
+### Managed PG 限制 extension 列表
 
 AWS RDS / Aurora PG / Cloud SQL / Azure DB for PostgreSQL 各自有 *支援 extension 白名單*：
 
@@ -240,7 +242,7 @@ AWS RDS / Aurora PG / Cloud SQL / Azure DB for PostgreSQL 各自有 *支援 exte
 - Self-hosted vs managed 的 *跨雲 portability* 議題：extension 是 lock-in source
 - 如果 application 強依賴某 extension（如 PostGIS），確認 cloud 支援
 
-### 3. Extension upgrade order
+### Extension upgrade order
 
 `pg_upgrade` 升 PG major version 後、extension 也要升。順序：
 
@@ -254,7 +256,7 @@ AWS RDS / Aurora PG / Cloud SQL / Azure DB for PostgreSQL 各自有 *支援 exte
 - PostGIS / TimescaleDB / Citus 有自己 upgrade 程序、必須遵循 vendor doc
 - 升完跑 `\dx` 看每個 extension 版本
 
-### 4. `shared_preload_libraries` 衝突
+### `shared_preload_libraries` 衝突
 
 部分 extension（pg_stat_statements / auto_explain / TimescaleDB / Citus / pg_cron）必須在 `shared_preload_libraries` 加進去、需要 *重啟 PG*。
 
@@ -269,7 +271,7 @@ AWS RDS / Aurora PG / Cloud SQL / Azure DB for PostgreSQL 各自有 *支援 exte
 - 提高 `max_worker_processes = 16` / `max_parallel_workers = 8` 等
 - 重啟 PG 才生效、計入 maintenance window
 
-### 5. Extension 跟 logical replication 互動
+### Extension 跟 logical replication 互動
 
 Logical replication（pglogical / native）不自動 replicate extension state（function / type definition）。Subscriber 沒裝對應 extension、replicate event 失敗。
 

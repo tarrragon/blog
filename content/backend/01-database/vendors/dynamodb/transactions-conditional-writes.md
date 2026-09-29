@@ -6,15 +6,15 @@ weight: 35
 tags: ["backend", "database", "dynamodb", "transaction", "conditional-write", "idempotency", "deep-article"]
 ---
 
-> 本文是 [DynamoDB](/backend/01-database/vendors/dynamodb/) overview 的 implementation-layer deep article。寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+這篇整理 [DynamoDB](/backend/01-database/vendors/dynamodb/) 的寫入保護工具：單 item conditional write、version-based optimistic locking、跨 item 的 `TransactWriteItems`，以及 `ClientRequestToken` 的 idempotency 與 transaction 的成本邊界。
 
-[對帳](/backend/knowledge-cards/data-reconciliation/)跑出一筆異常：用戶錢包餘額扣了 100 元、但對應訂單沒建立。追 log 發現 application 先 `PutItem` 扣餘額、再 `PutItem` 建訂單、兩步之間 process 被 OOM kill、第二步沒跑完。另一個系統反向情境：秒殺活動庫存剩 1、兩個請求同時讀到「剩 1」、各自 `PutItem` 扣成 0、實際賣出 2 件。兩個 production 痛點指向同一件事 — DynamoDB 預設的單筆寫入沒有跨 item 原子性、也沒有「讀到的值寫回時還沒被改」的保證。本文展開 DynamoDB 提供的三層寫保護：跨 item transaction、單 item conditional write、version-based optimistic locking。
+DynamoDB 預設的單筆寫入沒有跨 item 原子性，也不保證讀到的值寫回時還沒被改。沒有跨 item 原子性的典型後果是扣款與建單脫鉤：application 先 `PutItem` 扣錢包餘額、再 `PutItem` 建訂單，兩次寫入之間 process 被 OOM kill，餘額扣了而訂單沒建，要靠[對帳](/backend/knowledge-cards/data-reconciliation/)才發現。沒有「寫回時值未被改」保證的典型後果是超賣：庫存剩 1 時兩個請求同時讀到「剩 1」、各自 `PutItem` 寫成 0，實際賣出 2 件。
 
-> **寫一致性前提：先確認 workload 適配 DynamoDB**：本篇假設 workload 已通過 DynamoDB 適配 4 軸（PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定）— 判讀軸詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀4-軸)。寫一致性是 *已選 DynamoDB* 後的操作層議題；若 workload 需要頻繁跨多表多列複雜交易、那是 relational 的主場、應先回頭問 DynamoDB 是否選錯。
+> **寫一致性前提：先確認 workload 適配 DynamoDB**：本篇假設 workload 已通過 DynamoDB 適配 4 軸（PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定）— 判讀軸詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀)。寫一致性是 *已選 DynamoDB* 後的操作層議題；若 workload 需要頻繁跨多表多列複雜交易、那是 relational 的主場、應先回頭問 DynamoDB 是否選錯。
 
-## 核心機制：三層寫保護
+## 核心機制：單 item 寫、conditional write 與 transaction
 
-DynamoDB 的寫一致性由三種粒度不同的工具組成 — 單 item 寫、conditional write、跨 item transaction，三者解的問題與成本各異，不是單一 ACID 開關：
+DynamoDB 的寫一致性由粒度不同的工具組成 — 單 item 寫、conditional write、跨 item transaction，三者解的問題與成本各異，不是單一 ACID 開關：
 
 | 工具               | 解的問題                             | 原子性範圍                     | 成本                              |
 | ------------------ | ------------------------------------ | ------------------------------ | --------------------------------- |
@@ -57,7 +57,7 @@ table.update_item(
 )
 ```
 
-第二個例子是關鍵：`update_item` 帶 condition 是 *原子的 read-modify-write*。DynamoDB 在單 item 上保證「條件檢查 + 寫入」不會被其他寫入插隊。前述「兩個請求同時讀到剩 1」的超賣問題、用單 item conditional update 即可解、不需要 transaction。
+防超賣的例子是關鍵：`update_item` 帶 condition 是 *原子的 read-modify-write*。DynamoDB 在單 item 上保證「條件檢查 + 寫入」不會被其他寫入插隊。前述「兩個請求同時讀到剩 1」的超賣問題、用單 item conditional update 即可解、不需要 transaction。
 
 ## Optimistic Locking：跨讀寫週期的保護
 
@@ -115,9 +115,9 @@ client.transact_write_items(
 
 ## 操作流程
 
-從一致性需求判讀到工具選擇的 6 步流程。
+從一致性需求判讀到工具選擇的操作流程：分類寫入的一致性需求、先用 conditional write 解單 item race、跨 item 才上 transaction、加 idempotency token、處理失敗例外、驗證 conditional write 擋得住併發。
 
-#### Step 1：分類寫入的一致性需求
+#### 分類寫入的一致性需求
 
 每個寫入路徑標記它真正需要的保護：
 
@@ -126,19 +126,19 @@ client.transact_write_items(
 - 讀-算-寫週期、期間不能被改 → version optimistic locking
 - 多筆 item 必須一起成功或失敗 → TransactWriteItems
 
-#### Step 2：先用 conditional write 解單 item race
+#### 先用 conditional write 解單 item race
 
 把「需要 transaction」當成最後選項。多數 race condition 是單 item 問題、conditional update 的 atomic read-modify-write 已足夠、成本 1x 而非 2x。
 
-#### Step 3：跨 item 才上 transaction
+#### 跨 item 才上 transaction
 
 只有「多筆 item 的修改必須綁在一起」才用 TransactWriteItems。例：扣錢包 + 建訂單 + 寫流水帳三筆綁定。寫進 transaction 的 item 數量越少越好、每多一個 item 多一份 2x 成本。
 
-#### Step 4：加 idempotency token
+#### 加 idempotency token
 
 所有會被 client 重試的 transaction 帶 `ClientRequestToken`；token 用業務層的唯一鍵（order_id / request_id）、不要用隨機值（隨機值每次重試都不同、dedup 失效）。
 
-#### Step 5：處理失敗例外
+#### 處理失敗例外
 
 ```python
 from botocore.exceptions import ClientError
@@ -157,7 +157,7 @@ except ClientError as e:
 
 關鍵：`ConditionalCheckFailed` 是 *業務拒絕*（庫存不足、訂單已存在）、不該不分原因一律重試；`TransactionConflict` / `ThrottlingError` 才是可重試的 transient error。混為一談會把「庫存真的不夠」當成 transient 一直重試。
 
-#### Step 6：驗證點
+#### 驗證 conditional write 擋得住併發
 
 ```python
 # 驗證 conditional write 真的擋住併發
@@ -172,23 +172,23 @@ print(response["Attributes"])  # 確認 version / stock 變化符合預期
 
 production 常見的 5 個踩雷：
 
-#### Case 1：用 transaction 取代本該單 item 的寫
+#### 用 transaction 取代本該單 item 的寫
 
 team 把所有寫入都包進 TransactWriteItems「保險」、cost 翻倍、且 transaction 有 throughput 上限比單寫低。修法：transaction 只用於真正跨 item 綁定的場景；單 item 用 conditional write。
 
-#### Case 2：optimistic lock 在高衝突 item 上 retry 風暴
+#### optimistic lock 在高衝突 item 上 retry 風暴
 
 熱點 item（如全站唯一的計數器）大量並發寫、version condition 不斷失敗、application retry 風暴、latency 爆炸。修法：高衝突計數改用 atomic `ADD`（單 item 原子累加、不需 read-modify-write）；或把計數 shard 成多個 item 分散寫入。
 
-#### Case 3：idempotency token 用隨機值
+#### idempotency token 用隨機值
 
-這個 case 的失敗代價跟其他踩雷不同層級。Case 1（cost 翻倍）、Case 2（retry 風暴）、Case 5（跨 region 誤解）都可以在發現後調整設定或改資料模型補救；idempotency token 用隨機值導致的重複扣款是 *財務不可逆* — 每次 client retry 產生新 token、dedup 完全失效、同一筆付款被執行多次、錢已經從用戶帳戶扣走、要靠對帳發現後人工退款，且退款流程本身又是另一條容易出錯的補償路徑。修法：token 綁業務唯一鍵（order_id / payment_id）、同一筆業務操作的所有重試共用同一 token；且不只依賴 DynamoDB 的 dedup window（有時效上限），application 層自己也維護 idempotency 記錄當第二道防線（對應 [idempotency](/backend/knowledge-cards/idempotency/) 卡）。涉及金流的寫入，這道防線要在上線前用「同一 token 重送 N 次只執行一次」的測試明確驗證。
+idempotency token 用隨機值的失敗代價跟其他踩雷不同層級。用 transaction 取代單 item 寫（cost 翻倍）、optimistic lock 的 retry 風暴、以為 transaction 跨 region 有效，這幾種都可以在發現後調整設定或改資料模型補救；idempotency token 用隨機值導致的重複扣款是 *財務不可逆* — 每次 client retry 產生新 token、dedup 完全失效、同一筆付款被執行多次、錢已經從用戶帳戶扣走、要靠對帳發現後人工退款，且退款流程本身又是另一條容易出錯的補償路徑。修法：token 綁業務唯一鍵（order_id / payment_id）、同一筆業務操作的所有重試共用同一 token；且不只依賴 DynamoDB 的 dedup window（有時效上限），application 層自己也維護 idempotency 記錄當第二道防線（對應 [idempotency](/backend/knowledge-cards/idempotency/) 卡）。涉及金流的寫入，這道防線要在上線前用「同一 token 重送 N 次只執行一次」的測試明確驗證。
 
-#### Case 4：把 ConditionalCheckFailed 當 transient error 重試
+#### 把 ConditionalCheckFailed 當 transient error 重試
 
 庫存真的為 0、condition 永遠失敗、application 無限重試打爆 capacity。修法：例外分流 — 業務拒絕（ConditionalCheckFailed）回報給呼叫端、transient error（throttle / conflict）才 backoff retry。
 
-#### Case 5：以為 transaction 跨 region 有效
+#### 以為 transaction 跨 region 有效
 
 Global Tables 多 region 部署、誤以為 TransactWriteItems 在跨 region 也原子。實際 transaction 只在單 region 成立、跨 region 是 last-writer-wins（對應 [global-tables-conflict](/backend/01-database/vendors/dynamodb/global-tables-conflict/)）。修法：跨 region 一致性需求不能靠 transaction、要重新設計資料 ownership（單一 region 為 write authority）。
 
@@ -216,7 +216,7 @@ CloudWatch metric：
 
 ### 跟 relational transaction 的責任差異
 
-DynamoDB transaction 跟 relational transaction 不是同一個東西。Relational transaction 支援任意複雜的多表多列交易、長交易、isolation level 調整；DynamoDB transaction 是「一次性提交一組有限 action、全成全敗、無互動式 transaction、無 SELECT FOR UPDATE」。當 application 需要長交易、複雜 join 內的一致性、或多步互動式 transaction、那是 relational 的場景、不該硬塞進 DynamoDB（回頭看 single-table 4 軸前置判讀）。
+DynamoDB transaction 跟 relational transaction 不是同一個東西。Relational transaction 支援任意複雜的多表多列交易、長交易、isolation level 調整；DynamoDB transaction 是「一次性提交一組有限 action、全成全敗、無互動式 transaction、無 SELECT FOR UPDATE」。當 application 需要長交易、複雜 join 內的一致性、或多步互動式 transaction、那是 relational 的場景、不該硬塞進 DynamoDB（回頭看 [single-table design 篇的 DynamoDB 適用度前置判讀](/backend/01-database/vendors/dynamodb/single-table-design-pattern/)）。
 
 ### Sibling 與 cross-link
 

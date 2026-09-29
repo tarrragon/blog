@@ -5,11 +5,11 @@ description: "用 Firebase CLI 啟動 Firestore emulator、寫 firestore.rules�
 tags: ["backend", "database", "firestore", "hands-on", "emulator"]
 ---
 
-> 本文是 [Firestore Hands-on 操作路線](/backend/01-database/vendors/firestore/hands-on/) 的基礎 lab。指令以 [Firebase CLI 文件](https://firebase.google.com/docs/cli) 與 [Emulator Suite 文件](https://firebase.google.com/docs/emulator-suite) 為準、最後檢查日 2026-06-16。
+> 指令以 [Firebase CLI 文件](https://firebase.google.com/docs/cli) 與 [Emulator Suite 文件](https://firebase.google.com/docs/emulator-suite) 為準、最後檢查日 2026-06-16。
 
 Firestore local emulator quickstart 的核心責任是建立後續 Security Rules 測試與 distributed counter lab 共用的本地環境。這個 lab 把 Firestore 從抽象服務轉成可觀察的 emulator、規則檔、seed 資料與 query 結果，全程不碰雲端專案。
 
-本文的驗收標準是：你能在本地啟動 Firestore emulator、用 admin SDK 寫入並查詢一組 seed 資料、看到 emulator UI 裡的資料，並知道 cleanup 路徑。
+範圍從 lab 環境與前置開始，依序是 emulator 設定、baseline 規則、啟動 emulator、用 admin SDK seed 資料、query baseline，到 cleanup 為止。
 
 ## Lab 環境與前置
 
@@ -27,7 +27,7 @@ npm init -y
 npm install firebase-admin
 ```
 
-emulator 需要 Java runtime（Firestore emulator 跑在 JVM 上）。`java -version` 確認存在；缺的話先裝 JDK 再繼續。驗收 artifact 是 `/tmp/firestore-lab` 工作區。
+emulator 需要 Java runtime（Firestore emulator 跑在 JVM 上），而且版本有下限：firebase-tools 15.32.0 遇到 Java 17 時直接報錯、拒絕啟動 emulator，錯誤訊息寫明要 JDK 21 以上。`java -version` 看的是版本號，不只是有沒有裝；版本不到的話先裝新版 JDK 再繼續。驗收 artifact 是 `/tmp/firestore-lab` 工作區。
 
 ## Emulator 設定
 
@@ -49,7 +49,7 @@ JSON
 
 ## Baseline 規則
 
-`firestore.rules` 的核心責任是定義授權。Quickstart 先用一組明確的 owner-scoped 規則（不是 `allow read, write: if true`，那是 [deep article Case 1](/backend/01-database/vendors/firestore/security-rules-authz-modeling/) 的漏洞）。這份規則後續在 [Security Rules test lab](/backend/01-database/vendors/firestore/hands-on/security-rules-test-lab/) 會被測試覆蓋。
+`firestore.rules` 的核心責任是定義授權。Quickstart 先用一組明確的 owner-scoped 規則（不是 `allow read, write: if true`，那是 [Security Rules 授權建模](/backend/01-database/vendors/firestore/security-rules-authz-modeling/) 記錄的失敗案例「`allow read, write: if true` 上線沒收」）。這份規則後續在 [Security Rules test lab](/backend/01-database/vendors/firestore/hands-on/security-rules-test-lab/) 會被測試覆蓋。
 
 ```bash
 cat > firestore.rules <<'RULES'
@@ -85,9 +85,10 @@ Seed 的核心責任是建立可重跑的測試資料。admin SDK 連到 emulato
 
 ```bash
 cat > seed.js <<'JS'
-const admin = require('firebase-admin');
-admin.initializeApp({ projectId: 'demo-firestore-lab' });
-const db = admin.firestore();
+const { initializeApp } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
+initializeApp({ projectId: 'demo-firestore-lab' });
+const db = getFirestore();
 
 async function main() {
   await db.collection('notes').doc('n1').set({
@@ -110,13 +111,14 @@ node seed.js
 
 ## Query baseline
 
-Query 的核心責任是確認資料可讀、access pattern 入口可用。admin SDK 同樣繞過規則，這裡驗證的是資料與查詢本身（規則的放行 / 拒絕在下一個 lab 用 client context 驗）。
+Query 的核心責任是確認資料可讀、access pattern 入口可用。admin SDK 同樣繞過規則，這裡驗證的是資料與查詢本身（規則的放行 / 拒絕在 [Security Rules test lab](/backend/01-database/vendors/firestore/hands-on/security-rules-test-lab/) 用 client context 驗）。
 
 ```bash
 cat > query.js <<'JS'
-const admin = require('firebase-admin');
-admin.initializeApp({ projectId: 'demo-firestore-lab' });
-const db = admin.firestore();
+const { initializeApp } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
+initializeApp({ projectId: 'demo-firestore-lab' });
+const db = getFirestore();
 
 async function main() {
   const snap = await db.collection('notes')
@@ -159,5 +161,5 @@ rm -rf /tmp/firestore-lab
 ## 引用路徑
 
 - 上游：[Firestore Hands-on 操作路線](/backend/01-database/vendors/firestore/hands-on/)
-- Deep article：[Security Rules 授權建模](/backend/01-database/vendors/firestore/security-rules-authz-modeling/)
+- 對應的機制文章：[Security Rules 授權建模](/backend/01-database/vendors/firestore/security-rules-authz-modeling/)
 - 官方：[Install Firebase CLI](https://firebase.google.com/docs/cli)、[Connect to Firestore emulator](https://firebase.google.com/docs/emulator-suite/connect_firestore)

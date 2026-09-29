@@ -1,12 +1,12 @@
 ---
 title: "Spanner Schema Migration Without Downtime + Interleaved Tables"
 date: 2026-05-27
-description: "Spanner DDL 是 long-running operation、用 TrueTime 給每次 schema change 分配 version timestamp、所有 read / write 對應自己 transaction timestamp 看到對應 schema。Interleaved table 是 storage-level parent-child 物理交錯、不是 logical FK。本文走 schema change lifecycle、interleaved layout 機制、backfill capacity 影響、5 production 踩雷、跟 PostgreSQL online schema change 對照"
+description: "Spanner DDL 是 long-running operation、用 TrueTime 給每次 schema change 分配 version timestamp、所有 read / write 對應自己 transaction timestamp 看到對應 schema。Interleaved table 是 storage-level parent-child 物理交錯、不是 logical FK。本文走 schema change lifecycle、interleaved layout 機制、backfill capacity 影響、production 踩雷（backfill 時間沒估、interleave 事後重建、interleave 與 FK 混淆、ADD COLUMN NOT NULL 沒帶 DEFAULT、舊 client 的 schema cache）、跟 PostgreSQL online schema change 對照"
 weight: 32
 tags: ["backend", "database", "spanner", "global-sql", "schema-migration", "interleaved-tables", "ddl", "deep-article"]
 ---
 
-> 本文是 [Cloud Spanner](/backend/01-database/vendors/spanner/) overview 的 implementation-layer deep article。Overview 已說明 Spanner 在全球 OLTP 譜系的定位、本文聚焦 *schema migration without downtime + interleaved tables* — Spanner 兩個跟傳統 SQL 差異最大的 schema 機制。
+本文的範圍是 Spanner 的不停機 schema migration（long-running DDL 與 TrueTime 對齊的 schema version）與 interleaved table 的 parent-child 物理 layout，包括操作步驟、backfill 與 interleave 的 production 踩雷、backfill 的容量觀測，以及何時不用 interleaved table。
 
 ---
 
@@ -16,7 +16,7 @@ tags: ["backend", "database", "spanner", "global-sql", "schema-migration", "inte
 
 真實壓力：multi-tenant SaaS 要對 100 億 row 的 orders 表加 column + 加 index、不能停機、不能讓 p99 write latency 超過 SLA。團隊以為「Spanner schema change 不停機」等同於「DDL 瞬間完成」、實際 ALTER 是 long-running operation、index backfill 在大表上跑數小時到數天、capacity 規劃要把 backfill 期間的 CPU 升幅算進去。
 
-Case anchor：**缺案例**。9.C10 是 Google internal dogfood case、未展開 schema migration 細節、且 9.C10 不是 customer-facing capacity reference。本文用通用 pattern + 官方文件 + 反向回 [PostgreSQL Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/) 對照、待後續 customer case audit 補強。
+Case anchor：Google 內部的 [Cloud Spanner planetary scale 案例](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)沒有涉及 schema migration 細節，而且是 Google 內部自用的數據、不是 customer-facing capacity reference。本文的內容取自通用 pattern 與官方文件，並與 [PostgreSQL Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/) 對照。
 
 ## 核心機制：DDL 是 long-running、TrueTime 對齊 schema version
 
@@ -43,17 +43,17 @@ T2 (backfill 完成)
 
 DDL 本身瞬間完成的部分是 *metadata 廣播*（毫秒到秒級）、慢的部分是 *backfill*（依資料量、可能數小時到數天）。讀者常見誤解是把 metadata 完成當「DDL 完成」、實際 query 還沒走新 index 因為 backfill 沒跑完。
 
-### 不停機的關鍵：不同 DDL 的兩階段行為
+### 不停機的關鍵：每種 DDL 的 metadata 廣播與 backfill 各自怎麼走
 
-| DDL 類型                    | metadata 行為                                             | backfill 行為                                          | 阻塞？                                  |
-| --------------------------- | --------------------------------------------------------- | ------------------------------------------------------ | --------------------------------------- |
-| `ADD COLUMN`（無 NOT NULL） | metadata-only、瞬間生效                                   | 不需 backfill（新 column 預設 NULL）                   | 不阻塞 write                            |
-| `ADD COLUMN`（NOT NULL）    | 必須兩階段：先 ADD COLUMN with default、後 ADD CONSTRAINT | 兩階段間需 backfill default                            | 不阻塞 write、但兩階段不能合            |
-| `CREATE INDEX`              | metadata 立即                                             | 背景 backfill、不阻塞 write；backfill 完才 serve query | 不阻塞 write、阻塞「該 index 的 query」 |
-| `DROP COLUMN`               | metadata 立即                                             | 背景 GC dead column                                    | 不阻塞                                  |
-| `ALTER COLUMN TYPE`         | 限制多、查最新文件                                        | -                                                      | -                                       |
+| DDL 類型                    | metadata 行為                                                            | backfill 行為                                          | 阻塞？                                  |
+| --------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------ | --------------------------------------- |
+| `ADD COLUMN`（無 NOT NULL） | metadata-only、瞬間生效                                                  | 不需 backfill（新 column 預設 NULL）                   | 不阻塞 write                            |
+| `ADD COLUMN`（NOT NULL）    | 必須帶 `DEFAULT (expression)` 或 `AS (expression) STORED`，一條 DDL 完成 | 背景非同步 backfill 既有 row                           | 不阻塞 write                            |
+| `CREATE INDEX`              | metadata 立即                                                            | 背景 backfill、不阻塞 write；backfill 完才 serve query | 不阻塞 write、阻塞「該 index 的 query」 |
+| `DROP COLUMN`               | metadata 立即                                                            | 背景 GC dead column                                    | 不阻塞                                  |
+| `ALTER COLUMN TYPE`         | 限制多、查最新文件                                                       | -                                                      | -                                       |
 
-讀者要記的是：**index backfill 完成前、query 該 index 會 fallback 到 table scan**、用 `EXPLAIN` 確認 query plan 走新 index 才算真正完成。沒做這層驗證、團隊會以為 CREATE INDEX 已經成功、實際 p99 query latency 還在表掃描的數量級。
+讀者要記的是：**index backfill 完成前、query 該 index 會 fallback 到 table scan**、用 query plan（`gcloud spanner databases execute-sql` 的 `--query-mode=PLAN`，或 console 的 Explanation 分頁）確認走新 index 才算真正完成。沒做這層驗證、團隊會以為 CREATE INDEX 已經成功、實際 p99 query latency 還在表掃描的數量級。
 
 ### Interleaved table 的設計
 
@@ -83,7 +83,7 @@ Interleaved 的效果：parent + child JOIN 在同一個 [Range Sharding](/backe
 | `ON DELETE` 只能 CASCADE 或 NO ACTION  | 不像 PG FK 有 SET NULL / SET DEFAULT          |
 | 一旦建立、無法直接 ALTER 改 interleave | 要改 → export + recreate + import、不是 ALTER |
 
-最後一條是讀者最容易踩的雷 — 一開始沒設 interleaved、後悔時要 export-import 100 億 row、是大工程、不是 ALTER。Schema 設計階段要先 audit access pattern、決定哪些 parent-child 該 interleave。
+interleave 建立後無法直接 ALTER 是最容易踩的雷 — 一開始沒設 interleaved、後悔時要 export-import 100 億 row、是大工程、不是 ALTER。Schema 設計階段要先 audit access pattern、決定哪些 parent-child 該 interleave。
 
 ### 跟通用 FK 概念的差異
 
@@ -112,11 +112,13 @@ gcloud spanner operations describe projects/.../operations/<op-id>
 CREATE INDEX OrdersByCustomer ON Orders(customer_id);
 ```
 
-拿 operation id → 用 Monitoring metric `spanner.googleapis.com/instance/indexes/backfill_progress`（或對應的最新 metric、查官方文件）追蹤進度。Backfill 完成前 query 不會走新 index、要用 `EXPLAIN` 確認：
+拿 operation id → 用 `gcloud spanner operations describe` 讀輸出裡的 `progress` 段追蹤完成百分比（截至 2026-09 的 Cloud Monitoring Spanner metric 清單沒有 index backfill 進度的 metric）。Backfill 完成前 query 不會走新 index、要用 PLAN 模式取 query plan 確認（GoogleSQL 沒有 `EXPLAIN` 陳述式）；`<instance>` 與 `<database>` 換成自己的 instance ID 與 database ID：
 
-```sql
-EXPLAIN SELECT * FROM Orders WHERE customer_id = 'c123';
--- 應看到 plan 用 OrdersByCustomer index、不是 table scan
+```bash
+gcloud spanner databases execute-sql <database> --instance=<instance> \
+  --query-mode=PLAN \
+  --sql="SELECT * FROM Orders WHERE customer_id = 'c123'"
+# 應看到 plan 用 OrdersByCustomer index、不是 table scan
 ```
 
 ### 創建 interleaved table
@@ -151,11 +153,11 @@ CREATE TABLE `Order` (
 
 DDL 完成前可 `gcloud spanner operations cancel` 取消；完成後加 index 要 DROP、加 column 要 DROP COLUMN（同樣是 long-running）。讀者要先確認自己在 DDL 哪個階段、cancel 跟 reverse DDL 是兩條不同路徑。
 
-## 失敗模式：5 個 production 踩雷
+## 失敗模式：backfill、interleave 與 schema 版本的 production 踩雷
 
 ### Backfill 時間沒估、event window 撞牆
 
-100 億 row 加 index、預期 1 小時、實際 12 小時 — 沒先用 `cost` 估 + 沒監控進度 metric。事故場景：團隊在 black friday 前一週開 CREATE INDEX、以為週末跑完、實際週末仍在 backfill、event 期間 CPU 升、query latency 退化。
+100 億 row 加 index、預期 1 小時、實際 12 小時 — 事前沒估 backfill 時間、事中沒監控 backfill 的進度 metric。事故場景：團隊在 black friday 前一週開 CREATE INDEX、以為週末跑完、實際週末仍在 backfill、event 期間 CPU 升、query latency 退化。
 
 修法：
 
@@ -174,26 +176,23 @@ DDL 完成前可 `gcloud spanner operations cancel` 取消；完成後加 index 
 
 ### 把 interleaved 跟 FK 混為一談
 
-interleaved 的 `ON DELETE CASCADE` 是 storage-level、刪 parent 自動刪 child；非 interleaved FK 要 application 或 trigger 處理。事故場景：團隊以為「我加了 FK 就會 CASCADE」、實際非 interleaved table 只是 constraint check、刪 parent 時 child orphan、[對帳](/backend/knowledge-cards/data-reconciliation/)爆炸。
+interleaved 的 `ON DELETE CASCADE` 是 storage-level、刪 parent 自動刪 child；非 interleaved 的 foreign key 預設動作是 `NO ACTION`，要在宣告時明寫 `ON DELETE CASCADE` 才會在同一個 transaction 裡連帶刪除引用它的 row；截至 2026-09 的官方文件寫明 Spanner 不支援 trigger，這段邏輯沒有 trigger 可以放。事故場景：團隊以為「我加了 FK 就會 CASCADE」、實際沒寫 `ON DELETE CASCADE` 的 enforced FK 會讓刪 parent 的 transaction 失敗，宣告成 `NOT ENFORCED` 的 informational FK 則完全不檢查、刪 parent 後 child 成為 orphan、[對帳](/backend/knowledge-cards/data-reconciliation/)爆炸。
 
 修法：
 
-- Schema 設計時明確分類：interleaved（storage-level CASCADE）vs FK constraint（只檢查、不 CASCADE）
-- 非 interleaved 的 parent-child 刪除邏輯放應用層、寫入對帳測試
+- Schema 設計時明確分類：interleaved（storage-level CASCADE）vs FK constraint（預設 `NO ACTION` 只檢查，宣告 `ON DELETE CASCADE` 才連帶刪除）
+- 非 interleaved 的 parent-child 刪除在 FK 上明寫 `ON DELETE CASCADE`，或把刪除邏輯放應用層、寫入對帳測試
 
-### 加 NOT NULL 一步到位
+### ADD COLUMN NOT NULL 沒帶 DEFAULT
 
-直接 `ALTER ADD COLUMN x INT64 NOT NULL` 會失敗、必須兩階段。事故場景：開發環境 schema 是新建空表、`ADD COLUMN NOT NULL` OK；production 表有資料、ADD 失敗、團隊以為 Spanner 不支援、回退。
+直接 `ALTER TABLE Orders ADD COLUMN x INT64 NOT NULL` 會被 Spanner 拒絕，空表也一樣：截至 2026-09 的 GoogleSQL DDL 參考寫明 `ADD COLUMN` 要帶 `DEFAULT (expression)` 或 `AS (expression) STORED` 才能宣告 `NOT NULL`。事故場景：團隊照 PostgreSQL 在空表上的習慣寫 `ADD COLUMN ... NOT NULL`、DDL 失敗、團隊以為 Spanner 不支援、回退。
 
 修法：
 
 ```sql
--- Phase 1: ADD with default
-ALTER TABLE Orders ADD COLUMN tax_amount FLOAT64 DEFAULT 0;
--- 等 backfill 完成
-
--- Phase 2: ADD CONSTRAINT
-ALTER TABLE Orders ALTER COLUMN tax_amount SET NOT NULL;
+-- 一條 DDL：NOT NULL 搭配 DEFAULT，Spanner 在背景 backfill 既有 row
+ALTER TABLE Orders ADD COLUMN tax_amount FLOAT64 NOT NULL DEFAULT (0);
+-- 用 gcloud spanner operations describe 追蹤 backfill 完成百分比
 ```
 
 ### Schema change 期間舊 client 還在用舊 schema
@@ -234,29 +233,29 @@ Observability evidence：backfill 開始 timestamp、operation id、predicted du
 
 ### 跟 PostgreSQL 的對照
 
-[PostgreSQL Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/) 用 pg_repack / pt-osc workflow 模擬「不停機」 — 實際是用 trigger + 影子表 + cutover 把 lock 時間壓到秒級、不是真正瞬間。Spanner 是原生支援 DDL long-running operation、不需要外掛工具、但 backfill 時間在大表上仍長、跟 pg_repack 在大表上的執行時間量級接近。
+[PostgreSQL Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/) 用 pg_repack 這類 workflow 模擬「不停機」 — 實際是用 trigger + 影子表 + cutover 把 lock 時間壓到秒級、不是真正瞬間。Spanner 是原生支援 DDL long-running operation、不需要外掛工具、但 backfill 時間在大表上仍長、跟 pg_repack 在大表上的執行時間量級接近。
 
 差異點：
 
-| 維度            | PostgreSQL（pg_repack / pt-osc） | Spanner                         |
-| --------------- | -------------------------------- | ------------------------------- |
-| Lock 時間       | 秒級（cutover 時短鎖）           | 毫秒（metadata 廣播）           |
-| Backfill 時間   | 數小時                           | 數小時                          |
-| 工具            | 外掛                             | 原生                            |
-| Schema version  | 單版                             | TrueTime timestamp 對齊多版並存 |
-| 大表加 NOT NULL | 一步到位（搭配 default）         | 必須兩階段                      |
+| 維度            | PostgreSQL（pg_repack）  | Spanner                                                |
+| --------------- | ------------------------ | ------------------------------------------------------ |
+| Lock 時間       | 秒級（cutover 時短鎖）   | 毫秒（metadata 廣播）                                  |
+| Backfill 時間   | 數小時                   | 數小時                                                 |
+| 工具            | 外掛                     | 原生                                                   |
+| Schema version  | 單版                     | TrueTime timestamp 對齊多版並存                        |
+| 大表加 NOT NULL | 一步到位（搭配 default） | 一步到位（`ADD COLUMN` 搭配 `DEFAULT`，背景 backfill） |
 
-讀者選 Spanner 不是為了「DDL 更快」、是為了「不依賴外掛 + 多版本並存」。實際在大表上的耗時兩邊差不多。
+讀者選 Spanner 不是為了「DDL 更快」、是為了「不依賴外掛 + 多版本並存」。實際在大表上的耗時 Spanner 與 PostgreSQL 差不多。
 
-### Sibling deep articles
+### 相關的 Spanner 文章
 
-- [truetime-api-depth](../truetime-api-depth/)：schema version 也是 TrueTime timestamp、跟 transaction timestamp 同層機制
-- [migrate-from-cloud-sql-pg](../migrate-from-cloud-sql-pg/)：target schema 設計含 interleaved、Phase 1 必讀本文
-- [consistency-models-comparison](../consistency-models-comparison/)：schema change 期間多版本並存的一致性保證
+- [Spanner TrueTime API 深度](../truetime-api-depth/)：schema version 也是 TrueTime timestamp、跟 transaction timestamp 同層機制
+- [Migration Playbook：Cloud SQL for PostgreSQL → Cloud Spanner](../migrate-from-cloud-sql-pg/)：target schema 設計含 interleaved、設計 target schema 的階段必讀本文
+- [Spanner Consistency Models 對照](../consistency-models-comparison/)：schema change 期間多版本並存的一致性保證
 
-### 跟 1.x 章節
+### 跟資料庫模組主章節
 
-[Schema Design](/backend/01-database/schema-design/) — interleaved 是 schema 設計的物理層決策、不是純 logical design。對照 [schema-migration-rollout-evidence](/backend/01-database/schema-migration-rollout-evidence/) 看 schema rollout 的 evidence 收集模式。
+[Schema Design](/backend/01-database/schema-design/) — interleaved 是 schema 設計的物理層決策、不是純 logical design。對照 [Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/) 看 schema rollout 的 evidence 收集模式。
 
 ### Anti-recommendation
 

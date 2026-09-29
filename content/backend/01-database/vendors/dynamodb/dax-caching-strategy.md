@@ -1,18 +1,16 @@
 ---
 title: "DynamoDB DAX 快取策略：cluster 架構、item/query cache、write-through 與 invalidation 邊界"
 date: 2026-06-02
-description: "DAX 不是「加上去就變快」的開關；本文展開 DAX cluster 架構、item cache vs query cache 兩種快取、write-through 一致性語意、query cache 只靠 TTL 失效的陷阱，以及 strongly consistent read 繞過 cache 的邊界，含 Lemino 讀峰值補位 case fact 與 gsi-lsi-design 的 SSoT 切分"
+description: "DAX 不是「加上去就變快」的開關；本文展開 DAX cluster 架構、item cache vs query cache 兩種快取、write-through 一致性語意、query cache 只靠 TTL 失效的陷阱，以及 strongly consistent read 繞過 cache 的邊界"
 weight: 36
 tags: ["backend", "database", "dynamodb", "dax", "cache", "deep-article"]
 ---
 
-> 本文是 [DynamoDB](/backend/01-database/vendors/dynamodb/) overview 的 implementation-layer deep article。寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+這篇整理 [DynamoDB](/backend/01-database/vendors/dynamodb/) 在已經決定使用 DAX 之後的機制、配置與失效邊界：DAX cluster 的拓樸、item cache 與 query cache 各自的失效語意、write-through 的保證範圍，以及 strongly consistent read 繞過 cache 的行為。DAX 該不該存在的觸發條件（讀峰值持續高、cache hit rate 可預期、read:write ratio 高）與對應的案例寫在 [GSI 與 LSI 設計的 DAX 段](/backend/01-database/vendors/dynamodb/gsi-lsi-design/#dax-作為讀峰值補位)。
 
-熱門節目首播時段、application 對同一批 metadata item 的讀取 latency p99 從 5ms 尖到 40ms、下游 timeout 連鎖。team 加了 DAX、p99 壓回個位數毫秒。三個月後另一個 service 也「照抄」加 DAX、結果 cost 上升、latency 沒降 — 那個 service 是寫密集、每次讀的 key 都不同、cache hit rate 不到 20%。同一個工具、在一個 workload 壓回 p99 延遲、在另一個只增加成本卻不降延遲。DAX 的價值取決於 read pattern 跟一致性需求是否匹配。本文展開 DAX 的 cluster 架構、兩種快取的不同失效語意、以及 write-through 跟 strongly consistent read 的邊界。
+DAX 的效益取決於 read pattern 跟一致性需求是否匹配：同一批 key 被反覆讀取、可以接受 eventually consistent read 的 workload，讀延遲能被 cache 吸收；寫密集或每次讀不同 key 的 workload，cache hit rate 低，DAX 只增加 cluster 成本。
 
-> **DAX 觸發條件 SSoT**：DAX 「該不該存在」的觸發條件（讀峰值持續高 / cache hit rate 可預期 / read:write ratio 高）主寫於 [gsi-lsi-design 的 DAX 段](/backend/01-database/vendors/dynamodb/gsi-lsi-design/#dax-作為讀峰值補位)、含 `9.C29 Lemino` case fact 跟 `9.C19 Capcom` derive 分層。本文承接「已決定要用 DAX」之後的機制、配置與失效邊界、不重複展開觸發判讀。
-
-## 核心機制：DAX cluster 與兩種快取
+## 核心機制：DAX cluster、item cache 與 query cache
 
 DAX（DynamoDB Accelerator）是 DynamoDB 前面的 in-memory write-through cache、提供 microsecond 級讀取（DynamoDB 本身是 single-digit ms）。它 API 相容 — application 把 DynamoDB client 換成 DAX client、API call 不變、讀寫自動經過 cache 層。
 
@@ -29,7 +27,7 @@ DAX（DynamoDB Accelerator）是 DynamoDB 前面的 in-memory write-through cach
 | Item cache  | `GetItem` / `BatchGetItem` 的單筆結果 | write-through 寫入時同步更新對應 item   | item TTL + write-through |
 | Query cache | `Query` / `Scan` 的結果集             | 單筆 write *不會* 失效對應 query 結果集 | 只靠 query TTL           |
 
-這張表的第二列是 DAX 最常被誤解的點：**query cache 不會因為底層某筆 item 被改而失效**。item cache 走 write-through、寫入時會更新；但 query cache 存的是「整個結果集」、DAX 無法知道某筆新寫入是否該進某個已快取的 query 結果、所以 query cache 只靠 TTL 過期。這代表 query 結果可能 stale 到一個 TTL 週期。
+表中 Query cache 那一列是 DAX 最常被誤解的點：**query cache 不會因為底層某筆 item 被改而失效**。item cache 走 write-through、寫入時會更新；但 query cache 存的是「整個結果集」、DAX 無法知道某筆新寫入是否該進某個已快取的 query 結果、所以 query cache 只靠 TTL 過期。這代表 query 結果可能 stale 到一個 TTL 週期。
 
 > **Scope warning**：「item cache 預設 TTL 5 分鐘」、「query cache 預設 TTL 5 分鐘」這些預設值屬 AWS vendor 規格、可在 cluster 設定調整、實作時 cross-verify 官方 doc。本文不含 production case 揭露的 DAX TTL 配置數字。
 
@@ -55,16 +53,16 @@ application 用 `Query` 列「某 user 的 active order」、結果被 query cac
 
 ## 操作流程
 
-從 read pattern 評估到上線的 6 步流程。
+從 read pattern 評估到上線的操作流程：確認 read pattern 適配、估算 cluster 大小、切換 application client、分流 strongly consistent read、設定 TTL 與監控 hit rate、驗證 DAX 是否真的削減 DynamoDB 讀取。
 
-#### Step 1：確認 read pattern 適配
+#### 確認 read pattern 適配
 
 在加 DAX 前、用 CloudWatch 看目標 table 的 read:write ratio 跟 read 的 key 重複度：
 
 - read:write 高（讀遠多於寫）+ 重複讀同一組 key → 適合
 - 寫密集 / 每次讀不同 key / 大量 strongly consistent read → 不適合（回頭看 [gsi-lsi-design DAX 觸發條件](/backend/01-database/vendors/dynamodb/gsi-lsi-design/#dax-作為讀峰值補位)）
 
-#### Step 2：cluster sizing
+#### 估算 cluster 大小
 
 ```text
 node 數 = 讀峰值 throughput / 單 node 容量 + 1（容錯餘量）
@@ -73,7 +71,7 @@ node class = 依 working set 大小選（cache 要能裝下熱資料）
 
 跨至少 2 個 AZ、確保 primary 故障有 replica 接手。
 
-#### Step 3：application 切換 client
+#### application 切換成 DAX client
 
 ```python
 import amazondax
@@ -84,7 +82,7 @@ table = dax.Table("orders")
 response = table.get_item(Key={"PK": "ORDER#123", "SK": "META"})
 ```
 
-#### Step 4：分流 strongly consistent read
+#### 分流 strongly consistent read
 
 ```python
 # 需要 strong 的讀直接走 DynamoDB、不要走 DAX
@@ -95,15 +93,15 @@ dax_table.get_item(Key=...)                          # 走 cache
 
 application 要明確區分哪些讀路徑能接受 stale、哪些不能；不能接受的不走 DAX。
 
-#### Step 5：設定 TTL 與監控 hit rate
+#### 設定 TTL 與監控 hit rate
 
-依資料變動頻率設 item / query cache TTL：變動慢的 metadata 可設長 TTL、變動快的設短或不快取。上線後盯 `CacheHitRate`。
+依資料變動頻率設 item / query cache TTL：變動慢的 metadata 可設長 TTL、變動快的設短或不快取。上線後盯 hit rate：DAX 不發布現成的 hit rate metric，要用 `ItemCacheHits`、`ItemCacheMisses`、`QueryCacheHits`、`QueryCacheMisses` 自己算。
 
-#### Step 6：驗證點
+#### 驗證 DAX 是否削減 DynamoDB 讀取
 
 ```python
 # 驗證 hit rate 達預期、確認 DAX 真的減少 DynamoDB 讀
-# CloudWatch: DAX CacheHits / (CacheHits + CacheMisses)
+# CloudWatch: DAX (ItemCacheHits + QueryCacheHits) / (ItemCacheHits + ItemCacheMisses + QueryCacheHits + QueryCacheMisses)
 # 同時看 DynamoDB ConsumedReadCapacityUnits 是否下降
 ```
 
@@ -113,23 +111,23 @@ application 要明確區分哪些讀路徑能接受 stale、哪些不能；不�
 
 production 常見的 5 個踩雷：
 
-#### Case 1：把 DAX 當預設配置
+#### 把 DAX 當預設配置
 
-寫密集 / 低 hit rate workload 加 DAX、invalidation 開銷 + cluster 成本 > cache 收益。修法：先確認 read pattern 適配（Step 1）、DAX 是讀峰值補位不是預設（觸發條件 SSoT 在 gsi-lsi-design）。
+寫密集 / 低 hit rate workload 加 DAX、invalidation 開銷 + cluster 成本 > cache 收益。修法：先確認 read pattern 適配（見〈確認 read pattern 適配〉）、DAX 是讀峰值補位不是預設（觸發條件寫在 [GSI 與 LSI 設計的 DAX 段](/backend/01-database/vendors/dynamodb/gsi-lsi-design/#dax-作為讀峰值補位)）。
 
-#### Case 2：以為 query cache 會即時反映寫入
+#### 以為 query cache 會即時反映寫入
 
 寫入後列表 query 在 TTL 內看不到新資料、被當成 bug 長時間誤查。修法：理解 query cache 只靠 TTL 失效（不是 bug 是設計）；強一致列表需求的 query 不走 DAX、或縮短 TTL。
 
-#### Case 3：strongly consistent read 全走 DAX 還抱怨不快
+#### strongly consistent read 全走 DAX 還抱怨不快
 
 application 全程 `ConsistentRead=True`、DAX 全部 pass through、等於沒裝 DAX 還多付 cluster 錢。修法：分流 — strong read 直接打 DynamoDB、eventual read 才走 DAX。
 
-#### Case 4：cluster 單 AZ / 單 node
+#### cluster 單 AZ / 單 node
 
-省成本只開單 node、primary 故障時讀路徑整個失效、回退到 DynamoDB 瞬間流量尖峰。修法：跨 2+ AZ、primary + replica；DAX 故障的 fallback 路徑（直連 DynamoDB）要先測過。這個 Case 的失敗代價跟其他 Case 不對稱 — 其餘 Case 多是成本浪費或延遲沒降、detach DAX 即可回復；單 AZ / 單 node 故障是讀路徑硬中斷、回退瞬間把原本被 cache 吸收的讀峰值全打回 DynamoDB、若 base table 的 RCU 或 on-demand burst 餘量沒預留、會引發 throttling 連鎖。回退路徑要按「DAX 全失效時的讀峰值」預估 DynamoDB 側容量、而非平時被 cache 削減後的讀量。
+省成本只開單 node、primary 故障時讀路徑整個失效、回退到 DynamoDB 瞬間流量尖峰。修法：跨 2+ AZ、primary + replica；DAX 故障的 fallback 路徑（直連 DynamoDB）要先測過。單 AZ / 單 node 的失敗代價跟本節其他踩雷不對稱 — 把 DAX 當預設、以為 query cache 即時反映寫入、strong read 全走 DAX、working set 超過 cache 容量，這幾種多是成本浪費或延遲沒降、detach DAX 即可回復；單 AZ / 單 node 故障是讀路徑硬中斷、回退瞬間把原本被 cache 吸收的讀峰值全打回 DynamoDB、若 base table 的 RCU 或 on-demand burst 餘量沒預留、會引發 throttling 連鎖。回退路徑要按「DAX 全失效時的讀峰值」預估 DynamoDB 側容量、而非平時被 cache 削減後的讀量。
 
-#### Case 5：working set 超過 cache 容量
+#### working set 超過 cache 容量
 
 熱資料超過 node memory、cache 不斷 evict、hit rate 掉到沒意義。修法：依 working set 選 node class、或縮小快取範圍（只快取真正熱的 access pattern）。
 
@@ -139,14 +137,13 @@ application 全程 `ConsistentRead=True`、DAX 全部 pass through、等於沒�
 
 CloudWatch metric：
 
-- `CacheHits` / `CacheMisses` / 算出 `CacheHitRate` — 核心健康指標
-- `ItemCacheHits` / `QueryCacheHits` — 分辨兩種快取各自的命中
+- `ItemCacheHits` / `ItemCacheMisses` / `QueryCacheHits` / `QueryCacheMisses` — 核心健康指標，hit rate 由這四個自己算（DAX 沒有現成的 hit rate metric），兩種快取也各自分得出命中
 - `CPUUtilization` / `EvictedSize` — node 是否過載、cache 是否頻繁 evict
 - DynamoDB 端 `ConsumedReadCapacityUnits` — 確認 DAX 真的削減了 base 讀取
 
 **判讀**：
 
-- `CacheHitRate` < 70% — 重新評估 DAX 是否該存在、或快取範圍是否該收窄
+- 算出的 hit rate < 70% — 重新評估 DAX 是否該存在、或快取範圍是否該收窄
 - `EvictedSize` 持續高 — working set 超過 cache 容量、要加大 node class
 - DynamoDB read capacity 沒因 DAX 下降 — read pattern 不適配、DAX 沒發揮作用
 
@@ -168,9 +165,9 @@ DAX 不是唯一的 DynamoDB 讀加速方案。三者責任不同：
 
 ### Sibling 與 cross-link
 
-- [gsi-lsi-design](/backend/01-database/vendors/dynamodb/gsi-lsi-design/) — DAX 觸發條件 SSoT（讀峰值補位 / Lemino case fact / Capcom derive）在該篇、本篇承接機制層
+- [DynamoDB GSI 與 LSI 設計](/backend/01-database/vendors/dynamodb/gsi-lsi-design/) — DAX 該不該存在的觸發條件（讀峰值補位）與 Lemino、Capcom 案例寫在該篇
 - [on-demand-vs-provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/) — DAX 削減 base 讀取後、provisioned RCU 規劃要重算
 - [consistency-model-optimization](/backend/01-database/vendors/dynamodb/consistency-model-optimization/) — strongly consistent read 繞過 DAX、對應 read 一致性軸
 - [partition-key-antipatterns](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/) — DAX 不解 hot partition、寫熱點仍打到 DynamoDB
 - 替代路由：跨資料源快取 / Redis 資料結構需求 → [02 快取模組](/backend/02-cache-redis/) ElastiCache
-- 跟 [Lemino 9.C29](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) 互引：DAX 讀峰值補位的 case fact
+- [NTT DOCOMO Lemino：3 個月達 500 萬 MAU 的串流後端](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)：DAX 用於讀峰值補位的案例來源

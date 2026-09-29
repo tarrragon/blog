@@ -8,7 +8,7 @@ tags: ["backend", "database", "postgresql", "variants"]
 
 Specialized PostgreSQL variants 的核心責任是把 PostgreSQL ecosystem 裡的 specialized engines、extensions 與 managed variants 放到正確服務位置。PostgreSQL 的擴充性讓它能支援 geospatial、time-series、vector search、distributed table、serverless branch 與 managed acceleration；但每個變體都改變 operation、migration、cost 與 lock-in。
 
-本文的判讀錨點是：PostgreSQL compatibility 是入口，不等於相同責任。選 variant 前，要先說清楚新增能力解決哪個 workload，並確認 exit route。
+本文的範圍是 PostgreSQL variant 的分類、各類 variant 對應的 workload、從 vanilla PostgreSQL 進入 variant 的 migration gap、lock-in 與 exit，以及選型的 decision matrix 與 review checklist。
 
 ## Variant Taxonomy
 
@@ -99,4 +99,4 @@ Review checklist 的核心責任是避免 specialized variant 只被功能吸引
 
 ## 下一步路由
 
-Specialized variants 完成後，回到 [PostgreSQL overview](../) 做服務定位；需要 managed provider 比較讀 [Managed PostgreSQL Comparison](../managed-pg-comparison/)；需要跨 vendor migration 讀 [Database Migration Playbook](/backend/01-database/database-migration-playbook/)。
+Specialized variants 完成後，回到 [PostgreSQL 服務總覽](../)；需要 managed provider 比較讀 [Managed PostgreSQL Comparison](../managed-pg-comparison/)；需要跨 vendor migration 讀 [Database Migration Playbook](/backend/01-database/database-migration-playbook/)。

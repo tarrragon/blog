@@ -6,9 +6,9 @@ weight: 73
 tags: ["backend", "database", "cosmosdb", "migration", "mongodb", "cassandra", "deep-article"]
 ---
 
-本文是 [Cosmos DB](/backend/01-database/vendors/cosmosdb/) overview 的 migration playbook、寫作參照 [Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/)。從 MongoDB 或 Cassandra 遷入 Cosmos DB 的核心決策是 *選哪條路徑* — 用 Cosmos 的 protocol-compat API（MongoDB API / Cassandra API）做 wire-protocol drop-in、driver 與 query 大致不動；還是換 native SQL API、把 application 重寫成 Cosmos native paradigm。這兩條路的 diff 維度、風險、不可逆性都不同、是一個 multi-element 的 migration 規劃。本文先把 driver 與 no-go 講清楚、再做 6 維 diff audit 分出兩條路徑、再進各自的 phase plan、evidence 與 cutover。
+這篇整理從 MongoDB 或 Cassandra 遷入 Cosmos DB 的流程：遷移動機與不該遷的條件、兩條路徑的差異盤點、各自的階段計畫、驗證證據與切換。從 MongoDB 或 Cassandra 遷入 Cosmos DB 的核心決策是 *選哪條路徑* — 用 Cosmos 的 protocol-compat API（MongoDB API / Cassandra API）做 wire-protocol drop-in、driver 與 query 大致不動；還是換 native SQL API、把 application 重寫成 Cosmos native paradigm。這兩條路的 diff 維度、風險、不可逆性都不同，所以階段計畫要分路徑各排一份。
 
-API *選擇判斷* 本身（MongoDB API vs SQL API 的四層 framing、dogfood signal、multi-model、跨雲 hedging）由 [mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/) 主寫、本文不重複展開那層對比；本文主寫 *遷移流程* — 選定路徑後怎麼安全把資料與流量搬過去。
+要選哪個 API（遷移路徑型、dogfood signal、multi-model、跨雲 hedging 這幾個判斷）見 [mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/)；這篇從路徑選定之後開始：怎麼安全把資料與流量搬過去。
 
 Case anchor：[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)（MongoDB → Cosmos DB MongoDB API、planet-scale、dogfood）、[9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/)（自管 → Atlas、6 個月、同 DB 換託管的時程對照）、[9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/)（保留 MongoDB 補周邊、對照「不一定要遷」）。Microsoft 365 case 自承沒揭露 throughput / latency / cost 數字、本文不拿它當 benchmark、只取遷移路徑 frame。
 
@@ -68,7 +68,7 @@ native API 路徑在 Phase 0 與 Phase 1 之間插入 *application 重寫 stream
 
 - 重新建模 document（從 MongoDB document / Cassandra table 設計 Cosmos native shape、決定 embed vs reference）
 - 重寫 data access layer（換掉 MongoDB driver / CQL、改用 Cosmos SQL API SDK、重寫所有 query）
-- 重寫 aggregation（Cosmos SQL API 沒有 JOIN、aggregation 模型不同、部分邏輯移到 application 或用 stored procedure / Change Feed 物化）
+- 重寫 aggregation（Cosmos SQL API 的 `JOIN` 只在單一 document 內部做、沒有跨 document 的 join，aggregation 模型不同、部分邏輯移到 application 或用 stored procedure / Change Feed 物化）
 
 這條 application stream 是 native API 路徑的主要風險與工期來源、必須跟資料遷移 stream 用獨立 owner 並行、shadow read 階段要對 *重寫後的 query* 與 *原 query* 的結果一致性、不只是資料一致性。
 
@@ -80,10 +80,10 @@ Forbes 同 DB 換託管（自管 → Atlas、paradigm 不變）用 6 個月、�
 
 每個 phase 用資料證明可前進、不靠感覺：
 
-- Phase 0：unsupported feature 清單已窮舉、每條有對應策略（改寫 / 移 application 層 / 接受降級）
-- Phase 2-3：row / document count 對齊、CDC replication lag 收斂到穩定
-- Phase 4：query result checksum 一致（protocol-compat 比原 query 結果；native API 比重寫 query 與原 query 結果）、RU baseline 量到、aggregation result 逐條對齊
-- Phase 5-6：error rate、p99 latency、RU consumption 在 cutover 後在預期範圍
+- 相容性 audit（Phase 0）：unsupported feature 清單已窮舉、每條有對應策略（改寫 / 移 application 層 / 接受降級）
+- bulk export-import 與 CDC sync（Phase 2-3）：row / document count 對齊、CDC replication lag 收斂到穩定
+- shadow read（Phase 4）：query result checksum 一致（protocol-compat 比原 query 結果；native API 比重寫 query 與原 query 結果）、RU baseline 量到、aggregation result 逐條對齊
+- read cutover 與 write cutover（Phase 5-6）：error rate、p99 latency、RU consumption 在 cutover 後在預期範圍
 - 對應 [schema-migration-rollout-evidence](/backend/01-database/schema-migration-rollout-evidence/) 的 dual-write 驗證
 
 ## Cutover
@@ -92,7 +92,7 @@ Forbes 同 DB 換託管（自管 → Atlas、paradigm 不變）用 6 個月、�
 - write cutover window：read-only freeze < 10 分鐘、切寫、最終 checksum 對齊
 - Rollback condition：query error rate 超過閾值（如 > 1%）、RU consumption 顯著高於估算（protocol-compat 翻譯層 overhead 比預期高）、或 result mismatch — 任一成立回退到 source、對應 [rollback condition](/backend/knowledge-cards/rollback-condition/)
 - decision owner：cutover 期間誰有權回退要事前定、資料庫切流失敗代價高、不靠臨場判斷
-- 不可逆點：API kind 是 account 層、建 account 時選定、無法事後切換 — protocol-compat 與 native API 是 *兩個不同 account*；選 protocol-compat 後想升 native API 是 export → 新 account → import + 重寫 application 的二次全量遷移、不是 in-place 升級。這個不可逆性要在 Phase 0 就決定方向、不能 cutover 後反悔
+- 不可逆點：API kind 是 account 層、建 account 時選定、無法事後切換 — protocol-compat 與 native API 是 *兩個不同 account*；選 protocol-compat 後想升 native API 是 export → 新 account → import + 重寫 application 的二次全量遷移、不是 in-place 升級。這個不可逆性要在相容性 audit 階段（Phase 0）就決定方向、不能 cutover 後反悔
 
 ## Cleanup
 
@@ -105,15 +105,15 @@ Forbes 同 DB 換託管（自管 → Atlas、paradigm 不變）用 6 個月、�
 
 ### 假設 wire-compat = 100% 行為相同
 
-protocol-compat API 是「在某些 query pattern 下相容」、不是普遍相容。MongoDB 的部分 aggregation stage（`$graphLookup` / `$facet` 等）、Cassandra 的部分 CQL feature 在對應 API 行為不同或不支援、dev 環境 sample data 看不出、production 才爆。修法是 Phase 0 把 *所有* production query 拉出來逐條驗證、Phase 4 shadow read 對 checksum、不能假設相容。
+protocol-compat API 是「在某些 query pattern 下相容」、不是普遍相容。MongoDB 的部分 aggregation stage（`$graphLookup` / `$bucket` 等）、Cassandra 的部分 CQL feature 在對應 API 行為不同或不支援、dev 環境 sample data 看不出、production 才爆。修法是在相容性 audit（Phase 0）把 *所有* production query 拉出來逐條驗證、在 Phase 4 shadow read 對 checksum、不能假設相容。
 
 ### shard key / partition key 直接照搬
 
-MongoDB shard key 或 Cassandra partition key 直接當 Cosmos logical partition key、忽略 10,000 RU/s per partition 上限。原本 Cassandra 寬 partition 在 Cosmos 變 hot partition、throttle。修法是 Phase 1 按 Cosmos 的 partition 上限重新評估、必要時用 synthetic / composite key 強制分散、見 [partition-key-design](../partition-key-design/) 與 [Hot Partition](/backend/knowledge-cards/hot-partition/)。
+MongoDB shard key 或 Cassandra partition key 直接當 Cosmos logical partition key、忽略 10,000 RU/s per partition 上限。原本 Cassandra 寬 partition 在 Cosmos 變 hot partition、throttle。修法是在 partition key 設計階段（Phase 1）按 Cosmos 的 partition 上限重新評估、必要時用 synthetic / composite key 強制分散、見 [partition-key-design](../partition-key-design/) 與 [Hot Partition](/backend/knowledge-cards/hot-partition/)。
 
 ### 把 native API 二次遷移當「升級」低估
 
-選 protocol-compat 上線後、想拿 Change Feed / SQL query 等 native 能力、以為「升級到 SQL API」是改設定。實際是新 account + 全量資料遷 + application 重寫的第二次完整遷移。修法是 Phase 0 就決定終態方向 — 若終態確定要 native feature 且團隊能承擔重寫、直接走 native API 路徑、不要兩段遷。
+選 protocol-compat 上線後、想拿 Change Feed / SQL query 等 native 能力、以為「升級到 SQL API」是改設定。實際是新 account + 全量資料遷 + application 重寫的第二次完整遷移。修法是在相容性 audit 階段（Phase 0）就決定終態方向 — 若終態確定要 native feature 且團隊能承擔重寫、直接走 native API 路徑、不要兩段遷。
 
 ### consistency level 對應錯
 
@@ -121,18 +121,18 @@ CQL 的 QUORUM / MongoDB 的 read concern majority 直接假設等價於 Cosmos 
 
 ## 邊界與整合
 
-- 主對比 SSoT：[mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/) — API *選擇判斷* 與三型遷移路徑分類在它主寫、本文主寫選定後的 *遷移流程*
-- Sibling deep articles：[partition-key-design](../partition-key-design/)（shard / partition key 翻譯）、[ru-cost-model-sizing](../ru-cost-model-sizing/)（翻譯層 RU overhead 與 baseline）、[consistency-levels-engineering](../consistency-levels-engineering/)（read concern / CQL consistency 對應）、[change-feed-cdc](../change-feed-cdc/)（native API 才有原生 Change Feed、是 native 路徑的 feature driver 之一）
+- API 選擇：[mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/) — 選 MongoDB API、SQL API 還是留 Atlas，以及保留 + 補周邊、同 DB 換託管、同 model 換 vendor 三種遷移路徑的差別
+- 同 vendor 的其他文章：[partition-key-design](../partition-key-design/)（shard / partition key 翻譯）、[ru-cost-model-sizing](../ru-cost-model-sizing/)（翻譯層 RU overhead 與 baseline）、[consistency-levels-engineering](../consistency-levels-engineering/)（read concern / CQL consistency 對應）、[change-feed-cdc](../change-feed-cdc/)（native API 才有原生 Change Feed、是 native 路徑的 feature driver 之一）
 - 不遷的對照：[Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) 保留 MongoDB 補周邊 — 確認「補周邊」解不了再遷
 - 跨雲對照：[Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) 留 Atlas 跨雲 — 跨雲需求是 Cosmos DB 的 no-go
 - 共通遷移模型：[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)
 - Knowledge card：[vendor lock-in](/backend/knowledge-cards/vendor-lock-in/) / [Hot Partition](/backend/knowledge-cards/hot-partition/)
-- 回 overview：[Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) 的「從 MongoDB / Cassandra 遷入」backlog
+- 回 overview：[Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) 列出本 vendor 的其他深度文章
 
 ## 相關連結
 
-- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — 本文是該頁尾遷入 backlog 的深度展開
-- [mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/) — API 選擇判斷與三型遷移路徑 SSoT
+- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
+- [mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/) — API 選擇判斷，以及保留 + 補周邊、同 DB 換託管、同 model 換 vendor 三種遷移路徑的差別
 - [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB → Cosmos DB MongoDB API dogfood
 - [9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) — 同 DB 換託管時程對照
 - [9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — 保留 MongoDB 不遷的對照

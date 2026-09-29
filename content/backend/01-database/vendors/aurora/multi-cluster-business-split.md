@@ -6,9 +6,9 @@ weight: 32
 tags: ["backend", "database", "aurora", "multi-cluster", "blast-radius", "fleet", "deep-article"]
 ---
 
-把所有服務的資料塞進一個大 Aurora cluster，平時運維最省事，直到某一天：報表服務跑了一個沒索引的聚合 query、佔滿 connection 與 IOPS、結帳服務跟著變慢、整個平台一起卡。問題的根源是「不相關的業務共用同一個 cluster、彼此沒有隔離」，那個 query 只是觸發點。多 cluster 按業務切分要回答的是：哪些業務該各自獨立 cluster、哪些可以共用、切分後 fleet 怎麼維持治理一致。
+這篇整理 Aurora 按業務切成多個 cluster 時的判斷：哪些業務該各自獨立 cluster、哪些可以共用、切分後多個 cluster 組成的 fleet 怎麼維持治理一致。Aurora 的服務定位與適用場景在 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)。
 
-本文不是 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 而是 cluster 邊界劃分與多 cluster 治理的實作層教學。
+所有服務的資料放在同一個大 Aurora cluster 時，平時運維最省事，而不相關的業務之間沒有隔離：報表服務跑一個沒索引的聚合 query、佔滿 connection 與 IOPS，結帳服務就跟著變慢、整個平台一起卡。那個 query 只是觸發點，成因是不相關的業務共用同一個 cluster。
 
 ## 共用大 cluster 的根本問題：blast radius
 
@@ -37,7 +37,7 @@ tags: ["backend", "database", "aurora", "multi-cluster", "blast-radius", "fleet"
 
 > **Scope warning**：Netflix 的「+75% 效能 / -28% 成本」是跨多 workload 的最大改善幅度、非每個 workload 都 +75%（case 原文已標明）；且 Netflix 數據層遠不止 Aurora（還有 Cassandra / EVCache / Iceberg），Aurora 承擔的是需要 ACID 的 OLTP。引用時不可外推成「整合到 Aurora 就 +75%」。
 
-## 兩種切分哲學的對照
+## per-service 私有 store 與高度 consolidation 的對照
 
 大規模平台的 cluster 切分沒有單一正解，光譜兩端各有代表：
 
@@ -55,25 +55,25 @@ tags: ["backend", "database", "aurora", "multi-cluster", "blast-radius", "fleet"
 - **升級協調**：major version 升級分批跨 fleet，不是一次全升（也不是放任各 cluster 版本散落）
 - **成本歸屬**：按 cluster / 業務 tag 切成本，讓每個業務看見自己的 DB 成本
 
-這層治理對應 [read-replica-scaling 的 fleet 治理段](/backend/01-database/vendors/aurora/read-replica-scaling/)——讀副本 fleet 與多 cluster fleet 共用「N 個實例如何維持治理一致」的方法。
+多 cluster 的 fleet 治理對應 [read-replica-scaling 的 fleet 治理段](/backend/01-database/vendors/aurora/read-replica-scaling/)——讀副本 fleet 與多 cluster fleet 共用「N 個實例如何維持治理一致」的方法。
 
 ## 失敗模式
 
 production 常見的踩雷：
 
-#### Case 1：共用大 cluster、報表 query 拖垮交易
+#### 共用大 cluster、報表 query 拖垮交易
 
 分析 / 報表 workload 跟核心交易共用 cluster、一個重 query 佔滿資源、交易延遲飆高。修法：分析類 workload 切到獨立 cluster 或獨立 read replica；核心交易的 cluster 不混入不可控的分析查詢。
 
-#### Case 2：cluster 切太細、運維 surface 爆炸
+#### cluster 切太細、運維 surface 爆炸
 
 矯枉過正、每個小服務都獨立 cluster、結果幾十個 cluster 各自飄移、升級與監控成本失控。修法：低關鍵性、負載相近、可共命運的服務合併共用 cluster；切分以「blast radius 需求」為準，不是「每個服務都要」。
 
-#### Case 3：切分了 cluster 但沒切分 fleet 治理
+#### 切分了 cluster 但沒切分 fleet 治理
 
 多 cluster 各自手調 parameter group、版本散落、backup 策略不一、出事才發現某個 cluster 設定漂移。修法：fleet 配置用 IaC 統一、監控基線一致、升級分批協調。
 
-#### Case 4：跨 cluster 交易需求才發現切錯邊界
+#### 跨 cluster 交易需求才發現切錯邊界
 
 把本該強一致綁在一起的資料切到不同 cluster、結果需要跨 cluster 交易（Aurora 不提供跨 cluster transaction）、application 層自己補償、複雜又易錯。修法：cluster 邊界要對齊 transaction boundary——必須在同一個交易內一起成功失敗的資料，放同一 cluster（對應 [1.3 transaction 與一致性邊界](/backend/01-database/transaction-boundary/)）。這是切分前就要確認的邊界，切錯後重切成本高。
 

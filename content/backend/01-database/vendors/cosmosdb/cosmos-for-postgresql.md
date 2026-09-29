@@ -6,7 +6,7 @@ weight: 74
 tags: ["backend", "database", "cosmosdb", "postgresql", "citus", "deep-article"]
 ---
 
-本文是 [Cosmos DB](/backend/01-database/vendors/cosmosdb/) overview 的 deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Cosmos DB for PostgreSQL 是 Azure 在 2022 把 Citus（PostgreSQL 的分散式 extension）納入後推出的 *分散式 PostgreSQL* 託管服務 — 它跑真正的 PostgreSQL engine、支援標準 SQL / JOIN / ACID 交易、把單表水平分片到多個 worker node。它跟本 vendor 頁主講的核心 Cosmos DB（NoSQL、multi-model、RU/s 計費）是 *兩個不同產品*、只是共用品牌名稱。本文的主責任是釐清這個定位混淆、再講它的架構與選型標準：何時選它、何時該回核心 Cosmos DB、何時一般 PostgreSQL 就夠。
+這篇整理 Cosmos DB for PostgreSQL 的定位、Citus 架構與選型標準：它跟核心 Cosmos DB 的差別、何時選它、何時該回核心 Cosmos DB、何時一般 PostgreSQL 就夠。Cosmos DB for PostgreSQL 是 Azure 在 2022 把 Citus（PostgreSQL 的分散式 extension）納入後推出的 *分散式 PostgreSQL* 託管服務 — 它跑真正的 PostgreSQL engine、支援標準 SQL / JOIN / ACID 交易、把單表水平分片到多個 worker node。它跟核心 Cosmos DB（NoSQL、multi-model、RU/s 計費）是 *兩個不同產品*、只是共用品牌名稱。
 
 本文沒有專屬 production case anchor：Cosmos DB for PostgreSQL 的公開 case 覆蓋稀薄、機制以 Azure / Citus vendor 規格與分散式 PostgreSQL 通用工程展開、選型標準用「scale-out PG vs NoSQL vs single-node PG」這個具體決策驅動。
 
@@ -27,9 +27,9 @@ tags: ["backend", "database", "cosmosdb", "postgresql", "citus", "deep-article"]
 
 ## 核心機制：Citus-based coordinator-worker 分散式 PostgreSQL
 
-Cosmos DB for PostgreSQL 的底層是 Citus、把 PostgreSQL 從單機擴展成 coordinator + worker 的分散式叢集。它的關鍵概念有幾個。
+Cosmos DB for PostgreSQL 的底層是 Citus、把 PostgreSQL 從單機擴展成 coordinator + worker 的分散式叢集。理解它要看 engine 是什麼、coordinator 與 worker 怎麼分工、distribution column 決定什麼、表有哪幾種。
 
-它跑 *真正的 PostgreSQL*。不是 wire-compat、不是 PostgreSQL API on top of NoSQL — 是 PostgreSQL engine 加 Citus extension。標準 SQL、JOIN、ACID 交易、PostgreSQL extension 生態（含部分如 PostGIS）都在。這跟核心 Cosmos DB（自己的 query language、SQL-like 但無 JOIN、RU/s 計費）是根本不同的東西。
+它跑 *真正的 PostgreSQL*。不是 wire-compat、不是 PostgreSQL API on top of NoSQL — 是 PostgreSQL engine 加 Citus extension。標準 SQL、JOIN、ACID 交易、PostgreSQL extension 生態（含部分如 PostGIS）都在。這跟核心 Cosmos DB（自己的 query language、SQL-like 而 `JOIN` 只能在單一 document 內部做、RU/s 計費）是根本不同的產品。
 
 架構是 coordinator-worker。coordinator node 接 query、根據 distribution column 把 query 路由 / 拆分到 worker node、worker 存實際的 shard。application 連 coordinator、看起來像連一個 PostgreSQL。
 
@@ -37,9 +37,9 @@ distribution column 是核心設計決策、類比核心 Cosmos DB 的 partition
 
 表分三種：distributed table（按 distribution column 分片、大表用）、reference table（每個 worker 全複本、小的維度表用、讓 JOIN co-locate）、local table（只在 coordinator）。建模的關鍵是把常一起 JOIN 的大表用 *同一 distribution column* 分片、達成 co-location。
 
-## 選型標準：三方對照
+## 選型標準：Cosmos DB for PostgreSQL、核心 Cosmos DB 與單機 PostgreSQL 的分界
 
-這是本文主判讀段。Cosmos DB for PostgreSQL 的正確位置是「single-node PG 不夠、但 workload 仍是 SQL 範式」的中間地帶。
+Cosmos DB for PostgreSQL 的正確位置是「single-node PG 不夠、但 workload 仍是 SQL 範式」的中間地帶。
 
 選 Cosmos DB for PostgreSQL 的條件：
 
@@ -85,14 +85,37 @@ CREATE TABLE tenants (tenant_id bigint PRIMARY KEY, name text);
 SELECT create_reference_table('tenants');
 ```
 
-驗證：`SELECT * FROM citus_tables;` 看每張表的 distribution column 與 shard 分布；對 distributed table 的查詢若帶 distribution column filter、`EXPLAIN` 顯示下推到單一 shard、不帶則 fan-out 到所有 worker。
+驗證：`citus_tables` 列出每張表的類型、distribution column 與 shard 數；同一段查詢帶不帶 distribution column 條件，`EXPLAIN` 的 `Task Count` 會從 1 變成 shard 總數。
+
+```sql
+SELECT table_name, citus_table_type, distribution_column, shard_count
+FROM citus_tables;
+-- events  | distributed | tenant_id | 32   ← 預設切成 32 個 shard
+-- tenants | reference   | <none>    | 1    ← reference table 只有一份，複製到每個 worker
+
+-- 帶 distribution column 條件：路由到單一 shard
+EXPLAIN (COSTS OFF) SELECT * FROM events WHERE tenant_id = 3;
+-- Custom Scan (Citus Adaptive)
+--   Task Count: 1
+
+-- 不帶 distribution column 條件：fan-out 到每一個 shard
+EXPLAIN (COSTS OFF) SELECT * FROM events WHERE event_id = 42;
+-- Custom Scan (Citus Adaptive)
+--   Task Count: 32
+```
 
 ### 驗證 co-location
 
 ```sql
--- 同 distribution column 的兩張 distributed table JOIN 應 co-located
-SELECT colocation_id, count(*)
-FROM citus_tables GROUP BY colocation_id;
+-- 第二張大表也用 tenant_id 分片，Citus 會把它放進 events 的 colocation group
+CREATE TABLE event_tags (tenant_id bigint NOT NULL, event_id bigint NOT NULL, tag text);
+SELECT create_distributed_table('event_tags', 'tenant_id');
+
+SELECT table_name, citus_table_type, distribution_column, colocation_id
+FROM citus_tables ORDER BY table_name;
+-- event_tags | distributed | tenant_id | 3   ← 與 events 同一個 colocation_id
+-- events     | distributed | tenant_id | 3
+-- tenants    | reference   | <none>    | 4   ← reference table 自成一組
 ```
 
 驗證：常一起 JOIN 的大表落在同一 colocation group、JOIN 在 worker 本地完成、不跨 worker shuffle。
@@ -103,7 +126,15 @@ FROM citus_tables GROUP BY colocation_id;
 
 ### Rollback boundary
 
-Cosmos DB for PostgreSQL 是叢集級服務、scale worker 是運維操作、可逆（縮回去）。但 *distribution column 一旦選定、改它要重建表 + 重灌資料* — 跟核心 Cosmos DB 的 partition key 不可改是同一類不可逆設計、見 [partition-key-design](../partition-key-design/)。
+Cosmos DB for PostgreSQL 是叢集級服務、scale worker 是運維操作、可逆（縮回去）。distribution column 可以改，但代價是整張表重寫一次：Citus 的 `alter_distributed_table` 會建一張新表、把資料全部搬過去、再刪掉舊表，資料量越大越久。核心 Cosmos DB 的 partition key 則要自己建新 container 搬資料（見 [partition-key-design](../partition-key-design/)）。兩者都讓選錯的代價跟資料量成正比，所以 distribution column 仍要在建表時選對。
+
+```sql
+SELECT alter_distributed_table('events', distribution_column := 'event_id');
+-- NOTICE:  creating a new table for public.events
+-- NOTICE:  moving the data of public.events
+-- NOTICE:  dropping the old public.events
+-- NOTICE:  renaming the new table to public.events
+```
 
 ## 失敗模式
 
@@ -141,15 +172,15 @@ document / KV、固定 access pattern、不需要 JOIN 的 workload 選了 Cosmo
 - 跟核心 Cosmos DB 的分界：SQL / JOIN / 交易 + 到單機上限 → 本服務；document / KV / multi-model / multi-region active-active → 核心 Cosmos DB、見 [mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/)
 - 跟 PostgreSQL vendor 的分界：single-node 沒到上限 → [Azure Database for PostgreSQL / 一般 PG](/backend/01-database/vendors/postgresql/)；PostgreSQL 既有的 [Specialized PostgreSQL Variants](/backend/01-database/vendors/postgresql/specialized-pg-variants/) 段已把 Cosmos DB for PostgreSQL 列為 Citus-based 變體之一
 - 跟其他 distributed SQL：[Spanner](/backend/01-database/vendors/spanner/)（全球強一致）、[CockroachDB](/backend/01-database/vendors/cockroachdb/)（跨雲、自動 range）— 本服務強在真 PostgreSQL engine + co-location 控制、弱在需 distribution column 設計 + 綁 Azure
-- distribution column 不可改：跟 [partition-key-design](../partition-key-design/) 的 partition key 不可改是同類不可逆設計
+- distribution column 改得動但要整張表重寫：跟 [partition-key-design](../partition-key-design/) 的 partition key 一樣，選錯的代價跟資料量成正比
 - Knowledge card：[distributed SQL](/backend/knowledge-cards/distributed-sql/) / [Hot Partition](/backend/knowledge-cards/hot-partition/)
 
 ## 相關連結
 
-- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — 本文是該頁尾 Cosmos DB for PostgreSQL backlog 的深度展開
+- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
 - [mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/) — SQL 範式 vs document / KV 範式的根本判讀
 - [PostgreSQL vendor](/backend/01-database/vendors/postgresql/) / [Specialized PostgreSQL Variants](/backend/01-database/vendors/postgresql/specialized-pg-variants/) — single-node PG 與 Citus 變體定位
 - [Spanner vendor](/backend/01-database/vendors/spanner/) / [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/) — 其他 distributed SQL 對照
-- [partition-key-design](../partition-key-design/) — distribution column 不可改的同類設計
+- [partition-key-design](../partition-key-design/) — 核心 Cosmos DB 的 partition key 怎麼選、選錯要付什麼代價
 - [Distributed SQL 卡片](/backend/knowledge-cards/distributed-sql/) / [Hot Partition 卡片](/backend/knowledge-cards/hot-partition/) — 概念基底
 - 官方：[Azure Cosmos DB for PostgreSQL](https://learn.microsoft.com/azure/cosmos-db/postgresql/) / [Citus distributed tables](https://learn.microsoft.com/azure/cosmos-db/postgresql/concepts-distributed-data)

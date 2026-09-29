@@ -1,20 +1,20 @@
 ---
-title: "PostgreSQL Replication Topology：async / sync / quorum 三模式跟 LSN + replication slot 的三軸組合"
+title: "PostgreSQL Replication Topology：async / sync / quorum 在 durability、latency、consistency 上的取捨，與 LSN + replication slot"
 date: 2026-05-19
-description: "PostgreSQL streaming replication 不是「sync 或 async」、是 *durability / latency / consistency* 三軸組合 + LSN-based 進度追蹤 + replication slot 治理。本文走 3 軸取捨模型、async / sync / quorum-based sync 行為對比、LSN + replication slot 機制、配置 step-by-step、5 production 踩雷（standby lag 暴衝 / sync standby 退回 async / orphan replication slot / cascading replication 雪崩 / failover 後 timeline 分歧）、跟 Patroni HA + logical replication 整合"
+description: "PostgreSQL streaming replication 不是「sync 或 async」、是 *durability / latency / consistency* 三軸組合 + LSN-based 進度追蹤 + replication slot 治理。本文走 durability / latency / consistency 的取捨模型、async / sync / quorum-based sync 行為對比、LSN + replication slot 機制、配置 step-by-step、production 踩雷（standby lag 暴衝 / sync standby 失聯時 primary commit 卡住 / orphan replication slot / cascading replication 雪崩 / failover 後 timeline 分歧）、跟 Patroni HA + logical replication 整合"
 weight: 12
 tags: ["backend", "database", "postgresql", "replication", "streaming-replication", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *streaming replication topology* — 從 single primary 到 multi-standby 部署的 3 個 trade-off 軸 + LSN + replication slot 機制。
+本文的範圍是 PostgreSQL streaming replication topology：async 與 sync streaming 在 durability、latency、consistency 上的取捨，LSN 與 replication slot 的進度追蹤機制，sync streaming 加 slot 的配置步驟，以及 production 踩雷與容量對照。
 
 ---
 
-## Replication 的 3 個 trade-off 軸 + mode 選擇
+## Durability、latency、consistency 三個 trade-off 軸 + mode 選擇
 
-PG streaming replication mode 選擇看起來是「async 還是 sync」、實際是 3 個獨立 trade-off 軸的組合、async / sync / quorum-based sync 是這些軸的常見組合 *名稱*：
+PG streaming replication mode 選擇看起來是「async 還是 sync」、實際是 durability、latency、consistency 三個 trade-off 軸的組合、async / sync / quorum-based sync 是這些軸的常見組合 *名稱*：
 
-| 軸              | 端 A                      | 端 B                              | PG 旋鈕                                                |
+| 軸              | 寬鬆端                    | 嚴格端                            | PG 旋鈕                                                |
 | --------------- | ------------------------- | --------------------------------- | ------------------------------------------------------ |
 | **Durability**  | primary 寫完就 commit     | 至少一個 standby 收到才 commit    | `synchronous_commit` / `synchronous_standby_names`     |
 | **Latency**     | client 等 primary 寫完 OK | client 等 standby ack（額外 RTT） | 同上                                                   |
@@ -145,7 +145,7 @@ hot_standby = on                       # 讓 standby 接受 read query
 
 實務最常見組合：sync streaming + replication slot + cross-AZ replica。
 
-### Step 1：Primary 配置
+### Primary 配置
 
 ```ini
 # postgresql.conf
@@ -153,7 +153,7 @@ wal_level = replica
 max_wal_senders = 10
 max_replication_slots = 10
 synchronous_commit = on
-synchronous_standby_names = 'FIRST 1 (standby1, standby2)'
+# synchronous_standby_names 先留空：這裡就設的話，下面建 replication user 與 slot 的 commit 會一直等一個還不存在的 standby ack；standby 連上之後在「驗證」那一步再開
 wal_keep_size = 1024MB
 
 # pg_hba.conf — 允許 replication 連線
@@ -162,7 +162,7 @@ host replication replication 10.0.0.0/16 scram-sha-256
 
 Restart primary 套用。
 
-### Step 2：建 replication user + slot
+### 建 replication user + slot
 
 ```sql
 CREATE USER replication WITH REPLICATION PASSWORD '...';
@@ -170,7 +170,7 @@ SELECT * FROM pg_create_physical_replication_slot('standby1_slot');
 SELECT * FROM pg_create_physical_replication_slot('standby2_slot');
 ```
 
-### Step 3：Standby base backup
+### Standby base backup
 
 ```bash
 # 在 standby 上跑
@@ -181,19 +181,25 @@ pg_basebackup -h primary.example.com -D /var/lib/postgresql/data \
 # -X stream: 邊 backup 邊 stream 增量 WAL（避免 backup 期間 WAL gap）
 ```
 
-### Step 4：Standby 啟動
+### Standby 啟動
 
 ```bash
-# standby /var/lib/postgresql/data/postgresql.auto.conf 已有：
-# primary_conninfo = 'host=primary.example.com user=replication password=... application_name=standby1'
+# pg_basebackup -R 寫進 standby /var/lib/postgresql/data/postgresql.auto.conf 的內容：
+# primary_conninfo = 'user=replication ... host=primary.example.com port=5432 ...'（不含 application_name）
+# synchronous_standby_names 比對的是 application_name；沒設時 standby 不會以 standby1 的名字連線
+# 所以要手動在 primary_conninfo 補 application_name=standby1（standby2 同理）
 # primary_slot_name = 'standby1_slot'
 
 pg_ctl -D /var/lib/postgresql/data start
 ```
 
-### Step 5：驗證
+### 驗證
 
 ```sql
+-- Primary: standby 都連上之後才開 sync（先開的話，建 user / slot 的 commit 會一直等 standby ack）
+ALTER SYSTEM SET synchronous_standby_names = 'FIRST 1 (standby1, standby2)';
+SELECT pg_reload_conf();
+
 -- Primary: 確認 standby 連上
 SELECT application_name, state, sync_state, write_lag, flush_lag, replay_lag
 FROM pg_stat_replication;
@@ -203,21 +209,21 @@ FROM pg_stat_replication;
 SELECT pg_is_in_recovery(), pg_last_wal_receive_lsn(), pg_last_wal_replay_lsn();
 ```
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Standby lag 暴衝 — Single replay process bottleneck
+### Standby lag 暴衝：Single replay process bottleneck
 
 PG standby 是 *single startup process* 套用 WAL（不像 MySQL multi-thread replication）、primary 高並發寫入時 standby 跟不上、lag 從 < 100ms 飆到分鐘級。常見觸發：批次 UPDATE / DELETE、大 transaction、index 建立、autovacuum 大量 dead tuple cleanup。
 
 修法：
 
-- *Parallel WAL apply*（PG 14+）：`max_parallel_workers_per_gather` 增加 background worker、但仍受 startup process 主導
+- *WAL prefetch*（PG 15+ 的 `recovery_prefetch`，預設 `try`）：startup process 在 replay 前先預讀 WAL 會用到的 data block，減少 replay 等 I/O 的時間；replay 本身仍由 startup process 單一行程執行
 - 對 *read scaling* 場景接受 standby lag、application 用 *primary read 對 latency-critical query*
 - *Cascading replication* 對 high-fan-out 解決 sender CPU bottleneck、但 standby replay 仍 single-thread
 
 監控：`pg_stat_replication.replay_lag` 是 *最後一個 commit 到 standby replay 的時間差*、超過 threshold 即告警。
 
-### 2. Sync standby 失聯時 primary commit 卡住
+### Sync standby 失聯時 primary commit 卡住
 
 `synchronous_standby_names = 'FIRST 1 (standby1)'` + standby1 down → primary commit *等永遠*。Application 全部 timeout。
 
@@ -228,7 +234,7 @@ PG standby 是 *single startup process* 套用 WAL（不像 MySQL multi-thread r
 - 監控 sync standby 健康、自動 failover 切 sync mode 到其他 standby（Patroni 自動做）
 - 緊急情況：在 primary 跑 `ALTER SYSTEM SET synchronous_standby_names = ''; SELECT pg_reload_conf();` 暫時退 async（接受 data loss risk）
 
-### 3. Orphan replication slot — Primary disk 爆
+### Orphan replication slot：Primary disk 爆
 
 Standby 失聯（永久故障 / 重 decommission 但忘了 drop slot）、primary slot 持續保留 WAL、`pg_wal/` 累積到 disk 滿、primary 也掛。
 
@@ -240,13 +246,14 @@ Standby 失聯（永久故障 / 重 decommission 但忘了 drop slot）、primar
    ```sql
    SELECT slot_name, active,
           pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained_wal
-   FROM pg_replication_slots WHERE retained_wal > 10GB;
+   FROM pg_replication_slots
+   WHERE pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn) > 10 * 1024^3;  -- > 10 GB
    ```
 
 - 設 `max_slot_wal_keep_size`（PG 13+）— slot 對應 WAL 超過 limit 自動 invalidate slot（standby 之後要 base backup 重來）
 - DR runbook 紀錄 *standby 退役流程* 必須包含 `pg_drop_replication_slot('xxx')`
 
-### 4. Cascading replication 雪崩
+### Cascading replication 雪崩
 
 Topology `primary → standby1 → standby2 → ...`（每層遞迴 stream）。Standby1 startup process 卡住、後續 standby 都被 block、整條 chain 雪崩。
 
@@ -256,7 +263,7 @@ Topology `primary → standby1 → standby2 → ...`（每層遞迴 stream）。
 - 跨 region 用 *region-local tier1 + cross-region tier2*、不是長 chain
 - 真的大規模、改用 *binlog server* style：[Citus / PgCat](https://github.com/postgresml/PgCat) 等中介、或 logical replication 解耦
 
-### 5. Failover 後 timeline 分歧
+### Failover 後 timeline 分歧
 
 Primary 失敗、standby1 promote 為新 primary、其他 standby（standby2 / 3）原本連舊 primary、必須重新連 standby1。但 PG 用 *timeline*（每次 promotion 增 1）標 WAL 分支、原 standby 的 timeline 跟新 primary 不同。重連時看到 timeline mismatch、報錯。
 

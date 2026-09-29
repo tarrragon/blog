@@ -1,18 +1,20 @@
 ---
 title: "Firestore realtime listener 扇出與成本：snapshot 訂閱、re-read 計費與連線規模"
 date: 2026-06-16
-description: "Firestore 的 snapshot listener 提供即時同步、但訂閱的扇出、查詢結果變動的 re-read 計費與連線數會在規模下變成成本與效能瓶頸；本文展開 listener 的推送模型、訂閱範圍設計、五個 realtime 成本踩坑，以及即時需求超過 listener 該換推送架構的邊界"
+description: "Firestore 的 snapshot listener 提供即時同步、但訂閱的扇出、查詢結果變動的 re-read 計費與連線數會在規模下變成成本與效能瓶頸；本文展開 listener 的推送模型、訂閱範圍設計、realtime 成本事故（把不需即時的列表做成 listener、忘記取消訂閱、訂閱寬 query、每次推送重畫整個列表、高扇出直接訂閱原始資料），以及即時需求超過 listener 該換推送架構的邊界"
 weight: 15
 tags: ["backend", "database", "firestore", "realtime", "snapshot-listener"]
 ---
 
-> 本文是 [Firestore](/backend/01-database/vendors/firestore/) overview 的 deep article。寫作參照 [Vendor 深度技術文章寫作方法論](/posts/vendor-deep-article-methodology/)。計費模型以 [官方 pricing](https://firebase.google.com/docs/firestore/pricing) 為準、最後檢查日 2026-06-16。
+這篇整理 Firestore snapshot listener 在規模下的成本：listener 的推送與計費模型、訂閱範圍與生命週期設計、realtime 成本事故、扇出乘上變動頻率的成本估算，以及即時需求超過 listener 時換推送架構的邊界。
 
-## 問題情境：即時很爽，帳單很痛
+> 計費模型以 [官方 pricing](https://firebase.google.com/docs/firestore/pricing) 為準、最後檢查日 2026-06-16。
+
+## 問題情境：listener 的 read 計費隨訂閱數與推送筆數相乘
 
 Firestore 的 snapshot listener 是它最有吸引力的能力——client `onSnapshot` 訂閱一個 query，資料一變就即時推送，多裝置同步、協作介面幾乎免費得到。團隊很快把所有列表都改成 listener：訊息列表、通知、儀表板計數，全部即時更新，體驗很好。
 
-帳單在用戶量上來後出問題。Firestore 對 listener 的計費規則是——query 結果裡每個被推送的 document 都計一次 read。一個列表有 100 名觀眾各自訂閱、列表變動推送 50 筆，就是 100 × 50 = 5000 次 read。即時的爽感建立在 re-read 計費上，扇出越大、變動越頻繁，成本成乘積成長。這篇處理 listener 的推送與計費模型、如何設計訂閱範圍把成本壓住、以及即時需求超過 listener 能力時的退場。
+帳單在用戶量上來後出問題。Firestore 對 listener 的計費規則是——query 結果裡每個被推送的 document 都計一次 read。一個列表有 100 名觀眾各自訂閱、列表變動推送 50 筆，就是 100 × 50 = 5000 次 read。listener 的即時推送建立在 re-read 計費上，扇出越大、變動越頻繁，成本成乘積成長。這篇處理 listener 的推送與計費模型、如何設計訂閱範圍把成本壓住、以及即時需求超過 listener 能力時的退場。
 
 ## 核心概念：listener 的推送與計費模型
 
@@ -60,27 +62,27 @@ listener 的成本與效能由訂閱範圍和生命週期決定。三個設計�
 
 **用 `limit` 封頂結果集，配分頁**。即時列表只訂最近 N 筆，往前翻歷史用一次性 `getDocs` 分頁，不訂閱。歷史資料不會變、不需要即時，訂閱它只是白付 re-read。即時的部分小而精，歷史的部分按需一次性拉。
 
-**高扇出的即時值改訂閱彙總 document**。一萬名觀眾要看同一個即時計數，正解是由後端把彙總值寫進一個 summary document、所有人訂閱那一份，而非各自訂閱原始資料加總。扇出仍是一萬個 listener，但每次變動只推一份小 document，而不是推整個結果集——把推送的 payload 壓到最小。這跟 [distributed counter](/backend/01-database/vendors/firestore/distributed-counter-high-frequency-write/) 的 summary 彙總是同一個手段的兩面：那裡解寫入熱點，這裡解讀取扇出。
+**高扇出的即時值改訂閱彙總 document**。一萬名觀眾要看同一個即時計數，正解是由後端把彙總值寫進一個 summary document、所有人訂閱那一份，而非各自訂閱原始資料加總。扇出仍是一萬個 listener，但每次變動只推一份小 document，而不是推整個結果集——把推送的 payload 壓到最小。[distributed counter](/backend/01-database/vendors/firestore/distributed-counter-high-frequency-write/) 也用同一種 summary document：那一篇的 shard 把寫入熱點打散之後，讀一次計數要讀全部 shard 加總，summary 把這筆讀取降回一份 document；這裡的 summary 把每個觀眾訂閱的結果集降成一份 document，listener 的數量仍等於觀眾數。
 
-## 故障演練：五個 realtime 成本踩坑
+## 故障演練：realtime 成本事故
 
-#### Case 1：把不需要即時的列表也做成 listener
+#### 把不需要即時的列表也做成 listener
 
-歷史訊息、已讀通知、靜態設定全用 `onSnapshot`，這些資料根本不變或極少變，訂閱它們只是把一次性讀取變成持續掛著的 listener。修法：先問「這個資料 client 在看的時候會不會變、變了要不要立刻看到」，否才用 listener；不變或不需即時的用一次性 `getDocs`。
+歷史訊息、已讀通知、靜態設定全用 `onSnapshot`，這些資料根本不變或極少變，訂閱它們只是把一次性讀取變成持續掛著的 listener。修法：先問「這個資料 client 在看的時候會不會變、變了要不要立刻看到」，兩個答案都是「會」才用 listener；不變或不需即時的用一次性 `getDocs`。
 
-#### Case 2：忘記 unsubscribe 造成 listener 洩漏
+#### 忘記 unsubscribe 造成 listener 洩漏
 
 路由切換、元件重建時建了新 listener 沒取消舊的，listener 越積越多、計費持續、記憶體也漏。修法：listener 的建立與取消綁死畫面生命週期，用框架的 cleanup hook（React `useEffect` return、Vue `onUnmounted`）統一管理，app 進背景時主動斷。
 
-#### Case 3：訂閱寬 query 被無關變動轟炸
+#### 訂閱寬 query 被無關變動轟炸
 
-訂了整個 `orders` collection 想看自己的訂單，結果別人的訂單一變也推給你（雖然規則可能擋讀，但寬 query 本身設計就錯）。修法：query 用 `where` 縮到 client 相關的最小集合，訂閱範圍與 [Security Rules](/backend/01-database/vendors/firestore/security-rules-authz-modeling/) 的授權範圍對齊。
+client 想看自己的訂單，卻訂閱整個 `orders` collection。Security Rules 若只准讀自己的訂單，規則不會替這個 query 過濾出自己那幾筆，整個 listener 收到 `permission-denied`；規則若放行整個 collection，別人的訂單每變一次都推到這個 client、每筆計一次 read。修法：query 用 `where` 縮到 client 相關的最小集合，訂閱範圍與 [Security Rules](/backend/01-database/vendors/firestore/security-rules-authz-modeling/) 的授權範圍對齊。
 
-#### Case 4：每次 snapshot 重畫整個列表
+#### 每次 snapshot 重畫整個列表
 
 `onSnapshot` callback 裡拿 `snap.docs` 整個重建 UI，而不用 `docChanges()`，列表大時每次推送都重畫、UI 卡頓。修法：用 `docChanges()` 只處理 added / modified / removed 的增量，UI 做局部更新。
 
-#### Case 5：高扇出直接訂閱原始資料
+#### 高扇出直接訂閱原始資料
 
 直播觀看數讓每個觀眾訂閱原始事件流自己算，扇出 × 結果集大小的 re-read 爆炸。修法：後端彙總寫 summary document，觀眾訂閱 summary 一份，把推送 payload 與 re-read 都壓到最小。
 
@@ -98,11 +100,11 @@ snapshot listener 適合「中等扇出、client 要即時看到自己相關資�
 - **複雜事件處理的即時**：即時推送需要先做跨資料聚合、過濾、轉換，listener 只能訂 query 結果、表達不了。這類要後端處理後再推，listener 不是合適的傳輸層
 - **即時是核心且規模化**：當即時同步是產品核心且扇出規模化，整個即時層自建是 [Firestore → 自建 relational](/backend/01-database/vendors/firestore/migrate-to-relational/) 裡「realtime / offline 要重建」這項工作量——遷移時這層最容易被低估
 
-判讀的起點是「這份即時是 client 看自己相關的少量資料，還是海量訂閱者看同一份廣播」。前者 listener 是正解，後者從一開始就該用推送架構，而不是把 listener 的扇出推到極限。
+判讀的起點是「這份即時是 client 看自己相關的少量資料，還是海量訂閱者看同一份廣播」。client 看自己相關的少量資料，listener 是正解；海量訂閱者看同一份廣播，從一開始就該用推送架構，而不是把 listener 的扇出推到極限。
 
 ## 下一步路由
 
-- 上層：[Firestore overview](/backend/01-database/vendors/firestore/)（realtime / offline 能力與容量特性）
+- 上層：[Firestore overview](/backend/01-database/vendors/firestore/)
 - sibling：[distributed counter 高頻寫入](/backend/01-database/vendors/firestore/distributed-counter-high-frequency-write/)（summary 彙總的另一面）
 - 授權對齊：[Security Rules 授權建模](/backend/01-database/vendors/firestore/security-rules-authz-modeling/)（訂閱範圍與授權範圍一致）
 - 推送架構：[03 訊息佇列](/backend/03-message-queue/)（超高扇出 broadcast 的去處）

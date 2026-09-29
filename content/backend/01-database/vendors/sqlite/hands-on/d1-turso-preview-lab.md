@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "hands-on", "edge"]
 
 SQLite D1 / Turso preview lab 的核心責任是把 local SQLite 轉向 edge SQLite product 前的 compatibility gap 找出來。這篇承接 [D1 / Turso / libSQL Comparison](/backend/01-database/vendors/sqlite/d1-turso-libsql-comparison/) 與 [SQLite to D1 / Turso Migration](/backend/01-database/vendors/sqlite/migrate-to-d1-turso/)，把 edge migration 變成可回報的 query matrix。
 
-本文的驗收標準是：你能從 local SQLite 匯出 schema / seed，匯入 D1 或 Turso preview database，跑相同 query set，記錄 unsupported SQL、latency、error mapping 與 rollback route。
+本篇的範圍是從 local SQLite 匯出 schema 與 seed、匯入 D1 或 Turso 的 preview database、在兩端跑同一組 query matrix，並記錄 unsupported SQL、latency、error mapping 與 rollback route；正式 cutover 的 phase plan 不在範圍內。
 
 ## Preview Scope
 
@@ -58,14 +58,51 @@ Q7 explain / performance sample if platform supports it
 
 ```bash
 sqlite3 app.db <<'SQL'
+PRAGMA foreign_keys = ON;
 .timer on
+
+-- list account balances
 SELECT a.id, a.owner_name, SUM(l.amount_cents) AS balance_cents
 FROM accounts a
 JOIN ledger_entries l ON l.account_id = a.id
 GROUP BY a.id, a.owner_name
 ORDER BY a.id;
+-- 沿用 local file quickstart 跑完的 app.db：1|Ada|1300、2|Lin|900
+
+-- insert ledger entry with unique idempotency key：成功，沒有輸出
+INSERT INTO ledger_entries(account_id, amount_cents, idempotency_key, created_at)
+VALUES (2, 500, 'matrix-lin-credit-1', '2026-05-21T00:30:00Z');
+
+-- insert duplicate idempotency key：同一個 key 再寫一次
+INSERT INTO ledger_entries(account_id, amount_cents, idempotency_key, created_at)
+VALUES (2, 500, 'matrix-lin-credit-1', '2026-05-21T00:31:00Z');
+-- Runtime error: UNIQUE constraint failed: ledger_entries.idempotency_key (19)
+
+-- foreign key violation：account 999 不存在
+INSERT INTO ledger_entries(account_id, amount_cents, idempotency_key, created_at)
+VALUES (999, 100, 'matrix-missing-account', '2026-05-21T00:32:00Z');
+-- Runtime error: FOREIGN KEY constraint failed (19)
+
+-- transaction rollback：ROLLBACK 之後查不到那一筆
+BEGIN;
+INSERT INTO ledger_entries(account_id, amount_cents, idempotency_key, created_at)
+VALUES (1, 700, 'matrix-rollback', '2026-05-21T00:33:00Z');
+ROLLBACK;
+SELECT COUNT(*) FROM ledger_entries WHERE idempotency_key = 'matrix-rollback';
+-- 0
+
+-- pagination by created_at：以上一頁最後一筆的 created_at 當起點，同一時間再以 id 排序
+SELECT id, account_id, amount_cents, created_at
+FROM ledger_entries
+WHERE created_at > '2026-05-21T00:10:00Z'
+ORDER BY created_at, id
+LIMIT 2;
+-- 2|1|-200|2026-05-21T00:12:00Z
+-- 3|2|900|2026-05-21T00:15:00Z
 SQL
 ```
+
+每一段的註解就是 local SQLite 這一欄的 expected result：錯誤訊息的文字與 error code 19（`SQLITE_CONSTRAINT`）是 error category，`.timer on` 印出的 `Run Time` 是 latency baseline。同一份檔案送進 D1 與 Turso preview 時，逐段比對錯誤訊息與列數，差異填進下方的 compatibility matrix。
 
 ## Import to D1 Preview
 
@@ -74,8 +111,13 @@ Import to D1 preview 的核心責任是驗證 Cloudflare D1 workflow。以下是
 ```bash
 # Example shape only. Use your project naming and official Wrangler docs.
 wrangler d1 create sqlite_edge_preview
-wrangler d1 execute sqlite_edge_preview --file=seed.sql
-wrangler d1 execute sqlite_edge_preview --command="SELECT COUNT(*) FROM accounts;"
+
+# sqlite3 的 .dump 會把內容包在 BEGIN TRANSACTION; … COMMIT; 裡，D1 不接受，匯入前刪掉這兩行
+sed -e '/^BEGIN TRANSACTION;$/d' -e '/^COMMIT;$/d' seed.sql > seed-d1.sql
+
+# 不加 --remote 時 wrangler 對的是本機的開發用資料庫，不是剛建立的 D1 database
+wrangler d1 execute sqlite_edge_preview --remote --file=seed-d1.sql
+wrangler d1 execute sqlite_edge_preview --remote --command="SELECT COUNT(*) FROM accounts;"
 ```
 
 D1 preview evidence 要記錄：

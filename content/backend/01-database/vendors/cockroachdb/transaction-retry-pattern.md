@@ -1,14 +1,14 @@
 ---
 title: "CockroachDB Transaction Retry Pattern：serializable default 與 application contract 重塑"
 date: 2026-05-27
-description: "CockroachDB default SERIALIZABLE、application 必須包 retry loop 處理 40001 serialization_failure。本文走 PG → CockroachDB application contract 重塑視角、SAVEPOINT cockroach_restart 語法、5 種失敗模式（retry storm / 非冪等 / cross-statement state / hot row / long-running transaction）。**整篇是跨 case 合成 frame**：DoorDash case 沒揭露 retry pattern、只揭露 PG wire protocol 相容 + SQL 行為仍要 audit、本章 retry contract 重塑屬通用工程議題從 Cockroach Labs 官方 docs 合成"
+description: "CockroachDB default SERIALIZABLE、application 必須包 retry loop 處理 40001 serialization_failure。本文走 PG → CockroachDB application contract 重塑、SAVEPOINT cockroach_restart 語法，以及 retry storm、retry loop 裡的副作用重複執行、cross-statement state、hot row、改 READ COMMITTED 後的業務語意、long-running transaction、distributed deadlock 等失敗模式；retry pattern 取自 Cockroach Labs 官方文件，不是案例揭露"
 weight: 50
 tags: ["backend", "database", "cockroachdb", "distributed-sql", "transaction", "isolation", "serializable", "deep-article"]
 ---
 
-> 本文是 [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/) 的 implementation-layer deep article。Overview 已界定 CockroachDB 的 PostgreSQL wire 相容定位、本文聚焦 *serializable default 對 application transaction contract 的重塑*。
+> 本文整理 CockroachDB 預設 `SERIALIZABLE` 對 application transaction contract 的影響：為什麼要包 retry loop、怎麼寫、哪些寫法在 retry 時出事。
 >
-> **Scope warning（最高、F4 Frame 2）**：**本篇整篇是跨 case 合成 frame、不是單一 case 揭露**。3 個 CockroachDB direct case（[9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) / [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) / [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)）對 application transaction retry contract 重塑的揭露 *都偏弱* — DoorDash case 只寫 PostgreSQL wire *protocol-level* 相容、SQL 行為（serializable default / retry semantics / partial index）「仍要驗證」、**沒**直接寫 `40001 serialization_failure` / `SAVEPOINT cockroach_restart` / hot row contention / retry loop pattern。Netflix / Hard Rock case 完全沒寫 retry pattern。本章 retry pattern 議題從 Cockroach Labs 官方 SQL Layer docs + PG → CockroachDB 通用 contract 重塑視角合成、DoorDash 只作為 trigger context（撞牆訊號 + 觸發遷移）、不是 ground truth case study。讀者引用本章內容到實際系統前、應該 *自己跑 application audit* 而不是直接套合成的 pattern。
+> **來源**：本篇的 retry 機制與寫法取自 Cockroach Labs 官方的 SQL Layer 與 Transaction Retry 文件，不是任何一個案例的揭露。三個 CockroachDB 案例（[9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) / [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) / [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)）都沒有寫到 `40001 serialization_failure`、`SAVEPOINT cockroach_restart`、hot row contention 或 retry loop；DoorDash case 只寫到 PostgreSQL wire *protocol-level* 相容、SQL 行為（serializable default / retry semantics / partial index）仍要驗證。把本篇的 pattern 用到實際系統前，先對自己的 application 跑一次 audit。
 
 ---
 
@@ -25,24 +25,13 @@ tags: ["backend", "database", "cockroachdb", "distributed-sql", "transaction", "
 
 四題的回答都依賴一個前提：CockroachDB 的 application transaction contract 跟 PostgreSQL default 不一樣、必須重塑。
 
-### Scope warning explicit label：DoorDash case 沒揭露 retry pattern
+### DoorDash case 給的是遷移前要驗證的提醒
 
-**DoorDash case 沒直接揭露 serializable retry contract / 40001 / SAVEPOINT pattern / hot row contention**。case 只寫「PostgreSQL wire protocol 相容、實際 SQL 行為（serializable default、retry semantics、partial index）*仍要驗證*」（DoorDash 觀察段 / 策略段 3、F4.4）。
+DoorDash case 在〈策略〉段寫的是：「CockroachDB 不是 PostgreSQL fork、是 *protocol-level 相容*、實際 SQL 行為（serializable default、retry semantics、partial index）仍要驗證」。這一句是本篇要處理的問題的來由：serializable default 與 retry semantics 正是 application transaction contract 要改寫的地方。retry contract、`40001`、`SAVEPOINT` pattern 與 hot row contention 本身，DoorDash case 都沒有寫，本篇依 Cockroach Labs 官方的 SQL Layer 與 Transaction Retry 文件整理。
 
-本章 retry pattern 議題是從 PG → CockroachDB 通用 contract 重塑視角合成、不是 DoorDash case 直接揭露。引用 DoorDash 時應該用：
-
-- **正確口徑**：「DoorDash 揭露 Aurora Postgres 1.636 M QPS 撞牆 → 引出 distributed SQL retry contract 需求、本章 retry pattern 議題是從 PostgreSQL → CockroachDB 通用 contract 重塑視角合成、不是 DoorDash case 直接揭露」
-- **不要寫成**：「DoorDash retry pattern」、「DoorDash 揭露 40001 處理」之類把合成包成 case fact 的語法
-
-### Case anchor（trigger context、不是 ground truth）
-
-- [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)：提供「PG wire 相容、SQL 行為仍要 audit」的 case 警語（F4.4）、作為本章 *為什麼 retry contract 要重塑* 的觸發訊號。retry pattern 本體走 standard-driven（Cockroach Labs 官方 SQL Layer docs + Transaction Retry docs）
-
-Sibling 對照 [9.C4 DraftKings Aurora financial ledger](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 提供 *PostgreSQL READ COMMITTED + Aurora* 的另一條路徑 — 用 application-level sharding（200 個獨立 Aurora cluster）避開 retry、而不是處理 retry。**Scope warning**：DraftKings case *沒* 寫 PostgreSQL READ COMMITTED retry pattern、case 是 Aurora 內 business sharding 路徑。本章引用 DraftKings 為「假想若把 DraftKings 遷 CockroachDB 會撞到 retry contract 重塑」合成對照、不是 case 直接揭露。
+Sibling 對照 [9.C4 DraftKings Aurora financial ledger](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 走的是 *PostgreSQL READ COMMITTED + Aurora* 的另一條路徑 — 用 application-level sharding（200 個獨立 Aurora cluster）解 Aurora single-primary 的寫入上限，沒有走到 serializable retry 這一步。DraftKings case 沒有寫 retry pattern；同樣的 ledger 若改走 CockroachDB，才需要處理本篇描述的 retry loop 與 application 改寫。
 
 ## 核心機制：serializable default 跟 PostgreSQL 的差異
-
-> **來源分層**：本段機制來源是 Cockroach Labs 官方 SQL Layer docs + Transaction Retry docs（standard-driven）、*不是* 從 case 抽取。3 個 direct case 都沒揭露這些機制細節。
 
 ### Serializable 是 CockroachDB 的 default
 
@@ -60,7 +49,7 @@ CockroachDB 預設 `SERIALIZABLE` — 最強 isolation level、保證 transactio
 
 CockroachDB 追蹤每個 transaction 的 read set 跟 write set。當兩個並行 transaction 的 read / write set 衝突、CockroachDB abort 後到的那個、發 [Serialization Failure](/backend/knowledge-cards/serialization-failure/)（`40001 serialization_failure`）。
 
-對比 PostgreSQL serializable（SSI）：兩者都是「post-detect」、commit 時偵測 anomaly、不是 pre-lock。差別在 *衝突偵測時機* 跟 *成本*：
+對比 PostgreSQL serializable（SSI）：兩者都不靠預先上鎖來擋住衝突，差別在 *衝突偵測時機* 跟 *成本*：
 
 - PostgreSQL SSI：用 predicate lock 追蹤 query 條件、commit 時偵測
 - CockroachDB：用 timestamp ordering + write intent、衝突 *當下* 就 abort
@@ -98,15 +87,9 @@ COMMIT;
 
 ### READ COMMITTED 是 v23.2+ 可選降級
 
-CockroachDB v23.2+ 新增 `READ COMMITTED` isolation level — application 可選擇用 weaker isolation 換少 retry。但這是「降級」、失去 serializable 保證 — 對應的反例段在失敗模式段展開（金融 ledger 走 READ COMMITTED 可能讓 balance 變負）。
+CockroachDB v23.2+ 新增 `READ COMMITTED` isolation level — application 可選擇用 weaker isolation 換少 retry。但這是「降級」、失去 serializable 保證 — 反例見〈改 READ COMMITTED 後忘了驗證業務語意〉（金融 ledger 走 READ COMMITTED 可能讓 balance 變負）。
 
 對應 [isolation level 卡](/backend/knowledge-cards/isolation-level/) 跟 [transaction boundary 卡](/backend/knowledge-cards/transaction-boundary/)。
-
-### DoorDash case 對接點（trigger context only）
-
-DoorDash case 揭露 PG wire *protocol-level* 相容、明示 SQL 行為（serializable default / retry semantics / partial index）「仍要驗證」（F4.4）。本章機制段就是回答「audit 什麼」的具體展開 — 但 audit checklist 本體屬通用工程知識、case 沒 ground truth。
-
-引用紀律：「DoorDash 揭露 PG wire 相容、SQL 行為仍要 audit、其中 serializable default 跟 retry semantics 是 application contract 重塑的核心議題」— 把 case 揭露的 fact 跟本章合成的 frame 分開講。
 
 ## 操作流程：retry loop 設計
 
@@ -146,48 +129,66 @@ return ErrMaxRetriesExceeded
 - exponential backoff with jitter（避免 retry storm 同步）
 - max retry 上限（避免無限 loop、要有 circuit breaker）
 - 只 retry serialization failure、其他 error 直接拋
-- transaction body 必須是 *冪等* 的（同樣 input 多次執行結果一致）
+- retry loop 裡資料庫之外的動作必須冪等，或移到 COMMIT 成功之後（見〈Idempotency 設計：retry 會重做的是 transaction 外的副作用〉）
 
 ### 配置
 
 ```sql
--- 改 transaction isolation level（v23.2+ 才支援 READ COMMITTED）
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-- 單一 transaction 改用 READ COMMITTED（v23.2+）
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SHOW transaction_isolation;   -- read committed
+COMMIT;
+
+-- 改這個 session 之後所有 transaction 的預設
+SET default_transaction_isolation = 'read committed';
 
 -- 看當前 session 預設
-SHOW SESSION default_transaction_isolation;
+SHOW default_transaction_isolation;
 ```
 
 ### 驗證點
 
 ```sql
--- 看 transaction retry 統計
-SELECT * FROM crdb_internal.txn_stats;
+-- crdb_internal 在 v26.3 預設禁止查詢，要先開這個 session 變數（官方標示為不支援的內部介面）
+SET allow_unsafe_internals = true;
 
--- 看哪些 query / table 衝突最多
+-- 看 transaction retry 統計：每種 transaction 指紋一列，maxRetries 是觀察到的最多重試次數
+SELECT fingerprint_id,
+       (statistics->'statistics'->>'cnt')::INT        AS executions,
+       (statistics->'statistics'->>'maxRetries')::INT AS max_retries
+FROM crdb_internal.transaction_statistics
+ORDER BY max_retries DESC LIMIT 10;
+
+-- 看哪些 table / key 衝突最多
 SELECT * FROM crdb_internal.cluster_contention_events ORDER BY count DESC LIMIT 10;
 ```
 
-### Idempotency 設計：transaction body 必須冪等
+### Idempotency 設計：retry 會重做的是 transaction 外的副作用
 
-retry-safe transaction body 必須冪等 — 同樣 input 多次執行結果一致。這是 [idempotency](/backend/knowledge-cards/idempotency/) 在 distributed SQL retry contract 下的具體展開、不是 optional：
+`ROLLBACK TO SAVEPOINT cockroach_restart` 會丟掉這一次嘗試寫進資料庫的全部變更，所以 transaction body 裡的 SQL 在 retry 時重跑一次，不會在資料庫裡留下兩份結果：
 
-| Transaction body                             | 是否冪等       | 為什麼                                 |
-| -------------------------------------------- | -------------- | -------------------------------------- |
-| `UPDATE balance SET balance = balance - 100` | 是             | 同樣 input 每次都減 100                |
-| `UPDATE balance SET balance = 900`           | 是             | 設成絕對值、retry 不影響               |
-| `INSERT INTO logs VALUES (...)`              | 否             | retry 後重複寫、要加 UNIQUE constraint |
-| `INSERT ON CONFLICT (id) DO NOTHING`         | 是             | 用 ON CONFLICT 處理重複                |
-| `UPDATE counter SET val = val + 1`           | 否（語意問題） | retry 後加超過預期次數                 |
+```sql
+-- 共用資料：accounts(id, balance)，id = 1 的 balance = 900；logs(id 自動產生, msg) 是空表
+BEGIN;
+SAVEPOINT cockroach_restart;
+INSERT INTO logs (msg) VALUES ('attempt');                -- 第一次嘗試
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+ROLLBACK TO SAVEPOINT cockroach_restart;                 -- 模擬收到 40001 之後重來
+INSERT INTO logs (msg) VALUES ('attempt');                -- 重跑同一段 body
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+RELEASE SAVEPOINT cockroach_restart;
+COMMIT;
+-- logs 只有 1 列；balance 是 800，只扣了一次 100
+```
 
-冪等性是 application 設計議題、不是 CockroachDB 配置可解的 — application contract 重塑的核心成本就在這。
+retry 會重複發生的是資料庫之外的動作：在 retry loop 裡呼叫付款 API、送通知、改 application 記憶體裡的狀態，每重試一次就多做一次。另一個需要 [idempotency](/backend/knowledge-cards/idempotency/) 的位置是 COMMIT 的結果不確定時——例如連線在 COMMIT 途中斷掉，application 不知道這筆有沒有寫進去，整筆重送就可能寫兩次，要靠 idempotency key 或 UNIQUE constraint 讓重送的那一筆被擋下。這兩件事都是 application 設計議題、不是 CockroachDB 配置可解的 — application contract 重塑的核心成本就在這。
 
 ### Rollback 邊界
 
 transaction 自身有 `SAVEPOINT cockroach_restart` 邊界、`ROLLBACK TO SAVEPOINT` 後可重試整個 transaction body。但：
 
 - commit 後不可回滾 — 業務狀態還原只能新交易補償
-- application 端如果在 transaction *外* cache state、retry 後 state 不一致（見失敗模式段）
+- application 端如果在 transaction *外* cache state、retry 後 state 不一致（見〈Cross-statement state 假設〉）
 
 ## 失敗模式
 
@@ -201,14 +202,14 @@ transaction 自身有 `SAVEPOINT cockroach_restart` 邊界、`ROLLBACK TO SAVEPO
 - 改 schema 避開 hot row（partition by region、shard counter、用 sequence 代替全局 counter）
 - 監控 `crdb_internal.cluster_contention_events`、針對 top-N table 改設計
 
-### 非冪等 transaction 重試：double-count
+### retry loop 裡的副作用重複執行：double-count
 
-最危險的 production bug：transaction body 不是冪等的、retry 後資料重複寫。ledger double-count、payment 重複扣款、log 重複記錄。
+最危險的 production bug：retry loop 裡除了 SQL 還有資料庫之外的動作（呼叫付款 API、送通知、寫外部 log），每次 retry 都再做一次；或 COMMIT 結果不確定時整筆重送。後果是 payment 重複扣款、通知重複送出。
 
 修法：
 
-- transaction body 寫成 `UPDATE balance SET balance = balance - X`（相對運算）、不寫 `UPDATE balance SET balance = Y`（絕對賦值依賴 read 結果）
-- `INSERT` 加 UNIQUE constraint + `ON CONFLICT DO NOTHING`
+- 資料庫之外的動作移到 COMMIT 成功之後，或讓外部系統用 idempotency key 去重
+- `INSERT` 加 UNIQUE constraint + `ON CONFLICT DO NOTHING`，讓重送的那一筆被擋下
 - 用 idempotency key（client 帶 UUID、server 端 dedupe）
 
 ### Cross-statement state 假設
@@ -233,7 +234,19 @@ application 在 transaction *外* cache state（例：開 transaction 前 read �
 
 ### 改 READ COMMITTED 後忘了驗證業務語意
 
-v23.2+ 可改 `READ COMMITTED`、少 retry 但失去 serializable 保證。對金融 ledger：READ COMMITTED 可能讓 balance 變負（兩個並行 withdraw 都看到 balance=100、都扣 50、結果 balance=-50）。
+v23.2+ 可改 `READ COMMITTED`、少 retry 但失去 serializable 保證。對金融 ledger：READ COMMITTED 可能讓 balance 變負——兩個並行 withdraw 都讀到 balance=100、各自判斷餘額足夠而扣 80：
+
+```sql
+-- 共用資料：wallet 表 id = 1 的 balance = 100
+-- 兩個 session 同時執行這一段；isolation 換成 SERIALIZABLE 再各跑一次對照
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT balance FROM wallet WHERE id = 1;                 -- 兩個 session 都讀到 100，application 判斷餘額足夠
+SELECT pg_sleep(2);                                      -- 模擬 application 判斷的時間，讓兩個 transaction 重疊
+UPDATE wallet SET balance = balance - 80 WHERE id = 1;
+COMMIT;
+-- READ COMMITTED：兩個 session 都 COMMIT 成功，balance = -60
+-- SERIALIZABLE：後寫的那個 session 收到 40001（restart transaction），balance = 20
+```
 
 修法：
 
@@ -265,12 +278,6 @@ CockroachDB 用 distributed deadlock detection（每個 node 維護 wait-for gra
 - 加 jitter、不同 session 的 retry 不同步
 - Application metric 分桶記錄 `serialization_conflict_retry` vs `distributed_deadlock_retry`、避免 contention 改善方向判錯
 - Schema 設計階段避免「跨節點熱 row 環形依賴」（例：兩個服務交叉 update 對方的 counter row）
-
-### 跨 case 合成 Scope warning：DraftKings 對照
-
-DraftKings ledger 對照 — **DraftKings case 沒寫 PostgreSQL READ COMMITTED retry pattern**、case 內容是「Aurora 內 business sharding 路徑」、用 200 個獨立 cluster 解 Aurora single-primary 撞牆。本章把 DraftKings 拿來當「假想若遷 CockroachDB 需改 SERIALIZABLE + retry loop」的合成對照、不是 case 揭露的 fact。
-
-實際 DraftKings 走 Aurora + application sharding 而非 CockroachDB、所以「DraftKings retry pattern」這個說法本身就是合成 — 應該寫成「DraftKings 走 Aurora sharding 避開 retry contract 重塑、若改走 CockroachDB 則需處理本章描述的 application 改寫」。
 
 ## 容量與觀測
 
@@ -305,7 +312,7 @@ retry rate 是 *容量規劃必納入* 的變數 — 沒算 retry 就會 underes
 
 ## 邊界與整合
 
-### Sibling deep articles
+### 同 vendor 的其他文章
 
 - [HLC + Raft consensus](../hlc-raft-consensus/)：為什麼 serializable 是 distributed SQL 的合理 default
 - [locality-aware schema](../locality-aware-schema/)：partition 降低 hot row contention

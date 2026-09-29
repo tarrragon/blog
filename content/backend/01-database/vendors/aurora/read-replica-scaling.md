@@ -6,9 +6,9 @@ weight: 50
 tags: ["backend", "database", "aurora", "read-replica", "capacity", "fleet", "deep-article"]
 ---
 
-Aurora 「最多 15 read replica」是文件數字、實際 production 部署常常更早遇到拆 cluster 的決策點 — 不是 15 replica 不夠用、是 [blast radius](/backend/knowledge-cards/blast-radius/)、業務 sharding、微服務 ownership、合規 boundary 早在 15 replica 之前就推動拆 cluster。本文同時展開兩個議題：(1) 單 cluster 內 read replica 怎麼用、容量怎麼規劃、lag 怎麼管；(2) Aurora fleet 治理的 3 條 driver、什麼條件下拆 cluster vs 加 replica。後者是 Aurora 系列的 *fleet 治理 SSoT* — [Aurora storage architecture](../storage-architecture/) / [Aurora cross-AZ failover RTO](../cross-az-failover-rto/) / [Aurora Global Database](../global-database-multi-region/) / [Aurora migration playbook](../migrate-from-self-managed-pg-mysql/) 都 cross-link 到本篇、不重複展開。
+這篇整理 Aurora read replica 與 fleet 拓樸：單一 cluster 內 read replica 怎麼用、容量怎麼規劃、lag 怎麼管，以及按 business sharding、微服務 ownership、合規市場 boundary 這幾條 driver 判斷什麼條件下拆 cluster、什麼條件下加 replica。共享 storage 為什麼能養大量 replica，在 [Aurora storage architecture](../storage-architecture/)。
 
-本文不是 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 而是 read replica 跟 fleet 拓樸的實作層教學。前置閱讀建議 [Aurora storage architecture](../storage-architecture/)（理解共享 storage 為什麼能養大量 replica）。
+Aurora「最多 15 read replica」是文件數字，而實際 production 部署常常更早遇到拆 cluster 的決策點：[blast radius](/backend/knowledge-cards/blast-radius/)、業務 sharding、微服務 ownership、合規 boundary 早在 15 replica 之前就推動拆 cluster。
 
 ## 問題情境
 
@@ -43,14 +43,14 @@ Aurora read replica 的 first-class concept 是 *共享 storage + DNS-based read
 - Lag 來源是 *compute node 的 buffer cache 同步*、不是 WAL replay
 - Typical 10-30ms、heavy write 期間可能 100ms+、但 *不會像 PostgreSQL 那樣 unbounded*
 
-**DraftKings 揭露的「lag 可預測」frame**（[case「判讀」段第 2 點](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)）：
+**DraftKings 揭露的「lag 可預測」frame**（[DraftKings case 的「判讀」段](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)）：
 
 「30 秒降到 10-30 ms」的工程意義不只是「快」、而是「讓 read-after-write 變得可預測」。30 秒 lag 的世界裡、application 端做 read-after-write 要 cache 用戶最後寫入 30 秒以上、實務上做不到；10-30ms lag 的世界裡、application 可以做「寫操作後 100ms 內走 primary、之後可走 replica」的可規劃策略。
 
 **Reader endpoint 行為**：
 
 - DNS-based round-robin、不感知 replica 健康狀態
-- Application 想要 lag-aware routing 要自己實作或用 RDS Proxy
+- Application 想要依 replica lag 挑 replica 要自己實作；截至 2026-09 的官方文件，RDS Proxy 的 reader endpoint 只把連線導向狀態為 available 的 reader，不依 replica lag 挑選 reader
 - Failover 期間短暫包含 promoted replica（已升 primary）、見 [Aurora cross-AZ failover RTO](../cross-az-failover-rto/)
 
 **Auto-scaling policy**：
@@ -132,7 +132,7 @@ aws application-autoscaling put-scaling-policy \
 
 ## 故障模式 / 邊界 case
 
-### Case 1：加 replica 後 primary CPU 沒降
+### 加 replica 後 primary CPU 沒降
 
 徵兆：明明加了 3 個 read replica、primary CPU 仍然 90%、reader endpoint CPU 才 10%。
 
@@ -142,9 +142,9 @@ aws application-autoscaling put-scaling-policy \
 
 - Application 端 ORM / data source layer 拆 read / write connection pool
 - 寫操作用 writer endpoint、純讀走 reader endpoint
-- 雙峰錯位是這層拆分的 driver（[DraftKings case 揭露](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 讀寫資源規劃要分開）
+- 雙峰錯位是拆 read / write data source 的 driver（[DraftKings case 揭露](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 讀寫資源規劃要分開）
 
-### Case 2：Reader endpoint round-robin 推 stale read
+### Reader endpoint round-robin 推 stale read
 
 徵兆：read-after-write 場景（用戶下注後立刻查 balance）打到 lagging replica、看到舊 balance、客訴。
 
@@ -152,17 +152,17 @@ aws application-autoscaling put-scaling-policy \
 
 修：
 
-- Sticky session：寫操作後 N 秒內同 session 走 primary（N = lag p99、typical 100ms）
-- Application 端做「下注後 N 秒走 primary」邏輯（DraftKings「可預測 lag」frame 讓 N 秒可規劃）
-- 或用 RDS Proxy 提供 lag-aware routing（managed alternative）
+- Sticky session：寫操作後的一段時間 N 內同 session 走 primary（N 取 lag p99、typical 100ms）
+- Application 端做「下注後 N 內走 primary」邏輯（DraftKings「可預測 lag」frame 讓 N 可規劃）
+- RDS Proxy 的 reader endpoint 補不上 read-after-write 的缺口：截至 2026-09 的官方文件，它只避開不可用的 reader、不依 replica lag 挑 reader，寫入後的讀取仍要靠 sticky session 或 application 端的「下注後 N 內走 primary」邏輯
 
-### Case 3：Auto-scaling 來不及接秒級尖峰 — headroom 預留判讀
+### Auto-scaling 來不及接秒級尖峰 — headroom 預留判讀
 
 徵兆：賽事開賽 30 秒內流量 +50%、auto-scaling 觸發但 2-5 分鐘後才有新 replica、開賽尖峰已過、用戶在最關鍵時段看到 timeout。
 
 機制限制：replica creation 2-5 分鐘、秒級尖峰過去了 replica 才上線。
 
-**DraftKings「Super Bowl +50% no sweat」的工程意義**（[case「判讀」段第 3 點原文](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)）：「這句話的工程意義是 *提前做好容量規劃*、不是『Aurora 神奇』。寫 workload 預期可能 +50%、整個 system headroom 預留至少 50%、加上 read replica 動態加減、才能讓 50% 增幅變成『不流汗』」。
+**DraftKings「Super Bowl +50% no sweat」的工程意義**（[DraftKings case 的「判讀」段原文](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)）：「這句話的工程意義是 *提前做好容量規劃*、不是『Aurora 神奇』。寫 workload 預期可能 +50%、整個 system headroom 預留至少 50%、加上 read replica 動態加減、才能讓 50% 增幅變成『不流汗』」。
 
 工程含義：
 
@@ -176,15 +176,15 @@ aws application-autoscaling put-scaling-policy \
 - Primary instance class 升級提前一週、不是賽前升（升級期間 failover 風險）
 - Headroom 預算：read replica 預留 50%、primary CPU baseline < 50%
 
-### Case 4：15 replica 上限 — 拆 cluster 訊號
+### 15 replica 上限 — 拆 cluster 訊號
 
 徵兆：read traffic 持續成長、加到 15 replica 仍接近 CPU 瓶頸、想加第 16 個被 API 拒絕。
 
 原因：Aurora 硬上限 15 replica / cluster、超過要拆 cluster。但實務上更常在 5-10 replica 就遇到其他拆 cluster 訊號（blast radius、ownership boundary、業務 sharding）。
 
-修：見下方「邊界與整合：fleet 治理 SSoT」段、按 3 條 driver 判讀拆 cluster vs 加 replica。
+修：照下方〈何時拆 vs 加 replica 的判讀順序〉逐條判斷——超過 15 replica 的需求、blast radius 隔離需求、業務本身可切分、微服務私有 store 拓樸、合規禁止跨境複製，任一成立就拆 cluster，都不成立才加 replica。
 
-### Case 5：Heavy write 期間 replica lag spike
+### Heavy write 期間 replica lag spike
 
 徵兆：bulk insert / DDL 期間 replica lag 從 10-30ms 跳到 100-500ms、application 假設 typical lag 永遠成立、stale read 比例大幅上升。
 
@@ -193,10 +193,10 @@ aws application-autoscaling put-scaling-policy \
 修：
 
 - bulk insert / DDL 期間 application 端切到全 primary 模式（避開 stale read 風險）
-- 重要 DDL 用 [pg_repack](https://github.com/reorg/pg_repack) 或 logical migration、避免長時間 table lock
+- 要重寫整張表的 DDL 改用 logical migration 或分批執行、避免長時間 table lock；[pg_repack](https://github.com/reorg/pg_repack) 只移除表與索引的 bloat，不執行欄位變更這類 schema DDL，而且它重建整張表時本身就是一段 heavy write
 - 監測 `AuroraReplicaLagMaximum`、spike 超過 p99 threshold trigger application 端 fallback
 
-### Case 6：FanDuel 雙 SLO 並行 — 不要壓成單一數字
+### FanDuel 雙 SLO 並行 — 不要壓成單一數字
 
 徵兆：team 看 FanDuel「5-10x peak」直接套到自家 streaming workload、結果 Aurora 撐不住、發現 FanDuel streaming 根本不走 Aurora。
 
@@ -226,20 +226,15 @@ aws application-autoscaling put-scaling-policy \
 | 季冠軍賽 championship | 4-5x  | FanDuel case 揭露事件分級     |
 | Super Bowl            | 5-10x | FanDuel case 揭露事件分級     |
 
-**Frame 8 event-driven scaling 5 模式（跨 vendor 共寫）**：本表是 Aurora 端從讀峰視角切入的事件分級、跟 [DynamoDB on-demand-vs-provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/) 的 5 模式分類（flash-sale spike / predictable peak / sustained growth / surge baseline permanent shift / B2B sustained + 高可用）共軸。Aurora 端的 FanDuel 季賽 cycle 在 5 模式分類中對應 *predictable peak* 的時間序列展開 — 事件 tier 已知（賽季 → 季後賽 → 季冠軍賽 → Super Bowl）、按 tier 預配 read replica 數量、本質是「峰值已知 + 重複出現」的 predictable peak 在多 tier 結構下的延伸。
+**跟 DynamoDB 事件型流量模式的對應**：本表是 Aurora 從讀峰視角切入的事件分級。[DynamoDB on-demand-vs-provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/) 把事件型流量分成 flash-sale spike、predictable peak、sustained growth、surge baseline permanent shift、B2B sustained + 高可用這幾種模式；FanDuel 的賽季 cycle 對應其中的 *predictable peak*——事件 tier 已知（賽季 → 季後賽 → 季冠軍賽 → Super Bowl）、峰值已知而且重複出現，所以能按 tier 預配 read replica 數量。
 
-**KV 層 vs SQL 層的 mode 決策差異**：DynamoDB 端的 on-demand vs provisioned mode 是 KV vendor 的容量抽象（軸 1 peak/avg ratio / 軸 4 predictable-peak vs flash-sale）、詳見 [DynamoDB on-demand-vs-provisioned 6 軸決策](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)、本篇不展開。Aurora 端對應的決策是 *read replica 數量 + auto-scaling vs scheduled scaling vs headroom 預留*、靠的是 replica fleet size 而非 mode 切換。
-
-兩 vendor 在 Frame 8 各自承擔：
-
-- **DynamoDB on-demand-vs-provisioned**：5 模式分類 SSoT、mode × 事件型分類的合成判讀
-- **Aurora read-replica-scaling（本篇）**：read 峰值的 headroom 預留 + 雙 SLO 並行（FanDuel 分級 + DraftKings 讀寫雙峰錯位）+ fleet 治理
+**KV 層與 SQL 層的容量決策差異**：DynamoDB 的容量決策是在 on-demand 與 provisioned 兩種 mode 之間選，判斷依據包括 peak/avg ratio 與 predictable-peak vs flash-sale，推導在 [DynamoDB on-demand-vs-provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)。Aurora 沒有對應的 mode 可切，對應的決策是 read replica 的數量，以及用 auto-scaling、scheduled scaling 還是 headroom 預留來調整它。
 
 **case 自帶警示（scope warning 必保留）**：
 
 - 「5-10x」是 *峰值倍數*、不是 *peak 持續時間*。Super Bowl 的關鍵 30 分鐘可能 8-10x、其他 3 小時可能 3-5x（case「需要警惕」段）
 - 分級 driver 是「同類事件中的最高倍率」、不是恆定數字 — 引用時要保留事件 tier 對應、不是一律「Super Bowl = 10x」單一閾值
-- 跨業務 transfer 判讀：本表 *只代表體育博彩賽季 cycle*、不能直接套到 e-commerce flash-sale（後者倍數結構是「秒級數千倍」、跟事件 tier 結構不同）
+- 跨業務 transfer 判讀：本表 *只代表體育博彩賽季 cycle*、不能直接套到 e-commerce flash-sale（e-commerce flash-sale 的倍數結構是「秒級數千倍」、跟事件 tier 結構不同）
 
 **容量規劃做法**：
 
@@ -249,7 +244,7 @@ aws application-autoscaling put-scaling-policy \
 
 ## 邊界與整合：Fleet 治理 SSoT — 何時拆 cluster vs 加 replica
 
-本段是 Aurora fleet 治理軸 SSoT — [Aurora storage architecture](../storage-architecture/) / [Aurora cross-AZ failover RTO](../cross-az-failover-rto/) / [Aurora Global Database](../global-database-multi-region/) / [Aurora migration playbook](../migrate-from-self-managed-pg-mysql/) cross-link 不重複展開。
+本段回答 Aurora fleet 什麼條件下拆 cluster、什麼條件下加 replica。
 
 **跨 case 合成 frame**：production scale 不是「單一巨型 cluster」而是 *fleet of clusters*、但 *driver 各異*。
 
@@ -259,7 +254,7 @@ aws application-autoscaling put-scaling-policy \
 | Microservice ownership | [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)                 | 多 cluster  | 每微服務私有 store、不共用 cluster — 容量規劃分散到 service owner                    |
 | 合規市場 boundary      | [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) | 7 cluster   | 受監管市場資料 *不能跨境複製*、每市場獨立 cluster — Global Database 在合規場景反指標 |
 
-### Driver 1：Business sharding（DraftKings 200 cluster）
+### Business sharding（DraftKings 200 cluster）
 
 DraftKings 不用一個巨型 cluster 撐 100 萬 ops/min、而是 *按業務切 200 cluster*。每體育類別、每地理、每產品線各自 cluster、blast radius 自然隔離。
 
@@ -271,7 +266,7 @@ DraftKings 不用一個巨型 cluster 撐 100 萬 ops/min、而是 *按業務切
 
 **容易誤判的邊界**：[DraftKings 100 萬 ops/min ≈ 17K ops/sec](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 是 *200 cluster 加總*、平均每 cluster 約 80 ops/sec（case「需要警惕」段）— 不是「單一 cluster 撐 100 萬 ops」、案例對照不能擴寫成單 cluster 容量。
 
-### Driver 2：Microservice ownership（Netflix）
+### Microservice ownership（Netflix）
 
 Netflix 每微服務各自有 private Aurora cluster、不共用 — 跟 monolith「一個大 DB 撐全部」相反。
 
@@ -283,7 +278,7 @@ Netflix 每微服務各自有 private Aurora cluster、不共用 — 跟 monolit
 
 **case 自帶 scope 警示**：[Netflix 數據層遠不止 Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 還有 Cassandra（playback metadata）、EVCache（cache layer）、Iceberg（data warehouse）。Aurora 主要是「需要 ACID 的 OLTP 工作負載」、不是「all-purpose store」（case「需要警惕」段第 2 點）。讀者引用 Netflix consolidation 時、不能誤推論「Aurora 可以替所有 store」。
 
-### Driver 3：合規市場 boundary（Standard Chartered 7 cluster）
+### 合規市場 boundary（Standard Chartered 7 cluster）
 
 Standard Chartered 7 個受監管市場 = 7 個獨立 cluster。[Data Residency](/backend/knowledge-cards/data-residency/) 規範資料 *不能跨境複製*、[Aurora Global Database](../global-database-multi-region/) 在這種場景違反合規。
 
@@ -339,17 +334,17 @@ read_replica_routing_ratio   # writer vs reader 流量比例
 **容量公式**：
 
 ```text
-read replica count = (read QPS / replica throughput) × (1 + lag buffer) × (1 + event tier headroom)
+read replica count = (平日 read QPS / replica throughput) × (1 + lag buffer) × (1 + event tier headroom)
 
-lag buffer        = 30%（典型）
-event tier headroom = 0% (平日) / 50% (playoff) / 100% (championship) / 200% (Super Bowl)
+lag buffer          = 30%（典型）
+event tier headroom = 事件倍數 − 1：0% (平日 1x) / 100-200% (playoff 2-3x) / 300-400% (championship 4-5x) / 400-900% (Super Bowl 5-10x)
 ```
 
 **回路徑**：[9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/) 判斷 read-bound vs write-bound、[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) peak workload 預配 vs auto-scale 決策。
 
 ## 邊界與整合 / 下一步
 
-**Sibling deep articles**：
+**同 vendor 的其他文章**：
 
 - [Aurora storage architecture](../storage-architecture/) — 共享 storage 為什麼能養 15 replica + 雙峰錯位 application 邊界
 - [Aurora cross-AZ failover RTO](../cross-az-failover-rto/) — replica 升 primary 流程
@@ -363,18 +358,18 @@ event tier headroom = 0% (平日) / 50% (playoff) / 100% (championship) / 200% (
 
 - [1.1 高併發資料存取](/backend/01-database/high-concurrency-access/) — read replica 是 OLTP 擴容的基本槓桿
 
-**RDS Proxy 整合**：lag-aware routing、connection pool 共享、Lambda 場景；managed alternative。
+**RDS Proxy 整合**：reader endpoint 避開不可用的 reader（截至 2026-09 的官方文件，不依 replica lag 挑 reader）、connection pool 共享、Lambda 場景；managed alternative。
 
-**何時不用本文**：single replica + cross-AZ failover 已滿足、read traffic 不是 bottleneck 時可跳過、看 [Aurora vendor overview](/backend/01-database/vendors/aurora/) 即可。
+**何時不用本文**：single replica + cross-AZ failover 已滿足、read traffic 不是 bottleneck 時可跳過。
 
 ## 相關連結
 
-- [Aurora vendor overview](/backend/01-database/vendors/aurora/) — 服務定位、適用 / 不適用場景
+- [Aurora vendor overview](/backend/01-database/vendors/aurora/)
 - [Replication Lag 卡片](/backend/knowledge-cards/replication-lag/) — 概念基底
 - [Stale Read 卡片](/backend/knowledge-cards/stale-read/) — read-after-write 容忍度
 - [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 200 cluster business sharding 跟 headroom 預留
 - [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 微服務私有 store + Aurora 非 all-purpose store 邊界
 - [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 合規驅動 fleet 拓樸
 - [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) — 雙 SLO 並行 + 事件型容量分級
-- [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — 本文遵循的 6 規格面寫作模板
+- [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — vendor 深度文章從問題情境、核心機制、操作流程、失敗模式、容量與觀測到邊界與整合的寫法
 - 官方：[Aurora replication](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Replication.html)

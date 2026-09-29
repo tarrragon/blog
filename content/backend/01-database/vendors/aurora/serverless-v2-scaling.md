@@ -6,9 +6,9 @@ weight: 31
 tags: ["backend", "database", "aurora", "serverless", "capacity", "cost", "deep-article"]
 ---
 
-Aurora Serverless v2 把 instance 的容量從「開機時固定的 instance class」改成「按負載秒級伸縮的 ACU」。它解的問題很具體：固定 provisioned cluster 在離峰時段付滿整台機器的錢、卻只用一小部分；尖峰來時又被 instance class 上限卡住。但 serverless v2 不是「比較便宜的 Aurora」——穩定高負載下它反而比同等 provisioned 貴。要不要用，取決於 workload 的負載形狀是否間歇、是否難預測。
+這篇整理 Aurora Serverless v2 的容量機制、min / max ACU 的設定與它的適用邊界。Aurora 的服務定位與適用場景在 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)。
 
-本文不是 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 而是 Serverless v2 的容量機制、設定與適用邊界的實作層教學。
+Aurora Serverless v2 把 instance 的容量從「開機時固定的 instance class」改成「按負載秒級伸縮的 ACU」。它解的問題很具體：固定 provisioned cluster 在離峰時段付滿整台機器的錢、卻只用它的一小部分容量；尖峰來時又被 instance class 上限卡住。穩定高負載下 serverless v2 反而比同等 provisioned 貴，所以要不要用，取決於 workload 的負載形狀是否間歇、是否難預測。
 
 ## 核心機制：ACU 與秒級擴縮
 
@@ -56,7 +56,7 @@ Serverless v2 不是「整個 cluster 要嘛全 serverless、要嘛全 provision
 
 從負載形狀評估到上線的 6 步流程。
 
-#### Step 1：判斷負載形狀
+#### 判斷負載形狀
 
 用 CloudWatch 過去 30 天的 CPU / connection / IOPS，看負載是穩定平緩、規律日週期、還是不規則突發：
 
@@ -64,11 +64,11 @@ Serverless v2 不是「整個 cluster 要嘛全 serverless、要嘛全 provision
 - 間歇 / 突發 / 開發測試 / 多租戶各自小 DB → serverless v2 適合
 - 規律日週期（白天高晚上低）→ serverless v2 或 provisioned + scheduled 都可，算成本 crossover
 
-#### Step 2：估 min / max ACU
+#### 估 min / max ACU
 
 min 依離峰最低負載 + 暖容量需求；max 依尖峰負載 + 餘量。第一次設保守一點、上線後依實際 ACU 曲線收斂。
 
-#### Step 3：建立或轉換
+#### 建立 serverless v2 cluster 或轉換既有 cluster
 
 ```bash
 # 新 cluster 指定 serverless v2 capacity range
@@ -80,15 +80,15 @@ aws rds create-db-cluster \
 
 既有 provisioned cluster 可加 serverless v2 reader、逐步驗證再調整 writer。
 
-#### Step 4：觀察 ACU 曲線
+#### 觀察 ACU 曲線
 
 上線後盯 `ServerlessDatabaseCapacity`（即時 ACU）與 `ACUUtilization`，確認伸縮符合負載、min/max 設定合理。
 
-#### Step 5：成本對照
+#### 對照 serverless 與 provisioned 的成本
 
 把實際 ACU-秒換算的帳單，跟「同等 provisioned instance 全時段開機」對照。若 serverless 帳單接近或超過 provisioned，代表負載其實夠穩定、該回 provisioned。
 
-#### Step 6：驗證點
+#### 驗證伸縮符合 min / max 設定
 
 ```text
 # 驗證離峰真的縮到 min ACU（看 ServerlessDatabaseCapacity 低谷）
@@ -102,23 +102,23 @@ aws rds create-db-cluster \
 
 production 常見的 5 個踩雷：
 
-#### Case 1：穩定高負載用 serverless 反而更貴
+#### 穩定高負載用 serverless 反而更貴
 
 把一個 7x24 高使用率的 cluster 改 serverless「以為省錢」，實際 ACU 幾乎全時段貼近高水位、按 ACU-秒計費比固定 instance 貴。修法：穩定高負載用 provisioned；serverless 的省錢前提是「有顯著的離峰可以縮」。
 
-#### Case 2：min ACU 設太低、回升期 latency 尖刺
+#### min ACU 設太低、回升期 latency 尖刺
 
 離峰縮到極低、早上流量回來時 cache 冷、ACU 從低水位爬、前幾分鐘 query 變慢。修法：規律日週期的 workload，min ACU 留足暖容量；或用 provisioned + scheduled scaling 處理可預測的日週期。
 
-#### Case 3：max ACU 沒當成本天花板監控
+#### max ACU 沒當成本天花板監控
 
 缺索引的 query 觸發全表掃描、ACU 一路衝到 max、帳單尖峰才發現。修法：max ACU 設合理上限 + CloudWatch alarm 盯 ACU 長時間貼 max（那是 query 或容量問題的訊號，不是正常擴縮）。
 
-#### Case 4：把 serverless 當「不用做容量規劃」
+#### 把 serverless 當「不用做容量規劃」
 
 以為 serverless 自動伸縮就不必估容量、min/max 隨便設。修法：serverless 改變的是「不用手動切 instance」，不是「不用理解負載形狀」；min/max 仍要基於負載曲線設定。
 
-#### Case 5：對延遲極敏感的 OLTP 全 serverless
+#### 對延遲極敏感的 OLTP 全 serverless
 
 核心交易路徑要求穩定低延遲、卻用會伸縮的 serverless writer、伸縮邊界期間 latency 抖動。修法：穩定低延遲的核心寫入用 provisioned writer，serverless 留給可容忍伸縮抖動的讀取 / 分析副本（混合 cluster）。
 

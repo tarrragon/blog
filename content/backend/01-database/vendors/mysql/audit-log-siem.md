@@ -8,7 +8,7 @@ tags: ["backend", "database", "mysql", "audit", "siem", "security"]
 
 MySQL audit log + SIEM 的核心責任是把資料庫操作事件轉成可查詢、可保留、可告警的安全證據。Audit log 是可調查的行為紀錄；它要回答誰在何時、從哪裡、對哪個資料物件做了什麼，以及是否符合授權流程。
 
-本文的判讀錨點是：audit logging 要服務於 investigation 與 compliance。Slow query log、general log、binary log、error log、managed service audit log、plugin audit log 各自承擔不同證據，不應混成同一種 log。
+這篇整理 MySQL audit log 接進 SIEM 的設計：要蒐集的資料庫事件分類、各 log 來源的用途與風險、SIEM pipeline 的處理步驟、告警規則，以及 audit log 的保存與隱私邊界。
 
 ## Event Taxonomy
 
@@ -40,6 +40,8 @@ Log sources 的核心責任是選出合適來源。
 
 General log 在 production 要謹慎使用。它能提供完整 SQL，但 volume、PII 與成本都高；通常只用短時間 incident window 或測試環境。
 
+Audit logging 要服務於 investigation 與 compliance。Slow query log、general log、binary log、error log、managed service audit log、plugin audit log 各自承擔不同證據，不應混成同一種 log。
+
 ## SIEM Pipeline
 
 SIEM pipeline 的核心責任是把 database event 轉成集中查詢與告警。
@@ -67,7 +69,7 @@ Alert rules 的核心責任是把高風險事件變成可行動訊號。
 | Bulk update / delete       | application bug / misuse             | 查 transaction、binlog、backup   |
 | Sensitive table read       | PII exposure                         | ticket match、scope review       |
 
-Alert 要有 owner 與 runbook。只把 log 送進 SIEM，缺少 triage rule，incident 時仍然難以快速定位。
+Alert 要有 owner 與 runbook。只把 log 送進 SIEM 而缺少 triage rule，incident 發生時，處理的人仍要在沒有分級的事件裡逐筆找出哪一個帳號、哪一個操作需要先處理。
 
 ## Retention and Privacy
 

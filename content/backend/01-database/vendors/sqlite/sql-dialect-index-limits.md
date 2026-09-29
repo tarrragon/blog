@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "sql", "index"]
 
 SQLite SQL dialect and index limits 的核心責任是說明 SQLite 和 server SQL 的語意差異。SQLite 可以執行大量 SQL，也支援 transaction、index、trigger、view、window function 與 JSON；但它的 typing、constraint、file-level operation、query planner 與 extension model 會影響測試可信度、migration 成本與 production adapter。
 
-本文的判讀錨點是：SQLite 測過代表某個 repository contract 在 SQLite 語意下成立。當 production target 是 PostgreSQL、MySQL、D1、Turso 或其他 server database 時，測試與 migration 要補上 dialect gap evidence。
+SQLite 測過代表某個 repository contract 在 SQLite 語意下成立，所以本文的範圍是 production target 為 PostgreSQL、MySQL、D1、Turso 或其他 server database 時，type affinity、constraint、transaction 與 index 這幾處 SQLite 語意與 target 的差異，以及測試與 migration 要為這些差異補上哪些 dialect gap evidence。
 
 ## Type Affinity
 
@@ -49,6 +49,16 @@ Foreign key 是 SQLite fixture 最常漏掉的設定。每個測試連線開啟�
 ```sql
 PRAGMA foreign_keys = ON;
 SELECT foreign_keys FROM pragma_foreign_keys;
+-- 1：這個 connection 已啟用 FK；回 0 代表 test setup 沒有執行到上一行
+
+-- 故意違反 FK 的 fixture case：payments.order_id 參照 orders(id)，999 不存在
+CREATE TABLE payments (
+  id INTEGER PRIMARY KEY,
+  order_id INTEGER NOT NULL REFERENCES orders(id)
+) STRICT;
+INSERT INTO payments (id, order_id) VALUES (1, 999);
+-- Runtime error: FOREIGN KEY constraint failed
+-- 這一行沒有報錯，就代表這個 connection 的 FK enforcement 沒有生效
 ```
 
 Constraint error 要在 repository adapter 層被歸類。若 production target 會把 duplicate key、foreign key、check violation 映射成不同 error code，SQLite fixture 也要至少保留 domain-level classification test。
@@ -94,6 +104,13 @@ FROM orders
 WHERE created_at >= '2026-05-01T00:00:00Z'
 ORDER BY created_at DESC
 LIMIT 50;
+-- 上方 schema 沒有 created_at 的 index：
+-- |--SCAN orders
+-- `--USE TEMP B-TREE FOR ORDER BY
+
+CREATE INDEX orders_created_at ON orders(created_at);
+-- 同一段查詢再跑一次 EXPLAIN QUERY PLAN：
+-- `--SEARCH orders USING INDEX orders_created_at (created_at>?)
 ```
 
 Index drift 是 migration 的常見風險。SQLite fixture 裡的 index 可以讓測試變快，但若 production schema 缺少同等 index，正式服務會在資料量成長後出現 latency spike；因此 index 要進入 schema diff audit。

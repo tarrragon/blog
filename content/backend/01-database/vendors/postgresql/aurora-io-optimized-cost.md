@@ -6,11 +6,11 @@ description: "Aurora PostgreSQL Standard 與 I/O-Optimized 的成本模型、I/O
 tags: ["backend", "database", "postgresql", "aurora", "cost"]
 ---
 
-Aurora PostgreSQL I/O-Optimized cost 的核心責任是把 Aurora storage configuration 從定價選項轉成 workload 決策。AWS 官方文件將 Aurora cluster storage configuration 分成 Aurora Standard 與 Aurora I/O-Optimized；前者適合一般 I/O 分布，後者針對 I/O 密集 workload 提供不同成本結構。
+Aurora PostgreSQL I/O-Optimized cost 的核心責任是把 Aurora storage configuration 從定價選項轉成 workload 決策。AWS 官方文件將 Aurora cluster storage configuration 分成 Aurora Standard 與 Aurora I/O-Optimized；Aurora Standard 適合一般 I/O 分布，Aurora I/O-Optimized 針對 I/O 密集 workload 提供不同成本結構。
 
-本文的判讀錨點是：I/O-Optimized 是成本與 workload profile 決策，而非效能保證。要看的是 read / write I/O charge、storage、instance、backup、replica、query pattern、maintenance 與未來成長。
+本文涵蓋 Aurora bill 的成本模型、判斷 I/O 是否為主要成本的 workload 訊號、切換前的評估流程、切換與回退，以及常見的反模式。
 
-官方文件路由的核心責任是固定時間敏感 claim。實作前先查 [Aurora storage configurations](https://docs.aws.amazon.com/en_us/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.StorageReliability.html) 與 [supported engines / regions](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.Aurora_Fea_Regions_DB-eng.Feature.storage-type.html)；本文最後檢查日是 2026-05-22。
+Aurora storage configuration 的支援區域、支援的 engine version 與計費方式會隨 AWS 更新而改變，這一篇的相關敘述只在檢查日當下成立。實作前先查 [Aurora storage configurations](https://docs.aws.amazon.com/en_us/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.StorageReliability.html) 與 [supported engines / regions](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.Aurora_Fea_Regions_DB-eng.Feature.storage-type.html)；本文最後檢查日是 2026-05-22。
 
 ## Cost Model
 
@@ -82,4 +82,4 @@ I/O-Optimized 的價值來自成本結構對齊 workload。它應該是 FinOps �
 
 ## 下一步路由
 
-Aurora I/O-Optimized cost 完成後，Aurora 遷移讀 [PostgreSQL to Aurora Migration](../migrate-to-aurora/)；query 成本讀 [Query Optimization](../query-optimization/)；capacity 與瓶頸判斷讀 [Bottleneck Localization](/backend/09-performance-capacity/bottleneck-localization/)。
+評估完 storage configuration 的成本之後，要把 PostgreSQL 搬上 Aurora 讀 [PostgreSQL to Aurora Migration](../migrate-to-aurora/)；query 成本讀 [Query Optimization](../query-optimization/)；capacity 與瓶頸判斷讀 [Bottleneck Localization](/backend/09-performance-capacity/bottleneck-localization/)。

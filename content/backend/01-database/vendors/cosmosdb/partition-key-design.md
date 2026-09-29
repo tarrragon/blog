@@ -8,9 +8,9 @@ tags: ["backend", "database", "cosmosdb", "partition-key", "hot-partition", "dee
 
 Cosmos DB 的 *logical partition 上限是 10,000 [Request Unit](/backend/knowledge-cards/request-unit/)/s + 20 GB storage*、partition key 一旦上 production *改不了*（要 export → recreate container → import）。partition key 選錯的後果是 Black Friday / 上線日 / VIP 用戶把流量壓在少數 partition、p99 latency 從 50ms 飆到 5s、整體 container 還有 70% RU 剩餘卻全 throttle。Cosmos DB partition key 設計是 *selection 階段就要決定的硬約束*、不是「先選錯再改」可承擔的風險 — 這個不可逆性跟 MongoDB（`reshardCollection` 線上完成）跟 DynamoDB（建新 table backfill）形成關鍵對比。
 
-本文不是 Cosmos DB overview（請看 [Cosmos DB vendor 頁](/backend/01-database/vendors/cosmosdb/)）— 而是 partition key 設計 + 故障演練的深度展開。Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（synthetic partition key 強制分散、AR 遊戲玩家位置）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 流量分散 + latency budget 拆解）。
+這篇涵蓋 Cosmos DB partition key 的上限與不可逆性、synthetic／composite／hierarchical 三種設計模式與它們的寫法、常見的 partition 失衡，以及 latency budget 怎麼拆。Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（synthetic partition key 強制分散、AR 遊戲玩家位置）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 流量分散 + latency budget 拆解）。
 
-> **Cosmos DB 適用度前置判讀**：本篇假設 workload 已通過 Cosmos DB 適用度四層 framing（API model 三型遷移路徑 / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in）— 詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)、本篇不重複展開。Partition key 設計是 *已選 Cosmos DB 後* 的硬約束議題；若 workload 不適用 Cosmos DB、partition key 設計無法救回 vendor 選錯的不可逆性風險。
+> **Cosmos DB 適用度前置判讀**：本篇假設 workload 已通過 Cosmos DB 適用度四層 framing（遷移路徑是保留 + 補周邊、同 DB 換託管還是同 model 換 vendor / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in）— 詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)。Partition key 設計是 *已選 Cosmos DB 後* 的硬約束議題；若 workload 不適用 Cosmos DB、partition key 設計無法救回 vendor 選錯的不可逆性風險。
 
 ## 問題情境
 
@@ -30,7 +30,7 @@ Cosmos DB 的 *logical partition 上限是 10,000 [Request Unit](/backend/knowle
 - SaaS 多租戶（大客戶 vs 小客戶不均、tenant_id 直接當 partition key 會 hot）
 - 零售商品 catalog（熱門 SKU vs 冷門 SKU 不均）
 
-partition key 選錯的隱性成本：要改就是 *export → recreate container with new partition key → import*、無 in-place migration、production 等於停機窗口 + 全量資料搬移。selection 階段就要決定、不能 phase 後補。
+partition key 選錯的隱性成本：要改就是 *export → recreate container with new partition key → import*、無 in-place migration、production 等於停機窗口 + 全量資料搬移。selection 階段就要決定、不能等上線之後再補。
 
 ## 核心機制
 
@@ -77,9 +77,9 @@ az cosmosdb sql container create \
 
 設計順序要從 *低 cardinality* 到 *高 cardinality*（tenant 少、device 多、session 最多）— 反序會讓 prefix query 無意義。
 
-### 跟其他 vendor 的可逆性對照（本章合成 frame）
+### 跟其他 vendor 的可逆性對照（本篇自行歸納的對照）
 
-> **跨 vendor 可逆性對照 SSoT**：MongoDB / DynamoDB / Cosmos DB 三家 partition key 可逆性不在同一光譜（Cosmos DB 屬不可改、不可逆性最高）、跨 vendor 對照 SSoT 主寫位置在 [DB3 entry — 三 vendor 對比 10 軸](/backend/01-database/vendors/db3-vendor-selection/#三-vendor-對比-10-軸) + 對應的[軸的延伸子段](/backend/01-database/vendors/db3-vendor-selection/#軸的延伸子段)。本段聚焦 Cosmos DB 不可改特性對 selection 階段 access pattern audit 嚴格度的影響、不重複展開三 vendor 全光譜比較。
+> MongoDB、DynamoDB、Cosmos DB 三家的 partition key 可逆性差很多，Cosmos DB 改不了、可逆性最低；三家在資料模型、部署 topology、capacity 抽象、consistency model、multi-region write 等面向的逐項對照見 [MongoDB / DynamoDB / Cosmos DB 選型對照](/backend/01-database/vendors/db3-vendor-selection/#mongodb--dynamodb--cosmos-db-的選型對比)。本段只看 Cosmos DB 改不了 partition key 這件事，對 selection 階段 access pattern audit 要多嚴格的影響。
 
 partition / shard key 的可逆性在 vendor 間差異懸殊：
 
@@ -181,7 +181,7 @@ partition key 選錯只能 export → recreate container with new partition key 
 
 ## 失敗模式
 
-### Failure 1：user_id 直接當 partition key
+### user_id 直接當 partition key
 
 高活躍用戶（VIP / bot / 大客戶）超過 10,000 RU/s、全 container 被 throttle；徵兆是 `429 TooManyRequests` 集中在少數 partition、整體 RU 利用率才 30%。
 
@@ -191,13 +191,13 @@ partition key 選錯只能 export → recreate container with new partition key 
 - 長期：換 synthetic key（user_id + random suffix）或 composite key（tenant + user）
 - selection 階段 audit：access pattern 是否會有「少數 user 主導流量」現象（B2B SaaS、VIP 用戶都有）
 
-### Failure 2：時間當 partition key
+### 時間當 partition key
 
 `/createdDate` 或 `/yyyyMM`、新資料全寫入最新 partition、舊 partition 冷掉浪費 — write hot + read 不均。徵兆：最新月份 partition throttle、其他月份 partition 閒置。
 
-修：時間 + 業務維度組合（如 `/yyyyMM-userId`、`/userId-yyyy`）、避免純時間維度。time-series workload 該考慮 Azure Time Series Insights 或 Cosmos DB time-series 專屬模式。
+修：時間 + 業務維度組合（如 `/yyyyMM-userId`、`/userId-yyyy`）、避免純時間維度。time-series workload 該考慮 Microsoft Fabric Real-Time Intelligence 的 Eventhouse 或 Azure Data Explorer（Azure Time Series Insights 已於 2024-07-07 退役，截至 2026-09 的官方遷移文件指向這兩者），或 Cosmos DB time-series 專屬模式。
 
-### Failure 3：Synthetic key 沒考慮 read 路徑
+### Synthetic key 沒考慮 read 路徑
 
 寫入散開但 read 必須 fan-out 100 partition、單一 query RU 暴漲 100x。徵兆：read 成本遠高於估算、`RetrievedDocumentCount` 跟 `OutputDocumentCount` 比例 > 50。
 
@@ -207,13 +207,13 @@ partition key 選錯只能 export → recreate container with new partition key 
 - 或調 fanout（10 而非 100）、平衡 write 分散跟 read 成本
 - 或重新評估「真的需要 synthetic key 嗎」 — 多數場景用 composite 就夠
 
-### Failure 4：Hierarchical key 設計順序顛倒
+### Hierarchical key 設計順序顛倒
 
 把 high-cardinality 放第一層、prefix query 變得無意義。如 `/userId/tenantId` 而非 `/tenantId/userId` — 想拿「tenant X 的所有 user」變成 cross-partition query、完全失去 hierarchical 優勢。
 
 修：設計順序從 *低 cardinality* 到 *高 cardinality*、跟業務 query pattern 對齊。建 container 前畫 access pattern 表、列每個 query 的 hierarchy 順序、再決定 partition key path。
 
-### Failure 5：不監控 partition 分布
+### 不監控 partition 分布
 
 partition skew 累積幾個月、直到事故才發現。production 上線初期 access pattern 還不明顯、半年後 VIP 客戶開始用、partition 失衡 — 來不及改 partition key、只能在 throttle 中應急。
 
@@ -225,9 +225,9 @@ partition skew 累積幾個月、直到事故才發現。production 上線初期
 
 每週看 portal Insights > Top contributors > Partition key range、early detect skew。
 
-### Failure 6：Container 之間 partition 設計不一致
+### Container 之間 partition 設計不一致
 
-跨 container query 需要 fan-out、cross-partition query 成本爆炸。常見 anti-pattern：訂單 container 用 user_id、商品 container 用 product_id、join 訂單 + 商品時兩邊都 cross-partition。
+跨 container query 需要 fan-out、cross-partition query 成本爆炸。常見 anti-pattern：訂單 container 用 user_id、商品 container 用 product_id，application 要把訂單與商品對起來時，只要查詢條件不是該 container 的 partition key，訂單 container 與商品 container 的查詢都變成 cross-partition。
 
 修：跨 container 的 access pattern 在 selection 階段就要設計、不能各 container 各自決定 partition key。或者用 Change Feed 把跨 container 資料合成 single container 的 materialized view。
 
@@ -254,16 +254,16 @@ partition skew 累積幾個月、直到事故才發現。production 上線初期
 
 ## 邊界與整合
 
-- Sibling deep articles：[ru-cost-model-sizing](../ru-cost-model-sizing/)（partition skew 直接影響 RU sizing）、[consistency-levels-engineering](../consistency-levels-engineering/)（partition 失衡時即使設 Strong 也看到 throttle）、[multi-region-write-conflict](../multi-region-write-conflict/)（partition key 影響 conflict 分布）、[mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/)（MongoDB shard key → Cosmos DB partition key 翻譯）
+- 同 vendor 的其他文章：[ru-cost-model-sizing](../ru-cost-model-sizing/)（partition skew 直接影響 RU sizing）、[consistency-levels-engineering](../consistency-levels-engineering/)（partition 失衡時即使設 Strong 也看到 throttle）、[multi-region-write-conflict](../multi-region-write-conflict/)（partition key 影響 conflict 分布）、[mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/)（MongoDB shard key → Cosmos DB partition key 翻譯）
 - 跟 [DynamoDB vendor](/backend/01-database/vendors/dynamodb/) 對比：partition key + adaptive capacity vs 不可逆 + hierarchical
 - 跟 [MongoDB vendor](/backend/01-database/vendors/mongodb/) 對比：`reshardCollection` 可逆 vs 不可逆
-- 跟 1.x 章節：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) / [1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)
+- 主章節：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) / [1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)
 - Knowledge cards：[Hot Partition](/backend/knowledge-cards/hot-partition/) / [Database Sharding](/backend/knowledge-cards/database-sharding/)
 - Anti-recommendation：小流量（< 1000 RU/s 預期）不必過度設計 synthetic key、Cosmos DB autoscale + 簡單 partition key 即可；過度 design 比 under-design 更常見的成本浪費
 
 ## 相關連結
 
-- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — 本文是該頁尾 partition key design backlog 的深度展開
+- [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
 - [9.C11 Minecraft Earth case](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — synthetic partition key 主案例
 - [9.C21 ASOS case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — latency budget 拆解 + 全球零售流量分散
 - [Hot Partition 卡片](/backend/knowledge-cards/hot-partition/) / [Database Sharding 卡片](/backend/knowledge-cards/database-sharding/) — 概念基底

@@ -1,12 +1,12 @@
 ---
 title: "TimescaleDB Deep Dive：Hypertable / Continuous Aggregate / Compression 把 PG 變 Time-Series DB"
 date: 2026-05-19
-description: "TimescaleDB 是 PG extension（不是 fork）、用 *hypertable* 自動 partition by time、加 *continuous aggregate* 做 incremental materialized view、加 *compression* 對舊 chunk 壓 90%+、把 PG 變成 InfluxDB / Prometheus 級 time-series DB。本文走 hypertable 機制、continuous aggregate 跟普通 MV 差異、compression policy、retention policy、5 production 踩雷（chunk size 不對 / CAGG refresh 落後 / compression 後 update 限制 / hypertable 不能加 FK / TimescaleDB 跟 PG 主版本對齊）、跟 PG 原生 partitioning 對比"
+description: "TimescaleDB 是 PG extension（不是 fork）、用 *hypertable* 自動 partition by time、加 *continuous aggregate* 做 incremental materialized view、加 *compression* 對舊 chunk 壓 90%+、把 PG 變成 InfluxDB / Prometheus 級 time-series DB。本文走 hypertable 機制、continuous aggregate 跟普通 MV 差異、compression policy、retention policy、production 踩雷（chunk size 不對 / CAGG refresh 落後 / 舊版 compression 後 update 限制 / FK 方向限制 / TimescaleDB 跟 PG 主版本對齊）、跟 PG 原生 partitioning 對比"
 weight: 29
 tags: ["backend", "database", "postgresql", "timescaledb", "time-series", "extension", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *TimescaleDB extension* — 用 PG 解 time-series workload 的路徑、跟 [extension-ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/) 是 *單一 extension 細節 vs ecosystem 全景* 的關係。
+本文的範圍是 TimescaleDB extension：hypertable 的 time-based partitioning、continuous aggregate、compression、retention policy、production 踩雷，以及跟 PG 原生 partitioning 的對比。PostgreSQL extension 生態的全景在 [extension-ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/)。
 
 ---
 
@@ -87,7 +87,7 @@ Hypertable 機制：
 **Multi-dimensional hypertable**（time + space partition）：
 
 ```sql
--- 按 time + device_id 雙維 partition
+-- 按 time + sensor_id 雙維 partition
 SELECT create_hypertable('sensor_data', 'time',
     partitioning_column => 'sensor_id',
     number_partitions => 16
@@ -126,17 +126,17 @@ CAGG 機制：
 
 - 記錄哪些 time bucket 已 materialize、哪些 stale
 - Refresh 時只重算 stale bucket、不全量
-- Query CAGG 自動 fallback 到原 hypertable 補最新資料（real-time aggregation）
+- 開啟 real-time aggregation（`timescaledb.materialized_only = false`）時，查 CAGG 會把尚未 materialize 的最新時段改從原 hypertable 算出來補上；TimescaleDB 2.13 起新建的 CAGG 預設關閉這個行為
 
 **CAGG vs 普通 MV 對比**：
 
-| 維度               | TimescaleDB CAGG  | 普通 PG MV            |
-| ------------------ | ----------------- | --------------------- |
-| Refresh 模式       | Incremental       | 全量重算              |
-| Refresh 時間       | 秒級              | 表大時數十分鐘        |
-| Real-time fallback | 自動補最新        | 不支援、需手動 union  |
-| Storage            | 多一份 aggregated | 多一份 aggregated     |
-| Policy             | 內建排程          | 需 pg_cron / 外部排程 |
+| 維度               | TimescaleDB CAGG                                       | 普通 PG MV            |
+| ------------------ | ------------------------------------------------------ | --------------------- |
+| Refresh 模式       | Incremental                                            | 全量重算              |
+| Refresh 時間       | 秒級                                                   | 表大時數十分鐘        |
+| Real-time fallback | 開啟 real-time aggregation 後補最新（2.13 起預設關閉） | 不支援、需手動 union  |
+| Storage            | 多一份 aggregated                                      | 多一份 aggregated     |
+| Policy             | 內建排程                                               | 需 pg_cron / 外部排程 |
 
 **CAGG hierarchy**（多層聚合）：
 
@@ -152,14 +152,14 @@ FROM sensor_hourly
 GROUP BY day, sensor_id;
 ```
 
-Application query 不同時間範圍時自動命中對應粒度、不必每次掃原始資料。
+Application 依查詢的時間範圍自己選要查 `sensor_hourly` 還是 `sensor_daily`：查長時間範圍時查日粒度的 CAGG，不必掃原始資料。
 
 ## Compression：把舊 Chunk 壓 90%+
 
 舊 chunk 可以開啟 compression：
 
 ```sql
--- 開啟 compression（必須先設定 segment by）
+-- 開啟 compression（segmentby / orderby 可省略，省略時 TimescaleDB 自己挑；明確指定才能控制壓縮分組）
 ALTER TABLE sensor_data SET (
     timescaledb.compress,
     timescaledb.compress_segmentby = 'sensor_id',
@@ -187,10 +187,9 @@ Compression 機制：
 
 **Compression 限制**（重要）：
 
-- 壓縮後 chunk **不能 UPDATE / DELETE 單 row**（要先 decompress）
-- 壓縮後 chunk **不能加 column**（要 decompress 所有 chunk）
-- 壓縮後 chunk 只能 *append new row*、不能改舊 row
-- DDL 變更（加 column / 改 index）需 decompress
+- TimescaleDB 2.11 之前，壓縮後 chunk **不能 UPDATE / DELETE 單 row**（要先 decompress）；2.11 起可以直接 UPDATE / DELETE，TimescaleDB 在背後把受影響的 segment 解壓、改完再寫回，成本比未壓縮的 chunk 高
+- 壓縮後的 hypertable 可以直接 `ADD COLUMN`，不必先 decompress
+- 改 index 這類 DDL 依版本而定，動手前先查所用版本的 compression 限制
 
 實務：compression 是 *write-once cold data* 的工具、active OLTP chunk 不開。
 
@@ -213,9 +212,9 @@ SELECT add_retention_policy('sensor_hourly', INTERVAL '5 years');
 
 這是 TimescaleDB 跟普通 PG partitioning 最大的價值差 — 普通 PG 要自己寫 cron drop partition、TimescaleDB policy 內建。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### Case 1：Chunk size 不對、catalog 膨脹
+### Chunk size 不對、catalog 膨脹
 
 **情境**：sensor 每秒寫 10 row、chunk_interval 設 1 小時、一年產 8760 chunk、`pg_class` 撐到 200 萬 row、planner 變慢。
 
@@ -225,23 +224,22 @@ SELECT add_retention_policy('sensor_hourly', INTERVAL '5 years');
 - 重設 chunk_interval：`SELECT set_chunk_time_interval('sensor_data', INTERVAL '1 day');`
 - 已存在 chunk 不會自動 merge、要靠 retention drop 自然消化
 
-### Case 2：CAGG refresh 落後 real-time
+### CAGG refresh 落後 real-time
 
 **情境**：CAGG refresh policy 每 1 小時跑、application 期待「即時 dashboard」、看到的數字落後 1 小時。
 
 修法：
 
 - 縮短 `schedule_interval`（5 分鐘）
-- 用 `real-time aggregation`（預設 ON、CAGG 自動 union 原始資料）
-- 確認 `materialized_only = false`（real-time aggregation 開啟）
+- 開啟 real-time aggregation：TimescaleDB 2.13 起新建的 CAGG 預設 `materialized_only = true`（不 union 原始資料），要明確設成 false
 
 ```sql
 ALTER MATERIALIZED VIEW sensor_hourly SET (timescaledb.materialized_only = false);
 ```
 
-### Case 3：Compression 後想 UPDATE
+### Compression 後想 UPDATE（TimescaleDB 2.11 之前）
 
-**情境**：發現某個歷史 row 數值錯、想 UPDATE、報錯 *cannot update/delete from compressed chunk*。
+**情境**：發現某個歷史 row 數值錯、想 UPDATE、報錯 *cannot update/delete from compressed chunk*。TimescaleDB 2.11 起直接 UPDATE 就會成功，這一段只適用更早的版本。
 
 修法：
 
@@ -257,17 +255,16 @@ SELECT compress_chunk(...);
 
 或設計階段就避免 — compression 用在 *immutable data*、有可能改的留未壓。
 
-### Case 4：Hypertable 不能加 FK 到 non-hypertable
+### FK 指向 hypertable 的限制
 
-**情境**：想對 `sensor_data` 加 FK 到 `sensors` 表、報錯 *foreign key constraints with hypertables are not supported*。
+**情境**：hypertable 指向一般表的 FK（`sensor_data.sensor_id` → `sensors.id`）一直可以建、也會檢查；受限的是反方向——一般表的 FK 指向 hypertable，TimescaleDB 2.16 之前不支援。
 
 修法：
 
-- Application 層維護 referential integrity
-- 或反過來：`sensors` 可以 FK 到 hypertable（特定方向支援）
-- TimescaleDB 2.11+ 部分支援 FK from hypertable、但限制多
+- 需要一般表指向 hypertable 時，升到支援這個方向的版本，或在 application 層維護 referential integrity
+- hypertable 指向一般表的 FK 照常宣告
 
-### Case 5：TimescaleDB 跟 PG 主版本對齊
+### TimescaleDB 跟 PG 主版本對齊
 
 **情境**：PG 升級 14 → 16、TimescaleDB extension 沒對應升級、PG 啟動 fail。
 
@@ -330,4 +327,4 @@ PG 10+ 有 declarative partitioning、不一定要 TimescaleDB：
 ## 下一步
 
 - 看 [extension-ecosystem](/backend/01-database/vendors/postgresql/extension-ecosystem/) 了解其他 PG 擴展選項
-- 回 [PostgreSQL overview](/backend/01-database/vendors/postgresql/) 看全圖
+- 回 [PostgreSQL 服務總覽](/backend/01-database/vendors/postgresql/)

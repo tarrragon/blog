@@ -6,7 +6,7 @@ weight: 22
 tags: ["backend", "database", "mysql", "partitioning", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *native partitioning* — 5 段 lifecycle + 4 種 type + 跟 Vitess sharding / PG partitioning 對比。
+> 這篇整理 MySQL（以 8.4 為準）在同一個 instance 內把一張表切成多個 partition 的做法：partition type 的選法、optimizer 怎麼只掃相關 partition（partition pruning）、ADD / DROP / REORGANIZE / EXCHANGE 的維護操作，以及它跟跨 instance 的 [Vitess sharding](/backend/01-database/vendors/mysql/vitess-sharding/)、PostgreSQL declarative partitioning 的差別。
 
 ---
 
@@ -35,7 +35,7 @@ Drop         整個 partition 一次刪（比 DELETE FROM 快 1000x）
 
 兩者不衝突、可組合：Vitess shard 內部 *再* 用 MySQL partition（例如：shard 切 16 個、每個 shard 的 table 再按月份 partition）。
 
-## 4 種 partition type
+## Partition type：RANGE、LIST、HASH、KEY 與 sub-partitioning
 
 ### RANGE partitioning — 連續區間切割
 
@@ -87,7 +87,17 @@ PARTITION BY LIST COLUMNS (region) (
 
 優點：對 enum-like value 直接命中、pruning 簡單。
 
-缺點：value list 不能變更（不 supported `ALTER PARTITION ADD VALUE`）、新國家代碼必須 REORGANIZE。
+缺點：沒有單獨替某個 partition 追加值的語法；新國家代碼放進新的 partition 用 `ADD PARTITION`，要放進既有 partition 就得用 `REORGANIZE PARTITION` 重寫那個 partition：
+
+```sql
+-- 新代碼自成一個 partition：只新增，不動既有資料
+ALTER TABLE users ADD PARTITION (PARTITION p_sea VALUES IN ('SG', 'MY'));
+
+-- 新代碼併進既有的 p_asia：重新定義整個 value list，p_asia 的資料會被重寫
+ALTER TABLE users REORGANIZE PARTITION p_asia INTO (
+    PARTITION p_asia VALUES IN ('TW', 'JP', 'KR', 'CN', 'HK')
+);
+```
 
 ### HASH partitioning — 均勻分布
 
@@ -150,17 +160,18 @@ SUBPARTITION BY HASH (user_id) SUBPARTITIONS 4 (
 
 ## Partition Pruning — Optimizer 怎麼選 partition
 
-`EXPLAIN PARTITIONS SELECT ...` 顯示 query 命中哪些 partition：
+`EXPLAIN` 輸出的 `partitions` 欄列出 query 命中哪些 partition（MySQL 8.0 起 `EXPLAIN` 預設就有這一欄，舊版的 `EXPLAIN PARTITIONS` 寫法在 8.4 是語法錯誤）：
 
 ```sql
-EXPLAIN PARTITIONS
+EXPLAIN
 SELECT * FROM orders WHERE created_at BETWEEN '2026-02-15' AND '2026-02-20';
 
-+----+-------------+--------+------------+-------+
-| id | select_type | table  | partitions | type  |
-+----+-------------+--------+------------+-------+
-|  1 | SIMPLE      | orders | p202602    | range |
-+----+-------------+--------+------------+-------+
+-- 節錄前五欄（L45–57 的 orders 表、放三列測試資料）
++----+-------------+--------+------------+------+
+| id | select_type | table  | partitions | type |
++----+-------------+--------+------------+------+
+|  1 | SIMPLE      | orders | p202602    | ALL  |
++----+-------------+--------+------------+------+
 ```
 
 只命中 `p202602`、其他 partition 不 scan。
@@ -170,34 +181,27 @@ SELECT * FROM orders WHERE created_at BETWEEN '2026-02-15' AND '2026-02-20';
 1. **Function on partition key**：
 
     ```sql
-    WHERE YEAR(created_at) = 2026  -- 沒 pruning、scan 全部
+    -- partitions: p202601,p202602,p202603,p_future（函式包住 partition key，全掃）
+    SELECT id FROM orders WHERE YEAR(created_at) = 2026 AND MONTH(created_at) = 2;
     ```
 
-    應該寫成：
+    應該寫成直接比較 partition key 的範圍：
 
     ```sql
-    WHERE created_at >= '2026-01-01' AND created_at < '2027-01-01'
+    -- partitions: p202601,p202602（TO_DAYS 分區遇到範圍條件時多帶了相鄰的 p202601，仍比全掃少）
+    SELECT id FROM orders WHERE created_at >= '2026-02-01' AND created_at < '2026-03-01';
     ```
 
-2. **Implicit conversion**：
+2. **OR 跨 partition**：
 
     ```sql
-    WHERE created_at = '2026-02-15'  -- 字串 vs DATETIME、可能失效
+    -- partitions: p202601,p202602,p202603,p_future（partition key 與非 partition key 用 OR 連接，全掃）
+    SELECT * FROM orders WHERE created_at = '2026-02-15' OR user_id = 100;
     ```
 
-    應該：
+3. **JOIN 不直接 filter partition key**：JOIN 條件不含 partition key、optimizer 估計無法 pruning。
 
-    ```sql
-    WHERE created_at = TIMESTAMP '2026-02-15 00:00:00'
-    ```
-
-3. **OR 跨 partition**：
-
-    ```sql
-    WHERE created_at = '2026-02-15' OR user_id = 100  -- partition + non-partition column OR、scan 全部
-    ```
-
-4. **JOIN 不直接 filter partition key**：JOIN 條件不含 partition key、optimizer 估計無法 pruning。
+字串常數跟 DATETIME 欄位比對不會讓 pruning 失效：`WHERE created_at = '2026-02-15'` 的 `EXPLAIN` 只列 `p202602`，跟寫成 `TIMESTAMP '2026-02-15 00:00:00'` 的結果相同。
 
 ## Partition Maintenance — ADD / DROP / REORGANIZE / EXCHANGE
 
@@ -251,9 +255,9 @@ ALTER TABLE orders EXCHANGE PARTITION p202601 WITH TABLE orders_staging;
 
 `EXCHANGE PARTITION` 是 *metadata operation*、毫秒級完成、不複製資料。Time-series archive 工作流的核心工具。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. PK 必須含 partition key — Schema 設計受限
+### PK 必須含 partition key — Schema 設計受限
 
 MySQL partition 規則：**PK 必須包含所有 partition key column**。
 
@@ -283,26 +287,37 @@ CREATE TABLE orders (
 
 對 application：原本 `WHERE id = X` 仍 work、但慢（沒 partition pruning）、必須 `WHERE id = X AND created_at >= ...` 才高效。
 
-### 2. Global index 沒原生支援
+### Global index 沒原生支援
 
-MySQL partitioning *沒 global secondary index*（PG 有）。每個 partition 各自有自己的 local index、跨 partition 的 unique constraint 必須 *包含 partition key*。
+MySQL partitioning *沒 global secondary index*：每個 partition 各自有自己的 local index，所以 unique constraint 只能在單一 partition 內檢查，MySQL 因此要求每個 UNIQUE index 都 *包含 partition key*。PostgreSQL 的 declarative partitioning 也一樣沒有 global index。
 
 例：希望 `user_id` 全表 unique、但 partition by `created_at`：
 
 ```sql
--- MySQL 不允許這樣 — UNIQUE 必須含 created_at
+-- 被拒：UNIQUE 只有 user_id
 CREATE TABLE orders (
     id BIGINT AUTO_INCREMENT,
     user_id BIGINT,
     created_at DATETIME,
     PRIMARY KEY (id, created_at),
-    UNIQUE KEY (user_id, created_at)  -- 必須含 created_at、不是純 user_id
-);
+    UNIQUE KEY (user_id)
+) PARTITION BY RANGE (TO_DAYS(created_at)) (PARTITION p0 VALUES LESS THAN MAXVALUE);
+-- ERROR 1503 (HY000): A UNIQUE INDEX must include all columns in the table's partitioning function (prefixed columns are not considered).
+
+-- 建得起來：UNIQUE 加上 created_at
+-- 代價是它只保證 (user_id, created_at) 這組值不重複，同一個 user_id 在不同時間仍可以出現多次
+CREATE TABLE orders (
+    id BIGINT AUTO_INCREMENT,
+    user_id BIGINT,
+    created_at DATETIME,
+    PRIMARY KEY (id, created_at),
+    UNIQUE KEY (user_id, created_at)
+) PARTITION BY RANGE (TO_DAYS(created_at)) (PARTITION p0 VALUES LESS THAN MAXVALUE);
 ```
 
 對 application：跨 partition 的 unique 需要 *application 層處理*（INSERT 前 SELECT 檢查）或改用 Vitess `lookup_hash` Vindex。
 
-### 3. EXCHANGE partition — schema 必須完全一致
+### EXCHANGE partition — schema 必須完全一致
 
 EXCHANGE 失敗常見：staging table 跟 partition 的 *index / column 順序差一個*、`ERROR 1736: Tables have different definitions`。
 
@@ -312,7 +327,7 @@ EXCHANGE 失敗常見：staging table 跟 partition 的 *index / column 順序�
 - `REMOVE PARTITIONING` 後立即 verify schema
 - 跑 OSC 改 schema 時、partition + staging table 同時改、不能漏一個
 
-### 4. Orphan partition — Future partition 預先建忘記延展
+### Orphan partition — Future partition 預先建忘記延展
 
 部署 cron 每月建下個月 partition、cron 失敗 / pause、下個月 INSERT 無對應 partition、寫入 `p_future`。`p_future` 一年累積後變超大、partition pruning 沒效、查最近資料 scan 全表。
 
@@ -322,7 +337,7 @@ EXCHANGE 失敗常見：staging table 跟 partition 的 *index / column 順序�
 - Cron 失敗 alert（不是 silent fail）
 - 不依賴 cron、改成 *application 層在 INSERT 前 ensure partition exists*（lazy create）
 
-### 5. Cross-partition query 慢
+### Cross-partition query 慢
 
 ```sql
 SELECT user_id, SUM(amount) FROM orders GROUP BY user_id;
@@ -355,14 +370,14 @@ SELECT user_id, SUM(amount) FROM orders GROUP BY user_id;
 | ---------------------- | ---------------------------- | ----------------------------------- |
 | Partition type         | RANGE / LIST / HASH / KEY    | RANGE / LIST / HASH                 |
 | Sub-partitioning       | RANGE + HASH                 | 多層 nested 支援更廣                |
-| Global index           | 無                           | PG 11+ 有                           |
+| Global index           | 無                           | 無（每個分區各建 local index）      |
 | Partition wise join    | 受限                         | PG 11+ 強                           |
-| Cross-partition unique | 必須含 partition key         | PG 11+ 同限制、但 PG 17+ 部分解除   |
+| Cross-partition unique | 必須含 partition key         | 同限制（PG 16、17 皆是）            |
 | Partition attach       | EXCHANGE PARTITION           | ATTACH PARTITION                    |
 | 操作工具               | gh-ost / pt-osc 對 partition | pg_partman（成熟）                  |
 | Production maturity    | 中（5.x 開始有、8.0 強化）   | 高（11+ declarative 後成熟）        |
 
-PG partitioning 對 *跨 partition unique* 跟 *partition-wise join* 處理較好、是 reporting workload 的優勢。MySQL partitioning 對 *archive workflow*（DROP / EXCHANGE）較成熟。詳見 [PostgreSQL Declarative Partitioning](/backend/01-database/vendors/postgresql/declarative-partitioning/)。
+PG partitioning 對 *partition-wise join* 處理較好、是 reporting workload 的優勢；跨 partition unique 兩者限制相同，UNIQUE 都必須含 partition key。MySQL partitioning 對 *archive workflow*（DROP / EXCHANGE）較成熟。詳見 [PostgreSQL Declarative Partitioning](/backend/01-database/vendors/postgresql/declarative-partitioning/)。
 
 ## 何時用 native partitioning
 
@@ -396,24 +411,24 @@ Partition operation（ADD / DROP / EXCHANGE）是 DDL、走 binlog、replica app
 
 ### 跟 Query Optimization
 
-`EXPLAIN PARTITIONS` 是 partition-aware query optimization 的關鍵工具、看 query 真的命中哪些 partition。詳見 [Query Optimization](/backend/01-database/vendors/mysql/query-optimization/)。
+`EXPLAIN` 輸出的 `partitions` 欄是 partition-aware query optimization 的關鍵工具、看 query 真的命中哪些 partition。詳見 [Query Optimization](/backend/01-database/vendors/mysql/query-optimization/)。
 
 ## 容量規劃要點
 
-| 維度                        | 建議                                                      |
-| --------------------------- | --------------------------------------------------------- |
-| Partition 數量上限          | 8.0 預設 8192、實務建議 < 1000（管理成本上升）            |
-| 單 partition 大小           | 10 GB - 100 GB（太小無 partition value、太大 prune 沒效） |
-| RANGE 時間 partition        | 月 / 週 / 日（依資料量）                                  |
-| HASH partition 數量         | 通常 power of 2（8 / 16 / 32 / 64）                       |
-| Future partition pre-create | 至少 6 個月 buffer、cron 每月 add 1 個                    |
+| 維度                        | 建議                                                       |
+| --------------------------- | ---------------------------------------------------------- |
+| Partition 數量上限          | 8192（非 NDB 表的硬上限）、實務建議 < 1000（管理成本上升） |
+| 單 partition 大小           | 10 GB - 100 GB（太小無 partition value、太大 prune 沒效）  |
+| RANGE 時間 partition        | 月 / 週 / 日（依資料量）                                   |
+| HASH partition 數量         | 通常 power of 2（8 / 16 / 32 / 64）                        |
+| Future partition pre-create | 至少 6 個月 buffer、cron 每月 add 1 個                     |
 
 ## 相關連結
 
 - [MySQL vendor overview](/backend/01-database/vendors/mysql/)
 - [MySQL Vitess sharding](/backend/01-database/vendors/mysql/vitess-sharding/)（跨 instance 切割對比）
 - [MySQL Online Schema Change](/backend/01-database/vendors/mysql/online-schema-change-tools/)（partition table 的 schema change）
-- [MySQL Query Optimization](/backend/01-database/vendors/mysql/query-optimization/)（EXPLAIN PARTITIONS）
+- [MySQL Query Optimization](/backend/01-database/vendors/mysql/query-optimization/)（用 EXPLAIN 的 partitions 欄看命中哪些 partition）
 - [MySQL InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)（partition + buffer pool 互動）
 - [PostgreSQL Declarative Partitioning](/backend/01-database/vendors/postgresql/declarative-partitioning/)（PG sibling 對比）
 - [Partition 卡片](/backend/knowledge-cards/partition/)

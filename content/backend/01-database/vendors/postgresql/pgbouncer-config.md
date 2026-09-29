@@ -8,7 +8,7 @@ tags: ["backend", "database", "postgresql", "connection-pool", "pgbouncer", "dee
 
 PostgreSQL 的 connection 是 *昂貴的 process*、每個 connection ~10MB RAM、idle connection 也吃 backend slot。當 application instance 數量爆炸（K8s replica × 多 deployment × pool size）、直接連 PostgreSQL 會把 backend slot 耗盡、新 connection 全 refuse — 即使 active query 不多。pgBouncer 是 *connection pool proxy*、把幾千個 application connection 收斂成幾百個 PostgreSQL backend connection、production-grade PostgreSQL 部署的標配。
 
-本文不是 pgBouncer overview（請看 [PostgreSQL vendor 頁](/backend/01-database/vendors/postgresql/) 中 connection pool 段）— 而是 *production 部署 + 故障演練* 的實作層教學。覆蓋三層 pool（application → pgBouncer → PostgreSQL）的對齊、transaction pooling 跟 session pooling 的選擇陷阱、跟 HA failover 的整合、容量規劃。
+本文的範圍是 pgBouncer 的 production 部署與故障演練：application → pgBouncer → PostgreSQL 三層 pool 的對齊、transaction pooling 跟 session pooling 的選擇陷阱、跟 HA failover 的整合，以及容量規劃。
 
 ## 問題情境
 
@@ -27,14 +27,14 @@ PostgreSQL 預設 `max_connections = 100`、production 設 `max_connections = 50
 - DB failover 時所有 application 同時 reconnect、prod-test pattern 跑不通
 - DNS-based failover 時 application connection pool 不知道 backend 換了
 
-pgBouncer 解這四個問題。但 *引入 pgBouncer* 後又會引入新的問題層（pgBouncer 跟 application pool 不對齊、transaction pooling 的 session state 限制、HA 故障時 pgBouncer 也要 failover）— 本文討論這些。
+pgBouncer 直接解掉 idle connection 占 backend slot、cold start spike 與 DB failover 時的 reconnect 湧入；DNS-based failover 還要 pgBouncer 自己換掉連到舊 master 的 server connection（見〈DNS-based failover 後 application 連到舊 master〉）。但 *引入 pgBouncer* 後又會引入新的問題層（pgBouncer 跟 application pool 不對齊、transaction pooling 的 session state 限制、HA 故障時 pgBouncer 也要 failover）— 本文討論這些。
 
 ## 核心概念：pool mode + sizing
 
 pgBouncer 的 first-class concept 是 *pool mode*、決定 application connection 跟 PostgreSQL backend connection 的綁定方式：
 
 - **Session pooling**：application connection 拿到 backend connection 後、整個 session 期間都綁同一個 backend。tear-down 才釋放。語義跟「直連」一樣、不破壞 session state。但 *idle connection 仍占 backend slot*、收斂效率低、適合 *連線數不多但要保留 session state*（用了 prepared statement、temporary table、advisory lock 等）的場景。
-- **Transaction pooling**：application connection 在 *transaction 邊界* 才綁 backend、commit / rollback 後立即釋放。同一個 application connection 不同 transaction 可能拿到不同 backend。收斂效率高（idle connection 完全不占 backend slot）、但 *session state 限制嚴* — 不能用 `SET` 改 session-level setting、不能用 prepared statement（除非 application 端禁用）、不能用 advisory lock 跨 transaction。
+- **Transaction pooling**：application connection 在 *transaction 邊界* 才綁 backend、commit / rollback 後立即釋放。同一個 application connection 不同 transaction 可能拿到不同 backend。收斂效率高（idle connection 完全不占 backend slot）、但 *session state 限制嚴* — 不能用 `SET` 改 session-level setting、不能用 protocol-level prepared statement（pgBouncer 1.21 起可用 `max_prepared_statements` 支援）、不能用 advisory lock 跨 transaction。
 - **Statement pooling**：每個 statement 完就釋放 backend。極端高收斂但 *連 transaction 都不能跨 statement*、絕大多數 application 用不了、只在 batch query 場景。
 
 **Production 預設選 transaction pooling**、application 端禁用 prepared statement（或用 [PgBouncer-supported prepared statement](https://www.pgbouncer.org/config.html#max_prepared_statements)、需 pgBouncer 1.21+）。例外場景才開 session pooling。
@@ -42,20 +42,20 @@ pgBouncer 的 first-class concept 是 *pool mode*、決定 application connectio
 **Pool sizing 公式**：
 
 ```text
-PostgreSQL max_connections     = pgBouncer N × default_pool_size + reserve
-pgBouncer default_pool_size    = per-database backend connection 上限
-Application pool size          = 每 application instance 拿幾個 pgBouncer connection
+PostgreSQL max_connections  ≥ pgBouncer instance 數 × (database, user) 組合數 × (default_pool_size + reserve_pool_size) + admin 預留
+pgBouncer default_pool_size = 每個 (database, user) 組合對 PostgreSQL 開的 backend connection 上限
+Application pool size       = 每個 application instance 對 pgBouncer 開的 connection 數
 ```
 
-實例：50 個 application replica、每 instance pool 30 個、pgBouncer 後 default_pool_size = 20（per database）、3 個 database。
+實例：50 個 application replica、每 instance pool 30 個；1 個 pgBouncer instance，3 個 database 各用一個 user 連，`default_pool_size = 20`、`reserve_pool_size = 10`（下方設定檔的值）。
 
 ```text
 Total application → pgBouncer = 50 × 30 = 1500 connection
-pgBouncer → PostgreSQL        = 3 × 20 = 60 connection
-PostgreSQL max_connections    = 60 + reserve (50 預留 admin / migration) = 110
+pgBouncer → PostgreSQL        = 1 × 3 × (20 + 10) = 90 connection
+PostgreSQL max_connections    = 90 + admin 預留 50 = 140
 ```
 
-1500 → 110 收斂 13.6 倍、PostgreSQL 還在合理上限內。
+1500 → 140 收斂約 10.7 倍、PostgreSQL 還在合理上限內。
 
 ## Step-by-step 配置
 
@@ -101,7 +101,7 @@ stats_users = pgbouncer_stats
 關鍵欄位解釋：
 
 - `pool_mode = transaction`：絕大多數 production 場景
-- `default_pool_size = 20`：每 database 對 PostgreSQL 的 backend connection 上限、調整時要算進 PostgreSQL `max_connections`
+- `default_pool_size = 20`：每個 (database, user) 組合對 PostgreSQL 的 backend connection 上限、調整時要算進 PostgreSQL `max_connections`
 - `reserve_pool_size = 10` + `reserve_pool_timeout = 5`：當 default_pool_size 用滿、等 5 秒還拿不到 connection 才用 reserve pool — 是 *突發 spike* 的 buffer、不是 baseline
 - `max_client_conn = 2000`：application 端能連 pgBouncer 的最大數
 - `server_lifetime = 3600`：每 1 小時強制 recycle backend connection、避免 long-lived connection 累積 memory bloat（PostgreSQL `pg_stat_activity` 看 connection age）
@@ -116,7 +116,7 @@ spring.datasource.hikari.maximum-pool-size: 30
 spring.datasource.hikari.minimum-idle: 5
 spring.datasource.hikari.connection-timeout: 30000
 spring.datasource.hikari.idle-timeout: 600000
-spring.datasource.hikari.max-lifetime: 1800000  # 30 min < pgBouncer server_lifetime 60 min
+spring.datasource.hikari.max-lifetime: 1800000  # 30 min：HikariCP 汰換自己到 pgBouncer 的連線
 
 # 例：SQLAlchemy
 engine = create_engine(
@@ -124,19 +124,19 @@ engine = create_engine(
     pool_size=30,
     max_overflow=5,
     pool_pre_ping=True,        # 必開、檢測 stale connection
-    pool_recycle=1800,         # 30 min、跟 pgBouncer server_lifetime 對齊
+    pool_recycle=1800,         # 30 min：SQLAlchemy 汰換自己到 pgBouncer 的連線
 )
 ```
 
 **Application 跟 pgBouncer 對齊**：
 
-- application `max-lifetime` < pgBouncer `server_lifetime`：避免 application 拿到已被 pgBouncer recycle 的 connection
+- application 的 `max-lifetime` 與 pgBouncer 的 `server_lifetime` 管的是不同段的連線：前者汰換 application → pgBouncer 的連線，後者汰換 pgBouncer → PostgreSQL 的 server connection。pgBouncer 只關閉當下沒有連著任何 client 的 server connection，application 手上的連線不會因為 `server_lifetime` 失效，兩個值不必互相對齊
 - `pool_pre_ping = True`：每次 checkout 前 send `SELECT 1`、檢測 stale connection — 對 transaction pooling 是必要的
 - application 端 *不要* 用 prepared statement（除非 pgBouncer 1.21+ 設 `max_prepared_statements`）
 
 ## 故障演練 / 邊界 case
 
-### Case 1：Pool exhaustion（default_pool_size 用滿）
+### Pool exhaustion（default_pool_size 用滿）
 
 徵兆：application log `ERROR: no more connections allowed`、pgBouncer log `pool is full`、pgBouncer admin console `SHOW POOLS` 顯示 `cl_waiting > 0`。
 
@@ -157,7 +157,7 @@ SHOW SERVERS;
 - 中期：找 *long-running query*（PostgreSQL `pg_stat_activity` 看 `query_start`、kill 過長 query）
 - 長期：拆 database / 改 read replica / 移 OLAP query 到 data warehouse
 
-### Case 2：Transaction pooling 下 session state 漏洞
+### Transaction pooling 下 session state 漏洞
 
 徵兆：random 失敗 `prepared statement "S_3" does not exist`、`relation "tmp_xxx" does not exist`、advisory lock 不釋放。
 
@@ -170,7 +170,7 @@ SHOW SERVERS;
 - advisory lock 改 row-level lock 或 application-level lock（Redis）
 - 或：切到 session pooling、犧牲收斂效率
 
-### Case 3：DNS-based failover 後 application 連到舊 master
+### DNS-based failover 後 application 連到舊 master
 
 徵兆：PostgreSQL 切換 master 後、application 寫操作 *時好時壞*（看連到哪台）。
 
@@ -182,28 +182,28 @@ SHOW SERVERS;
 - 配 Patroni / Stolon 等 HA 工具自動 trigger pgBouncer reconnect
 - application 端 `pool_pre_ping` 開啟、stale connection 自動踢
 
-### Case 4：Server lifetime recycle 跟 in-flight transaction 衝突
+### 偶發 server closed the connection：先排除 server_lifetime
 
 徵兆：偶發 `server closed the connection unexpectedly`、跟 long-running transaction 重疊。
 
-原因：pgBouncer `server_lifetime = 3600` 強制 recycle、但有 transaction 在跑時 pgBouncer 不會切、超過時間後仍會切。
+原因不在 `server_lifetime`：pgBouncer 只關閉當下沒有連著任何 client 的 server connection，跑到一半的 transaction 不會被它切斷。要找的是其他會關掉連線的設定，例如 PostgreSQL 的 `idle_in_transaction_session_timeout` 或 pgBouncer 的 `idle_transaction_timeout`。
 
 修：
 
-- 確認沒有 *超過 1 小時* 的 transaction（PostgreSQL `pg_stat_activity` 看 `xact_start`）
-- 必要時調高 `server_lifetime`、但 memory bloat 風險上升
+- 對照斷線時間點的 pgBouncer log（`log_disconnections = 1` 時記錄斷線與原因）與 PostgreSQL log，找出關掉連線的是哪一端、哪個設定
+- 長 transaction 本身仍要處理（PostgreSQL `pg_stat_activity` 看 `xact_start`）
 - application 端做 transaction timeout
 
-### Case 5：pgBouncer 自己 crash / OOM
+### pgBouncer 自己 crash / OOM
 
 徵兆：所有 application 同時失去 PostgreSQL 連線。
 
-原因：pgBouncer 是 single-process（除非 1.21+ 用 `so_reuseport` 多 process）、memory leak / OOM / 部署事件都會打掉整個 connection layer。
+原因：pgBouncer 是 single-process（1.12 起可用 `so_reuseport` 讓同一台機器上的多個 pgBouncer process 共用同一個 port）、memory leak / OOM / 部署事件都會打掉整個 connection layer。
 
 修：
 
 - 多 pgBouncer instance + load balancer（HAProxy / Envoy）前置、application 連 LB
-- `so_reuseport = 1`（1.21+）讓多個 pgBouncer process 共用 port
+- `so_reuseport = 1`（1.12+）讓多個 pgBouncer process 共用 port
 - Resource limit 跟 alert：RSS > N、connection count > M
 - HA mode：active-passive 配 keepalived
 
@@ -254,10 +254,10 @@ SHOW SERVERS;
 
 ## 相關連結
 
-- [PostgreSQL vendor overview](/backend/01-database/vendors/postgresql/) — 本文是該頁尾「pgBouncer / PgCat 配置 best practice」backlog 的深度展開
+- [PostgreSQL vendor overview](/backend/01-database/vendors/postgresql/)
 - [Connection Scaling Deep Dive](/backend/01-database/vendors/postgresql/connection-scaling/) — connection-per-process model 跟為什麼 pooler 是必裝（根因 vs 配置）
 - [1.1 高併發資料存取](/backend/01-database/high-concurrency-access/) — 上游：什麼時候需要 connection pool
 - [Connection Pool 卡片](/backend/knowledge-cards/connection-pool/) — 概念基底
-- [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — 本文是該方法論的 demo #1
+- [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — 這類 production 部署文章的寫法
 - [9.C29 Lemino RDB connection limit case](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — connection 爆是 streaming surge 場景的 vendor-switch 主因
 - 官方：[pgBouncer Documentation](https://www.pgbouncer.org/usage.html)

@@ -6,7 +6,7 @@ weight: 20
 tags: ["backend", "database", "mysql", "group-replication", "innodb-cluster", "ha", "deep-article"]
 ---
 
-> 本文是 [MySQL](/backend/01-database/vendors/mysql/) overview 的 implementation-layer deep article。Overview 已說明 MySQL 在 OLTP 譜系的定位、本文聚焦 *Group Replication + InnoDB Cluster* — synchronous multi-primary 的 transaction model + 部署模型。
+> 這篇涵蓋 MySQL Group Replication 的 transaction model 與 Group Communication Engine、以 InnoDB Cluster（GR + MySQL Shell + MySQL Router）部署的方式，以及 production 踩雷、適用時機與容量規劃。
 
 ---
 
@@ -14,7 +14,7 @@ tags: ["backend", "database", "mysql", "group-replication", "innodb-cluster", "h
 
 Single-primary 跟 multi-primary 共用同一套 GR 機制（GCE atomic broadcast + certification + applier）— 切換 mode 是 *配置變更*。但 *性能效果* 經常跟讀者預期不同：在 single-primary cluster 上加開 `group_replication_single_primary_mode=OFF`、預期 *3 個 instance 都可以接受 write* 帶來吞吐倍增、實際上每個寫入仍要全 cluster GCE broadcast + certification、寫吞吐沒爆增 / latency 飆高 / certification 衝突回退增加。
 
-這篇 deep article 把 GR 的 *certification 流程* 講清楚 — 為什麼「multi-primary」聽起來像「線性 scale」、實際是「保 strong consistency 的 multi-entry」。然後展開 InnoDB Cluster（GR + MySQL Shell + MySQL Router）作為 production deployment 工具。
+這篇把 GR 的 *certification 流程* 講清楚 — 為什麼「multi-primary」聽起來像「線性 scale」、實際是「保 strong consistency 的 multi-entry」。然後展開 InnoDB Cluster（GR + MySQL Shell + MySQL Router）作為 production deployment 工具。
 
 ## Group Replication 的 transaction model
 
@@ -29,7 +29,7 @@ GR 用 *Group Communication Engine (GCE)*（Paxos 變種）達成 *atomic broadc
 4. GCE: Paxos consensus、所有 member 收到 broadcast、按 *相同順序*
 5. Each Member: certification phase — 看 write_set 跟 *尚未 apply 的 incoming transactions* 是否有 PK 衝突
 6. 若無衝突 → apply 該 transaction（local + remote member 都 apply）、回 client COMMIT OK
-7. 若衝突 → certification fail、Member A 對 client 回 ERR_LOCK_DEADLOCK / GR_CONFLICT、application 必須 retry
+7. 若衝突 → certification fail、Member A 對 client 回 error 3101（ER_TRANSACTION_ROLLBACK_DURING_COMMIT）、application 必須 retry
 ```
 
 **核心結論**：
@@ -90,9 +90,6 @@ gtid_mode = ON
 enforce_gtid_consistency = ON
 log_bin = mysql-bin
 binlog_format = ROW
-master_info_repository = TABLE
-relay_log_info_repository = TABLE
-transaction_write_set_extraction = XXHASH64
 plugin_load_add = 'group_replication.so'
 
 group_replication_group_name = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
@@ -103,7 +100,7 @@ group_replication_bootstrap_group = OFF
 group_replication_single_primary_mode = ON       # 99% 場景用 ON
 group_replication_enforce_update_everywhere_checks = OFF
 
-# Step 2: 用 MySQL Shell 從第一個 member bootstrap cluster
+# Step 2: 用 MySQL Shell 從 node1 bootstrap cluster
 mysqlsh --user=root --host=node1.example.com
 > dba.configureInstance('root@node1:3306')
 > var cluster = dba.createCluster('prodCluster')
@@ -120,11 +117,11 @@ systemctl start mysql-router
 
 Application 連 Router、Router 自動發現 cluster topology + 自動 failover routing。Application 不必知道哪個 instance 是 primary。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Certification lag — Multi-primary 模式 retry storm
+### Certification lag — Multi-primary 模式 retry storm
 
-Multi-primary mode 下、3 個 instance 同時收到 *相同 row* 的 conflicting write、certification 階段必有 N-1 個 transaction 被退回。Application 看到 `ER_GR_CONFLICT_TRANSACTION_ABORTED`、retry、若不智能 retry（exponential backoff）會 retry storm、整個 cluster 寫吞吐暴降。
+Multi-primary mode 下、3 個 instance 同時收到 *相同 row* 的 conflicting write、certification 階段必有 N-1 個 transaction 被退回。Application 看到 error 3101（`ER_TRANSACTION_ROLLBACK_DURING_COMMIT`）、retry、若不智能 retry（exponential backoff）會 retry storm、整個 cluster 寫吞吐暴降。
 
 修法：
 
@@ -132,18 +129,18 @@ Multi-primary mode 下、3 個 instance 同時收到 *相同 row* 的 conflictin
 - 真的需要 multi-primary：application 必須 sharding-aware（不同 entry 寫不同 row range）、本質上跟 Vitess sharding 同概念但用 GR 機制
 - Application retry 用 *jitter exponential backoff*、不直接 retry
 
-### 2. Certification queue 爆炸 — Single-primary mode 仍受 cert backlog 影響
+### Certification queue 爆炸 — Single-primary mode 仍受 cert backlog 影響
 
-Single-primary mode 下 primary 接受 write、broadcast 到 secondary。Secondary 跟 primary network latency / 處理速度差時、cert queue 累積。Cert queue 滿 → primary write 也被卡（GR 設計：所有 member 同步前不接受新 write、保 consistency）。
+Single-primary mode 下 primary 接受 write、broadcast 到 secondary。Secondary 跟 primary network latency / 處理速度差時、cert queue 累積。Certifier queue 或 applier queue 超過 flow control 門檻（`group_replication_flow_control_certifier_threshold` 與 `group_replication_flow_control_applier_threshold`，預設都是 25000 筆 transaction）時，GR 的 flow control（`group_replication_flow_control_mode=QUOTA`）會限制 writer 的寫入配額，primary 的寫入吞吐跟著被壓低。
 
 修法：
 
-- 監控 `group_replication_member_stats` view：`COUNT_TRANSACTIONS_IN_QUEUE` 持續 > 0 是警訊
+- 監控 `performance_schema.replication_group_member_stats`：`COUNT_TRANSACTIONS_IN_QUEUE`（等待 certification 的 transaction 數）持續 > 0 是警訊
 - 提高 `group_replication_message_cache_size`（預設 1 GB）給 large transaction 緩衝
 - 確認 *所有 member 同 instance class*、不要混 spec
 - 跨 region GR：完全不推薦（network latency 殺 cert throughput）
 
-### 3. Large transaction — 全 cluster 卡住
+### Large transaction — 全 cluster 卡住
 
 GR 必須把整個 transaction（含所有 write_set）一次 broadcast。10 GB transaction（大批量 UPDATE）必須一次塞滿 GCE buffer、cluster 內所有 member 都暫停接受新 transaction 直到 broadcast / apply 完成。常見場景：批次 archive / 大 backfill / `INSERT ... SELECT 1 億 row`。
 
@@ -153,7 +150,7 @@ GR 必須把整個 transaction（含所有 write_set）一次 broadcast。10 GB 
 - 大批量寫入拆 chunk（每 chunk < 100 MB）、用 application 層 loop
 - 對 archive / backfill 用 `INSERT INTO archive SELECT ... LIMIT 10000` chunked、不是一個 transaction
 
-### 4. Network partition — Minority partition 自動 read-only
+### Network partition — Minority partition 自動 read-only
 
 3 member cluster、network partition 把 1 個 member 隔離。被隔離 member 是 *minority*、自動進入 *read-only mode*（不接受 write）、防 split-brain。Application 連到 minority member 寫入會失敗。
 
@@ -161,9 +158,9 @@ GR 必須把整個 transaction（含所有 write_set）一次 broadcast。10 GB 
 
 - MySQL Router 自動發現 cluster topology、自動 route write 到 majority partition primary
 - Application 必須處理 connection error + retry（甚至 connection string 改成 *Router endpoint* 而非個別 instance）
-- 監控 `group_replication_primary_member` UDF、確認哪個是真 primary
+- 查 `performance_schema.replication_group_members` 的 `MEMBER_ROLE` 欄（`PRIMARY` / `SECONDARY`）、確認哪個是真 primary
 
-### 5. Member 加入 catch-up — 大量 binlog 阻擋 cluster service
+### Member 加入 catch-up — 大量 binlog 阻擋 cluster service
 
 新 member 加入 cluster（new instance / 復原 failed member）必須 *catch-up* — apply 從 GR cluster start 到當前所有 binlog 才能 join consensus。如果 cluster 已運作 1 個月、binlog 累積 100 GB、catch-up 可能 6-12 小時、catch-up 期間 *該 member 不投票、其他 member 仍 service*、但 majority 安全邊界縮小（3 → 2 member working）。
 
@@ -212,7 +209,7 @@ ProxySQL 可以連 GR cluster（自動偵測 read_only flag）、但 *MySQL Rout
 
 ### 跟 InnoDB Tuning
 
-GR 對 `innodb_flush_log_at_trx_commit` / `sync_binlog` 行為更敏感 — GR 要求 binlog 必須 *fsync to disk*（`sync_binlog=1`）保 zero-loss、不能用 `sync_binlog=0` 換速度。詳見 [InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)。
+GR 對 `innodb_flush_log_at_trx_commit` / `sync_binlog` 行為更敏感 — 截至 2026-09 的 MySQL 8.4 官方文件，GR 的必要設定清單不含 `sync_binlog`；`sync_binlog=1` 是 MySQL 的預設值，作用是每次 commit 都把 binlog fsync 到磁碟，改成 `sync_binlog=0` 換速度，成員意外停機時最近已 commit、還留在 OS cache 裡的 binlog 內容可能遺失。詳見 [InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)。
 
 ### 跟 PostgreSQL Patroni 對比
 

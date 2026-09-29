@@ -6,7 +6,7 @@ weight: 25
 tags: ["backend", "database", "postgresql", "jsonb", "json", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *JSONB deep dive* — binary storage + GIN index 的結構性優勢。
+> 這篇涵蓋 PostgreSQL 的 JSONB：binary storage + GIN index 的結構性優勢。
 
 ---
 
@@ -14,15 +14,15 @@ tags: ["backend", "database", "postgresql", "jsonb", "json", "deep-article"]
 
 PG 9.2 加 `JSON` type、9.4 加 `JSONB`。99% 場景用 JSONB：
 
-| 維度          | JSON                        | JSONB                           |
-| ------------- | --------------------------- | ------------------------------- |
-| 儲存          | 純文字（原樣保存）          | Binary decomposed format        |
-| Parse cost    | 每次 query parse            | Insert 時 parse 一次            |
-| Index 支援    | Limited（functional index） | GIN / functional / partial 都行 |
-| Operator 支援 | 有限（→ / →>）              | 完整（@> / ? / @? / ? 等）      |
-| Duplicate key | 保留（原樣）                | 只保留最後一個（normalize）     |
-| Key order     | 保留                        | 不保留                          |
-| Whitespace    | 保留                        | 不保留                          |
+| 維度          | JSON                                  | JSONB                                              |
+| ------------- | ------------------------------------- | -------------------------------------------------- |
+| 儲存          | 純文字（原樣保存）                    | Binary decomposed format                           |
+| Parse cost    | 每次 query parse                      | Insert 時 parse 一次                               |
+| Index 支援    | Limited（functional index）           | GIN / functional / partial 都行                    |
+| Operator 支援 | 取值類（`->` / `->>` / `#>` / `#>>`） | 取值類加上 `@>` / `?` / `?\|` / `?&` / `@?` / `@@` |
+| Duplicate key | 保留（原樣）                          | 只保留最後一個（normalize）                        |
+| Key order     | 保留                                  | 不保留                                             |
+| Whitespace    | 保留                                  | 不保留                                             |
 
 JSONB 唯一缺點是 *binary 儲存（不保留 key order / whitespace / duplicate）*。99% application 不在意這些。
 
@@ -55,30 +55,30 @@ SELECT * FROM products WHERE metadata ? 'discount';
 SELECT * FROM products WHERE metadata ?| array['discount', 'promotion'];
 ```
 
-跟 MongoDB index 對比、PG 不必 *預先 define* JSON path index、`USING GIN (metadata)` 對 *整個 JSONB document 任意 path* 都有效。
+跟 MongoDB index 對比、PG 不必 *預先 define* JSON path index、`USING GIN (metadata)` 對 *整個 JSONB document 任意 path* 的 `@>` / `?` / `@?` 這類 operator 都有效。`metadata ->> 'sku' = 's10'` 這種先取值再比較的寫法不在 GIN 支援的 operator 裡，要另建 expression index。
 
 ### `jsonb_ops` vs `jsonb_path_ops`
 
 PG GIN 對 JSONB 有兩種 *operator class*：
 
-| 維度          | `jsonb_ops`（預設） | `jsonb_path_ops`         |
-| ------------- | ------------------- | ------------------------ |
-| 索引內容      | Key + value 都索引  | 只索引 path → value pair |
-| Index size    | 大                  | 小（約一半）             |
-| 支援 operator | `@> / ? / ?\| / ?&` | 只 `@>` (containment)    |
-| 適用          | 多種 query pattern  | 只用 `@>` 的場景         |
+| 維度          | `jsonb_ops`（預設）                     | `jsonb_path_ops`                           |
+| ------------- | --------------------------------------- | ------------------------------------------ |
+| 索引內容      | Key + value 都索引                      | 只索引 path → value pair                   |
+| Index size    | 大                                      | 小（約一半）                               |
+| 支援 operator | `@>` / `?` / `?\|` / `?&` / `@?` / `@@` | `@>` / `@?` / `@@`（不支援 key existence） |
+| 適用          | 多種 query pattern                      | 只用 containment 與 jsonpath 的場景        |
 
 ```sql
 -- jsonb_ops（預設）
 CREATE INDEX idx_meta_default ON products USING GIN (metadata);
 
--- jsonb_path_ops（小、快、但只支援 @>）
+-- jsonb_path_ops（小、快、不支援 ? / ?| / ?& key existence）
 CREATE INDEX idx_meta_path ON products USING GIN (metadata jsonb_path_ops);
 ```
 
 **選擇**：
 
-- 只跑 `@>` containment query → `jsonb_path_ops`（index 小、快）
+- 只跑 `@>` containment 與 jsonpath operator（`@?` / `@@`）query → `jsonb_path_ops`（index 小、快）
 - 跑 `?` / `?|` / `?&` key existence query → `jsonb_ops`（預設）
 
 ## Operator + Path Query
@@ -148,22 +148,22 @@ WHERE status = 'active' AND metadata @> '{"category": "shoes"}';
 
 Partial index 比 full GIN 小很多、write cost 低、index hit rate 高。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. 大 JSONB + TOAST — 性能崩潰
+### 大 JSONB + TOAST — 性能崩潰
 
 JSONB > 2 KB 自動進 TOAST（PG 內外部 storage）、每次 query read 該 row 都要 *de-TOAST*（拉外部 storage 再合併）。大 JSONB（> 50 KB）每次 query 慢 10-100x。
 
 修法：
 
 - 把 *大 attribute 拆獨立 column*（如 `description TEXT` 不放 metadata）
-- 用 *JSON path index* 對 hot path 加速、不必每次讀整個 JSONB
+- 對常查的 path 建 expression index（例：`((metadata->>'category'))`）、篩選時不必逐列讀出整個 JSONB 來比對
 - 用 `pg_column_size(metadata)` 監控 JSONB size 分布、找 outlier
 - 對 truly 大 document（> 1 MB）考慮 separate table 或 object storage
 
-### 2. Nested update — 整個 JSONB 重寫
+### Nested update — 整個 JSONB 重寫
 
-PG 沒 *atomic partial update*。修改 nested key 必須讀整個 JSONB → 修改 → 寫回：
+PG 沒有只改 JSONB 其中一個 key 的 *in-place partial update*。修改 nested key 必須讀整個 JSONB → 修改 → 寫回：
 
 ```sql
 UPDATE products
@@ -180,7 +180,7 @@ WHERE id = 100;
 - Application 層 batch update（攢一批一次 update）
 - 接受 PG JSONB *是 immutable-replace* 心智模型、不是 *mutable in-place*
 
-### 3. Index 選錯 op class — `?` query 走 full scan
+### Index 選錯 op class — `?` query 走 full scan
 
 對 `jsonb_path_ops` index、`?` key existence query 走 *full scan*（不用 index）。Application 看 query 慢、查 EXPLAIN 才發現 index 沒用。
 
@@ -191,12 +191,12 @@ WHERE id = 100;
 - 純 containment → `jsonb_path_ops`（省 index size）
 - 不確定先用預設、production 觀察後再優化
 
-### 4. `jsonb_path_query` 跟 `jsonb_path_exists` 行為差
+### `jsonb_path_query` 跟 `jsonb_path_exists` 行為差
 
 - `jsonb_path_query(metadata, '$.variants[*].price')` — 展開、每個 match return 一 row
 - `jsonb_path_exists(metadata, '$.variants[*]')` — return boolean（true if any match）
 
-Application 想要「過濾 row」用前者寫成：
+Application 想要「過濾 row」卻用 `jsonb_path_query` 寫成：
 
 ```sql
 -- 錯：返多 row 給每個 product、結果 row count 暴增
@@ -216,7 +216,7 @@ SELECT * FROM products WHERE jsonb_path_exists(metadata, '$.variants[*] ? (@.pri
 - 過濾用 `jsonb_path_exists` 或 `@>` operator
 - 展開用 `jsonb_path_query` + 配合 `LATERAL` 或 subquery
 
-### 5. Partial index 條件不對齊 query
+### Partial index 條件不對齊 query
 
 ```sql
 CREATE INDEX idx_active_metadata ON products USING GIN (metadata) WHERE status = 'active';
@@ -258,7 +258,7 @@ JSONB query 的 planner 行為：
 
 - `@>` containment 對 jsonb_ops / jsonb_path_ops 都用 GIN
 - `?` 只對 jsonb_ops 用 GIN
-- jsonb_path_exists 用 *functional index*（不是 GIN）
+- `jsonb_path_exists(...)` 函式呼叫不走 GIN；同一個 jsonpath 寫成 `metadata @? '...'` operator 時 GIN 可用
 - 看 EXPLAIN 確認用對 index、詳見 [Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)
 
 ### 跟 SQL Features Baseline

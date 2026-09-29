@@ -8,7 +8,7 @@ tags: ["backend", "database", "postgresql", "connection-pooling"]
 
 PostgreSQL connection pooler comparison 的核心責任是把連線數壓力、transaction 語意與維運責任拆開判讀。PostgreSQL backend process 成本高，application instance 擴張後，connection pooler 常成為保護資料庫的第一層容量控制。
 
-本文的判讀錨點是：pooler 解決的是 connection fan-out 與 queueing，而非查詢本身變快。查詢慢、lock wait、transaction 過長、index 錯誤仍要回到 [Query Optimization](../query-optimization/) 與 [MVCC / lock model](../mvcc-lock-model/)。
+本文涵蓋 pool mode 的綁定模型、各 pooler 選項的責任邊界、導入 pooler 的判斷訊號、transaction pooling 的相容性、pool size 的設定與觀測，以及常見的反模式。
 
 ## Pooling Models
 
@@ -55,6 +55,8 @@ Decision signals 的核心責任是判斷何時導入 pooler，以及導入哪�
 
 Connection pooler 的成功訊號是 database backend count 下降、queue 可觀測、error rate 穩定、tail latency 受控。若導入後只是把 timeout 從 DB 移到 pooler，代表 capacity model 仍需調整。
 
+Pooler 解決的是 connection fan-out 與 queueing；查詢慢、lock wait、transaction 過長、index 錯誤要回到 [Query Optimization](../query-optimization/) 與 [MVCC / lock model](../mvcc-lock-model/)。
+
 ## Transaction Pooling Compatibility
 
 Transaction pooling compatibility 的核心責任是找出 application 對 session state 的隱性依賴。這些依賴要在 staging 先測出來。
@@ -99,4 +101,4 @@ Pooler 是 backpressure 元件。它要讓系統在過載時可排隊、可拒�
 
 ## 下一步路由
 
-Connection pooler comparison 完成後，實作層讀 [PgBouncer config](../pgbouncer-config/)；要觀察連線壓力讀 [Connection Scaling](../connection-scaling/)；需要演練讀 [Connection Pool Lab](../hands-on/connection-pool-lab/)。
+選定 pooler 之後，PgBouncer 的實際設定讀 [PgBouncer config](../pgbouncer-config/)；要觀察連線壓力讀 [Connection Scaling](../connection-scaling/)；需要演練讀 [Connection Pool Lab](../hands-on/connection-pool-lab/)。

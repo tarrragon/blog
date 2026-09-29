@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "observability", "runbook"]
 
 SQLite observability and runbook 的核心責任是把低操作成本服務補成可交接的 production evidence。SQLite 的元件少，但正式服務仍需要觀測 busy errors、WAL growth、backup freshness、restore drill、disk usage、migration result、file permission 與 application-level query health。
 
-本文的判讀錨點是：SQLite 的 observability 要貼近 file、process、filesystem 與 application。它通常沒有 server DB 那種長駐監控平面，因此 runbook 要把 signal 從 app metrics、log、scheduled job、file metadata 與 restore evidence 裡組出來。
+SQLite 通常沒有 server DB 那種長駐監控平面，所以本文的範圍是從 app metrics、log、scheduled job、file metadata 與 restore evidence 組出 signal，涵蓋要監看的 signal、backup 與 migration 各自要留的 evidence、常見 incident 的第一輪處置，以及 dashboard、alert 與交接文件的內容。
 
 ## Signal Inventory
 
@@ -41,7 +41,7 @@ Backup evidence 的核心責任是證明資料可被拿回來。SQLite backup �
 | Application smoke test | 啟動、讀核心頁、寫測試資料             | rollback、保留 evidence              |
 | Retention note         | 保存天數、刪除策略、legal hold         | 更新 data protection policy          |
 
-SQLite 官方 [backup API](https://www.sqlite.org/backup.html) 與 CLI `.backup` 是備份設計的基礎路由。WAL mode 下，直接複製單一 `.db` 檔容易漏掉 sidecar file 的時序；runbook 應使用 SQLite-aware backup 或經過 checkpoint / stop-the-world 的 snapshot。
+SQLite 官方 [backup API](https://www.sqlite.org/backup.html) 與 CLI `.backup` 是備份設計的基礎路由。WAL mode 下，直接複製單一 `.db` 檔容易漏掉 `-wal` sidecar 裡尚未 checkpoint 的寫入；runbook 應使用 SQLite-aware backup 或經過 checkpoint / stop-the-world 的 snapshot。
 
 ```bash
 sqlite3 app.db ".backup 'backup/app-2026-05-21.db'"

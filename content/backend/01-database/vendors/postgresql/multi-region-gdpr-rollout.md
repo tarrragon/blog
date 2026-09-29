@@ -1,20 +1,20 @@
 ---
 title: "PostgreSQL Multi-Region GDPR Rollout：政策驅動的 migration 屬本 methodology 嗎"
 date: 2026-05-19
-description: "PostgreSQL 單 region → multi-region 同時滿足 GDPR EU residency 是 *政策驅動* 兼 *topology 變動* 兼 *operational redesign* 的多軸 migration；驗證 [#128](/report/data-topology-as-audit-dimension/) self-aware limitation 提出的 residency axis 候選 — residency 是 driver 還是獨立 audit 軸；涵蓋 logical replication 配 GDPR / 5 個 production 踩雷 / cross-region cost"
+description: "PostgreSQL 單 region → multi-region 同時滿足 GDPR EU residency 是 *政策驅動* 兼 *topology 變動* 兼 *operational redesign* 的多軸 migration；並檢驗 residency 該算 driver 還是 diff dimension audit 的獨立維度；涵蓋 logical replication 的 GDPR filter、replication filter 漏表、backup 跨 region、monitoring SaaS 收 PII、FDW 跨境查詢、DR 與 residency 的衝突、cross-region cost"
 weight: 45
 tags: ["backend", "database", "postgresql", "multi-region", "gdpr", "residency", "migration", "axis-candidate"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。同時是 [#128 self-aware limitation](/report/data-topology-as-audit-dimension/) 第 1 點「6 維仍可能漏類（identity / consistency / residency 三軸候選）」的 *residency 軸驗證*、跟 [migration playbook methodology「何時不該套」段](/posts/migration-playbook-methodology/) 對「政策合規驅動」是否在 methodology scope 的反思。
+> 本文的範圍是單 region PostgreSQL 為了 GDPR EU residency 擴成 multi-region 的 migration：residency 對 topology、operational 與 application 的約束、logical replication 的 filter、migration 流程、production 故障與成本。這次 rollout 同時用來檢驗 residency 該不該成為 [diff dimension audit](/report/data-topology-as-audit-dimension/) 的獨立維度；[migration playbook methodology](/posts/migration-playbook-methodology/) 的「何時不該套」段討論過政策合規驅動的 migration 在不在 methodology 的範圍內。
 
 ## 政策驅動的 migration 屬本 methodology 嗎
 
 [Migration playbook methodology](/posts/migration-playbook-methodology/) 「何時不該套」段曾把「compliance-driven migration」歸為排除情境、後來改寫為「不在排除範圍 — 法規驅動只是 driver、資料層仍走 type A-E 之一」。本文是該改寫的 *正面實證* — GDPR EU residency 強制需求驅動 single-region → multi-region rollout、本文是 *政策驅動但仍走 audit + type 對映流程* 的 case study。
 
-但 reviewer D 在第三輪 audit 提出：residency 不只是 *driver*、本身是 *cross-cutting constraint*、反向約束 topology + operational + schema；該不該升 *獨立 audit 軸*？本文是該議題的 dogfood。
+Residency 還有另一種讀法：它本身是 *cross-cutting constraint*，反向約束 topology、operational 與 schema，照這個讀法它應該是 diff dimension audit 的一個獨立維度，而不只是 driver。本文用這次 rollout 檢驗這個讀法。
 
-## 三層約束：driver / topology / contract
+## GDPR 對 rollout 的約束：driver / topology / contract
 
 GDPR 對 PostgreSQL multi-region rollout 的影響在三個層次：
 
@@ -22,7 +22,7 @@ GDPR 對 PostgreSQL multi-region rollout 的影響在三個層次：
 2. **Topology layer**：跨 region replication 不能 *自由跨 region 複製* EU 客戶資料、必須按 GDPR scope 分區；topology 設計受合規約束
 3. **Contract layer**：審計能 *demonstrate* 「EU 資料在 EU」、操作日誌 + replication evidence 必須可追溯；application + ops contract 多出合規 obligation
 
-跑 [6 維 diff dimension audit](/report/content-structure-by-max-diff-dimension/) 對「single us-east → us-east + eu-west」：
+跑 [diff dimension audit](/report/content-structure-by-max-diff-dimension/)（schema / API、operational model、paradigm、components、application change、data topology 六個維度；下表最後一列 residency contract 是本文加上去的）對「single us-east → us-east + eu-west」：
 
 | 維度                   | 評估                                                 | 等級     |
 | ---------------------- | ---------------------------------------------------- | -------- |
@@ -34,19 +34,19 @@ GDPR 對 PostgreSQL multi-region rollout 的影響在三個層次：
 | Data topology          | Single → multi-region replication                    | **High** |
 | **Residency contract** | **EU 資料禁止離開 EU、log + replication 範圍受約束** | **High** |
 
-6 維 audit 抓不到「Residency contract = High」這軸。用既有 6 維歸類、會走 Type F multi-axis（topology + operational + application change 多 High）+ 政策合規補強段；但這個歸類 *漏掉合規對 topology / operational / application 的反向約束*：
+Diff dimension audit 原本的維度裡沒有 residency contract 這一列。只用原本的維度歸類，這次 rollout 會走 Type F（topology re-layout；上表 operational 與 data topology 是 High、application change 是 Medium）加政策合規補強段；但這個歸類 *漏掉合規對 topology / operational / application 的反向約束*：
 
-- Topology layer：6 維只 audit 「topology 是否變動」、漏 audit 「topology 範圍是否受合規約束」
-- Operational layer：6 維只 audit 「operational 是否重設計」、漏 audit 「audit log / encryption / access control 是否符合合規要求」
-- Application layer：6 維只 audit 「application code 是否改」、漏 audit 「資料 routing 是否符合 residency rule」
+- Topology layer：原本的維度只問「topology 是否變動」、沒有問「topology 範圍是否受合規約束」
+- Operational layer：原本的維度只問「operational 是否重設計」、沒有問「audit log / encryption / access control 是否符合合規要求」
+- Application layer：原本的維度只問「application code 是否改」、沒有問「資料 routing 是否符合 residency rule」
 
-**Residency 不只是 driver、是 cross-cutting constraint**、會反向約束其他 3-4 維、且帶獨立工作量（合規 evidence collection / DPIA / audit prep）。
+**Residency 不只是 driver、是 cross-cutting constraint**、會反向約束 topology、operational、application 這幾個維度，且帶獨立工作量（合規 evidence collection / DPIA / audit prep）。
 
-## Residency axis 是否獨立：3 個論據
+## Residency 是獨立的 audit 維度：可獨立發生、主導工作量分佈、跨維度約束
 
 **Yes、residency 是獨立軸**：
 
-1. **可獨立發生**：原本 multi-region setup、新增「PCI 強制信用卡資料只能 us-east」、是 *純 residency 變更*、其他 6 維皆 Low（topology 不重設計、operational 不重設計、application 加 routing rule 即可）；但 residency 約束 routing + log 範圍
+1. **可獨立發生**：原本 multi-region setup、新增「PCI 強制信用卡資料只能 us-east」、是 *純 residency 變更*、topology 與 operational 都不重設計、application 只加一條 routing rule；但 residency 約束 routing + log 範圍
 2. **驅動工作量分佈**：本文 multi-region GDPR rollout 工作量分佈：
    - Topology setup（logical replication / region setup）：~25%
    - Operational redesign（HA / backup / monitoring）：~20%
@@ -64,24 +64,6 @@ GDPR 對 PostgreSQL multi-region rollout 的影響在三個層次：
 - 拒絕：residency 反向約束 topology / application / operational、且帶獨立合規工作量（DPIA / cross-border transfer agreement / data subject rights）；不是單純 operational 子議題
 
 實證：本文 migration 工作量 40% 在 compliance、確認 residency 是 *獨立工作量主軸*。
-
-## 結構：Type F multi-axis + residency compliance 獨立段
-
-本文結構是 *Type F 為主*（topology high + operational high）+ *residency compliance 獨立段*（不在 6 維任一個）：
-
-```text
-1. 政策驅動的 migration 屬本 methodology 嗎（meta-reflection 開頭）
-2. 三層約束：driver / topology / contract
-3. Residency axis 是否獨立的論據
-4. 結構 differentiator（Type F multi-axis + residency compliance 段）
-5. EU residency 對 topology / operational / application 的反向約束
-6. Migration 流程（含 DPIA 跟 evidence collection 階段）
-7. Production 故障演練
-8. Capacity / cost（含合規 audit cost）
-9. 整合 / 下一步
-```
-
-9 章節、240-270 行。比標準 Type F 多 1 段（residency compliance）+ 1 段（meta-reflection）。
 
 ## EU residency 對其他維度的反向約束
 
@@ -103,13 +85,13 @@ Residency rule → Application constraint:
 - Data export feature 必須 reject 跨 region export request
 ```
 
-每條反向約束都是 *新工作量*、不在 6 維 audit 內。
+每條反向約束都是 *新工作量*、不落在 diff dimension audit 原本的任何一個維度裡。
 
 ## Migration 流程（含 DPIA + evidence collection）
 
 10 step、跨 5 個月：
 
-| Phase           | Step                                                              | 對應 6 維 / 合規         |
+| Phase           | Step                                                              | 對應維度 / 合規          |
 | --------------- | ----------------------------------------------------------------- | ------------------------ |
 | 0 Pre-migration | 1. DPIA（Data Protection Impact Assessment）                      | Compliance pre-requisite |
 | 0               | 2. 法務 review 跨境傳輸 agreement                                 | Compliance               |
@@ -122,15 +104,15 @@ Residency rule → Application constraint:
 | 4 Verify        | 9. Compliance audit + evidence package                            | Residency                |
 | 4               | 10. DPO sign-off + DR drill                                       | Residency + Operational  |
 
-Step 1 + 9 + 10 是 *residency-specific*、不在既有 6 維內。
+DPIA、法務 review 跨境傳輸 agreement、compliance audit + evidence package、DPO sign-off 這幾步只為 residency 而存在，不落在 diff dimension audit 原本的任何一個維度裡。
 
 ## Production 故障演練
 
-### Case 1：Replication filter 漏 table、EU 資料 leak 到 us-east
+### Replication filter 漏 table、EU 資料 leak 到 us-east
 
-**徵兆**：6 個月後 internal audit 發現 us-east 端 `customers` table 含 EU 客戶資料；replication filter 設定漏改、新加的 `eu_customer_extensions` table 被自動 replicate 到 us-east。
+**徵兆**：6 個月後 internal audit 發現 us-east 端出現 EU 客戶資料：replication filter 設定漏改，新加的 `eu_customer_extensions` table 被自動 replicate 到 us-east。
 
-**根因**：PostgreSQL logical replication publication 預設 `FOR ALL TABLES`、新加的 table 自動納入；應該明示 `FOR TABLE list...` 並 GDPR review。
+**根因**：us-east 訂閱的 publication 當初用 `FOR ALL TABLES` 建立，之後新建的 table 自動納入這個 publication。`CREATE PUBLICATION` 不帶任何 table 清單時建出來的是空的 publication，自動納入新表的是 `FOR ALL TABLES` 這個寫法本身；publication 要寫明 `FOR TABLE` 清單，清單的每次變更走 GDPR review。
 
 **修法**：
 
@@ -139,11 +121,11 @@ Step 1 + 9 + 10 是 *residency-specific*、不在既有 6 維內。
 3. **Replication monitor**：定期跑 `SELECT * FROM pg_publication_tables` 對照 expected list、漂移立刻 alert
 4. **Evidence collection**：filter 配置 + audit log 留檔、出事 DPO 知道何時 leak
 
-### Case 2：Backup 跨 region store、合規違規
+### Backup 跨 region store、合規違規
 
-**徵兆**：跑 1 年後 GDPR audit 抓到 EU table 的 backup 存在 us-west S3 bucket；違反 Article 44-49 限制。
+**徵兆**：跑 1 年後 GDPR audit 抓到 EU table 的 backup 存在 us-east-1 的 S3 bucket；違反 Article 44-49 限制。
 
-**根因**：pgBackRest 預設用 *global S3 bucket*（在 us-east-1）；EU PostgreSQL cluster backup 跑去 us-east、跨境傳輸無 transfer mechanism。
+**根因**：EU cluster 的 pgBackRest 設定沿用全公司共用的 S3 bucket（在 us-east-1）；EU PostgreSQL cluster backup 跑去 us-east、跨境傳輸無 transfer mechanism。
 
 **修法**：
 
@@ -152,7 +134,7 @@ Step 1 + 9 + 10 是 *residency-specific*、不在既有 6 維內。
 3. **Bucket policy 強 enforce**：EU bucket 加 `aws:RequestedRegion=eu-west-1` 強制 region match
 4. **Audit log archive 同理**：log shipping 也必須 region-respect
 
-### Case 3：Monitor SaaS 收集 EU PII、合規 alert
+### Monitor SaaS 收集 EU PII、合規 alert
 
 **徵兆**：Datadog APM 收集了 EU customer 端 request 含 user_email 在 trace、被 DPO catch、required to delete 過去 90 天的 Datadog data。
 
@@ -165,9 +147,9 @@ Step 1 + 9 + 10 是 *residency-specific*、不在既有 6 維內。
 3. **跨 region SaaS use 必須 audit**：所有外部 SaaS（Datadog / Sentry / NewRelic）必須 GDPR-friendly 配置
 4. **Privacy by design**：log / trace 預設 scrub PII、不是 opt-in
 
-### Case 4：Cross-region query 跑 EU + US 資料、residency 違規
+### Cross-region query 跑 EU + US 資料、residency 違規
 
-**徵兆**：BI dashboard 跑跨 region aggregation query（EU sales + US sales）、PostgreSQL FDW 從 us-east cluster query EU cluster、EU 端 server log 顯示「PII export to us-east」。
+**徵兆**：BI dashboard 跑跨 region aggregation query（EU sales + US sales）、PostgreSQL FDW 從 us-east cluster query EU cluster；EU cluster 的連線紀錄（`log_connections`）出現來自 us-east 的連線，追下去是 us-east cluster 上的 FDW 在查 EU 的表。
 
 **根因**：開發者用 PostgreSQL Foreign Data Wrapper（FDW）方便跑跨 region query、不知道這在 GDPR 視為跨境 PII export。
 
@@ -178,7 +160,7 @@ Step 1 + 9 + 10 是 *residency-specific*、不在既有 6 維內。
 3. **DBA access policy**：DBA 不能直接 query EU cluster 從 us-east jumpbox
 4. **Query audit**：production query log 跑 PII detection（regex / NER）、發現跨境 export 立即 alert
 
-### Case 5：DR drill 跨 region failover、暴露 residency assumption 失敗
+### DR drill 跨 region failover、暴露 residency assumption 失敗
 
 **徵兆**：DR drill「EU 完全不可用、切到 us-east」執行後、發現 us-east 端 *沒 EU 資料* — 因為一直 strict residency filter；business 端 EU 客戶 24 小時無法服務。
 
@@ -215,7 +197,7 @@ Aurora Global Database 可簡化跨 region setup、但 residency filter 仍需 a
 
 兩篇都是 multi-region rollout、但本文加合規維度；MongoDB 篇純 capacity + DR driver、本文加 residency constraint、結構不同。
 
-### 跟 #128 self-aware limitation 第 1 點對位
+### 對 diff dimension audit 的回饋：residency 升為獨立維度
 
 本文驗證 *residency axis 候選*：
 
@@ -226,7 +208,7 @@ Aurora Global Database 可簡化跨 region setup、但 residency filter 仍需 a
 
 ### 下一步議題
 
-- **Identity + Consistency + Residency 三軸候選統合**：本批 3 篇分別驗證、未來累積 evidence 後考慮獨立 #129 卡 / 擴 audit 到 7-8 維
+- **Identity、consistency、residency 是否一起擴進 diff dimension audit**：identity 與 consistency 各有一篇候選驗證（見〈相關連結〉的平行 axis 候選驗證），累積更多 case 之後再決定 audit 要擴充哪幾個維度
 - **Schrems II + new EU data transfer rules**：跨大西洋資料傳輸法規變動快、playbook 半衰期短
 - **Data localization in China / Russia / India**：類似 GDPR 但細節不同、未來 case 累積後評估
 
@@ -235,4 +217,4 @@ Aurora Global Database 可簡化跨 region setup、但 residency filter 仍需 a
 - 上游 vendor 頁：[PostgreSQL](/backend/01-database/vendors/postgresql/)
 - 平行 multi-region case：[MongoDB Shard + Multi-DC](/backend/01-database/vendors/mongodb/shard-expansion-multi-dc/)
 - 平行 axis 候選驗證：[Vault → AWS Secrets Manager](/backend/07-security-data-protection/vendors/hashicorp-vault/migrate-to-aws-secrets-manager/)（identity 候選）/ [DynamoDB Consistency Model](/backend/01-database/vendors/dynamodb/consistency-model-optimization/)（consistency 候選）
-- Methodology：[Migration playbook methodology](/posts/migration-playbook-methodology/) / [#128 self-aware limitation 第 1 點](/report/data-topology-as-audit-dimension/)（residency axis 候選驗證、本文是該驗證的 dogfood）
+- Methodology：[Migration playbook methodology](/posts/migration-playbook-methodology/) / [Data topology 是 process content 的第 6 audit 維度](/report/data-topology-as-audit-dimension/)（該卡的限制段把 residency 列為候選維度，本文是它的驗證案例）

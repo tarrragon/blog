@@ -1,7 +1,7 @@
 ---
 title: "MySQL 5.7 → 8.0 Major Version Upgrade：character set / authentication / atomic DDL 三條 paradigm 同時換軌"
 date: 2026-05-19
-description: "MySQL 5.7 → 8.0 三條 default 同時改：charset utf8 → utf8mb4、auth plugin native_password → caching_sha2_password、DDL non-atomic → atomic。本文走 Type E paradigm shift 結構、6 維 audit、4-phase upgrade、5 production 踩雷、何時不要升級。"
+description: "MySQL 5.7 → 8.0 三條 default 同時改：charset utf8 → utf8mb4、auth plugin native_password → caching_sha2_password、DDL non-atomic → atomic。本文走 Type E paradigm shift 結構、schema 到 topology 的 diff audit、從 pre-check 到 paradigm 遷移的升級流程、production 踩雷、何時不要升級。"
 weight: 25
 tags: ["backend", "database", "mysql", "vendor", "migration", "type-e", "paradigm-shift", "major-upgrade"]
 ---
@@ -16,7 +16,7 @@ tags: ["backend", "database", "mysql", "vendor", "migration", "type-e", "paradig
 | Authentication plugin | mysql_native_password         | caching_sha2_password         | client / library 需要支援新 plugin        |
 | DDL atomicity         | Non-atomic（crash 留 orphan） | Atomic（crash recovery 乾淨） | 開發信心、crash recovery 行為             |
 
-對應 *任意一個* paradigm 升級失誤、production 都會 down。三條同時換、必須 *三條都規劃*。
+對應 *任意一個* paradigm 升級失誤、production 都會 down。charset、auth plugin、DDL atomicity 同時換、必須 *三者都規劃*。
 
 這條 upgrade 比 [PostgreSQL major-version-upgrade](/backend/01-database/vendors/postgresql/major-version-upgrade/) 工作量大 — PG major upgrade 主要是 *pg_upgrade* 工具流程、MySQL 是 *behavioral compatibility audit + ecosystem 全 review*。
 
@@ -35,11 +35,11 @@ tags: ["backend", "database", "mysql", "vendor", "migration", "type-e", "paradig
 
 Paradigm = High + App change = Medium-High → **Type E paradigm shift**。
 
-雖然是 *同一個 vendor 的 major version*、實際的 *application 行為差異* 跨越多個 paradigm、6 type 框架仍適用、結構走 partial migration 收斂。
+雖然是 *同一個 vendor 的 major version*、實際的 *application 行為差異* 跨越多個 paradigm、migration playbook 的 type 分類仍適用、結構走 partial migration 收斂。
 
-## 4-phase upgrade
+## 升級流程：replica 先升、再 promote、最後遷移 paradigm
 
-### Phase 1：Pre-check audit
+### Pre-check audit
 
 8.0 升級前用 *MySQL Shell upgrade checker* + 手動 audit：
 
@@ -62,7 +62,7 @@ Upgrade checker 報告：
 
 完成標準：寫出 *blocker list*（必須在升級前修） + *warning list*（可在升級後處理）。
 
-### Phase 2：Shadow upgrade — Replica 升 8.0
+### Shadow upgrade — Replica 升 8.0
 
 從 *non-critical replica* 升起。先升一個 replica、跑 production traffic（read-only）2-4 週：
 
@@ -93,13 +93,13 @@ START SLAVE;
 - Replication lag 是否在 baseline 範圍
 - 8.0-specific feature 是否需要（hash join / window function 等）
 
-### Phase 3：Promote 8.0 為 primary
+### Promote 8.0 為 primary
 
 確認 shadow replica 穩定後：
 
 ```bash
 # 1. 升其他 replica 到 8.0
-# （per-replica 跑 Phase 2 流程）
+# （每個 replica 照 shadow upgrade 的步驟升級）
 
 # 2. Application application 改用 8.0-compatible driver
 # 把 connection string 加 default-authentication-plugin=caching_sha2_password
@@ -113,7 +113,7 @@ START SLAVE;
 
 完成標準：所有 server 都是 8.0、application 連 8.0 endpoint 無 error。
 
-### Phase 4：Decommission 5.7 + 套用 8.0 paradigm
+### Decommission 5.7 + 套用 8.0 paradigm
 
 完成 binary upgrade 不是真正完成 — 還要逐步遷移 paradigm：
 
@@ -134,14 +134,14 @@ START SLAVE;
 - **Reserved keyword 處理**：column / table 名稱跟新 reserved word 衝突的、改名
 
     ```sql
-    ALTER TABLE events RENAME COLUMN window TO event_window;
+    ALTER TABLE events RENAME COLUMN `window` TO event_window;  -- window 在 8.0 是 reserved word，改名時也要加 backtick
     ```
 
-多數 org 在 Phase 3 停留更久 — paradigm 升級不是一次 big bang、是漸進。
+多數 org 在 promote 完成、paradigm 還沒遷移的狀態停留更久 — paradigm 升級不是一次 big bang、是漸進。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. Authentication plugin — Application 突然連不上
+### Authentication plugin — Application 突然連不上
 
 升 8.0 後 *new user* 預設用 caching_sha2_password、舊 application driver（< 5 年版本）不支援、connect error: `Authentication plugin 'caching_sha2_password' cannot be loaded`。
 
@@ -151,7 +151,7 @@ START SLAVE;
 - 短期 workaround：用 `mysql_native_password`（new user 顯式 create with `IDENTIFIED WITH mysql_native_password`）
 - 設 `default_authentication_plugin=mysql_native_password`、強制保留舊 default
 
-### 2. Character set 4-byte UTF-8 — Emoji 進不去
+### Character set 4-byte UTF-8 — Emoji 進不去
 
 5.7 latin1 / utf8（=utf8mb3）column 升 8.0 後 *仍是 utf8mb3*、不會自動升 utf8mb4。Application 寫入 emoji（4-byte UTF-8）會被 *truncate / 拒絕*。
 
@@ -161,7 +161,7 @@ START SLAVE;
 - 新建 table 預設用 utf8mb4（`character_set_server=utf8mb4` 設定）
 - Application 連線 charset 設定一致（`character_set_client / connection / results`）
 
-### 3. Reserved keyword — Application query 突然 syntax error
+### Reserved keyword — Application query 突然 syntax error
 
 5.7 跑得好的 query：
 
@@ -177,11 +177,11 @@ SELECT `window`, `rank` FROM events;
 
 修法：
 
-- Phase 1 upgrade checker 已抓出來、Application code review 改 SQL
+- Pre-check audit 時 upgrade checker 已抓出來、Application code review 改 SQL
 - 推薦 *predefer table / column 名 backtick* policy（一律加 backtick、避免未來 reserved word 衝突）
 - ORM 多數會自動 backtick、raw SQL 容易踩
 
-### 4. Group Replication / 新 feature 開了就不能 rollback
+### Group Replication / 新 feature 開了就不能 rollback
 
 8.0 升級後 *誘惑使用 8.0-only feature*：
 
@@ -194,11 +194,11 @@ SELECT `window`, `rank` FROM events;
 
 修法：
 
-- *Phase 1-3 期間禁用 8.0-only feature*、保留 rollback option
-- *Phase 4 完成* 且穩定運作 30+ 天後、才開始 evaluate 8.0-only feature
+- *從 pre-check 到 promote 完成之前禁用 8.0-only feature*、保留 rollback option
+- *paradigm 遷移完成* 且穩定運作 30+ 天後、才開始 evaluate 8.0-only feature
 - 加 8.0-only feature 時 *明確記錄不可 rollback*
 
-### 5. Collation default 變動 — Sort order 跟 unique 行為改變
+### Collation default 變動 — Sort order 跟 unique 行為改變
 
 5.7 utf8mb4 預設 collation = `utf8mb4_general_ci`、8.0 預設 = `utf8mb4_0900_ai_ci`。兩者排序行為不一致：
 
@@ -225,14 +225,14 @@ SELECT `window`, `rank` FROM events;
 
 ## 容量與成本對照
 
-| 項目                     | 5.7                    | 8.0                                  |
-| ------------------------ | ---------------------- | ------------------------------------ |
-| Cost                     | Free (CE) / Enterprise | Free (CE) / Enterprise               |
-| 升級 hosts × 時間        | -                      | per-instance ~30 分鐘 binary upgrade |
-| Application 改動         | -                      | driver upgrade + SQL review          |
-| Character set conversion | -                      | per-table OSC、大表小時級            |
-| Ops headcount            | -                      | 1-2 個 DBA × 2-4 週                  |
-| 對 production 影響       | -                      | Phase 2-3 漸進升級、無大 downtime    |
+| 項目                     | 5.7                    | 8.0                                                |
+| ------------------------ | ---------------------- | -------------------------------------------------- |
+| Cost                     | Free (CE) / Enterprise | Free (CE) / Enterprise                             |
+| 升級 hosts × 時間        | -                      | per-instance ~30 分鐘 binary upgrade               |
+| Application 改動         | -                      | driver upgrade + SQL review                        |
+| Character set conversion | -                      | per-table OSC、大表小時級                          |
+| Ops headcount            | -                      | 1-2 個 DBA × 2-4 週                                |
+| 對 production 影響       | -                      | replica 先升、再 promote 的漸進升級、無大 downtime |
 
 5.7 → 8.0 upgrade 整體成本是 *1-2 個 FTE 月* 規模。對中型 deployment（100+ DB）可能更多。
 
@@ -264,7 +264,7 @@ PG major upgrade 比 MySQL 簡單。MySQL 5.7 → 8.0 是 *特例* — Oracle �
 
 ### 跟 InnoDB Tuning
 
-8.0 InnoDB 改寫了 redo log（atomic、可動態調整）、`innodb_log_file_size` 升級後可以 *online 改*、不必停機。詳見 [InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)。
+8.0.30 起 redo log 改由 `innodb_redo_log_capacity` 控制、可以用 `SET GLOBAL` *online 改*、不必停機；`innodb_log_file_size` 仍是 read-only。詳見 [InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)。
 
 ### 跟 Modern SQL Features
 

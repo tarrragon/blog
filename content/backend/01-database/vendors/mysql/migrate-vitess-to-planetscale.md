@@ -1,41 +1,41 @@
 ---
 title: "自管 Vitess → PlanetScale：Vitess component ops outsource、加 schema workflow shift"
 date: 2026-05-19
-description: "自管 Vitess → PlanetScale 是 Type C operational hybrid — Vitess component（VTGate / VTTablet / VReplication / VSchema）ops outsource + branch workflow。本文走 6 維 audit、4-phase migration、5 production 踩雷、何時不要遷。"
+description: "自管 Vitess → PlanetScale 是 Type C operational hybrid — Vitess component（VTGate / VTTablet / VReplication / VSchema）ops outsource + branch workflow。本文涵蓋差異維度盤點、從 topology 盤點到寫入切換與退役自管 Vitess 的階段切換、custom Vindex / branch workflow 訓練 / SUPER privilege / 連線上限 / per-row 計費的踩雷，以及何時不要遷。"
 weight: 28
 tags: ["backend", "database", "mysql", "vendor", "migration", "type-c", "operational-hybrid", "vitess", "planetscale"]
 ---
 
 > 本文是跨 vendor migration playbook、cross-link 到 [Vitess sharding](/backend/01-database/vendors/mysql/vitess-sharding/) 跟 PlanetScale。走 [Migration playbook methodology](/posts/migration-playbook-methodology/) Type C operational hybrid 結構。
 
-| 元件             | 自管 Vitess                          | PlanetScale                             |
-| ---------------- | ------------------------------------ | --------------------------------------- |
-| VTGate           | 自己部署 + LB                        | Managed、隱藏在 PlanetScale endpoint 後 |
-| VTTablet         | 自己 per-MySQL deploy                | Managed                                 |
-| VReplication     | 自己 trigger workflow                | Managed、透過 Console / API             |
-| VSchema          | 自己維護（YAML / API）               | Managed、Console UI 編輯                |
-| MySQL backend    | 自己 EC2 / on-prem                   | Managed (Aurora-like underlying)        |
-| Schema migration | gh-ost / pt-osc 或 Vitess online DDL | **Branch + Deploy Request workflow**    |
-| Failover         | 自己用 VTOrc                         | Managed                                 |
-| Multi-region     | 自己配 VReplication 跨 region        | Boost / per-region cluster              |
-| Cost model       | EC2 + EBS + ops headcount            | Per-row read / write + storage          |
+| 元件             | 自管 Vitess                          | PlanetScale                                       |
+| ---------------- | ------------------------------------ | ------------------------------------------------- |
+| VTGate           | 自己部署 + LB                        | Managed、隱藏在 PlanetScale endpoint 後           |
+| VTTablet         | 自己 per-MySQL deploy                | Managed                                           |
+| VReplication     | 自己 trigger workflow                | Managed、透過 Console / API                       |
+| VSchema          | 自己維護（YAML / API）               | Managed、Console UI 編輯                          |
+| MySQL backend    | 自己 EC2 / on-prem                   | Managed (Aurora-like underlying)                  |
+| Schema migration | gh-ost / pt-osc 或 Vitess online DDL | **Branch + Deploy Request workflow**              |
+| Failover         | 自己用 VTOrc                         | Managed                                           |
+| Multi-region     | 自己配 VReplication 跨 region        | Boost / per-region cluster                        |
+| Cost model       | EC2 + EBS + ops headcount            | 依 cluster 規格按月計費 + storage（截至 2026-09） |
 
 這條 migration 跟 [→ Aurora MySQL](/backend/01-database/vendors/mysql/migrate-to-aurora/) 相似（self-managed → managed），但 *target 是 Vitess-native managed*、保留 sharding 能力。同時加上 [→ PlanetScale from self-managed MySQL](/backend/01-database/vendors/mysql/migrate-to-planetscale/) 的 branch workflow paradigm。
 
 對 *已花心力建 Vitess team 但 ops cost 太大* 的 org 來說、這條 migration 比 *Vitess → distributed SQL* 風險低、保留 sharding investment。
 
-## 為什麼是 Type C（不是 Type A 或 Type E）
+## 為什麼是 Type C operational hybrid（不是 Type A phased translation 或 Type E paradigm shift）
 
 跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/)：
 
-| 維度        | 評     | 說明                                                                |
-| ----------- | ------ | ------------------------------------------------------------------- |
-| Schema      | Low    | Vitess wire protocol + VSchema 概念一致                             |
-| Operational | High   | 4 個 component 的 ops 全部 outsource、branch workflow 是新 paradigm |
-| Paradigm    | Medium | Vitess paradigm 不變、但加 branch workflow                          |
-| Components  | Low    | 同 Vitess engine                                                    |
-| App change  | Low    | Connection string 改、無 schema rewrite                             |
-| Topology    | Low    | Vitess sharding 結構保留                                            |
+| 維度        | 評     | 說明                                                                                            |
+| ----------- | ------ | ----------------------------------------------------------------------------------------------- |
+| Schema      | Low    | Vitess wire protocol + VSchema 概念一致                                                         |
+| Operational | High   | VTGate / VTTablet / VReplication / VSchema 的 ops 全部 outsource、branch workflow 是新 paradigm |
+| Paradigm    | Medium | Vitess paradigm 不變、但加 branch workflow                                                      |
+| Components  | Low    | 同 Vitess engine                                                                                |
+| App change  | Low    | Connection string 改、無 schema rewrite                                                         |
+| Topology    | Low    | Vitess sharding 結構保留                                                                        |
 
 Operational = High（其他 Low / Medium） → **Type C operational hybrid**。Branch workflow 是 *Medium paradigm shift* 但不是 dominant — 主要工作量在 *operational ownership 轉移*。
 
@@ -64,7 +64,7 @@ Operational = High（其他 Low / Medium） → **Type C operational hybrid**。
 
 不適合 *跨雲 portability priority high* 或 *strict on-prem deployment* 的 org — PlanetScale 是 cloud-only。
 
-## 4-phase migration
+## Migration 階段：topology 盤點、雙 cluster 同步、讀切換、寫入切換與退役
 
 ### Phase 1：Topology + VSchema audit
 
@@ -117,7 +117,7 @@ Vitess Connector 從自管 VTTablet 的 MySQL primary 讀 binlog、寫進 Planet
 
 ### Phase 3：Application read 切 PlanetScale
 
-跟 Aurora migration Phase 2 同概念。Application read query 切 PlanetScale endpoint：
+跟 [Aurora migration](/backend/01-database/vendors/mysql/migrate-to-aurora/) 把讀流量切到 Aurora reader endpoint 的做法同概念。Application read query 切 PlanetScale endpoint：
 
 - 連 PlanetScale connection string（`xxx.connect.psdb.cloud`）
 - 仍寫自管 Vitess、Vitess Connector 同步 PlanetScale
@@ -126,7 +126,7 @@ Vitess Connector 從自管 VTTablet 的 MySQL primary 讀 binlog、寫進 Planet
 
 - Query result 一致
 - PlanetScale read latency 接近自管（PlanetScale Boost cache 可能加速）
-- PlanetScale row read 計費跟預估一致
+- PlanetScale cluster 使用率與帳單跟預估一致
 
 ### Phase 4：Write cutover + 自管 Vitess 退役
 
@@ -151,30 +151,30 @@ Decommission 自管 Vitess 是大工程：
 
 完成標準：所有 traffic 在 PlanetScale、自管 Vitess 資源全 release、ops headcount confirm 下降。
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### 1. VSchema 不完全兼容 — Custom Vindex 必須改
+### VSchema 不完全兼容 — Custom Vindex 必須改
 
 自管 Vitess 可能用了 *custom Vindex*（自寫 Go plugin）、PlanetScale 不支援 custom Vindex（只支援 built-in：hash / lookup_hash / unicode 等）。
 
 修法：
 
-- Phase 1 audit 出所有 custom Vindex
+- 在 topology + VSchema audit 階段找出所有 custom Vindex
 - 對每個 custom Vindex 評估能否用 built-in 替代
 - 不能替代的、考慮 *application 層 logic 取代 Vindex*（application 自己算 shard key）
 - 或 *暫不遷該 keyspace*、保留自管 Vitess 跑 custom Vindex keyspace、其他遷 PlanetScale
 
-### 2. Branch workflow 訓練不到位 — DBA 仍用「Vitess online DDL」心智模型
+### Branch workflow 訓練不到位 — DBA 仍用「Vitess online DDL」心智模型
 
 自管 Vitess team 習慣 `vtctldclient ApplySchema --strategy=vitess` 跑 online DDL、遷 PlanetScale 後仍想直接這樣 — 但 PlanetScale production branch 禁止 schema change、必須走 Deploy Request。
 
 修法：
 
-- Phase 3 *訓練步驟*：team 每個 DBA / SRE 都跑過完整 branch + Deploy Request workflow
+- write cutover 之前安排 *branch workflow 訓練*：team 每個 DBA / SRE 都跑過完整 branch + Deploy Request workflow
 - 寫 *team runbook*：production schema change must 走 branch
 - 緊急 schema change（事故中）也走 branch、PlanetScale 可加速 Deploy
 
-### 3. SUPER privilege 移除 — 自管 admin tool 失效
+### SUPER privilege 移除 — 自管 admin tool 失效
 
 自管 Vitess 用 `SUPER` privilege 跑 admin script、PlanetScale 沒給 SUPER。常見失效：
 
@@ -184,36 +184,36 @@ Decommission 自管 Vitess 是大工程：
 
 修法：
 
-- Phase 1 audit 所有 admin script
+- 在 topology + VSchema audit 階段一併盤點所有 admin script
 - 改用 *PlanetScale Console / CLI / API* 等價操作
 - PlanetScale 提供的 monitoring 介面替代自管監控
 
-### 4. Connection limit — PlanetScale plan 比預期緊
+### Connection limit — PlanetScale plan 比預期緊
 
 PlanetScale Scaler Plan: 10K connection、Enterprise: 100K。自管 Vitess VTGate 通常設 50K-200K connection、遷 PlanetScale 後 hit limit。
 
 修法：
 
-- Phase 1 *connection forecast*：peak hour 多少 active connection
+- 在 topology + VSchema audit 階段做 *connection forecast*：peak hour 多少 active connection
 - 升 PlanetScale plan（Scaler Pro / Enterprise）
 - 或在 application 端加 connection pool（HikariCP / pgBouncer 等價）降低 connection count
 
-### 5. Cost model 翻盤 — Per-row read 計費超預期
+### Cost model 翻盤 — 帳單跟著 cluster 規格走、規格跟著 access pattern 走
 
-PlanetScale 計費是 *per row read / written*。自管 Vitess cost = EC2 + EBS（線性 with infrastructure scale）。遷 PlanetScale 後計費跟 *application access pattern* 直接相關。
+截至 2026-09 的官方定價頁，PlanetScale 依所選 cluster 規格按月計費、單價依 region 而定；依 row read / written 計費的 Scaler 方案 2024-02-12 起停止新建，2024-04-12 起剩餘的 Scaler 資料庫全數轉為 Scaler Pro（現名 Base）。自管 Vitess 的成本是 EC2 + EBS，跟 infrastructure 規模線性相關。遷到 PlanetScale 之後，月帳由承載 workload 所需的 cluster 規格決定，而需要多大的規格由 application 的 access pattern 決定。
 
-常見 surprise：
+會把 cluster 規格往上推的 access pattern：
 
-- Heavy analytics query（COUNT *、aggregation）讀大量 row、計費高
-- N+1 query pattern（application 跑很多小 SELECT）讀很多 row、計費高
-- Read-heavy workload 沒 Boost cache、每次 query 都 hit billing
+- Heavy analytics query（COUNT *、aggregation）掃大量 row，佔用 CPU 與 I/O
+- N+1 query pattern 讓 application 發出大量小 SELECT，推高 QPS 與連線數
+- Read-heavy workload 的讀取全部打在 primary
 
 修法：
 
-- Phase 1 *cost forecast*：用 `pscale analytics` 預估 row read / write 量、估算月帳
-- Phase 2 期間實際對 PlanetScale 跑 traffic、看實際 billing
-- Heavy analytics 改 *材料化 view* / *async aggregation*、不是每次 query
-- 高 read frequency 開 Boost cache（額外 cost、但比 row read 便宜）
+- 在 topology + VSchema audit 階段，用自管 Vitess 現有的 QPS、CPU 使用率與資料量對照官方定價頁的 cluster 規格，估算月帳
+- 讀流量切到 PlanetScale 之後看實際的 cluster 使用率與帳單（application traffic 從這時才進 PlanetScale）
+- Heavy analytics 改成 materialized view 或 async aggregation，不在每次 query 重算
+- Read-heavy 的流量導到 replica，讓 primary 的規格只為寫入配置
 
 ## Capability mapping
 
@@ -234,17 +234,16 @@ PlanetScale 計費是 *per row read / written*。自管 Vitess cost = EC2 + EBS�
 
 對 200 人 eng team 用自管 Vitess（10 shard、20 TB 資料、50K WPS）：
 
-| 項目                | 自管 Vitess（自管 EC2）                | PlanetScale Scaler Pro           |
-| ------------------- | -------------------------------------- | -------------------------------- |
-| Infrastructure      | ~$15K-25K / mo（EC2 + EBS + LB）       | Variable（per row read / write） |
-| Ops headcount       | 2-3 FTE × $150K / yr = $300K-450K / yr | < 0.5 FTE × $150K = $75K / yr    |
-| Vitess upgrade cost | 每年 1-2 個 SRE × 2 週                 | 自動                             |
-| Per-row read        | 不計費                                 | $1 per 1B row read               |
-| Per-row written     | 不計費                                 | $1.50 per 1M row write           |
-| Storage             | EBS $2K-5K / mo                        | $1.50 / GB / mo                  |
-| **總帳**            | ~$400K-550K / yr                       | ~$200K-350K / yr（看 traffic）   |
+| 項目                   | 自管 Vitess（自管 EC2）                | PlanetScale Base（原 Scaler Pro）                                                               |
+| ---------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Infrastructure         | ~$15K-25K / mo（EC2 + EBS + LB）       | 依 cluster 規格（PS-10、PS-20 等 SKU）按月計費、單價依 region 而定（截至 2026-09 的官方定價頁） |
+| Ops headcount          | 2-3 FTE × $150K / yr = $300K-450K / yr | < 0.5 FTE × $150K = $75K / yr                                                                   |
+| Vitess upgrade cost    | 每年 1-2 個 SRE × 2 週                 | 自動                                                                                            |
+| Per-row read / written | 不計費                                 | 不計費（依 row 計費的 Scaler 方案 2024-02-12 起停止新建、2024-04-12 起全數轉為 Scaler Pro）     |
+| Storage                | EBS $2K-5K / mo                        | 依官方定價頁的 storage 單價（截至 2026-09）                                                     |
+| **總帳**               | ~$480K-750K / yr（infra + ops）        | cluster 月費 × 12 + storage + ops $75K / yr                                                     |
 
-對中型規模、PlanetScale 通常 break-even 或更便宜。對極大規模（> 200K WPS / > 100 TB）PlanetScale Enterprise 需要 commit pricing、不一定划算。
+PlanetScale 端的總帳要把選定的 cluster 規格代入官方定價頁計算。ops headcount 從 2-3 FTE 降到 0.5 FTE 約省下 $225K-375K / yr，這是這條遷移路徑主要的成本理由：PlanetScale 的 cluster 月費與 storage 一年加總，要比自管的 infrastructure 與 storage 一年加總多不到這個數字才打平。對極大規模（> 200K WPS / > 100 TB）PlanetScale Enterprise 需要 commit pricing、不一定划算。
 
 ## 何時不要遷
 
@@ -258,11 +257,11 @@ PlanetScale 計費是 *per row read / written*。自管 Vitess cost = EC2 + EBS�
 
 ### 跟 [Vitess sharding](/backend/01-database/vendors/mysql/vitess-sharding/)
 
-本 migration 保留 Vitess sharding 概念、application code 視角幾乎不變。Phase 1 audit 是 *Vitess concept 對應 PlanetScale concept*、不是 *拆 Vitess 換 distributed SQL*。
+本 migration 保留 Vitess sharding 概念、application code 視角幾乎不變。Topology + VSchema audit 階段做的是 *Vitess concept 對應 PlanetScale concept*、不是 *拆 Vitess 換 distributed SQL*。
 
 ### 跟 [→ PlanetScale (from self-managed MySQL)](/backend/01-database/vendors/mysql/migrate-to-planetscale/)
 
-本 migration 是 *Vitess → PlanetScale*、前者是 *MySQL → PlanetScale*。差異：
+本 migration 的起點是自管 Vitess；[自管 MySQL → PlanetScale](/backend/01-database/vendors/mysql/migrate-to-planetscale/) 的起點是沒有 Vitess 的 MySQL。差異：
 
 - *MySQL → PlanetScale* (Type E)：要學 Vitess 概念 + branch workflow + FK 處理
 - *Vitess → PlanetScale* (Type C)：只學 branch workflow + ops outsource、保留所有 Vitess investment

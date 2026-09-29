@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "d1", "turso", "migration"]
 
 SQLite to D1 / Turso migration 的核心責任是把 local SQLite 轉成 edge / serverless / distributed SQLite-compatible product。這條路線的 driver 通常是 edge locality、Workers integration、managed operation、global read latency、embedded replica 或 serverless deployment workflow。
 
-本文的判讀錨點是：D1 / Turso migration 是 runtime boundary 變更。Local file 直連變成 platform binding、remote endpoint 或 embedded replica；因此 migration 要同時審查 SQL support、data movement、driver API、auth、latency、freshness、backup 與 vendor exit。
+本文的範圍是 local SQLite 遷到 D1 或 Turso 時的 migration driver、compatibility audit、data movement、application change、上線 evidence、rollback 與 decision route。
 
 ## Migration Drivers
 
@@ -38,14 +38,22 @@ Compatibility audit 的核心責任是確認 local SQLite schema、query 與 mig
 | Transaction  | request boundary、retry、write location | failure injection              |
 | Backup       | export、restore、retention              | restore drill                  |
 
-Compatibility audit 要以 production query 為單位。只跑 `CREATE TABLE` 會漏掉最重要的差異；query suite 要包含 list page、pagination、unique violation、FK violation、transaction rollback、large batch 與 slow query。
+Compatibility audit 要以 production query 為單位。只跑 `CREATE TABLE` 只驗到 schema 建得起來，local SQLite 與 target product 在 query 執行上的差異驗不到；query suite 要包含 list page、pagination、unique violation、FK violation、transaction rollback、large batch 與 slow query。
 
 ## Data Movement
 
 Data movement 的核心責任是把 SQLite file 轉成 target platform 可接受的 seed。Local SQLite 可以先 export 成 SQL dump、CSV 或 platform CLI 支援的 import format，再進 target product。
 
 ```bash
+# 把整個 SQLite 檔匯出成 SQL 文字
 sqlite3 app.db ".dump" > seed.sql
+# seed.sql 的開頭與結尾是：
+#   PRAGMA foreign_keys=OFF;
+#   BEGIN TRANSACTION;
+#   ...CREATE TABLE 與 INSERT...
+#   COMMIT;
+# 匯入 D1 前要刪掉 BEGIN TRANSACTION 與 COMMIT;
+#   沒刪時 D1 回 "cannot start a transaction within a transaction"
 ```
 
 這段命令只是 seed 起點。正式流程要處理 schema ordering、unsupported SQL、large transaction、batch split、sensitive data masking、import duration、row count 與 checksum。

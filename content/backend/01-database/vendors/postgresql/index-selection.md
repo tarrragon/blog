@@ -6,22 +6,22 @@ weight: 15
 tags: ["backend", "database", "postgresql", "index", "deep-article"]
 ---
 
-> 本文是 [PostgreSQL](/backend/01-database/vendors/postgresql/) overview 的 implementation-layer deep article。Overview 已說明 PG 在 OLTP 譜系的定位、本文聚焦 *index 選型* — 何時用哪種 index、跟 [query-optimization](/backend/01-database/vendors/postgresql/query-optimization/) 的「為什麼這個 plan 慢」互補。
+> 這篇涵蓋 PostgreSQL 的 index 選型：何時用哪種 index，跟 [query-optimization](/backend/01-database/vendors/postgresql/query-optimization/) 的「為什麼這個 plan 慢」互補。
 
 ---
 
-## 6 種 Index Method 對應 Workload
+## Index Method 與各自適用的 Workload
 
 PG 有 6 種 index access method、各有自己擅長的 query pattern：
 
-| Index method | 適用 query pattern                                         | 典型 column type              | 儲存成本                 |                |
-| ------------ | ---------------------------------------------------------- | ----------------------------- | ------------------------ | -------------- |
-| B-tree       | `=` / `<` / `>` / `BETWEEN` / `IS NULL` / `LIKE 'prefix%'` | 任何 scalar、最常用           | 中                       |                |
-| Hash         | 純 `=` 比對                                                | scalar、不常用                | 低                       |                |
-| GIN          | `@>` / `?` / `?                                            | ` / FTS / array 包含          | JSONB / tsvector / array | 高（write 慢） |
-| GiST         | 範圍 / 空間 / 自訂 operator                                | geometry / tsvector / range   | 中                       |                |
-| SP-GiST      | Non-balanced 樹結構                                        | IP / phone prefix / quad-tree | 中                       |                |
-| BRIN         | 大表的 range scan、physical order 跟 logical order 相關    | timestamp / id（append-only） | 極低                     |                |
+| Index method | 適用 query pattern                                         | 典型 column type              | 儲存成本       |
+| ------------ | ---------------------------------------------------------- | ----------------------------- | -------------- |
+| B-tree       | `=` / `<` / `>` / `BETWEEN` / `IS NULL` / `LIKE 'prefix%'` | 任何 scalar、最常用           | 中             |
+| Hash         | 純 `=` 比對                                                | scalar、不常用                | 低             |
+| GIN          | `@>` / `?` / `?\|` / FTS / array 包含                      | JSONB / tsvector / array      | 高（write 慢） |
+| GiST         | 範圍 / 空間 / 自訂 operator                                | geometry / tsvector / range   | 中             |
+| SP-GiST      | Non-balanced 樹結構                                        | IP / phone prefix / quad-tree | 中             |
+| BRIN         | 大表的 range scan、physical order 跟 logical order 相關    | timestamp / id（append-only） | 極低           |
 
 選錯 index 的代價：
 
@@ -29,7 +29,7 @@ PG 有 6 種 index access method、各有自己擅長的 query pattern：
 - **Storage**：JSONB 加 GIN 可能比表本身還大
 - **Plan misjudge**：planner 看到 index 不一定用、`EXPLAIN` 才確認
 
-## B-tree：預設選擇、95% workload 適用
+## B-tree：預設選擇、多數 workload 適用
 
 B-tree 是 PG 預設 index、CREATE INDEX 不指定 method 就是 B-tree：
 
@@ -60,19 +60,25 @@ B-tree 不擅長：
 - `column @> array`（包含）→ 改 GIN
 - JSON 內部 path query → 改 GIN on JSONB
 
-**Multi-column B-tree** 的順序很重要：
+**Multi-column B-tree** 的 column 順序決定哪些 query 用得到它。PostgreSQL 手冊〈Multicolumn Indexes〉寫的規則是：leading column 上的等值條件，加上第一個沒有等值條件的 column 上的範圍條件，會用來限縮 index 掃描的範圍；其餘條件只能在掃到的 entry 上逐筆過濾。
 
 ```sql
--- 假設常 query: WHERE user_id = ? AND status = ?
-CREATE INDEX idx_orders_user_status ON orders (user_id, status);  -- 對
-CREATE INDEX idx_orders_status_user ON orders (status, user_id);  -- 錯（status 選擇性低）
+-- 兩欄都是等值條件：WHERE user_id = 42 AND status = 'pending'
+-- 兩種順序都把掃描限縮到同一組 (user_id, status)
+-- 200 萬列的 orders、PostgreSQL 16 實測兩者都是 Buffers: shared hit=1 read=3
+CREATE INDEX idx_orders_user_status ON orders (user_id, status);
+CREATE INDEX idx_orders_status_user ON orders (status, user_id);
+
+-- 只查 user_id：WHERE user_id = 42
+-- (user_id, status)：Index Scan，Buffers: shared hit=2 read=3
+-- (status, user_id)：leading column 沒有條件，planner 改走 Parallel Seq Scan
 ```
 
 順序原則：
 
-1. **等值 column 在前**（高選擇性）
-2. **範圍 column 在後**（B-tree leftmost 規則）
-3. **selectivity 高的在前**（filter 更多 row）
+1. **等值條件的 column 在前、範圍條件的 column 在後**：範圍條件後面的 column 不再限縮掃描範圍
+2. **會被單獨查詢的 column 放 leading 位置**：leading column 沒有條件的 query 用不到這個 index
+3. **兩欄都只用等值條件查時，這個 query 不受順序影響**：順序要看的是其他 query 會不會只帶其中一欄
 
 ## GIN：JSONB / FTS / Array 的標配
 
@@ -101,10 +107,10 @@ GIN 代價：
 
 **Operator class** 選擇影響大：
 
-| Op class            | 適用                | 索引大小 | 支援 operator   |          |
-| ------------------- | ------------------- | -------- | --------------- | -------- |
-| `jsonb_ops`（預設） | 通用                | 大       | `@>` / `?` / `? | ` / `?&` |
-| `jsonb_path_ops`    | 只 `@>` containment | 1/3-1/2  | 只 `@>`         |          |
+| Op class            | 適用                | 索引大小 | 支援 operator             |
+| ------------------- | ------------------- | -------- | ------------------------- |
+| `jsonb_ops`（預設） | 通用                | 大       | `@>` / `?` / `?\|` / `?&` |
+| `jsonb_path_ops`    | 只 `@>` containment | 1/3-1/2  | 只 `@>`                   |
 
 只用 `@>` query 時、`jsonb_path_ops` 救大量 storage。
 
@@ -154,7 +160,7 @@ BRIN 機制：每個 block range（預設 128 page）記 min/max、query 時跳�
 
 **BRIN 失效情境**：
 
-- UPDATE 破壞 physical order（row 被 vacuum 移到別 block）→ BRIN 失效
+- UPDATE 與刪除後的 insert 破壞 physical order：UPDATE 把新版本的 row 寫進有空位的 block（不一定是原本那個），DELETE 經 vacuum 回收的空間會讓之後 insert 的新 row 落回舊 block → 那些 block range 的 min/max 被拉寬、BRIN 能跳過的 range 變少
 - 隨機 insert（uuid / hash id）→ BRIN range 完全沒選擇性
 
 **何時不該用 BRIN**：表 < 1GB（沒省 storage 收益）、column 沒 physical order correlation（CLUSTER 後可能改善）。
@@ -177,7 +183,7 @@ CREATE INDEX idx_orders_high_value ON orders (user_id)
 WHERE total > 1000;
 ```
 
-Partial index 的 query 要 *完全匹配 WHERE 條件* 才用得到：
+Partial index 只在 query 的 WHERE 條件推得出 index 的 WHERE 條件時才用得到；query 可以多帶其他條件：
 
 ```sql
 -- 用得到 partial index
@@ -200,8 +206,9 @@ SELECT * FROM users WHERE lower(email) = lower('USER@example.com');
 CREATE INDEX idx_products_category ON products ((metadata->>'category'));
 SELECT * FROM products WHERE metadata->>'category' = 'shoes';
 
--- 對日期截斷
-CREATE INDEX idx_orders_day ON orders (date_trunc('day', created_at));
+-- 對日期截斷（created_at 是 timestamptz 時，date_trunc 的結果隨 session 的 TimeZone 變，
+-- 函式是 STABLE、不能進 index，先轉成固定時區的 timestamp）
+CREATE INDEX idx_orders_day ON orders (date_trunc('day', created_at AT TIME ZONE 'UTC'));
 ```
 
 Expression 必須 IMMUTABLE — `now()` / `random()` 不能用、`timezone('UTC', ts)` 可以。
@@ -226,7 +233,7 @@ INCLUDE column 不參與 sorting / equality、只放 leaf node、救 IO。
 Query pattern 是什麼？
 
 ├─ 等值 / 範圍 / prefix LIKE / IS NULL
-│  └─ B-tree（90% 場景）
+│  └─ B-tree（多數場景）
 │     ├─ 只 query 部分 row？→ Partial B-tree
 │     ├─ 對函式結果？→ Expression B-tree
 │     └─ 需要回表更多 column？→ Covering（INCLUDE）
@@ -249,9 +256,9 @@ Query pattern 是什麼？
    └─ SP-GiST（罕見）
 ```
 
-## 5 個 Production 踩雷
+## Production 踩雷
 
-### Case 1：過度 index（write 放大）
+### 過度 index（write 放大）
 
 **情境**：team「為了 query 快」對 20 個 column 各建 index、寫入量大時 INSERT 慢 10x。
 
@@ -263,17 +270,34 @@ Query pattern 是什麼？
 - 用 `pg_stat_statements` 找實際被執行的 query、反推真正需要的 index
 - 同 column 多 index（user_id 單欄 + (user_id, status) 多欄）通常可拆掉單欄
 
-### Case 2：Partial index 條件跟 query 不匹配
+### Partial index 條件跟 query 不匹配
 
-**情境**：建 `WHERE status = 'active'` partial index、application query 寫 `WHERE status IN ('active')`、planner 不 prove 等價、不用 index。
+**情境**：建 `WHERE status = 'active'` partial index、application 用 prepared statement 把 status 當參數傳（`WHERE status = $1`），走 generic plan 時不用 index。
+
+Planner 在規劃時要能從 query 的 WHERE 推出 index 的 WHERE 條件。單一值的 `IN ('active')` 與 `= ANY(ARRAY['active'])` 推得出來；多一個值、或值在規劃時還不知道，就推不出來：
+
+```sql
+CREATE INDEX idx_users_active ON users (email) WHERE status = 'active';
+
+-- 推得出 status = 'active'：Index Scan using idx_users_active
+EXPLAIN SELECT * FROM users WHERE status IN ('active') AND email = 'u10@x.com';
+EXPLAIN SELECT * FROM users WHERE status = ANY(ARRAY['active']) AND email = 'u10@x.com';
+
+-- 推不出：('active', 'pending') 裡有 index 條件以外的值，改走 Seq Scan
+EXPLAIN SELECT * FROM users WHERE status IN ('active', 'pending') AND email = 'u10@x.com';
+
+-- 推不出：generic plan 規劃時不知道 $1 的值，改走 Seq Scan
+SET plan_cache_mode = force_generic_plan;
+PREPARE q(text, text) AS SELECT * FROM users WHERE status = $1 AND email = $2;
+EXPLAIN EXECUTE q('active', 'u10@x.com');
+```
 
 修法：
 
-- Partial 條件用最 generic form（避免 IN / OR 跟 = 的差異）
-- 寫完用 `EXPLAIN` 驗證 query 真的用到 partial index
-- Application 統一 query 寫法、不要混 `=` 跟 `IN` 跟 `ANY`
+- Partial 條件只用在 query 以常數寫出的條件上；status 以參數傳入時，改建以 status 為 key 的 index（`(status, email)`）
+- 寫完用 `EXPLAIN` 驗證 query 真的用到 partial index；prepared statement 用 `EXPLAIN EXECUTE` 看實際執行的 plan
 
-### Case 3：B-tree 對 JSONB 內部欄位無效
+### B-tree 對 JSONB 內部欄位無效
 
 **情境**：對 `metadata` JSONB column 建 B-tree、query `metadata->>'category' = 'shoes'` 不用 index。
 
@@ -285,7 +309,7 @@ B-tree 對 *整個 JSONB* 排序、但 path query 不是整個 JSONB 的比對�
 - 對動態 path 建 GIN index：`CREATE INDEX ... USING GIN (metadata)`
 - 兩者並存可、`EXPLAIN` 看 planner 選哪個
 
-### Case 4：BRIN 對非 correlated 資料無效
+### BRIN 對非 correlated 資料無效
 
 **情境**：對 `user_id` 建 BRIN index（user_id 是隨機 UUID）、query 完全跑 seq scan。
 
@@ -294,23 +318,29 @@ UUID 沒 physical order correlation、每個 block range 的 min/max 涵蓋整�
 修法：
 
 - BRIN 只用 `timestamp` / 自增 `id` / 其他自然 correlate 的 column
-- 用 `pg_stats` 看 `correlation` value、< 0.1 就不適合 BRIN
+- 用 `pg_stats` 看 `correlation` value、絕對值 < 0.1 就不適合 BRIN（依時間倒序寫入的 column 是 -1，同樣適合）
 - 真要對 random column 加 index、回 B-tree
 
-### Case 5：Multi-column index 順序錯
+### Multi-column index 順序錯：範圍條件放在 leading column
 
-**情境**：常見 query `WHERE status = 'pending' AND user_id = 42`、建 index `(status, user_id)`、效能差。
+**情境**：常見 query `WHERE user_id = 42 AND created_at > now() - interval '10 days'`、建 index `(created_at, user_id)`、效能差。
 
-`status` 只 5 個 distinct value、選擇性 1/5；`user_id` 1M distinct、選擇性 1/1M。Index leftmost 是 status、scan range 太大。
+`created_at` 上是範圍條件，它在 leading 位置時，index 掃描要走過這段時間內所有 user 的 entry，`user_id = 42` 只能在掃到的 entry 上逐筆比對。
 
-修法：
+修法：等值條件的 column 放前面：
 
 ```sql
--- 拆兩個或調順序
-CREATE INDEX idx_user_status ON orders (user_id, status);
+-- 範圍條件在 leading column：掃過 10 天內所有 user 的 entry
+CREATE INDEX idx_orders_created_user ON orders (created_at, user_id);
 
--- 或加 partial 限定低選擇性 column
-CREATE INDEX idx_orders_pending ON orders (user_id) WHERE status = 'pending';
+-- 等值條件在前：先定位 user_id = 42、再在它底下掃 created_at 範圍
+CREATE INDEX idx_orders_user_created ON orders (user_id, created_at);
+
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT * FROM orders WHERE user_id = 42 AND created_at > now() - interval '10 days';
+-- 200 萬列的 orders、PostgreSQL 16 實測：
+--   (created_at, user_id)：Buffers: shared read=3313
+--   (user_id, created_at)：Buffers: shared read=3
 ```
 
 ## 跟 MySQL Index 差異
