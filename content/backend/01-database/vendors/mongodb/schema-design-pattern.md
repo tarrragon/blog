@@ -6,11 +6,11 @@ weight: 30
 tags: ["backend", "database", "mongodb", "schema-design", "document-model", "deep-article"]
 ---
 
-MongoDB schema design 的初學討論常停在「embedded vs reference 二選一」。真實 production 議題遠不止此：document model 給的 schema flexibility 在第一年是紅利、跑半年後同 collection 開始混三代 schema、application code 三層 if-else 處理欄位缺失與型別漂移。這時候讀者要解的不是「embed 還是 reference」、是 **schema contract 該由誰守、守在哪一層**。本文把這個議題拆成三條 contract layer 路徑（DB-layer validator / app-layer abstraction / 混合）、配合 embedded / reference / polymorphic 機制與 time-series collection 邊界一起討論。
+這篇整理 MongoDB document schema 在 production 的設計與治理：embedded、reference、polymorphic 各自適用的資料形狀，schema contract 放在 DB 層 `$jsonSchema` validator、app 層 abstraction 還是兩者並用，以及 time-series collection 的適用邊界。Document model 適合哪些 workload 在 [MongoDB vendor overview](/backend/01-database/vendors/mongodb/)。
 
-本文不重複 [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) 已寫過的 document model 適用條件 — 而是 production 部署 + schema governance + 失敗修復 的實作層教學。
+Embedded 與 reference 的選擇決定單一 document 的形狀；schema contract 放在哪一層，決定 collection 跑半年、欄位演進幾輪之後，同一個 collection 裡的 document 還是不是同一種形狀。
 
-## 問題情境：document 自由的後座力
+## MongoDB 適用度前置判讀
 
 MongoDB 適用度的前置判讀有三件事要確認：
 
@@ -26,20 +26,20 @@ MongoDB 適用度的前置判讀有三件事要確認：
 - IoT / sensor / event log workload 寫進 regular collection、寫入吞吐撞牆但沒考慮 time-series collection
 - `$lookup` 出現在 hot path、document size warning（16MB 上限預警）、partial update 卻產生大量 disk write、schema validation 報錯比例突然爬升
 
-Case anchor：[9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 揭露車載 sensor schema 隨車型 / 年份 / 規範演進、polymorphic document 與 schema governance 並存；[9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) 揭露 CMS 50+ 微服務透過自建中介 abstraction layer 隔離 schema 變動；[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 揭露 document model 保留 + 跨 vendor 形狀治理。早期 startup MongoDB 三代 schema 並存的具體 incident 細節需未來 case 補完、本文先以「常見 failure pattern」處理。
+Case anchor：[9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 揭露車載 sensor schema 隨車型 / 年份 / 規範演進、polymorphic document 與 schema governance 並存；[9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) 揭露 CMS 50+ 微服務透過自建中介 abstraction layer 隔離 schema 變動；[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 揭露 document model 保留 + 跨 vendor 形狀治理。
 
 ## 核心機制：aggregate root、embedded、reference、polymorphic
 
-MongoDB schema design 的第一層是 *aggregate root 決定 atomicity 邊界*。MongoDB 把寫入 atomicity 限制在「單 document 內」、跨 document 要 multi-document transaction（5.0+ 在 replica set / sharded cluster 都支援、但跨 shard 有性能成本）。aggregate root 是 DDD 概念落地到 MongoDB 的具體實作 — 把「一起讀、一起寫、一致性邊界一致」的資料塞同一個 document。
+MongoDB schema design 的起點是 *aggregate root 決定 atomicity 邊界*。MongoDB 把寫入 atomicity 限制在「單 document 內」、跨 document 要 multi-document transaction（replica set 從 4.0、sharded cluster 從 4.2 開始支援，跨 shard 的 transaction 有性能成本）。aggregate root 是 DDD 概念落地到 MongoDB 的具體實作 — 把「一起讀、一起寫、一致性邊界一致」的資料塞同一個 document。
 
 - **Embedded（subdocument / array）**：寫入 atomic、讀取一次到位；代價是 update sub-element 仍要 rewrite 整顆 document，sub-element 寫頻很高時不適合
 - **Reference（手動 `_id` foreign key + `$lookup`）**：document 大小可控，但 join 在 application 或 aggregation 階段做；JOIN-heavy workload 跑這條路徑會 N+1
 - **Polymorphic pattern**：同 collection 用 `type` discriminator 存多型實體；MongoDB 沒 inheritance、靠 schema validator 與 partial index 維持邊界
 - **16MB document hard limit**：是 MongoDB 機制邊界；working set 在 RAM 的隱性軟限制（單 doc 大小直接影響 page cache 效率）更早就會出問題
 
-### Contract layer 三條路徑
+### Contract layer 放在 DB 層、app 層還是兩者並用
 
-跨 case 合成 frame（本章合成、Toyota + Forbes 共同揭露）：document model 的 schema flexibility 在 production 必須以 schema governance 對沖、否則「schema 自由」變「production data inconsistency」（Toyota case 明示）。讀者要選的不是「要不要做 schema governance」、是「contract 守在哪一層」。三條路徑：
+Toyota 與 Forbes 兩個案例都顯示，document model 的 schema flexibility 在 production 要以 schema governance 對沖，否則「schema 自由」變「production data inconsistency」（Toyota case 原文）。Schema governance 要做，要選的是 contract 守在哪一層：
 
 | 路徑               | 實作機制                                                                 | 適用條件                                           |
 | ------------------ | ------------------------------------------------------------------------ | -------------------------------------------------- |
@@ -55,21 +55,21 @@ MongoDB schema design 的第一層是 *aggregate root 決定 atomicity 邊界*�
 
 讀者選哪條路徑要看：team 規模 / collection 跨服務程度 / schema 演進速度。
 
-### Time-series collection（6.0+）
+### Time-series collection（5.0+）
 
 Time-series collection 是 MongoDB 為 IoT / sensor / event log / metrics 設計的 vendor-specific 機制 — 比 regular collection 寫入吞吐高 3-5x、storage 壓縮率更好。資料形狀必須是 `{ timestamp, metadata, measurement }` 三段式、timestamp 主導。
 
 適用情境：sensor signal 高頻寫入、metrics 系統的 time series、application event log。**不適用情境**：schema 不以 timestamp 為主、需要跨 document update、需要 polymorphic discriminator。
 
-9.C38 Toyota Connected 自承「20 個 Atlas database 沒明確說有沒有用 time series collection — 對 IoT 案例這是重要區分、但 case study 沒揭露」。寫進 production 時必須明示：IoT / sensor 場景該考慮 time-series collection、Toyota case 未揭露實際使用情況、不可寫成「Toyota 使用 time-series collection」。
+[Toyota Connected 案例](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/)的 20 個 Atlas database 有沒有用 time-series collection，案例原文沒有揭露，所以這個案例只能說明 IoT / sensor 資料的形狀，不能當成 time-series collection 的使用實例。
 
 對應 knowledge card：[document-store](/backend/knowledge-cards/document-store/)、[transaction-boundary](/backend/knowledge-cards/transaction-boundary/)（aggregate boundary = transaction boundary）、[data-inconsistency](/backend/knowledge-cards/data-inconsistency/)。
 
 ## 操作流程
 
-**Step 1：access pattern 盤點**。列出 top 10 query / write、標 read together / write together 集合 — 這份清單決定 embedded vs reference vs polymorphic 的候選。
+**access pattern 盤點**。列出 top 10 query / write、標 read together / write together 集合 — 這份清單決定 embedded vs reference vs polymorphic 的候選。
 
-**Step 2：contract layer 決策**。
+**選 contract layer 的路徑**。
 
 | 條件                                      | 路徑                                              |
 | ----------------------------------------- | ------------------------------------------------- |
@@ -78,9 +78,9 @@ Time-series collection 是 MongoDB 為 IoT / sensor / event log / metrics 設計
 | 大型 production + 多 owner + 跨團隊       | 混合（兩者並用）                                  |
 | IoT / sensor / event log + timestamp 主導 | Time-series collection（取代 regular collection） |
 
-**Step 3：embed 判斷標準** — 1:few、life-cycle 同步、< 1MB 預期上限；**reference 判斷標準** — 1:many 寫頻不對稱、跨 aggregate 引用。
+**embed 判斷標準** — 1:few、life-cycle 同步、< 1MB 預期上限；**reference 判斷標準** — 1:many 寫頻不對稱、跨 aggregate 引用。
 
-**Step 4：DB-layer 路徑 validator 配置**：
+**DB-layer 路徑的 validator 配置**：
 
 ```javascript
 db.runCommand({
@@ -114,9 +114,9 @@ db.runCommand({
 
 灰度策略：先 `validationLevel: "moderate"` + `validationAction: "warn"` 觀察兩週、確認 application 不寫違規 doc、再切 `"strict"` + `"error"` 封死。
 
-**Step 5：App-layer 路徑 abstraction 介面**。9.C37 Forbes 揭露的模式 — middleware 攔截 microservice 寫入、驗 schema、套版本欄位、把 owner microservice 的 schema 變動隔離在 abstraction 內。
+**App-layer 路徑的 abstraction 介面**。9.C37 Forbes 揭露的模式 — middleware 攔截 microservice 寫入、驗 schema、套版本欄位、把 owner microservice 的 schema 變動隔離在 abstraction 內。
 
-**Step 6：Polymorphic + partial index** — `partialFilterExpression` 避免冷分支吃 index 成本：
+**Polymorphic + partial index** — `partialFilterExpression` 只替熱類型建 index，冷類型不佔 index 空間：
 
 ```javascript
 db.events.createIndex(
@@ -125,7 +125,7 @@ db.events.createIndex(
 )
 ```
 
-**Step 7：量測 doc 形狀**。用 `bsondump` + `$bsonSize` + `collStats` 量測：
+**量測 doc 形狀**。用 aggregation 的 `$bsonSize` 算平均與最大 document 大小（`db.coll.stats()` 的 `avgObjSize` 可以交叉比對）：
 
 ```javascript
 db.coll.aggregate([
@@ -161,7 +161,7 @@ Anti-recommendation：
 
 - access pattern 還沒穩定的早期 MVP 不需要鎖死 schema validator；先用 app-layer abstraction、production 穩定後再決定 DB 層該不該封死
 - JOIN-heavy / 強 normalize workload 一開始就該回 PostgreSQL JSONB 或 SQL、不是塞進 MongoDB 再 `$lookup`
-- 跨案合成 frame：「不是所有資料都該進 MongoDB」、document-shaped + 形狀變化頻繁的進、access pattern 固定的 KV 走 KV（9.C36 Coinbase 揭露 MongoDB + DynamoDB 按 workload 分流）
+- 資料按形狀分流：document-shaped + 形狀變化頻繁的進 MongoDB、access pattern 固定的 KV 走 KV（9.C36 Coinbase 揭露 MongoDB + DynamoDB 按 workload 分流）
 
 ## 容量與觀測
 
@@ -178,13 +178,13 @@ Mongo command：
 - `db.runCommand({collMod: ..., validator: ...})` 改 validator
 - `db.setProfilingLevel(1, {slowms: 100})` 抓 slow op
 
-回到 [4.20 observability evidence](/backend/04-observability/observability-evidence-package/)：把 doc size 分布、validator failure rate、abstraction layer schema mismatch、`$lookup` 出現位置列為 evidence 三件套。
+回到 [4.20 observability evidence](/backend/04-observability/observability-evidence-package/)：把 doc size 分布、validator failure rate、abstraction layer schema mismatch、`$lookup` 出現位置列為 schema 治理的 evidence。
 
 回到 [9.5 bottleneck localization](/backend/09-performance-capacity/bottleneck-localization/)：working set 撐爆 RAM 時的 page fault 信號、跟 doc size 異常增長強相關。
 
 ## 邊界與整合
 
-Sibling deep articles：
+同 vendor 的其他文章：
 
 - [shard key selection](../shard-key-selection/) — document 形狀決定 shard key 候選空間
 - [aggregation pipeline optimization](../aggregation-pipeline-optimization/) — `$lookup` 與 schema reference 互相牽動
@@ -195,11 +195,11 @@ Migration playbook：
 - document 形狀走樣到無法治理時的 [→ MongoDB → PostgreSQL 拆 normalize](/backend/01-database/large-scale-db-migration/) 路徑
 - 保留 document model 換 vendor 三型對照 — 保留主 DB 補周邊（Coinbase）/ 同 DB 換託管（Forbes Atlas）/ 同 model 換 vendor（[Microsoft 365 Cosmos DB MongoDB API](/backend/01-database/vendors/cosmosdb/)）
 
-跟 1.x 互引：[1.2 schema design](/backend/01-database/schema-design/) 處理通用 schema 演進原則、本文是 MongoDB-specific 落地；[1.3 transaction boundary](/backend/01-database/transaction-boundary/) 對齊 aggregate = atomic 邊界。
+主章節：[1.2 schema design](/backend/01-database/schema-design/) 處理通用 schema 演進原則、本文是 MongoDB-specific 落地；[1.3 transaction boundary](/backend/01-database/transaction-boundary/) 對齊 aggregate = atomic 邊界。
 
 ## 相關連結
 
-- [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) — 本文是該頁尾「schema design pattern」backlog 的深度展開
+- [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) — MongoDB 的服務定位與 document model 適用條件
 - [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/)
 - [9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) — polymorphic + governance
 - [9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) — abstraction layer 模式

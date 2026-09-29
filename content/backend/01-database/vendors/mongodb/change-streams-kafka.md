@@ -6,11 +6,9 @@ weight: 35
 tags: ["backend", "database", "mongodb", "change-streams", "cdc", "kafka", "deep-article"]
 ---
 
-MongoDB change streams 是 3.6+ 原生 CDC 介面、本質上是 oplog tail 包裝成 cursor API。Application 從 dual-write 模式（自己寫 MongoDB 又寫 Elasticsearch / Redis / data warehouse）換成 change stream → Kafka → downstream sink 後、有了第一版 CDC pipeline、但連續工作幾週後出現「downstream 漏 event」或「duplicate event」；最痛的是 connector restart 後 resume token 過期（oplog 已滾掉）、整個 collection 必須重灌。本文把 change stream 機制、Kafka Connector 配置、resume token 治理、sharded cluster scope 選擇講清楚。
+這篇整理用 MongoDB change stream 接 Kafka 的 CDC pipeline：change stream 的 scope 與 resume token 機制、oplog 容量怎麼算、MongoDB Kafka Connector 的配置、downstream 的 idempotency，以及 resume token 過期、updateLookup 壓 primary、cluster-wide stream 壓 mongos 這幾種失敗的處置。Change streams 的基本介紹在 [MongoDB vendor overview](/backend/01-database/vendors/mongodb/)。
 
-本文不重複 [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) 已寫過的 change streams 簡介 — 而是 production CDC pipeline 部署 + 失敗修復的實作層教學。
-
-> **MongoDB 適用度前置判讀**：進到 CDC pipeline 設計前先確認 workload 在 MongoDB 適用區（document shape 主導 / contract layer 該放哪 / 跨雲 hedging 是否需要）— 詳見 [schema-design-pattern 開頭 3 軸前置判讀](../schema-design-pattern/#問題情境document-自由的後座力)、本篇不重複展開。Change streams 是 *已選 MongoDB 後* 的 event-driven 整合議題。
+> **MongoDB 適用度前置判讀**：進到 CDC pipeline 設計前先確認 workload 在 MongoDB 適用區（document shape 主導 / contract layer 該放哪 / 跨雲 hedging 是否需要）— 詳見 [schema-design-pattern 開頭 3 軸前置判讀](../schema-design-pattern/#mongodb-適用度前置判讀)、本篇不重複展開。Change streams 是 *已選 MongoDB 後* 的 event-driven 整合議題。
 
 ## 問題情境：第一版 CDC pipeline 跑幾週的踩雷
 
@@ -26,7 +24,7 @@ MongoDB change streams 是 3.6+ 原生 CDC 介面、本質上是 oplog tail 包�
 - Downstream Kafka topic event count vs source collection write count 不平
 - Replication oplog 跟 change stream consumer 的 lag 同時升
 
-Case anchor：CDC pipeline resume token 過期導致全量重灌的具體 incident 細節需未來 case 補完、本文以「常見 failure pattern」+ 容量公式處理、不憑空編造 incident 數字。側面引用 [Spotify Kafka → PubSub migration](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/)（pipeline-level migration 經驗對照）。
+Pipeline 層級遷移的經驗可以對照 [Spotify Kafka → PubSub migration](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/)。
 
 ## 核心機制
 
@@ -38,14 +36,14 @@ Change stream 是 MongoDB 3.6+ 原生 CDC、本質上是 oplog tail 包裝成 cu
 
 Oplog 是 capped collection、預設 size = disk 5% 或 50GB（取較小）。Resume token 對應 oplog entry 的 timestamp + UUID + documentKey。Token 必須對應仍在 oplog 內的 entry — oplog 滾掉就拿不到 token 對應的位置、`ChangeStreamHistoryLost`。
 
-**Resume token 兩種用法**：
+**Resume token 從哪裡取、怎麼用**：
 
-- `_id`：每個 event 都帶、application 自己存
+- `_id`：每個 event 都帶、這個欄位的值就是 resume token，application 自己存
 - `startAfter` / `resumeAfter` parameter：重啟 cursor 時帶上
 
 **`fullDocument: "updateLookup"`**：update event 預設只給 delta、加這個 option 會額外 query 一次 primary 拿完整 doc；高頻 update 下成本顯著（primary 負擔翻倍）。
 
-**Pre-image / post-image（6.0+）**：可以拿到 update 前的 doc 狀態、需 collection-level option `changeStreamPreAndPostImages: true`。
+**Pre-image / post-image（6.0+）**：可以拿到 update 前的 doc 狀態、需 collection-level option `changeStreamPreAndPostImages: { enabled: true }`。
 
 **Cluster-wide vs collection-level change stream**：
 
@@ -63,7 +61,7 @@ Oplog 是 capped collection、預設 size = disk 5% 或 50GB（取較小）。Re
 
 ## 操作流程
 
-**Step 1：scope 決策樹**。
+**選 change stream 的 scope**。
 
 | Scope            | 適用條件                                        | 代價                            |
 | ---------------- | ----------------------------------------------- | ------------------------------- |
@@ -71,15 +69,19 @@ Oplog 是 capped collection、預設 size = disk 5% 或 50GB（取較小）。Re
 | Database-level   | 多 collection 共享 sink、ordering 跨 collection | filter cost 在 connector 端     |
 | Cluster-wide     | 整個 cluster 統一 audit / replay                | mongos 單點瓶頸風險、event 量大 |
 
-**Step 2：oplog sizing**。容量公式：
+**oplog sizing**。容量公式：
 
 ```text
-oplog size >= peak write rate × max acceptable consumer downtime
+oplog size >= peak write rate × max acceptable consumer downtime × 平均每筆 oplog entry 大小
+
+例：peak 5,000 writes/s、要容忍 connector 停 48 小時（172,800 秒）
+    5,000 × 172,800 = 864,000,000 筆 oplog entry
+    再乘上平均每筆 oplog entry 的大小，就是 oplog 至少要設的大小
 ```
 
-典型設 24-72 小時可恢復窗口。例：peak 5K WPS、想容忍 48 小時 connector down、oplog 至少 5K × 86400 × 2 ÷ docs_per_GB ≈ 看實際 doc size 決定。在 Atlas 上 oplog size 可直接調、自管 cluster 改 `replSetResizeOplog`。
+典型設 24-72 小時可恢復窗口。平均每筆 oplog entry 的大小隨 document 大小與更新方式而變，接上自己的 cluster 用 `db.getReplicationInfo()` 的 oplog 大小除以時間範圍內的寫入量估出來。在 Atlas 上 oplog size 可直接調、自管 cluster 改 `replSetResizeOplog`。
 
-**Step 3：Kafka Connector 配置**。
+**Kafka Connector 配置**。
 
 ```json
 {
@@ -100,23 +102,30 @@ oplog size >= peak write rate × max acceptable consumer downtime
 
 - `change.stream.full.document: "updateLookup"`：每 update 額外 query primary 拿完整 doc（成本意識）
 - `copy.existing: "true"`：connector 啟動時先把現有 collection 全量複製、再切到 change stream — 適合初次部署
-- `errors.tolerance: "none"`：sink 失敗時 batch 停在 dead-letter queue、不 silently drop
+- `errors.tolerance: "none"`：遇到處理不了的 record 時 connector task 直接失敗停下，不跳過那筆 record
 
-**Step 4：resume token persistence**。Connector 把 token 寫 Kafka `__consumer_offsets` 或外部 store；application 自管 change stream 時要寫到 durable store（不是 in-memory）。
+**resume token persistence**。Source connector 的 token 由 Kafka Connect 寫進它的 offset topic（distributed 模式由 worker 設定 `offset.storage.topic` 指定）；application 自管 change stream 時要寫到 durable store（不是 in-memory）。
 
-**Step 5：filter pipeline**。Change stream 支援 aggregation pipeline 把過濾下推到 MongoDB：
+**filter pipeline**。Change stream 支援 aggregation pipeline 把過濾下推到 MongoDB。按 document 欄位過濾時要先確定每一種 event 都帶那個欄位：
 
 ```javascript
+// collection 要先開 pre-image：db.createCollection("orders", { changeStreamPreAndPostImages: { enabled: true } })
 const pipeline = [
-  { $match: { "operationType": { $in: ["insert", "update", "delete"] } } },
-  { $match: { "fullDocument.region": "ap-tokyo" } }
+  { $match: { operationType: { $in: ["insert", "update", "replace", "delete"] } } },
+  { $match: { $or: [
+      { "fullDocument.region": "ap-tokyo" },              // insert、replace，以及開了 updateLookup 的 update
+      { "fullDocumentBeforeChange.region": "ap-tokyo" }   // delete 沒有 fullDocument，只能讀 pre-image
+  ] } }
 ]
-const changeStream = db.orders.watch(pipeline)
+const changeStream = db.orders.watch(pipeline, {
+  fullDocument: "updateLookup",             // update event 預設不帶 fullDocument
+  fullDocumentBeforeChange: "whenAvailable"
+})
 ```
 
 把過濾下推減少 connector 處理量、特別是高頻 collection 上。
 
-**Step 6：downstream idempotency**。Sink 收 Kafka event 時用 `documentKey._id + clusterTime` 做 dedup key — at-least-once 語義意味著 connector restart 後幾分鐘 event 會重發。
+**downstream idempotency**。Sink 收 Kafka event 時用 `documentKey._id + clusterTime` 做 dedup key — at-least-once 語義意味著 connector restart 後幾分鐘 event 會重發。
 
 驗證點：
 
@@ -138,7 +147,7 @@ Rollback boundary：source connector 是 read-only 對 MongoDB 無傷；sink con
 
 **Schema drift 突然 break sink**：MongoDB 寫了新欄位 / 改型別、sink connector 的 JSON schema 不認、batch 停在 dead-letter queue。修法是 schema 變動有 validation gate（見 [schema design pattern](../schema-design-pattern/)）、sink schema 設 `lenient` 模式吃 unknown field、或加 schema registry 統一版本。
 
-**Backup / DDL 期間 change stream 異常**：`reIndex` / `compact` / `dropCollection` 觸發特殊 event、connector 沒處理 → consumer 停。修法是 connector 處理特殊 event 邏輯要明確、不認得的 operation type 至少 log warning 而不是 silently stuck。
+**DDL 期間 change stream 異常**：`drop` / `rename` / `dropDatabase` 會送出對應的 event，接著送 `invalidate` 並關閉 cursor；connector 沒處理 → consumer 停。修法是 connector 處理特殊 event 邏輯要明確、不認得的 operation type 至少 log warning 而不是 silently stuck。
 
 Anti-recommendation：
 
@@ -169,7 +178,7 @@ Connector metric（Kafka Connect JMX）：`source-record-poll-rate`、`source-re
 
 ## 邊界與整合
 
-Sibling deep articles：
+同 vendor 的其他文章：
 
 - [shard key selection](../shard-key-selection/) — cluster-wide vs collection-level change stream 在 sharded cluster 的選擇
 - [replica set read preference](../replica-set-read-preference/) — change stream 對 primary load 的影響、能否走 secondary
@@ -181,10 +190,10 @@ Migration playbook：
 - MongoDB → 其他 sink 的 bulk migration 走 [→ Atlas Migration Service](/backend/01-database/vendors/mongodb/migrate-to-atlas/)
 - 遷出 MongoDB 時 change stream 是 catch-up 機制（先 bulk export、再 change stream 補增量）
 
-跟 1.x 互引：[1.7 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/) 處理 schema drift 時 CDC pipeline 的[對賬](/backend/knowledge-cards/data-reconciliation/)；[1.9 reconciliation data repair](/backend/01-database/reconciliation-data-repair/) 處理 CDC 失準後的對賬流程。
+主章節：[1.7 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/) 處理 schema drift 時 CDC pipeline 的[對賬](/backend/knowledge-cards/data-reconciliation/)；[1.9 reconciliation data repair](/backend/01-database/reconciliation-data-repair/) 處理 CDC 失準後的對賬流程。
 
 ## 相關連結
 
-- [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) — 本文是該頁尾「change streams + Kafka」backlog 的深度展開
+- [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) — MongoDB 的服務定位與 change streams 簡介
 - [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/)
 - 官方：[Change Streams](https://www.mongodb.com/docs/manual/changeStreams/)、[MongoDB Kafka Connector](https://www.mongodb.com/docs/kafka-connector/current/)、[Oplog](https://www.mongodb.com/docs/manual/core/replica-set-oplog/)

@@ -1,22 +1,18 @@
 ---
-title: "MongoDB Shard Expansion + Multi-DC：Type F「不需要 parallel run」的 multi-region 例外"
+title: "MongoDB Shard Expansion + Multi-DC：加 shard 與加 DC 同時進行時的 parallel run 與流量切換"
 date: 2026-05-19
-description: "MongoDB sharded cluster 加 shard + 跨 DC expansion 是 Type F「topology re-layout」第 3 個 dogfood — 同時改 sharding + replication topology + region distribution；驗證 [#128](/report/data-topology-as-audit-dimension/) self-aware limitation 第 3 點「Type F 不需要 parallel run」claim 的例外（multi-region rollout 必須 parallel run + 切流量）；涵蓋 chunk migration / replica set add member / cross-DC routing"
+description: "MongoDB sharded cluster 同時加 shard 與加 DC 的操作：chunk migration、replica set 加跨 DC member、cross-DC routing 的機制，加 DC 為什麼要兩個 DC 並行服務再切流量，balancer、initial sync、跨 DC 讀取、zone sharding 與跨 DC failover 的故障演練，以及 multi-DC 的容量與成本"
 weight: 12
 tags: ["backend", "database", "mongodb", "sharded", "multi-dc", "topology", "type-f", "deep-article"]
 ---
 
-> 本文是 [MongoDB](/backend/01-database/vendors/mongodb/) overview 的 implementation-layer deep article。對應 [#128 Type F「Topology re-layout」](/report/data-topology-as-audit-dimension/) 第 3 個 dogfood、特別驗證 self-aware limitation 第 3 點「不需要 parallel run」claim 的 *multi-region rollout 例外* — 本文是反例的具體實證。
+這篇整理 MongoDB sharded cluster 同時加 shard 與從 single-DC 擴成 multi-DC 的操作：兩種 topology 變動各自的機制、合併執行時的步驟與 rollback boundary、balancer、initial sync、跨 DC 讀取、zone sharding 與跨 DC failover 的故障演練，以及 multi-DC 的容量與成本。MongoDB 的服務定位在 [MongoDB overview](/backend/01-database/vendors/mongodb/)。
 
-## Reviewer D 的質疑：Type F 一定不需要 parallel run 嗎
+## 加 DC 需要 parallel run，加 shard 不需要
 
-[#128 Self-aware limitation](/report/data-topology-as-audit-dimension/) 第 3 點承認：
+Topology re-layout 指在同一個 cluster 內改變資料分布方式的變更，多數在 cluster 內部完成、不需要新舊兩套環境並行：加 shard 時 balancer 在 cluster 內搬 chunk，Redis Cluster 的 re-sharding 靠 slot migration 在內部完成。加 DC 是例外：新 DC 的 member 完成 initial sync 之後，兩個 DC 要同時服務讀取一段時間，確認新 DC 的延遲與資料新鮮度後才把流量切過去，否則就只能停機切換。這段並行期與流量切換，跟 phased migration 的 parallel run 是同一套做法（這一類 migration 的分類見 [Data topology 是 process content 的 audit 維度](/report/data-topology-as-audit-dimension/)）。
 
-> 「不需要 parallel run」claim 部分不成立：multi-region rollout（#128 列為 Type F 情境）必須 parallel run — 兩 region 同時跑然後切流量、不然就是停機切換、跟 Type A phase 3 機制相同。
-
-本文是該 claim 的 *正面實證* — MongoDB sharded cluster 從 single-DC 加 shard + 加 secondary DC、確實需要 parallel run + 流量切換、跟 Type A phased migration 局部同構：
-
-| Type F 假設                      | Single-DC re-sharding（Redis case） | **Multi-DC expansion（本文）**    |
+| Topology re-layout 的常見性質    | Single-DC re-sharding（Redis case） | **Multi-DC expansion（本文）**    |
 | -------------------------------- | ----------------------------------- | --------------------------------- |
 | 同 cluster 不同 state            | yes                                 | yes（同 MongoDB cluster）         |
 | 不需 schema translation          | yes                                 | yes                               |
@@ -24,7 +20,7 @@ tags: ["backend", "database", "mongodb", "sharded", "multi-dc", "topology", "typ
 | 不需 cleanup phase               | yes                                 | partial（舊 DC 角色降為 standby） |
 | Step-by-step + rollback boundary | yes                                 | yes                               |
 
-→ Type F anatomy 仍適用、但「不需 parallel run」是 *子情境條件*、不是 universal claim。
+「不需要 parallel run」只在 cluster 內部就能完成的 re-layout 成立，加 DC 這類要讓新位置先接流量的變更不在其中。
 
 ## 兩個操作合併：shard 加 + DC 加
 
@@ -44,7 +40,7 @@ tags: ["backend", "database", "mongodb", "sharded", "multi-dc", "topology", "typ
 | Application change | Low                           | Low-Medium（cross-DC latency aware） | Low-Medium                      |
 | **Data topology**  | **High**（sharding strategy） | **High**（replication + region）     | **High**（雙變、複合 topology） |
 
-兩者主導維度都是 topology = High、組合走 Type F multi-axis 子情境。
+兩者主導維度都是 data topology = High，合在一起是同時改 sharding 與 replication / region 兩個 topology 軸的 re-layout。
 
 ## Pre-layout analysis：當前 + 目標 topology
 
@@ -69,7 +65,7 @@ Pre-layout 階段 output：
 - **當前**：3 shard × 1 replica set per shard (3 member) = 9 node、全在 us-east-1
 - **目標**：5 shard × 1 replica set per shard (5 member: 3 us-east + 2 us-west) = 25 node
 - **Migration scope**：加 2 shard + 加 2 DC member 每 shard、共 +16 node
-- **Chunk migration estimate**：30% chunk 需重分（從 33% × 3 變 20% × 5）
+- **Chunk migration estimate**：40% 的資料要搬到新 shard（每個舊 shard 從約 33% 降到 20%，兩個新 shard 各接 20%）
 
 ## Re-layout 機制
 
@@ -90,7 +86,7 @@ sh.startBalancer();
 sh.status();
 ```
 
-Chunk migration 是 *background* job、balancer 控制 throttle；不阻塞 production query、但 CPU / network 上升 30-50%。
+Chunk migration 是 balancer 控制的 *background* job；搬移期間 query 照常執行，每個 chunk 搬完前的 commit 階段會短暫擋住寫入那個 chunk 的操作（見〈Balancer 跑 chunk migration 撞 production peak〉），CPU / network 上升 30-50%。
 
 ### Multi-DC expansion mechanism
 
@@ -103,8 +99,8 @@ rs.add({
   hidden: false
 });
 
-// 2. 等 initial sync 完成（依資料量 1 小時 - 1 天）
-rs.printReplicationInfo();
+// 2. 等 initial sync 完成（依資料量 1 小時 - 1 天）：新 member 的 stateStr 從 STARTUP2 變成 SECONDARY
+rs.status().members.map(m => ({ name: m.name, state: m.stateStr }));
 
 // 3. 確認 secondary 健康後、提升 priority 或 votes
 // 不要立刻設 priority 1、避免 unintended failover
@@ -120,24 +116,24 @@ const client = new MongoClient(uri, {
 
 ## Execution flow（含 parallel run + 流量切換）
 
-8 step、包含 *parallel run + 切流量* 段——驗證 [#128 self-aware limitation](/report/data-topology-as-audit-dimension/) 第 3 點：
+整個流程的步驟如下；等 us-west member 完成 initial sync、兩個 DC 並行服務讀取、把 us-west 的讀取流量切過去，這三步是 parallel run 與流量切換：
 
-| Step                          | 動作                                         | Parallel run?                                             | Rollback boundary                |
-| ----------------------------- | -------------------------------------------- | --------------------------------------------------------- | -------------------------------- |
-| 1 Pre-check                   | 量化當前 topology、確認 cluster 健康         | no                                                        | -                                |
-| 2 加 us-east shard            | sh.addShard、balancer migrate chunk          | no（cluster 內）                                          | removeShard、chunk migrate 回    |
-| 3 加 us-west member           | 對每 shard rs.add 跨 DC member               | no                                                        | rs.remove、initial sync 投入廢棄 |
-| 4 **Initial sync wait**       | 等所有 us-west member catch up               | **parallel run starts**：兩 DC 同時 serve                 | -                                |
-| 5 **Cross-DC dual-serve**     | 兩 DC 都跑 read traffic（不切 write）        | **yes、parallel run**：app 用 secondary preferred us-west | readPref 切回 us-east primary    |
-| 6 **流量切換**                | application us-west traffic 走 us-west read  | **yes**                                                   | DNS / readPref 切回              |
-| 7 Promote us-west（optional） | 一個 shard 的 us-west member priority 提到 1 | post-cutover                                              | demote priority 回 0             |
-| 8 Cleanup                     | Verify、archive log、document new topology   | no                                                        | -                                |
+| Step                          | 動作                                         | Parallel run?                                                       | Rollback boundary                |
+| ----------------------------- | -------------------------------------------- | ------------------------------------------------------------------- | -------------------------------- |
+| 1 Pre-check                   | 量化當前 topology、確認 cluster 健康         | no                                                                  | -                                |
+| 2 加 us-east shard            | sh.addShard、balancer migrate chunk          | no（cluster 內）                                                    | removeShard、chunk migrate 回    |
+| 3 加 us-west member           | 對每 shard rs.add 跨 DC member               | no                                                                  | rs.remove、initial sync 投入廢棄 |
+| 4 **Initial sync wait**       | 等所有 us-west member catch up               | **parallel run 準備**：us-west member 仍在 initial sync、不服務讀取 | -                                |
+| 5 **Cross-DC dual-serve**     | 兩 DC 都跑 read traffic（不切 write）        | **yes、parallel run**：app 用 secondary preferred us-west           | readPref 切回 us-east primary    |
+| 6 **流量切換**                | application us-west traffic 走 us-west read  | **yes**                                                             | DNS / readPref 切回              |
+| 7 Promote us-west（optional） | 一個 shard 的 us-west member priority 提到 1 | post-cutover                                                        | demote priority 回 0             |
+| 8 Cleanup                     | Verify、archive log、document new topology   | no                                                                  | -                                |
 
-Step 4-6 是 *parallel run + 切流量* — **Type F 有此例外、跟 Type A phase 3 機制同構**；anatomy 中「Execution flow per-step」段必須含 parallel run 子段。
+Initial sync wait、Cross-DC dual-serve、流量切換這三步是 parallel run 與流量切換，做法跟 phased migration 的 parallel run 相同；其餘步驟都在 cluster 內部完成。
 
 ## Production 故障演練
 
-### Case 1：Balancer 跑 chunk migration 撞 production peak
+### Balancer 跑 chunk migration 撞 production peak
 
 **徵兆**：加 shard 後 balancer 開始 migrate chunk、production write latency p99 從 10ms 跳到 100ms；application 端 timeout 大量。
 
@@ -146,9 +142,9 @@ Step 4-6 是 *parallel run + 切流量* — **Type F 有此例外、跟 Type A p
 **修法**：
 
 ```javascript
-// 限 balancer 跑在 low-traffic window
+// 限 balancer 跑在 low-traffic window（balancer 設定存在 config database 的 settings collection）
 sh.setBalancerState(true);
-db.settings.update(
+db.getSiblingDB("config").settings.updateOne(
   { _id: "balancer" },
   { $set: { activeWindow: { start: "02:00", stop: "06:00" } } },
   { upsert: true }
@@ -157,7 +153,7 @@ db.settings.update(
 
 且設 `chunkSize` 較小（128MB → 64MB）讓 migration 步驟細、單次 lock 時間短。
 
-### Case 2：Cross-DC initial sync 期間 oplog 跑出窗口
+### Cross-DC initial sync 期間 oplog 跑出窗口
 
 **徵兆**：加 us-west member 後、initial sync 跑 4 小時、結束時 member 顯示「too stale to catch up」、需要 full re-sync。
 
@@ -167,9 +163,9 @@ db.settings.update(
 
 1. **預先擴 oplog size**：`db.adminCommand({replSetResizeOplog: 1, size: 51200})` 加到 50GB、覆蓋 sync window
 2. **Off-peak initial sync**：跑在低流量時間、oplog 寫入較慢
-3. **Manual initial sync via snapshot**：用 `mongodump` 從 primary snapshot、restore 到 new member、跳過 oplog tail catch-up
+3. **用既有 member 的資料檔做 initial sync**：對一個 secondary 做 file system snapshot，把 data directory 複製到新 member 再啟動；新 member 只需從 snapshot 的時間點開始追 oplog，不必從頭複製資料
 
-### Case 3：跨 DC read 路由錯誤、stale data 影響業務
+### 跨 DC read 路由錯誤、stale data 影響業務
 
 **徵兆**：切流量到 us-west 後、application 偶爾抓到 5-30 秒前的 stale data；customer 報告「明明剛改了 setting、refresh 又變回去」。
 
@@ -181,7 +177,7 @@ db.settings.update(
 const client = new MongoClient(uri, {
   readPreference: 'secondaryPreferred',
   readPreferenceTags: [{ region: 'us-west-2' }, {}],
-  maxStalenessSeconds: 90,  // 限 stale 不超過 90 秒
+  maxStalenessSeconds: 90,  // 排除落後超過 90 秒的 member；driver 接受的最小值就是 90
 });
 
 // 對 strict consistency 場景強制 primary
@@ -190,9 +186,9 @@ const client_strict = new MongoClient(uri, {
 });
 ```
 
-Application-level read pattern 必須區分「accept stale read」vs「require fresh read」、不是 cluster-level 統一配置。
+Application-level read pattern 必須區分「accept stale read」vs「require fresh read」、不是 cluster-level 統一配置。5-30 秒的 lag 在 `maxStalenessSeconds` 容許的範圍內，所以「剛改完 setting、refresh 又變回去」要靠 require fresh read 那一類讀 primary（上面的 `client_strict`）解決；`maxStalenessSeconds` 只擋掉嚴重落後的 member。
 
-### Case 4：Shard tag-aware routing 沒設、cross-DC traffic 爆 cost
+### Shard tag-aware routing 沒設、cross-DC traffic 爆 cost
 
 **徵兆**：multi-DC 跑了 1 個月、AWS egress cost 從 $500 / month 漲到 $8000 / month；99% 流量還是 us-east → us-west 跨 DC。
 
@@ -201,10 +197,10 @@ Application-level read pattern 必須區分「accept stale read」vs「require f
 **修法**：
 
 ```javascript
-// 注意: MongoDB 4.2+ API、舊版 sh.addShardTag / sh.addTagRange 已 deprecated
-// 對應改 sh.addShardToZone / sh.updateZoneKeyRange
+// sh.addShardToZone / sh.updateZoneKeyRange 取代舊的 sh.addShardTag / sh.addTagRange（3.4 起）
+// myapp.events 的 shard key 是 { region: 1, _id: 1 }，zone range 要落在 shard key 上
 
-// 1. 給 shard 加 zone (MongoDB 4.2+)
+// 1. 給 shard 加 zone
 sh.addShardToZone("rs-shard1", "us-east");
 sh.addShardToZone("rs-shard2", "us-east");
 sh.addShardToZone("rs-shard3", "us-east");
@@ -230,20 +226,20 @@ sh.updateZoneKeyRange(
 
 Zone sharding 是 multi-DC 必要設計、不設等於白付 egress cost。
 
-### Case 5：Failover 後跨 DC primary 切換、application 連線中斷
+### Failover 後跨 DC primary 切換、application 連線中斷
 
 **徵兆**：production 跑 6 個月後、us-east-1 outage、某 shard primary 切到 us-west member；application 5-10 秒內大量 connection error。
 
-**根因**：MongoDB driver 預設 election timeout 10 秒、application 沒設 server selection retry；primary 切換期間 client 沒重連。
+**根因**：replica set 的 `electionTimeoutMillis` 預設 10 秒（這是 replica set 的設定，不是 driver 的），選出新 primary 之前寫入沒有 primary 可送；application 的 server selection 等待時間與重試設定要涵蓋這段 election。
 
 **修法**：
 
 ```javascript
 const client = new MongoClient(uri, {
-  serverSelectionTimeoutMS: 30000,    // 等 30 秒給 election
-  retryWrites: true,
-  retryReads: true,
-  heartbeatFrequencyMS: 5000,         // 更頻繁 detect topology 變動
+  serverSelectionTimeoutMS: 30000,    // driver 預設值：找不到 primary 時最多等 30 秒，涵蓋 election
+  retryWrites: true,                  // driver 預設已開：寫入遇到 primary 切換自動重試一次
+  retryReads: true,                   // driver 預設已開
+  heartbeatFrequencyMS: 5000,         // 預設 10000；調短讓 driver 更早發現 topology 變動
 });
 ```
 
@@ -275,7 +271,7 @@ zone sharding + readPreference 跟 application logic 緊密耦合；不能事後
 
 ### 跟 [Cassandra keyspace re-balance](https://cassandra.apache.org/) 對比
 
-Cassandra 是另一個 Type F multi-DC 典型 case；用 *NetworkTopologyStrategy + replication factor per DC*、跟 MongoDB zone sharding 概念對等但 mechanism 完全不同。Reviewer D 把 Cassandra 列為 Type F 反例 — 本文以 MongoDB 替代驗證。
+Cassandra 是另一個 multi-DC topology re-layout 的典型；用 *NetworkTopologyStrategy + replication factor per DC*、跟 MongoDB zone sharding 概念對等但 mechanism 完全不同。
 
 ### 下一步議題
 
@@ -287,5 +283,5 @@ Cassandra 是另一個 Type F multi-DC 典型 case；用 *NetworkTopologyStrateg
 
 - 上游 vendor 頁：[MongoDB](/backend/01-database/vendors/mongodb/)
 - 平行 migration playbook：[MongoDB → Atlas](/backend/01-database/vendors/mongodb/migrate-to-atlas/)
-- 平行 Type F dogfood：[Redis Cluster Re-sharding](/backend/02-cache-redis/vendors/redis/cluster-resharding/)（dogfood #1）/ [PostgreSQL Partition Redesign](/backend/01-database/vendors/postgresql/partition-redesign/)（dogfood #2）
-- Methodology：[Migration playbook methodology](/posts/migration-playbook-methodology/) / [#128 Data topology 是第 6 audit 維度](/report/data-topology-as-audit-dimension/)（本文驗證 self-aware limitation 第 3 點）
+- 其他 topology re-layout 的操作：[Redis Cluster Re-sharding](/backend/02-cache-redis/vendors/redis/cluster-resharding/) / [PostgreSQL Partition Redesign](/backend/01-database/vendors/postgresql/partition-redesign/)
+- Methodology：[Migration playbook methodology](/posts/migration-playbook-methodology/) / [Data topology 是 process content 的 audit 維度](/report/data-topology-as-audit-dimension/)
