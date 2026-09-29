@@ -26,7 +26,21 @@ Linux 的預設指令（`grep`、`find`、`cat`、`ls`）能用，但它們是�
 
 `fzf` 不替代任何工具，它是一層**互動式模糊選擇器**，把「一堆候選 → 你挑一個」這件事變得極快。它從 stdin 吃候選清單、開一個可即時模糊過濾的介面、把你選的印到 stdout，所以能跟任何產生清單的指令組合：`fd -e md | fzf` 挑一個 markdown 檔、`git branch | fzf` 挑分支、`rg --files | fzf` 挑檔案開。
 
-最高價值的兩個內建整合：`Ctrl+R` 覆寫 shell 的歷史搜尋（模糊搜尋整個命令歷史，比預設的反向搜尋強太多）、`Ctrl+T` 把檔案路徑插進當前命令列。這兩個 key binding **不是裝完自動生效的**，要在 shell 設定裡啟用——新版 `fzf` 直接在 `.zshrc` / `.bashrc` 加一行 `eval "$(fzf --zsh)"`（bash 用 `--bash`）；舊版則 source 套件附的整合檔（Arch 在 `/usr/share/fzf/key-bindings.zsh` 與 `completion.zsh`，路徑隨發行版不同）。沒加這行，`Ctrl+R` 不會有反應。`fd` 跟 `rg` 可以當 `fzf` 的預設來源，三者是一組。
+最高價值的兩個內建整合：`Ctrl+R` 覆寫 shell 的歷史搜尋（模糊搜尋整個命令歷史，比預設的反向搜尋強太多）、`Ctrl+T` 把檔案路徑插進當前命令列。這兩個 key binding **不是裝完自動生效的**，要在 shell 設定裡啟用，新版與舊版 `fzf` 的啟用方式不同：
+
+```bash
+# 新版 fzf，zsh：在 .zshrc 加這一行
+eval "$(fzf --zsh)"
+# 新版 fzf，bash：在 .bashrc 加這一行，選項換成 --bash
+eval "$(fzf --bash)"
+
+# 舊版 fzf：source 套件附的整合檔
+# 下面是 Arch 的路徑，整合檔的路徑隨發行版不同
+source /usr/share/fzf/key-bindings.zsh
+source /usr/share/fzf/completion.zsh
+```
+
+shell 設定裡沒加啟用的那一行，`Ctrl+R` 不會有反應。`fd` 跟 `rg` 可以當 `fzf` 的預設來源，三者是一組。
 
 ## 看檔案內容：cat → bat
 
@@ -66,7 +80,19 @@ Linux 的預設指令（`grep`、`find`、`cat`、`ls`）能用，但它們是�
 
 **跨機器 / CI 的腳本別依賴它們**：要在別台機器或 CI 跑的腳本，用保證存在的 `grep` / `find` / `cat`，因為現代替代品不一定裝了。專案內部、已宣告了 dev 依賴的腳本（devcontainer、Makefile）另當別論——那裡明確裝了 `rg` / `fd`，用它們（甚至還因為 `rg` 尊重 `.gitignore` 的語意才選它）很合理。分界是「這段腳本會在沒裝這些工具的環境跑嗎」，不是「腳本一律不能用」。
 
-**安裝**：多數在各發行版套件庫直接有。Arch：`pacman -S ripgrep fd fzf bat eza zoxide`，按需再加 `procs ncdu htop git-delta`（`delta` 的套件名是 `git-delta`）。Debian / Ubuntu 有兩個要注意的改名坑——`fd` 的執行檔在 apt 上叫 `fdfind`、`bat` 叫 `batcat`（都是為了避免跟既有套件撞名），要自己 alias 回 `fd` / `bat`；`eza` 較舊的 apt 源可能還沒有，用 cargo 或官方 repo 裝。macOS 用 `brew install ripgrep fd fzf bat eza zoxide`。裝好後它們該進你的 [dotfile 套件清單](/linux/dotfile/08-sync-bootstrap/bootstrap-script-packages/)，新機器 bootstrap 時一次裝齊。
+**安裝**：多數在各發行版套件庫直接有。Arch 與 macOS 的安裝指令如下：
+
+```bash
+# Arch
+pacman -S ripgrep fd fzf bat eza zoxide
+# Arch，按需再加；delta 的套件名是 git-delta
+pacman -S procs ncdu htop git-delta
+
+# macOS
+brew install ripgrep fd fzf bat eza zoxide
+```
+
+Debian / Ubuntu 有兩個要注意的改名坑——`fd` 的執行檔在 apt 上叫 `fdfind`、`bat` 叫 `batcat`（都是為了避免跟既有套件撞名），要自己 alias 回 `fd` / `bat`；`eza` 較舊的 apt 源可能還沒有，用 cargo 或官方 repo 裝。裝好後這些工具該列進 [dotfile 套件清單](/linux/dotfile/08-sync-bootstrap/bootstrap-script-packages/)，新機器 bootstrap 時一次裝齊。
 
 ## 相關
 

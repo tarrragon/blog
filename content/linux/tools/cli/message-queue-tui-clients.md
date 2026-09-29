@@ -26,7 +26,24 @@ tags: ["cli", "tui", "message-queue", "kafka", "redis", "kaskade", "yozefu", "ir
 
 Kafka 有三個定位不同的全螢幕 TUI，互動模型與連線設定各異。
 
-`kaskade`（Python、Textual 寫，實測 4.0.7）分 admin 與 consumer 兩個子命令，連線參數走 `-b`。`kaskade admin -b localhost:9092` 進管理模式，實測連上 broker 後渲染出 topics 面板，欄位是 name、partitions、replicas、in sync、groups、members、records，一頁看完叢集的 topic 全貌。`kaskade consumer -b localhost:9092 -t orders --from-beginning` 進消費模式翻單一 topic 的訊息，`-v json` 與 `-v registry` 切 payload 解碼方式，後者配 `--registry url=http://localhost:8081` 接 Schema Registry。SSL / SASL 不走 `-b`，要用 `--config security.protocol=SSL` 逐項帶或 `--config-file kafka.properties` 餵設定檔。
+`kaskade`（Python、Textual 寫，實測 4.0.7）分 admin 與 consumer 兩個子命令，連線參數走 `-b`：
+
+```bash
+# 管理模式：實測連上 broker 後渲染出 topics 面板
+kaskade admin -b localhost:9092
+
+# 消費模式：從頭翻 orders 這個 topic 的訊息
+kaskade consumer -b localhost:9092 -t orders --from-beginning
+```
+
+管理模式的 topics 面板欄位是 name、partitions、replicas、in sync、groups、members、records，一頁看完叢集的 topic 全貌。消費模式另有切換 payload 解碼方式的選項；SSL / SASL 設定不走 `-b`，由另外兩個選項帶進去：
+
+```text
+-v json                                           # payload 以 JSON 解碼
+-v registry --registry url=http://localhost:8081  # 接 Schema Registry 解碼
+--config security.protocol=SSL                    # SSL / SASL 設定逐項帶
+--config-file kafka.properties                    # SSL / SASL 設定整份用設定檔餵
+```
 
 `yozefu`（Rust 寫、binary 名是 `yozf`，MAIF 維護）主打跨 topic 的搜尋查詢，把找特定 record 當成核心場景。它的查詢語言是 SQL 風的，預設 `initial_query` 是 `from end - 10`（從尾端往回取 10 筆），search filter 還能用 WebAssembly 自訂（`create-filter` / `import-filter` 子命令）。連線走 config 模型而非純 flag：`yozf config` 會印出設定（檔案在 `~/Library/Application Support/io.maif.yozefu/config.json`），每個 cluster 在裡面定義 `bootstrap.servers`、`security.protocol` 與 schema registry，再用 `yozf -c <cluster> -t <topics>` 指定要連哪個。
 

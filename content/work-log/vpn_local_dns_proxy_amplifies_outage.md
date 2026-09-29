@@ -156,7 +156,17 @@ done
 
 `dig` 走的是它自己的路徑。man page 寫明：未指定 `@` 時它讀 `/etc/resolv.conf` 取伺服器位址，然後直接對該位址發送查詢。而 `git`、`curl`、`ping` 走的是 `getaddrinfo`，也就是系統的解析函式，在 macOS 上經過 `scutil` 那份設定與 `mDNSResponder` 的快取。
 
-分岔有兩個來源，要分開查。一個是**問了不同的伺服器**：`/etc/resolv.conf` 由系統生成、通常鏡射 `scutil` 的第一順位，但接管 DNS 的元件寫入這兩處的時機未必同步，兩邊不一致時 `dig` 跟程式打的就是不同的 resolver。當下比對一次就知道，`cat /etc/resolv.conf` 的 `nameserver` 跟 `scutil --dns` 的 `resolver #1` 對不對得上。另一個是**繞過了中間那幾層**：即使問的是同一台，`dig` 仍然不經過 `mDNSResponder` 的快取（包含把失敗結果記下來的負快取）、不讀 `/etc/hosts`、也不套用 `scutil` 那份多 resolver 的排序與網域比對。
+分岔有兩個來源，要分開查。一個是**問了不同的伺服器**：`/etc/resolv.conf` 由系統生成、通常鏡射 `scutil` 的第一順位，但接管 DNS 的元件寫入這兩處的時機未必同步，兩邊不一致時 `dig` 跟程式打的就是不同的 resolver。當下把兩份設定的位址比對一次就知道（兩個指令的完整輸出見〈macOS 的解析設定權威在 scutil，不在 /etc/resolv.conf〉）：
+
+```bash
+# 讀 nameserver 行：未指定 @ 時 dig 問的伺服器
+cat /etc/resolv.conf
+# 讀 resolver #1 底下的 nameserver：程式走系統解析時的第一順位
+scutil --dns
+# 兩邊的位址對不上，dig 跟程式打的就是不同的 resolver
+```
+
+另一個是**繞過了中間那幾層**：即使問的是同一台 resolver，`dig` 仍然不經過 `mDNSResponder` 的快取（包含把失敗結果記下來的負快取）、不讀 `/etc/hosts`、也不套用 `scutil` 那份多 resolver 的排序與網域比對。
 
 實務後果是：`dig` 拿到位址、`git push` 仍然回 `Could not resolve host`，這個組合完全可能同時成立，而它不代表 `git` 有問題。
 

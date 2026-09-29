@@ -33,18 +33,25 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /notes/{noteId} {
+      // read：只有既有 document，看寫入前的狀態 resource.data
       allow read: if request.auth != null
                   && resource.data.ownerId == request.auth.uid;
+      // create：沒有既有狀態，看寫入後的狀態 request.resource.data
       allow create: if request.auth != null
                     && request.resource.data.ownerId == request.auth.uid;
-      allow update, delete: if request.auth != null
-                            && resource.data.ownerId == request.auth.uid;
+      // update：寫入前要是自己的，寫入後也還要是自己的（擋掉把 ownerId 改成別人）
+      allow update: if request.auth != null
+                    && resource.data.ownerId == request.auth.uid
+                    && request.resource.data.ownerId == request.auth.uid;
+      // delete：沒有寫入後的狀態，只看寫入前
+      allow delete: if request.auth != null
+                    && resource.data.ownerId == request.auth.uid;
     }
   }
 }
 ```
 
-`read` 用 `resource.data`（既有 document），`create` 用 `request.resource.data`（沒有既有狀態），`update` 兩者都要看——把 `read` / `create` / `update` / `delete` 分開是建模的起點，混成一條 `allow read, write` 是後面所有漏洞的源頭。
+骨架裡每一條 `allow` 讀的 document 狀態不同，每一行上方的註解標了它看哪一個：`read` 與 `delete` 只有寫入前的狀態，`create` 只有寫入後的狀態，`update` 兩者都要看——只看寫入前的話，擁有者可以把 `ownerId` 改成別人。把 `read`、`create`、`update`、`delete` 分開寫是建模的起點，混成一條 `allow read, write` 是後面所有漏洞的源頭。
 
 ## 配置：把授權拆成可組合 function
 

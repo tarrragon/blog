@@ -220,7 +220,12 @@ adb -s <serial> shell ls -l /storage/emulated/0/Android/data/<package>/
 
 ### appops
 
-`appops get` 的兩個引數是套件名與 op 名稱，回報那個套件在那個 op 上目前的 mode。mode 是一組固定值（`allow` / `ignore` / `deny` / `default`，位置類另有 `foreground`）。`ignore` 與 `deny` 都讓呼叫拿不到值，差別在 `deny` 回報失敗、`ignore` 靜默回空。從沒設定過的印 `No operations.` 加一行 `Default mode: default`。
+`appops get` 的兩個引數是套件名與 op 名稱，回報那個套件在那個 op 上目前的 mode。mode 是一組固定值（`allow` / `ignore` / `deny` / `default`，位置類另有 `foreground`）。`ignore` 與 `deny` 都讓呼叫拿不到值，差別在 `deny` 回報失敗、`ignore` 靜默回空。套件在那個 op 上從沒設定過 mode 時，`appops get` 印出這兩行：
+
+```text
+No operations.
+Default mode: default
+```
 
 ### dumpsys user
 

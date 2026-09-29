@@ -30,7 +30,25 @@ Miller 欄狀（Miller columns）範式像 macOS Finder 的欄狀檢視：並列
 | `nnn`    | C      | 細節／預覽  | 極簡超快、資源佔用低                     |
 | `lf`     | Go     | Miller 欄狀 | ranger 風、單一 binary                   |
 
-`broot` 把目錄做成可展開的樹，輸入幾個字就模糊過濾並跳轉到符合的路徑，是深層 monorepo 裡找檔最快的範式。它的 `br` shell function 讓退出時把工作目錄切到所在位置，等於用它當互動式 `cd` — 純 `broot` 指令做不到這件事，因為子行程改不了父 shell 的目錄。`br` 不會自動就位：首次執行 `broot` 會跳出提示問是否安裝（答 `Y`，或手動跑 `broot --install`），它把函式寫進 shell rc，重新載入 rc 後改用 `br` 啟動。如果還沒安裝 `br`，在 broot 裡按 `Alt + Enter`（`:cd`）跳轉會看到 `This verb needs broot to be launched as br` 的提示 — 這就是還沒透過 `br` 啟動的訊號，裝好 `br` 並改用 `br` 啟動就能跳轉。
+`broot` 把目錄做成可展開的樹，輸入幾個字就模糊過濾並跳轉到符合的路徑，是深層 monorepo 裡找檔最快的範式。它的 `br` shell function 讓退出時把工作目錄切到所在位置，等於用它當互動式 `cd` — 純 `broot` 指令做不到這件事，因為子行程改不了父 shell 的目錄。`br` 不會自動就位，要先安裝，兩種安裝方式都是把函式寫進 shell rc：
+
+```bash
+# 首次執行 broot 會跳出提示問是否安裝 br，答 Y
+broot
+# 或手動安裝
+broot --install
+
+# 重新載入 shell rc 之後，改用 br 啟動
+br
+```
+
+如果還沒安裝 `br`，在 broot 裡按 `Alt + Enter`（verb `:cd`）跳轉，broot 會顯示這行提示：
+
+```text
+This verb needs broot to be launched as br
+```
+
+這行提示就是還沒透過 `br` 啟動的訊號，裝好 `br` 並改用 `br` 啟動就能跳轉。
 
 操作上記幾個鍵就夠：直接打字會即時模糊過濾目錄樹，方向鍵移動游標；目錄上 `Enter` 進入該層、`Alt + Enter`（verb `:cd`）離開 broot 並把 shell 切到該目錄、檔案上 `Enter` 用預設程式開啟；`Ctrl + q` 離開，`Esc` 退回上一層狀態。完整快捷鍵與 verb 清單按 `?` 叫出。深層結構需要綜觀層級時，樹狀比欄狀直觀。要注意 broot 是導覽與啟動器、不內建文字編輯：改檔得在檔案上開外部編輯器（叫出 `$EDITOR`），它的強項在樹狀導覽與跳轉，不在看內容或改內容。
 

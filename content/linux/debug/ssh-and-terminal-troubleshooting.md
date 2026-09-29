@@ -38,7 +38,21 @@ SSH「連不上」本身（`Permission denied`、`Host key verification failed`�
 
 想從一條純文字的 SSH 連線去操作遠端的 Wayland 圖形桌面（例如啟動應用、截圖、送 IPC 指令）時，會撞到兩類界線，判斷對是哪一類就知道怎麼繞。
 
-第一類是**圖形程式需要知道連到哪個顯示**。SSH 進來的 shell 預設沒有圖形環境的環境變數，直接跑圖形程式會找不到 display。要對著遠端那個已經在跑的 Wayland session 操作，得補上它的環境變數：`XDG_RUNTIME_DIR`（通常 `/run/user/<uid>`）、`WAYLAND_DISPLAY`（socket 名，如 `wayland-1`）、必要時還有該 compositor 的 instance 變數與 `DBUS_SESSION_BUS_ADDRESS`。這些值怎麼撈：socket 名用 `ls /run/user/$(id -u)/wayland-*` 看；其餘變數直接從那個圖形 session 既有行程的環境複製最準——`cat /proc/<compositor-pid>/environ | tr '\0' '\n' | grep -E 'WAYLAND_DISPLAY|XDG_RUNTIME_DIR|DBUS_SESSION|_INSTANCE_'`（`<compositor-pid>` 用 `pgrep -x Hyprland` 之類找）。撈到後 `export` 進當前 SSH shell，這條連線就能對遠端的圖形 session 下指令、`grim` 截圖。
+第一類是**圖形程式需要知道連到哪個顯示**。SSH 進來的 shell 預設沒有圖形環境的環境變數，直接跑圖形程式會找不到 display。要對著遠端那個已經在跑的 Wayland session 操作，得補上它的環境變數：`XDG_RUNTIME_DIR`（通常 `/run/user/<uid>`）、`WAYLAND_DISPLAY`（socket 名，如 `wayland-1`）、必要時還有該 compositor 的 instance 變數與 `DBUS_SESSION_BUS_ADDRESS`。socket 名列一次 runtime 目錄就看得到；其餘變數直接從那個圖形 session 既有行程的環境複製最準：
+
+```bash
+# 列出 runtime 目錄下的 Wayland socket，檔名就是 WAYLAND_DISPLAY 的值（如 wayland-1）
+ls /run/user/$(id -u)/wayland-*
+
+# 找 compositor 的行程 ID；這裡以 Hyprland 為例，其他 compositor 換成它的行程名
+pgrep -x Hyprland
+
+# 把 compositor 行程的環境（以 \0 分隔）逐行印出，只留下要複製的幾個變數
+# <compositor-pid> 填上一行 pgrep 印出的行程 ID
+cat /proc/<compositor-pid>/environ | tr '\0' '\n' | grep -E 'WAYLAND_DISPLAY|XDG_RUNTIME_DIR|DBUS_SESSION|_INSTANCE_'
+```
+
+撈到的值用 `export` 設進當前 SSH shell 之後，這條連線就能對遠端的圖形 session 下指令、用 `grim` 截圖。
 
 第二類是**有些東西必須從實體圖形終端機（[VT](/linux/dotfile/knowledge-cards/tty/)，即 `Ctrl+Alt+F1`~`F6` 切換的那些文字主控台）啟動，SSH 的 pty 起不來**。Wayland 的[合成器](/linux/dotfile/knowledge-cards/compositor/)（compositor，畫桌面、把視窗合成到螢幕、管輸入輸出的核心程式，如 Hyprland）需要一個真正的圖形 VT 上的登入 session，拿到 DRM master（對顯示卡的獨佔繪圖控制權）與 [logind seat](/linux/dotfile/knowledge-cards/logind-session-seat/)（一組綁在一起的實體螢幕／鍵鼠裝置）才能啟動；從 SSH 的 pty 起它的**預設 backend** 會直接失敗（例如報 backend 建立失敗），因為預設 backend 要的 DRM master 與 seat 在 SSH 這條連線上不存在。判讀訊號：合成器一啟動就報 seat / DRM / backend 相關的錯，而你是從 SSH 起的——那就是這個界線。（例外：合成器多半有 headless backend，例如設 `WLR_BACKENDS=headless` 就不要 DRM master、不需 VT，專給 CI、雲端、自動化測試用；nested（跑在另一個 Wayland session 裡）也不需要。所以精確說是「預設 backend 需要圖形 VT」，不是「合成器一定起不來」。）
 

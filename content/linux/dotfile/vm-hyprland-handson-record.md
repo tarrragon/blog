@@ -245,7 +245,23 @@ visudo -c           # 印 parsed OK 才安全
 exit
 ```
 
-**發現二：install.sh 的 `which` bug**。最後換 zsh 那段 `chsh -s "$(which zsh)"` 報 `which: command not found`——最小 Arch 不含 `which`（獨立套件）。`$(which zsh)` 變空 → `chsh -s ""` → `chsh: shell must be a full path name`。而 `set -euo pipefail` 讓腳本在此中斷、後面 "Done" 沒印、**預設 shell 沒換成 zsh**。修法：`which zsh` → `command -v zsh`（POSIX builtin、一定在）。已修。註：`/usr/bin/zsh` 本來就在 `/etc/shells`、非 root chsh 不會被擋，唯一問題就是空路徑。
+**發現二：install.sh 的 `which` bug**。install.sh 最後換預設 shell 的那一行呼叫了 `which`，而最小安裝的 Arch 不含 `which`（它是獨立套件）。這一行從執行到失敗的經過如下：
+
+```bash
+# install.sh 原本換預設 shell 的那一行
+chsh -s "$(which zsh)"
+# 最小 Arch 沒有 which，命令替換先報：
+#   which: command not found
+# $(which zsh) 因此展開成空字串，chsh 實際收到的是：
+#   chsh -s ""
+# chsh 拒絕空路徑，報：
+#   chsh: shell must be a full path name
+
+# 修正後：command -v 是 POSIX builtin，一定存在
+chsh -s "$(command -v zsh)"
+```
+
+install.sh 開頭的 `set -euo pipefail` 讓腳本在 `chsh` 失敗時中斷，後面的 "Done" 沒有印出，**預設 shell 沒換成 zsh**。修法是把 `which zsh` 換成 `command -v zsh`，已修。註：`/usr/bin/zsh` 本來就列在 `/etc/shells`，非 root 使用者跑 chsh 不會被擋，這次失敗的唯一成因是空路徑。
 
 **發現三：packages-arch.txt 不存在**。install.sh 的 Arch 分支會讀 `$DOTFILES_DIR/packages-arch.txt` 補裝套件，但 repo 沒這檔、所以只裝了 `stow git zsh`，沒有任何桌面套件。
 
@@ -544,7 +560,19 @@ ShellRoot {
 - **`pw.loop ... can't make support.system handle`（pipewire event loop 建立失敗）**：guest 沒跑 pipewire，Caelestia 的音訊 service 起不來。shell 照常 render，只是音量／音訊 widget 失效。實機或補上 pipewire 即無此問題。
 - **`Could not register notification server at org.freedesktop.Notifications`**：step 2 留下的 mako 還在跑、先佔了 D-Bus 的通知服務名，Caelestia 自帶的通知 service 註冊不上。兩個通知 daemon 不能共存——要讓 Caelestia 接管通知，得先停掉 mako。
 
-**啟動路徑實測（無人值守／遠端的真實障礙）**：重開機後要把 Hyprland 拉起來測，卡在兩件事。其一，`getty@tty1` 是 `enabled` 但開機後沒 active（logind 的 autovt 沒觸發），tty1 沒有登入提示。其二，UTM 顯示停在 serial console（`ttyAMA0`），它跟圖形 VT 是兩個獨立輸出，在 guest 內 `chvt` 只切圖形那側、serial console 不受影響。解法是 SSH 進去 `sudo systemctl start getty@tty1` 補出登入提示、`sudo chvt 1` 切到圖形 VT，再從 UTM 的 Display 輸出登入跑 `Hyprland`。**從 SSH 用 `sudo chvt` 與 `systemctl start getty@tty1` 遠端操控 VM 的 VT，比在 Mac + UTM 下跟 `Ctrl+Alt+Fn` 快捷鍵搏鬥穩定**——這是把桌面 session 從遠端拉起來的一條可靠路徑。
+**啟動路徑實測（無人值守／遠端的真實障礙）**：重開機後要把 Hyprland 拉起來測，卡在兩件事。其一，`getty@tty1` 這個 unit 是 `enabled` 但開機後沒 active（logind 的 autovt 沒觸發），tty1 沒有登入提示。其二，UTM 顯示停在 serial console（`ttyAMA0`），它跟圖形 VT 是兩個獨立輸出，在 guest 內執行 `chvt` 只切換圖形 VT、serial console 不受影響。解法是從 SSH 進 VM 補出登入提示並切到圖形 VT，再從 UTM 的 Display 輸出登入：
+
+```bash
+# 在 SSH session 裡執行：補出 tty1 的登入提示
+sudo systemctl start getty@tty1
+# 在 SSH session 裡執行：切到圖形 VT（serial console 不受影響）
+sudo chvt 1
+
+# 回到 UTM 的 Display 輸出，登入 tty1 之後執行
+Hyprland
+```
+
+**從 SSH 用 `chvt` 與啟動 `getty@tty1` 遠端操控 VM 的 VT，比在 Mac + UTM 下跟 `Ctrl+Alt+Fn` 快捷鍵搏鬥穩定**——這是把桌面 session 從遠端拉起來的一條可靠路徑。
 
 #### 實測執行記錄：階段 C 之一（通知服務接管）——通過
 
@@ -572,7 +600,22 @@ ps -o comm= -p "$pid"
 
 ##### 配色切換（scheme）
 
-caelestia 內建 15 套配色（onedark／nord／dracula／gruvbox／catppuccin… 加 `dynamic` 從桌布取色）乘上 dark／light，用 `caelestia scheme set -n gruvbox -m light` 切。切完 `caelestia scheme get` 回報已是 gruvbox light，但跑著的 shell UI 沒跟著變色。讀 quickshell log 找到根因：shell 的 `services/Colours.qml` 從 `~/.local/state/caelestia/scheme.json` 讀配色，而 shell 啟動當下這個檔還不存在（log：`Read of .../scheme.json failed: File does not exist`）——第一次 `scheme set` 才建出這個檔。所以行為是「開機讀不到配色檔 → 用 fallback 色；之後 CLI 改了狀態、跑著的 shell 這一輪沒重讀套用」。要讓配色確定生效，最穩的順序是先 `scheme set` 建好 state 檔、再（重）啟 shell 讓它開機就讀。（後續補確認：解鎖後趕在鎖屏重新觸發前搶到一張乾淨桌面截圖 `shotG-desktop-scheme-check.png`——整個 UI 確實換成 gruvbox light 的暖奶油色，bar／dock／foot 終端機底色全變淺、文字轉為 gruvbox 的橄欖／黃／紅，配色確定生效。所以「scheme set 後沒變色」的根因收斂成啟動時機問題：在 scheme.json 存在之前啟動的 shell 實例讀不到、也不會為一次 CLI 變更熱重繪；在 state 檔就緒後啟動的 shell 實例開機讀取就正確上色。進一步驗證（換 tokyonight dark，`shotH-tokyonight-dark-hot-reload.png`）發現這個開機就載入 scheme.json 的實例，對檔案有 file watcher，之後 `scheme set` 會**即時熱套用、不必重啟**——UI 一秒內就變色。所以精確結論是：熱重繪能不能生效，取決於 shell 啟動時 scheme.json 在不在。啟動時檔已存在 → watcher 建成 → 之後改配色即時生效；啟動時檔不存在（首次安裝、沒 set 過）→ 那個實例讀不到、watcher 沒建，得先 `scheme set` 建檔再重啟 shell 一次，之後同一實例才會熱套用。）
+caelestia 內建 15 套配色（onedark／nord／dracula／gruvbox／catppuccin… 加 `dynamic` 從桌布取色）乘上 dark／light，切換與確認各用一條指令：
+
+```bash
+# 切到 gruvbox 的 light 版本
+caelestia scheme set -n gruvbox -m light
+# 回報已是 gruvbox light，而跑著的 shell UI 沒跟著變色
+caelestia scheme get
+```
+
+讀 quickshell log 找到根因：shell 的 `services/Colours.qml` 從 `~/.local/state/caelestia/scheme.json` 讀配色，而 shell 啟動當下這個檔還不存在，log 裡留著這一行：
+
+```text
+Read of .../scheme.json failed: File does not exist
+```
+
+第一次 `scheme set` 才建出這個檔。所以行為是「開機讀不到配色檔 → 用 fallback 色；之後 CLI 改了狀態、跑著的 shell 這一輪沒重讀套用」。要讓配色確定生效，最穩的順序是先 `scheme set` 建好 state 檔、再（重）啟 shell 讓它開機就讀。（後續補確認：解鎖後趕在鎖屏重新觸發前搶到一張乾淨桌面截圖 `shotG-desktop-scheme-check.png`——整個 UI 確實換成 gruvbox light 的暖奶油色，bar／dock／foot 終端機底色全變淺、文字轉為 gruvbox 的橄欖／黃／紅，配色確定生效。所以「scheme set 後沒變色」的根因收斂成啟動時機問題：在 scheme.json 存在之前啟動的 shell 實例讀不到、也不會為一次 CLI 變更熱重繪；在 state 檔就緒後啟動的 shell 實例開機讀取就正確上色。進一步驗證（換 tokyonight dark，`shotH-tokyonight-dark-hot-reload.png`）發現這個開機就載入 scheme.json 的實例，對檔案有 file watcher，之後 `scheme set` 會**即時熱套用、不必重啟**——UI 一秒內就變色。所以精確結論是：熱重繪能不能生效，取決於 shell 啟動時 scheme.json 在不在。啟動時檔已存在 → watcher 建成 → 之後改配色即時生效；啟動時檔不存在（首次安裝、沒 set 過）→ 那個實例讀不到、watcher 沒建，得先 `scheme set` 建檔再重啟 shell 一次，之後同一實例才會熱套用。）
 
 ##### 鎖屏機制：一個判斷被更正兩次
 

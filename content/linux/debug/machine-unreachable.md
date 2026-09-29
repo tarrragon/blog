@@ -22,7 +22,38 @@ tags: ["linux", "vm", "networking", "debugging"]
 
 ## 網路通、但域名解析不了
 
-有一種故障看起來像「網路壞了」，其實是 DNS 解析斷了：能連 IP、卻連不上任何用域名的東西——`ping 8.8.8.8` 通、但 `ping google.com`、`pacman -Sy`、`curl https://...` 全失敗。判讀要跟前面「網路沒起來」分開，因為網路層是通的，斷的是「域名 → IP」這一步。權威檢查：`ping <IP>` 通而 `ping <域名>` 不通、或 `getent hosts <域名>`（`resolvectl query <域名>` 若有 systemd-resolved）解不出位址，就定位到 DNS。常見成因是 `/etc/resolv.conf` 沒有可用的 nameserver（新裝或網路重設後沒填），或負責 DNS 的服務沒起來。修：確認 `/etc/resolv.conf` 有一行 `nameserver`（如 `nameserver 1.1.1.1`）、`systemctl status systemd-resolved`（若用它）。這一層在剛裝好的最小系統特別常撞到——`ip -brief a` 明明有 IP，`pacman` 或 bootstrap 卻抓不到套件，看起來像「網路好好的卻裝不了東西」，根因是 DNS 沒設。
+有一種故障看起來像「網路壞了」，其實是 DNS 解析斷了：機器用 IP 連得出去，用域名的連線卻全部失敗。判讀要跟前面「網路沒起來」分開，因為網路層是通的，斷的是「域名 → IP」這一步。下面把症狀與權威檢查放在同一個區塊，`<IP>` 與 `<域名>` 填要測的位址與域名：
+
+```bash
+# 症狀：用 IP 的連線通
+ping 8.8.8.8
+# 症狀：用域名的連線全失敗
+ping google.com
+pacman -Sy
+curl https://...
+
+# 權威檢查：用 IP 的 ping 通、用域名的 ping 不通，就定位到 DNS
+ping <IP>
+ping <域名>
+# 權威檢查：解不出位址，同樣定位到 DNS
+getent hosts <域名>
+# 機器有跑 systemd-resolved 時，也可以用它的查詢指令
+resolvectl query <域名>
+```
+
+常見成因是 `/etc/resolv.conf` 沒有可用的 nameserver（新裝或網路重設後沒填），或負責 DNS 的服務沒起來。修復時確認 `/etc/resolv.conf` 裡有一行 nameserver，機器用 systemd-resolved 的話再確認服務狀態：
+
+```text
+# /etc/resolv.conf 裡要有的那一行，例如：
+nameserver 1.1.1.1
+```
+
+```bash
+# 機器用 systemd-resolved 負責 DNS 時，確認它有在跑
+systemctl status systemd-resolved
+```
+
+這一層在剛裝好的最小系統特別常撞到——`ip -brief a` 明明列出了 IP，`pacman` 或 bootstrap 卻抓不到套件，看起來像「網路好好的卻裝不了東西」，根因是 DNS 沒設。
 
 另一個成因是解析路徑上多了一段：mesh VPN 或公司 VPN 的客戶端、本機跑的 `dnsmasq` 或廣告過濾、`systemd-resolved` 這類元件會在本機開一個 resolver 並把自己設成第一順位，於是它自己的健康狀態成為全機解析的上限，故障常呈現為間歇而非全滅。這個變體的定位方式（`dig @<server>` 分流、macOS 上 `/etc/resolv.conf` 不作數、`dig` 與程式走不同路徑）見 [本機 DNS proxy 插在第一順位時的放大效應](/work-log/vpn_local_dns_proxy_amplifies_outage/)。
 

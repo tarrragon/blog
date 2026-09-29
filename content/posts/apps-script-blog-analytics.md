@@ -38,6 +38,7 @@ beacon 的網址不寫死在版型裡，而是讀 `hugo.toml` 的一個站台參
     // 粗粒度分類閱讀裝置，只送 mobile / tablet / desktop，不送完整 userAgent
     function deviceType() {
       var ua = navigator.userAgent;
+      // iPadOS 的 Safari 把 userAgent 偽裝成 Mac 桌機：有 Macintosh 字樣且觸控點多於一個，就是 iPad
       var iPadAsMac = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
       if (/iPad|Tablet|PlayBook|Silk/.test(ua) || iPadAsMac || (/Android/.test(ua) && !/Mobile/.test(ua))) return "tablet";
       if (/Mobi|iPhone|iPod|Android|BlackBerry|IEMobile|Opera Mini/.test(ua)) return "mobile";
@@ -67,7 +68,7 @@ beacon 的網址不寫死在版型裡，而是讀 `hugo.toml` 的一個站台參
 
 三個設計決定值得說明。**用 `.Site.Params.analyticsBeacon` 當開關**，讓「啟用統計」變成一個 config 動作而非改程式，也讓公開的版型檔裡不出現部署網址。**hostname guard 從 `.Site.BaseURL` 推導**（`urls.Parse` 取 host），而不是寫死字串，換 domain 時不用改 partial；它的作用是讓本機 `hugo server` 預覽時的瀏覽不混進統計——`localhost` 不等於正式 host，beacon 就不送。**送 `text/plain` 而非 `application/json`**，是為了讓這個跨網域請求成為 CORS simple request、不觸發 preflight；Apps Script 的 web app 無法回應 preflight 的 `OPTIONS`，用 JSON 送會被擋，這條雷的細節在[前端 beacon 與 CORS 障礙](/automation/02-analytics-beacon/frontend-beacon/)。
 
-payload 除了路徑、來源、語言，還送一個粗粒度的閱讀裝置標籤 `dev`（`mobile` / `tablet` / `desktop`），讓我知道讀者用什麼裝置看——這對排版決策有用（例如某篇長表格文章若行動裝置佔比高，就值得檢查手機上的可讀性）。分類刻意只送三選一的標籤、不送完整 `userAgent`，維持不記 PII 的一致立場。實作上有個要補的判斷：iPadOS 的 Safari 會把 `userAgent` 偽裝成 Mac 桌機，單看字串會把 iPad 誤判成 `desktop`，得靠 `navigator.maxTouchPoints > 1` 搭配 `Macintosh` 字樣補抓成 `tablet`。
+payload 除了路徑、來源、語言，還送一個粗粒度的閱讀裝置標籤 `dev`（`mobile` / `tablet` / `desktop`），讓我知道讀者用什麼裝置看——這對排版決策有用（例如某篇長表格文章若行動裝置佔比高，就值得檢查手機上的可讀性）。分類刻意只送三選一的標籤、不送完整 `userAgent`，維持不記 PII 的一致立場。`deviceType()` 裡有一個要補的判斷：iPadOS 的 Safari 會把 userAgent 字串偽裝成 Mac 桌機，只比對字串會把 iPad 誤判成 `desktop`，所以 partial 裡的 `iPadAsMac` 另外檢查觸控點數，把 iPad 補抓成 `tablet`（判斷式與註解見上方區塊）。
 
 ## 實跑撞到的雷：script context 的雙重編碼
 

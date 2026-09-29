@@ -38,7 +38,20 @@ DETAIL:  Key (顧客編號)=(1) is still referenced from table "訂單".
 
 上面兩則錯誤訊息裡的約束名不同。第一則是評價表自己那條，第二則是訂單表那條——刪顧客這個動作在訂單表上觸發檢查，所以擋下它的約束掛在訂單表上。**外鍵的錯誤訊息因此要分兩層讀**：訊息指名的表，未必是剛才那句 SQL 寫到的表。
 
-有一個值在子表與父表兩邊都放行：`NULL`。單欄的外鍵讀作「這一欄有值的時候，那個值找得到對應」，所以空著的那一欄不參與檢查。**跨多欄的外鍵預設不是這樣讀**——標準的預設 `MATCH SIMPLE` 只要其中一欄是 `NULL` 就整條放行，另外幾欄有值也不查：PostgreSQL 18 上 `FOREIGN KEY (a,b)` 收下 `(999, NULL)` 而 `999` 在父表裡不存在。要它回到逐欄都算的讀法得寫 `MATCH FULL`，而這個寫法只在 PostgreSQL 上生效：PostgreSQL 18 拒絕 `(999, NULL)`，訊息是 `MATCH FULL does not allow mixing of null and nonnull key values`；SQLite 3.51 與 MySQL 8.4 都收下 `MATCH FULL` 這個語法，卻照樣放行同一列。在後兩家要擋下混著空與非空的組合，得在每一欄各自加 `NOT NULL`。訂單編號留空的評價插得進去，而它是一則指不到任何訂單的評價——[1.13 合不合法由引擎驗，答案對不對由提問的人負責](/sql/well-formed-is-not-correct/) 裡那個「用 `NOT IN` 表達否定成員判斷」的錯法，要的正是這樣一列。要連這一種也擋掉，欄位上另外要有 `NOT NULL`。
+有一個值在子表與父表兩邊都放行：`NULL`。單欄的外鍵讀作「這一欄有值的時候，那個值找得到對應」，所以空著的那一欄不參與檢查。**跨多欄的外鍵預設另有一種讀法**——標準的預設 `MATCH SIMPLE` 只要其中一欄是 `NULL` 就整條放行，另外幾欄有值也不查。要它回到逐欄都算的讀法得寫 `MATCH FULL`，而這個寫法只在 PostgreSQL 上生效。同一列 `(999, NULL)` 寫進兩欄外鍵、而 `999` 在父表裡不存在時，各引擎的結果是：
+
+```text
+-- 兩欄外鍵 FOREIGN KEY (a,b)，寫入 (999, NULL)；999 在父表裡不存在
+
+-- 預設 MATCH SIMPLE：有一欄是 NULL，整條放行，另一欄不查
+PostgreSQL 18            收下
+
+-- 宣告成 MATCH FULL：逐欄都算
+PostgreSQL 18            拒絕，訊息是 MATCH FULL does not allow mixing of null and nonnull key values
+SQLite 3.51、MySQL 8.4   收下 MATCH FULL 這個語法，照樣放行同一列
+```
+
+在 SQLite 與 MySQL 上要擋下混著空與非空的組合，得在每一欄各自加 `NOT NULL`。訂單編號留空的評價插得進去，而它是一則指不到任何訂單的評價——[1.13 合不合法由引擎驗，答案對不對由提問的人負責](/sql/well-formed-is-not-correct/) 裡那個「用 `NOT IN` 表達否定成員判斷」的錯法，要的正是這樣一列。要連這一種也擋掉，欄位上另外要有 `NOT NULL`。
 
 `NULL` 放行這件事在一種結構裡是必要的：外鍵指回自己所在的那張表。員工表的主管欄指向同一張表的另一列時，一列的上層是同一張表的另一列，而最頂層那一列的主管欄只能留空。這個結構的查詢要把同一張表擺兩次，兩次出現需要各自的名字，[1.7 查詢裡的表是一個具名的出現](/sql/table-occurrence-and-alias/) 寫自連接為什麼非取名不可，並把它處理的關係分成前後配對、同組比較與層級關係三種形態——員工與主管屬於層級關係。
 

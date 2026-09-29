@@ -295,7 +295,23 @@ docker run --rm -it \
 
 本步實測踩到兩個 gotcha，分屬不同層：
 
-**daemon 起不來、症狀在 iptables、根因在 kernel。** `sudo systemctl start docker` 失敗，journal 顯示 `iptables (nf_tables): Could not fetch rule set generation id: Invalid argument`、建 NAT chain `DOCKER` 失敗。照症狀往「docker 網路 / 防火牆規則」除錯會走錯方向——根因是前一步為修 pacman 404 跑的 `-Syu` 順帶升級了 kernel（`7.1.2-2` → `7.1.3-1`）、但機器沒重開，執行中 kernel 的 module 目錄已不存在（磁碟只剩新版），`nf_tables` 模組載不進來。判讀方法是讀權威狀態：`uname -r`（執行中）對比 `ls /usr/lib/modules/`（磁碟上），兩者不一致就是 kernel 升級後未重開機，重開即解（方法論見 [診斷讀權威狀態](../../../debug/diagnosis-read-authoritative-state/)）。這條 gotcha 鏈提醒：一個看似無關的修法（`-Syu`）可能埋下三步後才引爆的伏筆。
+**daemon 起不來、症狀在 iptables、根因在 kernel。** `sudo systemctl start docker` 失敗，journal 顯示 iptables 取不到規則集，接著建 NAT chain `DOCKER` 失敗：
+
+```text
+iptables (nf_tables): Could not fetch rule set generation id: Invalid argument
+```
+
+照症狀往「docker 網路 / 防火牆規則」除錯會走錯方向——根因是前一步為修 pacman 404 跑的 `-Syu` 順帶把 kernel 從 `7.1.2-2` 升級到 `7.1.3-1`、但機器沒重開，執行中 kernel 的 module 目錄已不存在（磁碟只剩新版），`nf_tables` 模組載不進來。判讀方法是讀權威狀態，比對執行中的 kernel 與磁碟上的 module 目錄（方法論見 [診斷讀權威狀態](../../../debug/diagnosis-read-authoritative-state/)）：
+
+```bash
+# 執行中的 kernel 版本（這次是升級前的 7.1.2-2）
+uname -r
+# 磁碟上留有 module 目錄的 kernel 版本（這次只剩 7.1.3-1）
+ls /usr/lib/modules/
+# 兩者不一致：kernel 升級後未重開機，重開即解
+```
+
+這條 gotcha 鏈提醒：一個看似無關的修法（`-Syu`）可能埋下三步後才引爆的伏筆。
 
 **named volume 掛載點是 root、非 root 使用者寫不進。** 把 `~/.claude` 掛成 named volume 後、container 內的 `node` 對它 `touch` 回 `Permission denied`——掛載點 owner 是 `root`。根因是 Docker 對「image 內不存在的路徑」建 named volume 時預設 root-owned。修法是在 Dockerfile 裡（`USER node` 之前、還是 root 時）先 `mkdir -p /home/node/.claude && chown node:node`：Docker 掛空 volume 時會沿用 image 內該目錄的 owner。這是「掛載點要先在 image 裡以對的 owner 存在」的通用原則、對任何要讓非 root 使用者寫的 volume 都適用（見 [Docker named volume 掛載點 owner](/linux/dotfile/knowledge-cards/docker-named-volume-ownership/)）。
 
