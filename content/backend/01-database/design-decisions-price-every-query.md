@@ -14,7 +14,7 @@ tags: ["backend", "database", "schema", "query", "design"]
 
 兩條路都要寫成合理的，因為它們在設計當下確實都合理——**這一類決定是在兩個都成立的選項之間選，而其中一個把帳單推給了別人**——正確與錯誤之間的選擇不長這樣。
 
-範圍：這裡談決定與它的查詢代價。那些查詢本身怎麼寫在 [SQL：這個語言為什麼長這樣](/sql/)；已經寫成那樣的查詢怎麼修在 [1.13 應用層查詢反模式](/backend/01-database/query-anti-patterns/)；改 schema 的動作怎麼分段執行在 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
+範圍：這裡談決定與它的查詢代價。那些查詢本身怎麼寫在 [SQL：這個語言為什麼長這樣](/backend/01-database/sql/)；已經寫成那樣的查詢怎麼修在 [1.13 應用層查詢反模式](/backend/01-database/query-anti-patterns/)；改 schema 的動作怎麼分段執行在 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
 
 本篇的輸出都是實際跑出來的，每一段標明引擎。多數量測在 SQLite 3.51.0；collation 那一節整節在 PostgreSQL 18.6（索引能不能用要看計畫，而 SQLite 沒有對應的形態），外鍵那一節兩家並排。
 
@@ -58,9 +58,9 @@ WHERE NOT EXISTS (SELECT 1 FROM 訂單 WHERE 訂單.優惠券編號 = 優惠券.
 
 把那一列的空值換成一個實際的值（`UPDATE 訂單 SET 優惠券編號 = 0 WHERE 訂單編號 = 102`）之後，`NOT IN` 也回「生日」。
 
-分岔的機制是三值邏輯——`NOT IN` 展開之後是一串「不等於」的連乘，其中一項拿 `NULL` 去比，答案是未知，整串因此永遠不會是真（完整推導在 [SQL 1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)）。這裡要看的是**那個空值是 schema 允許它存在的**，而查詢沒有寫錯。
+分岔的機制是三值邏輯——`NOT IN` 展開之後是一串「不等於」的連乘，其中一項拿 `NULL` 去比，答案是未知，整串因此永遠不會是真（完整推導在 [SQL 1.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/)）。這裡要看的是**那個空值是 schema 允許它存在的**，而查詢沒有寫錯。
 
-代價不只這一種，而且每一條都適用於往後每一段碰到這一欄的查詢，不只上面那一題。`count(優惠券編號)` 只數有值的列而 `count(*)` 數全部，兩者從此是兩個數字；`優惠券編號 = NULL` 永遠回零列而不報錯，要寫 `IS NULL`；排序時空值落在哪一端由引擎自己規定，SQLite 與 MySQL 排最前、PostgreSQL 與 DuckDB 排最後（[SQL 1.11 關係沒有順序](/sql/relations-have-no-order/) 的四家對照）。**每一條都是這一欄允許為空之後，往後每一段碰到它的查詢都要處理的事。**
+代價不只這一種，而且每一條都適用於往後每一段碰到這一欄的查詢，不只上面那一題。`count(優惠券編號)` 只數有值的列而 `count(*)` 數全部，兩者從此是兩個數字；`優惠券編號 = NULL` 永遠回零列而不報錯，要寫 `IS NULL`；排序時空值落在哪一端由引擎自己規定，SQLite 與 MySQL 排最前、PostgreSQL 與 DuckDB 排最後（[SQL 1.11 關係沒有順序](/backend/01-database/sql/relations-have-no-order/) 的四家對照）。**每一條都是這一欄允許為空之後，往後每一段碰到它的查詢都要處理的事。**
 
 **代價在什麼條件下浮現**。第一張沒有用優惠券的訂單被寫進來的那一刻——不是 schema 變更的時刻。在那之前這一欄裡沒有空值，上面兩種寫法回同一個答案，測試會過，而 schema 早就已經是現在這個樣子了。
 
@@ -112,7 +112,7 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 下單日 LIMIT 2 OFFSET 4;
 使用者拿到的整份清單：101, 102, 104, 102, 105, 106
 ```
 
-**102 出現兩次，而 103 一次都沒有出現。** 兩次查詢都沒有報錯，兩次的結果也都正確——四張同一天的訂單之間，`ORDER BY 下單日` 沒有規定誰在前面，所以掃全表時照存放順序、走索引時照索引順序，兩種都合法（機制在 [SQL 1.11 關係沒有順序](/sql/relations-have-no-order/)）。
+**102 出現兩次，而 103 一次都沒有出現。** 兩次查詢都沒有報錯，兩次的結果也都正確——四張同一天的訂單之間，`ORDER BY 下單日` 沒有規定誰在前面，所以掃全表時照存放順序、走索引時照索引順序，兩種都合法（機制在 [SQL 1.11 關係沒有順序](/backend/01-database/sql/relations-have-no-order/)）。
 
 **這個示範要成立，索引的第二欄是必要的。** 換成只建 `(下單日)`，第 2 頁回的是 `103, 104`，重複與遺漏都不發生——因為 SQLite 的單欄索引用 rowid 決勝，而那剛好與掃全表的順序一致。**這件事本身就是這一節的結論**：並列的列由什麼決勝沒有規定，所以它可以剛好一致、也可以剛好不一致，而查詢的文字對這件事完全沉默。
 
@@ -139,13 +139,13 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 下單日, 訂單編號 LIMIT 2 OFFSET 
 第 3 頁   104, 105      ← 106 從未出現
 ```
 
-`OFFSET` 數的是位置，而位置會被排在游標前面的寫入改變——這一種不需要並列、不需要計畫改變，只需要一邊翻頁一邊有人在寫。要免疫於它，游標得從位置換成值（[SQL 1.12 分頁要一個全序](/sql/pagination-needs-a-total-order/) 寫兩種游標的取捨，並說明補唯一鍵治好了哪一種、治不好哪一種）。**本節的決定只治得好並列造成的重複與遺漏**；翻頁途中的寫入造成的那一種要靠應用層把游標從位置換成值，schema 管不到。
+`OFFSET` 數的是位置，而位置會被排在游標前面的寫入改變——這一種不需要並列、不需要計畫改變，只需要一邊翻頁一邊有人在寫。要免疫於它，游標得從位置換成值（[SQL 1.12 分頁要一個全序](/backend/01-database/sql/pagination-needs-a-total-order/) 寫兩種游標的取捨，並說明補唯一鍵治好了哪一種、治不好哪一種）。**本節的決定只治得好並列造成的重複與遺漏**；翻頁途中的寫入造成的那一種要靠應用層把游標從位置換成值，schema 管不到。
 
-這一條的另一個代價落在「拿前一筆比較」那一族問題上：排序鍵有並列時「前一列」是哪一列沒有定義，`LAG` 與自連接都受影響（[SQL 1.10 分組把列收掉，視窗函數把列留著](/sql/window-keeps-rows-grouping-collapses/)）。
+這一條的另一個代價落在「拿前一筆比較」那一族問題上：排序鍵有並列時「前一列」是哪一列沒有定義，`LAG` 與自連接都受影響（[SQL 1.10 分組把列收掉，視窗函數把列留著](/backend/01-database/sql/window-keeps-rows-grouping-collapses/)）。
 
 **改回來要付什麼**。補決勝鍵只要改查詢，不用動 schema——這是六個決定裡最便宜的一個。真正的成本在**找出全部要改的地方**：每一段有 `ORDER BY` 加 `LIMIT` 的查詢都要查一次它的排序鍵唯不唯一，而那些查詢散在整個程式裡。
 
-**所以設計當下要問的是**：這張表會不會被翻頁或取前 N 筆，而拿來排的那一欄分不分得出高下。答案是否定的時候，分頁的排序鍵就要在設計時寫成「那一欄加上主鍵」，而不是等症狀出現。位置式與值式兩種游標的取捨在 [SQL 1.12 分頁要一個全序](/sql/pagination-needs-a-total-order/)。
+**所以設計當下要問的是**：這張表會不會被翻頁或取前 N 筆，而拿來排的那一欄分不分得出高下。答案是否定的時候，分頁的排序鍵就要在設計時寫成「那一欄加上主鍵」，而不是等症狀出現。位置式與值式兩種游標的取捨在 [SQL 1.12 分頁要一個全序](/backend/01-database/sql/pagination-needs-a-total-order/)。
 
 ## 一張表裝多寬
 
@@ -230,7 +230,7 @@ JOIN 標籤 ON 標籤.訂單編號 = 訂單.訂單編號;
 4           1600
 ```
 
-實際的小計總和是 800。兩筆明細各被兩個標籤複製一次，四列，總和翻倍（機制在 [SQL 1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)）。
+實際的小計總和是 800。兩筆明細各被兩個標籤複製一次，四列，總和翻倍（機制在 [SQL 1.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
 
 而**修法本身對不對由資料決定**。加上 `DISTINCT` 在上面這組資料上剛好回 800；把兩筆明細改成金額相同之後：
 
@@ -288,7 +288,7 @@ Gather (actual time=1.809..20.367 rows=1.00 loops=1)
         Rows Removed by Filter: 100000
 ```
 
-20.4 毫秒，讀了 1470 個頁面，掃過全部二十萬列。索引在那裡而用不上——**條件把欄位包進函式裡之後，索引上存的值與條件要比的值不是同一個東西**（判斷標準與改寫方向在 [Sargable](/sql/knowledge-cards/sargable/)）。
+20.4 毫秒，讀了 1470 個頁面，掃過全部二十萬列。索引在那裡而用不上——**條件把欄位包進函式裡之後，索引上存的值與條件要比的值不是同一個東西**（判斷標準與改寫方向在 [Sargable](/backend/01-database/sql/knowledge-cards/sargable/)）。
 
 兩條修法都把它拉回索引掃描，而它們動的層不同：
 
@@ -335,7 +335,7 @@ SELECT 會員編號 FROM 會員2 WHERE email = 'user12345@example.com';
 
 兩條都快，而**修法 B 的查詢裡沒有任何東西在處理大小寫**——規則住在欄位上，每一段查詢自動套用它。修法 A 要求每一段查詢都記得寫 `lower()`，漏掉一處就是一次全表掃描加一個不分大小寫失效的比對。
 
-**代價在什麼條件下浮現**。表長到掃描明顯變慢的時候。而這一條還有第二個代價**在單一引擎上完全量不到**：各家的預設比較規則不同，同一句 `WHERE 姓名 = 'anna'` 在 MySQL 8.4 上回四列（`Anna`、`anna`、`ANNA`、`Ánna`——它的預設 collation `utf8mb4_0900_ai_ci` 把大小寫與重音都算成同一個值），而在 SQLite 3.51 與 PostgreSQL 18 上只回逐字相同的那一列（三家的實測在 [SQL 1.15 字串的比較規則由 collation 決定](/sql/string-comparison-and-collation/)）。規則沒有寫出來的時候，換一家引擎、換一個資料庫的建立參數，命中的列就變。
+**代價在什麼條件下浮現**。表長到掃描明顯變慢的時候。而這一條還有第二個代價**在單一引擎上完全量不到**：各家的預設比較規則不同，同一句 `WHERE 姓名 = 'anna'` 在 MySQL 8.4 上回四列（`Anna`、`anna`、`ANNA`、`Ánna`——它的預設 collation `utf8mb4_0900_ai_ci` 把大小寫與重音都算成同一個值），而在 SQLite 3.51 與 PostgreSQL 18 上只回逐字相同的那一列（三家的實測在 [SQL 1.15 字串的比較規則由 collation 決定](/backend/01-database/sql/string-comparison-and-collation/)）。規則沒有寫出來的時候，換一家引擎、換一個資料庫的建立參數，命中的列就變。
 
 **改回來要付什麼**。改欄位的 collation 要重建那一欄上的全部索引，因為索引裡的排序是按舊規則建的。這件事在大表上是一次有停機風險的操作。
 
@@ -381,7 +381,7 @@ DETAIL:  Key (顧客編號)=(999) is not present in table "顧客".
 
 **兩個總額都是正確答案，而它們差 500。** 一份直接從訂單表算的報表得到 800，一份連了顧客表取姓名的報表得到 300，兩份都不報錯，而看報表的人沒有辦法從數字本身判斷哪一份對。這一節要看的是**這個差額由 schema 是否執法決定，不由那兩段查詢決定**——兩段都寫對了。
 
-宣告與執法分家有四條路徑（連線層開關、`NOT VALID` 狀態、欄位層與表層的寫法差異、storage engine），各家引擎上的實測在 [SQL 1.18 外鍵寫下保證，各家引擎決定它生不生效](/sql/foreign-key-and-referential-integrity/)。
+宣告與執法分家有四條路徑（連線層開關、`NOT VALID` 狀態、欄位層與表層的寫法差異、storage engine），各家引擎上的實測在 [SQL 1.18 外鍵寫下保證，各家引擎決定它生不生效](/backend/01-database/sql/foreign-key-and-referential-integrity/)。
 
 **代價在什麼條件下浮現**。第一筆孤兒資料寫進來的時候，而那多半是一次失敗的交易、一次部分成功的批次匯入、或一次手動修資料留下的。在那之前，有沒有執法在行為上分不出來。
 
@@ -432,6 +432,6 @@ DETAIL:  Key (顧客編號)=(999) is not present in table "顧客".
 
 ## 下一步路由
 
-查詢本身怎麼讀準、代價為什麼不在查詢的文字裡，在 [SQL：這個語言為什麼長這樣](/sql/)。本篇六節各自指過去的那幾篇是它的機制層：[SQL 1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/) 空值與列數膨脹、[SQL 1.11 關係沒有順序](/sql/relations-have-no-order/) 順序、[SQL 1.12 分頁要一個全序](/sql/pagination-needs-a-total-order/) 分頁、[SQL 1.15 字串的比較規則由 collation 決定](/sql/string-comparison-and-collation/) collation、[SQL 1.18 外鍵寫下保證](/sql/foreign-key-and-referential-integrity/) 外鍵。
+查詢本身怎麼讀準、代價為什麼不在查詢的文字裡，在 [SQL：這個語言為什麼長這樣](/backend/01-database/sql/)。本篇六節各自指過去的那幾篇是它的機制層：[SQL 1.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/) 空值與列數膨脹、[SQL 1.11 關係沒有順序](/backend/01-database/sql/relations-have-no-order/) 順序、[SQL 1.12 分頁要一個全序](/backend/01-database/sql/pagination-needs-a-total-order/) 分頁、[SQL 1.15 字串的比較規則由 collation 決定](/backend/01-database/sql/string-comparison-and-collation/) collation、[SQL 1.18 外鍵寫下保證](/backend/01-database/sql/foreign-key-and-referential-integrity/) 外鍵。
 
 要在真實系統上讀計畫、而不是像本篇這樣讀三四行的輸出，走 [PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)。

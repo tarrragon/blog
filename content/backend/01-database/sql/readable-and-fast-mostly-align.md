@@ -1,0 +1,133 @@
+---
+title: "1.21 好讀的寫法多數時候也是引擎好走的"
+date: 2026-09-01
+description: "寫法差異在什麼情形下免費、什麼情形下分岔，以及分岔時該動查詢還是動 schema"
+aliases: ["/sql/readable-and-fast-mostly-align/"]
+weight: 22
+tags: ["sql", "readability", "performance", "index", "cte"]
+---
+
+一段 SQL 同時要給引擎執行與給人維護，而這兩個需求在 SQL 上多數時候指向同一個寫法。理由落在這個語言的性質上：**引擎執行的是計畫，不是那段文字**（[1.1 宣告式的紅利與代價：三種順序各自由誰決定](/backend/01-database/sql/declarative-not-procedural/)），所以文字裡為了讓人看懂而多出來的結構，只要最佳化器攤得平就在計畫上留不下痕跡。決定執行次數的結構是例外——相關子查詢與 CTE 都屬於這一類，後面那一節量的正是它。
+
+這一篇與 [1.20 關鍵字宣告意圖，引擎只執行行為](/backend/01-database/sql/declared-intent-vs-behaviour/) 都問文字寫給誰。那一篇問文字對讀的人說了什麼——宣告落空的幾種形態與查證它的動作——這一篇問文字該為誰而寫。兩篇底下還有一層是答案本身對不對，引擎對那一層沒有回報的管道，好讀與否也碰不到它，[1.13 合不合法由引擎驗，答案對不對由提問的人負責](/backend/01-database/sql/well-formed-is-not-correct/) 寫它為什麼不報錯。
+
+## 多數的寫法差異是免費的
+
+同一批列的兩種寫法送進[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)之後常常收斂成同一個計畫。`CROSS JOIN` 加等值條件與 `JOIN ... ON` 寫同一個條件，計畫逐字相同（[1.20 關鍵字宣告意圖，引擎只執行行為](/backend/01-database/sql/declared-intent-vs-behaviour/) 有並排的輸出）。[1.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/) 從另一條路走到同一個處置：肯定式的 `IN` 與 `EXISTS` 語意相同，所以選哪一個按可讀性挑。它的依據是語意而非計畫：這兩種寫法在 SQLite 上各自走不同的計畫，而語意相同已經足以讓選擇落在可讀性上。
+
+```sql
+-- 共用資料：下過單的顧客，兩段都回 佳穎
+EXPLAIN QUERY PLAN
+SELECT 姓名 FROM 顧客 WHERE 顧客編號 IN (SELECT 顧客編號 FROM 訂單);
+-- SCAN 顧客
+-- LIST SUBQUERY 1：子查詢跑一次，把顧客編號收成一份清單
+
+EXPLAIN QUERY PLAN
+SELECT 姓名 FROM 顧客 WHERE EXISTS (SELECT 1 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧客編號);
+-- SCAN 顧客
+-- CORRELATED SCALAR SUBQUERY 1：子查詢對顧客的每一列各跑一次
+```
+
+一個寫法差異免不免費，判斷起來很省事——兩種寫法各要一次計畫，一樣就按好讀的挑。**這一步預設了拿得到計畫**；拿不到的時候本篇的方法整個用不上，剩下的是條件形狀那一層的排除法（[Sargable](/backend/01-database/sql/knowledge-cards/sargable/)）。
+
+## 分岔發生在條件的形狀上
+
+本篇量到寫法影響代價的位置有兩處，第一處是條件的形狀：條件把索引欄位包進函式或運算裡的時候，索引的查找就用不上了（[Sargable](/backend/01-database/sql/knowledge-cards/sargable/)）。而那個寫法常常正是好讀的那一個。
+
+三十萬列的訂單表，一年的日期平均分佈而三月佔兩萬五千列上下，`下單日` 上有索引：
+
+```sql
+CREATE TABLE 訂單 (訂單編號 INTEGER PRIMARY KEY, 顧客編號 INT, 下單日 TEXT, 金額 INT);
+WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i+1 FROM n WHERE i < 299999)
+INSERT INTO 訂單 SELECT i, i % 500, date('2021-01-01', (i % 365) || ' day'), 100 + i % 900 FROM n;
+CREATE INDEX ix_日 ON 訂單(下單日);
+```
+
+問三月有幾張訂單（SQLite 3.51，`SELECT count(*)`，各跑二十次取最小，計時器解析度一毫秒）：
+
+| 寫法                                               | 時間      |
+| -------------------------------------------------- | --------- |
+| `strftime('%Y-%m',下單日) = '2021-03'`             | 49 ms     |
+| `下單日 >= '2021-03-01' AND 下單日 < '2021-04-01'` | 不到 1 ms |
+
+`strftime` 那一行直接說出「這一列屬於哪個年月」，日期範圍那一行要讀的人自己把兩個邊界拼回一個月份，還要留意右邊是開區間。兩種寫法的執行時間差距大到日期範圍寫法落在計時器的解析度以下，而好讀的是慢的那一個。
+
+## 好讀的寫法走不了索引時，改 schema 不改查詢
+
+同一個好讀的寫法不動，把索引建在運算式上：
+
+```sql
+CREATE INDEX ix_月 ON 訂單(strftime('%Y-%m',下單日));
+
+-- 查詢與表格裡 strftime 那一行相同
+EXPLAIN QUERY PLAN
+SELECT count(*) FROM 訂單 WHERE strftime('%Y-%m',下單日) = '2021-03';
+-- 建 ix_月 之前：SCAN 訂單 USING COVERING INDEX ix_日（整份索引掃過一遍）
+-- 建 ix_月 之後：SEARCH 訂單 USING COVERING INDEX ix_月 (<expr>=?)（直接查到那個月份）
+```
+
+再量一次，時間也落在計時器的解析度以下。原本的查詢一個字都沒有改。
+
+所以碰到這種分岔時，第一個問題是**這個代價能不能在 schema 那一層買掉**，而不是要不要把查詢寫醜。索引的代價落在寫入端（[索引](/backend/01-database/sql/knowledge-cards/indexing/)那張卡寫這一條），那是一個可以評估的交換；把查詢改成需要讀的人自己拼日期範圍的邊界，換到的速度一樣，而付出的是往後每一次維護。
+
+## 拆成 CTE 常常比一整段快：拆開讓引擎看得見每位顧客的平均只有一個
+
+一般語言裡「拆成小塊比較好讀但比較慢」是常見的直覺，SQL 上量到的常常相反。同一個問題——「金額高於自己所屬顧客平均的訂單有幾張」——寫成一整段的相關子查詢，與拆成 CTE：
+
+```sql
+-- 一整段
+SELECT count(*) FROM 訂單 o
+WHERE o.金額 > (SELECT avg(金額) FROM 訂單 i WHERE i.顧客編號 = o.顧客編號);
+
+-- 拆開
+WITH 每人平均 AS (SELECT 顧客編號, avg(金額) AS 均 FROM 訂單 GROUP BY 顧客編號)
+SELECT count(*) FROM 訂單 o JOIN 每人平均 p ON p.顧客編號 = o.顧客編號
+WHERE o.金額 > p.均;
+```
+
+這一篇另外造自己的表，**顧客數固定在 500 而列數翻倍**（`N` 依序是 5000、10000、20000、40000）：
+
+```sql
+CREATE TABLE 訂單 (訂單編號 INTEGER PRIMARY KEY, 顧客編號 INT, 金額 INT);
+WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i+1 FROM n WHERE i < N-1)
+INSERT INTO 訂單 SELECT i, i % 500, 100 + (i * 37) % 900 FROM n;
+CREATE INDEX ix_顧 ON 訂單(顧客編號);
+```
+
+SQLite 3.51，四個資料量各跑二十次取最小：
+
+| 列數  | 一整段 | 拆成 CTE |
+| ----- | ------ | -------- |
+| 5000  | 9 ms   | 1 ms     |
+| 10000 | 33 ms  | 3 ms     |
+| 20000 | 126 ms | 7 ms     |
+| 40000 | 551 ms | 15 ms    |
+
+列數翻倍，一整段那一欄的三段比值是 3.7、3.8、4.4，而 CTE 那一欄最後一段是 2.1——列數翻倍、時間跟著翻倍。CTE 那一欄前兩段的比值貼著計時器的解析度，讀不出來。**這個結論依賴顧客數固定這個條件**：列數翻倍而顧客數不動，等於每位顧客的訂單數也翻倍，相關子查詢每一列要掃的量因此跟著漲；顧客數若隨列數一起成長，那一欄的成長會平緩得多。兩段查詢的計畫說明了原因：相關子查詢對外層的每一列各執行一次（[子查詢](/backend/01-database/sql/knowledge-cards/subquery/)那張卡寫這個區別），而 CTE 把每位顧客的平均算成一次，再拿去連接。
+
+```text
+一整段
+SCAN o
+CORRELATED SCALAR SUBQUERY 1                   對外層 o 的每一列各執行一次
+   SEARCH i USING INDEX ix_顧 (顧客編號=?)
+
+拆成 CTE
+CO-ROUTINE 每人平均                             每位顧客的平均算一次
+   SCAN 訂單 USING INDEX ix_顧
+SCAN p
+SEARCH o USING INDEX ix_顧 (顧客編號=?)         拿每人平均去連接訂單
+```
+
+**拆開讓引擎看得見「這個平均每位顧客只有一個」這件事**，而寫成相關子查詢等於把它藏起來。人讀得懂的結構，引擎往往也算得動。
+
+## 為速度而寫醜，押的是索引與資料量這些會變的狀態
+
+真要在好讀的寫法與為速度扭曲的寫法之間排序的話，理由落在 [1.17 代價由資料與索引決定](/backend/01-database/sql/cost-lives-in-the-plan/) 已經證過的一件事上：同一組寫法的快慢排名會隨索引對調——那一篇拿一道重複值的題目，示範加一個索引之後最慢的寫法變成最快之一，而查詢的文字一個字沒改。**為當下的代價而扭曲的文字，在別人加了一個索引之後就失去理由，而那段文字會留著。** 可讀性沒有這個問題——它不隨資料庫的狀態改變。
+
+這也對得上優化該動哪裡：[1.17 代價由資料與索引決定，不由寫法決定](/backend/01-database/sql/cost-lives-in-the-plan/) 列的那四項（資料量、分布、索引、統計資訊）全部是資料庫本身的狀態，不在查詢的文字裡，所以調整的位置在 schema 與計畫，而查詢的文字負責把意圖說清楚。
+
+## 文字層無解而 schema 動不了的時候
+
+為速度寫醜只在 schema 那一層動不了的時候有理由：唯讀複本、改不動的 vendor schema、或索引的寫入代價付不起，那時文字層是唯一能動的地方。
+
+**難讀的寫法自己不會說明它為什麼難讀**，而下一個人看到的只是一段可以「順手整理一下」的查詢。那個約束是這段文字唯一的存在理由，而它不在查詢裡的任何一個位置上——整理掉的時候會遺失的正是它（哪一層動不了、量測差多少）。

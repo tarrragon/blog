@@ -27,7 +27,7 @@ ORM 把資料表對映成程式語言的類別，把一列對映成一個物件�
 
 ## 概念位置
 
-ORM 站在應用程式與資料庫之間，運算仍然發生在資料庫那一端——它交出去的是描述，回來的是結果。這一點決定了它的容量上限跟著資料庫走，與把整批資料搬進記憶體再算的工具（[DataFrame](/sql/knowledge-cards/dataframe/) 那一類）分屬兩側。
+ORM 站在應用程式與資料庫之間，運算仍然發生在資料庫那一端——它交出去的是描述，回來的是結果。這一點決定了它的容量上限跟著資料庫走，與把整批資料搬進記憶體再算的工具（[DataFrame](/backend/01-database/sql/knowledge-cards/dataframe/) 那一類）分屬兩側。
 
 連線這一層同樣被它蓋住：每一段查詢佔用的仍然是 [connection pool](/backend/knowledge-cards/connection-pool/) 裡的一條連線，而是哪一條、佔多久由框架的作用域與連線池的設定決定。
 

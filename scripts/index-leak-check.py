@@ -5,8 +5,8 @@ _index.md 的正文不會渲染（layouts/_default/list.html 不輸出 .Content�
 文章正文引用那裡的段名或框架詞，讀者手上沒有對應的內容。
 
 用法：
-  scripts/index-leak-check.py content/sql             掃一個目錄
-  scripts/index-leak-check.py content/sql a.md b.md   只掃指定的文章（驗證用）
+  scripts/index-leak-check.py content/backend/01-database/sql             掃一個目錄
+  scripts/index-leak-check.py content/backend/01-database/sql a.md b.md   只掃指定的文章（驗證用）
   scripts/index-leak-check.py --all                   掃 content/ 下所有教學目錄
   scripts/index-leak-check.py --anchors               列出連到目錄頁錨點的連結（任何層數的路徑）
 

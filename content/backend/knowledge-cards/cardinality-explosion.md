@@ -13,7 +13,7 @@ Cardinality explosion 處於 SQL query 設計的「結果集大小判讀」維�
 
 本卡專指 query result-set 行數爆、跟 metric cardinality（time-series 維度爆）是兩個獨立議題、各自獨立成卡。
 
-成因裡的「誤用 CROSS JOIN」與「多對多 join 缺 filter」在語言層是兩件不同的事：前者條件從未綁住兩邊、量由兩張表的大小決定，後者條件正確而一列配到多列、量由重複程度決定。分辨的問句與兩者各自的修法在 [Cartesian Product（笛卡兒積）](/sql/knowledge-cards/cartesian-product/)。
+成因裡的「誤用 CROSS JOIN」與「多對多 join 缺 filter」在語言層是兩件不同的事：前者條件從未綁住兩邊、量由兩張表的大小決定，後者條件正確而一列配到多列、量由重複程度決定。分辨的問句與兩者各自的修法在 [Cartesian Product（笛卡兒積）](/backend/01-database/sql/knowledge-cards/cartesian-product/)。
 
 ## 可觀察訊號與例子
 

@@ -6,7 +6,7 @@ weight: 4
 tags: ["python", "pandas", "sql", "dataframe", "relational-algebra"]
 ---
 
-SQL 的子句與 pandas 的方法對應得起來，因為兩者操作的是同一種資料結構：由欄與列構成的表格。對表格能做的基本操作就那幾種——挑出符合條件的列、挑出要的欄、把兩張表按鍵值接起來、把列分組後彙總——這組操作叫[關聯代數](/sql/knowledge-cards/relational-algebra/)。SQL 與 [DataFrame](/sql/knowledge-cards/dataframe/) 各自是這套代數的一個介面——介面在這裡指的是表達那組操作的那一層，而底下由誰執行、怎麼執行，這一層都蓋住了。
+SQL 的子句與 pandas 的方法對應得起來，因為兩者操作的是同一種資料結構：由欄與列構成的表格。對表格能做的基本操作就那幾種——挑出符合條件的列、挑出要的欄、把兩張表按鍵值接起來、把列分組後彙總——這組操作叫[關聯代數](/backend/01-database/sql/knowledge-cards/relational-algebra/)。SQL 與 [DataFrame](/backend/01-database/sql/knowledge-cards/dataframe/) 各自是這套代數的一個介面——介面在這裡指的是表達那組操作的那一層，而底下由誰執行、怎麼執行，這一層都蓋住了。
 
 換介面重寫一次同樣的邏輯因此是划算的練習：邏輯已經想清楚了，剩下的是查另一套語法怎麼寫。
 
@@ -79,10 +79,10 @@ t.groupby("k", dropna=False).size()   # {'x': 1, nan: 2}  與 SQL 一致
 
 **這兩個介面為什麼會分家**：一邊把運算交給資料庫，一邊在自己的記憶體裡算。[8.2 運算發生在哪一端](/python/08-data-analysis/where-computation-runs/) 寫這條分界怎麼決定容量上限，以及選邊要問的三個條件。
 
-**同一個對比在 SQL 那一側怎麼講**：`transform` 對 `agg` 的差別就是視窗函數對 `GROUP BY` 的差別。[SQL 1.10 分組把列收掉，視窗函數把列留著](/sql/window-keeps-rows-grouping-collapses/) 用輸出的單位當判斷標準，並示範相鄰的定義漏掉分區之後會跨到別的組上。
+**同一個對比在 SQL 那一側怎麼講**：`transform` 對 `agg` 的差別就是視窗函數對 `GROUP BY` 的差別。[SQL 1.10 分組把列收掉，視窗函數把列留著](/backend/01-database/sql/window-keeps-rows-grouping-collapses/) 用輸出的單位當判斷標準，並示範相鄰的定義漏掉分區之後會跨到別的組上。
 
 **從產出認出手上是哪一個介面**：[8.3 ORM 交出查詢，DataFrame 自己算](/python/08-data-analysis/orm-and-dataframe/) 寫兩者的回傳值形狀差在哪，以及分得開它們的三個訊號。
 
-**這套代數在 SQL 那一側怎麼設計**：關聯代數的組合規則決定了子句的先後、連接的左右與分組的鍵，而那些規則各有一處與直覺相反。[SQL：這個語言為什麼長這樣](/sql/) 從語言的宣告式性質推導這一整組規則，並另外處理文字之外的四方（識別字規則、引擎的寬鬆度、權限、最佳化器）。
+**這套代數在 SQL 那一側怎麼設計**：關聯代數的組合規則決定了子句的先後、連接的左右與分組的鍵，而那些規則各有一處與直覺相反。[SQL：這個語言為什麼長這樣](/backend/01-database/sql/) 從語言的宣告式性質推導這一整組規則，並另外處理文字之外的四方（識別字規則、引擎的寬鬆度、權限、最佳化器）。
 
 **換介面之後接手的新限制**：SQL 那一側沒有記憶體上限的問題，換到 DataFrame 就有了。[8.5 記憶體是 pandas 的邊界條件](/python/08-data-analysis/memory-is-the-boundary/) 給估算方法與越過之後的三個方向。

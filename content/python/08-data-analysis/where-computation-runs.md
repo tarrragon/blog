@@ -31,7 +31,7 @@ print(stmt.compile(engine))
 
 ## 搬進記憶體端：資料整批進來，程式自己算
 
-搬進記憶體端的做法是把資料整批載進程式，運算由程式自己完成。pandas 屬於這一側，它的容器是 [DataFrame](/sql/knowledge-cards/dataframe/)。
+搬進記憶體端的做法是把資料整批載進程式，運算由程式自己完成。pandas 屬於這一側，它的容器是 [DataFrame](/backend/01-database/sql/knowledge-cards/dataframe/)。
 
 ```python
 df[df["age"] > 18]
