@@ -212,10 +212,10 @@ Sharding 的升級路徑要等 shard key 與 query shape 足夠穩定。過早�
 ## 後續擴充（仍待補）
 
 - Index 設計跟覆蓋
-- 從自管 MongoDB 遷到 Atlas
 - 從 MongoDB 遷到 Cosmos DB MongoDB API（保留 document model）
 - 從 MongoDB 遷到 DynamoDB（access pattern 需要重設計）
 - Queryable encryption（CSFLE）
+- Document model → relational split（遷出方向 playbook：哪些 collection 拆成關聯表、嵌入文件怎麼正規化）
 
 ## 案例對照
 

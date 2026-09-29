@@ -6,7 +6,7 @@ description: "把 PostgreSQL 與 MySQL 兩組文章的正文經驗整理成資�
 tags: ["backend", "database", "vendor", "writing-spec"]
 ---
 
-資料庫 Vendor 文章撰寫規格的核心責任是把服務頁、深度文章與遷移 playbook 的分工固定下來。PostgreSQL 與 MySQL 已經提供 SQL baseline 的完整樣本；後續撰寫 SQLite、MongoDB、DynamoDB、Aurora、Spanner、Cosmos DB 與 CockroachDB 時，應沿用同一組教學功能檢查，但保留每個服務自己的資料形狀、操作責任與失敗語言。
+資料庫 Vendor 文章撰寫規格的核心責任是把服務頁、深度文章與遷移 playbook 的分工固定下來。PostgreSQL 與 MySQL 已經提供 SQL baseline 的完整樣本；撰寫其他資料庫服務（SQLite、MongoDB、DynamoDB、Aurora、Spanner、Cosmos DB、CockroachDB、Firestore）時沿用同一組教學功能檢查，但保留每個服務自己的資料形狀、操作責任與失敗語言。
 
 這份規格承接 [Vendor 深度技術文章寫作方法論](/posts/vendor-deep-article-methodology/) 與 [Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/)。本文只處理資料庫模組的落地規格：哪些內容留在 vendor overview，哪些議題升級成 deep article，哪些變更需要 migration playbook。
 
@@ -66,6 +66,8 @@ Deep article 的責任是把 vendor overview 點到的單一機制展開成可�
 
 邊界與整合段要補「何時不用」。MySQL 的 deep article 多數已有 production 踩雷段、而缺「何時暫時不用這個機制」的段落；後續每篇 deep article 至少要有一段說明什麼規模、團隊能力或 workload 下暫時維持簡單設計更划算。
 
+比較 sibling vendor 時保留對手服務的強項：專業 vector DB 的規模、專業 time-series DB 的寫入吞吐、distributed SQL 的全域一致性、managed 平台接手的維運責任。只寫主角服務勝出的面向，讀者拿到的是一份推薦，判斷不出什麼條件下該換掉它。
+
 ## Hands-on / Artifact 規格
 
 Hands-on / artifact 章節的責任是把 deep article 的機制判讀轉成可演練操作。這一層要讓讀者能跑出一個 local / staging lab，取得 config、query output、metric snapshot、validation result 或 rollback note，而不只停在概念理解。
@@ -105,60 +107,6 @@ Evidence 段要把資料庫遷移接回 observability 與 reliability。Playbook
 Cutover 段要把決策權責寫清楚。資料庫切流失敗通常代價高，正文要標示切流窗口、暫停條件、回退條件、資料凍結策略與 decision owner，並連到 [rollback window](/backend/knowledge-cards/rollback-window/) 或 [rollback condition](/backend/knowledge-cards/rollback-condition/)。
 
 Cleanup 段要防止雙軌永久殘留。舊 schema、舊 writer、舊 CDC connector、舊 backup、舊 dashboard 與舊 runbook 都需要退役判斷標準；資料保留、稽核與 incident write-back 要在 cleanup 前確認。
-
-## 從 PostgreSQL / MySQL 回收的調整項
-
-PostgreSQL 與 MySQL 的正文已經足以讓其他服務頁開寫。下一輪調整應集中在橫向品質；SQL baseline 可維持現有正文作為後續服務頁的比較基準。
-
-### PostgreSQL
-
-PostgreSQL 的下一輪擴充重點是補安全、災難復原與 managed variant。[Security / RLS / audit logging](/backend/01-database/vendors/postgresql/security-rls-audit-logging/) 可以連到資料保護與稽核章節；[cross-region DR](/backend/01-database/vendors/postgresql/cross-region-dr/) 可以連到 reliability 與 incident decision；[Managed PG Comparison](/backend/01-database/vendors/postgresql/managed-pg-comparison/) 與 [Specialized PostgreSQL Variants](/backend/01-database/vendors/postgresql/specialized-pg-variants/) 承接 AlloyDB、Cloud SQL、Cosmos DB for PostgreSQL 與 pgvectorscale。
-
-PostgreSQL 的既有 limitation 已經標示 PG-favoring narrative 與時間敏感 claim。後續補文時要保留對手 vendor 的強項，例如專業 vector DB 的 scale、專業 time-series DB 的 ingestion、distributed SQL 的 global consistency 與 managed 平台的 operation transfer。
-
-### MySQL
-
-MySQL 的下一輪擴充重點是補 anti-recommendation 與真實 case anchor。多數 deep article 已經有 production 踩雷，但還要加上「何時暫時不用這個機制」的段落，讓讀者知道維持單 primary、簡單 replication、原生 partition 或標準 backup 何時更划算；security、audit、Document Store、multi-source replication、HeatWave、memory contention 與 metadata lock 已先建立 outline 路由。
-
-MySQL 的案例段要把 GitHub、Shopify、Slack、YouTube / Vitess 這些業界來源升級成具體 anchor。案例不只列公司名稱，還要回收它提供的流量形狀、[database sharding](/backend/knowledge-cards/database-sharding/) 策略、schema change 壓力、failover 責任或工具演化原因。
-
-## 後續服務撰寫順序
-
-後續服務撰寫順序要從 SQL baseline 推進到資料模型與操作責任差異。每一篇先完成 vendor overview，再依 overview 暴露出的機制缺口決定 deep article 或 migration playbook。
-
-| 批次 | 服務                | 開寫重點                                                       | 升級條件                                                                                   |
-| ---- | ------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| DB2  | SQLite              | embedded formal state、local data、testing DB、backup 邊界     | local-first sync、edge deployment 或 file corruption                                       |
-| DB3  | MongoDB / DynamoDB  | document shape、access pattern、partition key、capacity mode   | shard expansion、Atlas migration、[hot partition](/backend/knowledge-cards/hot-partition/) |
-| DB4  | Aurora              | managed SQL、storage / compute 分離、failover、cost model      | PostgreSQL / MySQL 遷移、I/O-Optimized cost                                                |
-| DB5  | Spanner / Cosmos DB | global consistency、multi-region latency、consistency level    | regional rollout、API model migration                                                      |
-| DB6  | CockroachDB         | distributed SQL、transaction retry、range lease、compatibility | PostgreSQL migration、multi-region topology                                                |
-
-SQLite 的重點是讓讀者知道單機正式狀態何時成立。它不應被寫成小型 PostgreSQL，而要處理 file lifecycle、embedded process boundary、backup、concurrency、migration 與測試資料責任。
-
-MongoDB / DynamoDB 的重點是把資料形狀放在 SQL baseline 之後。MongoDB 應教 document shape、index、schema governance 與 transaction boundary；DynamoDB 應教 access pattern、partition key、capacity mode、[hot partition](/backend/knowledge-cards/hot-partition/) 與 connection-free scaling。
-
-Aurora 的重點是 operation transfer。它把 PostgreSQL / MySQL 相容介面放進 AWS-managed operational model；storage / compute 分離、cluster endpoint、replica、backup、failover、cost model 與 AWS 限制都會改變團隊責任。
-
-Spanner / Cosmos DB 的重點是 global data responsibility。Spanner 應教 TrueTime、strong consistency、multi-region latency 與 cost；Cosmos DB 應教 consistency level、API model、partition、RU 與 Azure 約束。
-
-CockroachDB 的重點是 distributed SQL 對 application contract 的影響。SQL 相容降低導入門檻，但 transaction retry、range lease、hot range、schema feature gap 與 multi-region topology 會改變 application 與 SRE 的責任。
-
-## 各服務的下一篇 deep article 與 playbook 候選
-
-這一輪擴章的責任是把每個資料庫服務從 overview 推進到可教學的章節群。Overview 只回答第一輪服務判斷；deep article 回答穩定運作與排錯；migration playbook 回答跨 vendor、跨 topology 或跨 operational model 變更。
-
-| 服務        | 目前狀態           | 下一篇 deep article                                                                                                                                                                     | 升級 playbook 候選                                                                                                                                                 |
-| ----------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| SQLite      | T1 overview 已完成 | [teaching structure](/backend/01-database/vendors/sqlite/teaching-structure/) + [file lifecycle / backup boundary](/backend/01-database/vendors/sqlite/file-lifecycle-backup-boundary/) | [SQLite → PostgreSQL](/backend/01-database/vendors/sqlite/migrate-to-postgresql/)、[SQLite → D1 / Turso](/backend/01-database/vendors/sqlite/migrate-to-d1-turso/) |
-| MongoDB     | T1 overview 已完成 | document shape governance、index / shard key                                                                                                                                            | self-managed → Atlas、document model → relational split                                                                                                            |
-| DynamoDB    | T1 overview 已完成 | partition key / hot partition、capacity mode                                                                                                                                            | DynamoDB → SQL / search / analytics split                                                                                                                          |
-| Aurora      | T1 overview 已完成 | failover / endpoint routing、I/O cost model                                                                                                                                             | PostgreSQL / MySQL → Aurora、Aurora → distributed SQL                                                                                                              |
-| Spanner     | T1 overview 已完成 | TrueTime / transaction latency、multi-region topology                                                                                                                                   | regional SQL → Spanner                                                                                                                                             |
-| Cosmos DB   | T1 overview 已完成 | consistency level / RU budgeting、partitioning                                                                                                                                          | API model migration、Cosmos DB → specialized store                                                                                                                 |
-| CockroachDB | T1 overview 已完成 | transaction retry、range split / leaseholder                                                                                                                                            | PostgreSQL → CockroachDB、single-region → multi-region                                                                                                             |
-
-Backlog 的排序以學習梯度為準。SQLite 先處理單檔案正式狀態，補足「低操作成本如何 production 化」；MongoDB / DynamoDB 再處理資料形狀與 access pattern；Aurora 接 SQL operation transfer；Spanner、Cosmos DB 與 CockroachDB 最後處理 distributed consistency 與 multi-region topology。
 
 ## 規格檢查清單
 

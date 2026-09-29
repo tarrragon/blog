@@ -237,6 +237,7 @@ Migration playbook：
 - Hands-on lab 入口（對齊 PostgreSQL / MySQL / SQLite hands-on 形態）
 - Backup / PITR 與 continuous backup tier 選擇
 - Gremlin / Table API 的適用邊界與遷入
+- Cosmos DB → specialized store（search / analytics / 專用 KV）的遷出 playbook
 
 ## Anti-recommendation 與升級路由
 

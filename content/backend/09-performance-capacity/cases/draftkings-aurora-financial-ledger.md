@@ -31,8 +31,8 @@ DraftKings 帳本系統的關鍵數字（引自 [DraftKings case study](https://
 DraftKings 的工程選擇揭露三個 OLTP 容量設計重點。
 
 1. **200 個獨立資料庫 = sharding 預先做好**：按業務切 200 個 cluster、用巨型 cluster 撐全部在這個規模行不通。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 把「單機極限」改成「shard 極限」、每個 shard 的容量規劃變成獨立問題。
-2. **Replication lag 30 秒 → 10-30 ms**：這個改善不只是「快」、而是讓 read-after-write 變得可預測。Aurora 的 storage layer 多 AZ 複製是這個 lag 改善的主因。對應 [01 資料庫模組](/backend/01-database/) 的 replication lag 影響 transaction boundary 設計。
-3. **Super Bowl +50% 「no sweat」**：這句話的工程意義是 *提前做好容量規劃*、不是「Aurora 神奇」。寫 workload 預期可能 + 50%、整個 system headroom 預留至少 50%、加上 read replica 動態加減、才能讓 50% 增幅變成「不流汗」。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 的 headroom budget 與 event-driven scheduled scaling。
+2. **Replication lag 30 秒 → 10-30 ms**：這個改善讓 replica 落後主庫的時間縮到毫秒級、波動也小；lag 仍然不是零，剛寫完就要讀到自己那筆寫入的查詢（read-after-write）仍要走主庫。Aurora 的 storage layer 多 AZ 複製是這個 lag 改善的主因。對應 [01 資料庫模組](/backend/01-database/) 的 replication lag 影響 transaction boundary 設計。
+3. **Super Bowl +50% 「no sweat」**：這句話的工程意義是 *提前做好容量規劃*、不是「Aurora 神奇」。+50% 是預估的流量成長：Super Bowl 是已知事件，歷史經驗讓團隊能把這 50% 算進事件當天的目標容量、事前 scale-up 到位。headroom 是在目標容量之上再留的餘裕，吸收的是預估之外的偏差，跟預估成長分開算——把 +50% 當成 headroom，等於假設事件當天流量不會比預估高。案例只公開了流量 +50% 而延遲不受影響，headroom 實際留了多少沒有公開。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 的 headroom budget 與 event-driven scheduled scaling。
 
 需要警惕：100 萬 ops / 分鐘 = ~17K ops / 秒、跨 200 個 databases 平均下來每個 DB 約 80 ops / 秒。這不是「單一 DB 撐 100 萬 ops」、而是「200 shard 加總 100 萬」。讀案例時要看「峰值是分散到多少 shard」、不只看總數。
 

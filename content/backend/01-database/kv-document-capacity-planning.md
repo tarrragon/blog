@@ -1,14 +1,14 @@
 ---
 title: "1.10 KV / Document DB 容量規劃"
 date: 2026-05-13
-description: "DynamoDB / Cosmos DB / Bigtable / MongoDB 等 KV / Document DB 的容量設計、partition key 取捨、capacity mode 選擇"
+description: "DynamoDB / Cosmos DB / Bigtable / MongoDB 等 KV / Document DB 的容量設計、partition key 取捨、capacity mode 選擇，以及加 region 之後寫入容量怎麼跟著乘上去"
 weight: 10
 tags: ["backend", "database", "kv", "capacity"]
 ---
 
 ## 概念定位
 
-這篇整理 DynamoDB、Azure Cosmos DB、Google Cloud Bigtable、MongoDB Atlas 這類 KV / Document DB 的容量規劃：容量模型與連線模型、partition key 怎麼設計才不會 hot partition、on-demand 與 provisioned 怎麼選、一致性等級與 multi-model 的取捨，以及把 KV 當寫入緩衝與限流的用法。範圍是資料庫這一端的容量；OLTP 的高併發存取在 [高併發資料存取](/backend/01-database/high-concurrency-access/)，從 workload 出發找飽和點與建容量模型在 [Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 與 [容量規劃模型](/backend/09-performance-capacity/capacity-planning/)。
+這篇整理 DynamoDB、Azure Cosmos DB、Google Cloud Bigtable、MongoDB Atlas 這類 KV / Document DB 的容量規劃：容量模型與連線模型、partition key 怎麼設計才不會 hot partition、on-demand 與 provisioned 怎麼選、一致性等級、加 region 之後的容量代價與 multi-model 的取捨，以及把 KV 當寫入緩衝與限流的用法。範圍是資料庫這一端的容量；OLTP 的高併發存取在 [高併發資料存取](/backend/01-database/high-concurrency-access/)，從 workload 出發找飽和點與建容量模型在 [Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 與 [容量規劃模型](/backend/09-performance-capacity/capacity-planning/)。
 
 KV / Document DB 的容量規劃跟傳統 OLTP 不同。OLTP 容量靠「instance type 升級 + read replica」、KV 靠「partition 切分 + capacity unit 配置」。兩者瓶頸不同、可擴範圍不同、設計取捨也不同。
 
@@ -214,6 +214,34 @@ KV / Document DB 通常提供多個 [consistency level](/backend/knowledge-cards
 - [9.C30 Microsoft 365 Cosmos DB](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — 分析平台用 weakest consistency 換最大 throughput
 
 詳見 [1.3 Transaction Boundary](/backend/01-database/transaction-boundary/) 的一致性取捨。
+
+## 加一個 region，寫入容量要在每個 region 各付一份
+
+從 single-region 升到 multi-region 的決定由三件事驅動：可用性目標要不要撐過整個 region 失效、使用者分布在多遠的地方、法規要不要資料留在境內。三件都不是容量問題，判斷方法在 [全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) 的〈可用性目標的成本曲線〉〈延遲代價：跨 region quorum 不可壓縮〉〈跨地理合規：法規限制下的 global OLTP〉三節，那些判斷對 SQL 與 KV 都成立。這一節處理的是決定做了之後，KV / Document DB 的容量規劃跟著改變的地方。
+
+改變的核心是 **replicated write**：一筆寫入在一個 region 發生之後，要在其餘每個 replica region 再寫一次，而那一次寫入消耗的是目的地 region 的寫入容量。所以 multi-region 的每個 region 各自要容納全部 region 加總的寫入量，同一份寫入容量沒辦法攤給多個 region 共用。
+
+- **DynamoDB global tables**：replication 消耗 write capacity，provisioned 模式下應用程式的寫入加上 replication 的寫入超過配置的 WCU 就會 throttle。global table 的寫入容量設定在所有 replica 之間強制同步、不能逐 region 調整，讀取容量可以逐 region override（AWS 文件〈How DynamoDB global tables work〉）。
+- **Cosmos DB**：container 配置的 RU/s 在帳號的每一個 region 都保留一份，帳號配置 `T` RU/s、關聯 `N` 個 region，每小時計費的是 `T × N` RU/s，storage 也在每個 region 各存一份（Microsoft Learn〈Optimize cost for multi-region deployments〉）。
+
+Microsoft Learn 的計費範例把這個乘法寫成具體數字：
+
+```text
+# 一個 container 配置 10,000 RU/s、存 0.5 TB，從 1 個可寫 region 加到 2 個可寫 region
+throughput 計費（1 個 region）：10,000 RU/s × 730 小時
+throughput 計費（2 個 region）：2 × 10,000 RU/s × 730 小時
+storage 計費（1 個 region）：0.5 TB
+storage 計費（2 個 region）：2 × 0.5 TB = 1 TB
+```
+
+replicated write 也把 partition key 的設計結果複製到每個 region：寫入集中在少數幾個 partition key 時，每個 replica region 裡的同一批 partition 收到的是同樣集中的 replication 寫入，熱點不會因為多了 region 而分散。所以 hot partition 要在 single-region 階段就修掉，加 region 只會把同一個熱點乘上 region 數。
+
+一致性模式的選擇同時決定容量與可用的功能，而 DynamoDB 的模式在建表時就定死、之後不能改：
+
+- **Multi-Region eventual consistency（MREC）**：預設模式。replication 非同步、通常一秒內到達，同一筆資料在兩個 region 同時被改時以 last writer wins 收斂。寫入與 strong read 的延遲都比 MRSC 低，而 strong read 在資料最後由別的 region 更新時可能讀到舊值。
+- **Multi-Region strong consistency（MRSC）**：寫入同步複製到至少另一個 region 才回成功，任何 replica 上的 strong read 都讀到最新版本，RPO 是零。代價寫在限制裡：必須恰好部署在三個 region（三個 replica，或兩個 replica 加一個 witness）、寫入與 strong read 的延遲隨 region 間的距離增加、不支援 transaction 操作、TTL 與 LSI，而且只能從一張空表轉換。
+
+Cosmos DB 的對應選擇是單一寫入 region 還是 multi-region writes：單一寫入 region 只有一個 region 接受寫入，其餘 region 服務讀取；multi-region writes 讓每個 region 都能寫，同一筆資料在兩個 region 被同時改寫時要靠 conflict resolution 收斂，機制與 Strong 跟 multi-region writes 的互斥在 [Cosmos DB Multi-Region Write](/backend/01-database/vendors/cosmosdb/multi-region-write-conflict/)。DynamoDB 的 LWW 衝突與跨裝置同步的用法在 [DynamoDB Global Tables](/backend/01-database/vendors/dynamodb/global-tables-conflict/)，MongoDB 加 region 同時改 sharding 與 replication topology 的流程在 [MongoDB Shard Expansion + Multi-DC](/backend/01-database/vendors/mongodb/shard-expansion-multi-dc/)。
 
 ## Multi-model 取捨
 
