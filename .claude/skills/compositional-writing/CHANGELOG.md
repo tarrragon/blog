@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.38.1 — principle 卡 code-fragments-in-prose-make-readers-reassemble 補一個 SQL 教材分類全掃的發現：句型 pattern 只抓到一小部分描述式形態，寫成程式實跑後對出十幾處散文裡讀得通的內容錯
+
 **Version**: 1.38.0 — 「散文夾程式」補計數掃不到的形態：散文描述一段頁面上沒出現的程式或資料變體（改一列之後回什麼、換一種寫法回什麼、展開式），偵測改用句型 pattern；處置是寫出來並實跑、結果寫成註解，「原文只描述了程式時不補」限定在改寫者沒有環境可跑時。demonstrating-commands、SKILL.md bank、principle 卡同步
 
 **Version**: 1.37.0 — demonstrating-commands 新增〈散文裡夾了一段程式，就把程式與逐行解釋移進區塊〉並調和「推導與機制寫散文」「錯誤用法不進區塊」兩條；bank 新增「散文夾程式」類別；principle 卡 code-fragments-in-prose-make-readers-reassemble；全站實跑後補四種形態（既有區塊併註解、原文沒給完整寫法不補、無對象短指令留散文、搬回區塊後程式與散文對不上）
