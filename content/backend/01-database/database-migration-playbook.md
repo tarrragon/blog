@@ -1,19 +1,14 @@
 ---
 title: "1.6 資料庫轉換實作：雙寫、回填、切流與回滾"
 date: 2026-05-13
-description: "同 DB 內 schema 演進與資料變更的可分段驗證流程、跟 1.12 cross-DB migration 分工"
+description: "同一個資料庫引擎內 schema 演進與資料變更的分段驗證流程：expand-contract、回填、驗證查詢、切流與回滾；換資料庫引擎的遷移不在範圍內"
 weight: 6
 tags: ["backend", "database", "migration"]
 ---
 
 資料庫轉換實作的核心責任是讓 schema、資料與流量切換都可分段驗證、並在任一階段可安全回退。這一頁不討論要不要轉換、專注回答「決定要換之後怎麼做」。
 
-本章跟 [1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/) 分工：
-
-- **1.6 同 DB 內**：schema 演進、資料變更、新舊欄位共存、雙寫驗證、切流。例：加欄位、改欄位、拆表、合表、加 partition。
-- **1.12 跨 DB 引擎**：換 vendor（PostgreSQL → Aurora、MongoDB → Cosmos DB、TiDB → DynamoDB）。例：[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)、[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)。
-
-兩者用同樣的工程方法論（dual-write、shadow、cutover、rollback）、但 *stakes* 跟 *跨越的邊界* 不同。本章先處理 1.6 的同 DB schema 轉換、1.12 處理更大規模的 cross-engine。若來源是託管平台（Shopify / Firebase / WordPress）的匯出而非自建資料庫、整場遷出的資產線盤點與並行期設計見 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)；資料落地自建後的 schema 演進回到本章、跨引擎搬遷走 1.12。
+本篇的範圍是同一個資料庫引擎內的轉換：schema 演進、資料變更、新舊欄位共存、雙寫驗證與切流，例如加欄位、改欄位、拆表、合表、加 partition。換資料庫引擎的遷移（PostgreSQL → Aurora、MongoDB → Cosmos DB、TiDB → DynamoDB，案例有 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)、[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)）在 [大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)，那一篇沿用本篇的 dual-write、shadow read、cutover、rollback，再加上換引擎才有的應用層改寫與兩個引擎的行為差異。來源是託管平台（Shopify / Firebase / WordPress）的匯出而非自建資料庫時，整場遷出的資產線盤點與並行期設計見 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)；資料落地自建之後，schema 演進照本篇的流程做，跨引擎搬遷照大規模 DB 遷移實戰的流程做。
 
 ## 實作流程
 
@@ -64,67 +59,67 @@ tags: ["backend", "database", "migration"]
 
 ## 同 DB 內常見 migration 類型
 
-### Type A：加欄位（最簡單）
+### 加欄位（最簡單）
 
 - 直接 `ALTER TABLE ADD COLUMN`（nullable 或 default）
 - 應用層後續加寫入、讀取
 - 風險：低
 - 注意：大表 ADD COLUMN with DEFAULT 在 PostgreSQL 11+ 是 instant、之前要 rewrite
 
-### Type B：刪欄位
+### 刪欄位
 
 - 先讓所有 application 不再讀寫該欄位
 - 部署完成、確認後再 DROP COLUMN
 - 風險：中
 - 注意：DROP COLUMN 是 instant、但無法 rollback、必須 backup
 
-### Type C：改欄位型別
+### 改欄位型別
 
 - 用 expand-contract：加新欄位、dual-write、backfill、切讀、刪舊
 - 風險：高（特別是大表）
 - 注意：直接 `ALTER COLUMN TYPE` 可能 rewrite 整表、lock 時間長
 
-### Type D：改欄位名 / 表名
+### 改欄位名 / 表名
 
 - 同型別改名：用 expand-contract、加新名 + dual-write、切讀、刪舊
 - DB 端 native rename 是 instant 但 application 需要同步 update — 不適合大規模 deploy
 
-### Type E：拆表 / 合表
+### 拆表 / 合表
 
 - 拆：先 dual-write 到新舊表、backfill、切讀、刪舊
 - 合：先 dual-write 到新表、backfill、切讀、刪舊
 - 風險：高 — 影響面廣
 
-### Type F：加 index
+### 加 index
 
 - PostgreSQL：`CREATE INDEX CONCURRENTLY`（不 lock 表、可能 slow）
 - MySQL：`gh-ost` / `pt-online-schema-change`（ghost table）
 - 風險：低-中（看 index 大小）
 
-### Type G：加 NOT NULL constraint
+### 加 NOT NULL constraint
 
 - 先確保 application 所有 instance 都不寫 null
 - backfill null 為 default
 - 加 NOT NULL constraint
 - 風險：中
 
-### Type H：加 partition
+### 加 partition
 
 - 先把現有表變成 partition 0
 - 加新 partition 接新資料
 - 漸進把舊資料 move 到對應 partition
 - 風險：高（schema 大變）
 
-### Type I：加約束（CHECK / FK / NOT NULL 收緊）
+### 加約束（CHECK / FK / NOT NULL 收緊）
 
-對有存量資料的表加約束、風險形態跟加欄位不同：新約束要對「過去所有已寫入的資料」負責、不只對未來寫入負責。NOT NULL 是本類型的單欄特例（流程見 Type G）、CHECK 與 FK 走以下同一套順序。哪些規則該下沉成約束、哪些留在文件、分工標準見 [1.15 資料契約文件](/backend/01-database/data-contract-document/)；FK 強約束 vs 應用層保護的取捨回到 [1.2 schema design](/backend/01-database/schema-design/) 的外鍵段。
+對有存量資料的表加約束、風險形態跟加欄位不同：新約束要對「過去所有已寫入的資料」負責、不只對未來寫入負責。NOT NULL 是加約束的單欄特例（流程見〈加 NOT NULL constraint〉一節）、CHECK 與 FK 走以下同一套順序。哪些規則該下沉成約束、哪些留在文件、分工標準見 [1.15 資料契約文件](/backend/01-database/data-contract-document/)；FK 強約束 vs 應用層保護的取捨回到 [1.2 schema design](/backend/01-database/schema-design/) 的外鍵段。
 
 **約束前移原則**（為什麼值得做這種 migration）：
 
-- 沒有約束時、非法值照樣寫入、問題被推給讀取端
+- 沒有約束時、非法值照樣寫入、辨認非法值的責任落到讀取端
 - 讀取端對非法值做 fallback（當 0、當預設值、跳過該 row）看似穩健、實際是靜默翻轉業務語意——負數金額被當 0 加總、懸空引用被跳過、報表少算了沒有訊號
 - CHECK / FK 把失敗前移到寫入當下：寫入方立刻收到顯性錯誤、當下有完整的呼叫脈絡可修
-- 對偶關係：寫入時顯性失敗（吵、但可修）vs 讀取時靜默 fallback（安靜、但語意漂移）。約束層要的是前者
+- 對偶關係：寫入時顯性失敗（吵、但可修）vs 讀取時靜默 fallback（安靜、但語意漂移）。約束層要的是寫入時顯性失敗
 
 **宣告 vs 執法落差**：
 
@@ -244,21 +239,21 @@ backfill 是 migration 中最 *容易出錯* 的環節 — 大量寫、影響 pr
 
 ## 判讀訊號
 
-| 訊號                            | 判讀重點                                                                                                                                | 對應動作                                                  |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| 回填速度不穩、延遲飆高          | 可能與線上流量競爭 IOPS                                                                                                                 | 降低批次大小、加節流、避開 peak                           |
-| 雙寫成功率高但 shadow read 漂移 | 業務語意映射不一致                                                                                                                      | 先修轉換函式、再重跑對帳                                  |
-| 切流後 error rate 升高          | 新庫讀寫路徑與索引未對齊                                                                                                                | 回切舊讀路徑、補索引後再灰度                              |
-| rollback 時間超出 RTO           | 回退流程過度人工                                                                                                                        | 把回退腳本化並演練                                        |
-| 大表 ALTER TABLE 卡住           | online 工具沒用對 / lock                                                                                                                | 用 gh-ost / pgroll、或分批執行                            |
-| Backfill 後 NULL count 不歸零   | 有漏跑的 batch、或新寫入沒走 dual-write                                                                                                 | 補檢查 dual-write 邏輯、re-run backfill                   |
-| 加了 FK 之後仍出現懸空參照      | 約束宣告了但執法未開（pragma / NOT VALID / 寫法 / engine，[各家實測](/backend/01-database/sql/foreign-key-and-referential-integrity/)） | 檢查連線層開關與約束狀態、依 Type I SOP 修存量後 VALIDATE |
+| 訊號                            | 判讀重點                                                                                                                                                   | 對應動作                                                              |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| 回填速度不穩、延遲飆高          | 可能與線上流量競爭 IOPS                                                                                                                                    | 降低批次大小、加節流、避開 peak                                       |
+| 雙寫成功率高但 shadow read 漂移 | 業務語意映射不一致                                                                                                                                         | 先修轉換函式、再重跑對帳                                              |
+| 切流後 error rate 升高          | 新庫讀寫路徑與索引未對齊                                                                                                                                   | 回切舊讀路徑、補索引後再灰度                                          |
+| rollback 時間超出 RTO           | 回退流程過度人工                                                                                                                                           | 把回退腳本化並演練                                                    |
+| 大表 ALTER TABLE 卡住           | online 工具沒用對 / lock                                                                                                                                   | 用 gh-ost / pgroll、或分批執行                                        |
+| Backfill 後 NULL count 不歸零   | 有漏跑的 batch、或新寫入沒走 dual-write                                                                                                                    | 補檢查 dual-write 邏輯、re-run backfill                               |
+| 加了 FK 之後仍出現懸空參照      | 約束宣告了但執法未開（pragma / NOT VALID / MySQL 欄位層 REFERENCES / engine，[各家實測](/backend/01-database/sql/foreign-key-and-referential-integrity/)） | 檢查連線層開關與約束狀態、依〈加約束〉的存量處理順序修存量後 VALIDATE |
 
 ## 常見誤區
 
 把資料庫轉換當成單次 DDL 任務、會讓風險集中在 cutover 當下。穩定做法是把每一階段都做成可驗證、可回退的獨立里程碑。
 
-把 dual-write 當成最終保障也常出錯。雙寫只能保證「兩邊都有寫」、不保證「語意一致」、仍要配 shadow read 與業務對帳。
+把 dual-write 當成最終保障也常出錯。雙寫只能保證舊與新的欄位（或表）都寫進了值、不保證兩個值的業務語意一致、仍要配 shadow read 與業務對帳。
 
 把 online schema change 工具當「萬能」也是錯。gh-ost / pgroll 仍有 *限制*（例如 trigger 限制、IO 影響）、要按工具規格操作。
 
@@ -269,18 +264,18 @@ backfill 是 migration 中最 *容易出錯* 的環節 — 大量寫、影響 pr
 - 事故反饋： [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)
 - 大規模跨 DB 遷移： [1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（[Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)、[Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)、[Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 等 case）
 
-這組案例主要支撐的是「分段切換與可回退驗證」判讀、不直接支撐快取 TTL 或 broker delivery 參數；若問題核心在快取新鮮度或投遞語意、應轉到 2.x 或 3.x。
+這組案例主要支撐的是「分段切換與可回退驗證」判讀、不直接支撐快取 TTL 或 broker delivery 參數；若問題核心在快取新鮮度、轉到 [快取與 Redis](/backend/02-cache-redis/) 模組；在訊息的投遞語意、轉到 [訊息佇列與事件傳遞](/backend/03-message-queue/) 模組。
 
 ## 跨模組路由
 
-1. 與 1.2 的交接：欄位演進與命名語意回到 [schema design](/backend/01-database/schema-design/)。
-2. 與 1.3 的交接：交易邊界與副作用切分回到 [transaction boundary](/backend/01-database/transaction-boundary/)。
-3. 與 1.7 的交接：production rollout 證據實作 — [Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)。
-4. 與 1.12 的交接：跨 DB 引擎遷移 — [大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)。
-5. 與 4.20 的交接：validation query 與一致性證據進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
-6. 與 6.11 / 6.8 的交接：放行與停損條件進入 [Migration Safety](/backend/06-reliability/migration-safety/) 與 [Release Gate](/backend/06-reliability/release-gate/)。
-7. 與 8.19 的交接：pause、rollback、[fail-forward](/backend/knowledge-cards/fail-forward/) 決策記錄到 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
+- 欄位演進與命名語意回到 [schema design](/backend/01-database/schema-design/)。
+- 交易邊界與副作用切分回到 [transaction boundary](/backend/01-database/transaction-boundary/)。
+- production rollout 證據實作 — [Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)。
+- 跨 DB 引擎遷移 — [大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)。
+- validation query 與一致性證據進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
+- 放行與停損條件進入 [Migration Safety](/backend/06-reliability/migration-safety/) 與 [Release Gate](/backend/06-reliability/release-gate/)。
+- pause、rollback、[fail-forward](/backend/knowledge-cards/fail-forward/) 決策記錄到 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
 
 ## 下一步路由
 
-若你還在判斷是否該轉換、先回 [0.C4](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/) 看決策訊號。若你要把這套流程寫成 production rollout evidence、接著讀 [1.7 Schema Migration Rollout 證據實作示範](/backend/01-database/schema-migration-rollout-evidence/)。若你在設計放行與演練、接著看 [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/) 與 [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)。若你在事故回溯、接著看 [8.23 Post-incident Review](/backend/08-incident-response/post-incident-review/)。若你要做 *跨 DB 引擎遷移*、看 [1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)。
+還在判斷是否該轉換時，決策訊號在 [營運後技術轉換：語言、工具與架構何時該換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)。要把這套流程寫成 production rollout evidence，接著讀 [1.7 Schema Migration Rollout 證據實作示範](/backend/01-database/schema-migration-rollout-evidence/)。設計放行與演練，看 [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/) 與 [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)。事故回溯看 [8.23 Post-incident Review](/backend/08-incident-response/post-incident-review/)。跨 DB 引擎遷移看 [1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)。

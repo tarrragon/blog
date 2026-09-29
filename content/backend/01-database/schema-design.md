@@ -8,7 +8,7 @@ tags: ["backend", "database", "schema"]
 
 資料綱要設計（schema design）的核心責任是把業務狀態轉成可維護、可查詢、可演進的資料結構。資料建模做得好、交易邊界、查詢效率、migration 成本與事故修復路徑都會更穩定。
 
-本章是 01 模組的基礎章節之一、結合 [1.3 transaction boundary](/backend/01-database/transaction-boundary/)（交易範圍）、[1.7 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/)（演進證據）與 [1.10 KV / Document 容量規劃](/backend/01-database/kv-document-capacity-planning/)（partition key 設計）一起讀。讀完後能回答：table 怎麼切、index 怎麼選、什麼時候 denormalize、partition 怎麼設、命名怎麼治理。
+本章結合 [1.3 transaction boundary](/backend/01-database/transaction-boundary/)（交易範圍）、[1.7 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/)（演進證據）與 [1.10 KV / Document 容量規劃](/backend/01-database/kv-document-capacity-planning/)（partition key 設計）一起讀。讀完後能回答：table 怎麼切、index 怎麼選、什麼時候 denormalize、partition 怎麼設、命名怎麼治理。
 
 ## 先定義狀態責任
 
@@ -26,9 +26,9 @@ table 切分要對齊業務聚合邊界。聚合內需要交易一致性的欄�
 
 **主鍵選擇實務**：
 
-ID 設計不只是「選個格式」，而是在五個維度做取捨。先理解取捨、再按場景選型。
+ID 設計是在唯一性、有序性、隱私性、儲存成本與產生效能之間取捨，選型看的是場景在這幾個維度上各要什麼。
 
-### ID 設計的五個取捨維度
+### ID 設計的取捨維度
 
 | 維度         | 說明                                          | 範例                               |
 | ------------ | --------------------------------------------- | ---------------------------------- |
@@ -67,13 +67,13 @@ ID 設計不只是「選個格式」，而是在五個維度做取捨。先理�
 
 B-tree 索引的插入效能和 key 的分布有直接關係。UUID v4 的隨機分布導致每次插入都可能落在 B-tree 的不同 leaf page，造成大量隨機 I/O（page split、cache miss）。UUID v7 的時間戳前綴讓插入集中在 B-tree 的尾端，接近 sequential insert。
 
-| 測試場景（PostgreSQL、1000 萬筆） | UUID v4                  | UUID v7       | Bigint      |
+| 量級估算（PostgreSQL、1000 萬筆） | UUID v4                  | UUID v7       | Bigint      |
 | --------------------------------- | ------------------------ | ------------- | ----------- |
 | INSERT 吞吐                       | ~5,000/sec               | ~15,000/sec   | ~20,000/sec |
 | Index 大小                        | ~400 MB                  | ~350 MB       | ~200 MB     |
 | 範圍查詢延遲                      | 要額外建 timestamp index | UUID 本身有序 | 天然有序    |
 
-上表數字是基於 NVMe SSD 環境的量級估算（源自 UUID v4 的 random page split 成本約為 sequential 的 1/3-1/4 這個 B-tree 特性推導），實際效能依硬體和 workload 而定。核心結論：UUID v7 的插入效能約為 v4 的 3 倍，接近 bigint sequential。
+上表數字是基於 NVMe SSD 環境的量級估算（源自隨機插入的吞吐約為循序插入的 1/3 到 1/4 這個 B-tree 特性推導），實際效能依硬體和 workload 而定。核心結論：UUID v7 的插入效能約為 v4 的 3 倍，接近 bigint sequential。
 
 ### 隱私考量：v4 vs v7
 
@@ -92,14 +92,14 @@ UUID v7 的前 48 bit 是 Unix 時間戳（毫秒精度）。攻擊者拿到 UUI
 
 ### 各語言的標準庫支援
 
-| 語言          | UUID v4               | UUID v7                           | 套件     |
-| ------------- | --------------------- | --------------------------------- | -------- |
-| Python 3.14+  | `uuid.uuid4()`        | `uuid.uuid7()`                    | 標準庫   |
-| Python < 3.14 | `uuid.uuid4()`        | `uuid_utils.uuid7()`              | 第三方   |
-| Go            | `google/uuid` v4      | `google/uuid` v7（1.6+）          | 事實標準 |
-| TypeScript    | `crypto.randomUUID()` | 標準庫無（`uuidv7` npm）          | 第三方   |
-| Dart          | `uuid` package        | `uuid` package v4+（支援 v7）     | pub.dev  |
-| PostgreSQL    | `gen_random_uuid()`   | `uuidv7()`（pg_uuidv7 extension） | 擴展     |
+| 語言           | UUID v4               | UUID v7                       | 套件     |
+| -------------- | --------------------- | ----------------------------- | -------- |
+| Python 3.14+   | `uuid.uuid4()`        | `uuid.uuid7()`                | 標準庫   |
+| Python < 3.14  | `uuid.uuid4()`        | `uuid_utils.uuid7()`          | 第三方   |
+| Go             | `google/uuid` v4      | `google/uuid` v7（1.6+）      | 事實標準 |
+| TypeScript     | `crypto.randomUUID()` | 標準庫無（`uuidv7` npm）      | 第三方   |
+| Dart           | `uuid` package        | `uuid` package v4+（支援 v7） | pub.dev  |
+| PostgreSQL 18+ | `gen_random_uuid()`   | `uuidv7()`                    | 內建     |
 
 Go 的 `google/uuid` v1.6+ 內建 `uuid.NewV7()`，效能約 350ns/op（含 crypto/rand），和 JSON 解析（5-10μs）、DB 寫入（200μs）相比不是瓶頸。
 
@@ -137,7 +137,7 @@ index 設計要從查詢路徑反推、不是從欄位列表前推。每個高�
 - 用 OR 條件依賴單一 index：query planner 不一定能用
 - 大表 ALTER INDEX 不分批：lock 整個表
 
-本節從查詢路徑反推的是索引，而同一個反推對其餘的 schema 決定同樣成立——欄位允不允許為空、鍵唯不唯一、長欄位放在哪一張表、字串的比較規則寫在哪一層，每一個都在替往後每一次查詢定價，而它們在設計當下全部看不出差別。六個決定各自的查詢代價、浮現條件與遷移成本，逐條實測在 [1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/)。
+本節從查詢路徑反推的是索引，而同一個反推對其餘的 schema 決定同樣成立——欄位允不允許為空、排序鍵唯不唯一、長欄位放在哪一張表、常一起取的資料切在幾張表、字串的比較規則寫在哪一層、宣告的外鍵生不生效，每一個都在替往後每一次查詢定價，而每一個決定的兩種選法在設計當下看不出差別。這幾個決定各自的查詢代價、浮現條件與遷移成本，逐條實測在 [1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/)。
 
 ## Denormalization 模式
 
@@ -220,7 +220,7 @@ schema 從 day 1 就要為演進設計、不能假設「以後不會改」。
 
 ## Naming 與一致性
 
-取好的名字送進引擎之後會被改寫（大小寫摺疊、引號、保留字），那一層在 [SQL.14 識別字送進引擎之後會被改寫](/backend/01-database/sql/identifier-rules/)。本節談的是取什麼名字。
+取好的名字送進引擎之後會被改寫（大小寫摺疊、引號、保留字），改寫的規則在 [SQL.14 識別字送進引擎之後會被改寫](/backend/01-database/sql/identifier-rules/)。本節談的是取什麼名字。
 
 命名規則的責任是維持跨版本可讀性。table、column、index 的命名若沒有一致語意、migration 與故障排查會持續變慢。穩定做法是把命名和業務語意對齊、並保留可辨識版本與作用域。
 
@@ -246,16 +246,16 @@ schema 演進時、命名與結構要一起考慮。欄位重命名、拆欄位�
 
 ## 判讀訊號
 
-| 訊號                                   | 判讀重點                       | 對應動作                                                 |
-| -------------------------------------- | ------------------------------ | -------------------------------------------------------- |
-| 同一查詢在資料量成長後延遲快速上升     | 索引與查詢模型不對齊           | 補複合索引、重寫查詢條件                                 |
-| migration 後查詢計畫顯著變化           | 統計資訊或索引選擇偏移         | 重建統計、校正索引與查詢                                 |
-| 交易流程需跨多表同步更新               | table 邊界與業務聚合邊界不一致 | 重切聚合邊界、減少跨聚合同步更新                         |
-| 同義欄位在多表重複存在且語意漂移       | 命名與責任邊界失控             | 收斂欄位責任、補資料字典與遷移計畫                       |
-| 修復事故時需要多次手動比對資料         | 可追蹤欄位與關聯鍵不足         | 補追蹤欄位、設計對帳查詢與修復流程                       |
-| 單表 > 1 TB 且 vacuum 變慢             | 沒 partition、後續維運成本爆   | 規劃 partition by range / hash                           |
-| 大量 unused index                      | 寫入吞吐被舊 index 拖垮        | review pg_stat_user_indexes、定期 drop                   |
-| 子表出現懸空參照（引用不存在的父 row） | FK 宣告了但執法未開            | 檢查連線層開關與約束狀態、依 1.6 Type I 先修存量再開執法 |
+| 訊號                                   | 判讀重點                       | 對應動作                                                                                                                  |
+| -------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| 同一查詢在資料量成長後延遲快速上升     | 索引與查詢模型不對齊           | 補複合索引、重寫查詢條件                                                                                                  |
+| migration 後查詢計畫顯著變化           | 統計資訊或索引選擇偏移         | 重建統計、校正索引與查詢                                                                                                  |
+| 交易流程需跨多表同步更新               | table 邊界與業務聚合邊界不一致 | 重切聚合邊界、減少跨聚合同步更新                                                                                          |
+| 同義欄位在多表重複存在且語意漂移       | 命名與責任邊界失控             | 收斂欄位責任、補資料字典與遷移計畫                                                                                        |
+| 修復事故時需要多次手動比對資料         | 可追蹤欄位與關聯鍵不足         | 補追蹤欄位、設計對帳查詢與修復流程                                                                                        |
+| 單表 > 1 TB 且 vacuum 變慢             | 沒 partition、後續維運成本爆   | 規劃 partition by range / hash                                                                                            |
+| 大量 unused index                      | 寫入吞吐被舊 index 拉低        | review pg_stat_user_indexes、定期 drop                                                                                    |
+| 子表出現懸空參照（引用不存在的父 row） | FK 宣告了但執法未開            | 檢查連線層開關與約束狀態、依[資料庫轉換實作](/backend/01-database/database-migration-playbook/)的 Type I 先修存量再開執法 |
 
 ## 常見誤區
 
@@ -279,7 +279,7 @@ schema 演進時、命名與結構要一起考慮。欄位重命名、拆欄位�
 
 資料建模議題可以用 [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) 做回寫練習。讀這個事件時、先看跨區拓樸切換如何影響資料一致性、再回到本章檢查三件事：聚合邊界是否清晰、交易查詢與對帳查詢是否分層、修復時是否有可追蹤欄位與對帳鍵。
 
-這個案例主要支撐的是「查詢與資料模型邊界」判讀、不直接支撐 transaction retry 或 queue replay 調校；若問題是重試放大、應轉到 1.3 或 3.x 章節處理。
+這個案例主要支撐的是「查詢與資料模型邊界」判讀、不直接支撐 transaction retry 或 queue replay 調校；若問題是重試放大、應轉到 [1.3 Transaction 與一致性邊界](/backend/01-database/transaction-boundary/) 或 [模組三：訊息佇列與事件傳遞](/backend/03-message-queue/) 處理。
 
 當事件呈現長時間人工比對或查詢語意漂移時、先修正本章的 query boundary 與 naming 一致性、再補 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/) 的驗證與回退路徑。
 

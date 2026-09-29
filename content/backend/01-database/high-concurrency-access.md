@@ -6,9 +6,9 @@ weight: 1
 tags: ["backend", "database"]
 ---
 
-高併發服務處理 SQL 的核心原則是共用資料庫 client、並讓 [connection pool](/backend/knowledge-cards/connection-pool/) 管理連線生命週期。當並發升高時、真正要控制的是連線數、交易範圍、查詢時間與下游壓力；每個 request 各自建立連線會放大握手、排隊與資源回收成本。
+這篇整理高併發服務存取 SQL 資料庫時要控制的邊界：資料庫 client 與 [connection pool](/backend/knowledge-cards/connection-pool/)、交易範圍、hot row、read replica、查詢 timeout，以及什麼條件下該換掉 SQL。範圍從應用程式端的連線池開始，到資料庫端的 `max_connections` 與 replica 為止。
 
-本章是 01 模組的基礎章節之一、之後章節（[1.3 transaction boundary](/backend/01-database/transaction-boundary/) / [1.10 KV / Document 容量規劃](/backend/01-database/kv-document-capacity-planning/) / [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) / [1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)）都會回引這層的概念。跨模組對接 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 跟 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)。
+高併發服務處理 SQL 的核心原則是共用資料庫 client、讓 connection pool 管理連線生命週期。並發升高時要控制的是連線數、交易範圍、查詢時間與下游壓力；每個 request 各自建立連線會放大握手、排隊與資源回收成本。服務層的飽和判讀在 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 跟 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)。
 
 ## 本章目標
 
@@ -25,7 +25,7 @@ tags: ["backend", "database"]
 
 ---
 
-## 【觀察】資料庫 client 通常代表連線池入口
+## 資料庫 client 通常代表連線池入口
 
 多數後端語言的資料庫 client 都會包住連線池或連線管理能力。一般情況下、服務會在啟動時建立可重用的 [database](/backend/knowledge-cards/database/) handle、讓 request handler、worker 或 service layer 共用它、並在需要時從池子裡取出可用連線。
 
@@ -33,45 +33,57 @@ tags: ["backend", "database"]
 
 - 呼叫端不用自己管理每個連線的生命週期
 - 多個 request 或 worker 可以同時發出資料庫操作
-- 連線回收與重用由 `sql.DB` 處理
+- 連線回收與重用由 client 內建的連線池處理（Go 的 `database/sql` 裡是 `sql.DB`）
 
-## 【判讀】高併發需要有界連線
+## 高併發需要有界連線
 
 高併發時的核心風險是把 application concurrency 誤解成 database concurrency。語言端的 thread、task、coroutine 或 goroutine 可能很容易建立、但資料庫有自己的容量上限；連線池只是把壓力從應用端平滑地送到下游、無法消滅壓力。
 
-連線池調校的核心觀念是：
+連線池調校的核心觀念，以 Go `database/sql` 的 `sql.DB` 設定為例（其他語言的 driver pool 有對應的參數）：
 
 - `SetMaxOpenConns` 太低、request 會在應用端排隊。
 - `SetMaxOpenConns` 太高、可能把 DB 直接打滿。
-- `SetMaxIdleConns` 影響高峰與尖峰之間的重用效率。
+- `SetMaxIdleConns` 決定尖峰過後保留多少條閒置連線；留得太少，下一波請求要重新建立連線。
 - `SetConnMaxLifetime` / `SetConnMaxIdleTime` 影響長連線與資源回收節奏。
 
 ### 第一個爆的通常是連線、不是 CPU 或 disk
 
-SQL DB 在 surge 場景的 *first bottleneck* 不是 CPU、也不是 disk I/O、是 *連線數量*。原因：傳統 RDB（PostgreSQL、MySQL）每個連線吃記憶體 + 一個 process / thread、connection pool 上限通常 1K-5K。流量湧入時、application 想開更多連線、DB 直接拒絕（PostgreSQL：`FATAL: too many connections`）、看起來像 DB 故障、實際是連線數限制。
+SQL DB 在 surge 場景的 *first bottleneck* 不是 CPU、也不是 disk I/O、是 *連線數量*。原因：傳統 RDB（PostgreSQL、MySQL）每個連線吃記憶體 + 一個 process / thread，資料庫端的連線上限 `max_connections` 因此設不高（PostgreSQL 預設 100、MySQL 預設 151，實務設定值見下方〈Database 端 max_connections〉）。流量湧入時、application 想開更多連線、DB 直接拒絕（PostgreSQL：`FATAL: too many connections`）、看起來像 DB 故障、實際是連線數限制。
 
 對應 [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — NTT DOCOMO 串流平台選 DynamoDB 而非 RDB 的原因之一是「connection limit 在快速流量增加時變成 bottleneck」。DynamoDB 的 HTTP API 模型沒有 connection state、天然解決這個瓶頸。
 
-**判讀順序**：surge 期間 DB 看起來慢、先 `SHOW PROCESSLIST` / `pg_stat_activity` 看連線數、再看 CPU / disk。連線數已經滿、再加 CPU 沒用；要加 middleware pool（pgBouncer / ProxySQL）或換 HTTP-based DB。
+**判讀順序**：surge 期間 DB 看起來慢，先比對目前連線數與 `max_connections`，再看 CPU / disk：
+
+```sql
+-- PostgreSQL：各狀態的 client 連線數，與上限比對
+SELECT state, count(*) FROM pg_stat_activity WHERE backend_type = 'client backend' GROUP BY state;
+SHOW max_connections;
+
+-- MySQL：目前連線數與上限
+SHOW GLOBAL STATUS LIKE 'Threads_connected';
+SHOW VARIABLES LIKE 'max_connections';
+```
+
+連線數已經貼著上限時，再加 CPU 沒用；要加 middleware pool（pgBouncer / ProxySQL）或換 HTTP-based DB。
 
 ## 多層 Connection Pool 架構
 
 實務上 production-grade 服務的 connection pool 通常分三層：
 
-### Layer 1：Application pool（每個 instance 內）
+### Application pool（每個 instance 內）
 
 - 每個 application instance 維護自己的 driver-level pool
 - 典型大小：30-50 connection / instance
 - 工具：HikariCP（Java）、SQLAlchemy pool（Python）、`sql.DB`（Go）
 
-### Layer 2：Middleware pool（共享層）
+### Middleware pool（共享層）
 
 - PostgreSQL：[pgBouncer](https://www.pgbouncer.org/)（最常見、transaction pooling）、[PgCat](https://github.com/postgresml/pgcat)（rust、支援 sharding）
 - MySQL：[ProxySQL](https://proxysql.com/)（query routing + pool）
 - 為什麼需要：多個 application instance 同時打 DB、總 connection 數會爆
 - pgBouncer 把 1000 application connection mux 到 50 個 DB connection、應用感覺有 1000 connection、DB 只看到 50
 
-### Layer 3：Database 端 max_connections
+### Database 端 max_connections
 
 - PostgreSQL default 100、實務常設 200-500
 - MySQL default 151、實務常設 1000-5000
@@ -80,12 +92,12 @@ SQL DB 在 surge 場景的 *first bottleneck* 不是 CPU、也不是 disk I/O、
 **典型配置範例**（中型網路服務）：
 
 ```text
-50 application instance × 30 connection (app pool)
-  → pgBouncer transaction pool (4 instance × 100 connection)
-  → PostgreSQL primary (max_connections = 200)
+50 application instance × 30 connection (app pool)                 = 1500 條 client 連線
+  → pgBouncer transaction pool (4 instance × 45 server connection) = 180 條 DB 連線
+  → PostgreSQL primary (max_connections = 200)                     剩 20 條留給維運連線
 ```
 
-1500 application connection mux 到 200 DB connection、4 倍 multiplexing。
+1500 條 application connection 經 pgBouncer 收成 180 條 DB connection，約 8 倍 multiplexing。
 
 **反模式**：
 
@@ -105,7 +117,7 @@ SQL DB 在 surge 場景的 *first bottleneck* 不是 CPU、也不是 disk I/O、
 
 這些反模式單獨看是「query 寫法問題」、但放到連線池語境就是「連線池容量被間接削減」。先用 [1.13 query 反模式](/backend/01-database/query-anti-patterns/) 的清單收回連線占用時間、再考慮加 [9.14 connection pooler](/backend/09-performance-capacity/connection-pool-amplification/) 中介層 — 順序顛倒會讓 pooler 治標不治本。
 
-## 【策略】讀取與寫入要分開看
+## 讀取與寫入要分開看
 
 讀取的核心風險通常是慢查詢、掃描過大、N+1、熱點資料與連線被占住太久。寫入的核心風險則常常是 transaction 太大、衝突太高、鎖時間太長、重試邏輯不清楚。
 
@@ -136,36 +148,73 @@ SQL DB 在 surge 場景的 *first bottleneck* 不是 CPU、也不是 disk I/O、
 - queue / job ledger：所有 worker 競爭同一個 job table
 - session：高頻 session 更新
 
-**識別訊號**：
+**識別訊號**：整體 QPS 沒滿、但某些 endpoint p99 飆，而資料庫端看得到大量在等鎖的 session：
 
-- `pg_stat_activity` / SHOW PROCESSLIST 顯示大量 `lock waiting`
-- 整體 QPS 沒滿、但某些 endpoint p99 飆
-- `pg_locks` / INFORMATION_SCHEMA.INNODB_LOCK_WAITS 有大量等待
+```sql
+-- PostgreSQL：正在等鎖的 session，以及擋住它的 pid
+SELECT pid, pg_blocking_pids(pid) AS blocked_by, wait_event_type, wait_event, query
+FROM pg_stat_activity WHERE wait_event_type = 'Lock';
+--  pid | blocked_by | wait_event_type | wait_event    | query
+--  134 | {128}      | Lock            | transactionid | UPDATE products SET stock = stock - 1 WHERE id = 7;
+
+-- MySQL 8.4：InnoDB 的列鎖等待
+SELECT waiting_pid, waiting_query, blocking_pid FROM sys.innodb_lock_waits;
+--  waiting_pid | waiting_query                                      | blocking_pid
+--           23 | UPDATE products SET stock = stock - 1 WHERE id = 7 |           22
+```
+
+MySQL 的 `SHOW PROCESSLIST` 對等列鎖的 session 顯示的狀態是 `updating`，從那裡看不出它在等鎖；`INFORMATION_SCHEMA.INNODB_LOCK_WAITS` 在 MySQL 8.4 已經不存在，查詢會回 `Unknown table`。
 
 **對策**：
 
-**1. 分散熱點**：
+**分散熱點**：
 
-- counter shard：把 1 個 counter 拆成 N 個 sub-counter、寫入時隨機選一個、讀取時 SUM
-- 例：`view_count_0` ~ `view_count_9` → 10 倍寫入吞吐
+- counter shard：把 1 個 counter 拆成 N 列 sub-counter，寫入時由應用程式隨機挑一列加一、讀取時把 N 列加總。拆成 10 列時，同時寫入的 request 分散到 10 列上，瓶頸在同一列的鎖時寫入吞吐理想上接近 10 倍
+
+  ```sql
+  CREATE TABLE view_counter (
+    item_id INTEGER, shard INTEGER, cnt INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (item_id, shard)
+  );
+  -- 每個 item 先建 10 列，shard 0-9
+  INSERT INTO view_counter (item_id, shard) VALUES
+    (42, 0), (42, 1), (42, 2), (42, 3), (42, 4), (42, 5), (42, 6), (42, 7), (42, 8), (42, 9);
+
+  -- 寫入：shard 由應用程式在 0-9 隨機挑好再帶進來
+  UPDATE view_counter SET cnt = cnt + 1 WHERE item_id = 42 AND shard = 3;
+  UPDATE view_counter SET cnt = cnt + 1 WHERE item_id = 42 AND shard = 7;
+  UPDATE view_counter SET cnt = cnt + 1 WHERE item_id = 42 AND shard = 3;
+
+  -- 讀取：10 列加總
+  SELECT SUM(cnt) FROM view_counter WHERE item_id = 42;  -- 3
+  ```
+
 - 對應 [Hot Partition 卡片](/backend/knowledge-cards/hot-partition/) 在 SQL DB 的對應做法
 
-**2. Asynchronous batching**：
+**Asynchronous batching**：
 
 - 不要每次點擊就 update counter、先進 in-memory buffer、定期 flush
 - 應用層 Redis INCR + 定期同步回 SQL
 
-**3. Optimistic concurrency control**：
+**Optimistic concurrency control**：讀的時候記下 `version`，寫的時候只在 `version` 沒被別人改過時才更新，並把 `version` 加一；更新到零列就代表有人先寫了，應用層重讀再 retry。這個做法不用 `SELECT ... FOR UPDATE` 先鎖住那一列。
 
-- 用 `WHERE version = ?` 樂觀鎖、避免 SELECT FOR UPDATE
-- 衝突時應用層 retry
+```sql
+-- 兩個 request 都讀到 stock = 10、version = 3
+SELECT stock, version FROM products WHERE id = 7;
 
-**4. 換 KV / cache**：
+-- 先到的 request：更新成功，影響 1 列
+UPDATE products SET stock = stock - 1, version = version + 1 WHERE id = 7 AND version = 3;
+
+-- 後到的 request：version 已經是 4，影響 0 列 → 重讀後 retry
+UPDATE products SET stock = stock - 1, version = version + 1 WHERE id = 7 AND version = 3;
+```
+
+**換 KV / cache**：
 
 - counter workload 本來就不適合 SQL transaction
 - 用 Redis INCR、DynamoDB 的 atomic counter
 
-**5. Queue + worker 序列化**：
+**Queue + worker 序列化**：
 
 - 把搶資源的 request 排隊、worker 序列化處理
 - 對應 [9.C15 Tixcraft 案例](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票把 inventory 搶購塞進 DynamoDB queue、legacy server 慢慢消費、避免 SQL hot row
@@ -182,17 +231,17 @@ SQL DB 在 surge 場景的 *first bottleneck* 不是 CPU、也不是 disk I/O、
 
 **Routing 策略**：
 
-**1. Read / write split（application-level）**：
+**Read / write split（application-level）**：
 
 - 應用層判斷 query 類型、寫走 primary、讀走 replica
 - 工具：ProxySQL（MySQL）、application 自管
 
-**2. Routing 自動化（middleware）**：
+**Routing 自動化（middleware）**：
 
 - pgBouncer + 路由規則
 - HAProxy + health check
 
-**3. Stale read 容忍策略**：
+**Stale read 容忍策略**：
 
 - 「能容忍秒級 stale」的 read → replica（用戶 profile、報表）
 - 「不能 stale」的 read → primary（剛寫入後的查詢、餘額確認）
@@ -201,7 +250,7 @@ SQL DB 在 surge 場景的 *first bottleneck* 不是 CPU、也不是 disk I/O、
 **Replication lag 監控**：
 
 - PostgreSQL：`pg_stat_replication.replay_lag`
-- MySQL：`SHOW SLAVE STATUS\G` 的 `Seconds_Behind_Master`
+- MySQL 8.4：`SHOW REPLICA STATUS\G` 的 `Seconds_Behind_Source`
 - Aurora：CloudWatch `AuroraReplicaLag`
 - 對應案例：[9.C4 DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — replication lag 從 30 秒降到 10-30ms、是切換到 Aurora 的關鍵改善
 
@@ -230,13 +279,13 @@ Aurora / Cosmos DB / Spanner 的 replication 跟傳統 PostgreSQL streaming repl
 - 加 read replica 不增加 primary 寫入負擔
 - replication lag 從 30 秒級降到 10-30ms（Aurora）
 
-**為什麼這層差異反映在應用層設計**：compute 層 replication 的 replication lag 通常在秒級、應用層必須處理「剛寫的資料 N 秒內讀不到」的情境 — 常見補丁是 read-after-write consistency（session token 標記「剛寫過」、N 秒內走 primary）、cache invalidation 延遲、或刻意走 primary 的關鍵查詢路徑。Storage 層 replication 的 lag 在毫秒級、這些補丁多半不需要、read 可以幾乎無條件走 replica。對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 從 30 秒到 10-30ms 不只是「快」、是讓整個應用層 cache invalidation 跟 session routing 邏輯大幅簡化。對應 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — Aurora 75% performance improvement 主要來自 storage layer 設計、不是 CPU 改善。
+**儲存層與 compute 層 replication 的差異為什麼反映到應用層設計**：compute 層 replication 的 replication lag 通常在秒級、應用層必須處理「剛寫的資料 N 秒內讀不到」的情境 — 常見補丁是 read-after-write consistency（session token 標記「剛寫過」、N 秒內走 primary）、cache invalidation 延遲、或刻意走 primary 的關鍵查詢路徑。Storage 層 replication 的 lag 在毫秒級，cache invalidation 延遲這類補丁可以大幅簡化；lag 仍然不是零，剛寫入就要讀到的查詢（餘額確認）照樣要走 primary 或帶 freshness token。對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 從 30 秒到 10-30ms 不只是「快」、是讓整個應用層 cache invalidation 跟 session routing 邏輯大幅簡化。對應 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — Aurora 75% performance improvement 主要來自 storage layer 設計、不是 CPU 改善。
 
-**選型含義**：如果應用層 *依賴 read-after-write*（餘額確認、剛寫的查詢、session 狀態）、storage 層 replication 比 compute 層 replication 大幅簡化設計。代價是 vendor lock-in 加深、應用層綁定特定雲商。
+**選型含義**：如果應用層有大量「秒級 stale 會出錯、毫秒級可以接受」的讀取、storage 層 replication 比 compute 層 replication 大幅簡化設計；嚴格的 read-after-write（餘額確認、剛寫的查詢）在兩種設計下都要另外處理。代價是 vendor lock-in 加深、應用層綁定特定雲商。
 
 對應 [9.C32 Clearent Azure SQL Hyperscale](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) 跟 Aurora 是同類設計（log-structured 分散式 storage）、選哪家看 application 已在哪個 cloud、技術哲學一致。Sharding 觸發點（managed DB 容量上限）跟業務一致性需求決定 sharding 粒度的討論、見 [1.11 Sharding 粒度跟業務一致性需求](/backend/01-database/global-distributed-oltp/)。
 
-## 【執行】查詢與 rows 的生命週期要收乾淨
+## 查詢與 rows 的生命週期要收乾淨
 
 查詢回傳 rows 後、呼叫端要負責把它關掉、並檢查迭代錯誤。這不只是記憶體管理問題、也會影響連線何時能回到池子裡。
 
@@ -261,7 +310,7 @@ if err := rows.Err(); err != nil {
 }
 ```
 
-## 【策略】慢查詢要靠 timeout 與上層限流處理
+## 慢查詢要靠 timeout 與上層限流處理
 
 在高併發服務裡、database timeout 應由 request timeout、client timeout 與資料庫 timeout 共同定義。語言端需要能把取消、[deadline](/backend/knowledge-cards/deadline/) 或 timeout 往資料庫 client 傳遞、讓慢查詢在合理時間內釋放資源。
 
@@ -292,7 +341,7 @@ SQL 的 transactional 模型有結構性限制、超過某個規模硬擴 SQL �
 
 不要因為「現在 SQL 慢」就跳結論換 NoSQL — 先確認問題是 *結構性的*（connection、contention、跨 region）、不只是 *調校問題*（index、query、cache）。
 
-## 【延伸】語言端的責任是邊界
+## 語言端的責任：共用 client、控制並發、縮小交易、傳遞 timeout
 
 這一章不討論 PostgreSQL、MySQL、SQLite 的語法差異、也不討論 [migration](/backend/knowledge-cards/migration/) 工具本身。語言端需要掌握的是：怎麼共用 database client、怎麼控制並發、怎麼縮小 transaction、怎麼把 timeout 和取消傳下去。
 
@@ -334,23 +383,23 @@ SQL 的 transactional 模型有結構性限制、超過某個規模硬擴 SQL �
 
 ## 讀「峰值」數字的工程細節
 
-容量規劃時看到「100 萬 ops/分鐘」、「150 萬 RPS」這類數字、要拆三個維度看、否則容量規劃會錯位。
+容量規劃時看到「100 萬 ops/分鐘」、「150 萬 RPS」這類數字、要先分清它是最大瞬時、99 百分位還是常態流量、否則容量規劃會錯位。
 
-### 容量數字的三個口徑
+### 容量數字的口徑：最大瞬時、99 百分位、常態流量
 
-| 口徑          | 含義                   | 用於規劃                            |
-| ------------- | ---------------------- | ----------------------------------- |
-| 最大瞬時      | 某一秒的最高峰（單秒） | 不能拿這個訂 baseline、是 outlier   |
-| 99 百分位平均 | 99% 時間在這個水位以下 | 訂 capacity 上限的依據              |
-| 常態流量      | 平均的日常水位         | 訂 cost baseline、auto-scaling 起點 |
+| 口徑      | 含義                   | 用於規劃                            |
+| --------- | ---------------------- | ----------------------------------- |
+| 最大瞬時  | 某一秒的最高峰（單秒） | 不能拿這個訂 baseline、是 outlier   |
+| 99 百分位 | 99% 時間在這個水位以下 | 訂 capacity 上限的依據              |
+| 常態流量  | 平均的日常水位         | 訂 cost baseline、auto-scaling 起點 |
 
 **最大瞬時** 是觀測得到的最高峰值、通常是年度某秒、不能拿來訂 baseline。在 Grafana / CloudWatch / Datadog 上看 `max` 指標就是這個數字 — 用來知道系統 *曾經* 撐過多少、不是 *日常* 要撐多少。
 
-**99 百分位平均** 是 capacity 規劃的主要依據。在監控工具看的是 `p99` 隨時間的平均值（rolling 30 天或 90 天）— 代表 99% 的時間流量低於這個水位。Auto-scaling 上限通常訂在這個值的 1.5-2 倍、確保 99% 時間有足夠 headroom。
+**99 百分位** 是 capacity 規劃的主要依據：把過去 30 天或 90 天每一秒（或每一分鐘）的流量排序，第 99 百分位就是 99% 的時間流量低於的那個水位。監控圖上常見的 `p99` 多半是請求延遲的百分位，量的是耗時，這裡要的是流量的百分位，要另外算。Auto-scaling 上限通常訂在這個值的 1.5-2 倍、確保 99% 時間有足夠 headroom。
 
 **常態流量** 是 average / median、訂 cost baseline 跟 auto-scaling 的下限。在 PaaS（Aurora Serverless、Cosmos DB serverless）這是「最低保留容量」的依據；在 IaaS 是「永遠開著的 instance 數量」。
 
-[9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 揭露這個議題：「9000 萬 reads / 秒」通常是年度峰值最高一秒、不是平均。讀案例時要區分這三個口徑、否則容量規劃會錯位。
+[9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 揭露這個議題：「9000 萬 reads / 秒」通常是年度峰值最高一秒、不是平均。讀案例時要區分最大瞬時、99 百分位與常態流量、否則容量規劃會錯位。
 
 對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 「100 萬 ops/分鐘」≈ 17K ops/秒、跨 200 個獨立 cluster 平均下來每 DB 約 80 ops/秒。讀峰值要看 *分散到多少 shard*、不只看總數。
 
@@ -360,20 +409,20 @@ SQL 的 transactional 模型有結構性限制、超過某個規模硬擴 SQL �
 
 對應 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 「90% 延遲降」實際可能是 p50、p99 / p999 改善幅度通常較小。判讀重點：用戶體驗主要受 *p99 / p999* 影響、不是 p50。看到「平均 50ms 降到 5ms」要追問「p99 從多少降到多少」、否則可能用戶感受沒改善。
 
-延遲監控的必要 percentile：p50、p95、p99、p99.9。p99.9 對 1000 個 request 才偵測一次、但通常代表系統最差表現、是 SLO breach 的早期訊號。
+延遲監控的必要 percentile：p50、p95、p99、p99.9。p99.9 是每 1000 個 request 裡最慢那一個所在的水位，代表系統接近最差的表現、是 SLO breach 的早期訊號。
 
 ## Headroom budget：事件型 vs 突發型峰值
 
 Headroom budget 是 *提前預留的容量空間*、給可預期或不可預期的峰值用。讀「Super Bowl +50% no sweat」這種敘述、工程意義是團隊事前預留了 headroom、不是 vendor 神奇。
 
-對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — Super Bowl 是已知事件、+50% 是歷史經驗、所以可以提前 pre-scale。整個 system headroom 預留至少 50%、加上 read replica 動態加減、才能讓 50% 增幅變成「不流汗」。
+對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — Super Bowl 是已知事件、+50% 是歷史經驗，所以這 50% 算進事件當天的目標容量、事前 scale-up 到位，再在目標容量上加事件型的 headroom、配合 read replica 動態加減，50% 的增幅才會「不流汗」。案例頁只寫了流量 +50% 而延遲不受影響，headroom 實際留了多少沒有公開。
 
 兩種峰值的 headroom budget 規劃完全不同：
 
 **事件型峰值**（已知時間 + 已知幅度）：
 
 - 例：Super Bowl、Black Friday、票券開賣、財報日
-- 規劃做法：歷史 peak × 預期成長 × headroom（通常 1.5-2x）= baseline、事件前 scheduled scale-up
+- 規劃做法：歷史 peak × 預期成長 = 事件當天的目標容量，事件前 scheduled scale-up 到目標容量再加 headroom
 - headroom 預算可以較低（20-30%）、因為峰值可預測、可在事件前測試
 - 對應 [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)
 
@@ -388,7 +437,7 @@ Headroom budget 是 *提前預留的容量空間*、給可預期或不可預期�
 
 ## 讀寫峰值錯位：dual peak workload
 
-部分業務有 *讀峰值跟寫峰值不同時段* 的特性、容量規劃要按 *peak 之和* 而非 *單一 peak*。
+部分業務有 *讀峰值跟寫峰值不同時段* 的特性、容量規劃要讓讀 peak 與寫 peak 各自發生的時段都有足夠容量，而不是只看總流量曲線上的單一 peak。
 
 對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 「write workloads spike up significantly around payout events, but opening the app during the game also activates a lot of balance queries」。比賽進行時讀爆量（用戶看餘額、看下注狀態）、比賽結束 payout 時寫爆量（賠付寫進帳本）、兩個 peak 錯位。
 

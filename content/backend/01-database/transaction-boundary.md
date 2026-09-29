@@ -8,7 +8,7 @@ tags: ["backend", "database", "transaction"]
 
 交易邊界（transaction boundary）的核心責任是定義哪些資料變更必須一起成立。資料庫交易的價值在於讓同一個業務動作可以被明確提交、明確回退、明確重試。
 
-本章從業務邊界切分開始、進入 isolation level 工程細節、再到 retry 策略、最後處理跨服務 / 跨 region 的 distributed transaction。讀完後讀者能回答：transaction 範圍該多大、isolation 該訂多嚴、deadlock 怎麼處理、跨服務一致性怎麼設計、什麼時候該換 Saga 模式。
+本章涵蓋的範圍從單一資料庫內的交易切分、isolation level 與 retry，延伸到跨服務的 2PC、Saga 與跨 region 的一致性取捨。
 
 ## 邊界先於語法
 
@@ -16,38 +16,51 @@ tags: ["backend", "database", "transaction"]
 
 當同一個動作內同時包含高延遲外部呼叫、交易範圍會直接放大鎖持有時間。穩定做法是把交易內責任收斂在「需要同時成功」的資料集合、讓外部呼叫或延伸副作用透過 queue / outbox 交給後續流程。
 
-## Isolation Level 五級深度
+## Isolation Level：從 Read Uncommitted 到 External Consistency
 
-SQL 標準定義四個 isolation level、實務上 PostgreSQL / MySQL / Spanner 等實作有微妙差異。理解各級的具體行為、才能在 *正確性 vs 性能* 之間做取捨。
+SQL 標準定義 Read Uncommitted、Read Committed、Repeatable Read、Serializable 四個 isolation level，Spanner 這類全球分散式資料庫另外提供比 Serializable 更強的 external consistency；實務上 PostgreSQL / MySQL / Spanner 等實作有微妙差異。理解各級的具體行為、才能在 *正確性 vs 性能* 之間做取捨。
 
-**0. Read Uncommitted（dirty read 可能）**：
+**Read Uncommitted（dirty read 可能）**：
 
-- 可讀到別的 transaction 還沒 commit 的資料
-- 多數 DB 不真的支援這級（會 fallback 到 Read Committed）
+- 標準允許讀到別的 transaction 還沒 commit 的資料
+- MySQL InnoDB 照標準實作，真的會讀到還沒 commit 的值；PostgreSQL 接受這個設定，但行為等同 Read Committed，讀不到還沒 commit 的值
 - 實務不要用
 
-**1. Read Committed（PostgreSQL / Oracle 預設）**：
+**Read Committed（PostgreSQL / Oracle 預設）**：
 
 - 只讀到 commit 的資料
 - 同一個 transaction 內、多次 SELECT 同一筆資料可能讀到不同值（non-repeatable read）
 - 適合：read-heavy workload、不要求同 transaction 內 read consistency
 
-**2. Repeatable Read（MySQL InnoDB 預設）**：
+**Repeatable Read（MySQL InnoDB 預設）**：
 
-- 同 transaction 內 read 一致（snapshot at transaction start）
-- 不防 phantom read（標準定義）、但 InnoDB 的 RR 加 gap lock 實際上防住了
+- 同一個 transaction 裡的一般 SELECT 讀同一份快照，讀到的值一致
+- 標準定義不防 phantom read；InnoDB 的一般 SELECT 讀快照、看不到別的 transaction 新 commit 的列，而同一個 transaction 裡的 `SELECT ... FOR UPDATE` 與 `UPDATE` 讀的是最新 commit 的資料，會碰到那些新列（下方區塊以 MySQL 8.4 實際跑過）
 - 適合：報表類 transaction、需要 snapshot 一致性
 
-**3. Serializable（最強）**：
+```sql
+-- seats 一開始只有 (1, 10) 一列；連線 A：
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+START TRANSACTION;
+SELECT count(*) FROM seats WHERE event_id = 10;              -- 1
+-- 此時連線 B 執行並 commit：INSERT INTO seats VALUES (2, 10);
+SELECT count(*) FROM seats WHERE event_id = 10;              -- 仍是 1：讀快照
+SELECT count(*) FROM seats WHERE event_id = 10 FOR UPDATE;   -- 2：locking read 讀最新 commit 的資料
+UPDATE seats SET event_id = 11 WHERE event_id = 10;          -- 改到 2 列，包含連線 B 新插入的那一列
+ROLLBACK;
+```
+
+**Serializable（SQL 標準裡最強的一級）**：
 
 - 看起來像所有 transaction 序列執行
 - 兩種實作：strict 2PL（lock-based、MySQL）vs SSI（snapshot isolation + 衝突檢測、PostgreSQL）
 - 衝突時會 serialization failure、應用層必須 retry
 - 適合：金融交易、ticketing inventory、需要絕對正確
 
-**4. External Consistency / Linearizable（Spanner、Aurora DSQL）**：
+**External Consistency / Linearizable（Spanner）**：
 
 - 比 Serializable 更強：跨 transaction 的順序跟 wall clock 一致
+- Aurora DSQL 常跟 Spanner 並列為全球分散式 SQL，而它的交易隔離是 snapshot isolation：沒有鎖，兩筆交易改到同一列時後 commit 的那一筆收到 SQLSTATE `40001`（AWS 文件〈Concurrency control in Aurora DSQL〉），不屬於這一級
 - 全球分散式系統的特殊取捨
 - 詳見 [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) 的 Spanner TrueTime 段
 - 詳見 [9.C10 Spanner case](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
@@ -57,7 +70,7 @@ SQL 標準定義四個 isolation level、實務上 PostgreSQL / MySQL / Spanner 
 - 90% 業務用 Read Committed 夠
 - 報表 / 對帳用 Repeatable Read
 - 金融交易 / inventory 用 Serializable
-- 全球強一致用 Spanner / Aurora DSQL 等 linearizable 系統
+- 跨 region 的交易之間也要有全域順序時，用 Spanner 這類提供 external consistency 的系統
 
 ## Isolation 跟 Retry 的關係
 
@@ -75,16 +88,37 @@ SQL 標準定義四個 isolation level、實務上 PostgreSQL / MySQL / Spanner 
 
 當多個 transaction 同時操作同一筆資料、有兩種防衝突策略：
 
-**Pessimistic locking（悲觀鎖）**：
+**Pessimistic locking（悲觀鎖）**：讀取時就鎖住要改的列，其他 transaction 要改同一列得等這個 transaction 結束。
 
-- `SELECT ... FOR UPDATE`、提前 lock 行
+```sql
+BEGIN;
+-- 鎖住 id = 1 這一列，直到 COMMIT 或 ROLLBACK
+SELECT balance FROM accounts WHERE id = 1 FOR UPDATE;
+UPDATE accounts SET balance = 80 WHERE id = 1;
+COMMIT;
+-- 鎖持有期間，另一個連線對同一列的 UPDATE 會等待；設了 lock_timeout 就在逾時後報錯：
+--   ERROR:  canceling statement due to lock timeout
+```
+
 - 適合：衝突機率高、retry 成本高
 - 缺點：lock 期間其他 transaction 等待、容易 deadlock
 
-**Optimistic locking（樂觀鎖）**：
+**Optimistic locking（樂觀鎖）**：讀取時不鎖，寫回時把讀到的版本號當條件；版本號對不上，這次 UPDATE 就改不到任何列。
 
-- 不 lock、用 version column 或 `WHERE old_value = ?`
-- commit 時若 version 不對、整個 transaction 失敗、應用層 retry
+```sql
+-- 兩個請求都讀到 version = 7
+SELECT balance, version FROM accounts WHERE id = 1;   -- 100 | 7
+
+-- 先寫回的請求：條件成立，版本號跟著加一
+UPDATE accounts SET balance = 80, version = version + 1
+WHERE id = 1 AND version = 7;                          -- UPDATE 1
+
+-- 後寫回的請求：version 已經是 8，條件不成立
+UPDATE accounts SET balance = 50, version = version + 1
+WHERE id = 1 AND version = 7;                          -- UPDATE 0
+```
+
+- 版本號對不上時資料庫不報錯、transaction 也不會失敗，訊號只有 UPDATE 改到 0 列；應用層要檢查受影響的列數，是 0 就重讀、重算、再寫一次
 - 適合：衝突機率低、性能優先
 - 缺點：高衝突場景 retry 多、整體吞吐反而低
 
@@ -98,26 +132,26 @@ SQL 標準定義四個 isolation level、實務上 PostgreSQL / MySQL / Spanner 
 
 ## 服務情境：Checkout 多層邊界
 
-電商 checkout 是典型的 transaction boundary 設計題、可拆成兩層邊界。
+電商 checkout 是典型的 transaction boundary 設計題，切分依據是這個步驟能不能晚一點完成：必須跟訂單同時成立的步驟放進交易層，晚一點完成也不影響訂單成立的步驟放進延伸層。
 
-**第一層：交易層（即時一致）**：
+**交易層（即時一致）**：
 
 - 建立訂單主表
 - 寫入訂單項目
 - 扣減可售庫存
 - 寫入付款待確認狀態
 
-**第二層：延伸層（最終可達）**：
+**延伸層（最終可達）**：
 
 - 寄訂單確認 email
 - 同步 CRM 系統
 - 觸發 analytics event
 - 更新推薦模型
 
-這種切法讓交易控制面跟非同步控制面各自穩定：
+這種切法讓交易層跟延伸層各自穩定：
 
 - 交易層關注 *鎖、隔離與回退*
-- 非同步層關注 *投遞、重試與補償*
+- 延伸層關注 *投遞、重試與補償*
 
 對應案例：
 
@@ -130,8 +164,8 @@ SQL 標準定義四個 isolation level、實務上 PostgreSQL / MySQL / Spanner 
 
 **Two-Phase Commit (2PC)**：
 
-- 階段 1：coordinator 詢問所有 participant「你能 commit 嗎？」
-- 階段 2：所有都說 yes → coordinator 廣播 commit；任一說 no → 廣播 abort
+- Commit-request 階段（又稱 voting / prepare phase）：coordinator 詢問所有 participant「能不能 commit？」
+- Commit 階段：所有 participant 都回 yes → coordinator 廣播 commit；任一回 no → 廣播 abort
 - **優點**：強一致、ACID 保證
 - **缺點**：coordinator failure 會 block 所有 participant、性能差、跨服務複雜
 - 適合：少數高一致性需求的場景（金融交易、跨多 DB 一致性）
@@ -140,7 +174,7 @@ SQL 標準定義四個 isolation level、實務上 PostgreSQL / MySQL / Spanner 
 
 - 把長 transaction 拆成多個 local transaction + compensating transaction
 - 每個 step 成功 → 進下個；任一失敗 → 倒回去跑 compensation
-- 例：訂單 step1 扣庫存、step2 收款、step3 送貨。step2 失敗 → 跑 step1 的 compensation（補庫存）
+- 例：訂單流程依序是扣庫存、收款、送貨。收款失敗時，已經成功的只有扣庫存，所以跑扣庫存的 compensation（把庫存補回去）
 - **優點**：高可用、性能好、容易擴展
 - **缺點**：不是強一致、中間狀態可見、compensation 必須設計
 - 適合：multi-service 業務流程、可接受 [eventual consistency](/backend/knowledge-cards/eventual-consistency/)
@@ -175,7 +209,7 @@ SQL 標準定義四個 isolation level、實務上 PostgreSQL / MySQL / Spanner 
 
 **Multi-region strong consistency**（Spanner、Aurora DSQL、CockroachDB）：
 
-- 跨 region linearizable transaction
+- 每個 region 的讀取都看得到最新 commit 的資料；交易隔離各家不同：Spanner 是 external consistency、CockroachDB 預設 Serializable、Aurora DSQL 是 snapshot isolation
 - 代價是 latency（跨洲 100-200ms [quorum](/backend/knowledge-cards/quorum/)）
 - 對應 [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
 
@@ -220,7 +254,7 @@ distributed transaction 不是「跨服務就要 2PC」。多數 multi-service �
 
 交易邊界可用 [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) 做回寫。先看事件中的主從切換與恢復順序、再回到本章判讀三件事：哪些變更必須同交易成功、哪些副作用應拆到 outbox、哪些錯誤屬於可重試而非立即回退。
 
-這個案例主要支撐的是「提交與副作用切分」判讀、不直接支撐 schema naming 或 cache freshness；若問題落在資料命名或快取新鮮度、應回到 1.2 或 2.x。
+這個案例主要支撐的是「提交與副作用切分」判讀、不直接支撐 schema naming 或 cache freshness；若問題落在資料命名或快取新鮮度、應回到 [1.2 schema design 與資料建模](/backend/01-database/schema-design/) 或 [02 快取模組](/backend/02-cache-redis/)。
 
 若事件出現資料已寫入但外部流程落後、或重試後副作用重複、先收斂本章的邊界切分與重試前提、再同步更新 [3.3 outbox pattern](/backend/03-message-queue/outbox-pattern/) 與 [3.4 consumer 設計](/backend/03-message-queue/consumer-design/)。
 
@@ -228,7 +262,7 @@ distributed transaction 不是「跨服務就要 2PC」。多數 multi-service �
 
 交易邊界設計會直接影響後續模組的可操作性。
 
-1. 與 03 的交接：交易外副作用透過 [outbox pattern](/backend/knowledge-cards/outbox-pattern/) 與 consumer 落地。
+1. 與 [訊息佇列模組](/backend/03-message-queue/) 的交接：交易外副作用透過 [outbox pattern](/backend/knowledge-cards/outbox-pattern/) 與 consumer 落地。
 2. 與 1.7 的交接：付款狀態拆欄位、雙寫與回呼更新要進入 [Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/) 的驗證流程。
 3. 與 1.10 / 1.11 的交接：KV 跟全球分散式 OLTP 的 transaction model 不同、選型時要回到本章邊界判讀。
 4. 與 04 的交接：交易失敗需要對齊 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 的查詢與證據欄位。

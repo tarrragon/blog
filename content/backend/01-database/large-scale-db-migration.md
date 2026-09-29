@@ -8,11 +8,7 @@ tags: ["backend", "database", "migration"]
 
 ## 概念定位
 
-DB 遷移是後端工程中 *風險最高的長期工作* 之一。一次失敗的遷移可能造成資料丟失、用戶體驗劣化、合規違約、團隊信心受挫。本章整理近 5 年公開的大規模 DB 遷移案例、提煉出可重用的工程流程。
-
-跟 [1.6 database migration playbook](/backend/01-database/database-migration-playbook/) 的關係：1.6 是 *generic playbook*、本章針對「*跨 DB 種類*」遷移（PostgreSQL → Aurora、TiDB → DynamoDB、MongoDB → Cosmos DB）、規模較大、風險較高。
-
-跟 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/) 的關係：1.7 處理 *同一 DB 內* 的 schema 演進、本章處理 *換 DB engine* 的遷移。兩者都用 evidence-based gate、但 stakes 不同。
+本篇整理換資料庫引擎的遷移怎麼分階段進行，涵蓋 dual-write、shadow read、cutover 與 rollback window，材料是近 5 年公開的大規模遷移案例。同一個引擎內的 schema 演進與資料變更在 [1.6 database migration playbook](/backend/01-database/database-migration-playbook/)，schema 變更在 production 的放行證據在 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)；換引擎多出來的工作是應用層可能要改寫、兩個引擎的行為差異要逐項驗證（PostgreSQL → Aurora、TiDB → DynamoDB、MongoDB → Cosmos DB 各是一例）。
 
 讀完後讀者能回答：跨 DB 遷移該怎麼分階段、dual-write 怎麼設計、shadow read 怎麼驗證、cutover 怎麼安全進行、rollback window 訂多久。
 
@@ -20,28 +16,28 @@ DB 遷移是後端工程中 *風險最高的長期工作* 之一。一次失敗�
 
 DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流程不同。
 
-**Type 1：scale-up（換 instance）**：
+**scale-up（換 instance）**：
 
 - 例：m5.large → m5.4xlarge
 - 變動：硬體規格、不變 schema、不變 DB engine
 - 風險：低、通常 minutes downtime 即可
 - 工具：vendor 提供 in-place scaling
 
-**Type 2：schema migration**：
+**schema migration**：
 
 - 例：加欄位、加 index、改 data type
 - 變動：schema 結構、不變 DB engine
 - 風險：中、需要 expand-contract 模式
 - 詳見 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)
 
-**Type 3：cross-DB engine migration**：
+**cross-DB engine migration**：
 
 - 例：PostgreSQL → Aurora、SQL Server → PostgreSQL、TiDB → DynamoDB
 - 變動：DB engine、可能 schema、可能 query language
 - 風險：高、可能需要應用層改寫、cutover 風險大
 - 本章重點
 
-**Type 4：cross-model migration**：
+**cross-model migration**：
 
 - 例：RDBMS → KV、Document → Graph
 - 變動：資料模型、必須應用層大改寫
@@ -57,7 +53,7 @@ DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流�
 - **舊系統規模上限**：[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) TiDB 必須長期 over-provision 應付 spike、成本不划算 → 換 DynamoDB on-demand 後 50% 成本下降
 - **舊系統運維成本**：[9.C9 Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) 自管 Kafka 工程成本太高 → 換 managed Pub/Sub 釋放 SRE
 - **舊系統失能**：[9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 多套 RDBMS（PostgreSQL、MySQL、Oracle）DBA 負擔重 → 統一到 Aurora、效能 +75% 成本 -28%
-- **vendor 終止支援**：mongoDB 改授權、TiDB 改授權、Mesos 被棄、Oracle 升級費高
+- **vendor 授權或支援變動**：MongoDB 改授權、Mesos 被棄、Oracle 升級費高
 - **合規要求**：[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 新市場上線、需要本地合規 cluster
 - **新功能需求**：[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 需要 global distribution、原 MongoDB 達不到
 
@@ -70,9 +66,9 @@ DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流�
 
 ## 遷移階段流程
 
-成熟的大規模 DB 遷移分五階段、每階段有明確 exit criteria。
+成熟的大規模 DB 遷移依序經過可行性評估、應用層相容性改造、dual-write 與 shadow read 驗證、cutover、rollback window 與清理，每個階段有明確的 exit criteria。
 
-### 階段 1：可行性評估（T-180 ~ T-90）
+### 可行性評估（T-180 ~ T-90）
 
 **輸出**：可行性報告、決定 go / no-go。
 
@@ -86,20 +82,20 @@ DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流�
 
 **跨雲遷移特有 gap 分析**：當遷移橫跨雲廠商時、評估項目要加上 [0.19 雲端服務對照地圖](/backend/00-service-selection/cloud-vendor-capability-mapping/) 的「對應 ≠ 等價」差異維度：
 
-- 一致性模型差異（如 DynamoDB eventual vs Cosmos DB 五級可選）
+- 一致性模型差異（如 DynamoDB eventual vs Cosmos DB 的 strong / bounded staleness / session / consistent prefix / eventual 可選）
 - failover 時間差異（vendor 文件 vs 實測長尾）
 - 計價模型差異（per-request vs provisioned capacity 換算）
 - 配額差異（partition 上限、batch size、throttling 行為）
 - Data gravity / egress lock-in（PB 級資料的 egress fee 常是被低估的單筆最大成本）
 
-跨雲遷移的失敗多數來自 0.19 對照表沒做完整 gap 分析、把「名稱對應」當「能力等價」。
+跨雲遷移的失敗多數來自沒有照雲端服務對照地圖做完整 gap 分析、把「名稱對應」當「能力等價」。
 
 **對應案例**：
 
 - [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — POC 驗證 DynamoDB 撐得住、再決定遷移
 - [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB API 相容讓 POC 成本低、加速決策
 
-### 階段 2：應用層相容性改造（T-90 ~ T-30）
+### 應用層相容性改造（T-90 ~ T-30）
 
 **輸出**：應用層支援 *新舊 DB 雙寫*、可以隨時切換。
 
@@ -117,7 +113,7 @@ DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流�
 - Aurora PostgreSQL-compatible → 不改 SQL 跟 ORM
 - 缺點：API 相容不等於行為完全相同、要 *特定 query pattern* 驗證
 
-### 階段 3：Dual-write + shadow read 驗證（T-30 ~ T-7）
+### Dual-write + shadow read 驗證（T-30 ~ T-7）
 
 dual-write / shadow read / backfill 的 *generic 機制* 詳見 [1.6 database migration playbook](/backend/01-database/database-migration-playbook/) 跟 [1.7 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/)（含 Dual-write divergence schema 詳細分類）；本章只強調 *跨 DB engine* 遷移的特殊取捨。
 
@@ -139,13 +135,13 @@ dual-write / shadow read / backfill 的 *generic 機制* 詳見 [1.6 database mi
 
 **注意事項**：
 
-- Dual-write 期間 *兩邊都要可寫*、寫失敗的 fallback 流程明確
+- Dual-write 期間 *old DB 與 new DB 都要可寫*、寫失敗的 fallback 流程明確
 - 新 DB 還沒承擔流量、容量規劃要 *提前 ramp up*、不要等 cutover 才發現容量不夠
 - 監控指標：write success rate、cross-DB inconsistency rate、replication lag、performance metrics
 
 對應案例：[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 遷移前用 dual-write 驗證 4 倍吞吐改善是真的、不是 POC marketing。
 
-### 階段 4：Cutover（T-7 ~ T-0）
+### Cutover（T-7 ~ T-0）
 
 **輸出**：用戶流量切到 new DB、old DB 變成 fallback。
 
@@ -170,7 +166,7 @@ dual-write / shadow read / backfill 的 *generic 機制* 詳見 [1.6 database mi
 - T-7：所有 read 切到 new DB（write 還在 old）
 - T-3：write 切到 new DB（read 已驗證）
 
-### 階段 5：Rollback window + 清理（T+0 ~ T+30+）
+### Rollback window + 清理（T+0 ~ T+30+）
 
 **Rollback window**：cutover 後保持 *可隨時 rollback 回 old DB* 的狀態。
 
@@ -204,7 +200,7 @@ dual-write / shadow read / backfill 的 *generic 機制* 詳見 [1.6 database mi
 **優點**：
 
 - 遷移成本低（不必改 application code）
-- 風險低（不會引入 query bug）
+- 風險低（query 不改寫、不會因改寫引入 bug）
 - 時程快（不必等 application 改寫）
 
 **缺點**：
@@ -250,7 +246,7 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 **對應 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)**：遷移期是「臨時 over-provisioning 期」、要算進 cost。遷移完才能 right-sizing。
 
-**對應 [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)**：dual-write 跟 shadow read 是 production validation 的特殊形式、要按 9.10 的安全邊界設計。
+**對應 [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)**：dual-write 跟 shadow read 是 production validation 的特殊形式、要按 Production-Side 驗證列出的安全邊界設計。
 
 ## 案例對照
 
@@ -281,7 +277,7 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 - **Aurora Serverless**：線性、但有最低 ACU 基線
 - **Spanner**：節點數 × 單價、增量是 100 pu 一單位
 
-**曲線交叉點是選型決策的關鍵**：DynamoDB on-demand 跟自管 PostgreSQL 在某個流量水位交叉、流量低於此值前者便宜（無基線成本）、高於此值後者便宜（基線分攤後單價低）。Aurora Serverless 跟 Aurora provisioned 也有類似交叉、波動大的 workload 在 Serverless 划算、穩定的在 provisioned 划算。Spanner 因為節點數階梯式增加、跨節點交叉點通常在 *每節點 70-80% 利用率* — 過了就要加節點、新節點利用率掉回 50% 是常態。判讀重點：選型不該只看 *當下流量點*、要看未來 12-24 月的流量曲線會跨過哪些交叉點、再決定哪種計費模式總成本最低。
+**曲線交叉點是選型決策的關鍵**：DynamoDB on-demand 跟自管 PostgreSQL 在某個流量水位交叉、流量低於此值 DynamoDB on-demand 便宜（無基線成本）、高於此值自管 PostgreSQL 便宜（基線分攤後單價低）。Aurora Serverless 跟 Aurora provisioned 也有類似交叉、波動大的 workload 在 Serverless 划算、穩定的在 provisioned 划算。Spanner 因為節點數階梯式增加、跨節點交叉點通常在 *每節點 70-80% 利用率* — 過了就要加節點、新節點利用率掉回 50% 是常態。判讀重點：選型不該只看 *當下流量點*、要看未來 12-24 月的流量曲線會跨過哪些交叉點、再決定哪種計費模式總成本最低。
 
 **遷移 ROI 評估的維度**：
 
@@ -298,13 +294,13 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 **Lock-in 成本延伸**：vendor lock-in 不是「不能換」、是「換的時候要付多少」。包含：(1) 應用層改寫成本（DynamoDB → Spanner 要改 access pattern）、(2) 合約終止 penalty（reserved capacity 提前解約罰款）、(3) 資料導出成本（雲商出口流量費）、(4) 人才再訓練（DBA 從 Aurora 轉 Spanner 需要時間）。選 vendor 時就要評估這四項、即使沒打算換、合約年限到時也要面對。
 
-判讀重點：「遷移後成本降 50%」這種敘述只看 infra 成本、且只看當下。完整評估要看所有六個維度跨 12-24 月、決策才不會出「短期省、長期更貴」或「短期看似賺、合規卡 1 年」的事故。
+判讀重點：「遷移後成本降 50%」這種敘述只看 infra 成本、且只看當下。完整評估要把 infra、人力、機會成本、lock-in、合規 lead time 與遷移本身的成本都算進 12-24 個月、決策才不會出「短期省、長期更貴」或「短期看似賺、合規卡 1 年」的事故。
 
 ## 合規審查 lead time 是時程主要拉力
 
 受監管產業（金融、醫療、電信、政府）的 DB 遷移、*合規審查* 通常是時程主導因素、不是技術整合。
 
-對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 跨 7 個受監管市場遷移到 Aurora、每個市場各自審查（中央銀行 / 金融監管機關 / 個資主管機關）、單一市場審查 3-12 個月、總時程是「市場數 × 平均審查月份」、不是「技術遷移月份」。
+對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 跨 7 個受監管市場遷移到 Aurora、每個市場各自審查（中央銀行 / 金融監管機關 / 個資主管機關）、單一市場審查 3-12 個月、市場依序上線時總時程接近「市場數 × 平均審查月份」、不是「技術遷移月份」。
 
 **合規 lead time 的常見項目**：
 
@@ -317,7 +313,7 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 **規劃含義**：
 
 - 技術側 ready ≠ 可上線、合規簽核才是 cutover gate
-- 合規審查通常 serial、不能 parallel（單一審查機關沒法平行處理多 case）
+- 各市場由不同機關審查，送件本身可以同時進行；市場依序上線（先在一個市場驗證再推下一個）時，總時程是各市場審查月份的加總，要縮短就得同時送審，前提是遷移團隊應付得了多個機關同時提出的詢問
 - 高風險變更（DB 換 vendor、cross-border）審查週期最長
 - 跨市場部署、各市場各自審、不能用某市場結果代替
 
@@ -329,7 +325,7 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 「10x throughput」是 *vs 舊系統*、不是 *vs 競爭對手*。受監管銀行的舊系統通常是 1990s-2000s 的 mainframe 或自建 OLTP、性能本來就低、改善幅度大不代表絕對性能領先。
 
-對應 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 「up to 75% improvement」是 *跨多個 workload 的最大改善幅度*、不是「每個 workload 都 +75%」。實際每個 workload 改善從 10% 到 75% 不等、平均可能 30-40%。
+對應 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 「up to 75% improvement」是 *跨多個 workload 的最大改善幅度*、不是「每個 workload 都 +75%」。實際每個 workload 改善從 10% 到 75% 不等。
 
 **benchmark 解讀的關鍵問題**（遷移情境專屬）：
 
@@ -341,7 +337,7 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 **規模對照延伸**：vendor 案例研究最容易誤判的維度。讀者要識別三個訊號才能判斷規模是否類似 — (1) *資料量*（vendor 揭露的是 GB 還是 PB？自家在哪個量級？）、(2) *QPS 分布*（vendor 是 sustained 還是 bursty？自家流量形狀是否類似？）、(3) *讀寫比*（vendor 案例是 write-heavy 還是 read-heavy？自家業務性質是否吻合？）。三個訊號至少要有兩個跟自家對齊、benchmark 數字才有參考價值。對應 [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 案例的 18:1 讀寫比、跟一般電商的 5:1 完全不同、不能用同一份 benchmark 推論。
 
-**Percentile 跟時間窗口維度** — 是更通用的容量數字判讀問題、詳見 [1.1 高併發資料存取的「讀峰值數字的工程細節」](/backend/01-database/high-concurrency-access/) 段（容量三口徑、p50/p99/p999 解讀）。遷移情境只需在這個基礎上加「vs 基準 / workload / 規模對照」三個遷移專屬問題。
+**Percentile 跟時間窗口維度** — 是更通用的容量數字判讀問題、詳見 [1.1 高併發資料存取的「讀峰值數字的工程細節」](/backend/01-database/high-concurrency-access/) 段（最大瞬時、99 百分位平均、常態流量這幾種容量口徑，以及 p50/p99/p999 解讀）。遷移情境只需在這個基礎上加「vs 基準 / workload / 規模對照」三個遷移專屬問題。
 
 ## 「預設 DB」治理 pattern
 

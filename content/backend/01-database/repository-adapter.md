@@ -36,13 +36,13 @@ Repository 在 hexagonal architecture（也叫 ports & adapters）中是 *outbou
 
 詳見 [Repository Adapter 卡片](/backend/knowledge-cards/repository-adapter/)。
 
-## Adapter 三個核心責任
+## Adapter 的核心責任
 
 adapter 接收應用層輸入、負責三件事：查詢與命令組裝、row mapping、錯誤翻譯。業務規則判斷留在 service / usecase 層、adapter 聚焦在資料持久化語意與資料庫行為。
 
 邊界清楚的好處是演進可控。schema 調整時、只需要在 adapter 收斂欄位映射與查詢變更、不用把 SQL 細節滲透回 domain 層。
 
-### 1. 查詢與命令組裝
+### 查詢與命令組裝
 
 把 domain 操作翻成具體 SQL / NoSQL query。實作層級有取捨：
 
@@ -52,7 +52,7 @@ adapter 接收應用層輸入、負責三件事：查詢與命令組裝、row ma
 
 詳見下方「ORM vs Query Builder vs Raw SQL」段。
 
-### 2. Row Mapping 與 Nullable Handling
+### Row Mapping 與 Nullable Handling
 
 row mapping 的責任是把資料庫欄位轉成穩定模型。欄位型別、時間格式、枚舉值、可空欄位都要有明確轉換規則。可空欄位需要顯式處理、避免把「缺值」誤當有效預設值。
 
@@ -64,7 +64,7 @@ row mapping 的責任是把資料庫欄位轉成穩定模型。欄位型別、�
 
 資料模型演進時、新舊欄位可能共存。adapter 要支援過渡期讀寫相容、讓版本切換能分批進行。詳見 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)。
 
-### 3. Error Translation
+### Error Translation
 
 error translation 的責任是把底層錯誤分類成應用層可決策訊號。唯一鍵衝突、外鍵限制、交易衝突、連線逾時、都需要翻譯成可行動錯誤類型、而不是將原生錯誤字串直接外漏。
 
@@ -79,7 +79,7 @@ error translation 的責任是把底層錯誤分類成應用層可決策訊號�
 | `ErrTimeout`          | `query_canceled`（57014）/ context deadline | retry / circuit break     |
 | `ErrUnavailable`      | connection refused / pool exhausted         | circuit break / fallback  |
 
-這層翻譯會直接影響重試、回退與事故判讀。分類越穩定、越能在 06/08 模組形成一致決策語言。
+這層翻譯會直接影響重試、回退與事故判讀。錯誤分類越穩定，[可靠性驗證](/backend/06-reliability/) 的放行條件與 [事故處理](/backend/08-incident-response/) 的回退決策越能用同一套錯誤類型描述。
 
 ## ORM vs Query Builder vs Raw SQL
 
@@ -95,7 +95,7 @@ error translation 的責任是把底層錯誤分類成應用層可決策訊號�
 
 ### Query Builder
 
-主流工具：Knex（Node）、SQLAlchemy Core（Python）、jOOQ（Java）、sqlc（Go）、Diesel（Rust）。
+主流工具：Knex（Node）、SQLAlchemy Core（Python）、jOOQ（Java）、goqu（Go）、Diesel（Rust）。
 
 - 優勢：型別安全、IDE 自動完成
 - 優勢：不需要 ORM 的複雜度
@@ -120,7 +120,7 @@ error translation 的責任是把底層錯誤分類成應用層可決策訊號�
 1. **小團隊 + CRUD-heavy**：ORM（快速 prototype、boilerplate 少）
 2. **中型 + 混合需求**：Query Builder（安全 + 仍能寫複雜 query）
 3. **大型 + 性能極限**：Raw SQL + Query Builder（複雜 query 用 raw、簡單用 builder）
-4. **microservice 私有 store**：通常 Query Builder 為主（見 [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 模式）
+4. **microservice 私有 store**（每個微服務各有自己的資料庫 cluster，見 [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)）：store 只服務一個 service，工具照上面三條依團隊規模與查詢複雜度選；那個案例沒有記錄 Netflix 用的是哪一種存取工具
 
 ### ORM 反模式
 
@@ -150,7 +150,7 @@ repository 是 *infrastructure* 層、test 策略不同於 domain layer。
 ### Contract Test
 
 - 驗證 adapter 對外語意穩定：同一輸入是否得到一致輸出、同一錯誤是否被穩定分類、同一查詢語意在 schema 演進後是否保持相容
-- 測試重點是邊界語意覆蓋、資料庫產品特性覆蓋是另一件事
+- 測試重點是 adapter 對外承諾的語意；各家資料庫產品自己的行為差異由 Integration Test 覆蓋
 - 例：「unique 衝突必須回 `ErrAlreadyExists`」這條 contract、不管底層是 PostgreSQL / MySQL / SQLite 都成立
 
 詳見 [Contract 卡片](/backend/knowledge-cards/contract/) 跟 [6.10 Contract Testing](/backend/06-reliability/contract-testing/)。
@@ -166,45 +166,55 @@ repository 是 *infrastructure* 層、test 策略不同於 domain layer。
 
 repository 操作通常要支援「我自己起 transaction」跟「在已有 transaction 內操作」兩種模式。
 
-**Pattern 1：repository 自己起 transaction**：
+**repository 自己起 transaction**：
 
 ```go
 func (r *OrderRepo) PlaceOrder(ctx context.Context, order Order) error {
-    tx, _ := r.db.BeginTx(ctx, nil)
-    defer tx.Rollback()
-    // ... 操作 ...
+    tx, err := r.db.BeginTx(ctx, nil)
+    if err != nil {
+        return err // 交易沒開成時 tx 是 nil，不能往下用
+    }
+    defer tx.Rollback() // 已經 Commit 之後再 Rollback 不影響提交的資料
+    // ... 在 tx 上執行這張訂單的寫入 ...
     return tx.Commit()
 }
 ```
 
-問題：跨多個 repository 時無法共用 transaction。
+這個寫法的限制：交易在 `PlaceOrder` 裡開、也在裡面提交，另一個 repository 的寫入進不了同一筆交易。
 
-**Pattern 2：unit of work pattern**：
+**unit of work**：
 
 ```go
 func (s *Service) PlaceOrder(ctx context.Context, order Order) error {
+    // uow.Do 開一筆交易交給函式：函式回傳錯誤就回滾，回傳 nil 就提交
     return s.uow.Do(ctx, func(tx Transaction) error {
-        s.orderRepo.Save(tx, order)
-        s.inventoryRepo.Decrease(tx, order.Items)
-        s.paymentRepo.Create(tx, order.Payment)
+        if err := s.orderRepo.Save(tx, order); err != nil {
+            return err
+        }
+        if err := s.inventoryRepo.Decrease(tx, order.Items); err != nil {
+            return err // 庫存扣減失敗：訂單的寫入跟著回滾
+        }
+        if err := s.paymentRepo.Create(tx, order.Payment); err != nil {
+            return err
+        }
         return nil
     })
 }
 ```
 
-把 transaction 從 repository 抽到 unit-of-work、跨 repository 共用。
+把 transaction 從 repository 抽到 unit-of-work、跨 repository 共用。回滾與否由函式的回傳值決定，所以每一個 repository 呼叫的錯誤都要往外傳；漏接的錯誤不會讓交易回滾。
 
-**Pattern 3：context-based transaction**：
+**context-based transaction**：
 
 - 把 transaction 塞進 context
 - repository 從 context 拿 transaction（有 → 用、沒有 → 自己起）
-- Go 常用 pattern、但有「context 不該裝這種東西」的爭議
+- Go 常用 pattern、爭議在於 Go 的 `context` 套件文件要求 context 的值只用來傳跨行程與 API 的請求範圍資料、不用來傳函式的選用參數，而交易算不算請求範圍資料各方看法不同
 
 **選擇邏輯**：
 
-- 簡單應用：pattern 1 夠用
-- 跨 repository transaction：pattern 2 或 3
-- 大型 application：pattern 2（最清楚）
+- 簡單應用：repository 自己起 transaction 夠用
+- 跨 repository transaction：unit of work 或 context-based transaction
+- 大型 application：unit of work（交易邊界寫在 service 的程式碼裡，最清楚）
 
 詳見 [1.3 Transaction Boundary](/backend/01-database/transaction-boundary/)。
 
@@ -224,7 +234,7 @@ func (s *Service) PlaceOrder(ctx context.Context, order Order) error {
 - 共用 DB schema、不同 service 都 query 同一張表 → 強耦合、schema 改一個影響全部
 - 跨 service 用 DB foreign key → 不能 enforce、會壞掉
 
-## Repository Adapter 五個常見變體
+## Repository Adapter 的常見變體
 
 實務上 repository 不止「CRUD」這個樣態：
 
@@ -269,19 +279,19 @@ func (s *Service) PlaceOrder(ctx context.Context, order Order) error {
 
 ## 案例回寫
 
-adapter 邊界可用 [3.C9 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 的資料一致性段落回寫。若事件中出現同一錯誤在不同路徑被不同方式處理、通常代表 adapter 的錯誤翻譯與契約分層不足。
+adapter 邊界可用 [3.C9 反例：Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 的資料一致性段落回寫。若事件中出現同一錯誤在不同路徑被不同方式處理、通常代表 adapter 的錯誤翻譯與契約分層不足。
 
-這個案例主要支撐的是「錯誤分類與契約映射」判讀、不直接支撐 broker delivery 參數調整；若根因在 ack/retry 節奏、應回到 3.1/3.2。
+這個案例主要支撐的是「錯誤分類與契約映射」判讀、不直接支撐 broker delivery 參數調整；若根因在 ack/retry 節奏、應回到 [broker 基礎與投遞模型](/backend/03-message-queue/broker-basics/) 與 [durable queue 與重試策略](/backend/03-message-queue/durable-queue/)。
 
 回寫步驟是先盤點錯誤分類、再對齊重試與回退決策、最後把分類結果映射到 [6.10 Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/) 的驗證欄位、讓發版前可先發現漂移。
 
 ## 跨模組路由
 
-1. 與 1.2 的交接：欄位與索引語意回到 [schema design 與資料建模](/backend/01-database/schema-design/)。
-2. 與 1.3 的交接：交易錯誤與重試語意回到 [transaction 與一致性邊界](/backend/01-database/transaction-boundary/)。
-3. 與 1.12 的交接：cross-DB migration 時、repository 是 *關鍵抽象* — 詳見 [大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)。
-4. 與 6.10 的交接：跨服務契約一致性回到 [Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)。
-5. 與 8.19 的交接：資料層錯誤判斷與回退決策回到 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
+- 欄位與索引語意回到 [schema design 與資料建模](/backend/01-database/schema-design/)。
+- 交易錯誤與重試語意回到 [transaction 與一致性邊界](/backend/01-database/transaction-boundary/)。
+- cross-DB migration 時、repository 是 *關鍵抽象* — 詳見 [大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)。
+- 跨服務契約一致性回到 [Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)。
+- 資料層錯誤判斷與回退決策回到 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
 
 ## 下一步路由
 

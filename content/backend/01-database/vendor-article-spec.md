@@ -2,7 +2,7 @@
 title: "資料庫 Vendor 文章撰寫規格"
 date: 2026-05-20
 weight: 90
-description: "把 PostgreSQL 與 MySQL batch 的正文經驗整理成資料庫 vendor overview、deep article 與 migration playbook 的撰寫規格"
+description: "把 PostgreSQL 與 MySQL 兩組文章的正文經驗整理成資料庫 vendor overview、deep article 與 migration playbook 的撰寫規格"
 tags: ["backend", "database", "vendor", "writing-spec"]
 ---
 
@@ -14,7 +14,7 @@ tags: ["backend", "database", "vendor", "writing-spec"]
 
 資料庫 vendor 文章的錨點是正式狀態如何被保存、查詢、複製、演進與修復。產品功能、版本差異與雲端價格都只是材料；正文要把材料轉成讀者可操作的判斷標準，讓讀者能判斷資料模型、交易需求、查詢邊界、容量壓力、操作責任與替代路由。
 
-PostgreSQL 與 MySQL 的 batch 顯示三個穩定事實。第一，SQL baseline 已經足以支撐其他服務頁開寫；第二，深度文章需要「何時不用」與真實案例 anchor 防止過度工程化；第三，跨 vendor 或 topology 變更需要獨立 playbook，不適合塞回 overview。
+PostgreSQL 與 MySQL 兩組文章寫完之後，有三件事已經穩定：SQL baseline 已經足以支撐其他服務頁開寫；深度文章需要「何時不用」與真實案例 anchor 防止過度工程化；跨 vendor 或 topology 變更需要獨立 playbook，不適合塞回 overview。
 
 ## Vendor Overview 規格
 
@@ -39,7 +39,7 @@ Vendor overview 的責任是教讀者完成第一輪服務判斷。這一層回�
 
 替代邊界段要保留機會成本。PostgreSQL 或 MySQL 可以承擔多數 OLTP baseline；當 query 固定且高峰連線壓力明顯，DynamoDB 類服務可能更划算；當 document shape 主導資料模型，MongoDB 或 Cosmos DB 有更自然的操作語意；當 global write 是核心需求，Spanner、CockroachDB 或 Aurora DSQL 才進入主要比較。
 
-案例與限制段要分開處理 evidence 與 backlog。案例提供流量形狀、資料形狀、失敗代價或回退路徑；limitation 承認正文還缺哪些維度，例如 PostgreSQL 目前仍需補 Security / RLS / audit logging、cross-region DR 與 managed PG 變體對比，MySQL 仍需補 deep article 的 anti-recommendation 與真實 incident anchor。
+案例與限制段要分開處理 evidence 與 backlog。案例提供流量形狀、資料形狀、失敗代價或回退路徑；limitation 承認正文還缺哪些維度，例如某個 vendor 的 deep article 還沒有 anti-recommendation 段、或案例還沒有真實 incident anchor。
 
 ## Deep Article 規格
 
@@ -62,13 +62,13 @@ Deep article 的責任是把 vendor overview 點到的單一機制展開成可�
 
 失敗模式段是 deep article 的主要價值。PostgreSQL / MySQL 既有文章多數已具備「5 個 Production 踩雷」；後續服務要維持這個密度，並優先補真實案例 anchor，避免所有案例都停在合成數字或典型設定。
 
-容量與觀測段要讓 deep article 接回 04 / 09。資料庫機制常見的訊號包括 connection usage、replication lag、lock wait、dead tuple、buffer hit ratio、slow query、binlog retention、WAL growth、partition pruning 與 restore duration；這些訊號要能回到 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 或 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)。
+容量與觀測段要讓 deep article 接回可觀測性平台與效能工程與容量規劃兩個模組。資料庫機制常見的訊號包括 connection usage、replication lag、lock wait、dead tuple、buffer hit ratio、slow query、binlog retention、WAL growth、partition pruning 與 restore duration；這些訊號要能回到 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 或 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)。
 
-邊界與整合段要補「何時不用」。MySQL audit 已經指出 deep article 容易缺 anti-recommendation；後續每篇 deep article 至少要有一段說明什麼規模、團隊能力或 workload 下暫時維持簡單設計更划算。
+邊界與整合段要補「何時不用」。MySQL 的 deep article 多數已有 production 踩雷段、而缺「何時暫時不用這個機制」的段落；後續每篇 deep article 至少要有一段說明什麼規模、團隊能力或 workload 下暫時維持簡單設計更划算。
 
 ## Hands-on / Artifact 規格
 
-Hands-on / artifact 章節的責任是把 deep article 的機制判讀轉成可演練操作。這一層對齊 LLM `hands-on/` 的教學功能：讀者能跑出一個 local / staging lab，取得 config、query output、metric snapshot、validation result 或 rollback note，而不只停在概念理解。
+Hands-on / artifact 章節的責任是把 deep article 的機制判讀轉成可演練操作。這一層要讓讀者能跑出一個 local / staging lab，取得 config、query output、metric snapshot、validation result 或 rollback note，而不只停在概念理解。
 
 | 規格面     | 必答問題                                          | 交付形態                                             |
 | ---------- | ------------------------------------------------- | ---------------------------------------------------- |
@@ -144,9 +144,9 @@ Spanner / Cosmos DB 的重點是 global data responsibility。Spanner 應教 Tru
 
 CockroachDB 的重點是 distributed SQL 對 application contract 的影響。SQL 相容降低導入門檻，但 transaction retry、range lease、hot range、schema feature gap 與 multi-region topology 會改變 application 與 SRE 的責任。
 
-## LLM-depth 下一輪擴章 Backlog
+## 各服務的下一篇 deep article 與 playbook 候選
 
-LLM-depth 下一輪的責任是把每個資料庫服務從 T1 overview 推進到可教學的章節群。Overview 只回答第一輪服務判斷；deep article 回答穩定運作與排錯；migration playbook 回答跨 vendor、跨 topology 或跨 operational model 變更。
+這一輪擴章的責任是把每個資料庫服務從 overview 推進到可教學的章節群。Overview 只回答第一輪服務判斷；deep article 回答穩定運作與排錯；migration playbook 回答跨 vendor、跨 topology 或跨 operational model 變更。
 
 | 服務        | 目前狀態           | 下一篇 deep article                                                                                                                                                                     | 升級 playbook 候選                                                                                                                                                 |
 | ----------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -171,4 +171,4 @@ Backlog 的排序以學習梯度為準。SQLite 先處理單檔案正式狀態�
 - 案例提供壓力、失敗代價或回退條件，不只列公司名稱。
 - 「何時不用」或 no-go condition 已出現在 deep article / migration playbook。
 - Time-sensitive vendor claim 有日期語境或指向官方文件。
-- 下一步路由能接回主章、knowledge card、04 / 06 / 08 / 09 或 sibling vendor。
+- 下一步路由能接回主章、knowledge card、可觀測性平台、可靠性驗證流程、事故處理與復盤、效能工程與容量規劃模組，或 sibling vendor。

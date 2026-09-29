@@ -22,30 +22,42 @@ tags: ["backend", "database", "security", "red-team"]
 
 ## DB 攻擊面的外圍層次
 
-DB 攻擊面分三層、每層有典型攻擊向量跟防禦邊界、紅隊盤點要逐層檢查。傳統做法常把 90% 精力放在最內層 DB、外圍兩層的失守會讓內層防禦變成無效投資。
+DB 攻擊面由內到外分成 DB 本身、DB 周邊產品、認證信任根，每一層有典型攻擊向量跟防禦邊界、紅隊盤點要逐層檢查。盤點若只做 DB 本身（SQL injection、帳號權限、加密設定），DB 周邊產品與認證信任根的失守會讓 DB 本身的防禦變成無效投資。
 
-**Layer 1：DB 本身**（最直接、防禦最成熟）— SQL injection、authentication、authorization、RLS 都在這層。
+**DB 本身**（最直接、防禦最成熟）— SQL injection、authentication、authorization、RLS 都在這層。
 
-**Layer 2：DB 周邊產品**（最常被忽略）— file transfer service（MFT）、API gateway、search proxy、admin console 都「接 DB」、且通常 perimeter 設定比 DB 鬆。對應 [MOVEit 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/) — MOVEit Transfer 是 file transfer 產品、漏洞讓攻擊者直接存取後端資料、屬於 edge-exposure 類別的批量利用事件。判讀重點：任何「接 DB」的產品都屬於 DB 攻擊面、要盤 *所有上游 caller 產品*。類似結構還有 [GoAnywhere MFT 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/goanywhere-mft-2023-exfiltration-chain/)、[Progress WS_FTP 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/progress-wsftp-2023-file-service-breach/)。
+**DB 周邊產品**（最常被忽略）— file transfer service（MFT）、API gateway、search proxy、admin console 都「接 DB」、且通常 perimeter 設定比 DB 鬆。對應 [MOVEit 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/) — MOVEit Transfer 是 file transfer 產品、漏洞讓攻擊者直接存取後端資料、屬於 edge-exposure 類別的批量利用事件。判讀重點：任何「接 DB」的產品都屬於 DB 攻擊面、要盤 *所有上游 caller 產品*。類似結構還有 [GoAnywhere MFT 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/goanywhere-mft-2023-exfiltration-chain/)、[Progress WS_FTP 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/progress-wsftp-2023-file-service-breach/)。
 
-**Layer 3：認證信任根**（最致命、最少人想到）— signing key、token issuer、IAM [federation](/backend/knowledge-cards/federation/) 都決定「誰能宣稱是哪個 user」。對應 [Microsoft Storm-0558](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) — 簽章金鑰外洩後、攻擊者偽造可被驗證的身分權杖、application 層的 BOLA / BOPLA / RLS 都會在底層 trust 失守時被繞過。判讀重點：DB authorization 接受上游認證結果、上游 trust 失守時、DB 層的精緻設計就被旁路掉。
+**認證信任根**（最致命、最少人想到）— signing key、token issuer、IAM [federation](/backend/knowledge-cards/federation/) 都決定「誰能宣稱是哪個 user」。對應 [Microsoft Storm-0558](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) — 簽章金鑰外洩後、攻擊者偽造可被驗證的身分權杖、application 層的 BOLA / BOPLA / RLS 都會在底層 trust 失守時被繞過。判讀重點：DB authorization 接受上游認證結果、上游 trust 失守時、DB 層的精緻設計就被旁路掉。
 
-**設計含義**：紅隊盤點順序是由外向內。先盤「誰能通過認證」（trust root）、再盤「通過認證後能打到哪些產品」（caller surface）、最後盤「打到 DB 後能做什麼」（DB authorization）。三層任一失守、後續層的防禦投資都會被旁路。
+**設計含義**：紅隊盤點順序是由外向內。先盤認證信任根（誰能通過認證）、再盤 DB 周邊產品（通過認證後能打到哪些產品）、最後盤 DB 本身（打到 DB 後能做什麼）。任一層失守、比它更內側的各層的防禦投資都會被旁路。
 
-## 攻擊模式 1：注入類
+## 注入類攻擊
 
 **SQL Injection**：
 
 - 經典攻擊、把 user input 拼進 SQL 字串
 - 防禦：parameterized query / prepared statement、絕不字串拼接
-- 二階注入：input 已存進 DB、後續 query 時才觸發 — 比一階更難偵測
 
 **NoSQL Injection**：
 
 - MongoDB / DynamoDB 也可能被注入（不同形式）
-- MongoDB：`{$where: ...}` operator injection、`{$ne: null}` 跳過 auth
+- MongoDB：`{$where: ...}` operator injection、用 `{$ne: null}` 這類 operator 物件跳過密碼比對
 - DynamoDB：FilterExpression 注入（少見、需要特定 application 結構）
 - 防禦：白名單 user input、不直接組 query operator
+
+MongoDB 的登入端點把 request body 的欄位原樣放進查詢條件時，`password` 欄位收到的若是 operator 物件而不是字串，查詢比對的就不再是密碼：
+
+```javascript
+db.users.insertOne({username: "alice", password: "s3cret"});
+// 攻擊者送出的 request body：password 欄位是 operator 物件，不是字串
+const body = JSON.parse(`{"username": "alice", "password": {"$ne": null}}`);
+// 登入端點把 body 的欄位原樣放進查詢條件
+// password 的條件變成「不等於 null」，有設密碼的 alice 就符合，回傳 alice 的文件
+db.users.findOne({username: body.username, password: body.password});
+// 修法：組查詢前確認 password 是字串；operator 物件在這一步得到 false、被拒絕
+typeof body.password === "string";
+```
 
 **ORM Injection**：
 
@@ -53,17 +65,46 @@ DB 攻擊面分三層、每層有典型攻擊向量跟防禦邊界、紅隊盤�
 - 用 `where` clause 接 user input 不過濾、ORM 不會自動防
 - 防禦：永遠 parameterized、`Raw()` 必須 review
 
-**Second-order Injection**：
+**Second-order Injection**（二階注入）：
 
-- 第一次寫入時看起來安全、第二次讀出來時觸發
-- 例：username 帶 SQL fragment、寫入時 escape、後續 admin 查詢時不 escape
+- 寫入時用參數化查詢、看起來安全；資料之後被讀出來拼進另一段 query 時才觸發，比寫入當下就觸發的注入更難偵測
 - 防禦：*所有* DB output 都當 untrusted、不能依賴「寫入時的 escape」
 
-**真實事件對照**：[MOVEit 2023 mass exfiltration](/backend/07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/) 是 SQL injection 升級成 mass data exfil 的代表性事件。Progress Software 的 MOVEit Transfer 是 file transfer 產品、漏洞讓未認證攻擊者直接打到後端 DB、跨上百家客戶持續外洩。判讀重點：file transfer 這類「次要產品」也接 DB、且因為通常 perimeter 設定鬆、變成最先被打的點。
+下面用 Python 的 `sqlite3` 模組示範：註冊端點安全地存下一個帶 SQL 片段的 username，admin 報表把讀出來的 username 拼進查詢字串時，片段才被執行。
+
+```python
+import sqlite3
+
+db = sqlite3.connect(":memory:")
+db.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, email TEXT)")
+db.execute("INSERT INTO users (username, email) VALUES ('alice', 'alice@example.com')")
+db.execute("INSERT INTO users (username, email) VALUES ('bob', 'bob@example.com')")
+
+# 註冊端點：用參數化查詢寫入，username 原樣存進資料表，這一步沒有注入
+signup_name = "x' OR '1'='1"
+db.execute("INSERT INTO users (username, email) VALUES (?, ?)",
+           (signup_name, "attacker@example.com"))
+
+# admin 報表：從資料表讀出 username，再用字串拼接組下一段查詢
+stored_name = db.execute(
+    "SELECT username FROM users WHERE email = 'attacker@example.com'").fetchone()[0]
+report_sql = "SELECT username, email FROM users WHERE username = '" + stored_name + "'"
+print(report_sql)
+# SELECT username, email FROM users WHERE username = 'x' OR '1'='1'
+print(db.execute(report_sql).fetchall())
+# 回傳 alice、bob 與攻擊者自己三列：存進去的片段在這裡變成了條件
+
+# 修法：讀出來的值同樣走參數化查詢
+print(db.execute("SELECT username, email FROM users WHERE username = ?",
+                 (stored_name,)).fetchall())
+# 只回傳攻擊者自己那一列
+```
+
+**真實事件對照**：[MOVEit 2023 mass exfiltration](/backend/07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/) 是 SQL injection 升級成 mass data exfil 的代表性事件。Progress Software 的 MOVEit Transfer 是 file transfer 產品、SQL injection 漏洞讓未認證攻擊者直接打到後端 DB、跨上百家客戶持續外洩。這是 DB 周邊產品失守的實例：perimeter 設定比 DB 鬆的 file transfer 產品成為最先被打的點。
 
 對應 [Attack Surface 卡片](/backend/knowledge-cards/attack-surface/) 跟 [7.3 entrypoint security](/backend/07-security-data-protection/entrypoint-and-server-protection/)。
 
-## 攻擊模式 2：授權繞過類
+## 授權繞過類攻擊
 
 **BOLA**（Broken Object Level Authorization）：
 
@@ -92,9 +133,9 @@ DB 攻擊面分三層、每層有典型攻擊向量跟防禦邊界、紅隊盤�
 - 常見錯誤：忘了 `WHERE tenant_id = ?`、用 application 層而非 DB 層強制
 - 進階防禦：Row-Level Security（PostgreSQL RLS）、由 DB 強制 tenant boundary
 
-**真實事件對照**：[Snowflake 2024 credential abuse](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/) 揭露 *資料平台帳號沒強制 MFA* 的代價、攻擊者拿到外洩 credential 後直接 query 多家客戶的 Snowflake account、大量外送資料。判讀重點：DB 認證 = 資料邊界、但雲端資料平台預設未必開 MFA、要主動 enforce。對應 [Microsoft Storm-0558 紅隊版](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) — signing key 洩漏後攻擊者直接以任意 user 身份查任意 mailbox、application 層 BOLA / BOPLA 全部失效、因為攻擊者通過了底層 trust boundary。
+**真實事件對照**：這一節的檢查都接受上游認證結果，身分本身被冒用時一起失效。[Snowflake 2024 credential abuse](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/) 是憑證外洩的例子：攻擊者拿到外洩 credential 後直接 query 多家客戶的 Snowflake account、大量外送資料，防護設計見〈認證 + 網路雙重防護〉。[Microsoft Storm-0558 紅隊版](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) 是認證信任根失守的例子：signing key 洩漏後攻擊者以任意 user 身份查任意 mailbox，application 層的 BOLA / BOPLA 檢查全部照常通過。
 
-## 攻擊模式 3：資料外洩類
+## 資料外洩類攻擊
 
 **Excessive Data Exposure**：
 
@@ -114,7 +155,7 @@ DB 攻擊面分三層、每層有典型攻擊向量跟防禦邊界、紅隊盤�
 - DB backup 沒加密、放公開 S3 bucket
 - 客服 / BI 工具導出 CSV、檔案被搬到不該的地方
 - 防禦：backup encryption、export audit、emit-once endpoint
-- **真實事件對照**：[LastPass 2022 backup chain](/backend/07-security-data-protection/red-team/cases/data-exfiltration/lastpass-2022-backup-chain/) — 開發環境被入侵後、攻擊者沿著 *備份路徑* 拿到 production vault backup、雖然 vault 內容是加密的、但 master password 弱的客戶可被離線爆破。判讀重點：備份檔案的 *存放位置* 跟 *加密狀態* 是攻擊面、不只 production DB。
+- **真實事件對照**：[LastPass 2022 backup chain](/backend/07-security-data-protection/red-team/cases/data-exfiltration/lastpass-2022-backup-chain/) — 開發環境被入侵後、攻擊者沿著 *備份路徑* 拿到 production vault backup、雖然 vault 內容是加密的、但 master password 弱的客戶可被離線爆破。備份路徑的權限設計見〈備份 vs 正式環境的權限獨立性〉。
 
 **Support Tool Path**：
 
@@ -125,13 +166,40 @@ DB 攻擊面分三層、每層有典型攻擊向量跟防禦邊界、紅隊盤�
 
 對應 [7.4 data protection and masking](/backend/07-security-data-protection/data-protection-and-masking-governance/) 跟 [7.7 audit trail](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)。
 
-## 攻擊模式 4：競態 / TOCTOU 類
+## 競態 / TOCTOU 類攻擊
 
 **TOCTOU**（Time of Check Time of Use）：
 
-- 檢查時是 A 狀態、用的時候是 B 狀態
+- 檢查時讀到的狀態、到使用時已經被別的 transaction 改掉
 - 例：先 SELECT 確認 user 有 100 credit、再 UPDATE 扣 100、中間有別的 transaction 改了 credit
-- 防禦：用 `SELECT ... FOR UPDATE` 鎖、或用 atomic operation（`UPDATE ... WHERE credit >= 100`）
+- 防禦：用 `SELECT ... FOR UPDATE` 鎖、或用 atomic operation（把檢查寫進 UPDATE 的條件）
+
+下面的 PostgreSQL 示範讓兩個 session 同時執行同一段交易（實測時在 SELECT 與 UPDATE 之間加一行 `SELECT pg_sleep(2);`，讓兩個 session 交錯）：
+
+```sql
+CREATE TABLE accounts (user_id int PRIMARY KEY, credit int NOT NULL);
+INSERT INTO accounts VALUES (1, 100);
+
+-- 有競態的寫法：兩個 session 同時跑這一段
+BEGIN;
+SELECT credit FROM accounts WHERE user_id = 1;   -- 兩個 session 都讀到 100，應用程式都判定夠扣
+UPDATE accounts SET credit = credit - 100 WHERE user_id = 1;
+COMMIT;
+-- 兩段都 commit 之後 credit 是 -100
+
+-- 加鎖的寫法：FOR UPDATE 讓後到的 session 等先到的 commit
+BEGIN;
+SELECT credit FROM accounts WHERE user_id = 1 FOR UPDATE;
+-- 先到的 session 讀到 100；後到的等對方 commit 之後才讀到 0，應用程式據此拒絕扣款
+UPDATE accounts SET credit = credit - 100 WHERE user_id = 1;
+COMMIT;
+
+-- atomic 寫法：檢查寫進 UPDATE 的條件，不另外讀
+UPDATE accounts SET credit = credit - 100 WHERE user_id = 1 AND credit >= 100;
+-- 第一次回 UPDATE 1
+UPDATE accounts SET credit = credit - 100 WHERE user_id = 1 AND credit >= 100;
+-- 第二次回 UPDATE 0：應用程式看影響列數判斷扣款失敗，credit 停在 0
+```
 
 **Double-spend 攻擊**：
 
@@ -144,7 +212,7 @@ DB 攻擊面分三層、每層有典型攻擊向量跟防禦邊界、紅隊盤�
 - 註冊：兩個 request 同時用同一個 email、可能都成功
 - 防禦：unique constraint 在 DB 層、不只 application 層 check
 
-## 攻擊模式 5：DoS / 資源耗盡類
+## DoS / 資源耗盡類攻擊
 
 **Unrestricted Resource Consumption**：
 
@@ -196,9 +264,9 @@ DB 事故的處置三角是 *同步* 執行三件事、共同消除攻擊者在�
 2. **Session / 憑證失效**：撤銷所有可能被攻擊者拿到的 session、token、credential
 3. **異常痕跡清查**：盤點攻擊者已經做了什麼、哪些資料動過、哪些 backdoor 留下
 
-同步執行的理由是 *攻擊者擁有平行能力*：用已拿到的 credential 在 patch 完成前重新進入、或用清查前還沒被發現的 backdoor 繞過修補。線性執行「先修漏洞、再失效憑證、再清查」會留下兩個時間窗、攻擊代價被放大。
+同步執行的理由是 *攻擊者擁有平行能力*：用已拿到的 credential 在 patch 完成前重新進入、或用清查前還沒被發現的 backdoor 繞過修補。線性執行「先修漏洞、再失效憑證、再清查」時，憑證失效之前攻擊者仍能用已拿到的 credential 重新進入、清查完成之前仍能走還沒被發現的 backdoor，這兩段時間窗都會放大攻擊代價。
 
-**對應 [MOVEit 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/)** — 公告漏洞到攻擊者大規模利用之間只有數小時、單純等 vendor 修補來不及。實務做法是：
+**對應 [MOVEit 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/)** — CL0P 從 2023 年 5 月 27 日起利用這個當時還未公開的 SQL injection 漏洞（CVE-2023-34362），攻擊早於 vendor 公告與修補，等 vendor patch 來不及。實務做法是：
 
 - **發布前**：對外服務建立 *即時隔離開關*、不等 vendor patch
 - **事故中**：先把入口下線（DNS 切走 / WAF rule 全擋）、同步進行 patch + token revoke + audit log review
@@ -210,13 +278,13 @@ DB 事故的處置三角是 *同步* 執行三件事、共同消除攻擊者在�
 
 紅隊檢查不只「找漏洞」、也要設計 *持續偵測*：
 
-### 1. Query audit
+### Query audit
 
 - DB query 寫進 audit log（誰、什麼時候、查了什麼）
 - 不只 admin tool、application 也要 audit
 - 對應 [Audit Log 卡片](/backend/knowledge-cards/audit-log/)
 
-### 2. Anomaly detection
+### Anomaly detection
 
 - 異常 query pattern（突然 SELECT 全表、跨 tenant 範圍）
 - 異常 export volume
@@ -234,13 +302,13 @@ Cross-tenant token 偵測是觀測單一 issuer 發出的 token 在不應跨域�
 
 這些維度都需要足夠歷史 telemetry 建立基線、新部署的 DB 在累積基線前處於偵測盲區、要靠 *絕對閾值* 補（例如「任何 user 單次查詢 > 1GB 都告警」、不等基線）。
 
-### 3. DB-level monitoring
+### DB-level monitoring
 
 - slow query log（可能是 attacker 在 enumerate）
 - failed login（DB 層 connection attempt）
 - privilege escalation event
 
-### 4. Periodic review
+### Periodic review
 
 - 每季 review role / permission
 - 每年 audit support tool access pattern
@@ -248,7 +316,7 @@ Cross-tenant token 偵測是觀測單一 issuer 發出的 token 在不應跨域�
 
 ## 認證 + 網路雙重防護
 
-DB 認證 = 資料邊界、但雲端資料平台（Snowflake、BigQuery、Cosmos DB）預設未必開 MFA、且 *網路層通常 open*（任何 IP 都能嘗試連線）。任一層失守、攻擊者就進來。
+DB 認證 = 資料邊界、但雲端資料平台（Snowflake、BigQuery、Cosmos DB）預設未必開 MFA、且 *網路層通常 open*（任何 IP 都能嘗試連線）。認證層與網路層都沒有設防時，一組外洩的 credential 就足以從任意 IP 登入。
 
 對應 [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/) — 外洩 credential + 未強制 MFA + 沒設 network policy → 攻擊者直接從任意 IP 用 leaked credential 登入、查多家 tenant 的資料。
 
@@ -258,7 +326,7 @@ DB 認證 = 資料邊界、但雲端資料平台（Snowflake、BigQuery、Cosmos
 - **認證層**：強制 MFA + 條件式存取（context-aware：時間 / 地點 / 裝置）— 即使網路層失守、credential 還要過 MFA
 - **應用層**：API key / service account 跟 user credential 分開、各有 lifecycle
 
-兩層獨立、單層失守仍能阻擋資料外送。資料平台預設應強制 MFA + network policy、把「credential 外洩 = 資料外送」這條捷徑切斷。
+網路層與認證層各自獨立設防，其中一層失守時另一層仍能阻擋資料外送。資料平台預設應強制 MFA + network policy、把「credential 外洩 = 資料外送」這條捷徑切斷。
 
 ## 批量憑證撤銷的工程能力
 
@@ -316,9 +384,9 @@ Long-lived repeatable export artifact 是事故後仍能持續產出資料的工
 
 ## 案例對照
 
-### 07 主案例（產品 / 平台事故）
+### 資安與資料保護模組的主案例（產品 / 平台事故）
 
-| 07 案例                                                                                                        | 跟資料層的關係                                           |
+| 案例                                                                                                           | 跟資料層的關係                                           |
 | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | [7.C1 Cloudflare Route Leak](/backend/07-security-data-protection/cases/cloudflare-route-leak-2026/)           | 控制面變更可能影響資料層存取                             |
 | [7.C2 Cloudflare Token 事件](/backend/07-security-data-protection/cases/cloudflare-control-plane-token-2023/)  | Token 洩漏 → DB 存取被濫用                               |
@@ -327,7 +395,7 @@ Long-lived repeatable export artifact 是事故後仍能持續產出資料的工
 | [7.C5 Okta Support System](/backend/07-security-data-protection/cases/okta-support-system-incident-2023/)      | support tool 洩漏 → 客戶資料被存取                       |
 | [7.C6 Okta Cross-Tenant](/backend/07-security-data-protection/cases/okta-cross-tenant-impersonation-2023/)     | tenant boundary 失守 → DB-level RLS 也擋不住             |
 
-### 07 紅隊案例（攻擊鏈 / 入侵路徑）
+### 資安與資料保護模組的紅隊案例（攻擊鏈 / 入侵路徑）
 
 | 紅隊案例                                                                                                                                                   | 攻擊鏈到資料層的路徑                                                        |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
@@ -342,15 +410,15 @@ Long-lived repeatable export artifact 是事故後仍能持續產出資料的工
 
 ## 跨模組路由
 
-1. 與 1.3 的交接：race condition / TOCTOU 用 [transaction boundary](/backend/01-database/transaction-boundary/) 的 isolation level 處理
-2. 與 1.4 的交接：repository adapter 應用 allowlist / parameterized query — [repository adapter](/backend/01-database/repository-adapter/)
-3. 與 1.8 的交接：state ownership 決定哪些資料需要嚴格存取控制 — [State Ownership](/backend/01-database/state-ownership-query-boundary/)
-4. 與 7.2 的交接：identity / authorization 邊界 — [Identity & Access Boundary](/backend/07-security-data-protection/identity-access-boundary/)
-5. 與 7.4 的交接：資料保護與遮罩 — [Data Protection and Masking](/backend/07-security-data-protection/data-protection-and-masking-governance/)
-6. 與 7.7 的交接：audit trail — [Audit Trail and Accountability Boundary](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)
-7. 與 7.13 的交接：detection coverage — [Detection Coverage and Signal Governance](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)
-8. 與 8.19 的交接：事故時的資料層判讀 — [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)
-9. 合規驅動的多 region 部署選型：[Aurora global database 多 region](/backend/01-database/vendors/aurora/global-database-multi-region/)、[Aurora 跨 AZ failover RTO](/backend/01-database/vendors/aurora/cross-az-failover-rto/)、[Data Residency 知識卡](/backend/knowledge-cards/data-residency/)
+- race condition / TOCTOU 的 isolation level 處理：[Transaction Boundary](/backend/01-database/transaction-boundary/)
+- repository adapter 套用 allowlist / parameterized query：[Repository Adapter](/backend/01-database/repository-adapter/)
+- state ownership 決定哪些資料需要嚴格存取控制：[State Ownership](/backend/01-database/state-ownership-query-boundary/)
+- identity / authorization 邊界：[Identity & Access Boundary](/backend/07-security-data-protection/identity-access-boundary/)
+- 資料保護與遮罩：[Data Protection and Masking](/backend/07-security-data-protection/data-protection-and-masking-governance/)
+- audit trail：[Audit Trail and Accountability Boundary](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)
+- detection coverage：[Detection Coverage and Signal Governance](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)
+- 事故時的資料層判讀：[Incident Decision Log](/backend/08-incident-response/incident-decision-log/)
+- 合規驅動的多 region 部署選型：[Aurora global database 多 region](/backend/01-database/vendors/aurora/global-database-multi-region/)、[Aurora 跨 AZ failover RTO](/backend/01-database/vendors/aurora/cross-az-failover-rto/)、[Data Residency 知識卡](/backend/knowledge-cards/data-residency/)
 
 ## 關聯卡片
 

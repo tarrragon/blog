@@ -8,13 +8,13 @@ tags: ["backend", "database", "oltp", "global", "consistency"]
 
 ## 概念定位
 
-全球分散式 OLTP 解決一個傳統 DB 做不到的問題：跨地理位置 *同時* 維持強一致性、低延遲、高可用性。[CAP 定理](/backend/knowledge-cards/cap/)過往把這視為「三選二」，但近 15 年的工程進展（Google Spanner、AWS Aurora DSQL、CockroachDB、Microsoft Cosmos DB 等）顯示「在投入 *專屬硬體* 或 *特殊演算法* 的條件下、可以同時拿到 strong consistency + global distribution + 可接受 latency」。
+本章整理跨 region 仍要維持強一致的 OLTP 系統：它們的工程設計、容量取捨、跟傳統 single-region OLTP 的差異。讀完後讀者能回答：什麼業務需求需要 [global OLTP](/backend/knowledge-cards/global-oltp/)、跨 region [quorum](/backend/knowledge-cards/quorum/) 的延遲代價、選 Spanner vs Aurora DSQL vs Cosmos DB 的決策依據。
 
-本章整理這類系統的工程設計、容量取捨、跟傳統 single-region OLTP 的差異。讀完後讀者能回答：什麼業務需求需要 [global OLTP](/backend/knowledge-cards/global-oltp/)、跨 region [quorum](/backend/knowledge-cards/quorum/) 的延遲代價、選 Spanner vs Aurora DSQL vs Cosmos DB 的決策依據。
+全球分散式 OLTP 要在跨地理位置的部署上 *同時* 維持強一致性、低延遲、高可用性，傳統 DB 做不到這一點。[CAP 定理](/backend/knowledge-cards/cap/)處理的是網路分區發生時 consistency 與 availability 只能擇一，延遲與一致性的取捨則由 PACELC 處理（兩者見〈CAP 跟 PACELC：理論工具〉）；近 15 年的工程進展（Google Spanner、AWS Aurora DSQL、CockroachDB、Microsoft Cosmos DB 等）顯示「在投入 *專屬硬體* 或 *特殊演算法* 的條件下、可以同時拿到 strong consistency + global distribution + 可接受 latency」。
 
-跟 [1.3 Transaction Boundary](/backend/01-database/transaction-boundary/) 的關係：1.3 處理 single-region OLTP 的 transaction 設計、本章處理 multi-region OLTP 的特殊取捨。
+single-region OLTP 的 transaction 設計在 [Transaction Boundary](/backend/01-database/transaction-boundary/)，本章處理 multi-region OLTP 的特殊取捨。
 
-跟 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) 的關係：1.10 KV 通常 [eventual consistency](/backend/knowledge-cards/eventual-consistency/) 全球分散容易、本章處理 *強一致* 全球分散的工程挑戰。
+KV 與 document DB 多半用 [eventual consistency](/backend/knowledge-cards/eventual-consistency/) 做全球分散、相對容易，它們的容量規劃在 [KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)；本章處理 *強一致* 全球分散的工程挑戰。
 
 ## CAP 跟 [PACELC](/backend/knowledge-cards/pacelc/)：理論工具
 
@@ -36,15 +36,15 @@ tags: ["backend", "database", "oltp", "global", "consistency"]
 - Cassandra、DynamoDB Global Tables：PA/EL — 永遠選快、付出可能不一致
 - Cosmos DB session：PA/EL 但對同一 session 內保持 EC — 妥協方案
 
-選 global DB 不是「哪個最好」、是「業務需要哪一邊」。金融交易、ticketing inventory、payment ledger 通常需要 EC；社群 feed、推薦、analytics 通常 EL 夠用。
+選 global DB 要問的是業務需要 EC 還是 EL，而不是哪個 DB 最好。金融交易、ticketing inventory、payment ledger 通常需要 EC；社群 feed、推薦、analytics 通常 EL 夠用。
 
 ## Spanner / [TrueTime](/backend/knowledge-cards/truetime/) 模型
 
 [Google Cloud Spanner](https://cloud.google.com/spanner) 是目前最成熟的 global strong-consistency OLTP。
 
-**TrueTime API**：用 GPS + 原子鐘提供「全球 *unambiguous* 時間戳」、解決分散式系統最難的問題之一 — 跨節點時序排序。
+**TrueTime API**：用 GPS + 原子鐘把每台機器的時鐘誤差限制在已知的上界內，API 回傳一個區間 [earliest, latest]，真實時間落在區間之內；Spanner 提交交易時等過這段不確定區間（commit wait），讓交易時間戳的先後與實際發生順序一致。這解決的是分散式系統最難的問題之一 — 跨節點時序排序。
 
-**[External consistency](/backend/knowledge-cards/external-consistency/)（線性化）**：用 TrueTime 保證「全球任何節點看到的交易順序、跟 wall clock 一致」。比 CAP 的 strong consistency 更強。
+**[External consistency](/backend/knowledge-cards/external-consistency/)**：用 TrueTime 保證「全球任何節點看到的交易順序、跟 wall clock 一致」。它比 CAP 的 strong consistency（linearizability）更強：linearizability 只規範單一物件的讀寫，external consistency 規範的是整筆交易的先後順序。
 
 **容量特性**（引自 [9.C10 Spanner 案例](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）：
 
@@ -59,7 +59,7 @@ tags: ["backend", "database", "oltp", "global", "consistency"]
 
 Spanner 用 Paxos + TrueTime 把 coordinator 變成「拓樸感知的多 leader」、每個 leader 只管自己 partition、不需要全域 coordinator。這層演算法 + 硬體（GPS + 原子鐘）配合、才達成線性擴展。
 
-**為什麼這個 frame 對選型重要**：讀「Spanner 撐 10 億 req/sec」不該理解成「能力差距」、而是「設計差距」— 傳統 OLTP 不是「沒它快」、是「結構上做不到線性」。如果業務未來會跨 region 擴展、必須在最初就選 [distributed SQL](/backend/knowledge-cards/distributed-sql/)、不是先用 PostgreSQL 再「之後加 sharding」。
+**線性擴展對選型的意義**：「Spanner 撐 10 億 req/sec」反映的是設計差距而不是能力差距 — 傳統 OLTP 有全域 coordinator，結構上做不到線性擴展。如果業務未來會跨 region 擴展、必須在最初就選 [distributed SQL](/backend/knowledge-cards/distributed-sql/)、不是先用 PostgreSQL 再「之後加 sharding」。
 
 **對等技術跟取捨**：
 
@@ -67,7 +67,7 @@ Spanner 用 Paxos + TrueTime 把 coordinator 變成「拓樸感知的多 leader�
 - **CockroachDB**：用 HLC（Hybrid Logical Clock）+ Raft、可在通用硬體上跑、但 cross-region linearizability 需要 OCC retry。
 - **TiDB**：用 TSO（Timestamp Oracle）服務發 global timestamp、TSO 本身是 single point、可用性要靠 TSO failover 設計。
 
-TrueTime 是 *專屬硬體投資*、其他方案是 *軟體 only*、兩者一致性保證等級類似、但運維成本跟認證難度差很大。可複製性低的 TrueTime 是 Google 的競爭優勢、不是普遍 best practice。
+TrueTime 是 *專屬硬體投資*、Aurora DSQL、CockroachDB、TiDB 是 *軟體 only*，硬體與軟體兩條路線的一致性保證等級類似、但運維成本跟認證難度差很大。可複製性低的 TrueTime 是 Google 的競爭優勢、不是普遍 best practice。
 
 **容量規劃**：
 
@@ -147,7 +147,7 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 - 已用 PostgreSQL → 選 CockroachDB / Aurora DSQL（migration 容易）
 - 已用 MySQL → 選 TiDB
 
-對應案例：[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 從 TiDB 遷出（理由不是 TiDB 不好、是 NewSQL 必須 over-provision、KV NoSQL 對該 workload 更划算）。
+對應案例：[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 從 TiDB 遷出，理由是分散式 SQL 的結構性 over-provision 對不需要 strong consistency 的 workload 不划算（見〈分散式 SQL 的 over-provision 屬結構性成本〉）。
 
 ## Cosmos DB multi-region write 模式
 
@@ -205,7 +205,7 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 
 ## 延遲代價：跨 region quorum 不可壓縮
 
-全球 strong consistency 必須付的延遲代價來自物理。光速跑跨大西洋（紐約 ↔ 倫敦 5500 km）大約 27ms one-way、實際網路延遲 70-90ms（含路由 / 處理）。任何 strong consistency 系統都不能比這個快。
+全球 strong consistency 必須付的延遲代價來自物理。光在光纖裡跑紐約 ↔ 倫敦（約 5500 km）單程大約 27ms、來回大約 54ms，實際網路的來回延遲是 70-90ms（含路由 / 處理）。一筆寫入要等跨大西洋的 quorum 確認時，strong consistency 系統的寫入延遲不會低於這個來回時間。
 
 **典型跨 region quorum latency**：
 
@@ -235,7 +235,7 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 
 **B2C 終端用戶**（社群、電商）：延遲代價是 *一次性跳離*。用戶等 1 秒會抱怨、等 3 秒會跳離；但完成一個操作就走、不會像 B2B 累積多次。容忍區間在 200ms-500ms、超過就掉 conversion。專屬訊號是「session bounce rate 跟 latency p99 高度相關」、不是看平均。
 
-**金融交易**（payment、trading）：延遲代價有兩面、是其他業務型態少見的結構。一面是用戶體驗（付款卡 = 結帳放棄）、另一面是 *系統正確性*（交易順序錯 = 對帳異常、稽核失敗）。後者讓金融業願意付 100-200ms 換 strong consistency、因為對帳成本遠高於延遲成本。專屬訊號是「願意接受比 B2C 更高的 latency budget、但拒絕任何 consistency 妥協」。對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個受監管市場的設計。
+**金融交易**（payment、trading）：延遲代價有兩面、是其他業務型態少見的結構。一面是用戶體驗（付款卡 = 結帳放棄）、另一面是 *系統正確性*（交易順序錯 = 對帳異常、稽核失敗）。系統正確性這一面的代價讓金融業願意付 100-200ms 換 strong consistency、因為對帳成本遠高於延遲成本。專屬訊號是「願意接受比 B2C 更高的 latency budget、但拒絕任何 consistency 妥協」。對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個受監管市場的設計。
 
 **IoT / Telemetry**：延遲幾乎無業務代價（資料晚 10 秒進來、報表還是準）、但 throughput 才是主導指標。原因是這類業務的價值來自 *大量裝置的聚合趨勢*、不是 *單一裝置即時回應*；只要事件最終到達且順序合理、晚一點不影響決策。專屬訊號是「百萬裝置同時上報、寫入吞吐才是 SLO、latency 不在 alert 條件裡」。選型上 KV 或時序 DB 比 strong-consistency OLTP 更划算。
 
@@ -263,7 +263,7 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 
 ## 可用性目標的成本曲線
 
-「我們要 99.99% 還是 99.999%」這個問題不該用直覺答、要先看每多一個 9 帶來的成本是多少。可用性是非線性、不是線性。
+「我們要 99.99% 還是 99.999%」這個問題不該用直覺答、要先看每多一個 9 帶來的成本是多少。可用性每多一個 9，成本的成長是非線性的。
 
 **九的數學意義**：
 
@@ -307,13 +307,13 @@ distributed SQL 跟 single-cluster SQL 之間還有一層：**多個獨立 clust
 
 **Hyperscale / Aurora 同類設計**（storage / compute 分離）：
 
-- AWS Aurora、Azure SQL Hyperscale、GCP AlloyDB、Spanner 都採類似工程哲學 — log-structured 分散式 storage + 獨立 compute scale
-- storage 最高通常 100 TB（Hyperscale）、超過要 sharding
+- AWS Aurora、Azure SQL Hyperscale、GCP AlloyDB 都採類似工程哲學 — log-structured 分散式 storage + 獨立 compute scale
+- 單一資料庫的 storage 有上限：Azure SQL Hyperscale 是 128 TB（Microsoft Learn〈What is the Hyperscale service tier?〉），超過要 sharding
 - compute 上限是 instance type（80 vCore 等）、超過要 sharding 或換 distributed SQL
 
 對應 [9.C32 Clearent](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) — 5 億筆/年支付交易、用 Hyperscale 撐單一 cluster、沒拆 sharding 是因為支付業需要 *跨 merchant 對帳一致性*、共用 OLTP 比拆 cluster 划算。
 
-**選 vendor 看生態、不看技術**：Hyperscale 跟 Aurora 工程哲學一致、選哪家取決於 application 已在哪個 cloud。AWS 客戶選 Aurora、Azure 客戶選 Hyperscale、GCP 客戶選 AlloyDB / Spanner。技術差異小、生態差異大（IAM 整合、observability tooling、計費綁定）。
+**選 vendor 看生態、不看技術**：Hyperscale 跟 Aurora 工程哲學一致、選哪家取決於 application 已在哪個 cloud。AWS 客戶選 Aurora、Azure 客戶選 Hyperscale、GCP 客戶選 AlloyDB。技術差異小、生態差異大（IAM 整合、observability tooling、計費綁定）。
 
 **業務一致性需求決定 sharding 粒度**：
 
@@ -322,7 +322,7 @@ distributed SQL 跟 single-cluster SQL 之間還有一層：**多個獨立 clust
 - **Sharding by tenant**（B2B SaaS）：每個 enterprise tenant 自己 cluster、適合 tenant 之間完全隔離、大客戶可能要求專屬 cluster。Query path 上、跨 tenant 查詢（例如平台級報表）要走 federated query 或 ETL 聚合、不能直接 join；運維 path 上、每個 tenant cluster 的容量規劃、backup、upgrade 都獨立、運維工時隨 tenant 數量線性成長。
 - **Sharding by region**（受監管產業）：每個合規市場自己 cluster、合規驅動、不是性能驅動。對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個市場各自獨立。
 
-判讀重點：sharding 不是「擴容到不夠才做」、是「業務模型決定的初始設計」。等到 single cluster 撐不住才開始 shard、會踩進「跨 shard 一致性」的工程地雷區、修改成本遠高於初期設計成本。Managed DB（Aurora、Hyperscale）的容量上限是 *已知* 的、設計時就該知道未來何時觸發 sharding。對應 [1.1 高併發資料存取](/backend/01-database/high-concurrency-access/) 的 storage 層 replication 段 — Hyperscale / Aurora / Spanner 同類設計的容量上限同樣是 sharding 觸發點。
+判讀重點：sharding 不是「擴容到不夠才做」、是「業務模型決定的初始設計」。等到 single cluster 撐不住才開始 shard、會踩進「跨 shard 一致性」的工程地雷區、修改成本遠高於初期設計成本。Managed DB（Aurora、Hyperscale）的容量上限是 *已知* 的、設計時就該知道未來何時觸發 sharding。對應 [1.1 高併發資料存取](/backend/01-database/high-concurrency-access/) 的 storage 層 replication 段 — Hyperscale / Aurora 同類設計的容量上限同樣是 sharding 觸發點。
 
 ## 案例對照
 

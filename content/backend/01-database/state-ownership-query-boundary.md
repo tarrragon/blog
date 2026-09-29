@@ -1,14 +1,14 @@
 ---
 title: "1.8 State Ownership 與 Query Boundary"
 date: 2026-05-13
-description: "正式狀態 vs 派生狀態的責任分層、CQRS / event sourcing / materialized view、四種 query 邊界"
+description: "正式狀態 vs 派生狀態的責任分層、CQRS / event sourcing / materialized view、交易 / 列表 / 報表 / 對帳查詢各自的邊界"
 weight: 8
 tags: ["backend", "database", "state", "query-boundary"]
 ---
 
 State ownership 與 query boundary 的核心責任是先定義資料由誰承擔正式判斷、再定義不同查詢路徑能回答什麼問題。進入 MySQL、PostgreSQL、MSSQL 或其他資料庫前、讀者需要先知道資料庫同時是儲存工具與服務狀態的責任邊界。
 
-本章從 source of truth 的責任分層開始、引入 CQRS / event sourcing / materialized view 等模式、最後處理四種 query 邊界的設計。讀完後讀者能回答：哪些資料是正式狀態、什麼時候該分讀寫 model、materialized view 怎麼用、replica lag 怎麼影響 query。
+本章的範圍是資料庫選型之前的責任劃分：哪些資料是正式狀態、讀寫模型要分到什麼程度（CQRS、event sourcing、materialized view），以及交易、列表、報表、對帳查詢各自的延遲與新鮮度要求。
 
 ## State Ownership
 
@@ -49,7 +49,7 @@ State ownership 的責任是判斷哪些資料是 [source of truth](/backend/kno
 
 ## CQRS 在資料庫情境的應用
 
-[CQRS](/backend/knowledge-cards/cqrs/) 的概念定義、設計判斷標準與代價見知識卡。本段聚焦在資料庫層面：state ownership 的決策如何影響你要不要分離讀寫模型。
+[CQRS](/backend/knowledge-cards/cqrs/) 的概念定義、設計判斷標準與代價見知識卡。本段聚焦在資料庫層面：state ownership 的決策如何影響要不要分離讀寫模型。
 
 State ownership 跟 CQRS 的交叉點是：當 canonical state 的 schema 為寫入正確性最佳化（normalize、強一致、transaction boundary 清楚），但讀取面的多種消費者各自需要不同的反正規化形狀（列表頁要扁平 summary、報表要聚合、搜尋要全文索引），canonical schema 無法同時服務這些讀取需求。這時候分離 write model 跟 [read model](/backend/knowledge-cards/read-model/) 是解決形狀不對稱的方式。
 
@@ -69,7 +69,7 @@ State ownership 跟 CQRS 的交叉點是：當 canonical state 的 schema 為寫
 
 Event sourcing 把 state ownership 的正式紀錄從 mutable row 改成 append-only [event log](/backend/knowledge-cards/event-log/)。這個改變影響本章的每一個面向：
 
-**對 canonical / derived 分類的影響**：採用 event sourcing 後，event log 是 canonical state，current state 變成 derived state。這跟傳統 CRUD 架構相反 — 傳統架構中 current state（mutable row）是 canonical，歷史紀錄（audit log）是 derived。
+**對 canonical / derived 分類的影響**：採用 event sourcing 後，event log 是 canonical state，current state 變成 derived state。傳統 CRUD 架構的分配方式不同 — current state（mutable row）是 canonical，歷史紀錄另外寫進 audit log；audit log 無法從 current state 推算回來，所以它不符合本章對 derived state 的定義，是與 current state 並存的另一份紀錄。
 
 **對 query boundary 的影響**：event log 不適合直接服務交易查詢跟列表查詢（每次 replay 整條事件流太慢）。Event sourcing 幾乎必然搭配 [projection](/backend/knowledge-cards/projection/) 維護 read model — projection 持續消費事件流、更新反正規化的查詢 view。交易查詢讀 projection 的輸出而非直接讀 event log。
 
@@ -81,22 +81,48 @@ Event sourcing 的設計門檻在於 projection 的維護跟 event schema evolut
 
 [Materialized view](/backend/knowledge-cards/materialized-view/) 的概念定義見知識卡。本段聚焦在 OLTP 資料庫裡 materialized view 作為最輕量 read model 的具體實作。
 
-Materialized view 是「同 DB 內最簡單的讀寫分離」。不需要事件同步、不需要獨立 read store、不需要 projection consumer — 資料庫自己定期執行查詢、存放結果。
+Materialized view 是「同 DB 內最簡單的讀寫分離」。不需要事件同步、不需要獨立 read store、不需要 projection consumer — 資料庫在每次 refresh 時執行一次定義它的查詢、把結果存下來，讀取時直接讀存下來的結果。PostgreSQL 不會自己排程 refresh：`REFRESH MATERIALIZED VIEW` 要由排程工具或應用程式發出，兩次 refresh 之間 base table 的寫入不會反映在 view 上（見下方區塊）。
 
 **跟 regular view 的差別**：regular view 是 SQL 別名，每次 query 重跑底層查詢；materialized view 有實體儲存，query 時直接讀預計算結果。差別在 query-time cost — 複雜 JOIN / aggregation 重複跑時，materialized view 把計算推到 refresh 時、query 時接近零成本。
 
 **Refresh 策略**：
 
-- **全量 refresh**：PostgreSQL 的 `REFRESH MATERIALIZED VIEW`，refresh 期間 view 預設 unavailable。
-- **Concurrent refresh**：PostgreSQL 的 `CONCURRENTLY` 模式，refresh 期間 view 仍可讀但資料可能 stale。
-- **增量 refresh**：PostgreSQL 的 `pg_ivm`、Oracle 的 fast refresh — 只更新變更的部分，成本低但配置複雜。
+- **全量 refresh**：PostgreSQL 的 `REFRESH MATERIALIZED VIEW` 重跑整段查詢；執行期間 view 被鎖住，其他連線的讀取要等 refresh 完成。
+- **Concurrent refresh**：PostgreSQL 的 `REFRESH MATERIALIZED VIEW CONCURRENTLY`，refresh 期間 view 仍可讀、讀到的是 refresh 之前的結果；前提是 view 上有一個不帶 WHERE 的 unique index。
+- **增量 refresh**：PostgreSQL 的 `pg_ivm` 擴充、Oracle 的 fast refresh — 只更新變更的部分，成本低但配置複雜。
 - **Trigger-based**：特定 event 觸發 refresh，適合低頻變更的資料。
 
-**在 state ownership 的定位**：materialized view 是 derived state，修復方式是 refresh（重建）而非直接修改。大量 materialized view 會拖累寫入吞吐 — 每次 base table 變更都可能觸發 refresh 計算。設計時要平衡 refresh 頻率跟 query freshness 需求。
+下面以 PostgreSQL 16 實際跑過：
+
+```sql
+CREATE TABLE orders (id int PRIMARY KEY, tenant_id int);
+INSERT INTO orders SELECT g, g % 3 FROM generate_series(1, 250) AS g;
+CREATE MATERIALIZED VIEW order_summary AS
+  SELECT tenant_id, count(*) AS n FROM orders GROUP BY tenant_id;
+SELECT n FROM order_summary WHERE tenant_id = 0;   -- 83
+
+-- base table 的寫入不會觸發 refresh，view 維持上一次 refresh 的結果
+INSERT INTO orders VALUES (1000, 0);
+SELECT n FROM order_summary WHERE tenant_id = 0;   -- 仍是 83
+
+-- view 上沒有 unique index 時，CONCURRENTLY 被拒絕
+REFRESH MATERIALIZED VIEW CONCURRENTLY order_summary;
+-- ERROR:  cannot refresh materialized view "public.order_summary" concurrently
+-- HINT:  Create a unique index with no WHERE clause on one or more columns of the materialized view.
+CREATE UNIQUE INDEX ON order_summary (tenant_id);
+REFRESH MATERIALIZED VIEW CONCURRENTLY order_summary;
+SELECT n FROM order_summary WHERE tenant_id = 0;   -- 84
+
+-- 全量 refresh 所在的交易還沒結束時，另一個連線設了 lock_timeout = '1s' 去讀 view：
+--   ERROR:  canceling statement due to lock timeout
+-- 同樣情況換成 CONCURRENTLY，另一個連線的讀取立刻回傳
+```
+
+**在 state ownership 的定位**：materialized view 是 derived state，修復方式是 refresh（重建）而非直接修改。PostgreSQL 內建的 materialized view 不在寫入路徑上（上方區塊裡插入新訂單之後 view 沒有變），成本落在每次 refresh 重跑整段查詢；會把計算加到 base table 每一次寫入上的是增量 refresh 與由寫入觸發的 trigger-based refresh，採用這兩種策略時 materialized view 越多、寫入吞吐越低。設計時要平衡 refresh 頻率跟 query freshness 需求。
 
 **跟觀測領域的對照**：觀測領域的 [recording rule](/backend/knowledge-cards/recording-rule/) 在概念上等同於 TSDB 層的 materialized view — 定期執行 query expression、把結果寫成新 series。兩者面對同樣的設計問題：refresh 頻率、freshness lag、維護成本與儲存增長。觀測領域的 CQRS 特化應用見 [4.23 觀測查詢設計](/backend/04-observability/observability-query-design/)。
 
-## Query Boundary 四種
+## 交易、列表、報表與對帳查詢的 Query Boundary
 
 Query boundary 的責任是讓不同查詢路徑承擔不同服務問題。交易查詢、列表查詢、報表查詢與對帳查詢都可能讀同一張表、但它們的正確性、延遲與資料新鮮度要求不同。
 

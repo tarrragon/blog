@@ -8,7 +8,7 @@ tags: ["backend", "security", "case-study", "red-team"]
 
 ## 事故摘要
 
-2023 年 5 到 6 月，MOVEit Transfer 事件顯示，對外檔案傳輸服務在漏洞公開後可被快速批量利用並造成資料外送。
+2023 年 5 到 6 月，MOVEit Transfer 事件顯示，對外檔案傳輸服務的漏洞在公開之前就被批量利用並造成資料外送：CISA AA23-158A 記載 CL0P 從 2023 年 5 月 27 日起利用當時未公開的 SQL injection 漏洞（CVE-2023-34362）。
 
 **本案例的演示焦點**：邊界 zero-day → 邊界設備 / 對外應用入口接管 → 內部資源 / 會話 / 資料的橫向擴散。屬於 edge-exposure 類別、跟身分鏈接管 / 供應鏈植入 / 資料外送等其他 case category 形成互補視角。
 

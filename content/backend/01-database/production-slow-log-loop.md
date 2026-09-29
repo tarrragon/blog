@@ -6,15 +6,15 @@ weight: 14
 tags: ["backend", "database", "slow-log", "observability", "ops-loop"]
 ---
 
-[1.13 應用層查詢反模式](/backend/01-database/query-anti-patterns/) 列出了 query 反模式清單跟每請求預算、但沒覆蓋一件事：**production slow log 怎麼從「事故時才看」變成「定期審視能 catch 反模式」**。本章把 slow log 包成 closed loop — 採集、分析、PR review 整合、regression 偵測四個動作串起來、讓反模式在進 production 之前就被攔下。
+這篇整理把 production slow log 做成定期審視閉環的做法：採集、normalize 與聚合、接進 PR review、regression 偵測。閉環要攔的是 [1.13 應用層查詢反模式](/backend/01-database/query-anti-patterns/) 列出的那些查詢反模式，目標是在它們影響使用者之前發現。
 
-## Slow log 的兩種讀法
+## Slow log 可以當事故診斷工具讀，也可以當定期審視訊號讀
 
 多數團隊把 slow log 當「事故診斷工具」— 服務變慢時去翻一下、找出當下的罪魁禍首。這條讀法在事故時有效、但有 systemic 缺陷：所有 catch 到的反模式都已經影響使用者一段時間。
 
 另一條讀法是把 slow log 當「定期審視訊號」— 每週 / 每 release cycle 抓 slow log top-N、看哪些 query 模式持續存在、哪些是新出現的。這條讀法的關鍵在於「對比基線」、不是「找絕對閾值」。
 
-兩種讀法的對比決定了 closed loop 的設計方向：
+事故診斷與定期審視兩種讀法的對比決定了 closed loop 的設計方向：
 
 | 維度     | 事故診斷工具                    | 定期審視訊號                             |
 | -------- | ------------------------------- | ---------------------------------------- |
@@ -24,28 +24,56 @@ tags: ["backend", "database", "slow-log", "observability", "ops-loop"]
 | 介入點   | 事故發生後                      | 反模式被引入後、影響使用者前             |
 | 對應角色 | On-call / SRE                   | 整個團隊（每週輪流 review）              |
 
-定期審視這條讀法是本章的核心、後續四個動作都環繞它建立。
+定期審視這條讀法是本章的核心，採集、normalize 與聚合、PR review 整合、regression 偵測都環繞它建立。
 
-## Loop 第一步：採集
+## 採集
 
 Slow log 採集的設計關鍵是「採集標準要穩定、retention 要夠長」。常見的採集配置選擇：
 
-- **Threshold 設定**：MySQL `long_query_time`、PostgreSQL `log_min_duration_statement` 設多久才記？常見 default 1 秒太寬鬆、會漏掉「200ms-1s」這層慢但累積成大量壓力的 query。建議 100ms 或更低（依 application 需求）。
+- **Threshold 設定**：MySQL `long_query_time`、PostgreSQL `log_min_duration_statement` 決定多慢的 query 才記。兩家的預設都不能直接用：MySQL 8.4 的 slow log 預設關閉、`long_query_time` 預設 10 秒；PostgreSQL 16 的 `log_min_duration_statement` 預設 -1，也就是不記。門檻設在 1 秒以上會漏掉 200ms-1s 這層慢但累積成大量壓力的 query，建議 100ms 或更低（依 application 需求）：
+
+  ```sql
+  -- MySQL 8.4：開啟 slow log、門檻 100ms
+  SET GLOBAL slow_query_log = ON;
+  SET GLOBAL long_query_time = 0.1;
+  -- GLOBAL 的門檻只套用到之後建立的連線；已經開著的連線沿用舊門檻，連線池裡的長連線要重建才生效
+
+  -- PostgreSQL 16：寫進 postgresql.auto.conf，重新載入設定後生效
+  ALTER SYSTEM SET log_min_duration_statement = '100ms';
+  SELECT pg_reload_conf();
+  ```
+
 - **採集對象**：純 SELECT 慢？還是含 INSERT/UPDATE/DELETE？寫路徑慢通常代表 lock contention 或 transaction 範圍問題、跟讀路徑反模式不同、要分開分析。
 - **Retention**：log 保留多久？至少 30 天（覆蓋一個 sprint）、有資源的話 90 天（覆蓋季度 regression 對比）。雲端 managed DB（RDS / Aurora）的 slow log 通常自動匯出到 CloudWatch / S3、設定 retention policy 而不是依賴 DB instance 本身的 log。
-- **Sample rate**：高流量服務全採會把 disk I/O 拖垮。Production 環境用 sampling（如 10% 取樣）平衡採集完整度跟系統壓力。
+- **Sample rate**：高流量服務全數記錄會讓 disk I/O 成為瓶頸，取樣用來平衡採集完整度跟系統壓力，而能不能取樣看引擎。MySQL 8.4 社群版沒有 slow log 取樣的設定，只能靠門檻控制量；PostgreSQL 16 可以對落在兩個門檻之間的 query 取樣：
+
+  ```sql
+  -- PostgreSQL 16：超過 1 秒的全記；100ms 到 1 秒之間的抽 10% 記
+  ALTER SYSTEM SET log_min_duration_statement = '1s';
+  ALTER SYSTEM SET log_min_duration_sample = '100ms';
+  ALTER SYSTEM SET log_statement_sample_rate = 0.1;
+  SELECT pg_reload_conf();
+  ```
 
 採集出來的 raw log 不適合直接讀、要先 normalize。
 
-## Loop 第二步：Normalize 與聚合
+## Normalize 與聚合
 
 Raw slow log 每筆都帶具體參數（`WHERE user_id = 12345`、`WHERE user_id = 67890`），直接看會看到上千筆「不同 query」。實際上多數是同一個 query template 的不同參數實例。
 
-Normalize 動作把參數抽掉、留 query shape：
+Normalize 動作把參數抽掉、留 query shape：`WHERE user_id = 12345` 與 `WHERE user_id = 67890` 收成同一個 `WHERE user_id = ?`，字串常數同樣抽掉。`IN` 清單會不會收成同一個 shape 要看工具，PostgreSQL 16 的 `pg_stat_statements` 把每一種清單長度記成不同的 shape：
 
-- `WHERE user_id = 12345` → `WHERE user_id = ?`
-- `IN (1, 2, 3, 4, 5)` → `IN (?)`
-- 字串常數同樣抽掉
+```sql
+-- pg_stat_statements 要先在 shared_preload_libraries 載入，再執行 CREATE EXTENSION pg_stat_statements
+-- 依序執行過 id = 12345、id = 67890、id IN (1, 2, 3, 4, 5)、id IN (6, 7) 之後
+SELECT calls, query FROM pg_stat_statements WHERE query LIKE 'SELECT name FROM users%';
+--  calls | query
+--      2 | SELECT name FROM users WHERE id = $1
+--      1 | SELECT name FROM users WHERE id IN ($1, $2, $3, $4, $5)
+--      1 | SELECT name FROM users WHERE id IN ($1, $2)
+```
+
+同一段程式用不同長度的 `IN` 清單呼叫時，在這份統計裡分散成好幾列，看 Top-N 之前要把它們併起來算。
 
 工具上：MySQL 用 `pt-query-digest`（Percona Toolkit）；PostgreSQL 用 `pg_stat_statements` extension（已內建 normalize）；雲端用 vendor 工具（AWS Performance Insights、GCP Query Insights、Azure SQL Insights）。Normalize 後可以按 query shape 聚合、看哪些 shape 累計時間最長、出現次數最多、平均延遲最高。
 
@@ -55,9 +83,15 @@ Normalize 動作把參數抽掉、留 query shape：
 2. **Top-N by count**：出現次數最多的 query — 改一條就能降最多 connection 占用
 3. **Top-N by avg latency**：平均延遲最高的 query — 個別 request 體驗最差的
 
-三條訊號可能指向不同 query、各自值得 attention。
+三條訊號可能指向不同 query、各自值得 attention。在 PostgreSQL 上三條都從 `pg_stat_statements` 取，差別在排序欄位：
 
-## Loop 第三步：PR review 整合
+```sql
+SELECT calls, total_exec_time, query FROM pg_stat_statements ORDER BY total_exec_time DESC LIMIT 10;  -- Top-N by total time
+SELECT calls, total_exec_time, query FROM pg_stat_statements ORDER BY calls DESC LIMIT 10;            -- Top-N by count
+SELECT calls, mean_exec_time, query FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10;    -- Top-N by avg latency
+```
+
+## PR review 整合
 
 把 slow log 的 top-N 帶回 PR review 是 closed loop 的關鍵。常見三種整合機制：
 
@@ -67,7 +101,7 @@ Normalize 動作把參數抽掉、留 query shape：
 
 三層機制按介入點分層：PR check 是「進 production 前」、weekly review 是「進 production 後的固定盤點」、regression alert 是「漸進惡化的訊號偵測」。三層覆蓋率最高、單跑任一層都會漏。
 
-## Loop 第四步：Regression 偵測
+## Regression 偵測
 
 Slow log 的對比基線需要主動維護。沒有基線、定期審視會退化成「每次都看到同樣的 top-10、習以為常」。建立基線的常見做法：
 
@@ -75,7 +109,7 @@ Slow log 的對比基線需要主動維護。沒有基線、定期審視會退�
 - **資料量分位點 marker**：在 schema 加註「這張表預期 1M / 10M / 100M 行的 query 計畫」、實際成長到對應規模時驗證 plan 是否還對。Index 失效常常是「資料量過某個門檻、optimizer 改用 full scan」造成的。
 - **跨 release 趨勢圖**：把 slow log top-10 的累計時間做時序圖、看一年的趨勢。穩定升高代表反模式 / 資料成長壓力、突然升高代表新引入問題。
 
-Regression 偵測的 false-positive 風險是「業務本身在變、流量本身在長」、不是反模式造成的。用「query shape 佔比」而非「絕對延遲」當訊號可以降低 false positive — 某個 query shape 從佔 5% 變成佔 30%，不論絕對延遲是否升高、都值得審視。
+Regression 偵測的 false-positive 風險是「業務本身在變、流量本身在長」、不是反模式造成的。用「query shape 佔全部 query 累計時間的比例」而非「絕對延遲」當訊號可以降低 false positive — 某個 query shape 的累計時間從佔全部的 5% 變成佔 30%，不論絕對延遲是否升高、都值得審視。
 
 ## 判讀訊號
 
@@ -106,14 +140,14 @@ Regression 偵測的 false-positive 風險是「業務本身在變、流量本�
 - [9.C39 DoorDash：Aurora Postgres 寫入瓶頸](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) — 寫入飽和被識別為 vendor 層問題、但若 production slow log loop 早期就 catch 到 transaction 範圍跟熱 row 競爭、可能延後遷移時點。對照本章可問：DoorDash 在啟動遷移前、是否有定期 slow log review 機制？
 - [9.C14 Standard Chartered：合規驅動容量規劃](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 容量規劃以合規為驅動、但 query 預算假設若無 production 驗證、規劃出的 TPS 上限會偏低。對照本章「Regression 偵測」段：合規 cluster 是否有 query shape 趨勢圖？
 
-反向追問框架（per [#146](/report/case-misalignment-reverse-inquiry/)）：案例本身不直接示範 closed loop、但用「啟動 vendor 升級前、closed loop 能不能延後撞牆」這條追問、能看出 slow log loop 的事前價值。
+反向追問框架（見[案例庫不對齊章節主題時用反向追問取代強掛](/report/case-misalignment-reverse-inquiry/)）：案例本身不直接示範 closed loop、但用「啟動 vendor 升級前、closed loop 能不能延後撞牆」這條追問、能看出 slow log loop 的事前價值。
 
 ## 跨模組路由
 
-1. 與 [1.13 query 反模式](/backend/01-database/query-anti-patterns/) 的交接：1.13 給反模式清單、本章給「定期 catch 它們」的機制。
-2. 與 [04 observability](/backend/04-observability/) 的交接：slow log 採集跟聚合是 observability 的子問題、跨服務的 query trace 需要 04 的 telemetry pipeline。
-3. 與 [9.5 瓶頸定位](/backend/09-performance-capacity/bottleneck-localization/) 的交接：9.5 用 USE / RED method 定位、本章用 slow log 在 DB 層做更精細的 query-level 定位。
-4. 與 [06 reliability ci-pipeline](/backend/06-reliability/ci-pipeline/) 的交接：PR-level query budget check 是 CI 環節、屬 06 模組的 release gate 設計。
+1. 與 [1.13 query 反模式](/backend/01-database/query-anti-patterns/) 的交接：反模式清單在那一篇，「定期 catch 它們」的機制在本章。
+2. 與 [04 observability](/backend/04-observability/) 的交接：slow log 採集跟聚合是 observability 的子問題、跨服務的 query trace 需要可觀測性平台模組的 telemetry pipeline。
+3. 與 [9.5 瓶頸定位](/backend/09-performance-capacity/bottleneck-localization/) 的交接：瓶頸定位流程用 USE / RED method 定位、本章用 slow log 在 DB 層做更精細的 query-level 定位。
+4. 與 [06 reliability ci-pipeline](/backend/06-reliability/ci-pipeline/) 的交接：PR-level query budget check 是 CI 環節、屬可靠性驗證流程模組的 release gate 設計。
 
 ## 下一步路由
 

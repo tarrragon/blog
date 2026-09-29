@@ -8,7 +8,7 @@ tags: ["backend", "database", "reconciliation", "data-repair"]
 
 Reconciliation 與 data repair 的核心責任是把資料錯誤從模糊異常轉成可驗證、可修復、可稽核的流程。進入特定資料庫或 ORM 前、讀者需要先理解資料修復屬於正式狀態責任的一部分。
 
-本章從不一致分類開始、進入偵測模式（連續 vs scheduled）、處理修復策略（auto vs manual）、最後對接 audit trail 跟 backup recovery。讀完後讀者能設計：對帳機制、修復 runbook、evidence handoff、audit chain。
+本章涵蓋對帳作業的設計、不一致按成因的分類與偵測方式、修復的策略與執行控管，以及 audit、權限與 backup recovery 怎麼接進修復流程。
 
 ## Reconciliation
 
@@ -20,15 +20,15 @@ Reconciliation 的責任是比較兩個或多個資料來源、確認正式狀�
 
 設計對帳作業時、要先把這幾件事談清楚、再寫 query。少談任何一項、對帳結果都會在事故當下被質疑可信度。
 
-**來源 A 與來源 B**：明確指出哪個是內部 source of truth、哪個是外部事實。金流對帳的 A 是訂單表、B 是 provider 結算檔；庫存對帳的 A 是訂單庫存表、B 是倉儲 WMS 報表。兩邊都要有明確 owner、否則差異發生時沒人能解釋為何資料長那樣。
+**內部紀錄與外部事實**：對帳的兩個來源，一個是內部的 source of truth（本章稱內部紀錄）、一個是外部事實。金流對帳的內部紀錄是訂單表、外部事實是 provider 結算檔；庫存對帳的內部紀錄是訂單庫存表、外部事實是倉儲 WMS 報表。兩個來源都要有明確 owner、否則差異發生時沒人能解釋為何資料長那樣。
 
-**比對鍵（comparison key）**：A 跟 B 要用什麼欄位對齊。最理想是雙方共用的業務 ID（例如金流交易序號）；次優是 timestamp + 業務外鍵組合；最差是用 fuzzy matching（金額 + 時間範圍）、這時對帳結果天然帶有噪音、要在 output schema 標示信心度。
+**比對鍵（comparison key）**：內部紀錄跟外部事實要用什麼欄位對齊。最理想是雙方共用的業務 ID（例如金流交易序號）；次優是 timestamp + 業務外鍵組合；最差是用 fuzzy matching（金額 + 時間範圍）、這時對帳結果天然帶有噪音、要在 output schema 標示信心度。
 
 **時間窗（time window）**：對帳要對哪段時間的資料、什麼時候做。每日對帳通常設定 T-1 整天、跳過今天（避免 [in-flight](/backend/knowledge-cards/in-flight/) 資料）；分鐘級對帳要明確處理 in-flight：是排除最近 N 分鐘、還是允許重複跑直到收斂。在跨時區業務裡、時間窗要對齊雙方 timezone、不然每天差異會穩定出現在 0:00 前後。
 
-**差異分類規則**：mismatch 不是只有「不一致」一種。常見要再切：「A 有 B 沒有」（missing in B）、「B 有 A 沒有」（missing in A）、「兩邊都有但欄位不同」（value mismatch）、「同一個 key 在 A 有多筆」（duplicate）。每類差異的處理路徑跟 owner 都不同、不分類會讓修復決策無法分派。
+**差異分類規則**：mismatch 不是只有「不一致」一種。常見要再切：「內部紀錄有、外部事實沒有」（missing externally）、「外部事實有、內部紀錄沒有」（missing internally）、「兩個來源都有但欄位不同」（value mismatch）、「同一個比對鍵在內部紀錄有多筆」（duplicate）。每類差異的處理路徑跟 owner 都不同、不分類會讓修復決策無法分派。
 
-**Output schema**：對帳產出的不是「對 / 不對」、而是一份結構化報告。最少要有：mismatch 樣本（不是全部）、總筆數與金額影響、覆蓋率（總共比對了多少筆）、未覆蓋資料（哪些 A 或 B 沒涵蓋）、結果時間戳。這份報告會被 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 收進釋出證據鏈、結構不穩定會讓上游 release gate 拒絕採信。
+**Output schema**：對帳產出的不是「對 / 不對」、而是一份結構化報告。最少要有：mismatch 樣本（不是全部）、總筆數與金額影響、覆蓋率（總共比對了多少筆）、未覆蓋資料（內部紀錄或外部事實裡有哪些資料沒被這次比對涵蓋）、結果時間戳。這份報告會被 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 收進釋出證據鏈、結構不穩定會讓上游 release gate 拒絕採信。
 
 ### 對帳跟 anomaly detection 的差異
 
@@ -40,29 +40,29 @@ Reconciliation 的責任是比較兩個或多個資料來源、確認正式狀�
 
 兩者輸出格式也不同：對帳輸出 mismatch list、anomaly detection 輸出 confidence score。把兩者混在同一份報告會讓 incident reviewer 無法判斷哪些是必修、哪些是可疑。
 
-## 不一致的三種分類
+## 不一致按成因分類：時間性、結構性、語意
 
 不是所有「資料不一致」都一樣。按 *成因* 分三類、各有不同處理策略。
 
 ### Temporal Inconsistency（時間性不一致）
 
-- 來源：replication lag、async event delivery、[eventual consistency](/backend/knowledge-cards/eventual-consistency/)
-- 特徵：兩邊都是「對的」、只是 *時間點* 不同
+- 成因：replication lag、async event delivery、[eventual consistency](/backend/knowledge-cards/eventual-consistency/)
+- 特徵：互相比對的兩份資料都是「對的」、只是反映的 *時間點* 不同
 - 例：cache 跟 DB 看到不同 value（cache 還沒 invalidate）、replica 跟 primary 不同步
 - 處理：等待收斂或主動觸發 sync、不必修資料
 - 持續時間：通常 < 1 秒到分鐘級
 
 ### Structural Inconsistency（結構性不一致）
 
-- 來源：schema migration 期間、dual-write 失敗、partial write
-- 特徵：兩邊應該一致但實際不一致、其中一邊是 *錯的*
+- 成因：schema migration 期間、dual-write 失敗、partial write
+- 特徵：互相比對的兩份資料應該一致但實際不一致、其中一份是 *錯的*
 - 例：訂單寫進主表但 line items 沒寫、外鍵 reference 一個不存在的 row
 - 處理：必須修復、不能等
 - 持續時間：永久（直到修復）
 
 ### Semantic Inconsistency（語意不一致）
 
-- 來源：業務邏輯 bug、應用層 race condition、人工誤操作
+- 成因：業務邏輯 bug、應用層 race condition、人工誤操作
 - 特徵：資料結構 OK、但 *業務語意* 錯
 - 例：訂單付款狀態是 `paid` 但金流端是 `refunded`、帳戶餘額跟交易紀錄 sum 不符
 - 處理：複雜、需要業務判斷哪邊是 source of truth
@@ -97,7 +97,7 @@ Reconciliation 的責任是比較兩個或多個資料來源、確認正式狀�
 ### Reactive Detection（反應式偵測）
 
 - 用戶 / 客服回報後才查
-- 適合：尾長 inconsistency（找不到通用 pattern）
+- 適合：長尾（long-tail）inconsistency（找不到通用 pattern）
 - 成本：用戶體驗已受影響
 
 對應 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — migration 期間 [shadow read](/backend/knowledge-cards/shadow-read/) 持續對帳、抓 mapping 規則漂移。
@@ -114,7 +114,7 @@ Data repair 的責任是把已確認的資料差異修回正式狀態、並保�
 | 派生狀態重建 | 重建 index、cache、read model | 可能掩蓋正式狀態尚未修復       |
 | 補償動作     | 補退款、補發票、補通知        | 可能產生重複副作用             |
 
-修復前要先確認問題落在哪一層。正式欄位錯誤要修 source of truth；派生狀態錯誤要重建副本；外部副作用漏做要走補償流程。
+修復前要先確認錯誤落在哪裡：正式欄位錯誤要修 source of truth；派生狀態錯誤要重建副本；外部副作用漏做要走補償流程。
 
 欄位修復的判讀重點是 mapping 規則是否正確、因為錯誤規則會把單點差異擴成批次污染。派生狀態重建的判讀重點是 source of truth 是否已經正確、否則重建會複製錯誤。補償動作的判讀重點是副作用是否可逆、因為退款、通知或外部 webhook 可能已經被使用者或第三方看見。
 
@@ -122,20 +122,32 @@ Data repair 的責任是把已確認的資料差異修回正式狀態、並保�
 
 不管哪種修復、都遵守三個原則：
 
-### 1. Idempotency（冪等）
+### Idempotency（冪等）
 
 - 同樣的修復跑兩次、結果跟跑一次一樣
-- 用 `WHERE current_value != target_value` 而不是無條件 update
+- 修復寫成「設成目標值」、不寫成「在現值上加減」，再加上「現值還不是目標值」的條件，重跑時就不會再碰到已經修好的列（下方區塊以 SQLite 實際跑過，`accounts` 兩列的 balance 起始都是 500，另掛一個 AFTER UPDATE trigger 把每次更新寫進 `audit_log`）
+
+```sql
+-- 在現值上加減：跑兩次就補兩次
+UPDATE accounts SET balance = balance + 100 WHERE id = 1;   -- 跑兩次：500 → 600 → 700
+
+-- 寫成目標值：跑幾次都停在 600，但每跑一次都算改到 1 列，audit trigger 也每次都寫一筆
+UPDATE accounts SET balance = 600 WHERE id = 2;
+
+-- 目標值加上「現值還不是目標值」的條件：已經修好的列不再符合，改到 0 列，trigger 不觸發
+UPDATE accounts SET balance = 600 WHERE id = 2 AND balance <> 600;
+```
+
 - 補通知 / webhook 帶 idempotency key、第三方可去重
 - 對應 [Idempotency 卡片](/backend/knowledge-cards/idempotency/)
 
-### 2. Auditable（可稽核）
+### Auditable（可稽核）
 
 - 每次修復都有 record：誰、什麼時候、改了什麼、為什麼
 - 修復前 + 修復後的 snapshot 都要存
 - 對應 [Audit Log 卡片](/backend/knowledge-cards/audit-log/)、[1.5 Red Team](/backend/01-database/red-team-data-layer/) 的 audit 段
 
-### 3. Reversible（可逆）
+### Reversible（可逆）
 
 - 萬一修復是錯的、能回退到 before state
 - 不可逆操作（DELETE）必須有 dry-run、必須備份
@@ -145,7 +157,30 @@ Data repair 的責任是把已確認的資料差異修回正式狀態、並保�
 
 修復前要先回答「這次修復會碰多少筆、影響多少業務、最壞情況是什麼」、才能進入執行。直接跑 update 是 production-grade 流程的反例、即使在 incident 壓力下也不能跳過這步。
 
-**Dry-run 的責任**：把 update 改成 select、用同樣的 WHERE 條件、產出將被修改的資料樣本。Dry-run 結果要包含：影響筆數總計、影響金額或業務值（如果有）、affected tenant / user list 的抽樣、未涵蓋的邊界 case。Dry-run 跟正式修復必須共用 mapping 規則、否則 dry-run 結果無法當審核依據。
+**Dry-run 的責任**：用正式修復的同一段 WHERE 條件先跑 SELECT、產出將被修改的資料樣本，只讀不寫。Dry-run 結果要包含：影響筆數總計、影響金額或業務值（如果有）、affected tenant / user list 的抽樣、未涵蓋的邊界 case。Dry-run 跟正式修復必須共用 mapping 規則、否則 dry-run 結果無法當審核依據。下面以 PostgreSQL 16 實際跑過，修的是「provider 已經結算成功、訂單卻還停在 pending」的差異：
+
+```sql
+-- dry-run：影響筆數與影響金額
+SELECT count(*) AS affected_rows, sum(amount) AS affected_amount
+FROM orders
+WHERE status = 'pending'
+  AND payment_id IN (SELECT payment_id FROM provider_settlements WHERE result = 'captured');
+-- 2 | 500
+
+-- dry-run：給審核者看的樣本
+SELECT tenant_id, id, status, payment_id, amount
+FROM orders
+WHERE status = 'pending'
+  AND payment_id IN (SELECT payment_id FROM provider_settlements WHERE result = 'captured')
+ORDER BY tenant_id, id
+LIMIT 20;
+
+-- 正式修復：WHERE 條件與 dry-run 逐字相同，改到的列數與 dry-run 的筆數一致
+UPDATE orders SET status = 'paid'
+WHERE status = 'pending'
+  AND payment_id IN (SELECT payment_id FROM provider_settlements WHERE result = 'captured');
+-- UPDATE 2
+```
 
 **規模分級的執行策略**：影響筆數會決定執行方式。
 
@@ -164,7 +199,7 @@ Data repair 的責任是把已確認的資料差異修回正式狀態、並保�
 
 實務上常見的 repair pattern：
 
-### Pattern 1：條件式 UPDATE
+### 條件式 UPDATE
 
 最簡單也最安全的修復。
 
@@ -178,20 +213,38 @@ WHERE id = 12345
 
 `AND` 條件確保只在 *當前狀態符合預期* 時才改、避免 race condition。
 
-### Pattern 2：批次修復 + 節流
+### 批次修復 + 節流
 
-大量資料修復、必須節流避免影響 production。
+大量資料修復、必須節流避免影響 production：每批只改固定筆數，批與批之間停一段時間，直到沒有列可改。下面的迴圈以 PostgreSQL 16 實際跑過，263 筆待修的列分成 100、100、63 三批修完，第四次查不到可改的列而結束：
+
+```bash
+# 連線資訊由 PGHOST、PGUSER、PGDATABASE 等環境變數提供
+while true; do
+  n=$(psql -tA -c "
+    WITH batch AS (
+      SELECT id FROM orders WHERE status = 'broken' ORDER BY id LIMIT 100   -- 每批 100 筆
+    ), fixed AS (
+      UPDATE orders SET status = 'fixed'
+      WHERE id IN (SELECT id FROM batch)
+      RETURNING 1
+    )
+    SELECT count(*) FROM fixed;")
+  echo "本批修了 $n 筆"
+  [ "$n" -eq 0 ] && break    # 沒有列可改就結束
+  sleep 1                    # 批與批之間停 1 秒
+done
+```
+
+MySQL 不接受在 `IN` 子查詢裡寫 `LIMIT`（MySQL 8.4 回 `ERROR 1235 (42000): This version of MySQL doesn't yet support 'LIMIT & IN/ALL/ANY/SOME subquery'`），單表的批次改用 `UPDATE` 自帶的 `LIMIT`，迴圈的結束條件看 `ROW_COUNT()`：
 
 ```sql
--- 每批 100 筆、間隔 1 秒
-UPDATE orders SET status = 'fixed'
-WHERE status = 'broken'
-  AND id IN (SELECT id FROM orders WHERE status = 'broken' LIMIT 100);
+UPDATE orders SET status = 'fixed' WHERE status = 'broken' ORDER BY id LIMIT 100;
+SELECT ROW_COUNT();   -- 本批改到的列數，0 代表修完
 ```
 
 對應 [Backfill 卡片](/backend/knowledge-cards/backfill/) — backfill 跟 batch repair 是同類技術。
 
-### Pattern 3：補事件 / 補 webhook
+### 補事件 / 補 webhook
 
 外部副作用漏做時、補發事件。
 
@@ -199,7 +252,7 @@ WHERE status = 'broken'
 - 紀錄補發原因（incident report 連結）
 - 注意：補發前確認 third-party 是否真的沒收到
 
-### Pattern 4：重建 derived state
+### 重建 derived state
 
 cache 跟 search index 是 derived state、出錯通常 *砍掉重建*。
 
@@ -207,7 +260,7 @@ cache 跟 search index 是 derived state、出錯通常 *砍掉重建*。
 - 大規模重建用 batch job 跑、避免 thundering herd
 - 對應 [9.C25 Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) feature store 重建模式
 
-### Pattern 5：Point-in-time Recovery
+### 從備份回復（Point-in-time Recovery）
 
 當資料 *損毀且無法重建* 時、靠 backup recovery。
 
@@ -266,21 +319,19 @@ Data repair 常常需要高權限、因此必須接到 audit 與資料保護邊�
 - **資料 owner**：誰擁有那張表 / 那組欄位、誰負責解釋為何資料長那樣。資料 owner 通常是寫入該表的服務團隊。
 - **對帳作業 owner**：誰負責定義 reconciliation query、跑、看結果。可能跟資料 owner 是不同人（例如平台團隊跑對帳、業務團隊擁有資料）。
 - **差異處理 owner**：mismatch 出現後、誰負責決定修復策略。通常跟資料 owner 一致、但跨團隊 mismatch 要先約定誰主導。
-- **修復執行 owner**：實際下 SQL / call API 的人。可能跟差異處理 owner 不同（後者決策、前者執行）。
+- **修復執行 owner**：實際下 SQL / call API 的人。可能跟差異處理 owner 不同（差異處理 owner 決定修復策略、修復執行 owner 動手執行）。
 
-四個 owner 在簡單場景可以是同一人、在複雜跨團隊場景必須清楚分派。AGENTS.md 規範優先序段的「明確 owner」原則在這裡指的是 *對每一段流程* 都有人能簽收、不是只指對帳這件事整體有 owner。
+四個 owner 在簡單場景可以是同一人、在複雜跨團隊場景必須清楚分派：「明確 owner」指的是 *對每一段流程* 都有人能簽收，只有對帳這件事整體有 owner 並不夠。
 
-**跨組織對帳的特殊問題**：跟外部 provider（金流、物流、SaaS supplier）對帳時、對方不見得會接受你的對帳結果、也不見得會給差異列表。常見處理：
+**跨組織對帳的特殊問題**：跟外部 provider（金流、物流、SaaS supplier）對帳時、對方不見得會接受我方的對帳結果、也不見得會給差異列表。常見處理：
 
-- 自己跑兩份對帳：A vs provider report（每天）、A vs provider API（即時抽樣）、兩份結果不同代表 provider report 本身有問題。
+- 自己跑兩份對帳：內部紀錄對 provider report（每天）、內部紀錄對 provider API（即時抽樣）、兩份結果不同代表 provider report 本身有問題。
 - 約定差異仲裁流程：簽 SLA 時就寫清楚、mismatch 出現後雙方各保留多久的資料、誰先給對方檢視。
-- 不能依賴 provider 修：金流 provider 通常只負責對帳、不負責修你的 DB。修復永遠是你方責任。
+- 不能依賴 provider 修：金流 provider 通常只負責對帳、不負責修我方的 DB，修復由我方負責。
 
 ## 跟 Backup / PITR 整合
 
-備份的 *權限獨立性* 跟 *attack surface* 屬於 [1.5 Red Team 備份段](/backend/01-database/red-team-data-layer/) — 本段聚焦 *recovery* 角度的資料修復責任。兩者互補：1.5 解決「備份本身怎麼防被攻擊」、本段解決「事故後怎麼用備份回復」。
-
-當修復必須跨越「point in time」時、需要 backup 配合。
+當修復必須回到某個過去的時間點、需要 backup 配合：事故之後用備份把資料回復到正確狀態。備份本身怎麼防被攻擊（備份的權限獨立性與 attack surface）見 [1.5 Red Team 備份段](/backend/01-database/red-team-data-layer/)。
 
 ### Snapshot-based recovery
 
@@ -291,8 +342,8 @@ Data repair 常常需要高權限、因此必須接到 audit 與資料保護邊�
 ### PITR（Point-in-Time Recovery）
 
 - snapshot + WAL / binlog replay 到指定時間
-- 影響：只在指定時間點 stop replay
-- 適合：「3 小時前 admin 誤刪一張表」這類精準回放
+- 影響：跟 snapshot-based recovery 一樣是整個 cluster 回到過去，指定時間之後的所有寫入（包含跟事故無關的表）都不在回復結果裡；差別在時間點可以指定到誤操作發生之前的那一刻，不限於 snapshot 拍下的那幾個時刻
+- 適合：「3 小時前 admin 誤刪一張表」這類精準回放；只要救回那一張表時，PITR 的目標可以是另一台新的 instance，回復完成後再把那張表的資料匯回正式環境
 
 ### Logical backup（mysqldump / pg_dump）
 
@@ -331,7 +382,7 @@ PITR / snapshot recovery 不是純技術問題、會在事故當下面對「為�
 - **訂單寫入（outbox + replay）**：30 分鐘容忍區間夠用 outbox pattern — 訂單寫進 DB 同步寫進 outbox table、async worker 把 outbox event 推下游。即使下游中斷、訂單本身已落地、event 可在恢復後 replay。設計權衡是 outbox table 的儲存成本跟 replay 邏輯的冪等性、跟 [03 訊息佇列模組](/backend/03-message-queue/) 的 outbox pattern 整合。
 - **用戶登入（standby region failover）**：5 分鐘容忍意味 *自動 failover* 必須在這時間內完成、人類介入做不到、要靠 DNS health check + Route 53 / Cloudflare 自動切流。權衡是 standby region 平時付閒置成本、跟 active-active 比、便宜但 failover 時有 1-3 分鐘延遲跟 cache miss。
 
-落差是 *投資訊號*、不是「忽略它」。RTO > 業務容忍時、要嘛降 RTO（加 HA / DR 投資）、要嘛跟業務協商提高容忍（通常不接受）。
+RTO 與業務可接受中斷之間的落差是 *投資訊號*、不是「忽略它」。RTO > 業務容忍時、要嘛降 RTO（加 HA / DR 投資）、要嘛跟業務協商提高容忍（通常不接受）。
 
 判讀重點：對照表要每年 review。業務模式變了（例如從 B2C 變 B2B 客服 SaaS）、容忍時間會大幅縮短、RTO 必須跟著降。
 
@@ -341,7 +392,7 @@ DB 事故當下、*資安處置* 跟 *業務連續性處置* 要 *分軌並行*�
 
 對應 [Change Healthcare 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/) — 「技術處置與業務處置分軌並行的前提是事先有 dual-track IC 角色」。沒事先定義、事故當下會出現「資安 team 在隔離系統、business team 在喊客戶等不及」、兩條軌道互相干擾。
 
-**Dual-track IC 角色定義**（以下為通用 IC 模型、非案例直接揭露；具體角色細分視組織規模調整）：
+**IC 角色定義**（以下為通用 IC 模型、非案例直接揭露：在 dual-track 的技術、業務兩條軌道之外，再加上協調、資料與對外溝通三個角色；具體角色細分視組織規模調整）：
 
 | 軌道       | 角色                | 責任                                                  |
 | ---------- | ------------------- | ----------------------------------------------------- |
@@ -406,7 +457,7 @@ DB 事故當下、*資安處置* 跟 *業務連續性處置* 要 *分軌並行*�
 
 把 derived state 不一致跟 canonical state 不一致 *混在一起* 處理。derived 是 *再生* 的、canonical 是 *永久* 的、處理流程完全不同。
 
-把對帳結果跟 anomaly detection 結果放同一份報告。前者是 deterministic、後者是 statistical、混報會讓 incident reviewer 無法判斷必修跟可疑。對帳 mismatch 要有獨立追蹤面板、anomaly 走另一條路徑。
+把對帳結果跟 anomaly detection 結果放同一份報告。對帳結果是 deterministic、anomaly detection 結果是 statistical、混報會讓 incident reviewer 無法判斷必修跟可疑。對帳 mismatch 要有獨立追蹤面板、anomaly 走另一條路徑。
 
 跳過 dry-run、直接 update。即使單筆修復、也要先 select 看到當前 row、確認 WHERE 條件命中預期。incident 壓力下尤其容易跳、結果反而把單點問題擴成批次污染。
 

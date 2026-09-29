@@ -6,7 +6,7 @@ weight: 13
 tags: ["backend", "database", "query", "anti-patterns"]
 ---
 
-應用程式變慢、第一個直覺常常是「資料庫不夠力」。多數團隊的真實瓶頸在應用程式發給資料庫的查詢方式、資料庫本身反而不是問題：N+1、select \*、缺索引、ORM lazy load、長 transaction。本章把這些反模式列成可診斷、可修正的清單、並提出「每請求的 query 預算」作為發布前的判讀基準 — 讓讀者在資料層撞牆之前、先在應用層發現問題。
+這篇整理應用程式發給資料庫的查詢裡常見的反模式——N+1、`SELECT *`、缺索引、ORM lazy load、長 transaction——各自的徵兆、判讀方式與修法，並提出「每請求的 query 預算」作為發布前的檢查標準。
 
 查詢本身的語意為什麼是這樣——連接讓列數變多、條件放 `ON` 與放 `WHERE` 差在哪、`IN` 與 `EXISTS` 各自描述什麼——在 [SQL 分類](/backend/01-database/sql/)。本章處理的是寫對之後的次數與代價。
 
@@ -20,7 +20,22 @@ tags: ["backend", "database", "query", "anti-patterns"]
 
 N+1 query 指「先發一個 query 取回 N 筆資料、再對每一筆各發一個 query 取相關資料」，總共 1 + N 次 round trip。N 越大、整體越慢。
 
-典型範例：列出 100 個訂單跟每筆訂單的客戶資料。錯誤寫法是先 `SELECT * FROM orders LIMIT 100` 拿到 100 筆訂單、再對每一筆訂單做 `SELECT * FROM customers WHERE id = ?`，總共 101 次 query。正確寫法是 JOIN 或 IN 一次取回：`SELECT o.*, c.* FROM orders o JOIN customers c ON o.customer_id = c.id LIMIT 100`，1 次 query 完成。
+典型範例：列出 100 筆訂單與每筆訂單的客戶名稱。N+1 的寫法先取訂單、再對每一筆訂單各查一次客戶，100 筆訂單就是 101 次 query；JOIN 一次取回，`IN` 兩次取回：
+
+```sql
+-- N+1：先取訂單（1 次）
+SELECT id, customer_id FROM orders ORDER BY id LIMIT 100;
+-- 再對每一筆訂單各查一次客戶（100 次），? 換成那筆訂單的 customer_id
+SELECT id, name FROM customers WHERE id = ?;
+
+-- JOIN：1 次取回訂單與客戶名稱
+SELECT orders.id, orders.status, customers.name
+FROM orders JOIN customers ON customers.id = orders.customer_id
+ORDER BY orders.id LIMIT 100;
+
+-- IN：取完訂單之後，把這一頁出現過的 customer_id 收成一次查詢（共 2 次）
+SELECT id, name FROM customers WHERE id IN (?, ?, ?);
+```
 
 N+1 在 ORM 環境特別隱性，因為它常被框架的 lazy loading 機制隱藏。Django ORM 的 `order.customer` 看起來像存取 attribute，背後對應一次 query。寫程式時看不到 SQL，發布後才從 slow log 發現問題。
 
@@ -46,15 +61,25 @@ N+1 在 ORM 環境特別隱性，因為它常被框架的 lazy loading 機制隱
 
 ## 缺索引：查詢計畫沒走索引
 
-> 計畫沒走索引有兩種成因，本節處理的是「索引根本沒建」。另一種是索引建了而條件的形狀讓它用不上（欄位被包進函式或運算裡），徵兆與本節一模一樣而修法完全不同——判斷標準與三條改寫路在 [Sargable（可走索引的條件形狀）](/backend/01-database/sql/knowledge-cards/sargable/)。
+> 計畫沒走索引有兩種成因，本節處理的是「索引根本沒建」。另一種是索引建了而條件的形狀讓它用不上（欄位被包進函式或運算裡），兩者在 `EXPLAIN` 上都顯示沒走索引，修法卻完全不同——判斷標準與改寫方法（拆成範圍條件、把運算搬到比較的另一邊、建運算式索引）在 [Sargable（可走索引的條件形狀）](/backend/01-database/sql/knowledge-cards/sargable/)。
 
 缺索引的徵兆是 query 在小資料量時很快、資料一多就突然慢。原因是 query 走了 full table scan，資料量小時 scan 還快、資料量上百萬筆就慢。
 
-判讀方式是用 `EXPLAIN` 看查詢計畫：
+判讀方式是用 `EXPLAIN` 看查詢計畫。下面是 MySQL 8.4 對一張一萬列、`customer_id` 沒有索引的 `orders` 表的輸出：
 
-- `type=ALL` 或 `Seq Scan` 代表沒走索引
-- `rows` 估計值跟實際表大小接近，代表掃描範圍過大
-- `Using filesort` / `Using temporary` 代表排序或暫存資料的成本
+```sql
+EXPLAIN SELECT id, status FROM orders WHERE customer_id = 42 ORDER BY created_at DESC;
+-- type: ALL      整張表逐列掃描，沒走索引
+-- rows: 10266    預計要讀的列數，接近整張表的大小（這是估計值，實際是 10000 列）
+-- Extra: Using where; Using filesort
+--                Using filesort 表示結果要另外排序；Using temporary 表示要另建暫存表
+
+CREATE INDEX orders_customer_created ON orders (customer_id, created_at);
+EXPLAIN SELECT id, status FROM orders WHERE customer_id = 42 ORDER BY created_at DESC;
+-- type: ref   key: orders_customer_created   rows: 20   Extra: Backward index scan
+```
+
+PostgreSQL 的 `EXPLAIN` 用 `Seq Scan on orders` 表示整張表掃描。它每個節點上的 `rows` 是預計**輸出**的列數（同一個查詢在 PostgreSQL 16 顯示 `Seq Scan on orders ... rows=20`），不是要讀的列數，所以「`rows` 接近表大小」這個讀法只適用於 MySQL。
 
 修正方向不是「對每個 WHERE 條件都建索引」，這會讓寫入變慢、索引變大。要建索引的判讀條件：
 
@@ -63,7 +88,22 @@ N+1 在 ORM 環境特別隱性，因為它常被框架的 lazy loading 機制隱
 - 該欄位沒有跟其他索引重複覆蓋
 - 寫入路徑能承受多一個索引的維護成本
 
-複合索引的欄位順序也要對齊 query 的 WHERE 條件。`WHERE a = ? AND b = ?` 適合 `(a, b)` 複合索引，不適合 `(b, a)`。複合索引欄位順序的設計屬於 [1.2 schema design 與資料建模](/backend/01-database/schema-design/) 的範圍、本章只標出徵兆跟診斷起點。
+複合索引的欄位順序要對齊 query 的條件，而兩個欄位都是等值條件時順序沒有差別：`WHERE a = ? AND b = ?` 用 `(a, b)` 或 `(b, a)` 都能把兩個條件放進索引查找。順序的差別出在只有一個欄位有條件、或其中一個是範圍條件的時候：
+
+```sql
+-- MySQL 8.4，表 t 有 5000 列
+-- 只有 (b, a) 索引時
+EXPLAIN SELECT * FROM t WHERE a = 1 AND b = 2;  -- type: ref, key: t_ba, ref: const,const
+EXPLAIN SELECT * FROM t WHERE a = 1;            -- type: ALL，a 不是索引的第一欄，索引用不上
+EXPLAIN SELECT * FROM t WHERE a = 1 AND b > 2;  -- type: ALL，優化器沒有選 t_ba
+
+-- 只有 (a, b) 索引時
+EXPLAIN SELECT * FROM t WHERE a = 1 AND b = 2;  -- type: ref, key: t_ab, ref: const,const
+EXPLAIN SELECT * FROM t WHERE a = 1;            -- type: ref, key: t_ab（最左前綴）
+EXPLAIN SELECT * FROM t WHERE a = 1 AND b > 2;  -- type: range, key: t_ab，等值欄在前、範圍欄在後
+```
+
+複合索引欄位順序的設計屬於 [1.2 schema design 與資料建模](/backend/01-database/schema-design/) 的範圍、本章只標出徵兆跟診斷起點。
 
 ## ORM Lazy Load 陷阱
 
@@ -96,11 +136,30 @@ ORM 的 lazy load 預設行為是「存取 attribute 時才發 query」，這在
 
 ## 其他常見反模式
 
-上面五個是讀路徑高頻反模式。實務上其他幾類在 slow log 出現頻率不低、要一併列入發布前檢查：
+N+1、`SELECT *`、缺索引、ORM lazy load 與長 transaction 之外，還有幾類反模式在 slow log 出現頻率不低、要一併列入發布前檢查：
 
 - **[Cardinality explosion](/backend/knowledge-cards/cardinality-explosion/) / cross join 誤用**：兩個多對多關聯 join 沒加 filter、結果集從 N 行炸成 N×M 行。判讀訊號：query 結果行數遠超業務直覺、`EXPLAIN` 估計 rows 異常大。修正方向：補 filter、改 EXISTS / IN 半連接、或拆兩段 query。
-- **OFFSET-based pagination on large tables**：`LIMIT 20 OFFSET 100000` 在大表退化成「掃描 100020 行 + skip 100000 行」。修正方向：用 [keyset / cursor pagination](/backend/knowledge-cards/keyset-pagination/)（`WHERE id > last_seen_id LIMIT 20`）— 一致 O(LIMIT) 而非 O(OFFSET + LIMIT)。keyset 與 cursor 回答的是兩個不同層次的問題（定位機制 vs 對外表示），對外介面要不要一起換、以及 offset 在哪些條件下該留著，見 [分頁之爭](/backend/11-api-design/pagination-debate/)。
-- **隱式型別轉換讓 index 失效**：`WHERE varchar_col = 123` 把 column 轉成 int 比較、index 失效退到 full scan。判讀訊號：EXPLAIN 顯示 index 沒命中但 schema 上有 index。修正方向：明示型別（`WHERE varchar_col = '123'`）。
+- **OFFSET-based pagination on large tables**：`OFFSET` 要先讀過被跳過的每一列，才輪到要回傳的那幾列。修正方向是 [keyset / cursor pagination](/backend/knowledge-cards/keyset-pagination/)：用上一頁最後一筆的 id 當起點，讀的列數只跟這一頁的筆數有關。下面是 PostgreSQL 16 對 20 萬列的表依主鍵分頁的實測，`actual rows` 是索引實際讀出的列數：
+
+  ```sql
+  SELECT id, status FROM big_orders ORDER BY id LIMIT 20 OFFSET 100000;
+  -- Index Scan using big_orders_pkey (actual rows=100020)：讀出 100020 列、丟掉前 100000 列
+
+  SELECT id, status FROM big_orders WHERE id > 100000 ORDER BY id LIMIT 20;
+  -- Index Scan using big_orders_pkey (actual rows=20)，Index Cond: (id > 100000)
+  -- 100000 是上一頁最後一筆的 id；ORDER BY id 決定「下一頁」是哪 20 列，省掉它 LIMIT 取到的是任意 20 列
+  ```
+
+  keyset 與 cursor 回答的是兩個不同層次的問題（定位機制 vs 對外表示），對外介面要不要一起換、以及 offset 在哪些條件下該留著，見 [分頁之爭](/backend/11-api-design/pagination-debate/)。
+- **隱式型別轉換讓 index 失效**：MySQL 拿字串欄位與數字常數比較時，把欄位值逐列轉成數字再比，欄位上的索引因此用不上。判讀訊號：EXPLAIN 顯示 index 沒命中但 schema 上有 index。修正方向：常數的型別對齊欄位。
+
+  ```sql
+  -- MySQL 8.4，accounts.code 是 VARCHAR(20)、有索引 accounts_code，表有 5000 列
+  EXPLAIN SELECT * FROM accounts WHERE code = 123;    -- type: ALL, key: NULL, rows: 5000
+  EXPLAIN SELECT * FROM accounts WHERE code = '123';  -- type: ref, key: accounts_code, rows: 1
+  ```
+
+  PostgreSQL 不做這個轉換，`code = 123` 直接報錯 `operator does not exist: character varying = integer`，所以這一條是 MySQL 的反模式。
 - **應用層做大結果集排序 / 聚合**：把 100 萬行拉回應用、在記憶體 sort 或 group。應該 push 給 DB 做 `ORDER BY` / `GROUP BY` + `LIMIT`。判讀訊號：應用程式記憶體用量隨 endpoint 流量線性升高。
 - **N+1 write**：在 loop 內單筆 insert / update 而非 bulk insert。每筆觸發一次 round trip + 可能的 fsync。修正方向：用 `INSERT ... VALUES (), (), ()` 或 `executemany` / `bulk_create`。
 
@@ -121,11 +180,11 @@ NoSQL / KV DB 也有 sibling 反模式（hot partition、read amplification、sc
 
 這張表以 OLTP API 為主。Dashboard / report / search endpoint 常需要 10-30 query 解 join / aggregation、用「Complex」涵蓋不夠精確；batch / bulk write（一次寫入 1000 筆訂單）不該用 query count 評估、應該看 batch size 跟 transaction 範圍。預算是判讀工具、不是硬閾值。
 
-## 這幾條反模式有一半的成因在 schema
+## `SELECT *`、N+1 與缺索引的成因常在 schema
 
 本章的修法都改在查詢與 ORM 的寫法上，而其中幾條的成因在更上游：`SELECT *` 的代價由那張表裝了多寬決定（長文字欄位與短欄位同表時，不碰它的查詢也要掃過它的頁面）、N+1 的可修性由常一起取的資料切在幾張表決定、缺索引那一條裡有一種是索引建了而條件的形狀讓它用不上，而條件寫成那個形狀往往是因為比較規則沒有寫在欄位上。
 
-這幾個上游決定各自替查詢定了什麼價，逐條實測在 [1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/)。兩章的分工是：那一篇問設計時要怎麼想，本章問已經長成這樣之後怎麼修。
+這幾個上游決定各自替查詢定了什麼價，逐條實測在 [1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/)。
 
 ## 判讀訊號
 
@@ -165,11 +224,11 @@ DoorDash 案例是這條反向追問最直接的應用 — 寫入瓶頸的判讀
 
 ## 跨模組路由
 
-1. 與 [1.1 高併發下的 SQL 讀寫邊界](/backend/01-database/high-concurrency-access/) 的交接：1.1 處理連線池與 read replica 機制、1.13 處理 query 寫法本身。高併發場景下兩者要同步檢查。
+1. 與 [1.1 高併發下的 SQL 讀寫邊界](/backend/01-database/high-concurrency-access/) 的交接：連線池與 read replica 機制在那一篇，query 寫法本身在本章。高併發場景下兩者要同步檢查。
 2. 與 [1.2 schema design](/backend/01-database/schema-design/) 的交接：索引設計是 schema 層的事、本章只指出徵兆。
 3. 與 [04 observability](/backend/04-observability/) 的交接：slow query log、APM、query trace 是判讀反模式的主要訊號來源。
 4. 與 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/) 的交接：先在應用層查反模式，再考慮 DB 配置升級。
-5. 與 [9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/) 的交接：[規模成長路線](/backend/scale-growth-walls/)上、9.13 解擴展軸選擇後、1.13 是緊接著的下一站 — 在加機器或加 replica 前、先用本章反模式清單收回單機能撐住的容量。
+5. 與 [9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/) 的交接：[規模成長路線](/backend/scale-growth-walls/)上、擴展軸選定之後、本章是緊接著的下一站 — 在加機器或加 replica 前、先用本章反模式清單收回單機能撐住的容量。
 6. 與 [10.1 服務拆分](/backend/10-system-evolution/service-decomposition-boundaries/) 的交接：拆服務常被用來「解決 DB 慢」，但本章的反模式優化通常比拆服務 ROI 更高、應該優先嘗試。
 
 ## 下一步路由

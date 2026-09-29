@@ -6,7 +6,7 @@ weight: 7
 tags: ["backend", "database", "migration", "implementation", "evidence-package"]
 ---
 
-Schema migration rollout 證據（Schema Migration Rollout Evidence）的核心責任是把正式狀態的演進拆成可觀測、可放行、可停止與可回寫的服務路徑。這篇以訂單資料表的付款狀態欄位演進為例，示範資料庫變更如何從 schema design、backfill、cutover 交接到 evidence package、release gate 與 incident decision log。
+這篇以訂單資料表的付款狀態欄位演進為例，示範 schema migration 在 expand、backfill、cutover 與 contract 各階段要產出哪些證據（evidence package），以及 release gate 與 incident decision log 怎麼引用這些證據。Schema migration rollout 證據（Schema Migration Rollout Evidence）的責任是讓正式狀態的每一次演進都可觀測、可放行、可停止與可回寫。
 
 ## 服務路徑與狀態責任
 
@@ -14,7 +14,7 @@ Schema migration rollout 證據（Schema Migration Rollout Evidence）的核心�
 
 本篇示範的變更是把原本單一 `status` 欄位中的付款語意拆到 `payment_state`。這個欄位屬於正式狀態，會影響使用者看到的訂單結果、付款回呼的冪等更新、客服查詢與對帳流程，因此 rollout 的核心是讓新舊狀態語意在過渡期同時成立；DDL 只是其中一個執行動作。
 
-這條路徑的前置概念來自 [1.2 schema design 與資料建模](/backend/01-database/schema-design/)、[1.3 transaction 與一致性邊界](/backend/01-database/transaction-boundary/) 與 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)。1.2 定義欄位責任，1.3 定義哪些更新要在同一個交易邊界內成立，1.6 定義 expand、backfill、cutover 與 contract 的執行節奏。
+這條路徑用到的前置概念各有一篇：[schema design 與資料建模](/backend/01-database/schema-design/) 定義欄位責任，[transaction 與一致性邊界](/backend/01-database/transaction-boundary/) 定義哪些更新要在同一個交易邊界內成立，[資料庫轉換實作](/backend/01-database/database-migration-playbook/) 定義 expand、backfill、cutover 與 contract 的執行節奏。
 
 ## Rollout 階段
 
@@ -81,7 +81,7 @@ applyPaymentCallback(order, callback):
 
 ### Dual-write divergence schema
 
-Dual-write 的責任不只是「兩邊都寫」、是「兩邊寫的結果一致」。要證明這件事、需要明確的 divergence schema、否則事故當下無法區分 mapping bug 跟 race condition。
+Dual-write 的責任是讓舊欄位 `status` 與新欄位 `payment_state` 寫進去的付款判讀一致，兩個欄位都有寫入只是前提。要證明兩個欄位一致，需要明確的 divergence schema，否則事故當下無法區分 mapping bug 跟 race condition。
 
 最小 divergence 紀錄欄位：
 
@@ -95,15 +95,15 @@ Dual-write 的責任不只是「兩邊都寫」、是「兩邊寫的結果一致
 | `write_path`      | 哪個程式路徑寫的（callback / refund / manual / reconciliation） |
 | `detected_at`     | 偵測時間                                                        |
 
-`expected_new` 跟 `new_value` 對不上、表示 mapping function 在某些 path 沒被使用、是 mapping bug。`legacy_value` 跟 `new_value` 對不上、且 `expected_new == legacy_value` 對得上、是 dual-write 本身少寫一筆、可能是 race condition 或部分失敗。兩種情況的修法完全不同、不分類會在事故當下亂修。
+`new_value` 跟 `expected_new` 對不上，表示同一筆訂單的舊欄位與新欄位給出兩個付款判讀。`legacy_value` 與 `new_value` 分屬兩套值域（舊狀態 `paid` 對應的新值是 `captured`），不能直接比對，所以分類靠 `expected_new` 再加上其餘欄位：不一致的紀錄集中在同一個 `write_path`、而 `new_value` 是另一個合法的付款狀態，代表那條程式路徑沒有使用共用的 mapping function，屬於 mapping bug；`new_value` 是 NULL 或停在這筆訂單更早的付款狀態，代表這次寫入只寫成了一個欄位，屬於 dual-write 少寫一筆，可能來自 race condition 或部分失敗。mapping bug 要修那條程式路徑，少寫一筆要補寫那筆資料，不分類會在事故當下套錯修法。
 
-Dual-write 失敗回退策略：寫舊欄位成功、寫新欄位失敗時、不能直接 retry 新欄位（會跟主寫入競爭）。實務做法是把 divergence 寫進 outbox / repair queue、由 backfill 同類流程補。對應 [9.C16 SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 的 outbox-style 設計。
+Dual-write 失敗時的回退：寫舊欄位成功、寫新欄位失敗時，不直接 retry 新欄位，因為 retry 會跟這筆訂單之後的主寫入競爭。回退的做法是把這筆 divergence 寫進 outbox 或 repair queue，由一支跟 backfill 一樣以 checkpoint 分批執行的修補 job 補寫新欄位。
 
 ### 線上 DDL 的 vendor 差異
 
 Expand 階段加欄位 / 加索引、不同資料庫的 *阻塞行為* 差異極大、選錯時機會直接讓 production 鎖表。
 
-- **PostgreSQL**：`ALTER TABLE ADD COLUMN ... NULL` 是 metadata-only、不重寫 table。`ADD COLUMN ... NOT NULL DEFAULT ...` 在 PG 11+ 才是 metadata-only。`CREATE INDEX CONCURRENTLY` 不阻塞寫入、但更慢、且 transaction 中不能用。`ALTER TABLE ALTER COLUMN TYPE` 通常會重寫整張表、要先評估規模。
+- **PostgreSQL**：`ALTER TABLE ADD COLUMN ... NULL` 是 metadata-only、不重寫 table。`ADD COLUMN ... NOT NULL DEFAULT ...` 在 PG 11+ 才是 metadata-only，而且只限預設值是常數或 `now()` 這類非 volatile 的運算式；預設值是 `clock_timestamp()` 這類 volatile 函式時仍會重寫整張表。`CREATE INDEX CONCURRENTLY` 不阻塞寫入、但更慢、且 transaction 中不能用。`ALTER TABLE ALTER COLUMN TYPE` 通常會重寫整張表、要先評估規模。
 - **MySQL / Aurora MySQL**：`ALTER TABLE ... ALGORITHM=INSTANT` 是 8.0+ 的 metadata-only、5.7 則靠 `ALGORITHM=INPLACE` / `LOCK=NONE`。Aurora MySQL 還有 fast DDL（部分變更秒級完成、不重寫）。判讀重點是 *explicitly 指定 ALGORITHM*、不要讓 MySQL 自己選（可能掉回 COPY 算法、整張表複製）。
 - **Spanner**：schema change 預設非阻塞、後端 async 補欄位。新欄位 read 在 schema change 完成前可能讀不到、應用層要容忍。
 - **DynamoDB**：表本身沒 schema、但 *GSI（Global Secondary Index）創建是 async*、可能跑數小時、且新 GSI 在 backfill 完成前查不到完整資料。判讀重點：cutover 不能假設新 GSI 立即可用、要等 `IndexStatus = ACTIVE`。
@@ -141,19 +141,43 @@ SELECT
   count(*) FILTER (WHERE payment_state IS NULL) AS missing_payment_state,
   count(*) FILTER (
     WHERE payment_state IS NOT NULL
-      AND payment_state <> map_legacy_status_to_payment_state(status)
+      AND payment_state IS DISTINCT FROM map_legacy_status_to_payment_state(status)
   ) AS mismatch_rows
 FROM orders
 WHERE id BETWEEN 18415001 AND 18420000;
 ```
 
-Validation query 要和 mapping table 共用同一個語意。資料庫端缺少同一份 mapping function 時，查詢至少要把 mapping 規則展開成明確 CASE expression，並把 query version 保存在 evidence package；這樣事後才能知道 mismatch 是資料錯誤、mapping 規則改變，還是查詢本身落後。
+Validation query 要和 mapping table 共用同一個語意。付款狀態的 validation query 呼叫的 `map_legacy_status_to_payment_state` 要跟 backfill job 用同一份定義；資料庫端沒有這個函式時，查詢至少要把 mapping table 逐列展開成 CASE expression：
+
+```sql
+SELECT
+  count(*) AS total_rows,
+  count(*) FILTER (WHERE payment_state IS NULL) AS missing_payment_state,
+  count(*) FILTER (
+    WHERE payment_state IS NOT NULL
+      -- 舊狀態不在 mapping table 裡時 CASE 回 NULL；
+      -- 用 <> 跟 NULL 比對得到 unknown，那一列不會被算進 mismatch，
+      -- IS DISTINCT FROM 會把它算成 mismatch
+      AND payment_state IS DISTINCT FROM CASE status
+        WHEN 'pending_payment'        THEN 'pending'
+        WHEN 'paid'                   THEN 'captured'
+        WHEN 'payment_failed'         THEN 'failed'
+        WHEN 'refunded'               THEN 'refunded'
+        WHEN 'cancelled_before_pay'   THEN 'pending'
+        WHEN 'manual_review_required' THEN 'pending'
+      END
+  ) AS mismatch_rows
+FROM orders
+WHERE id BETWEEN 18415001 AND 18420000;
+```
+
+展開後的 CASE 也是一份 mapping 規則，所以要把 query version 保存在 evidence package；這樣事後才能知道 mismatch 是資料錯誤、mapping 規則改變，還是查詢本身落後。
 
 ## Cutover：先切讀取，再收斂寫入
 
 Cutover phase 的核心責任是把服務判讀權交給新欄位，同時保留可回退窗口。對訂單付款狀態來說，切換順序通常先從低風險讀取路徑開始，例如客服後台與內部對帳，再進入 checkout 查詢與使用者可見狀態；每一批切換都要有自己的 [cutover window](/backend/knowledge-cards/cutover-window/)。
 
-讀取 cutover 的 [stop condition](/backend/knowledge-cards/stop-condition/) 要比寫入 cutover 更早觸發。新欄位讀取後出現 mismatch、客服查詢結果漂移、對帳 job 補償量異常時，先回到 [fallback read](/backend/knowledge-cards/fallback-read/)，讓錯誤限制在判讀層，再重新驗證寫入收斂條件。
+讀取 cutover 的 [stop condition](/backend/knowledge-cards/stop-condition/) 要比寫入 cutover 更早觸發。新欄位讀取後出現 mismatch、客服查詢結果漂移、對帳 job 補償量異常時，先回到 [fallback read](/backend/knowledge-cards/fallback-read/)，讓錯誤只影響讀取路徑、不擴散到寫入路徑，再重新驗證寫入收斂條件。
 
 寫入 cutover 要確認所有更新來源都已對齊。付款回呼、手動修復、退款、訂單取消與 reconciliation job 都可能更新付款狀態；只切主 checkout 寫入路徑會留下長尾漂移。完成 cutover 前，要用 audit query 確認仍在寫舊欄位的程式路徑已經歸零或被納入例外清單。
 
@@ -185,7 +209,7 @@ readPaymentStateWithShadow(order):
 
 Shadow read 的判讀重點：
 
-- **抽樣率**：1% / 10% / 100% — 高流量場景全量 shadow 會雙倍 DB 讀取、要先評估容量。Cosmos DB / DynamoDB 的 RU 成本要乘 2。
+- **抽樣率**：1% / 10% / 100%。本篇的新舊欄位在同一列，`readPaymentStateWithShadow` 讀一次就拿到兩個值，全量 shadow 增加的是比對與寫 divergence log 的成本；新邏輯改讀另一張表、另一個索引或另一個資料庫時，每一筆 shadow 都多一次查詢，全量 shadow 讓讀取量加倍，Cosmos DB / DynamoDB 的 RU 成本也跟著加倍，要先評估容量。
 - **分歧分類**：跟 dual-write 一樣、divergence 要分類（mapping bug / race condition / [stale read](/backend/knowledge-cards/stale-read/)）、不分類無法定位修法。
 - **覆蓋條件**：要驗證所有 caller path（checkout / support / reconciliation / external API）都跑過 shadow、否則 cutover 後可能踩到沒測試過的 path。
 - **退場條件**：shadow read 不該長期跑、會增加負載。設明確 sunset deadline、cutover 完成後一週內移除。
@@ -203,15 +227,15 @@ Dual-write 跟 shadow read 的選擇不是互斥、是依風險組合：
 
 ## Multi-region 與跨服務協調
 
-Migration 跨越 region 或多個 service 時、rollout 順序錯誤是最常見的失敗模式。Service A 切到新欄位、service B 還在讀舊欄位、結果整條業務流量看到不一致。
+Migration 跨越 region 或多個 service 時、rollout 順序錯誤是最常見的失敗模式。`checkout-api` 已經改讀 `payment_state`、`reconciliation-job` 還在讀舊的 `status`，同一筆訂單在兩個服務裡得到兩種付款判讀。
 
 ### Multi-region rollout 順序
 
-跨 region 的 schema migration 要從 *最後寫入點* 開始 expand、從 *最後讀取點* 開始 cutover。先 expand 寫端、再 expand 讀端；先 cutover 讀端、再 cutover 寫端。順序反了會在過渡期讀到沒被寫的新欄位、或寫了沒被讀的新欄位。
+跨 region 部署裡，接受寫入的 region（寫端）與只服務讀取的 region（讀端）要分開排順序：expand 先做寫端、再做讀端；cutover 先做讀端、再做寫端。expand 的順序反了，讀端在過渡期會去讀寫端還沒開始寫的新欄位；cutover 的順序反了，寫端寫進的新欄位在過渡期沒有讀端在讀。
 
 實務步驟：
 
-1. **Schema expand**：所有 region 同步加新欄位（先寫端再讀端、不能跳）。確認跨 region replication lag 在新欄位上收斂、再進下一步。
+1. **Schema expand**：每個 region 都加上新欄位，順序是先寫端再讀端。確認跨 region replication lag 在新欄位上收斂、再進下一步。
 2. **Backfill**：可以平行跑、但每 region 各自 checkpoint、不共用。某 region backfill stuck 不應該卡住其他 region。
 3. **Cutover read**：region by region 切讀、用 canary region 先試 24-48 小時、再擴散。
 4. **Cutover write**：所有 region 都切完讀、再統一切寫。寫端切換比讀端更敏感、跨 region 寫差異會放大成跨 region inconsistency。
@@ -348,7 +372,7 @@ incident_decision:
 
 這些訊號要放回服務路徑判讀。Mismatch 要看集中在哪個業務入口；若 mismatch 只出現在延遲付款 callback，它代表外部 provider 回呼語意未對齊。Replication lag 要看是否和 backfill 批次對位；若它只在 backfill 批次出現，gate 應調整 migration 節奏，再判斷 schema 設計是否需要修正。
 
-Dual-write 跟 shadow read 的 divergence 要分開看 — 兩者偵測不同層的問題。Dual-write divergence 偏向 mapping bug 或 race condition；shadow read divergence 偏向讀取邏輯漂移或 stale read。混在同一個 dashboard 會讓 reviewer 看不出問題真正在哪一層。
+Dual-write 跟 shadow read 的 divergence 要分開看：dual-write divergence 出在寫入路徑，偏向 mapping bug 或 race condition；shadow read divergence 出在讀取路徑，偏向讀取邏輯漂移或 stale read。兩種 divergence 混在同一個 dashboard，reviewer 分不出問題出在寫入路徑還是讀取路徑。
 
 ## 常見誤區
 
@@ -358,32 +382,32 @@ Dual-write 跟 shadow read 的 divergence 要分開看 — 兩者偵測不同層
 
 把 rollback 寫成單一動作容易誤導團隊。資料庫 migration 的 rollback 會隨階段改變：expand 可回退 schema 使用，backfill 可暫停與重跑，cutover 可回到 fallback read，contract 後多半只能做[資料修復](/backend/knowledge-cards/data-repair/)或 fail-forward。
 
-把 dual-write 跟 shadow read 當成同一個工具。兩者偵測不同層、結合使用可以互補、互相替代會留下盲點。Dual-write 不跑 shadow read、cutover 後可能踩到沒驗過的讀取 path；shadow read 不跑 dual-write、新欄位可能在某些寫路徑根本沒被寫進去。
+把 dual-write 跟 shadow read 當成同一個工具，會留下盲點：dual-write 驗的是寫入路徑、shadow read 驗的是讀取路徑，兩者結合使用才互補。Dual-write 不跑 shadow read、cutover 後可能踩到沒驗過的讀取 path；shadow read 不跑 dual-write、新欄位可能在某些寫路徑根本沒被寫進去。
 
-把線上 DDL 當「一個 SQL 跑完就好」。各 vendor 的 DDL 語意差異大、PostgreSQL 的 `ADD COLUMN NOT NULL DEFAULT` 在 PG 10 重寫整張表、PG 11+ 是 metadata-only；MySQL 不指定 `ALGORITHM=INSTANT` 可能掉回 COPY。Expand evidence 要包含 *實際 lock duration*、不是只看 DDL 是否回傳成功。
+把線上 DDL 當成「一個 SQL 跑完就好」，會漏掉各 vendor 的阻塞行為差異：PostgreSQL 的 `ADD COLUMN NOT NULL DEFAULT` 在 PG 10 重寫整張表、PG 11+ 在預設值不是 volatile 函式時是 metadata-only；MySQL 不指定 `ALGORITHM=INSTANT` 可能掉回 COPY。Expand evidence 要包含 *實際 lock duration*、不是只看 DDL 是否回傳成功。
 
 只在主寫入路徑切 cutover、忘記補償流程跟 reconciliation job 也會寫舊欄位。這些長尾寫入會在 contract 階段才暴露、那時候已經沒有 fallback 可走。Cutover 前要 audit 所有寫舊欄位的程式路徑、不只看主流程。
 
 ## 案例回寫
 
-[0.C4 營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/) 可以回寫這篇的決策層。當服務營運後需要拆欄位、拆庫、分片或升級儲存引擎，先用 0.C4 判斷「為什麼要換」，再用本篇判斷「進入 production 後如何證明每一步成立」。
+[營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/) 案例處理的是轉換之前的判斷：服務營運後需要拆欄位、拆庫、分片或升級儲存引擎時，先用那個案例判斷「為什麼要換」，再用本篇判斷「進入 production 後如何證明每一步成立」。
 
-[GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) 可以回寫這篇的事故層。該事件顯示資料一致性優先時，團隊需要可回放的 fail-forward / fail-back 判斷標準；本篇則把這個需求落到 migration rollout 的 evidence、gate 與 decision log。
+[GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) 補的是事故當下的判斷：該事件顯示資料一致性優先時，團隊需要可回放的 fail-forward / fail-back 判斷標準；本篇則把這個需求落到 migration rollout 的 evidence、gate 與 decision log。
 
-這兩個案例共同支撐的是「資料狀態演進需要證據閉環」。0.C4 提供轉換動機與選型壓力，GitHub 事故提供資料一致性與恢復決策的代價；兩者都不直接替代 validation query、release gate 與 decision log 的實作細節。
+營運後技術轉換案例與 GitHub 事故共同支撐的是「資料狀態演進需要證據閉環」。營運後技術轉換案例提供轉換動機與選型壓力，GitHub 事故提供資料一致性與恢復決策的代價；兩個案例都不直接替代 validation query、release gate 與 decision log 的實作細節。
 
 ## 跨模組路由
 
-1. 與 1.2 的交接：欄位責任、命名與查詢模型回到 [schema design](/backend/01-database/schema-design/)。
-2. 與 1.3 的交接：付款回呼、手動修復與對帳更新的交易邊界回到 [transaction boundary](/backend/01-database/transaction-boundary/)。
-3. 與 1.6 的交接：expand、backfill、cutover 與 contract 的執行流程回到 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
-4. 與 4.20 / 4.22 的交接：validation query、row count、lag 與 slow query 進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 與 [Checkout API Evidence Package](/backend/04-observability/checkout-api-evidence-package/)。
-5. 與 6.11 / 6.8 / 6.25 的交接：migration 可逆性與放行條件進入 [Migration Safety](/backend/06-reliability/migration-safety/)、[Release Gate](/backend/06-reliability/release-gate/) 與 [Provider Dependency Release Gate](/backend/06-reliability/provider-dependency-release-gate/)。
-6. 與 8.19 / 8.23 的交接：pause、rollback、fail-forward 與 write-back 進入 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 與 [Control Plane Decision Log and Write-back](/backend/08-incident-response/control-plane-decision-log-write-back/)。
+- 欄位責任、命名與查詢模型回到 [schema design](/backend/01-database/schema-design/)。
+- 付款回呼、手動修復與對帳更新的交易邊界回到 [transaction boundary](/backend/01-database/transaction-boundary/)。
+- expand、backfill、cutover 與 contract 的執行流程回到 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
+- validation query、row count、lag 與 slow query 進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 與 [Checkout API Evidence Package](/backend/04-observability/checkout-api-evidence-package/)。
+- migration 可逆性與放行條件進入 [Migration Safety](/backend/06-reliability/migration-safety/)、[Release Gate](/backend/06-reliability/release-gate/) 與 [Provider Dependency Release Gate](/backend/06-reliability/provider-dependency-release-gate/)。
+- pause、rollback、fail-forward 與 write-back 進入 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 與 [Control Plane Decision Log and Write-back](/backend/08-incident-response/control-plane-decision-log-write-back/)。
 
 ## 下一步路由
 
-要把資料庫 migration 的 evidence 交給 release gate，接著讀 [6.25 Provider Dependency Release Gate 實作示範](/backend/06-reliability/provider-dependency-release-gate/)，並把 provider 依賴示範中的 gate 欄位改寫成 migration gate 欄位。要看下一條分類服務路徑，接著進 [02 Cache / Redis 模組](/backend/02-cache-redis/) 的 `Cache migration and stampede rollback` 服務路徑。
+要把資料庫 migration 的 evidence 交給 release gate，接著讀 [6.25 Provider Dependency Release Gate 實作示範](/backend/06-reliability/provider-dependency-release-gate/)，並把 provider 依賴示範中的 gate 欄位改寫成 migration gate 欄位。快取層的 migration 與 rollback 在 [02 Cache / Redis 模組](/backend/02-cache-redis/) 的 `Cache migration and stampede rollback` 服務路徑。
 
 跨 vendor schema migration 深入：
 
