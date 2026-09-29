@@ -4,6 +4,7 @@ date: 2026-05-13
 description: "embedded、單檔案、test / CLI / edge 場景的標準選擇、近年因 Cloudflare D1 / Turso 等服務復興"
 weight: 6
 tags: ["backend", "database", "vendor", "sqlite", "embedded"]
+aliases: ["/backend/01-database/vendors/sqlite/teaching-structure/"]
 ---
 
 SQLite 是世界上部署最多的 DB（手機、瀏覽器、car、IoT 都有）。傳統定位是 embedded、單檔案與低操作成本資料庫；multi-tenant 網路服務通常會先看 PostgreSQL、MySQL 或 managed SQL。但近年因 Cloudflare D1（serverless SQLite）、Turso（distributed SQLite）、Litestream（SQLite replication）等服務興起，出現「SQLite as production DB」的新場景。
@@ -186,11 +187,10 @@ SQLite 跟 PostgreSQL / MySQL 承擔不同層級的資料責任：
 
 ## 章節群結構
 
-SQLite 章節群的責任是把單檔正式狀態、embedded process、writer boundary、backup / restore、test fixture、local-first 與 edge SQLite 變體拆成可教學路線。完整結構見 [SQLite Teaching Structure](teaching-structure/)；下表列出目前已建立的 deep article、hands-on 與 migration route。
+SQLite 章節群的責任是把單檔正式狀態、embedded process、writer boundary、backup / restore、test fixture、local-first 與 edge SQLite 變體拆成可教學路線。下表列出目前已建立的 deep article、hands-on 與 migration route。
 
 | 層級              | 文件                                                                           | 狀態     | 教學責任                                                  |
 | ----------------- | ------------------------------------------------------------------------------ | -------- | --------------------------------------------------------- |
-| 結構總覽          | [Teaching Structure](teaching-structure/)                                      | 已有正文 | 對齊 PG / MySQL 與 LLM 架構，固定 SQLite 後續讀法         |
 | Core deep         | [File lifecycle / backup boundary](file-lifecycle-backup-boundary/)            | 已有正文 | WAL sidecar、backup API、restore drill、corruption route  |
 | Hands-on          | [Hands-on 操作路線](hands-on/)                                                 | 已有正文 | local file、backup restore、WAL busy、migration fixture   |
 | Concurrency       | [WAL concurrency / locking](wal-concurrency-locking/)                          | 已有正文 | single writer、file lock、`SQLITE_BUSY`、checkpoint       |
@@ -208,6 +208,69 @@ SQLite 章節群的責任是把單檔正式狀態、embedded process、writer bo
 | Migration route   | [PostgreSQL to SQLite simplification](migrate-from-postgresql-simplification/) | 已有正文 | single-user / embedded 工具的反向簡化路線                 |
 
 章節群的讀法是先讀 file lifecycle，再按壓力選 deep article。若問題是 write contention，讀 WAL locking；若問題是測試，讀 test fixture；若問題是 edge / serverless，讀 D1 / Turso comparison；若問題是服務長大，讀 SQLite to PostgreSQL migration。
+
+## 撰寫底稿：章節群的完成標準、撰寫順序與命名
+
+SQLite teaching structure 的核心責任是把 SQLite 從單篇 vendor overview 擴成可教學的服務章節群。PostgreSQL / MySQL 的完整度來自 overview、deep article、migration playbook 與案例路由；SQLite 的完整度也要保留同樣層級，但正文重點要貼合它自己的服務語言：single file、embedded process、writer boundary、backup / restore、test fixture、local-first 與 edge SQLite 變體。
+
+### 完成標準
+
+SQLite 章節群的完成標準是讀者能回答這些問題：SQLite 何時是正式狀態而非臨時檔案、SQLite production 化後要如何處理 WAL、backup、restore、migration、測試與觀測，以及 SQLite 成長後該升到 PostgreSQL / MySQL、Cloudflare D1、Turso / libSQL、Litestream / LiteFS 或 mobile sync。
+
+
+這份結構的重點是避免把 SQLite 寫成小型 PostgreSQL。SQLite deep article 要先處理檔案、process、filesystem、device、test 與 edge runtime；SQL dialect、index 與 migration 工具只有在這些責任成立後才展開。
+
+### 推薦撰寫順序
+
+撰寫順序要從正式狀態的最低操作責任開始，再逐步擴到應用形狀、edge 變體與 migration。
+
+| 順序 | 文件                                                                                                               | 狀態     | 為什麼排在這裡                                               |
+| ---- | ------------------------------------------------------------------------------------------------------------------ | -------- | ------------------------------------------------------------ |
+| 1    | [File lifecycle / backup boundary](/backend/01-database/vendors/sqlite/file-lifecycle-backup-boundary/)            | 已有正文 | 先回答 SQLite 如何成為可恢復的正式狀態                       |
+| 2    | [WAL concurrency / locking](/backend/01-database/vendors/sqlite/wal-concurrency-locking/)                          | 已有正文 | writer boundary 是 SQLite production 判斷的核心              |
+| 3    | [PRAGMA tuning / performance](/backend/01-database/vendors/sqlite/pragma-tuning-performance/)                      | 已有正文 | 把 journal、sync、cache、mmap 轉成可驗證的設定               |
+| 4    | [Schema migration / versioning](/backend/01-database/vendors/sqlite/schema-migration-versioning/)                  | 已有正文 | 單檔案 DB 仍需要版本、rollback 與 app release 配合           |
+| 5    | [Test fixture best practice](/backend/01-database/vendors/sqlite/test-fixture-best-practice/)                      | 已有正文 | SQLite 最常被語言教材引用，需要明確 production gap           |
+| 6    | [Mobile / desktop embedded store](/backend/01-database/vendors/sqlite/mobile-desktop-embedded-store/)              | 已有正文 | 說明 device local state、backup、sync 與 privacy 責任        |
+| 7    | [Local-first sync boundary](/backend/01-database/vendors/sqlite/local-first-sync-boundary/)                        | 已有正文 | 把 single-device SQLite 與 multi-device sync 分開            |
+| 8    | [D1 / Turso / libSQL comparison](/backend/01-database/vendors/sqlite/d1-turso-libsql-comparison/)                  | 已有正文 | edge SQLite 變體需要獨立比較，和本地 SQLite 分開             |
+| 9    | [Litestream / LiteFS replication](/backend/01-database/vendors/sqlite/litestream-litefs-replication/)              | 已有正文 | backup / read replica / failover 的語意要跟 multi-write 分開 |
+| 10   | [SQL dialect and index limits](/backend/01-database/vendors/sqlite/sql-dialect-index-limits/)                      | 已有正文 | 對照 PostgreSQL / MySQL 測試與 migration gap                 |
+| 11   | [Observability / runbook](/backend/01-database/vendors/sqlite/observability-runbook/)                              | 已有正文 | 把 SQLite 的低操作成本補成可交接 evidence                    |
+| 12   | [Hands-on 操作路線](/backend/01-database/vendors/sqlite/hands-on/)                                                 | 已有正文 | 把 local file、backup、WAL busy、migration fixture 變成演練  |
+| 13   | [SQLite to PostgreSQL migration](/backend/01-database/vendors/sqlite/migrate-to-postgresql/)                       | 已有正文 | 多 tenant、權限、HA、schema governance 出現時的主要升級路徑  |
+| 14   | [SQLite to D1 / Turso route](/backend/01-database/vendors/sqlite/migrate-to-d1-turso/)                             | 已有正文 | edge / serverless 化時的 migration route                     |
+| 15   | [PostgreSQL to SQLite simplification](/backend/01-database/vendors/sqlite/migrate-from-postgresql-simplification/) | 已有正文 | 小型工具、single-user app 或 embedded 需求的反向路徑         |
+
+這個順序讓 SQLite 先完成自己的核心語言，再處理相鄰產品。D1、Turso、LiteFS、Litestream 都帶有 SQLite 相容性，但教學上要先問它們承擔的是 backup、replication、edge locality、read replica 還是 distributed write。
+
+### 文件命名規則
+
+SQLite 章節群的檔名用服務責任命名，product-first 命名只留給 D1 / Turso / libSQL 這類 product boundary 本身就是教學主題的文件。
+
+| 類型        | 命名方式                        | 範例                               |
+| ----------- | ------------------------------- | ---------------------------------- |
+| Core deep   | `{mechanism}-{responsibility}`  | `wal-concurrency-locking.md`       |
+| Operation   | `{operation}-{decision-signal}` | `pragma-tuning-performance.md`     |
+| Application | `{context}-{state-role}`        | `mobile-desktop-embedded-store.md` |
+| Variant     | `{products}-comparison`         | `d1-turso-libsql-comparison.md`    |
+| Migration   | `migrate-to-{target}`           | `migrate-to-postgresql.md`         |
+
+### Cross-module 路由
+
+SQLite 章節群要固定連到相鄰的 backend 模組與語言教材。Backup / restore 連到可觀測性平台的 evidence package 與事故處理與復盤的 decision log；test fixture 連到語言教材與 repository adapter；edge / local-first 連到部署平台與網路入口、資安與資料保護；performance tuning 連到效能工程與容量規劃。
+
+| SQLite 議題        | 主要跨模組路由                                                                                                                                                             |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Backup / restore   | [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)、[Incident Decision Log](/backend/08-incident-response/incident-decision-log/) |
+| Test fixture       | [Repository Adapter](/backend/01-database/repository-adapter/)、語言教材的 contract test                                                                                   |
+| Local-first / sync | [Data Protection](/backend/07-security-data-protection/data-protection-and-masking-governance/)、offline / device privacy                                                  |
+| Edge SQLite        | [Global Distributed OLTP](/backend/01-database/global-distributed-oltp/)、deployment platform                                                                              |
+| Performance        | [Bottleneck Localization](/backend/09-performance-capacity/bottleneck-localization/)                                                                                       |
+
+### 後續審查點
+
+SQLite 章節群完稿後要特別審查這些偏誤：把 SQLite 過度美化成 production SQL 替代品、把 edge SQLite 產品跟本地 SQLite 混成同一種能力，以及把 test fixture 的便利性誤寫成 production equivalence。
 
 ## Anti-recommendation 與升級路由
 
@@ -252,7 +315,6 @@ SQLite 不在 09 case 庫的「規模化 vendor」類別、但作為 *embedded �
 - 完整 T1 對照：[01-database vendors index](/backend/01-database/vendors/)
 - 平行：[PostgreSQL vendor](/backend/01-database/vendors/postgresql/) / [MySQL vendor](/backend/01-database/vendors/mysql/)（production server-based RDBMS）
 - 上游：[1.4 Repository Adapter](/backend/01-database/repository-adapter/)（test fixture 模式）
-- 結構：[SQLite Teaching Structure](/backend/01-database/vendors/sqlite/teaching-structure/)（完整章節群與寫作順序）
 - 操作：[SQLite Hands-on](/backend/01-database/vendors/sqlite/hands-on/)（local file、backup restore、WAL busy reproduction、migration fixture、D1 / Turso preview）
 - 深入：[SQLite file lifecycle 與 backup boundary](/backend/01-database/vendors/sqlite/file-lifecycle-backup-boundary/)（WAL、backup、restore、file ownership）
 - 官方：[SQLite Documentation](https://sqlite.org/docs.html)、[Litestream](https://litestream.io/)、[Turso](https://turso.tech/)、[Cloudflare D1](https://developers.cloudflare.com/d1/)

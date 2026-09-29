@@ -24,5 +24,5 @@ SQLite hands-on 章節要以檔案生命週期為中心。操作指令只在能�
 ## 引用路徑
 
 - 上游：[SQLite overview](/backend/01-database/vendors/sqlite/)
-- Structure：[SQLite Teaching Structure](/backend/01-database/vendors/sqlite/teaching-structure/)
+- Structure：[SQLite overview](/backend/01-database/vendors/sqlite/) 的〈撰寫底稿〉節
 - Deep article：[File lifecycle / backup boundary](/backend/01-database/vendors/sqlite/file-lifecycle-backup-boundary/)
