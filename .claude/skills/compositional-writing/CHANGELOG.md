@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.37.0 — demonstrating-commands 新增〈散文裡夾了一段程式，就把程式與逐行解釋移進區塊〉並調和「推導與機制寫散文」「錯誤用法不進區塊」兩條；bank 新增「散文夾程式」類別；principle 卡 code-fragments-in-prose-make-readers-reassemble
+
 **Version**: 1.36.0 — 命名段補「重複的運算式」形態（同一個概念每次換描述重講），註明審查端列必修；principle 卡修法補審查端一條
 
 **Version**: 1.35.0 — 新增 principle 卡 unnamed-halves-are-unextracted-variables 與 bank 類別「部分與一側當名字」：切開集合時先寫切分依據、再用業界術語／案例名／描述短語命名，之後只用名字；全站實跑後補：整體也要具名、裸「這部分」回指、組成句豁免、模糊切分底下藏著寫反的論斷、替換文字的新關係要回原文核對
