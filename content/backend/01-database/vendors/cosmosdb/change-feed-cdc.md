@@ -8,7 +8,7 @@ tags: ["backend", "database", "cosmosdb", "change-feed", "cdc", "deep-article"]
 
 這篇整理 Cosmos DB SQL API container 的 Change Feed：它的順序與進度語義、latest-version 與 all-versions-and-deletes 兩種模式、用 change feed processor 與 Azure Functions trigger 消費的做法、常見失敗模式，以及它跟 DynamoDB Streams 的語義差。Change Feed 是 Cosmos DB 把 container 內每次寫入按 logical partition 順序持久化成一條可重讀變更序列的能力、對應 [Change Data Capture](/backend/knowledge-cards/change-data-capture/) 的概念分層。它讓「寫入後要做的後續工作」（投影、cache 失效、事件發布、跨 store 同步）從 application 寫入路徑解耦出來、由獨立 consumer 按自己的進度消費。
 
-Case anchor 是 [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（85,000 SKU、每週新增 5,000 件的高更新頻率 catalog、寫入後需要 search index / 推薦排序投影）。ASOS case 本身沒有揭露 Change Feed 的實作細節、本文只取它的 catalog 寫入投影壓力當情境 anchor、機制以 Azure vendor 規格與通用工程展開。
+Case anchor 是 [ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（85,000 SKU、每週新增 5,000 件的高更新頻率 catalog、寫入後需要 search index / 推薦排序投影）。ASOS case 本身沒有揭露 Change Feed 的實作細節、本文只取它的 catalog 寫入投影壓力當情境 anchor、機制以 Azure vendor 規格與通用工程展開。
 
 ## 問題情境
 
@@ -160,7 +160,7 @@ consumer 假設事件按全域時間到達、做了依賴順序的邏輯（例�
 ## 相關連結
 
 - [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
-- [9.C21 ASOS case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 高更新頻率 catalog 投影壓力的情境 anchor
+- [ASOS case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 高更新頻率 catalog 投影壓力的情境 anchor
 - [stored-procedure-trigger](../stored-procedure-trigger/) — partition 內同步邏輯的對照
 - [partition-key-design](../partition-key-design/) — per-partition 順序的設計來源
 - [DynamoDB vendor](/backend/01-database/vendors/dynamodb/) — DynamoDB Streams 對照

@@ -24,7 +24,7 @@ PostgreSQL dialect 的存在價值、在「既有 PostgreSQL 應用要拿到 Spa
 
 真實壓力場景：一個建在 Cloud SQL for PostgreSQL 上的金融 ledger、撞到 single-primary 寫入上限、需要遷到 Spanner 拿跨 region 強一致;團隊有數萬行 PostgreSQL SQL、用 libpq-based driver、若 target 是 GoogleSQL、application 層改動範圍會大到讓遷移 ROI 不成立。PG dialect 把這個改動範圍縮小到「相容子集邊界內的 SQL 多數可沿用、邊界外的功能需要改寫」。
 
-Case anchor：本主題沒有公開的客戶案例可以引用。Google 內部 Spanner 案例（[9.C10 Cloud Spanner：每秒 10 億請求的全球一致性資料庫](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）是 Google internal dogfood case、未展開 dialect 選擇細節、且不是 customer-facing 參考。本文 dialect 機制、相容子集邊界、wire protocol 行為均以 GCP vendor 規格 + 通用遷移工程展開、case 僅作「為什麼 PostgreSQL 團隊要遷 Spanner」的壓力 anchor。延伸的遷移流程在 sibling [migrate-from-cloud-sql-pg](../migrate-from-cloud-sql-pg/)。
+Case anchor：本主題沒有公開的客戶案例可以引用。Google 內部 Spanner 案例（[Cloud Spanner：每秒 10 億請求的全球一致性資料庫](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）是 Google internal dogfood case、未展開 dialect 選擇細節、且不是 customer-facing 參考。本文 dialect 機制、相容子集邊界、wire protocol 行為均以 GCP vendor 規格 + 通用遷移工程展開、case 僅作「為什麼 PostgreSQL 團隊要遷 Spanner」的壓力 anchor。延伸的遷移流程在 sibling [migrate-from-cloud-sql-pg](../migrate-from-cloud-sql-pg/)。
 
 ## 相容子集邊界：哪些 PostgreSQL 功能不在範圍內
 

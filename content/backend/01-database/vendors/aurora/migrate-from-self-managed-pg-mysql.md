@@ -51,7 +51,7 @@ operational model 為什麼要重做，由 storage 設計決定，在 [Aurora st
 | 合規禁止跨境複製          | 受監管市場 [Data Residency](/backend/knowledge-cards/data-residency/) *禁止跨境複製*、Aurora Global Database 在這種場景 *違反合規* — 要改用每市場獨立 cluster                              |
 | 客製化 storage / I/O      | Aurora storage 是 AWS managed、不能客製化（vs self-managed 可以做 cgroup / quota / 自訂 storage 配置）                                                                                     |
 
-**合規禁止跨境複製 no-go**（[9.C14 Standard Chartered 揭露](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)）：
+**合規禁止跨境複製 no-go**（[Standard Chartered 揭露](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)）：
 
 受監管市場資料不能跨境複製、Aurora Global Database 在這種場景違反合規。讀者規劃 Aurora migration 時不能假設「Aurora 一定有 Global Database 選項」— 要改用每市場獨立 cluster（fleet 拓樸吸收合規邊界、見 [Aurora read replica scaling](../read-replica-scaling/) fleet SSoT）。
 
@@ -63,9 +63,9 @@ operational model 為什麼要重做，由 storage 設計決定，在 [Aurora st
 
 ### Case anchor
 
-- [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)：多套 RDBMS 統一到 Aurora、driver 是 *operational consolidation*、不是純效能
-- [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)：200 個 cluster、按業務切分（不是一個大 cluster + 200 schema）
-- [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)：受監管場景、合規 lead time 是時程主項
+- [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)：多套 RDBMS 統一到 Aurora、driver 是 *operational consolidation*、不是純效能
+- [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)：200 個 cluster、按業務切分（不是一個大 cluster + 200 schema）
+- [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)：受監管場景、合規 lead time 是時程主項
 
 **Netflix scope warning（必引用）**：
 
@@ -245,7 +245,7 @@ Output：
 
 ### Standard Chartered 揭露的時程模型
 
-[9.C14 Standard Chartered case](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 「判讀」段第 3 點 + 「策略」段第 3 點原文：「每個受監管市場的審查可能 3-12 個月、合計遷移時程是『市場數 × 平均審查月份』、不是『技術遷移月份』」。
+[Standard Chartered case](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 「判讀」段第 3 點 + 「策略」段第 3 點原文：「每個受監管市場的審查可能 3-12 個月、合計遷移時程是『市場數 × 平均審查月份』、不是『技術遷移月份』」。
 
 工程含義：
 
@@ -340,7 +340,7 @@ Output：
 
 ### Netflix Aurora consolidation：operational consolidation 的價值
 
-[9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 多套 RDBMS（PostgreSQL / MySQL / Oracle）→ Aurora、+75% 效能 / -28% 成本。
+[Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 多套 RDBMS（PostgreSQL / MySQL / Oracle）→ Aurora、+75% 效能 / -28% 成本。
 
 **驗證的 driver**：
 
@@ -365,7 +365,7 @@ Output：
 
 ### DraftKings：fleet 拓樸 redesign
 
-[9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 200 個獨立 Aurora cluster、按業務切分（不是一個大 cluster + 200 schema）。
+[DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 200 個獨立 Aurora cluster、按業務切分（不是一個大 cluster + 200 schema）。
 
 **驗證的 driver**：
 
@@ -377,7 +377,7 @@ Output：
 
 ### Standard Chartered：合規 lead time + 跨境複製禁令
 
-[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 受監管場景揭露：
+[Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 受監管場景揭露：
 
 - 合規 lead time 是時程主項（3-12 個月 / 市場）
 - 跨境複製禁止讓 Global Database 變反指標
@@ -421,8 +421,8 @@ Output：
 - [Replication Lag 卡片](/backend/knowledge-cards/replication-lag/) — operational diff 主軸
 - [Rollback Window 卡片](/backend/knowledge-cards/rollback-window/) — cutover decision
 - [Rollback Condition 卡片](/backend/knowledge-cards/rollback-condition/) — rollback trigger
-- [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — operational consolidation 跟 Aurora 非 all-purpose store 邊界
-- [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — fleet 拓樸 redesign
-- [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 合規 lead time + 跨境複製禁令
+- [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — operational consolidation 跟 Aurora 非 all-purpose store 邊界
+- [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — fleet 拓樸 redesign
+- [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 合規 lead time + 跨境複製禁令
 - [Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/) — 遷移 playbook 從 Driver、Diff audit、Phase plan、Evidence、Cutover 到 Cleanup 的寫法
 - 官方：[Aurora migration documentation](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Migrating.html)

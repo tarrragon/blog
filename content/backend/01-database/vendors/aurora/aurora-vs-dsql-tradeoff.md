@@ -45,7 +45,7 @@ standard Aurora 的 storage 層雖然分散，*compute 寫入仍是 single write
 - **複雜 / 長交易**：依賴長交易、複雜多語句交易、特定 isolation 行為 → standard Aurora 的完整交易模型
 - **寫入量 standard Aurora 撐得住**：single writer 還有餘量 → 不必為「未來可能」預先跨 paradigm
 
-`9.C14 Standard Chartered` 與 `9.C4 DraftKings` 是反向佐證：金融帳本 / 博彩這類高一致性、高關鍵 OLTP workload，在 *standard Aurora* 上就能同時拿到韌性與性能（DraftKings replication lag 降到 10-30ms 級、Standard Chartered 把韌性與性能當單一目標）。它們沒有跨到 distributed SQL——因為 single-region 強一致 + 跨 AZ 高可用已滿足需求。多數金融 OLTP 不需要 active-active multi-region write。
+Standard Chartered 與 DraftKings 是反向佐證：金融帳本 / 博彩這類高一致性、高關鍵 OLTP workload，在 *standard Aurora* 上就能同時拿到韌性與性能（DraftKings replication lag 降到 10-30ms 級、Standard Chartered 把韌性與性能當單一目標）。它們沒有跨到 distributed SQL——因為 single-region 強一致 + 跨 AZ 高可用已滿足需求。多數金融 OLTP 不需要 active-active multi-region write。
 
 > **Scope warning**：Standard Chartered / DraftKings 的 case 揭露其用 standard Aurora 達成韌性 + 性能（見 [storage-architecture](/backend/01-database/vendors/aurora/storage-architecture/)）；「它們不需要 DSQL」是本文基於其 single-region 強一致需求的推論、非 case 明文比較 DSQL。引用為「standard Aurora 已足夠多數高一致 OLTP」的訊號、不當 DSQL 對比的 case fact。
 
@@ -85,4 +85,4 @@ standard Aurora → DSQL 不是版本升級、是 paradigm 切換。Aurora PG/My
 - [migrate-to-aurora-dsql](/backend/01-database/vendors/postgresql/migrate-to-aurora-dsql/) — 決定跨之後的遷移 playbook（SSoT）
 - [aurora-dsql-spanner-decision-tree](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/) — Aurora DSQL、Spanner 與 CockroachDB 之間的 distributed SQL 選型
 - 替代路由：single-region 夠 → 留 standard Aurora；KV access pattern → [DynamoDB](/backend/01-database/vendors/dynamodb/)
-- 跟 [Standard Chartered 9.C14](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) / [DraftKings 9.C4](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 互引：高一致 OLTP 在 standard Aurora 已足夠的訊號
+- 跟 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) / [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 互引：高一致 OLTP 在 standard Aurora 已足夠的訊號

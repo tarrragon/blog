@@ -6,7 +6,7 @@ weight: 40
 tags: ["backend", "database", "aurora", "failover", "rto", "ha", "deep-article"]
 ---
 
-這篇整理 Aurora 單一 cluster 內 cross-AZ failover 的流程：failover lifecycle 的 detection、promotion 與 DNS update，application 端的 reconnect 契約，量測真實 RTO 的做法，以及 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 受監管銀行業務為什麼選獨立 cluster 而非 Global Database failover。Aurora failover 為什麼不需要 data catch-up，在 [Aurora storage architecture](../storage-architecture/)。
+這篇整理 Aurora 單一 cluster 內 cross-AZ failover 的流程：failover lifecycle 的 detection、promotion 與 DNS update，application 端的 reconnect 契約，量測真實 RTO 的做法，以及 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 受監管銀行業務為什麼選獨立 cluster 而非 Global Database failover。Aurora failover 為什麼不需要 data catch-up，在 [Aurora storage architecture](../storage-architecture/)。
 
 Aurora cross-AZ failover 的 RTO 在官方文件的寫法是「通常 60 秒內恢復、常常不到 30 秒」（截至 2026-09），application 端實測常常看到 60-120 秒。落差來自 application 端的 *DNS cache + connection pool + retry policy* 沒有跟 failover 對齊，Aurora 端的 promotion 本身不慢。
 
@@ -193,7 +193,7 @@ echo "Failover triggered at $START ms"
 
 ## Standard Chartered 為什麼選獨立 cluster 而非 Global Database
 
-[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 揭露受監管產業的 failover 設計選擇 — 案例「判讀」段第 1 點：「7 個受監管市場代表 7 個獨立 cluster（資料不能跨境）、容量規劃變成『7 個獨立規劃 × 各自合規門檻』」。
+[Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 揭露受監管產業的 failover 設計選擇 — 案例「判讀」段第 1 點：「7 個受監管市場代表 7 個獨立 cluster（資料不能跨境）、容量規劃變成『7 個獨立規劃 × 各自合規門檻』」。
 
 **合規 driver**：
 

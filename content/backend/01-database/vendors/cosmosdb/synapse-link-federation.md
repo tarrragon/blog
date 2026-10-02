@@ -8,7 +8,7 @@ tags: ["backend", "database", "cosmosdb", "synapse-link", "federation", "htap", 
 
 這篇整理 Azure Synapse Link for Cosmos DB：analytical store 怎麼同步與隔離 RU、怎麼啟用與查詢、何時用它做分析、何時把分析交給專用 OLAP。Azure Synapse Link 把 Cosmos DB 的交易型資料自動同步到一個 column-oriented 的 analytical store、讓 Synapse（或其他 analytics engine）直接查分析資料、而 *不消耗 OLTP 的 RU、不打 transactional store*。它是一種 [federation](/backend/knowledge-cards/federation/) — 同一份資料的 OLTP 與 OLAP 存取被分到兩個各自最佳化的 store、由平台保持同步。
 
-Case anchor 是 [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Microsoft 自家把使用分析平台建在 Cosmos DB 上、planet-scale 全球分散式分析。case 自承沒揭露具體 throughput / latency / cost 數字、也沒明說用了 Synapse Link、本文只取「analytics workload 建在 Cosmos 上」這個情境 anchor、機制以 Azure vendor 規格與 HTAP / federation 通用工程展開。
+Case anchor 是 [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Microsoft 自家把使用分析平台建在 Cosmos DB 上、planet-scale 全球分散式分析。case 自承沒揭露具體 throughput / latency / cost 數字、也沒明說用了 Synapse Link、本文只取「analytics workload 建在 Cosmos 上」這個情境 anchor、機制以 Azure vendor 規格與 HTAP / federation 通用工程展開。
 
 ## 問題情境
 
@@ -133,12 +133,12 @@ analytical store 通常要建 container 時啟用、production 跑一陣子才�
 - federation 概念：[federation](/backend/knowledge-cards/federation/) — OLTP / OLAP 各自最佳化 store + 平台同步
 - 跨源 / 重型分析的升級路由：Synapse dedicated pool / BigQuery / Snowflake
 - 回 overview：[Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) 列出本 vendor 的其他深度文章
-- Microsoft 365 analytics 主 anchor：[9.C30](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — analytics workload 建在 Cosmos 上的情境
+- Microsoft 365 analytics 主 anchor：[Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — analytics workload 建在 Cosmos 上的情境
 
 ## 相關連結
 
 - [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
-- [9.C30 Microsoft 365 case](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Cosmos 上的全球分析平台情境 anchor
+- [Microsoft 365 case](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Cosmos 上的全球分析平台情境 anchor
 - [change-feed-cdc](../change-feed-cdc/) — 自訂 pipeline 的對照路徑
 - [ru-cost-model-sizing](../ru-cost-model-sizing/) — OLTP RU 與 analytical 成本的分離
 - [Federation 卡片](/backend/knowledge-cards/federation/) — OLTP / OLAP federation 概念基底

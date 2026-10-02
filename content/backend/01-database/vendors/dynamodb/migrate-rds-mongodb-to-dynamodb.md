@@ -56,7 +56,7 @@ paradigm shift 型遷移的本質是 *不收斂* — 不是所有資料都該進
 | 需要強一致複雜交易                          | 留 RDS                       |
 | schema 頻繁演進、查詢需求不穩               | 留 MongoDB / RDS             |
 
-`9.C20 Zomato` 是這個判讀的 case anchor：Zomato 遷的是 *billing platform*（帳單事件、access pattern 固定、可接受 eventually consistent）、不是把整家公司的資料庫都搬。帳單系統從 TiDB 遷到 DynamoDB 後吞吐 2,000 → 8,000 RPM（4x）、延遲降 90%、成本降 50%；動機是 TiDB 必須為突發流量峰值預先 over-provision、DynamoDB on-demand「pay only for what we use」避免常態浪費。
+Zomato 是這個判讀的 case anchor：Zomato 遷的是 *billing platform*（帳單事件、access pattern 固定、可接受 eventually consistent）、不是把整家公司的資料庫都搬。帳單系統從 TiDB 遷到 DynamoDB 後吞吐 2,000 → 8,000 RPM（4x）、延遲降 90%、成本降 50%；動機是 TiDB 必須為突發流量峰值預先 over-provision、DynamoDB on-demand「pay only for what we use」避免常態浪費。
 
 > **Scope warning**：Zomato 的「成本降 50%」是 *當下流量* 下的對照、不是永久結論；「延遲降 90%」可能主要是 p50、p99/p999 改善幅度通常較小。這兩點 case 原文已標明、引用時不可升級成「DynamoDB 永遠更便宜更快」。crossover 判讀見下方容量段。
 

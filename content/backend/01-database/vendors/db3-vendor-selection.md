@@ -20,12 +20,12 @@ document / KV / multi-model NoSQL 的 vendor selection，核心責任是把讀�
 
 這兩類讀者進來時的 *真實問題* 不在 vendor 之間、在 *workload 自己屬哪一型*。Case anchor 覆蓋六個 unique 角度：
 
-- 多型 document workload — [9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/)（車載 sensor schema 隨車型演進、20 個 Atlas DB blast radius 切分）
-- Document 跨雲 hedging — [9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/)（自管 → Atlas、6 個月遷移、跨雲彈性）
-- 同 model 換 vendor 的 dogfood signal — [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)（MongoDB → Cosmos DB MongoDB API、保留 driver、wire compat 限制）
-- KV-as-buffer 正向用例 — [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)（DynamoDB 寫入緩衝、6750x 彈性、後端慢消費）
-- PK 天然均勻典範 — [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)（90M reads/sec 年度峰值、KV pattern 純粹）
-- Federated DB 真實系統 — [9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/)（MongoDB + DynamoDB + Memcached + mongobetween + freshness token）
+- 多型 document workload — [Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/)（車載 sensor schema 隨車型演進、20 個 Atlas DB blast radius 切分）
+- Document 跨雲 hedging — [Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/)（自管 → Atlas、6 個月遷移、跨雲彈性）
+- 同 model 換 vendor 的 dogfood signal — [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)（MongoDB → Cosmos DB MongoDB API、保留 driver、wire compat 限制）
+- KV-as-buffer 正向用例 — [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)（DynamoDB 寫入緩衝、6750x 彈性、後端慢消費）
+- PK 天然均勻典範 — [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)（90M reads/sec 年度峰值、KV pattern 純粹）
+- Federated DB 真實系統 — [Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/)（MongoDB + DynamoDB + Memcached + mongobetween + freshness token）
 
 ## Workload shape × access pattern × consistency 三軸前置判讀
 
@@ -48,7 +48,7 @@ document / KV / multi-model NoSQL 的 vendor selection，核心責任是把讀�
 KV 適用度的核心判讀是 *partition key 天然均勻度*。partition key 不均勻會讓 vendor 廣告的「scale infinitely」變成「scale 到 hot partition 為止」、單一 logical key 流量超過該 partition 上限就 throttle 或 latency spike。
 
 - **天然均勻 PK + 穩定 access pattern**（meeting_id / player_id / message_id / user_id）→ DynamoDB / Cosmos DB Table API 適用、PK 不需 composite key 修補。Amazon Ads 用 ad_id 撐 90M reads/sec、Zoom 用 meeting_id、Capcom 用 player_id、PayPay 用 message_id、Disney+ 用 user_id — 五個 case 都揭露同一 frame：*業務天然存在均勻 key 時 KV 是最自然的選擇*。
-- **天然不均勻 PK**（event_id 一場演唱會集中 / date 時間序集中）→ 需 composite key 或 write sharding 修補。Tixcraft（9.C15）用 `event_id + user_id_hash` composite key 把單一熱門演唱會的 6750x spike 攤平到 partition 上 — 不是 DynamoDB 自身彈性、是 partition key 均勻分散的結果。
+- **天然不均勻 PK**（event_id 一場演唱會集中 / date 時間序集中）→ 需 composite key 或 write sharding 修補。Tixcraft用 `event_id + user_id_hash` composite key 把單一熱門演唱會的 6750x spike 攤平到 partition 上 — 不是 DynamoDB 自身彈性、是 partition key 均勻分散的結果。
 - **Access pattern 變動頻繁**（探索期、< 5 種 query 還會增加）→ 不適合 DynamoDB single-table design、回 RDB。Single-table 把 access pattern 編進 PK / SK 結構、增加新 query 等於改 schema、改 schema 等於重新 load 資料、成本不對。
 
 KV 適用度判讀的延伸細節（hot partition 反模式 / composite key 設計 / adaptive capacity）見 [DynamoDB partition key antipatterns](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)。
@@ -63,7 +63,7 @@ Consistency 需求的核心判讀是 *跨 partition / 跨 region transaction 是
 
 ## Migration path：保留原 DB、同 DB 換託管、換 vendor 保留 model
 
-> 這三種路徑是從 Coinbase（9.C36）、Forbes（9.C37）、Microsoft 365（9.C30）三個案例歸納的共通結構，不是單一案例直接揭露。
+> 這三種路徑是從 Coinbase、Forbes、Microsoft 365三個案例歸納的共通結構，不是單一案例直接揭露。
 
 讀者進來時通常不是綠地、是 *既有系統演進*。這三種遷移路徑的風險、ROI、適用條件完全不同、選錯路徑會推到錯的 vendor。
 
@@ -71,7 +71,7 @@ Consistency 需求的核心判讀是 *跨 partition / 跨 region transaction 是
 
 不換 vendor、加 connection proxy（mongobetween / pgbouncer 類）、加 cache（Memcached + freshness token）、加 predictive scaling — 主資料層不動、應用層跟 ops 層補強。
 
-- **代表 case**：Coinbase（9.C36）保留 MongoDB Atlas、自建 mongobetween 把 60K connections/min 降到 ~2K（一個量級）、用 Memcached + freshness token 撐 1.5M reads/sec、用 ML predictive scaling 把擴容時間從 70 → 25 分鐘提前 60 分鐘
+- **代表 case**：Coinbase保留 MongoDB Atlas、自建 mongobetween 把 60K connections/min 降到 ~2K（一個量級）、用 Memcached + freshness token 撐 1.5M reads/sec、用 ML predictive scaling 把擴容時間從 70 → 25 分鐘提前 60 分鐘
 - **路徑成本**：中（自建工具、需要工程資源 build & operate proxy / cache layer / ML model）
 - **風險**：低（主資料層不動、回滾代價小）
 - **ROI**：保留主資料 schema + access pattern、解 driver / 部署模型 / cache 一致性瓶頸
@@ -81,7 +81,7 @@ Consistency 需求的核心判讀是 *跨 partition / 跨 region transaction 是
 
 自管 → managed（Atlas / Cosmos DB / DocumentDB）、保留 schema 跟 access pattern、遷移期 6 個月量級。
 
-- **代表 case**：Forbes（9.C37）自管 MongoDB → MongoDB Atlas、保留 CMS schema、6 個月遷移、揭露「TCO 改善 25%」
+- **代表 case**：Forbes自管 MongoDB → MongoDB Atlas、保留 CMS schema、6 個月遷移、揭露「TCO 改善 25%」
 - **路徑成本**：中（dual-write + shadow read 驗證、driver 行為差異、operation runbook 重寫）
 - **風險**：中（dual-write 期間雙寫一致性、cutover 時點選擇）
 - **ROI**：operation transfer（DBA bandwidth 釋放給 schema design / query tuning）+ TCO 改善
@@ -93,7 +93,7 @@ Consistency 需求的核心判讀是 *跨 partition / 跨 region transaction 是
 
 MongoDB → Cosmos DB MongoDB API、或 MongoDB → DocumentDB — wire protocol + driver 不變、底層架構整個換、ops 模型整個換。
 
-- **代表 case**：Microsoft 365（9.C30）MongoDB → Cosmos DB MongoDB API、保留 MongoDB driver
+- **代表 case**：Microsoft 365MongoDB → Cosmos DB MongoDB API、保留 MongoDB driver
 - **路徑成本**：高（dual-write per query pattern 驗證、wire compat ≠ 100% 行為相同、aggregation pipeline 跟 transaction 行為要逐項驗證）
 - **風險**：高（每個 query pattern 都可能踩到不相容 edge case、cutover 點選擇難）
 - **ROI**：跨 vendor 換（Azure 生態 / multi-model API / global distribution）+ 保留應用層 driver code
@@ -112,9 +112,9 @@ KV → SQL 或 SQL → distributed SQL 屬 paradigm shift、應進 [CockroachDB 
 
 讀者若從 PostgreSQL / Aurora connection limit 撞牆過來、想評估 KV 替代、依撞牆訊號直接 route 到對應 article、不必先跑完資料形狀、access pattern 穩定度、consistency 的前置判讀：
 
-- **撞 connection limit**（surge 下 pool 1K-5K 隱性天花板、long-lived TCP 占滿）→ HTTP API 模型（no long-lived connection）的 KV 直接接寫入緩衝、進 [DynamoDB Single-Table Design](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) 的「durable queue / write buffer」段（Tixcraft 9.C15 路徑：DynamoDB 接訂單、傳統 server 慢消費）、或評估 [Cosmos DB Table API](/backend/01-database/vendors/cosmosdb/mongodb-api-vs-sql-api/)
+- **撞 connection limit**（surge 下 pool 1K-5K 隱性天花板、long-lived TCP 占滿）→ HTTP API 模型（no long-lived connection）的 KV 直接接寫入緩衝、進 [DynamoDB Single-Table Design](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) 的「durable queue / write buffer」段（Tixcraft 路徑：DynamoDB 接訂單、傳統 server 慢消費）、或評估 [Cosmos DB Table API](/backend/01-database/vendors/cosmosdb/mongodb-api-vs-sql-api/)
 - **撞單 primary 寫入上限**（單 leader 寫吞吐天花板、read replica 無法分擔寫）→ multi-primary distributed SQL 路徑、進 [CockroachDB vs Aurora DSQL vs Spanner 決策樹](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/) 的「single-primary 寫入撞牆」路徑（DoorDash 1.636 M QPS）
-- **撞單一 DB 撐不下 + 多 workload 形狀並存**（read-heavy / write-heavy / analytics 混在一個 DB）→ federated DB 模式、看 [9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/)（MongoDB + DynamoDB + Memcached + mongobetween）+ [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)（PostgreSQL → DynamoDB 揭露 RDB connection limit 隱性 bottleneck）
+- **撞單一 DB 撐不下 + 多 workload 形狀並存**（read-heavy / write-heavy / analytics 混在一個 DB）→ federated DB 模式、看 [Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/)（MongoDB + DynamoDB + Memcached + mongobetween）+ [Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)（PostgreSQL → DynamoDB 揭露 RDB connection limit 隱性 bottleneck）
 
 進 [DynamoDB Single-Table Design](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) 前先確認資料形狀與 access pattern 穩定度的判讀：access pattern 夠不夠穩定、PK 是否天然均勻 — connection limit 訊號 *必要但不充分*、KV 適用度的前置判讀還是要走完、避免「為了解 connection 把不穩定 access pattern 硬塞 single-table」反模式。
 
@@ -126,11 +126,11 @@ KV → SQL 或 SQL → distributed SQL 屬 paradigm shift、應進 [CockroachDB 
 
 ### Federated DB by workload
 
-Coinbase（9.C36）production 配置：MongoDB Atlas（document 主資料、identity service）+ DynamoDB（部分固定 KV workload）+ Memcached（read cache）+ mongobetween（connection proxy）+ Kinesis（event stream）。不是「全用 MongoDB」也不是「全遷 DynamoDB」、是按 workload shape 分流。
+Coinbaseproduction 配置：MongoDB Atlas（document 主資料、identity service）+ DynamoDB（部分固定 KV workload）+ Memcached（read cache）+ mongobetween（connection proxy）+ Kinesis（event stream）。不是「全用 MongoDB」也不是「全遷 DynamoDB」、是按 workload shape 分流。
 
-Toyota Connected（9.C38）：MongoDB Atlas 20 個 DB（microservice 拆 blast radius）+ Lambda + Kinesis + Redis + Kubernetes。20 個 DB 不是吞吐撐不住（18B txn/月 ≈ 7K txn/sec、單一 cluster 撐得下）、是 *microservice ownership* + *blast radius* 切分。
+Toyota Connected：MongoDB Atlas 20 個 DB（microservice 拆 blast radius）+ Lambda + Kinesis + Redis + Kubernetes。20 個 DB 不是吞吐撐不住（18B txn/月 ≈ 7K txn/sec、單一 cluster 撐得下）、是 *microservice ownership* + *blast radius* 切分。
 
-Forbes（9.C37）：MongoDB Atlas + 中介 abstraction layer + 50+ microservice。abstraction layer 隔離 schema 變動、避免 50 個服務都依賴 DB schema 細節。
+Forbes：MongoDB Atlas + 中介 abstraction layer + 50+ microservice。abstraction layer 隔離 schema 變動、避免 50 個服務都依賴 DB schema 細節。
 
 Coinbase、Toyota Connected、Forbes 三個案例揭露的共同 frame 是：**寫 production 系統時假設「DB 一個服務搞定」、忽略 cache / queue / proxy / abstraction layer 跨層責任、會撞 connection limit / cache miss / cross-region replication 等隱性瓶頸**。
 
@@ -148,18 +148,18 @@ DynamoDB 在 surge 場景能撐 nearly infinitely 不是 DynamoDB 自己神奇�
 
 下表是三家在 selection 階段的對比。每個軸後續都有各 vendor 的專篇展開機制、本文不重複展開。
 
-| 軸                               | MongoDB                                                                     | DynamoDB                                                   | Cosmos DB                                                                                                 |
-| -------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| **資料模型核心**                 | Document（aggregate root）+ aggregation pipeline                            | KV with optional document fields + GSI / LSI               | Multi-model（SQL / MongoDB / Cassandra / Gremlin / Table API）                                            |
-| **部署 topology**                | 跨雲（Atlas AWS / GCP / Azure）+ self-hosted                                | AWS-only managed                                           | Azure-only managed                                                                                        |
-| **跨雲 hedging**                 | 高（Atlas 跨雲、Forbes case）                                               | 無（AWS lock-in）                                          | 無（Azure lock-in）                                                                                       |
-| **Capacity 抽象**                | CPU + IOPS + working set RAM 三軸                                           | WCU/RCU + on-demand/provisioned + adaptive capacity        | RU（Request Unit）+ 5 consistency level                                                                   |
-| **Contract layer**               | DB 層 `$jsonSchema` validator / app 層 abstraction / 混合                   | DynamoDB Stream + app 層 validator                         | DB 層 stored procedure + app 層 validator                                                                 |
-| **Partition / shard key 可逆性** | `reshardCollection` 5.0+ 可改、成本高                                       | 可改用 backfill                                            | 不可改、必 export-recreate                                                                                |
-| **Consistency model**            | Read concern（local / majority / linearizable）+ causal consistency session | Eventually / strongly consistent reads                     | 5 level spectrum（Strong / Bounded staleness / Session / Consistent prefix / Eventual）                   |
-| **Multi-region write**           | Atlas 跨 region 手動 conflict 處理                                          | Global Tables LWW                                          | Multi-region write（Strong 互斥、見 Cosmos DB multi-region write conflict 一篇）                          |
-| **Dogfood signal**               | 無（MongoDB 是獨立公司、不適用）                                            | Amazon 自家高頻使用（9.C5 Amazon Ads / 9.C27 Disney+ etc） | Microsoft 365 dogfood（9.C30、**Scope warning**：dogfood 數字不公開、是 selection signal 不是 benchmark） |
-| **Multi-model 差異化**           | 單一 document model                                                         | 單一 KV-with-document model                                | 唯一單服務支援 5 API（SQL / MongoDB / Cassandra / Gremlin / Table，差異化價值）                           |
+| 軸                               | MongoDB                                                                     | DynamoDB                                            | Cosmos DB                                                                                          |
+| -------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **資料模型核心**                 | Document（aggregate root）+ aggregation pipeline                            | KV with optional document fields + GSI / LSI        | Multi-model（SQL / MongoDB / Cassandra / Gremlin / Table API）                                     |
+| **部署 topology**                | 跨雲（Atlas AWS / GCP / Azure）+ self-hosted                                | AWS-only managed                                    | Azure-only managed                                                                                 |
+| **跨雲 hedging**                 | 高（Atlas 跨雲、Forbes case）                                               | 無（AWS lock-in）                                   | 無（Azure lock-in）                                                                                |
+| **Capacity 抽象**                | CPU + IOPS + working set RAM 三軸                                           | WCU/RCU + on-demand/provisioned + adaptive capacity | RU（Request Unit）+ 5 consistency level                                                            |
+| **Contract layer**               | DB 層 `$jsonSchema` validator / app 層 abstraction / 混合                   | DynamoDB Stream + app 層 validator                  | DB 層 stored procedure + app 層 validator                                                          |
+| **Partition / shard key 可逆性** | `reshardCollection` 5.0+ 可改、成本高                                       | 可改用 backfill                                     | 不可改、必 export-recreate                                                                         |
+| **Consistency model**            | Read concern（local / majority / linearizable）+ causal consistency session | Eventually / strongly consistent reads              | 5 level spectrum（Strong / Bounded staleness / Session / Consistent prefix / Eventual）            |
+| **Multi-region write**           | Atlas 跨 region 手動 conflict 處理                                          | Global Tables LWW                                   | Multi-region write（Strong 互斥、見 Cosmos DB multi-region write conflict 一篇）                   |
+| **Dogfood signal**               | 無（MongoDB 是獨立公司、不適用）                                            | Amazon 自家高頻使用（Amazon Ads / Disney+ etc）     | Microsoft 365 dogfood（**Scope warning**：dogfood 數字不公開、是 selection signal 不是 benchmark） |
+| **Multi-model 差異化**           | 單一 document model                                                         | 單一 KV-with-document model                         | 唯一單服務支援 5 API（SQL / MongoDB / Cassandra / Gremlin / Table，差異化價值）                    |
 
 ### 軸的延伸子段
 
@@ -181,7 +181,7 @@ DynamoDB 在 surge 場景能撐 nearly infinitely 不是 DynamoDB 自己神奇�
 
 訊號：access pattern 還在探索期、5+ 種 query 還會增加、強一致 cross-partition transaction 是產品契約。應回 PostgreSQL / Aurora、不是繼續加碼 DynamoDB single-table design。
 
-DynamoDB 的 *正確* 用法包含 control plane KV（Zoom / Disney+ / Capcom）跟 durable queue / write buffer（Tixcraft 9.C15 揭露的非 OLTP 正向用例）— DynamoDB 接「訂單」寫入、不是即時生效、是讓 traditional server（金流 / 票庫）用自己能承受的速度消費。這層解耦讓「前端可以擴 130 倍、後端不用同步擴」。
+DynamoDB 的 *正確* 用法包含 control plane KV（Zoom / Disney+ / Capcom）跟 durable queue / write buffer（Tixcraft 揭露的非 OLTP 正向用例）— DynamoDB 接「訂單」寫入、不是即時生效、是讓 traditional server（金流 / 票庫）用自己能承受的速度消費。這層解耦讓「前端可以擴 130 倍、後端不用同步擴」。
 
 ### 把 MongoDB 當 KV
 
@@ -225,7 +225,7 @@ Wire compat ≠ 行為 100% 相同。Cosmos DB MongoDB API 廣告「100% wire co
 
 - **JOIN-heavy + 強 normalize workload**：應留 PostgreSQL（包括 PostgreSQL + JSONB 混合方案）、不該塞 NoSQL 再 `$lookup`。aggregation pipeline 的 `$lookup` 性能遠不如 SQL JOIN、在 sharded cluster 還有限制。
 - **強一致 cross-region transaction 是產品契約**：應進 [CockroachDB vs Aurora DSQL vs Spanner 決策樹](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/) 評估 distributed SQL（CockroachDB / Spanner / Aurora DSQL）。三家 NoSQL 的 cross-region transaction 都有 limitation、不該當主路徑。
-- **大流量 + 跨業務 fleet 治理**：Aurora 200 cluster 模式（9.C4 DraftKings 揭露的 business sharding fleet）可能更合適、進 Aurora fleet 治理。NoSQL 的 fleet 治理工具鏈（cluster lifecycle / cross-cluster query / unified IAM）通常不如 managed SQL 成熟。
+- **大流量 + 跨業務 fleet 治理**：Aurora 200 cluster 模式（DraftKings 揭露的 business sharding fleet）可能更合適、進 Aurora fleet 治理。NoSQL 的 fleet 治理工具鏈（cluster lifecycle / cross-cluster query / unified IAM）通常不如 managed SQL 成熟。
 - **資料模型還在探索 + access pattern 變動快**：暫緩 NoSQL 選型、用 PostgreSQL + JSONB 過渡。JSONB 給 document-like flexibility、SQL 給 ad-hoc query power、未來釐清穩定 access pattern 後再選 NoSQL 不遲。
 
 ## 下一步路由（per-vendor outline 子組）

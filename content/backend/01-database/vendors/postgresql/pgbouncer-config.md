@@ -259,5 +259,5 @@ SHOW SERVERS;
 - [1.1 高併發資料存取](/backend/01-database/high-concurrency-access/) — 上游：什麼時候需要 connection pool
 - [Connection Pool 卡片](/backend/knowledge-cards/connection-pool/) — 概念基底
 - [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — 這類 production 部署文章的寫法
-- [9.C29 Lemino RDB connection limit case](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — connection 爆是 streaming surge 場景的 vendor-switch 主因
+- [Lemino RDB connection limit case](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — connection 爆是 streaming surge 場景的 vendor-switch 主因
 - 官方：[pgBouncer Documentation](https://www.pgbouncer.org/usage.html)

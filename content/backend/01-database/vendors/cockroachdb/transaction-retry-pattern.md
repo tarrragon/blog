@@ -8,7 +8,7 @@ tags: ["backend", "database", "cockroachdb", "distributed-sql", "transaction", "
 
 > 本文整理 CockroachDB 預設 `SERIALIZABLE` 對 application transaction contract 的影響：為什麼要包 retry loop、怎麼寫、哪些寫法在 retry 時出事。
 >
-> **來源**：本篇的 retry 機制與寫法取自 Cockroach Labs 官方的 SQL Layer 與 Transaction Retry 文件，不是任何一個案例的揭露。三個 CockroachDB 案例（[9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) / [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) / [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)）都沒有寫到 `40001 serialization_failure`、`SAVEPOINT cockroach_restart`、hot row contention 或 retry loop；DoorDash case 只寫到 PostgreSQL wire *protocol-level* 相容、SQL 行為（serializable default / retry semantics / partial index）仍要驗證。把本篇的 pattern 用到實際系統前，先對自己的 application 跑一次 audit。
+> **來源**：本篇的 retry 機制與寫法取自 Cockroach Labs 官方的 SQL Layer 與 Transaction Retry 文件，不是任何一個案例的揭露。三個 CockroachDB 案例（[DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) / [Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) / [Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)）都沒有寫到 `40001 serialization_failure`、`SAVEPOINT cockroach_restart`、hot row contention 或 retry loop；DoorDash case 只寫到 PostgreSQL wire *protocol-level* 相容、SQL 行為（serializable default / retry semantics / partial index）仍要驗證。把本篇的 pattern 用到實際系統前，先對自己的 application 跑一次 audit。
 
 ---
 
@@ -29,7 +29,7 @@ tags: ["backend", "database", "cockroachdb", "distributed-sql", "transaction", "
 
 DoorDash case 在〈策略〉段寫的是：「CockroachDB 不是 PostgreSQL fork、是 *protocol-level 相容*、實際 SQL 行為（serializable default、retry semantics、partial index）仍要驗證」。這一句是本篇要處理的問題的來由：serializable default 與 retry semantics 正是 application transaction contract 要改寫的地方。retry contract、`40001`、`SAVEPOINT` pattern 與 hot row contention 本身，DoorDash case 都沒有寫，本篇依 Cockroach Labs 官方的 SQL Layer 與 Transaction Retry 文件整理。
 
-Sibling 對照 [9.C4 DraftKings Aurora financial ledger](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 走的是 *PostgreSQL READ COMMITTED + Aurora* 的另一條路徑 — 用 application-level sharding（200 個獨立 Aurora cluster）解 Aurora single-primary 的寫入上限，沒有走到 serializable retry 這一步。DraftKings case 沒有寫 retry pattern；同樣的 ledger 若改走 CockroachDB，才需要處理本篇描述的 retry loop 與 application 改寫。
+Sibling 對照 [DraftKings Aurora financial ledger](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 走的是 *PostgreSQL READ COMMITTED + Aurora* 的另一條路徑 — 用 application-level sharding（200 個獨立 Aurora cluster）解 Aurora single-primary 的寫入上限，沒有走到 serializable retry 這一步。DraftKings case 沒有寫 retry pattern；同樣的 ledger 若改走 CockroachDB，才需要處理本篇描述的 retry loop 與 application 改寫。
 
 ## 核心機制：serializable default 跟 PostgreSQL 的差異
 
@@ -348,8 +348,8 @@ PG → CockroachDB 的 application audit 必看 transaction shape：
 
 - [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/)
 - [HLC + Raft consensus](../hlc-raft-consensus/)
-- [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)（trigger context — PG wire 相容警語）
-- [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)（合成對照 — Aurora sharding 路徑）
+- [DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)（trigger context — PG wire 相容警語）
+- [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)（合成對照 — Aurora sharding 路徑）
 - [PostgreSQL MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)
 - [isolation level 卡](/backend/knowledge-cards/isolation-level/) / [transaction boundary 卡](/backend/knowledge-cards/transaction-boundary/)
 - 官方：[CockroachDB Transactions](https://www.cockroachlabs.com/docs/stable/transactions.html) / [Transaction Retry Error Reference](https://www.cockroachlabs.com/docs/stable/transaction-retry-error-reference.html) / [READ COMMITTED v23.2 announcement](https://www.cockroachlabs.com/docs/stable/read-committed.html)

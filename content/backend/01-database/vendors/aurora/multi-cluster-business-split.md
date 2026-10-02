@@ -33,7 +33,7 @@ tags: ["backend", "database", "aurora", "multi-cluster", "blast-radius", "fleet"
 | schema 變更頻率 | 高頻 migration、不想牽制別人     | 低頻、變更少                 |
 | 合規邊界        | 資料需獨立隔離（PCI / 個資分艙） | 無特殊合規隔離需求           |
 
-`9.C23 Netflix` 是這個判斷的 case anchor：Netflix 把過往多套不同 *種類* 的關聯式 DB（PostgreSQL / MySQL / Oracle）整合到 Aurora、效能提升最高 75%、成本下降 28%；但整合的是「DB 種類 / 運維 surface」，*不是* 把所有資料塞進一個 cluster——Netflix 的微服務各自擁有自己的 Aurora cluster、彼此不共用。兩件事同時成立：減少 DB *技術種類* 降低運維知識負擔、同時維持 *per-service cluster* 隔離 blast radius。
+Netflix 是這個判斷的 case anchor：Netflix 把過往多套不同 *種類* 的關聯式 DB（PostgreSQL / MySQL / Oracle）整合到 Aurora、效能提升最高 75%、成本下降 28%；但整合的是「DB 種類 / 運維 surface」，*不是* 把所有資料塞進一個 cluster——Netflix 的微服務各自擁有自己的 Aurora cluster、彼此不共用。兩件事同時成立：減少 DB *技術種類* 降低運維知識負擔、同時維持 *per-service cluster* 隔離 blast radius。
 
 > **Scope warning**：Netflix 的「+75% 效能 / -28% 成本」是跨多 workload 的最大改善幅度、非每個 workload 都 +75%（case 原文已標明）；且 Netflix 數據層遠不止 Aurora（還有 Cassandra / EVCache / Iceberg），Aurora 承擔的是需要 ACID 的 OLTP。引用時不可外推成「整合到 Aurora 就 +75%」。
 
@@ -102,4 +102,4 @@ production 常見的踩雷：
 - [serverless-v2-scaling](/backend/01-database/vendors/aurora/serverless-v2-scaling/) — 低關鍵 / 間歇負載的 cluster 可用 serverless 降離峰成本
 - [1.8 State Ownership 與 Query Boundary](/backend/01-database/state-ownership-query-boundary/) — cluster 邊界對齊狀態 ownership
 - 替代路由：切分壓力來自資料模型差異 → polyglot persistence、回 [00 服務選型模組](/backend/00-service-selection/)
-- 跟 [Netflix 9.C23](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 互引：DB 種類 consolidation + per-service cluster 隔離雙重成立的架構
+- 跟 [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 互引：DB 種類 consolidation + per-service cluster 隔離雙重成立的架構

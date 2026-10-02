@@ -47,7 +47,7 @@ peak/avg ratio 單獨不夠用、要跟讀寫比 trend、surge 性質、事件�
 
 ### 讀寫比 trend 變化
 
-`9.C5 Amazon Ads` 揭露的觀測軸：「讀寫比 *變化* 比讀寫比本身更重要」。
+Amazon Ads 揭露的觀測軸：「讀寫比 *變化* 比讀寫比本身更重要」。
 
 - 絕對讀寫比對容量規劃不是最重要（Amazon Ads 是 18:1、Disney+ 推估 5:1、絕對值各家不同）
 - 業務邏輯改變（新增即時報表 / 新增推播 / 新增分析 query）會讓讀寫比跳一個量級
@@ -57,18 +57,18 @@ peak/avg ratio 單獨不夠用、要跟讀寫比 trend、surge 性質、事件�
 
 ### surge 是 *暫時* 還是 *永久 baseline 上移*
 
-`9.C18 Zoom` COVID 30x DAU surge 揭露的軸：surge 後 baseline 永久上移、不會回去。
+Zoom COVID 30x DAU surge 揭露的軸：surge 後 baseline 永久上移、不會回去。
 
 - 暫時 surge（單日活動 / 季節高峰）：on-demand 划算、活動結束 mode 不用調
 - 永久上移後（Zoom COVID、社會行為改變）：原 on-demand 設計會持續燒錢、要重新算 crossover、考慮切回 provisioned
 
 **Tripwire**：surge 結束後 4-8 週仍維持 surge 期間 baseline 的 70%+、判定為「永久 baseline 上移」、重評 mode。
 
-> **Scope warning**：「4-8 週 / 70% 閾值」屬通用工程估算、9.C18 Zoom case 揭露「surge 後 baseline 不會回去」概念、未揭露具體閾值。
+> **Scope warning**：「4-8 週 / 70% 閾值」屬通用工程估算、Zoom case 揭露「surge 後 baseline 不會回去」概念、未揭露具體閾值。
 
 ### 事件分級：predictable-peak vs flash-sale
 
-`9.C27 Disney+` 跟 `9.C15 Tixcraft` 對比揭露的軸：兩種 event-driven peak 不是同一類。
+Disney+ 跟 Tixcraft 對比揭露的軸：兩種 event-driven peak 不是同一類。
 
 | 維度         | predictable-peak（Disney+ 新片發布） | flash-sale（拓元售票）                                    |
 | ------------ | ------------------------------------ | --------------------------------------------------------- |
@@ -78,7 +78,7 @@ peak/avg ratio 單獨不夠用、要跟讀寫比 trend、surge 性質、事件�
 | Auto-scaling | 跟得上（事件持續時間長）             | 完全跟不上（事件時間 < scaling 反應週期）                 |
 | 後續調回     | 事件結束後 scheduled scaling 降回    | 結束後立即降回、避免燒錢                                  |
 
-`9.C27 Disney+`（Marvel / Star Wars 首日 metadata 流量 3-5 倍、持續時段較長）可以提前 1-2 天 pre-scale、scheduled scaling 合適。`9.C15 Tixcraft` 6750x in seconds，scheduled scaling 太慢、必須事前 pre-provision baseline 拉到極高、或用 on-demand + composite partition key 雙保險。
+Disney+（Marvel / Star Wars 首日 metadata 流量 3-5 倍、持續時段較長）可以提前 1-2 天 pre-scale、scheduled scaling 合適。Tixcraft 6750x in seconds，scheduled scaling 太慢、必須事前 pre-provision baseline 拉到極高、或用 on-demand + composite partition key 雙保險。
 
 兩者都不是「peak/avg > 5x → on-demand」單軸決策能解。
 
@@ -86,10 +86,10 @@ peak/avg ratio 單獨不夠用、要跟讀寫比 trend、surge 性質、事件�
 
 ### DBA / SRE 工時釋放
 
-`9.C19 Capcom` 跟 `9.C29 Lemino` 揭露的成本軸：DynamoDB 真實成本不只看 monthly bill。
+Capcom 跟 Lemino 揭露的成本軸：DynamoDB 真實成本不只看 monthly bill。
 
-- `9.C19 Capcom`：30% 成本下降的本質是「工程資源從 DB 運維轉到遊戲品質」、Capcom 是遊戲公司不是 IT 公司、把 DBA 時間從 Postgres patching / replication 設定 / backup 排程釋放到遊戲機制設計
-- `9.C29 Lemino`：90% 工程工時下降（DBA + connection management + capacity planning 統包）
+- Capcom：30% 成本下降的本質是「工程資源從 DB 運維轉到遊戲品質」、Capcom 是遊戲公司不是 IT 公司、把 DBA 時間從 Postgres patching / replication 設定 / backup 排程釋放到遊戲機制設計
+- Lemino：90% 工程工時下降（DBA + connection management + capacity planning 統包）
 
 **評估公式**：
 
@@ -102,9 +102,9 @@ on-demand 的 6-7x base rate 在 DBA 工時釋放下、實質 ROI 可能仍正�
 
 ### Vendor crossover：DynamoDB vs 自管 cluster
 
-`9.C20 Zomato` 警惕段揭露的最上層決策軸：mode 選擇之上還有 vendor 選擇。
+Zomato 警惕段揭露的最上層決策軸：mode 選擇之上還有 vendor 選擇。
 
-- `9.C20 Zomato`：「成本降 50% 是 *當下流量* 的對照」、未來流量繼續成長、DynamoDB cost-per-request 成長率比 TiDB 自管 cluster 高、某流量規模後 crossover、自管 cluster 反而便宜
+- Zomato：「成本降 50% 是 *當下流量* 的對照」、未來流量繼續成長、DynamoDB cost-per-request 成長率比 TiDB 自管 cluster 高、某流量規模後 crossover、自管 cluster 反而便宜
 - 不是只在 on-demand vs provisioned 之間挑、是要算「未來 12-24 個月在預期流量下、DynamoDB（不論 mode）vs 自管 cluster 的成本曲線」
 
 判讀分層：
@@ -201,7 +201,7 @@ production 觀察到的 6 個典型 anti-pattern：
 
 #### on-demand 後 cost 翻 3 倍
 
-dev team 切 on-demand「不用管 capacity」、但 workload 是 sustained constant、on-demand 6-7x base rate 全付出來。`9.C5 Amazon Ads` 明示「sustained workload 用 provisioned + auto-scaling」。修法：穩定 workload 用 provisioned + auto-scaling（依 peak/avg ratio 與讀寫比 trend 判讀）。
+dev team 切 on-demand「不用管 capacity」、但 workload 是 sustained constant、on-demand 6-7x base rate 全付出來。Amazon Ads 明示「sustained workload 用 provisioned + auto-scaling」。修法：穩定 workload 用 provisioned + auto-scaling（依 peak/avg ratio 與讀寫比 trend 判讀）。
 
 #### auto-scaling 跟不上 spike
 

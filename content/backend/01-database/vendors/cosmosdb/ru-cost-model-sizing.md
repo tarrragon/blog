@@ -8,7 +8,7 @@ tags: ["backend", "database", "cosmosdb", "ru-sizing", "capacity-planning", "dee
 
 Cosmos DB 用單一 [Request Unit](/backend/knowledge-cards/request-unit/)（RU）抽象 read / write / query / replace 的成本。這個抽象 *簡化* 容量規劃（不用拆 RCU/WCU、不用估 CPU + IOPS）、但也引入 *團隊知識遷移* 成本 — 從 MongoDB / PostgreSQL 自管團隊轉過來、工程師要重新學「query 為什麼吃 200 RU」「payload 從 1KB 變 10KB cost 怎麼變」「index 改一個欄位 write RU 漲 30%」這些 RU 思維問題。這篇涵蓋 RU 的計價基準、payload 與 index policy 對 RU 的影響、依負載形狀選 provisioned／autoscale／serverless，以及 RU sizing 常見的失敗模式。
 
-Case anchor 是 [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（24h 1.67 億 request、autoscale + RU budgeting）+ [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（測試到 1M RU/s、RU 抽象單位定義）。
+Case anchor 是 [ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（24h 1.67 億 request、autoscale + RU budgeting）+ [Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（測試到 1M RU/s、RU 抽象單位定義）。
 
 > **Cosmos DB 適用度前置判讀**：本篇假設 workload 已通過 Cosmos DB 適用度四層 framing（遷移路徑是保留 + 補周邊、同 DB 換託管還是同 model 換 vendor / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in）— 詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)。RU sizing + 容量模式選擇是 *已選 Cosmos DB 後* 的成本決策；若 workload 不適用 Cosmos DB、RU sizing 無法救回 vendor 選錯的成本結構落差。
 
@@ -28,7 +28,7 @@ Case anchor 是 [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-
 
 ### 從 CPU + IOPS 思維轉到 RU 思維
 
-9.C11 Minecraft Earth 案例的平台特性段揭露的 RU 對照：
+Minecraft Earth 案例的平台特性段揭露的 RU 對照：
 
 - 1 RU = 1 KB document 的 strong-consistent read 成本
 - 寫成本約 5 RU
@@ -48,7 +48,7 @@ Case anchor 是 [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-
 
 *思維遷移成本可能高過 vendor 廣告的價格差距* — 工程師需要 4-6 週才會建立 RU 直覺、selection 評估時不能只看 monthly bill 就做 ROI 結論。對中型團隊、這個學習曲線可能直接決定遷移成功率。
 
-**Scope warning**：9.C11 揭露「100 萬 RU/s 壓測通過」 — *壓測通過數字、不是 production 持續跑*（case 自己警示）。引用 1M RU/s 時必須帶 scope：壓測 vs 持續、case 明示「實際營運要看 partition key 設計是否均勻」。把壓測數字當 production capacity 推算的後果是 sizing 嚴重低估 hot partition 風險。
+**Scope warning**：Minecraft Earth 揭露「100 萬 RU/s 壓測通過」 — *壓測通過數字、不是 production 持續跑*（case 自己警示）。引用 1M RU/s 時必須帶 scope：壓測 vs 持續、case 明示「實際營運要看 partition key 設計是否均勻」。把壓測數字當 production capacity 推算的後果是 sizing 嚴重低估 hot partition 風險。
 
 ## RU 的核心機制
 
@@ -113,7 +113,7 @@ az cosmosdb sql container update \
 **持續高峰（24h 整天高）** — Provisioned + [scheduled scaling](/backend/knowledge-cards/scheduled-scaling/)
 
 - Trigger 訊號：峰值 / 平均 < 2x、預測性高
-- Case anchor：[9.C21 ASOS Black Friday](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 24h 1.67 億 request、峰值 / 平均 = 1.81、整天高
+- Case anchor：[ASOS Black Friday](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 24h 1.67 億 request、峰值 / 平均 = 1.81、整天高
 - 為什麼選 provisioned：持續高峰時 RU 整天接近上限，autoscale 每小時按擴到的最高值、以 autoscale 單價計費；官方的經驗值是一個月裡用滿 Tmax 的時數超過 66%，autoscale 就不再省錢
 - Scheduled scaling 在 event 前 30-60 分鐘把 provisioned RU/s 調到預測峰值以上
 
@@ -126,7 +126,7 @@ az cosmosdb sql container update \
 **預測性 surge（外部訊號可預測）** — Pre-provision + scheduled scaling
 
 - Trigger 訊號：賽事 / 上線 / 季節 peak、有外部訊號可學
-- Case anchor：[9.C36 Coinbase predictive scaling](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) 模型對 KV / document 同適用 — ML 預測 60 分鐘領先窗、改善的是 *trigger 提前*、不是擴容本身變快
+- Case anchor：[Coinbase predictive scaling](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) 模型對 KV / document 同適用 — ML 預測 60 分鐘領先窗、改善的是 *trigger 提前*、不是擴容本身變快
 - Coinbase case 是 MongoDB 場景、模型可借鑑、但 Cosmos DB 沒有直接對應 ML 預測整合、需要自建
 
 **稀疏 / dev / 低流量** — Serverless
@@ -135,7 +135,7 @@ az cosmosdb sql container update \
 - Serverless 是建 account 時選、*不能事後轉 provisioned*、要在建 account 之前決定
 - 這一種負載形狀沒有案例佐證（case 庫的案例多數是 production 流量）
 
-上面四種負載形狀與容量模式的對應是本篇自行歸納的分類，case 原文沒有這個分類：持續高峰有 9.C21 ASOS 當案例、預測性 surge 借用 9.C36 Coinbase 的模型，隨機 surge 與稀疏負載兩種沒有案例佐證。
+上面四種負載形狀與容量模式的對應是本篇自行歸納的分類，case 原文沒有這個分類：持續高峰有 ASOS 當案例、預測性 surge 借用 Coinbase 的模型，隨機 surge 與稀疏負載兩種沒有案例佐證。
 
 ### 切換 provisioned ↔ autoscale
 
@@ -175,7 +175,7 @@ max 40000、min 4000（10% max ceiling）、實際 baseline 是 500、付 8x bas
 
 autoscale 在 0.1×Tmax 到 Tmax 之間即時擴縮、範圍內不會回 429；超過 Tmax 的流量照樣被 throttle。預測性流量（季節 peak / 賽事 / 上線日）的風險在峰值高過平常設定的 Tmax，所以事件前要把 Tmax 調高，或改用 scheduled scaling 預先拉高 provisioned RU/s。
 
-9.C21 ASOS Black Friday 是「持續高峰」、整天高 — 用 provisioned + scheduled 比 autoscale 划算，理由在計費：整天接近上限時 autoscale 每小時都按最高值計價。9.C36 Coinbase 模型是 MongoDB case：cluster 擴容要 70 分鐘、reactive 來不及，ML 預測 60 分鐘領先窗改善的是 *trigger 提前*、不是擴容本身變快。Cosmos DB autoscale 在 Tmax 範圍內沒有這段擴容延遲，Coinbase 的領先窗對 Cosmos DB 能借鑑的部分是「在事件前把 Tmax 或 provisioned RU/s 調上去」。
+ASOS Black Friday 是「持續高峰」、整天高 — 用 provisioned + scheduled 比 autoscale 划算，理由在計費：整天接近上限時 autoscale 每小時都按最高值計價。Coinbase 模型是 MongoDB case：cluster 擴容要 70 分鐘、reactive 來不及，ML 預測 60 分鐘領先窗改善的是 *trigger 提前*、不是擴容本身變快。Cosmos DB autoscale 在 Tmax 範圍內沒有這段擴容延遲，Coinbase 的領先窗對 Cosmos DB 能借鑑的部分是「在事件前把 Tmax 或 provisioned RU/s 調上去」。
 
 修：預測性 event 前 30-60 分鐘 pre-warm RU/s、事件結束後降回；用 scheduled scaling pipeline（Azure Function trigger + ARM template）自動化。
 
@@ -225,7 +225,7 @@ Cosmos DB 容器層的 TTL（[Time To Live](https://learn.microsoft.com/azure/co
 
 ### Latency budget 拆解：vendor SLA vs end-to-end 實測
 
-[9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) 觀察「48ms 平均響應」段揭露：48ms 包含 *網路 + DB + 應用層*、DB 本身可能只佔 5-10ms。引用時不能把 vendor 廣告的 5-10ms p99 當「使用者體驗」 — 詳細拆解見 [partition-key-design](../partition-key-design/) 的 latency budget 段。
+[ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) 觀察「48ms 平均響應」段揭露：48ms 包含 *網路 + DB + 應用層*、DB 本身可能只佔 5-10ms。引用時不能把 vendor 廣告的 5-10ms p99 當「使用者體驗」 — 詳細拆解見 [partition-key-design](../partition-key-design/) 的 latency budget 段。
 
 ### 跟其他 vendor capacity 抽象的對照
 
@@ -251,8 +251,8 @@ Cosmos DB 容器層的 TTL（[Time To Live](https://learn.microsoft.com/azure/co
 ## 相關連結
 
 - [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
-- [9.C21 ASOS Black Friday case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 持續高峰 + RU budgeting 主案例
-- [9.C11 Minecraft Earth case](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — RU 抽象單位定義 + 1M RU/s 壓測（scope warning：壓測非持續）
-- [9.C36 Coinbase predictive scaling case](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — 預測性 surge 模型借鑑（跨 vendor）
+- [ASOS Black Friday case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 持續高峰 + RU budgeting 主案例
+- [Minecraft Earth case](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — RU 抽象單位定義 + 1M RU/s 壓測（scope warning：壓測非持續）
+- [Coinbase predictive scaling case](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — 預測性 surge 模型借鑑（跨 vendor）
 - [Peak Forecast 卡片](/backend/knowledge-cards/peak-forecast/) / [Hot Partition 卡片](/backend/knowledge-cards/hot-partition/) — 概念基底
 - 官方：[Cosmos DB Request Units](https://learn.microsoft.com/azure/cosmos-db/request-units) / [Provisioned throughput vs autoscale vs serverless](https://learn.microsoft.com/azure/cosmos-db/throughput-serverless)

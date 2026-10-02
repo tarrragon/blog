@@ -8,7 +8,7 @@ tags: ["backend", "database", "cosmosdb", "multi-region", "active-active", "conf
 
 Cosmos DB 是 *AP 系統*（[CAP](/backend/knowledge-cards/cap/) 三選二、放棄跨 region linearizability 換取 multi-region write 可用性）。跨 region 寫同一筆 document 必然有 conflict、Cosmos DB 提供三種 resolution policy 處理：LWW（Last-Writer-Wins）、custom merge stored procedure、conflict feed manual [reconciliation](/backend/knowledge-cards/data-reconciliation/)。這篇涵蓋 Strong consistency 與 multi-region write 為什麼不能並用、三種 resolution policy 各自怎麼設定與消費，以及廣告 SLA 與實測可用性之間的鏈路（DB 端 SLA 不等於使用者體驗）。
 
-Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（AR 遊戲跨 region 寫入、5 consistency level + multi-region SLA）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 全球零售）+ [9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/)（鏈路 SLA 拆解、跨 vendor 適用做 frame anchor）。
+Case anchor 是 [Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（AR 遊戲跨 region 寫入、5 consistency level + multi-region SLA）+ [ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 全球零售）+ [Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/)（鏈路 SLA 拆解、跨 vendor 適用做 frame anchor）。
 
 > **Cosmos DB 適用度前置判讀**：本篇假設 workload 已通過 Cosmos DB 適用度四層 framing（遷移路徑是保留 + 補周邊、同 DB 換託管還是同 model 換 vendor / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in）— 詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)。Multi-region write + conflict resolution 是 *已選 Cosmos DB 後* 的拓樸決策；strong global consistency 必要的 workload 應走 Spanner 或 Cosmos DB Strong（單一 write region）、不是用 LWW 補。
 
@@ -226,7 +226,7 @@ multi-region write 已是 active-active、*不需要 manual failover* — 一個
 
 ### 廣告 SLA vs 實測可用性鏈路拆解（本篇自行歸納的拆法）
 
-9.C11 Minecraft Earth 平台揭露的 Cosmos DB SLA：
+Minecraft Earth 平台揭露的 Cosmos DB SLA：
 
 - single-region 99.99%
 - multi-region 99.999%
@@ -237,7 +237,7 @@ multi-region write 已是 active-active、*不需要 manual failover* — 一個
 實測可用性 = DB SLA × 網路 SLA × 應用層 SLA × 客戶端可達性
 ```
 
-[9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 揭露「99.99% target vs 99% 實測」段的觀察：兩個 9 的差距 *不是* MongoDB / Atlas 自身問題、是 end-to-end 鏈路（車輛無線網路 / cellular tower / cloud network / event bus / microservice / DB cluster 任一環節掉都會打掉可用性）。Cosmos DB multi-region write 同模型：
+[Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 揭露「99.99% target vs 99% 實測」段的觀察：兩個 9 的差距 *不是* MongoDB / Atlas 自身問題、是 end-to-end 鏈路（車輛無線網路 / cellular tower / cloud network / event bus / microservice / DB cluster 任一環節掉都會打掉可用性）。Cosmos DB multi-region write 同模型：
 
 - 多 region active-active 可解 *DB 端可用性*、但網路 / 應用層任一掉、實測仍 < 99.99%
 - 廣告 99.999% 是 multi-region availability zone 級、*不是* 「使用者 request 成功率」
@@ -258,9 +258,9 @@ multi-region write 已是 active-active、*不需要 manual failover* — 一個
 ## 相關連結
 
 - [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
-- [9.C11 Minecraft Earth case](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — multi-region 99.999% / single-region 99.99% SLA 來源
-- [9.C21 ASOS case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 全球零售 multi-region 補充
-- [9.C38 Toyota Connected case](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) — 鏈路 SLA 拆解 frame anchor（跨 vendor 適用）
+- [Minecraft Earth case](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — multi-region 99.999% / single-region 99.99% SLA 來源
+- [ASOS case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 全球零售 multi-region 補充
+- [Toyota Connected case](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) — 鏈路 SLA 拆解 frame anchor（跨 vendor 適用）
 - [consistency-levels-engineering](../consistency-levels-engineering/) — 五個 consistency level 的語義、Session token 與 per-request override
 - [Stale Read 卡片](/backend/knowledge-cards/stale-read/) / [RPO 卡片](/backend/knowledge-cards/rpo/) / [RTO 卡片](/backend/knowledge-cards/rto/) — 概念基底
 - 官方：[Cosmos DB conflict resolution](https://learn.microsoft.com/azure/cosmos-db/conflict-resolution-policies) / [Multi-region writes](https://learn.microsoft.com/azure/cosmos-db/how-to-multi-master)

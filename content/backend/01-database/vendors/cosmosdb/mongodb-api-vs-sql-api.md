@@ -8,7 +8,7 @@ tags: ["backend", "database", "cosmosdb", "mongodb-api", "sql-api", "migration",
 
 Cosmos DB 提供 *5 個 API*（SQL / MongoDB / Cassandra / Gremlin / Table）、底層是同一個分散式 document store。團隊從 MongoDB 來、第一個問題通常是「MongoDB API 跟 native SQL API 我選哪個」 — 但這個問題框架太窄。讀者真正在比的是 *vendor selection*、不是兩個 API 的 syntax 差。這篇把選型拆成四個判斷：遷移路徑屬於哪一型、dogfood signal 怎麼讀、multi-model 差異化是否真用上、跨雲 hedging 還是單雲 lock-in，接著整理兩個 API 的機制差異，以及 MongoDB → Cosmos DB MongoDB API 的遷移檢查項。
 
-Case anchor 是 [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Microsoft 自家 dogfood、MongoDB → Cosmos DB MongoDB API 的 planet-scale 分析平台、提供四層 framing 的證據錨點。
+Case anchor 是 [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Microsoft 自家 dogfood、MongoDB → Cosmos DB MongoDB API 的 planet-scale 分析平台、提供四層 framing 的證據錨點。
 
 ## 問題情境：選型問題不是「兩個 API 哪個快」
 
@@ -22,7 +22,7 @@ Case anchor 是 [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/mic
 - 「為什麼有人說 MongoDB API 只是過渡、最終要遷 SQL API」
 - 「Microsoft 自己選了 MongoDB API、是不是代表 MongoDB API 才是對的選擇」
 
-這些問題背後的 *真實壓力* 是 vendor selection：團隊已選 Azure、要決定「留 Atlas 還是進 Cosmos DB、進了 Cosmos DB 用哪個 API」、選錯的成本是 *年級的工程遷移* — 不是 *config 改不改* 等級。Microsoft 365 案例（[9.C30](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)）從 MongoDB 遷到 Cosmos DB MongoDB API 是 dogfood、但 case 自承「沒有提具體 throughput、latency、cost 數字」— 引用時不能拿這個案例的「成功」當 benchmark、只能取它的 framing。
+這些問題背後的 *真實壓力* 是 vendor selection：團隊已選 Azure、要決定「留 Atlas 還是進 Cosmos DB、進了 Cosmos DB 用哪個 API」、選錯的成本是 *年級的工程遷移* — 不是 *config 改不改* 等級。Microsoft 365 案例（[Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)）從 MongoDB 遷到 Cosmos DB MongoDB API 是 dogfood、但 case 自承「沒有提具體 throughput、latency、cost 數字」— 引用時不能拿這個案例的「成功」當 benchmark、只能取它的 framing。
 
 ## 四層 framing：vendor selection 的真實決策軸
 
@@ -30,11 +30,11 @@ Case anchor 是 [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/mic
 
 「MongoDB → Cosmos DB」是 *一種* 遷移、不是 *全部* 遷移。document model 的遷移路徑在 case 庫至少呈現三型、風險跟 ROI 完全不同：
 
-| 遷移型             | 案例                                                                                                                                                   | 工程複雜度                        | ROI                            |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------- | ------------------------------ |
-| 保留 + 補周邊      | [9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/)（mongobetween + freshness token + ML predictive scaling） | 低、漸進、保留 MongoDB 自管       | 中、解 connection storm 等瓶頸 |
-| 同 DB 換託管       | [9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/)（自管 → Atlas、6 個月）                             | 中、schema 跟 access pattern 保留 | 高、釋放 ops 人力              |
-| 同 model 換 vendor | [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)（MongoDB → Cosmos DB MongoDB API）                    | 高、底層架構換、driver 保留       | 高、planet-scale 擴展性        |
+| 遷移型             | 案例                                                                                                                                             | 工程複雜度                        | ROI                            |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------- | ------------------------------ |
+| 保留 + 補周邊      | [Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/)（mongobetween + freshness token + ML predictive scaling） | 低、漸進、保留 MongoDB 自管       | 中、解 connection storm 等瓶頸 |
+| 同 DB 換託管       | [Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/)（自管 → Atlas、6 個月）                             | 中、schema 跟 access pattern 保留 | 高、釋放 ops 人力              |
+| 同 model 換 vendor | [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)（MongoDB → Cosmos DB MongoDB API）                    | 高、底層架構換、driver 保留       | 高、planet-scale 擴展性        |
 
 **三型 frame 是本章合成、case 原文沒有此分類**。引用時要明示：Forbes 6 個月遷移成功 *不代表* Microsoft 365 也是 6 個月、底層架構換的工程複雜度遠高於託管換。讀者開頭要先問「我屬於哪一型」、再進兩個 API 比較 — 「保留 + 補周邊」根本不需要進 Cosmos DB selection、「同 DB 換託管」的主要 trade-off 是 Atlas vs Cosmos DB 的跨雲 hedging（見下方〈跨雲 hedging vs 單雲 lock-in 的 trade-off〉）、「同 model 換 vendor」才是本文聚焦的決策。
 
@@ -44,7 +44,7 @@ Case anchor 是 [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/mic
 
 Microsoft 365 案例揭露的核心 signal 是「Microsoft 自家旗艦產品 dogfood Cosmos DB」— 跟 Amazon Prime Day 用 DynamoDB、Google 自家用 Spanner 一樣、雲商旗艦 DB 都用在自家旗艦產品上、這個 signal 在 vendor selection 的權重高、因為「雲商自己賭身家」。讀者該把這當 *選型訊號*、不是當 *production benchmark*。
 
-但 9.C30 case 自承的警示必須明示：
+但 Microsoft 365 case 自承的警示必須明示：
 
 - 「沒有提具體 throughput、latency、cost 數字。Microsoft 內部數字通常不公開、跟 AWS / GCP 案例的數字密度差很多」
 - 「『MongoDB 不夠用』是行銷話術。實際是 *MongoDB 在某些 workload pattern 下不夠用*、不是普遍結論」
@@ -66,13 +66,13 @@ Cosmos DB 的差異化價值不是「比 Atlas 更會跑 MongoDB」、是 *單�
 
 對 selection 的意義：若團隊預期同一系統會用 document + KV + graph 混合、Cosmos DB 的 multi-model 是 *運維單一服務* 的 unique value、不是只看「MongoDB 替代品」就能 ROI 評估。但 anti-pattern 也明確：*若團隊只用 MongoDB API、不會用其他 4 個 API*、multi-model 差異化價值對該團隊 *不成立*、不該變成 selection 理由。
 
-判讀時要把 multi-model 當「條件性價值」、不是「普遍優勢」 — 條件是「現在或可預見未來會用到第二個 API」。9.C30 Microsoft 365 case 策略段直接揭露「Multi-model 是 Cosmos DB 的差異化價值」、但這個價值對「只用 MongoDB API」的團隊不成立、不能套到所有讀者。
+判讀時要把 multi-model 當「條件性價值」、不是「普遍優勢」 — 條件是「現在或可預見未來會用到第二個 API」。Microsoft 365 case 策略段直接揭露「Multi-model 是 Cosmos DB 的差異化價值」、但這個價值對「只用 MongoDB API」的團隊不成立、不能套到所有讀者。
 
 ### 跨雲 hedging vs 單雲 lock-in 的 trade-off
 
 選 Cosmos DB（單雲、Azure-only）跟選 MongoDB Atlas（跨雲、AWS / GCP / Azure 都能跑）的核心 trade-off 不是「哪個技術更強」、是 *未來不確定性的對沖價值* — 對應 [vendor lock-in](/backend/knowledge-cards/vendor-lock-in/) 的退出成本評估：
 
-- Atlas：跨雲部署能力、未來換雲商不用換 DB、9.C37 Forbes 用 GCP 但保留跨雲彈性
+- Atlas：跨雲部署能力、未來換雲商不用換 DB、Forbes 用 GCP 但保留跨雲彈性
 - Cosmos DB / DynamoDB / Spanner：三大雲商各自的單雲 DB、選一個就綁該雲商生態
 
 對 *未來雲商策略尚未底定* 的團隊、Atlas 的 hedging 價值 *高*、即使當下單雲就夠用 — 因為 5 年後換雲商的工程成本可能遠高於每月多付的 hosting 費用。對 *已綁 Azure 生態* 的團隊（Microsoft 365 dogfood、企業 AAD / Office / Power Platform 整合）、Cosmos DB 的 Azure-only 是 *整合延伸*、不是 *lock-in 損失* — 雲商已綁、再加一個 lock-in 不增邊際成本。
@@ -159,7 +159,7 @@ API kind 是 *account 層設定*、*建 account 時選擇、無法事後切換*�
 
 ### 假設 wire compat = 100% 行為相同
 
-「100% wire compat」是 vendor 行銷話術、實際是「在某些 query pattern 下相容」— aggregation pipeline 跑出不同結果、上 production 才發現。9.C30 case 揭露的「『MongoDB 不夠用』是行銷話術。實際是 *MongoDB 在某些 workload pattern 下不夠用*」同模型反向適用 — *相容性* 也是「在某些 query pattern 下相容」、不是普遍相容。
+「100% wire compat」是 vendor 行銷話術、實際是「在某些 query pattern 下相容」— aggregation pipeline 跑出不同結果、上 production 才發現。Microsoft 365 case 揭露的「『MongoDB 不夠用』是行銷話術。實際是 *MongoDB 在某些 workload pattern 下不夠用*」同模型反向適用 — *相容性* 也是「在某些 query pattern 下相容」、不是普遍相容。
 
 修法：production query corpus dual-write 跑一遍、case-by-case 驗證每個 query pattern、不能假設 wire compat = 行為 100% 一致。Phase 4 shadow read 不是「跑一些 test」、是 *把所有 production query 跑一遍、對 checksum*。
 
@@ -177,7 +177,7 @@ unsupported aggregation stage 在 dev 環境的 sample data 看不出、producti
 
 ### 把 dogfood 案例數字當 benchmark
 
-9.C30 Microsoft 365 case 自承沒提具體 throughput / latency / cost 數字、不能拿 dogfood 案例的「成功」推論「我們團隊遷過去也會成功」— 規模 / workload pattern / 團隊能力都不同。寫 sizing 計畫時要回到 [ru-cost-model-sizing](../ru-cost-model-sizing/) 用自己的 query corpus 量、不是抄 dogfood case。
+Microsoft 365 case 自承沒提具體 throughput / latency / cost 數字、不能拿 dogfood 案例的「成功」推論「我們團隊遷過去也會成功」— 規模 / workload pattern / 團隊能力都不同。寫 sizing 計畫時要回到 [ru-cost-model-sizing](../ru-cost-model-sizing/) 用自己的 query corpus 量、不是抄 dogfood case。
 
 ### 選 MongoDB API 後想升級 native MongoDB feature
 
@@ -211,9 +211,9 @@ MongoDB API server version 升級節奏跟 native MongoDB 不同步、新 featur
 ## 相關連結
 
 - [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
-- [9.C30 Microsoft 365 dogfood case](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — 本文主案例、四層 framing 的證據錨點
-- [9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — 三型遷移路徑「保留 + 補周邊」對照
-- [9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) — 三型遷移路徑「同 DB 換託管」對照
+- [Microsoft 365 dogfood case](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — 本文主案例、四層 framing 的證據錨點
+- [Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — 三型遷移路徑「保留 + 補周邊」對照
+- [Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) — 三型遷移路徑「同 DB 換託管」對照
 - [partition-key-design](../partition-key-design/) — Phase 1 partition key 從 shard key 翻譯
 - [ru-cost-model-sizing](../ru-cost-model-sizing/) — Phase 4 RU consumption baseline
 - [consistency-levels-engineering](../consistency-levels-engineering/) — read preference 對應 consistency level

@@ -8,7 +8,7 @@ tags: ["backend", "database", "aurora", "storage", "quorum", "replication", "dee
 
 這篇整理 Aurora storage layer 的設計：quorum-based replication 的工程含義、「韌性即性能」frame 為什麼成立、OLTP workload 在這套 storage 設計下的讀寫雙峰錯位，以及它給容量規劃的判讀槓桿。
 
-Aurora 把 storage 從「block device + WAL on local disk」重寫成跨 AZ 分散式 log service、compute node 只負責 process query 跟 generate redo log records。這個設計直接決定 read replica、failover、backup 跟跨 AZ replication 的物理上限，也是三個案例數字的來源：[9.C23 Netflix consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 拿到 +75% 效能、[9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) replication lag 從 30 秒降到 10-30ms、[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 能同時把韌性跟性能當成單一目標。
+Aurora 把 storage 從「block device + WAL on local disk」重寫成跨 AZ 分散式 log service、compute node 只負責 process query 跟 generate redo log records。這個設計直接決定 read replica、failover、backup 跟跨 AZ replication 的物理上限，也是三個案例數字的來源：[Netflix consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 拿到 +75% 效能、[DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) replication lag 從 30 秒降到 10-30ms、[Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 能同時把韌性跟性能當成單一目標。
 
 ## 問題情境
 
@@ -41,7 +41,7 @@ Aurora storage 的 first-class concept 是 *quorum 寫入 + 6-way 跨 AZ replica
 - Aurora compute node：只送 *redo log records* 到 storage、不送整個 page；storage node 自己 apply redo log 重建 page、自己 checkpoint、自己 backup
 - 工程含義：compute node 寫量小、CPU 不被 dirty page flush 佔用、寫入路徑變短
 
-**「韌性即性能」frame**（[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 揭露）：
+**「韌性即性能」frame**（[Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 揭露）：
 
 Aurora 把 HA 從 application-level（Patroni promotion + WAL catch-up）下推到 storage-level。設計含義是：storage 投資（6-way 跨 AZ replication）自動成為 read replica 的容量基底 — read replica 不需要 catch-up WAL、直接從共享 storage 讀、HA 預算同步轉成讀分流預算。
 
@@ -53,7 +53,7 @@ Aurora 把 HA 從 application-level（Patroni promotion + WAL catch-up）下推�
 
 ## OLTP workload shape：讀寫雙峰錯位
 
-Aurora 設計的工程含義在 application 層落地時、要看 workload 形狀。[9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 揭露一個 OLTP 容量規劃的典型 pattern。
+Aurora 設計的工程含義在 application 層落地時、要看 workload 形狀。[DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 揭露一個 OLTP 容量規劃的典型 pattern。
 
 **DraftKings 揭露的雙峰錯位**（case「觀察」段最後一行原文）：「write workloads spike up significantly around payout events, but opening the app during the game also activates a lot of balance queries」— 比賽進行時是讀爆量（balance query）、payout event 時是寫爆量（ledger write）、兩個峰不在同一時刻。
 
@@ -67,7 +67,7 @@ Aurora 設計的工程含義在 application 層落地時、要看 workload 形�
 
 **跨 case 對照**：
 
-[9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 揭露另一種雙峰 — 直播 + 投注 *兩種服務* 同時峰、不是同服務讀寫錯位。這兩種雙峰類型要分清楚：
+[FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 揭露另一種雙峰 — 直播 + 投注 *兩種服務* 同時峰、不是同服務讀寫錯位。這兩種雙峰類型要分清楚：
 
 - 同服務讀寫錯位（DraftKings）：解法是 read / write data source 拆分、共享 Aurora cluster
 - 跨服務雙峰（FanDuel）：解法是不同服務各自獨立擴容、betting 走 Aurora、streaming 走 CDN
@@ -203,7 +203,7 @@ AuroraReplicaLag          # replica lag、判斷讀寫分流可行性
 db.IO.aurora_redo_log_flush # quorum write 等待、storage 瓶頸訊號
 ```
 
-**Production reference number**（[9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 揭露、case「觀察」段表格）：
+**Production reference number**（[DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 揭露、case「觀察」段表格）：
 
 | 指標            | DraftKings 在 Aurora MySQL 的數字 |
 | --------------- | --------------------------------- |
@@ -225,7 +225,7 @@ db.IO.aurora_redo_log_flush # quorum write 等待、storage 瓶頸訊號
 
 ## Netflix +75% 效能改善的根因
 
-[9.C23 Netflix consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 案例揭露 storage 設計的具體效能含義。Netflix 把多套 RDBMS（PostgreSQL / MySQL / Oracle）統一到 Aurora、拿到 *up to 75%* 效能改善、-28% 成本。
+[Netflix consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 案例揭露 storage 設計的具體效能含義。Netflix 把多套 RDBMS（PostgreSQL / MySQL / Oracle）統一到 Aurora、拿到 *up to 75%* 效能改善、-28% 成本。
 
 **+75% 的根因**：
 

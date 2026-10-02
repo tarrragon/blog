@@ -193,7 +193,7 @@ CloudWatch metric：
 - 用 AWS Cost Explorer 按 GSI 維度看、不是只看 table-level 總 cost
 - DAX cost 是 instance-hour 計、不是 per-request；只在 read peak 持續高才划算
 
-> **Scope warning**：「GSI 多時 cost 超過 base table」屬通用工程知識、`9.C27 Disney+` / `9.C19 Capcom` case 沒揭露具體 GSI cost ratio。
+> **Scope warning**：「GSI 多時 cost 超過 base table」屬通用工程知識、Disney+ / Capcom case 沒揭露具體 GSI cost ratio。
 
 **DAX 觀測重點**：
 
@@ -209,7 +209,7 @@ CloudWatch metric：
 
 ### Disney+ / Capcom 的 access pattern 對照
 
-`9.C27 Disney+` 跟 `9.C19 Capcom` 是兩種 GSI 用法：
+Disney+ 跟 Capcom 是兩種 GSI 用法：
 
 - Disney+ watchlist + 播放進度 + cross-device sync 全用主表 + 少量 GSI、避免 GSI 爆炸；cross-device sync 透過 [Global Tables](/backend/01-database/vendors/dynamodb/global-tables-conflict/) 處理、不是 GSI
 - Capcom 玩家 leaderboard / 戰績用 GSI 反向查詢（跨遊戲共用平台、player_id 為 base PK、game_id 為 GSI PK）；leaderboard 是否該走 GSI 還是 Redis sorted set 是另一個取捨

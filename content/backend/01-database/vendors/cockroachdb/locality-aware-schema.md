@@ -18,7 +18,7 @@ tags: ["backend", "database", "cockroachdb", "distributed-sql", "locality", "mul
 - *跨州 reporting*：總公司 BI / 財務 reporting 要橫跨所有州、不能 query N 個 cluster 後再合
 - *跨州欺詐偵測*：同一張身分證在不同州 IP 同時下注 → 風控引擎要看 *cross-state aggregated* 資料
 
-[9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/) 跨 8 州（AZ / IN / TN / FL / OH / IL / NJ / VA）用 AWS Outposts 把運算放進州內、但邏輯上仍是 *一個* CockroachDB cluster — region placement 配置決定哪些 range 釘在哪個 Outpost / AWS region。case 觀察段直接揭露「跨所有 region 一個 logical database」這個拓樸 fact。
+[Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/) 跨 8 州（AZ / IN / TN / FL / OH / IL / NJ / VA）用 AWS Outposts 把運算放進州內、但邏輯上仍是 *一個* CockroachDB cluster — region placement 配置決定哪些 range 釘在哪個 Outpost / AWS region。case 觀察段直接揭露「跨所有 region 一個 logical database」這個拓樸 fact。
 
 讀者常問：
 
@@ -27,9 +27,9 @@ tags: ["backend", "database", "cockroachdb", "distributed-sql", "locality", "mul
 - `GLOBAL` table 為什麼讀快但寫慢、預設為什麼不全部用？
 - AWS Outposts 是 latency 工具還是合規工具？
 
-對照 [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)：60+ multi-region cluster、最大 Gaming cluster 48-node 跨 4 region、locality 配置直接影響 cluster 規模治理。
+對照 [Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)：60+ multi-region cluster、最大 Gaming cluster 48-node 跨 4 region、locality 配置直接影響 cluster 規模治理。
 
-對照 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) Aurora 7 cluster fleet：銀行業跨國合規邊界、走的是「每市場獨立 Aurora cluster」路徑 — 跟 Hard Rock 邏輯一個 cluster 的拓樸完全不同。兩條路徑沒有對錯、trigger 條件不同（合規顆粒 × 跨 boundary 業務邏輯需求）。
+對照 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) Aurora 7 cluster fleet：銀行業跨國合規邊界、走的是「每市場獨立 Aurora cluster」路徑 — 跟 Hard Rock 邏輯一個 cluster 的拓樸完全不同。兩條路徑沒有對錯、trigger 條件不同（合規顆粒 × 跨 boundary 業務邏輯需求）。
 
 ## 核心機制：三種 table locality + row-level region 標記
 
@@ -235,7 +235,7 @@ non-voting replica 是 *closed timestamp* 之前的資料、read-after-write 場
 - application：寫入前明確驗證 `crdb_region` 對應 user 所在合規區
 - 監控：定期跑 `SELECT crdb_region, count(*) FROM bets GROUP BY crdb_region` 確認分佈符合預期
 
-### Hard Rock 場景的組合配置（9.C41）
+### Hard Rock 場景的組合配置
 
 bet placement / settlement / account management 都需要跨州資料存取 + 州內合規 placement。Hard Rock 案例揭露的具體組合：
 
@@ -306,8 +306,8 @@ Spanner 的 [Interleaved Table](/backend/knowledge-cards/interleaved-table/) 解
 ## 相關連結
 
 - [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/)
-- [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)（concrete framing — 跨 8 州 + Outposts + 邏輯一個 cluster）
-- [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（多 region locality 規模治理）
-- [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)（fleet 拓樸對照、不同合規邊界）
+- [Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)（concrete framing — 跨 8 州 + Outposts + 邏輯一個 cluster）
+- [Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（多 region locality 規模治理）
+- [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)（fleet 拓樸對照、不同合規邊界）
 - [stale read 卡](/backend/knowledge-cards/stale-read/) / [table partitioning 卡](/backend/knowledge-cards/table-partitioning/)
 - 官方：[CockroachDB Multi-Region Capabilities](https://www.cockroachlabs.com/docs/stable/multiregion-overview.html) / [Table Localities](https://www.cockroachlabs.com/docs/stable/table-localities.html) / [Follower Reads](https://www.cockroachlabs.com/docs/stable/follower-reads.html)

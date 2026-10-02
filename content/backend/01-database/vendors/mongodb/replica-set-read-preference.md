@@ -25,7 +25,7 @@ tags: ["backend", "database", "mongodb", "replication", "read-preference", "cons
 
 讀者徵兆：`rs.printSecondaryReplicationInfo()` 顯示 lag 分鐘級、application log 出現「我剛寫的資料讀不到」客訴、failover 演練後 connection error 持續 30s+、cache hit rate 跟 read latency 反向相關。
 
-Case anchor：[9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) 揭露「document model 撐 1.5M reads/sec 靠 cache + freshness token」、含警示「1.5M reads/sec 是 users 服務 *加上 cache* 的數字、不是 MongoDB cluster 純讀取數字」。跨 region 改 `nearest` 之後出現 stale read 的情形，本文以常見的 failure pattern 處理。
+Case anchor：[Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) 揭露「document model 撐 1.5M reads/sec 靠 cache + freshness token」、含警示「1.5M reads/sec 是 users 服務 *加上 cache* 的數字、不是 MongoDB cluster 純讀取數字」。跨 region 改 `nearest` 之後出現 stale read 的情形，本文以常見的 failure pattern 處理。
 
 ## 核心機制
 
@@ -66,7 +66,7 @@ Causal consistency session 解的是 *單 client* 在 *MongoDB cluster 內部* �
 
 ### Freshness token（cache 層機制）
 
-9.C36 Coinbase 揭露的 *跨層* 機制 — 解的是 *MongoDB + cache 跨層* 的 read-after-write、不是 cluster 內部。對應 [Freshness Token](/backend/knowledge-cards/freshness-token/) 卡片的 application-level 版本協議定義：
+Coinbase 揭露的 *跨層* 機制 — 解的是 *MongoDB + cache 跨層* 的 read-after-write、不是 cluster 內部。對應 [Freshness Token](/backend/knowledge-cards/freshness-token/) 卡片的 application-level 版本協議定義：
 
 **觸發條件**：直接打 MongoDB 不可能撐 1.5M reads/sec（口徑：users 服務應用層觀察、含 cache、非 MongoDB cluster 純讀取）。Coinbase 在 users 服務前加 Memcached query cache、單 document query 先查 cache。
 
@@ -136,7 +136,7 @@ with client.start_session(causal_consistency=True) as s:
 
 Session 結束後因果關係結束、下個 session 不繼承。
 
-**freshness token 設計**（9.C36 Coinbase 模式）：
+**freshness token 設計**（Coinbase 模式）：
 
 - Write API 返回 `{result, version_token}` — token 含 OCC version 或 MongoDB clusterTime
 - Read API 接受 optional `If-Version-≥` header / parameter
@@ -242,5 +242,5 @@ Migration playbook：
 
 - [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) — MongoDB 的服務定位與 replica set 簡介
 - [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/)
-- [9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — freshness token + 1.5M reads/sec（含 cache）
+- [Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — freshness token + 1.5M reads/sec（含 cache）
 - 官方：[MongoDB Read Preference](https://www.mongodb.com/docs/manual/core/read-preference/)、[Read Concern](https://www.mongodb.com/docs/manual/reference/read-concern/)、[Causal Consistency](https://www.mongodb.com/docs/manual/core/causal-consistency-read-write-concerns/)

@@ -160,4 +160,4 @@ CloudWatch metric：
 - [Aurora I/O-Optimized cost](/backend/01-database/vendors/postgresql/aurora-io-optimized-cost/) — serverless 算的是 compute（ACU）成本、I/O-Optimized 算的是 storage I/O 成本，兩個成本軸獨立、要分開評估
 - [rds-proxy-connection-pooling](/backend/01-database/vendors/aurora/rds-proxy-connection-pooling/) — serverless + Lambda 場景的連線管理
 - 替代路由：負載穩定且高 → provisioned；KV access pattern → [DynamoDB](/backend/01-database/vendors/dynamodb/)
-- 跟 [Netflix 9.C23](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 互引：polyglot 架構下不同 workload 用不同 Aurora 配置（穩定 OLTP provisioned、間歇副本 serverless）
+- 跟 [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 互引：polyglot 架構下不同 workload 用不同 Aurora 配置（穩定 OLTP provisioned、間歇副本 serverless）

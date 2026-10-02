@@ -247,7 +247,7 @@ Aurora reader endpoint（`prod-aurora.cluster-ro-xxx`）是 *DNS-based load bala
 
 ## Production case：Netflix Aurora consolidation
 
-MySQL → Aurora migration 的 production 責任是把自管 database operation 轉移成 managed SQL 的契約，而非只搬 schema 與資料。[9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 提供的工程訊號是多套 RDBMS 整併到 Aurora 後，效能、成本與操作責任一起改變。
+MySQL → Aurora migration 的 production 責任是把自管 database operation 轉移成 managed SQL 的契約，而非只搬 schema 與資料。[Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 提供的工程訊號是多套 RDBMS 整併到 Aurora 後，效能、成本與操作責任一起改變。
 
 這個案例要回收到三個操作判斷標準。第一，migration driver 應寫成 operation transfer，例如 backup、failover、storage growth、patching 與 observability 由誰承擔。第二，效能與成本要一起看，因為 Aurora 的 storage / compute / I/O 計費會把原本藏在 DBA 操作裡的成本攤開。第三，整併多套 RDBMS 時要先做 feature inventory，確認 plugin、storage engine、charset、replication topology 與 SQL mode 都能落到 Aurora MySQL 支援範圍。
 
@@ -266,6 +266,6 @@ Netflix case 的 sibling 路由是 [Aurora vendor page](/backend/01-database/ven
 - 同樣從自管 MySQL 出發、目標換成 managed Vitess 加 branch-based schema workflow：[MySQL → PlanetScale](/backend/01-database/vendors/mysql/migrate-to-planetscale/)
 - 上游：[MySQL vendor overview](/backend/01-database/vendors/mysql/) / [Aurora vendor page](/backend/01-database/vendors/aurora/)
 - 跨章節：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) — Aurora cost forecast
-- 既有 case：[9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — Netflix 從多套 RDBMS 統一到 Aurora 的 migration evidence
+- 既有 case：[Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — Netflix 從多套 RDBMS 統一到 Aurora 的 migration evidence
 - 方法論：[Migration Playbook Methodology](/posts/migration-playbook-methodology/)（Type C operational hybrid 結構說明）
 - 官方：[Aurora MySQL Migration Guide](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Migrating.html)

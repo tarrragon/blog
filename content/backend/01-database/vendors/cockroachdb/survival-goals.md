@@ -25,11 +25,11 @@ multi-region CockroachDB cluster 上線時、團隊最常踩的兩個錯誤期�
 
 要回答這三題、必須先把 survival goal 跟業務 SLO 的對應關係講清楚。
 
-[9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/) 提供最 concrete 的 SLO 倒推路徑：sportsbook 中 *bet placement 不能 lose* — 玩家下注後系統 crash 沒紀錄、對博彩牌照是合規事故。CockroachDB Raft 3-replica + 跨 AZ + survival goal 配置是把這個業務不可丟事件翻譯成 DB 層保證。
+[Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/) 提供最 concrete 的 SLO 倒推路徑：sportsbook 中 *bet placement 不能 lose* — 玩家下注後系統 crash 沒紀錄、對博彩牌照是合規事故。CockroachDB Raft 3-replica + 跨 AZ + survival goal 配置是把這個業務不可丟事件翻譯成 DB 層保證。
 
-[9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 則提供反直覺判讀：60+ multi-region cluster 主要動機是 *region failure 0 downtime*、不是降 latency。Gaming cluster 48-node 跨 4 region 就是為了「region failover 不停服」、不是讓玩家延遲變低。
+[Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 則提供反直覺判讀：60+ multi-region cluster 主要動機是 *region failure 0 downtime*、不是降 latency。Gaming cluster 48-node 跨 4 region 就是為了「region failover 不停服」、不是讓玩家延遲變低。
 
-對照 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 走另一條路：銀行受監管市場資料 *不能跨境*、不可用 region survival、必須拆每市場獨立 Aurora cluster + 多 AZ 部署。這個 anti-recommendation 提醒「survival goal 不是越強越好、合規邊界優先於技術 HA 配置」。
+對照 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 走另一條路：銀行受監管市場資料 *不能跨境*、不可用 region survival、必須拆每市場獨立 Aurora cluster + 多 AZ 部署。這個 anti-recommendation 提醒「survival goal 不是越強越好、合規邊界優先於技術 HA 配置」。
 
 ## 核心機制：兩種 survival goal + replica placement
 
@@ -93,7 +93,7 @@ cockroach start --locality=region=us-west2,zone=us-west2-a ...
 cockroach start --locality=region=eu-west1,zone=eu-west1-a ...
 ```
 
-### 從業務 SLO 倒推（9.C41 Hard Rock）
+### 從業務 SLO 倒推（Hard Rock）
 
 Hard Rock Digital sportsbook 揭露的 5 步倒推流程：
 
@@ -161,7 +161,7 @@ production 前必須估：
 
 ### 合規邊界 violation
 
-受監管市場（金融 / 醫療 / 博彩）資料 *不能跨境*、但 region survival 強制 voting replica 跨 region — 這直接違反合規。對照 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 走的是「每市場獨立 Aurora cluster + 多 AZ 部署」、不是 region survival。
+受監管市場（金融 / 醫療 / 博彩）資料 *不能跨境*、但 region survival 強制 voting replica 跨 region — 這直接違反合規。對照 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 走的是「每市場獨立 Aurora cluster + 多 AZ 部署」、不是 region survival。
 
 合規邊界判讀：
 
@@ -195,7 +195,7 @@ production 前必須估：
 
 數字屬「合理的工程估算量級」、不是 case 揭露的 p99。讀者用這些做容量規劃時應該自己 benchmark、不要直接套。
 
-### 賽季型容量擺盪（9.C41 Hard Rock）
+### 賽季型容量擺盪（Hard Rock）
 
 sportsbook 業務年度循環：NFL / NBA 季初季末流量結構性差異 — Hard Rock 100 nodes ↔ 33 nodes 擺盪是 *計畫內*、不是異常事件。CockroachDB 加減節點靠 range rebalance、不停服。
 
@@ -245,8 +245,8 @@ Aurora 沒有 row-level locality 配置、跨 region 強一致要走 Aurora DSQL
 ## 相關連結
 
 - [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/)
-- [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)（bet placement RPO=0 倒推）
-- [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（Gaming 48-node 跨 4 region survival）
-- [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)（anti-recommendation、為何 *不用* region survival）
+- [Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)（bet placement RPO=0 倒推）
+- [Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（Gaming 48-node 跨 4 region survival）
+- [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)（anti-recommendation、為何 *不用* region survival）
 - [quorum 卡](/backend/knowledge-cards/quorum/) / [rto 卡](/backend/knowledge-cards/rto/) / [rpo 卡](/backend/knowledge-cards/rpo/) / [blast radius 卡](/backend/knowledge-cards/blast-radius/)
 - 官方：[CockroachDB Multi-Region Survival Goals](https://www.cockroachlabs.com/docs/stable/multiregion-survival-goals.html) / [Multi-Region Capabilities Overview](https://www.cockroachlabs.com/docs/stable/multiregion-overview.html)

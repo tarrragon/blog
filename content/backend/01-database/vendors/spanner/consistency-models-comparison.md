@@ -16,7 +16,7 @@ tags: ["backend", "database", "spanner", "global-sql", "consistency", "external-
 
 真實壓力場景：金融帳本 — A 在台北轉帳給 B、B 在東京立即收到通知然後查餘額、結果查到「轉帳前」的餘額。serializable 允許這種行為（兩 transaction 可以排成任意順序、不要求跟 wall clock 一致）、external consistency 不允許（必須等 commit 後的順序符合 real-time）。混用兩個詞會讓選型結論在系統實作後才被推翻、那時候改架構成本已經高了。
 
-本篇引用的數字來自 [9.C10 Cloud Spanner：每秒 10 億請求的全球一致性資料庫](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)，以下稱 **Google 內部 Spanner 案例**：Google Ads 計費需要 external consistency，本篇拿它對照 PostgreSQL SSI、CockroachDB HLC 與 Aurora DSQL。**dogfood 邊界**：這個案例是 Google 內部 dogfood，揭露的是 Spanner 的設計目標，不是 customer-facing 的 capacity 參考，也不是客戶 SLA。
+本篇引用的數字來自 [Cloud Spanner：每秒 10 億請求的全球一致性資料庫](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)，以下稱 **Google 內部 Spanner 案例**：Google Ads 計費需要 external consistency，本篇拿它對照 PostgreSQL SSI、CockroachDB HLC 與 Aurora DSQL。**dogfood 邊界**：這個案例是 Google 內部 dogfood，揭露的是 Spanner 的設計目標，不是 customer-facing 的 capacity 參考，也不是客戶 SLA。
 
 ## 三個概念的精確定義
 

@@ -22,9 +22,9 @@ tags: ["backend", "database", "cockroachdb", "distributed-sql", "consensus", "ra
 
 三題都不只是 spec 問題、而是 *production 容量規劃跟 incident 訊號的根本前置*。
 
-問題情境最常見的 trigger：[9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) 在 2020-04-17 高峰 Aurora Postgres 撞到 1.636 M QPS、multi-hour outage。**這個數字是 Aurora 在那個時間點撞牆的痛點、case 自己警示「不是 CockroachDB 撐到 1.636 M QPS 的 throughput claim」**。case 沒揭露遷移後單一 CockroachDB cluster 的峰值、只說「跑更多 cluster、alert volume 反而下降」。要把 CockroachDB 當寫入容量解法評估、就得先理解 Raft per range 怎麼把寫入從 single-primary 分散到多 node。
+問題情境最常見的 trigger：[DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) 在 2020-04-17 高峰 Aurora Postgres 撞到 1.636 M QPS、multi-hour outage。**這個數字是 Aurora 在那個時間點撞牆的痛點、case 自己警示「不是 CockroachDB 撐到 1.636 M QPS 的 throughput claim」**。case 沒揭露遷移後單一 CockroachDB cluster 的峰值、只說「跑更多 cluster、alert volume 反而下降」。要把 CockroachDB 當寫入容量解法評估、就得先理解 Raft per range 怎麼把寫入從 single-primary 分散到多 node。
 
-[9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 則提供另一條訊號：380+ cluster / 60+ multi-region、最大單區 cluster 60 nodes / 26.5 TB。這個規模證明 Raft 維運在 production 可承擔、但也揭露容量規劃顆粒不是「全公司一條容量曲線」、是「每 cluster 各自規劃」— artery of small DBs。
+[Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 則提供另一條訊號：380+ cluster / 60+ multi-region、最大單區 cluster 60 nodes / 26.5 TB。這個規模證明 Raft 維運在 production 可承擔、但也揭露容量規劃顆粒不是「全公司一條容量曲線」、是「每 cluster 各自規劃」— artery of small DBs。
 
 ## 核心機制：HLC + Raft + range + leaseholder 四層
 
@@ -197,7 +197,7 @@ serializable contention 嚴重時 application 端 retry loop、CPU 雪崩。這�
 - `HLC offset distribution`：時鐘同步健康
 - `Transaction retry rate`：contention 訊號（細節在 [transaction retry pattern](../transaction-retry-pattern/)）
 
-### Per-cluster 容量規劃顆粒（9.C40 Netflix）
+### Per-cluster 容量規劃顆粒（Netflix）
 
 Netflix 的 380+ cluster 模型揭露一個反直覺結論：production scale 不是「全公司一條容量曲線」、而是 *artery of small DBs*。每個 cluster 對應一個 application boundary、cluster sizing 從幾個 node 到 60 nodes 不等、最大單區 60 nodes / 26.5 TB（case 觀察段表格揭露）。
 
@@ -265,9 +265,9 @@ Aurora 是 *storage-level quorum*（4 of 6 storage replica）、compute 仍是 s
 ## 相關連結
 
 - [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/)
-- [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)（Aurora 1.636 M QPS 撞牆訊號）
-- [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（380+ cluster artery of small DBs）
-- [9.C10 Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)（TrueTime 對照）
+- [DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)（Aurora 1.636 M QPS 撞牆訊號）
+- [Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（380+ cluster artery of small DBs）
+- [Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)（TrueTime 對照）
 - [distributed SQL 卡](/backend/knowledge-cards/distributed-sql/)
 - [quorum 卡](/backend/knowledge-cards/quorum/)
 - 官方：[CockroachDB Architecture](https://www.cockroachlabs.com/docs/stable/architecture/overview.html) / [Hybrid Logical Clocks paper](https://cse.buffalo.edu/tech-reports/2014-04.pdf) / [Raft paper](https://raft.github.io/raft.pdf)

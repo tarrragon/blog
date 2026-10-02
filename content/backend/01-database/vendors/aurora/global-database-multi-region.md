@@ -8,7 +8,7 @@ tags: ["backend", "database", "aurora", "global-database", "multi-region", "dr",
 
 這篇整理 Aurora Global Database 的適用條件、它的 region failover 與 cross-AZ failover 在 RTO 上的數量級差、合規邊界，以及它跟 Aurora DSQL / Spanner / CockroachDB 之間怎麼選。storage-level replication 的機制在 [Aurora storage architecture](../storage-architecture/)，單 region 內的 failover 在 [Aurora cross-AZ failover RTO](../cross-az-failover-rto/)。
 
-Aurora Global Database 是 *跨 region async replication*、< 1 秒 typical lag、最多 5 個 secondary region，看起來是 multi-region OLTP 的標準解；[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 揭露一個受監管產業的 anti-recommendation：合規禁止跨境複製的場景下，Global Database *違反合規*，要改用每市場獨立 cluster + 應用層市場切換。
+Aurora Global Database 是 *跨 region async replication*、< 1 秒 typical lag、最多 5 個 secondary region，看起來是 multi-region OLTP 的標準解；[Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 揭露一個受監管產業的 anti-recommendation：合規禁止跨境複製的場景下，Global Database *違反合規*，要改用每市場獨立 cluster + 應用層市場切換。
 
 ## 問題情境
 
@@ -22,7 +22,7 @@ Aurora Global Database 是 *跨 region async replication*、< 1 秒 typical lag�
 - 「跟 Aurora DSQL / Spanner / CockroachDB 怎麼選？」
 - 「合規場景一定要用 Global Database 嗎？」
 
-進一步問題：Global Database 對一般 SaaS 是合理的 DR + 跨地理 read 工具、但對 *受監管產業* 是反指標。[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個受監管市場、各自獨立 Aurora cluster、不用 Global Database — 不是技術不夠、是合規要求「資料不能跨境複製」。讀者規劃 multi-region 架構時、合規維度要在技術維度之前判斷。
+進一步問題：Global Database 對一般 SaaS 是合理的 DR + 跨地理 read 工具、但對 *受監管產業* 是反指標。[Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個受監管市場、各自獨立 Aurora cluster、不用 Global Database — 不是技術不夠、是合規要求「資料不能跨境複製」。讀者規劃 multi-region 架構時、合規維度要在技術維度之前判斷。
 
 ## 核心機制：跨 region async storage replication
 
@@ -183,7 +183,7 @@ aws rds failover-global-cluster \
 
 徵兆：team 以為 Global Database 是受監管金融的標準 DR 解、配置完才發現監管機構不接受跨境資料複製、被迫拆掉 Global Database 重建獨立 cluster。
 
-[9.C14 Standard Chartered case](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 「判讀」段第 1 點原文：「7 個受監管市場代表 7 個獨立 cluster（資料不能跨境）、容量規劃變成『7 個獨立規劃 × 各自合規門檻』」。
+[Standard Chartered case](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 「判讀」段第 1 點原文：「7 個受監管市場代表 7 個獨立 cluster（資料不能跨境）、容量規劃變成『7 個獨立規劃 × 各自合規門檻』」。
 
 原因：受監管市場資料 *不能跨境複製*（[Data Residency](/backend/knowledge-cards/data-residency/) 硬約束）、Global Database 本質上就是跨 region storage replication、配置了就違反合規。Standard Chartered 的選擇是 *每市場獨立 cluster*、跨市場 DR 走應用層市場切換、不靠 Global Database。
 
@@ -210,7 +210,7 @@ aws rds failover-global-cluster \
 
 ### FanDuel 雙峰 case 對照（避免 over-extrapolate）
 
-如果 team 引用 [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 規劃 multi-region 部署、要明示 scope warning。
+如果 team 引用 [FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 規劃 multi-region 部署、要明示 scope warning。
 
 **case「判讀」段第 1 點原文**：「直播跟投注是兩種完全不同 SLO：直播容忍秒級延遲（用 CDN + ABR 串流）、投注必須毫秒級成交。兩個服務必須各自獨立擴容、各自獨立 SLO」。
 
@@ -311,7 +311,7 @@ Write 量大的 workload 月費可能 doubled（primary region + secondary regio
 - [Aurora vendor overview](/backend/01-database/vendors/aurora/)
 - [Stale Read 卡片](/backend/knowledge-cards/stale-read/) — read-after-write 容忍度
 - [RPO 卡片](/backend/knowledge-cards/rpo/) — DR RPO 判讀
-- [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 合規驅動的 Global Database anti-pattern
-- [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) — 雙 SLO 並行的 multi-region 策略對照
+- [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 合規驅動的 Global Database anti-pattern
+- [FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) — 雙 SLO 並行的 multi-region 策略對照
 - [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — vendor 深度文章從問題情境、核心機制、操作流程、失敗模式、容量與觀測到邊界與整合的寫法
 - 官方：[Aurora Global Database](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html)

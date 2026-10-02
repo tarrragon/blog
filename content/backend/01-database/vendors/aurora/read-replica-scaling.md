@@ -21,11 +21,11 @@ Aurora「最多 15 read replica」是文件數字，而實際 production 部署�
 - 「Reader endpoint round-robin 把 query 打到 lag 大的 replica、用戶看到舊 balance」
 - 「業務跨 200 個 cluster、單個 cluster 才 5-10 個 replica、為什麼不集中？」
 
-進一步問題：讀寫雙峰錯位是 Aurora 讀寫分流的核心 driver。[9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 揭露「write workloads spike up significantly around payout events, but opening the app during the game also activates a lot of balance queries」— 比賽進行時讀爆量、payout event 時寫爆量、兩個峰不在同一時刻。這代表 read replica 容量規劃不是「分散負載」、而是「為讀峰專門配置 capacity」。
+進一步問題：讀寫雙峰錯位是 Aurora 讀寫分流的核心 driver。[DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 揭露「write workloads spike up significantly around payout events, but opening the app during the game also activates a lot of balance queries」— 比賽進行時讀爆量、payout event 時寫爆量、兩個峰不在同一時刻。這代表 read replica 容量規劃不是「分散負載」、而是「為讀峰專門配置 capacity」。
 
-[9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 揭露事件型容量分級：平日 baseline → 季後賽 2-3x → 季冠軍賽 4-5x → Super Bowl 5-10x。容量規劃要按事件級別分段、不是一律 10x。
+[FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 揭露事件型容量分級：平日 baseline → 季後賽 2-3x → 季冠軍賽 4-5x → Super Bowl 5-10x。容量規劃要按事件級別分段、不是一律 10x。
 
-對 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 這種受監管金融、不能用單一巨型 cluster — 7 個受監管市場 = 7 個獨立 cluster、合規 boundary 比運維成本優先。
+對 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 這種受監管金融、不能用單一巨型 cluster — 7 個受監管市場 = 7 個獨立 cluster、合規 boundary 比運維成本優先。
 
 ## 核心機制：15 replica 上限、共享 storage、reader endpoint
 
@@ -200,7 +200,7 @@ aws application-autoscaling put-scaling-policy \
 
 徵兆：team 看 FanDuel「5-10x peak」直接套到自家 streaming workload、結果 Aurora 撐不住、發現 FanDuel streaming 根本不走 Aurora。
 
-[9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) case「判讀」段第 1 點原文：「直播跟投注是兩種完全不同 SLO：直播容忍秒級延遲（用 CDN + ABR 串流）、投注必須毫秒級成交。兩個服務必須各自獨立擴容、各自獨立 SLO」。
+[FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) case「判讀」段第 1 點原文：「直播跟投注是兩種完全不同 SLO：直播容忍秒級延遲（用 CDN + ABR 串流）、投注必須毫秒級成交。兩個服務必須各自獨立擴容、各自獨立 SLO」。
 
 **scope warning（必明示）**：
 
@@ -217,7 +217,7 @@ aws application-autoscaling put-scaling-policy \
 
 ## 事件型容量分級表
 
-[9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 揭露事件型 scaling 不是一律 10x — *事件級別* 是容量分級單位：
+[FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 揭露事件型 scaling 不是一律 10x — *事件級別* 是容量分級單位：
 
 | 事件級別              | 倍數  | 來源                          |
 | --------------------- | ----- | ----------------------------- |
@@ -248,11 +248,11 @@ aws application-autoscaling put-scaling-policy \
 
 **跨 case 合成 frame**：production scale 不是「單一巨型 cluster」而是 *fleet of clusters*、但 *driver 各異*。
 
-| Driver                 | Case anchor                                                                                           | Fleet 規模  | 拆分判讀                                                                             |
-| ---------------------- | ----------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------ |
-| Business sharding      | [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)         | 200 cluster | 業務本身可切分（每體育類別 / 每地理 / 每產品線各自 cluster）、blast radius 隔離      |
-| Microservice ownership | [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)                 | 多 cluster  | 每微服務私有 store、不共用 cluster — 容量規劃分散到 service owner                    |
-| 合規市場 boundary      | [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) | 7 cluster   | 受監管市場資料 *不能跨境複製*、每市場獨立 cluster — Global Database 在合規場景反指標 |
+| Driver                 | Case anchor                                                                                     | Fleet 規模  | 拆分判讀                                                                             |
+| ---------------------- | ----------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------ |
+| Business sharding      | [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)        | 200 cluster | 業務本身可切分（每體育類別 / 每地理 / 每產品線各自 cluster）、blast radius 隔離      |
+| Microservice ownership | [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)                 | 多 cluster  | 每微服務私有 store、不共用 cluster — 容量規劃分散到 service owner                    |
+| 合規市場 boundary      | [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) | 7 cluster   | 受監管市場資料 *不能跨境複製*、每市場獨立 cluster — Global Database 在合規場景反指標 |
 
 ### Business sharding（DraftKings 200 cluster）
 
@@ -367,9 +367,9 @@ event tier headroom = 事件倍數 − 1：0% (平日 1x) / 100-200% (playoff 2-
 - [Aurora vendor overview](/backend/01-database/vendors/aurora/)
 - [Replication Lag 卡片](/backend/knowledge-cards/replication-lag/) — 概念基底
 - [Stale Read 卡片](/backend/knowledge-cards/stale-read/) — read-after-write 容忍度
-- [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 200 cluster business sharding 跟 headroom 預留
-- [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 微服務私有 store + Aurora 非 all-purpose store 邊界
-- [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 合規驅動 fleet 拓樸
-- [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) — 雙 SLO 並行 + 事件型容量分級
+- [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 200 cluster business sharding 跟 headroom 預留
+- [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 微服務私有 store + Aurora 非 all-purpose store 邊界
+- [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 合規驅動 fleet 拓樸
+- [FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) — 雙 SLO 並行 + 事件型容量分級
 - [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — vendor 深度文章從問題情境、核心機制、操作流程、失敗模式、容量與觀測到邊界與整合的寫法
 - 官方：[Aurora replication](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Replication.html)

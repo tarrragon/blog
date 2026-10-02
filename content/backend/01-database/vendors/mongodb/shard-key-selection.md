@@ -28,7 +28,7 @@ Shard key 在 5.0 之前設定之後不能更換；5.0 起可以用 `reshardColl
 - `chunkMigrated` 異常頻繁、`sh.status()` 顯示 chunk 分布偏斜
 - 微服務 ownership 跟 collection 邊界不對齊、某 microservice 故障打到其他服務
 
-Case anchor：[9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 揭露「20 個 Atlas database 是業務邊界切分、不是吞吐切分」（單 cluster vs 多 cluster 對照）。
+Case anchor：[Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 揭露「20 個 Atlas database 是業務邊界切分、不是吞吐切分」（單 cluster vs 多 cluster 對照）。
 
 ## 核心機制：shard key、chunk、balancer
 
@@ -156,14 +156,14 @@ Rollback boundary：`shardCollection` 是不可逆操作（5.0 前完全不可�
 
 **Zone sharding 規則打架**：合規規則（資料必須留在某 region）跟負載平衡規則衝突、balancer 無法移動 chunk → 熱點固化。修法是 zone 規則 vs balancer 設計階段就劃清、不要事後加 zone。
 
-**把該分 cluster 的問題交給分 shard 解**：blast radius 議題塞到 sharded cluster、單 cluster 故障仍打掉全部 microservice。該分 cluster 的就分 cluster、不是塞到 shard。9.C38 Toyota 揭露：7K txn/sec 仍切 20 DB 的 trigger 是 microservice ownership、不是吞吐。
+**把該分 cluster 的問題交給分 shard 解**：blast radius 議題塞到 sharded cluster、單 cluster 故障仍打掉全部 microservice。該分 cluster 的就分 cluster、不是塞到 shard。Toyota 揭露：7K txn/sec 仍切 20 DB 的 trigger 是 microservice ownership、不是吞吐。
 
-**Cluster 擴容時間估計太樂觀**：MongoDB cluster 擴容不是 console 按下去就立刻生效。9.C36 Coinbase 揭露 cluster 擴容要 70 分鐘（口徑：Coinbase 特定環境 cluster tier / 資料量 / Atlas API 條件下、reactive scaling 起點到完成、非 MongoDB 普遍承諾）；預測性流量必須走 predictive / scheduled scaling、不能只靠 sharded cluster 動態橫向擴展接住 surge（見 [connection management and cache layer](../connection-management-and-cache-layer/)）。
+**Cluster 擴容時間估計太樂觀**：MongoDB cluster 擴容不是 console 按下去就立刻生效。Coinbase 揭露 cluster 擴容要 70 分鐘（口徑：Coinbase 特定環境 cluster tier / 資料量 / Atlas API 條件下、reactive scaling 起點到完成、非 MongoDB 普遍承諾）；預測性流量必須走 predictive / scheduled scaling、不能只靠 sharded cluster 動態橫向擴展接住 surge（見 [connection management and cache layer](../connection-management-and-cache-layer/)）。
 
 Anti-recommendation：
 
 - 寫入 < 5K WPS、storage < 1TB、single replica set 還能撐就不該分 shard；分了之後 aggregation、transaction、`$lookup`、index 成本全部跳一級
-- **shard vs 多 cluster 對照**：吞吐沒撞牆但 blast radius / ownership 是議題、走多 cluster 不是強行分 shard（9.C38 Toyota 7K txn/sec 仍切 20 DB 的 trigger）
+- **shard vs 多 cluster 對照**：吞吐沒撞牆但 blast radius / ownership 是議題、走多 cluster 不是強行分 shard（Toyota 7K txn/sec 仍切 20 DB 的 trigger）
 - 資料按 microservice ownership / blast radius / 合規邊界分到不同的 MongoDB cluster
 
 ## 容量與觀測
@@ -212,6 +212,6 @@ Migration playbook：
 
 - [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) — MongoDB 的服務定位與 sharding 簡介
 - [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/)
-- [9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) — 20 個 Atlas DB 切 blast radius
-- [9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — cluster 擴容 70 分鐘特定環境數字
+- [Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) — 20 個 Atlas DB 切 blast radius
+- [Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — cluster 擴容 70 分鐘特定環境數字
 - 官方：[MongoDB Sharding](https://www.mongodb.com/docs/manual/sharding/)、[Choosing a Shard Key](https://www.mongodb.com/docs/manual/core/sharding-shard-key/)、[Resharding](https://www.mongodb.com/docs/manual/core/sharding-reshard-a-collection/)

@@ -26,7 +26,7 @@ MongoDB 適用度的前置判讀有三件事要確認：
 - IoT / sensor / event log workload 寫進 regular collection、寫入吞吐撞牆但沒考慮 time-series collection
 - `$lookup` 出現在 hot path、document size warning（16MB 上限預警）、partial update 卻產生大量 disk write、schema validation 報錯比例突然爬升
 
-Case anchor：[9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 揭露車載 sensor schema 隨車型 / 年份 / 規範演進、polymorphic document 與 schema governance 並存；[9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) 揭露 CMS 50+ 微服務透過自建中介 abstraction layer 隔離 schema 變動；[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 揭露 document model 保留 + 跨 vendor 形狀治理。
+Case anchor：[Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 揭露車載 sensor schema 隨車型 / 年份 / 規範演進、polymorphic document 與 schema governance 並存；[Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) 揭露 CMS 50+ 微服務透過自建中介 abstraction layer 隔離 schema 變動；[Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 揭露 document model 保留 + 跨 vendor 形狀治理。
 
 ## 核心機制：aggregate root、embedded、reference、polymorphic
 
@@ -49,7 +49,7 @@ Toyota 與 Forbes 兩個案例都顯示，document model 的 schema flexibility 
 
 **DB-layer 路徑**：`$jsonSchema` validator 在 production 是「契約 enforcement」工具、不是 dev-time linter。設 `validationAction: "error"` 寫入直接擋；設 `"warn"` 只記 log。`validationLevel: "moderate"` 對既有 doc 放行、對新寫入嚴格；`"strict"` 對所有寫入都嚴格。適合 schema 穩定到「跨服務共用 collection」的程度。
 
-**App-layer 路徑**：9.C37 Forbes 揭露的模式 — 50+ 微服務透過自建中介 abstraction layer 看到穩定的 contract API、DB schema 變動限制在 owner microservice 內。Forbes 跨雲彈性能用起來、核心原因是 abstraction layer 把 schema 治理收斂到單點、跨雲遷移時 abstraction layer 不變、微服務不知道底層 DB 換 cluster 換雲。
+**App-layer 路徑**：Forbes 揭露的模式 — 50+ 微服務透過自建中介 abstraction layer 看到穩定的 contract API、DB schema 變動限制在 owner microservice 內。Forbes 跨雲彈性能用起來、核心原因是 abstraction layer 把 schema 治理收斂到單點、跨雲遷移時 abstraction layer 不變、微服務不知道底層 DB 換 cluster 換雲。
 
 **混合路徑**：Atlas Application Services、enterprise schema registry 屬此類。DB 層 validator 守底線（欄位型別、必填欄位）、app 層 abstraction 守業務（版本欄位 / 相容處理 / cross-document 一致性）。代價是兩層都要維護、版本同步成本高、適合 production 規模真的撐住這個複雜度的團隊。
 
@@ -114,7 +114,7 @@ db.runCommand({
 
 灰度策略：先 `validationLevel: "moderate"` + `validationAction: "warn"` 觀察兩週、確認 application 不寫違規 doc、再切 `"strict"` + `"error"` 封死。
 
-**App-layer 路徑的 abstraction 介面**。9.C37 Forbes 揭露的模式 — middleware 攔截 microservice 寫入、驗 schema、套版本欄位、把 owner microservice 的 schema 變動隔離在 abstraction 內。
+**App-layer 路徑的 abstraction 介面**。Forbes 揭露的模式 — middleware 攔截 microservice 寫入、驗 schema、套版本欄位、把 owner microservice 的 schema 變動隔離在 abstraction 內。
 
 **Polymorphic + partial index** — `partialFilterExpression` 只替熱類型建 index，冷類型不佔 index 空間：
 
@@ -149,7 +149,7 @@ db.coll.aggregate([
 
 **`$lookup` 在 hot path**：reference 沒設好變 join、p99 latency 隨 collection 大小線性退化。修法是 schema design 階段 denormalize、把 read-together 資料 embed 回 aggregate root；或 `$merge` 寫 materialized view（見 [aggregation pipeline optimization](../aggregation-pipeline-optimization/)）。
 
-**Schema 三代並存（缺 contract layer）**：缺 validator 跟 abstraction layer、舊版欄位殘留、application code 三層 fallback、新 dev onboarding 看不懂哪個欄位是現役。9.C38 Toyota 揭露：document model 的彈性「成本是 production 必須做 schema governance」、否則「schema 自由」變「production data inconsistency」。
+**Schema 三代並存（缺 contract layer）**：缺 validator 跟 abstraction layer、舊版欄位殘留、application code 三層 fallback、新 dev onboarding 看不懂哪個欄位是現役。Toyota 揭露：document model 的彈性「成本是 production 必須做 schema governance」、否則「schema 自由」變「production data inconsistency」。
 
 **Abstraction layer 變成 lock-in**：app-layer contract 寫得太重、跨 vendor 遷移時 abstraction 本身要重寫。該層應該薄、只做 schema 隔離、不做業務邏輯。
 
@@ -161,7 +161,7 @@ Anti-recommendation：
 
 - access pattern 還沒穩定的早期 MVP 不需要鎖死 schema validator；先用 app-layer abstraction、production 穩定後再決定 DB 層該不該封死
 - JOIN-heavy / 強 normalize workload 一開始就該回 PostgreSQL JSONB 或 SQL、不是塞進 MongoDB 再 `$lookup`
-- 資料按形狀分流：document-shaped + 形狀變化頻繁的進 MongoDB、access pattern 固定的 KV 走 KV（9.C36 Coinbase 揭露 MongoDB + DynamoDB 按 workload 分流）
+- 資料按形狀分流：document-shaped + 形狀變化頻繁的進 MongoDB、access pattern 固定的 KV 走 KV（Coinbase 揭露 MongoDB + DynamoDB 按 workload 分流）
 
 ## 容量與觀測
 
@@ -201,6 +201,6 @@ Migration playbook：
 
 - [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) — MongoDB 的服務定位與 document model 適用條件
 - [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/)
-- [9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) — polymorphic + governance
-- [9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) — abstraction layer 模式
+- [Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) — polymorphic + governance
+- [Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) — abstraction layer 模式
 - 官方：[MongoDB Data Modeling](https://www.mongodb.com/docs/manual/core/data-modeling-introduction/)、[Schema Validation](https://www.mongodb.com/docs/manual/core/schema-validation/)、[Time Series Collections](https://www.mongodb.com/docs/manual/core/timeseries-collections/)

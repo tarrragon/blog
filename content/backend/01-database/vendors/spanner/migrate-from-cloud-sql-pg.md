@@ -31,7 +31,7 @@ single-region Cloud SQL PostgreSQL primary 觸到容量上限（connection、wri
 
 小 / 中型 PostgreSQL workload 的成本門檻 — Spanner 早期最小單位是 1 node（1 node = 1000 processing units）、對中小負載偏貴、過去是 sizing barrier；2021+ 推出以 100 pu 為最小單位的 granular sizing 後雖然可從小開始、但 100 pu × per-pu monthly cost 加上跨 region replication 仍可能比 Cloud SQL HA 設定貴數倍。
 
-**來源：Google 內部 Spanner 案例（9.C10）的判讀段**：Spanner 早期以整個 node 起跳是 sizing barrier、後來推出 granular sizing 才讓中小負載可從小開始。**Dogfood 邊界明示**：這個案例揭露的 sizing 結構是 Google 內部 dogfood 的 capacity 規劃語言、不是 customer-facing pricing 承諾；客戶實際成本要看當期 Spanner pricing + region + replication config。
+**來源：Google 內部 Spanner 案例的判讀段**：Spanner 早期以整個 node 起跳是 sizing barrier、後來推出 granular sizing 才讓中小負載可從小開始。**Dogfood 邊界明示**：這個案例揭露的 sizing 結構是 Google 內部 dogfood 的 capacity 規劃語言、不是 customer-facing pricing 承諾；客戶實際成本要看當期 Spanner pricing + region + replication config。
 
 觸發 sizing no-go 的條件：
 
@@ -48,7 +48,7 @@ single-region Cloud SQL PostgreSQL primary 觸到容量上限（connection、wri
 
 應用層延遲容忍 < 50ms write 的 workload 不該升 Spanner — 跨 region Spanner write 在物理光速硬限下達 100-200ms（[consistency-models-comparison](../consistency-models-comparison/) 的 cross-region quorum 段）。延遲敏感 workload 升級後會在 p99 直接撞牆、回退時資料已經寫進 Spanner、roll back 成本巨大。
 
-**來源：Google 內部 Spanner 案例的判讀段與策略段**：「external consistency 必須等多區 quorum、跨洲交易延遲可達 100-200ms」。**Dogfood 邊界明示**：9.C10 揭露的數量級是 Google internal observation、客戶實際 latency 隨 voting region 配置變化、引用時要附條件。
+**來源：Google 內部 Spanner 案例的判讀段與策略段**：「external consistency 必須等多區 quorum、跨洲交易延遲可達 100-200ms」。**Dogfood 邊界明示**：Cloud Spanner 揭露的數量級是 Google internal observation、客戶實際 latency 隨 voting region 配置變化、引用時要附條件。
 
 觸發 latency no-go 的場景：
 
@@ -69,7 +69,7 @@ single-region Cloud SQL PostgreSQL primary 觸到容量上限（connection、wri
 
 **無強 customer case**。Google 內部 Spanner 案例是 Google 內部 dogfood、不是公開遷移 case；本 playbook 用 Spanner 的 [PostgreSQL dialect](/backend/01-database/vendors/spanner/postgresql-dialect/) 路徑 + 官方 migration guide + 通用 pattern。引用時必須明示「這個案例揭露的線性 scaling / line-rate 設計目標是 Spanner 設計依據、不等於客戶遷移後可獲得的 capacity」。
 
-對照 case：[9.C14 Standard Chartered Aurora 受監管 banking](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 雖然是 Aurora、不是 Spanner、但揭露「受監管 OLTP 遷移要算合規 lead time」「資料駐留限制 = 容量規劃 per-市場」這兩條結論在 Spanner 遷移同樣適用。讀者若是受監管產業、跨 region instance config 還要疊上 voting region 是否落在合規市場的 audit。
+對照 case：[Standard Chartered Aurora 受監管 banking](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 雖然是 Aurora、不是 Spanner、但揭露「受監管 OLTP 遷移要算合規 lead time」「資料駐留限制 = 容量規劃 per-市場」這兩條結論在 Spanner 遷移同樣適用。讀者若是受監管產業、跨 region instance config 還要疊上 voting region 是否落在合規市場的 audit。
 
 ## Diff Audit：schema、operational、paradigm、component、application、data topology 與 sizing / cost
 
@@ -270,7 +270,7 @@ Verdict = `proceed` 才進 Phase 1 target schema design；`halt` → 回到 Driv
 
 ### Cutover window
 
-選用戶最低流量時段、< 5 min read-only freeze、預先通知。受監管產業（對照 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)）要算合規 lead time、每市場各自審。
+選用戶最低流量時段、< 5 min read-only freeze、預先通知。受監管產業（對照 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)）要算合規 lead time、每市場各自審。
 
 ### Decision owner
 
@@ -331,8 +331,8 @@ postgres operation runbook 標記 deprecated、Spanner runbook 上線。新 runb
 
 ### 跟 case 對照
 
-- [9.C10 Cloud Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)：dogfood case、揭露 Spanner 設計目標、不是 customer-facing capacity reference
-- [9.C14 Standard Chartered Aurora banking](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)：受監管產業遷移要算合規 lead time、per-市場容量規劃
+- [Cloud Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)：dogfood case、揭露 Spanner 設計目標、不是 customer-facing capacity reference
+- [Standard Chartered Aurora banking](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)：受監管產業遷移要算合規 lead time、per-市場容量規劃
 
 ### Anti-recommendation
 

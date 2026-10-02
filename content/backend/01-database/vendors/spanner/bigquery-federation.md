@@ -22,7 +22,7 @@ federation 的價值、在「分析需求與交易需求共用同一個 OLTP 庫
 
 真實壓力場景：全球電商把訂單寫進 Spanner、營運團隊要即時看「過去一小時各區域的訂單趨勢」。這個查詢需要近即時的活資料（不能等隔日 batch）、又是掃描大量 row 的聚合（不該跑在 OLTP 上）。兩個需求拉扯：要新鮮就得查 Spanner 活資料、要不干擾交易就得分到分析引擎。federation + Data Boost 正是為了同時滿足這兩端 — 查 Spanner 的活資料、但用獨立運算資源。
 
-Case anchor：[9.C10 Cloud Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 提供「Spanner 定位在 OLTP、analytics workload 交給 BigQuery」的分工 anchor。**dogfood 邊界明示**：9.C10 是 Google 內部 dogfood case、未展開 federation 實作細節;本文 federation 機制、Data Boost 行為均以 GCP vendor 規格 + 通用 OLTP/OLAP 工程展開、case 僅作分工壓力 anchor。
+Case anchor：[Cloud Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 提供「Spanner 定位在 OLTP、analytics workload 交給 BigQuery」的分工 anchor。**dogfood 邊界明示**：Cloud Spanner 是 Google 內部 dogfood case、未展開 federation 實作細節;本文 federation 機制、Data Boost 行為均以 GCP vendor 規格 + 通用 OLTP/OLAP 工程展開、case 僅作分工壓力 anchor。
 
 ## 核心機制：external dataset federated query 與 Data Boost
 
@@ -104,7 +104,7 @@ BigQuery federated query bytes 處理量 → federation 拉取成本的計費基
 
 核心容量判讀是「分析查詢執行期間、OLTP CPU 與 p99 是否穩定」 — 若穩定、Data Boost 隔離生效;若分析查詢的執行時段與 OLTP p99 的抖動正相關、隔離失效、分析查詢正在消耗本該服務 OLTP 的資源。用 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 把「分析查詢時段」跟「OLTP p99」配成 evidence pair。容量規劃上、若走 federation + Data Boost、OLTP sizing 不需為分析加碼（Data Boost 用獨立 compute）;若 federated query 未隔離、OLTP sizing 要把分析尖峰算進去、回 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)。
 
-> **Scope warning**：Data Boost 的計費單位、federated query 的 bytes 計費、隔離的資源邊界屬 GCP 規格、隨版本演進、cross-verify 官方文件、非 9.C10 case 揭露的 production 數字。
+> **Scope warning**：Data Boost 的計費單位、federated query 的 bytes 計費、隔離的資源邊界屬 GCP 規格、隨版本演進、cross-verify 官方文件、非 Cloud Spanner case 揭露的 production 數字。
 
 ## 邊界與整合：何時把分析 workload 完全分出去
 

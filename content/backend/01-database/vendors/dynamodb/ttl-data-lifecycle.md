@@ -38,7 +38,7 @@ table.put_item(Item={
 
 「過期仍可讀」那一列是報表算錯的根因：**TTL 不是查詢過濾器**。過期到實際刪除之間有一段窗口、這期間 item 還在、還會被讀到。需要「過期立刻不可見」的、application 必須在讀取後自己比對 `expireAt` 過濾。
 
-> **Scope warning**：「TTL 通常在過期後數天內刪除」屬 AWS vendor 規格描述（截至 2026-09 的官方文件原文為 typically within a few days）、AWS 不保證準時、實際延遲視 table 大小與背景負載而定、實作時 cross-verify 官方 doc。`9.C26 PayPay` case 揭露「TTL 機制可自動清理過期訊息」的 *用途*、未揭露刪除延遲的具體數字。
+> **Scope warning**：「TTL 通常在過期後數天內刪除」屬 AWS vendor 規格描述（截至 2026-09 的官方文件原文為 typically within a few days）、AWS 不保證準時、實際延遲視 table 大小與背景負載而定、實作時 cross-verify 官方 doc。PayPay case 揭露「TTL 機制可自動清理過期訊息」的 *用途*、未揭露刪除延遲的具體數字。
 
 對應 knowledge card：[ttl](/backend/knowledge-cards/ttl/)、[soft-ttl](/backend/knowledge-cards/soft-ttl/)。
 
@@ -162,7 +162,7 @@ CloudWatch metric：
 - storage 持續上漲且 TTL 刪除量遠小於寫入量 → 保留期設太長、或寫入遠超過期速度、要重估保留策略
 - 大量過期未刪堆積 → 背景刪除跟不上寫入、storage 成本被殘留拉高
 
-> **Scope warning**：`9.C26 PayPay` 的「3 億/天 × 30 天 = 90 億筆」是 PayPay 案例頁的策略段推算、非 PayPay 官方揭露的精確 item 數；引用時當量級壓力 anchor、不當精確數字。
+> **Scope warning**：PayPay 的「3 億/天 × 30 天 = 90 億筆」是 PayPay 案例頁的策略段推算、非 PayPay 官方揭露的精確 item 數；引用時當量級壓力 anchor、不當精確數字。
 
 接回 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)、[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)。
 

@@ -8,7 +8,7 @@ tags: ["backend", "database", "cosmosdb", "consistency", "session-token", "deep-
 
 Cosmos DB 文件列 *5 個 consistency level*（Strong / Bounded staleness / Session / Consistent prefix / Eventual）、用 [PACELC](/backend/knowledge-cards/pacelc/) 講概念、但沒給具體工程判斷標準。這篇整理 Cosmos DB account 預設 level 與 per-request override 的選法：五個 level 各自保證什麼、Session 為什麼是多數互動式產品的預設、同一個 application 內不同操作怎麼分到不同 level；Strong 與 multi-region write 不能並用的理由在 [multi-region-write-conflict](../multi-region-write-conflict/)。
 
-Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（用 session consistency 撐 AR 全球同步、5 level 跨 collection 分流）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 用較弱 consistency 換 throughput）。
+Case anchor 是 [Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（用 session consistency 撐 AR 全球同步、5 level 跨 collection 分流）+ [ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 用較弱 consistency 換 throughput）。
 
 > **Cosmos DB workload 適配判讀（四層 framing）**：遷移路徑是保留 + 補周邊、同 DB 換託管還是同 model 換 vendor / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in — 判讀軸詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)。本文聚焦 consistency level 選擇操作層、是 *已選 Cosmos DB 後* 的 read / write 語義決策；若 workload 不適用 Cosmos DB、level 選擇無法救回 vendor 選錯的取捨。
 
@@ -85,7 +85,7 @@ Cosmos DB 是 *少數把 5 level 都商品化* 的服務、其他系統通常只
 
 ## 進階設計策略：同一 application 內不同操作選不同 level
 
-9.C11 Minecraft Earth 案例的平台特性段揭露「一致性是 spectrum、不是 binary」 — AR 遊戲玩家位置稍 stale OK（用 session / eventual）、庫存交易需要 strong；*同一 application 內不同資料配不同 consistency 是進階策略*、不一定是 account 一刀切。
+Minecraft Earth 案例的平台特性段揭露「一致性是 spectrum、不是 binary」 — AR 遊戲玩家位置稍 stale OK（用 session / eventual）、庫存交易需要 strong；*同一 application 內不同資料配不同 consistency 是進階策略*、不一定是 account 一刀切。
 
 container 層無法獨立設定 consistency level（時間敏感、查最新文件）、所以分流靠：
 
@@ -239,8 +239,8 @@ K 與 T 設得遠大於業務能接受的延遲時，Bounded staleness 的上限
 ## 相關連結
 
 - [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
-- [9.C11 Minecraft Earth case](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — session consistency + 跨 collection 分流主案例
-- [9.C21 ASOS case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 高 throughput + 較弱 level 補充
+- [Minecraft Earth case](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — session consistency + 跨 collection 分流主案例
+- [ASOS case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 高 throughput + 較弱 level 補充
 - [multi-region-write-conflict](../multi-region-write-conflict/) — Strong 與 multi-region write 為什麼不能並用、multi-region write 的 conflict 怎麼解
 - [Consistency Level 卡片](/backend/knowledge-cards/consistency-level/) / [Linearizability 卡片](/backend/knowledge-cards/linearizability/) / [Stale Read 卡片](/backend/knowledge-cards/stale-read/) — 概念基底
 - 官方：[Cosmos DB consistency levels](https://learn.microsoft.com/azure/cosmos-db/consistency-levels) / [Consistency level overrides](https://learn.microsoft.com/azure/cosmos-db/how-to-manage-consistency)

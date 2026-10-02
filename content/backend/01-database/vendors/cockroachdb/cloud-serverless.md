@@ -28,9 +28,9 @@ dedicated 則保留 *固定的 cluster 容量 + 可預測的計費*，由 vendor
 
 問題情境的對照 trigger 來自兩個 self-managed 規模的 case，它們界定了「什麼時候 serverless / dedicated 都不對、要 self-host」的邊界。
 
-[9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 是 self-managed 380+ cluster（case 揭露 380+ 為含非 production 的總數、production cluster 160+），case 明確揭露這需要 *專屬 Database Platform Team*（backup、upgrade、incident response、capacity review），並警示「沒這量級團隊就走 Cockroach Cloud managed、不要 self-host」。這條判讀的反向就是本文的入口 — 大多數團隊沒有 Platform Team，managed 才是合理起點，問題只剩 serverless 還是 dedicated。
+[Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 是 self-managed 380+ cluster（case 揭露 380+ 為含非 production 的總數、production cluster 160+），case 明確揭露這需要 *專屬 Database Platform Team*（backup、upgrade、incident response、capacity review），並警示「沒這量級團隊就走 Cockroach Cloud managed、不要 self-host」。這條判讀的反向就是本文的入口 — 大多數團隊沒有 Platform Team，managed 才是合理起點，問題只剩 serverless 還是 dedicated。
 
-[9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/) 是 self-managed、賽季型擴縮（高峰 ~100 node、淡季 ~33 node，case 觀察段揭露）。這個 100 ↔ 33 的擺盪是 *已知時間點的年度循環*（NFL / NBA 賽季切換），不是不可預測的突發。case 還揭露合規驅動需要 AWS Outposts 把運算放進州內 — 這把它鎖死在 self-managed。Hard Rock 的形狀正好對照出 serverless 的適配範圍：serverless 擅長 *不可預測* 的突發與長尾閒置，而非 *可預測且需要特定部署位置* 的賽季擴縮。
+[Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/) 是 self-managed、賽季型擴縮（高峰 ~100 node、淡季 ~33 node，case 觀察段揭露）。這個 100 ↔ 33 的擺盪是 *已知時間點的年度循環*（NFL / NBA 賽季切換），不是不可預測的突發。case 還揭露合規驅動需要 AWS Outposts 把運算放進州內 — 這把它鎖死在 self-managed。Hard Rock 的形狀正好對照出 serverless 的適配範圍：serverless 擅長 *不可預測* 的突發與長尾閒置，而非 *可預測且需要特定部署位置* 的賽季擴縮。
 
 ## 核心機制：RU 計費 + 自動 scale + 冷啟動
 
@@ -175,13 +175,13 @@ self-managed（如 Netflix 380+ cluster、Hard Rock 合規 Outposts）給最大�
 
 ### 何時不用本文
 
-- 已決定 self-managed（有 Platform Team 或需要 on-prem / 合規 Outposts）→ 本文的 serverless / dedicated 取捨不適用；self-managed 要承擔的運維責任（backup、upgrade、incident response、capacity review）見 [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)。
+- 已決定 self-managed（有 Platform Team 或需要 on-prem / 合規 Outposts）→ 本文的 serverless / dedicated 取捨不適用；self-managed 要承擔的運維責任（backup、upgrade、incident response、capacity review）見 [Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)。
 - single-region 小 workload 且 PostgreSQL 已夠用 → 先確認是否真需要 distributed SQL：CockroachDB 每筆寫入都經過 Raft 複製、叢集至少要 3 個節點，single-instance PostgreSQL 沒有這兩項成本。
 
 ## 相關連結
 
 - [CockroachDB vendor overview](/backend/01-database/vendors/cockroachdb/)
-- [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（self-managed 需 Platform Team 的反向 = managed 入口）
-- [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)（可預測賽季擴縮 vs serverless 突發適配範圍的對照）
+- [Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（self-managed 需 Platform Team 的反向 = managed 入口）
+- [Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)（可預測賽季擴縮 vs serverless 突發適配範圍的對照）
 - [distributed SQL 卡](/backend/knowledge-cards/distributed-sql/)
 - 官方：[Cockroach Cloud Documentation](https://www.cockroachlabs.com/docs/cockroachcloud/) / [Plan Your Cluster](https://www.cockroachlabs.com/docs/cockroachcloud/plan-your-cluster)

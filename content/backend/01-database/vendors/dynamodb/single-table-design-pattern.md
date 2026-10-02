@@ -18,11 +18,11 @@ DynamoDB 不做 join。用 RDBMS 的方式拆成 `user` / `order` / `order_item`
 
 DynamoDB 容量 = 每 partition 上限 × partition 數量、最熱 partition saturation 就是 workload 的天花板。`meeting_id`（Zoom）/ `player_id`（Capcom）/ `message_id`（PayPay）/ `user_id`（Disney+）這類 ID 天然散布、不會集中在少數 partition；反之 `event_id`（Tixcraft 售票）/ `date`（時間序）/ `status`（少數枚舉值）這類 PK 天然不均勻、要 [Composite Partition Key](/backend/knowledge-cards/composite-partition-key/) 修補才能 single-table。修補成本見 [partition-key-antipatterns](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)。
 
-`9.C18 Zoom`、`9.C19 Capcom`、`9.C26 PayPay`、`9.C27 Disney+` 4 個 case 都揭露 partition key 天然均勻是 DynamoDB 「能撐」的前提之一。
+Zoom、Capcom、PayPay、Disney+ 4 個 case 都揭露 partition key 天然均勻是 DynamoDB 「能撐」的前提之一。
 
 ### Workload 是 control plane 還是 data plane
 
-DynamoDB 適合存 metadata / state，實際大流量（影音串流 / 大型 BLOB / 全文搜尋）走 CDN / WebRTC / object store。`9.C18 Zoom` 把媒體串流放 P2P + edge servers、DynamoDB 只承擔會議 metadata；`9.C27 Disney+` 把 content 放 S3 + CDN、DynamoDB 只承擔 watchlist + 播放進度；`9.C19 Capcom` 把即時遊戲邏輯放 EKS、DynamoDB 處理持久狀態。讀者該問的不是「DynamoDB 能撐多大流量」、是「我的系統哪一層該放 DynamoDB」。
+DynamoDB 適合存 metadata / state，實際大流量（影音串流 / 大型 BLOB / 全文搜尋）走 CDN / WebRTC / object store。Zoom 把媒體串流放 P2P + edge servers、DynamoDB 只承擔會議 metadata；Disney+ 把 content 放 S3 + CDN、DynamoDB 只承擔 watchlist + 播放進度；Capcom 把即時遊戲邏輯放 EKS、DynamoDB 處理持久狀態。讀者該問的不是「DynamoDB 能撐多大流量」、是「我的系統哪一層該放 DynamoDB」。
 
 如果 workload 是 data plane（單筆 payload 上 MB、要做全文搜尋、要存 BLOB），用 DynamoDB 是反模式 — single item 上限 400KB 直接擋掉 BLOB 場景。
 
@@ -46,7 +46,7 @@ DynamoDB 的 key 結構：
 - **SK（sort key）**：決定同 partition 內排序與範圍查詢；composite SK 用 `#` 分隔層級（如 `ORDER#2026-05-27#001`）
 - **同 PK 不同 SK 前綴**：把相關 entity 物理共置、用一次 `Query` 拿回多個 entity；對應 RDB 的 JOIN
 
-實際範例（Disney+ 9.C27 揭露的 access pattern）：
+實際範例（Disney+ 揭露的 access pattern）：
 
 ```text
 PK             SK                          Entity
@@ -176,7 +176,7 @@ Contributor Insights：top-N partition key 訪問頻率，揭露 single-table �
 
 GSI 觀測：每個 GSI 獨立 RCU/WCU、projection type（`KEYS_ONLY` / `INCLUDE` / `ALL`）決定 storage cost。
 
-TTL 是 storage cost 防爆的標配（特別在 message-class workload）— PayPay `9.C26` 揭露 3 億 / 天 × 30 天 = 90 億筆記錄、不清理會撐死 storage 預算；設 TTL attribute 讓 DynamoDB 自動刪過期 item、消耗 0 WCU。
+TTL 是 storage cost 防爆的標配（特別在 message-class workload）— PayPay 揭露 3 億 / 天 × 30 天 = 90 億筆記錄、不清理會撐死 storage 預算；設 TTL attribute 讓 DynamoDB 自動刪過期 item、消耗 0 WCU。
 
 接回 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 跟 [9.5 Bottleneck localization](/backend/09-performance-capacity/bottleneck-localization/)。
 
@@ -203,13 +203,13 @@ TTL 是 storage cost 防爆的標配（特別在 message-class workload）— Pa
 
 DynamoDB 不是 universal store、不是 SQL 替代品。3 個 case 重複揭露同一定位：
 
-- **9.C18 Zoom**：媒體串流走 P2P + edge servers、DynamoDB 只承擔會議 / 用戶 metadata。control plane 跟 data plane 分離是 30x DAU surge 能撐的工程前提（不是 DynamoDB 自己魔法）。
-- **9.C27 Disney+**：content 走 S3 + CDN、DynamoDB 只承擔 metadata / watchlist / cross-device 進度。
-- **9.C19 Capcom**：EKS 跑 game server / 處理即時遊戲邏輯、DynamoDB 處理持久狀態。
+- **Zoom**：媒體串流走 P2P + edge servers、DynamoDB 只承擔會議 / 用戶 metadata。control plane 跟 data plane 分離是 30x DAU surge 能撐的工程前提（不是 DynamoDB 自己魔法）。
+- **Disney+**：content 走 S3 + CDN、DynamoDB 只承擔 metadata / watchlist / cross-device 進度。
+- **Capcom**：EKS 跑 game server / 處理即時遊戲邏輯、DynamoDB 處理持久狀態。
 
 ### Durable queue / write-buffer 作為正向非 OLTP access pattern
 
-`9.C15 Tixcraft` 揭露 DynamoDB 的另一種正向用法 — *寫入緩衝層*、不是 OLTP：
+Tixcraft 揭露 DynamoDB 的另一種正向用法 — *寫入緩衝層*、不是 OLTP：
 
 - 拓元用 DynamoDB 接「訂單」寫入、不是即時生效、是讓 traditional server（金流 / 票庫）用自己能承受的速度消費
 - 架構上 DynamoDB 扮演 durable queue、不是傳統 OLTP DB；這層解耦讓「前端可擴 130 倍、後端不用同步擴」
@@ -220,7 +220,7 @@ DynamoDB 不是 universal store、不是 SQL 替代品。3 個 case 重複揭露
 
 ### RDB connection limit 機制對照
 
-`9.C29 Lemino` 揭露為什麼 DynamoDB 在 surge 下不會踩 RDB 的隱性天花板：
+Lemino 揭露為什麼 DynamoDB 在 surge 下不會踩 RDB 的隱性天花板：
 
 - 「connection limits became bottlenecks when experiencing a rapid increase in access」— PostgreSQL/MySQL 每連線吃記憶體 / process、pool 上限 1K-5K、connection 是 RDB 在 surge 下 *第一個爆點*（不是 CPU / disk）
 - DynamoDB 的 HTTP API（無 long-lived connection state）天然解這個問題；client 不需要維護 connection pool、AWS SDK 用 connection-less HTTP request

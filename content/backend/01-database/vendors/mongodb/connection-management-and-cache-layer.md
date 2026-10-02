@@ -14,11 +14,11 @@ Coinbase 的 1.5M reads/sec 是三層合起來撐出的量級，量在 users 服
 
 MongoDB 部署規模從中型撐到大規模時、會接連撞上三個上限：connection 數、cluster 能承接的讀取量、cluster 擴容的反應時間。
 
-**Connection ceiling**：應用層 deploy 規模一上來、單一 MongoDB cluster 看到 connection storm。9.C36 Coinbase 揭露具體：Ruby + GVL + blue-green 部署把 instance 數 ×2、連線數隨之 ×2、單一 cluster 看到 60K connections / 分鐘（口徑：Coinbase 特定環境 CRuby + GVL 部署模型）。MongoDB cluster 的 connection limit 撞牆、新 deploy 連不上、線上服務 cascade 失敗。
+**Connection ceiling**：應用層 deploy 規模一上來、單一 MongoDB cluster 看到 connection storm。Coinbase 揭露具體：Ruby + GVL + blue-green 部署把 instance 數 ×2、連線數隨之 ×2、單一 cluster 看到 60K connections / 分鐘（口徑：Coinbase 特定環境 CRuby + GVL 部署模型）。MongoDB cluster 的 connection limit 撞牆、新 deploy 連不上、線上服務 cascade 失敗。
 
 **Read scaling ceiling**：應用把所有 read 都打 secondary、replica 加到 5-7 仍承接不了 sustained 高 read（>500K reads/sec）。Replication lag 升 + secondary CPU 飽和；單靠 MongoDB cluster 內機制（replica scaling + read preference）拿不到大規模量級。
 
-**Scaling reaction lag**：MongoDB cluster 擴容不是即時的。9.C36 Coinbase 揭露 reactive scaling 起點到完成 ~70 分鐘（口徑：Coinbase 特定環境、cluster tier / 資料量 / Atlas API 條件下、非 MongoDB 普遍承諾）。Surge 開始時才動來不及、預測性流量必須提前出手。
+**Scaling reaction lag**：MongoDB cluster 擴容不是即時的。Coinbase 揭露 reactive scaling 起點到完成 ~70 分鐘（口徑：Coinbase 特定環境、cluster tier / 資料量 / Atlas API 條件下、非 MongoDB 普遍承諾）。Surge 開始時才動來不及、預測性流量必須提前出手。
 
 Surge 形狀又不規則：加密貨幣 surge（隨外部市場波動）/ 媒體爆量（事件驅動）/ IoT 緊急通報（雙模式並存）— 都不適合單純 reactive auto-scaling 接住、必須 predictive + reactive 兩段式。
 
@@ -29,13 +29,13 @@ Surge 形狀又不規則：加密貨幣 surge（隨外部市場波動）/ 媒體
 - Atlas auto-scaling event log 顯示 *triggered too late*
 - Cache hit rate 跟 read latency 反向相關
 
-Case anchor：[9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) 是 rich case，含具體數字（deploy 尖峰 *connection event rate* ~60K connections / 分鐘 / mongobetween 後 *steady-state concurrent connections* 由 ~30K 降到 ~2K — 兩者口徑不同、不是同一數字的連續變化；1.5M reads/sec 含 cache / 70 → 25 分鐘擴容）；[9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 雙模式負載敘事（持續 sensor + 緊急事件）、[9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) 媒體爆量形狀。
+Case anchor：[Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) 是 rich case，含具體數字（deploy 尖峰 *connection event rate* ~60K connections / 分鐘 / mongobetween 後 *steady-state concurrent connections* 由 ~30K 降到 ~2K — 兩者口徑不同、不是同一數字的連續變化；1.5M reads/sec 含 cache / 70 → 25 分鐘擴容）；[Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 雙模式負載敘事（持續 sensor + 緊急事件）、[Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) 媒體爆量形狀。
 
 ## 核心機制：driver / proxy、cache、scaling trigger 三層協作
 
 應用層連 MongoDB cluster 在大規模 production 由三層協作承擔，driver 只是其中一層的元件。下表的分層是把 Coinbase 案例的元件按職責歸類的結果，案例原文沒有這樣分：
 
-| 層次                    | 角色                                     | 9.C36 Coinbase 對應元件                   |
+| 層次                    | 角色                                     | Coinbase 對應元件                         |
 | ----------------------- | ---------------------------------------- | ----------------------------------------- |
 | Driver / Proxy          | 連線多工、應用 process 跟 cluster 的橋接 | MongoDB driver + mongobetween proxy       |
 | Cache + freshness token | read scaling 主路、跨層一致性協議        | Memcached + freshness token + OCC version |
@@ -49,10 +49,10 @@ MongoDB driver 原生 connection 模式：driver 在 application process 內維�
 
 Connection storm 的具體 trigger：
 
-- **部署模型放大 process 數**：CRuby + GVL 強制每 CPU core 一 process、blue-green 部署 instance 數 ×2、連線數隨之 ×2（9.C36 Coinbase 揭露：單 cluster 看到 60K connections/min）
-- **微服務數量多**：50+ microservice 各自連 cluster、每服務 connection 加總後撞上限（9.C37 Forbes 50+ 微服務情境對照）
+- **部署模型放大 process 數**：CRuby + GVL 強制每 CPU core 一 process、blue-green 部署 instance 數 ×2、連線數隨之 ×2（Coinbase 揭露：單 cluster 看到 60K connections/min）
+- **微服務數量多**：50+ microservice 各自連 cluster、每服務 connection 加總後撞上限（Forbes 50+ 微服務情境對照）
 
-mongobetween proxy（Coinbase 自建）：把多 application process 的連線合成少量到 MongoDB cluster 的連線。9.C36 揭露兩個獨立口徑、不是同一數字的連續變化：deploy 尖峰時 *connection event rate* 是 ~60K connections / 分鐘（unique connection 事件量、rate）；mongobetween 介入後 *steady-state concurrent connection 數* 由 ~30K 降到 ~2K（瞬時量、前後對比、一個量級）。引用時把 rate 跟瞬時 concurrent count 分開、不要壓成「60K 收斂到 2K」。
+mongobetween proxy（Coinbase 自建）：把多 application process 的連線合成少量到 MongoDB cluster 的連線。Coinbase 揭露兩個獨立口徑、不是同一數字的連續變化：deploy 尖峰時 *connection event rate* 是 ~60K connections / 分鐘（unique connection 事件量、rate）；mongobetween 介入後 *steady-state concurrent connection 數* 由 ~30K 降到 ~2K（瞬時量、前後對比、一個量級）。引用時把 rate 跟瞬時 concurrent count 分開、不要壓成「60K 收斂到 2K」。
 
 **適用範圍**：mongobetween 是 Coinbase 為 Ruby + GVL 需求自建、case 自承「Go / Java / Node.js 應用因原生支援連線多工、通常不需要這層 proxy」。寫進設計文件時不可寫成「MongoDB 在大規模都需要 mongobetween」、要寫成「特定部署模型才需要」。
 
@@ -75,7 +75,7 @@ mongobetween proxy（Coinbase 自建）：把多 application process 的連線�
 
 ### Scaling trigger 層
 
-MongoDB cluster 擴容時間：傳統 reactive scaling 起點到完成 ~70 分鐘（9.C36 Coinbase 揭露口徑：含 instance provisioning + 資料 sync + balancer rebalance、特定 Atlas tier / 資料量條件）。
+MongoDB cluster 擴容時間：傳統 reactive scaling 起點到完成 ~70 分鐘（Coinbase 揭露口徑：含 instance provisioning + 資料 sync + balancer rebalance、特定 Atlas tier / 資料量條件）。
 
 Reactive 為主跟不上快變流量：CPU / queue 觸發 reactive scaling 在 surge 開始時才動、來不及；surge 已經結束擴容才到位。
 
@@ -190,8 +190,8 @@ Application observability：APM 看 connection acquire latency、cache hit rate 
 
 Migration playbook：
 
-- **Federated DB 模式**（9.C36 Coinbase 揭露：MongoDB + DynamoDB）— 不是「全用 MongoDB」、document-shaped 用 MongoDB、access pattern 固定的 KV 用 DynamoDB；對應 [DynamoDB vendor page](/backend/01-database/vendors/dynamodb/) 跨 vendor 對照
-- **跨雲 hedging**（9.C37 Forbes 跨雲彈性）— Atlas 跨 AWS / GCP / Azure 是規避未來雲商鎖定的 selection 訊號
+- **Federated DB 模式**（Coinbase 揭露：MongoDB + DynamoDB）— 不是「全用 MongoDB」、document-shaped 用 MongoDB、access pattern 固定的 KV 用 DynamoDB；對應 [DynamoDB vendor page](/backend/01-database/vendors/dynamodb/) 跨 vendor 對照
+- **跨雲 hedging**（Forbes 跨雲彈性）— Atlas 跨 AWS / GCP / Azure 是規避未來雲商鎖定的 selection 訊號
 
 主章節：
 
@@ -203,7 +203,7 @@ Migration playbook：
 
 - [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) — MongoDB 的服務定位、Atlas 與容量規劃簡介
 - [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/)
-- [9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — 三層合成 rich case
-- [9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) — 媒體爆量形狀
-- [9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) — IoT 雙模式負載
+- [Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — 三層合成 rich case
+- [Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) — 媒體爆量形狀
+- [Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) — IoT 雙模式負載
 - 官方：[MongoDB Connection Pool Options](https://www.mongodb.com/docs/manual/reference/connection-string-options/)、[Atlas Auto-Scaling](https://www.mongodb.com/docs/atlas/cluster-autoscaling/)、[mongobetween GitHub](https://github.com/coinbase/mongobetween)

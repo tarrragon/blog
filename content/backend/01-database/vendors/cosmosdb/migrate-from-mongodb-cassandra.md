@@ -10,7 +10,7 @@ tags: ["backend", "database", "cosmosdb", "migration", "mongodb", "cassandra", "
 
 要選哪個 API（遷移路徑型、dogfood signal、multi-model、跨雲 hedging 這幾個判斷）見 [mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/)；這篇從路徑選定之後開始：怎麼安全把資料與流量搬過去。
 
-Case anchor：[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)（MongoDB → Cosmos DB MongoDB API、planet-scale、dogfood）、[9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/)（自管 → Atlas、6 個月、同 DB 換託管的時程對照）、[9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/)（保留 MongoDB 補周邊、對照「不一定要遷」）。Microsoft 365 case 自承沒揭露 throughput / latency / cost 數字、本文不拿它當 benchmark、只取遷移路徑 frame。
+Case anchor：[Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)（MongoDB → Cosmos DB MongoDB API、planet-scale、dogfood）、[Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/)（自管 → Atlas、6 個月、同 DB 換託管的時程對照）、[Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/)（保留 MongoDB 補周邊、對照「不一定要遷」）。Microsoft 365 case 自承沒揭露 throughput / latency / cost 數字、本文不拿它當 benchmark、只取遷移路徑 frame。
 
 ## Driver：為什麼遷、什麼條件不遷
 
@@ -133,9 +133,9 @@ CQL 的 QUORUM / MongoDB 的 read concern majority 直接假設等價於 Cosmos 
 
 - [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
 - [mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/) — API 選擇判斷，以及保留 + 補周邊、同 DB 換託管、同 model 換 vendor 三種遷移路徑的差別
-- [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB → Cosmos DB MongoDB API dogfood
-- [9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) — 同 DB 換託管時程對照
-- [9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — 保留 MongoDB 不遷的對照
+- [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB → Cosmos DB MongoDB API dogfood
+- [Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) — 同 DB 換託管時程對照
+- [Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) — 保留 MongoDB 不遷的對照
 - [partition-key-design](../partition-key-design/) / [ru-cost-model-sizing](../ru-cost-model-sizing/) / [consistency-levels-engineering](../consistency-levels-engineering/) — 遷移各 phase 的 sibling
 - [1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/) — 跨 vendor 共通模型
 - [Vendor Lock-in 卡片](/backend/knowledge-cards/vendor-lock-in/) — 跨雲 no-go 判讀

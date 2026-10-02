@@ -1,7 +1,7 @@
 ---
 title: "DynamoDB Partition Key 反模式與 Write Sharding：composite key 修復跟 mode × partition 交叉判讀"
 date: 2026-05-27
-description: "DynamoDB partition 上限 1000 WCU 是 hot partition 的根因；composite key（event_id + shard suffix）跟 calculated shard（hash % N）兩種修法、mode × partition 在 provisioned / on-demand 不同表現，以及 9.C15 Tixcraft 6750x 擴展的工程細節"
+description: "DynamoDB partition 上限 1000 WCU 是 hot partition 的根因；composite key（event_id + shard suffix）跟 calculated shard（hash % N）兩種修法、mode × partition 在 provisioned / on-demand 不同表現，以及 Tixcraft 6750x 擴展的工程細節"
 weight: 31
 tags: ["backend", "database", "dynamodb", "partition-key", "hot-partition", "write-sharding", "deep-article"]
 ---
@@ -23,7 +23,7 @@ DynamoDB 把 capacity 抽象成 RCU / WCU、但底下仍是物理 partition。�
 - **Adaptive Capacity**：跨 partition 重新分配閒置容量、但 *單 partition 仍硬上限*；不解 single-key 集中
 - **Splitting on heat**：vendor 偵測 hot partition 後自動 split、有分鐘級延遲；突發流量來不及 split 就先 throttle
 
-`9.C5 Amazon Ads` 揭露同一 frame：「容量 = 每 partition 上限 × partition 數量、最熱 partition saturation 是工程天花板」。Amazon Ads 90M reads/sec 不是把單 partition 推到極限、是 *partition key 設計讓流量散到極多 partition*、每個 partition 都在合理區間。
+Amazon Ads 揭露同一 frame：「容量 = 每 partition 上限 × partition 數量、最熱 partition saturation 是工程天花板」。Amazon Ads 90M reads/sec 不是把單 partition 推到極限、是 *partition key 設計讓流量散到極多 partition*、每個 partition 都在合理區間。
 
 對應 knowledge card：[hot partition](/backend/knowledge-cards/hot-partition/)、[database-sharding](/backend/knowledge-cards/database-sharding/)。
 
@@ -38,7 +38,7 @@ Hot partition 在 capacity mode 不同下表現不同、但根因都是 schema�
 | 工程誤判風險     | 低（exception 明顯）                              | 高（latency spike 容易被誤判成網路 / 應用層 / 下游服務問題）                                                                                   |
 | 解法             | 改 PK schema（composite key / write sharding）    | 改 PK schema（同左、不是切 mode）                                                                                                              |
 
-`9.C15 Tixcraft` 警惕段明示這個 frame：「DynamoDB 寫入排隊本身就是隱性限流」— 兩種 mode 超過單 partition 上限時都會記 throttle event、也都會被 SDK 重試攤成延遲，是同一個 schema 問題。
+Tixcraft 警惕段明示這個 frame：「DynamoDB 寫入排隊本身就是隱性限流」— 兩種 mode 超過單 partition 上限時都會記 throttle event、也都會被 SDK 重試攤成延遲，是同一個 schema 問題。
 
 **核心 frame**：on-demand 不是 partition key 設計的逃避路徑。看到 on-demand 模式 latency spike、同時 `WriteKeyRangeThroughputThrottleEvents` 或 `ReadKeyRangeThroughputThrottleEvents` 不為零，*第一個懷疑就是 hot partition*、不是網路或應用層。
 
@@ -56,7 +56,7 @@ Hot partition 在 capacity mode 不同下表現不同、但根因都是 schema�
 - 時間 bucket（`PK = date` / `PK = hour`）— 寫入永遠打當下 partition、舊 partition 閒置
 - 少數枚舉值（`PK = status` / `PK = country` 但只有 5-10 個值）
 
-`9.C15 Tixcraft` 揭露的具體場景：演唱會某一熱門場次的 `event_id` 為 PK、開賣瞬間 200K 用戶同時搶該場次、所有寫入集中到單一 partition。
+Tixcraft 揭露的具體場景：演唱會某一熱門場次的 `event_id` 為 PK、開賣瞬間 200K 用戶同時搶該場次、所有寫入集中到單一 partition。
 
 #### 選 shard 數
 
@@ -179,9 +179,9 @@ DynamoDB Streams：可用來抓 hot key debugging — 寫入事件落 Lambda 後
 
 ## 邊界與整合
 
-### 9.C15 Tixcraft 6750x 擴展的工程拆解
+### Tixcraft 6750x 擴展的工程拆解
 
-`9.C15 Tixcraft` 揭露的數字：IOPS 從 20 衝到 135K（6750 倍）、6 servers 變 800 servers、總成本 $4200、throttle rate 0.26%。但「6750x 擴展」不是 DynamoDB 自己的魔法、是 *partition key 均勻分散 + 架構解耦* 的組合結果：
+Tixcraft 揭露的數字：IOPS 從 20 衝到 135K（6750 倍）、6 servers 變 800 servers、總成本 $4200、throttle rate 0.26%。但「6750x 擴展」不是 DynamoDB 自己的魔法、是 *partition key 均勻分散 + 架構解耦* 的組合結果：
 
 - **partition key 均勻**：composite key（`event_id` 加分散 suffix）把單一熱門場次散到多個 partition、每個 partition 都在合理區間（case 揭露概念、未揭露具體 shard 數）
 - **架構解耦**：DynamoDB 當 durable queue、後端傳統 server（金流 / 票庫）用自己節奏消費、不被前端 130x 流量拖垮（見 [single-table-design-pattern](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) 的 durable queue 段）

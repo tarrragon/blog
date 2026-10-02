@@ -8,7 +8,7 @@ tags: ["backend", "database", "cosmosdb", "partition-key", "hot-partition", "dee
 
 Cosmos DB 的 *logical partition 上限是 10,000 [Request Unit](/backend/knowledge-cards/request-unit/)/s + 20 GB storage*、partition key 一旦上 production *改不了*（要 export → recreate container → import）。partition key 選錯的後果是 Black Friday / 上線日 / VIP 用戶把流量壓在少數 partition、p99 latency 從 50ms 飆到 5s、整體 container 還有 70% RU 剩餘卻全 throttle。Cosmos DB partition key 設計是 *selection 階段就要決定的硬約束*、不是「先選錯再改」可承擔的風險 — 這個不可逆性跟 MongoDB（`reshardCollection` 線上完成）跟 DynamoDB（建新 table backfill）形成關鍵對比。
 
-這篇涵蓋 Cosmos DB partition key 的上限與不可逆性、synthetic／composite／hierarchical 三種設計模式與它們的寫法、常見的 partition 失衡，以及 latency budget 怎麼拆。Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（synthetic partition key 強制分散、AR 遊戲玩家位置）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 流量分散 + latency budget 拆解）。
+這篇涵蓋 Cosmos DB partition key 的上限與不可逆性、synthetic／composite／hierarchical 三種設計模式與它們的寫法、常見的 partition 失衡，以及 latency budget 怎麼拆。Case anchor 是 [Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（synthetic partition key 強制分散、AR 遊戲玩家位置）+ [ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 流量分散 + latency budget 拆解）。
 
 > **Cosmos DB 適用度前置判讀**：本篇假設 workload 已通過 Cosmos DB 適用度四層 framing（遷移路徑是保留 + 補周邊、同 DB 換託管還是同 model 換 vendor / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in）— 詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)。Partition key 設計是 *已選 Cosmos DB 後* 的硬約束議題；若 workload 不適用 Cosmos DB、partition key 設計無法救回 vendor 選錯的不可逆性風險。
 
@@ -38,7 +38,7 @@ partition key 選錯的隱性成本：要改就是 *export → recreate containe
 
 每個 container 有 N 個 *physical partition*、每個 physical 上有多個 *logical partition*。同 partition key value 的所有 document 落到同一個 logical partition。Cosmos DB 動態調整 physical partition 數量（透明 split）、但 logical partition 的歸屬 *永遠不變*（同 PK value 永遠在同 logical）。
 
-9.C11 Minecraft Earth 案例的平台特性段揭露「partition 動態分裂：透明」 — physical partition 的 split 對 application 透明、不需要 application 重連 / 重新 hash。但這個透明 *只解 physical partition 容量* 問題、*不解 logical partition 熱點* — logical partition 由 PK value 決定、application 必須自己均勻散佈 value。
+Minecraft Earth 案例的平台特性段揭露「partition 動態分裂：透明」 — physical partition 的 split 對 application 透明、不需要 application 重連 / 重新 hash。但這個透明 *只解 physical partition 容量* 問題、*不解 logical partition 熱點* — logical partition 由 PK value 決定、application 必須自己均勻散佈 value。
 
 ### Logical partition 上限
 
@@ -54,7 +54,7 @@ partition key 選錯的隱性成本：要改就是 *export → recreate containe
 
 副作用：read 需 fan-out 100 個 partition、單一 query RU 暴漲 100x。適合 *write-heavy + 不需精準 read* 場景（如 IoT telemetry、log）。
 
-9.C11 Minecraft Earth 用 synthetic partition key 強制分散 — AR 遊戲玩家位置寫入頻繁、partition 分散讓單一玩家不會打爆一個 partition。但 case 沒揭露具體 schema、synthetic 細節屬 outline knowledge 推論。
+Minecraft Earth 用 synthetic partition key 強制分散 — AR 遊戲玩家位置寫入頻繁、partition 分散讓單一玩家不會打爆一個 partition。但 case 沒揭露具體 schema、synthetic 細節屬 outline knowledge 推論。
 
 #### Composite（多欄位合成）
 
@@ -89,7 +89,7 @@ partition / shard key 的可逆性在 vendor 間差異懸殊：
 | DynamoDB  | 可改                             | 建新 table、backfill + dual-write 切換    | 中、要 backfill  |
 | Cosmos DB | *不可改*                         | 必須 export → recreate container → import | 最高、需停機窗口 |
 
-**對照表是本章合成 frame、9.C11 Minecraft Earth 沒直接揭露此對比、是從 outline knowledge 跟 MongoDB shard-key-selection 對照得出**。引用時必須明示：Cosmos DB partition key 不可改是 *設計選型的硬約束*、不是「先選錯再改」可承擔的風險 — 這個約束直接決定 selection 階段的 partition key audit 嚴格度該多高。
+**對照表是本章合成 frame、Minecraft Earth 沒直接揭露此對比、是從 outline knowledge 跟 MongoDB shard-key-selection 對照得出**。引用時必須明示：Cosmos DB partition key 不可改是 *設計選型的硬約束*、不是「先選錯再改」可承擔的風險 — 這個約束直接決定 selection 階段的 partition key audit 嚴格度該多高。
 
 對 selection 的意義：若團隊對 access pattern 不確定、不能用「先上 Cosmos DB 再說、不行再改」的心態、要先用 MongoDB / DynamoDB 試 access pattern、確定後再評估 Cosmos DB。
 
@@ -241,11 +241,11 @@ partition skew 累積幾個月、直到事故才發現。production 上線初期
 
 ### Latency budget 拆解：vendor SLA vs end-to-end 實測
 
-9.C21 ASOS 觀察「48ms 平均響應 = 全球分散下 Cosmos DB 的代表性數字」段揭露：48ms 包含 *網路 + DB + 應用層*、DB 本身可能只佔 5-10ms、其他是網路與應用層。引用時不能把 vendor 廣告的 5-10ms p99 當「使用者體驗」、要明示「48ms 是 9.C21 ASOS 案例的 end-to-end 觀察、Cosmos DB 自身可能只佔 5-10ms（case 揭露的拆解推論、不是 case fact）」。
+ASOS 觀察「48ms 平均響應 = 全球分散下 Cosmos DB 的代表性數字」段揭露：48ms 包含 *網路 + DB + 應用層*、DB 本身可能只佔 5-10ms、其他是網路與應用層。引用時不能把 vendor 廣告的 5-10ms p99 當「使用者體驗」、要明示「48ms 是 ASOS 案例的 end-to-end 觀察、Cosmos DB 自身可能只佔 5-10ms（case 揭露的拆解推論、不是 case fact）」。
 
 操作上要把 end-to-end latency 拆 budget：
 
-- **DB 端 latency**（vendor SLA、p99 < 10ms 地區內讀、9.C11 揭露）
+- **DB 端 latency**（vendor SLA、p99 < 10ms 地區內讀、Minecraft Earth 揭露）
 - **跨 region replication latency**（multi-region read 從就近 region 拿、不會跨洲、但 cross-region write 不同、見 [multi-region-write-conflict](../multi-region-write-conflict/)）
 - **應用層 latency**（serialize / business logic / HTTP overhead）
 - **客戶端網路 latency**（mobile / 跨洲）
@@ -264,7 +264,7 @@ partition skew 累積幾個月、直到事故才發現。production 上線初期
 ## 相關連結
 
 - [Cosmos DB vendor overview](/backend/01-database/vendors/cosmosdb/) — Cosmos DB 其他深度文章的列表
-- [9.C11 Minecraft Earth case](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — synthetic partition key 主案例
-- [9.C21 ASOS case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — latency budget 拆解 + 全球零售流量分散
+- [Minecraft Earth case](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — synthetic partition key 主案例
+- [ASOS case](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — latency budget 拆解 + 全球零售流量分散
 - [Hot Partition 卡片](/backend/knowledge-cards/hot-partition/) / [Database Sharding 卡片](/backend/knowledge-cards/database-sharding/) — 概念基底
 - 官方：[Cosmos DB partitioning](https://learn.microsoft.com/azure/cosmos-db/partitioning-overview) / [Hierarchical partition keys](https://learn.microsoft.com/azure/cosmos-db/hierarchical-partition-keys)

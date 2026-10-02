@@ -18,7 +18,7 @@ Change Streams 的責任是把 Spanner 內已 commit 的 row mutation 變成有�
 
 真實壓力場景：全球電商把訂單寫進 Spanner multi-region instance、需要把每筆訂單狀態變更同時推給 (1) 搜尋索引更新庫存可售性、(2) Pub/Sub 通知履約系統、(3) BigQuery 做近即時營收儀表板。三個下游對延遲、順序、retention 的要求不同、但都需要從同一條變更流取得資料。
 
-Case anchor：[9.C10 Cloud Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 提供「全球大規模 OLTP 寫入」的壓力 anchor — Google Ads / Play 計費的寫入量級說明為什麼下游不能靠 full scan 跟上。**dogfood 邊界明示**：9.C10 是 Google 內部 dogfood case、未展開 change streams 實作細節；本文 change stream 的物件模型、partition 行為與 retention 上限均來自 GCP vendor 規格、不是 9.C10 case 揭露。
+Case anchor：[Cloud Spanner planetary scale](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 提供「全球大規模 OLTP 寫入」的壓力 anchor — Google Ads / Play 計費的寫入量級說明為什麼下游不能靠 full scan 跟上。**dogfood 邊界明示**：Cloud Spanner 是 Google 內部 dogfood case、未展開 change streams 實作細節；本文 change stream 的物件模型、partition 行為與 retention 上限均來自 GCP vendor 規格、不是 Cloud Spanner case 揭露。
 
 ## 核心機制：data change record、partition token、commit timestamp
 
@@ -57,7 +57,7 @@ Change stream 的讀取單位是 *partition*、不是整條流。Spanner 把 cha
 
 這個 child partition 的接力機制是 change stream 消費的核心複雜度。手刻消費者必須維護一張 partition token 的 watermark 表、處理 parent 結束 → child 開始的交棒、保證每個 token 只被一個 worker 讀。多數團隊不該手刻這層、應走 Dataflow connector 讓它代管 partition 生命週期（它與另外兩條消費路徑的比較在〈選消費路徑 — Dataflow connector 為預設〉）。
 
-> **Scope warning**：本節 data change record 欄位、value_capture_type 選項、child partition 接力語意均屬 GCP Spanner change streams 規格、實作前 cross-verify [Spanner change streams 官方文件](https://cloud.google.com/spanner/docs/change-streams)。retention_period、partition 切分行為隨版本演進、非 9.C10 case 揭露。
+> **Scope warning**：本節 data change record 欄位、value_capture_type 選項、child partition 接力語意均屬 GCP Spanner change streams 規格、實作前 cross-verify [Spanner change streams 官方文件](https://cloud.google.com/spanner/docs/change-streams)。retention_period、partition 切分行為隨版本演進、非 Cloud Spanner case 揭露。
 
 ## 操作流程：建立 change stream 到 Dataflow 下游
 
@@ -99,11 +99,11 @@ Change stream 是可加可刪的 schema 物件、`DROP CHANGE STREAM orders_stre
 
 change stream 的 record 只保留 retention_period（預設 1 天、上限數天、查官方文件確認當前上限）。若下游消費者停機超過 retention 窗口、過期 partition 的 record 被 GC、消費者重啟後讀到 partition token 已失效的錯誤、那段變更永久漏掉。徵兆是消費者重啟後報 partition not found、下游資料出現一段空洞。修法是 retention_period 設成大於「最壞情況下游停機 + 重啟趕上」的時間、並對 change stream 的 consumer lag 設告警、lag 接近 retention 一半就 page。
 
-> **Scope warning**：retention_period 的預設值與上限屬 GCP 規格、隨版本變動、cross-verify 官方文件。本段 lag 告警閾值（retention 一半）是通用工程估算、不是 9.C10 case 揭露的數字。
+> **Scope warning**：retention_period 的預設值與上限屬 GCP 規格、隨版本變動、cross-verify 官方文件。本段 lag 告警閾值（retention 一半）是通用工程估算、不是 Cloud Spanner case 揭露的數字。
 
 ### 下游消費吞吐慢於主庫寫入速率
 
-主庫 write rate 持續高於下游消費速率、consumer lag 單調上升、最終撞 retention 窗口漏資料。這在全球大規模 OLTP 寫入下是真實壓力 — 對應 9.C10 揭露的 Google internal dogfood 寫入量級（**dogfood 邊界**：該量級是 Google 全使用者加總、不是單一 instance 配額）。修法是擴 Dataflow worker、確認 partition 數足夠讓消費並行、必要時把單一 change stream 依 table 拆成多條降低單條負載。判讀訊號是 Dataflow backlog metric 持續成長、不是偶發 spike。
+主庫 write rate 持續高於下游消費速率、consumer lag 單調上升、最終撞 retention 窗口漏資料。這在全球大規模 OLTP 寫入下是真實壓力 — 對應 Cloud Spanner 揭露的 Google internal dogfood 寫入量級（**dogfood 邊界**：該量級是 Google 全使用者加總、不是單一 instance 配額）。修法是擴 Dataflow worker、確認 partition 數足夠讓消費並行、必要時把單一 change stream 依 table 拆成多條降低單條負載。判讀訊號是 Dataflow backlog metric 持續成長、不是偶發 spike。
 
 ### DELETE 變更在下游被漏處理
 
@@ -136,7 +136,7 @@ Alert 建議：
 | Dataflow backlog 成長趨勢     | 持續成長 30 分鐘   | 持續成長 2 小時    |
 | Spanner CPU（含 stream 讀取） | > 65%              | > 80%              |
 
-> **Scope warning**：上述閾值為通用工程估算、依各團隊 retention 設定與 SLA 調整、非 9.C10 case 揭露的 production 數字。
+> **Scope warning**：上述閾值為通用工程估算、依各團隊 retention 設定與 SLA 調整、非 Cloud Spanner case 揭露的 production 數字。
 
 ## 邊界與整合：跟 DynamoDB Streams 對照、何時不用 change streams
 

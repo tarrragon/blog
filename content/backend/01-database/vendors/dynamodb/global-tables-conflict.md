@@ -14,7 +14,7 @@ Global Tables 用 LWW 在 region 之間非同步複寫，多個 region 同時寫
 
 ## B2B SaaS vs B2C 業務 driver 對比
 
-Global Tables 不是預設選擇、是 *業務性質* 決定的工程投資。`9.C24 Genesys` 揭露兩條關鍵 frame — 可用性目標的業務 driver、跟每多一個 9 的 cost 指數成長。
+Global Tables 不是預設選擇、是 *業務性質* 決定的工程投資。Genesys 揭露兩條關鍵 frame — 可用性目標的業務 driver、跟每多一個 9 的 cost 指數成長。
 
 | 業務性質     | 典型可用性目標           | 年停機容忍           | Multi-region 投資邏輯                           |
 | ------------ | ------------------------ | -------------------- | ----------------------------------------------- |
@@ -36,7 +36,7 @@ Global Tables 不是預設選擇、是 *業務性質* 決定的工程投資。`9
 
 Global Tables 不只是 DR / availability、也是正向 access pattern 的工程方案。先建立正向用例的判讀、再進 conflict 細節。
 
-**Cross-device sync**（`9.C27 Disney+` 揭露）：用戶在手機看到一半、晚上回家用電視繼續、播放進度跨裝置同步。Global Tables 自然解這個 access pattern — 用戶在不同 region 登入同帳號、寫入自動同步、最終一致性可接受場景。
+**Cross-device sync**（Disney+ 揭露）：用戶在手機看到一半、晚上回家用電視繼續、播放進度跨裝置同步。Global Tables 自然解這個 access pattern — 用戶在不同 region 登入同帳號、寫入自動同步、最終一致性可接受場景。
 
 **Global read（latency 優化）**：跨地域用戶讀取就近 region 副本、latency 從 200ms 降到 < 10ms。read 比 write 多很多倍的 workload（feed / catalog / user profile）受益最大。
 
@@ -207,7 +207,7 @@ DynamoDB Streams + Lambda：抓 conflict event、寫進獨立 audit table；reco
 
 ### region-pinned Global Tables 吸收合規邊界
 
-Global Tables 不只是高可用工具、也是 *合規邊界*（[Data Residency](/backend/knowledge-cards/data-residency/) 拓樸）的吸收層。DynamoDB 在 vendor capability 層級支援 *region-pinned replication* — 每張 table 可獨立決定哪些 region 參與 replication group、部分 region 可不加入。這個 capability 同時服務三類場景：合規分離（受監管市場資料不跨境）、cost / latency 取捨（資料只在主要服務 region 同步）、災備拓樸（少數 region 純讀備援）。`9.C24 Genesys` 15 region 揭露的是 *延遲就近接入* 的 B2B SaaS 拓樸（客戶服務延遲敏感、必須在客戶所在地有 region）— case 原文沒明示合規應用、但 region-pinned capability 在 Genesys 規模下天然能容納合規市場分離、是同 capability 的 *可能應用維度*、不是 case 已驗證的具體實踐。
+Global Tables 不只是高可用工具、也是 *合規邊界*（[Data Residency](/backend/knowledge-cards/data-residency/) 拓樸）的吸收層。DynamoDB 在 vendor capability 層級支援 *region-pinned replication* — 每張 table 可獨立決定哪些 region 參與 replication group、部分 region 可不加入。這個 capability 同時服務三類場景：合規分離（受監管市場資料不跨境）、cost / latency 取捨（資料只在主要服務 region 同步）、災備拓樸（少數 region 純讀備援）。Genesys 15 region 揭露的是 *延遲就近接入* 的 B2B SaaS 拓樸（客戶服務延遲敏感、必須在客戶所在地有 region）— case 原文沒明示合規應用、但 region-pinned capability 在 Genesys 規模下天然能容納合規市場分離、是同 capability 的 *可能應用維度*、不是 case 已驗證的具體實踐。
 
 跨 vendor 對照：
 
@@ -224,7 +224,7 @@ Global Tables 不只是高可用工具、也是 *合規邊界*（[Data Residency
 
 ### Disney+ vs Genesys：UX driver 與合約 driver
 
-`9.C27 Disney+` 跟 `9.C24 Genesys` 是 Global Tables 兩種不同的工程動機：
+Disney+ 跟 Genesys 是 Global Tables 兩種不同的工程動機：
 
 - **Disney+**：cross-device sync 是 user-facing UX、watchlist + 播放進度跨裝置同步、B2C 但 sync 是 core experience
 - **Genesys**：99.999% B2B SaaS 合約義務、15 region active-active、客服平台停線損失極大
