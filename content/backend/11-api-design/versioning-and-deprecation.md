@@ -6,7 +6,7 @@ weight: 5
 tags: ["backend", "api-design", "versioning"]
 ---
 
-版本策略是承諾的分期方式：介面要演進、消費者要穩定、版本機制決定兩者的張力由誰、在什麼時點、付出什麼成本來吸收。同一家公司的答案會隨規模演進 — Stripe 2011 年起用日期滾動版本、2017 年公開轉換層設計、現行方案又演進成具名 major release 加月度相容 release（[11.C10](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/) 與 [11.C11](/backend/11-api-design/cases/versioning-stripe-named-major-releases/) 是同一策略的兩個時間切片）— 版本策略是活的設計、不是上線前勾一次的選項。
+版本策略是承諾的分期方式：介面要演進、消費者要穩定、版本機制決定兩者的張力由誰、在什麼時點、付出什麼成本來吸收。同一家公司的答案會隨規模演進 — Stripe 2011 年起用日期滾動版本、2017 年公開轉換層設計、現行方案又演進成具名 major release 加月度相容 release（[Stripe：日期滾動版本與 version change module](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/) 與 [Stripe 現行方案：具名 major release 與相容變更清單](/backend/11-api-design/cases/versioning-stripe-named-major-releases/) 是同一策略的兩個時間切片）— 版本策略是活的設計、不是上線前勾一次的選項。
 
 ## 版本擺哪裡：URI、header、日期
 
@@ -20,21 +20,21 @@ tags: ["backend", "api-design", "versioning"]
 
 URI 版本的優勢是可見性：版本寫在每個請求上、curl 就能切版、快取與路由基礎設施天然按版本分流。代價是「v2」的粒度太粗 — 整個 API 一起翻版、消費者面對的是大遷移、服務端面對的是雙版本長期並行的維護。
 
-header 與 date-based 把版本移出資源身分、版本粒度可以細到單一 breaking change。GitHub 2022 年為 REST API 引入 calendar versioning 時同步給了承諾結構：新版釋出後舊版至少支援 24 個月（見 [11.C12](/backend/11-api-design/cases/versioning-github-calendar-versioning/)）— 支援窗口從隱性期待變成 SLA 式的明文契約、消費者可以據此排遷移計畫。Stripe 的 date-based pin 更進一步：帳號自動 pin 住首次呼叫時的版本、服務端把每個 breaking change 封裝成一個 version change module、response 依時間反向流過模組鏈、轉換成該帳號 pin 住版本的回應 schema — 截至 2017 年累積約 100 個 backwards-incompatible 升級、維持與 2011 年以來每一版相容（見 [11.C10](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)；這種「服務端吸收」的成本分配框架見 [11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/)）。
+header 與 date-based 把版本移出資源身分、版本粒度可以細到單一 breaking change。GitHub 2022 年為 REST API 引入 calendar versioning 時同步給了承諾結構：新版釋出後舊版至少支援 24 個月（見 [GitHub：REST API calendar versioning 與 24 個月支援承諾](/backend/11-api-design/cases/versioning-github-calendar-versioning/)）— 支援窗口從隱性期待變成 SLA 式的明文契約、消費者可以據此排遷移計畫。Stripe 的 date-based pin 更進一步：帳號自動 pin 住首次呼叫時的版本、服務端把每個 breaking change 封裝成一個 version change module、response 依時間反向流過模組鏈、轉換成該帳號 pin 住版本的回應 schema — 截至 2017 年累積約 100 個 backwards-incompatible 升級、維持與 2011 年以來每一版相容（見 [Stripe：日期滾動版本與 version change module](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)；這種「服務端吸收」的成本分配框架見 [11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/)）。
 
-選型標準回到 11.1 的成本分配：消費者多而異質、值得投資 header / date-based 加服務端吸收層；消費者少而可協調、URI 版本的簡單性划算。另一派主張版本化本身是錯的 — Fielding 的立場是「DON'T」、用 hypermedia 的執行期演化取代版本號（InfoQ 訪談、2014、見 [11.C14](/backend/11-api-design/cases/versioning-fielding-no-versioning/)）；GraphQL 的 versionless 路線是這個方向的工程化實例（見 [11.C26](/backend/11-api-design/cases/graphql-versionless-evolution/)、紀律代價的深化見 [Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)）。四派的完整交鋒、各自的成立前提與借用結論而不帶前提的失效形態、收在掛本章的 [版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/) — 本段的判斷標準把 header 與 date-based 併在「多而異質」同一格、而該文的判定序把這兩者分開（分界在組織能不能持續維護一層轉換），落在這一格的讀者要往下走一步。
+選型標準回到 11.1 的成本分配：消費者多而異質、值得投資 header / date-based 加服務端吸收層；消費者少而可協調、URI 版本的簡單性划算。另一派主張版本化本身是錯的 — Fielding 的立場是「DON'T」、用 hypermedia 的執行期演化取代版本號（InfoQ 訪談、2014、見 [Fielding：對 API 版本化的建議是「別做」](/backend/11-api-design/cases/versioning-fielding-no-versioning/)）；GraphQL 的 versionless 路線是這個方向的工程化實例（見 [GraphQL 官方：versionless API 與 nullable-by-default](/backend/11-api-design/cases/graphql-versionless-evolution/)、紀律代價的深化見 [Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)）。四派的完整交鋒、各自的成立前提與借用結論而不帶前提的失效形態、收在掛本章的 [版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/) — 本段的判斷標準把 header 與 date-based 併在「多而異質」同一格、而該文的判定序把這兩者分開（分界在組織能不能持續維護一層轉換），落在這一格的讀者要往下走一步。
 
 ## Deprecation 的執行工具箱
 
 宣告 [deprecation](/backend/knowledge-cards/deprecation-lifecycle/) 容易、讓長尾消費者實際完成遷移才是工程問題。公開案例累積出一組執行工具、各自解決通訊鏈的不同斷點：
 
-**分階段日期**。Slack 收斂四族舊 API 到 Conversations API 時用三個日期各擋一種風險：宣告日起算、五個月後新建 app 拿不到舊方法（掐斷新增量）、十三個月後全面停用（處理存量）（見 [11.C16](/backend/11-api-design/cases/versioning-slack-conversations-api-sunset/)）。先斷增量再清存量的順序讓債務停止成長、清理才有終點。
+**分階段日期**。Slack 收斂四族舊 API 到 Conversations API 時用三個日期各擋一種風險：宣告日起算、五個月後新建 app 拿不到舊方法（掐斷新增量）、十三個月後全面停用（處理存量）（見 [Slack：四族 API 分階段收斂到 Conversations API](/backend/11-api-design/cases/versioning-slack-conversations-api-sunset/)）。先斷增量再清存量的順序讓債務停止成長、清理才有終點。
 
 **In-band warning**。同一案例的過渡期、呼叫舊方法會在 response 收到 `method_deprecated` warning 加退場日期 — 訊號出現在開發者一定會看的地方（自己的 response）、觸及率高於任何公告渠道。
 
-**Brownout**。GitHub 廢止 Git 操作密碼認證前、在兩個預告時窗暫時停用再恢復（見 [11.C13](/backend/11-api-design/cases/versioning-github-password-auth-brownout/)）— 沒讀公告的長尾消費者、只有短暫的真實故障能觸達、且是在低風險時窗先遭遇明確失敗、不是在強制日全面斷線。
+**Brownout**。GitHub 廢止 Git 操作密碼認證前、在兩個預告時窗暫時停用再恢復（見 [GitHub：密碼認證廢止的 brownout 執行](/backend/11-api-design/cases/versioning-github-password-auth-brownout/)）— 沒讀公告的長尾消費者、只有短暫的真實故障能觸達、且是在低風險時窗先遭遇明確失敗、不是在強制日全面斷線。
 
-**Sunset header**。RFC 8594 定義用 HTTP header 宣告退場時點的機器可讀層（見 [11.C15](/backend/11-api-design/cases/versioning-sunset-header-rfc8594/)）— Informational 地位、實務採用有限、Slack 與 GitHub 都沒等它。引用價值是概念完整性：通訊鏈該有一層給程式讀、具體形式各家自選。
+**Sunset header**。RFC 8594 定義用 HTTP header 宣告退場時點的機器可讀層（見 [RFC 8594 Sunset header：退場宣告的機器可讀層](/backend/11-api-design/cases/versioning-sunset-header-rfc8594/)）— Informational 地位、實務採用有限、Slack 與 GitHub 都沒等它。引用價值是概念完整性：通訊鏈該有一層給程式讀、具體形式各家自選。
 
 工具的組合邏輯：公告觸及會讀公告的人、in-band warning 觸及在開發的人、brownout 觸及所有人。退場計畫的完整度檢查是「三類人各被哪個工具覆蓋」——而三類人加起來仍不等於全部，涵蓋不到的那部分由消費者的可協調度決定（見 [Consumer Coordinability](/backend/knowledge-cards/consumer-coordinability/)）。
 

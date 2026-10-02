@@ -52,7 +52,7 @@ Prime Day 是「可預期極端峰值」的標竿。它的容量問題不是「�
 - 想規劃年度活動容量 → [9.6 容量規劃模型](/backend/09-performance-capacity/) + [9.11 高峰事件準備](/backend/09-performance-capacity/)
 - 想設計可預期峰值的 SLO → [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) + [06.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/)
 - 想做事前混沌驗證 → [06.4 Chaos Testing](/backend/06-reliability/chaos-testing/) + [06.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)
-- 對照不同形狀的峰值 → [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)（事件型不可預期峰值）/ [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)（無峰值低延遲）
+- 對照不同形狀的峰值 → [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)（事件型不可預期峰值）/ [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)（無峰值低延遲）
 
 ## 引用源
 

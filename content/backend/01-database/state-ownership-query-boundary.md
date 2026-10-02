@@ -39,7 +39,7 @@ State ownership 的責任是判斷哪些資料是 [source of truth](/backend/kno
 - 可以「rebuild」（lazy 或 eager）
 - 失效可接受（用戶可能看到舊的）
 - 通常在 cache / search / analytics store
-- 對應案例：[9.C6 Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) 配對快取、[9.C25 Tubi ML feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) feature
+- 對應案例：[Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) 配對快取、[Tubi ML feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) feature
 
 **設計原則**：
 
@@ -61,7 +61,7 @@ State ownership 跟 CQRS 的交叉點是：當 canonical state 的 schema 為寫
 
 **完整 — 獨立 read store**：寫入走 OLTP DB，讀取走獨立的 analytics store（BigQuery、Athena）或搜尋引擎（Elasticsearch）。透過 CDC 或事件同步維護 read store。適合讀取形狀、流量、SLA 都跟寫入完全不同的階段。
 
-對應案例：[9.C17 BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) — 交易層（OLTP）跟資料層（BigQuery / Athena）分開。[9.C22 Wayfair](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/) — on-prem OLTP + GCP BigQuery analytics。
+對應案例：[BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) — 交易層（OLTP）跟資料層（BigQuery / Athena）分開。[Wayfair](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/) — on-prem OLTP + GCP BigQuery analytics。
 
 ## Event Sourcing 與 State Ownership
 
@@ -141,7 +141,7 @@ Query boundary 的責任是讓不同查詢路徑承擔不同服務問題。交�
 
 交易路徑的設計要把報表聚合或長時間掃描移到其他查詢路徑。若下單 API 同時查歷史報表、計算大範圍統計或同步重建派生狀態、交易延遲會被非交易責任拖慢。
 
-對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 200 個獨立 Aurora cluster 把不同業務 transaction 分開、避免互相影響。
+對應 [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 200 個獨立 Aurora cluster 把不同業務 transaction 分開、避免互相影響。
 
 ### 列表與報表的邊界
 
@@ -149,7 +149,7 @@ Query boundary 的責任是讓不同查詢路徑承擔不同服務問題。交�
 
 報表查詢的責任是支援分析與決策。報表通常可以接受資料延遲、因此更適合使用 read replica、materialized view、ETL 或 analytics store。把報表直接壓在線上 primary 上、會讓交易服務承擔不必要的容量風險。
 
-對應 [9.C22 Wayfair hybrid burst](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/)、[9.C17 BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) — 交易層跟資料層分開部署。
+對應 [Wayfair hybrid burst](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/)、[BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) — 交易層跟資料層分開部署。
 
 ### 對帳查詢的邊界
 
@@ -204,13 +204,13 @@ Query boundary 的責任是讓不同查詢路徑承擔不同服務問題。交�
 
 ## 案例對照
 
-| 案例                                                                                                 | state / query 設計重點                           |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [9.C4 DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) | 200 個獨立 cluster 隔離 transaction scope        |
-| [9.C17 BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/)     | OLTP 交易層 + BigQuery / Athena 分析層           |
-| [9.C22 Wayfair](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/)                  | on-prem OLTP + GCP BigQuery 分析、典型 CQRS 配置 |
-| [9.C25 Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)              | feature store（derived state）、跟 source 分離   |
-| [9.C27 Disney+](/backend/09-performance-capacity/cases/disney-plus-content-metadata/)                | watch list（user state）跟 content metadata 分層 |
+| 案例                                                                                            | state / query 設計重點                           |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) | 200 個獨立 cluster 隔離 transaction scope        |
+| [BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/)      | OLTP 交易層 + BigQuery / Athena 分析層           |
+| [Wayfair](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/)                   | on-prem OLTP + GCP BigQuery 分析、典型 CQRS 配置 |
+| [Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)               | feature store（derived state）、跟 source 分離   |
+| [Disney+](/backend/09-performance-capacity/cases/disney-plus-content-metadata/)                 | watch list（user state）跟 content metadata 分層 |
 
 ## 跨模組路由
 

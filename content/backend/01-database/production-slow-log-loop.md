@@ -137,8 +137,8 @@ Regression 偵測的 false-positive 風險是「業務本身在變、流量本�
 
 09 案例庫中、slow log closed loop 直接示範的案例稀少（多數案例談規模 / vendor、不談 ops loop 設計）。可用以下案例反向追問：
 
-- [9.C39 DoorDash：Aurora Postgres 寫入瓶頸](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) — 寫入飽和被識別為 vendor 層問題、但若 production slow log loop 早期就 catch 到 transaction 範圍跟熱 row 競爭、可能延後遷移時點。對照本章可問：DoorDash 在啟動遷移前、是否有定期 slow log review 機制？
-- [9.C14 Standard Chartered：合規驅動容量規劃](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 容量規劃以合規為驅動、但 query 預算假設若無 production 驗證、規劃出的 TPS 上限會偏低。對照本章「Regression 偵測」段：合規 cluster 是否有 query shape 趨勢圖？
+- [DoorDash：Aurora Postgres 寫入瓶頸](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) — 寫入飽和被識別為 vendor 層問題、但若 production slow log loop 早期就 catch 到 transaction 範圍跟熱 row 競爭、可能延後遷移時點。對照本章可問：DoorDash 在啟動遷移前、是否有定期 slow log review 機制？
+- [Standard Chartered：合規驅動容量規劃](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 容量規劃以合規為驅動、但 query 預算假設若無 production 驗證、規劃出的 TPS 上限會偏低。對照本章「Regression 偵測」段：合規 cluster 是否有 query shape 趨勢圖？
 
 反向追問框架（見[案例庫不對齊章節主題時用反向追問取代強掛](/report/case-misalignment-reverse-inquiry/)）：案例本身不直接示範 closed loop、但用「啟動 vendor 升級前、closed loop 能不能延後撞牆」這條追問、能看出 slow log loop 的事前價值。
 

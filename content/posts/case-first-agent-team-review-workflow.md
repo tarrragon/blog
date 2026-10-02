@@ -80,7 +80,7 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 寫進 findings 列表時、要附上 *case 來源* 跟 *該對應到哪個章節*。例：
 
 > Finding: 線性擴展是 OLTP 設計最高目標、coordinator 是傳統 OLTP 的擴展瓶頸
-> 來源: 9.C10 Spanner 案例「2 nodes → 45K reads/sec, 4 nodes → 90K reads/sec」段
+> 來源: Spanner 案例「2 nodes → 45K reads/sec, 4 nodes → 90K reads/sec」段
 > 章節: 1.11 全球分散式 OLTP
 
 不寫來源跟章節定位、findings 會變成抽象列表、寫稿時用不上。
@@ -93,22 +93,22 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 
 - 內容深度：50-200 行、含具體數字、業務情境、引用源
 - 承接方式：可直接引用為事實、case 揭露的具體數字（RPS、延遲、TPS、stale window）可放進章節
-- 例：9.C5 Amazon Ads「90M RPS + 5M writes/sec + 99.999%」可直接寫進 1.10 KV 章節
-- 例：9.C6 Tinder「4700 萬 MAU 配對引擎、cache 是主要服務面」可直接做為 2.1 high-concurrency 的判讀依據
+- 例：Amazon Ads「90M RPS + 5M writes/sec + 99.999%」可直接寫進 1.10 KV 章節
+- 例：Tinder「4700 萬 MAU 配對引擎、cache 是主要服務面」可直接做為 2.1 high-concurrency 的判讀依據
 
 **Medium case**（06 模組新發現的類別、典型：模組內部 case 庫中含結構化「決策機制」+「可觀測訊號」表、但無具體數字的中篇 case）：
 
 - 內容深度：30-50 行、結構化 5 段（問題場景 / 決策機制 / 可觀測訊號 / 常見陷阱 / 下一步路由）、含 mechanism + 訊號名稱、但不給具體數字
 - 承接方式：用 case 直接列出的 *mechanism 名稱* 精準引用、比 skeleton 精準、但比 rich 保守
 - 承接句型：「對應 [case]：揭露 N 個機制 — A、B、C、D」
-- 例：6.C1 Amazon Shuffle Sharding 揭露 cell boundary / shuffle sharding / static stability / constant work 四機制、可直接引用機制名稱、但不擴寫到「具體 shard 數量」「具體 cell 大小」等 case 沒提的實作細節
+- 例：Amazon Shuffle Sharding 揭露 cell boundary / shuffle sharding / static stability / constant work 四機制、可直接引用機制名稱、但不擴寫到「具體 shard 數量」「具體 cell 大小」等 case 沒提的實作細節
 
 **Skeleton case**（典型：模組內部 N.Cx 案例庫中只有 frame、無具體數字的短篇 case）：
 
 - 內容深度：10-30 行、只給方向、無具體數字 / taxonomy
 - 承接方式：作為「視角 / 方向」、可引用為「case 揭露 X 議題」、但不引用為「case 揭露 X 具體場景數量」
-- 例：2.C1 Meta Cache Consistency 只有「promotion、shard move、故障恢復」三個方向、不引用為「具體 inconsistency window 數字」
-- 例：3.C9 反例只給「依賴特定 offset / 重試節奏 / idempotency」三個方向、不引用為「4 個具體誤配場景」
+- 例：Meta Cache Consistency 只有「promotion、shard move、故障恢復」三個方向、不引用為「具體 inconsistency window 數字」
+- 例：反例只給「依賴特定 offset / 重試節奏 / idempotency」三個方向、不引用為「4 個具體誤配場景」
 
 **判讀條件**：
 
@@ -121,9 +121,9 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 
 **Rich case 引用的反向風險（04/05 模組新發現）**：rich case 雖然可以引用具體數字、但 case 內常含「觀察層」（具體 fact）跟「判讀層」（作者推論）兩段、引用時要分開處理。05 模組驗證時 case fidelity reviewer 抓出 4 個 high issue 都來自把「判讀層作者推論」寫成「case 揭露的 fact」：
 
-- 9.C12 Riot Games：5.2 寫「揭露 35ms latency 反推 region 部署」、實際 case 的「35ms」是觀察層、「反推 region 部署」是作者判讀層
-- 9.C34 GCP 130K：5.2 寫「揭露 Spanner 替 etcd 才是 K8s 規模極限的關鍵」、實際 case 用更保守的「control plane 極限取決於 storage backend、GCP 用 Spanner 替換 etcd」分兩個點寫
-- 9.C12 Riot：5.2 引用「single-tenant per game 的多 cluster 策略」、漏掉 case 揭露的關鍵歷史轉折「從 multi-tenant cluster 模型改成 single-tenant per game」
+- Riot Games：5.2 寫「揭露 35ms latency 反推 region 部署」、實際 case 的「35ms」是觀察層、「反推 region 部署」是作者判讀層
+- GCP 130K：5.2 寫「揭露 Spanner 替 etcd 才是 K8s 規模極限的關鍵」、實際 case 用更保守的「control plane 極限取決於 storage backend、GCP 用 Spanner 替換 etcd」分兩個點寫
+- Riot：5.2 引用「single-tenant per game 的多 cluster 策略」、漏掉 case 揭露的關鍵歷史轉折「從 multi-tenant cluster 模型改成 single-tenant per game」
 
 **修法**：rich case 引用時、用「揭露 X 觀察 + 作者判讀 Y」分層標明、避免把推論寫成 fact。或在引用後補一句「（case 中 X 屬作者判讀層、本章引用此推論）」明示分層。
 
@@ -434,7 +434,7 @@ skill 之前的「不適用情境」寫「沒 case 庫的新主題（要先建 c
 
 - 01 紅隊：Snowflake「30-90 天 baseline」編造、Tixcraft「partition key 用 user_id」編造
 - 02 cache：Tubi 三層 cache 具體 latency（L1 < 1ms、L2 < 10ms、L3 10-100ms）編造、Redis「100K-200K ops/sec」無來源、KeyDB「5-10x throughput」其實是 case 判讀段非引用源
-- 03 messaging：PayPay「broker 寫入 3K msg/sec」實際 case 寫的是「DynamoDB 寫入 3K msg/sec」（PayPay 用 DynamoDB 不是傳統 broker）、3.C9 case 三個方向被擴寫成「4 個誤配場景」、3.C10 case 「大型服務 DLQ 是診斷入口」完全編造
+- 03 messaging：PayPay「broker 寫入 3K msg/sec」實際 case 寫的是「DynamoDB 寫入 3K msg/sec」（PayPay 用 DynamoDB 不是傳統 broker）、〈反例：Queue 語義切換誤配〉case 三個方向被擴寫成「4 個誤配場景」、〈對照：規模差異下的佇列模型〉case 「大型服務 DLQ 是診斷入口」完全編造
 
 **防範**：
 
@@ -491,9 +491,9 @@ skill 之前的「不適用情境」寫「沒 case 庫的新主題（要先建 c
 
 **實證**：
 
-- 05 / 9.C12 Riot：5.2 寫「揭露 35ms latency 反推 region 部署」、實際 case 的「35ms」是觀察層、「反推 region 部署」是作者判讀層
-- 05 / 9.C34 GCP：5.2 寫「揭露 Spanner 替 etcd 才是 K8s 規模極限的關鍵」、實際 case 用更保守的「control plane 極限取決於 storage backend、GCP 用 Spanner 替換 etcd」分兩個點寫、章節壓縮 + 強化成硬性結論
-- 05 / 9.C12 Riot：漏掉 case 揭露的關鍵歷史轉折「從 multi-tenant cluster 模型改成 single-tenant per game」
+- 05 / Riot：5.2 寫「揭露 35ms latency 反推 region 部署」、實際 case 的「35ms」是觀察層、「反推 region 部署」是作者判讀層
+- 05 / GCP：5.2 寫「揭露 Spanner 替 etcd 才是 K8s 規模極限的關鍵」、實際 case 用更保守的「control plane 極限取決於 storage backend、GCP 用 Spanner 替換 etcd」分兩個點寫、章節壓縮 + 強化成硬性結論
+- 05 / Riot：漏掉 case 揭露的關鍵歷史轉折「從 multi-tenant cluster 模型改成 single-tenant per game」
 
 **防範**：
 

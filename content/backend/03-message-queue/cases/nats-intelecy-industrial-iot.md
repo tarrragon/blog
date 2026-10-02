@@ -22,7 +22,7 @@ NATS 進階主題：JetStream stream 設計 / Subject-based ACL + 多租戶（se
 
 ## 下一步路由
 
-回 [NATS vendor 頁](/backend/03-message-queue/vendors/nats/) 與 [3.C37 MachineMetrics](/backend/03-message-queue/cases/nats-machinemetrics-edge-to-cloud/)（同類對照）。
+回 [NATS vendor 頁](/backend/03-message-queue/vendors/nats/) 與 [MachineMetrics](/backend/03-message-queue/cases/nats-machinemetrics-edge-to-cloud/)（同類對照）。
 
 ## 引用源
 

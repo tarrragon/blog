@@ -6,7 +6,7 @@ weight: 40
 tags: ["backend", "performance", "capacity", "case-study", "db-oltp", "aws", "low-latency-sustained"]
 ---
 
-這個案例的核心責任是說明「Cassandra 撐不住 transactional 一致性」如何用 distributed SQL 補位。Netflix *用 CockroachDB 補 Cassandra 缺的那塊*、全面替換從來不是策略：需要 rich transaction + global secondary index + multi-active 寫入的場景。跟 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 對照 — Aurora 整合的是 OLTP single-region workload、CockroachDB 解的是「跨 region 強一致 + 跨 cluster 高彈性」。
+這個案例的核心責任是說明「Cassandra 撐不住 transactional 一致性」如何用 distributed SQL 補位。Netflix *用 CockroachDB 補 Cassandra 缺的那塊*、全面替換從來不是策略：需要 rich transaction + global secondary index + multi-active 寫入的場景。跟 [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 對照 — Aurora 整合的是 OLTP single-region workload、CockroachDB 解的是「跨 region 強一致 + 跨 cluster 高彈性」。
 
 ## 觀察
 
@@ -38,7 +38,7 @@ Netflix CockroachDB 艦隊的關鍵數字（引自 [Now Streaming: Why Netflix R
 Netflix CockroachDB 艦隊揭露三個「補 Cassandra 缺口」的 OLTP 工程選擇。
 
 1. **Cassandra 不是 transactional 引擎、補位需求是工程現實**：Netflix 2014 全面採用 Cassandra 解 global replication、但 *lightweight transaction* 跟 unreliable secondary index 在 studio / control plane 等場景出問題。2019 評估後選 CockroachDB 是因為它同時滿足 multi-active topology、global consistent secondary index、global transaction、open source、SQL — 五個條件 Cassandra 在 transactional 場景下湊不齊。對應 [00 服務選型模組](/backend/00-service-selection/) 的 polyglot persistence 與 [01.5 transaction boundary](/backend/01-database/transaction-boundary/)。
-2. **380+ cluster ≠ 「一個巨型 DB」**：Netflix 是 *artery of small DBs* 模型 — 每個微服務 / 應用配自己的 cluster、cluster sizing 從幾個 node 到 60 nodes 不等。容量規劃變成「每個 cluster 各自規劃」、不是「全公司一個容量曲線」。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 跟 [9.C23 Netflix Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 的「微服務私有 store」哲學。
+2. **380+ cluster ≠ 「一個巨型 DB」**：Netflix 是 *artery of small DBs* 模型 — 每個微服務 / 應用配自己的 cluster、cluster sizing 從幾個 node 到 60 nodes 不等。容量規劃變成「每個 cluster 各自規劃」、不是「全公司一個容量曲線」。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 跟 [Netflix Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 的「微服務私有 store」哲學。
 3. **Multi-region 是「region failure 0 downtime」、不是「更快」**：Netflix 60+ multi-region cluster 主要動機是 region-level survival、不是降 latency（跨 region quorum 反而會增 latency）。Gaming cluster 48-node 跨 4 region 就是為了「region failover 不停服」、不是讓玩家延遲變低。對應 [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) 的 latency vs availability 取捨。
 
 需要警惕：
@@ -63,9 +63,9 @@ Netflix CockroachDB 艦隊揭露三個「補 Cassandra 缺口」的 OLTP 工程�
 
 ## 下一步路由
 
-- 想理解 polyglot persistence 選型 → [00 服務選型模組](/backend/00-service-selection/) + [9.C23 Netflix Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)
+- 想理解 polyglot persistence 選型 → [00 服務選型模組](/backend/00-service-selection/) + [Netflix Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)
 - 想規劃 multi-region survival goal → [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) + [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)
-- 對照其他 distributed SQL 案例 → [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) / [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/) / [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
+- 對照其他 distributed SQL 案例 → [DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) / [Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/) / [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
 - 想理解 transaction vs eventual consistency 邊界 → [01.5 transaction boundary](/backend/01-database/transaction-boundary/)
 - 想深入 CockroachDB survival goal 與 region failure 取捨 → [CockroachDB survival goals](/backend/01-database/vendors/cockroachdb/survival-goals/)
 - 想規劃跨 region schema 與資料本地化 → [CockroachDB locality-aware schema](/backend/01-database/vendors/cockroachdb/locality-aware-schema/)

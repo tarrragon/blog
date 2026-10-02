@@ -49,7 +49,7 @@ GitHub 在 2018-10-21 22:52 UTC 因例行網路設備維護引發 network partit
 - 證據回寫流程： [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)
 - 資料庫轉換實作： [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)
 - Migration rollout evidence： [1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)
-- 選型決策層： [0.C4 營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)
+- 選型決策層： [營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)
 - 穩態與恢復完成： [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)
 
 ## 引用源

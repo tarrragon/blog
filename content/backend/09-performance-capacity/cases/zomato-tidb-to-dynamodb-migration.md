@@ -27,7 +27,7 @@ Zomato 帳單系統遷移的關鍵數字（引自 [AWS Database Blog](https://aw
 Zomato 遷移揭露三個 DB 選型決策的判讀重點。
 
 1. **NewSQL vs NoSQL 的取捨不只是 schema**：TiDB 提供 SQL 介面跟 ACID、DynamoDB 提供 KV 介面跟最終一致性。Zomato 選 DynamoDB 是判斷「帳單事件本身可以接受 eventually consistent」、用一致性換性能跟成本。對應 [01.5 transaction boundary](/backend/01-database/transaction-boundary/) 的一致性取捨。
-2. **TiDB 必須 over-provision 是分散式 SQL 的常態**：分散式 SQL 為了支援跨節點交易、必須有預留容量、否則峰值會出現 leader election storm 或 follower lag。這跟 [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 的「節點數即容量」是同類取捨、Spanner 也必須預先 scale 節點。
+2. **TiDB 必須 over-provision 是分散式 SQL 的常態**：分散式 SQL 為了支援跨節點交易、必須有預留容量、否則峰值會出現 leader election storm 或 follower lag。這跟 [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 的「節點數即容量」是同類取捨、Spanner 也必須預先 scale 節點。
 3. **2K → 8K RPM 是 4 倍、但延遲降 90% 才是真關鍵**：吞吐改善可能來自架構優化、延遲改善才是 DB 本質差。從 baseline → 10% 通常代表少了 1-2 個 hop（例如 cross-region replication、coordinator round-trip）。對應 [9.1 壓測理論與系統行為](/backend/09-performance-capacity/) 的 Little's Law。
 
 需要警惕：
@@ -42,16 +42,16 @@ Zomato 遷移揭露三個 DB 選型決策的判讀重點。
 1. **DB 遷移前先確認業務一致性需求**：能接受 eventually consistent 的工作負載適合 KV / NoSQL；必須 strong consistency 的工作負載必須 SQL / NewSQL。對應 [01.5 transaction boundary](/backend/01-database/transaction-boundary/)。
 2. **遷移評估要看「總成本曲線」、不是「當下 snapshot」**：算未來 12-24 個月在預期流量下的成本對照、不是只算現在。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/)。
 3. **遷移過程要 dual-write + shadow read 驗證**：避免新舊系統行為不一致導致業務問題。對應 [01.3 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/)。
-4. **on-demand vs provisioned 的選擇與業務流量形狀對應**：突發流量適合 on-demand、可預測流量適合 provisioned。對應 [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 的 on-demand 應用。
+4. **on-demand vs provisioned 的選擇與業務流量形狀對應**：突發流量適合 on-demand、可預測流量適合 provisioned。對應 [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 的 on-demand 應用。
 
 跨平台等效：MongoDB Atlas → DynamoDB、Cassandra → DynamoDB、PostgreSQL → Aurora、CockroachDB → Spanner 都是常見遷移路徑。每條路徑的取捨類似。
 
 ## 下一步路由
 
 - 想做 DB 遷移評估 → [01 資料庫模組](/backend/01-database/) + [01.4 database migration playbook](/backend/01-database/database-migration-playbook/)
-- 想理解一致性取捨 → [01.5 transaction boundary](/backend/01-database/transaction-boundary/) + [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
+- 想理解一致性取捨 → [01.5 transaction boundary](/backend/01-database/transaction-boundary/) + [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
 - 想做總成本評估 → [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/)
-- 對照其他 DB 遷移 → [9.C9 Spotify Kafka→Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/)
+- 對照其他 DB 遷移 → [Spotify Kafka→Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/)
 - 想拆 access pattern 對應的 DynamoDB schema → [DynamoDB single-table design](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) + [DynamoDB partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)
 - 想評估搬遷後的 capacity mode → [DynamoDB on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)
 

@@ -13,7 +13,7 @@ Follower read 出現在 CockroachDB / Spanner 等跨 region distributed SQL、�
 
 ## 可觀察訊號與例子
 
-需要 follower read 的訊號是「跨 region distributed SQL、read p99 卡在跨 region RTT 上、但業務可容忍秒級 stale」。[9.C40 Netflix CockroachDB](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 揭露 region survival 配置下的 follower read 機制：voting replica 跨 region 參與 commit、non-voting replica 只 serve follower read；`REGIONAL BY ROW` + `SURVIVE REGION FAILURE` 配合時、其他 region 有 non-voting replica 提供本地 follower read。[9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 在 SDK 層提供 `bounded_staleness(t)` 選項、容忍 t 秒、可讀最近的本地 replica。
+需要 follower read 的訊號是「跨 region distributed SQL、read p99 卡在跨 region RTT 上、但業務可容忍秒級 stale」。[Netflix CockroachDB](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 揭露 region survival 配置下的 follower read 機制：voting replica 跨 region 參與 commit、non-voting replica 只 serve follower read；`REGIONAL BY ROW` + `SURVIVE REGION FAILURE` 配合時、其他 region 有 non-voting replica 提供本地 follower read。[Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 在 SDK 層提供 `bounded_staleness(t)` 選項、容忍 t 秒、可讀最近的本地 replica。
 
 ## 設計責任
 

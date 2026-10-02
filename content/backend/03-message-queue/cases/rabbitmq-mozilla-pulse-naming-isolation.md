@@ -22,7 +22,7 @@ RabbitMQ 進階主題：多 vhost + 多租戶（反向案例：用 ACL + naming 
 
 ## 下一步路由
 
-回 [RabbitMQ vendor 頁](/backend/03-message-queue/vendors/rabbitmq/) 與 [3.C23 Bloomberg vhost 多租戶](/backend/03-message-queue/cases/rabbitmq-bloomberg-multi-tenant-vhost/)（對照）。
+回 [RabbitMQ vendor 頁](/backend/03-message-queue/vendors/rabbitmq/) 與 [Bloomberg vhost 多租戶](/backend/03-message-queue/cases/rabbitmq-bloomberg-multi-tenant-vhost/)（對照）。
 
 ## 引用源
 

@@ -22,7 +22,7 @@ Pub/Sub 進階主題：BigQuery subscription（原生 BQ subscription 出現前�
 
 ## 下一步路由
 
-回 [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/) 與 [3.C68 Wix clickstream](/backend/03-message-queue/cases/pubsub-wix-clickstream-dashboard/)（同類組合）。
+回 [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/) 與 [Wix clickstream](/backend/03-message-queue/cases/pubsub-wix-clickstream-dashboard/)（同類組合）。
 
 ## 引用源
 

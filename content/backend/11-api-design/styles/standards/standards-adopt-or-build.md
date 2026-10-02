@@ -10,13 +10,13 @@ tags: ["backend", "api-design", "standards"]
 
 ## 採現成標準買到的是組織成本
 
-JSON:API 把價值主張直接寫在組織成本上。官網開宗明義：如果團隊曾為 JSON 回應怎麼格式化吵過架、JSON:API 能讓你停止這種 bikeshedding（為瑣碎細節沒完沒了地爭）（見 [11.C50](/backend/11-api-design/cases/standards-jsonapi-antibikeshedding/)）。它賣的是一個大家都同意的現成慣例、格式能力本身並未更強 —— 附帶好處是圍繞這個慣例的工具可以重用、client 端也能靠標準化的結構做快取、有時省掉一次網路請求。
+JSON:API 把價值主張直接寫在組織成本上。官網開宗明義：如果團隊曾為 JSON 回應怎麼格式化吵過架、JSON:API 能讓你停止這種 bikeshedding（為瑣碎細節沒完沒了地爭）（見 [JSON:API：以停止 bikeshedding 為賣點的格式標準](/backend/11-api-design/cases/standards-jsonapi-antibikeshedding/)）。它賣的是一個大家都同意的現成慣例、格式能力本身並未更強 —— 附帶好處是圍繞這個慣例的工具可以重用、client 端也能靠標準化的結構做快取、有時省掉一次網路請求。
 
 採現成標準的代價相對隱性：response 形狀從此綁在該標準的設計上、標準沒覆蓋的需求要嘛繞、要嘛回頭自建。JSON:API 的版本節奏很慢（1.1 距 1.0 約七年）—— 這既可讀成 spec 穩定、也可讀成演進動能有限。採用前要自己判：這個「慢」對你是保障、還是把你綁在一份不太會跟上新需求的格式上。response 的結構驗證是正交的另一層 —— JSON Schema 這類工具管「回應符不符合約定的形狀」、跟選哪個 response 格式標準是兩件事、選了 JSON:API 不代表驗證也一併有了。
 
 ## 怎麼預測一個標準會不會活
 
-一個標準的正式化程度、不能拿來預測它會不會活。OData 是這條判斷標準最清楚的反例：它是 OASIS 標準、還拿到 ISO/IEC 認證、正式化程度在同類裡最高、主流採用卻不成比例（見 [11.C51](/backend/11-api-design/cases/standards-odata-decline/)、退場分析為二手來源）。Netflix 低調關掉 OData catalogue、eBay 同步棄用 —— 招牌級採用者（marquee adopter）的離場、比任何標準機構的背書都更能預測一個標準會不會活。生態才是存活的變數、認證徽章不是。
+一個標準的正式化程度、不能拿來預測它會不會活。OData 是這條判斷標準最清楚的反例：它是 OASIS 標準、還拿到 ISO/IEC 認證、正式化程度在同類裡最高、主流採用卻不成比例（見 [OData：ISO 認證救不了生態萎縮（反例）](/backend/11-api-design/cases/standards-odata-decline/)、退場分析為二手來源）。Netflix 低調關掉 OData catalogue、eBay 同步棄用 —— 招牌級採用者（marquee adopter）的離場、比任何標準機構的背書都更能預測一個標準會不會活。生態才是存活的變數、認證徽章不是。
 
 OData 退場還有更深一層、而且直接是使用層判斷標準：它的設計把 repository 幾乎直通到 wire（對外的網路傳輸層）、自動生成 generic 查詢介面、暴露資料庫內部結構。這種「magic box」跟「API 是刻意設計的對外契約」的治理理念正面衝突 —— 採一個會把 DB 內部直通出去的標準、等於在這一層放棄了契約設計。所以判斷一個格式標準能不能採、除了看生態、還要看它逼你交出多少契約控制權。
 

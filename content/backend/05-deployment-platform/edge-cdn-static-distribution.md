@@ -107,9 +107,9 @@ CDN 專注「靜態與半靜態內容的網路層分發」。當問題進入動�
 
 邊緣分發策略可用以下案例回寫：
 
-- [9.C13 Hotstar：1800 萬同時觀眾的 IPL 直播](/backend/09-performance-capacity/cases/hotstar-ipl-eighteen-million-concurrent/) — 極端峰值靠多 CDN + origin shield 把 origin 流量壓在容量範圍內。Hotstar 的具體做法是把 hot content（live stream segment）跟 warm content（VOD）分配到不同 CDN provider、利用「edge cache miss 時不是同時打 origin」這條 cache stampede 防禦機制讓 origin 流量曲線跟使用者請求曲線解耦。對照本章「origin protection」段三大策略落地。
-- [9.C18 Zoom：COVID 30 倍突發](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/) — 30 倍突發中，登入頁、會議連結頁這類靜態資源由邊緣層吸收絕大部分讀取流量，API 叢集只面對真實的會議建立 / 結束請求。對照本章「Cacheable vs Non-Cacheable 判讀」段：登入頁屬未登入者一致、適合邊緣化；會議內互動屬寫入 API、保持在 origin。
-- [2.C7 Cloudflare Cache Reserve 與 Tiered Storage](/backend/02-cache-redis/cases/cloudflare-cache-reserve-tiered-storage/) — Cloudflare 在 CDN 內部再分一層 Cache Reserve（持久層）、把 warm 內容從 origin 卸下、避免 edge LRU 淘汰後又回到 origin。對照本章「三層快取」段：邊緣層內部本身也能有 hot / warm 分層、是同一概念的遞迴應用。
+- [Hotstar：1800 萬同時觀眾的 IPL 直播](/backend/09-performance-capacity/cases/hotstar-ipl-eighteen-million-concurrent/) — 極端峰值靠多 CDN + origin shield 把 origin 流量壓在容量範圍內。Hotstar 的具體做法是把 hot content（live stream segment）跟 warm content（VOD）分配到不同 CDN provider、利用「edge cache miss 時不是同時打 origin」這條 cache stampede 防禦機制讓 origin 流量曲線跟使用者請求曲線解耦。對照本章「origin protection」段三大策略落地。
+- [Zoom：COVID 30 倍突發](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/) — 30 倍突發中，登入頁、會議連結頁這類靜態資源由邊緣層吸收絕大部分讀取流量，API 叢集只面對真實的會議建立 / 結束請求。對照本章「Cacheable vs Non-Cacheable 判讀」段：登入頁屬未登入者一致、適合邊緣化；會議內互動屬寫入 API、保持在 origin。
+- [Cloudflare Cache Reserve 與 Tiered Storage](/backend/02-cache-redis/cases/cloudflare-cache-reserve-tiered-storage/) — Cloudflare 在 CDN 內部再分一層 Cache Reserve（持久層）、把 warm 內容從 origin 卸下、避免 edge LRU 淘汰後又回到 origin。對照本章「三層快取」段：邊緣層內部本身也能有 hot / warm 分層、是同一概念的遞迴應用。
 
 三個案例依規模從外向內展開：Hotstar 是極端峰值下 origin protection 防禦的天花板測試、Zoom 是把非交易流量（登入 / 連結頁）分流降低 API 叢集壓力的標準應用、Cloudflare Cache Reserve 則展示 CDN vendor 自身把 hot / warm 內容再分層的內部架構。讀者可串著讀理解規模光譜、也可以挑一條深入。
 

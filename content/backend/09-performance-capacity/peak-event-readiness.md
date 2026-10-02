@@ -24,7 +24,7 @@ tags: ["backend", "performance", "capacity", "peak-event"]
 **產品爆紅 surge**：新 app 紅、病毒擴散。完全不可預期、流量會隨熱度消退。例：Pokemon GO、ChatGPT 爆紅初期、TikTok challenge。
 **結構性 surge**：COVID 類外部衝擊、永久 baseline 上移。不會回到舊水準。例：COVID 期間遠距工作工具、烏俄戰爭期間能源類 app。
 
-對應案例：[9.C1 / 9.C13 / 9.C21 / 9.C27 / 9.C29](/backend/09-performance-capacity/cases/)（predictable）/ [9.C2 / 9.C4 / 9.C7 / 9.C28](/backend/09-performance-capacity/cases/)（event）/ [9.C15 / 9.C16 / 9.C17](/backend/09-performance-capacity/cases/)（flash-sale）/ [9.C8 / 9.C18](/backend/09-performance-capacity/cases/)（surge）。
+對應案例：[AWS Prime Day 2025、Disney+ Hotstar、ASOS、Disney+、NTT DOCOMO Lemino](/backend/09-performance-capacity/cases/)（predictable）/ [GR8 Tech、DraftKings、Lyft、FanDuel](/backend/09-performance-capacity/cases/)（event）/ [拓元 Tixcraft、SeatGeek、BookMyShow](/backend/09-performance-capacity/cases/)（flash-sale）/ [Niantic Pokémon GO、Zoom](/backend/09-performance-capacity/cases/)（surge）。
 
 ## T-90 → T-0 準備時程
 
@@ -185,14 +185,14 @@ T+7 retro 是讓 readiness 持續改進的關鍵。
 
 ## 案例對照
 
-| 案例                                                                                                 | 教學重點                        |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------- |
-| [9.C1 Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)           | 可預期極端峰值教科書範本        |
-| [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)        | flash-sale T-2 pre-scaling      |
-| [9.C13 Hotstar IPL](/backend/09-performance-capacity/cases/hotstar-ipl-eighteen-million-concurrent/) | 全球直播 watch room             |
-| [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)          | AWS IEM + 自家 AI 預測組合      |
-| [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)         | event tier 分級（playoff → SB） |
-| [9.C8 Pokemon GO](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/)      | surge 場景的 vendor 救援（CRE） |
+| 案例                                                                                           | 教學重點                        |
+| ---------------------------------------------------------------------------------------------- | ------------------------------- |
+| [Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)          | 可預期極端峰值教科書範本        |
+| [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)        | flash-sale T-2 pre-scaling      |
+| [Hotstar IPL](/backend/09-performance-capacity/cases/hotstar-ipl-eighteen-million-concurrent/) | 全球直播 watch room             |
+| [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)         | AWS IEM + 自家 AI 預測組合      |
+| [FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)         | event tier 分級（playoff → SB） |
+| [Pokemon GO](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/)     | surge 場景的 vendor 救援（CRE） |
 
 ## 下一步路由
 

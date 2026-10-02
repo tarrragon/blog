@@ -14,7 +14,7 @@ GitLab 官方 database outage postmortem（2017-01-31）：告警靜默失效 �
 
 ## 判讀
 
-兩層共命運：告警管道（email 加未驗證的 DMARC）跟被監控對象共享同一個沒人測過的假設 —— 沒人驗證告警本身會不會送達、於是觀測靜默死亡直到災難才發現；事故發生時大量使用者湧向公開監控頁、觀測前端在它最該提供資訊的時刻被同一波事故流量壓垮。設計含義：告警管道要有 meta-監控（告警本身有沒有送達要被監控、對應 dead man's switch，見 [4.C19](/backend/04-observability/cases/watchdog-dead-mans-switch/)）、觀測前端的容量要獨立於事故流量域。
+兩層共命運：告警管道（email 加未驗證的 DMARC）跟被監控對象共享同一個沒人測過的假設 —— 沒人驗證告警本身會不會送達、於是觀測靜默死亡直到災難才發現；事故發生時大量使用者湧向公開監控頁、觀測前端在它最該提供資訊的時刻被同一波事故流量壓垮。設計含義：告警管道要有 meta-監控（告警本身有沒有送達要被監控、對應 dead man's switch，見 [Watchdog / dead man's switch：訊號消失即告警](/backend/04-observability/cases/watchdog-dead-mans-switch/)）、觀測前端的容量要獨立於事故流量域。
 
 ## 對應大綱
 

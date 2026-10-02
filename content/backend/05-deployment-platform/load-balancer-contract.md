@@ -62,7 +62,7 @@ timeout 設計的常見失誤是只調 LB 層：團隊看到使用者回報 time
 
 切流失敗的回退判讀第一步是先分辨「平台問題」跟「流量生命週期問題」、再決定回退手法。平台問題用重啟服務恢復、流量生命週期問題用凍結切換並等待震盪收斂。回退手法錯位會把事故推進第二階段。
 
-切流失敗的本質是 connection lifecycle 跟切換時序錯位、平台元件本身往往是健康的。對應 [5.C9 反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)：揭露切流失敗常因 connection lifecycle 管理錯位、重啟動作會放大震盪。以下基於通用工程知識展開回退節奏。
+切流失敗的本質是 connection lifecycle 跟切換時序錯位、平台元件本身往往是健康的。對應 [反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)：揭露切流失敗常因 connection lifecycle 管理錯位、重啟動作會放大震盪。以下基於通用工程知識展開回退節奏。
 
 回退節奏有兩個時序階段、性質不同。
 
@@ -76,7 +76,7 @@ timeout 設計的常見失誤是只調 LB 層：團隊看到使用者回報 time
 
 ## 切流告警條件
 
-對應 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 的「部署專屬告警條件」段：揭露切流期告警的三個核心訊號（批次內 5xx 突增、長連線重連率快速上升、rollback time 超過既定 RTO）。本段在 case 三條基礎上補第 4 條（per-version error rate 偏離）與操作建議。
+對應 [反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 的「部署專屬告警條件」段：揭露切流期告警的三個核心訊號（批次內 5xx 突增、長連線重連率快速上升、rollback time 超過既定 RTO）。本段在 case 三條基礎上補第 4 條（per-version error rate 偏離）與操作建議。
 
 切流期告警的核心責任是對應切流批次節奏、跟日常閾值分離。日常閾值在切流期會被切換本身的短暫波動觸發、變成 alert noise；切流期需要更嚴格的「批次內偏差」訊號。
 
@@ -112,7 +112,7 @@ Health check 跟 readiness 的混淆會在切換時暴露隱性風險。health c
 
 ## 案例回寫
 
-流量契約可用 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 回寫。先看事件中的摘流量順序、drain 視窗與連線重建節奏，再回到本章判讀 connection contract 與 drain contract 是否對齊。
+流量契約可用 [反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 回寫。先看事件中的摘流量順序、drain 視窗與連線重建節奏，再回到本章判讀 connection contract 與 drain contract 是否對齊。
 
 這個案例主要支撐的是「連線生命週期與摘流量順序」判讀，不直接支撐 container build 可重現性；若根因在映像與 runtime 漂移，應回到 5.1。
 
@@ -132,4 +132,4 @@ load balancer contract 是部署平台與操作控制面的匯流點。
 
 ## 下一步路由
 
-要把 LB 合約放進整體部署流程，接著讀 [5.2 Kubernetes 部署策略](/backend/05-deployment-platform/kubernetes-deployment/) 與 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)。要把部署切換接到事故流程，接著讀 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
+要把 LB 合約放進整體部署流程，接著讀 [5.2 Kubernetes 部署策略](/backend/05-deployment-platform/kubernetes-deployment/) 與 [反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)。要把部署切換接到事故流程，接著讀 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。

@@ -52,9 +52,9 @@ Access pattern 的責任是定義快取面對的讀寫節奏。高讀低寫、�
 
 ### ML feature store 的多層 cache 設計模式
 
-ML inference 場景的 feature lookup 是多層 cache 的典型應用。[9.C25 Tubi feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) 的策略段提出 *可重用做法*：用 L1 in-process cache + L2 distributed cache + L3 持久 store 三層。Tubi 實做的是把 feature store 從 ScyllaDB 遷到 ElastiCache（屬於 L2 層的選擇）、p99 < 10ms；三層架構是策略段推導出的通用設計、不一定 Tubi 完整實做。
+ML inference 場景的 feature lookup 是多層 cache 的典型應用。[Tubi feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) 的策略段提出 *可重用做法*：用 L1 in-process cache + L2 distributed cache + L3 持久 store 三層。Tubi 實做的是把 feature store 從 ScyllaDB 遷到 ElastiCache（屬於 L2 層的選擇）、p99 < 10ms；三層架構是策略段推導出的通用設計、不一定 Tubi 完整實做。
 
-**通用三層模式**（推導自 9.C25 策略段、實際分層深度視 workload）：
+**通用三層模式**（推導自 Tubi 策略段、實際分層深度視 workload）：
 
 - **L1：in-process cache**：跟 application 同一 process、避免 network hop、適合最熱的少量 features
 - **L2：distributed cache**（ElastiCache / Memcached）：跨 application instance 共享、能擴容、Tubi 在這層用 ElastiCache 達 p99 < 10ms
@@ -64,7 +64,7 @@ ML inference 場景的 feature lookup 是多層 cache 的典型應用。[9.C25 T
 
 ### 跨 cloud 部署的資料引力（路由：見 2.7）
 
-跨 cloud cache 部署的 *資料引力* 原則跟 *跨區一致性* 議題密切相關、主寫場域是 [2.7 cache copy boundary 的跨區一致性窗口](/backend/02-cache-redis/cache-copy-freshness-boundary/)。本章從 *data shape / access pattern* 角度補充：當 cache value 包含跨 region 共享的業務資料時、access pattern 自然偏向 *同 cloud read* + *跨 cloud batch sync*、不適合即時跨 cloud lookup。詳見 9.C35 Snap KeyDB 案例。
+跨 cloud cache 部署的 *資料引力* 原則跟 *跨區一致性* 議題密切相關、主寫場域是 [2.7 cache copy boundary 的跨區一致性窗口](/backend/02-cache-redis/cache-copy-freshness-boundary/)。本章從 *data shape / access pattern* 角度補充：當 cache value 包含跨 region 共享的業務資料時、access pattern 自然偏向 *同 cloud read* + *跨 cloud batch sync*、不適合即時跨 cloud lookup。詳見 Snap KeyDB 案例。
 
 ## 選型前判斷標準
 

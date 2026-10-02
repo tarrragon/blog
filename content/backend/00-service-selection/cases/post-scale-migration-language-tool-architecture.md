@@ -156,13 +156,13 @@ tags: ["backend", "service-selection", "case-study", "migration"]
 
 這個索引的核心責任是讓讀者在「已經出錯」時，能快速找到對應回退失敗模式，而不是從頭重讀選型章節。
 
-| 分類                          | 回退失敗專題                                                                                                     |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| 02 Cache / Redis              | [2.C9 反例：快取切換失敗](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)              |
-| 03 Message Queue              | [3.C9 反例：語義切換失敗](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)             |
-| 04 Observability              | [4.C9 反例：OTel 訊號漂移](/backend/04-observability/cases/failure-otel-migration-signal-drift/)                 |
-| 05 Deployment Platform        | [5.C9 反例：切流未先 drain](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)       |
-| 07 Security / Data Protection | [7.C9 反例：憑證輪替失敗](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) |
+| 分類                          | 回退失敗專題                                                                                                |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 02 Cache / Redis              | [反例：快取切換失敗](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)              |
+| 03 Message Queue              | [反例：語義切換失敗](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)             |
+| 04 Observability              | [反例：OTel 訊號漂移](/backend/04-observability/cases/failure-otel-migration-signal-drift/)                 |
+| 05 Deployment Platform        | [反例：切流未先 drain](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)       |
+| 07 Security / Data Protection | [反例：憑證輪替失敗](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) |
 
 ## 回退判讀寫法
 

@@ -47,7 +47,7 @@ Niantic Pokémon GO 在 GCP 上的關鍵敘述（引自 [Bringing Pokémon GO to
 - 想對應 surge load → [9.11 高峰事件準備](/backend/09-performance-capacity/) + [08.6 incident severity trigger](/backend/08-incident-response/incident-severity-trigger/)
 - 想設計降級策略 → [01.6 high concurrency access](/backend/01-database/high-concurrency-access/) + [02 快取模組](/backend/02-cache-redis/)
 - 想評估 vendor 支援 → [00.6 operations control service selection](/backend/00-service-selection/operations-control-service-selection/)
-- 對照可預測峰值案例 → [9.C1 AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)
+- 對照可預測峰值案例 → [AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)
 
 ## 引用源
 

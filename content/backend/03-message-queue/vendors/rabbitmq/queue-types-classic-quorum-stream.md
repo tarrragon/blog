@@ -114,7 +114,7 @@ q-stream   stream  3  3
 
 ### 跨節點一致性：mirrored 的退場與 quorum 的接手
 
-Classic queue 在單節點上沒有複製。早期要跨節點高可用、靠 *mirrored queue* — 一個 master、多個 mirror、master 寫入同步到所有 mirror。這個機制的問題在 [3.C30 Runtastic](/backend/03-message-queue/cases/rabbitmq-runtastic-mirrored-queue-bottleneck/) 揭露：mirror 數越多、每筆訊息的網路放大越大、規模化時網路元件先被壓垮。RabbitMQ 3.x 已將 mirrored queue 標記 deprecated、4.0 移除。
+Classic queue 在單節點上沒有複製。早期要跨節點高可用、靠 *mirrored queue* — 一個 master、多個 mirror、master 寫入同步到所有 mirror。這個機制的問題在 [Runtastic](/backend/03-message-queue/cases/rabbitmq-runtastic-mirrored-queue-bottleneck/) 揭露：mirror 數越多、每筆訊息的網路放大越大、規模化時網路元件先被壓垮。RabbitMQ 3.x 已將 mirrored queue 標記 deprecated、4.0 移除。
 
 Quorum queue 用 Raft 共識取代 mirroring。差異在「同步多少 replica 才算寫成功」：mirrored queue 要求 *所有* mirror 同步（全量放大）；Raft 只要求 *majority*（多數派）寫入即 ack，少數派慢或暫時離線不阻塞寫入。majority 機制讓 quorum queue 在「容忍少數節點故障」與「寫入延遲」之間取得 mirrored 做不到的平衡。
 
@@ -132,7 +132,7 @@ throughput 排序大致是 stream > classic ≈ quorum（quorum 因 Raft round-t
 
 ### Mirrored queue 的網路放大成本
 
-**徵兆**：流量暴增期間、RabbitMQ cluster 出現高延遲與間歇中斷、但 CPU 與磁碟未飽和；performance test 指向網路元件被壓垮。這正是 [3.C30 Runtastic](/backend/03-message-queue/cases/rabbitmq-runtastic-mirrored-queue-bottleneck/) 2020 lockdown 期間的情況。
+**徵兆**：流量暴增期間、RabbitMQ cluster 出現高延遲與間歇中斷、但 CPU 與磁碟未飽和；performance test 指向網路元件被壓垮。這正是 [Runtastic](/backend/03-message-queue/cases/rabbitmq-runtastic-mirrored-queue-bottleneck/) 2020 lockdown 期間的情況。
 
 **根因**：mirrored queue 把每筆訊息同步到 *所有* mirror。一個 master + 2 mirror 的 queue、每筆 publish 產生 2 份額外的跨節點複製流量；mirror 數與訊息量相乘、網路頻寬隨規模線性放大。可靠性看似免費（多一個 mirror 就多一份備援）、實際成本藏在網路層、平時不顯、流量尖峰才爆。
 
@@ -174,14 +174,14 @@ throughput 排序大致是 stream > classic ≈ quorum（quorum 因 Raft round-t
 
 **徵兆**：把工作隊列從 classic（或 deprecated mirrored）遷到 quorum 時、切換瞬間有訊息遺失、或重複處理 — queue 重建期間 publisher 已經在發、consumer 還沒接上新 queue。
 
-**根因**：queue type 無法原地變更、遷移本質是 *建新 queue + 切流量 + 排空舊 queue*。最大的坑是 in-flight 訊息：舊 classic queue 裡還有未消費的訊息、若直接刪除舊 queue、這些訊息就丟了；若 publisher 提前切到新 queue、舊 queue 的 consumer 還在處理、就出現新舊兩條路徑並存的一致性窗口。[3.C27 Zalando](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/) 跨版本升級用 federation 過渡、正是為了平滑搬移而非硬切。
+**根因**：queue type 無法原地變更、遷移本質是 *建新 queue + 切流量 + 排空舊 queue*。最大的坑是 in-flight 訊息：舊 classic queue 裡還有未消費的訊息、若直接刪除舊 queue、這些訊息就丟了；若 publisher 提前切到新 queue、舊 queue 的 consumer 還在處理、就出現新舊兩條路徑並存的一致性窗口。[Zalando](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/) 跨版本升級用 federation 過渡、正是為了平滑搬移而非硬切。
 
 **修法**：
 
 1. **新 queue 先建、binding 並存**：用新 routing key 或新 queue 名建立 quorum queue、舊 classic queue 暫不刪。
 2. **consumer 先切、publisher 後切**：先讓 consumer 同時消費新舊兩個 queue、確認新 queue 路徑正常、再把 publisher 切到只發新 queue。順序顛倒（publisher 先切）會讓舊 queue 的 in-flight 訊息沒人消費。
 3. **排空舊 queue 再刪**：publisher 切換後、等舊 classic queue `messages` 歸零（用 `list_queues name messages` 確認）、才刪除舊 queue。
-4. **依賴 idempotency 兜底**：遷移窗口內訊息可能重複投遞、consumer 端的 [idempotency](/backend/knowledge-cards/idempotency/) 是最後一道防線（語義誤配的後果見 [3.C9](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)）、不要假設遷移零重複。
+4. **依賴 idempotency 兜底**：遷移窗口內訊息可能重複投遞、consumer 端的 [idempotency](/backend/knowledge-cards/idempotency/) 是最後一道防線（語義誤配的後果見 [反例：Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)）、不要假設遷移零重複。
 5. **用 federation / shovel 做大規模搬移**：跨 cluster 或跨版本場景、用 federation upstream 把舊 cluster 訊息引流到新 cluster、避免一次性硬切（Zalando case 的做法）。
 
 ## 容量與成本規劃
@@ -209,7 +209,7 @@ Queue type 的選擇與 RabbitMQ 其他能力交織：
 - **回 vendor overview**：三種 queue type 的取捨在 [RabbitMQ overview](/backend/03-message-queue/vendors/rabbitmq/)「Classic queue vs Quorum queue vs Stream」段有 vendor-level 定位；本文是其 implementation 展開。
 - **durable queue 能力層**：queue type 的持久化語意建立在 [3.2 durable queue](/backend/03-message-queue/durable-queue/) 的概念上 — quorum 與 stream 強制 durable、正是把「處理即承諾」的可靠性從單節點延伸到跨節點。
 - **durable queue 知識卡**：訊息持久化的概念基礎見 [durable queue 知識卡](/backend/knowledge-cards/durable-queue/)。
-- **mirrored → quorum 的遷移動機**：[3.C30 Runtastic](/backend/03-message-queue/cases/rabbitmq-runtastic-mirrored-queue-bottleneck/) 量化 mirrored 網路成本、是遷 quorum 的證據。
-- **跨版本 / 跨 cluster 平滑遷移**：[3.C27 Zalando](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/) 用 federation 過渡、是 in-flight message 安全搬移的範本。
+- **mirrored → quorum 的遷移動機**：[Runtastic](/backend/03-message-queue/cases/rabbitmq-runtastic-mirrored-queue-bottleneck/) 量化 mirrored 網路成本、是遷 quorum 的證據。
+- **跨版本 / 跨 cluster 平滑遷移**：[Zalando](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/) 用 federation 過渡、是 in-flight message 安全搬移的範本。
 
 何時 revisit queue type 選擇：classic queue 開始出現記憶體壓力或需要跨節點 HA 時、評估 quorum；任何 queue 場景開始需要「補讀歷史」「多 consumer 各自進度」「replay 重算」時、評估 stream；stream 場景開始需要跨團隊事件治理時、評估遷 [Kafka](/backend/03-message-queue/vendors/kafka/)。

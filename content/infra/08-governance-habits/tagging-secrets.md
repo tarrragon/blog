@@ -86,7 +86,7 @@ aws resourcegroupstaggingapi get-resources \
 
 三層護欄互補：靜態掃描擋寫 code 時的遺漏、plan 檢查擋執行前的偏差、tag policy 擋繞過 IaC 的手動操作。早期只做一層也有價值，三層都做時覆蓋最完整。定期跑 tag 覆蓋率報告（缺少必填 tag 的資源數 / 總資源數）可以作為治理進度的量化指標。覆蓋率從 40% 到 90% 的趨勢比單次數字更有意義，適合放進月報讓管理層追蹤。
 
-Tagging 在合規驅動的基礎設施中還有另一層用途：用 tag 標記資料的地理歸屬，讓合規查詢可以機器化。Hard Rock Digital 的運動博彩平台受美國 Wire Act 約束，不同州的投注資料必須留在州內。它們用 CockroachDB 跨 AWS Outposts 部署，每個 Outpost 的資源用地理 tag 標記歸屬州，合規稽核時用 tag 過濾而非逐台盤查。這個案例的 infra 教訓是：tag 的維度設計在受地理或法規約束的服務中，要提前納入合規需求的維度，而非只做成本和歸屬。詳見 [9.C41 Hard Rock Digital：Wire Act 合規](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)。
+Tagging 在合規驅動的基礎設施中還有另一層用途：用 tag 標記資料的地理歸屬，讓合規查詢可以機器化。Hard Rock Digital 的運動博彩平台受美國 Wire Act 約束，不同州的投注資料必須留在州內。它們用 CockroachDB 跨 AWS Outposts 部署，每個 Outpost 的資源用地理 tag 標記歸屬州，合規稽核時用 tag 過濾而非逐台盤查。這個案例的 infra 教訓是：tag 的維度設計在受地理或法規約束的服務中，要提前納入合規需求的維度，而非只做成本和歸屬。詳見 [Hard Rock Digital：Wire Act 合規](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)。
 
 ## Secrets 不進 code：機密值的儲存與引用
 

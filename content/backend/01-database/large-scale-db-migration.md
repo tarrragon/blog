@@ -42,7 +42,7 @@ DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流�
 - 例：RDBMS → KV、Document → Graph
 - 變動：資料模型、必須應用層大改寫
 - 風險：極高、通常分 service 漸進遷移、不會一次切完
-- 對應 [9.C20 Zomato TiDB → DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)
+- 對應 [Zomato TiDB → DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)
 
 ## 為什麼要做大規模 DB 遷移
 
@@ -50,12 +50,12 @@ DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流�
 
 **合理動機**：
 
-- **舊系統規模上限**：[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) TiDB 必須長期 over-provision 應付 spike、成本不划算 → 換 DynamoDB on-demand 後 50% 成本下降
-- **舊系統運維成本**：[9.C9 Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) 自管 Kafka 工程成本太高 → 換 managed Pub/Sub 釋放 SRE
-- **舊系統失能**：[9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 多套 RDBMS（PostgreSQL、MySQL、Oracle）DBA 負擔重 → 統一到 Aurora、效能 +75% 成本 -28%
+- **舊系統規模上限**：[Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) TiDB 必須長期 over-provision 應付 spike、成本不划算 → 換 DynamoDB on-demand 後 50% 成本下降
+- **舊系統運維成本**：[Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) 自管 Kafka 工程成本太高 → 換 managed Pub/Sub 釋放 SRE
+- **舊系統失能**：[Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 多套 RDBMS（PostgreSQL、MySQL、Oracle）DBA 負擔重 → 統一到 Aurora、效能 +75% 成本 -28%
 - **vendor 授權或支援變動**：MongoDB 改授權、Mesos 被棄、Oracle 升級費高
-- **合規要求**：[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 新市場上線、需要本地合規 cluster
-- **新功能需求**：[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 需要 global distribution、原 MongoDB 達不到
+- **合規要求**：[Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 新市場上線、需要本地合規 cluster
+- **新功能需求**：[Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 需要 global distribution、原 MongoDB 達不到
 
 **不合理動機（要警惕）**：
 
@@ -92,8 +92,8 @@ DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流�
 
 **對應案例**：
 
-- [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — POC 驗證 DynamoDB 撐得住、再決定遷移
-- [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB API 相容讓 POC 成本低、加速決策
+- [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — POC 驗證 DynamoDB 撐得住、再決定遷移
+- [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB API 相容讓 POC 成本低、加速決策
 
 ### 應用層相容性改造（T-90 ~ T-30）
 
@@ -109,7 +109,7 @@ DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流�
 
 **API-compatible 遷移的優勢**：
 
-- [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) MongoDB → Cosmos DB MongoDB API — 應用層幾乎不用改、只換 connection string
+- [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) MongoDB → Cosmos DB MongoDB API — 應用層幾乎不用改、只換 connection string
 - Aurora PostgreSQL-compatible → 不改 SQL 跟 ORM
 - 缺點：API 相容不等於行為完全相同、要 *特定 query pattern* 驗證
 
@@ -139,7 +139,7 @@ dual-write / shadow read / backfill 的 *generic 機制* 詳見 [1.6 database mi
 - 新 DB 還沒承擔流量、容量規劃要 *提前 ramp up*、不要等 cutover 才發現容量不夠
 - 監控指標：write success rate、cross-DB inconsistency rate、replication lag、performance metrics
 
-對應案例：[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 遷移前用 dual-write 驗證 4 倍吞吐改善是真的、不是 POC marketing。
+對應案例：[Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 遷移前用 dual-write 驗證 4 倍吞吐改善是真的、不是 POC marketing。
 
 ### Cutover（T-7 ~ T-0）
 
@@ -185,7 +185,7 @@ dual-write / shadow read / backfill 的 *generic 機制* 詳見 [1.6 database mi
 - 文件更新（runbook、onboarding doc）
 - decommission old DB（不立即砍、保留至少 90 天備援）
 
-對應案例：[9.C9 Spotify Kafka → Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — 大規模事件交付系統的 multi-month 漸進遷移、有明確 rollback path。
+對應案例：[Spotify Kafka → Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — 大規模事件交付系統的 multi-month 漸進遷移、有明確 rollback path。
 
 ## API-compatible vs 應用層改寫
 
@@ -222,9 +222,9 @@ dual-write / shadow read / backfill 的 *generic 機制* 詳見 [1.6 database mi
 
 **對應案例**：
 
-- [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB API compat、應用層幾乎不改
-- [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 多套 RDBMS → Aurora、PostgreSQL / MySQL 相容、最小應用層改動
-- [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — TiDB（SQL）→ DynamoDB（KV）、必須改 access pattern、不能 API compat
+- [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB API compat、應用層幾乎不改
+- [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 多套 RDBMS → Aurora、PostgreSQL / MySQL 相容、最小應用層改動
+- [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — TiDB（SQL）→ DynamoDB（KV）、必須改 access pattern、不能 API compat
 
 ## 容量規劃在遷移中的角色
 
@@ -250,18 +250,18 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 ## 案例對照
 
-| 案例                                                                                             | 遷移類型                          | 教學重點                                  |
-| ------------------------------------------------------------------------------------------------ | --------------------------------- | ----------------------------------------- |
-| [9.C9 Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/)    | self-managed → managed            | 7500 萬用戶事件交付系統遷移、人力成本驅動 |
-| [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)        | NewSQL → KV NoSQL                 | 對照 over-provisioning 成本、50% 帳單下降 |
-| [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)            | 多套 RDBMS → 統一 Aurora          | DB consolidation 釋放 DBA、效能 +75%      |
-| [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) | MongoDB → Cosmos DB（API compat） | API 相容遷移路徑、planet-scale 分析       |
+| 案例                                                                                       | 遷移類型                          | 教學重點                                  |
+| ------------------------------------------------------------------------------------------ | --------------------------------- | ----------------------------------------- |
+| [Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/)   | self-managed → managed            | 7500 萬用戶事件交付系統遷移、人力成本驅動 |
+| [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)        | NewSQL → KV NoSQL                 | 對照 over-provisioning 成本、50% 帳單下降 |
+| [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)            | 多套 RDBMS → 統一 Aurora          | DB consolidation 釋放 DBA、效能 +75%      |
+| [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) | MongoDB → Cosmos DB（API compat） | API 相容遷移路徑、planet-scale 分析       |
 
 ## 遷移評估的成本曲線
 
 遷移 ROI 評估常見錯誤是 *只看當下流量下的成本對照*、忽略未來流量曲線。決策時要算 12-24 個月的累積成本、不是 snapshot。
 
-對應 [9.C20 Zomato TiDB → DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 帳單系統「成本降 50%」是當下流量下的對照。如果未來流量繼續成長、DynamoDB on-demand 的單位成本可能比 TiDB 自管 cluster 高、達到某規模後 TiDB 反而更便宜。
+對應 [Zomato TiDB → DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 帳單系統「成本降 50%」是當下流量下的對照。如果未來流量繼續成長、DynamoDB on-demand 的單位成本可能比 TiDB 自管 cluster 高、達到某規模後 TiDB 反而更便宜。
 
 **評估公式**：
 
@@ -300,7 +300,7 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 受監管產業（金融、醫療、電信、政府）的 DB 遷移、*合規審查* 通常是時程主導因素、不是技術整合。
 
-對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 跨 7 個受監管市場遷移到 Aurora、每個市場各自審查（中央銀行 / 金融監管機關 / 個資主管機關）、單一市場審查 3-12 個月、市場依序上線時總時程接近「市場數 × 平均審查月份」、不是「技術遷移月份」。
+對應 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 跨 7 個受監管市場遷移到 Aurora、每個市場各自審查（中央銀行 / 金融監管機關 / 個資主管機關）、單一市場審查 3-12 個月、市場依序上線時總時程接近「市場數 × 平均審查月份」、不是「技術遷移月份」。
 
 **合規 lead time 的常見項目**：
 
@@ -323,9 +323,9 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 遷移案例的「X% improvement」要追問 *跟什麼基準比*、否則容易誤導。
 
-對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 「10x throughput」是 *vs 舊系統*、不是 *vs 競爭對手*。受監管銀行的舊系統通常是 1990s-2000s 的 mainframe 或自建 OLTP、性能本來就低、改善幅度大不代表絕對性能領先。
+對應 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 「10x throughput」是 *vs 舊系統*、不是 *vs 競爭對手*。受監管銀行的舊系統通常是 1990s-2000s 的 mainframe 或自建 OLTP、性能本來就低、改善幅度大不代表絕對性能領先。
 
-對應 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 「up to 75% improvement」是 *跨多個 workload 的最大改善幅度*、不是「每個 workload 都 +75%」。實際每個 workload 改善從 10% 到 75% 不等。
+對應 [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 「up to 75% improvement」是 *跨多個 workload 的最大改善幅度*、不是「每個 workload 都 +75%」。實際每個 workload 改善從 10% 到 75% 不等。
 
 **benchmark 解讀的關鍵問題**（遷移情境專屬）：
 
@@ -335,7 +335,7 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 讀 vendor 案例研究時、這三個遷移專屬維度都要對照、否則「75% 改善」可能變成「在某個 cherry-picked workload、跟舊系統比、規模跟自家不同」、實際搬過去未必有對應收益。
 
-**規模對照延伸**：vendor 案例研究最容易誤判的維度。讀者要識別三個訊號才能判斷規模是否類似 — (1) *資料量*（vendor 揭露的是 GB 還是 PB？自家在哪個量級？）、(2) *QPS 分布*（vendor 是 sustained 還是 bursty？自家流量形狀是否類似？）、(3) *讀寫比*（vendor 案例是 write-heavy 還是 read-heavy？自家業務性質是否吻合？）。三個訊號至少要有兩個跟自家對齊、benchmark 數字才有參考價值。對應 [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 案例的 18:1 讀寫比、跟一般電商的 5:1 完全不同、不能用同一份 benchmark 推論。
+**規模對照延伸**：vendor 案例研究最容易誤判的維度。讀者要識別三個訊號才能判斷規模是否類似 — (1) *資料量*（vendor 揭露的是 GB 還是 PB？自家在哪個量級？）、(2) *QPS 分布*（vendor 是 sustained 還是 bursty？自家流量形狀是否類似？）、(3) *讀寫比*（vendor 案例是 write-heavy 還是 read-heavy？自家業務性質是否吻合？）。三個訊號至少要有兩個跟自家對齊、benchmark 數字才有參考價值。對應 [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 案例的 18:1 讀寫比、跟一般電商的 5:1 完全不同、不能用同一份 benchmark 推論。
 
 **Percentile 跟時間窗口維度** — 是更通用的容量數字判讀問題、詳見 [1.1 高併發資料存取的「讀峰值數字的工程細節」](/backend/01-database/high-concurrency-access/) 段（最大瞬時、99 百分位平均、常態流量這幾種容量口徑，以及 p50/p99/p999 解讀）。遷移情境只需在這個基礎上加「vs 基準 / workload / 規模對照」三個遷移專屬問題。
 
@@ -343,7 +343,7 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 大規模平台選 DB 的做法是建立「預設 DB」規則、新團隊用其他要 *justify*、逐案決定在這個規模行不通。這個治理 pattern 簡化 onboarding、降低 DB 種類太多的運維成本。
 
-對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — Genesys Cloud 的 Chief Architect 明確說「Amazon DynamoDB is our primary data layer by default, and teams have to justify the use of something else」。對應 [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 把多套 RDB 整合到 Aurora、降低 DB 種類就是降低運維 surface area。
+對應 [Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — Genesys Cloud 的 Chief Architect 明確說「Amazon DynamoDB is our primary data layer by default, and teams have to justify the use of something else」。對應 [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 把多套 RDB 整合到 Aurora、降低 DB 種類就是降低運維 surface area。
 
 **預設 DB 治理的工程含義**：
 
@@ -373,7 +373,7 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 Vendor dogfood signal 是 vendor 自家 production-critical workload 對該服務的使用程度、反映 vendor 對自家服務的真實信任度。讀 vendor 案例研究時、這個訊號比 sales material 更可信、因為 vendor 自己賭身家。
 
-對應 [9.C1 AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) — Amazon Prime Day 用自家 DynamoDB + Aurora 撐 1.51 億 RPS + 500B txn。對應 [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) — Google 自家 Ads、Play、Search 都用 Spanner。對應 [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Microsoft 365 usage analytics 用自家 Cosmos DB。
+對應 [AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) — Amazon Prime Day 用自家 DynamoDB + Aurora 撐 1.51 億 RPS + 500B txn。對應 [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) — Google 自家 Ads、Play、Search 都用 Spanner。對應 [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Microsoft 365 usage analytics 用自家 Cosmos DB。
 
 **Dogfood 訊號為什麼重要**：
 

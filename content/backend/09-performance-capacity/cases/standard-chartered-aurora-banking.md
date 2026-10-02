@@ -47,7 +47,7 @@ Standard Chartered 在 Aurora 的關鍵敘述（引自 [AWS search results](http
 - 想規劃受監管產業 OLTP → [00 服務選型模組](/backend/00-service-selection/) + [01 資料庫模組](/backend/01-database/)
 - 想做合規驅動的容量規劃 → [00.4 traffic data scale](/backend/00-service-selection/traffic-data-scale/) + [9.6 容量規劃模型](/backend/09-performance-capacity/)
 - 想理解韌性跟性能的同步達成 → [06.18 reliability metrics governance](/backend/06-reliability/reliability-metrics-governance/)
-- 對照其他金融交易案例 → [9.C4 DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) / [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)
+- 對照其他金融交易案例 → [DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) / [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)
 - 想拆解跨 AZ failover RTO 量級與合規 anti-recommendation → [Aurora 跨 AZ failover RTO](/backend/01-database/vendors/aurora/cross-az-failover-rto/)
 - 想評估全球資料常駐與多 region 部署 → [Aurora global database 多 region](/backend/01-database/vendors/aurora/global-database-multi-region/)
 - 想對照 distributed SQL（CockroachDB / Aurora DSQL / Spanner）的合規場景 → [Aurora DSQL / Spanner / CockroachDB 決策樹](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/)

@@ -105,13 +105,13 @@ exactly-once 的適用面比字面窄：它通常只在單一 broker 生態的�
 
 Broker 在規模化服務承擔的責任從「單隊列工具」轉到「平台治理問題」— 容量規劃焦點從擴 broker 變成多租戶隔離、配額管理、跨團隊觀測標準化。
 
-對應 [3.C6 Uber Kafka Infrastructure Evolution](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/) — Uber 事件平台服務眾多團隊、focus 從 broker 容量是否充足轉到 team 之間的隔離邊界。對應 [3.C4 LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/) — 規模化必然分層 cluster、按業務特性跟可靠性需求分配不同叢集、高優先 workload 跟低優先 workload 各自獨立。
+對應 [Uber Kafka Infrastructure Evolution](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/) — Uber 事件平台服務眾多團隊、focus 從 broker 容量是否充足轉到 team 之間的隔離邊界。對應 [LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/) — 規模化必然分層 cluster、按業務特性跟可靠性需求分配不同叢集、高優先 workload 跟低優先 workload 各自獨立。
 
-**規模化的三個角色階段**（依據 3.C6 / 3.C4 / 早期服務對照、整理出三個典型階段）：
+**規模化的三個角色階段**（依據 Uber / LinkedIn / 早期服務對照、整理出三個典型階段）：
 
 - **單隊列工具**（規模尚小階段）：一個 Kafka cluster、所有 service 共用、broker 擴容是主要工作、團隊各自管理自己的 topic
-- **多租戶平台**（中大型階段）：跨團隊共用 cluster、平台 team 設定 quota、topic 命名規範、容量配額、觀測標準。3.C6 描述 Uber 在這階段「標準化 topic 治理與故障處理流程」、把跨團隊運維責任收斂到平台層
-- **分層治理平台**（規模化階段）：不同業務特性走不同 cluster（critical / standard / experimental）、跨 cluster 路由跟治理變主要工作。3.C4 描述 LinkedIn「依流量與可靠性需求分層」、高優先 workload 提供獨立保護
+- **多租戶平台**（中大型階段）：跨團隊共用 cluster、平台 team 設定 quota、topic 命名規範、容量配額、觀測標準。Uber 描述 Uber 在這階段「標準化 topic 治理與故障處理流程」、把跨團隊運維責任收斂到平台層
+- **分層治理平台**（規模化階段）：不同業務特性走不同 cluster（critical / standard / experimental）、跨 cluster 路由跟治理變主要工作。LinkedIn 描述 LinkedIn「依流量與可靠性需求分層」、高優先 workload 提供獨立保護
 
 判讀含義：當 broker incident 影響多個 team 不相關業務、屬於該分層的訊號。規模化後焦點要轉向跨 team 隔離跟跨 cluster 治理、單純擴 broker 處理不了多租戶共擠的結構性問題。攻擊面跟控制面見 [3.5 紅隊章 Multi-tenant broker 隔離邊界](/backend/03-message-queue/red-team-delivery-layer/)。
 
@@ -119,7 +119,7 @@ Broker 在規模化服務承擔的責任從「單隊列工具」轉到「平台�
 
 當 queue 變成跨區關鍵路徑（payment、order、notification 都靠它）、容量規劃焦點從 throughput 變成 *discoverability* 跟 *routing freshness*。
 
-對應 [3.C1 Meta FOQS](/backend/03-message-queue/cases/meta-foqs-global-migration/) — FOQS 從區域升級到全域、目標是讓災害期間 queue 仍可被存取、控制遷移期間的延遲跟可用性風險。Focus 從 queue 吞吐量轉到災害時的 broker 可達性、routing 狀態新鮮度、tenant 遷移節奏。
+對應 [Meta FOQS](/backend/03-message-queue/cases/meta-foqs-global-migration/) — FOQS 從區域升級到全域、目標是讓災害期間 queue 仍可被存取、控制遷移期間的延遲跟可用性風險。Focus 從 queue 吞吐量轉到災害時的 broker 可達性、routing 狀態新鮮度、tenant 遷移節奏。
 
 **跨區 queue 的設計挑戰**：
 
@@ -130,7 +130,7 @@ Broker 在規模化服務承擔的責任從「單隊列工具」轉到「平台�
 
 ## 案例回寫
 
-投遞語意可用 [3.C9 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 做回寫。先判讀事件是 delivery 層失配，還是 processing/recovery 層失配，再回到本章檢查 ack 時機、重試節奏與隔離策略是否清楚。
+投遞語意可用 [反例：Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 做回寫。先判讀事件是 delivery 層失配，還是 processing/recovery 層失配，再回到本章檢查 ack 時機、重試節奏與隔離策略是否清楚。
 這個案例主要支撐的是「語意分層與投遞責任」判讀，不直接支撐資料庫 schema 演進或 LB timeout；若問題在資料模型或連線生命週期，應轉到 1.2 或 5.3。
 
 若投遞成功但業務結果缺漏，先補齊語意分層，再分別回寫 [3.2 durable queue](/backend/03-message-queue/durable-queue/) 與 [3.4 consumer 設計](/backend/03-message-queue/consumer-design/)。

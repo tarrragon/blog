@@ -47,7 +47,7 @@ Tinder 案例值得讀的是「快取在 long-running 服務的角色變化」�
 - 想設計 cache layer 容量 → [02 快取模組](/backend/02-cache-redis/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/)
 - 想做 latency budget 反推 → [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) + [9.1 壓測理論與系統行為](/backend/09-performance-capacity/)
 - 想理解 cache stampede 風險 → [02.6 cache migration stampede rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/)
-- 對照其他 cache 案例 → [9.C5 Amazon Ads DynamoDB](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)（KV 高吞吐）
+- 對照其他 cache 案例 → [Amazon Ads DynamoDB](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)（KV 高吞吐）
 
 ## 引用源
 

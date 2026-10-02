@@ -51,8 +51,8 @@ Riot Games 案例揭露三個多 cluster K8s 容量治理重點。
 ## 下一步路由
 
 - 想設計 multi-cluster K8s → [05 部署平台模組](/backend/05-deployment-platform/) + [9.6 容量規劃模型](/backend/09-performance-capacity/)
-- 想做延遲門檻反推部署 → [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) + [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)
-- 想對照微服務 vs multi-cluster → [9.C7 Lyft](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)
+- 想做延遲門檻反推部署 → [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) + [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)
+- 想對照微服務 vs multi-cluster → [Lyft](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)
 
 ## 引用源
 

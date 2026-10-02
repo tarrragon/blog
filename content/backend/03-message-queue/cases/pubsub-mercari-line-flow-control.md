@@ -22,7 +22,7 @@ Pub/Sub 進階主題：Push vs Pull subscription。
 
 ## 下一步路由
 
-回 [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/) 與 [3.C58 Twilio webhook buffer](/backend/03-message-queue/cases/sqs-twilio-webhook-buffer/)（webhook + buffer 對照）。
+回 [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/) 與 [Twilio webhook buffer](/backend/03-message-queue/cases/sqs-twilio-webhook-buffer/)（webhook + buffer 對照）。
 
 ## 引用源
 

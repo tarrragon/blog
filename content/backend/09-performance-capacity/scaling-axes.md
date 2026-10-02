@@ -137,10 +137,10 @@ Auto scaling 不是萬靈丹。三類問題它無法解決：擴展速度跟不�
 
 擴展軸選擇可用以下案例回寫。每個案例對應的軸不同，引用時要先辨識案例的主要壓力來源，再對照本章相應段落。
 
-- [9.C18 Zoom：COVID 30 倍突發](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/) — 案例主軸是「stateless API 層水平擴展、stateful 資料層改用 DynamoDB 移除單點」，直接對應本章「stateless 是水平擴展的前提」段。是本批最貼近 scaling axis 主題的案例。
-- [9.C12 Riot Games：246 個 EKS cluster 的多遊戲多地區治理](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) — 案例展示水平擴展到極端規模後，協調成本（cluster 治理、版本一致性）變成新的瓶頸；對照本章「水平擴展的隱性成本 / 協調成本」段。
-- [9.C19 Capcom：DynamoDB + EKS 上的遊戲後端](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) — 案例主軸是 KV 業務語意、不是 scaling axis 取捨；但可反向追問「stateful 玩家狀態為何適合 KV vs RDB」、對照本章「stateless 是水平擴展的前提」段中的「狀態類型 vs 緩解方向」表。
-- [9.C23 Netflix：把關聯式 DB 統一到 Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 案例主軸是「DB 種類整併」、不直接對應 scale-up vs scale-out；但 Aurora 在 single-primary 規格選擇上隱含了「先垂直、再考慮分散」的策略，可作為「垂直擴展天花板」段的對照組。
+- [Zoom：COVID 30 倍突發](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/) — 案例主軸是「stateless API 層水平擴展、stateful 資料層改用 DynamoDB 移除單點」，直接對應本章「stateless 是水平擴展的前提」段。是本批最貼近 scaling axis 主題的案例。
+- [Riot Games：246 個 EKS cluster 的多遊戲多地區治理](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) — 案例展示水平擴展到極端規模後，協調成本（cluster 治理、版本一致性）變成新的瓶頸；對照本章「水平擴展的隱性成本 / 協調成本」段。
+- [Capcom：DynamoDB + EKS 上的遊戲後端](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) — 案例主軸是 KV 業務語意、不是 scaling axis 取捨；但可反向追問「stateful 玩家狀態為何適合 KV vs RDB」、對照本章「stateless 是水平擴展的前提」段中的「狀態類型 vs 緩解方向」表。
+- [Netflix：把關聯式 DB 統一到 Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 案例主軸是「DB 種類整併」、不直接對應 scale-up vs scale-out；但 Aurora 在 single-primary 規格選擇上隱含了「先垂直、再考慮分散」的策略，可作為「垂直擴展天花板」段的對照組。
 
 Zomato 跟 Netflix 不在這份案例清單裡的原因要先講清楚：擴展軸的真實示範案例在後端教材中相對稀缺、09 模組多數案例的主軸落在 vendor 或容量規劃。Zoom 是這四個案例中最貼近教科書 — stateless API 水平 + stateful 改用 DynamoDB 的組合直接示範本章核心。Riot Games 揭示水平到極端規模後協調成本翻轉成新瓶頸。Capcom 跟 Netflix Aurora 不直接示範擴展軸取捨、但用反向追問「為什麼選 KV / 為什麼 single-primary 仍是 default」能把它們的決策放回擴展軸框架。
 

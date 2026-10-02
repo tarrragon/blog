@@ -80,7 +80,7 @@ Tunnel 形態的入口（cloudflared、Tailscale Funnel）有獨立的弱點盤�
 
 ## 平台遷移期的攻擊面變動
 
-對應 5.C1 / 5.C4 / 5.C5 揭露的遷移分段切換流程、本段從弱點盤點角度補充其攻擊面變動風險（case 庫未直接揭露此角度、屬通用工程經驗）。遷移期的職責邊界重訂見 [5.7 Managed 平台跟團隊職責邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/#managed-平台跟團隊職責邊界)、弱點盤點跟治理視角合用才完整。
+對應 Tradeshift / Mobileye / Miro 揭露的遷移分段切換流程、本段從弱點盤點角度補充其攻擊面變動風險（case 庫未直接揭露此角度、屬通用工程經驗）。遷移期的職責邊界重訂見 [5.7 Managed 平台跟團隊職責邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/#managed-平台跟團隊職責邊界)、弱點盤點跟治理視角合用才完整。
 
 平台遷移（self-managed → managed、單 cluster → 多 cluster、舊版本 → 新版本）會短期擴大攻擊面、然後逐步收斂。遷移期顯式管理攻擊面變化、避免雙軌期變成攻擊面雙倍期。
 

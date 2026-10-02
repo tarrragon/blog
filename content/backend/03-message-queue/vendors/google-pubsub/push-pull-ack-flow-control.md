@@ -160,5 +160,5 @@ push/pull 判讀與 ack 是 Pub/Sub 可靠消費的核心，它跟其他議題�
 
 - 上游 vendor 頁：[Google Cloud Pub/Sub](/backend/03-message-queue/vendors/google-pubsub/)
 - 對照 vendor：[AWS SQS visibility timeout](/backend/03-message-queue/vendors/aws-sqs/visibility-polling-lambda-cost/)、[RabbitMQ DLQ](/backend/03-message-queue/vendors/rabbitmq/dlq-retry-escalation/)
-- 對應案例：[3.C65 Mercari LINE flow control](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/)、[3.C64 Mercari item feed DLT](/backend/03-message-queue/cases/pubsub-mercari-item-feed-dlt/)
+- 對應案例：[Mercari LINE flow control](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/)、[Mercari item feed DLT](/backend/03-message-queue/cases/pubsub-mercari-item-feed-dlt/)
 - 上游概念：[3.4 consumer design](/backend/03-message-queue/consumer-design/)

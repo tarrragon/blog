@@ -78,7 +78,7 @@ tags: ["backend", "reliability"]
 
 - 01.6 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)：執行層流程
 - 01.7 [Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)：production rollout evidence 與 gate 欄位
-- 0.C4 [營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)：決策層判讀
+- [營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)：決策層判讀
 - 06.7 DR / rollback：migration rollback 演練
 - 06.8 release gate：可逆性檢查
 - 06.10 contract testing：schema 契約驗證

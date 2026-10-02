@@ -26,9 +26,9 @@ Microsoft 365 在 Cosmos DB 的關鍵敘述（引自 [Microsoft 365 boosts usage
 
 Microsoft 365 案例揭露三個全球 SaaS 分析平台的工程重點。
 
-1. **MongoDB → Cosmos DB 是「相容 API + 升級擴展性」的遷移路徑**：Cosmos DB 提供 MongoDB API 相容、應用層程式幾乎不用改、但底層儲存改用 Cosmos DB 的分散式架構。這層遷移成本遠低於改寫 application 到 native Cosmos DB SQL API、適合大規模既有系統。對應 [01.4 database migration playbook](/backend/01-database/database-migration-playbook/)、跟 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 形成對照。
-2. **分析平台 vs 交易平台的 DB 取捨不同**：交易平台優先 latency + consistency（[9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）、分析平台優先 throughput + global distribution + cost。Cosmos DB 5 個 consistency level 讓分析場景可以選 weakest（eventual / session），換最大 throughput。對應 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) 同思維。
-3. **Microsoft 自家產品 dogfood Cosmos DB**：跟 Amazon Prime Day 用自家 DynamoDB（[9.C1](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)）、Google 自家用 Spanner（[9.C10](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）一樣 — 雲商旗艦 DB 都會用在自家旗艦產品。讀此類 dogfood 案例的權重應該高、因為「雲商自己賭身家」。
+1. **MongoDB → Cosmos DB 是「相容 API + 升級擴展性」的遷移路徑**：Cosmos DB 提供 MongoDB API 相容、應用層程式幾乎不用改、但底層儲存改用 Cosmos DB 的分散式架構。這層遷移成本遠低於改寫 application 到 native Cosmos DB SQL API、適合大規模既有系統。對應 [01.4 database migration playbook](/backend/01-database/database-migration-playbook/)、跟 [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 形成對照。
+2. **分析平台 vs 交易平台的 DB 取捨不同**：交易平台優先 latency + consistency（[Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）、分析平台優先 throughput + global distribution + cost。Cosmos DB 5 個 consistency level 讓分析場景可以選 weakest（eventual / session），換最大 throughput。對應 [Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) 同思維。
+3. **Microsoft 自家產品 dogfood Cosmos DB**：跟 Amazon Prime Day 用自家 DynamoDB（[AWS Prime Day 2025：可預期極端峰值的 dogfood](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)）、Google 自家用 Spanner（[Cloud Spanner：每秒 10 億請求的全球一致性資料庫](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）一樣 — 雲商旗艦 DB 都會用在自家旗艦產品。讀此類 dogfood 案例的權重應該高、因為「雲商自己賭身家」。
 
 需要警惕：
 
@@ -48,8 +48,8 @@ Microsoft 365 案例揭露三個全球 SaaS 分析平台的工程重點。
 
 ## 下一步路由
 
-- 對照其他 Cosmos DB 案例 → [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) / [9.C21 ASOS Black Friday](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)
-- 對照其他 dogfood 案例 → [9.C1 AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) / [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
+- 對照其他 Cosmos DB 案例 → [Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) / [ASOS Black Friday](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)
+- 對照其他 dogfood 案例 → [AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) / [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
 - 想做 MongoDB-compatible 遷移 → [01.4 database migration playbook](/backend/01-database/database-migration-playbook/)
 - 想理解 multi-model 取捨 → [01 資料庫模組](/backend/01-database/) + [00 服務選型模組](/backend/00-service-selection/)
 - 想對比 Cosmos DB MongoDB API vs SQL API 的選型 → [Cosmos DB MongoDB API vs SQL API](/backend/01-database/vendors/cosmosdb/mongodb-api-vs-sql-api/)

@@ -22,7 +22,7 @@ Kafka 進階主題：cross-region MirrorMaker / managed broker 遷移 / ACL 設�
 
 ## 下一步路由
 
-回 [Kafka vendor 頁](/backend/03-message-queue/vendors/kafka/) 與 [3.C2 VMware → MSK](/backend/03-message-queue/cases/vmware-kafka-to-msk/)。
+回 [Kafka vendor 頁](/backend/03-message-queue/vendors/kafka/) 與 [VMware → MSK](/backend/03-message-queue/cases/vmware-kafka-to-msk/)。
 
 ## 引用源
 

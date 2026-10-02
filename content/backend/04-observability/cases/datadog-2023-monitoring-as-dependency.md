@@ -14,7 +14,7 @@ Datadog 官方 outage postmortem（2023-03-08）：客戶側觀測全失能 —�
 
 ## 判讀
 
-這是「觀測作為外部依賴」的純粹形態：客戶把「我的系統有沒有事」外包給 Datadog、當 Datadog 自己 down、客戶的 monitors「unavailable and not alerting」—— 觀測層變成客戶事故的放大器（客戶系統可能沒事但看不到、或有事但沒被叫醒）。根因「更新視窗跨區同時」是 correlated failure 的教科書：以為獨立的多個部署共享同一個觸發器。設計含義：關鍵告警不能只有單一觀測供應商這一條路徑、需要 meta-monitoring 或第二條獨立通道（dead man's switch、外部 synthetic、見 [4.C19](/backend/04-observability/cases/watchdog-dead-mans-switch/)）。
+這是「觀測作為外部依賴」的純粹形態：客戶把「我的系統有沒有事」外包給 Datadog、當 Datadog 自己 down、客戶的 monitors「unavailable and not alerting」—— 觀測層變成客戶事故的放大器（客戶系統可能沒事但看不到、或有事但沒被叫醒）。根因「更新視窗跨區同時」是 correlated failure 的教科書：以為獨立的多個部署共享同一個觸發器。設計含義：關鍵告警不能只有單一觀測供應商這一條路徑、需要 meta-monitoring 或第二條獨立通道（dead man's switch、外部 synthetic、見 [Watchdog / dead man's switch：訊號消失即告警](/backend/04-observability/cases/watchdog-dead-mans-switch/)）。
 
 ## 對應大綱
 
@@ -26,4 +26,4 @@ Datadog 官方 outage postmortem（2023-03-08）：客戶側觀測全失能 —�
 
 ## 二手來源與狀態標注
 
-這是觀測廠商自身的失效（跟 4.C16 被觀測系統反噬觀測後端機制不同）—— 撐的是「觀測是獨立失效域、且可能是共享單點」這條軸、分節時勿與 4.C16 混寫。
+這是觀測廠商自身的失效（跟 〈Cardinality 事故爆炸：被觀測系統的異常把觀測後端打爆〉被觀測系統反噬觀測後端機制不同）—— 撐的是「觀測是獨立失效域、且可能是共享單點」這條軸、分節時勿與 〈Cardinality 事故爆炸：被觀測系統的異常把觀測後端打爆〉混寫。

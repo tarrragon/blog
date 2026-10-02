@@ -38,7 +38,7 @@ tags: ["backend", "message-queue"]
 
 Multi-tenant broker 的隔離邊界承擔「單租戶故障不放大到其他租戶」的責任。Multi-tenant broker 的紅隊重點是跨租戶邊界能否擋住攻擊放大跟資源耗盡。3.1 已建立規模化分層討論、本段聚焦攻擊面跟控制面。
 
-對應 [3.C6 Uber Kafka Infrastructure Evolution](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/) — case 提出方向：定義租戶隔離、配額規則、標準化 topic 治理、平台指標治理。對應 [3.C4 LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/) — 規模化分層 cluster、高優先 workload 跟低優先 workload 各自獨立、降低 noisy neighbor 風險。以下攻擊面 taxonomy 基於通用 multi-tenant broker 知識展開、非 case 原文列舉。
+對應 [Uber Kafka Infrastructure Evolution](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/) — case 提出方向：定義租戶隔離、配額規則、標準化 topic 治理、平台指標治理。對應 [LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/) — 規模化分層 cluster、高優先 workload 跟低優先 workload 各自獨立、降低 noisy neighbor 風險。以下攻擊面 taxonomy 基於通用 multi-tenant broker 知識展開、非 case 原文列舉。
 
 **Multi-tenant broker 的攻擊面**：
 
@@ -63,13 +63,13 @@ Replay 機制是事故恢復工具、也是攻擊面。攻擊者可能濫用 rep
 
 ## 【案例對照】
 
-| 案例                                                                                                            | 紅隊視角重點                                           |
-| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| [3.C6 Uber Kafka Infrastructure](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/)          | 治理視角、反推 multi-tenant 隔離攻擊面                 |
-| [3.C4 LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/)                | 治理視角、反推分層 cluster 跟 workload 隔離防護        |
-| [3.C9 反例 Queue Semantics Mismatch](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) | 切換語意誤配引發重複副作用、replay 跟 idempotency 失準 |
+| 案例                                                                                                       | 紅隊視角重點                                           |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [Uber Kafka Infrastructure](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/)          | 治理視角、反推 multi-tenant 隔離攻擊面                 |
+| [LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/)                | 治理視角、反推分層 cluster 跟 workload 隔離防護        |
+| [反例 Queue Semantics Mismatch](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) | 切換語意誤配引發重複副作用、replay 跟 idempotency 失準 |
 
-以上 3.C6 / 3.C4 屬治理視角案例、紅隊章節做反推使用（從控制面反推攻擊面）。
+以上 Uber / LinkedIn 屬治理視角案例、紅隊章節做反推使用（從控制面反推攻擊面）。
 
 ## 跨模組路由
 

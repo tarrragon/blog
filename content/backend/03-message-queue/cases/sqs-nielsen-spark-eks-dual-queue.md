@@ -22,7 +22,7 @@ SQS 進階主題：CloudWatch metric + alarm / Standard queue / 長 workload aut
 
 ## 下一步路由
 
-回 [SQS vendor 頁](/backend/03-message-queue/vendors/aws-sqs/) 與 [3.C22 Trivago KEDA](/backend/03-message-queue/cases/kafka-trivago-keda-scale-to-zero/)（lag-based autoscale 對照）。
+回 [SQS vendor 頁](/backend/03-message-queue/vendors/aws-sqs/) 與 [Trivago KEDA](/backend/03-message-queue/cases/kafka-trivago-keda-scale-to-zero/)（lag-based autoscale 對照）。
 
 ## 引用源
 

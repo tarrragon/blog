@@ -14,4 +14,4 @@ Outbound tunnel 位在本機進程與公網之間，取代傳統的 port-forward
 
 常見實作包括 cloudflared（綁 Cloudflare 邊緣）和 Tailscale（WireGuard mesh VPN）。隧道網址是位址、不是密碼 — 認證必須疊在 tunnel 之後。
 
-深入：[5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/)。選型案例：[7.C11 Tailscale vs Cloudflare Tunnel](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)。
+深入：[5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/)。選型案例：[Tailscale vs Cloudflare Tunnel](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)。

@@ -52,7 +52,7 @@ readiness 太鬆（只檢查 HTTP port 是否可達）會讓尚未就緒的實�
 - **可降級依賴**：推薦引擎、非關鍵 cache——不可用時服務可回傳降級結果。這類依賴不應納入 readiness，改用 [circuit breaker](/backend/knowledge-cards/circuit-breaker/) 或 [fallback](/backend/knowledge-cards/fallback/) 處理。
 - **觀測依賴**：metrics collector、log shipper——不可用不影響業務流量。這類依賴進 readiness 是常見誤判，會讓觀測基礎設施故障擊倒整個服務。
 
-對應 [5.C3 Orbitera managed K8s migration](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/)：揭露「跨平台遷移本質是能力遷移、部署 / 觀測 / 恢復與團隊流程都需要同步重建」。遷移到新平台時，舊平台的 readiness 條件不能直接搬——新平台的依賴可達路徑、DNS 解析速度、secret 注入方式可能改變，readiness 條件要重新驗證。
+對應 [Orbitera managed K8s migration](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/)：揭露「跨平台遷移本質是能力遷移、部署 / 觀測 / 恢復與團隊流程都需要同步重建」。遷移到新平台時，舊平台的 readiness 條件不能直接搬——新平台的依賴可達路徑、DNS 解析速度、secret 注入方式可能改變，readiness 條件要重新驗證。
 
 ## Liveness 與 Restart
 
@@ -81,7 +81,7 @@ liveness 的工程價值在於捕捉服務自己無法修復的狀態。把 live
 3. **啟動期間的容量缺口**：重啟到 readiness 通過之間，整體服務容量降低。
 4. **thundering herd 風險**：多實例同時被 liveness 判定失敗並重啟時，同時重建連線、同時搶資源、下游壓力瞬間放大。
 
-對應 [5.C7 Airbnb Istio 升級治理](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)：揭露「基礎平台元件升級若缺乏分批治理、會形成全域風險放大器」。以下基於通用工程知識展開：Istio 等 service mesh 升級期間的 sidecar 重啟可觸發大量服務的 liveness 暫時失敗，若 liveness 太敏感會放大成全域 [restart storm](/backend/knowledge-cards/thundering-herd/)。升級期的 liveness 閾值應比穩態更寬鬆，或在升級批次中暫時加大 liveness failure threshold。
+對應 [Airbnb Istio 升級治理](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)：揭露「基礎平台元件升級若缺乏分批治理、會形成全域風險放大器」。以下基於通用工程知識展開：Istio 等 service mesh 升級期間的 sidecar 重啟可觸發大量服務的 liveness 暫時失敗，若 liveness 太敏感會放大成全域 [restart storm](/backend/knowledge-cards/thundering-herd/)。升級期的 liveness 閾值應比穩態更寬鬆，或在升級批次中暫時加大 liveness failure threshold。
 
 ## Shutdown 與 Drain
 
@@ -99,7 +99,7 @@ shutdown 的責任是讓服務停止接新工作並完成資源釋放。[drainin
 
 **Background worker**（queue consumer、定時任務、batch job）：drain 窗口取決於單一工作的最長執行時間。核心條件是已領取的工作完成處理或安全重新排隊。風險點是不可中斷工作——某些 job 做到一半無法重試（例如外部 API 呼叫已發出但回應尚未確認），drain 時序要覆蓋這類 job 的最長完成時間，否則 job 被中斷後產生不一致狀態。
 
-對應 [5.C9 反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)：揭露「切流失敗常在 connection lifecycle 管理」「drain / idle timeout / health check / client retry 沒有同一節奏」。反例中的事故擴大機制正是不同 workload 類型的 drain 條件被忽略——短 API 的 drain 完成了，長連線的 reconnect 仍在震盪，worker 的 job 被中斷重試造成重複處理。
+對應 [反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)：揭露「切流失敗常在 connection lifecycle 管理」「drain / idle timeout / health check / client retry 沒有同一節奏」。反例中的事故擴大機制正是不同 workload 類型的 drain 條件被忽略——短 API 的 drain 完成了，長連線的 reconnect 仍在震盪，worker 的 job 被中斷重試造成重複處理。
 
 ### Shutdown 信號的傳遞路徑
 
@@ -143,9 +143,9 @@ Kubernetes 在 lifecycle 表達力上最完整，但參數最多也最容易配�
 
 ## 遷移期的 Lifecycle 重新驗證
 
-對應 [5.C6 Airbnb Kubernetes 叢集擴縮演進](/backend/05-deployment-platform/cases/airbnb-kubernetes-cluster-scaling-evolution/)：揭露「擴縮策略版本化與可回放」「不同 workload 區分擴縮政策」。以下基於通用工程知識展開：叢集演進過程中，lifecycle 參數的假設會改變——workload 從穩態變成高波動、從單一類型變成混合類型、從小規模變成大規模。lifecycle contract 的參數不是設一次就好，要隨叢集演進重新驗證。
+對應 [Airbnb Kubernetes 叢集擴縮演進](/backend/05-deployment-platform/cases/airbnb-kubernetes-cluster-scaling-evolution/)：揭露「擴縮策略版本化與可回放」「不同 workload 區分擴縮政策」。以下基於通用工程知識展開：叢集演進過程中，lifecycle 參數的假設會改變——workload 從穩態變成高波動、從單一類型變成混合類型、從小規模變成大規模。lifecycle contract 的參數不是設一次就好，要隨叢集演進重新驗證。
 
-對應 [5.C10 對照：規模差異下的平台遷移](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)：揭露「小型組織最容易漏掉回退腳本化」「中型組織依賴錯位、服務切過去但資料面 / 認證面 / 觀測面沒同步」。lifecycle contract 在遷移後的完整性驗證不只看 probe 設定——secret 注入時序、資料庫連線池的 endpoint 是否切到新叢集、observability pipeline 的 readiness 是否對齊，都是 lifecycle 合約的一部分。
+對應 [對照：規模差異下的平台遷移](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)：揭露「小型組織最容易漏掉回退腳本化」「中型組織依賴錯位、服務切過去但資料面 / 認證面 / 觀測面沒同步」。lifecycle contract 在遷移後的完整性驗證不只看 probe 設定——secret 注入時序、資料庫連線池的 endpoint 是否切到新叢集、observability pipeline 的 readiness 是否對齊，都是 lifecycle 合約的一部分。
 
 遷移後的 lifecycle 驗證清單：
 
@@ -187,7 +187,7 @@ Kubernetes 在 lifecycle 表達力上最完整，但參數最多也最容易配�
 
 ## 案例回寫
 
-lifecycle contract 的完整性可用多個案例交叉驗證。[5.C3 Orbitera managed K8s migration](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/) 揭露遷移後 readiness 依賴路徑改變的風險。[5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 揭露不同 workload 的 drain 條件被忽略造成的事故擴大。[5.C7 Airbnb Istio 升級治理](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/) 揭露基礎平台元件升級缺乏分批治理會形成全域風險放大器。[5.C10 對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/) 揭露不同規模下 lifecycle 驗證的缺口模式。
+lifecycle contract 的完整性可用多個案例交叉驗證。[Orbitera managed K8s migration](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/) 揭露遷移後 readiness 依賴路徑改變的風險。[反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 揭露不同 workload 的 drain 條件被忽略造成的事故擴大。[Airbnb Istio 升級治理](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/) 揭露基礎平台元件升級缺乏分批治理會形成全域風險放大器。[對照：規模差異下的平台遷移](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/) 揭露不同規模下 lifecycle 驗證的缺口模式。
 
 這些案例共同支撐的判讀是「lifecycle contract 的每個狀態都有不同的失敗模式，混在一起處理會在事故時無法定位」。流量切換或連線生命週期問題路由到 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)。runtime 產物穩定性問題路由到 [5.1 container 與 runtime](/backend/05-deployment-platform/container-runtime/)。
 

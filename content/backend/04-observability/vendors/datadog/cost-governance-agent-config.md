@@ -107,12 +107,12 @@ Agent 掛掉時 dashboard 會出現 gap（資料斷層）。如果所有 host �
 
 Datadog 支援 OpenTelemetry — 可以用 OTel SDK instrumentation + OTel Collector，把資料送到 Datadog backend。這種模式讓 instrumentation 跟 vendor 解耦，但犧牲部分 Datadog-native 功能（例如 Watchdog anomaly detection 需要 Datadog Agent 的 metadata）。
 
-整合模式的選擇跟 [4.C7 Datadog OTel migration practice](/backend/04-observability/cases/datadog-otel-migration-practice/) 的案例分析對應 — 雙軌期的成本跟語意對齊是主要挑戰。
+整合模式的選擇跟 [Datadog OTel migration practice](/backend/04-observability/cases/datadog-otel-migration-practice/) 的案例分析對應 — 雙軌期的成本跟語意對齊是主要挑戰。
 
 ## 下一步路由
 
 - [Datadog 服務頁](/backend/04-observability/vendors/datadog/)：overview 跟日常操作
 - [4.7 cardinality](/backend/04-observability/cardinality-cost-governance/)：cardinality 治理的完整策略
 - [4.15 cost attribution](/backend/04-observability/cost-attribution/)：成本歸因的組織治理
-- [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)：Datadog 跟 OTel 的整合案例
+- [Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)：Datadog 跟 OTel 的整合案例
 - [OpenTelemetry](/backend/04-observability/vendors/opentelemetry/)：vendor-neutral instrumentation

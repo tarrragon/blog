@@ -20,7 +20,7 @@ tags: ["backend", "api-design", "error-model"]
 | 解耦派         | 協定回應結構內建的 errors 集合    | 不說、恆定為傳輸結果  | GraphQL 規範與官方教學 |
 | 分層派         | 保證層加選配層、選配層走 metadata | 說（保證層即 status） | gRPC 官方 error guide  |
 
-補充派的立場在 [RFC 9457](/backend/knowledge-cards/problem-details/) 裡是明文的：這份標準定義 `application/problem+json`，核心成員是 `type`（錯誤種類的 URI）、`title`、`status`、`detail`、`instance` 五個，而 problem details 的定位是補充 HTTP status code、而非取代（見 [11.C35](/backend/11-api-design/cases/error-rfc9457-problem-details/)）。這句話決定了整份格式的定位 —— 讀 status 的角色拿到粗分類、讀 body 的角色拿到細節，兩層對同一個錯誤說一致的話。
+補充派的立場在 [RFC 9457](/backend/knowledge-cards/problem-details/) 裡是明文的：這份標準定義 `application/problem+json`，核心成員是 `type`（錯誤種類的 URI）、`title`、`status`、`detail`、`instance` 五個，而 problem details 的定位是補充 HTTP status code、而非取代（見 [RFC 9457：problem+json 標準化錯誤格式](/backend/11-api-design/cases/error-rfc9457-problem-details/)）。這句話決定了整份格式的定位 —— 讀 status 的角色拿到粗分類、讀 body 的角色拿到細節，兩層對同一個錯誤說一致的話。
 
 外殼派把成功與失敗塞進同一個形狀，常見形態是 `{ "success": ..., "data": ..., "error": ... }`。這一派要分兩種來看，而把它們混為一談是這場爭論裡最常見的誤讀。
 
@@ -28,9 +28,9 @@ tags: ["backend", "api-design", "error-model"]
 
 **協定層外殼**：JSON-RPC 2.0 把外殼寫進規範 —— 回應是 `result` 或 `error` 二選一，error 物件有 `code`、`message` 與供應用自訂的 `data`，且 code 保留了一段給協定自己的錯誤。它 over HTTP 時慣例上一律回 200，status 因此恆定為「這個訊息送到了」。這一派證明外殼形態拿得到命名空間與演化位置 —— 那兩件事並非只有 RFC 9457 給得起（JSON-RPC 的選型條件見 [JSON-RPC 的適用條件](/backend/11-api-design/styles/rpc-revival/rpc-revival-jsonrpc-conditions/)）。
 
-解耦派把錯誤從 transport 層完全移出。GraphQL 的回應結構內建 errors 集合（這一點出自 GraphQL 規範本身），transport 只表達「這個請求有沒有送達並被處理」。這個設計跟它的 nullable-by-default 是一體的：type system 中每個 field 預設 nullable，理由包含後端局部故障與細粒度授權（見 [11.C26](/backend/11-api-design/cases/graphql-versionless-evolution/)），局部失敗因此落在單一欄位而非整包回應，而說明失敗原因的位置就是 errors 集合（schema 側的完整展開見 [Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)）。
+解耦派把錯誤從 transport 層完全移出。GraphQL 的回應結構內建 errors 集合（這一點出自 GraphQL 規範本身），transport 只表達「這個請求有沒有送達並被處理」。這個設計跟它的 nullable-by-default 是一體的：type system 中每個 field 預設 nullable，理由包含後端局部故障與細粒度授權（見 [GraphQL 官方：versionless API 與 nullable-by-default](/backend/11-api-design/cases/graphql-versionless-evolution/)），局部失敗因此落在單一欄位而非整包回應，而說明失敗原因的位置就是 errors 集合（schema 側的完整展開見 [Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)）。
 
-分層派是同一張力在別的 transport 上的解。gRPC 的標準模型是失敗回一個 error status code 加一段選配的文字訊息；它另有一套 richer error model，讓 server 回傳結構化的錯誤細節，實作上把這些細節放在 trailing metadata —— 回應結尾附帶的一組鍵值對，中間節點不解析它（見 [11.C73](/backend/11-api-design/cases/errorchain-grpc-two-layer-model/)）。官方自列的風險裡有一條直接命中本文主題：proxies 與 loggers 看不到 trailing metadata 裡的錯誤細節。
+分層派是同一張力在別的 transport 上的解。gRPC 的標準模型是失敗回一個 error status code 加一段選配的文字訊息；它另有一套 richer error model，讓 server 回傳結構化的錯誤細節，實作上把這些細節放在 trailing metadata —— 回應結尾附帶的一組鍵值對，中間節點不解析它（見 [gRPC 兩層錯誤模型：status code 是保證層、richer detail 是選配層](/backend/11-api-design/cases/errorchain-grpc-two-layer-model/)）。官方自列的風險裡有一條直接命中本文主題：proxies 與 loggers 看不到 trailing metadata 裡的錯誤細節。
 
 ## 解耦換到的是局部失敗的表達力
 

@@ -120,12 +120,12 @@ Saturation discovery 跑完之後、產出 *容量地圖* — 不是一個數字
 
 ## 案例對照
 
-| 案例                                                                                          | 教學重點                                 |
-| --------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) | DynamoDB IOPS 20 → 135K 的擴展曲線量測   |
-| [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)     | partition 均勻時的線性擴展               |
-| [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)  | connection limit 是 RDB 的 saturation 點 |
-| [9.C25 Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)       | p99 < 10ms saturation 條件比平均嚴格     |
+| 案例                                                                                    | 教學重點                                 |
+| --------------------------------------------------------------------------------------- | ---------------------------------------- |
+| [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) | DynamoDB IOPS 20 → 135K 的擴展曲線量測   |
+| [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)    | partition 均勻時的線性擴展               |
+| [Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)  | connection limit 是 RDB 的 saturation 點 |
+| [Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)       | p99 < 10ms saturation 條件比平均嚴格     |
 
 ## 下一步路由
 

@@ -117,8 +117,8 @@ Strangler Fig 跟 big bang 拆分的本質差異是「失敗代價可控」— �
 
 09 / 05 案例庫中、Strangler 拆分案例不算多（多數案例是已拆完的狀態描述、而非拆分過程紀錄）。可用以下案例反向追問：
 
-- [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — Netflix 的故事是「拆完合回去」、隱含 strangler 反向。對照本章可問：合併過程是否也走了類似四階段、只是方向相反（雙寫期把多 DB 合到 Aurora、再切讀路徑、最後下架原 DB）？
-- [5.C2 Condé Nast：EKS 平台整併](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/) — 平台層整併。本章在「服務層」、整併在「平台層」、邏輯類似但 surface 不同。
+- [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — Netflix 的故事是「拆完合回去」、隱含 strangler 反向。對照本章可問：合併過程是否也走了類似四階段、只是方向相反（雙寫期把多 DB 合到 Aurora、再切讀路徑、最後下架原 DB）？
+- [Condé Nast：EKS 平台整併](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/) — 平台層整併。本章在「服務層」、整併在「平台層」、邏輯類似但 surface 不同。
 
 ## 跨模組路由
 

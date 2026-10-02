@@ -100,7 +100,7 @@ Reconciliation 的責任是比較兩個或多個資料來源、確認正式狀�
 - 適合：長尾（long-tail）inconsistency（找不到通用 pattern）
 - 成本：用戶體驗已受影響
 
-對應 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — migration 期間 [shadow read](/backend/knowledge-cards/shadow-read/) 持續對帳、抓 mapping 規則漂移。
+對應 [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — migration 期間 [shadow read](/backend/knowledge-cards/shadow-read/) 持續對帳、抓 mapping 規則漂移。
 
 ## Data Repair
 
@@ -258,7 +258,7 @@ cache 跟 search index 是 derived state、出錯通常 *砍掉重建*。
 
 - 不是直接修 cache value、是 invalidate 讓下次 read 重算
 - 大規模重建用 batch job 跑、避免 thundering herd
-- 對應 [9.C25 Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) feature store 重建模式
+- 對應 [Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) feature store 重建模式
 
 ### 從備份回復（Point-in-time Recovery）
 
@@ -354,7 +354,7 @@ Data repair 常常需要高權限、因此必須接到 audit 與資料保護邊�
 
 - WAL / binlog 持續備份到 S3 / GCS
 - 一直可以回放到 *任何時間點*
-- 對應 [9.C24 Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — 高可用需要快速 PITR
+- 對應 [Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — 高可用需要快速 PITR
 
 ### Recovery 時的對抗壓力
 
@@ -465,11 +465,11 @@ DB 事故當下、*資安處置* 跟 *業務連續性處置* 要 *分軌並行*�
 
 ## 案例對照
 
-| 案例                                                                                                  | reconciliation 重點                   |
-| ----------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)             | migration 期間用 shadow read 持續對帳 |
-| [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)         | 體育博彩 ledger、結算後對帳           |
-| [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) | 跨市場銀行、每市場獨立對帳            |
+| 案例                                                                                            | reconciliation 重點                   |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------- |
+| [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)             | migration 期間用 shadow read 持續對帳 |
+| [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)        | 體育博彩 ledger、結算後對帳           |
+| [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) | 跨市場銀行、每市場獨立對帳            |
 
 ## 實體服務討論承接點
 

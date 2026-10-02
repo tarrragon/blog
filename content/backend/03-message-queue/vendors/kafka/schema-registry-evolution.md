@@ -215,5 +215,5 @@ FULL 同時滿足兩者，代價是只能做「加帶 default 的欄位」與「
 
 - 概念索引：[Event Schema Compatibility](/backend/knowledge-cards/event-schema-compatibility/) 知識卡（本文的 implementation 來源）
 - 上游 vendor 頁：[Apache Kafka](/backend/03-message-queue/vendors/kafka/)（KRaft 與 Schema Registry 段）
-- 對應案例：[3.C14 Yelp Schematizer](/backend/03-message-queue/cases/kafka-yelp-schematizer/)（schema 治理拉到平台層）、[3.C13 Shopify Debezium CDC](/backend/03-message-queue/cases/kafka-shopify-debezium-cdc/)（CDC 場景的 schema evolution）
+- 對應案例：[Yelp Schematizer](/backend/03-message-queue/cases/kafka-yelp-schematizer/)（schema 治理拉到平台層）、[Shopify Debezium CDC](/backend/03-message-queue/cases/kafka-shopify-debezium-cdc/)（CDC 場景的 schema evolution）
 - 方法論：[Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/)

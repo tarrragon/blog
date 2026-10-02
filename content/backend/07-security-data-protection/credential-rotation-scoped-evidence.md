@@ -40,7 +40,7 @@ Credential rotation with scoped evidence 的核心責任是把憑證輪替從一
 
 ## 案例回寫
 
-這條路徑可用 [7.C9 反例：憑證輪替失敗](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) 回寫。先看失敗是發生在分域、驗證還是撤銷，再回到本章補齊 scope map 與回退窗口。
+這條路徑可用 [反例：憑證輪替失敗](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) 回寫。先看失敗是發生在分域、驗證還是撤銷，再回到本章補齊 scope map 與回退窗口。
 
 這個案例主要支撐的是「輪替分域與證據鏈完整度」判讀，不直接支撐 incident 通訊節奏；外部通報回到 8.4/8.20。
 
@@ -48,7 +48,7 @@ Credential rotation with scoped evidence 的核心責任是把憑證輪替從一
 
 控制面 token 事件的分域輪替壓力是 scope map 的最強壓測場景。當高權限 token 跨多個服務、多個 tenant、多個第三方端點共用、事件期間要回答「哪些必須先輪、哪些可以後輪、哪些必須同步輪」、缺 scope map 時這個排序只能靠 ad-hoc 判斷。
 
-對應 [7.C2 Cloudflare 控制面 token 2023](/backend/07-security-data-protection/cases/cloudflare-control-plane-token-2023/) 跟 [Cloudflare 2023 follow-through](/backend/07-security-data-protection/red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/)：揭露控制面 token 事件的處置壓力 — 主 case 揭露三個策略方向（工作負載身份替代長期共享 token、強制 rotation 與細粒度 scope、把憑證事件寫入 release gate）、紅隊 case 補的具體 mechanism 是「分批恢復必要權限、前提是事先有 token 範圍 inventory」。
+對應 [Cloudflare 控制面 token 2023](/backend/07-security-data-protection/cases/cloudflare-control-plane-token-2023/) 跟 [Cloudflare 2023 follow-through](/backend/07-security-data-protection/red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/)：揭露控制面 token 事件的處置壓力 — 主 case 揭露三個策略方向（工作負載身份替代長期共享 token、強制 rotation 與細粒度 scope、把憑證事件寫入 release gate）、紅隊 case 補的具體 mechanism 是「分批恢復必要權限、前提是事先有 token 範圍 inventory」。
 
 以下基於通用工程知識補充：分批恢復的工程意義是讓事件期間的可用性風險可控 — 用三個維度排序：業務優先序（核心交易 vs 內部工具）、依賴方向（上游 service 先恢復 / 下游後恢復）、權限等級（低權先恢復 / 高權後恢復）。三維度衝突時、業務優先序勝過權限等級、是常見的工程取捨點。粗粒度的「全部凍結再全部解封」是 fallback 選項、會把可用性代價拉滿。
 

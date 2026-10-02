@@ -59,7 +59,7 @@ Warmup completion 的判讀訊號：
 
 ### Cache 切換引發 stampede 的真實事故結構
 
-對應 [2.C9 反例：Cache Stampede Rollout Regression](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) — 看似低風險的 cache key 或 TTL 切換、若回源保護不足、會讓熱門資料同時 miss。事故結構屬「讀取路徑同時失去緩衝」的系統性失敗、不只是單一 key 問題。
+對應 [反例：Cache Stampede Rollout Regression](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) — 看似低風險的 cache key 或 TTL 切換、若回源保護不足、會讓熱門資料同時 miss。事故結構屬「讀取路徑同時失去緩衝」的系統性失敗、不只是單一 key 問題。
 
 切換引發 stampede 的三個放大機制會 *疊加*、不是獨立失效。在 read-heavy 規模化服務（如 Tinder 47M MAU、Tubi feature store）這類場景、典型疊加順序：重試放大先觸發 → 下游放大跟進 → 應用層放大終結：
 
@@ -71,7 +71,7 @@ Warmup completion 的判讀訊號：
 
 ### 切換順序決定 stampede 風險
 
-對應 [2.C10 對照：規模差異下的快取策略](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/) — 切換順序（先改 key 結構 vs 先改 TTL）會決定是否出現 stampede 連鎖反應、特別在中型服務同時承受活動流量跟版本切換時。
+對應 [對照：規模差異下的快取策略](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/) — 切換順序（先改 key 結構 vs 先改 TTL）會決定是否出現 stampede 連鎖反應、特別在中型服務同時承受活動流量跟版本切換時。
 
 **安全切換順序**（dual-read 模式、每步停損點不同）：
 
@@ -87,23 +87,23 @@ Warmup completion 的判讀訊號：
 - 應拆維度切換（key OR TTL OR 序列化各自獨立）、避免多變化疊加讓 debug 困難
 - 應先在低流量 region 試跑、再擴大到全量、避免事故時無回退時間
 
-判讀順序：每次切換只動 *一個維度*（key OR TTL OR 序列化）、先在低流量 region / tenant 試跑、命中率穩定後再擴大。在 Shopify 序列化遷移（[2.C3](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/)）類場景、停損 KPI 是「新格式編碼成功率」+「舊格式 fallback 觸發率」；在 Tinder 類 schema 變化頻繁場景、停損 KPI 是「v2 cache hit rate 是否在預估 warmup 時間內達標」。對應 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 跟 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/) 的同類 expand-contract 思維。
+判讀順序：每次切換只動 *一個維度*（key OR TTL OR 序列化）、先在低流量 region / tenant 試跑、命中率穩定後再擴大。在 Shopify 序列化遷移（[Shopify：快取序列化格式遷移](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/)）類場景、停損 KPI 是「新格式編碼成功率」+「舊格式 fallback 觸發率」；在 Tinder 類 schema 變化頻繁場景、停損 KPI 是「v2 cache hit rate 是否在預估 warmup 時間內達標」。對應 [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 跟 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/) 的同類 expand-contract 思維。
 
 ### Schema 變更引發的隱性 cache invalidation（路由：見 2.7）
 
-Cache invalidation *模型* 主寫於 [2.7 cache copy boundary 的 Invalidation 段](/backend/02-cache-redis/cache-copy-freshness-boundary/)；本章從 migration *實作步驟* 角度補充：schema migration 是 cache stampede 的隱藏觸發點。[9.C6 Tinder](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) 案例的警惕段提出 *風險推測*：「configurable matching」業務邏輯複雜、快取資料的 schema 變化頻繁、一個 schema 變更可能引發 cache invalidation 風險。
+Cache invalidation *模型* 主寫於 [2.7 cache copy boundary 的 Invalidation 段](/backend/02-cache-redis/cache-copy-freshness-boundary/)；本章從 migration *實作步驟* 角度補充：schema migration 是 cache stampede 的隱藏觸發點。[Tinder](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) 案例的警惕段提出 *風險推測*：「configurable matching」業務邏輯複雜、快取資料的 schema 變化頻繁、一個 schema 變更可能引發 cache invalidation 風險。
 
 Schema 變化讓 cache 失效的三種模式（屬工程實踐推導、非案例直接揭露）：
 
 - **欄位重命名 / 刪除**：舊 cache value 反序列化失敗、application 視為 miss、全部回源
 - **type 變更**（int → string、enum 增 case）：反序列化可能成功但語意錯、業務邏輯踩錯
-- **序列化格式換**（Marshal → MessagePack）：舊格式無法用新 decoder 讀、對應 [2.C3 Shopify](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/) 的雙軌策略
+- **序列化格式換**（Marshal → MessagePack）：舊格式無法用新 decoder 讀、對應 [Shopify](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/) 的雙軌策略
 
 **Migration 實作步驟**（按優先序）：
 
 1. **Schema migration 前盤點 cache key**（最先）：哪些 cache 包含這個 schema 的資料、估算 invalid 範圍。沒這步無法估算 warmup 計畫規模。
 2. **大規模 schema migration 配 cache warmup 計畫**：預先 warmup、避免用戶觸發 cache miss。warmup 計畫主寫於本章的「Warmup 與回源保護」段。
-3. **新欄位用 versioned key**（同步進行）：`product:v2:{id}` 跟 `product:v1:{id}` 並存、避免雙寫干擾。對應 [2.C3 Shopify 雙軌策略](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/)。
+3. **新欄位用 versioned key**（同步進行）：`product:v2:{id}` 跟 `product:v1:{id}` 並存、避免雙寫干擾。對應 [Shopify 雙軌策略](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/)。
 4. **降級 fallback**（最後保險）：cache miss 後 origin 也準備好被打、避免假設「cache hit rate 永遠維持高水位」。對應本章「回源保護策略」段。
 
 判讀重點：四步應同步落地、缺一個就會在 migration 期間踩 stampede。一致性 invalidation 模型回到 [2.7 Cache Copy Boundary 與 Freshness](/backend/02-cache-redis/cache-copy-freshness-boundary/)。
@@ -170,6 +170,6 @@ incident_decision:
 
 ## Case Write-back 與邊界
 
-這篇回寫重點對齊 [2.C3 Shopify：Cache Serialization Migration](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/) 與 [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)：前者看格式演進與相容窗口，後者看回源尖峰與停損節奏。
+這篇回寫重點對齊 [Shopify：Cache Serialization Migration](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/) 與 [反例：快取切換引發 Stampede 回歸](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)：前者看格式演進與相容窗口，後者看回源尖峰與停損節奏。
 
 這篇不處理分散式鎖正確性、queue replay 或資料庫正式狀態切換。若核心風險在互斥語意、事件重播或資料 schema，路由到 [2.4 distributed lock](/backend/02-cache-redis/distributed-lock/)、[3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/) 或 [1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)。

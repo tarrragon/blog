@@ -16,7 +16,7 @@ offset 的成本隨**翻到多深**增長，而非隨表多大增長。`LIMIT 20
 
 複雜度的階數之外還有常數，而常數的差距足以改變結論。走 index-only scan 丟棄一萬列跟回表丟棄一萬列不是同一件事，前者可以是次毫秒級。標準的緩解手法是 **deferred join** —— 先在覆蓋索引上取出那一頁的主鍵，再用主鍵回表取完整列，丟棄階段完全不碰表。還有一種混合形態直接反證「keyset 做不出跳頁」這個常見說法：用 keyset 定位到第 N 個區塊的起點、區塊內走有界 offset，跳頁做得出來而成本有上界。純 keyset 做不出**任意**跳頁，加上區塊錨點就做得出**有界**跳頁。
 
-一致性的差異跟成本無關、且更難事後補救。Slack 的工程紀錄把 offset 的第二個失效模式描述得很清楚：高寫入頻率下，兩次請求之間有新資料插入，page window 漂移，消費者會看到跳項或重複（見 [11.C37](/backend/11-api-design/cases/pagination-slack-cursor-migration/)）。keyset 用上一頁最後一筆的排序鍵值當起點，插入與刪除發生在已翻過的區間時不影響後續頁次。
+一致性的差異跟成本無關、且更難事後補救。Slack 的工程紀錄把 offset 的第二個失效模式描述得很清楚：高寫入頻率下，兩次請求之間有新資料插入，page window 漂移，消費者會看到跳項或重複（見 [Slack：offset 到 opaque cursor 的分頁遷移](/backend/11-api-design/cases/pagination-slack-cursor-migration/)）。keyset 用上一頁最後一筆的排序鍵值當起點，插入與刪除發生在已翻過的區間時不影響後續頁次。
 
 keyset 換來這兩項的代價落在能力上。它要求一個穩定且唯一的排序鍵 —— 排序欄位是 `created_at` 這類可能重複的值時，要用 `(created_at, id)` 複合條件補上 tiebreaker，缺了它翻頁會跳過或重複資料。它也放棄了跳頁：從第一頁直接到第五十頁需要中間頁的鍵值，而那正是還沒查的資料。total count 同樣落在放棄清單裡，因為 keyset 的查詢本身不產生總數。
 
@@ -38,7 +38,7 @@ Slack 選 Base64 編碼的 opaque cursor，介面收斂為 `cursor` 加 `limit`�
 
 ## 不透明性同時是一份多半沒寫下來的承諾
 
-「cursor 的不透明性算承諾還是逃生門」這個問法預設了二選一，而兩者同時成立：對底層策略是逃生門，對 cursor 這個物件本身是承諾。消費者拿到一個看不懂的字串之後，仍然會對它做出各種假設，而每一項假設都是服務端沒說話的地方。沒有宣告的性質會被依賴，之後任何改動都變成 breaking change —— 這跟錯誤訊息文字沒給機器可讀替代品時被消費者拿去 parse 是同一個機制（該形態見 [11.C75](/backend/11-api-design/cases/errorchain-aip193-error-content/) 的 message 穩定性規則）。
+「cursor 的不透明性算承諾還是逃生門」這個問法預設了二選一，而兩者同時成立：對底層策略是逃生門，對 cursor 這個物件本身是承諾。消費者拿到一個看不懂的字串之後，仍然會對它做出各種假設，而每一項假設都是服務端沒說話的地方。沒有宣告的性質會被依賴，之後任何改動都變成 breaking change —— 這跟錯誤訊息文字沒給機器可讀替代品時被消費者拿去 parse 是同一個機制（該形態見 [AIP-193 錯誤內容規範：三層受眾與「不假設使用者懂內部實作」](/backend/11-api-design/cases/errorchain-aip193-error-content/) 的 message 穩定性規則）。
 
 以下條款清單從機制與消費者的實際使用形態推導，未見公開 spec 明文處理；冪等鍵有一份對應的條款清單、且各家有明文承諾可對照（見 [API 層冪等設計](/backend/11-api-design/api-idempotency-design/)），cursor 這邊還沒有。這是最小集合而非窮盡清單 —— 反向翻頁的語意、cursor 的長度上限與 URL 限制都是同一層的問題，只是後果較輕。
 

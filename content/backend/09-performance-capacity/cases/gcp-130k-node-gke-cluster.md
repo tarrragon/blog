@@ -6,7 +6,7 @@ weight: 34
 tags: ["backend", "performance", "capacity", "case-study", "compute", "gcp", "low-latency-sustained"]
 ---
 
-這個案例的核心責任是揭示「現代 AI workload 對 Kubernetes 規模極限的拉扯」。跟 [9.C12 Riot Games 246 cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 走「多小 cluster 隔離」相反 — GCP 內部驗證的是「單一巨大 cluster 集中管理」、為前沿 LLM 訓練的萬卡叢集需求設計。
+這個案例的核心責任是揭示「現代 AI workload 對 Kubernetes 規模極限的拉扯」。跟 [Riot Games 246 cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 走「多小 cluster 隔離」相反 — GCP 內部驗證的是「單一巨大 cluster 集中管理」、為前沿 LLM 訓練的萬卡叢集需求設計。
 
 ## 觀察
 
@@ -59,15 +59,15 @@ GCP 130K-node GKE cluster 實驗（引自 [How we built a 130,000-node GKE clust
 2. **storage backend 是 K8s 規模極限的關鍵**：etcd 撐 5K-10K node 後開始吃力、要用 PostgreSQL / Spanner / 自家 KV 替換、才能擴到萬級節點。一般客戶用不到、但要知道「為什麼到某個規模 etcd 不夠」。
 3. **AI workload 用 specialized scheduler**（Kueue、Volcano）：預設的 K8s scheduler 為 web workload 設計、AI 的 gang scheduling、fair-sharing、preemption 都不太適合。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 scheduler 選型。
 4. **power-aware capacity planning 是未來方向**：傳統按 CPU / RAM 規劃容量、未來要加上 *power budget*。data center 用電量是硬上限、不是錢的問題。
-5. **multi-cluster 是萬卡訓練的必然**：單一 cluster 撐不住、要 MultiKueue 等跨 cluster 排程方案。對應 [9.C12 Riot Games multi-cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 但目的完全不同。
+5. **multi-cluster 是萬卡訓練的必然**：單一 cluster 撐不住、要 MultiKueue 等跨 cluster 排程方案。對應 [Riot Games multi-cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 但目的完全不同。
 
 跨平台等效：AWS EKS 官方支援單 cluster 多至 100K pod / cluster、Azure AKS 支援 5K node / cluster。GCP 用 Spanner 替換 etcd 是最深的工程投資、目前其他兩家還沒到這個規模。
 
 ## 下一步路由
 
-- 對照其他大規模 K8s → [9.C12 Riot Games 246 cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)（多 cluster 策略）
-- 對照 AI workload → [9.C8 Pokemon GO 50x surge](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/)（非 AI 但同 GCP K8s）
-- 想理解 control plane vs data plane → [9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)
+- 對照其他大規模 K8s → [Riot Games 246 cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)（多 cluster 策略）
+- 對照 AI workload → [Pokemon GO 50x surge](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/)（非 AI 但同 GCP K8s）
+- 想理解 control plane vs data plane → [Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)
 - 想設計 K8s 容量上限 → [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) + [05 部署平台模組](/backend/05-deployment-platform/)
 
 ## 引用源

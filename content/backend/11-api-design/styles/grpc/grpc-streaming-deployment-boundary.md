@@ -10,9 +10,9 @@ tags: ["backend", "api-design", "grpc"]
 
 ## trailers 與瀏覽器：協議事實層面的約束
 
-gRPC 用 HTTP/2 的 trailers（在 response body 之後才送的 metadata）傳狀態碼、這是協議規格、不是實作選擇。約束由此而來：瀏覽器的 fetch API 讀不到 trailers、所以瀏覽器不能直接當 gRPC client、要靠 gRPC-Web 加一個翻譯 proxy 把 trailers 搬進 body（見 [11.C32](/backend/11-api-design/cases/grpc-kmcd-bad-parts/)、獨立實踐者批評）。同樣的 trailers 依賴也讓中間層變挑剔 —— 不是每個 LB、proxy、防火牆規則都原樣放行 HTTP/2 trailers。
+gRPC 用 HTTP/2 的 trailers（在 response body 之後才送的 metadata）傳狀態碼、這是協議規格、不是實作選擇。約束由此而來：瀏覽器的 fetch API 讀不到 trailers、所以瀏覽器不能直接當 gRPC client、要靠 gRPC-Web 加一個翻譯 proxy 把 trailers 搬進 body（見 [gRPC: The Bad Parts：cURL 測試不過的 API（反例）](/backend/11-api-design/cases/grpc-kmcd-bad-parts/)、獨立實踐者批評）。同樣的 trailers 依賴也讓中間層變挑剔 —— 不是每個 LB、proxy、防火牆規則都原樣放行 HTTP/2 trailers。
 
-這條約束值得跟立場切開看。指出它最完整的一手清單來自 Buf 的 Connect 發布文（見 [11.C30](/backend/11-api-design/cases/grpc-buf-connect-critique/)）、而 Buf 是提供競品的利益相關方、它對 grpc-go 實作的批評（自帶 HTTP/2、不與其他 HTTP 流量共存）帶立場。但「瀏覽器讀不到 trailers、需要翻譯 proxy」是可獨立驗證的協議事實、跟誰在批評無關 —— C32 的獨立批評指向同一點、兩個來源互證後這條約束脫離 vendor 立場成立。使用層的判讀：如果介面要被瀏覽器直接消費、gRPC-Web 加 proxy 是必經的一層、選型時就要把這層 infra 算進成本。
+這條約束值得跟立場切開看。指出它最完整的一手清單來自 Buf 的 Connect 發布文（見 [Buf Connect 發布文：對 grpc-go 的系統性批評](/backend/11-api-design/cases/grpc-buf-connect-critique/)）、而 Buf 是提供競品的利益相關方、它對 grpc-go 實作的批評（自帶 HTTP/2、不與其他 HTTP 流量共存）帶立場。但「瀏覽器讀不到 trailers、需要翻譯 proxy」是可獨立驗證的協議事實、跟誰在批評無關 —— C32 的獨立批評指向同一點、兩個來源互證後這條約束脫離 vendor 立場成立。使用層的判讀：如果介面要被瀏覽器直接消費、gRPC-Web 加 proxy 是必經的一層、選型時就要把這層 infra 算進成本。
 
 這組約束有一條中間路線。同一份 C30 除了批評、也給了解方 Connect protocol：建在 `net/http` 上、以 HTTP/1.1 承載、同時支援 gRPC、gRPC-Web、Connect 三種協議、瀏覽器原生可連、JSON 版也能 `curl`。它放寬了「端到端 HTTP/2 加 trailers」這組約束、代價是離開純 gRPC 生態(Connect 是 Buf 自家協議)。所以部署邊界不是「要 proto 就得吞下整組 gRPC 約束」的二選一 —— 要 proto 契約與 codegen、但消費端有瀏覽器或過不了 HTTP/2 的中間層時、Connect 這格比硬架 gRPC-Web proxy 省事。
 

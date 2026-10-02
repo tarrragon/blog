@@ -30,7 +30,7 @@ hot data 與 cold data 的差異不只在存取次數，也在回源成本與業
 
 當熱資料集合超過 DRAM 經濟範圍、單層快取會同時遇到成本跟命中率瓶頸、要把 cache 結構擴展到分層管理。
 
-對應 [2.C4 Meta CacheLib / Kangaroo](/backend/02-cache-redis/cases/meta-cachelib-kangaroo-tiered-cache/) — Meta 把快取結構從 DRAM-only 擴展到 DRAM + flash 分層、改善容量跟成本平衡。當「全部熱資料塞 DRAM」變太貴、把次熱資料推到 flash、保留 DRAM 給最熱的子集。
+對應 [Meta CacheLib / Kangaroo](/backend/02-cache-redis/cases/meta-cachelib-kangaroo-tiered-cache/) — Meta 把快取結構從 DRAM-only 擴展到 DRAM + flash 分層、改善容量跟成本平衡。當「全部熱資料塞 DRAM」變太貴、把次熱資料推到 flash、保留 DRAM 給最熱的子集。
 
 **分層快取的相對特性**（具體 size / latency / cost 視硬體配置跟業務 workload）：
 
@@ -40,7 +40,7 @@ hot data 與 cold data 的差異不只在存取次數，也在回源成本與業
 
 落層策略要看 *資料熱度分布*。Zipfian 分布（80/20 法則）下、L1 放最熱 20% 就能命中大部分；如果分布更平、要把 L1 擴大或接受更低命中率。具體 L1 / L2 大小比例要實測 workload 才能定。
 
-對應 [2.C7 Cloudflare Cache Reserve](/backend/02-cache-redis/cases/cloudflare-cache-reserve-tiered-storage/) — edge cache 跟 persistent reserve 的分層、長尾資料用 reserve 接住、降低 origin 回源。這是 *同類設計思維* 在 CDN 場景的應用、但分層語意不同（edge cache 是地理分散的、Meta 分層是垂直記憶體 / flash 層）— 兩者都用「冷熱分離降低總成本」、實作機制差異需依場景區分。
+對應 [Cloudflare Cache Reserve](/backend/02-cache-redis/cases/cloudflare-cache-reserve-tiered-storage/) — edge cache 跟 persistent reserve 的分層、長尾資料用 reserve 接住、降低 origin 回源。這是 *同類設計思維* 在 CDN 場景的應用、但分層語意不同（edge cache 是地理分散的、Meta 分層是垂直記憶體 / flash 層）— 兩者都用「冷熱分離降低總成本」、實作機制差異需依場景區分。
 
 **Eviction 跟回補延遲要納入共同指標**：分層 cache 的訊號不只看 L1 命中率、要看 L1 evict 到 L2 的速率、L2 回補到 L1 的延遲、L3 回源到 L2 的尾巴延遲。混合 metric 才能判斷分層策略是否健康。
 
@@ -64,7 +64,7 @@ hot data 與 cold data 的差異不只在存取次數，也在回源成本與業
 
 ## 案例回寫
 
-TTL/eviction 的容量節奏可用 [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 回寫。先看事件中的過期同步與回源尖峰，再回到本章檢查 TTL 分布、淘汰策略與熱資料保護是否同時成立。
+TTL/eviction 的容量節奏可用 [反例：快取切換引發 Stampede 回歸](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 回寫。先看事件中的過期同步與回源尖峰，再回到本章檢查 TTL 分布、淘汰策略與熱資料保護是否同時成立。
 這個案例主要支撐的是「容量淘汰與過期波形」判讀，不直接支撐資料庫交易切分或部署切流策略；若事件核心在交易提交或 rollout 批次，應轉到 1.3 或 5.2。
 
 當 eviction 上升但命中率未明顯下降時，先補 value size 與 key 分布監控，再把量測定義回寫到 [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)。
@@ -80,4 +80,4 @@ TTL 與 eviction 設計會直接影響觀測、驗證與事故處理。
 
 ## 下一步路由
 
-要把 TTL/eviction 放進失效流程，接著讀 [2.2 cache aside 與失效策略](/backend/02-cache-redis/cache-aside/)。要看容量與策略失配案例，接著讀 [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)。
+要把 TTL/eviction 放進失效流程，接著讀 [2.2 cache aside 與失效策略](/backend/02-cache-redis/cache-aside/)。要看容量與策略失配案例，接著讀 [反例：快取切換引發 Stampede 回歸](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)。

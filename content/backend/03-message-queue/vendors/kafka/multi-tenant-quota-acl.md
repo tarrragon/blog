@@ -297,10 +297,10 @@ Quota 與 ACL 是 broker-side 即時生效、不需重啟、可隨租戶調整�
 ### 跟 overview 與案例的對位
 
 - 上游 vendor 頁：[Apache Kafka](/backend/03-message-queue/vendors/kafka/) —— 本文展開其「Multi-tenant 與配額治理」「Topic 生命週期治理」兩段
-- 平台治理案例：[3.C6 Uber Kafka 事件平台](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/) —— 單隊列問題提升到平台治理
-- 生命週期案例：[3.C3 LinkedIn TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/) —— 自動回收與 metadata 壓力
-- 規模化分群：[3.C4 LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/) —— metadata 逼近上限時的多叢集路徑
-- 自管轉 managed 的 ACL cutover：[3.C2 VMware → MSK](/backend/03-message-queue/cases/vmware-kafka-to-msk/)
+- 平台治理案例：[Uber Kafka 事件平台](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/) —— 單隊列問題提升到平台治理
+- 生命週期案例：[LinkedIn TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/) —— 自動回收與 metadata 壓力
+- 規模化分群：[LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/) —— metadata 逼近上限時的多叢集路徑
+- 自管轉 managed 的 ACL cutover：[VMware → MSK](/backend/03-message-queue/cases/vmware-kafka-to-msk/)
 
 ### 跟安全模組對位
 

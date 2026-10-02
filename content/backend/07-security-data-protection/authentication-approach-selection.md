@@ -53,7 +53,7 @@ tags: ["backend", "security"]
 
 **委派身分**換來的是不必碰密碼儲存，付出四樣依賴。前三樣的落點不同：
 
-- **身分提供者的可用性直接等於自己的登入可用性**——對方的控制面故障時，這邊沒有任何一條路能讓使用者進來。形態與恢復優先序見模組案例 [7.C3 Azure AD 身分控制面事件](/backend/07-security-data-protection/cases/azure-ad-identity-control-plane-2021/)。
+- **身分提供者的可用性直接等於自己的登入可用性**——對方的控制面故障時，這邊沒有任何一條路能讓使用者進來。形態與恢復優先序見模組案例 [Azure AD 身分控制面事件](/backend/07-security-data-protection/cases/azure-ad-identity-control-plane-2021/)。
 - **帳號的生命週期由對方決定**——對方停用帳號時這邊不會收到任何事件，除非另接一條反向通道。這條通道有既成標準：SCIM 管帳號的開通與停用、OIDC 的 back-channel logout 管單一 session、Shared Signals 的帳號停用與會話撤銷事件管推送。落差在對方支不支援，所以它是對接契約的一項，而不是自己這邊寫得完的東西。
 - **使用者離開那個來源時（換公司、平台停用帳號）這邊的資料歸屬要另外設計**——這是產品決定而非技術決定，三個要在導入當下定案的問題（保留多久、歸誰、匯出給誰）見 [7.38 外部身分與本地紀錄](../external-identity-local-record-lifecycle/)。
 

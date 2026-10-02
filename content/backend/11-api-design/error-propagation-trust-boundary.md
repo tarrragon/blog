@@ -10,13 +10,13 @@ tags: ["backend", "api-design", "error-contract"]
 
 ## 錯誤契約有保證層與選配層、傳播能力不同
 
-gRPC 的兩層錯誤模型把這件事講得最清楚：標準模型（status code 加 optional message）是所有語言 client 都拿得到的保證層；richer error model（`google.rpc.Status` 帶結構化 detail）是選配層 —— 官方自列它的三個傳播風險：語言支援不全、payload 撞 header 上限、以及最關鍵的一條：detail 走 trailing metadata（trailer 在回應串流結束後才送出、多數中介層只讀開頭的 header）、**proxy 與 logger 看不到**（見 [11.C73](/backend/11-api-design/cases/errorchain-grpc-two-layer-model/)）。
+gRPC 的兩層錯誤模型把這件事講得最清楚：標準模型（status code 加 optional message）是所有語言 client 都拿得到的保證層；richer error model（`google.rpc.Status` 帶結構化 detail）是選配層 —— 官方自列它的三個傳播風險：語言支援不全、payload 撞 header 上限、以及最關鍵的一條：detail 走 trailing metadata（trailer 在回應串流結束後才送出、多數中介層只讀開頭的 header）、**proxy 與 logger 看不到**（見 [gRPC 兩層錯誤模型：status code 是保證層、richer detail 是選配層](/backend/11-api-design/cases/errorchain-grpc-two-layer-model/)）。
 
 工程含義：錯誤資訊的可見範圍分層 —— status code 全鏈可見（每一跳、每個中介層都讀得到）、結構化 detail 只有端點可見（中間節點對它是盲的）。設計錯誤契約時要按這個分層放資訊：中介層要用的（可不可重試、要不要熔斷）必須放在全鏈可見層、放進 detail 就等於對整條鏈的基礎設施隱形。HTTP 系的對應是 status 全鏈可見、body 端到端 —— 同構的分層、同樣的設計判斷標準。
 
 ## 收到的錯誤能信多少：產生者歧義
 
-中間服務轉譯錯誤前、先要判斷收到的錯誤是誰說的。gRPC 的 status codes 文件給了一手根據：17 個 code 裡只有 7 個（INVALID_ARGUMENT、NOT_FOUND、ALREADY_EXISTS、FAILED_PRECONDITION、ABORTED、OUT_OF_RANGE、DATA_LOSS）保證來自 server 應用邏輯、library 從不自產；UNAVAILABLE、DEADLINE_EXCEEDED、INTERNAL 則可能是中間 channel 或 library 產生 —— consumer 單看 code 分不出來（見 [11.C74](/backend/11-api-design/cases/errorchain-grpc-code-producer-ambiguity/)）。
+中間服務轉譯錯誤前、先要判斷收到的錯誤是誰說的。gRPC 的 status codes 文件給了一手根據：17 個 code 裡只有 7 個（INVALID_ARGUMENT、NOT_FOUND、ALREADY_EXISTS、FAILED_PRECONDITION、ABORTED、OUT_OF_RANGE、DATA_LOSS）保證來自 server 應用邏輯、library 從不自產；UNAVAILABLE、DEADLINE_EXCEEDED、INTERNAL 則可能是中間 channel 或 library 產生 —— consumer 單看 code 分不出來（見 [gRPC status code 產生者歧義：收到的 code 不一定來自 server 應用層](/backend/11-api-design/cases/errorchain-grpc-code-producer-ambiguity/)）。
 
 這對轉譯的含義（推導、標明）：錯誤的可信度不均質。收到「保證來自應用」的 code、語意可以直接轉譯（NOT_FOUND 就是資源不在）；收到產生者不明的 code、轉譯往「暫時性」收斂 —— 回自己的 UNAVAILABLE 或 502 並標可重試、不映射成上游的業務錯誤；要保留產生者線索、放進結構化 detail 而非原樣透傳。它可能只是網路層的一次抖動、不代表上游的業務判斷。中間服務原樣透傳 UNKNOWN 或 INTERNAL、等於把「產生者是誰」的資訊消滅掉、下游拿到的錯誤比你拿到的更不可判讀 —— 資訊只會在鏈上遞減、不會自己恢復。
 
@@ -26,9 +26,9 @@ gRPC 的兩層錯誤模型把這件事講得最清楚：標準模型（status co
 
 ## 暴露多少：機器可讀與偵察面的對撞
 
-錯誤內容該多詳細、有兩股方向相反的一手規範、對撞出中間路線。安全端要求少暴露：OWASP 的規則是非預期錯誤回 generic response、細節只留 server side log —— stack trace 洩漏框架版本、SQL error 幫攻擊者找 injection point、錯誤訊息是攻擊者的偵察面（見 [11.C77](/backend/11-api-design/cases/errorchain-owasp-error-handling/)、攻擊面思路同 [07 安全](/backend/07-security-data-protection/)）。可用性端要求夠機器可讀：全 generic 的錯誤讓 consumer 完全無法自助、每個錯誤都變成 support ticket。
+錯誤內容該多詳細、有兩股方向相反的一手規範、對撞出中間路線。安全端要求少暴露：OWASP 的規則是非預期錯誤回 generic response、細節只留 server side log —— stack trace 洩漏框架版本、SQL error 幫攻擊者找 injection point、錯誤訊息是攻擊者的偵察面（見 [OWASP error handling：錯誤訊息是攻擊者的偵察面](/backend/11-api-design/cases/errorchain-owasp-error-handling/)、攻擊面思路同 [07 安全](/backend/07-security-data-protection/)）。可用性端要求夠機器可讀：全 generic 的錯誤讓 consumer 完全無法自助、每個錯誤都變成 support ticket。
 
-Google 的 API 設計規範 AIP-193 用三層受眾設計走出中間路線（見 [11.C75](/backend/11-api-design/cases/errorchain-aip193-error-content/)）：機器層給 `ErrorInfo` 的 (reason, domain)、可程式化分支的穩定識別符 —— 但「error messages must not assume that the user will know anything about its underlying implementation」、識別符用 consumer 的語彙命名、不洩內部結構；開發者層給 message、人類可讀的 debug 訊息、可以變動、定位上不可當 API；使用者層給 LocalizedMessage —— 呈現給終端使用者的文案。三層各給對的受眾、既不是 generic 到無法自助、也不是把內部狀態倒出來。附帶一條反向條款：舊 API 沒給機器可讀欄位的、AIP 要求 message 內容必須穩定 —— consumer 已經在 parse 它、改字就是 breaking change；不給機器層、人類層就會被迫變成契約。
+Google 的 API 設計規範 AIP-193 用三層受眾設計走出中間路線（見 [AIP-193 錯誤內容規範：三層受眾與「不假設使用者懂內部實作」](/backend/11-api-design/cases/errorchain-aip193-error-content/)）：機器層給 `ErrorInfo` 的 (reason, domain)、可程式化分支的穩定識別符 —— 但「error messages must not assume that the user will know anything about its underlying implementation」、識別符用 consumer 的語彙命名、不洩內部結構；開發者層給 message、人類可讀的 debug 訊息、可以變動、定位上不可當 API；使用者層給 LocalizedMessage —— 呈現給終端使用者的文案。三層各給對的受眾、既不是 generic 到無法自助、也不是把內部狀態倒出來。附帶一條反向條款：舊 API 沒給機器可讀欄位的、AIP 要求 message 內容必須穩定 —— consumer 已經在 parse 它、改字就是 breaking change；不給機器層、人類層就會被迫變成契約。
 
 ## 下一步路由
 

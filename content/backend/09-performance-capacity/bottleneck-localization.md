@@ -150,12 +150,12 @@ USE 找出哪一層 saturate 之後、profile 工具找出 *該層的哪段 code
 
 ## 案例對照
 
-| 案例                                                                                                             | 教學重點                                |
-| ---------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)                     | connection limit 是 RDB 隱性 bottleneck |
-| [9.C15 Tixcraft 付款層獨立](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)         | 關鍵路徑切分避免 cross contamination    |
-| [9.C3 Coinbase RAFT consensus](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) | 不可分散 bottleneck                     |
-| [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)                          | 下游 APNs / FCM quota 瓶頸              |
+| 案例                                                                                                        | 教學重點                                |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| [Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)                      | connection limit 是 RDB 隱性 bottleneck |
+| [Tixcraft 付款層獨立](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)          | 關鍵路徑切分避免 cross contamination    |
+| [Coinbase RAFT consensus](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) | 不可分散 bottleneck                     |
+| [PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)                           | 下游 APNs / FCM quota 瓶頸              |
 
 ## 下一步路由
 

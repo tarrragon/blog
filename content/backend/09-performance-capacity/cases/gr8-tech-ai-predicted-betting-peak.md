@@ -52,7 +52,7 @@ GR8 Tech 的工程做法揭露三個事件型峰值的判讀重點。
 - 想做事件型峰值的容量預測 → [9.11 高峰事件準備](/backend/09-performance-capacity/) + [9.6 容量規劃模型](/backend/09-performance-capacity/)
 - 想用 AI / ML 做預測式擴容 → [9.9 Performance Improvement Loop](/backend/09-performance-capacity/) + [9.8 效能可觀測性](/backend/09-performance-capacity/)
 - 想拆解微服務以便獨立擴容 → [9.5 瓶頸定位流程](/backend/09-performance-capacity/) + [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/)
-- 對照不同形狀的峰值 → [9.C1 AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)（可預期極端峰值）/ [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)（無峰值低延遲）
+- 對照不同形狀的峰值 → [AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)（可預期極端峰值）/ [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)（無峰值低延遲）
 
 ## 引用源
 

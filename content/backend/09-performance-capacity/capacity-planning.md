@@ -160,13 +160,13 @@ Headroom 不是 over-provisioning 浪費、是容量規劃的安全邊界。常�
 
 ## 案例對照
 
-| 案例                                                                                                  | 教學重點                            |
-| ----------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| [9.C1 Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)            | 可預期峰值的 forecast + pre-scaling |
-| [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)           | AI 預測式擴容、縮短反應時間         |
-| [9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)                       | 30x surge 後 baseline 永久上移      |
-| [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) | 跨市場獨立容量規劃                  |
-| [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)     | 不可水平擴的 pre-provision          |
+| 案例                                                                                            | 教學重點                            |
+| ----------------------------------------------------------------------------------------------- | ----------------------------------- |
+| [Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)           | 可預期峰值的 forecast + pre-scaling |
+| [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)          | AI 預測式擴容、縮短反應時間         |
+| [Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)                       | 30x surge 後 baseline 永久上移      |
+| [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) | 跨市場獨立容量規劃                  |
+| [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)    | 不可水平擴的 pre-provision          |
 
 ## 下一步路由
 

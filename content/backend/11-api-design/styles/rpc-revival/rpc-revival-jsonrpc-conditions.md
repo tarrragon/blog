@@ -22,7 +22,7 @@ JSON-RPC 不限於本地 —— Ethereum 節點的 JSON-RPC API 就是網路遠�
 
 ## 實證：LSP 與 MCP 都在 JSON-RPC 上加約束
 
-兩份現代協議在這組條件下選了 JSON-RPC、而且都是「在它上面加約束」而非發明新協議 —— 這個做法本身是選型訊號。LSP（編輯器與 language server 的協議）明文用 JSON-RPC 描述 requests、responses、notifications、固定 `jsonrpc: "2.0"`、外層自訂 Content-Length header 當傳輸框（見 [11.C34](/backend/11-api-design/cases/rpc-jsonrpc-lsp-mcp-revival/)）。MCP（agent 與工具的協議、2025-06-18 spec）規定所有訊息 MUST follow JSON-RPC 2.0、並在其上收緊約束（request ID 不可為 null、同 session 不可重用）、傳輸支援 stdio 與 HTTP。
+兩份現代協議在這組條件下選了 JSON-RPC、而且都是「在它上面加約束」而非發明新協議 —— 這個做法本身是選型訊號。LSP（編輯器與 language server 的協議）明文用 JSON-RPC 描述 requests、responses、notifications、固定 `jsonrpc: "2.0"`、外層自訂 Content-Length header 當傳輸框（見 [JSON-RPC 重生：LSP 與 MCP 都選它當訊息層](/backend/11-api-design/cases/rpc-jsonrpc-lsp-mcp-revival/)）。MCP（agent 與工具的協議、2025-06-18 spec）規定所有訊息 MUST follow JSON-RPC 2.0、並在其上收緊約束（request ID 不可為 null、同 session 不可重用）、傳輸支援 stdio 與 HTTP。
 
 這裡有一個引用邊界要標明：兩份 spec 都只陳述「採用 JSON-RPC」這個事實、沒有寫「為什麼選它」的理由段。上一節那組條件是本模組從採用事實反推的判讀、不是 spec 的原話。能直接學的做法是：選一個最小夠用的訊息層、然後在它上面加你自己場景需要的約束（ID 語意、session 規則）、而不是為每個新協議重造訊息結構。
 

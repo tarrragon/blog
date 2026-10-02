@@ -12,19 +12,19 @@ API 設計的核心責任是管理一組對外承諾的成本結構。服務內�
 
 對外承諾的範圍涵蓋所有消費者觀察得到、且會寫進程式碼依賴的介面性質 — 欄位與型別只是最顯眼的一層。錯誤碼、HTTP status 的使用慣例、欄位預設值、回應時序、分頁行為、ID 字串的長度與格式、甚至欄位在 JSON 裡的順序、都可能被某個消費者拿去依賴。這個現象有個常被引用的名字：[Hyrum's Law](/backend/knowledge-cards/hyrums-law/) — 使用者夠多時、介面的每個可觀察行為都會被某人依賴、無論服務端是否承諾過。
 
-契約邊界的有效管理方式是把「消費者不可依賴的性質」明文寫出來、而非留給雙方猜。Stripe 的 upgrade 文件明列了一份相容變更清單、劃出服務端保留變更自由的軸（清單逐項與它在變更審查裡的用法、主寫在 [11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)；案例見 [11.C11](/backend/11-api-design/cases/versioning-stripe-named-major-releases/)）。這份清單的作用是雙向的：服務端保留這些軸上的變更自由、消費者拿到「寫 client 時什麼可以依賴」的明確指引。缺少這種明文劃界時、每個未宣告的性質都處於灰色地帶 — 變更的權責只能事後協商。
+契約邊界的有效管理方式是把「消費者不可依賴的性質」明文寫出來、而非留給雙方猜。Stripe 的 upgrade 文件明列了一份相容變更清單、劃出服務端保留變更自由的軸（清單逐項與它在變更審查裡的用法、主寫在 [11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)；案例見 [Stripe 現行方案：具名 major release 與相容變更清單](/backend/11-api-design/cases/versioning-stripe-named-major-releases/)）。這份清單的作用是雙向的：服務端保留這些軸上的變更自由、消費者拿到「寫 client 時什麼可以依賴」的明確指引。缺少這種明文劃界時、每個未宣告的性質都處於灰色地帶 — 變更的權責只能事後協商。
 
 ## 變更成本的兩種分配設計
 
 承諾確立之後、變更成本的分配有兩種本質設計：由服務端吸收、或攤給所有消費者。這是 [11.5 版本策略](/backend/11-api-design/versioning-and-deprecation/) 背後的經濟結構、在本章先建立判讀框架。本章的二分在 [版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/) 細化成四派、且多出一派（不做版本）根本不在成本軸上——它要先過一道前提閘門，閘門不通時不進選項集。
 
-服務端吸收的極端案例是 Stripe：服務端的轉換層一次吸收了約 100 個 backwards-incompatible 升級、同時維持與 2011 年以來每一版相容（轉換層機制的展開見 [11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)；案例見 [11.C10](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)）。這個設計把變更成本收在服務端的基礎設施投資裡、換來的是消費者幾乎永遠不被迫遷移。
+服務端吸收的極端案例是 Stripe：服務端的轉換層一次吸收了約 100 個 backwards-incompatible 升級、同時維持與 2011 年以來每一版相容（轉換層機制的展開見 [11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)；案例見 [Stripe：日期滾動版本與 version change module](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)）。這個設計把變更成本收在服務端的基礎設施投資裡、換來的是消費者幾乎永遠不被迫遷移。
 
 攤給消費者的設計則以「版本 + 遷移窗口」的形式出現：服務端宣告新版、給一段支援期、到期消費者必須完成遷移。成本較低、但把協調負擔外部化 — 適合消費者數量有限、或平台對生態有強制力的情境。兩種設計的選擇標準是消費者的數量、異質性、跟服務端對消費者的控制力：內部服務間的 API 可以直接協調升級、公開平台的十萬個 integration 只能靠承諾與窗口。
 
 ## 承諾違約的模式
 
-違約的傷害大小跟違約的模式有關、明確的失敗優於靜默的行為改變。Facebook Graph API v1.0 退場時、到期的 v1.0 請求被靜默改以 v2.0 語意處理、而非回傳明確錯誤 — v2.0 移除了 friends 資料等大範圍權限、未遷移的 app 不會炸在認證層、而是拿到形狀不同的資料默默壞掉（見 [11.C17](/backend/11-api-design/cases/versioning-facebook-graph-v1-forced-upgrade/)、反例）。對照組是明確錯誤：消費者立刻知道、監控立刻報警、修復路徑清楚。設計退場行為時的判斷標準是「消費者發現問題的延遲」— 靜默切換把發現延遲拉到不可控、明確錯誤把它壓到第一個請求。
+違約的傷害大小跟違約的模式有關、明確的失敗優於靜默的行為改變。Facebook Graph API v1.0 退場時、到期的 v1.0 請求被靜默改以 v2.0 語意處理、而非回傳明確錯誤 — v2.0 移除了 friends 資料等大範圍權限、未遷移的 app 不會炸在認證層、而是拿到形狀不同的資料默默壞掉（見 [Facebook Graph API v1.0 退場：靜默語意切換（反例）](/backend/11-api-design/cases/versioning-facebook-graph-v1-forced-upgrade/)、反例）。對照組是明確錯誤：消費者立刻知道、監控立刻報警、修復路徑清楚。設計退場行為時的判斷標準是「消費者發現問題的延遲」— 靜默切換把發現延遲拉到不可控、明確錯誤把它壓到第一個請求。
 
 ## 契約判定要指定答案的產物形態
 

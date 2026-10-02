@@ -135,10 +135,10 @@ Tiered storage 的核心責任是把 broker 的「儲存容量」跟「保留期
 
 業界對 tiered storage 有兩條不同的工程路線、對應不同的 broker 角色定位：
 
-| 路線                           | broker 角色                              | 代表案例                                                                                          |
-| ------------------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Broker-coupled（KIP-405 原生） | broker 仍是 remote 讀的熱路徑、代理拉取  | Apache Kafka 原生 tiered storage                                                                  |
-| Broker-decoupled               | consumer 直接從 S3 拉、broker 不在熱路徑 | [3.C11 Pinterest Tiered Storage](/backend/03-message-queue/cases/kafka-pinterest-tiered-storage/) |
+| 路線                           | broker 角色                              | 代表案例                                                                                    |
+| ------------------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Broker-coupled（KIP-405 原生） | broker 仍是 remote 讀的熱路徑、代理拉取  | Apache Kafka 原生 tiered storage                                                            |
+| Broker-decoupled               | consumer 直接從 S3 拉、broker 不在熱路徑 | [Pinterest Tiered Storage](/backend/03-message-queue/cases/kafka-pinterest-tiered-storage/) |
 
 [Pinterest 的 broker-decoupled 做法](/backend/03-message-queue/cases/kafka-pinterest-tiered-storage/)把 ~200 TB/day 熱資料卸到 S3、讓 consumer 直接從 S3 拉冷資料、broker 不再是冷讀的熱路徑。它揭露的設計判讀是「broker 運算資源」跟「跨 AZ 網路成本」其實該分開治理、而不是綁在 broker 容量擴張上——保留期變長不該等於 broker 機群變大。
 
@@ -224,11 +224,11 @@ Retention 是 [replay window](/backend/knowledge-cards/replay-window/) 的物理
 
 ### 跟分層叢集治理對位
 
-本文的 tiered storage 解的是單一 topic 的儲存成本；[3.C4 LinkedIn 分層叢集](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/)解的是多 workload 的隔離——把不同可靠性需求的 topic 拆到不同叢集、避免資源競爭互相放大。保留策略在分層叢集裡會按層差異化：critical 叢集拉長 retention 保 replay、experimental 叢集縮短 retention 控成本。
+本文的 tiered storage 解的是單一 topic 的儲存成本；[LinkedIn 分層叢集](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/)解的是多 workload 的隔離——把不同可靠性需求的 topic 拆到不同叢集、避免資源競爭互相放大。保留策略在分層叢集裡會按層差異化：critical 叢集拉長 retention 保 replay、experimental 叢集縮短 retention 控成本。
 
 ### 跟 broker-decoupled 架構的取捨
 
-[3.C11 Pinterest broker-decoupled tiered storage](/backend/03-message-queue/cases/kafka-pinterest-tiered-storage/) 把冷讀流量從 broker 熱路徑移開、是「cold tier 讀延遲拖垮 replay」故障演練的架構級解法；它跟 [3.C12 Pinterest Shallow Mirror](/backend/03-message-queue/cases/kafka-pinterest-shallow-mirror/) 揭露的「跨區同步是 CPU + memory + 網路三維壓力」一起、構成 Pinterest 在儲存與複製兩條路徑上的成本治理。
+[Pinterest broker-decoupled tiered storage](/backend/03-message-queue/cases/kafka-pinterest-tiered-storage/) 把冷讀流量從 broker 熱路徑移開、是「cold tier 讀延遲拖垮 replay」故障演練的架構級解法；它跟 [Pinterest Shallow Mirror](/backend/03-message-queue/cases/kafka-pinterest-shallow-mirror/) 揭露的「跨區同步是 CPU + memory + 網路三維壓力」一起、構成 Pinterest 在儲存與複製兩條路徑上的成本治理。
 
 ### 回上游
 

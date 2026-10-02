@@ -237,5 +237,5 @@ Elastic Stack 的成本由三個維度決定：
 - [Elastic Stack 服務頁](/backend/04-observability/vendors/elastic-stack/)：overview 與日常操作
 - [4.11 telemetry pipeline](/backend/04-observability/telemetry-pipeline/)：採集 pipeline 在觀測架構中的定位
 - [4.17 telemetry data quality](/backend/04-observability/telemetry-data-quality/)：mapping drift 跟 field missing 的資料品質面
-- [4.C3 Healthcare retention](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)：ILM + searchable snapshot 在合規場景的應用
+- [Healthcare retention](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)：ILM + searchable snapshot 在合規場景的應用
 - [Elastic Cloud migration](../migrate-to-elastic-cloud/)：從自管 Elastic 遷移到 Elastic Cloud

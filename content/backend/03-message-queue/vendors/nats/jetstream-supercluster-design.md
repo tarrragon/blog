@@ -210,7 +210,7 @@ Supercluster 用 gateway 連接多個 Cluster、形成跨 region / 跨雲的單�
 
 > 以下 Supercluster 行為依 [NATS 官方文件](https://docs.nats.io/running-a-nats-service/configuration/gateways) 描述、未在本文實機環境驗證（gateway 多區拓樸需要跨 region 部署）。
 
-[3.C35 Form3](/backend/03-message-queue/cases/nats-form3-multi-cloud-payments/) 是 Leaf node 跨雲橋接的代表案例（Supercluster 為相應的一般拓樸選項、case 本身明確點到的是 Leaf node）：服務 Tier-1 銀行、要求 500ms 端到端 SLA、AWS SNS/SQS 約 300ms 延遲吃掉預算。Form3 用 JetStream 跨雲橋接、達到約 6× 延遲改善、並做到「AWS 整個 region 掛掉時不喪失處理能力」。這個案例揭露的判讀是：金融支付的硬 latency 預算逼出特定拓樸選型、不是把 Kafka / SQS 通用化套上去。
+[Form3](/backend/03-message-queue/cases/nats-form3-multi-cloud-payments/) 是 Leaf node 跨雲橋接的代表案例（Supercluster 為相應的一般拓樸選項、case 本身明確點到的是 Leaf node）：服務 Tier-1 銀行、要求 500ms 端到端 SLA、AWS SNS/SQS 約 300ms 延遲吃掉預算。Form3 用 JetStream 跨雲橋接、達到約 6× 延遲改善、並做到「AWS 整個 region 掛掉時不喪失處理能力」。這個案例揭露的判讀是：金融支付的硬 latency 預算逼出特定拓樸選型、不是把 Kafka / SQS 通用化套上去。
 
 ### Leaf node：邊緣連中心
 
@@ -218,9 +218,9 @@ Leaf node 是輕量 NATS server、跑在邊緣（工廠、店面、IoT gateway�
 
 > 以下 Leaf node 行為依 [NATS 官方文件](https://docs.nats.io/running-a-nats-service/configuration/leafnodes) 與下列 case 描述、未在本文實機環境驗證（leaf 拓樸需要 hub + edge 雙端部署）。
 
-[3.C37 MachineMetrics](/backend/03-message-queue/cases/nats-machinemetrics-edge-to-cloud/) 是 Leaf node 邊緣到雲端的完整案例：跨數百客戶廠區、數千機台、單機最高 1000Hz 採樣、工廠網路斷斷續續、Kinesis 等 cloud-only 工具無法跑在資源受限 edge。MachineMetrics 用 Leaf node 做 hub-and-spoke、edge 端用 JetStream 做本地持久化抵抗斷線。這個案例揭露的判讀是：broker 的功能集合（messaging + 本地持久化 + KV + Object Store + auth）決定它能不能取代邊緣的多套工具。
+[MachineMetrics](/backend/03-message-queue/cases/nats-machinemetrics-edge-to-cloud/) 是 Leaf node 邊緣到雲端的完整案例：跨數百客戶廠區、數千機台、單機最高 1000Hz 採樣、工廠網路斷斷續續、Kinesis 等 cloud-only 工具無法跑在資源受限 edge。MachineMetrics 用 Leaf node 做 hub-and-spoke、edge 端用 JetStream 做本地持久化抵抗斷線。這個案例揭露的判讀是：broker 的功能集合（messaging + 本地持久化 + KV + Object Store + auth）決定它能不能取代邊緣的多套工具。
 
-[3.C41 i-flow](/backend/03-message-queue/cases/nats-iflow-ot-it-integration/) 是多工廠 leaf node 拓樸的另一證據：每日 4 億筆 data operation、200+ OT/IT connector、用 leaf node hub-and-spoke 把多工廠接到 central、而不是每工廠自管一套 cluster。判讀：多工廠場景的運維成本由「每個邊緣點是不是要獨立維運一套 cluster」決定、leaf node 把邊緣端壓到單一 server。
+[i-flow](/backend/03-message-queue/cases/nats-iflow-ot-it-integration/) 是多工廠 leaf node 拓樸的另一證據：每日 4 億筆 data operation、200+ OT/IT connector、用 leaf node hub-and-spoke 把多工廠接到 central、而不是每工廠自管一套 cluster。判讀：多工廠場景的運維成本由「每個邊緣點是不是要獨立維運一套 cluster」決定、leaf node 把邊緣端壓到單一 server。
 
 ## Subject-based ACL 與多租戶
 
@@ -343,9 +343,9 @@ JetStream 的配置在不同規模下適用性不同、超出範圍要換拓樸�
 
 ### 對應 case
 
-- [3.C35 Form3](/backend/03-message-queue/cases/nats-form3-multi-cloud-payments/)——Supercluster + Leaf node 跨雲低延遲支付、硬 SLA 驅動拓樸
-- [3.C37 MachineMetrics](/backend/03-message-queue/cases/nats-machinemetrics-edge-to-cloud/)——Leaf node + edge JetStream + KV + Object Store + 多租戶 auth 的完整邊緣案例
-- [3.C41 i-flow](/backend/03-message-queue/cases/nats-iflow-ot-it-integration/)——多工廠 leaf node hub-and-spoke、運維成本驅動拓樸選型
+- [Form3](/backend/03-message-queue/cases/nats-form3-multi-cloud-payments/)——Supercluster + Leaf node 跨雲低延遲支付、硬 SLA 驅動拓樸
+- [MachineMetrics](/backend/03-message-queue/cases/nats-machinemetrics-edge-to-cloud/)——Leaf node + edge JetStream + KV + Object Store + 多租戶 auth 的完整邊緣案例
+- [i-flow](/backend/03-message-queue/cases/nats-iflow-ot-it-integration/)——多工廠 leaf node hub-and-spoke、運維成本驅動拓樸選型
 
 ### 後續可深入的議題
 

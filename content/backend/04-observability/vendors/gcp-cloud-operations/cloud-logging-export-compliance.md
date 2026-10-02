@@ -189,6 +189,6 @@ Cloud Logging 中的 PII 治理有三層：
 - [GCP Cloud Operations 服務頁](/backend/04-observability/vendors/gcp-cloud-operations/)：overview 與日常操作
 - [Cloud Monitoring Metrics Model 與 MQL](../cloud-monitoring-mql/)：同 vendor 的 metrics 面
 - [4.12 Audit Log 邊界與 PII 治理](/backend/04-observability/audit-log-governance/)：跨 vendor 的 audit log 治理策略
-- [4.C1 Fintech audit evidence](/backend/04-observability/cases/fintech-audit-evidence-observability/)：審計證據鏈的案例回寫
-- [4.C3 Healthcare retention](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)：長期保留的合規設計
+- [Fintech audit evidence](/backend/04-observability/cases/fintech-audit-evidence-observability/)：審計證據鏈的案例回寫
+- [Healthcare retention](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)：長期保留的合規設計
 - [07 security 模組](/backend/07-security-data-protection/)：data access audit log 的安全面

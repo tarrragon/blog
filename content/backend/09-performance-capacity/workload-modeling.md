@@ -86,13 +86,13 @@ Workload model 不是一次抽完就永久有效。業務變化會讓模型過�
 
 ## 案例對照
 
-| 案例                                                                                           | 教學重點                                     |
-| ---------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| [9.C21 ASOS Black Friday](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) | 持續高峰型 workload（峰均比 1.81x）          |
-| [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)  | flash-sale 形狀（5 分鐘賣完）                |
-| [9.C7 Lyft](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)            | 100+ 微服務各自 workload model（不能用單一） |
-| [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)        | 3 億 / 天的峰均比預估                        |
-| [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)   | 雙峰必須兩個 model 並行                      |
+| 案例                                                                                     | 教學重點                                     |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------- |
+| [ASOS Black Friday](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) | 持續高峰型 workload（峰均比 1.81x）          |
+| [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)  | flash-sale 形狀（5 分鐘賣完）                |
+| [Lyft](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)           | 100+ 微服務各自 workload model（不能用單一） |
+| [PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)        | 3 億 / 天的峰均比預估                        |
+| [FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)   | 雙峰必須兩個 model 並行                      |
 
 ## 下一步路由
 

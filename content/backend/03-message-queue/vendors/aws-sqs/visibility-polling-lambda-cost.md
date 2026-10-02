@@ -210,7 +210,7 @@ DLQ 段對應 [poison message quarantine](/backend/knowledge-cards/poison-messag
 
 ### 跟 case 對位
 
-visibility timeout 與 Lambda event source 的 ramp-up 行為來自 [3.C50 Capital One](/backend/03-message-queue/cases/sqs-capital-one-visibility-timeout/)；at-least-once + DLQ 在工作排程的取捨來自 [3.C48 Airbnb Dynein](/backend/03-message-queue/cases/sqs-airbnb-dynein-delayed-jobs/)；per-request cost 在極端規模的份量來自 [3.C59 Rapid7](/backend/03-message-queue/cases/sqs-rapid7-scale-billion-messages/)。
+visibility timeout 與 Lambda event source 的 ramp-up 行為來自 [Capital One](/backend/03-message-queue/cases/sqs-capital-one-visibility-timeout/)；at-least-once + DLQ 在工作排程的取捨來自 [Airbnb Dynein](/backend/03-message-queue/cases/sqs-airbnb-dynein-delayed-jobs/)；per-request cost 在極端規模的份量來自 [Rapid7](/backend/03-message-queue/cases/sqs-rapid7-scale-billion-messages/)。
 
 ### 何時 revisit
 

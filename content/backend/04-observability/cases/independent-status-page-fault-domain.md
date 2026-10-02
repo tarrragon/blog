@@ -14,7 +14,7 @@ Atlassian Statuspage 官方問題陳述：「when your website is down, so is yo
 
 ## 判讀
 
-事故溝通管道的可用性不能依賴被溝通的那個系統。status page 必須放在獨立 domain、獨立 codebase、獨立 infra（甚至獨立 DNS）、才能在主服務全滅時仍可達 —— 這是 out-of-band 用在對外播報通道。cadence 原則是為盲飛設計：沒有新資訊時、「我們仍在處理」本身就是要發布的狀態；主動發布降低湧入的客訴、讓人層訊號通道（客訴聚合、見 [4.C24](/backend/04-observability/cases/pagerduty-customer-liaison/)）不被 noise 淹沒。
+事故溝通管道的可用性不能依賴被溝通的那個系統。status page 必須放在獨立 domain、獨立 codebase、獨立 infra（甚至獨立 DNS）、才能在主服務全滅時仍可達 —— 這是 out-of-band 用在對外播報通道。cadence 原則是為盲飛設計：沒有新資訊時、「我們仍在處理」本身就是要發布的狀態；主動發布降低湧入的客訴、讓人層訊號通道（客訴聚合、見 [PagerDuty Customer Liaison：客訴的雙向 out-of-band 管道](/backend/04-observability/cases/pagerduty-customer-liaison/)）不被 noise 淹沒。
 
 ## 對應大綱
 

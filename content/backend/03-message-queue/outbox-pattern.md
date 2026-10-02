@@ -48,17 +48,17 @@ duplicate publish 在 outbox 模式下屬於預期現象。消費端需要配合
 
 Broker 選型本質是 long-term TCO 決策、需評估雲端費用 + 工程稅 + 治理負擔三層成本。Self-managed Kafka 的容量規劃 + broker 數量 + 副本因子 + disk + ZooKeeper / KRaft 治理是長期工程 tax、每次擴容是工程專案。
 
-對應 [9.C9 Spotify Kafka → Pub/Sub Migration](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — Spotify 從自管 Kafka 遷到 Google Cloud Pub/Sub、動機是 *容量規劃的工程成本* 在 sustained growth 下變得不划算、非 Kafka 效能不足。對 7500 萬用戶的事件交付系統、把 broker 容量規劃跟運維負擔卸給 vendor、釋放工程團隊 capacity。
+對應 [Spotify Kafka → Pub/Sub Migration](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — Spotify 從自管 Kafka 遷到 Google Cloud Pub/Sub、動機是 *容量規劃的工程成本* 在 sustained growth 下變得不划算、非 Kafka 效能不足。對 7500 萬用戶的事件交付系統、把 broker 容量規劃跟運維負擔卸給 vendor、釋放工程團隊 capacity。
 
-**TCO 評估的真實成本項**（9.C9 case 列前 4 項 + 雲端費用、第 5 項屬跨案例綜合）：
+**TCO 評估的真實成本項**（Spotify case 列前 4 項 + 雲端費用、第 5 項屬跨案例綜合）：
 
 - **Broker 雲端費用**：明面成本、相對小
 - **容量規劃工程**：每季 partition planning、每年容量擴張專案
 - **故障處理人力**：broker 故障 oncall、ZooKeeper / KRaft 故障診斷
 - **升級遷移成本**：Kafka 每個 major version 升級是專案
-- **跨團隊治理**（從 3.C6 Uber 跨案例補充）：規模化後的 multi-tenant 隔離、quota 管理、observability 建設
+- **跨團隊治理**（從 Uber 跨案例補充）：規模化後的 multi-tenant 隔離、quota 管理、observability 建設
 
-判讀含義：Self-managed Kafka 在中小團隊可能比 Pub/Sub 便宜（雲端費用低）；但規模化後人力成本壓過雲端費用差、managed service 反而划算。對應 [3.C2 VMware Tanzu Kafka → MSK](/backend/03-message-queue/cases/vmware-kafka-to-msk/) 同樣是「自管 → managed」的決策。
+判讀含義：Self-managed Kafka 在中小團隊可能比 Pub/Sub 便宜（雲端費用低）；但規模化後人力成本壓過雲端費用差、managed service 反而划算。對應 [VMware Tanzu Kafka → MSK](/backend/03-message-queue/cases/vmware-kafka-to-msk/) 同樣是「自管 → managed」的決策。
 
 **Managed service 的取捨**：
 
@@ -68,7 +68,7 @@ Broker 選型本質是 long-term TCO 決策、需評估雲端費用 + 工程稅 
 
 ## Broker 遷移的階段流程
 
-對應 [9.C9 Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — broker 遷移屬高併發容量工程、需維持 producer 連續寫入、保證 message 不丟。Spotify case 列三階段（dual write → shadow → cutover）、本章補第四階段（Decommission）作為清理收尾。replay 模型差異見 [3.6 Replay 跟 Idempotency 共設計](/backend/03-message-queue/processing-recovery-semantics/)。
+對應 [Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — broker 遷移屬高併發容量工程、需維持 producer 連續寫入、保證 message 不丟。Spotify case 列三階段（dual write → shadow → cutover）、本章補第四階段（Decommission）作為清理收尾。replay 模型差異見 [3.6 Replay 跟 Idempotency 共設計](/backend/03-message-queue/processing-recovery-semantics/)。
 
 1. **Dual-write**：producer 同時寫兩個 broker、確保 cutover 前新 broker 有完整資料
 2. **Shadow consume**：新 broker 有獨立 consumer group 消費、驗證業務結果跟舊 broker 一致
@@ -100,4 +100,4 @@ outbox 一致性可用 [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-i
 
 ## 下一步路由
 
-要從 outbox 延伸到消費恢復，接著讀 [3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/)。要看 queue 切換失敗時的一致性風險，接著讀 [3.C9 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。
+要從 outbox 延伸到消費恢復，接著讀 [3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/)。要看 queue 切換失敗時的一致性風險，接著讀 [反例：Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。

@@ -22,7 +22,7 @@ Redis Streams 進階主題：XADD/XREAD/XREADGROUP 操作 / Retention (MAXLEN/MI
 
 ## 下一步路由
 
-回 [Redis Streams vendor 頁](/backend/03-message-queue/vendors/redis-streams/) 與 [3.C16 Robinhood Faust](/backend/03-message-queue/cases/kafka-robinhood-faust-python-streaming/)（語言生態對照）。
+回 [Redis Streams vendor 頁](/backend/03-message-queue/vendors/redis-streams/) 與 [Robinhood Faust](/backend/03-message-queue/cases/kafka-robinhood-faust-python-streaming/)（語言生態對照）。
 
 ## 引用源
 

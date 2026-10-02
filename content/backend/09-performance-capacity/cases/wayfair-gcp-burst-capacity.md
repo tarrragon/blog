@@ -6,7 +6,7 @@ weight: 22
 tags: ["backend", "performance", "capacity", "case-study", "data-architecture", "gcp", "predictable-peak"]
 ---
 
-這個案例的核心責任是說明「hybrid cloud burst」模式 — 平日跑自家 data center、峰值事件靠雲端補容量。這跟全部上雲（[9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)）或全部自管的兩種極端都不同、是大企業常見的折衷路徑。
+這個案例的核心責任是說明「hybrid cloud burst」模式 — 平日跑自家 data center、峰值事件靠雲端補容量。這跟全部上雲（[Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)）或全部自管的兩種極端都不同、是大企業常見的折衷路徑。
 
 ## 觀察
 
@@ -44,7 +44,7 @@ Wayfair 揭露三個 hybrid cloud burst 模式的工程重點。
 可重用的工程做法：
 
 1. **Hybrid burst 適合「業務核心 on-prem 已穩定 + 季節性 / 事件型峰值」的企業**：對於全新雲原生 startup、直接全上雲更簡單；對於有 15-20 年自建系統的大企業、hybrid 是穩妥路徑。
-2. **資料平面先上雲、交易平面後上**：BI、ML、推薦這類「計算密集 + 資料量大 + 容忍延遲」適合先上 GCP / AWS / Azure；OLTP 後續再評估。對應 [9.C17 BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) 的資料層先行模式。
+2. **資料平面先上雲、交易平面後上**：BI、ML、推薦這類「計算密集 + 資料量大 + 容忍延遲」適合先上 GCP / AWS / Azure；OLTP 後續再評估。對應 [BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) 的資料層先行模式。
 3. **automation signal + 雲端 burst 是「change freeze」的解法**：監控訊號 → 自動 trigger 雲端容量 → 平滑釋放 → 不影響 on-prem 主系統的部署節奏。對應 [9.11 高峰事件準備](/backend/09-performance-capacity/)。
 
 跨平台等效：AWS Outposts + AWS Direct Connect、Azure Arc + ExpressRoute、Equinix + 各雲商 PrivateLink 都是 hybrid burst 的基礎設施。差異是各家 hybrid 策略成熟度。
@@ -52,8 +52,8 @@ Wayfair 揭露三個 hybrid cloud burst 模式的工程重點。
 ## 下一步路由
 
 - 想規劃 hybrid cloud burst → [9.6 容量規劃模型](/backend/09-performance-capacity/) + [9.11 高峰事件準備](/backend/09-performance-capacity/)
-- 想做資料平面遷移 → [9.C17 BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) + [01 資料庫模組](/backend/01-database/)
-- 對照全雲原生 → [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)
+- 想做資料平面遷移 → [BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) + [01 資料庫模組](/backend/01-database/)
+- 對照全雲原生 → [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)
 - 想取消 change freeze → [06.8 release gate](/backend/06-reliability/release-gate/) + [06.17 feature flag governance](/backend/06-reliability/feature-flag-governance/)
 
 ## 引用源

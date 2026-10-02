@@ -22,7 +22,7 @@ Kafka 進階主題：cross-region MirrorMaker / topic 生命週期 / 分層叢�
 
 ## 下一步路由
 
-回 [Kafka vendor 頁](/backend/03-message-queue/vendors/kafka/) 與 [3.C3 LinkedIn TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/)。
+回 [Kafka vendor 頁](/backend/03-message-queue/vendors/kafka/) 與 [LinkedIn TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/)。
 
 ## 引用源
 

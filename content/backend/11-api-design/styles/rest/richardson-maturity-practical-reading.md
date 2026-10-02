@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "api-design", "rest"]
 ---
 
-Richardson 成熟度模型（RMM）是一把定位尺、而非一張認證考卷 — 這個定位出自一手來源自己的聲明：Fowler 在記述這個模型時明文標注、RMM 是理解 REST 元素的思考工具、不是 REST 的分級定義（見 [11.C3](/backend/11-api-design/cases/rest-fowler-richardson-maturity-model/)）。下面依序看四級各自解決什麼、以及常見誤用的邊界在哪。
+Richardson 成熟度模型（RMM）是一把定位尺、而非一張認證考卷 — 這個定位出自一手來源自己的聲明：Fowler 在記述這個模型時明文標注、RMM 是理解 REST 元素的思考工具、不是 REST 的分級定義（見 [Richardson 成熟度模型：分級階梯與它的自我聲明](/backend/11-api-design/cases/rest-fowler-richardson-maturity-model/)）。下面依序看四級各自解決什麼、以及常見誤用的邊界在哪。
 
 ## 四級的工程意義
 

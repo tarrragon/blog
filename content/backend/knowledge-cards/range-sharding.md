@@ -13,7 +13,7 @@ Range sharding 出現在 CockroachDB / Spanner 等 distributed SQL、跟 [Partit
 
 ## 可觀察訊號與例子
 
-需要 range sharding 概念的訊號是「設計 distributed SQL schema 時、誤把 KV 的 shard key 思維搬過來」。[9.C40 Netflix CockroachDB](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 揭露 range 預設 ~512MB 自動 split 的機制：380+ cluster / 最大單區 60 nodes / 26.5 TB、不需要 application 端做 shard 設計。[9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 也用類似機制、跟 interleaved table 配合做 parent-child 物理 co-location。
+需要 range sharding 概念的訊號是「設計 distributed SQL schema 時、誤把 KV 的 shard key 思維搬過來」。[Netflix CockroachDB](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 揭露 range 預設 ~512MB 自動 split 的機制：380+ cluster / 最大單區 60 nodes / 26.5 TB、不需要 application 端做 shard 設計。[Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 也用類似機制、跟 interleaved table 配合做 parent-child 物理 co-location。
 
 ## 設計責任
 

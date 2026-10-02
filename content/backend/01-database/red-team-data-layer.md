@@ -386,14 +386,14 @@ Long-lived repeatable export artifact 是事故後仍能持續產出資料的工
 
 ### 資安與資料保護模組的主案例（產品 / 平台事故）
 
-| 案例                                                                                                           | 跟資料層的關係                                           |
-| -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| [7.C1 Cloudflare Route Leak](/backend/07-security-data-protection/cases/cloudflare-route-leak-2026/)           | 控制面變更可能影響資料層存取                             |
-| [7.C2 Cloudflare Token 事件](/backend/07-security-data-protection/cases/cloudflare-control-plane-token-2023/)  | Token 洩漏 → DB 存取被濫用                               |
-| [7.C3 Azure AD 2021](/backend/07-security-data-protection/cases/azure-ad-identity-control-plane-2021/)         | identity failure → 應用 fallback、可能讓 DB 存取錯誤路徑 |
-| [7.C4 Microsoft Storm-0558](/backend/07-security-data-protection/cases/microsoft-storm-0558-signing-key-2023/) | signing key 洩漏 → 任意 user 身份、可 query 任何資料     |
-| [7.C5 Okta Support System](/backend/07-security-data-protection/cases/okta-support-system-incident-2023/)      | support tool 洩漏 → 客戶資料被存取                       |
-| [7.C6 Okta Cross-Tenant](/backend/07-security-data-protection/cases/okta-cross-tenant-impersonation-2023/)     | tenant boundary 失守 → DB-level RLS 也擋不住             |
+| 案例                                                                                                      | 跟資料層的關係                                           |
+| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [Cloudflare Route Leak](/backend/07-security-data-protection/cases/cloudflare-route-leak-2026/)           | 控制面變更可能影響資料層存取                             |
+| [Cloudflare Token 事件](/backend/07-security-data-protection/cases/cloudflare-control-plane-token-2023/)  | Token 洩漏 → DB 存取被濫用                               |
+| [Azure AD 2021](/backend/07-security-data-protection/cases/azure-ad-identity-control-plane-2021/)         | identity failure → 應用 fallback、可能讓 DB 存取錯誤路徑 |
+| [Microsoft Storm-0558](/backend/07-security-data-protection/cases/microsoft-storm-0558-signing-key-2023/) | signing key 洩漏 → 任意 user 身份、可 query 任何資料     |
+| [Okta Support System](/backend/07-security-data-protection/cases/okta-support-system-incident-2023/)      | support tool 洩漏 → 客戶資料被存取                       |
+| [Okta Cross-Tenant](/backend/07-security-data-protection/cases/okta-cross-tenant-impersonation-2023/)     | tenant boundary 失守 → DB-level RLS 也擋不住             |
 
 ### 資安與資料保護模組的紅隊案例（攻擊鏈 / 入侵路徑）
 

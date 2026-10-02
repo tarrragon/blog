@@ -150,6 +150,6 @@ OTLP path 的計費跟 Datadog SDK path 相同：
 
 - [Datadog 服務頁](/backend/04-observability/vendors/datadog/)：overview 與日常操作
 - [Datadog 成本治理](../cost-governance-agent-config/)：Agent 配置與 cost control
-- [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)：從 Datadog SDK 轉向 OTel 相容模式的治理案例
+- [Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)：從 Datadog SDK 轉向 OTel 相容模式的治理案例
 - [OpenTelemetry Collector 部署模式](/backend/04-observability/vendors/opentelemetry/collector-deployment-patterns/)：OTel Collector → Datadog 的 alternative path
 - [← New Relic migration](../migrate-from-new-relic/)：New Relic → Datadog 的遷移中 OTLP 扮演的橋接角色

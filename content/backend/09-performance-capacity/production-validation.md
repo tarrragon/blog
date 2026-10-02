@@ -191,12 +191,12 @@ Shopify game day、Stripe game day 是業界範本（[06 cases](/backend/06-reli
 
 ## 案例對照
 
-| 案例                                                                                                            | 教學重點                          |
-| --------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| [9.C1 Prime Day FIS 8x](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)               | pre-event chaos + perf 驗證       |
-| [9.C15 Tixcraft 10K t2.micro 壓測](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) | pre-event 大規模壓測              |
-| [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)                    | 跨 20 州 canary 控制 blast radius |
-| [9.C16 SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)                         | 從第三方換到自建的 dark launch    |
+| 案例                                                                                                      | 教學重點                          |
+| --------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| [Prime Day FIS 8x](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)              | pre-event chaos + perf 驗證       |
+| [Tixcraft 10K t2.micro 壓測](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) | pre-event 大規模壓測              |
+| [FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)                    | 跨 20 州 canary 控制 blast radius |
+| [SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)                         | 從第三方換到自建的 dark launch    |
 
 ## 下一步路由
 

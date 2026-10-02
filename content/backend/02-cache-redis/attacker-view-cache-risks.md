@@ -80,7 +80,7 @@ key 命名、租戶隔離與敏感欄位限制要先定義，這決定污染與�
 
 ## 案例回寫
 
-快取放大面的弱點盤點可用 [2.C9 反例：stampede rollout regression](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 回寫。該案例的回源洪水來自部署回歸而非惡意攻擊，放大後果相似——大量請求同時 miss、穿透到 origin、把快取從保護層變成放大層——但觸發源不同：2.C9 是意外的部署回歸，攻擊場景則是刻意查詢大量不存在的 key。後果相似讓防護有共通部分（single-flight、回源 rate limit），觸發源不同則讓防線各有重點：部署回歸重在發布保護與 warmup，惡意穿透重在 negative cache 與請求來源限制。回寫時要保留「失效時壓力打到哪裡、單飛與 rate limit 是否就位」的判讀，把它從事後復盤前移到設計階段的弱點盤點。
+快取放大面的弱點盤點可用 [反例：stampede rollout regression](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 回寫。該案例的回源洪水來自部署回歸而非惡意攻擊，放大後果相似——大量請求同時 miss、穿透到 origin、把快取從保護層變成放大層——但觸發源不同：〈反例：快取切換引發 Stampede 回歸〉是意外的部署回歸，攻擊場景則是刻意查詢大量不存在的 key。後果相似讓防護有共通部分（single-flight、回源 rate limit），觸發源不同則讓防線各有重點：部署回歸重在發布保護與 warmup，惡意穿透重在 negative cache 與請求來源限制。回寫時要保留「失效時壓力打到哪裡、單飛與 rate limit 是否就位」的判讀，把它從事後復盤前移到設計階段的弱點盤點。
 
 這個案例主要支撐放大面與回源保護的判讀，不直接支撐污染面或租戶隔離；若根因是跨租戶資料洩漏或快取被當正式狀態，應回到 key 設計與 source of truth 邊界，而非回源保護。
 

@@ -22,7 +22,7 @@ SQS 進階主題：DLQ 設計 / CloudWatch alarm / Cost 模型。
 
 ## 下一步路由
 
-回 [SQS vendor 頁](/backend/03-message-queue/vendors/aws-sqs/) 與 [3.C9 反例：語義誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。
+回 [SQS vendor 頁](/backend/03-message-queue/vendors/aws-sqs/) 與 [反例：語義誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。
 
 ## 引用源
 

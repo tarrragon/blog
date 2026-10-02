@@ -6,7 +6,7 @@ weight: 36
 tags: ["backend", "performance", "capacity", "case-study", "db-document", "aws", "low-latency-sustained"]
 ---
 
-這個案例的核心責任是說明「document database 在大規模 OLTP 場景如何撐住」。Coinbase 從 Ruby on Rails 單體 + MongoDB 起家、八年後仍保留 MongoDB 作為主資料層、並把 connection pooling、ML 預測擴容、cache + freshness token 都疊在 document model 上。跟 [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 對照 — Microsoft 365 走「遷出 MongoDB、保留 document API」、Coinbase 走「保留 MongoDB、補周邊工具」。兩條路徑都揭露 MongoDB 在 production 主角位置會遇到什麼壓力。
+這個案例的核心責任是說明「document database 在大規模 OLTP 場景如何撐住」。Coinbase 從 Ruby on Rails 單體 + MongoDB 起家、八年後仍保留 MongoDB 作為主資料層、並把 connection pooling、ML 預測擴容、cache + freshness token 都疊在 document model 上。跟 [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 對照 — Microsoft 365 走「遷出 MongoDB、保留 document API」、Coinbase 走「保留 MongoDB、補周邊工具」。兩條路徑都揭露 MongoDB 在 production 主角位置會遇到什麼壓力。
 
 ## 觀察
 
@@ -24,7 +24,7 @@ Coinbase MongoDB 平台的關鍵數字（引自 [Coinbase Engineering Blog](http
 
 服務組合：MongoDB Atlas（主資料層）、DynamoDB（部分 workload 的 federated store）、Memcached（query result cache）、自研 mongobetween proxy（連線多工）、Ruby on Rails 單體 + 多個 Fragment APIs、ML 預測模型驅動 cluster auto-scaling。
 
-關鍵負載形狀：「加密貨幣價格突發 + 用戶交易需求湧入」雙峰疊加。價格 alert 觸發 read 爆量（users / portfolio 查詢）、下單觸發 write 爆量（order book / wallet 寫入）。兩種峰值不像 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 的 Super Bowl 事件型可預測、是隨外部市場波動的 *low-latency-sustained 中夾雜 surge*。
+關鍵負載形狀：「加密貨幣價格突發 + 用戶交易需求湧入」雙峰疊加。價格 alert 觸發 read 爆量（users / portfolio 查詢）、下單觸發 write 爆量（order book / wallet 寫入）。兩種峰值不像 [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 的 Super Bowl 事件型可預測、是隨外部市場波動的 *low-latency-sustained 中夾雜 surge*。
 
 ## 判讀
 
@@ -46,8 +46,8 @@ Coinbase MongoDB 的工程選擇揭露三個 document database 在 production �
 
 1. **document database 撐大規模 OLTP 要主動補 connection pool**：MongoDB 原生 connection 模式對「process 數多 + deploy 重」的環境會爆。應用層或 sidecar proxy 做多工是基線設計。對應 [01.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)。
 2. **freshness token 是 read-after-write 一致性的可重用模式**：比 strong consistency（性能差）跟 eventually consistent（read 不到剛寫的）更精細的中間路徑。token 機制可以推廣到任何「主要 eventually consistent、少數 read 要求最新」的場景。
-3. **predictive scaling 適用於「外部訊號可預測流量」的服務**：加密貨幣價格、賽事行程、票務開賣時間都是外部訊號。比 reactive scaling 早一個擴容週期出手。對應 [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 的 AI 預測式擴容。
-4. **federated DB（MongoDB + DynamoDB）按 workload 分流**：document-shaped 用 MongoDB、access pattern 固定的 KV 用 DynamoDB。不是「全用 MongoDB」也不是「全遷 DynamoDB」、是按 workload 形狀分。對應 [9.C23 Netflix Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 的多 DB 整合反例（Netflix 走整合方向、Coinbase 走 federated）。
+3. **predictive scaling 適用於「外部訊號可預測流量」的服務**：加密貨幣價格、賽事行程、票務開賣時間都是外部訊號。比 reactive scaling 早一個擴容週期出手。對應 [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 的 AI 預測式擴容。
+4. **federated DB（MongoDB + DynamoDB）按 workload 分流**：document-shaped 用 MongoDB、access pattern 固定的 KV 用 DynamoDB。不是「全用 MongoDB」也不是「全遷 DynamoDB」、是按 workload 形狀分。對應 [Netflix Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 的多 DB 整合反例（Netflix 走整合方向、Coinbase 走 federated）。
 
 跨平台等效：
 
@@ -60,8 +60,8 @@ Coinbase MongoDB 的工程選擇揭露三個 document database 在 production �
 
 - 想規劃 MongoDB 大規模 production → [MongoDB vendor page](/backend/01-database/vendors/mongodb/) + [01.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)
 - 想做 read-after-write 一致性設計 → [01.5 transaction boundary](/backend/01-database/transaction-boundary/)
-- 想做 predictive scaling → [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) + [9.6 容量規劃模型](/backend/09-performance-capacity/)
-- 想對照 MongoDB 遷出 / 保留決策 → [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)（遷到 Cosmos DB MongoDB API）
+- 想做 predictive scaling → [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) + [9.6 容量規劃模型](/backend/09-performance-capacity/)
+- 想對照 MongoDB 遷出 / 保留決策 → [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)（遷到 Cosmos DB MongoDB API）
 - 想理解 connection storm 問題 → [01.6 高併發資料存取](/backend/01-database/high-concurrency-access/)
 - 想深入 connection / proxy 治理與 cache 層 → [MongoDB connection 管理與 cache 層](/backend/01-database/vendors/mongodb/connection-management-and-cache-layer/)
 - 想做 replica set 讀寫分離設計 → [MongoDB replica set read preference](/backend/01-database/vendors/mongodb/replica-set-read-preference/)

@@ -27,7 +27,7 @@ Lyft 的工程做法揭露三個微服務容量治理重點。
 
 1. **微服務不是「全部 8x」、是「特定服務 8x」**：8x 是 *某些核心服務* 在週末爆量時刻的擴容比、不是 100 個服務全部 8x。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 必須先做「哪個服務是熱點」的層次定位。
 2. **微服務粒度 = 擴容粒度**：把 ride matching、payment、driver tracking、notification 切成獨立服務、每個服務的 autoscaling policy 可以獨立設計。對應 [03 訊息佇列模組](/backend/03-message-queue/) 跟 [05 部署平台模組](/backend/05-deployment-platform/) 的服務邊界。
-3. **GPS 座標寫入 DynamoDB 是高頻 sustained workload**：每個 driver 每秒寫 1-2 次位置、200+ 城市 × 每個城市數萬司機 = 巨量持續寫入、跟峰值無關。對應 [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 的 KV 高吞吐設計同類。
+3. **GPS 座標寫入 DynamoDB 是高頻 sustained workload**：每個 driver 每秒寫 1-2 次位置、200+ 城市 × 每個城市數萬司機 = 巨量持續寫入、跟峰值無關。對應 [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 的 KV 高吞吐設計同類。
 
 需要警惕：「8x 峰值」是 *峰值倍數*、不是 *尖峰持續時間*。週末晚間的尖峰可能持續 3-4 小時、機場特殊事件可能持續 30 分鐘、演唱會結束可能只有 10 分鐘瞬間。容量策略要按持續時間區分。
 
@@ -44,8 +44,8 @@ Lyft 的工程做法揭露三個微服務容量治理重點。
 ## 下一步路由
 
 - 想做微服務容量治理 → [05 部署平台模組](/backend/05-deployment-platform/) + [9.6 容量規劃模型](/backend/09-performance-capacity/)
-- 想規劃事件型峰值 → [9.11 高峰事件準備](/backend/09-performance-capacity/) + [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)
-- 想設計高頻 sustained workload → [01 資料庫模組](/backend/01-database/) + [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)
+- 想規劃事件型峰值 → [9.11 高峰事件準備](/backend/09-performance-capacity/) + [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)
+- 想設計高頻 sustained workload → [01 資料庫模組](/backend/01-database/) + [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)
 
 ## 引用源
 

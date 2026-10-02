@@ -25,7 +25,7 @@ Tubi 案例揭露三個 ML feature store 容量設計重點。
 
 1. **feature store 是 ML inference 的 critical path**：每個推薦請求都要查 N 個 feature（user_profile、item_metadata、recent_interactions、similar_users 等）、每個 feature 查詢都吃 latency budget。對應 [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) 的多 stage budget 分解。
 2. **ScyllaDB → ElastiCache 是「持久 KV → 純 cache」的權衡**：ScyllaDB 是 Cassandra-compatible 高吞吐 KV、提供 durability；ElastiCache 是 in-memory cache、可以 cache miss。Tubi 選 cache 是判斷「feature 可以重新計算」、durability 不必、純 in-memory 更快。對應 [02 快取模組](/backend/02-cache-redis/) 的 cache vs durable store 選型。
-3. **p99 才是 ML 系統的容量門檻**：ML 系統的 user-perceived latency 是 *最後完成的 inference*、不是平均。p50 快沒用、p99 慢用戶就看到 loading spinner。對應 [9.4 Saturation Discovery](/backend/09-performance-capacity/) 的 latency percentile 分析、跟 [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) 的長尾延遲議題同類。
+3. **p99 才是 ML 系統的容量門檻**：ML 系統的 user-perceived latency 是 *最後完成的 inference*、不是平均。p50 快沒用、p99 慢用戶就看到 loading spinner。對應 [9.4 Saturation Discovery](/backend/09-performance-capacity/) 的 latency percentile 分析、跟 [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) 的長尾延遲議題同類。
 
 需要警惕：
 
@@ -38,15 +38,15 @@ Tubi 案例揭露三個 ML feature store 容量設計重點。
 
 1. **ML feature store 用「兩層 cache」設計**：L1 是 in-process cache（最熱的 features）、L2 是 ElastiCache / Memcached（次熱）、L3 才是持久 store（ScyllaDB / DynamoDB / S3 + Parquet）。對應 [02 快取模組](/backend/02-cache-redis/) 的 cache hierarchy。
 2. **feature 可重算 → 用 cache、feature 必須持久 → 用 store**：判斷依據是「重算成本」跟「資料一致性需求」。對應 [02.4 cache copy freshness boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/)。
-3. **p99 / p999 反推單個 stage latency 上限**：每個 stage（network、cache lookup、feature aggregation、model inference、response serialization）給一個 latency budget、總和等於整體 SLO。對應 [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/)、跟 [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) 同樣的反推思維。
+3. **p99 / p999 反推單個 stage latency 上限**：每個 stage（network、cache lookup、feature aggregation、model inference、response serialization）給一個 latency budget、總和等於整體 SLO。對應 [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/)、跟 [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) 同樣的反推思維。
 
 跨平台等效：AWS ElastiCache for Redis / Valkey / MemoryDB、GCP Memorystore for Redis、Azure Cache for Redis 都可實作對等架構。專為 ML feature store 設計的還有 Feast / Tecton / Hopsworks 等開源 + 商業方案、底層常用 Redis-compatible store。
 
 ## 下一步路由
 
 - 想規劃 ML feature store → [02 快取模組](/backend/02-cache-redis/) + [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/)
-- 想做 p99 / p999 反推 → [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) + [9.4 Saturation Discovery](/backend/09-performance-capacity/)
-- 對照其他 cache 案例 → [9.C6 Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/)（配對引擎）
+- 想做 p99 / p999 反推 → [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) + [9.4 Saturation Discovery](/backend/09-performance-capacity/)
+- 對照其他 cache 案例 → [Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/)（配對引擎）
 - 想理解 cache hierarchy → [02 快取模組](/backend/02-cache-redis/)
 
 ## 引用源

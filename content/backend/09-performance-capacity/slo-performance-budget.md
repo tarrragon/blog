@@ -210,13 +210,13 @@ SLO 與 performance budget 的責任是讓容量決策有「可衡量的目標 +
 
 ## 案例對照
 
-| 案例                                                                                                    | 教學重點                  |
-| ------------------------------------------------------------------------------------------------------- | ------------------------- |
-| [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)       | latency budget 反推架構   |
-| [9.C5 / C24 99.999%](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)            | 5 個 9 的容量代價         |
-| [9.C25 Tubi ML stage budget](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) | p99 多 stage 分配         |
-| [9.C28 FanDuel 多 SLO](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)     | 直播 vs 投注不同 SLO 並存 |
-| [9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)                         | SLO baseline 重新校準     |
+| 案例                                                                                                                                                                                     | 教學重點                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)                                                                                             | latency budget 反推架構   |
+| [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) / [Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 的 99.999% | 5 個 9 的容量代價         |
+| [Tubi ML stage budget](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)                                                                                        | p99 多 stage 分配         |
+| [FanDuel 多 SLO](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)                                                                                            | 直播 vs 投注不同 SLO 並存 |
+| [Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)                                                                                                                | SLO baseline 重新校準     |
 
 ## 下一步路由
 

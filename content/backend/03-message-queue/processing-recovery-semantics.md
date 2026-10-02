@@ -51,7 +51,7 @@ Delivery 層的判讀重點是 broker 是否還能掌握訊息位置。Processin
 
 Poison message 屬於觸發 consumer 持續失敗、需要被隔離處理的訊息類型。處理流程從 *偵測 / 隔離 / 診斷 / 修復* 四個層次設計、屬於 DLQ 之後的延伸責任。
 
-對應 [3.C9 反例：Queue Semantics Mismatch](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) — case 提供切換後 DLQ 激增的觀察方向、是 broker 遷移時 consumer 沒對齊 processing/recovery 語意的訊號、poison message 是其下游表徵之一。
+對應 [反例：Queue Semantics Mismatch](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) — case 提供切換後 DLQ 激增的觀察方向、是 broker 遷移時 consumer 沒對齊 processing/recovery 語意的訊號、poison message 是其下游表徵之一。
 
 **四個處理層次**：
 
@@ -73,7 +73,7 @@ Replay safety 跟 idempotency 屬於同一個設計階段、需共設計並落�
 3. **依儲存策略反推 replay window**：去重紀錄保留 7 天、replay window 上限就是 7 天、超過會出現重複副作用
 4. **再依 replay window 反推 checkpoint 策略**：checkpoint 落地時機要保證 crash 後 replay window 內可恢復
 
-對應 [9.C9 Spotify Kafka → Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — broker 遷移要驗證業務語意跟新 broker 兼容、replay 模型在 Kafka（offset）跟 Pub/Sub（snapshot + seek）不同、idempotency 策略要重新校準。
+對應 [Spotify Kafka → Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — broker 遷移要驗證業務語意跟新 broker 兼容、replay 模型在 Kafka（offset）跟 Pub/Sub（snapshot + seek）不同、idempotency 策略要重新校準。
 
 判讀重點：replay window 由 idempotency 儲存策略反推、不是 broker 設定值。同一條反推在對外 API 是消費者做的——服務端的保存期承諾精確到什麼程度，決定消費者的重試窗口能設多長（見 [Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)）。先看 idempotency key 跟去重儲存、再決定 replay window 安全範圍。順序顛倒會踩到「replay 跨越去重紀錄到期」的事故、表現是 replay 後出現本來該被去重的重複副作用。
 

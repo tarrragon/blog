@@ -6,7 +6,7 @@ weight: 41
 tags: ["backend", "performance", "capacity", "case-study", "db-oltp", "aws", "event-peak"]
 ---
 
-這個案例的核心責任是說明「合規強制資料留地理邊界 + 想要單一邏輯 DB」如何用 distributed SQL + 邊緣硬體解。跟 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 對比 — Standard Chartered 走「Aurora 多 region、each region 一個 cluster」、Hard Rock Digital 走「跨 AWS Outposts + AWS region 一個邏輯 cluster」。兩條都解受監管金融類業務、結構差異反映法規顆粒不同：銀行是國家層級、美國運動博彩是 *州* 層級。
+這個案例的核心責任是說明「合規強制資料留地理邊界 + 想要單一邏輯 DB」如何用 distributed SQL + 邊緣硬體解。跟 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 對比 — Standard Chartered 走「Aurora 多 region、each region 一個 cluster」、Hard Rock Digital 走「跨 AWS Outposts + AWS region 一個邏輯 cluster」。兩條都解受監管金融類業務、結構差異反映法規顆粒不同：銀行是國家層級、美國運動博彩是 *州* 層級。
 
 ## 觀察
 
@@ -50,7 +50,7 @@ Hard Rock Digital 的工程選擇揭露三個受監管 OLTP 的設計重點。
 
 1. **合規 boundary 用 region placement 表達、不是 cluster fragmentation**：當法規要求資料留某地理邊界、優先看 distributed SQL 的 region placement / pin-to-region 能力、不要直接開獨立 cluster。獨立 cluster 解了合規但破壞了業務邏輯（跨州統一帳戶、欺詐偵測、reporting）。對應 [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/) 的 multi-region table 與 [Spanner vendor](/backend/01-database/vendors/spanner/) 的 placement。
 2. **邊緣硬體（AWS Outposts / Local Zones）是合規工具、不是 latency 工具**：Outposts 主要為「資料留某地理邊界」而存在、latency 改善是副作用。決策時先看合規驅動力、latency 改善列為 bonus。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 hybrid cloud 設計。
-3. **賽季型擴縮容寫進 baseline 容量模型**：Hard Rock Digital 100 ↔ 33 的擺盪不是「臨時 scale up」、是計畫內年度循環。容量規劃要直接把 NFL / NBA / 國際賽事曆塞進預測模型、不要當 surprise。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 與 [9.C2 GR8 Tech 體育博彩 AI 預測](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)。
+3. **賽季型擴縮容寫進 baseline 容量模型**：Hard Rock Digital 100 ↔ 33 的擺盪不是「臨時 scale up」、是計畫內年度循環。容量規劃要直接把 NFL / NBA / 國際賽事曆塞進預測模型、不要當 surprise。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 與 [GR8 Tech 體育博彩 AI 預測](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)。
 4. **distributed SQL 的 ops 槓桿：team 小、cluster 大**：Hard Rock Digital 50 人 tech team 養全部運維、估省了 10-20 個 DBA。distributed SQL 把「DBA 養單區、跨區 sync 養運維」的工作量壓進 *系統內建* 的 Raft / placement、人月支出降。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/) 的人力成本工程化。
 
 跨平台等效：
@@ -61,10 +61,10 @@ Hard Rock Digital 的工程選擇揭露三個受監管 OLTP 的設計重點。
 
 ## 下一步路由
 
-- 對照其他受監管金融 / 博彩 OLTP → [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)（銀行國家層級）/ [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)（fantasy sports）
-- 對照 event-driven peak 設計 → [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) / [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)
+- 對照其他受監管金融 / 博彩 OLTP → [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)（銀行國家層級）/ [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)（fantasy sports）
+- 對照 event-driven peak 設計 → [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) / [FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)
 - 想規劃 multi-region OLTP survival goal → [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) + [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)
-- 對照其他 distributed SQL 案例 → [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) / [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) / [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
+- 對照其他 distributed SQL 案例 → [DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) / [Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) / [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
 - 想理解合規驅動的拓樸設計 → [05 部署平台模組](/backend/05-deployment-platform/) + [01.4 database migration playbook](/backend/01-database/database-migration-playbook/)
 - 想拆 CockroachDB survival goal 與合規拓樸對齊 → [CockroachDB survival goals](/backend/01-database/vendors/cockroachdb/survival-goals/)
 - 想做 region pinning 與在地化 schema → [CockroachDB locality-aware schema](/backend/01-database/vendors/cockroachdb/locality-aware-schema/)

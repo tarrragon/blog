@@ -25,7 +25,7 @@ PayPay 在 DynamoDB 的關鍵敘述（引自 [DynamoDB Customers](https://aws.am
 PayPay 案例揭露三個行動支付訊息系統的工程重點。
 
 1. **支付通知是「不可丟失 + 不可延遲」雙重需求**：用戶付完款 30 秒沒收到通知會懷疑系統壞了、會打客服 / 重複扣款。這層需求比 OTA 推播嚴格、必須有 durable queue + retry + 重複偵測。對應 [03 訊息佇列模組](/backend/03-message-queue/) 的 idempotency 設計。
-2. **DynamoDB 在「訊息事件」這類負載特別適合**：每則訊息有獨立 message_id（partition key 天然均勻）、TTL 機制可以自動清理過期訊息（避免 storage 爆炸）。對應 [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 的 partition 均勻優勢、跟 [02.4 cache copy freshness boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/) 的 TTL 議題。
+2. **DynamoDB 在「訊息事件」這類負載特別適合**：每則訊息有獨立 message_id（partition key 天然均勻）、TTL 機制可以自動清理過期訊息（避免 storage 爆炸）。對應 [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 的 partition 均勻優勢、跟 [02.4 cache copy freshness boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/) 的 TTL 議題。
 3. **3 億 / 天 ≈ 3,500 訊息 / 秒平均**：聽起來不大、但這是 *平均*。月底、雙 11 類大促、新年紅包等場景、單秒峰值可能達 10x-50x。對應 [9.2 Workload Modeling](/backend/09-performance-capacity/) 的峰均比評估。
 
 需要警惕：「super reliable」是行銷語言、不是工程承諾。讀此類短篇案例要把行銷敘述折扣、重點看 *服務組合* 與 *規模量級*。
@@ -43,7 +43,7 @@ PayPay 案例揭露三個行動支付訊息系統的工程重點。
 ## 下一步路由
 
 - 想設計行動支付訊息 → [03 訊息佇列模組](/backend/03-message-queue/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/)
-- 對照其他 KV 高吞吐 → [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) / [9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)
+- 對照其他 KV 高吞吐 → [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) / [Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)
 - 想做訊息系統容量規劃 → [9.6 容量規劃模型](/backend/09-performance-capacity/) + [9.2 Workload Modeling](/backend/09-performance-capacity/)
 - 想避免訊息熱點打爆單一 partition → [DynamoDB partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)
 - 想評估訊息系統的 capacity mode → [DynamoDB on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)

@@ -47,8 +47,8 @@ Spanner 案例最值得讀的不是「能撐多大」、是「為什麼要這樣
 
 - 想評估全球一致性需求 → [00 服務選型模組](/backend/00-service-selection/) + [01.5 transaction boundary](/backend/01-database/transaction-boundary/)
 - 想規劃 OLTP 容量 → [9.6 容量規劃模型](/backend/09-performance-capacity/) + [01 資料庫模組](/backend/01-database/)
-- 想對照其他 OLTP 案例 → [9.C4 DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)
-- 想看不需要強一致的全球 KV → [9.C11 Minecraft Earth Cosmos DB](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)
+- 想對照其他 OLTP 案例 → [DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)
+- 想看不需要強一致的全球 KV → [Minecraft Earth Cosmos DB](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)
 - 想理解 TrueTime ε 與外部一致性實作 → [Spanner TrueTime API 深入](/backend/01-database/vendors/spanner/truetime-api-depth/)
 - 想對照 Spanner / Aurora DSQL / CockroachDB 不同一致性層 → [Spanner 一致性模型對照](/backend/01-database/vendors/spanner/consistency-models-comparison/)
 

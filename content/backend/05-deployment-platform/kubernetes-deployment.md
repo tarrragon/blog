@@ -60,7 +60,7 @@ N-1 相容窗口的壽命要有明確終點。長期維護雙版本相容會累�
 
 長連線服務或有大量背景任務的 workload，通常需要比 stateless API 更保守的 rollout 策略，並額外搭配 drain 與 reconnect 設計。
 
-擴縮策略的演進需要版本化跟可回放。對應 [5.C6 Airbnb K8s 叢集擴縮演進](/backend/05-deployment-platform/cases/airbnb-kubernetes-cluster-scaling-evolution/)：揭露「擴縮策略版本化跟可回放」「不同 workload 區分擴縮政策」「容量治理跟事故指標綁定」三個方向。以下基於通用工程知識展開。
+擴縮策略的演進需要版本化跟可回放。對應 [Airbnb K8s 叢集擴縮演進](/backend/05-deployment-platform/cases/airbnb-kubernetes-cluster-scaling-evolution/)：揭露「擴縮策略版本化跟可回放」「不同 workload 區分擴縮政策」「容量治理跟事故指標綁定」三個方向。以下基於通用工程知識展開。
 
 可重複套用的做法：
 
@@ -72,7 +72,7 @@ N-1 相容窗口的壽命要有明確終點。長期維護雙版本相容會累�
 
 平台遷移的本質是流量跟依賴的分段切換。遷移期內新舊叢集同時存在，rollout 策略要把跨叢集流量切換納入批次節奏、視為連續多批決策。本段聚焦流量 / 依賴切換時序；遷移期的團隊職責邊界重訂見 [5.7 Managed 平台跟團隊職責邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/#managed-平台跟團隊職責邊界)。
 
-對應 [5.C1 Tradeshift：self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/)：揭露「零停機遷移要把切換做成分段策略」「難點通常在跨叢集服務依賴跟流量切換、不在 Kubernetes API 本身」。對應 [5.C4 Mobileye workloads 遷移](/backend/05-deployment-platform/cases/mobileye-workloads-to-eks/)：揭露「分批遷移 workload、保留觀測對照」「明確切換 / 回退條件」「新平台先驗證容量跟恢復節奏」。以下基於通用工程知識展開。
+對應 [Tradeshift：self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/)：揭露「零停機遷移要把切換做成分段策略」「難點通常在跨叢集服務依賴跟流量切換、不在 Kubernetes API 本身」。對應 [Mobileye workloads 遷移](/backend/05-deployment-platform/cases/mobileye-workloads-to-eks/)：揭露「分批遷移 workload、保留觀測對照」「明確切換 / 回退條件」「新平台先驗證容量跟恢復節奏」。以下基於通用工程知識展開。
 
 可重複套用的分階段做法：
 
@@ -81,24 +81,24 @@ N-1 相容窗口的壽命要有明確終點。長期維護雙版本相容會累�
 3. **可控流量分批切換**：用 DNS 加權、service mesh 流量切分或 LB 規則把流量分批從舊叢集導到新叢集。每批切換後驗證 SLI 偏差、再進下一批。
 4. **每批保留回退路徑**：舊叢集服務不立即下線，保留作為回退目標。回退條件先驗證（rollback script、流量切回 DNS / LB 規則），再開始下一批切換。
 
-延伸 5.C1 揭露的「跨叢集服務依賴是難點」、5.C10 中型組織判讀「服務本身切過去了、但資料面、認證面、觀測面還沒同步」也指向同類問題。跨叢集遷移最容易出的事故是「服務切過去了、依賴沒切過去」。Database、cache、message queue、observability pipeline、auth service 的切換時機要分別規劃，避免應用層在新叢集但仍跨網路打舊叢集的依賴，造成隱性 latency 或單點失效。規模差異下的同類問題見 [5.C10 對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)。
+延伸 Tradeshift 揭露的「跨叢集服務依賴是難點」、〈對照：規模差異下的平台遷移〉中型組織判讀「服務本身切過去了、但資料面、認證面、觀測面還沒同步」也指向同類問題。跨叢集遷移最容易出的事故是「服務切過去了、依賴沒切過去」。Database、cache、message queue、observability pipeline、auth service 的切換時機要分別規劃，避免應用層在新叢集但仍跨網路打舊叢集的依賴，造成隱性 latency 或單點失效。規模差異下的同類問題見 [對照：規模差異下的平台遷移](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)。
 
 ## 大規模 K8s 的設計取捨
 
 K8s 在不同規模下的設計取捨會明顯分歧。小規模叢集追求簡單跟低運維成本，大規模叢集追求隔離跟自動化治理。同一套部署策略放到不同規模會在某個量級開始失效。
 
-對應 [9.C12 Riot Games：246 個 EKS cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)：揭露架構決策從 multi-tenant cluster 改成 single-tenant per game、Karpenter + Terraform 的 cluster 級自動化、35ms 延遲門檻 + Local Zones / Outposts 區域部署（case 中「35ms 反推 region 部署」屬作者判讀層、本章引用此推論）。對應 [9.C34 GCP 130,000-node GKE cluster](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)：揭露 control plane 極限取決於 storage backend（GCP 用 Spanner 替代 etcd）、AI workload 跟 web workload 容量規劃差異。對應 [9.C33 Maersk + Bosch AKS](/backend/09-performance-capacity/cases/maersk-bosch-azure-aks/)：揭露 Maersk 工程訴求引語「focus on things that makes the most business impact」、傳統產業上 K8s 動機是治理一致性（作者判讀）、適合 single-cluster-multi-namespace。
+對應 [Riot Games：246 個 EKS cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)：揭露架構決策從 multi-tenant cluster 改成 single-tenant per game、Karpenter + Terraform 的 cluster 級自動化、35ms 延遲門檻 + Local Zones / Outposts 區域部署（case 中「35ms 反推 region 部署」屬作者判讀層、本章引用此推論）。對應 [GCP 130,000-node GKE cluster](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)：揭露 control plane 極限取決於 storage backend（GCP 用 Spanner 替代 etcd）、AI workload 跟 web workload 容量規劃差異。對應 [Maersk + Bosch AKS](/backend/09-performance-capacity/cases/maersk-bosch-azure-aks/)：揭露 Maersk 工程訴求引語「focus on things that makes the most business impact」、傳統產業上 K8s 動機是治理一致性（作者判讀）、適合 single-cluster-multi-namespace。
 
 可重複套用的取捨判讀：
 
 1. **single-tenant per workload vs single-cluster multi-namespace**：高隔離需求（每個 workload 失效不能影響其他）、高延遲敏感度（需 region cluster）→ 多 cluster；治理一致性訴求（統一 release flow、合規邊界）→ 單一 cluster 多 namespace。
-2. **Cluster 容量極限取決於 control plane**：data plane（worker nodes）擴容容易、control plane（API server、etcd / storage）擴容難、瓶頸通常在 control plane。etcd 撐 5K-10K node 後吃力、需要替換 storage backend（Spanner / PostgreSQL / 自家 KV）才能撐萬級節點（見 [9.C34](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)）。control plane 的 ownership 邊界由 [5.7 control plane boundary](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 處理。
+2. **Cluster 容量極限取決於 control plane**：data plane（worker nodes）擴容容易、control plane（API server、etcd / storage）擴容難、瓶頸通常在 control plane。etcd 撐 5K-10K node 後吃力、需要替換 storage backend（Spanner / PostgreSQL / 自家 KV）才能撐萬級節點（見 [GCP：130,000-node GKE cluster 的工程極限](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)）。control plane 的 ownership 邊界由 [5.7 control plane boundary](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 處理。
 3. **Multi-cluster 治理需要 IaC + 自動化**：Terraform / Crossplane / Cluster API + Karpenter / Cluster Autoscaler 是基本工具。手動管理超過數十個 cluster 不可行。
 4. **AI workload 跟 web workload 容量規劃完全不同**：AI workload 短時間爆量創建 Pods（萬級 / 秒）、preempt 頻繁；web workload 節點生命週期長、變動緩。把 web 經驗套到 AI workload 容量規劃會嚴重低估壓力。
 
 關鍵判讀是「先決定 cluster 是隔離單位還是治理單位」。Riot Games 把 cluster 當隔離單位（246 個獨立 cluster），Maersk / Bosch 把 cluster 當治理單位（單 cluster 多 namespace）。同一個工具兩種用法、決定整體運維模型。
 
-對應 [5.C2 Condé Nast：EKS 平台整併與標準化](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/)：揭露多叢集整併到單一控制面的場景、跟 Maersk-Bosch 同屬「治理一致性」取捨方向（治理單位優先於隔離單位）。Condé Nast 的整併路徑是「盤點既有叢集差異 → 建立統一平台基線 → 藍綠或漸進切換業務流量」、對應前面「分階段平台遷移」段的批次節奏。
+對應 [Condé Nast：EKS 平台整併與標準化](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/)：揭露多叢集整併到單一控制面的場景、跟 Maersk-Bosch 同屬「治理一致性」取捨方向（治理單位優先於隔離單位）。Condé Nast 的整併路徑是「盤點既有叢集差異 → 建立統一平台基線 → 藍綠或漸進切換業務流量」、對應前面「分階段平台遷移」段的批次節奏。
 
 ## 判讀訊號
 
@@ -121,7 +121,7 @@ K8s 在不同規模下的設計取捨會明顯分歧。小規模叢集追求簡�
 
 ## 案例回寫
 
-部署切換語意可用 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 做回寫。先看事件中的失敗是在 rollout 批次、probe 判斷、還是 drain 時序，再對照本章的 rollout 節奏與停止條件。
+部署切換語意可用 [反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 做回寫。先看事件中的失敗是在 rollout 批次、probe 判斷、還是 drain 時序，再對照本章的 rollout 節奏與停止條件。
 
 這個案例主要支撐的是「部署批次與切換時序」判讀，不直接支撐資料庫交易切分或 consumer 冪等；若問題落在提交一致性或重播補償，應轉到 1.3 或 3.4。
 
@@ -142,4 +142,4 @@ Kubernetes 部署策略要和觀測、驗證、事故流程同時對齊。
 
 ## 下一步路由
 
-要把部署與流量切換一起治理，接著讀 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)。要看切換失敗與回退判讀，接著讀 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)。要看大規模 K8s 容量設計，接著讀 [9.C12 Riot Games](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 跟 [9.C34 GCP 130K-node](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)。
+要把部署與流量切換一起治理，接著讀 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)。要看切換失敗與回退判讀，接著讀 [反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)。要看大規模 K8s 容量設計，接著讀 [Riot Games](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 跟 [GCP 130K-node](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)。

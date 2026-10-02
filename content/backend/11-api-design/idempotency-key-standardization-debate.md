@@ -6,7 +6,7 @@ weight: 34
 tags: ["backend", "api-design", "idempotency"]
 ---
 
-冪等鍵的標準化現況是業界實作先行、正式標準停滯：IETF httpapi 工作組的 `Idempotency-Key` header draft 推進到版本 07 後過期，狀態為 expired（見 [11.C40](/backend/11-api-design/cases/idempotency-ietf-key-header-draft/)）。draft 期滿是 IETF 的流程事實，本文不推測它為什麼沒有續推 —— 工作組人力、優先序、爭議未收斂都可能是原因，而公開紀錄沒有給答案。本文分析的是另一件事：即使 draft 當年推進到 RFC，統一得了的是什麼、統一不了的又是什麼。切線不在「命名 vs 語意」——那條線畫得太粗，因為有些語意其實是普世的。切線在**形狀 vs 值**：一份標準規定得了 header 叫什麼名字、重放要用哪個欄位標示、同 key 不同參數必須報錯、保存期必須以某個明文欄位揭露；規定不了保存期是 24 小時還是 7 天、replay 該回首次快照還是最新狀態，因為這些取決於這個 API 在做什麼。HTTP 對快取正是這樣處理的：`Cache-Control` 標準化了一份完全應用相關的政策該怎麼揭露，沒有規定任何一個值。
+冪等鍵的標準化現況是業界實作先行、正式標準停滯：IETF httpapi 工作組的 `Idempotency-Key` header draft 推進到版本 07 後過期，狀態為 expired（見 [IETF Idempotency-Key draft：標準化停在 expired](/backend/11-api-design/cases/idempotency-ietf-key-header-draft/)）。draft 期滿是 IETF 的流程事實，本文不推測它為什麼沒有續推 —— 工作組人力、優先序、爭議未收斂都可能是原因，而公開紀錄沒有給答案。本文分析的是另一件事：即使 draft 當年推進到 RFC，統一得了的是什麼、統一不了的又是什麼。切線不在「命名 vs 語意」——那條線畫得太粗，因為有些語意其實是普世的。切線在**形狀 vs 值**：一份標準規定得了 header 叫什麼名字、重放要用哪個欄位標示、同 key 不同參數必須報錯、保存期必須以某個明文欄位揭露；規定不了保存期是 24 小時還是 7 天、replay 該回首次快照還是最新狀態，因為這些取決於這個 API 在做什麼。HTTP 對快取正是這樣處理的：`Cache-Control` 標準化了一份完全應用相關的政策該怎麼揭露，沒有規定任何一個值。
 
 這件事對讀者的實際意義是：在標準缺席的現在，那份「形狀」得由每個整合方自己手工維護一次，而本文其餘各節就是那份手工版本。本文攤開各家條款的實質差異與它們各自的成立情境。自建一套冪等機制要承諾哪些條款，見 [API 層冪等設計](/backend/11-api-design/api-idempotency-design/)。
 
@@ -22,7 +22,7 @@ tags: ["backend", "api-design", "idempotency"]
 
 ## 命名之爭與語意之爭要分開看
 
-觀察到的分歧有兩層。表層是 header 命名：Stripe 用 `Idempotency-Key`、PayPal 用 `PayPal-Request-Id`，且並非所有 PayPal API 都支援這個 header（見 [11.C41](/backend/11-api-design/cases/idempotency-paypal-request-id/)）。這是無標準的直接後果，而「同一家內還要逐 API 查」正是它的極端形態 —— 整合方每接一家就要查一次 header 名，SDK、gateway 與觀測層都無法對這個機制寫通用邏輯。
+觀察到的分歧有兩層。表層是 header 命名：Stripe 用 `Idempotency-Key`、PayPal 用 `PayPal-Request-Id`，且並非所有 PayPal API 都支援這個 header（見 [PayPal-Request-Id：同語意、不同契約的冪等實作](/backend/11-api-design/cases/idempotency-paypal-request-id/)）。這是無標準的直接後果，而「同一家內還要逐 API 查」正是它的極端形態 —— 整合方每接一家就要查一次 header 名，SDK、gateway 與觀測層都無法對這個機制寫通用邏輯。
 
 深層是條款語意，而它跟業務形態綁在一起（以下對標準化難度的分析是從各家條款差異推導，未見任何公開規範明文處理）。難以統一的理由有三個：「同一次操作」的邊界由消費者定義，只有消費者知道兩次呼叫算不算同一件事；同 key 帶了不同參數算不算衝突，取決於這個 API 的哪些參數屬於操作語意、哪些只是傳輸細節；replay 該回什麼，取決於這個操作在首次回應時是否已經結束。三個理由都指回各 API 自己的業務形態，統一的 header 名解不了任何一個。
 
@@ -38,7 +38,7 @@ tags: ["backend", "api-design", "idempotency"]
 
 ## Replay 語意的快照派與現況派各有成立情境
 
-最實質的分歧在同 key 重送時回什麼。Stripe 回傳首次請求的 status code 加 body，包含 500 也照樣快取重放（見 [11.C39](/backend/11-api-design/cases/idempotency-stripe-api-contract/)）；PayPal 回傳前次請求的最新狀態（C41）。案例判讀已點出取捨方向：後者對非同步操作友善，而失去 exactly-once 的回應保證。
+最實質的分歧在同 key 重送時回什麼。Stripe 回傳首次請求的 status code 加 body，包含 500 也照樣快取重放（見 [Stripe 冪等鍵契約條款：24h 保存、500 也重放](/backend/11-api-design/cases/idempotency-stripe-api-contract/)）；PayPal 回傳前次請求的最新狀態（C41）。案例判讀已點出取捨方向：後者對非同步操作友善，而失去 exactly-once 的回應保證。
 
 兩派的差異在同步操作上幾乎觀察不到 —— 操作在首次回應時已經結束，首次結局跟最新狀態是同一份資料。分歧要在操作跨越首次回應的時間軸時才浮現，而兩個方向的後果相反（以下從兩家的條款推導）。
 

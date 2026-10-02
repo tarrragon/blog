@@ -39,7 +39,7 @@ Invalidation 的責任是讓快取副本在正式狀態變更後收斂。常見�
 
 ### Cache 不一致的主要來源點
 
-規模化 cache 的不一致主要由 *topology 變動事件* 觸發、不是 TTL 設定。對應 [2.C1 Meta Cache Consistency Upgrade](/backend/02-cache-redis/cases/meta-cache-consistency-upgrade/) — 案例指出 promotion、shard move、故障恢復是三類主要事件來源、傳統 invalidation 在大規模系統難以維持穩定。
+規模化 cache 的不一致主要由 *topology 變動事件* 觸發、不是 TTL 設定。對應 [Meta Cache Consistency Upgrade](/backend/02-cache-redis/cases/meta-cache-consistency-upgrade/) — 案例指出 promotion、shard move、故障恢復是三類主要事件來源、傳統 invalidation 在大規模系統難以維持穩定。
 
 **三類事件的典型機制**（具體實作依 cluster 設計而異）：
 
@@ -78,7 +78,7 @@ Origin protection 的責任是避免 cache miss 把壓力集中打回資料庫�
 
 ## 跨區一致性窗口
 
-當 cache 跨多 region 部署、一致性問題從「副本 vs source-of-truth」變成「副本 vs 副本」。同一個用戶在不同 region 看到 cache 內容差異、可能影響業務邏輯（庫存超賣、配額超用、權限延遲）。規模化的 cache 把跨區一致性窗口跟區域容錯設計納入同一模型、不是分開治理（對應 [2.C6 Netflix EVCache](/backend/02-cache-redis/cases/netflix-evcache-global-cache-layer/) 跟 [2.C2 Meta mcrouter](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)）。
+當 cache 跨多 region 部署、一致性問題從「副本 vs source-of-truth」變成「副本 vs 副本」。同一個用戶在不同 region 看到 cache 內容差異、可能影響業務邏輯（庫存超賣、配額超用、權限延遲）。規模化的 cache 把跨區一致性窗口跟區域容錯設計納入同一模型、不是分開治理（對應 [Netflix EVCache](/backend/02-cache-redis/cases/netflix-evcache-global-cache-layer/) 跟 [Meta mcrouter](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)）。
 
 **Strong sync** 採每次寫入同步到所有 region、延遲高、可靠性高。適合付款 / 庫存 / 權限類資料 — 庫存超賣的代價是業務直接損失（賣出實際沒有的商品）、權限不一致的代價是越權或拒服務、付款延遲一致的代價是重複扣款。這些代價高到值得付跨 region [quorum](/backend/knowledge-cards/quorum/) 的 latency 成本。失敗代價路徑：跨 region quorum 不可達時 → 寫入失敗 → 用戶看到操作失敗、業務不繼續寫錯資料。
 
@@ -90,9 +90,9 @@ Origin protection 的責任是避免 cache miss 把壓力集中打回資料庫�
 
 ### 跨 cloud 部署的資料引力
 
-當 application 跟 cache 不在同一 cloud / region、每次 cache lookup 吃跨網路 latency（視 region pair 而定、9.C35 觀察值為 5-30ms）。對「每次互動查多個 cache」的服務、5ms × 10 lookup = 50ms 額外延遲、用戶感受明顯。
+當 application 跟 cache 不在同一 cloud / region、每次 cache lookup 吃跨網路 latency（視 region pair 而定、Snap 觀察值為 5-30ms）。對「每次互動查多個 cache」的服務、5ms × 10 lookup = 50ms 額外延遲、用戶感受明顯。
 
-對應 [9.C35 Snap KeyDB cross-cloud](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/) — Snap 把 KeyDB cache 放在 GCP 上、減少跨 cloud cache lookup latency。資料引力原則：data 在哪、cache 跟著去、跨 cloud 走 batch sync 降頻、應用與 cache 共置主資料 cloud。
+對應 [Snap KeyDB cross-cloud](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/) — Snap 把 KeyDB cache 放在 GCP 上、減少跨 cloud cache lookup latency。資料引力原則：data 在哪、cache 跟著去、跨 cloud 走 batch sync 降頻、應用與 cache 共置主資料 cloud。
 
 **Multi-cloud cache 部署原則**：
 

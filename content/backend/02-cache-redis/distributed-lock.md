@@ -90,4 +90,4 @@ distributed lock 在「偶爾失效的代價可控」的場景是一個效率優
 
 ## 下一步路由
 
-要看快取層一致性與容量壓力，接著讀 [2.3 TTL 與 eviction](/backend/02-cache-redis/ttl-eviction/)。要看鎖語意在事故裡的擴散方式，接著讀 [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)。
+要看快取層一致性與容量壓力，接著讀 [2.3 TTL 與 eviction](/backend/02-cache-redis/ttl-eviction/)。要看鎖語意在事故裡的擴散方式，接著讀 [反例：快取切換引發 Stampede 回歸](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)。

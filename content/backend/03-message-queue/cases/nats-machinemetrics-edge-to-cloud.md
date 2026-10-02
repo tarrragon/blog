@@ -22,7 +22,7 @@ NATS 進階主題：Cluster + Supercluster + Leaf node / JetStream KV + Object S
 
 ## 下一步路由
 
-回 [NATS vendor 頁](/backend/03-message-queue/vendors/nats/) 與 [3.C36 Intelecy](/backend/03-message-queue/cases/nats-intelecy-industrial-iot/)（同類對照）。
+回 [NATS vendor 頁](/backend/03-message-queue/vendors/nats/) 與 [Intelecy](/backend/03-message-queue/cases/nats-intelecy-industrial-iot/)（同類對照）。
 
 ## 引用源
 

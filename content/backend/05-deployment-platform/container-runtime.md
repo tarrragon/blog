@@ -36,7 +36,7 @@ image 的責任是固定依賴、執行入口與檔案結構，讓同一版本�
 3. **避免 image 中殘留敏感資訊**：build arg、環境變數、中間層都可能殘留 secret。secret 不進 Dockerfile，用 runtime mount 或 secret manager 注入（注入後仍有曝露邊界——env 值可經 `/proc/<pid>/environ`、`docker inspect` 讀到，見 [機密 runtime 注入](/linux/dotfile/knowledge-cards/runtime-secret-injection/)）。
 4. **image 標記策略**：`latest` tag 不可重現——同一個 tag 指向的 image 會隨時間改變。用 git commit SHA 或語意版本號標記，讓每個 tag 指向唯一 image（tag 精確度與可重現性見 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/)）。
 
-對應 [5.C3 Orbitera managed K8s migration](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/)：揭露「跨平台遷移本質是能力遷移」。遷移到新平台時，CI/CD pipeline 可能換了 runner 環境、換了 registry——建置可重現性的前提是依賴鎖定與 multi-stage build 本身不依賴特定 CI 環境。
+對應 [Orbitera managed K8s migration](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/)：揭露「跨平台遷移本質是能力遷移」。遷移到新平台時，CI/CD pipeline 可能換了 runner 環境、換了 registry——建置可重現性的前提是依賴鎖定與 multi-stage build 本身不依賴特定 CI 環境。
 
 ## entrypoint 與啟動行為
 
@@ -113,7 +113,7 @@ runtime 配置與映像版本要保留相容窗口，讓部署與回退可分步
 
 ## 遷移期的 Runtime 穩定性
 
-對應 [5.C5 Miro managed EKS 遷移](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)：揭露「平台託管化的價值在讓團隊把心力從底層維護轉到交付效率與可靠性策略」。遷移到 managed 平台後，runtime 層面的變化包含 container runtime 版本（containerd vs Docker shim）、node OS、storage driver、network plugin。這些變化可能改變 image pull 速度、filesystem 行為、DNS 解析路徑。
+對應 [Miro managed EKS 遷移](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)：揭露「平台託管化的價值在讓團隊把心力從底層維護轉到交付效率與可靠性策略」。遷移到 managed 平台後，runtime 層面的變化包含 container runtime 版本（containerd vs Docker shim）、node OS、storage driver、network plugin。這些變化可能改變 image pull 速度、filesystem 行為、DNS 解析路徑。
 
 遷移前後的 runtime 驗證應包含：
 
@@ -147,9 +147,9 @@ Container 常被簡化成「打包完就好」的步驟，結果是部署風險�
 
 ## 案例回寫
 
-runtime 穩定性可用 [5.C1 Tradeshift：self-managed K8s -> EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) 回寫。先看遷移期內啟動行為與資源限制如何影響切流，再對照本章檢查 image、entrypoint、limit 與 config 相容窗口。這個案例主要支撐的是「執行環境可重現性」判讀——遷移到新叢集時，image 不變但 runtime 環境變了（node OS、container runtime 版本、network plugin），runtime 穩定性的前提是 image 本身不依賴特定宿主環境的行為。
+runtime 穩定性可用 [Tradeshift：self-managed K8s -> EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) 回寫。先看遷移期內啟動行為與資源限制如何影響切流，再對照本章檢查 image、entrypoint、limit 與 config 相容窗口。這個案例主要支撐的是「執行環境可重現性」判讀——遷移到新叢集時，image 不變但 runtime 環境變了（node OS、container runtime 版本、network plugin），runtime 穩定性的前提是 image 本身不依賴特定宿主環境的行為。
 
-[5.C5 Miro managed EKS 遷移](/backend/05-deployment-platform/cases/miro-managed-eks-migration/) 從另一個角度支撐：managed 平台接管 runtime 基礎設施後，container runtime 版本升級由平台控制，團隊要能驗證自家 image 在新 runtime 版本下行為一致。
+[Miro managed EKS 遷移](/backend/05-deployment-platform/cases/miro-managed-eks-migration/) 從另一個角度支撐：managed 平台接管 runtime 基礎設施後，container runtime 版本升級由平台控制，團隊要能驗證自家 image 在新 runtime 版本下行為一致。
 
 若同版容器在不同節點出現分歧行為，先追建置來源與 runtime config 版本鏈，確認是依賴漂移還是環境漂移，再把關鍵證據收斂到 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。不直接支撐 service discovery TTL 或 queue replay 邏輯；若根因在定位鏈路或重播流程，應轉到 5.4 或 3.4。
 

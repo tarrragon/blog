@@ -10,7 +10,7 @@ tags: ["backend", "api-design", "pagination"]
 
 ## 分頁：offset 的兩個失效模式
 
-offset 分頁（`?page=3&limit=50`）的介面直觀、失效有明確的機制。Slack 的工程紀錄給了一手描述：其一、`LIMIT / OFFSET` 深頁掃描 — 資料庫要掃過並丟棄前面所有列、頁數越深成本越高；其二、page window 漂移 — 高頻寫入下、兩次請求之間有新資料插入、消費者會看到跳項或重複（見 [11.C37](/backend/11-api-design/cases/pagination-slack-cursor-migration/)）。
+offset 分頁（`?page=3&limit=50`）的介面直觀、失效有明確的機制。Slack 的工程紀錄給了一手描述：其一、`LIMIT / OFFSET` 深頁掃描 — 資料庫要掃過並丟棄前面所有列、頁數越深成本越高；其二、page window 漂移 — 高頻寫入下、兩次請求之間有新資料插入、消費者會看到跳項或重複（見 [Slack：offset 到 opaque cursor 的分頁遷移](/backend/11-api-design/cases/pagination-slack-cursor-migration/)）。
 
 Slack 的解法是遷移到 opaque [cursor](/backend/knowledge-cards/pagination-cursor/)：介面收斂為 `cursor` 加 `limit`、回傳 `next_cursor`、cursor 內容 Base64 編碼、消費者不可解析。opaque 這個性質是設計重點 — **分頁狀態的表示權留在 server 端**、消費者不能解析就不能依賴內部格式、server 可以自由更換底層策略（keyset、shard 位置、甚至混合）而不動介面。同一份紀錄明列了付出的代價：失去 total count 與跳頁能力 — 這是明示的產品決策、選 cursor 前要跟產品端確認「第 N 頁」跟「共幾筆」是不是真需求。
 
@@ -28,7 +28,7 @@ Slack 的解法是遷移到 opaque [cursor](/backend/knowledge-cards/pagination-
 
 ## 長時操作：把「進行中」實體化
 
-超過請求逾時預算的操作（報表、匯入、佈建）、介面要回的是「工作的身分」而非結果。Google AIP-151 是這個模式的系統化規範：長時方法回傳 Operation resource、client 輪詢其 `done` / `response` / `error` 狀態、回應型別事先宣告、operation 約 30 天過期（見 [11.C44](/backend/11-api-design/cases/longrun-google-aip151/)）。比起裸的 202 加 Location、Operation resource 的增量價值在統一：所有長時操作共用同一個查詢介面、client 寫一套 polling 邏輯到處用；`done=true` 直接回的 validate-only 條款、示範了用同一個介面模式涵蓋同步捷徑的手法（C44 判讀）。
+超過請求逾時預算的操作（報表、匯入、佈建）、介面要回的是「工作的身分」而非結果。Google AIP-151 是這個模式的系統化規範：長時方法回傳 Operation resource、client 輪詢其 `done` / `response` / `error` 狀態、回應型別事先宣告、operation 約 30 天過期（見 [Google AIP-151：長時操作實體化成 Operation resource](/backend/11-api-design/cases/longrun-google-aip151/)）。比起裸的 202 加 Location、Operation resource 的增量價值在統一：所有長時操作共用同一個查詢介面、client 寫一套 polling 邏輯到處用；`done=true` 直接回的 validate-only 條款、示範了用同一個介面模式涵蓋同步捷徑的手法（C44 判讀）。
 
 設計時要明訂的三件事：operation 的生命週期（查詢結果保留多久 — AIP 選 30 天）、輪詢的節奏指引（配合 [11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/) 的限流語意、避免消費者用 while-true 打爆查詢端點）、以及完成通知的替代路徑（webhook 回呼、屬 styles/realtime 的 backlog 範圍）。
 

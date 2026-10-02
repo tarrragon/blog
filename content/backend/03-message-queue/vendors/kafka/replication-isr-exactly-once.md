@@ -6,7 +6,7 @@ weight: 12
 tags: ["backend", "message-queue", "kafka", "replication", "isr", "exactly-once", "deep-article"]
 ---
 
-> 本文是 [Kafka](/backend/03-message-queue/vendors/kafka/) overview「Replication 與 exactly-once 升級」段的 implementation-layer deep article。Overview 已給出 partition / replication 的選型定位、本文展開 *寫入承諾* 跟 *處理語義* 兩條獨立軸線怎麼設、邊界在哪、成本是什麼。對應反例 [3.C9 Queue 語義誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。
+> 本文是 [Kafka](/backend/03-message-queue/vendors/kafka/) overview「Replication 與 exactly-once 升級」段的 implementation-layer deep article。Overview 已給出 partition / replication 的選型定位、本文展開 *寫入承諾* 跟 *處理語義* 兩條獨立軸線怎麼設、邊界在哪、成本是什麼。對應反例 [Queue 語義誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。
 
 ## 寫入承諾與處理語義是兩條獨立軸線
 
@@ -222,13 +222,13 @@ Topic: repl-demo  Partition: 0  Leader: 2  Replicas: 2,3,1  Isr: 1,2,3
 
 Exactly-once 的封閉迴圈假設訊息格式穩定、replay 可重現。[3.7 event-contract-replay-boundary](/backend/03-message-queue/event-contract-replay-boundary/) 展開 schema 演進與 replay 邊界 — 當 transaction 提供的原子性遇上 schema 變更、replay 舊訊息的可重現性會受 contract 影響、是 exactly-once 在時間維度上的延伸限制。
 
-### 對應反例 3.C9
+### 對應反例
 
-[3.C9 Queue 語義誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 是本文兩條軸線混淆的真實後果：broker 遷移後「名稱上相近的 delivery semantics」在失敗重播時產生不同結果、出現重複扣款與狀態漏更新。判讀路徑正是本文的拆分 — 先確認是寫入承諾（acks / ISR）還是處理語義（idempotence / commit 時機）出問題、不要用 queue depth 這種寫入承諾層的指標去判斷處理語義層的故障。
+[Queue 語義誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 是本文兩條軸線混淆的真實後果：broker 遷移後「名稱上相近的 delivery semantics」在失敗重播時產生不同結果、出現重複扣款與狀態漏更新。判讀路徑正是本文的拆分 — 先確認是寫入承諾（acks / ISR）還是處理語義（idempotence / commit 時機）出問題、不要用 queue depth 這種寫入承諾層的指標去判斷處理語義層的故障。
 
-### 對應案例 3.C21 Goldman Sachs MSK 遷移
+### 對應案例 Goldman Sachs MSK 遷移
 
-[3.C21 Goldman Sachs MSK 遷移](/backend/03-message-queue/cases/kafka-goldman-sachs-msk-migration/) 揭露遷移時可靠性配置的細節風險集中在 client 端的 timeout / flush / LB 配置、而非 broker 本身。本文的 acks=all 在 ISR 不足時拒絕寫入、若 client 端的 retry 與 timeout 沒對齊（如 flush timeout 太短）、會把「broker 正常的 backpressure」誤判成「遷移失敗」。可靠性配置與 client 容錯參數要一起驗證。
+[Goldman Sachs MSK 遷移](/backend/03-message-queue/cases/kafka-goldman-sachs-msk-migration/) 揭露遷移時可靠性配置的細節風險集中在 client 端的 timeout / flush / LB 配置、而非 broker 本身。本文的 acks=all 在 ISR 不足時拒絕寫入、若 client 端的 retry 與 timeout 沒對齊（如 flush timeout 太短）、會把「broker 正常的 backpressure」誤判成「遷移失敗」。可靠性配置與 client 容錯參數要一起驗證。
 
 ### 下一步路由
 

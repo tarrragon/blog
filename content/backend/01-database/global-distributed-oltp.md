@@ -46,7 +46,7 @@ KV 與 document DB 多半用 [eventual consistency](/backend/knowledge-cards/eve
 
 **[External consistency](/backend/knowledge-cards/external-consistency/)**：用 TrueTime 保證「全球任何節點看到的交易順序、跟 wall clock 一致」。它比 CAP 的 strong consistency（linearizability）更強：linearizability 只規範單一物件的讀寫，external consistency 規範的是整筆交易的先後順序。
 
-**容量特性**（引自 [9.C10 Spanner 案例](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）：
+**容量特性**（引自 [Spanner 案例](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）：
 
 - 內部峰值 > 10 億 requests / 秒
 - 線性擴展：2 nodes → 45K reads/sec、4 nodes → 90K reads/sec
@@ -94,7 +94,7 @@ TrueTime 是 *專屬硬體投資*、Aurora DSQL、CockroachDB、TiDB 是 *軟體
 - 預留 buffer 讓 leader / follower lag 在尖峰時仍能收斂、否則 replication lag 爆增、讀走 replica 的 query 拿到太舊資料。
 - 跨 region quorum 在某個 region 暫時不可用時、剩下 region 要能繼續 quorum、所以每 region 的容量都要 >= quorum 所需。
 
-對應 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 從 TiDB 遷出是業務需求側的判斷：該 workload 本身就能接受 eventually consistent、為 strong consistency 付的 over-provision 屬於浪費。判讀重點：strong consistency 是業務需求時、distributed SQL 的常態 over-provision 是合理代價；業務需求不到這個層級時、KV / 傳統 OLTP 是更划算的選項。
+對應 [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 從 TiDB 遷出是業務需求側的判斷：該 workload 本身就能接受 eventually consistent、為 strong consistency 付的 over-provision 屬於浪費。判讀重點：strong consistency 是業務需求時、distributed SQL 的常態 over-provision 是合理代價；業務需求不到這個層級時、KV / 傳統 OLTP 是更划算的選項。
 
 選型公式：先問業務需求要什麼一致性層級、再選 DB 類型、避免倒過來「先選 DB 再硬塞需求」。
 
@@ -147,7 +147,7 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 - 已用 PostgreSQL → 選 CockroachDB / Aurora DSQL（migration 容易）
 - 已用 MySQL → 選 TiDB
 
-對應案例：[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 從 TiDB 遷出，理由是分散式 SQL 的結構性 over-provision 對不需要 strong consistency 的 workload 不划算（見〈分散式 SQL 的 over-provision 屬結構性成本〉）。
+對應案例：[Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 從 TiDB 遷出，理由是分散式 SQL 的結構性 over-provision 對不需要 strong consistency 的 workload 不划算（見〈分散式 SQL 的 over-provision 屬結構性成本〉）。
 
 ## Cosmos DB multi-region write 模式
 
@@ -175,9 +175,9 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 
 **對應案例**：
 
-- [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — AR 玩家位置用 session consistency、跨 region 寫入
-- [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — Black Friday 全球用戶、Cosmos DB 跨 region 複製
-- [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — 分析 platform 用 weakest acceptable consistency、最大 throughput
+- [Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — AR 玩家位置用 session consistency、跨 region 寫入
+- [ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — Black Friday 全球用戶、Cosmos DB 跨 region 複製
+- [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — 分析 platform 用 weakest acceptable consistency、最大 throughput
 
 ## 跨地理合規：法規限制下的 global OLTP
 
@@ -199,9 +199,9 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 
 **對應案例**：
 
-- [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 7 個受監管市場、各自獨立 Aurora cluster、不能合併
-- [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — 15 主 region + 5 衛星、按合規區分布
-- [9.C32 Clearent](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) — 美國支付業務、Azure SQL Hyperscale + 美國 region
+- [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 7 個受監管市場、各自獨立 Aurora cluster、不能合併
+- [Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — 15 主 region + 5 衛星、按合規區分布
+- [Clearent](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) — 美國支付業務、Azure SQL Hyperscale + 美國 region
 
 ## 延遲代價：跨 region quorum 不可壓縮
 
@@ -222,8 +222,8 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 
 **對應案例**：
 
-- [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) — sub-ms 需求、無法跨 region、用 single-AZ cluster placement
-- [9.C12 Riot Games](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) — 35ms VALORANT 延遲門檻、靠 region cluster 滿足、不靠 global DB
+- [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) — sub-ms 需求、無法跨 region、用 single-AZ cluster placement
+- [Riot Games](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) — 35ms VALORANT 延遲門檻、靠 region cluster 滿足、不靠 global DB
 
 詳見 [Latency Budget 卡片](/backend/knowledge-cards/latency-budget/)。
 
@@ -231,11 +231,11 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 
 讀「100-200ms 跨洲延遲」這種數字、不能只看絕對值、要看 *業務代價怎麼隨延遲變化*。不同業務型態的延遲代價曲線不同、決定能不能用 strong consistency 全球分散。
 
-**B2B agent 操作介面**（客服平台、CRM）：延遲代價的特性是 *累積*。agent 一通客戶電話內連續操作數十次、每次卡 1 秒、累積 30 秒讓 agent 在用戶面前沉默 — 客服效率直接掉一半、客戶等不及掛電話、agent 績效跟 NPS 同時下降。專屬訊號是「單次 latency 看似可接受、agent 體感卻變慢」。對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 用 15 個 region 把任一 agent 的 DB 延遲壓到 < 50ms — 客服 SaaS 對單次延遲的容忍區間遠窄於一般網路服務。
+**B2B agent 操作介面**（客服平台、CRM）：延遲代價的特性是 *累積*。agent 一通客戶電話內連續操作數十次、每次卡 1 秒、累積 30 秒讓 agent 在用戶面前沉默 — 客服效率直接掉一半、客戶等不及掛電話、agent 績效跟 NPS 同時下降。專屬訊號是「單次 latency 看似可接受、agent 體感卻變慢」。對應 [Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 用 15 個 region 把任一 agent 的 DB 延遲壓到 < 50ms — 客服 SaaS 對單次延遲的容忍區間遠窄於一般網路服務。
 
 **B2C 終端用戶**（社群、電商）：延遲代價是 *一次性跳離*。用戶等 1 秒會抱怨、等 3 秒會跳離；但完成一個操作就走、不會像 B2B 累積多次。容忍區間在 200ms-500ms、超過就掉 conversion。專屬訊號是「session bounce rate 跟 latency p99 高度相關」、不是看平均。
 
-**金融交易**（payment、trading）：延遲代價有兩面、是其他業務型態少見的結構。一面是用戶體驗（付款卡 = 結帳放棄）、另一面是 *系統正確性*（交易順序錯 = 對帳異常、稽核失敗）。系統正確性這一面的代價讓金融業願意付 100-200ms 換 strong consistency、因為對帳成本遠高於延遲成本。專屬訊號是「願意接受比 B2C 更高的 latency budget、但拒絕任何 consistency 妥協」。對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個受監管市場的設計。
+**金融交易**（payment、trading）：延遲代價有兩面、是其他業務型態少見的結構。一面是用戶體驗（付款卡 = 結帳放棄）、另一面是 *系統正確性*（交易順序錯 = 對帳異常、稽核失敗）。系統正確性這一面的代價讓金融業願意付 100-200ms 換 strong consistency、因為對帳成本遠高於延遲成本。專屬訊號是「願意接受比 B2C 更高的 latency budget、但拒絕任何 consistency 妥協」。對應 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個受監管市場的設計。
 
 **IoT / Telemetry**：延遲幾乎無業務代價（資料晚 10 秒進來、報表還是準）、但 throughput 才是主導指標。原因是這類業務的價值來自 *大量裝置的聚合趨勢*、不是 *單一裝置即時回應*；只要事件最終到達且順序合理、晚一點不影響決策。專屬訊號是「百萬裝置同時上報、寫入吞吐才是 SLO、latency 不在 alert 條件裡」。選型上 KV 或時序 DB 比 strong-consistency OLTP 更划算。
 
@@ -285,7 +285,7 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 **適用場景的業務理由**：
 
 - **99.99%（受監管產業、付款）**：合約 SLA 通常落在這層。受監管金融在中央銀行 / 金融監管機關的書面要求下、年度書面合規會審查 downtime 紀錄、超過 52 分鐘 / 年要解釋；付款 gateway 對商家 SLA 通常承諾 99.99%、低於這個值會被合作夥伴扣保證金。
-- **99.999%（客服 SaaS / telco）**：5x9 是 B2B 客服 SaaS 跟電信業的 *合約義務*、不是行銷話術。對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — 客服平台用 15 主 region + 5 衛星 region 達 99.999%、架構成本約是 single-region 的 15 倍、但 B2B 客服合約要 5x9、這是合理投資。對應 [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — 廣告計費 1 分鐘斷線可能損失幾百萬美金廣告收入、5x9 對應真實營收邊界。電信業 911 緊急通話必須 5x9 是更嚴格的法規層級。
+- **99.999%（客服 SaaS / telco）**：5x9 是 B2B 客服 SaaS 跟電信業的 *合約義務*、不是行銷話術。對應 [Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — 客服平台用 15 主 region + 5 衛星 region 達 99.999%、架構成本約是 single-region 的 15 倍、但 B2B 客服合約要 5x9、這是合理投資。對應 [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — 廣告計費 1 分鐘斷線可能損失幾百萬美金廣告收入、5x9 對應真實營收邊界。電信業 911 緊急通話必須 5x9 是更嚴格的法規層級。
 - **99.9999%（核電、航空管制）**：6x9 不只是工程目標、是 *公共安全法規*。核電廠 SCADA 系統、空管雷達、軌道交通信號這類業務 30 秒 / 年的中斷會威脅生命、所以付得起跨多 cloud / 異地災備 / 全鏈路演練的成本。一般網路服務談 6x9 通常是過度設計。
 
 **SLO 木桶效應**：99.999% 是 *系統整體* 數字、不是 DB 單獨。DNS、load balancer、application、DB、storage 任何一層 single-region 就破壞整體 SLO。傳統工程師常以為「DB 多 region 就好」、忽略 application 跑在 single-region 的話、application down = 整體 down。
@@ -311,7 +311,7 @@ distributed SQL 跟 single-cluster SQL 之間還有一層：**多個獨立 clust
 - 單一資料庫的 storage 有上限：Azure SQL Hyperscale 是 128 TB（Microsoft Learn〈What is the Hyperscale service tier?〉），超過要 sharding
 - compute 上限是 instance type（80 vCore 等）、超過要 sharding 或換 distributed SQL
 
-對應 [9.C32 Clearent](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) — 5 億筆/年支付交易、用 Hyperscale 撐單一 cluster、沒拆 sharding 是因為支付業需要 *跨 merchant 對帳一致性*、共用 OLTP 比拆 cluster 划算。
+對應 [Clearent](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) — 5 億筆/年支付交易、用 Hyperscale 撐單一 cluster、沒拆 sharding 是因為支付業需要 *跨 merchant 對帳一致性*、共用 OLTP 比拆 cluster 划算。
 
 **選 vendor 看生態、不看技術**：Hyperscale 跟 Aurora 工程哲學一致、選哪家取決於 application 已在哪個 cloud。AWS 客戶選 Aurora、Azure 客戶選 Hyperscale、GCP 客戶選 AlloyDB。技術差異小、生態差異大（IAM 整合、observability tooling、計費綁定）。
 
@@ -320,20 +320,20 @@ distributed SQL 跟 single-cluster SQL 之間還有一層：**多個獨立 clust
 - **微服務各自 OLTP**（Netflix Aurora consolidation）：每個微服務有自己的 Aurora cluster、跨服務一致性靠 application 層 saga / outbox。適合服務間業務 *天然解耦*（用戶服務、訂單服務、商品服務各自 owned data）。Query path 上、跨服務查詢必須走 API 而非 SQL JOIN、要接受查多個服務多次往返；一致性 path 上、跨服務 transaction 用 saga + compensation、容忍中間態。
 - **微服務共用 OLTP**（Clearent Hyperscale）：所有微服務共用一個大 cluster、跨服務一致性靠 DB transaction。適合業務 *天然耦合*（payment 跟 refund 跟 chargeback 必須在同一 transaction）。Query path 上、可以用 SQL JOIN 直接查跨服務資料、簡單；一致性 path 上、所有微服務共享一個 schema 演進邊界、schema migration 影響所有服務、要協調。
 - **Sharding by tenant**（B2B SaaS）：每個 enterprise tenant 自己 cluster、適合 tenant 之間完全隔離、大客戶可能要求專屬 cluster。Query path 上、跨 tenant 查詢（例如平台級報表）要走 federated query 或 ETL 聚合、不能直接 join；運維 path 上、每個 tenant cluster 的容量規劃、backup、upgrade 都獨立、運維工時隨 tenant 數量線性成長。
-- **Sharding by region**（受監管產業）：每個合規市場自己 cluster、合規驅動、不是性能驅動。對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個市場各自獨立。
+- **Sharding by region**（受監管產業）：每個合規市場自己 cluster、合規驅動、不是性能驅動。對應 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個市場各自獨立。
 
 判讀重點：sharding 不是「擴容到不夠才做」、是「業務模型決定的初始設計」。等到 single cluster 撐不住才開始 shard、會踩進「跨 shard 一致性」的工程地雷區、修改成本遠高於初期設計成本。Managed DB（Aurora、Hyperscale）的容量上限是 *已知* 的、設計時就該知道未來何時觸發 sharding。對應 [1.1 高併發資料存取](/backend/01-database/high-concurrency-access/) 的 storage 層 replication 段 — Hyperscale / Aurora 同類設計的容量上限同樣是 sharding 觸發點。
 
 ## 案例對照
 
-| 案例                                                                                                                  | 教學重點                                          |
-| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)                         | 10 億 req/sec 線性擴展、TrueTime 實作             |
-| [9.C11 Minecraft Earth Cosmos DB](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)           | turnkey global distribution、5 consistency levels |
-| [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)                 | 受監管金融跨市場、必須各自獨立 cluster            |
-| [9.C21 ASOS Cosmos DB](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)                           | 全球零售 multi-region、Black Friday 持續高峰      |
-| [9.C24 Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)                  | 跨 15 region active-active 達 5 個 9 可用性       |
-| [9.C32 Clearent Azure SQL Hyperscale](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) | 美國支付業、storage / compute 分離擴展            |
+| 案例                                                                                                            | 教學重點                                          |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)                         | 10 億 req/sec 線性擴展、TrueTime 實作             |
+| [Minecraft Earth Cosmos DB](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)           | turnkey global distribution、5 consistency levels |
+| [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)                 | 受監管金融跨市場、必須各自獨立 cluster            |
+| [ASOS Cosmos DB](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)                           | 全球零售 multi-region、Black Friday 持續高峰      |
+| [Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)                  | 跨 15 region active-active 達 5 個 9 可用性       |
+| [Clearent Azure SQL Hyperscale](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) | 美國支付業、storage / compute 分離擴展            |
 
 ## 下一步路由
 

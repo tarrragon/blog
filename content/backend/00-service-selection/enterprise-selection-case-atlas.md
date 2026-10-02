@@ -85,13 +85,13 @@ tags: ["backend", "service-selection"]
 
 第一批缺口已補對應正文，圖譜可直接連到可回寫文章：
 
-| 類型       | 正文入口                                                                                                                 |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
-| FinTech    | [0.C1 FinTech：合規壓力下的後端選型](/backend/00-service-selection/cases/fintech-compliance-and-selection-pressure/)     |
-| Gaming     | [0.C2 Gaming：高峰流量與隔離邊界選型](/backend/00-service-selection/cases/gaming-peak-traffic-and-isolation/)            |
-| Healthcare | [0.C3 Healthcare：資料主權與回復順序選型](/backend/00-service-selection/cases/healthcare-data-sovereignty-and-recovery/) |
+| 類型       | 正文入口                                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------------------------- |
+| FinTech    | [FinTech：合規壓力下的後端選型](/backend/00-service-selection/cases/fintech-compliance-and-selection-pressure/)     |
+| Gaming     | [Gaming：高峰流量與隔離邊界選型](/backend/00-service-selection/cases/gaming-peak-traffic-and-isolation/)            |
+| Healthcare | [Healthcare：資料主權與回復順序選型](/backend/00-service-selection/cases/healthcare-data-sovereignty-and-recovery/) |
 
-營運一段時間後的語言、工具或架構轉換案例，見 [0.C4 營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)。
+營運一段時間後的語言、工具或架構轉換案例，見 [營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)。
 
 ## 讀法提醒
 

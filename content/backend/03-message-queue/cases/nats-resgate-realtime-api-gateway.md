@@ -22,7 +22,7 @@ NATS 進階主題：Request/Reply pattern / Subject-based ACL + 多租戶（subj
 
 ## 下一步路由
 
-回 [NATS vendor 頁](/backend/03-message-queue/vendors/nats/) 與 [3.C26 GoCardless Hutch routing key](/backend/03-message-queue/cases/rabbitmq-gocardless-hutch-service-mesh/)（命名規約對照）。
+回 [NATS vendor 頁](/backend/03-message-queue/vendors/nats/) 與 [GoCardless Hutch routing key](/backend/03-message-queue/cases/rabbitmq-gocardless-hutch-service-mesh/)（命名規約對照）。
 
 ## 引用源
 

@@ -171,5 +171,5 @@ app.dlq（死信終點：無自動重試、人工 / 專門 consumer 處理）
 
 - 上游 vendor 頁：[RabbitMQ](/backend/03-message-queue/vendors/rabbitmq/)
 - 同 vendor deep article：[quorum vs mirrored queue](/backend/03-message-queue/vendors/rabbitmq/queue-types-classic-quorum-stream/)
-- 對應案例：[3.C25 Indeed delay queue + DLQ 三層 escalation](/backend/03-message-queue/cases/rabbitmq-indeed-delay-dlq-escalation/)
+- 對應案例：[Indeed delay queue + DLQ 三層 escalation](/backend/03-message-queue/cases/rabbitmq-indeed-delay-dlq-escalation/)
 - 上游概念：[3.2 durable queue](/backend/03-message-queue/durable-queue/)、[3.4 consumer design](/backend/03-message-queue/consumer-design/)

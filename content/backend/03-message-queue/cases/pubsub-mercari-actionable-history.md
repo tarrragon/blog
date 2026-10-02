@@ -22,7 +22,7 @@ Pub/Sub 進階主題：Ack deadline / Push vs Pull / Ordering key（exactly-once
 
 ## 下一步路由
 
-回 [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/) 與 [3.C9 反例：語義誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。
+回 [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/) 與 [反例：語義誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。
 
 ## 引用源
 

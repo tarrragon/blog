@@ -13,7 +13,7 @@ Commit wait 出現在 Spanner 系列產品、是 [TrueTime](/backend/knowledge-c
 
 ## 可觀察訊號與例子
 
-需要 commit wait 判讀的訊號是「Spanner write latency 拆解時、commit_latencies p99 跟 ε 一起平移」。[9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 揭露 commit wait 機制：Spanner 設 `s = TT.now().latest` 後等 `TT.after(s)`、wait ≈ 2ε（從拿 s 那刻起算）；ε 通常 1-7ms（Spanner vendor docs / 2012 OSDI 論文揭露範圍、非 case 直接揭露 production 分布）、所以 commit wait 通常落在 2-14ms。voting region 越分散、ε 上限越高、commit wait 越長。
+需要 commit wait 判讀的訊號是「Spanner write latency 拆解時、commit_latencies p99 跟 ε 一起平移」。[Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 揭露 commit wait 機制：Spanner 設 `s = TT.now().latest` 後等 `TT.after(s)`、wait ≈ 2ε（從拿 s 那刻起算）；ε 通常 1-7ms（Spanner vendor docs / 2012 OSDI 論文揭露範圍、非 case 直接揭露 production 分布）、所以 commit wait 通常落在 2-14ms。voting region 越分散、ε 上限越高、commit wait 越長。
 
 ## 設計責任
 

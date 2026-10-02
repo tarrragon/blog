@@ -44,9 +44,9 @@ poison message 要獨立隔離。持續重試同一壞訊息會壓垮整體吞�
 
 Broker 遷移失敗的根因通常是 *consumer 對舊 broker 行為的隱式依賴*、不是 broker 本身效能。表面上訊息仍被送達、但業務資料開始出現重複扣款、重複寄信、狀態漏更新。
 
-對應 [3.C9 反例：Queue Semantics Mismatch Cutover](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) — case 揭露切換後語意誤配三個方向：consumer 依賴特定 offset 行為、依賴特定重試節奏、依賴特定 idempotency 行為。失敗重播時、新系統即使提供相近 delivery semantics、結果可能不同。語意誤配會沿著下游資料寫入擴散、難以靠 queue depth 判斷。
+對應 [反例：Queue Semantics Mismatch Cutover](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) — case 揭露切換後語意誤配三個方向：consumer 依賴特定 offset 行為、依賴特定重試節奏、依賴特定 idempotency 行為。失敗重播時、新系統即使提供相近 delivery semantics、結果可能不同。語意誤配會沿著下游資料寫入擴散、難以靠 queue depth 判斷。
 
-**典型誤配場景**（基於通用 broker 行為知識展開、非 3.C9 case 原文具體列舉）：
+**典型誤配場景**（基於通用 broker 行為知識展開、非 〈反例：Queue 語義切換誤配〉case 原文具體列舉）：
 
 - **At-least-once 假設變成 exactly-once 依賴**：consumer 假設 broker 僅送一次、靠記憶單次處理；新 broker 重送同一 message、consumer 處理兩次
 - **Offset 跳號處理差異**：舊系統重啟後 offset 從特定位置開始、新系統可能從 latest / earliest 不同位置開始
@@ -85,7 +85,7 @@ Job queue 的拓樸分工是另一個獨立議題、跟鐵三角互補但不重�
 
 ## 案例回寫
 
-consumer 恢復語意可用 [3.C9 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 與 [3.C3 LinkedIn：TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/) 對照回寫。先判讀問題是 idempotency 失效、checkpoint 前移，還是 replay 邊界失控，再對應本章的 processing/recovery 段落。
+consumer 恢復語意可用 [反例：Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 與 [LinkedIn：TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/) 對照回寫。先判讀問題是 idempotency 失效、checkpoint 前移，還是 replay 邊界失控，再對應本章的 processing/recovery 段落。
 這組案例主要支撐的是「處理恢復語意」判讀，不直接支撐 deployment drain 或 cache eviction；若根因在切流順序或快取容量，應轉到 5.3 或 2.3。
 
 若重播成功但業務狀態仍不一致，先補副作用補償與對帳路徑，並把決策證據同步到 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
@@ -102,4 +102,4 @@ consumer 設計是 01/03/04/06/08 的交界點。
 
 ## 下一步路由
 
-要看 processing / recovery 三層語意完整定義、接著讀 [3.6 processing-recovery-semantics](/backend/03-message-queue/processing-recovery-semantics/)。要建立 broker 層投遞模型，接著讀 [3.1 broker 基礎與投遞模型](/backend/03-message-queue/broker-basics/) 與 [3.2 durable queue](/backend/03-message-queue/durable-queue/)。要看錯誤切換案例，接著讀 [3.C9 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。
+要看 processing / recovery 三層語意完整定義、接著讀 [3.6 processing-recovery-semantics](/backend/03-message-queue/processing-recovery-semantics/)。要建立 broker 層投遞模型，接著讀 [3.1 broker 基礎與投遞模型](/backend/03-message-queue/broker-basics/) 與 [3.2 durable queue](/backend/03-message-queue/durable-queue/)。要看錯誤切換案例，接著讀 [反例：Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。

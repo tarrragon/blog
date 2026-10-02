@@ -151,11 +151,11 @@ Baseline 不是「歷史最佳」、是「最低可接受效能」。
 
 ## 案例對照
 
-| 案例                                                                                              | 教學重點                  |
-| ------------------------------------------------------------------------------------------------- | ------------------------- |
-| [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)             | 統一 DB 後 profile 變單純 |
-| [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)         | 遷移後重新做 baseline     |
-| [9.C1 Prime Day FIS 8x](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) | 持續改進的混沌 + 壓測迴圈 |
+| 案例                                                                                         | 教學重點                  |
+| -------------------------------------------------------------------------------------------- | ------------------------- |
+| [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)              | 統一 DB 後 profile 變單純 |
+| [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)          | 遷移後重新做 baseline     |
+| [Prime Day FIS 8x](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) | 持續改進的混沌 + 壓測迴圈 |
 
 ## 下一步路由
 

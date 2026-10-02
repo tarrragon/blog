@@ -55,7 +55,7 @@ coop-cg  cooperative-sticky   Stable   1
 | Eager (range / sticky)  | 全部 partition   | 全停                  | 小 group、partition 少、rebalance 不頻繁 |
 | Cooperative incremental | 僅換手 partition | 未換手 partition 持續 | 大 group、partition 多、要求消費連續性   |
 
-對 partition 數上百、consumer 數十的 group，eager 的全停窗口會讓每次 deploy 都產生明顯 lag spike。Walmart 每天 trillions of message、25K+ consumer 跑在 K8s，pod scaling 與 deploy 觸發的 rebalance 是最大痛點（[3.C17](/backend/03-message-queue/cases/kafka-walmart-mps-rebalance/)）；這種規模下 eager 的全停代價無法接受，cooperative 把中斷限縮到換手 partition 是基本要求。但 Walmart 進一步發現，即使換成 cooperative，partition-consumer 1:1 模型本身在 K8s 規模仍撞到擴張極限，最終把 consumer 解耦成 stateless service。Protocol 選擇降低單次 rebalance 代價，架構解耦才解決 rebalance 頻率本身。
+對 partition 數上百、consumer 數十的 group，eager 的全停窗口會讓每次 deploy 都產生明顯 lag spike。Walmart 每天 trillions of message、25K+ consumer 跑在 K8s，pod scaling 與 deploy 觸發的 rebalance 是最大痛點（[Walmart：Messaging Proxy Service 解 rebalance storm](/backend/03-message-queue/cases/kafka-walmart-mps-rebalance/)）；這種規模下 eager 的全停代價無法接受，cooperative 把中斷限縮到換手 partition 是基本要求。但 Walmart 進一步發現，即使換成 cooperative，partition-consumer 1:1 模型本身在 K8s 規模仍撞到擴張極限，最終把 consumer 解耦成 stateless service。Protocol 選擇降低單次 rebalance 代價，架構解耦才解決 rebalance 頻率本身。
 
 切換 protocol 不能直接全量改：eager 與 cooperative 的 consumer 不能在同一 group 共存。滾動升級時，consumer 需先支援兩種 protocol、再分批切換 config，否則混用會導致 rebalance 失敗或 assignment 不一致。
 
@@ -137,7 +137,7 @@ Lag 均勻分布在所有 partition，代表 consumer group 整體消費速度�
 
 Lag 集中在少數 partition、其餘 partition lag 接近零，代表負載不均，根因通常在 key 分布。Producer 用 key 決定 partition（`hash(key) % partition_count`），如果某些 key 是熱點（例如某個大客戶的 id、某個 null key 全落同一 partition），對應 partition 的訊息量遠高於其他，負責它的 consumer 再快也追不上，而其他 consumer 閒著。加 consumer 不解決這個問題，因為瓶頸 partition 仍只能被一個 consumer 消費。修法在 key 設計：拆熱點 key、加 salt 打散、或對熱點走獨立 topic。
 
-Airbnb 的 logging pipeline 遇到的正是 partition 層 skew：event size 從幾百 bytes 到幾百 KB、QPS 跨數個量級，Spark 一個 partition 對一個 task，造成 data skew，catch-up 一個 4 小時 lag 要再花 4 小時（[3.C15](/backend/03-message-queue/cases/kafka-airbnb-spark-streaming-rebalance/)）。它的解法揭露一個關鍵判斷標準：partition 數不該等同 consumer parallelism。當 lag 集中在少數重 partition，加 consumer 受限於 partition 數的天花板無效，要把 parallelism 從 partition 數解耦、按 event volume × size 重新分派 work。這把「lag 集中」的診斷從 key 分布延伸到了 work 分派模型本身。
+Airbnb 的 logging pipeline 遇到的正是 partition 層 skew：event size 從幾百 bytes 到幾百 KB、QPS 跨數個量級，Spark 一個 partition 對一個 task，造成 data skew，catch-up 一個 4 小時 lag 要再花 4 小時（[Airbnb：Spark Streaming Kafka reader rebalance](/backend/03-message-queue/cases/kafka-airbnb-spark-streaming-rebalance/)）。它的解法揭露一個關鍵判斷標準：partition 數不該等同 consumer parallelism。當 lag 集中在少數重 partition，加 consumer 受限於 partition 數的天花板無效，要把 parallelism 從 partition 數解耦、按 event volume × size 重新分派 work。這把「lag 集中」的診斷從 key 分布延伸到了 work 分派模型本身。
 
 | Lag 分布形狀                | 根因方向                 | 修法                                           | 加 consumer 是否有效          |
 | --------------------------- | ------------------------ | ---------------------------------------------- | ----------------------------- |
@@ -172,7 +172,7 @@ Airbnb 的 logging pipeline 遇到的正是 partition 層 skew：event size 從�
 1. `--describe` 確認 lag 集中形狀，排除「整體容量不足」的均勻分布情境。
 2. 找出熱點 key：抽樣訊息看 key 分布，常見是 null key（全落同一 partition）或單一大租戶 id。
 3. 重設計 key：對熱點加 salt 打散到多 partition，或讓熱點走獨立 topic 用更多 partition。
-4. 若 work 本身有 skew（單筆訊息處理成本差異大），把 parallelism 從 partition 數解耦，按工作量重新分派，如 Airbnb 的 balanced reader（[3.C15](/backend/03-message-queue/cases/kafka-airbnb-spark-streaming-rebalance/)）。
+4. 若 work 本身有 skew（單筆訊息處理成本差異大），把 parallelism 從 partition 數解耦，按工作量重新分派，如 Airbnb 的 balanced reader（[Airbnb：Spark Streaming Kafka reader rebalance](/backend/03-message-queue/cases/kafka-airbnb-spark-streaming-rebalance/)）。
 
 > key 重分布需要 producer 端配合改 key 策略，對既有 topic 是破壞性變更（舊訊息 key 不變），通常搭配新 topic 切換。本文未實機驗證 producer key 重設計的線上切換流程，依官方分區語義說明。
 
@@ -189,7 +189,7 @@ Airbnb 的 logging pipeline 遇到的正是 partition 層 skew：event size 從�
 3. 切換到 cooperative incremental protocol：即使仍有 rebalance，只有換手 partition 中斷，未換手 partition 持續消費。
 4. 控制部署並行度：一次重啟太多 pod 會放大同時 rebalance 的影響，分批滾動。
 
-Walmart 在 25K+ consumer 規模下，正是 pod scaling / deploy / heartbeat fail 三類事件持續觸發 rebalance lag spike（[3.C17](/backend/03-message-queue/cases/kafka-walmart-mps-rebalance/)）；static membership 與 cooperative 降低單次代價，但它最終把 consumer 解耦成可獨立 auto-scale 的 stateless service，從架構層消除 rebalance 與 partition 數的綁定。
+Walmart 在 25K+ consumer 規模下，正是 pod scaling / deploy / heartbeat fail 三類事件持續觸發 rebalance lag spike（[Walmart：Messaging Proxy Service 解 rebalance storm](/backend/03-message-queue/cases/kafka-walmart-mps-rebalance/)）；static membership 與 cooperative 降低單次代價，但它最終把 consumer 解耦成可獨立 auto-scale 的 stateless service，從架構層消除 rebalance 與 partition 數的綁定。
 
 ### Case 4：scale-to-zero 後冷啟動 lag
 
@@ -203,7 +203,7 @@ Walmart 在 25K+ consumer 規模下，正是 pod scaling / deploy / heartbeat fa
 2. 接受 scale-to-zero 的冷啟動 lag 為設計取捨：minReplicaCount=0 省下 idle 成本，代價是流量回來時的 catch-up 窗口，對非即時 sink 可接受。
 3. 設 lag 閾值與擴容步長：閾值太高 catch-up 久、太低頻繁擴縮，依 SLA 對 backlog 的容忍度設定。
 
-Trivago 跨 3 region 跑 50+ Kafka sink、每個 always-on 用 1 CPU + 1 GB，CPU/mem autoscaling 對 I/O-bound sink 無效；改用 KEDA 以 consumer lag 為 scaling signal、minReplicaCount=0 達到 scale-to-zero，daily replica-hour 從 50 降到 1-2（[3.C22](/backend/03-message-queue/cases/kafka-trivago-keda-scale-to-zero/)）。這個案例的判斷標準是 resource usage 不等於工作量，event-driven 場景該看 backlog signal。
+Trivago 跨 3 region 跑 50+ Kafka sink、每個 always-on 用 1 CPU + 1 GB，CPU/mem autoscaling 對 I/O-bound sink 無效；改用 KEDA 以 consumer lag 為 scaling signal、minReplicaCount=0 達到 scale-to-zero，daily replica-hour 從 50 降到 1-2（[Trivago：KEDA scale-to-zero by Kafka lag](/backend/03-message-queue/cases/kafka-trivago-keda-scale-to-zero/)）。這個案例的判斷標準是 resource usage 不等於工作量，event-driven 場景該看 backlog signal。
 
 ## Capacity 與 cost
 
@@ -233,9 +233,9 @@ Rebalance 與 lag 診斷接在 consumer 設計與交付語義之上：commit 策
 
 ### 相關案例
 
-- [3.C15 Airbnb Spark Streaming](/backend/03-message-queue/cases/kafka-airbnb-spark-streaming-rebalance/) — partition-task 1:1 造成 data skew、parallelism 從 partition 數解耦
-- [3.C17 Walmart MPS](/backend/03-message-queue/cases/kafka-walmart-mps-rebalance/) — 25K+ consumer 在 K8s 的 rebalance storm、consumer 解耦成 stateless service
-- [3.C22 Trivago KEDA](/backend/03-message-queue/cases/kafka-trivago-keda-scale-to-zero/) — consumer lag 驅動 scale-to-zero、backlog signal 取代 resource usage
+- [Airbnb Spark Streaming](/backend/03-message-queue/cases/kafka-airbnb-spark-streaming-rebalance/) — partition-task 1:1 造成 data skew、parallelism 從 partition 數解耦
+- [Walmart MPS](/backend/03-message-queue/cases/kafka-walmart-mps-rebalance/) — 25K+ consumer 在 K8s 的 rebalance storm、consumer 解耦成 stateless service
+- [Trivago KEDA](/backend/03-message-queue/cases/kafka-trivago-keda-scale-to-zero/) — consumer lag 驅動 scale-to-zero、backlog signal 取代 resource usage
 
 ### 相關連結
 

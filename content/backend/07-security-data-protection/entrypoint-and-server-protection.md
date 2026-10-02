@@ -117,7 +117,7 @@ inventory 在本章出現三次都是當作前提——可達面要靠它才盤�
 - 邊界設備高風險窗口： [PAN-OS 2024](/backend/07-security-data-protection/red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/)
 - VPN 路徑被鏈式利用： [Ivanti 2024](/backend/07-security-data-protection/red-team/cases/edge-exposure/ivanti-2024-vpn-chain/)
 - 管理平面被快速接管： [Cisco IOS XE 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/cisco-ios-xe-cve-2023-20198-webui-chain/)
-- 單人遠端 shell 的入口選型： [7.C11 選型：單人遠端 Shell — Tailscale vs Cloudflare Tunnel](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)
+- 單人遠端 shell 的入口選型： [選型：單人遠端 Shell — Tailscale vs Cloudflare Tunnel](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)
 
 ## 下一步路由
 

@@ -10,23 +10,23 @@ Hypermedia 復興派的論證錨在一個可檢驗的工程性質上：**applica
 
 ## 樞紐判斷標準：consumer 是誰決定方向
 
-hypermedia 這條路線成不成立、樞紐在一個判斷標準：**REST 的 self-describing 特性是為 uniform client（瀏覽器）設計的、machine-to-machine 的 JSON 生態並不存在這種 client**（見 [11.C4](/backend/11-api-design/cases/rest-gross-opposite-of-rest/)）。這個判斷標準往兩個方向都推得出合理結論：consumer 是瀏覽器、就回到 HTML 讓瀏覽器當 uniform client；consumer 是 machine-to-machine 的程式、就放棄 hypermedia。分歧不在誰對、在 consumer 是誰 —— 這條判斷標準是後面適用邊界的地基。
+hypermedia 這條路線成不成立、樞紐在一個判斷標準：**REST 的 self-describing 特性是為 uniform client（瀏覽器）設計的、machine-to-machine 的 JSON 生態並不存在這種 client**（見 [Carson Gross：REST 如何變成 REST 的反義詞](/backend/11-api-design/cases/rest-gross-opposite-of-rest/)）。這個判斷標準往兩個方向都推得出合理結論：consumer 是瀏覽器、就回到 HTML 讓瀏覽器當 uniform client；consumer 是 machine-to-machine 的程式、就放棄 hypermedia。分歧不在誰對、在 consumer 是誰 —— 這條判斷標準是後面適用邊界的地基。
 
 ## 復興論證的正面版本
 
-htmx 一系的 essays 把復興論證落到具體工程性質：業務狀態直接編碼在可用操作裡、client 端零業務邏輯（範例層見 [11.C5](/backend/11-api-design/cases/rest-htmx-hateoas-html-necessity/) 與 11.3 的展開）。從這個性質推下去（本文判讀）：狀態機改版時只有 server 要改、部署即生效、沒有 client 端的版本滯後 — hypermedia 於是成為 [版本策略](/backend/11-api-design/versioning-and-deprecation/) 的另一種解法：Fielding 的 no-versioning 立場（InfoQ 訪談、見 [11.C14](/backend/11-api-design/cases/versioning-fielding-no-versioning/)）在 hypermedia 前提下是自洽的 — 控制項在執行期習得、演化不需要版本號。
+htmx 一系的 essays 把復興論證落到具體工程性質：業務狀態直接編碼在可用操作裡、client 端零業務邏輯（範例層見 [htmx HATEOAS essay：透支帳戶的兩種表徵對照](/backend/11-api-design/cases/rest-htmx-hateoas-html-necessity/) 與 11.3 的展開）。從這個性質推下去（本文判讀）：狀態機改版時只有 server 要改、部署即生效、沒有 client 端的版本滯後 — hypermedia 於是成為 [版本策略](/backend/11-api-design/versioning-and-deprecation/) 的另一種解法：Fielding 的 no-versioning 立場（InfoQ 訪談、見 [Fielding：對 API 版本化的建議是「別做」](/backend/11-api-design/cases/versioning-fielding-no-versioning/)）在 hypermedia 前提下是自洽的 — 控制項在執行期習得、演化不需要版本號。
 
-論證同時對 GraphQL 保留了讓步：thick-client 場景（client 本來就要持有大量邏輯）用 GraphQL 是合理選擇（此讓步出自 [11.C4](/backend/11-api-design/cases/rest-gross-opposite-of-rest/)）— 復興派的攻擊對象是「掛 REST 名的 JSON RPC」、而非所有非 hypermedia 的設計。
+論證同時對 GraphQL 保留了讓步：thick-client 場景（client 本來就要持有大量邏輯）用 GraphQL 是合理選擇（此讓步出自 [Carson Gross：REST 如何變成 REST 的反義詞](/backend/11-api-design/cases/rest-gross-opposite-of-rest/)）— 復興派的攻擊對象是「掛 REST 名的 JSON RPC」、而非所有非 hypermedia 的設計。
 
 ## 格式標準化的現實：JSON 上補 hypermedia 的失敗
 
-復興論證有一個要正面回答的歷史事實：在 JSON 上疊 hypermedia controls 的嘗試、生態上失敗了。HAL 用 `_links` 與 `_embedded` 兩個保留屬性做最小侵入的 hypermedia 化、有 spec、有生態（曾是 Spring HATEOAS 預設格式）、標準化止步於過期的 IETF draft（見 [11.C6](/backend/11-api-design/cases/rest-kelly-hal-spec/)）。Siren 走表達力路線、first-class 的 `actions` 帶 method 與欄位、比 HAL 更接近 HTML form 的 JSON 化 — 採用反而更少、release 停在 2017（見 [11.C7](/backend/11-api-design/cases/rest-swiber-siren-adoption/)）。
+復興論證有一個要正面回答的歷史事實：在 JSON 上疊 hypermedia controls 的嘗試、生態上失敗了。HAL 用 `_links` 與 `_embedded` 兩個保留屬性做最小侵入的 hypermedia 化、有 spec、有生態（曾是 Spring HATEOAS 預設格式）、標準化止步於過期的 IETF draft（見 [HAL spec：JSON hypermedia 標準化的過期 draft](/backend/11-api-design/cases/rest-kelly-hal-spec/)）。Siren 走表達力路線、first-class 的 `actions` 帶 method 與欄位、比 HAL 更接近 HTML form 的 JSON 化 — 採用反而更少、release 停在 2017（見 [Siren spec：表達力更完整、採用曲線停滯](/backend/11-api-design/cases/rest-swiber-siren-adoption/)）。
 
 兩案並排的判讀：表達力不是 hypermedia 格式勝出的變數、client 生態才是 — HAL、Siren、JSON-LD、Collection+JSON 並立無一勝出、uniform client 沒有形成、每個消費者仍要為每個 API 寫專屬邏輯、hypermedia 的收益前提落空。這個碎片化現實同時支撐兩派：復興派引它證明「JSON 不是 natural hypermedia、所以回到 HTML」；pragmatic 派引它證明「別等標準收斂、直接放棄 controls」。
 
 ## 反方的收益假設拆解
 
-Pragmatic 派的拆解針對的是收益假設而非名詞；本文把 C8 記錄的論據重組為三條假設逐一對應（重組是本文整理、原文論據見 [11.C8](/backend/11-api-design/cases/rest-morris-pragmatic-no-hateoas/)、對照組）：解耦（decoupling）— client 開發者實務上讀文件直打 endpoint、不跟連結走；可發現性（discoverability）— hypermedia 格式無共識、「不會出現資料版的瀏覽器這種 generic REST client」；可演化性（evolvability）— hypermedia 傳遞不了資料語意、文件仍不可免。三條拆解共享同一個前提：消費者是程式、不是人 — 把這個前提換掉（消費者是瀏覽器後面的人）、三條拆解全部失效、這正是 htmx 一系在 web UI 場景成立的原因。
+Pragmatic 派的拆解針對的是收益假設而非名詞；本文把 C8 記錄的論據重組為三條假設逐一對應（重組是本文整理、原文論據見 [Ben Morris：不做 hypermedia 的 pragmatic REST（反例對照）](/backend/11-api-design/cases/rest-morris-pragmatic-no-hateoas/)、對照組）：解耦（decoupling）— client 開發者實務上讀文件直打 endpoint、不跟連結走；可發現性（discoverability）— hypermedia 格式無共識、「不會出現資料版的瀏覽器這種 generic REST client」；可演化性（evolvability）— hypermedia 傳遞不了資料語意、文件仍不可免。三條拆解共享同一個前提：消費者是程式、不是人 — 把這個前提換掉（消費者是瀏覽器後面的人）、三條拆解全部失效、這正是 htmx 一系在 web UI 場景成立的原因。
 
 ## 適用邊界
 

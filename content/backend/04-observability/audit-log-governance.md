@@ -64,13 +64,13 @@ Audit event 的核心責任是回答五個問題：誰（who）、做了什麼�
 2. **Tamper-evident hash chain**：每個 audit event 含前一個 event 的 hash，篡改任一筆會破壞整條 chain。需要週期性 anchor 到外部時間戳服務或第三方公證。
 3. **Independent retention**：audit log 的保留期跟 application DB 解耦，application 刪資料不影響 audit。retention 由合規團隊定義、不由應用團隊調整。
 
-對應 [4.C1 FinTech 審計證據鏈](/backend/04-observability/cases/fintech-audit-evidence-observability/)：揭露「audit log completeness、event correlation integrity、retention policy drift」是合規場景的核心治理項目，本章關注的是治理邊界跟欄位設計，事件相關的 evidence 包裝由 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 處理。
+對應 [FinTech 審計證據鏈](/backend/04-observability/cases/fintech-audit-evidence-observability/)：揭露「audit log completeness、event correlation integrity、retention policy drift」是合規場景的核心治理項目，本章關注的是治理邊界跟欄位設計，事件相關的 evidence 包裝由 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 處理。
 
 ## 跨團隊存取證據連續性
 
 跨團隊 audit 治理的核心責任是維持責任鏈在團隊邊界上的連續性。應用團隊記應用層事件、基礎設施團隊記 infra 層存取、IAM 團隊記授權變更，三段證據各自必要、但只有拼接後才能還原一次跨團隊敏感操作。常見失敗來自團隊邊界上的責任鏈斷裂 — 而非單一團隊技術不到位 — 任一段缺失都會讓事後復盤無法閉合。
 
-對應 [4.C3 Healthcare 存取可追溯性與保留邊界](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)：揭露「access evidence continuity、retention boundary violations、timestamp integrity」三個方向。Healthcare 場景把這個問題放大，但跨團隊存取連續性是所有合規場景的共同議題。
+對應 [Healthcare 存取可追溯性與保留邊界](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)：揭露「access evidence continuity、retention boundary violations、timestamp integrity」三個方向。Healthcare 場景把這個問題放大，但跨團隊存取連續性是所有合規場景的共同議題。
 
 讓存取證據跨團隊連續的可操作做法：
 
@@ -93,7 +93,7 @@ Retention 是 audit log 跟 operational log 最大的治理差異。Operational 
 
 Retention 漂移的偵測手段：把 retention compliance 變成可查詢的訊號。週期性對照各類 audit log 的實際留存時間跟政策要求、偏差超過閾值時觸發告警、讓漂移在治理週期內就被處理、避免等到稽核時才發現。
 
-對應 [4.C1 FinTech retention policy drift](/backend/04-observability/cases/fintech-audit-evidence-observability/) 跟 [4.C3 Healthcare retention boundary violations](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)：兩個案例的判讀訊號都把 retention 偏離列為一級訊號（兩 case 的表格行明示這點）；本章在此基礎上補上「偏離視為治理事件、retention compliance 變成可查詢訊號」的展開、屬章節推論。
+對應 [FinTech retention policy drift](/backend/04-observability/cases/fintech-audit-evidence-observability/) 跟 [Healthcare retention boundary violations](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)：兩個案例的判讀訊號都把 retention 偏離列為一級訊號（兩 case 的表格行明示這點）；本章在此基礎上補上「偏離視為治理事件、retention compliance 變成可查詢訊號」的展開、屬章節推論。
 
 保留階梯（hot / warm / cold tier）與成本歸屬的詳細設計見 [4.7 控制面與保留階梯](/backend/04-observability/cardinality-cost-governance/#控制面與保留階梯)。
 

@@ -140,7 +140,7 @@ Operating model 的角色配置隨組織規模調整。可投入的治理人力�
 
 本段聚焦常態 ownership 配置（不同規模下角色矩陣的差異）；遷移期的節奏取捨由 [4.11 規模差異下的遷移節奏](/backend/04-observability/telemetry-pipeline/#規模差異下的遷移節奏) 處理、兩者 lens 不同。
 
-對應 [4.C10 規模差異下觀測遷移](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)：揭露「規模差異會放大不同治理失分模式」的方向；case 主場景是觀測遷移、本章將此 frame 借用到常態 operating model 場景、以下展開屬通用工程知識補充。
+對應 [規模差異下觀測遷移](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)：揭露「規模差異會放大不同治理失分模式」的方向；case 主場景是觀測遷移、本章將此 frame 借用到常態 operating model 場景、以下展開屬通用工程知識補充。
 
 小型組織的 operating model 重點是「角色合一、節奏明確」。一個 SRE 同時承擔 platform、service、on-call、cost owner 多重身份。治理重點是顯式記錄當前 ownership 跟 review cadence、避免角色合一被誤讀成默契傳遞（「大家都管 = 沒人管」是典型失敗）。Dashboard review、alert review、cost review 可以合併在同一個月會中，但要有具體的決議紀錄。
 

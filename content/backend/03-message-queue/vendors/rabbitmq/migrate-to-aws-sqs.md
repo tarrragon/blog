@@ -18,7 +18,7 @@ SQS 把這整層責任移除。沒有 broker 實例、沒有 cluster 拓樸、�
 
 第一種是 AWS 生態原生服務。若 producer / consumer 已經跑在 Lambda、ECS、EKS 上、SQS 的 event source mapping 跟 IAM 整合讓 application 不必自管連線池跟認證。RabbitMQ 在 AWS 上要嘛自管 EC2 叢集、要嘛用 Amazon MQ（仍是 broker 模型、運維責任只是部分轉移）、都不如 SQS 的 serverless 整合直接。
 
-第二種是 routing 邏輯本來就簡單。若 RabbitMQ 的用法是 direct exchange + 少數固定 routing key、或單純 worker pool 消費單一 queue、那 exchange 的靈活性本來就沒被用到、遷到 SQS 不損失能力。Airbnb 的 Dynein 分散式延遲任務系統就是這個形狀：用 SQS at-least-once + DLQ 取代原本受限於單 Redis 的 Resque、每 scheduler instance 達約 1000 QPS、水平擴展（見 [3.C48 Airbnb Dynein](/backend/03-message-queue/cases/sqs-airbnb-dynein-delayed-jobs/)）。任務排程對「不丟資料」的需求 at-least-once 足夠、不需要 broker 級 routing。
+第二種是 routing 邏輯本來就簡單。若 RabbitMQ 的用法是 direct exchange + 少數固定 routing key、或單純 worker pool 消費單一 queue、那 exchange 的靈活性本來就沒被用到、遷到 SQS 不損失能力。Airbnb 的 Dynein 分散式延遲任務系統就是這個形狀：用 SQS at-least-once + DLQ 取代原本受限於單 Redis 的 Resque、每 scheduler instance 達約 1000 QPS、水平擴展（見 [Airbnb Dynein](/backend/03-message-queue/cases/sqs-airbnb-dynein-delayed-jobs/)）。任務排程對「不丟資料」的需求 at-least-once 足夠、不需要 broker 級 routing。
 
 第三種是團隊規模不支撐 broker 專業。小團隊養一套 RabbitMQ 叢集、真正用到的是「可靠的任務隊列 + DLQ」、但要付出整套 Erlang 運維學習曲線。把這層交給 SQS、團隊把精力放回 application 邏輯。
 
@@ -120,7 +120,7 @@ Components 維度的核心是 SQS 沒有 exchange、RabbitMQ 的 routing 能力�
 判讀：
 
 - **Direct exchange + 少數固定 key**：最容易遷。routing 邏輯本來就是「key X 進 queue X」、改成 producer 直接 `send_message` 到對應 queue url。routing 從 broker 收斂進 application、程式碼多幾行 if/else 或 map 查表。
-- **Fanout（一條訊息給多個 downstream）**：用 SNS-to-SQS。SNS topic 當 fan-out 點、每個 downstream 訂閱一個自己的 SQS queue。Twitch EventSub 就是這個形狀（見 [3.C54 Twitch EventSub](/backend/03-message-queue/cases/sqs-twitch-eventsub-fanout/)）：SNS fan-out 到多個 SQS、各 consumer 獨立消費。這比 RabbitMQ fanout exchange 多一層 SNS、但換來 managed 運維。
+- **Fanout（一條訊息給多個 downstream）**：用 SNS-to-SQS。SNS topic 當 fan-out 點、每個 downstream 訂閱一個自己的 SQS queue。Twitch EventSub 就是這個形狀（見 [Twitch EventSub](/backend/03-message-queue/cases/sqs-twitch-eventsub-fanout/)）：SNS fan-out 到多個 SQS、各 consumer 獨立消費。這比 RabbitMQ fanout exchange 多一層 SNS、但換來 managed 運維。
 - **Topic exchange（複雜層級匹配）**：SNS 的 subscription filter policy 能做 attribute-based 過濾、但表達力不如 AMQP topic 的 `*` / `#` 通配。複雜 topic routing 是「不該遷」的訊號（見下節）。
 
 關鍵取捨：SQS + SNS 把 RabbitMQ 的單一 broker（routing 內建）拆成兩個 managed 服務（SQS 排隊 + SNS 分流）。好處是各自 managed、壞處是 routing 從宣告式 binding 變成要管 SNS topic + subscription + filter policy 的組合、跨服務除錯多一層。
@@ -129,9 +129,9 @@ Components 維度的核心是 SQS 沒有 exchange、RabbitMQ 的 routing 能力�
 
 SQS 的 managed 簡潔有代價、三類用法遷過去會損失能力或增加複雜度：
 
-**複雜 topic routing**。若 RabbitMQ 重度使用 topic exchange 的 `*` / `#` 層級通配、binding 規則數十條、那 routing 的表達力是核心價值。SNS subscription filter 的 attribute 匹配做不到對等表達、勉強遷會把 broker 內的宣告式 routing 拆成散落在 SNS filter policy + application 程式碼的命令式邏輯、維護成本反而上升。GoCardless 用單一 topic exchange 當服務 mesh（見 [3.C26 GoCardless Hutch](/backend/03-message-queue/cases/rabbitmq-gocardless-hutch-service-mesh/)）這類設計、routing 就是架構本身、不該拆。
+**複雜 topic routing**。若 RabbitMQ 重度使用 topic exchange 的 `*` / `#` 層級通配、binding 規則數十條、那 routing 的表達力是核心價值。SNS subscription filter 的 attribute 匹配做不到對等表達、勉強遷會把 broker 內的宣告式 routing 拆成散落在 SNS filter policy + application 程式碼的命令式邏輯、維護成本反而上升。GoCardless 用單一 topic exchange 當服務 mesh（見 [GoCardless Hutch](/backend/03-message-queue/cases/rabbitmq-gocardless-hutch-service-mesh/)）這類設計、routing 就是架構本身、不該拆。
 
-**需要 broker 級 ordering**。RabbitMQ 單 queue 預設 FIFO、consistent hash exchange 還能做 per-key ordering（見 [3.C28 WeWork hash ordering](/backend/03-message-queue/cases/rabbitmq-wework-consistent-hash-ordering/)）。SQS standard queue *無 ordering*；要 ordering 只能用 FIFO queue、而 FIFO 吞吐受限（每 MessageGroupId 有序、整體 3000 msg/sec with batching）。若 workload 同時要高吞吐跟嚴格 ordering、SQS FIFO 兩者不可兼得、RabbitMQ 反而更適合。
+**需要 broker 級 ordering**。RabbitMQ 單 queue 預設 FIFO、consistent hash exchange 還能做 per-key ordering（見 [WeWork hash ordering](/backend/03-message-queue/cases/rabbitmq-wework-consistent-hash-ordering/)）。SQS standard queue *無 ordering*；要 ordering 只能用 FIFO queue、而 FIFO 吞吐受限（每 MessageGroupId 有序、整體 3000 msg/sec with batching）。若 workload 同時要高吞吐跟嚴格 ordering、SQS FIFO 兩者不可兼得、RabbitMQ 反而更適合。
 
 **RPC over messaging（request-reply）**。RabbitMQ 的 reply-to + correlation-id 做同步 RPC 模式、SQS 沒有原生 request-reply、要自己用兩條 queue + correlation 拼、延遲也不適合（SQS 是 task queue 不是低延遲傳輸）。這類用法該考慮 [NATS](/backend/03-message-queue/vendors/nats/) 的 request-reply 或直接 HTTP。
 
@@ -152,7 +152,7 @@ operational redesign 的 cutover 走 dual-run、按 queue（不是按整個叢�
 
 ### Case 1：DLX 改 redrive policy，重試語意不對等
 
-**徵兆**：RabbitMQ 端用 DLX 配 message TTL 做「延遲重試 + 多層 escalation」（如 [3.C25 Indeed Delay + DLQ](/backend/03-message-queue/cases/rabbitmq-indeed-delay-dlq-escalation/) 的三層 retry）；遷到 SQS 後發現 redrive policy 只能設「失敗 N 次直接進 DLQ」、做不出原本的延遲重試階梯。
+**徵兆**：RabbitMQ 端用 DLX 配 message TTL 做「延遲重試 + 多層 escalation」（如 [Indeed Delay + DLQ](/backend/03-message-queue/cases/rabbitmq-indeed-delay-dlq-escalation/) 的三層 retry）；遷到 SQS 後發現 redrive policy 只能設「失敗 N 次直接進 DLQ」、做不出原本的延遲重試階梯。
 
 **根因**：RabbitMQ DLX 是 routing 機制、能配 TTL + 多個中繼 queue 組出任意 escalation 拓樸；SQS redrive policy 是單一規則（maxReceiveCount 到了就送 DLQ）、沒有中繼層。兩者都叫「DLQ」、但 RabbitMQ 的是可編程 routing、SQS 的是固定計數。
 
@@ -171,7 +171,7 @@ operational redesign 的 cutover 走 dual-run、按 queue（不是按整個叢�
 **修法**：
 
 1. **慢任務用 batch size 1**：對等 RabbitMQ `prefetch=1` 就設 `MaxNumberOfMessages=1`、一次領一條、避免批內互相拖累。
-2. **visibility timeout 設成略高於最大處理時間**：Capital One 的 SQS + Lambda 實務明示這點（見 [3.C50 Capital One](/backend/03-message-queue/cases/sqs-capital-one-visibility-timeout/)）— timeout 太短重複處理、太長延遲 retry。長任務處理中主動 `ChangeMessageVisibility` 續期。
+2. **visibility timeout 設成略高於最大處理時間**：Capital One 的 SQS + Lambda 實務明示這點（見 [Capital One](/backend/03-message-queue/cases/sqs-capital-one-visibility-timeout/)）— timeout 太短重複處理、太長延遲 retry。長任務處理中主動 `ChangeMessageVisibility` 續期。
 3. **逐條 delete 不等整批**：每條處理完立刻 `delete_message`、不要等整批做完才一起刪、降低整批超時導致部分重複的風險。
 
 ### Case 3：fanout 改 SNS-to-SQS，漏訂閱導致部分 downstream 收不到
@@ -194,7 +194,7 @@ operational redesign 的 cutover 走 dual-run、按 queue（不是按整個叢�
 
 **修法**：
 
-1. **Claim-check pattern**：大 payload 存 S3、訊息只放 S3 物件的引用（key / presigned URL）、consumer 收到後從 S3 取。FINRA 的大檔案處理是 S3 event notification → SQS（檔案上傳 S3 後由 S3 推通知），結果同樣讓訊息只帶 S3 物件引用，但機制是 S3 觸發、不是 producer 主動 offload（見 [3.C53 FINRA Large File](/backend/03-message-queue/cases/sqs-finra-large-file-service/)）。
+1. **Claim-check pattern**：大 payload 存 S3、訊息只放 S3 物件的引用（key / presigned URL）、consumer 收到後從 S3 取。FINRA 的大檔案處理是 S3 event notification → SQS（檔案上傳 S3 後由 S3 推通知），結果同樣讓訊息只帶 S3 物件引用，但機制是 S3 觸發、不是 producer 主動 offload（見 [FINRA Large File](/backend/03-message-queue/cases/sqs-finra-large-file-service/)）。
 2. **SQS Extended Client Library**：AWS 官方 library 自動把超過上限的 payload 透明存 S3、訊息存指標、consumer 端自動取回、application 程式碼幾乎不改。
 3. **盤點 payload 大小分佈**：Phase 0 audit 時量測現有訊息大小、超 256KB 的比例決定是否需要 claim-check、避免 cutover 後才發現大量訊息被拒。
 
@@ -202,7 +202,7 @@ operational redesign 的 cutover 走 dual-run、按 queue（不是按整個叢�
 
 **徵兆**：RabbitMQ 單 queue 提供順序消費、原本靠這個保證同一筆訂單的事件有序處理；遷 SQS standard queue 後 ordering 消失、改用 SQS FIFO queue 恢復 ordering、但吞吐從原本的數萬 msg/sec 掉到 3000 msg/sec 上限、隊列堆積。
 
-**根因**：SQS standard queue 無 ordering（為了吞吐跟可用性的設計取捨）；FIFO queue 提供 per-MessageGroupId 有序 + 去重、但整體吞吐上限 3000 msg/sec（with batching）。RabbitMQ 單 queue 的有序消費吞吐遠高於此。SQS FIFO 的吞吐上限是 300 TPS（不 batch）／ 3000 TPS（batch，後者為通用 SQS FIFO 數值）。Twilio 的 webhook buffer 文件特別點出 FIFO 300 TPS 這個限制（見 [3.C58 Twilio webhook](/backend/03-message-queue/cases/sqs-twilio-webhook-buffer/)）。
+**根因**：SQS standard queue 無 ordering（為了吞吐跟可用性的設計取捨）；FIFO queue 提供 per-MessageGroupId 有序 + 去重、但整體吞吐上限 3000 msg/sec（with batching）。RabbitMQ 單 queue 的有序消費吞吐遠高於此。SQS FIFO 的吞吐上限是 300 TPS（不 batch）／ 3000 TPS（batch，後者為通用 SQS FIFO 數值）。Twilio 的 webhook buffer 文件特別點出 FIFO 300 TPS 這個限制（見 [Twilio webhook](/backend/03-message-queue/cases/sqs-twilio-webhook-buffer/)）。
 
 **修法**：
 
@@ -258,5 +258,5 @@ RabbitMQ 還有另一條遷移路徑是 [RabbitMQ → Kafka](/backend/03-message
 - Source / target vendor：[RabbitMQ](/backend/03-message-queue/vendors/rabbitmq/) / [AWS SQS](/backend/03-message-queue/vendors/aws-sqs/)
 - 平行 vendor：[Google Pub/Sub](/backend/03-message-queue/vendors/google-pubsub/) / [NATS](/backend/03-message-queue/vendors/nats/)
 - 平行 migration playbook：[Kafka ↔ NATS](/backend/03-message-queue/vendors/kafka/migrate-from-to-nats/)
-- 引用案例：[3.C48 Airbnb Dynein](/backend/03-message-queue/cases/sqs-airbnb-dynein-delayed-jobs/) / [3.C50 Capital One](/backend/03-message-queue/cases/sqs-capital-one-visibility-timeout/) / [3.C54 Twitch EventSub](/backend/03-message-queue/cases/sqs-twitch-eventsub-fanout/) / [3.C58 Twilio webhook](/backend/03-message-queue/cases/sqs-twilio-webhook-buffer/)
+- 引用案例：[Airbnb Dynein](/backend/03-message-queue/cases/sqs-airbnb-dynein-delayed-jobs/) / [Capital One](/backend/03-message-queue/cases/sqs-capital-one-visibility-timeout/) / [Twitch EventSub](/backend/03-message-queue/cases/sqs-twitch-eventsub-fanout/) / [Twilio webhook](/backend/03-message-queue/cases/sqs-twilio-webhook-buffer/)
 - Methodology：[Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/)

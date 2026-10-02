@@ -6,7 +6,7 @@ weight: 23
 tags: ["backend", "performance", "capacity", "case-study", "db-oltp", "aws", "sustained-growth"]
 ---
 
-這個案例的核心責任是說明 Netflix 在 AWS 上的「資料庫統一」決策、跟 [9.C12 Riot Games EKS 多集群](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 形成對照。Riot 走「single-tenant per workload、246 個 cluster」、Netflix 走「跨 application 統一 Aurora、減少 DB 種類」 — 兩條路徑都是大規模平台的 *合理* 選擇、但工程哲學完全不同。
+這個案例的核心責任是說明 Netflix 在 AWS 上的「資料庫統一」決策、跟 [Riot Games EKS 多集群](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 形成對照。Riot 走「single-tenant per workload、246 個 cluster」、Netflix 走「跨 application 統一 Aurora、減少 DB 種類」 — 兩條路徑都是大規模平台的 *合理* 選擇、但工程哲學完全不同。
 
 ## 觀察
 
@@ -28,9 +28,9 @@ Netflix 整體 AWS 使用：「Netflix uses AWS to deliver billions of hours of 
 
 Netflix Aurora 整合揭露三個大規模平台 DB 治理重點。
 
-1. **「DB 種類太多」本身是規模化的成本**：Netflix 過往用 PostgreSQL、MySQL、Oracle 等不同 RDB、每個都需要不同 DBA 知識、不同備份、不同 monitoring 流程。整合到 Aurora 不只是「換 DB」、是「降低運維 surface area」、釋放工程資源。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/) 的人力成本工程化、跟 [9.C19 Capcom](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) 同類訴求。
+1. **「DB 種類太多」本身是規模化的成本**：Netflix 過往用 PostgreSQL、MySQL、Oracle 等不同 RDB、每個都需要不同 DBA 知識、不同備份、不同 monitoring 流程。整合到 Aurora 不只是「換 DB」、是「降低運維 surface area」、釋放工程資源。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/) 的人力成本工程化、跟 [Capcom](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) 同類訴求。
 2. **75% performance improvement 是 Aurora storage layer 的本質優勢**：Aurora 把 storage 跟 compute 分離、storage 用分散式 log-based 設計、replication 在 storage 層處理、不在 compute 層 — 這讓 read replica 不會受 master 寫入壓力影響、性能曲線比傳統 RDB 平滑。對應 [01 資料庫模組](/backend/01-database/) 與 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 的儲存層 vs 計算層分離。
-3. **Netflix 的 DB 工作負載大多是「微服務私有 store」**：Netflix 微服務各自有自己的 Aurora cluster、不共用 — 跟 monolith 「一個大 DB 撐全部」相反。這層架構讓「DB 容量規劃」變成「每個微服務的容量規劃」、複雜度分散。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 service decomposition、跟 [9.C7 Lyft 微服務](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)。
+3. **Netflix 的 DB 工作負載大多是「微服務私有 store」**：Netflix 微服務各自有自己的 Aurora cluster、不共用 — 跟 monolith 「一個大 DB 撐全部」相反。這層架構讓「DB 容量規劃」變成「每個微服務的容量規劃」、複雜度分散。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 service decomposition、跟 [Lyft 微服務](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)。
 
 需要警惕：
 
@@ -42,7 +42,7 @@ Netflix Aurora 整合揭露三個大規模平台 DB 治理重點。
 可重用的工程做法：
 
 1. **DB 種類整合是規模化的必要工程**：每多一種 DB 就多一套運維 surface。在能合理 consolidate 的時候整合、降低 ops 複雜度。對應 [00 服務選型模組](/backend/00-service-selection/) 的 vendor diversity 取捨。
-2. **storage / compute 分離是 OLTP 擴容的關鍵**：Aurora、Spanner、TiDB 都採類似設計、是現代 cloud DB 的共同特徵。對應 [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 的 storage layer 設計。
+2. **storage / compute 分離是 OLTP 擴容的關鍵**：Aurora、Spanner、TiDB 都採類似設計、是現代 cloud DB 的共同特徵。對應 [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 的 storage layer 設計。
 3. **微服務私有 store 比共用 DB 容量規劃簡單**：每個服務各自管 DB 容量、跨服務 contention 變成 *network 議題* 而非 *DB lock 議題*。
 4. **大規模平台必須區分「OLTP 用 Aurora」「analytics 用 data lake」「KV 用 DynamoDB」「cache 用 EVCache」**：Netflix 用各種 DB、不是一招打天下。對應 [00 服務選型模組](/backend/00-service-selection/) 的 polyglot persistence。
 
@@ -50,8 +50,8 @@ Netflix Aurora 整合揭露三個大規模平台 DB 治理重點。
 
 ## 下一步路由
 
-- 對照其他大規模平台 → [9.C12 Riot Games EKS](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)（不同 consolidation 策略）
-- 想理解 Aurora 設計 → [9.C4 DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) + [01 資料庫模組](/backend/01-database/)
+- 對照其他大規模平台 → [Riot Games EKS](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)（不同 consolidation 策略）
+- 想理解 Aurora 設計 → [DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) + [01 資料庫模組](/backend/01-database/)
 - 想做 polyglot persistence 選型 → [00 服務選型模組](/backend/00-service-selection/) + [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/)
 - 想做 DB consolidation 規劃 → [01.4 database migration playbook](/backend/01-database/database-migration-playbook/)
 - 想理解 +75% 的 storage / compute 解耦根因 → [Aurora 儲存層架構](/backend/01-database/vendors/aurora/storage-architecture/)

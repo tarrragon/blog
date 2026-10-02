@@ -6,7 +6,7 @@ weight: 4
 tags: ["backend", "performance", "capacity", "case-study", "db-oltp", "aws", "event-peak"]
 ---
 
-這個案例的核心責任是說明「transactional 金融系統」如何在不可預期峰值下維持低延遲。跟 [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 對比 — GR8 Tech 走「微服務 + AI 預測擴容」、DraftKings 走「Aurora 單一資料庫服務支撐多 DB cluster」、兩條路徑都解決同類業務問題。
+這個案例的核心責任是說明「transactional 金融系統」如何在不可預期峰值下維持低延遲。跟 [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 對比 — GR8 Tech 走「微服務 + AI 預測擴容」、DraftKings 走「Aurora 單一資料庫服務支撐多 DB cluster」、兩條路徑都解決同類業務問題。
 
 ## 觀察
 
@@ -42,14 +42,14 @@ DraftKings 的工程選擇揭露三個 OLTP 容量設計重點。
 
 1. **按業務切 OLTP cluster、不要一個 DB 撐全部**：DraftKings 200 個 databases 顯示「業務切片」是 OLTP 擴容的前置。對應 [01 資料庫模組](/backend/01-database/) 的 schema design 與 partition 決策。
 2. **讀寫分流是 OLTP 容量規劃的基線**：6ms 寫 vs <1ms 讀的差距、加上 read replica、是 OLTP 擴容最基本的兩個槓桿。
-3. **事件型峰值預測寫進 baseline**：Super Bowl 是已知事件、+50% 是歷史經驗、所以可以提前 pre-scale。事件未知（突發新聞、KOL 推廣）的情況才需要 AI 預測（對照 [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)）。
+3. **事件型峰值預測寫進 baseline**：Super Bowl 是已知事件、+50% 是歷史經驗、所以可以提前 pre-scale。事件未知（突發新聞、KOL 推廣）的情況才需要 AI 預測（對照 [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)）。
 
 跨平台等效：GCP Cloud SQL + read replica / Spanner、Azure Database for PostgreSQL + read replica、自建 PostgreSQL + Patroni + pgbouncer 都可以實作對等架構。Aurora 的差異是 storage layer 對 replica 的 lag 改善。
 
 ## 下一步路由
 
 - 想規劃 OLTP 高峰容量 → [9.6 容量規劃模型](/backend/09-performance-capacity/) + [9.11 高峰事件準備](/backend/09-performance-capacity/) + [01 資料庫模組](/backend/01-database/)
-- 想搞清楚事件型 vs 突發型峰值 → [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 對照
+- 想搞清楚事件型 vs 突發型峰值 → [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 對照
 - 想做 read replica 容量設計 → [01.6 高併發資料存取](/backend/01-database/high-concurrency-access/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/)
 - 想理解 replication lag 對 transaction boundary 的影響 → [01.5 transaction boundary](/backend/01-database/transaction-boundary/)
 - 想理解 6 寫 / 4 讀 quorum 跟 200 cluster fleet 治理 → [Aurora 儲存層架構](/backend/01-database/vendors/aurora/storage-architecture/)

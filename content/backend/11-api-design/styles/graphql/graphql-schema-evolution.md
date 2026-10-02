@@ -6,7 +6,7 @@ weight: 1
 tags: ["backend", "api-design", "graphql"]
 ---
 
-GraphQL 的 schema 演進機制建立在一條因果鏈上：client 只拿到明確請求的欄位、所以新增 type 與 field 對既有 query 不可見、所以加法演進永遠安全、所以版本號可以不存在。[11.C26](/backend/11-api-design/cases/graphql-versionless-evolution/) 收錄的官方立場把「永遠避免 breaking change、提供 versionless API」稱為 common practice。本文追這條因果鏈的三個支撐紀律、以及各自的隱藏帳單。跨風格的變更紀律框架（格式層 / 工具層 / 流程層）主寫在 [11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)、本文的 lens 是 GraphQL 內部機制的深化。
+GraphQL 的 schema 演進機制建立在一條因果鏈上：client 只拿到明確請求的欄位、所以新增 type 與 field 對既有 query 不可見、所以加法演進永遠安全、所以版本號可以不存在。[GraphQL 官方：versionless API 與 nullable-by-default](/backend/11-api-design/cases/graphql-versionless-evolution/) 收錄的官方立場把「永遠避免 breaking change、提供 versionless API」稱為 common practice。本文追這條因果鏈的三個支撐紀律、以及各自的隱藏帳單。跨風格的變更紀律框架（格式層 / 工具層 / 流程層）主寫在 [11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)、本文的 lens 是 GraphQL 內部機制的深化。
 
 ## 紀律一：只加不改
 

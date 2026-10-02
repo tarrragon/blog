@@ -27,8 +27,8 @@ Snap 在 GCP 的關鍵敘述（引自 [Snap deploys KeyDB on Google Cloud](https
 Snap 案例揭露三個 multi-cloud 容量設計的工程重點。
 
 1. **跨 cloud latency 是隱性容量瓶頸**：當 application 在 AWS、cache 在 GCP（或反之）、每個 cache lookup 都吃跨 cloud 網路 latency（通常 5-30ms、視 region pair 而定）。對 [Snap 這類「每次互動查多個 cache」](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) 的服務、5ms × 10 cache lookup = 50ms 額外 latency、用戶感受明顯。對應 [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/slo-performance-budget/) 的 latency budget 反推。
-2. **KeyDB 是 Redis 的 multi-threaded 替代**：Redis 7+ 之前是 single-threaded、單實例吞吐受限。KeyDB（Snap 等大型用戶採用）改成 multi-threaded、單實例 throughput 提升 5-10x、適合超高吞吐 cache 需求。對應 [9.C6 Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) 的 cache layer 設計、但 Snap 規模更大要走專業 fork。
-3. **TPU vs GPU 是 ML training 的容量成本決策**：Snap 算過 GPU 的「throughput -67% + cost +52%」就是 TPU 的反向 — TPU 的 throughput 高 67%、cost 低 52% — 對 ML-heavy 公司是巨大決策。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/) 的雲端硬體選型、跟 [9.C31 Mercado Libre Vertex AI](/backend/09-performance-capacity/cases/mercado-libre-latam-bigquery-vertex/) 的 ML 容量規劃同類。
+2. **KeyDB 是 Redis 的 multi-threaded 替代**：Redis 7+ 之前是 single-threaded、單實例吞吐受限。KeyDB（Snap 等大型用戶採用）改成 multi-threaded、單實例 throughput 提升 5-10x、適合超高吞吐 cache 需求。對應 [Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) 的 cache layer 設計、但 Snap 規模更大要走專業 fork。
+3. **TPU vs GPU 是 ML training 的容量成本決策**：Snap 算過 GPU 的「throughput -67% + cost +52%」就是 TPU 的反向 — TPU 的 throughput 高 67%、cost 低 52% — 對 ML-heavy 公司是巨大決策。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/) 的雲端硬體選型、跟 [Mercado Libre Vertex AI](/backend/09-performance-capacity/cases/mercado-libre-latam-bigquery-vertex/) 的 ML 容量規劃同類。
 
 需要警惕：
 
@@ -53,9 +53,9 @@ Snap 案例揭露三個 multi-cloud 容量設計的工程重點。
 
 ## 下一步路由
 
-- 對照其他 cache 案例 → [9.C6 Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) / [9.C25 Tubi ML feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)
+- 對照其他 cache 案例 → [Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) / [Tubi ML feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)
 - 想設計 multi-cloud cache → [02 快取模組](/backend/02-cache-redis/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)
-- 想做 ML training 容量規劃 → [9.7 成本邊界](/backend/09-performance-capacity/cost-engineering/) + [9.C31 Mercado Libre](/backend/09-performance-capacity/cases/mercado-libre-latam-bigquery-vertex/)
+- 想做 ML training 容量規劃 → [9.7 成本邊界](/backend/09-performance-capacity/cost-engineering/) + [Mercado Libre](/backend/09-performance-capacity/cases/mercado-libre-latam-bigquery-vertex/)
 - 想理解 cross-cloud latency → [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/slo-performance-budget/)
 
 ## 引用源

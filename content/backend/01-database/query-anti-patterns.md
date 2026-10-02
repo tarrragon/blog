@@ -216,9 +216,9 @@ NoSQL / KV DB 也有 sibling 反模式（hot partition、read amplification、sc
 
 09 案例庫的主軸是規模、vendor 與容量壓力，直接以「query 反模式」為主題的案例較少。下列案例可以反向讀：每一個都展示了「在沒有先用 query 反模式優化收回壓力的前提下、團隊直接走 vendor 遷移或 scale-out 路徑」的決策。讀者讀完應追問：這些 case 啟動遷移前、是否有可能用本章的反模式清單先收回一部分容量？
 
-- [9.C39 DoorDash：Aurora Postgres 寫入瓶頸 → CockroachDB](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) — DoorDash 撞到 Aurora single-primary write 天花板（瓶頸在 primary CPU + WAL flush rate）、用 PostgreSQL wire protocol 相容的 CockroachDB 換成多主寫入、ORM 不必重寫。對照本章可問：寫入熱點是否伴隨長 transaction 或熱 row 競爭？這些是 vendor 遷移前可以先用本章「Long-Running Transaction」清單檢查的點。
-- [9.C20 Zomato：TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 判斷 billing 事件本身可接受 eventually consistent、用一致性語意換取 4 倍吞吐 + 50% 成本。對照本章可問：遷移前每筆業務動作平均發了多少 query、是否有 N+1 或 select \* 在放大壓力？把這條問題擺進「每請求 Query 預算」段一起讀。
-- [9.C14 Standard Chartered：Aurora 4000 TPS 合規容量](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — Standard Chartered 在 7 個受監管市場各跑獨立 Aurora cluster（資料不能跨境）、容量規劃單位是「per 市場」、合規邊界決定了 cluster 拓樸。對照本章可問：query 預算假設是否進入容量模型？預算寫鬆、規劃出的 per-cluster TPS 上限會偏低。
+- [DoorDash：Aurora Postgres 寫入瓶頸 → CockroachDB](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) — DoorDash 撞到 Aurora single-primary write 天花板（瓶頸在 primary CPU + WAL flush rate）、用 PostgreSQL wire protocol 相容的 CockroachDB 換成多主寫入、ORM 不必重寫。對照本章可問：寫入熱點是否伴隨長 transaction 或熱 row 競爭？這些是 vendor 遷移前可以先用本章「Long-Running Transaction」清單檢查的點。
+- [Zomato：TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 判斷 billing 事件本身可接受 eventually consistent、用一致性語意換取 4 倍吞吐 + 50% 成本。對照本章可問：遷移前每筆業務動作平均發了多少 query、是否有 N+1 或 select \* 在放大壓力？把這條問題擺進「每請求 Query 預算」段一起讀。
+- [Standard Chartered：Aurora 4000 TPS 合規容量](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — Standard Chartered 在 7 個受監管市場各跑獨立 Aurora cluster（資料不能跨境）、容量規劃單位是「per 市場」、合規邊界決定了 cluster 拓樸。對照本章可問：query 預算假設是否進入容量模型？預算寫鬆、規劃出的 per-cluster TPS 上限會偏低。
 
 DoorDash 案例是這條反向追問最直接的應用 — 寫入瓶頸的判讀不該停在 vendor 規格、而是先檢查 transaction 範圍跟熱 row 競爭。Zomato 跟 Standard Chartered 的反向追問則退一步問「query 預算假設是否進入容量模型」。三條追問共享同一條診斷邏輯：應用層 query 不是事後解釋的細節、是事前可以收回的容量。這個讀法承認案例本身不直接示範 query 反模式、是用反向追問把案例當成 query 反模式重要性的反證。
 

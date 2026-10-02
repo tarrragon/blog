@@ -67,7 +67,7 @@ endpoint 摘除不是瞬時的。從 pod 標記 not-ready 到所有 client 停�
 
 ### 跨叢集 Discovery 的挑戰
 
-對應 [5.C1 Tradeshift self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/)：揭露「遷移難點通常在跨叢集服務依賴與流量切換、不在 Kubernetes API 本身」。跨叢集 discovery 是遷移期的核心難題——服務 A 在新叢集、服務 B 在舊叢集，A 要能找到 B。
+對應 [Tradeshift self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/)：揭露「遷移難點通常在跨叢集服務依賴與流量切換、不在 Kubernetes API 本身」。跨叢集 discovery 是遷移期的核心難題——服務 A 在新叢集、服務 B 在舊叢集，A 要能找到 B。
 
 跨叢集 discovery 的常見做法：
 
@@ -125,9 +125,9 @@ discovery 跟 load balancing 的邊界：discovery 回答「有哪些 endpoint �
 
 ## 案例回寫
 
-發現與定位鏈路可用 [5.C3 Orbitera：managed K8s migration](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/) 回寫。先看遷移期間實例註冊、摘除與 DNS/registry 同步節奏，再對照本章判讀 endpoint 新鮮度與 fallback 壽命是否合理。
+發現與定位鏈路可用 [Orbitera：managed K8s migration](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/) 回寫。先看遷移期間實例註冊、摘除與 DNS/registry 同步節奏，再對照本章判讀 endpoint 新鮮度與 fallback 壽命是否合理。
 
-[5.C1 Tradeshift self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) 從跨叢集角度支撐：揭露遷移期的 discovery 挑戰——「難點在跨叢集服務依賴與流量切換」。遷移期 discovery 要處理新舊叢集的 endpoint 共存、切換時序、回退路徑。
+[Tradeshift self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) 從跨叢集角度支撐：揭露遷移期的 discovery 挑戰——「難點在跨叢集服務依賴與流量切換」。遷移期 discovery 要處理新舊叢集的 endpoint 共存、切換時序、回退路徑。
 
 這些案例主要支撐「定位集合新鮮度」與「跨叢集 discovery 同步」判讀。不直接支撐 LB 連線 timeout 或 runtime 建置一致性；若問題在連線生命週期或映像漂移，應轉到 5.3 或 5.1。
 

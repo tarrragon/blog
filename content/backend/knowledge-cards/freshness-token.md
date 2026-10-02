@@ -13,7 +13,7 @@ Freshness token 出現在「application 在 DB 前面加 cache、但 cache 跟 D
 
 ## 可觀察訊號與例子
 
-需要 freshness token 的訊號是「DB 寫成功、user 立刻 read、cache 還回舊資料」。[9.C36 Coinbase MongoDB](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) 揭露具體機制：在 MongoDB + Memcached 三層架構下、users 服務直接撐 1.5M reads/sec（含 cache、users 服務應用層觀察口徑）。write 成功時 DB 返回 token（含 OCC version / clusterTime）、client 後續 read 帶 token、server 保證返回 ≥ token 版本、必要時 bypass cache 直接打 DB。
+需要 freshness token 的訊號是「DB 寫成功、user 立刻 read、cache 還回舊資料」。[Coinbase MongoDB](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) 揭露具體機制：在 MongoDB + Memcached 三層架構下、users 服務直接撐 1.5M reads/sec（含 cache、users 服務應用層觀察口徑）。write 成功時 DB 返回 token（含 OCC version / clusterTime）、client 後續 read 帶 token、server 保證返回 ≥ token 版本、必要時 bypass cache 直接打 DB。
 
 ## 設計責任
 

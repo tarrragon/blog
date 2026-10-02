@@ -22,7 +22,7 @@ Pub/Sub 進階主題：BigQuery subscription / Push vs Pull。
 
 ## 下一步路由
 
-回 [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/) 與 [3.C67 Niantic Pokémon GO](/backend/03-message-queue/cases/pubsub-niantic-pokemon-go-telemetry/)（同類組合）。
+回 [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/) 與 [Niantic Pokémon GO](/backend/03-message-queue/cases/pubsub-niantic-pokemon-go-telemetry/)（同類組合）。
 
 ## 引用源
 

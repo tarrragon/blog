@@ -170,7 +170,7 @@ sampling policy 黑箱會降低服務團隊的風險判讀品質。平台可以�
 
 雙軌對照的核心責任是把新管線當被檢驗的對象、用舊管線作為對照基準。新舊管線同時採集相同訊號、用相同 query 對照 error rate、p95 latency、[burn rate](/backend/knowledge-cards/burn-rate/)、trace coverage 是否一致；偏差超過閾值時先停止下一步遷移、保留證據後再決定下一步。
 
-對應 [4.C7 Datadog OTel 相容遷移實務](/backend/04-observability/cases/datadog-otel-migration-practice/)：揭露「先建立雙軌採集對照、用品質指標決定何時關閉舊管線」的做法。對應 [4.C9 OTel 遷移訊號漂移反例](/backend/04-observability/cases/failure-otel-migration-signal-drift/)：揭露遷移失敗的主要風險來自語意漂移 — metric 名稱、label、sampling、aggregation 在新舊管線間出現微小差異，導致同一現象被歸到不同 service / label / latency bucket。
+對應 [Datadog OTel 相容遷移實務](/backend/04-observability/cases/datadog-otel-migration-practice/)：揭露「先建立雙軌採集對照、用品質指標決定何時關閉舊管線」的做法。對應 [OTel 遷移訊號漂移反例](/backend/04-observability/cases/failure-otel-migration-signal-drift/)：揭露遷移失敗的主要風險來自語意漂移 — metric 名稱、label、sampling、aggregation 在新舊管線間出現微小差異，導致同一現象被歸到不同 service / label / latency bucket。
 
 可重複套用的對照驗證做法：
 
@@ -200,4 +200,4 @@ Telemetry data quality 是 SLO 與事故 evidence 的可信度前提。SLI 若�
 - [4.18 operating model](/backend/04-observability/observability-operating-model/)：品質指標的 platform / service ownership 邊界
 - [8.19 incident decision log](/backend/08-incident-response/incident-decision-log/)：標記事中判讀使用的資料品質限制
 - [4.23 觀測查詢設計](/backend/04-observability/observability-query-design/)：pre-aggregation 跟 raw data 的一致性驗證
-- [4.C13 Discord 儲存→觀測缺口](/backend/04-observability/cases/discord-storage-growth-observability-gap/)：儲存演進反覆暴露觀測盲區的教訓
+- [Discord 儲存→觀測缺口](/backend/04-observability/cases/discord-storage-growth-observability-gap/)：儲存演進反覆暴露觀測盲區的教訓

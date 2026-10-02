@@ -54,7 +54,7 @@ Coinbase 在 2023-05 推出國際交易所、上線後關鍵數字（引自 [Coi
 - 想設計延遲敏感型服務的容量地圖 → [9.1 壓測理論與系統行為](/backend/09-performance-capacity/) + [9.6 容量規劃模型](/backend/09-performance-capacity/)
 - 想搞清楚哪些服務該水平擴容、哪些不該 → [9.5 瓶頸定位流程](/backend/09-performance-capacity/) + [9.4 Saturation Discovery](/backend/09-performance-capacity/)
 - 想做 latency budget 反推 → [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) + [04.16 SLI / SLO 訊號](/backend/04-observability/sli-slo-signal/)
-- 對照不同形狀的負載 → [9.C1 AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)（可預期極端峰值）/ [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)（事件型不可預期峰值）
+- 對照不同形狀的負載 → [AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)（可預期極端峰值）/ [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)（事件型不可預期峰值）
 
 ## 引用源
 

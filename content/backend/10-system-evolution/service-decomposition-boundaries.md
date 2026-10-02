@@ -163,9 +163,9 @@ Monolith 用「同一個程式碼庫、同一個部署單位、同一個資料�
 
 服務拆分判讀可用以下案例回寫：
 
-- [9.C23 Netflix：把關聯式 DB 統一到 Aurora、效能 +75%、成本 -28%](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 反例方向：原本各 microservice 各自 DB 造成運維碎片化、最後做 consolidation；對照本章「拆分過度的收回」段。
-- [5.C2 Condé Nast：EKS 平台整併與標準化](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/) — Condé Nast 把多 brand 各自的 K8s cluster 整併到統一 EKS 控制面、降低跨團隊運維分歧。對照本章「拆分代價 / 運維複雜度」段：拆出去快、合回來慢、設計時就要評估這種非對稱性。
-- [9.C12 Riot Games：246 個 EKS cluster 的多遊戲多地區治理](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) — Riot 的拆分軸是「遊戲 × 地區 × 環境」三維交集、246 個 cluster 是這三軸的笛卡兒積取一個 subset。對照本章「拆分軸 / 部署邊界」段：實務上的拆分常常是多軸交集、不是單軸推進。
+- [Netflix：把關聯式 DB 統一到 Aurora、效能 +75%、成本 -28%](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 反例方向：原本各 microservice 各自 DB 造成運維碎片化、最後做 consolidation；對照本章「拆分過度的收回」段。
+- [Condé Nast：EKS 平台整併與標準化](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/) — Condé Nast 把多 brand 各自的 K8s cluster 整併到統一 EKS 控制面、降低跨團隊運維分歧。對照本章「拆分代價 / 運維複雜度」段：拆出去快、合回來慢、設計時就要評估這種非對稱性。
+- [Riot Games：246 個 EKS cluster 的多遊戲多地區治理](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) — Riot 的拆分軸是「遊戲 × 地區 × 環境」三維交集、246 個 cluster 是這三軸的笛卡兒積取一個 subset。對照本章「拆分軸 / 部署邊界」段：實務上的拆分常常是多軸交集、不是單軸推進。
 
 Netflix Aurora consolidation 是反例最有教學價值的一筆 — 它證明「拆 microservice 各自 DB → consolidation 回 Aurora」是 valid endgame、拆服務不是單向操作。Condé Nast 跟 Riot Games 補充另兩條維度：碎片化的運維代價、多軸交集的設計複雜度。把這三筆放回「拆分時機判讀」框架的不同節點上、能看出拆分決策的本質是「沿哪幾條軸 + 接受哪些代價」的組合。
 

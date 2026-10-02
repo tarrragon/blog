@@ -8,7 +8,7 @@ tags: ["backend", "database", "migration"]
 
 資料庫轉換實作的核心責任是讓 schema、資料與流量切換都可分段驗證、並在任一階段可安全回退。這一頁不討論要不要轉換、專注回答「決定要換之後怎麼做」。
 
-本篇的範圍是同一個資料庫引擎內的轉換：schema 演進、資料變更、新舊欄位共存、雙寫驗證與切流，例如加欄位、改欄位、拆表、合表、加 partition。換資料庫引擎的遷移（PostgreSQL → Aurora、MongoDB → Cosmos DB、TiDB → DynamoDB，案例有 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)、[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)）在 [大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)，那一篇沿用本篇的 dual-write、shadow read、cutover、rollback，再加上換引擎才有的應用層改寫與兩個引擎的行為差異。來源是託管平台（Shopify / Firebase / WordPress）的匯出而非自建資料庫時，整場遷出的資產線盤點與並行期設計見 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)；資料落地自建之後，schema 演進照本篇的流程做，跨引擎搬遷照大規模 DB 遷移實戰的流程做。
+本篇的範圍是同一個資料庫引擎內的轉換：schema 演進、資料變更、新舊欄位共存、雙寫驗證與切流，例如加欄位、改欄位、拆表、合表、加 partition。換資料庫引擎的遷移（PostgreSQL → Aurora、MongoDB → Cosmos DB、TiDB → DynamoDB，案例有 [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)、[Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)）在 [大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)，那一篇沿用本篇的 dual-write、shadow read、cutover、rollback，再加上換引擎才有的應用層改寫與兩個引擎的行為差異。來源是託管平台（Shopify / Firebase / WordPress）的匯出而非自建資料庫時，整場遷出的資產線盤點與並行期設計見 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)；資料落地自建之後，schema 演進照本篇的流程做，跨引擎搬遷照大規模 DB 遷移實戰的流程做。
 
 ## 實作流程
 
@@ -259,7 +259,7 @@ backfill 是 migration 中最 *容易出錯* 的環節 — 大量寫、影響 pr
 
 ## 案例回寫
 
-- 選型層案例： [0.C4 營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)
+- 選型層案例： [營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)
 - 可靠性治理： [6.11 Migration Safety](/backend/06-reliability/migration-safety/)
 - 事故反饋： [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)
 - 大規模跨 DB 遷移： [1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（[Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)、[Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)、[Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 等 case）

@@ -68,7 +68,7 @@ Service topology 的可信度取決於資料來源是否反映真實流量。常
 
 動態叢集下拓撲訊號的責任是讓觀測模型追上實際依賴結構的變化。Pod 數量浮動、node 換代、service IP 變化、跨 cluster 流量重新分配都會在分鐘級內改變服務間的可達性、若拓撲訊號停留在週期性快照、事故時看到的會是過期結構。
 
-對應 [4.C8 Airbnb K8s 規模化下的觀測訊號治理](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)：揭露「叢集擴縮跟工作負載變動需要回寫觀測模型」「叢集層指標跟服務層指標要分開治理」「擴縮事件跟事故關聯要可回溯」三個方向（case 直接列出）；以下展開的 service 層級節點、跨 cluster failover、drill-down 設計屬通用 K8s observability 經驗、case 本身未細說。
+對應 [Airbnb K8s 規模化下的觀測訊號治理](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)：揭露「叢集擴縮跟工作負載變動需要回寫觀測模型」「叢集層指標跟服務層指標要分開治理」「擴縮事件跟事故關聯要可回溯」三個方向（case 直接列出）；以下展開的 service 層級節點、跨 cluster failover、drill-down 設計屬通用 K8s observability 經驗、case 本身未細說。
 
 動態叢集對拓撲訊號的挑戰有三個面向、性質不同、各自的對應做法也不同。
 

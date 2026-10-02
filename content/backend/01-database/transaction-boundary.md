@@ -63,7 +63,7 @@ ROLLBACK;
 - Aurora DSQL 常跟 Spanner 並列為全球分散式 SQL，而它的交易隔離是 snapshot isolation：沒有鎖，兩筆交易改到同一列時後 commit 的那一筆收到 SQLSTATE `40001`（AWS 文件〈Concurrency control in Aurora DSQL〉），不屬於這一級
 - 全球分散式系統的特殊取捨
 - 詳見 [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) 的 Spanner TrueTime 段
-- 詳見 [9.C10 Spanner case](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
+- 詳見 [Spanner case](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
 
 **選擇原則**：
 
@@ -155,8 +155,8 @@ WHERE id = 1 AND version = 7;                          -- UPDATE 0
 
 對應案例：
 
-- [9.C4 DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 體育博彩 ledger、200 個獨立 cluster 處理 transaction、後續 settlement 跑非同步
-- [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 跨市場銀行 transaction、各市場獨立、跨市場結算非同步
+- [DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 體育博彩 ledger、200 個獨立 cluster 處理 transaction、後續 settlement 跑非同步
+- [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 跨市場銀行 transaction、各市場獨立、跨市場結算非同步
 
 ## Distributed Transaction：2PC vs Saga
 
@@ -187,8 +187,8 @@ WHERE id = 1 AND version = 7;                          -- UPDATE 0
 
 **對應案例**：
 
-- [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票 + 付款分開：DynamoDB 接搶單（local transaction）、legacy server 跑付款（compensation 處理庫存回退）
-- [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) — 投注 → 結算的 saga 流程
+- [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票 + 付款分開：DynamoDB 接搶單（local transaction）、legacy server 跑付款（compensation 處理庫存回退）
+- [FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) — 投注 → 結算的 saga 流程
 
 詳見 [Outbox Pattern 卡片](/backend/knowledge-cards/outbox-pattern/) 跟 [3.3 Outbox Pattern](/backend/03-message-queue/outbox-pattern/)。
 
@@ -243,12 +243,12 @@ distributed transaction 不是「跨服務就要 2PC」。多數 multi-service �
 
 ## 案例對照
 
-| 案例                                                                                                  | Transaction 相關重點                                                     |
-| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [9.C4 DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)  | Aurora MySQL ACID transaction、200 個獨立 cluster 隔離 transaction scope |
-| [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)         | External consistency（linearizable）跨 region transaction、TrueTime      |
-| [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) | 跨市場 transaction 各市場獨立 cluster、合規限制                          |
-| [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)         | 搶票 + 付款 saga 模式、DynamoDB queue + legacy SQL                       |
+| 案例                                                                                            | Transaction 相關重點                                                     |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) | Aurora MySQL ACID transaction、200 個獨立 cluster 隔離 transaction scope |
+| [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)         | External consistency（linearizable）跨 region transaction、TrueTime      |
+| [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) | 跨市場 transaction 各市場獨立 cluster、合規限制                          |
+| [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)         | 搶票 + 付款 saga 模式、DynamoDB queue + legacy SQL                       |
 
 ## 案例回寫
 

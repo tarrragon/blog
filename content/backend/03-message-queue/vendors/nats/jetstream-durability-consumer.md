@@ -159,5 +159,5 @@ JetStream 的邊界判斷是 NATS 使用的核心，它跟其他議題交織：
 
 - 上游 vendor 頁：[NATS](/backend/03-message-queue/vendors/nats/)
 - 對照 vendor：[RabbitMQ DLQ 與分層 retry](/backend/03-message-queue/vendors/rabbitmq/dlq-retry-escalation/)、[Kafka](/backend/03-message-queue/vendors/kafka/)
-- 對應案例：[3.C38 Clarifai NATS ML 非同步任務](/backend/03-message-queue/cases/nats-clarifai-async-task-queue/)
+- 對應案例：[Clarifai NATS ML 非同步任務](/backend/03-message-queue/cases/nats-clarifai-async-task-queue/)
 - 上游概念：[3.4 consumer design](/backend/03-message-queue/consumer-design/)、[3.2 durable queue](/backend/03-message-queue/durable-queue/)

@@ -89,7 +89,7 @@ Control plane 變更的 blast radius 跟 data plane 變更不同——一條 rou
 
 平台基礎元件升級是 control plane 風險最高的場景。Service mesh、ingress controller、CNI、API server 這類元件影響面廣、單次升級可能形成全域風險放大器。
 
-對應 [5.C7 Airbnb Istio 升級治理](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)：揭露 1 個判讀（基礎平台元件升級缺乏分批治理會形成全域風險放大器）+ 3 條策略（分批升級 + 回退窗口、升級驗證標準固定化、升級事件接入 incident command 節奏）。以下基於通用工程知識展開、「升級事件進 timeline」是從 case「接入 incident command」策略進一步推到具體操作。
+對應 [Airbnb Istio 升級治理](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)：揭露 1 個判讀（基礎平台元件升級缺乏分批治理會形成全域風險放大器）+ 3 條策略（分批升級 + 回退窗口、升級驗證標準固定化、升級事件接入 incident command 節奏）。以下基於通用工程知識展開、「升級事件進 timeline」是從 case「接入 incident command」策略進一步推到具體操作。
 
 可重複套用的升級流程：
 
@@ -106,7 +106,7 @@ Control plane 變更的 blast radius 跟 data plane 變更不同——一條 rou
 
 Platform team 從「維持 Kubernetes 跑起來」轉向「定義 release flow、observability convention、cost governance」。managed 平台採用後第一個治理動作是顯式重新定義職責邊界、讓 platform team 從 cluster ops 轉到 release flow / observability convention / cost governance。重新定義缺位、組織轉型紅利容易被誤判為純技術升級。
 
-對應 [5.C5 Miro Managed EKS 遷移](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)：揭露 1 個判讀（平台託管化的價值在讓團隊把心力從底層維護轉到交付效率與可靠性策略）+ 3 條策略（先定義遷移後的平台責任邊界、自動化流程取代手動平台操作、incident 跟 release policy 接回平台治理）。對應 [9.C33 Maersk + Bosch Azure AKS](/backend/09-performance-capacity/cases/maersk-bosch-azure-aks/)：揭露 Maersk 工程訴求引語「focus on things that makes the most business impact」、傳統產業 K8s 動機是治理一致性 + 釋放工程資源到業務功能（後者屬作者判讀）。以下基於通用工程知識展開。
+對應 [Miro Managed EKS 遷移](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)：揭露 1 個判讀（平台託管化的價值在讓團隊把心力從底層維護轉到交付效率與可靠性策略）+ 3 條策略（先定義遷移後的平台責任邊界、自動化流程取代手動平台操作、incident 跟 release policy 接回平台治理）。對應 [Maersk + Bosch Azure AKS](/backend/09-performance-capacity/cases/maersk-bosch-azure-aks/)：揭露 Maersk 工程訴求引語「focus on things that makes the most business impact」、傳統產業 K8s 動機是治理一致性 + 釋放工程資源到業務功能（後者屬作者判讀）。以下基於通用工程知識展開。
 
 managed 平台採用後的職責邊界重訂可以分四層：
 

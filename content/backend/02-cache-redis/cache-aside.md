@@ -50,7 +50,7 @@ tags: ["backend", "cache", "redis"]
 
 **Cache aside**（read-through）：寫入只動 source-of-truth、讀取 miss 時才填 cache。適合寫入頻率低於讀取、cache 可以重建、寫入失敗時 cache 保持不污染的場景。常見於商品詳情、推薦列表、設定值這類 read-heavy 資料、業務代價是 cache miss 時用戶等待回源、可接受。
 
-**Write-through**：寫入同時動 source-of-truth + cache、保證 cache 永遠最新。對應 [2.C5 Shopify Write-through Cache](/backend/02-cache-redis/cases/shopify-write-through-cache-at-scale/) — Shopify 在 Shop App 後端的 read-heavy 路徑用 write-through 降低 cache miss 風險、改善熱門資料讀取穩定性。適合場景：cache miss 成本很高（回源慢或會壓垮 origin）、寫入流量可控、資料更新時間可預測。典型應用包括熱門商品的庫存 / 價格、用戶 session、需要避免讀路徑抖動的場景。
+**Write-through**：寫入同時動 source-of-truth + cache、保證 cache 永遠最新。對應 [Shopify Write-through Cache](/backend/02-cache-redis/cases/shopify-write-through-cache-at-scale/) — Shopify 在 Shop App 後端的 read-heavy 路徑用 write-through 降低 cache miss 風險、改善熱門資料讀取穩定性。適合場景：cache miss 成本很高（回源慢或會壓垮 origin）、寫入流量可控、資料更新時間可預測。典型應用包括熱門商品的庫存 / 價格、用戶 session、需要避免讀路徑抖動的場景。
 
 **Write-behind**（async）：寫入只動 cache、async 同步到 source-of-truth。適合寫入頻率極高、source-of-truth 跟不上、可接受 cache crash 丟失少量資料的場景。常見於 counter、rate limit、metrics aggregation 這類 *吞吐優先、可接受短暫不持久* 的資料。代價是 cache crash 會丟最近 N 秒寫入、要確認業務代價可承受。
 
@@ -65,7 +65,7 @@ tags: ["backend", "cache", "redis"]
 3. **持久性可接受失損** + **一致性可放寬** + **重算貴** → cache aside + 較長 TTL、減少回源
 4. **持久性可接受失損** + **一致性可放寬** + **重算便宜** → cache aside + 短 TTL 或 write-behind
 
-例如 ML feature store 場景（[9.C25 Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)）— 持久性可接受失損（feature 可重算）、一致性可放寬（推薦演算法）、重算便宜（feature engineering pipeline 跑得到）— 落在第 4 類、Tubi 把 feature store 從 ScyllaDB 遷到 ElastiCache 是合理取捨。p99 落在 ElastiCache 的 < 10ms 範圍（先前 ScyllaDB-based 架構為 ML inference 路徑的延遲瓶頸、案例未公開 ScyllaDB 端具體延遲數字）。
+例如 ML feature store 場景（[Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)）— 持久性可接受失損（feature 可重算）、一致性可放寬（推薦演算法）、重算便宜（feature engineering pipeline 跑得到）— 落在第 4 類、Tubi 把 feature store 從 ScyllaDB 遷到 ElastiCache 是合理取捨。p99 落在 ElastiCache 的 < 10ms 範圍（先前 ScyllaDB-based 架構為 ML inference 路徑的延遲瓶頸、案例未公開 ScyllaDB 端具體延遲數字）。
 
 判讀重點：cache 的本質是用 miss 風險換取 latency；資料若無法重建、需採 persistent store 並接受 latency 成本；資料若可重建但一致性嚴格、可用 cache 但要 write-through 確保即時收斂。詳見 [2.7 cache copy boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/) 的「Cache vs Persistent Store 取捨」段。
 
@@ -96,7 +96,7 @@ cache 命中下降時，來源系統會承受瞬間回源壓力。回源保護�
 
 ## 案例回寫
 
-cache aside 的失效風險可用 [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 做回寫。先看事件中的失效節奏：是大批 key 同時過期、失效順序錯置，還是熱點 key 回源放大，再對照本章的 freshness window、回源保護與容量策略。
+cache aside 的失效風險可用 [反例：快取切換引發 Stampede 回歸](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 做回寫。先看事件中的失效節奏：是大批 key 同時過期、失效順序錯置，還是熱點 key 回源放大，再對照本章的 freshness window、回源保護與容量策略。
 這個案例主要支撐的是「失效節奏與回源壓力」判讀，不直接支撐分散式鎖租約或 queue replay；若是互斥控制或重播問題，應轉到 2.4 或 3.x。
 
 命中率看似正常但業務錯誤上升時，先回到本章檢查值語意與 key 版本化，再把量測缺口接到 [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)。
@@ -117,4 +117,4 @@ cache aside 的設計會直接影響觀測、驗證與事故處理。
 其他延伸方向：
 
 - 進一步處理 TTL、容量與淘汰策略 → [2.3 TTL 與 eviction](/backend/02-cache-redis/ttl-eviction/)
-- 快取策略在真實事件中的失敗與修復 → [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)
+- 快取策略在真實事件中的失敗與修復 → [反例：快取切換引發 Stampede 回歸](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)

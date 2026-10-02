@@ -70,7 +70,7 @@ Collector 在 pipeline 中扮演三個角色：
 2. **Schema / sampling 集中治理**：attribute 重命名、敏感欄位 redaction、tail sampling decision、cardinality 限制都集中在 collector，不分散在每個服務。
 3. **Topology 適配層**：collector 可以部署為 sidecar（與應用同 Pod）、DaemonSet（每個 node 一份）或 gateway（集中接收）。不同部署形態適合不同規模與隔離需求，並不互斥；大型部署常見「應用 → sidecar → cluster gateway → 後端」的多級拓樸。
 
-對應 [4.C5 Cloud Trace OTLP 導入](/backend/04-observability/cases/cloud-trace-otlp-adoption/)：標準化傳輸協定降低跨環境的 instrumentation 重複，揭露「資料通道標準化」是觀測平台轉換的常見起點。對應 [4.C6 ADOT on EKS 管線遷移](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/)：多代理混用在規模化時放大配置漂移，揭露 collector 集中治理的營運價值。兩個案例的具體實作差異留給原案例，本章關注的是 collector 在 pipeline 中的責任邊界。
+對應 [Cloud Trace OTLP 導入](/backend/04-observability/cases/cloud-trace-otlp-adoption/)：標準化傳輸協定降低跨環境的 instrumentation 重複，揭露「資料通道標準化」是觀測平台轉換的常見起點。對應 [ADOT on EKS 管線遷移](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/)：多代理混用在規模化時放大配置漂移，揭露 collector 集中治理的營運價值。兩個案例的具體實作差異留給原案例，本章關注的是 collector 在 pipeline 中的責任邊界。
 
 ## 觀測遷移的執行順序
 
@@ -85,13 +85,13 @@ Collector 在 pipeline 中扮演三個角色：
 
 執行順序的設計理由：collector 是 vendor-neutral 抽象、可以雙軌並存承受對照成本；應用層 instrumentation 改動會跨眾多 service team、變更面廣、要在 collector 對照穩定後才大規模推進。把次序反過來容易在 instrumentation 全面改完才發現 collector 抽象有缺失、被迫重做。
 
-對應 [4.C4 X-Ray 到 OpenTelemetry 轉換](/backend/04-observability/cases/xray-to-opentelemetry-migration/)：揭露「先 collector 後 instrumentation」的階段切換方向。對應 [4.C7 Datadog OTel 相容遷移實務](/backend/04-observability/cases/datadog-otel-migration-practice/)：揭露「雙軌期成本跟語意漂移是遷移期主要風險」（單一 agent 安裝是次要議題）。本章關注的是執行順序，schema drift 跟資料品質的對照驗證細節由 [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/) 處理。
+對應 [X-Ray 到 OpenTelemetry 轉換](/backend/04-observability/cases/xray-to-opentelemetry-migration/)：揭露「先 collector 後 instrumentation」的階段切換方向。對應 [Datadog OTel 相容遷移實務](/backend/04-observability/cases/datadog-otel-migration-practice/)：揭露「雙軌期成本跟語意漂移是遷移期主要風險」（單一 agent 安裝是次要議題）。本章關注的是執行順序，schema drift 跟資料品質的對照驗證細節由 [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/) 處理。
 
 ## 規模差異下的遷移節奏
 
 遷移節奏由團隊規模、可承受雙軌成本、配置漂移風險與治理成熟度共同決定。本段聚焦遷移期的節奏取捨；常態 ownership 配置由 [4.18 規模差異下的角色配置](/backend/04-observability/observability-operating-model/#規模差異下的角色配置) 處理，兩者 lens 不同。
 
-對應 [4.C10 規模差異下觀測遷移](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)：揭露三種規模團隊的失敗模式骨架；以下三段的具體操作做法均屬通用工程知識展開、case 本身只列方向。
+對應 [規模差異下觀測遷移](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)：揭露三種規模團隊的失敗模式骨架；以下三段的具體操作做法均屬通用工程知識展開、case 本身只列方向。
 
 小團隊的核心風險是雙軌維護消耗人力。同時看兩套 dashboard、雙倍 alert noise、雙倍 on-call 負擔，很容易讓遷移本身拖累業務維運。小團隊適合用「短期對照、快速收斂」策略：把對照期壓到一個迭代週期內，固定一個服務作為先導，把問題在小範圍內收斂，再快速複製到其他服務。
 
@@ -105,7 +105,7 @@ Collector 在 pipeline 中扮演三個角色：
 
 漂移回退的責任是把降級決策權跟資料採集分離、讓回退保留可分析的對照證據。直接關閉新管線會失去漂移原因的線索、後續再遷移容易出同樣的事故。
 
-對應 [4.C9 OTel 遷移訊號漂移反例](/backend/04-observability/cases/failure-otel-migration-signal-drift/)：揭露遷移失敗的主要型態是語意漂移、回退要保留對照證據。
+對應 [OTel 遷移訊號漂移反例](/backend/04-observability/cases/failure-otel-migration-signal-drift/)：揭露遷移失敗的主要型態是語意漂移、回退要保留對照證據。
 
 漂移發生時，主要訊號是「兩套儀表板看似都有資料、但對同一事故的判讀不同」。新舊管線對同一服務的 error rate 長期偏離、missing span 或 missing metric 比例上升、alert 噪音增加但事故量沒對應增加，都是漂移在 pipeline 層的表現。
 
@@ -200,4 +200,4 @@ Query engine 服務三種查詢模式：alert rule evaluation（系統關鍵、�
 - [05 部署](/backend/05-deployment-platform/)：collector 部署形態（DaemonSet / sidecar / gateway）
 - [6.4 chaos](/backend/06-reliability/)：pipeline 故障模擬作為 chaos 場景
 - [4.15 cost attribution](/backend/04-observability/cost-attribution/)：pipeline 各層的成本歸屬
-- [4.C12 Cloudflare 內部觀測](/backend/04-observability/cases/cloudflare-internal-observability-architecture/)：大規模自建 pipeline 的三層能力設計
+- [Cloudflare 內部觀測](/backend/04-observability/cases/cloudflare-internal-observability-architecture/)：大規模自建 pipeline 的三層能力設計

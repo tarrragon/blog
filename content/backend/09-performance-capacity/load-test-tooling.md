@@ -100,10 +100,10 @@ tags: ["backend", "performance", "capacity", "tooling"]
 
 ## 案例對照
 
-| 案例                                                                                          | 教學重點                                       |
-| --------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) | 10,000 台 t2.micro 跑分散式壓測（$130 / 小時） |
-| [9.C25 Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)       | ML p99 < 10ms 壓測必須帶 latency distribution  |
+| 案例                                                                                    | 教學重點                                       |
+| --------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) | 10,000 台 t2.micro 跑分散式壓測（$130 / 小時） |
+| [Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)       | ML p99 < 10ms 壓測必須帶 latency distribution  |
 
 ## 下一步路由
 

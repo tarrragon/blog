@@ -10,13 +10,13 @@ tags: ["backend", "api-design", "standards"]
 
 ## 描述格式標準靠既有動能、不靠背書
 
-OpenAPI 成為 API 描述的事實標準、走的是一條跟 OData 相反的路。它源自 SmartBear 捐出的 Swagger Specification、轉進 Linux Foundation 下的 OpenAPI Initiative、以開放治理與 vendor neutrality 運作（見 [11.C52](/backend/11-api-design/cases/standards-openapi-initiative-evolution/)）。關鍵差異在轉移的時機：捐出來時 Swagger 已經是事實標準、治理轉移是把一份已有動能的規格中立化、而不是靠標準機構的背書從零創造動能。
+OpenAPI 成為 API 描述的事實標準、走的是一條跟 OData 相反的路。它源自 SmartBear 捐出的 Swagger Specification、轉進 Linux Foundation 下的 OpenAPI Initiative、以開放治理與 vendor neutrality 運作（見 [OpenAPI Initiative：從 Swagger 捐贈到開放治理](/backend/11-api-design/cases/standards-openapi-initiative-evolution/)）。關鍵差異在轉移的時機：捐出來時 Swagger 已經是事實標準、治理轉移是把一份已有動能的規格中立化、而不是靠標準機構的背書從零創造動能。
 
 這正是[採現成標準篇](/backend/11-api-design/styles/standards/standards-adopt-or-build/)裡 OData（拿了 ISO 認證卻退場的那個案例）的反向情形。選一個描述格式標準時、要問的是它是不是已經被廣泛採用、還是靠機構背書硬推 —— 前者的認證是市場給的、後者的認證是委員會給的、兩者對存活的預測力差很多。OpenAPI 站穩後把描述範圍延伸到周邊問題（Arazzo 描述多 API workflow、Overlay 讓描述自動更新）—— 一個標準組織站穩後往鄰接問題延伸、是可觀察的生命週期訊號。
 
 ## REST 加 event 混合時的補位
 
-當系統同時有 REST API 跟 event、描述格式的選型多一個維度：涵蓋範圍。OpenAPI 描述的是 request/response 式的介面、描述不了 event-driven 的 publish/subscribe。AsyncAPI 來補這個空白、而且它補的方式本身是個值得學的策略：不另起爐灶、刻意維持跟 OpenAPI 相容、重用 OpenAPI 的 schema、只把結構換成 event 的語彙（Paths 換成 Channels、HTTP verbs 換成 Publish/Subscribe）（見 [11.C53](/backend/11-api-design/cases/standards-asyncapi-complement/)）。它明講的論證是系統很少只有 REST 或只有 event、多半兩者都有 —— 以相容性換採用曲線、站在既有標準的肩上而不是跟它競爭。
+當系統同時有 REST API 跟 event、描述格式的選型多一個維度：涵蓋範圍。OpenAPI 描述的是 request/response 式的介面、描述不了 event-driven 的 publish/subscribe。AsyncAPI 來補這個空白、而且它補的方式本身是個值得學的策略：不另起爐灶、刻意維持跟 OpenAPI 相容、重用 OpenAPI 的 schema、只把結構換成 event 的語彙（Paths 換成 Channels、HTTP verbs 換成 Publish/Subscribe）（見 [AsyncAPI：刻意相容 OpenAPI 的補位策略](/backend/11-api-design/cases/standards-asyncapi-complement/)）。它明講的論證是系統很少只有 REST 或只有 event、多半兩者都有 —— 以相容性換採用曲線、站在既有標準的肩上而不是跟它競爭。
 
 使用層的判讀：描述格式的邊界就是治理的邊界。組織同時有 REST 加 event 時、規範治理需要兩份 spec 格式（OpenAPI 描述同步介面、AsyncAPI 描述事件）、但共用一套 schema 來源 —— schema 是 source of truth、兩份描述格式是它在同步與非同步兩側的投影。event 側的能力與交接落在 [03 訊息佇列](/backend/03-message-queue/)。
 

@@ -174,13 +174,13 @@ Classic queue 立即接受寫入。它沒有 Raft、leader 節點獨自決定、
 
 ## 真實 cluster 治理：以 Zalando 為例
 
-[3.C27 Zalando RabbitMQ on AWS](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/) 案例揭露了 K8s 普及之前、雲端 RabbitMQ cluster 治理的工程模式（master selection 與成員協調），跟 cluster 拓樸治理相關。
+[Zalando RabbitMQ on AWS](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/) 案例揭露了 K8s 普及之前、雲端 RabbitMQ cluster 治理的工程模式（master selection 與成員協調），跟 cluster 拓樸治理相關。
 
 Zalando 的 communication platform 把 RabbitMQ cluster 跑在 EC2 上、自建 sidekick 服務查 AWS API 動態識別 cluster 成員、指定「最老的 instance」當 master、master 死後晉升下一個最老的節點。這套機制本質是在 RabbitMQ 內建的 partition handling 之外、額外加一層 *外部協調者* 來決定 cluster 拓樸（case 記載的直接動機是用 AWS API 動態識別成員、配合每 region 5 個 Elastic IP 的限制處理 master 角色）。把它讀作「早期雲端 RabbitMQ 在節點角色確定性上需要外部補強」是本文的判讀、非 case 明述的結論。
 
 這個案例對映到本文的判讀是：早期 RabbitMQ cluster 的 partition 一致性需要大量外部工程（sidekick + AWS API + 自訂 master selection）來補足。Quorum queue 用 Raft 把這套外部協調內化進 broker——Raft 的 leader election 與 majority commit 取代了 Zalando 手寫的「最老 instance 當 master」邏輯。現代部署若用 quorum queue + pause_minority、不再需要外部 sidekick 來決定誰是 master。
 
-語義誤配的風險在 partition 場景同樣存在。[3.C9 Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 指出 broker 行為改變時、「表面上訊息仍被送達、但業務資料開始出現重複或遺漏」。Partition 恢復正是這種高風險時刻：autoheal 丟棄輸家狀態、或人工從 ignore 的腦裂中合併、都可能讓同一批事件被處理零次或兩次。Partition 恢復後的 [reconciliation](/backend/knowledge-cards/data-reconciliation/)、要對照 [3.6 recovery semantics](/backend/03-message-queue/processing-recovery-semantics/) 確認哪一段資料已被哪一側處理過、而不是假設「broker 恢復了 = 狀態正確了」。
+語義誤配的風險在 partition 場景同樣存在。[Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 指出 broker 行為改變時、「表面上訊息仍被送達、但業務資料開始出現重複或遺漏」。Partition 恢復正是這種高風險時刻：autoheal 丟棄輸家狀態、或人工從 ignore 的腦裂中合併、都可能讓同一批事件被處理零次或兩次。Partition 恢復後的 [reconciliation](/backend/knowledge-cards/data-reconciliation/)、要對照 [3.6 recovery semantics](/backend/03-message-queue/processing-recovery-semantics/) 確認哪一段資料已被哪一側處理過、而不是假設「broker 恢復了 = 狀態正確了」。
 
 ## 容量與規模判讀
 
@@ -210,8 +210,8 @@ queue 類型的選擇直接決定 partition 行為。Classic queue 靠 `cluster_
 
 partition 恢復的核心是恢復語義、不是連線恢復。Broker 重新連上不等於狀態一致——這正是 [3.6 processing semantics 與 recovery semantics](/backend/03-message-queue/processing-recovery-semantics/) 區分投遞、處理、恢復三層的價值。Partition 後的 reconciliation 要對照這三層判斷。
 
-雲端 cluster 治理的歷史脈絡見 [3.C27 Zalando AWS master selection](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/)——理解外部協調者怎麼被 Raft 內化、有助於判斷現代部署該把多少責任交給 broker、多少留給運維。
+雲端 cluster 治理的歷史脈絡見 [Zalando AWS master selection](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/)——理解外部協調者怎麼被 Raft 內化、有助於判斷現代部署該把多少責任交給 broker、多少留給運維。
 
-語義誤配在 partition 恢復時的具體告警條件見 [3.C9 Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)——下游同時出現重複與遺漏、是 partition 恢復處置出錯的典型訊號。
+語義誤配在 partition 恢復時的具體告警條件見 [Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)——下游同時出現重複與遺漏、是 partition 恢復處置出錯的典型訊號。
 
 回到上游：[RabbitMQ overview](/backend/03-message-queue/vendors/rabbitmq/) 的進階主題段列了 Erlang clustering 之外的 federation / shovel / Cluster Operator 議題；[3.1 broker basics](/backend/03-message-queue/broker-basics/) 是 broker 通用概念的起點。

@@ -67,4 +67,4 @@ tags: ["backend", "deployment", "case-study"]
 
 ## 下一步路由
 
-回 [5.2 分階段平台遷移](/backend/05-deployment-platform/kubernetes-deployment/#分階段平台遷移) 看切換順序規劃。回 [5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/) 看遷移後的 lifecycle 重新驗證。回 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 看切流未 drain 的具體事故 timeline。
+回 [5.2 分階段平台遷移](/backend/05-deployment-platform/kubernetes-deployment/#分階段平台遷移) 看切換順序規劃。回 [5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/) 看遷移後的 lifecycle 重新驗證。回 [反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 看切流未 drain 的具體事故 timeline。

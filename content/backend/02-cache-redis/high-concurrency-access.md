@@ -92,13 +92,13 @@ transaction 應服務明確的一致性需求，cache 寫入也應維持輔助�
 
 Cache 在規模化服務的角色從「DB 補救」逐步轉變到「主要服務面」再到「資料平面」、是橫跨整個 02 模組的入門 frame。完整光譜跟判讀條件主寫於 [模組入口的「規模化下 cache 的角色光譜」段](/backend/02-cache-redis/)；本章從 *高併發讀寫* 角度補充：當 cache 已落在「主要服務面」或「資料平面」角色、cache lookup 是 critical path、容量規劃跟 stampede 防護要按本章「Cache 容量規劃跟 DB 不一樣」段執行。
 
-對應 [9.C6 Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) — 4700 萬 MAU 配對引擎、每次滑動查多個 cache（用戶 profile、距離、偏好過濾、推薦池）、cache lookup 屬 critical path。詳細 cache vs persistent store 取捨見 [2.7 cache copy boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/)。
+對應 [Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) — 4700 萬 MAU 配對引擎、每次滑動查多個 cache（用戶 profile、距離、偏好過濾、推薦池）、cache lookup 屬 critical path。詳細 cache vs persistent store 取捨見 [2.7 cache copy boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/)。
 
 ## Cache 容量規劃跟 DB 不一樣
 
 容量規劃基準在 cache 跟 DB 有本質差異：DB 容量受 *total dataset size* 影響（要存所有資料）；cache 容量受 *working set size* 影響（只存熱資料）。兩者的擴容邏輯、成本曲線、評估指標都不同、不能套用相同規劃模板。
 
-對應 [9.C6 Tinder](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) — 47M MAU sustained growth、容量規劃變成「每月線性擴容 X%」的長期決策、不是峰值規劃。對應 [2.C4 Meta CacheLib / Kangaroo](/backend/02-cache-redis/cases/meta-cachelib-kangaroo-tiered-cache/) — 當熱資料超過 DRAM 經濟範圍、單層 cache 同時遇到成本跟命中率瓶頸、要分層（DRAM + flash、詳見 [2.3 ttl-eviction 分層快取段](/backend/02-cache-redis/ttl-eviction/)）。
+對應 [Tinder](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) — 47M MAU sustained growth、容量規劃變成「每月線性擴容 X%」的長期決策、不是峰值規劃。對應 [Meta CacheLib / Kangaroo](/backend/02-cache-redis/cases/meta-cachelib-kangaroo-tiered-cache/) — 當熱資料超過 DRAM 經濟範圍、單層 cache 同時遇到成本跟命中率瓶頸、要分層（DRAM + flash、詳見 [2.3 ttl-eviction 分層快取段](/backend/02-cache-redis/ttl-eviction/)）。
 
 **Cache 容量規劃的三個維度**：
 
@@ -116,11 +116,11 @@ Redis command 執行至今仍 single-threaded、單實例 command 吞吐受 CPU 
 
 **2. Redis 6.0+ I/O thread**：保留 Redis protocol、I/O 處理 multi-threaded、command 執行仍 single-threaded。提升 read-heavy 場景吞吐、實測倍數依 workload 跟 thread 數而定。適合「主要瓶頸在 I/O syscall 不在 command CPU」的場景、是低改動量的階段性升級、不換 broker。
 
-**3. [KeyDB](/backend/02-cache-redis/vendors/keydb/) / [Dragonfly](/backend/02-cache-redis/vendors/dragonflydb/)（multi-threaded fork）**：command 執行也 multi-threaded。對應 [9.C35 Snap KeyDB](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/) — Snap 採用 KeyDB 在 GCP 上替代原生 Redis、9.C35 判讀段提出「單實例 throughput 提升 5-10x」（屬案例 derived 推論、實測倍數依 workload）。適合「單 key 極熱、cluster 切不開、需要單實例多執行緒撐單 partition」的壓力。代價是 vendor lock-in、fork 治理走向不確定（KeyDB 公司被收購後策略未明）。
+**3. [KeyDB](/backend/02-cache-redis/vendors/keydb/) / [Dragonfly](/backend/02-cache-redis/vendors/dragonflydb/)（multi-threaded fork）**：command 執行也 multi-threaded。對應 [Snap KeyDB](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/) — Snap 採用 KeyDB 在 GCP 上替代原生 Redis、Snap 判讀段提出「單實例 throughput 提升 5-10x」（屬案例 derived 推論、實測倍數依 workload）。適合「單 key 極熱、cluster 切不開、需要單實例多執行緒撐單 partition」的壓力。代價是 vendor lock-in、fork 治理走向不確定（KeyDB 公司被收購後策略未明）。
 
 **4. Memcached（multi-threaded、功能少）**：純 KV 不支援複雜資料結構（hash / sorted set / stream）、適合「資料形狀單純、要 multi-threaded」的 cache-only 場景。如果 application 不需要 Redis 的進階資料結構、Memcached 通常單實例吞吐更高、運維更簡單。
 
-**規模化常用組合**：ElastiCache for Redis 7.1 在 r7g.4xlarge 上的 [AWS 公布上限](https://aws.amazon.com/blogs/database/achieve-over-500-million-requests-per-second-per-cluster-with-amazon-elasticache-for-redis-7-1/)（單節點百萬級 RPS、單 cluster 5 億 RPS）+ Cluster 模式 + 應用層 connection multiplexing。實際配置依工作量跟成本邊界決定、不是「規模化必然全配滿」。對應 [9.C6 Tinder](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) 的設計方向。
+**規模化常用組合**：ElastiCache for Redis 7.1 在 r7g.4xlarge 上的 [AWS 公布上限](https://aws.amazon.com/blogs/database/achieve-over-500-million-requests-per-second-per-cluster-with-amazon-elasticache-for-redis-7-1/)（單節點百萬級 RPS、單 cluster 5 億 RPS）+ Cluster 模式 + 應用層 connection multiplexing。實際配置依工作量跟成本邊界決定、不是「規模化必然全配滿」。對應 [Tinder](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) 的設計方向。
 
 判讀順序：先確認瓶頸是不是單實例 command 吞吐（CPU 單核滿載 vs 整體 RAM / network 是否還有 headroom）、再選方案。應用層 key 分布不均（hot key）跟 single-threaded 限制是兩個獨立議題、混在一起會誤選方案。
 
@@ -158,14 +158,14 @@ Redis 高併發邊界會受語言 runtime 影響。Thread-based runtime 要管�
 
 ## 案例對照
 
-| 案例                                                                                                  | 高併發 cache 場景重點                                           |
-| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| [9.C6 Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) | 47M MAU 配對引擎、cache 是主要服務面、sustained growth 成本曲線 |
-| [9.C25 Tubi feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) | ML inference 之前 feature lookup、p99 < 10ms 是業務 KPI         |
-| [9.C35 Snap KeyDB](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/)                | KeyDB multi-threaded fork、跨 cloud 部署                        |
-| [2.C8 Meta TAO](/backend/02-cache-redis/cases/meta-tao-social-graph-cache-evolution/)                 | cache 成為資料層能力、社交圖查詢的快取治理                      |
-| [2.C6 Netflix EVCache](/backend/02-cache-redis/cases/netflix-evcache-global-cache-layer/)             | 跨區分散式 cache、平台層基礎設施                                |
-| [2.C2 Meta mcrouter](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)               | client 散落邏輯收斂到路由層、跨叢集 cache 路由                  |
+| 案例                                                                                             | 高併發 cache 場景重點                                           |
+| ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| [Tinder ElastiCache](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) | 47M MAU 配對引擎、cache 是主要服務面、sustained growth 成本曲線 |
+| [Tubi feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)  | ML inference 之前 feature lookup、p99 < 10ms 是業務 KPI         |
+| [Snap KeyDB](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/)                 | KeyDB multi-threaded fork、跨 cloud 部署                        |
+| [Meta TAO](/backend/02-cache-redis/cases/meta-tao-social-graph-cache-evolution/)                 | cache 成為資料層能力、社交圖查詢的快取治理                      |
+| [Netflix EVCache](/backend/02-cache-redis/cases/netflix-evcache-global-cache-layer/)             | 跨區分散式 cache、平台層基礎設施                                |
+| [Meta mcrouter](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)               | client 散落邏輯收斂到路由層、跨叢集 cache 路由                  |
 
 這六個案例可以分成兩群讀。**規模化容量群**（Tinder、Tubi、Snap）的共同訊號是「sustained growth 下 cache 變主要服務面、容量規劃跟單實例邊界要重新設計」、本章「Cache 容量規劃跟 DB 不一樣」跟「Redis 規模化的單執行緒邊界」段直接對應；**跨區資料平面群**（Meta TAO、Netflix EVCache、Meta mcrouter）的共同訊號是「cache 變成跨區資料層、需要路由治理跟一致性窗口」、詳細展開在 [2.7 cache copy boundary 的跨區一致性窗口](/backend/02-cache-redis/cache-copy-freshness-boundary/) 跟 [2.8 cache data shape](/backend/02-cache-redis/cache-data-shape-access-pattern/)。兩群讀法切入點不同、本章先處理前者的高併發 / 容量議題、後者跨章節讀。
 

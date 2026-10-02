@@ -59,7 +59,7 @@ Trace cardinality 的問題是另一種：sampling 過於粗暴會丟失高價�
 
 高峰場景的 cardinality 治理責任是讓「平時可控的 series 上限」在尖峰時仍能維持決策可用。平時 cardinality 看似穩定，高峰時可能突然出現新 tenant、新 endpoint、新 error class 的湧入，把 series 推到平台極限；治理重點是把「成長斜率」「容量緩衝」「dry-run」「freshness gap」變成預先設計的訊號、而非高峰中即興救火。
 
-對應 [4.C2 Gaming 高峰流量下的訊號新鮮度與 Cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)：揭露「ingestion lag、cardinality growth slope、alert freshness gap」是高峰場景的核心治理項目（三個訊號名稱屬 case 直接列出）；以下做法基於通用工程知識展開。
+對應 [Gaming 高峰流量下的訊號新鮮度與 Cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)：揭露「ingestion lag、cardinality growth slope、alert freshness gap」是高峰場景的核心治理項目（三個訊號名稱屬 case 直接列出）；以下做法基於通用工程知識展開。
 
 高峰場景的可操作做法：
 

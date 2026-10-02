@@ -166,12 +166,12 @@ tags: ["backend", "performance", "capacity", "observability"]
 
 ## 案例對照
 
-| 案例                                                                                                         | 教學重點                             |
-| ------------------------------------------------------------------------------------------------------------ | ------------------------------------ |
-| [9.C5 Amazon Ads 99.999%](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)            | SLO 5 個 9 的訊號治理                |
-| [9.C24 Genesys 12 個月 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) | 滾動 SLO 觀測                        |
-| [9.C25 Tubi p99 分解](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)             | ML inference 多 stage latency budget |
-| [9.C2 GR8 Tech p95 是業務 KPI](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)   | latency 不只是技術指標               |
+| 案例                                                                                                   | 教學重點                             |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------ |
+| [Amazon Ads 99.999%](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)           | SLO 5 個 9 的訊號治理                |
+| [Genesys 12 個月 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) | 滾動 SLO 觀測                        |
+| [Tubi p99 分解](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)             | ML inference 多 stage latency budget |
+| [GR8 Tech p95 是業務 KPI](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)  | latency 不只是技術指標               |
 
 ## 下一步路由
 

@@ -59,7 +59,7 @@ Bloomberg 建立了內部自助平台，團隊透過 API 或內部 portal 申請
 ## 回寫教材的連結
 
 - [3.1 broker basics](/backend/03-message-queue/broker-basics/)：broker 的多租戶治理責任
-- [3.C6 Uber Kafka 平台](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/)：Kafka 生態的多租戶治理比較 — Kafka 用 topic-level ACL + quota，RabbitMQ 用 vhost
+- [Uber Kafka 平台](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/)：Kafka 生態的多租戶治理比較 — Kafka 用 topic-level ACL + quota，RabbitMQ 用 vhost
 - [4.18 operating model](/backend/04-observability/observability-operating-model/)：平台團隊跟服務團隊的 ownership 邊界
 
 ## 判讀徵兆

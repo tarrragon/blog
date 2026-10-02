@@ -51,7 +51,7 @@ gcloud pubsub subscriptions modify-message-ack-deadline demo-sub \
 
 實務上不手動發 `modifyAckDeadline`，而是用 client library 的自動 lease 管理：client 在背景對 outstanding 訊息週期性續約，直到 application code 回 ack / nack。這跟 SQS 的 visibility timeout 語意類似 — 都是「訊息正在被處理、暫時別重投」的租約 — 但 Pub/Sub 是 per-message lease + client 自動續約，SQS 是 per-receive visibility window + 手動 `ChangeMessageVisibility`。
 
-> ackDeadline 的陷阱在 batch 邊界。client library 常以 batch 為單位 pull，但 ackDeadline lease 是 per-message。若 application 把整個 batch 當一個工作單元處理、處理時間超過單則 ackDeadline 且 client 未對每則續約，未 ack 的訊息會被重投。Mercari 的 actionable history pipeline 揭露的正是這個 client library 行為：ack deadline 以整批 batch 為粒度運作，同批只要有一則過期或被 nack，已 ack 的訊息會跟著一起重投（[3.C63](/backend/03-message-queue/cases/pubsub-mercari-actionable-history/)）。
+> ackDeadline 的陷阱在 batch 邊界。client library 常以 batch 為單位 pull，但 ackDeadline lease 是 per-message。若 application 把整個 batch 當一個工作單元處理、處理時間超過單則 ackDeadline 且 client 未對每則續約，未 ack 的訊息會被重投。Mercari 的 actionable history pipeline 揭露的正是這個 client library 行為：ack deadline 以整批 batch 為粒度運作，同批只要有一則過期或被 nack，已 ack 的訊息會跟著一起重投（[Mercari Actionable History：ack deadline 是 batch-level](/backend/03-message-queue/cases/pubsub-mercari-actionable-history/)）。
 
 ## Push、Pull、Streaming Pull 與 flow control
 
@@ -67,7 +67,7 @@ Push 把投遞節奏交給 Pub/Sub：endpoint 回 2xx 視為 ack、回非 2xx �
 
 flow control 是 pull 的核心優勢：consumer 用 `max_outstanding_messages` 與 `max_outstanding_bytes` 設定「同時最多持有多少未 ack 訊息」，超過上限 client 就暫停從連線拉取，等 application ack 釋放額度才繼續。這讓 consumer 能把消費速率對齊到下游能吃的速率，而不是被 broker 灌爆。
 
-> Push vs pull 不是實作偏好，是「下游能否接受 push 衝擊」的判讀。Mercari 把外部行銷 webhook（Braze）轉成 Pub/Sub event 後，下游 worker 刻意用 pull subscription 精確控制每秒處理訊息數，因為下游要呼叫的外部 LINE API 有 RPS 限制 — push 會把瞬間流量直接打到受限的外部 API（[3.C65](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/)）。下游有硬性 RPS 上限時，pull + flow control 是讓消費速率可控的手段。
+> Push vs pull 不是實作偏好，是「下游能否接受 push 衝擊」的判讀。Mercari 把外部行銷 webhook（Braze）轉成 Pub/Sub event 後，下游 worker 刻意用 pull subscription 精確控制每秒處理訊息數，因為下游要呼叫的外部 LINE API 有 RPS 限制 — push 會把瞬間流量直接打到受限的外部 API（[Mercari LINE：Pull subscription 對齊外部 RPS](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/)）。下游有硬性 RPS 上限時，pull + flow control 是讓消費速率可控的手段。
 
 ## Ordering Key：有序的代價是吞吐
 
@@ -126,7 +126,7 @@ gcloud pubsub subscriptions create retry-sub \
 
 > 啟用 DLT 需要把 Pub/Sub service account 授權對主 subscription 有 subscriber、對 DLT 有 publisher（emulator 不校驗 IAM，正式環境若漏授權，訊息超過 max attempts 後不會進 DLT、而是繼續留在主 subscription 重投，看起來像 DLT 沒生效）。授權細節依 GCP 官方 IAM 文件。
 
-Mercari 的商品 feed 同步示範了 DLT 的標準用法：pull subscription + 自家 batch requester、成功 ack 整批、失敗 nack 讓 Pub/Sub 重送、重試多次仍失敗送 DLT、後續訊息優先處理；同一個 topic 還兼當突發流量的 load-leveling buffer（[3.C64](/backend/03-message-queue/cases/pubsub-mercari-item-feed-dlt/)）。
+Mercari 的商品 feed 同步示範了 DLT 的標準用法：pull subscription + 自家 batch requester、成功 ack 整批、失敗 nack 讓 Pub/Sub 重送、重試多次仍失敗送 DLT、後續訊息優先處理；同一個 topic 還兼當突發流量的 load-leveling buffer（[Mercari Item Feed：DLT 防 poison message 阻塞](/backend/03-message-queue/cases/pubsub-mercari-item-feed-dlt/)）。
 
 ## Schema Enforcement：投遞前的契約守門
 
@@ -216,7 +216,7 @@ deep article 的差異化價值在故障演練。以下五個徵兆對應前述�
 **判讀與修法**：
 
 1. 先判訊息毒性 vs endpoint 健康。若是 endpoint 整體掛（所有訊息都 500），是容量 / 依賴問題；若是特定訊息 500（多數成功、少數失敗），是 poison message，該走 DLT。
-2. endpoint 整體掛的場景，push 不是好選擇 — 改 pull + flow control，讓 consumer 用 `max_outstanding_messages` 把消費速率對齊到下游能吃的速率，避免恢復瞬間被積壓流量打垮（對照 [3.C65](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/) 的下游 RPS 限制場景）。
+2. endpoint 整體掛的場景，push 不是好選擇 — 改 pull + flow control，讓 consumer 用 `max_outstanding_messages` 把消費速率對齊到下游能吃的速率，避免恢復瞬間被積壓流量打垮（對照 [Mercari LINE：Pull subscription 對齊外部 RPS](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/) 的下游 RPS 限制場景）。
 3. 對 push 配 DLT，把反覆 500 的特定訊息隔離出去，避免單一 poison message 混在正常流量裡放大 retry。
 4. endpoint 側對「Pub/Sub 重投」做 idempotency，因為 push 也是 at-least-once、500 後的重投會帶來重複。
 
@@ -247,7 +247,7 @@ deep article 的差異化價值在故障演練。以下五個徵兆對應前述�
 
 Pub/Sub Lite 是獨立的 CLI surface（`gcloud pubsub lite-topics` / `gcloud pubsub lite-subscriptions`），不是標準版的一個 flag。選 Lite 的代價是要自己 provision partition 數與 throughput capacity（回到接近 Kafka 的容量規劃），換來的是高吞吐穩定流量下顯著更低的成本。判斷標準是吞吐「夠高且夠穩定到值得自己管容量」— 流量彈性大、或不想管 partition 的場景仍該留在標準版。
 
-> Spotify 的 autoscaling 案例揭露 backlog 不等於 consumer healthy：下游 export 失敗時 consumer 不 ack 仍持續耗 CPU，autoscaling 把 CPU 越拉越高、反而擴出更多空轉 consumer；解法是 exponential backoff 抑制 CPU 消耗（[3.C61](/backend/03-message-queue/cases/pubsub-spotify-autoscaling-consumers/)）。容量規劃的 autoscale signal 要看「處理成功率」而非「CPU + backlog」，否則擴縮方向會反。
+> Spotify 的 autoscaling 案例揭露 backlog 不等於 consumer healthy：下游 export 失敗時 consumer 不 ack 仍持續耗 CPU，autoscaling 把 CPU 越拉越高、反而擴出更多空轉 consumer；解法是 exponential backoff 抑制 CPU 消耗（[Spotify：Autoscaling Pub/Sub consumer 反效果](/backend/03-message-queue/cases/pubsub-spotify-autoscaling-consumers/)）。容量規劃的 autoscale signal 要看「處理成功率」而非「CPU + backlog」，否則擴縮方向會反。
 
 ## 整合與下一步
 
@@ -265,7 +265,7 @@ Pub/Sub Lite 是獨立的 CLI surface（`gcloud pubsub lite-topics` / `gcloud pu
 - 上游 vendor 頁：[Google Cloud Pub/Sub overview](/backend/03-message-queue/vendors/google-pubsub/) — 選型層、跟 Kafka / SQS 取捨
 - 契約與重播邊界：[3.7 Event Contract 與 Replay Boundary](/backend/03-message-queue/event-contract-replay-boundary/) — schema / idempotency key / replay window 先於 broker 選型
 - 知識卡：[Event Schema Compatibility](/backend/knowledge-cards/event-schema-compatibility/)（schema enforcement 守的契約等級）、[Poison-Message Quarantine](/backend/knowledge-cards/poison-message-quarantine/)（DLT 的隔離機制）
-- 對應 case：[3.C64 Mercari Item Feed DLT](/backend/03-message-queue/cases/pubsub-mercari-item-feed-dlt/)、[3.C65 Mercari LINE flow control](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/)、[3.C61 Spotify autoscaling](/backend/03-message-queue/cases/pubsub-spotify-autoscaling-consumers/)、[3.C63 Mercari actionable history](/backend/03-message-queue/cases/pubsub-mercari-actionable-history/)
+- 對應 case：[Mercari Item Feed DLT](/backend/03-message-queue/cases/pubsub-mercari-item-feed-dlt/)、[Mercari LINE flow control](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/)、[Spotify autoscaling](/backend/03-message-queue/cases/pubsub-spotify-autoscaling-consumers/)、[Mercari actionable history](/backend/03-message-queue/cases/pubsub-mercari-actionable-history/)
 - 方法論：[Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/)
 
 ### 何時 revisit

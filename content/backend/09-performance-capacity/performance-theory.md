@@ -83,12 +83,12 @@ USL（Neil Gunther 提出）的公式 throughput(N) = N / (1 + α(N-1) + βN(N-1
 
 ## 案例對照
 
-| 案例                                                                                              | 教學重點                            |
-| ------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) | sub-ms latency 反推所有架構選擇     |
-| [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)     | TrueTime 降低 β 達成線性擴展        |
-| [9.C25 Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)           | ML p99 < 10ms 的 stage latency 配額 |
-| [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)         | 線性擴展靠 partition 均勻、不靠魔法 |
+| 案例                                                                                         | 教學重點                            |
+| -------------------------------------------------------------------------------------------- | ----------------------------------- |
+| [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) | sub-ms latency 反推所有架構選擇     |
+| [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)      | TrueTime 降低 β 達成線性擴展        |
+| [Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)            | ML p99 < 10ms 的 stage latency 配額 |
+| [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)         | 線性擴展靠 partition 均勻、不靠魔法 |
 
 ## 下一步路由
 

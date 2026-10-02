@@ -6,7 +6,7 @@ weight: 38
 tags: ["backend", "performance", "capacity", "case-study", "db-document", "aws", "sustained-growth"]
 ---
 
-這個案例的核心責任是說明「IoT / telematics 高頻 sensor 寫入」如何套在 document model 上、以及 MongoDB Atlas 在 mission-critical（生命安全）服務中的角色。Toyota Connected 把車輛 sensor、緊急通報（SOS / 撞擊偵測）、駕駛資料都寫進 20 個 MongoDB Atlas database、用 event-driven microservice 處理。跟 [9.C5 Amazon Ads DynamoDB](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 對照 — Amazon Ads 用 KV 撐極高吞吐、Toyota 用 document model 撐「形狀變化頻繁的 sensor signal」、兩條路徑反映不同的工作負載決策。
+這個案例的核心責任是說明「IoT / telematics 高頻 sensor 寫入」如何套在 document model 上、以及 MongoDB Atlas 在 mission-critical（生命安全）服務中的角色。Toyota Connected 把車輛 sensor、緊急通報（SOS / 撞擊偵測）、駕駛資料都寫進 20 個 MongoDB Atlas database、用 event-driven microservice 處理。跟 [Amazon Ads DynamoDB](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 對照 — Amazon Ads 用 KV 撐極高吞吐、Toyota 用 document model 撐「形狀變化頻繁的 sensor signal」、兩條路徑反映不同的工作負載決策。
 
 ## 觀察
 
@@ -37,7 +37,7 @@ Toyota Connected 的 MongoDB 選擇揭露三個 IoT / telematics 工程決策的
 
 1. **document model 適合「sensor schema 隨產品演進」的場景**：車載 sensor 種類隨車型、年份、地區規範變化。RDB 走「每加 sensor 加 column」會讓 schema migration 變成發行週期的卡點；document model 走「polymorphic document」、新 sensor 只是新欄位、舊文件不需要 backfill。對應 [MongoDB vendor page](/backend/01-database/vendors/mongodb/) 的 document shape 教學段。但這個彈性的成本是：production 必須做 schema governance（validation、版本欄位、application 層相容處理），否則「schema 自由」會變「production data inconsistency」。
 2. **20 個 Atlas database 不是技術上限、是業務邊界切分**：18 Billion transactions / 月 ÷ 30 天 ÷ 86400 秒 ≈ 7K transactions / sec。這個數字單一 MongoDB cluster 可以撐、不需要 20 個 DB。Toyota 切 20 個 DB 是按 *microservice ownership* 跟 *blast radius* — 每個 microservice 擁有自己的 DB、單一 DB 故障不會影響其他服務。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/)、把「總吞吐」拆成「per-DB 邊界」。
-3. **99.99% target vs 99% 實測差距揭露 telematics 的可用性挑戰**：99.99% 是 4 分鐘 / 月停機、99% 是 7.2 小時 / 月停機。差兩個 9 不是 MongoDB 自身可用性問題、是 *end-to-end* 鏈路問題 — 車輛無線網路、cellular tower、AWS network、event bus、microservice、Atlas cluster 任一環節掉都會打掉可用性。MongoDB Atlas 自身的 SLA 通常是 99.95%、達到 99.99% 必須 multi-region + 跨雲冗餘。對應 [9.C24 Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 的多 region active-active 設計。
+3. **99.99% target vs 99% 實測差距揭露 telematics 的可用性挑戰**：99.99% 是 4 分鐘 / 月停機、99% 是 7.2 小時 / 月停機。差兩個 9 不是 MongoDB 自身可用性問題、是 *end-to-end* 鏈路問題 — 車輛無線網路、cellular tower、AWS network、event bus、microservice、Atlas cluster 任一環節掉都會打掉可用性。MongoDB Atlas 自身的 SLA 通常是 99.95%、達到 99.99% 必須 multi-region + 跨雲冗餘。對應 [Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 的多 region active-active 設計。
 
 需要警惕：
 
@@ -50,7 +50,7 @@ Toyota Connected 的 MongoDB 選擇揭露三個 IoT / telematics 工程決策的
 可重用的工程做法：
 
 1. **IoT 高頻 sensor 寫入考慮 MongoDB time series collection（6.0+）**：比 regular collection 寫入吞吐高 3-5x、storage 壓縮率更好。專為 timestamp + metadata + measurement 三段式資料優化。對應 [MongoDB vendor page](/backend/01-database/vendors/mongodb/) 的容量規劃要點段。
-2. **mission-critical IoT 系統要做 multi-region 跟多供應商備援**：99.99% 不能只靠 MongoDB Atlas 本身、要靠 region 冗餘 + 多條 cellular network + 多個 event bus 路徑。對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 的 multi-region active-active。
+2. **mission-critical IoT 系統要做 multi-region 跟多供應商備援**：99.99% 不能只靠 MongoDB Atlas 本身、要靠 region 冗餘 + 多條 cellular network + 多個 event bus 路徑。對應 [Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 的 multi-region active-active。
 3. **按 microservice ownership 切 MongoDB cluster、不要單一巨型 cluster**：blast radius 邊界 = 業務邊界、不是「能不能撐」的問題。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/)。
 4. **event-driven 處理 IoT 資料、不用 request-response**：sensor 寫到 Kinesis / Kafka / event bus、microservice 從 stream 消費、寫進 MongoDB。這條 path 避免「sensor 寫不進去 DB 就 retry storm」的問題。對應 [03 訊息佇列模組](/backend/03-message-queue/)。
 
@@ -64,8 +64,8 @@ Toyota Connected 的 MongoDB 選擇揭露三個 IoT / telematics 工程決策的
 ## 下一步路由
 
 - 想規劃 IoT / telematics 資料層 → [MongoDB vendor page](/backend/01-database/vendors/mongodb/) + [01.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)
-- 想做 multi-region 高可用性 → [9.C24 Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)
-- 想對照不同 IoT 資料層選擇 → [9.C5 Amazon Ads DynamoDB](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)（KV）/ [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)（高頻訊息）
+- 想做 multi-region 高可用性 → [Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)
+- 想對照不同 IoT 資料層選擇 → [Amazon Ads DynamoDB](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)（KV）/ [PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)（高頻訊息）
 - 想理解 event-driven IoT 架構 → [03 訊息佇列模組](/backend/03-message-queue/)
 - 想做 IoT 寫入吞吐的 shard key 選型 → [MongoDB shard key 選型](/backend/01-database/vendors/mongodb/shard-key-selection/)
 - 想規劃 telemetry schema design → [MongoDB schema design pattern](/backend/01-database/vendors/mongodb/schema-design-pattern/)

@@ -141,13 +141,13 @@ FinOps 是 *財務跟工程的協作框架*、把成本決策從事後對帳變�
 
 ## 案例對照
 
-| 案例                                                                                         | 教學重點                               |
-| -------------------------------------------------------------------------------------------- | -------------------------------------- |
-| [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)    | 50% 成本下降（從 over-provision 解放） |
-| [9.C12 Riot Games](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)     | 年省 1000 萬（EKS 替代 Mesos）         |
-| [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)        | 28% 成本下降（DB consolidation）       |
-| [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) | 90% 工程工時降（managed 路線）         |
-| [9.C19 Capcom](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/)           | 30% 成本下降（DBA 釋放到遊戲品質）     |
+| 案例                                                                                   | 教學重點                               |
+| -------------------------------------------------------------------------------------- | -------------------------------------- |
+| [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)    | 50% 成本下降（從 over-provision 解放） |
+| [Riot Games](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)     | 年省 1000 萬（EKS 替代 Mesos）         |
+| [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)        | 28% 成本下降（DB consolidation）       |
+| [Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) | 90% 工程工時降（managed 路線）         |
+| [Capcom](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/)           | 30% 成本下降（DBA 釋放到遊戲品質）     |
 
 ## 下一步路由
 

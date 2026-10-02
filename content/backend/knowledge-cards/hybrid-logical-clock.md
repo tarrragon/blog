@@ -13,7 +13,7 @@ HLC 出現在 CockroachDB 等不依賴專用硬體的 distributed SQL、跟 [Tru
 
 ## 可觀察訊號與例子
 
-需要 HLC 判讀的訊號是「distributed SQL cluster 節點 NTP 異常、寫入路徑開始 panic」。[9.C39 DoorDash CockroachDB](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) 跟 [9.C40 Netflix CockroachDB](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 都用 HLC 撐線性化、NTP 是 ops first-class concern。CockroachDB 預設 `max-offset` 是 500ms、節點時鐘飄超過就自動 panic、不會發出錯誤 commit；HLC 在跨 node RPC 時把 logical counter 同步推進、確保事件因果順序在跨節點仍可推導。
+需要 HLC 判讀的訊號是「distributed SQL cluster 節點 NTP 異常、寫入路徑開始 panic」。[DoorDash CockroachDB](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) 跟 [Netflix CockroachDB](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 都用 HLC 撐線性化、NTP 是 ops first-class concern。CockroachDB 預設 `max-offset` 是 500ms、節點時鐘飄超過就自動 panic、不會發出錯誤 commit；HLC 在跨 node RPC 時把 logical counter 同步推進、確保事件因果順序在跨節點仍可推導。
 
 ## 設計責任
 

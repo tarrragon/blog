@@ -46,7 +46,7 @@ Hotstar 案例揭露三個全球直播容量重點。
 - 想規劃全球直播 → [9.11 高峰事件準備](/backend/09-performance-capacity/) + [9.6 容量規劃模型](/backend/09-performance-capacity/)
 - 想做 CDN 容量設計 → [05 部署平台模組](/backend/05-deployment-platform/) + [04 可觀測性模組](/backend/04-observability/)
 - 想理解 cache freshness 在直播的影響 → [02.4 cache copy freshness boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/)
-- 對照其他可預期峰值 → [9.C1 AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)（分散全球的峰值）
+- 對照其他可預期峰值 → [AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)（分散全球的峰值）
 
 ## 引用源
 

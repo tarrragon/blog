@@ -68,7 +68,7 @@ resource "aws_ce_anomaly_subscription" "alert" {
 
 到了「知道誰花多少、接下來怎麼省」這一步 — reserved instance 的承諾折扣、spot 的可中斷算力、閒置資源的 rightsizing 與排程關機 — 就進入 [運維 模組八：成本管理](/operations/08-cost-management/) 的運行期優化範圍。這一章負責的是讓那些優化「有帳可查、有人可問」。
 
-成本治理在不同規模下的操作形態差異很大。Netflix 把多套關聯式資料庫統一到 Aurora 後成本下降 28%，核心操作是「把資源種類收斂、讓成本歸因的維度減少」——這在 tagging 已經到位的前提下才做得到，見 [9.C23 Netflix：Aurora 整併](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)。另一個極端是 Arcjet 用 Redis Streams 取代 managed Kafka，年費從六位數美金降到約 $1k，代價是自行維護 retention 與 consumer group 監控——這個取捨的前提是團隊有能力承擔額外的運維面，見 [3.C43 Arcjet：Redis Streams 取代 Kafka](/backend/03-message-queue/cases/redis-streams-arcjet-replace-kafka/)。
+成本治理在不同規模下的操作形態差異很大。Netflix 把多套關聯式資料庫統一到 Aurora 後成本下降 28%，核心操作是「把資源種類收斂、讓成本歸因的維度減少」——這在 tagging 已經到位的前提下才做得到，見 [Netflix：Aurora 整併](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)。另一個極端是 Arcjet 用 Redis Streams 取代 managed Kafka，年費從六位數美金降到約 $1k，代價是自行維護 retention 與 consumer group 監控——這個取捨的前提是團隊有能力承擔額外的運維面，見 [Arcjet：Redis Streams 取代 Kafka](/backend/03-message-queue/cases/redis-streams-arcjet-replace-kafka/)。
 
 ## 最小可行節奏：先把地基跑起來，再逐步加
 

@@ -38,12 +38,12 @@ Compensation 的責任是處理副作用已經發生但結果不正確的情況�
 
 跨 broker migration 的工程責任是維持業務語意對映、broker 吞吐是次要驗證項。同一份 event contract 在 Kafka、Pub/Sub、SQS、NATS 的對映概念不同、需要逐項校準。
 
-對應 [9.C9 Spotify Kafka → Pub/Sub Migration](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — Spotify 7500 萬用戶事件交付系統遷移、case 明確點出 Kafka 的 partition / offset / consumer group 對映成 Pub/Sub 的 subscription / ordering key / message attribute、需要校準業務語意而非直接搬。
+對應 [Spotify Kafka → Pub/Sub Migration](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — Spotify 7500 萬用戶事件交付系統遷移、case 明確點出 Kafka 的 partition / offset / consumer group 對映成 Pub/Sub 的 subscription / ordering key / message attribute、需要校準業務語意而非直接搬。
 
-**典型概念對映差異**（依據 9.C9 case 列出的三組對映展開、Pub/Sub 實際 API 細節為文章補充）：
+**典型概念對映差異**（依據 Spotify case 列出的三組對映展開、Pub/Sub 實際 API 細節為文章補充）：
 
 - **Partition (Kafka) 跟 Subscription (Pub/Sub)**：Kafka partition 是物理分片 + 順序邊界；Pub/Sub subscription 是邏輯 [fan-out](/backend/knowledge-cards/fan-out/)、無物理分片概念。靠 Kafka partition 保證 per-key 順序的 consumer、遷到 Pub/Sub 改用 ordering key
-- **Offset (Kafka) 對映成 message attribute (Pub/Sub)**：9.C9 case 原文對映方向；replay 模型差異上、Kafka offset 是位置指標、可任意回放到某個 offset；Pub/Sub 用 Snapshot + Seek API 達成類似 replay 能力、模型不同
+- **Offset (Kafka) 對映成 message attribute (Pub/Sub)**：Spotify case 原文對映方向；replay 模型差異上、Kafka offset 是位置指標、可任意回放到某個 offset；Pub/Sub 用 Snapshot + Seek API 達成類似 replay 能力、模型不同
 - **Consumer Group (Kafka) 跟 Subscription (Pub/Sub)**：Kafka consumer group 內部 rebalance 自動分 partition；Pub/Sub subscription 自動分 message、語意接近但 rebalance 細節差異會影響 [in-flight](/backend/knowledge-cards/in-flight/) message 處理順序
 
 **遷移評估要驗證的業務語意**：

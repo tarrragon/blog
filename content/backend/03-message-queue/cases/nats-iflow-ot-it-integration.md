@@ -22,7 +22,7 @@ NATS 進階主題：Cluster + Supercluster + Leaf node（多工廠 leaf node 連
 
 ## 下一步路由
 
-回 [NATS vendor 頁](/backend/03-message-queue/vendors/nats/) 與 [3.C37 MachineMetrics](/backend/03-message-queue/cases/nats-machinemetrics-edge-to-cloud/)（技術細節更深的對照）。
+回 [NATS vendor 頁](/backend/03-message-queue/vendors/nats/) 與 [MachineMetrics](/backend/03-message-queue/cases/nats-machinemetrics-edge-to-cloud/)（技術細節更深的對照）。
 
 ## 引用源
 

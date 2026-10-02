@@ -152,7 +152,7 @@ grep -rln "<DI 接線點或 provider 名稱>" <程式碼根目錄> | wc -l
 | 案例                                                                                                                        | 契約視角的重點                                                                   |
 | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | [1.7 訂單付款狀態欄位演進](/backend/01-database/schema-migration-rollout-evidence/)                                         | mapping table 這類狀態契約先進 artifact、validation query 才有判讀基準           |
-| [3.C9 Queue 語意不匹配 cutover 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)             | 語意契約缺席時、cutover 前後的行為差異無從驗證                                   |
+| [Queue 語意不匹配 cutover 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)                  | 語意契約缺席時、cutover 前後的行為差異無從驗證                                   |
 | [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) | 此類事故的修復依賴人工比對跨區資料；對帳鍵與欄位語意若有成文載體、比對成本可壓縮 |
 
 ## 案例回寫

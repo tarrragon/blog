@@ -10,9 +10,9 @@ webhook 是 server 主動 POST 到你提供的 URL、把「有事發生了」推
 
 ## 投遞保證不是預設
 
-webhook 不一定會重試 —— 這是採用前最該先確認的承諾。GitHub 明文（文件裡重述兩次）不自動重投失敗的 webhook、失敗條件是 server down 或回應超過 10 秒、補救要你手動重送或自寫排程查 API 補投（見 [11.C61](/backend/11-api-design/cases/webhook-github-no-retry/)）。對照 Stripe：live mode 對失敗投遞重試最多三天、指數退避（見 [11.C60](/backend/11-api-design/cases/webhook-stripe-delivery-contract/)）。同樣叫 webhook、一個試三天、一個一次都不重試。
+webhook 不一定會重試 —— 這是採用前最該先確認的承諾。GitHub 明文（文件裡重述兩次）不自動重投失敗的 webhook、失敗條件是 server down 或回應超過 10 秒、補救要你手動重送或自寫排程查 API 補投（見 [GitHub webhooks：不自動重試的反向承諾](/backend/11-api-design/cases/webhook-github-no-retry/)）。對照 Stripe：live mode 對失敗投遞重試最多三天、指數退避（見 [Stripe webhooks：at-least-once 加簽章、明文要求 consumer 冪等與不依賴順序](/backend/11-api-design/cases/webhook-stripe-delivery-contract/)）。同樣叫 webhook、一個試三天、一個一次都不重試。
 
-重試的「形狀」本身就是一條要讀清楚的承諾。四個 vendor 四種形狀：Stripe 的長視窗指數退避、Slack 的固定三次（幾乎立即、1 分鐘後、5 分鐘後、見 [11.C62](/backend/11-api-design/cases/webhook-slack-events-retry/)）、GitHub 的完全不重試、Shopify 連投遞本身都不保證（見 [11.C63](/backend/11-api-design/cases/webhook-shopify-ordering-dedup/)）。假設「webhook 會自動重試到成功」、會讓你漏事件卻不自知。payload 格式層有 CloudEvents 這類標準化嘗試、但它標準化的是事件信封的欄位、不是投遞語意 —— 重試、ack、去重這些承諾仍逐 vendor 各異、還是得逐家讀。
+重試的「形狀」本身就是一條要讀清楚的承諾。四個 vendor 四種形狀：Stripe 的長視窗指數退避、Slack 的固定三次（幾乎立即、1 分鐘後、5 分鐘後、見 [Slack Events API：3 秒 ack 上限加固定三次重試](/backend/11-api-design/cases/webhook-slack-events-retry/)）、GitHub 的完全不重試、Shopify 連投遞本身都不保證（見 [Shopify webhooks：ordering 不保證、指定 header 去重、投遞不保證](/backend/11-api-design/cases/webhook-shopify-ordering-dedup/)）。假設「webhook 會自動重試到成功」、會讓你漏事件卻不自知。payload 格式層有 CloudEvents 這類標準化嘗試、但它標準化的是事件信封的欄位、不是投遞語意 —— 重試、ack、去重這些承諾仍逐 vendor 各異、還是得逐家讀。
 
 ## consumer 要扛的五件事
 

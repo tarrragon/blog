@@ -50,7 +50,7 @@ tags: ["backend", "database"]
 
 SQL DB 在 surge 場景的 *first bottleneck* 不是 CPU、也不是 disk I/O、是 *連線數量*。原因：傳統 RDB（PostgreSQL、MySQL）每個連線吃記憶體 + 一個 process / thread，資料庫端的連線上限 `max_connections` 因此設不高（PostgreSQL 預設 100、MySQL 預設 151，實務設定值見下方〈Database 端 max_connections〉）。流量湧入時、application 想開更多連線、DB 直接拒絕（PostgreSQL：`FATAL: too many connections`）、看起來像 DB 故障、實際是連線數限制。
 
-對應 [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — NTT DOCOMO 串流平台選 DynamoDB 而非 RDB 的原因之一是「connection limit 在快速流量增加時變成 bottleneck」。DynamoDB 的 HTTP API 模型沒有 connection state、天然解決這個瓶頸。
+對應 [Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — NTT DOCOMO 串流平台選 DynamoDB 而非 RDB 的原因之一是「connection limit 在快速流量增加時變成 bottleneck」。DynamoDB 的 HTTP API 模型沒有 connection state、天然解決這個瓶頸。
 
 **判讀順序**：surge 期間 DB 看起來慢，先比對目前連線數與 `max_connections`，再看 CPU / disk：
 
@@ -104,7 +104,7 @@ SHOW VARIABLES LIKE 'max_connections';
 - 跳過 middleware pool、application 直連 DB
 - 應用 instance 50 個 × 30 connection = 1500 connection、PostgreSQL 直接拒絕
 
-對應 [9.C29 Lemino case](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — RDB connection limit 是 surge 場景的隱性 bottleneck、Lemino 選擇遷移到 DynamoDB 而不是擴 connection pool（因為 HTTP-based KV 沒這個問題）。
+對應 [Lemino case](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — RDB connection limit 是 surge 場景的隱性 bottleneck、Lemino 選擇遷移到 DynamoDB 而不是擴 connection pool（因為 HTTP-based KV 沒這個問題）。
 
 ### Query 反模式如何放大連線池壓力
 
@@ -217,7 +217,7 @@ UPDATE products SET stock = stock - 1, version = version + 1 WHERE id = 7 AND ve
 **Queue + worker 序列化**：
 
 - 把搶資源的 request 排隊、worker 序列化處理
-- 對應 [9.C15 Tixcraft 案例](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票把 inventory 搶購塞進 DynamoDB queue、legacy server 慢慢消費、避免 SQL hot row
+- 對應 [Tixcraft 案例](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票把 inventory 搶購塞進 DynamoDB queue、legacy server 慢慢消費、避免 SQL hot row
 
 ## Read Replica Scaling
 
@@ -252,13 +252,13 @@ UPDATE products SET stock = stock - 1, version = version + 1 WHERE id = 7 AND ve
 - PostgreSQL：`pg_stat_replication.replay_lag`
 - MySQL 8.4：`SHOW REPLICA STATUS\G` 的 `Seconds_Behind_Source`
 - Aurora：CloudWatch `AuroraReplicaLag`
-- 對應案例：[9.C4 DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — replication lag 從 30 秒降到 10-30ms、是切換到 Aurora 的關鍵改善
+- 對應案例：[DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — replication lag 從 30 秒降到 10-30ms、是切換到 Aurora 的關鍵改善
 
 **注意事項**：
 
 - replica 數量不是無限、Aurora 最多 15 個、PostgreSQL 通常 3-5 個（chain replication 更多但複雜）
 - 跨 region replica 通常 async、不能保證 read-after-write
-- 對應 [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) Super Bowl 5-10x peak、需要動態加 replica
+- 對應 [FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) Super Bowl 5-10x peak、需要動態加 replica
 
 ### 儲存層 replication vs compute 層 replication
 
@@ -279,11 +279,11 @@ Aurora / Cosmos DB / Spanner 的 replication 跟傳統 PostgreSQL streaming repl
 - 加 read replica 不增加 primary 寫入負擔
 - replication lag 從 30 秒級降到 10-30ms（Aurora）
 
-**儲存層與 compute 層 replication 的差異為什麼反映到應用層設計**：compute 層 replication 的 replication lag 通常在秒級、應用層必須處理「剛寫的資料 N 秒內讀不到」的情境 — 常見補丁是 read-after-write consistency（session token 標記「剛寫過」、N 秒內走 primary）、cache invalidation 延遲、或刻意走 primary 的關鍵查詢路徑。Storage 層 replication 的 lag 在毫秒級，cache invalidation 延遲這類補丁可以大幅簡化；lag 仍然不是零，剛寫入就要讀到的查詢（餘額確認）照樣要走 primary 或帶 freshness token。對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 從 30 秒到 10-30ms 不只是「快」、是讓整個應用層 cache invalidation 跟 session routing 邏輯大幅簡化。對應 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — Aurora 75% performance improvement 主要來自 storage layer 設計、不是 CPU 改善。
+**儲存層與 compute 層 replication 的差異為什麼反映到應用層設計**：compute 層 replication 的 replication lag 通常在秒級、應用層必須處理「剛寫的資料 N 秒內讀不到」的情境 — 常見補丁是 read-after-write consistency（session token 標記「剛寫過」、N 秒內走 primary）、cache invalidation 延遲、或刻意走 primary 的關鍵查詢路徑。Storage 層 replication 的 lag 在毫秒級，cache invalidation 延遲這類補丁可以大幅簡化；lag 仍然不是零，剛寫入就要讀到的查詢（餘額確認）照樣要走 primary 或帶 freshness token。對應 [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 從 30 秒到 10-30ms 不只是「快」、是讓整個應用層 cache invalidation 跟 session routing 邏輯大幅簡化。對應 [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — Aurora 75% performance improvement 主要來自 storage layer 設計、不是 CPU 改善。
 
 **選型含義**：如果應用層有大量「秒級 stale 會出錯、毫秒級可以接受」的讀取、storage 層 replication 比 compute 層 replication 大幅簡化設計；嚴格的 read-after-write（餘額確認、剛寫的查詢）在兩種設計下都要另外處理。代價是 vendor lock-in 加深、應用層綁定特定雲商。
 
-對應 [9.C32 Clearent Azure SQL Hyperscale](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) 跟 Aurora 是同類設計（log-structured 分散式 storage）、選哪家看 application 已在哪個 cloud、技術哲學一致。Sharding 觸發點（managed DB 容量上限）跟業務一致性需求決定 sharding 粒度的討論、見 [1.11 Sharding 粒度跟業務一致性需求](/backend/01-database/global-distributed-oltp/)。
+對應 [Clearent Azure SQL Hyperscale](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) 跟 Aurora 是同類設計（log-structured 分散式 storage）、選哪家看 application 已在哪個 cloud、技術哲學一致。Sharding 觸發點（managed DB 容量上限）跟業務一致性需求決定 sharding 粒度的討論、見 [1.11 Sharding 粒度跟業務一致性需求](/backend/01-database/global-distributed-oltp/)。
 
 ## 查詢與 rows 的生命週期要收乾淨
 
@@ -329,13 +329,13 @@ SQL 的 transactional 模型有結構性限制、超過某個規模硬擴 SQL �
 
 **換工具的訊號**：
 
-1. **Connection saturate 但 CPU / RAM 還閒**：connection 是 SQL 的早期 bottleneck。對應 [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — RDB connection limit 是 surge 場景的瓶頸、換 DynamoDB（HTTP-based、無 connection 概念）解決。
+1. **Connection saturate 但 CPU / RAM 還閒**：connection 是 SQL 的早期 bottleneck。對應 [Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — RDB connection limit 是 surge 場景的瓶頸、換 DynamoDB（HTTP-based、無 connection 概念）解決。
 
 2. **Hot row contention 無法分散**：應用層改不了 schema、無法把 counter shard、SQL 就是 contention 源頭。換 Redis atomic counter / DynamoDB atomic update。
 
 3. **Write throughput > 50K WPS 單機**：sharding 工程成本變高、不如換 KV 或分散式 SQL。詳見 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) 或 [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)。
 
-4. **Flash-sale spiky workload**：用 SQL 接搶購、connection 跟 lock 都會爆。對應 [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 用 DynamoDB 當 durable queue、legacy SQL 慢慢消費。
+4. **Flash-sale spiky workload**：用 SQL 接搶購、connection 跟 lock 都會爆。對應 [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 用 DynamoDB 當 durable queue、legacy SQL 慢慢消費。
 
 5. **跨 region 強一致 OLTP**：傳統 PostgreSQL / MySQL 跨 region 是 async、滿足不了強一致。換 Spanner / Aurora DSQL / CockroachDB（[1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)）。
 
@@ -349,17 +349,17 @@ SQL 的 transactional 模型有結構性限制、超過某個規模硬擴 SQL �
 
 ## 案例對照
 
-| 案例                                                                                                                  | 高併發場景重點                                                                                                                                                                             |
-| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [9.C1 AWS Prime Day 2025](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)                   | DynamoDB 1.51 億 RPS + Aurora 5000 億 txn、可預期峰值的 [dogfood baseline](/backend/01-database/large-scale-db-migration/)（vendor 自家 production-critical workload 是 selection signal） |
-| [9.C4 DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)                  | 1M ops/min、200 個獨立 cluster、replication lag 30s → 10-30ms                                                                                                                              |
-| [9.C14 Standard Chartered Aurora](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)          | 4000 TPS、7 個受監管市場、各自獨立 cluster                                                                                                                                                 |
-| [9.C23 Netflix Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)                          | DB 統一後 +75% 效能、storage / compute 分離釋放 read replica                                                                                                                               |
-| [9.C28 FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)                          | Super Bowl 5-10x peak、Aurora MySQL + read replica scaling                                                                                                                                 |
-| [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)                          | RDB connection limit 是 surge 瓶頸、改用 DynamoDB                                                                                                                                          |
-| [9.C32 Clearent Azure SQL Hyperscale](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) | 5 億 txn/年、storage / compute 分離跟 Aurora 同類設計                                                                                                                                      |
+| 案例                                                                                                            | 高併發場景重點                                                                                                                                                                             |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [AWS Prime Day 2025](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)                  | DynamoDB 1.51 億 RPS + Aurora 5000 億 txn、可預期峰值的 [dogfood baseline](/backend/01-database/large-scale-db-migration/)（vendor 自家 production-critical workload 是 selection signal） |
+| [DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)                 | 1M ops/min、200 個獨立 cluster、replication lag 30s → 10-30ms                                                                                                                              |
+| [Standard Chartered Aurora](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)          | 4000 TPS、7 個受監管市場、各自獨立 cluster                                                                                                                                                 |
+| [Netflix Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)                          | DB 統一後 +75% 效能、storage / compute 分離釋放 read replica                                                                                                                               |
+| [FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)                          | Super Bowl 5-10x peak、Aurora MySQL + read replica scaling                                                                                                                                 |
+| [Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)                          | RDB connection limit 是 surge 瓶頸、改用 DynamoDB                                                                                                                                          |
+| [Clearent Azure SQL Hyperscale](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) | 5 億 txn/年、storage / compute 分離跟 Aurora 同類設計                                                                                                                                      |
 
-[9.C1 Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) 是高併發章節的 *上限參考點*：Amazon 自家 Prime Day 在 24 小時內、DynamoDB 服務 1.51 億 RPS 毫秒級回應、Aurora 處理 5000 億次 transaction。這份數字的意義不是「要達到這個量級」、而是給定 *可預期峰值* 跟 *無限預算* 時、AWS 自家服務的設計上限長這樣。讀本章其他內部 baseline（connection pool、replica lag、isolation level）時、要記得最終物理上限遠高於大部分服務日常會碰到的水位。
+[Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) 是高併發章節的 *上限參考點*：Amazon 自家 Prime Day 在 24 小時內、DynamoDB 服務 1.51 億 RPS 毫秒級回應、Aurora 處理 5000 億次 transaction。這份數字的意義不是「要達到這個量級」、而是給定 *可預期峰值* 跟 *無限預算* 時、AWS 自家服務的設計上限長這樣。讀本章其他內部 baseline（connection pool、replica lag、isolation level）時、要記得最終物理上限遠高於大部分服務日常會碰到的水位。
 
 ## 跨語言適配評估
 
@@ -399,15 +399,15 @@ SQL 的 transactional 模型有結構性限制、超過某個規模硬擴 SQL �
 
 **常態流量** 是 average / median、訂 cost baseline 跟 auto-scaling 的下限。在 PaaS（Aurora Serverless、Cosmos DB serverless）這是「最低保留容量」的依據；在 IaaS 是「永遠開著的 instance 數量」。
 
-[9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 揭露這個議題：「9000 萬 reads / 秒」通常是年度峰值最高一秒、不是平均。讀案例時要區分最大瞬時、99 百分位與常態流量、否則容量規劃會錯位。
+[Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 揭露這個議題：「9000 萬 reads / 秒」通常是年度峰值最高一秒、不是平均。讀案例時要區分最大瞬時、99 百分位與常態流量、否則容量規劃會錯位。
 
-對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 「100 萬 ops/分鐘」≈ 17K ops/秒、跨 200 個獨立 cluster 平均下來每 DB 約 80 ops/秒。讀峰值要看 *分散到多少 shard*、不只看總數。
+對應 [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 「100 萬 ops/分鐘」≈ 17K ops/秒、跨 200 個獨立 cluster 平均下來每 DB 約 80 ops/秒。讀峰值要看 *分散到多少 shard*、不只看總數。
 
 ### 延遲改善要看 percentile、不是平均
 
 「延遲降 90%」這類敘述要追問：是 p50 還是 p99？兩者改善幅度通常差很多、平均值會掩蓋尾巴問題。
 
-對應 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 「90% 延遲降」實際可能是 p50、p99 / p999 改善幅度通常較小。判讀重點：用戶體驗主要受 *p99 / p999* 影響、不是 p50。看到「平均 50ms 降到 5ms」要追問「p99 從多少降到多少」、否則可能用戶感受沒改善。
+對應 [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 「90% 延遲降」實際可能是 p50、p99 / p999 改善幅度通常較小。判讀重點：用戶體驗主要受 *p99 / p999* 影響、不是 p50。看到「平均 50ms 降到 5ms」要追問「p99 從多少降到多少」、否則可能用戶感受沒改善。
 
 延遲監控的必要 percentile：p50、p95、p99、p99.9。p99.9 是每 1000 個 request 裡最慢那一個所在的水位，代表系統接近最差的表現、是 SLO breach 的早期訊號。
 
@@ -415,7 +415,7 @@ SQL 的 transactional 模型有結構性限制、超過某個規模硬擴 SQL �
 
 Headroom budget 是 *提前預留的容量空間*、給可預期或不可預期的峰值用。讀「Super Bowl +50% no sweat」這種敘述、工程意義是團隊事前預留了 headroom、不是 vendor 神奇。
 
-對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — Super Bowl 是已知事件、+50% 是歷史經驗，所以這 50% 算進事件當天的目標容量、事前 scale-up 到位，再在目標容量上加事件型的 headroom、配合 read replica 動態加減，50% 的增幅才會「不流汗」。案例頁只寫了流量 +50% 而延遲不受影響，headroom 實際留了多少沒有公開。
+對應 [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — Super Bowl 是已知事件、+50% 是歷史經驗，所以這 50% 算進事件當天的目標容量、事前 scale-up 到位，再在目標容量上加事件型的 headroom、配合 read replica 動態加減，50% 的增幅才會「不流汗」。案例頁只寫了流量 +50% 而延遲不受影響，headroom 實際留了多少沒有公開。
 
 兩種峰值的 headroom budget 規劃完全不同：
 
@@ -431,7 +431,7 @@ Headroom budget 是 *提前預留的容量空間*、給可預期或不可預期�
 - 例：突發新聞、KOL 推廣、競爭對手出包導致流量湧入、病毒式擴散
 - 規劃做法：常態 baseline 預留高 headroom（50-100%）、加 auto-scaling 跟動態 capacity
 - headroom 預算要高、因為事故發生前沒時間 scale
-- 對應 [9.C2 GR8 Tech AI 預測式擴容](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)
+- 對應 [GR8 Tech AI 預測式擴容](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)
 
 判讀重點：事件型 headroom 適合可預測峰值、突發型 headroom 適合不可預測峰值；兩者預算邏輯不同。把事件型 headroom 套用在突發型場景、突發事件發生時容量會不足；把突發型的高 headroom 套用在事件型、會付大量浪費成本。
 
@@ -439,7 +439,7 @@ Headroom budget 是 *提前預留的容量空間*、給可預期或不可預期�
 
 部分業務有 *讀峰值跟寫峰值不同時段* 的特性、容量規劃要讓讀 peak 與寫 peak 各自發生的時段都有足夠容量，而不是只看總流量曲線上的單一 peak。
 
-對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 「write workloads spike up significantly around payout events, but opening the app during the game also activates a lot of balance queries」。比賽進行時讀爆量（用戶看餘額、看下注狀態）、比賽結束 payout 時寫爆量（賠付寫進帳本）、兩個 peak 錯位。
+對應 [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 「write workloads spike up significantly around payout events, but opening the app during the game also activates a lot of balance queries」。比賽進行時讀爆量（用戶看餘額、看下注狀態）、比賽結束 payout 時寫爆量（賠付寫進帳本）、兩個 peak 錯位。
 
 容量規劃含義：
 
@@ -460,7 +460,7 @@ Headroom budget 是 *提前預留的容量空間*、給可預期或不可預期�
 
 當系統有「高頻流量（如選位、瀏覽）」跟「低頻但關鍵流量（如付款、結算）」共存時、必須切分、否則高頻流量會塞爆低頻路徑、讓低頻關鍵業務無法完成。
 
-對應 [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 拓元把 Payment EC2 拉出來、直連傳統金流 server、不放在搶票流量會打到的 ELB / DB 後面。讓「選位 + 下單」的高頻流量塞爆時、「付款」的低頻流量仍能跑。
+對應 [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 拓元把 Payment EC2 拉出來、直連傳統金流 server、不放在搶票流量會打到的 ELB / DB 後面。讓「選位 + 下單」的高頻流量塞爆時、「付款」的低頻流量仍能跑。
 
 **切分策略**：
 

@@ -47,7 +47,7 @@ Spotify 遷移揭露三個 broker 容量規劃的長期工程問題。
 - 想評估 broker 自管 vs managed → [03 訊息佇列模組](/backend/03-message-queue/) + [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/)
 - 想做大規模 message 系統遷移 → [01.3 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/) 的對等流程
 - 想理解 broker 容量規劃 → [03.4 broker basics](/backend/03-message-queue/broker-basics/)
-- 對照其他事件型負載 → [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)
+- 對照其他事件型負載 → [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)
 
 ## 引用源
 

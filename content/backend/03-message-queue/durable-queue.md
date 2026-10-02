@@ -52,7 +52,7 @@ durable queue 在順序與吞吐之間需要明確取捨。全域順序通常成
 
 訊息系統設計區分兩種 SLO 不同的傳遞責任：*transactional 通知* 承擔業務副作用的可靠送達、*broadcast 訊息* 承擔大量低成本傳播。兩者用不同 storage、不同重試策略、不同投遞保證。
 
-對應 [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — 行動支付每日 3 億訊息、付款通知承擔「確認交易完成」的業務責任、SLO 包含秒級延遲跟高投遞率（用戶付完款後若 30 秒沒收到通知會打客服、產生重複扣款風險）。這層需求嚴於 OTA 推播、需要 durable queue + retry + 重複偵測。
+對應 [PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — 行動支付每日 3 億訊息、付款通知承擔「確認交易完成」的業務責任、SLO 包含秒級延遲跟高投遞率（用戶付完款後若 30 秒沒收到通知會打客服、產生重複扣款風險）。這層需求嚴於 OTA 推播、需要 durable queue + retry + 重複偵測。
 
 **分類設計**：
 
@@ -65,7 +65,7 @@ durable queue 在順序與吞吐之間需要明確取捨。全域順序通常成
 
 訊息系統的真正瓶頸常落在 *下游推送通道*（APNs、FCM、SMS gateway、email provider）、不在 broker。下游 quota 是 hard ceiling、超過會被 throttle、訊息積壓回 broker 形成 backlog。
 
-對應 [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — DynamoDB 寫入可以撐 3K msg/sec 平均（PayPay 本身用 DynamoDB 作訊息後端、不是傳統 broker）、但 APNs 推送額度成為事故當下的隱性瓶頸。容量規劃要把下游 quota 算進去、不只看訊息後端吞吐。
+對應 [PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — DynamoDB 寫入可以撐 3K msg/sec 平均（PayPay 本身用 DynamoDB 作訊息後端、不是傳統 broker）、但 APNs 推送額度成為事故當下的隱性瓶頸。容量規劃要把下游 quota 算進去、不只看訊息後端吞吐。
 
 **設計含義**：
 
@@ -77,7 +77,7 @@ durable queue 在順序與吞吐之間需要明確取捨。全域順序通常成
 
 ## 案例回寫
 
-durable queue 的重試與隔離節奏可用 [3.C9 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 回寫。先看事件中的 backlog、retry、DLQ 變化，再回到本章判讀是重試策略失衡，還是隔離邊界不清楚。
+durable queue 的重試與隔離節奏可用 [反例：Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 回寫。先看事件中的 backlog、retry、DLQ 變化，再回到本章判讀是重試策略失衡，還是隔離邊界不清楚。
 這個案例主要支撐的是「重試隔離與停損門檻」判讀，不直接支撐 outbox 交易切分；若事件核心是資料提交與發布不一致，應轉到 3.3 與 1.3。
 
 當重試量上升且主隊列延遲同步拉高時，先拆分重試通道並收斂 DLQ 分流條件，再把停損門檻接到 [6.24 規則推送安全閘門](/backend/06-reliability/rule-rollout-safety-gate/)。
@@ -94,4 +94,4 @@ durable queue 是非同步可靠性的起點，不是終點。
 
 ## 下一步路由
 
-要從投遞語意往消費語意延伸，接著讀 [3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/)。要看 queue 切換失敗模式，接著讀 [3.C9 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。
+要從投遞語意往消費語意延伸，接著讀 [3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/)。要看 queue 切換失敗模式，接著讀 [反例：Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)。

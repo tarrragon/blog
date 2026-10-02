@@ -22,7 +22,7 @@ Pub/Sub 進階主題：Dead-letter topic / Push vs Pull subscription。
 
 ## 下一步路由
 
-回 [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/) 與 [3.C56 PostNL EBE](/backend/03-message-queue/cases/sqs-postnl-mission-critical-ebe/)（DLQ 設計對照）。
+回 [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/) 與 [PostNL EBE](/backend/03-message-queue/cases/sqs-postnl-mission-critical-ebe/)（DLQ 設計對照）。
 
 ## 引用源
 

@@ -14,7 +14,7 @@ PagerDuty 官方 Customer Liaison 角色定義：「the primary individual in ch
 
 ## 判讀
 
-Customer Liaison 把散落的客訴制度化成一個雙向 out-of-band 管道：一邊把 incoming support requests 聚合成 IC 可用的 scope 訊號（「6 個客戶說沒收到通知」在監控失效時就是 blast-radius 的量測）、一邊把 IC 確認過的狀態往外送。「never guess」在工具退化時尤其關鍵 —— 當內部都不確定發生什麼、對外溝通只講確認的、不猜 ETA、避免把盲飛狀態變成錯誤承諾。這條把 4.C23 的散訊號變成有人負責的通道。
+Customer Liaison 把散落的客訴制度化成一個雙向 out-of-band 管道：一邊把 incoming support requests 聚合成 IC 可用的 scope 訊號（「6 個客戶說沒收到通知」在監控失效時就是 blast-radius 的量測）、一邊把 IC 確認過的狀態往外送。「never guess」在工具退化時尤其關鍵 —— 當內部都不確定發生什麼、對外溝通只講確認的、不猜 ETA、避免把盲飛狀態變成錯誤承諾。這條把 Google Home 的散訊號變成有人負責的通道。
 
 ## 對應大綱
 

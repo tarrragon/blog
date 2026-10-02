@@ -78,7 +78,7 @@ replay window 要能被明確描述與回放，不可用「重播昨天全部」
 
 當背景工作同時要 *高吞吐* 跟 *快速反應*、單一通道模型會變成瓶頸。job queue 的擴展通常是 *拓樸重整*、把不同工作類型切到不同傳遞路徑、而非單點替換。
 
-對應 [3.C5 Slack Job Queue 演進到 Kafka + Redis](/backend/03-message-queue/cases/slack-job-queue-kafka-redis/) — Slack 在 job queue 擴展時把工作切到不同傳遞路徑、Kafka 跟 Redis 分別承擔持久性跟即時性目標、分開治理 lag、重試跟失敗重播。
+對應 [Slack Job Queue 演進到 Kafka + Redis](/backend/03-message-queue/cases/slack-job-queue-kafka-redis/) — Slack 在 job queue 擴展時把工作切到不同傳遞路徑、Kafka 跟 Redis 分別承擔持久性跟即時性目標、分開治理 lag、重試跟失敗重播。
 
 **拓樸分工的判讀**（基於 Slack case 揭露的雙通道分工方向）：
 
@@ -89,11 +89,11 @@ replay window 要能被明確描述與回放，不可用「重播昨天全部」
 
 ## Job queue 規模差異的治理重點
 
-不同規模服務的 job queue 治理問題差異大、SSoT 在本章。對應 [3.C10 對照：規模差異下的佇列模型](/backend/03-message-queue/cases/contrast-queue-model-by-scale/)：
+不同規模服務的 job queue 治理問題差異大、SSoT 在本章。對應 [對照：規模差異下的佇列模型](/backend/03-message-queue/cases/contrast-queue-model-by-scale/)：
 
 - **小型服務**：優先用 managed queue（SQS / Pub/Sub）、運維成本最低。最容易忽略的是語意邊界（重試次數、死信規則、重播責任）、規模一上來會出現資料重複與漏處理。**升級訊號**：team 數超 3-5 個、各自寫 consumer 開始出現 idempotency 不一致、進中型階段
 - **中型服務**：常見問題是 lag 與 DLQ 長期累積。原因是 consumer idempotency + 重播流程 + 下游承載能力沒一起設計。對應前段 Job queue 拓樸分工。**升級訊號**：DLQ 累積速度高於排空速度連續 7 天、單一 tenant 流量尖峰拖垮其他 tenant、進大型階段
-- **大型服務**：需要處理跨租戶跟跨區壓力。單叢集思維會讓任何一類流量尖峰拖垮整體。對應 [3.C4 LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/) 跟 [3.1 broker-basics 分層治理平台](/backend/03-message-queue/broker-basics/)、重點從「怎麼送訊息」轉成「怎麼隔離失敗」
+- **大型服務**：需要處理跨租戶跟跨區壓力。單叢集思維會讓任何一類流量尖峰拖垮整體。對應 [LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/) 跟 [3.1 broker-basics 分層治理平台](/backend/03-message-queue/broker-basics/)、重點從「怎麼送訊息」轉成「怎麼隔離失敗」
 
 判讀重點：當前服務規模決定要處理的 *主要* 問題。規模尚小的服務硬上 multi-tenant 隔離治理屬過度設計、規模化服務應同時考慮 broker 容量是否充足跟隔離邊界是否完整。判斷自己在哪個階段、看 *升級訊號* 對應的指標。
 
@@ -146,6 +146,6 @@ incident_decision:
 
 ## Case Write-back 與邊界
 
-這篇回寫對齊 [3.C9 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)，重點是切換時語意分層混淆導致 delivery 成功但業務結果失真。
+這篇回寫對齊 [反例：Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)，重點是切換時語意分層混淆導致 delivery 成功但業務結果失真。
 
 這篇不處理同步 API latency、cache TTL 或 deployment drain。若風險在同步交易壓力、快取失效或流量切換，路由到 [4.22 Checkout API Evidence Package](/backend/04-observability/checkout-api-evidence-package/)、[2.9 Cache Migration 與 Stampede Rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/) 或 [5.8 Deployment Rollout with Drain and Rollback](/backend/05-deployment-platform/deployment-rollout-drain-rollback/)。

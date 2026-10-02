@@ -36,7 +36,7 @@ KV DB 在 surge 場景比 OLTP 有結構性優勢的主因、不只是 partition
 - 沒有 connection 上限概念、能力上限是 *每 partition 的 RU / RCU*
 - application 加多少 instance 都不會碰到 DB 端的連線上限；請求量仍然消耗 RCU / RU
 
-對應 [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — NTT DOCOMO 串流服務選 DynamoDB 而非 RDB 的關鍵原因是 RDB 的 connection limit 在 surge 場景變成 bottleneck、HTTP API 模型沒這個問題。
+對應 [Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — NTT DOCOMO 串流服務選 DynamoDB 而非 RDB 的關鍵原因是 RDB 的 connection limit 在 surge 場景變成 bottleneck、HTTP API 模型沒這個問題。
 
 判讀含義：選 KV DB 不只是「擴容容易」、是 *連線模型* 適合無 state HTTP 服務的天然契合。微服務數量增加時、HTTP API DB 不需要每次都 review connection pool 設定。但若 application 仍以 SQL transaction 為主流程設計、改 KV 需要 *改 application 架構*、不是換 driver 而已。
 
@@ -98,9 +98,9 @@ partition key 設計不均勻、實際容量遠低於名義。這是 KV DB 最�
 
 **對應案例**：
 
-- [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — 9000 萬 reads/sec 靠 partition 設計均勻、不是純擴 capacity
-- [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票 event_id 天然容易 hot、必須用 composite key 或 write sharding 分散
-- [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — Cosmos DB synthetic partition key 強制分散
+- [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — 9000 萬 reads/sec 靠 partition 設計均勻、不是純擴 capacity
+- [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票 event_id 天然容易 hot、必須用 composite key 或 write sharding 分散
+- [Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — Cosmos DB synthetic partition key 強制分散
 
 詳見 [Hot Partition 卡片](/backend/knowledge-cards/hot-partition/)。
 
@@ -108,7 +108,7 @@ partition key 設計不均勻、實際容量遠低於名義。這是 KV DB 最�
 
 KV DB 的吞吐彈性等於 partition key 均勻分布的結果。partition key 均勻時、實際容量接近名義容量；partition key 不均時、實際容量由最熱 partition 的上限（DynamoDB 每 partition 3000 RCU / 1000 WCU）與它分到的流量比例決定、加再多 partition 也分不走同一個 key 的流量。
 
-對應 [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票 IOPS 從 20 衝到 135K 的 6,750 倍彈性、前提是 partition key 把流量分散到大量 partition（合理做法是 composite key `event_id + user_id_hash` 或 write sharding `event_id + random_suffix`）。若用裸 `event_id` 當 partition key、同一場演唱會所有訂單擠進同一個 partition、實際 IOPS 上限被鎖在 1000 WCU、跟 partition 總數無關。
+對應 [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票 IOPS 從 20 衝到 135K 的 6,750 倍彈性、前提是 partition key 把流量分散到大量 partition（合理做法是 composite key `event_id + user_id_hash` 或 write sharding `event_id + random_suffix`）。若用裸 `event_id` 當 partition key、同一場演唱會所有訂單擠進同一個 partition、實際 IOPS 上限被鎖在 1000 WCU、跟 partition 總數無關。
 
 判讀重點：讀「Amazon Ads 9000 萬 reads/sec」、「DynamoDB 1.51 億 RPS」這類數字、要追問「partition 設計是什麼」、再判斷自己的服務能否複製。換成 DynamoDB 這類按 partition 擴容的資料庫，只讓容量有機會隨 partition 數量成長；partition key 把流量分散到足夠多的 partition，那份容量才用得上，兩個條件缺一不可。只換 DB 而沒解決 partition key、會出「換了 DB 但 hot partition 依舊」的事故。
 
@@ -143,9 +143,9 @@ DynamoDB / Cosmos DB 都提供兩種容量模式、各有適用場景。
 
 **對應案例**：
 
-- [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — TiDB 必須長期 over-provision、換 DynamoDB on-demand 後 pay-per-use、50% 成本下降
-- [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — sustained 3 億 msg/day 適合 provisioned + auto-scaling
-- [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — 9000 萬 RPS sustained workload 必然 provisioned + careful tuning
+- [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — TiDB 必須長期 over-provision、換 DynamoDB on-demand 後 pay-per-use、50% 成本下降
+- [PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — sustained 3 億 msg/day 適合 provisioned + auto-scaling
+- [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — 9000 萬 RPS sustained workload 必然 provisioned + careful tuning
 
 詳見 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/) 的成本曲線分析。
 
@@ -153,7 +153,7 @@ DynamoDB / Cosmos DB 都提供兩種容量模式、各有適用場景。
 
 KV / Document DB 的計費單位（DynamoDB 的 RCU/WCU、Cosmos DB 的 RU、Spanner 的 processing unit）決定容量規劃可以從多小開始。計費粒度太大、中小規模負載付過多錢；計費粒度太小、大規模負載要管理很多細項。
 
-對應 [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) — Spanner 早期最小單位是 1 node（等於 1000 processing units，pu）、對中小負載門檻過高。後來推出 100 pu 起跳的 granular sizing、讓容量規劃可以從小開始、降低 onboarding 門檻。
+對應 [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) — Spanner 早期最小單位是 1 node（等於 1000 processing units，pu）、對中小負載門檻過高。後來推出 100 pu 起跳的 granular sizing、讓容量規劃可以從小開始、降低 onboarding 門檻。
 
 **選型含義**：
 
@@ -167,7 +167,7 @@ KV / Document DB 的計費單位（DynamoDB 的 RCU/WCU、Cosmos DB 的 RU、Spa
 
 讀寫比變化是容量規劃的早期警訊、但常被忽略。原始容量規劃通常基於某個讀寫比（例如 1:1 或 5:1）、業務邏輯改變可能讓比例跳一個量級、原容量規劃失效。
 
-對應 [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — 廣告事件量測讀寫比 18:1（曝光發生 1 次、後續查詢 18 次）。如果業務新增即時報表功能、讀次數從 18 跳到 180、容量規劃要重做、不是「再加一點 capacity」。
+對應 [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — 廣告事件量測讀寫比 18:1（曝光發生 1 次、後續查詢 18 次）。如果業務新增即時報表功能、讀次數從 18 跳到 180、容量規劃要重做、不是「再加一點 capacity」。
 
 **常見業務變化導致讀寫比跳量級**：
 
@@ -210,8 +210,8 @@ KV / Document DB 通常提供多個 [consistency level](/backend/knowledge-cards
 
 **對應案例**：
 
-- [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) — external consistency（線性化）跨地區、付出 quorum 延遲代價
-- [9.C30 Microsoft 365 Cosmos DB](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — 分析平台用 weakest consistency 換最大 throughput
+- [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) — external consistency（線性化）跨地區、付出 quorum 延遲代價
+- [Microsoft 365 Cosmos DB](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — 分析平台用 weakest consistency 換最大 throughput
 
 詳見 [1.3 Transaction Boundary](/backend/01-database/transaction-boundary/) 的一致性取捨。
 
@@ -280,14 +280,14 @@ Cosmos DB 的對應選擇是單一寫入 region 還是 multi-region writes：單
 
 **對應案例**：
 
-- [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB → Cosmos DB MongoDB API、應用層幾乎不改、底層改用 Cosmos 分散式架構
-- [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — 用 SQL API、不需要 MongoDB compat
+- [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB → Cosmos DB MongoDB API、應用層幾乎不改、底層改用 Cosmos 分散式架構
+- [Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) — 用 SQL API、不需要 MongoDB compat
 
 ## KV DB 作為寫入緩衝的特殊用法
 
 flash-sale 架構可以把 KV 當寫入緩衝：前端先把請求寫進 KV，後端再按自己的處理速度消費。broker 與 queue 本身的設計在 [03 訊息佇列模組](/backend/03-message-queue/)，高峰事件前的整體準備在 [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)；這一節只談把 KV 當 buffer 的取捨。
 
-[9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 揭露一個非傳統用法：DynamoDB 不當 OLTP、當 *durable queue*。
+[Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 揭露一個非傳統用法：DynamoDB 不當 OLTP、當 *durable queue*。
 
 **模式**：前端把訂單塞進 DynamoDB（高吞吐、partition 均勻）、後端 legacy server 按自己能承受的速度從 DynamoDB 消費。
 
@@ -310,7 +310,7 @@ flash-sale 架構可以把 KV 當寫入緩衝：前端先把請求寫進 KV，�
 - 高吞吐 stream processing（用 Kafka 更專業）
 - 順序性嚴格要求（DynamoDB Streams 只在 partition 內保證順序）
 
-詳見 [9.C15 Tixcraft 案例](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 的詳細分析。
+詳見 [Tixcraft 案例](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 的詳細分析。
 
 ## 連線管理：connection pool 要不要跟著 instance 數量算
 
@@ -324,14 +324,14 @@ flash-sale 架構可以把 KV 當寫入緩衝：前端先把請求寫進 KV，�
 
 flash-sale 或極端負載場景的限流可能分散在多層元件、不是單一「rate limiter」。同一架構可能同時包含 *隱性* 限流（用 DB / LB 上限自然攔截）跟 *明確* 限流（用排隊系統精確控速）。
 
-對應 [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票架構圖上看不到明確「rate limiter」元件、但限流發生在多層：
+對應 [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票架構圖上看不到明確「rate limiter」元件、但限流發生在多層：
 
 - **DynamoDB 寫入排隊**：前端把訂單寫進 DynamoDB、傳統 server 按自己的處理能力從 DynamoDB 消費 — DynamoDB 表的 throughput 上限就是隱性限流
 - **ELB max connection**：load balancer 上限自動拒絕超量請求
 - **Application 層 connection pool**：超過 pool size 的 request 排隊或被拒
 - **付款層獨立**：搶票流量塞爆時、付款不受影響、低頻路徑「自然限流」
 
-對比 [9.C16 SeatGeek Virtual Waiting Room](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 的 *明確限流*：用 Counters table 精確控發 token 速率、用戶看得到排隊位置。
+對比 [SeatGeek Virtual Waiting Room](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 的 *明確限流*：用 Counters table 精確控發 token 速率、用戶看得到排隊位置。
 
 **選擇取捨**：
 
@@ -351,23 +351,23 @@ flash-sale 或極端負載場景的限流可能分散在多層元件、不是單
 
 ## 案例對照
 
-| 案例                                                                                                | 教學重點                                                                            |
-| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| [9.C1 AWS Prime Day 2025](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) | DynamoDB 24 小時 1.51 億 RPS、毫秒級延遲、可預期峰值上限參考                        |
-| [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)           | 9000 萬 RPS + 99.999% 可用 — partition 均勻設計典範                                 |
-| [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)   | Cosmos DB 1M RU/s + multi-model + global distribution                               |
-| [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)       | DynamoDB 當 durable queue、IOPS 20→135K                                             |
-| [9.C16 SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)             | DynamoDB 4 表 + Lambda 實作 virtual waiting room、跟 Tixcraft 的隱性緩衝形成姊妹案  |
-| [9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)                     | 30x DAU surge、DynamoDB 撐 [control plane](/backend/knowledge-cards/control-plane/) |
-| [9.C19 Capcom](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/)                  | 遊戲後端 KV、billions of requests + single-digit ms                                 |
-| [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)           | TiDB → DynamoDB、50% 成本下降的取捨                                                 |
-| [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)                   | Black Friday 1.67 億請求 / 24h、Cosmos DB 多 region                                 |
-| [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)        | 99.999% 跨 15 region、DynamoDB 為預設 DB                                            |
-| [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)             | 3 億訊息 / 天、TTL 自動清理                                                         |
-| [9.C27 Disney+](/backend/09-performance-capacity/cases/disney-plus-content-metadata/)               | billions of actions daily、watchlist + 播放進度                                     |
-| [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)        | connection limit 才是 RDB bottleneck、改用 DynamoDB                                 |
+| 案例                                                                                           | 教學重點                                                                            |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [AWS Prime Day 2025](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) | DynamoDB 24 小時 1.51 億 RPS、毫秒級延遲、可預期峰值上限參考                        |
+| [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)           | 9000 萬 RPS + 99.999% 可用 — partition 均勻設計典範                                 |
+| [Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)    | Cosmos DB 1M RU/s + multi-model + global distribution                               |
+| [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)        | DynamoDB 當 durable queue、IOPS 20→135K                                             |
+| [SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)              | DynamoDB 4 表 + Lambda 實作 virtual waiting room、跟 Tixcraft 的隱性緩衝形成姊妹案  |
+| [Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)                      | 30x DAU surge、DynamoDB 撐 [control plane](/backend/knowledge-cards/control-plane/) |
+| [Capcom](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/)                   | 遊戲後端 KV、billions of requests + single-digit ms                                 |
+| [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)            | TiDB → DynamoDB、50% 成本下降的取捨                                                 |
+| [ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)                    | Black Friday 1.67 億請求 / 24h、Cosmos DB 多 region                                 |
+| [Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)         | 99.999% 跨 15 region、DynamoDB 為預設 DB                                            |
+| [PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)              | 3 億訊息 / 天、TTL 自動清理                                                         |
+| [Disney+](/backend/09-performance-capacity/cases/disney-plus-content-metadata/)                | billions of actions daily、watchlist + 播放進度                                     |
+| [Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)         | connection limit 才是 RDB bottleneck、改用 DynamoDB                                 |
 
-[9.C16 SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 把 DynamoDB 當 *排隊調度系統*、不只當 queue buffer：用 Protected Zone table 記錄哪個 event 受 waiting room 保護、Counters table 控發 token 的速率、Queue table 紀錄序號、User Connection table 串 WebSocket。這個架構跟 [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 的「全部塞進 DynamoDB 隱性緩衝」是兩種對立取捨 — Tixcraft 用透明度換流量吸收能力、SeatGeek 用流量吸收能力換體驗可見度。判讀重點：KV DB 不只能當 OLTP 替代品、這四張表組合就能變成業務級調度引擎、選表前要先確定業務要的是流量吸收能力還是排隊位置的可見度。
+[SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 把 DynamoDB 當 *排隊調度系統*、不只當 queue buffer：用 Protected Zone table 記錄哪個 event 受 waiting room 保護、Counters table 控發 token 的速率、Queue table 紀錄序號、User Connection table 串 WebSocket。這個架構跟 [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 的「全部塞進 DynamoDB 隱性緩衝」是兩種對立取捨 — Tixcraft 用透明度換流量吸收能力、SeatGeek 用流量吸收能力換體驗可見度。判讀重點：KV DB 不只能當 OLTP 替代品、這四張表組合就能變成業務級調度引擎、選表前要先確定業務要的是流量吸收能力還是排隊位置的可見度。
 
 ## 下一步路由
 

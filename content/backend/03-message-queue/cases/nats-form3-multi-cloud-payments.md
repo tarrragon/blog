@@ -22,7 +22,7 @@ NATS 進階主題：Cluster + Supercluster + Leaf node / JetStream stream 設計
 
 ## 下一步路由
 
-回 [NATS vendor 頁](/backend/03-message-queue/vendors/nats/) 與 [3.C1 Meta FOQS](/backend/03-message-queue/cases/meta-foqs-global-migration/)（跨區對照）。
+回 [NATS vendor 頁](/backend/03-message-queue/vendors/nats/) 與 [Meta FOQS](/backend/03-message-queue/cases/meta-foqs-global-migration/)（跨區對照）。
 
 ## 引用源
 

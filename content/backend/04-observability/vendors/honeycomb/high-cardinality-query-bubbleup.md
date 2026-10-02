@@ -178,4 +178,4 @@ Honeycomb 的計費基於 **events volume**（per million events ingested per mo
 - [4.6 SLI/SLO signal](/backend/04-observability/sli-slo-signal/)：SLO / burn rate 的訊號設計
 - [OpenTelemetry](/backend/04-observability/vendors/opentelemetry/)：OTLP ingestion 的上游標準
 - [Prometheus](/backend/04-observability/vendors/prometheus/)：共存模式中的 metrics 面
-- [4.C2 Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)：high-cardinality 場景的案例回寫
+- [Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)：high-cardinality 場景的案例回寫

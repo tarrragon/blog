@@ -13,7 +13,7 @@ RU 出現在 Cosmos DB 全產品線、跟 [Cost Per Request](/backend/knowledge-
 
 ## 可觀察訊號與例子
 
-需要 RU 判讀的訊號是「Cosmos DB throttle 在 monthly bill 之前就先出現、team 估容量發現估不出來」。[9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) 揭露對照：1 RU = 1KB strong-consistent read、寫 ~5 RU、複雜 query 數百 RU；100 萬 RU/s 壓測通過（壓測數字、非 production 持續、case 自己警示）。[9.C21 ASOS Cosmos DB](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) 跟 [9.C30 Microsoft 365 Cosmos DB](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 揭露 Black Friday 10x 流量下 autoscale 跟不上 throttle、index policy 改動讓 write RU 漲 30%。
+需要 RU 判讀的訊號是「Cosmos DB throttle 在 monthly bill 之前就先出現、team 估容量發現估不出來」。[Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) 揭露對照：1 RU = 1KB strong-consistent read、寫 ~5 RU、複雜 query 數百 RU；100 萬 RU/s 壓測通過（壓測數字、非 production 持續、case 自己警示）。[ASOS Cosmos DB](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) 跟 [Microsoft 365 Cosmos DB](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 揭露 Black Friday 10x 流量下 autoscale 跟不上 throttle、index policy 改動讓 write RU 漲 30%。
 
 ## 設計責任
 

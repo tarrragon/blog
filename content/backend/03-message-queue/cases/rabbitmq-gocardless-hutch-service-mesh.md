@@ -22,7 +22,7 @@ RabbitMQ 進階主題：Exchange types 與 routing 設計 / 多 vhost（單 vhos
 
 ## 下一步路由
 
-回 [RabbitMQ vendor 頁](/backend/03-message-queue/vendors/rabbitmq/) 與 [3.C23 Bloomberg](/backend/03-message-queue/cases/rabbitmq-bloomberg-multi-tenant-vhost/)（規模化後的對照）。
+回 [RabbitMQ vendor 頁](/backend/03-message-queue/vendors/rabbitmq/) 與 [Bloomberg](/backend/03-message-queue/cases/rabbitmq-bloomberg-multi-tenant-vhost/)（規模化後的對照）。
 
 ## 引用源
 

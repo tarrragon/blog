@@ -31,7 +31,7 @@ ElastiCache 的責任劃分可以列成一張清楚的表，這張表是判讀�
 | key 設計 / hot key   | 不管                       | key 分布、hot key 兩層 cache 自己處理                                              |
 | 連線管理             | 提供 endpoint              | 連線池、socket timeout 自己設                                                      |
 
-左欄是用 managed 換到的，右欄是用 managed 換不掉的。[2.C9 cache stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 的雪崩、[連線風暴](/backend/02-cache-redis/vendors/redis/connection-pipeline-latency/)、[eviction 選錯](/backend/02-cache-redis/vendors/redis/memory-eviction-tuning/) 在 ElastiCache 上跟自管 Redis 一模一樣會發生——因為這些是 cache 使用方式的問題，不是運維的問題。
+左欄是用 managed 換到的，右欄是用 managed 換不掉的。[cache stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 的雪崩、[連線風暴](/backend/02-cache-redis/vendors/redis/connection-pipeline-latency/)、[eviction 選錯](/backend/02-cache-redis/vendors/redis/memory-eviction-tuning/) 在 ElastiCache 上跟自管 Redis 一模一樣會發生——因為這些是 cache 使用方式的問題，不是運維的問題。
 
 ### engine 選擇與 cluster mode
 

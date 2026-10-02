@@ -13,7 +13,7 @@ Leaseholder 出現在 CockroachDB / Spanner 等 distributed SQL 架構、跟 [Co
 
 ## 可觀察訊號與例子
 
-需要 leaseholder 判讀的訊號是「整體 cluster CPU 不高、但某節點 p99 latency 飆 + 寫入 throughput 卡住」。[9.C39 DoorDash CockroachDB](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) 揭露 Aurora Postgres 撞牆後遷到 CockroachDB、寫入分散到 leaseholder 跟 Raft replica；[9.C40 Netflix CockroachDB](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 揭露 380+ cluster / 最大單區 60 nodes 規模、leaseholder placement 跟 locality config 直接決定 cross-region latency。
+需要 leaseholder 判讀的訊號是「整體 cluster CPU 不高、但某節點 p99 latency 飆 + 寫入 throughput 卡住」。[DoorDash CockroachDB](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) 揭露 Aurora Postgres 撞牆後遷到 CockroachDB、寫入分散到 leaseholder 跟 Raft replica；[Netflix CockroachDB](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 揭露 380+ cluster / 最大單區 60 nodes 規模、leaseholder placement 跟 locality config 直接決定 cross-region latency。
 
 ## 設計責任
 

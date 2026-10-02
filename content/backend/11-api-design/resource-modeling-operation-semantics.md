@@ -10,7 +10,7 @@ tags: ["backend", "api-design", "modeling"]
 
 ## 資源與表徵是兩層
 
-資源建模的第一個概念區分是資源（resource）與表徵（representation）：資源是被命名的概念實體、表徵是它在某次回應裡的具體格式。這個區分出自 REST 論文的 uniform interface 子約束 manipulation through representations — client 透過表徵操作資源（約束清單見 [11.C1](/backend/11-api-design/cases/rest-fielding-dissertation-ch5/)、定義展開依論文原文）。工程意義：同一個資源可以有多種表徵（完整版、列表精簡版、不同版本的形狀）、表徵的形狀可以演進而資源身分不變 — URL 命名的是資源、欄位設計的是表徵、兩層的變更紀律不同。把這兩層混在一起的常見症狀是「加一個欄位要開一個新 endpoint」。
+資源建模的第一個概念區分是資源（resource）與表徵（representation）：資源是被命名的概念實體、表徵是它在某次回應裡的具體格式。這個區分出自 REST 論文的 uniform interface 子約束 manipulation through representations — client 透過表徵操作資源（約束清單見 [Fielding 論文第 5 章：REST 是約束推導的架構風格](/backend/11-api-design/cases/rest-fielding-dissertation-ch5/)、定義展開依論文原文）。工程意義：同一個資源可以有多種表徵（完整版、列表精簡版、不同版本的形狀）、表徵的形狀可以演進而資源身分不變 — URL 命名的是資源、欄位設計的是表徵、兩層的變更紀律不同。把這兩層混在一起的常見症狀是「加一個欄位要開一個新 endpoint」。
 
 ## 資源導向與動作導向的取捨
 
@@ -28,11 +28,11 @@ method 與 status 的選用向中介層與消費者承諾了行為性質、選�
 
 ## Available actions 由誰計算
 
-資源當下可做什麼操作、有兩種回答方式 — 這是 hypermedia 爭論落到建模層的具體形式。htmx 的 HATEOAS essay 用透支帳戶做對照：HTML 表徵在透支時只回 deposit 連結、業務狀態直接編碼在可用操作裡、client 零業務知識；JSON 表徵回 `status: "overdrawn"` 欄位、client 靠文件理解語意跟下一步（見 [11.C5](/backend/11-api-design/cases/rest-htmx-hateoas-html-necessity/)）。由此得到的操作型判別法：**available actions 由 server 算完放進 response、還是 client 讀狀態欄位自己算** — 前者是 hypermedia 路線、後者是業界主流的 JSON API 路線。
+資源當下可做什麼操作、有兩種回答方式 — 這是 hypermedia 爭論落到建模層的具體形式。htmx 的 HATEOAS essay 用透支帳戶做對照：HTML 表徵在透支時只回 deposit 連結、業務狀態直接編碼在可用操作裡、client 零業務知識；JSON 表徵回 `status: "overdrawn"` 欄位、client 靠文件理解語意跟下一步（見 [htmx HATEOAS essay：透支帳戶的兩種表徵對照](/backend/11-api-design/cases/rest-htmx-hateoas-html-necessity/)）。由此得到的操作型判別法：**available actions 由 server 算完放進 response、還是 client 讀狀態欄位自己算** — 前者是 hypermedia 路線、後者是業界主流的 JSON API 路線。
 
 判斷標準層的建議：machine-to-machine 的 JSON API 走 client 自算是務實預設（消費者是程式、本來就要讀文件寫死邏輯）；但「狀態欄位 + 文件」的組合要把狀態機明文化 — 狀態列舉、每個狀態下的合法操作、非法操作回什麼錯誤。hypermedia 路線的完整論證與反方立場、收在 [Hypermedia 與 HATEOAS 復興](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)。
 
-Richardson 成熟度模型可以當這個決策的定位工具：Level 1（資源化）、Level 2（method 與 status 語意正確）、Level 3（hypermedia controls）。一手來源自己標注它是理解工具、非 REST 認證（見 [11.C3](/backend/11-api-design/cases/rest-fowler-richardson-maturity-model/)）。用它描述「我們的 API 在哪、要不要往上」是合法用法、拿它當合規檢查表是誤用 — 完整的實用讀法與誤用邊界、主寫在 [Richardson 成熟度的實用讀法](/backend/11-api-design/styles/rest/richardson-maturity-practical-reading/)。
+Richardson 成熟度模型可以當這個決策的定位工具：Level 1（資源化）、Level 2（method 與 status 語意正確）、Level 3（hypermedia controls）。一手來源自己標注它是理解工具、非 REST 認證（見 [Richardson 成熟度模型：分級階梯與它的自我聲明](/backend/11-api-design/cases/rest-fowler-richardson-maturity-model/)）。用它描述「我們的 API 在哪、要不要往上」是合法用法、拿它當合規檢查表是誤用 — 完整的實用讀法與誤用邊界、主寫在 [Richardson 成熟度的實用讀法](/backend/11-api-design/styles/rest/richardson-maturity-practical-reading/)。
 
 ## 判讀訊號
 

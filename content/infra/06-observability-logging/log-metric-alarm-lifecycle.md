@@ -90,7 +90,7 @@ Retention 是成本、合規與除錯需求的三方取捨：
 
 較合理的做法是按日誌類型分層：高頻、除錯用的 application log 設短 retention，稽核相關的 access log 按合規要求設長期保留，必要時再把冷資料用 subscription filter 歸檔到更便宜的物件儲存（S3 + Glacier）。把這些值寫進 IaC，讓「為什麼這條 log 留 90 天」是一個能在 PR 上被討論的決定，而非某人半年前在 console 點的一個數字。成本參考：CloudWatch Logs 的儲存費用約 $0.03/GB/月。一個每天產生 10GB log 的服務，30 天 retention 的月費約 $9，7 天約 $2。retention 天數的選擇是合規需求（留多久才合規）與儲存成本的直接取捨，可以按 log 類型分層設定。
 
-觀測平台的帳單在規模化後容易超線性成長，而缺乏 per-team cost attribution 的環境只能靠全域砍 retention 或降 sampling 來控制成本，兩者都會傷害觀測品質。把 log retention 跟 cardinality budget 的決定從全域級拆到團隊級（用 tag 歸因），才能做到「該省的省、該留的留」。這個取捨在 [4.C14 觀測平台成本治理](/backend/04-observability/cases/observability-cost-governance-at-scale/) 有多家企業的具體經驗。
+觀測平台的帳單在規模化後容易超線性成長，而缺乏 per-team cost attribution 的環境只能靠全域砍 retention 或降 sampling 來控制成本，兩者都會傷害觀測品質。把 log retention 跟 cardinality budget 的決定從全域級拆到團隊級（用 tag 歸因），才能做到「該省的省、該留的留」。這個取捨在 [觀測平台成本治理](/backend/04-observability/cases/observability-cost-governance-at-scale/) 有多家企業的具體經驗。
 
 ```hcl
 resource "aws_cloudwatch_log_group" "api" {
@@ -209,7 +209,7 @@ variable "alarm_latency_p99_ms" {
 
 開新服務時 alarm 跟著資源一起生出來，調整閾值才是該服務 owner 的選配。預設值的選擇依據是「保守但不擾民」— 初始閾值設寬一點，上線穩定後再根據實際基線收斂。
 
-觀測訊號的設計有一個容易忽略的盲區：aggregated metric 會遮蔽局部惡化。Discord 在三代儲存架構的遷移過程中反覆遇到同一個問題——整體 p95 延遲正常，但少數 hot partition 或大型群組的延遲已經飆升，直到使用者回報才發現。教訓是 alarm 的維度要跟業務的 fan-out 結構對齊，而非只看全域聚合。詳見 [4.C13 Discord：從儲存問題回推觀測缺口](/backend/04-observability/cases/discord-storage-growth-observability-gap/)。規模化後叢集的動態擴縮也會改變觀測模型——擴縮事件本身要成為觀測對象，見 [4.C8 Airbnb：K8s 規模化觀測訊號治理](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)。
+觀測訊號的設計有一個容易忽略的盲區：aggregated metric 會遮蔽局部惡化。Discord 在三代儲存架構的遷移過程中反覆遇到同一個問題——整體 p95 延遲正常，但少數 hot partition 或大型群組的延遲已經飆升，直到使用者回報才發現。教訓是 alarm 的維度要跟業務的 fan-out 結構對齊，而非只看全域聚合。詳見 [Discord：從儲存問題回推觀測缺口](/backend/04-observability/cases/discord-storage-growth-observability-gap/)。規模化後叢集的動態擴縮也會改變觀測模型——擴縮事件本身要成為觀測對象，見 [Airbnb：K8s 規模化觀測訊號治理](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)。
 
 ## 基礎設施訊號 vs 客戶端行為訊號
 

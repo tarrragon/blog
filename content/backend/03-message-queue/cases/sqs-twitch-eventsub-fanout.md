@@ -22,7 +22,7 @@ SQS 進階主題：Standard queue + SQS + Lambda / SNS-SQS fan-out。
 
 ## 下一步路由
 
-回 [SQS vendor 頁](/backend/03-message-queue/vendors/aws-sqs/) 與 [3.C51 Atlassian JiRT](/backend/03-message-queue/cases/sqs-atlassian-jirt-kinesis-sqs/)（subscription 對照）。
+回 [SQS vendor 頁](/backend/03-message-queue/vendors/aws-sqs/) 與 [Atlassian JiRT](/backend/03-message-queue/cases/sqs-atlassian-jirt-kinesis-sqs/)（subscription 對照）。
 
 ## 引用源
 

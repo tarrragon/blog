@@ -242,6 +242,6 @@ application 邏輯的商業處理部分（process 函式）多數可保留、改
 - Source / target vendor：[AWS SQS](/backend/03-message-queue/vendors/aws-sqs/) / [Google Pub/Sub](/backend/03-message-queue/vendors/google-pubsub/)
 - 平行 vendor：[Kafka](/backend/03-message-queue/vendors/kafka/) / [RabbitMQ](/backend/03-message-queue/vendors/rabbitmq/) / [NATS](/backend/03-message-queue/vendors/nats/)
 - 平行 migration playbook：[Kafka ↔ NATS](/backend/03-message-queue/vendors/kafka/migrate-from-to-nats/)
-- 引用案例：[3.C64 Mercari Item Feed DLT](/backend/03-message-queue/cases/pubsub-mercari-item-feed-dlt/) / [3.C61 Spotify autoscaling](/backend/03-message-queue/cases/pubsub-spotify-autoscaling-consumers/)
+- 引用案例：[Mercari Item Feed DLT](/backend/03-message-queue/cases/pubsub-mercari-item-feed-dlt/) / [Spotify autoscaling](/backend/03-message-queue/cases/pubsub-spotify-autoscaling-consumers/)
 - Methodology：[Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/)
 - 上游概念：[0.3 非同步選型](/backend/00-service-selection/async-delivery-selection/) / [6.12 idempotency / replay](/backend/06-reliability/idempotency-replay/)

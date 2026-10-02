@@ -12,7 +12,7 @@ Spotify 把全球 event delivery 從 Kafka 遷到 Cloud Pub/Sub 的案例揭露�
 
 Spotify 的 Event Delivery 系統負責把所有使用者行為事件（播放、搜尋、推薦互動、廣告曝光）從客戶端經由資料管線送到下游消費者。事件是推薦引擎、A/B test、廣告計費跟 analytics 的核心輸入。
 
-遷移到 GCP Pub/Sub 後的系統規模：每個 event type 一個 topic、~15 個 microservice 跑在 ~2500 VM 上、Q1 2019 高峰 8M events/sec、每日 350 TB raw event 流量。遷出 Kafka 的動機跟技術評估見 [3.C20 Spotify 遷出 Kafka（反例）](/backend/03-message-queue/cases/kafka-spotify-event-delivery-exodus/)。
+遷移到 GCP Pub/Sub 後的系統規模：每個 event type 一個 topic、~15 個 microservice 跑在 ~2500 VM 上、Q1 2019 高峰 8M events/sec、每日 350 TB raw event 流量。遷出 Kafka 的動機跟技術評估見 [Spotify 遷出 Kafka（反例）](/backend/03-message-queue/cases/kafka-spotify-event-delivery-exodus/)。
 
 ## 技術挑戰
 
@@ -58,7 +58,7 @@ Dedup store 的挑戰是大小跟 TTL — 要記住多久以前的 event ID 才�
 ## 回寫教材的連結
 
 - [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/)：push vs pull subscription、ack deadline、ordering 跟 DLT 的進階主題
-- [3.C20 Spotify 遷出 Kafka](/backend/03-message-queue/cases/kafka-spotify-event-delivery-exodus/)：遷出 Kafka 的動機跟決策標準
+- [Spotify 遷出 Kafka](/backend/03-message-queue/cases/kafka-spotify-event-delivery-exodus/)：遷出 Kafka 的動機跟決策標準
 - [3.6 processing recovery semantics](/backend/03-message-queue/processing-recovery-semantics/)：at-least-once 語意下的 dedup 策略
 - [3.7 event contract replay boundary](/backend/03-message-queue/event-contract-replay-boundary/)：event schema 跟 topic lifecycle 的治理
 

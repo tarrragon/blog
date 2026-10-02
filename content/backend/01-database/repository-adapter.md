@@ -120,7 +120,7 @@ error translation 的責任是把底層錯誤分類成應用層可決策訊號�
 1. **小團隊 + CRUD-heavy**：ORM（快速 prototype、boilerplate 少）
 2. **中型 + 混合需求**：Query Builder（安全 + 仍能寫複雜 query）
 3. **大型 + 性能極限**：Raw SQL + Query Builder（複雜 query 用 raw、簡單用 builder）
-4. **microservice 私有 store**（每個微服務各有自己的資料庫 cluster，見 [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)）：store 只服務一個 service，工具照上面三條依團隊規模與查詢複雜度選；那個案例沒有記錄 Netflix 用的是哪一種存取工具
+4. **microservice 私有 store**（每個微服務各有自己的資料庫 cluster，見 [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)）：store 只服務一個 service，工具照上面三條依團隊規模與查詢複雜度選；那個案例沒有記錄 Netflix 用的是哪一種存取工具
 
 ### ORM 反模式
 
@@ -227,7 +227,7 @@ func (s *Service) PlaceOrder(ctx context.Context, order Order) error {
 - 每個 service 自己的 schema、自己的 adapter
 - 跨 service 不直接 DB query、要透過 API
 - transaction 不跨 service（用 Saga 或 outbox）
-- 對應 [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)、[9.C7 Lyft 100+ microservice](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)
+- 對應 [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)、[Lyft 100+ microservice](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)
 
 **反模式**：
 
@@ -271,15 +271,15 @@ func (s *Service) PlaceOrder(ctx context.Context, order Order) error {
 
 ## 案例對照
 
-| 案例                                                                                                       | repository / adapter 設計重點                          |
-| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) | microservice 私有 store、每個 service 自己 repository  |
-| [9.C7 Lyft 100+ microservice](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)      | 微服務私有 DB、跨 service 不直接 DB query              |
-| [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)                  | TiDB → DynamoDB、repository adapter 是換 DB 的關鍵抽象 |
+| 案例                                                                                                 | repository / adapter 設計重點                          |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) | microservice 私有 store、每個 service 自己 repository  |
+| [Lyft 100+ microservice](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)     | 微服務私有 DB、跨 service 不直接 DB query              |
+| [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)                  | TiDB → DynamoDB、repository adapter 是換 DB 的關鍵抽象 |
 
 ## 案例回寫
 
-adapter 邊界可用 [3.C9 反例：Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 的資料一致性段落回寫。若事件中出現同一錯誤在不同路徑被不同方式處理、通常代表 adapter 的錯誤翻譯與契約分層不足。
+adapter 邊界可用 [反例：Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 的資料一致性段落回寫。若事件中出現同一錯誤在不同路徑被不同方式處理、通常代表 adapter 的錯誤翻譯與契約分層不足。
 
 這個案例主要支撐的是「錯誤分類與契約映射」判讀、不直接支撐 broker delivery 參數調整；若根因在 ack/retry 節奏、應回到 [broker 基礎與投遞模型](/backend/03-message-queue/broker-basics/) 與 [durable queue 與重試策略](/backend/03-message-queue/durable-queue/)。
 

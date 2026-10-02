@@ -57,7 +57,7 @@ DLQ 的價值是把「目前無法處理」的訊息安全保存，不讓它們�
 - [3.2 durable queue](/backend/03-message-queue/durable-queue/)：DLX + TTL 是 RabbitMQ 原生的 durable 機制
 - [3.6 processing recovery semantics](/backend/03-message-queue/processing-recovery-semantics/)：retry 策略跟 consumer 的 ack/nack 行為
 - [RabbitMQ DLQ retry escalation](/backend/03-message-queue/vendors/rabbitmq/dlq-retry-escalation/)：DLX 配置的實作細節
-- [3.C6 Uber Kafka 平台](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/)：Kafka 生態的 retry topic 跟 DLQ 設計比較
+- [Uber Kafka 平台](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/)：Kafka 生態的 retry topic 跟 DLQ 設計比較
 
 ## 判讀徵兆
 

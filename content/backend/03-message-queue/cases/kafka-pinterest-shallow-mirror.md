@@ -22,7 +22,7 @@ Kafka 進階主題：cross-region MirrorMaker / MirrorMaker 2 配置。
 
 ## 下一步路由
 
-回 [Kafka vendor 頁](/backend/03-message-queue/vendors/kafka/) 與 [3.C1 Meta FOQS](/backend/03-message-queue/cases/meta-foqs-global-migration/)。
+回 [Kafka vendor 頁](/backend/03-message-queue/vendors/kafka/) 與 [Meta FOQS](/backend/03-message-queue/cases/meta-foqs-global-migration/)。
 
 ## 引用源
 

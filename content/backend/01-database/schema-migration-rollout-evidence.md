@@ -214,7 +214,7 @@ Shadow read 的判讀重點：
 - **覆蓋條件**：要驗證所有 caller path（checkout / support / reconciliation / external API）都跑過 shadow、否則 cutover 後可能踩到沒測試過的 path。
 - **退場條件**：shadow read 不該長期跑、會增加負載。設明確 sunset deadline、cutover 完成後一週內移除。
 
-對應 [9.C20 Zomato TiDB → DynamoDB migration](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — migration 期間用 shadow read 持續驗證 mapping 規則、抓到 mapping drift。
+對應 [Zomato TiDB → DynamoDB migration](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — migration 期間用 shadow read 持續驗證 mapping 規則、抓到 mapping drift。
 
 Dual-write 跟 shadow read 的選擇不是互斥、是依風險組合：
 
@@ -253,7 +253,7 @@ Migration 跨越 region 或多個 service 時、rollout 順序錯誤是最常見
 - **owner-by-owner cutover roster**：明確列出每個下游 service 的 owner、預計 cutover 時間、目前狀態。常用工具是共享 dashboard、不是散落的 ticket。
 - **Contract test**：每個下游 service 對新欄位都要有 contract test、在 CI gate 跑過。避免上游 cutover 後下游才發現沒讀對。
 
-對應案例：[9.C20 Zomato TiDB → DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 跨多個 service 的 access pattern 變更、必須每個 service 各自驗證、不能假設「DB 切了就好」。
+對應案例：[Zomato TiDB → DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 跨多個 service 的 access pattern 變更、必須每個 service 各自驗證、不能假設「DB 切了就好」。
 
 ## Evidence Package
 

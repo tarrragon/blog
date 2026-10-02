@@ -6,7 +6,7 @@ weight: 16
 tags: ["backend", "performance", "capacity", "case-study", "compute", "aws", "flash-sale-spike"]
 ---
 
-這個案例的核心責任是說明「flash-sale 場景下、限流如何明確設計」。跟 [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 的「DynamoDB 隱性緩衝」是姊妹案 — Tixcraft 用 DynamoDB 作為寫入緩衝吸收洪峰、SeatGeek 走更上游一層、在用戶到達系統前就明確排隊。兩種架構並存於票務業界、適合不同業務場景。
+這個案例的核心責任是說明「flash-sale 場景下、限流如何明確設計」。跟 [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 的「DynamoDB 隱性緩衝」是姊妹案 — Tixcraft 用 DynamoDB 作為寫入緩衝吸收洪峰、SeatGeek 走更上游一層、在用戶到達系統前就明確排隊。兩種架構並存於票務業界、適合不同業務場景。
 
 ## 觀察
 
@@ -57,7 +57,7 @@ SeatGeek 案例揭露三個明確限流設計重點。
 ## 下一步路由
 
 - 想設計明確排隊限流 → [05 部署平台模組](/backend/05-deployment-platform/) + [9.11 高峰事件準備](/backend/09-performance-capacity/)
-- 對照隱性緩衝模式 → [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)
+- 對照隱性緩衝模式 → [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)
 - 想做 conversion funnel 可觀測性 → [04 可觀測性模組](/backend/04-observability/) + [04.16 SLI / SLO 訊號](/backend/04-observability/sli-slo-signal/)
 - 想了解 stateful service 容量規劃 → [05 部署平台模組](/backend/05-deployment-platform/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/)
 

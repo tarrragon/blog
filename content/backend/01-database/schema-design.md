@@ -103,7 +103,7 @@ UUID v7 的前 48 bit 是 Unix 時間戳（毫秒精度）。攻擊者拿到 UUI
 
 Go 的 `google/uuid` v1.6+ 內建 `uuid.NewV7()`，效能約 350ns/op（含 crypto/rand），和 JSON 解析（5-10μs）、DB 寫入（200μs）相比不是瓶頸。
 
-對應 KV 案例：[9.C5 Amazon Ads partition key](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)、[9.C15 Tixcraft composite key](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 都是主鍵策略的延伸。
+對應 KV 案例：[Amazon Ads partition key](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)、[Tixcraft composite key](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 都是主鍵策略的延伸。
 
 ## Index 設計
 
@@ -171,8 +171,8 @@ normalize 是 SQL 的預設、但 denormalize 有時是更好的工程選擇。
 
 **對應案例**：
 
-- [9.C27 Disney+ watch list](/backend/09-performance-capacity/cases/disney-plus-content-metadata/) — denormalize 用戶 metadata、跨裝置查詢方便
-- [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — DynamoDB single-table design 是極端 denormalization
+- [Disney+ watch list](/backend/09-performance-capacity/cases/disney-plus-content-metadata/) — denormalize 用戶 metadata、跨裝置查詢方便
+- [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — DynamoDB single-table design 是極端 denormalization
 
 ## Partition 策略
 
@@ -193,8 +193,8 @@ normalize 是 SQL 的預設、但 denormalize 有時是更好的工程選擇。
 
 **對應案例**：
 
-- [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 200 個獨立 Aurora cluster 是極端 partition by business
-- [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — DynamoDB 透明 partition、應用層不必管
+- [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 200 個獨立 Aurora cluster 是極端 partition by business
+- [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — DynamoDB 透明 partition、應用層不必管
 
 ## Schema Evolution 友好設計
 
@@ -267,13 +267,13 @@ schema 演進時、命名與結構要一起考慮。欄位重命名、拆欄位�
 
 ## 案例對照
 
-| 案例                                                                                              | Schema 設計重點                                  |
-| ------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)         | DynamoDB single-table design、極端 denormalize   |
-| [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)     | Composite partition key、event_id × user_id_hash |
-| [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)     | 200 個獨立 cluster、按業務切 partition           |
-| [9.C27 Disney+](/backend/09-performance-capacity/cases/disney-plus-content-metadata/)             | watch list embedded design、跨裝置同步           |
-| [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) | Cosmos DB synthetic partition key 強制分散       |
+| 案例                                                                                        | Schema 設計重點                                  |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)        | DynamoDB single-table design、極端 denormalize   |
+| [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)     | Composite partition key、event_id × user_id_hash |
+| [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)    | 200 個獨立 cluster、按業務切 partition           |
+| [Disney+](/backend/09-performance-capacity/cases/disney-plus-content-metadata/)             | watch list embedded design、跨裝置同步           |
+| [Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/) | Cosmos DB synthetic partition key 強制分散       |
 
 ## 案例回寫
 
