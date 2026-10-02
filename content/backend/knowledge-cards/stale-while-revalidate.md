@@ -9,11 +9,11 @@ Stale-while-revalidate（SWR）的核心概念是「[TTL](/backend/knowledge-car
 
 ## 概念位置
 
-SWR 處於 HTTP cache 失效策略層、跟 [TTL](/backend/knowledge-cards/ttl/)、[Cache Invalidation](/backend/knowledge-cards/cache-invalidation/) 是兄弟概念。TTL 定義「何時 expire」、SWR 定義「expire 之後仍允許用舊版的時間窗口」、cache invalidation 定義「主動清掉」。跟 [Stale-If-Error](/backend/knowledge-cards/stale-if-error/) 屬不同維度但常一起配置 — SWR 處理過期、SIE 處理錯誤。
+SWR 處於 HTTP cache 失效策略層、跟 [TTL](/backend/knowledge-cards/ttl/)、[Cache Invalidation](/backend/knowledge-cards/cache-invalidation/) 是兄弟概念。TTL 定義「何時 expire」、SWR 定義「expire 之後仍允許用舊版的時間窗口」、cache invalidation 定義「主動清掉」。跟 [Stale-If-Error](/backend/knowledge-cards/stale-if-error/) 屬不同維度但常一起配置 — SWR 處理過期、SIE 處理錯誤。它是 [Cache-Control](/backend/knowledge-cards/cache-control/) 的擴充指令（RFC 5861），回應同時寫了 `s-maxage` 時，規範的答案是共用快取不延用過期副本；規範條文、窗口語意與 Varnish、nginx、瀏覽器的支援差異見 [12.6 過期副本的延用：stale-while-revalidate 與 stale-if-error](/backend/12-http-caching/serving-stale/)。
 
 ## 可觀察訊號與例子
 
-`Cache-Control: max-age=60, stale-while-revalidate=600` 的服務行為：60 秒內 cache 完全新鮮、60-660 秒之間 client 仍立即拿到舊版（但 cache 已背景重整）、660 秒後才強制等 origin response。Cloudflare / Fastly / Varnish 都支援、瀏覽器 cache 也尊重這個 directive。
+`Cache-Control: max-age=60, stale-while-revalidate=600` 的服務行為：60 秒內 cache 完全新鮮、60-660 秒之間有請求進來時，client 仍立即拿到舊版，同時這個請求觸發 cache 在背景重整（窗口內沒有請求就不會重整）、660 秒後才強制等 origin response。Cloudflare / Fastly / Varnish 都支援、瀏覽器 cache 也尊重這個 directive。
 
 新鮮度敏感的場景（庫存、價格、權限）應限縮 SWR 範圍或關閉、保住 stale 風險的上限；blog 文章、商品描述、靜態 metadata 適合 SWR 降低 origin 壓力。
 

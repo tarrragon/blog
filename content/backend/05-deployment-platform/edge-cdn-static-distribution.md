@@ -8,18 +8,20 @@ tags: ["backend", "deployment", "cdn", "edge-cache"]
 
 邊緣分發的核心責任是把靜態與半靜態內容放到離使用者最近的網路節點，讓 origin 不必為每一筆讀取請求承擔流量與延遲。CDN 屬於部署平台的網路入口層，跟 [02 模組的應用層快取](/backend/02-cache-redis/) 是不同責任：CDN 解決「請求是否需要進到應用程式」，應用層快取解決「應用程式如何降低資料層讀寫成本」。這個邊界清楚後，origin 保護策略與快取一致性設計才能各自展開。
 
-## 快取分層的責任分工：瀏覽器快取只能等到期
+## 快取分層的責任分工
 
 瀏覽器快取、CDN、應用層快取與資料層快取串成一條快取分層。每一層各有自己的 freshness 模型、失效路徑與失敗代價，需要各自設計策略。
 
-| 層級       | 主要載體                                                                     | 主要責任                       | 失效成本                                                                |
-| ---------- | ---------------------------------------------------------------------------- | ------------------------------ | ----------------------------------------------------------------------- |
-| 瀏覽器快取 | 使用者裝置上的 browser cache                                                 | 省去重複請求                   | 只能等回應給的快取時間到期（max-age，或沒給時瀏覽器自行估的啟發式時間） |
-| 邊緣層     | CDN edge node                                                                | 降低跨網延遲、保護 origin 流量 | 全球節點 purge                                                          |
-| 應用層     | Redis、in-memory cache、[cache aside](/backend/knowledge-cards/cache-aside/) | 降低資料層查詢成本             | 區域 cluster purge                                                      |
-| 資料層快取 | DB buffer pool、query cache                                                  | 降低硬碟 I/O                   | 內部自動管理                                                            |
+| 層級       | 主要載體                                                                     | 主要責任                       | 失效成本                                                                                                                       |
+| ---------- | ---------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| 瀏覽器快取 | 使用者裝置上的 browser cache                                                 | 省去重複請求                   | 沒有清除介面：等回應給的快取時間到期後的下一次驗證，或使用者之後造訪時由 origin 送出 Clear-Site-Data（只清那個使用者的瀏覽器） |
+| 轉送代理   | 企業網路或電信業者的代理（限明文 HTTP，或會解開 TLS 的代理）                 | 替自己的使用者省流量           | 沒有清除介面，只能等到期                                                                                                       |
+| 邊緣層     | CDN edge node                                                                | 降低跨網延遲、保護 origin 流量 | 全球節點 purge                                                                                                                 |
+| 反向代理   | origin 前面自己經營的 Varnish、nginx proxy_cache                             | 降低 origin 負載               | 自己的設定與 purge 規則                                                                                                        |
+| 應用層     | Redis、in-memory cache、[cache aside](/backend/knowledge-cards/cache-aside/) | 降低資料層查詢成本             | 區域 cluster purge                                                                                                             |
+| 資料層快取 | DB buffer pool、query cache                                                  | 降低硬碟 I/O                   | 內部自動管理                                                                                                                   |
 
-讀者實作時要先判斷需求屬於哪一層。把使用者頭像、商品圖片、活動 banner 放邊緣層；把熱門商品價格、會員等級放應用層；DB 自身的 buffer pool 留給資料庫引擎管理。混用會造成失效路徑互相覆蓋，事故時難以判斷快取漂移來自哪一層。瀏覽器快取這一層只在瀏覽器再次回到 origin 時才收得到清除指令，而已快取的資源不會回來，所以回應送出時給的快取時間就是這一層最慢多久收得回來；需要撤回的資源（例如會被停用的轉址）要在回應當下就限制這個時間，實例見 [0.24 短網址服務的實作](/backend/00-service-selection/url-shortener-implementation/) 的〈轉址回應的快取標頭與瀏覽器保存回應的時間〉。
+讀者實作時要先判斷需求屬於哪一層。把使用者頭像、商品圖片、活動 banner 放邊緣層；把熱門商品價格、會員等級放應用層；DB 自身的 buffer pool 留給資料庫引擎管理。混用會造成失效路徑互相覆蓋，事故時難以判斷快取漂移來自哪一層。瀏覽器快取這一層只在瀏覽器再次回到 origin 時才收得到清除指令，而還在期限內的副本不會回來，所以回應送出時給的快取時間就是這一層最慢多久收得回來；需要撤回的資源（例如會被停用的轉址）要在回應當下就限制這個時間，轉址的實例見 [12.8 快取設定的應用：轉址、需登入的 API 回應與個人化頁面](/backend/12-http-caching/applying-cache-headers/) 的〈轉址回應的狀態碼與快取標頭〉。各層由誰經營、origin 能直接操作到哪裡，見 [12.1 HTTP 回應的保存位置：私有快取與共用快取](/backend/12-http-caching/cache-storage-locations/)。
 
 ## Origin Protection 的設計責任
 
@@ -27,9 +29,9 @@ CDN 在規模成長路徑上承擔 origin protection。當 KOL 引流或熱門�
 
 origin protection 的核心策略包含三個方向：
 
-1. **cache hit ratio 優化**：把高頻、可共用的內容做成可快取資源（含正確的 cache-control header、ETag 跟 vary 設計）。命中率每提升 10 個百分點，origin 流量幾乎等比例下降。
+1. **cache hit ratio 優化**：把高頻、可共用的內容做成可快取資源（含正確的 [Cache-Control](/backend/knowledge-cards/cache-control/) header、ETag 跟 [Vary](/backend/knowledge-cards/vary/) 設計）。命中率每提升 10 個百分點，origin 流量幾乎等比例下降。
 2. **回源行為控制**：edge 沒命中時用 [Cache Stampede](/backend/knowledge-cards/cache-stampede/) 保護機制（origin shield 是 CDN 內部多一層中央節點集中回源、coalescing / request collapsing 把同時打進來的 N 個請求合併成一次 origin 呼叫）、避免擊穿。
-3. **failure fallback**：origin 不健康時、edge 可以回傳舊版本（[stale-while-revalidate](/backend/knowledge-cards/stale-while-revalidate/) / [stale-if-error](/backend/knowledge-cards/stale-if-error/)）、避免使用者直接看到 5xx。代價是 [Stale Data](/backend/knowledge-cards/stale-data/) 風險暫時提高、需要在 freshness budget 內。
+3. **failure fallback**：origin 不健康時、edge 可以回傳舊版本（[stale-if-error](/backend/knowledge-cards/stale-if-error/)；[stale-while-revalidate](/backend/knowledge-cards/stale-while-revalidate/) 處理的是過期後先給舊版、背景更新）、避免使用者直接看到 5xx。回應同時寫了 `s-maxage` 時，規範對 `stale-while-revalidate` 的答案是共用快取不延用、對 `stale-if-error` 兩份 RFC 的文字互相衝突；Varnish 不認得 `stale-if-error`，CDN 的支援情形查各家文件（見 [12.6 過期副本的延用：stale-while-revalidate 與 stale-if-error](/backend/12-http-caching/serving-stale/)）。代價是 [Stale Data](/backend/knowledge-cards/stale-data/) 風險暫時提高、需要在 freshness budget 內。
 
 Origin shield 跟 request coalescing 常被混為一談，兩者解決的問題不同。Origin shield 在 CDN 內部插入一層中央節點——全球 edge POP 的 cache miss 先集中到 shield 節點，shield 再向 origin 回源；它解決的是「N 個 edge POP 同時 miss 變成 N 次 origin 請求」的扇出放大。Request coalescing（也叫 request collapsing）在單一節點內把同時到達的多個相同請求合併成一次 origin 呼叫；它解決的是「同一個 edge POP 在同一毫秒收到 1000 個相同請求」的並發放大。兩者是不同層級的保護——shield 跨節點收斂、coalescing 單節點收斂——可以同時啟用形成兩層防線。
 
@@ -37,7 +39,7 @@ Origin shield 跟 request coalescing 常被混為一談，兩者解決的問題�
 
 ## Cacheable vs Non-Cacheable 的判讀
 
-CDN 適合承接的資源有明確判讀條件：對所有使用者一致、且可容忍短暫舊版。符合這兩個條件的資源放邊緣層收益最高，不符合的留在應用層或 origin 處理。
+CDN 適合承接的資源有明確判讀條件：對所有使用者一致、且可容忍短暫舊版。符合這兩個條件的資源放邊緣層收益最高，不符合的留在應用層或 origin 處理。「對所有使用者一致」在標頭上怎麼表達（`private`、`Vary` 與 `Authorization` 的規則）見 [12.4 快取鍵與副本共用：Vary、Cookie 與 Authorization](/backend/12-http-caching/cache-key/)；「可容忍多久的舊版」怎麼換算成快取期限見 [12.2 新鮮度期限的計算：max-age、s-maxage、Expires 與啟發式期限](/backend/12-http-caching/freshness-lifetime/)。
 
 | 資源類型             | 適合放 CDN？ | 判讀理由                                       |
 | -------------------- | ------------ | ---------------------------------------------- |
@@ -58,9 +60,9 @@ CDN 的 [Cache Invalidation](/backend/knowledge-cards/cache-invalidation/) 跟�
 
 操作上的三種策略各有適用場景：
 
-- **TTL 自然過期**：適合內容變動慢、不需要立即生效的資源。優點是不依賴 purge API，缺點是無法應對緊急下架。搭配 stale-while-revalidate 後可以兼顧低 origin 壓力與最終新鮮度、是現代 default 而非「弱版本」。
+- **TTL 自然過期**：適合內容變動慢、不需要立即生效的資源。優點是不依賴 purge API，缺點是無法應對緊急下架。搭配 stale-while-revalidate 後可以兼顧低 origin 壓力與最終新鮮度、是現代 default 而非「弱版本」。改版之後最慢多久所有層都換成新版，見 [12.5 已保存副本的更新方式：失效、purge、版本化網址與等待到期](/backend/12-http-caching/updating-stored-responses/) 的〈等待到期與改版全面生效的時間〉。
 - **顯式 purge**：適合內容變動時要立刻生效的場景（價格更新、文章下架、合規移除）。要把 purge 列入發布流程，事故期能在分鐘內收回錯誤內容。
-- **版本化路徑**：適合 JS/CSS 等可永久快取的資源。檔名含 hash（`app.a3f1b2.js`），新版本上線時直接換路徑、舊版本自然失效。這是命中率最高的策略，因為可以設定 `max-age=31536000, immutable`。
+- **版本化路徑**：適合 JS/CSS 等可永久快取的資源。檔名含 hash（`app.a3f1b2.js`），新版本上線時直接換路徑、舊版本自然失效。這是命中率最高的策略，因為可以設定 `max-age=31536000, immutable`（標頭語意與引用它的頁面怎麼設，見 [12.5 已保存副本的更新方式：失效、purge、版本化網址與等待到期](/backend/12-http-caching/updating-stored-responses/) 的〈版本化網址與 immutable〉）。
 
 這三種策略以 origin pull 模型為主、是基底但不窮盡。現代 CDN 還有兩種重要策略需要展開。
 
@@ -82,13 +84,13 @@ Tag-based purge 跟顯式 purge（按 URL purge）的本質差異在於「失效
 
 ## 判讀訊號
 
-| 訊號                        | 判讀重點                                             | 對應動作                                               |
-| --------------------------- | ---------------------------------------------------- | ------------------------------------------------------ |
-| origin 流量隨使用者線性成長 | cache hit ratio 偏低，邊緣層沒發揮 origin protection | 檢查 cache-control header、命中率分布、coalescing 設定 |
-| edge 命中率忽然下降         | purge 設定誤觸全網、或 cache key 設計過細            | 檢查近期 purge 操作、vary 與 query string 設計         |
-| purge 後仍看到舊內容        | 全球節點同步延遲、或 CDN 與應用層快取沒對齊          | 確認 CDN purge 完成訊號、再追應用層快取狀態            |
-| 高峰時 origin 出現 5xx 尖峰 | edge 沒做 stale-if-error，origin 過載直接打回使用者  | 啟用 stale-while-revalidate、檢查 origin shield 設定   |
-| 部分區域延遲偏高            | 區域節點覆蓋不足、或回源走錯區域                     | 檢查路由策略、加開 edge POP、考慮多 CDN 策略           |
+| 訊號                        | 判讀重點                                             | 對應動作                                                                                                                   |
+| --------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| origin 流量隨使用者線性成長 | cache hit ratio 偏低，邊緣層沒發揮 origin protection | 檢查 cache-control header、命中率分布、coalescing 設定                                                                     |
+| edge 命中率忽然下降         | purge 設定誤觸全網、或 cache key 設計過細            | 檢查近期 purge 操作、vary 與 query string 設計                                                                             |
+| purge 後仍看到舊內容        | 全球節點同步延遲、或 CDN 與應用層快取沒對齊          | 確認 CDN purge 完成訊號、再追應用層快取狀態                                                                                |
+| 高峰時 origin 出現 5xx 尖峰 | edge 沒做 stale-if-error，origin 過載直接打回使用者  | 啟用 stale-if-error（確認 CDN 支援，以及回應有 `s-maxage` 時這家 CDN 怎麼處理，規範沒有一致答案）、檢查 origin shield 設定 |
+| 部分區域延遲偏高            | 區域節點覆蓋不足、或回源走錯區域                     | 檢查路由策略、加開 edge POP、考慮多 CDN 策略                                                                               |
 
 ## 常見誤區
 
@@ -96,7 +98,7 @@ CDN 跟「加速工具」的混淆，會讓 origin protection 跟一致性責任
 
 把 purge 當成同步操作也容易出事。緊急下架觸發 purge 後立刻通知公關「已下線」，但全球節點還沒收斂，仍有區域看到原內容。這類風險要把「purge 已完成」當成可觀測訊號處理，不是 API 回 200 就視為完成。
 
-把 CDN 當成應用層快取替代品則是另一個極端。商品價格、會員等級這類「跟使用者狀態相關」的資料放邊緣層，會在用戶切帳號、優惠變更時暴露其他人的資料或舊狀態，是 [Stale Read](/backend/knowledge-cards/stale-read/) 的擴大版。
+把 CDN 當成應用層快取替代品則是另一個極端。商品價格、會員等級這類「跟使用者狀態相關」的資料放邊緣層，會在用戶切帳號、優惠變更時暴露其他人的資料或舊狀態，是 [Stale Read](/backend/knowledge-cards/stale-read/) 的擴大版。個人化回應在標頭上怎麼讓共用快取不保存，見 [12.4 快取鍵與副本共用：Vary、Cookie 與 Authorization](/backend/12-http-caching/cache-key/) 的〈個人化回應的標頭選擇〉。
 
 ## 定位邊界
 
@@ -120,6 +122,7 @@ CDN 專注「靜態與半靜態內容的網路層分發」。當問題進入動�
 2. 與 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/) 的交接：edge miss 後流量進到 origin LB，超時與重試設定要協調。
 3. 與 [7.3 入口治理](/backend/07-security-data-protection/entrypoint-and-server-protection/) 的交接：CDN 是公網入口，WAF、TLS 與 bot mitigation 在邊緣層落地。
 4. 與 [9.6 容量規劃](/backend/09-performance-capacity/capacity-planning/) 的交接：cache hit ratio 是 origin 容量規劃的核心輸入，命中率假設失準會直接撞牆。
+5. 與 [模組十二：HTTP 快取與回應保存規則](/backend/12-http-caching/) 的交接：本章處理 CDN 的營運面，標頭在各層快取上的語意（保存位置、新鮮度期限、驗證、快取鍵、更新手段）見 [12.1 HTTP 回應的保存位置：私有快取與共用快取](/backend/12-http-caching/cache-storage-locations/) 起的八篇。
 
 ## 下一步路由
 

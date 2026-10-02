@@ -95,7 +95,7 @@ Tripwire 的責任是提醒前端 workflow 需要重切。當同一類問題反�
 - Preview 常和 production 不一致：把 preview 改成部署 build artifact，讓 preview job 沿用同一份產物。
 - E2E 測試通過但 production 壞：把 E2E 改到 static artifact 或 production-like server 上執行。
 - rollback 依賴人工找舊 commit：保留 release artifact 與版本索引，讓回退指向明確產物。
-- CDN cache 問題反覆出現：把 HTML cache、asset cache 與 purge 策略寫進 deploy checklist。
+- CDN cache 問題反覆出現：把 HTML cache、asset cache 與 purge 策略寫進 deploy checklist（HTML 與版本化靜態資源各自怎麼設快取標頭，見 [12.8 快取設定的應用：轉址、需登入的 API 回應與個人化頁面](/backend/12-http-caching/applying-cache-headers/) 的〈靜態資源與引用它的頁面的快取標頭〉）。
 
 ## 下一步路由
 

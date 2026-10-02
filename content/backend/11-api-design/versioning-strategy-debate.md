@@ -25,7 +25,7 @@ tags: ["backend", "api-design", "versioning"]
 
 版本指向消費者屬性時，動作的預設值反了過來。Stripe 讓帳號在首次呼叫時自動 pin 住當時版本，消費者維持現狀就繼續拿到熟悉的語意，升級是主動選擇而非被動應付（見 [Stripe：日期滾動版本與 version change module](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)）。這個反轉是 date-based pin 的核心價值：消費者的沉默被解讀成「維持舊約」，而在 URI 版本下，消費者的沉默會在舊版下線那天變成故障。
 
-表中四派是最常見的四種形態，另有兩種真實存在的變體值得知道。**media type 版本**（`Accept: application/vnd.example+json;version=2`）走的是 HTTP 標準的內容協商，因此有正規的 `Vary` 快取語意；表中的 header 版本用的是自訂 header，CDN 對它預設是盲的 —— 兩者常被歸成一類，而在快取層的行為並不同。**query parameter 版本**（`?api-version=2023-01-01`）把識別碼放進 URI 卻能逐 endpoint 版本化，它直接說明了「版本進 URI 就等於整包遷移」並非必然。
+表中四派是最常見的四種形態，另有兩種真實存在的變體值得知道。**media type 版本**（`Accept: application/vnd.example+json;version=2`）走的是 HTTP 標準的內容協商，因此有正規的 [`Vary`](/backend/knowledge-cards/vary/) 快取語意（`Vary` 怎麼把請求標頭加進快取鍵，見 [12.4 快取鍵與副本共用：Vary、Cookie 與 Authorization](/backend/12-http-caching/cache-key/)）；表中的 header 版本用的是自訂 header，CDN 對它預設是盲的 —— 兩者常被歸成一類，而在快取層的行為並不同。**query parameter 版本**（`?api-version=2023-01-01`）把識別碼放進 URI 卻能逐 endpoint 版本化，它直接說明了「版本進 URI 就等於整包遷移」並非必然。
 
 不做版本時，消費者每次呼叫都在跟當下的 server 對話，穩定性由服務端的自我約束提供。REST 這個架構風格的提出者 Roy Fielding 把這件事推到最遠：對 `/v1/` 式介面版本化的建議是「DON'T」，版本化逼 client 要嘛跟著重佈署、要嘛讓舊版成為「permanent lead weight」，而「Versioning interface names only manages change for the API owner's sake」（InfoQ 訪談、2014，見 [Fielding：對 API 版本化的建議是「別做」](/backend/11-api-design/cases/versioning-fielding-no-versioning/)）。
 

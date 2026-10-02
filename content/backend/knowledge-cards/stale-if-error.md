@@ -9,7 +9,7 @@ Stale-if-error（SIE）的核心概念是「cache 過期後若 origin 回 5xx �
 
 ## 概念位置
 
-SIE 處於 HTTP cache 失效策略層、是 cache 從「降延遲工具」升級成「fallback 機制」的關鍵 directive。跟 [TTL](/backend/knowledge-cards/ttl/)、[Cache Invalidation](/backend/knowledge-cards/cache-invalidation/) 是兄弟。觸發條件跟 SWR 不同：SWR 是「TTL 過期但 origin 正常」、SIE 是「origin 出錯」— 一個是 condition-driven、一個是 error-driven。
+SIE 處於 HTTP cache 失效策略層、是 cache 從「降延遲工具」升級成「fallback 機制」的關鍵 directive。跟 [TTL](/backend/knowledge-cards/ttl/)、[Cache Invalidation](/backend/knowledge-cards/cache-invalidation/) 是兄弟。觸發條件跟 SWR 不同：SWR 在窗口內不論 origin 狀態都可以先給舊版、同時背景更新；SIE 只在向 origin 驗證遇到錯誤（500、502、503、504 或連不上）時才延用 — 一個是 time-driven、一個是 error-driven。它是 [Cache-Control](/backend/knowledge-cards/cache-control/) 的擴充指令（RFC 5861）：RFC 5861 寫它可以不顧其他新鮮度資訊延用，而 RFC 9111 規定 `s-maxage` 禁止共用快取給出過期副本，兩份規範對這個組合沒有一致的答案；Varnish 7.7 不認得這個指令。規範條文與實作支援差異見 [12.6 過期副本的延用：stale-while-revalidate 與 stale-if-error](/backend/12-http-caching/serving-stale/)。
 
 ## 可觀察訊號與例子
 

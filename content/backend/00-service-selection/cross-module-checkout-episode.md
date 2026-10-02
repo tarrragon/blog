@@ -53,7 +53,7 @@ Checkout 的正式狀態是訂單紀錄。這筆寫入必須在 [transaction bou
 
 - 快取是 [可重建副本](/backend/02-cache-redis/cache-copy-freshness-boundary/)，資料來源是資料庫的正式狀態。失效後的 cache miss 會回源到資料庫
 - 失效策略用 [cache aside](/backend/02-cache-redis/cache-aside/)：寫入後主動 invalidate，下次讀取時 lazy reload
-- Invalidation 的順序：先 invalidate 應用層快取（Redis），再考慮是否需要 purge CDN 層（若商品頁有 edge cache）
+- Invalidation 的順序：先 invalidate 應用層快取（Redis），再考慮是否需要 purge CDN 層（若商品頁有 edge cache）；使用者瀏覽器裡的副本沒有清除介面，要等回應給的期限到期或下一次驗證，商品頁要改版即時生效時回應改用 `no-cache`（見 [12.5 已保存副本的更新方式：失效、purge、版本化網址與等待到期](/backend/12-http-caching/updating-stored-responses/)）
 
 **失敗判讀**：
 

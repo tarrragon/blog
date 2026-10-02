@@ -26,7 +26,7 @@ Service Worker 可以攔截頁面發出的所有 HTTP 請求（包括 SDK 的 PO
 
 SDK 端的適配：
 
-在 fetch 請求中加 `cache: 'no-store'` 防止 Service Worker 快取監控請求。或在請求 URL 加唯一的 query parameter（`?_t=timestamp`）讓每次請求的 URL 都不同，繞過 cache 比對。
+在 fetch 請求中加 `cache: 'no-store'`，讓瀏覽器的 HTTP 快取不讀也不存監控請求（快取模式見 [12.7 瀏覽器端的快取行為：重新整理、強制重新整理與上一頁](/backend/12-http-caching/browser-cache-behavior/) 的〈Fetch 規範的快取模式〉）。Service Worker 用 Cache API 自己保存的回應不受這個選項約束，要由 Service Worker 的程式對監控請求的路徑直接放行。或在請求 URL 加唯一的 query parameter（`?_t=timestamp`）讓每次請求的 URL 都不同，繞過 cache 比對。
 
 如果 SDK 本身提供 Service Worker 模組（在 Service Worker 內攔截 error），需要注意 Service Worker 的生命週期和頁面不同 — Service Worker 可能在頁面關閉後仍在執行，也可能在空閒時被瀏覽器終止。
 

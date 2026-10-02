@@ -42,6 +42,8 @@ tags: ["backend", "cache", "redis"]
 
 順序顛倒會出事 — 若先 purge CDN、CDN 全球節點 miss 後到 origin 拉資料、若 origin 應用層還是舊 cache、CDN 會把舊資料回填到全球節點、stale 被「重新永久化」一個 TTL 週期。
 
+這條 pipeline 清得到的只有應用層與 CDN。CDN 後面還有使用者的瀏覽器快取，以及企業網路裡的轉送代理，這兩層沒有清除介面：CDN purge 完成之後，已經存下舊回應的瀏覽器仍會用它直到期限結束，回應帶 `max-age=600`、沒有 stale 窗口時，最長還有十分鐘的舊資料。所以「寫入之後多久所有人都看到新資料」要再加上瀏覽器那一層的期限，加總的算法見 [12.5 已保存副本的更新方式：失效、purge、版本化網址與等待到期](/backend/12-http-caching/updating-stored-responses/) 的〈等待到期與改版全面生效的時間〉；寫入後要立刻全面生效的資料，回應就讓瀏覽器每次使用前都先向 origin 確認（`no-cache`，見 [12.3 過期副本的驗證：條件請求、304 回應、no-cache 與 no-store](/backend/12-http-caching/revalidation/)）。
+
 實務上的權衡是「CDN purge ack 是否要等」。等了會讓 write API latency 升高到秒級、不等則必須接受短暫雙層不一致。價格 / 庫存類資料適合「短 TTL + 等 purge ack」、blog 文章類適合「長 TTL + 不等 ack」。詳見 [5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/) 的 purge 操作模型。
 
 ## Cache aside vs write-through 的選擇

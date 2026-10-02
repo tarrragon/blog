@@ -2,7 +2,7 @@
 title: "12.4 快取鍵與副本共用：Vary、Cookie 與 Authorization"
 slug: "cache-key"
 date: 2026-10-02
-description: "快取用什麼條件挑出一份副本回應請求：快取鍵的組成、Vary 如何把請求標頭加進快取鍵、帶 Authorization 的請求在共用快取的規則、Cookie 與 Set-Cookie 在規範與實作上的處理，以及個人化回應的標頭選擇"
+description: "快取用什麼條件挑出一份副本回應請求：快取鍵的組成、Vary 如何把請求標頭加進快取鍵、帶 Authorization 的請求在共用快取的規則、Cookie 與 Set-Cookie 在規範與實作上的處理，個人化回應的標頭選擇，以及沒有列進快取鍵的輸入造成的快取投毒與快取規則造成的 web cache deception"
 weight: 4
 tags: ["backend", "http-caching", "cache-control", "vary", "security"]
 ---
@@ -80,6 +80,31 @@ nginx 的行為代表：origin 依靠「請求帶了 `Authorization`，快取就
 標頭以外還有一種做法：頁面只有一小塊因使用者而不同（例如右上角的使用者名稱）時，把那一塊拆成另一個帶 `private` 的請求，頁面主體就能讓共用快取保存；前提是共用快取不會因為請求帶 Cookie 就跳過快取，Varnish 的內建設定會，要在 VCL 裡移除頁面主體請求的 Cookie。
 
 MDN 的建議與表中 `private` 那一列一致：「you should specify Cache-Control: private instead of specifying a cookie for Vary.」個人化回應寫 `private`，是讓「這份回應能不能給別人」由 origin 決定，而不是交給共用快取的預設設定決定；〈帶 Authorization 的請求在共用快取的重用規則〉與〈Cookie 與 Set-Cookie 在共用快取的處理〉兩節的實測顯示，共用快取的預設在「會不會把回應發給別的使用者」這一點上，不同實作的結果相反。從外部確認某個網址有沒有把一個使用者的回應發給別人，做法在 [12.8 快取設定的應用：轉址、需登入的 API 回應與個人化頁面](/backend/12-http-caching/applying-cache-headers/) 的〈檢查實際送出的快取標頭〉。
+
+## 沒有列進快取鍵的輸入與快取投毒
+
+快取比對請求時只看快取鍵裡的部分。請求裡其他會改變回應內容的部分（某些請求標頭、某些查詢參數），PortSwigger 的研究稱為 unkeyed input，也就是沒有列進快取鍵的輸入。origin 依一個沒有列進快取鍵的輸入產生了不同的回應，而快取把這份回應存下來，在它過期之前，所有快取鍵相同的請求都會拿到它，不論那些請求有沒有帶那個輸入。攻擊者刻意利用這一點，送出帶惡意值的請求、讓有害的回應被存下來發給其他使用者，稱為 web cache poisoning（快取投毒）；James Kettle 在 2018 年 8 月發表於 PortSwigger 的研究〈Practical Web Cache Poisoning〉整理了這類實際案例。
+
+一個常見的形態是框架讀取 `X-Forwarded-Host` 這類代理轉送用的請求標頭，拿它組出頁面裡的絕對網址。請求帶上攻擊者的網域時，回應裡的網址就指向攻擊者的伺服器；這個標頭不在快取鍵裡，被存下來的頁面就發給之後的每個使用者。這和本篇〈Vary 標頭加進快取鍵的請求標頭〉一節講的是同一件事的兩種結果：origin 依某個請求標頭改變回應時，那個標頭列進 `Vary`、或由快取設定加進快取鍵，不同的值就各存一份；沒有列進去，它就是一個沒有列進快取鍵的輸入，一個值產生的回應會被發給帶其他值的請求。
+
+PortSwigger 列的防範裡，和快取鍵直接相關的有下面幾條：
+
+- 網站用不到的請求標頭，在快取或 origin 前停用，不讓框架讀到。這類標頭多半是代理或框架預設支援的，網站本身不需要。
+- 為了命中率想把某個輸入排除在快取鍵外時，改成在快取前把請求改寫成正規化的值，讓同一個快取鍵只對應一種回應。
+- 不接受帶 body 的 GET 請求，因為 GET 請求的 body 不在快取鍵裡，卻可能被 origin 讀取。
+
+其他還有把快取限縮在純靜態的回應、修補看似無法利用的前端漏洞，見研究原文。
+
+## 快取規則與 web cache deception
+
+web cache deception 和快取投毒是兩種不同的問題，PortSwigger 的文件也明確區分：快取投毒操弄的是快取鍵，讓攻擊者的有害回應被存下來發給別人；web cache deception 利用的是快取規則，讓受害者帶個人資料的回應被存下來，再被攻擊者取走。
+
+CDN 常依副檔名（`.css`、`.js`）或目錄（`/static`）設定快取規則，把符合的網址當成可以保存的靜態檔，而快取與 origin 解析網址路徑的方式可能不同。攻擊者引誘已登入的使用者點一個在快取看來是靜態檔、在 origin 看來是個人頁面的網址，origin 回出帶個人資料的頁面，快取依規則存下它，攻擊者再請求同一個網址就拿到那份副本。這種情形下快取鍵本身沒有問題，出問題的是快取規則覆寫了 origin 對這份回應能不能保存的判斷。PortSwigger 的防範建議：
+
+- 動態回應明寫 `Cache-Control: no-store, private`。
+- CDN 的快取規則不覆寫 origin 的 `Cache-Control`。
+- 啟用 CDN 比對回應的 `Content-Type` 與網址副檔名是否一致的保護。
+- 確認 origin 與快取解析網址路徑的方式一致。
 
 ## 瀏覽器快取的分區
 

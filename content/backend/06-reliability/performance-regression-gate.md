@@ -113,7 +113,7 @@ Gate 攔住 regression 後，下一步是定位來源並決定行動。
 
 Transcoding pipeline 的 regression 需要三維判讀。新 codec 或 encoder 版本可能改善壓縮率但增加 encoding latency，CI gate 需要同時量化 encoding speed、output quality 與 cost — 只看其中一個維度會漏掉 trade-off。例如 AV1 encoder 比 H.264 壓縮率更好，但 encoding 時間可能增加數倍，若 gate 只看 latency 就會擋住合理的品質升級。
 
-CDN cache hit rate 是隱性的 regression 指標。code 變更如果改變了 cache key 策略或 content fingerprint，CDN cache hit rate 會下降，回源流量上升，間接造成 origin latency 惡化與成本跳升。這類 regression 在 staging 壓測中看不到（staging 沒有 CDN 快取層），需要 canary 階段的 CDN 層監控才能偵測。
+CDN cache hit rate 是隱性的 regression 指標。code 變更如果改變了 cache key 策略（快取鍵由哪些部分組成，見 [12.4 快取鍵與副本共用：Vary、Cookie 與 Authorization](/backend/12-http-caching/cache-key/) 的〈快取鍵的組成〉）或 content fingerprint，CDN cache hit rate 會下降，回源流量上升，間接造成 origin latency 惡化與成本跳升。這類 regression 在 staging 壓測中看不到（staging 沒有 CDN 快取層），需要 canary 階段的 CDN 層監控才能偵測。
 
 ## 案例對照
 

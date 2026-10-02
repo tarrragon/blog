@@ -73,7 +73,7 @@ CDN pre-warm 在 T-2 階段是 high-impact 操作、但跟其他 pre-scaling 的
 - **驗證 hit ratio 已升高**：用 vendor dashboard 觀察 cache_status=HIT 比例、確認 pre-warm 生效
 - **預估 origin 流量曲線**：pre-warm 完成後、活動開始時 edge miss 流量應該大幅降低、origin 容量規劃可以對應放鬆
 
-跟其他 pre-scaling 不同的是 **CDN pre-warm 沒有「容量上限」這個概念** — edge cache 是被動填的、warm 完就是 warm、不像 EC2 / Lambda 那樣需要 reserve 容量。風險不在「填不夠」、在「填錯」（key 不對、TTL 設錯讓 pre-warm 立刻過期）。詳見 [5.9 邊緣分發](/backend/05-deployment-platform/edge-cdn-static-distribution/) 的 purge 與 cacheable 判讀。
+跟其他 pre-scaling 不同的是 **CDN pre-warm 沒有「容量上限」這個概念** — edge cache 是被動填的、warm 完就是 warm、不像 EC2 / Lambda 那樣需要 reserve 容量。風險不在「填不夠」、在「填錯」（key 不對、TTL 設錯讓 pre-warm 立刻過期；CDN 的 TTL 從哪個標頭取見 [12.2 新鮮度期限的計算：max-age、s-maxage、Expires 與啟發式期限](/backend/12-http-caching/freshness-lifetime/)，只給 CDN 一個期限（`CDN-Cache-Control`）見 [12.1 HTTP 回應的保存位置：私有快取與共用快取](/backend/12-http-caching/cache-storage-locations/) 的〈把指令指定給特定快取：CDN-Cache-Control〉）。詳見 [5.9 邊緣分發](/backend/05-deployment-platform/edge-cdn-static-distribution/) 的 purge 與 cacheable 判讀。
 
 **事件結束後也要 *scheduled scale down***：autoscaler 通常 scale up 快、scale down 慢、長期 over-provision 浪費錢。
 

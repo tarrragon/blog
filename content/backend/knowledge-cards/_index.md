@@ -105,65 +105,68 @@ weight: -1
 
 ## 快取與流量
 
-| 卡片                                                                                     | 核心問題                                | 常見出現位置                   |
-| ---------------------------------------------------------------------------------------- | --------------------------------------- | ------------------------------ |
-| [Timeout](/backend/knowledge-cards/timeout/)                                             | 單一步驟最久可以等待多久                | API、database、broker          |
-| [Freshness Window](/backend/knowledge-cards/freshness-window/)                           | 各資料類型可容忍多久的不新鮮            | cache-aside、TTL、rollback     |
-| [Origin Protection](/backend/knowledge-cards/origin-protection/)                         | 快取失效時後端如何不被打垮              | stampede、singleflight、TTL    |
-| [Cache Key Versioning](/backend/knowledge-cards/cache-key-versioning/)                   | key schema 演進如何不互踩               | migration、相容窗口            |
-| [Cache Serialization Migration](/backend/knowledge-cards/cache-serialization-migration/) | 快取序列化格式如何安全換版              | dual-format、rollback          |
-| [Deadline](/backend/knowledge-cards/deadline/)                                           | 整體操作何時必須完成                    | request、job、workflow         |
-| [Exponential Backoff](/backend/knowledge-cards/exponential-backoff/)                     | 重試間隔如何逐步拉長                    | retry、API、worker             |
-| [Jitter](/backend/knowledge-cards/jitter/)                                               | 如何分散同步重試與排程尖峰              | retry、TTL、reconnect          |
-| [Retry Storm](/backend/knowledge-cards/retry-storm/)                                     | 大量重試如何放大下游壓力                | timeout、dependency failure    |
-| [Thundering Herd](/backend/knowledge-cards/thundering-herd/)                             | 大量工作同時醒來如何形成尖峰            | reconnect、cache、lock         |
-| [Transient Failure](/backend/knowledge-cards/transient-failure/)                         | 暫時性故障如何影響重試與告警            | network、failover、timeout     |
-| [Partial Failure](/backend/knowledge-cards/partial-failure/)                             | 局部失效時如何保留整體可用性            | distributed system、fallback   |
-| [Cascading Failure](/backend/knowledge-cards/cascading-failure/)                         | 局部故障如何擴散成整體故障              | dependency、retry、pool        |
-| [Correlated Failure](/backend/knowledge-cards/correlated-failure/)                       | 以為獨立的元件共享隱藏觸發器一起壞      | 冗餘、失效域、shared trigger   |
-| [Load Shedding](/backend/knowledge-cards/load-shedding/)                                 | 過載時如何主動拒絕低優先工作            | overload、priority             |
-| [Token Bucket](/backend/knowledge-cards/token-bucket/)                                   | 如何用配額與補充速率控制流量            | rate limit、retry budget       |
-| [Dependency Isolation](/backend/knowledge-cards/dependency-isolation/)                   | 如何避免單一下游耗盡共享資源            | pool、queue、dependency        |
-| [Bulkhead](/backend/knowledge-cards/bulkhead/)                                           | 如何用資源分艙限制故障擴散              | worker、tenant、pool           |
-| [In-Process Channel](/backend/knowledge-cards/in-process-channel/)                       | 單一 process 內如何傳遞工作或訊號       | channel、local queue           |
-| [Local Worker](/backend/knowledge-cards/local-worker/)                                   | 同 process 背景工作的責任與邊界         | background task、shutdown      |
-| [Worker Pool](/backend/knowledge-cards/worker-pool/)                                     | 如何限制同時處理量                      | worker、background job         |
-| [HTTP Client](/backend/knowledge-cards/http-client/)                                     | 呼叫外部 HTTP 依賴時如何管理資源        | API、dependency                |
-| [Webhook](/backend/knowledge-cards/webhook/)                                             | 外部系統回呼事件如何驗證與處理          | callback、signature、retry     |
-| [WebSocket](/backend/knowledge-cards/websocket/)                                         | 長連線雙向即時通訊如何運作              | chat、presence、push           |
-| [Server-Sent Events (SSE)](/backend/knowledge-cards/sse/)                                | HTTP 單向事件串流如何推送更新           | notification、progress         |
-| [Stream Pipeline](/backend/knowledge-cards/stream-pipeline/)                             | 連續資料流如何管理吞吐與 backpressure   | stream、CDC、ETL               |
-| [Throughput](/backend/knowledge-cards/throughput/)                                       | 單位時間內可處理多少工作                | load test、queue、broker       |
-| [Buffer](/backend/knowledge-cards/buffer/)                                               | 暫存空間如何吸收短暫速度差              | queue、socket、cache           |
-| [Queue](/backend/knowledge-cards/queue/)                                                 | 等待處理的工作如何形成容量邊界          | producer、consumer、backlog    |
-| [Socket](/backend/knowledge-cards/socket/)                                               | 網路連線如何成為資料讀寫與資源邊界      | network、connection、timeout   |
-| [Fallback](/backend/knowledge-cards/fallback/)                                           | 主要路徑失敗時使用什麼替代結果          | degradation、circuit breaker   |
-| [Fail Fast](/backend/knowledge-cards/fail-fast/)                                         | 已知會失敗時如何快速回應                | circuit breaker、validation    |
-| [Retry Budget](/backend/knowledge-cards/retry-budget/)                                   | 重試量如何受整體容量限制                | retry、SLO、token bucket       |
-| [Cache Aside](/backend/knowledge-cards/cache-aside/)                                     | application 如何讀快取與正式來源        | Redis、read path               |
-| [Cache Hit / Miss](/backend/knowledge-cards/cache-hit-miss/)                             | 讀取是否命中快取                        | cache、database pressure       |
-| [Cache Hit Rate](/backend/knowledge-cards/cache-hit-rate/)                               | 命中比例如何衡量快取效益                | dashboard、capacity            |
-| [Cache Warmup](/backend/knowledge-cards/cache-warmup/)                                   | 正式流量前如何預先載入快取              | deployment、event              |
-| [Cache Prefetching](/backend/knowledge-cards/cache-prefetching/)                         | 如何在資料被需要前預先載入              | user flow、hot data            |
-| [Cold Start](/backend/knowledge-cards/cold-start/)                                       | 新 instance 或空快取如何造成延遲        | autoscaling、readiness         |
-| [Write-Through Cache](/backend/knowledge-cards/write-through-cache/)                     | 寫入時如何同步更新快取                  | write path、freshness          |
-| [Write-Behind Cache](/backend/knowledge-cards/write-behind-cache/)                       | 先寫緩衝層再非同步持久化的風險          | analytics、buffer              |
-| [Stale Data](/backend/knowledge-cards/stale-data/)                                       | 過期資料如何影響產品結果                | cache、replica                 |
-| [Soft TTL](/backend/knowledge-cards/soft-ttl/)                                           | 進入刷新期後如何短暫使用舊資料          | stampede、refresh              |
-| [Singleflight](/backend/knowledge-cards/singleflight/)                                   | 相同工作如何合併成一次下游請求          | cache miss、hot key            |
-| [TTL](/backend/knowledge-cards/ttl/)                                                     | 資料何時自動過期                        | cache、session、presence       |
-| [Eviction](/backend/knowledge-cards/eviction/)                                           | 容量不足時哪些資料會被淘汰              | Redis、local cache、CDN        |
-| [快取失效策略](/backend/knowledge-cards/cache-invalidation/)                             | 快取資料何時更新、刪除或重建            | Redis、CDN、多層快取           |
-| [Hot Key](/backend/knowledge-cards/hot-key/)                                             | 少數 key 如何形成容量瓶頸               | Redis、partition、counter      |
-| [Cache Stampede](/backend/knowledge-cards/cache-stampede/)                               | 快取同時 miss 如何壓垮正式來源          | hot key、TTL、database         |
-| [Rate Limit](/backend/knowledge-cards/rate-limit/)                                       | 如何限制主體在一段時間內的資源使用量    | API、tenant、worker            |
-| [Backpressure](/backend/knowledge-cards/backpressure/)                                   | 下游變慢時如何讓上游放慢                | queue、worker、stream          |
-| [Buffer Pool](/backend/knowledge-cards/buffer-pool/)                                     | 資料庫如何用記憶體快取磁碟頁            | InnoDB、shared buffers、命中率 |
-| [Cache Penetration](/backend/knowledge-cards/cache-penetration/)                         | 必定不存在的 key 如何繞過快取打到源站   | 穿透、origin 負載              |
-| [Negative Cache](/backend/knowledge-cards/negative-cache/)                               | 查無此 key 的結果如何也被快取一小段時間 | 穿透防護、短 TTL               |
-| [Cache Tag Purge](/backend/knowledge-cards/cache-tag-purge/)                             | 多個關聯資源如何被一次批量失效          | CDN、surrogate key             |
-| [Stale-While-Revalidate](/backend/knowledge-cards/stale-while-revalidate/)               | 過期後如何先回舊版再背景更新            | HTTP cache-control             |
-| [Stale-If-Error](/backend/knowledge-cards/stale-if-error/)                               | 源站出錯時如何用舊版頂著                | HTTP cache-control、降級       |
+| 卡片                                                                                     | 核心問題                                          | 常見出現位置                   |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------ |
+| [Timeout](/backend/knowledge-cards/timeout/)                                             | 單一步驟最久可以等待多久                          | API、database、broker          |
+| [Freshness Window](/backend/knowledge-cards/freshness-window/)                           | 各資料類型可容忍多久的不新鮮                      | cache-aside、TTL、rollback     |
+| [Origin Protection](/backend/knowledge-cards/origin-protection/)                         | 快取失效時後端如何不被打垮                        | stampede、singleflight、TTL    |
+| [Cache Key Versioning](/backend/knowledge-cards/cache-key-versioning/)                   | key schema 演進如何不互踩                         | migration、相容窗口            |
+| [Cache Serialization Migration](/backend/knowledge-cards/cache-serialization-migration/) | 快取序列化格式如何安全換版                        | dual-format、rollback          |
+| [Deadline](/backend/knowledge-cards/deadline/)                                           | 整體操作何時必須完成                              | request、job、workflow         |
+| [Exponential Backoff](/backend/knowledge-cards/exponential-backoff/)                     | 重試間隔如何逐步拉長                              | retry、API、worker             |
+| [Jitter](/backend/knowledge-cards/jitter/)                                               | 如何分散同步重試與排程尖峰                        | retry、TTL、reconnect          |
+| [Retry Storm](/backend/knowledge-cards/retry-storm/)                                     | 大量重試如何放大下游壓力                          | timeout、dependency failure    |
+| [Thundering Herd](/backend/knowledge-cards/thundering-herd/)                             | 大量工作同時醒來如何形成尖峰                      | reconnect、cache、lock         |
+| [Transient Failure](/backend/knowledge-cards/transient-failure/)                         | 暫時性故障如何影響重試與告警                      | network、failover、timeout     |
+| [Partial Failure](/backend/knowledge-cards/partial-failure/)                             | 局部失效時如何保留整體可用性                      | distributed system、fallback   |
+| [Cascading Failure](/backend/knowledge-cards/cascading-failure/)                         | 局部故障如何擴散成整體故障                        | dependency、retry、pool        |
+| [Correlated Failure](/backend/knowledge-cards/correlated-failure/)                       | 以為獨立的元件共享隱藏觸發器一起壞                | 冗餘、失效域、shared trigger   |
+| [Load Shedding](/backend/knowledge-cards/load-shedding/)                                 | 過載時如何主動拒絕低優先工作                      | overload、priority             |
+| [Token Bucket](/backend/knowledge-cards/token-bucket/)                                   | 如何用配額與補充速率控制流量                      | rate limit、retry budget       |
+| [Dependency Isolation](/backend/knowledge-cards/dependency-isolation/)                   | 如何避免單一下游耗盡共享資源                      | pool、queue、dependency        |
+| [Bulkhead](/backend/knowledge-cards/bulkhead/)                                           | 如何用資源分艙限制故障擴散                        | worker、tenant、pool           |
+| [In-Process Channel](/backend/knowledge-cards/in-process-channel/)                       | 單一 process 內如何傳遞工作或訊號                 | channel、local queue           |
+| [Local Worker](/backend/knowledge-cards/local-worker/)                                   | 同 process 背景工作的責任與邊界                   | background task、shutdown      |
+| [Worker Pool](/backend/knowledge-cards/worker-pool/)                                     | 如何限制同時處理量                                | worker、background job         |
+| [HTTP Client](/backend/knowledge-cards/http-client/)                                     | 呼叫外部 HTTP 依賴時如何管理資源                  | API、dependency                |
+| [Webhook](/backend/knowledge-cards/webhook/)                                             | 外部系統回呼事件如何驗證與處理                    | callback、signature、retry     |
+| [WebSocket](/backend/knowledge-cards/websocket/)                                         | 長連線雙向即時通訊如何運作                        | chat、presence、push           |
+| [Server-Sent Events (SSE)](/backend/knowledge-cards/sse/)                                | HTTP 單向事件串流如何推送更新                     | notification、progress         |
+| [Stream Pipeline](/backend/knowledge-cards/stream-pipeline/)                             | 連續資料流如何管理吞吐與 backpressure             | stream、CDC、ETL               |
+| [Throughput](/backend/knowledge-cards/throughput/)                                       | 單位時間內可處理多少工作                          | load test、queue、broker       |
+| [Buffer](/backend/knowledge-cards/buffer/)                                               | 暫存空間如何吸收短暫速度差                        | queue、socket、cache           |
+| [Queue](/backend/knowledge-cards/queue/)                                                 | 等待處理的工作如何形成容量邊界                    | producer、consumer、backlog    |
+| [Socket](/backend/knowledge-cards/socket/)                                               | 網路連線如何成為資料讀寫與資源邊界                | network、connection、timeout   |
+| [Fallback](/backend/knowledge-cards/fallback/)                                           | 主要路徑失敗時使用什麼替代結果                    | degradation、circuit breaker   |
+| [Fail Fast](/backend/knowledge-cards/fail-fast/)                                         | 已知會失敗時如何快速回應                          | circuit breaker、validation    |
+| [Retry Budget](/backend/knowledge-cards/retry-budget/)                                   | 重試量如何受整體容量限制                          | retry、SLO、token bucket       |
+| [Cache Aside](/backend/knowledge-cards/cache-aside/)                                     | application 如何讀快取與正式來源                  | Redis、read path               |
+| [Cache Hit / Miss](/backend/knowledge-cards/cache-hit-miss/)                             | 讀取是否命中快取                                  | cache、database pressure       |
+| [Cache Hit Rate](/backend/knowledge-cards/cache-hit-rate/)                               | 命中比例如何衡量快取效益                          | dashboard、capacity            |
+| [Cache Warmup](/backend/knowledge-cards/cache-warmup/)                                   | 正式流量前如何預先載入快取                        | deployment、event              |
+| [Cache Prefetching](/backend/knowledge-cards/cache-prefetching/)                         | 如何在資料被需要前預先載入                        | user flow、hot data            |
+| [Cold Start](/backend/knowledge-cards/cold-start/)                                       | 新 instance 或空快取如何造成延遲                  | autoscaling、readiness         |
+| [Write-Through Cache](/backend/knowledge-cards/write-through-cache/)                     | 寫入時如何同步更新快取                            | write path、freshness          |
+| [Write-Behind Cache](/backend/knowledge-cards/write-behind-cache/)                       | 先寫緩衝層再非同步持久化的風險                    | analytics、buffer              |
+| [Stale Data](/backend/knowledge-cards/stale-data/)                                       | 過期資料如何影響產品結果                          | cache、replica                 |
+| [Soft TTL](/backend/knowledge-cards/soft-ttl/)                                           | 進入刷新期後如何短暫使用舊資料                    | stampede、refresh              |
+| [Singleflight](/backend/knowledge-cards/singleflight/)                                   | 相同工作如何合併成一次下游請求                    | cache miss、hot key            |
+| [TTL](/backend/knowledge-cards/ttl/)                                                     | 資料何時自動過期                                  | cache、session、presence       |
+| [Eviction](/backend/knowledge-cards/eviction/)                                           | 容量不足時哪些資料會被淘汰                        | Redis、local cache、CDN        |
+| [快取失效策略](/backend/knowledge-cards/cache-invalidation/)                             | 快取資料何時更新、刪除或重建                      | Redis、CDN、多層快取           |
+| [Hot Key](/backend/knowledge-cards/hot-key/)                                             | 少數 key 如何形成容量瓶頸                         | Redis、partition、counter      |
+| [Cache Stampede](/backend/knowledge-cards/cache-stampede/)                               | 快取同時 miss 如何壓垮正式來源                    | hot key、TTL、database         |
+| [Rate Limit](/backend/knowledge-cards/rate-limit/)                                       | 如何限制主體在一段時間內的資源使用量              | API、tenant、worker            |
+| [Backpressure](/backend/knowledge-cards/backpressure/)                                   | 下游變慢時如何讓上游放慢                          | queue、worker、stream          |
+| [Buffer Pool](/backend/knowledge-cards/buffer-pool/)                                     | 資料庫如何用記憶體快取磁碟頁                      | InnoDB、shared buffers、命中率 |
+| [Cache Penetration](/backend/knowledge-cards/cache-penetration/)                         | 必定不存在的 key 如何繞過快取打到源站             | 穿透、origin 負載              |
+| [Negative Cache](/backend/knowledge-cards/negative-cache/)                               | 查無此 key 的結果如何也被快取一小段時間           | 穿透防護、短 TTL               |
+| [Cache Tag Purge](/backend/knowledge-cards/cache-tag-purge/)                             | 多個關聯資源如何被一次批量失效                    | CDN、surrogate key             |
+| [Stale-While-Revalidate](/backend/knowledge-cards/stale-while-revalidate/)               | 過期後如何先回舊版再背景更新                      | HTTP cache-control             |
+| [Stale-If-Error](/backend/knowledge-cards/stale-if-error/)                               | 源站出錯時如何用舊版頂著                          | HTTP cache-control、降級       |
+| [Cache-Control](/backend/knowledge-cards/cache-control/)                                 | 回應能被誰保存、保存多久、使用前要不要先問 origin | HTTP 快取、CDN、瀏覽器         |
+| [Vary](/backend/knowledge-cards/vary/)                                                   | 同一個網址的回應如何依請求標頭分開保存            | 快取鍵、壓縮、命中率           |
+| [Heuristic Freshness](/backend/knowledge-cards/heuristic-freshness/)                     | 沒寫期限的回應快取如何自己估保存時間              | 301、改版沒生效、Last-Modified |
 
 ## 入口與部署
 
