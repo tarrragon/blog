@@ -270,6 +270,6 @@ Amazon Ads、拓元、Zoom、Genesys、Disney+ 等案例揭露 event-driven scal
 - [global-tables-conflict](/backend/01-database/vendors/dynamodb/global-tables-conflict/) — 多 region capacity 規劃放大、DBA / SRE 工時釋放在 multi-region 更顯著
 - Migration playbook：跨 vendor cost optimization（如 [Zomato TiDB → DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)）對應 type C operational hybrid
 - 替代路由：cost 極度敏感 + 流量穩定 + DBA 團隊已存在 → 自管 PostgreSQL / MySQL 可能更便宜（vendor crossover）、回 [PostgreSQL vendor](/backend/01-database/vendors/postgresql/)
-- [Zoom：COVID 期間從 1000 萬到 3 億 DAU 的 30 倍突發](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)：30x permanent surge 後的 mode 重評，surge 性質的主案例
+- [9.C18 Zoom：COVID 期間每日會議參與人次從 1000 萬到 3 億的 30 倍成長](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)：30x permanent surge 後的 mode 重評，surge 性質的主案例
 - [Capcom：Resident Evil / Monster Hunter 在 DynamoDB + EKS 上的遊戲後端](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) 與 [NTT DOCOMO Lemino：3 個月達 500 萬 MAU 的串流後端](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)：DBA / SRE 工時釋放的主案例
 - [Aurora Read Replica Scaling](/backend/01-database/vendors/aurora/read-replica-scaling/)：同一類 event-driven scaling 問題從 SQL 讀副本切入，涵蓋事件分級表（FanDuel 平日 / playoff / championship / Super Bowl）、讀寫雙峰錯位的雙 SLO 並行（DraftKings）與 fleet 治理

@@ -18,10 +18,10 @@ tags: ["backend", "performance", "capacity", "peak-event"]
 
 不同事件對應不同準備強度、第一步要分類。
 
-**可預期極端峰值**：年度活動、預售、賽事決賽。提前數月已知時間、業務影響大。例：Prime Day、Black Friday、Super Bowl、IPL 決賽。
+**可預期極端峰值**：年度活動、預售、賽事決賽。提前數月已知時間、業務影響大。例：Prime Day、Black Friday、Super Bowl、IPL 決賽。日期可預期，需求仍可能超出預測：Coinbase 在超級盃廣告前做過壓測，實際流量仍超出預測而暫時節流，超出預測時的承接機制見 [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/)。
 **事件型不可預期峰值**：賽事高潮、突發新聞、KOL 推廣。時間或大小不完全可預測。例：賽事進球瞬間、KOL 帶貨、突發新聞引發的流量。
-**Flash-sale 瞬間爆量**：售票開賣、報名活動、限量搶購。t=0 瞬間爆量、5-30 分鐘結束。例：演唱會售票、限量商品搶購、報名截止前最後一小時。
-**產品爆紅 surge**：新 app 紅、病毒擴散。完全不可預期、流量會隨熱度消退。例：Pokemon GO、ChatGPT 爆紅初期、TikTok challenge。
+**Flash-sale 瞬間爆量**：售票開賣、報名活動、限量搶購。t=0 瞬間爆量、5-30 分鐘結束。例：演唱會售票、限量商品搶購、報名截止前最後一小時。開賣當下的等候室與事前註冊見 [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/) 的〈准入控制：虛擬等候室（virtual waiting room）、waitlist 與事前註冊〉。
+**產品爆紅 surge**：新 app 紅、病毒擴散。完全不可預期、流量會隨熱度消退。例：Pokemon GO、ChatGPT 爆紅初期、TikTok challenge。這一類與事件型不可預期峰值沒有準備時程可排，承接的機制見 [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/)。
 **結構性 surge**：COVID 類外部衝擊、永久 baseline 上移。不會回到舊水準。例：COVID 期間遠距工作工具、烏俄戰爭期間能源類 app。
 
 對應案例：[AWS Prime Day 2025、Disney+ Hotstar、ASOS、Disney+、NTT DOCOMO Lemino](/backend/09-performance-capacity/cases/)（predictable）/ [GR8 Tech、DraftKings、Lyft、FanDuel](/backend/09-performance-capacity/cases/)（event）/ [拓元 Tixcraft、SeatGeek、BookMyShow](/backend/09-performance-capacity/cases/)（flash-sale）/ [Niantic Pokémon GO、Zoom](/backend/09-performance-capacity/cases/)（surge）。
@@ -199,6 +199,7 @@ T+7 retro 是讓 readiness 持續改進的關鍵。
 - 上游：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) / [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)
 - 上游：[9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/)（pre-scaling 前要分辨可不可水平擴展）
 - 跨模組：[5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/)（CDN pre-warm / origin protection 是 T-2 核心）
+- 平行：[9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/)（沒有準備窗口時的流量來源辨識、擴展緩衝、負載卸除與准入控制）
 - 跨模組：[06.20 experiment safety boundary](/backend/06-reliability/experiment-safety-boundary/) / [08 事故處理模組](/backend/08-incident-response/)
 
 ## 既建知識卡片

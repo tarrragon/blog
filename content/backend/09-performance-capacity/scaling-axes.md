@@ -160,4 +160,5 @@ Zomato 跟 Netflix 不在這份案例清單裡的原因要先講清楚：擴展�
 
 - 容量計算與 headroom 模型 → [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)
 - 擴展前的瓶頸定位 → [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)
+- 自動擴展的反應時間換算成緩衝、擴展路徑上的上限 → [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/) 的〈自動擴展（autoscaling）的反應時間與緩衝〉
 - 服務拆分如何配合水平擴展 → [10.1 服務拆分與邊界判讀](/backend/10-system-evolution/service-decomposition-boundaries/)

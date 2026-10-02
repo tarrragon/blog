@@ -11,7 +11,7 @@ Load shedding 的核心概念是「在過載時主動丟棄或拒絕部分工作
 
 ## 概念位置
 
-Load shedding 是過載保護工具。它和 rate limit、backpressure、degradation、priority queue 與 admission control 相關；重點是先定義哪些工作可以被拒絕，哪些工作需要保留。 可先對照 [Load Test](/backend/knowledge-cards/load-test/)。
+Load shedding 是過載保護工具。它和 rate limit、backpressure、degradation、priority queue 與 [Admission Control](/backend/knowledge-cards/admission-control/) 相關；重點是先定義哪些工作可以被拒絕，哪些工作需要保留。 可先對照 [Load Test](/backend/knowledge-cards/load-test/)。
 
 ## 可觀察訊號與例子
 

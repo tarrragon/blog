@@ -203,19 +203,19 @@ flash-sale-spike 是 09 案例庫的核心 differentiator — 雲商案例庫對
 
 待 09 主章寫作推進、第二批案例可從下列候選補齊。
 
-| 候選案例                    | 預期教學重點                             | 來源                                                                                                                              |
-| --------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Disney+ DynamoDB            | 每日數十億動作、watch list metadata      | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
-| PayPay 30 億訊息/日         | 行動支付的持續高頻 message               | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
-| Capcom DynamoDB             | 遊戲業數十億請求、single-digit ms        | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
-| Zomato 90% 延遲下降         | 帳務處理、跨資料庫遷移效益               | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
-| Zoom COVID 30x 成長         | 1000 萬 → 3 億 DAU、突發長期 sustained   | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
-| FanFight 100 萬寫入/秒      | 印度 fantasy sports 體育博彩             | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
-| Tubi ScyllaDB → ElastiCache | ML feature store sub-10ms p99            | [ElastiCache customers](https://aws.amazon.com/elasticache/customers/)                                                            |
-| FanDuel 直播 + 投注         | 雙重峰值對齊                             | [FanDuel case study](https://aws.amazon.com/solutions/case-studies/fanduel-case-study/)                                           |
-| Blockchain.com Spanner      | Crypto 高頻交易、強一致全球              | [Spanner blog](https://cloud.google.com/blog/products/databases/using-cloud-spanner-to-handle-high-throughput-writes/)            |
-| Walmart Cosmos DB           | 全球零售 KV、跨地區一致性策略            | [Cosmos DB blog](https://azure.microsoft.com/en-us/blog/azure-cosmos-db-pushing-the-frontier-of-globally-distributed-databases/)  |
-| Microsoft 365 Cosmos        | MongoDB → Cosmos 遷移、planet-scale 分析 | [Cosmos DB Microsoft 365 blog](https://azure.microsoft.com/en-us/blog/microsoft-365-boosts-usage-analytics-with-azure-cosmos-db/) |
+| 候選案例                    | 預期教學重點                                        | 來源                                                                                                                              |
+| --------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Disney+ DynamoDB            | 每日數十億動作、watch list metadata                 | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
+| PayPay 30 億訊息/日         | 行動支付的持續高頻 message                          | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
+| Capcom DynamoDB             | 遊戲業數十億請求、single-digit ms                   | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
+| Zomato 90% 延遲下降         | 帳務處理、跨資料庫遷移效益                          | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
+| Zoom COVID 30x 成長         | 每日會議參與人次 1000 萬 → 3 億、突發長期 sustained | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
+| FanFight 100 萬寫入/秒      | 印度 fantasy sports 體育博彩                        | [DynamoDB customers](https://aws.amazon.com/dynamodb/customers/)                                                                  |
+| Tubi ScyllaDB → ElastiCache | ML feature store sub-10ms p99                       | [ElastiCache customers](https://aws.amazon.com/elasticache/customers/)                                                            |
+| FanDuel 直播 + 投注         | 雙重峰值對齊                                        | [FanDuel case study](https://aws.amazon.com/solutions/case-studies/fanduel-case-study/)                                           |
+| Blockchain.com Spanner      | Crypto 高頻交易、強一致全球                         | [Spanner blog](https://cloud.google.com/blog/products/databases/using-cloud-spanner-to-handle-high-throughput-writes/)            |
+| Walmart Cosmos DB           | 全球零售 KV、跨地區一致性策略                       | [Cosmos DB blog](https://azure.microsoft.com/en-us/blog/azure-cosmos-db-pushing-the-frontier-of-globally-distributed-databases/)  |
+| Microsoft 365 Cosmos        | MongoDB → Cosmos 遷移、planet-scale 分析            | [Cosmos DB Microsoft 365 blog](https://azure.microsoft.com/en-us/blog/microsoft-365-boosts-usage-analytics-with-azure-cosmos-db/) |
 
 ## Engineering Blog 補充候選
 

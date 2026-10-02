@@ -18,4 +18,4 @@ Thundering herd 常出現在 cache 過期、鎖釋放、服務恢復、排程任
 
 ## 設計責任
 
-常見策略包括 jitter、排隊、分批恢復、token bucket、singleflight、soft TTL 與 admission control。設計重點是把同步尖峰轉成可控分布。
+常見策略包括 jitter、排隊、分批恢復、token bucket、singleflight、soft TTL 與 [Admission Control](/backend/knowledge-cards/admission-control/)。設計重點是把同步尖峰轉成可控分布。

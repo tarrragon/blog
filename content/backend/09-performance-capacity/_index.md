@@ -71,24 +71,25 @@ tags: ["backend", "performance", "capacity"]
 
 ## 主章規劃
 
-| 章節                                                                                       | 主題                          | 核心責任                                                                |
-| ------------------------------------------------------------------------------------------ | ----------------------------- | ----------------------------------------------------------------------- |
-| [9.1 壓測理論與系統行為](/backend/09-performance-capacity/performance-theory/)             | Performance Theory            | Little's Law、queueing theory、USL、saturation curve 的工程意義         |
-| [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/)               | Workload Modeling             | 把 production traffic shape 翻成可重播的壓測模型                        |
-| [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)                    | Load Test Tooling             | k6 / JMeter / Gatling / Locust / Vegeta / Production Replay 的選型判讀  |
-| [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)         | Saturation Discovery          | 找出 throughput plateau 與 latency knee 的方法                          |
-| [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)              | Bottleneck Localization       | 從 app 到 DB、cache、broker、第三方 quota 的逐層定位                    |
-| [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)                    | Capacity Planning             | peak forecast、headroom、growth curve、autoscaling sizing               |
-| [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/)            | Cost Engineering              | cost per request、cost curve、降級成本、over-provisioning trade-off     |
-| [9.8 效能可觀測性](/backend/09-performance-capacity/performance-observability/)            | Performance Observability     | saturation metric、USE / RED method、cost dashboard                     |
-| [9.9 Performance Improvement Loop](/backend/09-performance-capacity/improvement-loop/)     | Improvement Loop              | 壓測 → profile → fix → re-test → release gate 的閉環                    |
-| [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)       | Production Validation         | shadow traffic、dark launch、canary、production-like load test          |
-| [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)                | Peak Event Readiness          | 活動、季節性流量、推廣事件的 capacity readiness 流程                    |
-| [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/slo-performance-budget/) | SLO Coupling                  | performance budget 跟 SLO / error budget 的對接                         |
-| [9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/)             | Scaling Axes                  | 垂直 / 水平擴展取捨、stateless 前提、auto scaling 操作模型              |
-| [9.14 連線池放大解法](/backend/09-performance-capacity/connection-pool-amplification/)     | Connection Pool Amplification | PgBouncer / RDS Proxy / ProxySQL 對比、解 9.13 提出的連線池放大隱性成本 |
+| 章節                                                                                                                                                 | 主題                          | 核心責任                                                                                           |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------- |
+| [9.1 壓測理論與系統行為](/backend/09-performance-capacity/performance-theory/)                                                                       | Performance Theory            | Little's Law、queueing theory、USL、saturation curve 的工程意義                                    |
+| [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/)                                                                         | Workload Modeling             | 把 production traffic shape 翻成可重播的壓測模型                                                   |
+| [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)                                                                              | Load Test Tooling             | k6 / JMeter / Gatling / Locust / Vegeta / Production Replay 的選型判讀                             |
+| [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)                                                                   | Saturation Discovery          | 找出 throughput plateau 與 latency knee 的方法                                                     |
+| [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)                                                                        | Bottleneck Localization       | 從 app 到 DB、cache、broker、第三方 quota 的逐層定位                                               |
+| [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)                                                                              | Capacity Planning             | peak forecast、headroom、growth curve、autoscaling sizing                                          |
+| [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/)                                                                      | Cost Engineering              | cost per request、cost curve、降級成本、over-provisioning trade-off                                |
+| [9.8 效能可觀測性](/backend/09-performance-capacity/performance-observability/)                                                                      | Performance Observability     | saturation metric、USE / RED method、cost dashboard                                                |
+| [9.9 Performance Improvement Loop](/backend/09-performance-capacity/improvement-loop/)                                                               | Improvement Loop              | 壓測 → profile → fix → re-test → release gate 的閉環                                               |
+| [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)                                                                 | Production Validation         | shadow traffic、dark launch、canary、production-like load test                                     |
+| [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)                                                                          | Peak Event Readiness          | 活動、季節性流量、推廣事件的 capacity readiness 流程                                               |
+| [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/slo-performance-budget/)                                                           | SLO Coupling                  | performance budget 跟 SLO / error budget 的對接                                                    |
+| [9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/)                                                                       | Scaling Axes                  | 垂直 / 水平擴展取捨、stateless 前提、auto scaling 操作模型                                         |
+| [9.14 連線池放大解法](/backend/09-performance-capacity/connection-pool-amplification/)                                                               | Connection Pool Amplification | PgBouncer / RDS Proxy / ProxySQL 對比、解 9.13 提出的連線池放大隱性成本                            |
+| [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/) | Unplanned Traffic Surge       | 沒有準備窗口時的流量來源辨識、擴展反應時間與緩衝、負載卸除順序、准入控制、體積型攻擊交給邊緣、退路 |
 
-> 14 個主章已完成首輪正文。後續工作是補 `vendors/` 工具入口、提升案例回寫密度，並校正各章與 06 reliability 的分工。
+> 15 個主章已完成首輪正文。後續工作是補 `vendors/` 工具入口、提升案例回寫密度，並校正各章與 06 reliability 的分工。
 
 主章撰寫順序：9.1 → 9.2 → 9.4 → 9.5 → 9.6 → 9.3 → 9.8 → 9.9 → 9.7 → 9.10 → 9.11 → 9.12。理論與模型先行，工具落地放在 saturation 與 bottleneck 概念成熟之後，最後處理成本與 production 驗證的進階主題。
 
@@ -108,13 +109,13 @@ tags: ["backend", "performance", "capacity"]
 
 ### 規劃中案例（補不同視角與規模）
 
-| 候選來源     | 預期教學重點                                        |
-| ------------ | --------------------------------------------------- |
-| Lyft / Slack | 微服務 + Auto Scaling、事件型流量的擴容粒度治理     |
-| Riot Games   | EKS 多集群（246 cluster）治理、跨地區延遲與成本平衡 |
-| FanDuel      | 直播流量 + 投注峰值的雙重峰值對齊                   |
-| Hotstar      | 即時 live streaming 全球峰值（1860 萬同時觀看）     |
-| Zoom         | COVID 期間 30 倍成長（1000 萬 → 3 億 DAU）          |
+| 候選來源     | 預期教學重點                                            |
+| ------------ | ------------------------------------------------------- |
+| Lyft / Slack | 微服務 + Auto Scaling、事件型流量的擴容粒度治理         |
+| Riot Games   | EKS 多集群（246 cluster）治理、跨地區延遲與成本平衡     |
+| FanDuel      | 直播流量 + 投注峰值的雙重峰值對齊                       |
+| Hotstar      | 即時 live streaming 全球峰值（1860 萬同時觀看）         |
+| Zoom         | COVID 期間 30 倍成長（每日會議參與人次 1000 萬 → 3 億） |
 
 ### Engineering Blog 補充候選
 
@@ -220,16 +221,17 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                                   | 類型   | 前置條件                                                    | 規模       |
-| ---------------------------------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------- | ---------- |
-| 負載工具 deep article（JMeter / Gatling / Locust / Vegeta）                                                            | vendor | 需與 06 界定角度分工（效能工程 vs 驗證流程）                | 4 篇（大） |
-| 流量錄製與鏡像（GoReplay / Service Mesh Mirroring / VPC Traffic Mirroring）                                            | vendor | 無                                                          | 3 篇（中） |
-| 持續剖析（Pyroscope / Parca）                                                                                          | vendor | 無                                                          | 2 篇（中） |
-| 成本工具（Akamas / Vantage / CloudHealth / AWS Cost Explorer）                                                         | vendor | 無                                                          | 4 篇（大） |
-| 認證運算的容量規劃（密碼雜湊的 CPU 與記憶體尖峰、與其他負載的共存）                                                    | 主章   | 無（7.30 路由過來、已給最小推估法）                         | 小         |
-| 資源量測涵蓋面盤點：哪些配額該進量測清單、集合怎麼產生與驗齊、缺口往哪路由，含持有者紀錄的粒度設計                     | 主章   | 無（#252 已承接單一資源要不要量的舉證責任、本章只做集合層） | 中         |
-| 配額型資源的上限與餘裕怎麼定：把本模組的容量公式套到 pool / fd / pids / port / 外部 API 配額，含上限不在自己手上的情形 | 主章   | 上一列先落地                                                | 小         |
-| cgroup 資源上限知識卡（`pids.max` 等）：容器裡的配額主體與 per-uid 的差異                                              | 知識卡 | 無                                                          | 1 張       |
+| 項目                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 類型   | 前置條件                                                    | 規模       |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------- | ---------- |
+| 負載工具 deep article（JMeter / Gatling / Locust / Vegeta）                                                                                                                                                                                                                                                                                                                                                                                                 | vendor | 需與 06 界定角度分工（效能工程 vs 驗證流程）                | 4 篇（大） |
+| 流量錄製與鏡像（GoReplay / Service Mesh Mirroring / VPC Traffic Mirroring）                                                                                                                                                                                                                                                                                                                                                                                 | vendor | 無                                                          | 3 篇（中） |
+| 持續剖析（Pyroscope / Parca）                                                                                                                                                                                                                                                                                                                                                                                                                               | vendor | 無                                                          | 2 篇（中） |
+| 成本工具（Akamas / Vantage / CloudHealth / AWS Cost Explorer）                                                                                                                                                                                                                                                                                                                                                                                              | vendor | 無                                                          | 4 篇（大） |
+| 認證運算的容量規劃（密碼雜湊的 CPU 與記憶體尖峰、與其他負載的共存）                                                                                                                                                                                                                                                                                                                                                                                         | 主章   | 無（7.30 路由過來、已給最小推估法）                         | 小         |
+| 資源量測涵蓋面盤點：哪些配額該進量測清單、集合怎麼產生與驗齊、缺口往哪路由，含持有者紀錄的粒度設計                                                                                                                                                                                                                                                                                                                                                          | 主章   | 無（#252 已承接單一資源要不要量的舉證責任、本章只做集合層） | 中         |
+| 9.15 與 0.25 的反向連結回填：operations/03 rate-limiting 與 backpressure（第五種機制：依系統狀態的負載卸除）、11.9 拒絕契約與 11 consumer-retry-decision、5.9 首段、6.x capacity-cost／load-testing、12.8 短網址轉址、reading-paths 搶購列、scale-growth-walls、autoscaling／degradation 卡、operations/05 peak-estimation 與 scaling-inflection-point、operations/02 scaling-triggers；另外 cases 多頁的「9.11」「9.6」「9.5」連結文字實際指向本模組目錄頁 | 跨模組 | 無                                                          | 中         |
+| 配額型資源的上限與餘裕怎麼定：把本模組的容量公式套到 pool / fd / pids / port / 外部 API 配額，含上限不在自己手上的情形                                                                                                                                                                                                                                                                                                                                      | 主章   | 上一列先落地                                                | 小         |
+| cgroup 資源上限知識卡（`pids.max` 等）：容器裡的配額主體與 per-uid 的差異                                                                                                                                                                                                                                                                                                                                                                                   | 知識卡 | 無                                                          | 1 張       |
 
 與 06 共用四個負載工具（k6 / JMeter / Gatling / Locust），寫作前要先確立本模組讀「效能工程的工具鏈」、06 讀「驗證流程的工具鏈」這條分工，否則兩邊會產出重複內容。
 

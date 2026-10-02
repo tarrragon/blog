@@ -149,4 +149,5 @@ Dashboard 視圖：rate limit hit 的時間趨勢 + 按 client 和 endpoint 分�
 - Rate limit 的概念基礎 → [運行期維運 流量管控 — Rate Limiting](/operations/03-traffic-management/rate-limiting/)
 - 背壓機制（被動的流量控制）→ [運行期維運 背壓機制](/operations/03-traffic-management/backpressure/)
 - Rate limit 知識卡 → [Rate Limit](/backend/knowledge-cards/rate-limit/)
+- 依系統狀態拒絕請求的負載卸除、與限流的分工，以及瞬時大流量時的優先等級 → [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/)
 - 監控系統中的 ingestion 限速 → [Monitoring Ingestion Scaling](/monitoring/04-collector/ingestion-scaling/)

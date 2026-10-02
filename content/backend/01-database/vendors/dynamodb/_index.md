@@ -59,7 +59,7 @@ DynamoDB 的核心設計是「partition 透明、capacity 抽象化」。不像 
 
 - on-demand capacity 自動吸收 burst
 - 不需 connection pool（HTTP API、無 stateful connection）
-- 對應案例：[9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)（COVID 1000 萬 → 3 億 DAU）、[9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)（IOPS 20 → 135K、售票搶購）、[9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)（RDB connection limit → 改 DynamoDB）
+- 對應案例：[9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)（COVID 期間每日會議參與人次 1000 萬 → 3 億）、[9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)（IOPS 20 → 135K、售票搶購）、[9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)（RDB connection limit → 改 DynamoDB）
 
 **4. 大規模通知 / 訊息系統**：
 

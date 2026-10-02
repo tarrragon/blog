@@ -93,7 +93,7 @@ Headroom 不是 over-provisioning 浪費、是容量規劃的安全邊界。常�
 
 - min 太低 → cold start 風險（流量上來時還在 boot）
 - min 太高 → 平日浪費
-- max 太低 → 限流（peak 時 autoscaler 不能再擴）
+- max 太低 → 限流（peak 時 autoscaler 不能再擴）；擴展路徑上的其他上限（雲端 quota、建失敗的機器也佔名額）與反應時間換算成緩衝，見 [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/) 的〈自動擴展（autoscaling）的反應時間與緩衝〉
 - max 太高 → 月底炸帳單（autoscaler 不受控、過 peak 不會主動降）
 - target 太高 → autoscale 啟動太晚、進 knee 才反應
 - target 太低 → autoscale 太敏感、頻繁 scale up / down 浪費
@@ -118,7 +118,7 @@ Headroom 不是 over-provisioning 浪費、是容量規劃的安全邊界。常�
 - DynamoDB auto-scaling：DB capacity 層
 - CloudFront：CDN 層
 
-對應案例：[Tixcraft 30 分鐘擴 130 倍](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 6 台 → 800 台靠 ASG + AMI prebuild + ELB warmup；[Prime Day predictive](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) — pre-scaling 30-77% 年增率提前算進容量。
+對應案例：[Tixcraft 30 分鐘擴 130 倍](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 單場最多擴到 800 台 EC2；[Prime Day predictive](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) — pre-scaling 30-77% 年增率提前算進容量。
 
 ## 不可水平擴容服務的容量規劃
 

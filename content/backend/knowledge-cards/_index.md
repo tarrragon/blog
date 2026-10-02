@@ -122,6 +122,7 @@ weight: -1
 | [Cascading Failure](/backend/knowledge-cards/cascading-failure/)                         | 局部故障如何擴散成整體故障                        | dependency、retry、pool        |
 | [Correlated Failure](/backend/knowledge-cards/correlated-failure/)                       | 以為獨立的元件共享隱藏觸發器一起壞                | 冗餘、失效域、shared trigger   |
 | [Load Shedding](/backend/knowledge-cards/load-shedding/)                                 | 過載時如何主動拒絕低優先工作                      | overload、priority             |
+| [Admission Control](/backend/knowledge-cards/admission-control/)                         | 開賣或湧入時如何決定誰能進入、何時進入            | waiting room、waitlist         |
 | [Token Bucket](/backend/knowledge-cards/token-bucket/)                                   | 如何用配額與補充速率控制流量                      | rate limit、retry budget       |
 | [Dependency Isolation](/backend/knowledge-cards/dependency-isolation/)                   | 如何避免單一下游耗盡共享資源                      | pool、queue、dependency        |
 | [Bulkhead](/backend/knowledge-cards/bulkhead/)                                           | 如何用資源分艙限制故障擴散                        | worker、tenant、pool           |
