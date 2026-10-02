@@ -38,4 +38,4 @@ tags: ["books", "knowledge-cards", "remote-work", "asynchronous", "team"]
 
 換算的責任落在讀的人身上，而換算失敗多半走同一條路：把非同步當成「同步少了一點」來處理。加開視訊會議把重疊工時湊出來，是把非同步的成本轉嫁到某一邊的作息上。湊出來的那一小時通常落在其中一邊的晚上十點以後，而每週兩次不會有人反對——會議本身開得順，出席率與紀錄都正常。沒有被及時發現，是因為團隊看得到的訊號全部長在會議那一側，作息不對應任何一項團隊指標；等到有人離職，理由會被歸成個人生涯選擇。有效的換算方向相反——找出原本靠時間重疊才發生的功能，替它找一個不需要重疊的位置。
 
-這層換算目前得自己做。[書單推薦](/books/) 裡把非同步當成正面題目處理的只有[個人工作流與工作負荷](/books/software-management/topics/personal-workflow/)收的 A World Without Email。[困難對話與無權限影響力](/books/software-management/topics/influence-conversation/)收的 Humble Inquiry 第三版加了遠距工作專章，但那一章處理的是遠距而非重疊不足，而且繁體中文版譯自較早的版本、沒有那一章。其餘的書都要自己做這層換算。
+這層換算目前得自己做。[書單推薦](/books/) 裡把非同步當成正面題目處理的只有[個人工作流與工作負荷的選讀書目](/books/software-management/topics/personal-workflow/)收的 A World Without Email。[困難對話與無權限影響力的選讀書目](/books/software-management/topics/influence-conversation/)收的 Humble Inquiry 第三版加了遠距工作專章，但那一章處理的是遠距而非重疊不足，而且繁體中文版譯自較早的版本、沒有那一章。其餘的書都要自己做這層換算。

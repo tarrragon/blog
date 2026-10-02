@@ -59,9 +59,9 @@ df[df["age"] > 18]
 
 DataFrame 這一層則是額外的第四種，它不在上面那條線上——它處理的是已經在記憶體裡的表格，與資料庫的存取方式無關。一般的增刪改查應用不使用它，那是 ORM 的位置。
 
-## 往下走
+## 延伸閱讀：SQL 與 pandas 的寫法對應、運算發生的位置、pandas 的記憶體邊界、ORM 的查詢反模式
 
-**這兩側共用的抽象**：ORM 產生的 SQL 與 DataFrame 的方法，做的是同一組操作。[8.4 SQL 子句與 pandas 方法的對應：篩選、連接、分組彙總、視窗函數，以及空值、索引與順序的語意差異](/python/08-data-analysis/same-relational-algebra/) 給四組對應的實測比對，以及對應斷掉的三個位置。
+**這兩側共用的抽象**：ORM 產生的 SQL 與 DataFrame 的方法，做的是同一組操作。[8.4 SQL 子句與 pandas 方法的對應：篩選、連接、分組彙總、視窗函數，以及空值、索引與順序的語意差異](/python/08-data-analysis/same-relational-algebra/) 給篩選、連接、分組彙總與視窗函數在兩邊的實測比對，以及空值、索引與順序這幾處對應斷掉的位置。
 
 **分界本身**：兩側的差異全部從「運算發生在哪一端」推出來。[8.2 運算發生的位置](/python/08-data-analysis/where-computation-runs/) 寫這條軸怎麼決定容量上限與失敗形態，以及選邊時要問的三個條件。
 

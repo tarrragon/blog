@@ -69,7 +69,7 @@ SELECT 金額 * 2 AS 兩倍 FROM 訂單 WHERE 兩倍 > 1000;
 -- SQLite：收下，回 1400
 ```
 
-`WHERE` 那一步發生在算出 `兩倍` 之前，所以那個名字在那裡還不存在。SQLite 收下同一段，這是它的寬鬆度而不是標準行為（求值順序的完整推導與這條寬鬆度的其他實例在 [SQL.2 子句的求值順序，以及哪些限制擋得掉哪些擋不掉](/backend/01-database/sql/clause-evaluation-order/)）。
+`WHERE` 那一步發生在算出 `兩倍` 之前，所以那個名字在那裡還不存在。SQLite 收下同一段，這是它的寬鬆度而不是標準行為（求值順序的完整推導與這條寬鬆度的其他實例在 [SQL.2 子句的求值順序：每一步可用的欄位、語意模型擋下的寫法與各家引擎放寬的寫法](/backend/01-database/sql/clause-evaluation-order/)）。
 
 ## NULL 在排序結果裡的位置與各家引擎的預設
 

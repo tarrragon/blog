@@ -10,7 +10,7 @@ tags: ["backend", "api-design", "error-model"]
 
 本文處理這兩個決定與各派的取捨。錯誤該分幾類、格式欄位怎麼設計，見 [錯誤模型設計](/backend/11-api-design/error-model-design/)。
 
-## 錯誤跟 transport status 的關係分歧
+## 各派錯誤格式對 transport status 的處理：補充、外殼、解耦與分層
 
 | 流派           | 錯誤細節的容器                    | status 還說不說真話   | 一手來源               |
 | -------------- | --------------------------------- | --------------------- | ---------------------- |
@@ -32,7 +32,7 @@ tags: ["backend", "api-design", "error-model"]
 
 分層派是同一張力在別的 transport 上的解。gRPC 的標準模型是失敗回一個 error status code 加一段選配的文字訊息；它另有一套 richer error model，讓 server 回傳結構化的錯誤細節，實作上把這些細節放在 trailing metadata —— 回應結尾附帶的一組鍵值對，中間節點不解析它（見 [gRPC 兩層錯誤模型：status code 是保證層、richer detail 是選配層](/backend/11-api-design/cases/errorchain-grpc-two-layer-model/)）。官方自列的風險裡有一條直接命中本文主題：proxies 與 loggers 看不到 trailing metadata 裡的錯誤細節。
 
-## 解耦派的收益：局部失敗的表達力
+## 錯誤與 transport status 解耦的收益：局部失敗的表達力
 
 解耦派的收益具體而非抽象。單一 request 觸發多個 resolver、其中一個因授權或後端故障失敗時，補充派要在「整包失敗」與「假裝成功」之間二選一，而解耦派可以回傳部分資料加上對應的錯誤條目 —— 消費者拿到的是「這幾格有值、那一格為什麼沒有」。
 
@@ -60,7 +60,7 @@ gRPC 的分層設計正是為了在拿到表達力的同時保住只看 status �
 
 選了另外三派時，這兩件事變成自建責任。命名空間缺席的形態是跨服務的錯誤碼撞號，演化條款缺席的形態是每次新增欄位都無法確認既有消費者安不安全。判斷標準是既有 API 有自訂格式且被大量依賴時，把這兩個設計補進自訂格式，比換格式務實。
 
-## 借用結論而不帶前提
+## 採用某一派錯誤格式而缺其前提的失效形態：解耦而沒重建錯誤率指標、外殼配恆定 200、只抄 RFC 9457 的欄位、保證層與選配層沒有分界
 
 **解耦了，卻沒重建錯誤率指標**。GraphQL 的表達力收益在文章與會議簡報裡很好講，而它預設消費者與營運端都會補上應用層的錯誤觀測。檢查問法：現在讓 resolver 對所有請求回錯誤，值班的人幾分鐘內會不會收到告警。
 
@@ -80,14 +80,14 @@ gRPC 的分層設計正是為了在拿到表達力的同時保住只看 status �
 
 有一類情境會壓過上面全部：中介層本身是稽核證據來源時，選配層不能承載需要留證的內容。分層派「proxies 與 loggers 看不到 trailing metadata」在一般平台是取捨，在受稽核的鏈上是失格條件 —— 錯誤內容要可重現、可歸檔，就得住在整條鏈都讀得到的地方。
 
-## 下一步路由
+## 延伸閱讀：錯誤模型設計、status 的表達力邊界、錯誤傳播與信任邊界、錯誤回報迴路與 GraphQL schema 演進
 
 - 錯誤分類與格式欄位的設計判斷標準：[11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)
 - status 這一格裝不下事實時的兩條路線：[Status 裝不下的東西](/backend/11-api-design/status-expressiveness-boundary/)
 - 錯誤在多層服務間傳播時的保證層與選配層、以及 provider 該暴露多少細節的安全邊界：[錯誤傳播與信任邊界](/backend/11-api-design/error-propagation-trust-boundary/) 的「暴露多少」段
 - 消費者拿到錯誤後的回報與升級判讀：[錯誤回報的回饋迴路](/backend/11-api-design/error-feedback-loop/)
 - GraphQL 解耦設計的 schema 側代價：[Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)
-- 第二問的那層錯誤觀測怎麼建：[11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)
-- 演化條款怎麼送到消費者手上（它是編不了碼、只能靠人讀的那一類）：[11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)
-- 既有 API 要把恆定 200 改回真實 status 的路徑：[11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)
+- 第二問的那層錯誤觀測怎麼建：[11.12 API 消費者用量觀測：契約決策要的觀測維度、消費者身分的識別、欄位級用量與全量或抽樣的成本邊界](/backend/11-api-design/consumer-usage-observability/)
+- 演化條款怎麼送到消費者手上（它是編不了碼、只能靠人讀的那一類）：[11.14 契約條款的送達：機制、SDK 預設值、型別、執行期回饋與文件各層的強制力與射程](/backend/11-api-design/contract-clause-delivery/)
+- 既有 API 要把恆定 200 改回真實 status 的路徑：[11.13 既有 API 的改造路徑：已暴露性質的分類、補得回來與補不回來的判斷標準與動工順序](/backend/11-api-design/existing-api-retrofit/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

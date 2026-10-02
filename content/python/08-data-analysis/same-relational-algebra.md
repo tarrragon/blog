@@ -14,7 +14,7 @@ SQL 的子句與 pandas 的方法對應得起來，因為兩者操作的是同�
 
 以下的 `emp` 兩邊是同一份資料，一邊在 SQLite 裡、一邊在記憶體的 DataFrame 裡。
 
-### 挑出符合條件的列
+### 篩選：挑出符合條件的列
 
 ```sql
 SELECT name FROM emp WHERE salary > 150
@@ -24,7 +24,7 @@ SELECT name FROM emp WHERE salary > 150
 emp[emp["salary"] > 150][["name"]]
 ```
 
-### 把兩張表按鍵值接起來
+### 連接：把兩張表按鍵值接起來
 
 ```sql
 SELECT e.name, d.dname FROM emp e JOIN dept d ON e.dept = d.dept
@@ -34,7 +34,7 @@ SELECT e.name, d.dname FROM emp e JOIN dept d ON e.dept = d.dept
 emp.merge(dept, on="dept")[["name", "dname"]]
 ```
 
-### 分組之後彙總
+### 分組彙總：每一組收斂成一列
 
 ```sql
 SELECT dept, MAX(salary) AS m FROM emp GROUP BY dept
@@ -44,7 +44,7 @@ SELECT dept, MAX(salary) AS m FROM emp GROUP BY dept
 emp.groupby("dept", as_index=False)["salary"].max().rename(columns={"salary": "m"})
 ```
 
-### 視窗函數：算出分組的統計值，但保留原本的每一列
+### 視窗函數：算出分組的統計值並保留原本的每一列
 
 ```sql
 SELECT name, salary - AVG(salary) OVER (PARTITION BY dept) AS d FROM emp
@@ -69,13 +69,13 @@ t.groupby("k").size()                 # {'x': 1}          缺值那一組消失�
 t.groupby("k", dropna=False).size()   # {'x': 1, nan: 2}  與 SQL 一致
 ```
 
-同一段邏輯照著翻譯過來，統計結果會少掉一整組而且不會報錯。這是四組對應之外最容易靜默出錯的一項。
+同一段邏輯照著翻譯過來，統計結果會少掉一整組而且不會報錯。這是篩選、連接、分組彙總與視窗函數這幾組對應之外最容易靜默出錯的一項。
 
 **索引。** DataFrame 的每一列有一個索引，它獨立於欄位存在，而且會在 `groupby`、`merge` 之後改變。SQL 沒有對應的概念。翻譯過來的程式碼常常需要 `reset_index()` 或 `as_index=False`，那幾個呼叫處理的正是索引這個 SQL 沒有的狀態。
 
 **順序。** SQL 的查詢結果在沒有 `ORDER BY` 時不保證順序。DataFrame 的列有位置順序，而且多數操作會保留它。所以「相同的結果」在順序這一維上兩邊本來就不可比——可比的是集合，而集合的比較要先各自排序才成立。
 
-## 往下走
+## 延伸閱讀：運算發生的位置、ORM 與 DataFrame 的分辨、SQL 的視窗函數與語言設計、pandas 的記憶體邊界
 
 **這兩個介面為什麼會分家**：一邊把運算交給資料庫，一邊在自己的記憶體裡算。[8.2 運算發生的位置](/python/08-data-analysis/where-computation-runs/) 寫這條分界怎麼決定容量上限，以及選邊要問的三個條件。
 

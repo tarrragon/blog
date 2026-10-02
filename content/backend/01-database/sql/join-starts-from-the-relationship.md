@@ -71,7 +71,7 @@ FROM 顧客 LEFT JOIN 訂單
 
 **配不到的列要不要保護，這個決定由問題決定，不由現有資料決定。** 「翻遍現在的訂單表，每一列都配得到顧客」只證明此刻如此，而查詢要活得比這一批資料久。反過來說，資料保證配得到的時候寫 `LEFT` 也有代價——它宣告了一個從未發生的情況，下一個讀的人會以為那些列存在（[SQL.20 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/)）。要判斷配對有沒有保證，去看[約束](/backend/01-database/sql/knowledge-cards/constraint/)，而那條保證要真的生效才算數（[SQL.18 外鍵與參照完整性：宣告、生效與查詢得到的保證](/backend/01-database/sql/foreign-key-and-referential-integrity/)）。
 
-## 從一句業務描述走到查詢
+## 業務描述對應到查詢的位置：ON、連接種類與 WHERE
 
 「每位顧客與他 300 元以上的訂單，沒有這種訂單的顧客也要列出來」這句話裡有三個決定，各自對應查詢的一個位置。
 

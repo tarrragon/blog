@@ -1,7 +1,7 @@
 ---
 title: "品質閘門的更替：覆蓋率、突變分數與各自的射程"
 date: 2026-08-24
-description: "測試數量大幅增加而信心沒有跟著上升、或要為生成的測試挑一個不會被灌水的門檻時，用來決定量什麼，以及那個量的盲區在哪裡"
+description: "行覆蓋率與測試偵測能力脫鉤的形態、突變分數擋得住與擋不住的達成路徑、等價突變的處置，以及閘門的配對、前置條件與導入順序"
 weight: 3
 tags: ["testing", "mutation-testing", "coverage", "quality-gate", "ai-generated-code"]
 ---
@@ -10,7 +10,7 @@ tags: ["testing", "mutation-testing", "coverage", "quality-gate", "ai-generated-
 
 這個假設從來沒有完全成立。站內的 [Assertion 品質三問](/testing/05-test-design-judgment/assertion-quality/)把 `isNotNull`、`isA` 列為人手寫測試裡**常見**的無效斷言，[ANSI parser 測試資料不覆蓋真實 shell output](/testing/cases/ansi-parser-test-data-blindspot/) 就是一個實例。變的是規模：套件小到可以逐條抽查時，這類斷言會在 review 裡被指出來；斷言可以整批產生之後抽查追不上，塌掉的是這個假設的可稽查性——它本身的正確性一直都只是近似。於是需要一個不靠抽查、而且用空斷言達不到的指標——[突變測試](/testing/knowledge-cards/mutation-testing/)是目前唯一一種空斷言達不到的成熟指標——這個性質來自它的構造，不隨工具生態變動。
 
-## 覆蓋率失效的形狀
+## 行覆蓋率與偵測能力的脫鉤：永遠綠的測試與對照實驗的數據
 
 覆蓋率不是變得不準，是執行足跡與偵測能力之間的相關性斷了。一個測試呼叫函式、檢查它沒有拋出例外，覆蓋率把那幾行算進去；同一個測試對回傳值不做任何檢查，偵測能力是零。這種測試被稱為永遠綠的測試，它在覆蓋率報表上與一個嚴謹的測試無法區分。
 
@@ -44,7 +44,7 @@ tags: ["testing", "mutation-testing", "coverage", "quality-gate", "ai-generated-
 
 **平行執行並設定逾時。** 有些突變會造成無窮迴圈，逾時要設得夠短，否則單一突變就吃掉整輪時間。
 
-覆蓋率與偵測能力脫鉤這件事另有站內既有內容佐證（本章開頭引的 Assertion 品質三問與 [ANSI parser 測試資料不覆蓋真實 shell output](/testing/cases/ansi-parser-test-data-blindspot/)），不單靠那份實驗；那份實驗足以支持與不足以支持的宣稱見[本模組引用的對照實驗](/testing/06-agent-authored-code/shared-experiment-scope/)。
+覆蓋率與偵測能力脫鉤這件事另有站內既有內容佐證（本章開頭引的 Assertion 品質三問與 [ANSI parser 測試資料不覆蓋真實 shell output](/testing/cases/ansi-parser-test-data-blindspot/)），不單靠那份實驗；那份實驗足以支持與不足以支持的宣稱見[negative-test-experiment 對照實驗](/testing/06-agent-authored-code/shared-experiment-scope/)。
 
 ## 存活突變的分類：真正的漏洞與等價突變
 
@@ -79,7 +79,7 @@ tags: ["testing", "mutation-testing", "coverage", "quality-gate", "ai-generated-
 
 [複雜度上限](/testing/knowledge-cards/cyclomatic-complexity/)那一列有實測的代價可以參考：同一份實驗在程式寫完後強制把圈複雜度壓到 3 以下，四個版本的函式數大致翻倍、覆蓋率上升到 97% 以上，而原作者給的可讀性評分全部落在最低的兩級，設計評分一次都沒有上升。他的描述是這個約束「不做簡化，只是繁殖名字」。這條的完整推導在 [#278](/report/mechanical-constraints-buy-the-measured-number/)。
 
-## 前置條件：確定性的測試套件與可用的突變工具
+## 突變測試的前置條件：確定性的測試套件與可用的突變工具
 
 這一章的作法有兩個硬前提，任一個不成立時整套跑不起來，而它們不會在文件裡自己現身。
 
@@ -87,7 +87,7 @@ tags: ["testing", "mutation-testing", "coverage", "quality-gate", "ai-generated-
 
 **該語言要有一個跑得動的突變工具。** 工具的成熟度分語言差距很大（寫作當下 Java、JavaScript 與 Python 各有生產可用的實作，而包含 Dart 在內的不少語言還沒有），而這個生態逐年變動——導入前查一次該語言的現行實作，不要拿本文的舉例當現況。工具不存在時的替代品是[性質式測試](/testing/knowledge-cards/property-based-testing/)加上人工的斷言強度抽查，不是降級回覆蓋率。
 
-## 導入順序
+## 突變測試的導入順序
 
 先有可信的判斷標準，再談分數。順序顛倒的話，得到的是一套把錯誤需求釘得很牢的高分測試。
 
@@ -103,7 +103,7 @@ tags: ["testing", "mutation-testing", "coverage", "quality-gate", "ai-generated-
 
 第三點的範圍選擇有實際差別：領域邏輯的突變幾乎都有意義，而 I/O 膠水層、序列化樣板、設定讀取的突變多半是等價的或無關緊要的，先跑那些會讓排除清單暴增而收益很低。
 
-## 判讀訊號
+## 品質閘門失真的訊號與處置
 
 | 訊號                                            | 該做的事                                                             |
 | ----------------------------------------------- | -------------------------------------------------------------------- |
@@ -115,11 +115,11 @@ tags: ["testing", "mutation-testing", "coverage", "quality-gate", "ai-generated-
 | 新增一條機械閘門而沒指定它量不到什麼            | 補上配對檢查點，否則閘門會被最便宜的達成路徑滿足                     |
 | 「所有指標都綠了」被當成品質改善的結論          | 指標描述的是外觀量，要宣稱品質改善需要獨立於該指標的說法             |
 
-## 下一步路由
+## 延伸閱讀：判斷標準的推導來源、驗收條件的等價類、判斷標準的形態、機械約束的代價與斷言品質
 
 - 判斷標準本身怎麼取得獨立性 → [判斷標準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)
 - 驗收條件的射程怎麼量 → [驗收條件的等價類](/testing/06-agent-authored-code/acceptance-equivalence-class/)
-- 預期值連寫都寫不出來時怎麼辦 → [判斷標準寫不下來的時候](/testing/06-agent-authored-code/oracle-beyond-examples/)
+- 預期值連寫都寫不出來時怎麼辦 → [測試判斷標準的形態](/testing/06-agent-authored-code/oracle-beyond-examples/)
 - 術語卡 → [Mutation Testing](/testing/knowledge-cards/mutation-testing/)
 - 機械約束的代價 → [#278 機械約束買到被量測的那個數字](/report/mechanical-constraints-buy-the-measured-number/)
 - 斷言本身怎麼寫才偵測得到錯誤 → [Assertion 品質三問](/testing/05-test-design-judgment/assertion-quality/)

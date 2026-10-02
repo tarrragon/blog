@@ -1,7 +1,7 @@
 ---
 title: "1.16 Schema 設計決定的查詢代價：可空性、排序鍵唯一性、表寬、一對多的切法、比較規則與外鍵執法"
 date: 2026-09-22
-description: "建表時每一個決定的兩種選法、選了之後查詢要多做什麼、代價在什麼條件下才浮現、改回來要付的遷移成本，以及設計當下就能問的問題；輸出為 SQLite 與 PostgreSQL 的實測"
+description: "建表時每一個決定有哪些選法、選了之後查詢要多做什麼、代價在什麼條件下才浮現、改回來要付的遷移成本，以及設計當下就能問的問題；輸出為 SQLite 與 PostgreSQL 的實測"
 weight: 16
 tags: ["backend", "database", "schema", "query", "design"]
 ---
@@ -458,7 +458,7 @@ PRAGMA foreign_key_list(訂單);   -- 宣告了哪些外鍵
 PRAGMA foreign_keys;             -- 這條連線有沒有開執法，0 是沒開
 ```
 
-## 設計決定的共同形狀
+## 各項 schema 設計決定在代價浮現方式上的共同點
 
 各節的答案並排：
 
@@ -479,7 +479,7 @@ PRAGMA foreign_keys;             -- 這條連線有沒有開執法，0 是沒開
 
 **表寬與 collation 兩條的症狀含「慢」（前者十五倍、後者三個量級），其餘四條只有一個錯的數字。** 靜默回零列、分頁少一筆、聚合翻倍、報表兩種算法差 500——這四種沒有任何一個會讓程式停下來。collation 那一條兩種症狀都有：同一個引擎上是慢，換一家引擎是命中的列變了。
 
-## 設計當下就答得出來的問題
+## 建表當下就能回答的設計問題清單
 
 各節的最後一段各是一個問句。把它們抽出來，這幾句在寫 `CREATE TABLE` 的時候就答得出來——**每一條都不必等資料長出來**，而要看的東西不只 `CREATE TABLE` 的文字：空值代表什麼、排序的那一欄分不分得出高下、哪幾張表對同一個父列是一對多、「相等」是什麼意思，看的是領域語意；這張表會不會被翻頁或取前 N 筆、一欄在多少比例的查詢裡被讀到、那幾張一對多的表會不會出現在同一段查詢裡，看的是**預期的查詢負載**（這張表會被誰怎麼讀）；約束生不生效，看的是**這條連線上的設定**。三種輸入都在建表當下取得到，而它們不在同一個地方：
 
@@ -492,14 +492,14 @@ PRAGMA foreign_keys;             -- 這條連線有沒有開執法，0 是沒開
 
 [1.2 schema design](/backend/01-database/schema-design/) 問的是這組表該長什麼樣（狀態責任、主鍵策略、索引、反正規化、分區、命名）；這份清單接在那些決定之後，問**長成那樣之後，往後每一次查詢要付多少**。
 
-## 跨模組路由
+## 相鄰章節：schema design、查詢反模式、資料庫轉換實作與 State Ownership
 
 - → [1.2 schema design 與資料建模](/backend/01-database/schema-design/)：這組表該長什麼樣。它的 Index 設計段已經寫著「index 設計要從查詢路徑反推」，而本篇把同一個反推套到可空性、排序鍵、表寬、一對多的切法、比較規則、外鍵這幾個決定上
 - → [1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/)：查詢已經寫成那樣之後怎麼修。本篇的表寬與一對多兩節，是那一篇 `SELECT *` 與 N+1 兩條反模式在 schema 設計上的成因
 - → [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)：各節的「改回來要付什麼」都落在它的分段流程上，可空性那一節對應它的 `Type G：加 NOT NULL constraint`，外鍵那一節對應 `Type I：加約束`
 - → [1.8 State Ownership 與 Query Boundary](/backend/01-database/state-ownership-query-boundary/)：本篇問單一決定的查詢代價，那一篇問哪些資料是正式狀態、哪幾種查詢責任該分開
 
-## 下一步路由
+## 延伸閱讀：各節查詢行為的 SQL 機制篇與 PostgreSQL 查詢計畫判讀
 
 查詢本身怎麼讀準、代價為什麼不在查詢的文字裡，在 [SQL：這個語言為什麼長這樣](/backend/01-database/sql/)。本篇六節各自指過去的那幾篇是它的機制層：[SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/) 空值與列數膨脹、[SQL.11 查詢結果的列序](/backend/01-database/sql/relations-have-no-order/) 順序、[SQL.12 分頁的排序鍵與游標](/backend/01-database/sql/pagination-needs-a-total-order/) 分頁、[SQL.15 字串比較與 collation](/backend/01-database/sql/string-comparison-and-collation/) collation、[SQL.18 外鍵與參照完整性](/backend/01-database/sql/foreign-key-and-referential-integrity/) 外鍵。
 

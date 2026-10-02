@@ -132,7 +132,7 @@ Unit 這一層的「單元」有兩種定義，決定替身出現在模組邊界
 | 品質指標     | 覆蓋率高代表測試寫得夠 | 覆蓋率可以在斷言為空的情況下達成       |
 | 判斷標準形態 | 預期值人算得出來       | 產出規模讓逐例斷言成為瓶頸             |
 
-> 章節入口：[判斷標準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)、[驗收條件的等價類](/testing/06-agent-authored-code/acceptance-equivalence-class/)、[品質閘門的更替](/testing/06-agent-authored-code/coverage-to-mutation-gate/)、[判斷標準寫不下來的時候](/testing/06-agent-authored-code/oracle-beyond-examples/)
+> 章節入口：[判斷標準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)、[驗收條件的等價類](/testing/06-agent-authored-code/acceptance-equivalence-class/)、[品質閘門的更替](/testing/06-agent-authored-code/coverage-to-mutation-gate/)、[測試判斷標準的形態](/testing/06-agent-authored-code/oracle-beyond-examples/)
 >
 > 案例入口：[T.C10 同一組驗收通過八個不同的程式](/testing/cases/acceptance-passes-eight-different-programs/) — 外部公開實驗，把關卡放行的等價類實際量了一次
 

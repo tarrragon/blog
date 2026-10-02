@@ -42,7 +42,9 @@ SELECT * FROM mixedcase;            -- 找得到
 CREATE TABLE "MixedCase" (x INT);   -- 加了引號，存成 MixedCase
 SELECT * FROM MixedCase;            -- 摺成 mixedcase 去找
 -- ERROR: relation "mixedcase" does not exist
-```**加引號的效果是關掉「沒加引號就摺成小寫」這道摺疊，要求逐字比對。**
+```
+
+加引號的效果是關掉「沒加引號就摺成小寫」這道摺疊，要求逐字比對。
 
 這道摺疊只作用在名字上。同一家引擎把 `Orders` 摺成 `orders` 之後，拿 `'Anna'` 去比 `'anna'` 時用的是另一套規則，叫 collation，而 PostgreSQL 預設的 collation 判這兩個值不相等——值的大小寫與名字的大小寫由兩套彼此獨立的規則管。[SQL.15 字串比較與 collation：相等、排序、LIKE 與索引可用性](/backend/01-database/sql/string-comparison-and-collation/) 寫 collation 這套規則住在哪一層，以及索引與條件的規則為什麼要對得上。
 
@@ -87,15 +89,17 @@ CREATE TABLE `select` (x INT);   -- MySQL 的識別字要用反引號
 
 SET SESSION sql_mode = CONCAT(@@sql_mode, ',ANSI_QUOTES');
 CREATE TABLE "order" (x INT);    -- 開了 ANSI_QUOTES 之後，MySQL 的雙引號才代表識別字
-```同一份 DDL 要跑在 MySQL 與另外幾家上，引號要逐家寫，或者乾脆不用保留字當名字。
+```
+
+同一份 DDL 要跑在 MySQL 與另外幾家上，引號要逐家寫，或者乾脆不用保留字當名字。
 
 保留字清單各家不完全相同，而且新版本會往清單裡加新的字——今天合法的名字在下個大版本可能變成保留字。這是「所有識別字一律加引號」這個慣例的主要理由。採用這個慣例的代價是每個名字都變長，而且從此大小寫必須逐字一致。
 
-## 中文識別字
+## 中文識別字在各家引擎上的處理
 
 `CREATE TABLE 顧客 (姓名 TEXT)` 與 `SELECT 姓名 FROM 顧客` 在 SQLite、DuckDB 與 PostgreSQL 上都不用加引號就能跑。摺疊規則對中文沒有作用，因為那些字沒有大小寫。
 
-## 全部不加引號、全部加引號與混用
+## 引號的做法：全部不加、全部加與混用
 
 **全部不加引號、名字一律用小寫加底線。** 這是 PostgreSQL 生態的主流，摺疊不會改變任何東西，換引擎也不受影響。代價是撞到保留字時仍然要加引號。
 

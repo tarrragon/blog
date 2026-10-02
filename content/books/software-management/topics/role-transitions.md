@@ -1,7 +1,7 @@
 ---
-title: "角色轉換與職涯路徑"
+title: "角色轉換與職涯路徑的選讀書目"
 date: 2026-08-18
-description: "想知道某個職涯位置實際在做什麼、下一個位置需要什麼能力、以及該不該轉過去時的選讀"
+description: "管理階梯的全貌、個人貢獻者各級別的能力、技術路線的位置、第一年帶人的場景與管理工作的通用定義，各由哪一本書承接，還有各書的證據來源與時效"
 weight: 90
 tags: ["books", "reading", "career", "engineering-leadership", "staff-engineer"]
 ---
@@ -72,7 +72,7 @@ Andrew Grove 的《High Output Management》提供的是管理這件事的操作
 - [Amazon（High Output Management）](https://www.amazon.com/High-Output-Management-Andrew-Grove/dp/0679762884)
 - [博客來（葛洛夫給經理人的第一課：從煮蛋、賣咖啡的早餐店談高效能管理之道，3 版）](https://www.books.com.tw/products/0010816790)
 
-## 為什麼只收這幾本
+## 職涯路徑各書的分工與沒收錄的升等指南、成功敘事
 
 這六本承擔五個角色：整條階梯的全貌（Manager's Path）、個人貢獻者各級別的能力拆解（SE Guidebook）、技術路線的位置說明（Staff 兩本共同承擔）、第一年帶人的具體場景（Making of a Manager）、管理動作的通用判斷標準（High Output Management）。Staff 兩本合佔一個角色，兩本的差別在形式而非涵蓋範圍。
 
@@ -82,8 +82,8 @@ Andrew Grove 的《High Output Management》提供的是管理這件事的操作
 
 這個主題沒查到可以收的公開課，而成因跟它在哪裡被教有關：組織類題材主要在商學院，而美國的商學院把這類課留成收入產品、不免費全釋出。這條成因的適用範圍（它在台大不成立，反例是台大管理學院有釋出的課）與整條線的供給狀況，寫在 [主題書單的公開課段](../courses-not-found/)。
 
-## 這個主題接到哪裡
+## 職涯路徑的相鄰主題與接續閱讀
 
-確定了位置之後，各項具體能力回到對應主題：交付效能走 [持續交付與交付效能](../continuous-delivery/)，團隊切分走 [組織結構與團隊設計](../team-design/)，人留不留得住走 [留任、動機與工作環境](../retention-motivation/)，該講的話講不出口走 [困難對話與無權限影響力](../influence-conversation/)。
+確定了位置之後，各項具體能力回到對應主題：交付效能走 [持續交付與交付效能的選讀書目](../continuous-delivery/)，團隊切分走 [組織結構與團隊設計的選讀書目](../team-design/)，人留不留得住走 [留任、動機與工作環境的選讀書目](../retention-motivation/)，該講的話講不出口走 [困難對話與無權限影響力的選讀書目](../influence-conversation/)。
 
 要判斷自己現在站在哪個位置、以及位置對應的起點書，回到 [軟體管理與組織書單](../../) 的位置表。

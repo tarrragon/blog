@@ -1,5 +1,5 @@
 ---
-title: "本模組引用的對照實驗：它支持與不支持的宣稱"
+title: "negative-test-experiment 對照實驗：實驗設計與它足以支持、不足以支持的宣稱"
 date: 2026-09-24
 description: "本模組各章共用的一份公開對照實驗，涵蓋它的設計、足以支持的形態觀察，以及它量不到的那些規模與代價"
 weight: 5
@@ -8,13 +8,13 @@ tags: ["testing", "ai-generated-code", "acceptance-test", "mutation-testing", "e
 
 這一篇交代本模組各章引用的那份對照實驗是什麼、它的設計限制在哪裡，以及哪些宣稱可以拿它當證據、哪些不行。各章的判斷標準本身出自機制推導，實驗提供的是那些機制一次外顯的形態，所以讀各章引用的數字之前先讀這一篇。
 
-## 實驗的設計
+## negative-test-experiment 的設計：四種測試紀律與複雜度上限開關的組合
 
 實驗是 Robert C. Martin 公開的 [negative-test-experiment](https://github.com/unclebob/negative-test-experiment)：同一份需求從空目錄開始寫八次，八次由四種測試紀律乘上「有沒有施加複雜度上限」這個開關組成。案例側的完整記錄在 [同一組驗收通過八個不同的程式 — 關卡放行的等價類有多大](/testing/cases/acceptance-passes-eight-different-programs/)。
 
 它只有一個產品（一個主控台文字遊戲）、一種語言，每一種組合只執行一次，設計與可讀性的評分由原作者本人以主觀量表給出。這幾個條件決定了它能支持的宣稱範圍。
 
-## 足以支持與不足以支持的宣稱
+## negative-test-experiment 足以支持與不足以支持的宣稱
 
 | 這份實驗足以支持的                           | 它不足以支持的                                           |
 | -------------------------------------------- | -------------------------------------------------------- |

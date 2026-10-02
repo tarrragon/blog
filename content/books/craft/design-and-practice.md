@@ -1,7 +1,7 @@
 ---
-title: "設計判斷標準與日常實踐"
+title: "設計判斷標準與日常實踐的選讀書目"
 date: 2026-08-19
-description: "寫出來的程式改不動、或不確定日常該養成哪些習慣時的選讀"
+description: "日常工作習慣的廣泛入門、模組設計的深入論證與百科式的實作對照，各由哪一本書承接，還有各書的時效與讀得出價值的前提"
 weight: 10
 tags: ["books", "reading", "craft", "software-design", "practice"]
 ---
@@ -59,7 +59,7 @@ Steve McConnell 的《Code Complete》第二版是這個主題涵蓋面最大的
 - [Amazon（Code Complete, Second Edition）](https://www.amazon.com/Code-Complete-Practical-Handbook-Construction/dp/0735619670)
 - [博客來（CODE COMPLETE 2 中文版：軟體開發實務指南，第二版）](https://www.books.com.tw/products/0010805887)
 
-## 為什麼只收這幾本
+## 設計與日常實踐各書的密度差異與沒收錄的語言實踐彙編、規則推廣書
 
 同樣回答「怎麼寫得更好」，這三本的密度差一個量級：Pragmatic Programmer 廣而每條短，A Philosophy of Software Design 窄而挖到底，Code Complete 大而全。手上的問題越具體越往《A Philosophy of Software Design》走，想建立通盤基礎才輪到《Code Complete》。
 
@@ -69,10 +69,10 @@ Robert Martin 的《Clean Code》常被列在這個位置，不收的理由跟�
 
 想走影音路徑的讀者這個主題目前接不住。最接近的一門是 MIT 的 6.005 Software Construction，大綱涵蓋規格、測試、抽象資料型別、物件導向設計模式、並行與函數式程式設計，跟本篇三本書重疊得最多，OpenCourseWare 上也放了考題、習題與程式作業——缺的只有影音，因為那門課刻意不把課堂時間拿來講課（FAQ 自陳），沒有可錄的講課。整條線的供給狀況寫在 [工程技藝書單的公開課段](../craft-line-guide/#各主題的公開課涵蓋狀況)。
 
-## 這個主題接到哪裡
+## 設計與日常實踐的相鄰主題與接續閱讀
 
-設計判斷標準要在既有程式碼上生效，靠的是改動的技術：手上有測試時怎麼移動結構、沒有測試時怎麼先弄出測試、以及小改動要不要現在做。那條路徑走 [改既有的程式](../changing-existing-code/)。
+設計判斷標準要在既有程式碼上生效，靠的是改動的技術：手上有測試時怎麼移動結構、沒有測試時怎麼先弄出測試、以及小改動要不要現在做。那條路徑走 [改既有程式的選讀書目](../changing-existing-code/)。
 
-寫得好而團隊切錯時，交付一樣會卡，那條路徑走 [組織結構與團隊設計](../../software-management/topics/team-design/)。想知道自己在職涯位置上該補什麼，走 [依位置選書](../../software-management/roles/)。
+寫得好而團隊切錯時，交付一樣會卡，那條路徑走 [組織結構與團隊設計的選讀書目](../../software-management/topics/team-design/)。想知道自己在職涯位置上該補什麼，走 [依位置選書](../../software-management/roles/)。
 
 各語言的具體寫法與慣例看 [Python 維護指南](/python/)、[Go 維護指南](/go/)、[Flutter 實戰指南](/flutter/)；測試怎麼分層與設計看 [Testing 測試策略](/testing/)。

@@ -10,7 +10,7 @@ tags: ["backend", "api-design", "pagination"]
 
 正交只在單一時點成立。第一版選的表示法會限制第二版還能換哪些機制：透明 cursor 把內部欄位變成介面的一部分，機制就凍在那個形狀上。表示法因此透過**選項價值**向未來耦合，而這正是爭論的實質 —— 不透明性到底給服務端什麼自由、又對消費者承諾了什麼。分頁放在批次與長時操作旁邊一起看的完整判斷標準，見 [集合介面設計](/backend/11-api-design/collection-interface-design/)。
 
-## 定位機制的成本曲線與能力差
+## offset 與 keyset 定位機制的成本曲線與能力差
 
 offset 的成本隨**翻到多深**增長，而非隨表多大增長。`LIMIT 20 OFFSET 10000` 要求資料庫掃過並丟棄前一萬列，複雜度是 O(offset + limit)；keyset 寫成 `WHERE id > last_seen_id LIMIT 20`，索引直接定位到起點，複雜度恆為 O(limit)。驅動變數是 offset 深度這件事有操作後果：淺頁的量測數字看起來永遠健康，而問題出在沒有人常去的深處，於是它在 p50 與 p95 上都不現形。
 
@@ -24,7 +24,7 @@ Slack 遷移時把這兩項損失明列出來：失去 total count 與跳頁能�
 
 offset 與 keyset 之外還有三條路，各自解掉上面某一項限制。**快照分頁**（point-in-time）讓整趟翻頁固定在同一個資料版本上：服務端保留一個一致的讀取視圖，消費者帶著它翻完全程 —— 一致性因此跟定位機制解耦，offset 也能拿到不跳項不重複，代價是服務端要為每個進行中的翻頁保存快照資源，且它有存活時限。**時間視窗**（`since` / `until`）在 feed 與稽核 log 上是主流：定位鍵就是時間，語意對讀者直觀，限制是它要求資料有可靠的時間序且不回填。**不分頁**則是大量匯出的正解 —— 需求是「把整批資料搬走」而非「一頁一頁瀏覽」時，走匯出端點或串流，分頁選型整個不適用。把匯出需求硬塞進 cursor 分頁，是這個題目最常見的誤用。
 
-## 不透明性給服務端的自由
+## cursor 的不透明性給服務端的自由
 
 表示法的問題從機制決定之後才開始，而它有兩問。第一問是 cursor 住在哪裡：回應 body 的欄位，還是 RFC 8288 的 `Link: <...>; rel="next"` header。後者是標準化形式，泛型 client 與 hypermedia client 可以自動跟隨，而且「翻完了」的語意由 `Link` 缺席自然表達，不必另外約定空字串還是 null。
 
@@ -52,7 +52,7 @@ Slack 選 Base64 編碼的 opaque cursor，介面收斂為 `cursor` 加 `limit`�
 
 這份清單的用法跟冪等契約清單相同：對照自家文件，缺哪條補哪條。缺漏的成本不是立刻發生的 —— 它以「某個消費者的整合在某次無關的部署後壞掉，而雙方都判定不了契約上誰違約」的形式，在幾個月後到期。
 
-## offset 存活的理由
+## offset 分頁仍被採用的理由：隨機存取與總數
 
 offset 在爭論裡常被寫成過渡方案，而它有一個換不掉的能力：隨機存取。產品要「跳到第 47 頁」、要顯示「共 1,284 筆」時，這兩件事在 keyset 上做不出來。管理後台、報表列表、資料稽核介面經常需要它們，而使用者的操作模式是點頁碼、不是無限捲動。
 
@@ -60,7 +60,7 @@ offset 在爭論裡常被寫成過渡方案，而它有一個換不掉的能力�
 
 中間路線值得單獨提一句：主分頁走 cursor、總數另開一個端點回近似值。近似值的來源可以是統計資訊或快取的計數，成本跟精確 count 差好幾個量級，而多數列表介面顯示的「約 1,300 筆」已經滿足產品需求。這條路線讓「要總數」不再自動等於「要 offset」。
 
-## 借用結論而不帶前提
+## 分頁選型缺前提的失效形態：未查跳頁需求的 cursor、可辨識的 opaque cursor、缺 tiebreaker 的 keyset、會長大的 offset 集合
 
 **採 cursor 而沒查過跳頁需求**。遷移完才發現後台的頁碼列跟總數回不來，此時的選項只剩下再開一套 offset 端點並行。檢查問法在遷移之前：現有介面的頁碼與總數，有哪個角色正在用它做事。消費者在組織外而這一問查不出答案時，退路是看 `page` 參數的深度分布——沒有人翻超過第三頁，跟每天有人翻到第兩百頁，是兩個不同的決定。
 
@@ -76,7 +76,7 @@ offset 在爭論裡常被寫成過渡方案，而它有一個換不掉的能力�
 
 三步顛倒過來做的代價很具體：先選了 cursor，再回頭跟產品端解釋為什麼後台沒有頁碼，而此時能給的只剩「再開一套 offset 端點並行」——兩套分頁語意並存，比一開始就選 offset 更差。
 
-## 下一步路由
+## 延伸閱讀：集合介面設計、排序鍵與 keyset 的資料庫機制、cursor 知識卡、流量配額，以及分頁條款的觀測、改造與送達
 
 - 分頁、批次與長時操作的完整判斷標準：[11.7 集合介面設計](/backend/11-api-design/collection-interface-design/)
 - 為什麼缺了 tiebreaker 就會跳項與重複——關係是集合、排序鍵不唯一時同分的列跟著執行計畫走：[SQL.12 分頁的排序鍵與游標](/backend/01-database/sql/pagination-needs-a-total-order/) 附三家引擎的實測與游標條件寫錯方向的形態
@@ -84,7 +84,7 @@ offset 在爭論裡常被寫成過渡方案，而它有一個換不掉的能力�
 - cursor 作為對外契約的概念位置：[Pagination Cursor 知識卡](/backend/knowledge-cards/pagination-cursor/)
 - 條款清單這個做法的 case 支撐版本：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)
 - 一次拉多少算過量、配額該計次還是計成本：[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/) 的成本模型段（`limit` 該不該設 max 這一條的落點在 [11.7 的常見設計錯誤段](/backend/11-api-design/collection-interface-design/)）
-- 「三年後幾筆」「誰在用頁碼與總數」這幾個檢查問法要的觀測：[11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)
-- 既有 API 換分頁機制的路徑（多數是加法可解，不必規劃版本升級）：[11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)
-- cursor 條款清單怎麼送到消費者手上而不只是寫進文件：[11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)
+- 「三年後幾筆」「誰在用頁碼與總數」這幾個檢查問法要的觀測：[11.12 API 消費者用量觀測：契約決策要的觀測維度、消費者身分的識別、欄位級用量與全量或抽樣的成本邊界](/backend/11-api-design/consumer-usage-observability/)
+- 既有 API 換分頁機制的路徑（多數是加法可解，不必規劃版本升級）：[11.13 既有 API 的改造路徑：已暴露性質的分類、補得回來與補不回來的判斷標準與動工順序](/backend/11-api-design/existing-api-retrofit/)
+- cursor 條款清單怎麼送到消費者手上而不只是寫進文件：[11.14 契約條款的送達：機制、SDK 預設值、型別、執行期回饋與文件各層的強制力與射程](/backend/11-api-design/contract-clause-delivery/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

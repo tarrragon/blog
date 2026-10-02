@@ -12,7 +12,7 @@ Test oracle 是測試判定「這次執行算通過還是算失敗」所依據�
 
 測試三層（unit / [protocol integration](/testing/knowledge-cards/protocol-integration-test/) / [screen state](/testing/knowledge-cards/screen-state-test/)）回答的是驗證發生在哪一層，oracle 回答的是憑什麼判定，兩者正交：同一層的兩個測試可以有完全不同的 oracle，而 oracle 決定了紅燈的意義。
 
-Oracle 分兩層。第一層問**預期值從哪裡取得**，有四種取法；取不到答案時進第二層，改問**預期值必須滿足什麼**（不變量）或**輸入變了輸出該怎麼變**（變形關係）——那兩種是判斷標準的替代形態而不是取得預期值的來源，退階的完整判斷標準在[判斷標準寫不下來的時候](/testing/06-agent-authored-code/oracle-beyond-examples/)。
+Oracle 分兩層。第一層問**預期值從哪裡取得**，有四種取法；取不到答案時進第二層，改問**預期值必須滿足什麼**（不變量）或**輸入變了輸出該怎麼變**（變形關係）——那兩種是判斷標準的替代形態而不是取得預期值的來源，退階的完整判斷標準在[測試判斷標準的形態](/testing/06-agent-authored-code/oracle-beyond-examples/)。
 
 第一層四種來源各自的覆蓋範圍：
 

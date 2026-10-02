@@ -57,7 +57,7 @@ GitHub 的 24 個月是把它寫成契約的形態（[GitHub](/backend/11-api-de
 
 不做版本的一派同樣要回答這題，而它在兩個支派下的形式不同（以下為機制推導，未見公開規範明文處理）。GraphQL 這一支的形式是 deprecation 標注掛了多久才真的移除：標注本身不帶時限，時限由各服務自己承諾 —— 這正是 WunderGraph 說的組織問題落地的位置。純 hypermedia 那一支連標注都沒有，問題移到控制項與表徵上：某個 link relation 停止出現之後，還在依賴它的 client 有多久的適應期、media type 的相容承諾維持到哪一版。兩支都要給答案，只是答案掛在不同的表面上。
 
-## 借用結論而不帶前提
+## 採用某一派版本方案而缺其前提的失效形態：缺轉換層的 date pin、client 硬編碼的 no-versioning、缺量測的 versionless
 
 各派的結論都可以在網路上單獨讀到，而失效多半發生在結論被搬走、前提留在原地時。
 
@@ -79,7 +79,7 @@ GitHub 的 24 個月是把它寫成契約的形態（[GitHub](/backend/11-api-de
 
 **第二問：不做版本的前提成不成立**。三種前提任一成立即可，而它們要求的東西不同：client 能在執行期習得控制項（hypermedia）、client 顯式宣告要哪些欄位（GraphQL 式）、或變更純粹是加法且由服務端吸收（ingest 型 API 的 tolerant reader 加 add-only，寬容度由服務端單方面提供、消費者不必有任何能力）。
 
-前提成立之後還有一道進場條件，而它是既存事實而非自評：**現在查不查得出上週有幾個消費者呼叫某個 deprecated 欄位**。查不出來時 no-versioning 的三份紀律沒有執行依據，等同前提不成立，往下走（這層能力的建法見 [11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)）。
+前提成立之後還有一道進場條件，而它是既存事實而非自評：**現在查不查得出上週有幾個消費者呼叫某個 deprecated 欄位**。查不出來時 no-versioning 的三份紀律沒有執行依據，等同前提不成立，往下走（這層能力的建法見 [11.12 API 消費者用量觀測：契約決策要的觀測維度、消費者身分的識別、欄位級用量與全量或抽樣的成本邊界](/backend/11-api-design/consumer-usage-observability/)）。
 
 **第三問：消費者的集中度**。數量之外要看分佈，而「協調得動」這件事本身有四項查得到的成立條件（見 [Consumer Coordinability](/backend/knowledge-cards/consumer-coordinability/)）。單一客戶佔九成流量時，協調得動的是那九成，永遠協調不動的是那條長尾，而退場當天的事故全發生在長尾上。判斷標準因此不是「多少個」而是「協調不動的那部分佔多少」，產物是近三十天流量的 per-consumer 佔比排序與前十名之外的尾部合計。尾部佔比高時，大客戶走合約協調、長尾走版本機制，而兩邊的支援窗口可以不同——長尾那半實質上是第一問的第三格。
 
@@ -91,13 +91,13 @@ GitHub 的 24 個月是把它寫成契約的形態（[GitHub](/backend/11-api-de
 
 走完三問拿到的是機制，不是全部。四派在支援窗口那一題上重新匯合——消費者感受得到的始終是「舊語意什麼時候停止供應」，而這一題的答案由誰來寫、寫在哪裡，各派都得自己交代。選完機制之後真正要動筆的是那份承諾。
 
-## 下一步路由
+## 延伸閱讀：deprecation 執行、向後相容紀律、GraphQL schema 演進、hypermedia 適用邊界與支援窗口的送達
 
 - 版本方案的落地與 deprecation 執行工具箱：[11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)
 - 什麼算 breaking change、變更怎麼審：[11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)
 - 承諾成本結構的上游框架：[11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/)
 - versionless 的紀律代價與 schema 演進實作：[Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)
 - hypermedia 前提的完整展開：[Hypermedia 適用邊界](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)
-- 支援窗口承諾怎麼送到消費者手上：[11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)
-- 已在某一派、要換到另一派的路徑：[11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)
+- 支援窗口承諾怎麼送到消費者手上：[11.14 契約條款的送達：機制、SDK 預設值、型別、執行期回饋與文件各層的強制力與射程](/backend/11-api-design/contract-clause-delivery/)
+- 已在某一派、要換到另一派的路徑：[11.13 既有 API 的改造路徑：已暴露性質的分類、補得回來與補不回來的判斷標準與動工順序](/backend/11-api-design/existing-api-retrofit/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

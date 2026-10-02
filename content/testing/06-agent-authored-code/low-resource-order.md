@@ -15,4 +15,4 @@ tags: ["testing", "ai-generated-code", "mutation-testing", "property-based-testi
 3. **性質式測試挑兩類**：往返與冪等。這兩類最好認、也最常在小系統裡成立。
 4. **突變測試整章暫緩**。它的兩個硬前置（確定性套件、可用的語言工具）加上一個成本條件（CI 時間預算）通常一個都不成立，強行導入會卡在第零步。暫緩要記進模組的 backlog 並寫明是哪一個前置擋住——回補的訊號跟著那一項走（隔離清單清空、CI 時間預算鬆動、該語言出現生產可用的實作），沒有訊號的暫緩會變成永久豁免。
 
-反過來說，人手充足而**決定權不在自己手上**時，順序完全不同——先看[判斷標準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)那一章的三層主體表，確認要動的是哪一層。
+反過來說，人手充足而**決定權不在自己手上**時，順序完全不同——先看[判斷標準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)那一章的產出、組織、契約與監理主體表，確認要動的是哪一層。

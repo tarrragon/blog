@@ -62,7 +62,7 @@ weight: 8
 
 ## 從章節到實作的 chain
 
-全模組共用的交接規格住在 [從章節到實作的兩條 chain](chapter-to-implementation-chain/)，本頁正文不會渲染。
+全模組共用的交接規格住在 [資安與資料保護模組從章節走到實作的路徑](chapter-to-implementation-chain/)，本頁正文不會渲染。
 
 ## Vendor / Platform 清單
 

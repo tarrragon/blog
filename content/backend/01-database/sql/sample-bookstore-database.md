@@ -1,7 +1,7 @@
 ---
 title: "SQL 各篇共用的範例資料庫：一家小書店的顧客、訂單與評價表"
 date: 2026-09-24
-description: "SQL 各篇的查詢跑在共用資料上、需要各表的欄位與初始資料時回來查；也記錄各篇的輸出跑在哪一版引擎上"
+description: "SQL 各篇共用的顧客、訂單與評價表的建表語句與初始資料，以及各篇輸出所用的引擎版本、錯誤訊息與列序的閱讀約定"
 aliases: ["/sql/sample-bookstore-database/"]
 weight: 24
 tags: ["sql", "sample-data", "reference"]
@@ -25,7 +25,7 @@ INSERT INTO 評價 VALUES (9001,101,5);
 
 `RIGHT JOIN` 與 `FULL OUTER JOIN` 是後來才加進 SQLite 的，舊版回語法錯誤；遇到的話先用 `sqlite3 --version` 對一下手上這一份。
 
-## 各篇的輸出跑在哪一版引擎上
+## 各篇輸出所用的引擎版本與閱讀輸出的約定
 
 各篇的輸出都是實際跑出來的，多數在 SQLite 3.51 上。談權限的那一篇整篇在 PostgreSQL 18；比較各家行為的那幾篇另外用到 MySQL 8.4 與 DuckDB v0.10.3，牽涉到各家行為不同的地方都標明是哪一個引擎與哪一版。
 

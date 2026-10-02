@@ -68,7 +68,7 @@ PayPal 明示同 ID 並發請求時第二個可能失敗（[PayPal-Request-Id](/
 
 自建時的最低要求是把選擇寫進文件，並讓兩種同 key 錯誤在錯誤模型裡可區分。Stripe 為冪等衝突保留了一級錯誤型別 `idempotency_error`（見 [11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)），而區分並發與參數衝突需要的是型別之下的細分碼。
 
-## 借用結論而不帶前提
+## 整合與自建冪等機制的錯誤假設：沿用 Stripe 語意、引用過期 draft、只快取成功結果、不檢查同 key 不同參數
 
 **拿 Stripe 的語意假設去打別家**。Stripe 的條款是目前公開文件裡最明確的一份，因此常被當成冪等鍵的預設語意。整合另一家時，前述六項條款逐一會不同，而錯誤的形態是靜默的：重試拿到的回應跟預期不同，程式繼續往下走。檢查問法：六項在整合文件裡都查得到嗎。文件的答案不可操作時等同查不到：保存期沒有具體時長、replay 沒有指名回首次快照或最新狀態，這類文字看起來像答案而不能拿來設計。逐項套保守預設 —— header 名假設每個 API 都要各查一次、replay 假設回最新狀態（因此不把回應當終局）、replay 假設無標記（因此自己記下哪些 key 已送出）、保存期假設「請求結束後就不保證 key 還在」（不要自己猜一個具體時長，猜短了會白白放棄冪等鍵在長時間重試上的價值）、並發假設第二個請求會失敗（因此重試要帶退避）、同 key 不同參數假設服務端不檢查（因此自己保證同一個 key 只配一份參數）。
 
@@ -82,14 +82,14 @@ PayPal 明示同 ID 並發請求時第二個可能失敗（[PayPal-Request-Id](/
 
 無標準的現況把兩端推向對稱：同一份六項條款，自建時是要寫進文件的承諾，整合時是要逐家讀的檢查表。自建方寫明條款，消費者才設計得出重試；整合方讀不到條款，就在自己這端補上對應的保守處理。這份對稱是雙方在沒有共同規範時可依賴的東西 —— 它不需要任何一方等 IETF，只需要兩邊都認得同一組問題。
 
-## 下一步路由
+## 延伸閱讀：冪等契約設計、冪等衝突的錯誤表達、接收方重試決策、非同步操作的查詢入口與訊息消費端的去重
 
 - 冪等契約的條款設計與判讀訊號：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)
 - 冪等衝突的錯誤表達：[11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)
 - status、method 與 key 三者合判的重送決策：[接收方的重試決策](/backend/11-api-design/consumer-retry-decision/)
 - 非同步操作的查詢入口設計：[11.7 集合介面設計](/backend/11-api-design/collection-interface-design/)
 - 內部交付語意的去重處理與驗證：[3.4 consumer 設計](/backend/03-message-queue/consumer-design/)、[6.12 冪等與重放驗證](/backend/06-reliability/idempotency-replay/)
-- 衝突率與 replay 率集中在誰身上：[11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)
-- 六項條款怎麼送到消費者手上（保存期是最該推進執行期的一項）：[11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)
-- 已上線但條款未明文時的補寫路徑：[11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)
+- 衝突率與 replay 率集中在誰身上：[11.12 API 消費者用量觀測：契約決策要的觀測維度、消費者身分的識別、欄位級用量與全量或抽樣的成本邊界](/backend/11-api-design/consumer-usage-observability/)
+- 六項條款怎麼送到消費者手上（保存期是最該推進執行期的一項）：[11.14 契約條款的送達：機制、SDK 預設值、型別、執行期回饋與文件各層的強制力與射程](/backend/11-api-design/contract-clause-delivery/)
+- 已上線但條款未明文時的補寫路徑：[11.13 既有 API 的改造路徑：已暴露性質的分類、補得回來與補不回來的判斷標準與動工順序](/backend/11-api-design/existing-api-retrofit/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

@@ -66,7 +66,7 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 金額;
 
 **寬鬆度的排名確實存在，而它只回答「收不收」這一個問題。** 就收不收而言 SQLite 確實比 PostgreSQL 寬鬆——未分組欄位、WHERE 用別名、同表未取別名都是，字串比對上兩家一樣。問題在於字串比對與空值排序問的不是收不收：這兩個寫法四家全部收下，而答案不同。所以帶著「SQLite 最寬鬆、PostgreSQL 最嚴」去搬家，會準確地預期到「本來能跑的變成報錯」，而錯過完全沒有報錯的字串比對與空值排序。
 
-各個寫法的完整推導住在它們自己的篇裡：未分組欄位在 [SQL.2 子句的求值順序，以及哪些限制擋得掉哪些擋不掉](/backend/01-database/sql/clause-evaluation-order/) 與 [SQL.9 分組鍵的選擇：鍵與一組所代表的對象](/backend/01-database/sql/grouping-key-decides-the-unit/)（SQLite 收下之後自己從那一組挑一列的值），WHERE 用別名在 [SQL.11 查詢結果的列序：沒有 ORDER BY 時的來源與 ORDER BY 的規定範圍](/backend/01-database/sql/relations-have-no-order/)（`WHERE` 那一步發生在算出別名之前），同表未取別名在 [SQL.7 表的出現與別名：表名的指稱、別名的作用範圍與自連接](/backend/01-database/sql/table-occurrence-and-alias/)（同一張表出現兩次為什麼非取名不可），字串比對在 [SQL.15 字串比較與 collation：相等、排序、LIKE 與索引可用性](/backend/01-database/sql/string-comparison-and-collation/)（「相等」由哪一條比較規則定義），空值排序在 [SQL.11 查詢結果的列序：沒有 ORDER BY 時的來源與 ORDER BY 的規定範圍](/backend/01-database/sql/relations-have-no-order/)（空值與任何值都比不出大小，落在哪一端由引擎規定）。表上沒有列出的一個實例形態特別隱蔽：識別字的大小寫。SQLite 與 DuckDB 連引號都不讓名字變敏感，所以在它們上面開發時混用引號的地方一路正常，搬到 PostgreSQL 才整批找不到表——[SQL.14 識別字的規則：各家的大小寫摺疊、引號與保留字](/backend/01-database/sql/identifier-rules/) 寫各家的摺疊規則，以及兩種一致做法之間的中間地帶。
+各個寫法的完整推導住在它們自己的篇裡：未分組欄位在 [SQL.2 子句的求值順序：每一步可用的欄位、語意模型擋下的寫法與各家引擎放寬的寫法](/backend/01-database/sql/clause-evaluation-order/) 與 [SQL.9 分組鍵的選擇：鍵與一組所代表的對象](/backend/01-database/sql/grouping-key-decides-the-unit/)（SQLite 收下之後自己從那一組挑一列的值），WHERE 用別名在 [SQL.11 查詢結果的列序：沒有 ORDER BY 時的來源與 ORDER BY 的規定範圍](/backend/01-database/sql/relations-have-no-order/)（`WHERE` 那一步發生在算出別名之前），同表未取別名在 [SQL.7 表的出現與別名：表名的指稱、別名的作用範圍與自連接](/backend/01-database/sql/table-occurrence-and-alias/)（同一張表出現兩次為什麼非取名不可），字串比對在 [SQL.15 字串比較與 collation：相等、排序、LIKE 與索引可用性](/backend/01-database/sql/string-comparison-and-collation/)（「相等」由哪一條比較規則定義），空值排序在 [SQL.11 查詢結果的列序：沒有 ORDER BY 時的來源與 ORDER BY 的規定範圍](/backend/01-database/sql/relations-have-no-order/)（空值與任何值都比不出大小，落在哪一端由引擎規定）。表上沒有列出的一個實例形態特別隱蔽：識別字的大小寫。SQLite 與 DuckDB 連引號都不讓名字變敏感，所以在它們上面開發時混用引號的地方一路正常，搬到 PostgreSQL 才整批找不到表——[SQL.14 識別字的規則：各家的大小寫摺疊、引號與保留字](/backend/01-database/sql/identifier-rules/) 寫各家的摺疊規則，以及兩種一致做法之間的中間地帶。
 
 ## 跨引擎差異的分級：當場報錯、等資料才報錯、靜默而輸出不同、靜默且輸出相同
 
@@ -129,7 +129,7 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 金額 NULLS LAST;
 
 **還有一條路不看組態數**：用查詢建構器或物件關聯對映把 SQL 包起來。按組態數分的那三種做法是自己決定哪幾種差異要提前處理，這一條是把整個決定交出去——那一層自己要對每一家引擎做同樣的決定，而它做了哪些決定通常沒有寫在讀得到的地方。所以它換掉的是「誰來查這些引擎代為決定的位置」，不是「有沒有這些位置」。
 
-## 選擇成立的前提：組態清單、引擎設定與測試環境
+## 按組態數做的選擇成立的前提：組態清單、引擎設定與測試環境
 
 按組態數做的選擇綁在幾個前提上，前提換了就要重算。
 

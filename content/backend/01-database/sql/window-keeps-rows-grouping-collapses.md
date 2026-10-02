@@ -87,7 +87,7 @@ JOIN (SELECT 顧客編號, sum(金額) AS 總額      -- 讀第一次：收成�
 
 這一句對得上 [SQL.9 分組鍵的選擇：鍵與一組所代表的對象](/backend/01-database/sql/grouping-key-decides-the-unit/) 的鍵判斷標準，鍵的判斷標準決定一組由誰構成，輸出單位決定這一組收不收成一列；一段用到分組或視窗函數的查詢，兩者都要先回答。
 
-後續的子句跟著這個選擇走。`GROUP BY` 算出來的值可以放進 `HAVING` 篩組（[SQL.2 子句的求值順序，以及哪些限制擋得掉哪些擋不掉](/backend/01-database/sql/clause-evaluation-order/)），而視窗函數算出來的值到 `SELECT` 那一步才誕生，`WHERE` 與 `HAVING` 都拿不到它——要拿它當條件，得把整段包成一層子查詢再從外面篩（部分引擎另有 `QUALIFY` 這個子句直接做這件事，標準 SQL 沒有）。算 `佔該顧客百分比` 的那段查詢要篩出「超過五成」的訂單時寫成這樣：
+後續的子句跟著這個選擇走。`GROUP BY` 算出來的值可以放進 `HAVING` 篩組（[SQL.2 子句的求值順序：每一步可用的欄位、語意模型擋下的寫法與各家引擎放寬的寫法](/backend/01-database/sql/clause-evaluation-order/)），而視窗函數算出來的值到 `SELECT` 那一步才誕生，`WHERE` 與 `HAVING` 都拿不到它——要拿它當條件，得把整段包成一層子查詢再從外面篩（部分引擎另有 `QUALIFY` 這個子句直接做這件事，標準 SQL 沒有）。算 `佔該顧客百分比` 的那段查詢要篩出「超過五成」的訂單時寫成這樣：
 
 ```sql
 -- 直接在同一層寫 WHERE 佔該顧客百分比 > 50，SQLite 3.51 拒絕：

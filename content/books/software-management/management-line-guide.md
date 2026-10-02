@@ -1,7 +1,7 @@
 ---
 title: "軟體管理與組織書單：依位置與依主題的選書入口"
 date: 2026-09-24
-description: "這條書線涵蓋的五種位置、完全陌生時的單一起點、各位置的起點書、主題書單的入口，以及分散在多篇的套書怎麼買"
+description: "這條書線涵蓋的位置（從只對自己的產出負責到對組織結構負責）、完全陌生時的單一起點、各位置的起點書、主題書單的入口，以及分散在多篇的套書怎麼買"
 weight: 1
 tags: ["books", "management", "reading"]
 ---
@@ -22,32 +22,32 @@ tags: ["books", "management", "reading"]
 
 位置的判斷標準是對什麼負責，不是職稱——同一個職稱在大企業與小公司對應的責任範圍經常不同。判斷標準的操作版本是：**交不出來的時候，誰會被問**。下表給每個位置的起點書；那個位置一天實際在處理什麼、在有階梯與沒階梯的組織裡問題差在哪、往相鄰位置移動前該預習什麼，在 [依位置選書](/books/software-management/roles/) 的五篇裡。
 
-| 位置                                                                             | 當下的主要問題                                   | 起點                              | 主要主題                                                                                                                                                                                                                                 |
-| -------------------------------------------------------------------------------- | ------------------------------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [只對自己的產出負責](/books/software-management/roles/own-output/)               | 怎麼讓產出被信任、怎麼知道自己下一步該補什麼     | The Software Engineer's Guidebook | [角色轉換與職涯路徑](/books/software-management/topics/role-transitions/)、[問題定義與系統思考](/books/software-management/topics/problem-definition/)                                                                                   |
-| [對技術品質負責、不帶人](/books/software-management/roles/technical-quality/)    | 沒有指揮權時怎麼讓別人照著做、技術決策怎麼被採納 | The Staff Engineer's Path         | [困難對話與無權限影響力](/books/software-management/topics/influence-conversation/)、[組織結構與團隊設計](/books/software-management/topics/team-design/)                                                                                |
-| [對別人的產出負責（Tech Lead）](/books/software-management/roles/others-output/) | 怎麼讓團隊的產出達標而不變成自己重寫             | The Manager's Path                | [持續交付與交付效能](/books/software-management/topics/continuous-delivery/)、[困難對話與無權限影響力](/books/software-management/topics/influence-conversation/)                                                                        |
-| [對人負責（EM）](/books/software-management/roles/people/)                       | 人留不留得住、回饋怎麼給、壞消息為什麼傳不上來   | Peopleware                        | [留任、動機與工作環境](/books/software-management/topics/retention-motivation/)、[組織文化與心理安全感](/books/software-management/topics/culture-safety/)、[個人工作流與工作負荷](/books/software-management/topics/personal-workflow/) |
-| [對組織結構負責（管理管理者）](/books/software-management/roles/org-structure/)  | 團隊怎麼切、交接面誰負責、承諾為什麼總是跳票     | Team Topologies                   | [組織結構與團隊設計](/books/software-management/topics/team-design/)、[估算、承諾與決策偏誤](/books/software-management/topics/estimation-decision/)                                                                                     |
+| 位置                                                                                                                        | 當下的主要問題                                   | 起點                              | 主要主題                                                                                                                                                                                                                                                               |
+| --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [只對自己的產出負責的位置：成文制度的影響、選讀書目與移動前的預習](/books/software-management/roles/own-output/)            | 怎麼讓產出被信任、怎麼知道自己下一步該補什麼     | The Software Engineer's Guidebook | [角色轉換與職涯路徑的選讀書目](/books/software-management/topics/role-transitions/)、[問題定義與系統思考的選讀書目](/books/software-management/topics/problem-definition/)                                                                                             |
+| [對技術品質負責而不帶人的位置：成文制度的影響、選讀書目與移動前的預習](/books/software-management/roles/technical-quality/) | 沒有指揮權時怎麼讓別人照著做、技術決策怎麼被採納 | The Staff Engineer's Path         | [困難對話與無權限影響力的選讀書目](/books/software-management/topics/influence-conversation/)、[組織結構與團隊設計的選讀書目](/books/software-management/topics/team-design/)                                                                                          |
+| [對別人的產出負責（Tech Lead）](/books/software-management/roles/others-output/)                                            | 怎麼讓團隊的產出達標而不變成自己重寫             | The Manager's Path                | [持續交付與交付效能的選讀書目](/books/software-management/topics/continuous-delivery/)、[困難對話與無權限影響力的選讀書目](/books/software-management/topics/influence-conversation/)                                                                                  |
+| [對人負責（EM）](/books/software-management/roles/people/)                                                                  | 人留不留得住、回饋怎麼給、壞消息為什麼傳不上來   | Peopleware                        | [留任、動機與工作環境的選讀書目](/books/software-management/topics/retention-motivation/)、[組織文化與心理安全感的選讀書目](/books/software-management/topics/culture-safety/)、[個人工作流與工作負荷的選讀書目](/books/software-management/topics/personal-workflow/) |
+| [對組織結構負責（管理管理者）](/books/software-management/roles/org-structure/)                                             | 團隊怎麼切、交接面誰負責、承諾為什麼總是跳票     | Team Topologies                   | [組織結構與團隊設計的選讀書目](/books/software-management/topics/team-design/)、[估算、承諾與決策偏誤的選讀書目](/books/software-management/topics/estimation-decision/)                                                                                               |
 
-起點書的完整描述與購書連結在對應的主題篇：前三本在 [角色轉換與職涯路徑](/books/software-management/topics/role-transitions/)，Peopleware 在 [留任、動機與工作環境](/books/software-management/topics/retention-motivation/)，Team Topologies 在 [組織結構與團隊設計](/books/software-management/topics/team-design/)。
+起點書的完整描述與購書連結在對應的主題篇：前三本在 [角色轉換與職涯路徑的選讀書目](/books/software-management/topics/role-transitions/)，Peopleware 在 [留任、動機與工作環境的選讀書目](/books/software-management/topics/retention-motivation/)，Team Topologies 在 [組織結構與團隊設計的選讀書目](/books/software-management/topics/team-design/)。
 
-有三種處境這張表判不出來：好幾個位置同時成立、還沒被指派而想先評估要移動過去的那個位置、以及團隊人數不到一個團隊。三種各自的處方寫在 [怎麼判斷自己在哪個位置](/books/software-management/roles/which-position/#怎麼判斷自己在哪個位置)。
+有三種處境這張表判不出來：好幾個位置同時成立、還沒被指派而想先評估要移動過去的那個位置、以及團隊人數不到一個團隊。三種各自的處方寫在 [位置的判斷標準與它失準的組織](/books/software-management/roles/which-position/#位置的判斷標準與它失準的組織)。
 
-想往上或往旁邊移動時，預習的方向跟當下的問題不同。純個人貢獻者想走管理，第一站是 [角色轉換與職涯路徑](/books/software-management/topics/role-transitions/)：那裡的書逐層寫出管理位置整天在處理什麼，而「值不值得走過去」得先看得到那個。決定要走之後才輪到 [留任、動機與工作環境](/books/software-management/topics/retention-motivation/) 與 [組織文化與心理安全感](/books/software-management/topics/culture-safety/)——這兩塊在只對自己負責的位置上完全用不到，因此也最沒有機會自然累積。想走 Staff+ 技術路線的人，預習的是 [困難對話與無權限影響力](/books/software-management/topics/influence-conversation/) 與 [組織結構與團隊設計](/books/software-management/topics/team-design/)，因為技術決策要能推得動，靠的是能不能把方案講進別人的約束裡，職權在這條路線上幫不上忙。
+想往上或往旁邊移動時，預習的方向跟當下的問題不同。純個人貢獻者想走管理，第一站是 [角色轉換與職涯路徑的選讀書目](/books/software-management/topics/role-transitions/)：那裡的書逐層寫出管理位置整天在處理什麼，而「值不值得走過去」得先看得到那個。決定要走之後才輪到 [留任、動機與工作環境的選讀書目](/books/software-management/topics/retention-motivation/) 與 [組織文化與心理安全感的選讀書目](/books/software-management/topics/culture-safety/)——這兩塊在只對自己負責的位置上完全用不到，因此也最沒有機會自然累積。想走 Staff+ 技術路線的人，預習的是 [困難對話與無權限影響力的選讀書目](/books/software-management/topics/influence-conversation/) 與 [組織結構與團隊設計的選讀書目](/books/software-management/topics/team-design/)，因為技術決策要能推得動，靠的是能不能把方案講進別人的約束裡，職權在這條路線上幫不上忙。
 
 ## 依主題選書
 
 十三個主題在 [主題書單目錄](/books/software-management/topics/)，其中十二個有起點書、一個交付的是判定依據。那一頁是主題與首選的唯一清單，這裡不重複列，避免兩份清單各自漂移。
 
-## 分散在多篇的套書怎麼買
+## 分散在多篇的套書：溫伯格四卷與 DeMarco、Lister 兩本的購買方式
 
 各主題篇按問題組織，因此同一套書會分散在不同篇。實際購買時面對的是套書決定，這一段只處理那個決定，每本書的性質判定回各主題篇看。
 
-Gerald Weinberg 的《溫伯格的軟體管理學》四卷分別對應四個主題：第 1 卷系統化思考在 [問題定義與系統思考](/books/software-management/topics/problem-definition/)，第 2 卷第一級評量在 [持續交付與交付效能](/books/software-management/topics/continuous-delivery/)，第 3 卷關照全局的管理作為在 [困難對話與無權限影響力](/books/software-management/topics/influence-conversation/)，第 4 卷擁抱變革在 [組織結構與團隊設計](/books/software-management/topics/team-design/)。第 1、2 卷處理的問題現在有大規模實證的書可以對照，第 3 卷處理的管理者即時反應在這條線的其他書裡沒有對應。只買一卷買第 3 卷；買套書適合想看完整論述的讀者。四卷合購頁在[博客來](https://www.books.com.tw/products/0010553999)。
+Gerald Weinberg 的《溫伯格的軟體管理學》四卷分別對應四個主題：第 1 卷系統化思考在 [問題定義與系統思考的選讀書目](/books/software-management/topics/problem-definition/)，第 2 卷第一級評量在 [持續交付與交付效能的選讀書目](/books/software-management/topics/continuous-delivery/)，第 3 卷關照全局的管理作為在 [困難對話與無權限影響力的選讀書目](/books/software-management/topics/influence-conversation/)，第 4 卷擁抱變革在 [組織結構與團隊設計的選讀書目](/books/software-management/topics/team-design/)。第 1、2 卷處理的問題現在有大規模實證的書可以對照，第 3 卷處理的管理者即時反應在這條線的其他書裡沒有對應。只買一卷買第 3 卷；買套書適合想看完整論述的讀者。四卷合購頁在[博客來](https://www.books.com.tw/products/0010553999)。
 
-Tom DeMarco 與 Timothy Lister 的兩本分屬不同主題：《Peopleware》在 [留任、動機與工作環境](/books/software-management/topics/retention-motivation/)，《Waltzing with Bears》（繁中《與熊共舞》）在 [估算、承諾與決策偏誤](/books/software-management/topics/estimation-decision/)。兩本沒有合購版本，分開買。
+Tom DeMarco 與 Timothy Lister 的兩本分屬不同主題：《Peopleware》在 [留任、動機與工作環境的選讀書目](/books/software-management/topics/retention-motivation/)，《Waltzing with Bears》（繁中《與熊共舞》）在 [估算、承諾與決策偏誤的選讀書目](/books/software-management/topics/estimation-decision/)。兩本沒有合購版本，分開買。
 
-## 相關的實作內容
+## 教學系列裡的相關實作內容
 
 書單處理選讀判斷，技術實作在教學系列：交付管線與部署 gate 看 [CI/CD 教學](/ci/)，服務探活、容量規劃與高可用看 [運行期維運](/operations/)，事故分級、指揮角色與復盤制度看 [事故處理與復盤](/backend/08-incident-response/)，客戶端遙測的四類事件與收集鏈路看 [Monitoring 監控體系](/monitoring/)，交付生命週期全景看 [DevOps 全景](/devops/)。既有團隊的結構評估協議看 [發射管制隊視角：評估工作團隊設計](/record/launch-control-team-lens-methodology/)。

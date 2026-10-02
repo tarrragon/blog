@@ -13,7 +13,7 @@ tags: ["sql", "engine", "portability", "knowledge-card"]
 
 ## 它的四種決定，換引擎的後果各不相同
 
-**接不接受這段文字。** 引擎檢查名字解析得到、型別配得上、子句的組合合乎規則。標準定死的那些各家一致；標準禁止而各家自行放寬的那些不一致，於是同一段查詢在一家報錯、在另一家跑得動（[SQL.2 子句的求值順序，以及哪些限制擋得掉哪些擋不掉](/backend/01-database/sql/clause-evaluation-order/) 與 [SQL.9 分組鍵的選擇：鍵與一組所代表的對象](/backend/01-database/sql/grouping-key-decides-the-unit/) 各有一個實例）。
+**接不接受這段文字。** 引擎檢查名字解析得到、型別配得上、子句的組合合乎規則。標準定死的那些各家一致；標準禁止而各家自行放寬的那些不一致，於是同一段查詢在一家報錯、在另一家跑得動（[SQL.2 子句的求值順序：每一步可用的欄位、語意模型擋下的寫法與各家引擎放寬的寫法](/backend/01-database/sql/clause-evaluation-order/) 與 [SQL.9 分組鍵的選擇：鍵與一組所代表的對象](/backend/01-database/sql/grouping-key-decides-the-unit/) 各有一個實例）。
 
 **名字指向哪個物件。** 沒加引號的識別字被摺成什麼樣由引擎決定，各家的規則不同（[SQL.14 識別字的規則：各家的大小寫摺疊、引號與保留字](/backend/01-database/sql/identifier-rules/)）。
 

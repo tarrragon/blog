@@ -15,7 +15,7 @@ tags: ["sql", "relational-algebra", "semantics", "knowledge-card"]
 
 **與執行方式分開。** [最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)可以任意重排步驟，只受一個約束：輸出的關係要與語意模型算出來的一致。這個分工是「代價由資料與索引決定、不由寫法決定」的根據（[SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)）。
 
-**與書寫順序分開。** `SELECT` 寫在最前面而它在求值順序上排在後面，這正是語意模型與文字順序不同的地方（[SQL.2 子句的求值順序，以及哪些限制擋得掉哪些擋不掉](/backend/01-database/sql/clause-evaluation-order/)）。
+**與書寫順序分開。** `SELECT` 寫在最前面而它在求值順序上排在後面，這正是語意模型與文字順序不同的地方（[SQL.2 子句的求值順序：每一步可用的欄位、語意模型擋下的寫法與各家引擎放寬的寫法](/backend/01-database/sql/clause-evaluation-order/)）。
 
 ## 它涵蓋的與它沒涵蓋的
 

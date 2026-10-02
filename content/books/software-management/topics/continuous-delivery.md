@@ -1,7 +1,7 @@
 ---
-title: "持續交付與交付效能"
+title: "持續交付與交付效能的選讀書目"
 date: 2026-08-18
-description: "想用證據而非經驗談判斷工程做法有沒有效、該追哪些交付指標時，依證據強度分層的選讀"
+description: "依證據強度分層的持續交付選讀：統計實證、跨組織案例、零門檻敘事、單一組織的深度重建與量測的副作用，各由哪一本書承接，以及各書的時效"
 weight: 20
 tags: ["books", "reading", "devops", "sre", "measurement", "continuous-delivery"]
 ---
@@ -53,7 +53,7 @@ Google 的《Site Reliability Engineering》是論文集，由 SRE 團隊成員�
 
 證據來源是單一組織的深度重建，形式是制度紀錄，這決定了它的用法：書中做法預設有專職團隊與內部工具鏈，直接照抄會做出過重的流程。讀它的價值在理解「為什麼在那個規模下這樣做合理」，然後判斷自己的規模需要哪一段。時效上，書出版於 2016 年，章節裡的內部工具與監控堆疊已與現況有距離，而錯誤預算、SLO/SLI 的定義方式與值班負載上限這幾條制度設計不依賴那些工具。這本要值過班才讀得動，或者處理過至少一次真實的生產事故。值班之前讀，錯誤預算是一個公式；值班之後讀，它是一個可以拿去跟產品談判的額度。
 
-書中的無指責檢討章節是另一條線的入口，完整的理論來源在 [事故、歸因與無指責檢討](../incident-blame/)。全文免費線上閱讀，包含原書、Workbook 與《Building Secure & Reliable Systems》。繁體中文版由歐萊禮出版、孫宇聰譯，譯名《網站可靠性工程｜Google 的系統管理之道》。
+書中的無指責檢討章節是另一條線的入口，完整的理論來源在 [事故、歸因與無指責檢討的選讀書目](../incident-blame/)。全文免費線上閱讀，包含原書、Workbook 與《Building Secure & Reliable Systems》。繁體中文版由歐萊禮出版、孫宇聰譯，譯名《網站可靠性工程｜Google 的系統管理之道》。
 
 - [Google SRE 官方免費線上版](https://sre.google/books/)
 - [Amazon（Site Reliability Engineering: How Google Runs Production Systems）](https://www.amazon.com/Site-Reliability-Engineering-Production-Systems/dp/149192912X)
@@ -70,7 +70,7 @@ Weinberg 的《Quality Software Management, Vol. 2: First-Order Measurement》�
 - [Amazon（Quality Software Management: First-Order Measurement）](https://www.amazon.com/Quality-Software-Management-First-Order-Measurement/dp/0932633242)
 - [博客來（溫伯格的軟體管理學：第一級評量，第 2 卷）](https://www.books.com.tw/products/0010411034)
 
-## 為什麼只收這幾本
+## 持續交付各書的證據分層與沒收錄的 DevOps 書
 
 這個主題的書按證據強度分層，五本各承擔一層或一個獨立角色：統計實證（Accelerate）、跨組織案例（DevOps Handbook）、零門檻敘事（鳳凰專案）、單一組織的深度重建（Google SRE）、量測的副作用（溫伯格第 2 卷）。
 
@@ -80,12 +80,12 @@ Weinberg 的《Quality Software Management, Vol. 2: First-Order Measurement》�
 
 這個主題沒查到可以收的公開課，而缺的不是數量：以它為名的課很多，內容集中在技巧演練與商業培訓，跨不過本質恆定那一條。它要的機制（研究設計與因果推論）在鄰近學科有課，換那組詞去搜才找得到。整條線的供給狀況與那個換法寫在 [主題書單的公開課段](../courses-not-found/)。
 
-## 這個主題接到哪裡
+## 持續交付的相鄰主題與接續閱讀
 
-指標定下來之後會立刻碰到組織問題：誰對指標負責、團隊怎麼切、交接面在哪。那些走 [組織結構與團隊設計](../team-design/)。
+指標定下來之後會立刻碰到組織問題：誰對指標負責、團隊怎麼切、交接面在哪。那些走 [組織結構與團隊設計的選讀書目](../team-design/)。
 
-指標回答的是「已經發生的事跑得多快」，而對外承諾的是還沒發生的事。要把實測分布用在承諾上，以及處理承諾失準的另外一半原因，走 [估算、承諾與決策偏誤](../estimation-decision/)。
+指標回答的是「已經發生的事跑得多快」，而對外承諾的是還沒發生的事。要把實測分布用在承諾上，以及處理承諾失準的另外一半原因，走 [估算、承諾與決策偏誤的選讀書目](../estimation-decision/)。
 
-如果團隊已經在追指標、數字卻長期沒有改善，瓶頸通常在資料的可信度這一層而非指標選擇——沒有人願意回報壞消息時，所有指標都會漂亮。那條路徑走 [組織文化與心理安全感](../culture-safety/)。
+如果團隊已經在追指標、數字卻長期沒有改善，瓶頸通常在資料的可信度這一層而非指標選擇——沒有人願意回報壞消息時，所有指標都會漂亮。那條路徑走 [組織文化與心理安全感的選讀書目](../culture-safety/)。
 
 具體的管線設計、部署 gate 與環境分離看 [CI/CD 教學](/ci/)，服務探活與容量規劃看 [運行期維運](/operations/)。

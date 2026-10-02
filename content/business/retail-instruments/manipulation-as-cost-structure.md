@@ -2,7 +2,7 @@
 title: "炒作的成本結構：籌碼、敘事通道與承接量，以及與投機、詐騙、內線交易的分界"
 slug: "manipulation-as-cost-structure"
 date: 2026-08-28
-description: "看到一個標的的價格與討論度同時上升時，用來判斷這個走勢的形成過程裡有多少來自市場以外的投入"
+description: "比較炒作與投機的收益形狀與成本科目，界定籌碼、敘事通道與承接量各指什麼、哪一類標的同時具備這些條件，並劃出炒作與詐騙、內線交易的分界"
 weight: 42
 tags: ["business", "retail-instruments", "manipulation", "market-microstructure"]
 ---
@@ -55,6 +55,6 @@ tags: ["business", "retail-instruments", "manipulation", "market-microstructure"
 
 判斷標準因此不是「這個走勢是不是被炒的」——單憑公開資料，個別案例通常無法確認，而司法上的認定需要委託單紀錄與資金往來，那些資料零售參與者拿不到。可以回答的是另一個問題：這個標的目前成立幾項。三項都成立的標的，價格序列的資訊含量比它看起來的低，而據此做的方向判斷正確率也隨之下降。
 
-## 往下讀
+## 延伸閱讀：台股與加密市場的炒作條件
 
 台灣的制度條件、法律條文與監視機制怎麼對應這三項，見[台股的炒作條件與監視制度：籌碼、敘事通道、承接量、放空限制與注意處置制度](../taiwan-stock-manipulability/)。加密市場把每一項放大到什麼程度、以及它多出來的第四項，見[加密市場的炒作條件](../crypto-market-manipulation/)。

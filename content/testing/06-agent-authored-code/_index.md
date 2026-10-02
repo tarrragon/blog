@@ -20,11 +20,11 @@ tags: ["testing", "ai-generated-code", "test-oracle", "mutation-testing", "accep
 | 驗收條件通過即可交付   | 通過的是一個等價類，不是一個程式                               | [驗收條件的等價類](/testing/06-agent-authored-code/acceptance-equivalence-class/)                           |
 | 覆蓋率高代表測試寫得夠 | 覆蓋率可以在斷言為空的情況下達成                               | [品質閘門的更替](/testing/06-agent-authored-code/coverage-to-mutation-gate/)                                |
 | 有人會讀完程式碼       | 逐行讀的成本高到多數人不做，而閱讀原本承擔的那件事沒有自動移交 | [判斷標準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)（人審的位置要跟著移動） |
-| 預期值人算得出來       | 產出規模與速度讓逐例斷言跟不上                                 | [判斷標準寫不下來的時候](/testing/06-agent-authored-code/oracle-beyond-examples/)                           |
+| 預期值人算得出來       | 產出規模與速度讓逐例斷言跟不上                                 | [測試判斷標準的形態](/testing/06-agent-authored-code/oracle-beyond-examples/)                               |
 
 ## 這個模組的證據基礎
 
-四章共用的對照實驗、它足以支持與不足以支持的宣稱，寫在 [本模組引用的對照實驗](shared-experiment-scope/)（讀者要看的內容住在文章裡，本頁正文不會渲染）。
+四章共用的對照實驗、它足以支持與不足以支持的宣稱，寫在 [negative-test-experiment 對照實驗](shared-experiment-scope/)（讀者要看的內容住在文章裡，本頁正文不會渲染）。
 
 ## 判定問題的答案要留下痕跡
 

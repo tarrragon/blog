@@ -26,4 +26,4 @@ tags: ["til", "認知心理學", "偏誤", "事故調查"]
 
 ## 要往下讀
 
-事故調查怎麼繞開它，看 Sidney Dekker 的《The Field Guide to Understanding 'Human Error'》，選讀判斷在 [事故、歸因與無指責檢討書單](/books/software-management/topics/incident-blame/)。偏誤的完整地圖在 Kahneman 的《Thinking, Fast and Slow》，那本的選讀說明在 [估算、承諾與決策偏誤](/books/software-management/topics/estimation-decision/)。事故流程的制度實作看 [事故處理與復盤](/backend/08-incident-response/)。
+事故調查怎麼繞開它，看 Sidney Dekker 的《The Field Guide to Understanding 'Human Error'》，選讀判斷在 [事故、歸因與無指責檢討書單](/books/software-management/topics/incident-blame/)。偏誤的完整地圖在 Kahneman 的《Thinking, Fast and Slow》，那本的選讀說明在 [估算、承諾與決策偏誤的選讀書目](/books/software-management/topics/estimation-decision/)。事故流程的制度實作看 [事故處理與復盤](/backend/08-incident-response/)。

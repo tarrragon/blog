@@ -1,7 +1,7 @@
 ---
-title: "改既有的程式"
+title: "改既有程式的選讀書目"
 date: 2026-08-19
-description: "要動一段自己沒寫的、或沒有測試保護的程式碼時的選讀"
+description: "有測試保護時的重構目錄、沒有測試時的入場技術，以及小幅整理該現在做還是之後做的取捨，各由哪一本書承接，還有各書的時效"
 weight: 20
 tags: ["books", "reading", "craft", "refactoring", "legacy-code"]
 ---
@@ -61,7 +61,7 @@ Kent Beck 的《Tidy First?》（2023）處理的是另外兩本沒有處理的�
 - [Amazon（Tidy First?: A Personal Exercise in Empirical Software Design）](https://www.amazon.com/Tidy-First-Personal-Exercise-Empirical/dp/1098151240)
 - [博客來（先整理一下？｜個人層面的軟體設計考量）](https://www.books.com.tw/products/0011008590)
 
-## 為什麼只收這幾本
+## 改既有程式各書的分工與沒收錄的語言重構手冊
 
 手上有沒有測試，決定了哪一類技術用得上，所以這個主題的入口不只一個：有測試的走 Fowler 的目錄，沒有測試的走 Feathers 的入場技術，改動小到不值得開專案的走 Beck 的取捨算法。三本之間沒有重疊。
 
@@ -71,10 +71,10 @@ Joshua Kerievsky 的《Refactoring to Patterns》把重構手法接到設計模�
 
 讀不動長篇文字的讀者在別的主題可以改走公開課，這個主題走不了。課堂教材要可控、可評分、每屆重複得了，而本篇三本書處理的**已經存在而且沒人想動的程式碼**正好是這三項的反面——它的價值來自真實系統累積出來的歷史，那種材料課程取不到。整條線的供給狀況寫在 [工程技藝書單的公開課段](../craft-line-guide/#各主題的公開課涵蓋狀況)。
 
-## 這個主題接到哪裡
+## 改既有程式的相鄰主題與接續閱讀
 
-改動的技術要用在對的地方，靠的是設計判斷標準——什麼樣的結構值得改成、什麼樣的複雜度是根本問題。那條路徑走 [設計判斷標準與日常實踐](../design-and-practice/)。
+改動的技術要用在對的地方，靠的是設計判斷標準——什麼樣的結構值得改成、什麼樣的複雜度是根本問題。那條路徑走 [設計判斷標準與日常實踐的選讀書目](../design-and-practice/)。
 
 要動的程式碼沒有測試而需要先補，測試該怎麼分層與設計看 [Testing 測試策略](/testing/)；大規模重構怎麼分階段推進、途中的常見失誤與作用域回歸風險，看 [Python 維護指南的重構章](/python/07-refactoring/)，那裡有一個跨版本重構的完整實作案例。
 
-如果重構一直被排不進時程，那不是技藝問題——走 [估算、承諾與決策偏誤](../../software-management/topics/estimation-decision/) 與 [組織結構與團隊設計](../../software-management/topics/team-design/)。
+如果重構一直被排不進時程，那不是技藝問題——走 [估算、承諾與決策偏誤的選讀書目](../../software-management/topics/estimation-decision/) 與 [組織結構與團隊設計的選讀書目](../../software-management/topics/team-design/)。

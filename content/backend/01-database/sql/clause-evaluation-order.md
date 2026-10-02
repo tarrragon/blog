@@ -1,7 +1,7 @@
 ---
-title: "SQL.2 子句的求值順序，以及哪些限制擋得掉哪些擋不掉"
+title: "SQL.2 子句的求值順序：每一步可用的欄位、語意模型擋下的寫法與各家引擎放寬的寫法"
 date: 2026-08-31
-description: "求值順序規定每一步能用到哪些欄位與值，以及模型層的限制與各家引擎的放寬怎麼分辨"
+description: "從 FROM 到 LIMIT 每一步可用的欄位與值、聚合放進 WHERE、別名用在 WHERE 與列的條件放進 HAVING 在各家引擎上的結果，以及這幾種寫法換引擎時的表現"
 aliases: ["/sql/clause-evaluation-order/"]
 weight: 3
 tags: ["sql", "clause-order", "having", "group-by", "alias"]
@@ -11,7 +11,7 @@ tags: ["sql", "clause-order", "having", "group-by", "alias"]
 
 求值順序規定的是**每一步能用到哪些欄位與值**——而不在這一步能用的欄位與值裡的，那一步就用不了，引擎因此會擋下某些寫法。擋下來的理由分兩種，分法看換一家引擎結果會不會變：這一步確實拿不到那個值的，本篇叫**模型層的限制**，換哪一家引擎都一樣；照模型拿不到、而有的引擎替使用者補上一個決定的，叫**引擎寬鬆**，換一家就變。在擋下它的那一家引擎上，模型層的限制與引擎寬鬆的錯誤訊息長得一樣。引擎實際照什麼次序做事是另一種順序（執行順序），由最佳化器決定而不在本篇範圍，[SQL.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/) 把書寫、求值、執行三種順序分開。
 
-## 每一步能用到哪些欄位與值
+## 求值順序各步驟可用的欄位與值
 
 `FROM` 走完之後，這一步的中間結果是一個 [relation](/backend/01-database/sql/knowledge-cards/relation/)，欄位是來源表的欄位。`WHERE` 因此只能引用這些欄位，一列一列判斷留不留。本篇把 `FROM` 當成一個交出關係的整體；多張表的時候它自己是一個過程，按書寫位置逐個把表併進來，[SQL.4 鏈式連接的左運算元](/backend/01-database/sql/join-left-operand-accumulates/) 寫這個累積怎麼決定每個 `ON` 引用得到哪些欄位。
 
