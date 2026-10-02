@@ -18,6 +18,8 @@ Commodity business 是[毛利率](/business/knowledge-cards/gross-margin/)長期
 
 突圍路徑有三條：往上游整合（控制原料成本，如卜蜂的自有農場）、往下游整合（控制終端定價，如超秦的麥味登品牌）、靠規模降本（如大成的國際化和飼料市佔第一）。三條路徑的財報結構和風險截然不同，詳見[雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/)和[大成規模分散策略](/business/financial-analysis/case-studies/dachan-scale-diversification-strategy/)。
 
+軟體功能也會落入同一個結構：邊際成本接近零、沒有差異化、有開源替代品。這時的突圍不靠上下游整合，而是把收費理由移到相鄰的功能，或改由另一個出資者付錢，實例見[短網址的商業模型](/business/case-analyses/url-shortener-business-models/)。
+
 ## 邊界
 
 高附加價值的加工品（即食食品、保健品、品牌消費品）脫離了 commodity 結構——即使原料是 commodity，加工後的產品有品牌溢價和客戶黏性。判斷一間公司是「commodity 公司」還是「用 commodity 做原料的品牌公司」，看營收中 commodity 段佔比和定價權歸屬。

@@ -14,7 +14,7 @@ Lock-in 跟 [Switching Cost](/business/knowledge-cards/switching-cost/) 是一�
 
 ## 可觀察訊號與例子
 
-判讀 lock-in 強度，看四個維度：客戶的核心資料是否儲存在你這（資料 lock-in）、客戶的多個系統是否依賴你做整合中樞（整合 lock-in）、客戶的員工訓練是否花費巨大（操作 lock-in）、客戶的客製化邏輯是否難以遷移（流程 lock-in）。四個維度的綜合決定強度。
+判讀 lock-in 強度，看下列維度：客戶的核心資料是否儲存在你這（資料 lock-in）、客戶的多個系統是否依賴你做整合中樞（整合 lock-in）、客戶的員工訓練是否花費巨大（操作 lock-in）、客戶的客製化邏輯是否難以遷移（流程 lock-in）、客戶已經對外發出的位址是否落在你的命名空間上（識別碼 lock-in：短網址、業者網域上的 email 位址這類位址換業者就失效；客戶改用自有網域時，位址本身可以帶走，剩下的是對照資料能不能匯出，實例見[短網址的商業模型](/business/case-analyses/url-shortener-business-models/)的品牌網域一節）。這些維度的綜合決定強度。
 
 ## 判讀方式
 
