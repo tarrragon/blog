@@ -26,7 +26,7 @@ tags: ["ux-design", "navigation", "routing", "dead-code", "reachability"]
 
 ## 路由存在但不可達的案例
 
-一個遠端終端機 app 的 router 定義了三條路由：`/`（首頁）、`/enrollment`（配對）、`/terminal`（終端機）。首頁只有一個 Connect Terminal 按鈕導航到 `/terminal`。`/enrollment` 路由存在，`EnrollmentScreen` 完整實作，但首頁沒有任何 UI 元素導航到這個路由（[U.C4](/ux-design/cases/missing-enrollment-entry-point/)）。
+一個遠端終端機 app 的 router 定義了三條路由：`/`（首頁）、`/enrollment`（配對）、`/terminal`（終端機）。首頁只有一個 Connect Terminal 按鈕導航到 `/terminal`。`/enrollment` 路由存在，`EnrollmentScreen` 完整實作，但首頁沒有任何 UI 元素導航到這個路由（[首頁缺配對入口按鈕、導航流未完整列出](/ux-design/cases/missing-enrollment-entry-point/)）。
 
 從使用者視角看，配對功能不存在。從開發者視角看，配對功能完整 — 路由定義了、畫面寫好了、業務邏輯都通了。問題出在「入口」這個連接層。
 
@@ -63,7 +63,7 @@ BDD 操作盤點列出了所有使用者操作（UC）。每個 UC 對應至少�
 
 選擇 `go` 還是 `push` 取決於使用者的心理模型：這個導航是「暫時離開主畫面去做一件事，做完回來」（push），還是「切換到另一個主要工作區」（go）。
 
-該終端機 app 修復時選擇 `context.push('/enrollment')` 讓使用者配對完成後按 back 回首頁 — 配對是「暫時去做一件事」，不是切換工作區（[U.C4](/ux-design/cases/missing-enrollment-entry-point/)）。
+該終端機 app 修復時選擇 `context.push('/enrollment')` 讓使用者配對完成後按 back 回首頁 — 配對是「暫時去做一件事」，不是切換工作區（[首頁缺配對入口按鈕、導航流未完整列出](/ux-design/cases/missing-enrollment-entry-point/)）。
 
 ## 下一步路由
 

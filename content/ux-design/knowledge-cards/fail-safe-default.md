@@ -14,7 +14,7 @@ Fail-safe 預設與 [UX Fallback](/ux-design/knowledge-cards/ux-fallback/) 的�
 
 ## 可觀察訊號與例子
 
-需要檢查 fail-safe 的訊號是「保護邏輯存在、但它的故障分支沒人設計過」。實戰正面案例：匯入覆蓋模式的確認 Modal 在 DOM 缺失時一律視為未確認、預設不清空書庫（[U.C12](/ux-design/cases/destructive-import-fail-safe-confirm/)）。反向的檢查問句：確認元件不存在時、你的程式碼走哪個分支？
+需要檢查 fail-safe 的訊號是「保護邏輯存在、但它的故障分支沒人設計過」。實戰正面案例：匯入覆蓋模式的確認 Modal 在 DOM 缺失時一律視為未確認、預設不清空書庫（[匯入空檔會清空書庫 — 破壞性操作的確認與安全預設](/ux-design/cases/destructive-import-fail-safe-confirm/)）。反向的檢查問句：確認元件不存在時、你的程式碼走哪個分支？
 
 ## 設計責任
 

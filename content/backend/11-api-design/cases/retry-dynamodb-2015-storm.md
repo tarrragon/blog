@@ -30,4 +30,4 @@ consumer 的 retry 自保在 provider 過載時等效於 DDoS —— 而這裡�
 
 ## 二手來源與狀態標注
 
-postmortem 未逐字出現「retry storm」一詞 —— 放大機制從「simultaneous requests + 自我下線再重連」敘述推得、正文引述貼原句、不替 AWS 造詞（「retry storm」的官方定義見 C72）。
+postmortem 未逐字出現「retry storm」一詞 —— 放大機制從「simultaneous requests + 自我下線再重連」敘述推得、正文引述貼原句、不替 AWS 造詞（「retry storm」的官方定義見 [AWS retry 指南](/backend/11-api-design/cases/retry-aws-guidance-budget/)）。

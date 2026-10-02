@@ -38,7 +38,7 @@ tags: ["ddd", "read-model", "projection", "state-ownership", "sync", "pos"]
 
 可導出狀態「等下一輪」的延遲若不可接受（本案：合併後使用者可能立刻取消品項，需要新明細 id），正確做法不是手工搬——是**立即觸發一次同步**。同一條同步路徑、只是提早跑。
 
-這裡還埋著一個順序陷阱：同步路徑內部有依賴（輪詢用本地單據列表過濾資料），催同步之前要先讓依賴就緒（先同步列表、再刷新快照），否則催出來的是空結果、反而污染比對基準。「催同步」不是一個呼叫，是一小段有順序約束的編排——這個順序錯誤實際發生過，由流程測試首跑抓到（[T.C6](/testing/cases/flow-test-first-run-ordering-catch/)）。
+這裡還埋著一個順序陷阱：同步路徑內部有依賴（輪詢用本地單據列表過濾資料），催同步之前要先讓依賴就緒（先同步列表、再刷新快照），否則催出來的是空結果、反而污染比對基準。「催同步」不是一個呼叫，是一小段有順序約束的編排——這個順序錯誤實際發生過，由流程測試首跑抓到（[流程測試首跑抓到修復自己引入的順序 bug](/testing/cases/flow-test-first-run-ordering-catch/)）。
 
 ## 4. 與讀模型階梯的關係
 
@@ -58,4 +58,4 @@ tags: ["ddd", "read-model", "projection", "state-ownership", "sync", "pos"]
 - 自持 vs 可導出的遷移判斷標準（理論層）→ [跨邊界參照與狀態所有權](/ddd/cross-boundary-reference-ownership/)
 - 讀側階梯的理論層 → [讀模型的升級條件](/ddd/read-model-upgrade-signals/)
 - 身份轉移的參照層問題 → [跨邊界參照的生命週期](/work-log/pos_cross_boundary_reference_lifecycle/)
-- 順序陷阱被抓到的過程 → [T.C6 流程測試首跑抓到順序 bug](/testing/cases/flow-test-first-run-ordering-catch/)
+- 順序陷阱被抓到的過程 → [流程測試首跑抓到順序 bug](/testing/cases/flow-test-first-run-ordering-catch/)

@@ -6,7 +6,7 @@ weight: 39
 tags: ["backend", "api-design", "case-study", "idempotency"]
 ---
 
-這個案例的核心責任是提供冪等鍵「可承諾的 what」、跟 C38 的「why」互補。
+這個案例的核心責任是提供冪等鍵「可承諾的 what」、跟 [Stripe 冪等設計哲學](/backend/11-api-design/cases/idempotency-stripe-design-blog/) 的「why」互補。
 
 ## 觀察
 

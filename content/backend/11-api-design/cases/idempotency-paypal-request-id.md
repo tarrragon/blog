@@ -6,7 +6,7 @@ weight: 41
 tags: ["backend", "api-design", "case-study", "idempotency"]
 ---
 
-這個案例的核心責任是當 Stripe 冪等契約（C39）的對照組、展示無標準狀態下的實作分歧。
+這個案例的核心責任是當 Stripe 冪等契約（[Stripe 冪等鍵契約條款](/backend/11-api-design/cases/idempotency-stripe-api-contract/)）的對照組、展示無標準狀態下的實作分歧。
 
 ## 觀察
 
@@ -14,7 +14,7 @@ PayPal 的冪等 header 名為 `PayPal-Request-Id`；並非所有 API 支援、�
 
 ## 判讀
 
-與 Stripe 的對照有三點：header 命名不同（無標準的直接後果、呼應 C40）；replay 語意不同 — Stripe 重放「首次結局快照」、PayPal 回「最新狀態」、後者對 async 操作友善但失去 exactly-once 回應保證；契約精確度不同 — Stripe 承諾 24h、PayPal 模糊。這組差異本身就是比較教材。
+與 Stripe 的對照有三點：header 命名不同（無標準的直接後果、呼應 [IETF Idempotency-Key draft](/backend/11-api-design/cases/idempotency-ietf-key-header-draft/)）；replay 語意不同 — Stripe 重放「首次結局快照」、PayPal 回「最新狀態」、後者對 async 操作友善但失去 exactly-once 回應保證；契約精確度不同 — Stripe 承諾 24h、PayPal 模糊。這組差異本身就是比較教材。
 
 ## 對應大綱
 

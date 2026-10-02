@@ -14,7 +14,7 @@ repo 於 2022-03 正式 archived、轉唯讀、總計僅 34 commits。內容是�
 
 ## 判讀
 
-文件品質不差、但沒有 Guild / linter / review 流程等執行機制、也沒有持續的 ownership、停在 34 commits 後封存。與 Zalando 四件套（C47）並排可直接論證：規範的存活取決於配套組織機制、不取決於文件本身寫得多好。
+文件品質不差、但沒有 Guild / linter / review 流程等執行機制、也沒有持續的 ownership、停在 34 commits 後封存。與 Zalando 四件套（[Zalando API-first](/backend/11-api-design/cases/governance-zalando-api-first/)）並排可直接論證：規範的存活取決於配套組織機制、不取決於文件本身寫得多好。
 
 ## 對應大綱
 

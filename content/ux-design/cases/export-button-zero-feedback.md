@@ -43,5 +43,5 @@ book_overview_app 的匯出設定頁有一顆「確認匯出」按鈕。實機�
 - 三層回饋模型的完整定義 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
 - 非同步按鈕的生命週期設計 → [按鈕狀態設計](/ux-design/06-interaction-feedback/button-state-design/)
 - 等待指示的時間門檻 → [Doherty Threshold](/ux-design/knowledge-cards/doherty-threshold/)
-- 類似案例（回饋誠實但誤導）→ [U.C7 商品條碼的誤導性查無結果](/ux-design/cases/misleading-no-result-for-product-barcode/)
-- 未接線的另一種形態（刻意佔位）→ [U.C20 管理模式操作全是佔位](/ux-design/cases/management-actions-placeholder-only/)
+- 類似案例（回饋誠實但誤導）→ [商品條碼的誤導性查無結果](/ux-design/cases/misleading-no-result-for-product-barcode/)
+- 未接線的另一種形態（刻意佔位）→ [管理模式操作全是佔位](/ux-design/cases/management-actions-placeholder-only/)

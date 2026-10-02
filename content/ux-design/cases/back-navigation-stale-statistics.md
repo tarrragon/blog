@@ -42,5 +42,5 @@ book_overview_app 的資料管理頁顯示書庫統計（書籍總數、書庫�
 
 - happy-path-only 反模式的完整定義 → [反模式：只設計 happy path](/ux-design/01-screen-state-machine/anti-pattern-happy-path-only/)
 - 想用狀態矩陣盤點進入條件 → [畫面狀態矩陣的定義與填寫方法](/ux-design/01-screen-state-machine/state-matrix-definition/)
-- 類似案例（狀態矩陣缺口）→ [U.C1 五狀態零退出](/ux-design/cases/five-states-zero-exits/)
+- 類似案例（狀態矩陣缺口）→ [五狀態零退出](/ux-design/cases/five-states-zero-exits/)
 - BR-10 的完整技術收斂（導航補償 → EventBus 橋接 → repository 觀測出口）→ [ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)

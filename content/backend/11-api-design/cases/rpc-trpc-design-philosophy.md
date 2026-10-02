@@ -18,7 +18,7 @@ tRPC 是「把 API 契約從 IDL 檔搬進型別系統」的極端點 — 換到
 
 ## 對應大綱
 
-styles/rpc-revival/「tRPC 與型別共享」（anchor、與 C23 Echobind 並用）、11.2 風格選型交叉。
+styles/rpc-revival/「tRPC 與型別共享」（anchor、與 [Echobind](/backend/11-api-design/cases/graphql-echobind-trpc-retreat/) 並用）、11.2 風格選型交叉。
 
 ## 下一步路由
 

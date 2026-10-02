@@ -6,7 +6,7 @@ weight: 32
 tags: ["backend", "api-design", "case-study", "grpc"]
 ---
 
-這個案例的核心責任是提供非 vendor 立場的 gRPC 獨立批評、跟 C30 互證。
+這個案例的核心責任是提供非 vendor 立場的 gRPC 獨立批評、跟 [Buf Connect 發布文](/backend/11-api-design/cases/grpc-buf-connect-critique/) 互證。
 
 ## 觀察
 

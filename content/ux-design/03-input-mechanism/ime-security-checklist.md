@@ -14,7 +14,7 @@ IME（Input Method Editor）的個人化學習功能會從使用者輸入中學�
 
 在一般文字輸入場景中（聊天、筆記、email），IME 學習使用者的常用詞彙是合理的 — 提高打字效率，減少重複輸入。
 
-在 CLI 場景中（[U.C3](/ux-design/cases/terminal-input-mechanism-absent/)），使用者可能輸入：
+在 CLI 場景中（[終端機文字輸入機制未設計、事後 hotfix 補 TextField](/ux-design/cases/terminal-input-mechanism-absent/)），使用者可能輸入：
 
 - 資料庫密碼：`mysql -p'MySecret123'`
 - API key：`curl -H 'Authorization: Bearer sk-abc123...'`

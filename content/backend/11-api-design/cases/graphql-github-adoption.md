@@ -18,7 +18,7 @@ GitHub 2016 年公開 GraphQL API 時明言：既有 REST API 負責超過 60% �
 
 ## 對應大綱
 
-[公開 API 的 GraphQL 進退](/backend/11-api-design/styles/graphql/graphql-public-api-tradeoffs/)（anchor、已引用）、11.2 風格選型交叉。GitHub cluster 之一（C18-C20）。
+[公開 API 的 GraphQL 進退](/backend/11-api-design/styles/graphql/graphql-public-api-tradeoffs/)（anchor、已引用）、11.2 風格選型交叉。GitHub cluster 之一（[GitHub：採用 GraphQL 的可量化動機](/backend/11-api-design/cases/graphql-github-adoption/)、[GitHub：GraphQL point system 成本計點限流](/backend/11-api-design/cases/graphql-github-cost-rate-limiting/)、[GitHub：REST 與 GraphQL 雙軌並行的十年穩態](/backend/11-api-design/cases/graphql-github-rest-parallel/)）。
 
 ## 下一步路由
 

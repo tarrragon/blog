@@ -10,7 +10,7 @@ tags: ["testing", "ai-generated-code", "acceptance-test", "mutation-testing", "e
 
 ## 實驗的設計
 
-實驗是 Robert C. Martin 公開的 [negative-test-experiment](https://github.com/unclebob/negative-test-experiment)：同一份需求從空目錄開始寫八次，八次由四種測試紀律乘上「有沒有施加複雜度上限」這個開關組成。案例側的完整記錄在 [T.C10](/testing/cases/acceptance-passes-eight-different-programs/)。
+實驗是 Robert C. Martin 公開的 [negative-test-experiment](https://github.com/unclebob/negative-test-experiment)：同一份需求從空目錄開始寫八次，八次由四種測試紀律乘上「有沒有施加複雜度上限」這個開關組成。案例側的完整記錄在 [同一組驗收通過八個不同的程式 — 關卡放行的等價類有多大](/testing/cases/acceptance-passes-eight-different-programs/)。
 
 它只有一個產品（一個主控台文字遊戲）、一種語言，每一種組合只執行一次，設計與可讀性的評分由原作者本人以主觀量表給出。這幾個條件決定了它能支持的宣稱範圍。
 

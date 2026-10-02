@@ -18,7 +18,7 @@ tags: ["ddd", "identity", "reference", "state-ownership", "snapshot"]
 2. **有沒有一個跨越這些操作仍不變的身份？** 如果存在——以它為錨、其餘參照動態解析。如果沒有——凍結參照只能當一次性用途、跨操作的功能改走查詢。
 3. **「不變」的出處是什麼？** 文件說的、程式碼推理的、實測證實的——只有第三種算數。把實測結果固化為測試資產（[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)、[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)），從此不依賴任何人的記憶。
 
-三個問題的回答決定參照的設計形態。未回答就動工的代價是靜默失效——操作對著死 id 回寫，回傳值看起來正常（目標不存在也沒有噪音），功能在特定操作之後全部失效、直到使用者回報。凍結參照在測試中的結構盲區另見 [T.C5](/testing/cases/stale-reference-stub-blindspot/)：由測試餵資料的 stub 同時控制凍結值與回應資料，讓「id 死亡」這個狀態在測試裡不可能出現。
+三個問題的回答決定參照的設計形態。未回答就動工的代價是靜默失效——操作對著死 id 回寫，回傳值看起來正常（目標不存在也沒有噪音），功能在特定操作之後全部失效、直到使用者回報。凍結參照在測試中的結構盲區另見 [凍結參照失效被 stub 遮蔽 — 測試全綠、功能全壞](/testing/cases/stale-reference-stub-blindspot/)：由測試餵資料的 stub 同時控制凍結值與回應資料，讓「id 死亡」這個狀態在測試裡不可能出現。
 
 ## 穩定身份為錨、解引用延後到使用時
 
@@ -69,7 +69,7 @@ tags: ["ddd", "identity", "reference", "state-ownership", "snapshot"]
 - 身份語意的入口判斷標準 → [entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/)
 - 凍結與稽核的時間軸判斷標準 → [狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)
 - 可導出狀態與讀模型的同構關係 → [讀模型的升級條件](/ddd/read-model-upgrade-signals/)
-- 凍結參照在測試中的結構盲區 → [T.C5 凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)
+- 凍結參照在測試中的結構盲區 → [凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)
 - 假後端模擬重建行為 → [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
 - 參照層的 case → [跨邊界參照的生命週期](/work-log/pos_cross_boundary_reference_lifecycle/)
 - 遷移層的 case → [自持狀態與可導出狀態](/work-log/pos_held_vs_derived_state_migration/)

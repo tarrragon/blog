@@ -18,7 +18,7 @@ brownout 承擔的角色是「email 與 blog 公告觸及不到的長尾 client�
 
 ## 對應大綱
 
-11.5 版本策略與 deprecation、11.6 向後相容的變更紀律。與 C12 同公司 cluster。
+11.5 版本策略與 deprecation、11.6 向後相容的變更紀律。與 [GitHub](/backend/11-api-design/cases/versioning-github-calendar-versioning/) 同公司 cluster。
 
 ## 下一步路由
 

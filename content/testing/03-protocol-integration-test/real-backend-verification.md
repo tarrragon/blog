@@ -57,7 +57,7 @@ tags: ["testing", "real-backend", "integration-test", "contract-test"]
 配套紀律：
 
 - **先復原、再斷言**：把現場復原（釋放資源、刪除臨時資料）放在斷言之前或 finally 裡——斷言失敗的那次執行更不該留下髒資料。
-- **容許非同步**：狀態類斷言即刻讀一次、延遲再讀一次，區分「同步生效／非同步生效／未生效」，三種結果對前端的意義不同（[T.C7](/testing/cases/dual-semantics-attribution/)）。延遲時間取實測觀察到的後端非同步生效窗乘上安全係數——觀察窗穩定在 N 秒內時，2-3 倍即可（觀察到 1 秒內生效 → 延遲 2-3 秒）；觀察窗跨越級距（有時 1 秒有時 10 秒）代表後端行為本身不確定，倍數幫不上忙，改用重試迴圈（重讀 + 上限次數）。設太短會把非同步生效誤判成未生效。
+- **容許非同步**：狀態類斷言即刻讀一次、延遲再讀一次，區分「同步生效／非同步生效／未生效」，三種結果對前端的意義不同（[症狀相同、成因兩種 — 用測試切開前後端責任](/testing/cases/dual-semantics-attribution/)）。延遲時間取實測觀察到的後端非同步生效窗乘上安全係數——觀察窗穩定在 N 秒內時，2-3 倍即可（觀察到 1 秒內生效 → 延遲 2-3 秒）；觀察窗跨越級距（有時 1 秒有時 10 秒）代表後端行為本身不確定，倍數幫不上忙，改用重試迴圈（重讀 + 上限次數）。設太短會把非同步生效誤判成未生效。
 - **接受的代價要寫明**：每次執行都會對測試環境產生真實讀寫。資料噪音、與他人並行執行的碰撞風險，是這層防線的持有成本——團隊要知情地接受，而不是事後驚訝。碰撞的緩解選單：專屬測試帳號、測試資源命名前綴、或套件 serial 執行。
 
 ## CI 執行節奏
@@ -78,6 +78,6 @@ tags: ["testing", "real-backend", "integration-test", "contract-test"]
 ## 下一步路由
 
 - 配對的另一半 → [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
-- 責任歸因的完整案例 → [T.C7 症狀相同、成因兩種](/testing/cases/dual-semantics-attribution/)
+- 責任歸因的完整案例 → [症狀相同、成因兩種](/testing/cases/dual-semantics-attribution/)
 - 這類測試的成本判斷 → [協議整合測試的成本判斷](/testing/03-protocol-integration-test/cost-judgment/)
 - 供給側的視角：QA 站該對這類消費者承諾什麼 → [共用測試環境的設計契約](/backend/06-reliability/qa-environment-design/)

@@ -30,9 +30,9 @@ Assertion 應該在程式碼正確時通過、錯誤時失敗。如果 assertion
 
 **斷言包含**：`expect(result, contains('error'))` 驗證字串包含 'error'，但如果回傳 'no error occurred'（正確情境）也包含 'error' — assertion 無法區分正確和錯誤。
 
-T.C3 的 parser test 斷言 `expect(tokens.first, isA<TextToken>())` — 驗證 token 型別是 TextToken。但正確解析和透傳亂碼都可能產生 TextToken，assertion 無法區分（本章合成，TF-5 Derive — 透傳的靜默副作用和 assertion 的區分力有 tension）。
+[ANSI parser 測試資料不覆蓋真實 shell output](/testing/cases/ansi-parser-test-data-blindspot/) 的 parser test 斷言 `expect(tokens.first, isA<TextToken>())` — 驗證 token 型別是 TextToken。但正確解析和透傳亂碼都可能產生 TextToken，assertion 無法區分（本章合成，TF-5 Derive — 透傳的靜默副作用和 assertion 的區分力有 tension）。
 
-有時序約束的訊息流是區分力的另一個維度：[T.C9 外接螢幕訊息序列斷言](/testing/cases/outbox-sequence-external-display/) 是序列斷言取代存在斷言的實例——只斷言「訊息有送出」無法區分順序顛倒的錯誤。
+有時序約束的訊息流是區分力的另一個維度：[外接螢幕訊息序列斷言](/testing/cases/outbox-sequence-external-display/) 是序列斷言取代存在斷言的實例——只斷言「訊息有送出」無法區分順序顛倒的錯誤。
 
 ### 會 flaky 嗎
 

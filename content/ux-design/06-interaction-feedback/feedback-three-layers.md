@@ -61,7 +61,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 
 **部分成功的呈現**：批次操作（匯入 100 筆、87 筆成功）用摘要加明細兩層：摘要先告知整體結果（「87 筆成功、13 筆失敗」），明細列出失敗項與各自的修正動作，讓使用者只需處理失敗的部分、而非重跑整批。
 
-**結果通知的鏈路前提**：第三層的設計都假設「結果會正確到達 UI」。UI 與執行端分屬不同 context 時（browser extension 的 popup / content script / service worker、跨 process 架構），結果要跨訊息通道才到 UI — 通道語意錯誤或事件訂閱缺失會讓通知消失、甚至反轉。一個 Chrome extension 提取成功 96 本且已寫入 storage，popup 卻顯示「提取失敗」— async listener 把 undefined 搶先當回應送回（[U.C9](/ux-design/cases/async-listener-false-failure/)）。跨 context 的結果通知要有端對端驗證（操作成功 → UI 顯示成功），不只測 UI 收到資料後的呈現。
+**結果通知的鏈路前提**：第三層的設計都假設「結果會正確到達 UI」。UI 與執行端分屬不同 context 時（browser extension 的 popup / content script / service worker、跨 process 架構），結果要跨訊息通道才到 UI — 通道語意錯誤或事件訂閱缺失會讓通知消失、甚至反轉。一個 Chrome extension 提取成功 96 本且已寫入 storage，popup 卻顯示「提取失敗」— async listener 把 undefined 搶先當回應送回（[提取成功卻誤報失敗 — 結果通知鏈路被搶通道](/ux-design/cases/async-listener-false-failure/)）。跨 context 的結果通知要有端對端驗證（操作成功 → UI 顯示成功），不只測 UI 收到資料後的呈現。
 
 本篇聚焦「該通知什麼」；SnackBar / Dialog / Banner / Bottom Sheet 之間的形式選擇由[通知模式選擇](../notification-pattern-selection/)展開。螢幕閱讀器的通知宣告（aria-live / aria-busy）屬無障礙實作，不在本模組範圍。
 
@@ -157,7 +157,7 @@ timeout 是 connecting 的隱形退出路徑：取消靠使用者主動，timeou
 | 畫面中間狀態無退出路徑   | 使用者被卡在 connecting   | 只能殺 app（UX 死胡同）        |
 | 錯誤狀態只有重連沒有返回 | 問題無法重連解決時被鎖住  | 在錯誤迴圈中反覆重連           |
 
-表格第一行（按鈕無任何視覺回饋）的完整實證案例見 [U.C5 匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)——狀態機完備但 UI 沒接線，三層回饋全缺。同族的兩個變體：佔位 handler 上線 — 按鈕存在但 onPressed 只接開發提示或 log，dev toast 讓開發自測「有反應」、掩蓋未接線（[U.C20](/ux-design/cases/management-actions-placeholder-only/)）；回饋文字被版面擠壓 — state 有值、綁定正確，flex 寬度競爭把「已選擇: 3/45」壓成「...」（[U.C19](/ux-design/cases/selection-count-layout-starvation/)）。回饋鏈要驗到使用者的眼睛，state 有值、widget 有綁都不是終點。
+表格第一行（按鈕無任何視覺回饋）的完整實證案例見 [匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)——狀態機完備但 UI 沒接線，三層回饋全缺。同族的兩個變體：佔位 handler 上線 — 按鈕存在但 onPressed 只接開發提示或 log，dev toast 讓開發自測「有反應」、掩蓋未接線（[管理模式操作全是佔位 — dev toast 讓未接線看起來有反應](/ux-design/cases/management-actions-placeholder-only/)）；回饋文字被版面擠壓 — state 有值、綁定正確，flex 寬度競爭把「已選擇: 3/45」壓成「...」（[「已選擇」計數被版面擠壓成省略號 — 回饋死在 layout](/ux-design/cases/selection-count-layout-starvation/)）。回饋鏈要驗到使用者的眼睛，state 有值、widget 有綁都不是終點。
 
 版面擠壓類問題有一個常見的誤歸因：專案用了等比縮放套件（如 flutter_screenutil），版面出事時第一反應是查套件設定。換算工具工作在常數層（設計稿座標 → 裝置座標的數值換算）、空間分配發生在 layout 協商層（有限寬度分給動態內容）— 兩層獨立，「有用響應式套件」不構成版面不會擠壓的保證。判斷式（換算錯 vs 分配錯）與三層修法（設計層空間競爭規格 / 實作層 flex 顯式決策 / 驗證層窄幕檢查）見 [#228 等比縮放不管空間分配](/report/proportional-scaling-is-not-space-allocation/)。
 

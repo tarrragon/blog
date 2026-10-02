@@ -14,7 +14,7 @@ Guidelines repo 開宗明義「Great RESTful APIs look like they were designed b
 
 ## 判讀
 
-Guidelines（文件）、Guild（人的治理）、Zally（自動化）、Portal（可發現性）構成完整系統 — 缺一環都會退化成書架文件。Guild 模式介於中心化委員會與完全去中心之間：ownership 集中、貢獻開放、適合跟 Google 編輯團制（C46）對照。
+Guidelines（文件）、Guild（人的治理）、Zally（自動化）、Portal（可發現性）構成完整系統 — 缺一環都會退化成書架文件。Guild 模式介於中心化委員會與完全去中心之間：ownership 集中、貢獻開放、適合跟 Google 編輯團制（[Google AIP](/backend/11-api-design/cases/governance-google-aip-model/)）對照。
 
 ## 對應大綱
 

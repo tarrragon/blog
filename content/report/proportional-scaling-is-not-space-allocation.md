@@ -72,7 +72,7 @@ slug: "proportional-scaling-is-not-space-allocation"
 
 ## 套用到本系統的 case
 
-書庫管理 app 驗收（案例卡 [U.C19](/ux-design/cases/selection-count-layout-starvation/)、[U.C16](/ux-design/cases/filter-chips-overflow-no-affordance/)）：
+書庫管理 app 驗收（案例卡 [「已選擇」計數被版面擠壓成省略號 — 回饋死在 layout](/ux-design/cases/selection-count-layout-starvation/)、[篩選列截斷被讀成遮蔽 — 水平溢出沒有捲動提示](/ux-design/cases/filter-chips-overflow-no-affordance/)）：
 
 - 「已選擇: {count}/{total}」與同列的 flex:2 按鈕、Spacer 按比例分配自由寬度，分到的份額容不下整串、ellipsis 壓成「...」— state 正確、換算正確、回饋死在空間分配。
 - 篩選 chips 超出螢幕寬、截斷處無捲動 affordance — chip 尺寸全部等比正確，總寬 vs 可用寬的關係不在任何工具的視野裡。

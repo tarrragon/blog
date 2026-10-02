@@ -8,13 +8,13 @@ tags: ["testing", "mutation-testing", "coverage", "quality-gate", "ai-generated-
 
 品質閘門要量的是測試的偵測能力：程式在某個位置改掉行為時，這套測試會不會變紅。行覆蓋率量的是執行足跡，它與偵測能力之間隔著一個假設——執行到了通常也就斷言了。
 
-這個假設從來沒有完全成立。站內的 [Assertion 品質三問](/testing/05-test-design-judgment/assertion-quality/)把 `isNotNull`、`isA` 列為人手寫測試裡**常見**的無效斷言，[T.C3](/testing/cases/ansi-parser-test-data-blindspot/) 就是一個實例。變的是規模：套件小到可以逐條抽查時，這類斷言會在 review 裡被指出來；斷言可以整批產生之後抽查追不上，塌掉的是這個假設的可稽查性——它本身的正確性一直都只是近似。於是需要一個不靠抽查、而且用空斷言達不到的指標——[突變測試](/testing/knowledge-cards/mutation-testing/)是目前唯一一種空斷言達不到的成熟指標——這個性質來自它的構造，不隨工具生態變動。
+這個假設從來沒有完全成立。站內的 [Assertion 品質三問](/testing/05-test-design-judgment/assertion-quality/)把 `isNotNull`、`isA` 列為人手寫測試裡**常見**的無效斷言，[ANSI parser 測試資料不覆蓋真實 shell output](/testing/cases/ansi-parser-test-data-blindspot/) 就是一個實例。變的是規模：套件小到可以逐條抽查時，這類斷言會在 review 裡被指出來；斷言可以整批產生之後抽查追不上，塌掉的是這個假設的可稽查性——它本身的正確性一直都只是近似。於是需要一個不靠抽查、而且用空斷言達不到的指標——[突變測試](/testing/knowledge-cards/mutation-testing/)是目前唯一一種空斷言達不到的成熟指標——這個性質來自它的構造，不隨工具生態變動。
 
 ## 覆蓋率失效的形狀
 
 覆蓋率不是變得不準，是執行足跡與偵測能力之間的相關性斷了。一個測試呼叫函式、檢查它沒有拋出例外，覆蓋率把那幾行算進去；同一個測試對回傳值不做任何檢查，偵測能力是零。這種測試被稱為永遠綠的測試，它在覆蓋率報表上與一個嚴謹的測試無法區分。
 
-[T.C10](/testing/cases/acceptance-passes-eight-different-programs/) 的數據顯示了這個斷裂的程度。三種紀律——test-last（寫完程式再補測試）、bundling（寫完一個函式就補那個函式的測試）、以及三法則 TDD 加上複雜度上限——產出的程式與套件組成完全不同，而行覆蓋率全部停在 97% 到 99%。
+[同一組驗收通過八個不同的程式 — 關卡放行的等價類有多大](/testing/cases/acceptance-passes-eight-different-programs/) 的數據顯示了這個斷裂的程度。三種紀律——test-last（寫完程式再補測試）、bundling（寫完一個函式就補那個函式的測試）、以及三法則 TDD 加上複雜度上限——產出的程式與套件組成完全不同，而行覆蓋率全部停在 97% 到 99%。
 
 被覆蓋率區分出來的只有兩端。一端是零測試又不開複雜度上限那一格，停在 14%（form，該語言的運算式單位）與 24%（line，程式碼行），而這些數字全部來自載入而非斷言；同一種紀律開啟複雜度上限之後被迫生出 40 個範例，覆蓋率跟著跳上來。另一端是三法則不開複雜度上限那一格的 85.81% 行覆蓋，作者標為 outlier，成因是主控台迴圈只被輕度驅動。
 
@@ -44,7 +44,7 @@ tags: ["testing", "mutation-testing", "coverage", "quality-gate", "ai-generated-
 
 **平行執行並設定逾時。** 有些突變會造成無窮迴圈，逾時要設得夠短，否則單一突變就吃掉整輪時間。
 
-覆蓋率與偵測能力脫鉤這件事另有站內既有內容佐證（本章開頭引的 Assertion 品質三問與 T.C3），不單靠那份實驗；那份實驗足以支持與不足以支持的宣稱見[本模組引用的對照實驗](/testing/06-agent-authored-code/shared-experiment-scope/)。
+覆蓋率與偵測能力脫鉤這件事另有站內既有內容佐證（本章開頭引的 Assertion 品質三問與 [ANSI parser 測試資料不覆蓋真實 shell output](/testing/cases/ansi-parser-test-data-blindspot/)），不單靠那份實驗；那份實驗足以支持與不足以支持的宣稱見[本模組引用的對照實驗](/testing/06-agent-authored-code/shared-experiment-scope/)。
 
 ## 存活的突變分兩類
 

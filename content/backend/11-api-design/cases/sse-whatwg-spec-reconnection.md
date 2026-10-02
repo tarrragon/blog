@@ -14,7 +14,7 @@ WHATWG HTML Living Standard 的 Server-Sent Events 章節定義 `text/event-stre
 
 ## 判讀
 
-SSE 把「重連 + 斷點續傳的協商鉤子」寫進協議層 —— 消費者拿到的承諾是自動重連加一個可用來補送的 id 契約。但補送的實際保證仍取決於 server 有沒有實作 replay：spec 只保證瀏覽器會送 `Last-Event-ID`、不強制 server 保存或重放事件。這是 SSE 跟 WebSocket（協議層對重連沉默、見 C56）最核心的承諾差異。
+SSE 把「重連 + 斷點續傳的協商鉤子」寫進協議層 —— 消費者拿到的承諾是自動重連加一個可用來補送的 id 契約。但補送的實際保證仍取決於 server 有沒有實作 replay：spec 只保證瀏覽器會送 `Last-Event-ID`、不強制 server 保存或重放事件。這是 SSE 跟 WebSocket（協議層對重連沉默、見 [RFC 6455](/backend/11-api-design/cases/websocket-rfc6455-transport/)）最核心的承諾差異。
 
 ## 對應大綱
 

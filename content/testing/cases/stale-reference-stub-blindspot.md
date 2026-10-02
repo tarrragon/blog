@@ -39,4 +39,4 @@ tags: ["testing", "case-study", "stub", "fake-backend", "integration-test"]
 
 - 想建立有狀態假後端 → [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
 - 假後端的行為假設怎麼對真實後端驗證 → [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)
-- 換了測試形態後首跑就抓到問題的實例 → [T.C6 流程測試首跑抓到順序 bug](/testing/cases/flow-test-first-run-ordering-catch/)
+- 換了測試形態後首跑就抓到問題的實例 → [流程測試首跑抓到順序 bug](/testing/cases/flow-test-first-run-ordering-catch/)

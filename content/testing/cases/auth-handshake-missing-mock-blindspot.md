@@ -6,7 +6,7 @@ weight: 2
 tags: ["testing", "case-study", "websocket", "mock", "protocol-integration", "authentication"]
 ---
 
-一整段 auth handshake 邏輯從未被實作，兩層測試共 21 個案例卻沒有一個亮紅燈——mock 讓「功能缺失」變得不可見，是比「功能錯誤」更深一層的遮蔽形態。T.C1 是功能存在但行為錯誤；這個案例是功能根本沒實作，因為 mock 不需要這個功能就能通過所有 test。
+一整段 auth handshake 邏輯從未被實作，兩層測試共 21 個案例卻沒有一個亮紅燈——mock 讓「功能缺失」變得不可見，是比「功能錯誤」更深一層的遮蔽形態。[WebSocket text/binary frame 被 FakeWebSocketChannel 遮蔽](/testing/cases/ws-text-binary-frame-mock-blindspot/) 是功能存在但行為錯誤；這個案例是功能根本沒實作，因為 mock 不需要這個功能就能通過所有 test。
 
 ## 觀察
 
@@ -26,7 +26,7 @@ ttyd WebSocket 協議要求連線建立後發送一個 JSON frame 包含 base64 
 
 2. **Integration test 名為整合實為 fake**。`connection_flow_test.dart` 標題是「端對端整合測試」，但內部使用 `FakeWebSocketChannel` + `FakeBiometricService` + `InMemoryCredentialRepository` — 三個核心依賴全是 fake。這個 test 驗證的是「假設所有外部服務都正常，內部狀態機是否正確」，不是「真實服務互動是否正確」。
 
-3. **功能缺失比功能錯誤更難被 test 抓到**。功能錯誤（T.C1 text vs binary）至少有一個實作可以斷言；功能缺失意味著沒有程式碼可以 test。只有 protocol integration test（對真實服務跑）才能暴露「應該有但沒有」的行為。
+3. **功能缺失比功能錯誤更難被 test 抓到**。功能錯誤（[WebSocket text/binary frame 被 FakeWebSocketChannel 遮蔽](/testing/cases/ws-text-binary-frame-mock-blindspot/) text vs binary）至少有一個實作可以斷言；功能缺失意味著沒有程式碼可以 test。只有 protocol integration test（對真實服務跑）才能暴露「應該有但沒有」的行為。
 
 ## 策略
 
@@ -38,4 +38,4 @@ ttyd WebSocket 協議要求連線建立後發送一個 JSON frame 包含 base64 
 
 - 想區分 mock 層級 → [模組一：測試策略分層](/testing/01-test-strategy-layers/)
 - 想建 protocol integration test → [模組三：協議整合測試](/testing/03-protocol-integration-test/)
-- 想設計 auth 機制的 UX fallback → [U.C2 biometricOnly 無 fallback](/ux-design/cases/biometric-only-no-fallback/)
+- 想設計 auth 機制的 UX fallback → [biometricOnly 無 fallback](/ux-design/cases/biometric-only-no-fallback/)

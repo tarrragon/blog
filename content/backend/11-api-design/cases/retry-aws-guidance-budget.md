@@ -14,11 +14,11 @@ AWS Well-Architected REL05-BP03（Control and limit retry calls）逐字定義�
 
 ## 判讀
 
-「低層 retry 0-1 次、委派給上層」跟 C69 的跨層疊乘（64 倍）互相印證：retry 是要在架構層分配的預算、不是每層預設行為。token bucket 的本地限制把「retry 是否過量」從每次請求的局部判斷、變成程序級的資源帳 —— consumer 端對 provider 的保護寫成了自己的限流。
+「低層 retry 0-1 次、委派給上層」跟 [Google SRE Book](/backend/11-api-design/cases/retry-sre-book-cascading-failures/) 的跨層疊乘（64 倍）互相印證：retry 是要在架構層分配的預算、不是每層預設行為。token bucket 的本地限制把「retry 是否過量」從每次請求的局部判斷、變成程序級的資源帳 —— consumer 端對 provider 的保護寫成了自己的限流。
 
 ## 對應大綱
 
-11.11 接收方重試決策章「retry 放哪一層」「retry budget」段（與 C69 互證）。
+11.11 接收方重試決策章「retry 放哪一層」「retry budget」段（與 [Google SRE Book](/backend/11-api-design/cases/retry-sre-book-cascading-failures/) 互證）。
 
 ## 下一步路由
 

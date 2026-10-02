@@ -36,7 +36,7 @@ tags: ["backend", "api-design", "selection"]
 
 ## 判斷標準軸三：操作與 debug 可及性
 
-介面會被 on-call 的人徒手戳、會過 LB 與 proxy、會被防火牆規則篩 — 這些操作面的成本在能力比較表上通常缺席。gRPC 在這條軸上的代價有完整的一手批評：協議要求端到端 HTTP/2 加 trailers、瀏覽器支援需要翻譯 proxy、debug 時 `curl | jq` 不可行（見 [Buf Connect 發布文：對 grpc-go 的系統性批評](/backend/11-api-design/cases/grpc-buf-connect-critique/)、發布方是競品 vendor、批評點與 [gRPC: The Bad Parts：cURL 測試不過的 API（反例）](/backend/11-api-design/cases/grpc-kmcd-bad-parts/) 的獨立實踐者批評互證後採用）。C32 提出的「傳一個 cURL 範例給朋友」測試是這條軸的可操作的判斷標準。
+介面會被 on-call 的人徒手戳、會過 LB 與 proxy、會被防火牆規則篩 — 這些操作面的成本在能力比較表上通常缺席。gRPC 在這條軸上的代價有完整的一手批評：協議要求端到端 HTTP/2 加 trailers、瀏覽器支援需要翻譯 proxy、debug 時 `curl | jq` 不可行（見 [Buf Connect 發布文：對 grpc-go 的系統性批評](/backend/11-api-design/cases/grpc-buf-connect-critique/)、發布方是競品 vendor、批評點與 [gRPC: The Bad Parts：cURL 測試不過的 API（反例）](/backend/11-api-design/cases/grpc-kmcd-bad-parts/) 的獨立實踐者批評互證後採用）。[gRPC: The Bad Parts](/backend/11-api-design/cases/grpc-kmcd-bad-parts/) 提出的「傳一個 cURL 範例給朋友」測試是這條軸的可操作的判斷標準。
 
 這條軸的權重跟組織的 infra 成熟度成反比：有能力在框架層集中處理 proxy、觀測、部署的組織（如 Dropbox 的 Courier、見 [Dropbox Courier：百萬 RPS 規模的 gRPC 遷移](/backend/11-api-design/cases/grpc-dropbox-courier/)）、操作成本被平台吸收；小團隊每個介面都要自己扛操作面、可及性差的風格會在 on-call 時收利息。
 

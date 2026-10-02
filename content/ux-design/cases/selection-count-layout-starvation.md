@@ -35,5 +35,5 @@ tags: ["ux-design", "case-study", "interaction-feedback", "layout", "ellipsis", 
 ## 下一步路由
 
 - 結果通知的完整設計 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
-- 資料正確但 UI 未反映的另一種形態 → [U.C9 提取成功卻誤報失敗](/ux-design/cases/async-listener-false-failure/)
-- 管理模式的佔位操作 → [U.C20 管理模式操作全是佔位](/ux-design/cases/management-actions-placeholder-only/)
+- 資料正確但 UI 未反映的另一種形態 → [提取成功卻誤報失敗](/ux-design/cases/async-listener-false-failure/)
+- 管理模式的佔位操作 → [管理模式操作全是佔位](/ux-design/cases/management-actions-placeholder-only/)

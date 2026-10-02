@@ -42,4 +42,4 @@ book_overview_app 的掃描器偵測所有 EAN-13 格式條碼。書籍 ISBN-13 
 
 - 輸入機制的四維度決策 → [輸入機制設計](/ux-design/03-input-mechanism/four-dimension-decision/)
 - 結果通知屬於三層回饋的第三層 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
-- 類似案例（回饋缺失）→ [U.C5 匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)
+- 類似案例（回饋缺失）→ [匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)

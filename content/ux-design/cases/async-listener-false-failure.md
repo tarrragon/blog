@@ -37,5 +37,5 @@ tags: ["ux-design", "case-study", "interaction-feedback", "chrome-extension", "w
 ## 下一步路由
 
 - 結果通知該呈現什麼 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
-- 類似案例（UI 未接線、三層回饋全缺）→ [U.C5 匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)
-- 完成宣告的證據強度 → [U.C11 抓到 96/928 本就顯示完成](/ux-design/cases/lazy-load-premature-completion/)
+- 類似案例（UI 未接線、三層回饋全缺）→ [匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)
+- 完成宣告的證據強度 → [抓到 96/928 本就顯示完成](/ux-design/cases/lazy-load-premature-completion/)

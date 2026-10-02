@@ -14,7 +14,7 @@ tags: ["backend", "api-design", "case-study", "grpc"]
 
 ## 判讀
 
-gRPC 的部署邊界（瀏覽器、proxy、trailers）是風格選型時常被忽略的維度 — 協議能力表不會列「你的 LB 過不過 trailers」。與 C32 的獨立批評互證後、批評點的可信度不依賴 Buf 的立場。
+gRPC 的部署邊界（瀏覽器、proxy、trailers）是風格選型時常被忽略的維度 — 協議能力表不會列「你的 LB 過不過 trailers」。與 [gRPC: The Bad Parts](/backend/11-api-design/cases/grpc-kmcd-bad-parts/) 的獨立批評互證後、批評點的可信度不依賴 Buf 的立場。
 
 ## 對應大綱
 

@@ -14,7 +14,7 @@ tags: ["backend", "api-design", "case-study", "graphql"]
 
 ## 判讀
 
-no-versioning 的實質是把演進成本轉嫁到三個紀律：只加不改、deprecation 標注、nullable 預設 — 版本管理的工作換了位置、沒有消失。nullable-by-default 正是為了讓局部失敗與授權拒絕不炸掉整個 response — 這條因果鏈是 schema 演進篇的骨幹。可與 WunderGraph 批評（C27）對照：versionless 解 schema 相容、解不了組織層的舊 client 支援。
+no-versioning 的實質是把演進成本轉嫁到三個紀律：只加不改、deprecation 標注、nullable 預設 — 版本管理的工作換了位置、沒有消失。nullable-by-default 正是為了讓局部失敗與授權拒絕不炸掉整個 response — 這條因果鏈是 schema 演進篇的骨幹。可與 WunderGraph 批評對照：versionless 解 schema 相容、解不了組織層的舊 client 支援。
 
 ## 對應大綱
 

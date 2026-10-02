@@ -14,7 +14,7 @@ Terminal app 在手機上的輸入需求和一般文字輸入有根本差異。C
 
 手機鍵盤在使用者和 app 之間插入了 IME 層。使用者按 `l` 時，IME 可能等待後續按鍵組合成完整詞彙再傳送；使用者按的按鍵可能被自動校正替換；使用者的輸入被記錄到 IME 詞庫供跨 app 學習。
 
-Terminal app 需要繞過或控制 IME 層的這些行為。以一個遠端終端機 app 為例，TextField 用 `TextInputType.visiblePassword` + `autocorrect: false` + `enableSuggestions: false` + `enableIMEPersonalizedLearning: false` 四個參數關閉 IME 的自動行為（[U.C3](/ux-design/cases/terminal-input-mechanism-absent/)）。
+Terminal app 需要繞過或控制 IME 層的這些行為。以一個遠端終端機 app 為例，TextField 用 `TextInputType.visiblePassword` + `autocorrect: false` + `enableSuggestions: false` + `enableIMEPersonalizedLearning: false` 四個參數關閉 IME 的自動行為（[終端機文字輸入機制未設計、事後 hotfix 補 TextField](/ux-design/cases/terminal-input-mechanism-absent/)）。
 
 ## 整行送出 vs 逐字元：protocol 層的影響
 

@@ -28,7 +28,7 @@ API 層冪等處理一個無法迴避的物理事實：網路請求會在結果�
 
 ## 反例：冪等閘門缺席的內部迴圈
 
-冪等的適用範圍大於對外 header — 系統內部會自動重試的 side-effect 動作、同樣需要閘門。Twilio 2013 年計費事故的時序（C45 觀察層）：Redis 故障讓餘額資料遺失歸零且無法寫回、auto-recharge 在「餘額為零、扣款成功、餘額寫不回去」的循環中對約 1.4% 客戶重複扣款（見 [Twilio 2013 計費事故：無冪等防線的重複扣款（反例）](/backend/11-api-design/cases/idempotency-twilio-billing-postmortem/)、反例）。把事故抽象成冪等語言（判讀層）：扣款的觸發條件在執行後未被消除、等效於無限重放的非冪等操作。通用形式：冪等閘門 = 執行紀錄先寫、後執行副作用；配套的 fail-safe = 狀態寫不進去、就不准產生金流級 side effect。對外的 idempotency key 只是這個通用形式在 API 邊界的特例。
+冪等的適用範圍大於對外 header — 系統內部會自動重試的 side-effect 動作、同樣需要閘門。Twilio 2013 年計費事故的時序（[Twilio 2013 計費事故](/backend/11-api-design/cases/idempotency-twilio-billing-postmortem/) 案例的觀察層）：Redis 故障讓餘額資料遺失歸零且無法寫回、auto-recharge 在「餘額為零、扣款成功、餘額寫不回去」的循環中對約 1.4% 客戶重複扣款（見 [Twilio 2013 計費事故：無冪等防線的重複扣款（反例）](/backend/11-api-design/cases/idempotency-twilio-billing-postmortem/)、反例）。把事故抽象成冪等語言（判讀層）：扣款的觸發條件在執行後未被消除、等效於無限重放的非冪等操作。通用形式：冪等閘門 = 執行紀錄先寫、後執行副作用；配套的 fail-safe = 狀態寫不進去、就不准產生金流級 side effect。對外的 idempotency key 只是這個通用形式在 API 邊界的特例。
 
 ## 判讀訊號
 

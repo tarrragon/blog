@@ -18,7 +18,7 @@ RFC 9110 §15.3.3（Internet Standard）原文：「The request might or might n
 
 ## 對應大綱
 
-11.11 status 表達力邊界章「非同步 / 延遲失敗」段（與 C65 的 LRO 出口、C44 AIP-151 Operation 相互印證）。
+11.11 status 表達力邊界章「非同步 / 延遲失敗」段（與 [Google AIP 部分成功立場](/backend/11-api-design/cases/status-google-aip-partial-success/) 的 LRO 出口、[Google AIP-151](/backend/11-api-design/cases/longrun-google-aip151/) AIP-151 Operation 相互印證）。
 
 ## 下一步路由
 

@@ -45,4 +45,4 @@ W2-001 修復後加入 back 按鈕的狀態：error、disconnected、connecting�
 - 想用狀態矩陣設計畫面 → [畫面狀態矩陣的定義與填寫方法](/ux-design/01-screen-state-machine/state-matrix-definition/)
 - 連線類流程每個狀態的回饋與退出路徑 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)的畫面級回饋段
 - 想建 widget test 覆蓋導航 → [模組四：自動化 UI 驗證](/testing/04-ui-automation/)
-- 類似案例（Gate fallback）→ [U.C2 biometricOnly 無 fallback](/ux-design/cases/biometric-only-no-fallback/)
+- 類似案例（Gate fallback）→ [biometricOnly 無 fallback](/ux-design/cases/biometric-only-no-fallback/)

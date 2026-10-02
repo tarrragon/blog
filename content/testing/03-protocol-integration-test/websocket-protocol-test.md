@@ -1,7 +1,7 @@
 ---
 title: "WebSocket 協議測試實作"
 date: 2026-06-19
-description: "對真實 ttyd 驗證 frame type 和 auth handshake — 從 T.C1 和 T.C2 的教訓推導出的 protocol integration test 設計"
+description: "對真實 ttyd 驗證 frame type 和 auth handshake — 從 [WebSocket text/binary frame 被 FakeWebSocketChannel 遮蔽](/testing/cases/ws-text-binary-frame-mock-blindspot/) 和 [Auth handshake 邏輯缺失被 FakeWebSocketChannel 遮蔽](/testing/cases/auth-handshake-missing-mock-blindspot/) 的教訓推導出的 protocol integration test 設計"
 weight: 2
 tags: ["testing", "integration-test", "websocket", "protocol", "ttyd"]
 ---
@@ -10,11 +10,11 @@ WebSocket 協議測試的目標是驗證 client 端的 WebSocket 操作在真實
 
 ## 要驗證什麼
 
-從 T.C1 和 T.C2 的案例推導出 WebSocket protocol test 至少需要覆蓋的場景：
+從 [WebSocket text/binary frame 被 FakeWebSocketChannel 遮蔽](/testing/cases/ws-text-binary-frame-mock-blindspot/) 和 [Auth handshake 邏輯缺失被 FakeWebSocketChannel 遮蔽](/testing/cases/auth-handshake-missing-mock-blindspot/) 的案例推導出 WebSocket protocol test 至少需要覆蓋的場景：
 
 ### Frame type 驗證
 
-`IOWebSocketChannel` 對 `String` 和 `Uint8List` 產生不同的 frame type（text vs binary）。ttyd 只接受 text frame，收到 binary frame 靜默忽略（[T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)）。
+`IOWebSocketChannel` 對 `String` 和 `Uint8List` 產生不同的 frame type（text vs binary）。ttyd 只接受 text frame，收到 binary frame 靜默忽略（[WebSocket text/binary frame 被 FakeWebSocketChannel 遮蔽](/testing/cases/ws-text-binary-frame-mock-blindspot/)）。
 
 Protocol test 需要驗證：
 
@@ -24,7 +24,7 @@ Protocol test 需要驗證：
 
 ### Auth handshake 驗證
 
-ttyd 連線後需要發送 auth token JSON frame 完成認證，認證通過後才推送 terminal output（[T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/)）。
+ttyd 連線後需要發送 auth token JSON frame 完成認證，認證通過後才推送 terminal output（[Auth handshake 邏輯缺失被 FakeWebSocketChannel 遮蔽](/testing/cases/auth-handshake-missing-mock-blindspot/)）。
 
 Protocol test 需要驗證：
 

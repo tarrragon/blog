@@ -6,7 +6,7 @@ weight: 43
 tags: ["backend", "api-design", "case-study", "rate-limit"]
 ---
 
-這個案例的核心責任是提供大平台限流對外契約的實作切片、跟 IETF draft（C42）對照。
+這個案例的核心責任是提供大平台限流對外契約的實作切片、跟 IETF draft（[IETF RateLimit headers](/backend/11-api-design/cases/ratelimit-ietf-header-fields/)）對照。
 
 ## 觀察
 

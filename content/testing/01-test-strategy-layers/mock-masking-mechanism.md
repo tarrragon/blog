@@ -22,11 +22,11 @@ API 層描述的是「這個方法接受什麼參數、回傳什麼型別」。D
 
 協議層描述的是「這個資料在網路上如何被編碼、對方如何解讀」。WebSocket 協議（RFC 6455）定義 text frame 用 opcode 0x1、binary frame 用 opcode 0x2 — 兩者語意不同，接收端可以選擇只處理其中一種。
 
-Dart 的 `IOWebSocketChannel`（真實實作）根據 `sink.add` 的參數型別決定 frame type：`String` 產生 text frame，`List<int>` 或 `Uint8List` 產生 binary frame。這個行為是 `IOWebSocketChannel` 的實作細節，不是 `WebSocketSink` 介面契約的一部分 — API 簽名用 `dynamic` 把型別資訊抹除了（[T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)）。
+Dart 的 `IOWebSocketChannel`（真實實作）根據 `sink.add` 的參數型別決定 frame type：`String` 產生 text frame，`List<int>` 或 `Uint8List` 產生 binary frame。這個行為是 `IOWebSocketChannel` 的實作細節，不是 `WebSocketSink` 介面契約的一部分 — API 簽名用 `dynamic` 把型別資訊抹除了（[WebSocket text/binary frame 被 FakeWebSocketChannel 遮蔽](/testing/cases/ws-text-binary-frame-mock-blindspot/)）。
 
 ttyd 只接受 text frame，收到 binary frame 靜默忽略。從 API 層看，`sink.add(Uint8List(...))` 合法；從協議層看，這產生了 ttyd 不處理的 binary frame。斷裂點在 API 層和協議層之間 — mock 模擬了前者，但後者的語意差異只有真實 `IOWebSocketChannel` + 真實 ttyd 才會浮現。
 
-同構的斷裂點也出現在瀏覽器擴充功能的訊息通道：Manifest V3 把「listener 回傳 Promise」解讀為認領回應權 — 這是通道層語意，mock 掉 `chrome.runtime` 的單元測試看不到，「提取成功被誤報失敗」的事故只有跨 context 的端對端測試才會現形（[U.C9](/ux-design/cases/async-listener-false-failure/)）。
+同構的斷裂點也出現在瀏覽器擴充功能的訊息通道：Manifest V3 把「listener 回傳 Promise」解讀為認領回應權 — 這是通道層語意，mock 掉 `chrome.runtime` 的單元測試看不到，「提取成功被誤報失敗」的事故只有跨 context 的端對端測試才會現形（[提取成功卻誤報失敗 — 結果通知鏈路被搶通道](/ux-design/cases/async-listener-false-failure/)）。
 
 ### 環境層：執行環境的行為差異
 
@@ -42,7 +42,7 @@ Mock 遮蔽有兩種不同的表現，需要不同的偵測策略。
 
 程式碼有對應的實作，但實作的行為和真實服務期望的行為不一致。Mock 讓這個不一致變得不可見，因為 mock 接受了實際上外部服務不會接受的輸入。
 
-T.C1 就是這種模式。`sendData()` 實作了「發送鍵盤輸入」的功能，但發送的是 binary frame 而非 text frame。Mock 的 `sink.add(dynamic)` 接受 `Uint8List` 不報錯，真實 ttyd 靜默忽略 binary frame。功能存在，行為錯誤，mock 遮蔽了錯誤。
+[WebSocket text/binary frame 被 FakeWebSocketChannel 遮蔽](/testing/cases/ws-text-binary-frame-mock-blindspot/) 就是這種模式。`sendData()` 實作了「發送鍵盤輸入」的功能，但發送的是 binary frame 而非 text frame。Mock 的 `sink.add(dynamic)` 接受 `Uint8List` 不報錯，真實 ttyd 靜默忽略 binary frame。功能存在，行為錯誤，mock 遮蔽了錯誤。
 
 這種模式的偵測策略是 protocol integration test — 對真實服務發送相同輸入，比對回應是否符合預期。
 
@@ -50,7 +50,7 @@ T.C1 就是這種模式。`sendData()` 實作了「發送鍵盤輸入」的功�
 
 程式碼缺少應有的功能步驟，但 mock 不需要這個步驟就能進入成功狀態。Mock 把多步驟的協議流程簡化成單步操作，讓開發者不知道還有缺少的步驟。
 
-T.C2 就是這種模式。ttyd 要求連線後發送 auth token，但 `ConnectionManager` 沒有實作這個步驟。`FakeWebSocketChannel.ready` 立即完成不需認證，`stream` 由開發者手動控制，不依賴 auth 狀態。Mock 把「TCP 握手 → WS 握手 → auth token → 驗證通過 → 推送資料」這個多步驟流程簡化成「`ready` 完成 → `stream` 有資料」（[T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/)）。
+[Auth handshake 邏輯缺失被 FakeWebSocketChannel 遮蔽](/testing/cases/auth-handshake-missing-mock-blindspot/) 就是這種模式。ttyd 要求連線後發送 auth token，但 `ConnectionManager` 沒有實作這個步驟。`FakeWebSocketChannel.ready` 立即完成不需認證，`stream` 由開發者手動控制，不依賴 auth 狀態。Mock 把「TCP 握手 → WS 握手 → auth token → 驗證通過 → 推送資料」這個多步驟流程簡化成「`ready` 完成 → `stream` 有資料」（[Auth handshake 邏輯缺失被 FakeWebSocketChannel 遮蔽](/testing/cases/auth-handshake-missing-mock-blindspot/)）。
 
 功能缺失比功能錯誤更難被偵測。功能錯誤至少有一段程式碼可以被 test 覆蓋（只是斷言的對象不夠深）；功能缺失意味著沒有程式碼可以寫 test。只有 protocol integration test 對真實服務跑完整流程，才能暴露「應該有但沒有」的步驟。
 

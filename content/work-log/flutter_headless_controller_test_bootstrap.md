@@ -71,7 +71,7 @@ for (var i = 0; i < 100; i++) {
 }
 ```
 
-輪詢「可觀察的終態」而非固定 sleep——固定延遲只是把起跑線挪後，在更慢的環境照樣輸。通用層的分析見 [T.C8 fire-and-forget 編排的測試競態](/testing/cases/fire-and-forget-test-race/)。
+輪詢「可觀察的終態」而非固定 sleep——固定延遲只是把起跑線挪後，在更慢的環境照樣輸。通用層的分析見 [fire-and-forget 編排的測試競態](/testing/cases/fire-and-forget-test-race/)。
 
 ## 5. 可複用的判斷標準
 

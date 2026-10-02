@@ -14,7 +14,7 @@ Slack Events API 官方 docs 明文：app 應在 3 秒內回 HTTP 2xx（「withi
 
 ## 判讀
 
-Slack 把「慢等於失敗」寫死成 3 秒硬上限、逼 consumer 走「立即 2xx 加背景處理」模式；`x-slack-retry-num` 讓 consumer 辨識這是重投、把去重責任明文交出。重試次數與間隔是固定有限的 —— 跟 Stripe 的三天指數退避（見 C60）是不同的承諾形狀。選型時「重試形狀」本身就是一條要讀清楚的承諾。
+Slack 把「慢等於失敗」寫死成 3 秒硬上限、逼 consumer 走「立即 2xx 加背景處理」模式；`x-slack-retry-num` 讓 consumer 辨識這是重投、把去重責任明文交出。重試次數與間隔是固定有限的 —— 跟 Stripe 的三天指數退避（見 [Stripe webhooks](/backend/11-api-design/cases/webhook-stripe-delivery-contract/)）是不同的承諾形狀。選型時「重試形狀」本身就是一條要讀清楚的承諾。
 
 ## 對應大綱
 

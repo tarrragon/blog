@@ -30,4 +30,4 @@ styles/realtime/「持久連線推送機制」（四機制承諾差異表 long-p
 
 ## 二手來源與狀態標注
 
-RFC 為 2011 年、pre-WebSocket-普及的時代背景；它比較的對象是 HTTP streaming、不是 WebSocket。用來講 long-polling 內在機制代價很穩、「相對 WebSocket 多重」的對照要另配來源（見 C59）。
+RFC 為 2011 年、pre-WebSocket-普及的時代背景；它比較的對象是 HTTP streaming、不是 WebSocket。用來講 long-polling 內在機制代價很穩、「相對 WebSocket 多重」的對照要另配來源（見 [Socket.IO](/backend/11-api-design/cases/longpolling-socketio-negotiation/)）。

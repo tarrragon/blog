@@ -14,7 +14,7 @@ Affordance 在互動發生之前起作用 — [互動回饋三層模型](/ux-des
 
 ## 可觀察訊號與例子
 
-需要檢查 affordance 的訊號是使用者回報「按了沒反應」或「找不到功能」、而程式行為正確。實戰案例：狀態圖示與動作按鈕同形混排、被當成壞掉的按鈕（[U.C18](/ux-design/cases/status-icon-mistaken-for-button/)）；水平篩選列可捲動但無提示、截斷被讀成被遮蔽（[U.C16](/ux-design/cases/filter-chips-overflow-no-affordance/)）；整行反白暗示可點、gesture 只掛在尾端箭頭（[U.C8](/ux-design/cases/tag-row-touch-target-scope/)）。
+需要檢查 affordance 的訊號是使用者回報「按了沒反應」或「找不到功能」、而程式行為正確。實戰案例：狀態圖示與動作按鈕同形混排、被當成壞掉的按鈕（[狀態圖示被當成按鈕點 — 非互動指示與動作按鈕同形](/ux-design/cases/status-icon-mistaken-for-button/)）；水平篩選列可捲動但無提示、截斷被讀成被遮蔽（[篩選列截斷被讀成遮蔽 — 水平溢出沒有捲動提示](/ux-design/cases/filter-chips-overflow-no-affordance/)）；整行反白暗示可點、gesture 只掛在尾端箭頭（[標籤行只有箭頭可點 — 觸控目標小於視覺單元](/ux-design/cases/tag-row-touch-target-scope/)）。
 
 ## 設計責任
 

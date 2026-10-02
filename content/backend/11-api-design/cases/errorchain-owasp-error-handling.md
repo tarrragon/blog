@@ -6,7 +6,7 @@ weight: 77
 tags: ["backend", "api-design", "case-study", "error-contract"]
 ---
 
-這個案例的核心責任是提供「provider 暴露下限」的安全端論證、跟 C75（AIP-193）對撞出中間路線。
+這個案例的核心責任是提供「provider 暴露下限」的安全端論證、跟 [AIP-193 錯誤內容規範](/backend/11-api-design/cases/errorchain-aip193-error-content/)對撞出中間路線。
 
 ## 觀察
 
@@ -18,7 +18,7 @@ OWASP 給了「provider 少暴露」的安全端論證、跟 AIP-193 的「多�
 
 ## 對應大綱
 
-11.11 錯誤鏈傳播章「暴露的下限：安全邊界」段（與 C75 對照）、連 [07 安全](/backend/07-security-data-protection/)。
+11.11 錯誤鏈傳播章「暴露的下限：安全邊界」段（與 [AIP-193 錯誤內容規範](/backend/11-api-design/cases/errorchain-aip193-error-content/) 對照）、連 [07 安全](/backend/07-security-data-protection/)。
 
 ## 下一步路由
 
@@ -30,4 +30,4 @@ OWASP 給了「provider 少暴露」的安全端論證、跟 AIP-193 的「多�
 
 ## 二手來源與狀態標注
 
-該頁完全沒提 error ID / correlation id 回傳給使用者 ——「generic message + 附 trace id 供回報」這個常見組合不能掛 OWASP 出處：trace id 部分引 C76（W3C Trace Context）、組合本身標明是常見實務而非 OWASP 規範。
+該頁完全沒提 error ID / correlation id 回傳給使用者 ——「generic message + 附 trace id 供回報」這個常見組合不能掛 OWASP 出處：trace id 部分引 [W3C Trace Context](/backend/11-api-design/cases/trace-w3c-trace-context/)、組合本身標明是常見實務而非 OWASP 規範。

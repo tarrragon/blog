@@ -16,7 +16,7 @@ Keyboard type 決定使用者按下輸入框時出現什麼鍵盤。數字鍵盤
 
 選擇判斷依據是「使用者要輸入什麼內容」。email 地址用 email 鍵盤（有 `@` 鍵），電話號碼用數字鍵盤，密碼或 CLI 指令用 `visiblePassword` 型別（避免自動校正和建議）。
 
-一個遠端終端機 app 的輸入框用 `TextInputType.visiblePassword` — 因為 CLI 指令包含路徑分隔符、flag 縮寫等非自然語言內容，一般文字鍵盤會嘗試自動校正 `ls -la` 或 `/usr/bin/` 成其他東西（[U.C3](/ux-design/cases/terminal-input-mechanism-absent/)）。
+一個遠端終端機 app 的輸入框用 `TextInputType.visiblePassword` — 因為 CLI 指令包含路徑分隔符、flag 縮寫等非自然語言內容，一般文字鍵盤會嘗試自動校正 `ls -la` 或 `/usr/bin/` 成其他東西（[終端機文字輸入機制未設計、事後 hotfix 補 TextField](/ux-design/cases/terminal-input-mechanism-absent/)）。
 
 ### Submit model：怎麼送出輸入
 

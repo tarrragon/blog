@@ -10,7 +10,7 @@ tags: ["ddd", "identity", "reference", "aggregate", "snapshot", "pos"]
 > **觸發場景**：POS App 的前端為後端事件建立本地追蹤記錄，記錄裡存了事件當下的兩個後端 id（單據 id、明細列 id），後續的取消、追加操作用這兩個 id 回寫。後端執行「合併兩張單據」後，這些操作全部失效。
 > **疑問來源**：合併後前端已把記錄「改掛」到新單據——為什麼還是壞？
 > **整理目的**：把「跨邊界參照的生命週期」整理成可判斷標準的問題清單：哪些 id 會死、哪個 id 不死、持有端該怎麼設計。
-> **本文邊界**：測試層的對策（語意級假後端）另見 [T.C5 凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)。
+> **本文邊界**：測試層的對策（語意級假後端）另見 [凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)。
 
 ---
 
@@ -66,7 +66,7 @@ tags: ["ddd", "identity", "reference", "aggregate", "snapshot", "pos"]
 
 ## 下一步
 
-- 測試層怎麼防 → [T.C5 凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)、[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
+- 測試層怎麼防 → [凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)、[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
 - 參照有效性與狀態所有權的理論層 → [跨邊界參照與狀態所有權](/ddd/cross-boundary-reference-ownership/)
 - 身份判斷標準的理論層 → [entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/)
 - 快照的概念卡 → [snapshot](/ddd/knowledge-cards/snapshot/)

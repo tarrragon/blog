@@ -10,7 +10,7 @@ tags: ["testing", "observability", "logging", "design", "quality"]
 
 ## 格式統一性
 
-一個遠端終端機 app 在實機修復時補的 `developer.log` 格式不統一（[T.C4](/testing/cases/client-log-absent-debug-cost/)）。不同元件由不同時間點、不同 debug 需求補上的 log，各自有各自的風格：
+一個遠端終端機 app 在實機修復時補的 `developer.log` 格式不統一（[Client-side log 缺失導致 debug 只能靠實機盲測](/testing/cases/client-log-absent-debug-cost/)）。不同元件由不同時間點、不同 debug 需求補上的 log，各自有各自的風格：
 
 有的帶 `name:` 參數讓 log 可以按元件過濾：
 

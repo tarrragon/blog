@@ -14,7 +14,7 @@ repo 含三條 guidance track：核心 `Guidelines.md`、`/azure` 資料夾（Az
 
 ## 判讀
 
-同一組織內分軌（Core vs Azure vs Graph）證明單一 guideline 無法覆蓋差異巨大的產品線、規範會沿組織邊界分化 — 跟 Zalando「像同一團隊設計」的理想（C47）形成有用的張力。公開 repo 加對外喊話也顯示大廠把內部規範開源當成社群影響力工具。
+同一組織內分軌（Core vs Azure vs Graph）證明單一 guideline 無法覆蓋差異巨大的產品線、規範會沿組織邊界分化 — 跟 Zalando「像同一團隊設計」的理想（[Zalando API-first](/backend/11-api-design/cases/governance-zalando-api-first/)）形成有用的張力。公開 repo 加對外喊話也顯示大廠把內部規範開源當成社群影響力工具。
 
 ## 對應大綱
 

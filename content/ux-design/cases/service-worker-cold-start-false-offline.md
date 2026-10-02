@@ -36,4 +36,4 @@ tags: ["ux-design", "case-study", "state-machine", "chrome-extension", "web", "s
 
 - 狀態矩陣的四欄與填寫步驟 → [畫面狀態矩陣的定義與填寫方法](/ux-design/01-screen-state-machine/state-matrix-definition/)
 - 等待多久該顯示什麼指示 → [時間感知與回應策略](/ux-design/06-interaction-feedback/response-time-strategy/)
-- 類似案例（狀態設計遺漏）→ [U.C1 五個狀態零個退出路徑](/ux-design/cases/five-states-zero-exits/)
+- 類似案例（狀態設計遺漏）→ [五個狀態零個退出路徑](/ux-design/cases/five-states-zero-exits/)

@@ -22,7 +22,7 @@ Debug 需求驅動的事件收集目標是「問題發生時，開發者能從�
 
 推導方法：列出最近三個月遇到的 debug 困難場景，問「如果當時有哪些事件記錄，debug 時間能從 30 分鐘降到 5 分鐘？」。答案就是 debug 需求驅動的事件清單。
 
-一個透過 WebSocket 連接遠端終端機的 Flutter app、其 T.C4 案例是典型的 debug 需求缺口 — 六個元件中四個零 log，debug 只能靠實機反覆測試。如果在企劃階段就設計了連線生命週期的五步 log，auth token 問題在第一次連線就能從 log 定位（[testing 模組二](/testing/02-client-observability/)）。
+一個透過 WebSocket 連接遠端終端機的 Flutter app、其 [Client-side log 缺失導致 debug 只能靠實機盲測](/testing/cases/client-log-absent-debug-cost/) 案例是典型的 debug 需求缺口 — 六個元件中四個零 log，debug 只能靠實機反覆測試。如果在企劃階段就設計了連線生命週期的五步 log，auth token 問題在第一次連線就能從 log 定位（[testing 模組二](/testing/02-client-observability/)）。
 
 具體的事件表和查詢場景見 [動機驅動的事件設計](/monitoring/01-mental-model/motivation-to-event-mapping/)。
 

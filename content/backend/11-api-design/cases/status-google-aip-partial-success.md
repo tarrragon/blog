@@ -6,7 +6,7 @@ weight: 65
 tags: ["backend", "api-design", "case-study", "error-contract"]
 ---
 
-這個案例的核心責任是提供部分成功的大廠設計立場：跟 207（C64）相反的路線、以及原子性階梯的具體切分規則。
+這個案例的核心責任是提供部分成功的大廠設計立場：跟 207（[RFC 4918 207 Multi-Status](/backend/11-api-design/cases/status-207-multistatus-rfc4918/)）相反的路線、以及原子性階梯的具體切分規則。
 
 ## 觀察
 
@@ -20,7 +20,7 @@ AIP-193（Errors、Approved）專節明文：「APIs **should not** support part
 
 ## 對應大綱
 
-11.11 status 表達力邊界章「部分成功」段（與 C64 對照的反向立場、原子性階梯）。
+11.11 status 表達力邊界章「部分成功」段（與 [RFC 4918 207 Multi-Status](/backend/11-api-design/cases/status-207-multistatus-rfc4918/) 對照的反向立場、原子性階梯）。
 
 ## 下一步路由
 

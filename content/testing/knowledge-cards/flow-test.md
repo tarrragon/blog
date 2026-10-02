@@ -14,7 +14,7 @@ tags: ["testing", "flow-test", "strategy"]
 
 ## 可觀察訊號與例子
 
-Bug 集中在服務接力的縫隙（各服務的 unit test 全綠，組合起來出錯）、或編排對順序與時序敏感。實例：套件首跑抓到修復自身引入的順序 bug（[T.C6](/testing/cases/flow-test-first-run-ordering-catch/)）、合跑暴露 [fire-and-forget 編排](/testing/knowledge-cards/fire-and-forget-orchestration/)的時序競態（[T.C8](/testing/cases/fire-and-forget-test-race/)）。
+Bug 集中在服務接力的縫隙（各服務的 unit test 全綠，組合起來出錯）、或編排對順序與時序敏感。實例：套件首跑抓到修復自身引入的順序 bug（[流程測試首跑抓到修復自己引入的順序 bug](/testing/cases/flow-test-first-run-ordering-catch/)）、合跑暴露 [fire-and-forget 編排](/testing/knowledge-cards/fire-and-forget-orchestration/)的時序競態（[fire-and-forget 編排讓測試單跑綠、合跑紅](/testing/cases/fire-and-forget-test-race/)）。
 
 ## 設計責任
 

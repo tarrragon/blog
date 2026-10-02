@@ -14,7 +14,7 @@ tags: ["backend", "api-design", "case-study", "grpc"]
 
 ## 判讀
 
-契約相容性在 protobuf 是編碼格式的數學性質、不是 code review 慣例 —「加法演進 + 編號永不回收」是 protobuf 相對 JSON schema 的核心工程差異、也是所有 breaking-change 工具（C29）存在的前提。
+契約相容性在 protobuf 是編碼格式的數學性質、不是 code review 慣例 —「加法演進 + 編號永不回收」是 protobuf 相對 JSON schema 的核心工程差異、也是所有 breaking-change 工具（[Buf breaking detection](/backend/11-api-design/cases/grpc-buf-breaking-detection/)）存在的前提。
 
 ## 對應大綱
 

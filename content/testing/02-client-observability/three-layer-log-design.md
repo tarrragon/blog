@@ -22,7 +22,7 @@ tags: ["testing", "observability", "logging", "client-side", "design"]
 [conn] Step 5/5: stream subscribed, ready
 ```
 
-該 app 在實機測試前六個核心元件中只有兩個有 log，且全是實機修復時事後補上的（[T.C4](/testing/cases/client-log-absent-debug-cost/)）。auth token 缺失問題的 debug 過程中，開發者無法從任何 log 判斷失敗發生在五步中的哪一步。如果有連線生命週期 log，第一次連線就能看到「Step 3 完成，Step 4 未執行」— 直接定位到 auth token 缺失。
+該 app 在實機測試前六個核心元件中只有兩個有 log，且全是實機修復時事後補上的（[Client-side log 缺失導致 debug 只能靠實機盲測](/testing/cases/client-log-absent-debug-cost/)）。auth token 缺失問題的 debug 過程中，開發者無法從任何 log 判斷失敗發生在五步中的哪一步。如果有連線生命週期 log，第一次連線就能看到「Step 3 完成，Step 4 未執行」— 直接定位到 auth token 缺失。
 
 連線生命週期 log 在所有模式（debug 和 release）都應該啟用。這層 log 量小（每次連線 5-10 條），不影響效能，但在 production 問題回報時是第一手資訊來源。
 
@@ -36,7 +36,7 @@ Protocol 訊息 log 記錄的是通訊協議層面的細節：發送和接收的
 [proto] TX: binary frame, payload: [72, 101, 108, 108, 111] (5 bytes)
 ```
 
-Protocol log 在 debug 時幫助確認「程式碼發送了什麼、收到了什麼」。該 app 的 text/binary frame 問題（[T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)）如果有 protocol log，開發者會在 log 中看到 `TX: binary frame` 而非預期的 `TX: text frame` — 直接指向 frame type 問題。
+Protocol log 在 debug 時幫助確認「程式碼發送了什麼、收到了什麼」。該 app 的 text/binary frame 問題（[WebSocket text/binary frame 被 FakeWebSocketChannel 遮蔽](/testing/cases/ws-text-binary-frame-mock-blindspot/)）如果有 protocol log，開發者會在 log 中看到 `TX: binary frame` 而非預期的 `TX: text frame` — 直接指向 frame type 問題。
 
 Protocol log 在 release mode 應該能關閉。這層 log 量大（每次鍵盤輸入一條），且 payload 可能包含敏感資訊。Debug mode 預設啟用，release mode 提供開關（例如隱藏設定頁的 toggle）讓進階使用者在回報問題時開啟。
 

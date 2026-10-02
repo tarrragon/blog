@@ -22,7 +22,7 @@ Offline-first 的 UX 設計重點是讓使用者知道同步狀態：已同步�
 
 功能需要網路但可以等待。斷線時顯示狀態和重試選項，使用者決定要等還是離開。
 
-一個遠端終端機 app 的連線畫面屬於這個模式（[U.C1](/ux-design/cases/five-states-zero-exits/)）。WebSocket 連線需要網路，斷線時使用者無法操作終端機。error 和 disconnected 狀態提供重連按鈕讓使用者手動重試。
+一個遠端終端機 app 的連線畫面屬於這個模式（[Terminal 畫面五個狀態零個退出路徑](/ux-design/cases/five-states-zero-exits/)）。WebSocket 連線需要網路，斷線時使用者無法操作終端機。error 和 disconnected 狀態提供重連按鈕讓使用者手動重試。
 
 Retry 策略的 UX 設計重點：
 
@@ -39,7 +39,7 @@ Retry 策略的 UX 設計重點：
 
 ## 網路狀態的 UI 呈現
 
-呈現離線之前，先區分「查詢對象還沒回應」與「確認離線」— 查詢對象有獨立生命週期（service worker、遠端服務）時，把初始化中的無回應呈現成離線會產生假離線、誤導使用者放棄（[U.C10](/ux-design/cases/service-worker-cold-start-false-offline/)；initializing 狀態的建模見[畫面狀態矩陣的定義與填寫方法](/ux-design/01-screen-state-machine/state-matrix-definition/)）。
+呈現離線之前，先區分「查詢對象還沒回應」與「確認離線」— 查詢對象有獨立生命週期（service worker、遠端服務）時，把初始化中的無回應呈現成離線會產生假離線、誤導使用者放棄（[Service Worker 冷啟動期間的假離線 — initializing 狀態未建模](/ux-design/cases/service-worker-cold-start-false-offline/)；initializing 狀態的建模見[畫面狀態矩陣的定義與填寫方法](/ux-design/01-screen-state-machine/state-matrix-definition/)）。
 
 ### 全域指示器
 

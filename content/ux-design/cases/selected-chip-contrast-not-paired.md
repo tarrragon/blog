@@ -30,5 +30,5 @@ tags: ["ux-design", "case-study", "visual-contrast", "selected-state", "accessib
 
 ## 下一步路由
 
-- 同一條篩選列的溢出問題 → [U.C16 篩選列截斷被讀成遮蔽](/ux-design/cases/filter-chips-overflow-no-affordance/)
+- 同一條篩選列的溢出問題 → [篩選列截斷被讀成遮蔽](/ux-design/cases/filter-chips-overflow-no-affordance/)
 - 按鈕各狀態的視覺設計 → [按鈕狀態設計](/ux-design/06-interaction-feedback/button-state-design/)

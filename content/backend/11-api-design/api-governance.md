@@ -24,11 +24,11 @@ API 規範治理處理的問題在文件之外：規範寫得出來、讓幾十�
 
 ## 工具層：規範進 CI
 
-治理成本的關鍵優化是把可機檢的規則從人工 review 前移到 CI。OpenAPI 生態的代表是 Spectral（內建 OpenAPI 與 AsyncAPI rulesets、組織自帶自訂規則）跟 Zalando 的 Zally（預設 ruleset 直接執行 Zalando guidelines）；兩者的生態軌跡本身是選型訊號 — Spectral 有 8.1k dependent projects 且持續發版、Zally 的 release 停在 2022：兩個資料點指向「通用 linter 加組織自帶 ruleset、比單一組織專用 linter 更能存活」的判讀（C49 判讀、樣本有限、見 [Spectral 與 Zally：guidelines 變成可執行檢查](/backend/11-api-design/cases/governance-linting-spectral-zally/)）。protobuf 生態的對應物是 buf 的 lint 與 breaking check（[11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/) 的工具層）。工具的邊界要誠實：linter 蓋得住命名、結構、必填欄位；蓋不住語意（這個資源建模合不合理）— 語意層仍回到 design review、工具的價值是讓人的注意力只花在語意上。
+治理成本的關鍵優化是把可機檢的規則從人工 review 前移到 CI。OpenAPI 生態的代表是 Spectral（內建 OpenAPI 與 AsyncAPI rulesets、組織自帶自訂規則）跟 Zalando 的 Zally（預設 ruleset 直接執行 Zalando guidelines）；兩者的生態軌跡本身是選型訊號 — Spectral 有 8.1k dependent projects 且持續發版、Zally 的 release 停在 2022：兩個資料點指向「通用 linter 加組織自帶 ruleset、比單一組織專用 linter 更能存活」的判讀（[Spectral 與 Zally](/backend/11-api-design/cases/governance-linting-spectral-zally/) 案例的判讀、樣本有限、見 [Spectral 與 Zally：guidelines 變成可執行檢查](/backend/11-api-design/cases/governance-linting-spectral-zally/)）。protobuf 生態的對應物是 buf 的 lint 與 breaking check（[11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/) 的工具層）。工具的邊界要誠實：linter 蓋得住命名、結構、必填欄位；蓋不住語意（這個資源建模合不合理）— 語意層仍回到 design review、工具的價值是讓人的注意力只花在語意上。
 
 ## 失敗的模式：文件不會自己活著
 
-治理缺席時規範的結局有公開的乾淨反例：White House API Standards — 內容完整的 RESTful guidelines、34 個 commit 後停止維護、2022 年正式 archived（見 [White House API Standards：規範制定後棄置（反例）](/backend/11-api-design/cases/governance-whitehouse-api-standards-archived/)、反例）。文件品質過關、缺的是 Zalando 四件套裡的另外三件：沒有 owner、沒有 review 流程、沒有工具。跟 C47 並排的結論：**規範的存活取決於配套組織機制、不取決於文件寫得多好** — 評估自己組織的規範健康度、先問 owner 是誰、上次更新是何時、違反規範的 API 會在哪一關被擋。
+治理缺席時規範的結局有公開的乾淨反例：White House API Standards — 內容完整的 RESTful guidelines、34 個 commit 後停止維護、2022 年正式 archived（見 [White House API Standards：規範制定後棄置（反例）](/backend/11-api-design/cases/governance-whitehouse-api-standards-archived/)、反例）。文件品質過關、缺的是 Zalando 四件套裡的另外三件：沒有 owner、沒有 review 流程、沒有工具。跟 [Zalando API-first](/backend/11-api-design/cases/governance-zalando-api-first/) 並排的結論：**規範的存活取決於配套組織機制、不取決於文件寫得多好** — 評估自己組織的規範健康度、先問 owner 是誰、上次更新是何時、違反規範的 API 會在哪一關被擋。
 
 這一章問的是規範在組織內部活不活得下來，而規範活著之後還有另一半：它產出的那些條款有沒有真的到達消費者。文件裡有寫與消費者知道是兩件事，而兩者失效時的觀察結果相同（送達的四層手段見 [11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)）。
 

@@ -12,7 +12,7 @@ tags: ["testing", "acceptance-test", "ai-generated-code", "requirements"]
 
 ## 等價類可以被量出來
 
-[T.C10](/testing/cases/acceptance-passes-eight-different-programs/) 把這件事實際量了一次。產品是 Hunt the Wumpus，一個主控台文字冒險遊戲：玩家在洞穴間移動、房間裡可能有怪物、陷阱或蝙蝠。同一份需求從空目錄寫八次，八個程式全部通過同一組 25 案例的驗收，八棵原始碼樹沒有任何兩棵相同，行數從 331 到 603。
+[同一組驗收通過八個不同的程式 — 關卡放行的等價類有多大](/testing/cases/acceptance-passes-eight-different-programs/) 把這件事實際量了一次。產品是 Hunt the Wumpus，一個主控台文字冒險遊戲：玩家在洞穴間移動、房間裡可能有怪物、陷阱或蝙蝠。同一份需求從空目錄寫八次，八個程式全部通過同一組 25 案例的驗收，八棵原始碼樹沒有任何兩棵相同，行數從 331 到 603。
 
 被放行的差異裡，大部分屬於實作自由度——檔案怎麼切、函式怎麼命名、內部用什麼資料結構，這些本來就該留給實作。但有三類不是：
 
@@ -77,7 +77,7 @@ tags: ["testing", "acceptance-test", "ai-generated-code", "requirements"]
 
 **先補改變外部行為的交叉。** 判定順序、狀態轉換的合法性、失敗發生在流程中段時的補償，這些交叉一旦錯了使用者會看見。
 
-**再補契約性的承諾。** 這一類是「文件上寫了、而沒有任何一條條件在守」的承諾。付款端點宣稱重試安全，就要有一條條件用同一個冪等鍵送兩次並斷言只扣一次款；分頁 API 宣稱排序穩定，就要有一條條件在兩次查詢之間插入一筆資料並斷言既有頁次的內容不位移。T.C10 裡的 `--seed` 是同一類的最小形態——宣稱同樣輸入得到同樣輸出，而八個版本用了三種不同的亂數產生器，沒有一條條件發現。
+**再補契約性的承諾。** 這一類是「文件上寫了、而沒有任何一條條件在守」的承諾。付款端點宣稱重試安全，就要有一條條件用同一個冪等鍵送兩次並斷言只扣一次款；分頁 API 宣稱排序穩定，就要有一條條件在兩次查詢之間插入一筆資料並斷言既有頁次的內容不位移。[同一組驗收通過八個不同的程式 — 關卡放行的等價類有多大](/testing/cases/acceptance-passes-eight-different-programs/) 裡的 `--seed` 是同一類的最小形態——宣稱同樣輸入得到同樣輸出，而八個版本用了三種不同的亂數產生器，沒有一條條件發現。
 
 **終止與資源釋放要有自己的條件。** 「跑得完」與「跑對」是兩件事，而多數驗收腳本只斷言「跑得完」。長時間執行的流程要斷言它會結束、結束時釋放了什麼。
 
@@ -112,5 +112,5 @@ tags: ["testing", "acceptance-test", "ai-generated-code", "requirements"]
 - 條件由誰寫、為什麼不能與實作同源 → [判斷標準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)
 - 條件寫好之後怎麼量測試的偵測能力 → [品質閘門的更替](/testing/06-agent-authored-code/coverage-to-mutation-gate/)
 - 這個判斷標準抽出的可重用原則 → [#277 通過關卡不等於通過的是同一個程式](/report/passing-a-gate-does-not-pin-the-program/)
-- 實際量出等價類的案例 → [T.C10](/testing/cases/acceptance-passes-eight-different-programs/)
+- 實際量出等價類的案例 → [同一組驗收通過八個不同的程式 — 關卡放行的等價類有多大](/testing/cases/acceptance-passes-eight-different-programs/)
 - 條件下沉到協議層之後怎麼寫成契約 → [HTTP contract test 設計](/testing/03-protocol-integration-test/http-contract-test/)

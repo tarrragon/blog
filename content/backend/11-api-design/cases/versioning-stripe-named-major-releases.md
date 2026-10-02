@@ -14,11 +14,11 @@ tags: ["backend", "api-design", "case-study", "versioning"]
 
 ## 判讀
 
-同一家公司的版本策略會隨規模演進 — 2017 blog（C10）與現行 docs 是兩個時間切片、引用時要標時點。「相容變更清單」是變更紀律章的直接教材：把 client 不可依賴的介面性質（ID 長度、欄位順序）明文化、等於劃出契約邊界。
+同一家公司的版本策略會隨規模演進 — 2017 blog（[Stripe](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)）與現行 docs 是兩個時間切片、引用時要標時點。「相容變更清單」是變更紀律章的直接教材：把 client 不可依賴的介面性質（ID 長度、欄位順序）明文化、等於劃出契約邊界。
 
 ## 對應大綱
 
-11.6 向後相容的變更紀律（清單主展開）、11.5 版本策略、11.1 契約劃界段交叉。與 C10 同 cluster。
+11.6 向後相容的變更紀律（清單主展開）、11.5 版本策略、11.1 契約劃界段交叉。與 [Stripe](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/) 同 cluster。
 
 ## 下一步路由
 

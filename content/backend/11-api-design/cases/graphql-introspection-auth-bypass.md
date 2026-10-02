@@ -14,7 +14,7 @@ tags: ["backend", "api-design", "case-study", "graphql", "security"]
 
 ## 判讀
 
-REST 世界要靠 fuzzing 才找得到的隱藏端點、GraphQL 用型別系統自己告訴你。教學上與 C22 的 CPU / 記憶體放大並列成兩類攻擊面：資訊暴露與資源耗盡。
+REST 世界要靠 fuzzing 才找得到的隱藏端點、GraphQL 用型別系統自己告訴你。教學上與 [Matt Bessey](/backend/11-api-design/cases/graphql-bessey-retreat/) 的 CPU / 記憶體放大並列成兩類攻擊面：資訊暴露與資源耗盡。
 
 ## 對應大綱
 

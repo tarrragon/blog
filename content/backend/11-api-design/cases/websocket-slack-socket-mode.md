@@ -14,7 +14,7 @@ Slack Socket Mode 用 WebSocket 取代 HTTP webhook 收 events 與 interactions�
 
 ## 判讀
 
-因為 WebSocket 協議層不給保證（見 C56）、vendor 必須在應用層自建整套可靠性 —— 多連線熱備、disconnect 預警、envelope ack、未 ack 就 retry。這是「WebSocket 給管線、投遞保證要自己做」的一手實證：協議的空白由 vendor 的應用層協定填上、而每個 vendor 填的方式不同。
+因為 WebSocket 協議層不給保證（見 [RFC 6455](/backend/11-api-design/cases/websocket-rfc6455-transport/)）、vendor 必須在應用層自建整套可靠性 —— 多連線熱備、disconnect 預警、envelope ack、未 ack 就 retry。這是「WebSocket 給管線、投遞保證要自己做」的一手實證：協議的空白由 vendor 的應用層協定填上、而每個 vendor 填的方式不同。
 
 ## 對應大綱
 

@@ -121,4 +121,4 @@ final watchBooksProvider = StreamProvider<List<Book>>((ref) async* {
 - 事件與狀態流的語意分界（為什麼 EventBus 橋接是越權）：[domain event 與狀態流](/ddd/domain-event-vs-state-stream/)
 - watchBooks 落地的三個實作點（broadcast、初始值、dispose）：[StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)
 - provider 圖與容器的關係（狀態屬於容器、宣告只是配方）：[App 永遠卡在載入畫面](/work-log/flutter_riverpod_dual_container_state_desync/)
-- 同一事故的 UX 分析角度（happy-path-only 資料版）：[U.C6 加書後返回不刷新統計](/ux-design/cases/back-navigation-stale-statistics/)
+- 同一事故的 UX 分析角度（happy-path-only 資料版）：[加書後返回不刷新統計](/ux-design/cases/back-navigation-stale-statistics/)

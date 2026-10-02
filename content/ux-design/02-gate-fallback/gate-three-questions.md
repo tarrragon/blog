@@ -22,7 +22,7 @@ Gate 通過後使用者進入下一步。這是最直覺的設計 — 認證成�
 
 Gate 未通過時使用者的[替代路徑](/ux-design/knowledge-cards/ux-fallback/)。替代路徑可以是：降級功能（部分功能可用）、替代驗證方式（密碼代替 Face ID）、手動重試（重試按鈕）、放棄操作（返回上一頁）。
 
-失敗路徑是最容易遺漏的。一個自用遠端終端機 app 的 biometric gate 設定 `biometricOnly: true`，Face ID 不可用時使用者直接被擋住，沒有密碼 fallback、沒有跳過選項、沒有返回路徑（[U.C2](/ux-design/cases/biometric-only-no-fallback/)）。修復只改一個 boolean — `biometricOnly: false` — 讓系統自動提示輸入裝置密碼。但這個決策應該在企劃階段做，而非實機測試時才發現。
+失敗路徑是最容易遺漏的。一個自用遠端終端機 app 的 biometric gate 設定 `biometricOnly: true`，Face ID 不可用時使用者直接被擋住，沒有密碼 fallback、沒有跳過選項、沒有返回路徑（[biometricOnly=true 無密碼 fallback](/ux-design/cases/biometric-only-no-fallback/)）。修復只改一個 boolean — `biometricOnly: false` — 讓系統自動提示輸入裝置密碼。但這個決策應該在企劃階段做，而非實機測試時才發現。
 
 ### 使用者不知道發生什麼時做什麼
 
@@ -38,7 +38,7 @@ Gate 處理中（loading）或結果不確定（timeout）時使用者看到什�
 
 使用者必須驗證身份才能使用功能。生物辨識、密碼、PIN 碼、OAuth 登入。這四項在使用者眼中是並列的選項，而在後端的分類裡生物辨識與其餘三者不同層——它解鎖的是裝置上那把金鑰，本身不是憑證，見 [7.39 使用者持有型憑證](/backend/07-security-data-protection/user-held-credential-carrier/)。
 
-認證 gate 的 fallback 設計取決於安全需求和使用場景。銀行 app 可能要求生物辨識 + PIN 碼雙重驗證，沒有更低層級的 fallback。自用工具可以接受密碼 fallback，因為使用者本身就是 owner — 可用性優先於認證強度（[U.C2](/ux-design/cases/biometric-only-no-fallback/)）。
+認證 gate 的 fallback 設計取決於安全需求和使用場景。銀行 app 可能要求生物辨識 + PIN 碼雙重驗證，沒有更低層級的 fallback。自用工具可以接受密碼 fallback，因為使用者本身就是 owner — 可用性優先於認證強度（[biometricOnly=true 無密碼 fallback](/ux-design/cases/biometric-only-no-fallback/)）。
 
 ### 網路 Gate
 
@@ -60,7 +60,7 @@ App 需要系統權限（相機、位置、通知）才能使用特定功能。
 
 操作的破壞半徑大於使用者直覺預期時（不可逆、覆蓋既有資料），在執行前攔一道確認。這類 gate 的觸發條件不是身分或環境，是操作語意：「匯入」聽起來是加法、實際語意可能是取代 — 語意與直覺預期的落差越大，越需要確認。確認 UI 要描述具體後果（「將清空現有 N 本書」），不只問「確定嗎」。
 
-三問中的「使用者不知道發生什麼」在這類 gate 有一個特化：要涵蓋**確認機制本身故障**的情況。確認元件沒渲染、事件沒綁上時，系統要選一個預設方向 — [fail-safe 預設](/ux-design/knowledge-cards/fail-safe-default/)是視為未確認、不執行破壞（倒向不可逆性低的那邊：不清空可以重試、清空無法還原）。一個 Chrome extension 的匯入功能在覆蓋模式下語意是「取代現有書庫」，該模式匯入空檔前彈出描述後果的確認 Modal，且確認元件 DOM 缺失時一律視為未確認、預設不清空（[U.C12](/ux-design/cases/destructive-import-fail-safe-confirm/)，正面案例）。
+三問中的「使用者不知道發生什麼」在這類 gate 有一個特化：要涵蓋**確認機制本身故障**的情況。確認元件沒渲染、事件沒綁上時，系統要選一個預設方向 — [fail-safe 預設](/ux-design/knowledge-cards/fail-safe-default/)是視為未確認、不執行破壞（倒向不可逆性低的那邊：不清空可以重試、清空無法還原）。一個 Chrome extension 的匯入功能在覆蓋模式下語意是「取代現有書庫」，該模式匯入空檔前彈出描述後果的確認 Modal，且確認元件 DOM 缺失時一律視為未確認、預設不清空（[匯入空檔會清空書庫 — 破壞性操作的確認與安全預設](/ux-design/cases/destructive-import-fail-safe-confirm/)，正面案例）。
 
 ### 其他常見 Gate
 

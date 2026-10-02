@@ -58,4 +58,4 @@ Parser 只認識 `\x1B[{數字;數字}{字母}` 格式的標準 CSI，其他全�
 
 - 想理解測試資料代表性 → [Test data 代表性](/testing/05-test-design-judgment/test-data-representativeness/)
 - 想建 protocol integration test 用真實 ttyd 輸出 → [模組三：協議整合測試](/testing/03-protocol-integration-test/)
-- 類似案例（mock 遮蔽） → [T.C1 WS frame type mock 遮蔽](/testing/cases/ws-text-binary-frame-mock-blindspot/)
+- 類似案例（mock 遮蔽） → [WS frame type mock 遮蔽](/testing/cases/ws-text-binary-frame-mock-blindspot/)

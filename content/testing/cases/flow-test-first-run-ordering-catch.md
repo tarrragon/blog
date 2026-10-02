@@ -6,11 +6,11 @@ weight: 6
 tags: ["testing", "case-study", "flow-test", "fake-backend", "ordering"]
 ---
 
-修復跨服務互動 bug 後，新建的[流程測試](/testing/knowledge-cards/flow-test/)首跑就抓到修復自己引入的順序錯誤——單元測試綠燈、流程測試紅燈，紅燈才是對的。單元測試為了聚焦而繞過的路徑，正是跨服務互動 bug 藏身的地方。前情：[T.C5](/testing/cases/stale-reference-stub-blindspot/) 的修復合入後觸發了此問題。
+修復跨服務互動 bug 後，新建的[流程測試](/testing/knowledge-cards/flow-test/)首跑就抓到修復自己引入的順序錯誤——單元測試綠燈、流程測試紅燈，紅燈才是對的。單元測試為了聚焦而繞過的路徑，正是跨服務互動 bug 藏身的地方。前情：[凍結參照失效被 stub 遮蔽 — 測試全綠、功能全壞](/testing/cases/stale-reference-stub-blindspot/) 的修復合入後觸發了此問題。
 
 ## 觀察
 
-這個系統的前端以輪詢讀取後端的事件流，把新事件轉成列印輸出；後端的「合併兩張單據」操作會重建明細、更換全部明細 id。[T.C5](/testing/cases/stale-reference-stub-blindspot/) 的修復針對後者：合併後前端要「立即刷新一次快照」，讓後續操作拿到重建後的新明細 id。修復者把刷新放在「同步單據列表」之前。
+這個系統的前端以輪詢讀取後端的事件流，把新事件轉成列印輸出；後端的「合併兩張單據」操作會重建明細、更換全部明細 id。[凍結參照失效被 stub 遮蔽 — 測試全綠、功能全壞](/testing/cases/stale-reference-stub-blindspot/) 的修復針對後者：合併後前端要「立即刷新一次快照」，讓後續操作拿到重建後的新明細 id。修復者把刷新放在「同步單據列表」之前。
 
 這個順序踩中輪詢的兩道機制。第一道是過濾：多店環境下，後端事件流混有其他店的資料，前端以本地單據列表為準濾掉非本店的部分。合併後的瞬間，本地列表還停在舊單據——新單據的資料被**整批濾掉**，刷新等於白做。第二道是差異比對：輪詢以上一輪結果為基準，只把新增的部分觸發輸出；空結果覆寫了這個基準，下一輪輪詢會把整張單據誤判為新增而重複觸發列印。
 
@@ -39,4 +39,4 @@ tags: ["testing", "case-study", "flow-test", "fake-backend", "ordering"]
 
 - 流程測試的地基怎麼搭 → [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
 - 被繞過的鏈路屬於哪一層職責 → [三層定義與職責表](/testing/01-test-strategy-layers/three-layer-definition/)
-- 前一集：bug 為什麼漏掉 → [T.C5 凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)
+- 前一集：bug 為什麼漏掉 → [凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)

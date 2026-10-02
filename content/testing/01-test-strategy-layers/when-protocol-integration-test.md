@@ -20,7 +20,7 @@ WebSocket 協議的複雜度較高：連線握手、frame type（text / binary /
 
 判斷問題：**API 簽名是否隱藏了協議層的行為分支？** 如果 API 用 `dynamic`、`Object`、`Any` 等寬泛型別接受輸入，而協議層對不同輸入有不同處理方式，這就是需要 protocol integration test 的訊號。
 
-一個遠端終端機 app 的 `sink.add(dynamic)` 就是這個模式 — API 簽名不區分 `String` 和 `Uint8List`，但協議層對兩者產生不同的 frame type（[T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)）。
+一個遠端終端機 app 的 `sink.add(dynamic)` 就是這個模式 — API 簽名不區分 `String` 和 `Uint8List`，但協議層對兩者產生不同的 frame type（[WebSocket text/binary frame 被 FakeWebSocketChannel 遮蔽](/testing/cases/ws-text-binary-frame-mock-blindspot/)）。
 
 ### 維度二：Mock 寬鬆度
 
@@ -30,7 +30,7 @@ Mock 通常是「最小可用」的實作 — 能讓 test 通過就好。這意�
 
 寬鬆本身不是問題，但寬鬆程度和真實服務的差距決定了 mock 遮蔽的風險大小。判斷問題：**Mock 跳過了真實服務的哪些步驟？每個被跳過的步驟在業務上是否關鍵？**
 
-該 app 的 `FakeWebSocketChannel` 跳過了 auth handshake — `ready` 立即完成不需認證。Auth handshake 在業務上是關鍵步驟（沒有認證，ttyd 不推送資料），mock 跳過這一步讓「功能根本沒實作」變得不可見（[T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/)）。
+該 app 的 `FakeWebSocketChannel` 跳過了 auth handshake — `ready` 立即完成不需認證。Auth handshake 在業務上是關鍵步驟（沒有認證，ttyd 不推送資料），mock 跳過這一步讓「功能根本沒實作」變得不可見（[Auth handshake 邏輯缺失被 FakeWebSocketChannel 遮蔽](/testing/cases/auth-handshake-missing-mock-blindspot/)）。
 
 逐項列出 mock 跳過的步驟是一個實用的 audit 方法。寫出「`FakeWebSocketChannel` 和 `IOWebSocketChannel` 的行為差異清單」，每一個差異點就是潛在的遮蔽風險。Bug 源自「對後端行為的假設錯誤」時，協議層測試接不到——協議互動正確、假設本身錯了——出口是[語意級假後端](/testing/01-test-strategy-layers/semantic-fake-backend/)配流程測試。
 

@@ -26,7 +26,7 @@ htmx 一系的 essays 把復興論證落到具體工程性質：業務狀態直�
 
 ## 反方的收益假設拆解
 
-Pragmatic 派的拆解針對的是收益假設而非名詞；本文把 C8 記錄的論據重組為三條假設逐一對應（重組是本文整理、原文論據見 [Ben Morris：不做 hypermedia 的 pragmatic REST（反例對照）](/backend/11-api-design/cases/rest-morris-pragmatic-no-hateoas/)、對照組）：解耦（decoupling）— client 開發者實務上讀文件直打 endpoint、不跟連結走；可發現性（discoverability）— hypermedia 格式無共識、「不會出現資料版的瀏覽器這種 generic REST client」；可演化性（evolvability）— hypermedia 傳遞不了資料語意、文件仍不可免。三條拆解共享同一個前提：消費者是程式、不是人 — 把這個前提換掉（消費者是瀏覽器後面的人）、三條拆解全部失效、這正是 htmx 一系在 web UI 場景成立的原因。
+Pragmatic 派的拆解針對的是收益假設而非名詞；本文把 [Ben Morris](/backend/11-api-design/cases/rest-morris-pragmatic-no-hateoas/) 記錄的論據重組為三條假設逐一對應（重組是本文整理、原文論據見 [Ben Morris：不做 hypermedia 的 pragmatic REST（反例對照）](/backend/11-api-design/cases/rest-morris-pragmatic-no-hateoas/)、對照組）：解耦（decoupling）— client 開發者實務上讀文件直打 endpoint、不跟連結走；可發現性（discoverability）— hypermedia 格式無共識、「不會出現資料版的瀏覽器這種 generic REST client」；可演化性（evolvability）— hypermedia 傳遞不了資料語意、文件仍不可免。三條拆解共享同一個前提：消費者是程式、不是人 — 把這個前提換掉（消費者是瀏覽器後面的人）、三條拆解全部失效、這正是 htmx 一系在 web UI 場景成立的原因。
 
 ## 適用邊界
 

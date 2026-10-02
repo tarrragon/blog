@@ -14,7 +14,7 @@ Shopify webhooks 官方 best practices 明文：ordering 不保證（「Shopify 
 
 ## 判讀
 
-第二個獨立 vendor 佐證「ordering 不保證加 consumer 用指定 header 去重」是 webhook 通則、而非 Stripe 特例（見 C60）。Shopify 甚至更弱 —— 連投遞本身都不保證、app 要另備 reconciliation 或 polling 補漏。這把「webhook 是盡力而為、不是可靠佇列」講得最白：要不漏事件、consumer 得在 webhook 之外自備對帳。
+第二個獨立 vendor 佐證「ordering 不保證加 consumer 用指定 header 去重」是 webhook 通則、而非 Stripe 特例（見 [Stripe webhooks](/backend/11-api-design/cases/webhook-stripe-delivery-contract/)）。Shopify 甚至更弱 —— 連投遞本身都不保證、app 要另備 reconciliation 或 polling 補漏。這把「webhook 是盡力而為、不是可靠佇列」講得最白：要不漏事件、consumer 得在 webhook 之外自備對帳。
 
 ## 對應大綱
 

@@ -37,4 +37,4 @@ app_tunnel Flutter app 連接 ttyd WebSocket 終端機。`ConnectionManager.send
 
 - 想寫 protocol integration test → [模組三：協議整合測試](/testing/03-protocol-integration-test/)
 - 想理解 mock 遮蔽的系統性機制 → [Mock 遮蔽機制分析](/testing/01-test-strategy-layers/mock-masking-mechanism/)
-- 類似案例（auth handshake） → [T.C2 Auth handshake 缺失](/testing/cases/auth-handshake-missing-mock-blindspot/)
+- 類似案例（auth handshake） → [Auth handshake 缺失](/testing/cases/auth-handshake-missing-mock-blindspot/)

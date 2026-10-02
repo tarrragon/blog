@@ -30,4 +30,4 @@ Google SRE Book「Addressing Cascading Failures」章：retry 放大例 —— 1
 
 ## 二手來源與狀態標注
 
-本章未討論 circuit breaker（取回內容確認）—— circuit breaker 段以 C71（Slack）承接。
+本章未討論 circuit breaker（取回內容確認）—— circuit breaker 段以 [Slack 2021-01-04 事故](/backend/11-api-design/cases/retry-slack-2021-recovery/)承接。

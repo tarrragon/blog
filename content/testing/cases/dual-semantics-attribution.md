@@ -40,4 +40,4 @@ tags: ["testing", "case-study", "attribution", "fake-backend", "real-backend"]
 
 - 真實後端驗證測試的工程化 → [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)
 - 假後端的行為從哪裡來 → [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
-- 同場景的另一種畫面殘留 → [T.C6 流程測試首跑抓到順序 bug](/testing/cases/flow-test-first-run-ordering-catch/)
+- 同場景的另一種畫面殘留 → [流程測試首跑抓到順序 bug](/testing/cases/flow-test-first-run-ordering-catch/)

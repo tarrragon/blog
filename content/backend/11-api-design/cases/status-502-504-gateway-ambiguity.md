@@ -14,7 +14,7 @@ RFC 9110 §15.6.3：「The 502 (Bad Gateway) status code indicates that the serv
 
 ## 判讀
 
-（此段為推導、非 spec 明文。）spec 只定義 gateway 的觀察（沒收到有效或及時回應）、不定義上游的執行狀態。504 尤其如此：connect timeout（請求沒送到、retry 安全）跟 read timeout（請求已執行、對非冪等操作 retry 會重複執行）在 consumer 端拿到同一個 504 —— 兩種情況的 retry 安全性相反、status code 層無法區分。這是 status 表達力的第三種邊界形態：不是裝不下多個結果（C64）、也不是裝不下時間軸（C66）、是裝不下不確定性。緩解手段（idempotency key、上游去重）全在 status code 之外。
+（此段為推導、非 spec 明文。）spec 只定義 gateway 的觀察（沒收到有效或及時回應）、不定義上游的執行狀態。504 尤其如此：connect timeout（請求沒送到、retry 安全）跟 read timeout（請求已執行、對非冪等操作 retry 會重複執行）在 consumer 端拿到同一個 504 —— 兩種情況的 retry 安全性相反、status code 層無法區分。這是 status 表達力的第三種邊界形態：不是裝不下多個結果（[RFC 4918 207 Multi-Status](/backend/11-api-design/cases/status-207-multistatus-rfc4918/)）、也不是裝不下時間軸（[RFC 9110 202 Accepted](/backend/11-api-design/cases/status-202-noncommittal-rfc9110/)）、是裝不下不確定性。緩解手段（idempotency key、上游去重）全在 status code 之外。
 
 ## 對應大綱
 

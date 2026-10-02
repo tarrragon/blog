@@ -21,7 +21,7 @@ Richardson 成熟度模型（RMM）是一把定位尺、而非一張認證考卷
 
 ## 兩個立場事實
 
-用 RMM 之前要知道它在爭論光譜上的位置。其一、Fielding 的立場被 Fowler 記錄在案：只有 Level 3 才算 REST — 依原義、RMM 的前三級都是「還不是 REST」的程度差異、把 Level 2 說成「基本 REST」與原始定義者的立場直接牴觸（把 REST 這個詞用對的判斷標準見 [REST 流派總覽](/backend/11-api-design/styles/rest/)）。其二、業界實務多停在 Level 2 — 這是廣泛的觀察、C3 案例的判讀層也如此標注、Fowler 原文沒有這個統計主張、引用時分清楚。
+用 RMM 之前要知道它在爭論光譜上的位置。其一、Fielding 的立場被 Fowler 記錄在案：只有 Level 3 才算 REST — 依原義、RMM 的前三級都是「還不是 REST」的程度差異、把 Level 2 說成「基本 REST」與原始定義者的立場直接牴觸（把 REST 這個詞用對的判斷標準見 [REST 流派總覽](/backend/11-api-design/styles/rest/)）。其二、業界實務多停在 Level 2 — 這是廣泛的觀察、[Richardson 成熟度模型](/backend/11-api-design/cases/rest-fowler-richardson-maturity-model/) 案例的判讀層也如此標注、Fowler 原文沒有這個統計主張、引用時分清楚。
 
 ## 誤用一：當合規檢查表
 

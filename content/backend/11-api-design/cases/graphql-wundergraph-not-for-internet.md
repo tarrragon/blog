@@ -14,7 +14,7 @@ tags: ["backend", "api-design", "case-study", "graphql"]
 
 ## 判讀
 
-「GraphQL 當 server-side 查詢語言、對外只開 persisted operations」是介於全開與撤退之間的第三條路、公開 API 進退章需要這個中間選項。來源是賣此方案的 vendor、立場要標明；但攻擊面描述與 Bessey（C22）、HackerOne（C25）獨立互證。
+「GraphQL 當 server-side 查詢語言、對外只開 persisted operations」是介於全開與撤退之間的第三條路、公開 API 進退章需要這個中間選項。來源是賣此方案的 vendor、立場要標明；但攻擊面描述與 Bessey（[Matt Bessey](/backend/11-api-design/cases/graphql-bessey-retreat/)）、HackerOne獨立互證。
 
 ## 對應大綱
 

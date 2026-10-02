@@ -36,7 +36,7 @@ tags: ["testing", "test-provenance", "ai-generated-code", "test-oracle", "tdd"]
 
 最後兩類正是 agent 產出最容易出錯的地方，也是同源測試的系統性盲區。單據合併後明細 id 全部重建（下游持有舊 id 的取消與追加操作從此無聲失效，而畫面看起來一切正常）、危險判定的先後順序、幣別換算的方向、狀態機少一條轉換——這些都是需求語意層的問題，在實作與測試共用同一個誤解時全部通過。
 
-這個盲區不會因為測試變多而縮小。[T.C10](/testing/cases/acceptance-passes-eight-different-programs/) 裡八份程式的單元測試規模從零到 206 個範例，而 25 條驗收條件對危險判定順序一律沉默——規模成長沒有把任何一份帶進那個維度，因為斷言全部從同一份對需求的理解長出來。
+這個盲區不會因為測試變多而縮小。[同一組驗收通過八個不同的程式 — 關卡放行的等價類有多大](/testing/cases/acceptance-passes-eight-different-programs/) 裡八份程式的單元測試規模從零到 206 個範例，而 25 條驗收條件對危險判定順序一律沉默——規模成長沒有把任何一份帶進那個維度，因為斷言全部從同一份對需求的理解長出來。
 
 本節的三種形態與四個變數出自機制推導；用來對照的實驗數字只有一份來源，[本模組引用的對照實驗](/testing/06-agent-authored-code/shared-experiment-scope/)交代了它支持與不支持哪些宣稱。
 
@@ -92,5 +92,5 @@ tags: ["testing", "test-provenance", "ai-generated-code", "test-oracle", "tdd"]
 - 驗收條件要寫到什麼顆粒度才擋得住語意層錯誤 → [驗收條件的等價類](/testing/06-agent-authored-code/acceptance-equivalence-class/)
 - 有了獨立判斷標準之後怎麼量測試的偵測能力 → [品質閘門的更替](/testing/06-agent-authored-code/coverage-to-mutation-gate/)
 - 這條性質的術語卡 → [Test Provenance](/testing/knowledge-cards/test-provenance/)
-- 由測試自己餵資料造成的同型盲區 → [Stub](/testing/knowledge-cards/stub/) 與 [T.C5](/testing/cases/stale-reference-stub-blindspot/)
+- 由測試自己餵資料造成的同型盲區 → [Stub](/testing/knowledge-cards/stub/) 與 [凍結參照失效被 stub 遮蔽 — 測試全綠、功能全壞](/testing/cases/stale-reference-stub-blindspot/)
 - 測試邊界該畫在模組還是類別 → [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)

@@ -35,4 +35,4 @@ tags: ["ux-design", "case-study", "interaction-feedback", "toggle", "label-seman
 ## 下一步路由
 
 - 按鈕各狀態傳達的系統訊息 → [按鈕狀態設計](/ux-design/06-interaction-feedback/button-state-design/)
-- 書卡動作列的可點性歧義 → [U.C18 狀態圖示被當成按鈕](/ux-design/cases/status-icon-mistaken-for-button/)
+- 書卡動作列的可點性歧義 → [狀態圖示被當成按鈕](/ux-design/cases/status-icon-mistaken-for-button/)

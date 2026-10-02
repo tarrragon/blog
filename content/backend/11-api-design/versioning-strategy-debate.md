@@ -35,17 +35,17 @@ URI 版本把帳單開給消費者與服務端的維運面：消費者付一次�
 
 它換到的三件事在設計層看不見、在營運層很硬。**版本邊界就是部署邊界**：`/v1` 可以凍結、獨立部署、獨立擴縮、獨立 rollback，舊版是一份不再變動的程式碼；轉換層路線的舊版則是活的，每次部署都可能動到轉換鏈裡的任何一環，而爆炸半徑是全體 pin 住舊版的帳號。**URI 就是 cache key**：邊緣快取天然按版本分流，不需要 `Vary`；自訂 header 版本要 CDN 支援對該 header 做 `Vary`，而綁帳號的 date pin 基本上放棄邊緣快取。**分版的可觀測性是免費的**：path prefix 讓 per-version 的 metrics、log 與配額直接成立，header 版本要另外埋，而漏埋是靜默的。三項合起來，URI 版本在「大量匿名讀取、CDN 前置」的平台上未必是次優解。
 
-日期 pin 把帳單開給服務端的基礎設施投資。Stripe 內部用 version change module 封裝每個 breaking change，response 依時間反向流過模組鏈、轉換成該帳號 pin 住版本的形狀；截至 2017 年累積約 100 個 backwards-incompatible 升級，仍維持與 2011 年以來每一版相容（C10）。這是把相容性從路由層搬進轉換層的做法，案例本身的判讀說得很直接：版本策略是基礎設施投資，而非命名慣例。代價相應清楚 —— 每個 breaking change 都要寫出一個可執行的轉換模組，轉換鏈的長度隨時間單調成長，且測試矩陣跟著長。
+日期 pin 把帳單開給服務端的基礎設施投資。Stripe 內部用 version change module 封裝每個 breaking change，response 依時間反向流過模組鏈、轉換成該帳號 pin 住版本的形狀；截至 2017 年累積約 100 個 backwards-incompatible 升級，仍維持與 2011 年以來每一版相容（[Stripe](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)）。這是把相容性從路由層搬進轉換層的做法，案例本身的判讀說得很直接：版本策略是基礎設施投資，而非命名慣例。代價相應清楚 —— 每個 breaking change 都要寫出一個可執行的轉換模組，轉換鏈的長度隨時間單調成長，且測試矩陣跟著長。
 
-header 版本介於兩者之間：服務端仍要為每個宣告過的版本維持行為，但版本切片是顯式的、有限的，而非像日期 pin 那樣連續。GitHub 選這條的同時給了承諾結構 —— 新版釋出後舊版至少支援 24 個月，公告明講理由是「不能也不期待 integrator 隨我們調整 API 而不斷更新整合」（C12）。
+header 版本介於兩者之間：服務端仍要為每個宣告過的版本維持行為，但版本切片是顯式的、有限的，而非像日期 pin 那樣連續。GitHub 選這條的同時給了承諾結構 —— 新版釋出後舊版至少支援 24 個月，公告明講理由是「不能也不期待 integrator 隨我們調整 API 而不斷更新整合」。
 
 不做版本的帳單開給紀律。GraphQL 官方教學把 versionless 講成 common practice，明文的機制是兩件事：新能力透過新 type 或既有 type 的新 field 加入、type system 中每個 field 預設 nullable（見 [GraphQL 官方：versionless API 與 nullable-by-default](/backend/11-api-design/cases/graphql-versionless-evolution/)）。案例判讀把它歸納成三個紀律：只加不改、舊欄位以 deprecation 標注而非移除、欄位保持 nullable 預設；並把成本結構點明——版本管理的工作換了位置，沒有消失。nullable-by-default 尤其值得單獨理解 —— 它讓後端局部故障與細粒度授權拒絕落在單一欄位上，而非炸掉整個 response，代價是每個消費者都得在每個欄位上處理空值。
 
 ## 不做版本的成立前提是消費者能在執行期習得控制項
 
-Fielding 立場的力道來自它的完整形式：hypermedia as the engine of application state 是 REST 的約束而非選配，控制項應在執行期動態習得（C14）。這句話的操作意義是——client 當下能做哪些操作，由伺服器在回應裡附的連結告訴它，而不是寫死在 client 的程式碼裡。在這個前提下，服務端改變可用操作時，client 讀到的是新的控制項集合，行為跟著變 —— 版本號確實多餘。
+Fielding 立場的力道來自它的完整形式：hypermedia as the engine of application state 是 REST 的約束而非選配，控制項應在執行期動態習得。這句話的操作意義是——client 當下能做哪些操作，由伺服器在回應裡附的連結告訴它，而不是寫死在 client 的程式碼裡。在這個前提下，服務端改變可用操作時，client 讀到的是新的控制項集合，行為跟著變 —— 版本號確實多餘。
 
-前提在多數 JSON-over-HTTP API 並不成立，這正是實務路線與學院立場分歧的根源（C14 判讀）。硬編碼路徑與欄位名的 client 拿不到「執行期習得」這個能力，服務端一改就斷。判斷自家 client 落在哪一邊有個直接的問法：把某個端點的 URL 換掉、只在既有回應裡加一個指向新位置的控制項，現有 client 會跟著走嗎。
+前提在多數 JSON-over-HTTP API 並不成立，這正是實務路線與學院立場分歧的根源（[Fielding](/backend/11-api-design/cases/versioning-fielding-no-versioning/) 案例的判讀）。硬編碼路徑與欄位名的 client 拿不到「執行期習得」這個能力，服務端一改就斷。判斷自家 client 落在哪一邊有個直接的問法：把某個端點的 URL 換掉、只在既有回應裡加一個指向新位置的控制項，現有 client 會跟著走嗎。
 
 GraphQL 的 versionless 是這個方向的工程化實例，且把前提換成了較弱的版本：client 不需要動態習得控制項，只需要顯式宣告自己要哪些欄位，服務端據此判斷加欄位是否安全。代價是 versionless 依賴的那三個紀律，而紀律的執行落在組織而非機制上。GraphQL 工具商 WunderGraph 的批評正指這一點 —— versioning 的組織問題 GraphQL 沒解（見 [WunderGraph：GraphQL 不該直接暴露在公網](/backend/11-api-design/cases/graphql-wundergraph-not-for-internet/)；該公司販售的正是 GraphQL 的替代方案、立場需納入判斷，此處引用的是其論證而非量化事實）。schema 保持相容，跟「還在用三年前那批欄位的內部團隊什麼時候能被停止支援」是兩個問題，後者不隨 versionless 消失。
 
@@ -53,7 +53,7 @@ GraphQL 的 versionless 是這個方向的工程化實例，且把前提換成�
 
 各派決定的是「版本這件事長什麼樣」，而消費者實際感受到的是另一件事：舊語意什麼時候真的停止供應。這一題各派都躲不掉，且答案的明文程度比流派選擇更能預測退場當天的災情。
 
-GitHub 的 24 個月是把它寫成契約的形態（C12，限 REST API、GraphQL 與 webhooks 除外）：支援窗口從隱性期待變成 SLA 式明文，消費者可以據此排遷移計畫。Facebook Graph API v1.0 的退場是同一題答錯的形態 —— 給了一年遷移期，到期後未遷移的請求被靜默改以 v2.0 語意處理，而 v2.0 移除了 friends 資料等大範圍權限（見 [Facebook Graph API v1.0 退場：靜默語意切換（反例）](/backend/11-api-design/cases/versioning-facebook-graph-v1-forced-upgrade/)，反例；損壞影響的描述來自二手轉述）。靜默切換的危險在於 client 拿到的是形狀不同的資料而非明確錯誤，故障因此發生在業務邏輯深處、而非認證層。
+GitHub 的 24 個月是把它寫成契約的形態（[GitHub](/backend/11-api-design/cases/versioning-github-calendar-versioning/)，限 REST API、GraphQL 與 webhooks 除外）：支援窗口從隱性期待變成 SLA 式明文，消費者可以據此排遷移計畫。Facebook Graph API v1.0 的退場是同一題答錯的形態 —— 給了一年遷移期，到期後未遷移的請求被靜默改以 v2.0 語意處理，而 v2.0 移除了 friends 資料等大範圍權限（見 [Facebook Graph API v1.0 退場：靜默語意切換（反例）](/backend/11-api-design/cases/versioning-facebook-graph-v1-forced-upgrade/)，反例；損壞影響的描述來自二手轉述）。靜默切換的危險在於 client 拿到的是形狀不同的資料而非明確錯誤，故障因此發生在業務邏輯深處、而非認證層。
 
 不做版本的一派同樣要回答這題，而它在兩個支派下的形式不同（以下為機制推導，未見公開規範明文處理）。GraphQL 這一支的形式是 deprecation 標注掛了多久才真的移除：標注本身不帶時限，時限由各服務自己承諾 —— 這正是 WunderGraph 說的組織問題落地的位置。純 hypermedia 那一支連標注都沒有，問題移到控制項與表徵上：某個 link relation 停止出現之後，還在依賴它的 client 有多久的適應期、media type 的相容承諾維持到哪一版。兩支都要給答案，只是答案掛在不同的表面上。
 

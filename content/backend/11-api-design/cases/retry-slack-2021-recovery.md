@@ -30,4 +30,4 @@ retry 的雙面性：底層網路恢復後、正是 retry 加 circuit breaking �
 
 ## 二手來源與狀態標注
 
-事故主因是網路層（TGW）而非 API 契約層 —— 引用定位為「retry / circuit breaker 在復原期的角色」、不包裝成 API retry 風暴主案例（主案例是 C70）。
+事故主因是網路層（TGW）而非 API 契約層 —— 引用定位為「retry / circuit breaker 在復原期的角色」、不包裝成 API retry 風暴主案例（主案例是 [AWS DynamoDB 2015 事故](/backend/11-api-design/cases/retry-dynamodb-2015-storm/)）。

@@ -6,7 +6,7 @@ weight: 52
 tags: ["backend", "api-design", "case-study", "standards"]
 ---
 
-這個案例的核心責任是記錄 API 描述標準的成功轉軌路徑、跟 OData（C51）形成直接對照。
+這個案例的核心責任是記錄 API 描述標準的成功轉軌路徑、跟 OData形成直接對照。
 
 ## 觀察
 

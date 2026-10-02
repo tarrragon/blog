@@ -19,11 +19,11 @@ tags: ["ux-design", "anti-pattern", "happy-path", "state-machine", "navigation"]
 - 遇到回應異常想從頭重新連線
 - 覺得功能不符需求想回到首頁看其他選項
 
-一個遠端終端機 app 的連線畫面五個狀態都沒有退出路徑。connected 狀態有打字和特殊鍵操作，但沒有「離開」操作；error 和 disconnected 有重連按鈕，但沒有「放棄重連、回首頁」的選項。開發者設計 error 狀態時的隱性假設是「使用者遇到錯誤會想重試」— 沒考慮「使用者可能想放棄」（[U.C1](/ux-design/cases/five-states-zero-exits/)）。
+一個遠端終端機 app 的連線畫面五個狀態都沒有退出路徑。connected 狀態有打字和特殊鍵操作，但沒有「離開」操作；error 和 disconnected 有重連按鈕，但沒有「放棄重連、回首頁」的選項。開發者設計 error 狀態時的隱性假設是「使用者遇到錯誤會想重試」— 沒考慮「使用者可能想放棄」（[Terminal 畫面五個狀態零個退出路徑](/ux-design/cases/five-states-zero-exits/)）。
 
 ## Happy path 偏差的擴散
 
-Happy path 偏差不只發生在單一畫面，也不只發生在導航流。首頁只放 Connect Terminal 按鈕、沒放配對入口，是首頁層級的 happy path 偏差 — 假設使用者已經完成配對、只需要連線（[U.C4](/ux-design/cases/missing-enrollment-entry-point/)）。資料流的 happy path 同樣常見：畫面只設計「進入時載入」，沒設計「底層資料在畫面存活期間變更時如何得知」，使用者加了資料返回卻看到舊值（[U.C6](/ux-design/cases/back-navigation-stale-statistics/)）。
+Happy path 偏差不只發生在單一畫面，也不只發生在導航流。首頁只放 Connect Terminal 按鈕、沒放配對入口，是首頁層級的 happy path 偏差 — 假設使用者已經完成配對、只需要連線（[首頁缺配對入口按鈕、導航流未完整列出](/ux-design/cases/missing-enrollment-entry-point/)）。資料流的 happy path 同樣常見：畫面只設計「進入時載入」，沒設計「底層資料在畫面存活期間變更時如何得知」，使用者加了資料返回卻看到舊值（[加書後返回不刷新統計 — 只設計了進入時載入](/ux-design/cases/back-navigation-stale-statistics/)）。
 
 操作盤點的「前端引導」只描述顯示不描述操作和退出，是設計流程層級的 happy path 偏差 — 關注「順利時使用者看到什麼」，忽略「不順利時使用者能做什麼」。
 

@@ -34,4 +34,4 @@ tags: ["ux-design", "case-study", "error-recovery", "chrome-extension", "web", "
 
 - 錯誤訊息的診斷與行動職責 → [錯誤訊息撰寫原則](/ux-design/04-error-recovery/error-message-principles/)
 - 重試行動的設計 → [Retry 機制 UX](/ux-design/04-error-recovery/retry-mechanism-ux/)
-- 對照案例（行動缺失 — 只有重試沒有退路）→ [U.C1 五個狀態零個退出路徑](/ux-design/cases/five-states-zero-exits/)
+- 對照案例（行動缺失 — 只有重試沒有退路）→ [五個狀態零個退出路徑](/ux-design/cases/five-states-zero-exits/)

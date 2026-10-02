@@ -34,4 +34,4 @@ tags: ["ux-design", "case-study", "navigation", "chrome-extension", "web", "spa"
 
 - Deep link 的 URL 結構設計 → [Deep link 設計](/ux-design/05-navigation-patterns/deep-link-design/)
 - 導航模式與宣告式路由 → [Mobile 導航模式分類](/ux-design/05-navigation-patterns/mobile-navigation-taxonomy/)
-- 類似案例（外部頁面結構是輸入規格 — 提取器對 lazy-load 的假設）→ [U.C11 抓到 96/928 本就顯示完成](/ux-design/cases/lazy-load-premature-completion/)
+- 類似案例（外部頁面結構是輸入規格 — 提取器對 lazy-load 的假設）→ [抓到 96/928 本就顯示完成](/ux-design/cases/lazy-load-premature-completion/)

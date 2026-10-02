@@ -18,7 +18,7 @@ AIP-193 把「provider 暴露多少」拆成三個受眾層：機器（ErrorInfo
 
 ## 對應大綱
 
-11.11 錯誤鏈傳播章「錯誤契約的三層受眾」「provider 該暴露什麼」段（與 C77 OWASP 對撞成中間路線）。
+11.11 錯誤鏈傳播章「錯誤契約的三層受眾」「provider 該暴露什麼」段（與 [OWASP error handling](/backend/11-api-design/cases/errorchain-owasp-error-handling/) 對撞成中間路線）。
 
 ## 下一步路由
 

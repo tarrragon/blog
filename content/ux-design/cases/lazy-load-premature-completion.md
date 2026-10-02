@@ -34,4 +34,4 @@ tags: ["ux-design", "case-study", "interaction-feedback", "chrome-extension", "w
 
 - 進度指示與假進度反模式 → [時間感知與回應策略](/ux-design/06-interaction-feedback/response-time-strategy/)
 - 結果通知的呈現（部分成功的摘要 + 明細）→ [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
-- 類似案例（結果通知鏈路錯誤）→ [U.C9 提取成功卻誤報失敗](/ux-design/cases/async-listener-false-failure/)
+- 類似案例（結果通知鏈路錯誤）→ [提取成功卻誤報失敗](/ux-design/cases/async-listener-false-failure/)

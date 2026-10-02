@@ -19,7 +19,7 @@ Test 依賴特定的時間條件 — timeout、delay、animation duration。系�
 - `await Future.delayed(Duration(seconds: 2))` + assertion — 如果操作在 2 秒內完成，test 通過；如果 CI 機器負載高導致操作超過 2 秒，test 失敗
 - `expect(stopwatch.elapsed, lessThan(Duration(seconds: 1)))` — 效能斷言在不同機器上結果不同
 
-處理策略：用事件驅動代替 timeout。等待 `stream.first` 代替 `delay(2s) + check`；用 completion signal 代替固定等待時間。如果必須用 timeout，設定寬裕的上限（10x 預期時間）而非精確的預期值。[T.C8 fire-and-forget 編排的測試競態](/testing/cases/fire-and-forget-test-race/) 是「單跑綠、合跑紅」的實例——被測編排未等待背景收尾，斷言與它賽跑。
+處理策略：用事件驅動代替 timeout。等待 `stream.first` 代替 `delay(2s) + check`；用 completion signal 代替固定等待時間。如果必須用 timeout，設定寬裕的上限（10x 預期時間）而非精確的預期值。[fire-and-forget 編排的測試競態](/testing/cases/fire-and-forget-test-race/) 是「單跑綠、合跑紅」的實例——被測編排未等待背景收尾，斷言與它賽跑。
 
 ### 環境差異
 

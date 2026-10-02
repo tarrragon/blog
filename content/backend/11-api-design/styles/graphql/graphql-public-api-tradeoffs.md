@@ -22,9 +22,9 @@ GitHub 的十年後狀態記錄在 [GitHub：REST 與 GraphQL 雙軌並行的十
 
 ## 撤退：兩類動機、兩個教訓
 
-撤退案例分兩類、動機幾乎正交。執行成本類（[Matt Bessey：六年 GraphQL 老手的撤退清單（反例）](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例）：六年使用者列出的代價全在執行期與安全面 — 欄位級授權、成本不可預測、解析層攻擊面、防禦性 dataloader；撤退條件句是「控制得了 client、就不需要 GraphQL 的彈性」（C22 判讀核心句）。開發體驗類（[Echobind：從 GraphQL 撤到 tRPC 的量化帳（反例）](/backend/11-api-design/cases/graphql-echobind-trpc-retreat/)、反例）：同一資料形狀在五層重複宣告、三層 codegen 產出 8,200 行型別檔拖垮 IDE、遷移到 tRPC 後淨減 1,608 行；作者自列的前提是全 TypeScript 同倉 — schema 作為跨團隊契約的價值、在單團隊同構技術棧下變成純開銷。
+撤退案例分兩類、動機幾乎正交。執行成本類（[Matt Bessey：六年 GraphQL 老手的撤退清單（反例）](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例）：六年使用者列出的代價全在執行期與安全面 — 欄位級授權、成本不可預測、解析層攻擊面、防禦性 dataloader；撤退條件句是「控制得了 client、就不需要 GraphQL 的彈性」（[Matt Bessey](/backend/11-api-design/cases/graphql-bessey-retreat/) 案例的判讀核心句）。開發體驗類（[Echobind：從 GraphQL 撤到 tRPC 的量化帳（反例）](/backend/11-api-design/cases/graphql-echobind-trpc-retreat/)、反例）：同一資料形狀在五層重複宣告、三層 codegen 產出 8,200 行型別檔拖垮 IDE、遷移到 tRPC 後淨減 1,608 行；作者自列的前提是全 TypeScript 同倉 — schema 作為跨團隊契約的價值、在單團隊同構技術棧下變成純開銷。
 
-兩類撤退指向同一條邊界的兩側：GraphQL 的 schema 中介層、價值在「跨團隊 / 跨 client 的契約協調」— 消費者異質且不受控、彈性有買家、中介層成本值得；消費者單一且同構、彈性沒有買家、中介層是稅。C23 的 tRPC 面向（型別共享的前提與代價）主寫在 [tRPC 型別共享](/backend/11-api-design/styles/rpc-revival/rpc-revival-trpc-type-sharing/)。
+兩類撤退指向同一條邊界的兩側：GraphQL 的 schema 中介層、價值在「跨團隊 / 跨 client 的契約協調」— 消費者異質且不受控、彈性有買家、中介層成本值得；消費者單一且同構、彈性沒有買家、中介層是稅。[Echobind](/backend/11-api-design/cases/graphql-echobind-trpc-retreat/) 的 tRPC 面向（型別共享的前提與代價）主寫在 [tRPC 型別共享](/backend/11-api-design/styles/rpc-revival/rpc-revival-trpc-type-sharing/)。
 
 ## 中間路線與適用邊界
 

@@ -14,7 +14,7 @@ RFC 6455 定義 WebSocket 為「two-way communication channel where each side ca
 
 ## 判讀
 
-WebSocket 給雙向管線、不給保證：投遞保證、ack、重連、斷點續傳全都是應用層自己要蓋的。這跟 SSE 把重連寫進協議（見 C55）是兩種相反的承諾形狀 —— SSE 內建重連、換來單向；WebSocket 給雙向、換來零內建可靠性。協議層的「沉默」是論點本身：引用時陳述為「協議未定義、留給應用層」、而非「明文禁止」。
+WebSocket 給雙向管線、不給保證：投遞保證、ack、重連、斷點續傳全都是應用層自己要蓋的。這跟 SSE 把重連寫進協議（見 [WHATWG SSE spec](/backend/11-api-design/cases/sse-whatwg-spec-reconnection/)）是兩種相反的承諾形狀 —— SSE 內建重連、換來單向；WebSocket 給雙向、換來零內建可靠性。協議層的「沉默」是論點本身：引用時陳述為「協議未定義、留給應用層」、而非「明文禁止」。
 
 ## 對應大綱
 

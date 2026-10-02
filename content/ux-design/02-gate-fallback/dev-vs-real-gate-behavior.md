@@ -14,7 +14,7 @@ tags: ["ux-design", "gate", "simulator", "testing", "development-environment"]
 
 iOS 模擬器不支援 Face ID / Touch ID 硬體。`local_auth` 的 `isAvailable()` 在模擬器上回傳 `false`（`isDeviceSupported()` 為 `true` 但 `getAvailableBiometrics()` 為空），app 跳過認證走預設路徑。
 
-在真機上 `isAvailable()` 回傳 `true`，app 嘗試認證，如果設定了 `biometricOnly: true` 且 Face ID 失敗，使用者被擋住。模擬器上「跳過認證直接使用」的體驗讓開發者以為認證流程沒有問題（[U.C2](/ux-design/cases/biometric-only-no-fallback/)）。
+在真機上 `isAvailable()` 回傳 `true`，app 嘗試認證，如果設定了 `biometricOnly: true` 且 Face ID 失敗，使用者被擋住。模擬器上「跳過認證直接使用」的體驗讓開發者以為認證流程沒有問題（[biometricOnly=true 無密碼 fallback](/ux-design/cases/biometric-only-no-fallback/)）。
 
 ### Debug build 的權限行為不同
 

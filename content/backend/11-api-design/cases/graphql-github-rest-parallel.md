@@ -14,7 +14,7 @@ GitHub 官方文件明言「不需要獨佔使用其中一個 API」；GraphQL �
 
 ## 判讀
 
-2016 年的採用者（C18）在多年後的穩態是雙軌並行、功能覆蓋不對等 — 這是「大平台採用 GraphQL 的長期終點是共存」的最直接證據、支撐「進退」章的結論框架。跟 Shopify 的 all-in 策略（C21）形成兩個極端。
+2016 年的採用者（[GitHub](/backend/11-api-design/cases/graphql-github-adoption/)）在多年後的穩態是雙軌並行、功能覆蓋不對等 — 這是「大平台採用 GraphQL 的長期終點是共存」的最直接證據、支撐「進退」章的結論框架。跟 Shopify 的 all-in 策略形成兩個極端。
 
 ## 對應大綱
 

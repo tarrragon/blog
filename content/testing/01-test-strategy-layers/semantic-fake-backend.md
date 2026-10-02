@@ -6,7 +6,7 @@ weight: 6
 tags: ["testing", "fake-backend", "flow-test", "strategy", "integration-test"]
 ---
 
-單元測試的 [stub](/testing/knowledge-cards/stub/) 有一個結構性限制：它的回應由測試作者寫死，**回放的是作者對後端的假設**。當 bug 的成因正是「假設錯了」（後端合併資料時會重建子項並換掉全部 id、刪除會連帶釋放關聯的佔用資源），stub 驗證不出任何東西——假設與斷言出自同一人之手，永遠自洽（案例：[T.C5 凍結參照失效](/testing/cases/stale-reference-stub-blindspot/)）。
+單元測試的 [stub](/testing/knowledge-cards/stub/) 有一個結構性限制：它的回應由測試作者寫死，**回放的是作者對後端的假設**。當 bug 的成因正是「假設錯了」（後端合併資料時會重建子項並換掉全部 id、刪除會連帶釋放關聯的佔用資源），stub 驗證不出任何東西——假設與斷言出自同一人之手，永遠自洽（案例：[凍結參照失效](/testing/cases/stale-reference-stub-blindspot/)）。
 
 [語意級假後端](/testing/knowledge-cards/semantic-fake-backend/)是針對這個限制的測試形態：一個**持有狀態、模擬已證實後端行為**的假件，讓多個前端服務對它走完整的互動鏈。業界 [test double 分類](/testing/knowledge-cards/test-double-taxonomy/)裡，這對應 Fowler 定義的 fake——有狀態、可運作的簡化實作；「語意級」強調的是行為出處紀律。
 
@@ -21,7 +21,7 @@ tags: ["testing", "fake-backend", "flow-test", "strategy", "integration-test"]
 | 驗證標的 | 前端邏輯在「假設成立」時是否正確 | 前端多服務接力在「已證實的後端行為」下是否正確   |
 | 結構盲區 | 假設本身錯誤、跨服務互動         | 後端行為的未知變化（見界限）                     |
 
-「模擬後端動詞的效果」是關鍵：對「合併兩筆資料」這類操作，假後端在自己的狀態裡執行完整效果——子項全部重建、舊參照全部失效——與實測證實的真實後端一致。前端若依賴舊參照仍然有效，測試立刻紅。完整情節見 [T.C5](/testing/cases/stale-reference-stub-blindspot/)。至於值不值得為此建一個假後端，判斷標準見文末「結構界限與適用條件」段。
+「模擬後端動詞的效果」是關鍵：對「合併兩筆資料」這類操作，假後端在自己的狀態裡執行完整效果——子項全部重建、舊參照全部失效——與實測證實的真實後端一致。前端若依賴舊參照仍然有效，測試立刻紅。完整情節見 [凍結參照失效被 stub 遮蔽 — 測試全綠、功能全壞](/testing/cases/stale-reference-stub-blindspot/)。至於值不值得為此建一個假後端，判斷標準見文末「結構界限與適用條件」段。
 
 本模組的[遮蔽機制章](/testing/01-test-strategy-layers/mock-masking-mechanism/)批評「讓 mock 更逼真」是結構性錯誤——mock 終究是開發者理解的副本。語意級假後端與那條批評的差別在三點：模擬止於應用層行為，協議層仍歸 protocol integration test；每條行為有實測出處，而非理解的副本；配對的真實後端驗證測試承擔行為漂移。三點缺一，它就退化成該章批評的對象。
 
@@ -55,7 +55,7 @@ spike 走完會分出兩條路。立得起來——平台通道（行動端的�
 
 這個閘門的答案決定整個套件的形態，值得用一條最小測試先驗證，而不是寫到一半才發現。
 
-一併確立驗證邊界：對話框、畫面選取這類純 UI 互動不在流程測試範圍——測試直接呼叫 UI 收集完參數後的編排入口。外接裝置（第二螢幕、印表機）以可注入的假件攔在傳輸出口，斷言送出的資料流與時序（[T.C9](/testing/cases/outbox-sequence-external-display/)），列印則以假印表機計數斷言張數。
+一併確立驗證邊界：對話框、畫面選取這類純 UI 互動不在流程測試範圍——測試直接呼叫 UI 收集完參數後的編排入口。外接裝置（第二螢幕、印表機）以可注入的假件攔在傳輸出口，斷言送出的資料流與時序（[外接螢幕漏通知 — 訊息序列斷言與訂閱盲區](/testing/cases/outbox-sequence-external-display/)），列印則以假印表機計數斷言張數。
 
 ## 流程測試的典型劇本
 
@@ -65,13 +65,13 @@ spike 走完會分出兩條路。立得起來——平台通道（行動端的�
 2. 前端服務鏈啟動（以輪詢同步架構為例）：同步列表 → 訂閱事件 → 輪詢建立差異比對基準
 3. 業務操作：呼叫真實編排入口，執行會改變後端狀態的操作（合併、拆分、刪除這類會重建或釋放資料的動詞）
 4. 斷言：假後端的狀態變化（後端該發生的事）、前端的狀態對齊（本地資料該還原或更新）、對外輸出的副作用（外送訊息序列、輸出計數）
-5. 追加一輪輪詢：驗證下一個週期把先前的變更辨識為已處理。差異比對基準是輪詢用來判斷「哪些是新資料」的上一輪快照；這一步防的是基準被污染的迴歸形態——空結果覆寫基準，下一輪就把同一筆資料誤判為新增而重複輸出（見 [T.C6](/testing/cases/flow-test-first-run-ordering-catch/)）
+5. 追加一輪輪詢：驗證下一個週期把先前的變更辨識為已處理。差異比對基準是輪詢用來判斷「哪些是新資料」的上一輪快照；這一步防的是基準被污染的迴歸形態——空結果覆寫基準，下一輪就把同一筆資料誤判為新增而重複輸出（見 [流程測試首跑抓到修復自己引入的順序 bug](/testing/cases/flow-test-first-run-ordering-catch/)）
 
 步驟 2 與 5 是輪詢同步架構的情境實例；推播型架構有等價的命題——驗證事件重放時前端只輸出一次、重送的同一事件被辨識為已處理。
 
 隔離紀律是劇本成立的前提：每條流程測試重建假後端實例（或等效重置），劇本之間狀態互不滲漏；seed 用共用 builder 組裝，初始狀態的形狀集中維護，避免每條測試手拼。
 
-價值實例：這個形態的套件在建置過程中，首跑就抓到修復自身引入的順序 bug（[T.C6](/testing/cases/flow-test-first-run-ordering-catch/)）；一條劇本在「單跑綠、合跑紅」的合跑階段暴露 fire-and-forget（呼叫後不等待）編排的時序競態（[T.C8](/testing/cases/fire-and-forget-test-race/)）；雙行為開關（假後端同時模擬後端會做與不會做兩種行為、由開關切換）配合真實後端驗證測試，為一個先前只能互相猜測的前後端責任問題提供歸因定案的手段（[T.C7](/testing/cases/dual-semantics-attribution/)）——開關是歸因期對「已證實」規則的暫時例外（其中一種行為尚未證實），定案後收斂回單一已證實行為。
+價值實例：這個形態的套件在建置過程中，首跑就抓到修復自身引入的順序 bug（[流程測試首跑抓到修復自己引入的順序 bug](/testing/cases/flow-test-first-run-ordering-catch/)）；一條劇本在「單跑綠、合跑紅」的合跑階段暴露 fire-and-forget（呼叫後不等待）編排的時序競態（[fire-and-forget 編排讓測試單跑綠、合跑紅](/testing/cases/fire-and-forget-test-race/)）；雙行為開關（假後端同時模擬後端會做與不會做兩種行為、由開關切換）配合真實後端驗證測試，為一個先前只能互相猜測的前後端責任問題提供歸因定案的手段（[症狀相同、成因兩種 — 用測試切開前後端責任](/testing/cases/dual-semantics-attribution/)）——開關是歸因期對「已證實」規則的暫時例外（其中一種行為尚未證實），定案後收斂回單一已證實行為。
 
 ## 結構界限與適用條件
 
@@ -106,6 +106,6 @@ spike 走完會分出兩條路。立得起來——平台通道（行動端的�
 ## 下一步路由
 
 - 配對的另一半 → [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)
-- stub 回放假設的完整案例 → [T.C5 凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)
+- stub 回放假設的完整案例 → [凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)
 - 測試該寫成什麼樣子 → [測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/)
 - Dart/Flutter 生態的實作限制（headless 立控制器、binding 互斥、假後端序列化）→ [流程測試基礎設施](/flutter/flow-test-infrastructure/)

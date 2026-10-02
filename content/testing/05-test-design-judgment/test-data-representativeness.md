@@ -12,7 +12,7 @@ tags: ["testing", "test-data", "parser", "representativeness", "ansi"]
 
 一個遠端終端機 app 的 ANSI parser 有 18 個 test，全部通過。測試資料是手寫的 SGR 色彩碼（`\x1B[31mhello\x1B[0m`），parser 正確解析這類序列。
 
-真實 zsh 啟動後送出的控制序列包含 OSC 標題設定、CSI private mode、字元集指定等至少 5 種類型。Parser 只認識 SGR，其他全部透傳為亂碼（[T.C3](/testing/cases/ansi-parser-test-data-blindspot/)）。
+真實 zsh 啟動後送出的控制序列包含 OSC 標題設定、CSI private mode、字元集指定等至少 5 種類型。Parser 只認識 SGR，其他全部透傳為亂碼（[ANSI parser 測試資料不覆蓋真實 shell output](/testing/cases/ansi-parser-test-data-blindspot/)）。
 
 18 個 test 覆蓋了 1 種序列類型。測試資料的代表性假設（「SGR 就是主要的序列類型」）和真實環境不符。
 
@@ -24,7 +24,7 @@ tags: ["testing", "test-data", "parser", "representativeness", "ansi"]
 
 優點：精確控制、容易理解、可以針對特定邊界條件設計。
 
-缺點：受限於開發者對輸入分佈的認知。如果開發者不知道真實環境有哪些輸入類型，手寫的測試資料就是開發者認知的子集 — T.C3 就是這個模式。
+缺點：受限於開發者對輸入分佈的認知。如果開發者不知道真實環境有哪些輸入類型，手寫的測試資料就是開發者認知的子集 — [ANSI parser 測試資料不覆蓋真實 shell output](/testing/cases/ansi-parser-test-data-blindspot/) 就是這個模式。
 
 適合場景：格式規格明確且有限（JSON schema、固定格式的設定檔）、邊界條件測試（空值、最大長度、特殊字元）。
 
@@ -38,7 +38,7 @@ tags: ["testing", "test-data", "parser", "representativeness", "ansi"]
 
 適合場景：輸入格式複雜且規格不完整（終端機 escape 序列、網路封包、使用者產生的內容）、parser 類的功能（需要知道「真實輸入長什麼樣」）。
 
-T.C3 如果用錄製的真實 zsh 啟動輸出作為測試資料，OSC 和 CSI private mode 會自然出現在輸入中。即使 parser 仍然不處理這些序列，test 至少能讓開發者看到「有 5 種序列類型，我只處理了 1 種」。
+[ANSI parser 測試資料不覆蓋真實 shell output](/testing/cases/ansi-parser-test-data-blindspot/) 如果用錄製的真實 zsh 啟動輸出作為測試資料，OSC 和 CSI private mode 會自然出現在輸入中。即使 parser 仍然不處理這些序列，test 至少能讓開發者看到「有 5 種序列類型，我只處理了 1 種」。
 
 ### 生成（Property-based testing）
 
@@ -52,7 +52,7 @@ T.C3 如果用錄製的真實 zsh 啟動輸出作為測試資料，OSC 和 CSI p
 
 ## 兩類 test 的分工
 
-T.C3 的策略建議是把 test 分成兩類：
+[ANSI parser 測試資料不覆蓋真實 shell output](/testing/cases/ansi-parser-test-data-blindspot/) 的策略建議是把 test 分成兩類：
 
 **功能正確性 test**：用手寫乾淨字串驗證 parser 對已知序列的處理正確性。`\x1B[31mhello\x1B[0m` 應該產生紅色 token — 這是功能規格的驗證。
 

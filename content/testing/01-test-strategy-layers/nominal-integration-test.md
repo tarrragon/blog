@@ -10,7 +10,7 @@ tags: ["testing", "integration-test", "mock", "naming", "test-design"]
 
 ## 辨識特徵
 
-一個遠端終端機 app 的 `connection_flow_test.dart` 是具體案例。檔名標題是端對端整合測試，但內部使用了三個核心替身：`FakeWebSocketChannel`、`FakeBiometricService`、`InMemoryCredentialRepository`（[T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/)）。
+一個遠端終端機 app 的 `connection_flow_test.dart` 是具體案例。檔名標題是端對端整合測試，但內部使用了三個核心替身：`FakeWebSocketChannel`、`FakeBiometricService`、`InMemoryCredentialRepository`（[Auth handshake 邏輯缺失被 FakeWebSocketChannel 遮蔽](/testing/cases/auth-handshake-missing-mock-blindspot/)）。
 
 名義 integration test 有三個共同特徵可用來辨識。
 

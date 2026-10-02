@@ -192,4 +192,4 @@ async function searchWithFilter(query) {
 
 跟 [#19 覆寫深度的成本告知](../override-depth-cost-report/) 同源：兩者都是「把實作的限制 / 代價攤給使用者、讓使用者參與決策」。差別在 #19 是「實作前告知工程成本」、本卡是「runtime 持續顯示掃描成本」 — 攤出來的位置不同、原則一致：silent 累積負擔是反模式。
 
-缺三數字的實戰反例見 [U.C11 抓到 96/928 本就顯示完成](/ux-design/cases/lazy-load-premature-completion/)：提取器只宣告「完成」、沒有已掃 / 總數對照，停滯訊號被誤判成窮盡、使用者帶著十分之一的資料離開 —「共 M」正是那個缺失的窮盡對照。
+缺三數字的實戰反例見 [抓到 96/928 本就顯示完成](/ux-design/cases/lazy-load-premature-completion/)：提取器只宣告「完成」、沒有已掃 / 總數對照，停滯訊號被誤判成窮盡、使用者帶著十分之一的資料離開 —「共 M」正是那個缺失的窮盡對照。

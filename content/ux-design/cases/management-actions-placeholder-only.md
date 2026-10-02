@@ -24,7 +24,7 @@ tags: ["ux-design", "case-study", "interaction-feedback", "placeholder", "techni
 
 ## 判讀
 
-1. **可點的假按鈕是負資產**。按鈕存在 = 系統承諾功能存在，點了沒反應被讀成「壞掉」（體感同 U.C5 零回饋）— 對產品信任的傷害大於「功能還沒有」。未完成的功能在 UI 上的正確形態是隱藏、或 disabled + 說明（「即將推出」），不是可點的佔位。
+1. **可點的假按鈕是負資產**。按鈕存在 = 系統承諾功能存在，點了沒反應被讀成「壞掉」（體感同 [匯出按鈕按下零回饋 — 狀態機完備但 UI 沒接線](/ux-design/cases/export-button-zero-feedback/) 零回饋）— 對產品信任的傷害大於「功能還沒有」。未完成的功能在 UI 上的正確形態是隱藏、或 disabled + 說明（「即將推出」），不是可點的佔位。
 
 2. **dev toast 佔位掩蓋未接線**。接了 toast 的按鈕在開發自測時「有反應」— 開發回饋（toast 彈了）與使用者回饋（操作確實執行）被混為一談，佔位從此不在任何人的視野裡，直到驗收。log-only 佔位更隱形：畫面上完全無反應。
 
@@ -40,6 +40,6 @@ tags: ["ux-design", "case-study", "interaction-feedback", "placeholder", "techni
 
 ## 下一步路由
 
-- 零回饋按鈕的原型案例 → [U.C5 匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)
-- 回饋鏈路的其他斷點 → [U.C9 提取成功卻誤報失敗](/ux-design/cases/async-listener-false-failure/)、[U.C19 計數被版面擠壓](/ux-design/cases/selection-count-layout-starvation/)
+- 零回饋按鈕的原型案例 → [匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)
+- 回饋鏈路的其他斷點 → [提取成功卻誤報失敗](/ux-design/cases/async-listener-false-failure/)、[計數被版面擠壓](/ux-design/cases/selection-count-layout-starvation/)
 - 三層回饋的完整要求 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)

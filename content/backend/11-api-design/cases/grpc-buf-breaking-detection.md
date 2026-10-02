@@ -14,7 +14,7 @@ tags: ["backend", "api-design", "case-study", "grpc"]
 
 ## 判讀
 
-這是 C28 紀律從「人的自律」升級成 CI gate 的論證。四級規則的核心主張：「選符合消費者實際依賴的等級」— 只走 wire 的消費者用 WIRE、有外部 Go import 的要 PACKAGE。教學重點是「相容性檢查粒度是產品決策、不是工具預設」。
+這是 [protobuf 官方規範](/backend/11-api-design/cases/grpc-protobuf-field-number-discipline/) 紀律從「人的自律」升級成 CI gate 的論證。四級規則的核心主張：「選符合消費者實際依賴的等級」— 只走 wire 的消費者用 WIRE、有外部 Go import 的要 PACKAGE。教學重點是「相容性檢查粒度是產品決策、不是工具預設」。
 
 ## 對應大綱
 
