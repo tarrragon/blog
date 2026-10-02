@@ -1,7 +1,7 @@
 ---
-title: "分頁之爭：offset 與 keyset 選機制、cursor 決定表示權"
+title: "分頁之爭：offset 與 keyset 的定位機制、cursor 的表示法與不透明性條款"
 date: 2026-08-11
-description: "選分頁方案時把定位機制跟對外表示分開判斷：cursor 的不透明性給服務端什麼自由、未宣告的 cursor 性質會被誰依賴"
+description: "定位機制、一致性模型與表示法各自的取捨：offset 與 keyset 的成本與能力差、不透明 cursor 給服務端的自由、未宣告的 cursor 性質會被誰依賴、offset 留下來的條件，以及選型的判定順序"
 weight: 33
 tags: ["backend", "api-design", "pagination"]
 ---
@@ -36,7 +36,7 @@ Slack 選 Base64 編碼的 opaque cursor，介面收斂為 `cursor` 加 `limit`�
 
 這份自由的取得時點則是固定的，而「第一版」指的是**這個參數的第一版**、不是這個 API 的第一版。先給透明 cursor 再收緊成不透明，是一次破壞相容性的變更；而既有 API 從 `?page=` 換過來時是新增一個參數，新參數從它自己的第一版就 opaque，這份自由仍然拿得到——舊的 offset 參數照原樣退場，兩件事互不影響。
 
-## 不透明性同時是一份多半沒寫下來的承諾
+## 不透明 cursor 隱含的承諾與條款清單
 
 「cursor 的不透明性算承諾還是逃生門」這個問法預設了二選一，而兩者同時成立：對底層策略是逃生門，對 cursor 這個物件本身是承諾。消費者拿到一個看不懂的字串之後，仍然會對它做出各種假設，而每一項假設都是服務端沒說話的地方。沒有宣告的性質會被依賴，之後任何改動都變成 breaking change —— 這跟錯誤訊息文字沒給機器可讀替代品時被消費者拿去 parse 是同一個機制（該形態見 [AIP-193 錯誤內容規範：三層受眾與「不假設使用者懂內部實作」](/backend/11-api-design/cases/errorchain-aip193-error-content/) 的 message 穩定性規則）。
 
@@ -70,7 +70,7 @@ offset 在爭論裡常被寫成過渡方案，而它有一個換不掉的能力�
 
 **採 offset 而集合會長大**。offset 的兩個失效模式都隨規模浮現，且都在 production 才浮現。檢查問法：這個集合三年後大概幾筆，以及那時候還會不會有人翻到第一百頁。
 
-## 選型的順序固定、每一步都有出口
+## 選型的順序：跳頁與總數需求、定位機制、表示法
 
 **第一步確認跳頁與總數是不是真需求**。兩種消費者形態要的是同一種證據、只是取得方式不同。公開 API 的消費者在組織外、問不到人，看既有端點的實際呼叫參數分布（`page` 參數的深度直方圖、有沒有人真的呼叫 count 端點），或在 deprecation 預告期觀察誰來反映。內部後台與第一方 client 問得到人，而口頭答案不該取代量測——同樣先看既有的 `page` 參數分布或後台頁碼元件的點擊量測，沒有既有系統可量時才用口頭答案，並記下日期與答的人。答案出來之後——跳頁是真需求時 offset 留下，接受深頁成本並用 `limit` 上限把它框住；只有總數是真需求時走中間路線，主分頁用 cursor、總數另開端點回近似值；需求其實是整批搬走資料時走匯出端點，分頁選型不適用；以上皆非才進第二步。**第二步依翻頁深度與寫入頻率選定位機制**：翻得深或寫入頻繁選 keyset，兩者都不成立時 offset 的簡單性划算。**第三步決定表示法**：選了 keyset 就從第一版做成 opaque，強度依 cursor 會流到誰手上決定，並把不透明性條款清單寫進文件。
 
@@ -79,7 +79,7 @@ offset 在爭論裡常被寫成過渡方案，而它有一個換不掉的能力�
 ## 下一步路由
 
 - 分頁、批次與長時操作的完整判斷標準：[11.7 集合介面設計](/backend/11-api-design/collection-interface-design/)
-- 為什麼缺了 tiebreaker 就會跳項與重複——關係是集合、排序鍵不唯一時同分的列跟著執行計畫走：[SQL.12 分頁要一個全序](/backend/01-database/sql/pagination-needs-a-total-order/) 附三家引擎的實測與游標條件寫錯方向的形態
+- 為什麼缺了 tiebreaker 就會跳項與重複——關係是集合、排序鍵不唯一時同分的列跟著執行計畫走：[SQL.12 分頁的排序鍵與游標](/backend/01-database/sql/pagination-needs-a-total-order/) 附三家引擎的實測與游標條件寫錯方向的形態
 - 深頁掃描背後的資料庫機制：[Keyset Pagination 知識卡](/backend/knowledge-cards/keyset-pagination/) 給複雜度對照與 tiebreaker 設計；[Query 反模式](/backend/01-database/query-anti-patterns/) 把它放在查詢反模式的全景裡，與 N+1、缺索引並列
 - cursor 作為對外契約的概念位置：[Pagination Cursor 知識卡](/backend/knowledge-cards/pagination-cursor/)
 - 條款清單這個做法的 case 支撐版本：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)

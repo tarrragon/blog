@@ -10,9 +10,9 @@ tags: ["books", "reading", "systems-thinking", "problem-solving"]
 
 這裡的書都不談軟體技術，轉譯要自己做。它們的共通特徵是概念少、應用面廣，因此讀完的當下感覺抽象，真正的價值在幾個月後遇到具體情境時才兌現。
 
-先拿哪一本，看手上的問題卡在哪一步。連問題本身該怎麼陳述都還沒定下來，從 [Are Your Lights On?](#問題陳述本身出錯時讀-are-your-lights-on) 開始，它最短也最快。問題定義清楚了而想不通為什麼改了還是回到原狀，那要的是存量與回饋迴路，走 [Thinking in Systems](#起點是-thinking-in-systems)。想看這些概念在一個真實組織裡跑完一輪，走 [《穀倉效應》](#想看系統思考的概念在真實組織裡跑完一輪時讀穀倉效應)。前三本不預設任何組織條件，《穀倉效應》有一項限制寫在該節。不確定自己落在哪一格，就從 [Thinking in Systems](#起點是-thinking-in-systems) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+先拿哪一本，看手上的問題卡在哪一步。連問題本身該怎麼陳述都還沒定下來，從 [Are Your Lights On?](#are-your-lights-on問題陳述本身出錯時的選讀) 開始，它最短也最快。問題定義清楚了而想不通為什麼改了還是回到原狀，那要的是存量與回饋迴路，走 [Thinking in Systems](#起點書thinking-in-systems)。想看這些概念在一個真實組織裡跑完一輪，走 [《穀倉效應》](#穀倉效應想看系統思考的概念在真實組織裡跑完一輪時的選讀)。前三本不預設任何組織條件，《穀倉效應》有一項限制寫在該節。不確定自己落在哪一格，就從 [Thinking in Systems](#起點書thinking-in-systems) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
-## 起點是 Thinking in Systems
+## 起點書：Thinking in Systems
 
 Donella Meadows 的《Thinking in Systems》給的是語言本身，本篇另外三本——《Are Your Lights On?》、溫伯格第 1 卷、《穀倉效應》——都在這套語言裡運作。它用存量、流量、回饋迴路三個元件把整組詞彙鋪完，例子刻意選日常情境——浴缸水位、庫存補貨、兄弟互推——每個例子都在示範結構如何決定行為。[起點書判斷標準](../)的第一項問的是涵蓋面，而把整組概念鋪完的只有它。門檻最低的那本不是它，是下一節的《Are Your Lights On?》；要挑給一群程度不一的人共讀時取後者。
 
@@ -23,7 +23,7 @@ Donella Meadows 的《Thinking in Systems》給的是語言本身，本篇另外
 - [Amazon（Thinking in Systems: A Primer）](https://www.amazon.com/Thinking-Systems-Donella-H-Meadows/dp/1603580557)
 - [博客來（系統思考：克服盲點、面對複雜性、見樹又見林的整體思考）](https://www.books.com.tw/products/0010702990)
 
-## 問題陳述本身出錯時讀 Are Your Lights On
+## Are Your Lights On：問題陳述本身出錯時的選讀
 
 Donald Gause 與 Gerald Weinberg 的《Are Your Lights On?》處理比「怎麼解」更前面的問題：這個問題是什麼、是誰的問題、真的想解嗎。它給的定義短到可以背——問題是期望與感受之間的落差——整本書都在示範這個定義有多難正確套用。書名來自隧道口該不該立牌提醒駕駛開燈的案例，以及牌子怎麼寫才不會製造新問題。
 
@@ -34,7 +34,7 @@ Donald Gause 與 Gerald Weinberg 的《Are Your Lights On?》處理比「怎麼�
 - [Amazon（Are Your Lights On?: How to Figure Out What the Problem Really Is）](https://www.amazon.com/Are-Your-Lights-Figure-Problem/dp/0932633161)
 - [博客來（你想通了嗎？解決問題之前，你該思考的 6 件事）](https://www.books.com.tw/products/0010754502)
 
-## 想看軟體組織的具體形狀時讀溫伯格第 1 卷
+## 溫伯格第 1 卷：想看軟體組織的具體形狀時的選讀
 
 Weinberg 的《Quality Software Management, Vol. 1: Systems Thinking》把同一組概念放進軟體組織。它的工具是效應圖，把因果與回饋畫成節點與箭頭，用來拆解非線性效應。最常被拿來示範的是 Brooks's Law——對已經落後的專案加人只會更落後，出自 Brooks 的《人月神話》，完整說明在 [組織結構與團隊設計](../team-design/)。效應圖的貢獻是把那條定律展開成可以逐段檢查的迴路：加人導致老手花時間帶新人、產出短期下降、進度更落後、壓力上升、品質下降、缺陷增加、修復佔用時間、進度再落後。定律說明會發生什麼，迴路指出在哪一段可以介入。
 
@@ -45,7 +45,7 @@ Weinberg 的《Quality Software Management, Vol. 1: Systems Thinking》把同一
 - [Amazon（Quality Software Management: Systems Thinking）](https://www.amazon.com/Quality-Software-Management-Systems-Thinking/dp/0932633226)
 - [博客來（溫伯格的軟體管理學：系統化思考，第 1 卷）](https://www.books.com.tw/products/0010341309)
 
-## 想看系統思考的概念在真實組織裡跑完一輪時讀《穀倉效應》
+## 《穀倉效應》：想看系統思考的概念在真實組織裡跑完一輪時的選讀
 
 Gillian Tett 的《The Silo Effect》是本篇唯一的深度個案，八個組織各被完整報導過一輪。它跟另外三本概念書的分工在證據形態而非主題：《Thinking in Systems》、《Are Your Lights On?》與溫伯格第 1 卷給概念與判斷標準，這本給同一組機制在真實組織裡運作好幾年的樣子，包括當事人當下怎麼想、事後怎麼解釋。
 

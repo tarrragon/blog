@@ -1,7 +1,7 @@
 ---
-title: "資源很少時先做哪一件"
+title: "資源不足時測試作法的降級順序：判斷標準與實作分開產出、維度交叉盤點、性質式測試、突變測試"
 date: 2026-09-24
-description: "本模組四章的作法成本差很多，這一篇是人手或工具不足時的授權降級順序，以及進出降級版本時要留下的痕跡"
+description: "人手或工具不足時各項作法取用到什麼程度，以及進出降級版本時要留下的紀錄與回看訊號"
 weight: 6
 tags: ["testing", "ai-generated-code", "mutation-testing", "property-based-testing"]
 ---

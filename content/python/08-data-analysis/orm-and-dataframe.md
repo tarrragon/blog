@@ -1,5 +1,5 @@
 ---
-title: "8.3 ORM 交出查詢，DataFrame 自己算"
+title: "8.3 ORM 與 DataFrame 的分辨：回傳值的形狀、連線物件與查詢送出的時機"
 date: 2026-08-31
 description: "ORM 產生查詢、DataFrame 執行運算，以及外觀相似的方法串接底下差了什麼"
 weight: 3
@@ -8,7 +8,7 @@ tags: ["python", "pandas", "orm", "sqlalchemy", "dataframe"]
 
 [ORM](/backend/knowledge-cards/orm/) 的產出是一段 SQL 與一組物件，DataFrame 的產出是一張新的表格。兩者的寫法看起來相似，因為都用方法串接描述篩選條件，而底下發生的事完全不同：ORM 是查詢的產生器，DataFrame 是運算的執行者。
 
-## ORM 產生查詢，把運算交出去
+## ORM 的產出與運算發生的位置
 
 ORM 把資料表對應成類別、把資料列對應成物件。篩選條件寫成屬性的比較式，框架把它翻譯成 SQL 的 `WHERE` 子句。
 
@@ -28,7 +28,7 @@ with Session(engine) as s:
 
 `stmt` 本身還沒有做任何運算，它是一段待送出的查詢。運算在資料庫那一端完成，回來的每一列被包成一個 `Customer` 實例——所以拿到的是物件，可以呼叫它的方法、走訪它關聯到的其他物件。
 
-## DataFrame 自己執行運算
+## DataFrame 的產出與運算發生的位置
 
 pandas 這一側的同一件事：
 
@@ -43,7 +43,7 @@ df[df["age"] > 18]
 
 回來的是一張新的表格，不是一組物件。它可以繼續被篩選、被合併、被彙總，因為表格正是這些操作接受的輸入。
 
-## 從三個訊號認出手上是哪一類
+## 分辨 ORM 與 DataFrame 的訊號：回傳值的形狀、連線物件、查詢送出的時機
 
 外觀相似的方法串接底下，有三個分得開的訊號。
 
@@ -53,7 +53,7 @@ df[df["age"] > 18]
 
 **查詢送出的時機。** ORM 允許先把查詢組好、之後才送出，所以「描述」與「執行」是兩個時刻。pandas 的每一行敘述當場就算完，中間沒有待送出的狀態。
 
-## 多數語言生態都有同樣的三層
+## 各語言生態的資料庫存取分層：手寫 SQL、查詢建構器、ORM
 
 自己寫 SQL、用建構器組 SQL、用 ORM 對應物件，這三層在多數語言生態裡都找得到對應的套件，名字不同而分層一致。
 
@@ -61,10 +61,10 @@ DataFrame 這一層則是額外的第四種，它不在上面那條線上——�
 
 ## 往下走
 
-**這兩側共用的抽象**：ORM 產生的 SQL 與 DataFrame 的方法，做的是同一組操作。[8.4 SQL 與 DataFrame 是同一套關聯代數的兩個介面](/python/08-data-analysis/same-relational-algebra/) 給四組對應的實測比對，以及對應斷掉的三個位置。
+**這兩側共用的抽象**：ORM 產生的 SQL 與 DataFrame 的方法，做的是同一組操作。[8.4 SQL 子句與 pandas 方法的對應：篩選、連接、分組彙總、視窗函數，以及空值、索引與順序的語意差異](/python/08-data-analysis/same-relational-algebra/) 給四組對應的實測比對，以及對應斷掉的三個位置。
 
-**分界本身**：兩側的差異全部從「運算發生在哪一端」推出來。[8.2 運算發生在哪一端](/python/08-data-analysis/where-computation-runs/) 寫這條軸怎麼決定容量上限與失敗形態，以及選邊時要問的三個條件。
+**分界本身**：兩側的差異全部從「運算發生在哪一端」推出來。[8.2 運算發生的位置](/python/08-data-analysis/where-computation-runs/) 寫這條軸怎麼決定容量上限與失敗形態，以及選邊時要問的三個條件。
 
-**選了記憶體端之後的上限**：[8.5 記憶體是 pandas 的邊界條件](/python/08-data-analysis/memory-is-the-boundary/) 給資料量的估算方法與越過之後的三個方向。
+**選了記憶體端之後的上限**：[8.5 pandas 的記憶體邊界：資料與運算過程的佔用估算，推回資料庫、換引擎與分散式的代價](/python/08-data-analysis/memory-is-the-boundary/) 給資料量的估算方法與越過之後的三個方向。
 
 **ORM 那一側的失敗形態**：延遲載入什麼時候把一次請求變成一百次查詢，在 [backend 模組一的查詢反模式](/backend/01-database/query-anti-patterns/)。那一篇把 N+1 與長交易列成可診斷的清單，並給出每請求的查詢次數預算。

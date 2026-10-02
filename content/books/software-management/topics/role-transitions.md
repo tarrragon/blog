@@ -12,9 +12,9 @@ tags: ["books", "reading", "career", "engineering-leadership", "staff-engineer"]
 
 預習有一個時間差要注意。位置轉換前讀這些書，能讀到的是那個位置的全貌；真正的判斷標準要等到承擔了責任才長出來。因此比較有效的用法是轉換前讀一次建立預期，等到自己獨立走完一輪那個位置的完整循環（帶完一次績效週期、獨立處理過一次人的問題、或主導完一次跨團隊的交付）之後再讀一次，兩次讀到的東西不同。
 
-先拿哪一本，看要看的是哪一個位置。想知道從工程師到管理者這條路整條長什麼樣，從 [The Manager's Path](#起點是-the-managers-path) 開始，它一層一層寫完。還在個人貢獻者的位置、想先把自己這一層做穩，走 [The Software Engineer's Guidebook](#還在個人貢獻者階段時讀-the-software-engineers-guidebook)。確定不走管理而要往 Staff 走，走 [Staff 工程師的兩本](#要走技術路線而非管理路線時讀-staff-工程師的兩本)。下個月就要開始帶人，走 [The Making of a Manager](#第一次帶人時讀-the-making-of-a-manager)。不確定自己落在哪一格，就從 [The Manager's Path](#起點是-the-managers-path) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+先拿哪一本，看要看的是哪一個位置。想知道從工程師到管理者這條路整條長什麼樣，從 [The Manager's Path](#起點書the-managers-path) 開始，它一層一層寫完。還在個人貢獻者的位置、想先把自己這一層做穩，走 [The Software Engineer's Guidebook](#the-software-engineers-guidebook還在個人貢獻者階段時的選讀)。確定不走管理而要往 Staff 走，走 [Staff 工程師的兩本](#the-staff-engineers-path-與-staff-engineer要走技術路線而非管理路線時的選讀)。下個月就要開始帶人，走 [The Making of a Manager](#the-making-of-a-manager第一次帶人時的選讀)。不確定自己落在哪一格，就從 [The Manager's Path](#起點書the-managers-path) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
-## 起點是 The Manager's Path
+## 起點書：The Manager's Path
 
 Camille Fournier 的《The Manager's Path》一本鋪完整條路徑，涵蓋面在本篇最廣。它從「怎麼被管理」開始，接著是 mentor、tech lead、管理個人、管理團隊、管理多個團隊、管理管理者，最後到資深領導。每章結構相似：這個角色實際在做什麼、常見的失敗模式、怎麼判斷自己準備好進下一層。
 
@@ -25,7 +25,7 @@ Camille Fournier 的《The Manager's Path》一本鋪完整條路徑，涵蓋面
 - [Amazon（The Manager's Path）](https://www.amazon.com/Managers-Path-Leaders-Navigating-Growth/dp/1491973897)
 - [博客來（經理人之道：技術領袖航向成長與改變的參考指南）](https://www.books.com.tw/products/0010890612)
 
-## 還在個人貢獻者階段時讀 The Software Engineer's Guidebook
+## The Software Engineer's Guidebook：還在個人貢獻者階段時的選讀
 
 Gergely Orosz 的《The Software Engineer's Guidebook》涵蓋從入門工程師到 principal 以上的各個級別，並且針對每個級別分別處理軟體工程、協作、把事情做完這幾組能力。
 
@@ -36,7 +36,7 @@ Gergely Orosz 的《The Software Engineer's Guidebook》涵蓋從入門工程師
 - [Amazon（The Software Engineer's Guidebook）](https://www.amazon.com/Software-Engineers-Guidebook-Navigating-positions/dp/908338182X)
 - [博客來（軟體工程師的晉升之路：全方位升遷攻略）](https://www.books.com.tw/products/0011030029)
 
-## 要走技術路線而非管理路線時讀 Staff 工程師的兩本
+## The Staff Engineer's Path 與 Staff Engineer：要走技術路線而非管理路線時的選讀
 
 Tanya Reilly 的《The Staff Engineer's Path》處理的是不帶人但要對技術品質負責的位置。它把這個角色拆成三根支柱：用寬廣的視角看自己的工作、把專案實際推成功的戰術、以及決定在自己的組織裡「好的工程」是什麼意思。第三根支柱是這本書在這條線上少有其他書處理的部分——沒有職權的人如何設定標準。
 
@@ -50,7 +50,7 @@ Will Larson 的《Staff Engineer》（Tanya Reilly 作序）是另一種形式�
 - [博客來（Staff 工程師之路：獻給個人貢獻者成長與改變的導航指南）](https://www.books.com.tw/products/0010980200)
 - [Amazon（Staff Engineer: Leadership beyond the management track）](https://www.amazon.com/Staff-Engineer-Leadership-beyond-management/dp/1736417916)
 
-## 第一次帶人時讀 The Making of a Manager
+## The Making of a Manager：第一次帶人時的選讀
 
 Julie Zhuo 的《The Making of a Manager》聚焦在第一年。它處理的是新手管理者實際會遇到的具體場景：第一次一對一該說什麼、面試該問什麼、什麼時候該讓表現不佳的人離開、怎麼在自己也不確定的時候給團隊方向。
 
@@ -61,7 +61,7 @@ Julie Zhuo 的《The Making of a Manager》聚焦在第一年。它處理的是�
 - [Amazon（The Making of a Manager: What to Do When Everyone Looks to You）](https://www.amazon.com/Making-Manager-What-Everyone-Looks/dp/0735219567)
 - [博客來（當上主管後，難道只能默默崩潰？）](https://www.books.com.tw/products/0010855700)
 
-## 想要管理工作的通用定義時讀 High Output Management
+## High Output Management：想要管理工作的通用定義時的選讀
 
 Andrew Grove 的《High Output Management》提供的是管理這件事的操作定義而非某個角色的指南。核心是把管理者的產出定義成他所轄組織的產出加上他影響所及組織的產出——這個定義把「我今天很忙」與「我今天有產出」分開，並且讓槓桿變成可以計算的東西。
 

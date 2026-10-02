@@ -36,7 +36,7 @@ tags: ["testing", "ai-generated-code", "test-oracle", "mutation-testing", "accep
 
 ## 資源很少時先做哪一件
 
-授權的降級順序住在 [資源很少時先做哪一件](low-resource-order/)，本頁正文不會渲染。
+授權的降級順序住在 [資源不足時測試作法的降級順序：判斷標準與實作分開產出、維度交叉盤點、性質式測試、突變測試](low-resource-order/)，本頁正文不會渲染。
 
 ## 本模組回應的案例
 

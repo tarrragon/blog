@@ -1,7 +1,7 @@
 ---
-title: "Idempotency key 標準化之爭：標準統一得了揭露的形狀、統一不了業務綁定的值"
+title: "Idempotency key 標準化之爭：header 命名、replay 語意、保存期與同 key 並發的各家差異"
 date: 2026-08-11
-description: "整合或自建冪等機制時各家條款的實質差異：replay 回首次快照還是最新狀態、保存期是否明文、同 key 並發怎麼處理"
+description: "冪等鍵的標準化現況，以及一份標準規定得了與規定不了哪些條款；涵蓋不需要冪等鍵的操作、各家條款的成立情境與整合時逐項採用的保守預設"
 weight: 34
 tags: ["backend", "api-design", "idempotency"]
 ---
@@ -10,7 +10,7 @@ tags: ["backend", "api-design", "idempotency"]
 
 這件事對讀者的實際意義是：在標準缺席的現在，那份「形狀」得由每個整合方自己手工維護一次，而本文其餘各節就是那份手工版本。本文攤開各家條款的實質差異與它們各自的成立情境。自建一套冪等機制要承諾哪些條款，見 [API 層冪等設計](/backend/11-api-design/api-idempotency-design/)。
 
-## 先問這個操作需不需要 key
+## 冪等鍵的前置閘門：兩端協作的前提與不需要 key 的操作
 
 冪等鍵是一套要兩端協作的機制，而協作有前提：消費者改得動自己的 client、而且重試窗口短於服務端的保存期。這兩件事不成立時，再完美的條款也沒有人送 key，機制形同不存在。先過這道閘門，再談條款。
 
@@ -20,7 +20,7 @@ tags: ["backend", "api-design", "idempotency"]
 
 閘門過得了的情境——消費者改得動、重試窗口以分鐘計、且「同一次操作」的邊界必須由消費者定義——才進入本文其餘各節的條款比較。
 
-## 命名之爭與語意之爭要分開看
+## header 命名的分歧與條款語意的分歧
 
 觀察到的分歧有兩層。表層是 header 命名：Stripe 用 `Idempotency-Key`、PayPal 用 `PayPal-Request-Id`，且並非所有 PayPal API 都支援這個 header（見 [PayPal-Request-Id：同語意、不同契約的冪等實作](/backend/11-api-design/cases/idempotency-paypal-request-id/)）。這是無標準的直接後果，而「同一家內還要逐 API 查」正是它的極端形態 —— 整合方每接一家就要查一次 header 名，SDK、gateway 與觀測層都無法對這個機制寫通用邏輯。
 
@@ -36,7 +36,7 @@ tags: ["backend", "api-design", "idempotency"]
 
 這六項是[11.8 的冪等契約條款清單](/backend/11-api-design/api-idempotency-design/)在跨家比較下的切面 —— 該章寫的是自建時要承諾什麼（包含 key 由誰生成、只作用於 POST 這類各家沒有分歧的項目），本文只收各家答案會不同的那些。
 
-## Replay 語意的快照派與現況派各有成立情境
+## Replay 語意：快照派與現況派的成立情境
 
 最實質的分歧在同 key 重送時回什麼。Stripe 回傳首次請求的 status code 加 body，包含 500 也照樣快取重放（見 [Stripe 冪等鍵契約條款：24h 保存、500 也重放](/backend/11-api-design/cases/idempotency-stripe-api-contract/)）；PayPal 回傳前次請求的最新狀態（[PayPal-Request-Id](/backend/11-api-design/cases/idempotency-paypal-request-id/)）。案例判讀已點出取捨方向：後者對非同步操作友善，而失去 exactly-once 的回應保證。
 
@@ -50,7 +50,7 @@ tags: ["backend", "api-design", "idempotency"]
 
 二選一之外實務上還有三條混合路線，各自解掉快照派的一個代價。**快照配查詢資源**：回應保持可預測，終局狀態走它自己的介面（該模式見 [11.7 的長時操作段](/backend/11-api-design/collection-interface-design/)）。**重送回 409 加 Location**：不重放內容，直接把消費者指向結果資源，讓終局由資源本身承擔，建立型 API 常走這條。**快照加新鮮度標記**：回首次結局的同時附上「這是重放、而目前狀態已變動」的指標，一次給兩層——這條其實就是前一節第三項條款（replay 認不認得出來）落地之後的樣子，也是資訊最完整的一種。
 
-## 保存期的精確度決定消費者能設計多長的重試窗口
+## 保存期的明文程度與消費者的重試窗口
 
 Stripe 承諾保存至少 24 小時、逾期後同 key 視為新請求（[Stripe 冪等鍵契約條款](/backend/11-api-design/cases/idempotency-stripe-api-contract/)）；PayPal 的保存期寫「a period of time」，細節要查各 API reference（[PayPal-Request-Id](/backend/11-api-design/cases/idempotency-paypal-request-id/)）。這組對照是契約精確度的差異，而它對消費者的影響是可以直接推導出來的。
 
@@ -60,7 +60,7 @@ Stripe 承諾保存至少 24 小時、逾期後同 key 視為新請求（[Stripe
 
 整合方這一端則有一條退路，而它是六項裡唯一量得出來的：保存期。在沙箱環境用同一個 key 以遞增間隔重送，觀察從哪一次開始被當成新請求，量出來的窗口比文件上的「a period of time」可用得多。量到的值要當觀察而非承諾 —— 它隨時可能改，而沒有明文的值改了不會有人通知。
 
-## 同 key 並發是重試風暴下的常態
+## 同 key 並發請求的處理
 
 PayPal 明示同 ID 並發請求時第二個可能失敗（[PayPal-Request-Id](/backend/11-api-design/cases/idempotency-paypal-request-id/)）。這個條款容易被當成邊緣情況，而它在故障當下是主流形態 —— 消費者超時後重送時，首次請求往往還在服務端執行，兩個帶同一個 key 的請求因此同時在跑。
 
@@ -78,7 +78,7 @@ PayPal 明示同 ID 並發請求時第二個可能失敗（[PayPal-Request-Id](/
 
 **假設消費者不會誤用 key**。同 key 不同參數直接報錯這條的作用是防止 key 被當 session id 濫用（[Stripe 冪等鍵契約條款](/backend/11-api-design/cases/idempotency-stripe-api-contract/)）。它在六項條款裡的位置特殊 —— 其餘五項的答案隨業務形態變動、各家不同是正常的，而這一條在任何業務形態下都成立，因此可以給通則。理由是它保護的對象是 key 的定義本身、而非任何業務結果：key 代表「消費者眼中的同一次操作」，同一個 key 配上兩份不同的參數，這個定義當場失效——與這個 API 在做什麼無關，所以它是前面說的「形狀」而非「值」。缺了它，消費者無意間重用 key 時拿到的是前一次操作的結果，而它看起來像成功。檢查問法：用同一個 key 送兩個金額不同的請求，第二個拿到的是錯誤還是第一筆的結果。
 
-## 自建與整合共用同一份條款
+## 自建方與整合方對同一份條款的用法
 
 無標準的現況把兩端推向對稱：同一份六項條款，自建時是要寫進文件的承諾，整合時是要逐家讀的檢查表。自建方寫明條款，消費者才設計得出重試；整合方讀不到條款，就在自己這端補上對應的保守處理。這份對稱是雙方在沒有共同規範時可依賴的東西 —— 它不需要任何一方等 IETF，只需要兩邊都認得同一組問題。
 

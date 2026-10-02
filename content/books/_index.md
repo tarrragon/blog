@@ -6,7 +6,7 @@ weight: 42
 tags: ["books", "reading"]
 ---
 
-這一頁的正文不會渲染，是維護這個分類的人用的。讀者需要的內容在四篇文章：[書單推薦怎麼用](reading-this-list/)（三條書線與分界）、[書單怎麼描述一本書](describing-a-book/)（四個維度、判定來源、收錄規則）、[同一個位置的答案會被哪些約束改變](constraints-that-change-the-answer/)、[公開課的收錄門檻與它服務得了的處境](open-course-criteria/)。三條線的導讀各在該線目錄底下。
+這一頁的正文不會渲染，是維護這個分類的人用的。讀者需要的內容在四篇文章：[書單推薦怎麼用](reading-this-list/)（三條書線與分界）、[書單怎麼描述一本書](describing-a-book/)（四個維度、判定來源、收錄規則）、[選書時會改變答案的約束條件](constraints-that-change-the-answer/)、[公開課的收錄門檻與它服務得了的處境](open-course-criteria/)。三條線的導讀各在該線目錄底下。
 
 ## 結構計數
 

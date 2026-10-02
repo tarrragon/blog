@@ -1,7 +1,7 @@
 ---
-title: "接收端的欄位要跟著 payload 一起改"
+title: "接收端與試算表表頭的欄位同步：payload 新增欄位的對照、doPost 的改法與重新部署"
 date: 2026-09-24
-description: "本模組三篇在前端 payload 上加的欄位、模組二接收端與試算表表頭要跟著改的程式碼，以及改完之後讓端點跑新版本的部署步驟"
+description: "前端 payload 加了欄位而接收端沒改時資料怎麼靜默遺失，表頭建立為什麼放進讀取路徑，以及新欄位對既有記錄不回填的限制"
 weight: 6
 tags: ["automation", "apps-script", "analytics"]
 ---

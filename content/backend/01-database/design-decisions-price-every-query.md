@@ -1,7 +1,7 @@
 ---
-title: "1.16 設計時下的每一個決定，替往後每一次查詢定價"
+title: "1.16 Schema 設計決定的查詢代價：可空性、排序鍵唯一性、表寬、一對多的切法、比較規則與外鍵執法"
 date: 2026-09-22
-description: "欄位可不可空、排序鍵唯不唯一、長欄位放哪張表、一對多的表怎麼切、字串比較規則寫在哪一層、外鍵生不生效，各自讓查詢多做什麼、代價在什麼條件下才浮現，以及改回來要付的遷移成本"
+description: "建表時每一個決定的兩種選法、選了之後查詢要多做什麼、代價在什麼條件下才浮現、改回來要付的遷移成本，以及設計當下就能問的問題；輸出為 SQLite 與 PostgreSQL 的實測"
 weight: 16
 tags: ["backend", "database", "schema", "query", "design"]
 ---
@@ -14,7 +14,7 @@ tags: ["backend", "database", "schema", "query", "design"]
 
 本篇的輸出都是實際跑出來的，每一段標明引擎。多數量測在 SQLite 3.51.0；collation 那一節整節在 PostgreSQL 18.6（索引能不能用要看計畫，而 SQLite 沒有對應的形態），外鍵那一節兩家並排。
 
-## 這一欄允不允許為空
+## 欄位的可空性
 
 **要決定的**：訂單有一欄「優惠券編號」，而不是每張訂單都用了優惠券。
 
@@ -60,7 +60,7 @@ SELECT 名稱 FROM 優惠券 WHERE 優惠券編號 NOT IN (SELECT 優惠券編�
 -- 生日
 ```
 
-分岔的機制是三值邏輯。`NOT IN` 拿外層的值跟子查詢交回的每一個值各比一次「不等於」，再用 `AND` 串起來；其中一項拿 `NULL` 去比，那一項的真值是未知，整串因此不會判成真（完整推導在 [SQL.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/)）。以「生日」那一列為例：
+分岔的機制是三值邏輯。`NOT IN` 拿外層的值跟子查詢交回的每一個值各比一次「不等於」，再用 `AND` 串起來；其中一項拿 `NULL` 去比，那一項的真值是未知，整串因此不會判成真（完整推導在 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/)）。以「生日」那一列為例：
 
 ```sql
 -- 子查詢交回 9001、NULL、9002，對「生日」（9003）展開
@@ -84,7 +84,7 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 優惠券編號;
 -- 102, 101, 103：SQLite 升冪時把 NULL 排最前
 ```
 
-升冪排序時空值落在哪一端由引擎自己規定，SQLite 與 MySQL 排最前、PostgreSQL 與 DuckDB 排最後；降冪時 SQLite、MySQL、PostgreSQL 都翻到另一端，DuckDB 仍排最後（[SQL.11 關係沒有順序](/backend/01-database/sql/relations-have-no-order/) 的四家對照）。**每一條都是這一欄允許為空之後，往後每一段碰到它的查詢都要處理的事。**
+升冪排序時空值落在哪一端由引擎自己規定，SQLite 與 MySQL 排最前、PostgreSQL 與 DuckDB 排最後；降冪時 SQLite、MySQL、PostgreSQL 都翻到另一端，DuckDB 仍排最後（[SQL.11 查詢結果的列序](/backend/01-database/sql/relations-have-no-order/) 的四家對照）。**每一條都是這一欄允許為空之後，往後每一段碰到它的查詢都要處理的事。**
 
 **代價在什麼條件下浮現**。第一張沒有用優惠券的訂單被寫進來的那一刻——不是 schema 變更的時刻。在那之前這一欄裡沒有空值，`NOT IN` 與 `NOT EXISTS` 回同一個答案，測試會過，而 schema 早就已經是現在這個樣子了。
 
@@ -92,7 +92,7 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 優惠券編號;
 
 **所以設計當下要問的是**：這一欄的空值，代表「還不知道」、「不適用」、還是「確定沒有」。三種是不同的事實，而 `NULL` 只有一個，把它們併成同一個值之後，往後每一段查詢都要從別的欄位去猜是哪一種。分得開的那幾種，各自給一個實際的值或各自一張表。
 
-## 這個鍵唯不唯一
+## 排序鍵的唯一性
 
 **要決定的**：訂單列表要按下單日排序給使用者翻頁。下單日這一欄唯不唯一。
 
@@ -136,7 +136,7 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 下單日 LIMIT 2 OFFSET 4;
 使用者拿到的整份清單：101, 102, 104, 102, 105, 106
 ```
 
-**102 出現兩次，而 103 一次都沒有出現。** 兩次查詢都沒有報錯，兩次的結果也都正確——四張同一天的訂單之間，`ORDER BY 下單日` 沒有規定誰在前面，所以掃全表時照存放順序、走索引時照索引順序，兩種都合法（機制在 [SQL.11 關係沒有順序](/backend/01-database/sql/relations-have-no-order/)）。
+**102 出現兩次，而 103 一次都沒有出現。** 兩次查詢都沒有報錯，兩次的結果也都正確——四張同一天的訂單之間，`ORDER BY 下單日` 沒有規定誰在前面，所以掃全表時照存放順序、走索引時照索引順序，兩種都合法（機制在 [SQL.11 查詢結果的列序](/backend/01-database/sql/relations-have-no-order/)）。
 
 **這個示範要成立，索引的第二欄是必要的。** 索引只建下單日一欄時，同一份資料的第 2 頁不重複也不遺漏：
 
@@ -180,15 +180,15 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 下單日, 訂單編號 LIMIT 2 OFFSET 
 SELECT 訂單編號 FROM 訂單 ORDER BY 下單日, 訂單編號 LIMIT 2 OFFSET 4;   -- 第 3 頁：104, 105，106 從未出現
 ```
 
-`OFFSET` 數的是位置，而位置會被排在游標前面的寫入改變——翻頁途中的寫入造成的錯位不需要並列、不需要計畫改變，只需要一邊翻頁一邊有人在寫。要免疫於它，游標得從位置換成值（[SQL.12 分頁要一個全序](/backend/01-database/sql/pagination-needs-a-total-order/) 寫兩種游標的取捨，並說明補唯一鍵治好了哪一種、治不好哪一種）。**本節的決定只治得好並列造成的重複與遺漏**；翻頁途中的寫入造成的那一種要靠應用層把游標從位置換成值，schema 管不到。
+`OFFSET` 數的是位置，而位置會被排在游標前面的寫入改變——翻頁途中的寫入造成的錯位不需要並列、不需要計畫改變，只需要一邊翻頁一邊有人在寫。要免疫於它，游標得從位置換成值（[SQL.12 分頁的排序鍵與游標](/backend/01-database/sql/pagination-needs-a-total-order/) 寫兩種游標的取捨，並說明補唯一鍵治好了哪一種、治不好哪一種）。**本節的決定只治得好並列造成的重複與遺漏**；翻頁途中的寫入造成的那一種要靠應用層把游標從位置換成值，schema 管不到。
 
-排序鍵不唯一的另一個代價落在「拿前一筆比較」那一族問題上：排序鍵有並列時「前一列」是哪一列沒有定義，`LAG` 與自連接都受影響（[SQL.10 分組把列收掉，視窗函數把列留著](/backend/01-database/sql/window-keeps-rows-grouping-collapses/)）。
+排序鍵不唯一的另一個代價落在「拿前一筆比較」那一族問題上：排序鍵有並列時「前一列」是哪一列沒有定義，`LAG` 與自連接都受影響（[SQL.10 分組與視窗函數：各自的產出、選用的依據與 LAG、LEAD 的相鄰列](/backend/01-database/sql/window-keeps-rows-grouping-collapses/)）。
 
 **改回來要付什麼**。補決勝鍵只要改查詢，不用動 schema——這是六個決定裡最便宜的一個。真正的成本在**找出全部要改的地方**：每一段有 `ORDER BY` 加 `LIMIT` 的查詢都要查一次它的排序鍵唯不唯一，而那些查詢散在整個程式裡。
 
-**所以設計當下要問的是**：這張表會不會被翻頁或取前 N 筆，而拿來排的那一欄分不分得出高下。答案是否定的時候，分頁的排序鍵就要在設計時寫成「那一欄加上主鍵」，而不是等症狀出現。位置式與值式兩種游標的取捨在 [SQL.12 分頁要一個全序](/backend/01-database/sql/pagination-needs-a-total-order/)。
+**所以設計當下要問的是**：這張表會不會被翻頁或取前 N 筆，而拿來排的那一欄分不分得出高下。答案是否定的時候，分頁的排序鍵就要在設計時寫成「那一欄加上主鍵」，而不是等症狀出現。位置式與值式兩種游標的取捨在 [SQL.12 分頁的排序鍵與游標](/backend/01-database/sql/pagination-needs-a-total-order/)。
 
-## 一張表裝多寬
+## 表的寬度與長欄位的存放位置
 
 **要決定的**：商品有一段很長的描述文字。它跟名稱、價格放同一張表，還是另外一張。
 
@@ -236,7 +236,7 @@ SELECT count(*) FROM 商品窄 WHERE 價格 > 500;
 
 **所以設計當下要問的是**：這一欄在多少比例的查詢裡會被讀到。答案是「很少」而它又很大的時候，它跟同一張表的其他欄位的存取頻率差了一個量級，而**存取頻率差一個量級的欄位不該住在同一張表**。
 
-## 常一起取的資料切在幾張表
+## 一對多資料的切表方式
 
 **要決定的**：一張訂單有多筆明細，也有多個標籤。要拿「這張訂單的明細總額」的時候，查詢會同時碰到幾張一對多的表。
 
@@ -271,7 +271,7 @@ JOIN 標籤 ON 標籤.訂單編號 = 訂單.訂單編號;
 4           1600
 ```
 
-實際的小計總和是 800。兩筆明細各被兩個標籤複製一次，連出四列，總和翻倍（機制在 [SQL.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/)）。同一個父列在兩張一對多的表上各有多列、而兩張表在同一段查詢裡各連一次，本篇把這個形狀叫**雙重展開**：連出來的列數是兩張表列數的乘積。
+實際的小計總和是 800。兩筆明細各被兩個標籤複製一次，連出四列，總和翻倍（機制在 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/)）。同一個父列在兩張一對多的表上各有多列、而兩張表在同一段查詢裡各連一次，本篇把這個形狀叫**雙重展開**：連出來的列數是兩張表列數的乘積。
 
 而**修法本身對不對由資料決定**。把 `sum` 改成 `sum(DISTINCT ...)`，在兩批資料上各跑一次：
 
@@ -305,7 +305,7 @@ JOIN (SELECT 訂單編號, count(*) AS 標籤數 FROM 標籤 GROUP BY 訂單編�
 
 **所以設計當下要問的是**：哪幾張表對同一個父列是一對多的，而它們會不會出現在同一段查詢裡。會的話，那個彙總在設計時就該有一條不經過雙重展開的路。
 
-## 字串的比較規則寫在哪一層
+## 字串比較規則的宣告位置
 
 **要決定的**：使用者用 email 登入，而 email 不分大小寫。這條規則寫在哪裡。
 
@@ -386,13 +386,13 @@ SELECT 會員編號 FROM 會員2 WHERE email = 'user12345@example.com';
 
 兩條修法都快，而**欄位 collation 的查詢裡沒有任何東西在處理大小寫**——規則住在欄位上，每一段查詢自動套用它。函式索引要求每一段查詢都記得寫 `lower()`，漏掉一處就是一次全表掃描加一個不分大小寫失效的比對。
 
-**代價在什麼條件下浮現**。表長到掃描明顯變慢的時候。而這一條還有第二個代價**在單一引擎上完全量不到**：各家的預設比較規則不同，同一句 `WHERE 姓名 = 'anna'` 在 MySQL 8.4 上回四列（`Anna`、`anna`、`ANNA`、`Ánna`——它的預設 collation `utf8mb4_0900_ai_ci` 把大小寫與重音都算成同一個值），而在 SQLite 3.51 與 PostgreSQL 18 上只回逐字相同的那一列（三家的實測在 [SQL.15 字串的比較規則由 collation 決定](/backend/01-database/sql/string-comparison-and-collation/)）。規則沒有寫出來的時候，換一家引擎、換一個資料庫的建立參數，命中的列就變。
+**代價在什麼條件下浮現**。表長到掃描明顯變慢的時候。而這一條還有第二個代價**在單一引擎上完全量不到**：各家的預設比較規則不同，同一句 `WHERE 姓名 = 'anna'` 在 MySQL 8.4 上回四列（`Anna`、`anna`、`ANNA`、`Ánna`——它的預設 collation `utf8mb4_0900_ai_ci` 把大小寫與重音都算成同一個值），而在 SQLite 3.51 與 PostgreSQL 18 上只回逐字相同的那一列（三家的實測在 [SQL.15 字串比較與 collation](/backend/01-database/sql/string-comparison-and-collation/)）。規則沒有寫出來的時候，換一家引擎、換一個資料庫的建立參數，命中的列就變。
 
 **改回來要付什麼**。改欄位的 collation 要重建那一欄上的全部索引，因為索引裡的排序是按舊規則建的。這件事在大表上是一次有停機風險的操作。
 
 **所以設計當下要問的是**：這一欄的「相等」是什麼意思，而那個定義寫在哪裡。寫在每一段查詢裡的定義會被漏掉；寫在欄位上的定義由引擎替每一段查詢執行。
 
-## 外鍵宣告了，而它生效了嗎
+## 外鍵的宣告與執法
 
 **要決定的**：訂單的顧客編號要不要宣告外鍵，以及——這是容易被略過的那一半——**那條宣告在這個環境裡會不會執法**。
 
@@ -438,7 +438,7 @@ JOIN 顧客 ON 顧客.顧客編號 = 訂單.顧客編號;
 
 **兩個總額都是正確答案，而它們差 500。** 一份直接從訂單表算的報表得到 800，一份連了顧客表取姓名的報表得到 300，兩份都不報錯，而看報表的人沒有辦法從數字本身判斷哪一份對。這一節要看的是**這個差額由 schema 是否執法決定，不由那兩段查詢決定**——兩段都寫對了。
 
-宣告與執法分家有四條路徑（連線層開關、`NOT VALID` 狀態、欄位層與表層的寫法差異、storage engine），各家引擎上的實測在 [SQL.18 外鍵寫下保證，各家引擎決定它生不生效](/backend/01-database/sql/foreign-key-and-referential-integrity/)。
+宣告與執法分家有四條路徑（連線層開關、`NOT VALID` 狀態、欄位層與表層的寫法差異、storage engine），各家引擎上的實測在 [SQL.18 外鍵與參照完整性：宣告、生效與查詢得到的保證](/backend/01-database/sql/foreign-key-and-referential-integrity/)。
 
 **代價在什麼條件下浮現**。第一筆孤兒資料寫進來的時候，而那多半是一次失敗的交易、一次部分成功的批次匯入、或一次手動修資料留下的。在那之前，有沒有執法在行為上分不出來。
 
@@ -501,6 +501,6 @@ PRAGMA foreign_keys;             -- 這條連線有沒有開執法，0 是沒開
 
 ## 下一步路由
 
-查詢本身怎麼讀準、代價為什麼不在查詢的文字裡，在 [SQL：這個語言為什麼長這樣](/backend/01-database/sql/)。本篇六節各自指過去的那幾篇是它的機制層：[SQL.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/) 空值與列數膨脹、[SQL.11 關係沒有順序](/backend/01-database/sql/relations-have-no-order/) 順序、[SQL.12 分頁要一個全序](/backend/01-database/sql/pagination-needs-a-total-order/) 分頁、[SQL.15 字串的比較規則由 collation 決定](/backend/01-database/sql/string-comparison-and-collation/) collation、[SQL.18 外鍵寫下保證](/backend/01-database/sql/foreign-key-and-referential-integrity/) 外鍵。
+查詢本身怎麼讀準、代價為什麼不在查詢的文字裡，在 [SQL：這個語言為什麼長這樣](/backend/01-database/sql/)。本篇六節各自指過去的那幾篇是它的機制層：[SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/) 空值與列數膨脹、[SQL.11 查詢結果的列序](/backend/01-database/sql/relations-have-no-order/) 順序、[SQL.12 分頁的排序鍵與游標](/backend/01-database/sql/pagination-needs-a-total-order/) 分頁、[SQL.15 字串比較與 collation](/backend/01-database/sql/string-comparison-and-collation/) collation、[SQL.18 外鍵與參照完整性](/backend/01-database/sql/foreign-key-and-referential-integrity/) 外鍵。
 
 要在真實系統上讀計畫、而不是像本篇這樣讀三四行的輸出，走 [PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)。

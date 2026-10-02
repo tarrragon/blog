@@ -14,13 +14,13 @@ tags: ["python", "pandas", "data-analysis", "sql"]
 
 ## 章節
 
-| 篇                                                                                | 交付                                                       |
-| --------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| [8.1 資料以什麼單位進來](/python/08-data-analysis/data-unit-splits-work/)         | 分開幾種 Python 工作的那條軸，以及各自的工具鏈由它推導出來 |
-| [8.2 運算發生在哪一端](/python/08-data-analysis/where-computation-runs/)          | 資料庫端與記憶體端的分界，本模組其餘各篇的推導源頭         |
-| [8.3 ORM 交出查詢，DataFrame 自己算](/python/08-data-analysis/orm-and-dataframe/) | 兩者各自產出什麼，以及從回傳值認出手上是哪一類的方法       |
-| [8.4 同一套關聯代數](/python/08-data-analysis/same-relational-algebra/)           | SQL 與 DataFrame 四組對應的實測，以及對應斷掉的位置        |
-| [8.5 記憶體是邊界條件](/python/08-data-analysis/memory-is-the-boundary/)          | 資料量的估算法，與越過之後三個方向各自付什麼代價           |
+| 篇                                                                                                                 | 交付                                                       |
+| ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| [8.1 Python 的幾種工作與資料進入程式的單位](/python/08-data-analysis/data-unit-splits-work/)                       | 分開幾種 Python 工作的那條軸，以及各自的工具鏈由它推導出來 |
+| [8.2 運算發生的位置](/python/08-data-analysis/where-computation-runs/)                                             | 資料庫端與記憶體端的分界，本模組其餘各篇的推導源頭         |
+| [8.3 ORM 與 DataFrame 的分辨：回傳值的形狀、連線物件與查詢送出的時機](/python/08-data-analysis/orm-and-dataframe/) | 兩者各自產出什麼，以及從回傳值認出手上是哪一類的方法       |
+| [8.4 SQL 子句與 pandas 方法的對應](/python/08-data-analysis/same-relational-algebra/)                              | SQL 與 DataFrame 四組對應的實測，以及對應斷掉的位置        |
+| [8.5 pandas 的記憶體邊界](/python/08-data-analysis/memory-is-the-boundary/)                                        | 資料量的估算法，與越過之後三個方向各自付什麼代價           |
 
 ## 推導源頭
 

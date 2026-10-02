@@ -8,9 +8,9 @@ tags: ["books", "reading", "craft", "refactoring", "legacy-code"]
 
 改既有的程式跟寫新的程式是兩種活。寫新的時候形狀由動手的人決定；改既有的時候形狀已經定了，動它的前提是不弄壞任何人依賴的行為。這件事的難度不由程式碼的複雜度決定，由**有沒有辦法知道自己弄壞了什麼**決定——同一段程式，有測試時的改法跟沒測試時的改法完全不同。
 
-先拿哪一本，就看手上那段程式有沒有測試。有測試，從 [Refactoring](#起點是-refactoring) 開始，它給的是一份可以逐項對照的手法目錄。沒有測試而又非動不可，先走 [Working Effectively with Legacy Code](#手上沒有測試時讀-working-effectively-with-legacy-code)——那本處理的正是「怎麼在沒有安全網的情況下先弄出安全網」。改動小到不值得為它開一張工單、只是不確定要不要順手整理，走 [Tidy First?](#要決定現在整理還是之後再說時讀-tidy-first)，一個下午讀得完。不確定自己落在哪一格，就從 [Refactoring](#起點是-refactoring) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+先拿哪一本，就看手上那段程式有沒有測試。有測試，從 [Refactoring](#起點書refactoring) 開始，它給的是一份可以逐項對照的手法目錄。沒有測試而又非動不可，先走 [Working Effectively with Legacy Code](#working-effectively-with-legacy-code手上沒有測試時的選讀)——那本處理的正是「怎麼在沒有安全網的情況下先弄出安全網」。改動小到不值得為它開一張工單、只是不確定要不要順手整理，走 [Tidy First?](#tidy-first要決定現在整理還是之後再說時的選讀)，一個下午讀得完。不確定自己落在哪一格，就從 [Refactoring](#起點書refactoring) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
-## 起點是 Refactoring
+## 起點書：Refactoring
 
 Martin Fowler 的《Refactoring》把這個主題編成一份目錄，第二版收了六十幾項具名重構，每一項都有動機、機制與範例——編成目錄這件事本身就是它涵蓋面最完整的原因，因為漏掉的手法在目錄裡是看得出來的。它同時定義了這個詞：重構是改變程式碼的內部結構而不改變其外部行為——這個定義比日常用法嚴格得多，而多數把「重構」用在大改寫上的溝通混亂都來自忽略後半句。
 
@@ -27,9 +27,9 @@ Martin Fowler 的《Refactoring》把這個主題編成一份目錄，第二版�
 - [Amazon（Refactoring, 2nd Edition）](https://www.amazon.com/Refactoring-Improving-Existing-Addison-Wesley-Signature/dp/0134757599)
 - [博客來（重構（第二版）：改善既有程式的設計）](https://www.books.com.tw/products/0010825896)
 
-## 手上沒有測試時讀 Working Effectively with Legacy Code
+## Working Effectively with Legacy Code：手上沒有測試時的選讀
 
-Michael Feathers 這本補的是 [《Refactoring》](#起點是-refactoring) 假設已經存在、而現實中經常沒有的東西。它對遺留程式碼的定義是：**沒有測試的程式碼就是遺留程式碼**，不論它上週才寫好。這個定義把問題從「這段程式碼有多老」換成「我改它的時候拿什麼確認自己沒弄壞」，而後者才是可以動手處理的。
+Michael Feathers 這本補的是 [《Refactoring》](#起點書refactoring) 假設已經存在、而現實中經常沒有的東西。它對遺留程式碼的定義是：**沒有測試的程式碼就是遺留程式碼**，不論它上週才寫好。這個定義把問題從「這段程式碼有多老」換成「我改它的時候拿什麼確認自己沒弄壞」，而後者才是可以動手處理的。
 
 於是全書的主軸變成一個先有雞還是先有蛋的問題：要安全地改，得先有測試；要寫測試，得先把依賴切開；而切開依賴本身就是在改程式碼。Feathers 的解法是接縫（seam）——程式裡那些可以在不編輯該處的前提下改變行為的位置，找到它就有了掛測試的著力點。書末的二十四項解依賴技術是這套方法的目錄。
 
@@ -46,7 +46,7 @@ Michael Feathers 這本補的是 [《Refactoring》](#起點是-refactoring) 假
 - [Amazon（Working Effectively with Legacy Code）](https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052)
 - [博客來（Working Effectively with Legacy Code 中文版）](https://www.books.com.tw/products/0010829482)
 
-## 要決定「現在整理還是之後再說」時讀 Tidy First?
+## Tidy First?：要決定「現在整理還是之後再說」時的選讀
 
 Kent Beck 的《Tidy First?》（2023）處理的是另外兩本沒有處理的那個決定：手上要改一個功能，而周圍的程式碼有點亂——先整理再改、改完再整理、還是不整理？這本書整本只回答這一個問題，很快就能讀完。它也是本篇門檻最低的一本，跟起點書不是同一本：起點取 Fowler 是因為涵蓋面，而 Fowler 那本要手上正有一段想改的程式碼才讀得出東西。要挑給一群程度不一的人共讀時取這本。
 
@@ -69,7 +69,7 @@ Kent Beck 的《Tidy First?》（2023）處理的是另外兩本沒有處理的�
 
 Joshua Kerievsky 的《Refactoring to Patterns》把重構手法接到設計模式上，前提是讀者已經熟悉 GoF 設計模式。那套模式近年的適用性本身有討論，所以這本書要不要讀，得先對那個前提有立場。
 
-讀不動長篇文字的讀者在別的主題可以改走公開課，這個主題走不了。課堂教材要可控、可評分、每屆重複得了，而本篇三本書處理的**已經存在而且沒人想動的程式碼**正好是這三項的反面——它的價值來自真實系統累積出來的歷史，那種材料課程取不到。整條線的供給狀況寫在 [工程技藝書單的公開課段](../craft-line-guide/#四個主題裡只有系統架構接得住公開課)。
+讀不動長篇文字的讀者在別的主題可以改走公開課，這個主題走不了。課堂教材要可控、可評分、每屆重複得了，而本篇三本書處理的**已經存在而且沒人想動的程式碼**正好是這三項的反面——它的價值來自真實系統累積出來的歷史，那種材料課程取不到。整條線的供給狀況寫在 [工程技藝書單的公開課段](../craft-line-guide/#各主題的公開課涵蓋狀況)。
 
 ## 這個主題接到哪裡
 

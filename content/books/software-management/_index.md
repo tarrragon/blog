@@ -6,7 +6,7 @@ weight: 10
 tags: ["books", "reading", "management", "engineering-leadership", "career"]
 ---
 
-這一頁的正文不會渲染，是維護這條線的人用的。讀者要的五種位置、單一起點、各位置起點書與套書購買說明在 [軟體管理與組織書單：依位置與依主題兩條入口](management-line-guide/)。
+這一頁的正文不會渲染，是維護這條線的人用的。讀者要的五種位置、單一起點、各位置起點書與套書購買說明在 [軟體管理與組織書單：依位置與依主題的選書入口](management-line-guide/)。
 
 ## Backlog
 

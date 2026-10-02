@@ -15,7 +15,7 @@ tags: ["sql", "constraint", "null", "ddl", "knowledge-card"]
 
 一個判斷標準能不能省掉某一步，取決於約束有沒有把那一步的前提固定住。最直接的一例是[空值](/backend/01-database/sql/knowledge-cards/null/)：`NOT IN` 在子查詢那一欄出現 `NULL` 的時候會整個回空集合而不報錯，所以否定式的成員判斷一般用 `NOT EXISTS`。這條規則有一個豁免——那一欄掛了 `NOT NULL`。**豁免的條件是約束而不是觀察**：翻遍現在的資料都沒有 `NULL`，只證明此刻沒有；約束證明的是往後也不會有，而查詢要活得比這一批資料久。
 
-同一個結構在別處反覆出現：`UNIQUE` 讓「這個連接會不會讓一列配到多列」變成可以事先回答的問題（見 [SQL.6 連接產出的是新的關係，列數與空缺都變了](/backend/01-database/sql/join-changes-rows-and-nulls/)），`FOREIGN KEY` 讓「這個 `JOIN` 會不會掉列」有一個不必查資料就成立的答案。
+同一個結構在別處反覆出現：`UNIQUE` 讓「這個連接會不會讓一列配到多列」變成可以事先回答的問題（見 [SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)），`FOREIGN KEY` 讓「這個 `JOIN` 會不會掉列」有一個不必查資料就成立的答案。
 
 ## 概念位置
 
@@ -23,8 +23,8 @@ tags: ["sql", "constraint", "null", "ddl", "knowledge-card"]
 
 它與[索引](/backend/01-database/sql/knowledge-cards/indexing/)在外觀上容易混——`UNIQUE` 在多數引擎底下確實靠一個索引實作，而兩者的責任不同：索引買的是查找速度，約束買的是內容的保證。刪掉一個索引查詢會變慢，刪掉一個約束則是往後的寫入不再被擋。
 
-這條分工有一個邊界：約束宣告的內容同時是[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)可用的資訊，所以它買到的有時候多於內容的保證。同一張五千列的表、同一個 `EXISTS` 查詢、`recordDate` 上同樣掛著索引，只把索引從 `UNIQUE` 換成普通索引，SQLite 3.51.0 產出的位元碼就多一圈內層迴圈——唯一的時候引擎知道那次查找至多回一列，不唯一的時候它得準備好再看下一筆。這個差別在 `EXPLAIN QUERY PLAN` 上看不見，兩邊都印同一行 `SEARCH y USING INDEX ix (recordDate=?)`，要 `EXPLAIN` 到位元碼那一層才分得開；而在這組資料上它沒有量出時間差。同一組查詢在 DuckDB 1.5.5 上的計畫與有沒有 `UNIQUE` 無關。所以約束會不會影響代價是各家自己的決定，不是約束本身的性質（[SQL.19 引擎的寬鬆度沒有總排名，可攜性要逐個寫法決定](/backend/01-database/sql/engine-leniency-and-portability/)）。
+這條分工有一個邊界：約束宣告的內容同時是[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)可用的資訊，所以它買到的有時候多於內容的保證。同一張五千列的表、同一個 `EXISTS` 查詢、`recordDate` 上同樣掛著索引，只把索引從 `UNIQUE` 換成普通索引，SQLite 3.51.0 產出的位元碼就多一圈內層迴圈——唯一的時候引擎知道那次查找至多回一列，不唯一的時候它得準備好再看下一筆。這個差別在 `EXPLAIN QUERY PLAN` 上看不見，兩邊都印同一行 `SEARCH y USING INDEX ix (recordDate=?)`，要 `EXPLAIN` 到位元碼那一層才分得開；而在這組資料上它沒有量出時間差。同一組查詢在 DuckDB 1.5.5 上的計畫與有沒有 `UNIQUE` 無關。所以約束會不會影響代價是各家自己的決定，不是約束本身的性質（[SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)）。
 
 ## 往下走
 
-`NULL` 在比較、計數與分組裡各自怎麼表現，以及否定式那條規則的完整推導，在 [NULL（空值）](/backend/01-database/sql/knowledge-cards/null/) 與 [SQL.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/) 的「NOT IN 碰到一個 NULL 就整個失效」一節。約束能在寫入時擋下哪些會讓答案錯掉的資料、為什麼問錯問題的那一類錯它擋不下，在 [SQL.13 合不合法由引擎驗，答案對不對由提問的人負責](/backend/01-database/sql/well-formed-is-not-correct/)。`FOREIGN KEY` 擋下哪兩個方向的寫入、同一段宣告在各家引擎為什麼未必生效，在 [SQL.18 外鍵寫下保證，各家引擎決定它生不生效](/backend/01-database/sql/foreign-key-and-referential-integrity/)。約束由誰有權建立、以及它跟常態運行帳號的權限為什麼分開，在 [SQL.16 權限的預設是什麼都不給](/backend/01-database/sql/privilege-model/)。
+`NULL` 在比較、計數與分組裡各自怎麼表現，以及否定式那條規則的完整推導，在 [NULL（空值）](/backend/01-database/sql/knowledge-cards/null/) 與 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/) 的「子查詢含 NULL 時的 NOT IN 與 NOT EXISTS」一節。約束能在寫入時擋下哪些會讓答案錯掉的資料、為什麼問錯問題的那一類錯它擋不下，在 [SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/)。`FOREIGN KEY` 擋下哪兩個方向的寫入、同一段宣告在各家引擎為什麼未必生效，在 [SQL.18 外鍵與參照完整性：宣告、生效與查詢得到的保證](/backend/01-database/sql/foreign-key-and-referential-integrity/)。約束由誰有權建立、以及它跟常態運行帳號的權限為什麼分開，在 [SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)。

@@ -12,7 +12,7 @@ tags: ["books", "reading", "postmortem", "blameless", "safety-science", "inciden
 
 受監理環境的讀者要先看這一段再往下。金融、醫療、航空這類有主管機關的組織，事故後的追責與報告是法定義務，不是文化選擇；下面三本處理的是「怎麼問出真正的原因」，不是「可不可以不追究」，而兩者在受監理環境裡最容易被混為一談。把無指責當成免責在這裡有實際的法律風險。這種組織該問的是懲戒界線畫在哪、以及調查報告與法遵報告能不能分開產出，那組問題對應的是 Dekker 的另一本《Just Culture》（見下面的「為什麼只收這幾本」段），而法遵那一側要回到自己領域的主管機關規定，書給不了。
 
-## 起點是 Dekker 的 Field Guide
+## 起點書：Dekker 的 Field Guide
 
 Sidney Dekker 的《The Field Guide to Understanding 'Human Error'》從歸因理論一路寫到調查程序，而且設計上就是給調查者當工作手冊用——理論與程序同時到位的只有它。核心主張是「人為疏失」這個標籤會阻止真正原因被發現，因為它把調查的終點放在最容易指認的地方。
 
@@ -24,7 +24,7 @@ Sidney Dekker 的《The Field Guide to Understanding 'Human Error'》從歸因�
 
 - [Amazon（The Field Guide to Understanding 'Human Error'）](https://www.amazon.com/Field-Guide-Understanding-Human-Error/dp/1472439058)
 
-## 想理解災難怎麼累積時讀 The Challenger Launch Decision
+## The Challenger Launch Decision：想理解災難怎麼累積時的選讀
 
 Diane Vaughan 的《The Challenger Launch Decision》是一部社會學的深度個案重建，推翻了挑戰者號失事的通俗解釋。她的結論是 [偏差被逐步正常化](/til/organization/normalization-of-deviance/)，而非有人違規或隱瞞——每一次小幅放寬標準當下都有合理理由，而且每次都沒出事，於是新標準成為基準，下一次再從新基準往外放一點。
 
@@ -36,7 +36,7 @@ Diane Vaughan 的《The Challenger Launch Decision》是一部社會學的深度
 
 - [Amazon（The Challenger Launch Decision, Enlarged Edition）](https://www.amazon.com/Challenger-Launch-Decision-Technology-Deviance/dp/022634682X)
 
-## 要看產業實作版本時回到 Google SRE
+## Google SRE：事故檢討的產業實作版本
 
 Google 的《Site Reliability Engineering》裡的事後檢討章節，是 Dekker 的歸因理論與 Vaughan 的偏差正常化在軟體組織裡的制度化版本：檢討報告該包含什麼、由誰主持、如何確保追蹤項目真的被完成、以及怎麼避免無指責變成無追究。
 

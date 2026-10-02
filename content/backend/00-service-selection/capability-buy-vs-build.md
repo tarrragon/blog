@@ -67,7 +67,7 @@ feature SaaS 把整塊能力連同它的內部業務邏輯一起交出去、你�
 
 commodity 這一列是最常見的買訊號。認證、Email 投遞、金流處理、問卷蒐集、物件儲存 / 檔案 / CDN、後台操作介面（internal tooling）都落在這裡 — 每個產品要的功能幾乎一樣、自己寫一套不會讓產品更有競爭力。後台介面值得特別點出：很多團隊把「完整後台可操作」當成自建理由、但 admin panel 本身是 commodity、Supabase Studio、Retool、Appsmith 這類工具讓你連著資料庫就生出可操作的後台、把工程時間留給真正客製的業務流程。
 
-自己架一台 SMTP 寄 email 看起來簡單、真正的成本藏在 deliverability — SPF、DKIM、DMARC、IP 信譽、退信處理、進垃圾桶的排查、是一條沒有終點的維護線、而 SendGrid 這類服務把這條線變成它的本業。這就是長尾成本最容易被低估的地方：金流的反詐欺、認證的 MFA 與 social login 矩陣同理 — 第一版很快、長期維護吃掉的人力沒有上限。短網址是同一型的能力：轉址幾十行就寫得出來，長尾在濫用處理與網域名聲，網域被列入封鎖清單時所有連結一起失效，判讀見 [0.23 短網址服務的需求定義](/backend/00-service-selection/url-shortener-requirements/) 的〈自建的理由要落在轉址以外的地方〉。
+自己架一台 SMTP 寄 email 看起來簡單、真正的成本藏在 deliverability — SPF、DKIM、DMARC、IP 信譽、退信處理、進垃圾桶的排查、是一條沒有終點的維護線、而 SendGrid 這類服務把這條線變成它的本業。這就是長尾成本最容易被低估的地方：金流的反詐欺、認證的 MFA 與 social login 矩陣同理 — 第一版很快、長期維護吃掉的人力沒有上限。短網址是同一型的能力：轉址幾十行就寫得出來，長尾在濫用處理與網域名聲，網域被列入封鎖清單時所有連結一起失效，判讀見 [0.23 短網址服務的需求定義](/backend/00-service-selection/url-shortener-requirements/) 的〈自建或購買：自建成立的理由與自建之後的長期成本〉。
 
 ## 【觀察】什麼訊號指向「自建或搬離」
 

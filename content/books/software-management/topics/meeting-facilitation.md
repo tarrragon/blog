@@ -10,9 +10,9 @@ tags: ["books", "reading", "facilitation", "decision-making", "meetings"]
 
 三本書對「把人聚在一起想事情」的信任度不同，而那條線是選書的主軸。Kaner 的整套設計建立在群體能一起想；de Bono 認為可以，但要先規定所有人在同一時間只用一種模式；Knapp 的流程把產出環節退回個人，只把評估與收斂留給群體。常見的會議格式各自預設了這條線上的某一點，而那個預設很少被說出來過。
 
-先拿哪一本，看要的是整套設計還是一個明天就能用的動作。要建立引導這件事的完整基礎，從 [Facilitator's Guide to Participatory Decision-Making](#起點是-facilitators-guide-to-participatory-decision-making) 開始，它最厚也最完整。下週的會議就想改掉一件事，走 [六頂思考帽](#要一個當天就能導入的協議時讀六頂思考帽)，一個協議、當天導得進去。已經試過集體發想而結果一再讓人失望，走 [Sprint](#對一群人一起發想存疑時讀-sprint)——它把產出環節退回個人，正面處理那個懷疑。不確定自己落在哪一格，就從 [Facilitator's Guide](#起點是-facilitators-guide-to-participatory-decision-making) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+先拿哪一本，看要的是整套設計還是一個明天就能用的動作。要建立引導這件事的完整基礎，從 [Facilitator's Guide to Participatory Decision-Making](#起點書facilitators-guide-to-participatory-decision-making) 開始，它最厚也最完整。下週的會議就想改掉一件事，走 [六頂思考帽](#六頂思考帽要一個當天就能導入的協議時的選讀)，一個協議、當天導得進去。已經試過集體發想而結果一再讓人失望，走 [Sprint](#sprint對一群人一起發想存疑時的選讀)——它把產出環節退回個人，正面處理那個懷疑。不確定自己落在哪一格，就從 [Facilitator's Guide](#起點書facilitators-guide-to-participatory-decision-making) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
-## 起點是 Facilitator's Guide to Participatory Decision-Making
+## 起點書：Facilitator's Guide to Participatory Decision-Making
 
 Sam Kaner 這本從發散到收斂的每一段都給得出對應的做法，而不只處理其中一個環節——本篇最完整的一本因此是它。它的骨架是鑽石模型：發散期把選項攤開、中間一段混亂、收斂期做出決定。
 
@@ -26,7 +26,7 @@ Sam Kaner 這本從發散到收斂的每一段都給得出對應的做法，而�
 - [Amazon（Facilitator's Guide to Participatory Decision-Making，新版）](https://www.amazon.com/Facilitators-Guide-Participatory-Decision-Making-Kaner/dp/1119789060)
 - [博客來（結構化研討：參與式決策操作手冊，第 3 版，簡體中文版）](https://www.books.com.tw/products/CN11339885)
 
-## 要一個當天就能導入的協議時讀六頂思考帽
+## 六頂思考帽：要一個當天就能導入的協議時的選讀
 
 Edward de Bono 這本是本篇門檻最低的一本：一個下午讀得完，隔天的會議就能用。它推的是平行思考——全場在同一時間處於同一個思考模式，由主持決定順序與切換時機。白帽查事實、紅帽講直覺與情緒、黑帽找風險、黃帽找好處、綠帽產生替代方案、藍帽管理流程本身。
 
@@ -43,7 +43,7 @@ Edward de Bono 這本是本篇門檻最低的一本：一個下午讀得完，�
 - [Amazon（Six Thinking Hats）](https://www.amazon.com/Six-Thinking-Hats-Edward-Bono/dp/0241257530)
 - [博客來（六頂思考帽 全新修訂版）](https://www.books.com.tw/products/0010962021)
 
-## 對「一群人一起發想」存疑時讀 Sprint
+## Sprint：對「一群人一起發想」存疑時的選讀
 
 Jake Knapp 與另兩位 GV 設計合夥人這本給的是一份五天的逐時腳本：週一收斂問題、週二各自畫方案、週三選一個、週四做原型、週五交給真實使用者測。
 

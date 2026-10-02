@@ -10,9 +10,9 @@ tags: ["books", "reading", "productivity", "workload", "attention"]
 
 三本書對同一種體感給出三種診斷，而它們分歧的是**問題落在哪一層**，不是做法。Allen 認為問題在個人層，把所有承諾外部化就能解決；Newport 認為層級錯了，決定工作量與節奏的協議在組織層，個人再怎麼優化都只是把自己處理得更快；Burkeman 認為目標錯了，「全部做完」這個狀態不存在，因為處理事情本身會製造更多事情。
 
-選書的第一個動作因此是判斷自己的處境屬於哪一層，而判斷的材料就在下面三節各自的「讀得出價值的前提」那一句：承諾量已經超過記得住的範圍、而且漏掉過其中一項，是個人層；能改變至少一個小組的協作方式，是組織層；試過至少一套系統、系統運作良好而清單仍然變長，是目標層。三個診斷可以同時成立，但投入的順序不同，花掉的時間差很多。三條都對不太上、或者一時判不出來，就從 [Getting Things Done](#起點是-getting-things-done) 開始——它處理的是最先到達的那一層，不需要先確定自己在哪一層才讀得動。
+選書的第一個動作因此是判斷自己的處境屬於哪一層，而判斷的材料就在下面三節各自的「讀得出價值的前提」那一句：承諾量已經超過記得住的範圍、而且漏掉過其中一項，是個人層；能改變至少一個小組的協作方式，是組織層；試過至少一套系統、系統運作良好而清單仍然變長，是目標層。三個診斷可以同時成立，但投入的順序不同，花掉的時間差很多。三條都對不太上、或者一時判不出來，就從 [Getting Things Done](#起點書getting-things-done) 開始——它處理的是最先到達的那一層，不需要先確定自己在哪一層才讀得動。
 
-## 起點是 Getting Things Done
+## 起點書：Getting Things Done
 
 David Allen 這本把一個人處理工作的整條管線都給了名字與步驟：收集、釐清、整理、回顧、執行。五個步驟從入口蓋到出口，中間沒有留白，本篇最完整的一本因此是它。另外兩本的批評需要這套座標才有對象——它們針對的正是這條管線被要求承擔的位置。
 
@@ -33,9 +33,9 @@ David Allen 這本把一個人處理工作的整條管線都給了名字與步�
 - [Amazon（Getting Things Done: The Art of Stress-Free Productivity, 2015 revised edition）](https://www.amazon.com/Getting-Things-Done-Stress-Free-Productivity/dp/0143126563)
 - [博客來（搞定！工作效率大師教你：事情再多照樣做好的搞定5步驟）](https://www.books.com.tw/products/0010731198)
 
-## 系統做對了而事情還是做不完時讀 A World Without Email
+## A World Without Email：系統做對了而事情還是做不完時的選讀
 
-Cal Newport 這本處理的是 [Getting Things Done](#起點是-getting-things-done) 假設不存在的那一層：工作怎麼被指派、審查、排序。他的觀察是知識工作在這一層沒有協議——公司給目標、給文化，講到事情實際怎麼流動，做法是把所有人接上 email 與即時通訊，剩下自己想辦法。他給這個預設模式的名字是過動的蜂巢思維（hyperactive hive mind）：所有協調靠隨時發生、無結構的訊息往返完成。
+Cal Newport 這本處理的是 [Getting Things Done](#起點書getting-things-done) 假設不存在的那一層：工作怎麼被指派、審查、排序。他的觀察是知識工作在這一層沒有協議——公司給目標、給文化，講到事情實際怎麼流動，做法是把所有人接上 email 與即時通訊，剩下自己想辦法。他給這個預設模式的名字是過動的蜂巢思維（hyperactive hive mind）：所有協調靠隨時發生、無結構的訊息往返完成。
 
 這本書跟 GTD 的關係要講清楚，因為它常被誤讀成攻擊。Newport 明確表示他欣賞 Allen 的系統，他要指出的是那套系統被要求承擔的位置不對。個人層的優化改變的是自己處理事情的速度；流進來的量與順序沒有動——跑得快的獎賞是分到更多。他在 2020 年《The New Yorker》那篇〈The Rise and Fall of Getting Things Done〉裡用 Merlin Mann 的軌跡說明這件事：GTD 最大的推廣者最後放棄了整套實踐，而那不是意志力的問題。
 
@@ -46,7 +46,7 @@ Cal Newport 這本處理的是 [Getting Things Done](#起點是-getting-things-d
 - [Amazon（A World Without Email: Reimagining Work in an Age of Communication Overload）](https://www.amazon.com/World-Without-Email-Reimagining-Communication/dp/0525536558)
 - [博客來（沒有Email的世界：過度溝通時代的深度工作法）](https://www.books.com.tw/products/0010905956)
 
-## 對「全部做完」這個目標存疑時讀 Four Thousand Weeks
+## Four Thousand Weeks：對「全部做完」這個目標存疑時的選讀
 
 Oliver Burkeman 這本挑戰的是 Allen 與 Newport 共有的前提：存在一個「處理完了」的狀態，而方法的任務是把人帶到那裡。他的主張是那個狀態不存在，而理由在結構、不在效率——處理事情本身會製造更多事情，收件匣清空的獎賞是更多郵件被寄進來，而能力提升會讓自己與別人同步提高期望。
 

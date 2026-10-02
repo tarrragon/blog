@@ -10,9 +10,9 @@ tags: ["books", "reading", "estimation", "risk", "cognitive-bias", "planning"]
 
 把這兩者分開是這個主題的核心價值。多數組織的估算改善措施只處理第一層，於是導入了更精細的估算流程、卻得到同樣失準的數字，因為真正在運作的是第二層。
 
-先拿哪一本，看要處理的是哪一層。承諾一再跳票而想知道別的產業怎麼解，從 [How Big Things Get Done](#起點是-how-big-things-get-done) 開始，它直接處理第二層。手上是一個具體專案、要把風險換算成可以談的數字，走 [Waltzing with Bears](#要處理軟體專案的風險時讀-waltzing-with-bears)。要的是偏誤本身從哪來、以及一份可以長期翻回去查的目錄，走 [Thinking, Fast and Slow](#想理解偏誤的來源時讀-thinking-fast-and-slow)。讀不動長篇文字的走文末的課程段。不確定自己落在哪一格，就從 [How Big Things Get Done](#起點是-how-big-things-get-done) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+先拿哪一本，看要處理的是哪一層。承諾一再跳票而想知道別的產業怎麼解，從 [How Big Things Get Done](#起點書how-big-things-get-done) 開始，它直接處理第二層。手上是一個具體專案、要把風險換算成可以談的數字，走 [Waltzing with Bears](#waltzing-with-bears要處理軟體專案的風險時的選讀)。要的是偏誤本身從哪來、以及一份可以長期翻回去查的目錄，走 [Thinking, Fast and Slow](#thinking-fast-and-slow想理解偏誤的來源時的選讀)。讀不動長篇文字的走文末的課程段。不確定自己落在哪一格，就從 [How Big Things Get Done](#起點書how-big-things-get-done) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
-## 起點是 How Big Things Get Done
+## 起點書：How Big Things Get Done
 
 Bent Flyvbjerg 與 Dan Gardner 的《How Big Things Get Done》同時涵蓋上述兩層來源並且明確區分兩者，證據規模也是本篇最大的一本，資料庫涵蓋上萬件大型專案的實際成本與時程。
 
@@ -25,7 +25,7 @@ Bent Flyvbjerg 與 Dan Gardner 的《How Big Things Get Done》同時涵蓋上�
 - [Amazon（How Big Things Get Done）](https://www.amazon.com/How-Big-Things-Get-Done/dp/0593239512)
 - [博客來（超級專案管理：牛津大學教授揭示計畫成敗的法則）](https://www.books.com.tw/products/0010986409)
 
-## 要處理軟體專案的風險時讀 Waltzing with Bears
+## Waltzing with Bears：要處理軟體專案的風險時的選讀
 
 Tom DeMarco 與 Timothy Lister 的《Waltzing with Bears》是這個主題唯一針對軟體專案寫的一本。核心主張分兩段：忽視風險在道德上說不過去也危及成功，但單純迴避風險在商業上等於放棄競爭力，因此必須接受並管理風險。
 
@@ -38,7 +38,7 @@ Tom DeMarco 與 Timothy Lister 的《Waltzing with Bears》是這個主題唯一
 - [Amazon（Waltzing With Bears: Managing Risk on Software Projects）](https://www.amazon.com/Waltzing-Bears-Managing-Software-Projects/dp/0932633609)
 - [博客來（與熊共舞：軟體專案的風險管理，經典紀念版）](https://www.books.com.tw/products/0010888540)
 
-## 想理解偏誤的來源時讀 Thinking, Fast and Slow
+## Thinking, Fast and Slow：想理解偏誤的來源時的選讀
 
 Daniel Kahneman 的《Thinking, Fast and Slow》提供的是規劃謬誤的心理學源頭，以及一整份認知偏誤的目錄——系統一與系統二、錨定、可得性、框架效應。技術決策裡的許多爭論其實是這些偏誤在不同人身上的不同表現，有了名字之後才能在會議中被指認。
 
@@ -55,7 +55,7 @@ Daniel Kahneman 的《Thinking, Fast and Slow》提供的是規劃謬誤的心�
 
 軟體估算的技術書（功能點分析、故事點校準、蒙地卡羅模擬）數量不少，它們處理的都是第一層——讓估算方法更精細。這個主題不收它們的理由可以從 Flyvbjerg 的資料庫直接讀出來：那批專案的估算方法各異、精細程度差距很大，而超支比例並沒有隨方法精細度下降。方法精細度的提升在誘因結構不變時不改變結果。翻目錄就分得出來：全書的章節都在談怎麼算得更準的，處理的是第一層；有章節在談承諾怎麼被定下來、誰在什麼壓力下改了數字的，才跨到這裡收的那兩層。需要估算技術本身的讀者，那屬於專案管理的操作領域，不在這個主題底下。
 
-## 誘因結構由賽局理論承接，偏誤那一層由一門哲學課接住一半
+## 公開課：Yale ECON 159、台大的商管賽局分析與 Yale PHIL 181
 
 這是管理線十二個主題裡唯一接得住公開課的一個，兩層各有一門課接。本篇開頭把估算失準分成樂觀偏誤與策略性虛報，並說後者是誘因結構的產物、靠估算方法修不了；分析誘因結構的工具有完整的公開課，就是賽局理論。
 
@@ -67,7 +67,7 @@ Daniel Kahneman 的《Thinking, Fast and Slow》提供的是規劃謬誤的心�
 
 樂觀偏誤那一層的一手研究由 **Open Yale PHIL 181 Philosophy and the Science of Human Nature** 接得住，逐條走完偏誤目錄的用途它接不住。Tamar Gendler（哲學與認知科學）主講、2011 年春季、26 講。它不是偏誤目錄課——全課的骨架是幸福、道德與政治正當性三個哲學問題——但它的指定閱讀直接是《Thinking, Fast and Slow》的一手來源：Kahneman 的〈Mapping Bounded Rationality〉與諾貝爾講座、Ariely 的《Predictably Irrational》全本、Evans 的雙系統推理、Sunstein 的道德捷思。讀 Thinking, Fast and Slow 是拿 Kahneman 整理過的版本，走這門課是拿原始論文加一個哲學家的追問。門檻也在那裡：英語授課，而指定閱讀是一手論文而非科普，投入的份量比另外三門重。它跟 ECON 159 一樣是 Open Yale Courses 的課，該站的標準供給含英文逐字稿，讀得慢而聽不動的讀者靠那份稿子搭橋。
 
-它接不住的是把整批偏誤逐一走完那一面——[《Thinking, Fast and Slow》](#想理解偏誤的來源時讀-thinking-fast-and-slow) 的用途之一是當長期參考的偏誤目錄，而課程這個載體給不了那個功能：目錄要能隨時翻回某一條，講次只能線性播。
+它接不住的是把整批偏誤逐一走完那一面——[《Thinking, Fast and Slow》](#thinking-fast-and-slow想理解偏誤的來源時的選讀) 的用途之一是當長期參考的偏誤目錄，而課程這個載體給不了那個功能：目錄要能隨時翻回某一條，講次只能線性播。
 
 三門課教的都是推導而非當期材料，時效因此不隨年代改變；ECON 159 錄於 2007 年，它舉的產業例子（外包、教育訊號）屬於當時的情境，推導本身不依賴那些例子。台大那兩門的取得限制寫在本節的 Coursera 那一段。整條線的供給狀況寫在 [主題書單的公開課段](../courses-not-found/)。
 

@@ -8,11 +8,11 @@ tags: ["books", "reading", "retention", "motivation", "feedback", "peopleware"]
 
 這個主題處理人留下來的條件。離職的原因通常被歸給薪資或機會，但研究一致指向另外兩層：工作環境是否讓人能專心把事做完，以及與直屬主管的關係是否讓人覺得自己被看見。這兩層都在管理者的控制範圍內，而且代價不對稱——環境與關係的損壞需要幾個月累積，修復需要更久，而一次資深工程師離職的成本遠高於任何環境投資。
 
-這個主題整批有一個共同前提：成員會待夠久，久到值得投資關係與環境。這條約束的完整說明（哪些情境會讓它不成立、不成立之後往哪走）在 [同一個位置的答案會被哪些約束改變](/books/constraints-that-change-the-answer/) 的人員流動率那一項，選書前先確認自己踩不踩得到。
+這個主題整批有一個共同前提：成員會待夠久，久到值得投資關係與環境。這條約束的完整說明（哪些情境會讓它不成立、不成立之後往哪走）在 [選書時會改變答案的約束條件](/books/constraints-that-change-the-answer/) 的人員流動率那一項，選書前先確認自己踩不踩得到。
 
-前提成立的話，這個主題的書分成兩支，選書時先確認自己面對的是哪一支。環境支處理的是物理與制度條件：中斷、噪音、加班、流程負擔。關係支處理的是主管與部屬之間發生什麼：回饋怎麼給、才能怎麼配置、期望怎麼對齊。兩支的書幾乎不重疊。分不出自己踩到的是哪一支，就從 [Peopleware](#起點是-peopleware) 開始——它把環境支收齊，而環境的問題通常比關係的問題先被看見。
+前提成立的話，這個主題的書分成兩支，選書時先確認自己面對的是哪一支。環境支處理的是物理與制度條件：中斷、噪音、加班、流程負擔。關係支處理的是主管與部屬之間發生什麼：回饋怎麼給、才能怎麼配置、期望怎麼對齊。兩支的書幾乎不重疊。分不出自己踩到的是哪一支，就從 [Peopleware](#起點書peopleware) 開始——它把環境支收齊，而環境的問題通常比關係的問題先被看見。
 
-## 起點是 Peopleware
+## 起點書：Peopleware
 
 Tom DeMarco 與 Timothy Lister 的《Peopleware》一本收齊環境支的全部主題，而《First, Break All the Rules》與《Radical Candor》都落在關係支、各自只處理其中一環（《First, Break All the Rules》給的是主管關係的大規模實證，《Radical Candor》只處理回饋這一個動作），因此起點是它。它 1987 年出版時的主張是軟體專案的主要問題是社會性的而非技術性的；這個立場現在聽起來像常識，但書中對中斷成本、辦公環境、團隊凝聚、離職代價的具體論證，後續的書多半引用它而少有更完整的處理。
 
@@ -25,7 +25,7 @@ Tom DeMarco 與 Timothy Lister 的《Peopleware》一本收齊環境支的全部
 - [Amazon（Peopleware: Productive Projects and Teams, 3rd Edition）](https://www.amazon.com/Peopleware-Productive-Projects-Teams-3rd/dp/0321934113)
 - [博客來（Peopleware：腦力密集產業的人才管理之道，經典紀念版）](https://www.books.com.tw/products/0010872982)
 
-## 要用資料說服別人時讀 First, Break All the Rules
+## First, Break All the Rules：要用資料說服別人時的選讀
 
 Marcus Buckingham 與 Curt Coffman 的《First, Break All the Rules》建立在 Gallup 二十五年間、超過八萬名經理人的訪談與百萬名員工的調查上，證據規模是本篇最大的一本。核心發現是員工留任與績效的差異，主要由與直屬主管的關係決定，而非由公司整體政策決定。
 
@@ -36,7 +36,7 @@ Marcus Buckingham 與 Curt Coffman 的《First, Break All the Rules》建立在 
 - [Amazon（First, Break All the Rules: What the World's Greatest Managers Do Differently）](https://www.amazon.com/First-Break-All-Rules-Differently/dp/0684852861)
 - [博客來（首先，打破成規：八萬名傑出經理人的共通特質）](https://www.books.com.tw/products/0010120349)
 
-## 回饋給不出口時讀 Radical Candor
+## Radical Candor：回饋給不出口時的選讀
 
 Kim Scott 的《Radical Candor》處理關係支裡最具體的一環：怎麼在不傷害關係的前提下把難聽的話講出來。它的框架是兩個軸——個人關心與直接挑戰——兩軸交叉出四個象限，其中三個是失敗模式：只挑戰不關心是討人厭的侵略，只關心不挑戰是毀滅性同理，兩者皆無是操弄式虛偽。兩者兼具的那個象限就是書名所指的徹底坦率。
 

@@ -8,7 +8,7 @@ tags: ["backend", "reading-path", "overview"]
 
 這篇整理 Backend 教材各模組之間的閱讀順序：教材分成哪幾層、依讀者手上的目的各走哪一條路線，以及一條把各模組串起來的 checkout 流程。範圍是模組之間的順序，每個模組內部的章節順序在該模組的列表頁。
 
-## 教材分三層：分類語言、服務路徑、具體工具
+## 教材的分層：分類語言、服務路徑、具體工具
 
 Backend 教材把後端服務能力分成三層來教。**分類語言**讓讀者知道資料、快取、事件、觀測、部署、驗證、資安、事故與容量各自承擔什麼責任；**服務路徑**用一條具體業務流程，演練這些能力之間怎麼交接；**具體工具**討論 PostgreSQL、Redis、Kafka、Kubernetes、PagerDuty、k6 這些服務落到真實操作時的能力、成本與遷移。
 
@@ -32,11 +32,11 @@ Backend 教材把後端服務能力分成三層來教。**分類語言**讓讀�
 | Production 操作 | 想學上線、觀測、驗證與事故的閉環                  | [可觀測性平台模組](/backend/04-observability/) → [部署平台與網路入口模組](/backend/05-deployment-platform/)（含 [5.9 邊緣分發與靜態資源（CDN / Origin Protection）](/backend/05-deployment-platform/edge-cdn-static-distribution/)）→ [可靠性驗證流程模組](/backend/06-reliability/) → [事故處理與復盤模組](/backend/08-incident-response/)                                                                                                                                                                                                                                                                                                          | 能把 release、alert、gate、邊緣層的 origin protection、事故決策紀錄與事後回寫串成操作閉環                  |
 | 資安與資料保護  | 想理解權限、秘密、資料、偵測與回應                | [資安與資料保護模組](/backend/07-security-data-protection/) → [可觀測性平台模組](/backend/04-observability/)的稽核證據 → [可靠性驗證流程模組](/backend/06-reliability/)的控制驗證 → [事故處理與復盤模組](/backend/08-incident-response/)的資安事故                                                                                                                                                                                                                                                                                                                                                                                                   | 能從身份、資料、入口、秘密與稽核證據判讀控制面                                                             |
 | 工具比較與遷移  | 已懂分類、要比較工具或規劃遷移                    | 對應模組的主章 → [0.19 雲端服務對照地圖（AWS / GCP / Azure）](/backend/00-service-selection/cloud-vendor-capability-mapping/) → 該模組的 `vendors/` → 遷移操作手冊（含 [10.2 服務拆分執行 Runbook（Strangler Fig / 雙寫期 / 切流 / 回退）](/backend/10-system-evolution/service-decomposition-execution-runbook/)、[10.3 託管形態遷出：資產線盤點與並行期執行](/backend/10-system-evolution/managed-platform-exit/)）→ 案例（含 [1.14 Production Slow Log Closed Loop](/backend/01-database/production-slow-log-loop/)、[9.14 連線池放大解法（PgBouncer / RDS Proxy / ProxySQL）](/backend/09-performance-capacity/connection-pool-amplification/)） | 能先判斷分類責任，再對照雲端能力、比較具體服務、操作成本與遷移風險                                         |
-| 規模成長        | 已經做出能跑的服務，要學讓它撐住                  | [服務從能跑到能撐，每一次架構調整都由一個撞牆訊號觸發](/backend/scale-growth-walls/)，那一篇有完整的閱讀順序與各訊號對應的章節                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 能描述一個服務從一臺機器演進到多區域多服務的過程、每一段會撞上什麼、要先補哪一塊能力                       |
+| 規模成長        | 已經做出能跑的服務，要學讓它撐住                  | [服務規模成長的閱讀路線：架構撞到限制的訊號、要補的能力與對應章節](/backend/scale-growth-walls/)，那一篇有完整的閱讀順序與各訊號對應的章節                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 能描述一個服務從一臺機器演進到多區域多服務的過程、每一段會撞上什麼、要先補哪一塊能力                       |
 
 各條路線共用同一組後端詞彙，所以可以只走一條，也可以從系統心智模型那一條開始，再依工作需求轉進其他路線。表格裡帶編號的連結是單篇文章，只寫模組名的連結是整個模組。
 
-## 一條 checkout 流程把各模組串起來
+## 串起各模組的 checkout 流程
 
 各模組可以獨立閱讀，而讀者需要一個共同的場景，才看得出某一章處理的是整個服務的哪一段。Backend 教材用一條簡化的 checkout 流程當這個場景：使用者建立訂單、付款服務回應、商品或價格資料被快取、事件送到下游的通知與報表、服務上線時產出觀測與驗證證據、事故發生時留下決策紀錄並回寫改善。
 

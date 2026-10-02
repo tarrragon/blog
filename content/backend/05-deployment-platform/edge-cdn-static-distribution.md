@@ -19,7 +19,7 @@ tags: ["backend", "deployment", "cdn", "edge-cache"]
 | 應用層     | Redis、in-memory cache、[cache aside](/backend/knowledge-cards/cache-aside/) | 降低資料層查詢成本             | 區域 cluster purge                                                      |
 | 資料層快取 | DB buffer pool、query cache                                                  | 降低硬碟 I/O                   | 內部自動管理                                                            |
 
-讀者實作時要先判斷需求屬於哪一層。把使用者頭像、商品圖片、活動 banner 放邊緣層；把熱門商品價格、會員等級放應用層；DB 自身的 buffer pool 留給資料庫引擎管理。混用會造成失效路徑互相覆蓋，事故時難以判斷快取漂移來自哪一層。瀏覽器快取這一層只在瀏覽器再次回到 origin 時才收得到清除指令，而已快取的資源不會回來，所以回應送出時給的快取時間就是這一層最慢多久收得回來；需要撤回的資源（例如會被停用的轉址）要在回應當下就限制這個時間，實例見 [0.24 短網址服務的實作](/backend/00-service-selection/url-shortener-implementation/) 的〈快取標頭決定瀏覽器還會不會回來，也就決定瀏覽器這一層的撤回延遲〉。
+讀者實作時要先判斷需求屬於哪一層。把使用者頭像、商品圖片、活動 banner 放邊緣層；把熱門商品價格、會員等級放應用層；DB 自身的 buffer pool 留給資料庫引擎管理。混用會造成失效路徑互相覆蓋，事故時難以判斷快取漂移來自哪一層。瀏覽器快取這一層只在瀏覽器再次回到 origin 時才收得到清除指令，而已快取的資源不會回來，所以回應送出時給的快取時間就是這一層最慢多久收得回來；需要撤回的資源（例如會被停用的轉址）要在回應當下就限制這個時間，實例見 [0.24 短網址服務的實作](/backend/00-service-selection/url-shortener-implementation/) 的〈轉址回應的快取標頭與瀏覽器保存回應的時間〉。
 
 ## Origin Protection 的設計責任
 

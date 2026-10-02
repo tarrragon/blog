@@ -10,9 +10,9 @@ tags: ["books", "reading", "psychological-safety", "culture", "organizational-le
 
 這個主題的書大多來自軟體業以外——組織行為學、教育學、管理心理學。軟體業自己的書幾乎不處理恐懼與防衛，而這些領域在這一題上累積了三十年以上的實證研究，所以讀的時候要自己做一次轉譯。
 
-先拿哪一本，看現在要做什麼。要建立這個構念本身、並且拿得出實證依據，從 [The Fearless Organization](#起點是-the-fearless-organization) 開始。手上的團隊在東亞、而讀起點書時覺得那些描述對不太上，走 [愈吵愈有競爭力](#想知道這個構念在東亞職場長什麼樣時讀愈吵愈有競爭力)。改善措施已經推過一輪而沒有動靜，走 [Argyris](#想知道為什麼改善措施總是失效時讀-argyris)——它處理的正是為什麼大家都同意卻沒有改變。不確定自己落在哪一格，就從 [The Fearless Organization](#起點是-the-fearless-organization) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+先拿哪一本，看現在要做什麼。要建立這個構念本身、並且拿得出實證依據，從 [The Fearless Organization](#起點書the-fearless-organization) 開始。手上的團隊在東亞、而讀起點書時覺得那些描述對不太上，走 [愈吵愈有競爭力](#愈吵愈有競爭力想知道心理安全感在東亞職場長什麼樣時的選讀)。改善措施已經推過一輪而沒有動靜，走 [Argyris](#argyris想知道為什麼改善措施總是失效時的選讀)——它處理的正是為什麼大家都同意卻沒有改變。不確定自己落在哪一格，就從 [The Fearless Organization](#起點書the-fearless-organization) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
-## 起點是 The Fearless Organization
+## 起點書：The Fearless Organization
 
 Amy Edmondson 的《The Fearless Organization》從現象一路寫到操作框架，中間解釋機制的那一段沒有跳過，證據規模也是本篇最大的一本。概念本身的整理在 [心理安全感](/til/organization/psychological-safety/)，這裡處理的是要不要讀這本書。起點是一個反直覺的研究結果：她研究醫院團隊時預期表現好的團隊犯錯較少，資料卻顯示表現好的團隊回報的錯誤更多。追下去才發現差別出在回報率這一層，犯錯率其實相當——好團隊敢講。心理安全感這個概念與後續三十年的研究從這裡長出來。
 
@@ -30,7 +30,7 @@ Amy Edmondson 的《The Fearless Organization》從現象一路寫到操作框�
 - [Amazon（Right Kind of Wrong: The Science of Failing Well）](https://www.amazon.com/Right-Kind-Wrong-Science-Failing/dp/1982195061)
 - [博客來（正確犯錯：哈佛學者揭開成長心態的關鍵）](https://www.books.com.tw/products/0010985600)
 
-## 想知道這個構念在東亞職場長什麼樣時讀愈吵愈有競爭力
+## 愈吵愈有競爭力：想知道心理安全感在東亞職場長什麼樣時的選讀
 
 石井遼介的《愈吵愈有競爭力》把起點書那個構念拿到日本職場的資料上重跑一次，得到四個因子：暢所欲言、互助、挑戰、歡迎新事物。它在本篇的角色跟其他三本不同軸——那三本按解釋深度排，這一本換的是母體。
 
@@ -42,7 +42,7 @@ Amy Edmondson 的《The Fearless Organization》從現象一路寫到操作框�
 
 - [三民（愈吵愈有競爭力：建立團隊的心理安全感，漫遊者文化 2025 二版）](https://www.sanmin.com.tw/product/index/014322779)
 
-## 想知道為什麼改善措施總是失效時讀 Argyris
+## Argyris：想知道為什麼改善措施總是失效時的選讀
 
 Chris Argyris 的研究方法是逐字記錄組織裡的真實對話再逐句分析，因此是這個主題裡證據粒度最細的一位。貢獻集中在兩組概念。第一組是信奉理論與使用理論的落差：一個人宣稱相信的原則，與他的行為顯示他實際依循的原則經常不同，而本人通常看不見這個落差。第二組是組織防衛慣例：組織會發展出一套機制迴避尷尬與威脅，接著把「這套機制存在」本身也變成不可討論的話題，於是防衛無法被檢討。
 
@@ -57,7 +57,7 @@ Chris Argyris 的研究方法是逐字記錄組織裡的真實對話再逐句分
 - [三民（克服組織防衛，天津科學技術出版社 2022 年簡體中文版）](https://www.sanmin.com.tw/product/index/010880135)
 - [三民（克服組織防衛，中國人民大學出版社 2007 年簡體中文版）](https://www.sanmin.com.tw/product/index/000798512)
 
-## 程式碼審查滑向人身攻擊的起源在溫伯格 1971 年的《The Psychology of Computer Programming》
+## 溫伯格 1971 年的《The Psychology of Computer Programming》：程式碼審查文化的思想源頭
 
 這本書是最早把寫程式當成人類行為來研究的著作。書中的無私程式設計（egoless programming）——把程式碼與自我認同分開，才能坦然接受別人檢視——是今天 code review 文化的思想源頭。
 

@@ -6,4 +6,4 @@ weight: 10
 tags: ["books", "reading", "management"]
 ---
 
-這一頁的正文不會渲染。主題表與起點書的判斷標準在 [主題書單：起點書怎麼選出來的](starting-book-selection/)，公開課沒查到的主題與成因在 [沒查到公開課的主題，理由分三種](courses-not-found/)。
+這一頁的正文不會渲染。主題表與起點書的判斷標準在 [主題書單：起點書怎麼選出來的](starting-book-selection/)，公開課沒查到的主題與成因在 [管理線沒查到公開課的主題與成因：有課無影片、供給形態不符、商學院不釋出](courses-not-found/)。

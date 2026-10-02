@@ -111,11 +111,11 @@ Python 的物件導向設計模式，從類別設計到設計模式。
 
 資料整批進入程式之後的工具選擇。軸是運算發生在資料庫端還是程式的記憶體端。
 
-- [資料以什麼單位進來，分開了 Python 底下幾種工作](/python/08-data-analysis/data-unit-splits-work/)
-- [運算發生在哪一端，決定了工具長什麼樣子](/python/08-data-analysis/where-computation-runs/)
-- [ORM 交出查詢，DataFrame 自己算](/python/08-data-analysis/orm-and-dataframe/)
-- [SQL 與 DataFrame 是同一套關聯代數的兩個介面](/python/08-data-analysis/same-relational-algebra/)
-- [記憶體是 pandas 的邊界條件](/python/08-data-analysis/memory-is-the-boundary/)
+- [Python 的幾種工作與資料進入程式的單位：Web 後端、資料工程與分析、機器學習、自動化與系統工具](/python/08-data-analysis/data-unit-splits-work/)
+- [運算發生的位置：資料庫端與記憶體端的工具、分工條件與 DuckDB](/python/08-data-analysis/where-computation-runs/)
+- [ORM 與 DataFrame 的分辨：回傳值的形狀、連線物件與查詢送出的時機](/python/08-data-analysis/orm-and-dataframe/)
+- [SQL 子句與 pandas 方法的對應：篩選、連接、分組彙總、視窗函數，以及空值、索引與順序的語意差異](/python/08-data-analysis/same-relational-algebra/)
+- [pandas 的記憶體邊界：資料與運算過程的佔用估算，推回資料庫、換引擎與分散式的代價](/python/08-data-analysis/memory-is-the-boundary/)
 
 ## 範例來源
 

@@ -1,17 +1,17 @@
 ---
-title: "SQL.6 連接產出的是新的關係，列數與空缺都變了"
+title: "SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯"
 date: 2026-08-31
-description: "連接造成的列數膨脹與新生的空缺，以及 NULL 的三值邏輯在聚合、比較與 NOT IN 上的後果"
+description: "連接讓聚合多算的機制與計數、加總、平均、中位數各自的修法，以及外連接補出來的 NULL 在 count、等號比較、NOT IN 與 NOT EXISTS 上的行為"
 aliases: ["/sql/join-changes-rows-and-nulls/"]
 weight: 7
 tags: ["sql", "null", "join", "aggregate", "count", "not-in"]
 ---
 
-`FROM` 走完之後得到的 [relation](/backend/01-database/sql/knowledge-cards/relation/) 已經不是任何一張來源表。它的列數可能變多，而它多出來一些來源表裡沒有的空缺。後面每一個子句都在這個新的關係上操作。本篇從這個關係已經成形的那一刻開始；它是逐個 `JOIN` 累積出來的，每個 `JOIN` 的左運算元是什麼在 [SQL.4 JOIN 的左邊是累積結果](/backend/01-database/sql/join-left-operand-accumulates/)。
+`FROM` 走完之後得到的 [relation](/backend/01-database/sql/knowledge-cards/relation/) 已經不是任何一張來源表。它的列數可能變多，而它多出來一些來源表裡沒有的空缺。後面每一個子句都在這個新的關係上操作。本篇從這個關係已經成形的那一刻開始；它是逐個 `JOIN` 累積出來的，每個 `JOIN` 的左運算元是什麼在 [SQL.4 鏈式連接的左運算元](/backend/01-database/sql/join-left-operand-accumulates/)。
 
 列數變多與多出空缺各自帶來一類錯誤，兩類都不報錯。列數變多帶來的錯誤本篇叫**列數膨脹**：聚合數的是連接之後的列，回了比實際大的數字。空缺帶來的錯誤本篇叫**比較 NULL 的錯誤**：拿 NULL 做比較，答案是未知而不是真或假，`WHERE` 裡的等號與 `NOT IN` 因此回了零列，`NOT EXISTS` 子查詢裡的不等號則多留了一列。
 
-## 一列可以變成好幾列
+## 列數膨脹與各類聚合的修法
 
 這一節反覆數的是列，也就是橫向的一筆資料——三張訂單就是三列，欄位有幾個與這件事無關。
 
@@ -44,7 +44,7 @@ GROUP BY 顧客.姓名;
 
 列數膨脹最難察覺的地方在於數字看起來合理。count(*) 的三比實際訂單數的二只多一，而且它會隨著評價增加而慢慢變大——沒有任何一刻它會大到讓人起疑。
 
-**判斷方法是問這個聚合要數的是哪一個層次的單位**——訂單、還是連接之後的列。決定那個層次的是分組鍵（選鍵的判斷標準在 [SQL.9 分組鍵決定每一組代表什麼](/backend/01-database/sql/grouping-key-decides-the-unit/)），而把單位拉回來的做法依聚合的性質分三種。
+**判斷方法是問這個聚合要數的是哪一個層次的單位**——訂單、還是連接之後的列。決定那個層次的是分組鍵（選鍵的判斷標準在 [SQL.9 分組鍵的選擇：鍵與一組所代表的對象](/backend/01-database/sql/grouping-key-decides-the-unit/)），而把單位拉回來的做法依聚合的性質分三種。
 
 **數個數的**用 `count(DISTINCT 訂單編號)`，計數的單位就回到訂單。
 
@@ -121,7 +121,7 @@ GROUP BY 姓名;
 
 這一段的例子做完之後把 9003 刪掉：`DELETE FROM 評價 WHERE 評價編號 = 9003;`。下一節要用到訂單 102 沒有評價的狀態。
 
-## 空缺是連接造出來的
+## 外連接補出來的 NULL：count(*) 與 count(欄位) 的差別
 
 外連接配不上時補的 [NULL](/backend/01-database/sql/knowledge-cards/null/)，來源表裡並不存在。`LEFT` / `RIGHT` / `FULL` 各自保護哪一側、因此在哪一側補空缺，定義在 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/)。`count` 對它的處理與一般的值不同：
 
@@ -133,7 +133,7 @@ FROM 訂單 LEFT JOIN 評價 ON 評價.訂單編號 = 訂單.訂單編號;
 
 `count(*)` 數的是列，`count(欄位)` 數的是那一欄有值的列。差額就是空缺的數量。這個差別在沒有連接的查詢裡很少現形，因為原始資料多半沒那麼多空值。
 
-## NULL 不等於任何值，包括它自己
+## NULL 的比較結果與 IS NULL
 
 要找出沒下過單的顧客，很自然會寫成「訂單編號等於 NULL」：
 
@@ -150,7 +150,7 @@ WHERE 訂單.訂單編號 IS NULL;
 -- 宗翰、雅文
 ```
 
-`= NULL` 那一段在三個引擎上都回零列、都不報錯。這個 `IS NULL` 要寫在 `WHERE` 而不是 `ON`，理由是它描述的是連接完成之後的那份結果；同一個條件放兩邊為什麼在外連接底下留下不同的列，在 [SQL.5 ON 描述關係、WHERE 篩選結果](/backend/01-database/sql/on-describes-where-filters/)。
+`= NULL` 那一段在三個引擎上都回零列、都不報錯。這個 `IS NULL` 要寫在 `WHERE` 而不是 `ON`，理由是它描述的是連接完成之後的那份結果；同一個條件放兩邊為什麼在外連接底下留下不同的列，在 [SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責](/backend/01-database/sql/on-describes-where-filters/)。
 
 原因是 NULL 表示「這裡沒有值」，而拿一個未知的值去比對任何值，答案也是未知：
 
@@ -163,7 +163,7 @@ SELECT (NULL = NULL), (NULL IS NULL);
 
 `IS NULL` 是另一個運算子，它問的是「這個位置有沒有值」，答案只有真或假兩種。**判斷空缺一律用 `IS NULL` 與 `IS NOT NULL`，比較運算子在這件事上永遠回零列。**
 
-## NOT IN 碰到一個 NULL 就整個失效
+## 子查詢含 NULL 時的 NOT IN 與 NOT EXISTS
 
 同一套三值邏輯（見 [NULL](/backend/01-database/sql/knowledge-cards/null/)）製造了一個更難發現的形態。書店要找出沒下過單的顧客，改用 `NOT IN`：
 
@@ -221,10 +221,10 @@ DELETE FROM 訂單 WHERE 訂單編號 = 104;
 
 佳穎的「金額最高的訂單」在沒有 `IS NOT NULL` 的那段查詢裡回了兩張：真正最高的 102，以及金額未填的 104。
 
-## 這三件事的共同來源
+## 列數改變、空缺與 NULL 比較的共同來源
 
 列數變了、空缺出現了、空缺的比較是第三種答案——三者都來自同一件事：**`FROM` 產出的是一個新的關係，而後續每一步都在它上面操作。** 拿來源表的直覺去讀後面的子句，就會在這三個地方各撞一次。
 
-列數會變與空缺會出現，在本篇是給定的，而兩者各自在更早的時候就決定了。列數會不會膨脹，由常一起取的資料切在幾張表決定；空缺存不存在，由這一欄允不允許為空決定——兩個都是建表時下的，下的當下看不出代價。[backend 1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/) 各給一節，並量出雙重展開讓聚合翻倍，以及 `DISTINCT` 這個修法對不對由資料決定。
+列數會變與空缺會出現，在本篇是給定的，而兩者各自在更早的時候就決定了。列數會不會膨脹，由常一起取的資料切在幾張表決定；空缺存不存在，由這一欄允不允許為空決定——兩個都是建表時下的，下的當下看不出代價。[backend 1.16 Schema 設計決定的查詢代價](/backend/01-database/design-decisions-price-every-query/) 各給一節，並量出雙重展開讓聚合翻倍，以及 `DISTINCT` 這個修法對不對由資料決定。
 
-列數膨脹與比較 NULL 的錯誤各有各的機制，而共通的是引擎對它們都沒有回報的管道：列數膨脹的結果列數與欄位看不出異常，而計數與總額已經多算；等號比 `NULL` 與 `NOT IN` 回零列，而零列與「確實沒有」分不開；`NOT EXISTS` 子查詢裡的不等號多留了金額未填的那張訂單，多出來的那一列也是一張真實存在的訂單。[SQL.13 合不合法由引擎驗，答案對不對由提問的人負責](/backend/01-database/sql/well-formed-is-not-correct/) 拿列數膨脹當例子，說明結果的形狀正確為什麼不構成保證。
+列數膨脹與比較 NULL 的錯誤各有各的機制，而共通的是引擎對它們都沒有回報的管道：列數膨脹的結果列數與欄位看不出異常，而計數與總額已經多算；等號比 `NULL` 與 `NOT IN` 回零列，而零列與「確實沒有」分不開；`NOT EXISTS` 子查詢裡的不等號多留了金額未填的那張訂單，多出來的那一列也是一張真實存在的訂單。[SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/) 拿列數膨脹當例子，說明結果的形狀正確為什麼不構成保證。

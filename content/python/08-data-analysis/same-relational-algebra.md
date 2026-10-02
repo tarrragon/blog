@@ -1,7 +1,7 @@
 ---
-title: "8.4 SQL 與 DataFrame 是同一套關聯代數的兩個介面"
+title: "8.4 SQL 子句與 pandas 方法的對應：篩選、連接、分組彙總、視窗函數，以及空值、索引與順序的語意差異"
 date: 2026-08-31
-description: "SQL 子句與 pandas 方法的四組對應，以及對應斷掉的三個位置"
+description: "SQL 與 DataFrame 共用的關聯代數、同一份資料上兩邊寫法的實測比對，以及照著逐句翻譯會靜默失準的位置"
 weight: 4
 tags: ["python", "pandas", "sql", "dataframe", "relational-algebra"]
 ---
@@ -10,7 +10,7 @@ SQL 的子句與 pandas 的方法對應得起來，因為兩者操作的是同�
 
 換介面重寫一次同樣的邏輯因此是划算的練習：邏輯已經想清楚了，剩下的是查另一套語法怎麼寫。
 
-## 四組對應
+## 篩選、連接、分組彙總與視窗函數的兩邊寫法
 
 以下的 `emp` 兩邊是同一份資料，一邊在 SQLite 裡、一邊在記憶體的 DataFrame 裡。
 
@@ -58,7 +58,7 @@ emp.assign(d=emp["salary"] - emp.groupby("dept")["salary"].transform("mean"))[["
 
 這四組在同一份資料上跑出來的結果逐格相同。
 
-## 對應斷掉的三個位置
+## 對應斷掉的位置：分組時的空值、索引、順序
 
 有三個地方兩邊的語意本來就不同，照著逐句翻譯會在這裡失準。
 
@@ -77,12 +77,12 @@ t.groupby("k", dropna=False).size()   # {'x': 1, nan: 2}  與 SQL 一致
 
 ## 往下走
 
-**這兩個介面為什麼會分家**：一邊把運算交給資料庫，一邊在自己的記憶體裡算。[8.2 運算發生在哪一端](/python/08-data-analysis/where-computation-runs/) 寫這條分界怎麼決定容量上限，以及選邊要問的三個條件。
+**這兩個介面為什麼會分家**：一邊把運算交給資料庫，一邊在自己的記憶體裡算。[8.2 運算發生的位置](/python/08-data-analysis/where-computation-runs/) 寫這條分界怎麼決定容量上限，以及選邊要問的三個條件。
 
-**同一個對比在 SQL 那一側怎麼講**：`transform` 對 `agg` 的差別就是視窗函數對 `GROUP BY` 的差別。[SQL.10 分組把列收掉，視窗函數把列留著](/backend/01-database/sql/window-keeps-rows-grouping-collapses/) 用輸出的單位當判斷標準，並示範相鄰的定義漏掉分區之後會跨到別的組上。
+**同一個對比在 SQL 那一側怎麼講**：`transform` 對 `agg` 的差別就是視窗函數對 `GROUP BY` 的差別。[SQL.10 分組與視窗函數：各自的產出、選用的依據與 LAG、LEAD 的相鄰列](/backend/01-database/sql/window-keeps-rows-grouping-collapses/) 用輸出的單位當判斷標準，並示範相鄰的定義漏掉分區之後會跨到別的組上。
 
-**從產出認出手上是哪一個介面**：[8.3 ORM 交出查詢，DataFrame 自己算](/python/08-data-analysis/orm-and-dataframe/) 寫兩者的回傳值形狀差在哪，以及分得開它們的三個訊號。
+**從產出認出手上是哪一個介面**：[8.3 ORM 與 DataFrame 的分辨：回傳值的形狀、連線物件與查詢送出的時機](/python/08-data-analysis/orm-and-dataframe/) 寫兩者的回傳值形狀差在哪，以及分得開它們的三個訊號。
 
 **這套代數在 SQL 那一側怎麼設計**：關聯代數的組合規則決定了子句的先後、連接的左右與分組的鍵，而那些規則各有一處與直覺相反。[SQL：這個語言為什麼長這樣](/backend/01-database/sql/) 從語言的宣告式性質推導這一整組規則，並另外處理文字之外的四方（識別字規則、引擎的寬鬆度、權限、最佳化器）。
 
-**換介面之後接手的新限制**：SQL 那一側沒有記憶體上限的問題，換到 DataFrame 就有了。[8.5 記憶體是 pandas 的邊界條件](/python/08-data-analysis/memory-is-the-boundary/) 給估算方法與越過之後的三個方向。
+**換介面之後接手的新限制**：SQL 那一側沒有記憶體上限的問題，換到 DataFrame 就有了。[8.5 pandas 的記憶體邊界：資料與運算過程的佔用估算，推回資料庫、換引擎與分散式的代價](/python/08-data-analysis/memory-is-the-boundary/) 給估算方法與越過之後的三個方向。

@@ -1,7 +1,7 @@
 ---
-title: "SQL.8 IN、EXISTS 與 JOIN 描述的是三件不同的事"
+title: "SQL.8 IN、EXISTS 與 JOIN：列數、可取用的欄位與 NULL 的處理"
 date: 2026-08-31
-description: "三者在列數與可取用欄位上的差別，以及 NOT IN 碰到 NULL 時與 NOT EXISTS 的分岔"
+description: "同一個「找出有對應資料的那些」的問題用成員判斷、存在性判斷與連接各寫一次的結果，選用的判斷標準，以及子查詢含 NULL 時 NOT IN 與 NOT EXISTS 的分岔"
 aliases: ["/sql/in-exists-join/"]
 weight: 9
 tags: ["sql", "in", "exists", "join", "subquery", "semi-join"]
@@ -11,7 +11,7 @@ tags: ["sql", "in", "exists", "join", "subquery", "semi-join"]
 
 分開它們的問題只有一個：**除了判斷有沒有，還要不要用到被比對的那張表的欄位。**
 
-## JOIN 讓下過兩張單的顧客出現兩次
+## 同一題用 IN、EXISTS 與 JOIN 各寫一次
 
 書店的三位顧客裡只有佳穎下過單，兩張都是她的。要找出下過單的顧客。
 
@@ -39,11 +39,11 @@ SELECT 顧客.姓名 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧
 
 同一個「找出下過單的顧客」的問題，`IN` 與 `EXISTS` 回一列而 `JOIN` 回兩列——**佳穎在 `JOIN` 的結果裡出現了兩次**。
 
-## 只有 JOIN 會讓列數變多
+## 列數：條件與連接的差別
 
 `IN` 與 `EXISTS` 出現在 `WHERE` 裡，它們是條件。條件對每一列只做一件事——留下或丟掉——所以顧客表有三列，過完條件最多剩三列，一列都不會多出來。
 
-`JOIN` 出現在 `FROM` 裡，它參與的是關係的組成。佳穎配得上兩張訂單，於是她在新的關係裡出現兩次（[SQL.6 連接產出的是新的關係，列數與空缺都變了](/backend/01-database/sql/join-changes-rows-and-nulls/)）。加上 `DISTINCT` 之後結果才與 `IN`、`EXISTS` 一致：
+`JOIN` 出現在 `FROM` 裡，它參與的是關係的組成。佳穎配得上兩張訂單，於是她在新的關係裡出現兩次（[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。加上 `DISTINCT` 之後結果才與 `IN`、`EXISTS` 一致：
 
 ```sql
 SELECT DISTINCT 顧客.姓名 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號;
@@ -54,7 +54,7 @@ SELECT DISTINCT 顧客.姓名 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = �
 
 `IN` 與 `EXISTS` 做的運算在[關聯代數](/backend/01-database/sql/knowledge-cards/relational-algebra/)裡叫半連接：顧客表與訂單表配對之後只留下顧客表的列，每一列至多出現一次。否定式的 `NOT EXISTS` 留下顧客表裡配不到任何訂單的列，叫反連接（[Semi-join 與 Anti-join（半連接與反連接）](/backend/01-database/sql/knowledge-cards/semi-join-and-anti-join/)）。
 
-## 只有 JOIN 把被比對的那張表帶進 FROM
+## 可取用的欄位：被比對的那張表在不在 FROM 裡
 
 要列出每位顧客的訂單金額，`JOIN` 是最直接的一條路：
 
@@ -81,17 +81,17 @@ SELECT 姓名, (SELECT 金額 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧
 -- 佳穎 300 / 宗翰 NULL / 雅文 NULL
 ```
 
-它一次只交得出一個值，所以要多欄或多列時仍然回到 `JOIN`；而它的執行方式是逐列的，代價怎麼算見 [SQL.17 代價由資料與索引決定，不由寫法決定](/backend/01-database/sql/cost-lives-in-the-plan/)。
+它一次只交得出一個值，所以要多欄或多列時仍然回到 `JOIN`；而它的執行方式是逐列的，代價怎麼算見 [SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)。
 
 這時候佳穎出現兩次是對的，因為問的是每一張訂單的金額，而她確實有兩張。**這一題本來就要每張訂單各佔一列，所以列數變多正是這個寫法要交出來的東西。**
 
-## 選哪一種，問一句話
+## 選用的判斷標準：要不要用到被比對那張表的欄位
 
-**要不要用到被比對的那張表的欄位。** 要用到就得 `JOIN`，因為只有它把那張表帶進 `FROM`。這時候要順帶檢查列數是不是預期內的——後面如果接聚合，`sum` 與 `count` 算的是配對後的列；這個膨脹怎麼發生、可加與不可加的聚合各自怎麼修，在 [SQL.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/)。
+**要不要用到被比對的那張表的欄位。** 要用到就得 `JOIN`，因為只有它把那張表帶進 `FROM`。這時候要順帶檢查列數是不是預期內的——後面如果接聚合，`sum` 與 `count` 算的是配對後的列；這個膨脹怎麼發生、可加與不可加的聚合各自怎麼修，在 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/)。
 
-只是判斷有沒有，就用 `IN` 或 `EXISTS`。它們是條件，對每一列只做留或丟，寫出來的意圖比 `JOIN` 加 `DISTINCT` 清楚——而哪一種比較快是另一個問題，答案取決於資料與索引。[SQL.17 代價由資料與索引決定](/backend/01-database/sql/cost-lives-in-the-plan/) 用一道重複值的題目量分組、自連接與 `EXISTS` 三種寫法，並示範加一個索引之後排名重排——`EXISTS` 從最慢掉到與分組同一個量級。
+只是判斷有沒有，就用 `IN` 或 `EXISTS`。它們是條件，對每一列只做留或丟，寫出來的意圖比 `JOIN` 加 `DISTINCT` 清楚——而哪一種比較快是另一個問題，答案取決於資料與索引。[SQL.17 查詢的代價](/backend/01-database/sql/cost-lives-in-the-plan/) 用一道重複值的題目量分組、自連接與 `EXISTS` 三種寫法，並示範加一個索引之後排名重排——`EXISTS` 從最慢掉到與分組同一個量級。
 
-## IN 與 EXISTS 之間再分一次
+## IN 與 EXISTS 的分岔：子查詢含 NULL 時的否定式
 
 `IN` 與 `EXISTS` 在「有沒有」這件事上同值，而在一個地方分岔：**子查詢的結果裡有 NULL 的時候。**
 
@@ -109,10 +109,10 @@ WHERE NOT EXISTS (SELECT 1 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧客
 -- 共用資料與多了訂單 103 之後都是：宗翰、雅文
 ```
 
-完整的推導在 [SQL.6 連接產出的是新的關係，列數與空缺都變了](/backend/01-database/sql/join-changes-rows-and-nulls/)，包括 `NOT EXISTS` 的安全範圍為什麼限定在等號配對。零列與「確實沒有」在結果上分不開，所以 `NOT IN` 碰到 NULL 的錯只能靠寫的人預先知道「子查詢有 NULL 時 NOT IN 會失效」那條規則——[SQL.13 合不合法由引擎驗，答案對不對由提問的人負責](/backend/01-database/sql/well-formed-is-not-correct/) 把它歸成**誤解語意模型**：寫的人對某條規則的預期與語意模型的規定不同，而誤解語意模型修得掉，改對之後永遠對。
+完整的推導在 [SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)，包括 `NOT EXISTS` 的安全範圍為什麼限定在等號配對。零列與「確實沒有」在結果上分不開，所以 `NOT IN` 碰到 NULL 的錯只能靠寫的人預先知道「子查詢有 NULL 時 NOT IN 會失效」那條規則——[SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/) 把它歸成**誤解語意模型**：寫的人對某條規則的預期與語意模型的規定不同，而誤解語意模型修得掉，改對之後永遠對。
 
 所以肯定式的 `IN` 與 `EXISTS` 可以按可讀性挑，而**否定式一律用 `NOT EXISTS`**——除非能保證子查詢那一欄不會有 NULL，而那個保證要來自[約束](/backend/01-database/sql/knowledge-cards/constraint/)而不是來自習慣：翻遍現在的資料都沒有 NULL 只證明此刻沒有，而查詢要活得比這一批資料久。
 
 還有一個形態上的差別：本篇 `IN` 的子查詢與外層無關，可以單獨拿出來執行，叫獨立子查詢；`EXISTS` 的子查詢引用了外層的欄位，離開外層就跑不動，是相關子查詢。讀陌生的查詢時，看子查詢裡有沒有出現外層的表名，就分得出它是算一次的獨立子查詢，還是對外層每一列各問一次的相關子查詢。
 
-「語意相同就按可讀性挑」這個處置的適用範圍不只 `IN`、`EXISTS` 與 `JOIN` 這三種寫法：哪幾類寫法差異是免費的、哪一類會與效能分岔，在 [SQL.21 好讀的寫法多數時候也是引擎好走的](/backend/01-database/sql/readable-and-fast-mostly-align/)。
+「語意相同就按可讀性挑」這個處置的適用範圍不只 `IN`、`EXISTS` 與 `JOIN` 這三種寫法：哪幾類寫法差異是免費的、哪一類會與效能分岔，在 [SQL.21 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/)。

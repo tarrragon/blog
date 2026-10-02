@@ -10,13 +10,13 @@ tags: ["books", "reading", "cross-cultural", "communication", "global-teams", "o
 
 這個主題的觸發條件比「團隊是跨國的」寬。這條線上的書幾乎全部由美國或西歐作者寫給同一批文化背景的讀者，而讀這份書單的人在台灣。「直接一點」「讓大家講出不同意見」這類建議，書裡沒有標出它的刻度以哪裡為零點，於是讀的人預設那個零點落在自己身上。全員同國籍的團隊踩到的是讀者與書之間的那一次換算，那一次跟團隊裡有沒有外國人無關。
 
-這一篇交付的是往後判讀用的刻度，不解眼前那一次已經發生的誤讀——那一次走 [困難對話與無權限影響力](../influence-conversation/)。跟 [同一個位置的答案會被哪些約束改變](/books/constraints-that-change-the-answer/)裡的文化背景組成那一項是同一件事的兩面：那一段說的是踩到之後其他主題的答案會變，這一篇說的是踩到之後讀什麼。
+這一篇交付的是往後判讀用的刻度，不解眼前那一次已經發生的誤讀——那一次走 [困難對話與無權限影響力](../influence-conversation/)。跟 [選書時會改變答案的約束條件](/books/constraints-that-change-the-answer/)裡的文化背景組成那一項是同一件事的兩面：那一段說的是踩到之後其他主題的答案會變，這一篇說的是踩到之後讀什麼。
 
 這個主題的書按五個面向分工，選書前先確認自己要的是哪一個。**動作與意義的對應**問同一個動作在不同成長環境被讀成什麼，是離當下的動作最近的一層。**價值維度與它的資料**問哪些量可以跨國比較、以及那些數字從哪來，是唯一能拿去支持制度改變的一層。**差異的認知成因**問這些分佈為什麼長這樣，回答的是「為什麼」而非「有什麼」。**一個組織實際跑過一輪**問一套制度隨國別調整時改了什麼、代價落在哪。**本地樣本自己建構的理論**問這些差異在讀者所在的社會被怎麼描述——前四個面向的書都由外部作者執筆，讀者的文化在那些書裡是被觀察的對象。五個面向沒有一本書全包——選書的人要自己組出座標，而不是挑一本讀完。
 
-先拿哪一本，看現在要做什麼。明天就要跟另一個分部開會、需要的是當下該怎麼說，走 [The Culture Map](#要把差異換成當下該說的話時讀-the-culture-map)，它今天就讀得動。要拿數字去支持一個制度改變，走 [Cultures and Organizations](#起點是-cultures-and-organizations)，它是這裡唯一給得出可查證分數的一本。制度已經確定要進另一個國家，走 [零規則](#制度已經要進另一個國家時讀零規則)。要的是本地企業怎麼被本地研究者描述，走 [華人領導的十堂必修課](#想看本地樣本自己建構理論時讀華人領導的十堂必修課)。不確定自己落在哪一格，就從 [Cultures and Organizations](#起點是-cultures-and-organizations) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+先拿哪一本，看現在要做什麼。明天就要跟另一個分部開會、需要的是當下該怎麼說，走 [The Culture Map](#the-culture-map要把差異換成當下該說的話時的選讀)，它今天就讀得動。要拿數字去支持一個制度改變，走 [Cultures and Organizations](#起點書cultures-and-organizations)，它是這裡唯一給得出可查證分數的一本。制度已經確定要進另一個國家，走 [零規則](#零規則制度已經要進另一個國家時的選讀)。要的是本地企業怎麼被本地研究者描述，走 [華人領導的十堂必修課](#華人領導的十堂必修課想看本地樣本自己建構理論時的選讀)。不確定自己落在哪一格，就從 [Cultures and Organizations](#起點書cultures-and-organizations) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
-## 起點是 Cultures and Organizations
+## 起點書：Cultures and Organizations
 
 Geert Hofstede 等人的《Cultures and Organizations: Software of the Mind》是這個主題唯一結論可以拿去支持組織層級改變的一本，起點取它。它給出六個可跨國比較的維度——權力距離、個人與集體、成就導向與關係導向、不確定性趨避、長期與短期導向、放縱與節制——每個維度都有國別分數，而那些分數來自可以重做的調查工具而非作者的觀察。
 
@@ -37,7 +37,7 @@ Geert Hofstede 等人的《Cultures and Organizations: Software of the Mind》�
 - [Amazon（Cultures and Organizations: Software of the Mind, Third Edition）](https://www.amazon.com/Cultures-Organizations-Software-Mind-Third/dp/0071664181)
 - [三民（文化與組織：心理軟件的力量，修訂第 3 版，簡體中文）](https://www.sanmin.com.tw/product/index/007158471)
 
-## 要把差異換成當下該說的話時讀 The Culture Map
+## The Culture Map：要把差異換成當下該說的話時的選讀
 
 Erin Meyer 的《The Culture Map》把文化差異換成八條可以指著看的量表：溝通（低語境到高語境）、評價（負面回饋直接到迂迴）、說服（原則先行到應用先行）、領導（平權到階層）、決策（共識到由上而下）、信任（任務型到關係型）、異議（正面衝突到迴避衝突）、時間（線性到彈性）。每一條都標出國別的相對位置，而用法是把兩個國家疊在同一條線上看落差，不是看單一國家的絕對值。
 
@@ -50,7 +50,7 @@ Erin Meyer 的《The Culture Map》把文化差異換成八條可以指著看的
 - [Amazon（The Culture Map: Breaking Through the Invisible Boundaries of Global Business）](https://www.amazon.com/Culture-Map-Breaking-Invisible-Boundaries/dp/1610392507)
 - [三民（文化地圖：運用 8 個的文化量表，穿透全球商務溝通的隱形疆界，2024 新版）](https://www.sanmin.com.tw/product/index/013640246)
 
-## 想知道這些差異從哪來時讀 The Geography of Thought
+## The Geography of Thought：想知道這些差異從哪來時的選讀
 
 Richard Nisbett 的《The Geography of Thought》回答 Hofstede 與 Meyer 都不回答的那個問題：這些分佈為什麼長這樣。它用實驗測東亞與西方受試者在注意力分配、因果歸因、分類方式與矛盾容忍上的系統差異，並把成因追到古希臘與先秦兩套傳統對「個體與情境誰是主角」的不同預設。
 
@@ -63,7 +63,7 @@ Richard Nisbett 的《The Geography of Thought》回答 Hofstede 與 Meyer 都�
 - [Amazon（The Geography of Thought: How Asians and Westerners Think Differently... and Why）](https://www.amazon.com/Geography-Thought-Asians-Westerners-Differently/dp/0743255356)
 - [三民（思維的疆域：東方人與西方人的思考方式為何不同，聯經 2007）](https://www.sanmin.com.tw/product/index/000532780)
 
-## 制度已經要進另一個國家時讀零規則
+## 零規則：制度已經要進另一個國家時的選讀
 
 Reed Hastings 與 Erin Meyer 的《No Rules Rules》（繁體中文版《零規則》）記錄 Netflix 那套自由與責任的制度在進入荷蘭、新加坡、日本、巴西時各自改了什麼。下面只展開荷蘭與日本，因為這兩個的失效方向相反、對照最清楚；另外兩地的調整在書裡。它承擔的角色 Hofstede、Meyer、Nisbett 與鄭伯壎都不承擔：前三本告訴讀者差異存在、長什麼樣、從哪來，鄭伯壎告訴讀者本地的理論怎麼建，零規則是唯一寫出「於是我們把制度改成這樣，然後發生了這些事」的。
 
@@ -74,7 +74,7 @@ Reed Hastings 與 Erin Meyer 的《No Rules Rules》（繁體中文版《零規�
 - [Amazon（No Rules Rules: Netflix and the Culture of Reinvention）](https://www.amazon.com/No-Rules-Netflix-Culture-Reinvention/dp/1984877860)
 - [三民（零規則：高人才密度 x 完全透明 x 最低管控，天下雜誌）](https://www.sanmin.com.tw/product/index/007909222)
 
-## 想看本地樣本自己建構理論時讀華人領導的十堂必修課
+## 華人領導的十堂必修課：想看本地樣本自己建構理論時的選讀
 
 鄭伯壎的《華人領導的十堂必修課》是本篇唯一由讀者所在文化的研究者、用本地樣本寫成的一本。Hofstede、Meyer、Nisbett 與零規則都由美國或歐洲的作者執筆，台灣在那四本裡是被觀察的對象——量表上的一個位置、案例裡的一個分部。這一本的方向相反：理論在本地建構、用本地企業的樣本驗證，再輸出到國際期刊。
 

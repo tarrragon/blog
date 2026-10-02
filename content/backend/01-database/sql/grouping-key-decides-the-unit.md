@@ -1,7 +1,7 @@
 ---
-title: "SQL.9 分組鍵決定每一組代表什麼"
+title: "SQL.9 分組鍵的選擇：鍵與一組所代表的對象"
 date: 2026-08-31
-description: "分組鍵與一組所代表的對象之間的對應、選鍵的判斷標準，以及分組不適用的那一類問題"
+description: "外連接之後拿右表欄位當鍵的後果、輸出非分組欄時 MySQL、DuckDB 與 SQLite 的反應、補進鍵的欄位要滿足的函數相依，以及改用 NOT EXISTS 回答的那一類問題"
 aliases: ["/sql/grouping-key-decides-the-unit/"]
 weight: 10
 tags: ["sql", "group-by", "null", "aggregate", "join"]
@@ -11,7 +11,7 @@ tags: ["sql", "group-by", "null", "aggregate", "join"]
 
 選錯鍵的時候查詢照樣跑得動，只是每一組代表的對象與寫查詢的人預期的不同。
 
-## 用右表的欄位當鍵，沒配到的列會全部併成一組
+## 外連接之後用右表的欄位當分組鍵
 
 書店的三位顧客裡只有佳穎下過單，兩張都是她的。要找出一張單都沒下的顧客，用 `LEFT JOIN` 接起來之後按訂單那一側的顧客編號分組：
 
@@ -30,11 +30,11 @@ NULL    2         0         宗翰,雅文
 1       2         2         佳穎,佳穎
 ```
 
-**宗翰與雅文被併進同一組。** 他們沒有配到訂單，外連接給他們的 `訂單.顧客編號` 都是 `NULL`，而 `GROUP BY` 把值相同的列收成一組——`GROUP BY` 對 [NULL](/backend/01-database/sql/knowledge-cards/null/) 的處理與比較運算不同：鍵同樣是 `NULL` 的那些列會被收進同一組，所有沒配到的列因此共用同一個鍵。分組是少數 `NULL` 表現得像一般值的地方，它在比較與 `NOT IN` 上的表現剛好相反，那兩處的表現寫在 [SQL.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/)；這些 `NULL` 是連接補上的、不是資料裡本來的空值，兩種來源的分別在 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/)。
+**宗翰與雅文被併進同一組。** 他們沒有配到訂單，外連接給他們的 `訂單.顧客編號` 都是 `NULL`，而 `GROUP BY` 把值相同的列收成一組——`GROUP BY` 對 [NULL](/backend/01-database/sql/knowledge-cards/null/) 的處理與比較運算不同：鍵同樣是 `NULL` 的那些列會被收進同一組，所有沒配到的列因此共用同一個鍵。分組是少數 `NULL` 表現得像一般值的地方，它在比較與 `NOT IN` 上的表現剛好相反，那兩處的表現寫在 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/)；這些 `NULL` 是連接補上的、不是資料裡本來的空值，兩種來源的分別在 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/)。
 
 接著用 `HAVING count(訂單.顧客編號) = 0` 挑出沒下過單的那一組，這個條件本身是對的：它確實選中了那一組，因為 `count(欄位)` 只數有值的列而那一組一列都沒有。**選中的是一組，而這一組底下是宗翰與雅文兩列。**
 
-## 輸出非分組欄時，SQLite 給錯答案而不報錯
+## 輸出非分組欄時各家引擎的反應
 
 輸出顧客姓名時，姓名不在分組鍵裡，於是三家引擎在這裡分岔：
 
@@ -67,7 +67,7 @@ INSERT INTO 顧客 VALUES (4, '宗翰');   -- 第二位宗翰，同樣沒下過�
 -- 沒下過單的顧客有三位而結果只有兩列：兩位宗翰的鍵都是 (NULL, 宗翰)，被併成一組
 ```
 
-鍵錯在它讓不同的顧客共用一個值，而這件事要等資料裡出現同名的人才看得到。選錯鍵的查詢在語法上完全合法，[SQL.13 合不合法由引擎驗，答案對不對由提問的人負責](/backend/01-database/sql/well-formed-is-not-correct/) 把它歸進問錯了問題的那一類。
+鍵錯在它讓不同的顧客共用一個值，而這件事要等資料裡出現同名的人才看得到。選錯鍵的查詢在語法上完全合法，[SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/) 把它歸進問錯了問題的那一類。
 
 ## 選鍵的判斷標準：一組要代表誰
 
@@ -102,9 +102,9 @@ GROUP BY 顧客.顧客編號, 顧客.姓名, 訂單.下單日;
 
 所以不由鍵決定的欄位不能靠補進鍵來輸出，要用聚合包起來（`max(下單日)` 這種），讓它回到「這一組的某個值」而不是「這一組的分法」。
 
-鍵只決定一組由誰構成；算完之後原本的列還留不留，是分組與視窗函數分開的地方，[SQL.10 分組把列收掉，視窗函數把列留著](/backend/01-database/sql/window-keeps-rows-grouping-collapses/) 用同一批訂單並排兩種產出。
+鍵只決定一組由誰構成；算完之後原本的列還留不留，是分組與視窗函數分開的地方，[SQL.10 分組與視窗函數：各自的產出、選用的依據與 LAG、LEAD 的相鄰列](/backend/01-database/sql/window-keeps-rows-grouping-collapses/) 用同一批訂單並排兩種產出。
 
-## 這一題不需要分組
+## 不需要分組的問題：存在性判斷
 
 把分組鍵換成顧客編號、再補上姓名的那個修正讓查詢回出正確答案，而更前面還有一個問題沒被問：這一題需要分組嗎。
 
@@ -136,8 +136,8 @@ SELECT 顧客.姓名 FROM 顧客
 LEFT JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號
 WHERE 訂單.訂單編號 IS NULL;   -- 訂單編號只有在外連接補出來的列上是 NULL
 -- 宗翰、雅文
-```差別在描述的路徑——`NOT EXISTS` 直接說「找不到」，外連接那一版先讓每位顧客都保留下來、再挑出補了 `NULL` 的那些。[SQL.5 ON 描述關係、WHERE 篩選結果](/backend/01-database/sql/on-describes-where-filters/) 從條件該放哪一邊的角度走同一題，兩篇的結論一致。
+```差別在描述的路徑——`NOT EXISTS` 直接說「找不到」，外連接那一版先讓每位顧客都保留下來、再挑出補了 `NULL` 的那些。[SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責](/backend/01-database/sql/on-describes-where-filters/) 從條件該放哪一邊的角度走同一題，兩篇的結論一致。
 
 **`GROUP BY` 是換單位的工具**，用在單看一列答不出來的問題上——「這位顧客下了幾張單」「哪張訂單被評價超過兩次」那一類。判斷沿用 [SQL.2 子句的求值順序](/backend/01-database/sql/clause-evaluation-order/)：這個條件需不需要看到組裡的其他列才能回答。不需要就留在 `WHERE`，連 `GROUP BY` 都不必寫。求值順序那一篇走過從 `FROM` 到 `LIMIT` 每一步處理的單位，分組前後從列換成組是其中變化最大的一步。
 
-三種寫法各自描述什麼、以及 `NOT IN` 為什麼在這裡是危險的那一個，在 [SQL.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/)。
+三種寫法各自描述什麼、以及 `NOT IN` 為什麼在這裡是危險的那一個，在 [SQL.8 IN、EXISTS 與 JOIN：列數、可取用的欄位與 NULL 的處理](/backend/01-database/sql/in-exists-join/)。

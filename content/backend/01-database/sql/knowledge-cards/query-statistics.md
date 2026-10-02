@@ -35,4 +35,4 @@ tags: ["sql", "statistics", "analyze", "query-plan", "knowledge-card"]
 
 ## 往下走
 
-有無統計的兩個計畫並排、以及書寫順序為什麼只是退路，在 [SQL.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/)。統計、索引與資料分布三者各自決定代價的哪一部分，在 [SQL.17 代價由資料與索引決定](/backend/01-database/sql/cost-lives-in-the-plan/)。
+有無統計的兩個計畫並排、以及書寫順序為什麼只是退路，在 [SQL.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/)。統計、索引與資料分布三者各自決定代價的哪一部分，在 [SQL.17 查詢的代價](/backend/01-database/sql/cost-lives-in-the-plan/)。

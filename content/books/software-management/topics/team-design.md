@@ -8,9 +8,9 @@ tags: ["books", "reading", "team-topologies", "organization-design", "conway-law
 
 這個主題處理組織的形狀怎麼決定系統的形狀。團隊邊界一旦畫下去，溝通成本、交接延遲與架構耦合就跟著定下來，而這些代價通常在幾個月後才顯現、要改又得付重組成本。這使得團隊設計成為少數「事前多想一個月很划算」的決定。
 
-這個主題的書對組織規模特別敏感。同一套結構模板，在三十人的公司是過度設計，在三百人的公司是必要基礎設施。選書時先確認自己的規模，否則讀到的會是一整套用不上的框架，並且開始為不存在的問題做設計。規模已經到三個團隊以上、而不確定該從哪裡切入，就從 [Team Topologies](#起點是-team-topologies) 開始；還不到那個規模的，這個主題現在讀不出東西，先走別的主題。
+這個主題的書對組織規模特別敏感。同一套結構模板，在三十人的公司是過度設計，在三百人的公司是必要基礎設施。選書時先確認自己的規模，否則讀到的會是一整套用不上的框架，並且開始為不存在的問題做設計。規模已經到三個團隊以上、而不確定該從哪裡切入，就從 [Team Topologies](#起點書team-topologies) 開始；還不到那個規模的，這個主題現在讀不出東西，先走別的主題。
 
-## 起點是 Team Topologies
+## 起點書：Team Topologies
 
 Matthew Skelton 與 Manuel Pais 的《Team Topologies》涵蓋了從團隊型態到互動模式的完整設計語彙，套用成本也是本篇最低的一本：它把團隊互動收斂成三個具名選項，讀完就能拿去對照自己的組織。它從 Conway's Law 出發——系統架構會反映組織的溝通結構——並把這條規律當設計工具用：既然結構會互相映射，就先設計組織來得到想要的架構。
 
@@ -24,7 +24,7 @@ Matthew Skelton 與 Manuel Pais 的《Team Topologies》涵蓋了從團隊型態
 - [Amazon（第一版）](https://www.amazon.com/Team-Topologies-Organizing-Business-Technology/dp/1942788819)
 - [天瓏（高效能團隊模式：支持軟件快速交付的組織架構，簡體中文版）](https://www.tenlong.com.tw/products/9787121410826)
 
-## 已經在調度多個團隊時讀 An Elegant Puzzle
+## An Elegant Puzzle：已經在調度多個團隊時的選讀
 
 Will Larson 的《An Elegant Puzzle》預設讀者越過了「怎麼帶三個人」的階段，關心的是團隊規模怎麼定、技術債怎麼排進計畫、接班怎麼安排、組織成長時哪些結構會先斷。書名的 puzzle 指的是這類問題的性質：沒有唯一解，但有明顯較好與較差的解，而各個約束彼此牽動。
 
@@ -36,7 +36,7 @@ Will Larson 的《An Elegant Puzzle》預設讀者越過了「怎麼帶三個人
 
 - [Amazon（An Elegant Puzzle: Systems of Engineering Management）](https://www.amazon.com/Elegant-Puzzle-Systems-Engineering-Management/dp/1732265186)
 
-## 要理解規模與時間怎麼改變決策時讀 Software Engineering at Google
+## Software Engineering at Google：要理解規模與時間怎麼改變決策時的選讀
 
 《Software Engineering at Google》處理的問題是：當程式碼要活二十年、當有數萬名工程師在同一個 repo 上工作時，哪些工程判斷會反過來。它把軟體工程定義成「隨時間推移的程式設計」，然後逐項檢視這個定義如何改變測試策略、程式碼審查、依賴管理、棄用流程與工具投資。
 
@@ -48,7 +48,7 @@ Will Larson 的《An Elegant Puzzle》預設讀者越過了「怎麼帶三個人
 - [官方免費線上版（HTML 全文，CC BY-NC-ND 授權）](https://abseil.io/resources/swe-book)
 - [博客來（Google 的軟體工程之道：從程式設計經驗中吸取教訓）](https://www.books.com.tw/products/0010938794)
 
-## 想把零散做法串成一套解釋時讀 Wiring the Winning Organization
+## Wiring the Winning Organization：想把零散做法串成一套解釋時的選讀
 
 Gene Kim 與 Steven Spear 的《Wiring the Winning Organization》（2023）處理的問題是：為什麼同樣的工作在某些組織裡很難、在另一些組織裡很簡單。答案由三個機制構成——slowification（把問題移到壓力較低的場合先解決）、simplification（把大問題切成可獨立處理的小問題）、amplification（讓問題訊號快速被聽見並回應）。
 
@@ -58,7 +58,7 @@ Gene Kim 與 Steven Spear 的《Wiring the Winning Organization》（2023）處�
 
 - [Amazon（Wiring the Winning Organization）](https://www.amazon.com/Wiring-Winning-Organization-Slowification-Simplification/dp/1950508420)
 
-## 加人為什麼不能壓縮時程，源頭在《人月神話》
+## 《人月神話》：加人與時程的關係、概念完整性、本質與偶然的區分
 
 Frederick Brooks 的《The Mythical Man-Month》1975 年出版，取材自他在 IBM 帶 System/360 與 OS/360 的經驗。這個主題的多數討論可以追到它——加人為什麼不能壓縮時程、溝通成本為什麼隨人數超線性成長、設計為什麼要出自少數人。
 
@@ -75,7 +75,7 @@ Frederick Brooks 的《The Mythical Man-Month》1975 年出版，取材自他在
 - [Amazon（The Mythical Man-Month, Anniversary Edition）](https://www.amazon.com/Mythical-Man-Month-Software-Engineering-Anniversary/dp/0201835959)
 - [博客來（人月神話：軟體專案管理之道，20 週年紀念版）](https://www.books.com.tw/products/0010254508)
 
-## 推動重組時的人的阻力在溫伯格第 4 卷
+## 溫伯格第 4 卷：推動重組時遇到的抗拒
 
 Weinberg 的《Quality Software Management, Vol. 4: Anticipating Change》處理組織轉變的推動過程。Team Topologies 到人月神話那幾本給出目標結構長什麼樣，這一卷處理從現狀走到目標的路上會遇到什麼——誰會抗拒、抗拒的形式有哪些、哪些抗拒其實是有效資訊。
 

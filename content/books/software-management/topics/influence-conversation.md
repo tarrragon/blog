@@ -8,9 +8,9 @@ tags: ["books", "reading", "difficult-conversations", "influence", "communicatio
 
 這個主題處理其他主題留下的執行缺口。理解了心理安全感的機制、知道了估算為什麼失準、看清了組織的回饋迴路，這些都不會告訴一個人：當主管在會議上盯著他問「到底行不行」的時候，接下來三十秒該說什麼。這裡的書處理的正是那三十秒，以及沒有指揮權時怎麼讓別人照著做。
 
-無權限的影響力有兩個方向，而多數管理書預設讀者有直接權限，兩個方向都不處理。橫向的那個方向比較常被談到：Staff 工程師、平台團隊、SRE、架構師都在影響自己管不到的平行團隊，技術決策要推得動，靠的是方案能不能講進別人的約束裡，光是論證正確並不足夠。縱向的那個方向更普遍——每一個受僱的人都是某個人的部屬，每天在對位置比自己高的人做同樣的事：把方案講進對方的約束裡、把壞消息說出口、把一句評語接下來。開頭那三十秒就發生在這個方向上。這一篇的書兩個方向都服務，選書時先確認自己這次面對的是哪一個。不確定，或者兩個都會碰到，就從 [Difficult Conversations](#起點是-difficult-conversations) 開始——它處理的是對話開始之前的準備與診斷，那一段兩個方向共用。還有一種卡住的位置不同：對方要什麼已經清楚了，自己也已經決定要講，卻反覆做不到。那走 [溫伯格第 3 卷](#想看自己在壓力下的反應時讀溫伯格第-3-卷) 與 [《變革抗拒》](#該說的話反覆說不出口時讀變革抗拒)。
+無權限的影響力有兩個方向，而多數管理書預設讀者有直接權限，兩個方向都不處理。橫向的那個方向比較常被談到：Staff 工程師、平台團隊、SRE、架構師都在影響自己管不到的平行團隊，技術決策要推得動，靠的是方案能不能講進別人的約束裡，光是論證正確並不足夠。縱向的那個方向更普遍——每一個受僱的人都是某個人的部屬，每天在對位置比自己高的人做同樣的事：把方案講進對方的約束裡、把壞消息說出口、把一句評語接下來。開頭那三十秒就發生在這個方向上。這一篇的書兩個方向都服務，選書時先確認自己這次面對的是哪一個。不確定，或者兩個都會碰到，就從 [Difficult Conversations](#起點書difficult-conversations) 開始——它處理的是對話開始之前的準備與診斷，那一段兩個方向共用。還有一種卡住的位置不同：對方要什麼已經清楚了，自己也已經決定要講，卻反覆做不到。那走 [溫伯格第 3 卷](#溫伯格第-3-卷想看自己在壓力下的反應時的選讀) 與 [《變革抗拒》](#變革抗拒該說的話反覆說不出口時的選讀)。
 
-## 起點是 Difficult Conversations
+## 起點書：Difficult Conversations
 
 哈佛談判專案的《Difficult Conversations》把一場難談的對話從準備、診斷走到收尾，整條都在書裡，而且它提供的診斷可以在對話進行中當場用。它把困難對話拆成三層同時進行的對話：關於事實的（發生了什麼、誰對誰錯）、關於感受的（各方的情緒與在意的事）、關於身分認同的（這件事說明了我是什麼樣的人）。
 
@@ -23,7 +23,7 @@ tags: ["books", "reading", "difficult-conversations", "influence", "communicatio
 - [Amazon（Difficult Conversations: How to Discuss What Matters Most）](https://www.amazon.com/Difficult-Conversations-Discuss-What-Matters/dp/014313759X)
 - [博客來（再也沒有難談的事：哈佛法學院教你如何開口）](https://www.books.com.tw/products/0010650242)
 
-## 情緒已經升溫時讀 Crucial Conversations
+## Crucial Conversations：情緒已經升溫時的選讀
 
 《Crucial Conversations》處理同一件事的另一個切面：高風險、意見相左、情緒正在升溫的時刻。它與前一本的分工是時間點——《Difficult Conversations》用於準備與診斷，這一本處理對話已經開始失控時怎麼拉回來。
 
@@ -35,7 +35,7 @@ tags: ["books", "reading", "difficult-conversations", "influence", "communicatio
 - [博客來（開口就說對話，繁體中文舊版）](https://www.books.com.tw/products/0010570731)
 - [博客來（關鍵對話：如何高效能溝通，原書第 3 版，簡體中文版）](https://www.books.com.tw/products/CN11836522)
 
-## 問不出真話時讀 Humble Inquiry
+## Humble Inquiry：問不出真話時的選讀
 
 Edgar Schein 的《Humble Inquiry》主題單一：管理者總在說而不在問，而問法本身決定能不能問出真話。它區分幾種提問——謙遜提問、診斷式提問、引導式提問——並指出後兩者會在不知不覺中把答案塞給對方，於是拿回來的是自己的假設被覆述一遍。
 
@@ -47,7 +47,7 @@ Edgar Schein 的《Humble Inquiry》主題單一：管理者總在說而不在�
 - [Amazon（Humble Inquiry, Second Edition）](https://www.amazon.com/Humble-Inquiry-Second-Instead-Leadership/dp/1523092629)
 - [博客來（MIT 最打動人心的溝通課：組織心理學大師教你謙遜提問的藝術）](https://www.books.com.tw/products/0010660316)
 
-## 一句評語當下聽不進去時讀 Thanks for the Feedback
+## Thanks for the Feedback：一句評語當下聽不進去時的選讀
 
 Douglas Stone 與 Sheila Heen 的《Thanks for the Feedback》處理接收端。Difficult Conversations、Crucial Conversations 與 Humble Inquiry 教的是怎麼把話說出去，而一次回饋有沒有作用，由接收的那個人決定——擋不擋得住這句話是他的動作，不是說話者的。這一本問的是話說出去之後，為什麼沒有進去。
 
@@ -60,7 +60,7 @@ Douglas Stone 與 Sheila Heen 的《Thanks for the Feedback》處理接收端。
 - [Amazon（Thanks for the Feedback: The Science and Art of Receiving Feedback Well）](https://www.amazon.com/Thanks-Feedback-Science-Receiving-Well/dp/0143127136)
 - [三民（謝謝你的指教：哈佛溝通專家教你轉化負面意見，成就更好的自己）](https://www.sanmin.com.tw/product/index/008005699)
 
-## 沒有職權要推動改變時讀 The Secrets of Consulting
+## The Secrets of Consulting：沒有職權要推動改變時的選讀
 
 Gerald Weinberg 的《The Secrets of Consulting》處理的是在沒有指揮權的位置上推動改變。這個處境在現在的組織裡很普遍，而多數管理書預設讀者有直接權限，因此這本承擔的角色在這條線上少有其他書填補。
 
@@ -71,7 +71,7 @@ Gerald Weinberg 的《The Secrets of Consulting》處理的是在沒有指揮權
 - [Amazon（The Secrets of Consulting）](https://www.amazon.com/Secrets-Consulting-Giving-Getting-Successfully/dp/0932633013)
 - [博客來（顧問成功的祕密：有效建議、促成改變的工作智慧，10 週年智慧紀念版）](https://www.books.com.tw/products/0011055748)
 
-## 想看自己在壓力下的反應時讀溫伯格第 3 卷
+## 溫伯格第 3 卷：想看自己在壓力下的反應時的選讀
 
 Weinberg 的《Quality Software Management, Vol. 3: Congruent Action》處理的是管理者在壓力下的即時反應：被高層質問時為什麼會撒謊、為什麼明知進度不可能還是點頭、為什麼團隊裡沒人敢說壞消息。這是他四卷本裡在這條線的其他書中沒有對應的一卷。
 
@@ -84,7 +84,7 @@ Weinberg 的《Quality Software Management, Vol. 3: Congruent Action》處理的
 - [Amazon（Quality Software Management, Vol. 3: Congruent Action）](https://www.amazon.com/Quality-Software-Management-Vol-Congruent/dp/0932633285)
 - [博客來（溫伯格的軟體管理學：關照全局的管理作為，第 3 卷）](https://www.books.com.tw/products/0010444273)
 
-## 該說的話反覆說不出口時讀《變革抗拒》
+## 《變革抗拒》：該說的話反覆說不出口時的選讀
 
 Robert Kegan 與 Lisa Laskow Lahey 的《變革抗拒》處理同一個人反覆做不到自己已經決定要做的事。書中主張這種原地不動來自保護而非意志力不足：當事人同時持有兩個互相衝突的承諾，一個在檯面上（這次會議要把風險講出來），另一個不在（讓自己不被看成唱反調的人），而不在檯面上的那個通常自己看不見。兩個承諾各自都在生效，合起來讓行為停在原地。
 

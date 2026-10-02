@@ -10,9 +10,9 @@ tags: ["books", "reading", "craft", "software-design", "practice"]
 
 三本書的差別在**密度與主張數**，不在誰對誰錯：《The Pragmatic Programmer》列幾十條短原則、《A Philosophy of Software Design》用一條主張貫穿全書、《Code Complete》鋪成百科式的對照表。三本都不預設任何組織條件——判斷標準落在程式碼本身的形狀與個人的動手習慣上，成立與否不取決於有沒有職級制度、成員是不是同一個僱主、大家在不在同一個時區，換了公司照樣讀得動。
 
-先拿哪一本，看手上的問題有多具體。還沒有通盤基礎、要的是一批可以逐條拿走的實踐，從 [The Pragmatic Programmer](#起點是-the-pragmatic-programmer) 開始。手上有一個具體的設計問題想不通——這個模組該怎麼切、這個介面為什麼用起來彆扭——走 [A Philosophy of Software Design](#想把設計問題想清楚時讀-a-philosophy-of-software-design)，它主張集中、篇幅短。要的是一份可以長期翻回去查的對照，才輪到 [Code Complete](#要一份百科式的對照時讀-code-complete)。不確定自己落在哪一格，就從 [The Pragmatic Programmer](#起點是-the-pragmatic-programmer) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+先拿哪一本，看手上的問題有多具體。還沒有通盤基礎、要的是一批可以逐條拿走的實踐，從 [The Pragmatic Programmer](#起點書the-pragmatic-programmer) 開始。手上有一個具體的設計問題想不通——這個模組該怎麼切、這個介面為什麼用起來彆扭——走 [A Philosophy of Software Design](#a-philosophy-of-software-design想把設計問題想清楚時的選讀)，它主張集中、篇幅短。要的是一份可以長期翻回去查的對照，才輪到 [Code Complete](#code-complete要一份百科式的對照時的選讀)。不確定自己落在哪一格，就從 [The Pragmatic Programmer](#起點書the-pragmatic-programmer) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
-## 起點是 The Pragmatic Programmer
+## 起點書：The Pragmatic Programmer
 
 Dave Thomas 與 Andy Hunt 的《The Pragmatic Programmer》把技藝拆成幾十條自成一段、互不依賴的實踐——從 DRY、正交性這種設計判斷標準，到版本控制、純文字、自動化這種工具習慣，再到知識組合、除錯紀律這種職業態度——任何一條都可以單獨拿走用。條目多而彼此不相依，是它在本篇管得最寬、因此當起點的原因。
 
@@ -29,7 +29,7 @@ Dave Thomas 與 Andy Hunt 的《The Pragmatic Programmer》把技藝拆成幾十
 - [Amazon（The Pragmatic Programmer, 20th Anniversary Edition）](https://www.amazon.com/Pragmatic-Programmer-journey-mastery-Anniversary/dp/0135957052)
 - [博客來（The Pragmatic Programmer 20 週年紀念版）](https://www.books.com.tw/products/0010856354)
 
-## 想把設計問題想清楚時讀 A Philosophy of Software Design
+## A Philosophy of Software Design：想把設計問題想清楚時的選讀
 
 John Ousterhout 的這本整本只推一個主張：**軟體設計的根本問題是控制複雜度**，其餘的判斷標準都從這一條長出來。這種寫法的好處是它給得出一個可以隨身帶的判斷標準，而不是一份要背的清單。
 
@@ -46,7 +46,7 @@ John Ousterhout 的這本整本只推一個主張：**軟體設計的根本問�
 - [Amazon（A Philosophy of Software Design, 2nd Edition）](https://www.amazon.com/Philosophy-Software-Design-2nd/dp/173210221X)
 - [天瓏（軟件設計的哲學 2/e，簡體中文版）](https://www.tenlong.com.tw/products/9787115655615)
 
-## 要一份百科式的對照時讀 Code Complete
+## Code Complete：要一份百科式的對照時的選讀
 
 Steve McConnell 的《Code Complete》第二版是這個主題涵蓋面最大的一本，把建構期的每個決定都拆開處理：變數命名、迴圈結構、防禦性編程、程式碼佈局、審查方式。它跟前兩本的差別在於它不推銷單一主張，而是把當時能找到的研究與實務歸納整理成對照表。
 
@@ -67,7 +67,7 @@ Steve McConnell 的《Code Complete》第二版是這個主題涵蓋面最大的
 
 Robert Martin 的《Clean Code》常被列在這個位置，不收的理由跟上面那一類不同——它的部分主張（函式應該極短、註解是失敗的象徵）近年受到相當多的技術批評，而爭議還沒有收束。要讀的話同時找反方的討論一起看，不要當成無爭議的標準。
 
-想走影音路徑的讀者這個主題目前接不住。最接近的一門是 MIT 的 6.005 Software Construction，大綱涵蓋規格、測試、抽象資料型別、物件導向設計模式、並行與函數式程式設計，跟本篇三本書重疊得最多，OpenCourseWare 上也放了考題、習題與程式作業——缺的只有影音，因為那門課刻意不把課堂時間拿來講課（FAQ 自陳），沒有可錄的講課。整條線的供給狀況寫在 [工程技藝書單的公開課段](../craft-line-guide/#四個主題裡只有系統架構接得住公開課)。
+想走影音路徑的讀者這個主題目前接不住。最接近的一門是 MIT 的 6.005 Software Construction，大綱涵蓋規格、測試、抽象資料型別、物件導向設計模式、並行與函數式程式設計，跟本篇三本書重疊得最多，OpenCourseWare 上也放了考題、習題與程式作業——缺的只有影音，因為那門課刻意不把課堂時間拿來講課（FAQ 自陳），沒有可錄的講課。整條線的供給狀況寫在 [工程技藝書單的公開課段](../craft-line-guide/#各主題的公開課涵蓋狀況)。
 
 ## 這個主題接到哪裡
 

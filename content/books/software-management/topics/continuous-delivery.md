@@ -10,9 +10,9 @@ tags: ["books", "reading", "devops", "sre", "measurement", "continuous-delivery"
 
 量測本身也在這個主題裡。選錯指標的組織會得到精確衡量的錯誤行為：以程式碼行數衡量產出、以工時衡量投入、以缺陷數衡量品質，每一個都會在幾個月內長出對應的規避行為。
 
-先拿哪一本，看要拿它去做什麼。要一組拿得出去、對方追問時指得回大規模調查的數字，從 [Accelerate](#起點是-accelerate) 開始。已經同意那組結論而卡在怎麼落地，走 [The DevOps Handbook](#要把結論落到操作時讀-the-devops-handbook)。要說服的是還沒有共同語言的人，[鳳凰專案](#門檻最低的一本是鳳凰專案) 的門檻最低，適合整組一起讀。生產環境已經在跑而問題出在維運上，走 [Google SRE](#已經在跑生產環境時讀-google-sre)。不確定自己落在哪一格，就從 [Accelerate](#起點是-accelerate) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+先拿哪一本，看要拿它去做什麼。要一組拿得出去、對方追問時指得回大規模調查的數字，從 [Accelerate](#起點書accelerate) 開始。已經同意那組結論而卡在怎麼落地，走 [The DevOps Handbook](#the-devops-handbook要把結論落到操作時的選讀)。要說服的是還沒有共同語言的人，[鳳凰專案](#鳳凰專案門檻最低的一本) 的門檻最低，適合整組一起讀。生產環境已經在跑而問題出在維運上，走 [Google SRE](#google-sre已經在跑生產環境時的選讀)。不確定自己落在哪一格，就從 [Accelerate](#起點書accelerate) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
-## 起點是 Accelerate
+## 起點書：Accelerate
 
 Nicole Forsgren、Jez Humble、Gene Kim 的《Accelerate》涵蓋了這個主題的完整座標，證據強度也是本篇最高的一本。它用心理計量與統計方法檢驗做法與績效的關係，產出四個指標：部署頻率、變更前置時間、變更失敗率、服務還原時間。這四項已經是業界共同語言，讀完之後其他書的討論才有對照基準。
 
@@ -25,7 +25,7 @@ Nicole Forsgren、Jez Humble、Gene Kim 的《Accelerate》涵蓋了這個主題
 - [Amazon（Accelerate: The Science of Lean Software and DevOps）](https://www.amazon.com/Accelerate-Software-Performing-Technology-Organizations/dp/1942788339)
 - [博客來（ACCELERATE：精益軟體與 DevOps 背後的科學）](https://www.books.com.tw/products/0010913771)
 
-## 要把結論落到操作時讀 The DevOps Handbook
+## The DevOps Handbook：要把結論落到操作時的選讀
 
 《The DevOps Handbook》與《Accelerate》分工明確：後者說什麼有效，前者說怎麼做。它把交付流程拆成建立快速流動、建立回饋迴路、建立持續學習文化三個層次，每層底下有技術實踐與組織實踐，並用案例說明導入時遇到什麼阻力。
 
@@ -36,7 +36,7 @@ Nicole Forsgren、Jez Humble、Gene Kim 的《Accelerate》涵蓋了這個主題
 - [Amazon（The DevOps Handbook, 2nd Edition）](https://www.amazon.com/DevOps-Handbook-World-Class-Reliability-Organizations/dp/1950508404)
 - [博客來（DevOps Handbook 中文版 第二版）](https://www.books.com.tw/products/0010962048)
 
-## 門檻最低的一本是鳳凰專案
+## 鳳凰專案：門檻最低的一本
 
 《The Phoenix Project》用小說形式講一個 IT 經理接手瀕臨崩潰的專案、被要求九十天內救回來的故事。它的功能是建立畫面感：工作在系統裡怎麼堆積、看不見的工作為什麼比看得見的危險、把 IT 工作類比成工廠產線之後哪些管理直覺可以搬過來。
 
@@ -47,7 +47,7 @@ Nicole Forsgren、Jez Humble、Gene Kim 的《Accelerate》涵蓋了這個主題
 - [Amazon（The Phoenix Project）](https://www.amazon.com/Phoenix-Project-DevOps-Helping-Business/dp/1942788290)
 - [博客來（鳳凰專案：看 IT 部門如何讓公司從谷底翻身的傳奇故事）](https://www.books.com.tw/products/0010765203)
 
-## 已經在跑生產環境時讀 Google SRE
+## Google SRE：已經在跑生產環境時的選讀
 
 Google 的《Site Reliability Engineering》是論文集，由 SRE 團隊成員各自撰寫章節。它的核心貢獻是把可靠性從「盡量不要出事」變成可以定價、可以編列預算的量。錯誤預算把可用性目標翻譯成「這一季還可以壞多久」，於是「要不要上這個功能」變成有數字可算的決定，而不是產品與維運的立場之爭。
 
@@ -59,7 +59,7 @@ Google 的《Site Reliability Engineering》是論文集，由 SRE 團隊成員�
 - [Amazon（Site Reliability Engineering: How Google Runs Production Systems）](https://www.amazon.com/Site-Reliability-Engineering-Production-Systems/dp/149192912X)
 - [博客來（網站可靠性工程｜Google 的系統管理之道）](https://www.books.com.tw/products/0010770752)
 
-## 量測的扭曲效應在溫伯格第 2 卷
+## 溫伯格第 2 卷：量測對行為的扭曲效應
 
 Weinberg 的《Quality Software Management, Vol. 2: First-Order Measurement》處理的是量測這件事本身：怎麼知道專案的實際狀況、什麼該量、量測如何反過來扭曲被量測的行為。它主張多數組織的問題在於數據被用來評價人，於是數據開始服務評價而非服務判斷，缺乏數據反而很少是瓶頸。
 

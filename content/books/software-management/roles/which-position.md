@@ -1,7 +1,7 @@
 ---
-title: "依位置選書：交不出來的時候誰會被問"
+title: "依位置選書：按責任範圍劃分的位置與判斷方法"
 date: 2026-09-24
-description: "位置篇按責任範圍而不按職稱組織的理由、五個位置與各自最常見的失敗、怎麼判斷自己在哪個位置，以及位置篇與主題篇的分工"
+description: "位置篇按責任範圍而不按職稱組織的理由、從只對自己的產出負責到對組織結構負責的各個位置與最常見的失敗、怎麼判斷自己在哪個位置與判斷標準失準的組織，以及位置篇與主題篇的分工"
 weight: 1
 tags: ["books", "management", "career"]
 ---
@@ -12,7 +12,7 @@ tags: ["books", "management", "career"]
 
 遠距與公部門這兩種情境會再疊上各自的變形（可見度、單一薪資市場的假設、法定薪級），那些差異這批內容沒有處理——跨時區非同步團隊尤其要先看[協作形態](/books/knowledge-cards/collaboration-mode/)。跨國那一種現在有落點：成員成長環境不同時整批建議的刻度要重設，走 [跨文化協作與行為判讀](/books/software-management/topics/cross-cultural-collaboration/)。書的完整描述都在 [主題書單](/books/software-management/topics/)，這裡只說「哪種處境對應哪本」與為什麼。
 
-## 五個位置
+## 各個位置負責的範圍與最常見的失敗
 
 | 位置                                                                          | 對什麼負責                 | 最常見的失敗                           |
 | ----------------------------------------------------------------------------- | -------------------------- | -------------------------------------- |
@@ -44,9 +44,9 @@ tags: ["books", "management", "career"]
 
 同時符合兩處時取當下解不掉的那一處——已經在解的那些問題不需要一本書指出怎麼開始。完全對不上的情況也存在——小公司的技術負責人可能同時負責技術品質、別人的產出、人與組織結構，那種處境的建議是照急迫度挑一篇開始，而不是四篇一起讀。
 
-有一個規模下限要先確認：[對組織結構負責](/books/software-management/roles/org-structure/) 那篇的書預設組織裡至少有三個團隊（這個數字的推導在 [同一個位置的答案會被哪些約束改變](/books/constraints-that-change-the-answer/)）。人數在一個團隊以內時，那些內容是為不存在的問題做設計，先看 [對別人的產出負責](/books/software-management/roles/others-output/)。[對人負責](/books/software-management/roles/people/) 那個位置照樣成立——兩個人的去留一樣決定得了公司能不能活，只是那個位置的書預設組織已經有分級、調薪與績效制度可用，沒有制度時讀到的是那些工具背後的判斷，而不是照著把制度建起來。這個規模在管理書單之外真正該補的是 [工程技藝](/books/craft/)。
+有一個規模下限要先確認：[對組織結構負責](/books/software-management/roles/org-structure/) 那篇的書預設組織裡至少有三個團隊（這個數字的推導在 [選書時會改變答案的約束條件](/books/constraints-that-change-the-answer/)）。人數在一個團隊以內時，那些內容是為不存在的問題做設計，先看 [對別人的產出負責](/books/software-management/roles/others-output/)。[對人負責](/books/software-management/roles/people/) 那個位置照樣成立——兩個人的去留一樣決定得了公司能不能活，只是那個位置的書預設組織已經有分級、調薪與績效制度可用，沒有制度時讀到的是那些工具背後的判斷，而不是照著把制度建起來。這個規模在管理書單之外真正該補的是 [工程技藝](/books/craft/)。
 
-其他會改變答案的約束（人員流動率、協作形態、法規義務、預算）見 [同一個位置的答案會被哪些約束改變](/books/constraints-that-change-the-answer/)。
+其他會改變答案的約束（人員流動率、協作形態、法規義務、預算）見 [選書時會改變答案的約束條件](/books/constraints-that-change-the-answer/)。
 
 ## 這幾篇跟主題篇的分工
 

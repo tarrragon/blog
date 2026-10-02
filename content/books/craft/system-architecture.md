@@ -10,9 +10,9 @@ tags: ["books", "reading", "craft", "architecture", "trade-off"]
 
 這個主題只有兩本，按有沒有詞彙分：《Fundamentals of Software Architecture》先建立一整套可以用來討論的概念，《Software Architecture: The Hard Parts》再處理那些用了概念仍然沒有標準答案的決定。
 
-所以先拿哪一本很好判斷：架構討論還停在「我覺得微服務比較好」這種層次，缺的是詞彙，從 [Fundamentals of Software Architecture](#起點是-fundamentals-of-software-architecture) 開始；詞彙已經夠用而卡在某個拆分的每個選項都有代價，直接走 [The Hard Parts](#已經在拆分而每個選項都有代價時讀-software-architecture-the-hard-parts)。讀不動長篇文字的走文末的課程段，那裡有兩門完整的課教架構決定要用到的分散式系統機制。不確定自己落在哪一格，就從 [Fundamentals of Software Architecture](#起點是-fundamentals-of-software-architecture) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+所以先拿哪一本很好判斷：架構討論還停在「我覺得微服務比較好」這種層次，缺的是詞彙，從 [Fundamentals of Software Architecture](#起點書fundamentals-of-software-architecture) 開始；詞彙已經夠用而卡在某個拆分的每個選項都有代價，直接走 [The Hard Parts](#software-architecture-the-hard-parts已經在拆分而每個選項都有代價時的選讀)。讀不動長篇文字的走文末的課程段，那裡有兩門完整的課教架構決定要用到的分散式系統機制。不確定自己落在哪一格，就從 [Fundamentals of Software Architecture](#起點書fundamentals-of-software-architecture) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
-## 起點是 Fundamentals of Software Architecture
+## 起點書：Fundamentals of Software Architecture
 
 Mark Richards 與 Neal Ford 這本的主要貢獻是一整套詞彙，而詞彙要鋪滿才有用——這也是它成為本篇涵蓋面最完整一本的原因。沒有那套詞彙的架構討論會停在「我覺得微服務比較好」，有了之後才問得出「我們要優化的是哪幾個架構特性、代價付在哪裡」。
 
@@ -29,9 +29,9 @@ Mark Richards 與 Neal Ford 這本的主要貢獻是一整套詞彙，而詞彙�
 - [Amazon（Fundamentals of Software Architecture: A Modern Engineering Approach, 2nd Edition）](https://www.amazon.com/Fundamentals-Software-Architecture-Engineering-Approach/dp/1098175514)
 - [博客來（軟體架構原理 第二版｜現代工程方法）](https://www.books.com.tw/products/0011045361)
 
-## 已經在拆分而每個選項都有代價時讀 Software Architecture: The Hard Parts
+## Software Architecture: The Hard Parts：已經在拆分而每個選項都有代價時的選讀
 
-同一組作者加上 Pramod Sadalage 與 Zhamak Dehghani 的這本，處理的是 [《Fundamentals of Software Architecture》](#起點是-fundamentals-of-software-architecture) 建立詞彙之後才浮出來的問題：服務該切多細、工作流程要編排還是編舞、契約要嚴格還是寬鬆、分散式交易怎麼辦、資料該怎麼跟著服務拆。
+同一組作者加上 Pramod Sadalage 與 Zhamak Dehghani 的這本，處理的是 [《Fundamentals of Software Architecture》](#起點書fundamentals-of-software-architecture) 建立詞彙之後才浮出來的問題：服務該切多細、工作流程要編排還是編舞、契約要嚴格還是寬鬆、分散式交易怎麼辦、資料該怎麼跟著服務拆。
 
 它的書名說明了立場——這些是**沒有最佳實踐的問題**。書的結構因此給的是取捨分析的做法而非答案：把每個決定的可能選項列出來、標出各自在哪些架構特性上得分、明確寫出放棄了什麼。它反覆示範同一個動作，那個動作本身才是要學的東西。
 
@@ -56,7 +56,7 @@ Robert Martin 的《Clean Architecture》常被列在這個位置，不收的理
 
 資料密集系統的設計（複製、分片、一致性模型）不在這個主題，那屬於 [Backend 服務實務指南](/backend/) 的責任範圍。
 
-## 架構決定要用的機制知識有兩門完整的課，取捨判斷沒有
+## 公開課：MIT 6.824 與 Kleppmann 的分散式系統課
 
 這是技藝線唯一接得住公開課的主題，而它接住的只有一半。架構決定要用到機制知識與取捨判斷兩者：機制知識是複製怎麼做、一致性有幾種、共識協定在解什麼、分割之後交易怎麼辦；取捨判斷是在資訊不足時把每個選項的代價講清楚。機制教得了，判斷教不了——這跟本篇兩本書的分工同向，起點書先給詞彙、The Hard Parts 才處理用了詞彙仍然沒有標準答案的決定。
 
@@ -66,7 +66,7 @@ Robert Martin 的《Clean Architecture》常被列在這個位置，不收的理
 
 兩門課的材料是已經發表的論文與已經定案的協定，時效因此不隨版本更新而動；會改變的是它們順帶提到的雲端服務與工具介面。兩門都是英語授課，而且不像 Open Yale 的課附官方逐字稿，字幕以 YouTube 當下提供的為準、可能是自動生成。這個主題沒有中文的對應課。
 
-取捨判斷那一半沒查到課，而缺口的成因就是這個主題的核心能力本身——在資訊不足的時候把取捨講清楚，包括講清楚自己選的那個爛在哪。這種能力的教材是別人做過的決定與它後來的代價，而那些代價要好幾年才顯現，一學期的課承載不了。整條線的供給狀況寫在 [工程技藝書單的公開課段](../craft-line-guide/#四個主題裡只有系統架構接得住公開課)。
+取捨判斷那一半沒查到課，而缺口的成因就是這個主題的核心能力本身——在資訊不足的時候把取捨講清楚，包括講清楚自己選的那個爛在哪。這種能力的教材是別人做過的決定與它後來的代價，而那些代價要好幾年才顯現，一學期的課承載不了。整條線的供給狀況寫在 [工程技藝書單的公開課段](../craft-line-guide/#各主題的公開課涵蓋狀況)。
 
 - [YouTube 播放清單（MIT 6.824 Distributed Systems，Robert Morris，Spring 2020，20 講）](https://www.youtube.com/playlist?list=PLrw6a1wE39_tb2fErI4-WkMbsvGQk9_UB)
 - [YouTube 播放清單（Distributed Systems lecture series，Martin Kleppmann，8 講、23 段影片）](https://www.youtube.com/playlist?list=PLeKd45zvjcDFUEv_ohr_HdUFe97RItdiB)

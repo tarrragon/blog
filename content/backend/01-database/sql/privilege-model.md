@@ -1,7 +1,7 @@
 ---
-title: "SQL.16 權限的預設是什麼都不給"
+title: "SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限"
 date: 2026-08-31
-description: "角色與 GRANT 的授權單位、建立物件擋在 schema 這一層，以及最小權限成立的前提"
+description: "新角色的預設權限、讀寫各自授權與收回的方式、建立物件的權限落在 schema 這一層，以及最小權限在應用程式帳號上成立的前提"
 aliases: ["/sql/privilege-model/"]
 weight: 17
 tags: ["sql", "privilege", "grant", "role", "least-privilege", "postgresql"]
@@ -11,7 +11,7 @@ tags: ["sql", "privilege", "grant", "role", "least-privilege", "postgresql"]
 
 以下的輸出來自 PostgreSQL 18。SQLite 沒有使用者的概念，整個檔案的存取由檔案系統決定，所以本篇談的授權這一層在 SQLite 上不存在。
 
-## 新建的角色連讀都讀不了
+## 新建角色的預設權限
 
 書店的資料裡有三位顧客與兩張訂單，現在要開一個只跑報表的帳號。PostgreSQL 用「角色」這一個概念同時涵蓋使用者與群組——帶 `LOGIN` 屬性的角色可以連線，不帶的當群組用，兩者授權的方式相同。先建一個能登入的角色，什麼權限都還沒給：
 
@@ -34,7 +34,7 @@ SELECT 姓名 FROM 顧客;
 -- 佳穎、宗翰、雅文
 ```
 
-## 授權是逐項的，讀寫各自分開
+## 授權的單位：角色、表與動作
 
 上面只給了 `SELECT`。同一個角色去寫：
 
@@ -43,7 +43,7 @@ INSERT INTO 顧客 VALUES (4,'柏宇');   -- permission denied for table 顧客
 DELETE FROM 顧客 WHERE 顧客編號=1;    -- permission denied for table 顧客
 ```
 
-兩個都被擋下來，錯誤訊息與完全沒授權時一模一樣。權限的單位是「哪個角色、對哪張表、做哪一種動作」，`SELECT`、`INSERT`、`UPDATE`、`DELETE` 各自獨立，給一項不會順帶給另一項。「哪張表」由識別字指認，而那個名字送進引擎之前會先被改寫一次——`GRANT SELECT ON Orders` 在 PostgreSQL 上授權的對象是 `orders`，這個改寫的規則在 [SQL.14 識別字送進引擎之後會被改寫](/backend/01-database/sql/identifier-rules/)。
+兩個都被擋下來，錯誤訊息與完全沒授權時一模一樣。權限的單位是「哪個角色、對哪張表、做哪一種動作」，`SELECT`、`INSERT`、`UPDATE`、`DELETE` 各自獨立，給一項不會順帶給另一項。「哪張表」由識別字指認，而那個名字送進引擎之前會先被改寫一次——`GRANT SELECT ON Orders` 在 PostgreSQL 上授權的對象是 `orders`，這個改寫的規則在 [SQL.14 識別字的規則：各家的大小寫摺疊、引號與保留字](/backend/01-database/sql/identifier-rules/)。
 
 目前有哪些授權查得到，收回之後那個角色又回到 `permission denied`：
 
@@ -60,7 +60,7 @@ SELECT * FROM 顧客;
 -- ERROR: permission denied for table 顧客
 ```
 
-## 建立物件的權限擋在 schema，不擋在 table
+## 建立物件的權限與 schema
 
 `GRANT SELECT` 給的是對既有表的存取，與「能不能建新的表」無關。報表角色去建表：
 
@@ -71,7 +71,7 @@ CREATE TABLE 偷建的 (x INT);
 
 被擋的層次不同——這次擋在 [schema](/backend/01-database/sql/knowledge-cards/schema-namespace/) 而不是 table。PostgreSQL 15 之後 `public` schema 預設不再開放給所有人建立物件，在那之前這個操作會成功。**同一段 SQL 在不同版本上的結果不同，而差別在預設值而不在語法。**
 
-## 最小權限在這裡的具體意思
+## 最小權限：應用程式帳號的授權範圍
 
 應用程式連資料庫用的帳號，開的權限涵蓋它實際會執行的動作就夠。一個只跑報表的程式從來不寫入，所以它的帳號有沒有 `INSERT` 對它的功能沒有差別；處理訂單的程式不會刪顧客，所以它的帳號有沒有顧客表的 `DELETE` 對它的功能也沒有差別。遷移是唯一需要 [DDL](/backend/01-database/sql/knowledge-cards/ddl-dml/) 的場合，而它不是常態運行的一部分——那些權限跟著它自己的帳號走，平常沒有任何一條應用程式的連線用它登入。遷移本身的流程（雙寫、回填、切流與回滾）在 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
 

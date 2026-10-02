@@ -1,7 +1,7 @@
 ---
-title: "版本策略流派之爭：識別碼是入口、預設行為才是成本的分水嶺"
+title: "版本策略流派之爭：URI 版本、header 版本、日期 pin 與不做版本的前提與成本"
 date: 2026-08-11
-description: "選版本方案時各派的前提與代價：版本識別什麼、變更成本由誰吸收、借用某派結論而不帶其前提會壞在哪"
+description: "版本識別碼指向什麼、消費者不動作時被解讀成什麼、遷移成本由誰吸收；各派的支援窗口承諾、借用某派結論而不帶其前提的失效形態，以及選型的判定順序"
 weight: 32
 tags: ["backend", "api-design", "versioning"]
 ---
@@ -12,7 +12,7 @@ tags: ["backend", "api-design", "versioning"]
 
 本文攤開各派的前提、成本結構與失效條件。少數幾個大客戶加一條長尾的混合形態（中型 SaaS 最常見的形狀）也適用，做法是兩邊分開處理：大客戶的遷移由合約與客戶成功團隊協調，版本機制服務的是那條聯絡不到也協調不動的長尾，而兩邊的支援窗口可以不同。單一消費者佔絕大多數流量、且握有合約級槓桿時例外——那種情境下遷移成本由談判決定，版本機制只是執行工具。版本方案選定之後怎麼落地、舊版怎麼退場，是另一個題目，收在 [版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)。
 
-## 識別碼指向什麼
+## 各派的版本識別碼與它指向的對象
 
 | 流派        | 識別碼形式                         | 版本指向           | 消費者跟上的動作         | 本文引用的一手案例              |
 | ----------- | ---------------------------------- | ------------------ | ------------------------ | ------------------------------- |
@@ -29,7 +29,7 @@ tags: ["backend", "api-design", "versioning"]
 
 不做版本時，消費者每次呼叫都在跟當下的 server 對話，穩定性由服務端的自我約束提供。REST 這個架構風格的提出者 Roy Fielding 把這件事推到最遠：對 `/v1/` 式介面版本化的建議是「DON'T」，版本化逼 client 要嘛跟著重佈署、要嘛讓舊版成為「permanent lead weight」，而「Versioning interface names only manages change for the API owner's sake」（InfoQ 訪談、2014，見 [Fielding：對 API 版本化的建議是「別做」](/backend/11-api-design/cases/versioning-fielding-no-versioning/)）。
 
-## 成本的收款人換了、總額還在
+## 各派的成本結構：遷移成本由誰承擔
 
 URI 版本把帳單開給消費者與服務端的維運面：消費者付一次性的大遷移，服務端付雙版本並行期間的重複維護與行為漂移風險。這筆錢的好處是不需要事前投資 —— 第一版上線時只要在路徑裡放一個 `v1`，成本要到第一次 breaking change 才發生。
 
@@ -41,7 +41,7 @@ header 版本介於兩者之間：服務端仍要為每個宣告過的版本維�
 
 不做版本的帳單開給紀律。GraphQL 官方教學把 versionless 講成 common practice，明文的機制是兩件事：新能力透過新 type 或既有 type 的新 field 加入、type system 中每個 field 預設 nullable（見 [GraphQL 官方：versionless API 與 nullable-by-default](/backend/11-api-design/cases/graphql-versionless-evolution/)）。案例判讀把它歸納成三個紀律：只加不改、舊欄位以 deprecation 標注而非移除、欄位保持 nullable 預設；並把成本結構點明——版本管理的工作換了位置，沒有消失。nullable-by-default 尤其值得單獨理解 —— 它讓後端局部故障與細粒度授權拒絕落在單一欄位上，而非炸掉整個 response，代價是每個消費者都得在每個欄位上處理空值。
 
-## 不做版本的成立前提是消費者能在執行期習得控制項
+## 不做版本的成立前提
 
 Fielding 立場的力道來自它的完整形式：hypermedia as the engine of application state 是 REST 的約束而非選配，控制項應在執行期動態習得。這句話的操作意義是——client 當下能做哪些操作，由伺服器在回應裡附的連結告訴它，而不是寫死在 client 的程式碼裡。在這個前提下，服務端改變可用操作時，client 讀到的是新的控制項集合，行為跟著變 —— 版本號確實多餘。
 
@@ -49,7 +49,7 @@ Fielding 立場的力道來自它的完整形式：hypermedia as the engine of a
 
 GraphQL 的 versionless 是這個方向的工程化實例，且把前提換成了較弱的版本：client 不需要動態習得控制項，只需要顯式宣告自己要哪些欄位，服務端據此判斷加欄位是否安全。代價是 versionless 依賴的那三個紀律，而紀律的執行落在組織而非機制上。GraphQL 工具商 WunderGraph 的批評正指這一點 —— versioning 的組織問題 GraphQL 沒解（見 [WunderGraph：GraphQL 不該直接暴露在公網](/backend/11-api-design/cases/graphql-wundergraph-not-for-internet/)；該公司販售的正是 GraphQL 的替代方案、立場需納入判斷，此處引用的是其論證而非量化事實）。schema 保持相容，跟「還在用三年前那批欄位的內部團隊什麼時候能被停止支援」是兩個問題，後者不隨 versionless 消失。
 
-## 支援窗口是各派共同要回答的那一題
+## 各派的支援窗口承諾
 
 各派決定的是「版本這件事長什麼樣」，而消費者實際感受到的是另一件事：舊語意什麼時候真的停止供應。這一題各派都躲不掉，且答案的明文程度比流派選擇更能預測退場當天的災情。
 
@@ -67,7 +67,7 @@ GitHub 的 24 個月是把它寫成契約的形態（[GitHub](/backend/11-api-de
 
 **採 versionless 而缺 add-only 紀律與量測**。GraphQL 的三個紀律裡，只加不改跟 deprecation 標注靠 review 執行，而「舊欄位還有誰在用」靠量測回答。缺了量測時 deprecation 標注會無限期累積，schema 變成一份沒有人敢動的欄位墓園 —— 表面上沒有版本，實際上每個舊欄位都是一個永久支援的版本。檢查問法：任選一個標了 deprecated 的欄位，能不能在五分鐘內說出上週有幾個消費者呼叫它。
 
-## 判定序的順序不能顛倒
+## 選型的判定序：消費者可協調度、不做版本的前提、集中度與轉換層負擔
 
 選型是一道有方向的判定序，因為前面的問題會把後面的選項整組排除。每一問都要指定答案的產物形態——一個數字、一項程式碼事實、或一份既存文件；答案不是判斷本身，這樣走完之後才有東西可以複驗與重跑（這條原則的完整說明見 [11.1 的產物形態段](/backend/11-api-design/api-boundary-responsibility/)）。
 

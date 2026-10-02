@@ -184,7 +184,7 @@ NoSQL / KV DB 也有 sibling 反模式（hot partition、read amplification、sc
 
 本章的修法都改在查詢與 ORM 的寫法上，而其中幾條的成因在更上游：`SELECT *` 的代價由那張表裝了多寬決定（長文字欄位與短欄位同表時，不碰它的查詢也要掃過它的頁面）、N+1 的可修性由常一起取的資料切在幾張表決定、缺索引那一條裡有一種是索引建了而條件的形狀讓它用不上，而條件寫成那個形狀往往是因為比較規則沒有寫在欄位上。
 
-這幾個上游決定各自替查詢定了什麼價，逐條實測在 [1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/)。
+這幾個上游決定各自替查詢定了什麼價，逐條實測在 [1.16 Schema 設計決定的查詢代價：可空性、排序鍵唯一性、表寬、一對多的切法、比較規則與外鍵執法](/backend/01-database/design-decisions-price-every-query/)。
 
 ## 判讀訊號
 

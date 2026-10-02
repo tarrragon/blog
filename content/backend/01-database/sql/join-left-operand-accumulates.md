@@ -1,7 +1,7 @@
 ---
-title: "SQL.4 JOIN 的左邊是累積結果，不是一張表"
+title: "SQL.4 鏈式連接的左運算元：累積方式與外連接的保護範圍"
 date: 2026-08-31
-description: "鏈式連接的左運算元怎麼累積，以及 RIGHT 放在鏈中間時保護方向的反轉"
+description: "每個 JOIN 的左運算元由哪些表合成、ON 因此引用得到哪些欄位、LEFT 與 RIGHT 各自保護哪些列，以及 WHERE 引用鏈尾的表時哪些列會被撤掉保護"
 aliases: ["/sql/join-left-operand-accumulates/"]
 weight: 5
 tags: ["sql", "join", "left-join", "right-join", "outer-join"]
@@ -13,7 +13,7 @@ tags: ["sql", "join", "left-join", "right-join", "outer-join"]
 
 累積這件事在只有一個 `JOIN` 的查詢裡不現形，從第二個開始才有分量：某個 `LEFT` 保護了哪些列，取決於它上面累積出來的是什麼。
 
-## 左運算元隨著往下走而變大
+## 左運算元的累積與判讀方法
 
 書店的顧客有三位——佳穎下過兩張單，宗翰與雅文一張都沒有，而兩張單裡只有一張被評價過。要一份完整名單：每位顧客連同他的訂單與那張訂單的評價，沒下單的顧客與沒被評價的訂單也要出現。三張表往下接：
 
@@ -45,9 +45,9 @@ JOIN 評價 ON 評價.訂單編號 = 訂單.訂單編號;       -- 內連接：�
 -- 佳穎  101  5
 ```
 
-他們那兩列訂單欄裡的 `NULL` 是連接的產物，不是資料裡本來的空值，而後續對這欄做的計數與比較分不出這件事。`LEFT` 保護左側、`RIGHT` 保護右側、`FULL` 兩側都保護，這三種方向與這些 `NULL` 的來源定義在 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/)；這些 `NULL` 怎麼讓聚合算錯、為什麼不能用等號比，由 [SQL.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/) 接手。
+他們那兩列訂單欄裡的 `NULL` 是連接的產物，不是資料裡本來的空值，而後續對這欄做的計數與比較分不出這件事。`LEFT` 保護左側、`RIGHT` 保護右側、`FULL` 兩側都保護，這三種方向與這些 `NULL` 的來源定義在 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/)；這些 `NULL` 怎麼讓聚合算錯、為什麼不能用等號比，由 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/) 接手。
 
-## 鏈中間的 RIGHT 保護的是那一張單表
+## 鏈中間的 RIGHT JOIN 保護的對象
 
 把最後一個 `LEFT` 換成 `RIGHT`，其餘一個字不動：
 
@@ -63,7 +63,7 @@ RIGHT JOIN 評價 ON 評價.訂單編號 = 訂單.訂單編號
 
 **語意上這等於宣告「每一則評價都要留著，而顧客與訂單可有可無」。** 書店大概不會想問這個問題。它幾乎不會是任何人在鏈尾接上評價那個 `JOIN` 時想表達的事，而它讀起來只像是把 `LEFT` 打成了 `RIGHT`。
 
-## 全部寫成 LEFT，鏈的方向就一致
+## 只用 LEFT JOIN 的鏈：保護方向的判讀與 FULL JOIN 的例外
 
 不用 `RIGHT` 的話，鏈裡每個 `JOIN` 都是同一個方向：要保護的那張表寫在最上面，往下一行一行掛可選的表。要判斷查詢裡任何一個 `JOIN` 保護了什麼，在它那一行上方畫橫線就夠了。
 
@@ -81,13 +81,13 @@ LEFT JOIN 顧客 ON 顧客.顧客編號 = 訂單.顧客編號;
 
 這段查詢的每個 `JOIN` 都是 `LEFT`，鏈的方向沒有中途反轉。
 
-## 左右決定保護誰，執行順序決定誰先被掃
+## 書寫的左右與引擎的執行順序
 
 左右是書寫位置決定的語意，與引擎實際先處理誰無關。同一個連接寫成 `FROM 訂單 JOIN 顧客` 與 `FROM 顧客 JOIN 訂單`，在跑過 `ANALYZE` 的資料庫上，SQLite 兩次給出完全相同的 [query plan](/backend/01-database/sql/knowledge-cards/query-plan/)——它掃二十萬列的訂單、對五十列的顧客做查找，與誰寫在前面無關。沒有統計時它會改照文字順序走，而那只是它沒有別的資訊時的退路——[SQL.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/) 對照有無統計資訊時引擎怎麼選計畫。
 
 **左右決定哪一側的列被保護，執行順序決定誰先被掃，兩者互不相干。** 混用這兩個直覺會讓人以為調換書寫順序可以調效能，或以為從查詢文字看得出引擎的動作。
 
-## WHERE 引用鏈尾那張表，撤掉的是整個累積結果的保護
+## WHERE 引用鏈尾那張表時被撤掉保護的列
 
 `WHERE` 篩的是整條鏈累積完的那四列。條件引用鏈尾評價表的欄位時，佳穎的 102、宗翰與雅文那三列的評價欄是補出來的 `NULL`，一起被篩掉——宗翰與雅文跟評價表毫無關係，他們的保護是第一個 `LEFT JOIN` 給的：
 
@@ -100,4 +100,4 @@ WHERE 評價.星等 = 5;   -- 補出來的 NULL 判成未知，那三列被篩�
 -- 佳穎  101  5
 ```
 
-在這份資料上，消失的正好是把第二個 `JOIN` 換成 `INNER` 時消失的同一批列。所以判讀一個 `WHERE` 條件撤掉了誰，同樣回到累積：它引用的表掛在鏈的哪一行，那一行以上累積進來、在那張表上配不到的列都在它的射程裡。條件對 `NULL` 判成什麼決定撤不撤得掉，哪幾種條件形態保得住保護，在 [SQL.5 ON 描述關係、WHERE 篩選結果](/backend/01-database/sql/on-describes-where-filters/)。
+在這份資料上，消失的正好是把第二個 `JOIN` 換成 `INNER` 時消失的同一批列。所以判讀一個 `WHERE` 條件撤掉了誰，同樣回到累積：它引用的表掛在鏈的哪一行，那一行以上累積進來、在那張表上配不到的列都在它的射程裡。條件對 `NULL` 判成什麼決定撤不撤得掉，哪幾種條件形態保得住保護，在 [SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責](/backend/01-database/sql/on-describes-where-filters/)。

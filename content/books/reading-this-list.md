@@ -1,5 +1,5 @@
 ---
-title: "書單推薦怎麼用：三條書線各自承接哪一類決定"
+title: "書單推薦怎麼用：軟體管理、工程技藝、財務與投資各自承接的決定"
 date: 2026-09-24
 description: "書單分類回答的兩個問題、三條書線按決定的對象分開的理由與各自涵蓋的主題，以及書單與教學系列的分界"
 weight: 1
@@ -8,7 +8,7 @@ tags: ["books", "reading"]
 
 書單分類回答兩個問題：站在一個特定的職涯位置上，這個主題該先讀哪一本；以及要往別的位置移動時，該預習什麼。工具書的選擇跟當下承擔的責任綁在一起——同一本書給只對自己產出負責的人讀，跟給要對整個組織結構負責的人讀，能讀出來的東西完全不同，而且不是深淺差別，是關注點根本不在同一處。
 
-要直接找書的，三條書線與各自涵蓋的問題在下面的書單線表，各線的導讀在 [軟體管理與組織](/books/software-management/management-line-guide/)、[工程技藝](/books/craft/craft-line-guide/) 與 [財務與投資](/books/finance/finance-line-guide/)。各主題篇逐本套用的那組描述、它們可信到什麼程度，寫在 [書單怎麼描述一本書](/books/describing-a-book/)；選書之前先確認自己有沒有踩到會讓答案改變的約束，見 [同一個位置的答案會被哪些約束改變](/books/constraints-that-change-the-answer/)。要的是同一份知識換成用聽的，走 [公開課的收錄門檻與它服務得了的處境](/books/open-course-criteria/)。
+要直接找書的，三條書線與各自涵蓋的問題在下面的書單線表，各線的導讀在 [軟體管理與組織](/books/software-management/management-line-guide/)、[工程技藝](/books/craft/craft-line-guide/) 與 [財務與投資](/books/finance/finance-line-guide/)。各主題篇逐本套用的那組描述、它們可信到什麼程度，寫在 [書單怎麼描述一本書](/books/describing-a-book/)；選書之前先確認自己有沒有踩到會讓答案改變的約束，見 [選書時會改變答案的約束條件](/books/constraints-that-change-the-answer/)。要的是同一份知識換成用聽的，走 [公開課的收錄門檻與它服務得了的處境](/books/open-course-criteria/)。
 
 ## 書單線
 

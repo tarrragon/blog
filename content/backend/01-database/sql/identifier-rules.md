@@ -1,7 +1,7 @@
 ---
-title: "SQL.14 識別字送進引擎之後會被改寫"
+title: "SQL.14 識別字的規則：各家的大小寫摺疊、引號與保留字"
 date: 2026-08-31
-description: "各家對大小寫的摺疊規則、引號的作用與保留字，以及兩種一致做法之間的中間地帶"
+description: "表名與欄名送進引擎之後被怎麼改寫、PostgreSQL 與 SQLite、DuckDB 在引號上的差別、MySQL 的反引號，以及全部不加引號、全部加引號與混用各自在換引擎時的後果"
 aliases: ["/sql/identifier-rules/"]
 weight: 15
 tags: ["sql", "identifier", "naming", "postgresql", "portability"]
@@ -9,11 +9,11 @@ tags: ["sql", "identifier", "naming", "postgresql", "portability"]
 
 表名與欄名（統稱識別字）寫進查詢之後，引擎會先按自己的規則處理一次，才拿去對照真正存在的名字。這道改寫各家不同，所以同一段 SQL 在不同引擎上指向的可能是不同的名字——或者什麼都指不到。
 
-查詢的文字之外，還有幾方決定一段 SQL 最後做什麼：識別字規則、權限、最佳化器、約束、collation，以及引擎寬鬆度——標準禁止的寫法這一家引擎收不收（寬鬆度那一方在 [SQL.19 引擎的寬鬆度沒有總排名，可攜性要逐個寫法決定](/backend/01-database/sql/engine-leniency-and-portability/)）。識別字規則是離查詢文字最近的那一方：名字還沒指到任何一張表之前，引擎就已經按這套規則把它改寫過一次。同一張表被誰允許讀寫是另一方的事，在 [SQL.16 權限的預設是什麼都不給](/backend/01-database/sql/privilege-model/)；最佳化器那一方，執行順序怎麼從書寫順序分出來在 [SQL.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/)。
+查詢的文字之外，還有幾方決定一段 SQL 最後做什麼：識別字規則、權限、最佳化器、約束、collation，以及引擎寬鬆度——標準禁止的寫法這一家引擎收不收（寬鬆度那一方在 [SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)）。識別字規則是離查詢文字最近的那一方：名字還沒指到任何一張表之前，引擎就已經按這套規則把它改寫過一次。同一張表被誰允許讀寫是另一方的事，在 [SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)；最佳化器那一方，執行順序怎麼從書寫順序分出來在 [SQL.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/)。
 
 這與命名慣例是兩件事。取什麼名字是設計問題，[Schema Design 的「Naming 與一致性」段](/backend/01-database/schema-design/#naming-與一致性) 給表、欄、外鍵、布林、時間戳、索引各自的慣例，以及縮寫不一致、隱性意義這幾種反模式；這裡談的是取好的名字送進引擎會發生什麼。改寫的後果在單一引擎上看不見，換一個引擎才浮現：一段建表語句在原本那個引擎上建好了表，同樣的名字搬到另一個引擎去查卻找不到——名字在送進引擎的路上會先被改寫一次，而兩個引擎改寫的規則不一樣。
 
-## PostgreSQL 把沒加引號的名字摺成小寫
+## PostgreSQL 的大小寫摺疊與引號
 
 在 PostgreSQL 上建一張大小寫混合的表，名字加了引號：
 
@@ -44,9 +44,9 @@ SELECT * FROM MixedCase;            -- 摺成 mixedcase 去找
 -- ERROR: relation "mixedcase" does not exist
 ```**加引號的效果是關掉「沒加引號就摺成小寫」這道摺疊，要求逐字比對。**
 
-這道摺疊只作用在名字上。同一家引擎把 `Orders` 摺成 `orders` 之後，拿 `'Anna'` 去比 `'anna'` 時用的是另一套規則，叫 collation，而 PostgreSQL 預設的 collation 判這兩個值不相等——值的大小寫與名字的大小寫由兩套彼此獨立的規則管。[SQL.15 字串的相等、大小與索引可用性都由 collation 決定](/backend/01-database/sql/string-comparison-and-collation/) 寫 collation 這套規則住在哪一層，以及索引與條件的規則為什麼要對得上。
+這道摺疊只作用在名字上。同一家引擎把 `Orders` 摺成 `orders` 之後，拿 `'Anna'` 去比 `'anna'` 時用的是另一套規則，叫 collation，而 PostgreSQL 預設的 collation 判這兩個值不相等——值的大小寫與名字的大小寫由兩套彼此獨立的規則管。[SQL.15 字串比較與 collation：相等、排序、LIKE 與索引可用性](/backend/01-database/sql/string-comparison-and-collation/) 寫 collation 這套規則住在哪一層，以及索引與條件的規則為什麼要對得上。
 
-## SQLite 與 DuckDB 完全不區分大小寫
+## SQLite 與 DuckDB 對識別字大小寫的處理
 
 同一張 `"Orders"` 表搬到 SQLite 與 DuckDB，四種查法全部找得到那張表：
 
@@ -65,7 +65,7 @@ SELECT * FROM "orders";   -- 加引號、大小寫不一致
 
 這造成一個很難發現的可攜性問題：在 SQLite 上開發、程式碼裡大小寫混著寫，一路都正常；搬到 PostgreSQL 之後，凡是建表時加了引號而查詢時沒加的地方全部找不到表。錯誤出現的時機離寫下它的時機很遠。
 
-## 保留字要加引號，要不要加各家一致，用哪一種引號各家不同
+## 保留字與各家的引號寫法
 
 `select`、`order`、`group` 這些是語法的一部分，直接拿來當表名會在剖析階段（引擎把文字切成語法結構的那一步）就失敗：
 
@@ -91,11 +91,11 @@ CREATE TABLE "order" (x INT);    -- 開了 ANSI_QUOTES 之後，MySQL 的雙引�
 
 保留字清單各家不完全相同，而且新版本會往清單裡加新的字——今天合法的名字在下個大版本可能變成保留字。這是「所有識別字一律加引號」這個慣例的主要理由。採用這個慣例的代價是每個名字都變長，而且從此大小寫必須逐字一致。
 
-## 中文識別字三家都收
+## 中文識別字
 
 `CREATE TABLE 顧客 (姓名 TEXT)` 與 `SELECT 姓名 FROM 顧客` 在 SQLite、DuckDB 與 PostgreSQL 上都不用加引號就能跑。摺疊規則對中文沒有作用，因為那些字沒有大小寫。
 
-## 兩種一致的做法，中間地帶最危險
+## 全部不加引號、全部加引號與混用
 
 **全部不加引號、名字一律用小寫加底線。** 這是 PostgreSQL 生態的主流，摺疊不會改變任何東西，換引擎也不受影響。代價是撞到保留字時仍然要加引號。
 
