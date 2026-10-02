@@ -102,6 +102,7 @@ cardinality 的控制手段、sampling 策略與保留階梯的完整操作面�
 本章的維度分界、身分分層與取樣窗口做法為機制推導，未見公開規範明文處理。
 
 - 退場的通知鏈與 brownout：[11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)
+- 整個服務結束時，用最後使用時間決定保留哪些引用、用客戶端版本分布決定公告期：[10.7 分階段退場：停止新建、唯讀、靜態封存、關閉與公告期](/backend/10-system-evolution/staged-shutdown/)
 - 各版本方案對這層觀測的不同要求：[版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)、[No-Versioning 知識卡](/backend/knowledge-cards/no-versioning/)
 - 錯誤觀測改建在應用層之後要補什麼：[錯誤格式之爭](/backend/11-api-design/error-format-debate/)
 - 分頁參數分布怎麼用來決定換不換機制：[分頁之爭](/backend/11-api-design/pagination-debate/)

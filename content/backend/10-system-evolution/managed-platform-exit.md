@@ -7,7 +7,7 @@ weight: 3
 tags: ["backend", "evolution", "migration", "runbook"]
 ---
 
-[0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/) 的升級自建 tripwire 回答「何時該重新評估」、評估成立後、本章接手回答「按下遷出鍵之後的工程」。讀者情境：產品跑在 Wix / Shopify / Firebase / WordPress 這類託管形態上、tripwire 已命中、目標是自建或半託管。遷出的核心原則是把「搬家」拆成多條資產線各自的受控 [migration](/backend/knowledge-cards/migration/)：資料、身分、流量、整合的可攜性差異極大、斷點位置不同、可以分開 [cutover](/backend/knowledge-cards/cutover-window/) — 把它們綁成同一天的大爆炸切換（big bang cutover）、等於把可攜性最差的那條線的風險強加給其他所有線。
+[0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/) 的升級自建 tripwire 回答「何時該重新評估」、評估成立後、本章接手回答「按下遷出鍵之後的工程」。讀者情境：產品跑在 Wix / Shopify / Firebase / WordPress 這類託管形態上、tripwire 已命中、目標是自建或半託管；上游宣布關閉而被迫遷出也適用，差別在截止日與唯讀期由對方決定，並行期要排在對方的唯讀期之前（上游的階段安排見 [10.7 分階段退場：停止新建、唯讀、靜態封存、關閉與公告期](/backend/10-system-evolution/staged-shutdown/)）。遷出的核心原則是把「搬家」拆成多條資產線各自的受控 [migration](/backend/knowledge-cards/migration/)：資料、身分、流量、整合的可攜性差異極大、斷點位置不同、可以分開 [cutover](/backend/knowledge-cards/cutover-window/) — 把它們綁成同一天的大爆炸切換（big bang cutover）、等於把可攜性最差的那條線的風險強加給其他所有線。
 
 [Vendor lock-in](/backend/knowledge-cards/vendor-lock-in/) 在遷出日的具體形狀就是這幾條資產線的斷點。0.21 的可遷出保險清單（自有網域、資料定期匯出、客戶聯絡管道自有、金流可攜性、密碼不可攜的預案、業務邏輯文件化）是進場時買的保險、本章是理賠流程 — 保險有買、每條線的斷點都有現成出口；保險沒買、本章每一節都會多一段「先補保險再動手」的前置工。
 
@@ -39,7 +39,7 @@ Session 綁定在平台端、cutover 當天全體使用者重新登入是預設�
 
 流量線的前提是自有網域 — 0.21 可遷出保險清單裡的保險項。網域在自己名下、DNS 自己控制、流量切換就是一次 DNS 變更加一套轉址規則；流量活在平台贈送的子網域上、遷出等於換址、SEO 與既有連結歸零、這條線要先補保險（買網域、在平台上綁定、讓搜尋引擎與外部連結先收斂到自有網域）再談切換。
 
-執行面的關鍵是斷裂面管理。平台的 URL 結構（`/products/handle`、`/blogs/news/slug`）跟自建系統的路由幾乎必然不同、而離開平台後、舊 URL 的轉址規則沒有地方住 — 平台停用後它連 404 都不會回、是 DNS 直接指向新系統。所以轉址表（舊 URL 樣式 → 新 URL）要建在新系統自己身上：cutover 後由新系統對舊樣式回 301、搜尋引擎與外部連結沿轉址收斂。配套動作：cutover 前把 DNS TTL 調低、cutover 後重交 sitemap、用搜尋主控台觀察索引替換進度。SEO 累積是按月計的資產、轉址表缺漏的代價以自然流量下滑直接體現。
+執行面的關鍵是斷裂面管理。平台的 URL 結構（`/products/handle`、`/blogs/news/slug`）跟自建系統的路由幾乎必然不同、而離開平台後、舊 URL 的轉址規則沒有地方住 — 平台停用後它連 404 都不會回、是 DNS 直接指向新系統。所以轉址表（舊 URL 樣式 → 新 URL）要建在新系統自己身上：cutover 後由新系統對舊樣式回 301、搜尋引擎與外部連結沿轉址收斂。配套動作：cutover 前把 DNS TTL 調低、cutover 後重交 sitemap、用搜尋主控台觀察索引替換進度；切換完成後，刪除自有網域裡仍指向平台主機名的 DNS 紀錄，否則平台回收那個主機名之後，紀錄就會懸空（見 [10.6 命名空間與網域的處置：續約、名稱保留與回收、懸空 DNS](/backend/10-system-evolution/namespace-and-domain-disposition/) 的〈懸空 DNS 與子網域接管〉）。SEO 累積是按月計的資產、轉址表缺漏的代價以自然流量下滑直接體現。
 
 ### 整合線
 
@@ -88,7 +88,7 @@ Cutover 本身是一段 [cutover window](/backend/knowledge-cards/cutover-window
 
 ## 定位邊界
 
-本章專注「託管形態 → 自建 / 半託管」的遷出執行。當問題回到「該不該遷、何時該重新評估」、回 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/) 的升級自建 tripwire 表；遷移目標的自建選型（資料庫、部署、金流接法）走 [模組零的選型順序](/backend/00-service-selection/)；自建系統之間的資料庫搬遷技術細節（雙寫、shadow read、切換）進 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)；服務層的漸進替換紀律進 [10.2 服務拆分執行 Runbook](/backend/10-system-evolution/service-decomposition-execution-runbook/)。
+本章專注「託管形態 → 自建 / 半託管」的遷出執行。當問題回到「該不該遷、何時該重新評估」、回 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/) 的升級自建 tripwire 表；遷移目標的自建選型（資料庫、部署、金流接法）走 [模組零的選型順序](/backend/00-service-selection/)；自建系統之間的資料庫搬遷技術細節（雙寫、shadow read、切換）進 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)；服務層的漸進替換紀律進 [10.2 服務拆分執行 Runbook](/backend/10-system-evolution/service-decomposition-execution-runbook/)。反過來，我們身為提供者、結束自己的服務時，外部引用的盤點與處置見 [10.4 服務終止的範圍：外部引用的種類與持有者](/backend/10-system-evolution/service-termination-scope/)。
 
 ## 下一步路由
 

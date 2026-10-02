@@ -48,5 +48,6 @@ header 與 date-based 把版本移出資源身分、版本粒度可以細到單�
 
 - 什麼算 breaking、變更怎麼審：[11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)
 - 承諾成本結構的上游框架：[11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/)
+- 服務本身終止（不只淘汰一個版本）時，外部引用的盤點與處置：[10.4 服務終止的範圍：外部引用的種類與持有者](/backend/10-system-evolution/service-termination-scope/)
 - 退場量測的觀測基礎：[04 可觀測性平台](/backend/04-observability/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

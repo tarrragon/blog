@@ -95,6 +95,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## 下一步路由
 
+- 網域易手、套件名稱被回收、維護者信箱網域過期這三條供應鏈路徑（polyfill.io、left-pad、PyPI `ctx`）：[10.6 命名空間與網域的處置：續約、名稱保留與回收、懸空 DNS](/backend/10-system-evolution/namespace-and-domain-disposition/)
 - 交付平台與部署治理：`05-deployment-platform`
 - 發佈驗證與回退演練：`06-reliability`
 - 分級與跨部門收斂：`08-incident-response`

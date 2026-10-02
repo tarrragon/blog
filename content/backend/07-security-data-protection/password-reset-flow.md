@@ -97,6 +97,7 @@ tags: ["backend", "security"]
 
 ## 下一步路由
 
+- 綁定信箱的網域過期、被別人重新註冊之後，重設密碼信寄到新主人手上：[10.6 命名空間與網域的處置：續約、名稱保留與回收、懸空 DNS](/backend/10-system-evolution/namespace-and-domain-disposition/) 的〈綁在可過期網域上的帳號身分〉
 - 主路徑用什麼驗證使用者、以及回復路徑決定上限這個結論的來源：[7.31 認證方式選型](../authentication-approach-selection/)
 - 帳號已經被接管之後的處置與核身：[7.41 單一帳號被接管](../single-account-takeover-response/)
 - 大量帳號的強制重設、期限與容量攤平：[7.37 密碼外洩之後](../credential-breach-response/)

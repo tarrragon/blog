@@ -62,3 +62,4 @@ tags: ["backend", "security"]
 - 資料與儲存邊界實作：`05-deployment-platform`
 - 一致性驗證與演練：`06-reliability`
 - 通報與事件收斂：`08-incident-response`
+- 刪除帳號之後名稱與公開網址的處置（名稱被重新申請、佔位紀錄只留名稱）：[10.6 命名空間與網域的處置：續約、名稱保留與回收、懸空 DNS](/backend/10-system-evolution/namespace-and-domain-disposition/) 的〈名稱的保留與回收：套件名稱、雲端資源名稱與短碼〉

@@ -1,7 +1,7 @@
 ---
 title: "模組十：系統演進與遷移"
 date: 2026-05-27
-description: "處理服務拆分、跨服務重構、大型遷移與雲端切換的執行紀律 — 設計階段的選型判斷見模組零、執行階段的高風險變更收斂在本模組"
+description: "處理服務拆分、跨服務重構、大型遷移、雲端切換與服務終止的執行紀律 — 設計階段的選型判斷見模組零、執行階段的高風險變更收斂在本模組"
 weight: 11
 tags: ["backend", "evolution", "migration"]
 ---
@@ -36,9 +36,17 @@ tags: ["backend", "evolution", "migration"]
 | 9.x 擴展軸、容量規劃                       | 09 留         | —                                          |
 | 交付形態該不該遷、升級 tripwire 判讀       | 00 留（0.21） | —                                          |
 | 託管形態遷出的執行劇本                     | —             | 模組十收（10.3）                           |
+| API 版本淘汰（服務仍在、舊版本下線）       | 11 留（11.5） | —                                          |
+| 服務本身終止、外部引用的延續與移交         | —             | 模組十收（10.4–10.8）                      |
 | 拆分後造成的容量重平衡 runbook             | —             | 模組十收（未來）                           |
 
 判別問題是「這個變更失敗時、回退範圍跨幾個服務 / 模組？」。跨多模組的演進劇本進模組十、單模組內的小範圍變更留原模組。
+
+## 服務終止這一組的推導源頭
+
+10.4 到 10.8 從同一個事實展開：**服務發出去的外部引用（連結、寫在別人程式或韌體裡的端點、程式碼網址、名稱、網域）活得比服務的收入久，而持有引用的人多半不在合約裡。** 由這個事實推出兩個時間點：上線時決定引用指向哪裡、能不能交出去（10.5）；結束時決定網域與名稱的去向、分幾個階段降級、交給誰（10.6、10.7、10.8）。10.4 盤點引用與持有者，是後面四篇共用的輸入。案例取自業者公告、官方部落格、規範與事件報告的原文（goo.gl、tr.im、301works、polyfill.io、npm、PyPI、Azure、GitHub Pages、Parse、Revolv、Insteon、Spotify Car Thing、Pebble、Heroku、Google Code、CodePlex），2026-10-02 取得，原文與引文位置存在作者的研究材料裡。
+
+與 10.3 的分工：10.3 是我們身為租戶離開別人的平台；10.4–10.8 是我們身為提供者結束自己的服務。與 11.5 的分工：11.5 是服務仍在、只淘汰一個 API 版本。
 
 ## 章節列表
 
@@ -47,21 +55,30 @@ tags: ["backend", "evolution", "migration"]
 | [10.1 服務拆分與邊界判讀](/backend/10-system-evolution/service-decomposition-boundaries/)                                                  | 服務拆分與邊界判讀   | 整理 monolith vs microservice 取捨、服務邊界判讀訊號、拆分時機與回退路徑                                                                                                                                                                         |
 | [10.2 服務拆分執行 Runbook（Strangler Fig / 雙寫期 / 切流 / 回退）](/backend/10-system-evolution/service-decomposition-execution-runbook/) | 服務拆分執行 Runbook | 10.1 決定該拆之後、實際怎麼動手 — [Strangler Fig](/backend/knowledge-cards/strangler-fig/)、[雙寫期](/backend/knowledge-cards/dual-write/) 管理、切流策略、回退條件設計                                                                          |
 | [10.3 託管形態遷出：資產線盤點與並行期執行](/backend/10-system-evolution/managed-platform-exit/)                                           | 託管形態遷出         | [0.21 交付形態選型：從全託管到自建的光譜與邊界](/backend/00-service-selection/delivery-mode-selection/) 升級自建 tripwire 觸發之後、從託管平台 / BaaS 遷往自建的執行 — 資料 / 身分 / 流量 / 整合的資產線盤點、並行期與回切窗口、部分遷出中繼形態 |
+| [10.4 服務終止的範圍：外部引用的種類與持有者](/backend/10-system-evolution/service-termination-scope/)                                     | 服務終止的範圍       | 盤點服務發出去的外部引用（網址、寫在別人程式裡的端點、程式碼網址、名稱、綁在網域上的身分）、持有者的三類，以及引用在服務結束時失效或易手的差別                                                                                                   |
+| [10.5 退場能力的設計前置：端點間接層、本地運作模式與引用的命名空間](/backend/10-system-evolution/exit-ready-design/)                       | 退場能力的設計前置   | 上線時就要決定、越接近關閉越難補上的設計：客戶端讀取服務位置的間接層、沒有雲端時的本地運作模式、引用落在誰的命名空間、使用紀錄與可交出的格式                                                                                                     |
+| [10.6 命名空間與網域的處置：續約、名稱保留與回收、懸空 DNS](/backend/10-system-evolution/namespace-and-domain-disposition/)                | 命名空間與網域的處置 | 網域與名稱在服務結束時的去向：出售與轉讓、名稱回收與佔位、子網域接管、綁在網域上的帳號身分                                                                                                                                                       |
+| [10.7 分階段退場：停止新建、唯讀、靜態封存、關閉與公告期](/backend/10-system-evolution/staged-shutdown/)                                   | 分階段退場           | 每一個退場階段保留什麼、對哪一類持有者有效、維運成本降到哪裡，以及公告期長度與補償的安排                                                                                                                                                         |
+| [10.8 移交：資料匯出、開源與交給社群或封存機構](/backend/10-system-evolution/handover-and-archival/)                                       | 移交                 | 把讓引用繼續運作所需的東西交給客戶、社群或封存機構：匯出格式、開源程式碼的可用程度、社群接手的條件，以及交不出去的部分                                                                                                                           |
 
 ## Backlog
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                 | 類型 | 前置條件                                             | 規模 |
-| ------------------------------------------------------------------------------------ | ---- | ---------------------------------------------------- | ---- |
-| 跨服務 schema 演進（API contract migration、event schema versioning、backfill 策略） | 主章 | 無                                                   | 中   |
-| 大型雲端遷移（on-prem 到 cloud、跨雲 cutover 劇本）                                  | 主章 | 需要公開遷移案例做素材                               | 大   |
-| 基礎設施替換（DB 引擎、cache vendor、queue broker 切換）                             | 主章 | 依賴 01 / 02 / 03 的 migration playbook 已完成的部分 | 中   |
-| 容量重平衡（服務間流量分佈、shard 重分佈、tenant 隔離）                              | 主章 | 需要與 09 容量模組界定分工                           | 中   |
+| 項目                                                                                                                                                                                                                                                                                        | 類型   | 前置條件                                                                       | 規模 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------ | ---- |
+| 跨服務 schema 演進（API contract migration、event schema versioning、backfill 策略）                                                                                                                                                                                                        | 主章   | 無                                                                             | 中   |
+| 大型雲端遷移（on-prem 到 cloud、跨雲 cutover 劇本）                                                                                                                                                                                                                                         | 主章   | 需要公開遷移案例做素材                                                         | 大   |
+| 基礎設施替換（DB 引擎、cache vendor、queue broker 切換）                                                                                                                                                                                                                                    | 主章   | 依賴 01 / 02 / 03 的 migration playbook 已完成的部分                           | 中   |
+| 容量重平衡（服務間流量分佈、shard 重分佈、tenant 隔離）                                                                                                                                                                                                                                     | 主章   | 需要與 09 容量模組界定分工                                                     | 中   |
+| 自家 DNS 紀錄的生命週期與懸空紀錄盤點（客戶這一側的子網域接管防護）                                                                                                                                                                                                                         | 跨模組 | 落點待定：backend/07 入口保護或 infra/05 DNS 篇；10.6 只寫提供者這一側         | 中   |
+| 開源函式庫的維護交接、棄用標記與封存                                                                                                                                                                                                                                                        | 跨模組 | 落點待定：ci/package-library-release 或 backend/07 供應鏈；10.8 只寫服務端接手 | 中   |
+| 知識卡：Subdomain Takeover（含 dangling DNS）、Last-Seen Table、Brownout（先統一 11.5 與 10.7 的定界）                                                                                                                                                                                      | 知識卡 | 無                                                                             | 3 張 |
+| 服務終止組的反向引用回填：11.5 工具箱、0.21 tripwire 列、capability-buy-vs-build、existing-api-retrofit、versioning-strategy-debate、page-shield-csp-sri、legacy-php-security-audit、infra dns 卡、going-live 網域篇、api-consumer-shape／consumer-coordinability／deprecation-lifecycle 卡 | 跨模組 | 無                                                                             | 中   |
 
 ### 後續擴充方向
 
-本模組目前收服務拆分與託管形態遷出議題。未來會擴充的演進類議題：
+本模組目前收服務拆分、託管形態遷出與服務終止議題。未來會擴充的演進類議題：
 
 - **跨服務 schema 演進**：API contract migration、event schema versioning、跨服務的 backfill 策略
 - **大型雲端遷移**：on-prem → cloud、跨雲遷移的 cutover 劇本、流量切換策略
