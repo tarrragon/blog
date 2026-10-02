@@ -16,7 +16,7 @@ HTTP 快取模組處理的是應用層快取以外的那一段：一個 HTTP 回
 - 副本在不詢問 origin 的情況下可以直接使用多久（12.2）
 - 副本過期之後怎麼向 origin 確認是否仍然有效（12.3）
 - 一個請求會拿到哪一份副本（12.4）
-- origin 想改變已存副本時，指令能傳到哪幾個快取（12.5）
+- origin 想改變已存副本時，各種更新手段的作用範圍（12.5）
 - 在什麼條件下允許給出過期副本（12.6）
 - 瀏覽器在重新整理與上一頁時怎麼使用它的副本（12.7）
 - 把前述規則用在具體回應上（12.8）
@@ -27,7 +27,7 @@ HTTP 快取模組處理的是應用層快取以外的那一段：一個 HTTP 回
 
 ## 規範與實作預設的分界
 
-本模組每一章都區分兩類行為：**規範規定的行為**（RFC 9111 HTTP Caching、RFC 9110 HTTP Semantics 與相關擴充），以及**某個快取實作的預設**。實測一次 Varnish 7.7、nginx 1.27 與 Chrome 154 的結果顯示，兩者落差很大：同一組標頭，有的實作比規範保守、有的實作違反規範。文章寫出落差的形狀與該去哪個設定項查；預設數值只在說明落差形狀時引用，並標明讀取日期與版本；CDN 的預設行為各家不同，以各家文件為準。
+本模組每一章都區分兩類行為：**規範規定的行為**（RFC 9111 HTTP Caching、RFC 9110 HTTP Semantics 與相關擴充），以及**某個快取實作的預設**。實測一次 Varnish 7.7、nginx 1.27 與 Chrome 154 的結果顯示，兩者落差很大：同一組標頭，實作的預設可能比規範保守、比規範寬鬆或違反規範，三類的界定寫在 12.1〈可以被保存的回應〉。文章寫出落差的形狀與該去哪個設定項查；預設數值只在說明落差形狀時引用，並標明讀取日期與版本；CDN 的預設行為各家不同，以各家文件為準。
 
 ## 章節列表
 
@@ -37,7 +37,7 @@ HTTP 快取模組處理的是應用層快取以外的那一段：一個 HTTP 回
 | [12.2 新鮮度期限的計算：max-age、s-maxage、Expires 與啟發式期限](/backend/12-http-caching/freshness-lifetime/)      | 副本可直接使用多久、Age 標頭、沒有指令時的啟發式期限           |
 | [12.3 過期副本的驗證：條件請求、304 回應、no-cache 與 no-store](/backend/12-http-caching/revalidation/)             | 驗證子、條件請求、no-cache 與 no-store 的差別、must-revalidate |
 | [12.4 快取鍵與副本共用：Vary、Cookie 與 Authorization](/backend/12-http-caching/cache-key/)                         | 哪個請求拿到哪份副本、個人化回應在共用快取的處理規則、快取投毒 |
-| [12.5 已保存副本的更新方式：失效、purge、版本化網址與等待到期](/backend/12-http-caching/updating-stored-responses/) | 各種更新手段能傳到哪幾個快取                                   |
+| [12.5 已保存副本的更新方式：失效、purge、版本化網址與等待到期](/backend/12-http-caching/updating-stored-responses/) | 各種更新手段的作用範圍                                         |
 | [12.6 過期副本的延用：stale-while-revalidate 與 stale-if-error](/backend/12-http-caching/serving-stale/)            | 允許給出過期副本的條件與實作支援差異                           |
 | [12.7 瀏覽器端的快取行為：重新整理、強制重新整理與上一頁](/backend/12-http-caching/browser-cache-behavior/)         | 一般瀏覽、重新整理與強制重新整理送出的請求、back/forward cache |
 | [12.8 快取設定的應用：轉址、需登入的 API 回應與個人化頁面](/backend/12-http-caching/applying-cache-headers/)        | 具體回應的快取標頭選擇                                         |
@@ -54,11 +54,4 @@ HTTP 快取模組處理的是應用層快取以外的那一段：一個 HTTP 回
 
 ## Backlog
 
-格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
-
-| 項目                                                                                                                                                                          | 類型 | 前置條件         | 規模 |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------------- | ---- |
-| origin 被打爆的集中入口：12.5〈purge〉補清空後的回源尖峰、12.3 補 no-cache 讓命中率歸零，連 Cache Stampede 卡與 5.9                                                           | 主章 | 無               | 小   |
-| 遺留組合 `no-cache, no-store, must-revalidate` 加 `Pragma` 加 `Expires: 0` 的實際效果，以及回應端 `Pragma` 的落點                                                             | 主章 | 查 RFC 9111 §5.4 | 小   |
-| 「每一層能被哪些手段改到副本」在 12.1、12.4–12.8 換了六種說法、只有表頭有名字；實作相對規範「更保守／更寬鬆／違反」的分類只寫在本頁：各取一個名字在 12.1 界定，其他篇改用名字 | 主章 | 無               | 中   |
-| 補跑 lab：`/cond` 回應後寬限時間內的請求，確認 Varnish 背景抓取帶 `If-None-Match`（目前依原始碼寫）；POST 後 GET 確認 Varnish、nginx 不做規範失效                             | 案例 | 無               | 小   |
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。目前沒有待辦項目。

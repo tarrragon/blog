@@ -47,7 +47,13 @@ tags: ["backend", "http-caching", "cache-control", "cdn"]
 
 清單的最後一條決定了沒有任何快取指令的回應能不能被保存：狀態碼在可啟發式快取的清單裡（例如 200、301），就可以保存，保存之後能直接使用多久由快取自己估算；不在清單裡（例如 302、307），規範不允許保存。這份清單與估算方式在 [12.2 新鮮度期限的計算：max-age、s-maxage、Expires 與啟發式期限](/backend/12-http-caching/freshness-lifetime/) 的〈沒有明確期限時的啟發式期限〉。
 
-這份清單是規範的要求，實作可以比它更保守，也可能違反它：比規範保守的例子見 [12.3 過期副本的驗證：條件請求、304 回應、no-cache 與 no-store](/backend/12-http-caching/revalidation/) 的〈共用快取實作的驗證預設〉，違反規範的例子見 [12.4 快取鍵與副本共用：Vary、Cookie 與 Authorization](/backend/12-http-caching/cache-key/) 的〈帶 Authorization 的請求在共用快取的重用規則〉。
+這份清單是規範的要求，而實作的預設可能和它有三種落差，本模組各篇用同一組名稱標出：
+
+- **比規範保守**：規範允許保存或重用的回應，實作不保存或不重用。對 origin 的代價是失去快取的效益，這些請求的負載全部回到 origin。例子是 Varnish 預設不保存 `no-cache` 的回應（[12.3 過期副本的驗證：條件請求、304 回應、no-cache 與 no-store](/backend/12-http-caching/revalidation/) 的〈共用快取實作的驗證預設〉）。
+- **比規範寬鬆**：規範預設不允許、但留了出口讓經營者用設定開啟的行為，實作預設就開著。RFC 9111 §4.2.4 預設不給出過期副本，同時允許依「out-of-band contract」的設定給出，Varnish 預設的寬限時間就落在這個出口上（[12.6 過期副本的延用：stale-while-revalidate 與 stale-if-error](/backend/12-http-caching/serving-stale/)）。代價落在使用者這一端：拿到的舊內容比標頭宣告的期限更舊。
+- **違反規範**：規範沒有留出口的禁止，實作照樣做。代價最直接，可能把一個使用者的回應發給別人。例子是預設設定的 nginx 共用帶 `Authorization` 請求的回應（[12.4 快取鍵與副本共用：Vary、Cookie 與 Authorization](/backend/12-http-caching/cache-key/) 的〈帶 Authorization 的請求在共用快取的重用規則〉）；回應明寫 `must-revalidate` 而 Varnish 仍在寬限時間內給出它的過期副本，也屬於這一類，因為明確的指令禁止沒有設定上的出口（[12.6 過期副本的延用：stale-while-revalidate 與 stale-if-error](/backend/12-http-caching/serving-stale/)）。
+
+三種落差都只能從實作的文件、原始碼或實測得知。規範隱含的保護（例如帶 `Authorization` 的回應不被共用）不能依賴，要由回應明寫的標頭（`private`、`no-store`）承擔；延用過期副本這一類，連明寫的 `must-revalidate` 都可能被實作的寬限時間略過，要回到快取自己的設定處理。
 
 ## 只對共用快取或只對私有快取有效的指令
 

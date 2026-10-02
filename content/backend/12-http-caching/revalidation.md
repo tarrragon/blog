@@ -69,12 +69,22 @@ If-Modified-Since: Mon, 01 Jan 2024 00:00:00 GMT
 
 選擇的依據是兩個問題。第一，內容能不能留在任何快取裡，包括使用者自己的裝置：不能就是 `no-store`；只是不能讓別人拿到，用 `private` 就夠了（[12.4 快取鍵與副本共用：Vary、Cookie 與 Authorization](/backend/12-http-caching/cache-key/)），`no-store` 會連帶失去瀏覽器保存與條件請求省下的傳輸頻寬。第二，拿到舊內容的後果有多嚴重：每次都要確認是最新就是 `no-cache`；新鮮期間內可以接受、過期後即使連不上 origin 也不能拿舊內容頂替，就是 `must-revalidate`。
 
+常見的遺留寫法是把幾個指令與舊標頭疊在一起，例如：
+
+```text
+Cache-Control: no-cache, no-store, must-revalidate
+Pragma: no-cache
+Expires: 0
+```
+
+這一組的實際效果由 `no-store` 決定：任何快取都不保存，`no-cache` 與 `must-revalidate` 只對保存下來的副本有意義，在這裡不起作用。`Expires: 0` 不是有效的日期，規範要求快取把無法解析的值、特別是 `0`，當成過去的時間處理（RFC 9111 §5.3）；這一組沒有 `max-age` 或 `s-maxage`，所以 `Expires` 不會被忽略，只認得 `Expires` 的舊快取會把這份回應當成一到就過期。`Pragma` 是 HTTP/1.0 時代給請求用的標頭，RFC 9111 §5.4 已將它廢止，並註明它在回應裡的意思從來沒有被定義，不能拿來代替回應的 `Cache-Control: no-cache`；規範沒有定義它在回應裡的作用，個別舊快取理不理會它無法預期。所以要的效果是「不保存」時，寫 `Cache-Control: no-store` 就夠了；要的是「可以保存、每次先確認」時，寫 `no-cache`，兩者不要疊在一起，否則 `no-store` 會讓 `no-cache` 想保留的條件請求省不到任何傳輸。
+
 ## 共用快取實作的驗證預設
 
 快取向 origin 送條件請求這一步，在實測的情境（`no-cache` 的回應，以及 Varnish 寬限時間過後、nginx 過期後的請求）裡，Varnish 7.7 與 nginx 1.27 預設設定下都沒有發生：
 
-- **`no-cache` 回應**：兩者預設都不保存。規範允許保存 `no-cache` 回應，Varnish 自己的期限計算也判定可以保存；讓 Varnish 不保存的是內建設定（builtin VCL，VCL 是 Varnish 的設定語言）裡一條在回應沒有 `Surrogate-Control` 時，把 `no-cache|no-store|private` 一律標成不可快取的規則。結果是 Varnish 與 nginx 把每個請求都以一般的 GET 轉給 origin，不是條件請求，origin 每次都回完整的 200。
-- **有 `max-age` 的回應過期之後**：Varnish 預設在一段寬限時間（參數 `default_grace`）內先給出過期副本，同時在背景向 origin 抓新的（見 [12.6 過期副本的延用：stale-while-revalidate 與 stale-if-error](/backend/12-http-caching/serving-stale/)）；依 Varnish 7.7 的原始碼，副本是帶 `ETag` 或 `Last-Modified` 的 200 回應、內容不是空的時，這次背景抓取會送條件請求（這一點只有原始碼依據，實測沒有在寬限時間內送出請求）。寬限時間也過了之後，副本只在保留時間（參數 `default_keep`，預設 0）內留著供條件請求使用；預設設定下副本已經丟掉，實測在這個時間點的請求，Varnish 送給 origin 的是一般的 GET。nginx 預設不打開 `proxy_cache_revalidate`，過期後同步向 origin 送一般的 GET。把 Varnish 的 keep 設成大於 0（實測同時把 grace 設為 0、keep 設為 60 秒）、或打開 nginx 的 `proxy_cache_revalidate` 之後，Varnish 寬限時間過後的請求、以及 nginx 過期後的請求才改送帶 `If-None-Match` 與 `If-Modified-Since` 的條件請求，origin 回 304，快取繼續使用原本的內容。
+- **`no-cache` 回應**：兩者預設都不保存，比規範保守。規範允許保存 `no-cache` 回應，Varnish 自己的期限計算也判定可以保存；讓 Varnish 不保存的是內建設定（builtin VCL，VCL 是 Varnish 的設定語言）裡一條在回應沒有 `Surrogate-Control` 時，把 `no-cache|no-store|private` 一律標成不可快取的規則。結果是 Varnish 與 nginx 把每個請求都以一般的 GET 轉給 origin，不是條件請求，origin 每次都回完整的 200。也就是說，回應寫 `no-cache` 時，這一層反向代理的命中率是零，所有請求的負載都由 origin 承擔；容量規劃要把這類回應當成前面沒有快取來估（[Origin Protection](/backend/knowledge-cards/origin-protection/) 卡）。
+- **有 `max-age` 的回應過期之後**：Varnish 預設在一段寬限時間（參數 `default_grace`）內先給出過期副本，同時在背景向 origin 抓新的（見 [12.6 過期副本的延用：stale-while-revalidate 與 stale-if-error](/backend/12-http-caching/serving-stale/)）；依 Varnish 7.7 的原始碼，副本是帶 `ETag` 或 `Last-Modified` 的 200 回應、內容不是空的時，這次背景抓取會送條件請求；實測在 `max-age=5` 的副本過期後約 2 秒、仍在寬限時間內送出請求，客戶端拿到的是過期副本（回應的 `Age` 為 7、Varnish 回報命中），origin 端同時收到帶 `If-None-Match` 與 `If-Modified-Since` 的請求。寬限時間也過了之後，副本只在保留時間（參數 `default_keep`，預設 0）內留著供條件請求使用；預設設定下副本已經丟掉，實測在這個時間點的請求，Varnish 送給 origin 的是一般的 GET。nginx 預設不打開 `proxy_cache_revalidate`，過期後同步向 origin 送一般的 GET。把 Varnish 的 keep 設成大於 0（實測同時把 grace 設為 0、keep 設為 60 秒）、或打開 nginx 的 `proxy_cache_revalidate` 之後，Varnish 寬限時間過後的請求、以及 nginx 過期後的請求才改送帶 `If-None-Match` 與 `If-Modified-Since` 的條件請求，origin 回 304，快取繼續使用原本的內容。
 - **客戶端自己送條件請求、而快取裡的副本還新鮮**：兩者都直接回 304 給客戶端，不轉送到 origin。這是規範允許的行為。
 
 這代表 origin 端設定好 `ETag` 與 `no-cache`，不保證共用快取會照規範去驗證。origin 有多台伺服器時，同一份內容在每一台算出的 `ETag` 也要相同，否則條件請求落到另一台就比對不上，只能回完整的 200。要讓驗證在共用快取上發生，要另外查手上那個快取的設定：Varnish 的 keep 與內建設定的覆寫方式，nginx 的 `proxy_cache_revalidate`，CDN 則查各家文件裡「revalidation」或「conditional request」相關的說明。

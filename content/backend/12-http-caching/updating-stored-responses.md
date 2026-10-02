@@ -7,7 +7,7 @@ weight: 5
 tags: ["backend", "http-caching", "cache-control", "cache-invalidation", "cdn"]
 ---
 
-這篇整理一份回應已經被各處快取保存之後，origin 要讓它們改用新內容時有哪些手段，以及每一種手段能傳到哪幾種快取。快取的種類與經營者見 [12.1 HTTP 回應的保存位置：私有快取與共用快取](/backend/12-http-caching/cache-storage-locations/)。瀏覽器快取與第三方轉送代理沒有管理介面，origin 要改變它們的副本，都要等它們再向 origin 送出請求；簽約的 CDN 與自己經營的反向代理另有清除手段，見下方〈purge〉。
+這篇整理一份回應已經被各處快取保存之後，origin 要讓它們改用新內容時有哪些手段，以及每一種手段能傳到哪幾種快取；本模組把一種更新手段能作用到哪幾層快取、以及每一層裡的哪些副本，稱為這個手段的**作用範圍**。快取的種類與經營者見 [12.1 HTTP 回應的保存位置：私有快取與共用快取](/backend/12-http-caching/cache-storage-locations/)。瀏覽器快取與第三方轉送代理沒有管理介面，origin 要改變它們的副本，都要等它們再向 origin 送出請求；簽約的 CDN 與自己經營的反向代理另有清除手段，見下方〈purge〉。
 
 ## 規範定義的失效
 
@@ -34,6 +34,8 @@ purge 因此是各個快取產品自己的功能，能用到什麼程度取決�
 - **CDN**：透過 CDN 的管理介面或 API 清除，可以依網址、依前綴或依標籤（tag，見 [Cache Tag Purge](/backend/knowledge-cards/cache-tag-purge/) 卡）清除。依標籤清除的操作模型見 [5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/) 的〈Tag-based Purge 的操作模型〉。清除傳到所有節點需要時間，傳播時間與 API 呼叫的額度限制查各家文件。
 - **自己經營的反向代理**：Varnish 的內建設定把 `PURGE` 當成不認得的方法，直接轉給 origin、不動快取，要在設定檔（VCL）裡自己寫處理規則；實測時寫了 `PURGE`（刪除指定網址的副本）與 `BAN`（依條件一次標記一批副本失效）兩種規則之後，兩者都能讓下一個請求回到 origin。其他產品是否支援、怎麼開啟，查各自的文件。
 - **瀏覽器與第三方轉送代理**：沒有 purge 管道。
+
+purge 刪掉的副本不會留下可以延用的舊版，所以清除之後，下一批請求在被清掉的每一個節點上都對不到副本，同時回到 origin。清的是一個熱門網址、或一整個前綴與標籤時，這一批回源請求會在同一個時間點湧進 origin，形成 [Cache Stampede](/backend/knowledge-cards/cache-stampede/) 描述的回源尖峰，清除的範圍越大、流量越高，尖峰越高。能壓低尖峰的做法都在清除的方式與回源的路徑上：把清除的範圍縮到真正改了的網址或標籤、避開流量高峰再清、讓 CDN 的 origin shield 或 request coalescing 把同時回源的請求合併成一次（[5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/) 的〈Origin Protection 的設計責任〉）；部分 CDN 另外提供把副本標成過期而不刪除的清除方式，配合 `stale-while-revalidate` 讓回源分散到背景進行，支援情形以各家文件為準。保護 origin 承受回源量的手段，見 [Origin Protection](/backend/knowledge-cards/origin-protection/) 卡。
 
 ## 版本化網址與 immutable
 
@@ -74,7 +76,7 @@ Clear-Site-Data: "cache"
 
 它適合的用途是使用者登出這類「從這個使用者的瀏覽器裡清掉資料」的時機，而不是改版時讓所有人拿到新內容。登出時通常不只清 `"cache"`，還會一起清 `"cookies"` 與 `"storage"`，各值在各瀏覽器的支援情形查 MDN 的 Clear-Site-Data 頁面。
 
-## 各種手段能傳到的快取
+## 各種更新手段的作用範圍
 
 | 手段                                     | 瀏覽器                       | 自己經營的反向代理       | 簽約的 CDN             | 第三方轉送代理           |
 | ---------------------------------------- | ---------------------------- | ------------------------ | ---------------------- | ------------------------ |
@@ -87,7 +89,7 @@ Clear-Site-Data: "cache"
 
 ## 等待到期與改版全面生效的時間
 
-表中「規範的失效」那一列是規範的要求：依 Varnish 7.7 的內建設定，POST、PUT、DELETE、PATCH 走 pass、直接轉給 origin，不會因此讓副本失效（這一點來自設定檔，沒有實測）；nginx 與各家 CDN 是否實作，查各自的文件。
+表中「規範的失效」那一列是規範的要求：依 Varnish 7.7 的內建設定，POST、PUT、DELETE、PATCH 走 pass、直接轉給 origin；實測對一個副本已經存在 Varnish 7.7 與 nginx 1.27 proxy_cache 裡的網址送出 POST、origin 回 200 之後，同一網址的下一個 GET 在兩者上都仍由快取直接回應，兩者預設都不做這項失效。各家 CDN 是否實作，查各自的文件。
 
 上表的「等待到期」與「下一次驗證」兩種手段對每一層都有效，但它們都要等：等副本過期，或等快取下一次回來驗證。所以一個網址的內容「改了之後最慢多久所有人都看得到新版」，有三個成分：
 
