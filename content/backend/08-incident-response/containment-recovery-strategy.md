@@ -88,4 +88,5 @@ Cloudflare 2019 的教訓是規則推送錯誤會在秒級擴散，containment �
 - [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)：把止血邊界轉成演練門檻
 - [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)：用同一門檻判斷恢復完成
 - 08.19 incident decision log：記錄每一步的條件與回退門檻
+- [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)：出問題的是已安裝的行動 App 版本時，各回退手段對已安裝版本的作用與事前準備
 - [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/)：流量型事故的來源辨識、負載卸除與等候室，以及哪些止血手段要事前建好

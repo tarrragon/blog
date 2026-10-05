@@ -70,7 +70,7 @@ SnackBar 消失後使用者就忘記自己在離線中，30 秒後送出表單�
 
 Banner 和 SnackBar 的關鍵差異是**生命週期**：SnackBar 是事件驅動（「這件事剛發生」），Banner 是狀態驅動（「這個條件持續存在」）。「已恢復連線」是事件、用 SnackBar；「目前離線，部分功能不可用」是持續狀態、用 Banner。[Degraded mode](/ux-design/04-error-recovery/degraded-mode-design/)（系統部分功能因外部依賴不可用而暫時無法運作）的進入退出是這個差異的典型場景 — 進入降級是持續狀態，用 Banner 比 SnackBar 合適，因為 SnackBar 消失後使用者會忘記自己在降級中；退出降級是一次性事件，用 SnackBar。
 
-典型使用場景：持續性狀態需要使用者知曉（「離線模式」「版本過舊，部分功能受限」）、非緊急但需要使用者在某個時間點處理（「有新版本可更新」＋「立即更新」「稍後」）、影響整個畫面的使用者操作（「篩選已啟用，顯示的是部分結果」）。一次性事件通知（用 SnackBar）和需要立即決策的重要操作（用 Dialog）不適合 Banner。
+典型使用場景：持續性狀態需要使用者知曉（「離線模式」「版本過舊，部分功能受限」）、非緊急但需要使用者在某個時間點處理（「有新版本可更新」＋「立即更新」「稍後」，即強制更新的軟提示，見 [Minimum Supported Version](/backend/knowledge-cards/minimum-supported-version/)）、影響整個畫面的使用者操作（「篩選已啟用，顯示的是部分結果」）。一次性事件通知（用 SnackBar）和需要立即決策的重要操作（用 Dialog）不適合 Banner。
 
 ### Bottom Sheet
 

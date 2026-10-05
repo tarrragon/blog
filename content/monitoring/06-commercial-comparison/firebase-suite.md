@@ -42,7 +42,7 @@ GA4 主要處理 Event 類和 Lifecycle 類事件（[模組一](/monitoring/01-m
 
 ## Remote Config
 
-Firebase Remote Config 讓開發者在不更新 app 的情況下修改 app 的行為 — 功能旗標（feature flag）、UI 文案、數值參數。
+Firebase Remote Config 讓開發者在不更新 app 的情況下修改 app 的行為 — 功能旗標（feature flag）、UI 文案、數值參數。改值之後要等每台裝置下一次抓取才生效（預設 12 小時抓一次），讀不到時用 app 內建的預設值；這兩個性質怎麼影響回退與多版本共存，見 [Remote Config](/backend/knowledge-cards/remote-config/) 與 [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)。
 
 ### 和 A/B test 的整合
 

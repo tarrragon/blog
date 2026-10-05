@@ -47,6 +47,7 @@ header 與 date-based 把版本移出資源身分、版本粒度可以細到單�
 ## 下一步路由
 
 - 什麼算 breaking、變更怎麼審：[11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)
+- 舊 API 只剩舊版自家 App 在呼叫時，先用最低支援版本讓舊版 App 退場：[11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)
 - 承諾成本結構的上游框架：[11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/)
 - 服務本身終止（不只淘汰一個版本）時，外部引用的盤點與處置：[10.4 服務終止的範圍：外部引用的種類與持有者](/backend/10-system-evolution/service-termination-scope/)
 - 退場量測的觀測基礎：[04 可觀測性平台](/backend/04-observability/)

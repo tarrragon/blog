@@ -20,7 +20,7 @@ Rollout Strategy 位在部署執行與正式[流量切換](/ci/knowledge-cards/r
 
 ## 接近真實服務的例子
 
-後端 API 先以 10% canary 流量觀察錯誤率與延遲，再逐步推進。App 發布以 phased rollout 控制商店推送比例。
+後端 API 先以 10% canary 流量觀察錯誤率與延遲，再逐步推進。App 發布以 phased rollout 控制商店推送比例；App Store 的分階段發布只控制自動更新，主動到商店更新的使用者仍拿得到新版（兩家商店的差異見 [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)）。
 
 ## 設計責任
 

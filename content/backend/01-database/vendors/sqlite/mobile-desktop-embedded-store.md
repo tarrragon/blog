@@ -53,12 +53,12 @@ SQLite file 要進入資料保護盤點。若 local DB 保存敏感資料，應�
 
 App upgrade 的核心責任是保證新版 binary 能安全打開舊 database file。Mobile / desktop app 的使用者不會按照 backend deployment order 升級；同一時間可能存在多個 app version 與多個 DB schema version。
 
-| 問題           | 設計策略                                                            |
-| -------------- | ------------------------------------------------------------------- |
-| 新 app 打舊 DB | startup migration、`user_version`、backup before migration          |
-| 舊 app 打新 DB | backward-compatible column、feature gate、minimum supported version |
-| 使用者降版     | export / import、read-only fallback、no-downgrade notice            |
-| 多裝置不同版本 | sync protocol version、server-side compatibility                    |
+| 問題           | 設計策略                                                                                                                   |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 新 app 打舊 DB | startup migration、`user_version`、backup before migration                                                                 |
+| 舊 app 打新 DB | backward-compatible column、feature gate、[minimum supported version](/backend/knowledge-cards/minimum-supported-version/) |
+| 使用者降版     | export / import、read-only fallback、no-downgrade notice                                                                   |
+| 多裝置不同版本 | sync protocol version、server-side compatibility                                                                           |
 
 這些策略要和 [Schema Migration / Versioning](/backend/01-database/vendors/sqlite/schema-migration-versioning/) 對齊。Embedded app 的 migration failure 通常直接影響使用者啟動體驗，因此 migration 要能快速、可恢復、可診斷。
 

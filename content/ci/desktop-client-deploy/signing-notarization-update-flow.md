@@ -29,7 +29,7 @@ Notarize 階段負責處理 macOS 信任 gate。macOS app 即使完成簽章，�
 
 Release 階段負責把 artifact 放到正確 [Release Channel](/ci/knowledge-cards/release-channel/)。Internal、beta、stable 與 enterprise channel 的 gate 不同；CI/CD 要避免未審核的 beta artifact 被 stable feed 取用。
 
-Update 階段負責維持升級路徑。[Update Feed](/ci/knowledge-cards/update-feed/)、delta package、signature、minimum supported version 與 rollback channel 要一起設計；更新壞掉時，使用者可能卡在需要人工修復的版本。
+Update 階段負責維持升級路徑。[Update Feed](/ci/knowledge-cards/update-feed/)、delta package、signature、[minimum supported version](/backend/knowledge-cards/minimum-supported-version/) 與 rollback channel 要一起設計；更新壞掉時，使用者可能卡在需要人工修復的版本。
 
 Recovery 階段負責止血。桌面客戶端常用方式是撤下 update feed、發布 hotfix、切換 rollback channel、停用 remote feature 或要求最低版本；每種方式都依賴 app 內建相容支援。
 

@@ -20,7 +20,7 @@ Rollback Strategy 位在 deploy、rollout 與 incident handling 之間，通常�
 
 ## 接近真實服務的例子
 
-靜態站可回退前一版 artifact。後端服務可回退 image tag 並暫停新 migration。App 場域可先用 remote config 關閉新功能，再走 hotfix 發版。
+靜態站可回退前一版 artifact。後端服務可回退 image tag 並暫停新 migration。App 場域可先用 remote config 關閉新功能，再走 hotfix 發版；remote config 的生效時間取決於 App 多久重新讀一次設定（Firebase 預設 12 小時），各回退手段對已安裝版本的作用見 [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)。
 
 ## 設計責任
 

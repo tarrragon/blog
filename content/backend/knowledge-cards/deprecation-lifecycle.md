@@ -9,7 +9,7 @@ Deprecation lifecycle 是 API 版本從宣告棄用到完全退場之間的一�
 
 ## 概念位置
 
-執行工具箱有四種常見形態：分階段日期（先掐斷新增量、再處理存量，用不同時間點各擋一種風險）、in-band warning（在 response 內夾帶棄用警告，觸及率高於任何外部公告渠道，因為它出現在開發者一定會看的地方）、brownout（在正式停用前先短暫真實中斷，讓沒讀公告的長尾消費者在低風險時窗先遭遇明確失敗）、sunset header（用 HTTP header 宣告退場時點的機器可讀層）。跟 [Feature Flag](/backend/knowledge-cards/feature-flag/) 常用於漸進開啟新功能相對，deprecation lifecycle 處理的是同一種漸進節奏在反方向的鏡像——漸進收斂舊功能。這組工具的組合邏輯是分層觸及：公告觸及會讀公告的人、in-band warning 觸及在開發的人、brownout 觸及所有人。
+執行工具箱有四種常見形態：分階段日期（先掐斷新增量、再處理存量，用不同時間點各擋一種風險）、in-band warning（在 response 內夾帶棄用警告，觸及率高於任何外部公告渠道，因為它出現在開發者一定會看的地方）、brownout（在正式停用前先短暫真實中斷，讓沒讀公告的長尾消費者在低風險時窗先遭遇明確失敗）、sunset header（用 HTTP header 宣告退場時點的機器可讀層）。跟 [Feature Flag](/backend/knowledge-cards/feature-flag/) 常用於漸進開啟新功能相對，deprecation lifecycle 處理的是同一種漸進節奏在反方向的鏡像——漸進收斂舊功能。這組工具的組合邏輯是分層觸及：公告觸及會讀公告的人、in-band warning 觸及在開發的人、brownout 觸及所有人。還在呼叫這支 API 的若是自家 App 的舊版，使用者是匿名的、看不到 deprecation 標頭，brownout 打到的是他們的通用錯誤畫面；這時先用 [Minimum Supported Version](/backend/knowledge-cards/minimum-supported-version/) 讓那些版本退場，再走這組工具（見 [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)）。
 
 ## 可觀察訊號與例子
 

@@ -31,7 +31,7 @@ Store review 階段負責處理外部 gate。審核可能因 metadata、隱私�
 
 [Rollout strategy](/ci/knowledge-cards/rollout-strategy/) 階段負責控制新版本擴散速度。分批發布的觀察指標包含 crash rate、登入、購買、同步、推播與核心流程完成率；達到停損條件時應暫停 rollout，先讓已受影響範圍維持可控。
 
-Recovery 階段負責處理已安裝版本。App 常見止血工具是 remote config、feature flag、kill switch、server-side compatibility、hotfix build 與要求使用者升級；每個工具都要在事故前實作，事故時才有路可走。
+Recovery 階段負責處理已安裝版本。App 常見止血工具是 remote config、feature flag、kill switch、server-side compatibility、hotfix build 與要求使用者升級（[最低支援版本](/backend/knowledge-cards/minimum-supported-version/)）；每個工具都要在事故前實作，事故時才有路可走。這裡列的是常見工具的摘要，各手段對已安裝版本多久生效、事先要準備什麼，見 [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/) 的回退手段表。
 
 ## 多版本共存契約
 
@@ -67,3 +67,4 @@ Release checklist 的責任是把外部 gate 與內部 gate 接起來。App 發�
 - App 部署總覽：回 [App 部署 CI/CD](../)。
 - 簽章概念：讀 [App Signing](/ci/knowledge-cards/app-signing/)。
 - Gate 原理：讀 [CI gate 與 workflow 邊界](../../ci-gate-workflow-boundary/)。
+- 多版本共存在 API 那一側的設計（版本回報、最低支援版本、上線日遠端啟用、各回退手段對已安裝版本的作用與事前準備）：讀 [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)。

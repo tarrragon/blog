@@ -68,7 +68,7 @@ App 需要系統權限（相機、位置、通知）才能使用特定功能。
 
 **付費 Gate**（paywall）：功能需要付費才能使用。付費 gate 的 fallback 設計和上述四種不同 — 「失敗」路徑的目標是引導使用者付費而非提供替代功能。試用期、降級功能、付費引導 vs 付費強制的取捨依賴商業模式決策。
 
-**版本相容性 Gate**：API 版本過舊需要升級 app。Fallback 是提示使用者更新，但強制更新會阻擋無法更新的使用者（舊 OS 版本不支援新版 app）。
+**版本相容性 Gate**：API 版本過舊需要升級 app。Fallback 是提示使用者更新，但強制更新會阻擋無法更新的使用者（舊 OS 版本不支援新版 app）。版本下限怎麼由服務方保存與檢查見 [Minimum Supported Version](/backend/knowledge-cards/minimum-supported-version/)。
 
 ## Gate 設計表
 

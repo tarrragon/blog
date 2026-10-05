@@ -35,7 +35,7 @@ URI 版本把帳單開給消費者與服務端的維運面：消費者付一次�
 
 它換到的三件事在設計層看不見、在營運層很硬。**版本邊界就是部署邊界**：`/v1` 可以凍結、獨立部署、獨立擴縮、獨立 rollback，舊版是一份不再變動的程式碼；轉換層路線的舊版則是活的，每次部署都可能動到轉換鏈裡的任何一環，而爆炸半徑是全體 pin 住舊版的帳號。**URI 就是 cache key**：邊緣快取天然按版本分流，不需要 `Vary`；自訂 header 版本要 CDN 支援對該 header 做 `Vary`，而綁帳號的 date pin 基本上放棄邊緣快取。**分版的可觀測性是免費的**：path prefix 讓 per-version 的 metrics、log 與配額直接成立，header 版本要另外埋，而漏埋是靜默的。三項合起來，URI 版本在「大量匿名讀取、CDN 前置」的平台上未必是次優解。
 
-日期 pin 把帳單開給服務端的基礎設施投資。Stripe 內部用 version change module 封裝每個 breaking change，response 依時間反向流過模組鏈、轉換成該帳號 pin 住版本的形狀；截至 2017 年累積約 100 個 backwards-incompatible 升級，仍維持與 2011 年以來每一版相容（[Stripe](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)）。這是把相容性從路由層搬進轉換層的做法，案例本身的判讀說得很直接：版本策略是基礎設施投資，而非命名慣例。代價相應清楚 —— 每個 breaking change 都要寫出一個可執行的轉換模組，轉換鏈的長度隨時間單調成長，且測試矩陣跟著長。
+日期 pin 把帳單開給服務端的基礎設施投資。Stripe 內部用 version change module 封裝每個 breaking change，response 依時間反向流過模組鏈、轉換成該帳號 pin 住版本的形狀；截至 2017 年累積約 100 個 backwards-incompatible 升級，仍維持與 2011 年以來每一版相容（[Stripe](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)）。這是把相容性從路由層搬進轉換層的做法，案例本身的判讀說得很直接：版本策略是基礎設施投資，而非命名慣例。代價相應清楚 —— 每個 breaking change 都要寫出一個可執行的轉換模組，轉換鏈的長度隨時間單調成長，且測試矩陣跟著長。同一個機制也用在依客戶端版本調整回應的場合，自家行動 App 依 App 版本回不同形狀的回應就是一例（見 [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)）。
 
 header 版本介於兩者之間：服務端仍要為每個宣告過的版本維持行為，但版本切片是顯式的、有限的，而非像日期 pin 那樣連續。GitHub 選這條的同時給了承諾結構 —— 新版釋出後舊版至少支援 24 個月，公告明講理由是「不能也不期待 integrator 隨我們調整 API 而不斷更新整合」。
 

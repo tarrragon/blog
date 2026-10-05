@@ -46,19 +46,19 @@ Flag 按用途分離，不同角色的 lifecycle、權限與治理策略差異�
 
 Flag 的生命週期是 create → rollout → converge → remove。每個階段有明確的輸入與交付物。
 
-**Create**：flag 建立時記錄 owner、用途分類（release / experiment / ops）、預計移除日期與關聯 ticket。這些 metadata 是後續治理的基礎 — 沒有 owner 的 flag 在移除階段會變成無人認領的 debt。
+**Create**：flag 建立時記錄 owner、用途分類（release / experiment / ops）、預計移除日期與關聯 ticket；行動 App 讀取的 flag 另外在收斂時記錄每個平台第一個不再讀它的 App 版本，供 TTL 掃描比對。這些 metadata 是後續治理的基礎 — 沒有 owner 的 flag 在移除階段會變成無人認領的 debt。
 
 **Rollout**：progressive rollout 按 percentage、[cohort](/backend/knowledge-cards/cohort/) 或 region 逐步放量。每一步有可觀測指標確認行為正常 — error rate、latency、business KPI。rollout 節奏跟 [6.8 release gate](/backend/06-reliability/release-gate/) 的放行條件對齊：gate 通過後用 flag 做細粒度控制，flag 異常時 gate 提供回退依據。
 
 **Converge**：功能穩定後，flag 設定 100%（always-on）或 0%（移除功能）。此時 flag 已無控制作用，只是代碼中的條件分支。converge 階段是 flag 治理的關鍵轉折 — 很多 flag 停在這裡不再前進，持續佔用代碼路徑。
 
-**Remove**：移除 flag 代碼、清理條件分支、移除 flag 定義。移除動作困難的原因是 flag 可能被多處引用（server / client / config / test），每處都需要確認行為收斂到同一分支。自動化掃描（dead code detection、unused flag audit）能降低手動風險，但最終決策仍需要 flag owner 確認沒有殘留依賴。
+**Remove**：移除 flag 代碼、清理條件分支、移除 flag 定義。移除動作困難的原因是 flag 可能被多處引用（server / client / config / test），每處都需要確認行為收斂到同一分支。自動化掃描（dead code detection、unused flag audit）能降低手動風險，但最終決策仍需要 flag owner 確認沒有殘留依賴。行動 App 讀取的 flag 另有一個條件：已安裝的舊版還在讀它的遠端定義，定義一刪，舊版會改用 App 內建的預設值，功能跟著消失；所以收斂為 always-on 的客戶端 flag，移除分兩步：先發一版不再讀它、行為寫死為開啟的 App，再等最後一個讀它的版本低於 [Minimum Supported Version](/backend/knowledge-cards/minimum-supported-version/)，才刪掉遠端定義，在那之前只把值收斂成 always-on，見 [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)。
 
 ## Flag debt 治理
 
 每個未移除的 flag 讓測試需要覆蓋的狀態空間翻倍。10 個 stale flag 代表 1024 種潛在的狀態組合 — 實際測試覆蓋率遠低於這個數字，代碼行為的可預測性持續下降。
 
-**TTL policy**：flag 建立時設定預計移除日期。超過 TTL 且沒有活躍修改的 flag 自動標記為 debt，進入清理 backlog。TTL 按角色設定：release flag 兩週到一個月，experiment flag 與實驗週期對齊，ops flag 免 TTL 但需要年度 review。
+**TTL policy**：flag 建立時設定預計移除日期。超過 TTL 且沒有活躍修改的 flag 自動標記為 debt，進入清理 backlog。TTL 按角色設定：release flag 兩週到一個月（行動 App 讀取的 release flag 例外：到期條件改為最後一個讀它的版本低於最低支援版本，掃描時比對最低支援版本的變更，見 Remove），experiment flag 與實驗週期對齊，ops flag 免 TTL 但需要年度 review。
 
 **定期掃描**：每月或每季掃描 stale flag（超過 TTL + 無活躍修改），生成清理 backlog。掃描結果對應到 flag owner，由 owner 決定是移除、延長 TTL 還是升級為 ops flag。無 owner 的 stale flag 是最高風險 — 沒有人能確認移除是否安全。
 
@@ -107,3 +107,4 @@ experimentation 平台的 SLO 應獨立定義。當平台自身的 [error budget
 - [6.21 reliability debt backlog](/backend/06-reliability/reliability-debt-backlog/)：stale flag 進入 debt 治理
 - [07 資安與資料保護](/backend/07-security-data-protection/)：permission flag 的權限約束
 - [8.3 止血策略](/backend/08-incident-response/containment-recovery-strategy/)：ops flag 作為事中止血手段
+- [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)：行動 App 讀取的 release flag、讀取間隔與移除時機

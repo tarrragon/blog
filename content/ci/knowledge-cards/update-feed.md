@@ -10,7 +10,7 @@ Update Feed 的核心概念是「告訴已安裝客戶端該取得哪個版本�
 
 ## 概念位置
 
-Update Feed 位在 signed [artifact](/ci/knowledge-cards/artifact/)、release channel 與已安裝 app 之間，常包含版本號、下載 URL、signature、checksum、release notes 與最低支援版本。
+Update Feed 位在 signed [artifact](/ci/knowledge-cards/artifact/)、release channel 與已安裝 app 之間，常包含版本號、下載 URL、signature、checksum、release notes 與[最低支援版本](/backend/knowledge-cards/minimum-supported-version/)。
 
 ## 可觀察訊號
 

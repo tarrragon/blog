@@ -21,7 +21,7 @@ Consumer Coordinability 的核心責任是把「可協調」從一個感覺變�
 
 ## 可觀察訊號與例子
 
-四項的常見組合各有典型後果。列得出名單但發不出通知，退場當天的客訴會來自名單上確實有的整合方。發得出通知但沒有 SDK 也沒有強制力，遷移完成率取決於對方的排程優先序，而這個變更在對方的 backlog 裡通常排在很後面。四項都有的情境（自家 mobile app 走自家 SDK）實際上已經接近可原子更新，判斷標準應該直接跳到 [API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/) 的第三種形態（可原子更新的內部呼叫端）。
+四項的常見組合各有典型後果。列得出名單但發不出通知，退場當天的客訴會來自名單上確實有的整合方。發得出通知但沒有 SDK 也沒有強制力，遷移完成率取決於對方的排程優先序，而這個變更在對方的 backlog 裡通常排在很後面。自家 mobile app 不在這張卡的適用範圍：它的程式碼與 SDK 在服務方手上，也有最低支援版本這種強制力，但使用者是匿名的，列不出名單、也發不出通知；它也不屬於 [API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/) 裡可原子更新的內部呼叫端，因為已經安裝在使用者裝置上的版本不會跟著提交改變。舊版 App 靠 [最低支援版本](/backend/knowledge-cards/minimum-supported-version/) 退場，見 [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)。
 
 集中度是四項之外的修正項。單一客戶佔九成流量時，協調得動的是那九成、永遠協調不動的是那條長尾，而退場當天的事故全發生在長尾上。可協調度因此不是一個整體數字，而要看「協調不動的那部分佔多少」——可觀察的形式是近三十天流量的 per-consumer 佔比排序與尾部合計。
 

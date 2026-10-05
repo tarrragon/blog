@@ -20,7 +20,7 @@ tags: ["backend", "api-design", "compatibility"]
 
 **消費者自己決定何時更新**：對外的 HTTP API、平台團隊對產品團隊。舊版會存在數月到數年、長度由對方的排期決定，所以紀律要能維持到那麼久之後，「宣告之後還要等很久」是這個形態的常態，到期與豁免的邊界條款在這個形態才開始有份量。
 
-**消費者無法被強制更新**：行動應用（使用者不更新就是不更新）、發佈出去的 SDK、嵌進第三方系統的整合。舊版永遠在線，breaking 等於放棄還停在舊版的使用者。這個形態讓「先上線再收斂」這條路不存在，紀律的下限因此由它決定。
+**消費者無法被強制更新**：行動應用（使用者不更新就是不更新）、發佈出去的 SDK、嵌進第三方系統的整合。舊版永遠在線，breaking 等於放棄還停在舊版的使用者。這個形態讓「先上線再收斂」這條路不存在，紀律的下限因此由它決定。自家行動 App 在這個形態裡另有服務方自己能用的手段（版本回報、最低支援版本、上線日遠端啟用）；最低支援版本做的是讓舊版停止使用、把使用者帶到更新畫面，替使用者裝上新版仍然做不到，所以它不改變這個形態的紀律下限，見 [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)。
 
 同一個服務可以同時面對多種消費者，這時紀律取最嚴的那一種——有一個行動應用在用，整條介面就進入第三形態。
 
@@ -52,6 +52,7 @@ tags: ["backend", "api-design", "compatibility"]
 ## 下一步路由
 
 - Breaking 決定要做之後的分期與退場：[11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)
+- 消費者是自家行動 App 時，讓舊版 App 停止使用的最低支援版本、商店審核下的上線順序與回退手段：[11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)
 - 消費端驗證（consumer-driven contract test 把「誰依賴什麼」顯性化）：[6.10 契約測試](/backend/06-reliability/contract-testing/)
 - 相容檢查工具進 CI 的組織面：[11.10 API 規範治理](/backend/11-api-design/api-governance/)
 - opaque 識別碼保留服務端自由，這條原則在分頁上的完整形態（以及它同時是一份多半沒寫下來的承諾）：[分頁之爭](/backend/11-api-design/pagination-debate/)
