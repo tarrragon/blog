@@ -177,7 +177,7 @@ php_flag engine off
 </FilesMatch>
 ```
 
-這條設定讓即使攻擊者成功上傳了 `.php` 檔案，也無法透過 HTTP 請求觸發執行。
+這條設定讓即使攻擊者成功上傳了 `.php` 檔案，也無法透過 HTTP 請求觸發執行。`php_flag` 這個指令只在 PHP 以 mod_php 執行時存在：站台若是 Apache 搭配 PHP-FPM，Apache 不認得它，整個 `uploads/` 目錄會回 500（`Invalid command`），見 [mod_php](/php/01-server-runtime/mod-php/#從-mod_php-換到-php-fpm-時-htaccess-的變化)。PHP-FPM 環境下對應的防線在 web 伺服器不把上傳目錄的請求交給 PHP，以及 PHP-FPM 的 `security.limit_extensions` 只允許 `.php`；把圖片當 PHP 執行的路徑與這幾道防線見 [FastCGI](/php/01-server-runtime/fastcgi/#web-伺服器決定-php-執行哪個檔案)。
 
 ### 安全 header
 

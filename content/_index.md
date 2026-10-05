@@ -29,6 +29,7 @@ tags: ["首頁", "教學", "工程筆記"]
 - [Python 進階指南](/python-advanced/)：深入內部機制與擴展開發
 - [Go 維護指南](/go/)：理解 Go 語言精神與核心開發能力
 - [Go 進階指南](/go-advanced/)：深入 Go 並發、WebSocket、runtime 與服務架構
+- [PHP 伺服器執行模型](/php/)：CGI、mod_php、FastCGI、PHP-FPM、OPcache 到常駐 worker，PHP 在伺服器上被執行的方式與各自的成本
 - [Flutter 實戰指南](/flutter/)：Dart 型別設計、狀態與渲染、測試策略與工具鏈，從實際專案 case 抽出判斷標準
 - [DDD 領域驅動設計指南](/ddd/)：領域模型的理論與判斷標準層 — entity 判斷標準、不變式強制層次、稽核軌跡，實作限制路由到各語言模組
 - [Backend 服務實務指南](/backend/)：整理資料庫（含 [SQL 查詢語言的設計](/backend/01-database/sql/)）、快取、訊息佇列、觀測、部署與可靠性驗證等跨語言後端能力

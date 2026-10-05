@@ -29,7 +29,7 @@ PHP 行為異常時要檢查的第一個地方。常見的情境：上傳檔案�
 | `error_reporting`     | 顯示哪些層級的錯誤    | E_ALL      | 開發時開到 E_ALL、production 時關 display_errors |
 | `display_errors`      | 是否在頁面上顯示錯誤  | Off        | production 應該關閉（錯誤寫 log 不顯示給使用者） |
 
-`.user.ini` 的修改不需要重啟 Apache/nginx，但有快取時間（預設 300 秒）——改完後要等最多 5 分鐘才生效。`php.ini` 的修改在多數環境需要重啟 web server。
+`.user.ini` 的修改不需要重啟 Apache/nginx，但有快取時間（預設 300 秒，`user_ini.cache_ttl`）——改完後要等最多 5 分鐘才生效；它只由 CGI/FastCGI（含 PHP-FPM）讀取，mod_php 下的對應做法是 `.htaccess` 的 `php_value`。`php.ini` 的修改要重新載入讀它的那個程序：mod_php 是重載 Apache，PHP-FPM 是重載 PHP-FPM（web 伺服器不必動），見 [mod_php](/php/01-server-runtime/mod-php/#從-mod_php-換到-php-fpm-時-htaccess-的變化)。
 
 ## 鄰卡
 

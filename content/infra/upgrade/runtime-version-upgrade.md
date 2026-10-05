@@ -202,15 +202,17 @@ PHP 的 session 序列化格式在某些版本之間有變更。版本切換後�
 
 ### opcache 快取
 
-PHP 的 opcache 會快取編譯後的 bytecode。版本切換後如果 opcache 沒清，可能用舊版本編譯的 bytecode 跑在新版本上。切換後的第一件事：
+PHP 的 opcache 把編譯後的 opcode 快取在共享記憶體裡，那塊記憶體屬於啟動它的 PHP-FPM（或 Apache）程序。切換版本或部署新程式碼之後，要讓服務請求的那個程序重新載入，快取才會清空：
 
 ```bash
-# CLI 方式清除（如果有 SSH）
-php -r "opcache_reset();"
+# 重新載入 PHP-FPM（服務名依發行版與 PHP 版本而不同，例如 php8.2-fpm）
+systemctl reload php8.2-fpm
 
-# 或重啟 PHP-FPM / Apache
-systemctl restart php8.2-fpm
+# mod_php 的環境改成重新載入 Apache
+apachectl graceful
 ```
+
+`php -r "opcache_reset();"` 清不到網頁請求用的快取：命令列執行的 PHP 是另一個程序，有自己的一塊（而且 `opcache.enable_cli` 預設關閉）。實測在 PHP-FPM 容器裡執行它回傳 `false`，PHP-FPM 的快取命中次數照樣往上加；reload PHP-FPM 之後才歸零。快取與程序壽命的關係見 [OPcache 與程序壽命](/php/01-server-runtime/opcache/)。
 
 ### Composer 的 PHP 版本鎖定
 

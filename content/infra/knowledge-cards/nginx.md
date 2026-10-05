@@ -14,12 +14,12 @@ nginx 在 infra 裡常見的角色有三種：作為 reverse proxy 把請求轉�
 
 ## 跟 Apache 的關鍵差別
 
-| 面向        | nginx                              | Apache                               |
-| ----------- | ---------------------------------- | ------------------------------------ |
-| 設定模式    | 集中式（`/etc/nginx/` 下的設定檔） | 支援 .htaccess 分散式設定            |
-| 並發模型    | 事件驅動、非阻塞                   | 預設 prefork（每個請求一個 process） |
-| PHP 整合    | 透過 FastCGI（PHP-FPM）            | mod_php（直接嵌入）或 FastCGI        |
-| URL rewrite | `location` + `rewrite` 區塊        | `.htaccess` 的 `RewriteRule`         |
+| 面向        | nginx                              | Apache                                                                      |
+| ----------- | ---------------------------------- | --------------------------------------------------------------------------- |
+| 設定模式    | 集中式（`/etc/nginx/` 下的設定檔） | 支援 .htaccess 分散式設定                                                   |
+| 並發模型    | 事件驅動、非阻塞                   | 依 MPM：2.4 官方預設 event；裝 mod_php 時退回 prefork（每個連線一個子程序） |
+| PHP 整合    | 透過 FastCGI（PHP-FPM）            | mod_php（直接嵌入）或 FastCGI                                               |
+| URL rewrite | `location` + `rewrite` 區塊        | `.htaccess` 的 `RewriteRule`                                                |
 
 ## 可觀察訊號
 
@@ -33,4 +33,6 @@ nginx 設定要決定：server block（類似 Apache 的 VirtualHost）怎麼組
 
 - [.htaccess](/infra/knowledge-cards/htaccess/) — Apache 的分散設定，遷移到 nginx 時需要轉換
 - [ALB](/infra/knowledge-cards/alb/) — 雲端環境裡承擔部分 nginx 職責
+- [Apache MPM](/infra/knowledge-cards/apache-mpm/) — Apache 的並發模型，決定能不能搭配 mod_php
+- [PHP-FPM](/php/knowledge-cards/php-fpm/) — nginx 用 `fastcgi_pass` 轉請求給它的 PHP 程序管理器
 - [流量入口層](/infra/03-network-foundation/traffic-entry-layer/) — nginx 作為單機 reverse proxy 在請求責任鏈的位置、以及跟雲端 ALB 的選擇條件

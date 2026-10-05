@@ -52,9 +52,9 @@ L7 負載平衡器工作在應用層，讀得懂 HTTP。它看得到 host header
 
 reverse proxy 承擔的是代替後端應用接收外部請求、再依規則轉發給內部服務。它坐在應用前面，把幾件「每個後端都需要、但不該每個後端各做一份」的橫切關注點收攏到一層：終結 TLS、依 URL 分流、把靜態檔案直接回掉、加安全標頭、限流。使用者連的永遠是 reverse proxy，它背後有幾台應用、跑什麼語言、在哪個 subnet，使用者不需要知道。
 
-[nginx](/infra/knowledge-cards/nginx/) 是單機環境最常見的 reverse proxy 實作。它以集中的設定檔取代 Apache 分散的 `.htaccess`，用 `proxy_pass` 把請求轉給後端的應用伺服器（PHP-FPM、Node.js、Python WSGI）。在雲端，L7 負載平衡器（ALB）本身就內建了大部分 reverse proxy 的職責——TLS 終結、path 路由、健康檢查——所以雲端環境不一定需要另一層獨立的 nginx。這兩者的關係是本文後段「單機 nginx vs 雲端 ALB」要展開的核心選擇。
+[nginx](/infra/knowledge-cards/nginx/) 是單機環境最常見的 reverse proxy 實作。它以集中的設定檔取代 Apache 分散的 `.htaccess`，把請求轉給後端的應用伺服器：講 HTTP 的後端（Node.js、Python 的 gunicorn）用 `proxy_pass`，只講 FastCGI 的 PHP-FPM 用 `fastcgi_pass`（見 [FastCGI](/php/01-server-runtime/fastcgi/)）。在雲端，L7 負載平衡器（ALB）本身就內建了大部分 reverse proxy 的職責——TLS 終結、path 路由、健康檢查——所以雲端環境不一定需要另一層獨立的 nginx。這兩者的關係是本文後段「單機 nginx vs 雲端 ALB」要展開的核心選擇。
 
-[動靜分離](/infra/knowledge-cards/static-dynamic-separation/)是 reverse proxy 這一層最具體的判斷。靜態資源（圖片、CSS、JS、字型）不需要應用邏輯就能回應，讓 reverse proxy 直接從檔案系統回掉，動態請求才轉發給應用伺服器。這樣做把應用伺服器的工作量集中在真正需要它的請求上——一個載入 50 個靜態資源、只有 1 個動態 API 呼叫的頁面，應用伺服器只需要處理那 1 個。共享主機時代 Apache 加 mod_php 把動靜都吃在同一個 process 裡，動靜分離是隱形的預設；自管的 nginx 要在設定裡明確劃出「哪些路徑走檔案、哪些路徑走 `proxy_pass`」。reverse proxy 四類職責（TLS 終結、路由、負載分散、健康檢查）的設計邊界與 timeout 由外到內遞減的紀律，在[反向代理的職責](/operations/01-load-balancing/reverse-proxy-responsibilities/)展開。
+[動靜分離](/infra/knowledge-cards/static-dynamic-separation/)是 reverse proxy 這一層最具體的判斷。靜態資源（圖片、CSS、JS、字型）不需要應用邏輯就能回應，讓 reverse proxy 直接從檔案系統回掉，動態請求才轉發給應用伺服器。這樣做把應用伺服器的工作量集中在真正需要它的請求上——一個載入 50 個靜態資源、只有 1 個動態 API 呼叫的頁面，應用伺服器只需要處理那 1 個。共享主機時代 Apache 加 [mod_php](/php/01-server-runtime/mod-php/) 把動靜都吃在同一個 process 裡，動靜分離是隱形的預設；自管的 nginx 要在設定裡明確劃出「哪些路徑走檔案、哪些路徑走 `proxy_pass`」。reverse proxy 四類職責（TLS 終結、路由、負載分散、健康檢查）的設計邊界與 timeout 由外到內遞減的紀律，在[反向代理的職責](/operations/01-load-balancing/reverse-proxy-responsibilities/)展開。
 
 ## TLS 終結放在哪一層
 

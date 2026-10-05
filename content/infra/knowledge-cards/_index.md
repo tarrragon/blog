@@ -10,6 +10,8 @@ Infra 知識卡收錄基礎設施領域的核心術語。每張卡自包含、�
 
 知識卡的職責是建立術語的語意錨點。教學模組負責情境推導與操作判斷標準，知識卡負責「這個詞是什麼、什麼時候會碰到、使用時要決定什麼」。兩者互相引用但各自完整。
 
+PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識卡](/php/knowledge-cards/)。
+
 ## 卡片清單
 
 | 卡片                                                                                 | 說明                                                                                      |
@@ -38,6 +40,8 @@ Infra 知識卡收錄基礎設施領域的核心術語。每張卡自包含、�
 | [phpMyAdmin](/infra/knowledge-cards/phpmyadmin/)                                     | Web 介面的 MySQL / MariaDB 管理工具，無 SSH 環境的主要 DB 管理入口                        |
 | [FileZilla](/infra/knowledge-cards/filezilla/)                                       | 跨平台 FTP/SFTP client，提供目錄同步瀏覽和檔案比較功能                                    |
 | [cPanel](/infra/knowledge-cards/cpanel/)                                             | Web 主機管理面板，整合 PHP 版本切換、cron、email、SSL、備份的圖形介面                     |
+| [CGI](/infra/knowledge-cards/cgi/)                                                   | web 伺服器為每個請求啟動一個外部程式、用環境變數與標準輸入輸出傳遞請求的介面              |
+| [Apache MPM](/infra/knowledge-cards/apache-mpm/)                                     | Apache 用程序或執行緒處理並發連線的模組，決定能不能搭配 mod_php                           |
 | [.htaccess](/infra/knowledge-cards/htaccess/)                                        | Apache 的目錄層級設定檔，控制 URL rewrite、存取權限、PHP 設定覆寫                         |
 | [.env](/infra/knowledge-cards/dotenv/)                                               | 存放環境變數的純文字檔案，把機密值從程式碼分離出來                                        |
 | [php.ini / .user.ini](/infra/knowledge-cards/php-ini/)                               | PHP 的執行期設定檔，控制記憶體上限、上傳大小、錯誤報告等 runtime 行為                     |
