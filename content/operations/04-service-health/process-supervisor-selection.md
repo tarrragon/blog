@@ -40,7 +40,7 @@ supervisord 是單機上的經典應用監管者，比 systemd 更輕、跨發�
 
 ## 選型收斂
 
-單機、服務自己寫得動、要零額外依賴且需要區分就緒與存活 → systemd，用 `sd_notify` 宣告就緒與報活。單機但不想綁 systemd、只要基本的拉起與重啟 → supervisord。多機、需要 startup、readiness、liveness、drain 全部分開表達、能吃下配置複雜度 → Kubernetes。容器化但生命週期需求簡單、不需要分離就緒與存活 → Docker restart policy 加 `HEALTHCHECK`，不足的部分在應用層補。判斷標準始終是同一條：服務需要的生命週期粒度，跟平台能表達的粒度對不對得上——需求簡單卻上最複雜的平台，付的是配置成本；需求複雜卻用表達力不足的平台，付的是應用層補洞的成本。
+單機、服務自己寫得動、要零額外依賴且需要區分就緒與存活 → systemd，用 `sd_notify` 宣告就緒與報活。單機但不想綁 systemd、只要基本的拉起與重啟 → supervisord。多機、需要 startup、readiness、liveness、drain 全部分開表達、能吃下配置複雜度 → Kubernetes。容器化但生命週期需求簡單、不需要分離就緒與存活 → Docker restart policy 加 `HEALTHCHECK`，不足的部分在應用層補；兩者在 Compose 下各管各的，unhealthy 不會觸發 restart policy，程序卡住而沒結束時要另外處理（見 [容器的健康檢查](/operations/04-service-health/container-healthcheck/)）。判斷標準始終是同一條：服務需要的生命週期粒度，跟平台能表達的粒度對不對得上——需求簡單卻上最複雜的平台，付的是配置成本；需求複雜卻用表達力不足的平台，付的是應用層補洞的成本。
 
 ## 要不要上 Kubernetes
 

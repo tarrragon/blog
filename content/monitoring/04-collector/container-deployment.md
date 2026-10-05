@@ -113,7 +113,7 @@ services:
       retries: 3
 ```
 
-`restart: unless-stopped` 讓 container 在 crash 或 host 重啟後自動恢復。`healthcheck` 讓 Docker 偵測 collector 是否真的在回應 — 只有 process 活著但 HTTP 不回應的場景也會被標記為 unhealthy。
+`restart: unless-stopped` 讓 container 在 crash 或 host 重啟後自動恢復。`healthcheck` 讓 Docker 偵測 collector 是否真的在回應 — 只有 process 活著但 HTTP 不回應的場景也會被標記為 unhealthy。標記之後 Docker 不會重啟它：`restart: unless-stopped` 只在程序結束時動作，卡住而沒結束的 collector 會一直停在 unhealthy，要由讀健康狀態的工具或人處理，見 [容器的健康檢查](/operations/04-service-health/container-healthcheck/)；從另一個容器探測 collector 與其他服務的做法見 [多容器服務的存活監看](/operations/04-service-health/multi-container-monitoring/)。
 
 ## 和同機部署的效能對照
 

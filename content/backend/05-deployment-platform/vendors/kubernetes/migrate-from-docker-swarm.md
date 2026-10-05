@@ -199,7 +199,7 @@ spec:
 
 **徵兆**：cutover 後 deploy 期間 application 5-10% request 失敗；發現 pod startup 完成前就接 traffic。
 
-**根因**：Swarm 簡單 restart_policy 沒對等 probe 概念；K8s 預設 deploy 後 immediate ready、若沒 readiness probe、startup 時間長的 application 會在未 ready 時接流量。
+**根因**：K8s 預設 deploy 後 immediate ready，沒有 readiness probe 時 startup 時間長的 application 會在未 ready 時接流量。Swarm 那邊只有一個 `HEALTHCHECK`、沒有分開的 readiness 與 liveness；原本的 Swarm 服務若設了 `HEALTHCHECK`，它在 Swarm 裡會等到 healthy 才接流量，搬到 K8s 時若只搬 image 與 restart 設定，這一層保護就不見了。Swarm 的 `HEALTHCHECK` 在 K8s 要拆成 readiness 與 liveness 兩個 probe 重新設定（兩者在 Swarm 的行為見 [容器的健康檢查](/operations/04-service-health/container-healthcheck/)）。
 
 **修法**：
 

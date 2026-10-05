@@ -55,7 +55,7 @@ tmpfs 適合不需持久化的高頻寫入（SDK 的離線 buffer、session 暫�
 
 ## 容器的健康檢查掛在探活模組
 
-容器層的 health check（Dockerfile 的 `HEALTHCHECK`、Compose 的 `healthcheck`）告訴 orchestrator 這個容器是否正常運作，並用一段啟動寬限期（`start_period`）避免服務還在初始化就被判死。這一層的完整設計——health check 要探到多深、`HEALTHCHECK` 等同 Kubernetes 的哪種 probe、readiness 與 startup 在單機 Docker 為什麼沒有對應物——是 [模組四 服務探活](/operations/04-service-health/) 的主題，容器資源設計只需知道健康檢查是容器生命週期的一部分、跟資源限制一起構成「容器跑得穩」的條件。探到不健康之後的自動重啟、liveness 與 readiness 的語意分界，見 [模組四 Liveness 與 Readiness](/operations/04-service-health/liveness-vs-readiness/)。
+容器層的 health check（Dockerfile 的 `HEALTHCHECK`、Compose 的 `healthcheck`）告訴 orchestrator 這個容器是否正常運作，並用一段啟動寬限期（`start_period`）避免服務還在初始化就被判死。health check 要探到多深在 [Health check endpoint 設計](/operations/04-service-health/health-check-endpoint/)；`HEALTHCHECK` 在 Compose、`docker run` 與 Swarm 下各自對應什麼行為、為什麼它沒有分開的 readiness 與 startup，在 [容器的健康檢查](/operations/04-service-health/container-healthcheck/)。容器資源設計只需知道健康檢查是容器生命週期的一部分、跟資源限制一起構成「容器跑得穩」的條件。要注意的是 Compose 與 `docker run` 下，容器變成 unhealthy 不會被重啟，restart policy 只在程序結束時動作；liveness 與 readiness 的語意分界見 [模組四 Liveness 與 Readiness](/operations/04-service-health/liveness-vs-readiness/)。
 
 ## 下一步路由
 

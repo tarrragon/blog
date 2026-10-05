@@ -98,7 +98,7 @@ docker compose down -v         # 停掉並清掉（-v 連 named volume 一起清
         condition: service_healthy
 ```
 
-其二，在應用層做連線重試（開機時連不上就 backoff 重試）。實務上兩者常一起用——healthcheck 處理啟動順序、應用層重試處理執行期間 DB 短暫重啟。應用層重試更穩健，因為 DB 在服務跑起來之後也可能短暫斷線。
+其二，在應用層做連線重試（開機時連不上就 backoff 重試）。實務上兩者常一起用——healthcheck 處理啟動順序、應用層重試處理執行期間 DB 短暫重啟。應用層重試更穩健，因為 DB 在服務跑起來之後也可能短暫斷線。`service_healthy` 只在啟動那一刻把關，入口的反向代理若設成等所有上游健康，任一個上游壞掉時入口在下一次重啟就起不來，判斷哪些依賴該等健康、哪些只等啟動見 [容器的健康檢查](/operations/04-service-health/container-healthcheck/#depends_on-的-service_healthy-把關的時機與連鎖失敗)。
 
 ### arm64 主機跑無原生 image 的舊服務
 
