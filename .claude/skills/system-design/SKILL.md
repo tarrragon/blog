@@ -1,9 +1,9 @@
 ---
 name: system-design
-description: "接到新系統、新功能或服務升級需求時的系統設計流程：需求盤點、從業務推估容量、依改動成本決定定案／先做／延後、延後設計的觸發指標，涵蓋後端前端與基礎設施，含功能開關、A/B 測試、行動 App 上架與先擴充才能上線的變更。Triggers: 系統設計, system design, 過度設計, 何時擴充, feature flag, A/B test, 上線計畫, App 上架, 熱更新"
+description: "接到新系統、新功能或服務升級需求時的系統設計流程：需求盤點、從業務推估容量、依改動成本決定定案／先做／延後、延後設計的觸發指標，涵蓋後端前端與基礎設施，含功能開關、A/B 測試、對外 API 改版、行動 App 上架與先擴充才能上線的變更。Triggers: 系統設計, system design, 過度設計, 何時擴充, feature flag, A/B test, 上線計畫, App 上架, 熱更新"
 metadata:
   portable: true
-  version: 0.2.0
+  version: 0.3.0
 ---
 
 # System Design
@@ -22,7 +22,7 @@ metadata:
 | 容量估算     | 從業務事件推估讀取尖峰、寫入、儲存，每個數字附依據           | 估算表，含「依賴它的結論」欄                 | `references/capacity-estimation.md` |
 | 決策時機分類 | 列出設計決定，逐項分進定案、先做、延後                       | 決定清單；延後類附早期替代做法與觸發指標     | `references/decision-timing.md`     |
 | 觸發指標     | 延後類逐項查觸發訊號與要先量的指標                           | 量測清單（併入「先做」類）                   | `references/escalation-triggers.md` |
-| 上線設計     | 判斷要不要功能開關（含後台切換）、A/B 測試、先擴充；行動 App 另排審核前置時間、多版本相容與回退手段；準備上線監控 | 上線計畫與上線監控                           | `references/release-and-rollout.md` |
+| 上線設計     | 判斷要不要功能開關（含後台切換）、A/B 測試、先擴充；對外 API 依消費者的更新能力設計改版與退場；行動 App 另排審核前置時間、強制更新與回退手段；準備上線監控 | 上線計畫與上線監控                           | `references/release-and-rollout.md` |
 
 待問題目還沒有答案時，容量估算照常進行：缺的值用假設值填入估算表，並在那一列標記「假設」。標記的作用是答案回來時找得到要重算的列；沒標記的假設值進入設計之後，就沒有人知道它要被替換。
 
