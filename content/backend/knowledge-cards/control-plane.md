@@ -9,7 +9,7 @@ Control plane 的核心概念是「管理系統行為的決策層」，負責下
 
 ## 概念位置
 
-Control plane 常見於 service mesh、load balancer、Kubernetes 與 API gateway。它影響 data path 的行為，因此任何變更都可能造成大範圍連動，要和 [blast-radius](/backend/knowledge-cards/blast-radius/) 一起治理。
+Control plane 常見於 service mesh、load balancer、Kubernetes 與 API gateway。Kubernetes 的控制平面以 [Control Loop](/backend/knowledge-cards/control-loop/) 的方式運作：持續比對期望狀態與實際狀態並修正落差。它影響 data path 的行為，因此任何變更都可能造成大範圍連動，要和 [blast-radius](/backend/knowledge-cards/blast-radius/) 一起治理。
 
 ## 可觀察訊號與例子
 

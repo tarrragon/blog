@@ -22,6 +22,8 @@ Kubernetes 是 container orchestration 事實標準、承擔三個責任：workl
 
 ## 最短路徑：5 分鐘把 Kubernetes 跑起來
 
+還沒用過 Kubernetes 時，先讀 [Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/)，它說明下面這幾行指令建立的 Deployment、Service 各自是什麼。下面用的 kind 是三種在一台電腦上起叢集的工具之一，它和 k3d、minikube 的差異與各自的安裝後步驟見 [單機練習用的 Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/local-practice-clusters/)。
+
 ```bash
 # 1. 本機跑 kind（需先安裝 kind + docker）
 kind create cluster --name dev
@@ -144,14 +146,15 @@ kubectl logs <name> --previous        # 看 crash 前一輪的 container log
 
 ## 何時改走其他服務
 
-| 需求形狀                        | 改走                                                              |
-| ------------------------------- | ----------------------------------------------------------------- |
-| 單機服務（VM / bare metal）     | [systemd](/backend/05-deployment-platform/vendors/systemd/)       |
-| Local dev / CI                  | [Docker](/backend/05-deployment-platform/vendors/docker/) Compose |
-| AWS managed runtime（不要 K8s） | ECS / Fargate                                                     |
-| 極簡 PaaS                       | Cloud Run / Heroku / Fly.io                                       |
-| 替代 orchestrator               | Nomad / Rancher                                                   |
-| Edge / IoT 場景                 | K3s / MicroK8s                                                    |
+| 需求形狀                                 | 改走                                                                                                                             |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| 單機服務（VM / bare metal）              | [systemd](/backend/05-deployment-platform/vendors/systemd/)                                                                      |
+| Local dev / CI                           | [Docker](/backend/05-deployment-platform/vendors/docker/) Compose                                                                |
+| AWS managed runtime（不要 K8s）          | ECS / Fargate                                                                                                                    |
+| 極簡 PaaS                                | Cloud Run / Heroku / Fly.io                                                                                                      |
+| 替代 orchestrator                        | Nomad / Rancher                                                                                                                  |
+| Edge / IoT 場景                          | K3s / MicroK8s                                                                                                                   |
+| 本機練習、CI 整合測試要用真的 Kubernetes | kind / k3d / minikube，見 [單機練習用的 Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/local-practice-clusters/) |
 
 ## 不在本頁內的主題
 
@@ -178,6 +181,7 @@ kubectl logs <name> --previous        # 看 crash 前一輪的 container log
 
 ## 下一步路由
 
+- 入門：[Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/)、[單機練習用的 Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/local-practice-clusters/)
 - 上游概念：[5.2 K8s deployment](/backend/05-deployment-platform/kubernetes-deployment/)
 - 平行 vendor：[Docker](/backend/05-deployment-platform/vendors/docker/)、[Envoy](/backend/05-deployment-platform/vendors/envoy/)
 - 下游能力：[6 reliability](/backend/06-reliability/)（release gate）、[8 incident response](/backend/08-incident-response/)

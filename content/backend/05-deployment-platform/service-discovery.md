@@ -16,7 +16,7 @@ service discovery 常見兩種路徑：DNS 查詢與 service registry。DNS 提�
 
 ### DNS-based Discovery 的運作與限制
 
-Kubernetes Service 的 ClusterIP 模式是最常見的 DNS-based discovery：kube-dns / CoreDNS 回覆一個虛擬 IP，kube-proxy 用 iptables / IPVS 做 L4 負載均衡到實際 pod IP。Headless Service（`clusterIP: None`）則直接回傳所有 pod IP 的 A record，讓客戶端自行選擇目標。
+[Kubernetes Service](/backend/knowledge-cards/kubernetes-service/) 的 ClusterIP 模式是最常見的 DNS-based discovery：kube-dns / CoreDNS 回覆一個虛擬 IP，kube-proxy 用 iptables / IPVS 做 L4 負載均衡到實際 pod IP。Headless Service（`clusterIP: None`）則直接回傳所有 pod IP 的 A record，讓客戶端自行選擇目標。
 
 DNS-based discovery 的限制來自 DNS 本身的語意：
 

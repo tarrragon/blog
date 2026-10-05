@@ -10,7 +10,7 @@ Data reconciliation 的核心概念是「比對多個資料來源，找出差異
 
 ## 概念位置
 
-Reconciliation 是 eventual consistency 的修復流程。即使系統設計了事件、[retry policy](/backend/knowledge-cards/retry-policy/) 與 [outbox pattern](/backend/knowledge-cards/outbox-pattern/)，仍需要定期或事件後比對正式結果，修復漏送、重複或半成功。
+Reconciliation 是 eventual consistency 的修復流程。Kubernetes 文件裡的 reconcile 指的是控制器把實際狀態拉回期望狀態，是另一個概念，見 [Control Loop](/backend/knowledge-cards/control-loop/)。即使系統設計了事件、[retry policy](/backend/knowledge-cards/retry-policy/) 與 [outbox pattern](/backend/knowledge-cards/outbox-pattern/)，仍需要定期或事件後比對正式結果，修復漏送、重複或半成功。
 
 ## 可觀察訊號與例子
 

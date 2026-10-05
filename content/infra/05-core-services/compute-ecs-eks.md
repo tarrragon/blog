@@ -26,7 +26,7 @@ ECS 的控制平面由 AWS 代管，service、task definition、target group 都
 
 EKS 的控制平面是受管的 Kubernetes，IaC 描述的是 cluster 本身與 node group，workload（Deployment、Service）則走 Kubernetes manifest 或 Helm chart。這代表 infra 工具鏈跨越了 Terraform 與 Kubernetes 兩套系統 — Terraform 負責 cluster 基礎設施，kubectl / Helm 負責工作負載，兩者的 state 與變更流程是分開的。
 
-團隊已有 Kubernetes 能力或需要其生態（service mesh、自訂排程器、多雲部署、社群的 operator 生態）時，EKS 的複雜度才值得承擔。否則 ECS 的低負擔是預設起點。一個自測方式：團隊選了 EKS 但只用到最基本的 Deployment + Service，沒有碰 service mesh、CRD 或跨雲，那等於承擔了 Kubernetes 的維運成本卻沒用到它的回報——退回 ECS 通常更合理。
+團隊已有 Kubernetes 能力或需要其生態（service mesh、自訂排程器、多雲部署、社群的 operator 生態）時，EKS 的複雜度才值得承擔。否則 ECS 的低負擔是預設起點。一個自測方式：團隊選了 EKS 但只用到最基本的 Deployment + Service，沒有碰 service mesh、CRD 或跨雲，那等於承擔了 Kubernetes 的維運成本卻沒用到它的回報——退回 ECS 通常更合理。Deployment 與 Service 各自負責什麼，見 [Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/)；選 EKS 之前想先在自己的電腦上試，見 [單機練習用的 Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/local-practice-clusters/)。
 
 ### Fargate vs EC2 launch type
 

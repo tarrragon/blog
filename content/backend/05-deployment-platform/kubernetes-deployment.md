@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "deployment", "kubernetes"]
 ---
 
-Kubernetes 部署策略（Kubernetes deployment strategy）的核心責任是把服務版本切換做成可預測流程。Deployment 把副本數、健康訊號、流量承接、設定變更與回退條件組成同一條交付路徑。
+Kubernetes 部署策略（Kubernetes deployment strategy）的核心責任是把服務版本切換做成可預測流程。Deployment 把副本數、健康訊號、流量承接、設定變更與回退條件組成同一條交付路徑。Deployment、ReplicaSet 與 [Pod](/backend/knowledge-cards/pod/) 三層物件各自負責什麼，見 [Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/) 的〈工作負載的三層：Deployment、ReplicaSet 與 Pod〉；本篇從那個模型往上談批次、探針與回退。
 
 ## deployment、replica 與 rollout
 
@@ -142,4 +142,4 @@ Kubernetes 部署策略要和觀測、驗證、事故流程同時對齊。
 
 ## 下一步路由
 
-要把部署與流量切換一起治理，接著讀 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)。要看切換失敗與回退判讀，接著讀 [反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)。要看大規模 K8s 容量設計，接著讀 [Riot Games](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 跟 [GCP 130K-node](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)。
+Deployment、ReplicaSet、Pod、Service 與 Ingress 各自負責什麼、一個請求怎麼抵達 Pod，見 [Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/)。要把部署與流量切換一起治理，接著讀 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)。要看切換失敗與回退判讀，接著讀 [反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)。要看大規模 K8s 容量設計，接著讀 [Riot Games](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 跟 [GCP 130K-node](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)。

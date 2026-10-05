@@ -19,7 +19,7 @@ Load balancer 位在 client 與 application instances 之間，是服務接流�
 
 ## 接近真實網路服務的例子
 
-Kubernetes service、edge proxy、[API Gateway](/backend/knowledge-cards/api-gateway/) 或雲端 LB 都會把 request 導到健康節點。長連線服務也常依賴 load balancer 做 [draining](/backend/knowledge-cards/draining/)，避免關閉中的 instance 繼續接新流量，也會透過 [idle timeout](/backend/knowledge-cards/idle-timeout/) 回收空閒連線。
+[Kubernetes Service](/backend/knowledge-cards/kubernetes-service/)、edge proxy、[API Gateway](/backend/knowledge-cards/api-gateway/) 或雲端 LB 都會把 request 導到健康節點。長連線服務也常依賴 load balancer 做 [draining](/backend/knowledge-cards/draining/)，避免關閉中的 instance 繼續接新流量，也會透過 [idle timeout](/backend/knowledge-cards/idle-timeout/) 回收空閒連線。
 
 ## 設計責任
 

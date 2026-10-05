@@ -16,7 +16,7 @@ Docker Compose 解決的就是這個：把「這個 app 需要哪些 container�
 
 ## 核心概念：一個檔描述整個拓樸
 
-Compose 的核心是「用一份宣告式檔案描述多 service 的完整拓樸」。你寫的是**期望的最終狀態**（要哪些 service、各自的 image / network / volume），Compose 負責把它變成現實：
+Compose 的核心是「用一份宣告式檔案描述多 service 的完整拓樸」。你寫的是**期望的最終狀態**（要哪些 service、各自的 image / network / volume），Compose 在 `docker compose up` 執行時負責把它變成現實（指令結束後不再持續比對，容器掛掉由 Docker 的 restart 設定處理）：
 
 - **service 是編排單位**：每個 service 對應一個（或多個 replica）container，Compose 管它們的生命週期。
 - **network 預設自動建**：同一個 compose 檔的所有 service 自動進同一個 network，彼此用 **service name 當 hostname** 互連——nginx 連 `php:9000`、PHP 連 `db:3306`，不需要知道 IP。
@@ -133,10 +133,11 @@ Compose 的定位是 **single-host 的多 container 編排**，適用範圍要�
 - **適合**：本機 dev 環境、CI 裡起依賴服務跑整合測試、單機小型部署（一台 VM 跑幾個 container 的內部工具）。
 - **不適合**：多 host、需要自動擴縮、rolling update、self-healing 的 production。這些是 orchestrator 的職責。
 
-界線的訊號是「你開始想要跨機器調度、或要 replica 自動補」——那是該換 [Kubernetes](/backend/05-deployment-platform/kubernetes-deployment/) 的訊號。好消息是 image 不用變，換的是編排層（compose → K8s manifest），Dockerfile build 出的 image 兩邊通用。
+界線的訊號是「你開始想要跨機器調度、或要 replica 自動補」——那是該換 Kubernetes 的訊號，換過去得到什麼、付出什麼見 [Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/) 的〈Kubernetes 這套模型的成本與適用規模〉。好消息是 image 不用變，換的是編排層（compose → K8s manifest），Dockerfile build 出的 image 兩邊通用。
 
 ## 整合與下一步
 
 - compose 裡 `build:` 指向的 Dockerfile 怎麼設計，見 [Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)。
 - 一個完整的「用 compose 對齊 client 線上舊環境」實作（含 parity probe 驗證），見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/)。
+- Kubernetes 用哪些元件取代 compose 的角色、一個請求怎麼抵達容器，見 [Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/)；想在同一台電腦上先跑一個叢集試試，見 [單機練習用的 Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/local-practice-clusters/)。
 - 從 compose 搬到 production 編排，見 [Kubernetes deployment](/backend/05-deployment-platform/kubernetes-deployment/)。

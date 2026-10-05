@@ -92,12 +92,16 @@ Container 解決服務包裝與 runtime 依賴；Kubernetes 解決多 instance �
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                         | 類型   | 前置條件                                        | 規模       |
-| -------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------- | ---------- |
-| 六個 T1 vendor 的 deep article（Docker / systemd / nginx / Envoy / AWS ELB / Traefik）       | vendor | 無                                              | 6 篇（大） |
-| gateway 限流實作章（承接 11.9 對外流量語意的執行面）                                         | 主章   | 無（11.9 已定義路由需求、該條目只在本模組計數） | 中         |
-| 知識卡：drain completion、rollout batch、config freeze、environment protection               | 知識卡 | 無                                              | 4 張（中） |
-| 觀念網路五方向的章節回寫（runtime / lifecycle / traffic / rollout / control-plane contract） | 主章   | 無                                              | 中         |
+| 項目                                                                                                                                                                                                                                                                                         | 類型   | 前置條件                                        | 規模       |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------- | ---------- |
+| 六個 T1 vendor 的 deep article（Docker / systemd / nginx / Envoy / AWS ELB / Traefik）                                                                                                                                                                                                       | vendor | 無                                              | 6 篇（大） |
+| gateway 限流實作章（承接 11.9 對外流量語意的執行面）                                                                                                                                                                                                                                         | 主章   | 無（11.9 已定義路由需求、該條目只在本模組計數） | 中         |
+| 知識卡：drain completion、rollout batch、config freeze、environment protection                                                                                                                                                                                                               | 知識卡 | 無                                              | 4 張（中） |
+| Ingress controller 選型與 Gateway API 遷移（ingress-nginx 已停止維護；Traefik / nginx / Envoy vendor 頁補 deep article）                                                                                                                                                                     | 主章   | 無                                              | 中         |
+| 知識卡：EndpointSlice（Endpoints 與「移除」舊說法的橋，優先）、Deployment（Kubernetes 物件，與泛用「部署」消歧義）、IngressClass、label / selector                                                                                                                                           | 知識卡 | 無                                              | 4 張（小） |
+| Kubernetes 術語反向回填：service-discovery、operations health-check-routing / graceful-shutdown、5.1、readiness / probe / helm 卡、attacker-view、chaos-mesh、service-topology 首次出現處連 Pod / Service / Ingress / Namespace 卡；Endpoints 用語改 EndpointSlice；Shopify pod 案例加消歧義 | 跨模組 | EndpointSlice 卡                                | 中         |
+| 入口路由：reading-paths「Production 操作」、going-live/what-is-deploy、hosting-spectrum（缺 Kubernetes 一格）、09/scaling-axes 加到 Kubernetes 元件篇的路由                                                                                                                                  | 跨模組 | 無                                              | 小         |
+| 觀念網路五方向的章節回寫（runtime / lifecycle / traffic / rollout / control-plane contract）                                                                                                                                                                                                 | 主章   | 無                                              | 中         |
 
 ### 觀念網路補完方向
 

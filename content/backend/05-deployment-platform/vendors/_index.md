@@ -34,11 +34,11 @@ tags: ["backend", "deployment", "vendor"]
 
 每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「→ X」代表遷移到 X 的 playbook、「← X」代表從 X 遷入。
 
-| Vendor                    | Deep article                                       | Migration playbook                                      |
-| ------------------------- | -------------------------------------------------- | ------------------------------------------------------- |
-| [Kubernetes](kubernetes/) | [graceful-shutdown](kubernetes/graceful-shutdown/) | [← Docker Swarm](kubernetes/migrate-from-docker-swarm/) |
-| [Terraform](terraform/)   | —                                                  | [→ OpenTofu](terraform/migrate-to-opentofu/)            |
-| [Consul](consul/)         | —                                                  | [← etcd](consul/migrate-from-etcd/)                     |
+| Vendor                    | Deep article                                                                                                                                                                               | Migration playbook                                      |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| [Kubernetes](kubernetes/) | [components-and-request-path](kubernetes/components-and-request-path/)、[local-practice-clusters](kubernetes/local-practice-clusters/)、[graceful-shutdown](kubernetes/graceful-shutdown/) | [← Docker Swarm](kubernetes/migrate-from-docker-swarm/) |
+| [Terraform](terraform/)   | —                                                                                                                                                                                          | [→ OpenTofu](terraform/migrate-to-opentofu/)            |
+| [Consul](consul/)         | —                                                                                                                                                                                          | [← etcd](consul/migrate-from-etcd/)                     |
 
 其他 T1 vendor（Docker / systemd / nginx / Envoy / AWS ELB / Traefik）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
 

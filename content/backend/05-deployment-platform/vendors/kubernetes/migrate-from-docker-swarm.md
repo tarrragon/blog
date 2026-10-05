@@ -57,20 +57,22 @@ Schema + Paradigm 雙 High → **Type E paradigm shift** 為主、Schema 高維�
 
 ## Paradigm 對位
 
-| 概念               | Swarm                               | K8s                                               |
-| ------------------ | ----------------------------------- | ------------------------------------------------- |
-| Workload unit      | Service                             | Deployment + Pod + Service                        |
-| Stack 定義         | stack.yml (docker-compose 格式)     | YAML manifest (multiple resources)                |
-| Networking         | Overlay network (built-in)          | CNI plugin (Calico / Cilium / etc)                |
-| Service discovery  | DNS-based built-in                  | DNS-based (CoreDNS) + Service object              |
-| Load balancing     | Built-in routing mesh               | Service + Ingress + LoadBalancer                  |
-| Secret management  | Docker secrets                      | K8s Secret + 外部 Vault / Secrets Manager         |
-| Rolling update     | `docker service update --image ...` | Deployment + rolling update + readiness probe     |
-| Autoscaling        | 手動 scale                          | HPA (Horizontal Pod Autoscaler)                   |
-| RBAC               | Limited (Swarm enterprise)          | First-class (Role / RoleBinding / ServiceAccount) |
-| Persistent storage | Volume + driver plugin              | PV / PVC + CSI driver                             |
-| Service mesh       | 無 (要外掛 Traefik)                 | Istio / Linkerd / Cilium                          |
-| GitOps             | 無 native                           | Argo CD / Flux (first-class)                      |
+| 概念              | Swarm                               | K8s                                           |
+| ----------------- | ----------------------------------- | --------------------------------------------- |
+| Workload unit     | Service                             | Deployment + Pod + Service                    |
+| Stack 定義        | stack.yml (docker-compose 格式)     | YAML manifest (multiple resources)            |
+| Networking        | Overlay network (built-in)          | CNI plugin (Calico / Cilium / etc)            |
+| Service discovery | DNS-based built-in                  | DNS-based (CoreDNS) + Service object          |
+| Load balancing    | Built-in routing mesh               | Service + Ingress + LoadBalancer              |
+| Secret management | Docker secrets                      | K8s Secret + 外部 Vault / Secrets Manager     |
+| Rolling update    | `docker service update --image ...` | Deployment + rolling update + readiness probe |
+
+表裡兩欄都出現 Service，而兩者的所指不同：Swarm 的 service 同時管副本數與入口，Kubernetes 的 Service 只負責一組 Pod 的固定入口，副本管理由 Deployment 承擔，見 [Kubernetes Service](/backend/knowledge-cards/kubernetes-service/)、[Pod](/backend/knowledge-cards/pod/) 與 [Ingress](/backend/knowledge-cards/ingress/)。
+| Autoscaling        | 手動 scale                 | HPA (Horizontal Pod Autoscaler)                   |
+| RBAC               | Limited (Swarm enterprise) | First-class (Role / RoleBinding / ServiceAccount) |
+| Persistent storage | Volume + driver plugin     | PV / PVC + CSI driver                             |
+| Service mesh       | 無 (要外掛 Traefik)        | Istio / Linkerd / Cilium                          |
+| GitOps             | 無 native                  | Argo CD / Flux (first-class)                      |
 
 ## Schema gap：docker-compose vs K8s YAML
 
@@ -209,7 +211,7 @@ spec:
 
 **徵兆**：Swarm 端寫了 cron-based autoscale script、切 K8s 後 script 失效、流量高峰沒 scale up。
 
-**根因**：K8s HPA 不是預設啟動、需要 *明示配置* + metrics-server install。
+**根因**：K8s HPA 不是預設啟動、需要 *明示配置* + metrics-server install。沒有 metrics-server 時，HPA 的 `TARGETS` 停在 `<unknown>`、事件寫 `unable to fetch metrics`；各本機叢集預設有沒有附這個元件，見 [單機練習用的 Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/local-practice-clusters/)。
 
 **修法**：
 

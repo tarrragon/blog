@@ -6,7 +6,7 @@ weight: 10
 tags: ["backend", "deployment", "kubernetes", "graceful-shutdown", "deep-article"]
 ---
 
-> 本文是 [Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/) overview 的 implementation-layer deep article。Overview 已說明 K8s 在 deployment platform 譜系的定位、本文聚焦 *pod termination* 這個 production 最常踩、被誤解最深的議題：序列、配置、五個 case、跟 service mesh 整合。
+> 本文是 [Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/) overview 的 implementation-layer deep article。Pod、EndpointSlice 與 Ingress controller 的基本關係見 [Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/)。Overview 已說明 K8s 在 deployment platform 譜系的定位、本文聚焦 *pod termination* 這個 production 最常踩、被誤解最深的議題：序列、配置、五個 case、跟 service mesh 整合。
 
 ## Graceful shutdown 沒做對、500 期間每次 deploy 都吃 502
 
@@ -18,25 +18,25 @@ tags: ["backend", "deployment", "kubernetes", "graceful-shutdown", "deep-article
 
 K8s 收到 delete pod 請求後、發生的事 *按時間* 是：
 
-| 時序                                      | 事件                                       | 動作來源            |
-| ----------------------------------------- | ------------------------------------------ | ------------------- |
-| t=0                                       | API server 標 pod 為 Terminating           | kubelet 收到 delete |
-| t=0                                       | Pod 從 Service Endpoints 移除（**async**） | endpoint controller |
-| t=0                                       | kubelet 跑 preStop hook（若有定義）        | container runtime   |
-| t=preStop 結束                            | container 收到 SIGTERM                     | container runtime   |
-| t=SIGTERM + terminationGracePeriodSeconds | container 收到 SIGKILL                     | container runtime   |
+| 時序                            | 事件                                         | 動作來源                       |
+| ------------------------------- | -------------------------------------------- | ------------------------------ |
+| t=0                             | API server 標 pod 為 Terminating             | API server（收到 delete 請求） |
+| t=0                             | Pod 在 EndpointSlice 標成未就緒（**async**） | EndpointSlice controller       |
+| t=0                             | kubelet 跑 preStop hook（若有定義）          | kubelet                        |
+| t=preStop 結束                  | container 收到 SIGTERM                       | kubelet 透過 container runtime |
+| t=terminationGracePeriodSeconds | container 收到 SIGKILL                       | kubelet 透過 container runtime |
 
 關鍵誤解：
 
-1. **「pod 從 Service 移除」跟「container 收到 SIGTERM」是 *平行*、不是序列**。Endpoint controller 更新 Endpoints object → kube-proxy 重新寫 iptables → 各 node 的 traffic 才真正停 — 這條鏈通常需要 *1-5 秒*；同時間 SIGTERM 已經發給 application。
+1. **「pod 在 EndpointSlice 標成未就緒」跟「container 收到 SIGTERM」是 *平行*、不是序列**。EndpointSlice controller 把該 Pod 的 endpoint 標成 `ready=false`（`terminating=true`）→ kube-proxy 重新寫 iptables、Ingress controller 更新後端清單 → 各 node 的 traffic 才真正停 — 這條鏈通常需要 *1-5 秒*；同時間 SIGTERM 已經發給 application。
 
-2. **preStop hook 是「container 還在跑、SIGTERM 還沒發」期間執行**。pre-Stop 設 `sleep 10` 是 production 標準作法 — 用 sleep 讓 endpoint controller 有時間把 pod 從 Service 移除、避免 SIGTERM 期間還有新 request 進來。
+2. **preStop hook 是「container 還在跑、SIGTERM 還沒發」期間執行**。pre-Stop 設 `sleep 10` 是 production 標準作法 — 用 sleep 讓 EndpointSlice controller 與下游的 kube-proxy、Ingress controller 有時間停止送流量給這個 pod、避免 SIGTERM 期間還有新 request 進來。
 
 3. **terminationGracePeriodSeconds 是 *從 preStop 開始* 計時、不是從 SIGTERM**。preStop sleep 10s + application 30s graceful = 至少要設 40s。
 
 4. **graceful 不是 framework 自動的**。Application 必須 *主動處理 SIGTERM*：拒絕新 request、等 in-flight 完成、close DB connection、flush log。沒處理 SIGTERM、container 會在 grace period 後被強殺。
 
-5. **readiness probe 在 Terminating 期間 *仍會被執行*、但結果不影響 traffic**（已經從 Endpoints 移除）。但若 application 沒主動讓 readiness fail、service mesh / external LB 可能仍在送 request（依不同 mesh 行為）。
+5. **readiness probe 在 Terminating 期間 *仍會被執行*、但結果不影響一般流量**（EndpointSlice 裡的 `ready` 固定是 false）。它反映在 `serving` 條件上：所有後端都在終止中時，kube-proxy 會改送給 serving 的那幾個。但若 application 沒主動讓 readiness fail、service mesh / external LB 可能仍在送 request（依不同 mesh 行為）。
 
 ## 配置全圖
 
@@ -48,7 +48,7 @@ kind: Deployment
 spec:
   template:
     spec:
-      terminationGracePeriodSeconds: 60          # SIGTERM 後 60s 才 SIGKILL
+      terminationGracePeriodSeconds: 60          # 從 preStop 開始算 60s 後 SIGKILL
       containers:
         - name: app
           lifecycle:
@@ -63,7 +63,7 @@ spec:
             failureThreshold: 2
 ```
 
-時序：t=0 preStop 開始 sleep 10s → t=10s container SIGTERM → t=70s SIGKILL（不是 t=60s、是 60s after SIGTERM）。
+時序：t=0 preStop 開始 sleep 10s → t=10s container SIGTERM → t=60s SIGKILL（grace period 從 preStop 開始計時，所以 application 實際可用的處理時間是 50s）。
 
 ### Application 處理 SIGTERM（Go 範例）
 
@@ -162,7 +162,7 @@ Graceful shutdown 的成本主要在 *deploy 時間* 跟 *capacity buffer*：
 
 | 規模因素                              | 影響                                                                                      |
 | ------------------------------------- | ----------------------------------------------------------------------------------------- |
-| terminationGracePeriod 60s            | 單 pod deploy ~70-80s（含 preStop + grace + new pod startup）                             |
+| terminationGracePeriod 60s            | 單 pod deploy ~70-80s（grace 60s 已含 preStop，再加上新 Pod 啟動時間）                    |
 | Deployment 100 replica + maxSurge 25% | 全 deploy ~5-10 分鐘、需要 *25% extra capacity*（25 replica buffer）                      |
 | StatefulSet 串行 + 60s grace          | 10 replica 約 10-12 分鐘、deploy window 要在低流量時段                                    |
 | HPA scale-down 跟 graceful 一起跑     | scale-down 觸發 → preStop + grace + new metric → 下次 scale 判斷、avg 反應週期 ≈ 3-5 分鐘 |
@@ -180,13 +180,13 @@ Graceful shutdown 的成本主要在 *deploy 時間* 跟 *capacity buffer*：
 
 Service mesh sidecar（envoy / linkerd-proxy）也有自己的 termination — 通常比 main container 晚一點關。配置原則：
 
-1. mesh sidecar 設 `terminationGracePeriodSeconds` 比 main 多 5-10s、main 處理完才換 sidecar
+1. 讓 sidecar 比 main 晚結束：`terminationGracePeriodSeconds` 是 Pod 層級的欄位、不能逐容器設定。Kubernetes 1.29 起的原生 sidecar（`restartPolicy: Always` 的 init container）會在主容器結束後才收到終止訊號；沒有用原生 sidecar 時，靠 mesh 自己的 drain 設定（例如 Istio 的 `terminationDrainDuration`）讓 proxy 等主容器處理完
 2. Istio 1.12+ 的 `proxy.istio.io/config.holdApplicationUntilProxyStarts` 控啟動順序、shutdown 也要對應
 3. mTLS 環境 graceful 多一道：在 SIGTERM 後等 mesh 主動 close cert rotation、不要硬斷
 
 ### Readiness probe 跟 mesh-aware traffic
 
-純 K8s Service（kube-proxy iptables）：endpoint 移除後 *已建立 connection 仍會跑完*、新 connection 不來。Mesh-aware traffic（service mesh / external LB with health check）：要 readiness fail 才會停送。
+純 K8s Service（kube-proxy iptables）：endpoint 在 EndpointSlice 標成未就緒後 *已建立 connection 仍會跑完*、新 connection 不來。Mesh-aware traffic（service mesh / external LB with health check）：要 readiness fail 才會停送。
 
 修法：application graceful 第一步是 `ready.Store(false)` + 等 readiness probe 至少 fail 一次（5-10s）、才開始 server.Shutdown。
 

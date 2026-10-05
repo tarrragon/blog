@@ -197,6 +197,12 @@ weight: -1
 | [Serverless](/backend/knowledge-cards/serverless/)                                       | 執行環境與擴縮交給平台的邊界在哪         | 按用量計費、冷啟動                      |
 | [BaaS（Backend as a Service）](/backend/knowledge-cards/baas/)                           | 認證與資料存取如何由前端 SDK 直連        | 現成模組、前端直連                      |
 | [Startup Probe](/backend/knowledge-cards/startup-probe/)                                 | 慢啟動服務如何避免被過早重啟             | Kubernetes、liveness                    |
+| [Pod](/backend/knowledge-cards/pod/)                                                     | Kubernetes 排程與執行的最小單位是什麼    | 容器、ReplicaSet、Deployment            |
+| [Kubernetes Service](/backend/knowledge-cards/kubernetes-service/)                       | 一組會換 IP 的 Pod 如何有固定入口        | ClusterIP、EndpointSlice、DNS           |
+| [Ingress](/backend/knowledge-cards/ingress/)                                             | 叢集外 HTTP 流量如何依網域與路徑分流     | Ingress controller、Gateway API         |
+| [Control Loop（控制迴圈）](/backend/knowledge-cards/control-loop/)                       | 期望狀態如何被持續比對與修正             | 宣告式、reconcile、Kubernetes           |
+| [Namespace（命名空間）](/backend/knowledge-cards/namespace/)                             | 叢集裡的物件名稱如何劃分範圍             | kube-system、default、-n                |
+| [Taint 與 Toleration](/backend/knowledge-cards/taint-and-toleration/)                    | 節點如何擋下或趕走 Pod、Pod 如何容忍     | NotReady、驅逐、300 秒                  |
 | [Static Stability](/backend/knowledge-cards/static-stability/)                           | 控制面失效時資料面如何繼續服務           | 已知好配置、降級                        |
 | [Cell-Based Architecture](/backend/knowledge-cards/cell-based-architecture/)             | 系統如何切成互相隔離的 cell              | blast radius、隔離                      |
 | [Outbound Tunnel](/backend/knowledge-cards/outbound-tunnel/)                             | 出站連線如何轉成可達入口                 | 反向隧道、NAT 後方                      |
