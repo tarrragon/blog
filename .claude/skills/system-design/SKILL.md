@@ -3,7 +3,7 @@ name: system-design
 description: "接到新系統、新功能或服務升級需求時的系統設計流程：需求盤點、從業務推估容量、依改動成本決定定案／先做／延後、延後設計的觸發指標，涵蓋後端前端與基礎設施，含功能開關、A/B 測試、對外 API 改版、行動 App 上架與先擴充才能上線的變更。Triggers: 系統設計, system design, 過度設計, 何時擴充, feature flag, A/B test, 上線計畫, App 上架, 熱更新"
 metadata:
   portable: true
-  version: 0.5.0
+  version: 0.5.1
 ---
 
 # System Design
@@ -79,7 +79,7 @@ metadata:
 | 先做類裡屬於專案地基的產物（測試鷹架、migration、可觀測性）  | `foundation-design`                                              |
 | 延後的設計被觸發，要擴充設備、遷移或切換                     | 本 skill 的 `references/release-and-rollout.md`〈先擴充才能上線或切換的變更〉 |
 
-本 skill 的決定清單是那些 skill 的輸入：清單上每一個需要挑方案、設絆腳索、寫規格或建立地基產物的決定，依上表的情境交給對應的 skill。不必等本 skill 全部走完——決策時機分類出現第一個定案項目時，就可以開始為它挑方案。
+表中的 skill 不一定安裝在每個專案；沒有安裝時，情境欄描述的工作仍然要做，改用專案自己的做法。本 skill 的決定清單是那些 skill 的輸入：清單上每一個需要挑方案、設絆腳索、寫規格或建立地基產物的決定，依上表的情境交給對應的 skill。不必等本 skill 全部走完——決策時機分類出現第一個定案項目時，就可以開始為它挑方案。
 
 ---
 

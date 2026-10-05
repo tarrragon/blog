@@ -2,6 +2,8 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
+**Version**: 0.5.1 — 分工表下補一句：表中的 skill 不一定安裝在每個專案，未安裝時情境欄的工作仍要做
+
 **Version**: 0.5.0 — 分工表修正：migration-playbook-methodology 是寫遷移系列文章的寫作方法論、不是執行遷移的指南，該列改指向本 skill 的〈先擴充才能上線或切換的變更〉；新增 wrap-decision 絆腳索一列（延後項目的觸發指標就是絆腳索）；foundation-design 一列寫明接的是先做類裡的地基產物。新增「開發順序」產出：延後類也都要實作時（練習、原型），排成較後的階段並以前後壓測對照
 
 **Version**: 0.4.0 — 「練習專案／學習目的」擴大為「目的不是上線服務的設計」（原型、提案 demo、學習或比較），要求記下跳過了哪些設計，並把目的改變列為重新分類的觸發點；依行動 App API 契約文章的審查修正 release-and-rollout：回退手段不再依速度排列、遠端設定生效時間改依讀取間隔（Firebase 預設 12 小時）、暫停分階段發布移出回退清單、強制更新分兩層、補提高最低支援版本前要分出拿不到新版的使用者、補 Apple DPLA 3.3.1(B) 與 Google Play 的熱更新條款、補 Feature Flag 預設值與移除時機、補版本比較與缺版本請求；decision-timing 把 header 與錯誤碼格式移到定案

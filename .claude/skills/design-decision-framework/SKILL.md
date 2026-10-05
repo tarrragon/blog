@@ -2,7 +2,7 @@
 name: design-decision-framework
 description: "多方案評估決策框架。用於面臨 3+ 技術方案時的結構化評估、架構決策時的系統化分析，防止衝動決策和技術債務累積。Use for: 技術方案選擇、重大架構決策、高風險技術選型"
 metadata:
-  version: 1.3.1
+  version: 1.3.2
 ---
 
 # 多方案評估決策框架 (Design Decision Framework) SKILL
@@ -14,6 +14,8 @@ metadata:
 ## 概述
 
 多方案評估決策框架是一套結構化的技術決策工具，用於在面臨多個技術方案時進行系統化評估和選擇。避免衝動決策，確保決策品質。
+
+> **框架依賴**：五階段評估流程（方案收集、評估維度、評分、風險分析、決策）可以單獨使用。〈與其他 Skill 的關係〉裡的 `/ticket create`、`/5w1h-decision`、`/pre-fix-eval` 屬於另一套工作流框架；沒有安裝該框架的專案沒有這些 skill，決策完成後改用專案自己的方式記錄與建立後續工作。
 
 ## 觸發條件
 
