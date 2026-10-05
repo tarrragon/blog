@@ -23,6 +23,26 @@ sudo chmod 440 /etc/sudoers.d/20-nopasswd
 
 開了 NOPASSWD，等於放棄「sudo 密碼」這道在你被入侵或程序失控時的最後防線。判讀軸是這台機器的爆炸半徑——它持有哪些憑證、能觸及哪些系統，也就是最壞情況下會波及多大範圍。一台範圍受限、沒有任何真實憑證、出事就重建的測試 VM，放棄這道防線換取自動執行是划算的；一台共享主機、生產伺服器、或裝著真實憑證與資料的機器，不該為了方便開 NOPASSWD。關鍵是「可不可丟」不等於「爆炸半徑小」：一台用完即丟的 VM，一旦塞進能碰到生產系統或你帳號的憑證，爆炸半徑就不小了——看的不是機器本身，是它最壞情況能波及什麼。
 
+### 兩種自動化環境的 sudo 設計：GitHub Actions runner 與 Ansible
+
+同一個爆炸半徑的判讀，也解釋了兩種常見的自動化環境為什麼對 sudo 採取相反的設計。GitHub Actions 是 GitHub 的 CI 服務：一份 workflow 檔描述要自動執行的工作，其中每個 job 分派到一台 runner（執行 job 的機器）上跑；runner 可以用 GitHub 提供的（GitHub-hosted runner），也可以用自己架設的機器（self-hosted runner）。Ansible 是設定管理工具：用 playbook（描述要對哪些機器做哪些設定的 YAML 檔）把設定推到遠端機器，每一步由一個 module（執行單一工作的程式，例如安裝套件、改寫設定檔）完成，需要 root 權限的步驟由 become 機制做權限提升，預設透過 sudo。
+
+**GitHub Actions 的 GitHub-hosted runner 預設就是無密碼 sudo。** GitHub 官方文件寫明 Linux 與 macOS 的 runner 以無密碼 sudo 執行，job 裡要裝套件或改系統設定時直接 `sudo` 就行。這個設計成立的前提是執行環境用完即丟：官方的安全強化文件說明 GitHub-hosted runner 在每次都是乾淨、隔離、用完即丟的虛擬機上執行，所以沒有辦法在這個環境裡留下持續性的入侵（見 [Security hardening for GitHub Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions)）。一個 job 結束，那台虛擬機連同 job 裡做過的任何改動一起消失，sudo 密碼這道防線要保護的「留在機器上的改動」在這裡不存在，所以拿掉它只換到方便。這個環境的爆炸半徑由 job 拿到的權限與資料決定：workflow 注入的 secrets、`GITHUB_TOKEN` 的權限，以及 job 執行的是誰寫的程式碼（例如來自外部 fork 的 pull request）。
+
+**同一份 workflow 搬到自架的 runner 上，這個前提就消失了。** 同一份文件指出 self-hosted runner 沒有「乾淨、用完即丟」的保證，workflow 裡不受信任的程式碼可以在那台機器上留下持續性的入侵，也就是在下一個 job 開始時仍然存在的後門或被改過的檔案。這時在 runner 機器上開全機 NOPASSWD，爆炸半徑就是那台機器本身與它連得到的所有系統。要在自架環境重現 GitHub-hosted runner 的安全前提，做法是讓每個 job 都在新的虛擬機或容器裡跑、跑完就銷毀；只照搬無密碼 sudo 這一項，無密碼 sudo 成立的前提（用完即丟的環境）並沒有跟著搬過來。
+
+**Ansible 這類設定管理工具的條件正好相反：它操作的是長期運作、不會被丟掉的機器。** 所以常見做法是讓目標機器維持需要密碼的 sudo，把密碼交給工具。執行時加 `--ask-become-pass`（縮寫 `-K`）讓人輸入一次 sudo 密碼，或用 `ansible_become_password` 變數從 Ansible Vault（Ansible 內建的檔案加密功能）加密的檔案讀取。後者沒有人在場也能跑，代價是 sudo 密碼以加密形式跟著 playbook 存放，拿得到 Vault 密碼的人或程序就拿得到每台目標機器的 sudo。
+
+另一種常見的限縮是只對特定指令開 NOPASSWD，適合固定腳本呼叫固定指令的自動化：
+
+```bash
+# sudoers 規則：帳號 deploy 只能免密碼以 root 執行 /usr/local/bin/restart-app 這一支腳本
+# deploy 與腳本路徑是示範用的佔位值，換成自己的帳號與要放行的指令
+deploy ALL=(root) NOPASSWD: /usr/local/bin/restart-app
+```
+
+這條限縮成立的條件是被放行的指令本身不能讓呼叫者執行任意程式：能開 shell 的編輯器與分頁程式（例如 vim、less 都能在程式裡執行任意指令，以 root 身分開啟時就是一個 root shell）、接受任意參數的指令、一般使用者寫得進去的腳本，放行之後等於放行全部。這種限縮對 Ansible 不適用：[Ansible 官方文件](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_privilege_escalation.html)說明它不一定用固定的指令做事，而是把模組寫成檔名每次都不同的暫存檔再執行，寫死指令路徑的 sudoers 規則對不上。所以 Ansible 需要一個不限指令的權限提升帳號，密碼由 `-K` 在執行時輸入，或由 Ansible Vault 提供。
+
 ## 障礙二：SSH 斷線就把任務一起殺掉
 
 直接在 SSH session 裡跑的程序，會隨著 SSH 連線中斷而一起死掉——你闔上筆電、網路斷一下、或單純關掉終端機，正在跑的任務就沒了（連線掛斷送 SIGHUP、預設終止前景程序，機制見 [SIGHUP 與斷線即死](/linux/dotfile/knowledge-cards/sighup-hangup-signal/)）。對一個要跑好幾小時的無人值守任務，這條等於「你不能離開」，跟無人值守的目的矛盾。

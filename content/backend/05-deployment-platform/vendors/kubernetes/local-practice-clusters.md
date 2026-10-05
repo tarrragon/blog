@@ -95,7 +95,7 @@ kind create cluster --name lab
 kubectl port-forward svc/web 8080:80
 ```
 
-kind 沒有附 Ingress controller，也不替叢集建立對外的埠對應，所以最直接的連法是 `kubectl port-forward`：kubectl 經由 API server 建一條通道，主機的 8080 埠收到的連線從這條通道送進去。指定 `svc/web` 時，kubectl 從 Service 選出的 Pod 裡挑一個建立通道，所有連線都送到那一個 Pod，不經過 Service 的分派，也不經過 Ingress，適合確認單一服務能不能回應。kind 官方文件建議要練 Ingress 時另外執行 [cloud-provider-kind](https://github.com/kubernetes-sigs/cloud-provider-kind)：它在主機上替叢集提供 LoadBalancer 型別的 Service，從 0.9.0 版起直接支援 Ingress 與 Gateway API；在 macOS 與 WSL2 上要用 `sudo` 執行，因為它要在主機上建立網路對應。
+kind 沒有附 Ingress controller，也不替叢集建立對外的埠對應，所以最直接的連法是 `kubectl port-forward`：kubectl 經由 API server 建一條通道，主機的 8080 埠收到的連線從這條通道送進去。指定 `svc/web` 時，kubectl 從 Service 選出的 Pod 裡挑一個建立通道，所有連線都送到那一個 Pod，不經過 Service 的分派，也不經過 Ingress，適合確認單一服務能不能回應。kind 官方文件建議要練 Ingress 時另外執行 [cloud-provider-kind](https://github.com/kubernetes-sigs/cloud-provider-kind)：它在主機上替叢集提供 LoadBalancer 型別的 Service，從 0.9.0 版起直接支援 Ingress 與 Gateway API；在 macOS 與 WSL2 上要用 `sudo` 執行，因為它要在主機上建立網路對應。在自己的電腦上執行時照常輸入密碼；在 GitHub Actions 的 GitHub-hosted runner 上，sudo 預設不需要密碼，CI 裡可以直接執行。兩種環境對 sudo 的設計為什麼不同，見 [讓機器跑無人值守的長任務](/linux/install/unattended-remote-work/) 的〈兩種自動化環境的 sudo 設計：GitHub Actions runner 與 Ansible〉。
 
 kind 的多節點叢集寫在設定檔裡，〈單機上量得到與量不到的行為〉裡的節點故障實驗用的就是這種叢集：
 
