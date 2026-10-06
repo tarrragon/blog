@@ -132,13 +132,14 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Terminology"]
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                   | 關係                                                                                                                                    |
-| -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| [#84 Naming 是 iterated artifact](../naming-as-iterated-artifact/)                     | 術語翻譯是命名的一種；第一版中文譯名常基於當下語境，必須接受 reviewer 修正。                                                            |
-| [#97 Metadata surface 要納入寫作 review 範圍](../metadata-surface-in-writing-review/)  | title、description、index entry 若使用術語，也要保留同一組中文 / 原文錨點。                                                             |
-| [#44 Single Source of Truth](../single-source-of-truth/)                               | 原文術語可作為跨中文譯名的概念 SSoT；中文譯名可以調整，原概念錨點不可漂移。                                                             |
-| [#104 Security 標準引用的時效性與精確度](../security-citation-currency-and-precision/) | 高 stakes 領域的標準術語若翻譯漂移，會把 conditional / scope 一起翻錯；原文錨點降低扭曲風險。                                           |
-| [#259 轉述與翻譯要保留語意強度量級](../rewrite-preserves-claim-intensity/)             | 本卡的雙錨點定義在術語層；#259 把「保留可回源原文」延伸到句子與標語層、作為量級對照（鄰詞存在測試）的前提——錨點在、強度漂移才查得出來。 |
+| 原則                                                                                   | 關係                                                                                                                                                                                                 |
+| -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#370 借用中文日常詞當術語譯名的誤讀](../borrowed-everyday-word-as-translated-term/)   | 補本卡中文那一半怎麼選：讀者在技術文件裡第一個想到的若不是這個概念（cursor 譯成游標），譯名要換；也說明為什麼不能退回只寫英文。本卡「後續可依語境用中文或原文」維持不變，#370 的寫法是之後以中文為主 |
+| [#84 Naming 是 iterated artifact](../naming-as-iterated-artifact/)                     | 術語翻譯是命名的一種；第一版中文譯名常基於當下語境，必須接受 reviewer 修正。                                                                                                                         |
+| [#97 Metadata surface 要納入寫作 review 範圍](../metadata-surface-in-writing-review/)  | title、description、index entry 若使用術語，也要保留同一組中文 / 原文錨點。                                                                                                                          |
+| [#44 Single Source of Truth](../single-source-of-truth/)                               | 原文術語可作為跨中文譯名的概念 SSoT；中文譯名可以調整，原概念錨點不可漂移。                                                                                                                          |
+| [#104 Security 標準引用的時效性與精確度](../security-citation-currency-and-precision/) | 高 stakes 領域的標準術語若翻譯漂移，會把 conditional / scope 一起翻錯；原文錨點降低扭曲風險。                                                                                                        |
+| [#259 轉述與翻譯要保留語意強度量級](../rewrite-preserves-claim-intensity/)             | 本卡的雙錨點定義在術語層；#259 把「保留可回源原文」延伸到句子與標語層、作為量級對照（鄰詞存在測試）的前提——錨點在、強度漂移才查得出來。                                                              |
 
 ---
 

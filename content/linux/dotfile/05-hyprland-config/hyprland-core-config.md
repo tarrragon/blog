@@ -336,4 +336,4 @@ hl.config({
 })
 ```
 
-> **[已驗證]** Hyprland 0.55（Aquamarine 渲染後端）+ UTM virtio-gpu-gl-pci 實測：使用 GPU 加速時不需要 `WLR_RENDERER` 或 `LIBGL_ALWAYS_SOFTWARE`，Hyprland 自動走 VirGL/Venus 硬體路徑。`WLR_NO_HARDWARE_CURSORS` 仍需要（virtio-gpu 不支援硬體 cursor）。完整 VM 設定見 [VM 環境設定與測試矩陣](/linux/dotfile/05-hyprland-config/hyprland-vm-setup/)。
+> **[已驗證]** Hyprland 0.55（Aquamarine 渲染後端）+ UTM virtio-gpu-gl-pci 實測：使用 GPU 加速時不需要 `WLR_RENDERER` 或 `LIBGL_ALWAYS_SOFTWARE`，Hyprland 自動走 VirGL/Venus 硬體路徑。`WLR_NO_HARDWARE_CURSORS` 仍需要（virtio-gpu 不支援硬體游標）。完整 VM 設定見 [VM 環境設定與測試矩陣](/linux/dotfile/05-hyprland-config/hyprland-vm-setup/)。

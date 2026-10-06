@@ -68,7 +68,7 @@ if (raw[i][5] !== "view") continue;   // 只數進入事件（第 6 欄）
 
 觸發器受一條配額約束：個人帳號所有觸發器每天總執行時間上限 90 分鐘，且單次一樣不能超過 6 分鐘（見[執行配額](/automation/knowledge-cards/execution-quota/)）。上面那段每次 `getDataRange().getValues()` 把**整張 raw log** 讀進來——log 還小時沒問題，但累積到數十萬列後，光讀取就可能逼近 6 分鐘。
 
-有效率的寫法是**只讀增量**：記住「上次彙總處理到第幾列」，這次只讀新增的部分。用 `PropertiesService` 存這個游標：
+有效率的寫法是**只讀增量**：記住「上次彙總處理到第幾列」，這次只讀新增的部分。用 `PropertiesService` 存這個接續標記（cursor）：
 
 ```javascript
 var props = PropertiesService.getScriptProperties();

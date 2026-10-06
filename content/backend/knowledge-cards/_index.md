@@ -222,19 +222,20 @@ weight: -1
 
 對外 API 的承諾邊界——對外契約的語意：版本與退場、重試與冪等、翻頁、限流、錯誤格式、以及消費者本身的形態與可協調度。
 
-| 卡片                                                                             | 核心問題                          | 常見出現位置                 |
-| -------------------------------------------------------------------------------- | --------------------------------- | ---------------------------- |
-| [Idempotency Key](/backend/knowledge-cards/idempotency-key/)                     | 重試安全用什麼機制對外承諾        | Stripe、retry、409           |
-| [Pagination Cursor](/backend/knowledge-cards/pagination-cursor/)                 | cursor 的不透明性算承諾還是逃生門 | keyset、collection API       |
-| [Deprecation Lifecycle](/backend/knowledge-cards/deprecation-lifecycle/)         | API 退場如何分階段承諾            | sunset header、brownout      |
-| [Rate Limit Contract](/backend/knowledge-cards/rate-limit-contract/)             | 被限流後消費者能依賴什麼邊界      | 429、Retry-After             |
-| [No-Versioning](/backend/knowledge-cards/no-versioning/)                         | 拿掉版本識別碼要換來什麼前提      | hypermedia、versionless      |
-| [Problem Details](/backend/knowledge-cards/problem-details/)                     | 採現成錯誤格式附帶哪兩項設計條款  | RFC 9457、problem+json       |
-| [API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/)               | 「消費者」指的是哪一種對象        | 版本退場、中介層失明         |
-| [Consumer Coordinability](/backend/knowledge-cards/consumer-coordinability/)     | 「可協調」的四項成立條件          | 遷移計畫、支援窗口           |
-| [Minimum Supported Version](/backend/knowledge-cards/minimum-supported-version/) | 如何讓舊版行動 App 停止使用       | 強制更新、版本回報           |
-| [Remote Config](/backend/knowledge-cards/remote-config/)                         | 已安裝的 App 如何不經更新改變行為 | 讀取間隔、內建預設值、多版本 |
-| [BFF](/backend/knowledge-cards/bff/)                                             | 特定客戶端的聚合責任放在哪一層    | 聚合、客戶端專屬後端         |
+| 卡片                                                                             | 核心問題                                              | 常見出現位置                 |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------- |
+| [Idempotency Key](/backend/knowledge-cards/idempotency-key/)                     | 重試安全用什麼機制對外承諾                            | Stripe、retry、409           |
+| [Pagination Cursor](/backend/knowledge-cards/pagination-cursor/)                 | 接續標記的不透明性算承諾還是逃生門                    | keyset、collection API       |
+| [Cursor](/backend/knowledge-cards/cursor/)                                       | cursor 指的是畫面游標、查詢結果的讀取物件還是接續標記 | 譯名、資料庫用戶端、分頁 API |
+| [Deprecation Lifecycle](/backend/knowledge-cards/deprecation-lifecycle/)         | API 退場如何分階段承諾                                | sunset header、brownout      |
+| [Rate Limit Contract](/backend/knowledge-cards/rate-limit-contract/)             | 被限流後消費者能依賴什麼邊界                          | 429、Retry-After             |
+| [No-Versioning](/backend/knowledge-cards/no-versioning/)                         | 拿掉版本識別碼要換來什麼前提                          | hypermedia、versionless      |
+| [Problem Details](/backend/knowledge-cards/problem-details/)                     | 採現成錯誤格式附帶哪兩項設計條款                      | RFC 9457、problem+json       |
+| [API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/)               | 「消費者」指的是哪一種對象                            | 版本退場、中介層失明         |
+| [Consumer Coordinability](/backend/knowledge-cards/consumer-coordinability/)     | 「可協調」的四項成立條件                              | 遷移計畫、支援窗口           |
+| [Minimum Supported Version](/backend/knowledge-cards/minimum-supported-version/) | 如何讓舊版行動 App 停止使用                           | 強制更新、版本回報           |
+| [Remote Config](/backend/knowledge-cards/remote-config/)                         | 已安裝的 App 如何不經更新改變行為                     | 讀取間隔、內建預設值、多版本 |
+| [BFF](/backend/knowledge-cards/bff/)                                             | 特定客戶端的聚合責任放在哪一層                        | 聚合、客戶端專屬後端         |
 
 ## 邊界與治理
 
@@ -419,7 +420,7 @@ weight: -1
 | [OLAP Offload](/backend/knowledge-cards/olap-offload/)                           | 分析查詢如何從 OLTP 主庫卸載             | replica、資料倉儲、CDC                   |
 | [Per-Connection Memory](/backend/knowledge-cards/per-connection-memory/)         | 每連線記憶體如何隨並發數放大             | sort/join buffer、OOM、連線數            |
 | [Query Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)   | 查詢行數如何因 join 缺條件而爆炸放大     | join、cross product                      |
-| [Keyset Pagination](/backend/knowledge-cards/keyset-pagination/)                 | 深分頁如何避開 OFFSET 的線性退化         | 大表、游標分頁                           |
+| [Keyset Pagination](/backend/knowledge-cards/keyset-pagination/)                 | 深分頁如何避開 OFFSET 的線性退化         | 大表、接續標記分頁                       |
 
 ## 事故處理與復盤
 

@@ -132,7 +132,7 @@ env = {
 }
 ```
 
-Cursor 修正（NVIDIA 常見的硬體 cursor 問題）：
+Cursor 修正（NVIDIA 常見的硬體游標問題）：
 
 ```lua
 hl.config({
@@ -282,9 +282,9 @@ SDDM 會自動偵測到 Hyprland 並在登入畫面顯示它作為 session 選�
 
 | 症狀                           | 原因                                     | 修正                                                        |
 | ------------------------------ | ---------------------------------------- | ----------------------------------------------------------- |
-| 黑屏、沒有 cursor              | 缺少 polkit agent 或 seatd service       | `sudo systemctl enable --now seatd` 或安裝 `polkit-gnome`   |
+| 黑屏、沒有游標                 | 缺少 polkit agent 或 seatd service       | `sudo systemctl enable --now seatd` 或安裝 `polkit-gnome`   |
 | 開不了 terminal                | 預設 keybind 用的是 kitty，但 kitty 沒裝 | `sudo pacman -S kitty` 或改 keybind 指向已安裝的 terminal   |
-| Cursor 不見（NVIDIA）          | 硬體 cursor 問題                         | 設定 `cursor { no_hardware_cursors = true }`                |
+| Cursor 不見（NVIDIA）          | 硬體游標問題                             | 設定 `cursor { no_hardware_cursors = true }`                |
 | Portal 衝突，screen share 失敗 | 同時裝了多個 portal backend              | 移除 `xdg-desktop-portal-gnome` 和 `xdg-desktop-portal-gtk` |
 | 沒有音訊                       | PipeWire 服務未啟動                      | `systemctl --user enable --now pipewire wireplumber`        |
 | Config 報錯但不影響使用        | 自動產生的預設 config 語法不完整         | emergency keybind 仍可用：SUPER+Q 開 terminal、SUPER+M 離開 |

@@ -138,14 +138,14 @@ interleaved table 設計參考 [schema-migration-interleaved-tables](../schema-m
 
 ### Application diff
 
-| 維度                        | Cloud SQL（PostgreSQL client）       | Spanner                                                  |
-| --------------------------- | ------------------------------------ | -------------------------------------------------------- |
-| ORM                         | 全 PG ORM 相容                       | PostgreSQL dialect 相容部分 ORM、查最新 dialect 支援列表 |
-| Connection model            | process-per-connection（postgres）   | stateless gRPC client（SDK 內 pool）                     |
-| Transaction model           | 可長交易                             | 10s timeout、需短交易                                    |
-| Timestamp 使用              | app 內 `now()` / `CURRENT_TIMESTAMP` | 改用 `PENDING_COMMIT_TIMESTAMP` sentinel                 |
-| Cursor / prepared statement | 全支援                               | 部分支援、查 SDK 文件                                    |
-| Stored procedure            | 全支援                               | 少數支援、業務邏輯改應用層                               |
+| 維度                                             | Cloud SQL（PostgreSQL client）       | Spanner                                                  |
+| ------------------------------------------------ | ------------------------------------ | -------------------------------------------------------- |
+| ORM                                              | 全 PG ORM 相容                       | PostgreSQL dialect 相容部分 ORM、查最新 dialect 支援列表 |
+| Connection model                                 | process-per-connection（postgres）   | stateless gRPC client（SDK 內 pool）                     |
+| Transaction model                                | 可長交易                             | 10s timeout、需短交易                                    |
+| Timestamp 使用                                   | app 內 `now()` / `CURRENT_TIMESTAMP` | 改用 `PENDING_COMMIT_TIMESTAMP` sentinel                 |
+| 查詢結果的讀取物件（cursor）/ prepared statement | 全支援                               | 部分支援、查 SDK 文件                                    |
+| Stored procedure                                 | 全支援                               | 少數支援、業務邏輯改應用層                               |
 
 ORM 兼容性是 time-sensitive claim — JPA / Hibernate / SQLAlchemy 在 Spanner PostgreSQL dialect 上的行為隨 dialect 版本演進、實作前查最新 vendor docs。讀者要把 ORM 兼容測試放進 Phase 0 的 compatibility audit、不能假設「PostgreSQL ORM 直接搬到 Spanner」。
 

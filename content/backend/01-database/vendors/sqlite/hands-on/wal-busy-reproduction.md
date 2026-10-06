@@ -129,7 +129,7 @@ TRUNCATE 適合 lab 觀察。Production 使用時要評估 reader、latency 與�
 
 ## Mitigation Note
 
-Mitigation note 的核心責任是把 lab 結果轉成設計策略。看到 `SQLITE_BUSY` 後，優先檢查 long transaction、未關閉 cursor、背景 job、write burst、parallel test 共用 DB 與 checkpoint pressure。
+Mitigation note 的核心責任是把 lab 結果轉成設計策略。看到 `SQLITE_BUSY` 後，優先檢查 long transaction、未關閉的查詢結果的讀取物件（cursor）、背景 job、write burst、parallel test 共用 DB 與 checkpoint pressure。
 
 常見策略包含：
 

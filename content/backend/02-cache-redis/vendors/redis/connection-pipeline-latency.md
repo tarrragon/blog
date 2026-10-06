@@ -126,7 +126,7 @@ cas(keys=["lock:resource"], args=["old_token", "new_token"])
 **修法**：
 
 1. pipeline 分批（chunk），每批幾百到幾千命令，不要一個 pipeline 塞無上限
-2. 大量資料的掃描用 `SCAN` 游標分批，不要 `KEYS *` 一次撈
+2. 大量資料的掃描用 `SCAN` 接續標記（cursor）分批，不要 `KEYS *` 一次撈
 3. 監控 client output buffer（`CLIENT LIST` 的 `omem`），異常大代表有巨型 pipeline 或慢 consumer
 4. 批次大小靠 RTT 與記憶體權衡——批次越大省越多 RTT，但記憶體尖峰越高
 

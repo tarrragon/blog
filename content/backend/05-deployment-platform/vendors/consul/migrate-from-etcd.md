@@ -89,7 +89,7 @@ etcdctl watch --prefix /myapp/config/
 
 # Consul blocking query (long polling)
 curl 'http://consul:8500/v1/kv/myapp/config?recurse&index=5&wait=10s'
-# X-Consul-Index header 為 watch cursor
+# X-Consul-Index header 為 watch 的接續標記（cursor）
 ```
 
 ```bash

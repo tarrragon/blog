@@ -105,7 +105,7 @@ $ redis-cli XPENDING mystream g1 - + 10
 
 ```bash
 $ redis-cli XAUTOCLAIM mystream g1 c3 0 0
-0-0                          # 下次掃描的 cursor（0-0 代表掃完一輪）
+0-0                          # 下次掃描的接續標記（0-0 代表掃完一輪）
 1781584105278-0 ...          # 接管的 entry 內容（order_2）
 1781584105373-0 ...          # order_3
 1781584105466-0 ...          # order_4
@@ -120,7 +120,7 @@ c3                           # 全部 4 筆 owner 變 c3
 4
 ```
 
-一次呼叫把整個 group 的 idle 訊息全歸到 c3。`XAUTOCLAIM` 是 consumer crash 後接管的主力——consumer 在啟動或處理迴圈裡固定跑一輪 `XAUTOCLAIM`、把孤兒訊息撿回來。回傳的 cursor 支援分批（一次掃不完時帶 cursor 續掃）、第三個回傳值（被刪 entry 清單）對應後面 MAXLEN 修剪的故障。
+一次呼叫把整個 group 的 idle 訊息全歸到 c3。`XAUTOCLAIM` 是 consumer crash 後接管的主力——consumer 在啟動或處理迴圈裡固定跑一輪 `XAUTOCLAIM`、把孤兒訊息撿回來。回傳的接續標記（cursor）支援分批（一次掃不完時帶接續標記續掃）、第三個回傳值（被刪 entry 清單）對應後面 MAXLEN 修剪的故障。
 
 ## min-idle-time：防止活 consumer 被搶單
 
@@ -172,7 +172,7 @@ $ redis-cli XAUTOCLAIM mystream g1 self_consumer_id 60000 0
 ```
 
 1. **min-idle-time 設成 > p99 處理時間 + 安全係數**：避免把處理中的訊息誤判成孤兒（接 Case 2）。
-2. **用回傳 cursor 分批掃**：PEL 大時一次 `XAUTOCLAIM` 不掃完、帶 cursor 續掃、避免單次 block 太久。
+2. **用回傳接續標記分批掃**：PEL 大時一次 `XAUTOCLAIM` 不掃完、帶接續標記續掃、避免單次 block 太久。
 3. **接管後檢查 delivery count**：超過閾值（如 5）的 entry 不再處理、路由到 DLQ（Redis Streams 沒原生 DLQ、Bitso 自建一個 stream 當 DLQ）。
 4. **監控 PEL 最大 idle**：alert 設在「最老 pending entry 的 idle 超過 N 倍接管門檻」、代表接管機制本身停了。
 

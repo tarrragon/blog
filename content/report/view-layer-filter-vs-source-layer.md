@@ -54,13 +54,13 @@ items.forEach(el => {
 
 ## 哪些 source 形狀有層錯位風險
 
-| Source 型態                           | 是否有層錯位風險                |
-| ------------------------------------- | ------------------------------- |
-| 一次性 fetch、靜態陣列                | 否（沒有 subset）               |
-| Paginated fetch（load more / cursor） | 是 — 本次任務的 case            |
-| Streaming（SSE / WebSocket）          | 視 server 是否限額              |
-| Lazy iterator + take(N) / break       | 是                              |
-| Cached + revalidate                   | 是（cache vs fresh 兩 dataset） |
+| Source 型態                                   | 是否有層錯位風險                |
+| --------------------------------------------- | ------------------------------- |
+| 一次性 fetch、靜態陣列                        | 否（沒有 subset）               |
+| Paginated fetch（load more、接續標記 cursor） | 是 — 本次任務的 case            |
+| Streaming（SSE / WebSocket）                  | 視 server 是否限額              |
+| Lazy iterator + take(N) / break               | 是                              |
+| Cached + revalidate                           | 是（cache vs fresh 兩 dataset） |
 
 四類 source 共用同個結構：**source 分批 / 限額 / 延遲 materialize、filter 在下游 → silent 缺口**。詳細形狀分析見 [#63 資料源的形狀決定 feature 的形狀](../data-source-shape-defines-feature-shape/)。
 

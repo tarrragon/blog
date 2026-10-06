@@ -64,19 +64,19 @@ tags: ["backend", "api-design", "case-study"]
 
 ## 介面語意：錯誤 / 分頁 / 冪等 / 限流 / 長時操作（C35-C45）
 
-| 編號 | 案例                                                                                          | 主議題                                                                        | 類型   |
-| ---- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ |
-| C35  | [RFC 9457 problem+json](/backend/11-api-design/cases/error-rfc9457-problem-details/)          | 錯誤格式標準、演化條款                                                        | anchor |
-| C36  | [Stripe 錯誤物件](/backend/11-api-design/cases/error-stripe-error-object/)                    | 三層正交欄位                                                                  | anchor |
-| C37  | [Slack cursor 遷移](/backend/11-api-design/cases/pagination-slack-cursor-migration/)          | opaque [cursor](/backend/knowledge-cards/pagination-cursor/)、表示權在 server | anchor |
-| C38  | [Stripe 冪等設計哲學](/backend/11-api-design/cases/idempotency-stripe-design-blog/)           | 三種失敗點、client 協作                                                       | anchor |
-| C39  | [Stripe 冪等契約條款](/backend/11-api-design/cases/idempotency-stripe-api-contract/)          | 24h、500 也重放                                                               | anchor |
-| C40  | [IETF Idempotency-Key draft](/backend/11-api-design/cases/idempotency-ietf-key-header-draft/) | 標準化停滯（expired）                                                         | 邊緣   |
-| C41  | [PayPal-Request-Id](/backend/11-api-design/cases/idempotency-paypal-request-id/)              | 同語意不同契約                                                                | 邊緣   |
-| C42  | [IETF RateLimit headers](/backend/11-api-design/cases/ratelimit-ietf-header-fields/)          | 政策 / 狀態分離、informational                                                | anchor |
-| C43  | [GitHub 雙層限流](/backend/11-api-design/cases/ratelimit-github-primary-secondary/)           | primary / secondary、x- 前綴                                                  | anchor |
-| C44  | [Google AIP-151](/backend/11-api-design/cases/longrun-google-aip151/)                         | Operation resource                                                            | anchor |
-| C45  | [Twilio 計費事故](/backend/11-api-design/cases/idempotency-twilio-billing-postmortem/)        | 內部 retry 缺冪等閘門                                                         | 反例   |
+| 編號 | 案例                                                                                          | 主議題                                                                         | 類型   |
+| ---- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------ |
+| C35  | [RFC 9457 problem+json](/backend/11-api-design/cases/error-rfc9457-problem-details/)          | 錯誤格式標準、演化條款                                                         | anchor |
+| C36  | [Stripe 錯誤物件](/backend/11-api-design/cases/error-stripe-error-object/)                    | 三層正交欄位                                                                   | anchor |
+| C37  | [Slack 接續標記遷移](/backend/11-api-design/cases/pagination-slack-cursor-migration/)         | 不透明[接續標記](/backend/knowledge-cards/pagination-cursor/)、表示權在 server | anchor |
+| C38  | [Stripe 冪等設計哲學](/backend/11-api-design/cases/idempotency-stripe-design-blog/)           | 三種失敗點、client 協作                                                        | anchor |
+| C39  | [Stripe 冪等契約條款](/backend/11-api-design/cases/idempotency-stripe-api-contract/)          | 24h、500 也重放                                                                | anchor |
+| C40  | [IETF Idempotency-Key draft](/backend/11-api-design/cases/idempotency-ietf-key-header-draft/) | 標準化停滯（expired）                                                          | 邊緣   |
+| C41  | [PayPal-Request-Id](/backend/11-api-design/cases/idempotency-paypal-request-id/)              | 同語意不同契約                                                                 | 邊緣   |
+| C42  | [IETF RateLimit headers](/backend/11-api-design/cases/ratelimit-ietf-header-fields/)          | 政策 / 狀態分離、informational                                                 | anchor |
+| C43  | [GitHub 雙層限流](/backend/11-api-design/cases/ratelimit-github-primary-secondary/)           | primary / secondary、x- 前綴                                                   | anchor |
+| C44  | [Google AIP-151](/backend/11-api-design/cases/longrun-google-aip151/)                         | Operation resource                                                             | anchor |
+| C45  | [Twilio 計費事故](/backend/11-api-design/cases/idempotency-twilio-billing-postmortem/)        | 內部 retry 缺冪等閘門                                                          | 反例   |
 
 ## 規範治理與標準化（C46-C54）
 

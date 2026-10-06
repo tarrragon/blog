@@ -5,11 +5,11 @@ description: "用上一頁最後一筆的 key 當下一頁起點、避開 OFFSET
 weight: 358
 ---
 
-Keyset pagination（也稱 cursor pagination）的核心責任是讓大表分頁性能穩定在 O(LIMIT)、跟 offset 大小解耦。傳統 `LIMIT 20 OFFSET 10000` 在大表退化成「掃描 10020 行 + skip 10000 行」、是 O(OFFSET + LIMIT)；keyset 寫成 `WHERE id > last_seen_id LIMIT 20`、永遠是 O(LIMIT)、跟 offset 大小無關。跟 [query cardinality explosion](/backend/knowledge-cards/cardinality-explosion/) 同屬大表查詢反模式修法、機制各自獨立。
+Keyset pagination 的核心責任是讓大表分頁性能穩定在 O(LIMIT)、跟 offset 大小解耦。傳統 `LIMIT 20 OFFSET 10000` 在大表退化成「掃描 10020 行 + skip 10000 行」、是 O(OFFSET + LIMIT)；keyset 寫成 `WHERE id > last_seen_id LIMIT 20`、永遠是 O(LIMIT)、跟 offset 大小無關。跟 [query cardinality explosion](/backend/knowledge-cards/cardinality-explosion/) 同屬大表查詢反模式修法、機制各自獨立。業界常把它跟 cursor-based pagination（接續標記分頁）混稱；兩者在不同層：keyset 是定位機制，接續標記是對外的表示法，見 [Pagination Cursor](/backend/knowledge-cards/pagination-cursor/)，cursor 這個字的其他意思見 [Cursor](/backend/knowledge-cards/cursor/)。
 
 ## 概念位置
 
-Keyset pagination 處於 SQL query 設計的「pagination 策略」維度、跟 [query cardinality explosion](/backend/knowledge-cards/cardinality-explosion/) 是 sibling 反模式修法；它的查詢狀態要不要對外承諾成不透明 cursor、是另一張卡 [Pagination Cursor](/backend/knowledge-cards/pagination-cursor/) 承擔的契約面。對比：
+Keyset pagination 處於 SQL query 設計的「pagination 策略」維度、跟 [query cardinality explosion](/backend/knowledge-cards/cardinality-explosion/) 是 sibling 反模式修法；它的查詢狀態要不要對外承諾成不透明的接續標記（opaque cursor）、是另一張卡 [Pagination Cursor](/backend/knowledge-cards/pagination-cursor/) 承擔的契約面。對比：
 
 | 策略         | 寫法                               | 複雜度          | 限制                               |
 | ------------ | ---------------------------------- | --------------- | ---------------------------------- |
@@ -22,4 +22,4 @@ Keyset pagination 處於 SQL query 設計的「pagination 策略」維度、跟 
 
 ## 設計責任
 
-排序欄位若是非 unique（如 `created_at`）、用 `(created_at, id)` 複合條件確保穩定 — 缺 tiebreaker 時、重複值翻頁會跳過或重複資料。Cursor 編碼成 opaque token 給 client、避免暴露內部 ID 結構（也方便未來改 cursor 內容）。對「插入 / 刪除中翻頁」的行為比 OFFSET 穩定（OFFSET 在這類場景容易跳過或重複）。表小於 10000 行時 OFFSET 也快、保持簡單即可。Google 搜尋結果頁那種「跳到第 N 頁」需求要回到 OFFSET 或考慮重新設計使用者操作。
+排序欄位若是非 unique（如 `created_at`）、用 `(created_at, id)` 複合條件確保穩定 — 缺 tiebreaker 時、重複值翻頁會跳過或重複資料。接續標記編碼成 opaque token 給 client、避免暴露內部 ID 結構（也方便未來改接續標記內容）。對「插入 / 刪除中翻頁」的行為比 OFFSET 穩定（OFFSET 在這類場景容易跳過或重複）。表小於 10000 行時 OFFSET 也快、保持簡單即可。Google 搜尋結果頁那種「跳到第 N 頁」需求要回到 OFFSET 或考慮重新設計使用者操作。

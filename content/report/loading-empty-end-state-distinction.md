@@ -56,7 +56,7 @@ End 狀態類似：`results.length > 0 && !hasMore` 才是 End、跟「還可以
 實作上至少需要：
 
 - 一個 fetch state machine（不能只看 `results`）
-- 一個「還有沒有下一批」的訊號（`hasMore` / cursor / total count）
+- 一個「還有沒有下一批」的訊號：`hasMore`、接續標記（cursor）或 total count
 - UI 對三種組合各畫一個樣子
 
 ---

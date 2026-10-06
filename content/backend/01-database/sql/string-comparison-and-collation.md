@@ -81,7 +81,7 @@ SELECT GROUP_CONCAT(姓名 ORDER BY 姓名) FROM 顧客;
 -- Ánna,ANNA,anna,Anna,佳穎（四個 A 開頭的名字倒過來，佳穎仍在最後）
 ```
 
-兩次都沒有違反 collation，因為 collation 對這四個之間什麼都沒有規定。這是 collation 與分頁交會的地方：一條把大小寫與重音都忽略的規則，會讓原本以為唯一的排序鍵變成不唯一，而沒有規定的那一段在分頁時會變成同一列出現兩次、另一列一次都不出現——[SQL.12 分頁的排序鍵與游標](/backend/01-database/sql/pagination-needs-a-total-order/) 寫那個機制與把排序鍵補到兩兩可分的判斷標準。
+兩次都沒有違反 collation，因為 collation 對這四個之間什麼都沒有規定。這是 collation 與分頁交會的地方：一條把大小寫與重音都忽略的規則，會讓原本以為唯一的排序鍵變成不唯一，而沒有規定的那一段在分頁時會變成同一列出現兩次、另一列一次都不出現——[SQL.12 分頁的排序鍵與接續標記](/backend/01-database/sql/pagination-needs-a-total-order/) 寫那個機制與把排序鍵補到兩兩可分的判斷標準。
 
 ## 索引的比較規則與條件的比較規則
 

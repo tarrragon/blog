@@ -166,7 +166,7 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 下單日, 訂單編號 LIMIT 2 OFFSET 
 
 **代價在什麼條件下浮現**。並列造成的那一種要三件事同時成立：排序鍵上有並列的列、同一次翻頁跨過了計畫改變的時刻、而且剛好有人在看。開發時資料少、只有一種計畫，順序穩定得像是有保證，而讓它變動的條件（建了索引、資料長大、統計更新、換一台複本）沒有一項在查詢的文字裡。
 
-**而補決勝鍵只治好並列那一種。** 同一組資料、不建任何索引、計畫全程不變，只要在翻頁中間寫進一張排在游標前面的訂單，補了決勝鍵的版本照樣重複與遺漏：
+**而補決勝鍵只治好並列那一種。** 同一組資料、不建任何索引、計畫全程不變，只要在翻頁中間寫進一張排在接續標記（cursor）前面的訂單，補了決勝鍵的版本照樣重複與遺漏：
 
 ```sql
 -- 回到建表時的六張訂單，拿掉前面建的索引
@@ -180,13 +180,13 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 下單日, 訂單編號 LIMIT 2 OFFSET 
 SELECT 訂單編號 FROM 訂單 ORDER BY 下單日, 訂單編號 LIMIT 2 OFFSET 4;   -- 第 3 頁：104, 105，106 從未出現
 ```
 
-`OFFSET` 數的是位置，而位置會被排在游標前面的寫入改變——翻頁途中的寫入造成的錯位不需要並列、不需要計畫改變，只需要一邊翻頁一邊有人在寫。要免疫於它，游標得從位置換成值（[SQL.12 分頁的排序鍵與游標](/backend/01-database/sql/pagination-needs-a-total-order/) 寫兩種游標的取捨，並說明補唯一鍵治好了哪一種、治不好哪一種）。**本節的決定只治得好並列造成的重複與遺漏**；翻頁途中的寫入造成的那一種要靠應用層把游標從位置換成值，schema 管不到。
+`OFFSET` 數的是位置，而位置會被排在接續標記前面的寫入改變——翻頁途中的寫入造成的錯位不需要並列、不需要計畫改變，只需要一邊翻頁一邊有人在寫。要免疫於它，接續標記得從位置換成值（[SQL.12 分頁的排序鍵與接續標記](/backend/01-database/sql/pagination-needs-a-total-order/) 寫兩種接續標記的取捨，並說明補唯一鍵治好了哪一種、治不好哪一種）。**本節的決定只治得好並列造成的重複與遺漏**；翻頁途中的寫入造成的那一種要靠應用層把接續標記從位置換成值，schema 管不到。
 
 排序鍵不唯一的另一個代價落在「拿前一筆比較」那一族問題上：排序鍵有並列時「前一列」是哪一列沒有定義，`LAG` 與自連接都受影響（[SQL.10 分組與視窗函數：各自的產出、選用的依據與 LAG、LEAD 的相鄰列](/backend/01-database/sql/window-keeps-rows-grouping-collapses/)）。
 
 **改回來要付什麼**。補決勝鍵只要改查詢，不用動 schema——這是六個決定裡最便宜的一個。真正的成本在**找出全部要改的地方**：每一段有 `ORDER BY` 加 `LIMIT` 的查詢都要查一次它的排序鍵唯不唯一，而那些查詢散在整個程式裡。
 
-**所以設計當下要問的是**：這張表會不會被翻頁或取前 N 筆，而拿來排的那一欄分不分得出高下。答案是否定的時候，分頁的排序鍵就要在設計時寫成「那一欄加上主鍵」，而不是等症狀出現。位置式與值式兩種游標的取捨在 [SQL.12 分頁的排序鍵與游標](/backend/01-database/sql/pagination-needs-a-total-order/)。
+**所以設計當下要問的是**：這張表會不會被翻頁或取前 N 筆，而拿來排的那一欄分不分得出高下。答案是否定的時候，分頁的排序鍵就要在設計時寫成「那一欄加上主鍵」，而不是等症狀出現。位置式與值式兩種接續標記的取捨在 [SQL.12 分頁的排序鍵與接續標記](/backend/01-database/sql/pagination-needs-a-total-order/)。
 
 ## 表的寬度與長欄位的存放位置
 
@@ -501,6 +501,6 @@ PRAGMA foreign_keys;             -- 這條連線有沒有開執法，0 是沒開
 
 ## 延伸閱讀：各節查詢行為的 SQL 機制篇與 PostgreSQL 查詢計畫判讀
 
-查詢本身怎麼讀準、代價為什麼不在查詢的文字裡，在 [SQL：這個語言為什麼長這樣](/backend/01-database/sql/)。本篇六節各自指過去的那幾篇是它的機制層：[SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/) 空值與列數膨脹、[SQL.11 查詢結果的列序](/backend/01-database/sql/relations-have-no-order/) 順序、[SQL.12 分頁的排序鍵與游標](/backend/01-database/sql/pagination-needs-a-total-order/) 分頁、[SQL.15 字串比較與 collation](/backend/01-database/sql/string-comparison-and-collation/) collation、[SQL.18 外鍵與參照完整性](/backend/01-database/sql/foreign-key-and-referential-integrity/) 外鍵。
+查詢本身怎麼讀準、代價為什麼不在查詢的文字裡，在 [SQL：這個語言為什麼長這樣](/backend/01-database/sql/)。本篇六節各自指過去的那幾篇是它的機制層：[SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/) 空值與列數膨脹、[SQL.11 查詢結果的列序](/backend/01-database/sql/relations-have-no-order/) 順序、[SQL.12 分頁的排序鍵與接續標記](/backend/01-database/sql/pagination-needs-a-total-order/) 分頁、[SQL.15 字串比較與 collation](/backend/01-database/sql/string-comparison-and-collation/) collation、[SQL.18 外鍵與參照完整性](/backend/01-database/sql/foreign-key-and-referential-integrity/) 外鍵。
 
 要在真實系統上讀計畫、而不是像本篇這樣讀三四行的輸出，走 [PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)。

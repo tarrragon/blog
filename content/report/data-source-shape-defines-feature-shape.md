@@ -54,14 +54,14 @@ UI 上「filter 拉桿」這個元件、隱含假設「資料能立即過濾」 
 
 ### 形狀 2：分批 fetch（pagination）
 
-範例：pagefind、infinite scroll、cursor-based API。
+範例：pagefind、infinite scroll、接續標記分頁 API（cursor-based API）。
 
 | Feature 設計     | 限制                                      |
 | ---------------- | ----------------------------------------- |
 | Filter           | 必須跟 source 同層（A）或自動續抓（B）    |
 | Sort             | 必須是 server-side sort、不能 client 重排 |
 | Count            | 通常需要 source 提供 total（pagefind 有） |
-| 「跳到最後一頁」 | 需要 cursor / offset 支援                 |
+| 「跳到最後一頁」 | 需要接續標記 / offset 支援                |
 
 UI 設計時要避開：「立即 filter」「立即 sort」「Show all」 — 這些假設 dataset 已 materialize。
 

@@ -22,7 +22,7 @@ SELECT id FROM (SELECT id, k FROM t) d ORDER BY k;
 
 這個語言用一套規則決定哪些列會出現在結果裡（那套規則叫[語意模型](/backend/01-database/sql/knowledge-cards/semantic-model/)），而輸出的順序是它管得最少的一項：**規則只到「排序鍵分得出高下」為止，分不出高下的那些它沒有規定**。
 
-本篇交代順序從哪裡來、`ORDER BY` 看得到什麼、以及比不出大小的值落在哪一端。**`ORDER BY` 沒有規定同分的列誰先誰後，這件事在什麼時候變成錯誤，在 [SQL.12 分頁的排序鍵與游標](/backend/01-database/sql/pagination-needs-a-total-order/)**——整批看的時候同分的列換位置沒有後果，每一頁各查一次的時候它變成重複與遺漏；那一篇寫排序鍵要補到兩兩可分的判斷標準，以及把游標從位置換成值的寫法。
+本篇交代順序從哪裡來、`ORDER BY` 看得到什麼、以及比不出大小的值落在哪一端。**`ORDER BY` 沒有規定同分的列誰先誰後，這件事在什麼時候變成錯誤，在 [SQL.12 分頁的排序鍵與接續標記](/backend/01-database/sql/pagination-needs-a-total-order/)**——整批看的時候同分的列換位置沒有後果，每一頁各查一次的時候它變成重複與遺漏；那一篇寫排序鍵要補到兩兩可分的判斷標準，以及把接續標記（cursor）從位置換成值的寫法。
 
 本篇範圍之外的兩件事各有專篇。哪些列會進到這份結果由條件與連接決定，順序管不到那一層：條件擺哪一邊決定留下哪些列在 [SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責](/backend/01-database/sql/on-describes-where-filters/)，連接怎麼改變列數在 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/)。視窗函數的 `OVER (ORDER BY ...)` 是另一個順序，它決定計算時誰算相鄰、不決定輸出怎麼排，兩者可以不同，[SQL.10 分組與視窗函數：各自的產出、選用的依據與 LAG、LEAD 的相鄰列](/backend/01-database/sql/window-keeps-rows-grouping-collapses/) 的〈排序相鄰與問題要的相鄰：分區、排序鍵與距離條件〉一節寫那一種。
 

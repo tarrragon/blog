@@ -81,12 +81,12 @@ Checkpoint 策略的判讀要看 workload cadence。互動式服務通常保留 
 
 Checkpoint starvation 的核心概念是：只要總有 reader 還在使用舊 snapshot，checkpoint 就可能停在 reset 之前。SQLite 官方 WAL 文件明確指出，checkpoint 可以和 reader 並行，但遇到仍被 reader 使用的 WAL 位置時要停下來；如果長時間沒有 reader gap，WAL file 會持續成長。
 
-| 情境                         | 真實服務長相                            | 修正方向                                       |
-| ---------------------------- | --------------------------------------- | ---------------------------------------------- |
-| Desktop app 開著長報表       | 使用者查詢大列表，背景寫入持續發生      | 報表分頁、限制 read transaction duration       |
-| API handler 把 cursor 留太久 | streaming response 邊讀邊回，交易未結束 | 先 materialize 結果、縮短 DB read transaction  |
-| Background sync 長讀取       | sync worker 掃全表，UI 仍在寫資料       | 分批讀取、讀寫排程、低流量 checkpoint          |
-| Test suite 平行讀寫 fixture  | 測試共用同一 `.db`，多 worker 交錯      | per-test DB、read-only fixture、獨立 temp file |
+| 情境                                             | 真實服務長相                            | 修正方向                                       |
+| ------------------------------------------------ | --------------------------------------- | ---------------------------------------------- |
+| Desktop app 開著長報表                           | 使用者查詢大列表，背景寫入持續發生      | 報表分頁、限制 read transaction duration       |
+| API handler 把查詢結果的讀取物件（cursor）留太久 | streaming response 邊讀邊回，交易未結束 | 先 materialize 結果、縮短 DB read transaction  |
+| Background sync 長讀取                           | sync worker 掃全表，UI 仍在寫資料       | 分批讀取、讀寫排程、低流量 checkpoint          |
+| Test suite 平行讀寫 fixture                      | 測試共用同一 `.db`，多 worker 交錯      | per-test DB、read-only fixture、獨立 temp file |
 
 這些情境的共同點是 reader lifecycle 沒有被 application 控制。SQLite 的 concurrency 問題常發生在 application boundary，而非 database engine 本身；修法也應回到 handler、worker、test runner 或 UI lifecycle。
 

@@ -35,7 +35,7 @@ Apple Silicon Mac 用 UTM（基於 QEMU）跑 ARM64 Linux VM：
 -- VM-only environment variables
 env = {
     "WLR_RENDERER_ALLOW_SOFTWARE, 1",  -- 允許軟體渲染 fallback
-    "WLR_NO_HARDWARE_CURSORS, 1",      -- 停用硬體 cursor（VM 常見問題）
+    "WLR_NO_HARDWARE_CURSORS, 1",      -- 停用硬體游標（VM 常見問題）
     "LIBGL_ALWAYS_SOFTWARE, 1",        -- 強制 Mesa 軟體渲染
 }
 ```
@@ -129,7 +129,7 @@ Sway 比 Hyprland 輕量（基於 wlroots、沒有華麗動畫），如果 Sway 
 | NVIDIA 驅動設定            | VM 不走 NVIDIA 驅動，所有 NVIDIA 配置無法測試  |
 | Screen sharing             | PipeWire + portal 的完整鏈路在 VM 中測試無意義 |
 | Suspend / Resume           | 虛擬機的 suspend 行為跟實機不同                |
-| 硬體 cursor 渲染           | VM 用軟體 cursor，無法測試硬體 cursor 問題     |
+| 硬體游標渲染               | VM 用軟體游標，無法測試硬體游標問題            |
 | 藍牙 / WiFi 整合           | 需要實際硬體                                   |
 | 電池 / 電源管理            | 筆電專屬功能                                   |
 | 日常使用效能               | 只有在實機跑一段時間才能評估「能不能當主力」   |

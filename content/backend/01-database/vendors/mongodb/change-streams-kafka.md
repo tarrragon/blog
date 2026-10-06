@@ -28,7 +28,7 @@ Pipeline 層級遷移的經驗可以對照 [Spotify Kafka → PubSub migration](
 
 ## 核心機制
 
-Change stream 是 MongoDB 3.6+ 原生 CDC、本質上是 oplog tail 包裝成 cursor API。可以從 collection / database / cluster 三個 scope 開：
+Change stream 是 MongoDB 3.6+ 原生 CDC、本質上是把 oplog tail 包裝成一個查詢結果的讀取物件（cursor），應用程式持續從它讀出變更。可以從 collection / database / cluster 三個 scope 開：
 
 - **Collection-level**：監看單一 collection 的變更
 - **Database-level**：監看整個 database 的所有 collection
@@ -39,7 +39,7 @@ Oplog 是 capped collection、預設 size = disk 5% 或 50GB（取較小）。Re
 **Resume token 從哪裡取、怎麼用**：
 
 - `_id`：每個 event 都帶、這個欄位的值就是 resume token，application 自己存
-- `startAfter` / `resumeAfter` parameter：重啟 cursor 時帶上
+- `startAfter` / `resumeAfter` parameter：重新開啟讀取物件時帶上
 
 **`fullDocument: "updateLookup"`**：update event 預設只給 delta、加這個 option 會額外 query 一次 primary 拿完整 doc；高頻 update 下成本顯著（primary 負擔翻倍）。
 
@@ -147,7 +147,7 @@ Rollback boundary：source connector 是 read-only 對 MongoDB 無傷；sink con
 
 **Schema drift 突然 break sink**：MongoDB 寫了新欄位 / 改型別、sink connector 的 JSON schema 不認、batch 停在 dead-letter queue。修法是 schema 變動有 validation gate（見 [schema design pattern](../schema-design-pattern/)）、sink schema 設 `lenient` 模式吃 unknown field、或加 schema registry 統一版本。
 
-**DDL 期間 change stream 異常**：`drop` / `rename` / `dropDatabase` 會送出對應的 event，接著送 `invalidate` 並關閉 cursor；connector 沒處理 → consumer 停。修法是 connector 處理特殊 event 邏輯要明確、不認得的 operation type 至少 log warning 而不是 silently stuck。
+**DDL 期間 change stream 異常**：`drop` / `rename` / `dropDatabase` 會送出對應的 event，接著送 `invalidate` 並關閉讀取物件；connector 沒處理 → consumer 停。修法是 connector 處理特殊 event 邏輯要明確、不認得的 operation type 至少 log warning 而不是 silently stuck。
 
 Anti-recommendation：
 
@@ -160,7 +160,7 @@ Anti-recommendation：
 關鍵 metric：
 
 - **Oplog 健康**：oplog 寫入速率與保留時間
-- **Change stream 健康**：cursor age、resume token 距 oplog 頭尾的距離
+- **Change stream 健康**：讀取物件開著的時間（cursor age）、resume token 距 oplog 頭尾的距離
 - **Connector 健康**：connector lag（Kafka offset 對比 source write）
 - **下游健康**：event count diff（source write count vs sink apply count）、event time → arrival time lag 分布
 

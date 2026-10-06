@@ -34,7 +34,7 @@ tags:
 1. 多台 server 如何知道某個 [topic](/backend/knowledge-cards/topic/) 的訂閱者在哪些節點。
 2. Presence store 如何記錄 client online、offline 與最後活動時間。
 3. Broker [fan-out](/backend/knowledge-cards/fan-out/) 如何和每個節點本地 send [buffer](/backend/knowledge-cards/buffer/) 策略銜接。
-4. Client reconnect 如何使用 cursor、last event ID 或 snapshot 補資料。
+4. Client reconnect 如何使用接續標記（cursor）、last event ID 或 snapshot 補資料。
 5. Topic ACL 與 subscription [authorization](/backend/knowledge-cards/authorization/) 應放在 router、usecase 還是 gateway。
 
 ## 【觀察】跨節點 WebSocket 的核心問題是狀態協調
@@ -67,7 +67,7 @@ presence store 的用途是讓系統知道某個 client 或節點目前大概在
 只靠重新連上 WebSocket 並不能保證使用者不漏訊息。當連線中斷時，常見的補資料方式有：
 
 - last event ID
-- cursor / [offset](/backend/knowledge-cards/offset/)
+- 接續標記 / [offset](/backend/knowledge-cards/offset/)
 - snapshot + delta
 
 選哪一種，取決於你的事件是否可排序、是否可回放，以及業務能容忍多大的缺口。

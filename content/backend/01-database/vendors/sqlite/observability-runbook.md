@@ -23,7 +23,7 @@ Signal inventory 的核心責任是列出 SQLite production 化後最能預告�
 | Migration version      | app startup / metadata | schema drift                      | block release、跑 validation          |
 | Integrity check result | maintenance job        | corruption / storage issue        | 進入 restore decision                 |
 
-`SQLITE_BUSY` 是 writer boundary 的最直接訊號。它可能代表長交易、read cursor 未關、parallel test 共用 DB、checkpoint 壓力或 write burst；runbook 要先查 query duration 與 transaction boundary，再調 busy timeout。
+`SQLITE_BUSY` 是 writer boundary 的最直接訊號。它可能代表長交易、查詢結果的讀取物件（cursor）沒有關閉、parallel test 共用 DB、checkpoint 壓力或 write burst；runbook 要先查 query duration 與 transaction boundary，再調 busy timeout。
 
 WAL size 是 checkpoint 與 reader 壓力的綜合訊號。WAL 持續成長時，先確認是否有長 reader、backup process、未完成 transaction 或 checkpoint 失敗；接著才考慮手動 checkpoint。
 

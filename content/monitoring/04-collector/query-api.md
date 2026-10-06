@@ -92,7 +92,7 @@ GET /v1/events?type=error&name=terminal.connect.*&from=2026-06-18T00:00:00Z&to=2
 }
 ```
 
-`events` 陣列按 `timestamp` 降序排列。`total` 是符合篩選條件的全量筆數（不受 limit 截斷），讓呼叫端計算分頁（`total_pages = ceil(total / limit)`）。分頁用 offset-based（`offset=100` 取第二頁），適合資料量在十萬筆以下的場景。資料量大到 offset 效能不足時，改用 cursor-based（`after=<last_event_id>`），但 cursor-based 是 PostgreSQL 層的演進，SQLite 層用 offset 足夠。
+`events` 陣列按 `timestamp` 降序排列。`total` 是符合篩選條件的全量筆數（不受 limit 截斷），讓呼叫端計算分頁（`total_pages = ceil(total / limit)`）。分頁用 offset-based（`offset=100` 取第二頁），適合資料量在十萬筆以下的場景。資料量大到 offset 效能不足時，改用接續標記分頁（cursor-based pagination，`after=<last_event_id>`），但接續標記分頁是 PostgreSQL 層的演進，SQLite 層用 offset 足夠。
 
 ### 實作策略
 

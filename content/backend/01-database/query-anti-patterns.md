@@ -139,7 +139,7 @@ ORM 的 lazy load 預設行為是「存取 attribute 時才發 query」，這在
 N+1、`SELECT *`、缺索引、ORM lazy load 與長 transaction 之外，還有幾類反模式在 slow log 出現頻率不低、要一併列入發布前檢查：
 
 - **[Cardinality explosion](/backend/knowledge-cards/cardinality-explosion/) / cross join 誤用**：兩個多對多關聯 join 沒加 filter、結果集從 N 行炸成 N×M 行。判讀訊號：query 結果行數遠超業務直覺、`EXPLAIN` 估計 rows 異常大。修正方向：補 filter、改 EXISTS / IN 半連接、或拆兩段 query。
-- **OFFSET-based pagination on large tables**：`OFFSET` 要先讀過被跳過的每一列，才輪到要回傳的那幾列。修正方向是 [keyset / cursor pagination](/backend/knowledge-cards/keyset-pagination/)：用上一頁最後一筆的 id 當起點，讀的列數只跟這一頁的筆數有關。下面是 PostgreSQL 16 對 20 萬列的表依主鍵分頁的實測，`actual rows` 是索引實際讀出的列數：
+- **OFFSET-based pagination on large tables**：`OFFSET` 要先讀過被跳過的每一列，才輪到要回傳的那幾列。修正方向是 [keyset / 接續標記分頁（cursor-based pagination）](/backend/knowledge-cards/keyset-pagination/)：用上一頁最後一筆的 id 當起點，讀的列數只跟這一頁的筆數有關。下面是 PostgreSQL 16 對 20 萬列的表依主鍵分頁的實測，`actual rows` 是索引實際讀出的列數：
 
   ```sql
   SELECT id, status FROM big_orders ORDER BY id LIMIT 20 OFFSET 100000;
@@ -150,7 +150,7 @@ N+1、`SELECT *`、缺索引、ORM lazy load 與長 transaction 之外，還有�
   -- 100000 是上一頁最後一筆的 id；ORDER BY id 決定「下一頁」是哪 20 列，省掉它 LIMIT 取到的是任意 20 列
   ```
 
-  keyset 與 cursor 回答的是兩個不同層次的問題（定位機制 vs 對外表示），對外介面要不要一起換、以及 offset 在哪些條件下該留著，見 [分頁之爭](/backend/11-api-design/pagination-debate/)。
+  keyset 與接續標記回答的是兩個不同層次的問題（定位機制 vs 對外表示），對外介面要不要一起換、以及 offset 在哪些條件下該留著，見 [分頁之爭](/backend/11-api-design/pagination-debate/)。
 - **隱式型別轉換讓 index 失效**：MySQL 拿字串欄位與數字常數比較時，把欄位值逐列轉成數字再比，欄位上的索引因此用不上。判讀訊號：EXPLAIN 顯示 index 沒命中但 schema 上有 index。修正方向：常數的型別對齊欄位。
 
   ```sql

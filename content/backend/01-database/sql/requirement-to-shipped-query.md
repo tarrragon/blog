@@ -122,7 +122,7 @@ ORDER BY 測站, 觀測日;
 高雄  2026-03-06
 ```
 
-三者押的前提不同。自連接押「同一個日期在同一個測站上只有一筆」——有兩筆的時候一列會配到多列，結果多出來（[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。視窗函數押「排序鍵在每個分區裡分得出唯一的次序」——並列的時候「前一列」是哪一列沒有定義（[SQL.12 分頁的排序鍵與游標：同分的列、全序與 OFFSET 的代價](/backend/01-database/sql/pagination-needs-a-total-order/)）。相關子查詢押「括號裡那一段最多回一列」——而**回多列的時候兩家引擎的反應相反**：PostgreSQL 18.6 報 `more than one row returned by a subquery used as an expression`，SQLite 3.51.0 靜默取其中一列往下算。這一條落在 [SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/) 的引擎差異上。
+三者押的前提不同。自連接押「同一個日期在同一個測站上只有一筆」——有兩筆的時候一列會配到多列，結果多出來（[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。視窗函數押「排序鍵在每個分區裡分得出唯一的次序」——並列的時候「前一列」是哪一列沒有定義（[SQL.12 分頁的排序鍵與接續標記：同分的列、全序與 OFFSET 的代價](/backend/01-database/sql/pagination-needs-a-total-order/)）。相關子查詢押「括號裡那一段最多回一列」——而**回多列的時候兩家引擎的反應相反**：PostgreSQL 18.6 報 `more than one row returned by a subquery used as an expression`，SQLite 3.51.0 靜默取其中一列往下算。這一條落在 [SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/) 的引擎差異上。
 
 **三個前提說的是同一件事**：`(測站, 觀測日)` 這一組唯不唯一。那是 schema 上的一條約束，而三段查詢沒有一段查得到它有沒有成立——[外鍵與約束要去系統目錄查](/backend/01-database/sql/foreign-key-and-referential-integrity/)，設計側的完整推導在 [backend 1.16 Schema 設計決定的查詢代價](/backend/01-database/design-decisions-price-every-query/)。
 
