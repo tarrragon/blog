@@ -10,7 +10,7 @@ Replication lag 的核心概念是「資料副本落後正式來源的時間或�
 
 ## 概念位置
 
-Replication lag 是資料一致性與讀取路徑的風險指標。讀 replica 可以降低正式 [database](/backend/knowledge-cards/database/) 壓力，但 lag 會讓剛寫入的資料在副本上暫時看不到。
+Replication lag 是資料一致性與讀取路徑的風險指標。讀 replica 可以降低正式 [database](/backend/knowledge-cards/database/) 壓力，但 lag 會讓剛寫入的資料在副本上暫時看不到；哪些查詢被送到副本，由應用程式、ORM 或代理的路由規則決定，見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈讀寫分離與多個資料庫：連線的路由由哪一層決定〉。
 
 ## 可觀察訊號與例子
 

@@ -99,7 +99,7 @@ transaction 的核心用途是把一組資料庫操作綁成單一一致性單�
 
 ## 本章不處理
 
-本章不會選定特定資料庫或 ORM；Go 的具體工具與交易寫法見 [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)，工具選型見 [10.6 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)。真正的重點是 Go application 如何定義資料一致性責任，讓 SQLite、PostgreSQL 或其他儲存技術都能成為可替換 adapter。
+本章不會選定特定資料庫或 ORM；Go 的具體工具與交易寫法見 [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)，工具選型見 [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)。真正的重點是 Go application 如何定義資料一致性責任，讓 SQLite、PostgreSQL 或其他儲存技術都能成為可替換 adapter。
 
 ## 和 Go 教材的關係
 

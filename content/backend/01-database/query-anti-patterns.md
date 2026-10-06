@@ -39,7 +39,7 @@ SELECT id, name FROM customers WHERE id IN (?, ?, ?);
 
 N+1 在 ORM 環境特別隱性，因為它常被框架的 lazy loading 機制隱藏。Django ORM 的 `order.customer` 看起來像存取 attribute，背後對應一次 query。寫程式時看不到 SQL，發布後才從 slow log 發現問題。
 
-判讀方式：開啟 ORM 的 query log（debug mode）、看一個 API request 跑出幾個 query。預期是個位數；若 query 數隨著資料集大小線性成長（例如 list 100 筆觸發 100 query、list 1000 筆觸發 1000 query），這條 scaling 訊號就是 N+1 — 比固定閾值更可靠的判讀。
+判讀方式：開啟 ORM 的 query log（debug mode，各框架的開法見 [Query Log](/backend/knowledge-cards/query-log/)）、看一個 API request 跑出幾個 query。預期是個位數；若 query 數隨著資料集大小線性成長（例如 list 100 筆觸發 100 query、list 1000 筆觸發 1000 query），這條 scaling 訊號就是 N+1 — 比固定閾值更可靠的判讀。
 
 修正方向：
 

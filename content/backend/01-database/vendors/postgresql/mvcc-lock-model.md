@@ -144,7 +144,7 @@ PG 預設 READ COMMITTED、跟 MySQL InnoDB 預設 REPEATABLE READ 不同：
 
 ### Idle transaction 卡 vacuum — Bloat 暴增
 
-PG MVCC 仰賴 *VACUUM 清理 dead tuple*。VACUUM 只清理 *已經沒有任何 transaction 看得到的 dead tuple*。如果有 *idle in transaction* session 持續開著（application connection pool 連線忘關 transaction），而這個 transaction 已經寫過資料（持有 transaction ID）或跑在 REPEATABLE READ 以上（持有 snapshot），VACUUM 就不能清掉在它開始之後才變成 dead 的 tuple，bloat 跟著累積。只讀過資料的 READ COMMITTED transaction 在兩個 statement 之間不持有 snapshot，閒置時不擋 vacuum。
+PG MVCC 仰賴 *VACUUM 清理 dead tuple*。VACUUM 只清理 *已經沒有任何 transaction 看得到的 dead tuple*。如果有 *idle in transaction* session 持續開著（application connection pool 連線忘關 transaction，見 [Connection Leak](/backend/knowledge-cards/connection-leak/)），而這個 transaction 已經寫過資料（持有 transaction ID）或跑在 REPEATABLE READ 以上（持有 snapshot），VACUUM 就不能清掉在它開始之後才變成 dead 的 tuple，bloat 跟著累積。只讀過資料的 READ COMMITTED transaction 在兩個 statement 之間不持有 snapshot，閒置時不擋 vacuum。
 
 修法：
 

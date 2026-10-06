@@ -163,7 +163,8 @@ Go 標準庫如何把檔案處理、JSON、時間、HTTP 與結構化日誌串�
 - [10.3 sqlx：手寫 SQL 加上 struct 對映](/go/10-database-access/sqlx/)
 - [10.4 sqlc：從 SQL 產生型別安全的 Go 程式碼](/go/10-database-access/sqlc/)
 - [10.5 GORM：model、關聯載入與 ORM 送出的 SQL](/go/10-database-access/gorm/)
-- [10.6 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)
+- [10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/go/10-database-access/gorm-model-and-soft-delete/)
+- [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)
 
 ## 主題導讀
 

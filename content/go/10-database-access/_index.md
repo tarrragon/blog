@@ -30,14 +30,15 @@ tags: ["go", "database"]
 
 ## 章節列表
 
-| 章節                                                                                                       | 交付的內容                                                                                                                 |
-| ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)                    | 標準庫的模型：`*sql.DB` 是連線池、驅動註冊、`Scan` 與 NULL、讀取物件不關閉時連線被佔住、交易的寫法；範例資料表也定在這一篇 |
-| [10.2 pgx：PostgreSQL 驅動的原生介面、連線池與 COPY 大量寫入](/go/10-database-access/pgx/)                 | 驅動的兩種用法、`pgxpool`、依欄名對映、`*pgconn.PgError`、`CopyFrom`、語句快取與連線池代理                                 |
-| [10.3 sqlx：手寫 SQL 加上 struct 對映](/go/10-database-access/sqlx/)                                       | `Get` 與 `Select`、欄位對不上時的錯誤、具名參數與 `IN`                                                                     |
-| [10.4 sqlc：從 SQL 產生型別安全的 Go 程式碼](/go/10-database-access/sqlc/)                                 | 設定檔與查詢註記、產生的程式碼、產生時擋下的錯誤、NULL 與型別對應、選擇性條件                                              |
-| [10.5 GORM：model、關聯載入與 ORM 送出的 SQL](/go/10-database-access/gorm/)                                | 命名慣例、`First` 與 `Take`、N+1 與 `Preload`、零值更新、預設交易、錯誤判讀、`AutoMigrate` 的限制                          |
-| [10.6 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/) | 把 1.17 的選型軸套到 Go 的工具上，以及 Go 專案常見的混用組合                                                               |
+| 章節                                                                                                                           | 交付的內容                                                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)                                        | 標準庫的模型：`*sql.DB` 是連線池、驅動註冊、`Scan` 與 NULL、讀取物件不關閉時連線被佔住、交易的寫法；範例資料表也定在這一篇      |
+| [10.2 pgx：PostgreSQL 驅動的原生介面、連線池與 COPY 大量寫入](/go/10-database-access/pgx/)                                     | 驅動的兩種用法、`pgxpool`、依欄名對映、`*pgconn.PgError`、`CopyFrom`、語句快取與連線池代理                                      |
+| [10.3 sqlx：手寫 SQL 加上 struct 對映](/go/10-database-access/sqlx/)                                                           | `Get` 與 `Select`、欄位對不上時的錯誤、具名參數與 `IN`                                                                          |
+| [10.4 sqlc：從 SQL 產生型別安全的 Go 程式碼](/go/10-database-access/sqlc/)                                                     | 設定檔與查詢註記、產生的程式碼、產生時擋下的錯誤、NULL 與型別對應、選擇性條件                                                   |
+| [10.5 GORM：model、關聯載入與 ORM 送出的 SQL](/go/10-database-access/gorm/)                                                    | 命名慣例、`First` 與 `Take`、N+1 與 `Preload`、零值更新、預設交易、錯誤判讀、`AutoMigrate` 的限制                               |
+| [10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/go/10-database-access/gorm-model-and-soft-delete/) | `gorm.Model` 的四個欄位、軟刪除替查詢加的條件與它涵蓋不到的路徑、唯一約束與部分索引、`Save` 寫回全部欄位與找不到主鍵時的 upsert |
+| [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)                     | 把 1.17 的選型軸套到 Go 的工具上、Go 專案常見的混用組合，以及用 dbresolver 做讀寫分離時的路由                                   |
 
 ## 跨分類引用
 
@@ -45,16 +46,17 @@ tags: ["go", "database"]
 - 不分語言的 ORM 概念：[ORM 知識卡](/backend/knowledge-cards/orm/)
 - Raw SQL、Query Builder、ORM 三類的取捨與 repository adapter 的責任：[Repository Adapter 實作](/backend/01-database/repository-adapter/)
 - N+1 與其他查詢反模式：[查詢反模式](/backend/01-database/query-anti-patterns/)
+- 本模組反覆用到的概念卡：借了連線不還的 [Connection Leak](/backend/knowledge-cards/connection-leak/)、交易物件怎麼傳到每個 repository 的 [Transaction Propagation](/backend/knowledge-cards/transaction-propagation/)、ORM 與資料庫兩端各記到什麼的 [Query Log](/backend/knowledge-cards/query-log/)、刪除改成加標記的 [Soft Delete](/backend/knowledge-cards/soft-delete/)
 
 ## 驗證環境
 
-各篇的輸出在 Go 1.25、PostgreSQL 17、pgx v5.11.0、sqlx v1.4.0、sqlc v1.31.1、GORM v1.31.2（PostgreSQL 方言套件 v1.6.3）上實際跑過。
+各篇的輸出在 Go 1.25、PostgreSQL 17、pgx v5.11.0、sqlx v1.4.0、sqlc v1.31.1、GORM v1.31.2（PostgreSQL 方言套件 v1.6.3）、GORM dbresolver v1.6.2 上實際跑過。
 
 ## Backlog
 
-| 項目                                                                          | 類型 | 前置條件                     | 規模 |
-| ----------------------------------------------------------------------------- | ---- | ---------------------------- | ---- |
-| Query Builder（squirrel、goqu）專篇                                           | 主章 | 讀者回饋顯示 10.6 的簡介不夠 | 小   |
-| ent 專篇（schema 寫成 Go 程式碼的另一種 ORM）                                 | 主章 | 同上                         | 中   |
-| 資料庫整合測試（testcontainers 與交易回滾）                                   | 主章 | 無                           | 中   |
-| GORM 的 `gorm.Model` 與軟刪除（`DeletedAt`、`Unscoped`）、`Save` 寫回全部欄位 | 主章 | 先實測 GORM v1.31 的行為     | 小   |
+| 項目                                                                                                                                                                 | 類型 | 前置條件                     | 規模 |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------------------------- | ---- |
+| Query Builder（squirrel、goqu）專篇                                                                                                                                  | 主章 | 讀者回饋顯示 10.7 的簡介不夠 | 小   |
+| ent 專篇（schema 寫成 Go 程式碼的另一種 ORM）                                                                                                                        | 主章 | 同上                         | 中   |
+| 資料庫整合測試（testcontainers 與交易回滾）                                                                                                                          | 主章 | 無                           | 中   |
+| GORM 的樂觀鎖外掛（`gorm.io/plugin/optimisticlock`）與 `Save` 搭配時的行為、關聯一併軟刪除（`Select("Orders").Delete`）、`gorm.io/plugin/soft_delete` 的旗標式軟刪除 | 主章 | 先實測                       | 小   |

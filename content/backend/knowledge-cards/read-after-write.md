@@ -13,7 +13,7 @@ Read-After-Write 位在一致性保證光譜上、比 eventual consistency 強�
 
 ## 可觀察訊號與例子
 
-需要 read-after-write 的訊號是使用者送出資料後會立刻看結果：下單後看訂單、發文後看貼文、改設定後回設定頁。這些路徑讀到舊狀態會被當成「資料遺失」的 bug。提供保證的常見做法是讓這類讀取走 primary、加 lag guard、或在 session 內 pin 到能看到自己寫入的來源。
+需要 read-after-write 的訊號是使用者送出資料後會立刻看結果：下單後看訂單、發文後看貼文、改設定後回設定頁。這些路徑讀到舊狀態會被當成「資料遺失」的 bug。提供保證的常見做法是讓這類讀取走 primary、加 lag guard、或在 session 內 pin 到能看到自己寫入的來源。框架層的做法（Laravel 的 `sticky`、GORM dbresolver 的 `Clauses(dbresolver.Write)`）與它們沒處理的情形見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈讀寫分離與多個資料庫：連線的路由由哪一層決定〉。
 
 ## 設計責任
 

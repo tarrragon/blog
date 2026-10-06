@@ -76,7 +76,7 @@ SELECT * FROM users WHERE status = 'active' AND email = 'x@y.com';
 
 用途：
 
-- *Soft-delete* 場景：對 `deleted_at IS NULL` 建 partial index
+- *Soft-delete* 場景（[Soft Delete](/backend/knowledge-cards/soft-delete/)）：對 `deleted_at IS NULL` 建 partial index
 - *Hot subset* 場景：對 `status = 'pending'` 等熱資料建 partial
 - Index 大小 / 寫入成本大降
 

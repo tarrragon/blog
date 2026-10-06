@@ -166,7 +166,7 @@ repository 是 *infrastructure* 層、test 策略不同於 domain layer。
 
 ## Transaction 傳遞
 
-repository 操作通常要支援「我自己起 transaction」跟「在已有 transaction 內操作」兩種模式。
+repository 操作通常要支援「我自己起 transaction」跟「在已有 transaction 內操作」兩種模式（概念與各語言隱含、明確傳遞的差別見 [Transaction Propagation](/backend/knowledge-cards/transaction-propagation/)）。
 
 **repository 自己起 transaction**：
 
@@ -250,16 +250,16 @@ func (s *Service) PlaceOrder(ctx context.Context, order Order) error {
 
 ## 判讀訊號
 
-| 訊號                                  | 判讀重點                   | 對應動作                                      |
-| ------------------------------------- | -------------------------- | --------------------------------------------- |
-| 同一業務錯誤在不同路徑返回不同型別    | error translation 分類漂移 | 收斂錯誤分類介面與 mapping                    |
-| schema 變更後應用層出現大量 null 問題 | nullable handling 規則不足 | 補顯式轉換與 fallback 規則                    |
-| SQL 細節在 service 層大量出現         | adapter 邊界被繞過         | 收斂資料操作入口到 repository                 |
-| 同一查詢在不同環境結果不一致          | contract test 覆蓋不足     | 補跨環境合約測試與 fixture                    |
-| 事故排查時難以判斷重試與回退條件      | 錯誤分類無法對應決策       | 建立錯誤分類到 gate/incident 的映射表         |
-| N+1 query 在 ORM 環境下出現           | lazy loading 反模式        | 改 eager loading 或換 query builder           |
-| 跨 repository 的 transaction 不一致   | transaction 沒共用機制     | 引入 unit-of-work pattern                     |
-| Test 跑很慢、需要起 DB                | test 沒分層                | unit test 用 memory fake、integration 才用 DB |
+| 訊號                                  | 判讀重點                   | 對應動作                                                                                                                   |
+| ------------------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 同一業務錯誤在不同路徑返回不同型別    | error translation 分類漂移 | 收斂錯誤分類介面與 mapping                                                                                                 |
+| schema 變更後應用層出現大量 null 問題 | nullable handling 規則不足 | 補顯式轉換與 fallback 規則                                                                                                 |
+| SQL 細節在 service 層大量出現         | adapter 邊界被繞過         | 收斂資料操作入口到 repository                                                                                              |
+| 同一查詢在不同環境結果不一致          | contract test 覆蓋不足     | 補跨環境合約測試與 fixture                                                                                                 |
+| 事故排查時難以判斷重試與回退條件      | 錯誤分類無法對應決策       | 建立錯誤分類到 gate/incident 的映射表                                                                                      |
+| N+1 query 在 ORM 環境下出現           | lazy loading 反模式        | 改 eager loading 或換 query builder                                                                                        |
+| 跨 repository 的 transaction 不一致   | transaction 沒共用機制     | 引入 unit-of-work pattern（徵兆與傳遞方式見 [Transaction Propagation](/backend/knowledge-cards/transaction-propagation/)） |
+| Test 跑很慢、需要起 DB                | test 沒分層                | unit test 用 memory fake、integration 才用 DB                                                                              |
 
 ## 常見誤區
 

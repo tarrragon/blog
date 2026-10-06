@@ -50,7 +50,7 @@ defer pool.Close()
 | `EmptyAcquireCount()` | 取連線時池裡沒有閒置連線、必須等待或新開的累計次數 |
 | `AcquireDuration()`   | 取連線花掉的累計時間                               |
 
-`EmptyAcquireCount` 持續增加、`AcquireDuration` 跟著變長，代表請求在等連線；這和 `database/sql` 連線池的 `WaitCount` 是同一種訊號。
+`EmptyAcquireCount` 持續增加、`AcquireDuration` 跟著變長，代表請求在等連線；這和 `database/sql` 連線池的 `WaitCount` 是同一種訊號，持續發生而查詢本身不慢時，先查有沒有借了連線不還（[Connection Leak](/backend/knowledge-cards/connection-leak/)）。
 
 ## 讀取結果：CollectRows 與 RowToStructByName
 

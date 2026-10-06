@@ -235,18 +235,18 @@ UPDATE products SET stock = stock - 1, version = version + 1 WHERE id = 7 AND ve
 **Read / write split（application-level）**：
 
 - 應用層判斷 query 類型、寫走 primary、讀走 replica
-- 工具：ProxySQL（MySQL）、application 自管
+- 工具：application 自管（各框架的路由規則見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈讀寫分離與多個資料庫：連線的路由由哪一層決定〉）
 
 **Routing 自動化（middleware）**：
 
-- pgBouncer + 路由規則
+- ProxySQL（MySQL，依 SQL 文字比對規則分流）、Pgpool-II（PostgreSQL）；PgBouncer 只做連線池，不依 SQL 內容分流讀寫
 - HAProxy + health check
 
 **Stale read 容忍策略**：
 
 - 「能容忍秒級 stale」的 read → replica（用戶 profile、報表）
 - 「不能 stale」的 read → primary（剛寫入後的查詢、餘額確認）
-- read-after-write consistency：用 session token 標記「剛寫過」、N 秒內讀走 primary
+- [read-after-write consistency](/backend/knowledge-cards/read-after-write/)：用 session token 標記「剛寫過」、N 秒內讀走 primary
 
 **Replication lag 監控**：
 

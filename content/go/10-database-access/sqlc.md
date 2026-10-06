@@ -39,7 +39,7 @@ sql:
         sql_package: "pgx/v5"   # 產生的程式碼呼叫 pgx 的原生介面
 ```
 
-不寫 `sql_package` 時，產生的是呼叫 `database/sql` 的程式碼。要和 GORM 在同一個交易裡執行就選它，見 [10.6 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)〈混用時共用同一個交易〉。
+不寫 `sql_package` 時，產生的是呼叫 `database/sql` 的程式碼。要和 GORM 在同一個交易裡執行就選它，見 [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)〈混用時共用同一個交易〉。
 
 `schema` 指向專案的 migration 目錄（資料表結構的版本化變更檔，見 [Schema Migration](/backend/knowledge-cards/schema-migration/)），sqlc 依序讀裡面的檔案、算出最終的資料表結構。它認得幾種 migration 工具的檔名慣例，例如 golang-migrate 的 `001_init.up.sql` 與 `001_init.down.sql` 放在同一個目錄時，只讀 `up` 那一份；把 `down` 也讀進去的話，`DROP TABLE` 會讓後面的查詢全部找不到表。schema 的權威因此留在 migration，sqlc 只是讀它。
 
@@ -207,7 +207,7 @@ MinAmount = nil  → [{101 300} {102 500}]
 MinAmount = 400  → [{102 500}]
 ```
 
-這個寫法在條件只有兩三個時清楚好讀。條件多到十幾個、排序欄位也由使用者決定時，`OR` 堆疊的查詢讀起來吃力，資料庫為它選的執行計畫也可能不是最好的；那類查詢交給查詢建構器（Query Builder）或 ORM 的條件串接，和 sqlc 並存（混用的方式見 [10.6 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)）。
+這個寫法在條件只有兩三個時清楚好讀。條件多到十幾個、排序欄位也由使用者決定時，`OR` 堆疊的查詢讀起來吃力，資料庫為它選的執行計畫也可能不是最好的；那類查詢交給查詢建構器（Query Builder）或 ORM 的條件串接，和 sqlc 並存（混用的方式見 [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)）。
 
 ## sqlc 帶進來的工作
 

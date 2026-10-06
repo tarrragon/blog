@@ -1,7 +1,7 @@
 ---
 title: "1.17 應用程式存取資料庫的工具分層：驅動、結果對映、從 SQL 產生程式碼、Query Builder 與 ORM"
 date: 2026-10-06
-description: "應用程式存取關聯式資料庫的工作（寫 SQL、取得連線與交易、把結果對映成程式的值），驅動、結果對映、從 SQL 產生程式碼、Query Builder 與 ORM 各接手哪幾件、接手之後哪些行為看不見，ORM 的 N+1 與交易邊界、Go、gunicorn 與 PHP-FPM 各自對資料庫的連線總數與 max_connections、唯一約束違反時各語言讀取約束名稱的位置，以及 Go、PHP（Laravel）與 Python 的對應工具與選型軸"
+description: "應用程式存取關聯式資料庫的工作（寫 SQL、取得連線與交易、把結果對映成程式的值），驅動、結果對映、從 SQL 產生程式碼、Query Builder 與 ORM 各接手哪幾件、接手之後哪些行為看不見，ORM 的 N+1 與交易邊界、Go、gunicorn 與 PHP-FPM 各自對資料庫的連線總數與 max_connections、唯一約束違反時各語言讀取約束名稱的位置、讀寫分離時各框架把查詢送到主庫或副本的規則、資料拆到多個資料庫時跨不過的邊界，以及 Go、PHP（Laravel）與 Python 的對應工具與選型軸"
 weight: 17
 tags: ["backend", "database", "orm", "data-access"]
 ---
@@ -40,7 +40,7 @@ tags: ["backend", "database", "orm", "data-access"]
 
 用驅動直接寫 SQL 時三件事大多看得見，看不見的是驅動自己的預設行為：
 
-- **連線什麼時候還回池裡**：各語言歸還連線的時機不同。Go 的 `database/sql` 每次查詢向池借一條連線，查詢結果的讀取物件（cursor，本站譯為查詢結果的讀取物件，見 [Cursor](/backend/knowledge-cards/cursor/)）關閉時才放回去；讀到最後一列時會自動關閉，讀到一半就離開、又沒有呼叫 `Close` 時，那條連線就一直被佔著。Python 的 SQLAlchemy 與 `psycopg_pool` 由程式明確借出連線，`with` 區塊結束時歸還，洩漏發生在借出連線的那一段沒有收尾（psycopg 預設的 cursor 在執行時就把結果全部讀進來）。PHP-FPM 在請求結束時一併釋放。
+- **連線什麼時候還回池裡**：各語言歸還連線的時機不同。Go 的 `database/sql` 每次查詢向池借一條連線，查詢結果的讀取物件（cursor，本站譯為查詢結果的讀取物件，見 [Cursor](/backend/knowledge-cards/cursor/)）關閉時才放回去；讀到最後一列時會自動關閉，讀到一半就離開、又沒有呼叫 `Close` 時，那條連線就一直被佔著。這種借了不還的情形是連線洩漏（[Connection Leak](/backend/knowledge-cards/connection-leak/)），累積到池的上限時症狀才浮現。Python 的 SQLAlchemy 與 `psycopg_pool` 由程式明確借出連線，`with` 區塊結束時歸還，洩漏發生在借出連線的那一段沒有收尾（psycopg 預設的 cursor 在執行時就把結果全部讀進來）。PHP-FPM 在請求結束時一併釋放。
 - **NULL 的對應**：每種語言要有一個能表示「沒有值」（[NULL](/backend/01-database/sql/knowledge-cards/null/)）的型別。Go 的 `string` 零值是空字串，沒有一個值代表 NULL，所以要用指標或 `sql.NullString`；PHP 與 Python 的動態型別直接用 `null`／`None`。
 - **預先解析的查詢**：有些驅動會把執行過的查詢在連線上建成預先解析的查詢（[prepared statement](/backend/knowledge-cards/prepared-statement/)），下次執行同一段 SQL 只送名字與參數。那個名字只存在於建立它的那一條資料庫連線上，而 PgBouncer 這類連線池代理在交易模式（transaction pooling）下，同一條應用程式連線的下一個交易可能被分到另一條資料庫連線，名字因此對不上。各驅動的預設不同：Go 的 pgx 每條連線都快取；PHP 的 PDO pgsql 驅動預設在伺服器端建立具名的 `pdo_stmt_…`，Laravel 沒有改掉這個預設；Python 的 psycopg 3 在同一段查詢執行過 5 次之後、第 6 次執行時才建立（`prepare_threshold`，預設 5）；Django 預設用用戶端綁定，不建立。接上交易模式的代理時，處理方式是讓代理追蹤這些名字（PgBouncer 1.21 起的 `max_prepared_statements`，1.24 起預設開啟），或關掉驅動的這個行為。
 - **參數一律用佔位符傳**：值拼進 SQL 字串就是 [SQL 注入（SQL injection）](/backend/knowledge-cards/sql-injection/)的入口，這件事在每一層工具都成立。
@@ -83,7 +83,7 @@ ORM 要決定 `UPDATE` 要寫哪幾個欄位，常見的規則有三種：
 
 - **變更追蹤（dirty tracking）**：Eloquent 與 SQLAlchemy 追蹤哪些屬性被改過，只寫改過的。
 - **寫回全部欄位**：Django 的 `save()` 預設把 model 的每個欄位都寫回（傳 `update_fields` 才只寫指定的），兩個請求同時改同一列的不同欄位時，後寫的請求會用它讀出時的舊值，蓋掉先寫的請求改過的欄位。
-- **跳過零值**：GORM 的 `Updates` 傳入 struct 時不追蹤變更（`Save` 則寫回全部欄位），而是跳過值為零值的欄位。Go 的 struct 欄位沒有「未設定」這個狀態，沒給值就是 0、空字串或 false（Go 稱為零值），所以 GORM 分不出「沒有設定」與「要改成 0」。
+- **跳過零值**：GORM 的 `Updates` 傳入 struct 時不追蹤變更（`Save` 則寫回全部欄位，找不到那一列時還會改成 upsert，見 [10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/go/10-database-access/gorm-model-and-soft-delete/)），而是跳過值為零值的欄位。Go 的 struct 欄位沒有「未設定」這個狀態，沒給值就是 0、空字串或 false（Go 稱為零值），所以 GORM 分不出「沒有設定」與「要改成 0」。
 
 以「把金額從 300 改成 0」為例：變更追蹤看到金額被改過，寫入 0；GORM 看到金額是零值，當成沒有設定而略過金額這一欄，也不回報錯誤；model 沒有其他要寫的欄位時不送出任何 `UPDATE`，model 有 `UpdatedAt`（`gorm.Model` 就帶這個欄位）時仍會送出只更新 `updated_at` 的 `UPDATE`，影響列數是 1，看起來像更新成功。
 
@@ -91,7 +91,7 @@ ORM 要決定 `UPDATE` 要寫哪幾個欄位，常見的規則有三種：
 
 有的 ORM 從 model 產生 schema（Django 的 `makemigrations`、GORM 的 `AutoMigrate`），有的 model 與 schema 分開定義（Laravel 的 migration 與 Eloquent model 是兩份檔案）。從 model 產生時，欄位改名最容易出錯：GORM 的 `AutoMigrate` 把它當成新增一欄、舊欄留著；Django 的 `makemigrations` 會詢問是不是改名，回答否就產生刪除舊欄加新增一欄的 migration，舊欄的資料跟著刪掉。產生出來的 migration 要逐份讀過。
 
-這四類看不見的行為各有看得到它的地方：送出幾次查詢與寫回哪些欄位，看 ORM 的 SQL 記錄（應用程式端印出它送出的語句）；交易邊界看資料庫端的語句記錄（PostgreSQL 的 `log_statement`），因為有的 ORM（GORM）的 SQL 記錄不印 `begin` 與 `commit`；schema 的那一類看的是產生出來的 migration 檔。程式碼審查時看的是 ORM 的 SQL 記錄、資料庫的語句記錄與 migration 檔，而不只是方法呼叫。
+這四類看不見的行為各有看得到它的地方：送出幾次查詢與寫回哪些欄位，看 ORM 的 SQL 記錄（應用程式端印出它送出的語句，兩種記錄的開啟方式與差別見 [Query Log](/backend/knowledge-cards/query-log/)）；交易邊界看資料庫端的語句記錄（PostgreSQL 的 `log_statement`），因為有的 ORM（GORM）的 SQL 記錄不印 `begin` 與 `commit`；schema 的那一類看的是產生出來的 migration 檔。程式碼審查時看的是 ORM 的 SQL 記錄、資料庫的語句記錄與 migration 檔，而不只是方法呼叫。
 
 ## 各語言執行模型下的連線模型
 
@@ -123,30 +123,67 @@ ORM 要決定 `UPDATE` 要寫哪幾個欄位，常見的規則有三種：
 
 所以建表時替約束取明確的名字（SQL 寫 `CONSTRAINT customers_email_key UNIQUE (email)`；schema 由 Django model 管理時寫 `Meta.constraints` 的 `UniqueConstraint(fields=["email"], name="customers_email_key")`），程式就能依名字回報「email 已被使用」而不是籠統的「資料重複」；讓資料庫自動命名，名字會隨建表工具與版本而不同。
 
+## 讀寫分離與多個資料庫：連線的路由由哪一層決定
+
+讀寫分離（[Read-Write Split](/backend/knowledge-cards/read-write-split/)）把寫入送到主庫（primary）、把讀取送到一個或多個唯讀副本（replica）。副本的資料由主庫複製過去，會落後一段時間（[Replication Lag](/backend/knowledge-cards/replication-lag/)），所以每一個查詢送到哪一邊，決定了它讀不讀得到剛寫入的資料。〈存取資料庫的工作：寫 SQL、取得連線與交易、對映結果〉裡「取得連線並執行」那件工作因此多了一個問題：這個查詢要用哪一個資料庫的連線。決定的位置有三種：應用程式自己、ORM 或框架、資料庫前面的代理。
+
+**應用程式持有多個連線池，程式明確選**：主庫一個池、副本一個池，每個 repository 方法自己決定用哪一個，可以預設全部讀主庫、只把能接受落後的查詢指定給副本。驅動、結果對映與從 SQL 產生程式碼這幾類工具沒有路由功能，用的就是這一種（sqlc 產生的程式碼接受一個連線介面，傳主庫的池或副本的池都可以）。每個查詢去哪裡都寫在程式碼上，代價是每個方法都要做這個決定。
+
+**ORM 或框架依規則路由**：程式照常呼叫，框架依查詢的種類替它選連線。規則各框架不同，而這些規則就是這一層在程式碼上看不見的行為：
+
+| 框架                                | 一般查詢                      | 交易裡的查詢                                        | 同一個請求剛寫入之後的查詢                   | 手寫 SQL                                                                                                                      |
+| ----------------------------------- | ----------------------------- | --------------------------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| GORM 的 dbresolver 外掛             | 副本                          | 主庫                                                | 副本，複製落後時查不到剛寫入的資料           | `Raw` 的 SQL 以 `SELECT` 開頭、結尾不是 `FOR UPDATE` 才送副本，`WITH ... SELECT` 送主庫；`Clauses(dbresolver.Write)` 強制主庫 |
+| Laravel 的 `read`／`write` 連線設定 | 副本                          | 主庫                                                | 設定 `sticky => true` 時改送主庫，否則送副本 | `DB::select` 預設送副本；`lockForUpdate()` 送主庫                                                                             |
+| Django 的 `DATABASE_ROUTERS`        | 由路由器的 `db_for_read` 決定 | 路由器不知道交易的存在，照 `db_for_read` 的回傳值送 | 照 `db_for_read` 的回傳值送，不區分          | `raw()` 走 model 的路由；`connections["default"]` 直接指定                                                                    |
+
+SQLAlchemy 沒有內建這個功能，要覆寫 `Session.get_bind` 自己寫規則。
+
+GORM 那一列是實測結果（dbresolver v1.6.2，用兩個內容不同的資料庫當主庫與副本，看每個查詢讀到哪一邊的資料，程式與輸出見 [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)〈讀寫分離：GORM 的 dbresolver 與程式自己持有兩個池〉）；Laravel 那一列取自它的 `Connection::getReadPdo`：交易層數大於零、或開了 `sticky` 而這個連線物件已經寫過資料，就改用寫入的連線；Django 的官方文件明寫它的主從路由範例不處理複製延遲，也不考慮交易與路由的交互作用。表上的差異集中在剛寫入之後的讀取（[Read-After-Write Consistency](/backend/knowledge-cards/read-after-write/)），而這種讀取有兩種形狀。一種在同一個請求裡：建立訂單之後，同一個請求接著讀出訂單內容放進回應；Laravel 的 `sticky` 處理的是這一種，GORM 的 dbresolver 不處理。另一種跨兩個請求：使用者送出表單，寫入的請求回應之後瀏覽器被導回列表頁，列表是一個新的請求；`sticky` 記在連線物件上，新請求不知道剛才寫過，三個框架都照常把列表查詢送到副本，複製落後時讀不到剛寫入的那一筆。同一個請求裡的讀取，由程式在那個查詢上指定主庫：GORM 寫 `Clauses(dbresolver.Write)`，Laravel 的 Query Builder 寫 `useWritePdo()`、Eloquent 寫 `Model::onWriteConnection()`，Django 寫 `.using("default")`（`default` 是主庫的資料庫別名）。跨請求的讀取要程式自己記住「這個使用者剛寫過」，常見做法是寫入時在 session 記下時間，之後幾秒內這個使用者的讀取都送主庫。
+
+**資料庫前面的代理依規則路由**：應用程式只連一個位址，由代理判斷每個語句送哪裡（MySQL 的 ProxySQL 用比對 SQL 文字的規則，見 [MySQL ProxySQL 配置：connection / query / route / response 四段 lifecycle 跟 query rule 設計](/backend/01-database/vendors/mysql/proxysql-config/)；PostgreSQL 有 Pgpool-II 這類代理）。程式碼完全不用改，而代理同樣要判斷交易內的讀取與剛寫入之後的讀取，判斷依據只剩 SQL 文字與連線狀態，比框架知道的更少。
+
+另有兩個機制也決定連線去哪一台機器，但只在建立連線時決定，不逐一判斷查詢。雲端資料庫服務提供一個讀取端點（reader endpoint），用 DNS 在多個副本之間分配連線，它不知道各副本落後多少（見 [Aurora Read Replica Scaling：15 replica 上限、lag profile、headroom 預留與 fleet 治理](/backend/01-database/vendors/aurora/read-replica-scaling/)）；PostgreSQL 的用戶端（libpq、pgx）在連線字串裡列多台主機並設 `target_session_attrs`（`primary`、`prefer-standby` 等），在建立連線時挑出主庫或副本，它決定的是每一條連線連到哪一台，不替每一個查詢挑，用途是讓兩個池的連線字串在主庫切換之後仍然指對機器。
+
+服務要不要加唯讀副本，先看讀取慢的原因：查詢次數或缺索引造成的慢（見 [1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/)），加副本只是把同樣的浪費分到更多機器上；同一批資料被反覆讀取的熱讀，先加快取（見 [模組二：快取與 Redis](/backend/02-cache-redis/)）；寫入量大的服務加副本沒有幫助，副本還要重放同樣多的寫入，落後得更多。副本的容量與落後的量測見 [1.1 高併發下的 SQL 讀寫邊界](/backend/01-database/high-concurrency-access/)〈Read Replica Scaling〉。
+
+決定加副本之後，先選預設方向。框架的路由規則是「預設送副本，例外送主庫」，每一條不能讀舊資料的路徑都要被找出來列為例外；程式自己持有兩個池時可以反過來，「預設送主庫，只把報表、搜尋、統計這類能接受落後的查詢送副本」，要找出來的只剩送副本的那幾條，漏掉的路徑讀的是主庫，不會讀到舊資料。
+
+選了「預設送副本」時，逐條列出三類路徑，再對照所用框架或代理的規則，決定每一條由誰把讀取送到主庫：
+
+- **寫入之後馬上讀**：分成同一個請求裡與跨請求兩種。同一個請求裡的，在那個查詢上指定主庫；跨請求的，由程式記住這個使用者剛寫過。跨請求的那一種用「寫入後幾秒內送主庫」時，落後超過那幾秒就失效；需要確定讀到的時候，改成比對複製位置：寫入時記下主庫的位置（PostgreSQL 的 `pg_current_wal_lsn()`，或 MySQL 那筆交易的 GTID），讀取前確認副本已經重放到那個位置（PostgreSQL 的 `pg_last_wal_replay_lsn()`，MySQL 的 `WAIT_FOR_EXECUTED_GTID_SET`），或在副本查不到時回主庫再查一次（剛建立的短網址被別人點開這種情形，點的人沒有建立者的 session，只能用這個做法）。Django 的路由器拿不到請求物件，記在 session 的寫入時間要另外經由 middleware 放進 context 變數，路由器才讀得到；不用 session 的 API（JWT 驗證的行動 App）把寫入時間放在客戶端帶回的標頭或 cookie 裡。
+- **讀出的結果決定接下來的寫入**：檢查庫存再扣、檢查 email 有沒有被用過再建立。這類讀取讀到舊值就會寫錯，一律送主庫，需要鎖住那一列時用 `SELECT ... FOR UPDATE`（Laravel 的 `lockForUpdate()`、Django 的 `select_for_update()`）；Django 的路由器在 `transaction.atomic` 裡照樣把一般讀取送副本，這一類要明確指定主庫。
+- **背景工作讀剛寫入的資料**：寫入之後派送的佇列工作（Laravel 的 job、Celery 的 task）在另一個程序裡執行，既不在同一個請求裡，也沒有 session 可記。工作要在交易提交之後才派送（Laravel 的 `afterCommit`、Django 的 `transaction.on_commit`），並由工作自己指定讀主庫，或帶著要處理的資料內容出發。
+
+分出唯讀副本之後，每個應用程式實例對資料庫開的連線總數也跟著變：每個實例對主庫與每一個副本各開一個池，所以「實例數 × 池的上限」要對主庫與每一個副本各算一次，各自小於那個資料庫的 `max_connections`（Python 的多 worker 部署再乘上 worker 數）。ORM 提供的「取得底層連線池」方法多半只回傳主庫那一個，副本的池要另外設上限與監控（GORM 的情形見 [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)）。
+
+**多個資料庫**是另一種情形：資料依業務拆在不同的資料庫裡（例如訂單一個、會員一個），而不是同一份資料的副本。各框架都支援一個程式連多個資料庫（Laravel 的 `DB::connection('name')`、Django 的 `using()`、GORM dbresolver 依 model 指定資料庫），而三件事跨不過資料庫的邊界：一個交易、外鍵與 `JOIN`。Django 的文件明寫不支援跨資料庫的外鍵與多對多關聯。需要一起成功的寫入落在兩個資料庫時，交易邊界要重新設計（見 [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/)）。
+
 ## 選型：從要交出的資料存取層往回看
 
-選型要交出的是專案的資料存取層：各個 repository 用哪一類工具寫、哪些例外。比較的軸取自那一層要承擔的事，而不是工具本身的特性清單；其中「schema 的擁有者」與「應用程式與資料庫之間的基礎設施」兩列是部署與擁有權的環境，其餘是程式碼庫自己的性質：
+選型要交出的是專案的資料存取層：各個 repository 用哪一類工具寫、哪些例外。比較的軸取自那一層要承擔的事，而不是工具本身的特性清單；其中「schema 的擁有者」「應用程式與資料庫之間的基礎設施」與「讀取流量與資料庫拓撲」三列是部署與擁有權的環境，其餘是程式碼庫自己的性質：
 
-| 讀者要決定的事                 | 條件                                                                                                                                                               | 適合的類別                                                                                                                                        |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| schema 的權威放哪裡            | schema 由 migration 的 SQL 定義，程式跟著 schema 走                                                                                                                | 從 SQL 產生程式碼、驅動加結果對映                                                                                                                 |
-|                                | schema 由 model 定義（Django 的 `makemigrations` 從 model 產生 migration），或 migration 與 model 由同一個框架的慣例管理（Laravel 的 migration 與 Eloquent model） | ORM                                                                                                                                               |
-| schema 的擁有者                | schema 由另一個服務擁有（多個服務共用一個資料庫、DBA 管理，或接手既有資料庫）                                                                                      | 本服務不跑 migration；從 SQL 產生程式碼的工具把 `schema` 指向 `pg_dump --schema-only` 的輸出，或用整合測試比對 schema；約束名稱照擁有方的命名判讀 |
-| 應用程式與資料庫之間的基礎設施 | 前面有交易模式的連線池代理                                                                                                                                         | 不影響類別的選擇，但會快取預先解析查詢的驅動要調整（見〈驅動與標準介面〉）；連線池上限改對代理的 `max_client_conn` 估算                           |
-| 查詢的形狀                     | 多數是單表或一層關聯的增刪查改                                                                                                                                     | ORM                                                                                                                                               |
-|                                | 報表、多表聚合、視窗函數這類固定而複雜的查詢                                                                                                                       | 從 SQL 產生程式碼，或在 ORM 裡直接寫 SQL                                                                                                          |
-|                                | 篩選條件依使用者輸入動態組合                                                                                                                                       | Query Builder，或 ORM 的條件串接                                                                                                                  |
-| 框架的整合程度                 | 用的是 ORM 與驗證、序列化、後台管理整合在一起的框架（Laravel、Django）                                                                                             | 照框架的 ORM 寫，例外的查詢另外寫 SQL                                                                                                             |
-|                                | 語言沒有主導的全端框架（Go）                                                                                                                                       | 依 schema 的權威與查詢的形狀決定，沒有預設答案                                                                                                    |
-| 錯誤在什麼時候被發現           | 希望欄位改名、查詢寫錯在產生程式碼或編譯時就失敗                                                                                                                   | 從 SQL 產生程式碼，或從 schema 產生型別的 Query Builder 與 ORM（ent、jOOQ、Prisma）                                                               |
-|                                | 接受由整合測試在執行時抓出來                                                                                                                                       | 沒有產生步驟的驅動、結果對映、Query Builder 與 ORM                                                                                                |
-| 程式碼審查要看到什麼           | 審查者要直接看到每一段送出的 SQL                                                                                                                                   | 驅動、結果對映、從 SQL 產生程式碼                                                                                                                 |
-|                                | 審查者看得出查詢的子句結構即可，參數展開與方言細節靠記錄確認                                                                                                       | Query Builder                                                                                                                                     |
-|                                | 審查看方法呼叫，SQL 靠開發時 ORM 的 SQL 記錄確認（受稽核、要求每段 SQL 在審查時可見的服務不適用）                                                                  | ORM                                                                                                                                               |
-| 資料庫的種類                   | 要支援多種資料庫                                                                                                                                                   | ORM、Query Builder（方言由工具處理）                                                                                                              |
-|                                | 只連一種資料庫                                                                                                                                                     | 不受限；從 SQL 產生程式碼的工具要選有支援該資料庫的                                                                                               |
+| 讀者要決定的事                 | 條件                                                                                                                                                               | 適合的類別                                                                                                                                                                                    |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| schema 的權威放哪裡            | schema 由 migration 的 SQL 定義，程式跟著 schema 走                                                                                                                | 從 SQL 產生程式碼、驅動加結果對映                                                                                                                                                             |
+|                                | schema 由 model 定義（Django 的 `makemigrations` 從 model 產生 migration），或 migration 與 model 由同一個框架的慣例管理（Laravel 的 migration 與 Eloquent model） | ORM                                                                                                                                                                                           |
+| schema 的擁有者                | schema 由另一個服務擁有（多個服務共用一個資料庫、DBA 管理，或接手既有資料庫）                                                                                      | 本服務不跑 migration；從 SQL 產生程式碼的工具把 `schema` 指向 `pg_dump --schema-only` 的輸出，或用整合測試比對 schema；約束名稱照擁有方的命名判讀                                             |
+| 應用程式與資料庫之間的基礎設施 | 前面有交易模式的連線池代理                                                                                                                                         | 不影響類別的選擇，但會快取預先解析查詢的驅動要調整（見〈驅動與標準介面〉）；連線池上限改對代理的 `max_client_conn` 估算                                                                       |
+| 查詢的形狀                     | 多數是單表或一層關聯的增刪查改                                                                                                                                     | ORM                                                                                                                                                                                           |
+|                                | 報表、多表聚合、視窗函數這類固定而複雜的查詢                                                                                                                       | 從 SQL 產生程式碼，或在 ORM 裡直接寫 SQL                                                                                                                                                      |
+|                                | 篩選條件依使用者輸入動態組合                                                                                                                                       | Query Builder，或 ORM 的條件串接                                                                                                                                                              |
+| 框架的整合程度                 | 用的是 ORM 與驗證、序列化、後台管理整合在一起的框架（Laravel、Django）                                                                                             | 照框架的 ORM 寫，例外的查詢另外寫 SQL                                                                                                                                                         |
+|                                | 語言沒有主導的全端框架（Go）                                                                                                                                       | 依 schema 的權威與查詢的形狀決定，沒有預設答案                                                                                                                                                |
+| 錯誤在什麼時候被發現           | 希望欄位改名、查詢寫錯在產生程式碼或編譯時就失敗                                                                                                                   | 從 SQL 產生程式碼，或從 schema 產生型別的 Query Builder 與 ORM（ent、jOOQ、Prisma）                                                                                                           |
+|                                | 接受由整合測試在執行時抓出來                                                                                                                                       | 沒有產生步驟的驅動、結果對映、Query Builder 與 ORM                                                                                                                                            |
+| 程式碼審查要看到什麼           | 審查者要直接看到每一段送出的 SQL                                                                                                                                   | 驅動、結果對映、從 SQL 產生程式碼                                                                                                                                                             |
+|                                | 審查者看得出查詢的子句結構即可，參數展開與方言細節靠記錄確認                                                                                                       | Query Builder                                                                                                                                                                                 |
+|                                | 審查看方法呼叫，SQL 靠開發時 ORM 的 SQL 記錄確認（受稽核、要求每段 SQL 在審查時可見的服務不適用）                                                                  | ORM                                                                                                                                                                                           |
+| 讀取流量與資料庫拓撲           | 有唯讀副本要分流讀取                                                                                                                                               | 不影響類別的選擇；用 ORM 時確認它的路由規則（交易內、剛寫入之後、手寫 SQL 各送哪裡），用驅動與從 SQL 產生程式碼時由程式持有兩個池自己選（見〈讀寫分離與多個資料庫：連線的路由由哪一層決定〉） |
+| 資料庫的種類                   | 要支援多種資料庫                                                                                                                                                   | ORM、Query Builder（方言由工具處理）                                                                                                                                                          |
+|                                | 只連一種資料庫                                                                                                                                                     | 不受限；從 SQL 產生程式碼的工具要選有支援該資料庫的                                                                                                                                           |
 
-多數專案不只用一類。三種語言都常見同一個組合：一般的增刪查改用框架或專案選定的 ORM，報表與效能敏感的查詢直接寫 SQL（Laravel 的 `DB::select`、Django 的 `raw()`、GORM 的 `Raw`），或在 Go 裡改用從 SQL 產生程式碼的 sqlc。組合本身不是問題，要留意的是兩條路徑共用同一個連線池與交易：ORM 開的交易裡，直接寫的 SQL 也要走同一個交易物件，否則它會從池裡另取一條連線、跑在交易之外；交易物件怎麼一路傳進各個 repository，見 [1.4 Repository Adapter 實作](/backend/01-database/repository-adapter/)〈Transaction 傳遞〉。
+多數專案不只用一類。三種語言都常見同一個組合：一般的增刪查改用框架或專案選定的 ORM，報表與效能敏感的查詢直接寫 SQL（Laravel 的 `DB::select`、Django 的 `raw()`、GORM 的 `Raw`），或在 Go 裡改用從 SQL 產生程式碼的 sqlc。組合本身不是問題，要留意的是兩條路徑共用同一個連線池與交易：ORM 開的交易裡，直接寫的 SQL 也要走同一個交易物件，否則它會從池裡另取一條連線、跑在交易之外；交易物件怎麼一路傳進各個 repository，以及 Laravel、Django 為什麼不必傳，見 [Transaction Propagation](/backend/knowledge-cards/transaction-propagation/)。
 
 ## 各語言的實作
 

@@ -149,7 +149,7 @@ second query: context deadline exceeded WaitCount = 1
 after Close: InUse=0 Idle=1
 ```
 
-第二個查詢排隊等那唯一的一條連線，等了兩秒仍然等不到。正式環境的池上限比 1 大，同樣的連線洩漏（connection leak）要累積到把池佔滿才浮現，症狀是請求慢慢變慢、最後全部逾時，而資料庫本身的負載並不高。`db.Stats()` 的 `InUse` 一直接近上限、`WaitCount` 持續增加，是這個狀況的訊號。
+第二個查詢排隊等那唯一的一條連線，等了兩秒仍然等不到。正式環境的池上限比 1 大，同樣的連線洩漏（[connection leak](/backend/knowledge-cards/connection-leak/)）要累積到把池佔滿才浮現，症狀是請求慢慢變慢、最後全部逾時，而資料庫本身的負載並不高。`db.Stats()` 的 `InUse` 一直接近上限、`WaitCount` 持續增加，是這個狀況的訊號。
 
 所以讀多列的標準寫法固定是這個形狀：
 
@@ -204,7 +204,7 @@ rollback after commit: sql: transaction has already been committed or rolled bac
 
 交易裡的查詢一定要用 `tx` 的方法，不能用 `db` 的。`db.ExecContext` 會從池裡另取一條連線，那個查詢就跑在交易之外：交易撤銷時它不會跟著撤銷，而且交易裡尚未提交的修改它也看不到。池上限是 1 的時候，這個錯誤直接變成卡住，因為唯一的連線被交易佔著。
 
-隔離等級由 `BeginTx` 的第二個參數 `&sql.TxOptions{Isolation: sql.LevelSerializable}` 指定，`nil` 代表用資料庫的預設值（PostgreSQL 是 read committed）。等級之間的差別見 [Isolation Level](/backend/knowledge-cards/isolation-level/)，交易範圍要劃在哪裡見 [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/)；交易要跨好幾個 repository 共用時，交易物件怎麼傳進各個 repository，見 [1.4 Repository Adapter 實作](/backend/01-database/repository-adapter/)〈Transaction 傳遞〉。
+隔離等級由 `BeginTx` 的第二個參數 `&sql.TxOptions{Isolation: sql.LevelSerializable}` 指定，`nil` 代表用資料庫的預設值（PostgreSQL 是 read committed）。等級之間的差別見 [Isolation Level](/backend/knowledge-cards/isolation-level/)，交易範圍要劃在哪裡見 [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/)；交易要跨好幾個 repository 共用時，交易物件怎麼傳進各個 repository（以及傳錯時的徵兆，見 [Transaction Propagation](/backend/knowledge-cards/transaction-propagation/)），見 [1.4 Repository Adapter 實作](/backend/01-database/repository-adapter/)〈Transaction 傳遞〉。
 
 ## 本模組其餘工具各自接手哪一段
 
@@ -217,4 +217,4 @@ rollback after commit: sql: transaction has already been committed or rolled bac
 | [sqlc](/go/10-database-access/sqlc/)        | 從 SQL 產生呼叫函式、參數與結果的 struct，產生時檢查欄位          | SQL 寫在 `.sql` 檔；動態組合的條件 |
 | [GORM](/go/10-database-access/gorm/)        | 從方法呼叫組出 SQL、對映、寫入時的交易                            | 理解它實際送出了什麼 SQL           |
 
-sqlx、pgx 原生介面與 sqlc 接手之後，送出的 SQL 仍然寫在程式碼或 `.sql` 檔裡看得見；GORM 接手之後，SQL 也從程式碼上消失，要靠它的 SQL 記錄才看得到。怎麼在這些工具之間選，見 [10.6 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)。
+sqlx、pgx 原生介面與 sqlc 接手之後，送出的 SQL 仍然寫在程式碼或 `.sql` 檔裡看得見；GORM 接手之後，SQL 也從程式碼上消失，要靠它的 SQL 記錄才看得到。怎麼在這些工具之間選，見 [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)。

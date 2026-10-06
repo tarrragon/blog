@@ -25,7 +25,7 @@ Cursor 的核心概念是「標記目前位置的東西」，而英文用同一�
 ## 可觀察訊號與例子
 
 - **畫面上的游標**：出現在 CSS（`cursor: pointer`）、終端機的控制序列（隱藏游標、移動游標）、無障礙與輸入設計的討論裡。
-- **查詢結果的讀取物件**：出現在資料庫用戶端的程式碼裡，例如 Python 資料庫介面的 `conn.cursor()`、SQL 的 `DECLARE CURSOR`、MongoDB 變更串流（change stream）的讀取端。它的特徵是**要開、要關**：沒關閉的讀取物件會一直佔著資料庫的資源（連線與讀取交易）。例如 SQLite 在預寫日誌（write-ahead log，WAL）模式下讀取與寫入可以同時進行，但沒讀完、沒關閉的讀取物件會讓讀取交易（read transaction）一直開著；SQLite 官方文件說明，只要有連線還開著讀取交易，檢查點（checkpoint，把 WAL 的內容寫回主資料庫檔的動作）就無法重設 WAL 檔，WAL 檔因此一直變大、查詢跟著變慢。Go 的讀取物件沒關閉時佔住連線、讓後續查詢排隊的實測見 [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)〈查詢結果讀取物件（*sql.Rows）的關閉與連線洩漏〉。
+- **查詢結果的讀取物件**：出現在資料庫用戶端的程式碼裡，例如 Python 資料庫介面的 `conn.cursor()`、SQL 的 `DECLARE CURSOR`、MongoDB 變更串流（change stream）的讀取端。它的特徵是**要開、要關**：沒關閉的讀取物件會一直佔著資料庫的資源（連線與讀取交易），佔著連線不還累積到池滿就是 [Connection Leak](/backend/knowledge-cards/connection-leak/)。例如 SQLite 在預寫日誌（write-ahead log，WAL）模式下讀取與寫入可以同時進行，但沒讀完、沒關閉的讀取物件會讓讀取交易（read transaction）一直開著；SQLite 官方文件說明，只要有連線還開著讀取交易，檢查點（checkpoint，把 WAL 的內容寫回主資料庫檔的動作）就無法重設 WAL 檔，WAL 檔因此一直變大、查詢跟著變慢。Go 的讀取物件沒關閉時佔住連線、讓後續查詢排隊的實測見 [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)〈查詢結果讀取物件（*sql.Rows）的關閉與連線洩漏〉。
 - **接續標記**：出現在 API 的回應與參數裡（`next_cursor`、`cursor`），以及逐批掃描的指令回傳值，例如 Redis 的 `SCAN` 每次回傳下一次要帶的接續標記，回到 `0` 代表掃完一輪。它的特徵是**一個字串、客戶端原樣送回**，客戶端不需要關閉它，但要知道它會不會過期、跨版本還能不能用（見 [分頁之爭](/backend/11-api-design/pagination-debate/) 的條款清單）。
 
 ## 設計責任

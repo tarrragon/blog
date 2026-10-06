@@ -48,7 +48,7 @@ db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 
 下面的範例為了簡短，直接在 `db` 上呼叫；服務程式裡每個查詢都從 `db.WithContext(ctx)` 開始，理由和 [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/) 要求一律用帶 `Context` 的方法相同：請求取消或逾時時，查詢跟著中止。
 
-這個記錄是 GORM 的方法呼叫與實際送出的 SQL 之間的對照，下面多數的 SQL 取自它；實際每個查詢前面還有呼叫位置與耗時一行，文中的輸出只留 SQL。GORM 自動包的 `begin` 與 `commit` 不出現在它的記錄裡，要看交易的那幾節改用 PostgreSQL 的語句記錄（`log_statement = 'all'`）。
+這個記錄是 GORM 的方法呼叫與實際送出的 SQL 之間的對照，下面多數的 SQL 取自它；實際每個查詢前面還有呼叫位置與耗時一行，文中的輸出只留 SQL。GORM 自動包的 `begin` 與 `commit` 不出現在它的記錄裡，要看交易的那幾節改用 PostgreSQL 的語句記錄（`log_statement = 'all'`）。兩種記錄各記到什麼、正式環境怎麼開，見 [Query Log](/backend/knowledge-cards/query-log/)。
 
 ## 查一筆：First、Take 與重用的變數
 
@@ -144,7 +144,7 @@ GORM 的記錄裡，第一個 `Updates` 沒有任何 `UPDATE`；第二個才有�
 UPDATE "orders" SET "amount"=0 WHERE "id" = 103
 ```
 
-PostgreSQL 的語句記錄（`log_statement`）顯示第一個 `Updates` 送出了一組空的交易（`begin` 之後直接 `commit`；GORM 的寫入預設包在交易裡，見〈寫入時的預設交易〉），沒有錯誤、影響零列，程式完全不會發現金額沒有改。範例的 `Order` 沒有 `UpdatedAt`；model 帶 `UpdatedAt`（嵌入 `gorm.Model` 就有）時，GORM 仍會送出只更新 `updated_at` 的 `UPDATE`，影響列數是 1，看起來像更新成功，而金額照樣沒改。和 Eloquent、SQLAlchemy 這類追蹤變更的 ORM 不同（對照見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈ORM 寫回哪些欄位：變更追蹤、全部欄位與零值〉）。要寫入零值（`0`、`""`、`false`）時，用 map、用 `Select("amount")` 指定欄位，或用 `Update("amount", 0)` 更新單一欄位。可以是 NULL 的欄位宣告成指標（`*int`），`nil` 是「不寫」、指向 0 的指標是「寫成 0」，兩者就分得開。
+PostgreSQL 的語句記錄（`log_statement`）顯示第一個 `Updates` 送出了一組空的交易（`begin` 之後直接 `commit`；GORM 的寫入預設包在交易裡，見〈寫入時的預設交易〉），沒有錯誤、影響零列，程式完全不會發現金額沒有改。範例的 `Order` 沒有 `UpdatedAt`；model 帶 `UpdatedAt`（嵌入 `gorm.Model` 就有，見 [10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/go/10-database-access/gorm-model-and-soft-delete/)）時，GORM 仍會送出只更新 `updated_at` 的 `UPDATE`，影響列數是 1，看起來像更新成功，而金額照樣沒改。和 Eloquent、SQLAlchemy 這類追蹤變更的 ORM 不同（對照見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈ORM 寫回哪些欄位：變更追蹤、全部欄位與零值〉）。要寫入零值（`0`、`""`、`false`）時，用 map、用 `Select("amount")` 指定欄位，或用 `Update("amount", 0)` 更新單一欄位。可以是 NULL 的欄位宣告成指標（`*int`），`nil` 是「不寫」、指向 0 的指標是「寫成 0」，兩者就分得開。
 
 ## 寫入時的預設交易
 
@@ -161,7 +161,7 @@ LOG:  statement: commit
 
 這兩次多出來的來回在一般的增刪查改流量下不構成瓶頸，在寫入密集的路徑上才量得出差別；而關掉它的前提是那條路徑沒有依賴它的連帶寫入。所以這個預設值是否要關，取決於壓測或正式環境的延遲數字有沒有指向它。
 
-`db.Transaction(func(tx *gorm.DB) error { ... })` 是程式自己控制的交易，回傳 `nil` 提交、回傳錯誤撤銷；函式裡每一個查詢都要用參數 `tx`，用外面的 `db` 會從池裡另取一條連線、跑在交易之外，和 [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)〈交易：BeginTx、defer Rollback 與 Commit〉是同一個規則。
+`db.Transaction(func(tx *gorm.DB) error { ... })` 是程式自己控制的交易，回傳 `nil` 提交、回傳錯誤撤銷；函式裡每一個查詢都要用參數 `tx`，用外面的 `db` 會從池裡另取一條連線、跑在交易之外（交易物件怎麼傳進各個 repository、誤用時交易外的寫入卡在交易持有的鎖上，見 [Transaction Propagation](/backend/knowledge-cards/transaction-propagation/)），和 [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)〈交易：BeginTx、defer Rollback 與 Commit〉是同一個規則。
 
 ## 錯誤判讀：唯一約束
 
@@ -221,4 +221,6 @@ db.AutoMigrate(&CouponV2{})
 
 主鍵條件、零值更新、`CreatedAt` 與預設交易這幾節的現象有同一個來源：程式碼寫的是方法呼叫，實際行為由 GORM 的慣例決定——傳入物件上的主鍵、零值的含義、`CreatedAt` 這個欄位名稱、寫入時的交易。慣例讓常見的增刪查改很短，而每一條慣例都要先知道它存在，才知道程式碼底下發生了什麼。其中三條在 GORM 的 SQL 記錄裡看得到：主鍵條件多出來、零值欄位沒有出現在 `UPDATE` 裡、`INSERT` 帶著應用程式填的建立時間；預設交易的 `begin` 與 `commit` 要開資料庫的語句記錄（`log_statement`）才看得到。
 
-需要報表、多表聚合這類固定而複雜的查詢時，GORM 的 `Raw` 可以直接寫 SQL 並對映回 struct；這類查詢多的專案，也常把它們交給 [10.4 sqlc：從 SQL 產生型別安全的 Go 程式碼](/go/10-database-access/sqlc/)，兩者怎麼並存見 [10.6 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)。
+`gorm.Model` 帶進來的 `UpdatedAt` 與 `DeletedAt`、軟刪除替每個查詢加的條件，以及 `Save` 寫回全部欄位的行為，是同一類由欄位名稱與型別決定的慣例，見 [10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/go/10-database-access/gorm-model-and-soft-delete/)。
+
+需要報表、多表聚合這類固定而複雜的查詢時，GORM 的 `Raw` 可以直接寫 SQL 並對映回 struct；這類查詢多的專案，也常把它們交給 [10.4 sqlc：從 SQL 產生型別安全的 Go 程式碼](/go/10-database-access/sqlc/)，兩者怎麼並存見 [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)。

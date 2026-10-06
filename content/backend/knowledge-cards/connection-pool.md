@@ -21,4 +21,4 @@ Connection pool 的核心概念是「重用並限制到下游服務的連線」�
 
 ## 設計責任
 
-Pool 設定要搭配 timeout、查詢耗時、instance 數量與下游最大連線數。全部實例的池上限加起來要小於資料庫的 `max_connections` 扣掉維運保留的連線；一個 instance 跑多個 worker 程序時要乘上 worker 數，PHP-FPM 這類沒有程序內池的執行模型另有算法，見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈各語言執行模型下的連線模型〉。Runbook 應能看到 pool in-use、idle、wait count、timeout 與下游 error rate。
+Pool 設定要搭配 timeout、查詢耗時、instance 數量與下游最大連線數。全部實例的池上限加起來要小於資料庫的 `max_connections` 扣掉維運保留的連線；一個 instance 跑多個 worker 程序時要乘上 worker 數，PHP-FPM 這類沒有程序內池的執行模型另有算法，見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈各語言執行模型下的連線模型〉。Runbook 應能看到 pool in-use、idle、wait count、timeout 與下游 error rate；in-use 一直貼著上限而查詢本身不慢，先查程式有沒有借了連線不還（見 [Connection Leak](/backend/knowledge-cards/connection-leak/)）。

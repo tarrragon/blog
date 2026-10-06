@@ -18,4 +18,4 @@ Transaction boundary 的核心概念是「一組資料變更必須一起成功�
 
 ## 設計責任
 
-交易邊界要盡量短，並明確處理 deadlock、[retry policy](/backend/knowledge-cards/retry-policy/)、[timeout](/backend/knowledge-cards/timeout/) 與錯誤分類。跨 database 或跨服務的一致性要改用 outbox、saga、補償或 [data reconciliation](/backend/knowledge-cards/data-reconciliation/)，而非假設單一交易能包住所有事情。
+交易邊界要盡量短，並明確處理 deadlock、[retry policy](/backend/knowledge-cards/retry-policy/)、[timeout](/backend/knowledge-cards/timeout/) 與錯誤分類。跨 database 或跨服務的一致性要改用 outbox、saga、補償或 [data reconciliation](/backend/knowledge-cards/data-reconciliation/)，而非假設單一交易能包住所有事情。邊界定好之後，交易物件要傳到邊界內的每一個資料存取呼叫，傳遞方式見 [Transaction Propagation](/backend/knowledge-cards/transaction-propagation/)。

@@ -9,7 +9,7 @@ Tombstone 的核心概念是用一筆「已刪除」標記來記錄刪除，而�
 
 ## 概念位置
 
-Tombstone 位在「刪除如何被當成事件」的環節。在單一資料庫內，刪除就是移除一列；但在有副本、有離線裝置或有 CDC 下游的系統裡，直接移除會讓其他端不知道「這筆被刪了」。tombstone 把刪除變成一筆可傳播的標記，和 [Eventual Consistency](/backend/knowledge-cards/eventual-consistency/) 一起讓刪除能收斂。它的保留期限要接回 [資料生命週期](/backend/knowledge-cards/data-lifecycle/)。
+Tombstone 位在「刪除如何被當成事件」的環節。在單一資料庫內，刪除就是移除一列；但在有副本、有離線裝置或有 CDC 下游的系統裡，直接移除會讓其他端不知道「這筆被刪了」。tombstone 把刪除變成一筆可傳播的標記（只在單一資料庫裡、讓 ORM 查詢略過已刪除列的標記是 [Soft Delete](/backend/knowledge-cards/soft-delete/)），和 [Eventual Consistency](/backend/knowledge-cards/eventual-consistency/) 一起讓刪除能收斂。它的保留期限要接回 [資料生命週期](/backend/knowledge-cards/data-lifecycle/)。
 
 ## 可觀察訊號與例子
 

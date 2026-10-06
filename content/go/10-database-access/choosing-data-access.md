@@ -1,12 +1,12 @@
 ---
-title: "10.6 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合"
+title: "10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合"
 date: 2026-10-06
-description: "把語言無關的資料存取選型軸套到 Go 的工具上：驅動入口選 pgx 原生介面還是 database/sql、主力選 GORM 還是 sqlc、為什麼用 GORM 與用 sqlc 的專案都把 schema 交給 migration 工具、常見的混用組合，以及混用時交易能不能共用"
-weight: 6
+description: "把語言無關的資料存取選型軸套到 Go 的工具上：驅動入口選 pgx 原生介面還是 database/sql、主力選 GORM 還是 sqlc、為什麼用 GORM 與用 sqlc 的專案都把 schema 交給 migration 工具、常見的混用組合、混用時交易能不能共用，以及讀寫分離時 dbresolver 把查詢送到主庫或副本的規則"
+weight: 7
 tags: ["go", "database", "gorm", "sqlc", "pgx"]
 ---
 
-這篇把 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/) 的選型軸套到 Go 的工具上。那一篇給的是跨語言的軸（schema 的權威、查詢的形狀、框架的整合程度、審查要看到什麼）；Go 的選型多出兩件事要決定：驅動入口用哪一種，以及沒有主導框架時主力工具由誰來定；主力工具的選擇另外加上團隊背景這一軸。本模組前面各篇示範的行為是這篇的材料：[10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)、[10.2 pgx：PostgreSQL 驅動的原生介面、連線池與 COPY 大量寫入](/go/10-database-access/pgx/)、[10.3 sqlx：手寫 SQL 加上 struct 對映](/go/10-database-access/sqlx/)、[10.4 sqlc：從 SQL 產生型別安全的 Go 程式碼](/go/10-database-access/sqlc/)、[10.5 GORM：model、關聯載入與 ORM 送出的 SQL](/go/10-database-access/gorm/)。
+這篇把 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/) 的選型軸套到 Go 的工具上。那一篇給的是跨語言的軸（schema 的權威、查詢的形狀、框架的整合程度、審查要看到什麼）；Go 的選型多出兩件事要決定：驅動入口用哪一種，以及沒有主導框架時主力工具由誰來定；主力工具的選擇另外加上團隊背景這一軸。本模組前面各篇示範的行為是這篇的材料：[10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)、[10.2 pgx：PostgreSQL 驅動的原生介面、連線池與 COPY 大量寫入](/go/10-database-access/pgx/)、[10.3 sqlx：手寫 SQL 加上 struct 對映](/go/10-database-access/sqlx/)、[10.4 sqlc：從 SQL 產生型別安全的 Go 程式碼](/go/10-database-access/sqlc/)、[10.5 GORM：model、關聯載入與 ORM 送出的 SQL](/go/10-database-access/gorm/)、[10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/go/10-database-access/gorm-model-and-soft-delete/)。
 
 ## Go 資料庫存取工具的生態現況
 
@@ -67,8 +67,8 @@ Go 沒有一個像 Laravel 或 Django 那樣把 ORM、驗證、後台整合在�
 
 | 組合                         | 分工                                                                                   | 要留意的地方                                                                                                                                                                                               |
 | ---------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GORM 加 `Raw`                | 增刪查改用 GORM，報表用 `db.Raw(sql).Scan(&rows)` 直接寫 SQL                           | `Raw` 裡的 SQL 是字串，錯誤到執行時才出現，和 sqlx 一樣                                                                                                                                                    |
-| GORM 加 sqlc                 | 增刪查改用 GORM，固定而複雜的查詢用 sqlc                                               | sqlc 要產生 `database/sql` 版本的程式碼，才能和 GORM 共用交易（見〈混用時共用同一個交易〉）                                                                                                                |
+| GORM 加 `Raw`                | 增刪查改用 GORM，報表用 `db.Raw(sql).Scan(&rows)` 直接寫 SQL                           | `Raw` 裡的 SQL 是字串，錯誤到執行時才出現，和 sqlx 一樣；model 用軟刪除時，`Raw` 不會自動加 `deleted_at IS NULL`，要自己寫（見 10.6〈不經過軟刪除條件的路徑〉）                                            |
+| GORM 加 sqlc                 | 增刪查改用 GORM，固定而複雜的查詢用 sqlc                                               | sqlc 要產生 `database/sql` 版本的程式碼，才能和 GORM 共用交易（見〈混用時共用同一個交易〉）；GORM 的 model 用軟刪除時，sqlc 的查詢要自己寫 `deleted_at IS NULL`                                            |
 | sqlc 加 pgx 加 Query Builder | 多數查詢用 sqlc，條件多變的搜尋用 squirrel 這類 Query Builder 組出 SQL 再交給 pgx 執行 | Query Builder 組出的 SQL 沒有產生時的檢查，要有測試涵蓋；它在審查時看不到最終的 SQL，要求每段 SQL 在審查時可見的服務不適合；squirrel 預設的佔位符是 `?`，接 PostgreSQL 要設 `PlaceholderFormat(sq.Dollar)` |
 
 ## 混用時共用同一個交易
@@ -107,7 +107,57 @@ tx err: 撤銷 amount: 250 note nil: true
 
 金額仍是原來的 250、備註仍是 NULL，兩邊的修改都被撤銷了。sqlc 改成產生 pgx 原生版本（`sql_package: "pgx/v5"`）的話，它要的是 `pgx.Tx`，和 GORM 的 `*sql.Tx` 接不起來；這時有兩個做法：GORM 與 sqlc 各自開交易，接受它們不在同一個交易裡；或把需要一起成功的寫入全部交給 GORM，或全部交給 sqlc。
 
-## 選型結果裡要統一的項目：連線池、例外路徑、migration 工具、錯誤值、NULL、交易傳遞與記錄
+## 讀寫分離：GORM 的 dbresolver 與程式自己持有兩個池
+
+讀取量大到要把查詢分給唯讀副本（replica）時，用 GORM 的專案可以用 GORM 官方維護的 dbresolver 外掛；主力是 sqlc 或 pgx 時沒有這樣的外掛，由程式自己持有兩個池。dbresolver 的路由規則在外掛裡，自己持有兩個池時寫在程式碼上，語言無關的比較見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈讀寫分離與多個資料庫：連線的路由由哪一層決定〉。
+
+dbresolver 註冊之後，程式照常呼叫 GORM，外掛依查詢的種類選連線。`db` 原本用主庫的連線字串開啟；dbresolver 的設定裡另有一個 `Sources` 欄位可以列主庫，沒有列時主庫就是 `db` 本身的連線；`replicaDSN` 換成副本的連線字串，有多個副本就列多個：
+
+```go
+db.Use(dbresolver.Register(dbresolver.Config{
+	Replicas: []gorm.Dialector{postgres.Open(replicaDSN)},
+}))
+```
+
+下面的實測用兩個內容不同的資料庫當主庫與副本（取得套件：`go get gorm.io/plugin/dbresolver@v1.6.2`）：副本裡每位顧客的名字後面多了「（副本）」，查詢讀到哪一個名字，就知道它被送到哪一邊。
+
+```go
+var c Customer
+var name string
+n := Customer{Name: "新顧客", Email: "new@example.com"}
+
+db.First(&c, 1)                                // 一般查詢
+db.Clauses(dbresolver.Write).First(&c, 1)      // 指定主庫
+db.Create(&n); db.First(&c, n.ID)              // 剛建立就讀
+db.Transaction(func(tx *gorm.DB) error { tx.First(&c, 1); return nil })
+db.Raw("SELECT name FROM customers WHERE id = 1").Scan(&name)
+db.Raw("WITH x AS (SELECT 1) SELECT name FROM customers WHERE id = 1").Scan(&name)
+```
+
+```text
+First                                    "佳穎（副本）"
+Clauses(dbresolver.Write).First          "佳穎"
+Create then First(new id)                id=4 err=record not found
+First inside Transaction                 "佳穎"
+Raw SELECT                               "佳穎（副本）"
+Raw WITH ... SELECT                      "佳穎"
+```
+
+一般查詢送副本、寫入與交易裡的查詢送主庫。剛建立的顧客馬上用 `First` 讀，查詢送到副本而查不到；真實的副本在複製追上之後就讀得到，所以這種錯誤只在寫入後立刻讀、而且複製剛好落後的時候出現。同一個請求裡寫完就讀的查詢要寫 `Clauses(dbresolver.Write)`，或整段放進交易；寫完之後由下一個請求讀的路徑（建立後導向詳情頁、改完設定馬上重新載入），dbresolver 不知道上一個請求寫過，要程式自己記住這個使用者剛寫過（例如在 session 記下寫入時間，幾秒內的讀取都加 `Clauses(dbresolver.Write)`）。`Raw` 的路由看 SQL 文字：外掛的原始碼只在 SQL 以 `SELECT` 開頭、結尾不是 `FOR UPDATE` 時送副本，所以 `WITH` 開頭的查詢送主庫。
+
+程式自己持有兩個池時，這些規則都寫在程式碼上：sqlc 產生的 `New` 收一個連線介面（`DBTX`），連線池與交易都符合它，呼叫端決定傳哪一個。
+
+```go
+primary, _ := pgxpool.New(ctx, primaryDSN) // 主庫
+replica, _ := pgxpool.New(ctx, replicaDSN) // 副本
+
+orders, _ := store.New(replica).ListOrdersByCustomer(ctx, 1) // 可以接受落後的訂單列表
+c, _ := store.New(primary).GetCustomer(ctx, 1)               // 剛寫完就讀的那一筆
+```
+
+`store` 是 [10.4 sqlc：從 SQL 產生型別安全的 Go 程式碼](/go/10-database-access/sqlc/) 以 `sql_package: "pgx/v5"` 產生的套件，`ListOrdersByCustomer` 與 `GetCustomer` 是那一篇定義的查詢。每一個查詢送到哪裡都在呼叫的那一行看得到，代價是每個呼叫端都要做這個選擇。主庫與副本各有一個池，連線數要分開算上限；dbresolver 的情形也一樣，`db.DB()` 只回傳主庫的 `*sql.DB`，副本的池要用 dbresolver 的 `SetMaxOpenConns` 這組方法設定。這組方法對主庫與每一個副本設同一個值（設定裡沒有列 `Sources` 時主庫也包含在內），主庫要另一個上限時，在呼叫 dbresolver 的 `SetMaxOpenConns` 之後，用 `db.DB()` 取得的 `*sql.DB` 重設。
+
+## 選型結果裡要統一的項目：連線池、例外路徑、migration 工具、錯誤值、NULL、交易傳遞、唯讀副本與記錄
 
 選型的結果不只是一個工具名稱，因為同一個工具兩個開發者各自決定細節時，會在下面這幾處分岔：
 
@@ -119,7 +169,9 @@ tx err: 撤銷 amount: 250 note nil: true
 - **主力是 GORM 時，開發與測試環境的兩種記錄**：GORM 的 SQL 記錄看得到送出的語句，零值更新被略過時那裡會少一行 `UPDATE`；預設交易的 `begin` 與 `commit` 只在資料庫的語句記錄（`log_statement`）裡看得到。
 - **NULL 的表示**：`sql.NullString`、`*string` 與 sqlc 預設的 `pgtype.Text` 混在同一個專案裡，轉成 domain 型別的程式就要寫三套（見 [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)〈Scan 與 NULL〉）。
 - **「找不到」的錯誤值**：`sql.ErrNoRows`、`pgx.ErrNoRows`、`gorm.ErrRecordNotFound`，以及 GORM 的 `Find` 不回錯誤；混用的專案三種都會出現，repository 要在邊界把它們轉成同一個錯誤。
-- **交易物件怎麼傳進各個 repository**：一人用參數傳 `*sql.Tx`、另一人放進 `context`，混用時就接不起來（傳遞方式見 [1.4 Repository Adapter 實作](/backend/01-database/repository-adapter/)〈Transaction 傳遞〉）。
+- **交易物件怎麼傳進各個 repository**：一人用參數傳 `*sql.Tx`、另一人放進 `context`，混用時就接不起來（傳遞方式見 [1.4 Repository Adapter 實作](/backend/01-database/repository-adapter/)〈Transaction 傳遞〉，誤用時的徵兆見 [Transaction Propagation](/backend/knowledge-cards/transaction-propagation/)）。
+- **要不要用 `gorm.Model` 的軟刪除、`Save` 用在哪裡**：一人用軟刪除、另一人寫的報表 SQL 不加 `deleted_at IS NULL`，或一人用 `Save` 寫回整列、另一人只改欄位，同一張表上就會出現已刪除的資料被算進報表、別人的修改被蓋掉（見 [10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/go/10-database-access/gorm-model-and-soft-delete/)）。
+- **有唯讀副本時，哪些路徑強制讀主庫**：寫入後立刻讀的路徑一人加了 `Clauses(dbresolver.Write)`、另一人沒加，同一類畫面時好時壞，只在複製落後時出錯（見〈讀寫分離：GORM 的 dbresolver 與程式自己持有兩個池〉）。
 - **`gorm.Config` 的旗標由同一處設定**：`PrepareStmt`、`SkipDefaultTransaction`、`TranslateError` 都會改變行為；開了 `PrepareStmt`，〈混用時共用同一個交易〉的 `ConnPool.(*sql.Tx)` 型別斷言會 panic。
 
 這幾條決定了 repository 背後的 adapter 長什麼樣；adapter 對上層暴露的 port 怎麼切，見 [6.6 如何新增 repository port](/go/06-practical/repository-port/)。

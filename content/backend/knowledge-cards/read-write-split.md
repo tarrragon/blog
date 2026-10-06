@@ -13,7 +13,7 @@ Read-Write Split 位在 application 與資料庫拓撲之間的路由層。它�
 
 ## 可觀察訊號與例子
 
-適合 read-write split 的訊號是 primary 的讀取壓力遠大於寫入、且多數讀取可以接受秒級延遲的資料。要特別處理的是「寫入後立刻讀」的流程：使用者送出訂單後馬上看訂單列表、後台改完權限馬上驗證，這些 read-after-write 路徑分到 replica 會讀到舊狀態。常見做法是讓這類路徑強制走 primary，或加一層 lag guard。
+適合 read-write split 的訊號是 primary 的讀取壓力遠大於寫入、且多數讀取可以接受秒級延遲的資料。要特別處理的是「寫入後立刻讀」的流程：使用者送出訂單後馬上看訂單列表、後台改完權限馬上驗證，這些 read-after-write 路徑分到 replica 會讀到舊狀態。常見做法是讓這類路徑強制走 primary，或加一層 lag guard。路由放在應用程式、ORM 或代理時各自的規則（交易內的讀取、同一請求剛寫入之後的讀取、手寫 SQL 送哪裡），以及 GORM、Laravel、Django 的實際行為，見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈讀寫分離與多個資料庫：連線的路由由哪一層決定〉。
 
 ## 設計責任
 
