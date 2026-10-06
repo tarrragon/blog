@@ -107,6 +107,7 @@ weight: -1
 | [Materialized View](/backend/knowledge-cards/materialized-view/)                         | 查詢結果如何預先計算並儲存                       | projection、read model                     |
 | [CQRS](/backend/knowledge-cards/cqrs/)                                                   | 讀寫責任在什麼條件下該分離                       | read model、projection                     |
 | [Event Sourcing](/backend/knowledge-cards/event-sourcing/)                               | 事件流如何取代可變狀態成為正式紀錄               | append-only、replay                        |
+| [Lambda Architecture（批次層與即時層）](/backend/knowledge-cards/lambda-architecture/)   | 即時累加與依原始事件重算的兩份統計如何分工       | speed layer、batch layer、Redis 即時計數   |
 | [Saga](/backend/knowledge-cards/saga/)                                                   | 跨服務事務如何用補償序列取代 atomic              | 補償交易、最終一致                         |
 | [Connection Pooler](/backend/knowledge-cards/connection-pooler/)                         | 連線數放大如何在應用與資料庫之間收斂             | pgbouncer、水平擴展                        |
 
