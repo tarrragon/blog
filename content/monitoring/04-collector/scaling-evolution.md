@@ -148,12 +148,14 @@ CREATE TABLE daily_summary (
     UNIQUE(date, type, name)
 );
 
--- 降採樣（Downsample，每小時跑一次，幂等 — 重跑只更新不重複）
+-- 降採樣（Downsample，每小時跑一次，冪等：重跑只覆寫、不重複計算）
+-- 範圍從「前一個整點」開始：前一個完整小時與目前這個小時都整個重算，
+-- 用「現在往前一小時」會只涵蓋前一個小時的一部分，覆寫掉完整的計數（見 1.18）
 INSERT OR REPLACE INTO hourly_summary (hour, type, name, count, error_count)
 SELECT strftime('%Y-%m-%dT%H:00:00', ts), type, name,
        COUNT(*), SUM(CASE WHEN type='error' THEN 1 ELSE 0 END)
 FROM events
-WHERE ts >= datetime('now', '-1 hour')
+WHERE ts >= strftime('%Y-%m-%dT%H:00:00', 'now', '-1 hour')
 GROUP BY 1, 2, 3;
 
 -- 清理（Purge，每天跑一次，分批刪除避免長時間鎖定）

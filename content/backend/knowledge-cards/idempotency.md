@@ -18,4 +18,4 @@ Idempotency 是副作用邊界的穩定性設計。查詢通常天然接近 idem
 
 ## 設計責任
 
-Idempotency 設計要有穩定 key、唯一約束、處理紀錄、結果查詢與過期策略。測試要覆蓋連續重送、處理中 crash、外部 API timeout 與 replay。
+Idempotency 設計要有穩定 key、唯一約束、處理紀錄、結果查詢與過期策略。測試要覆蓋連續重送、處理中 crash、外部 API timeout 與 replay。事件批次寫入資料庫時，識別碼由程式在事件產生時產生、寫入用 `ON CONFLICT DO NOTHING` 的做法與實測見 [1.18 高頻計數的寫入與彙總：熱點列的鎖、只新增的事件、可以重跑的彙總與重送的事件](/backend/01-database/high-frequency-counting/)〈重送的事件：識別碼的產生位置與 ON CONFLICT 的寫法〉。

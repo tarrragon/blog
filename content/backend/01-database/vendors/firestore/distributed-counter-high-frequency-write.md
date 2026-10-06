@@ -118,7 +118,7 @@ shard 數量的估算從峰值寫入頻率反推：`shard 數 ≈ 峰值每秒�
 distributed counter 解的是「高頻、可接受近似、不需強一致」的計數——讚數、觀看數、瀏覽量、即時參與人數。它的邊界很清楚：
 
 - **需要強一致與精確的計數**：帳戶餘額、庫存、配額扣減。這些要嘛用 Firestore transaction 嚴格序列化（但就回到單 document 寫入上限的限制、不適合高頻），要嘛放關聯式資料庫用 row-level lock 與交易保護（見 [1.3 transaction 與一致性邊界](/backend/01-database/transaction-boundary/)）
-- **需要任意維度聚合的計數**：要算「各地區、各時段的累計」這類多維彙總，分片計數表達不了，該把事件流寫進分析系統或關聯式資料庫做 aggregation
+- **需要任意維度聚合的計數**：要算「各地區、各時段的累計」這類多維彙總，分片計數表達不了，該把事件流寫進分析系統或關聯式資料庫做 aggregation（在關聯式資料庫裡只新增事件、再以可以重跑的方式彙總，見 [1.18 高頻計數的寫入與彙總：熱點列的鎖、只新增的事件、可以重跑的彙總與重送的事件](/backend/01-database/high-frequency-counting/)）
 - **計數本身是核心交易資料**：當計數驅動扣款、結算這類有金錢後果的流程，把它留在 client 直連的 Firestore 是控制面風險，該移到後端——這呼應 [Firestore → 自建 relational](/backend/01-database/vendors/firestore/migrate-to-relational/) 的成本與授權 driver
 
 判讀順序是先問「這個計數能不能容忍近似與最終一致」。能，distributed counter 是 Firestore 內的正解；不能，這個計數從一開始就不該用 Firestore 的單欄位累加表達。

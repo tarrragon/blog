@@ -170,7 +170,7 @@ MySQL 的 `SHOW PROCESSLIST` 對等列鎖的 session 顯示的狀態是 `updatin
 
 **分散熱點**：
 
-- counter shard：把 1 個 counter 拆成 N 列 sub-counter，寫入時由應用程式隨機挑一列加一、讀取時把 N 列加總。拆成 10 列時，同時寫入的 request 分散到 10 列上，瓶頸在同一列的鎖時寫入吞吐理想上接近 10 倍
+- counter shard：把 1 個 counter 拆成 N 列 sub-counter，寫入時由應用程式隨機挑一列加一、讀取時把 N 列加總。拆成 10 列時，同時寫入的 request 分散到 10 列上，10 倍是寫入吞吐的上限（實測只有數倍，見 1.18）
 
   ```sql
   CREATE TABLE view_counter (
@@ -196,6 +196,8 @@ MySQL 的 `SHOW PROCESSLIST` 對等列鎖的 session 顯示的狀態是 `updatin
 
 - 不要每次點擊就 update counter、先進 in-memory buffer、定期 flush
 - 應用層 Redis INCR + 定期同步回 SQL
+
+熱點列的吞吐量為什麼受提交寫盤的時間限制、加開連線只會放大延遲，以及改成只新增事件再彙總時要處理的漏算、重複計算與彙總排程的互斥，見 [1.18 高頻計數的寫入與彙總：熱點列的鎖、只新增的事件、可以重跑的彙總與重送的事件](/backend/01-database/high-frequency-counting/)。
 
 **Optimistic concurrency control**：讀的時候記下 `version`，寫的時候只在 `version` 沒被別人改過時才更新，並把 `version` 加一；更新到零列就代表有人先寫了，應用層重讀再 retry。這個做法不用 `SELECT ... FOR UPDATE` 先鎖住那一列。
 

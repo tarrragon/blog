@@ -22,4 +22,6 @@ Rollup 是 [storage tiering](/backend/knowledge-cards/storage-tiering/) 在時�
 
 需要 rollup 的訊號是 TSDB 儲存成本持續成長、長時間範圍的 dashboard panel 查詢逾時、或保留政策因為儲存限制被迫縮短。Thanos compactor、Cortex/Mimir compactor、VictoriaMetrics downsampling 都是常見實作。
 
+彙總用累加還是重算、重算的範圍怎麼取才不漏掉晚到的事件，見 [1.18 高頻計數的寫入與彙總：熱點列的鎖、只新增的事件、可以重跑的彙總與重送的事件](/backend/01-database/high-frequency-counting/)〈彙總的兩種寫法：累加新的事件，或重算一段時間〉。
+
 在觀測領域的查詢設計見 [4.2 metrics 聚合查詢](/backend/04-observability/metrics-basics/) 跟 [4.23 觀測查詢設計](/backend/04-observability/observability-query-design/)。

@@ -126,7 +126,7 @@ Load balancer 用 round-robin 或 least-connections 分配。不需要 sticky se
 
 ### 多機的 Downsample 和 Purge
 
-Downsample 和 Purge job 只能由一個 collector 實例執行（避免重複處理）。用 PostgreSQL 的 advisory lock 或外部的 distributed lock 確保單一執行者。
+Downsample 和 Purge job 只能由一個 collector 實例執行（避免重複處理）。用 PostgreSQL 的建議鎖（[Advisory Lock（建議鎖）](/backend/knowledge-cards/advisory-lock/)，經過連線池時用交易層級的那一種）或外部的 distributed lock 確保同一時間只有一個執行者；job 本身仍要能重跑，因為一個執行者跑完之後，另一個照樣會再跑一次。
 
 ## 第四層：Queue 解耦
 

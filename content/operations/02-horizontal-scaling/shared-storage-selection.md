@@ -19,7 +19,7 @@ tags: ["devops", "horizontal-scaling", "shared-storage", "read-replica", "connec
 存取型態決定放哪一類儲存，三類常見的共享狀態各有適合的落點：
 
 - **結構化、要查詢的狀態** → 共享的關聯式資料庫。本站 collector 的水平擴展就靠這個——多個 collector 實例寫入同一個 PostgreSQL，任何實例接收的事件都能被任何 dashboard 查到。這裡有一個關鍵限制：不是所有資料庫都能當共享儲存。collector 的 SQLite 後端不支援水平擴展，因為每個實例有各自的 SQLite 檔案、無法合併查詢，且單檔案模型無法跨主機存取——這也排除了「把 SQLite 檔放 NFS 給多台共享」這種看似省事的做法。要共享，就要用本身支援多連線並行、能跨主機的資料庫。
-- **高頻的鍵值狀態** → 鍵值儲存或快取。session、計數器、限流狀態這類高頻讀寫、不需要跨行交易的狀態，放 SQL 會撞 hot row 的鎖競爭，放 Redis、DynamoDB 這類鍵值儲存才對——這條在 [Session 處理](/operations/02-horizontal-scaling/session-handling/) 展開過。
+- **高頻的鍵值狀態** → 鍵值儲存或快取。session、計數器、限流狀態這類高頻讀寫、不需要跨行交易的狀態，放 SQL 會撞 hot row 的鎖競爭，維度固定、可以接受遺失少量計數時放 Redis、DynamoDB 這類鍵值儲存——這條在 [Session 處理](/operations/02-horizontal-scaling/session-handling/) 展開過。計數要事後換維度（依客群、排除機器人）時，改成只新增事件再彙總，見 [1.18 高頻計數的寫入與彙總：熱點列的鎖、只新增的事件、可以重跑的彙總與重送的事件](/backend/01-database/high-frequency-counting/)。
 - **大檔案、不可變的內容** → 物件儲存。上傳的檔案、靜態資源這類大而不常改的內容，放物件儲存（如 S3）比塞進資料庫合適——資料庫不擅長存大二進位、物件儲存正是為此設計，且本身就跨主機共享，解掉了「上傳暫存放本機、換實例就找不到」的無狀態破口。
 
 ## 共享一個資料庫的讀路徑

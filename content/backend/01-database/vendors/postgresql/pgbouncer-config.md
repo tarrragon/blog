@@ -167,7 +167,7 @@ SHOW SERVERS;
 
 - Application 框架禁用 prepared statement（JDBC `prepareThreshold=0`、psycopg 3 `prepare_threshold=None`、asyncpg `statement_cache_size=0`、Go pgx `default_query_exec_mode=exec`，pgx 的實測見 [10.2 pgx：PostgreSQL 驅動的原生介面、連線池與 COPY 大量寫入](/go/10-database-access/pgx/)）
 - temporary table 改 [unlogged table](https://www.postgresql.org/docs/current/sql-createtable.html#SQL-CREATETABLE-UNLOGGED-TABLES) + cleanup
-- advisory lock 改 row-level lock 或 application-level lock（Redis）
+- advisory lock 改用交易層級的 `pg_try_advisory_xact_lock`（和交易一起開始、一起結束，不受換連線影響，見 [Advisory Lock（建議鎖）](/backend/knowledge-cards/advisory-lock/)），或改 row-level lock、application-level lock（Redis）
 - 或：切到 session pooling、犧牲收斂效率
 
 ### DNS-based failover 後 application 連到舊 master

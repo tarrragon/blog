@@ -143,7 +143,7 @@ n, err := pool.CopyFrom(ctx,
 copy: 2 <nil>
 ```
 
-`COPY` 是整批成功或整批失敗，其中一列違反約束，整批都不會寫入；它也不支援 `ON CONFLICT`，所以要「已存在就略過」的寫入不適合用它。資料來源很大時，用 `pgx.CopyFromFunc` 逐列產生資料，不必先把全部資料放進記憶體。
+`COPY` 是整批成功或整批失敗，其中一列違反約束，整批都不會寫入；它也不支援 `ON CONFLICT`，所以要「已存在就略過」的寫入不適合用它（重送的事件用 `INSERT ... ON CONFLICT DO NOTHING` 冪等寫入的做法見 [1.18 高頻計數的寫入與彙總：熱點列的鎖、只新增的事件、可以重跑的彙總與重送的事件](/backend/01-database/high-frequency-counting/)）。資料來源很大時，用 `pgx.CopyFromFunc` 逐列產生資料，不必先把全部資料放進記憶體。
 
 ## pgx 的語句快取與 PgBouncer 交易模式
 

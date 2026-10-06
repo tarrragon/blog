@@ -95,6 +95,7 @@ weight: -1
 | [Hybrid Logical Clock](/backend/knowledge-cards/hybrid-logical-clock/)                   | 事件時間戳如何兼顧物理與邏輯順序                 | HLC、max offset                            |
 | [Serialization Failure](/backend/knowledge-cards/serialization-failure/)                 | 序列化衝突如何被回報與重試                       | SERIALIZABLE、40001                        |
 | [Distributed Lock](/backend/knowledge-cards/distributed-lock/)                           | 跨機器互斥如何在持有者失效時收回                 | lease、Redis、etcd                         |
+| [Advisory Lock（建議鎖）](/backend/knowledge-cards/advisory-lock/)                       | 資料庫裡由應用程式定義意義的鎖、和連線池的交互   | 排程互斥、PostgreSQL、連線池               |
 | [Fencing Token](/backend/knowledge-cards/fencing-token/)                                 | 過期持鎖者的寫入如何被下游拒絕                   | 單調遞增 token、資料層                     |
 | [Distributed SQL](/backend/knowledge-cards/distributed-sql/)                             | SQL 與交易語意如何延伸到多節點                   | CockroachDB、Spanner                       |
 | [Global OLTP](/backend/knowledge-cards/global-oltp/)                                     | 跨地理區域維持交易一致性的代價是什麼             | multi-region、延遲預算                     |

@@ -40,7 +40,7 @@ HyperLogLog 的判讀重點是「估計值能不能接受」。它回答的是�
 
 ## 原子計數器：counter
 
-counter 的責任是提供一個原子遞增的整數，讓並發場景下的計數不需要鎖。它建構在 string 上，`INCR`、`INCRBY`、`DECR` 都是原子操作，適合限流、配額、瀏覽計數這類高並發累加。
+counter 的責任是提供一個原子遞增的整數，讓並發場景下的計數不需要鎖。它建構在 string 上，`INCR`、`INCRBY`、`DECR` 都是原子操作，適合限流、配額、瀏覽計數這類高並發累加。計數放 Redis、拆成資料庫裡的多列、或改成只新增事件再彙總，三者各自能回答什麼問題、遺失時損失什麼，見 [1.18 高頻計數的寫入與彙總：熱點列的鎖、只新增的事件、可以重跑的彙總與重送的事件](/backend/01-database/high-frequency-counting/)。
 
 限流計數是典型應用，也跟 [rate limit](/backend/knowledge-cards/rate-limit) 卡片直接相關。固定窗口限流用 `INCR rate:<user>:<minute>` 累加當前窗口的請求數，第一次寫入時 `EXPIRE` 設定窗口長度，超過閾值就拒絕。原子性讓多個並發請求的計數不會互相覆蓋，這是用一般 `GET`/`SET` 做計數會踩到的競態。
 
