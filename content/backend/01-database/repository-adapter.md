@@ -83,21 +83,21 @@ error translation 的責任是把底層錯誤分類成應用層可決策訊號�
 
 ## ORM vs Query Builder vs Raw SQL
 
-選 mapping 工具是 repository adapter 的核心取捨。
+選 mapping 工具是 repository adapter 的核心取捨。下面三類是粗分；Raw SQL 這一類再細分成驅動、結果對映與從 SQL 產生程式碼，以及各類在 Go、PHP（Laravel）、Python 的代表工具，見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)。
 
 ### Raw SQL
 
 - 優勢：完全控制 query plan、易 tune
 - 優勢：大規模 query 性能最好
-- 限制：易拼錯字、IDE 支援差
-- 風險：一不小心就 SQL injection（用 prepared statement / parameterized query）
+- 限制：易拼錯字、IDE 支援差（從 SQL 產生程式碼這一支在產生時檢查欄位，見 1.17）
+- 風險：一不小心就 SQL injection（用 prepared statement / parameterized query，見 [SQL Injection](/backend/knowledge-cards/sql-injection/) 與 [Prepared Statement](/backend/knowledge-cards/prepared-statement/)）
 - 適合：性能極限關鍵 / 複雜 query / 已有 SQL 專家團隊
 
 ### Query Builder
 
 主流工具：Knex（Node）、SQLAlchemy Core（Python）、jOOQ（Java）、goqu（Go）、Diesel（Rust）。
 
-- 優勢：型別安全、IDE 自動完成
+- 優勢：IDE 自動完成；型別安全的程度依工具而定：jOOQ 從 schema 產生型別，squirrel、goqu 這類用字串表示欄位，欄位寫錯要到執行時才出現
 - 優勢：不需要 ORM 的複雜度
 - 優勢：仍可看到生成的 SQL
 - 限制：學 DSL 成本
@@ -108,7 +108,7 @@ error translation 的責任是把底層錯誤分類成應用層可決策訊號�
 主流工具：GORM（Go）、SQLAlchemy ORM（Python）、Active Record（Rails）、JPA / Hibernate（Java）、Entity Framework（.NET）、Prisma（TypeScript）。
 
 - 優勢：CRUD 操作快速、boilerplate 少
-- 優勢：自動 mapping、自動 transaction
+- 優勢：自動 mapping；部分 ORM 把每一次寫入自動包成交易（GORM），有的要程式明確開始（Laravel），兩種都不會把多次寫入放進同一個交易，見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈ORM〉
 - 優勢：migration 工具通常整合
 - 限制：隱藏 SQL 細節、易產生 N+1 query
 - 限制：複雜 query 反而比 raw SQL 難寫
@@ -116,6 +116,8 @@ error translation 的責任是把底層錯誤分類成應用層可決策訊號�
 - 適合：CRUD 為主的應用、團隊偏業務開發
 
 ### 選型決策
+
+以下依團隊規模粗分；依資料存取層要承擔的事拆開的選型軸（schema 的權威、查詢的形狀、錯誤在什麼時候被發現、審查要看到什麼）見 1.17〈選型：從要交出的資料存取層往回看〉。
 
 1. **小團隊 + CRUD-heavy**：ORM（快速 prototype、boilerplate 少）
 2. **中型 + 混合需求**：Query Builder（安全 + 仍能寫複雜 query）

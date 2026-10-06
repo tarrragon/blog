@@ -6,7 +6,7 @@ weight: 14
 tags: ["backend", "performance", "scaling", "connection-pool"]
 ---
 
-[9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/) 指出了水平擴展應用層時的隱性成本之一：連線池放大 — 100 臺機器 × 每臺 10 個連線 = 對 DB 開 1000 個連線、超過 PostgreSQL `max_connections` default（100）十倍。本章把這條撞牆訊號的具體解法說清楚 — connection pooler 是什麼、PgBouncer / RDS Proxy / ProxySQL 怎麼選、不同場景的取捨。
+[9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/) 指出了水平擴展應用層時的隱性成本之一：連線池放大 — 100 臺機器 × 每臺 10 個連線 = 對 DB 開 1000 個連線、超過 PostgreSQL `max_connections` default（100）十倍；一臺機器跑多個 worker 程序（gunicorn、PHP-FPM）時還要再乘上 worker 數，各語言執行模型下的估算見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈各語言執行模型下的連線模型〉。本章把這條撞牆訊號的具體解法說清楚 — connection pooler 是什麼、PgBouncer / RDS Proxy / ProxySQL 怎麼選、不同場景的取捨。
 
 ## 連線池放大的物理本質
 
@@ -33,10 +33,10 @@ PostgreSQL / MySQL 每個連線都會在 DB server 端配一個 backend process 
 PgBouncer 的核心參數是 `pool_mode`：
 
 - **Session mode**：應用層 client 拿到的連線、跟 DB backend 1:1 綁定、整個 session 結束才釋放。其實沒做 multiplexing、只是 connection caching。
-- **Transaction mode**：每個 transaction 結束、應用層 client 的連線釋放回 pool、下個 transaction 再分配 DB backend。multiplexing 比較強、但**不支援 transaction-scoped state**（如 `SET LOCAL`、prepared statement、temporary table）。
+- **Transaction mode**：每個 transaction 結束、應用層 client 的連線釋放回 pool、下個 transaction 再分配 DB backend。multiplexing 比較強、但**不支援跨 transaction 的 session 層級狀態**（如 session 層級的 `SET`、prepared statement、temporary table；`SET LOCAL` 只在單一 transaction 內生效，不受影響）。
 - **Statement mode**：每個 statement 結束就釋放、最強 multiplexing 但**不支援 transaction**。極少用、只在純 stateless query workload 適用。
 
-Transaction mode 是多數場景的 default。但要注意：應用層的 ORM / driver 可能預設用 prepared statement、跟 transaction mode 衝突。PostgreSQL 14+ 的 protocol-level prepared statement 才相容、JDBC / asyncpg 等需要特別配置。
+Transaction mode 是多數場景的 default。但要注意：應用層的 ORM / driver 可能預設用 prepared statement、跟 transaction mode 衝突。PgBouncer 1.21 起可以在 transaction mode 追蹤 protocol-level prepared statement（`max_prepared_statements`，1.24 起預設開啟），與 PostgreSQL 的版本無關；更早的 PgBouncer 要在 JDBC / asyncpg / pgx 等驅動端另外配置（見 [Prepared Statement](/backend/knowledge-cards/prepared-statement/)）。
 
 ### AWS RDS Proxy — managed 換掉運維
 
@@ -88,13 +88,13 @@ Connection pooler 不是必要 — 在以下情境可以暫時不裝：
 
 ## 判讀訊號
 
-| 訊號                                       | 判讀重點                                                | 對應動作                                                                   |
-| ------------------------------------------ | ------------------------------------------------------- | -------------------------------------------------------------------------- |
-| DB `pg_stat_activity` 顯示大量 idle 連線   | 應用層 keep-alive 連線、實際使用率低                    | 加 connection pooler 把 idle 釋放回 DB                                     |
-| 應用層 connection acquisition 等待時間升高 | 應用層 pool 太小、或 DB 連線數已撞 `max_connections`    | 加 pooler 把連線總數壓低、應用層 pool size 維持原樣                        |
-| DB failover 後應用層 5-10 分鐘錯誤率高     | 應用層 connection pool 沒 detect 到 backend 切換        | RDS Proxy 的 failover 加速、或應用層 connection validation 加強            |
-| Pooler 上線後出現「unexpected error」      | transaction mode 跟 prepared statement / SET LOCAL 衝突 | 改 ORM 配置、用 protocol-level prepared statement 或避開 SET LOCAL         |
-| 應用層 N+1 query 仍然存在                  | Pooler 沒解 N+1、它只解連線數放大                       | 回 [1.13 query 反模式](/backend/01-database/query-anti-patterns/) 修反模式 |
+| 訊號                                       | 判讀重點                                                         | 對應動作                                                                   |
+| ------------------------------------------ | ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| DB `pg_stat_activity` 顯示大量 idle 連線   | 應用層 keep-alive 連線、實際使用率低                             | 加 connection pooler 把 idle 釋放回 DB                                     |
+| 應用層 connection acquisition 等待時間升高 | 應用層 pool 太小、或 DB 連線數已撞 `max_connections`             | 加 pooler 把連線總數壓低、應用層 pool size 維持原樣                        |
+| DB failover 後應用層 5-10 分鐘錯誤率高     | 應用層 connection pool 沒 detect 到 backend 切換                 | RDS Proxy 的 failover 加速、或應用層 connection validation 加強            |
+| Pooler 上線後出現「unexpected error」      | transaction mode 跟 prepared statement / session 層級的 SET 衝突 | 改 ORM 配置、用 protocol-level prepared statement 或避開 SET LOCAL         |
+| 應用層 N+1 query 仍然存在                  | Pooler 沒解 N+1、它只解連線數放大                                | 回 [1.13 query 反模式](/backend/01-database/query-anti-patterns/) 修反模式 |
 
 ## 常見誤區
 
@@ -102,7 +102,7 @@ Connection pooler 不是必要 — 在以下情境可以暫時不裝：
 
 把 RDS Proxy 當「免費功能」。Proxy 的計價跟 RDS / Aurora 本體疊加、高 connection volume 場景 Proxy 成本可能可觀。要算實際的 cost-per-request、不是預設「managed 一定值得」。
 
-把 transaction mode 配置當「裝完就好」。Prepared statement / SET LOCAL / temporary table 都會跟 transaction mode 衝突、ORM 預設行為要 audit 過、不然會在 production 出現難 debug 的「query 隨機失敗」。
+把 transaction mode 配置當「裝完就好」。Prepared statement / session 層級的 SET / temporary table 都會跟 transaction mode 衝突、ORM 預設行為要 audit 過、不然會在 production 出現難 debug 的「query 隨機失敗」。
 
 ## 定位邊界
 

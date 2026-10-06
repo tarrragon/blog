@@ -59,7 +59,7 @@ listen = /run/php/site_b.sock
 
 ## max_children：並發上限與排隊
 
-`pm.max_children` 是這個 pool 最多能同時存在的 worker 數量，也就是這個 pool 最多能同時處理幾個請求。一個 worker 一次只處理一個請求，所以超過這個數量的請求要排隊等。
+`pm.max_children` 是這個 pool 最多能同時存在的 worker 數量，也就是這個 pool 最多能同時處理幾個請求。一個 worker 一次只處理一個請求，所以超過這個數量的請求要排隊等。每個 worker 各自連資料庫，所以實例數 × `pm.max_children` 也是資料庫連線數的上限，要算進資料庫的 `max_connections`（各語言的連線模型對照見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)）。
 
 這一點可以直接量。設 `pm = static`、`pm.max_children = 2`，然後同時送 6 個各需要 1 秒的請求：
 

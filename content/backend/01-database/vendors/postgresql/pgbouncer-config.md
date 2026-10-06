@@ -37,7 +37,7 @@ pgBouncer 的 first-class concept 是 *pool mode*、決定 application connectio
 - **Transaction pooling**：application connection 在 *transaction 邊界* 才綁 backend、commit / rollback 後立即釋放。同一個 application connection 不同 transaction 可能拿到不同 backend。收斂效率高（idle connection 完全不占 backend slot）、但 *session state 限制嚴* — 不能用 `SET` 改 session-level setting、不能用 protocol-level prepared statement（pgBouncer 1.21 起可用 `max_prepared_statements` 支援）、不能用 advisory lock 跨 transaction。
 - **Statement pooling**：每個 statement 完就釋放 backend。極端高收斂但 *連 transaction 都不能跨 statement*、絕大多數 application 用不了、只在 batch query 場景。
 
-**Production 預設選 transaction pooling**、application 端禁用 prepared statement（或用 [PgBouncer-supported prepared statement](https://www.pgbouncer.org/config.html#max_prepared_statements)、需 pgBouncer 1.21+）。例外場景才開 session pooling。
+**Production 預設選 transaction pooling**、application 端禁用 [prepared statement](/backend/knowledge-cards/prepared-statement/)（或用 [PgBouncer-supported prepared statement](https://www.pgbouncer.org/config.html#max_prepared_statements)、需 pgBouncer 1.21+）。例外場景才開 session pooling。
 
 **Pool sizing 公式**：
 
@@ -165,7 +165,7 @@ SHOW SERVERS;
 
 修：
 
-- Application 框架禁用 prepared statement（JDBC `prepareThreshold=0`、SQLAlchemy `use_native_prepared_statements=False`）
+- Application 框架禁用 prepared statement（JDBC `prepareThreshold=0`、psycopg 3 `prepare_threshold=None`、asyncpg `statement_cache_size=0`、Go pgx `default_query_exec_mode=exec`，pgx 的實測見 [10.2 pgx：PostgreSQL 驅動的原生介面、連線池與 COPY 大量寫入](/go/10-database-access/pgx/)）
 - temporary table 改 [unlogged table](https://www.postgresql.org/docs/current/sql-createtable.html#SQL-CREATETABLE-UNLOGGED-TABLES) + cleanup
 - advisory lock 改 row-level lock 或 application-level lock（Redis）
 - 或：切到 session pooling、犧牲收斂效率

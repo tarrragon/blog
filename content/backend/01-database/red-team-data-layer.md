@@ -62,7 +62,7 @@ typeof body.password === "string";
 **ORM Injection**：
 
 - 即使用 ORM、`Raw()` / `Exec()` 等 escape hatch 仍能注入
-- 用 `where` clause 接 user input 不過濾、ORM 不會自動防
+- 把 user input 拼進 `where` 的條件字串，ORM 不會自動防；值走 `?` 參數時才由佔位符保護（見 [SQL Injection](/backend/knowledge-cards/sql-injection/)）
 - 防禦：永遠 parameterized、`Raw()` 必須 review
 
 **Second-order Injection**（二階注入）：

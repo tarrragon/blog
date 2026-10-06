@@ -422,6 +422,7 @@ repository 應該來自 usecase 需求。先建一個萬用 `Repository`，通�
 本章先處理 repository port 如何表達資料能力；特定資料庫、ORM 與 transaction，會在下列章節再往外延伸：
 
 - [Go 進階：資料庫 transaction 與 schema migration](/go-advanced/07-distributed-operations/database-transactions/)
+- [Go 模組十：資料庫存取](/go/10-database-access/)：adapter 背後用 `database/sql`、pgx、sqlx、sqlc 與 GORM 的寫法
 - [Backend：資料庫與持久化](/backend/01-database/)
 
 ## 和 Go 教材的關係

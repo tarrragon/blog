@@ -150,6 +150,21 @@ Go 標準庫如何把檔案處理、JSON、時間、HTTP 與結構化日誌串�
 - [Go 的高併發服務案例](/go/08-case-studies/high-concurrency-services/)
 - [Go 公開原始碼讀碼路線](/go/08-case-studies/open-source-code-reading/)
 
+### [模組九：Go 做工具鏈與靜態分析](/go/09-tooling-and-analysis/)
+
+用 Go 寫開發工具：命令列子命令、AST 分析與改寫、跨檔關係圖、pre-commit 與 CI 整合。
+
+### [模組十：資料庫存取](/go/10-database-access/)
+
+用標準庫 `database/sql`、pgx、sqlx、sqlc 與 GORM 存取 PostgreSQL，各自替程式接手哪一段工作、哪些行為因此看不見；語言無關的分層在 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)。
+
+- [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)
+- [10.2 pgx：PostgreSQL 驅動的原生介面、連線池與 COPY 大量寫入](/go/10-database-access/pgx/)
+- [10.3 sqlx：手寫 SQL 加上 struct 對映](/go/10-database-access/sqlx/)
+- [10.4 sqlc：從 SQL 產生型別安全的 Go 程式碼](/go/10-database-access/sqlc/)
+- [10.5 GORM：model、關聯載入與 ORM 送出的 SQL](/go/10-database-access/gorm/)
+- [10.6 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)
+
 ## 主題導讀
 
 同一個主題會在不同階段重複出現，這是刻意安排：前面先學 Go 語法與標準庫，後面再把同一概念放進服務設計、重構與生產情境。遇到重疊時，可以依照下列路線閱讀，先看語言層，再看實戰與平台層。
@@ -162,6 +177,7 @@ Go 標準庫如何把檔案處理、JSON、時間、HTTP 與結構化日誌串�
 | 事件系統                                                   | [typed string](/go/02-types-data/constants/)                                        | [新增 domain event](/go/06-practical/new-event-type/)、[事件去重重構](/go/07-refactoring/dedup-refactor/)                                            | [事件去重語義鍵](/go-advanced/04-architecture-boundaries/dedup-key/)、[多來源 event 融合](/go-advanced/04-architecture-boundaries/event-fusion/) | [訊息佇列與事件傳遞](/backend/03-message-queue/)                                         |
 | [WebSocket](/backend/knowledge-cards/websocket) 與即時服務 | [HTTP handler](/go/03-stdlib/http-handler/)、[channel](/go/04-concurrency/channel/) | [新增 WebSocket action](/go/06-practical/new-websocket-action/)                                                                                      | [WebSocket 服務架構](/go-advanced/02-networking-websocket/)、[跨節點 WebSocket](/go-advanced/07-distributed-operations/cross-node-websocket/)    | [快取與 Redis](/backend/02-cache-redis/)、[訊息佇列](/backend/03-message-queue/)         |
 | 專案成長與架構                                             | [從單檔到多檔案](/go/01-basics/growing-files-packages/)                             | [domain package](/go/07-refactoring/domain-packages/)、[ports/adapters](/go/07-refactoring/hexagonal-migration/)                                     | [架構邊界與事件系統](/go-advanced/04-architecture-boundaries/)                                                                                   | [Backend 服務實務指南](/backend/)                                                        |
+| 資料庫存取                                                 | [context](/go/03-stdlib/context/)                                                   | [repository port](/go/06-practical/repository-port/)、[資料庫存取模組](/go/10-database-access/)                                                      | [資料庫 transaction 與 schema migration](/go-advanced/07-distributed-operations/database-transactions/)                                          | [應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)                 |
 | 公司案例與讀碼                                             | [Go 選型案例總覽](/go/08-case-studies/selection-patterns/)                          | [高併發服務案例](/go/08-case-studies/high-concurrency-services/)                                                                                     | [公開原始碼讀碼路線](/go/08-case-studies/open-source-code-reading/)                                                                              | [Go 官方案例與 GitHub 原始碼](/go/08-case-studies/)                                      |
 
 ## 範例方式

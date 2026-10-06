@@ -9,7 +9,7 @@ Transaction Pooling 的核心概念是 connection pooler 把後端連線的綁�
 
 ## 概念位置
 
-Transaction Pooling 位在 application 與資料庫之間的 [Connection Pool](/backend/knowledge-cards/connection-pool/) 內。相對於 session pooling（連線綁定整個 client session）與 statement pooling（綁定單一語句），transaction pooling 在壓縮率與相容性之間取中間值。選它就要把 search_path、prepared statement、暫存表、advisory lock、SET 等 session 層設定全部改成 transaction-scoped。
+Transaction Pooling 位在 application 與資料庫之間的 [Connection Pool](/backend/knowledge-cards/connection-pool/) 內。相對於 session pooling（連線綁定整個 client session）與 statement pooling（綁定單一語句），transaction pooling 在壓縮率與相容性之間取中間值。選它就要把 search_path、prepared statement（PgBouncer 1.21 起可另行追蹤、1.24 起預設開啟，見 [Prepared Statement](/backend/knowledge-cards/prepared-statement/)）、暫存表、advisory lock、SET 等 session 層設定全部改成 transaction-scoped。
 
 ## 可觀察訊號與例子
 

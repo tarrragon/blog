@@ -60,20 +60,25 @@ SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場�
 | [1.14 Production Slow Log Closed Loop](/backend/01-database/production-slow-log-loop/)                                                                   | Production Slow Log Closed Loop                          | 採集 / Normalize / PR review 整合 / Regression 偵測 — 把 slow log 從事故工具變成定期審視訊號                                               |
 | [1.15 資料契約文件（Data Contract Document）](/backend/01-database/data-contract-document/)                                                              | 資料契約文件                                             | 把 schema 表達不了的語意承諾寫成可攜性兩區 artifact、含適用條件與 dormant 豁免                                                             |
 | [1.16 Schema 設計決定的查詢代價：可空性、排序鍵唯一性、表寬、一對多的切法、比較規則與外鍵執法](/backend/01-database/design-decisions-price-every-query/) | 設計時下的每一個決定，替往後每一次查詢定價               | 六個 schema 決定各自讓查詢多付什麼、代價在什麼條件下才浮現、改回來要動什麼                                                                 |
+| [1.17 應用程式存取資料庫的工具分層：驅動、結果對映、從 SQL 產生程式碼、Query Builder 與 ORM](/backend/01-database/data-access-layers/)                   | 應用程式存取資料庫的工具分層                             | 五類工具各接手寫 SQL、連線與交易、結果對映的哪幾件，連線模型隨語言執行模型的差異，Go、PHP（Laravel）、Python 的對應工具與選型軸            |
 | [Vendor 文章撰寫規格](/backend/01-database/vendor-article-spec/)                                                                                         | Vendor overview / deep article / migration playbook 分工 | 把 PostgreSQL / MySQL batch 經驗整理成後續資料庫服務頁的撰寫規格                                                                           |
 
 ## Backlog
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                               | 類型   | 前置條件                            | 規模       |
-| ------------------------------------------------------------------------------------------------------------------ | ------ | ----------------------------------- | ---------- |
-| 六個 vendor 的後續擴充（Aurora 13 / CockroachDB 12 / DynamoDB 15 / MongoDB 13 / Cosmos DB 14 / Spanner 12 項）     | vendor | 各 vendor `_index.md` 已列項        | 大         |
-| 觀念網路五方向的章節回寫（state ownership / query boundary / migration safety / reconciliation / data protection） | 主章   | 無                                  | 中         |
-| migration validation 知識卡                                                                                        | 知識卡 | 無                                  | 1 張（小） |
-| 1.16 的六個例子全取自交易型系統，換成事件流／IoT 時有兩條答不出來                                                  | 主章   | 無                                  | 小         |
-| 1.16 補 `NOT VALID`、雙寫、回填、孤兒列的就地定義或連卡                                                            | 主章   | `dual-write` 與 `backfill` 卡已存在 | 小         |
-| 1.16 的 collation 那一節要交代 PostgreSQL 前置條件（需帶 ICU 編譯、`CREATE COLLATION` 權限）                       | 主章   | 無                                  | 1 句       |
+| 項目                                                                                                                              | 類型   | 前置條件                                   | 規模       |
+| --------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------ | ---------- |
+| 六個 vendor 的後續擴充（Aurora 13 / CockroachDB 12 / DynamoDB 15 / MongoDB 13 / Cosmos DB 14 / Spanner 12 項）                    | vendor | 各 vendor `_index.md` 已列項               | 大         |
+| 觀念網路五方向的章節回寫（state ownership / query boundary / migration safety / reconciliation / data protection）                | 主章   | 無                                         | 中         |
+| migration validation 知識卡                                                                                                       | 知識卡 | 無                                         | 1 張（小） |
+| 1.16 的六個例子全取自交易型系統，換成事件流／IoT 時有兩條答不出來                                                                 | 主章   | 無                                         | 小         |
+| 1.16 補 `NOT VALID`、雙寫、回填、孤兒列的就地定義或連卡                                                                           | 主章   | `dual-write` 與 `backfill` 卡已存在        | 小         |
+| 1.16 的 collation 那一節要交代 PostgreSQL 前置條件（需帶 ICU 編譯、`CREATE COLLATION` 權限）                                      | 主章   | 無                                         | 1 句       |
+| 1.17 的 PHP（Laravel）實作篇：PDO、Query Builder、Eloquent 對照 1.17 的分層，含 PHP-FPM 下的連線模型與 PgBouncer 下的預先解析查詢 | 跨模組 | 實作篇放 `content/php/`，輸出要實際跑過    | 中         |
+| 1.17 的 Python 實作篇：psycopg、SQLAlchemy Core 與 ORM、Django ORM 對照 1.17 的分層                                               | 跨模組 | 實作篇放 `content/python/`，輸出要實際跑過 | 中         |
+| Connection Leak、Unit of Work（交易傳遞）、SQL 記錄（ORM 端與資料庫端）三張知識卡：1.17 與 Go 模組十有三篇以上反覆用到而沒有卡    | 知識卡 | 無                                         | 3 張（小） |
+| 讀寫分離與多資料庫（GORM dbresolver、Laravel read／write 連線）在 1.17 選型軸裡的位置                                             | 主章   | 無                                         | 小         |
 
 ### 觀念網路補完方向
 

@@ -5,7 +5,7 @@ description: "應用層跟資料庫之間的連線複用中介層、解水平擴
 weight: 354
 ---
 
-Connection pooler 的核心責任是讓部署在應用層跟資料庫之間的中介層、把多個應用層連線複用到少數 DB backend 連線上。解水平擴展應用層時「100 臺機器 × 每臺 10 連線 = 1000 個 DB 連線、超過 `max_connections` 十倍」這個常見問題。跟 [connection pool](/backend/knowledge-cards/connection-pool/) 是不同層 — 後者在 application instance 內、本卡是跨 instance 共享層。
+連線池代理（connection pooler）的核心責任是讓部署在應用層跟資料庫之間的中介層、把多個應用層連線複用到少數 DB backend 連線上。解水平擴展應用層時「100 臺機器 × 每臺 10 連線 = 1000 個 DB 連線、超過 `max_connections` 十倍」這個常見問題。跟 [connection pool](/backend/knowledge-cards/connection-pool/) 是不同層 — 後者在 application instance 內、本卡是跨 instance 共享層。
 
 ## 概念位置
 
@@ -16,7 +16,7 @@ Connection pooler 在 DB topology 中是「應用層跟 DB 之間的 multiplexer
 - **ProxySQL**（MySQL）：規則型 routing + connection pooling + query rewriting
 - **PgCat**（PostgreSQL）：Rust 寫的 PgBouncer 替代、支援 sharding
 
-PgBouncer 的 `pool_mode` 是核心配置：session mode 嚴格說屬 connection caching（單 client 跟 backend 1:1 綁定整個 session）；transaction mode 是多數場景的 default、但限於不依賴 transaction-scoped state 的應用（`SET LOCAL`、prepared statement、temp table 在 transaction mode 下會丟失）；statement mode 限於純無狀態 query workload、極少用。
+PgBouncer 的 `pool_mode` 是核心配置：session mode 嚴格說屬 connection caching（單 client 跟 backend 1:1 綁定整個 session）；transaction mode 是多數場景的 default、但限於不依賴跨 transaction 的 session 層級狀態的應用（session 層級的 `SET`、prepared statement、temp table 在 transaction mode 下會丟失，`SET LOCAL` 只在單一 transaction 內生效、不受影響；PgBouncer 1.21 起可用 `max_prepared_statements` 追蹤 prepared statement，1.24 起預設開啟，見 [Prepared Statement](/backend/knowledge-cards/prepared-statement/)）；statement mode 限於純無狀態 query workload、極少用。
 
 ## 可觀察訊號與例子
 
@@ -24,4 +24,4 @@ PgBouncer 的 `pool_mode` 是核心配置：session mode 嚴格說屬 connection
 
 ## 設計責任
 
-選 PgBouncer 自管要付 HA / failover / 監控的運維成本；選 RDS Proxy 換掉運維、付 per vCPU 計價。Transaction mode 配置前要 audit ORM / driver 行為 — JDBC / asyncpg 的 default prepared statement 跟 transaction mode 衝突、要明示配置 protocol-level prepared statement 或改寫成 inline parameter。Pooler 解的是連線數放大、N+1 query 屬另一層議題 — 兩個問題正交、各自要解。
+選 PgBouncer 自管要付 HA / failover / 監控的運維成本；選 RDS Proxy 換掉運維、付 per vCPU 計價。Transaction mode 配置前要 audit ORM / driver 行為 — JDBC / asyncpg / Go 的 pgx 的 default prepared statement 跟 transaction mode 衝突、要明示配置 protocol-level prepared statement 或改寫成 inline parameter。Pooler 解的是連線數放大、N+1 query 屬另一層議題 — 兩個問題正交、各自要解。

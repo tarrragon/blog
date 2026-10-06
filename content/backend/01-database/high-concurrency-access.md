@@ -75,6 +75,7 @@ SHOW VARIABLES LIKE 'max_connections';
 - 每個 application instance 維護自己的 driver-level pool
 - 典型大小：30-50 connection / instance
 - 工具：HikariCP（Java）、SQLAlchemy pool（Python）、`sql.DB`（Go）
+- 一個 instance 跑多個 worker 程序（例如 gunicorn）時，每個程序各一個池，總數要乘上 worker 數；PHP-FPM 沒有程序內的池，連線數跟 worker 數走，見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈各語言執行模型下的連線模型〉
 
 ### Middleware pool（共享層）
 

@@ -16,7 +16,7 @@ tags:
 
 學完本章後，你將能夠：
 
-1. 判斷 [[transaction](/backend/knowledge-cards/transaction/) boundary](/go-advanced/backend/knowledge-cards/transaction-boundary) 應該放在 repository 還是 usecase
+1. 判斷 [transaction boundary](/backend/knowledge-cards/transaction-boundary/) 應該放在 repository 還是 usecase
 2. 理解 [migration](/backend/knowledge-cards/migration/) 為什麼要維持向前相容
 3. 分辨 application validation、constraint 與 [isolation level](/backend/knowledge-cards/isolation-level/) 的責任
 4. 用 contract test 保護 memory repository 與 [database](/backend/knowledge-cards/database/) repository 的一致行為
@@ -99,7 +99,7 @@ transaction 的核心用途是把一組資料庫操作綁成單一一致性單�
 
 ## 本章不處理
 
-本章不會選定特定資料庫或 ORM。真正的重點是 Go application 如何定義資料一致性責任，讓 SQLite、PostgreSQL 或其他儲存技術都能成為可替換 adapter。
+本章不會選定特定資料庫或 ORM；Go 的具體工具與交易寫法見 [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)，工具選型見 [10.6 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)。真正的重點是 Go application 如何定義資料一致性責任，讓 SQLite、PostgreSQL 或其他儲存技術都能成為可替換 adapter。
 
 ## 和 Go 教材的關係
 

@@ -118,7 +118,7 @@ ORM 的 lazy load 預設行為是「存取 attribute 時才發 query」，這在
 修正方向：
 
 - 明確標示 eager loading 邊界，serializer 之前完成所有需要的資料載入
-- ORM 配置改成 default eager 或 strict mode（query 太多會 warning）
+- ORM 配置改成 default eager 或 strict mode（query 太多會 warning；Laravel 的 `Model::preventLazyLoading()`、SQLAlchemy 的 `lazy="raise"` 這類開關見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈ORM〉）
 - DTO 出 service 邊界前做 fully materialized
 
 ## Long-Running Transaction
