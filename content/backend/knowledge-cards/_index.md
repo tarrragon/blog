@@ -68,6 +68,8 @@ weight: -1
 | [Embedded Database](/backend/knowledge-cards/embedded-database/)                         | 資料庫如何隨 application process 運作            | SQLite、檔案生命週期、本地儲存             |
 | [Metadata Lock](/backend/knowledge-cards/metadata-lock/)                                 | DDL 與既有交易如何在 schema 層互相阻塞           | ALTER、長交易、DDL window                  |
 | [Table Partitioning](/backend/knowledge-cards/table-partitioning/)                       | 大表如何在單庫內拆成多個分區                     | range/list/hash、pruning、retention        |
+| [Partial Index（部分索引）](/backend/knowledge-cards/partial-index/)                     | 索引如何只收表裡的一小類列                       | 排除大宗資料、列表查詢、條件推導           |
+| [Table Bloat（表膨脹與 VACUUM）](/backend/knowledge-cards/table-bloat/)                  | 舊版本的列如何累積、清理與縮回                   | autovacuum、VACUUM FULL、大批改寫          |
 | [Read-Write Split](/backend/knowledge-cards/read-write-split/)                           | 讀寫流量如何分流到 primary 與 replica            | proxy、replica lag、read-after-write       |
 | [Transaction Pooling](/backend/knowledge-cards/transaction-pooling/)                     | 連線如何只綁定單一 transaction                   | pooler、session state、SET LOCAL           |
 | [Document Store](/backend/knowledge-cards/document-store/)                               | 資料如何以 JSON 文件與彈性 schema 存取           | JSON、巢狀結構、index                      |

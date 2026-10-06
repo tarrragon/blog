@@ -15,6 +15,8 @@ Table Partitioning 位在單機資料庫的表結構層。它和 messaging 的 [
 
 適合 table partitioning 的訊號是一張表很大、但查詢通常只碰最近一段時間或某個範圍，例如時序事件表、訂單表。time-based 分區讓「清掉 90 天前資料」變成卸載一個分區，而不是大範圍 DELETE。要特別注意的訊號是查詢沒帶分區鍵 — 規劃器無法做 partition pruning，查詢會退化成掃描全部分區。
 
+另一個要先查的是表上的唯一約束。PostgreSQL 的唯一約束由各分區自己的索引執行，所以必須包含分區鍵：依 `created_at` 分區的表建 `UNIQUE (code)` 會回 `unique constraint on partitioned table must include all partitioning columns`，只能寫成 `UNIQUE (code, created_at)`，不同時間的兩列就可以有相同的 `code`。靠某一欄的唯一約束防止重複的表（例如短網址的短碼）依時間分區時，不能只靠分區表本身的唯一約束：做法是依那一欄的 hash 分區，或另建一張不分區的登記表（那一欄當主鍵）擔任唯一的仲裁者，代價是每次寫入多寫一張表，而登記表本身也不刪除、一直變大，見 [1.19 資料表長期成長的成本](/backend/01-database/table-growth-query-cost/)〈依時間分割與唯一約束〉。
+
 ## 設計責任
 
 設計時要讓分區鍵和最常見的查詢條件對齊，並規劃分區的建立與卸載流程。time-based 分區要有自動建立未來分區、自動卸載過期分區的機制，並接回 [Retention](/backend/knowledge-cards/retention/)。observability 要看查詢是否命中 pruning，以及 default 分區是否意外累積資料。
