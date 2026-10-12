@@ -12,15 +12,15 @@ Load average 是一段時間內處於可執行狀態的平均行程數：正在�
 
 load 本身是行程數，要除以核心數才讀得出意思；它和 [CPU Steal Time](/backend/knowledge-cards/cpu-steal-time/) 量的是不同的現象，被虛擬化層拿走的 CPU 時間不會讓 load 升高：
 
-| load 除以核心數 | 讀法                                                                   |
-| --------------- | ---------------------------------------------------------------------- |
-| 小於 1          | 每顆核心平均不到一個可執行的行程，沒有排隊                             |
-| 1 左右          | 核心剛好被用滿                                                         |
-| 大於 1          | 有行程在排隊；例如 8 顆核心、load 55，平均每顆核心有六個以上的行程在等 |
+| load 除以核心數 | 讀法                                                                                 |
+| --------------- | ------------------------------------------------------------------------------------ |
+| 小於 1          | 每顆核心平均不到一個可執行的行程，沒有排隊                                           |
+| 1 左右          | 核心剛好被用滿                                                                       |
+| 大於 1          | 有行程在排隊；例如 8 顆核心、load 55，每顆核心約 6.9 個可執行的行程，其中近 6 個在等 |
 
 核心數在 macOS 用 `sysctl -n hw.ncpu`、Linux 用 `nproc` 查。Prometheus 裡的寫法是 `node_load1 / count without (cpu, mode) (node_cpu_seconds_total{mode="idle"})`。
 
-load 高而 CPU 使用率不高時，多半是磁碟在排隊：Linux 的 load 含 D 狀態的行程。要把 CPU 與磁碟的排隊分開，看 `rate(node_cpu_seconds_total{mode="iowait"}[5m])`，或在實體 Linux 主機上看 PSI（`node_pressure_cpu_waiting_seconds_total` 與 io 那一組）。
+load 高而 CPU 使用率不高時，多半是磁碟在排隊：Linux 的 load 含 D 狀態的行程。要把 CPU 與磁碟的排隊分開，看 `rate(node_cpu_seconds_total{mode="iowait"}[5m])`，或在核心有提供 PSI 時（`node_scrape_collector_success{collector="pressure"}` 是 1）看 PSI（`node_pressure_cpu_waiting_seconds_total` 與 io 那一組）。
 
 ## 可觀察訊號與例子
 

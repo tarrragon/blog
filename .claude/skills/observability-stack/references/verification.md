@@ -42,11 +42,11 @@ count by (container_label_com_docker_compose_service) (container_memory_working_
 | 重建容器不誤報 | `docker compose up -d --force-recreate <服務>`，等超過規則的秒數 | 「容器停止」的規則 | 不成立（舊容器的序列還在，規則要依服務取最小值） |
 | 主機外的訊號會發通知 | 停掉一個被監控的服務 | 主機外那一端的探測與它的通知管道 | 連續失敗次數之後收到通知；紀錄寫收到的時間 |
 | Prometheus 停掉時有人知道 | `docker compose stop prometheus`，等超過外部服務的心跳期限，量完 start | 外部的心跳服務 | 心跳中斷的通知 |
-| 抑制規則會壓下症狀 | 對 Alertmanager 的 `/api/v2/alerts` 送入合成的「原因」與「症狀」告警（設 `endsAt` 讓它們自己結束）。標籤從規則實際產生的告警抄（`ALERTS{alertname="<症狀規則>"}` 查得到帶哪些標籤），不自己編；規則有 `equal` 時另送一則 `equal` 標籤值不同的症狀 | `GET /api/v2/alerts?active=false&silenced=false&unprocessed=false`（只列被抑制的告警）的 `status.state` | 標籤值相同的症狀是 `suppressed`，`inhibitedBy` 列出原因；標籤值不同的那一則維持 active |
+| 抑制規則會壓下症狀 | 對 Alertmanager 的 `/api/v2/alerts` 送入合成的「原因」與「症狀」告警（設 `endsAt` 讓它們自己結束）。每一則的標籤各自從它那條規則的運算式取：拿掉比較運算子直接在 Prometheus 查，把查到的標籤原樣帶上，原因與症狀各查各的、不手動統一（`ALERTS` 只在規則成立過之後才有序列）；規則有 `equal` 時另送一則 `equal` 標籤值不同的症狀 | `GET /api/v2/alerts?active=false&silenced=false&unprocessed=false`（只列被抑制的告警）的 `status.state` | 標籤值相同的症狀是 `suppressed`，`inhibitedBy` 列出原因；標籤值不同的那一則用不帶篩選的 `GET /api/v2/alerts` 確認是 `active` |
 
 `timeout` 與 `pg_sleep` 的秒數要長過查詢的時間窗（`[1m]`）加一個讀取間隔，時間窗改了就跟著改。
 
-送入合成告警的指令（macOS 的 `date` 語法；Linux 用 `date -u -d '+15 min'`；位址、告警名稱與標籤值依自己的部署替換，標籤值從實際的序列抄）：
+送入合成告警的指令（macOS 的 `date` 語法；Linux 用 `date -u -d '+15 min'`；位址、告警名稱與標籤值依自己的部署替換，標籤值從各規則的運算式查）：
 
 ```sh
 now=$(date -u +%Y-%m-%dT%H:%M:%SZ); end=$(date -u -v+15M +%Y-%m-%dT%H:%M:%SZ)
@@ -54,8 +54,10 @@ curl -XPOST http://127.0.0.1:9093/api/v2/alerts -H 'Content-Type: application/js
   {\"labels\":{\"alertname\":\"HostCpuSaturated\",\"severity\":\"warning\",\"host\":\"host-a\"},\"startsAt\":\"$now\",\"endsAt\":\"$end\"},
   {\"labels\":{\"alertname\":\"ServiceSlow\",\"severity\":\"warning\",\"host\":\"host-a\",\"job\":\"injected\"},\"startsAt\":\"$now\",\"endsAt\":\"$end\"},
   {\"labels\":{\"alertname\":\"ServiceSlow\",\"severity\":\"warning\",\"host\":\"host-b\",\"job\":\"injected\"},\"startsAt\":\"$now\",\"endsAt\":\"$end\"}]"
-# host-a 的 ServiceSlow 應為 suppressed；host-b 的那一則應為 active
+# 只列被抑制的告警：host-a 的 ServiceSlow 應在這裡，狀態 suppressed
 curl -s 'http://127.0.0.1:9093/api/v2/alerts?active=false&silenced=false&unprocessed=false'
+# 全部告警：host-b 的 ServiceSlow 應為 active
+curl -s 'http://127.0.0.1:9093/api/v2/alerts'
 ```
 
 合成告警只驗證 Alertmanager 的抑制規則；Prometheus 的告警規則在實際的狀況下會不會成立，要另外用上表製造狀況的那幾種方式確認。

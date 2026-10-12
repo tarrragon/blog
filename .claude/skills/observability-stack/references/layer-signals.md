@@ -53,12 +53,41 @@ min by (device, fstype) (
 
 **規則改了要重新載入**：規則或設定改完，先用 `promtool check rules`、`amtool check-config` 檢查語法，再重新載入。Prometheus 啟動時加 `--web.enable-lifecycle`，才能 `POST /-/reload`；Alertmanager 一律可以打它的 `POST /-/reload`（或送 SIGHUP），不需要額外的旗標。
 
+## 主機標籤
+
+多台主機時，抑制規則以 `equal: [host]` 對應原因與症狀，`host` 指症狀發生的那台主機。各種讀取對象的加法不同：
+
+```yaml
+scrape_configs:
+  # 本機的 exporter：讀取對象跑在哪台主機，host 就是哪台
+  - job_name: node
+    static_configs:
+      - targets: ["host-a:9100"]
+        labels: { host: host-a }
+  # 探測：讀取對象是探測程式，host 依被探測的端點填（這裡用 Gatus 的 name 標籤對應）
+  - job_name: gatus
+    static_configs:
+      - targets: ["probe-host:8080"]
+    metric_relabel_configs:
+      - source_labels: [name]
+        regex: "Laravel 後端|Go 後端"
+        target_label: host
+        replacement: host-a
+  # Pushgateway：推送端在 grouping label 帶 host，這裡保留推送端給的標籤
+  - job_name: pushgateway
+    honor_labels: true
+    static_configs:
+      - targets: ["pushgateway:9091"]
+```
+
+Blackbox exporter 從 `__param_target` 推出被探測的主機。Kubernetes 上服務的序列帶 Pod 的位址，以 `* on (namespace, pod) group_left(node) kube_pod_info` 接上 `node`；node_exporter 那一側以 `label_replace` 產生同名的 `node`，兩側都有同名同值的標籤，`equal` 才對得上。
+
 ## 部署在 Kubernetes 時
 
 盤點、盲區、驗收與告警的原則照用，實作的位置換成那套平台與 operator 的做法（以 kube-prometheus-stack 為例）：
 
-- **容器層不另外部署 cAdvisor**：kubelet 內建 cAdvisor，operator 已經讀它；`--docker_only=true` 在只有 containerd 的節點上收不到任何容器。
-- **規則與抑制寫進 operator 的資源**：告警規則寫成 PrometheusRule，Alertmanager 的設定走 Helm values 或 AlertmanagerConfig，不去編 `rule_files` 再打 reload。新增之前先列出既有的規則與抑制，這類 stack 已內建 Watchdog 與一組預設的抑制規則，照 SKILL.md 再加一條會重複。
-- **標籤不同**：區分服務用 `namespace` 加 `pod` 或 `container`；服務的序列帶 Pod 的位址，抑制要以節點對應時先接上 `kube_pod_info` 的 `node`。
+- **容器層不另外部署 cAdvisor**：kubelet 內建 cAdvisor，operator 已經讀它，再部署一份會重複收集。
+- **規則與抑制寫進 operator 的資源**：告警規則寫成 PrometheusRule，Alertmanager 的設定走 Helm values 或 AlertmanagerConfig，不去編 `rule_files` 再打 reload。AlertmanagerConfig 預設只在自己的 namespace 內比對，節點層的原因告警壓不到其他 namespace 的症狀；跨 namespace 的抑制寫進全域的 Alertmanager 設定。新增之前先列出既有的規則與抑制，這類 stack 已內建 Watchdog 與一組預設的抑制規則，照 SKILL.md 再加一條會重複。
+- **標籤不同**：區分服務用 `namespace` 加 `pod` 或 `container`；抑制以節點對應時，原因與症狀兩側都要有 `node` 標籤，寫法見〈主機標籤〉。
 - **容器停止**：控制器會重啟或重建 Pod，看 kube-state-metrics 的 Pod 與 Deployment 狀態（例如可用副本數低於期望值），不用 `container_last_seen`。
 - **主機外的訊號**：單位是叢集，訊號要跑在叢集之外。
