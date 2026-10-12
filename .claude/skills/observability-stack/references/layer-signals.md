@@ -1,6 +1,6 @@
 # 各層的 exporter：接法與實測遇到的問題
 
-> 何時讀：盤點訊號與實作時，要為某一層選收集方式、寫部署設定，或某一層接上之後數字不對時讀。
+> 何時讀：盤點訊號與實作時，要為某一層選收集方式、寫部署設定，或某一層接上之後數字不對時讀。不適用：判讀已收集的數字。
 
 ## 實作的共同規則
 
@@ -16,21 +16,21 @@
 | --- | --- | --- | --- |
 | 入口（Nginx） | nginx-prometheus-exporter | 代理開一個只聽內部 port、只允許私有位址的 `stub_status`，exporter 讀它 | 依網域、狀態碼、上游分開的請求數：要從 access log 算 |
 | 容器 | cAdvisor | 掛載 `/`、`/var/run`、`/sys`、`/var/lib/docker`，`--docker_only=true`；containerd socket 不在預設位置的環境要用 `--containerd` 指定 | 容器裡是哪個行程 |
-| 主機 | node_exporter | `pid: host`、掛載 `/` 到 `/host` 並 `--path.rootfs=/host`；留在容器網路裡時關掉 `netdev`、`netstat`、`sockstat`（看到的是自己容器的網路），網路改看 cAdvisor | 它所在那一層以外的機器的 CPU 負載；磁碟看得到哪幾顆依環境而定，見下 |
+| 主機 | node_exporter | `pid: host`、掛載 `/` 到 `/host` 並 `--path.rootfs=/host`；留在容器網路裡時關掉 `netdev`、`netstat`、`sockstat`（看到的是自己容器的網路），網路改看 cAdvisor | 它所在那一層以外的機器的 CPU 負載；磁碟看得到哪幾顆依環境而定，見本檔〈實測遇到的問題〉的磁碟告警一則 |
 | PostgreSQL | postgres_exporter | 專用帳號加 `pg_monitor` | 個別查詢的耗時：要 `pg_stat_statements` |
 | Redis / Valkey | redis_exporter | `REDIS_ADDR` 指向服務 | 應用程式那一端等它的時間 |
 | 外部探測 | Gatus（`metrics: true`）、Blackbox exporter | 探測條件只放可用性 | 真實使用者的流量 |
-| 應用程式 | client library 的 `/metrics` | 多個實作共用同一份指標名稱與標籤，才能並排比較 | — |
+| 應用程式 | client library 的 `/metrics` | 多個實作共用同一份指標名稱與標籤，才能並排比較 | 在應用程式之前就失敗的請求（入口擋下、連不上）：用入口與應用程式的請求數差額算 |
 
 ## 實測遇到的問題
 
-**cAdvisor 只有 cgroup 的雜湊 id、沒有容器名稱與 compose 標籤**：cAdvisor 要問 containerd 才知道 cgroup 是哪個容器。日誌有 `Registration of the docker container factory failed: ... containerd.sock: connect: no such file or directory` 就是這個成因，而 `up` 照樣是 1。找 socket 的位置：
+**cAdvisor 只有 cgroup 的雜湊 id、沒有容器名稱與 compose 標籤**：cAdvisor 要問 containerd 才知道 cgroup 是哪個容器。cAdvisor 容器的日誌（`docker logs <cAdvisor 容器>`）有 `Registration of the docker container factory failed: ... containerd.sock: connect: no such file or directory` 就是這個成因，而 `up` 照樣是 1。找 socket 的位置：
 
 ```sh
 docker run --rm -v /var/run:/host-run:ro alpine find /host-run -name 'containerd*.sock'
 ```
 
-把找到的路徑（去掉 `/host-run`、換回 `/var/run`）傳給 `--containerd`。Linux 主機直接跑 Docker 時預設的 `/run/containerd/containerd.sock` 就對；OrbStack 在 `/var/run/docker/containerd/containerd.sock`（OrbStack 2.2.3 時）；其他把 Docker 跑在虛擬機裡的環境用同一個方法找。
+把找到的路徑（去掉 `/host-run`、換回 `/var/run`）傳給 `--containerd`；同時列出的 `containerd-debug.sock` 是除錯用的，不取。Linux 主機直接跑 Docker 時預設的 `/run/containerd/containerd.sock` 就對；OrbStack 在 `/var/run/docker/containerd/containerd.sock`（OrbStack 2.2.3 時）；其他把 Docker 跑在虛擬機裡的環境用同一個方法找。
 
 **容器停掉之後 cAdvisor 仍輸出它最後的值**：序列不消失，依服務分組的圖維持在停掉前的值。停止前進的是 `container_last_seen`。
 
@@ -47,6 +47,6 @@ min by (device, fstype) (
 ) < 0.10
 ```
 
-在 OrbStack 上分組後是兩顆：`device="/dev/vdb1"`（虛擬機放 Docker 資料的磁碟）與 `device="mac"`、`fstype="virtiofs"`（主機的磁碟）。實測同一時間 Docker 資料那一顆剩 48.9%、主機那一顆剩 2.4%，只看 Docker 資料那一顆會漏掉主機快滿。
+分組前先跑 `count by (device, fstype) (node_filesystem_size_bytes)` 列出各顆，對照主機上 `df` 的大小，認出哪一顆是主機的磁碟（OrbStack 2.2.3 上它的 `fstype` 是 `virtiofs`）。只看 Docker 資料那一顆會漏掉主機快滿。
 
-**規則改了要重新載入**：Prometheus 啟動時加 `--web.enable-lifecycle`，規則或讀取設定改完 `POST /-/reload`；Alertmanager 的設定改了重啟它。改之前先用 `promtool check rules`、`amtool check-config` 檢查語法。
+**規則改了要重新載入**：Prometheus 啟動時加 `--web.enable-lifecycle`，規則或讀取設定改完 `POST /-/reload`；Alertmanager 的設定改了打它的 `POST /-/reload`（或送 SIGHUP），不需要額外的旗標。改之前先用 `promtool check rules`、`amtool check-config` 檢查語法。

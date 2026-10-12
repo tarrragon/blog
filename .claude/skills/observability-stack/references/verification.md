@@ -1,6 +1,6 @@
 # 驗收：讀得到、有標籤、會反應
 
-> 何時讀：每接上或改動一個收集來源之後，以及寫完告警規則之後。三項都要跑，結果以實測值寫進 README 或驗收紀錄。
+> 何時讀：每接上或改動一個收集來源之後，以及寫完告警規則之後。三項都要跑，結果以實測值寫進 README 或驗收紀錄。不適用：告警門檻怎麼定，見 SKILL.md〈告警〉。
 
 ## 讀得到，而且 exporter 連得到它監控的服務
 
@@ -35,12 +35,14 @@ count by (container_label_com_docker_compose_service) (container_memory_working_
 | 入口有流量 | 對入口送一批請求 | `rate(nginx_http_requests_total[1m])` | 上升 |
 | 告警規則會成立 | 用上面的狀況觸發，或暫時把門檻調低 | Prometheus 的 Alerts 頁面、Alertmanager | 規則在 `for` 的時間後成立，被抑制的出現在抑制清單 |
 | 重建容器不誤報 | `docker compose up -d --force-recreate <服務>`，等超過規則的秒數 | 「容器停止」的規則 | 不成立（舊容器的序列還在，規則要依服務取最小值） |
-| 抑制規則會壓下症狀 | 對 Alertmanager 的 `/api/v2/alerts` 送入一組合成的「原因」與「症狀」告警（設 `endsAt` 讓它們自己結束） | `GET /api/v2/alerts?inhibited=true` 的 `status.state` | 症狀是 `suppressed`，`inhibitedBy` 列出原因 |
+| 抑制規則會壓下症狀 | 對 Alertmanager 的 `/api/v2/alerts` 送入一組合成的「原因」與「症狀」告警（設 `endsAt` 讓它們自己結束）；兩則的標籤要分別符合 `source_matchers` 與 `target_matchers`，規則有 `equal` 時兩則都帶上那幾個標籤且值相同 | `GET /api/v2/alerts?active=false&silenced=false&unprocessed=false`（只列被抑制的告警）的 `status.state` | 症狀是 `suppressed`，`inhibitedBy` 列出原因 |
+
+`timeout` 與 `pg_sleep` 的秒數要長過查詢的時間窗（`[1m]`）加一個讀取間隔，時間窗改了就跟著改。
 
 合成告警只驗證 Alertmanager 的抑制規則；Prometheus 的告警規則在實際的狀況下會不會成立，要另外用上表製造狀況的那幾種方式確認。
 
-主機本身正在過載時做故障注入，數字會混進主機的雜訊（同時量的探測延遲與讀取耗時都偏高）；記下當時主機的負載，結果有疑問時在主機安靜時重做。
+主機本身正在過載時做故障注入，數字會混進主機的雜訊（同時量的探測延遲與讀取耗時都偏高）；注入前後各記一次主機的 load 除以核心數，注入時的值明顯高於注入前、而結果和預期不符時，等主機回到注入前的負載再重做。
 
 ## 驗收結果怎麼寫
 
-每一項寫實測值，不寫「已確認」：「`up` 七個 job 皆為 1；`pg_up`、`redis_up`、`nginx_up` 皆為 1；15 個服務都有標籤；cache 空轉 0.98 核心；5 個 `pg_sleep` 連線 active=5；停掉 portal 後探測為 0、last_seen 每 15 秒增加 15」。只寫「已確認」與沒做過，在紀錄上長得一樣。
+每一項寫實測值，不寫「已確認」：「`up` 八個 job 皆為 1；`pg_up`、`redis_up`、`nginx_up` 皆為 1；16 個服務都有標籤；`<快取服務>` 空轉 0.98 核心；5 個 `pg_sleep` 連線 active=5；停掉 `<服務 A>` 後探測為 0、last_seen 每 15 秒增加 15」。只寫「已確認」與沒做過，在紀錄上長得一樣。

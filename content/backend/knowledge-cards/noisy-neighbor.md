@@ -6,7 +6,7 @@ weight: 468
 tags: ["backend", "capacity", "isolation", "knowledge-card"]
 ---
 
-Noisy neighbor 是多個工作負載共用同一份硬體資源時，其中一個用掉的資源從其他工作負載能用的那一份裡扣掉，使那些工作負載變慢或失敗的現象；被影響的一方沒有做錯任何事。共用發生在幾個層：同一台主機上的多個容器（應用程式、資料庫、批次工作、監控）、同一台實體機上的多台虛擬機（雲端的其他租戶），以及開發用筆電上 Docker 的虛擬機與其他程式。它是 [Blast Radius](/backend/knowledge-cards/blast-radius/) 在資源層的來源之一：放在一起的工作負載會一起變慢、一起停；把資源分開的做法見 [Bulkhead](/backend/knowledge-cards/bulkhead/) 與 [Resource Limit](/backend/knowledge-cards/resource-limit/)。
+Noisy neighbor 是多個工作負載共用同一份硬體資源時，其中一個用掉的資源從其他工作負載能用的那一份裡扣掉，使那些工作負載變慢或失敗的現象；被影響的一方沒有做錯任何事。本卡管的是硬體資源這一層，共用發生在幾個層：同一台主機上的多個容器（應用程式、資料庫、批次工作、監控）、同一台實體機上的多台虛擬機（雲端的其他租戶），以及開發用筆電上 Docker 的虛擬機與其他程式。它是 [Blast Radius](/backend/knowledge-cards/blast-radius/) 在資源層的來源之一：放在一起的工作負載會一起變慢、一起停；把資源分開的做法見 [Bulkhead](/backend/knowledge-cards/bulkhead/) 與 [Resource Limit](/backend/knowledge-cards/resource-limit/)。同一個服務裡的多個租戶搶連線池、快取或佇列，是同一個現象在應用層的形態，隔離的做法見 Bulkhead。
 
 ## 概念位置
 
@@ -16,11 +16,11 @@ Noisy neighbor 是多個工作負載共用同一份硬體資源時，其中一�
 | 同一台實體機的虛擬機 | CPU 時間、磁碟與網路頻寬    | Linux 虛擬機的 steal 時間（`node_cpu_seconds_total{mode="steal"}`）                                                                                   |
 | 開發用筆電上的虛擬機 | 筆電的 CPU 與磁碟           | CPU 負載只有筆電本身看得到（`uptime`），虛擬機裡的 load 很低；磁碟要看虛擬機有沒有掛進筆電的那一顆（OrbStack 以 virtiofs 掛入，node_exporter 看得到） |
 
-被干擾的服務自己的監控通常看不到成因：它的 CPU 用量低、錯誤少，只有延遲高；同一台主機上的容器各自用多少，靠 [Resource Limit](/backend/knowledge-cards/resource-limit/) 設下的上限與權重分開。從哪一層找原因、隔離做到哪一層，見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)。
+被干擾的服務自己的監控通常看不到成因：它的 CPU 用量低、錯誤少，只有延遲高；同一台主機上的容器之間，用 [Resource Limit](/backend/knowledge-cards/resource-limit/) 的上限與權重把各自能用的量分開。從哪一層找原因、隔離做到哪一層，見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)。
 
 ## 可觀察訊號與例子
 
-- **全部服務同時變慢，各自的用量都不高**：成因在它們共用的那一層之上。實例是一台 8 核心的 Mac 被其他程式吃到 load 55 以上，Docker 虛擬機裡的 load 除以核心數只有 0.43，而容器裡的服務全面變慢，資料庫一個平常一百多毫秒的查詢要 4 秒。
+- **全部服務同時變慢，各自的用量都不高**：成因在它們共用的那一層之上。實例是一台 8 核心的 Mac 被其他程式吃到 load 55 以上，Docker 虛擬機裡的 load 除以核心數在 0.33 到 1.28 之間，而容器裡的服務全面變慢，資料庫一個平常一百多毫秒的查詢要 4 秒。
 - **只在某些時段變慢**：與同一台主機上的批次工作、備份或另一個租戶的尖峰重疊。
 - **受影響的程度因服務而異**：同一次過載，同樣的探測條件下 Go 後端的成功率是 92.5%、Laravel 後端是 49%；對 CPU 被搶比較敏感的服務先出現延遲與錯誤。
 

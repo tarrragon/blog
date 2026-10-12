@@ -21,7 +21,7 @@
 
 | 訊號            | 最小實作                                                                  |
 | --------------- | ------------------------------------------------------------------------- |
-| 活著沒有        | 外部 uptime 監控（打 health endpoint，條件只看回應碼與連線）+ alert 到手機層級管道；連續失敗數次才發 |
+| 活著沒有        | 外部 uptime 監控（打 health endpoint，條件只看回應碼與連線）+ alert 到手機層級管道；連續失敗的次數乘上探測間隔長過短暫尖峰、短過使用者能忍受的時間才發 |
 | Request log     | structured JSON：request id、路由、狀態碼、duration、user / tenant id     |
 | 錯誤分類        | 4xx（client 問題）/ 5xx（自己的 bug）/ 依賴失敗（DB、第三方）三類分開計數 |
 | 錯誤聚合        | error tracking 服務（Sentry 類）：同錯誤聚合、新錯誤通知、帶 stack trace  |

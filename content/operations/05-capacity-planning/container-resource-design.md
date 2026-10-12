@@ -61,4 +61,5 @@ tmpfs 適合不需持久化的高頻寫入（SDK 的離線 buffer、session 暫�
 
 - 資源限制值的上游——容量怎麼算出來 → [規模拐點判斷](/operations/05-capacity-planning/scaling-inflection-point/)
 - 容器的健康檢查、probe 語意與自動重啟 → [模組四 服務探活](/operations/04-service-health/)
+- 單一容器的限制之外，整台主機上多個服務的資源競爭、故障範圍與隔離層級 → [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)
 - 監控 collector 的容器部署實例 → [Container 部署設計](/monitoring/04-collector/container-deployment/)
