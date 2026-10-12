@@ -125,7 +125,7 @@ Pipeline 的多租戶治理責任是讓單一服務或團隊的爆量不會拖�
 可操作的隔離手段：
 
 - **Ingestion quota per tenant**：限制單一服務的 ingest rate，超過時觸發降級或退單。
-- **Buffer 與 storage 分區**：高優先 tenant 使用獨立 buffer 或 storage shard，避免 noisy neighbor。
+- **Buffer 與 storage 分區**：高優先 tenant 使用獨立 buffer 或 storage shard，避免 [noisy neighbor](/backend/knowledge-cards/noisy-neighbor/)。
 - **Sampling 政策 per tenant**：成本敏感 tenant 走較高採樣比例，關鍵 tenant 走 minimum sample floor。
 - **Cost attribution**：把 ingestion、storage、query 成本拆到 tenant，回到 [4.15 cost attribution](/backend/04-observability/cost-attribution/)。
 

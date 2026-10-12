@@ -15,6 +15,8 @@ Out-of-band signal 處理的是觀測共命運失效——觀測系統跟被觀�
 
 kube-prometheus 的 Watchdog alert 設計成「is always firing」，一旦停止觸發，就代表告警管線本身出了問題——這時沒有其他告警會通知「監控系統死了」，只有獨立於管線之外的偵測器（如 Dead Man's Snitch）能發現心跳消失（2026）。另一種形態是客訴：內部監控漏掉時，客服累積的電話、社群貼文與工單常是實際生效的補位訊號，但它有延遲與噪音，管的是「哪個功能對誰壞了」而非「系統死沒死」。
 
+不跑 Kubernetes 的單機環境，Watchdog 規則與送往外部服務的 route 寫法（含 `repeat_interval` 要短於外部服務的心跳期限）見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉。
+
 ## 判讀方式
 
 判斷一個訊號是否夠格當 out-of-band signal，判讀的核心是失效域重疊度——共用同一個雲帳號、同一個網路、同一組憑證都算重疊。這類訊號平時難以自我辯護：沒事故時看不出價值，review 時最容易被當成過度準備砍掉，但它的 ROI 全押在觀測退化的那一小時。完整的機制拆解與客訴升級路徑見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)。

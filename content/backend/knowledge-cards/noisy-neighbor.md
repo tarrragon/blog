@@ -3,7 +3,7 @@ title: "Noisy Neighbor（共用資源的鄰居干擾）"
 date: 2026-10-12
 description: "服務沒有改動、自己的用量也不高卻整體變慢，或者同一台主機、同一台實體機上的其他工作負載一忙就跟著慢時，查共用資源的競爭從哪裡來、為什麼服務自己的監控看不到，以及隔離由淺到深有哪些做法"
 weight: 468
-tags: ["backend", "capacity", "isolation", "knowledge-card"]
+tags: ["backend", "capacity-planning", "isolation", "noisy-neighbor", "knowledge-card"]
 ---
 
 Noisy neighbor 是多個工作負載共用同一份硬體資源時，其中一個用掉的資源從其他工作負載能用的那一份裡扣掉，使那些工作負載變慢或失敗的現象；被影響的一方沒有做錯任何事。本卡管的是硬體資源這一層，共用發生在幾個層：同一台主機上的多個容器（應用程式、資料庫、批次工作、監控）、同一台實體機上的多台虛擬機（雲端的其他租戶），以及開發用筆電上 Docker 的虛擬機與其他程式。它是 [Blast Radius](/backend/knowledge-cards/blast-radius/) 在資源層的來源之一：放在一起的工作負載會一起變慢、一起停；把資源分開的做法見 [Bulkhead](/backend/knowledge-cards/bulkhead/) 與 [Resource Limit](/backend/knowledge-cards/resource-limit/)。同一個服務裡的多個租戶搶連線池、快取或佇列，是同一個現象在應用層的形態，隔離的做法見 Bulkhead。
@@ -13,16 +13,16 @@ Noisy neighbor 是多個工作負載共用同一份硬體資源時，其中一�
 | 共用的層             | 被搶走的資源                | 從哪裡看得到                                                                                                                                                          |
 | -------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 同一台主機的容器     | CPU、記憶體、磁碟讀寫、網路 | 主機與每個容器的用量（node_exporter、cAdvisor），哪個容器在尖峰時用得最多                                                                                             |
-| 同一台實體機的虛擬機 | CPU 時間、磁碟與網路頻寬    | Linux 虛擬機的 steal 時間（`node_cpu_seconds_total{mode="steal"}`）                                                                                                   |
+| 同一台實體機的虛擬機 | CPU 時間、磁碟與網路頻寬    | Linux 虛擬機的 [steal 時間](/backend/knowledge-cards/cpu-steal-time/)（`node_cpu_seconds_total{mode="steal"}`）                                                       |
 | 開發用筆電上的虛擬機 | 筆電的 CPU 與磁碟           | CPU 負載只有筆電本身看得到（`uptime`），筆電忙的時候虛擬機裡的 load 仍然很低；磁碟要看虛擬機有沒有掛進筆電的那一顆（OrbStack 以 virtiofs 掛入，node_exporter 看得到） |
 
 被干擾的服務自己的監控通常看不到成因：它的 CPU 用量低、錯誤少，只有延遲高，成因在它與其他工作負載共用的那一份資源上，而且常在監控所在層之外。隔離由淺到深是同機設上限與權重（[Resource Limit](/backend/knowledge-cards/resource-limit/)）、同機保留資源與優先權、分到不同主機、專用實體機，各層級隔離得了與隔離不了什麼，見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈隔離的層級與代價〉。
 
 ## 可觀察訊號與例子
 
-- **全部服務同時變慢，各自的用量都不高**：成因在它們共用的那一份資源上，而且可能落在監控所在層之外（虛擬機外的實體機或筆電）。一台 8 核心的 Mac 被其他程式吃到 load average（在跑或在等 CPU 的平均行程數）55 以上時，Docker 虛擬機裡的 load 除以核心數在 0.33 到 1.28 之間，而容器裡的服務全面變慢，資料庫一個平常一百多毫秒的查詢要 4 秒。這時各服務的延遲告警會一起發出，以主機飽和的告警收斂它們、以及這條規則在虛擬機裡判斷不到外部原因的條件，見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)。
+- **全部服務同時變慢，各自的用量都不高**：成因在它們共用的那一份資源上，而且可能落在監控所在層之外（虛擬機外的實體機或筆電），各層的監控看得到什麼見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)。一台 8 核心的 Mac 被其他程式吃到 [load average](/backend/knowledge-cards/load-average/) 55 以上時，Docker 虛擬機裡的 load 除以核心數在 0.33 到 1.28 之間，而容器裡的服務全面變慢，資料庫一個平常一百多毫秒的查詢要 4 秒。這時各服務的延遲告警會一起發出，以主機飽和的告警收斂它們、以及這條規則在虛擬機裡判斷不到外部原因的條件，見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)。
 - **只在某些時段變慢**：與同一台主機上的批次工作、備份或另一個租戶的尖峰重疊。
-- **受影響的程度因服務而異**：同一次過載，同樣的探測條件下 Go 後端的成功率是 92.5%、Laravel 後端是 49%；對 CPU 被搶比較敏感的服務先出現延遲與錯誤。
+- **受影響的程度因服務而異**：同一次過載，同樣的探測條件下（回應碼 200 且 500 ms 以內），Go 後端達標的比例是 92.5%、Laravel 後端是 49%，未達標的全是慢、沒有錯誤；對 CPU 被搶比較敏感的服務先變慢。
 
 ## 設計責任
 

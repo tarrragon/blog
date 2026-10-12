@@ -126,6 +126,8 @@ Alert 表達式讀 recording rule 而非原始 metric。好處有二：alert eva
 
 修法：用 `absent_over_time(up{job="myapp"}[5m])` 替代，要求整個 5 分鐘區間都沒有 series 才觸發。或用 `count(up{job="myapp"}) == 0` 明確檢查 series 數量。
 
+反過來，exporter 在對象停止之後繼續輸出最後的值時（cAdvisor 就是這樣），序列不會消失，`absent()` 永遠不成立，要看最後被看到的時間，寫法見 [4.26](/backend/04-observability/host-traffic-resource-monitoring/)〈偵測容器停止〉。
+
 ### Recording rules circular dependency
 
 Rule group A 的 rule 讀 rule group B 的 recording rule、group B 又讀 group A 的結果。Prometheus 按 group name 字母序 evaluate，circular dependency 會讓一方讀到上一輪的 stale 結果。

@@ -1,6 +1,6 @@
 # 各層的 exporter：接法與實測遇到的問題
 
-> 何時讀：盤點訊號與實作時，要為某一層選收集方式、寫部署設定，或某一層接上之後數字不對時讀。不適用：判讀已收集的數字。接上一個來源之後，走 `verification.md` 的三項驗收。
+> 何時讀：盤點訊號與實作時，要為某一層選收集方式、寫部署設定，或某一層接上之後數字不對時讀。不適用：判讀壓測或事故的數字。接上一個來源之後，走 `verification.md` 的三項驗收。
 
 ## 實作的共同規則
 
@@ -12,10 +12,12 @@
 
 ## 各層
 
-| 層 | 工具 | 接法 | 看不到 |
+盤點表的「看不到」欄以 SKILL.md〈盤點訊號〉的表為準；這張表的最後一欄是這個工具收不到、要改由哪裡收的資訊。
+
+| 層 | 工具 | 接法 | 這個工具收不到（改由哪裡收） |
 | --- | --- | --- | --- |
 | 入口（Nginx） | nginx-prometheus-exporter | 代理開一個只聽內部 port、只允許私有位址的 `stub_status`，exporter 讀它 | 依網域、狀態碼、上游分開的請求數：要從 access log 算 |
-| 容器 | cAdvisor | 掛載 `/`、`/var/run`、`/sys`、`/var/lib/docker`，`--docker_only=true`；containerd socket 不在預設位置的環境要用 `--containerd` 指定 | 容器裡是哪個行程 |
+| 容器 | cAdvisor | 掛載 `/`、`/var/run`、`/sys`、`/var/lib/docker`，`--docker_only=true`（只在 Docker 引擎上用）；containerd socket 不在預設位置的環境要用 `--containerd` 指定 | 容器裡是哪個行程 |
 | 主機 | node_exporter | `pid: host`、掛載 `/` 到 `/host` 並 `--path.rootfs=/host`；留在容器網路裡時關掉 `netdev`、`netstat`、`sockstat`（看到的是自己容器的網路），網路改看 cAdvisor | 它所在那一層以外的機器的 CPU 負載；磁碟看得到哪幾顆依環境而定，見本檔〈實測遇到的問題〉的磁碟告警一則 |
 | PostgreSQL | postgres_exporter | 專用帳號加 `pg_monitor` | 個別查詢的耗時：要 `pg_stat_statements` |
 | Redis / Valkey | redis_exporter | `REDIS_ADDR` 指向服務 | 應用程式那一端等它的時間 |
@@ -50,3 +52,13 @@ min by (device, fstype) (
 分組前先跑 `count by (device, fstype) (node_filesystem_size_bytes)` 列出各顆，對照主機上 `df` 的大小，認出哪一顆是主機的磁碟（OrbStack 2.2.3 上它的 `fstype` 是 `virtiofs`）。只看 Docker 資料那一顆會漏掉主機快滿。
 
 **規則改了要重新載入**：規則或設定改完，先用 `promtool check rules`、`amtool check-config` 檢查語法，再重新載入。Prometheus 啟動時加 `--web.enable-lifecycle`，才能 `POST /-/reload`；Alertmanager 一律可以打它的 `POST /-/reload`（或送 SIGHUP），不需要額外的旗標。
+
+## 部署在 Kubernetes 時
+
+盤點、盲區、驗收與告警的原則照用，實作的位置換成那套平台與 operator 的做法（以 kube-prometheus-stack 為例）：
+
+- **容器層不另外部署 cAdvisor**：kubelet 內建 cAdvisor，operator 已經讀它；`--docker_only=true` 在只有 containerd 的節點上收不到任何容器。
+- **規則與抑制寫進 operator 的資源**：告警規則寫成 PrometheusRule，Alertmanager 的設定走 Helm values 或 AlertmanagerConfig，不去編 `rule_files` 再打 reload。新增之前先列出既有的規則與抑制，這類 stack 已內建 Watchdog 與一組預設的抑制規則，照 SKILL.md 再加一條會重複。
+- **標籤不同**：區分服務用 `namespace` 加 `pod` 或 `container`；服務的序列帶 Pod 的位址，抑制要以節點對應時先接上 `kube_pod_info` 的 `node`。
+- **容器停止**：控制器會重啟或重建 Pod，看 kube-state-metrics 的 Pod 與 Deployment 狀態（例如可用副本數低於期望值），不用 `container_last_seen`。
+- **主機外的訊號**：單位是叢集，訊號要跑在叢集之外。

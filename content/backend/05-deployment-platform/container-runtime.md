@@ -70,9 +70,9 @@ CPU/memory [Resource Limit](/backend/knowledge-cards/resource-limit/) 隔離資�
 
 CPU 限制有兩個參數：request（排程保證）與 limit（硬上限）。兩者的關係決定服務在負載變動下的行為：
 
-- **request = limit**（guaranteed QoS）：CPU 用量穩定可預測，不會被 throttle 也不會超用。代價是無法在閒時借用節點剩餘 CPU。適合延遲敏感的 API 服務。
+- **request = limit**（guaranteed QoS）：CPU 用量穩定可預測，不會超用；用量碰到 limit 時照樣會被 throttle（limit 就是 CFS 的配額），所以 limit 要設在平常尖峰之上。代價是無法在閒時借用節點剩餘 CPU。適合延遲敏感的 API 服務。
 - **request < limit**（burstable QoS）：平時用 request 保證的份額，高峰時可用到 limit。代價是當節點 CPU 競爭激烈時，所有 burstable pod 同時被 throttle，延遲會一起劣化。適合批次處理或對延遲要求不高的服務。
-- **不設 limit**（只設 request）：服務可用到節點全部剩餘 CPU。Kubernetes 社群近年傾向這個做法——CPU throttle 常比 CPU contention 更難排查。代價是需要良好的觀測來偵測 noisy neighbor。
+- **不設 limit**（只設 request）：服務可用到節點全部剩餘 CPU。Kubernetes 社群近年傾向這個做法——CPU throttle 常比 CPU contention 更難排查。代價是需要良好的觀測來偵測 [noisy neighbor](/backend/knowledge-cards/noisy-neighbor/)（共用節點的其他工作負載把服務拖慢）。
 
 ### Memory limit 與 OOM 的判讀
 

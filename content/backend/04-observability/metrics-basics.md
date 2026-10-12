@@ -72,6 +72,7 @@ Prometheus 原生的資源隔離有限，但 Thanos Query Frontend、Mimir Query
 
 ## 交接路由
 
+- [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)：counter 用 `rate()` 換成時間窗平均、與 `docker stats` 單次取樣的差別，在單機容器環境的實例
 - 04.6 SLI/SLO 訊號設計：把 metric 升級為 user-journey SLI
 - 04.7 [metric cardinality](/backend/knowledge-cards/metric-cardinality/) / cost：label 治理與成本邊界
 - 04.9 continuous profiling：metrics 之外的第四角觀測訊號

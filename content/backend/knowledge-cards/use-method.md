@@ -15,6 +15,8 @@ USE 是 resource-oriented 的觀察法、跟 request-oriented 的 [RED method](/
 
 USE 三維度的典型訊號：CPU utilization 100% 但 saturation queue 空 → 還能撐；CPU 80% 但 run queue 不斷增長 → 已 saturate。對應案例：[Lemino connection limit](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — utilization 看似還行、但 connection saturation 已爆。
 
+在虛擬機與容器裡，CPU 的 saturation 另有兩個訊號：被虛擬化層分給別的虛擬機的 [steal 時間](/backend/knowledge-cards/cpu-steal-time/)，與容器碰到 CPU 上限而被暫停的時間；虛擬機裡的 run queue 與 [load average](/backend/knowledge-cards/load-average/) 看不到主機上的排隊，見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)〈監控所在層看不到的範圍〉。
+
 ## 設計責任
 
 USE method 的關鍵是「不要只看 utilization」。utilization 是「目前用了多少」、saturation 是「排隊有多少在等」 — 後者才是 capacity 真正的領先指標。每個資源都要量三個維度、不能用 average 代替 percentile。

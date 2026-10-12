@@ -99,7 +99,7 @@ Noise rate = 不需要行動的 alert / 總 alert。追蹤方式是讓 on-call �
 
 **Grouping**：把同一個根因觸發的多個 alert 合併成一則通知。Alertmanager 的 `group_by` 讓同服務、同 alert name 的 alert 只發一次。
 
-**Inhibition**：高嚴重性 alert 抑制低嚴重性。Database down 觸發時，所有依賴該 database 的 query timeout alert 被抑制 — 根因已知、不需要每個症狀都通知。
+**Inhibition**：高嚴重性 alert 抑制低嚴重性。Database down 觸發時，所有依賴該 database 的 query timeout alert 被抑制 — 根因已知、不需要每個症狀都通知。抑制也會把同時發生、與根因無關的故障一起藏掉，所以會 page 人的症狀改用 grouping 合併；共用主機過載時以主機飽和抑制各服務變慢的規則寫法、怎麼用合成告警單獨驗證、以及原因落在監控所在層之外時抑制不會發生，見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)〈依原因抑制〉。
 
 **Silence / maintenance window**：已知的維護活動期間暫停特定 alert。Silence 需要有過期時間，避免永久靜默掩蓋真實問題。
 
@@ -182,3 +182,4 @@ Dashboard 跟 alert 是否有效，最直接的訊號是 alert noise rate 跟 da
 - [4.14 anomaly detection](/backend/04-observability/anomaly-detection/)：rule-based alert 之外的統計訊號
 - [4.18 operating model](/backend/04-observability/observability-operating-model/)：dashboard / alert 的 ownership 矩陣與 metadata 欄位
 - [4.23 觀測查詢設計](/backend/04-observability/observability-query-design/)：dashboard 查詢的效能與 recording rule
+- [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)：共用主機過載時，可用與延遲分開判斷、間歇條件的聚合、以主機飽和抑制各服務變慢的規則與驗證

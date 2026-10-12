@@ -24,7 +24,7 @@ tags: ["devops", "health-check", "monitoring", "docker", "compose"]
 
 容器的健康檢查只看得到容器內部，外部探測補上的是網路與路由這一段。做法是在同一個 Compose 網路裡多跑一個探測工具的容器，它用服務名稱（`go:8080`、`postgres:5432`）定期對各服務發請求，把結果彙整成一個儀表板。
 
-已經在跑 Prometheus 的環境，外部探測通常交給 Prometheus 的 blackbox_exporter，結果直接進既有的告警規則（Prometheus 的元件分工見 [Prometheus](/backend/04-observability/vendors/prometheus/)）。這一節談的是還沒有監控堆疊的單機環境，要一個獨立的探測工具。選工具時主要的分別在設定放在哪裡：
+已經在跑 Prometheus 的環境，外部探測通常交給 Prometheus 的 blackbox_exporter（一種 [exporter](/backend/knowledge-cards/prometheus-exporter/)，替 Prometheus 從外面打端點並輸出結果），結果直接進既有的告警規則（Prometheus 的元件分工見 [Prometheus](/backend/04-observability/vendors/prometheus/)）。這一節談的是還沒有監控堆疊的單機環境，要一個獨立的探測工具。選工具時主要的分別在設定放在哪裡：
 
 | 工具        | 設定方式                                                                                                          | 適合                                           |
 | ----------- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
@@ -41,11 +41,10 @@ endpoints:
     url: "http://go:8080/healthz"   # Compose 網路裡的服務名稱與健康端點
     interval: 30s
     conditions:
-      - "[STATUS] == 200"           # 狀態碼要是 200
-      - "[RESPONSE_TIME] < 500"     # 回應時間要在 500 毫秒以內
+      - "[STATUS] == 200"           # 狀態碼要是 200；回應時間不放進存活的條件
 ```
 
-`url` 要換成手上服務在 Compose 網路裡的名稱、port 與健康端點；`interval` 與回應時間的門檻依服務的特性調整。
+`url` 要換成手上服務在 Compose 網路裡的名稱、port 與健康端點；`interval` 依服務的特性調整。回應時間不放進存活探測的條件：同一台主機過載時，服務只是變慢也會被判成失敗，「慢」和「掛了」在結果裡長得一樣；延遲改以探測回應時間在一段時間窗內的分位數、或後端輸出的延遲分布判斷，寫法見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)〈可用性與延遲分成兩個判斷〉。
 
 ### TCP 檢查的保證範圍
 
@@ -95,4 +94,4 @@ endpoints:
 
 ## 三層的分工
 
-回到開頭的三種問法：容器的健康檢查告訴 Docker 每個容器自己好不好，並讓 Compose 決定啟動順序；外部探測回答從網路與入口打不打得通，並把結果集中到一個地方；指令列查詢讓人在主機上快速確認、讓腳本拿到一個可判斷的結束碼。三者都不會自己修好壞掉的服務——Compose 管理的容器不會因為 unhealthy 被重啟，探測工具只負責看與通知——自動恢復要另外設計，見 [容器的健康檢查](/operations/04-service-health/container-healthcheck/#unhealthy-之後容器重啟由什麼觸發) 與 [Process supervisor 選型](/operations/04-service-health/process-supervisor-selection/)。
+回到開頭的三種問法：容器的健康檢查告訴 Docker 每個容器自己好不好，並讓 Compose 決定啟動順序；外部探測回答從網路與入口打不打得通，並把結果集中到一個地方；指令列查詢讓人在主機上快速確認、讓腳本拿到一個可判斷的結束碼。三者都不會自己修好壞掉的服務——Compose 管理的容器不會因為 unhealthy 被重啟，探測工具只負責看與通知——自動恢復要另外設計，見 [容器的健康檢查](/operations/04-service-health/container-healthcheck/#unhealthy-之後容器重啟由什麼觸發) 與 [Process supervisor 選型](/operations/04-service-health/process-supervisor-selection/)。三種做法回答的都是服務活不活著；服務活著而變慢、或某一層的資源快用完，要靠各層的指標與時間窗判斷，各層的訊號從哪裡收見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)。

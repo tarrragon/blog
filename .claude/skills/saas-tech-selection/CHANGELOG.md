@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.9.2 — 多輪審查 Round 3（誤用梯度）：約束驗證腳本從 `pg_constraint` 檢查涵蓋全部約束、改壞預期的結束碼寫進決策記錄；schema 規格在空資料庫跑的指令與結束碼寫進決策記錄；多套實作的 dump 差異逐項處理到空，常見差異清單不是放行清單
+
 **Version**: 1.9.1 — state-storage 的「下一條」改為指名「只有一份語言中立的產生器」；observability 的連續失敗次數補換算依據
 
 **Version**: 1.9.0 — deployment-platform 訪談新增同一台主機上放了哪些服務、尖峰是否重疊，compose 類的代價補同機互相搶資源、一起出事；observability 的存活探測只看回應碼與連線並連續失敗才發，新增「掛了」與「變慢」分成兩個判斷

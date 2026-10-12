@@ -19,6 +19,8 @@ Bulkhead 的概念來自船舶的隔艙設計 — 船體分成多個獨立的水
 | 記憶體           | 一個功能的 buffer 無限增長，OOM 殺掉整個 process | 每個功能的 buffer 有獨立上限      |
 | CPU              | 一個計算密集任務佔滿 CPU，其他請求延遲           | cgroup 或 GOMAXPROCS 限制         |
 
+隔離的對象從程序內的資源池換成同一台主機上的整個服務時，做法改成容器的上限與權重、保留資源，或分到不同主機，見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈隔離的層級與代價〉。
+
 ## 實作模式
 
 ### 獨立 Goroutine Pool

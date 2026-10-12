@@ -93,7 +93,7 @@ count by (method, status) (http_requests_total)
 
 ### Scrape timeout 連鎖
 
-**觸發條件**：target 的 metrics endpoint 回應慢（> scrape_timeout）、或 target 數量超過 Prometheus 的並行 scrape 能力。
+**觸發條件**：target 的 metrics endpoint 回應慢（> scrape_timeout）、或 target 數量超過 Prometheus 的並行 scrape 能力；或 Prometheus 與被讀取的 exporter 跑在同一台過載的主機上，讀取的耗時包含兩邊等 CPU 的時間，判讀與對策見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉。
 
 **表現**：`up` metric 為 0、`scrape_duration_seconds` 升高、dashboard 出現資料斷層（missing data points）。大量 target 同時 timeout 時，Prometheus 的 scrape goroutine pool 被佔滿，影響其他健康 target 的 scrape。
 

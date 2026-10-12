@@ -61,7 +61,7 @@ scrape_configs:
 
 ### Node Exporter
 
-每台需要監控的 Linux 機器裝一個 node_exporter（單一二進位、無依賴），暴露 CPU、記憶體、磁碟、網路等系統 metric。離線安裝同理——下載 binary、搬運、解壓、設成 service。
+每台需要監控的 Linux 機器裝一個 node_exporter（主機層的 [exporter](/backend/knowledge-cards/prometheus-exporter/)；單一二進位、無依賴），暴露 CPU、記憶體、磁碟、網路等系統 metric。離線安裝同理——下載 binary、搬運、解壓、設成 service。
 
 ```bash
 # 搬運後安裝

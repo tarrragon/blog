@@ -122,7 +122,7 @@ curl -s 'http://localhost:9090/api/v1/query?query=up' | jq '.data.result[].value
 
 子議題：
 
-- Node exporter（host metrics）
+- Node exporter（host metrics）；exporter 是什麼、和應用程式自己開的 /metrics 差在哪見 [Prometheus Exporter](/backend/knowledge-cards/prometheus-exporter/)，單機 Compose 上 cAdvisor、node_exporter 與資料庫 exporter 的接法與驗收見 [4.26](/backend/04-observability/host-traffic-resource-monitoring/)
 - Blackbox exporter（HTTP / TCP / ICMP probing）
 - Database exporters（postgres / mysql / redis）
 - 應用層 metrics：用 client library（prometheus_client）原生暴露
@@ -149,7 +149,7 @@ curl -s 'http://localhost:9090/api/v1/query?query=up' | jq '.data.result[].value
 
 ### Scrape failure
 
-操作原則：先看 target 是否健康、再看 network 跟認證。
+操作原則：先看 target 是否健康、再看 network 跟認證。`up` 是 1 只代表 Prometheus 讀得到 exporter；exporter 連不上它監控的服務、或缺了分辨對象的標籤時 `up` 照樣是 1，驗收方式見 [4.26](/backend/04-observability/host-traffic-resource-monitoring/)〈監控來源接上之後仍沒在監控的情形與驗收〉。
 
 ```bash
 curl -s http://localhost:9090/api/v1/targets | jq '.data.activeTargets[] | {job: .labels.job, health, lastError}'
@@ -171,7 +171,7 @@ curl -s 'http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series' |
 
 ### Alert flapping / noise
 
-操作原則：alert 觸發頻繁但無實際問題、調整 `for:` duration、加 absent() check、用 Alertmanager inhibition。
+操作原則：alert 觸發頻繁但無實際問題、調整 `for:` duration、加 absent() check、用 Alertmanager inhibition（規則寫法與驗證見 [4.27](/backend/04-observability/host-overload-alerting/)〈依原因抑制〉）。間歇的條件（讀取耗時、讀取失敗）加 `for:` 之前先在時間窗內聚合，見 4.27〈告警的持續條件〉。
 
 ### Memory pressure
 
@@ -219,3 +219,4 @@ curl -s 'http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series' |
 - 上游概念：[Metrics Basics](/backend/04-observability/metrics-basics/)
 - 平行 vendor：[Grafana Stack](/backend/04-observability/vendors/grafana-stack/)（Mimir）、[OpenTelemetry](/backend/04-observability/vendors/opentelemetry/)
 - 下游能力：[4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)
+- 單機實作：[4.26](/backend/04-observability/host-traffic-resource-monitoring/) 收各層指標、[4.27](/backend/04-observability/host-overload-alerting/) 寫告警

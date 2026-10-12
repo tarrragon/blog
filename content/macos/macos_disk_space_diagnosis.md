@@ -42,6 +42,8 @@ tmutil listlocalsnapshots /System/Volumes/Data
 
 這次就踩到這個陷阱。`find` 列出近期修改的大檔時，OrbStack（一套容器與 VM 執行環境）的虛擬磁碟映像顯示為 228G，看起來像頭號兇手；但用 `du` 一量，實際佔用只有 1.9G。同樣地，macOS Podcasts 在 tmp 塞的一堆 `.tmp.resize.img` 顯示有數十個檔，實際只佔 3.5M。這些都是 sparse 檔：宣告了很大的邏輯大小，但只有寫入過的區塊才真正佔磁碟。
 
+虛擬磁碟映像的邏輯大小雖然是假的，它實際佔的空間仍在 Mac 的磁碟上：Mac 的磁碟寫滿時，OrbStack 的虛擬機連同裡面全部的容器會被停掉。虛擬機裡的監控怎麼同時涵蓋 Docker 資料那一顆與 Mac 本機的磁碟，見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)〈監控所在層看不到的範圍〉。
+
 ```bash
 # 實際佔用（正確）
 du -sh ~/some/large.img

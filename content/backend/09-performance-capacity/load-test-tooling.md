@@ -93,6 +93,7 @@ tags: ["backend", "performance", "capacity", "tooling"]
 
 - **只測單一 API、不測 user journey**：找不到 cross-endpoint contention、找不到 session state 累積
 - **壓測機跟被測機在同一網段**：網路延遲被低估、p99 比 production 樂觀
+- **壓測時主機被其他工作負載佔用**：同一個服務在主機安靜時與過載時量到的上限，差的是主機而不是服務；紀錄要附上量測期間主機本身的 load、核心數與可用磁碟，判讀方式見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉
 - **壓測時 throttle 自己的工具**：結果不是被測系統的極限、是工具自己的極限
 - **結果報表只看平均**：[tail latency](/backend/knowledge-cards/tail-latency/) 看不到、p99 退化被掩蓋
 - **壓測環境跟 production hardware 不一致**：CPU 型號、network、disk IOPS 差很大、結果不可外推

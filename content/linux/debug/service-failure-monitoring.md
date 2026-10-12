@@ -210,7 +210,7 @@ systemctl show sshd -p OnFailure        # 關鍵服務有沒有掛告警鉤子
 - **某個 service 掛了想被通知** → 第一層 `OnFailure` drop-in + ntfy。不裝額外 daemon，最貼近 systemd。
 - **希望先自動重啟、救不回來才告警** → 第一層再加 `Restart=on-failure` + `StartLimit*`。
 - **怕整台機器當掉沒人知道** → 第三層心跳 / dead-man switch。這層體內方案覆蓋不到，必須體外。
-- **要看資源趨勢、跨多台、設門檻告警** → 第四層，單機用 Netdata、多機用 Prometheus 堆疊。
+- **要看資源趨勢、跨多台、設門檻告警** → 第四層，單機用 Netdata、多機用 Prometheus 堆疊（單機也要拿數字做判斷——壓測找瓶頸、和應用程式指標並排——時改用 Prometheus 加 exporter，取捨見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)〈工具的選項〉）。
 
 判斷標準是先分清你要監控的層級：**單一 service 的死活、整台機器的死活、還是資源的趨勢**——三種對應不同層，別拿其中一種去蓋另一種。最常見的誤區是以為體內的 `OnFailure` 能報自己這台的當機，那正是它的盲點。
 

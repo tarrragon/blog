@@ -26,7 +26,7 @@ tags: ["devops", "capacity-planning", "saturation", "scaling", "knee-point"]
 
 系統的容量由最先飽和的那個資源決定，所以每次 ramp-up 要同時盯多個維度，看哪個先到頂：
 
-- **CPU**：看 load average 與 run queue，不只看利用率——利用率 100% 但 run queue 是空的仍撐得住，run queue 開始堆才是真的 CPU 飽和。
+- **CPU**：看 load average 與 run queue，不只看利用率——利用率 100% 但 run queue 是空的仍撐得住，run queue 開始堆才是真的 CPU 飽和。Docker 跑在虛擬機裡或與其他工作負載共用主機時，虛擬機裡的 [load average](/backend/knowledge-cards/load-average/) 看不到主機上的排隊（見 [4.26](/backend/04-observability/host-traffic-resource-monitoring/)〈監控所在層看不到的範圍〉），加壓的每一級要附上當時主機本身的 load（見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉）。
 - **記憶體**：垃圾回收暫停、swap、快取驅逐都是隱性的記憶體飽和，不會反映在單純的用量數字上。
 - **磁碟 I/O**：吞吐量、IOPS、佇列深度三個維度分開看——雲端 SSD 通常先撞 IOPS 上限，本機 NVMe 先撞吞吐量上限。
 - **網路**：頻寬、每秒封包數（PPS）、連線數。雲端的 PPS 上限超過時可能是靜默丟包，不報錯。
