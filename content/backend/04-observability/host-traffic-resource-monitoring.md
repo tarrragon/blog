@@ -1,7 +1,7 @@
 ---
 title: "4.26 單機容器服務的流量與資源監控：各層的訊號、Prometheus 與 exporter、監控所在層的盲區"
 date: 2026-10-12
-description: "健康檢查之外的流量與資源監控：入口、應用程式、容器、主機與資料庫等服務內部各層的訊號從哪裡收、用哪一個 exporter，Prometheus 加 exporter、單一 agent、開箱即用工具與臨時查看指令的取捨，單次取樣與時間窗的差別，以及監控裝在虛擬機裡時看不到主機的負載與磁碟；附 OrbStack 上 cAdvisor 與 node_exporter 的實測"
+description: "健康檢查之外的流量與資源監控：入口、應用程式、容器、主機與資料庫等服務內部各層的訊號從哪裡收、用哪一個 exporter，Prometheus 加 exporter、單一 agent、開箱即用工具與臨時查看指令的取捨，單次取樣與時間窗的差別，以及監控裝在虛擬機裡時看不到主機的 CPU 負載、看到的磁碟要分清是哪一顆；附 OrbStack 上 cAdvisor 與 node_exporter 的實測"
 weight: 26
 tags: ["backend", "observability", "prometheus", "monitoring", "docker"]
 ---
@@ -86,20 +86,34 @@ docker run --rm -v /var/run:/host-run:ro alpine find /host-run -name 'containerd
 
 macOS 上的 Docker 跑在一台 Linux 虛擬機裡，容器與裝在 compose 裡的 node_exporter 都在這台虛擬機裡。node_exporter 回報的是虛擬機，同一個時間點和 Mac 本機對照：
 
-| 項目                      | node_exporter（虛擬機） | Mac 本機 |
-| ------------------------- | ----------------------- | -------- |
-| load average（1 分鐘）    | 2.89                    | 55       |
-| 記憶體                    | 8.4 GB                  | 16 GB    |
-| Docker 所在磁碟的可用空間 | 34.6 GB                 | 15 GB    |
+| 項目                   | node_exporter（虛擬機） | Mac 本機 |
+| ---------------------- | ----------------------- | -------- |
+| load average（1 分鐘） | 2.89                    | 55       |
+| 記憶體                 | 8.4 GB                  | 16 GB    |
 
 **load average** 是一段時間內處於可執行狀態（在跑或在等 CPU）的平均行程數，Linux 另外把等待磁碟讀寫的行程也算進去；大於核心數代表有行程在排隊。這台 Mac 有 8 顆核心，load 55 代表嚴重排隊，而虛擬機裡只看到 2.89：排隊的是 Mac 上的其他程式，虛擬機只是分到的 CPU 時間變少。容器裡的工作因此全面變慢，而虛擬機與容器的監控都顯示用量很低，從它們的數字找不到原因。
 
-磁碟那一列的落差更危險。虛擬機的磁碟是存在 Mac 磁碟上的一個映像檔，用到才佔用 Mac 的空間；虛擬機以為自己還有幾十 GB 可以用，Mac 實際剩下的空間卻少得多。Mac 的磁碟寫滿時，虛擬機（連同裡面全部的容器）會被停掉（實測時 Mac 剩不到 1 GB，大量寫入 PostgreSQL 的過程中連續發生三次）；而虛擬機裡的磁碟監控量的是虛擬機那顆磁碟的可用空間，上表那一刻它比 Mac 的實際剩餘多出一倍以上，所以在它的數字裡看不到這個風險。
+磁碟的情況不同：虛擬機裡看得到兩顆磁碟，要分清楚是哪一顆。
+
+- **虛擬機放 Docker 資料的磁碟**（OrbStack 上是 `device="/dev/vdb1"`，掛在 `/var/lib/docker`）：它是存在 Mac 磁碟上的一個映像檔，用到才佔用 Mac 的空間。實測它回報可用 34.6 GB 時，Mac 實際只剩 15 GB；後來另一個時間點它剩 48.9%，Mac 剩 2.4%。
+- **Mac 本機的磁碟**：OrbStack 用 virtiofs 把 Mac 的 `/Users`、`/private` 等目錄掛進虛擬機，node_exporter 以 `device="mac"`、`fstype="virtiofs"` 回報它，數字和 Mac 上的 `df` 一致。
+
+只看 Docker 那一顆會以為空間充足。Mac 的磁碟寫滿時，虛擬機（連同裡面全部的容器）會被停掉（實測時 Mac 剩不到 1 GB，大量寫入 PostgreSQL 的過程中連續發生三次）。所以磁碟的告警要依裝置分組、兩顆都涵蓋（同一顆磁碟常掛在好幾個掛載點，不分組時一顆磁碟會發好幾則告警）：
+
+```promql
+# 每一顆磁碟的剩餘比例，低於 10% 告警
+min by (device, fstype) (
+  node_filesystem_avail_bytes{fstype!~"tmpfs|overlay|squashfs|vfat"}
+  / node_filesystem_size_bytes{fstype!~"tmpfs|overlay|squashfs|vfat"}
+) < 0.10
+```
+
+其他把 Docker 跑在虛擬機裡的環境不一定把主機的目錄掛進來，查 `node_filesystem_size_bytes` 裡有沒有大小和主機磁碟一致的那一顆就知道。
 
 所以監控的範圍由它裝在哪一層決定：
 
 - **Linux 主機直接跑 Docker**：node_exporter 看到的就是真正的主機，上表的落差不存在。
-- **macOS 或 Windows 上的 Docker**：主機的負載與磁碟要在主機上另外量。node_exporter 有 macOS 的版本可以裝在 Mac 本機，本篇沒有實測；最低限度是在開始大量資料的實驗或壓測之前，在主機上看一次 load 與磁碟空間。
+- **macOS 或 Windows 上的 Docker**：主機的 CPU 負載要在主機上另外量；磁碟看虛擬機有沒有掛進主機的那一顆。node_exporter 有 macOS 的版本可以裝在 Mac 本機，本篇沒有實測；最低限度是在開始大量資料的實驗或壓測之前，在主機上看一次 load 與磁碟空間，寫成腳本、超過門檻就不開始。
 - **雲端的虛擬機**：同一個問題換成「同一台實體機上的其他租戶」。Linux 的 `node_cpu_seconds_total{mode="steal"}` 記錄虛擬機想用 CPU 而被 hypervisor 分給別人的時間，持續升高時，慢的原因在虛擬機之外。
 
 ## 導入的順序與驗收
@@ -121,7 +135,16 @@ macOS 上的 Docker 跑在一台 Linux 虛擬機裡，容器與裝在 compose �
 | 停掉前台的容器                        | Gatus 對前台的探測                       | 0（失敗）            |
 | 停掉前台的容器                        | cAdvisor 裡那個容器的序列                | **3 分鐘後仍然存在** |
 
-最後一列是要特別記下的行為：容器停掉之後，cAdvisor 繼續輸出它最後的 CPU 與記憶體數值，依服務分組的圖上那條線維持在停掉前的值，看起來像服務還在。停止前進的是 `container_last_seen`（這個容器最後一次被看到的時間），所以偵測容器停了要看 `time() - container_last_seen` 有沒有持續增加；告警寫成「序列消失」的話永遠不會響。
+最後一列是要特別記下的行為：容器停掉之後，cAdvisor 繼續輸出它最後的 CPU 與記憶體數值，依服務分組的圖上那條線維持在停掉前的值，看起來像服務還在。停止前進的是 `container_last_seen`（這個容器最後一次被看到的時間），所以偵測容器停了要看 `time() - container_last_seen` 有沒有持續增加；告警寫成「序列消失」的話永遠不會響。寫成告警時依服務取最小值：
+
+```promql
+# 一個 compose 服務的所有容器都超過 60 秒沒被看到，才算這個服務停了
+min by (container_label_com_docker_compose_service) (
+  time() - container_last_seen{container_label_com_docker_compose_service!=""}
+) > 60
+```
+
+用最大值會在重建容器時誤報：服務重建之後，cAdvisor 同時留著舊容器與新容器兩條序列，舊的那條停止前進。實測強制重建一個容器 150 秒後，最大值是 161 秒、最小值是 10 秒。
 
 ## 延伸閱讀：指標的設計、面板與告警、監控自己的失效
 

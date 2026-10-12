@@ -34,6 +34,10 @@ count by (container_label_com_docker_compose_service) (container_memory_working_
 | 一個容器停掉 | `docker compose stop <服務>` | 外部探測的成功指標；`time() - container_last_seen` | 探測失敗；秒數持續增加（序列本身不會消失） |
 | 入口有流量 | 對入口送一批請求 | `rate(nginx_http_requests_total[1m])` | 上升 |
 | 告警規則會成立 | 用上面的狀況觸發，或暫時把門檻調低 | Prometheus 的 Alerts 頁面、Alertmanager | 規則在 `for` 的時間後成立，被抑制的出現在抑制清單 |
+| 重建容器不誤報 | `docker compose up -d --force-recreate <服務>`，等超過規則的秒數 | 「容器停止」的規則 | 不成立（舊容器的序列還在，規則要依服務取最小值） |
+| 抑制規則會壓下症狀 | 對 Alertmanager 的 `/api/v2/alerts` 送入一組合成的「原因」與「症狀」告警（設 `endsAt` 讓它們自己結束） | `GET /api/v2/alerts?inhibited=true` 的 `status.state` | 症狀是 `suppressed`，`inhibitedBy` 列出原因 |
+
+合成告警只驗證 Alertmanager 的抑制規則；Prometheus 的告警規則在實際的狀況下會不會成立，要另外用上表製造狀況的那幾種方式確認。
 
 主機本身正在過載時做故障注入，數字會混進主機的雜訊（同時量的探測延遲與讀取耗時都偏高）；記下當時主機的負載，結果有疑問時在主機安靜時重做。
 

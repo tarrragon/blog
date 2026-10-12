@@ -3,7 +3,7 @@ name: observability-stack
 description: "自架指標監控（Prometheus、exporter、Grafana）的設計、實作與驗收：依層盤點流量與資源訊號、監控放在哪一層與它看不到的範圍、各層 exporter 的接法、讀得到／有標籤／會反應三項驗收與故障注入、共用主機過載時的告警。Triggers: 監控, Prometheus, exporter, Grafana, cAdvisor, node_exporter, 資源監控, 流量監控"
 metadata:
   portable: true
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Observability Stack
@@ -45,7 +45,7 @@ metadata:
 
 監控只看得到它所在的那一層。寫進盤點表的兩件事：
 
-- **跑在虛擬機裡的監控看不到虛擬機以外**：macOS、Windows 上的 Docker 跑在 Linux 虛擬機裡，node_exporter 與 cAdvisor 回報的是虛擬機。主機上其他程式吃滿 CPU 時，虛擬機的 load 很低而容器全面變慢；虛擬機的磁碟是主機上的映像檔，回報的可用空間可以比主機實際剩下的多，主機磁碟寫滿時虛擬機被停掉。動手做大量資料或壓測前，在主機上看一次 load 與磁碟。雲端虛擬機看 steal 時間（`node_cpu_seconds_total{mode="steal"}`）。
+- **跑在虛擬機裡的監控看不到虛擬機以外**：macOS、Windows 上的 Docker 跑在 Linux 虛擬機裡，node_exporter 與 cAdvisor 回報的是虛擬機。主機上其他程式吃滿 CPU 時，虛擬機的 load 很低而容器全面變慢，虛擬機裡沒有任何指標反映這個競爭。磁碟要分清是哪一顆：虛擬機放 Docker 資料的磁碟是主機上的映像檔，回報的可用空間可以比主機實際剩下的多，主機磁碟寫滿時虛擬機被停掉；有些環境（OrbStack）另外把主機的目錄掛進虛擬機，node_exporter 看得到主機的磁碟，查 `node_filesystem_size_bytes` 有沒有大小和主機磁碟一致的那一顆，有就讓磁碟告警涵蓋它。動手做大量資料或壓測前，在主機上看一次 load 與磁碟。雲端虛擬機看 steal 時間（`node_cpu_seconds_total{mode="steal"}`）。
 - **監控與被監控的服務共用主機時一起退化**：探測與 Prometheus 自己也在等 CPU，探測量到的延遲包含它們自己的等待；Prometheus 讀取 exporter 的耗時逼近 `scrape_timeout` 時讀取失敗、資料出現空洞；資源耗盡時一起停。至少一個訊號放在被監控的主機之外，通常是外部探測：從另一台機器（或外部的 uptime 服務）定時打服務的健康端點；並監控 Prometheus 本身（`scrape_duration_seconds`、`up` 的空洞）。
 
 ## 告警
@@ -53,7 +53,7 @@ metadata:
 - **可用性與延遲分成兩個判斷**：存活探測的條件只放回應碼，以及 TCP 連不連得上；延遲用應用程式自己在 `/metrics` 輸出的延遲分布（histogram）算一段時間的百分位數，不用單次探測的回應時間。兩者放在同一個探測裡時，主機過載讓服務變慢就被報成「掛了」。
 - **條件持續才發**：Prometheus 用 `for`，uptime 工具用連續失敗次數；持續時間要長過短暫尖峰、短過使用者能忍受的時間。
 - **依原因抑制**：Alertmanager 的 `inhibit_rules` 讓「主機飽和」的告警成立時，壓下同一台主機上各服務的「變慢」告警。「主機飽和」用監控所在那一層的指標算（node_exporter 的 load 除以核心數、steal 時間），所以寫下它的盲區：監控在虛擬機裡時，算的是虛擬機，虛擬機外面（實體機或筆電）的競爭不會讓「主機飽和」成立，抑制也就不會發生。規則照樣設定（部署到實體主機或看得到 steal 時間的雲端虛擬機時有效），但在開發用的虛擬機上不依賴它，主機的負載另外在主機上看。抑制只擋通知，Prometheus 裡各服務的延遲資料照樣存在；檢討一次過載時要回頭看各服務的延遲，不能只看那一條「主機飽和」——各服務受影響的程度不同，正是容量規劃要的資訊。
-- **「序列消失」不能當成停掉的訊號**：至少 cAdvisor 在容器停掉之後仍輸出最後的值；偵測停止要看會停止前進的指標：`container_last_seen` 是 cAdvisor 最後一次看到這個容器的時間戳，容器停掉之後不再更新，所以 `time() - container_last_seen` 持續增加，規則寫成這個差值大於某個秒數（例如 60）。規則寫完實際停掉一個容器，確認規則在 `for` 的時間後觸發。
+- **「序列消失」不能當成停掉的訊號**：至少 cAdvisor 在容器停掉之後仍輸出最後的值；偵測停止要看會停止前進的指標：`container_last_seen` 是 cAdvisor 最後一次看到這個容器的時間戳，容器停掉之後不再更新，所以 `time() - container_last_seen` 持續增加，規則寫成這個差值大於某個秒數（例如 60），並依服務取最小值（`min by (服務)`）：服務重建之後，舊容器的序列還在而且停止前進，取最大值會在每次重建時誤報。規則寫完實際停掉一個容器，確認規則在 `for` 的時間後觸發。
 - 規則與抑制設定寫完以 `promtool check rules`、`amtool check-config` 檢查語法，再製造規則要偵測的狀況，確認告警真的觸發、該被抑制的出現在抑制清單。
 
 ## 讀數字的兩條規則

@@ -79,6 +79,20 @@ inhibit_rules:
 
 **這條抑制規則在虛擬機裡判斷不到虛擬機以外的原因。** 上面那次過載，Mac 的 load 是核心數的七倍以上，虛擬機裡算出來的值卻是 0.43，`HostCpuSaturated` 不會成立，抑制也不會發生。OrbStack 這類開發用的虛擬機沒有提供 steal 時間時，虛擬機裡沒有任何指標反映 Mac 上的競爭。這種情況下能用的訊號是間接的：同一台主機上全部服務的延遲同時上升，而它們的 CPU 用量都不高。正式環境的主機是雲端虛擬機時，steal 時間通常量得到；是自己的實體機時，node_exporter 看到的就是那台機器，load 的判斷是準的。
 
+抑制規則寫完要確認它會壓下目標，而主機飽和不容易刻意製造。Alertmanager 的 API 接受直接送入的告警，用它送一組合成的「原因」與「症狀」，再查症狀的狀態：
+
+```sh
+# 送入一組合成的告警，15 分鐘後自動結束（macOS 的 date 語法；Linux 用 date -u -d '+15 min'）
+now=$(date -u +%Y-%m-%dT%H:%M:%SZ); end=$(date -u -v+15M +%Y-%m-%dT%H:%M:%SZ)
+curl -XPOST http://127.0.0.1:9093/api/v2/alerts -H 'Content-Type: application/json' -d "[
+  {\"labels\":{\"alertname\":\"HostCpuSaturated\"},\"startsAt\":\"$now\",\"endsAt\":\"$end\"},
+  {\"labels\":{\"alertname\":\"ScrapeNearTimeout\",\"job\":\"injected\"},\"startsAt\":\"$now\",\"endsAt\":\"$end\"}]"
+# 症狀的 status.state 應該是 suppressed，inhibitedBy 列出壓下它的那一則
+curl -s 'http://127.0.0.1:9093/api/v2/alerts?inhibited=true'
+```
+
+同一個短網址服務的實測：送入之後 `ScrapeNearTimeout` 的狀態是 `suppressed`，`HostCpuSaturated` 是 `active`。這只驗證 Alertmanager 的抑制規則；Prometheus 的「主機飽和」規則會不會在實際飽和時成立，要另外以故障注入確認。
+
 ## 抑制藏起各服務受影響程度的差別
 
 上表裡 Go 與 Laravel 在同一台過載的主機上，成功率分別是 92.5% 與 49%。兩者對 CPU 被搶的敏感程度不同，而這正是容量規劃要知道的事：主機資源吃緊時，哪一個服務先出現延遲與錯誤。抑制規則把兩者的告警一起壓下，這個差別就只剩在面板上。

@@ -16,7 +16,7 @@
 | --- | --- | --- | --- |
 | 入口（Nginx） | nginx-prometheus-exporter | 代理開一個只聽內部 port、只允許私有位址的 `stub_status`，exporter 讀它 | 依網域、狀態碼、上游分開的請求數：要從 access log 算 |
 | 容器 | cAdvisor | 掛載 `/`、`/var/run`、`/sys`、`/var/lib/docker`，`--docker_only=true`；containerd socket 不在預設位置的環境要用 `--containerd` 指定 | 容器裡是哪個行程 |
-| 主機 | node_exporter | `pid: host`、掛載 `/` 到 `/host` 並 `--path.rootfs=/host`；留在容器網路裡時關掉 `netdev`、`netstat`、`sockstat`（看到的是自己容器的網路），網路改看 cAdvisor | 它所在那一層以外的機器 |
+| 主機 | node_exporter | `pid: host`、掛載 `/` 到 `/host` 並 `--path.rootfs=/host`；留在容器網路裡時關掉 `netdev`、`netstat`、`sockstat`（看到的是自己容器的網路），網路改看 cAdvisor | 它所在那一層以外的機器的 CPU 負載；磁碟看得到哪幾顆依環境而定，見下 |
 | PostgreSQL | postgres_exporter | 專用帳號加 `pg_monitor` | 個別查詢的耗時：要 `pg_stat_statements` |
 | Redis / Valkey | redis_exporter | `REDIS_ADDR` 指向服務 | 應用程式那一端等它的時間 |
 | 外部探測 | Gatus（`metrics: true`）、Blackbox exporter | 探測條件只放可用性 | 真實使用者的流量 |
@@ -37,3 +37,16 @@ docker run --rm -v /var/run:/host-run:ro alpine find /host-run -name 'containerd
 **設定檔掛載進容器時，改內容不會讓 compose 重建容器**：例如 Gatus 的設定檔改成 `metrics: true` 之後要手動重啟那個容器；Prometheus 的讀取設定同理（或打它的 reload 端點）。
 
 **改了某個服務的環境變數，compose 會重建它與依賴它的服務**：例如給資料庫加 exporter 帳號的密碼變數，資料庫被重建、依賴它的後端跟著重啟。正式環境改這類環境變數之前要排停機或維護時間。
+
+**磁碟告警一顆磁碟發好幾則，或漏掉主機的磁碟**：同一顆磁碟常掛在好幾個掛載點（OrbStack 把主機的 `/Users`、`/private`、`/tmp` 等都掛進虛擬機），依掛載點告警時一顆磁碟發好幾則。依裝置分組：
+
+```promql
+min by (device, fstype) (
+  node_filesystem_avail_bytes{fstype!~"tmpfs|overlay|squashfs|vfat"}
+  / node_filesystem_size_bytes{fstype!~"tmpfs|overlay|squashfs|vfat"}
+) < 0.10
+```
+
+在 OrbStack 上分組後是兩顆：`device="/dev/vdb1"`（虛擬機放 Docker 資料的磁碟）與 `device="mac"`、`fstype="virtiofs"`（主機的磁碟）。實測同一時間 Docker 資料那一顆剩 48.9%、主機那一顆剩 2.4%，只看 Docker 資料那一顆會漏掉主機快滿。
+
+**規則改了要重新載入**：Prometheus 啟動時加 `--web.enable-lifecycle`，規則或讀取設定改完 `POST /-/reload`；Alertmanager 的設定改了重啟它。改之前先用 `promtool check rules`、`amtool check-config` 檢查語法。

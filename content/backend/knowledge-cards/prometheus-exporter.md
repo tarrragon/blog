@@ -21,7 +21,7 @@ Prometheus exporter 是把某個系統的狀態轉成 Prometheus 指標格式、
 ## 可觀察訊號與例子
 
 - **讀得到但分不出是誰**：`up` 是 1、指標有數字，標籤卻缺了用來分辨對象的那一個。實例是 cAdvisor 在 OrbStack 上找不到 containerd 的 socket，每個容器只剩 cgroup 的雜湊 id、沒有容器名稱，依服務分組的查詢全部落空。
-- **讀到的是另一台機器**：exporter 只看得到它所在的那一層。macOS 上的 Docker 跑在 Linux 虛擬機裡，裝在 compose 裡的 node_exporter 回報的是虛擬機（load 2.89、可用磁碟 34.6 GB），同一時間 Mac 本機的 load 是 55、可用磁碟 15 GB。
+- **讀到的是另一台機器**：exporter 只看得到它所在的那一層。macOS 上的 Docker 跑在 Linux 虛擬機裡，裝在 compose 裡的 node_exporter 回報的是虛擬機的 load（2.89），同一時間 Mac 本機的 load 是 55。磁碟則同時看得到兩顆：虛擬機放 Docker 資料的那一顆，以及 OrbStack 以 virtiofs 掛進來的 Mac 磁碟，兩者剩餘空間不同，只看 Docker 資料那一顆會以為空間充足。
 - **標籤組合爆量**：exporter 把每個連線、每個查詢都當成一個標籤值輸出時，時間序列的數量暴增，見 [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)。
 
 ## 設計責任
