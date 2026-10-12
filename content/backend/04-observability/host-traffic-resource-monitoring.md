@@ -108,9 +108,20 @@ macOS 上的 Docker 跑在一台 Linux 虛擬機裡，容器與裝在 compose �
 
 每接上一個來源，驗收三件事：
 
-1. Prometheus 的 Targets 頁面上它是 `UP`，或查詢 `up{job="<名稱>"}` 是 1。
-2. 每一個預期的服務都出現在標籤裡，例如查 `count by (container_label_com_docker_compose_service) (container_memory_working_set_bytes)`，一個服務一列。
-3. 刻意製造一次它該看到的狀況，確認數字有反應：停掉一個容器、在一個容器裡跑滿 CPU、開一個長時間持有連線的查詢。監控只在出事時被讀，平常沒有人會發現它讀不到。
+1. **讀得到，而且 exporter 連得到它監控的服務**：Prometheus 的 Targets 頁面上它是 `UP`，或查詢 `up{job="<名稱>"}` 是 1。`up` 只代表 Prometheus 連得到 exporter；postgres_exporter 連不上 PostgreSQL 時 `up` 照樣是 1，要另外看 exporter 自己輸出的連線狀態（`pg_up`、`redis_up`、`nginx_up`）。
+2. **每一個預期的服務都出現在標籤裡**：例如查 `count by (container_label_com_docker_compose_service) (container_memory_working_set_bytes)`，一個服務一列。
+3. **刻意製造一次它該看到的狀況，確認數字有反應**。監控只在出事時被讀，平常沒有人會發現它讀不到或讀錯。
+
+同一個短網址服務第一次接上時，「刻意製造狀況」那一項的實測：
+
+| 製造的狀況                            | 看哪個指標                               | 結果                 |
+| ------------------------------------- | ---------------------------------------- | -------------------- |
+| 在 Valkey 的容器裡跑一個空轉的迴圈    | 該服務的 CPU（1 分鐘平均）               | 0.98 顆核心          |
+| 開 5 個連線各自 `select pg_sleep(90)` | `pg_stat_activity_count{state="active"}` | 5                    |
+| 停掉前台的容器                        | Gatus 對前台的探測                       | 0（失敗）            |
+| 停掉前台的容器                        | cAdvisor 裡那個容器的序列                | **3 分鐘後仍然存在** |
+
+最後一列是要特別記下的行為：容器停掉之後，cAdvisor 繼續輸出它最後的 CPU 與記憶體數值，依服務分組的圖上那條線維持在停掉前的值，看起來像服務還在。停止前進的是 `container_last_seen`（這個容器最後一次被看到的時間），所以偵測容器停了要看 `time() - container_last_seen` 有沒有持續增加；告警寫成「序列消失」的話永遠不會響。
 
 ## 延伸閱讀：指標的設計、面板與告警、監控自己的失效
 

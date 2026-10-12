@@ -10,14 +10,15 @@ tags: ["devops", "capacity-planning", "load-testing", "peak-estimation", "cost-m
 
 ## 章節
 
-| 章節                                                                          | 回答什麼問題                                        |
-| ----------------------------------------------------------------------------- | --------------------------------------------------- |
-| [流量模型建立](/operations/05-capacity-planning/traffic-model/)               | 峰均比、到達型態、讀寫比、從 log 抽模型             |
-| [峰值估算](/operations/05-capacity-planning/peak-estimation/)                 | 峰值五形狀、歷史倍率階梯、安全係數的飽和曲線根據    |
-| [壓力測試工具與方法](/operations/05-capacity-planning/load-testing-tools/)    | 工具選型六維、k6/wrk 定位、怎麼讀延遲分布           |
-| [規模拐點判斷](/operations/05-capacity-planning/scaling-inflection-point/)    | 飽和曲線三區間、膝點早期訊號、垂直 vs 水平          |
-| [成本模型](/operations/05-capacity-planning/cost-model/)                      | on-demand/reserved/spot、單位請求成本、right-sizing |
-| [容器化資源設計](/operations/05-capacity-planning/container-resource-design/) | memory/CPU/磁碟限制、overlay fs、OOMKill 排查       |
+| 章節                                                                           | 回答什麼問題                                                 |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------ |
+| [流量模型建立](/operations/05-capacity-planning/traffic-model/)                | 峰均比、到達型態、讀寫比、從 log 抽模型                      |
+| [峰值估算](/operations/05-capacity-planning/peak-estimation/)                  | 峰值五形狀、歷史倍率階梯、安全係數的飽和曲線根據             |
+| [壓力測試工具與方法](/operations/05-capacity-planning/load-testing-tools/)     | 工具選型六維、k6/wrk 定位、怎麼讀延遲分布                    |
+| [規模拐點判斷](/operations/05-capacity-planning/scaling-inflection-point/)     | 飽和曲線三區間、膝點早期訊號、垂直 vs 水平                   |
+| [成本模型](/operations/05-capacity-planning/cost-model/)                       | on-demand/reserved/spot、單位請求成本、right-sizing          |
+| [容器化資源設計](/operations/05-capacity-planning/container-resource-design/)  | memory/CPU/磁碟限制、overlay fs、OOMKill 排查                |
+| [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/) | 共用主機時容量估算、故障範圍、隔離層級與監控位置各要考慮什麼 |
 
 ## 跨分類引用
 
