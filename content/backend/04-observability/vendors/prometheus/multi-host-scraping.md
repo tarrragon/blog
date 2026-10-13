@@ -144,7 +144,7 @@ Prometheus 會監看這個檔案，內容改了就重新讀取，不必重新載
 
 ## 主機停掉與主機從清單上消失的偵測
 
-這一節以中央直接讀取為準。改用各主機推送時，主機停掉時它的 agent 跟著停，Prometheus 不會讀到 `up` 為 0，序列直接中斷，表現和本節的「主機從清單上消失」相同，要用那一類規則偵測。
+這一節以中央直接讀取為準。改用各主機推送時，主機停掉時它的 agent 跟著停，Prometheus 不會讀到 `up` 為 0，序列直接中斷，表現和本節的「主機從清單上消失」相同，要用那一段的 `count` 與 `absent` 規則偵測。
 
 **主機停掉、仍在清單上**：Prometheus 讀不到它，`up{host="app-2"}` 變成 0，讀取失敗的告警（`ScrapeTargetDown`）對那台主機成立。這條規則取 15 分鐘內讀取成功的比例，因為主機過載時讀取是間歇失敗，`up == 0` 加持續時間會在兩次失敗之間被打斷（實測見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈告警的持續條件〉一節）：
 
@@ -160,7 +160,7 @@ Prometheus 會監看這個檔案，內容改了就重新讀取，不必重新載
 
 `up` 帶著目標清單上的 `host`，所以告警自己就指出是哪台主機。這條規則的延遲由兩段組成：失敗的比例要累積到低於九成（讀取對象已經跑滿 15 分鐘時，約 1.5 分鐘的失敗），再加上 `for` 的 2 分鐘，合計約 3.5 分鐘。
 
-`and up` 處理的是有意移除的主機。縮容或汰換時，主機常常先停掉、隔一陣子才從清單上拿掉；拿掉之後時間窗裡仍留著停機到移除之間的失敗樣本，只寫 `avg_over_time(up[15m]) < 0.9` 的話，規則會對已經不存在的主機再成立十幾分鐘（以 promtool 餵入「上線 15 分鐘、失敗 2 分鐘、接著移除」的序列，移除後 15 分鐘才結束）。`and up` 要求這個讀取對象現在還在，序列過期之後規則就不成立。
+`and up` 處理的是有意移除的主機。縮容或汰換時，主機常常先停掉、隔一陣子才從清單上拿掉。拿掉之後，15 分鐘的時間窗裡仍留著停機到移除之間的失敗樣本。只寫 `avg_over_time(up[15m]) < 0.9` 的話，規則會對已經不存在的主機再成立十幾分鐘（以 promtool 餵入「上線 15 分鐘、失敗 2 分鐘、接著移除」的序列，移除後 15 分鐘才結束）。`and up` 要求這個讀取對象現在還在，序列過期之後規則就不成立。
 
 整台主機停掉時，這條規則只是 warning，而 critical 的容器停止規則不會成立：cAdvisor 跟著讀不到，它的序列被標成過期，`container_last_seen` 沒有值可算。所以主機層另外一條：
 
@@ -196,9 +196,9 @@ absent(up{job="node"})
 
 ## 監控主機放在哪裡
 
-中央的 Prometheus、Alertmanager 與 Grafana 預設放在一台獨立的監控主機上，不和被監控的服務共用。共用時，那台主機過載或停掉，監控跟著一起退化或停掉，而那正是最需要它的時候（見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)）。監控主機自己停掉時，它發不出任何告警，所以另外需要一個不經過它的訊號：在監控主機以外跑的外部探測，以及一條永遠成立的 Watchdog 告警，經由 Alertmanager 持續送到外部的心跳服務，心跳中斷時由外部服務通知（做法見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉一節）。主機只有兩三台、多開一台監控主機不划算時，把監控放在負載最低的那一台，Watchdog 與外部探測照樣保留，代價是那一台過載時監控跟著退化。
+中央的 Prometheus、Alertmanager 與 Grafana 預設放在一台獨立的監控主機上，不和被監控的服務共用。共用時，那台主機過載或停掉，監控跟著一起退化或停掉，而那正是最需要它的時候（見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)）。監控主機自己停掉時，它發不出任何告警，所以另外需要一個不經過它的訊號：在監控主機以外跑的外部探測，以及一條永遠成立的 Watchdog 告警，經由 Alertmanager 持續送到外部的心跳服務，心跳中斷時由外部服務通知（做法見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉一節）。主機只有兩三台、多開一台監控主機不划算時，把 Prometheus、Alertmanager 與 Grafana 放在負載最低的那一台，Watchdog 與外部探測照樣保留，代價是那一台過載時監控跟著退化。
 
-元件因此分成三個 compose 檔：每一台主機（含監控主機）都要跑的 node_exporter 與 cAdvisor 在 `compose.host-exporters.yml`，跟著服務走的 exporter 和服務一起留在 `docker-compose.yml`，Prometheus、Alertmanager、Grafana 在 `compose.monitoring.yml`。監控主機也跑主機層的 exporter，它自己的 CPU、記憶體與磁碟才有人看；它停掉時由 Watchdog 發現，而過載或磁碟快滿要靠它自己的 node_exporter。每台主機在自己的 `.env`（不進版控，每台內容不同）以 `COMPOSE_FILE` 決定讀哪幾個檔，同一個 repo 在每台主機上執行同一條 `docker compose up -d`（分隔符在 Linux、macOS 是 `:`，Windows 是 `;`）：
+元件因此分成三個 compose 檔：每一台主機（含監控主機）都要跑的 node_exporter 與 cAdvisor 在 `compose.host-exporters.yml`，跟著服務走的 exporter 和服務一起留在 `docker-compose.yml`，Prometheus、Alertmanager、Grafana 在 `compose.monitoring.yml`。監控主機也跑主機層的 exporter，它自己的 CPU、記憶體與磁碟才有人看；它停掉時由 Watchdog 發現，而過載或磁碟快滿要靠它自己的 node_exporter。每台主機在自己的 `.env`（不進版控，每台內容不同）以 `COMPOSE_FILE` 決定讀哪幾個檔，同一個 repo 在每台主機上執行同一條 `docker compose up -d`。`COMPOSE_FILE` 裡檔名的分隔符在 Linux、macOS 是 `:`，Windows 是 `;`：
 
 | 主機                       | `.env` 的 `COMPOSE_FILE`                                                                                      |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------- |

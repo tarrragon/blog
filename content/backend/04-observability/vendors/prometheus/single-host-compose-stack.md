@@ -82,7 +82,7 @@ cadvisor:
 
 `--containerd` 的值放在環境變數，因為 socket 的位置依環境不同：Linux 主機直接跑 Docker 時預設的 `/run/containerd/containerd.sock` 多半就對；macOS 上的 Docker 跑在虛擬機裡，socket 在虛擬機的另一個位置（OrbStack 2.2.3 上量到的是 `/var/run/docker/containerd/containerd.sock`），位置隨工具與版本不同，要在自己的環境裡找一次。找不到 socket 時 cAdvisor 照樣起來、Prometheus 照樣讀得到，指標卻只剩 `id="/docker/<雜湊>"` 而沒有容器名稱與 compose 標籤；找法與日誌長什麼樣，見 [單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/) 的〈Docker 跑在虛擬機裡時 cAdvisor 缺容器名稱〉。`--housekeeping_interval` 是 cAdvisor 更新每個容器統計的間隔，預設 1 秒，而且閒置的容器會逐步拉長到最多 1 分鐘（`--allow_dynamic_housekeeping` 預設開啟）；Prometheus 每 15 秒才來讀一次，兩次讀取之間多做的更新，Prometheus 都讀不到，所以對齊讀取間隔，省下 cAdvisor 的 CPU。要每次讀取都拿到新的值，另外設 `--allow_dynamic_housekeeping=false`。
 
-cAdvisor 的 `privileged`、node_exporter 的 `pid: host` 加上唯讀掛進主機的 `/`，讓這兩個容器看得到主機上所有行程與檔案，等於把主機的讀取權限交給它們的映像：映像來源要可信、版本寫死，它們的連接埠也不對外。
+node_exporter 的 `pid: host` 加上唯讀掛進主機的 `/`，讓它讀得到主機上所有行程與檔案。cAdvisor 的 `privileged` 給它全部的核心權限與主機上的裝置，加上掛進來的 `/var/run` 底下有容器執行環境的 socket（唯讀掛載不限制對 socket 下指令，透過它可以起新的容器），等於主機的 root。兩者都是把主機交給它們的映像：映像來源要可信、版本寫死，它們的連接埠也不對外。
 
 ## 服務內部：資料庫、快取與入口
 
@@ -142,7 +142,7 @@ valkey-exporter:
     REDIS_ADDR: redis://cache:6379   # compose 的服務名稱與連接埠；快取有密碼時另設 REDIS_PASSWORD
 ```
 
-入口 Nginx 的連線數由它自己的 `stub_status` 提供，nginx-prometheus-exporter 讀這個狀態頁轉成指標。狀態頁另開一個只在內部聽的連接埠，只接受私有位址，compose 不把這個連接埠對外發佈。下面的 `server` 區塊放在 Nginx 的設定目錄（例如 `conf.d/status.conf`）。設定以掛載進容器時，存檔後重新載入 Nginx（`docker compose exec nginx nginx -s reload`）；設定以 Dockerfile 的 `COPY` 打進映像時，要重建映像與容器（`docker compose up -d --build nginx`），只重新載入的話容器讀不到新檔，狀態頁回 404、`nginx_up` 是 0：
+入口 Nginx 的連線數由它自己的 `stub_status` 提供，nginx-prometheus-exporter 讀這個狀態頁轉成指標。狀態頁另開一個只在內部聽的連接埠，只接受私有位址，compose 不把這個連接埠對外發佈。下面的 `server` 區塊放在 Nginx 的設定目錄（例如 `conf.d/status.conf`）。設定以掛載進容器時，存檔後重新載入 Nginx（`docker compose exec nginx nginx -s reload`）；設定以 Dockerfile 的 `COPY` 打進映像時，要重建映像與容器（`docker compose up -d --build nginx`），只重新載入的話容器讀不到新檔，8081 沒有在聽，exporter 連線被拒、`nginx_up` 是 0：
 
 ```nginx
 server {
