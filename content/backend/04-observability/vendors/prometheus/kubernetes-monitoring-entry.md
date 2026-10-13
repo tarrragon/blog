@@ -1,7 +1,7 @@
 ---
-title: "在 Kubernetes 上接上監控：kube-prometheus-stack 的元件、ServiceMonitor 與 PrometheusRule 的選取、儀表板 sidecar 與控制平面的讀取"
+title: "在 Kubernetes 上接上監控：kube-prometheus-stack 的元件、ServiceMonitor 與 PrometheusRule 的選取、節點標籤、儀表板 sidecar、控制平面的讀取與單節點叢集的資源用量"
 date: 2026-10-13
-description: "在 Kubernetes 上以 kube-prometheus-stack 接上監控：chart 裝了哪些元件與 CRD，讀取對象與告警規則改以 ServiceMonitor、PrometheusRule 宣告之後由誰轉成 Prometheus 的設定，release 標籤決定哪些宣告會被選中，主機標籤改成節點標籤，儀表板經由 ConfigMap 與 sidecar 載入，以及控制平面元件只綁本機時讀不到的原因與單機叢集上的資源用量"
+description: "在 Kubernetes 上以 kube-prometheus-stack 接上監控：chart 裝了哪些元件與 CRD，讀取對象與告警規則改以 ServiceMonitor、PrometheusRule 宣告之後由誰轉成 Prometheus 的設定，release 標籤決定哪些宣告會被選中，主機標籤改成節點標籤，儀表板經由 ConfigMap 與 sidecar 載入，Alertmanager 預設不送任何通知，以及控制平面元件只綁本機時讀不到的原因、單節點叢集上的資源用量與記憶體不足時的表現"
 weight: 18
 tags: ["backend", "observability", "vendor", "prometheus", "kubernetes"]
 ---
@@ -12,16 +12,18 @@ tags: ["backend", "observability", "vendor", "prometheus", "kubernetes"]
 
 ## kube-prometheus-stack 裝了什麼
 
-在 Docker Compose 上，監控的每一個元件都是自己寫進 compose 檔的服務，讀取清單是 Prometheus 設定檔裡的一段。kube-prometheus-stack 把這些打包成一個 chart，一次裝進叢集：
+在 Docker Compose 上，監控的每一個元件都是自己寫進 compose 檔的服務，讀取清單是 Prometheus 設定檔裡的 `scrape_configs`。kube-prometheus-stack 把這些打包成一個 chart，一次裝進叢集：
 
 - **Prometheus Operator**：一個常駐的控制程式，監看叢集裡描述監控的物件，把它們轉成 Prometheus 與 Alertmanager 的設定檔。
-- **Prometheus 與 Alertmanager**：本身也由 Operator 依 `Prometheus`、`Alertmanager` 這兩種物件建立，以 StatefulSet 執行。
+- **Prometheus 與 Alertmanager**：本身也由 Operator 依 `Prometheus`、`Alertmanager` 這兩種自訂物件（CRD，見下方）建立，以 StatefulSet 執行。
 - **Grafana**：附 30 個預設儀表板，資料來源已經指向這個 Prometheus。
 - **node-exporter**：以 DaemonSet 在每個節點跑一份，對應 Compose 上的 node_exporter。
 - **kube-state-metrics**：讀 Kubernetes API，把 Deployment 的期望與實際副本數、Pod 的狀態這類叢集物件的狀態輸出成指標。
 - **預設的告警規則**：實測 36 組、251 條，涵蓋節點、kubelet、API server 與上面這些元件；其中包括一條永遠成立的 `Watchdog`。
 
 容器的 CPU 與記憶體不另外裝 cAdvisor：每個節點的 kubelet 內建 cAdvisor，chart 附的讀取設定直接讀 kubelet。
+
+Alertmanager 的路由與 receiver 寫在 chart 的 `alertmanager.config` 值裡。chart 預設的設定把所有告警送到一個不通知的 `null` receiver，Watchdog 也另有一條子路由送到 `null`，所以裝好之後沒有任何通知送出。要接通知時改寫這個值：子路由與 receiver 的寫法和 Compose 上相同，見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/)；Watchdog 規則 chart 已經有，不必另加，要改的是把它那條子路由的 receiver 換成心跳服務。私密的網址以 Secret 交給 Alertmanager：在 `alertmanager.alertmanagerSpec.secrets` 列出 Secret 的名稱，Operator 把它掛在 Alertmanager 的 `/etc/alertmanager/secrets/<Secret 名稱>/` 底下，`url_file` 指到那裡。這一段依 chart 92.3.0 的預設值寫成，這次沒有在叢集上實際送出通知。
 
 Operator 監看的物件是 chart 安裝的 CRD（Custom Resource Definition，讓 Kubernetes API 多認得一種物件），實測裝了十種，其中最常直接寫的是三種：
 
@@ -31,11 +33,11 @@ Operator 監看的物件是 chart 安裝的 CRD（Custom Resource Definition，�
 | `PodMonitor`     | 不經過 Service，直接以 Pod 的標籤選讀取對象                                                | 同上                                            |
 | `PrometheusRule` | 告警規則與預先算好結果的規則（[recording rule](/backend/knowledge-cards/recording-rule/)） | `rules/*.yml`                                   |
 
-這三種物件由服務自己的團隊放在服務所在的 namespace，和 Deployment、Service 一起部署；Operator 把全叢集的這些物件收集起來，產生一份 Prometheus 設定。讀取清單因此跟著部署走，和 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/) 裡由部署工具產生目標清單是同一個想法，只是產生清單的程式換成 Operator。
+這三種物件由服務自己的團隊放在服務所在的 namespace，和 Deployment、Service 一起部署：ServiceMonitor 預設只選同一個 namespace 裡的 Service，放到別的 namespace（例如集中放在 `monitoring`）時要另寫 `spec.namespaceSelector`，否則它選不到任何 Service，也不報錯。Operator 把全叢集的這些物件收集起來，產生一份 Prometheus 設定。讀取清單因此跟著部署走，和 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/) 裡由部署工具產生目標清單是同一個想法，只是產生清單的程式從部署工具換成 Operator。
 
 ## ServiceMonitor 與 release 標籤
 
-以一個輸出 `/metrics` 的範例服務來看。服務有一個 Service，連接埠命名為 `web`；ServiceMonitor 以標籤選中這個 Service，指定讀 `web` 這個連接埠：
+以一個輸出 `/metrics` 的範例服務來看。服務以一個 Deployment 跑兩個 Pod，前面有一個 Service，Service 的連接埠取名為 `web`；ServiceMonitor 以標籤選中這個 Service，指定讀 `web` 這個連接埠：
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -53,7 +55,7 @@ spec:
       interval: 15s
 ```
 
-`metadata.labels` 那一行決定這個 ServiceMonitor 會不會被讀到。chart 建立的 `Prometheus` 物件只選帶 `release: <release 名稱>` 標籤的 ServiceMonitor、PodMonitor 與 PrometheusRule，namespace 不限：
+`metadata.labels` 那一行決定這個 ServiceMonitor 會不會被讀到。chart 建立的 `Prometheus` 物件以 `release: <release 名稱>` 這個標籤選 ServiceMonitor、PodMonitor 與 PrometheusRule，三種物件各自要帶這個標籤才會被選中，所在的 namespace 不限：
 
 ```sh
 # monitoring 換成安裝 chart 時指定的 namespace
@@ -61,7 +63,9 @@ kubectl -n monitoring get prometheus -o jsonpath='{.items[0].spec.serviceMonitor
 # {"matchLabels":{"release":"kps"}}
 ```
 
-實測同一個 ServiceMonitor 先不帶這個標籤套用，等了 4 分鐘，Prometheus 的設定裡沒有它，Operator 沒有報錯，ServiceMonitor 物件上也沒有任何狀態欄位說明它沒被選中；補上 `release: kps` 之後，兩個 Pod 都出現在讀取對象裡。所以 ServiceMonitor 寫好而讀取對象沒出現時，先核對的是這個標籤與 `serviceMonitorSelector`。chart 的值 `prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues` 設成 `false` 時，選取條件改成全部選中，這是 chart 文件寫的做法，這次沒有實測。
+輸出是 `{}` 時，選取條件是全部選中，標籤不影響。
+
+實測同一個 ServiceMonitor 先不帶這個標籤套用，等了 4 分鐘，Prometheus 的設定裡沒有它，Operator 沒有報錯，ServiceMonitor 物件上也沒有任何狀態欄位說明它沒被選中；補上 `release: kps` 之後，範例服務的兩個 Pod 都出現在讀取對象裡。所以 ServiceMonitor 寫好而讀取對象沒出現時，先核對這個標籤與 `serviceMonitorSelector`，以及 ServiceMonitor 與 Service 是否在同一個 namespace。在叢集裡開 Prometheus 的網頁看讀取對象，以 `kubectl -n monitoring port-forward svc/<Service 名稱> 9090` 把它轉到本機的 9090；Service 名稱含 release 名稱，以 `kubectl -n monitoring get svc` 查。chart 的值 `prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues` 設成 `false` 時，選取條件改成全部選中，這是 chart 文件寫的做法，這次沒有實測。
 
 PrometheusRule 同樣如此：不帶標籤的規則等了 2 分鐘沒有載入，補上標籤之後 30 秒出現在 Prometheus 的規則清單。chart 另外裝了一個驗證規則的 admission webhook（API server 在接受物件之前先送去檢查的服務），PromQL 寫錯時 `kubectl apply` 當場被拒，訊息指出是哪一組、哪一條規則與錯在第幾個字元：
 
@@ -76,7 +80,7 @@ Compose 上要自己跑 `promtool check rules` 才擋得住的錯誤，在 Kuber
 
 ServiceMonitor 產生的讀取對象帶著這些標籤：`namespace`、`service`、`pod`、`container`、`endpoint`、`job`（預設是 Service 的名稱）與 `instance`（Pod 的 IP 與連接埠）。沒有代表節點的標籤。
 
-Compose 上的告警與抑制都依 `host` 分組，一台主機飽和只壓下同一台主機上的症狀。在 Kubernetes 上，「主機」是節點，Pod 會被排到任何一個節點上、重建之後換節點，所以節點不能寫死在清單裡，要從服務發現的資訊取。ServiceMonitor 的 `relabelings` 就是 Prometheus 的 `relabel_configs`（見 [Relabeling](/backend/knowledge-cards/relabeling/)），服務發現給的 `__meta_kubernetes_pod_node_name` 是 Pod 所在的節點：
+Compose 上的告警與抑制都依 `host` 分組，一台主機飽和只壓下同一台主機上的症狀。在 Kubernetes 上，「主機」是節點，Pod 會被排到任何一個節點上、重建之後換節點，所以節點不能寫死在清單裡，要從服務發現的資訊取。ServiceMonitor 的 `relabelings` 與 `metricRelabelings` 就是 Prometheus 的 `relabel_configs` 與 `metric_relabel_configs`（見 [Relabeling](/backend/knowledge-cards/relabeling/)），欄位名稱改成 camelCase（`sourceLabels`、`targetLabel`）；服務發現給的 `__meta_kubernetes_pod_node_name` 是 Pod 所在的節點：
 
 ```yaml
   endpoints:
@@ -87,7 +91,7 @@ Compose 上的告警與抑制都依 `host` 分組，一台主機飽和只壓下�
           targetLabel: node
 ```
 
-實測改了 ServiceMonitor 之後 41 秒，查詢結果裡的序列帶上 `node`：Operator 重新產生設定，Prometheus 旁邊的 config-reloader 讓它重新載入。改標籤同時產生了新的序列：同一個 Pod 在幾分鐘內查得到兩條 `up`，一條沒有 `node`、一條有，舊的那條要等過期才消失，序列的歷史在改標籤的那一刻斷成兩段。標籤因此在服務第一次接上監控時就決定好，之後再改，依這個標籤分組的面板與告警在那一刻前後各自只看到一段。
+實測改了 ServiceMonitor 之後 41 秒，查詢結果裡的序列帶上 `node`：Operator 重新產生設定，Prometheus 的 Pod 裡負責重新載入設定的 config-reloader 容器讓它重新載入。改標籤同時產生了新的序列：同一個 Pod 在幾分鐘內查得到兩條 `up`，一條沒有 `node`、一條有，舊的那條在約 5 分鐘沒有新的樣本之後被 Prometheus 判為過期才消失，序列的歷史在改標籤的那一刻斷成兩段。所以標籤要在服務第一次接上監控時就決定好；之後再改的話，面板與告警依這個標籤分組時，改標籤之前的資料落在舊的那一組、之後的落在新的那一組，兩段接不起來。
 
 寫告警與抑制時以 `node` 取代 Compose 上的 `host`。另一種做法是不改讀取設定，在查詢時以 `kube_pod_info` 把 `node` 接上去（`* on (namespace, pod) group_left(node) kube_pod_info`），寫法與 node-exporter 序列的對應見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制：主機飽和時壓下各服務變慢〉；兩者的差別在讀取時加的標籤每一條序列本身就帶著，查詢時接的則每一條規則都要寫一次。chart 附的其他讀取設定（例如 kubelet）各自帶哪些標籤，這次沒有逐一檢查，寫規則之前先在 Prometheus 查一次 `up` 的標籤，確認每個要分組的序列都有 `node`。
 
@@ -107,13 +111,15 @@ data:
     {"uid": "shop-overview", "title": "shop 服務總覽", ...}
 ```
 
-實測套用之後 23 秒，儀表板出現在 Grafana；刪掉 ConfigMap 之後 6 秒，儀表板從 Grafana 消失。從 ConfigMap 載入的儀表板是佈建（provisioned）的儀表板，chart 的佈建設定寫 `allowUiUpdates: false`：Grafana 的 API 對這個儀表板回 `canSave: true`，實際以 API 存檔時被拒，訊息是 `Cannot save provisioned dashboard`。所以在介面上調好的儀表板要匯出 JSON、改回 ConfigMap，這和 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 的〈Grafana：以檔案佈建資料來源與儀表板〉以檔案佈建儀表板的流程相同，只是檔案換成 ConfigMap。
+實測套用之後 23 秒，儀表板出現在 Grafana；刪掉 ConfigMap 之後 6 秒，儀表板從 Grafana 消失；這段延遲是 sidecar 察覺 ConfigMap 變更、寫檔、再讓 Grafana 重新載入的時間。從 ConfigMap 載入的儀表板是佈建（provisioned）的儀表板，chart 的佈建設定寫 `allowUiUpdates: false`：Grafana 的 API 對這個儀表板回 `canSave: true`，實際以 API 存檔時被拒，訊息是 `Cannot save provisioned dashboard`。所以在介面上調好的儀表板要匯出 JSON、改回 ConfigMap，這和 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 的〈Grafana：以檔案佈建資料來源與儀表板〉以檔案佈建儀表板的流程相同，只是檔案換成 ConfigMap。
 
 資料來源也是同一個機制，標籤換成 `grafana_datasource: "1"`。
 
+手上是從 Grafana 匯出的 JSON 檔時，以 `kubectl -n shop create configmap shop-dashboard --from-file=shop.json` 建 ConfigMap，再 `kubectl -n shop label configmap shop-dashboard grafana_dashboard=1` 加上標籤（`shop` 與檔名換成自己的）。JSON 很大時，以 `kubectl apply` 更新要加 `--server-side`，用預設的 client-side apply 會超過 Kubernetes 對 annotation 的長度上限。這兩條指令這次沒有實跑。
+
 ## 控制平面元件的 metrics 綁定位址與讀取失敗
 
-裝好之後，Prometheus 的讀取對象裡有四個一直讀不到：controller-manager（10257）、scheduler（10259）、etcd 的 metrics（2381）與 kube-proxy（10249），錯誤是 `connection refused`。到 kind 的節點容器裡看，這四個程式都只聽 `127.0.0.1`：
+裝好之後，Prometheus 的讀取對象裡有四個一直讀不到：controller-manager（連接埠 10257）、scheduler（10259）、etcd 的 metrics（2381）與 kube-proxy（10249），錯誤是 `connection refused`。到 kind 的節點容器裡看，這四個程式都只聽 `127.0.0.1`：
 
 ```sh
 docker exec <叢集名稱>-control-plane ss -ltn   # kind 的節點是一個容器，名稱是叢集名稱加 -control-plane
@@ -122,7 +128,7 @@ docker exec <叢集名稱>-control-plane ss -ltn   # kind 的節點是一個容�
 
 kind 以 kubeadm 建立控制平面，kubeadm 預設把這幾個元件的 metrics 端點綁在本機；Prometheus 在 Pod 網路裡，連的是節點的 IP，所以連不上。預設的告警規則因此各自成立一條：`KubeControllerManagerInstanceUnreachable`、`KubeSchedulerInstanceUnreachable`、`KubeProxyInstanceUnreachable`、`TargetDown`，以及 critical 的 `etcdInsufficientMembers`。一裝好就有 critical 告警成立，而叢集本身是正常的。
 
-自己以 kubeadm 建的叢集（kind 也是）在建立時改這幾個綁定位址：
+以 kubeadm 新建的叢集（kind 也是）在建立時改這幾個綁定位址：
 
 ```yaml
 # kind 的叢集設定；kind create cluster --name <名稱> --config <這個檔>
@@ -148,22 +154,19 @@ nodes:
         metricsBindAddress: 0.0.0.0:10249
 ```
 
-以這份設定重建之後，四個程式都改聽所有介面；從叢集裡的一個 Pod 連過去，etcd 與 kube-proxy 回 200，controller-manager 與 scheduler 回 403（連得上、要帶認證，Prometheus 讀取時帶 ServiceAccount 的 token）。這個重建的叢集上沒有再裝一次監控，所以讀取成功與告警解除沒有實測。綁到所有介面也讓節點網路上的其他程式連得到這些端點，正式叢集要搭配網路政策或防火牆限制來源。
+以這份設定重建之後，四個程式都改聽所有介面；從叢集裡的一個 Pod 連過去，etcd 與 kube-proxy 回 200，controller-manager 與 scheduler 回 403（連得上，要帶認證才讀得到）。這個重建的叢集上沒有再裝一次監控，所以 chart 附的讀取設定能不能讀到、告警會不會解除，都沒有實測。綁到所有介面也讓節點網路上的其他程式連得到這些端點，正式叢集要搭配網路政策或防火牆限制來源。
 
-託管的 Kubernetes（EKS、GKE、AKS）由雲端供應商管理控制平面，controller-manager、scheduler 與 etcd 多半不讓使用者直接讀，chart 的對應讀取設定只會一直失敗；這時在 chart 的值裡把 `kubeControllerManager.enabled`、`kubeScheduler.enabled`、`kubeEtcd.enabled` 設成 `false`，控制平面的狀態改看供應商提供的指標。
+已經在跑、不能重建的 kubeadm 叢集，改的是控制平面節點上 `/etc/kubernetes/manifests/` 裡 kube-controller-manager、kube-scheduler 與 etcd 的靜態 Pod 檔（kubelet 偵測到檔案變更會自己重啟它們），以及 `kube-system` 裡 `kube-proxy` 這個 ConfigMap 的 `metricsBindAddress`，改完重啟 kube-proxy 的 DaemonSet。之後的 `kubeadm upgrade` 會以叢集的 ClusterConfiguration 重寫靜態 Pod 檔，所以同一組設定也要寫進 `kube-system` 的 `kubeadm-config` ConfigMap。這一段沒有實測。k3s 與 k3d 不經過 kubeadm，控制平面元件合在同一個程序裡，綁定位址以 k3s 的啟動參數設定，這裡沒有涵蓋。
 
-## 單機叢集上的資源用量與過載時的連鎖反應
+託管的 Kubernetes（EKS、GKE、AKS）由雲端供應商管理控制平面，controller-manager、scheduler 與 etcd 多半不讓使用者直接讀，chart 的對應讀取設定只會一直失敗；這時在 chart 的值裡把 `kubeControllerManager.enabled`、`kubeScheduler.enabled`、`kubeEtcd.enabled` 設成 `false`，控制平面的狀態改看供應商提供的指標。kube-proxy 跑在使用者自己的節點上，託管叢集也一樣，它是否只綁本機依供應商的設定而定；它的讀取對象仍然失敗時，查該供應商 kube-proxy 設定的 `metricsBindAddress`，改不了就把 `kubeProxy.enabled` 設成 `false`。
 
-裝好之後量這一組在叢集裡的記憶體（`container_memory_working_set_bytes`，依 Pod 加總）：Grafana 421 MB、Prometheus 355 MB、Alertmanager 58 MB、Operator 40 MB、kube-state-metrics 23 MB、node-exporter 19 MB，合計約 916 MB；kind 的節點容器整個約 2 GB。Prometheus 的活躍序列是 57,572 條，叢集裡只有一個節點、一個範例服務，這些幾乎全部來自 kubelet、API server 與預設的規則所需的指標，是 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 那一整組（約九千條）的六倍多。
+## 單節點叢集上的資源用量與記憶體不足時的表現
 
-這台 Mac 是 16 GB 記憶體，同時開著其他應用程式與 Docker 上的另一組服務。第一次安裝在 3 分 22 秒時失敗，錯誤是 `etcdserver: request timed out`；之後叢集出現一連串看似各自獨立的故障：
+裝好之後量這一組在叢集裡的記憶體（`container_memory_working_set_bytes`，依 Pod 加總）：Grafana 421 MB、Prometheus 355 MB、Alertmanager 58 MB、Operator 40 MB、kube-state-metrics 23 MB、node-exporter 19 MB，合計約 916 MB；kind 的節點容器整個約 2 GB。Prometheus 的活躍序列是 57,572 條，叢集裡只有一個節點、一個範例服務，這些幾乎全部來自 kubelet、API server 與預設的規則所需的指標，是 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 那一整組（約九千條）的六倍多。這些數字只代表這個單節點叢集，自己的叢集以同一個查詢量。
 
-- API server 重啟 5 次、controller-manager 與 scheduler 各重啟十幾次，`kubectl` 偶爾回 `Forbidden`。
-- Operator 與 kube-state-metrics 啟動時連不到 API server（`dial tcp 10.96.0.1:443: connect: connection refused`），進入 CrashLoopBackOff。
-- node-exporter 與 Grafana 的存活探針逾時，被 kubelet 重啟；重啟又增加負載。
-- 預設規則 `KubeAPIErrorBudgetBurn` 以 critical 成立。
+單機上的叢集與主機上其他的程式共用記憶體，記憶體不足時的表現不像記憶體問題。主機開始大量換頁之後，etcd 的寫入逾時，API server、controller-manager 與 scheduler 反覆重啟；依賴 API server 的 Operator 與 kube-state-metrics 連不上它而進入 CrashLoopBackOff（容器反覆啟動失敗、重啟間隔逐次拉長的狀態）；存活探針逾時又讓 kubelet 重啟更多容器，增加負載；預設規則 `KubeAPIErrorBudgetBurn` 以 critical 成立。這一串故障看起來各自獨立，共同的原因在主機。實測在一台 16 GB 的 Mac 上，同時跑著另一組 Docker 服務時，第一次安裝就以 `etcdserver: request timed out` 失敗，接著出現上面每一種故障；當時主機的 swap 用到 13 GB，系統負載（load average）到 90，而 CPU 使用率並不高。
 
-這些故障的原因都不在 Kubernetes：Mac 的 swap 用到 13 GB、可用的記憶體只剩幾十 MB，磁碟每秒三千多次 I/O 都在換頁，系統負載（load average）到 90 而 CPU 使用率並不高。在單機叢集上看到 etcd 逾時或控制平面反覆重啟時，先在主機上看記憶體與 swap（macOS 是 `sysctl vm.swapusage` 與 `vm_stat`，Linux 是 `free` 與 `vmstat`），再查叢集。停掉 Docker 上的另一組服務、重新啟動 kind 的節點之後，叢集在半小時內恢復，所有 Pod 回到 Ready。
+所以在單節點叢集上看到 etcd 逾時或控制平面反覆重啟時，先在主機上看記憶體與 swap（macOS 是 `sysctl vm.swapusage` 與 `vm_stat`，Linux 是 `free` 與 `vmstat`），排除主機的記憶體不足再查叢集。主機的記憶體不足時，停掉主機上其他吃記憶體的程式，再重新啟動 kind 的節點容器，叢集會自己恢復；實測半小時內所有 Pod 回到 Ready。
 
 ## 延伸閱讀：Compose 上的對應做法、Relabeling、Alertmanager 的通知與單機練習叢集
 

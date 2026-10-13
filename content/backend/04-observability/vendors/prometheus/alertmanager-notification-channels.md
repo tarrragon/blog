@@ -1,5 +1,5 @@
 ---
-title: "Alertmanager 的通知管道：路由樹、webhook 與 ntfy、email、私密網址的檔案、心跳與通知送不出去的偵測"
+title: "Alertmanager 的通知管道：路由樹與分組、webhook 與 ntfy、email 與 Slack、私密網址的檔案、心跳與通知送不出去的偵測"
 date: 2026-10-13
 description: "Alertmanager 從只在網頁上看告警，到依嚴重度送到手機與信箱：路由樹怎麼決定一則告警送到哪裡、分組與 group_wait、group_interval、repeat_interval 各控制什麼，以 webhook 接 ntfy 推播與它的訊息範本，email 與 Slack 的設定，私密網址為什麼要放在檔案裡，以及 Watchdog 心跳與通知送不出去時的偵測"
 weight: 17
@@ -8,13 +8,13 @@ tags: ["backend", "observability", "vendor", "prometheus", "alertmanager"]
 
 > 這一篇屬於 [Prometheus](/backend/04-observability/vendors/prometheus/) 的實作系列，接在 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 之後：那一篇的 Alertmanager 只有一個不送任何通知的 receiver，告警只出現在它的網頁上。
 
-這一篇整理讓 Alertmanager 把告警送出去的設定：路由、receiver、私密值的放法，以及告警鏈本身停掉或送不出去時怎麼發現。哪些條件該告警、依原因抑制的規則見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)，這裡從「告警已經進到 Alertmanager」開始。文中的設定取自一個短網址服務的監控（Alertmanager 0.34.1、Prometheus 3.15.0），通知服務在本機以 ntfy 2.30 與 Mailpit（攔截郵件的測試用 SMTP 伺服器）的容器代替，時間與行為都是在那裡量到的；Slack 只以 `amtool check-config` 檢查過設定語法。
+這一篇整理讓 Alertmanager 把告警送出去的設定：路由、receiver、私密值的放法，以及告警鏈本身停掉或送不出去時怎麼發現。哪些條件該告警、依原因抑制的規則見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)，這裡從「告警已經進到 Alertmanager」開始。文中的設定取自一個短網址服務的監控（Alertmanager 0.34.1、Prometheus 3.15.0），通知服務在本機以 ntfy 2.30 與 Mailpit（攔截郵件的測試用 SMTP 伺服器）的容器代替，文中的時間與行為都是在這套本機環境裡量到的。文中的「合成告警」指以 Alertmanager 的 API 直接送進去、只帶幾個標籤的測試告警，用來在不停掉任何服務的情況下觀察通知。
 
 ## 路由樹：一則告警送到哪個 receiver
 
-receiver 是一組通知設定的名字，裡面寫要送到哪裡（ntfy、信箱、Slack 頻道）；route 決定哪些告警送到哪個 receiver。route 是一棵樹：最上層的 route 接住全部告警，底下的子路由各自以 `matchers` 比對告警的標籤，告警從上往下找，落在第一個比中的子路由；都沒比中的留在最上層，送到最上層的 receiver。子路由加上 `continue: true` 時，比中之後還會繼續往下比，同一則告警可以同時送到兩個地方。
+receiver 是一組通知設定的名字，裡面寫要送到哪裡（ntfy、信箱、Slack 頻道）；route 決定哪些告警送到哪個 receiver。route 是一棵樹：最上層的 route 接住全部告警，底下的子路由各自以 `matchers` 比對告警的標籤，Alertmanager 由上往下比，告警落在第一個比中的子路由；都沒比中的留在最上層，送到最上層的 receiver。子路由加上 `continue: true` 時，比中之後還會繼續往下比，同一則告警可以同時送到兩個地方。
 
-那個短網址服務依嚴重度分兩條路，另外替心跳開一條：
+下面的設定依嚴重度分兩條路，另外替心跳開一條。心跳是一條永遠成立的 `Watchdog` 告警，持續送到監控主機以外的心跳服務，用來證明告警鏈還在運作，規則與心跳服務的設定見〈Watchdog：告警鏈本身的心跳〉：
 
 ```yaml
 route:
@@ -57,12 +57,12 @@ docker run --rm -v "$PWD:/a" --entrypoint amtool prom/alertmanager:v0.34.1 \
   config routes test --config.file=/a/alertmanager.yml severity=critical alertname=HostDown
 ```
 
-上面的設定測三組，`severity=critical alertname=HostDown` 回 `ntfy-critical`，`severity=warning alertname=HostDiskLow` 回 `ntfy-warning`，`alertname=Watchdog severity=none` 回 `heartbeat`。標籤要拆成各自的參數：把三組標籤放進 zsh 的變數再展開時，zsh 不切字，整串被當成一個參數，三組全部回最上層的 `ntfy-warning`，看起來像路由寫錯；這時 amtool 同時在 stderr 印出 matchers 解析器的警告（`Alertmanager is moving to a new parser`），看到它就是標籤被當成了一個參數。
+上面的設定測三組，`severity=critical alertname=HostDown` 回 `ntfy-critical`，`severity=warning alertname=HostDiskLow` 回 `ntfy-warning`，`alertname=Watchdog severity=none` 回 `heartbeat`。amtool 把每一個參數當成一個標籤比對，所以標籤要拆成各自的參數；整串標籤被當成一個參數時（例如放進 zsh 的變數再展開，zsh 不切字），路由一律落到最上層，同時 stderr 印出 matchers 解析器的警告。
 
 **分組與三個時間參數。** `group_by` 列出的標籤值相同的告警屬於同一組，一組送一則通知。三個時間參數都以組為單位：
 
-- `group_wait`：一組的第一則告警進來之後，等多久才送第一次通知。等待期間陸續成立的同組告警合進同一則，一台主機停掉時同時成立的好幾條規則不會變成好幾則推播。實測合成的告警送進去之後 30 秒送出。
-- `group_interval`：一組已經通知過之後，組裡有變化（新的告警加入、有告警解除）時，距離上次通知至少隔多久才再送。解除的通知因此最晚在恢復之後一個 `group_interval` 才到：實測停掉前台容器之後 2 分 39 秒收到 critical 通知，重新啟動之後 5 分鐘收到解除。
+- `group_wait`：一組的第一則告警進來之後，等多久才送第一次通知。等待期間陸續成立的同組告警合進同一則，一台主機停掉時同時成立的好幾條規則不會變成好幾則推播。實測合成告警送進去之後 30 秒送出。
+- `group_interval`：一組已經通知過之後，組裡有變化（新的告警加入、有告警解除）時，距離上次通知至少隔多久才再送。解除的通知因此最晚在恢復之後一個 `group_interval`（這份設定是 5 分鐘）才到：實測停掉前台容器再重新啟動之後 5 分鐘收到解除。
 - `repeat_interval`：組裡沒有變化、告警一直成立時，隔多久再提醒一次。critical 設 2 小時、warning 設 12 小時，一直沒處理的問題不會被遺忘，也不會每 5 分鐘響一次。
 
 把 receiver 從不送通知的換成實際送出通知的那一個時，已經在 Alertmanager 裡的告警會馬上補送：實測重新載入設定之後 3 秒，兩則原本就成立的 warning（磁碟剩餘空間、探測變慢）送到了 ntfy。第一次接上通知時，手機會先收到一批既有的告警。
@@ -71,13 +71,13 @@ docker run --rm -v "$PWD:/a" --entrypoint amtool prom/alertmanager:v0.34.1 \
 
 Alertmanager 0.34 原生支援的通知服務有 email、Slack、Microsoft Teams、Discord、Telegram、PagerDuty、Opsgenie、Pushover、Amazon SNS、Webex、Mattermost、Rocket.Chat、Jira、incident.io、VictorOps 與企業微信，各自是一種 `*_configs`。清單以外的服務走 `webhook_configs`：Alertmanager 預設對一個網址 POST 一份固定格式的 JSON，由對方決定怎麼呈現（0.34 另有自訂內容的 `payload` 欄位，官方標註自行承擔風險，這裡不用）。
 
-這份 JSON 以組為單位，一次通知一份。頂層的 `status` 是整組的狀態，組裡還有任何一則在成立就是 `firing`，全部解除才是 `resolved`；`groupLabels` 是分組用的標籤，`commonLabels` 與 `commonAnnotations` 是組裡每一則都相同的標籤與註解；`alerts` 是組裡每一則告警，各自帶 `status`、`labels`、`annotations` 與開始、結束的時間。整組的 `status` 是 `firing` 時，`alerts` 裡可能混著已經解除的，要只列出還在成立的就得逐則檢查各自的 `status`。
+這份 JSON 以組為單位，一次通知一份。頂層的 `status` 是整組的狀態，組裡還有任何一則在成立就是 `firing`，全部解除才是 `resolved`；`groupLabels` 是分組用的標籤，`commonLabels` 與 `commonAnnotations` 是組裡每一則都相同的標籤與註解；`alerts` 是組裡每一則告警，各自帶 `status`、`labels`、`annotations` 與開始、結束的時間。組裡有的告警已經解除、有的還在成立時，整組的 `status` 仍是 `firing`，而 `alerts` 裡混著兩種，要只列出還在成立的就得逐則檢查各自的 `status`。
 
 ## 以 ntfy 推播到手機
 
-ntfy 是一個以 HTTP 發佈、以 App 訂閱的推播服務：對 `https://ntfy.sh/<topic>` POST 一段文字，訂閱了這個 topic 的手機就收到一則通知。可以用公開的 ntfy.sh，也可以自己架，運作方式與兩者的差別見 [ntfy：推送通知服務怎麼運作、公共站 vs 自架](/linux/debug/ntfy-push-notification-service/)。Alertmanager 沒有原生的 ntfy 支援，所以用 webhook 送過去，但 webhook 送的是 JSON，直接 POST 到 topic，手機上看到的是一整段 JSON。
+ntfy 是一個以 HTTP 發佈、以 App 訂閱的推播服務：對 `https://ntfy.sh/<topic>` POST 一段文字，訂閱了這個 topic 的手機就收到一則通知。可以用公開的 ntfy.sh，也可以自己架，運作方式與兩者的差別見 [ntfy：推送通知服務怎麼運作、公共站 vs 自架](/linux/debug/ntfy-push-notification-service/)。Alertmanager 沒有原生的 ntfy 支援，所以以 webhook 送過去；webhook 送的是 JSON，Alertmanager 直接把它 POST 到 topic 時，手機上看到的是一整段 JSON。
 
-ntfy 的訊息範本解決這件事：網址加上 `tpl=yes`，ntfy 把收到的 JSON 當成資料，以 Go 的範本語法產生標題（`t`）、內容（`m`）與優先度（`p`）。
+ntfy 的訊息範本把 JSON 轉成可讀的通知：網址加上 `tpl=yes`，ntfy 把收到的 JSON 當成資料，以 Go 的範本語法產生標題（`t`）、內容（`m`）與優先度（`p`）。critical 用的範本如下，為了閱讀分行：
 
 ```text
 https://ntfy.sh/<topic>?tpl=yes
@@ -86,11 +86,33 @@ https://ntfy.sh/<topic>?tpl=yes
   &p={{if eq .status "resolved"}}default{{else}}urgent{{end}}
 ```
 
-上面為了閱讀分行，實際是一行，範本要經過 URL 編碼（`{` 寫成 `%7B`、空白寫成 `+`，`\n` 代表換行字元、編碼成 `%0A`）；`<topic>` 換成自己的 topic。編碼還有第二個作用：Alertmanager 0.34 會先以自己的範本語法處理 `url` 與 `url_file` 的內容，沒編碼的 `{{.status}}` 會被它先解析而送出失敗或變成 `<no value>`，編碼成 `%7B%7B` 之後才原樣送到 ntfy。這三個範本的作用：
+這三個範本的作用：
 
 - **標題**寫狀態、規則名稱與主機，鎖定畫面上只看標題就知道是哪台主機的哪一種問題，例如 `[firing] HostDown app-2`。
 - **內容**在成立時逐一列出組裡還在成立的告警的 `summary`；解除時寫「已解除」。解除時不沿用 `summary`，因為 `summary` 是告警最後一次成立時算出的文字，實測解除通知裡寫著「portal 已有 2m 55s 沒被看到」，讀起來像問題還在。
-- **優先度**依狀態切換。ntfy 的優先度決定手機的提示強度：`urgent`（5）長時間震動並跳出橫幅，`default`（3）短震動加提示音，`low`（2）不震動也不出聲。只用固定的 `priority=urgent` 時，解除的通知也以最高強度跳出；實測換成範本之後，成立時是 5、解除時是 3。warning 那一條改成成立 `default`、解除 `low`，所以 warning 成立時手機仍會短震動並出聲。
+- **優先度**依狀態切換。ntfy 的優先度決定手機的提示強度：`urgent`（5）長時間震動並跳出橫幅，`default`（3）短震動加提示音，`low`（2）不震動也不出聲。只用固定的 `priority=urgent` 時，解除的通知也以最高強度跳出；實測換成範本之後，成立時是 5、解除時是 3。warning 的網址把 `p` 的範本改成成立時 `default`、解除時 `low`，所以 warning 成立時手機仍會短震動並出聲。
+
+實際寫進檔案的網址是一行，每個參數都經過 URL 編碼。編碼有兩個作用：網址裡不能直接放空白、引號、中文這些字元；而 Alertmanager 0.34 會先以自己的範本語法處理 `url` 與 `url_file` 的內容，沒編碼的 `{{.status}}` 會被它先解析而送出失敗或變成 `<no value>`，編碼成 `%7B%7B` 之後才原樣送到 ntfy。手寫編碼容易漏字元，以腳本產生比較可靠：
+
+```python
+# ntfy_url.py：印出 ntfy 的網址
+# 用法：python3 ntfy_url.py <伺服器網址與 topic> <成立時的優先度> <解除時的優先度>
+import sys
+from urllib.parse import quote_plus
+
+base, firing_p, resolved_p = sys.argv[1:4]
+t = "[{{.status}}] {{.commonLabels.alertname}} {{.commonLabels.host}}"
+m = ('{{if eq .status "resolved"}}已解除{{else}}{{range .alerts}}'
+     '{{if eq .status "firing"}}{{.annotations.summary}}\n{{end}}{{end}}{{end}}')
+p = '{{if eq .status "resolved"}}' + resolved_p + '{{else}}' + firing_p + '{{end}}'
+print(f"{base}?tpl=yes&t={quote_plus(t)}&m={quote_plus(m)}&p={quote_plus(p)}", end="")
+```
+
+```sh
+# 第一個引數換成自己的 ntfy 伺服器與 topic；輸出的路徑換成自己放私密檔的目錄
+python3 ntfy_url.py https://ntfy.sh/<topic> urgent default > secrets/ntfy-critical.url
+python3 ntfy_url.py https://ntfy.sh/<topic> default low > secrets/ntfy-warning.url
+```
 
 範本裡的欄位名稱是 JSON 的鍵，小寫開頭（`.status`、`.commonLabels`）；Alertmanager 自己的通知範本（例如 Slack 的 `title`）用的是大寫開頭的 `.Status`、`.CommonLabels`，兩者在同一份設定的不同位置出現時不能互抄。`p` 的範本在 ntfy 2.30 上實測可用。ntfy 也內建一個 `template=alertmanager`，開箱即用，而它的標題帶 emoji、內容讀 `instance` 標籤；以 `host` 區分主機的設定裡，那一欄顯示 `<no value>`。
 
@@ -98,13 +120,15 @@ ntfy 的 topic 名稱本身就是讀取權限：公開的 ntfy.sh 上，知道 t
 
 ## 私密網址的存放：讀檔案的 `*_file` 欄位
 
-Alertmanager 的設定檔不展開環境變數，`${NTFY_TOPIC}` 會原封不動地被當成網址的一部分。含有私密值的欄位因此各有一個讀檔案的版本：webhook 的 `url_file`、email 的 `smtp_auth_password_file`、Slack 的 `api_url_file`。設定檔進版本控制，私密的檔案放在另一個不進版本控制的目錄，與設定檔一起掛進容器。
+Alertmanager 的設定檔不展開環境變數，`${NTFY_TOPIC}` 會原封不動地被當成網址的一部分。含有私密值的欄位因此各有一個讀檔案的版本：webhook 的 `url_file`、email 的 `smtp_auth_password_file`、Slack 的 `api_url_file`。設定檔進版本控制，私密的檔案放在一個不進版本控制的目錄。[單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 把整個 `infra/observability/alertmanager` 目錄掛到容器的 `/etc/alertmanager`，所以私密的檔案放在它底下的 `secrets/`，容器裡就出現在 `/etc/alertmanager/secrets/`；只掛單一設定檔的寫法要另加一行掛這個目錄。
 
-那個短網址服務的做法是 `alertmanager/secrets/` 列在 `.gitignore`，另外提交一份 `secrets.example/`，內容是 topic 換成 `CHANGE-ME` 的網址，範本的部分已經編碼好；部署時複製一份、只換 topic。
+`secrets/` 列進 `.gitignore`，旁邊提交一份 `secrets.example/`，內容是把 topic 換成 `CHANGE-ME` 的網址。範例裡的範本已經編碼好，部署時複製一份、只換 topic，不必重新產生網址。
 
 `url_file` 在每次送通知時才讀：實測改了檔案內容之後，下一則通知就用新的網址，不必重新載入 Alertmanager。檔案不存在時，`amtool check-config` 照樣通過、Alertmanager 照樣啟動，失敗發生在送通知的那一刻，要靠下方〈通知送不出去的偵測〉發現。
 
 ## email 與 Slack
+
+下面兩段的 receiver 併進主設定裡已有的 `receivers` 清單，不能整段附加在檔案後面：同一份設定出現兩個 `receivers` 時，`amtool check-config` 回 `field receivers already set`。receiver 也要有一條子路由指到它才會被用到，例子見〈通知送不出去的偵測〉的末段。
 
 email 的 SMTP 伺服器寫在 `global`，所有 `email_configs` 共用：
 
@@ -121,7 +145,7 @@ receivers:
         send_resolved: true                 # email 預設不送解除的通知
 ```
 
-`smtp_require_tls` 預設是 `true`，伺服器不支援 STARTTLS 時 Alertmanager 拒絕送出；本機以 Mailpit 測試時設成 `false`，一則只帶 `alertname`、`host`、`severity` 的合成告警以 `[FIRING:1] HostDiskLow app-1 (warning)` 為主旨送達：主旨依序是狀態與告警數、分組標籤的值，括號裡是組內共同而不屬於分組的標籤值，所以帶著更多標籤的真實告警，括號裡會多出那些值。解除的通知是否送出，各通知類型（integration，例如 webhook、email）的預設不同：webhook 預設送，email 與 Slack 預設不送，要寫 `send_resolved: true`。
+`smtp_require_tls` 預設是 `true`，伺服器不支援 STARTTLS 時 Alertmanager 拒絕送出；本機以 Mailpit 測試時設成 `false`，一則只帶 `alertname`、`host`、`severity` 的合成告警以 `[FIRING:1] HostDiskLow app-1 (warning)` 為主旨送達：主旨依序是狀態與告警數、分組標籤的值，括號裡是組內共同而不屬於分組的標籤值，所以帶著更多標籤的真實告警，括號裡會多出那些值。解除的通知是否送出，各通知類型（integration，例如 webhook、email）的預設不同：webhook 預設送，email 與 Slack 預設不送，要寫 `send_resolved: true`。真正的 SMTP 伺服器這裡沒有測過。
 
 Slack 用 incoming webhook 的網址，標題與內容用 Alertmanager 自己的範本語法：
 
@@ -152,7 +176,7 @@ ntfy、email 與 Slack 的通知全部要 Prometheus 在評估規則、Alertmana
     summary: "告警鏈的心跳：Prometheus 在評估規則、Alertmanager 在送通知"
 ```
 
-路由把它送到心跳服務（例如 healthchecks.io，對它的 ping 網址發一個請求就算一次心跳），`group_wait: 0s` 讓它一成立就送，`repeat_interval: 5m` 讓它每 5 分鐘再送一次；它永遠不會解除，所以 `send_resolved: false`。實測兩次心跳相隔 5 分 01 秒。心跳服務那邊把預期的週期設 5 分鐘、寬限 5 分鐘，超過 10 分鐘沒收到就由心跳服務自己的通知管道（例如 email）通知。這條路徑上的判斷全部發生在監控主機以外，監控主機整台停掉時它照樣運作。
+心跳服務（例如 healthchecks.io）替每一個檢查發一個 ping 網址，收到一個請求就算一次心跳。這個網址寫進 `heartbeat.url`，Alertmanager 以 webhook 對它 POST，就是一次心跳。心跳那條子路由把 `group_wait` 設成 `0s`，Alertmanager 在 Watchdog 一成立就送出；`repeat_interval: 5m` 讓 Alertmanager 每 5 分鐘重送一次；它永遠不會解除，所以 `send_resolved: false`。實測兩次心跳相隔 5 分 01 秒。在心跳服務上把這個檢查的預期週期設 5 分鐘、寬限 5 分鐘，超過 10 分鐘沒收到，心跳服務就經由它自己的通知管道（例如 email）通知。這條路徑上的判斷全部發生在監控主機以外，監控主機整台停掉時它照樣運作。心跳服務在心跳停止時實際發出的通知，這裡沒有測過。
 
 心跳的 `group_interval` 要比 `repeat_interval` 短。Alertmanager 只在每個 `group_interval` 的時間點檢查要不要重送，`group_interval` 沿用上層的 5 分鐘時，重送會落在 5 分鐘的倍數上，任何一次稍晚錯過檢查點就變成 10 分鐘，正好碰到心跳服務的寬限上限。
 
@@ -167,24 +191,22 @@ Prometheus 讀得到 Alertmanager 自己的指標，所以這件事可以寫成�
   expr: sum by (host, integration) (increase(alertmanager_notifications_failed_total[10m])) > 0
   for: 5m
   labels: {severity: warning, scope: monitoring}
+  annotations:
+    summary: "Alertmanager 經由 {{ $labels.integration }} 送通知失敗，10 分鐘內 {{ $value | printf \"%.0f\" }} 次"
 ```
 
-這條規則送出的告警，同樣要經過 Alertmanager 的某一個 receiver，所以它能不能送到，取決於哪一條管道壞了。它是 warning，走 warning 的 topic：critical 的管道壞掉時它送得出來，實測送失敗之後 5 分 41 秒，它出現在 warning 的 topic 上（`for: 5m` 加上 `group_wait` 的 30 秒）；warning 的管道本身壞掉時它送不出來，只留在 Alertmanager 的頁面與日誌。兩個 topic 都在同一個 ntfy 服務上，ntfy 整個連不上時兩者一起斷，而心跳走的是另一個服務，照常送達，這種故障沒有任何通知。要補上這個缺口，需要一條不經過 ntfy 的路，例如把這條規則送到 email，或者由心跳服務另外探測 ntfy。
+`summary` 不能省：ntfy 範本的內容欄讀的是它，沒有的話推播內容只剩 `<no value>`。這條規則與 Watchdog 以 promtool 的單元測試檢查：餵一條失敗計數的序列，測試確認 Watchdog 沒有任何輸入也成立、失敗的告警帶著 `integration` 標籤、10 分鐘內沒有新的失敗就不再成立。測試本身也要驗：把規則的門檻從 `> 0` 改成 `> 1`，測試應該失敗，實測確實失敗；改壞規則而測試照樣通過，代表測試沒有在檢查那個門檻。
 
-## 驗證：在單機上重現的結果
+這條規則送出的告警，同樣要經過 Alertmanager 的某一個 receiver，所以它能不能送到，取決於哪一條管道壞了。它是 warning，走 warning 的 topic：critical 的管道壞掉時它送得出來，實測送失敗之後 5 分 41 秒，它出現在 warning 的 topic 上（`for: 5m` 加上 `group_wait` 的 30 秒）；warning 的管道本身壞掉時它送不出來，只留在 Alertmanager 的頁面與日誌。兩個 topic 都在同一個 ntfy 服務上，ntfy 整個連不上時兩者一起斷，而心跳走的是另一個服務，照常送達，這種故障沒有任何通知。只有一條通知管道的設定裡更是如此，這條規則永遠走那條壞掉的管道。
 
-以下是在那個短網址服務上，以本機的 ntfy 容器代替 ntfy.sh 量到的結果，每一項對應上面一個設定：
+要補上這個缺口，這條規則要另走一條不經過 ntfy 的路。一種是在路由裡替它開一條子路由，送到〈email 與 Slack〉裡的 `mail` receiver，排在 critical 那一條之前：
 
-- `amtool config routes test` 對三組標籤分別回 `ntfy-critical`、`ntfy-warning`、`heartbeat`。
-- 重新載入之後 3 秒，兩則既有的 warning 送到 warning 的 topic。
-- 停掉前台容器之後 2 分 39 秒，`EndpointDown` 與 `ContainerStopped` 以優先度 5 送到 critical 的 topic；重新啟動之後 5 分鐘收到兩則解除。
-- 合成的 critical 告警送進 Alertmanager 之後 30 秒送出（優先度 5），解除之後 5 分鐘送出「已解除」（優先度 3）。
-- Watchdog 兩次送達相隔 5 分 01 秒。
-- 拿掉 critical 的網址檔之後，critical 告警送不出去，`alertmanager_notifications_failed_total{reason="other"}` 加 1，`AlertmanagerNotificationsFailing` 經由 warning 的 topic 送達。
-- 合成的 warning 告警以 email 經由 Mailpit 送達，主旨 `[FIRING:1] HostDiskLow app-1 (warning)`。
-- 規則的單元測試（promtool）涵蓋 Watchdog 沒有輸入也成立、通知失敗的告警帶 `integration` 標籤，以及 10 分鐘內沒有新的失敗就不再成立；把規則的門檻從 `> 0` 改成 `> 1`，測試失敗。
+```yaml
+    - matchers: [alertname="AlertmanagerNotificationsFailing"]
+      receiver: mail
+```
 
-沒有驗證的部分：公開的 ntfy.sh 與手機 App 的實際推播、healthchecks.io 在心跳停止時的通知、真正的 SMTP 伺服器，以及 Slack。
+另一種是送到心跳服務：healthchecks.io 的 ping 網址加上 `/fail` 就是回報失敗的網址，以一個 webhook receiver 送到那裡，由心跳服務自己的管道通知。
 
 ## 延伸閱讀：告警規則、抑制與觀測的共命運
 
