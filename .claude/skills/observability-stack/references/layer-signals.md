@@ -80,7 +80,7 @@ scrape_configs:
       - targets: ["pushgateway:9091"]
 ```
 
-Blackbox exporter 從 `__param_target` 推出被探測的主機。Kubernetes 上服務的序列帶 Pod 的位址，以 `* on (namespace, pod) group_left(node) kube_pod_info` 接上 `node`；node_exporter 那一側以 `label_replace` 產生同名的 `node`，兩側都有同名同值的標籤，`equal` 才對得上。
+Blackbox exporter 從 `__param_target` 推出被探測的主機。Kubernetes 上服務的序列帶 Pod 的位址，用 `* on (namespace, pod) group_left(node) kube_pod_info` 把 `kube_pod_info` 的 `node` 標籤加到服務的序列上；node_exporter 的序列用 `label_replace` 產生同名的 `node` 標籤。原因與症狀的序列都有同名同值的 `node`，`equal` 才對得上。
 
 ## 部署在 Kubernetes 時
 

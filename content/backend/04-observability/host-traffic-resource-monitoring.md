@@ -6,7 +6,7 @@ weight: 26
 tags: ["backend", "observability", "prometheus", "monitoring", "docker"]
 ---
 
-這篇整理一台主機（或一台虛擬機）上以 Docker Compose 跑的服務，在健康檢查之外怎麼監控流量與資源用量：每一層的訊號從哪裡收、工具怎麼選，以及監控本身裝在哪一層就看不到哪些範圍。範例是一個短網址服務：入口 Nginx、以 Go 與 Laravel 實作同一組 API 的兩個後端、前台與後台兩個前端網頁、PostgreSQL 與 Valkey。Kubernetes 上的做法（Prometheus Operator、ServiceMonitor）見 [Prometheus](/backend/04-observability/vendors/prometheus/) 的進階主題。
+這篇整理一台主機（或一台虛擬機）上以 Docker Compose 跑的服務，在健康檢查之外怎麼監控流量與資源用量：每一層的訊號從哪裡收、工具怎麼選，以及監控本身裝在哪一層就看不到哪些範圍。範例是一個短網址服務：入口 Nginx、以 Go 與 Laravel 實作同一組 API 的兩個後端、前台與後台兩個前端網頁、PostgreSQL 與 Valkey。各元件在 compose 裡的實際設定（掛載、旗標、讀取設定與 Grafana 佈建）見 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/)；Kubernetes 上的做法（Prometheus Operator、ServiceMonitor）見 [Prometheus](/backend/04-observability/vendors/prometheus/) 的進階主題。
 
 文中的實測在 macOS 的 OrbStack 2.2.3（Docker 29.4.0）上進行，cAdvisor 是 v0.55.1、node_exporter 是 1.12.1、Prometheus 是 3.15.0。實測的那幾天 Mac 上另有與這個服務無關的程式長時間佔用 CPU，所以下文的數字多半量在主機過載的時候，判讀各段時會說明這一點。
 
@@ -42,7 +42,7 @@ node_exporter 以容器跑在 compose 的網路裡時，它讀的 `/proc/net` �
 | 開箱即用的主機監控                             | Netdata、Beszel                        | 自帶儀表板的即時與短期歷史                                     |
 | 臨時查看                                       | `docker stats`、ctop、lazydocker       | 當下那一刻的數字                                               |
 
-**Prometheus 加 exporter** 與**單一 agent** 都把數字存成同一種時間序列、用同一個查詢語言，要拿監控數字做判斷（壓測時找瓶頸在哪一層、把應用程式的指標和資源用量放在同一份儀表板對照、保留歷史比較改動前後）兩者都做得到；分開它們的是之後要不要也收 log 與 trace，以及團隊熟悉哪一套。每個 exporter 只做一件事、各自有文件，出問題時容易定位是哪一層沒收到；代價是 compose 多出七、八個容器（各層的 exporter 加上 Prometheus、Grafana 與 Alertmanager，這個短網址服務以 `container_memory_working_set_bytes` 加總，約 600 MB 記憶體；自己的環境接上之後用同一個查詢量），儀表板要自己組或匯入社群的。
+**Prometheus 加 exporter** 與**單一 agent** 都把數字存成同一種時間序列、用同一個查詢語言，要拿監控數字做判斷（壓測時找瓶頸在哪一層、把應用程式的指標和資源用量放在同一份儀表板對照、保留歷史比較改動前後）兩者都做得到；分開它們的是之後要不要也收 log 與 trace，以及團隊熟悉哪一套。每個 exporter 只做一件事、各自有文件，出問題時容易定位是哪一層沒收到；代價是 compose 多出七、八個容器（各層的 exporter 加上 Prometheus、Grafana 與 Alertmanager，這個短網址服務以 `container_memory_working_set_bytes` 加總，約 600 到 650 MB 記憶體；自己的環境接上之後用同一個查詢量），儀表板要自己組或匯入社群的。
 
 單一 agent 把多個 exporter 的工作收進一個行程，之後要收 log 與 [trace](/backend/knowledge-cards/trace/) 時不必再加一套管線（見 [4.11 Telemetry Pipeline 架構](/backend/04-observability/telemetry-pipeline/)）。設定比單一用途的 exporter 抽象，只收指標時多付了這份複雜度。
 

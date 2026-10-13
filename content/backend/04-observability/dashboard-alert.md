@@ -99,11 +99,21 @@ Noise rate = 不需要行動的 alert / 總 alert。追蹤方式是讓 on-call �
 
 **Grouping**：把同一個根因觸發的多個 alert 合併成一則通知。Alertmanager 的 `group_by` 讓同服務、同 alert name 的 alert 只發一次。
 
-**Inhibition**：高嚴重性 alert 抑制低嚴重性。Database down 觸發時，所有依賴該 database 的 query timeout alert 被抑制 — 根因已知、不需要每個症狀都通知。抑制也會把同時發生、與根因無關的故障一起藏掉，所以會 page 人的症狀改用 grouping 合併；共用主機過載時以主機飽和抑制各服務變慢的規則寫法、怎麼用合成告警單獨驗證、以及原因落在監控所在層之外時抑制不會發生，見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)〈依原因抑制〉。
+**[Inhibition](/backend/knowledge-cards/alert-inhibition/)**：高嚴重性 alert 抑制低嚴重性。Database down 觸發時，所有依賴該 database 的 query timeout alert 被抑制 — 根因已知、不需要每個症狀都通知。抑制也會把同時發生、與根因無關的故障一起藏掉，所以會 page 人的症狀改用 grouping 合併；共用主機過載時以主機飽和抑制各服務變慢的規則寫法、怎麼用合成告警單獨驗證、以及原因落在監控所在層之外時抑制不會發生，見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)〈依原因抑制〉。
 
 **Silence / maintenance window**：已知的維護活動期間暫停特定 alert。Silence 需要有過期時間，避免永久靜默掩蓋真實問題。
 
-**Hysteresis**：alert 觸發需要條件持續 N 分鐘（`for: 5m`），避免瞬間 spike 觸發。恢復也需要條件持續 N 分鐘，避免「反覆觸發 → 恢復」的 flapping。
+**Hysteresis**（遲滯）：告警的觸發與恢復用不同的條件，數值在門檻附近來回時告警才不會反覆開關（flapping）。有兩種做法，可以並用：
+
+- **時間上的遲滯**：觸發要條件持續一段時間，Prometheus 規則用 `for: 5m`，避免瞬間的 spike 觸發；恢復也要條件解除持續一段時間，用 `keep_firing_for`（Prometheus 2.42 起）。沒設 `keep_firing_for` 時，條件一不成立告警就恢復，下一次評估又成立就是一則新的告警。
+- **門檻上的遲滯**：恢復的門檻比觸發的嚴，例如超過 90% 觸發、降到 80% 以下才恢復。PromQL 以告警自己的 `ALERTS` 序列寫出「已經成立時改用較低的門檻」：
+
+```promql
+cpu_usage_ratio > 0.9
+  or (cpu_usage_ratio > 0.8 and on (instance) ALERTS{alertname="HostCpuHigh", alertstate="firing"})
+```
+
+`for` 要求每一次評估都成立，所以只適合本身連續的條件；讀取耗時、load 這類間歇的尖峰要先在時間窗內聚合（最大值、平均、比例）再加 `for`，實測與寫法見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)〈告警的持續條件〉。
 
 ## Runbook 設計
 

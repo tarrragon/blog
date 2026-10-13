@@ -2,6 +2,8 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
+**Version**: 1.5.1 — 翻譯探針指出的歧義：探測類 `host` 填被探測端點所在的主機、`relabel_configs` 的句構、Kubernetes 上 `node` 標籤加到哪一側的序列
+
 **Version**: 1.5.0 — 多輪審查 Round 4：主機飽和改用 5 分鐘平均的 load（原始 load1 加 for 實測不成立）；原因與症狀在觸發與恢復兩端對齊，原因加 `keep_firing_for`；延遲探測改看慢探測比例（15 分鐘 30 個樣本取分位數近於取最慢的幾次）；嚴重度分工寫明（可用性與 burn rate 通知值班、固定門檻延遲為 warning）與分組的代價；`host` 指症狀發生的主機，layer-signals 新增〈主機標籤〉（本機 exporter、探測、Pushgateway、Kubernetes 兩側）；Watchdog route 補 `group_interval`；合成告警的標籤從各規則運算式查、對照組用不帶篩選的查詢確認；容器停止的標籤查詢改列全部容器並改寫 `min` 的說明；外部探測的通知與 Alertmanager 分工；Kubernetes 分支修正 cAdvisor 的理由與 AlertmanagerConfig 的 namespace 比對；Windows CPU 改用不受語言影響的指令；PSI 不限實體主機；監控資源的估算方法
 
 **Version**: 1.4.0 — 多輪審查 Round 3：盤點加「元件歸誰管」（第三方軟體的延遲從入口取、受管服務一層）；主機外的訊號寫明跑在哪裡、單位是被監控的整個範圍，估算監控自己的資源；驗收前先跑主機檢查，門檻使用者沒給時不自訂；告警加來源失效三條、間歇條件先聚合再 `for`、主機飽和以 `or` 納入 steal 並排除 throttling、抑制只壓 warning 症狀而 critical 改 `group_by`、原因 `for` 不長於症狀、多台主機用 relabel 的 `host` 標籤（`instance` 不是主機）、Watchdog route 的 `repeat_interval`、容器停止看不到沒有序列的服務；Kubernetes 的分支移到 layer-signals；verification 改為比較基準來自部署設定、注入前中後三個值、移除「或調低門檻」、合成告警標籤從實際告警抄並送不該被抑制的對照、加主機外通知與 Watchdog 兩列、驗收紀錄的「未驗」一節

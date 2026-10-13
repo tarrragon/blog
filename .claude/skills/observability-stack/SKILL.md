@@ -3,7 +3,7 @@ name: observability-stack
 description: "自架指標監控（Prometheus、exporter、Grafana、Alertmanager）的設計、實作與驗收：依層盤點訊號、監控所在層的盲區、各層 exporter 的接法、三項驗收與故障注入、告警（可用與延遲分開、依原因抑制、偵測容器停止）。Triggers: 監控, Prometheus, exporter, Grafana, cAdvisor, node_exporter, Alertmanager, 告警, 抑制, 故障注入"
 metadata:
   portable: true
-  version: 1.5.0
+  version: 1.5.1
 ---
 
 # Observability Stack
@@ -70,7 +70,7 @@ metadata:
   - **盲區**：監控在虛擬機裡時，虛擬機外面（實體機或筆電）的競爭不會讓這條規則成立。規則照樣寫進設定；在驗收紀錄的「未驗」寫「主機飽和在本環境不會成立，抑制只以合成告警驗過；部署到實體主機或看得到 steal 的雲端虛擬機時壓滿全部核心驗一次」（例如 `stress-ng --cpu 0 --timeout 15m`，`--cpu 0` 代表每顆核心一個工作者）。
   - **嚴重度**：會通知值班的是可用性與以 SLO 推出的錯誤預算消耗速度；以固定門檻判斷的延遲列為 warning。抑制只用在 warning 症狀（`target_matchers` 加 `severity="warning"`）；會通知值班的症狀不抑制，因為抑制會把同時發生、與主機無關的故障一起藏掉，改用 `group_by` 依主機合併成一則通知（單機時 `[alertname]` 效果相同；代價是同一台主機上無關的告警也併進來）。
   - **觸發與恢復兩端對齊**：原因從條件成立到告警成立的時間（時間窗的延遲加上 `for`）不長於症狀，否則症狀的通知先送出；原因加 `keep_firing_for`，值不短於症狀規則的時間窗，否則主機恢復後原因先解除，症狀的通知在事故結束之後才送出。
-  - **多台主機**：要有一個代表主機的標籤 `host`，它指**症狀發生的那台主機**，不是 exporter 所在的主機。`instance` 是讀取對象的位址，同一台主機上各 exporter 的值都不同，不能用。本機的 exporter 在讀取設定以 `relabel_configs` 加 `host`；探測類（Gatus、Blackbox）依被探測的端點以 `metric_relabel_configs` 填；Pushgateway 由推送端帶 `host` 並設 `honor_labels: true`。寫法與 Kubernetes 上兩側都要接上節點標籤的做法見 `references/layer-signals.md`〈主機標籤〉。抑制規則寫 `equal: [host]`，症狀規則的聚合（例如 `sum by (service, le)`）也保留 `host`：
+  - **多台主機**：要有一個代表主機的標籤 `host`，它指**症狀發生的那台主機**，不是 exporter 所在的主機。`instance` 是讀取對象的位址，同一台主機上各 exporter 的值都不同，不能用。跑在被監控主機上的 exporter，在讀取設定裡用 `relabel_configs` 替它的序列加上 `host`；探測類（Gatus、Blackbox）的 `host` 填被探測的那個端點所在的主機，用 `metric_relabel_configs` 依端點決定；Pushgateway 由推送端帶 `host` 並設 `honor_labels: true`。寫法與 Kubernetes 上兩側都要接上節點標籤的做法見 `references/layer-signals.md`〈主機標籤〉。抑制規則寫 `equal: [host]`，症狀規則的聚合（例如 `sum by (service, le)`）也保留 `host`：
 
     ```yaml
     inhibit_rules:

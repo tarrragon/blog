@@ -88,6 +88,7 @@ curl -s 'http://localhost:9090/api/v1/query?query=up' | jq '.data.result[].value
 - [Prometheus 容量規劃與故障模式](capacity-failure-modes/)：單機容量邊界、cardinality 與 retention 的資源模型、常見故障模式與判讀
 - [PromQL 與 Recording Rules 實務](promql-recording-rules/)：常見 SLI 查詢模式、recording rules 設計慣例、效能陷阱與故障判讀
 - [Remote Write 與長期儲存整合](remote-write-long-term-storage/)：remote write 配置、Mimir / Thanos / Cortex 三家比較、故障模式與容量規劃
+- [單機 Compose 的最小監控堆疊](single-host-compose-stack/)：在一台主機上接起 Prometheus、Alertmanager、Grafana 與主機、容器、資料庫、快取、入口各層的 exporter，每個掛載與旗標的理由
 
 ## 進階主題（按需閱讀）
 
@@ -171,7 +172,7 @@ curl -s 'http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series' |
 
 ### Alert flapping / noise
 
-操作原則：alert 觸發頻繁但無實際問題、調整 `for:` duration、加 absent() check、用 Alertmanager inhibition（規則寫法與驗證見 [4.27](/backend/04-observability/host-overload-alerting/)〈依原因抑制〉）。間歇的條件（讀取耗時、讀取失敗）加 `for:` 之前先在時間窗內聚合，見 4.27〈告警的持續條件〉。
+操作原則：alert 觸發頻繁但無實際問題、調整 `for:` duration、加 absent() check、用 Alertmanager [inhibition](/backend/knowledge-cards/alert-inhibition/)（規則寫法與驗證見 [4.27](/backend/04-observability/host-overload-alerting/)〈依原因抑制〉）。間歇的條件（讀取耗時、讀取失敗）加 `for:` 之前先在時間窗內聚合，見 4.27〈告警的持續條件〉。
 
 ### Memory pressure
 
