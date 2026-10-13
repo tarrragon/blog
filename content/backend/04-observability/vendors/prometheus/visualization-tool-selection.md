@@ -1,14 +1,14 @@
 ---
-title: "Prometheus 指標的視覺化工具：視覺化層的責任，與內建介面、Grafana、Perses、Kibana、託管服務的取捨"
+title: "Prometheus 指標的視覺化工具：視覺化層的責任，與內建介面、Grafana、Perses、Kibana／OpenSearch Dashboards、託管服務的取捨"
 date: 2026-10-13
-description: "自架 Prometheus 之後把指標畫成常駐畫面的那一層承擔哪些責任（查詢與呈現、儀表板定義的保存、存取控制、告警規則放在哪一層、多種資料來源、授權與資源），Prometheus 內建介面、Grafana、Perses、Kibana 與託管服務各自滿足哪幾項、成立的前提，以及前提改變時改用哪一個"
+description: "自架 Prometheus 之後把指標畫成常駐畫面的那一層承擔哪些責任（查詢與呈現、儀表板定義的保存、存取控制、告警規則放在哪一層、多種資料來源、授權與資源），Grafana 逐項對照這些責任，內建介面、Perses、Kibana／OpenSearch Dashboards 與託管服務各自的定位與成立的前提，以及前提改變時改用哪一個"
 weight: 14
 tags: ["backend", "observability", "vendor", "prometheus", "grafana"]
 ---
 
-> 本文是 [Prometheus](/backend/04-observability/vendors/prometheus/) 的 vendor deep article。Prometheus、exporter 與 Grafana 在一台主機上怎麼接起來，見 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/)；儀表板該放哪些圖、怎麼分層，見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)。
+> 這一篇屬於 [Prometheus](/backend/04-observability/vendors/prometheus/) 的實作系列，回答畫面那一層為什麼通常交給 Grafana、什麼前提下改用別的工具。Prometheus、exporter 與 Grafana 在一台主機上怎麼接起來，見 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/)；儀表板該放哪些圖、怎麼分層，見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)。
 
-這篇整理自架 Prometheus 之後，把指標畫成常駐畫面的那一層要用什麼工具。範圍從 Prometheus 已經在讀取指標開始，比較的對象是自架或託管的視覺化工具；儀表板裡該放哪些圖不在本篇。
+比較的對象是 Prometheus 已經在讀取指標之後、把指標畫成常駐畫面的那一層：Prometheus 內建介面、Grafana、Perses、Kibana／OpenSearch Dashboards 與託管服務。儀表板裡該放哪些圖不在本篇。
 
 ## 視覺化層承擔的責任
 
@@ -19,7 +19,7 @@ Prometheus 負責讀取（scrape）各 exporter 的指標、存進時間序列�
 - **存取控制**：Prometheus 與 Alertmanager 的網頁設定檔（`--web.config.file`）只提供 TLS 與 basic auth，通過認證的帳號全部擁有完整權限，官方文件也把這個功能標為實驗性。所以要讓團隊、主管或外部合作方看畫面時，「誰只能看、誰能改」要放在視覺化工具的帳號與角色上分級，或放在前面一層帶認證的反向代理（例如 oauth2-proxy）上；Prometheus 本身分不出來。
 - **告警規則放在哪一層**：有些視覺化工具自帶[告警](/backend/knowledge-cards/alert/)引擎。告警規則可以寫在 Prometheus 的規則檔、由 Alertmanager 發通知，也可以寫在視覺化工具裡；放在哪一層，決定了這個工具停掉時告警還發不發得出去。
 - **多種資料來源**：除了 Prometheus 的指標，同一個畫面要不要並排 log、trace 或資料庫的查詢結果。
-- **授權與資源**：工具的授權條款對「修改後提供給別人使用」有沒有要求，以及它本身佔多少記憶體。記憶體在監控與服務共用一台小主機時是實際的成本。Prometheus 的記憶體主要隨活躍的時間序列數成長，Grafana 的隨開著的面板與同時進行的查詢起伏，所以序列很少的單機上 Grafana 可能比 Prometheus 還多：〈單機 Compose 的最小監控堆疊〉那套設定（約九千條時間序列）一天內每小時取樣，Grafana 約 240 到 400 MB、Prometheus 約 140 到 235 MB。自己的環境用 `container_memory_working_set_bytes` 量。
+- **授權與資源**：工具的授權條款對「修改後提供給別人使用」有沒有要求，以及它本身佔多少記憶體。記憶體在監控與服務共用一台小主機時是實際的成本。Prometheus 的記憶體主要隨活躍的時間序列數成長，Grafana 的隨開著的面板與同時進行的查詢起伏，所以序列很少的單機上 Grafana 可能比 Prometheus 還多；單機、約九千條序列時兩者的實測量見 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 的〈連接埠與資源用量〉，自己的環境用 `container_memory_working_set_bytes` 量。
 
 ## Prometheus 內建的查詢介面
 
@@ -37,13 +37,13 @@ Grafana 是開源的視覺化平台，本身不收集資料，向外部的資料
 
 **查詢與呈現**：Prometheus 是它內建的資料來源之一，查詢直接寫 PromQL，儀表板變數可以從 Prometheus 的標籤值產生下拉選單。
 
-**儀表板定義的保存**：儀表板是一份 JSON。Grafana 預設把它存在自己的資料庫（單機部署預設是容器裡的 SQLite 檔），也可以用 provisioning 從檔案載入。〈單機 Compose 的最小監控堆疊〉用的是 provisioning，並設 `allowUiUpdates: false` 讓檔案成為唯一來源。兩種保存方式的差別在 Grafana 的資料目錄（`/var/lib/grafana`）沒有掛 volume 時最明顯：重建容器之後，從檔案載入的儀表板照樣出現，存在資料庫裡的使用者、改過的密碼與在介面上建的儀表板全部消失。那套設定替資料目錄掛了具名 volume，重建容器不會清掉它們；也因為資料庫留了下來，環境變數 `GF_SECURITY_ADMIN_PASSWORD` 只在資料庫第一次建立時用來設定管理者密碼，之後改這個變數不會改變登入密碼。檔案之外，Grafana 也提供以程式產生儀表板的 Foundation SDK（Go、TypeScript、Python 等語言），以及 Terraform provider 與 Kubernetes 上的 Grafana Operator。
+**儀表板定義的保存**：儀表板是一份 JSON。Grafana 預設把它存在自己的資料庫（單機部署預設是容器裡的 SQLite 檔），也可以用 provisioning 從檔案載入。〈單機 Compose 的最小監控堆疊〉用的是 provisioning，並設 `allowUiUpdates: false` 讓檔案成為唯一來源。〈單機 Compose 的最小監控堆疊〉替 Grafana 的資料目錄（`/var/lib/grafana`）掛了具名 volume，重建容器不會清掉資料庫裡的東西。假設沒掛，兩種保存方式的差別就會在重建容器時出現：從檔案載入的儀表板照樣出現，存在資料庫裡的使用者、改過的密碼與在介面上建的儀表板全部消失。檔案之外，Grafana 也提供以程式產生儀表板的 Foundation SDK（Go、TypeScript、Python 等語言），以及 Terraform provider 與 Kubernetes 上的 Grafana Operator。
 
-**存取控制**：Grafana 有使用者、團隊與角色（Viewer、Editor、Admin），只需要看畫面的人給 Viewer 角色，他們能瀏覽儀表板而無法修改。〈單機 Compose 的最小監控堆疊〉預設三個元件都只綁本機位址；要給團隊看時，對外開的是 Grafana（經過入口的反向代理與認證），Prometheus 與 Alertmanager 繼續只綁本機，因為要給別人看的那一層有權限分級，另外兩個沒有。
+**存取控制**：Grafana 有使用者、團隊與角色（Viewer、Editor、Admin），只需要看畫面的人給 Viewer 角色，他們能瀏覽儀表板而無法修改。這套權限分級是 Prometheus 與 Alertmanager 沒有的那一層（它們只有 basic auth），所以要給團隊看畫面時對外開的是 Grafana。人數多時，登入改接組織既有的帳號系統（Grafana 支援 OAuth、LDAP 等登入方式），權限依團隊與資料夾分。
 
 **告警規則放在哪一層**：Grafana 內建一個以 Prometheus Alertmanager 為基礎擴充的 Alertmanager，可以在介面上建立告警規則，規則的資料來源不限於 Prometheus（例如一段 SQL 查詢或 Loki 的 log 查詢）。它也能把告警轉送給外部的 Prometheus Alertmanager，並把外部的 Alertmanager 加成資料來源來檢視；對外部的 Prometheus Alertmanager，Grafana 只能管理靜音（silence），聯絡點與通知政策是唯讀的，因為 Alertmanager 的 HTTP API 不提供修改這些設定。
 
-規則放在 Prometheus 與放在 Grafana 的取捨，在 Grafana 停掉的那一刻分出來。規則寫在 Prometheus 的規則檔時，Grafana 重啟、升級或記憶體不足被停掉，告警照常發出；規則檔放在 repo 裡，可以用 `promtool check rules` 檢查語法、用 `promtool test rules` 寫單元測試。規則寫在 Grafana 時，Grafana 就進入了告警的路徑，它停掉的期間沒有告警，這是觀測系統與被觀測系統一起失效的一種形態（見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)）；換到的是不寫 YAML 的人也能在介面上建規則，以及能對 Prometheus 以外的資料來源告警。〈單機 Compose 的最小監控堆疊〉把規則寫在 Prometheus：告警全部在 Prometheus 與 Alertmanager，Grafana 只負責畫面。
+規則放在 Prometheus 與放在 Grafana，平常看不出差別，差別出現在 Grafana 停掉的期間。規則寫在 Prometheus 的規則檔時，Grafana 重啟、升級或記憶體不足被停掉，告警照常發出；規則檔放在 repo 裡，可以用 `promtool check rules` 檢查語法、用 `promtool test rules` 寫單元測試。規則寫在 Grafana 時，Grafana 就進入了告警的路徑：它自己停掉的期間沒有告警，告警路徑多了一個會單獨失效的元件；Grafana 與服務共用主機時，主機過載會讓服務與告警一起停擺，這是觀測系統與被觀測系統一起失效的一種形態（見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)）。規則放在 Grafana 換到的是不寫 YAML 的人也能在介面上建規則，以及能對 Prometheus 以外的資料來源告警。〈單機 Compose 的最小監控堆疊〉把規則寫在 Prometheus：告警全部在 Prometheus 與 Alertmanager，Grafana 只負責畫面。
 
 **多種資料來源**：Loki（log）、Tempo（trace）、Elasticsearch、PostgreSQL、MySQL 等都能加成資料來源，同一頁可以把一段時間的錯誤率曲線與那段時間的 log 並排。Grafana 自家的 log 與 trace 後端怎麼搭配，見 [LGTM Stack 組合運維](/backend/04-observability/vendors/grafana-stack/lgtm-stack-operations/)。
 
@@ -61,7 +61,7 @@ Perses 是 CNCF 的 sandbox 專案（CNCF 三個成熟度等級裡最早期的�
 
 Perses 和 Grafana 的差別集中在儀表板定義的保存。Perses 從設計上就以「儀表板是程式碼」為出發點：提供 CUE 與 Go 的 SDK 定義儀表板，並有 Kubernetes operator（在叢集裡依宣告的資源自動建立與維護對應物件的控制程式）以 Custom Resource 宣告儀表板，讓儀表板與服務的其他設定一起走 GitOps 的流程（以 Git repo 為部署設定的來源，變更合併之後自動套用到環境）。Grafana 也能以 provisioning 檔與 Foundation SDK 做到版控，差別在預設值：Grafana 預設存在自己的資料庫、檔案是另外接上的，Perses 的規格本身就是檔案。
 
-Perses 成立的前提有兩種：團隊已經用 Kubernetes 與 GitOps 管理部署，希望儀表板也是一份經過 review 的宣告；或者要把儀表板工具嵌進自己對外提供的產品，需要 Apache 授權。代價是它的生態還小：現成的儀表板大多是 Grafana 格式，Perses 的命令列工具 `percli migrate` 能把 Grafana 儀表板轉成 Perses 格式，而官方文件列的支援範圍是 Grafana 9 到 11 版的儀表板、以盡力而為的方式轉換，告警等儀表板以外的設定不轉，轉換結果要拿自己的儀表板逐張確認。
+Perses 成立的前提有兩種：團隊已經用 Kubernetes 與 GitOps 管理部署，希望儀表板也是一份經過 review 的宣告；或者要修改儀表板工具、嵌進自己對外提供的產品，而不想承擔 AGPL 公開修改內容的義務（Perses 是 Apache 2.0）。代價是它的生態還小：現成的儀表板大多是 Grafana 格式，Perses 的命令列工具 `percli migrate` 能把 Grafana 儀表板轉成 Perses 格式，而官方文件列的支援範圍是 Grafana 9 到 11 版的儀表板、以盡力而為的方式轉換，告警等儀表板以外的設定不轉，轉換結果要拿自己的儀表板逐張確認。
 
 ## Kibana 與 OpenSearch Dashboards
 
@@ -75,13 +75,15 @@ Grafana Cloud、Datadog、雲端供應商的監控主控台（CloudWatch、Cloud
 
 ## 前提改變時的選擇
 
-各工具成立的前提拆成以下幾項，它們各自獨立變動，任何一項改變，適合的工具就跟著換：
+各工具成立的前提拆成以下幾項，它們各自獨立變動，任何一項改變，適合的工具就跟著換。這些前提由視覺化層的責任換算而來：看畫面的人對應存取控制，保存方式對應儀表板定義的保存，告警規則的位置、資料所在的平台、授權各自對應同名的責任；查詢與呈現每個工具都做得到，不構成差別；主機的資源與維運的人力是責任清單之外的條件。
 
 - **看畫面的人**：只有維護 Prometheus 的人、用途是排查時，內建介面就夠，不多跑元件。要給維護者以外的人看、需要「只能看」的權限時，加上 Grafana 或 Perses 這類有帳號與角色的工具，對外開的是這個工具（經過反向代理與認證），Prometheus 與 Alertmanager 繼續只綁在本機位址。
+- **看畫面的人是不是不同的客戶**：把儀表板嵌進產品給不同客戶看時，Viewer 角色只管能不能改，不管能看到哪些資料，而儀表板變數（例如 `host`）看的人自己就能改掉。所以要在資料層分開租戶：每個客戶一個 Grafana 組織（organization），各自有只查得到自己資料的資料來源，或讓查詢經過依租戶過濾的儲存（例如 Mimir 的多租戶）。這一項決定的是資料怎麼分，選哪個儀表板工具都要處理。
 - **儀表板定義的保存方式**：可以接受儀表板存在工具的資料庫裡時，Grafana 的預設就能用，前提是它的資料目錄掛在 volume 上並納入備份，否則重建容器就會遺失。要求每一次修改都經過 code review 時，Grafana 改用 provisioning 檔或 Foundation SDK；部署本身已經是 Kubernetes 加 GitOps 時，Perses 的規格與 operator 是更直接的選項。
-- **告警規則的位置**：告警在工具停掉時仍要發得出去、規則要能用 `promtool` 測試時，規則留在 Prometheus，視覺化工具只負責畫面。要對 Prometheus 以外的資料來源告警、或要讓不寫 YAML 的人建規則時，用 Grafana 的告警，並接受它進入告警路徑，另外安排一個不經過它的訊號（例如外部探測）。
+- **告警規則的位置**：要求告警在視覺化工具停掉時仍發得出去，或要求規則能用 `promtool` 測試（兩者任一成立）時，規則留在 Prometheus，視覺化工具只負責畫面。要對 Prometheus 以外的資料來源告警、或要讓不寫 YAML 的人建規則時，用 Grafana 的告警，並接受它進入告警路徑，另外安排一個不經過它的訊號（例如外部探測）。
 - **資料所在的平台**：log 已經在 Elasticsearch 或 OpenSearch 時，log 的搜尋留在 Kibana 或 OpenSearch Dashboards，指標仍在 Grafana，需要並排時把 Elasticsearch 加成 Grafana 的資料來源。
 - **授權與散布**：只在自己的主機上照原樣（不修改原始碼）部署給團隊用時，Grafana 的 AGPLv3 不產生義務；修改過再透過網路提供給團隊使用，就要對使用者提供修改的原始碼。要修改儀表板工具並包進對外提供的產品時，評估 Perses 這類 Apache 授權的工具，或在不修改 Grafana 的前提下整合。
+- **主機的資源**：只有一台小主機、記憶體與服務共用時，多跑一個 Grafana 的成本要和需求比；只有維護的人看圖時，內建介面加上 Prometheus 的告警就能運作，等有其他人要看再加。
 - **維運的人力**：沒有人力維運視覺化層的升級、帳號與資料目錄時，改用託管服務，代價是計費與資料的位置。
 
 以〈單機 Compose 的最小監控堆疊〉的情境逐項對照：看畫面的人會擴大到團隊，儀表板要放進 repo，告警要在 Grafana 停掉時照常發出，資料只有 Prometheus 的指標，只在自己的主機上部署，維運由同一組人負責。對照的結果是 Grafana 以 provisioning 檔載入儀表板、告警留在 Prometheus 與 Alertmanager，Prometheus 的內建介面保留給排查告警規則時使用。
