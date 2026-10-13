@@ -42,11 +42,11 @@ services:
 
 **各主機先收、再推送到中央**：每台主機跑一個只負責讀取與轉送的程式——Prometheus 以 `--agent` 啟動的 agent 模式、Grafana Alloy 或 OpenTelemetry Collector——讀本機的 exporter，再以 remote write 推送到中央的儲存（Mimir、Thanos 或託管服務，見 [Remote Write 與長期儲存整合](/backend/04-observability/vendors/prometheus/remote-write-long-term-storage/)）。連線由主機往外發起，所以主機在 NAT 後面、跨區域或跨雲、中央連不進去時仍然可行。代價有兩項：agent 模式不能查詢、不算告警，也不算 recording rule（預先計算並存成新序列的查詢），這些都移到中央的儲存；中央連不上時 agent 把資料暫存在本機磁碟，官方文件寫明暫存目前上限是兩小時，斷線超過兩小時的那段資料會留下缺口。
 
-選擇看的是網路的可達方向與單台 Prometheus 的容量。監控主機連得到每一台、而全部讀取對象在一台 Prometheus 的容量之內時，中央直接讀取的元件最少，本篇以下以它為準；中央連不進去，或一台 Prometheus 已經讀不完全部讀取對象（容量的估法見 [Prometheus 容量規劃與故障模式](/backend/04-observability/vendors/prometheus/capacity-failure-modes/)）時，改用推送。
+選擇看的是網路的可達方向與單台 Prometheus 的容量。監控主機連得到每一台、而全部讀取對象在一台 Prometheus 的容量之內時，中央直接讀取的元件最少，本篇以下以它為準；主機在 NAT 後面時，也可以先用 WireGuard 這類 overlay 網路讓監控主機連得進去，維持中央讀取。中央連不進去，或一台 Prometheus 已經讀不完全部讀取對象（容量的估法見 [Prometheus 容量規劃與故障模式](/backend/04-observability/vendors/prometheus/capacity-failure-modes/)）時，改用推送；推送時被監控的主機不必對內開放 exporter 的連接埠，`host` 寫在每台 agent 的 `external_labels` 裡，中央的讀取設定不必帶它。
 
 ## 代表主機的 host 標籤
 
-每個序列都要帶一個說明「這是哪台主機」的標籤，告警、抑制與面板才分得出主機。Prometheus 自動加上的 `instance` 不能代替它：`instance` 是讀取對象（target）的位址，同一台主機上 node_exporter 是 `10.0.1.11:9100`、cAdvisor 是 `10.0.1.11:8080`，兩者不相等。[抑制規則](/backend/knowledge-cards/alert-inhibition/)以 `instance` 比對原因告警（例如主機 CPU 飽和）與症狀告警（例如讀取變慢）時，只有恰好讀自同一個 exporter 的兩則對得上（實際後果見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制〉一節）。所以另外加一個 `host` 標籤，值是這個序列代表的那台主機。
+每個序列都要帶一個說明「這是哪台主機」的標籤，告警、抑制與面板才分得出主機。Prometheus 自動加上的 `instance` 不能代替它：`instance` 是讀取對象（target）的位址，同一台主機上 node_exporter 是 `10.0.1.11:9100`、cAdvisor 是 `10.0.1.11:8080`，兩者不相等。[抑制規則](/backend/knowledge-cards/alert-inhibition/)以 `instance` 比對原因告警（例如主機 CPU 飽和）與症狀告警（例如讀取變慢）時，只有恰好讀自同一個 exporter 的兩則對得上（實際後果見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制〉一節）。所以另外加一個 `host` 標籤，值是這個序列代表的那台主機。另一種做法是用 relabel 把 `instance` 直接改成主機名稱；本篇另外加 `host`，是讓 `instance` 保留讀取位址方便排查，而且探測類指標（Gatus、Blackbox exporter）的 `instance` 是被探測的網址，沒辦法同時當主機名稱。relabel 指 Prometheus 在讀取之前依規則改寫讀取對象的標籤（`relabel_configs`），服務發現帶來的 `__meta_*` 標籤只在這個階段可以取用，之後就丟掉。
 
 `host` 加進去之後，凡是把序列聚合起來的地方都要保留它，否則聚合會把不同主機合在一起，一台主機的狀況被另一台蓋掉。容器停止的規則是最直接的例子（規則本身為什麼看 `container_last_seen`、為什麼取最小值，見 [單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/) 的〈偵測容器停止〉；告警規則在規則檔裡放在 `groups:` 底下的 `rules:` 清單）：
 
@@ -63,9 +63,9 @@ services:
     summary: "{{ $labels.host }} 上的 {{ $labels.container_label_com_docker_compose_service }} 已有 {{ $value | humanizeDuration }} 沒被 cAdvisor 看到"
 ```
 
-同一個服務跑在 app-1 與 app-2 兩台主機上、app-2 的容器停了時，分組少了 `host` 的版本取的是兩台的最小值，而 app-1 的容器還在、值很小，整條規則不成立。磁碟的規則同理，依 `host, device, fstype` 分組，不同主機上同名的 `/dev/nvme0n1p1` 才不會合成一個。
+同一個服務跑在 app-1 與 app-2 兩台主機上、app-2 的容器停了時，分組少了 `host` 的版本取的是兩台的最小值，而 app-1 的容器還在、值很小，整條規則不成立。磁碟的規則同理，依 `host, device, fstype` 分組，不同主機上同名的 `/dev/nvme0n1p1` 才不會合成一個。同一台主機上跑了不只一個 compose 專案、兩邊有同名的服務時，分組再加 `container_label_com_docker_compose_project`，否則一邊停掉會被另一邊的值蓋掉。多台主機時這條規則還依賴時鐘：`container_last_seen` 的值來自被監控主機的時鐘，`time()` 來自 Prometheus 所在的主機，各台要以 NTP（chrony、systemd-timesyncd）同步，偏差接近 60 秒時，容器還在而規則就成立。
 
-告警送到 Alertmanager 之後，分組與抑制也要依主機分開。下面的片段只列 `route` 與 `inhibit_rules`，`receivers` 的寫法見 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 的 Alertmanager 一節；三個告警名稱取自 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制〉，`HostCpuSaturated` 是原因（主機 CPU 飽和），`ScrapeNearTimeout`、`ProbeSlow` 是症狀（讀取逼近逾時、外部探測變慢），換成自己規則檔裡的名稱。名稱對不上時抑制不會報錯，只是不作用：
+告警送到 Alertmanager 之後，分組與抑制也要依主機分開。下面的片段只列 `route` 與 `inhibit_rules`，`receivers` 的寫法見 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 的 Alertmanager 一節；三個告警名稱取自 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制〉，`HostCpuSaturated` 是原因（主機 CPU 飽和），`ScrapeNearTimeout`、`ProbeSlow`、`ServiceSlow` 是症狀（讀取逼近逾時、外部探測變慢、服務自己的延遲變長），換成自己規則檔裡的名稱。名稱對不上時抑制不會報錯，只是不作用：
 
 ```yaml
 # alertmanager.yml 的 route 與 inhibit_rules
@@ -74,11 +74,14 @@ route:
   group_by: [alertname, host]          # 同一台主機的同一種告警合成一則
 inhibit_rules:
   - source_matchers: [alertname="HostCpuSaturated"]
-    target_matchers: [alertname=~"ScrapeNearTimeout|ProbeSlow", severity="warning"]
+    target_matchers: [alertname=~"ScrapeNearTimeout|ProbeSlow|ServiceSlow", severity="warning"]
     equal: [host]                      # 只壓下同一台主機上的症狀
+  - source_matchers: [alertname="HostDown"]   # 整台主機讀不到，見〈主機停掉與主機從清單上消失的偵測〉
+    target_matchers: [alertname=~"ScrapeTargetDown|ScrapeNearTimeout"]
+    equal: [host]
 ```
 
-`equal: [host]` 讓一台主機 CPU 飽和只壓下同一台主機上的症狀，其他主機的症狀照常通知。
+`equal: [host]` 讓一台主機 CPU 飽和只壓下同一台主機上的症狀，其他主機的症狀照常通知；整台主機讀不到時，同一台上各個 exporter 的讀取失敗由 `HostDown` 那一則代表。
 
 面板頂端放一個以 `label_values(up, host)` 產生的下拉選單（Grafana 的儀表板變數，名稱設成 `host`），每個查詢加上篩選、依 `host` 分開，圖例前面加主機名稱：
 
@@ -117,7 +120,7 @@ scrape_configs:
 
 `/etc/prometheus/targets/` 是容器裡的路徑，Prometheus 的服務要把 repo 裡放清單的目錄掛進去。〈單機 Compose 的最小監控堆疊〉把整個 Prometheus 設定目錄掛到 `/etc/prometheus`，清單放在那個目錄的 `targets/` 底下就讀得到；掛的是目錄而不是單一檔案，部署工具以換檔方式改寫清單時，容器才看得到新的內容。檔案不存在或讀不到時 Prometheus 照樣啟動，只寫一行日誌，這個 job 沒有任何讀取對象。從〈單機 Compose 的最小監控堆疊〉改過來時，每一個 job 都要這樣改：那一篇以 compose 的服務名稱寫的讀取對象，在另一台監控主機上解析不到，留著 `static_configs` 的 job 會全部讀取失敗；只有讀 Prometheus 自己與 Alertmanager 的兩個 job 和它們在同一台，可以留著，`host` 改成監控主機的名稱。
 
-Prometheus 會監看這個檔案，內容改了就重新讀取，不必重新載入設定；`refresh_interval` 是監看失效時的定時重讀。在那個短網址服務上（macOS 的 OrbStack），清單加上一台主機之後 13 秒，它就出現在 Prometheus 的 Targets 頁面；另一次把 `refresh_interval` 設成 10 分鐘來測，改檔後 4 秒生效，所以生效靠的是監看而不是定時重讀。這份檔案由 Ansible、Terraform 這類部署工具從主機清單產生，主機清單是部署的依據，監控因此跟著部署走，不靠人記得同步。
+Prometheus 會監看這個檔案，內容改了就重新讀取，不必重新載入設定；`refresh_interval` 是監看失效時的定時重讀。在那個短網址服務上（macOS 的 OrbStack），清單加上一台主機之後 13 秒，它就出現在 Prometheus 的 Targets 頁面；另一次把 `refresh_interval` 設成 10 分鐘來測，改檔後 4 秒生效，所以生效靠的是監看而不是定時重讀。這份檔案由 Ansible、Terraform 這類部署工具從主機清單產生，主機清單是部署的依據，監控因此跟著部署走，不靠人記得同步。這個前提是主機只由部署工具建立與移除；有部署工具以外的機制會開關主機時（Auto Scaling、搶占式執行個體被回收），檔案清單會落後實際的主機，被汰換的一直是 `up` 為 0、新開的不在監控裡，這時改用雲端的服務發現（見本節〈雲端的服務發現〉那一段）。
 
 **雲端的服務發現**：在 AWS 上用 `ec2_sd_configs`，Prometheus 定時向 EC2 的 API 查詢執行個體，依 tag 篩選要監控的那些。執行個體的 tag 以 `__meta_ec2_tag_<tag 名稱>` 的形式出現，用 relabel 搬到 `host`：
 
@@ -130,22 +133,25 @@ Prometheus 會監看這個檔案，內容改了就重新讀取，不必重新載
         - name: tag:monitoring # 只讀帶這個 tag 的執行個體；tag 名稱與值換成自己環境的
           values: [enabled]
   relabel_configs:
-    # 讀取對象的位址預設就是私有 IP；host 取執行個體的 Name tag
-    - source_labels: [__meta_ec2_tag_Name]
+    # 讀取對象的位址預設就是私有 IP；host 取執行個體 ID，每台一定不同
+    - source_labels: [__meta_ec2_instance_id]
       target_label: host
 ```
 
-這段設定以 `promtool check config` 檢查過語法，沒有在 AWS 上實際跑過。Prometheus 呼叫 EC2 API 要有權限，跑在 EC2 上時給它所在執行個體的 IAM 角色至少 `ec2:DescribeInstances`。GCP 的 `gce_sd_configs`、Kubernetes 的 `kubernetes_sd_configs` 是同一類，各自提供不同的 `__meta_*` 標籤。
+`host` 取執行個體 ID 而不是 Name tag：同一個 Auto Scaling 群組開出來的執行個體多半共用同一個 Name，取 Name 的話各台的 `host` 相同，聚合與抑制又把它們合在一起；Name 每台都不同時才能用它（`__meta_ec2_tag_Name`）。這段設定以 `promtool check config` 檢查過語法，沒有在 AWS 上實際跑過。Prometheus 呼叫 EC2 API 要有權限，跑在 EC2 上時給它所在執行個體的 IAM 角色至少 `ec2:DescribeInstances`。GCP 的 `gce_sd_configs`、Kubernetes 的 `kubernetes_sd_configs` 是同一類，各自提供不同的 `__meta_*` 標籤。
 
 兩種來源的差別在主機被移除時。檔案清單只在部署工具重新產生時改變。`ec2_sd_configs` 在每次重新查詢時（`refresh_interval`，預設 60 秒）更新讀取對象：已終止的執行個體沒有私有 IP，被略過而從清單上消失；停止而沒終止的執行個體仍有私有 IP，留在清單上、`up` 變成 0。篩選條件加上 `instance-state-name` 只取 `running` 的話，停止的執行個體也會從清單上消失。所以停止的執行個體仍在清單上、`up` 變成 0，已終止的（以及加了 `running` 篩選之後停止的）連序列都不見，兩者要用不同的規則偵測。
 
 ## 主機停掉與主機從清單上消失的偵測
 
+這一節以中央直接讀取為準。改用各主機推送時，主機停掉時它的 agent 跟著停，Prometheus 不會讀到 `up` 為 0，序列直接中斷，表現和本節的「主機從清單上消失」相同，要用那一類規則偵測。
+
 **主機停掉、仍在清單上**：Prometheus 讀不到它，`up{host="app-2"}` 變成 0，讀取失敗的告警（`ScrapeTargetDown`）對那台主機成立。這條規則取 15 分鐘內讀取成功的比例，因為主機過載時讀取是間歇失敗，`up == 0` 加持續時間會在兩次失敗之間被打斷（實測見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈告警的持續條件〉一節）：
 
 ```yaml
 - alert: ScrapeTargetDown
-  expr: avg_over_time(up[15m]) < 0.9   # 15 分鐘內讀取成功的比例低於九成
+  # 15 分鐘內讀取成功的比例低於九成；and up：讀取對象從清單拿掉之後就不再成立
+  expr: avg_over_time(up[15m]) < 0.9 and up
   for: 2m
   labels: {severity: warning, scope: monitoring}
   annotations:
@@ -154,7 +160,21 @@ Prometheus 會監看這個檔案，內容改了就重新讀取，不必重新載
 
 `up` 帶著目標清單上的 `host`，所以告警自己就指出是哪台主機。這條規則的延遲由兩段組成：失敗的比例要累積到低於九成（讀取對象已經跑滿 15 分鐘時，約 1.5 分鐘的失敗），再加上 `for` 的 2 分鐘，合計約 3.5 分鐘。
 
-**主機從清單上消失**：讀取對象從清單上被拿掉之後，Prometheus 替它的序列寫入過期標記（staleness marker），`up{host="app-2"}` 在即時查詢（instant query）裡直接消失，不會變成 0。讀取失敗的規則只對存在的序列判斷，所以這種情形要另外比對預期的數量，而預期的數量取自部署設定，不取自查詢結果：
+`and up` 處理的是有意移除的主機。縮容或汰換時，主機常常先停掉、隔一陣子才從清單上拿掉；拿掉之後時間窗裡仍留著停機到移除之間的失敗樣本，只寫 `avg_over_time(up[15m]) < 0.9` 的話，規則會對已經不存在的主機再成立十幾分鐘（以 promtool 餵入「上線 15 分鐘、失敗 2 分鐘、接著移除」的序列，移除後 15 分鐘才結束）。`and up` 要求這個讀取對象現在還在，序列過期之後規則就不成立。
+
+整台主機停掉時，這條規則只是 warning，而 critical 的容器停止規則不會成立：cAdvisor 跟著讀不到，它的序列被標成過期，`container_last_seen` 沒有值可算。所以主機層另外一條：
+
+```yaml
+- alert: HostDown
+  # node_exporter 5 分鐘內沒有一次讀取成功；過載時的間歇失敗中間總有成功的讀取，不會讓它成立
+  expr: max_over_time(up{job="node"}[5m]) == 0
+  for: 1m
+  labels: {severity: critical, scope: host}
+  annotations:
+    summary: "{{ $labels.host }} 的 node_exporter 5 分鐘內沒有一次讀取成功"
+```
+
+**主機從清單上消失**：讀取對象從清單上被拿掉之後，Prometheus 替它的序列寫入過期標記（staleness marker），`up{host="app-2"}` 在即時查詢（instant query）裡直接消失，不會變成 0。讀取失敗的規則只對存在的序列判斷，所以這種情形要另外比對預期的數量，而預期的數量要取自和目標清單不同的來源（部署設定、Auto Scaling 群組的容量、Kubernetes 上 kube-state-metrics 的 `kube_node_info`），不取自同一份清單讀出來的結果：
 
 ```promql
 # 預期 3 台；數字從部署設定（例如 Auto Scaling 群組的最小容量）來，部署改了這裡跟著改
@@ -164,7 +184,7 @@ count(up{job="node"}) < 3
 absent(up{job="node", host="db-1"})
 ```
 
-全部主機同時消失時，`count(up{job="node"})` 沒有結果可以比較而不成立，由下面清單整個空了時用的 `absent(up{job="node"})` 接手。
+全部主機同時消失時，`count(up{job="node"})` 沒有結果可以比較而不成立，這時改由〈清單整個空了〉那一條 `absent(up{job="node"})` 偵測。
 
 **清單整個空了**：部署工具產生了空的檔案，或服務發現的篩選條件寫錯，`node` 這個 job 沒有任何讀取對象。這時沒有任何 `up` 序列可以判斷，讀取失敗的規則全部沉默，看起來就像所有主機都正常：
 
@@ -172,19 +192,19 @@ absent(up{job="node", host="db-1"})
 absent(up{job="node"})
 ```
 
-用檔案清單時，主機停掉由讀取失敗的規則處理，清單本身就是預期的主機，另外只需要清單整個空了的那一條；用雲端的服務發現時，主機停掉、主機從清單上消失、清單整個空了，三種情形各要有一條規則。
+用檔案清單時，主機停掉由讀取失敗的規則與 `HostDown` 處理，清單本身就是預期的主機，另外只需要清單整個空了的那一條；清單與預期出自同一份主機清單，產生清單的模板漏掉一台時，監控這一端看不出來，要在部署時比對產出的筆數。用雲端的服務發現時，主機停掉、主機從清單上消失、清單整個空了，三種情形各要有一條規則。
 
 ## 監控主機放在哪裡
 
-中央的 Prometheus、Alertmanager 與 Grafana 放在一台獨立的監控主機上，不和被監控的服務共用。共用時，那台主機過載或停掉，監控跟著一起退化或停掉，而那正是最需要它的時候（見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)）。監控主機自己停掉時，它發不出任何告警，所以另外需要一個不經過它的訊號：在監控主機以外跑的外部探測，以及一條永遠成立的 Watchdog 告警，經由 Alertmanager 持續送到外部的心跳服務，心跳中斷時由外部服務通知（設定見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉一節）。
+中央的 Prometheus、Alertmanager 與 Grafana 預設放在一台獨立的監控主機上，不和被監控的服務共用。共用時，那台主機過載或停掉，監控跟著一起退化或停掉，而那正是最需要它的時候（見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)）。監控主機自己停掉時，它發不出任何告警，所以另外需要一個不經過它的訊號：在監控主機以外跑的外部探測，以及一條永遠成立的 Watchdog 告警，經由 Alertmanager 持續送到外部的心跳服務，心跳中斷時由外部服務通知（做法見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉一節）。主機只有兩三台、多開一台監控主機不划算時，把監控放在負載最低的那一台，Watchdog 與外部探測照樣保留，代價是那一台過載時監控跟著退化。
 
-元件因此分成兩個 compose 檔：每台主機都要跑的 exporter 留在 `docker-compose.yml`，Prometheus、Alertmanager、Grafana 移到 `compose.monitoring.yml`。每台主機在自己的 `.env`（不進版控，每台內容不同）以 `COMPOSE_FILE` 決定讀哪幾個檔，同一個 repo 在每台主機上執行同一條 `docker compose up -d`：
+元件因此分成三個 compose 檔：每一台主機（含監控主機）都要跑的 node_exporter 與 cAdvisor 在 `compose.host-exporters.yml`，跟著服務走的 exporter 和服務一起留在 `docker-compose.yml`，Prometheus、Alertmanager、Grafana 在 `compose.monitoring.yml`。監控主機也跑主機層的 exporter，它自己的 CPU、記憶體與磁碟才有人看；它停掉時由 Watchdog 發現，而過載或磁碟快滿要靠它自己的 node_exporter。每台主機在自己的 `.env`（不進版控，每台內容不同）以 `COMPOSE_FILE` 決定讀哪幾個檔，同一個 repo 在每台主機上執行同一條 `docker compose up -d`（分隔符在 Linux、macOS 是 `:`，Windows 是 `;`）：
 
-| 主機                       | `.env` 的 `COMPOSE_FILE`                                                        |
-| -------------------------- | ------------------------------------------------------------------------------- |
-| 單機（服務與監控在同一台） | `docker-compose.yml:compose.monitoring.yml`                                     |
-| 被監控的主機               | `docker-compose.yml:compose.exporters-published.yml`，另設 `EXPORTER_BIND_ADDR` |
-| 監控主機                   | `compose.monitoring.yml`                                                        |
+| 主機                       | `.env` 的 `COMPOSE_FILE`                                                                                      |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| 單機（服務與監控在同一台） | `docker-compose.yml:compose.host-exporters.yml:compose.monitoring.yml`                                        |
+| 被監控的主機               | `docker-compose.yml:compose.host-exporters.yml:compose.exporters-published.yml`，另設 `EXPORTER_BIND_ADDR`    |
+| 監控主機                   | `compose.host-exporters.yml:compose.monitoring.yml`，目標清單裡以服務名稱列上自己的 node_exporter 與 cAdvisor |
 
 本篇取材的短網址服務只把監控元件拆了出來：它的 `docker-compose.yml` 仍把全部的應用服務、資料庫與快取放在一起，照上表在每台被監控的主機上跑，每一台都會起整套服務。服務要真的分到多台主機，還要依主機的角色再拆 compose 檔（例如資料庫主機只有 PostgreSQL、Valkey 與跟著它們的 exporter，`COMPOSE_FILE` 換成那一組），疊加檔裡也只留那台主機上實際有的 exporter。
 

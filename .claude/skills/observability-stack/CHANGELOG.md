@@ -2,6 +2,8 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
+**Version**: 1.7.0 — 讀取成功比例的規則加 `and up`（讀取對象移除後不殘留告警）；新增整台主機讀不到的判斷（node_exporter 5 分鐘內沒有一次成功，嚴重度與服務停止相同）；`allowUiUpdates` 的語意改正（兩種設定都不寫回檔案）；cAdvisor 補 `--housekeeping_interval`
+
 **Version**: 1.6.0 — 多台主機：host 標籤寫在每個讀取對象上（static_configs／file_sd 的 labels），job 層常數 replacement 只在一個 job 一台主機時成立；容器停止與磁碟的聚合保留 host；抑制名單統一為 ProbeSlow|ServiceSlow|ScrapeNearTimeout；layer-signals 補讀取對象清單（掛目錄不掛單檔）與主機停掉／消失／清單空了三種偵測
 
 **Version**: 1.5.2 — 虛擬機裡掛入的主機磁碟：大小差固定倍數也是主機的磁碟，位元組不可信、只用剩餘比例（OrbStack 2.2.3 的 virtiofs 區塊大小欄位與區塊數單位不同，node_exporter 的位元組放大 256 倍）

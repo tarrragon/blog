@@ -7,7 +7,7 @@
 - **版本固定**：映像檔寫明版本，不用 `latest`；README 的版本表與部署設定一致。
 - **對外的連接埠只綁本機**：Prometheus、Grafana 的程式預設聽全部介面，所以在部署設定裡把連接埠寫成只綁 `127.0.0.1`（例如 compose 寫 `"127.0.0.1:9090:9090"`）；要對外時另外決定經過哪個入口與認證。
 - **exporter 用最小權限的帳號**：資料庫的 exporter 用專用帳號（PostgreSQL 給內建的 `pg_monitor`），不沿用應用程式的帳號。帳號由資料庫初始化腳本建立時，初始化腳本只在資料目錄是空的時候執行，既有的資料庫要另外補建，把補建的指令寫進 README。
-- **設定與面板以檔案進 repo**：讀取設定、Grafana 的資料來源與面板以 provisioning 檔佈建，介面上的修改不寫回檔案（`allowUiUpdates: false`），以檔案為準。
+- **設定與面板以檔案進 repo**：讀取設定、Grafana 的資料來源與面板以 provisioning 檔佈建，被佈建的面板在介面上不能儲存（`allowUiUpdates: false`；設成 true 時修改只存進 Grafana 的資料庫、下次同步被檔案蓋掉，兩者都不寫回檔案），以檔案為準。
 - **環境相依的值用環境變數，並寫下找法**：例如 cAdvisor 的 containerd socket 路徑。只寫值的話，換一個環境的人會照抄。
 
 ## 各層
@@ -17,7 +17,7 @@
 | 層 | 工具 | 接法 | 這個工具收不到（改由哪裡收） |
 | --- | --- | --- | --- |
 | 入口（Nginx） | nginx-prometheus-exporter | 代理開一個只聽內部 port、只允許私有位址的 `stub_status`，exporter 讀它 | 依網域、狀態碼、上游分開的請求數：要從 access log 算 |
-| 容器 | cAdvisor | 掛載 `/`、`/var/run`、`/sys`、`/var/lib/docker`，`--docker_only=true`（只在 Docker 引擎上用）；containerd socket 不在預設位置的環境要用 `--containerd` 指定 | 容器裡是哪個行程 |
+| 容器 | cAdvisor | 掛載 `/`、`/var/run`、`/sys`、`/var/lib/docker`，`--docker_only=true`（只在 Docker 引擎上用）、`--housekeeping_interval` 對齊讀取間隔（預設每秒更新，更新比讀取頻繁的部分沒有人讀，對齊可省 CPU）；containerd socket 不在預設位置的環境要用 `--containerd` 指定 | 容器裡是哪個行程 |
 | 主機 | node_exporter | `pid: host`、掛載 `/` 到 `/host` 並 `--path.rootfs=/host`；留在容器網路裡時關掉 `netdev`、`netstat`、`sockstat`（看到的是自己容器的網路），網路改看 cAdvisor | 它所在那一層以外的機器的 CPU 負載；磁碟看得到哪幾顆依環境而定，見本檔〈實測遇到的問題〉的磁碟告警一則 |
 | PostgreSQL | postgres_exporter | 專用帳號加 `pg_monitor` | 個別查詢的耗時：要 `pg_stat_statements` |
 | Redis / Valkey | redis_exporter | `REDIS_ADDR` 指向服務 | 應用程式那一端等它的時間 |

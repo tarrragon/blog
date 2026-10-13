@@ -6,9 +6,9 @@ weight: 13
 tags: ["backend", "observability", "prometheus", "docker", "monitoring"]
 ---
 
-> 這一篇接在 [Prometheus](/backend/04-observability/vendors/prometheus/) 的概觀之後，處理一台主機上各元件的實際接法。各層要收哪些訊號、監控所在層看不到什麼、接上之後怎麼驗收，見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)；告警怎麼寫見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)。
+> 這一篇屬於 [Prometheus](/backend/04-observability/vendors/prometheus/) 的實作系列，處理一台主機上各元件的實際接法。各層要收哪些訊號、監控所在層看不到什麼、接上之後怎麼驗收，見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)；告警怎麼寫見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)。
 
-這篇整理以 Docker Compose 在一台主機上接起一套最小監控堆疊時，每一個元件的設定與它為什麼要這樣設。範圍從「服務已經用 Compose 跑起來」開始，涵蓋 Prometheus、Alertmanager、Grafana，以及主機、容器、PostgreSQL、Redis／Valkey、入口 Nginx 各一個 exporter。文中的設定取自一個短網址服務在單機時的版本（它之後為了拆到多台主機，把讀取清單改成檔案清單，見 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/)）：Prometheus 3.15.0、Alertmanager 0.34.1、Grafana 13.2.3、cAdvisor v0.55.1、node_exporter 1.12.1、postgres_exporter 0.20.1、redis_exporter 1.93.0、nginx-prometheus-exporter 1.5.0。下面的程式碼片段都是同一個 compose 專案裡 `services:` 底下的服務（具名 volume 在檔案最後的 `volumes:` 底下宣告），服務名稱、`./infra/...` 這類路徑依自己的專案換。
+這篇整理以 Docker Compose 在一台主機上接起一套最小監控堆疊時，每一個元件的設定與它為什麼要這樣設。範圍從「服務已經用 Compose 跑起來」開始，涵蓋 Prometheus、Alertmanager、Grafana，以及主機、容器、PostgreSQL、Redis／Valkey、入口 Nginx 各一個 exporter。文中的設定取自一個短網址服務現行的設定，讀取清單改寫回單機用的 `static_configs`（它現行的版本為了拆到多台主機改成檔案清單，見 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/)）：Prometheus 3.15.0、Alertmanager 0.34.1、Grafana 13.2.3、cAdvisor v0.55.1、node_exporter 1.12.1、postgres_exporter 0.20.1、redis_exporter 1.93.0、nginx-prometheus-exporter 1.5.0。下面的程式碼片段都是同一個 compose 專案裡 `services:` 底下的服務（具名 volume 在檔案最後的 `volumes:` 底下宣告），服務名稱、`./infra/...` 這類路徑依自己的專案換。
 
 ## 堆疊的組成：誰讀誰
 
@@ -35,7 +35,7 @@ exporter 與被監控的服務放在同一個 compose 網路裡，Prometheus 以
 | `GRAFANA_ADMIN_PASSWORD`     | Grafana 的 admin 密碼                                              |
 | `CADVISOR_CONTAINERD_SOCKET` | containerd socket 的位置，預設值不對時才設                         |
 
-沒設的變數 compose 代入空字串並印出警告，exporter 帳號的密碼就會是空的，而 Prometheus 照樣讀得到 exporter，錯誤不會出現在 `up` 上。
+沒設的變數 compose 代入空字串並印出警告，exporter 帳號的密碼就會是空的，而 Prometheus 照樣讀得到 exporter，錯誤不會出現在 `up` 上。要讓 compose 當場擋下來，把引用寫成 `${POSTGRES_EXPORTER_PASSWORD:?設定 postgres_exporter 的密碼}` 這種必填形式，沒設時 `docker compose up` 直接失敗並印出那段訊息。
 
 ## 主機層：node_exporter
 
@@ -67,7 +67,7 @@ cAdvisor 從 cgroup 讀每個容器的 CPU、記憶體、網路與磁碟讀寫�
 cadvisor:
   image: gcr.io/cadvisor/cadvisor:v0.55.1
   restart: unless-stopped
-  privileged: true              # 讀主機的 cgroup 與裝置資訊
+  privileged: true              # 讀主機的 cgroup 與裝置資訊；代價見下方
   command:
     - --containerd=${CADVISOR_CONTAINERD_SOCKET:-/run/containerd/containerd.sock}
     - --docker_only=true        # 只回報容器，不回報主機上其他的 cgroup
@@ -81,6 +81,8 @@ cadvisor:
 ```
 
 `--containerd` 的值放在環境變數，因為 socket 的位置依環境不同：Linux 主機直接跑 Docker 時預設的 `/run/containerd/containerd.sock` 多半就對；macOS 上的 Docker 跑在虛擬機裡，socket 在虛擬機的另一個位置（OrbStack 2.2.3 上量到的是 `/var/run/docker/containerd/containerd.sock`），位置隨工具與版本不同，要在自己的環境裡找一次。找不到 socket 時 cAdvisor 照樣起來、Prometheus 照樣讀得到，指標卻只剩 `id="/docker/<雜湊>"` 而沒有容器名稱與 compose 標籤；找法與日誌長什麼樣，見 [單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/) 的〈Docker 跑在虛擬機裡時 cAdvisor 缺容器名稱〉。`--housekeeping_interval` 是 cAdvisor 更新每個容器統計的間隔，預設 1 秒，而且閒置的容器會逐步拉長到最多 1 分鐘（`--allow_dynamic_housekeeping` 預設開啟）；Prometheus 每 15 秒才來讀一次，兩次讀取之間多做的更新，Prometheus 都讀不到，所以對齊讀取間隔，省下 cAdvisor 的 CPU。要每次讀取都拿到新的值，另外設 `--allow_dynamic_housekeeping=false`。
+
+cAdvisor 的 `privileged`、node_exporter 的 `pid: host` 加上唯讀掛進主機的 `/`，讓這兩個容器看得到主機上所有行程與檔案，等於把主機的讀取權限交給它們的映像：映像來源要可信、版本寫死，它們的連接埠也不對外。
 
 ## 服務內部：資料庫、快取與入口
 
@@ -140,7 +142,7 @@ valkey-exporter:
     REDIS_ADDR: redis://cache:6379   # compose 的服務名稱與連接埠；快取有密碼時另設 REDIS_PASSWORD
 ```
 
-入口 Nginx 的連線數由它自己的 `stub_status` 提供，nginx-prometheus-exporter 讀這個狀態頁轉成指標。狀態頁另開一個只在內部聽的連接埠，只接受私有位址，compose 不把這個連接埠對外發佈。下面的 `server` 區塊放在 Nginx 的設定目錄（例如 `conf.d/status.conf`），加完重新載入 Nginx：
+入口 Nginx 的連線數由它自己的 `stub_status` 提供，nginx-prometheus-exporter 讀這個狀態頁轉成指標。狀態頁另開一個只在內部聽的連接埠，只接受私有位址，compose 不把這個連接埠對外發佈。下面的 `server` 區塊放在 Nginx 的設定目錄（例如 `conf.d/status.conf`）。設定以掛載進容器時，存檔後重新載入 Nginx（`docker compose exec nginx nginx -s reload`）；設定以 Dockerfile 的 `COPY` 打進映像時，要重建映像與容器（`docker compose up -d --build nginx`），只重新載入的話容器讀不到新檔，狀態頁回 404、`nginx_up` 是 0：
 
 ```nginx
 server {
@@ -239,7 +241,7 @@ curl -X POST http://127.0.0.1:9093/-/reload
 
 ## Alertmanager：告警的分組與抑制
 
-Alertmanager 接收 Prometheus 算出的告警，決定怎麼分組、哪些被抑制、送到哪裡。這套設定還沒有通知管道，告警在它的網頁上看：
+Alertmanager 接收 Prometheus 算出的告警，決定怎麼分組、哪些被抑制、送到哪裡。這套設定還沒有通知管道，告警在它的網頁上看。監控與服務在同一台主機上，這台主機停掉或過載時，告警跟著停或延遲，所以接上通知管道之後，還需要一個不經過這台主機的訊號：外部探測，以及一條永遠成立、持續送到外部心跳服務的 Watchdog 告警（做法見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉一節）：
 
 ```yaml
 alertmanager:
@@ -288,7 +290,7 @@ apiVersion: 1
 providers:
   - name: default
     type: file
-    allowUiUpdates: false        # 介面上的修改不寫回檔案，以檔案為準
+    allowUiUpdates: false        # 被佈建的儀表板在介面上不能儲存，以檔案為準
     options:
       path: /var/lib/grafana/dashboards
 ```

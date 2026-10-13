@@ -25,7 +25,7 @@ Prometheus 是 CNCF graduated 的 metrics 系統、承擔三個責任：pull-bas
 先建最小 config 檔（Prometheus scrape 自己）：
 
 ```yaml
-# prometheus.yml
+# prometheus/prometheus.yml（放在一個目錄裡，整個目錄掛進容器）
 global:
   scrape_interval: 15s
 
@@ -39,9 +39,10 @@ scrape_configs:
 
 ```bash
 # 1. 啟動 Prometheus
-docker run -d --name prom -p 9090:9090 \
-  -v "$(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml" \
-  prom/prometheus
+# 最短路徑；正式的設定（掛目錄、只綁本機、版本寫死）見 single-host-compose-stack
+docker run -d --name prom -p 127.0.0.1:9090:9090 \
+  -v "$(pwd)/prometheus:/etc/prometheus:ro" \
+  prom/prometheus:v3.15.0
 
 # 2. 確認 target 正常（等 15 秒讓第一次 scrape 完成）
 curl -s http://localhost:9090/api/v1/targets | jq '.data.activeTargets[].health'
@@ -223,3 +224,12 @@ curl -s 'http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series' |
 - 平行 vendor：[Grafana Stack](/backend/04-observability/vendors/grafana-stack/)（Mimir）、[OpenTelemetry](/backend/04-observability/vendors/opentelemetry/)
 - 下游能力：[4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)
 - 單機實作：[4.26](/backend/04-observability/host-traffic-resource-monitoring/) 收各層指標、[4.27](/backend/04-observability/host-overload-alerting/) 寫告警
+
+## Backlog
+
+| 項目                                                                                            | 類型   | 前置條件             | 規模 |
+| ----------------------------------------------------------------------------------------------- | ------ | -------------------- | ---- |
+| Grafana 經入口反向代理對外開放：Nginx 的 location、`GF_SERVER_ROOT_URL`、認證放在代理或 Grafana | 主章   | 實作專案接上入口     | 小   |
+| Alertmanager 通知管道的範例（webhook、email、Slack 的 receiver 與 route）                       | 主章   | 有實際的通知管道可測 | 小   |
+| Kubernetes 上的監控入口（kube-prometheus-stack、ServiceMonitor、儀表板 sidecar）                | 主章   | 有可實測的叢集       | 中   |
+| relabel 知識卡（`relabel_configs`、`metric_relabel_configs`、`__meta_*` 的生命週期）            | 知識卡 | 無                   | 小   |

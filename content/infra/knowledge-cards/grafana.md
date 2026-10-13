@@ -14,11 +14,11 @@ Grafana 在監控體系裡負責「讓指標和 log 變成人可以讀的畫面�
 
 ## 可觀察訊號
 
-系統需要 Grafana 的訊號是：已經有 Prometheus 或其他資料源在收集指標，但需要一個視覺化介面來建 dashboard、設告警（Grafana 也有自己的告警功能）、分享給團隊。如果只需要 CLI 查詢，PromQL 直接在 Prometheus 跑就好。
+系統需要 Grafana 的訊號是：已經有 Prometheus 或其他資料源在收集指標，但需要一個視覺化介面來建 dashboard、設告警（Grafana 也有自己的告警功能）、分享給團隊。只需要臨時查詢時，Prometheus 內建的網頁介面就夠。
 
 ## 設計責任
 
-使用 Grafana 時要決定：dashboard 的組織（按服務、按環境、按角色）、資料源的連線設定、使用者權限（viewer / editor / admin）、告警通知管道（email / Slack / webhook）。告警規則放在 Grafana 還是留在 Prometheus 是一個取捨：放在 Grafana 時它停掉的期間沒有告警，換到的是能對 Prometheus 以外的資料來源告警、不寫 YAML 也能建規則，比較見 [Prometheus 指標的視覺化工具](/backend/04-observability/vendors/prometheus/visualization-tool-selection/)。斷網環境裡 Grafana 的 plugin 需要離線安裝（`grafana-cli --pluginUrl` 指向本地檔案）。
+使用 Grafana 時要決定：dashboard 的組織（按服務、按環境、按角色）、資料源的連線設定、使用者權限（viewer / editor / admin）、告警通知管道（email / Slack / webhook）。告警規則放在 Grafana 還是留在 Prometheus 是一個取捨：放在 Grafana 時它停掉的期間沒有告警，換到的是能對 Prometheus 以外的資料來源告警、不寫 YAML 也能建規則，比較見 [Prometheus 指標的視覺化工具](/backend/04-observability/vendors/prometheus/visualization-tool-selection/)。斷網環境裡 Grafana 的 plugin 需要離線安裝（`grafana cli --pluginUrl <檔案位置> plugins install <plugin 名稱>` 指向本地檔案）。
 
 ## 鄰卡
 
