@@ -65,7 +65,7 @@ services:
 
 同一個服務跑在 app-1 與 app-2 兩台主機上、app-2 的容器停了時，分組少了 `host` 的版本取的是兩台的最小值，而 app-1 的容器還在、值很小，整條規則不成立。磁碟的規則同理，依 `host, device, fstype` 分組，不同主機上同名的 `/dev/nvme0n1p1` 才不會合成一個。同一台主機上跑了不只一個 compose 專案、兩邊有同名的服務時，分組再加 `container_label_com_docker_compose_project`，否則一邊停掉會被另一邊的值蓋掉。多台主機時這條規則還依賴時鐘：`container_last_seen` 的值來自被監控主機的時鐘，`time()` 來自 Prometheus 所在的主機，各台要以 NTP（chrony、systemd-timesyncd）同步，偏差接近 60 秒時，容器還在而規則就成立。
 
-告警送到 Alertmanager 之後，分組與抑制也要依主機分開。下面的片段只列 `route` 與 `inhibit_rules`，`receivers` 的寫法見 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 的 Alertmanager 一節；三個告警名稱取自 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制〉，`HostCpuSaturated` 是原因（主機 CPU 飽和），`ScrapeNearTimeout`、`ProbeSlow`、`ServiceSlow` 是症狀（讀取逼近逾時、外部探測變慢、服務自己的延遲變長），換成自己規則檔裡的名稱。名稱對不上時抑制不會報錯，只是不作用：
+告警送到 Alertmanager 之後，分組與抑制也要依主機分開。下面的片段只列 `route` 與 `inhibit_rules`，`receivers` 的寫法見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/)；三個告警名稱取自 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制〉，`HostCpuSaturated` 是原因（主機 CPU 飽和），`ScrapeNearTimeout`、`ProbeSlow`、`ServiceSlow` 是症狀（讀取逼近逾時、外部探測變慢、服務自己的延遲變長），換成自己規則檔裡的名稱。名稱對不上時抑制不會報錯，只是不作用：
 
 ```yaml
 # alertmanager.yml 的 route 與 inhibit_rules
@@ -196,7 +196,7 @@ absent(up{job="node"})
 
 ## 監控主機放在哪裡
 
-中央的 Prometheus、Alertmanager 與 Grafana 預設放在一台獨立的監控主機上，不和被監控的服務共用。共用時，那台主機過載或停掉，監控跟著一起退化或停掉，而那正是最需要它的時候（見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)）。監控主機自己停掉時，它發不出任何告警，所以另外需要一個不經過它的訊號：在監控主機以外跑的外部探測，以及一條永遠成立的 Watchdog 告警，經由 Alertmanager 持續送到外部的心跳服務，心跳中斷時由外部服務通知（做法見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉一節）。主機只有兩三台、多開一台監控主機不划算時，把 Prometheus、Alertmanager 與 Grafana 放在負載最低的那一台，Watchdog 與外部探測照樣保留，代價是那一台過載時監控跟著退化。
+中央的 Prometheus、Alertmanager 與 Grafana 預設放在一台獨立的監控主機上，不和被監控的服務共用。共用時，那台主機過載或停掉，監控跟著一起退化或停掉，而那正是最需要它的時候（見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)）。監控主機自己停掉時，它發不出任何告警，所以另外需要一個不經過它的訊號：在監控主機以外跑的外部探測，以及一條永遠成立的 Watchdog 告警，經由 Alertmanager 持續送到外部的心跳服務，心跳中斷時由外部服務通知（設定見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 的〈Watchdog：告警鏈本身的心跳〉；這個訊號為什麼要從主機外面發出，見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉一節）。主機只有兩三台、多開一台監控主機不划算時，把 Prometheus、Alertmanager 與 Grafana 放在負載最低的那一台，Watchdog 與外部探測照樣保留，代價是那一台過載時監控跟著退化。
 
 元件因此分成三個 compose 檔：每一台主機（含監控主機）都要跑的 node_exporter 與 cAdvisor 在 `compose.host-exporters.yml`，跟著服務走的 exporter 和服務一起留在 `docker-compose.yml`，Prometheus、Alertmanager、Grafana 在 `compose.monitoring.yml`。監控主機也跑主機層的 exporter，它自己的 CPU、記憶體與磁碟才有人看；它停掉時由 Watchdog 發現，而過載或磁碟快滿要靠它自己的 node_exporter。每台主機在自己的 `.env`（不進版控，每台內容不同）以 `COMPOSE_FILE` 決定讀哪幾個檔，同一個 repo 在每台主機上執行同一條 `docker compose up -d`。`COMPOSE_FILE` 裡檔名的分隔符在 Linux、macOS 是 `:`，Windows 是 `;`：
 
@@ -286,6 +286,6 @@ docker run --rm -v "$PWD/infra/observability/prometheus:/p" -w /p/tests \
 
 - 改用各主機推送到中央時，中央儲存的選擇與 remote write 的故障模式，見 [Remote Write 與長期儲存整合](/backend/04-observability/vendors/prometheus/remote-write-long-term-storage/)。
 - 主機變多之後一台 Prometheus 的時間序列數、記憶體與讀取逾時，見 [Prometheus 容量規劃與故障模式](/backend/04-observability/vendors/prometheus/capacity-failure-modes/)。
-- `host` 標籤在探測類指標（Gatus、Blackbox exporter）、Pushgateway 與 Kubernetes 上各自怎麼加，以及主機飽和時的抑制規則，見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制〉一節。
+- `host` 標籤在探測類指標（Gatus、Blackbox exporter）、Pushgateway 與 Kubernetes 上各自怎麼加，以及主機飽和時的抑制規則，見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制：主機飽和時壓下各服務變慢〉一節；Kubernetes 上在讀取時以 `relabelings` 加節點標籤的做法，見 [在 Kubernetes 上接上監控](/backend/04-observability/vendors/prometheus/kubernetes-monitoring-entry/) 的〈主機標籤改成節點標籤〉。
 - 誰能看面板、Viewer 與 Editor 的權限分級，以及告警規則留在 Prometheus 還是放進 Grafana，見 [Prometheus 指標的視覺化工具](/backend/04-observability/vendors/prometheus/visualization-tool-selection/)。
 - 監控主機上的 Grafana 只綁本機，讓其他電腦上的人看到它的做法（SSH 通道，或監控主機上專用的反向代理），見 [Grafana 的對外存取](/backend/04-observability/vendors/prometheus/grafana-external-access/)。
