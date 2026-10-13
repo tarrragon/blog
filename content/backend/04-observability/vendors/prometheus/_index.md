@@ -94,6 +94,7 @@ curl -s 'http://localhost:9090/api/v1/query?query=up' | jq '.data.result[].value
 - [多台主機的指標收集](multi-host-scraping/)：exporter 跟著主機與服務走、中央讀取與推送的架構、host 標籤、目標清單的來源、主機停掉與從清單消失的偵測
 - [Grafana 的對外存取](grafana-external-access/)：以有沒有主機帳號決定要不要對外、SSH 通道的連法、監控主機上專用反向代理的 TLS、WebSocket 與來源限制，應用入口 Nginx 加上 Grafana 的轉送之後在多台主機時起不來的原因，登入頁對外之後的帳號鎖定與認證放置
 - [Alertmanager 的通知管道](alertmanager-notification-channels/)：路由樹與分組的三個時間參數、以 webhook 接 ntfy 推播與它的訊息模板、email 與 Slack、私密網址放在檔案裡、Watchdog 心跳與通知送不出去的偵測
+- [Kubernetes 上的監控入口](kubernetes-monitoring-entry/)：kube-prometheus-stack 裝了哪些元件與 CRD、ServiceMonitor 與 PrometheusRule 靠 release 標籤被選中、主機標籤改成節點標籤、儀表板經由 ConfigMap 與 sidecar 載入、控制平面只綁本機時讀不到，以及單機叢集過載時的連鎖反應
 
 ## 進階主題（按需閱讀）
 
@@ -229,6 +230,4 @@ curl -s 'http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series' |
 
 ## Backlog
 
-| 項目                                                                             | 類型 | 前置條件       | 規模 |
-| -------------------------------------------------------------------------------- | ---- | -------------- | ---- |
-| Kubernetes 上的監控入口（kube-prometheus-stack、ServiceMonitor、儀表板 sidecar） | 主章 | 有可實測的叢集 | 中   |
+目前沒有待辦項目。
