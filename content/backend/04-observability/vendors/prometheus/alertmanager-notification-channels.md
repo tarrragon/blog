@@ -61,7 +61,7 @@ docker run --rm -v "$PWD:/a" --entrypoint amtool prom/alertmanager:v0.34.1 \
 
 ## 分組與 group_wait、group_interval、repeat_interval
 
-`group_by` 列出的標籤值相同的告警屬於同一組，一組送一則通知。三個時間參數都以組為單位：
+`group_by` 列出的標籤值相同的告警屬於同一組，一組送一則通知。下文的數字取自〈路由樹：一則告警送到哪個 receiver〉那份設定。三個時間參數都以組為單位：
 
 - `group_wait`：一組的第一則告警進來之後，等多久才送第一次通知。等待期間陸續成立的同組告警合進同一則，一台主機停掉時同時成立的好幾條規則不會變成好幾則推播。實測合成告警送進去之後 30 秒送出。
 - `group_interval`：一組已經通知過之後，組裡有變化（新的告警加入、有告警解除）時，距離上次通知至少隔多久才再送。解除的通知因此最晚在恢復之後一個 `group_interval`（這份設定是 5 分鐘）才到：實測停掉前台容器再重新啟動之後 5 分鐘收到解除。
@@ -69,7 +69,7 @@ docker run --rm -v "$PWD:/a" --entrypoint amtool prom/alertmanager:v0.34.1 \
 
 `group_wait` 30 秒與 `group_interval` 5 分鐘是 Alertmanager 的預設值（`repeat_interval` 的預設是 4 小時）；2 小時與 12 小時是這個服務依值班的回應時間選的。重送的計時與靜音存在 Alertmanager 的 `--storage.path` 目錄裡，這個目錄沒有掛 volume 時，容器重建之後所有成立中的組會立刻重送一次，靜音也會消失。
 
-critical 與 warning 分成兩個 topic，是讓只想收 critical 的人只訂一個，也讓 warning 可以單獨靜音。這份設定把 warning 全天推送、以較低的優先度降低打擾；[dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/) 把 warning 定義成工作時間處理，要照那個定義，以 Alertmanager 的 `time_intervals` 定義工作時段，並在 warning 那條路由加上 `active_time_intervals`，工作時段以外的 warning 就不送（這一種沒有實測）。`severity` 是 `info` 或 `none` 的告警（Watchdog 以外）沒有子路由接走時會落到最上層的 warning，要另開一條送到不通知的 receiver。
+critical 與 warning 分成兩個 topic，是讓只想收 critical 的人只訂一個，也讓 warning 可以單獨靜音。這份設定把 warning 全天推送、以較低的優先度降低打擾；[4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/) 把 warning 定義成工作時間處理，要照那個定義，以 Alertmanager 的 `time_intervals` 定義工作時段，並在 warning 那條路由加上 `active_time_intervals`，工作時段以外的 warning 就不送（這一種沒有實測）。`severity` 是 `info` 或 `none` 的告警（Watchdog 以外）沒有子路由接走時會落到最上層的 warning，要另開一條送到不通知的 receiver。
 
 把 receiver 從不送通知的換成實際送出通知的那一個時，已經在 Alertmanager 裡的告警會馬上補送：實測重新載入設定之後 3 秒，兩則原本就成立的 warning（磁碟剩餘空間、探測變慢）送到了 ntfy。第一次接上通知時，手機會先收到一批既有的告警。
 
@@ -134,7 +134,7 @@ Alertmanager 的設定檔不展開環境變數，`${NTFY_TOPIC}` 會原封不動
 
 ## email 與 Slack
 
-下面兩段的 receiver 併進主設定裡已有的 `receivers` 清單，不能整段附加在檔案後面：同一份設定出現兩個 `receivers` 時，`amtool check-config` 回 `field receivers already set`。receiver 也要有一條子路由指到它才會被用到，例子見〈通知送不出去的偵測〉的末段。
+下面兩段的 receiver 併進主設定裡已有的 `receivers` 清單，不能整段附加在檔案後面：同一份設定出現兩個 `receivers` 時，`amtool check-config` 回 `field receivers already set`。receiver 也要有一條子路由指到它才會被用到，例子見〈通知送不出去的偵測〉裡送到 `mail` 的子路由。
 
 email 的 SMTP 伺服器寫在 `global`，所有 `email_configs` 共用：
 
@@ -215,7 +215,7 @@ Prometheus 讀得到 Alertmanager 自己的指標，所以這件事可以寫成�
       receiver: ntfy-warning         # 後面的子路由都不符合時不會回到最上層，所以明寫
 ```
 
-email 本身送不出去時，送 email 的那一份照樣失敗，這一類由 ntfy 那一份或心跳監看服務發現。
+email 本身送不出去時，送 email 的那一份照樣失敗，這一類由 ntfy 那一份送到手機；ntfy 與 email 同時壞掉時兩份都送不出去，要涵蓋這種情形，改用下面送到心跳監看服務的做法。
 
 另一種是送到心跳監看服務：在 healthchecks.io 上另開一個檢查，它的 ping 網址加上 `/fail` 就是回報失敗的網址，以一個 `send_resolved: false` 的 webhook receiver 送到那裡，由心跳監看服務自己的管道通知。不另開檢查、用心跳的那一個時，下一次 Watchdog 心跳會在 5 分鐘內把它翻回正常。這一種沒有實測。
 

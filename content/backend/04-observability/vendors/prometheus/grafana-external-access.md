@@ -1,7 +1,7 @@
 ---
 title: "Grafana 的對外存取：SSH 通道或 VPN、經由應用入口轉送的問題、監控主機上的反向代理，與登入保護和認證的位置"
 date: 2026-10-13
-description: "Grafana 只綁本機之後，讓其他人看到它的做法：看的人能不能經由 SSH 或 VPN 連進來、有沒有固定的來源網段時各自的存取方式，SSH 通道的連法，應用入口 Nginx 加上 Grafana 的轉送之後的兩個問題，監控主機上專用反向代理的 TLS、WebSocket、GF_SERVER_ROOT_URL 與來源限制，以及登入頁對外之後的帳號鎖定與認證放置"
+description: "Grafana 只綁本機之後，讓其他人看到它的做法：看的人能不能經由 SSH 或 VPN 連進來、有沒有固定的來源網段時各自的存取方式，SSH 通道的連法，應用入口 Nginx 加上 Grafana 的轉送之後的兩個問題，監控主機上專用反向代理的 TLS、WebSocket、GF_SERVER_ROOT_URL 與來源限制，以及 Grafana 登入失敗的帳號鎖定與認證放置"
 weight: 16
 tags: ["backend", "observability", "vendor", "prometheus", "grafana"]
 ---
@@ -19,7 +19,7 @@ Grafana 綁在 `127.0.0.1:3000` 時，只有在監控主機上的程式連得到
 
 兩者的差別在於誰承擔「這個人能不能連進來」的判斷。SSH 與 VPN 由既有的 SSH 或 VPN 帳號判斷，對外的做法則把判斷交給 Grafana 的登入頁加上代理的來源限制，而登入頁一旦對外，就會被掃描與猜密碼（見〈Grafana 登入失敗的帳號鎖定，與認證放在哪裡〉）。所以只有工程師要看時，SSH 通道就夠；「沒有 SSH 或 VPN 帳號的人也要看」是加反向代理的觸發條件。代理因此寫成一個可選的 compose 檔：它一啟動就有一個對外的登入頁，所以觸發條件成立之前，監控主機的 `COMPOSE_FILE` 不列進它。
 
-來源限制的效果取決於看的人從哪裡連進來。他們都在辦公室、出口位址固定時，代理只放行那個網段（[CIDR](/infra/knowledge-cards/cidr/) 寫法），其他人連不到登入頁；看的人用手機、在出差地或各自的網路上連進來，沒有固定的網段可寫時，代理只能放行全部來源，登入頁等於對整個網際網路開放。這時把認證移到代理前面的身分驗證服務（見〈Grafana 登入失敗的帳號鎖定，與認證放在哪裡〉裡的「代理前面的身分驗證服務」），或替看的人開 VPN 帳號改走 SSH 或 VPN 那一類，而不是只靠 Grafana 的密碼。為了看儀表板開的 VPN 帳號要限定只能連到 Grafana 的位址：VPN 接進來之後碰得到整個內部網路，包括只有 basic auth 的 Prometheus、Alertmanager 與綁在私有位址的 exporter。
+來源限制的效果取決於看的人從哪裡連進來。他們都在辦公室、出口位址固定時，代理只放行那個網段（[CIDR](/infra/knowledge-cards/cidr/) 寫法），其他人連不到登入頁；看的人用手機、在出差地或各自的網路上連進來，沒有固定的網段可寫時，代理只能放行全部來源，登入頁等於對整個網際網路開放。這時把認證移到代理前面的身分驗證服務（這時 SSH 通道與 VPN 不再能直接連 Grafana，見〈Grafana 登入失敗的帳號鎖定，與認證放在哪裡〉裡的「代理前面的身分驗證服務」），或替看的人開 VPN 帳號改走 SSH 或 VPN 那一類，而不是只靠 Grafana 的密碼。為了看儀表板開的 VPN 帳號要限定只能連到 Grafana 的位址：VPN 接進來之後碰得到整個內部網路，包括只有 basic auth 的 Prometheus、Alertmanager 與綁在私有位址的 exporter。
 
 ## SSH 通道的連法
 
@@ -73,7 +73,7 @@ services:
 
 三個變數都寫成 `${VAR:?訊息}`，沒設就讓 `docker compose` 在啟動前停下，印出 `required variable … is missing a value` 與 compose 檔裡寫的提示，不會帶著空的網域或空的網段起來。`grafana` 那一段併進已有的 Grafana 服務（`compose.monitoring.yml` 或單機的 `docker-compose.yml` 裡那一個）：compose 把同名的服務合併，這一段只替它多加一個環境變數。
 
-`ports` 的 `443` 在單機上可能已經被應用的入口占用，這時 `docker compose up` 回 `port is already allocated`。單機有兩個選擇：代理改發佈另一個連接埠（例如 `"8443:443"`，網址帶上 `:8443`，`GF_SERVER_ROOT_URL` 也要一併改成 `https://${GRAFANA_DOMAIN}:8443/`，否則 Grafana 登入之後的轉址仍指向 443、落到應用的入口），或者在兩者前面再放一層依網域分流的代理或負載平衡器，讓兩個網域共用 443。後一種的那一層同時承載應用與 Grafana，它過載或設定改壞時兩者一起斷，又回到經由應用入口轉送的第二個問題，所以能用的話偏好改連接埠或另一個公開位址。
+`ports` 的 `443` 在單機上可能已經被應用的入口占用，這時 `docker compose up` 回 `port is already allocated`。單機有兩個選擇：代理改發佈另一個連接埠（例如 `"8443:443"`，網址帶上 `:8443`，`GF_SERVER_ROOT_URL` 也要一併改成 `https://${GRAFANA_DOMAIN}:8443/`，否則 Grafana 登入之後的轉址仍指向 443、落到應用的入口），或者在兩者前面再放一層依網域分流的代理或負載平衡器，讓兩個網域共用 443。後一種的那一層同時承載應用與 Grafana，它過載或設定改壞時兩者一起斷，又回到〈經由應用入口 Nginx 轉送的做法〉裡入口出事時監控跟著看不到的問題，所以能用的話偏好改連接埠或另一個公開位址。
 
 ### GF_SERVER_ROOT_URL：Grafana 產生網址的依據
 
@@ -81,7 +81,7 @@ services:
 
 ### Nginx 範本與 Grafana Live 的 WebSocket 轉送
 
-Nginx 的設定放在 `templates/` 底下，檔名以 `.template` 結尾。官方的 nginx 映像啟動時以 `envsubst` 把範本裡的 `${GRAFANA_DOMAIN}` 這類環境變數換成實際值，輸出到 `/etc/nginx/conf.d/`；`$host`、`$http_upgrade` 這些是 Nginx 自己的變數，不是容器的環境變數，原樣保留。
+Nginx 的設定放在範本目錄（上方 compose 掛進容器 `/etc/nginx/templates` 的 `infra/observability/grafana-proxy/templates`）底下，檔名以 `.template` 結尾。官方的 nginx 映像啟動時以 `envsubst` 把範本裡的 `${GRAFANA_DOMAIN}` 這類環境變數換成實際值，輸出到 `/etc/nginx/conf.d/`；`$host`、`$http_upgrade` 這些是 Nginx 自己的變數，不是容器的環境變數，原樣保留。
 
 ```nginx
 # templates/grafana.conf.template
@@ -173,7 +173,7 @@ openssl req -x509 -newkey rsa:2048 -nodes -days 30 -subj "/CN=grafana.localhost"
 
 - **Grafana 的帳號與密碼**：預設的做法，適合組織沒有集中的身分系統、看的人不多、而且來源網段固定時。每個人一組 Grafana 帳號，看畫面的人給 Viewer 角色。帳號由 Grafana 管理，離職時要另外停用。
 - **Grafana 的 OAuth 或 LDAP 登入**：公司已經有 Google Workspace、Microsoft Entra ID、GitHub 組織這類[身分提供者](/backend/knowledge-cards/identity-provider/)時，Grafana 以 OAuth 把登入交給它們（目錄服務是 LDAP 時，Grafana 也有 LDAP 登入），可以依群組對應角色。帳號跟著公司的身分系統走，這時 `GF_SERVER_ROOT_URL` 必須正確，OAuth 的回呼網址由它產生。
-- **代理前面的身分驗證服務**：雲端負載平衡器的身分驗證、Cloudflare Access 這類服務，或自架在本篇 Nginx 前面的 oauth2-proxy，在請求到達 Grafana 之前先驗證身分，Grafana 以 auth proxy 模式讀代理填入的使用者名稱標頭。組織已經用它保護其他內部工具，或者看的人沒有固定的來源網段時，用這一種。Grafana 完全信任那個標頭，所以連得到 Grafana 的路只能剩代理這一條，否則任何人自己填一個標頭就能登入。在本篇的架構裡，同一個 compose 網路上的其他容器、以及 `127.0.0.1:3000` 的發佈都能直接連到 Grafana；改用 auth proxy 時拿掉 `127.0.0.1:3000` 的發佈，並以 Grafana 的 `GF_AUTH_PROXY_WHITELIST` 限定只接受代理的位址；拿掉之後 SSH 通道也連不到 Grafana 了，工程師同樣改經由身分驗證服務進來。這一種沒有實測。
+- **代理前面的身分驗證服務**：雲端負載平衡器的身分驗證、Cloudflare Access 這類服務，或自架在本篇 Nginx 前面的 oauth2-proxy，在請求到達 Grafana 之前先驗證身分，Grafana 以 auth proxy 模式讀代理填入的使用者名稱標頭。組織已經用它保護其他內部工具，或者看的人沒有固定的來源網段時，用這一種。Grafana 完全信任那個標頭，所以連得到 Grafana 的路只能剩代理這一條，否則任何人自己填一個標頭就能登入。在本篇的架構裡，同一個 compose 網路上的其他容器、以及 `127.0.0.1:3000` 或 VPN 位址上的發佈都能直接連到 Grafana；改用 auth proxy 時拿掉這些發佈，並以 Grafana 的 `GF_AUTH_PROXY_WHITELIST` 限定只接受代理的位址；拿掉之後 SSH 通道與 VPN 都連不到 Grafana 了，工程師同樣改經由身分驗證服務進來。這一種沒有實測。
 
 ## 延伸閱讀：Grafana 的角色、監控主機的位置、Grafana 本身的設定與告警通知
 

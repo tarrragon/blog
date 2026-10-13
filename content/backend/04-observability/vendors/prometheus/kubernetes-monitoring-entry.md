@@ -23,7 +23,6 @@ tags: ["backend", "observability", "vendor", "prometheus", "kubernetes"]
 
 容器的 CPU 與記憶體不另外裝 cAdvisor：每個節點的 kubelet 內建 cAdvisor，chart 附的讀取設定直接讀 kubelet。
 
-
 chart 預設不替 Prometheus 與 Alertmanager 建 PersistentVolumeClaim（`prometheus.prometheusSpec.storageSpec` 與 `alertmanager.alertmanagerSpec.storage` 都是空的），資料寫在 Pod 自己的暫存目錄裡。Pod 被重新排到別的節點或重建時，指標的歷史、Alertmanager 的靜音與通知紀錄一起消失；Prometheus 的保留期間預設 `10d`。正式叢集在這兩個值寫 `volumeClaimTemplate`，指定叢集裡可用的 StorageClass。這一項依 chart 92.3.0 的預設值寫成，沒有實測。
 
 Operator 監看的物件是 chart 安裝的 CRD（Custom Resource Definition，讓 Kubernetes API 多認得一種物件），實測裝了十種，其中最常直接寫的是三種：
@@ -128,11 +127,11 @@ Alertmanager 的路由與 receiver 寫在 chart 的 `alertmanager.config` 值裡
 
 要接通知時改寫這個值。子路由與 receiver 的寫法和 Compose 上相同，見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/)，有三處要依 chart 的預設調整：
 
-- **Watchdog 那條子路由**：chart 預設只寫了 matchers 與 receiver，時間參數沿用上層的 `group_wait: 30s`、`group_interval: 5m`、`repeat_interval: 12h`。只把 receiver 換成心跳監看服務時，心跳每 12 小時才送一次，心跳監看服務會一直判定告警鏈停了；要照〈Watchdog：告警鏈本身的心跳〉一併寫上 `group_wait: 0s`、`group_interval: 1m`、`repeat_interval: 5m`。Watchdog 規則 chart 已經有，不必另加。
-- **分組與範本裡的 `host`**：Compose 的設定依 `host` 分組，ntfy 與 Slack 的標題也讀 `host`，而 Kubernetes 上的序列沒有這個標籤，分組會塌成只依 `alertname`，標題顯示 `<no value>`。改用 `node`，或 chart 預設分組用的 `namespace`。
-- **`severity` 是 `info` 與 `none` 的告警**：chart 的預設規則有這兩級（例如 `InfoInhibitor`），Compose 的路由會把沒有子路由接走的都送到最上層的 receiver，它們因此推到手機。替這兩級另開一條送到 `null` 的子路由。
+- **Watchdog 那條子路由**：chart 預設只寫了 matchers 與 receiver，時間參數沿用上層的 `group_wait: 30s`、`group_interval: 5m`、`repeat_interval: 12h`。只把 receiver 換成心跳監看服務（監控以外、接收心跳並在心跳中斷時通知的外部服務，例如 healthchecks.io）時，心跳每 12 小時才送一次，心跳監看服務會一直判定告警鏈停了；要照那一篇〈Watchdog：告警鏈本身的心跳〉的設定一併寫上 `group_wait: 0s`、`group_interval: 1m`、`repeat_interval: 5m`。Watchdog 規則 chart 已經有，不必另加。
+- **分組與範本裡的 `host`**：Compose 的設定依 `host` 分組，ntfy 與 Slack 的標題也讀 `host`，而 Kubernetes 上的序列沒有這個標籤，分組只剩依 `alertname` 一個標籤，標題顯示 `<no value>`。改用 `node`，或 chart 預設分組用的 `namespace`。
+- **`severity` 是 `info` 與 `none` 的告警**：chart 的預設規則有這兩級（info 例如 `CPUThrottlingHigh`，none 例如 `InfoInhibitor`），Compose 的路由會把沒有子路由接走的都送到最上層的 receiver，它們因此推到手機。替這兩級另開一條送到 `null` 的子路由，排在 Watchdog 那一條之後，否則同樣是 `none` 的 Watchdog 會先被它接走。
 
-`routes` 與 `receivers` 在 Helm 的值裡是清單，自己寫的清單整份取代 chart 的預設，所以 `null` receiver 與送到它的子路由要一起寫進去。通知送失敗的告警 chart 也附了（`AlertmanagerFailedToSendAlerts`），不必照 Compose 的版本另寫。私密的網址以 Secret 交給 Alertmanager：在 `alertmanager.alertmanagerSpec.secrets` 列出 Secret 的名稱，Operator 把它掛在 Alertmanager 的 `/etc/alertmanager/secrets/<Secret 名稱>/` 底下，`url_file` 指到那裡。這一節依 chart 92.3.0 的預設值寫成，沒有在叢集上實際送出通知。
+`routes` 與 `receivers` 在 Helm 的值裡是清單，自己寫的清單整份取代 chart 的預設，所以 `null` receiver 與送到它的子路由要一起寫進去；`inhibit_rules` 同理，自己寫了抑制規則，chart 預設的抑制規則就不在了，而沒寫的鍵（例如上層的 `group_by`、`group_wait`）沿用 chart 的值。通知送失敗的告警 chart 也附了（`AlertmanagerFailedToSendAlerts`，severity 是 warning，條件是 15 分鐘內失敗的比例超過 1%），不必另寫規則；它同樣要另走一條不經過同一個通知服務的路，照〈通知送不出去的偵測〉開子路由時，`matchers` 換成 `alertname="AlertmanagerFailedToSendAlerts"`。私密的網址以 Secret 交給 Alertmanager：在 `alertmanager.alertmanagerSpec.secrets` 列出 Secret 的名稱，Operator 把它掛在 Alertmanager 的 `/etc/alertmanager/secrets/<Secret 名稱>/` 底下，`url_file` 指到那裡。這一節依 chart 92.3.0 的預設值寫成，沒有在叢集上實際送出通知。
 
 ## 控制平面元件的 metrics 綁定位址與讀取失敗
 
@@ -179,7 +178,7 @@ nodes:
 
 ## 單節點叢集上的資源用量與記憶體不足時的表現
 
-裝好之後量這一組在叢集裡的記憶體（`container_memory_working_set_bytes`，依 Pod 加總）：Grafana 421 MB、Prometheus 355 MB、Alertmanager 58 MB、Operator 40 MB、kube-state-metrics 23 MB、node-exporter 19 MB，合計約 916 MB；kind 的節點容器整個約 2 GB。Prometheus 的活躍序列是 57,572 條，叢集裡只有一個節點、一個範例服務，這些幾乎全部來自 kubelet、API server 與預設的規則所需的指標，是 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 那一整組（約九千條）的六倍多。這些數字只代表這個單節點叢集，自己的叢集以同一個查詢量。
+裝好之後量這一組在叢集裡的記憶體（`container_memory_working_set_bytes`，依 Pod 加總）：Grafana 421 MB、Prometheus 355 MB、Alertmanager 58 MB、Operator 40 MB、kube-state-metrics 23 MB、node-exporter 19 MB，合計約 916 MB；kind 的節點容器整個約 2 GB。Prometheus 的活躍序列是 57,572 條，叢集裡只有一個節點、一個範例服務，這些幾乎全部來自 kubelet、API server 與預設的規則所需的指標，是 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 那一整組（約九千條）的六倍多。這些數字只代表這個單節點叢集，自己的叢集以同一個查詢量出自己的數字。
 
 單機上的叢集與主機上其他的程式共用記憶體，記憶體不足時的表現不像記憶體問題。主機開始大量換頁之後，etcd 的寫入逾時，API server、controller-manager 與 scheduler 反覆重啟；依賴 API server 的 Operator 與 kube-state-metrics 連不上它而進入 CrashLoopBackOff（容器反覆啟動失敗、重啟間隔逐次拉長的狀態）；存活探針逾時又讓 kubelet 重啟更多容器，增加負載；預設規則 `KubeAPIErrorBudgetBurn` 以 critical 成立。這一串故障看起來各自獨立，共同的原因在主機。實測在一台 16 GB 的 Mac 上，同時跑著另一組 Docker 服務時，第一次安裝就以 `etcdserver: request timed out` 失敗，接著出現上面每一種故障；當時主機的 swap 用到 13 GB，系統負載（[load average](/backend/knowledge-cards/load-average/)）到 90，而 CPU 使用率並不高。
 
