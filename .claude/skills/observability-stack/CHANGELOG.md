@@ -2,6 +2,8 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
+**Version**: 1.5.2 — 虛擬機裡掛入的主機磁碟：大小差固定倍數也是主機的磁碟，位元組不可信、只用剩餘比例（OrbStack 2.2.3 的 virtiofs 區塊大小欄位與區塊數單位不同，node_exporter 的位元組放大 256 倍）
+
 **Version**: 1.5.1 — 翻譯探針指出的歧義：探測類 `host` 填被探測端點所在的主機、`relabel_configs` 的句構、Kubernetes 上 `node` 標籤加到哪一側的序列
 
 **Version**: 1.5.0 — 多輪審查 Round 4：主機飽和改用 5 分鐘平均的 load（原始 load1 加 for 實測不成立）；原因與症狀在觸發與恢復兩端對齊，原因加 `keep_firing_for`；延遲探測改看慢探測比例（15 分鐘 30 個樣本取分位數近於取最慢的幾次）；嚴重度分工寫明（可用性與 burn rate 通知值班、固定門檻延遲為 warning）與分組的代價；`host` 指症狀發生的主機，layer-signals 新增〈主機標籤〉（本機 exporter、探測、Pushgateway、Kubernetes 兩側）；Watchdog route 補 `group_interval`；合成告警的標籤從各規則運算式查、對照組用不帶篩選的查詢確認；容器停止的標籤查詢改列全部容器並改寫 `min` 的說明；外部探測的通知與 Alertmanager 分工；Kubernetes 分支修正 cAdvisor 的理由與 AlertmanagerConfig 的 namespace 比對；Windows CPU 改用不受語言影響的指令；PSI 不限實體主機；監控資源的估算方法

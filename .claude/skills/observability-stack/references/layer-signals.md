@@ -49,7 +49,7 @@ min by (device, fstype) (
 ) < 0.10
 ```
 
-分組前先跑 `count by (device, fstype) (node_filesystem_size_bytes)` 列出各顆，對照主機上 `df` 的大小，認出哪一顆是主機的磁碟（OrbStack 2.2.3 上它的 `fstype` 是 `virtiofs`）。只看 Docker 資料那一顆會漏掉主機快滿。
+分組前先跑 `count by (device, fstype) (node_filesystem_size_bytes)` 列出各顆，對照主機上 `df` 的大小，認出哪一顆是主機的磁碟（OrbStack 2.2.3 上它的 `fstype` 是 `virtiofs`）。大小差一個固定倍數的也是主機的磁碟，那一顆的位元組不可信：node_exporter 以區塊數乘 `statfs` 的 `f_bsize` 算位元組，而 OrbStack 的 virtiofs 區塊數以 4 KiB 計、`f_bsize` 填 1 MiB，放大 256 倍；`df` 用 `f_frsize` 所以正確。規則與儀表板都用剩餘比例，比例不受倍數影響；Linux 主機本身的 ext4、xfs 兩個欄位相等，位元組也可用。只看 Docker 資料那一顆會漏掉主機快滿。
 
 **規則改了要重新載入**：規則或設定改完，先用 `promtool check rules`、`amtool check-config` 檢查語法，再重新載入。Prometheus 啟動時加 `--web.enable-lifecycle`，才能 `POST /-/reload`；Alertmanager 一律可以打它的 `POST /-/reload`（或送 SIGHUP），不需要額外的旗標。
 

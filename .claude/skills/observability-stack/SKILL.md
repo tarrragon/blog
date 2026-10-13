@@ -3,7 +3,7 @@ name: observability-stack
 description: "自架指標監控（Prometheus、exporter、Grafana、Alertmanager）的設計、實作與驗收：依層盤點訊號、監控所在層的盲區、各層 exporter 的接法、三項驗收與故障注入、告警（可用與延遲分開、依原因抑制、偵測容器停止）。Triggers: 監控, Prometheus, exporter, Grafana, cAdvisor, node_exporter, Alertmanager, 告警, 抑制, 故障注入"
 metadata:
   portable: true
-  version: 1.5.1
+  version: 1.5.2
 ---
 
 # Observability Stack
@@ -51,7 +51,7 @@ metadata:
 監控只看得到它所在的那一層。下面三種盲區，各寫一句進盤點表下方的「監控跑在哪一層」與「主機外的訊號跑在哪裡」：
 
 - **跑在虛擬機裡的監控看不到虛擬機以外的 CPU 競爭從哪裡來**：macOS、Windows 上的 Docker 跑在 Linux 虛擬機裡，node_exporter 與 cAdvisor 回報的是虛擬機。主機上其他程式吃滿 CPU 時，虛擬機的 load 很低而容器全面變慢（OrbStack 的 steal 序列存在、值恆為 0）。虛擬機裡沒有指標直接指出這個原因；間接反映它的是 Prometheus 自己的讀取耗時（`scrape_duration_seconds`）與探測的回應時間，它們在各服務 CPU 用量都低時一起升高。雲端虛擬機看 steal 時間（虛擬機想用 CPU 而虛擬化層分給別的虛擬機的時間），它是累計值，查 `avg without (cpu, mode) (rate(node_cpu_seconds_total{mode="steal"}[5m]))`；先確認它不是恆為 0。
-- **虛擬機裡看到的磁碟要分清是哪一顆**：虛擬機放 Docker 資料的磁碟是主機上的映像檔，回報的可用空間可以比主機實際剩下的多（OrbStack 上實測主機磁碟寫滿時虛擬機被停掉，其他環境沒有實測）。有些環境（OrbStack）另外把主機的目錄掛進虛擬機：在 Prometheus 查 `count by (device, fstype) (node_filesystem_size_bytes)` 列出各顆，對照主機上 `df -h` 的大小，有一致的那一顆，就讓磁碟告警涵蓋它（規則見 `references/layer-signals.md` 的磁碟一則）。
+- **虛擬機裡看到的磁碟要分清是哪一顆**：虛擬機放 Docker 資料的磁碟是主機上的映像檔，回報的可用空間可以比主機實際剩下的多（OrbStack 上實測主機磁碟寫滿時虛擬機被停掉，其他環境沒有實測）。有些環境（OrbStack）另外把主機的目錄掛進虛擬機：在 Prometheus 查 `count by (device, fstype) (node_filesystem_size_bytes)` 列出各顆，對照主機上 `df -h` 的大小，一致或差一個固定倍數的那一顆是主機的磁碟，就讓磁碟告警涵蓋它；差倍數的那一顆位元組不可信、只用剩餘比例（OrbStack 2.2.3 的 virtiofs 區塊大小欄位填 1 MiB 而區塊數以 4 KiB 計，node_exporter 算出的位元組放大 256 倍）（規則見 `references/layer-signals.md` 的磁碟一則）。
 - **監控與被監控的服務共用主機時一起退化**：探測與 Prometheus 自己也在等 CPU，探測量到的延遲包含它們自己的等待；Prometheus 讀取 exporter 的耗時逼近 `scrape_timeout` 時讀取失敗、資料出現空洞；資源耗盡時一起停。所以主機外的訊號那一項要填一個不在這台主機上跑的訊號，通常是外部探測：另一台機器或外部的 uptime 服務定時打服務的健康端點。Prometheus 整個停掉時它自己發不出告警，所以加一條永遠成立的告警規則（Watchdog，`expr: vector(1)`），Alertmanager 經由一條專用的 route 把它持續送到外部服務，外部服務在心跳中斷時通知（dead man's switch）。這條 route 的 `repeat_interval`（預設 4 小時）會被往上取到 `group_interval`（預設 5 分鐘）的倍數，所以兩個都設短於外部服務的心跳期限（例如 `group_interval: 30s`、`repeat_interval: 1m`，對 5 分鐘的心跳期限），`group_wait` 設 0，`group_by` 只放 `alertname`。
 
 ## 量測前的主機檢查

@@ -102,7 +102,7 @@ macOS 上的 Docker 跑在一台 Linux 虛擬機裡，容器與裝在 compose �
 磁碟的可見範圍與 CPU 不同：虛擬機裡看得到兩顆磁碟，要分清楚是哪一顆。
 
 - **虛擬機放 Docker 資料的磁碟**（OrbStack 上是 `device="/dev/vdb1"`，掛在 `/var/lib/docker`）：它是存在 Mac 磁碟上的一個映像檔，用到才佔用 Mac 的空間。實測它回報可用 34.6 GB 時，Mac 實際只剩 15 GB；後來另一個時間點它剩 48.9%，Mac 剩 2.4%。
-- **Mac 本機的磁碟**：OrbStack 用 virtiofs 把 Mac 的 `/Users`、`/private` 等目錄掛進虛擬機，node_exporter 以 `device="mac"`、`fstype="virtiofs"` 回報它，數字和 Mac 上的 `df` 一致。
+- **Mac 本機的磁碟**：OrbStack 用 virtiofs 把 Mac 的 `/Users`、`/private` 等目錄掛進虛擬機，node_exporter 以 `device="mac"`、`fstype="virtiofs"` 回報它。這一顆的剩餘比例和 Mac 上的 `df` 一致，位元組數則放大 256 倍（460 GiB 的 Mac 磁碟顯示成 126 TB）：OrbStack 2.2.3 回報的區塊數以 4 KiB 計，區塊大小欄位（`statfs` 的 `f_bsize`）卻填 1 MiB，node_exporter 把兩者相乘算位元組；`df` 用的是另一個欄位 `f_frsize`（4 KiB），所以它算得對。大小與可用量放大同樣的倍數，比例不受影響，所以這一顆在告警與儀表板上都只用剩餘比例。
 
 只看 Docker 那一顆會以為空間充足。Mac 的磁碟寫滿時，虛擬機（連同裡面全部的容器）會被停掉（實測時 Mac 剩不到 1 GB，大量寫入 PostgreSQL 的過程中連續發生三次）。所以磁碟的告警要依裝置分組、兩顆都涵蓋（同一顆磁碟常掛在好幾個掛載點，不分組時一顆磁碟會發好幾則告警）：
 
@@ -114,7 +114,7 @@ min by (device, fstype) (
 ) < 0.10
 ```
 
-被排除的 fstype 是記憶體檔案系統（tmpfs）、容器的疊加層（overlay）、唯讀映像（squashfs）與 EFI 分割區（vfat），它們的空間不是要告警的對象；`0.10` 是範例門檻，實際的值依磁碟的增長速度與清出空間要花的時間來定。寫成告警規則時加上持續條件（例如 `for: 10m`），暫存檔造成的短暫低點才不會發告警。剩餘比例之外還有兩種寫法：inode 用完時空間還在而檔案寫不進去，看 `node_filesystem_files_free`；依增長速度預告，`predict_linear(node_filesystem_avail_bytes[6h], 24*3600) < 0` 代表照過去 6 小時的速度，一天內會寫滿。換一個環境時，先查 `count by (device, fstype) (node_filesystem_size_bytes)` 列出各顆，再決定排除哪些；其他把 Docker 跑在虛擬機裡的環境不一定把主機的目錄掛進來，列表裡有沒有大小和主機磁碟一致的那一顆就知道。
+被排除的 fstype 是記憶體檔案系統（tmpfs）、容器的疊加層（overlay）、唯讀映像（squashfs）與 EFI 分割區（vfat），它們的空間不是要告警的對象；`0.10` 是範例門檻，實際的值依磁碟的增長速度與清出空間要花的時間來定。寫成告警規則時加上持續條件（例如 `for: 10m`），暫存檔造成的短暫低點才不會發告警。剩餘比例之外還有兩種寫法：inode 用完時空間還在而檔案寫不進去，看 `node_filesystem_files_free`；依增長速度預告，`predict_linear(node_filesystem_avail_bytes[6h], 24*3600) < 0` 代表照過去 6 小時的速度，一天內會寫滿。換一個環境時，先查 `count by (device, fstype) (node_filesystem_size_bytes)` 列出各顆，再決定排除哪些；其他把 Docker 跑在虛擬機裡的環境不一定把主機的目錄掛進來：拿列表裡各顆的大小和主機上 `df` 的大小比，一致的那一顆是主機的磁碟，差一個固定倍數的（OrbStack 的 virtiofs 差 256 倍）也是，那一顆只用比例。雲端主機上 node_exporter 看到的就是主機本身的磁碟，ext4、xfs 的 `f_bsize` 與 `f_frsize` 相等，位元組與比例都和 `df` 一致。
 
 所以監控的範圍由它裝在哪一層決定：
 
