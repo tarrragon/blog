@@ -92,6 +92,7 @@ curl -s 'http://localhost:9090/api/v1/query?query=up' | jq '.data.result[].value
 - [單機 Compose 的最小監控堆疊](single-host-compose-stack/)：在一台主機上接起 Prometheus、Alertmanager、Grafana 與主機、容器、資料庫、快取、入口各層的 exporter，每個掛載與旗標的理由
 - [Prometheus 指標的視覺化工具](visualization-tool-selection/)：視覺化層承擔的責任，內建介面、Grafana、Perses、Kibana 與託管服務各自成立的前提，告警規則放在 Prometheus 還是 Grafana 的取捨
 - [多台主機的指標收集](multi-host-scraping/)：exporter 跟著主機與服務走、中央讀取與推送的架構、host 標籤、目標清單的來源、主機停掉與從清單消失的偵測
+- [Grafana 的對外存取](grafana-external-access/)：以有沒有主機帳號決定要不要對外、SSH 通道的連法、監控主機上專用反向代理的 TLS、WebSocket 與來源限制，應用入口 Nginx 加上 Grafana 的轉送之後在多台主機時起不來的原因，登入頁對外之後的帳號鎖定與認證放置
 
 ## 進階主題（按需閱讀）
 
@@ -227,8 +228,7 @@ curl -s 'http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series' |
 
 ## Backlog
 
-| 項目                                                                                            | 類型 | 前置條件             | 規模 |
-| ----------------------------------------------------------------------------------------------- | ---- | -------------------- | ---- |
-| Grafana 經入口反向代理對外開放：Nginx 的 location、`GF_SERVER_ROOT_URL`、認證放在代理或 Grafana | 主章 | 實作專案接上入口     | 小   |
-| Alertmanager 通知管道的範例（webhook、email、Slack 的 receiver 與 route）                       | 主章 | 有實際的通知管道可測 | 小   |
-| Kubernetes 上的監控入口（kube-prometheus-stack、ServiceMonitor、儀表板 sidecar）                | 主章 | 有可實測的叢集       | 中   |
+| 項目                                                                             | 類型 | 前置條件             | 規模 |
+| -------------------------------------------------------------------------------- | ---- | -------------------- | ---- |
+| Alertmanager 通知管道的範例（webhook、email、Slack 的 receiver 與 route）        | 主章 | 有實際的通知管道可測 | 小   |
+| Kubernetes 上的監控入口（kube-prometheus-stack、ServiceMonitor、儀表板 sidecar） | 主章 | 有可實測的叢集       | 中   |

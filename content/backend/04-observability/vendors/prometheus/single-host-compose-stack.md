@@ -321,7 +321,7 @@ volumes:
 
 ## 連接埠與資源用量
 
-Prometheus、Alertmanager 與 Grafana 的程式預設聽全部的網路介面，compose 的 `ports` 寫成 `"127.0.0.1:9090:9090"` 這種形式，才只綁在主機的本機位址上。要給其他人看時，對外開的是有帳號與角色的 Grafana，經過入口的反向代理與認證；Prometheus 與 Alertmanager 沒有權限分級，繼續只綁本機。exporter 與被監控的服務在同一個 compose 網路裡，Prometheus 以服務名稱連它們，所以 exporter 都不發佈連接埠。
+Prometheus、Alertmanager 與 Grafana 的程式預設聽全部的網路介面，compose 的 `ports` 寫成 `"127.0.0.1:9090:9090"` 這種形式，才只綁在主機的本機位址上。要給其他人看時，對外開的是有帳號與角色的 Grafana：有主機帳號的人用 SSH 通道連本機的 3000，沒有的人經過監控主機上專用的反向代理，見 [Grafana 的對外存取](/backend/04-observability/vendors/prometheus/grafana-external-access/)；Prometheus 與 Alertmanager 沒有權限分級，繼續只綁本機。exporter 與被監控的服務在同一個 compose 網路裡，Prometheus 以服務名稱連它們，所以 exporter 都不發佈連接埠。
 
 這一整組（各層的 exporter 加上 Prometheus、Grafana 與 Alertmanager）的記憶體用 `sum by (container_label_com_docker_compose_service) (container_memory_working_set_bytes)` 量。在那個短網址服務上（macOS 的 OrbStack、單機、約九千條活躍的時間序列）一天內每小時取樣，總和約 600 MB 上下，其中 Grafana 約 240 到 400 MB、Prometheus 約 140 到 235 MB 最多。Prometheus 的記憶體主要隨活躍的時間序列數成長，保留天數影響的是磁碟；Grafana 隨開著的面板與同時進行的查詢起伏。這些數字只代表那一台，小機型上監控本身和服務搶同一份記憶體，接上之後用同一個查詢量自己的數字。放不下時把 Prometheus 這類元件移到另一台機器，怎麼拆見 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/) 的〈監控主機放在哪裡〉，共用主機的取捨見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)。
 

@@ -288,3 +288,4 @@ docker run --rm -v "$PWD/infra/observability/prometheus:/p" -w /p/tests \
 - 主機變多之後一台 Prometheus 的時間序列數、記憶體與讀取逾時，見 [Prometheus 容量規劃與故障模式](/backend/04-observability/vendors/prometheus/capacity-failure-modes/)。
 - `host` 標籤在探測類指標（Gatus、Blackbox exporter）、Pushgateway 與 Kubernetes 上各自怎麼加，以及主機飽和時的抑制規則，見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制〉一節。
 - 誰能看面板、Viewer 與 Editor 的權限分級，以及告警規則留在 Prometheus 還是放進 Grafana，見 [Prometheus 指標的視覺化工具](/backend/04-observability/vendors/prometheus/visualization-tool-selection/)。
+- 監控主機上的 Grafana 只綁本機，讓其他電腦上的人看到它的做法（SSH 通道，或監控主機上專用的反向代理），見 [Grafana 的對外存取](/backend/04-observability/vendors/prometheus/grafana-external-access/)。

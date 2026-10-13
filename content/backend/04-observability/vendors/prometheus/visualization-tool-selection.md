@@ -77,7 +77,7 @@ Grafana Cloud、Datadog、雲端供應商的監控主控台（CloudWatch、Cloud
 
 各工具成立的前提拆成以下幾項，它們各自獨立變動，任何一項改變，適合的工具就跟著換。這些前提由視覺化層的責任換算而來：看畫面的人對應存取控制；儀表板定義的保存方式、告警規則的位置、資料所在的平台、授權各自對應同名的那一項責任；查詢與呈現每個工具都做得到，不構成差別；主機的資源與維運的人力是責任清單之外的條件。
 
-- **看畫面的人**：只有維護 Prometheus 的人、用途是排查時，內建介面就夠，不多跑元件。要給維護者以外的人看、需要「只能看」的權限時，加上 Grafana 或 Perses 這類有帳號與角色的工具，對外開的是這個工具（經過反向代理與認證），Prometheus 與 Alertmanager 繼續只綁在本機位址。
+- **看畫面的人**：只有維護 Prometheus 的人、用途是排查時，內建介面就夠，不多跑元件。要給維護者以外的人看、需要「只能看」的權限時，加上 Grafana 或 Perses 這類有帳號與角色的工具，對外開的是這個工具（經過反向代理與認證，Grafana 的做法見 [Grafana 的對外存取](/backend/04-observability/vendors/prometheus/grafana-external-access/)），Prometheus 與 Alertmanager 繼續只綁在本機位址。
 - **看畫面的人是不是不同的客戶**：把儀表板嵌進產品給不同客戶看時，Viewer 角色只管能不能改，不管能看到哪些資料，而儀表板變數（例如 `host`）看的人自己就能改掉。所以要在資料層分開租戶：每個客戶一個 Grafana 組織（organization），各自有只查得到自己資料的資料來源，或讓查詢經過依租戶過濾的儲存（例如 Mimir 的多租戶：Mimir 以請求標頭 `X-Scope-OrgID` 區分租戶，本身不驗證這個標頭，前面要有一層先認證、再替請求填入租戶 ID 的反向代理，否則沒有隔離）。這一項決定的是資料怎麼分，選哪個儀表板工具都要處理。
 - **儀表板定義的保存方式**：可以接受儀表板存在工具的資料庫裡時，Grafana 的預設就能用。這時 Grafana 的資料目錄要掛在 volume 上並納入備份，沒有掛的話，重建容器時儀表板就遺失。要求每一次修改都經過 code review 時，Grafana 改用 provisioning 檔或 Foundation SDK；部署本身已經是 Kubernetes 加 GitOps 時，Grafana 可以用 kube-prometheus-stack 的儀表板 sidecar（讀帶特定標籤的 ConfigMap）或 Grafana Operator 把儀表板放進同一個流程，並沿用現成的 mixin 儀表板；要儀表板從規格層就是宣告式、或需要 Apache 授權時，Perses 的規格與 operator 是更直接的選項。
 - **告警規則的位置**：要求告警在視覺化工具停掉時仍發得出去，或要求規則能用 `promtool` 測試（兩者任一成立）時，規則留在 Prometheus，視覺化工具只負責畫面。要對 Prometheus 以外的資料來源告警、或要讓不寫 YAML 的人建規則時，用 Grafana 的告警，並接受它進入告警路徑，另外安排一個不經過它的訊號（例如外部探測）。
