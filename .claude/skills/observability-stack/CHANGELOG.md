@@ -2,6 +2,8 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
+**Version**: 1.6.0 — 多台主機：host 標籤寫在每個讀取對象上（static_configs／file_sd 的 labels），job 層常數 replacement 只在一個 job 一台主機時成立；容器停止與磁碟的聚合保留 host；抑制名單統一為 ProbeSlow|ServiceSlow|ScrapeNearTimeout；layer-signals 補讀取對象清單（掛目錄不掛單檔）與主機停掉／消失／清單空了三種偵測
+
 **Version**: 1.5.2 — 虛擬機裡掛入的主機磁碟：大小差固定倍數也是主機的磁碟，位元組不可信、只用剩餘比例（OrbStack 2.2.3 的 virtiofs 區塊大小欄位與區塊數單位不同，node_exporter 的位元組放大 256 倍）
 
 **Version**: 1.5.1 — 翻譯探針指出的歧義：探測類 `host` 填被探測端點所在的主機、`relabel_configs` 的句構、Kubernetes 上 `node` 標籤加到哪一側的序列

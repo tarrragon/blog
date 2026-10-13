@@ -14,13 +14,13 @@ tags: ["backend", "observability", "alerting", "prometheus", "monitoring"]
 
 跑這個開發環境的 Mac 有 8 顆核心，佔用 CPU 的是 Mac 上與這個服務無關的其他程式；在 Mac 上隔幾分鐘跑一次 `uptime`，數小時內的 load average 都在 55 到 78 之間。[load average](/backend/knowledge-cards/load-average/) 是一段時間內在跑或在等 CPU 的平均行程數（Linux 另把等磁碟讀寫的行程也算進去），除以核心數大於 1 代表有行程在排隊，55 對 8 顆核心是每顆核心約 6.9 個可執行的行程，其中近 6 個在等。Docker 的虛擬機同樣分到 8 顆核心。同一段 30 分鐘的時間裡，各層的監控回報：
 
-| 層                                                                                           | 回報                                                                                          |
-| -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Gatus 對 Laravel 後端的探測（條件：回應碼 200 且回應時間低於 500 ms）                        | 達標 49%，最慢 6.0 秒，未達標的那幾次回應碼都是 200                                           |
-| Gatus 對 Go 後端的探測（同樣的條件）                                                         | 達標 92.5%，最慢 2.1 秒                                                                       |
-| Laravel 容器自己的 healthcheck（只看回應碼）                                                 | 一直是 healthy                                                                                |
-| 虛擬機裡的 node_exporter                                                                     | load 除以核心數在 0.33 到 1.28 之間（平均 0.69）                                              |
-| Prometheus 讀取（scrape）各 [exporter](/backend/knowledge-cards/prometheus-exporter/) 的耗時 | 各讀取對象（設定裡稱為 job）的最大值 8.6 到 14.9 秒，預設逾時 10 秒；postgres 有 4 次讀取失敗 |
+| 層                                                                                           | 回報                                                                                                    |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Gatus 對 Laravel 後端的探測（條件：回應碼 200 且回應時間低於 500 ms）                        | 達標 49%，最慢 6.0 秒，未達標的那幾次回應碼都是 200                                                     |
+| Gatus 對 Go 後端的探測（同樣的條件）                                                         | 達標 92.5%，最慢 2.1 秒                                                                                 |
+| Laravel 容器自己的 healthcheck（只看回應碼）                                                 | 一直是 healthy                                                                                          |
+| 虛擬機裡的 node_exporter                                                                     | load 除以核心數在 0.33 到 1.28 之間（平均 0.69）                                                        |
+| Prometheus 讀取（scrape）各 [exporter](/backend/knowledge-cards/prometheus-exporter/) 的耗時 | 依 job（同一種 exporter 的讀取對象）取的最大值 8.6 到 14.9 秒，預設逾時 10 秒；postgres 有 4 次讀取失敗 |
 
 這張表裡每一個監控回報的都是事實：Laravel 對使用者來說確實變慢了，容器確實活著，虛擬機裡的 load 確實低於下文告警規則用的門檻 1.5。收到告警的人看到的是「Laravel 後端失敗」，而成因在 Mac 上，沒有一個訊號直接指向它。這個情境有三個要分開處理的問題：告警把「變慢」報成「失敗」、告警只報出各服務的症狀而沒有附上它們共同的原因、監控自己也在同一台過載的機器上。
 
@@ -104,7 +104,7 @@ groups:
 # 主機飽和的告警成立時，壓下 warning 級的症狀；服務停止的告警與會通知值班的症狀不壓
 inhibit_rules:
   - source_matchers: [alertname="HostCpuSaturated"]
-    target_matchers: [alertname=~"ProbeSlow|ScrapeNearTimeout", severity="warning"]
+    target_matchers: [alertname=~"ProbeSlow|ServiceSlow|ScrapeNearTimeout", severity="warning"]
 ```
 
 規則裡的數字與名稱要依自己的環境重定：
@@ -117,7 +117,7 @@ inhibit_rules:
 
 **抑制與嚴重度的取捨。** 4.4 的分級裡，critical 會通知值班人員，warning 在工作時間處理。[Symptom-based Alert](/backend/knowledge-cards/symptom-based-alert/) 讓使用者感受得到的症狀走 critical；本篇的分工是：會通知值班人員的是可用性（服務停止回應）與以 SLO 推出的錯誤預算消耗速度，以固定門檻判斷的延遲（`ProbeSlow`）刻意列為 warning，因為固定門檻在主機過載這類共同原因下會一起成立、需要先查原因。抑制把通知交給原因的那一則告警，所以只用在 warning 級的症狀：症狀告警被壓下之後，由主機飽和那一則告警的通知說明發生了什麼。會通知值班人員的症狀不抑制，原因是抑制也會把同時發生、與主機無關的故障一起藏掉，而那正是值班人員要收到的；同一台主機一起成立的 critical 症狀，改用 Alertmanager 的分組（`group_by` 依主機）合成一則通知，主機飽和的狀態附在通知或儀表板上。分組的代價是同一台主機上無關的告警也併進同一則通知，而之後才加入群組的告警要等 `group_interval`（預設 5 分鐘）才送出。單機時 `group_by: [alertname]` 與依主機分組效果相同。抑制只在原因成立的期間生效，所以兩端都要對齊：觸發時，原因規則從條件成立到告警成立的時間（時間窗造成的延遲加上 `for`）不長於症狀規則的同一段時間，否則症狀的通知先送出；恢復時，原因規則以 `keep_firing_for` 讓告警維持到症狀規則的時間窗退完之後。
 
-**多台主機時要有一個代表主機的標籤。** 上面的規則沒有 `equal`，任何一則 `HostCpuSaturated` 都會壓下全部的症狀，只適用於一台主機。`instance` 不能當主機標籤：它是讀取對象的位址，同一台主機上 node_exporter、postgres_exporter、cAdvisor 的 `instance` 都不同，寫 `equal: [instance]` 之後，只有恰好讀自 node_exporter 的症狀會被抑制，其餘服務的症狀都不會。做法是替症狀與原因都加一個 `host` 標籤，它指**症狀發生的那台主機**，不是 exporter 所在的主機：跑在被監控主機上的 exporter，在 Prometheus 的讀取設定裡用 `relabel_configs` 替它的序列加上 `host`（例如 `target_label: host`、`replacement: host-a`）；探測類的指標（Gatus、Blackbox exporter）是從探測程式讀出來的，`host` 要填被探測的那個端點所在的主機，用 `metric_relabel_configs` 依端點名稱或網址決定填哪台（Blackbox 從 `__param_target` 取得被探測的網址）；Pushgateway 由推送端在 grouping label 帶 `host`，並設 `honor_labels: true`。抑制規則寫 `equal: [host]`，症狀規則的聚合也保留 `host`。Kubernetes 上，原因（node_exporter 的序列）與症狀（服務的序列）都要有節點的標籤：服務的序列帶的是 Pod 的位址，用 `* on (namespace, pod) group_left(node) kube_pod_info` 把 `kube_pod_info` 的 `node` 標籤加到服務的序列上；node_exporter 的序列用 `label_replace` 產生同名的 `node` 標籤。
+**多台主機時要有一個代表主機的標籤。** 上面的規則沒有 `equal`，任何一則 `HostCpuSaturated` 都會壓下全部的症狀，只適用於一台主機。`instance` 不能當主機標籤：它是讀取對象的位址，同一台主機上 node_exporter、postgres_exporter、cAdvisor 的 `instance` 都不同，寫 `equal: [instance]` 之後，只有恰好讀自 node_exporter 的症狀會被抑制，其餘服務的症狀都不會。做法是替症狀與原因都加一個 `host` 標籤，它指**症狀發生的那台主機**，不是 exporter 所在的主機：跑在被監控主機上的 exporter，`host` 寫在讀取設定裡每個讀取對象上（`static_configs` 或檔案清單的 `labels`），用雲端的服務發現時以 `relabel_configs` 從執行個體的 `__meta_*` 標籤取；寫成整個 job 共用的常數（`relabel_configs` 的 `replacement`）只在一個 job 只讀一台主機時成立，一個 job 列了好幾台時每台都會被標成同一個名字（目標清單與服務發現的寫法見 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/)）；探測類的指標（Gatus、Blackbox exporter）是從探測程式讀出來的，`host` 要填被探測的那個端點所在的主機，用 `metric_relabel_configs` 依端點名稱或網址決定填哪台（Blackbox 從 `__param_target` 取得被探測的網址）；Pushgateway 由推送端在 grouping label 帶 `host`，並設 `honor_labels: true`。抑制規則寫 `equal: [host]`，症狀規則的聚合也保留 `host`。Kubernetes 上，原因（node_exporter 的序列）與症狀（服務的序列）都要有節點的標籤：服務的序列帶的是 Pod 的位址，用 `* on (namespace, pod) group_left(node) kube_pod_info` 把 `kube_pod_info` 的 `node` 標籤加到服務的序列上；node_exporter 的序列用 `label_replace` 產生同名的 `node` 標籤。
 
 **這條抑制規則在虛擬機裡判斷不到虛擬機以外的原因。** Mac 的 load 在 55 到 78 之間的那次過載，load 是核心數的七到十倍，虛擬機裡算出來的值卻始終低於 1.5，OrbStack 的虛擬機裡 steal 的序列存在、值恆為 0，`HostCpuSaturated` 不會成立，抑制也不會發生。虛擬機裡沒有指標直接指出這個原因；間接反映它的是 Prometheus 自己的讀取耗時（`scrape_duration_seconds`）與探測的回應時間，它們在各服務 CPU 用量都低時一起升高。成因告警成立不了時，症狀告警仍會一起發出，`group_by` 把它們合成一則通知（機制見 4.4〈Alert Noise Control〉）。開發用的虛擬機上主機飽和的規則本來就不會成立，所以在實體主機或雲端虛擬機上要另外壓滿全部核心驗一次（例如 `stress-ng --cpu 0 --timeout 15m`，`--cpu 0` 代表每顆核心一個工作者）。正式環境的主機是雲端虛擬機時，steal 時間通常量得到；是自己的實體機時，node_exporter 看到的就是那台機器，load 的判斷是準的。
 

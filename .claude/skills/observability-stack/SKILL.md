@@ -3,7 +3,7 @@ name: observability-stack
 description: "自架指標監控（Prometheus、exporter、Grafana、Alertmanager）的設計、實作與驗收：依層盤點訊號、監控所在層的盲區、各層 exporter 的接法、三項驗收與故障注入、告警（可用與延遲分開、依原因抑制、偵測容器停止）。Triggers: 監控, Prometheus, exporter, Grafana, cAdvisor, node_exporter, Alertmanager, 告警, 抑制, 故障注入"
 metadata:
   portable: true
-  version: 1.5.2
+  version: 1.6.0
 ---
 
 # Observability Stack
@@ -70,12 +70,12 @@ metadata:
   - **盲區**：監控在虛擬機裡時，虛擬機外面（實體機或筆電）的競爭不會讓這條規則成立。規則照樣寫進設定；在驗收紀錄的「未驗」寫「主機飽和在本環境不會成立，抑制只以合成告警驗過；部署到實體主機或看得到 steal 的雲端虛擬機時壓滿全部核心驗一次」（例如 `stress-ng --cpu 0 --timeout 15m`，`--cpu 0` 代表每顆核心一個工作者）。
   - **嚴重度**：會通知值班的是可用性與以 SLO 推出的錯誤預算消耗速度；以固定門檻判斷的延遲列為 warning。抑制只用在 warning 症狀（`target_matchers` 加 `severity="warning"`）；會通知值班的症狀不抑制，因為抑制會把同時發生、與主機無關的故障一起藏掉，改用 `group_by` 依主機合併成一則通知（單機時 `[alertname]` 效果相同；代價是同一台主機上無關的告警也併進來）。
   - **觸發與恢復兩端對齊**：原因從條件成立到告警成立的時間（時間窗的延遲加上 `for`）不長於症狀，否則症狀的通知先送出；原因加 `keep_firing_for`，值不短於症狀規則的時間窗，否則主機恢復後原因先解除，症狀的通知在事故結束之後才送出。
-  - **多台主機**：要有一個代表主機的標籤 `host`，它指**症狀發生的那台主機**，不是 exporter 所在的主機。`instance` 是讀取對象的位址，同一台主機上各 exporter 的值都不同，不能用。跑在被監控主機上的 exporter，在讀取設定裡用 `relabel_configs` 替它的序列加上 `host`；探測類（Gatus、Blackbox）的 `host` 填被探測的那個端點所在的主機，用 `metric_relabel_configs` 依端點決定；Pushgateway 由推送端帶 `host` 並設 `honor_labels: true`。寫法與 Kubernetes 上兩側都要接上節點標籤的做法見 `references/layer-signals.md`〈主機標籤〉。抑制規則寫 `equal: [host]`，症狀規則的聚合（例如 `sum by (service, le)`）也保留 `host`：
+  - **多台主機**：要有一個代表主機的標籤 `host`，它指**症狀發生的那台主機**，不是 exporter 所在的主機。`instance` 是讀取對象的位址，同一台主機上各 exporter 的值都不同，不能用。跑在被監控主機上的 exporter，`host` 寫在讀取設定裡每個讀取對象上（`static_configs` 或 `file_sd_configs` 清單的 `labels`），用雲端的服務發現時以 `relabel_configs` 從 `__meta_*` 標籤取；寫成整個 job 共用的常數（`replacement`）只在一個 job 只讀一台主機時成立；探測類（Gatus、Blackbox）的 `host` 填被探測的那個端點所在的主機，用 `metric_relabel_configs` 依端點決定；Pushgateway 由推送端帶 `host` 並設 `honor_labels: true`。寫法與 Kubernetes 上兩側都要接上節點標籤的做法見 `references/layer-signals.md`〈主機標籤〉。抑制規則寫 `equal: [host]`，症狀規則的聚合（例如 `sum by (host, service, le)`）也保留 `host`：
 
     ```yaml
     inhibit_rules:
       - source_matchers: [alertname="HostCpuSaturated"]
-        target_matchers: [alertname=~"ServiceSlow|ScrapeNearTimeout", severity="warning"]
+        target_matchers: [alertname=~"ProbeSlow|ServiceSlow|ScrapeNearTimeout", severity="warning"]
         equal: [host]
     ```
 
@@ -83,9 +83,9 @@ metadata:
 - **偵測容器停止要看會停止前進的指標**：cAdvisor 在容器停掉之後仍輸出最後的值，所以「序列消失」當不了停掉的訊號。`container_last_seen` 是 cAdvisor 最後一次看到這個容器的時間戳，容器停掉之後不再更新。寫規則之前先在 Prometheus 查 `count by (name, container_label_com_docker_compose_service) (container_last_seen)`，看每個容器的序列帶哪些標籤、哪一個區分服務（compose 是 `container_label_com_docker_compose_service`；compose 以外的容器這一欄是空的）。規則先算每個容器的差值、再依服務取最小值：差值最小的是最近還被看到的那個容器，它還在就代表服務還在：
 
   ```promql
-  min by (container_label_com_docker_compose_service) (
+  min by (host, container_label_com_docker_compose_service) (
     time() - container_last_seen{container_label_com_docker_compose_service!=""}
-  ) > 60   # 讀取間隔 15 秒的四倍，讀取間隔改了跟著改
+  ) > 60   # 讀取間隔 15 秒的四倍，讀取間隔改了跟著改；host 讓同一個服務在不同主機上各自判斷
   ```
 
   服務重建之後，舊容器的序列還在而且停止前進：不聚合或取最大值，每次重建都會誤報。先對 `container_last_seen` 取最小值再相減也會誤報，因為最小的時間戳屬於最舊的那個容器。從沒起來或已被移除的服務沒有序列，這條看不到，拿預期的服務清單對照或寫 `absent()`。

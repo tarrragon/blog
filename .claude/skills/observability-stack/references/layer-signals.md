@@ -43,7 +43,7 @@ docker run --rm -v /var/run:/host-run:ro alpine find /host-run -name 'containerd
 **磁碟告警一顆磁碟發好幾則，或漏掉主機的磁碟**：同一顆磁碟常掛在好幾個掛載點（OrbStack 把主機的 `/Users`、`/private`、`/tmp` 等都掛進虛擬機），依掛載點告警時一顆磁碟發好幾則。依裝置分組：
 
 ```promql
-min by (device, fstype) (
+min by (host, device, fstype) (
   node_filesystem_avail_bytes{fstype!~"tmpfs|overlay|squashfs|vfat"}
   / node_filesystem_size_bytes{fstype!~"tmpfs|overlay|squashfs|vfat"}
 ) < 0.10
@@ -81,6 +81,16 @@ scrape_configs:
 ```
 
 Blackbox exporter 從 `__param_target` 推出被探測的主機。Kubernetes 上服務的序列帶 Pod 的位址，用 `* on (namespace, pod) group_left(node) kube_pod_info` 把 `kube_pod_info` 的 `node` 標籤加到服務的序列上；node_exporter 的序列用 `label_replace` 產生同名的 `node` 標籤。原因與症狀的序列都有同名同值的 `node`，`equal` 才對得上。
+
+**讀取對象的清單與主機的消失**：主機多於一台時，讀取對象寫在 `file_sd_configs` 指向的清單檔（每個對象帶 `host`），由部署工具從主機清單產生；Prometheus 監看這個檔，改了不必重新載入。掛進容器的是放清單的目錄，不是單一檔案：單一檔案的掛載綁在原本的 inode，以換檔方式改寫之後容器讀不到新內容，`prometheus.yml` 與 `alertmanager.yml` 同理。偵測依清單的來源分開寫：
+
+| 情形 | 序列的樣子 | 規則 |
+| --- | --- | --- |
+| 主機停掉、仍在清單上 | `up` 變成 0 | 讀取成功比例的規則，依 `host` 各自成立 |
+| 主機從清單上消失（雲端服務發現在執行個體終止後拿掉它） | `up` 序列消失 | `count(up{job="node"}) < <預期台數>`，台數取自部署設定；不可少的主機另寫 `absent(up{job="node", host="<名稱>"})` |
+| 清單整個空了 | 沒有任何 `up` 序列 | `absent(up{job="node"})` |
+
+檔案清單由部署工具維護時，清單就是預期的主機，前兩種只會出現第一種；`ec2_sd_configs` 這類服務發現三種都會出現（停止而未終止的執行個體仍有私有 IP，留在清單上）。
 
 ## 部署在 Kubernetes 時
 
