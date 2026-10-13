@@ -227,9 +227,8 @@ curl -s 'http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series' |
 
 ## Backlog
 
-| 項目                                                                                            | 類型   | 前置條件             | 規模 |
-| ----------------------------------------------------------------------------------------------- | ------ | -------------------- | ---- |
-| Grafana 經入口反向代理對外開放：Nginx 的 location、`GF_SERVER_ROOT_URL`、認證放在代理或 Grafana | 主章   | 實作專案接上入口     | 小   |
-| Alertmanager 通知管道的範例（webhook、email、Slack 的 receiver 與 route）                       | 主章   | 有實際的通知管道可測 | 小   |
-| Kubernetes 上的監控入口（kube-prometheus-stack、ServiceMonitor、儀表板 sidecar）                | 主章   | 有可實測的叢集       | 中   |
-| relabel 知識卡（`relabel_configs`、`metric_relabel_configs`、`__meta_*` 的生命週期）            | 知識卡 | 無                   | 小   |
+| 項目                                                                                            | 類型 | 前置條件             | 規模 |
+| ----------------------------------------------------------------------------------------------- | ---- | -------------------- | ---- |
+| Grafana 經入口反向代理對外開放：Nginx 的 location、`GF_SERVER_ROOT_URL`、認證放在代理或 Grafana | 主章 | 實作專案接上入口     | 小   |
+| Alertmanager 通知管道的範例（webhook、email、Slack 的 receiver 與 route）                       | 主章 | 有實際的通知管道可測 | 小   |
+| Kubernetes 上的監控入口（kube-prometheus-stack、ServiceMonitor、儀表板 sidecar）                | 主章 | 有可實測的叢集       | 中   |

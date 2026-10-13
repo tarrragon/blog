@@ -91,7 +91,7 @@ node_load1{host=~"$host"}
   / on (host) count by (host) (node_cpu_seconds_total{mode="idle", host=~"$host"})
 ```
 
-`host` 加在哪裡，取決於目標清單怎麼產生：檔案清單直接寫在每個讀取對象上；用雲端的服務發現時，以 relabel 把執行個體的 tag（例如 Name）複製成 `host` 標籤。單機時在 `static_configs` 的每個讀取對象上寫 `labels: {host: app-1}` 也可以；寫成整個 job 共用的常數（`relabel_configs` 的 `replacement`）只在一個 job 只讀一台主機時成立，一個 job 列了好幾台時，每台都會被標成同一個名字。
+`host` 加在哪裡，取決於目標清單怎麼產生：檔案清單直接寫在每個讀取對象上；用雲端的服務發現時，以 [relabel](/backend/knowledge-cards/relabeling/) 把執行個體的資訊（例如執行個體 ID）複製成 `host` 標籤。單機時在 `static_configs` 的每個讀取對象上寫 `labels: {host: app-1}` 也可以；寫成整個 job 共用的常數（`relabel_configs` 的 `replacement`）只在一個 job 只讀一台主機時成立，一個 job 列了好幾台時，每台都會被標成同一個名字。
 
 ## 目標清單的來源：檔案清單與雲端服務發現
 
