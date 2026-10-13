@@ -89,6 +89,7 @@ curl -s 'http://localhost:9090/api/v1/query?query=up' | jq '.data.result[].value
 - [PromQL 與 Recording Rules 實務](promql-recording-rules/)：常見 SLI 查詢模式、recording rules 設計慣例、效能陷阱與故障判讀
 - [Remote Write 與長期儲存整合](remote-write-long-term-storage/)：remote write 配置、Mimir / Thanos / Cortex 三家比較、故障模式與容量規劃
 - [單機 Compose 的最小監控堆疊](single-host-compose-stack/)：在一台主機上接起 Prometheus、Alertmanager、Grafana 與主機、容器、資料庫、快取、入口各層的 exporter，每個掛載與旗標的理由
+- [Prometheus 指標的視覺化工具](visualization-tool-selection/)：視覺化層承擔的責任，內建介面、Grafana、Perses、Kibana 與託管服務各自成立的前提，告警規則放在 Prometheus 還是 Grafana 的取捨
 
 ## 進階主題（按需閱讀）
 

@@ -212,7 +212,7 @@ providers:
       path: /var/lib/grafana/dashboards
 ```
 
-Grafana 的服務把 provisioning 目錄掛到 `/etc/grafana/provisioning`、儀表板的 JSON 目錄掛到上面的 `path`。管理者密碼放在 `.env` 的變數，`GF_USERS_ALLOW_SIGN_UP` 設成 `"false"` 關掉自行註冊。`allowUiUpdates: false` 的取捨是：在介面上調好的儀表板要匯出 JSON 放回 repo 才會留下，好處是 repo 永遠是儀表板的唯一來源。
+Grafana 的服務把 provisioning 目錄掛到 `/etc/grafana/provisioning`、儀表板的 JSON 目錄掛到上面的 `path`。管理者密碼放在 `.env` 的變數，`GF_USERS_ALLOW_SIGN_UP` 設成 `"false"` 關掉自行註冊。`allowUiUpdates: false` 的取捨是：在介面上調好的儀表板要匯出 JSON 放回 repo 才會留下，好處是 repo 永遠是儀表板的唯一來源。視覺化層為什麼選 Grafana、它與 Prometheus 內建介面、Perses 等工具各自成立的前提，以及告警規則為什麼留在 Prometheus 而不放進 Grafana，見 [Prometheus 指標的視覺化工具](/backend/04-observability/vendors/prometheus/visualization-tool-selection/)。
 
 ## 連接埠與資源用量
 
