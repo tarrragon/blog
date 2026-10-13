@@ -37,7 +37,7 @@ Grafana 是開源的視覺化平台，本身不收集資料，向外部的資料
 
 **查詢與呈現**：Prometheus 是它內建的資料來源之一，查詢直接寫 PromQL，儀表板變數可以從 Prometheus 的標籤值產生下拉選單。
 
-**儀表板定義的保存**：儀表板是一份 JSON。Grafana 預設把它存在自己的資料庫（單機部署預設是容器裡的 SQLite 檔），也可以用 provisioning 從檔案載入。〈單機 Compose 的最小監控堆疊〉用的是 provisioning，並設 `allowUiUpdates: false` 讓檔案成為唯一來源。兩種保存方式在重建容器時的差別很明顯：那套設定沒有替 Grafana 的資料目錄掛 volume，所以重建容器之後，從檔案載入的儀表板照樣出現，存在資料庫裡的使用者與在介面上改過的密碼則全部回到初始狀態。檔案之外，Grafana 也提供以程式產生儀表板的 Foundation SDK（Go、TypeScript、Python 等語言），以及 Terraform provider 與 Kubernetes 上的 Grafana Operator。
+**儀表板定義的保存**：儀表板是一份 JSON。Grafana 預設把它存在自己的資料庫（單機部署預設是容器裡的 SQLite 檔），也可以用 provisioning 從檔案載入。〈單機 Compose 的最小監控堆疊〉用的是 provisioning，並設 `allowUiUpdates: false` 讓檔案成為唯一來源。兩種保存方式的差別在 Grafana 的資料目錄（`/var/lib/grafana`）沒有掛 volume 時最明顯：重建容器之後，從檔案載入的儀表板照樣出現，存在資料庫裡的使用者、改過的密碼與在介面上建的儀表板全部消失。那套設定替資料目錄掛了具名 volume，重建容器不會清掉它們；也因為資料庫留了下來，環境變數 `GF_SECURITY_ADMIN_PASSWORD` 只在資料庫第一次建立時用來設定管理者密碼，之後改這個變數不會改變登入密碼。檔案之外，Grafana 也提供以程式產生儀表板的 Foundation SDK（Go、TypeScript、Python 等語言），以及 Terraform provider 與 Kubernetes 上的 Grafana Operator。
 
 **存取控制**：Grafana 有使用者、團隊與角色（Viewer、Editor、Admin），只需要看畫面的人給 Viewer 角色，他們能瀏覽儀表板而無法修改。這是把 Grafana 對團隊開放、而 Prometheus 與 Alertmanager 只綁在本機位址上的理由：要給別人看的那一層有權限分級，沒有權限分級的那幾個元件不對外。
 

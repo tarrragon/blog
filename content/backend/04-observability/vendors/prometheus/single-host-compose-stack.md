@@ -222,7 +222,7 @@ Prometheus、Alertmanager 與 Grafana 的程式預設聽全部的網路介面，
 
 ## 接上之後先查的幾件事
 
-這套設定跑起來、Prometheus 的 Targets 頁面全部是 `UP`，不代表每一層都在監控：exporter 連不上它監控的服務時 `up` 照樣是 1（看 `pg_up`、`redis_up`、`nginx_up`），cAdvisor 找不到 socket 時讀得到而缺標籤，部分 collector 失敗時 `up` 也是 1（看 `node_scrape_collector_success`）。每一種的查法與用故障注入確認數字會反應的做法，見 4.26〈監控來源接上之後仍沒在監控的情形與驗收〉；以這套指標寫告警、以及主機過載時各服務的告警怎麼收斂，見 4.27。
+這套設定跑起來、Prometheus 的 Targets 頁面全部是 `UP`，不代表每一層都在監控：exporter 連不上它監控的服務時 `up` 照樣是 1（看 `pg_up`、`redis_up`、`nginx_up`），cAdvisor 找不到 socket 時讀得到而缺標籤，部分 collector 失敗時 `up` 也是 1（看 `node_scrape_collector_success`）。每一種的查法與用故障注入確認數字會反應的做法，見 4.26〈監控來源接上之後仍沒在監控的情形與驗收〉；以這套指標寫告警、以及主機過載時各服務的告警怎麼收斂，見 4.27。服務分到多台主機時，exporter 的連接埠、主機標籤、目標清單與主機消失的偵測要怎麼改，見 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/)。
 
 ## 延伸閱讀：容量、查詢與長期保存
 
