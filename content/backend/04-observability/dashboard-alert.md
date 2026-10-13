@@ -97,7 +97,7 @@ Noise rate = 不需要行動的 alert / 總 alert。追蹤方式是讓 on-call �
 
 ### 降噪手段
 
-**Grouping**：把同一個根因觸發的多個 alert 合併成一則通知。Alertmanager 的 `group_by` 讓同服務、同 alert name 的 alert 只發一次。
+**Grouping**：把同一個根因觸發的多個 alert 合併成一則通知。Alertmanager 的 `group_by` 讓同服務、同 alert name 的 alert 只發一次（`group_by` 與三個時間參數的設定與實測見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 的〈分組與 group_wait、group_interval、repeat_interval〉）。
 
 **[Inhibition](/backend/knowledge-cards/alert-inhibition/)**：高嚴重性 alert 抑制低嚴重性。Database down 觸發時，所有依賴該 database 的 query timeout alert 被抑制 — 根因已知、不需要每個症狀都通知。抑制也會把同時發生、與根因無關的故障一起藏掉，所以會 page 人的症狀改用 grouping 合併；共用主機過載時以主機飽和抑制各服務變慢的規則寫法、怎麼用合成告警單獨驗證、以及原因落在監控所在層之外時抑制不會發生，見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)〈依原因抑制〉。
 

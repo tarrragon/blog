@@ -92,9 +92,9 @@ curl -s 'http://localhost:9090/api/v1/query?query=up' | jq '.data.result[].value
 - [單機 Compose 的最小監控堆疊](single-host-compose-stack/)：在一台主機上接起 Prometheus、Alertmanager、Grafana 與主機、容器、資料庫、快取、入口各層的 exporter，每個掛載與旗標的理由
 - [Prometheus 指標的視覺化工具](visualization-tool-selection/)：視覺化層承擔的責任，內建介面、Grafana、Perses、Kibana 與託管服務各自成立的前提，告警規則放在 Prometheus 還是 Grafana 的取捨
 - [多台主機的指標收集](multi-host-scraping/)：exporter 跟著主機與服務走、中央讀取與推送的架構、host 標籤、目標清單的來源、主機停掉與從清單消失的偵測
-- [Grafana 的對外存取](grafana-external-access/)：看的人有沒有主機帳號時各自的存取方式、SSH 通道的連法、監控主機上專用反向代理的 TLS、WebSocket 與來源限制，應用入口 Nginx 加上 Grafana 的轉送之後在多台主機時起不來的原因，登入頁對外之後的帳號鎖定與認證放置
-- [Alertmanager 的通知管道](alertmanager-notification-channels/)：路由樹與分組的三個時間參數、以 webhook 接 ntfy 推播與它的訊息模板、email 與 Slack、私密網址放在檔案裡、Watchdog 心跳與通知送不出去的偵測
-- [在 Kubernetes 上接上監控](kubernetes-monitoring-entry/)：kube-prometheus-stack 裝了哪些元件與 CRD、ServiceMonitor 與 PrometheusRule 靠 release 標籤被選中、主機標籤改成節點標籤、儀表板經由 ConfigMap 與 sidecar 載入、控制平面只綁本機時讀不到，以及單機叢集過載時的連鎖反應
+- [Grafana 的對外存取](grafana-external-access/)：看的人能不能經由 SSH 或 VPN 連進來、有沒有固定來源網段時各自的存取方式，經由應用入口轉送的兩個問題，監控主機上專用反向代理的 compose、GF_SERVER_ROOT_URL、WebSocket、重建後的 502 與憑證，來源限制比對的位址，登入失敗的帳號鎖定與認證放置
+- [Alertmanager 的通知管道](alertmanager-notification-channels/)：路由樹、分組與三個時間參數、webhook 的前提與以 ntfy 推播（訊息範本與產生網址的腳本）、私密網址的 `*_file`、email 與 Slack、Watchdog 心跳的時間條件、通知送不出去的偵測與另一條路
+- [在 Kubernetes 上接上監控](kubernetes-monitoring-entry/)：kube-prometheus-stack 的元件、CRD 與預設不持久化的儲存，ServiceMonitor 與 PrometheusRule 的選取，節點標籤（含 node-exporter），儀表板 sidecar 與 Grafana 的連法，chart 預設的 Alertmanager 路由不送通知，控制平面的讀取，單節點叢集的資源用量
 
 ## 進階主題（按需閱讀）
 
@@ -141,7 +141,7 @@ curl -s 'http://localhost:9090/api/v1/query?query=up' | jq '.data.result[].value
 
 - CRD：Prometheus / ServiceMonitor / PodMonitor / PrometheusRule / Alertmanager
 - 自動發現 ServiceMonitor 物件、不手動改 scrape config
-- kube-prometheus-stack Helm chart
+- kube-prometheus-stack Helm chart：選取條件、節點標籤、儀表板、預設路由與控制平面讀取的實作見 [在 Kubernetes 上接上監控](kubernetes-monitoring-entry/)
 - 對應 [4.C6 ADOT EKS](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/) 對照
 
 ### Pull vs Push model
@@ -200,7 +200,6 @@ curl -s 'http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series' |
 
 - PromQL 完整 syntax reference（prometheus.io/docs/prometheus/latest/querying/）
 - Exporter 內部實作
-- Alertmanager routing tree 細節
 - Operator CRD spec
 
 ## 案例回寫
@@ -230,6 +229,14 @@ curl -s 'http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series' |
 
 ## Backlog
 
-| 項目                                                                                                                                                                                      | 類型 | 前置條件 | 規模 |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | -------- | ---- |
-| 多輪審查（至少三輪）：〈Grafana 的對外存取〉〈Alertmanager 的通知管道〉〈在 Kubernetes 上接上監控〉與 Relabeling 知識卡，連同這次改到的〈單機 Compose〉〈多台主機〉〈視覺化工具〉的連結句 | 主章 | 無       | 中   |
+| 項目                                                                                                                                                                                                                                            | 類型   | 前置條件                                                                              | 規模 |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------- | ---- |
+| K8s 篇實機補驗：helm install 指令與 release 名稱、Grafana 的 Service 與 admin Secret 名稱、改寫 `alertmanager.config` 之後實際送出通知、node-exporter 的 `relabelings`、PVC 的 `volumeClaimTemplate`                                            | 主章   | 主機記憶體足夠跑 kind 加 kube-prometheus-stack（2026-10-13 時 swap 滿，叢集循環重啟） | 中   |
+| Alertmanager 篇實機補驗：送合成告警的指令與本機 ntfy、Mailpit 的 compose 片段，`time_intervals` 讓 warning 只在工作時段送，healthchecks.io 另開檢查的 `/fail`                                                                                   | 主章   | tinyurl-test 的 Alertmanager secrets 換成可用的 topic 與 ping 網址                    | 小   |
+| Grafana 篇補驗：設了 `GF_SERVER_ROOT_URL` 之後，經 SSH 通道開 `127.0.0.1:3000` 的使用者登入後被轉去哪裡                                                                                                                                         | 主章   | 無                                                                                    | 小   |
+| Kubernetes 上叢集外的讀取對象（VM 上的資料庫、外部 exporter）放在哪裡：ScrapeConfig CRD、chart 的 `additionalScrapeConfigs`、不帶 selector 的 Service                                                                                           | 主章   | 無                                                                                    | 小   |
+| Kubernetes 上的 Grafana 對外：以 Ingress 取代〈Grafana 的對外存取〉的代理，選擇條件與認證位置沿用                                                                                                                                               | 主章   | 無                                                                                    | 小   |
+| 跨元件的存取路徑清單：連得到 Alertmanager 網頁就能設靜音、Grafana 的匿名存取與 service account、Kubernetes 上的 Service 類型與 port-forward 權限                                                                                                | 主章   | 無                                                                                    | 中   |
+| 列表頁的 weight：實作序列（單機 Compose → 視覺化工具 → 多台主機 → Grafana 對外 → Alertmanager 通知 → Kubernetes）排在容量、PromQL、remote write 三篇之前，從零開始的讀者先看到起點                                                              | 主章   | 無                                                                                    | 小   |
+| 實作系列五篇的開場範圍段同形（「這一篇整理…文中的設定取自一個短網址服務…實測」），要不要逐篇改成各自的範圍邊界                                                                                                                                  | 主章   | 無                                                                                    | 小   |
+| 知識卡：Kubernetes Operator 與 CRD、Sidecar、ConfigMap、Prometheus 的序列過期（staleness marker 與 5 分鐘的回看；先複驗〈多台主機〉與〈Kubernetes〉兩篇的說法是不是兩種情境）、Compose 的必填變數 `${VAR:?}`、綁定位址（把 LLM 分類那張一般化） | 知識卡 | 無                                                                                    | 6    |

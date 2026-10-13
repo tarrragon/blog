@@ -6,7 +6,7 @@ weight: 37
 ---
 
 
-Metric cardinality 的核心概念是「指標 label 組合會產生多少條時間序列」。Label 越多、值越分散，時間序列越多，儲存、查詢與告警成本越高。 可先對照 [Metrics](/backend/knowledge-cards/metrics/)。
+Metric cardinality 的核心概念是「指標 label 組合會產生多少條時間序列」。Label 越多、值越分散，時間序列越多，儲存、查詢與告警成本越高。 可先對照 [Metrics](/backend/knowledge-cards/metrics/)。在讀取或寫入之前丟掉標籤與指標的規則見 [Relabeling](/backend/knowledge-cards/relabeling/)。
 
 ## 概念位置
 

@@ -7,7 +7,7 @@ weight: 152
 ---
 
 
-Service discovery 的核心概念是「讓呼叫端根據 registry 或 DNS 找到目前可用的服務實例」。它支援擴容、滾動更新與故障切換。 可先對照 [Service Registry](/backend/knowledge-cards/service-registry/)。
+Service discovery 的核心概念是「讓呼叫端根據 registry 或 DNS 找到目前可用的服務實例」。它支援擴容、滾動更新與故障切換。 可先對照 [Service Registry](/backend/knowledge-cards/service-registry/)。Prometheus 以服務發現找讀取對象時，發現給的標籤在讀取之前以 [Relabeling](/backend/knowledge-cards/relabeling/) 改寫。
 
 ## 概念位置
 

@@ -6,7 +6,7 @@ weight: 467
 tags: ["backend", "observability", "prometheus", "knowledge-card"]
 ---
 
-Prometheus exporter 是把某個系統的狀態轉成 Prometheus 指標格式、開一個 HTTP 端點讓 Prometheus 定期來讀（scrape）的程式。被監控的系統本身不必懂 Prometheus：node_exporter 讀 Linux 的 `/proc` 與 `/sys` 輸出主機的 CPU、記憶體與磁碟；cAdvisor 讀 cgroup 輸出每個容器的用量；postgres_exporter 連進 PostgreSQL 查統計視圖；nginx-prometheus-exporter 讀 Nginx 的 `stub_status`。應用程式自己用 client library 開的 `/metrics` 是另一條路：程式直接輸出自己的指標，不經過轉接。兩條路收到的訊號種類不同，見下方〈概念位置〉與 [USE Method](/backend/knowledge-cards/use-method/)、[RED Method](/backend/knowledge-cards/red-method/)。
+Prometheus exporter 是把某個系統的狀態轉成 Prometheus 指標格式、開一個 HTTP 端點讓 Prometheus 定期來讀（scrape）的程式。被監控的系統本身不必懂 Prometheus：node_exporter 讀 Linux 的 `/proc` 與 `/sys` 輸出主機的 CPU、記憶體與磁碟；cAdvisor 讀 cgroup 輸出每個容器的用量；postgres_exporter 連進 PostgreSQL 查統計視圖；nginx-prometheus-exporter 讀 Nginx 的 `stub_status`。應用程式自己用 client library 開的 `/metrics` 是另一條路：程式直接輸出自己的指標，不經過轉接。兩條路收到的訊號種類不同，見下方〈概念位置〉與 [USE Method](/backend/knowledge-cards/use-method/)、[RED Method](/backend/knowledge-cards/red-method/)。丟掉整個讀取對象或其中一部分指標的規則見 [Relabeling](/backend/knowledge-cards/relabeling/)。
 
 ## 概念位置
 

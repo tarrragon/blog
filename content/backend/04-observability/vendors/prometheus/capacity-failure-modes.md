@@ -77,7 +77,7 @@ count by (method, status) (http_requests_total)
 ### 修復方向
 
 - **Label 白名單**：在 scrape config 或 relabeling rule 中 drop 高 cardinality label
-- **Metric relabeling**：`metric_relabel_configs` 在 scrape 後、寫入前移除特定 label
+- **Metric relabeling**：`metric_relabel_configs` 在 scrape 後、寫入前移除特定 label（各個 relabel 時間點讀得到哪些標籤見 [Relabeling](/backend/knowledge-cards/relabeling/)）
 - **Recording rule 替代**：把高 cardinality metric 聚合成低 cardinality 的 recording rule，下游只讀 recording rule
 - **移到 traces**：user_id / request_id 這類維度放在 [trace](/backend/knowledge-cards/trace/) 的 span attribute 而非 metric label
 

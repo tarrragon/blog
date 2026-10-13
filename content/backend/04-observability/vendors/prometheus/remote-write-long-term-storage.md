@@ -68,7 +68,7 @@ remote_write:
 - `max_samples_per_send`：每次 POST 的 sample 數量。5000 是常用值
 - `batch_send_deadline`：即使 batch 沒滿也在這個時間內 flush，避免低流量時 sample 延遲太久
 
-`write_relabel_configs` 在 remote write 前過濾 series — 不需要長期保存的 internal metrics（go runtime、scrape metadata）可以在這裡 drop，減少長期儲存的 cardinality 與成本。
+`write_relabel_configs`（規則語法見 [Relabeling](/backend/knowledge-cards/relabeling/)）在 remote write 前過濾 series — 不需要長期保存的 internal metrics（go runtime、scrape metadata）可以在這裡 drop，減少長期儲存的 cardinality 與成本。
 
 ### External labels（HA 與多叢集）
 

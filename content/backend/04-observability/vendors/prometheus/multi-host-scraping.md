@@ -196,7 +196,7 @@ absent(up{job="node"})
 
 ## 監控主機放在哪裡
 
-中央的 Prometheus、Alertmanager 與 Grafana 預設放在一台獨立的監控主機上，不和被監控的服務共用。共用時，那台主機過載或停掉，監控跟著一起退化或停掉，而那正是最需要它的時候（見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)）。監控主機自己停掉時，它發不出任何告警，所以另外需要一個不經過它的訊號：在監控主機以外跑的外部探測，以及一條永遠成立的 Watchdog 告警，經由 Alertmanager 持續送到外部的心跳服務，心跳中斷時由外部服務通知（設定見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 的〈Watchdog：告警鏈本身的心跳〉；這個訊號為什麼要從主機外面發出，見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉一節）。主機只有兩三台、多開一台監控主機不划算時，把 Prometheus、Alertmanager 與 Grafana 放在負載最低的那一台，Watchdog 與外部探測照樣保留，代價是那一台過載時監控跟著退化。
+中央的 Prometheus、Alertmanager 與 Grafana 預設放在一台獨立的監控主機上，不和被監控的服務共用。共用時，那台主機過載或停掉，監控跟著一起退化或停掉，而那正是最需要它的時候（見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)）。監控主機自己停掉時，它發不出任何告警，所以另外需要一個不經過它的訊號：在監控主機以外跑的外部探測，以及一條永遠成立的 Watchdog 告警，經由 Alertmanager 持續送到外部的心跳監看服務，心跳中斷時由外部服務通知（設定見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 的〈Watchdog：告警鏈本身的心跳〉；這個訊號為什麼要從主機外面發出，見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉一節）。主機只有兩三台、多開一台監控主機不划算時，把 Prometheus、Alertmanager 與 Grafana 放在負載最低的那一台，Watchdog 與外部探測照樣保留，代價是那一台過載時監控跟著退化。
 
 元件因此分成三個 compose 檔：每一台主機（含監控主機）都要跑的 node_exporter 與 cAdvisor 在 `compose.host-exporters.yml`，跟著服務走的 exporter 和服務一起留在 `docker-compose.yml`，Prometheus、Alertmanager、Grafana 在 `compose.monitoring.yml`。監控主機也跑主機層的 exporter，它自己的 CPU、記憶體與磁碟才有人看；它停掉時由 Watchdog 發現，而過載或磁碟快滿要靠它自己的 node_exporter。每台主機在自己的 `.env`（不進版控，每台內容不同）以 `COMPOSE_FILE` 決定讀哪幾個檔，同一個 repo 在每台主機上執行同一條 `docker compose up -d`。`COMPOSE_FILE` 裡檔名的分隔符在 Linux、macOS 是 `:`，Windows 是 `;`：
 

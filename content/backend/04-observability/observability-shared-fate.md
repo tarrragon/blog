@@ -52,7 +52,7 @@ tail sampling 是這個原則的具體做法：head [sampling](/backend/knowledg
 
 前面幾種備援有一個共同的失敗模式：它們平時不觸發、所以沒人知道它們到底有沒有效。dead man's switch 可能因為外部偵測端配錯而從來不會在心跳消失時響、獨立 status page 可能其實跟主站共用了同一個 DNS、tail sampling 的降級路徑可能在真正過載時才發現 memory 上限設太低。判讀訊號裡「告警管道從沒被測過『告警本身會不會送達』」描述的是病徵、藥方是主動測。
 
-驗證的做法是把觀測失效本身當成一個要演練的故障：刻意停掉 Alertmanager、確認 Watchdog 的消失真的觸發外部通知；故意灌高基數、確認降級路徑保住 error trace 而不是整個後端 crash；把主站切掉、確認 status page 仍可達（順便驗它沒偷偷共用主站的 DNS）。這條路由到 [6.4 chaos testing](/backend/06-reliability/chaos-testing/) 與 [08 演練與值班能力](/backend/08-incident-response/drills-and-oncall-readiness/) —— 觀測備援要進演練清單、跟服務本身的 chaos 實驗同一套紀律。
+驗證的做法是把觀測失效本身當成一個要演練的故障：刻意停掉 Alertmanager、確認 Watchdog 的消失真的觸發外部通知（Watchdog 的路由與外部心跳監看服務的設定見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 的〈Watchdog：告警鏈本身的心跳〉）；故意灌高基數、確認降級路徑保住 error trace 而不是整個後端 crash；把主站切掉、確認 status page 仍可達（順便驗它沒偷偷共用主站的 DNS）。這條路由到 [6.4 chaos testing](/backend/06-reliability/chaos-testing/) 與 [08 演練與值班能力](/backend/08-incident-response/drills-and-oncall-readiness/) —— 觀測備援要進演練清單、跟服務本身的 chaos 實驗同一套紀律。
 
 ## 人層應對：telemetry 不可信時的設計
 

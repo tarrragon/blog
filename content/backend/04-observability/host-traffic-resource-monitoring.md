@@ -6,7 +6,7 @@ weight: 26
 tags: ["backend", "observability", "prometheus", "monitoring", "docker"]
 ---
 
-這篇整理一台主機（或一台虛擬機）上以 Docker Compose 跑的服務，在健康檢查之外怎麼監控流量與資源用量：每一層的訊號從哪裡收、工具怎麼選，以及監控本身裝在哪一層就看不到哪些範圍。範例是一個短網址服務：入口 Nginx、以 Go 與 Laravel 實作同一組 API 的兩個後端、前台與後台兩個前端網頁、PostgreSQL 與 Valkey。各元件在 compose 裡的實際設定（掛載、旗標、讀取設定與 Grafana 佈建）見 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/)；本篇不涵蓋 Kubernetes 上的做法（Prometheus Operator、ServiceMonitor）。
+這篇整理一台主機（或一台虛擬機）上以 Docker Compose 跑的服務，在健康檢查之外怎麼監控流量與資源用量：每一層的訊號從哪裡收、工具怎麼選，以及監控本身裝在哪一層就看不到哪些範圍。範例是一個短網址服務：入口 Nginx、以 Go 與 Laravel 實作同一組 API 的兩個後端、前台與後台兩個前端網頁、PostgreSQL 與 Valkey。各元件在 compose 裡的實際設定（掛載、旗標、讀取設定與 Grafana 佈建）見 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/)；本篇不涵蓋 Kubernetes 上的做法（Prometheus Operator、ServiceMonitor），Kubernetes 上的做法見 [在 Kubernetes 上接上監控](/backend/04-observability/vendors/prometheus/kubernetes-monitoring-entry/)。
 
 文中的實測在 macOS 的 OrbStack 2.2.3（Docker 29.4.0）上進行，cAdvisor 是 v0.55.1、node_exporter 是 1.12.1、Prometheus 是 3.15.0。實測的那幾天 Mac 上另有與這個服務無關的程式長時間佔用 CPU，所以下文的數字多半量在主機過載的時候，判讀各段時會說明這一點。
 

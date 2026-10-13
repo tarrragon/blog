@@ -16,6 +16,8 @@ kube-prometheus 標配的 Watchdog alert 定義：「This is an alert meant to e
 
 正常監控是「壞了才告警」；Watchdog 反轉為「一直告警、消失才是壞」—— 因為監控系統自己死了時、它發不出「我死了」的告警、只能靠一個獨立失效域的外部偵測器判斷心跳消失。這跟 blackbox 的外部探測互補：一個是「內部心跳消失」、一個是「外部主動探測」、兩者的存活判斷都不依賴被測系統自己上報。設計含義：關鍵告警鏈要有一個活在生產棧之外的證人。
 
+Prometheus 與 Alertmanager 上的實作（Watchdog 規則、心跳路由的時間參數、外部心跳監看服務的週期與寬限）見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 的〈Watchdog：告警鏈本身的心跳〉。
+
 ## 對應大綱
 
 觀測共命運章「out-of-band 訊號」段（heartbeat 消失 + 外部探測）。
