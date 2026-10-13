@@ -110,6 +110,24 @@ ps -o comm= -p "$pid"
 
 耗時操作停住時別直接跳「不相容 / 跑不起來」（昂貴結論）。先讀最廉價的權威：`df -h`（磁碟滿？）、`free`（記憶體？）。實測：原始碼編譯停在半路，是宿主磁碟寫滿把 build 打斷，清空間後同份 source 接著編就過，跟相容性無關。先排除資源，再懷疑相容。（區隔：只有「這一個操作」卡住 → 看這裡；「連線斷 + 任務失敗 + 服務怪」一串同時發生 → machine-unreachable 的磁碟滿 / fs 唯讀連鎖。）
 
+## 主機很慢、load 很高：先分 CPU、記憶體還是 I/O
+
+load average 計的是正在跑加上排隊等待的執行緒。Linux 把等磁碟 I/O、不可中斷的執行緒（`ps` 狀態 `D`）也算進去；macOS 在記憶體壓力下實測同樣出現 load 遠高於 CPU 使用率能解釋的情形。所以 load 高只說明「有很多執行緒在等」，不說明在等什麼；先分出是哪一種資源，再決定停什麼。
+
+| 資源 | macOS | Linux | 判讀 |
+| --- | --- | --- | --- |
+| CPU | `uptime`、`sysctl -n hw.ncpu`、`ps -Ao pcpu,comm -r \| head` | `uptime`、`nproc`、`top -bn1 \| head -15` | load 除以核心數遠大於 1，**而且**行程的 CPU 使用率加總接近核心數，才是 CPU 不夠 |
+| 記憶體 | `sysctl vm.swapusage`、`vm_stat \| grep -E "free\|Swapouts"`、`top -l 1 -o mem -n 12 -stats pid,command,mem` | `free -h`、`vmstat 1 5`（`si`/`so` 欄）、`cat /proc/pressure/memory` | swap 接近用滿、可用頁幾乎為零、換頁持續發生，就是記憶體壓力 |
+| I/O | `iostat -d -w 2 -c 3 disk0` | `iostat -x 2 3`、`vmstat 1 5`（`wa` 欄）、`cat /proc/pressure/io` | 每秒 I/O 次數長時間居高；記憶體壓力下這些 I/O 多半是換頁 |
+
+**load 高而 CPU 使用率不高，先看記憶體與 I/O。** 實測：16 GB 的 macOS 上 load 到 90（8 核），行程的 CPU 使用率加總遠低於核心數；swap 用了 13 GB、可用頁只剩約 70 MB、磁碟每秒三千多次 I/O——瓶頸是記憶體，I/O 是換頁造成的。
+
+**跑在虛擬機或容器裡的元件逾時、反覆重啟時，先查宿主機。** 同一次實測，宿主機的記憶體壓力在虛擬機內的 Kubernetes 叢集裡表現成一串看似各自獨立的故障：`etcdserver: request timed out`、API server 與 controller-manager 反覆重啟、`kubectl` 偶發 `Forbidden`、元件啟動時連不到 API server（`connection refused`）而進入 CrashLoopBackOff、存活探針逾時被重啟、`kubectl port-forward` 斷線（`lost connection to pod`）。逐一排查這些症狀不會找到原因，因為原因不在叢集裡。
+
+**停服務或容器之前先確定停的是瓶頸。** 容器的監控工具（例如 `docker stats`）顯示的是虛擬機內部的分配，容器 CPU 高不代表宿主機的瓶頸在 CPU。實測依它停掉一整組容器之後 load 沒有下降：記憶體被宿主機上的其他應用程式占著（`top -o mem` 才看得到），而虛擬機釋放的記憶體不會立刻還給宿主機。停掉的服務若不是自己起的，先問擁有者——停別人的服務是對外的動作，不是除錯步驟。
+
+**恢復要時間。** 解除壓力之後，叢集元件在指數退避之後才會重試，實測從釋放資源到所有 Pod 回到 Ready 約半小時；這段期間仍在 CrashLoopBackOff 的元件，先看 `kubectl logs --previous` 的錯誤是不是還在連不到 API server，而不是重新部署。
+
 ## 權限被拒（EACCES）：讀是哪一層擋的，別一律 sudo
 
 `Permission denied` / `EACCES` / `Operation not permitted` 有多個根因，`sudo` 蓋過去會掩蓋真正的層別、還可能在 home 留 root-owned 檔製造新問題。先讀哪一層：

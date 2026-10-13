@@ -10,12 +10,12 @@ description: >
   進程活著但沒反應, pgrep 騙人, permission denied, EACCES, operation not permitted,
   command not found, unable to locate package, dpkg lock, pacman db lock, partial upgrade,
   unbound variable, shell script 可攜, bash 3.2, timeout 找不到, 容器沒有 sudo,
-  keyring 過期, PATH 沒吃到, 磁碟滿, 檔案系統唯讀, OOM, exit 137, dmesg, 黑畫面, getty,
+  keyring 過期, PATH 沒吃到, load 很高, swap 滿, etcd 逾時, 磁碟滿, 檔案系統唯讀, OOM, exit 137, dmesg, 黑畫面, getty,
   chvt, 沒聲音, wpctl, DNS 解析不了, 機器沒回應, 服務告警, OnFailure, ntfy, 心跳監控,
   linux install, linux debug, systemd, authoritative state.
 license: MIT
 metadata:
-  version: 1.17.2
+  version: 1.18.0
   category: ops-diagnostics
 ---
 
@@ -75,6 +75,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 | 網路通不通                            | 介面 / 路由 / 鄰居表            | `ip -brief a`、`ip neigh`、`ss`（`arp` 常沒裝）                                                    |
 | 域名解析                              | resolver 設定                   | `getent hosts <域名>`、`/etc/resolv.conf`、`resolvectl`                                            |
 | 磁碟 / 記憶體                         | 檔案系統 / 記憶體用量           | `df -h`、`du -sh`、`free`、`mount \| grep -w ro`                                                   |
+| 主機很慢、load 很高                    | CPU、記憶體壓力、I/O 各自的用量 | load ÷ 核心數 + CPU 使用率加總、`sysctl vm.swapusage` / `free -h`、`iostat`；load 高而 CPU 不高先看記憶體 |
 | 核心 / 硬體 / 被殺行程(OOM、exit 137) | kernel ring buffer              | `dmesg`、`journalctl -k -b`                                                                        |
 | 權限被拒(EACCES)                      | 檔案 mode/owner、路徑逐層、MAC  | `namei -l <path>`、`stat`、`id`、`sudo -l`、`getcap`、`ausearch`(SELinux)                          |
 | 程式 log 沉默、不知哪個 syscall 失敗  | syscall 層                      | `strace -f -e trace=file <cmd>`                                                                    |
@@ -89,6 +90,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 - **判程式活著沒 / 服務歸誰 / 服務 failed 或一直重啟(restart loop) / 鎖沒鎖 / session 存活 / 卡住是資源還是相容** → [process-service-state](references/process-service-state.md)
 - **進程活著卻不運作（GUI shell / bar 畫得出來但點不動、keybind 叫不出東西、焦點視窗打字正常）** → [process-service-state](references/process-service-state.md) 的「進程活著 ≠ 子系統活著」段（讀 shell 自己的 log + IPC，別信 pgrep）
 - **不想肉眼盯服務死活 / 要自動告警 / 怕整台機器當掉沒人知道 / 裝新系統或反覆除服務失敗（主動確認有無監控、無則建議建立）** → [process-service-state](references/process-service-state.md) 的「把失敗變成推播（OnFailure）」段（先確認有無監控 → 沒有優先建議 OnFailure + ntfy 公共站零 daemon → 要更高安全再自架 ntfy + 完整堆疊；含 hung 偵測、canary、topic 安全）
+- **主機很慢、load 很高，或虛擬機 / 容器 / 本機 Kubernetes 裡的元件一起逾時、反覆重啟（etcd request timed out、CrashLoopBackOff、探針逾時、port-forward 斷線）** → [process-service-state](references/process-service-state.md) 的「主機很慢、load 很高」段（先分 CPU、記憶體、I/O；先查宿主機再查叢集；停服務前先確定停的是瓶頸）
 - **權限被拒（Permission denied / EACCES / Operation not permitted / sudo 後冒 root-owned 檔）** → [process-service-state](references/process-service-state.md) 的權限段
 - **套件管理器失敗（pacman：db lock / keyring 簽章過期 / partial upgrade / mirror。apt：unable-to-locate / 批次 abort / dpkg lock / EOL archive 404 / node 爆量）** → [install-and-verify](references/install-and-verify.md) 的套件管理器段
 - **自己寫的 shell script 壞了（unbound variable 而變數名尾端有怪字元、`timeout` 之類的 GNU 工具在 macOS 找不到、root 容器裡沒有 `sudo`、非互動環境卡在 `[Y/n]`）** → [install-and-verify](references/install-and-verify.md) 的可攜陷阱段。這些歸檔在安裝流程底下，是因為它們都是從寫 bootstrap 腳本時踩出來的，而症狀出現時多半不在裝機情境
@@ -99,6 +101,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 - **看畫面就下結論**：畫面有密碼框 ≠ 鎖了；通知沒跳 ≠ 服務沒接管；build 停住 ≠ 不相容。一律回權威來源確認。
 - **讀錯層**：Wayland 合成器層的鎖用 logind 的 `LockedHint` 查（查錯層）；用猜的 process 名 `pgrep`（查詢條件錯）。權威來源對、但問錯地方，一樣誤導。
+- **看到 load 高就停 CPU 用量最高的服務**：load 也計等 I/O 的執行緒，容器工具顯示的是虛擬機內部的分配。先分出是 CPU、記憶體還是 I/O 不夠，再決定停什麼；停的不是自己起的服務先問擁有者。
 - **急著下昂貴結論**：跳到「不相容 / 要重裝」前，先用最廉價的檢查（`df -h`、資源、資源在不在）排除。
 - **一直重試同一個失敗動作**：連不上就一直重連，不去讀網路 / 服務 / 資源的權威狀態。
 - **信終端機 scrollback 殘影**：拿捲過的舊輸出當現況。權威狀態是「現在再查一次」的結果，不是畫面上留著的上一次。

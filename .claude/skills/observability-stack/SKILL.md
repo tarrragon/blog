@@ -3,7 +3,7 @@ name: observability-stack
 description: "自架指標監控（Prometheus、exporter、Grafana、Alertmanager）的設計、實作與驗收：依層盤點訊號、監控所在層的盲區、各層 exporter 的接法、三項驗收與故障注入、告警（可用與延遲分開、依原因抑制、偵測容器停止）。Triggers: 監控, Prometheus, exporter, Grafana, cAdvisor, node_exporter, Alertmanager, 告警, 抑制, 故障注入"
 metadata:
   portable: true
-  version: 1.7.0
+  version: 1.8.0
 ---
 
 # Observability Stack
@@ -56,7 +56,7 @@ metadata:
 
 ## 量測前的主機檢查
 
-故障注入、大量資料、壓測或效能比較之前與期間，在主機本身（不是 Docker 的虛擬機裡）看 load、核心數與磁碟：macOS 跑 `uptime`、`sysctl -n hw.ncpu`、`df -h`，Linux 跑 `uptime`、`nproc`、`df -h`；Windows 沒有 load，看 CPU 使用率（`(Get-CimInstance Win32_Processor).LoadPercentage`，不受系統語言影響）與磁碟（`Get-PSDrive C`）。量測期間持續記錄（例如每分鐘一次），不只在開始前看一次；壓測工具跑在同一台主機時，它用的 CPU 也從服務那一份扣掉。
+故障注入、大量資料、壓測或效能比較之前與期間，在主機本身（不是 Docker 的虛擬機裡）看 load、核心數、記憶體與磁碟：macOS 跑 `uptime`、`sysctl -n hw.ncpu`、`sysctl vm.swapusage`、`df -h`，Linux 跑 `uptime`、`nproc`、`free -h`、`df -h`；load 高而 CPU 使用率不高時多半是記憶體不夠在換頁（swap 接近用滿），這時虛擬機裡的元件逾時與重啟都是它的連帶症狀，量到的數字不能拿來比較；Windows 沒有 load，看 CPU 使用率（`(Get-CimInstance Win32_Processor).LoadPercentage`，不受系統語言影響）與磁碟（`Get-PSDrive C`）。量測期間持續記錄（例如每分鐘一次），不只在開始前看一次；壓測工具跑在同一台主機時，它用的 CPU 也從服務那一份扣掉。
 
 紀錄寫在哪台機器上跑了哪個指令、load 除以核心數、磁碟使用率，以及門檻和它的出處（使用者給的值與原話）。使用者沒給門檻時不自訂，照樣量，紀錄標「主機狀態未經門檻判定」，這次的數字不拿去和其他時間的比較。
 

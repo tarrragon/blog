@@ -2,6 +2,8 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
+**Version**: 1.8.0 — 〈量測前的主機檢查〉加上記憶體與 swap（macOS `sysctl vm.swapusage`、Linux `free -h`）：load 高而 CPU 使用率不高時多半是記憶體壓力，虛擬機裡的元件逾時與重啟是連帶症狀，量到的數字不能拿來比較。來源是一次本機 kind 叢集在宿主機 swap 用滿時的實測。
+
 **Version**: 1.7.0 — 讀取成功比例的規則加 `and up`（讀取對象移除後不殘留告警）；新增整台主機讀不到的判斷（node_exporter 5 分鐘內沒有一次成功，嚴重度與服務停止相同）；`allowUiUpdates` 的語意改正（兩種設定都不寫回檔案）；cAdvisor 補 `--housekeeping_interval`
 
 **Version**: 1.6.0 — 多台主機：host 標籤寫在每個讀取對象上（static_configs／file_sd 的 labels），job 層常數 replacement 只在一個 job 一台主機時成立；容器停止與磁碟的聚合保留 host；抑制名單統一為 ProbeSlow|ServiceSlow|ScrapeNearTimeout；layer-signals 補讀取對象清單（掛目錄不掛單檔）與主機停掉／消失／清單空了三種偵測
