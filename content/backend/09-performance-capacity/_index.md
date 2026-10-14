@@ -232,8 +232,19 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 | 9.15 與 0.25 的反向連結回填：operations/03 rate-limiting 與 backpressure（第五種機制：依系統狀態的負載卸除）、11.9 拒絕契約與 11 consumer-retry-decision、5.9 首段、6.x capacity-cost／load-testing、12.8 短網址轉址、reading-paths 搶購列、scale-growth-walls、autoscaling／degradation 卡、operations/05 peak-estimation 與 scaling-inflection-point、operations/02 scaling-triggers；另外 cases 多頁的「9.11」「9.6」「9.5」連結文字實際指向本模組目錄頁 | 跨模組 | 無                                                          | 中         |
 | 配額型資源的上限與餘裕怎麼定：把本模組的容量公式套到 pool / fd / pids / port / 外部 API 配額，含上限不在自己手上的情形                                                                                                                                                                                                                                                                                                                                      | 主章   | 上一列先落地                                                | 小         |
 | cgroup 資源上限知識卡（`pids.max` 等）：容器裡的配額主體與 per-uid 的差異                                                                                                                                                                                                                                                                                                                                                                                   | 知識卡 | 無                                                          | 1 張       |
+| 負載壓力的分級表達：變慢、無回應、崩潰各自的判斷標準、偵測它的監控層（對照 4.0 服務端監控的分層）與應對；並分析既有相關文章要延伸還是改寫，以及全站負載情境「撐／扛／垮」約 200 行的改寫分類                                                                                                                                                                                                                                                                | 跨模組 | 無（寫法規則已定在 #234、#374；新卡與教學文章的取捨待討論） | 大         |
 
 與 06 共用四個負載工具（k6 / JMeter / Gatling / Locust），寫作前要先確立本模組讀「效能工程的工具鏈」、06 讀「驗證流程的工具鏈」這條分工，否則兩邊會產出重複內容。
+
+### 負載壓力分級的待討論範圍
+
+這一列由 2026-10-14 一次寫作規則修訂帶出：#234 取消了系統負載的豁免，「撐住尖峰流量」「扛不住」這類句子要寫出負載量、判斷標準與瓶頸，而「撐不住」本身沒說是哪一種結果。討論要回答的是三件事。
+
+- **壓力的分級**：負載超過容量時，服務的表現至少分成變慢（延遲超過門檻、仍回應）、無回應（程序在而請求逾時、健康檢查逾時）、崩潰（程序結束、被 OOM 終止、反覆重啟）。每一級的判斷標準、通常的成因（佇列累積、連線池耗盡、記憶體耗盡）與應對（擴充、背壓、負載卸除、隔離、重啟）不同。
+- **與 4.0 的對應**：4.0 服務端監控的分層裡，變慢由應用層訊號的耗時分布與合成監控看到，無回應由自檢的逾時與服務網路內的探測看到，崩潰由自檢、重啟計數與心跳看到，飽和的前兆由元件指標（USE）看到。分級寫清楚之後，4.0 的各層能接到「這一層看到的是哪一級」。
+- **既有文章的處置**：本模組的 saturation-discovery、unplanned-traffic-surge、peak-event-readiness、workload-modeling、capacity-planning，operations 的 07-burst-traffic 與 02-horizontal-scaling，以及知識卡 saturation-point、headroom-budget、cascading-failure、load-shedding、backpressure、retry-storm 已經有分級需要的詞彙；要判斷的是延伸既有文章、改寫，或新增一篇。
+
+「撐／扛／垮」在負載情境的用法依意思分五類，各有站內術語：容量（撐得住、撐不住 → saturation-point、headroom-budget）、過載行為（壓垮、扛不住 → backpressure、load-shedding、retry-storm）、故障擴散（拖垮 → cascading-failure、blast-radius、bulkhead）、突發緩衝（撐過尖峰 → queue-depth、little-law）、耗盡時間（撐多久 → capacity-planning）。另有不屬於負載的用法（「靠契約撐住」「撐住過渡期」）另列。數字的寫法受原則十二約束：通則句寫出句子的形狀與去哪裡量，具體數字只出現在文章自己的範例情境並標明來源。全站候選掃描（不含 report 與 skills）：`rg '撐得住|撐不住|撐住|撐起|撐過|撐不過|撐多久|撐不久|扛得住|扛不住|扛住|打垮|拖垮|壓垮|垮掉|頂得住|頂不住' content -g '!content/report/**' -g '!content/skills/**'`，當時 361 行、其中約 200 行與負載詞同行，backend 佔 228 行。
 
 ### 規劃方向
 
