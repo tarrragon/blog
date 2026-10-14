@@ -33,7 +33,7 @@ dmesg | grep -i oom                                       # kernel log 裡被殺
 
 CPU 限制有兩種語意，對應不同的隔離需求。`--cpus=0.5` 是 hard limit，最多用 0.5 個核心、超過就被 throttle，適合多容器共用一台主機、要嚴格隔離的場景；`--cpu-shares=512` 是相對權重，跟其他容器按比例分 CPU、host 閒置時可以用更多，適合彈性分配。選哪種取決於「這個容器的 CPU 用量需不需要一個硬上限」。
 
-CPU throttle 跟 OOMKill 的差別是它不會 crash——症狀是延遲上升，請求處理時間從 10ms 變 100ms，因為容器的 CPU time 被 cgroup 暫停了。要確認有沒有被 throttle，看 cgroup 的統計：
+CPU throttle 跟 OOMKill 的差別是它不會 crash——症狀是延遲上升，請求處理時間從 10ms 變 100ms，因為容器的 CPU time 被 cgroup 暫停了（兩者在過載時的結果與監控訊號見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)）。要確認有沒有被 throttle，看 cgroup 的統計：
 
 ```bash
 cat /sys/fs/cgroup/cpu/cpu.stat   # nr_throttled 被限制次數、throttled_time 累計暫停奈秒

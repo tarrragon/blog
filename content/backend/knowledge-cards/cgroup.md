@@ -25,7 +25,7 @@ cgroup（control group）是 Linux 核心替一組行程記帳與設限的機制
 ## 可觀察訊號與例子
 
 - **cAdvisor 只有 cgroup 的雜湊 id、沒有容器名稱**：cgroup 只認得一個 id，容器名稱與標籤要問容器執行環境（containerd）才知道，見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)〈Docker 跑在虛擬機裡時 cAdvisor 缺容器名稱〉。
-- **延遲升高而主機的 CPU 不滿**：容器碰到 `cpu.max` 被暫停，`container_cpu_cfs_throttled_seconds_total` 升高。
+- **延遲升高而主機的 CPU 不滿**：容器碰到 `cpu.max` 被暫停，`container_cpu_cfs_throttled_seconds_total` 升高（它在過載時呈現的週期性停頓見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)）。
 - **容器被結束、退出碼 137**：超過 `memory.max`，見 [OOM killer 與退出碼 137](/linux/dotfile/knowledge-cards/oom-exit-code-137/)。
 
 ## 設計責任

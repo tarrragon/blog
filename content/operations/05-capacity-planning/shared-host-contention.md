@@ -35,7 +35,7 @@ tags: ["devops", "capacity-planning", "isolation", "noisy-neighbor", "monitoring
 這帶出部署時要決定的幾件事：
 
 - **哪些服務適合放在一起**：延遲敏感的線上請求與吃滿 CPU 的批次工作（重算報表、匯出）放在一起時，批次工作的尖峰就是線上請求的延遲尖峰。分開放，或至少用限制與權重讓線上請求優先。
-- **資料庫與應用程式要不要同機**：同機省下網路延遲與一台機器的成本，代價在記憶體。主機的記憶體耗盡時，Linux 的 [OOM killer](/linux/dotfile/knowledge-cards/oom-exit-code-137/) 依各行程常駐的記憶體（與可調的 `oom_score_adj`）挑一個結束，佔用最多的最先被挑中；資料常駐記憶體的 Redis、Valkey，或 `shared_buffers` 調大的 PostgreSQL，常是佔用最多的那一個（PostgreSQL 多數的快取在作業系統的 page cache，不算進去）。所以應用程式的記憶體暴增時，被結束的可能是資料庫或快取；PostgreSQL 的一個行程被結束，主行程會中斷所有連線、做損毀復原（crash recovery）之後才收得了新連線。給應用程式的容器設記憶體上限，暴增時被結束的就只會是那個容器；PostgreSQL 官方文件另建議把主行程的 `oom_score_adj` 調低。
+- **資料庫與應用程式要不要同機**：同機省下網路延遲與一台機器的成本，代價在記憶體。主機的記憶體耗盡時，Linux 的 [OOM killer](/linux/dotfile/knowledge-cards/oom-exit-code-137/) 依各行程常駐的記憶體（與可調的 `oom_score_adj`）挑一個結束，佔用最多的最先被挑中；資料常駐記憶體的 Redis、Valkey，或 `shared_buffers` 調大的 PostgreSQL，常是佔用最多的那一個（PostgreSQL 多數的快取在作業系統的 page cache，不算進去）。所以應用程式的記憶體暴增時，被結束的可能是資料庫或快取；PostgreSQL 的一個行程被結束，主行程會中斷所有連線、做損毀復原（crash recovery）之後才收得了新連線。給應用程式的容器設記憶體上限，暴增時被結束的就只會是那個容器；PostgreSQL 官方文件另建議把主行程的 `oom_score_adj` 調低。這時被終止的程序與負載增加的程序不是同一個，後端看到的是依賴失敗，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/) 的〈程序終止：被系統結束、當機或反覆重啟〉。
 - **監控放在哪裡**：監控與被監控的服務放在同一台主機時，主機出事的那一刻監控也跟著退化或停止，見〈監控的位置〉。
 
 ## 隔離的層級與代價
