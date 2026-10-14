@@ -106,7 +106,7 @@ server {
     deny all;
 
     location / {
-        proxy_set_header Host $host;          # Grafana 依 Host 判斷請求的網域
+        proxy_set_header Host $host;          # Grafana 比對 Origin 與 Host，見範本下方的說明
         proxy_pass http://grafana:3000;
     }
 
@@ -129,6 +129,8 @@ server {
 ```
 
 `/api/live/` 那一段處理的是 Grafana Live：Grafana 以 [WebSocket](/backend/knowledge-cards/websocket/) 把資料推到開著的面板，WebSocket 連線從一個帶 `Upgrade: websocket` 的 HTTP 請求開始。Nginx 轉送時預設使用 HTTP/1.0 而且不轉送 `Upgrade` 與 `Connection` 這兩個逐跳（hop-by-hop）的標頭，所以要明確寫出 HTTP/1.1 與這兩個標頭。實測拿掉 `location /api/live/` 整段、只留 `location /` 時，`/api/live/ws` 的升級請求由 Grafana 回 400；加上之後回 101（協定切換成功）。一般的儀表板查詢走普通的 HTTP，不受影響，所以漏掉這一段時畫面看起來正常，只是即時推送的部分沒有更新。
+
+兩個 `location` 都把瀏覽器送來的 `Host` 原樣傳給 Grafana。Grafana 對寫入的請求比對瀏覽器帶的 `Origin` 標頭與 `Host`，兩者的網域不一致時拒絕。Nginx 預設把 `Host` 換成 `proxy_pass` 裡的 `grafana:3000`，所以實測拿掉這一行之後，登入與瀏覽儀表板照常，以 API 建立資料夾的寫入請求回 `origin not allowed`。
 
 `allow` 一行只接受一個網段，`GRAFANA_ALLOW_CIDR` 填兩個網段時（不論以空白或逗號分隔）`nginx` 拒絕啟動。要允許多個網段時，在範本裡多寫幾行 `allow`，各自對應一個變數。
 
