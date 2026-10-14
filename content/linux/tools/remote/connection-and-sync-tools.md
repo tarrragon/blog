@@ -35,7 +35,7 @@ autossh 解的是「隧道的自動存活」：它監控一條 SSH 連線，斷�
 
 ## 網路層：機器根本連不到時，先解可達性
 
-前面的連線工具都假設「遠端機器的 IP 你連得到」。當遠端機器在 NAT 或防火牆後面、沒有公開 IP 時，連不到是可達性問題，要在網路層解，而不是換 SSH 客戶端。WireGuard 是現代的輕量 VPN 協定，讓兩台機器像在同一個私網裡直接互連；Tailscale 建在 WireGuard 之上，把「交換金鑰、打洞穿透 NAT、管理裝置清單」這些麻煩事自動化，通常裝好登入就能讓所有裝置互相 SSH，不必自己配 VPN。tailnet 位址模型、直連 vs DERP 中繼、以及採用它的取捨（第三方 control plane 依賴、免費上限）見 [Tailscale 深入](/linux/tools/remote/tailscale-tailnet-and-relay/)。
+前面的連線工具都假設「遠端機器的 IP 你連得到」。當遠端機器在 NAT 或防火牆後面、沒有公開 IP 時，連不到是可達性問題，要在網路層解，而不是換 SSH 客戶端。WireGuard 是現代的輕量 VPN 協定，讓兩台機器像在同一個私網裡直接互連；Tailscale 建在 WireGuard 之上，把「交換金鑰、打洞穿透 NAT、管理裝置清單」這些麻煩事自動化，通常裝好登入就能讓所有裝置互相 SSH，不必自己配 VPN。所有裝置預設互通是 tailnet 的預設政策，伺服器與個人裝置放在同一個 tailnet 時要以存取規則收窄，見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/)。tailnet 位址模型、直連 vs DERP 中繼、以及採用它的取捨（第三方 control plane 依賴、免費上限）見 [Tailscale 深入](/linux/tools/remote/tailscale-tailnet-and-relay/)。
 
 家裡的機器、公司內網的開發機、雲端私網裡的主機，想從外面連進去又不想開公網 port 暴露 SSH，用 Tailscale（要省事）或自建 WireGuard（要完全自主、不依賴第三方協調伺服器）在網路層打通，之後 SSH/mosh 照常用。這一層跟連線層是疊加關係：先有可達性，上面才談連線手感。（機器連不到的診斷——是網路層、服務層還是機器沒起——見[機器連不到或起不來](../../../debug/machine-unreachable/)。）
 

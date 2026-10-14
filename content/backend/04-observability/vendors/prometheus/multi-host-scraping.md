@@ -42,7 +42,7 @@ services:
 
 **各主機先收、再推送到中央**：每台主機跑一個只負責讀取與轉送的程式——Prometheus 以 `--agent` 啟動的 agent 模式、Grafana Alloy 或 OpenTelemetry Collector——讀本機的 exporter，再以 remote write 推送到中央的儲存（Mimir、Thanos 或託管服務，見 [Remote Write 與長期儲存整合](/backend/04-observability/vendors/prometheus/remote-write-long-term-storage/)）。連線由主機往外發起，所以主機在 NAT 後面、跨區域或跨雲、中央連不進去時仍然可行。代價有兩項：agent 模式不能查詢、不算告警，也不算 recording rule（預先計算並存成新序列的查詢），這些都移到中央的儲存；中央連不上時 agent 把資料暫存在本機磁碟，官方文件寫明暫存目前上限是兩小時，斷線超過兩小時的那段資料會留下缺口。
 
-選擇看的是網路的可達方向與單台 Prometheus 的容量。監控主機連得到每一台、而全部讀取對象在一台 Prometheus 的容量之內時，中央直接讀取的元件最少，本篇以下以它為準；主機在 NAT 後面時，也可以先用 WireGuard 這類 overlay 網路讓監控主機連得進去，維持中央讀取。中央連不進去，或一台 Prometheus 已經讀不完全部讀取對象（容量的估法見 [Prometheus 容量規劃與故障模式](/backend/04-observability/vendors/prometheus/capacity-failure-modes/)）時，改用推送；推送時被監控的主機不必對內開放 exporter 的連接埠，換來的是中央要接受各主機發起的連線，哪一個方向較安全取決於哪一端較不可信（見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/#地端監控情境需要的連線發起方向與回應內容)）；`host` 寫在每台 agent 的 `external_labels` 裡，中央的讀取設定不必帶它。
+選擇看的是網路的可達方向與單台 Prometheus 的容量。監控主機連得到每一台、而全部讀取對象在一台 Prometheus 的容量之內時，中央直接讀取的元件最少，本篇以下以它為準；主機在 NAT 後面時，也可以先用 WireGuard 這類 overlay 網路讓監控主機連得進去，維持中央讀取。中央連不進去，或一台 Prometheus 已經讀不完全部讀取對象（容量的估法見 [Prometheus 容量規劃與故障模式](/backend/04-observability/vendors/prometheus/capacity-failure-modes/)）時，改用推送；推送時被監控的主機不必對內開放 exporter 的連接埠，換來的是中央要接受各主機發起的連線，哪一個方向較安全取決於哪一端較不可信（見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/#地端監控情境需要的連線發起方向與流入的資料)）；`host` 寫在每台 agent 的 `external_labels` 裡，中央的讀取設定不必帶它。
 
 ## 代表主機的 host 標籤
 

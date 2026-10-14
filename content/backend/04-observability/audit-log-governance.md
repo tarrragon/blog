@@ -60,7 +60,7 @@ Audit event 的核心責任是回答五個問題：誰（who）、做了什麼�
 
 不變性保證有三層遞進：
 
-1. **Append-only storage**：寫入後不可修改、不可刪除。一般 object storage（S3 Object Lock、GCS Bucket Lock）或 immutable database table 可實作。
+1. **Append-only storage**：寫入後不可修改、不可刪除。一般 object storage（S3 Object Lock、GCS Bucket Lock）或 immutable database table 可實作。S3 Object Lock 要用 compliance 模式才是寫入後不可刪除：governance 模式下持有繞過權限的帳號仍刪得掉，兩種模式的差別見 [WORM Storage（不可變儲存）](/backend/knowledge-cards/worm-storage/)。
 2. **Tamper-evident hash chain**：每個 audit event 含前一個 event 的 hash，篡改任一筆會破壞整條 chain。需要週期性 anchor 到外部時間戳服務或第三方公證。
 3. **Independent retention**：audit log 的保留期跟 application DB 解耦，application 刪資料不影響 audit。retention 由合規團隊定義、不由應用團隊調整。
 

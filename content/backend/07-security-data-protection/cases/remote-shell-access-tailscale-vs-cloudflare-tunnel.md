@@ -106,13 +106,13 @@ zsh
 
 ## 此選型的 tripwire
 
-| 訊號                       | 觸發後重評                                                   |
-| -------------------------- | ------------------------------------------------------------ |
-| 從單人變多人               | Tailscale ACL 是否足夠，或需升級為 Teleport / CF Access      |
-| 需要對外暴露服務           | Tailscale Funnel 不適合 production hardened ingress，改走 CF |
-| 需要合規 session recording | Tailscale Enterprise 或改走 Teleport                         |
-| 需要 WAF / bot protection  | Tailscale 沒有應用層防護，改走 CF                            |
-| Tailscale key 即將到期     | 確認 key expiry 政策（預設 180 天）、設提醒避免裝置靜默掉線  |
+| 訊號                       | 觸發後重評                                                                                                           |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 從單人變多人               | Tailscale ACL 是否足夠，或需升級為 Teleport / CF Access                                                              |
+| 需要對外暴露服務           | Tailscale Funnel 不適合 production hardened ingress，改走 CF                                                         |
+| 需要合規 session recording | Tailscale Enterprise 或改走 Teleport                                                                                 |
+| 需要 WAF / bot protection  | Tailscale 沒有應用層防護，改走 CF                                                                                    |
+| Tailscale key 即將到期     | 確認 key expiry 政策（預設 180 天）、設提醒避免裝置靜默掉線；以 tag 認證或關掉到期的裝置金鑰永久有效，要記進金鑰紀錄 |
 
 ## 從本情境到 vendor 詳頁
 
@@ -120,3 +120,4 @@ zsh
 - Cloudflare Access 完整 vendor 判讀 → [Cloudflare Access](/backend/07-security-data-protection/vendors/cloudflare-access/)
 - Infrastructure access + 合規場景 → [Teleport](/backend/07-security-data-protection/vendors/teleport/)
 - 本選型的章節歸屬 → [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)
+- ACL 預設全部放行要替換、管理帳號與 Tailnet Lock、關掉金鑰到期之後的金鑰紀錄 → [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/) 的〈WireGuard 與 Tailscale 的金鑰與控制平面〉
