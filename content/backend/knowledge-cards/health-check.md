@@ -11,7 +11,7 @@ Health Check 的核心概念是「讓平台用一個簡單回應判斷服務是�
 
 ## 概念位置
 
-Health Check 位在 load balancer、platform、diagnostic endpoint 與 application 之間。平台會依這個回應決定是否導流、是否重啟，或是否需要進一步檢查；同一個回應被拿來做哪一件事，由讀它的平台決定。Kubernetes 把它拆成 [Readiness](/backend/knowledge-cards/readiness/)、[Liveness](/backend/knowledge-cards/health-check-liveness/) 與 [Startup Probe](/backend/knowledge-cards/startup-probe/) 三種探針；Docker 的 `HEALTHCHECK` 只有一個健康狀態，在 Compose 與 `docker run` 下只用來顯示與決定啟動順序、不會因此重啟容器，在 Swarm 模式下則會讓不健康的任務被取代。
+Health Check 位在 load balancer、platform、diagnostic endpoint 與 application 之間。平台會依這個回應決定是否導流、是否重啟，或是否需要進一步檢查；同一個回應被拿來做哪一件事，由讀它的平台決定。Kubernetes 把它拆成 [Readiness](/backend/knowledge-cards/readiness/)、[Liveness](/backend/knowledge-cards/health-check-liveness/) 與 [Startup Probe](/backend/knowledge-cards/startup-probe/) 三種探針；Docker 的 `HEALTHCHECK` 只有一個健康狀態，在 Compose 與 `docker run` 下只用來顯示與決定啟動順序、不會因此重啟容器，在 Swarm 模式下則會讓不健康的任務被取代。過載時健康檢查可能先逾時而讓實例被移出或重啟，也可能因為不經過卡住的資源而一直成功，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)〈無回應：程序還在，請求等到逾時也沒有結果〉。
 
 ## 可觀察訊號
 

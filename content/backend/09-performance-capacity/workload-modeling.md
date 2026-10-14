@@ -67,7 +67,7 @@ production log 通常缺寫入 payload（log 只記 metadata、不記 request bo
 兩個可能的偏差結果：
 
 - **同一個負載下，模型越過 SLO 而 production 沒有** → 模型太苛刻、可能高估了流量或操作複雜度。usually fine、調整模型參數即可。
-- **同一個負載下，模型在 SLO 內而 production 越過 SLO（或出現模型裡沒出現的請求失敗、無回應）** → 模型不足、漏了某個維度。dangerous、需要回到 data 蒐集階段找漏掉的 pattern。
+- **同一個負載下，模型在 SLO 內而 production 越過 SLO（或出現模型裡沒出現的請求失敗、無回應，各種結果的判斷標準見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)）** → 模型不足、漏了某個維度。dangerous、需要回到 data 蒐集階段找漏掉的 pattern。
 
 對應案例：[Zoom 30x COVID surge](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/) — 之前的 workload model 完全不能用、必須 reset baseline 重新從 post-COVID 流量抽 model；[Tixcraft 10K t2.micro 壓測](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 用實際售票場景重播驗證、不是 synthetic 數字。
 

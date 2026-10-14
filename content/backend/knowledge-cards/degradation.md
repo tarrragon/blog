@@ -11,7 +11,7 @@ weight: 9
 
 ## 概念位置
 
-降級是可靠性設計的一部分。它和 failover、rate limit、circuit breaker、feature flag、cache fallback、read-only mode 相關，但重點是產品取捨：哪些功能必須保留，哪些功能可以暫時縮小。 可先對照 [Delivery Mode](/backend/knowledge-cards/delivery-mode/)。
+降級是可靠性設計的一部分。它和 failover、rate limit、circuit breaker、feature flag、cache fallback、read-only mode 相關，但重點是產品取捨：哪些功能必須保留，哪些功能可以暫時縮小。 可先對照 [Delivery Mode](/backend/knowledge-cards/delivery-mode/)。降級回應的延遲與錯誤率都正常，監控上要另外計數，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)〈降級回應：回應成功而內容縮減〉。
 
 ## 可觀察訊號
 

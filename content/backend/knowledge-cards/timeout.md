@@ -11,7 +11,7 @@ Timeout 的核心概念是「為一次等待設定時間上限」。後端服務
 
 ## 概念位置
 
-Timeout 是資源保護與失敗分類的基礎。等待時間上限讓 connection、worker、goroutine、thread、memory 與 request slot 可以釋放，降低單一慢依賴擴散成整體容量問題的機率。 可先對照 [Database](/backend/knowledge-cards/database/)。
+Timeout 是資源保護與失敗分類的基礎。等待時間上限讓 connection、worker、goroutine、thread、memory 與 request slot 可以釋放，降低單一慢依賴擴散成整體容量問題的機率。 可先對照 [Database](/backend/knowledge-cards/database/)。服務端的等待上限讓過載時的結果從無回應變成請求失敗，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)〈無回應：程序還在，請求等到逾時也沒有結果〉。
 
 ## 可觀察訊號與例子
 

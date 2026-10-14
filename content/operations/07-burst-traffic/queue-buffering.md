@@ -10,7 +10,7 @@ Message queue 放在 ingestion（接收事件）和 processing（寫入 storage�
 
 ## 為什麼不直接寫 DB
 
-直接寫 DB（SQLite / PostgreSQL）的問題是 ingestion 速度被 DB 寫入速度限制。DB 寫入慢（鎖定、WAL flush、索引更新）時，HTTP handler 的 goroutine 等在 `Storage.Store()` 上 — goroutine 積壓 → 記憶體上升 → 最終 OOM 或 response timeout。
+直接寫 DB（SQLite / PostgreSQL）的問題是 ingestion 速度被 DB 寫入速度限制。DB 寫入慢（鎖定、WAL flush、索引更新）時，HTTP handler 的 goroutine 等在 `Storage.Store()` 上 — goroutine 積壓 → 記憶體上升 → 最終 OOM 或 response timeout（記憶體先到上限是程序終止，用戶端的逾時先到是無回應，判斷標準與監控訊號見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)）。
 
 Queue 的解決方式是把「接收」和「寫入」分開：接收端只做 JSON 驗證 + 寫入 queue（微秒級），處理端從 queue 讀取 + 寫入 DB（毫秒級）。接收端的吞吐量不再受 DB 限制。
 

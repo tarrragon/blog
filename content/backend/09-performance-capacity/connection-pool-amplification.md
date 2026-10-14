@@ -12,7 +12,7 @@ tags: ["backend", "performance", "scaling", "connection-pool"]
 
 PostgreSQL / MySQL 每個連線都會在 DB server 端配一個 backend process / thread。Backend 佔 5-15 MB 記憶體、context switch 也有成本。當應用層連線數超過 DB 機器能負擔的數量，會出現三類問題：
 
-- **記憶體吃光**：500 個 backend × 10 MB = 5 GB、再加 shared buffer、可能直接 OOM
+- **記憶體耗盡**：500 個 backend × 10 MB = 5 GB、再加 shared buffer、可能直接 OOM（記憶體耗盡在使用者那一側是程序終止，判斷標準見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)）
 - **Context switch 抖動**：上百個 backend 競爭 CPU、上下文切換 overhead 變成主要消耗
 - **連線建立失敗**：超過 `max_connections` 後、新請求拿不到連線、即使現有連線多數 idle
 

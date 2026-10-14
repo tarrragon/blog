@@ -42,6 +42,8 @@ tags: ["devops", "burst-traffic", "classification", "marketing", "error-storm"]
 | Error storm（app bug 觸發大量 error） | 依 bug 影響範圍 | 直到 hotfix | 每個受影響的使用者都在送 error 事件 |
 | 外部依賴復原（積壓請求一次湧入）      | 2-5x            | 分鐘級      | 依賴恢復後積壓的 retry 一起到達     |
 
+依賴恢復時積壓請求一起到達的第二波湧入，以及它轉成停在失效的條件，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)。
+
 不可預期突發的應對核心是**降級** — 系統在超載時自動犧牲非核心功能，保住核心功能。
 
 ### 監控系統的 error storm

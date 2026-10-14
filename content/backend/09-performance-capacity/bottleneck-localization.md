@@ -162,6 +162,7 @@ USE 找出哪一層 saturate 之後、profile 工具找出 *該層的哪段 code
 - 上游：[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)
 - 下游：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)（針對 bottleneck 規劃）
 - 下游：[9.9 Improvement Loop](/backend/09-performance-capacity/improvement-loop/)（用 profile diff 改進）
+- 下游：定位出的瓶頸在使用者那一側呈現哪一種結果，以及先耗盡的資源怎麼決定結果：[9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)
 - 下游：[1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/)（DB 層 bottleneck 多半在 query 寫法）
 - 跨模組：[04 可觀測性模組](/backend/04-observability/) / [05 部署平台模組](/backend/05-deployment-platform/)
 
