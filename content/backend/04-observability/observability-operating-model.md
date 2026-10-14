@@ -120,13 +120,13 @@ Observability operating model 的生命週期是新增、審核、使用、修�
 
 Operating model 的治理節奏把觀測資產拉回日常工程流程。review cadence 的重點是定期回答「這個資產還能支援決策嗎」，會議只是其中一種執行形式。
 
-| 節奏                     | 核心問題                         | 典型輸出                                       |
-| ------------------------ | -------------------------------- | ---------------------------------------------- |
-| Dashboard review         | 面板是否仍有人用、是否對應旅程   | 更新、合併、下架                               |
-| Alert review             | alert 是否可行動、噪音是否可接受 | threshold 調整、降為只送通知、刪除、補 runbook |
-| Cost review              | 成本是否對應服務價值             | retention tier、sampling policy                |
-| Schema review            | 欄位是否穩定、是否跨服務一致     | schema migration、drift 修正                   |
-| Post-incident write-back | 復盤缺口是否回寫到訊號與 owner   | 新 alert、新 dashboard、新 runbook             |
+| 節奏                     | 核心問題                         | 典型輸出                                                         |
+| ------------------------ | -------------------------------- | ---------------------------------------------------------------- |
+| Dashboard review         | 面板是否仍有人用、是否對應旅程   | 更新、合併、下架                                                 |
+| Alert review             | alert 是否可行動、噪音是否可接受 | threshold 調整、降為只送通知、以分組或抑制合併、刪除、補 runbook |
+| Cost review              | 成本是否對應服務價值             | retention tier、sampling policy                                  |
+| Schema review            | 欄位是否穩定、是否跨服務一致     | schema migration、drift 修正                                     |
+| Post-incident write-back | 復盤缺口是否回寫到訊號與 owner   | 新 alert、新 dashboard、新 runbook                               |
 
 Dashboard review 應看使用情境與操作價值。面板需要支援 on-call 的前 10 分鐘、capacity planning 或 SLO review；脫離這些用途的面板適合合併、重命名或下架。
 

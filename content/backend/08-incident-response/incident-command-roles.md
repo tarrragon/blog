@@ -50,7 +50,7 @@ Datadog 和 Roblox 也很有用，前者讓我們看到監控供應商自己失�
 | Owner                 | 實際修復、驗證、回復                        | 邊界不清、被多方拉扯       |
 | Subject Matter Expert | 提供技術判斷與風險評估                      | 直接搶走決策權             |
 
-liaison 寫給客服的那一份（內部狀態頁上對客戶的說法）見 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#客服當場答覆時用的資訊) 的〈客服當場答覆時用的資訊〉。
+Liaison 在內部狀態頁上寫給客服、對客戶的說法，見 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#客服當場答覆時用的資訊) 的〈客服當場答覆時用的資訊〉。
 
 這張表的重點是分工清楚，不是職稱固定。小團隊可以兼任，但責任不能重疊到失去路由。
 

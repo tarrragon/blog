@@ -12,7 +12,7 @@ Incident severity 的核心概念是「用一致標準把事故影響分級」�
 
 Incident severity 連接 [alert](/backend/knowledge-cards/alert/)、[runbook](/backend/knowledge-cards/runbook/) 與 [escalation policy](/backend/knowledge-cards/escalation-policy/)。同一類技術錯誤在不同業務場景可能有不同等級，因此分級要以產品後果為主。
 
-影響固定、有替代做法的問題列進已知錯誤清單，由客服與值班照著處理，不開事故，見 [Known Error（已知錯誤）](/backend/knowledge-cards/known-error/)。
+影響固定、有替代做法的問題列進已知錯誤清單，由客服照清單上的替代做法答覆，不開事故，見 [Known Error（已知錯誤）](/backend/knowledge-cards/known-error/)。
 
 ## 可觀察訊號與例子
 

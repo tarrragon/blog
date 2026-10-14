@@ -42,7 +42,7 @@ Client (Flutter) → HTTP POST /log → Go receiver → JSON file → grep/jq
 
 只有開發者自己 → grep/jq 足夠，不需要 dashboard。
 
-包含非技術人員（客服、產品經理）→ 需要視覺化 dashboard 和搜尋介面，商業方案的 UI 是這個需求的標準答案。給一線客服的是從 log 裡挑出來的狀態而不是 log 本身，見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#客服查詢工具的權限) 的〈客服查詢工具的權限〉。
+包含非技術人員（產品經理）→ 需要視覺化 dashboard 和搜尋介面，商業方案的 UI 是這個需求的標準答案。一線客服不直接讀 log，給它的是查詢工具從 log 與資料庫挑出來的狀態，見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#客服查詢工具的權限) 的〈客服查詢工具的權限〉。
 
 ### 是否需要告警
 

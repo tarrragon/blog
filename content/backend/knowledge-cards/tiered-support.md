@@ -6,7 +6,7 @@ weight: 482
 tags: ["backend", "incident-response", "customer-support"]
 ---
 
-Tiered support（分層支援）是把處理使用者回報的人分成幾層的組織方式：一線客服（Tier 1）接所有回報，能以既有資訊答覆的當場答覆；技術支援（Tier 2）處理需要讀系統資料的回報；工程（Tier 3）處理需要查 log、改程式的回報。小團隊多半只有兩層，客服直接轉給工程。一線客服答覆時用的資訊之一是 [Known Error（已知錯誤）](/backend/knowledge-cards/known-error/) 清單，各層之間累積答案的方法見 [Knowledge-Centered Service（KCS）](/backend/knowledge-cards/knowledge-centered-service/)。
+Tiered support（分層支援）是把處理使用者回報的人分成幾層的組織方式：一線客服（Tier 1）接所有回報，能以既有資訊答覆的當場答覆；技術支援（Tier 2）處理需要讀系統資料的回報；工程（Tier 3）處理需要改程式、或讀完整 log 與資料庫的回報。小團隊多半只有兩層，客服直接轉給工程。一線客服答覆時用的資訊之一是 [Known Error（已知錯誤）](/backend/knowledge-cards/known-error/) 清單，各層之間累積答案的方法見 [Knowledge-Centered Service（KCS）](/backend/knowledge-cards/knowledge-centered-service/)。
 
 ## 概念位置
 
