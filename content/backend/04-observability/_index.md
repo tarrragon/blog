@@ -160,7 +160,7 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | 4.29 / alert-silence 的低優先回指：4.0〈告警鏈的監看〉補「心跳不證明沒有告警被靜音壓下」、4.27 與 kubernetes-monitoring-entry、visualization-tool-selection、external-heartbeat 的 silence 與暫停項目連卡、4.4〈Noise rate 量測〉與〈判讀訊號〉連 4.29；4.25 的「低摩擦 support-to-engineering 升級」連 8.24 | 跨模組 | 無                                                 | 小         |
 | 4.12 的 operational log 保留期前後不一（表寫 7-30 天、〈Retention 與保留策略漂移〉寫 30-90 天），11.16 兩處都引用                                                                                                                                                                                            | 主章   | 無                                                 | 小         |
 | Page 與 Ticket 卡（呼叫值班與只送通知）：8.24 與 4.29 各定義一次，4.4、observability-readiness-review、operations-control-service-selection 直接用 page 而不解釋                                                                                                                                             | 知識卡 | 先跑術語探針確認中文名                             | 小         |
-| 停在失效（負載退去之後仍不恢復）的偵測規則：入口請求率已回到平常範圍而成功完成的請求量仍偏低時送出的比對告警（PromQL 寫法、平常範圍的取法、持續時間），在 tinyurl-test 用重試造出一次再實測                                                                                                                  | 主章   | 無（判斷標準已寫在 9.16 與 metastable-failure 卡） | 小         |
+| 停在失效（觸發消失、請求率回到平常之後仍不恢復）的偵測規則：入口請求率已回到平常範圍而成功完成的請求量仍偏低時送出的比對告警（PromQL 寫法、平常範圍的取法、持續時間），在 tinyurl-test 用重試造出一次再實測                                                                                                  | 主章   | 無（判斷標準已寫在 9.16 與 metastable-failure 卡） | 小         |
 
 「個案前拓展空間」列的四個前置控制面（4.16-4.19）已全數完成，保留該段作為回寫路由的判斷標準參考。
 

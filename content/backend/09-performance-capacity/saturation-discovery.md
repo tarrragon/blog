@@ -24,7 +24,7 @@ Saturation discovery 的責任是量出系統在延遲與錯誤率目標之內�
 
 - **linear region**（utilization < 50%）：latency 平穩、加流量幾乎不影響
 - **knee region**（utilization 50-80%）：latency 開始上升、但還可接受；knee point（設計容量上限）落在這一段的後半，M/M/c 通常在 70-80%
-- **cliff region**（utilization > 80%）：latency 不可預測；進入 cliff 之後服務呈現的是請求失敗、無回應還是程序終止，由先耗盡的資源與等待有沒有上限決定，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)
+- **cliff region**（utilization > 80%）：latency 不可預測；進入 cliff 之後服務呈現的是變慢、請求失敗、無回應還是程序終止，由先耗盡的資源與等待是否設有上限決定，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)
 
 健康系統運轉在 linear 後半段或 knee 前段（utilization 50-70%）、留出 headroom 應付 burst。autoscaler 的 target metric 通常訂在 60-70%、是這條曲線推導出的安全位置。
 
