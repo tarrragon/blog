@@ -23,7 +23,7 @@ Grafana Stack（LGTM = Loki + Grafana + Tempo + Mimir）是自架觀測平台的
 
 Grafana 是查詢 / 視覺化層，Loki / Mimir / Tempo 是儲存 / 查詢層。Grafana 本身不存觀測資料，它連接 data source（Loki / Mimir / Tempo / Prometheus / Elasticsearch）做查詢跟渲染。
 
-四個元件獨立部署、獨立擴展、各自有健康指標。一個元件故障不影響其他元件 — Loki 掛了時 Grafana 的 metric dashboard 跟 trace 查詢仍然正常，只有 log panel 會報錯。
+四個元件獨立部署、獨立擴展、各自有健康指標。一個元件故障不影響其他元件 — Loki 停止時 Grafana 的 metric dashboard 跟 trace 查詢仍然正常，只有 log panel 會報錯。
 
 ## 部署模式
 

@@ -112,7 +112,7 @@ Connection pooler 不是必要 — 在以下情境可以暫時不裝：
 
 09 案例庫多數案例規模到 connection pool 已是 secondary concern、但兩個案例有對應參考：
 
-- [Zoom：COVID 30 倍突發](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/) — Zoom 把 stateful 資料層改用 DynamoDB、繞過 SQL connection pool 問題（KV 沒有 backend process 概念）。對照本章可問：若 Zoom 保留 SQL、connection pool 怎麼設計才撐得住 30 倍突發？
+- [Zoom：COVID 30 倍突發](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/) — Zoom 把 stateful 資料層改用 DynamoDB、繞過 SQL connection pool 問題（KV 沒有 backend process 概念）。對照本章可問：若 Zoom 保留 SQL、請求量變成 30 倍時，connection pool 怎麼設計才不會讓資料庫的連線數超過上限？
 - [DoorDash：CockroachDB 多主寫入](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) — DoorDash 從 Aurora single-primary 換成 CockroachDB 多主、connection pool 設計從「集中在 primary」變成「分散在多 node」。對照本章可問：CockroachDB 是否仍需要 connection pooler？
 
 ## 跨模組路由

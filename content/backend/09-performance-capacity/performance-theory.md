@@ -18,9 +18,9 @@ tags: ["backend", "performance", "capacity", "theory"]
 
 Little's Law 用一條等式 L = λW 把三個變數綁在一起：L 是系統內平均並發數、λ 是請求到達率、W 是請求平均逗留時間。這個關係在 *穩態*（流量已穩定、不在 warmup 階段）必然成立、不需要假設特定分布或服務模式。
 
-工程上最有價值的用法是「反推」。給定預期 RPS λ = 1000 跟 SLO latency 上限 W = 200ms、能算出系統最大穩態並發 L = 1000 × 0.2 = 200。這個 200 直接對應「connection pool size」「thread pool size」「async worker count」這類容量參數 — 訂得比 200 小、系統撐不住預期流量；訂得比 200 大太多、資源浪費。
+工程上最有價值的用法是「反推」。給定預期 RPS λ = 1000 跟 SLO latency 上限 W = 200ms、能算出系統最大穩態並發 L = 1000 × 0.2 = 200。這個 200 直接對應「connection pool size」「thread pool size」「async worker count」這類容量參數 — 訂得比 200 小、超出的並發請求要排隊等 pool 釋出，逗留時間超過 200ms，越過 SLO 的延遲上限；訂得比 200 大太多、資源浪費。
 
-反向也成立。當 connection pool 卡死在某個 size L、latency budget W 已訂、能算出可支撐的 RPS。這個算法在 capacity planning 階段比 ramp-up 壓測更快、可以先用 Little's Law 篩掉明顯撐不住的配置、再用壓測驗證剩下的候選。
+反向也成立。當 connection pool 卡死在某個 size L、latency budget W 已訂、能算出可支撐的 RPS。這個算法在 capacity planning 階段比 ramp-up 壓測更快、可以先用 Little's Law 篩掉在預期 RPS 下必然超過延遲上限的配置、再用壓測驗證剩下的候選。
 
 對應案例：[Coinbase sub-ms](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) 把 W 訂在 sub-millisecond、所有架構選擇都從這個 W 反推；[Tubi ML p99 < 10ms](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) 從 W 反推 feature lookup 必須 cache hit 路徑、不能回到持久 store。
 
@@ -36,7 +36,7 @@ M/M/c 系統的平均 queue length 跟 utilization 之間是非線性關係。�
 
 多 server 模型（M/M/c）比單 server（M/M/1）有顯著容量優勢：c 個 server 的有效容量遠超 1 個 server 容量 × c。這也解釋了為什麼水平擴容（多開幾個 instance）通常比垂直擴容（單機加 CPU）划算 — 不只是規模、是 queue 行為的本質差異。
 
-對應案例：[GR8 Tech 25ms p95](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 把 p95 維持在 25ms 同時撐 54K TPS、靠的是 *永遠不讓系統進入 knee*、AI 預測讓擴容窗口縮短到 reaction time 內。
+對應案例：[GR8 Tech 25ms p95](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 把 p95 維持在 25ms 同時處理 54K TPS、靠的是 *永遠不讓系統進入 knee*、AI 預測讓擴容窗口縮短到 reaction time 內。
 
 ## Universal Scalability Law：擴容會邊際失效
 
@@ -53,9 +53,9 @@ USL（Neil Gunther 提出）的公式 throughput(N) = N / (1 + α(N-1) + βN(N-1
 
 ## Saturation Curve：linear → knee → cliff
 
-實際系統的 latency vs throughput 曲線分三段。第一段是 linear region — utilization 低、latency 平穩、加流量幾乎不影響 latency。第二段是 knee — utilization 接近 80%、latency 開始指數成長、再加流量會明顯變慢。第三段是 cliff — 系統進入不穩定區、latency 不可預測、可能 timeout、可能 cascade failure。
+實際系統的 latency vs throughput 曲線分三段。第一段是 linear region — utilization 低、latency 平穩、加流量幾乎不影響 latency。第二段是 knee — utilization 接近 80%、latency 開始指數成長、再加流量會明顯變慢。第三段是 cliff — 系統進入不穩定區、latency 不可預測；進入 cliff 之後呈現哪一種結果（請求失敗、無回應或程序終止），見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)。
 
-容量規劃的關鍵概念是 *knee point = 設計容量上限*。健康系統運轉在 knee 以下 50-70%、留出 headroom 應付 burst 跟 forecast 誤差。沒有量過 knee 的系統等於「不知道距離崩潰多遠」 — 平日看起來穩、實際隨時可能因為一個小 spike 進入 cliff。
+容量規劃的關鍵概念是 *knee point = 設計容量上限*。健康系統運轉在 knee 以下 50-70%、留出 headroom 應付 burst 跟 forecast 誤差。沒有量過 knee 的系統，不知道負載再增加多少就會進入 cliff — 平日看起來穩、實際隨時可能因為一個小 spike 進入 cliff。
 
 不同 system 的 knee 位置差異很大。stateless service 通常 knee 在 80% CPU；DB 因為 lock contention、knee 可能在 60% utilization；broker / queue 因為 disk I/O bottleneck、knee 可能在 50%。容量規劃時不能一概而論、必須個別量測。
 
@@ -67,7 +67,7 @@ USL（Neil Gunther 提出）的公式 throughput(N) = N / (1 + α(N-1) + βN(N-1
 
 ## 反推：從業務 KPI 到系統參數
 
-理論工具的真正價值在「反推」 — 不是先設計系統再量測 saturate 多少、是 *先訂業務目標再反推系統參數*。這層思維把容量規劃從 reactive（撐到撐不住才擴）變成 proactive（按業務需求預先配置）。
+理論工具的真正價值在「反推」：*先訂業務目標再反推系統參數*，而不是先設計系統再量測它在多少負載下 saturate。這層思維把容量規劃從 reactive（延遲或錯誤率越過門檻之後才擴容）變成 proactive（按業務需求預先配置）。
 
 反推流程通常從 latency budget 開始（詳見 [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/slo-performance-budget/)）：
 

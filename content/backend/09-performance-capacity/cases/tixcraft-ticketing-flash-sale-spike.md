@@ -1,7 +1,7 @@
 ---
 title: "9.C15 拓元 Tixcraft：售票搶購的瞬間爆量架構"
 date: 2026-05-12
-description: "拓元把售票系統搬到 AWS 後，30 分鐘內把資源擴到 130 倍（一場熱門活動擴到 800 台 EC2），撐住 10 萬以上同時在線與每秒 2,500 筆以上訂單；資料庫改用 DynamoDB"
+description: "拓元把售票系統搬到 AWS 後，30 分鐘內把資源擴到 130 倍（一場熱門活動擴到 800 台 EC2），處理 10 萬以上同時在線與每秒 2,500 筆以上訂單；資料庫改用 DynamoDB"
 weight: 15
 tags: ["backend", "performance", "capacity", "case-study", "db-kv", "aws", "flash-sale-spike"]
 ---
@@ -10,7 +10,7 @@ tags: ["backend", "performance", "capacity", "case-study", "db-kv", "aws", "flas
 
 ## 觀察
 
-拓元遷到 AWS 之前，自建機房撐不住熱門場次開賣的尖峰，網站與 App 會「inaccessible for up to several hours」。遷移後的關鍵數字如下，標「簡報」的出自 re:Invent 2015 簡報，沒有取得原文核對，其餘出自 AWS 案例頁（[tixCraft Case Study，Wayback 2015-12-31](https://web.archive.org/web/20151231134110id_/http://aws.amazon.com:80/solutions/case-studies/tixcraft/)；[AWS re:Invent 2015 簡報](https://www.slideshare.net/slideshow/case-sharing-tixcraft-on-aws-reinvent-2015-recap/55681198)）：
+拓元遷到 AWS 之前，自建機房在熱門場次開賣的尖峰無法服務，網站與 App 會「inaccessible for up to several hours」。遷移後的關鍵數字如下，標「簡報」的出自 re:Invent 2015 簡報，沒有取得原文核對，其餘出自 AWS 案例頁（[tixCraft Case Study，Wayback 2015-12-31](https://web.archive.org/web/20151231134110id_/http://aws.amazon.com:80/solutions/case-studies/tixcraft/)；[AWS re:Invent 2015 簡報](https://www.slideshare.net/slideshow/case-sharing-tixcraft-on-aws-reinvent-2015-recap/55681198)）：
 
 | 指標                | 數字                                              |
 | ------------------- | ------------------------------------------------- |
@@ -38,15 +38,15 @@ tags: ["backend", "performance", "capacity", "case-study", "db-kv", "aws", "flas
 
 拓元案例最值得讀的、是它揭露三個 flash-sale 工程設計的非直覺事實。
 
-1. **DynamoDB 作為寫入緩衝、不是 OLTP（依架構圖的推論，AWS 案例頁只寫資料庫從 RDS 遷到 DynamoDB）**：搶票時的「訂單」先丟進 DynamoDB、傳統 server 用自己能承受的速度消費、即時生效在此架構下不是目標。架構上 DynamoDB 扮演 *durable queue* 的角色、不是傳統 OLTP DB。這層解耦讓「前端可以擴 130 倍、後端不用同步擴」、避免後端被前端拖垮。對應 [03 訊息佇列模組](/backend/03-message-queue/) 的 outbox / async delivery 概念、跟 [01 資料庫模組](/backend/01-database/) 的 transaction boundary 分離。
-2. **DynamoDB IOPS 從 20 衝到 135,000 = partition 設計能撐**：這個 6,750 倍的彈性不是 DynamoDB 魔法、是 *partition key 設計均勻* 的結果。partition key 不均、IOPS 上限是「最熱 partition 上限」、不是「總和」。對應 [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 的同一判讀重點、跟 [9.4 Saturation Discovery](/backend/09-performance-capacity/) 的 hot partition 識別。
+1. **DynamoDB 作為寫入緩衝、不是 OLTP（依架構圖的推論，AWS 案例頁只寫資料庫從 RDS 遷到 DynamoDB）**：搶票時的「訂單」先丟進 DynamoDB、傳統 server 用自己能承受的速度消費、即時生效在此架構下不是目標。架構上 DynamoDB 扮演 *durable queue* 的角色、不是傳統 OLTP DB。這層解耦讓「前端可以擴 130 倍、後端不用同步擴」，後端的處理速率因此不必跟著前端流量上升。對應 [03 訊息佇列模組](/backend/03-message-queue/) 的 outbox / async delivery 概念、跟 [01 資料庫模組](/backend/01-database/) 的 transaction boundary 分離。
+2. **DynamoDB IOPS 從 20 調到 135,000，要真的用得到，寫入得平均分散到各 partition**：這個 6,750 倍的彈性不是 DynamoDB 魔法、是 *partition key 設計均勻* 的結果。partition key 不均、IOPS 上限是「最熱 partition 上限」、不是「總和」。對應 [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 的同一判讀重點、跟 [9.4 Saturation Discovery](/backend/09-performance-capacity/) 的 hot partition 識別。
 3. **30 分鐘擴 130 倍與開賣瞬間的落差**：擴到 800 台要以分鐘計，開賣的請求卻在幾秒內湧入，所以這個擴展速度對得上的是開賣前的預擴，開賣當下的吸收要靠已經擴好的容量或排隊（這是推論，案例頁沒有寫拓元如何安排擴展時點）。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 autoscaling 與 [9.6 容量規劃模型](/backend/09-performance-capacity/)。
 
 需要警惕的判讀盲點：
 
 - 「限流到底怎麼做」這個工程社群關心的問題、架構圖上看不到明確元件。可能是「DynamoDB 寫入排隊 = 隱性限流」、也可能是 ELB / WAF / 應用層限流。沒有公開資訊不要過度推測。
 - 2015 年的數字、用的還是 t2.micro 跟舊版 DynamoDB throughput model。現在等效實作可能會用 DynamoDB on-demand、AWS WAF、CloudFront WAF rules、或 SeatGeek-style Virtual Waiting Room（見 [SeatGeek：DynamoDB + Lambda 打造的虛擬等候室](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)）。
-- 「30,000 張 / 3 分鐘」是 *票房成績*、不是 *系統極限*。系統能撐遠不止這個量、只是票本身賣完了。
+- 「30,000 張 / 3 分鐘」是 *票房成績*、不是 *系統極限*。成交量的上限是票數；案例頁沒有給出系統的處理上限，這個數字不能當容量讀。
 
 ## 策略
 

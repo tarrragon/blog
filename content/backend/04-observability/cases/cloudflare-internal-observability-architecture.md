@@ -79,7 +79,7 @@ Retention 按合規需求保留 6 個月到數年。成本主要是儲存（obje
 - Dashboard 查詢越來越慢，因為查詢打的是存了全量資料的同一個 backend
 - on-call 跟 analytics 團隊對觀測 backend 的需求衝突（一個要快、一個要全）
 - edge / CDN / 多 region 架構下，central pipeline 的 ingestion bandwidth 成為瓶頸
-- 安全團隊要求保留原始事件 6 個月以上，但 hot tier 儲存成本撐不住
+- 安全團隊要求保留原始事件 6 個月以上，但 hot tier 存 6 個月的成本超出預算
 
 ## 引用源
 

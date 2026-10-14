@@ -1,7 +1,7 @@
 ---
-title: "9.C27 Disney+：DynamoDB 撐每日數十億動作的觀看歷史"
+title: "9.C27 Disney+：DynamoDB 承載每日數十億動作的觀看歷史"
 date: 2026-05-12
-description: "Disney+ 用 DynamoDB 撐每日數十億動作的觀看歷史、watchlist、播放進度等串流 metadata"
+description: "Disney+ 用 DynamoDB 承載每日數十億動作的觀看歷史、watchlist、播放進度等串流 metadata"
 weight: 27
 tags: ["backend", "performance", "capacity", "case-study", "db-kv", "aws", "predictable-peak"]
 ---
@@ -25,7 +25,7 @@ Disney+ 在 DynamoDB 的關鍵敘述（引自 [DynamoDB Customers](https://aws.a
 
 Disney+ 案例揭露三個串流平台 metadata 層的工程重點。
 
-1. **「每日數十億動作」= read + write 都要撐**：跟 [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 的 18:1 讀寫比不同、串流 metadata 通常接近 5:1 read-heavy（每動作 1 寫、每 session 5 讀）。partition key 設計通常用 user_id、天然均勻、不會 hot partition。對應 [01 資料庫模組](/backend/01-database/) 的 schema design。
+1. **「每日數十億動作」= read 與 write 的量都大**：跟 [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 的 18:1 讀寫比不同、串流 metadata 通常接近 5:1 read-heavy（每動作 1 寫、每 session 5 讀）。partition key 設計通常用 user_id、天然均勻、不會 hot partition。對應 [01 資料庫模組](/backend/01-database/) 的 schema design。
 2. **新片發布是 predictable-peak**：Marvel / Star Wars / Disney 動畫 新片上線首日、metadata 流量可衝 3-5 倍 — 因為「全平台用戶同時打開該片頁面」。這比一般 Black Friday 集中、像 [Hotstar IPL](/backend/09-performance-capacity/cases/hotstar-ipl-eighteen-million-concurrent/) 的集中型流量。對應 [9.11 高峰事件準備](/backend/09-performance-capacity/) 的內容發布事件容量規劃。
 3. **watchlist + 播放進度需要跨裝置即時同步**：用戶在手機看到一半、晚上回家用電視繼續、進度必須跨裝置同步。這層需求對 DynamoDB Global Tables（multi-region active-active）特別適合。對應 [01.5 transaction boundary](/backend/01-database/transaction-boundary/) 的最終一致性可接受場景。
 

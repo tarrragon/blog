@@ -39,7 +39,7 @@ Cardinality 在 metric、log、trace 三類訊號的影響機制不同，失分�
 
 Metric cardinality 是最敏感的維度。Prometheus 等 pull-based TSDB 在 series 數超過數百萬時查詢退化、aggregation 失準、recording rule 跑不完。Cloud 託管型 TSDB 雖然容量更大，但每個 active series 的單價非常具體，cardinality 直接對應 vendor 月帳單。
 
-Log cardinality 的失分比較緩慢。Log 的 unique 值多本身不會立即崩潰，但全文索引 + 結構化欄位索引會持續膨脹，到某個臨界點查詢從毫秒退化到秒、再到分鐘。一般診斷不易察覺，要靠 query latency 跟 index size 的長期趨勢才能發現。
+Log cardinality 的失分比較緩慢。Log 的 unique 值多本身不會讓 log 後端立即失效，但全文索引 + 結構化欄位索引會持續膨脹，到某個臨界點查詢從毫秒退化到秒、再到分鐘。一般診斷不易察覺，要靠 query latency 跟 index size 的長期趨勢才能發現。
 
 Trace cardinality 的問題是另一種：sampling 過於粗暴會丟失高價值樣本。低流量服務、錯誤樣本、長尾延遲樣本若被 head sampling 平均稀釋，事故時無 trace 可看。Trace 的治理重點是 sampling 策略而非單純限制 cardinality。
 

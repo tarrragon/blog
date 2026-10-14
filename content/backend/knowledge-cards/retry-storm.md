@@ -14,7 +14,7 @@ Retry storm 是 retry policy、timeout、backoff、jitter 與 rate limit 的共�
 
 ## 可觀察訊號與例子
 
-系統需要防止 retry storm 的訊號是下游錯誤率上升後，request 數、連線數與 CPU 同步上升。付款 API 短暫變慢時，所有 checkout instance 同時重試，可能讓付款 API 更難恢復。
+系統需要防止 retry storm 的訊號是下游錯誤率上升後，request 數、連線數與 CPU 同步上升。付款 API 短暫變慢時，所有 checkout instance 同時重試，可能讓付款 API 在原本的流量回到平常之後仍然過載、停在失效狀態，見 [Metastable Failure](/backend/knowledge-cards/metastable-failure/)。
 
 ## 設計責任
 

@@ -26,7 +26,7 @@ Niantic Pokémon GO 在 GCP 上的關鍵敘述（引自 [Bringing Pokémon GO to
 
 這個案例最重要的判讀是「surge load 跟可預測峰值是不同問題」。
 
-1. **50x surge 沒辦法事前規劃**：任何合理的 capacity planning 都不會預留 50x headroom — 那會讓平日成本爆炸。事前撐住全額容量不可行；事前要建的是緩衝、准入、卸除與退路，事中補的是容量，這次由 Google CRE 代為加上。對應 [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/) 的〈自動擴展（autoscaling）的反應時間與緩衝〉與〈擴展跟不上時的退路：panic mode、fast-fail 與分批上線〉。
+1. **50x surge 沒辦法事前規劃**：任何合理的 capacity planning 都不會預留 50x headroom — 那會讓平日成本爆炸。事前備足 50 倍容量不可行；事前要建的是緩衝、准入、卸除與退路，事中補的是容量，這次由 Google CRE 代為加上。對應 [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/) 的〈自動擴展（autoscaling）的反應時間與緩衝〉與〈擴展跟不上時的退路：panic mode、fast-fail 與分批上線〉。
 2. **CRE 不是技術、是 vendor 關係**：Google Customer Reliability Engineering 是 GCP 提供給戰略客戶的 24/7 工程支援團隊。能即時為 Niantic 補容量靠的是 *人 + 流程 + 工具* 的組合、不是純技術。對應 [00.6 操作控制服務選型](/backend/00-service-selection/operations-control-service-selection/) 的廠商支援能力評估。
 3. **分區上線是預警，架構更換在分區之間完成**：原文寫澳洲與紐西蘭上線 15 分鐘，流量就「surged well past Niantic's expectations」，Niantic 在美國上線的前一天找 Google CRE 支援；之後在日本上線前升級 GKE 版本以容納多出上千個節點，並把 Network Load Balancer 換成 HTTP/S Load Balancer，日本上線時新註冊數是美國的 3 倍而沒有事故。「用 VM 會來不及」這類說法原文沒有，是推論。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 platform 選型。
 
@@ -36,7 +36,7 @@ Niantic Pokémon GO 在 GCP 上的關鍵敘述（引自 [Bringing Pokémon GO to
 
 可重用的工程做法：
 
-1. **接受 surge 不可避免、設計快速 onboard 流程**：核心問題不是「會不會 surge」、是「surge 之後 24 小時內能不能撐住」。對應 [9.11 高峰事件準備](/backend/09-performance-capacity/) 跟 [08.8 incident communication](/backend/08-incident-response/incident-communication/)。
+1. **接受 surge 不可避免、設計快速 onboard 流程**：要決定的是 surge 發生後 24 小時內能不能把容量補到服務恢復可用。對應 [9.11 高峰事件準備](/backend/09-performance-capacity/) 跟 [08.8 incident communication](/backend/08-incident-response/incident-communication/)。
 2. **降級機制（通用做法，原文沒有寫 Pokémon GO 降級或拒絕過哪些流量）**：當容量不足時、優先保住核心功能、暫時關閉非核心。對應 [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/) 的〈負載卸除與限流的分工、請求的優先等級〉，以及 [02.3 cache stampede](/backend/02-cache-redis/) 跟 [01.6 high concurrency access](/backend/01-database/high-concurrency-access/) 的降級設計。
 3. **預先談好 vendor 緊急支援條款**：戰略服務在簽約時就要談好 surge 期間的容量配額、限流豁免、CRE / TAM 支援、不要等出事才談。對應 [00 服務選型模組](/backend/00-service-selection/) 的 vendor relationship 設計。
 4. **分區或分批上線換取預警時間**：先在小市場上線，用實際流量校正容量預估，下一個市場上線前還有時間改架構。

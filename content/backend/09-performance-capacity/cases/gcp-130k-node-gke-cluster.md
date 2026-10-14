@@ -36,15 +36,15 @@ GCP 130K-node GKE cluster 實驗（引自 [How we built a 130,000-node GKE clust
 
 - Consistent Reads from Cache（KEP-2340）— 強一致 read 從 in-memory cache、不打 storage
 - Snapshottable API Server Cache（KEP-4988）— B-tree snapshot 處理 LIST 請求
-- Spanner-based key-value store 作為 K8s storage backend（撐 13K QPS lease 更新）
+- Spanner-based key-value store 作為 K8s storage backend（處理每秒 13K 次 lease 更新）
 
 ## 判讀
 
 130K-node 案例揭露三個 hyperscale K8s 設計的工程重點。
 
-1. **單一 control plane 的極限取決於 storage backend、不是 nodes**：130K node 不是「機器跑不動」、是「API server 跟 etcd 撐不撐住」。GCP 用 Spanner 替換 etcd、配上 cache-first read 設計、把 storage 從瓶頸變成「showed no signs of not being able to support higher scales」。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/) 的「真實 bottleneck 在哪一層」。
+1. **單一 control plane 的極限取決於 storage backend、不是 nodes**：130K node 的規模先碰到的是 API server 與 etcd 能處理的讀寫量上限。GCP 用 Spanner 替換 etcd、配上 cache-first read 設計、把 storage 從瓶頸變成「showed no signs of not being able to support higher scales」。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/) 的「真實 bottleneck 在哪一層」。
 2. **AI workload 顛覆了 K8s 容量規劃**：傳統 web workload 的 K8s 多在 1K-10K node、節點生命週期長。AI workload 短時間爆量創建跟銷毀 Pods（13 萬個 in 3 分 40 秒）、preempt 跟 schedule 頻繁、對 control plane 是完全不同壓力模式。對應 [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/) — workload 形狀完全不同、容量規劃也完全不同。
-3. **「power constraint > chip supply」是新瓶頸**：單顆 NVIDIA GB200 GPU 吃 2700W、萬卡叢集 = 27MW 用電量。未來 mega cluster 必須跨多個 data center（一個 DC 電力撐不住）、需要 *robust multi-cluster solutions*。這層瓶頸跟 [9.7 成本邊界](/backend/09-performance-capacity/cost-engineering/) 對接 — 電力成本變成主要 cost driver。
+3. **「power constraint > chip supply」是新瓶頸**：單顆 NVIDIA GB200 GPU 吃 2700W、萬卡叢集 = 27MW 用電量。這種規模的叢集用電量可達數百 MW，Google 寫的是最好分散到多個 data center、需要 *robust multi-cluster solutions*。這層瓶頸跟 [9.7 成本邊界](/backend/09-performance-capacity/cost-engineering/) 對接 — 電力成本變成主要 cost driver。
 
 需要警惕：
 
@@ -56,10 +56,10 @@ GCP 130K-node GKE cluster 實驗（引自 [How we built a 130,000-node GKE clust
 可重用的工程做法：
 
 1. **K8s control plane 跟 data plane 分開規劃容量**：data plane（worker nodes）擴容容易、control plane（API server、etcd / storage）擴容難。瓶頸通常在 control plane、不是 worker。
-2. **storage backend 是 K8s 規模極限的關鍵**：etcd 撐 5K-10K node 後開始吃力、要用 PostgreSQL / Spanner / 自家 KV 替換、才能擴到萬級節點。一般客戶用不到、但要知道「為什麼到某個規模 etcd 不夠」。
+2. **storage backend 是 K8s 規模極限的關鍵**：etcd 在 5K-10K node 的規模開始成為瓶頸、要用 PostgreSQL / Spanner / 自家 KV 替換、才能擴到萬級節點。一般客戶用不到、但要知道「為什麼到某個規模 etcd 不夠」。
 3. **AI workload 用 specialized scheduler**（Kueue、Volcano）：預設的 K8s scheduler 為 web workload 設計、AI 的 gang scheduling、fair-sharing、preemption 都不太適合。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 scheduler 選型。
 4. **power-aware capacity planning 是未來方向**：傳統按 CPU / RAM 規劃容量、未來要加上 *power budget*。data center 用電量是硬上限、不是錢的問題。
-5. **multi-cluster 是萬卡訓練的必然**：單一 cluster 撐不住、要 MultiKueue 等跨 cluster 排程方案。對應 [Riot Games multi-cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 但目的完全不同。
+5. **萬卡訓練要跨 cluster**：超過 100K node 的 AI 平台用電量達數百 MW、要分散到多個 data center，Google 的方向是用 MultiKueue 這類跨 cluster 排程。對應 [Riot Games multi-cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 但目的完全不同。
 
 跨平台等效：AWS EKS 官方支援單 cluster 多至 100K pod / cluster、Azure AKS 支援 5K node / cluster。GCP 用 Spanner 替換 etcd 是最深的工程投資、目前其他兩家還沒到這個規模。
 

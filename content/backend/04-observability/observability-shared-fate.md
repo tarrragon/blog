@@ -26,11 +26,11 @@ tags: ["backend", "observability"]
 
 **依賴耦合**是最根本的一種。Google SRE Book 的立論是：觀測系統若跟被觀測系統一樣複雜、依賴一樣多，它會在同樣的壓力下一起變 fragile —— 所以「the elements of your monitoring system that direct to a pager need to be very simple and robust」、規則要「as simple, predictable, and reliable as possible」（見 [SRE Book：叫醒人的觀測路徑必須 simple and robust](/backend/04-observability/cases/monitoring-simple-robust-sre-book/)）。這裡要標明推導邊界：SRE Book 沒有「觀測必須不共享失效域」的字面原句、「共命運」是從 simple / robust / fragile / loosely-coupled 這幾個原句推導的框架。啟示是把「叫醒人類」那條路徑的依賴壓到最少、讓它能獨立於生產棧存活。這條 simple 的約束只加在 alerting 的關鍵路徑上、不是要求整個 tracing 與分析棧都簡單 —— 大規模分散式追蹤本質複雜、該複雜的地方複雜、但決定「要不要 page 人」的那條路徑要能在生產棧全滅時獨立運作。
 
-**反噬**是被觀測系統的異常行為把觀測後端打爆。正好在你要下 query 排障的時刻、被觀測系統反過來拖垮了觀測：事故時 error、user、request-id 這類維度會從低基數突然 spike 成高基數（[cardinality](/backend/knowledge-cards/metric-cardinality/) spike）、而 Prometheus 這類 TSDB「every unique combination of key-value label pairs represents a new time series」、高基數會「lead to memory errors and system crashes」（見 [Cardinality 事故爆炸：被觀測系統的異常把觀測後端打爆](/backend/04-observability/cases/cardinality-explosion-incident/)）。這不是外部依賴掛掉、是被觀測系統透過 label 反噬觀測後端。反噬還有兩條打在被觀測服務自己身上的路徑：log 暴量塞爆磁碟、把服務本身也拖垮；觀測 agent 或 sidecar 在高負載時跟服務爭 CPU 與記憶體。修法在 label 白名單與高基數維度的隔離（見 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)）、log 的容量上限與 agent 的資源上限。
+**反噬**是被觀測系統的異常行為耗盡觀測後端的資源，發生在工程師正要下 query 排障的時刻：事故時 error、user、request-id 這類維度會從低基數突然 spike 成高基數（[cardinality](/backend/knowledge-cards/metric-cardinality/) spike）、而 Prometheus 這類 TSDB「every unique combination of key-value label pairs represents a new time series」，Grafana Labs 的說明是高基數會「lead to memory errors and system crashes」（見 [Cardinality 事故爆炸：被觀測系統的異常 label 耗盡觀測後端的記憶體](/backend/04-observability/cases/cardinality-explosion-incident/)）。這條路徑的成因不在外部依賴：耗盡觀測後端的是被觀測系統透過 label 送進去的維度值。反噬還有兩條打在被觀測服務自己身上的路徑：log 暴量寫滿磁碟，同一顆磁碟上的服務跟著寫入失敗；觀測 agent 或 sidecar 在高負載時跟服務爭 CPU 與記憶體。修法在 label 白名單與高基數維度的隔離（見 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)）、log 的容量上限與 agent 的資源上限。
 
 **供應商單點**是把「我有沒有事」外包給單一觀測供應商、供應商自己掛。Datadog 2023-03-08 事故裡、客戶的「monitors were unavailable and not alerting」、根因是一個跨區同時觸發的自動更新打到多個本應獨立的部署（見 [Datadog 2023：觀測廠商自己掛、客戶 monitors 停止告警](/backend/04-observability/cases/datadog-2023-monitoring-as-dependency/)）—— 觀測層變成客戶事故的放大器：系統可能沒事但看不到、或有事但沒被叫醒。這是 [correlated failure](/backend/knowledge-cards/correlated-failure/) 的典型：以為獨立的部署共享同一個觸發器。
 
-GitLab 2017 事故把前兩種機制合在一起演了一遍：備份失敗的告警走 email、但「DMARC was not enabled... resulting in them being rejected」、於是「we were never aware of the backups failing, until it was too late」（告警管道靜默失效 —— 沒人監控「告警本身有沒有送達」、這種對監控鏈自己的監控就是 meta-monitoring）；事故發生時公開監控頁又被使用者流量壓垮（儀表板容量共命運）（見 [GitLab 2017：告警靜默失效、儀表板被事故流量壓垮](/backend/04-observability/cases/gitlab-2017-silent-monitoring-failure/)）。
+GitLab 2017 事故把前兩種機制合在一起演了一遍：備份失敗的告警走 email、但「DMARC was not enabled... resulting in them being rejected」、於是「we were never aware of the backups failing, until it was too late」（告警管道靜默失效 —— 沒人監控「告警本身有沒有送達」、這種對監控鏈自己的監控就是 meta-monitoring）；事故發生時公開監控頁又無法處理湧入的使用者流量（儀表板容量共命運）（見 [GitLab 2017：告警靜默失效、公開儀表板無法處理事故期間的使用者流量](/backend/04-observability/cases/gitlab-2017-silent-monitoring-failure/)）。
 
 ## Out-of-band 訊號：活在生產棧之外的證人
 
@@ -46,7 +46,7 @@ GitLab 2017 事故把前兩種機制合在一起演了一遍：備份失敗的�
 
 tail sampling 是這個原則的具體做法：head [sampling](/backend/knowledge-cards/sampling/) 在 [trace](/backend/knowledge-cards/trace/) 開頭、資訊不全時就隨機決定去留、高錯誤率下要保留的 error / 慢 trace 常被丟掉；tail sampling 把決策延到整條 trace 到齊之後（latency policy 要用最早 start 與最晚 end 才算得出時長、本身就要等 trace 完整）、才依 policy（`status_codes: [ERROR]`、超過延遲門檻）保留（見 [Tail sampling：採樣壓力下保留 error 與尾延遲樣本](/backend/04-observability/cases/tail-sampling-preserve-errors/)）。但降級機制自己也有上限：tail sampling 的 `sampling_trace_dropped_too_early` 就是它記憶體超標時的降級失敗徵兆 —— 優雅降級不等於無限降級、要監控降級機制自己的飽和點。
 
-同一個原則往上推是容量隔離：觀測前端與後端的容量要獨立於事故流量域（GitLab 的公開監控頁被事故流量壓垮就是沒隔離）、cardinality 要有預算擋住事故時的維度爆炸。
+同一個原則往上推是容量隔離：觀測前端與後端的容量要獨立於事故流量域（GitLab 的公開監控頁在事故流量下無法服務就是沒隔離）、cardinality 要有預算擋住事故時的維度爆炸。
 
 ## 驗證備援：不測的備援是薛丁格的備援
 
@@ -72,7 +72,7 @@ tail sampling 是這個原則的具體做法：head [sampling](/backend/knowledg
 - 存活判斷全靠服務自己上報、沒有外部探測或心跳
 - status page 跑在跟主服務同一個失效域（同 infra / 同 DNS）
 - 事故時觀測後端因 cardinality spike 而變慢或 crash
-- log 暴量塞爆磁碟、或觀測 agent 跟服務爭 CPU / 記憶體、把被觀測服務也拖垮
+- log 暴量寫滿磁碟讓同一顆磁碟上的服務寫入失敗，或觀測 agent 跟服務爭 CPU / 記憶體讓服務變慢，記憶體被爭走時服務也可能被 OOM 終止
 - 這些備援（dead man's switch、獨立 status page、降級路徑）從沒被演練驗證過
 - 採樣在高錯誤率下把 error trace 一起丟掉（head-only sampling）
 - 只有單一觀測供應商、沒有第二條獨立告警通道
@@ -86,7 +86,7 @@ tail sampling 是這個原則的具體做法：head [sampling](/backend/knowledg
 | 告警管道無 meta-監控        | 告警靜默失效、沒人知道觀測已死                                            | dead man's switch、外部偵測心跳消失              |
 | status page 同失效域        | 主站掛時 status page 一起掛                                               | 獨立 domain / infra / DNS 託管                   |
 | head-only sampling          | 高錯誤率下 error trace 被採樣丟掉                                         | tail sampling 保留 ERROR 與尾延遲                |
-| 觀測後端無 cardinality 預算 | 事故時維度 spike 把後端打爆                                               | label 白名單、高基數維度隔離                     |
+| 觀測後端無 cardinality 預算 | 事故時維度 spike 耗盡觀測後端的記憶體                                     | label 白名單、高基數維度隔離                     |
 | 單一觀測供應商無備援        | 供應商掛、monitors 全部不告警                                             | 第二獨立通道或 meta-monitoring                   |
 | 溝通臨時起草                | [on-call](/backend/knowledge-cards/on-call/) 在高壓下即席寫公告、動作變慢 | 預寫模板、預定通道、預備聯絡清單                 |
 | 客訴無升級路徑              | 客訴累積數天才被當事故                                                    | 低摩擦 support-to-engineering 升級、客訴聚合角色 |

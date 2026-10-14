@@ -39,7 +39,7 @@ Zoom surge 揭露三個 SaaS 突發成長的工程重點。
 2. **surge 後重新校準 SLO baseline**：30x 成長之後、SLO 的「正常範圍」要更新、否則 monitoring 會誤報。對應 [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) 的 SLO 演進。
 3. **長期 surge 觸發架構重新評估**：DynamoDB 是「擴大量」的好選擇、但成本也跟著放大。當 baseline 從 1000 萬永久升到 3 億、原本的 on-demand 模式可能變得貴、要考慮 provisioned + auto-scaling 組合。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/)。
 
-跨平台等效：Google Meet 也用 Spanner / Firestore、Microsoft Teams 用 Cosmos DB — 三家視訊會議都靠 managed KV 撐 metadata、是同一個架構模式的不同 vendor 實作。
+跨平台等效：Google Meet 也用 Spanner / Firestore、Microsoft Teams 用 Cosmos DB — 三家視訊會議都靠 managed KV 承載 metadata、是同一個架構模式的不同 vendor 實作。
 
 ## 下一步路由
 

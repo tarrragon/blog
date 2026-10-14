@@ -85,7 +85,7 @@ Datadog 的 index exclusion filter 讓特定 pattern 的 log 進入 ingestion pi
 
 ### Agent 健康判讀
 
-Agent 本身需要被監控 — Agent 故障時 Datadog 看到的是「資料消失」而非「Agent 掛了」。
+Agent 本身需要被監控 — Agent 故障時 Datadog 看到的是「資料消失」而非「Agent 停止了」。
 
 判讀指標（Agent 自帶）：
 
@@ -93,7 +93,7 @@ Agent 本身需要被監控 — Agent 故障時 Datadog 看到的是「資料消
 - `datadog.agent.check_run`：各 integration check 是否正常
 - `datadog.dogstatsd.packets.dropped`：DogStatsD buffer 滿時丟棄的封包數
 
-Agent 掛掉時 dashboard 會出現 gap（資料斷層）。如果所有 host 同時斷層、問題在 Datadog backend；如果特定 host 斷層、問題在該 host 的 Agent。
+Agent 停止時 dashboard 會出現 gap（資料斷層）。如果所有 host 同時斷層、問題在 Datadog backend；如果特定 host 斷層、問題在該 host 的 Agent。
 
 ### 常見 Agent 故障
 

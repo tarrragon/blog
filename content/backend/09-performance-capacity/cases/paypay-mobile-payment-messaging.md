@@ -35,8 +35,8 @@ PayPay 案例揭露三個行動支付訊息系統的工程重點。
 可重用的工程做法：
 
 1. **訊息系統設計區分「通知」跟「訊息」**：通知（payment received）是 transactional、不可丟失；訊息（marketing）可以丟失部分、重點是 throughput。兩者用不同 SLO、不同 storage。對應 [03 訊息佇列模組](/backend/03-message-queue/) 的訊息分類。
-2. **TTL 自動清理避免 storage 成本爆炸**：3 億 / 天 × 30 天 = 90 億筆記錄、不清理會撐死 storage 預算。對應 [02 快取模組](/backend/02-cache-redis/) 的 TTL 設計。
-3. **訊息推送的下游（APNs、FCM、SMS gateway）是隱性瓶頸**：DynamoDB 寫入可以撐 3K msg/sec、但 APNs 一天的 quota 是有限的。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 的依賴鏈分析。
+2. **TTL 自動清理避免 storage 成本爆炸**：3 億 / 天 × 30 天 = 90 億筆記錄、不清理的話 storage 成本隨保存天數線性累積。對應 [02 快取模組](/backend/02-cache-redis/) 的 TTL 設計。
+3. **訊息推送的下游（APNs、FCM、SMS gateway）是隱性瓶頸**：DynamoDB 寫入處理得了每秒 3K 則訊息、但 APNs 一天的 quota 是有限的。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 的依賴鏈分析。
 
 跨平台等效：GCP Firestore + Cloud Messaging、Azure Cosmos DB + Notification Hubs 都是對等架構。差異是 vendor 整合度跟全球分發能力。
 
@@ -45,7 +45,7 @@ PayPay 案例揭露三個行動支付訊息系統的工程重點。
 - 想設計行動支付訊息 → [03 訊息佇列模組](/backend/03-message-queue/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/)
 - 對照其他 KV 高吞吐 → [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) / [Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)
 - 想做訊息系統容量規劃 → [9.6 容量規劃模型](/backend/09-performance-capacity/) + [9.2 Workload Modeling](/backend/09-performance-capacity/)
-- 想避免訊息熱點打爆單一 partition → [DynamoDB partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)
+- 想避免訊息熱點讓單一 partition 超過上限而被 throttle → [DynamoDB partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)
 - 想評估訊息系統的 capacity mode → [DynamoDB on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)
 
 ## 引用源

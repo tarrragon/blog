@@ -1,12 +1,12 @@
 ---
-title: "9.C36 Coinbase：MongoDB 撐 Ruby 單體 + 1.5M reads/sec identity 服務"
+title: "9.C36 Coinbase：MongoDB 作為 Ruby 單體與 1.5M reads/sec identity 服務的主資料庫"
 date: 2026-05-26
-description: "Coinbase 以 MongoDB 為主資料層、自建 mongobetween connection proxy、users 服務在加密貨幣 surge 時撐 1.5M reads/sec"
+description: "Coinbase 以 MongoDB 為主資料層、自建 mongobetween connection proxy、users 服務在加密貨幣 surge 時處理 1.5M reads/sec"
 weight: 36
 tags: ["backend", "performance", "capacity", "case-study", "db-document", "aws", "low-latency-sustained"]
 ---
 
-這個案例的核心責任是說明「document database 在大規模 OLTP 場景如何撐住」。Coinbase 從 Ruby on Rails 單體 + MongoDB 起家、八年後仍保留 MongoDB 作為主資料層、並把 connection pooling、ML 預測擴容、cache + freshness token 都疊在 document model 上。跟 [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 對照 — Microsoft 365 走「遷出 MongoDB、保留 document API」、Coinbase 走「保留 MongoDB、補周邊工具」。兩條路徑都揭露 MongoDB 在 production 主角位置會遇到什麼壓力。
+這個案例的核心責任是說明 document database 在大規模 OLTP 場景下用哪些設計維持讀取量與一致性。Coinbase 從 Ruby on Rails 單體 + MongoDB 起家、八年後仍保留 MongoDB 作為主資料層、並把 connection pooling、ML 預測擴容、cache + freshness token 都疊在 document model 上。跟 [Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 對照 — Microsoft 365 走「遷出 MongoDB、保留 document API」、Coinbase 走「保留 MongoDB、補周邊工具」。兩條路徑都揭露 MongoDB 在 production 主角位置會遇到什麼壓力。
 
 ## 觀察
 
@@ -31,7 +31,7 @@ Coinbase MongoDB 平台的關鍵數字（引自 [Coinbase Engineering Blog](http
 Coinbase MongoDB 的工程選擇揭露三個 document database 在 production 主角位置的設計重點。
 
 1. **MongoDB + Ruby 連線爆炸需要外部 connection pool**：CRuby 因為 GVL 必須每 CPU core 起一個 process、blue-green 部署期間 instance 數量 ×2、連線數隨之 ×2、單一 cluster 看到 60K 連線/分鐘。原生 MongoDB driver 沒有跨 process 的 connection pool — 跟 PostgreSQL 走 pgbouncer 是同樣需求、所以 Coinbase 自建 [mongobetween](https://github.com/coinbase/mongobetween) 做多工。對應 [01.6 高併發資料存取](/backend/01-database/high-concurrency-access/) 的 connection storm 問題、document database 不會自動解決、要主動補工具。
-2. **document model 撐 1.5M reads/sec 靠 cache + freshness token**：直接打 MongoDB 不可能撐 1.5M reads/sec — Coinbase 在 users 服務前面加 Memcached query cache、單 document query 先查 cache。但 cache + write 會有一致性問題、所以引入 OCC version 跟 *freshness token*：write 成功後給 client 一個 token、client 之後 read 帶 token、server 保證返回的資料版本 ≥ token、必要時 bypass cache 直接打 DB。對應 [01.5 transaction boundary](/backend/01-database/transaction-boundary/) 的 read-after-write 設計。
+2. **每秒 1.5M 次讀取先查 Memcached，命中的不打 MongoDB；一致性靠 freshness token**：Coinbase 在 users 服務前面加 Memcached query cache、單 document query 先查 cache。但 cache + write 會有一致性問題、所以引入 OCC version 跟 *freshness token*：write 成功後給 client 一個 token、client 之後 read 帶 token、server 保證返回的資料版本 ≥ token、必要時 bypass cache 直接打 DB。對應 [01.5 transaction boundary](/backend/01-database/transaction-boundary/) 的 read-after-write 設計。
 3. **加密貨幣 surge 用 ML 預測、不靠 reactive scaling**：cluster 擴容要 70 分鐘、傳統 CPU / queue 觸發的 reactive scaling 在 surge 開始時才動、來不及。Coinbase 訓練 ML 模型分析價格資料、提前 60 分鐘預測流量、預先擴容。把擴容時間從 70 分鐘壓到 25 分鐘是 trigger 提前、不是擴容本身變快。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 的 predictive scaling。
 
 需要警惕：
@@ -44,7 +44,7 @@ Coinbase MongoDB 的工程選擇揭露三個 document database 在 production �
 
 可重用的工程做法：
 
-1. **document database 撐大規模 OLTP 要主動補 connection pool**：MongoDB 原生 connection 模式對「process 數多 + deploy 重」的環境會爆。應用層或 sidecar proxy 做多工是基線設計。對應 [01.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)。
+1. **document database 用在大規模 OLTP 時要主動補 connection pool**：MongoDB 原生 connection 模式在「process 數多 + deploy 重」的環境下，連線數隨 process 數成長，會超過資料庫的連線上限。應用層或 sidecar proxy 做多工是基線設計。對應 [01.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)。
 2. **freshness token 是 read-after-write 一致性的可重用模式**：比 strong consistency（性能差）跟 eventually consistent（read 不到剛寫的）更精細的中間路徑。token 機制可以推廣到任何「主要 eventually consistent、少數 read 要求最新」的場景。
 3. **predictive scaling 適用於「外部訊號可預測流量」的服務**：加密貨幣價格、賽事行程、票務開賣時間都是外部訊號。比 reactive scaling 早一個擴容週期出手。對應 [GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 的 AI 預測式擴容。
 4. **federated DB（MongoDB + DynamoDB）按 workload 分流**：document-shaped 用 MongoDB、access pattern 固定的 KV 用 DynamoDB。不是「全用 MongoDB」也不是「全遷 DynamoDB」、是按 workload 形狀分。對應 [Netflix Aurora](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 的多 DB 整合反例（Netflix 走整合方向、Coinbase 走 federated）。

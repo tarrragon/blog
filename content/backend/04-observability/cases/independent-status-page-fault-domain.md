@@ -10,7 +10,7 @@ tags: ["backend", "observability", "case-study"]
 
 ## 觀察
 
-Atlassian Statuspage 官方問題陳述：「when your website is down, so is your status page」；其託管做法「We host your page so it's available when you need it most – when you're down」；support docs 補充 custom domain 要用獨立 dedicated domain、否則 DNS provider 掛了 status page 也跟著掛。溝通 cadence 五原則：Communicate Early（快速確認、簡述已知影響、承諾後續更新）、Communicate Often（每 30 分更新、即使技術狀態沒變）、Communicate Precisely（誠實、清楚、透明）、跨通道一致、Own the Problem；主動溝通可「Halt the flood of support requests during an incident」。
+Atlassian Statuspage 官方問題陳述：「when your website is down, so is your status page」；其託管做法「We host your page so it's available when you need it most – when you're down」；support docs 補充 custom domain 要用獨立 dedicated domain、否則 DNS provider 停止解析時 status page 也跟著無法存取。溝通 cadence 五原則：Communicate Early（快速確認、簡述已知影響、承諾後續更新）、Communicate Often（每 30 分更新、即使技術狀態沒變）、Communicate Precisely（誠實、清楚、透明）、跨通道一致、Own the Problem；主動溝通可「Halt the flood of support requests during an incident」。
 
 ## 判讀
 

@@ -30,7 +30,7 @@ Netflix Aurora 整合揭露三個大規模平台 DB 治理重點。
 
 1. **「DB 種類太多」本身是規模化的成本**：Netflix 過往用 PostgreSQL、MySQL、Oracle 等不同 RDB、每個都需要不同 DBA 知識、不同備份、不同 monitoring 流程。整合到 Aurora 不只是「換 DB」、是「降低運維 surface area」、釋放工程資源。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/) 的人力成本工程化、跟 [Capcom](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) 同類訴求。
 2. **75% performance improvement 是 Aurora storage layer 的本質優勢**：Aurora 把 storage 跟 compute 分離、storage 用分散式 log-based 設計、replication 在 storage 層處理、不在 compute 層 — 這讓 read replica 不會受 master 寫入壓力影響、性能曲線比傳統 RDB 平滑。對應 [01 資料庫模組](/backend/01-database/) 與 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 的儲存層 vs 計算層分離。
-3. **Netflix 的 DB 工作負載大多是「微服務私有 store」**：Netflix 微服務各自有自己的 Aurora cluster、不共用 — 跟 monolith 「一個大 DB 撐全部」相反。這層架構讓「DB 容量規劃」變成「每個微服務的容量規劃」、複雜度分散。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 service decomposition、跟 [Lyft 微服務](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)。
+3. **Netflix 的 DB 工作負載大多是「微服務私有 store」**：Netflix 微服務各自有自己的 Aurora cluster、不共用 — 跟 monolith 「一個大 DB 承接全部服務」相反。這層架構讓「DB 容量規劃」變成「每個微服務的容量規劃」、複雜度分散。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 service decomposition、跟 [Lyft 微服務](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)。
 
 需要警惕：
 

@@ -29,7 +29,7 @@ Mercado Libre 揭露三個區域電商容量規劃重點。
 
 1. **區域電商 ≠ 全球電商**：拉丁美洲 18 個國家、各自有獨立貨幣、稅務、物流、合規規則。容量規劃單位通常是「per country」、不是「per region」。對應 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 的市場分割、跟 [BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) 的跨國平台對照。
 2. **Vertex AI Search = 「搜尋」當作 ML 服務、不是 Elasticsearch**：傳統電商搜尋靠 Elasticsearch / OpenSearch + 自訓 ranker、Mercado Libre 用 vendor managed Vertex AI Search、把「商品搜尋 + 推薦排序」當作 ML 黑盒。這個取捨用「不可調參」換「快速上線」。對應 [00 服務選型模組](/backend/00-service-selection/) 的 build vs buy、跟 [Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) 的 managed 轉向同類思維。
-3. **「數百萬美金 incremental revenue」是 ML 容量規劃的真實 ROI**：搜尋改善 → 轉換率 → 訂單 → 收入、ML 投資的 cost 才能合理化。容量規劃不只看「能撐多大流量」、也要看「擴容能否帶業務 ROI」。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/) 的成本工程化。
+3. **「數百萬美金 incremental revenue」是 ML 容量規劃的真實 ROI**：搜尋改善 → 轉換率 → 訂單 → 收入、ML 投資的 cost 才能合理化。容量規劃除了看處理得了多大流量，也要看「擴容能否帶業務 ROI」。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/) 的成本工程化。
 
 需要警惕：
 

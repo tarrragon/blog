@@ -65,7 +65,7 @@ processor 順序是常見踩雷點。`memory_limiter` 要排在第一個，讓�
 
 ## Production 故障演練
 
-Collector 失效的影響面取決於部署模式，這是選位置時要先想清楚的。agent 模式下，單一 node 的 collector 掛掉只影響該 node 的應用，且應用送往 localhost 失敗可以 fail-fast；gateway 模式下，gateway 叢集掛掉會影響所有上游 agent，因此 gateway 必須多副本 + 負載均衡，不能單點；sidecar 模式下，失效影響面比 agent 更窄（只影響同 pod 的應用），但每個 pod 各自是獨立失效點，pod 數多時同時出狀況的機率也高。演練時要分別注入「單 agent 掛」與「gateway 叢集不可用」，確認前者影響被局限、後者有 agent 層 buffer 兜著。
+Collector 失效的影響面取決於部署模式，這是選位置時要先想清楚的。agent 模式下，單一 node 的 collector 停止只影響該 node 的應用，且應用送往 localhost 失敗可以 fail-fast；gateway 模式下，gateway 叢集停止會影響所有上游 agent，因此 gateway 必須多副本 + 負載均衡，不能單點；sidecar 模式下，失效影響面比 agent 更窄（只影響同 pod 的應用），但每個 pod 各自是獨立失效點，pod 數多時同時出狀況的機率也高。演練時要分別注入「單 agent 掛」與「gateway 叢集不可用」，確認前者影響被局限、後者有 agent 層 buffer 兜著。
 
 記憶體壓力是 collector 最常見的故障。telemetry 流入速度超過 exporter 送出速度時，資料在 collector 內累積、記憶體上升，沒有保護會 OOM 被 kill、整段 telemetry 全丟。`memory_limiter` processor 是這道防線，它定期（`check_interval`）檢查記憶體並用兩個閾值分級反應：記憶體超過軟上限（`limit_mib` 減去 `spike_limit_mib`）時強制觸發 GC 並開始拒收，給回收一個緩衝區間；超過硬上限（`limit_mib`）時全面拒收新資料。只設 `limit_mib`、不設 `spike_limit_mib` 是不完整的配置，等於沒有軟性緩衝、直接撞硬牆。演練時用高於 exporter 吞吐的速率灌資料，確認 memory_limiter 在軟上限就介入、collector 存活，而不是 OOM。
 
@@ -81,7 +81,7 @@ Backpressure 的傳遞要驗證到底。當 backend 變慢、exporter queue 滿�
 
 ## Capacity / cost 邊界
 
-agent 與 gateway 的成本曲線不同，選型要對著規模看。agent（DaemonSet）的成本是「每個 node 一份 collector」的固定開銷：node 多時總開銷隨 node 數線性成長，但每份 collector 只處理本機流量、單份負載可控。gateway 的成本是「集中叢集」：份數少但每份要扛匯流後的總流量，要按總 telemetry 吞吐量做容量規劃與水平擴展。
+agent 與 gateway 的成本曲線不同，選型要對著規模看。agent（DaemonSet）的成本是「每個 node 一份 collector」的固定開銷：node 多時總開銷隨 node 數線性成長，但每份 collector 只處理本機流量、單份負載可控。gateway 的成本是「集中叢集」：份數少但每份要處理匯流後的總流量，要按總 telemetry 吞吐量做容量規劃與水平擴展。
 
 兩層架構的成本判讀是：agent 層用最小配置（夠做 buffer + enrichment 即可，`limit_mib` 設小），把重處理（tail sampling、大量 routing）集中到 gateway，讓 gateway 的擴展跟總流量綁定、agent 的開銷跟 node 數綁定。把 tail sampling 誤放在 agent 層是常見的成本錯誤——agent 看不到完整 trace、做不了正確的 tail sampling，還白白吃掉每個 node 的記憶體。
 

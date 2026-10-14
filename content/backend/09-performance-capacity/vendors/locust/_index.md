@@ -56,7 +56,7 @@ Distributed load 適合用 Locust worker 擴展。當單機 Python runner 遇到
 
 **Gevent-based concurrency**：Locust 用 [gevent](https://www.gevent.org/) 的 green-thread 模擬大量 concurrent user、不是 OS thread。意義是單 worker 可以跑幾千個 *user*、但 CPU bound 工作（JSON serialization、加密、本地計算）會 *blocking* 整個 worker 的 event loop。`gevent.monkey.patch_all()` 要在 import 第一行、否則 socket / time / ssl 不會被 patch、blocking call 會卡死 swarm。
 
-**Distributed master-worker**：單機到極限時開 distributed — `locust --master` 起 master、`locust --worker --master-host=master.example.com` 起 worker。Master 負責 Web UI、spawn rate 控制、result aggregation、stat 收集；worker 負責跑 user。Master 不該跑 user（會跟 aggregation 搶 CPU、stat 失真）。worker 數量計算：先單 worker 拉到 CPU 80% 看能撐多少 user、目標 user 數除這個值 + 20% buffer。
+**Distributed master-worker**：單機到極限時開 distributed — `locust --master` 起 master、`locust --worker --master-host=master.example.com` 起 worker。Master 負責 Web UI、spawn rate 控制、result aggregation、stat 收集；worker 負責跑 user。Master 不該跑 user（會跟 aggregation 搶 CPU、stat 失真）。worker 數量計算：先單 worker 拉到 CPU 80% 看跑得了多少 user、目標 user 數除這個值 + 20% buffer。
 
 **Custom load shape**：除了固定 `-u 1000`、Locust 支援 `LoadTestShape` subclass 寫 *時間軸負載曲線* — spike test（瞬間 0 → 5000 user）、ramp test（線性爬升）、wave test（週期性高低交替）、step test（階梯式增加）。`tick()` method 每秒回傳 `(user_count, spawn_rate)`。用 custom shape 才能模擬 [9.C16 SeatGeek waiting room](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 那種 ticket drop 瞬間衝擊。
 
@@ -106,7 +106,7 @@ Locust 的主要成本是 runner overhead 與分散式治理。Python runner 的
 - **Gevent monkey-patch gotcha**：`requests` / `psycopg2` / 自家 SDK 在第三方 library 內部 blocking call、整個 worker 卡住 — `gevent.monkey.patch_all()` 一定要寫在 import 第一行；無法 patch 的 C extension（如 native MySQL driver）改用 gevent-friendly client
 - **RPS 達不到目標 / 看起來像 target 慢**：實際是 worker connection pool 耗盡、或 worker 本身網卡飽和 — 觀測 worker 本身的 TCP socket 數、netstat ESTABLISHED、network throughput；不要直接 blame target
 - **Distributed sync drift**：worker 之間 user count 不平均、aggregation 顯示 RPS 抖動 — `--expect-workers=N` 確認 master 等所有 worker join 才開測；worker 跨 region 時 message bus latency 也會影響 sync
-- **on_start 在 @task 裡跑**：壓測啟動瞬間打爆 auth endpoint、看到 IdP latency 飆高以為是 target — 把 login / token fetch 移到 `on_start`、每個 user 只做一次
+- **on_start 在 @task 裡跑**：壓測啟動瞬間所有 user 同時登入、auth endpoint 的請求量突增、看到 IdP latency 飆高以為是 target — 把 login / token fetch 移到 `on_start`、每個 user 只做一次
 - **wait_time = 0 拼最大 RPS 結果結論奇怪**：這已經不是 user behavior 是 throughput probe、p99 跟 production 對不上 — 改成 `between(1, 5)` 模擬 think time 或寫 custom shape
 - **Web UI 卡 / master CPU 100%**：master 同時在跑 user + aggregation — `locust --master` 跟 worker 拆機器、master 不跑 user
 

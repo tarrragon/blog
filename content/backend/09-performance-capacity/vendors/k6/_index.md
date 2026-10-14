@@ -48,7 +48,7 @@ Peak readiness rehearsal 適合用 k6 表達階段式負載。活動前可以用
 | API 導向     | HTTP / gRPC / WebSocket 等常見 API 場景清楚    | 複雜瀏覽器互動與端到端資料準備    |
 | 團隊學習成本 | JavaScript 腳本容易被多數 backend 團隊接手     | 大型分散式 runner 與測試資料治理  |
 
-腳本化價值來自可重跑。一次性的壓測只能回答當天配置能撐多少；可版本化 scenario 可以回答 release 後容量曲線有沒有漂移，並讓退化調查回到同一份 workload model。
+腳本化價值來自可重跑。一次性的壓測只量得到當天配置在 SLO 內處理得了的最大請求率；可版本化 scenario 可以回答 release 後容量曲線有沒有漂移，並讓退化調查回到同一份 workload model。
 
 CI 友善價值來自交接成本低。壓測結果要能轉成 artifact、threshold、trend 與 gate decision，才會從「工程師手動跑工具」變成 release 流程的一部分。
 

@@ -1,5 +1,5 @@
 ---
-title: "9.C6 Tinder：ElastiCache for Valkey 撐 4700 萬月活的配對引擎"
+title: "9.C6 Tinder：ElastiCache for Valkey 承載 4700 萬月活的配對引擎"
 date: 2026-05-12
 description: "Tinder 用 Amazon ElastiCache for Valkey 提供配對引擎所需的次毫秒延遲快取層"
 weight: 6

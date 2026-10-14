@@ -1,7 +1,7 @@
 ---
 title: "9.C29 NTT DOCOMO Lemino：3 個月達 500 萬 MAU 的串流後端"
 date: 2026-05-12
-description: "Lemino 用 DynamoDB + AWS Media Services 撐 30 channels live + 5M MAU、工程工時下降 90%"
+description: "Lemino 用 DynamoDB + AWS Media Services 承載 30 channels live + 5M MAU、工程工時下降 90%"
 weight: 29
 tags: ["backend", "performance", "capacity", "case-study", "db-kv", "aws", "predictable-peak"]
 ---
@@ -38,7 +38,7 @@ Lemino 案例揭露三個現代串流服務啟動的工程重點。
 
 可重用的工程做法：
 
-1. **新串流服務優先選 DynamoDB / Cosmos DB / Bigtable 撐 metadata 層**：避免 connection limit、避免 schema migration、避免 DBA 維運成本。
+1. **新串流服務優先選 DynamoDB / Cosmos DB / Bigtable 承載 metadata 層**：避免 connection limit、避免 schema migration、避免 DBA 維運成本。
 2. **AWS Media Services / GCP Media CDN / Azure Media Services 是新進入者快速 launch 的捷徑**：不要重造串流 stack、直接用 vendor 提供的。
 3. **DAX 是 DynamoDB 讀 cache 的標準解法**：當讀峰值持續高（例如熱門節目首播、Hotstar 等級）、加 DAX 減少 DynamoDB 讀次數、降低成本。對應 [02 快取模組](/backend/02-cache-redis/)。
 4. **小團隊 + managed services 是電信商雲端轉型的範本**：傳統電信商過去靠人海戰術、現在改靠 managed + 工程紀律。

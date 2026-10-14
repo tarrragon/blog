@@ -112,7 +112,7 @@ Evidence package 的核心用途是讓結果可審查。JMeter 測試計畫常�
 - **Distributed mode 結果跟單機對不上**：slave 機器 plugin / JMeter version / JVM heap 不一致、或 CSV 路徑只存在 master — 把 slave 環境 container 化（同 Docker image）、CSV 隨 `.jmx` 一起分發、`--remote-start` 統一啟動
 - **`.jmx` XML diff 不可 review / merge conflict 多**：多人同時改測試計畫、GUI 改完 XML 結構大變 — 拆 fragment（Test Fragment + Module Controller）、scenario 分檔、parameterization 走外部 CSV / properties、PR review 看截圖 + 跑結果而非 raw XML diff
 - **Plugin 版本漂移 / CI 結果不可重現**：dev 機器 plugin 跟 CI image 不同版 — 固定 plugin manifest、CI image 用 `PluginsManagerCMD.sh install-for-jmx plan.jmx` 從 plan 自動安裝、版本鎖到 image tag
-- **HTTPS / TLS 連線數爆炸**：JMeter 預設每 thread 一個 TLS handshake、large thread count 把 server TLS 拖垮、結果反而測到 TLS 不是 app — 開 *HTTP Cache Manager* 跟 *KeepAlive*、必要時調 `httpclient4.idletimeout`
+- **HTTPS / TLS 連線數爆炸**：JMeter 預設每 thread 一個 TLS handshake、large thread count 讓 server 的 CPU 耗在 TLS handshake 上、量到的是 TLS 的上限而不是 app 的 — 開 *HTTP Cache Manager* 跟 *KeepAlive*、必要時調 `httpclient4.idletimeout`
 
 ## 案例回寫
 

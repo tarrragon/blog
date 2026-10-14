@@ -24,7 +24,7 @@ Brendan Gregg 的 USE method 提供逐層定位的最小框架：對每個資源
 
 對每個資源（CPU / RAM / disk / network / DB connection / cache connection / file descriptor）逐一檢查。*第一個出現 saturation 上升的資源是 bottleneck*、不是 utilization 最高的那個。
 
-USE 跟 [RED method](/backend/knowledge-cards/red-method/)（rate / errors / duration）互補：USE 看「哪個資源頂不住」、RED 看「哪個 endpoint 表現變差」。容量規劃通常先用 USE 找瓶頸、再用 RED 看影響面。
+USE 跟 [RED method](/backend/knowledge-cards/red-method/)（rate / errors / duration）互補：USE 找出哪個資源先飽和或耗盡、RED 看「哪個 endpoint 表現變差」。容量規劃通常先用 USE 找瓶頸、再用 RED 看影響面。
 
 資源是配額型的（connection pool、fd、鎖、外部 API 額度）時，USE 指出它 saturate 之後還有一步：查誰佔住它。這一步不能靠 RED 的錯誤分布推——報錯最多的端點通常不是佔住配額的那個，判讀順序見 [配額耗盡的症狀落在申請最頻繁的元件、成因在持有最久的那個](/report/resource-exhaustion-symptom-vs-holder/)。
 
@@ -68,7 +68,7 @@ USE 跟 [RED method](/backend/knowledge-cards/red-method/)（rate / errors / dur
 **5. 外部 API / 第三方 quota**：
 
 - rate limit 觸發頻率
-- retry storm（自家 retry 把對方 quota 打爆）
+- retry storm（自家 retry 用完對方的 quota，之後的請求都被對方以 429 拒絕）
 - circuit breaker trip
 - timeout rate
 
@@ -112,9 +112,9 @@ USE 找出哪一層 saturate 之後、profile 工具找出 *該層的哪段 code
 
 **跨 region / 跨 zone 網路延遲** 是累積的。一個 user request 經過 5 個 service、每個 service 跨 AZ 一次、累積 10-20ms cross-AZ latency。看起來每個 service 都很快、但 end-to-end 慢。
 
-**Downstream cache** 也是依賴。app 看起來健康、但其實是 cache 在擋；cache 突然 cold start（restart、eviction storm）、application 直接被打爆。
+**Downstream cache** 也是依賴。app 看起來健康，是因為大部分讀取由 cache 回應；cache 突然 cold start（restart、eviction storm）、原本由 cache 回應的讀取全部打到資料庫，資料庫的 CPU、磁碟讀取或 application 到資料庫的連線先耗盡，application 的請求跟著逾時；流量回到平常之後 cache 還沒熱，可能停在失效狀態（[Metastable Failure](/backend/knowledge-cards/metastable-failure/)）。
 
-對應案例：[PayPay 行動支付](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — DynamoDB 寫入可以撐 3K msg/sec、但 APNs / FCM 一天的 quota 有限、推送下游才是瓶頸。
+對應案例：[PayPay 行動支付](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — DynamoDB 寫入處理得了每秒 3K 則訊息、但 APNs / FCM 一天的 quota 有限、推送下游才是瓶頸。
 
 ## 可分散 vs 不可分散瓶頸
 

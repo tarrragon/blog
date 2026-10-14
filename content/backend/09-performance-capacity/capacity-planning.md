@@ -10,7 +10,7 @@ tags: ["backend", "performance", "capacity", "planning"]
 
 容量規劃的責任是把「未來 N 個月可能多大」翻成「現在該訂多少 capacity」。這層工作不純靠歷史外推、要結合業務 forecast、事件型成長、頂部風險 buffer。
 
-跟 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 的關係：9.4 提供「當前配置能撐多少」、9.6 用這個數字加上 forecast 推「該規劃多少」。沒有 9.4 的 baseline、9.6 只是猜；沒有 9.6 的 forecast、9.4 的 baseline 只是 snapshot。
+跟 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 的關係：9.4 量出當前配置在 SLO 條件下處理得了的最大請求率、9.6 用這個數字加上 forecast 推「該規劃多少」。沒有 9.4 的 baseline、9.6 只是猜；沒有 9.6 的 forecast、9.4 的 baseline 只是 snapshot。
 
 跟 [9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/) 的關係：9.13 先決定「沿哪條軸擴」（垂直 / 水平 / Y 軸拆服務 / Z 軸 partition），9.6 才能算出「該擴多少」。同樣是「處理 10 倍流量」、選垂直擴展要算單機規格上限、選水平擴展要算協調成本跟連線池放大、選 Y 軸拆服務要算跨服務 latency budget — 三條軸的容量公式參數完全不同。沒先做 9.13、9.6 的數字會落到錯誤的擴展軸上。
 
@@ -62,7 +62,7 @@ Headroom 不是 over-provisioning 浪費、是容量規劃的安全邊界。常�
 - broker / queue：60%（consumer 落後恢復時要瞬間吃下積壓）
 - consensus DB：80%+（完全不能 reactive 擴）
 
-**headroom 太低 → 出事**：peak 期間進 cliff、用戶體驗變差。
+**headroom 太低 → 出事**：peak 期間進 cliff，延遲越過 SLO，接著依先耗盡的資源呈現請求失敗、無回應或程序終止（見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)）。
 **headroom 太高 → 浪費錢**：平日成本拉高、CFO 質疑。
 
 對應案例：[GR8 Tech AI 預測](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) — 預測準了可以降 headroom 比例；預測不準必須拉高 headroom 補回安全邊界。
@@ -93,7 +93,7 @@ Headroom 不是 over-provisioning 浪費、是容量規劃的安全邊界。常�
 
 - min 太低 → cold start 風險（流量上來時還在 boot）
 - min 太高 → 平日浪費
-- max 太低 → 限流（peak 時 autoscaler 不能再擴）；擴展路徑上的其他上限（雲端 quota、建失敗的機器也佔名額）與反應時間換算成緩衝，見 [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/) 的〈自動擴展（autoscaling）的反應時間與緩衝〉
+- max 太低 → peak 時 autoscaler 不能再擴，超過的負載只能靠卸除或限流擋下；擴展路徑上的其他上限（雲端 quota、建失敗的機器也佔名額）與反應時間換算成緩衝，見 [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/) 的〈自動擴展（autoscaling）的反應時間與緩衝〉
 - max 太高 → 月底炸帳單（autoscaler 不受控、過 peak 不會主動降）
 - target 太高 → autoscale 啟動太晚、進 knee 才反應
 - target 太低 → autoscale 太敏感、頻繁 scale up / down 浪費
@@ -133,7 +133,7 @@ Headroom 不是 over-provisioning 浪費、是容量規劃的安全邊界。常�
 **容量公式變成**：單機極限 × headroom、沒有 elastic 救援。
 **設計重點**：
 
-- 預先 provision 到能撐 peak、不依賴 reactive 擴
+- 預先 provision 到 peak 請求率下仍在 SLO 內的容量、不依賴 reactive 擴
 - 垂直擴容（更大 instance）為主、不是橫向
 - 留更高 headroom（80%+）、出事沒有第二招
 
@@ -154,7 +154,7 @@ Headroom 不是 over-provisioning 浪費、是容量規劃的安全邊界。常�
 - 每個 region 抽各自的 workload model
 - 各自跑 saturation discovery
 - 各自訂 headroom（區域峰值 + 區域 AZ failover）
-- 跨 region failover plan：哪個 region 掛了、流量去哪、目標 region 要留多少 headroom 接
+- 跨 region failover plan：哪個 region 故障、流量去哪、目標 region 要留多少 headroom 接
 
 對應案例：[Standard Chartered 7 個受監管市場](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 跨市場獨立容量規劃；[Genesys 15 region](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — 15 主 region + 5 衛星 region 各自規劃；[Mercado Libre 18 國](/backend/09-performance-capacity/cases/mercado-libre-latam-bigquery-vertex/) — 每國獨立 cycle。
 

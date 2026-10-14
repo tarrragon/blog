@@ -8,7 +8,7 @@ tags: ["backend", "performance", "capacity", "case-study"]
 
 這個資料夾的核心責任是把雲端服務商公開的高併發實戰案例轉成可回寫主章判讀的案例正文。資料來源以 [AWS Customer Success Stories](https://aws.amazon.com/solutions/case-studies/)、[Google Cloud Customer Stories](https://cloud.google.com/customers) 與 [Azure Customer Case Studies](https://customers.microsoft.com/) 為主，因為這層案例同時提供具體流量數字、實際使用的服務組合與工程決策路徑，比一般 engineering blog 更接近實戰判讀。
 
-跟模組七案例庫一樣、本資料夾不只服務 09 主章閱讀、也是 01-05 模組寫作時的證據來源。當寫 01 資料庫章節需要說明「Aurora 真實流量下能撐多少」、當寫 02 快取章節需要說明「ElastiCache 在持續成長服務的角色」時、可以直接回查本資料夾相應案例。
+跟模組七案例庫一樣、本資料夾不只服務 09 主章閱讀、也是 01-05 模組寫作時的證據來源。當寫 01 資料庫章節需要說明「Aurora 在真實流量下處理得了多少」、當寫 02 快取章節需要說明「ElastiCache 在持續成長服務的角色」時、可以直接回查本資料夾相應案例。
 
 ## 跟 06 案例庫的差異
 
@@ -16,7 +16,7 @@ tags: ["backend", "performance", "capacity", "case-study"]
 | -------- | ------------------------------------------------------------------ | --------------------------------------------------------------- |
 | 來源     | 大企業工程部落格（Google SRE Book、Netflix Tech Blog、Shopify 等） | AWS / GCP / Azure 官方 customer case studies                    |
 | 證據型態 | 方法論敘事（SLO 政策、chaos hypothesis、failure mode）             | 具體流量、實例、延遲、成本數字（QPS、msg/sec、p95、cost ratio） |
-| 讀法     | 失敗模式如何被驗證                                                 | 容量量化實踐：什麼配置撐多少、加多少、成本曲線怎麼走            |
+| 讀法     | 失敗模式如何被驗證                                                 | 容量量化實踐：什麼配置處理得了多少、加多少、成本曲線怎麼走      |
 | 教學責任 | 把驗證流程制度化                                                   | 把容量地圖具體化、把成本邊界量化                                |
 
 兩層案例互補。06 教讀者「怎麼預先驗證失敗會被擋住」、09 教讀者「實際配置在實際流量下會怎麼跑」。同一個服務可以同時出現在兩處、但讀法不同。
@@ -128,7 +128,7 @@ tags: ["backend", "performance", "capacity", "case-study"]
 | Global edge / CDN           | [9.C13 Hotstar](/backend/09-performance-capacity/cases/hotstar-ipl-eighteen-million-concurrent/) / [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)（CloudFront 卸載靜態）                                                                                      |
 | 限流 / Virtual Waiting Room | [9.C16 SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)（明確排隊）/ [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)（隱性緩衝）                                                                                               |
 | Hybrid cloud / burst        | [9.C22 Wayfair](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/)（on-prem + GCP burst）                                                                                                                                                                                                   |
-| Control plane vs Data plane | [9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)（DynamoDB 撐 metadata、影音另走 edge）                                                                                                                                                                                       |
+| Control plane vs Data plane | [9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)（DynamoDB 承載 metadata、影音另走 edge）                                                                                                                                                                                     |
 
 ### 寫 [00 服務選型模組](/backend/00-service-selection/) 時
 
@@ -154,7 +154,7 @@ tags: ["backend", "performance", "capacity", "case-study"]
 
 surge（突發遠超預期）內部還可分兩種、設計回應完全不同：
 
-- **產品爆紅 surge**（[9.C8 Pokémon GO](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/)）：流量隨熱度消退、是「暫時偏離 baseline 又回歸」。容量規劃焦點是「撐過熱度高峰、避免在最忙時掛」。
+- **產品爆紅 surge**（[9.C8 Pokémon GO](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/)）：流量隨熱度消退、是「暫時偏離 baseline 又回歸」。容量規劃焦點是在熱度高峰期間維持服務可用、高峰過後縮回容量。
 - **結構性 surge**（[9.C18 Zoom COVID](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)）：baseline 永久上移、是「新常態」。容量規劃焦點是「30x 後 SLO baseline 重新校準、長期成本曲線重算」。
 
 ### flash-sale-spike 形狀的特殊性

@@ -107,9 +107,9 @@ Evidence package 的核心用途是讓 replay 結論可審查。Reviewer 要能�
 - **TCP reassembly 失敗 / replay 結果亂碼**：跨 packet 的 HTTP body 沒被正確組裝、常見於 MTU / TCP segment offload 設定異常 — 確認 capture interface 沒開 TSO / GRO、或用 application-level capture（HEC-style sidecar）取代 packet capture
 - **PII / secret 漏 redact 進 staging**：middleware 規則沒覆蓋新加的 header / 新的 body schema — 建立 redaction allowlist（只放行已知 schema）而非 denylist、每次 schema 變更同步更新 middleware、staging 入口加 secret scanner 做 last-mile 攔截
 - **Replay 觸發下游真實副作用**：POST / PUT 沒導 sandbox、webhook 真的打出去、payment 真的扣款 — replay target 預設 *deny all write*、白名單放行特定 idempotent endpoint、其餘走 mock 或 dry-run flag
-- **Replay rate 拖垮 capture host**：同機 capture + replay、CPU / NIC 互相搶 — capture host 只負責 sniff + write to file、replay 機器獨立、用 gor file 解耦
+- **Replay 與 capture 在同一台主機搶資源**：同機 capture + replay、CPU / NIC 互相搶，capture 漏抓封包 — capture host 只負責 sniff + write to file、replay 機器獨立、用 gor file 解耦
 - **長時間 capture 寫爆 disk**：未設 rotation 或 size limit — `--output-file` 加 size / time rotation、定期 archive 到 S3 + 過期刪除
-- **Staging 容量比 production 小、放大流量打爆**：10x replay 沒先估下游 — capacity 規劃前先用 1x 暖機、觀察下游 saturation、再 ramp 到目標倍率
+- **Staging 容量比 production 小、放大後的流量超過下游容量**：10x replay 沒先估下游 — capacity 規劃前先用 1x 暖機、觀察下游 saturation、再 ramp 到目標倍率
 
 ## 案例回寫
 

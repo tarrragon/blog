@@ -1,7 +1,7 @@
 ---
-title: "9.C21 ASOS：Cosmos DB 在 Black Friday 撐 1.67 億請求"
+title: "9.C21 ASOS：Cosmos DB 在 Black Friday 處理 1.67 億請求"
 date: 2026-05-12
-description: "ASOS 在 2016 Black Friday 用 Azure Cosmos DB 撐 24 小時 1.67 億請求、3500 req/sec、48ms 平均延遲"
+description: "ASOS 在 2016 Black Friday 用 Azure Cosmos DB 在 24 小時內處理 1.67 億請求、3500 req/sec、48ms 平均延遲"
 weight: 21
 tags: ["backend", "performance", "capacity", "case-study", "db-kv", "azure", "predictable-peak"]
 ---

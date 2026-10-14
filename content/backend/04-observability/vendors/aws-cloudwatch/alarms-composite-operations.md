@@ -131,7 +131,7 @@ Alarm evaluation 遇到缺失 datapoint 時，有四種處理方式：
 | `notBreaching` | 視為正常       | metric 在低流量時段自然消失                 |
 | `ignore`       | 跳過該 period  | 不影響 evaluation window                    |
 
-`breaching` 適合 heartbeat 類型的 metric — 服務應該持續回報 metric，停止回報代表服務掛了。`notBreaching` 適合流量驅動的 metric — 凌晨沒有 request 時自然沒有 latency datapoint，不應該觸發告警。
+`breaching` 適合 heartbeat 類型的 metric — 服務應該持續回報 metric，停止回報代表服務停止了。`notBreaching` 適合流量驅動的 metric — 凌晨沒有 request 時自然沒有 latency datapoint，不應該觸發告警。
 
 選錯 missing data 策略是 alarm flapping 的常見原因。Lambda function 的 metric 在沒有 invocation 時沒有 datapoint，用預設的 `missing` 或 `breaching` 都會造成問題。Lambda metric alarm 應該用 `notBreaching`。
 

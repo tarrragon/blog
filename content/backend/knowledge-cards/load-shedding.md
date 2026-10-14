@@ -7,7 +7,7 @@ weight: 53
 ---
 
 
-Load shedding 的核心概念是「在過載時主動丟棄或拒絕部分工作」。它用有限失敗保護核心能力，避免所有工作一起排隊到超時。 可先對照 [Load Test](/backend/knowledge-cards/load-test/)。
+Load shedding 的核心概念是「在過載時主動丟棄或拒絕部分工作」。它用有限失敗保護核心能力，避免所有工作一起排隊到超時：被拒的請求立刻得到錯誤，其餘請求維持原本的延遲，等於主動選擇請求失敗、避開無回應（各種結果見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)）。 可先對照 [Load Test](/backend/knowledge-cards/load-test/)。
 
 ## 概念位置
 

@@ -6,7 +6,7 @@ weight: 40
 tags: ["backend", "performance", "capacity", "case-study", "db-oltp", "aws", "low-latency-sustained"]
 ---
 
-這個案例的核心責任是說明「Cassandra 撐不住 transactional 一致性」如何用 distributed SQL 補位。Netflix *用 CockroachDB 補 Cassandra 缺的那塊*、全面替換從來不是策略：需要 rich transaction + global secondary index + multi-active 寫入的場景。跟 [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 對照 — Aurora 整合的是 OLTP single-region workload、CockroachDB 解的是「跨 region 強一致 + 跨 cluster 高彈性」。
+這個案例的核心責任是說明 Cassandra 不提供的跨分區 ACID 交易如何用 distributed SQL 補位。Netflix *用 CockroachDB 補 Cassandra 缺的那塊*、全面替換從來不是策略：需要 rich transaction + global secondary index + multi-active 寫入的場景。跟 [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 對照 — Aurora 整合的是 OLTP single-region workload、CockroachDB 解的是「跨 region 強一致 + 跨 cluster 高彈性」。
 
 ## 觀察
 
@@ -50,7 +50,7 @@ Netflix CockroachDB 艦隊揭露三個「補 Cassandra 缺口」的 OLTP 工程�
 
 可重用的工程做法：
 
-1. **不要試圖一個 DB 撐全部**：Netflix 同時用 Cassandra（高吞吐 eventual）、CockroachDB（transactional + global）、Aurora（單區 ACID）、EVCache（cache）。每種 DB 對應不同 workload 類型、不混用。對應 [00 服務選型模組](/backend/00-service-selection/) 的 polyglot persistence。
+1. **不要把全部 workload 放進一個 DB**：Netflix 同時用 Cassandra（高吞吐 eventual）、CockroachDB（transactional + global）、Aurora（單區 ACID）、EVCache（cache）。每種 DB 對應不同 workload 類型、不混用。對應 [00 服務選型模組](/backend/00-service-selection/) 的 polyglot persistence。
 2. **每個 cluster 對應一個 application boundary**：避免 multi-tenant 大 cluster、改用「per-app cluster」— 容量規劃顆粒對齊 application、爆掉時 blast radius 限縮在單一 app。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 的 blast radius 設計。
 3. **Multi-region 用於 survival、不是 latency 優化**：跨 region quorum 物理上必然增 latency。把 multi-region 動機釐清成 *region failure 容忍*、不要混淆「跨 region = 更快」。對應 [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) 的 survival goal vs latency budget 取捨。
 4. **Self-managed 規模化需要專屬平台團隊**：Netflix 有 Database Platform Team 養 380+ cluster — 包含 backup、upgrade、incident response、capacity review。沒這量級團隊就走 managed service。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/) 的人力成本權衡。

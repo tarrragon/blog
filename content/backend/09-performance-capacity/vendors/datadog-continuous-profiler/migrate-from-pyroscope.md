@@ -39,11 +39,11 @@ Operational = High（其他 Low） → **Type C operational hybrid**。Type C �
 **TCO（total cost of ownership）**：self-host Pyroscope 看起來免費（Apache 2.0）、但實際 ops 成本：
 
 - Storage：profile sample 大、retention 與 storage cost 需要自己估（每 service 每天可能 1-10 GB）
-- Scaling：profile ingestion 突增（deploy event / canary rollout 期間）要 storage / ingester 撐住
+- Scaling：profile ingestion 突增（deploy event / canary rollout 期間）storage / ingester 的寫入容量要高於突增期間的 profile 寫入速率
 - On-call：Pyroscope server 自己會壞、要 on-call 帶
 - Ops engineer time：規模成長後可能需要 0.5-1 個 FTE 維護 Grafana stack 內的 Pyroscope
 
-對 *已經有 Datadog APM 帳單* 的 org、profiling 會跟 APM / profiled host 進同一個商務談判與 usage report，不需要額外 ops headcount。這條 TCO 拉力對 50-500 人 eng 規模最強 — 小於 50 人 self-host 也撐得住、大於 500 人 self-host 的 economy of scale 可能開始 favored Pyroscope。
+對 *已經有 Datadog APM 帳單* 的 org、profiling 會跟 APM / profiled host 進同一個商務談判與 usage report，不需要額外 ops headcount。這條 TCO 拉力對 50-500 人 eng 規模最強 — 小於 50 人時 self-host 需要的維運工時相對團隊規模還小、大於 500 人 self-host 的 economy of scale 可能開始 favored Pyroscope。
 
 **Ecosystem deep linking**：Datadog Profiler 跟 trace / log / metrics *在同一個介面*、profile span 直接連到 trace span、deploy marker 直接顯示在 flame graph timeline、cross-signal query 不用 wire。Pyroscope 要透過 Grafana datasource correlation 達到類似效果、但需要 Tempo / Loki 已部署 + 手動配 correlation rule、整合精度跟自動程度都不如 Datadog 內建。
 

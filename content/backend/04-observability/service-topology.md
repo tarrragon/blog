@@ -16,7 +16,7 @@ tags: ["backend", "observability"]
 - 動態叢集下的拓撲追蹤：擴縮事件如何回寫拓撲訊號
 - 跟 [4.3 tracing](/backend/04-observability/tracing-context/) 的分工：trace 是單 request、topology 是統計聚合
 - 跟 [05 deployment platform](/backend/05-deployment-platform/) 的整合：service mesh 部署
-- 反模式：架構圖只在 wiki 上、跟實際流量漂移；新依賴上線缺 review；拓撲圖回答「這服務掛了誰受影響」需要人工追查
+- 反模式：架構圖只在 wiki 上、跟實際流量漂移；新依賴上線缺 review；拓撲圖回答「這服務故障時誰受影響」需要人工追查
 
 ## 概念定位
 

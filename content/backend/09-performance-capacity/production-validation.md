@@ -32,7 +32,7 @@ Production-side 驗證的責任是回答「staging 過了 production 一定過�
 - AWS VPC Traffic Mirroring：底層網路層、加密 traffic 要另處理
 - Diffy（已 deprecated 但概念有效）：dual-write 對比結果
 
-**適合場景**：架構大改、想驗證 *是否能撐 production traffic* 但不能影響用戶。例如「DB 從 PostgreSQL 換 Aurora、想看新 DB 在真實 query pattern 下穩不穩」。
+**適合場景**：架構大改、想驗證 *新架構在 production 的請求組合與流量下延遲與錯誤率是否維持* 但不能影響用戶。例如「DB 從 PostgreSQL 換 Aurora、想看新 DB 在真實 query pattern 下穩不穩」。
 
 **注意事項**：
 

@@ -123,4 +123,6 @@ Gatus 與 Uptime Kuma 能以自己的管道發通知，那條通知不經過告�
 
 以層盤點只找得到監控鏈定義過的缺口；這個服務特有的故障，要先列出它的失效模式或使用者旅程，再對回各層，見 [4.16 Observability Readiness Review](/backend/04-observability/observability-readiness-review/)（上線前由服務、平台與值班一起確認訊號足以支援事故判讀的審查流程）與 [單點故障盤點](/operations/06-high-availability/spof-inventory/)。事故之後發現的偵測缺口怎麼寫回成新的規則，見 [4.8 訊號治理閉環](/backend/04-observability/signal-governance-loop/)。
 
+負載超過容量是這類失效模式裡最常見的一種：服務呈現的結果分成變慢、請求失敗、無回應、程序終止與停在失效（負載退去之後仍不恢復），各層看得到的不同：變慢由應用層訊號的耗時分布、服務網路內的探測與合成監控看到，抵達後的請求失敗由應用層的錯誤率看到、沒有抵達的請求只有入口的請求率與外部探測看得到，無回應由自檢與探測的逾時看到，程序終止由重啟計數與終止原因看到，飽和的前兆由元件指標看到；停在失效沒有任何一層直接看得到，要另寫一條比對入口請求率與成功完成請求量的規則。各種結果的判斷標準與成因見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)。
+
 還沒有任何監控的服務，接的順序可以照監控鏈由內往外：容器健康檢查與服務網路內的探測見 [多容器服務的存活監看](/operations/04-service-health/multi-container-monitoring/)，Prometheus、exporter 與 Alertmanager 見 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/)，心跳監看與合成監控放到失效域以外見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)。第二台主機或第三方服務要先給哪一層、備份要放到哪裡，見 [小型服務的兩到三台主機配置](/operations/06-high-availability/small-service-host-layout/)。

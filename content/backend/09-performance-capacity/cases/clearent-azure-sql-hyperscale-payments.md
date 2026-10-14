@@ -1,5 +1,5 @@
 ---
-title: "9.C32 Clearent：Azure SQL Hyperscale 撐每年 5 億筆支付交易"
+title: "9.C32 Clearent：Azure SQL Hyperscale 處理每年 5 億筆支付交易"
 date: 2026-05-13
 description: "Clearent 在 Azure SQL Hyperscale 上處理每年 5 億筆支付交易、autoscale + 微服務架構"
 weight: 32

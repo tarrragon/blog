@@ -8,7 +8,7 @@ tags: ["backend", "performance", "capacity", "peak-event"]
 
 ## 概念定位
 
-高峰事件準備的責任是把「事件臨頭才動手」變成「事前數週流程化準備」。沒有 readiness 流程時、年度活動靠 oncall 撐、出事率高；有流程之後、活動成「routine event」、工程資源穩定釋放。
+高峰事件準備的責任是把「事件臨頭才動手」變成「事前數週流程化準備」。沒有 readiness 流程時、年度活動靠 oncall 臨場處理、出事率高；有流程之後、活動成「routine event」、工程資源穩定釋放。
 
 本章 *是* [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/) 跟 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) 在「事件型場景」的應用組合、不重新建立方法論。要看具體方法回到那兩章、本章聚焦在 *流程整合*。
 
@@ -34,7 +34,7 @@ tags: ["backend", "performance", "capacity", "peak-event"]
 
 **T-30 天**：基礎設施 quota 申請。雲端 instance limit、connection pool、API rate limit、DynamoDB throughput、Lambda concurrency 都要 *提前申請*、不能事件當天才發現 quota 不夠。AWS Infrastructure Event Management（IEM）等服務在這階段啟動。
 
-**T-14 天**：第一輪 production-like 壓測。驗證容量計畫是否真的能撐預期峰值、找出第一輪 bottleneck。
+**T-14 天**：第一輪 production-like 壓測。驗證在預期峰值的請求率下延遲與錯誤率是否仍在 SLO 內、找出第一輪 bottleneck。
 
 **T-7 天**：完整 game day 演練。注入故障場景（DB failure、AZ outage、第三方 quota 耗盡）、驗證降級、failover、rollback 流程。修正最後問題、更新 runbook。
 
@@ -115,7 +115,7 @@ T-0 當天的指揮中心、跨團隊聯合 channel。
 
 **注意**：這類服務通常綁定 enterprise 等級合約、不是所有客戶都能用。設計事件準備時要假設「沒有 vendor 救援」、vendor 是 bonus 而非 primary plan。
 
-對應案例：[GR8 Tech World Cup IEM](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) — AWS Infrastructure Event Management 在 2022 FIFA World Cup 期間支援；[Pokemon GO CRE](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/) — GCP CRE 即時補容量、撐過 50x surge。
+對應案例：[GR8 Tech World Cup IEM](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) — AWS Infrastructure Event Management 在 2022 FIFA World Cup 期間支援；[Pokemon GO CRE](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/) — 流量達到原先預估的 50 倍時，GCP CRE 即時補上容量。
 
 ## Game day 演練
 

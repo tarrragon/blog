@@ -26,7 +26,7 @@ tags: ["backend", "performance", "capacity", "observability"]
 
 **為什麼不能只看 utilization**：
 
-- CPU 100% 但 run queue 空 → 還能撐（單純 CPU bound）
+- CPU 100% 但 run queue 空 → 還沒有工作在排隊等 CPU，延遲裡還沒有排隊時間（單純 CPU bound）；再加負載就開始排隊
 - CPU 80% 但 run queue 不斷增長 → 已 saturate（saturation 比 utilization 領先）
 
 **Saturation metric 是 capacity warning 的最早訊號**：

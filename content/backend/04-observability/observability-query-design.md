@@ -20,7 +20,7 @@ tags: ["backend", "observability"]
 
 觀測查詢設計是把「產生訊號之後怎麼被讀取」當成獨立的系統設計問題。觀測資料的寫入路徑（agent → collector → ingest → storage）在 [4.11 telemetry pipeline](/backend/04-observability/telemetry-pipeline/) 處理；本章處理的是讀取路徑 — 從 storage 經 query engine 到 dashboard、alert 與即席查詢的資料流。
 
-寫入路徑的設計目標是吞吐穩定、schema 一致、成本可控；讀取路徑的設計目標是在不同的時間壓力下，用對的精度取回對的切面。兩者的效能瓶頸不同、擴展方向不同、治理責任也不同。把讀取當寫入的附屬處理，會在流量成長後遇到「寫入正常但查詢崩潰」的局面。
+寫入路徑的設計目標是吞吐穩定、schema 一致、成本可控；讀取路徑的設計目標是在不同的時間壓力下，用對的精度取回對的切面。兩者的效能瓶頸不同、擴展方向不同、治理責任也不同。把讀取當寫入的附屬處理，會在流量成長後遇到「寫入正常但查詢逾時或被拒」的局面。
 
 ## 觀測資料的讀寫不對稱
 
@@ -153,7 +153,7 @@ Query engine 需要知道每個查詢的優先級，在資源不足時讓高優�
 
 ### Query cost estimation
 
-在查詢執行前估算掃描量（掃描的 series 數、time range、shard 數），超過閾值的查詢被拒絕或降級。避免單一 heavy query（例：跨所有 service 的 90 天 full-resolution 聚合）拖垮 query engine。
+在查詢執行前估算掃描量（掃描的 series 數、time range、shard 數），超過閾值的查詢被拒絕或降級。避免單一 heavy query（例：跨所有 service 的 90 天 full-resolution 聚合）佔滿 query engine 的記憶體與 CPU、讓同時段的其他查詢逾時。
 
 Query cost estimation 對使用者的回饋要足夠清楚。拒絕查詢時要說明「這個查詢預計掃描 N 條 series × M 天，超過單次查詢上限；請縮小時間範圍或增加 filter 條件」，而不是只回 timeout 或 500 error。
 

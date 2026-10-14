@@ -48,7 +48,7 @@ tags: ["devops", "burst-traffic", "classification", "marketing", "error-storm"]
 
 Error storm 是監控系統特有的突發場景：被監控的 app 出了 bug，每個受影響的使用者都在送 error 事件。如果有 10 萬使用者同時遇到同一個 bug，collector 瞬間收到 10 萬筆 error 事件。
 
-Error storm 的矛盾：error 事件是 debug 最需要的資料，但 storm 時的大量 error 可能打垮 collector。處理策略是**保留前 N 筆完整 error（含 stack trace）、後續的 error 只計數不存原始資料**。第一筆 error 的 stack trace 足夠 debug，後續的 10 萬筆只是確認影響範圍。
+Error storm 的矛盾：error 事件是 debug 最需要的資料，但 storm 時的大量 error 可能塞滿 collector 的接收佇列，collector 開始回 429 或丟掉資料。處理策略是**保留前 N 筆完整 error（含 stack trace）、後續的 error 只計數不存原始資料**。第一筆 error 的 stack trace 足夠 debug，後續的 10 萬筆只是確認影響範圍。
 
 ## 下一步路由
 

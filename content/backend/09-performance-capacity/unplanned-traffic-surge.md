@@ -24,7 +24,7 @@ tags: ["backend", "performance", "capacity", "surge", "load-shedding"]
 
 ## 自動擴展（autoscaling）的反應時間與緩衝
 
-**擴展的反應時間**是從擴展決策做出、到新容量開始服務請求的時間。這段時間裡流量還在上升，所以真正要回答的問題是：反應時間內流量會再上升多少，現有容量撐不撐得住這段增量。撐得住這段增量所需的額外容量，就是**擴展緩衝**，它是 [Headroom Budget](/backend/knowledge-cards/headroom-budget/) 裡因應擴展反應時間的那一部分。這個算法只適用於擴展得上去的層：沒有自動擴展、只能人工加機器時，反應時間就是人工擴容的時間，緩衝等於平常就留著的固定容量；自建的資料庫與快取這類有狀態、不能即時水平擴展的層，要按預估峰值加上 headroom 預留（見 [9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/) 與 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) 的〈不可水平擴容服務的容量規劃〉），託管的隨需模式資料庫也有自己的擴展速率上限，要查業者文件；超出的部分交給後面卸除、准入與退路三節。
+**擴展的反應時間**是從擴展決策做出、到新容量開始服務請求的時間。這段時間裡流量還在上升，所以要算的是：反應時間內流量會再上升多少，現有容量在延遲與錯誤率都不越過 SLO 的前提下，能否處理這段增量。處理這段增量所需的額外容量，就是**擴展緩衝**，它是 [Headroom Budget](/backend/knowledge-cards/headroom-budget/) 裡因應擴展反應時間的那一部分。這個算法只適用於擴展得上去的層：沒有自動擴展、只能人工加機器時，反應時間就是人工擴容的時間，緩衝等於平常就留著的固定容量；自建的資料庫與快取這類有狀態、不能即時水平擴展的層，要按預估峰值加上 headroom 預留（見 [9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/) 與 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) 的〈不可水平擴容服務的容量規劃〉），託管的隨需模式資料庫也有自己的擴展速率上限，要查業者文件；超出的部分交給後面卸除、准入與退路三節。
 
 Hotstar 的工程文用一組估算說明這個關係。Hotstar 的直播觀眾在比賽關鍵時刻像海嘯一樣湧入，事前把容量擴到預期同時在線人數「was resulting in a heavy infrastructure costs」，所以 2019 年開始在自己的 Kubernetes 平台上試用自建的 autoscaler。文中假設加節點約 90 秒，容器建立與應用啟動約 75 秒，再加上收集指標與做決策，總延遲約 4 分鐘，「we would have missed about two million people on the platform within these 4 minutes」。直播期間的緩衝因此加大：依同時在線人數分階擴展的服務多加 200 萬人，依請求數擴展的服務多加 30%（[Hotstar, 2019，Wayback](https://web.archive.org/web/20210221203256id_/https://blog.hotstar.com/scaling-for-tsunami-traffic-2ec290c37504)）。依這個關係，緩衝的大小是反應時間內流量的上升量，上升速度固定時就是兩者相乘；像 Coinbase 那樣一分鐘內湧入的階梯式上升，緩衝要涵蓋的是整段階梯。兩個值都要對自己的系統量出來，Hotstar 文中的數字只是估算的示範；上升速度取自過去事件的紀錄，反應時間取自實際擴展一次的計時。兩個值都容易被低估：無預警事件的上升速度正好是超出過去紀錄的那一種，反應時間在過載與網路劣化時也比平靜時長（下面 Slack 的例子），所以反應時間要在負載下量；緩衝涵蓋不到的那一段上升，交給〈負載卸除與限流的分工、請求的優先等級〉與〈准入控制〉兩節的機制。緩衝也是平常一直在付的閒置容量，Hotstar 改用 autoscaler 的理由正是事前全額擴容太貴。
 
@@ -42,7 +42,7 @@ Hotstar 的工程文用一組估算說明這個關係。Hotstar 的直播觀眾�
 
 卸除與恢復的速度也要事先決定。Stripe 寫明「It's very important that shedding and bringing load happen slowly, or you can end up flapping」：削得太快，負載一降就把流量全部放回來，系統又過載，在兩個狀態之間擺盪。限流器與卸除器本身也會壞，Stripe 列出的部署注意事項中有三件：任何層級的例外都 fail open，讓限流器的錯誤不會讓 API 停擺；準備一個 kill switch 能整個關掉（見 [6.17 Feature Flag Governance](/backend/06-reliability/feature-flag-governance/) 的〈Kill switch 設計〉）；新的限流器先 dark launch（[Dark Launch](/backend/knowledge-cards/dark-launch/)），只記錄它會擋掉哪些請求而不真的擋。
 
-被拒絕的請求會重試，重試又會加重過載。Amazon 描述了這個回饋迴圈：延遲超過客戶端的逾時，客戶端放棄並重送，伺服器同時處理已經沒人等的舊請求與新的重試，過載因此變成穩定狀態。Google SRE 的對策是重試預算：每個請求最多嘗試 3 次（含第一次），每個客戶端的重試比例不超過 10%。重試預算與重試風暴見 [Retry Budget](/backend/knowledge-cards/retry-budget/) 與 [Retry Storm](/backend/knowledge-cards/retry-storm/)。
+被拒絕的請求會重試，重試又會加重過載。Amazon 描述了這個回饋迴圈：延遲超過客戶端的逾時，客戶端放棄並重送，伺服器同時處理已經沒人等的舊請求與新的重試，過載因此變成穩定狀態。這個迴圈在觸發的尖峰過去之後仍可能讓服務停在失效狀態，這種失效叫 [Metastable Failure](/backend/knowledge-cards/metastable-failure/)。Google SRE 的對策是重試預算：每個請求最多嘗試 3 次（含第一次），每個客戶端的重試比例不超過 10%。重試預算與重試風暴見 [Retry Budget](/backend/knowledge-cards/retry-budget/) 與 [Retry Storm](/backend/knowledge-cards/retry-storm/)。
 
 降級（只回應部分功能或較舊的資料）是負載卸除之外的另一個選項，它保住的是「有回應」。Google SRE 提醒它的邊界：「under extreme overload, the service might not even be able to compute and serve degraded responses」。降級要有用，降級的那條路徑必須比正常路徑便宜，例如直接讀本地快取，而不是換一種算法重算。降級的設計責任見 [Degradation](/backend/knowledge-cards/degradation/)。
 
@@ -68,9 +68,9 @@ GitHub 那次事件的處置順序是：17:21 偵測到入站與出站流量的�
 
 ## 擴展跟不上時的退路：panic mode、fast-fail 與分批上線
 
-擴展與卸除都可能來不及，退路是事前建好、在這時接手的一組機制，目標是讓系統從「完全沒有回應」退到「慢但有回應」。
+擴展與卸除都可能來不及，退路是事前建好、在這時接手的一組機制，目標是讓系統從無回應（請求等不到結果）退到變慢或請求失敗（使用者拿到一個慢的回應，或很快拿到一個錯誤），各種結果的判斷標準見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)。
 
-Slack 2021 年 1 月那次事故從掛掉退到降級，靠的是三個事前就存在的機制。負載平衡器有一個「panic mode」，大部分主機的健康檢查都失敗時，它不再只送給健康的主機，而是平均分配到所有主機；加上重試與 circuit breaker（下游服務持續失敗時暫停呼叫那個下游，避免把失敗擴散開來），到太平洋時間早上 9:15 左右，「Slack was slower than normal and error rates were higher, but by around 9:15am PST Slack was degraded, not down」。人工做的是停掉自動縮容、保住現有的服務容量，同時修復 provision-service、清掉沒建好的機器，讓可服務的主機數回到足夠的數量；panic mode 生效的前提，正是 web tier 還有足夠數量的正常主機。panic mode 保住的是有回應，不是每個請求都成功：在多數主機不健康時仍然送流量給它們，換來的是一部分請求失敗而不是全部請求被拒絕。Circuit breaker 的設計見 [Circuit Breaker](/backend/knowledge-cards/circuit-breaker/)。
+Slack 2021 年 1 月那次事故從不可用（down）退到降級（degraded），靠的是三個事前就存在的機制。負載平衡器有一個「panic mode」，大部分主機的健康檢查都失敗時，它不再只送給健康的主機，而是平均分配到所有主機；加上重試與 circuit breaker（下游服務持續失敗時暫停呼叫那個下游，避免把失敗擴散開來），到太平洋時間早上 9:15 左右，「Slack was slower than normal and error rates were higher, but by around 9:15am PST Slack was degraded, not down」。人工做的是停掉自動縮容、保住現有的服務容量，同時修復 provision-service、清掉沒建好的機器，讓可服務的主機數回到足夠的數量；panic mode 生效的前提，正是 web tier 還有足夠數量的正常主機。panic mode 保住的是有回應，不是每個請求都成功：在多數主機不健康時仍然送流量給它們，換來的是一部分請求失敗而不是全部請求被拒絕。Circuit breaker 的設計見 [Circuit Breaker](/backend/knowledge-cards/circuit-breaker/)。
 
 佇列是另一個要事先決定的退路，決定的是過量的請求要排隊還是立刻失敗。Amazon 建議負載平衡器用 spillover 的設定，「which fast-fails instead of queueing excess requests」，超過容量的請求直接回失敗、不排隊（[Fail Fast](/backend/knowledge-cards/fail-fast/)），並限制請求在任何佇列裡停留的時間，過舊的請求直接丟掉（[Deadline](/backend/knowledge-cards/deadline/)）：客戶端早就逾時了，處理它只是浪費容量。和上游的回饋機制見 [Backpressure](/backend/knowledge-cards/backpressure/)。
 
@@ -80,7 +80,7 @@ Slack 2021 年 1 月那次事故從掛掉退到降級，靠的是三個事前就
 
 把這幾個案例的處置並排，當下做的事分成兩種。一種是啟用或調整已經存在的機制：GitHub 決定切換到清洗業者，Slack 停掉自動縮容，Ticketmaster 放慢佇列、延後場次，OpenAI 在公告裡預告會依需求調整使用上限。另一種是修復：Slack 修好 provision-service、清掉沒建好的機器，AWS 工程師手動擴大 Transit Gateway 的容量；Slack 的修復花了兩個多小時，這段期間服務不可用，之後才退到降級。那些機制本身，包括交給更大邊緣網路的路徑、照形狀設計的偵測訊號、入口的請求優先等級、為關鍵請求預留的容量、等候室與事前註冊、量過的擴展反應時間與緩衝、panic mode 與 circuit breaker，都是在流量進來之前就建好、部署好的。
 
-判斷一個機制屬於事前建好的機制，還是當下能做的決定，問的是：在過載正在進行時，要讓它生效，需不需要部署新的程式或新的設定、或簽一份新的合約。需要的，最好在流量來之前完成，因為過載的系統上，部署本身也可能失敗，Slack 那次連擴展都失敗了；業界把相關的性質叫 [Static Stability](/backend/knowledge-cards/static-stability/)：控制面（擴展用的 provision-service、雲端 API 這類負責變更系統的元件）失效時，資料面不需要做任何變更就能維持服務，Slack 擴展失敗正是控制面失效的例子。本篇的判斷標準比它寬，允許執行事前演練過的既有指令與改既有設定的值。只需要改一個既有設定的值、或只需要人做一個決定的，才能留到當下；分界在設定的欄位、作用路徑與權限是不是事前就存在並演練過：GitHub 撤回 BGP 宣告的 ChatOps 指令是事前寫好的，當下只是執行它，所以算當下的決定；當下才要新增一條規則或一條路徑，就屬於事前要建的機制。修復也發生在當下，而修復花的時間裡，服務只剩事前建好的退路撐得住的程度：Slack 在 panic mode 生效之前不可用，之後是降級。沒有事前機制時，當下仍然做得到幾件事，各有代價：在既有的擴展上限欄位調高數值，風險是那個值沒演練過；臨時把網域接到 CDN 或清洗業者後面，DNS 切換要時間生效，origin 的位址如果已經外洩，攻擊照樣直接打 origin；找業者手動擴容，取決於業者的支援安排：Slack 那次是 AWS 從自家監控發現封包遺失後手動擴大 Transit Gateway，Pokémon GO 則是 Niantic 主動找 Google 的支援團隊。改架構可以在兩波流量之間做，Pokémon GO 就是在美國與日本上線之間換掉負載平衡器。所以無預警的流量雖然無法預測時間，準備的方式和 [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/) 相同，差別在 9.11 的準備時程對著一個日期，這篇列的機制要平常就處於可用狀態，並在演練（[Game Day](/backend/knowledge-cards/game-day/)）時實際啟用一次，確認切換的指令、權限與儀表板都還能用。
+判斷一個機制屬於事前建好的機制，還是當下能做的決定，問的是：在過載正在進行時，要讓它生效，需不需要部署新的程式或新的設定、或簽一份新的合約。需要的，最好在流量來之前完成，因為過載的系統上，部署本身也可能失敗，Slack 那次連擴展都失敗了；業界把相關的性質叫 [Static Stability](/backend/knowledge-cards/static-stability/)：控制面（擴展用的 provision-service、雲端 API 這類負責變更系統的元件）失效時，資料面不需要做任何變更就能維持服務，Slack 擴展失敗正是控制面失效的例子。本篇的判斷標準比它寬，允許執行事前演練過的既有指令與改既有設定的值。只需要改一個既有設定的值、或只需要人做一個決定的，才能留到當下；分界在設定的欄位、作用路徑與權限是不是事前就存在並演練過：GitHub 撤回 BGP 宣告的 ChatOps 指令是事前寫好的，當下只是執行它，所以算當下的決定；當下才要新增一條規則或一條路徑，就屬於事前要建的機制。修復也發生在當下，而修復花的時間裡，服務能維持的只有事前建好的退路提供的那一部分功能：Slack 在 panic mode 生效之前不可用，之後是降級。沒有事前機制時，當下仍然做得到幾件事，各有代價：在既有的擴展上限欄位調高數值，風險是那個值沒演練過；臨時把網域接到 CDN 或清洗業者後面，DNS 切換要時間生效，origin 的位址如果已經外洩，攻擊照樣直接打 origin；找業者手動擴容，取決於業者的支援安排：Slack 那次是 AWS 從自家監控發現封包遺失後手動擴大 Transit Gateway，Pokémon GO 則是 Niantic 主動找 Google 的支援團隊。改架構可以在兩波流量之間做，Pokémon GO 就是在美國與日本上線之間換掉負載平衡器。所以無預警的流量雖然無法預測時間，準備的方式和 [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/) 相同，差別在 9.11 的準備時程對著一個日期，這篇列的機制要平常就處於可用狀態，並在演練（[Game Day](/backend/knowledge-cards/game-day/)）時實際啟用一次，確認切換的指令、權限與儀表板都還能用。
 
 ## 延伸閱讀：限流實作、可預期峰值、案例與事故處理
 

@@ -64,7 +64,7 @@ remote_write:
 `queue_config` 控制 remote write 的並行度與批次大小：
 
 - `capacity`：內存中暫存的 sample 數量。太小會頻繁 flush、太大會佔記憶體
-- `max_shards`：並行的 write goroutine 數量。Shard 太少會造成 backlog、太多會壓垮遠端
+- `max_shards`：並行的 write goroutine 數量。Shard 太少會造成 backlog、太多會讓並行寫入超過遠端的處理速率，遠端開始延遲回應或拒絕寫入
 - `max_samples_per_send`：每次 POST 的 sample 數量。5000 是常用值
 - `batch_send_deadline`：即使 batch 沒滿也在這個時間內 flush，避免低流量時 sample 延遲太久
 
@@ -112,7 +112,7 @@ M3 的經驗對後來的三家有直接影響：Mimir 的 per-tenant retention�
 
 - **跨 cluster 查詢需要 fan-out + dedup**：三家都實作了這個能力，但部署配置跟 dedup 策略各有差異
 - **Downsampling 是長期成本控制的必要手段**：不做 downsampling、90 天 range query 的效能跟成本都不可接受
-- **多租戶隔離不只是 query 層面**：ingestion rate limit 跟 storage quota per tenant 才能防止「一個團隊的 cardinality 爆炸拖垮整個平台」
+- **多租戶隔離不只是 query 層面**：ingestion rate limit 跟 storage quota per tenant 才能防止一個團隊的 cardinality 爆炸耗盡共用的 ingester 記憶體、讓其他租戶的寫入跟著失敗
 
 ## 故障與邊界
 
@@ -122,7 +122,7 @@ M3 的經驗對後來的三家有直接影響：Mimir 的 per-tenant retention�
 
 **表現**：`prometheus_remote_storage_bytes_total` 停止增長（寫不出去）、`prometheus_wal_storage_size_bytes` 持續增長、disk 使用率上升。嚴重時 WAL 佔滿 disk，Prometheus 無法寫入新 sample、連 local scrape 也受影響。
 
-**修復**：先恢復遠端連線。WAL backlog 會在連線恢復後自動 catch up — Prometheus 按 WAL 順序重送積壓的 samples。如果 catch up 時間太長（例如堆了數小時），remote write 的 max_shards 可以暫時調高加速回補，但要注意不要壓垮剛恢復的遠端。
+**修復**：先恢復遠端連線。WAL backlog 會在連線恢復後自動 catch up — Prometheus 按 WAL 順序重送積壓的 samples。如果 catch up 時間太長（例如堆了數小時），remote write 的 max_shards 可以暫時調高加速回補，回補的寫入速率要控制在剛恢復的遠端處理得了的範圍內。
 
 **預防**：監控 `prometheus_remote_storage_queue_highest_sent_timestamp_seconds` 跟 current time 的差距 — 差距代表 remote write 延遲。差距超過 5 分鐘時告警。設定 WAL 的 disk 空間上限（`--storage.tsdb.max-block-duration` 搭配 retention 控制 total disk）。
 

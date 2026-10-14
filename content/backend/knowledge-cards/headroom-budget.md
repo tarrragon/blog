@@ -13,7 +13,7 @@ Headroom 不是 over-provisioning 浪費、是容量規劃的安全邊界。三�
 
 ## 可觀察訊號與例子
 
-Headroom 不足的訊號是「peak 期間 utilization 接近 80%、autoscaler 還沒反應」或「single AZ 故障演練時、其他 AZ 撐不住」。對應案例：[GR8 Tech AI 預測](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) — 預測準了可以降 headroom 比例、預測不準必須拉高 headroom。
+Headroom 不足的訊號是「peak 期間 utilization 接近 80%、autoscaler 還沒反應」或「single AZ 故障演練時、其他 AZ 接手流量後延遲越過 SLO 或開始拒絕請求」。對應案例：[GR8 Tech AI 預測](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) — 預測準了可以降 headroom 比例、預測不準必須拉高 headroom。
 
 ## 設計責任
 

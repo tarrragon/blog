@@ -9,7 +9,7 @@ Cascading failure 的核心概念是「局部故障沿著依賴關係擴散成�
 
 ## 概念位置
 
-Cascading failure 是可靠性設計的主要防護目標。Timeout、backpressure、rate limit、circuit breaker、bulkhead 與 load shedding 都是在切斷擴散路徑。跟 [Correlated Failure](/backend/knowledge-cards/correlated-failure/) 的差別：cascading 是「一個壞了逐級傳導放大」（有先後），correlated 是「共享觸發器讓多個同時壞」（無先後）。
+Cascading failure 是可靠性設計的主要防護目標。Timeout、backpressure、rate limit、circuit breaker、bulkhead 與 load shedding 都是在切斷擴散路徑。跟 [Correlated Failure](/backend/knowledge-cards/correlated-failure/) 的差別：cascading 是「一個壞了逐級傳導放大」（有先後），correlated 是「共享觸發器讓多個同時壞」（無先後）。故障在觸發消失後仍延續的那一種是 [Metastable Failure](/backend/knowledge-cards/metastable-failure/)；它的持續效應也會擴散到沒碰到觸發的元件，所以兩者可以同時發生。
 
 ## 可觀察訊號與例子
 

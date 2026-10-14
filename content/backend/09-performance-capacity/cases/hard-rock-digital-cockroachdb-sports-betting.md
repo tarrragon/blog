@@ -1,7 +1,7 @@
 ---
 title: "9.C41 Hard Rock Digital：CockroachDB on AWS Outposts、Wire Act 合規 + 跨州單一邏輯 DB"
 date: 2026-05-26
-description: "Hard Rock Digital 用 CockroachDB 跨 AWS Outposts + US-East-1、Wire Act 強制資料留州、單一邏輯 DB 解多州 sportsbook、100 node 32 vCPU 撐 Super Bowl"
+description: "Hard Rock Digital 用 CockroachDB 跨 AWS Outposts + US-East-1、Wire Act 強制資料留州、單一邏輯 DB 解多州 sportsbook、以 100 node 32 vCPU 處理 Super Bowl 的投注尖峰"
 weight: 41
 tags: ["backend", "performance", "capacity", "case-study", "db-oltp", "aws", "event-peak"]
 ---

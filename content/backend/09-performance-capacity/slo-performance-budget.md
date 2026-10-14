@@ -166,11 +166,11 @@ SLO 與 performance budget 的責任是讓容量決策有「可衡量的目標 +
 
 回到本章開頭的論點 — SLO 是容量決策的目標。
 
-**容量公式**：能撐多少 RPS @ SLO 條件。
+**容量公式**：在 SLO 條件下處理得了多少 RPS。
 **規劃時用「SLO-constrained capacity」、不是「max capacity」**：
 
 - max capacity：絕對極限、進 cliff
-- SLO-constrained capacity：知道在 SLO 條件下能撐多少
+- SLO-constrained capacity：SLO 條件下處理得了的最大 RPS
 - 兩者差 30-50%（headroom）
 
 **9.4 saturation 找 knee 是技術指標、9.6 容量規劃用 SLO-constrained knee**：

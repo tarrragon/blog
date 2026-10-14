@@ -26,7 +26,7 @@ Forbes 遷移到 MongoDB Atlas on Google Cloud 的關鍵數字（引自 [Google 
 
 服務組合：MongoDB Atlas（managed document DB）、Google Cloud Platform（基礎設施）、Google Kubernetes Engine（50+ 微服務編排）、Google App Engine（部分 serverless 應用）、自建中介 abstraction layer（API 隔離 schema 變動）。
 
-關鍵負載形狀：「文章 publish 後突然爆量」是新聞媒體常態 — 熱門報導、人物專訪、財經事件都會在分鐘內把單篇文章拉到百萬讀者。這跟 [Hotstar IPL](/backend/09-performance-capacity/cases/hotstar-ipl-eighteen-million-concurrent/) 的「賽事時段預期峰值」不同、Forbes 的爆量是事件驅動、難以精確預測、需要 Atlas auto-scaling 撐住臨時讀爆。
+關鍵負載形狀：「文章 publish 後突然爆量」是新聞媒體常態 — 熱門報導、人物專訪、財經事件都會在分鐘內把單篇文章拉到百萬讀者。這跟 [Hotstar IPL](/backend/09-performance-capacity/cases/hotstar-ipl-eighteen-million-concurrent/) 的「賽事時段預期峰值」不同、Forbes 的爆量是事件驅動、難以精確預測、需要 Atlas auto-scaling 在讀取量突增時補上容量。
 
 ## 判讀
 

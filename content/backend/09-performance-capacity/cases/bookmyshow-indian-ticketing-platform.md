@@ -45,7 +45,7 @@ BookMyShow 案例揭露三個規模化 ticketing 平台的長期工程重點。
 需要警惕的判讀盲點：
 
 - 「年售 2 億張」是 *年度總和*、不是 *峰值*。實際單秒峰值（板球比賽決賽開票、寶萊塢新片首映）案例本身沒揭露。
-- 案例聚焦在 *資料分析層* 的遷移、不是 *交易層* 的 flash-sale 設計。讀者若想學「單場 flash-sale 怎麼撐」、應該回 [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 或 [SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)。
+- 案例聚焦在 *資料分析層* 的遷移、不是 *交易層* 的 flash-sale 設計。讀者若想學「單場 flash-sale 的尖峰怎麼處理」、應該回 [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 或 [SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)。
 - 「80% 成本下降」是 *vs 15 年舊系統*、不是 *vs 競爭對手*。舊系統的儲存效率、運維成本本來就低、改善幅度部分來自「現代化紅利」、不只是 AWS 服務本身。
 
 ## 策略

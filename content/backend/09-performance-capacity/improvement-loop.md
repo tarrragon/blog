@@ -118,7 +118,7 @@ Baseline 不是「歷史最佳」、是「最低可接受效能」。
 
 **漸進放大策略**：1% → 5% → 25% → 50% → 100%、每階段觀察足夠時間（至少 15 分鐘看 long-tail）。
 
-對應案例：[Prime Day FIS 8x chaos](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) — canary 模式跟 chaos test 並行、確保新版本在故障場景也撐得住。
+對應案例：[Prime Day FIS 8x chaos](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) — canary 模式跟 chaos test 並行、確認新版本在注入故障時延遲與錯誤率仍在目標內。
 
 ## Pre-release 改進迴圈頻率
 

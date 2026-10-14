@@ -14,7 +14,7 @@ Parca 是 Polar Signals 主導的 OSS continuous profiling、特色是 *eBPF-bas
 
 ## 最短判讀路徑
 
-判斷 Parca 部署是否能撐起 platform-wide profiling、最少看四件事：
+判斷 Parca 部署是否具備 platform-wide profiling 所需的元件與權限、最少看四件事：
 
 - **eBPF agent deploy**：Parca Agent 走 DaemonSet 跑在每個 node、需要 kernel ≥ 4.18（CO-RE / BTF）、`SYS_ADMIN` 或 `PERF_EVENT` capability、host PID namespace。受管 Kubernetes（GKE / EKS / AKS）的 worker node 是否允許這個權限是第一個判讀點
 - **Parca server scrape**：server 跟 agent 走 pull-based、Prometheus-style ServiceMonitor / scrape config、label 跟 metrics 同模型（namespace / pod / container / node）。scrape interval、retention、storage backend（FrostDB 內建 / object storage）要明確

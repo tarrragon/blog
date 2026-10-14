@@ -1,0 +1,21 @@
+---
+title: "Metastable Failure（負載退去後仍停在失效狀態）"
+date: 2026-10-14
+description: "流量已經回到平常的量而服務仍然大量逾時或出錯、或要判斷一次過載為什麼沒有自己恢復時，查 metastable failure 的定義、讓它停在失效狀態的持續效應、偵測它要比對的訊號與脫離它的做法"
+weight: 486
+tags: ["backend", "reliability", "performance", "overload"]
+---
+
+Metastable failure 指服務在一次觸發（短暫的流量尖峰、一次依賴故障、一次重新部署）讓它過載之後，觸發已經消失、進來的請求量也回到平常，服務仍然停在大量逾時或出錯的狀態。這個名字來自 Bronson 等人在 HotOS 2021 發表的〈Metastable Failures in Distributed Systems〉，論文把讓服務停在失效狀態的機制稱為持續效應（sustaining effect）：過載本身產生了額外的工作，額外的工作又維持過載。最常見的持續效應之一是 [Retry Storm](/backend/knowledge-cards/retry-storm/)。Metastable failure 與 [Cascading Failure](/backend/knowledge-cards/cascading-failure/) 描述同一次故障的兩個方向：cascading failure 是故障往其他元件擴散，metastable failure 是故障在觸發消失之後仍延續；兩者可以同時發生，論文也寫到持續效應會讓沒碰到觸發的元件跟著進入失效狀態。
+
+## 概念位置
+
+同一個服務平常處理得了的負載，在 metastable failure 期間處理不了，因為服務做的工作比進來的請求多。三種常見的持續效應：用戶端的重試讓同一個請求被送好幾次（[Retry Storm](/backend/knowledge-cards/retry-storm/)）；伺服器繼續處理已經逾時、沒有人在等結果的舊請求，佔掉處理新請求的資源；快取在故障或重啟後變空，原本由快取擋下的讀取全部打到資料庫（[Cache Warmup](/backend/knowledge-cards/cache-warmup/)）。Google《Site Reliability Engineering》的〈Addressing Cascading Failures〉舉的例子是一個在每秒一萬個請求下健康的服務，到每秒一萬一千時因當機開始連鎖失效；把負載降到每秒九千幾乎止不住當機，因為需求集中到剩下的少數伺服器上，假設只剩一成伺服器健康，要降到約每秒一千才能穩定並恢復；同一章也寫到，重試會讓後端在原始的請求率下降之後仍然過載，要大幅降低前端送進來的負載直到重試停止。
+
+## 可觀察訊號與例子
+
+判斷的依據是比對兩組數字：進來的請求率已經回到平常的量，而成功完成的請求量（goodput）或錯誤率仍沒有回到平常。另外兩個訊號是重試流量佔總請求的比例偏高，以及資料庫的讀取量明顯高於平常的同一時段（快取還沒熱）。短網址服務在一次資料庫切換之後，轉址請求的總量回到平常，成功的轉址卻只有平常的一半，log 裡同一個使用者在幾秒內重複送出同一個請求的紀錄大量出現，就是這個樣子（例子的數字是示意）。
+
+## 判讀方式
+
+流量回到平常而服務仍不恢復時，要處理的是持續效應，加容量或等流量自己退都不會讓服務恢復。脫離 metastable failure 要拿掉持續效應，不是等流量自己退：把進入服務的負載壓到平常的量以下（負載卸除、准入控制）、讓用戶端停止重試或拉長退避、丟掉已經逾時的排隊請求、先預熱快取再恢復全部流量。預防的做法是在平常就限制持續效應：重試預算、有上限的佇列與逾時、依優先等級卸除。負載超過容量時服務呈現的各種結果與各自的判斷標準，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)；卸除與准入的做法見 [9.15 無預警瞬時大流量](/backend/09-performance-capacity/unplanned-traffic-surge/)。

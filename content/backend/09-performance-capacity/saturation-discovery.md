@@ -8,7 +8,7 @@ tags: ["backend", "performance", "capacity", "saturation"]
 
 ## 概念定位
 
-Saturation discovery 的責任是把「系統能撐多少」這個問題變成可量化答案。沒有 saturation 量測時、容量規劃只能猜；有 saturation 量測之後、能說「在當前配置下、p99 < 100ms 的條件下、能撐 X RPS、headroom Y%」。
+Saturation discovery 的責任是量出系統在延遲與錯誤率目標之內處理得了的最大請求率。沒有 saturation 量測時、容量規劃只能猜；有 saturation 量測之後、能說「在當前配置下、p99 < 100ms 的條件下、處理得了 X RPS、headroom Y%」。
 
 跟 [9.1 壓測理論](/backend/09-performance-capacity/performance-theory/) 的關係：9.1 預測 saturation curve 的形狀（linear → knee → cliff）、9.4 用實測找出 *本服務* 的曲線具體位置。理論告訴我們 knee 存在、實測告訴我們它在哪裡。
 
@@ -23,8 +23,8 @@ Saturation discovery 的責任是把「系統能撐多少」這個問題變成�
 實務上把 saturation 分三段：
 
 - **linear region**（utilization < 50%）：latency 平穩、加流量幾乎不影響
-- **knee region**（utilization 50-80%）：latency 開始上升、但還可接受
-- **cliff region**（utilization > 80%）：latency 不可預測、可能 timeout / cascade failure
+- **knee region**（utilization 50-80%）：latency 開始上升、但還可接受；knee point（設計容量上限）落在這一段的後半，M/M/c 通常在 70-80%
+- **cliff region**（utilization > 80%）：latency 不可預測；進入 cliff 之後服務呈現的是請求失敗、無回應還是程序終止，由先耗盡的資源與等待有沒有上限決定，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)
 
 健康系統運轉在 linear 後半段或 knee 前段（utilization 50-70%）、留出 headroom 應付 burst。autoscaler 的 target metric 通常訂在 60-70%、是這條曲線推導出的安全位置。
 
@@ -32,7 +32,7 @@ Saturation discovery 的責任是把「系統能撐多少」這個問題變成�
 
 要找出 saturation 點、必須跑 *ramp-up 測試* — 不能固定一個壓力值。
 
-**單點壓測的問題**：跑「2000 RPS 連續 10 分鐘」、看 latency 100ms、結論「能撐 2000 RPS」 — 但不知道 1500 跟 2500 RPS 是什麼樣。可能 1500 也是 100ms（離 knee 還很遠）、可能 2500 直接崩（已經在 cliff）。
+**單點壓測的問題**：跑「2000 RPS 連續 10 分鐘」、看 latency 100ms、結論「2000 RPS 時 p99 是 100ms」 — 這一點成立，但不知道 1500 跟 2500 RPS 是什麼樣。可能 1500 也是 100ms（離 knee 還很遠）、可能 2500 時已經在 cliff，開始出現逾時或錯誤，而單點壓測看不到是哪一種。
 
 **Ramp-up 流程**：從基線開始、按倍數加壓（1x / 2x / 4x / 8x ...）。每個壓力 level 維持 5-10 分鐘、觀察 latency / throughput / resource utilization 的穩態（不是 transient）。紀錄每個 level 的 percentile 分布。
 
@@ -51,7 +51,7 @@ Saturation discovery 的責任是把「系統能撐多少」這個問題變成�
 
 每次 ramp-up 都要同時觀察六個維度的 resource saturation、找出哪個 *先 saturate*。
 
-**CPU**：utilization 100% *不一定* 等於 saturation。要看 load average 跟 run queue。utilization 80% 但 run queue 不斷增長 → 已 saturate；utilization 100% 但 run queue 空 → 還能撐（單純 CPU bound）。
+**CPU**：utilization 100% *不一定* 等於 saturation。要看 load average 跟 run queue。utilization 80% 但 run queue 不斷增長 → 已 saturate；utilization 100% 但 run queue 空 → 還沒有工作在排隊等 CPU（單純 CPU bound），再加負載就開始排隊。
 
 在 Docker 的虛擬機或與其他工作負載共用的主機上壓測時，虛擬機裡的 load 看不到主機上的排隊（見 [4.26](/backend/04-observability/host-traffic-resource-monitoring/)〈監控所在層看不到的範圍〉），量到的上限要附上主機本身的負載（見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉）。
 
@@ -73,7 +73,7 @@ Saturation discovery 的責任是把「系統能撐多少」這個問題變成�
 
 對分散式 KV / OLTP（DynamoDB、Cosmos DB、Bigtable、Cassandra）、saturation 還有另一個維度：[hot partition](/backend/knowledge-cards/hot-partition/)。
 
-名義容量 = 每 partition 上限 × partition 數量。partition key 分布不均 → 名義容量達不到。整體 utilization 看起來 20% → 系統還能撐？不一定。最熱 partition 已經 100%、其他 partition 0%、整體平均才 20%、但加流量會打在最熱 partition、立即 throttle。
+名義容量 = 每 partition 上限 × partition 數量。partition key 分布不均 → 名義容量達不到。整體 utilization 20% 不代表還有 80% 的餘裕。最熱 partition 已經 100%、其他 partition 0%、整體平均才 20%、但加流量會打在最熱 partition、立即 throttle。
 
 **識別 hot partition 的訊號**：
 
@@ -88,7 +88,7 @@ Saturation discovery 的責任是把「系統能撐多少」這個問題變成�
 - time-bucket（event_id + minute）
 - 用 cache 吸收 hot key（DAX、ElastiCache）
 
-對應案例：[Amazon Ads 9000 萬 RPS](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — partition 設計均勻時可以撐 sustained 高吞吐；[Tixcraft 售票](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 同一場演唱會（event_id）天然容易 hot、必須用 composite key 分散。
+對應案例：[Amazon Ads 9000 萬 RPS](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — partition 設計均勻時可以維持 sustained 高吞吐而不被 throttle；[Tixcraft 售票](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 同一場演唱會（event_id）天然容易 hot、必須用 composite key 分散。
 
 ## Long-tail latency 的 saturation
 
@@ -112,9 +112,9 @@ Saturation discovery 跑完之後、產出 *容量地圖* — 不是一個數字
 
 - 在 X 配置下（instance count、type、network）
 - SLO 條件 Y 下（p99 < N ms、error rate < M%）
-- 能撐 Z RPS（含分解到不同 endpoint）
+- 處理得了 Z RPS（含分解到不同 endpoint）
 - knee 在哪（什麼條件下進入 cliff）
-- 第一個 saturate 的 resource 是什麼
+- 第一個 saturate 的 resource 是什麼，以及越過 knee 之後呈現的結果（變慢、請求失敗、無回應或程序終止，判斷標準見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)）
 
 紀錄 *測試時間* 跟 *軟硬體版本*：硬體 / 軟體版本變動後、saturation 點可能位移、舊地圖不能套用。
 

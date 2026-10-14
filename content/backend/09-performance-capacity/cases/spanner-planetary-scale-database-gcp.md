@@ -6,7 +6,7 @@ weight: 10
 tags: ["backend", "performance", "capacity", "case-study", "db-oltp", "gcp", "low-latency-sustained"]
 ---
 
-這個案例的核心責任是提供「全球一致性 OLTP」的容量參考點。Spanner 是 Google 內部支撐 Ads、Play、Cloud Search 等服務的核心 DB、後來開放為 GCP 服務、是少數公開能撐每秒 10 億請求且維持強一致性的 OLTP 資料庫。
+這個案例的核心責任是提供「全球一致性 OLTP」的容量參考點。Spanner 是 Google 內部支撐 Ads、Play、Cloud Search 等服務的核心 DB、後來開放為 GCP 服務、是少數公開表示每秒處理 10 億請求且維持強一致性的 OLTP 資料庫。
 
 ## 觀察
 
@@ -25,7 +25,7 @@ Spanner 公開數字（引自 [Spanner overview](https://cloud.google.com/spanne
 
 ## 判讀
 
-Spanner 案例最值得讀的不是「能撐多大」、是「為什麼要這樣設計才能撐」。
+Spanner 案例的重點是它為了在每秒 10 億請求下維持強一致而做的設計。
 
 1. **線性擴展是 OLTP 的最高設計目標**：「2 nodes → 45K reads/sec、4 nodes → 90K reads/sec」這個 linear scaling 在傳統 OLTP（PostgreSQL、MySQL）做不到 — 因為 *跨節點交易* 需要 coordinator、coordinator 是 bottleneck。Spanner 用 Paxos + TrueTime 把 coordinator 變成「拓樸感知的多 leader」、才達成線性。對應 [01.5 transaction boundary](/backend/01-database/transaction-boundary/) 的設計取捨。
 2. **強一致 vs 全球部署不是必須二選**：CAP 定理常被解讀為「全球部署只能 eventual consistency」、Spanner 顯示「投入專屬硬體（GPS、原子鐘）+ 演算法（TrueTime）可以同時拿到 strong consistency + global distribution」。但這套硬體投資對其他 vendor 不容易複製。對應 [01 資料庫模組](/backend/01-database/) 的全球 OLTP 選項。

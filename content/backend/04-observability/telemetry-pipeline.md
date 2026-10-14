@@ -150,7 +150,7 @@ Query engine 服務三種查詢模式：alert rule evaluation（系統關鍵、�
 - **Query priority**：alert evaluation 最高、即席查詢次之、dashboard 最低。Alert 不能因為 dashboard 重查詢排隊而漏發。
 - **Query queue 分離**：不同類型的查詢進不同的 queue，各自有併發上限。Thanos / Mimir 的 query-frontend 支援 query 分類與排程。
 - **Query timeout 差異化**：alert evaluation 設短 timeout（跑不完就是問題）、即席查詢設中等 timeout、dashboard 的大範圍查詢允許較長 timeout。
-- **Query cost estimation**：在查詢執行前估算掃描量，超過閾值的查詢降級或拒絕，避免單一 heavy query 拖垮整個 query engine。
+- **Query cost estimation**：在查詢執行前估算掃描量，超過閾值的查詢降級或拒絕，避免單一 heavy query 佔滿 query engine 的記憶體與 CPU、讓同時段的其他查詢逾時。
 
 ### Buffer lag 對查詢 freshness 的影響
 

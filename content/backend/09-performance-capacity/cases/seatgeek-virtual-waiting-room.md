@@ -37,7 +37,7 @@ SeatGeek 案例揭露三個准入控制（等候室）的設計重點。
 
 1. **隱性緩衝 vs 明確排隊是兩種架構取捨**：[Tixcraft 模式](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)「全部塞進 DynamoDB」、用戶以為下單成功、實際處理排隊。SeatGeek 模式「明確告訴你排隊位置」、用戶看得到等待時間。前者犧牲透明度換流量吸收、後者犧牲流量吸收換體驗。對應 [9.10 Production-Side 驗證](/backend/09-performance-capacity/) 的用戶體驗 vs 系統行為取捨。
 2. **等候中的連線是 stateful 容量單位**：原文的 User Connection table 為每個連上 API Gateway 的訪客記一筆 visitor token 與 connection ID，所以等候人數本身就是要規劃的容量；同時等候人數有多大、連線怎麼維持，原文沒有寫，要自己壓測。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 stateful service 容量規劃。
-3. **限流粒度 = 業務粒度**：「每分鐘發 N 個 token」這個參數直接決定「每分鐘成交 N 張票」。N 太小、賣不完；N 太大、後端撐不住。N 不是技術參數、是業務 × 後端容量的協商結果。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 把容量規劃跟業務 KPI 對接。
+3. **限流粒度 = 業務粒度**：「每分鐘發 N 個 token」這個參數直接決定「每分鐘成交 N 張票」。N 太小、賣不完；N 太大、放進來的購票請求超過後端處理得了的速率，延遲與錯誤率上升。N 不是技術參數、是業務 × 後端容量的協商結果。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 把容量規劃跟業務 KPI 對接。
 
 需要警惕的判讀盲點：
 

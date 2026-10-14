@@ -34,7 +34,7 @@ DoorDash 的工程選擇揭露三個 OLTP 寫入容量設計重點。
 2. **Migration 工具自製是先決條件、不是 nice-to-have**：DoorDash 沒「一次性遷整套」、而是先寫工具把 table 從主 cluster 拆到獨立 Aurora cluster（紓壓）、再寫第二套工具把 Aurora → CockroachDB（換引擎）。兩階段都要 *lossless* + *可回退*。對應 [01.4 database migration playbook](/backend/01-database/database-migration-playbook/) 的「先建工具、再遷資料」原則。
 3. **Cluster 數量增加、alert volume 卻下降**：直覺反過來、cluster 多 = 維運面變大、應該更多 alert。但每個 CockroachDB cluster 內建 Raft 自動容錯、單節點 fail 不會 page on-call、Aurora 時代的「primary failover alert」消失。對應 [04 可觀測性模組](/backend/04-observability/) 的「告警 surface 設計」與 [06.x reliability](/backend/06-reliability/) 的 graceful degradation。
 
-需要警惕：1.636 M QPS 是 *主 cluster 峰值*、不是「DoorDash 全部寫入 QPS」。case 沒揭露遷移後單一 CockroachDB cluster 的峰值、只說「跑更多 cluster」。讀案例時不要把這個數字當成「CockroachDB 撐 1.6 M QPS」的證據、它是 *Aurora 在那個時間點撞牆的痛點*。
+需要警惕：1.636 M QPS 是 *主 cluster 峰值*、不是「DoorDash 全部寫入 QPS」。case 沒揭露遷移後單一 CockroachDB cluster 的峰值、只說「跑更多 cluster」。讀案例時不要把這個數字當成「CockroachDB 處理得了 1.6 M QPS」的證據、它是 *Aurora 在那個時間點撞牆的痛點*。
 
 ## 策略
 

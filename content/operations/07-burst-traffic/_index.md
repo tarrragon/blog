@@ -1,12 +1,12 @@
 ---
 title: "模組七：突發流量應對"
 date: 2026-06-20
-description: "行銷活動或新聞曝光帶來 10x-100x 流量時怎麼撐 — 突發分類、降級策略、queue 緩衝、規模分級應對"
+description: "行銷活動、新聞曝光或 error storm 讓送進 collector 的事件量暴增時：突發分類、降級策略、queue 緩衝、規模分級應對"
 weight: 7
 tags: ["devops", "burst-traffic", "degradation", "queue", "scaling"]
 ---
 
-回答「流量突然暴增時怎麼不掛」。突發流量和穩定高流量的處理策略不同 — 突發有時間限制，撐過去就恢復正常。
+處理流量突然暴增時，collector 怎麼維持接收與不遺失資料。突發流量和穩定高流量的處理策略不同：突發有時間限制，而突發過後服務不一定會自己恢復（重試與積壓可能讓過載延續，見 [Metastable Failure](/backend/knowledge-cards/metastable-failure/)）。
 
 ## 章節
 

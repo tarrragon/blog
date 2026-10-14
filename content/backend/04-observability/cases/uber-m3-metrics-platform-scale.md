@@ -78,7 +78,7 @@ M3 的最大風險是社群活躍度 — Uber 自 2023 年後縮減了 M3 的開
 
 - 單一 Prometheus 實例 memory 接近機器上限，開始 OOM restart
 - 多個 Prometheus 實例各自 scrape，跨服務查詢需要手動關聯
-- Retention 15 天不夠做季度趨勢分析，但拉長 retention 資源撐不住
+- Retention 15 天不夠做季度趨勢分析，但拉長 retention 會讓單一 Prometheus 的磁碟與記憶體需求同步上升、compaction 變慢
 - 團隊開始問「我們的 metrics 總共有多少 series、誰佔最多」但沒有統一的 cardinality 觀測
 - Grafana federation dashboard 查詢越來越慢或經常 timeout
 
