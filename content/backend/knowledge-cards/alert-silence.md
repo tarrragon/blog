@@ -20,7 +20,8 @@ Alert silence（告警靜音）是由人手動設定、在一段時間內不送�
 
 ```bash
 # --alertmanager.url 換成自己 Alertmanager 的網址；
-# alertname 與 instance 換成要靜音的告警標籤，--author 填自己
+# alertname 與 instance 換成要靜音的告警標籤，--author 填自己；
+# --duration 填這次維護預計的時間，寧可短一點，維護沒結束時再延長
 amtool --alertmanager.url=http://localhost:9093 silence add \
   alertname=DiskWillFillIn4Hours instance=db-1 \
   --duration=2h --author=oncall-a --comment="磁碟擴充維護"
@@ -36,4 +37,4 @@ Alertmanager 自己輸出 `alertmanager_silences{state="active"}`、`{state="pen
 
 ## 判讀方式
 
-靜音的風險在於結束時間比它對應的工作長：維護提早結束而靜音還在，這段時間同一條規則再成立，不會有任何通知，而從收件端看與一切正常沒有差別。降低風險的做法是設定時寫註解與合理的結束時間、接班時列出還沒過期的靜音逐一確認，以及以 `alertmanager_silences{state="active"}` 寫一條「生效中的靜音數連續一天大於零」的 warning 規則。這個數字只是數量，分不出是同一個靜音一直生效還是幾個靜音輪流設下，所以它是提醒，逐一確認仍要讀每個靜音的開始與結束時間。規則的寫法與接班檢查的完整項目見 [4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/)。
+靜音的風險在於結束時間比它對應的工作長：維護提早結束而靜音還在，這段時間同一條規則再成立，不會有任何通知，而從收件端看與一切正常沒有差別。降低風險的做法是設定時寫註解與合理的結束時間、接班時列出還沒過期的靜音逐一確認，以及讓 Prometheus 抓取 Alertmanager 的 `/metrics`，以 `alertmanager_silences{state="active"}` 寫一條「生效中的靜音數連續一天大於零」的 warning 規則。這個數字只是數量，分不出是同一個靜音一直生效還是幾個靜音輪流設下，所以它是提醒，逐一確認仍要讀每個靜音的開始與結束時間。這條規則的通知同樣經過 Alertmanager，條件寬鬆（例如只寫 `severity="warning"`）的靜音會連它一起壓下，所以設定靜音時條件至少寫到 `alertname`。規則的寫法與接班檢查的完整項目見 [4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/)。

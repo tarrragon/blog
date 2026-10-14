@@ -35,7 +35,7 @@ SLI 導向的 dashboard 從使用者體驗出發：第一排 panel 回答「使�
 
 不同使用者看不同層級的 dashboard。把所有資訊擠在同一個 dashboard 會讓每個角色都找不到自己要的。
 
-**Service overview**：on-call 工程師的第一個入口。5-8 個 panel，回答「這個服務現在有沒有問題」。SLI 指標（error rate、latency p99、availability）、最近的 alert、dependency 健康。 值班在沒有告警時定時讀的訊號（靜音、warning、error budget 走向、客服單量）與每週營運檢討，見 [4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/)。
+**Service overview**：on-call 工程師的第一個入口。5-8 個 panel，回答「這個服務現在有沒有問題」。SLI 指標（error rate、latency p99、availability）、最近的 alert、dependency 健康。 值班在沒有告警時定時讀的訊號（靜音、warning、error budget 走向、客服單量）與每週營運會議，見 [4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/)。
 
 **Debug dashboard**：事故中的深入診斷入口。按 dependency 分組（database panel group、cache panel group、downstream API panel group），每組顯示延遲、錯誤率、連線數。Panel 數量多但按需展開。
 

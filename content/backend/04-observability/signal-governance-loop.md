@@ -103,7 +103,7 @@ Dashboard 的健康度用三個指標追蹤：
 
 **事故驅動（每次事故後）**：Post-incident review 的 detection gap action items 在兩週內 close — 新增 / 調整的 metric、alert、dashboard 已部署並驗證。
 
-**每週**：值班的每週營運檢討讀這一週沒有引發動作的個別告警與重複出現的客服回報，見 [4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/#每週營運檢討讀的訊號)；本節的每季整理處理的是整體的雜訊比例與擁有者。
+**每週**：值班的每週營運會議讀這一週沒有引發動作的個別告警與重複出現的客服回報，見 [4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/#每週營運會議讀的訊號)；本節的每季整理處理的是整體的雜訊比例與擁有者。
 
 **定期審視（每季）**：
 

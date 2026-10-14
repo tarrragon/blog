@@ -58,7 +58,7 @@ API 設計的核心目標是管理對外承諾的成本結構。服務內部的�
 | [11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)                             | 既有 API 的改造路徑              | 契約已上線、消費者改不動、觀測未建時怎麼落地；已暴露性質的四類收法、程序閘門與三層排序                                                                                         | 合成（四篇爭論文的個案實跑）                                      |
 | [11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)                               | 契約條款的送達                   | 寫進文件只是宣告；送達手段的強制力與射程兩個維度、以及哪些條款只能靠人讀                                                                                                       | 合成（四篇爭論文的條款層）                                        |
 | [11.15 自家行動 App 與後端的 API 契約](/backend/11-api-design/mobile-client-api-contract/)             | 自家行動 App 與後端的 API 契約   | 自家 App 改得動程式、改不動已安裝的版本：版本回報、最低支援版本的兩層實作、商店審核下的上線順序、分階段發布、熱更新的範圍、各回退手段對已安裝版本的作用                        | 官方文件（Apple、Google Play、Expo、Shorebird、Firebase）         |
-| [11.16 面向終端使用者的錯誤碼與參考編號](/backend/11-api-design/end-user-error-code-and-reference-id/) | 面向終端使用者的錯誤碼與參考編號 | 使用者遇到錯誤、向客服回報、工程查證這條路上的系統設計：錯誤碼與參考編號的分工、請求編號在入口產生並傳進後端與 log、錯誤碼對照表、客服收件欄位、客服查詢工具的權限、log 保留期 | 官方文件（Nginx）與實測；Stripe 與 Microsoft Entra 的錯誤回報做法 |
+| [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/) | 面向終端使用者的錯誤碼與請求編號 | 使用者遇到錯誤、向客服回報、工程查證這條路上的系統設計：錯誤碼與請求編號的分工、請求編號在入口產生並傳進後端與 log、錯誤碼對照表、客服收件欄位、客服查詢工具的權限、log 保留期 | 官方文件（Nginx）與實測；Stripe 與 Microsoft Entra 的錯誤回報做法 |
 
 ### 流派層（`styles/`）
 
