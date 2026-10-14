@@ -361,6 +361,7 @@ weight: -1
 | [Out-of-Band Signal](/backend/knowledge-cards/out-of-band-signal/)                                   | 生產棧全掛時還有什麼訊號活著                 | watchdog、status page、shared fate                |
 | [Failure Domain（失效域）](/backend/knowledge-cards/failure-domain/)                                 | 哪些元件會因為同一個原因一起停掉             | 冗餘、監控位置、correlated failure                |
 | [Dead Man's Switch（心跳監看）](/backend/knowledge-cards/dead-mans-switch/)                          | 系統停掉發不出告警時由誰發現                 | Watchdog、healthchecks、排程工作                  |
+| [Synthetic Monitoring（合成監控）](/backend/knowledge-cards/synthetic-monitoring/)                   | 使用者從外面連不連得到服務                   | 外部探測、blackbox_exporter、RUM                  |
 | [Shared Responsibility Model（責任分擔模型）](/backend/knowledge-cards/shared-responsibility-model/) | 雲端業者與使用者各自處理哪些故障與攻擊       | IaaS、DDoS、WAF、自動擴充                         |
 | [Log Schema](/backend/knowledge-cards/log-schema/)                                                   | log 欄位如何支援搜尋與關聯                   | structured log、incident                          |
 | [Metrics](/backend/knowledge-cards/metrics/)                                                         | 指標如何描述趨勢、容量與健康                 | Prometheus、dashboard                             |

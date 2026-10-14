@@ -163,6 +163,7 @@ min by (container_label_com_docker_compose_service) (
 
 ## 延伸閱讀：指標的設計、儀表板與告警、監控自己的失效
 
+- 資源與流量指標在整個服務端監控裡的位置：它接住服務網路內的探測分不出的原因，它看不到的個別請求由應用層的請求指標、log 與 trace 接手，見 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)。
 - 指標的型別（counter、gauge、histogram）與 [SLI / SLO](/backend/knowledge-cards/sli-slo/) 的量法，見 [4.2 metrics 與 SLI/SLO](/backend/04-observability/metrics-basics/)。
 - 儀表板要放哪些圖、告警的門檻怎麼定，見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)。
 - 本篇的查詢只依 compose 服務分組，標籤值只有十幾個；改成依請求路徑或使用者分組時，時間序列與 Prometheus 的記憶體一起膨脹，上限怎麼估、怎麼收斂在 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)。
