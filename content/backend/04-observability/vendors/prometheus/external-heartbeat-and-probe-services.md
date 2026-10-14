@@ -20,7 +20,7 @@ tags: ["backend", "observability", "vendor", "prometheus", "alertmanager", "moni
 
 **回報失敗的端點。** 除了「我還在」，服務要能接受「出事了」。healthchecks 的 ping 網址加上 `/fail` 就是回報失敗，收到就立刻判定失敗並通知，不必等週期。Alertmanager 偵測到通知送不出去時，透過這個端點把「通知送不出去」這件事交給心跳監看服務，由它自己的管道通知。
 
-**送出去的資料留在哪裡。** Alertmanager 的 webhook 送出的是整份告警 JSON：標籤、註解（annotations），以及每則告警的 `generatorURL`。`generatorURL` 是 Prometheus 的網址，Prometheus 沒有設 `--web.external-url` 時取主機名，在容器裡就是容器 ID。healthchecks 會把每次 ping 的請求本文存下來（上限由自架版的 `PING_BODY_LIMIT` 設定，託管版寫在它的 API 文件），所以這些內容會存在服務那一邊。Watchdog 那一則的內容固定且少；送失敗通知的那一則帶著失敗的通知類型與主機標籤。告警內容不能離開組織時，改用自架的監看服務。
+**送出去的資料留在哪裡。** Alertmanager 的 webhook 送出的是整份告警 JSON：標籤、註解（annotations），以及每則告警的 `generatorURL`。`generatorURL` 是 Prometheus 的網址，Prometheus 沒有設 `--web.external-url` 時取主機名，在容器裡就是容器 ID。healthchecks 會把每次 ping 的請求本文存下來（上限由自架版的 `PING_BODY_LIMIT` 設定，託管版寫在它的 API 文件），所以這些內容會存在服務那一邊。Watchdog 那一則的內容固定且少；送失敗通知的那一則帶著失敗的通知類型與主機標籤。告警內容不能離開組織時，改用自架的監看服務，或只送不帶本文的心跳請求（兩種做法見 4.28 的〈觀察者的位置：第三方服務、另一個失效域的主機（含互相監看）與另一個業者的排程平台〉）。
 
 **方案的限制。** 免費方案通常限制檢查項目的數量、通知管道的種類與保留的歷史，各家的數字常變，選用時看服務當下公布的方案。心跳監看至少要兩個檢查項目，理由見下方〈Alertmanager 的 receiver 與路由：心跳與送失敗的通知〉。
 
@@ -28,7 +28,7 @@ tags: ["backend", "observability", "vendor", "prometheus", "alertmanager", "moni
 
 在 healthchecks 建立一個檢查項目（check），它會產生一個專屬的 ping 網址，路徑是一個 UUID（託管版的網址形如 `https://hc-ping.com/<UUID>`，自架版是 `SITE_ROOT` 環境變數設定的網站網址底下的 `/ping/<UUID>`）。對這個網址送一個 GET 或 POST 就算一次心跳，回應是 `OK`；接上 Alertmanager 之後，送心跳的是它的 webhook。網址本身就是寫入權限：知道它的人都能替這個檢查送心跳，或者回報失敗，所以它是私密值，與 ntfy 的網址一樣放在 Alertmanager 以 `url_file` 讀取的檔案裡（放法見〈Alertmanager 的通知管道〉的〈私密網址的存放：設定檔不展開環境變數，改用讀檔案的 `*_file` 欄位〉）。
 
-檢查項目建立之後、還沒收過任何 ping 時是 `new` 狀態，這個狀態不會因為沒有心跳而通知。UUID 不存在時，自架版與託管版的回應不同。自架的 healthchecks 4.4 實測回 404 與 `not found`，Alertmanager 會把它記成送出失敗。託管版的 API 文件寫的是回 200 與 `OK (not found)`，Alertmanager 會把它當成送出成功：網址檔裡的 UUID 寫錯時，通知送不出去的偵測不會留下任何失敗計數，而那個檢查項目從來沒收到心跳、停在 `new`，也不會通知。所以接好之後，到服務的頁面確認檢查項目收到了第一次心跳。檢查項目之後被刪除、或方案降級時被砍掉，託管版同樣回 200，心跳從此不再被看著而沒有任何訊號，這一種只有定期演練（見〈心跳中斷的演練〉）會發現。
+檢查項目建立之後、還沒收過任何 ping 時是 `new` 狀態，這個狀態不會因為沒有心跳而通知。UUID 不存在時，自架版與託管版的回應不同。自架的 healthchecks 4.4 實測回 404 與 `not found`，Alertmanager 會把它記成送出失敗。託管版的 API 文件寫的是回 200 與 `OK (not found)`，Alertmanager 會把它當成送出成功：網址檔裡的 UUID 寫錯時，通知送不出去的偵測不會留下任何失敗計數，而那個檢查項目從來沒收到心跳、停在 `new`，也不會通知。所以接好之後，到服務的頁面確認檢查項目收到了第一次心跳。檢查項目之後被刪除時，託管版同樣回 200，心跳從此不再被看著而沒有任何訊號，這一種只有定期演練（見〈心跳中斷的演練〉）會發現。
 
 週期與寬限在檢查項目上設定，選值的條件是 Alertmanager 實際送出心跳的最長間隔（`repeat_interval` 加一個 `group_interval`）要小於週期加寬限。沿用〈Alertmanager 的通知管道〉的 `repeat_interval: 5m` 與 `group_interval: 1m`，最長間隔是 6 分鐘，服務端設週期 5 分鐘、寬限 5 分鐘，總和 10 分鐘，留 4 分鐘的餘裕給一次稍晚的送出。週期設成 1 分鐘、寬限 1 分鐘而路由維持 5 分鐘的重送，服務會在每兩次心跳之間判定中斷，一直誤報。實測為了縮短等待，兩者各設 1 分鐘、路由也一起設短，停掉 Alertmanager 之後，`DOWN` 的通知信在最後一次心跳之後 2 分鐘寄出（時間線見〈心跳中斷的演練〉）：判斷的起點是最後一次收到心跳的時間，不是 Alertmanager 停掉的時間。所以從 Alertmanager 停掉到收到通知，最長是週期加寬限（剛送完一次心跳就停掉的情形）。停掉的是 Prometheus 時，Alertmanager 在已收到的 Watchdog 告警結束時間之前照常重送心跳，這段重送期另外加在延遲上，依 Prometheus 的原始碼約 4 個評估週期（評估週期短於 1 分鐘時以 1 分鐘計），本篇沒有實測。心跳恢復時，服務寄出 `UP` 的通知。
 
@@ -100,11 +100,11 @@ notify-fail 檢查項目平時不收 ping，所以「到服務的頁面確認收
 - **送出去的資料。** 送到探測業者的是探測的設定（網址、預期的回應內容）與服務的回應，不是告警 JSON；告警內容不能離開組織的服務，要查業者存了哪些回應內容，回應裡有內部資訊時改打只回固定內容的端點。
 - **對服務的影響。** 探測請求會出現在服務的存取紀錄與指標裡；探測打的是會記錄點擊的轉址路徑時，點擊數會被探測灌高，要在服務的統計裡以來源或 User-Agent 排除，或改打不記錄的端點。
 
-外部探測服務的候選（UptimeRobot、Better Stack、Pingdom 這類）與各自的免費方案對照，見 [無 SSH 環境的監控與告警](/infra/takeover/legacy-external-monitoring/) 的〈工具選型〉。自己有另一個失效域的主機時，外部探測也可以自己跑（例如在那台主機上跑 Prometheus 的 blackbox_exporter 或 Gatus），條件是那台主機不與服務共用失效域，而且它停掉時有人知道；兩台主機互相監看時，用來分辨兩台之間連線中斷的那一個探測要放在第三個位置，理由見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/) 的〈觀察者的位置：第三方服務、另一個失效域的主機與互相監看〉。
+外部探測服務的候選（UptimeRobot、Better Stack、Pingdom 這類）與各自的免費方案對照，見 [無 SSH 環境的監控與告警](/infra/takeover/legacy-external-monitoring/) 的〈工具選型〉。自己有另一個失效域的主機時，外部探測也可以自己跑（例如在那台主機上跑 Prometheus 的 blackbox_exporter 或 Gatus），條件是那台主機不與服務主機共用失效域，而且它停掉時有人知道；兩台主機互相監看時，用來分辨兩台之間連線中斷的那一個探測要同時避開服務主機與監控主機的失效域，理由見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/) 的〈觀察者的位置：第三方服務、另一個失效域的主機（含互相監看）與另一個業者的排程平台〉。
 
 ## 延伸閱讀：觀察者的位置、Alertmanager 的路由與自架的觀察者
 
-- 心跳監看與外部探測放在第三方、另一個失效域的主機或兩台互相監看時各自的差別，以及心跳監看、外部探測與內部告警並排時怎麼判讀，見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
+- 心跳監看與外部探測放在第三方、另一個失效域的主機或兩台互相監看時各自的差別，以及心跳監看、外部探測與主機內部探測並排時怎麼判讀，見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
 - 心跳之外的通知管道（ntfy、email、Slack）、Watchdog 的時間參數與通知送不出去的偵測規則，見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/)。
 - 觀察者改成自架、跑在另一個失效域的主機上時，VPN、互相監看的條件與兩台同時停掉的風險，見 [小型服務的兩到三台主機配置](/operations/06-high-availability/small-service-host-layout/)。
 - 心跳監看的判斷方式見 [Dead Man's Switch（心跳監看）](/backend/knowledge-cards/dead-mans-switch/)。
