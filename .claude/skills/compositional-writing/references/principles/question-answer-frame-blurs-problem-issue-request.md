@@ -49,6 +49,15 @@ rg -n '回答的問題|回答的是|問的是|問題是：' <檔案或目錄>
 
 這張卡的初稿自己也用了十幾處泛稱的「問題」（「這個框架本身另有問題」「骨架本身沒有問題」），用本卡的判斷問句掃過之後才改成缺陷、缺口、問句。
 
+## 同一類的其他詞：足夠性斷言裡的「撐」與評價謂語
+
+「問題」佔著一個內容格，而沒有把內容填進去：讀者讀到它，要自己決定那是問句、故障、事項還是需求。同一類的詞還有兩種，修法相同——寫出它佔住的那個內容，換成同義詞不算修好：
+
+- **足夠性斷言裡的「撐」**（撐得住、撐不起、扛不住、撐不久、會垮）：佔著需求與判斷標準的位置。「這個證據撐不住」沒說要支持哪個主張、需要什麼樣的證據；「單台資料庫撐得住這個流量」沒說是在什麼延遲門檻、多少請求量之下。改寫寫出需求、判斷標準與機制；換成「足以支持」仍然沒寫。借用物理直覺是偵測的入口，修法要回到它省略了什麼，見 [word-choice-fits-concept-attributes](word-choice-fits-concept-attributes.md) 的〈足夠性斷言要寫出需求、判斷標準與機制〉。
+- **正反問句裡的評價謂語**（「對不對」「通不通」）：佔著判斷標準的位置，見 [a-not-a-question-as-noun-clause](a-not-a-question-as-noun-clause.md)。
+
+三者的判斷問句是同一個：**這個詞佔住的位置，原本應該寫的是什麼；那個內容寫在句子裡了嗎。** LLM 生成時三者都高頻，因為它們讓句子在內容還沒決定時就能寫完。
+
 ## 論述基礎與限制
 
 證據是一篇文章的四種所指歸類（只舉例不逐一計數）、框架詞的詞頻，以及一位讀者的指認。「AI 生成的文章特別常用」沒有和人寫的文章對照過；詞頻只說明這個框架常見，不說明每一處都違規。
@@ -58,4 +67,5 @@ rg -n '回答的問題|回答的是|問的是|問題是：' <檔案或目錄>
 - [command-fragment-as-subject-hides-the-actor](command-fragment-as-subject-hides-the-actor.md)——「回答」與「問題」是動詞與受詞兩格被譬喻填上的形態。
 - [avoid-overused-generic-words](avoid-overused-generic-words.md)——一個詞蓋過不同的具體情境；「問題」多了一層應答框架。
 - [a-not-a-question-as-noun-clause](a-not-a-question-as-noun-clause.md)——應答框架的下游：內容被當成問句引出來，寫成正反問句。
+- [word-choice-fits-concept-attributes](word-choice-fits-concept-attributes.md)——足夠性斷言裡的「撐」與「問題」同一類，修法是寫出需求、判斷標準與機制。
 - [unnamed-halves-are-unextracted-variables](unnamed-halves-are-unextracted-variables.md)——命名先找業界術語；建在譬喻框架上的自創術語會把框架的歧義帶進名字。
