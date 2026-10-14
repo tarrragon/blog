@@ -6,7 +6,7 @@ weight: 28
 tags: ["backend", "observability", "reliability", "monitoring", "failure-domain"]
 ---
 
-這一篇整理服務與監控放在同一台主機（或同一個失效域）時，監控結構上判斷不了的故障，以及從失效域以外送出訊號的方式。觀測與被觀測系統一起退化的一般機制在 [4.25 觀測共命運失效：工具退化時的訊號與人層設計](/backend/04-observability/observability-shared-fate/)，這一篇處理其中最小的情形：只有一台主機。第三方服務的挑選與接法見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)，多台主機怎麼分配服務與監控見 [小型服務的兩到三台主機配置](/operations/06-high-availability/small-service-host-layout/)。這幾種故障在整條監控鏈上是位置盲區，各層的盲區與接手關係見 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)；本篇的外部探測就是那一篇的使用者路徑合成監控（[Synthetic Monitoring](/backend/knowledge-cards/synthetic-monitoring/)），主機內部探測是服務網路內的探測。
+這一篇整理服務與監控放在同一台主機（或同一個失效域）時，監控結構上判斷不了的故障，以及從失效域以外送出訊號的方式。觀測與被觀測系統一起退化的一般機制在 [4.25 觀測共命運失效：工具退化時的訊號與人層設計](/backend/04-observability/observability-shared-fate/)，這一篇處理其中最小的情形：只有一台主機。第三方服務的挑選與接法見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)，多台主機怎麼分配服務與監控見 [小型服務的兩到三台主機配置](/operations/06-high-availability/small-service-host-layout/)。在 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 的分法裡，主機停機與告警鏈停掉是位置盲區（觀察者跟著被觀察的對象一起停），使用者路徑中斷是服務網路內探測的問題盲區（公開入口不在它的問題裡），通知送不出去是讀取缺口，由送失敗的訊號偵測，各層的接手關係見那一篇；本篇的外部探測就是那一篇的使用者路徑合成監控（[Synthetic Monitoring](/backend/knowledge-cards/synthetic-monitoring/)），主機內部探測是服務網路內的探測。
 
 ## 監控與服務共用失效域時看不到的故障：主機停機、使用者路徑中斷與告警鏈中斷
 

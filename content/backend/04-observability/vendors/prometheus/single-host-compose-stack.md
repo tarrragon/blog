@@ -331,7 +331,7 @@ Prometheus 的 Targets 頁面上的 `UP` 只代表 Prometheus 讀得到 exporter
 
 ## 延伸閱讀：告警、多台主機、容量與長期保存
 
-- 這套堆疊在監控鏈上涵蓋元件指標與告警規則與分送兩層，自檢、使用者路徑與告警鏈的監看等其餘各層見 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)。
+- 這套堆疊涵蓋 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 裡的元件指標，以及告警規則的評估（通知管道見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/)）；容器的自檢、告警系統自己的心跳監看與使用者路徑的合成監控等其餘各層，見那一篇。
 - 以這套指標寫告警、主機過載時各服務的告警怎麼依原因收斂，見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)。
 - 服務分到多台主機時，exporter 的連接埠、主機標籤、目標清單與主機消失的偵測要怎麼改，見 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/)。
 - 這台 Prometheus 的時間序列數量、記憶體與磁碟怎麼估，讀取逾時與其他故障模式，見 [Prometheus 容量規劃與故障模式](/backend/04-observability/vendors/prometheus/capacity-failure-modes/)。

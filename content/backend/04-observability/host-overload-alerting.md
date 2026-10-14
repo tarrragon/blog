@@ -167,4 +167,4 @@ curl -s 'http://127.0.0.1:9093/api/v2/alerts?active=false&silenced=false&unproce
 - 本篇的延遲告警用固定的門檻 0.5 秒；門檻改由 SLO 推出、以錯誤預算的消耗速度判斷的寫法在 [4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/) 與 [Burn Rate](/backend/knowledge-cards/burn-rate/)。
 - 告警描述症狀而不是內部指標的理由，見 [Symptom-based Alert](/backend/knowledge-cards/symptom-based-alert/)。
 - 本篇的主機飽和規則算的是虛擬機的 load 與 steal；監控裝在哪一層就看不到哪些範圍、主機的磁碟怎麼一起涵蓋，見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)。
-- 各層監控回答的問題、盲區與接手的層，見 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)；上一條的「層」指監控裝在哪個元件，與那一篇的監控鏈不是同一件事。
+- 依每一層監控回答的問題排出的監控分層、各層看不到的範圍與接手的層，見 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)；4.26 那一條的「層」指監控裝在哪個元件，與那一篇的層不是同一件事。
