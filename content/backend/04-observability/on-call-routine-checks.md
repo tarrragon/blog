@@ -19,7 +19,7 @@ tags: ["backend", "observability", "on-call", "alerting"]
 - **慢慢變化的趨勢**：磁碟每週多用幾個百分點、佇列的積壓每天晚一點消化完。門檻告警只在越線那一刻通知，越線之前的走向要有人看。
 - **需要人判斷才知道是不是故障的狀態**：點擊量比上週少了兩成，可能是轉址出錯，也可能是一個大客戶的活動結束了。規則寫不出這個判斷。
 - **要在幾小時內處理、但不值得半夜叫人的故障**：Google 的《The Site Reliability Workbook》在值班章節舉的例子是備份失敗，這類問題在幾個小時內處理就夠，告警應該開單而不是通知值班。開了的單要有人讀，例行檢查就是讀它們的時間點。
-- **監控與告警本身的狀態**：還在生效的告警靜音、被暫停的心跳檢查項目、通知太多而被忽略的規則。這一類的故障讓告警不會響，所以只能在告警以外的地方看到。4.0 把它們歸在訊號失真與讀取缺口，見 [4.0](/backend/04-observability/monitoring-layers/) 的〈一層監控回答的問題與它的缺口〉。
+- **監控與告警本身的狀態**：還在生效的告警靜音、被暫停的心跳檢查項目、通知太多而被忽略的規則。這一類的故障讓告警不會響，所以只能在告警以外的地方看到。4.0 把它們歸在訊號失真與讀取缺口，見 [4.0](/backend/04-observability/monitoring-layers/) 的〈一層監控檢查的對象與它的缺口〉。
 
 ## 開班時讀的訊號
 
@@ -90,7 +90,7 @@ amtool --alertmanager.url=http://localhost:9093 silence query
 
 ## 延伸閱讀：告警分級、心跳監看與客服回報
 
-- 監控各層看不到的範圍、哪些缺口由告警規則接手、哪些問題在每一層都正常時仍會發生：[4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)
+- 監控各層看不到的範圍、哪些缺口由告警規則接手、哪些異常在每一層都正常時仍會發生：[4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)
 - warning 與 critical 的分級、依原因抑制症狀告警：[4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)
 - 心跳監看的設定與停機演練的時間線：[第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)
 - 客服回報轉給值班的條件與工程回覆的內容：[8.24 客服回報的分級與工程回覆](/backend/08-incident-response/support-escalation-and-engineering-reply/)

@@ -186,7 +186,7 @@ Dashboard 跟 alert 是否有效，最直接的訊號是 alert noise rate 跟 da
 ## 交接路由
 
 - [4.3 tracing](/backend/04-observability/tracing-context/)：trace waterfall 作為 dashboard 的診斷入口
-- [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)：告警規則與分送在依問題排出的各層監控裡的位置，告警系統自己停掉時由跑在另一個失效域的心跳監看接手
+- [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)：告警規則與分送在依檢查對象排出的各層監控裡的位置，告警系統自己停掉時由跑在另一個失效域的心跳監看接手
 - [4.6 SLI/SLO 訊號設計](/backend/04-observability/sli-slo-signal/)：alert 的訊號源頭、burn rate alerting 的 SLI 依據
 - [4.8 訊號治理閉環](/backend/04-observability/signal-governance-loop/)：alert / dashboard 的生命週期維運
 - [4.10 client-side / RUM](/backend/04-observability/client-side-monitoring/)：補 server-side 看不到的 dashboard 維度
