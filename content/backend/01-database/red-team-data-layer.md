@@ -370,7 +370,7 @@ Long-lived repeatable export artifact 是事故後仍能持續產出資料的工
 - **不同 KMS key audience**：production 用 production key、backup 用 backup key、兩者 lifecycle 分離
 - **不同 audit log**：production read / write 跟 backup read 在 *不同* audit stream、後續調查能區分「正常運作」vs「備份被讀」
 - **不同 access pattern review**：定期審查哪些 principal 在哪些時段讀 backup（正常情況很少有人讀 backup、頻繁讀取是異常訊號）
-- **寫入憑證刪不掉也改不了既有備份**：寫入備份的憑證多半放在正式環境的主機上，正式環境被打時它跟著外流；它只能新增、刪不掉也覆寫不了既有的備份，做法（只給上傳權限搭配版本保留或 conditional write、compliance 模式的物件鎖定、由備份端拉取）見 [7.43 的異地備份段](/backend/07-security-data-protection/cross-network-connection-security/#雲端對雲端與異地備份沒有共用私網時的接法) 與 [WORM Storage（不可變儲存）](/backend/knowledge-cards/worm-storage/)
+- **寫入憑證刪不掉也改不了既有備份**：寫入備份的憑證多半放在正式環境的主機上，正式環境被打時它跟著外流；它只能新增、刪不掉也覆寫不了既有的備份，做法（只給上傳權限搭配版本保留或 conditional write、compliance 模式的物件鎖定、由備份端拉取）見 [7.43 的異地備份段](/backend/07-security-data-protection/cross-network-connection-security/#雲端對雲端與異地備份沒有共用私網時的接法)；其中做到連帳號完整權限都刪不掉的只有 compliance 模式的物件鎖定，見 [WORM Storage（不可變儲存）](/backend/knowledge-cards/worm-storage/)
 
 「正式環境的接管不直接通到備份」是設計準則、不是 best practice 加分項。對應 [1.9 reconciliation](/backend/01-database/reconciliation-data-repair/) 的備份 / PITR 段討論。
 
