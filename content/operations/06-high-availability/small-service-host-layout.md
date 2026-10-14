@@ -32,7 +32,7 @@ tags: ["devops", "high-availability", "monitoring", "failure-domain"]
 
 ## 監控主機與服務主機之間的連線與連線中斷的誤判
 
-Prometheus 主動讀取各主機的 exporter，所以監控主機要連得到服務主機上的 exporter 連接埠。這些連接埠不對網際網路開放：exporter 預設沒有認證，輸出的指標透露主機的資源、服務的名稱與版本。同一個雲端業者內，exporter 綁在私有網路的位址上（[多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/) 以 `EXPORTER_BIND_ADDR` 設定）；跨業者或跨地端時沒有共用的私有網路，要在兩台之間建一條 VPN，例如 WireGuard 或 Tailscale（運作方式見 [Tailscale 深入](/linux/tools/remote/tailscale-tailnet-and-relay/)），exporter 改綁在 VPN 介面的位址上。
+Prometheus 主動讀取各主機的 exporter，所以監控主機要連得到服務主機上的 exporter 連接埠。這些連接埠不對網際網路開放：exporter 預設沒有認證，輸出的指標透露主機的資源、服務的名稱與版本。同一個雲端業者內，exporter 綁在私有網路的位址上（[多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/) 以 `EXPORTER_BIND_ADDR` 設定）；跨業者或跨地端時沒有共用的私有網路，要在兩台之間建一條 VPN，例如 WireGuard 或 Tailscale（運作方式見 [Tailscale 深入](/linux/tools/remote/tailscale-tailnet-and-relay/)），exporter 改綁在 VPN 介面的位址上。VPN 預設兩個方向都互通，雲端主機被入侵時攻擊者也能經由它連回地端；隧道兩端各自連得到什麼、限制要放在哪一端，見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/)。
 
 地端在 NAT 後面、對外 IP 會變動時，由地端主動建立 VPN：WireGuard 在地端那一側設定 `PersistentKeepalive`、主動連到雲端主機，雲端主機在業者的防火牆或安全群組開放一個 UDP 連接埠給它；Tailscale 由它的 NAT 穿越與中繼伺服器建立連線，兩端都不必開放連接埠。隧道建立之後兩個方向都連得到，所以 Prometheus 從監控主機讀取，或服務主機以 remote write 把指標推到監控主機，在網路上都走得通，兩者的取捨見〈多台主機的指標收集〉的〈指標回到中央的架構：中央直接讀取與各主機推送〉。
 
@@ -76,5 +76,6 @@ Prometheus 主動讀取各主機的 exporter，所以監控主機要連得到服
 
 - 還沒有第二台主機、服務與監控在同一台時看不到哪些故障，心跳監看、外部探測與主機內部探測並排時怎麼判讀，見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
 - 心跳監看或外部探測改由第三方服務提供時，挑選條件與 Alertmanager 的接法，見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)；自架 healthchecks 時同一篇的 ping 網址、`/fail` 與暫停也適用。
+- 監控主機與服務主機之間的 VPN 要開到多寬、限制放在哪一端才在雲端主機被入侵之後仍然成立、異地備份的存取金鑰要拿掉哪些權限，見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/)。
 - 監控主機已經分出去、要把各主機的 exporter 接上時，綁定位址、目標清單、主機標籤與主機消失的偵測，見 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/)。
 - 決定做應用程式的副本之後，要選 active-passive 還是 active-active、資料怎麼同步，見 [冗餘設計模式](/operations/06-high-availability/redundancy-patterns/)；每多一台要花多少、值不值得，見 [高可用的成本](/operations/06-high-availability/ha-cost/)。

@@ -508,6 +508,8 @@ weight: -1
 | [Security Misconfiguration](/backend/knowledge-cards/security-misconfiguration/)                 | 設定錯誤如何暴露內部能力             | CORS、debug、cloud               |
 | [Attack Surface](/backend/knowledge-cards/attack-surface/)                                       | 系統哪些對外暴露面最先被探測         | public API、admin route、webhook |
 | [Trust Boundary](/backend/knowledge-cards/trust-boundary/)                                       | 哪些位置要重建信任假設               | auth boundary、tenant、network   |
+| [Lateral Movement（橫向移動）](/backend/knowledge-cards/lateral-movement/)                       | 一台被入侵之後攻擊者還連得到哪些機器 | VPN、跳板、主機上的憑證          |
+| [Zero Trust（零信任）](/backend/knowledge-cards/zero-trust/)                                     | 連線能不能因為來自內網就被信任       | VPN、邊界模型、應用層認證        |
 | [Abuse Case](/backend/knowledge-cards/abuse-case/)                                               | 合法功能如何被惡意轉用               | export、invite、reset            |
 | [Threat Model](/backend/knowledge-cards/threat-model/)                                           | 風險的位置如何被逐項列舉             | 資產、邊界、攻擊者能力假設       |
 | [WAF](/backend/knowledge-cards/waf/)                                                             | 入口層如何過濾常見攻擊與濫用         | edge、bot、attack                |
