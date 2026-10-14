@@ -10,7 +10,7 @@ tags: ["backend", "reliability", "security", "cloud"]
 
 ## 概念位置
 
-這個模型決定「上雲端之後還要做什麼」。業者處理的是所有客戶共用、規模化才做得起來的部分：電力與硬體故障時把虛擬機搬到別台實體機、在網路邊緣吸收大流量的網路層攻擊。依每個應用而不同的部分留給使用者：判斷哪些請求是惡意的、決定流量變大時要不要多開機器（自動擴充見 [Autoscaling](/backend/knowledge-cards/autoscaling/)）、更新作業系統、備份資料。主機形態與分界位置的對照見 [主機形態光譜](/going-live/hosting-spectrum/)。
+這個模型決定「上雲端之後還要做什麼」。業者處理的是所有客戶共用、規模化才做得起來的部分：電力與硬體故障時把虛擬機搬到別台實體機、在網路邊緣吸收大流量的網路層攻擊（DDoS，處置見 [9.15 無預警瞬時大流量](/backend/09-performance-capacity/unplanned-traffic-surge/) 的〈體積型攻擊（DDoS）的處置：流量清洗與邊緣網路〉）。依每個應用而不同的部分留給使用者：判斷哪些請求是惡意的、決定流量變大時要不要多開機器（自動擴充見 [Autoscaling](/backend/knowledge-cards/autoscaling/)）、更新作業系統、備份資料。主機形態與分界位置的對照見 [主機形態光譜](/going-live/hosting-spectrum/)。
 
 ## 可觀察訊號與例子
 

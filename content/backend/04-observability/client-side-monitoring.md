@@ -80,7 +80,7 @@ Synthetic monitoring 用自動化的 [probe](/backend/knowledge-cards/probe/) �
 
 Synthetic probe 的探測路徑必須跟真實使用者一致。Probe 從 datacenter 內部發 request、走內部 DNS、不經過 CDN — 這種 probe 量到的 latency 跟 availability 不代表真實使用者的體驗。
 
-Probe 應該從外部網路、經過公開 DNS、經過 CDN / edge、用真實 browser（headless Chrome）渲染頁面。Catchpoint、Pingdom、Datadog Synthetic 都提供從多個公開地理位置發 probe 的能力。
+Probe 應該從外部網路、經過公開 DNS、經過 CDN / edge、用真實 browser（headless Chrome）渲染頁面。Catchpoint、Pingdom、Datadog Synthetic 都提供從多個公開地理位置發 probe 的能力。探測端也要在被測系統的失效域以外，跑在同一台主機或同一個網路裡的探測，那台主機停掉時跟著停，見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
 
 ## Core Web Vitals 與 Backend SLI 的整合
 
@@ -148,3 +148,4 @@ RUM SDK 跟 backend 的 trace 串接讓一個 user action 的完整路徑可追�
 - [08 incident response](/backend/08-incident-response/)：客戶感知影響量化
 - [Monitoring 模組](/monitoring/)：非 server 端的監控體系設計
 - [4.24 Client-to-Server 觀測串接](/backend/04-observability/client-server-trace-integration/)：從 browser click 到 server span 的完整 trace 鏈路實作
+- [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)：服務與監控只有一台主機時，外部探測與心跳監看要放在哪裡、與內部探測並排怎麼判讀

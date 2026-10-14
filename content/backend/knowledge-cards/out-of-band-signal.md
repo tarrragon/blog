@@ -9,7 +9,7 @@ Out-of-band signal 住在觀測系統的失效邊界之外——它是一個獨�
 
 ## 概念位置
 
-Out-of-band signal 處理的是觀測共命運失效——觀測系統跟被觀測系統共享失效域、在事故壓力下一起退化。它有兩種互補形態：心跳消失（外部偵測器監看「本該持續觸發的告警」是否停止，停止即代表監控管線本身斷了，見 [Dead Man's Switch](/backend/knowledge-cards/dead-mans-switch/)）與外部探測（blackbox / synthetic 從外部 vantage point 主動打 endpoint）。對外的一端會落到 [Status Page](/backend/knowledge-cards/status-page/)——狀態通道要跟主服務切開，否則使用者連查詢故障狀態的入口都拿不到。
+Out-of-band signal 處理的是觀測共命運失效——觀測系統跟被觀測系統共享[失效域](/backend/knowledge-cards/failure-domain/)、在事故壓力下一起退化。它有兩種互補形態：心跳消失（外部偵測器監看「本該持續觸發的告警」是否停止，停止即代表監控管線本身斷了，見 [Dead Man's Switch](/backend/knowledge-cards/dead-mans-switch/)）與外部探測（blackbox / synthetic 從外部 vantage point 主動打 endpoint）。對外的一端會落到 [Status Page](/backend/knowledge-cards/status-page/)——狀態通道要跟主服務切開，否則使用者連查詢故障狀態的入口都拿不到。
 
 ## 可觀察訊號與例子
 

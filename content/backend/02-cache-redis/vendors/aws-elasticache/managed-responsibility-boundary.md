@@ -14,7 +14,7 @@ tags: ["backend", "cache", "aws-elasticache", "managed", "failover", "deep-artic
 
 [Tinder 的配對引擎](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/)跑在 ElastiCache for Valkey 上、4700 萬月活、sub-millisecond 延遲——這證明 managed 撐得起極大規模，但 Tinder 仍要自己設計 key、處理 cache miss、控制 client 行為。ElastiCache for Redis 7.1 在 r7g.4xlarge 上單 node 可達約 100 萬 RPS、單 cluster 約 5 億 RPS（引自 [AWS Database Blog](https://aws.amazon.com/blogs/database/achieve-over-500-million-requests-per-second-per-cluster-with-amazon-elasticache-for-redis-7-1/)）——這個吞吐是 AWS 給的，但用不用得好取決於你的 key 分布與 client 設計。
 
-理解 ElastiCache 就是劃清這條責任邊界。本文按 shared responsibility 展開：AWS 管什麼、你管什麼、邊界上的踩坑在哪。
+理解 ElastiCache 就是劃清這條責任邊界。本文按 [shared responsibility](/backend/knowledge-cards/shared-responsibility-model/) 展開：AWS 管什麼、你管什麼、邊界上的踩坑在哪。
 
 ## 核心概念：shared responsibility 的兩側
 

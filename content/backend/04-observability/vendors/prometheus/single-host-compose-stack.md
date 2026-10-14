@@ -241,7 +241,7 @@ curl -X POST http://127.0.0.1:9093/-/reload
 
 ## Alertmanager：告警的分組與抑制
 
-Alertmanager 接收 Prometheus 算出的告警，決定怎麼分組、哪些被抑制、送到哪裡。這套設定還沒有通知管道，告警在它的網頁上看。監控與服務在同一台主機上，這台主機停掉或過載時，告警跟著停或延遲，所以接上通知管道之後，還需要一個不經過這台主機的訊號：外部探測，以及一條永遠成立、持續送到外部心跳監看服務的 Watchdog 告警（設定見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 的〈Watchdog：告警鏈本身的心跳〉；這個訊號為什麼要從主機外面發出，見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉一節）：
+Alertmanager 接收 Prometheus 算出的告警，決定怎麼分組、哪些被抑制、送到哪裡。這套設定還沒有通知管道，告警在它的網頁上看。監控與服務在同一台主機上，這台主機停掉或過載時，告警跟著停或延遲，所以接上通知管道之後，還需要一個不經過這台主機的訊號（兩種訊號各回答什麼、放在哪裡見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)）：外部探測，以及一條永遠成立、持續送到外部心跳監看服務的 Watchdog 告警（設定見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 的〈Watchdog：告警鏈本身的心跳〉；這個訊號為什麼要從主機外面發出，見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉一節）：
 
 ```yaml
 alertmanager:

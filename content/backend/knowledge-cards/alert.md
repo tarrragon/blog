@@ -10,7 +10,7 @@ Alert 的核心概念是「把需要人或自動流程處理的服務症狀轉�
 
 ## 概念位置
 
-Alert 是可觀測性進入操作流程的入口。[Symptom-based alert](/backend/knowledge-cards/symptom-based-alert/) 優先偵測使用者可感知結果（error rate、latency p99）；cause-based alert 偵測內部原因（CPU、[queue depth](/backend/knowledge-cards/queue-depth/)、[connection pool](/backend/knowledge-cards/connection-pool/)）。Symptom-based 用於 page on-call、cause-based 用於 warning 級通知。
+Alert 是可觀測性進入操作流程的入口；它要被監看的系統自己發出，系統整台停掉時發不出來，反過來在訊號消失時通知的形式見 [Dead Man's Switch](/backend/knowledge-cards/dead-mans-switch/)。[Symptom-based alert](/backend/knowledge-cards/symptom-based-alert/) 優先偵測使用者可感知結果（error rate、latency p99）；cause-based alert 偵測內部原因（CPU、[queue depth](/backend/knowledge-cards/queue-depth/)、[connection pool](/backend/knowledge-cards/connection-pool/)）。Symptom-based 用於 page on-call、cause-based 用於 warning 級通知。
 
 Alert 觸發後由 [on-call](/backend/knowledge-cards/on-call/) 工程師承接，按 [runbook](/backend/knowledge-cards/runbook/) 的步驟診斷跟處理。
 

@@ -41,4 +41,4 @@ OS/runtime/DB       platform 管佈署    平台管一切、可縮到零 供應�
 
 主機選好、code 有地方跑之後，接著要讓外面連得到——見 [域名與 HTTPS 怎麼接上](/going-live/domain-and-https/)。
 
-延伸：「app 跑在哪種形態的主機」跟「某個具體元件（DB）要自己顧還是託管」是同一個軸的兩種切法，後者見 [自架還是託管：以資料庫為例](/going-live/self-host-vs-managed-db/)；「值不值得自建」的商業選型角度見 [Backend 交付形態選型](/backend/00-service-selection/delivery-mode-selection/)；VPS 這一端往上長成「用 IaC 管整套雲端地基」，見 [Infra 指南](/infra/)。
+延伸：「app 跑在哪種形態的主機」跟「某個具體元件（DB）要自己顧還是託管」是同一個軸的兩種切法，後者見 [自架還是託管：以資料庫為例](/going-live/self-host-vs-managed-db/)；選定形態之後業者與自己各負責哪些故障與攻擊，見 [Shared Responsibility Model（責任分擔模型）](/backend/knowledge-cards/shared-responsibility-model/)；「值不值得自建」的商業選型角度見 [Backend 交付形態選型](/backend/00-service-selection/delivery-mode-selection/)；VPS 這一端往上長成「用 IaC 管整套雲端地基」，見 [Infra 指南](/infra/)。

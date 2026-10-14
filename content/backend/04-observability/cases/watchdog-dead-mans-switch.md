@@ -20,7 +20,7 @@ Prometheus 與 Alertmanager 上的實作（Watchdog 規則、心跳路由的時�
 
 ## 對應大綱
 
-觀測共命運章「out-of-band 訊號」段（heartbeat 消失 + 外部探測）。
+觀測共命運章「out-of-band 訊號」段（heartbeat 消失 + 外部探測）。判斷方式見 [Dead Man's Switch（心跳監看）](/backend/knowledge-cards/dead-mans-switch/)，「獨立失效域」的判讀見 [Failure Domain](/backend/knowledge-cards/failure-domain/)，只有一台主機時觀察者放在哪裡見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
 
 ## 引用源
 

@@ -11,7 +11,7 @@ Blast radius 的核心概念是「估算故障可擴散到哪些服務、資料�
 
 ## 概念位置
 
-Blast radius 與 [degradation](/backend/knowledge-cards/degradation/)、[failover](/backend/knowledge-cards/failover/) 與 [rollback-strategy](/backend/knowledge-cards/rollback-strategy/) 密切相關。影響面判斷會直接改變事故分級與處置策略。
+Blast radius 與 [degradation](/backend/knowledge-cards/degradation/)、[failover](/backend/knowledge-cards/failover/) 與 [rollback-strategy](/backend/knowledge-cards/rollback-strategy/) 密切相關。影響面判斷會直接改變事故分級與處置策略。哪些元件會因為同一個原因一起停掉，是另一端的問題，見 [Failure Domain](/backend/knowledge-cards/failure-domain/)。
 
 ## 可觀察訊號與例子
 
