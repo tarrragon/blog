@@ -1,10 +1,10 @@
 ---
 name: compositional-writing
-description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Use when cognitive load and token cost matter. **Also triggers during multi-round review / batch review / 寫作 audit** — provides the keyword bank (正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架 / 歸因語氣 / 宣導語氣 / 泛用詞 / 位置與集合指涉 / 序數與代號命名 / 計數式摘要 / 名詞缺所屬 / 脈絡懸置 / 敘事姿態 / 用詞搭配 / 物理化錯配 / 譯名誤讀 — 完整清單見本檔「字句層 keyword bank」節) and frame-specific check lists that multi-round-review reviewer agents need. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, 商業分析, 外部分析文章, 經驗談轉教學, 訪談整理, 機制重建, post-mortem, 架構決策, 除錯復盤, 檢討報告, 欄位設計, atomic, reusable, 多輪審查, multi-round review, batch review, 寫作 audit, 正向陳述, 口語修辭, 問句標題, 敘事視角, 字句層 grep, SOLID, 文章拆分, 結構決策, 擴充點, 依賴方向, 讀者分流, 示範指令, 程式碼區塊, code block, 指令註解, 參數表, 引數說明, 佔位符, 多種做法, 解法比較, 並排比較, 取捨, trade-off, 比較表."
+description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Use when cognitive load and token cost matter. **Also triggers during multi-round review / batch review / 寫作 audit** — provides the keyword bank (正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架 / 歸因語氣 / 宣導語氣 / 泛用詞 / 位置與集合指涉 / 序數與代號命名 / 計數式摘要 / 名詞缺所屬 / 命名的旁白 / 正反問句當名詞 / 問題與回答框架詞 / 排比的同義反覆 / 脈絡懸置 / 敘事姿態 / 用詞搭配 / 物理化錯配 / 譯名誤讀 — 完整清單見本檔「字句層 keyword bank」節) and frame-specific check lists that multi-round-review reviewer agents need. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, 商業分析, 外部分析文章, 經驗談轉教學, 訪談整理, 機制重建, post-mortem, 架構決策, 除錯復盤, 檢討報告, 欄位設計, atomic, reusable, 多輪審查, multi-round review, batch review, 寫作 audit, 正向陳述, 口語修辭, 問句標題, 敘事視角, 字句層 grep, SOLID, 文章拆分, 結構決策, 擴充點, 依賴方向, 讀者分流, 示範指令, 程式碼區塊, code block, 指令註解, 參數表, 引數說明, 佔位符, 多種做法, 解法比較, 並排比較, 取捨, trade-off, 比較表."
 license: MIT
 metadata:
   portable: true
-  version: 1.41.0
+  version: 1.42.0
   category: writing-methodology
 ---
 
@@ -63,6 +63,8 @@ SKILL.md 給的是原則、判別線與邊界；**可執行的操作在兩個地
 
 這一類集中在作者做抽象與收束的位置——段標、段落的第一句與最後一句、總結段、過渡句——寫到這些位置時逐句問一次。**只寫在目錄頁、讀者看不到的框架詞也是同一個成因**：「結果集由什麼決定，到這一篇有了完整的答案」的問題本身只存在於作者的編排底稿裡。審查端的偵測與它的量測在 [noun-without-its-owner-passes-the-slot-check](references/principles/noun-without-its-owner-passes-the-slot-check.md)。
 
+**組織全篇的框架詞也要過槽位。** 「X 回答的問題是：……」「這一層問的是……」把系統元件寫成應答的一方：健康檢查在領域裡做的是定期執行一條指令、依結果標記狀態，沒有回答任何提問，動詞與受詞兩格填的都是譬喻。寫的當下把「回答」換成元件實際做的動作（執行、量測、比對、送出、標記），把「問題」換成它實際指的那一種——問句、故障、要處理的事項、主題或需求，判斷問句是「這個『問題』翻成英文要從 question、problem、issue、topic、requirement 裡選哪一個」。框架詞還會往下游造句型：內容被當成問句引出來，就寫成正反問句；總覽句沿用「由 Z 接手」的骨架而手上還沒有具名的 Z，就寫成同義反覆的排比。三者各自的判讀在 [question-answer-frame-blurs-problem-issue-request](references/principles/question-answer-frame-blurs-problem-issue-request.md)、[a-not-a-question-as-noun-clause](references/principles/a-not-a-question-as-noun-clause.md) 與 [parallel-clause-filled-with-the-topics-definition](references/principles/parallel-clause-filled-with-the-topics-definition.md)。
+
 段落層的順序跟著槽位走：讀者會看到什麼 → 這個工具做什麼 → 為什麼需要它（機制，系統元件指名）→ 不做的具體後果 → 副作用。動作者槽位填對之後段落順序通常自動修正——操作者視角的順序就是讀者的問題序。詳見 [command-fragment-as-subject-hides-the-actor](references/principles/command-fragment-as-subject-hides-the-actor.md) 與 [spoken-emphasis-is-silent-in-text](references/principles/spoken-emphasis-is-silent-in-text.md)。
 
 ## 示範指令的引數另有一條檢查（程式碼區塊適用）
@@ -117,7 +119,7 @@ SKILL.md 給的是原則、判別線與邊界；**可執行的操作在兩個地
 
 **正文裡的對象用它是什麼來命名，不用序數、計數或字母代號**：名字的職責跟程式變數相同——讀者只看到名字就知道它指什麼。「三支」「七步」「第三步」「第一級」「前提一」「A1 與 C」是作者規劃結構時的索引，讀者要手上有那份清單才解得開，而作者與同源 reviewer 都持有清單，所以這一類在審查裡沒有成本、只在從中段落進來的讀者身上有。**生成端就用內容名**：分組用它回答的問題、步驟用動作、分級用它的判斷標準、並排的做法用描述；段標不帶序號，引用用節名或內容。判讀兩問：這個名字當變數名稱過不過得了程式碼審查；讀者從搜尋落在這一句，知不知道它指什麼。「這個集合不會再變」不構成保留序數的理由——上一條的損害要等成員增減，這一條在成員不變時就已經發生。序數名字密集的段落多半同時在寫作者的編排思路（各篇怎麼分組、兩篇怎麼分工），那些是維護資訊、不進正文。詳見 [ordinal-labels-are-the-authors-index](references/principles/ordinal-labels-are-the-authors-index.md)。
 
-**切開一個集合時先寫切分的依據、再替每一塊命名，之後只用名字**：「一部分交得出去」「交不出去的那一半」「那一側」只說了有一刀，沒說刀落在哪裡、每一塊是什麼，讀者要從例子歸納切法。修法跟抽變數是同一個動作：第一次切的位置寫出一個可以逐項判定的依據（「判斷時要讀什麼」，不是「有的做得到」），再依序用業界術語、文章裡的案例名、描述短語替每一塊命名，之後段落首句用名字開頭。取名常會逼出內容——要把一塊叫「靜態分析」，就得說出靜態分析在這個例子上判得出什麼；「那一側」「另一邊」不必決定指的是什麼，所以寫反的論斷能藏在它底下，命名時才對不上。整體也要具名，同一組對象只用一組名字。同一個概念每次換一個描述重講一次是同一類（重複的運算式沒有抽成變數），沒有字詞可掃，寫到第二次描述同一件事時就停下來命名。這一條影響的是讀者能不能理解，審查端列為必修。判讀問句：讀者只讀這一句，說不說得出這一塊是什麼、另一塊是什麼；所屬寫在同一句的（「子表這一側……父表那一側……」）合規。詳見 [unnamed-halves-are-unextracted-variables](references/principles/unnamed-halves-are-unextracted-variables.md)。
+**切開一個集合時先寫切分的依據、再替每一塊命名，之後只用名字**：「一部分交得出去」「交不出去的那一半」「那一側」只說了有一刀，沒說刀落在哪裡、每一塊是什麼，讀者要從例子歸納切法。修法跟抽變數是同一個動作：第一次切的位置寫出一個可以逐項判定的依據（「判斷時要讀什麼」，不是「有的做得到」），再依序用業界術語、文章裡的案例名、描述短語替每一塊命名，之後段落首句用名字開頭。取名常會逼出內容——要把一塊叫「靜態分析」，就得說出靜態分析在這個例子上判得出什麼；「那一側」「另一邊」不必決定指的是什麼，所以寫反的論斷能藏在它底下，命名時才對不上。整體也要具名，同一組對象只用一組名字。同一個概念每次換一個描述重講一次是同一類（重複的運算式沒有抽成變數），沒有字詞可掃，寫到第二次描述同一件事時就停下來命名。這一條影響的是讀者能不能理解，審查端列為必修。判讀問句：讀者只讀這一句，說不說得出這一塊是什麼、另一塊是什麼；所屬寫在同一句的（「子表這一側……父表那一側……」）合規。**命名由句子結構完成，取名的動作不寫進正文**：「盲區有兩種，各取一個名字，下文都用這兩個名字」的後半句刪掉之後讀者什麼都沒少——成員兩三個時寫成「分成 A 與 B」再逐一定義，成員更多時用清單列出名字、下一段起逐一解釋；判讀用刪除測試（刪掉這個子句，讀者少了什麼：少了名字或所指就留，什麼都沒少就刪）。詳見 [unnamed-halves-are-unextracted-variables](references/principles/unnamed-halves-are-unextracted-variables.md)。
 
 **摘要另一份內容時寫出成員，不寫計數**：在介紹另一份讀者還沒讀的內容的位置（文章結尾指向下一篇、`description`、目錄頁交付欄、閱讀路線說明），「四個追問、三種寫法、四類邊界」只交付清單的長度——寫的人手上有那份內容所以數字對他是完整索引，讀者手上沒有。寫的當下把成員寫出來，數字通常可以拿掉；成員太多時寫共同的性質。判讀問：沒讀過那一篇的人，讀完這個片語知不知道成員是什麼。詳見 [counted-summary-delivers-only-the-length](references/principles/counted-summary-delivers-only-the-length.md)。
 
@@ -323,6 +325,10 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
   - **縮寫術語 grep**：`rg "判準"` — 「判準」是「判斷標準」的縮寫，詞面只在科學哲學與教育評量有穩定所指，工程讀者讀不出來；一律寫「判斷標準」，狀態義寫「X 條件」（停止條件、完成條件）。全站替換過兩次仍回流，所以 `content/` 由 lint 規則 `TERM-abbreviation` 以 error 擋下；**skill 目錄不跑 lint，這一類要手動掃**。討論這個詞本身時加「」或行內程式碼。見 [term-probe-measures-register-not-invention](references/principles/term-probe-measures-register-not-invention.md)
   - **序數、計數與字母代號當名字 grep**：`rg "[一二三四五六七八九十兩]支|[一二三四五六七八九十]步|第[一二三四五六七八九十][步支節級層章階種類條項]|前提[一二三四五]|兩個軸|另一個軸|這個軸"` 與 `rg "\b[A-E][0-9]?\b 那|\b[A-E][0-9]? 與 [A-E][0-9]?\b"` — 正文裡的實體用作者的索引當名字（「第一支的篇落在七步的第三步」「D 與 E 在這裡」），讀者要回頭翻才知道指什麼；判讀用變數名稱測試（當成程式變數名稱過不過得了審查）與落點測試（從中段落進來知不知道它指什麼），修法是用問題／動作／判斷標準／描述命名、段標拿掉序號。**詞綴隨內容變、這條 pattern 非窮舉**：換一個分類先盤點那裡用的是支、步、級、節、層、階段還是別的。命中是候選——緊鄰清單且隨即逐一具名展開的計數、量測事實的數字、外部凍結編號、確實在描述位置而前一句剛列完成員的序數都合規；**「集合不會再變」不構成放行理由**。命中密集的段落順手問它是不是在寫作者的編排思路（各篇怎麼分組、兩篇怎麼分工、改哪一篇），那一類整段移出正文。見 [ordinal-labels-are-the-authors-index](references/principles/ordinal-labels-are-the-authors-index.md)
   - **部分與一側當名字 grep**：`rg "一部分|另一半|這一半|那一半|這部分|那部分|另一部分|那一側|這一側|另一側|另一邊"` — 被切開的集合沒有名字、切分依據沒寫出來（「有一部分判斷標準交得出去」「交不出去的那一半」），或「一側」當成「就……而言」的譬喻（「在條件這一側還有路」）；命中後問讀者只讀這一句說不說得出每一塊是什麼、以及被切開的整體是什麼（「同一條線的另一半」每一塊有名字而整體沒有，違規）；裸「這部分」回指而前面沒有切分的，按指涉問題改成那一塊的名字。**豁免**：組成句「X 是 Y 的一部分」（部分與整體都在句內）、所屬寫在同一句的「子表這一側……父表那一側」、字面比例。全站實跑 618 處候選、116 處要改，其中兩處的模糊切分底下是寫反的論斷——命名時才發現對不上；替換文字裡新出現的關係（並列、包含、因果）要回原文核對。修法是先寫依據、再用業界術語／案例名／描述短語命名，見 [unnamed-halves-are-unextracted-variables](references/principles/unnamed-halves-are-unextracted-variables.md)
+  - **命名的旁白 grep**：`rg "取一個名字|各取|下文都用|以下逐一說明|以下分別說明"` — 命名的句子另外宣告取名或約定下文用法（「盲區有兩種，各取一個名字，下文都用這兩個名字」）。判讀用刪除測試：刪掉這個子句，讀者少了什麼；什麼都沒少就刪，改成「分成 A 與 B」再逐一定義，成員多時用清單列名字、下一段起逐一解釋。**合規邊界**：「下文把 X 稱為 **Y**」這類子句本身帶著所指與名字，刪掉會失去名字，保留。見 [unnamed-halves-are-unextracted-variables](references/principles/unnamed-halves-are-unextracted-variables.md)
+  - **正反問句當名詞 grep**：`rg --pcre2 "(\p{Han})不\1|有沒有"`（需要 PCRE2） — 「連不連得到」「對不對」「讀不讀得到」這類 A 不 A 問句被當成主語、受詞或介系詞的受詞用，承擔英文 whether 子句的角色而沒有開頭標記，讀者讀到動詞才知道前面那段是問句。命中後問兩件獨立的事：**位置**——讀者讀到它之前，有沒有一個詞（「問」「檢查」「確認」、引號、問號、「是否」）告訴他接下來是問句；沒有就改成直述或「是否」「能否」；主語位置、介系詞「對」後面與多段並列加「都」最重（撞上「連……都」與附加問句「對不對」兩個高頻句型）。**判斷標準**——把謂語（對、通、到、行）單獨拿出來，讀者說不說得出照什麼標準判斷；說不出就寫進去（「是否把請求轉到正確的服務」），這一條在「檢查」後面的受詞位置同樣適用。**合規邊界**：接在「問」「檢查」後面且謂語有標準的、「」內的引語、程式碼。pattern 抓不到夾在句中的「X 嗎」。寫的人知道「對」照什麼標準，所以分析這個形態的段落本身也會寫出它（一次實測七處），要靠掃描。見 [a-not-a-question-as-noun-clause](references/principles/a-not-a-question-as-noun-clause.md)
+  - **「問題」與「回答」當框架詞 grep**：`rg "回答的問題|回答的是|問的是|問題是："` — 系統元件被寫成回答問題的一方，「問題」一個詞同時指檢查的內容、故障、歸屬的範圍與需求。命中後逐處問：這個「問題」翻成英文要從 question、problem、issue、topic、requirement 裡選哪一個；選得出就用那個意思的中文詞重寫並寫出內容（哪裡壞了、處理什麼、屬於哪個範圍、誰需要什麼），同一篇每處選的不同代表一個詞承擔了多個所指；「回答」換成元件實際做的動作（執行、量測、比對、送出、標記）。單獨的「問題」詞頻太高不直接掃，從框架詞找到集中的文章再逐處翻譯；建在這個框架上的自創術語（「問題盲區」）會同時帶著問句與故障兩種讀法。**合規邊界**：場景裡有人實際提問、業界固定術語（「N+1 問題」）、動詞片語「出問題」（密集重複時才換）。見 [question-answer-frame-blurs-problem-issue-request](references/principles/question-answer-frame-blurs-problem-issue-request.md)
+  - **排比的同義反覆（無穩定 pattern，按位置逐句讀）**：讀總覽句、段落首句，以及三個子句以上的排比（「X 的 Y，由 Z 接手；X 的 Y′，由 Z′ 接手……」），逐個子句做**定義代換**——變動格（Z）是否只從話題（Y）的定義就推得出來、不需要本篇的任何其他資訊（「問題盲區由問另一個問題的層接手」）；是的話資訊量是零。輔助檢查是**語序翻轉**：改成動作者在前（「問另一個問題的層接手問題盲區」），變得明顯空洞的子句就是被話題在前的語序遮住的那一個。排比裡有子句打破骨架、或總覽句寫在它所總覽的對象被介紹之前，都是候選訊號。修法：填實際的配對（具名的元件、人或步驟），或寫出這組分類帶來、讀者從定義推不出的判斷；填不出名字的子句不進排比。「每個半句能獨立判真」對它放行（同義反覆必然為真），四槽位也常放行（角色描述有名詞頭，看起來像已填的槽位）。見 [parallel-clause-filled-with-the-topics-definition](references/principles/parallel-clause-filled-with-the-topics-definition.md)
   - **脈絡懸置 grep**：`rg "等下再|稍後再|之後會(講|談|提到)|後面會(提到|講|說明)|下面會(提到|講)|如前所述|前面(提過|說過|講過|幾個小節|兩個小節)|上[一面](提到|說過)|用一句話(總結|概括)|一言以蔽之"` — 把脈絡寄存在讀者工作記憶裡的三種句式：前向懸置（「等下再討論」是沒有內容的欠條、到期時讀者已不記得）、位置回指（「前面兩個小節」要讀者持有位置地圖、中斷後的讀者不持有）、壓縮總結（「用一句話總結」把形狀推遲到文末補交）。判定看指涉攜帶什麼——只有位置或時間違規、攜帶內容名（最好再帶連結）是合法路由（「那正是 C 那本要處理的問題」）；緊鄰的近距指涉（「見下表」而表在下一行）、「」內引用、已具名對象的向後回指合規。同類的結構層形態**列舉鳥瞰**（「分成兩組、第一組四本講……」）grep 候選 `rg "分成[兩三四五]組|第[一二三四]組"`、要讀者 hold 整張清單才能繼續讀，修法是關係鏈——成員逐個以它與前一個成員的內容關係進場；緊鄰表格或清單且各成員隨即具名展開的合規。見 [coherence-by-shape-not-reader-memory](references/principles/coherence-by-shape-not-reader-memory.md)
   - **教室形式三形態**（教學定位被讀成教室講課時的殘留，三個形態各有檢查方式）：
     - **形態一：情境故事開場**——判別是刪掉開場第一段之後讀者還知不知道這篇在講什麼。標題與 description 已經告訴他了，開場的職責是一句話交代適用範圍。改前：「本篇的情境來自一次實際排查⋯⋯」；改後：「這篇整理透過 Wi-Fi 連上 adb 之後，用來做遠端排查的指令與注意事項。」
@@ -394,6 +400,6 @@ compositional-writing/
 
 ---
 
-**Last Updated**: 2026-08-18
+**Last Updated**: 2026-10-14
 
 版本紀錄在同目錄的 `CHANGELOG.md`。
