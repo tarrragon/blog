@@ -32,13 +32,16 @@ tags: ["backend", "observability"]
 
 偵測缺口的分類：
 
-| 缺口類型               | 典型表現                                  | 回寫方向             |
-| ---------------------- | ----------------------------------------- | -------------------- |
-| 訊號缺失               | 問題存在但沒有對應的 metric 或 trace      | 新增 metric / span   |
-| Alert 太晚             | Alert 在使用者投訴後才觸發                | 調整閾值或加短窗     |
-| Alert 指向錯誤         | Alert 觸發了但指向不相關的服務            | 修正 alert rule      |
-| Dashboard 沒有對應視圖 | 事故中需要看某個維度但現有 dashboard 沒有 | 新增 panel           |
-| 關聯性斷裂             | Log / trace / metric 無法用同一個 ID 串連 | 補 correlation field |
+| 缺口類型               | 典型表現                                  | 回寫方向               |
+| ---------------------- | ----------------------------------------- | ---------------------- |
+| 訊號缺失               | 問題存在但沒有對應的 metric 或 trace      | 新增 metric / span     |
+| Alert 太晚             | Alert 在使用者投訴後才觸發                | 調整閾值或加短窗       |
+| 客訴先於告警           | 客服先收到回報、監控沒有任何告警          | 新增規則或合成監控探測 |
+| Alert 指向錯誤         | Alert 觸發了但指向不相關的服務            | 修正 alert rule        |
+| Dashboard 沒有對應視圖 | 事故中需要看某個維度但現有 dashboard 沒有 | 新增 panel             |
+
+客訴先於告警的那一類，客服與工程怎麼把查證結果寫回告警規則，見 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#重複出現的回報查證結果寫回知識文章告警規則與查詢工具)。
+| 關聯性斷裂 | Log / trace / metric 無法用同一個 ID 串連 | 補 correlation field |
 
 Post-incident review 的 [action items](/backend/knowledge-cards/action-item-closure/) 中標記為「detection gap」的項目，應該指派給觀測系統的 owner，帶明確的 metric / alert / dashboard 變更規格。
 
@@ -99,6 +102,8 @@ Dashboard 的健康度用三個指標追蹤：
 訊號治理需要固定節奏，避免「只在事故後才補訊號、平時不管」的反應式治理。
 
 **事故驅動（每次事故後）**：Post-incident review 的 detection gap action items 在兩週內 close — 新增 / 調整的 metric、alert、dashboard 已部署並驗證。
+
+**每週**：值班的每週營運檢討讀這一週沒有引發動作的個別告警與重複出現的客服回報，見 [4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/#每週營運檢討讀的訊號)；本節的每季整理處理的是整體的雜訊比例與擁有者。
 
 **定期審視（每季）**：
 

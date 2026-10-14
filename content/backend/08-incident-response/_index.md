@@ -160,7 +160,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [8.21 Incident Workflow Automation Boundary](/backend/08-incident-response/incident-workflow-automation-boundary/)              | Incident Workflow Automation Boundary              | 定義哪些事故流程適合自動化，哪些決策需要保留人工確認                                                                                         |
 | [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)                                | Incident Evidence Write-back                       | 把事故證據、決策與復盤結論回寫到 observability、reliability 與 runbook                                                                       |
 | [8.23 Control Plane Decision Log and Write-back 實作示範](/backend/08-incident-response/control-plane-decision-log-write-back/) | Control Plane Decision Log and Write-back 實作示範 | 以 rule/config rollout 事故示範 decision log 與 write-back 的完整閉環                                                                        |
-| [8.24 客服回報的分級與工程回覆](/backend/08-incident-response/support-escalation-and-engineering-reply/)                        | 客服回報的分級與工程回覆                           | 客服當場答覆時用的資訊（內部狀態頁、已知錯誤清單、錯誤碼對照表、查詢工具）、立即通知值班與開單的條件、工程查證後的回覆內容、同一類回報的回寫 |
+| [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/)                                  | 客服回報的處理                                     | 客服當場答覆時用的資訊（內部狀態頁、已知錯誤清單、錯誤碼對照表、查詢工具）、立即通知值班與開單的條件、工程查證後的回覆內容、同一類回報的回寫 |
 
 > 註：8.1-8.23 已完成概念層與第一篇實作示範正文；8.24 補事故候選之前的那一段（一則客服回報還不確定是不是事故時由誰處理），位置在 8.18 的上游，案例庫可支援 intake、decision、impact、write-back 的完整路由。後續重點為多事件對照與跨模組回寫精度提升。
 
@@ -236,6 +236,9 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 - [alert runbook](/backend/knowledge-cards/alert-runbook/)
 - [runbook link](/backend/knowledge-cards/runbook-link/)
 - [on-call](/backend/knowledge-cards/on-call/)
+- [tiered support](/backend/knowledge-cards/tiered-support/)
+- [known error](/backend/knowledge-cards/known-error/)
+- [knowledge-centered service](/backend/knowledge-cards/knowledge-centered-service/)
 - [playbook](/backend/knowledge-cards/playbook/)
 - [game day](/backend/knowledge-cards/game-day/)
 - [symptom-based alert](/backend/knowledge-cards/symptom-based-alert/)
@@ -264,7 +267,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 ## 模組完成狀態
 
-主章 8.1-8.23 已完成首輪正文，服務案例庫第一批正文已補齊（Cloudflare / AWS S3 / GitHub / GCP / Atlassian / Roblox / Fastly，以及 Slack / Datadog / Discord / Azure AD / Heroku / Reddit / Microsoft 365）。目前重點從「補案例檔案」轉為「補多事件對照與決策路徑精度」。
+主章 8.1-8.24 已完成首輪正文，服務案例庫第一批正文已補齊（Cloudflare / AWS S3 / GitHub / GCP / Atlassian / Roblox / Fastly，以及 Slack / Datadog / Discord / Azure AD / Heroku / Reddit / Microsoft 365）。目前重點從「補案例檔案」轉為「補多事件對照與決策路徑精度」。
 
 案例正文入口見 [事故案例庫](/backend/08-incident-response/cases/)。每篇案例至少要能回寫一個事故控制面章節（例如 8.18、8.19、8.20、8.21、8.22），避免只停在事故時間線描述。
 
@@ -278,12 +281,13 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                    | 類型   | 前置條件               | 規模       |
-| ------------------------------------------------------------------------------------------------------- | ------ | ---------------------- | ---------- |
-| 六個 T1 vendor 的 deep article（Grafana OnCall / incident.io / FireHydrant / Rootly / Instatus / Jeli） | vendor | 無                     | 6 篇（大） |
-| 案例深挖批次 A / B（T1 補第二事件、T2/T3 補不同事故型態）                                               | 案例   | 無                     | 大         |
-| 案例的 intake、decision、impact、automation 教訓回寫主章（8.18-8.22）                                   | 主章   | 依賴案例深挖批次的產出 | 中         |
-| 補齊 04 / 05 / 06 / 07 的交接連結                                                                       | 跨模組 | 無                     | 中         |
+| 項目                                                                                                                                                              | 類型   | 前置條件               | 規模       |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------------------- | ---------- |
+| 六個 T1 vendor 的 deep article（Grafana OnCall / incident.io / FireHydrant / Rootly / Instatus / Jeli）                                                           | vendor | 無                     | 6 篇（大） |
+| 案例深挖批次 A / B（T1 補第二事件、T2/T3 補不同事故型態）                                                                                                         | 案例   | 無                     | 大         |
+| 案例的 intake、decision、impact、automation 教訓回寫主章（8.18-8.22）                                                                                             | 主章   | 依賴案例深挖批次的產出 | 中         |
+| 補齊 04 / 05 / 06 / 07 的交接連結                                                                                                                                 | 跨模組 | 無                     | 中         |
+| 8.24 的低優先回指：8.4〈通訊拓樸〉補客服這一層、8.20 的「狀態頁與客服話術」、8.13 的 toil 來源補「重複的手動查證」、4.25 的「低摩擦 support-to-engineering 升級」 | 跨模組 | 無                     | 小         |
 
 ### 後續推演大綱
 

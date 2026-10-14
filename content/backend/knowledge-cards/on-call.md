@@ -20,4 +20,4 @@ On-call 跟 [runbook](/backend/knowledge-cards/runbook/) 搭配運作 — runboo
 
 ## 設計責任
 
-On-call 設計要定義排班週期、回應時限（critical alert 需要 N 分鐘內 ack）、交接格式（交班時把當前狀態跟未關閉事項傳給下一位）、升級路徑（on-call 解不了時升級到 tech lead / manager）與支援角色（secondary on-call 或 subject matter expert）。Alert noise 治理跟 on-call 品質直接相關 — [alert fatigue](/backend/knowledge-cards/alert-fatigue/) 會讓值班品質退化。
+On-call 設計要定義排班週期、回應時限（critical alert 需要 N 分鐘內 ack）、交接格式（交班時把當前狀態跟未關閉事項傳給下一位；接班檢查與交班紀錄的內容見 [4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/)）、升級路徑（on-call 解不了時升級到 tech lead / manager）與支援角色（secondary on-call 或 subject matter expert）。Alert noise 治理跟 on-call 品質直接相關 — [alert fatigue](/backend/knowledge-cards/alert-fatigue/) 會讓值班品質退化。

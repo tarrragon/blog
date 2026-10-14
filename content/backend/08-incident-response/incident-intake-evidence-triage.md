@@ -62,7 +62,7 @@ Incident intake 的入口來源天然分散。共用 intake 模型的責任是�
 
 Alert 適合作為高可信自動入口。它應該帶著 service、severity suggestion、dashboard、runbook 與 owner，讓 on-call 能直接判斷是否啟動 incident。
 
-Customer ticket 適合補足平台盲區。客戶常先看到單一流程失敗、特定 tenant 受影響或前端體驗退化；這類 evidence 需要被轉成 impact scope，並送入事故候選流程。
+Customer ticket 適合補足平台盲區。客戶常先看到單一流程失敗、特定 tenant 受影響或前端體驗退化；這類 evidence 需要被轉成 impact scope，並送入事故候選流程。 客服回報在成為事故候選之前由客服分成立即呼叫值班、開單與客服答覆三種去處，條件見 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#轉給值班的條件與轉交方式)。
 
 Vendor notice 適合啟動依賴事故候選。當外部供應商狀態頁更新時，內部仍要判斷自己有哪些功能、客戶與 SLA 被影響，並指定 owner 追蹤替代路徑。
 

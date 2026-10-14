@@ -13,7 +13,7 @@ Handover protocol 位在 [on-call](/backend/knowledge-cards/on-call/)、[inciden
 
 ## 可觀察訊號與例子
 
-系統需要 handover protocol 的訊號是：事故已經持續一段時間、原本負責的人要下班、或指揮權需要轉給下一位。若沒有明確交接，常見問題是重複排查、遺漏已嘗試過的措施，或對下一步有不同理解。
+系統需要 handover protocol 的訊號是：事故已經持續一段時間、原本負責的人要下班、或指揮權需要轉給下一位。若沒有明確交接，常見問題是重複排查、遺漏已嘗試過的措施，或對下一步有不同理解。 事故以外的例行換班要交接哪些內容，見 [4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/#交班紀錄的內容) 的〈交班紀錄的內容〉。
 
 ## 設計責任
 

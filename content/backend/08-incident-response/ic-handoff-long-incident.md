@@ -21,7 +21,7 @@ tags: ["backend", "incident-response"]
 ## 概念定位
 
 [handover protocol](/backend/knowledge-cards/handover-protocol/) 是把長事故的 context、未決策事項與外部承諾安全交接給下一班的流程，責任是讓事故在跨班次後仍維持同一條推進線。
-在本章語境中，`IC handoff` 指的是 `[incident command system](/backend/knowledge-cards/incident-command-system/)` 的交接流程，不是一般輪班交接。
+在本章語境中，`IC handoff` 指的是 `[incident command system](/backend/knowledge-cards/incident-command-system/)` 的交接流程，不是一般輪班交接；一般輪班的接班檢查與交班紀錄見 [4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/)。
 
 這一頁處理的是時序延續。沒有 handoff，長事故最容易在交班時失去 momentum，甚至回到已排除的假設。
 

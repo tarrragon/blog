@@ -14,7 +14,7 @@ Request ID 是同步 request 診斷的基本欄位。它通常比 trace 簡單�
 
 ## 可觀察訊號與例子
 
-系統需要 request ID 的訊號是使用者回報錯誤時，工程師需要快速找到對應 log。錯誤頁顯示 request ID，客服可以把 ID 交給工程師查完整處理路徑。
+系統需要 request ID 的訊號是使用者回報錯誤時，工程師需要快速找到對應 log。錯誤頁顯示 request ID，客服可以把 ID 交給工程師查完整處理路徑。 錯誤畫面上怎麼顯示、入口怎麼產生並傳給後端與 log，見 [11.16 面向終端使用者的錯誤碼與參考編號](/backend/11-api-design/end-user-error-code-and-reference-id/)。
 
 ## 設計責任
 

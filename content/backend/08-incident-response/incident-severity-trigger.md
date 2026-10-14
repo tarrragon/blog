@@ -44,3 +44,4 @@ Atlassian 的長尾復原、GCP 的全球控制面失效、Azure AD 的 identity
 - 04.6 SLI/SLO：[burn rate](/backend/knowledge-cards/burn-rate/) 對應 severity 門檻
 - 08.14 multi-incident：跨事故優先序判斷標準
 - 08.17 security vs operational：分流影響 severity 計算
+- 客服回報什麼條件下立即呼叫值班、什麼條件開單：[8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#轉給值班的條件與轉交方式)

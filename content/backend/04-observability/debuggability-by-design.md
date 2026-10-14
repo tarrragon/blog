@@ -78,7 +78,7 @@ API 可診斷性的責任是讓每一次 request 都能被支援、工程與事�
 | Semantic status | 表達可重試、已接受、部分完成      | 支援客戶端與後端一致處置     |
 | Impact hint     | 標示 user-facing 或 internal-only | 支援 severity 初判           |
 
-Request ID 是支援與工程之間的共同鑰匙。客戶只知道某次操作失敗，支援需要 request id 或可查詢等價欄位，才能把客訴轉成 incident intake evidence。
+Request ID 是支援與工程之間的共同鑰匙。客戶只知道某次操作失敗，支援需要 request id 或可查詢等價欄位，才能把客訴轉成 incident intake evidence。 畫面上怎麼顯示、客服收件要收哪些欄位，見 [11.16 面向終端使用者的錯誤碼與參考編號](/backend/11-api-design/end-user-error-code-and-reference-id/)。
 
 Error code 應該表達穩定語意，並保持內部實作封裝。`PAYMENT_PROVIDER_TIMEOUT`、`QUOTA_EXCEEDED`、`TOKEN_EXPIRED` 這類分類能支援路由；隨程式碼結構變動的錯誤字串則會讓查詢與客戶端處置不穩定。
 
