@@ -88,7 +88,9 @@ endpoints:
 外部探測工具也是一個容器。它掛掉時檢查就停了，告警也不會送出，而沒有任何機制會發出「監看停了」的通知。常見的補法有兩種：
 
 - **讓另一套機制監看它**：探測工具多半有自己的健康端點（Gatus 的 `/health` 回 `{"status":"UP"}`），可以交給主機上的另一套機制（例如 systemd 的計時器、或另一台機器上的探測）去戳。
-- **反過來監看訊號是否消失**：讓探測工具定期送出一個「我還在」的訊號給外部服務，外部服務在訊號停止時告警，這就是 dead man's switch。它的好處是外部服務不需要連進服務所在的網路，設計見 [Watchdog / dead man's switch](/backend/04-observability/cases/watchdog-dead-mans-switch/)。
+- **反過來監看訊號是否消失**：讓探測工具定期送出一個「我還在」的訊號給外部服務，外部服務在訊號停止時告警，這就是 [dead man's switch](/backend/knowledge-cards/dead-mans-switch/)。它的好處是外部服務不需要連進服務所在的網路，設計見 [Watchdog / dead man's switch](/backend/04-observability/cases/watchdog-dead-mans-switch/)。
+
+本篇的外部探測是從同一台主機上另一個容器發出的，主機整台停掉、使用者到主機的路徑中斷時它跟著停或照樣成功；探測端放在主機的失效域以外的做法見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
 
 練習或開發用的環境可以不補，但要知道這是一個沒被涵蓋的位置；儀表板全綠的意思是「最後一次檢查時全部正常」，前提是探測工具本身還在跑。
 

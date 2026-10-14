@@ -21,4 +21,4 @@ Correlated failure（相關失效 / 共命運失效）指多個以為彼此獨�
 
 ## 概念位置
 
-Correlated failure 是冗餘設計的邊界條款：畫 [blast radius](/backend/knowledge-cards/blast-radius/) 與失效域時，要問的不是「有幾份副本」而是「這幾份會不會一起死」。防禦方向是拆開共享觸發器 —— 分批 rollout（不是所有副本同時套變更）、跨獨立失效域部署（不同區 / 不同供應商 / 不同 DNS）、關鍵訊號留 out-of-band 的第二條路。
+Correlated failure 是冗餘設計的邊界條款：畫 [blast radius](/backend/knowledge-cards/blast-radius/) 與[失效域](/backend/knowledge-cards/failure-domain/)時，要問的不是「有幾份副本」而是「這幾份會不會一起死」。防禦方向是拆開共享觸發器 —— 分批 rollout（不是所有副本同時套變更）、跨獨立失效域部署（不同區 / 不同供應商 / 不同 DNS）、關鍵訊號留 out-of-band 的第二條路。

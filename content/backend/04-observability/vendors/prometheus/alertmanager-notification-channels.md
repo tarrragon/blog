@@ -94,7 +94,7 @@ route:
 
 Alertmanager 0.34 原生支援的通知服務有 email、Slack、Microsoft Teams、Discord、Telegram、PagerDuty、Opsgenie、Pushover、Amazon SNS、Webex、Mattermost、Rocket.Chat、Jira、incident.io、VictorOps 與企業微信，各自是一種 `*_configs`。清單以外的服務走 `webhook_configs`（[webhook](/backend/knowledge-cards/webhook/)）：Alertmanager 預設對一個網址 POST 一份固定格式的 JSON，由對方決定怎麼呈現（0.34 另有自訂內容的 `payload` 欄位，官方標註自行承擔風險，這裡不用）。所以對方要讀得懂這份 JSON：ntfy 以訊息範本讀它（見下一節），自己寫的轉接程式也可以。只接受自己格式的 API（例如 LINE 的 Messaging API）不能直接填成 webhook 的網址，中間要放一個轉接服務，把這份 JSON 轉成對方的格式。
 
-這份 JSON 以組為單位，一次通知一份。頂層的 `status` 是整組的狀態，組裡還有任何一則在成立就是 `firing`，全部解除才是 `resolved`；`groupLabels` 是分組用的標籤，`commonLabels` 與 `commonAnnotations` 是組裡每一則都相同的標籤與註解；`alerts` 是組裡每一則告警，各自帶 `status`、`labels`、`annotations` 與開始、結束的時間。組裡有的告警已經解除、有的還在成立時，整組的 `status` 仍是 `firing`，而 `alerts` 裡混著兩種，要只列出還在成立的就得逐則檢查各自的 `status`。
+這份 JSON 以組為單位，一次通知一份。頂層的 `status` 是整組的狀態，組裡還有任何一則在成立就是 `firing`，全部解除才是 `resolved`；`groupLabels` 是分組用的標籤，`commonLabels` 與 `commonAnnotations` 是組裡每一則都相同的標籤與註解（annotations）；`alerts` 是組裡每一則告警，各自帶 `status`、`labels`、`annotations` 與開始、結束的時間。組裡有的告警已經解除、有的還在成立時，整組的 `status` 仍是 `firing`，而 `alerts` 裡混著兩種，要只列出還在成立的就得逐則檢查各自的 `status`。
 
 ## 以 ntfy 推播到手機
 
@@ -220,7 +220,7 @@ curl -XPOST -H 'content-type: application/json' http://127.0.0.1:9093/api/v2/ale
 
 ## Watchdog：告警鏈本身的心跳
 
-ntfy、email 與 Slack 的通知全部要 Prometheus 在評估規則、Alertmanager 在送通知才發得出來。Prometheus 停掉、Alertmanager 停掉、整台監控主機停電時，沒有任何告警成立，手機上什麼都沒有，和一切正常時看起來一樣。這種故障要由監控主機以外的地方發現：讓告警鏈持續送出一個「我還活著」的訊號，由外部的服務在訊號停止時通知（這類從監控主機以外發出的訊號叫 [頻外訊號](/backend/knowledge-cards/out-of-band-signal/)）。這個做法叫 dead man's switch，背後的推導見 [Watchdog / dead man's switch](/backend/04-observability/cases/watchdog-dead-mans-switch/)。
+ntfy、email 與 Slack 的通知全部要 Prometheus 在評估規則、Alertmanager 在送通知才發得出來。Prometheus 停掉、Alertmanager 停掉、整台監控主機停電時，沒有任何告警成立，手機上什麼都沒有，和一切正常時看起來一樣。這種故障要由監控主機以外的地方發現：讓告警鏈持續送出一個「我還活著」的訊號，由外部的服務在訊號停止時通知（這類從監控主機以外發出的訊號叫 [頻外訊號](/backend/knowledge-cards/out-of-band-signal/)，判斷方式見 [Dead Man's Switch（心跳監看）](/backend/knowledge-cards/dead-mans-switch/)）。這個做法叫 dead man's switch，背後的推導見 [Watchdog / dead man's switch](/backend/04-observability/cases/watchdog-dead-mans-switch/)。
 
 訊號是一條永遠成立的規則：
 
@@ -232,7 +232,7 @@ ntfy、email 與 Slack 的通知全部要 Prometheus 在評估規則、Alertmana
     summary: "告警鏈的心跳：Prometheus 在評估規則、Alertmanager 在送通知"
 ```
 
-心跳監看服務（例如 healthchecks.io）替每一個檢查發一個 ping 網址，收到一個請求就算一次心跳。這個網址寫進 `heartbeat.url`，Alertmanager 以 webhook 對它 POST，就是一次心跳。心跳那條子路由把 `group_wait` 設成 `0s`，Alertmanager 在 Watchdog 一成立就送出；`repeat_interval: 5m` 讓 Alertmanager 每 5 分鐘重送一次；它永遠不會解除，所以 `send_resolved: false`。實測兩次心跳相隔 5 分 01 秒。在心跳監看服務上把這個檢查的預期週期設 5 分鐘、寬限 5 分鐘，超過 10 分鐘沒收到，心跳監看服務就經由它自己的通知管道（例如 email）通知。這條路徑上的判斷全部發生在監控主機以外，監控主機整台停掉時它照樣運作。以自架的 healthchecks 演練停掉 Alertmanager，通知在最後一次心跳之後經過期限加寬限寄出，時間線與服務的挑選條件見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)；託管版 healthchecks.io 沒有實際接過。
+心跳監看服務（例如 healthchecks.io）替每一個檢查發一個 ping 網址，收到一個請求就算一次心跳。這個網址寫進 `heartbeat.url`，Alertmanager 以 webhook 對它 POST，就是一次心跳。心跳那條子路由把 `group_wait` 設成 `0s`，Alertmanager 在 Watchdog 一成立就送出；`repeat_interval: 5m` 讓 Alertmanager 每 5 分鐘重送一次；它永遠不會解除，所以 `send_resolved: false`。實測兩次心跳相隔 5 分 01 秒。在心跳監看服務上把這個檢查的預期週期設 5 分鐘、寬限 5 分鐘，超過 10 分鐘沒收到，心跳監看服務就經由它自己的通知管道（例如 email）通知。這條路徑上的判斷全部發生在監控主機以外，監控主機整台停掉時它照樣運作。以自架的 healthchecks 演練停掉 Alertmanager，通知在最後一次心跳之後經過週期加寬限寄出，時間線與服務的挑選條件見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)；託管版 healthchecks.io 沒有實際接過。
 
 時間參數的條件是：兩次心跳之間最長的間隔，要小於心跳監看服務的週期加寬限。Alertmanager 只在每個 `group_interval` 的時間點檢查要不要重送，所以最長的間隔約是 `repeat_interval` 加一個 `group_interval`。這份設定是 5 分加 1 分，小於 10 分鐘；`group_interval` 沿用上層的 5 分鐘時，重送落在 5 分鐘的倍數上，任何一次稍晚錯過檢查點就變成 10 分鐘，正好碰到心跳監看服務的上限，所以心跳的 `group_interval` 要比 `repeat_interval` 短。
 
@@ -267,7 +267,7 @@ Prometheus 讀得到 Alertmanager 自己的指標，所以這件事可以寫成�
 
 email 本身送不出去時，送 email 的那一份照樣失敗，這一類由 ntfy 那一份送到手機；ntfy 與 email 同時壞掉時兩份都送不出去，要涵蓋這種情形，改用下面送到心跳監看服務的做法。
 
-另一種是送到心跳監看服務：在 healthchecks.io 上另開一個檢查，它的 ping 網址加上 `/fail` 就是回報失敗的網址，以一個 `send_resolved: false` 的 webhook receiver 送到那裡，由心跳監看服務自己的管道通知。不另開檢查、用心跳的那一個時，下一次 Watchdog 心跳會在 5 分鐘內把它翻回正常。以自架的 healthchecks 實測，`/fail` 送出之後約 2 秒寄出通知，同一個檢查在下一次一般的 ping 之後翻回正常；receiver 的設定見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/) 的〈Alertmanager 的兩個 receiver：心跳與送失敗的通知〉。
+另一種是送到心跳監看服務：在 healthchecks.io 上另開一個檢查，它的 ping 網址加上 `/fail` 就是回報失敗的網址，以一個 `send_resolved: false` 的 webhook receiver 送到那裡，由心跳監看服務自己的管道通知。不另開檢查、用心跳的那一個時，下一次 Watchdog 心跳最晚約 6 分鐘後（`repeat_interval` 加一個 `group_interval`）就把它翻回正常。以自架的 healthchecks 實測，`/fail` 送出之後約 2 秒寄出通知，同一個檢查在下一次一般的 ping 之後翻回正常；receiver 的設定見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/) 的〈Alertmanager 的兩個 receiver：心跳與送失敗的通知〉。
 
 ## 延伸閱讀：告警規則、抑制與觀測的共命運
 

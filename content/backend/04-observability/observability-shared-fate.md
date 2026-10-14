@@ -98,7 +98,7 @@ tail sampling 是這個原則的具體做法：head [sampling](/backend/knowledg
 - [4.7 cardinality 治理](/backend/04-observability/cardinality-cost-governance/)：cardinality 預算與 sampling 策略矩陣
 - [4.11 telemetry pipeline](/backend/04-observability/telemetry-pipeline/)：pipeline 自身的失敗定位
 - [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)：單機情境下監控與服務一起等 CPU、Prometheus 讀取逾時留下的空洞
-- [4.28 單台主機的監控盲區與外部視角](/backend/04-observability/single-host-monitoring-outside-view/)：只有一台主機時心跳監看、外部探測與互相監看各回答的問題，外部位置由第三方或另一個失效域的主機提供
+- [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)：只有一台主機時心跳監看與外部探測各回答的問題，失效域以外的觀察者放在第三方服務、另一個失效域的主機或兩台互相監看
 - [08 事故處理](/backend/08-incident-response/)：完整的事故角色、指揮鏈、通訊節奏與客訴 intake（本章只截「觀測退化」約束）
 - [11.11 錯誤回報的回饋迴路](/backend/11-api-design/error-feedback-loop/)：consumer 的 request-id / trace-id 回報契約，是客訴訊號源的另一端
 - 案例原文：[可觀測性案例正文](/backend/04-observability/cases/)

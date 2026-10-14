@@ -162,7 +162,7 @@ Alertmanager 的路由與 receiver 寫在 chart 的 `alertmanager.config` 值裡
 
 要接通知時改寫這個值。子路由與 receiver 的寫法和 Compose 上相同，見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/)，有三處要依 chart 的預設調整：
 
-- **Watchdog 那條子路由**：chart 預設只寫了 matchers 與 receiver，時間參數沿用上層的 `group_wait: 30s`、`group_interval: 5m`、`repeat_interval: 12h`。只把 receiver 換成心跳監看服務（監控以外、接收心跳並在心跳中斷時通知的外部服務，例如 healthchecks.io）時，心跳每 12 小時才送一次，心跳監看服務會一直判定告警鏈停了；要照那一篇〈Watchdog：告警鏈本身的心跳〉的設定一併寫上 `group_wait: 0s`、`group_interval: 1m`、`repeat_interval: 5m`；實測照這組參數，心跳的間隔是 5 分 54 秒與 6 分 02 秒，落在 `repeat_interval` 加一個 `group_interval` 之內。Watchdog 規則 chart 已經有，不必另加。
+- **Watchdog 那條子路由**：chart 預設只寫了 matchers 與 receiver，時間參數沿用上層的 `group_wait: 30s`、`group_interval: 5m`、`repeat_interval: 12h`。只把 receiver 換成心跳監看服務（監控以外、接收心跳並在心跳中斷時通知的外部服務，例如 healthchecks.io）時，心跳每 12 小時才送一次，心跳監看服務會一直判定告警鏈停了；要照那一篇〈Watchdog：告警鏈本身的心跳〉的設定一併寫上 `group_wait: 0s`、`group_interval: 1m`、`repeat_interval: 5m`；實測照這組參數，心跳的間隔是 5 分 54 秒與 6 分 02 秒，接近 `repeat_interval` 加一個 `group_interval` 的 6 分鐘，遠小於週期加寬限的 10 分鐘。Watchdog 規則 chart 已經有，不必另加。
 - **分組與範本裡的 `host`**：Compose 的設定依 `host` 分組，ntfy 與 Slack 的標題也讀 `host`，而 Kubernetes 上的序列沒有這個標籤，分組只剩依 `alertname` 一個標籤，標題顯示 `<no value>`。改用 `node`，或 chart 預設分組用的 `namespace`。
 - **`severity` 是 `info` 與 `none` 的告警**：chart 的預設規則有這兩級（info 例如 `CPUThrottlingHigh`，none 例如 `InfoInhibitor`），Compose 的路由會把沒有子路由接走的都送到最上層的 receiver，它們因此推到手機。替這兩級另開一條送到 `null` 的子路由，排在 Watchdog 那一條之後，否則同樣是 `none` 的 Watchdog 會先被它接走。
 

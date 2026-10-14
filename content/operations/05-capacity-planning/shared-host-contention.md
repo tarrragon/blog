@@ -30,7 +30,7 @@ tags: ["devops", "capacity-planning", "isolation", "noisy-neighbor", "monitoring
 
 ## 故障範圍：同一台主機上服務的相關失效
 
-共用同一台主機的服務，失效是相關的：主機的 CPU、記憶體、磁碟或網路任一樣耗盡，上面全部的服務一起受影響；主機重開或磁碟寫滿，全部一起停。[Blast Radius](/backend/knowledge-cards/blast-radius/) 的估算因此要把「放在同一台主機」當成一條依賴。實例是同一個開發環境稍早的一次：Mac 的磁碟剩不到 1 GB 時，OrbStack 的虛擬機連同裡面全部的容器被停掉了三次。
+共用同一台主機的服務，失效是相關的：主機的 CPU、記憶體、磁碟或網路任一樣耗盡，上面全部的服務一起受影響；主機重開或磁碟寫滿，全部一起停。[Blast Radius](/backend/knowledge-cards/blast-radius/) 的估算因此要把「放在同一台主機」當成一條依賴，同一台主機上的服務落在同一個[失效域](/backend/knowledge-cards/failure-domain/)。實例是同一個開發環境稍早的一次：Mac 的磁碟剩不到 1 GB 時，OrbStack 的虛擬機連同裡面全部的容器被停掉了三次。
 
 這帶出部署時要決定的幾件事：
 
@@ -64,7 +64,7 @@ CPU 與記憶體的限制是成熟的做法；磁碟讀寫與網路頻寬的隔�
 
 裝在虛擬機裡的監控看不到虛擬機以外的競爭從哪裡來：Mac 上的其他程式完全看不到；實體機上的其他租戶只留下 [steal 時間](/backend/knowledge-cards/cpu-steal-time/)這一個間接訊號（見〈容量估算〉）。兩種情形在服務的指標上都長成全部服務同時變慢，而它們各自的用量都不高。各層的監控能看到什麼、主機的磁碟怎麼一起涵蓋，見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)。
 
-監控和服務放在同一台主機時還會一起退化：探測與 Prometheus 自己也在等 CPU，量到的延遲包含它們自己的等待，讀取逾時會在資料裡留下空洞。所以正式環境至少要有一個訊號來自那台主機之外（另一台機器上的探測、外部的 uptime 服務），這是 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/) 在共用主機上的形態；告警怎麼寫、怎麼依主機飽和收斂各服務的症狀，見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)。
+監控和服務放在同一台主機時還會一起退化：探測與 Prometheus 自己也在等 CPU，量到的延遲包含它們自己的等待，讀取逾時會在資料裡留下空洞。所以正式環境至少要有一個訊號來自那台主機之外（另一個失效域的機器上的探測、外部的 uptime 服務；位置怎麼選見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)，多台主機怎麼分配見 [小型服務的兩到三台主機配置](/operations/06-high-availability/small-service-host-layout/)），這是 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/) 在共用主機上的形態；告警怎麼寫、怎麼依主機飽和收斂各服務的症狀，見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)。
 
 ## 延伸閱讀：單一容器的限制、資源分艙與單點盤點
 

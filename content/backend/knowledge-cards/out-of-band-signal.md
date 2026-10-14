@@ -9,13 +9,13 @@ Out-of-band signal 住在觀測系統的失效邊界之外——它是一個獨�
 
 ## 概念位置
 
-Out-of-band signal 處理的是觀測共命運失效——觀測系統跟被觀測系統共享失效域、在事故壓力下一起退化。它有兩種互補形態：心跳消失（外部偵測器監看「本該持續觸發的告警」是否停止，停止即代表監控管線本身斷了）與外部探測（blackbox / synthetic 從外部 vantage point 主動打 endpoint）。對外的一端會落到 [Status Page](/backend/knowledge-cards/status-page/)——狀態通道要跟主服務切開，否則使用者連查詢故障狀態的入口都拿不到。
+Out-of-band signal 處理的是觀測共命運失效——觀測系統跟被觀測系統共享失效域、在事故壓力下一起退化。它有兩種互補形態：心跳消失（外部偵測器監看「本該持續觸發的告警」是否停止，停止即代表監控管線本身斷了，見 [Dead Man's Switch](/backend/knowledge-cards/dead-mans-switch/)）與外部探測（blackbox / synthetic 從外部 vantage point 主動打 endpoint）。對外的一端會落到 [Status Page](/backend/knowledge-cards/status-page/)——狀態通道要跟主服務切開，否則使用者連查詢故障狀態的入口都拿不到。
 
 ## 可觀察訊號與例子
 
 kube-prometheus 的 Watchdog alert 設計成「is always firing」，一旦停止觸發，就代表告警管線本身出了問題——這時沒有其他告警會通知「監控系統死了」，只有獨立於管線之外的偵測器（如 Dead Man's Snitch）能發現心跳消失（2026）。另一種形態是客訴：內部監控漏掉時，客服累積的電話、社群貼文與工單常是實際生效的補位訊號，但它有延遲與噪音，管的是「哪個功能對誰壞了」而非「系統死沒死」。
 
-不跑 Kubernetes 的單機環境，Watchdog 規則與送往外部服務的 route 寫法（含 `group_interval` 與 `repeat_interval` 都要短於外部服務的心跳期限：`repeat_interval` 會被往上取到 `group_interval` 的倍數）見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)〈探測程式與 Prometheus 在過載主機上的 CPU 等待〉。
+Watchdog 的心跳間隔最長是 `repeat_interval` 加一個 `group_interval`（Alertmanager 只在 `group_interval` 的時間點檢查要不要重送），這個值要小於外部服務設定的週期加寬限；條件的推導見 [Dead Man's Switch（心跳監看）](/backend/knowledge-cards/dead-mans-switch/)，路由與參數的寫法見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 的〈Watchdog：告警鏈本身的心跳〉。
 
 ## 判讀方式
 

@@ -31,6 +31,8 @@ tags: ["backend", "observability", "prometheus", "monitoring", "docker"]
 
 node_exporter 以容器跑在 compose 的網路裡時，它讀的 `/proc/net` 是自己這個容器的網路命名空間，所以 netdev、netstat、sockstat 這幾個 collector 回報的是容器自己的網路。要看主機的網路，讓它以 `network_mode: host` 執行，或關掉這幾個 collector、改看 cAdvisor 的各容器網路指標。
 
+表中的外部探測跑在同一台主機上時，主機整台停掉或使用者到主機的路徑中斷，它跟著停或照樣成功；探測端放在主機的失效域以外的做法見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
+
 入口與應用程式兩層都在量流量，兩者的差別是有用的訊號：入口的請求數多於後端收到的數量，差額是被入口擋下、被速率限制擋掉或在後端之前就失敗的請求。主機、容器與服務內部三層都在量資源，粒度由粗到細：主機的 CPU 滿了，容器那一層分得出是哪個服務，服務內部那一層分得出是哪一類工作（例如 PostgreSQL 的連線全被某種查詢佔住）。
 
 ## 工具的選項：Prometheus 加 exporter、單一 agent、開箱即用、臨時查看
