@@ -12,7 +12,7 @@ tags: ["devops", "high-availability", "monitoring", "failure-domain"]
 
 一台主機上跑著入口、應用程式、資料庫、快取與整組監控時，所有元件共用同一個[失效域](/backend/knowledge-cards/failure-domain/)（failure domain），風險有三種。**中斷沒人通知**：主機停掉時服務中斷，而負責通知的監控同時停掉，要等使用者回報才知道。**監控與服務搶資源**：主機過載時，應用程式、資料庫與監控搶同一組 CPU 與記憶體，監控量到的延遲混進它自己的等待（見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)）。**資料與備份一起消失**：資料與它的備份放在同一台主機的磁碟上時，磁碟損壞或帳號被停權會讓兩者一起消失。
 
-資料與備份一起消失是三種裡唯一不可逆的，也不需要第二台主機：備份放到另一個業者的物件儲存或另一個帳號，就不再與資料一起消失（備份與資料放在同一個帳號時，帳號被停權、或憑證外洩後被人刪除，兩者一起消失），所以它排在加主機之前做（備份的驗證見 [備份與還原的地基](/going-live/backup-restore-basics/)）。第二台主機處理的是中斷沒人通知、監控與服務搶資源，處理哪一種取決於它放什麼。
+資料與備份一起消失是三種裡唯一不可逆的，也不需要第二台主機：備份放到另一個業者的物件儲存或另一個帳號，就不再與資料一起消失（備份與資料放在同一個帳號時，帳號被停權、或憑證外洩後被人刪除，兩者一起消失），所以它排在加主機之前做（備份的驗證見 [備份與還原的地基](/going-live/backup-restore-basics/)）。分開帳號擋的是資料所在帳號的憑證外洩；寫入備份的那把存取金鑰仍放在服務主機上，它外洩之後備份會不會被刪除或覆寫，見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/#雲端對雲端與異地備份沒有共用私網時的接法)。第二台主機處理的是中斷沒人通知、監控與服務搶資源，處理哪一種取決於它放什麼。
 
 ## 第二台主機的用法：給監控、給應用程式的副本或給資料庫
 
@@ -34,7 +34,7 @@ tags: ["devops", "high-availability", "monitoring", "failure-domain"]
 
 Prometheus 主動讀取各主機的 exporter，所以監控主機要連得到服務主機上的 exporter 連接埠。這些連接埠不對網際網路開放：exporter 預設沒有認證，輸出的指標透露主機的資源、服務的名稱與版本。同一個雲端業者內，exporter 綁在私有網路的位址上（[多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/) 以 `EXPORTER_BIND_ADDR` 設定）；跨業者或跨地端時沒有共用的私有網路，要在兩台之間建一條 VPN，例如 WireGuard 或 Tailscale（運作方式見 [Tailscale 深入](/linux/tools/remote/tailscale-tailnet-and-relay/)），exporter 改綁在 VPN 介面的位址上。VPN 預設兩個方向都互通，雲端主機被入侵時攻擊者也能經由它連回地端；隧道兩端各自連得到什麼、限制要放在哪一端，見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/)。
 
-地端在 NAT 後面、對外 IP 會變動時，由地端主動建立 VPN：WireGuard 在地端那一側設定 `PersistentKeepalive`、主動連到雲端主機，雲端主機在業者的防火牆或安全群組開放一個 UDP 連接埠給它；Tailscale 由它的 NAT 穿越與中繼伺服器建立連線，兩端都不必開放連接埠。隧道建立之後兩個方向都連得到，所以 Prometheus 從監控主機讀取，或服務主機以 remote write 把指標推到監控主機，在網路上都走得通，兩者的取捨見〈多台主機的指標收集〉的〈指標回到中央的架構：中央直接讀取與各主機推送〉。
+地端在 NAT 後面、對外 IP 會變動時，由地端主動建立 VPN：WireGuard 在地端那一側設定 `PersistentKeepalive`、主動連到雲端主機，雲端主機在業者的防火牆或安全群組開放一個 UDP 連接埠給它；Tailscale 由它的 NAT 穿越與中繼伺服器建立連線，兩端都不必開放連接埠。隧道建立之後兩個方向都連得到，所以 Prometheus 從監控主機讀取，或服務主機以 remote write 把指標推到監控主機，在網路上都走得通，兩者的取捨見〈多台主機的指標收集〉的〈指標回到中央的架構：中央直接讀取與各主機推送〉。安全上兩者的差別在誰要接受對方發起的連線：讀取時地端只發起連線，推送時地端要開放接收端點，見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/#地端監控情境需要的連線發起方向與回應內容)。
 
 跨網路讀取多了一種誤判：兩地之間的 VPN 斷掉時，監控主機讀不到服務主機，在監控看來與服務主機停了相同，`up`（Prometheus 記錄每個讀取對象是否讀取成功的序列）變成 0，主機停機的告警發出。分辨連線中斷與服務主機停機要靠第三個位置的觀察者：從另一個網路對服務的公開網址發請求的外部探測，放在服務主機與監控主機以外（通常是第三方的外部探測服務）。外部探測成功而監控讀不到，指向兩地之間的連線；兩者都失敗，指向服務主機。這個配置裡量使用者路徑的也是這個外部探測：監控主機經由 VPN 讀取，不走使用者用的公開網址（見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/) 的〈外部探測：使用者看到的結果〉）。主機停機告警的說明因此寫上「也可能是監控主機連不過去」，值班的人收到時就知道有這兩種成因。
 

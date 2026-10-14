@@ -22,7 +22,7 @@ tags: ["backend", "security", "red-team"]
 1. 列入口：整理 [Public API](/backend/knowledge-cards/public-api-endpoint/)、[Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)、[Diagnostic Endpoint](/backend/knowledge-cards/diagnostic-endpoint/)、[Internal Endpoint](/backend/knowledge-cards/internal-endpoint/) 與 [webhook](/backend/knowledge-cards/webhook/)。
 2. 畫資料流：每條入口都連到下游能力與資料資產，包含第三方整合。
 3. 標信任切換點：在身份、租戶、網路、資料層切換處標示 [Trust Boundary](/backend/knowledge-cards/trust-boundary/)。
-4. 排優先級：以可枚舉性、可重放性、資料敏感度與橫向移動能力排序。
+4. 排優先級：以可枚舉性、可重放性、資料敏感度與[橫向移動](/backend/knowledge-cards/lateral-movement/)能力排序。
 
 ## 【風險代價】盤點品質直接影響事故規模
 

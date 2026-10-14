@@ -41,7 +41,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 入口治理的核心責任是定義哪些流量可以進來、能觸及什麼能力、異常時如何收斂。
 
 1. 入口分級：區分 public、admin、diagnostic、internal 端點責任。
-2. 平面分層：把管理平面與業務平面隔離，避免單點突破橫向擴散。隔離要落到哪些設定（入口路由、管理端點的可達來源）本站尚無專章承接，已列入 backlog；憑證與信任錨這一層的拆分見 [7.5 各節點的收斂動作](../transport-trust-and-certificate-lifecycle/#各節點的收斂動作)，控制面變更本身的守門與決策紀錄見 [5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Control Plane Boundary 段。
+2. 平面分層：把管理平面與業務平面隔離，避免單點突破之後的[橫向移動](/backend/knowledge-cards/lateral-movement/)。隔離要落到哪些設定（入口路由、管理端點的可達來源）本站尚無專章承接，已列入 backlog；憑證與信任錨這一層的拆分見 [7.5 各節點的收斂動作](../transport-trust-and-certificate-lifecycle/#各節點的收斂動作)，控制面變更本身的守門與決策紀錄見 [5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Control Plane Boundary 段。
 3. 修補節奏：把隔離、修補、驗證綁成同一個交付鏈，不讓修補停在部署完成。
 4. 會話收斂：把入口事件後的會話失效與權限回收納入標準流程。
 

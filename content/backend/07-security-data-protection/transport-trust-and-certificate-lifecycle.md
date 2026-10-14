@@ -84,7 +84,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 **憑證輪替覆蓋**的收斂順序是先建分母、再談完成率。分母不存在時完成率是自動化那批的完成率，它會長期接近滿分而與實際風險無關。分母建立之後，把手動那批逐一移進自動化，移不進去的（合作夥伴持有、燒進映像檔、硬體設備）單獨列一張清單並綁到期提醒——這張清單的長度本身就是治理指標，它越短風險越低。憑證本身的簽發與部署走 [5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Secret Boundary 段。
 
-**管理平面傳輸混層**的收斂是把信任域拆開：管理平面用獨立的憑證鏈與獨立的信任錨，業務服務的信任存放區不放管理平面的 CA。拆開之後兩邊的憑證互不認得，橫向移動因此在傳輸層就被擋下。入口層的隔離走 [7.3 入口治理與伺服器防護](../entrypoint-and-server-protection/)，設定落點走 [5.x 控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Control Plane Boundary 段。
+**管理平面傳輸混層**的收斂是把信任域拆開：管理平面用獨立的憑證鏈與獨立的信任錨，業務服務的信任存放區不放管理平面的 CA。拆開之後兩邊的憑證互不認得，[橫向移動](/backend/knowledge-cards/lateral-movement/)因此在傳輸層就被擋下。入口層的隔離走 [7.3 入口治理與伺服器防護](../entrypoint-and-server-protection/)，設定落點走 [5.x 控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Control Plane Boundary 段。
 
 **第三方信任重評估**的收斂前提是信任錨有清單。清單建立之後，供應商公告要能直接觸發一次比對：對方受影響的憑證或 CA 在自己的哪幾份存放區裡。這條 runbook 的內部收斂責任見 [7.2 第三方身分鏈的內部收斂責任](../identity-access-boundary/#第三方身分鏈的內部收斂責任)，事件當下的處置節奏走 [8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)。
 

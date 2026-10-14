@@ -17,4 +17,4 @@ Trust boundary 會出現在 [authentication](/backend/knowledge-cards/authentica
 
 ## 設計責任
 
-邊界管理要能說清楚誰信任誰、信任到哪裡、何時失效。若某段流程會跨越身份、租戶、網路或資料層邊界，就要在那一點重新定義驗證、授權與完整性檢查。
+邊界管理要能說清楚誰信任誰、信任到哪裡、何時失效。若某段流程會跨越身份、租戶、網路或資料層邊界，就要在那一點重新定義驗證、授權與完整性檢查。網路邊界這一處的原則是 [Zero Trust（零信任）](/backend/knowledge-cards/zero-trust/)：連線來自內網或 VPN，不構成跳過驗證的理由。

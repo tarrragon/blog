@@ -86,7 +86,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 **匯出節奏**的收斂是在身分控制之外補量的控制：單次筆數上限、超過上限走審批、匯出檔案設有效期與浮水印。這一格的判斷標準是把「誰能匯出」與「一次能匯出多少」當成兩個獨立決定——多數系統只做了前者，而外送風險由後者決定。匯出紀錄要能回查誰在什麼時候取走了哪些範圍，稽核欄位的設計走 [7.7 稽核追蹤與責任邊界](../audit-trail-and-accountability-boundary/)。對應失效樣式 [匯出流程濫用](../red-team/problem-cards/export-flow-abuse/)。
 
-**備份權限**的收斂是把還原能力與讀取能力拆成兩種授權。還原是寫入動作、可以要求走審批並留紀錄；讀取才是外送風險的來源。拆開之後備份憑證的日常權限只剩下寫入與驗證，讀取需要另一次授權。同一格的第二道控制是備份加密加上金鑰與備份憑證分持——拿到備份憑證的人讀到的是密文，還原要另外取得金鑰，兩者由不同的授權路徑管理；機制見 [at-rest encryption](/backend/knowledge-cards/at-rest-encryption/)。對應失效樣式 [長效可重複匯出產物](../red-team/problem-cards/fp-long-lived-repeatable-export-artifact/)。備份憑證本身的輪替與收斂節奏走 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)，備份資料的保留期與刪除證據走 [7.11 資料落點、刪除與證據鏈](../data-residency-deletion-and-evidence-chain/)。
+**備份權限**的收斂是把還原能力與讀取能力拆成兩種授權。還原是寫入動作、可以要求走審批並留紀錄；讀取才是外送風險的來源。拆開之後備份憑證的日常權限只剩下寫入與驗證，讀取需要另一次授權；同一把憑證外洩之後備份被刪除或覆寫那一面，見 [7.43 的異地備份段](../cross-network-connection-security/#雲端對雲端與異地備份沒有共用私網時的接法)。同一格的第二道控制是備份加密加上金鑰與備份憑證分持——拿到備份憑證的人讀到的是密文，還原要另外取得金鑰，兩者由不同的授權路徑管理；機制見 [at-rest encryption](/backend/knowledge-cards/at-rest-encryption/)。對應失效樣式 [長效可重複匯出產物](../red-team/problem-cards/fp-long-lived-repeatable-export-artifact/)。備份憑證本身的輪替與收斂節奏走 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)，備份資料的保留期與刪除證據走 [7.11 資料落點、刪除與證據鏈](../data-residency-deletion-and-evidence-chain/)。
 
 **跨組織責任鏈**的收斂發生在合約階段，而不是事件當下。要寫進契約的是通報時限（對方發現後多久要通知）、通報對象（自己這邊的哪個角色、哪個管道）、以及資料範圍的可查性（對方能不能說出自己這邊有哪些資料受影響）。三者缺一時，事件當下的時間會花在建立聯絡管道而不是處置。供應商事件傳導到內部的收斂責任見 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導)。這裡要的是 inbound 那一向（對方出事之後多久通知自己），本站尚無專章；自己出事之後對外的通報節奏是另一向，走 [8.x 事故溝通](/backend/08-incident-response/incident-communication/)。
 
