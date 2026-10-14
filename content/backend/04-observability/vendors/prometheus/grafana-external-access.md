@@ -73,11 +73,13 @@ services:
 
 三個變數都寫成 `${VAR:?訊息}`，沒設就讓 `docker compose` 在啟動前停下，印出 `required variable … is missing a value` 與 compose 檔裡寫的提示，不會帶著空的網域或空的網段起來。`grafana` 那一段併進已有的 Grafana 服務（`compose.monitoring.yml` 或單機的 `docker-compose.yml` 裡那一個）：compose 把同名的服務合併，這一段只替它多加一個環境變數。
 
-`ports` 的 `443` 在單機上可能已經被應用的入口占用，這時 `docker compose up` 回 `port is already allocated`。單機有兩個選擇：代理改發佈另一個連接埠（例如 `"8443:443"`，網址帶上 `:8443`，`GF_SERVER_ROOT_URL` 也要一併改成 `https://${GRAFANA_DOMAIN}:8443/`，否則 Grafana 登入之後的轉址仍指向 443、落到應用的入口），或者在兩者前面再放一層依網域分流的代理或負載平衡器，讓兩個網域共用 443。後一種的那一層同時承載應用與 Grafana，它過載或設定改壞時兩者一起斷，又回到〈經由應用入口 Nginx 轉送的做法〉裡入口出事時監控跟著看不到的問題，所以能用的話偏好改連接埠或另一個公開位址。
+`ports` 的 `443` 在單機上可能已經被應用的入口占用，這時 `docker compose up` 回 `port is already allocated`。單機有兩個選擇：代理改發佈另一個連接埠（例如 `"8443:443"`，網址帶上 `:8443`，`GF_SERVER_ROOT_URL` 也要一併改成 `https://${GRAFANA_DOMAIN}:8443/`，否則 Grafana 產生的分享連結與 OAuth 回呼網址少了 `:8443`，指向 443 上應用的入口），或者在兩者前面再放一層依網域分流的代理或負載平衡器，讓兩個網域共用 443。後一種的那一層同時承載應用與 Grafana，它過載或設定改壞時兩者一起斷，又回到〈經由應用入口 Nginx 轉送的做法〉裡入口出事時監控跟著看不到的問題，所以能用的話偏好改連接埠或另一個公開位址。
 
 ### GF_SERVER_ROOT_URL：Grafana 產生網址的依據
 
-`GF_SERVER_ROOT_URL` 是 Grafana 對外的網址。Grafana 產生絕對網址時以它為準：登入之後轉回原頁面、OAuth 登入的回呼網址、告警通知裡指回面板的連結；實測開網域的根目錄時，Grafana 回 302 轉到 `https://<網域>/login`，網址來自這個設定。沒設時預設是 `http://localhost:3000/`，經過代理的使用者會在這些位置被帶到他自己電腦上的 localhost。
+`GF_SERVER_ROOT_URL` 是 Grafana 對外的網址。Grafana 寫出完整網址、要讓別人在別處打開時以它為準：分享用的短網址、OAuth 登入的回呼網址、Grafana 自己送出的告警通知裡指回面板的連結。實測在 Grafana 13.2.3 設成 `https://grafana.example.com:8443/`，從 `127.0.0.1:3000` 建立的短網址是 `https://grafana.example.com:8443/goto/<代碼>`。沒設時預設是 `http://localhost:3000/`，這些網址指向收到的人自己電腦上的 localhost。
+
+登入前後的轉址不經過這個設定。實測以三種設定（不設、少了 `:8443`、正確）各跑一次，未登入時開根目錄回 `302`，`Location` 是相對路徑 `/login`，登入的回應是 `{"redirectUrl":"/"}`，瀏覽器依自己正在開的網址解讀這兩個相對路徑。所以經 SSH 通道開 `http://127.0.0.1:3000` 的人，設了 `GF_SERVER_ROOT_URL` 之後登入照樣留在 `127.0.0.1:3000`，建立資料夾這類寫入也成功；他從介面複製出去的分享連結則是公開網域的網址，收到的人要能經由代理連進來才打得開。
 
 ### Nginx 範本與 Grafana Live 的 WebSocket 轉送
 

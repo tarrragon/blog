@@ -16,14 +16,36 @@ tags: ["backend", "observability", "vendor", "prometheus", "kubernetes"]
 
 - **Prometheus Operator**：一個常駐的控制程式，監看叢集裡描述監控的物件，把它們轉成 Prometheus 與 Alertmanager 的設定檔。
 - **Prometheus 與 Alertmanager**：本身也由 Operator 依 `Prometheus`、`Alertmanager` 這兩種自訂物件（CRD，見下方）建立，以 StatefulSet 執行。
-- **Grafana**：附 30 個預設儀表板，資料來源已經指向這個 Prometheus。
+- **Grafana**：附 29 個預設儀表板，資料來源已經指向這個 Prometheus。
 - **node-exporter**：以 DaemonSet 在每個節點跑一份，對應 Compose 上的 node_exporter。
 - **kube-state-metrics**：讀 Kubernetes API，把 Deployment 的期望與實際副本數、Pod 的狀態這類叢集物件的狀態輸出成指標。
-- **預設的告警規則**：實測 36 組、251 條，涵蓋節點、kubelet、API server 與上面這些元件；其中包括一條永遠成立的 `Watchdog`。
+- **預設的告警規則**：實測 35 組、250 條，涵蓋節點、kubelet、API server 與上面這些元件；其中包括一條永遠成立的 `Watchdog`。
 
 容器的 CPU 與記憶體不另外裝 cAdvisor：每個節點的 kubelet 內建 cAdvisor，chart 附的讀取設定直接讀 kubelet。
 
-chart 預設不替 Prometheus 與 Alertmanager 建 PersistentVolumeClaim（`prometheus.prometheusSpec.storageSpec` 與 `alertmanager.alertmanagerSpec.storage` 都是空的），資料寫在 Pod 自己的暫存目錄裡。Pod 被重新排到別的節點或重建時，指標的歷史、Alertmanager 的靜音與通知紀錄一起消失；Prometheus 的保留期間預設 `10d`。正式叢集在這兩個值寫 `volumeClaimTemplate`，指定叢集裡可用的 StorageClass。這一項依 chart 92.3.0 的預設值寫成，沒有實測。
+chart 預設不替 Prometheus 與 Alertmanager 建 PersistentVolumeClaim（`prometheus.prometheusSpec.storageSpec` 與 `alertmanager.alertmanagerSpec.storage` 都是空的），資料寫在 Pod 自己的暫存目錄裡。Pod 被重新排到別的節點或重建時，指標的歷史、Alertmanager 的靜音與通知紀錄一起消失；Prometheus 的保留期間預設 `10d`。正式叢集在這兩個值寫 `volumeClaimTemplate`，指定叢集裡可用的 StorageClass：
+
+```yaml
+# helm install 時以 -f 傳入的值檔；standard 換成 kubectl get storageclass 列出的名稱
+prometheus:
+  prometheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard
+          accessModes: [ReadWriteOnce]
+          resources: {requests: {storage: 2Gi}}
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard
+          accessModes: [ReadWriteOnce]
+          resources: {requests: {storage: 1Gi}}
+```
+
+實測在 kind 上以這份值安裝，Operator 替兩者各建一個 PersistentVolumeClaim，兩個都進入 `Bound`。容量依保留期間與活躍序列數估算，估法見 [Prometheus 容量規劃與故障模式](/backend/04-observability/vendors/prometheus/capacity-failure-modes/)。
 
 Operator 監看的物件是 chart 安裝的 CRD（Custom Resource Definition，讓 Kubernetes API 多認得一種物件），實測裝了十種，其中最常直接寫的是三種：
 
@@ -65,7 +87,7 @@ kubectl -n monitoring get prometheus -o jsonpath='{.items[0].spec.serviceMonitor
 
 輸出是 `{}` 時，選取條件是全部選中，標籤不影響。
 
-實測同一個 ServiceMonitor 先不帶這個標籤套用，等了 4 分鐘，Prometheus 的設定裡沒有它，Operator 沒有報錯，ServiceMonitor 物件上也沒有任何狀態欄位說明它沒被選中；補上 `release: kps` 之後，範例服務的兩個 Pod 都出現在讀取對象裡。所以 ServiceMonitor 寫好而讀取對象沒出現時，先核對這個標籤與 `serviceMonitorSelector`，以及 ServiceMonitor 與 Service 是否在同一個 namespace、`endpoints.port` 寫的名稱與 Service 的連接埠名稱是否一致、`selector` 的標籤選不選得到 Service；這幾種錯都不報錯，讀取對象有沒有被產生，在 Prometheus 網頁的 Service discovery 頁面看（見 [Relabeling](/backend/knowledge-cards/relabeling/) 的〈可觀察訊號與例子〉）。在叢集裡開 Prometheus 的網頁看讀取對象，以 `kubectl -n monitoring port-forward svc/<Service 名稱> 9090` 把它轉到本機的 9090；Service 名稱含 release 名稱，以 `kubectl -n monitoring get svc` 查。chart 的值 `prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues` 設成 `false` 時，選取條件改成全部選中，這是 chart 文件寫的做法，這次沒有實測。
+實測同一個 ServiceMonitor 先不帶這個標籤套用，等了 4 分鐘，Prometheus 的設定裡沒有它，Operator 沒有報錯，ServiceMonitor 物件上也沒有任何狀態欄位說明它沒被選中；補上 `release: kps` 之後，範例服務的兩個 Pod 都出現在讀取對象裡。所以 ServiceMonitor 寫好而讀取對象沒出現時，先核對這個標籤與 `serviceMonitorSelector`，以及 ServiceMonitor 與 Service 是否在同一個 namespace、`endpoints.port` 寫的名稱與 Service 的連接埠名稱是否一致、`selector` 的標籤選不選得到 Service；這幾種錯都不報錯，讀取對象有沒有被產生，在 Prometheus 網頁的 Service discovery 頁面看（見 [Relabeling](/backend/knowledge-cards/relabeling/) 的〈可觀察訊號與例子〉）。在叢集裡開 Prometheus 的網頁看讀取對象，以 `kubectl -n monitoring port-forward svc/<Service 名稱> 9090` 把它轉到本機的 9090；Service 名稱含 release 名稱，以 `kubectl -n monitoring get svc` 查。chart 的值 `prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues` 設成 `false` 時，選取條件改成全部選中：實測以這個值升級之後，`serviceMonitorSelector` 變成 `{}`，一個不帶標籤的 ServiceMonitor 出現在 Operator 產生的設定裡。這個值只管 ServiceMonitor，同次升級之後 `ruleSelector` 仍是 `{"matchLabels":{"release":"kps"}}`；PodMonitor 與 PrometheusRule 各有自己的 `podMonitorSelectorNilUsesHelmValues`、`ruleSelectorNilUsesHelmValues`。
 
 PrometheusRule 同樣如此：不帶標籤的規則等了 2 分鐘沒有載入，補上標籤之後 30 秒出現在 Prometheus 的規則清單。chart 另外裝了一個驗證規則的 admission webhook（API server 在接受物件之前先送去檢查的服務），PromQL 寫錯時 `kubectl apply` 當場被拒，訊息指出是哪一組、哪一條規則與錯在第幾個字元：
 
@@ -95,7 +117,18 @@ Compose 上的告警與抑制都依 `host` 分組，一台主機飽和只壓下�
 
 寫告警與抑制時以 `node` 取代 Compose 上的 `host`。另一種做法是不改讀取設定，在查詢時以 `kube_pod_info` 把 `node` 接上去（`* on (namespace, pod) group_left(node) kube_pod_info`），用在 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制：主機飽和時壓下各服務變慢〉那類抑制規則時，服務的序列以這個方式接上 `node`；兩者的差別在讀取時加的標籤每一條序列本身就帶著，查詢時接的則每一條規則都要寫一次。
 
-原因那一側的 node-exporter 序列也要有 `node`。chart 92.3.0 的 node-exporter 預設沒有 relabelings，它的 `instance` 是節點的 IP 加連接埠，與 `kube_pod_info` 的節點名稱對不起來；在 chart 的值 `prometheus-node-exporter.prometheus.monitor.relabelings` 寫一條與上面相同的規則（`__meta_kubernetes_pod_node_name` 寫進 `node`），node-exporter 跑在每個節點上的那個 Pod 所在的節點就是它量的節點。這一項依 chart 的預設值寫成，沒有實測。chart 附的其他讀取設定（例如 kubelet）各自帶哪些標籤，這次沒有逐一檢查，寫規則之前先在 Prometheus 查一次 `up` 的標籤，確認每個要分組的序列都有 `node`。
+原因那一側的 node-exporter 序列也要有 `node`。chart 92.3.0 的 node-exporter 預設沒有 relabelings，它的 `instance` 是節點的 IP 加連接埠，與 `kube_pod_info` 的節點名稱對不起來；在 chart 的值 `prometheus-node-exporter.prometheus.monitor.relabelings` 寫一條與上面相同的規則（`__meta_kubernetes_pod_node_name` 寫進 `node`），node-exporter 跑在每個節點上的那個 Pod 所在的節點就是它量的節點：
+
+```yaml
+prometheus-node-exporter:
+  prometheus:
+    monitor:
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          targetLabel: node
+```
+
+實測以這份值安裝之後，node-exporter 的 `up` 帶著 `node="<叢集名稱>-control-plane"`。chart 附的其他讀取設定裡，kubelet 預設就帶 `node`，API server、CoreDNS、kube-state-metrics、控制平面元件與監控元件自己的讀取對象都沒有；寫規則之前以 `count by (job) (up{node=""})` 查一次，列出來的 job 就是還沒有 `node` 的讀取對象。
 
 ## 儀表板經由 ConfigMap 與 sidecar 載入
 
@@ -117,9 +150,11 @@ data:
 
 資料來源也是同一個機制，標籤換成 `grafana_datasource: "1"`。
 
-開 Grafana 看儀表板時，以 `kubectl -n monitoring port-forward svc/<release 名稱>-grafana 3000:80` 把它轉到本機的 3000（chart 附的 Grafana 的 Service 連接埠是 80）；admin 的帳號與密碼在 chart 建立的同名 Secret 裡（鍵是 `admin-user` 與 `admin-password`），以 `kubectl -n monitoring get secret <release 名稱>-grafana -o jsonpath='{.data.admin-password}' | base64 -d` 讀出。Service 與 Secret 的名稱依 chart 的預設值寫成，以 `kubectl -n monitoring get svc,secret` 確認。要讓沒有叢集權限的人看儀表板，選擇條件與認證的位置見 [Grafana 的對外存取](/backend/04-observability/vendors/prometheus/grafana-external-access/)；那一篇的代理在 Kubernetes 上換成叢集的 Ingress，這裡沒有涵蓋。
+開 Grafana 看儀表板時，以 `kubectl -n monitoring port-forward svc/<release 名稱>-grafana 3000:80` 把它轉到本機的 3000（chart 附的 Grafana 的 Service 連接埠是 80）；admin 的帳號與密碼在 chart 建立的同名 Secret 裡（鍵是 `admin-user` 與 `admin-password`），以 `kubectl -n monitoring get secret <release 名稱>-grafana -o jsonpath='{.data.admin-password}' | base64 -d` 讀出。實測 release 名稱是 `kps` 時，Service 與 Secret 分別是 `kps-grafana`，以這組帳號密碼經由轉出來的 3000 登入成功；release 名稱不同時以 `kubectl -n monitoring get svc,secret` 查。要讓沒有叢集權限的人看儀表板，選擇條件與認證的位置見 [Grafana 的對外存取](/backend/04-observability/vendors/prometheus/grafana-external-access/)；那一篇的代理在 Kubernetes 上換成叢集的 Ingress，這裡沒有涵蓋。
 
-手上是從 Grafana 匯出的 JSON 檔時，以 `kubectl -n shop create configmap shop-dashboard --from-file=shop.json` 建 ConfigMap，再 `kubectl -n shop label configmap shop-dashboard grafana_dashboard=1` 加上標籤（`shop` 與檔名換成自己的）。JSON 很大時，以 `kubectl apply` 更新要加 `--server-side`，用預設的 client-side apply 會超過 Kubernetes 對 annotation 的長度上限。這兩條指令這次沒有實跑。
+手上是從 Grafana 匯出的 JSON 檔時，以 `kubectl -n shop create configmap shop-dashboard --from-file=shop.json` 建 ConfigMap，再 `kubectl -n shop label configmap shop-dashboard grafana_dashboard=1` 加上標籤（`shop` 與檔名換成自己的）；實測加上標籤之後約 4 秒，儀表板出現在 Grafana。
+
+儀表板的 JSON 改寫成 YAML 檔、以 `kubectl apply` 更新時，JSON 很大就要加 `--server-side`。預設的 client-side apply 把整份物件另存一份在 `kubectl.kubernetes.io/last-applied-configuration` 這個 annotation 裡，而 Kubernetes 限制一個物件的 annotation 合計不超過 262144 位元組。實測一份約 300 KB 的 ConfigMap 以 `kubectl apply` 套用被拒，訊息是 `metadata.annotations: Too long: may not be more than 262144 bytes`；同一份加上 `--server-side` 套用成功。`kubectl create` 不寫這個 annotation，所以第一次以 `create` 建立不受這個限制。
 
 ## chart 預設的 Alertmanager 路由：不送任何通知
 
@@ -127,11 +162,15 @@ Alertmanager 的路由與 receiver 寫在 chart 的 `alertmanager.config` 值裡
 
 要接通知時改寫這個值。子路由與 receiver 的寫法和 Compose 上相同，見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/)，有三處要依 chart 的預設調整：
 
-- **Watchdog 那條子路由**：chart 預設只寫了 matchers 與 receiver，時間參數沿用上層的 `group_wait: 30s`、`group_interval: 5m`、`repeat_interval: 12h`。只把 receiver 換成心跳監看服務（監控以外、接收心跳並在心跳中斷時通知的外部服務，例如 healthchecks.io）時，心跳每 12 小時才送一次，心跳監看服務會一直判定告警鏈停了；要照那一篇〈Watchdog：告警鏈本身的心跳〉的設定一併寫上 `group_wait: 0s`、`group_interval: 1m`、`repeat_interval: 5m`。Watchdog 規則 chart 已經有，不必另加。
+- **Watchdog 那條子路由**：chart 預設只寫了 matchers 與 receiver，時間參數沿用上層的 `group_wait: 30s`、`group_interval: 5m`、`repeat_interval: 12h`。只把 receiver 換成心跳監看服務（監控以外、接收心跳並在心跳中斷時通知的外部服務，例如 healthchecks.io）時，心跳每 12 小時才送一次，心跳監看服務會一直判定告警鏈停了；要照那一篇〈Watchdog：告警鏈本身的心跳〉的設定一併寫上 `group_wait: 0s`、`group_interval: 1m`、`repeat_interval: 5m`；實測照這組參數，心跳的間隔是 5 分 54 秒與 6 分 02 秒，落在 `repeat_interval` 加一個 `group_interval` 之內。Watchdog 規則 chart 已經有，不必另加。
 - **分組與範本裡的 `host`**：Compose 的設定依 `host` 分組，ntfy 與 Slack 的標題也讀 `host`，而 Kubernetes 上的序列沒有這個標籤，分組只剩依 `alertname` 一個標籤，標題顯示 `<no value>`。改用 `node`，或 chart 預設分組用的 `namespace`。
 - **`severity` 是 `info` 與 `none` 的告警**：chart 的預設規則有這兩級（info 例如 `CPUThrottlingHigh`，none 例如 `InfoInhibitor`），Compose 的路由會把沒有子路由接走的都送到最上層的 receiver，它們因此推到手機。替這兩級另開一條送到 `null` 的子路由，排在 Watchdog 那一條之後，否則同樣是 `none` 的 Watchdog 會先被它接走。
 
-`routes` 與 `receivers` 在 Helm 的值裡是清單，自己寫的清單整份取代 chart 的預設，所以 `null` receiver 與送到它的子路由要一起寫進去；`inhibit_rules` 同理，自己寫了抑制規則，chart 預設的抑制規則就不在了，而沒寫的鍵（例如上層的 `group_by`、`group_wait`）沿用 chart 的值。通知送失敗的告警 chart 也附了（`AlertmanagerFailedToSendAlerts`，severity 是 warning，條件是 15 分鐘內失敗的比例超過 1%），不必另寫規則；它同樣要另走一條不經過同一個通知服務的路，照〈通知送不出去的偵測〉開子路由時，`matchers` 換成 `alertname="AlertmanagerFailedToSendAlerts"`。私密的網址以 Secret 交給 Alertmanager：在 `alertmanager.alertmanagerSpec.secrets` 列出 Secret 的名稱，Operator 把它掛在 Alertmanager 的 `/etc/alertmanager/secrets/<Secret 名稱>/` 底下，`url_file` 指到那裡。這一節依 chart 92.3.0 的預設值寫成，沒有在叢集上實際送出通知。
+`routes` 與 `receivers` 在 Helm 的值裡是清單，自己寫的清單整份取代 chart 的預設，所以 `null` receiver 與送到它的子路由要一起寫進去；`inhibit_rules` 同理，自己寫了抑制規則，chart 預設的抑制規則就不在了，而沒寫的鍵（例如上層的 `group_by`、`group_wait`）沿用 chart 的值。通知送失敗的告警 chart 也附了，不必另寫規則：`AlertmanagerFailedToSendAlerts`（warning）在 15 分鐘內失敗的比例超過 1% 並持續 5 分鐘時成立，同時成立的還有 critical 的 `AlertmanagerClusterFailedToSendAlerts`，條件相同而以整個 Alertmanager 叢集計算，只跑一份 Alertmanager 時兩條一起成立。它們同樣要另走一條不經過同一個通知服務的路，照〈通知送不出去的偵測〉開子路由時，`matchers` 換成 `alertname=~"Alertmanager(Cluster)?FailedToSendAlerts"`，兩條一起接走；只寫前一條的名稱時，critical 的那一條落到 critical 的子路由，走的正是送不出去的那條管道。
+
+私密的網址以 Secret 交給 Alertmanager：在 `alertmanager.alertmanagerSpec.secrets` 列出 Secret 的名稱，Operator 把它掛在 Alertmanager 的 `/etc/alertmanager/secrets/<Secret 名稱>/` 底下，`url_file` 指到那裡。
+
+實測在 kind 上以叢集裡一個記錄請求的 HTTP 服務當作通知的接收端，照上面三處調整寫了 `alertmanager.config`，以 `alertmanager.alertmanagerSpec.secrets` 交進四個網址檔。Operator 產生的設定裡，沒寫的 `group_wait`、`group_interval`、`repeat_interval` 與 chart 預設的 `inhibit_rules` 都在；一組永遠成立的合成規則套用之後約 70 秒，critical 與 warning 各收到一則，severity 是 `info` 的那一則沒有送出。把 critical 的網址檔改成連不上的位址之後，下一則 critical 告警在三次重試後失敗，失敗之後約 5 分 30 秒，兩條送失敗的告警成立：`AlertmanagerFailedToSendAlerts` 經由它自己的子路由送達，`AlertmanagerClusterFailedToSendAlerts` 在只寫前一條名稱時落到 critical 的子路由。
 
 ## 控制平面元件的 metrics 綁定位址與讀取失敗
 
@@ -170,7 +209,7 @@ nodes:
         metricsBindAddress: 0.0.0.0:10249
 ```
 
-以這份設定重建之後，四個程式都改聽所有介面；從叢集裡的一個 Pod 連過去，etcd 與 kube-proxy 回 200，controller-manager 與 scheduler 回 403（連得上，要帶認證才讀得到）。這個重建的叢集上沒有再裝一次監控，所以 chart 附的讀取設定能不能讀到、告警會不會解除，都沒有實測。綁到所有介面也讓節點網路上的其他程式連得到這些端點，正式叢集要搭配網路政策或防火牆限制來源。
+以這份設定重建之後，四個程式都改聽所有介面；從叢集裡的一個 Pod 連過去，etcd 與 kube-proxy 回 200，controller-manager 與 scheduler 回 403（連得上，要帶認證才讀得到）。chart 附的讀取設定替 controller-manager 與 scheduler 帶著 Prometheus 的 ServiceAccount 憑證去讀，所以在這個叢集上裝好監控之後，四個讀取對象的 `up` 都是 1；裝好 15 分鐘後，上面那幾條控制平面的告警與 `etcdInsufficientMembers` 都沒有成立。綁到所有介面也讓節點網路上的其他程式連得到這些端點，正式叢集要搭配網路政策或防火牆限制來源。
 
 已經在跑、不能重建的 kubeadm 叢集，改的是控制平面節點上 `/etc/kubernetes/manifests/` 裡 kube-controller-manager、kube-scheduler 與 etcd 的靜態 Pod 檔（kubelet 偵測到檔案變更會自己重啟它們），以及 `kube-system` 裡 `kube-proxy` 這個 ConfigMap 的 `metricsBindAddress`，改完重啟 kube-proxy 的 DaemonSet。之後的 `kubeadm upgrade` 會以叢集的 ClusterConfiguration 重寫靜態 Pod 檔，所以同一組設定也要寫進 `kube-system` 的 `kubeadm-config` ConfigMap。這一段沒有實測。k3s 與 k3d 不經過 kubeadm，控制平面元件合在同一個程序裡，綁定位址以 k3s 的啟動參數設定，這裡沒有涵蓋。
 

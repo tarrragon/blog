@@ -69,7 +69,24 @@ docker run --rm -v "$PWD:/a" --entrypoint amtool prom/alertmanager:v0.34.1 \
 
 `group_wait` 30 秒與 `group_interval` 5 分鐘是 Alertmanager 的預設值（`repeat_interval` 的預設是 4 小時）；2 小時與 12 小時是這個服務依值班的回應時間選的。重送的計時與靜音存在 Alertmanager 的 `--storage.path` 目錄裡，這個目錄沒有掛 volume 時，容器重建之後所有成立中的組會立刻重送一次，靜音也會消失。
 
-critical 與 warning 分成兩個 topic，是讓只想收 critical 的人只訂一個，也讓 warning 可以單獨靜音。這份設定把 warning 全天推送、以較低的優先度降低打擾；[4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/) 把 warning 定義成工作時間處理，要照那個定義，以 Alertmanager 的 `time_intervals` 定義工作時段，並在 warning 那條路由加上 `active_time_intervals`，工作時段以外的 warning 就不送（這一種沒有實測）。`severity` 是 `info` 或 `none` 的告警（Watchdog 以外）沒有子路由接走時會落到最上層的 warning，要另開一條送到不通知的 receiver。
+critical 與 warning 分成兩個 topic，是讓只想收 critical 的人只訂一個，也讓 warning 可以單獨靜音。這份設定把 warning 全天推送、以較低的優先度降低打擾；[4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/) 把 warning 定義成工作時間處理，要照那個定義，以 Alertmanager 的 `time_intervals` 定義工作時段，再替 warning 開一條帶 `active_time_intervals` 的子路由（warning 原本由最上層的 receiver 接走，時段要掛在子路由上）：
+
+```yaml
+time_intervals:
+  - name: office-hours
+    time_intervals:
+      - weekdays: ['monday:friday']
+        times: [{start_time: '09:00', end_time: '18:00'}]
+        location: Asia/Taipei        # 時段依這個時區解讀；不寫時是 UTC
+route:
+  routes:
+    # ……Watchdog 與 critical 兩條在前，順序同〈路由樹：一則告警送到哪個 receiver〉
+    - matchers: [severity="warning"]
+      receiver: ntfy-warning
+      active_time_intervals: [office-hours]
+```
+
+實測時段以外的 warning 不送出，告警仍留在 Alertmanager 的告警清單裡（`amtool alert query` 列得出來），進入時段之後才送。`weekdays` 的範圍依星期日到星期六的順序寫，要寫週末時寫成兩個值 `['saturday', 'sunday']`；寫成 `'saturday:sunday'` 時 Alertmanager 以 `start day cannot be before end day` 拒絕載入設定，容器直接退出。`severity` 是 `info` 或 `none` 的告警（Watchdog 以外）沒有子路由接走時會落到最上層的 warning，要另開一條送到不通知的 receiver。
 
 把 receiver 從不送通知的換成實際送出通知的那一個時，已經在 Alertmanager 裡的告警會馬上補送：實測重新載入設定之後 3 秒，兩則原本就成立的 warning（磁碟剩餘空間、探測變慢）送到了 ntfy。第一次接上通知時，手機會先收到一批既有的告警。
 
@@ -167,6 +184,39 @@ receivers:
 ```
 
 `.Alerts.Firing` 只取組裡還在成立的告警，作用等同 ntfy 那一段範本裡逐則檢查 `status` 的寫法；整組解除時它是空的，所以和 ntfy 一樣另外寫「已解除」。這一段只以 `amtool check-config` 檢查過語法，沒有實際送到 Slack。
+
+## 本機測試：自架的 ntfy、Mailpit 與合成告警
+
+真實的 topic 與 SMTP 伺服器還沒準備好時，路由、ntfy 範本與 email 主旨都可以在本機確認：ntfy 與 Mailpit（一個收下所有郵件、以網頁與 API 顯示的測試用 SMTP 伺服器）各跑一個容器，和 Alertmanager 放在同一個 compose 網路裡。告警的內容留在這台電腦上，收到的推播以 ntfy 的 API 讀出，手機不必訂閱 topic。這兩個服務以一個只在測試時加入的 compose 檔加進來：
+
+```yaml
+# compose.notify-test.yml；測試時把它加進 .env 的 COMPOSE_FILE，測完拿掉
+services:
+  ntfy:
+    image: binwiederhier/ntfy:v2.30.0
+    command: serve
+    ports:
+      - "127.0.0.1:8090:80"      # 本機讀 ntfy 收到的訊息用
+  mailpit:
+    image: axllent/mailpit:v1.31.5
+    ports:
+      - "127.0.0.1:8025:8025"    # Mailpit 的網頁與 API
+```
+
+Alertmanager 以服務名稱連到兩者：ntfy 的網址以 `ntfy_url.py` 產生、伺服器寫 `http://ntfy/<topic>`（例如 `python3 ntfy_url.py http://ntfy/alerts-critical urgent default > secrets/ntfy-critical.url`），email 那一段的 `global` 寫 `smtp_smarthost: mailpit:1025` 與 `smtp_require_tls: false`。這兩處是測試用的值，換回真實的 topic 與 SMTP 伺服器時一起改掉。
+
+合成告警直接送進 Alertmanager，不經過 Prometheus 的規則：
+
+```sh
+# 標籤換成要測的路由會比對的標籤；summary 有空白或中文時，值要以雙引號包起來
+docker compose exec alertmanager amtool alert add --alertmanager.url=http://localhost:9093 \
+  alertname=HostDiskLow host=app-1 severity=critical --annotation='summary="app-1 的磁碟剩 5%"'
+# 不經過容器時，對 Alertmanager 的 API 送同樣的內容（本機發佈的連接埠換成自己的）
+curl -XPOST -H 'content-type: application/json' http://127.0.0.1:9093/api/v2/alerts \
+  -d '[{"labels":{"alertname":"HostDiskLow","host":"app-1","severity":"critical"},"annotations":{"summary":"app-1 的磁碟剩 5%"}}]'
+```
+
+`summary` 的值沒有雙引號時告警照樣建立，而 amtool 印出一段 matchers 解析器改版的警告，說它退回舊的解析方式。送出之後過一個 `group_wait`，以 `curl -s 'http://127.0.0.1:8090/alerts-critical/json?poll=1'` 讀 ntfy 收到的訊息（`alerts-critical` 換成 topic 名稱），每一則是一行 JSON，`title`、`message`、`priority` 三個欄位就是手機上會看到的標題、內容與提示強度；email 在 Mailpit 的網頁 `http://127.0.0.1:8025` 看。實測以 Alertmanager 0.34.1 送出上面那一則，30 秒後 ntfy 收到標題 `[firing] HostDiskLow app-1`、內容 `app-1 的磁碟剩 5%`、優先度 5 的訊息；一則帶著〈通知送不出去的偵測〉那條規則標籤的 `AlertmanagerNotificationsFailing`（`host=mon`、`integration=webhook`）經 `mail` receiver 送到 Mailpit，主旨是 `[FIRING:1] AlertmanagerNotificationsFailing mon (webhook monitoring warning)`。
 
 ## Watchdog：告警鏈本身的心跳
 
