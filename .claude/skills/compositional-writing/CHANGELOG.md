@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.44.0 — 新增 principle 卡 `physical-verbs-stand-in-for-content`：物理化清單裡每一個動詞依佔住的格分類（足夠性、失效結果、負擔、關係、可信度、字面或技術），各自要寫出的內容；負載情境分容量、過載、故障擴散、突發緩衝與耗盡時間並對應業界術語；容量數字只留在範例情境並標明來源。bank 物理化條目加入其他動詞的判讀，`word-choice-fits-concept-attributes` 補下游指標。
+
 **Version**: 1.43.0 — 物理化錯配的修法改寫：足夠性斷言裡的「撐」（撐得住、撐不起、撐不久、會垮、扛不住）與「問題」同一類，佔著需求與判斷標準的位置，改寫要寫出需求、判斷標準與機制，換成「足以支持」「維持不久」不算修好；描述關係的（掛在前提上、扛責任）照舊換成依賴、佐證、負責。物理條件的問法降為偵測方法。取消系統負載的豁免（「撐住尖峰流量」「拖垮 OLTP」要寫出負載量、判斷標準與瓶頸），結構連接（route table 掛在 subnet）仍合規。`word-choice-fits-concept-attributes` 新增〈足夠性斷言要寫出需求、判斷標準與機制〉一節，`question-answer-frame-blurs-problem-issue-request` 新增〈同一類的其他詞〉一節。
 
 **Version**: 1.42.0 — 新增三個 principle 卡與 bank 類別、補一條命名規則：`a-not-a-question-as-noun-clause`（正反問句當主語、受詞、介系詞受詞時沒有開頭標記；判讀分位置（讀到它之前是否有前導詞告訴讀者是問句）與謂語的判斷標準；bank 新增 PCRE2 pattern）、`parallel-clause-filled-with-the-topics-definition`（排比的變動格填了話題定義推得出的描述時資訊量是零；定義代換與語序翻轉兩個檢查；bank 新增無 pattern 的逐句讀類別）、`question-answer-frame-blurs-problem-issue-request`（「問題」同時指問句、故障、事項、主題與需求，「回答」不是元件的動作；SKILL.md〈每一句先填槽位再成句〉加框架詞也要過槽位一段；bank 新增框架詞 pattern）；`unnamed-halves-are-unextracted-variables` 補〈命名由句子結構完成，取名的動作不寫進正文〉一節（刪除測試；兩三個成員寫成「分成 A 與 B」，更多時用清單列名字），SKILL.md 命名段與 bank 的「命名的旁白」同步。來源是一篇服務端監控教材多輪審查期間一位讀者的指認。
