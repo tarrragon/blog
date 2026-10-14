@@ -15,7 +15,7 @@ description: >
   linux install, linux debug, systemd, authoritative state.
 license: MIT
 metadata:
-  version: 1.18.0
+  version: 1.19.0
   category: ops-diagnostics
 ---
 
@@ -89,7 +89,8 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 - **（從 remote-access 分流後）機器沒回應、域名解析不了、虛擬機開不起來、疑似磁碟滿 / 檔案系統唯讀連鎖** → [machine-unreachable](references/machine-unreachable.md)
 - **判程式活著沒 / 服務歸誰 / 服務 failed 或一直重啟(restart loop) / 鎖沒鎖 / session 存活 / 卡住是資源還是相容** → [process-service-state](references/process-service-state.md)
 - **進程活著卻不運作（GUI shell / bar 畫得出來但點不動、keybind 叫不出東西、焦點視窗打字正常）** → [process-service-state](references/process-service-state.md) 的「進程活著 ≠ 子系統活著」段（讀 shell 自己的 log + IPC，別信 pgrep）
-- **不想肉眼盯服務死活 / 要自動告警 / 怕整台機器當掉沒人知道 / 裝新系統或反覆除服務失敗（主動確認有無監控、無則建議建立）** → [process-service-state](references/process-service-state.md) 的「把失敗變成推播（OnFailure）」段（先確認有無監控 → 沒有優先建議 OnFailure + ntfy 公共站零 daemon → 要更高安全再自架 ntfy + 完整堆疊；含 hung 偵測、canary、topic 安全）
+- **不想肉眼盯服務死活 / 要自動告警 / 裝新系統或反覆除服務失敗（主動確認有無監控、無則建議建立）** → [process-service-state](references/process-service-state.md) 的「把失敗變成推播（OnFailure）」段（先確認有無監控 → 沒有優先建議 OnFailure + ntfy 公共站零 daemon → 要更高安全再自架 ntfy + 完整堆疊；含 hung 偵測、canary、topic 安全）
+- **怕整台機器當掉沒人知道** → 同段的「整台機器死掉的盲點」：體內的 OnFailure 靠 systemd，機器當掉時它跟著停，要用體外心跳（機器定時送心跳到另一個業者或另一台機器上的監看服務，訊號停了由那一邊通知）；監看服務的通知管道也不能經過這台機器
 - **主機很慢、load 很高，或虛擬機 / 容器 / 本機 Kubernetes 裡的元件一起逾時、反覆重啟（etcd request timed out、CrashLoopBackOff、探針逾時、port-forward 斷線）** → [process-service-state](references/process-service-state.md) 的「主機很慢、load 很高」段（先分 CPU、記憶體、I/O；先查宿主機再查叢集；停服務前先確定停的是瓶頸）
 - **權限被拒（Permission denied / EACCES / Operation not permitted / sudo 後冒 root-owned 檔）** → [process-service-state](references/process-service-state.md) 的權限段
 - **套件管理器失敗（pacman：db lock / keyring 簽章過期 / partial upgrade / mirror。apt：unable-to-locate / 批次 abort / dpkg lock / EOL archive 404 / node 爆量）** → [install-and-verify](references/install-and-verify.md) 的套件管理器段

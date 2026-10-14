@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.19.0 — machine-unreachable 新增「有外部觀察者時：先比對它們，再登入主機」段：心跳監看、外部探測與內部探測三者並排的判讀表（五種組合各自先查哪裡），心跳中斷時內部探測不可信，心跳與外部探測都正常而主機有說不出原因的異常時把監控主機被入侵列進候選；快速路由表補一列。SKILL.md 的監控路由拆開：「怕整台機器當掉沒人知道」改導向體外心跳（OnFailure 靠 systemd、機器當掉時跟著停），並寫明監看服務的通知管道不能經過這台機器。來源是一組單機監控盲區與跨網路連線文章的判讀表與審查。
+
 **Version**: 1.18.0 — process-service-state 新增「主機很慢、load 很高：先分 CPU、記憶體還是 I/O」段：三種資源在 macOS 與 Linux 的權威指令與判讀、load 高而 CPU 不高先看記憶體、虛擬機內叢集的連鎖症狀（etcd 逾時、控制平面重啟、CrashLoopBackOff、探針逾時、port-forward 斷線）先查宿主機、停東西前先確定瓶頸、恢復時間。SKILL.md 補權威來源速查表一列、症狀路由一條、反模式一條、三個觸發詞（load 很高、swap 滿、etcd 逾時）。來源是一次本機 kind 叢集在宿主機 swap 用滿時的實測。
 
 **Version**: 1.17.2 — 版本紀錄搬到同目錄的 `CHANGELOG.md`。skill 是 runtime 整份載入的檔案，而沒有任何規則要求任何人讀版本紀錄，留在 SKILL.md 等於每次叫用都付一次無效讀取。SKILL.md 末尾留一行指過去，版號的兩個住址改成「CHANGELOG.md 最上面那一條 + frontmatter 的 metadata.version」。skill 的指令內容一個字都沒改。
