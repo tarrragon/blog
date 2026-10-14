@@ -267,7 +267,7 @@ Prometheus 讀得到 Alertmanager 自己的指標，所以這件事可以寫成�
 
 email 本身送不出去時，送 email 的那一份照樣失敗，這一類由 ntfy 那一份送到手機；ntfy 與 email 同時壞掉時兩份都送不出去，要涵蓋這種情形，改用下面送到心跳監看服務的做法。
 
-另一種是送到心跳監看服務：在 healthchecks.io 上另開一個檢查，它的 ping 網址加上 `/fail` 就是回報失敗的網址，以一個 `send_resolved: false` 的 webhook receiver 送到那裡，由心跳監看服務自己的管道通知。不另開檢查、用心跳的那一個時，下一次 Watchdog 心跳最晚約 6 分鐘後（`repeat_interval` 加一個 `group_interval`）就把它翻回正常。以自架的 healthchecks 實測，`/fail` 送出之後約 2 秒寄出通知，同一個檢查在下一次一般的 ping 之後翻回正常；receiver 的設定見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/) 的〈Alertmanager 的兩個 receiver：心跳與送失敗的通知〉。
+另一種是送到心跳監看服務：在 healthchecks.io 上另開一個檢查，它的 ping 網址加上 `/fail` 就是回報失敗的網址，以一個 `send_resolved: false` 的 webhook receiver 送到那裡，由心跳監看服務自己的管道通知。不另開檢查、用心跳的那一個時，下一次 Watchdog 心跳最晚約 6 分鐘後（`repeat_interval` 加一個 `group_interval`）就把它翻回正常。以自架的 healthchecks 實測，`/fail` 送出之後約 2 秒寄出通知，同一個檢查在下一次一般的 ping 之後翻回正常；receiver 的設定見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/) 的〈Alertmanager 的 receiver 與路由：心跳與送失敗的通知〉。
 
 ## 延伸閱讀：告警規則、抑制與觀測的共命運
 

@@ -16,8 +16,8 @@ Dead man's switch（心跳監看）是一種反過來的告警：被監看的系
 
 ## 可觀察訊號與例子
 
-監看者以週期（period，預期的心跳間隔）與寬限（grace time，容許的延遲）判斷：最後一次收到心跳之後超過週期加寬限還沒有新的，就判定中斷。以開源的 healthchecks 實測，週期與寬限各設 1 分鐘，停掉 Alertmanager 之後，通知在最後一次心跳之後 2 分鐘寄出：判斷的起點是最後一次收到心跳的時間，不是系統停掉的時間（實測的時間線見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/) 的〈心跳中斷的演練〉）。healthchecks 這類服務另外提供回報失敗的網址（ping 網址加上 `/fail`），收到就立刻判定失敗，不必等週期。
+監看者以週期（period，預期的心跳間隔）與寬限（grace time，容許的延遲）判斷：最後一次收到心跳之後超過週期加寬限還沒有新的，就判定中斷。以開源的 healthchecks 實測，週期與寬限各設 1 分鐘，停掉送心跳的 Alertmanager 之後，通知在最後一次心跳之後 2 分鐘寄出：判斷的起點是最後一次收到心跳的時間，不是系統停掉的時間（實測的時間線見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/) 的〈心跳中斷的演練〉）。healthchecks 這類服務另外提供回報失敗的網址：服務替每個檢查項目發一個接收心跳的網址（ping 網址），加上 `/fail` 就是回報失敗，收到就立刻判定失敗，不必等週期。
 
 ## 判讀方式
 
-心跳的送出間隔要小於週期加寬限，而且要算進送出端的時間粒度：Alertmanager 只在 `group_interval` 的時間點檢查要不要重送，實際的間隔最長是 `repeat_interval` 加一個 `group_interval`（設定見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 的〈Watchdog：告警鏈本身的心跳〉）。監看者本身的通知管道也不能經過被監看的系統，否則心跳中斷的通知會走那條已經停掉的路。最後，心跳監看平時不會觸發，要刻意停掉被監看的系統演練一次，確認通知會到。
+心跳的送出間隔要小於週期加寬限，而且要算進送出端的時間粒度：Alertmanager 只在 `group_interval` 的時間點檢查要不要重送，實際的間隔最長是 `repeat_interval` 加一個 `group_interval`（設定見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 的〈Watchdog：告警鏈本身的心跳〉）。監看者本身的通知管道也不能經過被監看的系統，否則心跳中斷的通知會走那條已經停掉的路。監看者的中斷通知平時不會發出，它會不會發出、送不送得到人手上，只有刻意停掉被監看的系統才看得到，演練的時間線見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/) 的〈心跳中斷的演練〉。

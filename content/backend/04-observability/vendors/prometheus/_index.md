@@ -94,7 +94,7 @@ curl -s 'http://localhost:9090/api/v1/query?query=up' | jq '.data.result[].value
 - [多台主機的指標收集](multi-host-scraping/)：exporter 跟著主機與服務走、中央讀取與推送的架構、host 標籤、目標清單的來源、主機停掉與從清單消失的偵測
 - [Grafana 的對外存取](grafana-external-access/)：看的人能不能經由 SSH 或 VPN 連進來、有沒有固定來源網段時各自的存取方式，經由應用入口轉送的兩個問題，監控主機上專用反向代理的 compose、GF_SERVER_ROOT_URL、WebSocket、重建後的 502 與憑證，來源限制比對的位址，登入失敗的帳號鎖定與認證放置
 - [Alertmanager 的通知管道](alertmanager-notification-channels/)：路由樹、分組與三個時間參數、webhook 的前提與以 ntfy 推播（訊息範本與產生網址的腳本）、私密網址的 `*_file`、email 與 Slack、Watchdog 心跳的時間條件、通知送不出去的偵測與另一條路
-- [第三方心跳監看與外部探測服務](external-heartbeat-and-probe-services/)：第三方服務提供的外部位置、挑選條件（服務的位置、通知管道、送出的告警資料留在哪裡）、healthchecks 的 ping 網址、期限與寬限、`/fail`，Alertmanager 送心跳與送失敗通知的兩個 receiver，停掉 Alertmanager 的演練，外部探測服務的挑選條件
+- [第三方心跳監看與外部探測服務](external-heartbeat-and-probe-services/)：以第三方服務當監控主機失效域以外的觀察者，心跳監看服務的挑選條件，healthchecks 的 ping 網址、週期與寬限、`/fail` 與自架和託管版的回應差異，Alertmanager 送心跳與送失敗通知的 receiver 與路由順序、驗收與暫停，停掉 Alertmanager 的演練，外部探測服務的挑選條件
 - [在 Kubernetes 上接上監控](kubernetes-monitoring-entry/)：kube-prometheus-stack 的元件、CRD 與預設不持久化的儲存，ServiceMonitor 與 PrometheusRule 的選取，節點標籤（含 node-exporter），儀表板 sidecar 與 Grafana 的連法，chart 預設的 Alertmanager 路由不送通知，控制平面的讀取，單節點叢集的資源用量
 
 ## 進階主題（按需閱讀）
