@@ -83,6 +83,7 @@ rg -n '回答的問題|回答的是|問的是|問題是：' <檔案或目錄>
 - [#203 避免濫用泛用詞](/report/avoid-overused-generic-words/)——一個詞蓋過不同的具體情境；「問題」是同一個機制，多了一層應答框架。
 - [#372 正反問句嵌進句子當名詞](/report/a-not-a-question-as-noun-clause/)——應答框架的下游：內容被當成問句引出來，於是寫成正反問句。
 - [#373 排比句的變動格填了話題自己的定義](/report/parallel-clause-filled-with-the-topics-definition/)——同一篇的另一個框架詞「由 Z 接手」的後果。
+- [#375 物理動詞佔住的內容](/report/physical-verbs-stand-in-for-content/)——把同一個判斷推到撐、扛、垮、掛在、站得住每一個動詞：各自佔住的格不同（足夠性、失效結果、負擔、關係、可信度），改寫要寫出的內容也不同。
 - [#234 描述抽象概念要用貼合屬性的謂語](/report/word-choice-fits-concept-attributes/)——足夠性斷言裡的「撐」與「問題」同一類，都佔著內容的位置；那張卡的修法已改成寫出需求、判斷標準與機制。
 - [#367 切開一個集合之前先寫切分的依據，再替每一塊命名](/report/unnamed-halves-are-unextracted-variables/)——命名依序從業界術語找；建在譬喻框架上的自創術語（問題盲區）會把框架的歧義帶進名字裡。
 - [#355 教學定位被讀成教室講課](/report/teaching-is-not-lecturing/)——自問自答的判定標準是同一個裝置。
