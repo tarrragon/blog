@@ -66,7 +66,7 @@ RUM 的取樣策略跟 server-side trace sampling 類似：可以全收（低流
 
 ## Synthetic Monitoring
 
-Synthetic monitoring 用自動化的 [probe](/backend/knowledge-cards/probe/) 從外部網路定期發起請求，測量 availability 跟 latency。跟 RUM 的差異是 synthetic 是主動探測（沒有真實使用者也能跑），能 24/7 持續監控。
+Synthetic monitoring（[合成監控](/backend/knowledge-cards/synthetic-monitoring/)）用排程的探測程式從外部網路定期發起請求，測量 availability 跟 latency。跟 RUM 的差異是 synthetic 是主動探測（沒有真實使用者也能跑），能 24/7 持續監控。
 
 ### 適用場景
 

@@ -146,11 +146,14 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                            | 類型   | 前置條件         | 規模       |
-| --------------------------------------------------------------- | ------ | ---------------- | ---------- |
-| OpenTelemetry deep article：Sampling 策略、Auto-instrumentation | vendor | 無               | 2 篇（中） |
-| 案例反例補強（遷移失敗與訊號失真案例）                          | 案例   | 需先採集公開案例 | 中         |
-| 觀測欄位對齊 release / incident 決策欄位                        | 跨模組 | 需與 06、08 對齊 | 中         |
+| 項目                                                                                                                                                                                                                                                                         | 類型   | 前置條件         | 規模       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------------- | ---------- |
+| OpenTelemetry deep article：Sampling 策略、Auto-instrumentation                                                                                                                                                                                                              | vendor | 無               | 2 篇（中） |
+| 案例反例補強（遷移失敗與訊號失真案例）                                                                                                                                                                                                                                       | 案例   | 需先採集公開案例 | 中         |
+| 觀測欄位對齊 release / incident 決策欄位                                                                                                                                                                                                                                     | 跨模組 | 需與 06、08 對齊 | 中         |
+| Meta-monitoring 卡：觀察者自己消失時的規則（`up == 0`、`absent()`）與心跳，站內九篇用到而沒有名字；4.0 的訊號失真引用它                                                                                                                                                      | 知識卡 | 名稱先跑術語探針 | 1 張       |
+| Real User Monitoring 卡：4.0 與 synthetic-monitoring 卡以行內定義，主場在 4.10                                                                                                                                                                                               | 知識卡 | 無               | 1 張       |
+| 4.0 的回指：health-check-endpoint、small-service-host-layout、going-live/what-is-deploy、legacy-external-monitoring、operations-control-service-selection、service-failure-monitoring；synthetic-monitoring 卡在 4.25、external-heartbeat、legacy-external-monitoring 的入連 | 跨模組 | 無               | 小         |
 
 「個案前拓展空間」列的四個前置控制面（4.16-4.19）已全數完成，保留該段作為回寫路由的判斷標準參考。
 

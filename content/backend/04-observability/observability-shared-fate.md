@@ -94,6 +94,7 @@ tail sampling 是這個原則的具體做法：head [sampling](/backend/knowledg
 ## 交接路由
 
 - [4.3 tracing 與 context link](/backend/04-observability/tracing-context/)：正常情況下的 trace 傳播（本章是它失能時的設計）
+- [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)：觀測共命運在單一服務的監控鏈上對應的是位置盲區，各層由誰接手
 - [4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/)：SLO 訊號正常可用時的判讀
 - [4.7 cardinality 治理](/backend/04-observability/cardinality-cost-governance/)：cardinality 預算與 sampling 策略矩陣
 - [4.11 telemetry pipeline](/backend/04-observability/telemetry-pipeline/)：pipeline 自身的失敗定位
