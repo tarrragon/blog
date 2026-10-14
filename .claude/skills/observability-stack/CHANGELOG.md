@@ -2,7 +2,7 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
-**Version**: 1.9.0 — 〈監控所在層的盲區〉新增三條：主機外的觀察者要三個條件都過才算獨立（不共用失效域、通知管道與其帳號不經過被監控主機與監控主機、觀察者自己也被看著）；心跳只證明送心跳的那一條路，通知送不出去另以專用檢查項目的 `/fail` 偵測（子路由排前面帶 `continue: true`、以 `amtool config routes test` 確認順序、合成告警驗收、以暫停而非 ping 復原）；監控主機被入侵時心跳可被偽造、告警可被靜默，至少一個觀察者不經過任何可能被入侵的機器上的憑證。流程表兩列對應補上。新增 principle 卡 `independence-is-what-the-guarded-side-cannot-disable`。來源是一組監控與跨網路連線文章的實測（healthchecks 4.4、Alertmanager 0.34.1、amtool）與五輪審查。
+**Version**: 1.9.0 — 〈監控所在層的盲區〉新增三條：主機外的觀察者要三個條件都過才算獨立（不共用失效域、通知管道與其帳號不經過被監控主機與監控主機、觀察者自己也被看著）；心跳只證明送心跳的那一條路，通知送不出去另以專用檢查項目的 `/fail` 偵測（子路由排前面帶 `continue: true`、以 `amtool config routes test` 確認順序、合成告警驗收、以暫停而非 ping 復原）；主機外的訊號明寫兩種都要（外部探測與 Watchdog 心跳），三個條件逐個觀察者檢查、失效域寫明要對上想防的失效、託管服務算已有人看著、任何一項答不出來整個不成立；監控主機被入侵時心跳可被偽造、告警可被靜默，至少一個觀察者不經過任何可能被入侵的機器上的憑證。流程表兩列對應補上。新增 principle 卡 `independence-is-what-the-guarded-side-cannot-disable`。來源是一組監控與跨網路連線文章的實測（healthchecks 4.4、Alertmanager 0.34.1、amtool）與五輪審查。
 
 **Version**: 1.8.0 — 〈量測前的主機檢查〉加上記憶體與 swap（macOS `sysctl vm.swapusage`、Linux `free -h`）：load 高而 CPU 使用率不高時多半是記憶體壓力，虛擬機裡的元件逾時與重啟是連帶症狀，量到的數字不能拿來比較。來源是一次本機 kind 叢集在宿主機 swap 用滿時的實測。
 
