@@ -10,13 +10,22 @@ tags: ["devops", "high-availability", "failover", "disaster-recovery", "redundan
 
 ## 章節
 
-| 章節                                                                          | 回答什麼問題                                             |
-| ----------------------------------------------------------------------------- | -------------------------------------------------------- |
-| [單點故障盤點](/operations/06-high-availability/spof-inventory/)              | pre-mortem 反推、依賴 budget、按 blast radius 排序       |
-| [冗餘設計模式](/operations/06-high-availability/redundancy-patterns/)         | active-passive / active-active / multi-region、冗餘≠備份 |
-| [Failover 機制](/operations/06-high-availability/failover-mechanism/)         | 探活觸發、故障域、恢復順序的循環等待、rollback           |
-| [Disaster recovery 策略](/operations/06-high-availability/disaster-recovery/) | RTO/RPO、restore drill、恢復不是切回流量就結束           |
-| [高可用的成本](/operations/06-high-availability/ha-cost/)                     | 冗餘 2x、用停機代價衡量、可用性等級階梯                  |
+| 章節                                                                                      | 回答什麼問題                                                                                                        |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| [單點故障盤點](/operations/06-high-availability/spof-inventory/)                          | pre-mortem 反推、依賴 budget、按 blast radius 排序                                                                  |
+| [冗餘設計模式](/operations/06-high-availability/redundancy-patterns/)                     | active-passive / active-active / multi-region、冗餘≠備份                                                            |
+| [Failover 機制](/operations/06-high-availability/failover-mechanism/)                     | 探活觸發、故障域、恢復順序的循環等待、rollback                                                                      |
+| [Disaster recovery 策略](/operations/06-high-availability/disaster-recovery/)             | RTO/RPO、restore drill、恢復不是切回流量就結束                                                                      |
+| [高可用的成本](/operations/06-high-availability/ha-cost/)                                 | 冗餘 2x、用停機代價衡量、可用性等級階梯                                                                             |
+| [小型服務的兩到三台主機配置](/operations/06-high-availability/small-service-host-layout/) | 第二台給監控、應用副本或資料庫各換到什麼，監控跨業者經 VPN 讀取，兩台互相監看，第三台的兩種配置，雲端業者負責的範圍 |
+
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                                                                              | 類型 | 前置條件       | 規模 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | -------------- | ---- |
+| 〈小型服務的兩到三台主機配置〉的實機驗證：監控主機在另一個業者或地端、經 VPN 讀取、兩台互相監看與兩地連線中斷的誤判，驗完把設計段落改成實測與指令 | 主章 | 第二台主機啟動 | 中   |
 
 ## 跨分類引用
 

@@ -355,52 +355,55 @@ weight: -1
 
 ## 可觀測性與可靠性
 
-| 卡片                                                                       | 核心問題                                     | 常見出現位置                                      |
-| -------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------- |
-| [Log](/backend/knowledge-cards/log/)                                       | 單一事件如何留下可搜尋的上下文               | incident、debug、audit                            |
-| [Out-of-Band Signal](/backend/knowledge-cards/out-of-band-signal/)         | 生產棧全掛時還有什麼訊號活著                 | watchdog、status page、shared fate                |
-| [Log Schema](/backend/knowledge-cards/log-schema/)                         | log 欄位如何支援搜尋與關聯                   | structured log、incident                          |
-| [Metrics](/backend/knowledge-cards/metrics/)                               | 指標如何描述趨勢、容量與健康                 | Prometheus、dashboard                             |
-| [Histogram](/backend/knowledge-cards/histogram/)                           | 如何用分桶統計延遲與分布                     | latency、SLO                                      |
-| [Bucket](/backend/knowledge-cards/bucket/)                                 | histogram 分桶如何影響解析度                 | metrics、cost                                     |
-| [Percentile](/backend/knowledge-cards/percentile/)                         | p95 / p99 如何描述長尾延遲                   | latency、UX                                       |
-| [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)         | label 組合數如何影響成本                     | metrics、storage、query                           |
-| [Trace](/backend/knowledge-cards/trace/)                                   | 跨服務流程如何重建路徑與耗時                 | tracing、dependency                               |
-| [Trace Context](/backend/knowledge-cards/trace-context/)                   | 跨服務 request 如何串起路徑                  | tracing、OpenTelemetry                            |
-| [Trace ID](/backend/knowledge-cards/trace-id/)                             | 同一條 trace 的識別碼                        | tracing、log correlation                          |
-| [Span](/backend/knowledge-cards/span/)                                     | trace 中一段工作如何記錄耗時                 | tracing、dependency                               |
-| [Correlation ID](/backend/knowledge-cards/correlation-id/)                 | 跨事件與跨服務如何關聯業務流程               | order、payment、queue                             |
-| [Request ID](/backend/knowledge-cards/request-id/)                         | 單次 request 如何被追蹤                      | API、support                                      |
-| [Dashboard](/backend/knowledge-cards/dashboard/)                           | 多個觀測訊號如何組成服務狀態畫面             | incident、capacity、SLO                           |
-| [SLI / SLO](/backend/knowledge-cards/sli-slo/)                             | 服務品質如何連到產品承諾                     | alert、incident、error budget                     |
-| [Error Budget](/backend/knowledge-cards/error-budget/)                     | SLO 允許的失敗額度如何決策                   | release、reliability                              |
-| [Burn Rate](/backend/knowledge-cards/burn-rate/)                           | error budget 消耗速度如何告警                | SLO alert                                         |
-| [Sampling](/backend/knowledge-cards/sampling/)                             | 如何抽樣觀測資料以控制成本                   | trace、log                                        |
-| [Alert](/backend/knowledge-cards/alert/)                                   | 服務症狀如何轉成可行動通知                   | on-call、SLO、incident                            |
-| [Runbook](/backend/knowledge-cards/runbook/)                               | 事故判斷與操作步驟如何標準化                 | on-call、incident、replay                         |
-| [Alert Runbook](/backend/knowledge-cards/alert-runbook/)                   | 告警如何連到可執行排障流程                   | on-call、dashboard                                |
-| [Symptom-Based Alert](/backend/knowledge-cards/symptom-based-alert/)       | 告警如何優先偵測產品症狀                     | SLO、on-call                                      |
-| [Runbook Link](/backend/knowledge-cards/runbook-link/)                     | 告警如何直接連到處理流程                     | alert、dashboard                                  |
-| [Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)                   | 低品質告警如何降低反應品質                   | on-call、alert policy                             |
-| [Alert Inhibition（告警抑制）](/backend/knowledge-cards/alert-inhibition/) | 原因成立時如何壓下它造成的症狀告警           | Alertmanager、inhibit_rules、分組                 |
-| [降級](/backend/knowledge-cards/degradation/)                              | 服務部分能力失效時如何保留核心功能           | failover、fallback、capacity                      |
-| [Circuit Breaker](/backend/knowledge-cards/circuit-breaker/)               | 下游持續失敗時如何暫停呼叫                   | timeout、fallback、degradation                    |
-| [Failover](/backend/knowledge-cards/failover/)                             | 主要路徑失效時如何切到備援                   | HA、region、provider                              |
-| [Autoscaling](/backend/knowledge-cards/autoscaling/)                       | 容量如何依指標自動擴縮                       | HPA、capacity、traffic burst                      |
-| [Rolling Update](/backend/knowledge-cards/rolling-update/)                 | 版本如何逐批替換並維持可用                   | deployment、release                               |
-| [Service Registry](/backend/knowledge-cards/service-registry/)             | 服務實例如何被註冊、維護與摘除               | heartbeat、TTL、metadata                          |
-| [Service Discovery](/backend/knowledge-cards/service-discovery/)           | 服務實例如何被查找與路由                     | registry、DNS、load balancing                     |
-| [停機](/backend/knowledge-cards/downtime/)                                 | 服務中斷時要先保護哪些產品結果               | incident、SLO、deployment                         |
-| [Readiness](/backend/knowledge-cards/readiness/)                           | instance 何時可以安全接收流量                | Kubernetes、load balancer、rollout                |
-| [Liveness](/backend/knowledge-cards/health-check-liveness/)                | 平台如何判斷 process 是否仍然存活            | Kubernetes、systemd                               |
-| [Graceful Shutdown](/backend/knowledge-cards/graceful-shutdown/)           | instance 停止前如何排空流量與保存狀態        | deployment、worker、long connection               |
-| [Recording Rule](/backend/knowledge-cards/recording-rule/)                 | 聚合計算如何從查詢時推到寫入時               | Prometheus、預聚合                                |
-| [Rollup / Downsampling](/backend/knowledge-cards/rollup/)                  | 時序資料如何隨時間降低精度                   | 保留期、儲存成本                                  |
-| [Storage Tiering](/backend/knowledge-cards/storage-tiering/)               | 資料如何按熱度分層儲存                       | 查詢速度、成本                                    |
-| [Resiliency Matrix](/backend/knowledge-cards/resiliency-matrix/)           | 每個失敗模式的防護狀態如何被盤點             | 交叉矩陣、驗證覆蓋                                |
-| [Fuzz Test](/backend/knowledge-cards/fuzz-test/)                           | 解析器與邊界處理如何用隨機輸入驗證           | 變異輸入、健壯性                                  |
-| [Toil](/backend/knowledge-cards/toil/)                                     | 重複且無永久價值的工作如何成為治理對象       | 自動化、值班負荷                                  |
-| [Relabeling（標籤改寫）](/backend/knowledge-cards/relabeling/)             | 讀取對象與指標的標籤在哪個時間點被改寫或丟掉 | relabel_configs、__meta_*、metric_relabel_configs |
+| 卡片                                                                                                 | 核心問題                                     | 常見出現位置                                      |
+| ---------------------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------- |
+| [Log](/backend/knowledge-cards/log/)                                                                 | 單一事件如何留下可搜尋的上下文               | incident、debug、audit                            |
+| [Out-of-Band Signal](/backend/knowledge-cards/out-of-band-signal/)                                   | 生產棧全掛時還有什麼訊號活著                 | watchdog、status page、shared fate                |
+| [Failure Domain（失效域）](/backend/knowledge-cards/failure-domain/)                                 | 哪些元件會因為同一個原因一起停掉             | 冗餘、監控位置、correlated failure                |
+| [Dead Man's Switch（心跳監看）](/backend/knowledge-cards/dead-mans-switch/)                          | 系統停掉發不出告警時由誰發現                 | Watchdog、healthchecks、排程工作                  |
+| [Shared Responsibility Model（責任分擔模型）](/backend/knowledge-cards/shared-responsibility-model/) | 雲端業者與使用者各自處理哪些故障與攻擊       | IaaS、DDoS、WAF、自動擴充                         |
+| [Log Schema](/backend/knowledge-cards/log-schema/)                                                   | log 欄位如何支援搜尋與關聯                   | structured log、incident                          |
+| [Metrics](/backend/knowledge-cards/metrics/)                                                         | 指標如何描述趨勢、容量與健康                 | Prometheus、dashboard                             |
+| [Histogram](/backend/knowledge-cards/histogram/)                                                     | 如何用分桶統計延遲與分布                     | latency、SLO                                      |
+| [Bucket](/backend/knowledge-cards/bucket/)                                                           | histogram 分桶如何影響解析度                 | metrics、cost                                     |
+| [Percentile](/backend/knowledge-cards/percentile/)                                                   | p95 / p99 如何描述長尾延遲                   | latency、UX                                       |
+| [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)                                   | label 組合數如何影響成本                     | metrics、storage、query                           |
+| [Trace](/backend/knowledge-cards/trace/)                                                             | 跨服務流程如何重建路徑與耗時                 | tracing、dependency                               |
+| [Trace Context](/backend/knowledge-cards/trace-context/)                                             | 跨服務 request 如何串起路徑                  | tracing、OpenTelemetry                            |
+| [Trace ID](/backend/knowledge-cards/trace-id/)                                                       | 同一條 trace 的識別碼                        | tracing、log correlation                          |
+| [Span](/backend/knowledge-cards/span/)                                                               | trace 中一段工作如何記錄耗時                 | tracing、dependency                               |
+| [Correlation ID](/backend/knowledge-cards/correlation-id/)                                           | 跨事件與跨服務如何關聯業務流程               | order、payment、queue                             |
+| [Request ID](/backend/knowledge-cards/request-id/)                                                   | 單次 request 如何被追蹤                      | API、support                                      |
+| [Dashboard](/backend/knowledge-cards/dashboard/)                                                     | 多個觀測訊號如何組成服務狀態畫面             | incident、capacity、SLO                           |
+| [SLI / SLO](/backend/knowledge-cards/sli-slo/)                                                       | 服務品質如何連到產品承諾                     | alert、incident、error budget                     |
+| [Error Budget](/backend/knowledge-cards/error-budget/)                                               | SLO 允許的失敗額度如何決策                   | release、reliability                              |
+| [Burn Rate](/backend/knowledge-cards/burn-rate/)                                                     | error budget 消耗速度如何告警                | SLO alert                                         |
+| [Sampling](/backend/knowledge-cards/sampling/)                                                       | 如何抽樣觀測資料以控制成本                   | trace、log                                        |
+| [Alert](/backend/knowledge-cards/alert/)                                                             | 服務症狀如何轉成可行動通知                   | on-call、SLO、incident                            |
+| [Runbook](/backend/knowledge-cards/runbook/)                                                         | 事故判斷與操作步驟如何標準化                 | on-call、incident、replay                         |
+| [Alert Runbook](/backend/knowledge-cards/alert-runbook/)                                             | 告警如何連到可執行排障流程                   | on-call、dashboard                                |
+| [Symptom-Based Alert](/backend/knowledge-cards/symptom-based-alert/)                                 | 告警如何優先偵測產品症狀                     | SLO、on-call                                      |
+| [Runbook Link](/backend/knowledge-cards/runbook-link/)                                               | 告警如何直接連到處理流程                     | alert、dashboard                                  |
+| [Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)                                             | 低品質告警如何降低反應品質                   | on-call、alert policy                             |
+| [Alert Inhibition（告警抑制）](/backend/knowledge-cards/alert-inhibition/)                           | 原因成立時如何壓下它造成的症狀告警           | Alertmanager、inhibit_rules、分組                 |
+| [降級](/backend/knowledge-cards/degradation/)                                                        | 服務部分能力失效時如何保留核心功能           | failover、fallback、capacity                      |
+| [Circuit Breaker](/backend/knowledge-cards/circuit-breaker/)                                         | 下游持續失敗時如何暫停呼叫                   | timeout、fallback、degradation                    |
+| [Failover](/backend/knowledge-cards/failover/)                                                       | 主要路徑失效時如何切到備援                   | HA、region、provider                              |
+| [Autoscaling](/backend/knowledge-cards/autoscaling/)                                                 | 容量如何依指標自動擴縮                       | HPA、capacity、traffic burst                      |
+| [Rolling Update](/backend/knowledge-cards/rolling-update/)                                           | 版本如何逐批替換並維持可用                   | deployment、release                               |
+| [Service Registry](/backend/knowledge-cards/service-registry/)                                       | 服務實例如何被註冊、維護與摘除               | heartbeat、TTL、metadata                          |
+| [Service Discovery](/backend/knowledge-cards/service-discovery/)                                     | 服務實例如何被查找與路由                     | registry、DNS、load balancing                     |
+| [停機](/backend/knowledge-cards/downtime/)                                                           | 服務中斷時要先保護哪些產品結果               | incident、SLO、deployment                         |
+| [Readiness](/backend/knowledge-cards/readiness/)                                                     | instance 何時可以安全接收流量                | Kubernetes、load balancer、rollout                |
+| [Liveness](/backend/knowledge-cards/health-check-liveness/)                                          | 平台如何判斷 process 是否仍然存活            | Kubernetes、systemd                               |
+| [Graceful Shutdown](/backend/knowledge-cards/graceful-shutdown/)                                     | instance 停止前如何排空流量與保存狀態        | deployment、worker、long connection               |
+| [Recording Rule](/backend/knowledge-cards/recording-rule/)                                           | 聚合計算如何從查詢時推到寫入時               | Prometheus、預聚合                                |
+| [Rollup / Downsampling](/backend/knowledge-cards/rollup/)                                            | 時序資料如何隨時間降低精度                   | 保留期、儲存成本                                  |
+| [Storage Tiering](/backend/knowledge-cards/storage-tiering/)                                         | 資料如何按熱度分層儲存                       | 查詢速度、成本                                    |
+| [Resiliency Matrix](/backend/knowledge-cards/resiliency-matrix/)                                     | 每個失敗模式的防護狀態如何被盤點             | 交叉矩陣、驗證覆蓋                                |
+| [Fuzz Test](/backend/knowledge-cards/fuzz-test/)                                                     | 解析器與邊界處理如何用隨機輸入驗證           | 變異輸入、健壯性                                  |
+| [Toil](/backend/knowledge-cards/toil/)                                                               | 重複且無永久價值的工作如何成為治理對象       | 自動化、值班負荷                                  |
+| [Relabeling（標籤改寫）](/backend/knowledge-cards/relabeling/)                                       | 讀取對象與指標的標籤在哪個時間點被改寫或丟掉 | relabel_configs、__meta_*、metric_relabel_configs |
 
 ## 效能工程與容量規劃
 

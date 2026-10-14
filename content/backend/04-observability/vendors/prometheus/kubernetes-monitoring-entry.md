@@ -2,7 +2,7 @@
 title: "在 Kubernetes 上接上監控：kube-prometheus-stack 的元件、ServiceMonitor 與 PrometheusRule 的選取、節點標籤、儀表板 sidecar、Alertmanager 的預設路由、控制平面的讀取與單節點叢集的資源用量"
 date: 2026-10-13
 description: "在 Kubernetes 上以 kube-prometheus-stack 接上監控：chart 裝了哪些元件與 CRD，讀取對象與告警規則改以 ServiceMonitor、PrometheusRule 宣告之後由誰轉成 Prometheus 的設定，release 標籤決定哪些宣告會被選中，主機標籤改成節點標籤，儀表板經由 ConfigMap 與 sidecar 載入，Alertmanager 預設不送任何通知，以及控制平面元件只綁本機時讀不到的原因、單節點叢集上的資源用量與記憶體不足時的表現"
-weight: 18
+weight: 19
 tags: ["backend", "observability", "vendor", "prometheus", "kubernetes"]
 ---
 
