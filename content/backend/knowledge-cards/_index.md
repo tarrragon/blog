@@ -388,6 +388,7 @@ weight: -1
 | [Runbook Link](/backend/knowledge-cards/runbook-link/)                                                           | 告警如何直接連到處理流程                     | alert、dashboard                                  |
 | [Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)                                                         | 低品質告警如何降低反應品質                   | on-call、alert policy                             |
 | [Alert Inhibition（告警抑制）](/backend/knowledge-cards/alert-inhibition/)                                       | 原因成立時如何壓下它造成的症狀告警           | Alertmanager、inhibit_rules、分組                 |
+| [Alert Silence（告警靜音）](/backend/knowledge-cards/alert-silence/)                                             | 維護期間如何暫停告警通知、靜音過期前藏住什麼 | Alertmanager、amtool、開班檢查                    |
 | [降級](/backend/knowledge-cards/degradation/)                                                                    | 服務部分能力失效時如何保留核心功能           | failover、fallback、capacity                      |
 | [Circuit Breaker](/backend/knowledge-cards/circuit-breaker/)                                                     | 下游持續失敗時如何暫停呼叫                   | timeout、fallback、degradation                    |
 | [Failover](/backend/knowledge-cards/failover/)                                                                   | 主要路徑失效時如何切到備援                   | HA、region、provider                              |
@@ -445,46 +446,49 @@ weight: -1
 
 ## 事故處理與復盤
 
-| 卡片                                                                                       | 核心問題                             | 常見出現位置                         |
-| ------------------------------------------------------------------------------------------ | ------------------------------------ | ------------------------------------ |
-| [On-Call](/backend/knowledge-cards/on-call/)                                               | 值班制度如何承接告警與事故流程       | paging、handover、incident           |
-| [Cohort](/backend/knowledge-cards/cohort/)                                                 | 實驗與發布的影響範圍用什麼單位縮限   | blast radius、feature flag、canary   |
-| [FIT (Failure Injection Testing)](/backend/knowledge-cards/fit-failure-injection-testing/) | 請求路徑注入如何驗證失敗處理         | chaos、Netflix、blast radius         |
-| [Handover Protocol](/backend/knowledge-cards/handover-protocol/)                           | 值班或事故責任如何安全交接           | on-call、escalation、incident        |
-| [Playbook](/backend/knowledge-cards/playbook/)                                             | 場景化處置如何快速啟動與執行         | incident workflow、recovery          |
-| [CI Pipeline](/backend/knowledge-cards/ci-pipeline/)                                       | 合併前如何自動驗證品質與相容性       | tests、checks、merge gate            |
-| [Load Test](/backend/knowledge-cards/load-test/)                                           | 預期流量下如何驗證容量與延遲         | performance、SLO、capacity           |
-| [Chaos Test](/backend/knowledge-cards/chaos-test/)                                         | 受控故障注入如何驗證韌性             | resilience、failover、runbook        |
-| [Game Day](/backend/knowledge-cards/game-day/)                                             | 事故演練如何驗證流程與協作           | drill、readiness、training           |
-| [Incident Severity](/backend/knowledge-cards/incident-severity/)                           | 事故如何依產品影響分級               | on-call、incident、SLO               |
-| [Incident Command System](/backend/knowledge-cards/incident-command-system/)               | 事故期間如何分配指揮與執行角色       | commander、scribe、owner             |
-| [Incident Communication Channel](/backend/knowledge-cards/incident-communication-channel/) | 事故期間如何同步對內對外資訊         | internal chat、status update、bridge |
-| [Escalation Policy](/backend/knowledge-cards/escalation-policy/)                           | 事故無回應或無進展時如何升級         | on-call、paging、handover            |
-| [Incident Timeline](/backend/knowledge-cards/incident-timeline/)                           | 事故事件如何形成一致時間軸           | incident log、communication          |
-| [Evidence Package](/backend/knowledge-cards/evidence-package/)                             | 觀測與事故證據如何交接與回放         | observability、verification、PIR     |
-| [Time Range](/backend/knowledge-cards/time-range/)                                         | 證據如何保留明確時間窗               | evidence、incident timeline          |
-| [Query Link](/backend/knowledge-cards/query-link/)                                         | 證據如何保留可重跑查詢入口           | evidence、handoff                    |
-| [Data Quality](/backend/knowledge-cards/data-quality/)                                     | 證據如何標示完整度與限制             | evidence、sampling、freshness        |
-| [Confidence](/backend/knowledge-cards/confidence/)                                         | 證據如何標示判讀信心等級             | evidence、gate decision              |
-| [Known Gap](/backend/knowledge-cards/known-gap/)                                           | 證據如何保存已知缺口                 | evidence、PIR、readiness             |
-| [Incident Decision Log](/backend/knowledge-cards/incident-decision-log/)                   | 事故決策如何保存證據與回退條件       | IC handoff、PIR、status update       |
-| [Steady State](/backend/knowledge-cards/steady-state/)                                     | 實驗與事故恢復如何定義成功狀態       | chaos、DR、recovery                  |
-| [Blast Radius](/backend/knowledge-cards/blast-radius/)                                     | 故障影響面如何估算與隔離             | dependency、shared resource          |
-| [Noisy Neighbor（共用資源的鄰居干擾）](/backend/knowledge-cards/noisy-neighbor/)           | 共用同一份硬體的工作負載如何互相拖慢 | 共用主機、虛擬機、steal              |
-| [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)                           | 事故期間何時回滾與回切               | deployment、release gate             |
-| [Post-Incident Review](/backend/knowledge-cards/post-incident-review/)                     | 事故後如何形成改進閉環               | retrospective、action items          |
-| [RCA](/backend/knowledge-cards/rca/)                                                       | 根因分析如何從證據推導改進           | timeline、control gap                |
-| [RTO](/backend/knowledge-cards/rto/)                                                       | 服務回復時間目標如何定義             | SLA/SLO、DR                          |
-| [RPO](/backend/knowledge-cards/rpo/)                                                       | 可接受資料損失窗口如何定義           | backup、replication                  |
-| [MTTR](/backend/knowledge-cards/mttr/)                                                     | 平均修復時間如何反映處置能力         | incident metrics、review             |
-| [Point-in-Time Recovery](/backend/knowledge-cards/point-in-time-recovery/)                 | 資料如何還原到過去任意時間點         | base backup、WAL、RPO                |
-| [Corruption Recovery](/backend/knowledge-cards/corruption-recovery/)                       | 資料損毀事故如何辨識來源並處置       | checksum、evidence、restore          |
-| [Containment](/backend/knowledge-cards/containment/)                                       | 擴散面如何被限制以爭取回復時間       | 止血、隔離                           |
-| [Impact Scope](/backend/knowledge-cards/impact-scope/)                                     | 受影響範圍如何被盤點                 | 通報、責任判讀                       |
-| [Stakeholder Mapping](/backend/knowledge-cards/stakeholder-mapping/)                       | 通報對象如何分層並對應 owner         | 分層通報、對外溝通                   |
-| [Status Page](/backend/knowledge-cards/status-page/)                                       | 對外狀態頁如何承接可用性承諾         | 通報、可用性承諾                     |
-| [Action Item Closure](/backend/knowledge-cards/action-item-closure/)                       | 復盤的行動項如何被驗證完成           | 復盤、驗收證據                       |
-| [Session Invalidation](/backend/knowledge-cards/session-invalidation/)                     | 事件之後既有會話如何失效             | 重放、撤銷                           |
+| 卡片                                                                                       | 核心問題                                   | 常見出現位置                         |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------ | ------------------------------------ |
+| [On-Call](/backend/knowledge-cards/on-call/)                                               | 值班制度如何承接告警與事故流程             | paging、handover、incident           |
+| [Tiered Support（分層支援）](/backend/knowledge-cards/tiered-support/)                     | 使用者回報由哪一層處理、何時往上轉         | 客服、技術支援、轉單                 |
+| [Known Error（已知錯誤）](/backend/knowledge-cards/known-error/)                           | 已確認未修好的問題怎麼讓客服與值班照著處理 | ITIL、KEDB、替代做法                 |
+| [Knowledge-Centered Service（KCS）](/backend/knowledge-cards/knowledge-centered-service/)  | 處理回報的當下怎麼留下下一次可用的答案     | 知識文章、Solve Loop、客服           |
+| [Cohort](/backend/knowledge-cards/cohort/)                                                 | 實驗與發布的影響範圍用什麼單位縮限         | blast radius、feature flag、canary   |
+| [FIT (Failure Injection Testing)](/backend/knowledge-cards/fit-failure-injection-testing/) | 請求路徑注入如何驗證失敗處理               | chaos、Netflix、blast radius         |
+| [Handover Protocol](/backend/knowledge-cards/handover-protocol/)                           | 值班或事故責任如何安全交接                 | on-call、escalation、incident        |
+| [Playbook](/backend/knowledge-cards/playbook/)                                             | 場景化處置如何快速啟動與執行               | incident workflow、recovery          |
+| [CI Pipeline](/backend/knowledge-cards/ci-pipeline/)                                       | 合併前如何自動驗證品質與相容性             | tests、checks、merge gate            |
+| [Load Test](/backend/knowledge-cards/load-test/)                                           | 預期流量下如何驗證容量與延遲               | performance、SLO、capacity           |
+| [Chaos Test](/backend/knowledge-cards/chaos-test/)                                         | 受控故障注入如何驗證韌性                   | resilience、failover、runbook        |
+| [Game Day](/backend/knowledge-cards/game-day/)                                             | 事故演練如何驗證流程與協作                 | drill、readiness、training           |
+| [Incident Severity](/backend/knowledge-cards/incident-severity/)                           | 事故如何依產品影響分級                     | on-call、incident、SLO               |
+| [Incident Command System](/backend/knowledge-cards/incident-command-system/)               | 事故期間如何分配指揮與執行角色             | commander、scribe、owner             |
+| [Incident Communication Channel](/backend/knowledge-cards/incident-communication-channel/) | 事故期間如何同步對內對外資訊               | internal chat、status update、bridge |
+| [Escalation Policy](/backend/knowledge-cards/escalation-policy/)                           | 事故無回應或無進展時如何升級               | on-call、paging、handover            |
+| [Incident Timeline](/backend/knowledge-cards/incident-timeline/)                           | 事故事件如何形成一致時間軸                 | incident log、communication          |
+| [Evidence Package](/backend/knowledge-cards/evidence-package/)                             | 觀測與事故證據如何交接與回放               | observability、verification、PIR     |
+| [Time Range](/backend/knowledge-cards/time-range/)                                         | 證據如何保留明確時間窗                     | evidence、incident timeline          |
+| [Query Link](/backend/knowledge-cards/query-link/)                                         | 證據如何保留可重跑查詢入口                 | evidence、handoff                    |
+| [Data Quality](/backend/knowledge-cards/data-quality/)                                     | 證據如何標示完整度與限制                   | evidence、sampling、freshness        |
+| [Confidence](/backend/knowledge-cards/confidence/)                                         | 證據如何標示判讀信心等級                   | evidence、gate decision              |
+| [Known Gap](/backend/knowledge-cards/known-gap/)                                           | 證據如何保存已知缺口                       | evidence、PIR、readiness             |
+| [Incident Decision Log](/backend/knowledge-cards/incident-decision-log/)                   | 事故決策如何保存證據與回退條件             | IC handoff、PIR、status update       |
+| [Steady State](/backend/knowledge-cards/steady-state/)                                     | 實驗與事故恢復如何定義成功狀態             | chaos、DR、recovery                  |
+| [Blast Radius](/backend/knowledge-cards/blast-radius/)                                     | 故障影響面如何估算與隔離                   | dependency、shared resource          |
+| [Noisy Neighbor（共用資源的鄰居干擾）](/backend/knowledge-cards/noisy-neighbor/)           | 共用同一份硬體的工作負載如何互相拖慢       | 共用主機、虛擬機、steal              |
+| [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)                           | 事故期間何時回滾與回切                     | deployment、release gate             |
+| [Post-Incident Review](/backend/knowledge-cards/post-incident-review/)                     | 事故後如何形成改進閉環                     | retrospective、action items          |
+| [RCA](/backend/knowledge-cards/rca/)                                                       | 根因分析如何從證據推導改進                 | timeline、control gap                |
+| [RTO](/backend/knowledge-cards/rto/)                                                       | 服務回復時間目標如何定義                   | SLA/SLO、DR                          |
+| [RPO](/backend/knowledge-cards/rpo/)                                                       | 可接受資料損失窗口如何定義                 | backup、replication                  |
+| [MTTR](/backend/knowledge-cards/mttr/)                                                     | 平均修復時間如何反映處置能力               | incident metrics、review             |
+| [Point-in-Time Recovery](/backend/knowledge-cards/point-in-time-recovery/)                 | 資料如何還原到過去任意時間點               | base backup、WAL、RPO                |
+| [Corruption Recovery](/backend/knowledge-cards/corruption-recovery/)                       | 資料損毀事故如何辨識來源並處置             | checksum、evidence、restore          |
+| [Containment](/backend/knowledge-cards/containment/)                                       | 擴散面如何被限制以爭取回復時間             | 止血、隔離                           |
+| [Impact Scope](/backend/knowledge-cards/impact-scope/)                                     | 受影響範圍如何被盤點                       | 通報、責任判讀                       |
+| [Stakeholder Mapping](/backend/knowledge-cards/stakeholder-mapping/)                       | 通報對象如何分層並對應 owner               | 分層通報、對外溝通                   |
+| [Status Page](/backend/knowledge-cards/status-page/)                                       | 對外狀態頁如何承接可用性承諾               | 通報、可用性承諾                     |
+| [Action Item Closure](/backend/knowledge-cards/action-item-closure/)                       | 復盤的行動項如何被驗證完成                 | 復盤、驗收證據                       |
+| [Session Invalidation](/backend/knowledge-cards/session-invalidation/)                     | 事件之後既有會話如何失效                   | 重放、撤銷                           |
 
 ## 資安與資料保護
 
