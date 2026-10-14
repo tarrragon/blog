@@ -44,7 +44,7 @@ Log 的寫入格式跟讀取需求是兩個不同的設計問題。寫入追求 
 
 ### 即席診斷查詢
 
-事故中的查詢要在秒級內定位問題。典型操作是拿到一個 [request id](/backend/knowledge-cards/request-id/) 或 error code，加上 time window，撈出相關事件鏈。
+事故中的查詢要在秒級內定位問題。典型操作是拿到一個 [request id](/backend/knowledge-cards/request-id/) 或 error code，加上 time window，撈出相關事件鏈。終端使用者經由客服回報時，request id 從哪裡來、沒抄下時怎麼退回以帳號與時間查，見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#客服收件的欄位)。
 
 即席查詢的索引策略是把高頻過濾欄位放進結構化索引：service name、log level、error code、[request id](/backend/knowledge-cards/request-id/)、[trace id](/backend/knowledge-cards/trace-id/)、[tenant boundary](/backend/knowledge-cards/tenant-boundary/)。這些欄位的共同特徵是有界或半有界（error code 有限、request id 雖然無界但查詢時一定帶精確值），查詢時用等值匹配或短範圍掃描。
 

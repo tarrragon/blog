@@ -281,13 +281,17 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                                                                              | 類型   | 前置條件               | 規模       |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------------------- | ---------- |
-| 六個 T1 vendor 的 deep article（Grafana OnCall / incident.io / FireHydrant / Rootly / Instatus / Jeli）                                                           | vendor | 無                     | 6 篇（大） |
-| 案例深挖批次 A / B（T1 補第二事件、T2/T3 補不同事故型態）                                                                                                         | 案例   | 無                     | 大         |
-| 案例的 intake、decision、impact、automation 教訓回寫主章（8.18-8.22）                                                                                             | 主章   | 依賴案例深挖批次的產出 | 中         |
-| 補齊 04 / 05 / 06 / 07 的交接連結                                                                                                                                 | 跨模組 | 無                     | 中         |
-| 8.24 的低優先回指：8.4〈通訊拓樸〉補客服這一層、8.20 的「狀態頁與客服話術」、8.13 的 toil 來源補「重複的手動查證」、4.25 的「低摩擦 support-to-engineering 升級」 | 跨模組 | 無                     | 小         |
+| 項目                                                                                                                                                                                                                                            | 類型   | 前置條件                     | 規模       |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------------------------- | ---------- |
+| 六個 T1 vendor 的 deep article（Grafana OnCall / incident.io / FireHydrant / Rootly / Instatus / Jeli）                                                                                                                                         | vendor | 無                           | 6 篇（大） |
+| 案例深挖批次 A / B（T1 補第二事件、T2/T3 補不同事故型態）                                                                                                                                                                                       | 案例   | 無                           | 大         |
+| 案例的 intake、decision、impact、automation 教訓回寫主章（8.18-8.22）                                                                                                                                                                           | 主章   | 依賴案例深挖批次的產出       | 中         |
+| 補齊 04 / 05 / 06 / 07 的交接連結                                                                                                                                                                                                               | 跨模組 | 無                           | 中         |
+| 8.24 的低優先回指：8.4〈通訊拓樸〉補客服這一層、8.20 的「狀態頁與客服話術」、8.13 的 toil 來源補「重複的手動查證」、8.22 的寫回方向連 8.24、Customer Liaison 案例與 Statuspage / FireHydrant / PagerDuty vendor 連 8.24、0.23 的濫用處理連 8.24 | 跨模組 | 無                           | 小         |
+| 外包客服（BPO）的值班轉交、工具帳號與權限：全站零命中，8.24 只有一段前提；外部人員帳號的開關、權限範圍與合約要求沒有住址                                                                                                                        | 主章   | 先全站反證並確認讀者需求     | 中         |
+| 客服後台卡（以帳號查資料的內部查詢工具）：全站 28 個檔案用了 7 種名稱（客服查詢工具、客服後台、support tooling、internal admin tool…），admin-endpoint 卡講的是寫入端點                                                                         | 知識卡 | 先跑反向術語探針確認標準名稱 | 小         |
+| ITIL 的 functional / hierarchical escalation：8.24 同時做了兩種轉交而集合裡沒有這兩個名字；tiered-support 卡補名字、escalation-policy 卡反向連                                                                                                  | 知識卡 | 無                           | 小         |
+| on-call 與 customer-support 兩個 tag 涵蓋不齊：on-call 卡、8.6、8.12、handover-protocol、escalation-policy、alert-silence、8.18、Customer Liaison 與 Google Home 案例、status-page 卡未帶                                                       | 跨模組 | 無                           | 小         |
 
 ### 後續推演大綱
 

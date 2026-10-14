@@ -1,14 +1,14 @@
 ---
 title: "11.16 面向終端使用者的錯誤碼與請求編號：錯誤畫面的欄位、請求編號的產生與傳遞、錯誤碼對照表、客服收件欄位、客服查詢工具的權限與 log 保留期"
 date: 2026-10-14
-description: "使用者經由客服回報錯誤、再由工程查到那一次請求，系統在每一段要提供什麼：錯誤碼與請求編號各自交給誰用、請求編號為什麼要隨機以及電話上怎麼唸，入口以 Nginx 產生編號並傳進後端與 log、入口自己的 502 與前端怎麼讀到編號（實測），錯誤碼對照表怎麼跟著程式維護，客服查詢工具的唯讀、遮罩與稽核，以及 log 保留期由回報到查證的時間決定"
+description: "使用者經由客服回報錯誤、再由工程查到那一次請求，系統在每一段要提供什麼：錯誤碼與請求編號各自交給誰用、請求編號為什麼要隨機以及電話上怎麼唸，入口以 Nginx 產生編號並傳進後端與 log、入口自己的 502 與前端怎麼讀到編號（實測），錯誤碼對照表怎麼跟著程式維護，客服查詢工具的唯讀、遮罩與稽核，以及 log 保留期的下限從哪些時間與規定來"
 weight: 16
 tags: ["backend", "api-design", "error-contract", "customer-support"]
 ---
 
 這一篇處理終端使用者遇到錯誤之後，從他看到的畫面、到客服收件、再到工程查到那一次請求，系統在每一段要提供什麼。API 呼叫方（另一個系統）收到錯誤之後怎麼回報給 API 提供者，是同一套機制在系統之間的版本，見 [錯誤回報的回饋迴路：request-id、trace 與呈現回報分工](/backend/11-api-design/error-feedback-loop/)；錯誤要怎麼分類、錯誤回應的格式怎麼定，見 [11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)。客服與工程之間的流程（什麼條件轉給值班、工程怎麼回覆）在 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/)，這一篇寫那個流程用到的系統設計。
 
-這一篇的例子是一個短網址服務：入口 Nginx 把請求轉給後端程式，登入的使用者建立短網址、看點擊統計，訪客點短網址時由服務轉址。
+這一篇的例子是一個短網址服務（需求規格見 [0.23 短網址服務的需求定義](/backend/00-service-selection/url-shortener-requirements/)）：入口 Nginx 把請求轉給後端程式，登入的使用者建立短網址、看點擊統計，訪客點短網址時由服務轉址。
 
 ## 錯誤碼與請求編號
 
@@ -18,22 +18,22 @@ tags: ["backend", "api-design", "error-contract", "customer-support"]
 
 **請求編號**代表單一次請求，每次都不同，例如 `9c8561d5272320ba8aafd57145eb9894`。它是那一次請求的 [Request ID](/backend/knowledge-cards/request-id/)，工程拿它去 log 與 trace 裡找到那一次請求的完整紀錄。畫面上的欄位名稱也寫「請求編號」，與系統內部用同一個名字，客服與工程說的是同一件事。
 
-兩者缺一個，查證就少一段。只有錯誤碼，客服知道是額度用完，而使用者說「我明明還有額度」時，工程查不出那一次請求實際讀到的額度是多少；只有請求編號，客服手上是一串看不出意思的字元，每一則回報都要轉給工程才知道是什麼錯誤。Microsoft Entra 的登入錯誤頁同時給兩者：畫面上有 `AADSTS` 開頭的錯誤碼，展開的疑難排解資訊列出 Request Id、Correlation Id 與時間戳記，管理員在登入紀錄裡以這些值找到使用者遇到的那一次失敗。系統之間的 API 也是同一個做法：Stripe 在每個回應的 `Request-Id` header 帶一個 `req_` 開頭的編號，並請使用者聯絡客服時附上它。
+錯誤碼與請求編號缺一個，查證就少一段。只有錯誤碼，客服知道是額度用完，而使用者說「我明明還有額度」時，工程查不出那一次請求實際讀到的額度是多少；只有請求編號，客服手上是一串看不出意思的字元，每一則回報都要轉給工程才知道是什麼錯誤。Microsoft Entra 的登入錯誤頁同時給兩者：畫面上有 `AADSTS` 開頭的錯誤碼，展開的疑難排解資訊列出 Request Id、Correlation Id（同一次登入的多個請求共用的編號）與時間戳記，管理員在登入紀錄裡以這些值找到使用者遇到的那一次失敗。系統之間的 API 也是同一個做法：Stripe 在每個回應的 `Request-Id` header 帶一個 `req_` 開頭的編號，並請使用者聯絡客服時附上它。
 
 ## 錯誤畫面上的欄位
 
 錯誤畫面要同時給使用者與客服用，所以畫面上放四個欄位：
 
-- **給使用者看的訊息**：發生了什麼、他現在能做什麼，不含內部的服務名稱、資料表或堆疊追蹤（stack trace）。錯誤訊息透露內部結構會成為攻擊者的偵察材料，見 [OWASP error handling：錯誤訊息是攻擊者的偵察面](/backend/11-api-design/cases/errorchain-owasp-error-handling/)。
+- **給使用者看的訊息**：發生了什麼、他現在能做什麼，不含內部的服務名稱、資料表或堆疊追蹤（stack trace）。錯誤訊息透露內部結構會成為攻擊者的偵察材料，見 [OWASP error handling：錯誤訊息是攻擊者的偵察面](/backend/11-api-design/cases/errorchain-owasp-error-handling/)；訊息怎麼分成標題、說明與行動，見 [錯誤訊息撰寫原則](/ux-design/04-error-recovery/error-message-principles/)，下面三個欄位放在它說的次要位置（折疊區塊或複製按鈕）。
 - **錯誤碼**。
 - **請求編號**，旁邊放一個複製按鈕。
 - **發生時間**，標明時區。
 
 訊息與錯誤碼對應的是錯誤的類別，可以在程式裡逐一寫好；請求編號與時間是每一次請求才有的值，要由產生錯誤的那一段程式帶到畫面上。
 
-請求編號的長度要和回報的管道一起考慮。網頁與 App 上，使用者按複製再貼進客服表單，32 個字元不成問題；電話客服要使用者唸出來，32 個十六進位字元太長。做法之一是畫面顯示完整的編號、電話上只請使用者唸前 8 碼，工程以前 8 碼加上帳號與時間範圍篩選 log。8 碼十六進位有 16⁸ 種、約 43 億種組合；工程篩選的那個帳號與時間範圍裡共有 n 次請求時，除了使用者要找的那一次，其餘請求之中至少有一次的前 8 碼也相同的機率約為 n ÷ 43 億，一小時一千次請求時約是四百萬分之一，帳號的請求量大時把 n 換成自己的數字重算。
+請求編號的長度要和回報的管道一起考慮。網頁與 App 上，使用者按複製再貼進客服表單，32 個字元不成問題；電話客服要使用者唸出來，32 個十六進位字元太長。做法之一是畫面顯示完整的編號、電話上只請使用者唸前 8 碼，工程以前 8 碼加上帳號與時間範圍篩選 log。8 碼十六進位有 16⁸ 種、約 43 億種組合。設工程篩選的那個帳號與時間範圍裡共有 n 次請求，除了使用者要找的那一次，其餘請求之中至少有一次的前 8 碼也相同的機率約為 n ÷ 43 億：一小時一千次請求時約是四百萬分之一，帳號的請求量大時把 n 換成自己的數字重算。
 
-請求編號要是隨機產生的值，不能由帳號編號、遞增序號或時間組成。由帳號編號組成的編號讓別人從編號推出帳號；遞增序號讓別人推算服務的請求量，也讓別人猜出其他使用者的編號；以時間開頭的編號前幾碼是時間戳記，UUIDv7 的前 8 碼約每 65 秒才變一次、ULID 的前 8 碼約每秒變一次，同一段時間內的請求前 8 碼相同，電話上只唸前 8 碼就分不出是哪一次請求。
+請求編號要是隨機產生的值，不能由帳號編號、遞增序號或時間組成，也不帶固定的前綴。由帳號編號組成的編號讓別人從編號推出帳號；遞增序號讓別人推算服務的請求量，也讓別人猜出其他使用者的編號；以時間開頭的編號前幾碼是時間戳記，UUIDv7（開頭 48 位元是毫秒時間戳記的 UUID）的前 8 碼約每 65 秒才變一次，ULID（開頭是時間戳記、可依時間排序的編號格式）的前 8 碼約每秒變一次，同一段時間內的請求前 8 碼相同；固定前綴（例如 `app-`）佔掉前幾碼，剩下的隨機字元也少了。這幾種情形下，電話上只唸前 8 碼就分不出是哪一次請求。
 
 ## 請求編號的產生與傳遞：Nginx 入口、後端程式、前端與 App
 
@@ -62,16 +62,16 @@ server {
 
 這段設定要拆開併進既有的設定檔，各行的位置與作用：
 
-- `log_format` 只能寫在 `http` 區塊，寫進 `server` 時 `nginx -t` 會回報 `"log_format" directive is not allowed here`。官方映像與多數套件的 `conf.d/*.conf` 是在 `http` 區塊裡被引入的，所以寫在那些檔案的最外層就是 `http` 層。名字 `withid` 與欄位標記 `rid=` 都是自取的，`access_log` 那一行以同一個名字引用它；log 檔的路徑換成自己主機上的位置。
-- 套件預設的 `nginx.conf` 在 `http` 層已經有一行 `access_log … main;`。這時把那一行的格式名改成 `withid`，或在原本的 `main` 格式後面加上 `rid=$request_id`；另加一行 `access_log` 的話，每個請求會以兩種格式各寫一次。
+- `log_format` 只能寫在 `http` 區塊，寫進 `server` 時 `nginx -t` 會回報 `"log_format" directive is not allowed here`。官方映像與多數套件的主設定檔在 `http` 區塊裡以 `include` 引入 `conf.d/*.conf`，所以寫在 `conf.d` 底下某個檔案的最外層、不包在任何 `server` 裡的指令，就屬於 `http` 區塊。名字 `withid` 與欄位標記 `rid=` 都是自取的，`access_log` 那一行以同一個名字引用它；log 檔的路徑換成自己主機上的位置。
+- 套件預設的 `nginx.conf` 在 `http` 層已經有一行 `access_log … main;`。這時把那一行的格式名改成 `withid`，或在原本的 `main` 格式後面加上 `rid=$request_id`；另加一行 `access_log` 的話，每個請求會以兩種格式各寫一次。讀這份 access log 的工具（GoAccess、ngxtop、log 收集器的解析規則）照原本的格式解析，格式一改它們會讀不到資料而且不報錯（見 [終端機看 nginx 請求](/linux/tools/cli/web-server-log-monitoring/)）；既有格式有工具在讀時，採用在 `main` 後面加 `rid=` 的做法，並把那些工具的格式定義一起改。
 - `add_header` 併進既有的 `server`，`proxy_set_header` 併進每一個有 `proxy_pass` 的 `location`。這兩個指令都只在當層沒有同名指令時才繼承上一層的設定，所以某個 `location` 自己寫了其他 `add_header` 或 `proxy_set_header` 時，要在那個 `location` 裡再寫一次這一行。
 - `add_header` 後面的 `always` 讓 Nginx 在 4xx 與 5xx 的回應上也加這個 header。少了它，Nginx 只在 200、201、204、206、301、302、303、304、307、308 這幾種回應加 header，而使用者回報的正好是錯誤回應。
 
-以 Nginx 1.27.5 實測這段設定：一次請求的回應 header、後端收到的 `X-Request-Id` 與 access log 的 `rid=` 欄位是同一個值。用戶端自己在請求裡帶了 `X-Request-Id` 時，Nginx 產生 `$request_id` 不讀這個 header，仍然產生新的值，後端收到的是 Nginx 產生的那一個；入口因此不必信任外部送進來的編號，與 W3C Trace Context 允許在信任邊界重新開始 trace 是同一個考量（見 [錯誤回報的回饋迴路：request-id、trace 與呈現回報分工](/backend/11-api-design/error-feedback-loop/#定位鉤子request-id-與-trace-的契約) 的〈定位鉤子：request-id 與 trace 的契約〉）。
+以 Nginx 1.27.5 實測這段設定：一次請求的回應 header、後端收到的 `X-Request-Id` 與 access log 的 `rid=` 欄位是同一個值。用戶端自己在請求裡帶了 `X-Request-Id` 時，Nginx 產生 `$request_id` 不讀這個 header，仍然產生新的值，後端收到的是 Nginx 產生的那一個；入口因此不必信任外部送進來的編號，與 [W3C Trace Context](/backend/knowledge-cards/trace-context/) 允許在信任邊界重新開始 trace 是同一個考量（見 [錯誤回報的回饋迴路：request-id、trace 與呈現回報分工](/backend/11-api-design/error-feedback-loop/#定位鉤子request-id-與-trace-的契約) 的〈定位鉤子：request-id 與 trace 的契約〉）。
 
-Nginx 前面還有 CDN 或雲端負載平衡器時，連不上 Nginx 的錯誤頁由那一層產生，不會有 `$request_id`。這時那一層的錯誤頁要顯示它自己產生的請求編號，Nginx 的 access log 也要記下那一層傳來的編號 header，兩個編號才接得起來。
+Nginx 前面還有 CDN 或雲端負載平衡器時，連不上 Nginx 的錯誤頁由那一層產生，不會有 `$request_id`。有的那一層會在錯誤頁顯示自己的編號（Cloudflare 的錯誤頁顯示 Ray ID），這時 Nginx 的 access log 也要記下那一層傳來的編號 header（Cloudflare 是 `CF-Ray`），兩個編號才接得起來，而那一層的編號同樣要確認不是以時間開頭；有的那一層只能回一個靜態頁（CloudFront 的自訂錯誤頁是存放在某個路徑下的固定物件），放不了每次請求的編號，這時改請使用者回報發生時間，工程以時間範圍查那一層的 log。
 
-後端程式要做兩件事。第一件是從 `X-Request-Id` header 讀出編號，放進這個請求的 log 欄位（多數 logging 函式庫稱為 context 或 MDC），讓這個請求寫的每一行 log 都帶著它；log 欄位怎麼命名、跨服務怎麼保持一致，見 [4.1 log schema 與搜尋規劃](/backend/04-observability/log-schema/)。第二件是回應錯誤時把它放進錯誤回應的 body，讓前端顯示在畫面上。
+後端程式要做兩件事。第一件是從 `X-Request-Id` header 讀出編號，放進這個請求的 log 欄位，讓這個請求寫的每一行 log 都帶著它；多數 logging 函式庫把「這個請求期間每一行 log 都自動帶上的欄位」稱為 context 或 MDC（Mapped Diagnostic Context），log 欄位怎麼命名、跨服務怎麼保持一致，見 [4.1 log schema 與搜尋規劃](/backend/04-observability/log-schema/)。第二件是回應錯誤時把它放進錯誤回應的 body，讓前端顯示在畫面上。
 
 錯誤回應採用 [RFC 9457](/backend/knowledge-cards/problem-details/)（HTTP API 錯誤回應的 Problem Details 格式）時，編號可以放在 `instance` 成員，它要寫成 URI，RFC 建議帶完整路徑，例如 `/requests/9c8561d5272320ba8aafd57145eb9894`；也可以放在自訂的欄位。
 
@@ -94,18 +94,20 @@ location @upstream_error {
 }
 ```
 
-`error_page` 寫了 `=` 而沒有接回應碼時，Nginx 回給用戶端的回應碼改用 `@upstream_error` 回的值，這裡一律是 502；要保留 503 與 504 的區分，就為它們各寫一個具名 location。錯誤頁要用 HTML 時，把 `default_type` 改成 `text/html`，內文換成 HTML。這裡的 `UPSTREAM_UNAVAILABLE` 也會顯示在使用者畫面上，同樣要在錯誤碼對照表上有一列。實測時把 `proxy_pass` 指向一個沒有程式在聽的埠，回應是 502，內文的請求編號、header 的 `X-Request-Id` 與 access log 的 `rid=` 三者相同。
+`error_page` 寫了 `=` 而沒有接回應碼時，Nginx 回給用戶端的回應碼改用 `@upstream_error` 回的值；上面的 `@upstream_error` 寫的是 `return 502`，所以 502、503、504 三種錯誤送到用戶端時都變成 502。要保留 503 與 504 的區分，就為它們各寫一個具名 location，各自 `return` 自己的回應碼。錯誤頁要用 HTML 時，把 `default_type` 改成 `text/html`，內文換成 HTML。這裡的 `UPSTREAM_UNAVAILABLE` 也會顯示在使用者畫面上，同樣要在錯誤碼對照表上有一列。實測時把 `proxy_pass` 指向一個沒有程式在聽的埠，回應是 502，內文的請求編號、header 的 `X-Request-Id` 與 access log 的 `rid=` 三者相同。
 
-前端或 App 自己畫錯誤畫面時，請求編號有兩個來源：後端錯誤回應 body 裡的欄位，以及每一個回應都帶的 `X-Request-Id` header。入口自己回的 502 是上面那段純文字，不是後端的錯誤格式，前端從 body 解析不出欄位，這時改讀 header。網頁前端與 API 不同源時，瀏覽器只讓前端程式讀到 CORS 公開的 header，入口要在同一層再加一行 `add_header Access-Control-Expose-Headers X-Request-Id always;`；實測 502 回應同時帶著這兩個 header。
+入口自己產生的錯誤不經過後端，只記在 access log，而上面的 `withid` 格式沒有帳號欄位；這一類錯誤只能以時間範圍、請求路徑與來源位址篩選，電話上唸前 8 碼時比對的範圍也因此是那段時間的全部請求。
 
-行動 App 的錯誤可能根本沒有到達伺服器（沒有網路、DNS 解析失敗、連線逾時），這時沒有入口產生的編號。App 可以在每次送出請求時自己產生一個編號，在畫面上顯示 App 自己的錯誤碼（例如 `NETWORK_UNREACHABLE`）與這個編號，並把它與錯誤一起寫進 App 自己送出的 log 或當機回報；請求沒有到達伺服器時，工程只能在那裡查到它。這個編號要放在另一個 header 送出，例如 `X-Client-Request-Id`，因為入口會以 `$request_id` 覆寫 `X-Request-Id`。請求到達了伺服器、只是回應沒有回到 App 時，要讓工程在伺服器的 access log 查得到這個編號，把前面那一行 `log_format withid` 換成下面這一行（同名的 `log_format` 只能定義一次，另加一行同名的，`nginx -t` 會回報 `duplicate "log_format" name`）：
+前端或 App 自己畫錯誤畫面時，請求編號有兩個來源：後端錯誤回應 body 裡的欄位，以及每一個回應都帶的 `X-Request-Id` header。入口自己回的 502 是上一個設定區塊裡那段純文字，不是後端的錯誤格式，前端從 body 解析不出欄位，這時改讀 header。網頁前端與 API 不同源時，瀏覽器依 CORS（跨來源資源共用）的規則只讓前端程式讀到伺服器明確公開的 header，入口要在 `add_header X-Request-Id … always;` 那一行所在的區塊再加一行 `add_header Access-Control-Expose-Headers X-Request-Id always;`；實測 502 回應同時帶著 `X-Request-Id` 與 `Access-Control-Expose-Headers` 兩個 header。
+
+行動 App 的錯誤可能根本沒有到達伺服器（沒有網路、DNS 解析失敗、連線逾時），這時沒有入口產生的編號。App 可以在每次送出請求時自己產生一個隨機編號，在畫面上顯示 App 自己的錯誤碼（例如 `NETWORK_UNREACHABLE`）與這個編號，並把它與錯誤一起寫進 App 自己送出的 log 或當機回報；請求沒有到達伺服器時，工程只能在那裡查到它。這個編號要放在另一個 header 送出，例如 `X-Client-Request-Id`，因為入口會以 `$request_id` 覆寫 `X-Request-Id`。請求到達了伺服器、只是回應沒有回到 App 時，要讓工程在伺服器的 access log 查得到這個編號，把前面寫在 `http` 區塊、只記 `rid=$request_id` 的那一行 `log_format withid` 換成下面這一行（同名的 `log_format` 只能定義一次，另加一行同名的，`nginx -t` 會回報 `duplicate "log_format" name`）：
 
 ```nginx
-# 取代前面的 log_format withid：在 rid= 之後多記 App 送來的編號；沒有帶這個 header 的請求記成 -
+# 取代前面寫在 http 區塊的 log_format withid：在 rid= 之後多記 App 送來的編號；沒有帶這個 header 的請求記成 -
 log_format withid '$remote_addr [$time_iso8601] "$request" $status rid=$request_id crid=$http_x_client_request_id';
 ```
 
-`$http_x_client_request_id` 是 Nginx 讀請求 header 的變數，名字由 `$http_` 加上 header 名稱的小寫、連字號換成底線組成。以 Nginx 1.27.5 實測，帶了 `X-Client-Request-Id: app-7f3a9c` 的請求在 access log 記成 `crid=app-7f3a9c`，沒帶的記成 `crid=-`；Nginx 預設把請求裡的其他 header 原樣轉給後端（名稱含底線的 header 預設會被丟棄），後端不必另外設定就收得到它。App 若已經依 [4.24 Client-to-Server 端到端觀測串接](/backend/04-observability/client-server-trace-integration/) 送出 `traceparent`，可以不另外產生編號，直接以其中的 trace-id 當作 App 端的編號，用戶端與伺服器端的紀錄由同一個 trace 串起來。
+`$http_x_client_request_id` 是 Nginx 讀請求 header 的變數，名字由 `$http_` 加上 header 名稱的小寫、連字號換成底線組成。以 Nginx 1.27.5 實測，帶了 `X-Client-Request-Id: 7f3a9c0e` 的請求在 access log 記成 `crid=7f3a9c0e`，沒帶的記成 `crid=-`；Nginx 預設把請求裡的其他 header 原樣轉給後端（header 名稱本身含底線的會被丟棄），後端不必另外設定就收得到它。App 若已經依 [4.24 Client-to-Server 端到端觀測串接](/backend/04-observability/client-server-trace-integration/) 送出 `traceparent`（W3C Trace Context 規定的 trace 傳遞 header），可以不另外產生編號，直接以其中的 trace-id 當作 App 端的編號，用戶端與伺服器端的紀錄由同一個 trace 串起來。這要求 trace-id 由隨機數產生：AWS X-Ray 格式的 trace-id 把請求時間的 Unix 秒數放在開頭 8 個十六進位字元，那時電話上唸的不能是前 8 碼。
 
 ## 錯誤碼對照表
 
@@ -135,8 +137,11 @@ log_format withid '$remote_addr [$time_iso8601] "$request" $status rid=$request_
 - **發生時間與時區**：縮小 log 的查詢範圍。使用者說的「下午三點」沒有時區時，工程可能在差八小時的位置找。
 - **錯誤碼**：查對照表，客服自己就可能答覆。
 - **請求編號**：直接找到那一次請求。
+- **功能**：從固定的清單選一項（短網址服務是轉址、建立短網址、點擊統計、付款與帳號）。每週的計數與排名用它分類，沒有錯誤碼的回報也只能靠它歸類。
 - **裝置、作業系統與 App 版本或瀏覽器**：判斷是否只發生在某個版本；只發生在低於最低支援版本的 App 上時，處理方式是請使用者更新（見 [Minimum Supported Version](/backend/knowledge-cards/minimum-supported-version/)）。
 - **操作步驟與螢幕截圖**：重現問題，也從截圖補回使用者沒抄下的錯誤碼與請求編號。
+
+錯誤碼與功能要存成客服單上可以篩選的欄位，客服系統才算得出件數；從截圖補回的錯誤碼，由客服填進欄位。
 
 使用者沒有抄下請求編號時，工程以帳號加上前後幾分鐘的時間範圍查 log，再以錯誤碼與請求的路徑縮小到那一次請求。這條退路成立的前提是 log 有帳號與錯誤碼欄位可以篩選，而帳號屬於個人資料，寫進 log 時要依 [PII](/backend/knowledge-cards/pii/) 的規則處理：寫內部的使用者編號，不寫電子郵件或姓名。
 
@@ -145,19 +150,23 @@ log_format withid '$remote_addr [$time_iso8601] "$request" $status rid=$request_
 客服查詢工具讓客服以帳號或短碼查到資料的狀態，取代請工程查資料庫。工具的設計重點在客服看得到什麼、以及每一次查詢留下什麼紀錄：
 
 - **只讀**：工具只顯示狀態，延長期限、退款、解除停用這類會改資料的動作另外走有核准流程的後台。
-- **欄位層級的遮罩**：客服看得到短碼的狀態、原始網址、到期日、建立時間與檢舉紀錄，以及帳號的方案與本月剩餘額度；電子郵件、姓名這類個人資料不顯示，付款資訊只顯示卡號末四碼。遮罩的做法見 [Data Masking](/backend/knowledge-cards/data-masking/)。
-- **查詢要附單號**：客服以帳號查詢時要填這次查詢對應的客服單號，工具只在單子存在時顯示資料。這讓每一次查詢都有理由，也讓查詢量異常時看得出來。
-- **每一次查詢都寫進稽核紀錄**：誰、什麼時間、以哪一張單、查了哪個帳號（見 [Audit Log](/backend/knowledge-cards/audit-log/)）。客服帳號被盜用時，攻擊者用的就是這個工具，稽核紀錄是事後查出影響範圍的依據；客服支援系統被入侵而外洩客戶資料的實例見 [Okta 支援系統事件](/backend/07-security-data-protection/cases/okta-support-system-incident-2023/)。
+- **欄位層級的遮罩**：客服看得到短碼的狀態、原始網址、到期日、建立時間與檢舉紀錄，以及帳號的方案、本月剩餘額度與本期的扣款紀錄；電子郵件、姓名這類個人資料不顯示，付款資訊只顯示卡號末四碼。遮罩的做法見 [Data Masking](/backend/knowledge-cards/data-masking/)。
+- **查詢要附還在處理中的單號**：客服以帳號查詢時要填這次查詢對應的客服單號，工具只在那張單還在處理中時顯示資料，結案的單號解不開查詢。這讓每一次查詢都有理由與有效期間，與 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/#代理操作的授權邊界) 的〈代理操作的授權邊界〉要求的發起理由與有效時窗是同一件事。來電者自稱帳號本人時，客服先依 [7.41 單一帳號被接管](/backend/07-security-data-protection/single-account-takeover-response/) 的做法確認身分，再查那個帳號。
+- **每一次查詢都寫進稽核紀錄**：誰、什麼時間、以哪一張單、查了哪個帳號（見 [Audit Log](/backend/knowledge-cards/audit-log/)）。各客服帳號每週的查詢量在每週營運會議上看，或寫成一條告警，查詢量突然升高的帳號可能已經被盜用。客服帳號被盜用時，攻擊者用的就是這個工具，稽核紀錄是事後查出影響範圍的依據；客服支援系統被入侵而外洩客戶資料的實例見 [Okta 支援系統事件](/backend/07-security-data-protection/cases/okta-support-system-incident-2023/)。
 
-客服不直接查 log。log 裡有其他使用者的資料與內部細節，而且 log 系統的權限多半以整個資料集為單位，給了客服就等於給了全部；客服需要的狀態，由查詢工具挑出來顯示。權限的整體設計原則見 [Least Privilege](/backend/knowledge-cards/least-privilege/)。
+一線客服不直接查 log。log 裡有其他使用者的資料與內部細節，而且 log 系統的權限多半以整個資料集為單位，給了一線客服就等於給了全部；一線客服需要的狀態，由查詢工具挑出來顯示。處理需要讀系統資料的回報的技術支援（見 [Tiered Support](/backend/knowledge-cards/tiered-support/)）要讀 log 時，權限縮到它負責的服務與遮罩過的欄位。權限的整體設計原則見 [Least Privilege](/backend/knowledge-cards/least-privilege/)。
 
-## log 保留期與客服處理時間
+## log 保留期：從使用者遇到錯誤到工程查 log 的時間
 
-請求編號在 log 裡查得到的前提，是那一行 log 在工程查詢時還在，而且仍是逐筆的完整紀錄。這一節說的客服處理時間，指從使用者遇到錯誤到工程以請求編號查 log 的整段時間，由幾段相加：使用者隔幾天才回報、客服單在佇列裡等、客服處理後轉給工程、工程排到這張單並開始查。開單在上班時間處理的回報，這段時間常以天甚至週計算。[Retention（保留期）](/backend/knowledge-cards/retention/) 比這段時間短的 log，工程拿著正確的請求編號也查不到，看起來像使用者抄錯了編號。
+請求編號在 log 裡查得到的前提，是那一行 log 在工程查詢時還在，而且仍是逐筆的完整紀錄。從使用者遇到錯誤到工程以請求編號查 log，時間由幾段相加：使用者隔幾天才回報、客服單在佇列裡等、客服處理後轉給工程、工程排到這張單並開始查。開單在上班時間處理的回報，這段時間常以天甚至週計算。[Retention（保留期）](/backend/knowledge-cards/retention/) 比這段時間短的 log，工程拿著正確的請求編號也查不到，看起來像使用者抄錯了編號。
 
-所以可以逐筆以請求編號查詢的那一層 log（完整粒度、沒有聚合），保留期要以這段時間的上限決定，再加上餘裕。例如使用者一週後才回報、客服兩天內轉單（遇到週末約四天）、工程在期限內第一次回覆之後，實際查 log 可能再隔兩週，加起來約二十五天，再加上餘裕，請求層級的 log 保留三十天；這幾段時間換成自己服務的數字重算。
+所以可以逐筆以請求編號查詢的那一層 log（完整粒度、沒有聚合），保留期至少要涵蓋這段時間的上限，再加上餘裕。例如使用者一週後才回報（7 天）、客服兩天內轉單（遇到週末約 4 天）、工程在 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/) 舉例的兩個上班日內第一次回覆（遇到週末約 4 天）、工程排到這張單實際查 log 再隔兩週（14 天），加起來約二十九天，再加上餘裕，請求層級的 log 保留四十五天；這幾段時間換成自己服務的數字重算。
 
-保留期越長，儲存成本與個人資料外洩的影響範圍越大，所以常見的做法是分層：請求層級的 log 以完整粒度保留到涵蓋客服處理時間為止，其中的個人資料欄位遮罩或只存內部編號，更長期的統計改用聚合過的指標。[4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/#控制面與保留階梯) 的保留階梯以最近 7 天的熱層保留完整粒度、7 到 30 天聚合為例，用在請求 log 時要把完整粒度那一層延長到客服處理時間；營運 log（operational log）的保留期與它的漂移見 [4.12 Audit Log 邊界與 PII 治理](/backend/04-observability/audit-log-governance/#retention-與保留策略漂移) 的〈Retention 與保留策略漂移〉。
+回報到查證的時間給出的是保留期的一個下限。合約與法規可能給出更長的下限：服務水準協議的補償申請有期限（例如 AWS 要求在事件發生後第二個帳單週期結束前申請），證據要留到那時；支付業的 PCI DSS 4.0 要求稽核紀錄保留 12 個月、其中最近 3 個月能立即取用。個資法規則可能給出上限。保留期取這些條件同時成立的範圍。
+
+access log 的保留期另外確認，它不一定在 log 平台上。Debian 與 Ubuntu 套件版 Nginx 的 logrotate 設定每天輪替、保留 14 份；官方 Docker 映像把 `access.log` 連到標準輸出，保留期由容器的 log driver 決定，刪除重建容器時一起消失。入口自己回的 502 只記在 access log 裡，所以 access log 要送進和後端 log 同一個 log 平台，或把輪替份數調到涵蓋上面算出的時間。
+
+保留期越長，儲存成本與個人資料外洩的影響範圍越大，所以常見的做法是分層：請求層級的 log 以完整粒度保留到涵蓋回報到查證的時間為止，其中的個人資料欄位遮罩或只存內部編號，更長期的統計改用聚合過的指標。[4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/#控制面與保留階梯) 的保留階梯以最近 7 天的熱層保留完整粒度、7 到 30 天聚合為例，用在請求 log 時要把完整粒度那一層延長到回報到查證的時間；營運 log（operational log）的保留期與它的漂移見 [4.12 Audit Log 邊界與 PII 治理](/backend/04-observability/audit-log-governance/#retention-與保留策略漂移) 的〈Retention 與保留策略漂移〉。
 
 ## 延伸閱讀：客服流程、系統之間的錯誤回報與錯誤分類
 

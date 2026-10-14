@@ -8,20 +8,22 @@ tags: ["backend", "observability", "on-call", "alerting"]
 
 這一篇整理值班工程師在沒有告警響起的時候，定時要讀哪些訊號、讀它們的理由，以及這些定時檢查和告警規則的分工。範圍是值班的日常：接班、交班與每週一次的營運會議。告警響起之後是否啟動事故流程與如何分級，見 [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)；長事故中事故指揮的跨班次交接另有專篇，見 [8.12 IC Handoff 與長事故跨班次協調](/backend/08-incident-response/ic-handoff-long-incident/)。
 
-例子沿用 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 的短網址服務：一台主機上的入口 Nginx、後端程式、PostgreSQL 與 Valkey，以 Prometheus 與 Alertmanager 監控，[失效域](/backend/knowledge-cards/failure-domain/)（會因同一個原因一起停掉的那組元件）以外有心跳監看與外部探測。
+例子沿用 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 的短網址服務：一台主機上的入口 Nginx、後端程式、PostgreSQL 與 Valkey（相容 Redis 的記憶體資料庫），以 Prometheus（抓取指標並評估告警規則）與 Alertmanager（把告警分送成通知）監控，[失效域](/backend/knowledge-cards/failure-domain/)（會因同一個原因一起停掉的那組元件）以外有心跳監看與外部探測。
 
 ## 例行檢查與告警規則的分工
 
 告警送到人手上的方式有兩種，下文只用這兩個名字。**呼叫值班**（page）是由值班通知系統打電話或推播，要值班立即處理，半夜也會把人叫醒。**只送通知**是送到聊天頻道、信箱或開成工單，在上班時間處理。依 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/#alert-的必要欄位) 的嚴重度分級，critical 呼叫值班，warning 只送通知。
 
-例行檢查讀的是告警規則刻意不呼叫值班、或根本沒有寫成規則的訊號。AWS 的 John O'Shea 在 Amazon Builders' Library 的〈[Building dashboards for operational visibility](https://builder.aws.com/content/3Ev2iw3R3ahQOM8BT4OUR0WP51z/building-dashboards-for-operational-visibility)〉寫道，任何需要人工檢視儀表板的營運流程，不論檢視得多頻繁，都會因人為疏失而失敗，所以 Amazon 以自動告警持續評估最重要的監控資料。O'Shea 這段話定下例行檢查的範圍：一個訊號能寫成「越過某個門檻就送出」的規則，就寫成告警，不靠值班定時去看。例行檢查本身也是人工流程，同樣會漏做，所以留在例行檢查裡的，只能是漏看幾小時到一天也不會造成損害的訊號。
+例行檢查讀的是告警規則刻意不呼叫值班、或根本沒有寫成規則的訊號。AWS 的 John O'Shea 在 Amazon Builders' Library 的〈[Building dashboards for operational visibility](https://builder.aws.com/content/3Ev2iw3R3ahQOM8BT4OUR0WP51z/building-dashboards-for-operational-visibility)〉寫道，任何需要人工檢視儀表板的營運流程，不論檢視得多頻繁，都會因人為疏失而失敗，所以 Amazon 以自動告警持續評估最重要的監控資料。O'Shea 這段話定下例行檢查的範圍：一個訊號能寫成「越過某個門檻就送出」的規則，就寫成告警，不靠值班定時去看。例行檢查本身也是人工流程，同樣會漏做，所以留在例行檢查裡的，只能是漏看幾小時到一天也不會造成損害的訊號；這個上限的前提是接班檢查至少每天做一次，排班以週輪替時，值班每天開工時照接班清單讀一次，不只在換班那天讀。
 
 這些訊號有四種：
 
-- **離越線還很遠的趨勢**：幾小時內就會越線的走向寫得成預測式告警，例如以 PromQL 的 `predict_linear`（依過去一段時間的走勢推算未來某個時間點的值）寫的「四小時內磁碟會滿」。磁碟每週多用幾個百分點、離越線還有幾週的走向，告警現在送出也沒有要做的事，留給人定期看走勢，決定什麼時候擴充。
+- **離越線還很遠的趨勢**：磁碟每週多用幾個百分點、離越線還有幾週的走向，告警現在送出也沒有要做的事，留給人定期看走勢，決定什麼時候擴充。幾小時內就會越線的走向不在這一類，它寫得成預測式告警，例如以 PromQL 的 `predict_linear`（依過去一段時間的走勢推算未來某個時間點的值）寫的「四小時內磁碟會滿」。
 - **需要人判斷才知道是不是故障的狀態**：點擊量比上週少了兩成，可能是轉址出錯，也可能是一個大客戶的活動結束了。規則寫不出這個判斷。
 - **只送通知的告警與工單**：《[The Site Reliability Workbook](https://sre.google/workbook/on-call/)》值班章的例子是一個還沒上線的服務，它的資料庫備份失敗：這類問題在上班時間處理就夠，告警應該開單而不是呼叫值班。開了的單與送出的通知要有人讀，例行檢查就是讀它們的時間點。
-- **監控與告警本身的狀態**：還在生效的告警靜音、被暫停的心跳檢查項目、通知太多而被忽略的規則。這一類的故障讓原本的告警規則不送出，要由告警以外的機制發現。整套告警停擺由心跳監看通知（見 [Dead Man's Switch](/backend/knowledge-cards/dead-mans-switch/)）；被遺忘的靜音有一條規則可以提醒，但它只量得到數量（見〈例行檢查項目改寫成告警規則的條件〉），逐一確認仍在接班檢查裡；被暫停的心跳檢查項目與被忽略的規則沒有現成的規則可寫，留給例行檢查。告警系統本身停擺或送不出通知時由誰發現，見 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/#告警鏈的監看心跳與通知失敗) 的〈告警鏈的監看：心跳與通知失敗〉。
+- **監控與告警本身的狀態**：還在生效的告警靜音、被暫停的心跳檢查項目、通知太多而被忽略的規則。這一類的故障讓原本的告警規則不送出，要由告警以外的機制發現。整套告警停擺時，由心跳監看送出通知（見 [Dead Man's Switch](/backend/knowledge-cards/dead-mans-switch/)）。被遺忘的靜音可以另外寫一條提醒，見〈例行檢查項目改寫成告警規則的條件〉；那條提醒只提醒「有靜音生效太久」，逐一確認每個靜音的工作仍由接班檢查負責。被暫停的心跳檢查項目與被忽略的規則沒有現成的規則可寫，留給例行檢查。告警系統本身停擺或送不出通知時由誰發現，見 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/#告警鏈的監看心跳與通知失敗) 的〈告警鏈的監看：心跳與通知失敗〉。
+
+靜音不完全符合「漏看一天也不會造成損害」這個範圍：一個被遺忘、壓住 critical 告警的靜音，漏看一天就可能錯過一次故障。它仍留在例行檢查裡，是因為以 Prometheus 指標寫的提醒量不到單一靜音的時長，所以風險要在設定時壓低：結束時間只設到維護預計的長度，維護沒結束時再延長。
 
 ## 接班時讀的訊號
 
@@ -29,13 +31,13 @@ tags: ["backend", "observability", "on-call", "alerting"]
 
 - **上一班的交班紀錄與還沒結的事件**：上一班留下的事件與觀察，系統上查不到。紀錄裡有還沒結的事件，接班的人回覆確認接手，從那一刻起由他負責。紀錄的內容見〈交班紀錄的內容〉。
 - **生效中的告警靜音（silence）**：[Alert Silence（告警靜音）](/backend/knowledge-cards/alert-silence/) 是人在 Alertmanager 手動設定、在一段時間內不送出符合條件的告警通知，與通訊軟體把對話設成靜音不同，它以標籤條件與結束時間界定（Grafana 的繁體中文介面也把 silence 譯成「靜音」）。維護時設下的靜音若結束時間設得比維護長，維護結束之後同一條規則再成立，也不會有任何通知。讀的方式是列出每一個靜音的條件、設定者、結束時間與註解，判斷它對應的工作是否已經結束；判斷不了時對照上一班交班紀錄裡記下的靜音與對應工作，或問設定者，問不到人就保留到結束時間，寫進自己的交班紀錄。
-- **上一班只送通知的 warning 告警**：沒有人判定的 warning，送出與沒送出的結果一樣。逐則判定：它指的狀況還在、不處理會在下一班之前變成要呼叫值班的狀況，就開成工單、指定負責人；已經自行恢復或屬於已知的雜訊，記為沒有引發動作，供每週營運會議統計。
-- **error budget 的走向**：error budget 是 [SLO](/backend/knowledge-cards/sli-slo/)（服務水準目標，例如每月 99.9% 的請求成功）在一個週期內容許的失敗額度。快速消耗由 [Burn Rate](/backend/knowledge-cards/burn-rate/)（消耗速率）告警呼叫值班；[4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/#multi-window-multi-burn-rate) 的多視窗告警裡最慢的一組（短視窗 2 小時、長視窗 3 天）適合只送通知。剩餘額度的百分比與它在 30 天 SLO 週期裡的走向在這裡看：照目前的速度在週期結束前會用完，就在每週營運會議上提出放慢發布（見 [Error Budget](/backend/knowledge-cards/error-budget/)）。
-- **排程工作與心跳檢查項目**：昨晚的備份與匯出是否完成。沒有按時送心跳的工作已經由心跳監看通知；這裡要看的是心跳監看服務上被暫停的檢查項目，被暫停的項目在恢復之前不會因心跳中斷而通知。有些項目刻意維持暫停：只接收 `/fail`（心跳監看服務的失敗回報網址，呼叫它就把那個檢查項目標成失敗）、用來回報通知送不出去的檢查項目，平時就是暫停狀態，而心跳監看服務在它暫停中照樣處理 `/fail`（見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)）。讀的方式是把暫停中的項目和預期維持暫停的清單比對，清單以外的才追查。
-- **到期事件**：TLS 憑證、網域與第三方 API 金鑰在多久之後到期。有告警規則的項目在這裡只確認規則還在：在 Prometheus 的規則頁（或 `/api/v1/rules`）查得到那條規則，而且狀態不是錯誤。沒有規則的項目（例如手動續約的網域），剩不到一個月就排續約。
+- **上一班只送通知的 warning 告警**：沒有人判定的 warning，送出與沒送出的結果一樣。逐則判定：它指的狀況還在、不處理會在下一次接班檢查之前變成要呼叫值班的狀況，就開成工單、指定負責人；已經自行恢復或屬於已知的雜訊，記為沒有引發動作，供每週營運會議統計。
+- **error budget 的走向**：error budget 是 [SLO](/backend/knowledge-cards/sli-slo/)（服務水準目標，例如每月 99.9% 的請求成功）在一個週期內容許的失敗額度。快速消耗由 [Burn Rate](/backend/knowledge-cards/burn-rate/)（消耗速率）告警呼叫值班；[4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/#multi-window-multi-burn-rate) 的多視窗告警裡，長視窗以天計的那一組偵測的是緩慢消耗，適合只送通知。剩餘額度的百分比與它在 30 天 SLO 週期裡的走向在這裡看：照目前的速度在週期結束前會用完，就在每週營運會議上提出放慢發布（見 [Error Budget](/backend/knowledge-cards/error-budget/)）。
+- **排程工作與心跳檢查項目**：昨晚的備份與匯出是否完成。沒有按時送心跳的工作已經由心跳監看通知；這裡要看的是心跳監看服務上被暫停的檢查項目，被暫停的項目在恢復之前不會因心跳中斷而通知。有一種檢查項目刻意維持暫停：用來回報「通知送不出去」的那個檢查項目只接收 `/fail`（心跳監看服務的失敗回報網址，呼叫它就把那個檢查項目標成失敗），平時就是暫停狀態，而心跳監看服務在這個項目暫停時照樣處理送到它的 `/fail`（見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)）。讀的方式是把暫停中的項目和預期維持暫停的清單比對，清單以外的才追查。
+- **到期事件**：TLS 憑證、網域與第三方 API 金鑰在多久之後到期。有告警規則的項目在這裡只確認規則還在：在 Prometheus 的規則頁（或 `/api/v1/rules`，Prometheus 列出全部規則與狀態的 API）查得到那條規則，而且狀態不是錯誤。沒有規則的項目（例如手動續約的網域），剩不到一個月就排續約，並照〈例行檢查項目改寫成告警規則的條件〉把它改寫成規則（例如 Gatus 的網域到期檢查）。
 - **容量的走向**：主機磁碟、資料庫大小、佇列積壓的一週走勢，看它照目前的速度多久之後越過告警門檻，短於擴充需要的準備時間就排擴充。
-- **最近的部署與功能開關（feature flag）變更**：Google 的《Site Reliability Engineering》在〈[Introduction](https://sre.google/sre-book/introduction/)〉寫道，約七成的停機來自對線上系統的變更。接班時知道改了什麼，故障發生時第一個檢查的方向就有了。
-- **客服單量與排名前幾名的錯誤碼**：使用者比監控先發現的故障，會先出現在客服單上。同一個錯誤碼的單量突然增加、或出現沒有對應事故的集中回報，照 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#轉給值班的條件與轉交方式) 的〈轉給值班的條件與轉交方式〉判斷是否要當成事故處理。
+- **最近的部署與[功能開關（feature flag）](/backend/knowledge-cards/feature-flag/)變更**：Google 的《Site Reliability Engineering》在〈[Introduction](https://sre.google/sre-book/introduction/)〉寫道，約七成的停機來自對線上系統的變更。接班時知道改了什麼，故障發生時第一個檢查的方向就有了。
+- **客服單量與排名前幾名的錯誤碼**：使用者比監控先發現的故障，會先出現在客服單上。件數越過門檻時由客服系統直接建立事件（見 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#轉給值班的條件與轉交方式) 的〈轉給值班的條件與轉交方式〉）；這一項是那條規則之外的後備檢查，看同一個錯誤碼的單量是否突然增加、或出現沒有對應事故的集中回報。
 
 團隊選定自己的項目之後，把它們放在同一個儀表板或同一份清單，接班檢查才會在幾分鐘內做完。以 Alertmanager 為例，還沒過期的靜音以它隨附的命令列工具 `amtool` 列出：
 
@@ -58,12 +60,12 @@ amtool --alertmanager.url=http://localhost:9093 silence query
 
 交班紀錄寫的是下一班接手時要知道、而系統上查不到的事：
 
-- **還沒結的事件**：每一件的現況、已經試過的處置、下一步、等的是誰。
+- **還沒結的事件**：每一件的現況、已經試過的處置、下一步、等的是誰，以及已經對客戶與客服說了什麼（內部狀態頁上的說法）與下一次更新的時間。
 - **這一班設下的靜音、它對應的工作與結束時間**：下一班不必從靜音清單反推它為什麼存在。
 - **這一班做過的變更**：重啟、手動擴充、改了設定，連同還沒寫回設定檔或版本控制的部分。
 - **觀察中、還沒到告警門檻的走向**：例如「資料庫連線數這兩天的尖峰在升高，還沒越過門檻」。
 - **客服轉來、還在查的單**：單號與目前查到的地方。
-- **這一班被呼叫的次數與時段**：夜間被叫醒幾次、每一則告警最後是否引發動作，供每週營運會議統計。
+- **這一班被呼叫的次數與時段**：夜間被叫醒幾次、每一則告警最後是否引發動作；告警工具在值班確認告警時已經標記過的（見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/#noise-rate-量測) 的〈Noise rate 量測〉），交班紀錄只寫沒標記到的，供每週營運會議統計。
 
 下一班讀完之後回覆確認接手；確認之前，還沒結的事件仍由上一班負責。
 
@@ -73,7 +75,7 @@ amtool --alertmanager.url=http://localhost:9093 silence query
 
 每週營運會議讀的是單一班次累積不出來的訊號：
 
-- **這一週沒有引發動作的告警**：每一則呼叫值班或送出的通知，最後是否引發動作。沒有動作的告警依原因處理：狀況確實存在、只是門檻太敏感，就調整門檻；要處理但不急，就改成只送通知；不需要任何人處理，就刪除。長期被忽略的告警會讓值班連實際發生的故障也跟著忽略（[Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)）。
+- **這一週沒有引發動作的告警**：每一則呼叫值班或送出的通知，最後是否引發動作。沒有動作的告警依原因處理：狀況確實存在、只是門檻太敏感，就調整門檻；要處理但不急，就改成只送通知；它是同一個原因觸發的多則告警之一（資料庫停了，查詢逾時與延遲告警一起響），就保留這則症狀告警，以分組或抑制把它們合成一則通知（見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/#降噪手段) 的〈降噪手段〉）；值班收到而不知道該做什麼、所以沒有動作的，補上 runbook 連結；不需要任何人處理，才刪除。長期被忽略的告警會讓值班連實際發生的故障也跟著忽略（[Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)）。
 - **值班負擔**：一週呼叫值班的次數、夜間被叫醒的次數，從交班紀錄統計。
 - **重複出現的客服回報**：客服單以錯誤碼與功能分類之後排名前幾名的類別，各自寫回錯誤碼對照表、告警或查詢工具，見 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#重複出現的回報查證結果寫回知識文章告警規則與查詢工具) 的〈重複出現的回報：查證結果寫回知識文章、告警規則與查詢工具〉。
 - **錯誤碼對照表沒有涵蓋的錯誤碼**：比對這一週客服單出現過的錯誤碼與錯誤碼對照表的列，查不到的錯誤碼補成一列並指定負責人，見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#錯誤碼對照表) 的〈錯誤碼對照表〉。
@@ -89,10 +91,10 @@ amtool --alertmanager.url=http://localhost:9093 silence query
 例行檢查的每一個項目都要定期確認它還該不該由人看，判斷條件是三項：
 
 - **能不能寫出一個不需要判斷的門檻**：三十天內到期的憑證、昨晚沒有完成的備份，都寫得出門檻，改寫成告警之後值班就不必每天看。
-- **讀了多少次都沒有動作**：一個項目連續幾週（週數由團隊定）每天都看、每天讀到的都在正常範圍，寫得出門檻的就改寫成規則，寫不出的就從清單移除。
+- **讀了多少次都沒有讀到異常**：一個項目連續幾週（週數由團隊定）每天都看、每天讀到的都在正常範圍，寫得出門檻的就改寫成規則，寫不出的就從清單移除。
 - **異常時要多快處理**：要在上班時間處理的，改寫成只送通知的 warning；要立即處理的，改寫成呼叫值班的告警，這時它本來就不該是例行檢查的項目。
 
-靜音是寫得出規則、而規則只量得到靜音數量、量不到單一靜音時長的例子。Alertmanager 自己在 `/metrics` 輸出 `alertmanager_silences{state="active"}`，是生效中靜音的數量。Prometheus 要先有一個抓取 Alertmanager `/metrics` 的 job；寫規則之前在 Prometheus 查一次 `alertmanager_silences`，回傳 active、pending、expired 三個狀態的序列才代表抓得到，查不到時下面這條規則永遠不會成立，也不會報錯。抓得到之後，可以寫一條只送通知的規則：
+靜音是寫得出規則、而以 Prometheus 指標寫的規則只量得到靜音數量、量不到單一靜音時長的例子。Alertmanager 自己在 `/metrics` 輸出 `alertmanager_silences{state="active"}`，是生效中靜音的數量。Prometheus 要先有一個抓取 Alertmanager `/metrics` 的 job（Prometheus 設定裡的一組抓取目標）；寫規則之前在 Prometheus 查一次 `alertmanager_silences`，active、pending、expired 三個狀態的序列都查得到，才代表抓得到，查不到時下面這條規則永遠不會成立，也不會報錯。抓得到之後，可以寫一條只送通知的規則：
 
 ```yaml
 groups:
@@ -107,16 +109,18 @@ groups:
           severity: warning
 ```
 
-群組名與規則名是自取的。寫好之後以 Prometheus 隨附的 `promtool check rules <規則檔>` 檢查語法；語法通過不代表 Prometheus 抓得到這個指標，那一項要靠前面的查詢確認。這條規則量的是數量而不是單一靜音的時長，團隊只要長期維持一個刻意的靜音，這條規則就一直成立；要知道哪一個靜音生效了多久，仍要讀每個靜音的開始與結束時間（`amtool silence query -o extended`）。
+群組名與規則名是自取的。寫好之後以 Prometheus 隨附的 `promtool check rules <規則檔>` 檢查語法；語法通過不代表 Prometheus 抓得到這個指標，那一項要靠前面的查詢確認。這條規則量的是數量而不是單一靜音的時長，團隊只要長期維持一個刻意的靜音，這條規則就一直成立，而一直成立的規則容易被人用另一個靜音壓掉。
 
-這條規則的通知也經過 Alertmanager，會被符合它標籤的靜音壓下：一個只寫 `severity="warning"` 或範圍更大的靜音被遺忘時，這條提醒也跟著不送出，而被遺忘時最危險的正是這種靜音。所以設定靜音時條件至少寫到 `alertname`，接班檢查時優先確認條件寬鬆的靜音。這條規則補的是「有靜音被遺忘」的提醒，逐一確認靜音的工作仍留在接班檢查裡。
+SilenceActiveForADay 的通知也經過 Alertmanager，條件寬鬆的靜音（只寫 `severity="warning"` 或範圍更大）會把 SilenceActiveForADay 自己的通知一起壓下，而被遺忘時最危險的正是這種靜音。所以設定靜音時條件至少寫到 `alertname`，接班檢查時優先確認條件寬鬆的靜音。
+
+要量單一靜音的時長、又不讓提醒被靜音壓下，改由排程腳本讀 Alertmanager 的 `/api/v2/silences`：它回傳每一個靜音的條件、開始時間（`startsAt`）、結束時間（`endsAt`）與設定者，腳本列出生效超過一天的靜音，直接送到聊天頻道，不經過 Alertmanager，分得出是哪一個靜音，也不會被寬鬆的靜音壓下。這兩種提醒補的都是「有靜音被遺忘」，逐一確認每個靜音對應的工作仍由接班檢查負責。
 
 寫不成規則的項目留在例行檢查裡：需要人判斷的業務數字、還在觀察的走向，以及每週營運會議裡那些要多人一起看的訊號。
 
 ## 延伸閱讀：告警分級、心跳監看、客服回報與值班制度
 
 - 監控各層看不到的範圍、哪些缺口由告警規則接手、各層都正常時仍會發生的異常：[4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)
-- critical、warning 與 info 的嚴重度分級與每條告警要帶的欄位：[4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)
+- critical、warning 與 info 的嚴重度分級、每條告警要帶的欄位與降噪手段：[4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)
 - 主機過載時大量告警同時送出，接班時讀到的 warning 要先分出哪一則是原因、哪些是症狀：[4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)
 - 心跳監看的設定、只收 `/fail` 的檢查項目與停機演練的時間線：[第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)
 - 客服回報轉給值班的條件與工程回覆的內容：[8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/)

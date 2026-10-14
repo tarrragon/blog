@@ -41,6 +41,7 @@ tags: ["backend", "incident-response"]
 - 08.2 [incident command system](/backend/knowledge-cards/incident-command-system/) / role分工：演練時的責任分派
 - 08.4 通訊與狀態：演練時 update cadence
 - 08.12 [handover protocol](/backend/knowledge-cards/handover-protocol/)：長事故接班節奏
+- 值班在沒有告警時每一班與每週要讀的訊號、交班紀錄的內容：[4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/)
 
 ## 判讀訊號
 

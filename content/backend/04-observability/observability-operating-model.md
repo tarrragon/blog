@@ -31,14 +31,14 @@ Observability operating model 是把觀測資產的責任分配明確化的治�
 
 Observability operating model 的角色分工以「誰能做決策」為核心。owner 是有權維護、調整、下架或升級觀測資產的人，名義聯絡人只能作為補充欄位。
 
-| 角色                  | 核心責任                              | 決策權限                           |
-| --------------------- | ------------------------------------- | ---------------------------------- |
-| Platform team         | 採集、儲存、查詢、成本與標準          | pipeline、schema convention、quota |
-| Service team          | 服務語意、核心旅程與業務事件          | service dashboard、SLI、alert rule |
-| On-call               | 事中判讀、runbook 使用與升級          | silence、escalate、incident intake |
-| Incident commander    | 事故優先序、通訊節奏與決策紀錄        | severity、rollback、status update  |
-| Security / compliance | audit log、PII、retention 與 evidence | retention、masking、access review  |
-| Finance / cost owner  | 成本歸屬、預算與 chargeback           | quota、retention tier、cost review |
+| 角色                  | 核心責任                              | 決策權限                                               |
+| --------------------- | ------------------------------------- | ------------------------------------------------------ |
+| Platform team         | 採集、儲存、查詢、成本與標準          | pipeline、schema convention、quota                     |
+| Service team          | 服務語意、核心旅程與業務事件          | service dashboard、SLI、alert rule                     |
+| On-call               | 事中判讀、runbook 使用與升級          | silence（限一次性維護期間）、escalate、incident intake |
+| Incident commander    | 事故優先序、通訊節奏與決策紀錄        | severity、rollback、status update                      |
+| Security / compliance | audit log、PII、retention 與 evidence | retention、masking、access review                      |
+| Finance / cost owner  | 成本歸屬、預算與 chargeback           | quota、retention tier、cost review                     |
 
 Platform team 的責任是維持共同語言。它需要定義 service name、environment、region、tenant、trace context、retention tier 與成本政策，讓跨服務查詢可行。
 
@@ -120,17 +120,17 @@ Observability operating model 的生命週期是新增、審核、使用、修�
 
 Operating model 的治理節奏把觀測資產拉回日常工程流程。review cadence 的重點是定期回答「這個資產還能支援決策嗎」，會議只是其中一種執行形式。
 
-| 節奏                     | 核心問題                         | 典型輸出                           |
-| ------------------------ | -------------------------------- | ---------------------------------- |
-| Dashboard review         | 面板是否仍有人用、是否對應旅程   | 更新、合併、下架                   |
-| Alert review             | alert 是否可行動、噪音是否可接受 | threshold 調整、silence、runbook   |
-| Cost review              | 成本是否對應服務價值             | retention tier、sampling policy    |
-| Schema review            | 欄位是否穩定、是否跨服務一致     | schema migration、drift 修正       |
-| Post-incident write-back | 復盤缺口是否回寫到訊號與 owner   | 新 alert、新 dashboard、新 runbook |
+| 節奏                     | 核心問題                         | 典型輸出                                       |
+| ------------------------ | -------------------------------- | ---------------------------------------------- |
+| Dashboard review         | 面板是否仍有人用、是否對應旅程   | 更新、合併、下架                               |
+| Alert review             | alert 是否可行動、噪音是否可接受 | threshold 調整、降為只送通知、刪除、補 runbook |
+| Cost review              | 成本是否對應服務價值             | retention tier、sampling policy                |
+| Schema review            | 欄位是否穩定、是否跨服務一致     | schema migration、drift 修正                   |
+| Post-incident write-back | 復盤缺口是否回寫到訊號與 owner   | 新 alert、新 dashboard、新 runbook             |
 
 Dashboard review 應看使用情境與操作價值。面板需要支援 on-call 的前 10 分鐘、capacity planning 或 SLO review；脫離這些用途的面板適合合併、重命名或下架。
 
-Alert review 應看行動品質。alert 若經常觸發但缺少明確處置，通常更適合變成 dashboard signal、ticket 或長期治理項。
+Alert review 應看行動品質。alert 若經常觸發但缺少明確處置，通常更適合變成 dashboard signal、ticket 或長期治理項。每週逐則處理沒有引發動作的告警，見 [4.29 值班的例行檢查](/backend/04-observability/on-call-routine-checks/#每週營運會議讀的訊號) 的〈每週營運會議讀的訊號〉；靜音（silence）只用在一次性的維護期間，不是處理吵鬧告警的手段，見 [Alert Silence（告警靜音）](/backend/knowledge-cards/alert-silence/)。
 
 Cost review 應看服務價值。觀測成本上升不一定是壞事，但需要能說明這些成本降低了哪一種事故風險、合規風險或容量風險。
 

@@ -20,6 +20,6 @@ Alert 觸發後由 [on-call](/backend/knowledge-cards/on-call/) 工程師承接�
 
 ## 設計責任
 
-Alert 設計要定義門檻、持續時間（`for` duration）、severity、通知對象、抑制規則、runbook link 與回復條件。每個 alert rule 帶 owner metadata — 沒有 owner 的 alert 會在服務演進後退化成 noise 來源，形成 [alert fatigue](/backend/knowledge-cards/alert-fatigue/)。
+Alert 設計要定義門檻、持續時間（`for` duration）、severity、通知對象、抑制規則、runbook link 與回復條件；通知也可能被人手動設定的靜音壓下，見 [Alert Silence（告警靜音）](/backend/knowledge-cards/alert-silence/)。每個 alert rule 帶 owner metadata — 沒有 owner 的 alert 會在服務演進後退化成 noise 來源，形成 [alert fatigue](/backend/knowledge-cards/alert-fatigue/)。
 
 SLO-based alerting 用 [burn rate](/backend/knowledge-cards/burn-rate/) 取代固定閾值，自動適應流量變化。完整的 alert 設計見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)、SLO-based alerting 見 [4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/)。

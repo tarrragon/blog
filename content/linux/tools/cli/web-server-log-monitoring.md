@@ -32,7 +32,7 @@ ngxtop -l access.log --no-follow
 
 `--no-follow` 處理現有 log 後就退出（預設會持續跟隨新進的 log）。
 
-這裡有一個實測會撞到的 gotcha：**ngxtop 的 log 格式要跟實際的 nginx log_format 完全對上，否則它靜默回 0 records**。nginx 官方 image 的預設 log_format 在標準 combined 之後多了一個 `"$http_x_forwarded_for"` 欄位，ngxtop 的預設格式不含它，結果就是「跑得起來、但一筆都沒解析到」。對策是用 `-f` 餵實際的格式：
+這裡有一個實測會撞到的 gotcha：**ngxtop 的 log 格式要跟實際的 nginx log_format 完全對上，否則它靜默回 0 records**。nginx 官方 image 的預設 log_format 在標準 combined 之後多了一個 `"$http_x_forwarded_for"` 欄位，ngxtop 的預設格式不含它，結果就是「跑得起來、但一筆都沒解析到」。access log 加了請求編號欄位（見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#請求編號的產生與傳遞nginx-入口後端程式前端與-app)）之後同樣要改這裡的格式。對策是用 `-f` 餵實際的格式：
 
 ```bash
 ngxtop -l access.log --no-follow \

@@ -12,6 +12,8 @@ Incident severity 的核心概念是「用一致標準把事故影響分級」�
 
 Incident severity 連接 [alert](/backend/knowledge-cards/alert/)、[runbook](/backend/knowledge-cards/runbook/) 與 [escalation policy](/backend/knowledge-cards/escalation-policy/)。同一類技術錯誤在不同業務場景可能有不同等級，因此分級要以產品後果為主。
 
+影響固定、有替代做法的問題列進已知錯誤清單，由客服與值班照著處理，不開事故，見 [Known Error（已知錯誤）](/backend/knowledge-cards/known-error/)。
+
 ## 可觀察訊號與例子
 
 系統需要分級模型的訊號是事件發生後團隊對嚴重度判斷不一致。付款成功率下降與單一內部報表延遲都可能由 timeout 引起，但前者需要立即啟動高優先級處置，後者通常走一般排程修復。

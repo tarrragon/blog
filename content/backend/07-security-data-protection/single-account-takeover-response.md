@@ -88,3 +88,4 @@ tags: ["backend", "security"]
 - 設定變更要留什麼紀錄才還原得回來：[7.7 稽核追蹤與責任邊界](../audit-trail-and-accountability-boundary/)
 - 這次靠什麼發現的、有沒有更早的訊號沒觸發：[7.13 偵測覆蓋率與訊號治理](../detection-coverage-and-signal-governance/)
 - 要不要當事故啟動、算哪一級：[8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)
+- 客服接到其他回報時，哪些條件立即呼叫值班、哪些開單：[8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#轉給值班的條件與轉交方式)

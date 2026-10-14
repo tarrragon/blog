@@ -130,7 +130,7 @@ Incident intake 的反模式通常來自入口分散但欄位不一致。入口�
 | Evidence 無 confidence | 分級時反覆確認真偽               | 標示 confirmed / suspected   |
 | Security signal 混流   | 敏感 evidence 進一般事故頻道     | security-sensitive 分流      |
 
-客訴停在客服系統會延後事故啟動。support ticket 應能轉成 incident candidate，並帶上客戶、功能、時間與重現資訊。
+客訴停在客服系統會延後事故啟動。support ticket 應能轉成 incident candidate，並帶上客戶、功能、時間與重現資訊；客服收件時要收齊哪些欄位（含錯誤碼、請求編號與裝置）見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#客服收件的欄位) 的〈客服收件的欄位〉。
 
 Evidence 缺 confidence 會讓分級會議重複查證同一件事。confidence 的責任是標示當下決策建立在哪個可信度上，證據可以在後續流程持續補強。
 

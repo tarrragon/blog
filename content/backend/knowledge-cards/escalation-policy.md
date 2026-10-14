@@ -10,7 +10,7 @@ Escalation policy 的核心概念是「在指定時間內把未解決事故交�
 
 ## 概念位置
 
-升級策略是 [incident severity](/backend/knowledge-cards/incident-severity/) 的執行流程，並與 [alert runbook](/backend/knowledge-cards/alert-runbook/) 與 [incident command system](/backend/knowledge-cards/incident-command-system/) 一起運作。
+升級策略是 [incident severity](/backend/knowledge-cards/incident-severity/) 的執行流程（使用者回報在客服各層之間怎麼往上轉是另一件事，見 [Tiered Support](/backend/knowledge-cards/tiered-support/)），並與 [alert runbook](/backend/knowledge-cards/alert-runbook/) 與 [incident command system](/backend/knowledge-cards/incident-command-system/) 一起運作。
 
 ## 可觀察訊號與例子
 

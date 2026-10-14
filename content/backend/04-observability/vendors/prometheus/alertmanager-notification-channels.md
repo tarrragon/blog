@@ -69,7 +69,7 @@ docker run --rm -v "$PWD:/a" --entrypoint amtool prom/alertmanager:v0.34.1 \
 
 `group_wait` 30 秒與 `group_interval` 5 分鐘是 Alertmanager 的預設值（`repeat_interval` 的預設是 4 小時）；2 小時與 12 小時是這個服務依值班的回應時間選的。重送的計時與靜音存在 Alertmanager 的 `--storage.path` 目錄裡，這個目錄沒有掛 volume 時，容器重建之後所有成立中的組會立刻重送一次，靜音也會消失。
 
-critical 與 warning 分成兩個 topic，是讓只想收 critical 的人只訂一個，也讓 warning 可以單獨靜音。這份設定把 warning 全天推送、以較低的優先度降低打擾；[4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/) 把 warning 定義成工作時間處理，要照那個定義，以 Alertmanager 的 `time_intervals` 定義工作時段，再替 warning 開一條帶 `active_time_intervals` 的子路由（warning 原本由最上層的 receiver 接走，時段要掛在子路由上）：
+critical 與 warning 分成兩個 topic，是讓只想收 critical 的人只訂一個，也讓手機上可以單獨把 warning 的 topic 設成不響（這是訂閱端的設定，不是 Alertmanager 的 [silence](/backend/knowledge-cards/alert-silence/)）。這份設定把 warning 全天推送、以較低的優先度降低打擾；[4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/) 把 warning 定義成工作時間處理，要照那個定義，以 Alertmanager 的 `time_intervals` 定義工作時段，再替 warning 開一條帶 `active_time_intervals` 的子路由（warning 原本由最上層的 receiver 接走，時段要掛在子路由上）：
 
 ```yaml
 time_intervals:
