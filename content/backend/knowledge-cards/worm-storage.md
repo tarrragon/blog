@@ -14,7 +14,7 @@ WORM 是防「寫入[憑證](/backend/knowledge-cards/credential/)外洩」的�
 
 ## 可觀察訊號與例子
 
-S3 的物件鎖定（Object Lock）有兩種模式。compliance 模式在保留期間內連帳號的 root 都刪不掉、也縮短不了保留期間；governance 模式下，持有繞過權限（`s3:BypassGovernanceRetention`）的帳號仍刪得掉（[S3 Object Lock 文件](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html)）。所以只開 governance 模式的備份，對「那把有繞過權限的金鑰外洩」這種情形不構成 WORM。其他業者與自架工具有各自的等價物，例如 restic 的備份伺服器 rest-server 的 `--append-only` 模式只接受新增、拒絕刪除與修改；它的保證由那一台伺服器提供，那台伺服器本身的權限與可達範圍要另外評估。
+S3 的物件鎖定（Object Lock）有兩種模式。compliance 模式在保留期間內連帳號的 root 都刪不掉、也縮短不了保留期間；governance 模式下，持有繞過權限（`s3:BypassGovernanceRetention`）的帳號仍刪得掉（[S3 Object Lock 文件](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html)）。所以只開 governance 模式的備份，對「那把有繞過權限的金鑰外洩」這種情形不構成 WORM。自架工具有近似的做法，而不一定構成 WORM：restic 的備份伺服器 rest-server 的 `--append-only` 模式只接受新增、拒絕刪除與修改，擋的是推送端的憑證；那台伺服器的管理者仍刪得掉磁碟上的檔案，所以照本卡的定義它不是 WORM。
 
 ## 判讀方式
 
