@@ -134,7 +134,7 @@ Observability readiness 是可靠性驗證與事故處理的輸入層。06 需�
 ## 交接路由
 
 - 04.1 log schema：補事件關聯欄位
-- [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)：上線前依每一層監控檢查的對象逐層盤點缺口：沒有觀察者檢查、觀察者跟著服務一起停、結果沒有送到人手上、結果不可信
+- [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)：上線前依每一層監控檢查的對象逐層盤點缺口：沒有觀察者檢查、觀察者跟著服務一起停、結果沒有送到人手上、結果不可信；單機與 Kubernetes 上的實際盤點見 [4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/) 與 [4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/)
 - 04.2 metrics：補服務健康與容量指標
 - 04.3 tracing：補跨服務與 async context
 - 04.4 dashboard / alert：補操作入口與通知條件

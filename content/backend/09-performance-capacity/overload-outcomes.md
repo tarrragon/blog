@@ -157,6 +157,7 @@ Slack 2021 年 1 月 4 日的事故可以拿來對照觸發仍在的過載：假
 
 - 負載在飽和曲線上的位置、knee 與 cliff 的量法、容量地圖：[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)
 - 負載卸除、准入控制、重試預算、擴展跟不上時的退路：[9.15 無預警瞬時大流量](/backend/09-performance-capacity/unplanned-traffic-surge/)
+- 熱點列與連線池的耗盡順序、等待上限與呼叫方逾時的關係，在售票系統上的完整例子：[9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/)；請求晚一點處理就失去價值、過載時要明確拒絕的撮合系統：[9.0.2 交易撮合的負載路徑](/backend/09-performance-capacity/matching-engine-load-path/)
 - 監控各層的做法、各層看不到的範圍與接手的層：[4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)
 - 可用性與延遲分成兩個告警、過載時監控自身的失真：[4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)
 - 負載退去之後仍停在失效狀態的機制與脫離方式：[Metastable Failure](/backend/knowledge-cards/metastable-failure/)

@@ -59,6 +59,7 @@ SeatGeek 案例揭露三個准入控制（等候室）的設計重點。
 ## 下一步路由
 
 - 想設計等候室與准入控制 → [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/) 的〈准入控制：虛擬等候室（virtual waiting room）、waitlist 與事前註冊〉
+- 放行速率怎麼對上扣庫存的處理量、排隊服務故障時為什麼要停止放行 → [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/) 的〈准入：排隊與放行的速率〉
 - 對照隱性緩衝模式 → [Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)
 - 想做 conversion funnel 可觀測性 → [04 可觀測性模組](/backend/04-observability/) + [04.16 SLI / SLO 訊號](/backend/04-observability/sli-slo-signal/)
 - 想了解 stateful service 容量規劃 → [05 部署平台模組](/backend/05-deployment-platform/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/)

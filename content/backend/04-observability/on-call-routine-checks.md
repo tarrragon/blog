@@ -119,7 +119,7 @@ SilenceActiveForADay 的通知也經過 Alertmanager，條件寬鬆的靜音（�
 
 ## 延伸閱讀：告警分級、心跳監看、客服回報與值班制度
 
-- 監控各層看不到的範圍、哪些缺口由告警規則接手、各層都正常時仍會發生的異常：[4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)
+- 監控各層看不到的範圍、哪些缺口由告警規則接手：[4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)；各層都正常時仍會發生的異常：[4.0.1 監控鏈事前偵測不到的異常](/backend/04-observability/monitoring-outside-the-chain/)
 - critical、warning 與 info 的嚴重度分級、每條告警要帶的欄位與降噪手段：[4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)
 - 主機過載時大量告警同時送出，接班時讀到的 warning 要先分出哪一則是原因、哪些是症狀：[4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)
 - 心跳監看的設定、只收 `/fail` 的檢查項目與停機演練的時間線：[第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)

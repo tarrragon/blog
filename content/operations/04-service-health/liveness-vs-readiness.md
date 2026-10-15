@@ -44,5 +44,6 @@ Liveness 觸發的重啟從來不是零成本，設計靈敏度時要把代價�
 
 - 在單機 systemd 上，liveness 對應 watchdog、重啟對應 restart policy → [systemd watchdog 與自動重啟](/operations/04-service-health/systemd-watchdog-restart/)
 - 探針該探到哪一層、回什麼才算健康 → [Health check endpoint 設計](/operations/04-service-health/health-check-endpoint/)
+- 所有副本共用的外部依賴（第三方金流）納入 readiness 時，全部副本同時下線、連付款回呼都收不到的例子 → [4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/) 的〈付款服務的 readiness 納入金流業者時的後果〉
 - 不同平台能不能分開表達這三種探針，是選型的關鍵 → [Process supervisor 選型](/operations/04-service-health/process-supervisor-selection/)
 - Readiness 轉為否、先摘流量再收束，是關閉流程的第一步 → [Graceful shutdown](/operations/04-service-health/graceful-shutdown/)

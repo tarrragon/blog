@@ -63,6 +63,7 @@ tags: ["backend", "performance", "capacity", "case-study", "db-kv", "aws", "flas
 ## 下一步路由
 
 - 想設計 flash-sale 緩衝架構 → [03 訊息佇列模組](/backend/03-message-queue/) + [01 資料庫模組](/backend/01-database/) + [9.6 容量規劃模型](/backend/09-performance-capacity/)
+- 寫入緩衝、記憶體扣庫存、資料庫認領與付款期限在一個範例售票系統裡怎麼接起來、每一段先耗盡什麼 → [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/)
 - 想做 partition key 設計 → [Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) + [01.6 高併發資料存取](/backend/01-database/high-concurrency-access/)
 - 想做明確限流 / 排隊機制 → [SeatGeek Virtual Waiting Room](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)
 - 想預熱 ELB / Auto Scaling → [05 部署平台模組](/backend/05-deployment-platform/) + [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)

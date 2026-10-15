@@ -1,0 +1,33 @@
+---
+title: "4.0.1 監控鏈事前偵測不到的異常：業務結果、資料正確性、到期事件、排程與背景工作、備份、安全、第三方依賴與成本的監看"
+date: 2026-10-15
+description: "監控鏈各層都正常時仍會發生的幾類異常：業務停了而程式回應正常、資料寫錯、憑證與網域到期、排程工作與佇列消費端沒跑、備份還原不回來、以帳號正常操作進行的攻擊、第三方業者停掉與帳單失控，各自要先定義的預期、檢查它的規則與承接的專章"
+weight: -3
+tags: ["backend", "observability", "monitoring", "alerting"]
+---
+
+這一篇寫 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 那條監控鏈的每一層都正常時，服務仍會發生的幾類異常，以及每一類要怎麼監看。監控鏈指從容器與程序的自檢、服務網路內的探測、元件指標、應用層訊號、告警規則與分送、告警鏈的監看，到使用者路徑的合成監控這一串依檢查對象排列的監控；它的各層在 4.0 的各節，檢查範圍盲區、位置盲區、讀取缺口、訊號失真這四種缺口的定義在 4.0 的〈一層監控檢查的對象與它的缺口〉。例子用 [Backend 範例系統](/backend/case-systems/) 的短網址服務與電商 checkout。
+
+## 監控鏈各層的規則都不會成立的異常
+
+監控鏈各層偵測的都是服務偏離正常運作的訊號：程序沒回應、請求失敗、資源耗盡、告警鏈中斷。下面這幾類是整條監控鏈共同的檢查範圍盲區：沒有任何一層的規則在事前檢查它們。業務結果、資料正確性、排程工作與背景工作、安全、非同步的第三方依賴與成本，在各層只留下正常範圍內的數字（某一類請求的請求率下降、某一類對外呼叫失敗），每個容器都健康、每個探測都成功，沒有一層的規則會把它判成異常；到期事件與同步的第三方依賴，各層既有的規則要等服務中斷才成立，那時已經來不及預警，也分不出原因。監看它們要另外定義「預期會看到什麼」，再寫一條規則檢查它是否出現；這條規則檢查的是新的對象，所以即使相關的數字某一層已經有（例如請求率），這幾類仍算檢查範圍盲區。
+
+**業務結果。** 程式回應正常而業務停了：付款頁的前端腳本壞掉、付款按鈕按不下去時，訂單照常建立，後端收不到付款請求，錯誤率維持正常，而付款端點的請求率與付款完成數歸零；短網址的建立頁被一次改版拿掉了送出按鈕時，轉址照常運作，新建的短網址數歸零。請求率的下降在應用層看得到，而沒有規則把「變少」當成異常。監看的做法是挑幾個代表業務在運作的數字（每 10 分鐘的訂單數、新建的短網址數），流量規律的服務和上週同一時段比較，低於預期一定比例時告警；流量本來就有不規則起伏的服務，以統計基準判斷偏離，見 [4.14 Anomaly Detection](/backend/04-observability/anomaly-detection/)。業務儀表板的定位見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)。
+
+**資料正確性。** 轉址目標寫錯、訂單重複寫入、入帳筆數與金流業者對不上時，每一個請求都成功、每一層的數字都正常。監看的做法是對帳：定期比對兩份應該一致的資料（訂單與金流業者的入帳紀錄、短網址表與轉址的稽核紀錄），對不上時告警，見 [Data Reconciliation](/backend/knowledge-cards/data-reconciliation/)。
+
+**到期事件。** TLS 憑證、網域、API 金鑰與付費方案在到期之前一切正常，到期那一刻服務中斷。監看的做法是記下到期時間、在剩下一段天數時告警。憑證的到期時間由走公開網址的探測取得，這條探測可以放在任何走公開網址的觀察者上，包括失效域以外的合成監控服務；放在服務主機上時主機停掉就沒有預警，而憑證到期是事前的事件，主機正常時就送得出來：blackbox_exporter 對 HTTPS 目標探測時輸出 `probe_ssl_earliest_cert_expiry`（最早到期那一張憑證的到期時間，Unix 時間戳），規則以它減去現在時間判斷剩下幾天；Gatus 的探測可以加 `[CERTIFICATE_EXPIRATION]` 條件。網域的到期日不在 TLS 握手裡，要從註冊商或 RDAP（WHOIS 的後繼協定）查，部分國碼網域（例如 .io、.jp）沒有 RDAP，仍要查 WHOIS；Gatus 的 `[DOMAIN_EXPIRATION]` 條件代為查詢。自動續期也要監看：續期程序失敗時只在它自己的日誌留下錯誤，不會通知任何人，直到憑證過期。續期與輪替的流程見 [Certificate Rotation and Renewal](/backend/knowledge-cards/certificate-rotation-renewal/)。
+
+**排程工作與背景工作。** 每晚的備份、報表、資料清理不在請求路徑上，它們沒跑的時候沒有任何請求失敗。監看的做法與告警鏈的心跳相同：工作完成時對心跳監看服務送一次心跳，沒按時送到就通知，見 [Dead Man's Switch（心跳監看）](/backend/knowledge-cards/dead-mans-switch/)。佇列的消費端（背景工作者）沒有端點，服務網路內的探測打不到它；它停掉、或卡在一筆反覆重試的訊息時，使用者的請求照常成功，工作在佇列裡堆積。監看的對象是工作被處理的速度：佇列裡最舊一筆等了多久、[consumer lag](/backend/knowledge-cards/consumer-lag/)、[死信佇列](/backend/knowledge-cards/dead-letter-queue/)的筆數，由佇列的 exporter 或業者的指標讀取，有的佇列直接提供最舊一筆的等待時間（SQS），有的只給筆數差、要另外換算成時間；規則以等待時間寫，因為佇列長度的正常範圍隨流量變化，consumer 的設計見 [3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/)。
+
+**備份。** 每晚的備份工作完成時同樣送一次心跳，此外還有兩項：託管資料庫自己做的備份沒有可以送心跳的工作，預期改寫成「最近一次備份的時間在一天以內」，監看業者記錄的最近備份時間；而備份工作成功只證明檔案寫出去了，還原得回來要實際還原一次才知道，見 [備份與還原的地基](/going-live/backup-restore-basics/)。
+
+**安全。** 攻擊者以竊取的帳號登入、提升權限、匯出資料時，每一個請求在元件指標與請求指標上都是正常的請求。監看的對象是行為：登入失敗的次數與來源、權限變更、管理操作、異常的大量讀取，資料來源是稽核紀錄（[Audit Log](/backend/knowledge-cards/audit-log/)）。稽核紀錄的邊界見 [4.12 Audit Log 邊界與 PII 治理](/backend/04-observability/audit-log-governance/)，偵測規則的涵蓋範圍與誤報成本見 [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)。另一類不經過請求：映像與相依套件出現新的已知弱點（CVE）時服務照常運作，由弱點掃描定期比對，映像與相依套件的信任見 [7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/)。
+
+**第三方依賴。** 金流、簡訊、email、第三方登入的業者停掉時，結果依呼叫的方式而不同。同步呼叫的依賴（金流、第三方登入）停掉時，使用者的請求跟著失敗，錯誤率會上升，而從錯誤率看不出是哪一家；非同步呼叫的依賴（寄信、簡訊、送出的 webhook）停掉時，使用者的請求照常成功，只有寄出的信與簡訊沒送到，監控鏈的每一層都沒有訊號。監看的做法是把對每一個外部依賴的呼叫各自記成請求指標（成功率、耗時），失敗率升高時就知道是哪一家，同時訂閱業者的狀態頁。依賴關係的盤點見 [4.13 Service Topology 與 Dependency Map](/backend/04-observability/service-topology/)，依賴方停掉時的處理見 [8.15 Vendor / 第三方依賴事故處理](/backend/08-incident-response/vendor-dependency-incident/)。
+
+**成本。** 自動擴充失控、一支程式反覆重試、log 量暴增，服務照常運作而帳單成倍增加。雲端業者的預算告警是最基本的監看；要分辨成本上升是因為流量還是因為效率變差，把每個服務的成本和它的流量並排看，見 [9.8 效能可觀測性](/backend/09-performance-capacity/performance-observability/) 的〈Cost dashboard〉。監控系統本身的成本見 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)。
+
+## 監控鏈事前偵測不到的異常在盤點時的位置
+
+盤點一個服務的監控時，這幾類要與監控鏈的各層分開逐類查：每一類先判斷這個服務有沒有那個對象（沒有佇列的服務沒有消費端、沒有呼叫第三方的服務沒有第三方依賴），有的話再看有沒有人定義過預期、有沒有規則檢查它。兩個服務的實際盤點見 [4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/) 與 [4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/)：短網址服務沒有佇列也沒有第三方，第三方依賴與「排程工作與背景工作」裡的佇列消費端不適用；checkout 有訊息佇列的消費端、第三方金流與寄信業者，這幾類佔了它大部分的缺口。

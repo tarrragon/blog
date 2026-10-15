@@ -88,5 +88,6 @@ Slack 2021 年 1 月那次事故從不可用（down）退到降級（degraded）
 - 有日期可排的峰值、T-90 到 T-0 的準備時程與演練：[9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)。
 - 擴展要依哪一個軸、無狀態的前提：[9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/)。
 - 售票搶購的案例：[拓元 Tixcraft：售票搶購的瞬間爆量架構](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)。
+- 等候室放行之後的扣庫存、資料庫認領與付款期限，以及排隊服務故障時停止放行的理由：[9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/)。
 - 這些機制落在短網址服務上的形狀（爆紅連結、建立路徑的機器人濫用、轉址網域的攻擊）：[0.25 短網址服務的瞬時大流量：爆紅連結、建立路徑的機器人濫用與轉址路徑的攻擊](/backend/00-service-selection/url-shortener-traffic-surge/)。
 - 流量已經造成事故時的止血與降級：[8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)；分級、溝通與事後檢討見 [08 事故處理模組](/backend/08-incident-response/)。

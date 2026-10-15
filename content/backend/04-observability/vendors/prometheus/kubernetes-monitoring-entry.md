@@ -228,4 +228,5 @@ nodes:
 - 讀取對象、規則與儀表板以檔案管理時的寫法，見 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/)；目標清單跟著部署走、主機標籤與主機消失的偵測，見 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/)。
 - `relabelings` 在什麼時間點執行、讀得到哪些標籤、為什麼來源標籤不存在時目標標籤會整個消失，見 [Relabeling](/backend/knowledge-cards/relabeling/)。
 - chart 附的 `Watchdog` 要接到外部的心跳監看服務才有作用，Alertmanager 的路由與通知見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/)，接心跳監看服務的設定在〈Watchdog：告警鏈本身的心跳〉，心跳監看服務的挑選、`/fail` 與送失敗通知的路由見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)。叢集裡的監控與叢集共用失效域，需要叢集以外的觀察者，理由見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
+- 以這個 chart 為底盤點一個電商 checkout 的監控：哪些缺口 chart 已經補上、哪些只缺路由、readiness 納入外部依賴的後果，見 [4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/)。
 - kind、k3d 與 minikube 各自怎麼模擬節點、閒置時用多少資源，見 [單機練習用的 Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/local-practice-clusters/)。
