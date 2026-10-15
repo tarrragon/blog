@@ -41,7 +41,7 @@ MySQL（InnoDB）的列鎖同樣持有到提交，`innodb_flush_log_at_trx_commi
 
 ## 把寫入分開的三種做法：拆成多列、只新增事件、先在記憶體裡合併
 
-熱點列的根源是所有寫入搶同一列。三種常見做法都是讓寫入落在不同的地方，差別在於數字在什麼時候、在哪裡加總：
+熱點列的根源是所有寫入搶同一列。三種常見做法都是讓寫入落在不同的地方，差別在於數字在什麼時候、在哪裡加總（庫存這種要互斥的計數，改成每張票一列逐張認領的寫法，以及什麼條件下才在前面加一道 Redis，見 [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/) 的〈扣庫存：資料庫逐張認領與加入 Redis 的條件〉）：
 
 - **拆成多列（counter shard）**：一個計數拆成 N 列，每次隨機挑一列加一，讀取時加總。pgbench 那一組壓測裡，拆成 10 列的吞吐量約是同一列的 3 倍，到不了 10 倍，差距的成因這次實驗沒有拆開。它保留了「一個數字」的形狀，查詢最簡單；代價是只能回答事先設計好的那一個數字，要依國家、裝置、客群拆分時就要更多計數器。Firestore 這類對單一文件有寫入上限的資料庫用同一個做法，見 [Firestore 高頻寫入與 distributed counter：單 document contention 邊界與分片計數](/backend/01-database/vendors/firestore/distributed-counter-high-frequency-write/)。
 - **只新增（append-only）事件，事後彙總**：每發生一次就 `INSERT` 一列事件（下文的事件表是 `click_events (id, link_id, clicked_at)`，`clicked_at` 由程式在事件發生時給值），事件之間沒有共用的列，彼此不必等鎖，多個交易的提交也能合併成一次寫盤（group commit）。原始事件留著，彙總的維度可以事後再決定、規則改了可以重算；代價是要另外寫彙總，而且事件表會一直長大。
