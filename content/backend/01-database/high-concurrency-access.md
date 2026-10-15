@@ -144,7 +144,7 @@ SHOW VARIABLES LIKE 'max_connections';
 
 **典型 hot row 場景**：
 
-- inventory counter：所有用戶搶同一個 product 庫存（售票搶購把扣庫存從這一列移到 Redis、再回資料庫認領的完整路徑見 [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/)）
+- inventory counter：所有用戶搶同一個 product 庫存（把庫存從這一列拆成每張票一列逐張認領、以及什麼條件下才在前面加 Redis 閘門，見 [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/) 的〈扣庫存：資料庫逐張認領與加入 Redis 閘門的條件〉）
 - counter / metrics：實時計數器（view count、like count）
 - queue / job ledger：所有 worker 競爭同一個 job table
 - session：高頻 session 更新

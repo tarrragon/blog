@@ -57,7 +57,7 @@ pipeline 的核心限制是批次大小仍要受控。太大的 pipeline 會帶�
 
 ## 【判讀】原子性需求要分清楚
 
-Redis 的很多操作本身就可以很快，但原子性與一致性需要額外設計（以 Lua 扣庫存當閘門、資料庫做最後保證的完整例子，見 [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/) 的〈扣庫存：資料庫逐張認領與加入 Redis 的條件〉）。當需求需要多個資料變更形成同一個結果時，才應該考慮：
+Redis 的很多操作本身就可以很快，但原子性與一致性需要額外設計（以 Lua 扣庫存當閘門、資料庫做最後保證的完整例子，見 [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/) 的〈扣庫存：資料庫逐張認領與加入 Redis 閘門的條件〉）。當需求需要多個資料變更形成同一個結果時，才應該考慮：
 
 - 單鍵原子操作
 - transaction
