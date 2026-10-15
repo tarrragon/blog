@@ -6,9 +6,9 @@ weight: -3
 tags: ["backend", "observability", "monitoring", "alerting"]
 ---
 
-這一篇寫 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 那條監控鏈的每一層都正常時，服務仍會發生的幾類異常，以及每一類要怎麼監看。監控鏈指從容器與程序的自檢、服務網路內的探測、元件指標、應用層訊號、告警規則與分送、告警鏈的監看，到使用者路徑的合成監控這一串依檢查對象排列的監控；它的各層在 4.0 的各節，檢查範圍盲區、位置盲區、讀取缺口、訊號失真這四種缺口的定義在 4.0 的〈一層監控檢查的對象與它的缺口〉。例子用 [Backend 範例系統](/backend/case-systems/) 的短網址服務與電商 checkout。
+這一篇寫 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 那條監控鏈的每一層都正常時，服務仍會發生的幾類異常，以及每一類要怎麼監看。監控鏈指從容器與程序的自檢、服務網路內的探測、元件指標、應用層訊號、告警規則與分送、告警鏈的監看，到使用者路徑的合成監控這一串依檢查對象排列的監控，其中告警規則的評估、Alertmanager 與通知管道那一串稱為告警鏈；它的各層在 4.0 的各節，檢查範圍盲區、位置盲區、讀取缺口、訊號失真這四種缺口的定義在 4.0 的〈一層監控檢查的對象與它的缺口〉。例子用 [Backend 範例系統](/backend/case-systems/) 的短網址服務與電商 checkout。
 
-## 監控鏈各層的規則都不會成立的異常
+## 監控鏈事前偵測不到的各類異常與監看做法
 
 監控鏈各層偵測的都是服務偏離正常運作的訊號：程序沒回應、請求失敗、資源耗盡、告警鏈中斷。下面這幾類是整條監控鏈共同的檢查範圍盲區：沒有任何一層的規則在事前檢查它們。業務結果、資料正確性、排程工作與背景工作、安全、非同步的第三方依賴與成本，在各層只留下正常範圍內的數字（某一類請求的請求率下降、某一類對外呼叫失敗），每個容器都健康、每個探測都成功，沒有一層的規則會把它判成異常；到期事件與同步的第三方依賴，各層既有的規則要等服務中斷才成立，那時已經來不及預警，也分不出原因。監看它們要另外定義「預期會看到什麼」，再寫一條規則檢查它是否出現；這條規則檢查的是新的對象，所以即使相關的數字某一層已經有（例如請求率），這幾類仍算檢查範圍盲區。
 
@@ -16,7 +16,7 @@ tags: ["backend", "observability", "monitoring", "alerting"]
 
 **資料正確性。** 轉址目標寫錯、訂單重複寫入、入帳筆數與金流業者對不上時，每一個請求都成功、每一層的數字都正常。監看的做法是對帳：定期比對兩份應該一致的資料（訂單與金流業者的入帳紀錄、短網址表與轉址的稽核紀錄），對不上時告警，見 [Data Reconciliation](/backend/knowledge-cards/data-reconciliation/)。
 
-**到期事件。** TLS 憑證、網域、API 金鑰與付費方案在到期之前一切正常，到期那一刻服務中斷。監看的做法是記下到期時間、在剩下一段天數時告警。憑證的到期時間由走公開網址的探測取得，這條探測可以放在任何走公開網址的觀察者上，包括失效域以外的合成監控服務；放在服務主機上時主機停掉就沒有預警，而憑證到期是事前的事件，主機正常時就送得出來：blackbox_exporter 對 HTTPS 目標探測時輸出 `probe_ssl_earliest_cert_expiry`（最早到期那一張憑證的到期時間，Unix 時間戳），規則以它減去現在時間判斷剩下幾天；Gatus 的探測可以加 `[CERTIFICATE_EXPIRATION]` 條件。網域的到期日不在 TLS 握手裡，要從註冊商或 RDAP（WHOIS 的後繼協定）查，部分國碼網域（例如 .io、.jp）沒有 RDAP，仍要查 WHOIS；Gatus 的 `[DOMAIN_EXPIRATION]` 條件代為查詢。自動續期也要監看：續期程序失敗時只在它自己的日誌留下錯誤，不會通知任何人，直到憑證過期。續期與輪替的流程見 [Certificate Rotation and Renewal](/backend/knowledge-cards/certificate-rotation-renewal/)。
+**到期事件。** TLS 憑證、網域、API 金鑰與付費方案在到期之前一切正常，到期那一刻服務中斷。監看的做法是記下到期時間、在剩下一段天數時告警。憑證的到期時間由走公開網址的探測取得，這條探測可以放在任何走公開網址的觀察者上，包括失效域以外的合成監控服務；放在服務主機上也有用：憑證到期的預警在到期前幾天、主機還正常時就送出，主機停掉時才送不出去：blackbox_exporter 對 HTTPS 目標探測時輸出 `probe_ssl_earliest_cert_expiry`（最早到期那一張憑證的到期時間，Unix 時間戳），規則以它減去現在時間判斷剩下幾天；Gatus 的探測可以加 `[CERTIFICATE_EXPIRATION]` 條件。網域的到期日不在 TLS 握手裡，要從註冊商或 RDAP（WHOIS 的後繼協定）查，部分國碼網域（例如 .io、.jp）沒有 RDAP，仍要查 WHOIS；Gatus 的 `[DOMAIN_EXPIRATION]` 條件代為查詢。自動續期也要監看：續期程序失敗時只在它自己的日誌留下錯誤，不會通知任何人，直到憑證過期。續期與輪替的流程見 [Certificate Rotation and Renewal](/backend/knowledge-cards/certificate-rotation-renewal/)。
 
 **排程工作與背景工作。** 每晚的備份、報表、資料清理不在請求路徑上，它們沒跑的時候沒有任何請求失敗。監看的做法與告警鏈的心跳相同：工作完成時對心跳監看服務送一次心跳，沒按時送到就通知，見 [Dead Man's Switch（心跳監看）](/backend/knowledge-cards/dead-mans-switch/)。佇列的消費端（背景工作者）沒有端點，服務網路內的探測打不到它；它停掉、或卡在一筆反覆重試的訊息時，使用者的請求照常成功，工作在佇列裡堆積。監看的對象是工作被處理的速度：佇列裡最舊一筆等了多久、[consumer lag](/backend/knowledge-cards/consumer-lag/)、[死信佇列](/backend/knowledge-cards/dead-letter-queue/)的筆數，由佇列的 exporter 或業者的指標讀取，有的佇列直接提供最舊一筆的等待時間（SQS），有的只給筆數差、要另外換算成時間；規則以等待時間寫，因為佇列長度的正常範圍隨流量變化，consumer 的設計見 [3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/)。
 
