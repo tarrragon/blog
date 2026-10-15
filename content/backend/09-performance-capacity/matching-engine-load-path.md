@@ -6,7 +6,7 @@ weight: -1
 tags: ["backend", "performance", "capacity", "case-study", "low-latency"]
 ---
 
-這篇以 [Backend 範例系統](/backend/case-systems/) 裡的交易撮合為例，沿著一筆委託從入口閘道到成交回報的路徑，逐段寫這一段先耗盡什麼資源、出錯時由哪一段補救，以及撮合之前幾乎沒有能確定結果的委託這件事，讓負載保護的做法與售票有哪些不同；對照的系統是 [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/)。撮合引擎的內部設計各交易所不同，這一篇只寫公開資料寫得到的部分與從機制推得出的部分，推論的地方會標明；委託量這類數字是範例系統的假設，交易所的規則與案例數字取自公開文件。
+這篇以 [Backend 範例系統](/backend/case-systems/) 裡的交易撮合為例，沿著一筆委託從入口閘道到成交回報的路徑，逐段寫這一段先耗盡什麼資源、出錯時由哪一段補救，以及撮合之前幾乎沒有能確定結果的委託這件事，讓負載保護的做法與售票有哪些不同；對照的系統是 [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/)，兩篇共用的概念在 [9.0 請求路徑上的負載分析](/backend/09-performance-capacity/load-path-analysis/)。撮合引擎的內部設計各交易所不同，這一篇只寫公開資料寫得到的部分與從機制推得出的部分，推論的地方會標明；委託量這類數字是範例系統的假設，交易所的規則與案例數字取自公開文件。
 
 ## 撮合系統的性質與需求
 

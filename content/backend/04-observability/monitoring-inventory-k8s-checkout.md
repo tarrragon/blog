@@ -2,7 +2,7 @@
 title: "4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout：叢集內的監控、託管資料庫與第三方金流各自的失效域，以及佇列消費端與外部依賴的缺口"
 date: 2026-10-15
 description: "把一個跑在託管 Kubernetes 上、有訊息佇列消費端、託管資料庫與第三方金流的電商 checkout 現有的監控放進監控鏈的各層，逐層判讀缺口與補法；另寫付款服務的 readiness 納入金流業者時對付款回呼的影響、失效域從主機換成叢集與雲端帳號之後觀察者要放在哪裡，以及業務結果、對帳、到期事件、消費端、備份、安全、第三方依賴與成本的逐類盤點"
-weight: -1
+weight: -2
 tags: ["backend", "observability", "monitoring", "case-study", "kubernetes"]
 ---
 

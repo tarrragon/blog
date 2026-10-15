@@ -6,7 +6,7 @@ weight: 3
 tags: ["backend", "case-study", "system-design", "overview"]
 ---
 
-這篇定義四個範例系統：短網址、售票搶購、電商 checkout 與交易撮合，供幾篇沿著具體系統的請求路徑逐段分析的文章共用，目前有 [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/)、[9.0.2 交易撮合的負載路徑](/backend/09-performance-capacity/matching-engine-load-path/)、[4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/) 與 [4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/)。那幾篇引用的請求量、票數這類規模數字是本篇的假設，用來讓例子有具體的量，不是任何真實服務的數字；[4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/) 到 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/) 也用短網址服務當例子，那幾篇的量測數字來自實際的開發環境，不在本篇的假設之內。
+這篇定義四個範例系統：短網址、售票搶購、電商 checkout 與交易撮合，供幾篇沿著具體系統的請求路徑逐段分析的文章共用，目前有 [9.0 請求路徑上的負載分析](/backend/09-performance-capacity/load-path-analysis/) 的舉例、[9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/)、[9.0.2 交易撮合的負載路徑](/backend/09-performance-capacity/matching-engine-load-path/)、[4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/) 、[4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/) 與 [4.0.4 以監控鏈盤點交易撮合系統](/backend/04-observability/monitoring-inventory-matching-engine/)。那幾篇引用的請求量、票數這類規模數字是本篇的假設，用來讓例子有具體的量，不是任何真實服務的數字；[4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/) 到 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/) 也用短網址服務當例子，那幾篇的量測數字來自實際的開發環境，不在本篇的假設之內。
 
 同一個元件在不同需求下的設計不同。售票系統可以讓大多數請求在進資料庫之前就收到「售完」，交易撮合每一筆被接受的委託都要處理；剛建立的短網址轉址讀到幾秒前的舊資料沒有影響，checkout 的付款狀態讀到舊資料會讓使用者重複付款。每個系統都有一件必須一次只處理一筆的事，範圍各自不同：售票是同一張票（座位）的認領與訂單狀態，撮合是同一個交易對的整本委託簿，checkout 是同一筆訂單的付款狀態，短網址是同一個代碼的分配。
 
@@ -64,7 +64,7 @@ tags: ["backend", "case-study", "system-design", "overview"]
 
 **規模假設（示意）**：一個熱門交易對每秒數萬筆委託與取消，市場劇烈波動時是平常的十倍以上；撮合的延遲目標在毫秒以下。
 
-**起點架構**：入口閘道（驗證身分、檢查餘額與帳戶的速率限制）、依交易對分開的撮合引擎、委託先寫入依序編號的日誌再撮合、行情發布服務、帳戶與歷史資料存放在資料庫。站內的對照案例有 [9.C3 Coinbase International Exchange：超低延遲交易的逆向容量設計](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)，負載路徑的分析見 [9.0.2 交易撮合的負載路徑](/backend/09-performance-capacity/matching-engine-load-path/)。
+**起點架構**：入口閘道（驗證身分、檢查餘額與帳戶的速率限制）、依交易對分開的撮合引擎、委託先寫入依序編號的日誌再撮合、行情發布服務、帳戶與歷史資料存放在資料庫。站內的對照案例有 [9.C3 Coinbase International Exchange：超低延遲交易的逆向容量設計](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/)，負載路徑的分析見 [9.0.2 交易撮合的負載路徑](/backend/09-performance-capacity/matching-engine-load-path/)，監控的盤點見 [4.0.4 以監控鏈盤點交易撮合系統](/backend/04-observability/monitoring-inventory-matching-engine/)。
 
 ## 四個系統在請求性質上的差別
 

@@ -2,11 +2,11 @@
 title: "4.0 服務端監控的分層：容器與程序的自檢、服務網路內的探測、元件指標、應用層訊號、告警規則與分送、告警鏈的監看與使用者路徑的合成監控"
 date: 2026-10-14
 description: "以每一層監控檢查的對象、看不到的範圍與接手的那一層，把服務端監控串成一條監控鏈，以及拿它盤點一個服務時怎麼判讀缺口的性質（檢查範圍、位置、讀取與訊號失真），涵蓋自架主機、Kubernetes 與雲端託管的情形；使用者路徑那一層另寫合成監控與真實使用者監測的差別，以及盤點時各種缺口的補法"
-weight: -4
+weight: -5
 tags: ["backend", "observability", "monitoring", "alerting"]
 ---
 
-這一篇把一個後端服務的監控，依每一層檢查的對象排成一條鏈，說明每一層看不到的範圍由哪一層接手，以及拿這條鏈盤點一個服務時怎麼判讀缺口。各層都正常時仍會發生的異常另寫在 [4.0.1 監控鏈事前偵測不到的異常](/backend/04-observability/monitoring-outside-the-chain/)，兩個服務的實際盤點寫在 [4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/) 與 [4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/)。範圍是跑在自己的主機、Kubernetes 或雲端託管平台上的服務；使用者端（行動 App、網頁、本機腳本）的事件蒐集是另一條路線，見 [監控實務指南](/monitoring/)。各層的做法與設定在連過去的專章裡，這一篇處理它們之間的關係。
+這一篇把一個後端服務的監控，依每一層檢查的對象排成一條鏈，說明每一層看不到的範圍由哪一層接手，以及拿這條鏈盤點一個服務時怎麼判讀缺口。各層都正常時仍會發生的異常另寫在 [4.0.1 監控鏈事前偵測不到的異常](/backend/04-observability/monitoring-outside-the-chain/)，兩個服務的實際盤點寫在 [4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/) 、[4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/) 與 [4.0.4 以監控鏈盤點交易撮合系統](/backend/04-observability/monitoring-inventory-matching-engine/)。範圍是跑在自己的主機、Kubernetes 或雲端託管平台上的服務；使用者端（行動 App、網頁、本機腳本）的事件蒐集是另一條路線，見 [監控實務指南](/monitoring/)。各層的做法與設定在連過去的專章裡，這一篇處理它們之間的關係。
 
 例子是一台主機上以 Docker Compose 跑的短網址服務（功能與需求見 [Backend 範例系統](/backend/case-systems/) 的〈短網址服務〉）：入口 Nginx、後端程式、PostgreSQL 與 Valkey，各在一個容器裡。下文把主機、容器、資料庫、快取與入口這些組成服務的單位稱為**元件**，監控用的程式（健康檢查、探測工具、Prometheus、雲端業者的監控）稱為**觀察者**，「層」只用來指監控的層。
 
@@ -93,7 +93,7 @@ Gatus 與 Uptime Kuma 能以自己的管道發通知，那條通知不經過告�
 
 同一個補法有時同時對應監控鏈的一層與 4.0.1 的一類：佇列改以等待時間告警，既是元件指標那一層的告警寫法，也是 4.0.1〈排程工作與背景工作〉要的預期。記法是告警的寫法（門檻以筆數還是等待時間、以平均還是百分位數判斷）記在監控鏈那一層，業務上的預期（消費端多久沒處理算異常、確認信晚多久算太晚）記在 4.0.1 的那一類，兩處互相指向。
 
-盤點的結果寫成一張表，每一列是監控鏈的一層，欄位是這一層現有的監控與判讀。表的實際樣子與補法見兩個案例：[4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/) 的觀察者全在一台主機上，失效域就是那台主機；[4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/) 的監控跑在服務所在的叢集裡，失效域是叢集、雲端帳號與區域，而託管資料庫與第三方金流各自站在另一個失效域。
+盤點的結果寫成一張表，每一列是監控鏈的一層，欄位是這一層現有的監控與判讀。表的實際樣子與補法見兩個案例：[4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/) 的觀察者全在一台主機上，失效域就是那台主機；[4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/) 的監控跑在服務所在的叢集裡，失效域是叢集、雲端帳號與區域，而託管資料庫與第三方金流各自站在另一個失效域；[4.0.4 以監控鏈盤點交易撮合系統](/backend/04-observability/monitoring-inventory-matching-engine/) 的撮合引擎單一執行緒、延遲以毫秒以下計，觀察者要從處理路徑以外讀數字，「沒有訊號」要靠主動產生的心跳才分得出市場安靜與引擎停住。
 
 以層盤點只找得到監控鏈定義過的缺口；被盤點的服務特有的故障，要先列出它的失效模式或使用者旅程，再對回各層，見 [4.16 Observability Readiness Review](/backend/04-observability/observability-readiness-review/)（上線前由服務、平台與值班一起確認訊號足以支援事故判讀的審查流程）與 [單點故障盤點](/operations/06-high-availability/spof-inventory/)。事故之後發現的偵測缺口怎麼寫回成新的規則，見 [4.8 訊號治理閉環](/backend/04-observability/signal-governance-loop/)。
 
