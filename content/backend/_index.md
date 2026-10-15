@@ -250,7 +250,7 @@ Backend 教學文章以敘事說明為主。每篇先回答「這個能力在真
 
 **要交付的與形態不規定的分開**：要交付的只有兩項，寫出這個系統在本模組的主題下每一段會在哪裡出錯、由誰補救、負載或責任轉給了誰，以及與對照的那一篇互連、連到範例系統的〈四個系統在請求性質上的差別〉。標題、開場、段落骨架、收尾句、對照句放在哪一節都不規定，每一篇從自己最大的特點起手。試點的兩對已經示範了差異的幅度：4.0.3 的標題寫系統特有的成員，9.0.x 第一版的標題寫方法槽位、Round 2 改掉；9.0.2 逐節對照售票，4.0.2 以散文逐類查。Round 2 的 cadence 審查量到兩對之間開場、標題、首節起手句、表後句、結尾命題都同構，十一個模組照抄會得到十一組副本，所以推進時每一篇開工前先讀同模組已寫的那一篇，避開它的句型，而不是照它的骨架填。
 
-**試點**：09 的 [9.0 概念篇](/backend/09-performance-capacity/load-path-analysis/)、[9.0.1 售票搶購](/backend/09-performance-capacity/ticketing-load-path/) 與 [9.0.2 交易撮合](/backend/09-performance-capacity/matching-engine-load-path/)，04 的 4.0 拆分（4.0 概念、[4.0.1 正常運作時仍會發生的異常](/backend/04-observability/monitoring-outside-the-chain/)、[4.0.2 單機短網址的盤點](/backend/04-observability/monitoring-inventory-single-host/)、[4.0.3 Kubernetes 上 checkout 的盤點](/backend/04-observability/monitoring-inventory-k8s-checkout/)）。兩組跑完多輪審查、確認形式站得住之後，再依下表逐模組推進。
+**試點**：09 的 [9.0 概念篇](/backend/09-performance-capacity/load-path-analysis/)、[9.0.1 售票搶購](/backend/09-performance-capacity/ticketing-load-path/) 與 [9.0.2 交易撮合](/backend/09-performance-capacity/matching-engine-load-path/)，04 的 4.0 拆分（4.0 概念、[4.0.1 正常運作時仍會發生的異常](/backend/04-observability/monitoring-outside-the-chain/)、[4.0.2 單機短網址的盤點](/backend/04-observability/monitoring-inventory-single-host/)、[4.0.3 Kubernetes 上 checkout 的盤點](/backend/04-observability/monitoring-inventory-k8s-checkout/)、[4.0.4 交易撮合的盤點](/backend/04-observability/monitoring-inventory-matching-engine/)）。兩組跑完多輪審查、確認形式站得住之後，再依下表逐模組推進。
 
 各模組的配對候選（動筆前重判：配對的理由是兩個系統的需求差異在該模組翻轉答案）：
 

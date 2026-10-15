@@ -156,6 +156,7 @@ Slack 2021 年 1 月 4 日的事故可以拿來對照觸發仍在的過載：假
 ## 延伸閱讀：飽和曲線、應對手段與監控層
 
 - 負載在飽和曲線上的位置、knee 與 cliff 的量法、容量地圖：[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)
+- 沿著請求路徑分析負載時共用的概念（一次一筆的處理與互斥範圍、可提早回應的比例、保護把負載轉到哪裡、保護元件故障時的處置）：[9.0 請求路徑上的負載分析](/backend/09-performance-capacity/load-path-analysis/)
 - 負載卸除、准入控制、重試預算、擴展跟不上時的退路：[9.15 無預警瞬時大流量](/backend/09-performance-capacity/unplanned-traffic-surge/)
 - 熱點列與連線池的耗盡順序、等待上限與呼叫方逾時的關係，在售票系統上的完整例子：[9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/)；請求晚一點處理就失去價值、過載時要明確拒絕的撮合系統：[9.0.2 交易撮合的負載路徑](/backend/09-performance-capacity/matching-engine-load-path/)
 - 監控各層的做法、各層看不到的範圍與接手的層：[4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)
