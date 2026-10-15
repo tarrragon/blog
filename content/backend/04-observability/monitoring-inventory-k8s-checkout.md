@@ -6,7 +6,7 @@ weight: -2
 tags: ["backend", "observability", "monitoring", "case-study", "kubernetes"]
 ---
 
-這一篇拿 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 的監控鏈盤點一個跑在託管 Kubernetes 上的電商 checkout：把它現有的每一種監控放到所屬的層，逐層判讀還開著的缺口是哪一種、補它要加什麼。盤點用到四種缺口：**檢查範圍盲區**是沒有觀察者檢查那個對象，**位置盲區**是觀察者跟被觀察的元件共用一個依賴、那個依賴停掉時一起停，**讀取缺口**是觀察者有結果而沒有規則讀它、或通知送不出去，**訊號失真**是觀察者自己壞掉沒人知道、或規則的寫法讓結果不可信。完整的定義與例子在 4.0 的〈一層監控檢查的對象與它的缺口〉，盤點時的判讀依據在 4.0 的〈以監控鏈盤點一個服務的判讀依據〉。服務的功能與需求見 [Backend 範例系統](/backend/case-systems/) 的〈電商 checkout〉；對照的案例是 [4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/)，那個服務的觀察者全在一台主機上，沒有佇列也沒有第三方。
+這一篇拿 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 的監控鏈盤點一個跑在託管 Kubernetes 上的電商 checkout：把它現有的每一種監控放到所屬的層，逐層判讀還開著的缺口是哪一種、補它要加什麼。盤點用到四種缺口：**檢查範圍盲區**是沒有觀察者檢查那個對象，**位置盲區**是觀察者跟被觀察的元件共用一個依賴、那個依賴停掉時一起停，**讀取缺口**是觀察者有結果而沒有規則讀它、或通知送不出去，**訊號失真**是觀察者自己壞掉沒人知道、或規則的寫法讓結果不可信。完整的定義與例子在 4.0 的〈一層監控檢查的對象與它的缺口〉，盤點時的判讀依據在 4.0 的〈以監控鏈盤點一個服務的判讀依據〉。服務的功能與需求見 [Backend 範例系統](/backend/case-systems/) 的〈電商 checkout〉；對照的案例是 [4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/)，那個服務的觀察者全在一台主機上，沒有佇列也沒有第三方；撮合引擎單一執行緒、觀察者要從輸出日誌讀數字的系統，見 [4.0.4 以監控鏈盤點交易撮合系統](/backend/04-observability/monitoring-inventory-matching-engine/)。
 
 ## checkout 的元件與各自的失效域
 

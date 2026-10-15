@@ -6,7 +6,7 @@ weight: -3
 tags: ["backend", "observability", "monitoring", "case-study"]
 ---
 
-這一篇拿 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 的監控鏈盤點一個單機的短網址服務：把它現有的每一種監控放到所屬的層，逐層判讀還開著的缺口是哪一種、補它要加什麼。四種缺口（檢查範圍盲區、位置盲區、讀取缺口、訊號失真）的定義在 4.0 的〈一層監控檢查的對象與它的缺口〉，盤點時的判讀依據在同一篇的〈以監控鏈盤點一個服務的判讀依據〉。服務的功能與需求見 [Backend 範例系統](/backend/case-systems/) 的〈短網址服務〉；對照的案例是 [4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/)，那個服務跑在叢集上、有佇列與第三方，失效域與缺口的分布都不同。
+這一篇拿 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 的監控鏈盤點一個單機的短網址服務：把它現有的每一種監控放到所屬的層，逐層判讀還開著的缺口是哪一種、補它要加什麼。四種缺口（檢查範圍盲區、位置盲區、讀取缺口、訊號失真）的定義在 4.0 的〈一層監控檢查的對象與它的缺口〉，盤點時的判讀依據在同一篇的〈以監控鏈盤點一個服務的判讀依據〉。服務的功能與需求見 [Backend 範例系統](/backend/case-systems/) 的〈短網址服務〉；對照的案例是 [4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/)，那個服務跑在叢集上、有佇列與第三方，失效域與缺口的分布都不同；撮合引擎單一執行緒、觀察者不能進處理路徑的系統，見 [4.0.4 以監控鏈盤點交易撮合系統](/backend/04-observability/monitoring-inventory-matching-engine/)。
 
 ## 單機短網址服務現有的監控與各層的判讀
 

@@ -32,4 +32,4 @@ tags: ["backend", "observability", "monitoring", "alerting"]
 
 ## 監控鏈事前偵測不到的異常在盤點時的位置
 
-盤點一個服務的監控時，這幾類要與監控鏈的各層分開逐類查：每一類先判斷這個服務有沒有那個對象（沒有佇列的服務沒有消費端、沒有呼叫第三方的服務沒有第三方依賴），有的話再看有沒有人定義過預期、有沒有規則檢查它。兩個服務的實際盤點見 [4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/) 與 [4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/)：短網址服務沒有佇列也沒有第三方，第三方依賴與「排程工作與背景工作」裡的佇列消費端不適用；checkout 有訊息佇列的消費端、第三方金流與寄信業者，這幾類佔了它大部分的缺口；[4.0.4 以監控鏈盤點交易撮合系統](/backend/04-observability/monitoring-inventory-matching-engine/) 最重的是資料正確性，輸出序號的斷號、帳戶部位與行情的一致要分開對帳。
+盤點一個服務的監控時，這幾類要與監控鏈的各層分開逐類查：每一類先判斷這個服務有沒有那個對象（沒有佇列的服務沒有消費端、沒有呼叫第三方的服務沒有第三方依賴），有的話再看有沒有人定義過預期、有沒有規則檢查它。實際盤點的案例見 [4.0.2 以監控鏈盤點單機短網址服務](/backend/04-observability/monitoring-inventory-single-host/) 與 [4.0.3 以監控鏈盤點 Kubernetes 上的電商 checkout](/backend/04-observability/monitoring-inventory-k8s-checkout/)：短網址服務沒有佇列也沒有第三方，第三方依賴與「排程工作與背景工作」裡的佇列消費端不適用；checkout 有訊息佇列的消費端、第三方金流與寄信業者，這幾類佔了它大部分的缺口；[4.0.4 以監控鏈盤點交易撮合系統](/backend/04-observability/monitoring-inventory-matching-engine/) 最重的是資料正確性，輸出序號的斷號、帳戶部位與行情的一致要分開對帳。
