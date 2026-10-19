@@ -8,7 +8,7 @@ tags: ["方法論", "寫作", "文件設計", "SRP", "重構"]
 
 規則文件、操作手冊、範本這類文字文件的拆分，判斷依據與程式模組相同：一份文件被幾種互不相干的主題修改，就承擔了幾種職責。範圍包括從修改紀錄讀出職責、沿哪條軸切開，以及拆完之後原檔與引用的處理；文件放在版本控制裡；放在 wiki 的文件用頁面歷史代替修改紀錄，wiki 的編輯摘要多半是空的，歸類改成讀每次修改的差異落在哪幾節，找引用改用 wiki 本身的反向連結功能。
 
-程式模組的拆分在[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)，文章與系列之間的責任分配在 [SOLID 寫作方法論](/record/solid-writing-methodology/)。一份文件只剩一種職責之後，內部怎麼把每次都要讀的內容與按需查閱的細節分層，是[規則文件的精簡](/record/non-code-refactoring/)的主題，那一篇的案例是 AI 代理人每次都整份讀進來的規則文件。
+程式模組的拆分在[從修改競爭判斷拆檔](/design-principles/module-boundary-from-change-history/)，文章與系列之間的責任分配在 [SOLID 寫作方法論](/record/solid-writing-methodology/)。一份文件只剩一種職責之後，內部怎麼把每次都要讀的內容與按需查閱的細節分層，是[規則文件的精簡](/record/non-code-refactoring/)的主題，那一篇的案例是 AI 代理人每次都整份讀進來的規則文件。
 
 ## 修改紀錄裡的職責訊號
 

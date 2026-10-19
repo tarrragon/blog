@@ -300,5 +300,5 @@ def main():
 ---
 
 _上一章：[完整案例回顧](/python/07-refactoring/case-study/)_
-_下一章：[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)_
+_下一章：[從修改競爭判斷拆檔](/design-principles/module-boundary-from-change-history/)_
 _相關：[5.5 頂層例外處理機制](/python/05-error-testing/error-infrastructure/) — 本案例中 bug 被靜默吞掉的機制分析_

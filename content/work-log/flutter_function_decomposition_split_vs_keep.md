@@ -57,7 +57,7 @@ tags: ["flutter", "dart", "refactoring", "readability", "srp", "function-decompo
 ## 相關閱讀
 
 - 函式層級與模組層級的分界：[單一職責原則](/design-principles/knowledge-cards/single-responsibility-principle/)——本文的「職責混雜」判的是函式在做什麼，屬於「一個函式只做一件事」那條函式層級的規則；類別與模組層級的單一職責原則判的是誰會要求它改變，兩者的判斷依據不同
-- 同一個論證在檔案層的版本：[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)——那篇用版本歷史數一個檔案被幾個不相干的需求修改，同樣把行數當症狀、把改變的理由當診斷
+- 同一個論證在檔案層的版本：[從修改競爭判斷拆檔](/design-principles/module-boundary-from-change-history/)——那篇用版本歷史數一個檔案被幾個不相干的需求修改，同樣把行數當症狀、把改變的理由當診斷
 - 同專案的可讀性家族：[typedef 改寫前後比較](/work-log/dart_hof_typedef_readability/)——那篇是型別層的可讀性手法、本文是結構層
 - 「規則是觸發器不是判決」的原則層：[#149 keyword bank 命中是候選、不是判決](/report/keyword-bank-hit-is-candidate-not-verdict/)——寫作 lint 與函式長度規則同構：偵測可機械化、判定要看語意
 - 測試守護重構的前提：[192 個測試全過、實機全壞](/work-log/testing_three_layer_strategy/)——測試耦合行為才有守護力，本文的 209 個零改動測試是正面樣本

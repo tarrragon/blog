@@ -39,7 +39,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作", "審查"
 
 ## 論述基礎與限制
 
-本卡的方法寫在 Python 教材[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)與 record 方法論[依職責拆分文字文件](/record/document-split-by-responsibility/)，還沒有拿任何一份實際的規則檔跑過稽核，主題數多到什麼程度該拆沒有量過，所以本卡不給門檻。修改紀錄當量測工具的前提是 commit 標題寫得出主題，這一點在不同專案差異很大。
+本卡的方法寫在 Python 教材[從修改競爭判斷拆檔](/design-principles/module-boundary-from-change-history/)與 record 方法論[依職責拆分文字文件](/record/document-split-by-responsibility/)，還沒有拿任何一份實際的規則檔跑過稽核，主題數多到什麼程度該拆沒有量過，所以本卡不給門檻。修改紀錄當量測工具的前提是 commit 標題寫得出主題，這一點在不同專案差異很大。
 
 ## 跟其他抽象層原則的關係
 
@@ -57,4 +57,4 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作", "審查"
 
 ## Case
 
-2026-10-19，[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)的使用者審閱要求另寫一篇文字文件的拆分，並分析如何把它的原則加進寫作 skill 與多輪審查。盤點時看到寫作 skill 判斷拆篇的觸發條件與文件撰寫的決策表都以長度啟動，與那兩篇文章的論點相反；拆完之後的交界檢查沒有涵蓋原檔與外部引用。使用者決定把這幾項全部改進 skill。
+2026-10-19，[從修改競爭判斷拆檔](/design-principles/module-boundary-from-change-history/)的使用者審閱要求另寫一篇文字文件的拆分，並分析如何把它的原則加進寫作 skill 與多輪審查。盤點時看到寫作 skill 判斷拆篇的觸發條件與文件撰寫的決策表都以長度啟動，與那兩篇文章的論點相反；拆完之後的交界檢查沒有涵蓋原檔與外部引用。使用者決定把這幾項全部改進 skill。

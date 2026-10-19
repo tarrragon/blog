@@ -36,7 +36,7 @@ ticket 獨立 =/= 檔案獨立。並行安全的判斷基準應該是後者。
 
 **Worktree 隔離不是萬靈丹**：git worktree 讓每個 agent 有獨立的工作目錄，避免 working tree 衝突。但如果兩個 agent 修改同一檔案的不同區段，merge 時仍需人工判斷。Worktree 解決的是「同時寫同一個 working tree」的問題，不解決「同時改同一個檔案的語意衝突」。
 
-**多張 ticket 反覆撞同一個檔案時，結構上的解法是拆檔**：序列化派發處理的是這一次的衝突，檔案若被多個不相干的需求反覆修改，下一批 ticket 仍會撞上。用版本歷史量出這種檔案、判斷怎麼拆，寫在[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)。
+**多張 ticket 反覆撞同一個檔案時，結構上的解法是拆檔**：序列化派發處理的是這一次的衝突，檔案若被多個不相干的需求反覆修改，下一批 ticket 仍會撞上。用版本歷史量出這種檔案、判斷怎麼拆，寫在[從修改競爭判斷拆檔](/design-principles/module-boundary-from-change-history/)。
 
 ## 適用場景
 
