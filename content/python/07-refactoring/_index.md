@@ -23,7 +23,7 @@ tags: ["python", "refactoring"]
 
 量化認知負擔、制定重構策略、掌握階段分解方法。
 
-### [程式碼壞味道識別](/python/07-refactoring/code-smells/)
+### [程式碼壞味道偵測](/python/07-refactoring/code-smells/)
 
 學習如何識別程式碼中的問題，包括 Error Patterns 系統介紹和 5 Why 分析方法。
 
