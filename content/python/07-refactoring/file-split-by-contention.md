@@ -20,7 +20,7 @@ tags: ["python", "refactoring", "srp", "git"]
 
 排好順序與加強溝通能縮短每次等待的時間，而一個檔案承載的職責越多，落在它身上的不相干修改越多，等待的次數跟著增加。只有一個人依序開發時沒有等待成本，量到的不相干修改仍然有意義：它代表一個需求的改動有機會改壞另一個需求在乎的行為，這份隔離正是單一職責原則要保護的對象。
 
-單一職責原則（SRP）常被解讀成「一個模組只做一件事」，而「一件事」的範圍很難判斷。Robert C. Martin 給過一個更可操作的表述：
+[單一職責原則（SRP）](/design-principles/knowledge-cards/single-responsibility-principle/)常被解讀成「一個模組只做一件事」，而「一件事」的範圍很難判斷。Robert C. Martin 給過一個更可操作的表述：
 
 > 一個模組應該只有一個「改變的理由」。
 
@@ -42,7 +42,7 @@ tags: ["python", "refactoring", "srp", "git"]
 | 200 行的骨架產生器，被 6 個不同需求改過    | 不會觸發       | 會觸發       |
 | 900 行的解析器，只屬於同一個需求的連續演進 | 會觸發（誤判） | 不會觸發     |
 
-照行數把 900 行的解析器切成三份，同一主題之後的每一次修改都要同時改三個檔。一個需求改多個檔案，Martin Fowler 的《Refactoring》叫它散彈式修改（shotgun surgery，其他中文資料也寫作散彈槍手術）；與它成對的是發散式變更（divergent change）：一個模組因為不同的理由、以不同的方式反覆被修改，這正是本篇用修改紀錄量的那種壞味道（站內的定義與偵測在 [Code Smell 檢查清單](/record/code_smell/)）。發散式變更在並行開發時造成等待，那段等待是修改競爭的成本。行數量的是檔案的大小，修改競爭量的是一個檔案混了幾種改變的理由，SRP 在意的是改變的理由有幾種。
+照行數把 900 行的解析器切成三份，同一主題之後的每一次修改都要同時改三個檔。一個需求改多個檔案，Martin Fowler 的《Refactoring》叫它[散彈式修改](/design-principles/knowledge-cards/shotgun-surgery/)（shotgun surgery，其他中文資料也寫作散彈槍手術）；與它成對的是[發散式變更](/design-principles/knowledge-cards/divergent-change/)（divergent change）：一個模組因為不同的理由、以不同的方式反覆被修改，這正是本篇用修改紀錄量的那種壞味道（站內的定義與偵測在 [Code Smell 檢查清單](/record/code_smell/)）。發散式變更在並行開發時造成等待，那段等待是修改競爭的成本。行數量的是檔案的大小，修改競爭量的是一個檔案混了幾種改變的理由，SRP 在意的是改變的理由有幾種。
 
 ## 用 git 歷史量出熱點
 
@@ -190,7 +190,7 @@ def test_block_message_is_unchanged(capsys):
     assert capsys.readouterr().out == "<拆分前印出的訊息>\n"
 ```
 
-`is_parallel_period` 的結果取決於執行當下有哪些代理人在工作，所以 fixture 先把它固定住，測試在任何機器上都得到同一個結果。`evaluate` 每次執行時都在 `guard` 模組的命名空間裡查 `is_parallel_period` 這個名字，fixture 替換的正是那個名字，所以拆分前（`guard.py`）與拆分後（`guard/__init__.py`）同一個 fixture 都生效；`evaluate` 之後若搬進 `guard/core.py` 這類子模組，替換的目標要跟著改成 `guard.core`。
+`is_parallel_period` 的結果取決於執行當下有哪些代理人在工作，所以 [fixture](/python/knowledge-cards/pytest-fixture/) 先把它固定住，測試在任何機器上都得到同一個結果。`evaluate` 每次執行時都在 `guard` 模組的命名空間裡查 `is_parallel_period` 這個名字，fixture 用 [monkeypatch](/python/knowledge-cards/monkeypatch/) 替換的正是那個名字，所以拆分前（`guard.py`）與拆分後（`guard/__init__.py`）同一個 fixture 都生效；`evaluate` 之後若搬進 `guard/core.py` 這類子模組，替換的目標要跟著改成 `guard.core`。
 
 測試表裡的 `git -C /other commit` 是應該擋下的寫法。測試表若只驗證正常情況會放行，拆分不小心改壞了擋下的判斷，測試依然全綠，拆分前後的差別不會出現在任何一項測試結果裡。這個範例只示範結構；實際的 commit 守衛還要處理 `--git-dir`、`--work-tree`、`GIT_DIR` 環境變數與先 `cd` 再 commit 這些同樣會把 commit 寫到別處的寫法。
 

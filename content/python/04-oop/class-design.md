@@ -112,7 +112,7 @@ class HookValidator:
 
 ### 1. 單一職責原則（SRP）
 
-每個類別只負責一件事：
+每個類別只有一個改變的理由：連結檢查的規則跟著 Markdown 的連結寫法變，Hook 驗證的規則跟著 Hook 的設定格式變，兩種理由的修改各自落在一個類別。「只做一件事」是函式層級的另一條規則，SRP 的判斷依據是誰會要求這個類別改變（定義見[單一職責原則](/design-principles/knowledge-cards/single-responsibility-principle/)卡片）：
 
 ```python
 # 好：每個類別有單一職責
@@ -126,7 +126,7 @@ class HookValidator:
     def validate_hook(self, path): ...
     def validate_all_hooks(self): ...
 
-# 不好：一個類別做太多事
+# 不好：連結檢查、Hook 驗證、格式化、測試的修改都落在這個類別
 class FileProcessor:
     def check_links(self): ...
     def validate_hooks(self): ...

@@ -142,14 +142,16 @@ OCP 做的是同樣的事，只是在更高的層級：好的設計讓讀者不�
 
 > 一個類別應該只有一個改變的理由。
 
-### 一次只理解一件事
+「改變的理由」指的是提出變更的人：驗證規則由業務決定、資料庫結構由負責資料的人決定、信件內容由行銷決定，這是三個理由。常見的說法「一個類別只做一件事」是函式層級的另一條規則，判斷依據是程式碼在做什麼；SRP 的判斷依據是誰會要求它改變。定義、來源與兩者的差別在[單一職責原則](/design-principles/knowledge-cards/single-responsibility-principle/)卡片。
 
-從認知負擔的角度，SRP 的核心是：
+### 依改變的理由切開之後，一次只理解一件事
+
+從認知負擔的角度，依改變的理由把類別切開，得到的結果是：
 
 > 讓讀者一次只需要理解一件事。
 
 ```python
-# 違反 SRP：一個類別做太多事
+# 違反 SRP：驗證規則、資料儲存、信件內容的修改都落在同一個類別
 class UserManager:
     def create_user(self, data):
         # 驗證邏輯
@@ -170,7 +172,7 @@ class UserManager:
 問題：讀者想理解「如何發送歡迎郵件」，卻需要閱讀整個 `UserManager` 類別。
 
 ```python
-# 遵循 SRP：每個類別只做一件事
+# 遵循 SRP：三種理由的修改各自落在一個類別
 class UserValidator:
     def validate(self, data: dict) -> ValidationResult:
         pass
@@ -391,7 +393,7 @@ ParserFactory.register(DartParser)
 從認知負擔的視角來看，OCP 和 SRP 的核心目的是：
 
 - **OCP**：讓開發者不需要理解整個系統就能擴展
-- **SRP**：讓開發者一次只需要理解一件事
+- **SRP**：依改變的理由切開類別，讓開發者一次只需要理解一件事
 
 這和命名是同一個哲學：**降低閱讀者的認知負擔**。
 

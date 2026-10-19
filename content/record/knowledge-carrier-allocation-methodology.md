@@ -29,7 +29,7 @@ tags: ["方法論", "知識管理", "AI協作", "框架設計"]
 | `pm-rules/`                              | 僅 PM                         | 情境觸發按需                                                        | 調度流程 SOP（派發、驗收、決策樹、skip-gate）                                                                        | 代理人執行知識（→ agents / skills）                                                                    |
 | `agents/AGENT_PRELOAD.md`                | 全體代理人                    | 派發時 @ 注入                                                       | 代理人通用行為禁令（ticket 操作、git 限制、工具選擇、嵌套協議）                                                      | 單一代理人偏好（→ 各 agent 定義）、PM 流程（→ pm-rules）                                               |
 | `agents/<name>.md`                       | 單一代理人                    | 派發時載入                                                          | 身份定位、三區塊（允許產出 / 禁止行為 / 適用情境）、設計偏好（命名習慣、技術手法傾向、文法語氣）、分工路由與升級條件 | → 見「代理人定義內容規範」節                                                                           |
-| `skills/`                                | 觸發者（角色無關）            | 觸發時漸進揭露                                                      | 可重複執行的工作流、方法、CLI 工具（TDD、寫作、ticket、worktree）                                                    | 身份偏好（→ agents）、專案設定（→ CLAUDE.md）                                                          |
+| `skills/`                                | 觸發者（角色無關）            | 觸發時漸進式揭露                                                    | 可重複執行的工作流、方法、CLI 工具（TDD、寫作、ticket、worktree）                                                    | 身份偏好（→ agents）、專案設定（→ CLAUDE.md）                                                          |
 | `methodologies/`                         | 主動查閱者                    | 按需                                                                | 30 秒理念複習清單（核心概念 + 步驟 + 檢查清單）                                                                      | 完整流程 / 範例 / 錯誤處理（→ skills）                                                                 |
 | `references/`                            | 執行特定動作者                | 按需                                                                | 技術參考、規則 substance（auto-load stub 的完整版）                                                                  | 每回合禁令（→ rules/core stub）                                                                        |
 | `error-patterns/`                        | ticket 前查詢者               | 按需                                                                | 失敗案例（症狀 / 根因 / 解法 / 預防）                                                                                | 規則正文（規則只放一行路由指向 PC/IMP）                                                                |
@@ -77,7 +77,7 @@ tags: ["方法論", "知識管理", "AI協作", "框架設計"]
 - `.claude/rules/README.md` — 自動載入預算原則（每回合必要性自問）
 - `.claude/pm-rules/pm-quality-baseline.md` 規則 7 — memory 升級四問 + 升級目的地預算閘門 + 升級即搬家
 - `.claude/README.md`「同步機制」章 — 寫作類 skill（compositional-writing / multi-round-review）內容 SSOT 在 blog repo，框架端為回流副本；依地圖判定「寫作方法 → skills/」後，內容修改應到上游 repo 執行
-- `.claude/skills/skill-design-guide/SKILL.md` — skills 載體的細部規範（官方規格、frontmatter、漸進揭露結構）
+- `.claude/skills/skill-design-guide/SKILL.md` — skills 載體的細部規範（官方規格、frontmatter、漸進式揭露結構）
 - [#256 多份文件必然漂移](/report/doc-sync-needs-mechanism-or-demotion/) — 載體定了之後、多載體副本的同步期待怎麼處置：有機制承接、或明示降級為 scaffold / append-only 記錄（本地圖處理錯置、該卡處理漂移）
 
 ---

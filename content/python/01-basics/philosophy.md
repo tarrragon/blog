@@ -187,7 +187,7 @@ def write_hook_output(
 
 - **顯式參數**：每個參數都有預設值和明確的型別提示
 - **文件字串**：清楚說明函式用途和參數意義
-- **單一職責**：函式只做一件事 - 輸出 JSON
+- **只做一件事**：函式只負責輸出 JSON。這是函式層級的規則；模組與類別層級的[單一職責原則](/design-principles/knowledge-cards/single-responsibility-principle/)以改變的理由定義，兩者的判斷依據不同
 
 ## 思考題
 

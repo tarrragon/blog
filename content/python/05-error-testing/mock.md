@@ -297,26 +297,29 @@ def test_check_file_exists():
 
 ## patch 的位置
 
-**重要**：patch 的目標是模組匯入的位置，而非定義的位置。
+patch 替換的是一個名字的綁定，所以目標要對準被測函式執行時實際去查的那個名字。查的位置由匯入的寫法決定：`from os import getcwd` 在 `module_a` 的命名空間建立一個名字 `getcwd`，函式執行時查的是 `module_a.getcwd`；`import os` 之後寫 `os.getcwd()`，函式執行時查的是 `os` 模組上的 `getcwd`。
 
 ```python
 # module_a.py
 from os import getcwd
 
 def my_function():
-    return getcwd()
+    return getcwd()        # 執行時查 module_a.getcwd
 
 # test_module_a.py
-# 正確：patch 匯入的位置
+# 生效：替換被查找的名字 module_a.getcwd
 @patch("module_a.getcwd")
 def test_my_function(mock_getcwd):
     ...
 
-# 錯誤：patch 定義的位置
-@patch("os.getcwd")  # 不會生效！
+# 不生效：module_a.getcwd 在匯入時已經綁到原本的函式，
+# 替換 os.getcwd 改不到它
+@patch("os.getcwd")
 def test_my_function(mock_getcwd):
     ...
 ```
+
+`module_a` 若改寫成 `import os` 再呼叫 `os.getcwd()`，情況反過來：要替換的是 `os.getcwd`。替換沒有生效時不會有任何錯誤訊息，被測函式只是照常呼叫原本的函式。pytest 的 `monkeypatch` 遵守同一條規則，對照範例與拆模組之後替換失效的情形在 [monkeypatch](/python/knowledge-cards/monkeypatch/) 卡片。
 
 ## 最佳實踐
 

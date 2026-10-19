@@ -7,7 +7,6 @@ weight: 30
 tags: ["python"]
 ---
 
-
 本教學文件專為需要維護和擴展 Hook 系統的工程師設計。透過實際專案範例，幫助你快速掌握 Python 開發的核心技能。
 
 ## 目標讀者
@@ -116,6 +115,13 @@ Python 的物件導向設計模式，從類別設計到設計模式。
 - [ORM 與 DataFrame 的分辨：回傳值的形狀、連線物件與查詢送出的時機](/python/08-data-analysis/orm-and-dataframe/)
 - [SQL 子句與 pandas 方法的對應：篩選、連接、分組彙總、視窗函數，以及空值、索引與順序的語意差異](/python/08-data-analysis/same-relational-algebra/)
 - [pandas 的記憶體邊界：資料與運算過程的佔用估算，推回資料庫、換引擎與分散式的代價](/python/08-data-analysis/memory-is-the-boundary/)
+
+### [知識卡片](/python/knowledge-cards/)
+
+Python 語言與工具鏈特有的術語。語言無關的設計原則（單一職責等）在[軟體設計原則](/design-principles/)。
+
+- [pytest fixture（測試夾具）](/python/knowledge-cards/pytest-fixture/)
+- [monkeypatch（測試期間的替換）](/python/knowledge-cards/monkeypatch/)
 
 ## 範例來源
 

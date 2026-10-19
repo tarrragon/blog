@@ -12,7 +12,7 @@ tags: ["方法論", "寫作", "文件設計", "SRP", "重構"]
 
 ## 修改紀錄裡的職責訊號
 
-單一職責原則把職責定義成「改變的理由」，Robert C. Martin 把「理由」對到提出變更的人或角色。這個定義對文件同樣成立：一份文件被一個不相干的主題修改——另一群人提出、要求另一種改動——就多一個改變它的理由。[SOLID 寫作方法論](/record/solid-writing-methodology/)的變動理由測試要作者預測「這篇會因為什麼事件需要更新」，版本歷史記的是實際發生過的更新；把預測與紀錄並排，紀錄裡有而預測沒有的那些主題，就是預測漏掉的修改來源。
+[單一職責原則](/design-principles/knowledge-cards/single-responsibility-principle/)把職責定義成「改變的理由」，Robert C. Martin 把「理由」對到提出變更的人或角色。這個定義對文件同樣成立：一份文件被一個不相干的主題修改——另一群人提出、要求另一種改動——就多一個改變它的理由。[SOLID 寫作方法論](/record/solid-writing-methodology/)的變動理由測試要作者預測「這篇會因為什麼事件需要更新」，版本歷史記的是實際發生過的更新；把預測與紀錄並排，紀錄裡有而預測沒有的那些主題，就是預測漏掉的修改來源。
 
 文件的 commit 多半不帶需求編號，所以修改的主題要靠讀 commit 標題人工歸類；標題讀不出主題時（「docs: update」），改看那次修改的差異落在哪幾節，squash merge 把幾個主題壓成一筆時，同一個 commit 可能要歸進好幾類。這套歸類方法的推導，以及用在專案規則檔上的做法，整理在 report 的[文件的職責數從修改紀錄讀出](/report/change-history-counts-a-documents-responsibilities/)：
 

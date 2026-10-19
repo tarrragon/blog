@@ -466,7 +466,7 @@ __all__ = [
 
 ### 1. 單一職責
 
-每個模組專注一個領域：
+每個模組只因一種理由改變（[單一職責原則](/design-principles/knowledge-cards/single-responsibility-principle/)）：`git_utils.py` 跟著 git 的指令與輸出格式改，YAML 驗證跟著設定檔格式改，通知跟著通知管道改。三種理由的函式放進同一個 `utils.py`，任何一種理由的修改都要動到同一個檔案：
 
 ```python
 # 好：專注於 Git 操作

@@ -29,7 +29,7 @@ Python 支援多種程式設計範式，物件導向是其中最重要的一種�
 ## 設計原則預覽
 
 ```python
-# 單一職責：每個類別只做一件事
+# 單一職責：每個類別只有一個改變的理由
 class MarkdownLinkChecker:
     """只負責檢查 Markdown 連結"""
     pass
