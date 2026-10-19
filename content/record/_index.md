@@ -41,8 +41,8 @@ tags: ["方法論", "AI協作心得", "敏捷", "工程實踐"]
 - [型別取代 doc 的收益曲線](types-replacing-docs/)
 - [測試命名作為文件](test-naming-as-documentation/)
 - [Commit message vs source code doc](commit-message-vs-source-doc/)
-- [非程式碼的重構](non-code-refactoring/)：用 Progressive Disclosure 把規則文件的常駐內容留在決策入口與強制規則、細節移到參考文件，含七份規則文件的精簡結果（原在 python 模組七，舊網址以 aliases 保留）
-- [依職責拆分文字文件](document-split-by-responsibility/)：從修改紀錄讀出文件的職責數、依職責而非長度切、原檔保留路由表、規則只定義一次、拆完更新引用（程式模組的對應篇在 python 模組七）
+- [規則文件的精簡](non-code-refactoring/)：用 Progressive Disclosure 把規則文件的常駐內容留在決策入口與強制規則、細節移到參考文件，含七份規則文件的精簡結果（原在 python 模組七，舊網址以 aliases 保留）
+- [依職責拆分文字文件](document-split-by-responsibility/)：從修改紀錄讀出文件的職責數、依職責而非長度切、原檔保留路由表、規則只定義一次、拆完更新引用（程式模組的對應篇是 python 模組七的[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)）
 
 **AI 協作工具評估** — Claude Code / Codex / MCP server 等 AI 協作工具的設計拆解、能力邊界、選型對照。包含個別工具的 deep-dive 跟「同題不同工具」的實測。例：
 

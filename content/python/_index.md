@@ -105,6 +105,7 @@ Python 的物件導向設計模式，從類別設計到設計模式。
 - [重構陷阱與防護](/python/07-refactoring/refactoring-pitfalls/)
 - [完整案例回顧](/python/07-refactoring/case-study/)
 - [作用域迴歸案例研究](/python/07-refactoring/scope-regression/)
+- [從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)
 
 ### [模組八：整批資料的處理與分析](/python/08-data-analysis/)
 
