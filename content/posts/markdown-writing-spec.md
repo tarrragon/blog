@@ -505,7 +505,7 @@ L9 另外單獨成條，**採 error 層**，理由有兩個。第一，設 0 想
 
 ### Pre-push hook（`.githooks/pre-push`）
 
-`pre-push` 的責任是把 CI 同款全量檢查提前到本機。`pre-commit` 為了速度只處理 staged markdown；`pre-push` 會跑 `make check`，也就是 `mdtools fmt --check content/`、`mdtools lint content/`、`mdtools cards content/`，讓整個 `content/` 的格式與連結 drift 在推送前被攔下。
+`pre-push` 的責任是把 CI 同款全量檢查提前到本機。`pre-commit` 為了速度只處理 staged markdown；`pre-push` 會跑 `make check`，也就是 `mdtools fmt --check content/`、`mdtools lint content/`、`mdtools cards content/`，讓整個 `content/` 的格式與連結 drift 在推送前被攔下。pre-push 傳入 `CHECK_FLAGS=-warn-summary`，`lint` 與 `cards` 的 error 逐條印出、warning 每條規則只印一行次數；要看每一條 warning，手動跑 `make check`。
 
 啟用 hook：
 

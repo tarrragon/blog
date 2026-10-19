@@ -24,6 +24,7 @@ import (
 func Cards(args []string) int {
 	fs := flag.NewFlagSet("cards", flag.ExitOnError)
 	warnAsError := fs.Bool("warn-as-error", false, "treat warnings as errors (CI strict mode)")
+	warnSummary := fs.Bool("warn-summary", false, "list errors in full but collapse warnings into one count per rule (ignored with -warn-as-error)")
 	_ = fs.Parse(args)
 
 	paths := fs.Args()
@@ -42,7 +43,13 @@ func Cards(args []string) int {
 	for _, v := range violations {
 		reporter.Add(v)
 	}
-	reporter.Write(os.Stdout)
+	// Under -warn-as-error the warnings decide the exit code, so they are
+	// always listed in full.
+	if *warnSummary && !*warnAsError {
+		reporter.WriteWarnSummary(os.Stdout)
+	} else {
+		reporter.Write(os.Stdout)
+	}
 
 	errCount := reporter.ErrorCount()
 	warnCount := reporter.Count() - errCount

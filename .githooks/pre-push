@@ -17,8 +17,10 @@ fi
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
-echo "[pre-push] running markdown quality gate: make check"
-if ! make check; then
+# Errors are listed in full; warnings collapse to one count per rule.
+# Run `make check` by hand to see every warning.
+echo "[pre-push] running markdown quality gate: make check CHECK_FLAGS=-warn-summary"
+if ! make check CHECK_FLAGS=-warn-summary; then
     cat >&2 <<'EOF'
 [pre-push] markdown quality gate failed.
 

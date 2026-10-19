@@ -196,14 +196,16 @@ bin/mdtools cards       # 跨文件檢查，失敗即阻擋
 `pre-push` 補上全量 gate：
 
 ```bash
-make check
+make check CHECK_FLAGS=-warn-summary
 ```
+
+`CHECK_FLAGS` 會傳給 `lint` 與 `cards`。`-warn-summary` 讓兩者把 error 逐條印出、warning 每條規則只印一行次數：全站累積的 warning 存量逐條印出時有幾百行，會把決定推送成敗的 error 數埋掉。要看每一條 warning，手動跑不帶參數的 `make check`；同時給 `-warn-as-error` 時 warning 會決定 exit code，所以照樣逐條列出。
 
 關鍵設計：
 
 - `mdtools fmt --fix` 會改檔，改完後要 `git add` 回 staged，否則 commit 進去的還是舊內容。
 - `lint` 和 `cards` 不改檔，只讀與報告。
-- `pre-commit` 保持 staged-file scoped，讓 commit 回饋夠快；`pre-push` 跑全量 `make check`，讓本機結果和 CI 同步。
+- `pre-commit` 保持 staged-file scoped，讓 commit 回饋夠快；`pre-push` 跑全量 `make check`（warning 只印各規則的次數），讓本機結果和 CI 同步。
 - Binary mtime 檢查避免每次 commit 都 rebuild。
 - `bin/mdtools` 本身 gitignore，不 commit 進 repo。
 

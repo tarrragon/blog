@@ -68,8 +68,46 @@ func (r *Reporter) ErrorCount() int {
 
 // Write emits violations to w in path/line/column order.
 func (r *Reporter) Write(w io.Writer) {
-	sorted := make([]Violation, len(r.violations))
-	copy(sorted, r.violations)
+	writeSorted(w, r.violations)
+}
+
+// WriteWarnSummary emits every error-level violation in full, then one
+// line per warning rule with its occurrence count. Pre-push uses it so a
+// standing warning backlog does not bury the line that decides whether
+// the push goes through; the full list is one rerun without the flag away.
+func (r *Reporter) WriteWarnSummary(w io.Writer) {
+	var errs []Violation
+	counts := map[string]int{}
+	for _, v := range r.violations {
+		if v.Level == LevelError {
+			errs = append(errs, v)
+			continue
+		}
+		counts[v.Rule]++
+	}
+	writeSorted(w, errs)
+
+	rules := make([]string, 0, len(counts))
+	for rule := range counts {
+		rules = append(rules, rule)
+	}
+	// Most frequent first; ties broken by rule name so the output is stable
+	// regardless of map iteration order.
+	sort.Slice(rules, func(i, j int) bool {
+		if counts[rules[i]] != counts[rules[j]] {
+			return counts[rules[i]] > counts[rules[j]]
+		}
+		return rules[i] < rules[j]
+	})
+	for _, rule := range rules {
+		fmt.Fprintf(w, "[%s] %s: %d occurrence(s) (rerun without -warn-summary to list them)\n",
+			LevelWarn, rule, counts[rule])
+	}
+}
+
+func writeSorted(w io.Writer, vs []Violation) {
+	sorted := make([]Violation, len(vs))
+	copy(sorted, vs)
 	sort.SliceStable(sorted, func(i, j int) bool {
 		a, b := sorted[i], sorted[j]
 		if a.Path != b.Path {

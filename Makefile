@@ -7,6 +7,9 @@
 MDTOOLS_SRC := $(shell find scripts/mdtools -type f -name '*.go' 2>/dev/null)
 MDTOOLS_MOD := scripts/mdtools/go.mod scripts/mdtools/go.sum
 MDTOOLS_BIN := bin/mdtools
+# Extra flags for lint and cards inside `make check`. Pre-push passes
+# -warn-summary so the standing warning backlog collapses to one line per rule.
+CHECK_FLAGS ?=
 
 .PHONY: build check fix lint cards install-hooks hooks-status clean help site test verify-red-green
 
@@ -15,6 +18,7 @@ help:
 	@echo ""
 	@echo "  make build           Build bin/mdtools (rebuilds on source changes)"
 	@echo "  make check           Run fmt --check + lint + cards (CI mode)"
+	@echo "                       CHECK_FLAGS=-warn-summary collapses warnings to one count per rule"
 	@echo "  make fix             Apply fmt --fix to content/**"
 	@echo "  make lint            Run lint on content/**"
 	@echo "  make cards           Run cards on content/**"
@@ -34,8 +38,8 @@ $(MDTOOLS_BIN): $(MDTOOLS_SRC) $(MDTOOLS_MOD)
 
 check: build
 	@./$(MDTOOLS_BIN) fmt --check content/
-	@./$(MDTOOLS_BIN) lint content/
-	@./$(MDTOOLS_BIN) cards content/
+	@./$(MDTOOLS_BIN) lint $(CHECK_FLAGS) content/
+	@./$(MDTOOLS_BIN) cards $(CHECK_FLAGS) content/
 
 fix: build
 	@./$(MDTOOLS_BIN) fmt --fix content/

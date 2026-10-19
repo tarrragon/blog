@@ -23,6 +23,15 @@ mdtools version                           Print version
 
 When no paths are given, defaults to `content/**`.
 
+`lint` and `cards` share two flags:
+
+- `-warn-as-error` treats warnings as errors (CI strict mode).
+- `-warn-summary` lists errors in full but collapses warnings into one
+  count per rule. The pre-push hook runs `make check CHECK_FLAGS=-warn-summary`
+  so the standing warning backlog does not bury the error count; run
+  `make check` without it to see every warning. The flag is ignored under
+  `-warn-as-error`, where the warnings decide the exit code.
+
 ## Package layout
 
 ```text
