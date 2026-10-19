@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.29.1 — principle 卡 `section-scope-is-bounded-by-the-category-too` 補判定上的補充（2-C 分類欄第一次實際使用的回饋），同 compositional-writing 1.45.1
+
 **Version**: 2.29.0 — 2-C 題目範圍檢查的逐段標表加「在不在所屬分類範圍內」一欄，與標題那一欄分開判（標題常常不寫分類已經限定的條件，一節講得比分類更泛的內容會在標題那一欄通過）；新增 3-I 規則類文件的職責稽核：讀規則檔的修改紀錄、依主題歸類、對照落在哪幾節，產出主題 / 修改次數 / 落在哪幾節 / 處置的表，處置含拆完之後的原檔路由表與外部引用；不給門檻。新增 principle 卡 `section-scope-is-bounded-by-the-category-too` 與 `change-history-counts-a-documents-responsibilities`（與 compositional-writing 1.45.0 同批）
 
 **Version**: 2.28.0 — 1-A 物理化錯配條目加入清單其他動詞的判讀（拖垮、壓垮寫出失效形態與傳遞路徑、硬扛寫出承擔者與工作、掛在多半是合規的技術附掛或關係），並把「修法把容量數字寫進通則句」列為新違規。判讀在 compositional-writing 1.44.0 的 `physical-verbs-stand-in-for-content`。
