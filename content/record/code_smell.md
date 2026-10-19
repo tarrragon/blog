@@ -194,6 +194,8 @@ C. Ticket 粒度相關 Code Smells
 **定義**:
 單一邏輯變更需要同時修改多個架構層級的程式碼，違反「單層修改原則」（[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 3.1 節）。
 
+本清單把 Shotgun Surgery 收窄到跨架構層級的情形；不限層級的通用定義（一個需求要改很多個模組）與它和 DRY、單一職責的關係在 [Shotgun Surgery（散彈式修改）](/design-principles/knowledge-cards/shotgun-surgery/) 卡片。
+
 **特徵識別**:
 
 1. 一個小需求需要修改 UI、Behavior、UseCase、Domain 多層
@@ -609,7 +611,7 @@ class FirestoreBookRepository implements IBookRepository {
 #### 2.2.1 B1. Divergent Change（發散式變更）
 
 **定義**:
-單一類別因不同原因需要修改，違反 Single Responsibility Principle（SRP）。
+單一類別因不同原因需要修改，違反 Single Responsibility Principle（SRP）。定義與來源在 [Divergent Change（發散式變更）](/design-principles/knowledge-cards/divergent-change/) 與 [單一職責原則](/design-principles/knowledge-cards/single-responsibility-principle/) 卡片，本節只放偵測規則。
 
 這一節從程式碼本身的結構偵測；同一個壞味道也可以從版本歷史量出來（一個檔案被幾個不相干的需求修改），做法在[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)。
 

@@ -9,7 +9,7 @@ tags: ["python", "philosophy", "cognitive-load", "oop"]
 
 ## OCP 的傳統解釋
 
-開放封閉原則（Open-Closed Principle, OCP）是 SOLID 原則之一，傳統定義是：
+[開放封閉原則](/design-principles/knowledge-cards/open-closed-principle/)（Open-Closed Principle, OCP）是 SOLID 原則之一，傳統定義是：
 
 > 軟體實體（類別、模組、函式）應該對擴展開放，對修改封閉。
 
@@ -375,6 +375,7 @@ ParserFactory.register(DartParser)
 - [ ] 新增功能是否不需要修改現有程式碼？
 - [ ] 擴展時是否只需要理解介面？
 - [ ] 是否有抽象層隔離變化點？
+- [ ] 這個擴充點擋的那一類變更，過去的修改紀錄裡實際發生過嗎？（沒有任何模組能對所有變更封閉，選擇依據見[開放封閉原則](/design-principles/knowledge-cards/open-closed-principle/)卡片）
 
 ### 單一職責原則
 

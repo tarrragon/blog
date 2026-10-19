@@ -41,7 +41,7 @@ def run_git_command(cmd):
 
 重複程式碼的四大壞處：**修改需改多處**、**容易不一致**、**增加維護成本**、**測試困難**。
 
-DRY 的完整含義不只是「不要複製貼上」：
+[DRY](/design-principles/knowledge-cards/dry-principle/) 的完整含義不只是「不要複製貼上」：
 
 > Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.
 >
@@ -340,11 +340,11 @@ v0.31.0 持續演進：
 
 ### 錯誤 1：過早抽象
 
-只用一次就抽出去是過度抽象。**原則**：至少重複兩次再抽取（Rule of Three）。
+只用一次就抽出去是過度抽象。**原則**：Rule of Three——第一次照寫，第二次寫出相似的程式碼時先容忍重複，第三次才抽取。
 
 ### 錯誤 2：強行統一
 
-不同概念硬塞進同一個函式（靠 mode 參數切換）。**解決**：不同概念應該是不同的函式。
+不同概念硬塞進同一個函式（靠 mode 參數切換）。**解決**：不同概念應該是不同的函式。兩段程式碼字面相同、卻因為不同的理由改變時，它們不是同一份知識，合併之後為其中一個需求做的修改會改到另一個需求依賴的行為（見 [DRY](/design-principles/knowledge-cards/dry-principle/) 卡片的意外重複）。
 
 ### 錯誤 3：忽略測試
 
