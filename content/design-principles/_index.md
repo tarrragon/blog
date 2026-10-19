@@ -7,7 +7,7 @@ weight: 34
 tags: ["design-principles", "solid", "architecture", "design"]
 ---
 
-本模組承擔語言無關的軟體設計原則：模組的邊界怎麼畫、哪些程式碼該放在一起、違反時在程式碼與修改紀錄上留下什麼痕跡。這些原則在每種語言的寫法不同（Python 的套件與 re-export、Go 的 package、Dart 的 library），所以本模組只放定義與判斷標準，實作細節放在各語言模組。
+本模組承擔語言無關的軟體設計原則：模組的邊界怎麼畫、哪些程式碼該放在一起、違反時在程式碼與修改紀錄上留下什麼痕跡。這些原則在每種語言的寫法不同（Python 的套件與 re-export、Go 的 package、Dart 的 library），所以本模組放定義、判斷標準、只讀版本歷史的量測方法，以及拆分時與語言無關的做法；各語言的寫法放在各語言模組。
 
 ## 與其他教材的分工
 
@@ -24,7 +24,7 @@ tags: ["design-principles", "solid", "architecture", "design"]
 
 ## 章節與卡片
 
-- [從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)：用 git 歷史量出被多個不相干需求修改的檔案、分類熱點、逐個 commit 把需求歸到職責、拆分合併的時機與拆完之後的追蹤。範例是一支 Python 寫成的 commit 守衛，量測與歸類不依賴語言；語言的拆分手法在各語言模組（目前有 [Python](/python/07-refactoring/python-module-split/)）。
+- [從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)：用 git 歷史量出被多個不同需求修改的檔案、分類熱點、逐個 commit 把需求歸到職責、拆分時與語言無關的做法（特徵測試、搬移與修改分開提交、單向依賴）、拆分合併的時機與拆完之後的驗證。範例是一支 Python 寫成的 commit 守衛，量測與歸類不依賴語言；語言的寫法在各語言模組（目前有 [Python](/python/07-refactoring/python-module-split/)，Go 的拆分基礎在 [1.5 從單檔到多檔案](/go/01-basics/growing-files-packages/)）。
 - [Knowledge Cards](/design-principles/knowledge-cards/)：單一職責、開放封閉、DRY、內聚、耦合與兩種對應的壞味道。
 
 ## Backlog
