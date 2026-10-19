@@ -52,6 +52,7 @@ notify/
 - `models.go` 同時包含 request DTO、domain state、response view。
 - 新增功能時不知道型別該放哪個檔案。
 - event、job、account 規則互相 import 或互相修改。
+- 同一個檔案或 package 被好幾個不相干的需求反覆修改：這是 [Divergent Change（發散式變更）](/design-principles/knowledge-cards/divergent-change/)，代表它混了好幾個改變的理由。
 - 測試一個 domain 規則必須初始化 handler 或 server。
 - package 內 unexported helper 太多，讀者很難判斷哪些屬於哪個概念。
 

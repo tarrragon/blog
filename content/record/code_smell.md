@@ -109,7 +109,7 @@ Code Smell（程式異味）:
 
 這類 Code Smell 涉及多個架構層級，違反層級隔離和單層修改原則：
 
-- **A1. Shotgun Surgery**（散彈槍手術）- 單一變更需要修改多個層級
+- **A1. Shotgun Surgery**（散彈式修改）- 單一變更需要修改多個層級
 - **A2. Feature Envy**（功能嫉妒）- 外層過度依賴內層實作細節
 - **A3. Inappropriate Intimacy**（不當親密關係）- 層級間過度耦合
 - **A4. Leaky Abstraction**（抽象滲漏）- 內層實作細節洩漏到外層
@@ -137,7 +137,7 @@ Code Smell（程式異味）:
 Code Smell 分類體系（基於[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 2.2 節五層架構定義）
 
 A. 跨層級 Code Smells（違反層級隔離）
-   ├─ A1. Shotgun Surgery（散彈槍手術）
+   ├─ A1. Shotgun Surgery（散彈式修改）
    ├─ A2. Feature Envy（功能嫉妒）
    ├─ A3. Inappropriate Intimacy（不當親密關係）
    └─ A4. Leaky Abstraction（抽象滲漏）
@@ -189,7 +189,7 @@ C. Ticket 粒度相關 Code Smells
 
 ### 2.1 A 類 Code Smell（跨層級問題）
 
-#### 2.1.1 A1. Shotgun Surgery（散彈槍手術）
+#### 2.1.1 A1. Shotgun Surgery（散彈式修改）
 
 **定義**:
 單一邏輯變更需要同時修改多個架構層級的程式碼，違反「單層修改原則」（[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 3.1 節）。
@@ -1290,7 +1290,7 @@ Phase 4 重構評估
 - 層級跨度: 2 層
 - 依賴鏈: 需要修改 1-2 層
 
-Shotgun Surgery（散彈槍手術）:
+Shotgun Surgery（散彈式修改）:
 - 檔案數: > 10 個
 - 層級跨度: > 2 層
 - 依賴鏈: 需要同步修改多層

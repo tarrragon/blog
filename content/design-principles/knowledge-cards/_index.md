@@ -17,3 +17,5 @@ weight: -1
 | [Shotgun Surgery（散彈式修改）](/design-principles/knowledge-cards/shotgun-surgery/)                                   | 一個需求要改很多個模組——同一個理由被拆散，拆檔切過頭的結果           |
 | [Open-Closed Principle（開放封閉原則）](/design-principles/knowledge-cards/open-closed-principle/)                     | 對選定的那一類變更封閉——使用端只依賴固定的抽象，封閉要有選擇         |
 | [DRY（Don't Repeat Yourself）](/design-principles/knowledge-cards/dry-principle/)                                      | 每一份知識只有一個權威來源——字面相同而理由不同的程式碼不是同一份知識 |
+| [Cohesion（內聚）](/design-principles/knowledge-cards/cohesion/)                                                       | 模組內部元素彼此相關的程度——依放在一起的理由分成由弱到強的幾種       |
+| [Coupling（耦合）](/design-principles/knowledge-cards/coupling/)                                                       | 模組之間互相依賴的程度——依兩個模組共享什麼分成由強到弱的幾種         |

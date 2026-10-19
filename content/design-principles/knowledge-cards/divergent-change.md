@@ -10,7 +10,7 @@ Divergent Change（發散式變更，其他中文資料常寫作「發散式變�
 
 ## 概念位置
 
-Divergent Change 與 Shotgun Surgery 描述的是同一組對應關係的兩種失衡：改變的理由與模組之間應該一對一。同一個理由的好幾個需求都改同一個模組是正常的內聚；屬於不同理由的需求改同一個模組是 Divergent Change，同一個理由的一個需求要改好幾個模組是 [Shotgun Surgery](/design-principles/knowledge-cards/shotgun-surgery/)。[單一職責原則](/design-principles/knowledge-cards/single-responsibility-principle/)的兩句指示各自對應一種：「把因不同理由改變的程式碼分開」修的是 Divergent Change，「把因同一個理由改變的程式碼放在一起」修的是 Shotgun Surgery。
+Divergent Change 與 Shotgun Surgery 描述的是同一組對應關係的兩種失衡：改變的理由與模組之間應該一對一。同一個理由的好幾個需求都改同一個模組是正常的[內聚](/design-principles/knowledge-cards/cohesion/)；屬於不同理由的需求改同一個模組是 Divergent Change，同一個理由的一個需求要改好幾個模組是 [Shotgun Surgery](/design-principles/knowledge-cards/shotgun-surgery/)。[單一職責原則](/design-principles/knowledge-cards/single-responsibility-principle/)的兩句指示各自對應一種：「把因不同理由改變的程式碼分開」修的是 Divergent Change，「把因同一個理由改變的程式碼放在一起」修的是 Shotgun Surgery。
 
 ## 可觀察訊號與例子
 

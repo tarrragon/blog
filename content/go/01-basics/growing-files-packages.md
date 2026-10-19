@@ -114,6 +114,8 @@ func loadConfig() config {
 | 同 package 多檔案 | 檔案太長、概念需要分段              | 直接呼叫                    | 成本低，沒有新 API 邊界 |
 | 新 package        | 概念可獨立、需要被其他 package 使用 | import 後呼叫 exported 名稱 | 成本較高，需要設計 API  |
 
+「檔案太長」是考慮拆檔的觸發訊號，切在哪裡由改變的理由決定：同一個檔案被好幾個不相干的需求修改，代表它有好幾個改變的理由，依理由切開比依行數切開更不容易把同一個主題拆散（定義見[單一職責原則](/design-principles/knowledge-cards/single-responsibility-principle/)，用 git 歷史量出這種檔案的做法在[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)，那篇的統計腳本以 Python 寫成，量的是任何語言的 git 歷史）。
+
 例如 `message.go` 只是放一些內部型別時，可以留在 `package main`：
 
 ```go

@@ -24,4 +24,4 @@ Fowler 指出這種壞味道的主要風險是漏改：變更散在很多地方�
 
 ## 設計責任
 
-修正 Shotgun Surgery 的方向是把總是一起改的函式與資料收回同一個模組：用 Move Function、Move Field 把散落的函式與資料移到一處，散開的那幾個模組若只剩空殼就用 Inline Class 併回去。判斷問句是：最近幾次同一類變更，各改了哪幾個檔案；每次都改同一組檔案，那一組就是應該合併的候選。合併之後回頭檢查另一個方向：新的模組是否因此開始被不相干的需求修改，是的話就併過頭了，變成 [Divergent Change](/design-principles/knowledge-cards/divergent-change/)。
+修正 Shotgun Surgery 的方向是提高[內聚](/design-principles/knowledge-cards/cohesion/)，把總是一起改的函式與資料收回同一個模組：用 Move Function、Move Field 把散落的函式與資料移到一處，散開的那幾個模組若只剩空殼就用 Inline Class 併回去。判斷問句是：最近幾次同一類變更，各改了哪幾個檔案；每次都改同一組檔案，那一組就是應該合併的候選。合併之後回頭檢查另一個方向：新的模組是否因此開始被不相干的需求修改，是的話就併過頭了，變成 [Divergent Change](/design-principles/knowledge-cards/divergent-change/)。

@@ -18,7 +18,7 @@ SRP 是 SOLID 五原則的第一條。Martin 在《Agile Software Development: P
 
 **理由的計數單位是改動的種類，提出的人用來辨認種類。** 一個 actor 要求的是同一類改動，所以理由可以從兩邊辨認：從提出變更的人，或從他們要求的改動種類。兩邊對得上時（財務部門要求的都是薪資規則的改動）看哪一邊結果都一樣；對不上時以改動種類為準——同一個人轉達好幾個職能的需求時，他提出的改動屬於不同理由；不同的人提出同一類改動時，仍是同一個理由。
 
-Martin 在 2014 年那篇文章裡說明這條原則的源頭是 David Parnas 1972 年的論文〈On the Criteria To Be Used in Decomposing Systems into Modules〉與 Edsger Dijkstra 提出的 separation of concerns：模組的切法要依「什麼會一起變」決定，不依程式執行的步驟決定。
+Martin 在 2014 年那篇文章裡說明這條原則的源頭是 David Parnas 1972 年的論文〈On the Criteria To Be Used in Decomposing Systems into Modules〉與 Edsger Dijkstra 提出的 separation of concerns：模組的切法要依「什麼會一起變」決定，不依程式執行的步驟決定。他在《Agile Software Development》的單一職責那一章也寫明，這條原則就是 Tom DeMarco 與 Meilir Page-Jones 所說的 [Cohesion（內聚）](/design-principles/knowledge-cards/cohesion/)，只是把判斷依據從功能上的相關換成讓模組改變的力量。
 
 **「只做一件事」是另一條原則。** SRP 最常見的誤讀是「一個類別只做一件事」。Martin 在《Clean Architecture》第七章說確實有一條原則是這樣講的，那條原則的對象是函式：一個函式只做一件事，用在把大函式拆小的重構裡。那一條管的是函式內部的步驟，判斷依據是程式碼在做什麼；SRP 管的是模組的邊界，判斷依據是誰會要求它改變。兩條原則的單位與依據都不同，所以一個只做一件事的類別仍然可能有兩個改變的理由，一個做了好幾件事的類別也可能只有一個。
 
