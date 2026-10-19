@@ -56,14 +56,14 @@ def collect_changes(since: str, path: str = ".") -> dict[str, set[str]]:
     ).stdout
 
     issues_per_file: dict[str, set[str]] = collections.defaultdict(set)
-    current = None
+    current: set[str] = set()
     for line in log.splitlines():
         if line.startswith("@@"):
-            match = ISSUE_ID.search(line)
-            current = match.group(1) if match else None
+            current = set(ISSUE_ID.findall(line[2:]))
             continue
         if line and current:
-            issues_per_file[line].add(current)
+            for issue in current:
+                issues_per_file[line].add(issue)
     return issues_per_file
 
 def report(since: str, top: int = 20) -> None:
@@ -76,10 +76,11 @@ if __name__ == "__main__":
     report("2 weeks ago")
 ```
 
-腳本有兩處設計會影響計數：
+腳本裡影響計數的設計：
 
 - **`--no-merges`**：merge commit 會把整條分支的改動列進來，不排除就會重複計數。
-- **把子需求歸到同一個主題**：需求有父子關係時（例如 `#120` 底下的 `#120.3`），要以根需求計數，否則同一主題的連續修改會被誤算成多個理由。
+- **一則 commit 帶多個編號**：`ISSUE_ID.findall` 取出訊息裡的全部編號。一個 commit 同時處理多個需求時，它改過的每個檔都會記到每個需求名下。
+- **把子需求歸到同一個主題**：點號格式的子需求（例如 `#120.3`），`#(\d+)` 只取第一段數字，本來就會算進根需求 120。子需求若有獨立編號（例如父需求 `#120`、子需求 `#135`），則要另備一份父子對照表，把子需求歸到根需求再計數；不歸併的話，同一主題的連續修改會被誤算成多個改變理由。
 
 ## 熱點的分類與處理方式
 
@@ -206,7 +207,7 @@ def handle(event):
 
 ### 讓拆出來的模組單向依賴
 
-拆出來的模組只依賴比它底層的模組，循環匯入就不會出現。`state.py` 和 `messages.py` 需要互相呼叫時，代表兩者之間還有一塊共用的定義沒有抽出來，把它再往下抽一層（例如 `types.py`），讓兩者都依賴它。
+拆出來的模組只依賴比它底層的模組，循環匯入就不會出現。`state.py` 和 `messages.py` 需要互相呼叫時，代表兩者之間還有一塊共用的定義沒有抽出來，把它再往下抽一層（例如 `models.py`），讓兩者都依賴它。
 
 ### 搬移與修改分開提交
 
@@ -244,6 +245,6 @@ def handle(event):
 
 ## 實作練習
 
-1. 修改本篇的熱點統計腳本，讓它把有父子關係的需求（例如 `#120` 與 `#120.3`）歸到同一個根需求計數。
+1. 子需求使用獨立編號時，為腳本加入父子對照表（例如從 issue tracker 匯出），把子需求歸到根需求後再計數。
 2. 挑一個專案中被 3 個以上不相干需求修改過的模組，依〈從修改紀錄找出職責邊界〉一節列出每次修改的職責，寫出會拆成哪幾個模組（不必實際動手拆）。
 3. 為該模組補一組行為測試，至少包含一筆「應被擋下或應回報錯誤」的反例，再思考：拆分時如果拆錯了，這組測試抓得到嗎？
