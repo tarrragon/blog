@@ -82,6 +82,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作", "審查"
 - [#363 正文裡的對象要用它是什麼來命名](/report/ordinal-labels-are-the-authors-index/)——序數名字是作者的索引漏進正文；目錄頁的框架詞是作者的編排漏進正文，兩者都要讀者手上有一份他沒有的清單。
 - [#302 定位決定體例](/report/positioning-decides-form-before-any-rule-applies/)——那一張記下規則的觸發條件比判斷標準先生效；本卡是反方向：觸發條件比缺陷窄，規則在沒寫到的句型上從不生效。
 - [#367 切開一個集合之前先寫切分的依據，再替每一塊命名](/report/unnamed-halves-are-unextracted-variables/)——本卡是一個名詞缺所屬；「一部分」「另一半」缺的所屬是整個切法，那一張處理它。
+- [#378 以對象起手的句子：缺少的動作者、時機與觸發原因](/report/topic-first-sentence-drops-actor-and-timing/)——本卡的缺口在名詞的所屬；那一張的缺口在動作者與時機（被動句、指標當主詞、條件句寫對象的狀態），逐字引出的探針沿用本卡的做法、改問不同的格。
 
 ## 判讀徵兆
 
