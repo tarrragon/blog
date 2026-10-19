@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 1.44.0
+  version: 1.45.0
   category: writing-methodology
 ---
 
@@ -103,7 +103,9 @@ SKILL.md 給的是原則、判別線與邊界；**可執行的操作在兩個地
 
 **串連佔掉的是本篇的篇幅，順序是先自足再往外開門**：相互引用的集合會讓串連看起來像義務，而每一條引用都佔掉本來要用來講自己的位置——上一條的「換成連結」出口因此有個前提，**本篇的主線不能靠它**。驗收是把所有往外的連結當成不存在重讀一次，剩下定義加屬性清單就代表判斷做錯了；遮住連結之後第一個要查的是那個貫穿全篇的詞（承重術語在自己的主場最容易沒有定義，作者寫得越多陌生感消失得越早）。串連寫成條件分支（換掉哪一項會變成什麼）讓它成為本篇的內容，而**分支不會順便交代目的地，承諾要另外寫**——判斷標準是遮住目的地之後讀者預測不預測得出那一篇會給什麼，句型只影響命中率、不是判定條件（寫成謂語命中率高，但照句法規則判會產生假陰性）。症狀是讀得懂而說不出要交付什麼，只有問「這一篇讓你具備什麼能力」分得開。詳見 [cross-links-eat-the-article-they-live-in](references/principles/cross-links-eat-the-article-they-live-in.md)。
 
-**拆完之後有一組新的檢查，對象是拆分自己造出來的交界**：一份文件拆成多檔之後多出一個原本不存在的位置——讀者在這裡離開一份檔案、進入另一份，或者不知道還有另一份可以進。**每一份單獨讀都是對的，所以逐檔的自審與逐檔的冷讀對這一類一律回報通過**，要另外查。六條逐項檢查（互指對稱、位置座標不寫總數、層級不混疊、定義與使用同檔、內嵌計數改分組名、指路在首次用點）、切法怎麼決定層級混疊會不會發生、以及外移之後殘餘要自足到什麼程度，都在 `references/structuring-with-solid.md` 的〈拆完之後的交界檢查〉，判定與實測見 [split-defects-land-between-the-files](references/principles/split-defects-land-between-the-files.md)。
+**拆完之後有一組新的檢查，對象是拆分自己造出來的交界**：一份文件拆成多檔之後多出一個原本不存在的位置——讀者在這裡離開一份檔案、進入另一份，或者不知道還有另一份可以進。**每一份單獨讀都是對的，所以逐檔的自審與逐檔的冷讀對這一類一律回報通過**，要另外查。逐項檢查（新檔之間的互指對稱、位置座標不寫總數、層級不混疊、定義與使用同檔、內嵌計數改分組名、指路在首次用點，以及新檔以外的兩項：指向原檔路徑與原錨點的外部引用、原檔保留成路由表）、切法怎麼決定層級混疊會不會發生、以及外移之後殘餘要自足到什麼程度，都在 `references/structuring-with-solid.md` 的〈拆完之後的交界檢查〉，判定與實測見 [split-defects-land-between-the-files](references/principles/split-defects-land-between-the-files.md)。
+
+**職責數從修改紀錄讀，長度不是拆分的觸發條件**：有版本歷史的文件，`git log --follow` 依 commit 標題歸類，類數就是職責數；600 行的參數表可以只有一種職責、80 行的 README 可以有四種，長度只決定一種職責之內要不要分節。一份文件多出一種職責發生在有人加一節的那一次修改，所以加之前問：這一節的修改理由在不在這份文件既有的理由裡，以及它換到同一個內容集合的另一個分類底下會不會更合適——文章的範圍是標題與所屬分類的交集，標題常常不寫分類已經限定的條件。聚合型文件（變更紀錄、索引）例外，改用片段檔或只追加。詳見 [change-history-counts-a-documents-responsibilities](references/principles/change-history-counts-a-documents-responsibilities.md) 與 [section-scope-is-bounded-by-the-category-too](references/principles/section-scope-is-bounded-by-the-category-too.md)，操作在 `references/structuring-with-solid.md` 的 S 單一責任。
 
 **拆分標準的核心問題**：「這張卡聚焦在什麼問題、議題切完整了嗎？」— 判斷標準是 **focus 完整度**。常見的次級訊號是「卡之間是否衝突」「邊界是否清晰」、兩者都不夠：兩張卡互不衝突、仍可能各切了一半同樣議題；一張卡邊界清晰、仍可能塞了兩個獨立議題。focus 完整度問的是「這張卡有沒有把它聲稱要解決的議題講完」、是 contrast 上面那兩個訊號抓不到的死角。
 
