@@ -44,6 +44,8 @@ tags: ["方法論", "寫作", "SOLID", "知識管理", "卡片盒筆記"]
 
 實證：一篇企業案例分析初版同時承擔「該公司自身的財報判讀」跟「跨公司結構比較」，兩個責任互相擠壓——案例深度被比較表佔空間、比較內容被鎖在單一公司的敘事裡無法擴充。拆成[案例篇](/business/financial-analysis/case-studies/bafang-franchise-platform-case/)跟[比較篇](/business/financial-analysis/franchise-model-structure-comparison/)後、兩邊各自深化（詳見 [#231 案例文章跟跨公司比較是兩個分析責任](/report/article-srp-split-comparison-from-case/)）。知識卡的「一卡一概念」是 S 在原子層的同一條原則。
 
+變動理由測試是作者的預測；已經有版本歷史的文件，可以用實際的修改紀錄對照預測，做法在[依職責拆分文字文件](/record/document-split-by-responsibility/)。
+
 違反訊號：更新 A 議題時被迫重讀整篇 B 內容；兩篇文章互相解釋對方的主題；段落放錯位置時的處理是路由到該去的地方、把刪除當成唯一選項會丟失內容（見 [#212 SRP 違反是路由訊號](/report/misplaced-content-needs-route-not-deletion/)）。
 
 ## O 開放封閉：對擴充開放、對重寫封閉

@@ -2,7 +2,7 @@
 title: "作用域迴歸案例研究"
 date: 2026-03-04
 description: "從 IMP-003 事件學習 Python 變數作用域的陷阱"
-weight: 76
+weight: 78
 tags: ["python", "refactoring"]
 ---
 

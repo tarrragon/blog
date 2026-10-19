@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.45.2 — principle 卡 `change-history-counts-a-documents-responsibilities`、`structuring-with-solid.md` 與 SKILL.md 刪掉集中登記型文件處置裡的「或只追加」（兩邊在尾端追加照樣是相鄰衝突，與兩篇示範文章矛盾），補 `merge=union` 當逐行清單的替代；「聚合型文件」改名「集中登記型文件」（術語探針：與 DDD 的聚合撞名）、原檔「路由表」改「導覽表」，與 blog 文章對齊
+
 **Version**: 1.45.1 — principle 卡 `section-scope-is-bounded-by-the-category-too` 補判定上的補充（multi-round-review 2-C 分類欄第一次實際使用的回饋）：同篇分類內實作節依賴的語言無關原則節判在範圍內、目錄頁描述的出處條件不限定範圍、寬分類的這一欄判別力低
 
 **Version**: 1.45.0 — 新增 principle 卡 `section-scope-is-bounded-by-the-category-too`（文章範圍是標題與所屬分類的交集，標題常常不寫分類的限定條件）與 `change-history-counts-a-documents-responsibilities`（職責數從修改紀錄讀出、長度當拆分訊號的兩種誤判、加段落之前的檢查、規則檔稽核、拆完之後的外部引用與原檔路由表）。`structuring-with-solid.md` 1.2.0：S 單一責任的觸發條件從「越寫越長」改成「要往既有文件加一節、或被不同主題反覆修改」，判別測試加修改紀錄測試與分類範圍測試；交界檢查加外部引用與原檔路由表兩項，「六條」改成不帶計數。`writing-documents.md` 決策表加兩列（依修改紀錄拆、聚合型文件例外）並寫明行數只在一個概念之內決定分節，新增〈Before adding a section to an existing document〉。SKILL.md 原子化一節加一段摘要，交界檢查的列舉補上兩項並拿掉計數

@@ -2,7 +2,7 @@
 title: "完整案例回顧"
 date: 2026-03-04
 description: "從超過 30 個 Hook 各自為政到系統化品質工程，三個階段的完整重構復盤"
-weight: 78
+weight: 77
 tags: ["python", "refactoring"]
 ---
 

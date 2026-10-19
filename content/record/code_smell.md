@@ -611,6 +611,8 @@ class FirestoreBookRepository implements IBookRepository {
 **定義**:
 單一類別因不同原因需要修改，違反 Single Responsibility Principle（SRP）。
 
+這一節從程式碼本身的結構偵測；同一個壞味道也可以從版本歷史量出來（一個檔案被幾個不相干的需求修改），做法在[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)。
+
 **特徵識別**:
 
 1. 一個 Controller 同時負責多個頁面的邏輯
