@@ -183,7 +183,7 @@ from lib import git_utils
 ImportError: cannot import name 'xxx' from partially initialized module
 ```
 
-**解決方案**：重構程式碼，避免模組間互相依賴。
+**解決方案**：重構程式碼，避免模組間互相依賴。這個錯誤只在 `from x import y` 這種寫法、而且名字還沒定義時出現；改用 `import x` 時循環照樣載入，依賴方向卻仍然違反。拆分模組時的成因與解法在[拆分 Python 模組](/python/07-refactoring/python-module-split/)的〈拆出模組之間的循環匯入：Python 的症狀與解法〉。
 
 ## 導入風格指南
 

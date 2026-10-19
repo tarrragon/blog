@@ -40,11 +40,11 @@ def test_block_message_is_unchanged(capsys):
     assert capsys.readouterr().out == "<拆分前印出的訊息>\n"
 ```
 
-`is_parallel_period` 的結果取決於執行當下有哪些代理人在工作，所以 [fixture](/python/knowledge-cards/pytest-fixture/) 先把它固定住，測試在任何機器上都得到同一個結果。`evaluate` 每次執行時都在 `guard` 模組的命名空間裡查 `is_parallel_period` 這個名字，fixture 用 [monkeypatch](/python/knowledge-cards/monkeypatch/) 替換的正是那個名字。〈改成同名套件並重新匯出，保留原本的匯入路徑〉會把 `guard.py` 改成同名套件、`evaluate` 留在 `guard/__init__.py`，`evaluate` 查名字的位置仍是 `guard` 這個命名空間，所以拆分前後同一個 fixture 都生效；`evaluate` 之後若搬進 `guard/core.py` 這類子模組，它查名字的位置變成 `guard.core`，`monkeypatch.setattr` 的第一個引數要跟著改成 `guard.core`。
+`is_parallel_period` 的結果取決於執行當下有哪些代理人在工作，所以 [fixture](/python/knowledge-cards/pytest-fixture/) 先把它固定住，測試在任何機器上都得到同一個結果。`evaluate` 每次執行時都在 `guard` 模組的命名空間裡查 `is_parallel_period` 這個名字，fixture 用 [monkeypatch](/python/knowledge-cards/monkeypatch/) 替換的正是那個名字。〈依職責萃取模組：改成同名套件並重新匯出，保留原本的匯入路徑〉會把 `guard.py` 改成同名套件、`evaluate` 留在 `guard/__init__.py`，`evaluate` 查名字的位置仍是 `guard` 這個命名空間，所以拆分前後同一個 fixture 都生效；`evaluate` 之後若搬進 `guard/core.py` 這類子模組，它查名字的位置變成 `guard.core`，`monkeypatch.setattr` 的第一個引數要跟著改成 `guard.core`。
 
 測試表裡的 `git -C /other commit` 是應該擋下的寫法。這個範例只示範結構；實際的 commit 守衛還要處理 `--git-dir`、`--work-tree`、`GIT_DIR` 環境變數與先 `cd` 再 commit 這些同樣會把 commit 寫到別處的寫法。
 
-## 改成同名套件並重新匯出，保留原本的匯入路徑
+## 依職責萃取模組：改成同名套件並重新匯出，保留原本的匯入路徑
 
 呼叫端寫的是 `from guard import evaluate`，所以拆分之後 `guard` 這個名字要繼續提供 `evaluate`。做法是刪掉 `guard.py`，改成同名的套件目錄 `guard/`，把每一類職責的函式移到套件裡的新模組，`guard/__init__.py` 從新模組匯入對外名稱，再以套件的名義重新匯出（re-export）：
 
@@ -105,6 +105,8 @@ HANDLERS = {}
 
 def register(kind):
     def decorator(func):
+        if kind in HANDLERS:
+            raise ValueError(f"事件類型 {kind!r} 已經登記過")  # 兩個模組登記同一種類型時直接報錯
         HANDLERS[kind] = func
         return func
     return decorator
@@ -125,7 +127,9 @@ def handle(event):
     return handler(event)
 ```
 
-分派表要讓檔案離開熱點排行，處理函式還得放進各自的模組：處理函式都寫在同一個檔案裡時，每個新需求仍然改這個檔，而且都在檔尾追加，兩個同時進行的需求照樣衝突。處理函式各放一個模組之後，手動列出 import 的那份清單（一個模組加一行 import）又是一份集中登記檔，所以登記改成由載入端掃描目錄。`HANDLERS` 與 `register` 放進獨立的 `registry.py`，處理函式的模組從那裡匯入：若把它們寫在 `handlers/__init__.py` 的掃描迴圈之後，處理函式的模組在掃描時被匯入，去 `handlers` 套件找 `register`，而那時 `handlers` 套件還沒執行到定義 `register` 的那一行，匯入就失敗。`handle` 留在原本的模組，不放進 `registry.py`，否則 `registry.py` 為了觸發登記去 `import handlers`，處理函式又回頭匯入 `registry.py`，形成循環匯入。三個位置的配置是：
+`register` 遇到重複的事件類型就報錯：改之前的 `if/elif` 裡，同一種類型寫了兩個分支時第一個生效、而且兩個分支在同一個函式裡看得到；改成自動登記之後，兩個模組登記同一種類型時，後被匯入的那一個會靜默蓋掉前一個，而兩個需求同時加同一種事件類型正是並行開發會遇到的情形。
+
+分派表要讓檔案離開熱點排行，處理函式還得放進各自的模組：處理函式都寫在同一個檔案裡時，每個新需求仍然改這個檔，而且都在檔尾追加，兩個同時進行的需求照樣衝突。處理函式各放一個模組之後，手動列出 import 的那份清單（一個模組加一行 import）又是一份集中登記檔，所以登記改成由載入端掃描目錄。`HANDLERS` 與 `register` 放進獨立的 `registry.py`，處理函式的模組從那裡匯入。理由是依賴方向：`registry.py` 在最下層，只提供登記的機制，不依賴任何處理函式。把它們寫在 `handlers/__init__.py` 裡時，能否載入取決於定義寫在掃描迴圈的前面還是後面——寫在後面，處理函式的模組在掃描時被匯入、去 `handlers` 套件找 `register`，而那時 `handlers` 套件還沒執行到定義 `register` 的那一行，匯入就失敗。`handle` 留在原本的模組、不放進 `registry.py` 也是同一個理由：`registry.py` 若為了觸發登記去 `import handlers`，最下層就依賴了上層，形成循環匯入，能否載入又變成取決於那行 import 擺在檔案的哪裡。三個位置的配置是：
 
 ```text
 registry.py           ← HANDLERS 與 register，不匯入任何處理函式
@@ -149,11 +153,9 @@ for module in pkgutil.iter_modules(__path__):
 
 ## 拆出模組之間的循環匯入：Python 的症狀與解法
 
-拆出來的模組之間依賴要只朝一個方向，判斷上下層的方法與互相呼叫時是否併回同一個模組，寫在[從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)的〈拆分時與語言無關的做法〉。Python 違反這一條時的症狀是匯入失敗：`state.py` 與 `messages.py` 互相 `from .state import ...`、`from .messages import ...`，先被匯入的那一個執行到 import 那一行時，另一個還沒執行完，要取的名字還不存在，Python 拋出 `ImportError: cannot import name '...' from partially initialized module '...' (most likely due to a circular import)`。
+拆出來的模組之間依賴要只朝一個方向，判斷上下層的方法與互相呼叫時是否併回同一個模組，寫在[從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)的〈拆分時與語言無關的做法〉。Python 違反這一條時，症狀依匯入的寫法而定。兩個模組用 `from .x import y` 互相匯入時，症狀是匯入失敗：例如 `messages.py` 先被匯入，執行到第一行 `from .state import ...` 時開始執行 `state.py`，`state.py` 第一行的 `from .messages import build_block_message` 要取的名字還不存在（`messages.py` 還停在它的第一行），Python 拋出 `ImportError: cannot import name 'build_block_message' from partially initialized module '...messages' (most likely due to a circular import)`——traceback 指向後被匯入的 `state.py`，訊息裡寫的是先被匯入的 `messages`。改用 `from . import state` 這種只匯入模組、呼叫時才取屬性的寫法，或把 import 寫在被取用的定義之後，循環照樣載入、執行正確，依賴方向卻仍然違反；所以沒有 `ImportError` 不代表依賴是單向的，確認要讀 import 的關係圖。
 
 這個例子裡 `command_parse.py` 只把指令字串解析成結構，在最下層；`state.py` 與 `messages.py` 使用解析結果；`__init__.py` 組合三者，在最上層。兩個模組都用到的定義（例如 `state.py` 與 `messages.py` 都用到的「並行狀態」資料型別）往下抽成一個 `models.py`，兩者都從 `models.py` 匯入、彼此不互相匯入，循環就斷開。`models.py` 之後被每個需求都改到時的判讀，在[從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)的〈拆分之後重跑熱點統計〉。
-
-拆分要排在等待中的需求開工之前合併，rebase 時的兩種衝突形態與處置在[從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)的〈拆分的時機與等待中的需求〉；搬移與修改分開提交、用 `git diff --color-moved` 確認只有搬移，在同一篇的〈拆分時與語言無關的做法〉。
 
 ## 實作練習：反例測試
 
@@ -161,6 +163,6 @@ for module in pkgutil.iter_modules(__path__):
 
 ---
 
-是否要拆、依什麼切：[從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)（用 git 歷史量出被多個需求修改的檔案，逐個 commit 歸類職責）。
+是否要拆、依什麼切，以及拆分時與語言無關的特徵測試、搬移與修改分開提交、單向依賴：[從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)（用 git 歷史量出被多個需求修改的檔案，逐個 commit 歸類職責，拆分的時機與 rebase 時的衝突形態）。
 
 上一章：[作用域迴歸案例研究](/python/07-refactoring/scope-regression/)

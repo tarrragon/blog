@@ -6,11 +6,11 @@ weight: 10
 tags: ["testing", "characterization-test", "legacy", "refactoring"]
 ---
 
-Characterization test 的斷言對象是現狀本身：預期值取自被測程式碼當下的實際輸出，而非規格說它該輸出什麼。這個語意讓它的紅燈只有一種意義——行為改了。正確性測試的紅燈則有兩種意義（行為改了、或行為本來就不對），兩者混在同一個測試檔裡，紅燈就失去歸因能力。與測試三層（unit / [protocol integration](/testing/knowledge-cards/protocol-integration-test/) / [screen state](/testing/knowledge-cards/screen-state-test/)）的關係是正交：三層各自驗證正確性，characterization test 守護現狀。
+Characterization test（特徵測試）的斷言對象是現狀本身：預期值取自被測程式碼當下的實際輸出，而非規格說它該輸出什麼。這個語意讓它的紅燈只有一種意義——行為改了。正確性測試的紅燈則有兩種意義（行為改了、或行為本來就不對），兩者混在同一個測試檔裡，紅燈就失去歸因能力。與測試三層（unit / [protocol integration](/testing/knowledge-cards/protocol-integration-test/) / [screen state](/testing/knowledge-cards/screen-state-test/)）的關係是正交：三層各自驗證正確性，characterization test 守護現狀。
 
 ## 概念位置
 
-當依賴纏結到必須先拆解才能寫正確性測試、而拆解本身就可能改壞行為時，characterization test 補上這段真空期的回饋——這原本是它唯一的存在理由。程式碼交給 agent 大幅改寫成為常態之後另有一種進入條件，那個推導在 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)。依賴纏結的典型樣貌是[mock 遮蔽](/testing/knowledge-cards/mock-masking/)描述的那種處境：程式碼直接呼叫外部服務、沒有可注入的介面。這個處境在 [legacy 專案的起步順序](/testing/01-test-strategy-layers/legacy-test-bootstrap/)的「遷移安全網」段有完整的操作判斷標準——包含三種起步路徑各自何時需要它。
+當依賴纏結到必須先拆解才能寫正確性測試、而拆解本身就可能改壞行為時，characterization test 補上這段真空期的回饋——這原本是它唯一的存在理由。程式碼交給 agent 大幅改寫成為常態之後另有一種進入條件，那個推導在 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)。拆分一個模組之前鎖住對外行為也是它的用途，拆分時的用法在[從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)的〈拆分時與語言無關的做法〉。依賴纏結的典型樣貌是[mock 遮蔽](/testing/knowledge-cards/mock-masking/)描述的那種處境：程式碼直接呼叫外部服務、沒有可注入的介面。這個處境在 [legacy 專案的起步順序](/testing/01-test-strategy-layers/legacy-test-bootstrap/)的「遷移安全網」段有完整的操作判斷標準——包含三種起步路徑各自何時需要它。
 
 ## 可觀察訊號與例子
 
