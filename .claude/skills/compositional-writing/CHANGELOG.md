@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.46.1 — principle 卡 `topic-first-sentence-drops-actor-and-timing` 與 SKILL.md 補逐個動詞探針在一篇 214 句文章上的實跑結果：雜訊高（狀態動詞與無主詞祈使句讓幾乎每句都被標記），候選要再過兩條條件——只看工作流程裡的動作、這一句與所在段落的第一句都沒有動作者；判斷問句的範圍同步放寬到所在段落的第一句（同段祈使句沿用）。限制段改寫成「只在一篇上跑過、條件未在另一篇驗證」。
+
 **Version**: 1.46.0 — 新增 principle 卡 `topic-first-sentence-drops-actor-and-timing`：〈每一句先填槽位再成句〉補一段——動作者那一格要問主詞能不能做這個動作（被動句、「由……」與指標當主詞讓格子看起來是滿的），槽位另加時機（讀者工作流程裡的一步）與觸發原因，寫作順序是誰 → 什麼時機 → 做什麼 → 為什麼；審查修正是這一類最常見的產地。keyword bank 新增「對象起手句」類別（三條候選 pattern、逐個動詞引出的探針與實測命中數）；description 的類別清單同步。
 
 **Version**: 1.45.2 — principle 卡 `change-history-counts-a-documents-responsibilities`、`structuring-with-solid.md` 與 SKILL.md 刪掉集中登記型文件處置裡的「或只追加」（兩邊在尾端追加照樣是相鄰衝突，與兩篇示範文章矛盾），補 `merge=union` 當逐行清單的替代；「聚合型文件」改名「集中登記型文件」（術語探針：與 DDD 的聚合撞名）、原檔「路由表」改「導覽表」，與 blog 文章對齊
