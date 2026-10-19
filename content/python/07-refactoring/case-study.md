@@ -314,7 +314,7 @@ Wave 2（配置分離）如果和 Wave 3（逐檔重構）合併，認知負擔�
 | [大規模統一化重構](/python/07-refactoring/unified-infrastructure/) | IMP-001, ARCH-001 | 第二階段 W22-W24           | 三階段統一化、漸進式重構         |
 | [重構陷阱與防護](/python/07-refactoring/refactoring-pitfalls/)     | IMP-003, IMP-005  | 第二階段 W24-W25           | 部分更新防護、AST 驗證           |
 | [作用域迴歸案例研究](/python/07-refactoring/scope-regression/)     | IMP-003           | 第二階段 W24               | AST 分析、作用域規則             |
-| [非程式碼的重構](/python/07-refactoring/non-code-refactoring/)     | 文件壞味道        | 第三階段 W9                | Progressive Disclosure、文件精簡 |
+| [非程式碼的重構](/record/non-code-refactoring/)（record 分類）     | 文件壞味道        | 第三階段 W9                | Progressive Disclosure、文件精簡 |
 | 本章（完整案例回顧）                                               | 全部              | 全部                       | 系統性思考、Wave 規劃            |
 
 每一章都可以獨立閱讀，但它們來自同一個持續演進的真實專案。單獨學會「怎麼消除魔法數字」是基礎能力；理解「什麼時候該做、以什麼順序做、做的時候可能出什麼事故」才是重構的完整技能。
@@ -385,6 +385,6 @@ def main():
 
 ---
 
-上一章：[非程式碼的重構](/python/07-refactoring/non-code-refactoring/)
+上一章：[重構陷阱與防護](/python/07-refactoring/refactoring-pitfalls/)
 
 回到模組總覽：[模組七：重構實戰](/python/07-refactoring/)

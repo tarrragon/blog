@@ -43,10 +43,6 @@ tags: ["python", "refactoring"]
 
 基於 IMP-003、IMP-005 錯誤模式，學習重構中的常見陷阱和防護措施。
 
-### [非程式碼的重構](/python/07-refactoring/non-code-refactoring/)
-
-文件壞味道識別與 Progressive Disclosure 精簡策略。
-
 ### [完整案例回顧](/python/07-refactoring/case-study/)
 
 完整回顧 v0.28.0-v0.31.0 重構流程，從問題識別到最終成果。

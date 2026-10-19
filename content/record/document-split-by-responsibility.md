@@ -6,7 +6,7 @@ description: "規則文件、操作手冊與範本的拆分：從版本歷史讀
 tags: ["方法論", "寫作", "文件設計", "SRP", "重構"]
 ---
 
-這篇整理規則文件、操作手冊、範本這類文字文件的拆分：判斷一份文件是否承擔了多種職責、沿哪條軸切開，以及拆完之後原檔與引用的處理。程式模組的拆分在[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)；文章與系列之間的責任分配在 [SOLID 寫作方法論](/record/solid-writing-methodology/)。
+這篇整理規則文件、操作手冊、範本這類文字文件的拆分：判斷一份文件是否承擔了多種職責、沿哪條軸切開，以及拆完之後原檔與引用的處理。程式模組的拆分在[從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)；文章與系列之間的責任分配在 [SOLID 寫作方法論](/record/solid-writing-methodology/)。一份文件只剩一種職責之後，內部要怎麼把常駐內容與參考細節分層，在[非程式碼的重構](/record/non-code-refactoring/)。
 
 ## 修改紀錄裡的職責訊號
 
@@ -15,8 +15,8 @@ tags: ["方法論", "寫作", "文件設計", "SRP", "重構"]
 文件的 commit 多半不帶需求編號，所以這一步靠讀 commit 標題人工歸類：
 
 ```bash
-# 列出一份文件近半年的修改，每行是 commit 短 hash 與標題
-git log --since="6 months ago" --no-merges --format='%h %s' -- docs/deploy.md
+# 列出一份文件近半年的修改，每行是 commit 短 hash 與標題；--follow 讓改過檔名的文件也看得到改名前的紀錄
+git log --follow --since="6 months ago" --no-merges --format='%h %s' -- docs/deploy.md
 ```
 
 `--since` 的時間範圍與最後的檔案路徑換成要檢查的文件；範圍太短看不出重複出現的主題，太長會混進早已不存在的職責，半年到一年是常見的起點。假設一份部署手冊的修改紀錄是這樣：

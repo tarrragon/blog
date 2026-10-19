@@ -330,6 +330,6 @@ grep -rn "save_check_log(" .claude/hooks/*.py
 ---
 
 *上一章：[大規模統一化重構](/python/07-refactoring/unified-infrastructure/)*
-*下一章：[非程式碼的重構](/python/07-refactoring/non-code-refactoring/)*
+*下一章：[完整案例回顧](/python/07-refactoring/case-study/)*
 *相關：[作用域迴歸案例研究](/python/07-refactoring/scope-regression/) -- 陷阱一的完整深入分析*
 *相關：[5.5 頂層例外處理機制](/python/05-error-testing/error-infrastructure/) -- 例外處理如何隱藏 bug 的機制分析*
