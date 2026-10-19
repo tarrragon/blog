@@ -12,7 +12,7 @@ DRY（Don't Repeat Yourself）出自 Andy Hunt 與 Dave Thomas 1999 年的《The
 
 DRY 管的對象是知識，不是程式碼的字面。2019 年的第二版特別說明，很多讀者把 DRY 讀成「不要複製貼上程式碼」，而 Hunt 與 Thomas 指的是知識與意圖的重複：同一件事寫在兩個地方，即使兩處的寫法完全不同（一段程式碼與描述它的文件、一份資料庫綱要與對應的資料結構），也是重複。
 
-反方向也成立：兩段字面相同的程式碼，如果因為不同的理由改變，就不是同一份知識。[Single Responsibility Principle（單一職責原則）](/design-principles/knowledge-cards/single-responsibility-principle/)的判斷在這裡接手：兩段程式碼由不同的人、為不同的需求修改，現在相同只是碰巧，合併成一個共用函式之後，為其中一個需求做的修改會改到另一個需求依賴的行為，那個共用函式就成了 [Divergent Change（發散式變更）](/design-principles/knowledge-cards/divergent-change/)。Martin 在《Clean Architecture》的單一職責那一章把這種字面相同、理由不同的情形稱為 accidental duplication（意外的重複）。
+反方向也成立：兩段字面相同的程式碼，如果因為不同的理由改變，就不是同一份知識。[Single Responsibility Principle（單一職責原則）](/design-principles/knowledge-cards/single-responsibility-principle/)的判斷在這裡接手：兩段程式碼要求的改動屬於不同種類（一段跟著某個職能的規則變、另一段跟著另一個職能的規則變），現在相同只是碰巧，合併成一個共用函式之後，為其中一個需求做的修改會改到另一個需求依賴的行為，那個共用函式就成了 [Divergent Change（發散式變更）](/design-principles/knowledge-cards/divergent-change/)。Martin 在《Clean Architecture》的單一職責那一章把這種字面相同、理由不同的情形稱為 accidental duplication（意外的重複）。
 
 ## 可觀察訊號與例子
 

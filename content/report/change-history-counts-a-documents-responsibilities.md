@@ -39,7 +39,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作", "審查"
 
 ## 論述基礎與限制
 
-本卡的方法寫在 Python 教材[從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)與 record 方法論[依職責拆分文字文件](/record/document-split-by-responsibility/)，還沒有拿任何一份實際的規則檔跑過稽核，主題數多到什麼程度該拆沒有量過，所以本卡不給門檻。修改紀錄當量測工具的前提是 commit 標題寫得出主題，這一點在不同專案差異很大。
+本卡的方法寫在語言無關的設計原則教材[從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)與 record 方法論[依職責拆分文字文件](/record/document-split-by-responsibility/)，還沒有拿任何一份實際的規則檔跑過稽核，主題數多到什麼程度該拆沒有量過，所以本卡不給門檻。修改紀錄當量測工具的前提是 commit 標題寫得出主題，這一點在不同專案差異很大。
 
 ## 跟其他抽象層原則的關係
 
