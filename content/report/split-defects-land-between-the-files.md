@@ -98,3 +98,4 @@ slug: "split-defects-land-between-the-files"
 - [#303 串連佔掉的是本篇的篇幅，順序要先自足再往外開門](/report/cross-links-eat-the-article-they-live-in/)：那裡問連結**交付什麼**（遮住目的地能不能預測那一篇會給什麼），本卡問連結**放在哪裡**。兩個檢查互不替代——一條寫在檔頭的指路可以把目的地交代得很完整而讀者仍然拿不到它。
 - [#281 理解檢查用低階 model 取樣讀者的實際理解](/report/comprehension-sampled-not-judged/)：本卡的偵測工具，五個設計條件全部沿用；本卡對它的增補是受測單位多一種（檔案集合）與派發多一條（對照組一次只改一個手段）。
 - [#204 路由條目要自包含：跳轉單位不依賴鄰條上下文](/report/routing-entry-self-contained/)：那裡管單一條目的自包含，本卡管條目的集合有沒有缺格；一組每條都自包含的路由仍然可能漏掉一個目的地。
+- [#377 文件的職責數從修改紀錄讀出](/report/change-history-counts-a-documents-responsibilities/)：本卡的檢查對象是新檔彼此之間的交界；那一張補上新檔以外的兩件事——其他文件、腳本與 agent 指令裡指向原檔路徑與原段標錨點的引用，以及原檔要保留成路由表而不是刪除。
