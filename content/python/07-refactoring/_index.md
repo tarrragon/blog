@@ -6,7 +6,6 @@ weight: 8
 tags: ["python", "refactoring"]
 ---
 
-
 本模組基於 v0.28.0-v0.31.0 Hook 系統重構的實際經驗，教你如何識別程式碼問題並進行系統性重構。
 
 ## 學習目標
@@ -55,6 +54,10 @@ tags: ["python", "refactoring"]
 ### [作用域迴歸案例研究](/python/07-refactoring/scope-regression/)
 
 基於 IMP-003 錯誤模式，學習 Python 變數作用域在重構中的陷阱。W24 統一 logger 初始化時，7 個 Hook 因作用域變更靜默失敗的真實案例。
+
+### [從修改競爭判斷拆檔](/python/07-refactoring/file-split-by-contention/)
+
+不同主題的修改反覆落在同一個檔案，是單一職責超標的訊號；用 git 歷史量出熱點、判斷何時該拆，並在不改變行為的前提下拆分 Python 模組。
 
 ## 重構成效數據
 
