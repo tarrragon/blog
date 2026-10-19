@@ -49,7 +49,7 @@ def test_patch_lookup_site(monkeypatch):
 
 `monkeypatch.setattr` 預設 `raising=True`：要替換的名字不存在時直接拋出 `AttributeError`。目標也可以寫成字串，例如 `monkeypatch.setattr("app.report.now", ...)`。
 
-**拆模組時最容易違反這條規則。** 一個模組改成同名套件之後，函式搬進子模組，它查找依賴的位置也跟著搬進那個子模組；原本對準舊模組的替換仍然執行成功、不報錯，只是不再影響被測的函式，測試因此依執行環境而時好時壞。拆分時的處理方式在[從修改競爭判斷拆檔](/design-principles/module-boundary-from-change-history/)。
+**拆模組時最容易違反這條規則。** 一個模組改成同名套件之後，函式搬進子模組，它查找依賴的位置也跟著搬進那個子模組；原本對準舊模組的替換仍然執行成功、不報錯，只是不再影響被測的函式，測試因此依執行環境而時好時壞。拆分時的處理方式在[拆分 Python 模組](/python/07-refactoring/python-module-split/)。
 
 ## 設計責任
 

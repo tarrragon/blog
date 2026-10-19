@@ -1,14 +1,15 @@
 ---
-title: "從修改競爭判斷拆檔：何時拆、怎麼拆"
+title: "從修改紀錄畫模組邊界：修改競爭、熱點的量測與分類、職責歸類與拆分時機"
 date: 2026-10-19
-description: "用 git 歷史統計每個檔案被幾個不相干的需求修改、把結果當成單一職責的間接量測，修改熱點的分類與處理，以及在不改變對外行為的前提下拆分 Python 模組"
-weight: 79
-tags: ["python", "refactoring", "srp", "git"]
+description: "用 git 歷史統計每個檔案被幾個不相干的需求修改、把結果當成單一職責的間接量測，修改熱點的分類與處理，逐個 commit 把需求歸到職責以決定切法，以及拆分合併的時機與拆完之後的追蹤；量測只讀版本歷史，與程式語言無關"
+weight: 1
+tags: ["design-principles", "refactoring", "srp", "git"]
+aliases: ["/python/07-refactoring/file-split-by-contention/"]
 ---
 
-一個檔案被幾個不相干的需求修改過，可以從版本歷史數出來，這個數字決定哪些檔案值得回頭讀修改紀錄、判斷這個檔案是否要拆。本篇的範圍是這個量測、量出來的熱點怎麼分類，以及拆分 Python 模組時維持對外行為不變的做法。量測的前提是需求與檔案的對應查得到：本篇從 commit 標題裡的需求編號取（commit 訊息帶票號的慣例見 [Commit message vs source code doc](/record/commit-message-vs-source-doc/)），也可以從 issue tracker 取——PR 連到的 issue 加上 PR 改的檔案——那樣下文幾條只讀標題造成的限制都不存在。commit 不帶任何編號時，腳本的排行是空的、只印出略過的 commit 數，這時改用〈從修改紀錄找出職責邊界〉那樣讀 commit 標題與 `git show` 人工歸類。範例是一支 commit 守衛：多個 AI 代理人各自在自己的工作目錄同時開發時（下文稱並行期間），代理人工具在執行每一條 shell 指令之前把整條指令字串交給它判斷，它擋下把 commit 寫進其他代理人工作目錄的寫法。命令解析、狀態判斷與提示訊息產生三種職責寫在同一個檔案裡。
+一個檔案被幾個不相干的需求修改過，可以從版本歷史數出來，這個數字決定哪些檔案值得回頭讀修改紀錄、判斷這個檔案是否要拆。本篇的範圍是這個量測、量出來的熱點怎麼分類、怎麼從修改紀錄決定切法，以及拆分合併的時機；量測與歸類只讀 git 歷史，與專案用什麼語言寫無關。量測的前提是需求與檔案的對應查得到：本篇從 commit 標題裡的需求編號取（commit 訊息帶票號的慣例見 [Commit message vs source code doc](/record/commit-message-vs-source-doc/)），也可以從 issue tracker 取——PR 連到的 issue 加上 PR 改的檔案——那樣下文幾條只讀標題造成的限制都不存在。commit 不帶任何編號時，腳本的排行是空的、只印出略過的 commit 數，這時改用〈從修改紀錄找出職責邊界〉那樣讀 commit 標題與 `git show` 人工歸類。範例是一支以 Python 寫成的 commit 守衛 `guard.py`：多個 AI 代理人各自在自己的工作目錄同時開發時（下文稱並行期間），代理人工具在執行每一條 shell 指令之前把整條指令字串交給它判斷，它擋下把 commit 寫進其他代理人工作目錄的寫法。命令解析、狀態判斷與提示訊息產生三種職責寫在同一個檔案裡。
 
-同一個模組裡，[重構的動機與策略](/python/07-refactoring/refactoring-strategy/)用認知負擔判斷何時該重構、怎麼分階段進行，[程式碼壞味道偵測](/python/07-refactoring/code-smells/)從程式碼本身的寫法辨認問題；本篇的修改競爭量的是另一件事——一個檔案混了幾種改變的理由，它判斷的是拆檔。規則文件、操作手冊這類文字文件的拆分寫在 record 的[依職責拆分文字文件](/record/document-split-by-responsibility/)。
+決定切法之後怎麼拆而不改變對外行為，依語言而定，Python 的做法在[拆分 Python 模組](/python/07-refactoring/python-module-split/)；規則文件、操作手冊這類文字文件的拆分寫在[依職責拆分文字文件](/record/document-split-by-responsibility/)。
 
 ## 修改競爭與單一職責原則
 
@@ -20,18 +21,14 @@ tags: ["python", "refactoring", "srp", "git"]
 
 排好順序與加強溝通能縮短每次等待的時間，而一個檔案承載的職責越多，落在它身上的不相干修改越多，等待的次數跟著增加。只有一個人依序開發時沒有等待成本，量到的不相干修改仍然有意義：它代表一個需求的改動有機會改壞另一個需求在乎的行為，這份隔離正是單一職責原則要保護的對象。
 
-[單一職責原則（SRP）](/design-principles/knowledge-cards/single-responsibility-principle/)常被解讀成「一個模組只做一件事」，而「一件事」的範圍很難判斷。Robert C. Martin 給過一個更可操作的表述：
-
-> 一個模組應該只有一個「改變的理由」。
-
-他在 2014 年的說明裡把「理由」對到提出變更的人：一個模組的變更應該只來自一群緊密合作、代表單一業務職能的人。bug 修正與重構不算改變的理由，他的說法是那是程式設計師的責任，不是程式的。這個表述把抽象的「職責」換成了可以觀察的對象——**改變的理由**。版本歷史記下了每一次改變，也記下了它是為了哪一個需求（票、issue、PR）而做，需求數因此可以當成改變理由的間接量測（proxy measure）。
+[單一職責原則（SRP）](/design-principles/knowledge-cards/single-responsibility-principle/)把職責定義成改變的理由：一個模組應該只有一個改變的理由，而理由對到提出變更的那一群人、以及他們要求的那一類改動（定義、Martin 的原文與「只做一件事」為什麼是另一條原則，在那張卡片）。這個定義把抽象的「職責」換成了可以觀察的對象——**改變的理由**。版本歷史記下了每一次改變，也記下了它是為了哪一個需求（票、issue、PR）而做，需求數因此可以當成改變理由的間接量測（proxy measure）。
 
 | 現象                                   | 代表什麼                                                                                 |
 | -------------------------------------- | ---------------------------------------------------------------------------------------- |
 | 同一個需求的多次 commit 都改同一個檔   | 正常。同一主題的演進集中在一處，這是[內聚](/design-principles/knowledge-cards/cohesion/) |
 | 三、四個**不相干的需求**都要改同一個檔 | 這個檔可能有好幾種改變的理由；實際幾種，由逐個 commit 歸類決定                           |
 
-需求數是篩選訊號：它決定要不要回頭讀這個檔案的修改紀錄，這個檔案實際有幾種改變的理由，在〈從修改紀錄找出職責邊界〉逐個 commit 歸類時才判定。兩個需求是否屬於同一個理由，看它們要求的是哪一種改動。commit 守衛的需求都服務同一件事（擋下跨工作目錄的 commit），而它們要求的改動分成三種：命令語法跟著 git 的寫法變、並行政策跟著團隊的工作流程變、提示措辭跟著使用者的回饋變，三種改動由不同的人提出、在不同的時間發生。這正是 Fowler 說的發散式變更：一個模組因為不同的理由、以不同的方式被修改。Martin 的業務職能是同一件事在組織層的說法，一個模組服務好幾個利害關係人時，每個利害關係人的需求各是一種理由。所以所有票都由同一位 PM 開的團隊裡，只看開票的人分不出理由，要看每張票要求的是哪一種改動。bug 修正照 Martin 的說法不另算一個理由，歸類時併進它修的那一類。同一個需求拆成多張票時，要靠父子對照表把它們歸到同一個根需求（見下文〈把子需求歸到同一個主題〉那一條）。
+需求數是篩選訊號：它決定要不要回頭讀這個檔案的修改紀錄，這個檔案實際有幾種改變的理由，在〈從修改紀錄找出職責邊界〉逐個 commit 歸類時才判定。兩個需求是否屬於同一個理由，看它們要求的是哪一種改動。commit 守衛的需求都服務同一件事（擋下跨工作目錄的 commit），而它們要求的改動分成三種：命令語法跟著 git 的寫法變、並行政策跟著團隊的工作流程變、提示措辭跟著使用者的回饋變，三種改動由不同的人提出、在不同的時間發生。這正是 [Divergent Change（發散式變更）](/design-principles/knowledge-cards/divergent-change/)：一個模組因為不同的理由、以不同的方式被修改。所有票都由同一位 PM 開的團隊裡，只看開票的人分不出理由，要看每張票要求的是哪一種改動。bug 修正不另算一個理由，歸類時併進它修的那一類。同一個需求拆成多張票時，要靠父子對照表把它們歸到同一個根需求（見下文〈把子需求歸到同一個主題〉那一條）。
 
 ### 行數與修改競爭的量測對象
 
@@ -42,7 +39,7 @@ tags: ["python", "refactoring", "srp", "git"]
 | 200 行的骨架產生器，被 6 個不同需求改過    | 不會觸發       | 會觸發       |
 | 900 行的解析器，只屬於同一個需求的連續演進 | 會觸發（誤判） | 不會觸發     |
 
-照行數把 900 行的解析器切成三份，同一主題之後的每一次修改都要同時改三個檔。一個需求改多個檔案，Martin Fowler 的《Refactoring》叫它[散彈式修改](/design-principles/knowledge-cards/shotgun-surgery/)（shotgun surgery，其他中文資料也寫作散彈槍手術）；與它成對的是[發散式變更](/design-principles/knowledge-cards/divergent-change/)（divergent change）：一個模組因為不同的理由、以不同的方式反覆被修改，這正是本篇用修改紀錄量的那種壞味道（站內的定義與偵測在 [Code Smell 檢查清單](/record/code_smell/)）。發散式變更在並行開發時造成等待，那段等待是修改競爭的成本。行數量的是檔案的大小，修改競爭量的是一個檔案混了幾種改變的理由，SRP 在意的是改變的理由有幾種。
+照行數把 900 行的解析器切成三份，同一主題之後的每一次修改都要同時改三個檔。一個需求改多個檔案是 [Shotgun Surgery（散彈式修改）](/design-principles/knowledge-cards/shotgun-surgery/)；與它成對的發散式變更，正是本篇用修改紀錄量的那種壞味道（從程式碼結構偵測的規則在 [Code Smell 檢查清單](/record/code_smell/)）。發散式變更在並行開發時造成等待，那段等待是修改競爭的成本。行數量的是檔案的大小，修改競爭量的是一個檔案混了幾種改變的理由，SRP 在意的是改變的理由有幾種。
 
 ## 用 git 歷史量出熱點
 
@@ -156,137 +153,7 @@ git log --no-merges --since="2 weeks ago" --format='%h %s' -- guard.py
 
 歸類的單位是每個 commit 改到的程式：`git show <hash>` 看得到那個 commit 改了哪些函式。類別由不同的需求建立；同一個需求或長期計畫的 commit，只歸進其他需求已經建立的類別，計畫本身不構成一個模組。只有一個需求、改到好幾處，是同一主題的連續演進或散彈式修改，不產生新的類別。這個例子裡每個需求只改到一類，所以逐個需求列出來就是逐個 commit 的結果。多數需求都同時改到某兩類時，這兩類對需求而言是同一個改變的理由，不要分開——依它們切開，每個需求都要同時改兩個新檔，就是散彈式修改。
 
-歸類之後，每一類職責是一個候選模組，這個例子分出命令解析、狀態判斷與訊息產生。歸類後只剩一類時，這個檔案被多個需求修改的原因是同一主題的連續演進（內聚），或這個檔案是集中登記檔，回到〈熱點的分類與處理方式〉的表重新判斷。
-
-## 拆分 Python 模組的做法
-
-### 用測試鎖住拆分前的行為
-
-拆分前後跑同一組測試、結果相同，才證明拆分沒有改到對外行為。這種測試叫特徵測試（[characterization test](/testing/knowledge-cards/characterization-test/)）：預期值取自拆分前程式當下的實際輸出，不是規格上應該如何——寫測試時先對拆分前的程式跑一次，把輸出填成預期值。它抓得到拆分在測到的輸入與斷言的輸出上造成的任何差異，包括原本就存在的錯誤被「順手修好」；沒有斷言的輸出，它抓不到。這組測試要涵蓋**邊界與反例**：
-
-```python
-import pytest
-
-import guard
-from guard import evaluate  # 拆分前後都從這裡匯入
-
-@pytest.fixture(autouse=True)
-def fixed_parallel_state(monkeypatch):
-    # 固定並行狀態：只有 /other 是其他代理人正在使用的工作目錄
-    monkeypatch.setattr(guard, "is_parallel_period", lambda target_dir: target_dir == "/other")
-
-@pytest.mark.parametrize("command, expected", [
-    ("git commit -m 'msg'", "allow"),
-    ("git -C /other commit -m 'msg'", "block"),   # 拆分前的輸出是 block：-C 把 commit 指到別的工作目錄
-    ("echo 'git commit'", "allow"),               # 字串中出現的 git
-])
-def test_evaluate_behavior_is_unchanged(command, expected):
-    assert evaluate(command) == expected
-
-def test_block_message_is_unchanged(capsys):
-    # 訊息產生也是要拆的一類，所以印出的內容也要斷言；
-    # 把 <拆分前印出的訊息> 換成拆分前的程式實際印出的那一行
-    evaluate("git -C /other commit -m 'msg'")
-    assert capsys.readouterr().out == "<拆分前印出的訊息>\n"
-```
-
-`is_parallel_period` 的結果取決於執行當下有哪些代理人在工作，所以 [fixture](/python/knowledge-cards/pytest-fixture/) 先把它固定住，測試在任何機器上都得到同一個結果。`evaluate` 每次執行時都在 `guard` 模組的命名空間裡查 `is_parallel_period` 這個名字，fixture 用 [monkeypatch](/python/knowledge-cards/monkeypatch/) 替換的正是那個名字，所以拆分前（`guard.py`）與拆分後（`guard/__init__.py`）同一個 fixture 都生效；`evaluate` 之後若搬進 `guard/core.py` 這類子模組，替換的目標要跟著改成 `guard.core`。
-
-測試表裡的 `git -C /other commit` 是應該擋下的寫法。測試表若只驗證正常情況會放行，拆分不小心改壞了擋下的判斷，測試依然全綠，拆分前後的差別不會出現在任何一項測試結果裡。這個範例只示範結構；實際的 commit 守衛還要處理 `--git-dir`、`--work-tree`、`GIT_DIR` 環境變數與先 `cd` 再 commit 這些同樣會把 commit 寫到別處的寫法。
-
-### 依職責萃取模組並保留原本的匯入路徑
-
-呼叫端寫的是 `from guard import evaluate`，所以拆分之後 `guard` 這個名字要繼續提供 `evaluate`。做法是刪掉 `guard.py`，改成同名的套件目錄 `guard/`，把每一類職責的函式移到套件裡的新模組，`guard/__init__.py` 從新模組匯入對外名稱，再以套件的名義重新匯出（re-export）：
-
-```text
-guard.py              ← 原本 1200 行，三種職責混在一起；拆分時刪除
-
-guard/
-├── __init__.py       ← 保留 evaluate 等對外名稱，呼叫端不用改
-├── command_parse.py  ← 命令解析
-├── state.py          ← 狀態判斷
-└── messages.py       ← 訊息產生
-```
-
-```python
-# guard/__init__.py
-from .command_parse import parse_command
-from .messages import build_block_message
-from .state import is_parallel_period
-
-def evaluate(command: str) -> str:
-    parsed = parse_command(command)
-    if parsed.is_commit and is_parallel_period(parsed.target_dir):
-        print(build_block_message(parsed))
-        return "block"
-    return "allow"
-```
-
-`guard.py` 與 `guard/` 同時存在時，`import guard` 取到的是套件，留下來的 `guard.py` 沒有人載入，之後改它不會有任何效果，所以要刪掉（先用 `git mv guard.py guard/__init__.py` 單獨提交一個只改名的 commit，再往外搬函式，`git log --follow` 才追得到改名之前的歷史）。原本寫 `from guard import evaluate` 的呼叫端不用改。`__init__.py` 匯入的三個名字 `evaluate` 都要用，所以要留著；`is_parallel_period` 另外還是上一節 fixture 替換的名字。舊的呼叫端若也直接寫 `from guard import parse_command`，這個名字同時負責相容，等那些呼叫端改成從 `guard.command_parse` 匯入之後，相容的用途才結束。套件、`__init__.py` 與公開 API 的基礎在[從單一 script 到多檔案專案](/python/01-basics/script-to-package/)。
-
-拆分時常會發現同一種判斷在好幾個檔案各寫了一份，例如 commit 守衛和另外兩支擋 push、擋 rebase 的守衛，各自實作「從命令中取出 commit 的目標工作目錄」。規則一改三份都要跟著改，這是散彈式修改；收斂成共用模組的做法與遷移時的陷阱在[DRY 原則與共用程式庫](/python/07-refactoring/dry-principle/)。
-
-### 把巨型分支改成分派表
-
-一個函式的主體是一長串 `if/elif`、每個分支處理一種事件類型時，每新增一種事件類型都要改這個函式，它所在的檔案就留在熱點排行上。改成分派表之後，新增一種事件類型只需要加一個處理函式並登記：
-
-```python
-# 改之前：每個新需求都要改這個函式
-def handle(event):
-    if event.kind == "commit":
-        ...
-    elif event.kind == "merge":
-        ...
-    elif event.kind == "rebase":
-        ...
-
-# 改之後：新增事件類型只需要加一個處理函式並登記
-HANDLERS = {}
-
-def register(kind):
-    def decorator(func):
-        HANDLERS[kind] = func
-        return func
-    return decorator
-
-@register("commit")
-def handle_commit(event): ...
-
-@register("merge")
-def handle_merge(event): ...
-
-@register("rebase")
-def handle_rebase(event): ...
-
-def handle(event):
-    handler = HANDLERS.get(event.kind)
-    if handler is None:
-        return None  # 與改之前相同：未知的事件類型不處理
-    return handler(event)
-```
-
-分派表要讓檔案離開熱點排行，處理函式還得放進各自的模組：處理函式都寫在同一個檔案裡時，每個新需求仍然改這個檔，而且都在檔尾追加，兩個同時進行的需求照樣衝突。處理函式各放一個模組之後，手動列出 import 的那份清單（一個模組加一行 import）又是一份集中登記檔，所以登記改成由載入端掃描目錄。`HANDLERS` 與 `register` 搬到獨立的 `registry.py` 最不容易出錯，處理函式的模組從那裡匯入；若把它們寫在 `handlers/__init__.py` 的掃描迴圈之後，處理函式匯入時會遇到還沒初始化完的模組而失敗。`handle` 留在原本的模組，不放進 `registry.py`，否則 `registry.py` 為了觸發登記去 `import handlers`，又會繞回自己形成循環匯入：
-
-```python
-# handlers/__init__.py：匯入同目錄底下的每一個模組，模組裡的 @register 在匯入時執行登記
-import importlib
-import pkgutil
-
-for module in pkgutil.iter_modules(__path__):
-    importlib.import_module(f"{__name__}.{module.name}")
-```
-
-新增一種事件類型只需要在 `handlers/` 底下加一個檔案；`handle` 所在的模組要先 `import handlers`，登記才會發生。處理函式分散在不同套件時，改用套件的 entry points：每個套件在自己的 `pyproject.toml` 宣告登記點，安裝之後由 `importlib.metadata.entry_points()` 列舉出來。片段式登記的代價是靜態分析看不到登記關係，放進目錄的半成品檔也會被自動登記。登記式的插件架構在[插件系統設計](/python-advanced/03-design-patterns/plugin-system/)，用 metaclass 與裝飾器自動註冊的寫法在[案例：自動註冊機制](/python-advanced/02-metaprogramming/case-studies/auto-registration/)。
-
-### 讓拆出來的模組單向依賴
-
-拆出來的模組之間，依賴只朝一個方向，循環匯入就不會出現。判斷上下層的依據是誰需要知道誰：被較多模組使用、而且自己不需要知道其他拆出模組的那一個在下層，兩個條件都成立。這個例子裡 `command_parse.py` 只把指令字串解析成結構，在最下層；`state.py` 與 `messages.py` 使用解析結果；`__init__.py` 組合三者，在最上層。
-
-兩邊都要呼叫對方，多半代表中間有一塊共用的定義沒有抽出來，例如 `state.py` 與 `messages.py` 都用到的「並行狀態」資料型別。先確認兩個方向的呼叫是否都必要，有時拿掉其中一邊就夠了；兩邊都必要時，把那塊共用定義再往下抽一層（例如 `models.py`），讓兩者都依賴它。
-
-### 搬移與修改分開提交
-
-搬移和修改混在同一個 commit 裡，測試一紅，就分不出是搬錯了還是改錯了，所以純搬移的 commit 不同時修改行為，行為的修改放在之後的 commit。`git diff --color-moved` 會把搬移過的行與新寫的行用不同顏色標出，用來確認一個 commit 裡只有搬移。
+歸類之後，每一類職責是一個候選模組，這個例子分出命令解析、狀態判斷與訊息產生。把 `guard.py` 依這三類拆成 `command_parse.py`、`state.py`、`messages.py` 三個模組而對外行為不變的 Python 做法——特徵測試、改成同名套件並重新匯出、分派表、單向依賴——在[拆分 Python 模組](/python/07-refactoring/python-module-split/)。歸類後只剩一類時，這個檔案被多個需求修改的原因是同一主題的連續演進（內聚），或這個檔案是集中登記檔，回到〈熱點的分類與處理方式〉的表重新判斷。
 
 ## 拆分的時機與等待中的需求
 
@@ -304,7 +171,9 @@ for module in pkgutil.iter_modules(__path__):
 
 兩種形態的處置相同：把這個分支的改動移到那一職責所在的新檔，不接受衝突區塊裡整段的舊程式碼。rebase 沒有衝突也要檢查一次：分支在被當成改名目標的那份新檔裡新增的函式會乾淨合併，即使它屬於另一類職責。用 `git diff main --stat` 與 `git diff main` 看分支新增的每個函式落在哪個檔。拆分前就有的測試在這些情形下仍然全綠，這個分支替自己的改動補的測試才會紅。這也是拆分要排在等待中的需求開工之前合併的原因。
 
-過一段時間後再跑一次熱點統計，`report()` 的引數設成拆分合併的那一天，比較 `guard/` 底下各檔被幾個需求修改，並看每個需求是不是只改了一個新檔——多數需求同時改到兩個新檔，代表當初把同一個改變的理由切成了兩類。某個新檔很快又成為熱點時，把它的修改再歸類一次：修改落在拆分時已有的幾類而混在一起，是當初的職責分類切錯了位置；出現拆分時沒有的一類，是多了一種新的職責；每次修改都是登記一筆，代表那個新檔本身是集中登記檔。很多需求都歸進同一類時，代表這一類的粒度還太粗，可以在裡面再找一次職責邊界；也可能這一類本來就是最常變動的那一處，拆分已經把變動集中在那裡。抽出來的 `models.py` 被每個需求都改到時，常見的原因是共用定義抽得太大，裡面混了只有某一個模組用的型別，把那些型別搬回使用它的模組。
+## 拆分之後的追蹤
+
+過一段時間後再跑一次熱點統計，`report()` 的引數設成拆分合併的那一天，比較拆出來的各個新檔被幾個需求修改，並看每個需求是不是只改了一個新檔——多數需求同時改到兩個新檔，代表當初把同一個改變的理由切成了兩類。某個新檔很快又成為熱點時，把它的修改再歸類一次：修改落在拆分時已有的幾類而混在一起，是當初的職責分類切錯了位置；出現拆分時沒有的一類，是多了一種新的職責；每次修改都是登記一筆，代表那個新檔本身是集中登記檔。很多需求都歸進同一類時，代表這一類的粒度還太粗，可以在裡面再找一次職責邊界；也可能這一類本來就是最常變動的那一處，拆分已經把變動集中在那裡。為了打破循環依賴而抽出來的共用定義模組被每個需求都改到時，常見的原因是共用定義抽得太大，裡面混了只有某一個模組用的型別，把那些型別搬回使用它的模組。
 
 ## 思考題：熱點排行與直覺、註冊表的衝突、新檔再成熱點
 
@@ -312,12 +181,11 @@ for module in pkgutil.iter_modules(__path__):
 2. 一個註冊表檔案被 10 個需求修改過。為什麼拆成兩個註冊表無法解決問題？要怎麼降低它的衝突？
 3. 拆分後，拆出來的其中一個新檔很快又變成熱點，這代表什麼？
 
-## 實作練習：父子需求對照、職責歸類、反例測試
+## 實作練習：父子需求對照、職責歸類
 
 1. 子需求使用獨立編號時，為腳本加入父子對照表（例如從 issue tracker 匯出），把子需求歸到根需求後再計數。
 2. 挑一個在熱點排行前段、被多個不相干需求修改過的模組，依〈從修改紀錄找出職責邊界〉一節列出每次修改的職責，寫出會拆成哪幾個模組（不必實際動手拆）。
-3. 為該模組補一組行為測試，至少包含一筆「應被擋下或應回報錯誤」的反例，再思考：拆分時如果拆錯了，這組測試抓得到嗎？
 
 ---
 
-上一章：[作用域迴歸案例研究](/python/07-refactoring/scope-regression/)
+拆分的語言實作：[拆分 Python 模組](/python/07-refactoring/python-module-split/)。文字文件的對應做法：[依職責拆分文字文件](/record/document-split-by-responsibility/)。

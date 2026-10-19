@@ -51,9 +51,9 @@ tags: ["python", "refactoring"]
 
 基於 IMP-003 錯誤模式，學習 Python 變數作用域在重構中的陷阱。W24 統一 logger 初始化時，7 個 Hook 因作用域變更靜默失敗的真實案例。
 
-### [從修改競爭判斷拆檔](/design-principles/module-boundary-from-change-history/)
+### [拆分 Python 模組：用特徵測試鎖住行為、保留匯入路徑、分派表與單向依賴](/python/07-refactoring/python-module-split/)
 
-用 git 歷史統計每個檔案被幾個不相干的需求修改、當成單一職責的代理量測，修改熱點的分類與處理，以及在不改變對外行為的前提下拆分 Python 模組。
+職責邊界決定之後，在不改變對外行為的前提下拆分 Python 模組。要不要拆、依什麼切的判斷與語言無關，在軟體設計原則模組的[從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)。
 
 ## 重構成效數據
 
