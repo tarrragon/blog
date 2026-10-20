@@ -235,7 +235,7 @@ def process(callback: Callable) -> None:  # 失去型別資訊
     callback(some_value)
 ```
 
-沒加參數型別的 `Callable` 等同於 `Callable[..., Any]`，型別檢查器會放行任何呼叫。這不是 type hints 的失敗，是契約寫太鬆。若真的要接受任何可呼叫物件，至少寫清楚參數與回傳上界：`Callable[..., object]`。
+沒加參數型別的 `Callable` 等同於 `Callable[..., Any]`，型別檢查器會放行任何呼叫。成因是這份契約寫得太鬆，而不是 type hints 失效。若真的要接受任何可呼叫物件，至少寫清楚參數與回傳上界：`Callable[..., object]`。
 
 ### 忽略 method 和 function 的差異
 

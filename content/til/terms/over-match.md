@@ -10,7 +10,7 @@ tags: ["til", "術語", "跨領域", "over-match"]
 
 over-match（過寬匹配，又稱 over-broad match、spurious match）指**規則或樣式寫得太寬，命中了不該命中的目標**。
 
-如果說 [false positive](../false-positive/) 是「偵測器誤報」這個現象，over-match 就是它在規則比對層常見的**機制成因**：不是偵測器壞了，是規則的涵蓋範圍超出了意圖。
+如果說 [false positive](../false-positive/) 是「偵測器誤報」這個現象，over-match 就是它在規則比對層常見的**機制成因**：規則的涵蓋範圍超出了意圖，偵測器本身沒有壞。
 
 ## 常見場景
 

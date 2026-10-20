@@ -6,7 +6,7 @@ weight: 6
 tags: ["devops", "capacity-planning", "container", "docker", "resource-limit", "oomkill"]
 ---
 
-容器的資源限制是容量規劃在容器化環境的落地：把「這個服務需要多少資源」這個規劃結果，轉成每個容器的 memory limit、CPU limit 與磁碟 I/O 控制，確保單一容器不會吃光 host 資源、拖垮同一台上的其他服務。這條限制設太緊會觸發 OOMKill 或 CPU throttle、設太鬆等於沒設，所以限制值不是拍板一個數字，是從服務的真實用量推出來的。
+容器的資源限制是容量規劃在容器化環境的落地：把「這個服務需要多少資源」這個規劃結果，轉成每個容器的 memory limit、CPU limit 與磁碟 I/O 控制，確保單一容器不會吃光 host 資源、拖垮同一台上的其他服務。這條限制設太緊會觸發 OOMKill 或 CPU throttle、設太鬆等於沒設，所以限制值要從服務的真實用量推出來，而不是拍板決定一個數字。
 
 ## Memory 限制：從 baseline 推，不從猜
 

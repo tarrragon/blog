@@ -40,7 +40,7 @@ app 依賴哪些套件，要寫在 lockfile 裡（`package-lock.json`、`go.sum`
 
 本機開發環境跟線上環境的差距越小，「在我電腦上能跑、上線卻壞」的機率越低。這條在你用舊版 runtime 的 client 環境時特別關鍵——本機要對齊線上的版本與行為，見 [Dotfile 模組十：Prod Parity](/linux/dotfile/10-prod-parity/)。
 
-## 判讀：這些不是潔癖，是省未來的痛
+## 每條規則沒做時的代價與第一次上線的優先順序
 
 每一條都對應一個「沒做就會在某個時刻痛」的場景：設定寫死 → 換環境或輪替密鑰時要改 code、還可能把密鑰簽進 git；process 有狀態 → 想加一台擋流量卻發現 session 掉了；log 寫檔 → 出事要 SSH 進每台機器撈。還有一條上 PaaS 當天就會撞的：**listen 在平台指派的 `$PORT`**——Heroku / Cloud Run 這類平台會給你一個環境變數指定 port，app 沒讀它、寫死自己的 port，就部署失敗。第一次上線可以先抓住「設定進環境變數」跟「process 無狀態」這兩條（上 PaaS 再加 `$PORT`），其餘隨服務長大再補。
 

@@ -10,7 +10,7 @@ Test double 是所有「用來取代真實依賴」的測試替身的統稱，Ma
 
 ## 概念位置
 
-本模組已經在用三種角色、只是沒有集中命名：[mock 遮蔽](/testing/knowledge-cards/mock-masking/)討論的 mock，忠實模擬 API 層的方法簽名與參數型別，驗證呼叫是否符合預期介面；[stub](/testing/knowledge-cards/stub/)是測試作者逐條寫死的固定回應，驗證「假設成立時」邏輯是否正確；[語意級假後端](/testing/knowledge-cards/semantic-fake-backend/)對應 fake——有狀態、可運作、模擬已證實後端行為的簡化實作。三者的差異不是實作細節，是各自能檢出的 bug 類型不同：mock 檢出介面誤用，stub 檢不出假設本身的錯誤，fake 能讓假設在多服務接力中被真正驗證。
+本模組已經在用三種角色、只是沒有集中命名：[mock 遮蔽](/testing/knowledge-cards/mock-masking/)討論的 mock，忠實模擬 API 層的方法簽名與參數型別，驗證呼叫是否符合預期介面；[stub](/testing/knowledge-cards/stub/)是測試作者逐條寫死的固定回應，驗證「假設成立時」邏輯是否正確；[語意級假後端](/testing/knowledge-cards/semantic-fake-backend/)對應 fake——有狀態、可運作、模擬已證實後端行為的簡化實作。三者的差異在各自能檢出的 bug 類型，而不只是實作細節：mock 檢出介面誤用，stub 檢不出假設本身的錯誤，fake 能讓假設在多服務接力中被真正驗證。
 
 ## 可觀察訊號與例子
 

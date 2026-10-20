@@ -235,7 +235,7 @@ ALTER TABLE orders ADD COLUMN status VARCHAR(20) DEFAULT 'pending';
 
 修改欄位型別、刪除欄位、刪除資料表、批次更新資料——這些操作在 phpMyAdmin 上執行就生效，沒有乾淨的 undo。額外防護是在執行前先確認：
 
-- 有沒有剛做的該資料表備份（不是上週的，是剛剛做的）
+- 有沒有該資料表在這次操作前剛做的備份（上週的備份不算）
 - 這張表有沒有 foreign key 或觸發器會連帶影響其他表
 - 如果改錯了，回退的具體步驟是什麼（從備份 SQL 重建整張表？還是用 UPDATE 改回來？）
 

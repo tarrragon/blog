@@ -28,7 +28,7 @@ tags: ["case-study", "知識基礎建設", "Cards-Skills", "Decision Dialogue", 
 
 每次 agent 都呈現得不一樣、user 也每次回得不一樣。**反覆出現但形式各異 = 抽 meta 的訊號**（[#42 2 次門檻](/report/two-occurrence-threshold/) + [#81 迭代浮現](/report/cards-as-living-system-iteration/)）。
 
-User 的「**這些選擇應該被做成卡片**」就是 meta-訊號的明確化 — 不是 agent 自己浮現的、是 user 點出來的。**External trigger（[#72](/report/external-trigger-for-high-roi-work/)）才能逼出抽 meta 這個高 ROI 但無觸發的工作**。
+User 的「**這些選擇應該被做成卡片**」就是 meta-訊號的明確化 — 這個訊號由 user 點出來，而不是 agent 自己浮現的。**External trigger（[#72](/report/external-trigger-for-high-roi-work/)）才能逼出抽 meta 這個高 ROI 但無觸發的工作**。
 
 ---
 
@@ -166,4 +166,4 @@ User 的三句話分別觸發三層深度：
 
 本系統的成型不是「用心寫文件」、是接受**「對話會浮現結構、原子卡會自我串連、meta-卡會回頭修原子卡」這個 spiral 真相**、然後讓每輪迭代都加深一點。
 
-下一次 user 在對話中又出現「這個應該被做成卡片」訊號時、流程已經是現成的 — 套 [#81] 的三層展開 + [#72] 的 L4 觸發、就能繼續長新卡。**真正的 knowledge infrastructure 不是寫一次的文件、是長期 spiral 的 living system**。
+下一次 user 在對話中又出現「這個應該被做成卡片」訊號時、流程已經是現成的 — 套 [#81] 的三層展開 + [#72] 的 L4 觸發、就能繼續長新卡。**knowledge infrastructure 是長期 spiral 的 living system，而不是寫一次的文件**。

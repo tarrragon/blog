@@ -11,7 +11,7 @@ macOS 的命令列 userland 是 BSD 系、不是 GNU。你在 Linux 養成的 GN
 
 macOS 的 Unix 底子（Darwin）來自 BSD，所以內建的命令列工具是 BSD 版，語意跟旗標跟著 BSD。至於 GNU 版本的工具，Apple 刻意停在舊版：GNU 的 coreutils、bash 等專案在某個時點把授權從 GPLv2 改成 GPLv3，而 GPLv3 的專利條款與反 Tivoization 條款（禁止廠商鎖死硬體、不准跑使用者修改過的軟體）是 Apple 不接受的，於是 Apple 把系統內建的 GNU 工具凍在最後一版 GPLv2、之後不再更新，整體改倚重 BSD 與自家工具。`/bin/bash` 停在 3.2（2006 年的版本、最後的 GPLv2）就是這個決定最顯眼的標記。
 
-結論是：macOS 給你的是「BSD userland + 一套凍結在多年前的舊 GNU」。這不是缺陷或沒維護，是授權取捨下的刻意設計。知道成因，下面三種現象就都是可預期的。
+結論是：macOS 給你的是「BSD userland + 一套凍結在多年前的舊 GNU」。這是授權取捨下的刻意設計，而不是缺陷或沒人維護。知道成因，下面三種現象就都是可預期的。
 
 ## 形態一：工具根本不在
 
