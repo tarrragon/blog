@@ -7,229 +7,120 @@ bundle 邊界；且 spec FR 是否全數映射到某 bundle 缺工具強制（�
   1. spec 對應的 domain map 是否存在
   2. spec 每個 FR 是否出現在 domain map 的 FR 覆蓋（含標為 presentation/data 的非 domain FR）
 
-domain map 定位：預設找 spec 同目錄的 domain-map.md，退化找 docs/domain-map.md。
+domain map 定位鏈：--domain-map 明示（唯一來源，不聯集）-> spec 同目錄 domain-map.md
+與 docs/spec/*/domain-map.md 中 frontmatter source_specs 含本 SPEC id 者（同目錄為聯集
+成員之一，並聯集 docs/system-layer.md；逐檔解析後於集合層合併）-> docs/domain-map.md。
 
 另含可選檢核「事件流標定」（`--check-event-flow-labeling`）：spec 的 FR 段落若命中
 事件流訊號詞（清單見 EVENT_FLOW_SIGNAL_WORDS，與 /spec validate Layer 2 維度 5「資源
 競爭」共用同一份訊號詞，見 SKILL.md 維度 5 掃描說明），該 FR 須能在 domain map 的
 「通道與協調圖」節（以標題文字定位，不依編號——章節編號在各專案可能已被既有內容
 佔用）之「到達類別與級別實例」子表中找到對應的 FR 引用，缺者列為提醒，非阻擋。
+
+實作依職責拆在 domain_coverage/ 套件（fr_extract／attribution／event_flow／map_locate）；
+本檔保留 CLI 入口、報告輸出，並 re-export 原有名稱，既有 import 路徑不變。
 """
 
 import argparse
-import re
 import sys
 from pathlib import Path
 
-import check_api_surface
-
-# FR 標題容許 H3 以上任一層級（### / #### …）——真實 spec 常用 #### FR-XX:，
-# 只認 H3 會使 extract_spec_frs 回空集、gate 靜默假通過（Round 2-C 實證）。
-FR_HEADER_RE = re.compile(r"^#{3,}\s+(FR-\d+):", re.MULTILINE)
-
-# 事件流訊號詞：與 /spec validate Layer 2 維度 5「資源競爭」共用單一常數，避免
-# Layer 1 機械檢核與 Layer 2 語意維度各自維護清單而漂移（SKILL.md 維度 5 掃描說明）。
-EVENT_FLOW_SIGNAL_WORDS = (
-    "事件", "通知", "提示", "背景", "排程", "佇列", "推送", "webhook", "isolate",
+# 以下為相容 re-export（含底線開頭的內部名稱，維持原匯入路徑可用）。
+from domain_coverage.attribution import (  # noqa: F401
+    HEADING_RE, _ParsedMap, _line_fr_owners, _merged_attribution, _parse_maps, _uncovered_frs,
+    check_domain_coverage_union, check_layer_coverage, describe_attribution_remedy,
+    describe_default_assigned, extract_fr_attribution, warn_unattributed_uncovered,
+)
+from domain_coverage.event_flow import (  # noqa: F401
+    ARRIVAL_LEVEL_TABLE_TITLE_RE, CHANNEL_SECTION_TITLE_RE, EVENT_FLOW_SIGNAL_WORDS,
+    _extract_section_by_title, check_event_flow_labeling, check_event_flow_labeling_union,
+    extract_arrival_level_table, extract_channel_section, extract_event_signaled_frs,
+)
+from domain_coverage.fr_extract import (  # noqa: F401
+    DECLARATION_KEY, DECLARATION_LINE_RE, EXPECTED_HEADING_HINT, FENCE_OPEN_RE,
+    FR_HEADER_RE, FR_LIKE_ATX_RE, FR_LIKE_SETEXT_TEXT_RE, FR_LIKE_STRONG_RE, FR_TOKEN_RE,
+    FRONTMATTER_BLOCK_RE, FRONTMATTER_ID_LINE_RE, SETEXT_UNDERLINE_RE, SPEC_ID_RE,
+    TOP_KEY_LINE_RE, _code_span_end, _declaration_occurrences, _expand_fr_token, _fence_closes,
+    _fence_open, _fr_like_number, _frontmatter_line_count, _mask_fenced_blocks,
+    _mask_html_comments, _scan_text, _unclosed_quote, extract_fr_ids, extract_spec_frs,
+    extract_spec_id, find_skipped_fr_lines, find_unextracted_fr_lines, fr_like_lines,
+    mask_fenced_blocks, read_fr_declaration,
+)
+from domain_coverage.map_locate import (  # noqa: F401
+    BLOCK_ITEM_RE, DOMAIN_FIELD_RE, DOMAIN_MAP_GLOB_DIR, DOMAIN_NOT_SINGLE_NAME_RE,
+    ID_UNRECOGNIZED_CAUSE, LEGACY_DOMAIN_FIELD_RE, LEGACY_DOMAIN_MAP_PATH, REASON_EXPLICIT_MISSING,
+    REASON_ID_UNRECOGNIZED, REASON_NO_MAP, REASON_NOT_LISTED, REASON_SOURCE_SPECS_UNPARSEABLE,
+    SOURCE_SPECS_KEY_RE, SYSTEM_LAYER_PATH, TRAILING_COMMENT_RE, YAML_NULL_LITERALS,
+    _declared_domains, _diagnose_missing, _frontmatter_domain, _list_domain_maps,
+    _map_frontmatter_domain, _parse_source_specs, _read_maps, _scan_listing_maps,
+    _unlisted_unparseable, _unquote_domain, describe_layer_id_unrecognized,
+    describe_missing_map, describe_missing_system_layer, domain_format_error, is_layer_spec,
+    layer_banner, locate_domain_maps, locate_domain_maps_with_reason, warn_unparseable_maps,
 )
 
-# domain map 章節標題比對：以標題文字定位，不依編號（章節編號在既有專案可能已
-# 被其他內容佔用，如本專案 docs/domain-map.md 的「## 2.5」已用於他途）。
-CHANNEL_SECTION_TITLE_RE = re.compile(r"^(#{1,6})\s*.*通道與協調圖.*$", re.MULTILINE)
-ARRIVAL_LEVEL_TABLE_TITLE_RE = re.compile(r"^(#{1,6})\s*.*到達類別與級別.*$", re.MULTILINE)
-# 展開 FR token：FR-NN、逗號續列 FR-01,02,03、範圍 FR-13~17 / FR-13-17
-FR_TOKEN_RE = re.compile(r"FR-(\d+)((?:\s*[~\-,]\s*\d+)*)")
 
-
-def _expand_fr_token(head_num, tail):
-    """展開單一 FR token 為 int 集合。head_num=起始號，tail=續列/範圍字串。"""
-    nums = {int(head_num)}
-    prev = int(head_num)
-    for op, digits in re.findall(r"([~\-,])\s*(\d+)", tail):
-        n = int(digits)
-        if op == ",":
-            nums.add(n)
-            prev = n
-        else:  # ~ 或 - 視為範圍
-            for v in range(min(prev, n), max(prev, n) + 1):
-                nums.add(v)
-            prev = n
-    return nums
-
-
-def extract_fr_ids(text):
-    """從文字抽出所有 FR 編號（int 集合），處理逗號續列與範圍。"""
-    ids = set()
-    for head, tail in FR_TOKEN_RE.findall(text):
-        ids |= _expand_fr_token(head, tail)
-    return ids
-
-
-def extract_spec_frs(spec_text):
-    """從 spec 的 `### FR-XX:` 標題抽出定義的 FR 編號（int 集合）。"""
-    return {int(m.group(1).split("-")[1]) for m in FR_HEADER_RE.finditer(spec_text)}
-
-
-SPEC_ID_RE = re.compile(r"SPEC-\d+")
-FRONTMATTER_BLOCK_RE = re.compile(r"\A---\s*\n(.*?)^---\s*$", re.MULTILINE | re.DOTALL)
-FRONTMATTER_ID_LINE_RE = re.compile(r"^id:\s*[\"']?([^\s\"']+)", re.MULTILINE)
-HEADING_RE = re.compile(r"^(#{1,6})\s")
-
-
-def extract_spec_id(spec_text, spec_path=None):
-    """spec 識別：先取 frontmatter id，缺時取檔名的 SPEC-NNN 前綴，都沒有回 None。
-
-    只接受 SPEC-NNN 形式：domain map 的歸屬鍵由 SPEC_ID_RE 抽出，其他形式的 id
-    （如 SPEC-UI-001）在 map 端永遠對不上，回 None 讓呼叫端走相容模式並警告，
-    而不是把該 spec 的全部 FR 報成未覆蓋。frontmatter 只看收尾 --- 之前的區塊。
-    """
-    block = FRONTMATTER_BLOCK_RE.match(spec_text)
-    fm = FRONTMATTER_ID_LINE_RE.search(block.group(1)) if block else None
-    if fm:
-        candidate = fm.group(1).upper()
-        return candidate if SPEC_ID_RE.fullmatch(candidate) else None
-    if spec_path is not None:
-        name = SPEC_ID_RE.match(Path(spec_path).name)
-        if name:
-            return name.group(0).upper()
+def judge_fr_declaration(spec_text):
+    """於 domain map 定位之前判定。回傳 exit code（已結束）或 None（續行覆蓋比對）。"""
+    try:
+        declared = read_fr_declaration(spec_text)
+    except ValueError as exc:
+        print(f"domain 覆蓋檢核失敗：{exc}")
+        return 1
+    for no, line in find_skipped_fr_lines(spec_text):
+        sys.stderr.write(f"WARNING: 第 {no} 行形似 FR 定義但位於被略過的區段（圍欄程式碼區塊或 HTML 註解）內，不納入比對：{line}\n")
+    extracted = extract_spec_frs(spec_text)
+    if declared is False:
+        loose = fr_like_lines(spec_text)
+        if extracted or loose:
+            print(f"domain 覆蓋檢核失敗：宣告 {DECLARATION_KEY}: false，但內容存在 FR 標題行（宣告與內容矛盾）：")
+            for no, line, _ in loose:
+                print(f"  第 {no} 行：{line}")
+            return 1
+        print(f"本 SPEC 宣告無 FR（{DECLARATION_KEY}: false），未執行覆蓋比對")
+        return 0
+    if not extracted:
+        print("domain 覆蓋檢核失敗：未宣告無 FR，但未抽到任何 FR 標題（未執行覆蓋比對）。")
+        print(EXPECTED_HEADING_HINT)
+        return 1
+    for no, line in find_unextracted_fr_lines(spec_text):
+        sys.stderr.write(f"WARNING: 第 {no} 行形似 FR 定義但未被抽出（不納入比對）：{line}\n")
     return None
 
 
-def _line_fr_owners(line, heading_spec):
-    """回傳該行每個 FR token 的（所屬 spec 或 None, FR 編號集合）。
-
-    歸屬順序：同一行在 token 之前最近的 SPEC-NNN；否則沿用祖先標題的 spec。
-    """
-    for m in FR_TOKEN_RE.finditer(line):
-        before = SPEC_ID_RE.findall(line[: m.start()])
-        owner = before[-1].upper() if before else heading_spec
-        yield owner, _expand_fr_token(m.group(1), m.group(2))
-
-
-def extract_fr_attribution(domain_map_text):
-    """回傳 ({spec_id: FR 編號集合}, 未歸屬 FR 編號集合)。"""
-    attributed, unattributed = {}, set()
-    stack = []  # [(標題階層, 該標題的 spec 或 None)]
-    for line in domain_map_text.splitlines():
-        heading = HEADING_RE.match(line)
-        if heading:
-            level = len(heading.group(1))
-            while stack and stack[-1][0] >= level:
-                stack.pop()
-            found = SPEC_ID_RE.search(line)
-            stack.append((level, found.group(0).upper() if found else None))
-        heading_spec = next((sp for _, sp in reversed(stack) if sp), None)
-        for owner, nums in _line_fr_owners(line, heading_spec):
-            if owner:
-                attributed.setdefault(owner, set()).update(nums)
-            else:
-                unattributed |= nums
-    return attributed, unattributed
-
-
-def check_domain_coverage(spec_text, domain_map_text, spec_path=None):
-    """回傳 spec 定義但 domain map 未覆蓋的 FR 編號（排序 list）。
-
-    比對鍵為（spec 識別, FR 編號）。spec 識別取不到、或 map 無任何已歸屬 token 時，
-    走相容模式（不分 spec 的舊比對）並於 stderr 說明。
-    """
-    spec_frs = extract_spec_frs(spec_text)
-    spec_id = extract_spec_id(spec_text, spec_path)
-    attributed, _ = extract_fr_attribution(domain_map_text)
-    if spec_id is None:
-        sys.stderr.write("WARNING: 取不到 spec 識別（frontmatter id / 檔名 SPEC-NNN），走相容模式（不分 spec 比對）\n")
-    elif not attributed:
-        sys.stderr.write("domain 覆蓋檢核：domain map 無任何 FR 歸屬到 SPEC-NNN，走相容模式（不分 spec 比對）\n")
-    else:
-        return sorted(spec_frs - attributed.get(spec_id, set()))
-    return sorted(spec_frs - extract_fr_ids(domain_map_text))
-
-
-def extract_event_signaled_frs(spec_text, signal_words=EVENT_FLOW_SIGNAL_WORDS):
-    """回傳 spec 中，FR 段落內文命中任一事件流訊號詞的 FR 編號集合（int）。
-
-    段落切分沿用 check_api_surface.split_fr_sections（H3 `### FR-XX:` 標題），
-    避免與既有 API surface 檢核各自維護一份切段邏輯。
-    """
-    signaled = set()
-    for fr_id, section in check_api_surface.split_fr_sections(spec_text):
-        lowered = section.lower()
-        if any(word.lower() in lowered for word in signal_words):
-            signaled.add(int(fr_id.split("-")[1]))
-    return signaled
-
-
-def _extract_section_by_title(text, title_re):
-    """依標題文字定位一個章節（不依編號），回傳從該標題到下一個同級或更高階標題前的內容。
-
-    找不到標題時回傳 None。「同級或更高階」判定以 `#` 數決定，使巢狀子節（較深階
-    標題）不會被誤判為章節邊界。
-    """
-    match = title_re.search(text)
-    if not match:
-        return None
-    level = len(match.group(1))
-    start = match.start()
-    next_heading_re = re.compile(r"^#{1," + str(level) + r"}\s+", re.MULTILINE)
-    next_match = next_heading_re.search(text, match.end())
-    end = next_match.start() if next_match else len(text)
-    return text[start:end]
-
-
-def extract_channel_section(domain_map_text):
-    """定位 domain map 的『通道與協調圖』節（標題文字比對，不依編號）。"""
-    return _extract_section_by_title(domain_map_text, CHANNEL_SECTION_TITLE_RE)
-
-
-def extract_arrival_level_table(channel_section_text):
-    """在『通道與協調圖』節內，定位含到達類別與級別欄的『到達類別與級別實例』子節。"""
-    if channel_section_text is None:
-        return None
-    return _extract_section_by_title(channel_section_text, ARRIVAL_LEVEL_TABLE_TITLE_RE)
-
-
-def check_event_flow_labeling(spec_text, domain_map_text, signal_words=EVENT_FLOW_SIGNAL_WORDS):
-    """回傳命中事件流訊號詞、但 domain map 通道表未見對應標定的 FR 編號（排序 list）。
-
-    未命中任何訊號詞的 spec 回傳空 list（維度 5 同形的條件式觸發：無事件流訊號時不檢核）。
-    """
-    signaled = extract_event_signaled_frs(spec_text, signal_words)
-    if not signaled:
-        return []
-    arrival_table = extract_arrival_level_table(extract_channel_section(domain_map_text))
-    labeled = extract_fr_ids(arrival_table) if arrival_table else set()
-    return sorted(signaled - labeled)
-
-
-def locate_domain_map(spec_path, explicit):
-    """定位 domain map：優先 explicit，其次 spec 同目錄，最後 docs/domain-map.md。"""
-    if explicit:
-        p = Path(explicit)
-        return p if p.exists() else None
-    same_dir = spec_path.parent / "domain-map.md"
-    if same_dir.exists():
-        return same_dir
-    fallback = Path("docs/domain-map.md")
-    return fallback if fallback.exists() else None
-
-
-def _report_domain_coverage(spec_text, domain_map_path, spec_path=None):
+def _report_domain_coverage(spec_text, domain_map_paths, spec_path=None, layer_mode=False):
     """列印 FR->bundle 覆蓋檢核結果，回傳 exit code。"""
-    uncovered = check_domain_coverage(spec_text, domain_map_path.read_text(encoding="utf-8"), spec_path)
+    domain_map_path = ", ".join(str(p) for p in domain_map_paths)
+    named_texts = _read_maps(domain_map_paths)
+    if layer_mode:
+        uncovered = check_layer_coverage(spec_text, named_texts[0][1], spec_path)
+    else:
+        parsed_maps = _parse_maps(named_texts)
+        uncovered = _uncovered_frs(spec_text, parsed_maps, spec_path)
     if not uncovered:
         print(f"domain 覆蓋檢核通過：spec 全部 FR 皆在 {domain_map_path} 有 bundle 歸屬")
         return 0
 
-    print(f"domain 覆蓋檢核發現 {len(uncovered)} 個 FR 未在 domain map 覆蓋：")
+    if layer_mode:
+        print(f"domain 覆蓋檢核發現 {len(uncovered)} 個 FR 未在系統層覆蓋：")
+    else:
+        print(f"domain 覆蓋檢核發現 {len(uncovered)} 個 FR 未在 domain map 覆蓋：")
     for fr in uncovered:
         print(f"  FR-{fr:02d}")
-    print(f"（domain map：{domain_map_path}）請於 domain map §7 FR->bundle 覆蓋表補上歸屬。")
+    spec_id = extract_spec_id(spec_text, spec_path)
+    if layer_mode:
+        print(f"（系統層：{domain_map_path}）層級 SPEC 以系統層判定，{describe_attribution_remedy('於系統層', spec_id)}")
+        return 1
+    warn_unattributed_uncovered(parsed_maps, uncovered)
+    tail = describe_attribution_remedy('於 domain map ', spec_id) + describe_default_assigned(parsed_maps, spec_id)
+    print(f"（domain map：{domain_map_path}）{tail}")
     return 1
 
 
-def _report_event_flow_labeling(spec_text, domain_map_path):
+def _report_event_flow_labeling(spec_text, domain_map_paths, layer_mode=False):
     """列印事件流標定檢核結果，回傳 exit code。性質為啟發式提醒，非阻擋。"""
-    missing = check_event_flow_labeling(spec_text, domain_map_path.read_text(encoding="utf-8"))
+    domain_map_path = ", ".join(str(p) for p in domain_map_paths)
+    missing = check_event_flow_labeling_union(
+        spec_text, [t for _, t in _read_maps(domain_map_paths)])
     if not missing:
         print("事件流標定檢核通過：命中事件流訊號詞的 FR 皆在通道與協調圖節有到達類別與級別標定")
         return 0
@@ -237,7 +128,8 @@ def _report_event_flow_labeling(spec_text, domain_map_path):
     print(f"事件流標定檢核發現 {len(missing)} 個 FR 命中事件流訊號詞但未見通道標定（提醒，非阻擋）：")
     for fr in missing:
         print(f"  FR-{fr:02d}")
-    print(f"（domain map：{domain_map_path}）請於「通道與協調圖」節之「到達類別與級別實例」子表補上標定。")
+    label = "系統層" if layer_mode else "domain map"
+    print(f"（{label}：{domain_map_path}）請於「通道與協調圖」節之「到達類別與級別實例」子表補上標定。")
     return 1
 
 
@@ -256,19 +148,58 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     spec_path = Path(args.spec_path)
+    for label, path in (("spec 路徑", spec_path), ("--domain-map", Path(args.domain_map) if args.domain_map else None)):
+        if path is not None and path.is_dir():
+            print(f"domain 覆蓋檢核：{label} 是目錄，需為檔案：{path}")
+            return 1
     spec_text = spec_path.read_text(encoding="utf-8")
 
-    domain_map_path = locate_domain_map(spec_path, args.domain_map)
-    if domain_map_path is None:
-        print(
-            "domain 覆蓋檢核：找不到 domain map（spec 同目錄 domain-map.md 或 "
-            "docs/domain-map.md）。依 version-bootstrap Step 2.5，規劃波應先產出 domain map。"
-        )
+    unclosed = mask_fenced_blocks(spec_text)[1]
+    if unclosed is not None:
+        print(f"domain 覆蓋檢核失敗：第 {unclosed} 行開啟的圍欄程式碼區塊未閉合，其後內容未被檢視（未執行覆蓋比對）")
         return 1
 
-    rc = _report_domain_coverage(spec_text, domain_map_path, spec_path)
+    early = judge_fr_declaration(spec_text)
+    if early is not None:
+        return early
+
+    if args.domain_map == "":
+        print("domain 覆蓋檢核：--domain-map 指定的檔案不存在：''（空字串不視為未帶旗標）")
+        return 1
+    domain_map_paths, reason, unparseable = locate_domain_maps_with_reason(
+        spec_path, args.domain_map, extract_spec_id(spec_text, spec_path))
+    layer_mode = not domain_map_paths and args.domain_map is None and is_layer_spec(spec_text)
+    warn_unparseable_maps(_unlisted_unparseable(unparseable, domain_map_paths, reason, layer_mode))
+    # 層級判定只在原定位鏈找不到任何 map、且 domain 欄非已宣告 domain 時成立；
+    # 有 map 時照原鏈，無 map 但 domain 欄為已宣告 domain 是漏登記，維持紅
+    if not domain_map_paths and args.domain_map is None:
+        # domain 欄只在此處被消費（進入層級判定），格式檢查限於此路徑
+        format_error = domain_format_error(spec_text)
+        if format_error:
+            print(format_error)
+            return 1
+    if layer_mode:
+        print(layer_banner(spec_text, unparseable))
+        if SYSTEM_LAYER_PATH.is_dir():
+            print(f"domain 覆蓋檢核：系統層 {SYSTEM_LAYER_PATH} 是目錄，需為檔案。")
+            return 1
+        if not SYSTEM_LAYER_PATH.exists():
+            print(describe_missing_system_layer())
+            return 1
+        if extract_spec_id(spec_text, spec_path) is None:
+            print(describe_layer_id_unrecognized())
+            return 1
+        domain_map_paths = [SYSTEM_LAYER_PATH]
+    if SYSTEM_LAYER_PATH in domain_map_paths and SYSTEM_LAYER_PATH.is_dir():
+        print(f"domain 覆蓋檢核：系統層 {SYSTEM_LAYER_PATH} 是目錄，需為檔案。")
+        return 1
+    if not domain_map_paths:
+        print(describe_missing_map(reason, args.domain_map, unparseable))
+        return 1
+
+    rc = _report_domain_coverage(spec_text, domain_map_paths, spec_path, layer_mode)
     if args.check_event_flow_labeling:
-        rc = _report_event_flow_labeling(spec_text, domain_map_path) or rc
+        rc = _report_event_flow_labeling(spec_text, domain_map_paths, layer_mode) or rc
     return rc
 
 
