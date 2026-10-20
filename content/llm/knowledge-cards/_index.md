@@ -147,13 +147,14 @@ weight: -1
 
 ### Vision / 多模態
 
-| 卡片                                                         | 核心問題                                                  |
-| ------------------------------------------------------------ | --------------------------------------------------------- |
-| [VLM](/llm/knowledge-cards/vlm/)                             | 同時吃圖 + 文字輸入的 LLM 變體、coding 場景的 vision 基底 |
-| [Vision Encoder](/llm/knowledge-cards/vision-encoder/)       | VLM 內部把圖轉成向量序列的模組、ViT / CLIP 為主流         |
-| [Image Token](/llm/knowledge-cards/image-token/)             | VLM 把圖變成跟 text token 同質的向量、計入 context        |
-| [CLIP](/llm/knowledge-cards/clip/)                           | OpenAI contrastive 預訓練、現代 vision encoder 起點       |
-| [Multimodal Fusion](/llm/knowledge-cards/multimodal-fusion/) | Vision + LLM 結合方式：early / cross-attention / native   |
+| 卡片                                                                 | 核心問題                                                  |
+| -------------------------------------------------------------------- | --------------------------------------------------------- |
+| [VLM](/llm/knowledge-cards/vlm/)                                     | 同時吃圖 + 文字輸入的 LLM 變體、coding 場景的 vision 基底 |
+| [Vision Encoder](/llm/knowledge-cards/vision-encoder/)               | VLM 內部把圖轉成向量序列的模組、ViT / CLIP 為主流         |
+| [Image Token](/llm/knowledge-cards/image-token/)                     | VLM 把圖變成跟 text token 同質的向量、計入 context        |
+| [CLIP](/llm/knowledge-cards/clip/)                                   | OpenAI contrastive 預訓練、現代 vision encoder 起點       |
+| [Multimodal Fusion](/llm/knowledge-cards/multimodal-fusion/)         | Vision + LLM 結合方式：early / cross-attention / native   |
+| [Set-of-Mark prompting](/llm/knowledge-cards/set-of-mark-prompting/) | 在圖上疊編號、讓 VLM 以編號回答是哪一個元件               |
 
 ### Deployment / 靜態場景
 
@@ -235,13 +236,14 @@ weight: -1
 
 ### 評估指標 / Benchmark
 
-| 卡片                                                           | 核心問題                                          |
-| -------------------------------------------------------------- | ------------------------------------------------- |
-| [SWE-bench](/llm/knowledge-cards/swe-bench/)                   | coding 能力如何被量化比較                         |
-| [LLM Benchmarks](/llm/knowledge-cards/llm-benchmarks/)         | MMLU / HumanEval / SWE-bench 等覆蓋範圍與失效情境 |
-| [MTEB](/llm/knowledge-cards/mteb-benchmark/)                   | Embedding model 跨任務通用能力的標準 benchmark    |
-| [Needle in Haystack](/llm/knowledge-cards/needle-in-haystack/) | 把事實藏在 long context 不同位置的 retrieval 測試 |
-| [Lost in the Middle](/llm/knowledge-cards/lost-in-the-middle/) | Long context 中段內容 recall 顯著降的現象         |
+| 卡片                                                                     | 核心問題                                          |
+| ------------------------------------------------------------------------ | ------------------------------------------------- |
+| [SWE-bench](/llm/knowledge-cards/swe-bench/)                             | coding 能力如何被量化比較                         |
+| [LLM Benchmarks](/llm/knowledge-cards/llm-benchmarks/)                   | MMLU / HumanEval / SWE-bench 等覆蓋範圍與失效情境 |
+| [MTEB](/llm/knowledge-cards/mteb-benchmark/)                             | Embedding model 跨任務通用能力的標準 benchmark    |
+| [Needle in Haystack](/llm/knowledge-cards/needle-in-haystack/)           | 把事實藏在 long context 不同位置的 retrieval 測試 |
+| [Lost in the Middle](/llm/knowledge-cards/lost-in-the-middle/)           | Long context 中段內容 recall 顯著降的現象         |
+| [Probability calibration](/llm/knowledge-cards/probability-calibration/) | 模型給出的機率與實際答對頻率是否相符              |
 
 ### 應用層模式
 
