@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.29.3 — 正文與 principle 卡的否定起手句（「不是 X、是 Y」）改成重點先行，核心概念移到句首、被否定的一半留作句尾對照；同步 blog 對應 report 卡的同一批改寫，語意不變
+
 **Version**: 2.29.2 — 同 compositional-writing 1.45.2：principle 卡與 3-I 的集中登記型文件改名、刪「或只追加」、補 `merge=union`
 
 **Version**: 2.29.1 — principle 卡 `section-scope-is-bounded-by-the-category-too` 補判定上的補充（2-C 分類欄第一次實際使用的回饋），同 compositional-writing 1.45.1

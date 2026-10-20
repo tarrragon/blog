@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.46.2 — 正文與 principle 卡的否定起手句（「不是 X、是 Y」）改成重點先行，核心概念移到句首、被否定的一半留作句尾對照；同步 blog 對應 report 卡的同一批改寫，語意不變
+
 **Version**: 1.46.1 — principle 卡 `topic-first-sentence-drops-actor-and-timing` 與 SKILL.md 補逐個動詞探針在一篇 214 句文章上的實跑結果：雜訊高（狀態動詞與無主詞祈使句讓幾乎每句都被標記），候選要再過兩條條件——只看工作流程裡的動作、這一句與所在段落的第一句都沒有動作者；判斷問句的範圍同步放寬到所在段落的第一句（同段祈使句沿用）。限制段改寫成「只在一篇上跑過、條件未在另一篇驗證」。
 
 **Version**: 1.46.0 — 新增 principle 卡 `topic-first-sentence-drops-actor-and-timing`：〈每一句先填槽位再成句〉補一段——動作者那一格要問主詞能不能做這個動作（被動句、「由……」與指標當主詞讓格子看起來是滿的），槽位另加時機（讀者工作流程裡的一步）與觸發原因，寫作順序是誰 → 什麼時機 → 做什麼 → 為什麼；審查修正是這一類最常見的產地。keyword bank 新增「對象起手句」類別（三條候選 pattern、逐個動詞引出的探針與實測命中數）；description 的類別清單同步。

@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.7.3 — 正文與 principle 卡的否定起手句（「不是 X、是 Y」）改成重點先行，核心概念移到句首、被否定的一半留作句尾對照；同步 blog 對應 report 卡的同一批改寫，語意不變
+
 **Version**: 1.7.2 — `fix-the-class-not-the-cited-instances` 卡補作用域的定義（與本體同步）：「全批」是成品的全部、不是這一輪改過的檔，判別問句是「我剛才掃的路徑，是我改過的那些，還是這個成品的全部」；正對照要放在沒被這一輪改動過的檔裡。
 
 **Version**: 1.7.1 — `fix-the-class-not-the-cited-instances` 卡補「執行本身有深淺」（與本體同步）：那三次的層級分別是不掃、掃了但只掃同形、掃同形再加逐項對照，寫成「掃一遍」的那一行會停在它最便宜的解釋上。

@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.15.2 — 正文與 principle 卡的否定起手句（「不是 X、是 Y」）改成重點先行，核心概念移到句首、被否定的一半留作句尾對照；同步 blog 對應 report 卡的同一批改寫，語意不變
+
 **Version**: 2.15.1 — 〈與其他決策類 Skill 的關係〉補 system-design 一列：它決定範圍與時機，WRAP 處理個別決定；延後項目的觸發指標是絆腳索的輸入
 
 **Version**: 2.15.0 — 錨點確認補第三錨點「評估單位」（實例還是模式；嚴重性在單位固定並量過普及度之後才給），推導在 detailed-techniques.md 新子節，principle 卡 evaluation-unit-before-severity（case：同一個發現當句子評是校對、當形態評是 33 篇的規範問題）；pm-checklist 1.3.0 同步；iterative-research 首次標號 1.0.0；hooks 硬路徑加 portability-allow 註記
