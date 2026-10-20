@@ -6,7 +6,7 @@ weight: 4
 tags: ["linux", "process", "systemd", "debugging"]
 ---
 
-判斷「某個東西現在是什麼狀態」——程式活著沒、服務由誰提供、螢幕鎖了沒、session 還在不在——是除錯裡最常做、也最常判錯的一步。判錯多半不是工具不對，是問錯了來源：用一個猜的名字去掃行程、用畫面有沒有反應去推服務狀態、用畫面上有沒有某個元素去斷定 session 狀態。這篇把幾個常見的狀態判斷，對到它們各自的權威來源與正確工具。
+判斷「某個東西現在是什麼狀態」——程式活著沒、服務由誰提供、螢幕鎖了沒、session 還在不在——是除錯裡最常做、也最常判錯的一步。判錯多半出在問錯了來源，而不是工具不對：用一個猜的名字去掃行程、用畫面有沒有反應去推服務狀態、用畫面上有沒有某個元素去斷定 session 狀態。這篇把幾個常見的狀態判斷，對到它們各自的權威來源與正確工具。
 
 底層的心法（讀權威狀態、不靠肉眼）見 [診斷心法](../diagnosis-read-authoritative-state/)，這篇是它在「程序 / 服務 / 狀態」這一類的具體招式。
 
@@ -25,7 +25,7 @@ tags: ["linux", "process", "systemd", "debugging"]
 
 比對到了正確的 comm、`pgrep` 也有輸出，只證明「這個進程存在」，不證明「它內部在正常運作」。有一類故障是進程好端端活著（`pgrep` 找得到、STAT 是正常的 `S`、在 `poll` 等事件、CPU 不高），但它內部某個子系統已經 wedged——例如一個圖形 shell 的 QML scene 因為上游錯誤（渲染 pipeline 建失敗之類）某個物件沒建起來變 null，於是負責互動的模組全部失效。表現是 bar 還畫得出來、卻點不動，keybind 叫不出東西，但焦點視窗打字正常。這時 `pgrep` 會騙你說「在跑」。
 
-這種情況權威來源不是行程表，是**程式自己的 log**，而且這種 log 常常不在 `journalctl`、也不在你猜的路徑，要用該程式專屬的 log 指令（例如某桌面 shell 的 `<shell> -l`）。log 裡的 `TypeError: Cannot read property 'X' of null` 這類訊息，才是「進程活著但子系統死了」的定案證據。另一個更精準的活性探針是程式的 **IPC 回不回真實狀態**：正常時查詢會回傳資料、子系統死掉時回空——這比「進程在不在」可靠得多。判「進程活著到底有沒有在運作」時，讀它自己的 log 與 IPC，不是看 `pgrep` 有沒有輸出。桌面 shell 的具體案例與恢復（讀 `caelestia shell -l` 抓到 null 根因、重啟重建 scene）見 [常見故障場景與恢復操作](/linux/dotfile/07-desktop-maintenance/common-failures-recovery/) 的「畫得出來但互動死掉」場景。
+這種情況的權威來源是**程式自己的 log**，而不是行程表，而且這種 log 常常不在 `journalctl`、也不在你猜的路徑，要用該程式專屬的 log 指令（例如某桌面 shell 的 `<shell> -l`）。log 裡的 `TypeError: Cannot read property 'X' of null` 這類訊息，才是「進程活著但子系統死了」的定案證據。另一個更精準的活性探針是程式的 **IPC 回不回真實狀態**：正常時查詢會回傳資料、子系統死掉時回空——這比「進程在不在」可靠得多。判「進程活著到底有沒有在運作」時，讀它自己的 log 與 IPC，不是看 `pgrep` 有沒有輸出。桌面 shell 的具體案例與恢復（讀 `caelestia shell -l` 抓到 null 根因、重啟重建 scene）見 [常見故障場景與恢復操作](/linux/dotfile/07-desktop-maintenance/common-failures-recovery/) 的「畫得出來但互動死掉」場景。
 
 ## 服務由誰提供：問註冊表
 
@@ -52,7 +52,7 @@ ps -o comm= -p "$pid"
 關鍵是分清兩種鎖：
 
 - **[logind](/linux/dotfile/knowledge-cards/logind-session-seat/) 層的鎖**：systemd 登入管理的 session 鎖，權威狀態是 `loginctl show-session <id> -p LockedHint`。
-- **Wayland 合成器層的鎖**：走 `ext-session-lock` 協議、由**[合成器](/linux/dotfile/knowledge-cards/compositor/)**（compositor，Wayland 下負責把各視窗合成到螢幕、管輸入輸出的核心程式，約當 X11 時代的視窗管理器加顯示伺服器；Hyprland、Sway 等都是）管的鎖，跟 logind 是獨立機制。這種鎖 `loginctl` 的 `LockedHint` **查不到**——不是沒鎖，是查錯層。（用 GNOME / KDE 的鎖屏走的機制不同，以下的 `ext-session-lock` 判法與復原針對 wlroots 系的 Wayland 合成器。）
+- **Wayland 合成器層的鎖**：走 `ext-session-lock` 協議、由**[合成器](/linux/dotfile/knowledge-cards/compositor/)**（compositor，Wayland 下負責把各視窗合成到螢幕、管輸入輸出的核心程式，約當 X11 時代的視窗管理器加顯示伺服器；Hyprland、Sway 等都是）管的鎖，跟 logind 是獨立機制。這種鎖 `loginctl` 的 `LockedHint` **查不到**——鎖確實存在，`LockedHint` 查的是另一層。（用 GNOME / KDE 的鎖屏走的機制不同，以下的 `ext-session-lock` 判法與復原針對 wlroots 系的 Wayland 合成器。）
 
 所以「`loginctl` 沒有 `LockedHint`、`pgrep` 找不到獨立鎖屏程式」不足以斷定「沒鎖」：合成器層的鎖不歸 logind、而鎖屏畫面可能由 shell 主程式在自己行程內畫（沒有獨立可執行檔可抓）。這種情況真正的權威來源是那個 shell 自己的 log（有沒有載入鎖屏模組、idle 計時器有沒有觸發鎖定），或直接看 compositor 的 session-lock 狀態。判鎖看合成器 / shell 的 log，不是 `loginctl`、更不是畫面有沒有密碼框。
 

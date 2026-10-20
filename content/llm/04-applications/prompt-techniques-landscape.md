@@ -74,7 +74,7 @@ Few-shot 跟 fine-tune 是「對齊」這件事的兩個 endpoint。Trade-off：
 
 ### Retrieval-augmented prompting
 
-跟 few-shot 像、但範例不是寫死、是**從一個範例庫即時 retrieve**。技術上落在 [4.1 RAG 原理](/llm/04-applications/rag-principles/)、但概念上是 few-shot 的延伸——把固定範例變成動態範例。
+跟 few-shot 像，差別在範例是**從一個範例庫即時 retrieve** 的，而不是寫死在 prompt 裡。技術上落在 [4.1 RAG 原理](/llm/04-applications/rag-principles/)、但概念上是 few-shot 的延伸——把固定範例變成動態範例。
 
 - **適用**：範例庫大、每次任務最相關的範例不同。
 - **跟 RAG 知識檢索的差異**：RAG 取「事實 / 文件」、retrieval-augmented prompting 取「相似任務的解答範例」。兩個目的不同、但 infra 共用。

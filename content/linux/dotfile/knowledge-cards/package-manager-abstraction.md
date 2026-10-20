@@ -23,7 +23,7 @@ macOS         brew install <pkg>
 Alpine        apk add --no-cache <pkg>
 ```
 
-除了這一步，其餘幾乎都可攜：`.zshrc` 的內容、`stow` 建 symlink 的方式、oh-my-zsh 的 `git clone`、config 檔本身——這些不管在哪個 distro 都一樣。所以跨 distro 的正解不是維護多份 dotfile，是維護一份 config + 一個依 package manager 分支的安裝層。
+除了這一步，其餘幾乎都可攜：`.zshrc` 的內容、`stow` 建 symlink 的方式、oh-my-zsh 的 `git clone`、config 檔本身——這些不管在哪個 distro 都一樣。所以跨 distro 的正解是維護一份 config + 一個依 package manager 分支的安裝層，而不是維護多份 dotfile。
 
 ## Detection 分支的兩種形態
 

@@ -41,7 +41,7 @@ Metal API（Apple Silicon GPU）
 Apple Silicon 硬體
 ```
 
-所以「Ollama vs llama.cpp」不是兩個競爭品，是「上層包裝」跟「底層引擎」的關係。
+所以「Ollama vs llama.cpp」是「上層包裝」跟「底層引擎」的關係，而不是兩個競爭品。
 
 ## Ollama 跟 llama.cpp 的關係
 

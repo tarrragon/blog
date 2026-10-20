@@ -361,7 +361,7 @@ count3.value++;  // Rx<int> 也行，但缺了 RxInt 的算術特化
 
 特化子類的核心好處：**原生語法的 mutation（`+=`、list `add`、string concat）都直接觸發 reactive 通知**，不需要手動 `notifyListeners()` 或 `add()`。
 
-結論：`.obs` 跟 `Rx` 不是兩個不同概念，是同一個機制的兩種建構寫法。後者多了型別推導與特化命名。
+結論：`.obs` 跟 `Rx` 是同一個機制的兩種建構寫法，而不是兩個不同概念。後者多了型別推導與特化命名。
 
 ### 概念差異
 

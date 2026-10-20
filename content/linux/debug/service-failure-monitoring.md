@@ -20,7 +20,7 @@ systemctl is-failed <unit>  # 單一 unit 明確判失敗（比 is-active 直接
 journalctl -u <unit> -f     # 即時跟一個 unit 的 log
 ```
 
-`systemctl --failed` 就是「服務死活」的權威清單。手動版的問題不是不準，是你得記得去看。下面每一層都是把「記得去看」換成「壞了它來找你」。
+`systemctl --failed` 就是「服務死活」的權威清單。手動版的缺點在於要有人記得去看，而不是量得不準。下面每一層都是把「記得去看」換成「壞了它來找你」。
 
 ## 第一層：systemd 原生 `OnFailure` 鉤子（不裝額外服務）
 

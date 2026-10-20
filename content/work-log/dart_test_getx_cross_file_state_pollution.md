@@ -61,7 +61,7 @@ group('PrintCenter 廚房印表機管理', () {
 00:08 +127 -1: ... auto_service_config_test.dart: ...
 ```
 
-`-1` 在第 126 個 test 才第一次出現——失敗的不是 print handler，是中間夾的 **widget test**。再看另一次 fail：
+`-1` 在第 126 個 test 才第一次出現——失敗的是中間夾的 **widget test**，而不是 print handler。再看另一次 fail：
 
 ```text
 00:09 +124 -1: ... settle_page_order_object_test.dart: SettlePage.orderObject reactivity orderList[i] 替換：badge 從「已完成」立即變「退貨」
@@ -208,7 +208,7 @@ Run 5: All tests passed!
 
 ## 教訓
 
-1. **`did not complete` 不是失敗源、是被牽連訊息**——往前找 `-1` 第一次出現的位置才是真正失敗的 test。
+1. **`did not complete` 是被牽連的訊息，而不是失敗源**——往前找 `-1` 第一次出現的位置才是真正失敗的 test。
 2. **單獨跑通過 + 全 suite fail = cross-file pollution**——這是 flaky test 最常見的固定模式之一、有專屬的解法（setUp reset）、不要當成「資料時序的隨機性」隨便重跑。
 3. **tearDown 清不夠、setUp 也要清**——任何用 GetX 的 test 應該在 setUp 開頭主動 `Get.reset()`、不要依賴上一個 file 的 tearDown。
 4. **第一次診斷錯誤是常態、要回到證據**——順著 fail 訊息修是直覺反應、但訊息可能誤導；停下來看計數欄位、單獨跑驗證、才是穩定的診斷方式。

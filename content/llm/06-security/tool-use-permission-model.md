@@ -39,7 +39,7 @@ MCP server（獨立 process、自己的權限）
 
 1. **模型本身不執行 tool**：模型只生成 tool call JSON、實際執行由「LLM client」（如 Continue.dev、Claude Desktop）跟 MCP server 完成。
 2. **MCP server 是獨立程式**：可以是 Node / Python script、可以呼叫任何系統 API、權限上限是「跑該 server 的 user 的權限」。
-3. **權限不是模型給的、是 OS / user 給的**：模型再怎麼「同意」執行 `rm -rf /`、實際上能不能跑取決於 OS 的權限模型跟 MCP server 自己的 sandbox。
+3. **權限由 OS / user 授予，而不是模型**：模型再怎麼「同意」執行 `rm -rf /`、實際上能不能跑取決於 OS 的權限模型跟 MCP server 自己的 sandbox。
 
 > **事實查核註**：[Model Context Protocol（MCP）](https://modelcontextprotocol.io) 是 Anthropic 在 2024 年底發布的開放協議、各家 LLM client 跟 MCP server 實作的成熟度、權限粒度依版本演進。本章描述以 2026 年 5 月主流實作為基準、引用前以 MCP 官方規格跟各 client / server 的 README 為準。
 

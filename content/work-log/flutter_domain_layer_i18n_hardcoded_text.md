@@ -16,7 +16,7 @@ tags: ["flutter", "dart", "i18n", "ddd", "layered-architecture", "refactoring"]
 
 ## 947 處是怎麼長出來的
 
-硬編碼不是一次寫壞的，是每一處都很合理地長出來的。典型形態：
+硬編碼是一處一處累積起來的，每一處在當時都有合理的理由，而不是一次寫壞的。典型形態：
 
 ```dart
 // Domain 層

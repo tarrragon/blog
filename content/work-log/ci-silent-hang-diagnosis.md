@@ -78,7 +78,7 @@ WRAP 決策框架的 R（Reality Test）原則是「需要什麼事證才能證�
 
 ## 4. Detailed log 的關鍵讀法：找「沒輸出的時間段」
 
-CI 平台的 step log 通常很長、人眼掃容易跳過。看 silent hang 嫌疑時、讀法不是順序讀、是抓四個 timestamp：
+CI 平台的 step log 通常很長、人眼掃容易跳過。看 silent hang 嫌疑時、讀法是抓四個 timestamp，而不是順序讀：
 
 1. **Step 開始的 timestamp**（log header 通常有）
 2. **Step 結束（cancel / fail）的 timestamp**
@@ -112,7 +112,7 @@ gh run view <run-id> --log --job <job-id> | rg "Install Playwright browsers" | t
 
 ## 5. Upstream issue 搜尋的優先序
 
-Silent hang 確認後、下一步通常**不是繼續 reason 根因**、是去查 upstream issue tracker。Silent hang 多半是工具 / 依賴的 bug、而非自己 config 錯 — 因為 config 錯通常有 error message、不會 silent。
+Silent hang 確認後、下一步通常是**去查 upstream issue tracker**，而不是繼續 reason 根因。Silent hang 多半是工具 / 依賴的 bug、而非自己 config 錯 — 因為 config 錯通常有 error message、不會 silent。
 
 查詢策略：
 

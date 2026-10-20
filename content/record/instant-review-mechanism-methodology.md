@@ -7,7 +7,7 @@ description: "累積一批 Ticket 才一起 review、而錯誤的架構決定已
 tags: ["AI協作心得", "Ticket", "方法論"]
 ---
 
-累積一批 Ticket 再一起 review 有一個結構性的代價：review 抓到第一張的架構方向有問題時，後面幾張已經建在那個方向上。修正的範圍不是一張 Ticket，是這一批。
+累積一批 Ticket 再一起 review 有一個結構性的代價：review 抓到第一張的架構方向有問題時，後面幾張已經建在那個方向上。修正的範圍是這一批，而不是一張 Ticket。
 
 即時 Review 機制的核心是一句話：**Ticket 完成就 Review，不累積。**
 

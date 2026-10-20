@@ -27,7 +27,7 @@ Indirect injection 的常見入口：
 
 > **事實查核註**：prompt injection 的攻擊形態跟研究進展快速演進、本卡描述參考 [OWASP LLM Top 10 LLM01](https://owasp.org/www-project-top-10-for-large-language-model-applications/) 跟 Greshake et al. 的「Indirect Prompt Injection」論文、引用前以對應的最新版本為準。
 
-實際造成影響的不是 injection 本身、是 LLM 輸出後的下游動作：
+實際造成影響的是 LLM 輸出後的下游動作，而不是 injection 本身：
 
 ```text
 injection → LLM 輸出 → 下游動作（這裡才是真正攻擊面）

@@ -32,7 +32,7 @@ git 的設定檔（`.gitconfig`）只存「用哪個 helper」這個指標、不
 
 ## 判讀訊號 / 邊界
 
-- git 對私有 repo 要求輸入帳號密碼、或非互動下回 `could not read Username`，是「沒有 helper 回得出憑證」的訊號——不是網路問題，是認證來源沒設好。
+- git 對私有 repo 要求輸入帳號密碼、或非互動下回 `could not read Username`，是「沒有 helper 回得出憑證」的訊號——成因是認證來源沒設好，而不是網路。
 - helper 可以疊：git 依序問每個設定的 helper、第一個回得出憑證的勝出。`gh auth setup-git` 產生的設定會先放一行空 `helper=` 清掉繼承的 helper、再指到 gh，避免別的 helper（如系統鑰匙圈）先攔。乾淨環境沒有繼承 helper 時單行就夠。
 - helper 只管 HTTPS 這條路。git submodule 或 remote 走 SSH（`git@github.com:`）時不經 credential helper、走的是 SSH 金鑰那條路。
 - helper 回傳的是「當下這次操作」的憑證，不改變遠端的授權範圍——token 本身權限不足（如只有讀權限卻要 push）不是 helper 的問題，helper 已經把 token 正確帶到了。

@@ -164,7 +164,7 @@ yadm 適合想要 bare repo 的簡單性、但需要條件安裝或 secret 加�
 
 ## Chezmoi：多機器 dotfile 管理工具
 
-Chezmoi 是專為 dotfile 管理設計的工具，原生處理 template、secret 管理和多機器差異。它把 dotfile 存在自己的 source directory（`~/.local/share/chezmoi`），用 `chezmoi apply` 把檔案實際寫入目標位置（不是 symlink，是複製）。
+Chezmoi 是專為 dotfile 管理設計的工具，原生處理 template、secret 管理和多機器差異。它把 dotfile 存在自己的 source directory（`~/.local/share/chezmoi`），用 `chezmoi apply` 把檔案實際寫入目標位置（用複製的方式，而不是 symlink）。
 
 ```bash
 # 安裝

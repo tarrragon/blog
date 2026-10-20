@@ -101,7 +101,7 @@ AI 接走的是 buffer 這層—associate 的 due diligence、文件 review、me
 | 新創淘汰   | 該行業有沒有 [Fat Data / Fat Skill](/business/knowledge-cards/fat-data-fat-skill/) 累積 | 拿掉 AI 還剩什麼、估值倍數                  | 累積 fat data / fat skill、避免 thin wrapper    |
 | 知識工作者 | 該行業 [Junior Buffer](/business/knowledge-cards/junior-buffer/) 結構強度               | due diligence / memo / 抓資料是不是主要工作 | 往 fat skill 方向走、累積判斷型 Tacit Knowledge |
 
-三層之間不是嚴格因果、是同一個事件觸發的平行結構轉變。判讀任一層時要意識到另外兩層在同時動。這個框架不局限於 AI 議題—當任何上游基礎服務商開始往應用層延伸時（例如雲端廠商做 SaaS、晶片廠商做 OS）、同樣可以套這三層問。
+三層是同一個事件觸發的平行結構轉變，彼此之間不是嚴格的因果關係。判讀任一層時要意識到另外兩層在同時動。這個框架不局限於 AI 議題—當任何上游基礎服務商開始往應用層延伸時（例如雲端廠商做 SaaS、晶片廠商做 OS）、同樣可以套這三層問。
 
 ## 延伸閱讀
 

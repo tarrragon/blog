@@ -100,7 +100,7 @@ LLM 工作流通常有多層信任邊界、跟「我在本地跑」的單純直�
 - **合規場景**：看具體規範要求。HIPAA、PCI-DSS 等場景雲端 + BAA / DPA 合約 + technical control 是主流方案、不一定要本地。
 - **NDA + 客戶明示不得送雲**：本地是預設、合約保證對「不得送雲」這條沒幫助。
 
-判讀「該選哪邊」不是 binary、是 spectrum：許多場景混用、敏感任務本地、需要能力的任務雲端 + 合約保證。混用模式有一個隱形 leak 風險：同一個 IDE 同時接本地與雲端 backend、prompt routing 設錯就會把該走本地的內容送到雲端。實作時要明確隔離（不同 workspace / 不同帳號 / 不同 plugin set）、用配置強制路由、而非依賴每次手動切換。Continue.dev 多 provider 設定的具體路由判讀見 [6.4 跨雲端 / 本地的資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)。
+「該選哪邊」的答案落在一道 spectrum 上，而不是 binary：許多場景混用、敏感任務本地、需要能力的任務雲端 + 合約保證。混用模式有一個隱形 leak 風險：同一個 IDE 同時接本地與雲端 backend、prompt routing 設錯就會把該走本地的內容送到雲端。實作時要明確隔離（不同 workspace / 不同帳號 / 不同 plugin set）、用配置強制路由、而非依賴每次手動切換。Continue.dev 多 provider 設定的具體路由判讀見 [6.4 跨雲端 / 本地的資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)。
 
 ## 零信任原則套用到 LLM 工作流
 

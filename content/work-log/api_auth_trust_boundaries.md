@@ -339,7 +339,7 @@ Layer 3 不引入新的 secret、是「**建立兩邊身分關聯**」的 lifecy
 
 - **Layer 1（使用者）**：解決「你是誰」 — 用 Bearer Token、注意 capability credential 的暴露成本
 - **Layer 2（系統）**：解決「哪個系統呼叫的」 — 用 Shared Secret / API Key / OAuth / mTLS、secret 不離 server
-- **Layer 3（Provisioning workflow）**：解決「兩邊身分怎麼對上」 — 不是新的 secret、是 lifecycle 動作
+- **Layer 3（Provisioning workflow）**：解決「兩邊身分怎麼對上」 — 它是 lifecycle 動作，而不是新的 secret
 
 設計後端 API 時，先把這三個問題分開，secret 機制的選擇會變清楚。若排障訊號是「這個 token 在那邊不能用」，下一步是先判斷它卡在使用者層、系統層，還是 provisioning workflow。
 

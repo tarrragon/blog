@@ -551,7 +551,7 @@ ShellRoot {
 
 #### 實測執行記錄：階段 B（Caelestia 完整安裝）——通過
 
-透過 `paru` 從 AUR 編譯 `caelestia-shell`（2.1.0），227 步 C++ 編譯在 aarch64 VM 上完整跑完、產物正常安裝。**先前一次 build 停在 `[120/227]` 不是編譯失敗，是主機磁碟寫滿把 build 中途打斷**——清出空間後同一份 source 接著編就過。這修正了一個容易誤判的方向：build 卡住先查磁碟／資源，不是先懷疑 aarch64 相容性。
+透過 `paru` 從 AUR 編譯 `caelestia-shell`（2.1.0），227 步 C++ 編譯在 aarch64 VM 上完整跑完、產物正常安裝。**先前一次 build 停在 `[120/227]`，成因是主機磁碟寫滿把 build 中途打斷，而不是編譯失敗**——清出空間後同一份 source 接著編就過。這修正了一個容易誤判的方向：build 卡住先查磁碟／資源，不是先懷疑 aarch64 相容性。
 
 `caelestia shell -d` 啟動後 log 收在 `Configuration Loaded`，Material-3 風格的介面（左側直立 dock + 頂列 status bar）在 virtio-gpu 上完整 render（`shotB-caelestia-render.png`）。**階段 A 只證明 Quickshell 能畫一個測試面板，階段 B 證明整套 Caelestia shell 的實際 UI 都能繪製**——go/no-go 的風險到這裡才真正解除。
 
@@ -627,7 +627,7 @@ quickshell log 給了關鍵證據：`@modules/lock/center/ProfilePic.qml`（lock
 
 - **`loginctl` 無 `LockedHint`**：`ext-session-lock` 是 **Wayland 合成器層**的鎖，跟 **logind 的 session 鎖**是兩套獨立機制。查 `LockedHint` 查的是 logind 那套，對 Wayland 協議鎖本來就查不到——是查錯層，不是沒鎖。
 - **`pgrep` 找不到 lock 行程**：鎖屏由 quickshell **行程內**畫，沒有獨立的 lock 可執行檔可抓。
-- **看起來時有時無**：不是鎖時有時無，是我剛好在 3 分鐘 idle 邊界附近截圖、加上截圖前的 IPC 活動偶爾把 idle resume 掉。
+- **看起來時有時無**：成因是我剛好在 3 分鐘 idle 邊界附近截圖、加上截圖前的 IPC 活動偶爾把 idle resume 掉，鎖本身的行為是穩定的。
 
 教訓：判斷 Wayland session 有沒有被鎖，看的是**合成器的 session-lock 狀態**（有鎖時 Hyprland 的特定行為、或直接看 lock client 在不在），不是 `loginctl LockedHint`，也不是畫面上有沒有密碼框——現代 shell 這兩個訊號都靠不住。用肉眼判 UI 狀態誤判了兩次，是讀 shell 自己的 log 才定案，呼應可除錯 bootstrap 的原則：找程式自己的 log，別盯著畫面猜。
 
@@ -893,7 +893,7 @@ step 3 的配色切換 / 桌布 / 動態取色在新 VM 全部重現，包括「
 
 ### VT 的三層判讀（kmscon 事件）
 
-新 VM 開機後 UTM 圖形視窗顯示的 login 是 `pts/0`（`tty` 指令定案）——archboot 預設用 **kmscon**（userspace console、直接畫在 DRM 上、login 跑在 pts）取代 VT getty，這也回頭修正了稍早「getty@tty1 被 disabled」的理解：不是漏開、是被 kmscon 取代。kmscon 持有 DRM master、跟 compositor 衝突，`chvt` 也救不了（它不是 VT）。換手：`sudo systemctl disable --now kmsconvt@tty1` + `sudo systemctl start getty@tty1`，畫面變真 tty1 login（`tty` 回 `/dev/tty1`）後 Hyprland 正常啟動。判讀鏈已進 linux-install-debug skill v1.7.0。
+新 VM 開機後 UTM 圖形視窗顯示的 login 是 `pts/0`（`tty` 指令定案）——archboot 預設用 **kmscon**（userspace console、直接畫在 DRM 上、login 跑在 pts）取代 VT getty，這也回頭修正了稍早「getty@tty1 被 disabled」的理解：getty 是被 kmscon 取代，而不是漏開。kmscon 持有 DRM master、跟 compositor 衝突，`chvt` 也救不了（它不是 VT）。換手：`sudo systemctl disable --now kmsconvt@tty1` + `sudo systemctl start getty@tty1`，畫面變真 tty1 login（`tty` 回 `/dev/tty1`）後 Hyprland 正常啟動。判讀鏈已進 linux-install-debug skill v1.7.0。
 
 ### GUI 三類工具安裝驗證（檔案管理 / 瀏覽器 / 串流）
 

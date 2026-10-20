@@ -231,7 +231,7 @@ def build_workflow(prompt_text, neg_text, steps):
 **每個節點做什麼**：
 
 - **4 CheckpointLoaderSimple**：載 SDXL safetensors、輸出 model / clip / vae 三個東西。是整條 graph 的根。
-- **5 EmptyLatentImage**：建一張 1024×1024 的空白 latent tensor（不是 RGB 圖、是 4-channel latent space tensor）。SDXL 的 「畫布」。
+- **5 EmptyLatentImage**：建一張 1024×1024 的空白 latent tensor（4-channel latent space tensor，而不是 RGB 圖）。SDXL 的 「畫布」。
 - **6 CLIPTextEncode (positive)**：把 prompt 文字用 CLIP text encoder 轉成 conditioning vector。
 - **7 CLIPTextEncode (negative)**：同上、但是 negative prompt（要 avoid 的特徵）。
 - **3 KSampler**：核心 denoising loop。15-30 個 step、把 latent 從噪聲變成跟 conditioning 對齊的 latent。

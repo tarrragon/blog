@@ -37,7 +37,7 @@ weight: 5
 - 工具選擇能力（多個工具中挑對的）。
 - 上下文管理能力（哪些 context 該帶下去、哪些可以丟）。
 
-這幾項能力是雲端旗艦模型的明顯強項、也是本地小模型的明顯弱項。理解這個能力差距、能解釋為什麼「本地寫 code 用 Continue.dev 還行、本地跑 agent 經常失敗」、不是工具問題、是模型能力 baseline 問題——背後牽涉 [function calling](/llm/knowledge-cards/function-calling/) 訓練深度、long context [prefill](/llm/knowledge-cards/prefill/) 痛點、規劃能力差距。
+這幾項能力是雲端旗艦模型的明顯強項、也是本地小模型的明顯弱項。理解這個能力差距、能解釋為什麼「本地寫 code 用 Continue.dev 還行、本地跑 agent 經常失敗」：成因在模型能力的 baseline，而不在工具——背後牽涉 [function calling](/llm/knowledge-cards/function-calling/) 訓練深度、long context [prefill](/llm/knowledge-cards/prefill/) 痛點、規劃能力差距。
 
 ## Agent Loop 的核心結構
 

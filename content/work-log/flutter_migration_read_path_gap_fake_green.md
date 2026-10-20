@@ -26,13 +26,13 @@ tags: ["flutter", "dart", "migration", "testing", "planning", "repository", "sql
 | W3-001   | 重寫 search 的 SQL、JOIN tag 表          | 部分——只有搜尋查詢路徑 |
 | **缺口** | 重寫 `_mapToBook`、一般讀取路徑填充 tags | **無人認領**           |
 
-資料模型遷移的通路有三段：**寫入**（backfill 讓新結構有資料）、**讀出**（讀取路徑把新結構載進物件）、**消費**（呼叫端改用新 API）。這個計畫排了第一段跟第三段、第二段整段缺席——不是排錯順序、是**沒有任何 ticket 認領它**。缺口安靜的原因跟[持久層靜默丟欄位](/work-log/flutter_feature_complete_never_persisted/)同構：每張存在的 ticket 都會被檢視、不存在的 ticket 沒有形狀可供檢視。
+資料模型遷移的通路有三段：**寫入**（backfill 讓新結構有資料）、**讀出**（讀取路徑把新結構載進物件）、**消費**（呼叫端改用新 API）。這個計畫排了第一段跟第三段、第二段整段缺席——成因是**沒有任何 ticket 認領它**，而不是排錯順序。缺口安靜的原因跟[持久層靜默丟欄位](/work-log/flutter_feature_complete_never_persisted/)同構：每張存在的 ticket 都會被檢視、不存在的 ticket 沒有形狀可供檢視。
 
 ## 假綠機制：fixture 不走真實資料通路
 
 更危險的是這個缺口**測試抓不到**。消費端的 unit test fixture 自己 `Book(...)` 建物件——遷移後 fixture 跟著改、建的時候直接帶上 `bookTags`，於是 `getPrimaryTag` 在測試裡有資料、斷言全過。真實環境的 Book 從 SQLite 經 `_mapToBook` 載入、`bookTags` 恆空——**測試世界跟真實世界走不同的資料通路**，測試通過證明的只是「如果資料有進來、邏輯是對的」，而資料沒進來。
 
-這是假綠家族裡最結構性的一種：不是 mock 遮蔽、不是斷言過時，是 fixture 的建構方式繞過了真實系統的組裝路徑。守住它的測試必須走完整通路——寫進 SQLite、經 repository 讀出、斷言 tags 存在——也就是整合層的 roundtrip，unit fixture 結構上無能為力。
+這是假綠家族裡最結構性的一種：fixture 的建構方式繞過了真實系統的組裝路徑，成因不在 mock 遮蔽，也不在斷言過時。守住它的測試必須走完整通路——寫進 SQLite、經 repository 讀出、斷言 tags 存在——也就是整合層的 roundtrip，unit fixture 結構上無能為力。
 
 ## 依賴圖是推導、ready 是推導的推導
 
@@ -40,7 +40,7 @@ tags: ["flutter", "dart", "migration", "testing", "planning", "repository", "sql
 
 訊號鏈是這樣失真的：語意前提沒被列進 blockedBy → blockedBy 齊了 → ready 亮綠燈 → 派發。每一步推導都正確、第一步的輸入就缺了。這跟 [#221 規則存在 vs 規則涵蓋](/report/lint-scope-must-be-explicit-fact/)同構：ready 訊號的可信度上限是依賴圖的完整性，圖不完整時 ready 的綠跟「沒檢查」的綠長一樣。修正也對準這裡：補建 read-path ticket、七張 ticket 的 blockedBy 補上資料通路前提、wave 重排序（讓 tag API 回真資料的工作先於所有消費端遷移）。
 
-流程上還有一筆值得記：這次分析被要求**獨立重驗**——「勿盲信 PM 行號、重跑 grep / 讀檔」，五項證據全部重新驗證。攔截的品質靠的不是第一個發現者的正確、是第二雙眼睛用自己的指令重跑一遍。
+流程上還有一筆值得記：這次分析被要求**獨立重驗**——「勿盲信 PM 行號、重跑 grep / 讀檔」，五項證據全部重新驗證。攔截的品質靠的是第二雙眼睛用自己的指令重跑一遍，而不是第一個發現者的正確。
 
 ## 判讀徵兆
 

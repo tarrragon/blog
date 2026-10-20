@@ -37,7 +37,7 @@ freezed 模型天生雙向（`fromJson`/`toJson`），這保證了一個閉環�
 type '_Map<String, dynamic>' is not a subtype of type 'List<dynamic>'
 ```
 
-真實後端的列表端點帶分頁包裝——`data` 不是陣列，是 `{ data: [...], previousPage, nextPage, ... }`。而產品的回應信封模型**早就內建**了「嘗試解分頁包裝」的邏輯，生產 App 天天在正確處理這個形狀。raw 寫法等於把一個已解決的問題重新發現、重新修補（在測試裡加了一個 `_listData` helper）——直到改用產品的 API client 與模型解析，這個 helper 連同它代表的重複知識一起刪除。
+真實後端的列表端點帶分頁包裝——`data` 是 `{ data: [...], previousPage, nextPage, ... }` 這個物件，而不是陣列。而產品的回應信封模型**早就內建**了「嘗試解分頁包裝」的邏輯，生產 App 天天在正確處理這個形狀。raw 寫法等於把一個已解決的問題重新發現、重新修補（在測試裡加了一個 `_listData` helper）——直到改用產品的 API client 與模型解析，這個 helper 連同它代表的重複知識一起刪除。
 
 教訓一句話：**回應形狀的知識只該存在一份**。fixture 或測試裡出現第二份（手寫 JSON、手挖欄位），它與第一份的分岔只是時間問題。
 

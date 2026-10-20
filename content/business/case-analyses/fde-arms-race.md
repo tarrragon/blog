@@ -56,7 +56,7 @@ AI 時代這個前提鬆動：使用者越來越多是 AI agent（自動化程�
 
 ### 支柱鬆動的綜合結果
 
-三件事疊起來、傳統 SaaS 的 70-80% 毛利目標跟 AI 產品商 2026 年的 50% 預估之間差距、就是 [估值](/business/knowledge-cards/valuation/) 倍數結構性受壓的根因。三家基礎模型供應商共同放棄 PLG 路徑、改押 FDE / Enterprise License、是這套結構鬆動下的合理 GTM 選擇—不是個別公司的策略偏好、是 unit economics 算式倒推的結論。
+三件事疊起來、傳統 SaaS 的 70-80% 毛利目標跟 AI 產品商 2026 年的 50% 預估之間差距、就是 [估值](/business/knowledge-cards/valuation/) 倍數結構性受壓的根因。三家基礎模型供應商共同放棄 PLG 路徑、改押 FDE / Enterprise License、是這套結構鬆動下的合理 GTM 選擇—它是 unit economics 算式倒推的結論，而不是個別公司的策略偏好。
 
 ## 為什麼必須派人到現場：Tacit Knowledge 萃取
 

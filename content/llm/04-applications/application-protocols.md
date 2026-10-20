@@ -53,7 +53,7 @@ Function calling 是模型在訓練階段建立的能力：[SFT 階段](/llm/03-
 - Llama 3 / Gemma 4 / Qwen3 開源旗艦模型 SFT 階段也加 function calling、但範例量不一、表現有落差。
 - 小型開源模型（< 14B）function calling 訓練嚴重不足；tool schema 複雜、多工具選擇、巢狀參數時失敗率高、單一工具 + 平坦 schema 仍可用。
 
-理解這點的價值：看到「這個模型支援 function calling」的宣稱、要追問「[訓練範例 coverage](/llm/knowledge-cards/training-example-coverage/) 多廣」、不是 binary 的支援 / 不支援、是 [spectrum](/llm/knowledge-cards/capability-spectrum/) 的訓練深度。
+理解這點的價值：看到「這個模型支援 function calling」的宣稱、要追問「[訓練範例 coverage](/llm/knowledge-cards/training-example-coverage/) 多廣」：訓練深度是一道 [spectrum](/llm/knowledge-cards/capability-spectrum/)，而不是 binary 的支援 / 不支援。
 
 ## Structured Output 是 Sampling 約束
 

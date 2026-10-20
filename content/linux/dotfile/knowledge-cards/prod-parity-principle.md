@@ -20,7 +20,7 @@ Parity 的意義就是把這個差距關掉：本機刻意退回線上那個舊�
 
 ## 要對齊哪些維度
 
-Parity 不是只對齊語言版本號，是對齊會影響 runtime 行為的每一層：
+Parity 要對齊的是會影響 runtime 行為的每一層，而不只是語言版本號：
 
 - **語言版本**：PHP/Python/Node 的主版與 patch 版
 - **底層 OS 與 libc**：Debian 世代、glibc vs musl（見 [glibc 與 musl](/linux/dotfile/knowledge-cards/glibc-vs-musl/)）

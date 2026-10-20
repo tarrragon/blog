@@ -7,7 +7,7 @@ description: "分層架構在文件上完整、而 codebase 三個月後依賴�
 tags: ["Clean Architecture", "品質檢查", "分層架構", "依賴方向", "架構合規"]
 ---
 
-在 Flutter 專案裡導入 Clean Architecture 並不難，難的是讓每一次 commit 都確實遵守它。架構設計文件寫得完整、而三個月後打開 codebase 出現 Widget 裡藏著業務規則、Controller 自己做驗證、UseCase 直接依賴具體資料庫實作時，缺的不是文件，是讓「做錯事」變困難的機制。
+在 Flutter 專案裡導入 Clean Architecture 並不難，難的是讓每一次 commit 都確實遵守它。架構設計文件寫得完整、而三個月後打開 codebase 出現 Widget 裡藏著業務規則、Controller 自己做驗證、UseCase 直接依賴具體資料庫實作時，缺的是讓「做錯事」變困難的機制，而不是文件。
 
 <!--more-->
 

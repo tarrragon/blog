@@ -52,7 +52,7 @@ class _CheckoutState {                       // immutable 內核：私有 class
 
 ## 不變式住在內核、錯誤是結構化的
 
-「能不能結帳」的判斷收在內核的 `canCheckout` / `cannotCheckoutError`，後者回傳的不是布林也不是字串、是 enum：
+「能不能結帳」的判斷收在內核的 `canCheckout` / `cannotCheckoutError`，後者回傳的是 enum，而不是布林或字串：
 
 ```dart
 enum CheckoutErrorCode implements ErrorCode {

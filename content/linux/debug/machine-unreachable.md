@@ -12,7 +12,7 @@ tags: ["linux", "vm", "networking", "debugging"]
 
 一台昨天還能 SSH 的機器今天連不上，第一步是確認「網路層通不通」，跟「SSH 服務在不在」分開。連線在 TCP 就 timeout（連 port 22 卡住沒回應），多半是網路層或機器沒在跑；連線有回應但被拒（`Connection refused`），是網路通、但那台機器上沒有服務在聽 port 22。這條逾時 vs 被拒的通用判別（含解析失敗第三症狀）見 [連線逾時 vs 連線被拒](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)。
 
-對虛擬機或同網段的機器，一個很有用的權威來源是**鄰居表**（IP 對 MAC 的對應）。要填起來需要對方在鏈路層有回應，所以它直接反映「對方在不在」。用 `ip neigh` 看目標 IP 的條目——優先用 `ip neigh` 而不是 `arp -a`，因為 `ip`（iproute2）在現代最小系統一定有，`arp`（net-tools）常常沒裝、跑了會 command not found 反而誤導。如果狀態是 `INCOMPLETE`（`arp -a` 顯示的是 `incomplete`），代表這個 IP 在鏈路層上根本沒有機器回應——不是 SSH 的問題，是那台機器的網路沒起來、或根本沒在跑。一個實際案例：一台虛擬機 SSH timeout，鄰居表顯示整個網段的 guest 位址全是 incomplete、只有閘道（宿主那側的橋接介面）是好的——這就定位到「宿主的橋沒問題，但橋的另一頭沒有 VM 在講話」，方向立刻從「調 SSH」轉到「去看 VM 的網路或開機狀態」。
+對虛擬機或同網段的機器，一個很有用的權威來源是**鄰居表**（IP 對 MAC 的對應）。要填起來需要對方在鏈路層有回應，所以它直接反映「對方在不在」。用 `ip neigh` 看目標 IP 的條目——優先用 `ip neigh` 而不是 `arp -a`，因為 `ip`（iproute2）在現代最小系統一定有，`arp`（net-tools）常常沒裝、跑了會 command not found 反而誤導。如果狀態是 `INCOMPLETE`（`arp -a` 顯示的是 `incomplete`），代表這個 IP 在鏈路層上根本沒有機器回應——成因是那台機器的網路沒起來、或根本沒在跑，與 SSH 無關。一個實際案例：一台虛擬機 SSH timeout，鄰居表顯示整個網段的 guest 位址全是 incomplete、只有閘道（宿主那側的橋接介面）是好的——這就定位到「宿主的橋沒問題，但橋的另一頭沒有 VM 在講話」，方向立刻從「調 SSH」轉到「去看 VM 的網路或開機狀態」。
 
 定位到「機器在跑但網路沒起來」後，去那台機器的主控台（不是 SSH，SSH 正是連不上的那條路）確認——實體機是接鍵盤螢幕，VM 則是打開 hypervisor 的 guest console（UTM / virt-manager 的視窗，或序列 console），必要時用 `chvt` 切到別的 VT，切 VT 的做法見[遠端連線與終端機問題](../ssh-and-terminal-troubleshooting/)：`ip -brief a` 看有沒有拿到 IP、`systemctl status <網路服務>`（`dhcpcd` / `systemd-networkd`）看網路服務起了沒，需要時 `sudo systemctl restart <網路服務>` 重拉。IP 回來、鄰居表的條目從 incomplete 變成有 MAC，就通了。
 
@@ -61,7 +61,7 @@ systemctl status systemd-resolved
 
 虛擬機開機失敗時，關鍵判斷是「錯誤來自 guest 內部（作業系統層）還是宿主側（虛擬化軟體 / QEMU 層）」。宿主側的錯誤訊息通常來自虛擬機軟體本身、在 guest 還沒開始開機前就跳出來，跟 guest 裡裝了什麼無關。
 
-一個實例是 QEMU 報「找不到某個 ROM 檔」（例如 `efi-virtio.rom`）而拒絕啟動。第一反應可能是「檔案不見了要重裝」，但正確的第一步是**去確認那個檔在不在**——實際去虛擬機軟體的安裝目錄裡找（`find <安裝目錄> -name '<rom名>'`），會發現 ROM 檔明明就在。既然檔案在，「找不到」就不是缺檔，是 QEMU 執行時**在它預期的路徑下找不到**——成因隨宿主 OS 不同。**在 macOS + UTM 宿主上**，最常見的是 Gatekeeper app translocation：帶隔離屬性的 app 被搬到一個隨機唯讀路徑跑，讓 QEMU 解析資源的相對路徑失效，明明存在的檔案在那個執行路徑下就找不到。**在 Linux 宿主上**（沒有 translocation 這回事），同樣的「找不到 ROM」通常是缺對應套件（`ovmf` / `ipxe-roms` / `edk2-ovmf`）、libvirt XML 指的 ROM 路徑錯、或檔案權限不對——一樣先確認檔在哪、QEMU 是用哪個路徑去找。
+一個實例是 QEMU 報「找不到某個 ROM 檔」（例如 `efi-virtio.rom`）而拒絕啟動。第一反應可能是「檔案不見了要重裝」，但正確的第一步是**去確認那個檔在不在**——實際去虛擬機軟體的安裝目錄裡找（`find <安裝目錄> -name '<rom名>'`），會發現 ROM 檔明明就在。既然檔案在，「找不到」指的是 QEMU 執行時**在它預期的路徑下找不到**，而不是缺檔——成因隨宿主 OS 不同。**在 macOS + UTM 宿主上**，最常見的是 Gatekeeper app translocation：帶隔離屬性的 app 被搬到一個隨機唯讀路徑跑，讓 QEMU 解析資源的相對路徑失效，明明存在的檔案在那個執行路徑下就找不到。**在 Linux 宿主上**（沒有 translocation 這回事），同樣的「找不到 ROM」通常是缺對應套件（`ovmf` / `ipxe-roms` / `edk2-ovmf`）、libvirt XML 指的 ROM 路徑錯、或檔案權限不對——一樣先確認檔在哪、QEMU 是用哪個路徑去找。
 
 另外兩個常見的「VM 起不來」故障也順手一起排除，它們不會特定產生「找不到 ROM」但常伴隨出現：上一次崩潰殘留的 helper 行程卡著（`pgrep -af 'qemu|<虛擬機軟體名>'` 找，沒清乾淨會佔住資源），以及宿主磁碟滿（`df -h`，啟動要寫暫存 / 狀態檔）。多數情況下，完全退出虛擬機軟體（連殘留 helper 一起清）+ 清出宿主磁碟空間 + 重新啟動，就恢復了。
 

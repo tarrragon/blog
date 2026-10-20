@@ -199,7 +199,7 @@ qwen3:8b > gemma3:4b > gemma3:1b ≈ gemma4:e4b (strict) > gemma4:e4b (default)
 - **Surface-level instruction**（heading 格式、不要 meta-text、要對話）：可以用 strict prompt 改善、prompt engineering 有效。
 - **Semantic-level alignment**（特定情境的角色處理、敏感主題的表述方式）：是 RLHF 階段建立的 hard line、prompt engineering 繞不過。
 
-設計應用時要意識：**「LLM follow 不了 instruction」可能不是能力問題、是 alignment 問題**。模型訓練時被刻意 align 不做某些事、即使 prompt 明示也不會做。發現這種情況、改換 model（或 less-aligned variant）會比繼續調 prompt 更省時間。
+設計應用時要意識：**「LLM follow 不了 instruction」的成因可能在 alignment，而不在能力**。模型訓練時被刻意 align 不做某些事、即使 prompt 明示也不會做。發現這種情況、改換 model（或 less-aligned variant）會比繼續調 prompt 更省時間。
 
 ### 「最新世代」的標籤可能誤導
 

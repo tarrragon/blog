@@ -38,7 +38,7 @@ LLM 進到軟體工程的最大影響、不是「多了一個 API 可以呼叫�
 
 ## 為什麼這個位移是典範級、不是只是換工具
 
-很多人把 LLM 當「多了一個 API」、結果是把 LLM 塞進 deterministic 設計框架裡、然後因為它「不夠 deterministic」而 frustrated。這個 framing 錯了。LLM 不是 deterministic 工具的下一代、是另一條工具線、需要另一套設計直覺。
+很多人把 LLM 當「多了一個 API」、結果是把 LLM 塞進 deterministic 設計框架裡、然後因為它「不夠 deterministic」而 frustrated。這個 framing 錯了。LLM 是另一條工具線、需要另一套設計直覺，而不是 deterministic 工具的下一代。
 
 幾個容易踩的混淆：
 
@@ -70,7 +70,7 @@ LLM 進到軟體工程的最大影響、不是「多了一個 API 可以呼叫�
 - **回應草稿生成**：偏 fuzzy（LLM 寫 email、考慮語氣）。
 - **發送 / 寫入動作**：偏 deterministic（API call、template render）。
 
-這個混合不是隨機、是按上述決策框架推出來的。LLM 強在「理解模糊輸入」跟「生成有風格的輸出」、其餘部分能 deterministic 就 deterministic。
+這個混合是按上述決策框架推出來的，而不是隨機搭配。LLM 強在「理解模糊輸入」跟「生成有風格的輸出」、其餘部分能 deterministic 就 deterministic。
 
 ### 反模式：典範用錯的訊號
 

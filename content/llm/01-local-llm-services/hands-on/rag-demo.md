@@ -308,7 +308,7 @@ Retrieval：
 0.771  llm/knowledge-cards/mtp.md#chunk2
 ```
 
-四個 chunk 都跟問題相關、相似度合理。MTP 卡確實被命中（雖然不是 top-1、是因為 transformer.md 該段提到 MTP）。
+四個 chunk 都跟問題相關、相似度合理。MTP 卡確實被命中，但沒有排第一：排第一的 transformer.md 那一段也提到了 MTP。
 
 Generation（1B 模型）：
 

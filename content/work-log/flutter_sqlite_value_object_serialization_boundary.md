@@ -29,7 +29,7 @@ Map<String, dynamic> _bookToMap(Book book) {
 }
 ```
 
-sqflite 底下的 SQLite 只接受 `num`、`String`、`Uint8List` 三種型別。`BookAuthor` 是帶內部狀態的 value object（作者清單、譯者），直接放進 map 就是把一個 Dart 物件遞給不認識它的儲存引擎。錯誤訊息其實說得很清楚——難的不是修，是這個錯誤揭露的責任問題：**誰負責把領域型別拆成儲存型別？**
+sqflite 底下的 SQLite 只接受 `num`、`String`、`Uint8List` 三種型別。`BookAuthor` 是帶內部狀態的 value object（作者清單、譯者），直接放進 map 就是把一個 Dart 物件遞給不認識它的儲存引擎。錯誤訊息其實說得很清楚——難處在這個錯誤揭露的責任歸屬，而不在修：**誰負責把領域型別拆成儲存型別？**
 
 ## 責任歸位：轉換發生在 repository 邊界
 

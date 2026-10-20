@@ -6,7 +6,7 @@ weight: 2
 tags: ["linux", "tools", "gui", "hyprland", "package-management", "file-manager"]
 ---
 
-在一個最小化的 Hyprland 環境加一個圖形應用，真正的成本不是那個 app 本身，是它拖進來的相依樹。Hyprland 這類 window manager 刻意不預設桌面環境，所以你手上是一台「只有合成器、沒有 GNOME/KDE/Cinnamon 那層服務」的機器。這時候裝一個看似單純的圖形檔案管理員，不同實作拖進來的東西可以差一個數量級——因為有些檔案管理員假設某個桌面環境的服務就在旁邊，有些則刻意做成桌面無關的獨立程式。
+在一個最小化的 Hyprland 環境加一個圖形應用，主要成本是它拖進來的相依樹，而不是那個 app 本身。Hyprland 這類 window manager 刻意不預設桌面環境，所以你手上是一台「只有合成器、沒有 GNOME/KDE/Cinnamon 那層服務」的機器。這時候裝一個看似單純的圖形檔案管理員，不同實作拖進來的東西可以差一個數量級——因為有些檔案管理員假設某個桌面環境的服務就在旁邊，有些則刻意做成桌面無關的獨立程式。
 
 這篇用「圖形檔案管理員」當具體案例，但判讀方式適用於任何你想加進最小環境的桌面 app：先看它的相依樹拖進什麼，再決定值不值得。
 
@@ -28,13 +28,13 @@ Thunar 與 PCManFM-Qt 都是刻意做成「不依賴完整桌面環境」的檔�
 
 ### Nemo：為 Cinnamon 而生，假設 Cinnamon 在旁邊
 
-Nemo 是 Cinnamon 桌面的檔案管理員，它的相依反映了這個出身：`cinnamon-desktop` 提供背景與顯示設定的整合、`xapp` 是 Cinnamon 系列跨桌面的整合層。即使你只想要「開一個視窗看檔案」，這些桌面元件也會一起裝上，因為 Nemo 在程式碼層面就假設它們存在。這不是 Nemo 寫得差，是它本來就不是設計給「裸 window manager」用的——它預期自己跑在 Cinnamon session 裡。
+Nemo 是 Cinnamon 桌面的檔案管理員，它的相依反映了這個出身：`cinnamon-desktop` 提供背景與顯示設定的整合、`xapp` 是 Cinnamon 系列跨桌面的整合層。即使你只想要「開一個視窗看檔案」，這些桌面元件也會一起裝上，因為 Nemo 在程式碼層面就假設它們存在。成因是 Nemo 預期自己跑在 Cinnamon session 裡，「裸 window manager」不在它的設計範圍內，而不是 Nemo 寫得差。
 
 Nemo 那 36 個套件裡，還有一大塊來自它把 `gvfs` 列成硬相依（下一節說明 gvfs 是什麼），而 gvfs 又拖進整套磁碟管理棧（udisks2、libblockdev 的 8 個子模組、mdadm、parted、volume_key）。所以 Nemo 的相依樹是「Cinnamon 桌面元件」加「完整磁碟/檔案系統管理」兩層疊起來的結果。
 
 ## gvfs：側欄那些功能不是檔案管理員自己做的
 
-截圖裡檔案管理員側欄常見的「Devices（掛載裝置）」「Network（瀏覽網路芳鄰）」「Trash（垃圾桶）」，多半不是檔案管理員自己實作的，是 **gvfs（GNOME Virtual File System）** 這個後端提供的。gvfs 用一層虛擬檔案系統把「掛載 USB 隨身碟」「連 SMB 網路分享」「把檔案丟垃圾桶」這些操作抽象成統一介面，讓檔案管理員不必自己處理每一種裝置與協定。
+截圖裡檔案管理員側欄常見的「Devices（掛載裝置）」「Network（瀏覽網路芳鄰）」「Trash（垃圾桶）」，多半由 **gvfs（GNOME Virtual File System）** 這個後端提供，而不是檔案管理員自己實作的。gvfs 用一層虛擬檔案系統把「掛載 USB 隨身碟」「連 SMB 網路分享」「把檔案丟垃圾桶」這些操作抽象成統一介面，讓檔案管理員不必自己處理每一種裝置與協定。
 
 這帶出一個重要判讀：**輕量不是免費的，當功能對等時，相依會靠攏。** Thunar 與 PCManFM-Qt 把 gvfs 列成 optional dependency——不裝也能開檔案管理員，但側欄就沒有掛載、垃圾桶、網路那些功能。要讓輕量檔案管理員有截圖裡那種完整側欄，你得自己補 gvfs，而補上 gvfs 就會連帶拖進它的相依（udisks2、polkit、fuse3、libsecret 等）。Nemo 把 gvfs 設成硬相依，只是把這個選擇替你做了。
 
