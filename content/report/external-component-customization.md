@@ -55,7 +55,7 @@ theme 的 site header 包含 `<h1>{{ .Site.Title }}</h1>`，每一頁 DOM 上的
 
 ### 判讀
 
-第一個 h1 是站名而非文章名 — 索引「看到」的範圍跟我們以為的不同。要修的不是 theme（影響其他頁面），是 Pagefind 的 input 範圍。
+第一個 h1 是站名而非文章名 — 索引「看到」的範圍跟我們以為的不同。要修的是 Pagefind 的 input 範圍，而不是 theme（改 theme 會影響其他頁面）。
 
 ### 執行
 

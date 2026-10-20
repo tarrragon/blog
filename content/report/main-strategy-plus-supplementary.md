@@ -71,7 +71,7 @@ Defensive 處理失敗、Optimistic 處理成功 — 兩個 happy path 共存、
 
 ### 模式三：Now + Later
 
-「先 ship X 解眼前、Y 下輪做」是一種隱式疊加 — 不是放棄 Y、是延後到風險更可承受的 release window。判斷標準見 [#76 分批 ship](../incremental-shipping-criteria/)。
+「先 ship X 解眼前、Y 下輪做」是一種隱式疊加 — Y 是延後到風險更可承受的 release window，而不是被放棄。判斷標準見 [#76 分批 ship](../incremental-shipping-criteria/)。
 
 ### 模式四：Selector strategy 疊加（#46-#50）
 

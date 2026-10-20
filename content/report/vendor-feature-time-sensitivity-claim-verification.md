@@ -34,7 +34,7 @@ tags: ["report", "事後檢討", "工程方法論", "寫作", "vendor", "verific
 
 修法：整段 Phase 1 audit 從「FK audit + drop」改寫成「FK 行為驗證 + cross-shard cascade 處理」。
 
-這不是 *微調文字*、是 *整段 framing 重做*。
+這是 *整段 framing 重做*，而不是 *微調文字*。
 
 ## 機制：為什麼會發生
 

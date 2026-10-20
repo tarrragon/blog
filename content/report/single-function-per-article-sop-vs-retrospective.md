@@ -30,7 +30,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作", "內容�
 
 前三篇的共通模式：文章開頭像方法論手冊（SOP 感），中段突然變成「第一輪 demo 驗證」「第二輪 batch 對照」（retrospective 感），讀者在兩種模式之間切換的認知成本高。
 
-第四篇 ci-silent-hang 是不同問題 — 它不是功能混合，是資料夾歸類錯（debugging case study 放在 `posts/` 而非 `work-log/`）。
+第四篇 ci-silent-hang 是不同問題 — 它的缺陷是資料夾歸類錯，而不是功能混合（debugging case study 放在 `posts/` 而非 `work-log/`）。
 
 ## 理想做法
 

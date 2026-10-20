@@ -8,7 +8,7 @@ tags: ["report", "事後檢討", "Accessibility", "Touch", "Mobile", "工程方�
 
 ## 核心原則
 
-**Hit target ≥ 44×44px、相鄰互動元素之間有間距、避免「精準瞄準」需求。** Motor accessibility 處理的不是視覺、是「手能否準確點擊」 — 行動裝置使用者、年長使用者、motor 障礙使用者都受益。設計時優先擴大 padding、不是縮小視覺。
+**Hit target ≥ 44×44px、相鄰互動元素之間有間距、避免「精準瞄準」需求。** Motor accessibility 處理的是「手能否準確點擊」，而不是視覺 — 行動裝置使用者、年長使用者、motor 障礙使用者都受益。設計時優先擴大 padding、不是縮小視覺。
 
 > 本篇焦點：**motor 可達性**。
 > - **視覺呈現面的 a11y**由 [#40 視覺輔助](../visual-aids-contrast-zoom-responsive/) 處理
@@ -83,7 +83,7 @@ label {
 input[type="radio"] { margin-right: 0.5rem; }
 ```
 
-關鍵不是把 input 視覺變大、是把可點區域擴大（padding）— 視覺保持精緻、可點區域達標。
+關鍵是把可點區域擴大（padding），而不是把 input 視覺變大 — 視覺保持精緻、可點區域達標。
 
 ---
 

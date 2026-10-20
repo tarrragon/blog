@@ -41,7 +41,7 @@ State：checkbox 勾選狀態存在 panel 子節點上、由 pagefind 維護
 為什麼安全：節點 identity 不變、pagefind 在下次 patch 時看到節點還在
 ```
 
-這段宣告把「動什麼」「不能動什麼」「為什麼安全」說清楚 — 不是儀式、是強迫自己想清楚再動。
+這段宣告把「動什麼」「不能動什麼」「為什麼安全」說清楚 — 它的作用是強迫自己想清楚再動，而不是儀式。
 
 ---
 
@@ -241,7 +241,7 @@ el.classList.toggle('is-hidden');
 
 - **機制**：改 inline style / class、加 important + observer 補打
 - **跟 A/B 的取捨**：A 不碰 framework、C 介入 framework 元件本身的視覺行為；C 比 A 侵入性高、但比直接改內部安全
-- **C 比 B 好的情境**：需要的不是搬位置、是改顯隱 / 顏色 / state
+- **C 比 B 好的情境**：需要的是改顯隱 / 顏色 / state，而不是搬位置
 
 ### D：改節點內部（最後手段）
 

@@ -205,4 +205,4 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "Performance", "Sc
 | Big-O 焦慮、卻沒量實際 latency       | 量了再決、constant factor 可能主導      |
 | 「lazy load 是必要」沒看 bundle size | 確認 bundle 真的大、< 200 KB 全載入即可 |
 
-**核心**：「需要 index / cache / 分散式 / lazy load」這類動詞**不是普世真理、是 production scale 的詞**。預設套用到小 dataset = 過度工程。**先量再決**、跟「猜的 scale」對齊不如跟「實際 dataset」對齊。
+**核心**：「需要 index / cache / 分散式 / lazy load」這類動詞**是 production scale 的詞，而不是普世真理**。預設套用到小 dataset = 過度工程。**先量再決**、跟「猜的 scale」對齊不如跟「實際 dataset」對齊。

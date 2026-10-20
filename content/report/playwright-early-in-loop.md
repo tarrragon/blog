@@ -8,7 +8,7 @@ tags: ["report", "事後檢討", "Playwright", "Debugging", "工程方法論"]
 
 ## 核心原則
 
-**Playwright 不是最後手段、是縮短診斷迴圈的工具。** 當靜態 CSS 推理 + 視覺截圖溝通的循環失敗 ≥ 2 次、就應該停止推理、改用 playwright `browser_evaluate` 直接讀 live DOM 與 computed style。早一點用 = 試錯次數更少、心智負擔更輕。
+**Playwright 是縮短診斷迴圈的工具，而不是最後手段。** 當靜態 CSS 推理 + 視覺截圖溝通的循環失敗 ≥ 2 次、就應該停止推理、改用 playwright `browser_evaluate` 直接讀 live DOM 與 computed style。早一點用 = 試錯次數更少、心智負擔更輕。
 
 ---
 

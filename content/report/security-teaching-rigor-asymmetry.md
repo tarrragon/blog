@@ -22,7 +22,7 @@ tags: ["report", "事後檢討", "工程方法論", "資安", "Audit", "原則"]
 
 ## 情境
 
-資安章節（`backend/07-security-data-protection/`）的內容形態不是純概念說明、是「問題節點 + 判讀訊號 + 風險後果 + 前置控制面 + 交接路由」。讀者拿到的不只是知識、是**會拿去做防護設計的依據**。
+資安章節（`backend/07-security-data-protection/`）的內容形態是「問題節點 + 判讀訊號 + 風險後果 + 前置控制面 + 交接路由」，而不是純概念說明。讀者拿到的不只是知識、是**會拿去做防護設計的依據**。
 
 寫作便利的選擇（在一般教學沒問題、在資安教學會出事）：
 
@@ -105,7 +105,7 @@ tags: ["report", "事後檢討", "工程方法論", "資安", "Audit", "原則"]
 
 - **適用**：資安內容（auth / crypto / 傳輸 / 機敏資料 / 標準引用 / mitigation 設計）、以及任何「讀者照做後錯誤是不可逆 / 系統層」的高風險領域（例：concurrency correctness、distributed consistency claims、financial / medical 計算）
 - **不適用**：純概念說明文章（沒有讀者會直接照做的 step）、實驗性 / playful 內容（讀者預期自行驗證）
-- **邊界**：「verifiability-first」≠「百科全書化」——不是把所有邊界都寫滿、是讓 audit 標準對應風險量級、必要時引用更深的標準文件而不重述
+- **邊界**：「verifiability-first」≠「百科全書化」——做法是讓 audit 標準對應風險量級、必要時引用更深的標準文件而不重述，而不是把所有邊界都寫滿
 - **過度應用反例**：把每個資安句子都加滿 boundary / threat / context 補述、文章變密度爆炸、讀者讀不下去——audit bar 對應風險量級、低風險段落（背景介紹 / 概念 anchor）保持簡潔、把 verifiability 投資集中在 mitigation / 標準引用 / 實作 step 段落
 
 本卡是後續資安 audit 系列卡片（#100-105）的 anchor、確立「為什麼資安寫作需要學術級審查標準」的論證基底。

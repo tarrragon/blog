@@ -155,6 +155,6 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作", "地區�
 
 本卡的觸發是修 [Dart StreamController：single-subscription vs broadcast 的事故實錄](../../work-log/dart_stream_controller_single_vs_broadcast/) 時、讀者指出「副屏」是中國用語、台灣應該用「副螢幕」。
 
-修補時 grep 全文、發現「副屏」出現 9 處——不是孤立的一個詞、是整篇貫穿的用詞選擇。修補方式是 batch replace。
+修補時 grep 全文、發現「副屏」出現 9 處——這是整篇貫穿的用詞選擇，而不是孤立的一個詞。修補方式是 batch replace。
 
 對應本卡：**地區漂移多半不是孤立的、會在整篇文章貫穿——修補要用 grep 而不是逐句改。寫作前先確定讀者地區、寫完跑一次地區用語 sweep**。

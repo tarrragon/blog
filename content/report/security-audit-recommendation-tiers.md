@@ -89,7 +89,7 @@ Q4：weakness 在容忍範圍（背景段 / 低 stakes 段、reader 不會直接
 3. **違反 current best practice 的步驟說明**：教讀者主動關閉 mitigation（disable HSTS / CSP / SameSite）作為 workaround、沒明示「workaround 引入的新 risk」
 4. **Defense theater 例子當示範**：用名稱層 mitigation 對位（rate limit「擋」brute force）作為步驟、reader 照做不擋實際 mechanism
 
-四訊號的共通：**reader 照做後實作會主動 worse than not having read**。Withdraw 不是嚴格、是 risk-asymmetric（[#99](../security-teaching-rigor-asymmetry/)）下的必要決策。
+四訊號的共通：**reader 照做後實作會主動 worse than not having read**。Withdraw 是 risk-asymmetric（[#99](../security-teaching-rigor-asymmetry/)）下的必要決策，而不是嚴格。
 
 ### Audit report 輸出格式
 
@@ -137,7 +137,7 @@ flat list 的 audit 給「找到問題」、team 把問題列入 backlog、backl
 
 ### Withdraw-level 內容繼續 ship、生產系統 risk 持續累積
 
-最危險的 case 是 audit 找到 withdraw-level weakness（過時 crypto、扭曲 citation）但用 minor / major 處置——讓內容繼續存在並擴散。教學擴散 = silent gap 集體放大（[#100 false sense of security](../false-sense-of-security-as-primary-failure/)），withdraw 是 cut-off 訊號、不是嚴格、是必要。
+最危險的 case 是 audit 找到 withdraw-level weakness（過時 crypto、扭曲 citation）但用 minor / major 處置——讓內容繼續存在並擴散。教學擴散 = silent gap 集體放大（[#100 false sense of security](../false-sense-of-security-as-primary-failure/)），withdraw 是 cut-off 訊號，出於必要而不是嚴格。
 
 ### 各 tier 之間的決策邏輯模糊、reviewer 之間判斷標準不一致
 

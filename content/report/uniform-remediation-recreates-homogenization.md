@@ -73,7 +73,7 @@ tags: ["report", "事後檢討", "工程方法論", "review-process", "原則"]
 ## 跟其他抽象層原則的關係
 
 - **[#123 多重硬規範同時生效會把 cadence 推向便利解](../compliance-optimum-converges-cadence/)**：#123 是 emergent 版——N 個硬規範逼出一個「都通過」的 framing、批量複製到所有檔案；本卡是 deliberate 版——刻意立的「破模具規則」也會變成那個被複製的便利 framing。兩者同一個「單一 framing 佔滿整批」結局，成因一個是無意識收斂、一個是有意識修法反噬。
-- **[#167 修法是新違規的來源、且常引入同類變體](../remediation-introduces-sibling-variants/)**：#167 是「修法漏放同一違規的下一個變體」（成因未動、變體浮現）；本卡是「修法本身裝上一個新模具」（不是漏、是新建）。都屬「修法產生新問題」，共享「review scope 要含修法產物」的推論，但 #167 是同違規殘留、本卡是新模具安裝。
+- **[#167 修法是新違規的來源、且常引入同類變體](../remediation-introduces-sibling-variants/)**：#167 是「修法漏放同一違規的下一個變體」（成因未動、變體浮現）；本卡是「修法本身裝上一個新模具」（新建的，而不是漏掉的）。都屬「修法產生新問題」，共享「review scope 要含修法產物」的推論，但 #167 是同違規殘留、本卡是新模具安裝。
 - **[#122 Cadence 同質化是模板的隱形維度](../cadence-homogenization-in-batch-writing/)**：本卡是 #122 的動態版——#122 講 cadence 是模板的隱形維度（靜態辨識），本卡講「修 cadence 的動作會重建 cadence」（修法動態）。自檢一樣 grep 首句 / 段末 / 前導句，但對象要加上「修法後的產物」。
 - **[#147 規範化跟自審是兩種認知任務](../rule-codification-vs-self-audit/)**：#147 講「立規範不保護同批稿件」；本卡更進一步——立的「生成規則」不但不自審、還主動把新模具寫進同批稿件。規範化的產物本身要進 audit。
 - **[#165 register 違規：偵測可機械化、判定要靠文體異源的眼睛](../register-violation-needs-cross-style-eyes/)**：#165 講同源自審對 register 有結構上限、要異源；本卡把它推到「修法後」——修完的信心讓同源盲區更深，cadence 這種跨卡屬性尤其只有整組異源看得到。

@@ -171,7 +171,7 @@ reader 信任引用、用 citation 內容實作、citation 過時後實作不知
 
 ### 引用 chain 越長、扭曲累積越嚴重
 
-教學 → 教學 → 教學 的 chain 中、每一層轉述都可能 drift。citation 沒回到一手原文、整條 chain 共享同一個扭曲、攻擊者繞過扭曲版的 mitigation 一次、所有採用該 chain 的 implementation 都中。**citation 的時效跟精確不是個別文章問題、是 ecosystem 問題**——一手原文 + 版本 + 原文 quote 是 minimum cost 的修法。
+教學 → 教學 → 教學 的 chain 中、每一層轉述都可能 drift。citation 沒回到一手原文、整條 chain 共享同一個扭曲、攻擊者繞過扭曲版的 mitigation 一次、所有採用該 chain 的 implementation 都中。**citation 的時效跟精確屬於 ecosystem 層級，而不是個別文章的瑕疵**——一手原文 + 版本 + 原文 quote 是 minimum cost 的修法。
 
 ---
 

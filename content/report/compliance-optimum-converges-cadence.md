@@ -8,7 +8,7 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Constraint-desig
 
 ## 結論
 
-多個 constraint 同時 enforce、批量寫作就會把 cadence 收斂到「最便利合規解」。這不是違規、是 *合規最佳解的副作用*。
+多個 constraint 同時 enforce、批量寫作就會把 cadence 收斂到「最便利合規解」。這是 *合規最佳解的副作用*，而不是違規。
 
 機制：
 
@@ -114,4 +114,4 @@ Dogfood 驗證見 [#122 cadence 同質化](../cadence-homogenization-in-batch-wr
 | 批量寫完 reviewer 才發現同質化   | Review 時機太晚、改 stage 內抽樣                             |
 | 想複用上批 framing 寫下批        | 警訊 — 復用 dominant framing 會把同質化跨 batch 擴散         |
 
-**核心**：多重硬規範同時生效時、cadence 收斂到合規最便利解是預設行為、不是違規。對策不是加更多 constraint、是拉開 constraint 或強制 pilot phase 準備變體；規範設計時要評估 attractor 副作用、不是只看「單檔有沒有過」。
+**核心**：多重硬規範同時生效時、cadence 收斂到合規最便利解是預設行為、不是違規。對策是拉開 constraint 或強制 pilot phase 準備變體，而不是加更多 constraint；規範設計時要評估 attractor 副作用，而不只看「單檔有沒有過」。

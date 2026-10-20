@@ -149,4 +149,4 @@ JS 的設計假設是「runtime 可以讀寫 DOM 與 style」。JS 可以在元�
 | JS 改 framework DOM 後，framework 更新就失效 | JS 動到 framework 管的領域   | 改用 CSS 視覺定位、不動 framework DOM    |
 | Inline style 散落多處難 debug                | JS 直接寫 style 而非透過變數 | 重構成「JS 寫 CSS 變數、CSS 從變數計算」 |
 
-**核心原則**：選工具不是品味問題、是「值能不能在 build time 定下來」「DOM 是不是我管」兩個技術問題的答案。問清楚再選。
+**核心原則**：選工具取決於兩個技術條件——值是否在 build time 就能確定、DOM 是否由我們管理——而不是品味。問清楚再選。

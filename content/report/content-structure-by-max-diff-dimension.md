@@ -152,7 +152,7 @@ Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
 
 - source 一站式、target N 個專責 component
 - 每個 stream 獨立 audit / deploy / cutover、stream 間少 dependency
-- 整體不是線性、是 *staggered parallel*
+- 整體是 *staggered parallel*，而不是線性
 
 適用：Datadog → Grafana Stack / Splunk → Elastic + Tines + PagerDuty / Atlassian Suite → 各 specialized tool
 

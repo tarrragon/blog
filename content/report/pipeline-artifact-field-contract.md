@@ -32,7 +32,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "流程設計", "�
 
 ## 跟其他抽象層原則的關係
 
-- [#153 Review 漏抓先分 design gap 與 execution gap](/report/review-miss-diagnose-design-vs-execution-gap/)：#153 立卡情境是 review 流程的漏抓、這裡把它的診斷分流借到流程設計：執行者標不出失敗語意、不是不認真、是設計沒給推導規則 — design gap、修法在文件、不在叮嚀執行者。
+- [#153 Review 漏抓先分 design gap 與 execution gap](/report/review-miss-diagnose-design-vs-execution-gap/)：#153 立卡情境是 review 流程的漏抓、這裡把它的診斷分流借到流程設計：執行者標不出失敗語意的成因是設計沒給推導規則，而不是不認真 — design gap、修法在文件、不在叮嚀執行者。
 - [#68 驗收的時間軸：四個 checkpoint](/report/verification-timeline-checkpoints/)：階段交接處是天然的驗收 checkpoint — 逐欄走查就是交接處的驗收動作、在「寫之前」的 checkpoint 跑一次、比執行者在第三階段卡住才回頭便宜。
 - [#44 Single Source of Truth](/report/single-source-of-truth/)：推導規則本身要有單一明文位置 — 沒有明文規則時、規則存在於每個執行者腦中、是 N 份互不一致的隱性源；寫下來不只是溝通、是把規則收斂成單源。
 - [#158 決策表兩列同時命中且結論相反](/report/decision-table-conflict-reveals-missing-dimension/)：同一族的「組合失效」— #158 是規則之間的矛盾、本卡是階段之間的缺口、偵測都要跨單元走查（#158 靠真實案例 dry-run、本卡靠逐欄對照）而不是單元內檢查；兩者常在同一次旅程模擬中被一起抓到。

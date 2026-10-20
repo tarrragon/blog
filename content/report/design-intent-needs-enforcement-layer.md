@@ -56,7 +56,7 @@ Reviewer 看到註解裡的「約束」字樣會核對呼叫端有沒有遵守�
 
 ### 慣例跟預設打架時、預設會贏
 
-Dart 生態把 copyWith 做成預設路徑：freezed 自動生成、IDE 補全第一個跳出。規範說「請走領域方法」、工具預設給全欄位 copyWith，長期下來團隊的實際行為跟著預設走（同見 [工具的預設行為決定使用者習慣](/work-log/tool_default_behavior_shapes_user_habit/)）。文件層意圖對抗的不是個別工程師的紀律，是整個生態的重力。
+Dart 生態把 copyWith 做成預設路徑：freezed 自動生成、IDE 補全第一個跳出。規範說「請走領域方法」、工具預設給全欄位 copyWith，長期下來團隊的實際行為跟著預設走（同見 [工具的預設行為決定使用者習慣](/work-log/tool_default_behavior_shapes_user_habit/)）。文件層意圖對抗的是整個生態的重力，而不是個別工程師的紀律。
 
 ---
 

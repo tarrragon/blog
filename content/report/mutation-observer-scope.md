@@ -150,7 +150,7 @@ new MutationObserver(apply).observe(root, {
 // → apply 改 class 觸發 observer → observer 又呼叫 apply → 無限循環
 ```
 
-**這不是邏輯錯、是 observer 機制的特性**：observer 不會區分「是不是 apply 自己改的」。
+**這是 observer 機制的特性，而不是邏輯錯**：observer 不會區分「是不是 apply 自己改的」。
 
 ### 解法：disconnect / observe 配對
 

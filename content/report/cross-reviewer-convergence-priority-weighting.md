@@ -91,7 +91,7 @@ ROI 上 convergence finding 修法效率 2x。
 
 ### 1. Multi-reviewer audit 後做 convergence matrix
 
-收齊 N 個 reviewer report 後、不是 merge findings list、是建 matrix：
+收齊 N 個 reviewer report 後，下一步是建 matrix，而不是 merge findings list：
 
 ```text
 Finding          | Reviewer A | Reviewer B | Reviewer C | Reviewer D | Convergence

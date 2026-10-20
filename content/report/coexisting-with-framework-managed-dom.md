@@ -26,7 +26,7 @@ Svelte / React 等框架透過「component tree → DOM tree」的 reconciliatio
 
 關鍵是步驟 2：**框架只認得自己 create 的節點**。外來節點（我們手動 appendChild 進去的）不在它的 component tree 裡、被視為「該節點不該存在」、清掉。
 
-這不是 bug、是 reconciliation 的正常行為 — 框架要保證 DOM 跟 component state 一致、外來節點屬於不一致的部分。
+這是 reconciliation 的正常行為，而不是 bug — 框架要保證 DOM 跟 component state 一致、外來節點屬於不一致的部分。
 
 ### 外來節點的命運是不可預測的
 

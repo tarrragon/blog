@@ -97,4 +97,4 @@ document.querySelector('meta[name="description"]');
 | 操作 `document.body` / `<html>`           | 否 — 這就是合理場景     |
 | 程式跑一次後丟棄（migration script）      | 否 — 簡潔優先           |
 
-**核心原則**：document query 不是反模式、是有適用範圍的工具。判斷「這段程式預期活多久」 — 短命用 document、長命用元件根。
+**核心原則**：document query 是有適用範圍的工具，而不是反模式。判斷「這段程式預期活多久」 — 短命用 document、長命用元件根。

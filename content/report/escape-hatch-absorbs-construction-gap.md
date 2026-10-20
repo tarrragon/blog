@@ -32,7 +32,7 @@ slug: "escape-hatch-absorbs-construction-gap"
 
 ### case 1：同型錯誤兩個檔案各一次
 
-測試資料產生器先犯：`copyWith(bookTags: [...Book.createForTest(id: bookId).bookTags, ...])` 用全新預設書籍的 tags、丟棄呼叫端指定的 `author` / `isbn`。幾天後效能基準測試再犯一次結構相同的寫法、換成炸 ID 長度。兩個作者（或同作者兩個時刻）在同一個表達力缺口前面、各自獨立走出同一條最短路徑——這不是巧合、是結構在選擇行為。
+測試資料產生器先犯：`copyWith(bookTags: [...Book.createForTest(id: bookId).bookTags, ...])` 用全新預設書籍的 tags、丟棄呼叫端指定的 `author` / `isbn`。幾天後效能基準測試再犯一次結構相同的寫法、換成炸 ID 長度。兩個作者（或同作者兩個時刻）在同一個表達力缺口前面、各自獨立走出同一條最短路徑——這是結構在選擇行為，而不是巧合。
 
 ### case 2：最小修法會留下語意錯誤
 

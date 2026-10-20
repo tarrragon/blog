@@ -9,7 +9,7 @@ tags: ["report", "事後檢討", "工程方法論", "資安", "Audit", "Context"
 
 ## 核心原則
 
-**資安 mitigation 的有效性不是 mitigation 本身決定的、是 mitigation × deployment 條件決定的。** 同一個 mitigation 在不同 deployment / config / scale / runtime 條件下、強度光譜從「完整擋」到「等同沒部署」都可能。寫作時忽略 deployment 變數、讀者實作時用最直覺條件詮釋、實際部署條件不對 mitigation silent 失效。
+**資安 mitigation 的有效性由 mitigation × deployment 條件決定，而不是 mitigation 本身。** 同一個 mitigation 在不同 deployment / config / scale / runtime 條件下、強度光譜從「完整擋」到「等同沒部署」都可能。寫作時忽略 deployment 變數、讀者實作時用最直覺條件詮釋、實際部署條件不對 mitigation silent 失效。
 
 | 描述形態                                | 讀者實作判斷                | 部署條件不對的後果                |
 | --------------------------------------- | --------------------------- | --------------------------------- |

@@ -30,7 +30,7 @@ WRAP 框架的 Widen Options 段落是「探索本質不同的因果解釋」、
 - fde-arms-race：A「模仿派」/ B「策略選擇派」/ C「結構性被迫派」、C 預設正解
 - bufstream：對 CoreWeave 為什麼買、X「業務擴張」/ Y「技術自主」、Y 預設正解
 
-3-reviewer audit 平行跑、3 個 reviewer 獨立都點出「兩弱一強稻草人」結構共通—診斷一致是這個 pattern 不是個別失誤、是 WRAP 套案例寫作的系統性陷阱。e00253c 重寫後改為「解釋 (1) / (2) / (3) / (4) 並陳因果鏈、每個有 prior + prediction」、Reality Test 改為 evidence weight assessment + Falsifier、Round 2 驗證通過。
+3-reviewer audit 平行跑、3 個 reviewer 獨立都點出「兩弱一強稻草人」結構共通—診斷一致說明這個 pattern 是 WRAP 套案例寫作的系統性陷阱，而不是個別失誤。e00253c 重寫後改為「解釋 (1) / (2) / (3) / (4) 並陳因果鏈、每個有 prior + prediction」、Reality Test 改為 evidence weight assessment + Falsifier、Round 2 驗證通過。
 
 ---
 
@@ -42,7 +42,7 @@ WRAP 框架的 Widen Options 段落是「探索本質不同的因果解釋」、
 
 1. **有實際 prior**：誰持這論、為何合理。Prior 可以引用 VC / 創辦人 / 學者 / 業界分析師的公開立場、或從產業結構推導出的合理初始假設。
 2. **有 testable prediction**：若這個解釋成立、會看到什麼具體 evidence（合約規模、客戶分布、銷售節奏、員工流向）。
-3. **跟其他選項的因果鏈本質不同**：不是同一個結論的不同包裝、是不同的因果起點。
+3. **跟其他選項的因果鏈本質不同**：它是不同的因果起點，而不是同一個結論的不同包裝。
 4. **不是設定就要被打爆的 dummy**：選項要成立、要可被讀者挑戰、不是 reductio ad absurdum 的設定。
 
 選項命名用中性編號「解釋 (1) / (2) / (3)」、避免「X 派 / Y 派 / Z 派」派系暗示—派系命名自帶「選邊」修辭框架。
@@ -110,7 +110,7 @@ WRAP 的核心價值是「強制做 hypothesis space 探索、防止認知偏誤
 | 文章 opening 用「市場敘事 X、但 X 不重要、Y 才是」    | 改成「正向陳述事件 + 結構性論點」、把對他人敘事的回應降為下游表象   |
 | 結論斷言「正確解釋是 X」「最強訊號是 Y」              | 改成「相容度最高 / 能解釋以下 N 項觀察」evidence-based 措辭         |
 | Reviewer 報告說「兩弱一強結構」「選項都很容易被打掉」 | 框架被當修辭、不是 hypothesis 探索、改 framing pivot                |
-| 多個 reviewer 獨立 catch 到同一個結構問題             | 不是個別失誤、是 systematic 陷阱、要從 framing 層改、不只 word swap |
+| 多個 reviewer 獨立 catch 到同一個結構問題             | 是 systematic 陷阱而不是個別失誤、要從 framing 層改、不只 word swap |
 
 ---
 

@@ -107,4 +107,4 @@ Collapse 是隱形預設、原因在 *對比標的不存在於眼前*。Yes/No �
 | 「為什麼大家都這樣寫 / 都這樣回」            | 系統性 collapse、不是個別事件、查 driver 跟 constraint          |
 | 設計新規範 / 新 default 時                   | 評估 collapse 副作用、不是只看「能不能用」                      |
 
-**核心**：Collapse 是高維空間預設被 reduce 到 1-2 維、看似中性、實際藏掉維度。三個 surface（decision / dialogue / output）有同骨 collapse pattern、都被「便利 / 合規 / 簡潔」驅動、都需要顯性化。對策不是消除 collapse、是讓設計者主動選擇要 collapse 哪一維、預設展開、選窄格要證明。
+**核心**：Collapse 是高維空間預設被 reduce 到 1-2 維、看似中性、實際藏掉維度。三個 surface（decision / dialogue / output）有同骨 collapse pattern、都被「便利 / 合規 / 簡潔」驅動、都需要顯性化。對策是讓設計者主動選擇要 collapse 哪一維、預設展開、選窄格要證明，而不是消除 collapse。
