@@ -24,7 +24,7 @@ Case anchor 是 [Minecraft Earth](/backend/09-performance-capacity/cases/minecra
 - 「multi-region write 開了之後 consistency level 還能設 Strong 嗎」
 - 「廣告寫 99.999%、為什麼實測只有 99%」
 
-真實壓力：購物車跨 region 寫入丟失、遊戲玩家狀態跨 region 衝突回滾、IoT device 跨 region 寫 telemetry 後消失。這些事故的根因不是 bug、是 multi-region write 的 *設計取捨*、需要在 selection 階段就決定 conflict resolution policy。
+真實壓力：購物車跨 region 寫入丟失、遊戲玩家狀態跨 region 衝突回滾、IoT device 跨 region 寫 telemetry 後消失。這些事故的根因是 multi-region write 的 *設計取捨*，而不是 bug，需要在 selection 階段就決定 conflict resolution policy。
 
 ## 核心機制
 
@@ -237,7 +237,7 @@ Minecraft Earth 平台揭露的 Cosmos DB SLA：
 實測可用性 = DB SLA × 網路 SLA × 應用層 SLA × 客戶端可達性
 ```
 
-[Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 揭露「99.99% target vs 99% 實測」段的觀察：兩個 9 的差距 *不是* MongoDB / Atlas 自身問題、是 end-to-end 鏈路（車輛無線網路 / cellular tower / cloud network / event bus / microservice / DB cluster 任一環節掉都會打掉可用性）。Cosmos DB multi-region write 同模型：
+[Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 揭露「99.99% target vs 99% 實測」段的觀察：兩個 9 的差距來自 end-to-end 鏈路，而不是 MongoDB / Atlas 自身：車輛無線網路 / cellular tower / cloud network / event bus / microservice / DB cluster 任一環節掉都會打掉可用性。Cosmos DB multi-region write 同模型：
 
 - 多 region active-active 可解 *DB 端可用性*、但網路 / 應用層任一掉、實測仍 < 99.99%
 - 廣告 99.999% 是 multi-region availability zone 級、*不是* 「使用者 request 成功率」

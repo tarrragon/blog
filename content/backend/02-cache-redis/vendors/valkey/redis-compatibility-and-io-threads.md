@@ -82,7 +82,7 @@ valkey-cli CONFIG GET io-threads
 
 **徵兆**：絕大多數 client 正常，但某個老服務的 client library 連 Valkey 報協定錯誤或行為異常。
 
-**根因**：Valkey 回報 `redis_version:7.2.4`，client library 若太舊（不支援 Redis 7.2 對應的協定特性，例如 RESP3）會協商失敗。這不是 Valkey 的問題，是 client 本來就跟不上 Redis 7.2。
+**根因**：Valkey 回報 `redis_version:7.2.4`，client library 若太舊（不支援 Redis 7.2 對應的協定特性，例如 RESP3）會協商失敗。成因是 client 本來就跟不上 Redis 7.2，而不在 Valkey。
 
 **修法**：
 

@@ -31,7 +31,7 @@ Maersk 跟 Bosch 案例揭露三個傳統產業 K8s 治理的工程重點。
    - 傳統產業上 K8s 是為了 *統一 50+ 個應用團隊的部署流程*、降低 ops 複雜度
    - 訴求不同、配置不同 — 傳統產業可能用 *較大 node、較少 cluster*、不是 [Riot 246 cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 那種多 cluster 策略
 2. **微服務 release cycle 多元化是傳統產業上 K8s 的核心需求**：Bosch Connected Building 有「樓宇感測 daily release、能源計費 weekly release、設備運維 monthly release」、每個 release cycle 不同。K8s + GitOps（Argo CD、Flux）讓不同 cycle 共存於同一 cluster。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 release governance。
-3. **「focus on business impact」是 managed K8s 的真正價值**：Maersk 不是科技公司、是航運公司。工程資源從 *維持 K8s 運維* 釋放到 *貨櫃追蹤演算法、港口物流優化*、是商業 ROI 的關鍵。對應 [Lemino 90% 工程工時下降](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) 的同類訴求、跟 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/) 的人力成本工程化。
+3. **「focus on business impact」是 managed K8s 的真正價值**：Maersk 是航運公司，而不是科技公司。工程資源從 *維持 K8s 運維* 釋放到 *貨櫃追蹤演算法、港口物流優化*、是商業 ROI 的關鍵。對應 [Lemino 90% 工程工時下降](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) 的同類訴求、跟 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/) 的人力成本工程化。
 
 需要警惕：Azure 官方對 Maersk / Bosch 的描述偏行銷、缺具體 throughput / latency 數字。讀此類案例要對 *策略* 學習、不要套用數字。
 

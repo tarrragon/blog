@@ -6,7 +6,7 @@ weight: 11
 tags: ["backend", "message-queue", "redis-streams", "kafka", "migration", "paradigm"]
 ---
 
-> 本文是跨 vendor migration playbook、cross-link 到 [Redis Streams](/backend/03-message-queue/vendors/redis-streams/) 跟 [Kafka](/backend/03-message-queue/vendors/kafka/)。對位 [Kafka ↔ NATS](/backend/03-message-queue/vendors/kafka/migrate-from-to-nats/) 的 *paradigm shift* 模板 — 兩端不是同類產品的不同實作、是不同抽象層的系統：一個是 Redis 行程內的 append-only log data structure、一個是專用的 distributed event streaming platform。
+> 本文是跨 vendor migration playbook、cross-link 到 [Redis Streams](/backend/03-message-queue/vendors/redis-streams/) 跟 [Kafka](/backend/03-message-queue/vendors/kafka/)。對位 [Kafka ↔ NATS](/backend/03-message-queue/vendors/kafka/migrate-from-to-nats/) 的 *paradigm shift* 模板 — 兩端是不同抽象層的系統，而不是同類產品的不同實作：一個是 Redis 行程內的 append-only log data structure、一個是專用的 distributed event streaming platform。
 
 ## Redis Streams 跟 Kafka 是不同抽象層的東西
 

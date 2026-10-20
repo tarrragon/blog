@@ -107,7 +107,7 @@ GUI / QA 團隊維護的 `.jmx` *不動* — 那些通常是 multi-protocol（JD
 
 ### Phase 3：QA 團隊雙工具技能（hybrid 穩定形態）
 
-很多 org 停在這個 phase：QA 團隊用 GUI 維護 multi-protocol .jmx（covering JDBC / JMS / LDAP / SOAP / FTP）、dev / SRE 用 k6 維護 HTTP / gRPC / WebSocket performance test in CI。Two-tool stack 不是 broken state、是 *not-converged-by-design*。
+很多 org 停在這個 phase：QA 團隊用 GUI 維護 multi-protocol .jmx（covering JDBC / JMS / LDAP / SOAP / FTP）、dev / SRE 用 k6 維護 HTTP / gRPC / WebSocket performance test in CI。Two-tool stack 是 *not-converged-by-design*，而不是 broken state。
 
 這個 phase 的工作主要塊：
 

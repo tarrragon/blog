@@ -22,7 +22,7 @@ OpenAPI 成為 API 描述的事實標準、走的是一條跟 OData 相反的路
 
 ## 選描述格式的兩個問題
 
-選描述格式標準收斂成兩問。這個標準是不是已經是事實標準、有沒有工具生態實際在用它 —— 在 REST／HTTP request-response 這個 paradigm 內、OpenAPI 的動能沒有對手、選它不太需要猶豫。（GraphQL 與 gRPC 各自帶原生的形狀描述 —— GraphQL 的 SDL 加 introspection、gRPC 的 protobuf 加 server reflection —— 這不是 OpenAPI 的缺位、是不同 paradigm 各有自己的事實標準。）你的介面涵蓋哪些種類 —— 只有 REST、OpenAPI 一份就夠；有 event、加 AsyncAPI 補位、但守住「一套 schema 源、兩份格式投影」、別讓兩份描述各自長出不一致的真相。
+選描述格式標準收斂成兩問。這個標準是不是已經是事實標準、有沒有工具生態實際在用它 —— 在 REST／HTTP request-response 這個 paradigm 內、OpenAPI 的動能沒有對手、選它不太需要猶豫。（GraphQL 與 gRPC 各自帶原生的形狀描述 —— GraphQL 的 SDL 加 introspection、gRPC 的 protobuf 加 server reflection —— 這是不同 paradigm 各有自己的事實標準，而不是 OpenAPI 的缺位。）你的介面涵蓋哪些種類 —— 只有 REST、OpenAPI 一份就夠；有 event、加 AsyncAPI 補位、但守住「一套 schema 源、兩份格式投影」、別讓兩份描述各自長出不一致的真相。
 
 描述格式選型幾乎不會落到「自建」這一格 —— 描述格式的價值全在生態工具、自建一份沒有工具吃的描述格式等於白做。（平台級玩家是例外：AWS 的 Smithy、Google 的 Discovery Document 都自建 IDL、把多語言 SDK 的 codegen 收進自己的 source、再往下游投影成 OpenAPI —— 自建不划算的判斷標準只對沒有自有工具鏈的一般團隊成立。）這跟採現成標準篇裡「response 格式自建仍是合理選項」的判斷剛好相反、差別在於 response 格式的消費者是你自己的 client（自建規範自己遵守就成立）、描述格式的消費者是一整片第三方工具鏈（脫離事實標準就沒工具可用）。
 

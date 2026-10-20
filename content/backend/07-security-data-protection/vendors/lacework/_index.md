@@ -70,7 +70,7 @@ Lacework 的核心定位是 *Polygraph 驅動的 CNAPP*、以 ML 自動學習正
 
 ## 進階主題
 
-**Polygraph internals**：Polygraph 不是單一 ML model、是 time-series behavioral graph + 多個 detection algorithm 組合。node 是 entity（user / workload / process / network endpoint）、edge 是 observed interaction、edge 上掛 frequency + temporal pattern。anomaly detection 用 unsupervised learning（clustering + outlier detection）找 baseline 外的 edge。優點是 *zero-day attack pattern 不需事先定義也可能偵測到*（行為偏離即可）、缺點是 detection 為何 trigger / 為何沒 trigger 都不易解釋、tuning 不是改 rule、是調整 baseline window 或標記 false positive 回饋 model。
+**Polygraph internals**：Polygraph 是 time-series behavioral graph + 多個 detection algorithm 組合，而不是單一 ML model。node 是 entity（user / workload / process / network endpoint）、edge 是 observed interaction、edge 上掛 frequency + temporal pattern。anomaly detection 用 unsupervised learning（clustering + outlier detection）找 baseline 外的 edge。優點是 *zero-day attack pattern 不需事先定義也可能偵測到*（行為偏離即可）、缺點是 detection 為何 trigger / 為何沒 trigger 都不易解釋、tuning 要調整 baseline window 或標記 false positive 回饋 model，而不是改 rule。
 
 **Fortinet FortiCNAPP 整合（2024+）**：Fortinet 收購後加速跟 *Fortinet NGFW*（network log 進 Polygraph 當 source）、*FortiSOAR*（Lacework alert 自動觸發 firewall block / endpoint isolation playbook）、*FortiSandbox*（suspicious file 進 sandbox 再回饋 baseline）整合。Fortinet-heavy 環境吃整合紅利、非 Fortinet 環境 Polygraph 跟原 connector 仍獨立運作。
 

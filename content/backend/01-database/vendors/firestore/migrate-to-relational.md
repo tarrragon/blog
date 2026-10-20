@@ -66,7 +66,7 @@ Firestore 的存取模型是 *前端即客戶端、資料庫直接面向公網�
 - snapshot listener 的即時推送、offline 讀寫快取，是平台白送的能力
 - 自建要用 WebSocket / SSE 重建即時層（見 [03 訊息佇列](/backend/03-message-queue/) 與 presence 設計）、用前端本地儲存重建 offline — 這是遷移最容易被漏估的工作量
 
-所以遷移的第一步不是匯資料，是**盤點 application 對 Firestore 的所有依賴面**：查詢路徑、授權規則、realtime 訂閱、offline 行為。這份清單決定哪些能直接遷、哪些要重建、哪些先留在平台。
+所以遷移的第一步是**盤點 application 對 Firestore 的所有依賴面**，而不是匯資料：查詢路徑、授權規則、realtime 訂閱、offline 行為。這份清單決定哪些能直接遷、哪些要重建、哪些先留在平台。
 
 ## 哪些該遷、哪些先留（逐能力混合）
 
@@ -80,7 +80,7 @@ paradigm shift 遷移不要求收斂到單一平台 — 不必把所有 Firebase
 | 認證（Firebase Auth）                         | 可留平台、逐能力決定（見 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/)） |
 | 檔案儲存（Firebase Storage）                  | 可留平台、與資料層解耦後再評估                                                                           |
 
-[0.22 的成長期 SaaS](/backend/00-service-selection/capability-buy-vs-build/) 是這個判讀的 case anchor：撞牆的是資料層的 query 複雜度與成本，遷的就是資料層，認證留在原地。混合不是過渡失敗，是逐能力選型的穩態。
+[0.22 的成長期 SaaS](/backend/00-service-selection/capability-buy-vs-build/) 是這個判讀的 case anchor：撞牆的是資料層的 query 複雜度與成本，遷的就是資料層，認證留在原地。混合是逐能力選型的穩態，而不是過渡失敗。
 
 ## Phase plan：存取模型反轉的階段化
 
@@ -144,7 +144,7 @@ paradigm shift 遷移的 cleanup 通常不是「關掉整個 Firebase」— 多�
 - 但 Firebase Auth / Storage 若仍在用，保留；明確標示哪條資料路徑的 source of truth 是自建庫、哪條仍在平台
 - Firestore 的資料匯出備份保留到確認新庫穩定，對應 [10.3 託管形態遷出：資產線盤點與並行期執行](/backend/10-system-evolution/managed-platform-exit/) 的並行期退役判斷標準
 
-混合架構不是遷移失敗、是逐能力選型的穩態 — 撞牆的資料層自建、沒撞牆的認證 / 儲存留在平台。
+混合架構是逐能力選型的穩態，而不是遷移失敗 — 撞牆的資料層自建、沒撞牆的認證 / 儲存留在平台。
 
 ## 失敗模式
 

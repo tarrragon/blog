@@ -52,7 +52,7 @@ Jeli 的核心定位是 *post-incident learning 的方法論工具*、不是 pag
 
 **Interview workflow（OPM-style）**：Jeli 推的 *Operating Procedures Manual* style 訪談 — facilitator 不是 incident commander、不是當事人；question template 走 *context*（這個系統平常怎麼運作）→ *decision*（事故當下你想到什麼選項、為何選這個）→ *surprise*（什麼跟你預期不一樣）→ *pattern*（你是否在別的事故看過類似形狀）。錄音 + transcription + structured coding（標 contributing factor / latent condition / how-near-miss）是這層的工程化。
 
-**Narrative reconstruction**：narrative 不是 chronological event list、是 *story*。三個必寫元素：*contributing factors*（多重原因疊加、不是 root cause）、*latent conditions*（事故前已存在但沒人 trip 的條件、像系統 default config / 文檔誤導）、*surprising / unexpected behavior*（responder 當下覺得「這不對」的點）。對照 [post-incident review](/backend/08-incident-response/post-incident-review.md) 的章節原則。
+**Narrative reconstruction**：narrative 是 *story*，而不是 chronological event list。三個必寫元素：*contributing factors*（多重原因疊加、不是 root cause）、*latent conditions*（事故前已存在但沒人 trip 的條件、像系統 default config / 文檔誤導）、*surprising / unexpected behavior*（responder 當下覺得「這不對」的點）。對照 [post-incident review](/backend/08-incident-response/post-incident-review.md) 的章節原則。
 
 **Cross-incident pattern detection**：跨 6-12 個月事故跑 longitudinal analysis、找 *recurring component*（同一個服務反覆 trip）、*recurring handoff*（某 team 之間 incident 傳遞失敗）、*recurring process gap*（同類 runbook 缺漏）。Output 是 org-level intervention 建議（process / tooling / training）、不是個案 action item。需要 tag taxonomy 跨事故一致、否則 pattern detection 抓不出 signal。
 
@@ -78,7 +78,7 @@ Jeli 的核心定位是 *post-incident learning 的方法論工具*、不是 pag
 
 **Production Excellence 文化前提**：Nora Jones / Charity Majors 推的 *blame-aware*（不是 blameless — blameless 太絕對、實務上人會自我審查；blame-aware 是承認情緒存在但不把責任貼個人）學習文化、跟 [Honeycomb](/backend/04-observability/vendors/honeycomb/) Production Excellence 對齊。Jeli 工具只在這個文化前提下有用、強行 deploy 到 blame-heavy org 會被當成「找戰犯的另一個工具」。
 
-**Interview methodology 深層原則**：question template 不是 checklist、是 *讓 responder 重建當下心智模型* 的工具。常見反例是 facilitator 問「為什麼你沒看 dashboard」— 這是 *hindsight bias*；正確問法是「你當下看了哪些 signal、它們告訴你什麼」。facilitator 訓練是 Jeli 流程的隱性投資、不只是工具熟悉度。
+**Interview methodology 深層原則**：question template 是 *讓 responder 重建當下心智模型* 的工具，而不是 checklist。常見反例是 facilitator 問「為什麼你沒看 dashboard」— 這是 *hindsight bias*；正確問法是「你當下看了哪些 signal、它們告訴你什麼」。facilitator 訓練是 Jeli 流程的隱性投資、不只是工具熟悉度。
 
 **Cross-incident tag taxonomy**：pattern detection 的前提是 tag 一致。常見治理失敗：每個 incident 用 free-form tag、半年後同類事故掛不同 tag、longitudinal scan 抓不到 signal。實務治理走 *固定 tag dictionary*（component / failure mode / contributing factor type）+ 季度 retag review、犧牲一些彈性換 pattern detection 可用性。
 

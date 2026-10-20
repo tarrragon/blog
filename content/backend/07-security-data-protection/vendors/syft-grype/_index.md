@@ -10,7 +10,7 @@ Syft 跟 Grype 是 Anchore 開源的 *姐妹工具*（Apache 2.0、免費）、�
 
 ## 服務定位
 
-Syft + Grype 的核心定位是 *SBOM-first 的 OSS supply chain scan tool chain*。SBOM 不是中間產物、是 *正式可簽章 artifact*：Syft 產 SBOM 後通常用 [Sigstore cosign](https://docs.sigstore.dev/) `attest --predicate sbom.cdx.json` 把 SBOM 簽進 image OCI metadata、跟 image 一起發布；下游團隊 / 客戶 / scan pipeline 拿 *trusted SBOM* 跑 Grype、不需要重新 scan image。對 *air-gapped 環境*、*multi-team handoff*、*合規場景*（EO 14028 / FedRAMP 要求交付 CycloneDX 或 SPDX）特別合適。
+Syft + Grype 的核心定位是 *SBOM-first 的 OSS supply chain scan tool chain*。SBOM 是 *正式可簽章 artifact*，而不是中間產物：Syft 產 SBOM 後通常用 [Sigstore cosign](https://docs.sigstore.dev/) `attest --predicate sbom.cdx.json` 把 SBOM 簽進 image OCI metadata、跟 image 一起發布；下游團隊 / 客戶 / scan pipeline 拿 *trusted SBOM* 跑 Grype、不需要重新 scan image。對 *air-gapped 環境*、*multi-team handoff*、*合規場景*（EO 14028 / FedRAMP 要求交付 CycloneDX 或 SPDX）特別合適。
 
 跟 [Trivy](/backend/07-security-data-protection/vendors/trivy/) 的差異是 *分工 vs 全包*：Trivy 一個 binary 把 SBOM 生成 + vuln scan + IaC + secret + license 都做了；Syft + Grype 拆兩個工具、SBOM 互通流程適合、團隊偏好 Unix philosophy 選這條。功能覆蓋面 Trivy 略廣（含 IaC / secret scan）、Syft 的 SBOM 格式互通性是 OSS reference implementation。跟 [Snyk](/backend/07-security-data-protection/vendors/snyk/) 的差異更直接：Snyk 商業 SaaS、覆蓋廣（SAST / IaC / CSPM / Reachability）、有 dashboard 跟 fix PR；Syft + Grype 純 CLI、OSS 免費、聚焦 SBOM + vuln 兩件事、沒 server / 沒 dashboard、要 dashboard 走商業 Anchore Enterprise 或自接 JSON 到 Elasticsearch / Grafana。
 

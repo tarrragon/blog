@@ -26,11 +26,11 @@ Monolith 用「同一個程式碼庫、同一個部署單位、同一個資料�
 
 這張表是兩端對比、實際系統常落在中間。常見折衷形態：
 
-- **[Modular monolith](/backend/knowledge-cards/modular-monolith/)**（單一部署 + 模組化邊界）：保留 monolith 的部署簡單、用模組邊界防止程式碼互相穿透。Shopify、Basecamp、Stack Overflow 是大規模長期維持的代表 — monolith 不是進化中段、是 valid endgame。
+- **[Modular monolith](/backend/knowledge-cards/modular-monolith/)**（單一部署 + 模組化邊界）：保留 monolith 的部署簡單、用模組邊界防止程式碼互相穿透。Shopify、Basecamp、Stack Overflow 是大規模長期維持的代表 — monolith 是 valid endgame，而不是進化中段。
 - **Macro-services**（少量大服務、5-15 個）：避免 microservice 的極端碎片化、保留拆分帶來的部署獨立性。是多數中型團隊的實際終點、不是過渡形態。
 - **[Cell-based architecture](/backend/knowledge-cards/cell-based-architecture/)**（多 cell 各自獨立、跨 cell 共用標準介面）：AWS、Slack、DoorDash 用來控制 blast radius — 把整個系統複製成多個 isolated cell、每個 cell 內可以是 monolith 或 microservice。
 
-拆分不是進化方向、是壓力應對工具。維持 monolith 在某些情境（極小團隊、PMF 前期、無 DevOps 能力）是更負責任的選擇。
+拆分是壓力應對工具，而不是進化方向。維持 monolith 在某些情境（極小團隊、PMF 前期、無 DevOps 能力）是更負責任的選擇。
 
 ## 拆分軸的判讀
 

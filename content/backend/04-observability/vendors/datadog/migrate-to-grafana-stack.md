@@ -6,7 +6,7 @@ weight: 12
 tags: ["backend", "observability", "datadog", "grafana", "mimir", "loki", "tempo", "migration"]
 ---
 
-> 本文是跨 vendor migration playbook、cross-link 到 [Datadog](/backend/04-observability/vendors/datadog/)（source）跟 [Grafana Stack](/backend/04-observability/vendors/grafana-stack/)（target）。跟前三篇 migration（[Splunk → Elastic](/backend/07-security-data-protection/vendors/splunk/migrate-to-elastic-security/) phased / [Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/) drop-in / [PostgreSQL → Aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/) hybrid）對照、本篇是 *cost-driven multi-tool migration* — 不是換一個產品、是把 *一站式 SaaS* 拆成 *五個專責 OSS / cloud component*。
+> 本文是跨 vendor migration playbook、cross-link 到 [Datadog](/backend/04-observability/vendors/datadog/)（source）跟 [Grafana Stack](/backend/04-observability/vendors/grafana-stack/)（target）。跟前三篇 migration（[Splunk → Elastic](/backend/07-security-data-protection/vendors/splunk/migrate-to-elastic-security/) phased / [Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/) drop-in / [PostgreSQL → Aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/) hybrid）對照、本篇是 *cost-driven multi-tool migration* — 它把 *一站式 SaaS* 拆成 *五個專責 OSS / cloud component*，而不只是換一個產品。
 
 ## $50K/month bill 拆解：先看錢花在哪、再決定怎麼遷
 

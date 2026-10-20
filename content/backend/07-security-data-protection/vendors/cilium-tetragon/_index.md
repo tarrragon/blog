@@ -50,7 +50,7 @@ Tetragon 的核心定位是 *eBPF 為基底的 runtime observability + enforceme
 
 **Event export 跟 SIEM 整合**：Tetragon event 預設走 JSON log 到 stdout、可走 OpenTelemetry exporter 進 collector pipeline、再 fanout 到 [Splunk](/backend/07-security-data-protection/vendors/splunk/) / [Elastic Security](/backend/07-security-data-protection/vendors/elastic-security/) / [Google Security Operations](/backend/07-security-data-protection/vendors/google-security-operations/)。在 SIEM 端做跨來源 correlation（process event + IdP audit + cloud control plane）是 production 標配、不可只看 Tetragon 自家視圖。
 
-**Observe → Enforce 階段化**：TracingPolicy 通常 *先進 observe-only*、跑 1-2 週收 baseline、確認 false positive 可控、再加 enforcement action 進 staging cluster、staging 觀察 24-48hr 才 promote production。對應 [Detection Engineering Lifecycle](/backend/07-security-data-protection/blue-team/detection-engineering-lifecycle/) 的章節原則 — runtime enforcement 不是 console 直改、是 detection content lifecycle。
+**Observe → Enforce 階段化**：TracingPolicy 通常 *先進 observe-only*、跑 1-2 週收 baseline、確認 false positive 可控、再加 enforcement action 進 staging cluster、staging 觀察 24-48hr 才 promote production。對應 [Detection Engineering Lifecycle](/backend/07-security-data-protection/blue-team/detection-engineering-lifecycle/) 的章節原則 — runtime enforcement 走 detection content lifecycle，而不是在 console 直改。
 
 ## 核心取捨表
 

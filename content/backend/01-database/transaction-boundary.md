@@ -205,7 +205,7 @@ WHERE id = 1 AND version = 7;                          -- UPDATE 0
 
 - 各 region 都能寫
 - LWW 或 application-level conflict resolution
-- 不是 ACID、是 BASE
+- 一致性模型是 BASE，而不是 ACID
 
 **Multi-region strong consistency**（Spanner、Aurora DSQL、CockroachDB）：
 

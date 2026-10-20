@@ -238,7 +238,7 @@ XtraBackup 備份時把 GTID set 寫進 `xtrabackup_binlog_info`、mysqldump 用
 
 ### Binlog gap — 中間遺漏 file 直接 restore fail
 
-Binlog stream 失聯（network blip / disk full）+ binlog rotate、`mysql-bin.000156` 不在 backup storage 內。PITR 試圖跨過該 file restore、跳過已 commit transaction、結果 *資料不一致*（不是錯誤、是 *silently incorrect*）。
+Binlog stream 失聯（network blip / disk full）+ binlog rotate、`mysql-bin.000156` 不在 backup storage 內。PITR 試圖跨過該 file restore、跳過已 commit transaction、結果 *資料不一致*（*silently incorrect*：不報錯而資料錯）。
 
 修法：
 

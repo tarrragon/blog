@@ -14,7 +14,7 @@ Redis 的記憶體問題很少在有人盯著儀表板時發生。它發生在�
 
 這類事故的根因幾乎都不是「Redis 不夠快」，而是三個記憶體旋鈕在設計時被當成預設值放著沒動：`maxmemory` 設多少、`maxmemory-policy` 選哪個、以及沒人注意到的記憶體碎片化。這三個旋鈕決定了 Redis 在記憶體壓力下是「優雅地淘汰冷資料繼續服務」還是「拒絕所有寫入直到有人重啟」。本文處理這三者的會計模型、選型判讀，以及它們怎麼被寫成事故。
 
-對延遲就是業務 KPI 的服務，這個旋鈕的代價更直接。[Tinder 的配對引擎](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/)每次滑動要查多個快取（profile、距離、偏好、推薦池），4700 萬月活下 cache 不是 DB 的補救、是主要服務面，cache miss 是邊緣案例。eviction policy 選錯，淘汰掉的若是熱資料，下一次滑動就打回 origin，sub-millisecond 的延遲預算瞬間破表。
+對延遲就是業務 KPI 的服務，這個旋鈕的代價更直接。[Tinder 的配對引擎](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/)每次滑動要查多個快取（profile、距離、偏好、推薦池），4700 萬月活下 cache 是主要服務面，而不是 DB 的補救，cache miss 是邊緣案例。eviction policy 選錯，淘汰掉的若是熱資料，下一次滑動就打回 origin，sub-millisecond 的延遲預算瞬間破表。
 
 ## 核心概念：Redis 記憶體的會計模型
 

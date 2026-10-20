@@ -133,7 +133,7 @@ DynamoDB         → 預設 eventually consistent、ConsistentRead=true 換強�
 
 ### Rollback boundary
 
-若一致性等級從強降到弱、要審計應用層所有讀取點（特別是「讀後決策再寫」的 critical path）。降級不是 config 一行的事、是 audit 一遍應用層假設的事。
+若一致性等級從強降到弱、要審計應用層所有讀取點（特別是「讀後決策再寫」的 critical path）。降級要 audit 一遍應用層假設，而不只是改一行 config。
 
 ## 失敗模式：把 transaction 當「強一致」的五種誤用
 

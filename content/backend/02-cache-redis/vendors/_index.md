@@ -105,7 +105,7 @@ Momento overview-only 的理由：Momento 是 serverless cache、實作面（無
 
 API 相容度決定 client / 工具 / module 是否能直接遷移。**Redis** 是 reference 實作；**Valkey** 100% 相容（直接 drop-in、所有 client library 可用）；**DragonflyDB** 相容核心 commands 但部分 module / Lua 行為差異、不支援 Redis Cluster mode；**Memcached** 跟 Redis 完全不相容（protocol 不同、無 data types）；**ElastiCache** 取決於 engine（Redis / Valkey 100%、Memcached 是另一條線）。
 
-選型判讀：既有 Redis 部署遷移 → Valkey 最低風險；要 scale up single instance → DragonflyDB 可評估但確認 module 跟 Cluster mode 影響；純 KV 從 Redis 改 Memcached → 等同重寫（不是相容問題、是 capability 差異）。
+選型判讀：既有 Redis 部署遷移 → Valkey 最低風險；要 scale up single instance → DragonflyDB 可評估但確認 module 跟 Cluster mode 影響；純 KV 從 Redis 改 Memcached → 等同重寫（差異在 capability，而不在相容性）。
 
 ### Data types
 

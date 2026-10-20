@@ -161,7 +161,7 @@ effective_cache_size = 12GB
 maintenance_work_mem = 512MB
 ```
 
-關鍵：`max_connections` 不是調更大救 connection 不足、是調 *PgBouncer pool size* 拓展 application 容量。
+關鍵：拓展 application 容量要調 *PgBouncer pool size*，而不是把 `max_connections` 調更大。
 
 ### Double-pool 配置失敗
 

@@ -45,7 +45,7 @@ tags: ["backend", "database", "cockroachdb", "aurora-dsql", "spanner", "distribu
 訊號：
 
 - 寫入量持續成長、Aurora / RDS / Cloud SQL primary CPU + WAL flush rate 接近上限
-- 轉折點 *不是 IOPS、是 primary CPU + WAL flush rate*（DoorDash case 的〈策略〉段）
+- 轉折點是 *primary CPU + WAL flush rate*，而不是 IOPS（DoorDash case 的〈策略〉段）
 - 已嘗試 vertical scale primary、撞 instance ceiling
 
 DoorDash concrete reference：2020-04-17 高峰 > 1.636 M QPS、multi-hour outage（觀察段表格）。**Scope warning（case 自帶警示）**：1.636 M QPS 是 *Aurora 撞牆的痛點* — 不是「CockroachDB throughput claim」、case 沒揭露遷移後單一 CockroachDB cluster 的峰值、只說「跑更多 cluster、alert volume 反而下降」。

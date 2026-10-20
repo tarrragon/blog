@@ -42,7 +42,7 @@ GHAS 的核心定位是 *把 application security 控制面收斂回 GitHub 平�
 
 **Code Scanning 走 SARIF 標準**：Code Scanning 不只是 CodeQL 的 UI、是 *SAST aggregation layer*。所有 SAST 結果（CodeQL 預設、或 Semgrep / Snyk Code / Brakeman / Bandit / SonarCloud / Checkmarx 等第三方）以 SARIF（Static Analysis Results Interchange Format）upload 到 Code Scanning、Security tab 統一展示、PR review 統一標註。意義是 *組織可以用多個 SAST 工具但只看一個 dashboard* — 不需要每個 vendor 各自登入。多工具 SARIF upload 用 GitHub Actions 的 `github/codeql-action/upload-sarif` step。
 
-**CodeQL 是 first-class query language**：CodeQL 用 Datalog-like 語法寫 *自定 query*、可以檢測 *organization-specific anti-pattern*（例：禁用某內部 deprecated function、強制 input validation 在特定 trust boundary）。vendor-provided pack（GitHub 維護的 CodeQL pack）覆蓋 OWASP Top 10 / CWE Top 25、自定 query 補組織 idiomatic check。代價是 *CodeQL 學習曲線陡* — 不是 regex / AST pattern、是完整的 graph query language。
+**CodeQL 是 first-class query language**：CodeQL 用 Datalog-like 語法寫 *自定 query*、可以檢測 *organization-specific anti-pattern*（例：禁用某內部 deprecated function、強制 input validation 在特定 trust boundary）。vendor-provided pack（GitHub 維護的 CodeQL pack）覆蓋 OWASP Top 10 / CWE Top 25、自定 query 補組織 idiomatic check。代價是 *CodeQL 學習曲線陡* — 它是完整的 graph query language，而不是 regex / AST pattern。
 
 **Secret Scanning 三層職責**：Secret Scanning 分三層。*Partner pattern* — GitHub 跟 AWS / GCP / Stripe / Slack / npm 等 vendor 預配 token pattern、預設 detection 範圍最大、leaked token 還會通知 vendor revoke。*Push Protection* — commit push 前 scan、發現 secret 直接 reject push、開發者必須先移除才能 push；這是 *預防* 不是 *偵測*、不需要等 leaked 後 rotation。*Custom pattern* — 組織自己的 internal token（service-to-service API key、legacy auth token）寫 regex pattern、配 validation endpoint 降 FP。
 

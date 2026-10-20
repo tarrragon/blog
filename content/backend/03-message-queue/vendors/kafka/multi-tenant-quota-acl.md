@@ -201,7 +201,7 @@ Topic 生命週期治理把「topic 的建立、歸屬、淘汰」變成有規�
 
 ### 命名規範劃出 ownership
 
-Topic 命名規範把 ownership 跟隔離邊界編碼進名字本身。一個可治理的命名規範通常含三段：租戶 / 領域前綴、語意名、版本。例如 `billing.invoices.v1` —— `billing.` 前綴對齊 prefixed ACL 的隔離邊界跟 quota 的租戶歸屬、`invoices` 是語意、`v1` 給 schema 演進留出平行存在的空間。命名規範在多租戶不是風格問題、是三個治理軸的共同錨點：ACL 靠前綴授權、quota 靠前綴歸屬、回收靠前綴找 owner。
+Topic 命名規範把 ownership 跟隔離邊界編碼進名字本身。一個可治理的命名規範通常含三段：租戶 / 領域前綴、語意名、版本。例如 `billing.invoices.v1` —— `billing.` 前綴對齊 prefixed ACL 的隔離邊界跟 quota 的租戶歸屬、`invoices` 是語意、`v1` 給 schema 演進留出平行存在的空間。命名規範在多租戶是三個治理軸的共同錨點，而不只是風格：ACL 靠前綴授權、quota 靠前綴歸屬、回收靠前綴找 owner。
 
 實機建 topic 時 Kafka 4.2.0 對 `.` 跟 `_` 混用會出 metric 名稱碰撞警告：
 
@@ -229,7 +229,7 @@ TopicGC 是 LinkedIn 的內部系統、不是 Kafka 內建指令；它揭示的�
 
 ### Case 1：單一租戶暴衝吃滿頻寬（quota 缺位）
 
-**徵兆**：某團隊上線一支新 backfill job、開始全速寫入；同叢集其他租戶的 producer 端 `request-latency` p99 從個位數 ms 跳到數百 ms、consumer lag 全面上升；broker network out 打到網卡上限、但 CPU 不高。受害的不是暴衝者自己、是所有共用 broker 的鄰居。
+**徵兆**：某團隊上線一支新 backfill job、開始全速寫入；同叢集其他租戶的 producer 端 `request-latency` p99 從個位數 ms 跳到數百 ms、consumer lag 全面上升；broker network out 打到網卡上限、但 CPU 不高。受害的是所有共用 broker 的鄰居，而不是暴衝者自己。
 
 **根因**：叢集沒設任何 producer quota、或只對部分租戶設了 quota。沒有 broker-side throttle 時、單一 client 能用滿 broker 的 network / disk I/O、把共享頻寬擠光。byte rate 飽和的特徵是 network 打滿但 CPU 不高 —— 區別於 `request_percentage` 缺位導致的 CPU 飽和。
 

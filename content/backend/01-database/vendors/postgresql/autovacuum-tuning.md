@@ -12,7 +12,7 @@ tags: ["backend", "database", "postgresql", "autovacuum", "vacuum", "performance
 
 write-heavy table 的常見故事：上線時表 10GB、3 個月後 30GB、6 個月 80GB；DBA 看 `pg_stat_user_tables` 發現 `n_dead_tup` 比 `n_live_tup` 還多、`pg_stat_progress_vacuum` 顯示 autovacuum 一直在跑、但 dead tuple 從沒清乾淨。表本身才 5M row、實際磁碟卻佔 80GB。
 
-這不是 PostgreSQL bug、是 autovacuum *cost-based throttling 預設保守* 的設計意圖 — autovacuum 不該影響 OLTP query 性能、所以每跑一段就 sleep。預設 `autovacuum_vacuum_cost_limit=200` + `autovacuum_vacuum_cost_delay=2ms` 在 write-heavy 表（每秒幾千 UPDATE）下、清理速度 *永遠慢於* dead tuple 產生速度。預設配置適合 read-heavy / write-light workload；OLTP write-heavy 必須調。
+這是 autovacuum *cost-based throttling 預設保守* 的設計意圖，而不是 PostgreSQL bug — autovacuum 不該影響 OLTP query 性能、所以每跑一段就 sleep。預設 `autovacuum_vacuum_cost_limit=200` + `autovacuum_vacuum_cost_delay=2ms` 在 write-heavy 表（每秒幾千 UPDATE）下、清理速度 *永遠慢於* dead tuple 產生速度。預設配置適合 read-heavy / write-light workload；OLTP write-heavy 必須調。
 
 ## MVCC 跟 dead tuple：vacuum 在解什麼
 

@@ -22,7 +22,7 @@ Aurora Global Database 是 *跨 region async replication*、< 1 秒 typical lag�
 - 「跟 Aurora DSQL / Spanner / CockroachDB 怎麼選？」
 - 「合規場景一定要用 Global Database 嗎？」
 
-進一步問題：Global Database 對一般 SaaS 是合理的 DR + 跨地理 read 工具、但對 *受監管產業* 是反指標。[Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個受監管市場、各自獨立 Aurora cluster、不用 Global Database — 不是技術不夠、是合規要求「資料不能跨境複製」。讀者規劃 multi-region 架構時、合規維度要在技術維度之前判斷。
+進一步問題：Global Database 對一般 SaaS 是合理的 DR + 跨地理 read 工具、但對 *受監管產業* 是反指標。[Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個受監管市場、各自獨立 Aurora cluster、不用 Global Database — 成因是合規要求「資料不能跨境複製」，而不是技術不夠。讀者規劃 multi-region 架構時、合規維度要在技術維度之前判斷。
 
 ## 核心機制：跨 region async storage replication
 

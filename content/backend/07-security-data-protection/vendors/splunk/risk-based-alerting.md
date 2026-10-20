@@ -14,7 +14,7 @@ Detection engineering 的成熟度上限不是「能寫多少 correlation rule�
 
 RBA 的核心轉折是 *把 alert 邏輯從「rule 觸發」拆成「score 累積」*：每個 detection rule 不直接產 alert、而是給 *user / asset / process* 加 risk score；多個低嚴重訊號累積到 threshold 才產 notable（高優先 case）。SOC 看的不是「rule X 觸發了」、是「user Y 今天累積 70 分、上週 12 分」。
 
-RBA 不是 *寫 detection rule 的替代*、是 *aggregation 跟 prioritization 的新層*。原本 100 條 rule 各自產 alert 變成 100 條 rule 共同貢獻 score、score → notable 是新的 alert 邊界。
+RBA 是 *aggregation 跟 prioritization 的新層*，而不是 *寫 detection rule 的替代*。原本 100 條 rule 各自產 alert 變成 100 條 rule 共同貢獻 score、score → notable 是新的 alert 邊界。
 
 ## RBA 三層 model：modifier、score、notable
 
@@ -111,7 +111,7 @@ Notable 進入 ES Incident Review、SOC analyst 看到的不只 score、還有 *
 **修法**：
 
 1. 每加新 rule 時跑「+1 rule 對 daily notable 數的影響」shadow simulation
-2. 重新 calibrate threshold — 不是固定值、是 *p95 daily total_risk 的 1.5 倍*
+2. 重新 calibrate threshold — 門檻設在 *p95 daily total_risk 的 1.5 倍*，而不是固定值
 3. 季度 review：跑 `index=risk | stats sum(risk_score) by source` 看 modifier 來源分佈、score 集中在少數 rule 是 inflation 訊號
 
 *Tuning 提醒*：score inflation 跟 alert fatigue 是同樣症狀的不同根因；前者改 threshold + rule weight calibration、後者改 modifier 維度跟 whitelist。

@@ -36,8 +36,8 @@ Toyota Connected 平台關鍵數字（引自 [AWS case study](https://aws.amazon
 Toyota Connected 的 MongoDB 選擇揭露三個 IoT / telematics 工程決策的判讀重點。
 
 1. **document model 適合「sensor schema 隨產品演進」的場景**：車載 sensor 種類隨車型、年份、地區規範變化。RDB 走「每加 sensor 加 column」會讓 schema migration 變成發行週期的卡點；document model 走「polymorphic document」、新 sensor 只是新欄位、舊文件不需要 backfill。對應 [MongoDB vendor page](/backend/01-database/vendors/mongodb/) 的 document shape 教學段。但這個彈性的成本是：production 必須做 schema governance（validation、版本欄位、application 層相容處理），否則「schema 自由」會變「production data inconsistency」。
-2. **20 個 Atlas database 不是技術上限、是業務邊界切分**：18 Billion transactions / 月 ÷ 30 天 ÷ 86400 秒 ≈ 7K transactions / sec。這個寫入量在單一 MongoDB cluster 的容量範圍內、不需要 20 個 DB。Toyota 切 20 個 DB 是按 *microservice ownership* 跟 *blast radius* — 每個 microservice 擁有自己的 DB、單一 DB 故障不會影響其他服務。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/)、把「總吞吐」拆成「per-DB 邊界」。
-3. **99.99% target vs 99% 實測差距揭露 telematics 的可用性挑戰**：99.99% 是 4 分鐘 / 月停機、99% 是 7.2 小時 / 月停機。差兩個 9 不是 MongoDB 自身可用性問題、是 *end-to-end* 鏈路問題 — 車輛無線網路、cellular tower、AWS network、event bus、microservice、Atlas cluster 任一環節掉都會打掉可用性。MongoDB Atlas 自身的 SLA 通常是 99.95%、達到 99.99% 必須 multi-region + 跨雲冗餘。對應 [Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 的多 region active-active 設計。
+2. **20 個 Atlas database 依業務邊界切分，而不是技術上限**：18 Billion transactions / 月 ÷ 30 天 ÷ 86400 秒 ≈ 7K transactions / sec。這個寫入量在單一 MongoDB cluster 的容量範圍內、不需要 20 個 DB。Toyota 切 20 個 DB 是按 *microservice ownership* 跟 *blast radius* — 每個 microservice 擁有自己的 DB、單一 DB 故障不會影響其他服務。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/)、把「總吞吐」拆成「per-DB 邊界」。
+3. **99.99% target vs 99% 實測差距揭露 telematics 的可用性挑戰**：99.99% 是 4 分鐘 / 月停機、99% 是 7.2 小時 / 月停機。差兩個 9 的成因在 *end-to-end* 鏈路，而不在 MongoDB 自身可用性 — 車輛無線網路、cellular tower、AWS network、event bus、microservice、Atlas cluster 任一環節掉都會打掉可用性。MongoDB Atlas 自身的 SLA 通常是 99.95%、達到 99.99% 必須 multi-region + 跨雲冗餘。對應 [Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 的多 region active-active 設計。
 
 需要警惕：
 

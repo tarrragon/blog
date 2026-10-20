@@ -1,5 +1,5 @@
 ---
-title: "PostgreSQL declarative partitioning：partition 不是切表、是讓 planner pruning"
+title: "PostgreSQL declarative partitioning：planner pruning、maintenance scope 與 partition key 選法"
 date: 2026-05-18
 description: "Declarative partitioning 的真實價值是 query planner pruning + maintenance scope 縮小、不是「把大表切小」；RANGE / LIST / HASH 取捨、partition key 選法、5 個 production 踩雷（key 選錯不 prune / unique 不 enforce 跨 partition / ATTACH 鎖太久 / partition 數爆 / DETACH 不 reclaim 空間）、跟 autovacuum + index 設計整合"
 weight: 33

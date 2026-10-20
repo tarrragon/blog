@@ -187,7 +187,7 @@ FULL 同時滿足兩者，代價是只能做「加帶 default 的欄位」與「
 
 1. **改 strategy 配合用法**：一 topic 多事件 → TopicRecordNameStrategy，subject 變成 `<topic>-<record 全名>`，每種 record 各自一條演進線、不互相檢查。
 2. **producer 與 consumer 設同一個 strategy**：strategy 不一致時 consumer 會用錯 subject 查 schema，拿到 null 或錯 schema。這是部署層的硬約束，要在共用 config 統一。
-3. **若只是不小心寫錯 topic**：那不是 strategy 問題、是路由問題，修 producer 的 topic 選擇邏輯，別為了繞過檢查改成 RecordNameStrategy。
+3. **若只是不小心寫錯 topic**：成因在路由，而不在 strategy，修 producer 的 topic 選擇邏輯，別為了繞過檢查改成 RecordNameStrategy。
 
 ## 容量與運維邊界
 

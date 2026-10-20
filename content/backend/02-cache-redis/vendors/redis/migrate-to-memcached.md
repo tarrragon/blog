@@ -8,7 +8,7 @@ tags: ["backend", "cache", "redis", "memcached", "paradigm-shift", "migration", 
 
 > 本文是跨 vendor migration playbook、cross-link [Redis](/backend/02-cache-redis/vendors/redis/) 跟 [Memcached](/backend/02-cache-redis/vendors/memcached/)。跑 [migration-playbook-methodology 6 維 audit](/posts/migration-playbook-methodology/) 後對映 *Paradigm = High（multi-paradigm → pure cache）→ Type E paradigm shift*；本文是 *paradigm reduction*（downgrade 方向）的 dogfood。
 
-## Memcached 不是 simpler Redis、是 cache paradigm
+## Memcached 的 cache paradigm 與 Redis 的差異
 
 把 Redis → Memcached 當「移除 Redis 功能」是最常見的誤判：
 

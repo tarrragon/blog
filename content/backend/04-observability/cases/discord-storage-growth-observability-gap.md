@@ -6,7 +6,7 @@ weight: 13
 tags: ["backend", "observability", "case-study", "debuggability", "data-quality"]
 ---
 
-Discord 的儲存演進案例從觀測角度回推一個教訓：儲存成長問題通常先表現為觀測缺口。不是資料庫變慢了才去看 metric，是該有的 metric 從一開始就沒設計。每一次儲存遷移（MongoDB → Cassandra → ScyllaDB）都揭露了上一階段缺少的訊號。
+Discord 的儲存演進案例從觀測角度回推一個教訓：儲存成長問題通常先表現為觀測缺口。缺口在該有的 metric 從一開始就沒設計，而不是資料庫變慢了才去看 metric。每一次儲存遷移（MongoDB → Cassandra → ScyllaDB）都揭露了上一階段缺少的訊號。
 
 ## 業務背景
 

@@ -48,7 +48,7 @@ tags: ["backend", "database"]
 
 ### 第一個爆的通常是連線、不是 CPU 或 disk
 
-SQL DB 在 surge 場景的 *first bottleneck* 不是 CPU、也不是 disk I/O、是 *連線數量*。原因：傳統 RDB（PostgreSQL、MySQL）每個連線吃記憶體 + 一個 process / thread，資料庫端的連線上限 `max_connections` 因此設不高（PostgreSQL 預設 100、MySQL 預設 151，實務設定值見下方〈Database 端 max_connections〉）。流量湧入時、application 想開更多連線、DB 直接拒絕（PostgreSQL：`FATAL: too many connections`）、看起來像 DB 故障、實際是連線數限制。
+SQL DB 在 surge 場景的 *first bottleneck* 是 *連線數量*，而不是 CPU 或 disk I/O。原因：傳統 RDB（PostgreSQL、MySQL）每個連線吃記憶體 + 一個 process / thread，資料庫端的連線上限 `max_connections` 因此設不高（PostgreSQL 預設 100、MySQL 預設 151，實務設定值見下方〈Database 端 max_connections〉）。流量湧入時、application 想開更多連線、DB 直接拒絕（PostgreSQL：`FATAL: too many connections`）、看起來像 DB 故障、實際是連線數限制。
 
 對應 [Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — NTT DOCOMO 串流平台選 DynamoDB 而非 RDB 的原因之一是「connection limit 在快速流量增加時變成 bottleneck」。DynamoDB 的 HTTP API 模型沒有 connection state、天然解決這個瓶頸。
 
@@ -114,7 +114,7 @@ SHOW VARIABLES LIKE 'max_connections';
 - **N+1 query** 讓一個 request 占用連線從 1 個 round trip 拉長到 N+1 個。同樣的 throughput、需要 N+1 倍的連線數來 sustain
 - **Long-running transaction** 把一個連線從幾毫秒占用變成幾秒，相當於把連線池的有效容量除以幾百倍
 - **缺索引的 query** 在熱表上跑 full scan、單筆 query 從 10ms 變成 1-5 秒、連線占用時間放大兩個數量級
-- **`SELECT *` 載入大欄位**：reader 在反序列化大物件期間連線一直 hold、不是 query 本身慢、是 serialization overhead 拉長占用
+- **`SELECT *` 載入大欄位**：reader 在反序列化大物件期間連線一直 hold，拉長占用的是 serialization overhead，而不是 query 本身慢
 
 這些反模式單獨看是「query 寫法問題」、但放到連線池語境就是「連線池容量被間接削減」。先用 [1.13 query 反模式](/backend/01-database/query-anti-patterns/) 的清單收回連線占用時間、再考慮加 [9.14 connection pooler](/backend/09-performance-capacity/connection-pool-amplification/) 中介層 — 順序顛倒會讓 pooler 治標不治本。
 

@@ -17,4 +17,4 @@ Range sharding 出現在 CockroachDB / Spanner 等 distributed SQL、跟 [Partit
 
 ## 設計責任
 
-設計時不要把 KV partition key 設計的直覺套到 range sharding — 在 range sharding 下、hot range 仍會發生（連續寫入 monotonic key 例如 timestamp 會集中到同一 range）、但解法不是設 shard key、是讓 primary key 有 entropy（例如改用 UUID 或加 hash prefix）。range split 雖然自動、但 split 過程是 ops event、會引發短期 p99 spike、變更窗口要避開。多 region 部署下、range 的 replica placement 由 locality config 決定、預設不會自動把 replica 放到合規 region、要主動配置。
+設計時不要把 KV partition key 設計的直覺套到 range sharding — 在 range sharding 下、hot range 仍會發生（連續寫入 monotonic key 例如 timestamp 會集中到同一 range）、但解法是讓 primary key 有 entropy（例如改用 UUID 或加 hash prefix），而不是設 shard key。range split 雖然自動、但 split 過程是 ops event、會引發短期 p99 spike、變更窗口要避開。多 region 部署下、range 的 replica placement 由 locality config 決定、預設不會自動把 replica 放到合規 region、要主動配置。

@@ -205,7 +205,7 @@ CREATE TABLE orders (
 
 修法：
 
-- 不是 in-place upgrade、是 full migration（DMS + cutover）
+- 這是 full migration（DMS + cutover），而不是 in-place upgrade
 - 把 DSQL 當完全新的 cluster type、走從 schema / application audit 到 cutover 的完整流程
 - Aurora PG → Aurora DSQL 不比 PG → CRDB 容易、wire-compatible 只解 application connect 問題、不解 schema / paradigm 差異
 

@@ -22,7 +22,7 @@ Google Security Operations 的核心定位是 *為超大規模 SOC 設計的雲�
 
 1. Google Security Ops 在 SOC stack 承擔哪一段（log aggregation + SIEM + SOAR + threat intel 一體）、跟 [Google Cloud IAM](/backend/07-security-data-protection/vendors/google-cloud-iam/) / [Google Secret Manager](/backend/07-security-data-protection/vendors/google-secret-manager/) 怎麼整合
 2. UDM forced normalization 跟 YARA-L 對 detection 設計的影響（schema-first 而非 query-first）
-3. Curated Detection + Mandiant Applied Threat Intel 在偵測 lifecycle 的位置（不是自己拉、是訂閱）
+3. Curated Detection + Mandiant Applied Threat Intel 在偵測 lifecycle 的位置（以訂閱取得，而不是自己拉）
 4. 何時選 Google Security Ops、何時走 Splunk / Elastic / Datadog 的取捨
 
 ## 最短判讀路徑

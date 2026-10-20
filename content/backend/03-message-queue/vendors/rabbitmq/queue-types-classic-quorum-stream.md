@@ -10,7 +10,7 @@ tags: ["backend", "message-queue", "rabbitmq", "quorum-queue", "stream", "deep-a
 
 ## 同一個 broker、三套儲存引擎
 
-RabbitMQ 的 queue 由三種 *儲存引擎* 構成、共用同一套 AMQP 協議與 management 介面。Queue type 決定訊息怎麼持久化、怎麼跨節點複製、消費後是否保留 — 這些差異在宣告 queue 的那一刻就鎖定、之後無法原地切換。選錯 queue type 的代價不是參數調整、是 *重建 queue + 遷移 in-flight 訊息*。
+RabbitMQ 的 queue 由三種 *儲存引擎* 構成、共用同一套 AMQP 協議與 management 介面。Queue type 決定訊息怎麼持久化、怎麼跨節點複製、消費後是否保留 — 這些差異在宣告 queue 的那一刻就鎖定、之後無法原地切換。選錯 queue type 的代價是 *重建 queue + 遷移 in-flight 訊息*，而不只是參數調整。
 
 三種 type 各自承擔不同責任：
 

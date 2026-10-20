@@ -42,7 +42,7 @@ RDS / MongoDB 是 *先有資料模型、再支援任意查詢*；DynamoDB 是 *�
 - 看似接近（都是 NoSQL / document-ish）、實際 MongoDB 的二級索引彈性、aggregation pipeline、彈性 query 在 DynamoDB 都沒有對應
 - MongoDB 可以「先存進去、之後再想怎麼查」；DynamoDB 不行、access pattern 沒想清楚就建表、後面要重做
 
-所以遷移的第一步不是匯資料、是 **窮舉 access pattern**：列出 application 對這份資料的所有讀寫路徑、每條路徑對應 DynamoDB 的 PK/SK/GSI 設計。access pattern 列不完整、就還不能開始遷。
+所以遷移的第一步是 **窮舉 access pattern**，而不是匯資料：列出 application 對這份資料的所有讀寫路徑、每條路徑對應 DynamoDB 的 PK/SK/GSI 設計。access pattern 列不完整、就還不能開始遷。
 
 ## 哪些 workload 該遷、哪些該留（混合架構）
 
@@ -121,7 +121,7 @@ paradigm shift 型遷移的 cleanup 不一定是「退役舊系統」— 多數�
 - 但 RDS / MongoDB 本身保留（服務 analytics / 強一致 / 彈性查詢 workload）
 - 明確標示哪條資料路徑的 source of truth 是 DynamoDB、哪條仍是 RDS / MongoDB、避免「到底哪個是真的」混亂
 
-混合架構不是過渡失敗、是 paradigm shift 的穩態 — 每個 workload 待在最適合它的儲存層。
+混合架構是 paradigm shift 的穩態，而不是過渡失敗 — 每個 workload 待在最適合它的儲存層。
 
 ## 失敗模式
 

@@ -12,7 +12,7 @@ tags: ["backend", "performance", "capacity", "tooling"]
 
 跟 [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/) 的關係：9.2 定義 workload 長什麼樣、9.3 找能複製這個樣子的工具。工具選對、壓測結果可信；工具選錯、壓測結果誤導。
 
-本章不是工具教學、是 *選型維度* + 主流工具的 *適用情境*。讀者讀完後能回答「我現在這個 workload 該用哪個工具」、而不是「哪個工具最快」。
+本章涵蓋 *選型維度* + 主流工具的 *適用情境*，而不是工具教學。讀者讀完後能回答「我現在這個 workload 該用哪個工具」、而不是「哪個工具最快」。
 
 ## 六個選型維度
 

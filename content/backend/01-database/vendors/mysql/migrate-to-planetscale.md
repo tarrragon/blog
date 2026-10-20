@@ -183,7 +183,7 @@ Deploy Request 顯示 *schema-level diff*（CREATE / ALTER / DROP）、不顯示
 - CI integration：PR close 自動 `pscale branch delete <branch-name>`
 - 設 *branch retention policy*（30 天無活動自動刪）
 - 監控 `pscale branch list | wc -l` 數量、超 threshold alert
-- 把 branch lifecycle 寫進 *team playbook*（不是 PlanetScale 教、是團隊內部規範）
+- 把 branch lifecycle 寫進 *team playbook*（這是團隊內部規範，PlanetScale 不會提供）
 
 ### 無 `SUPER` privilege — 部分操作不可行
 

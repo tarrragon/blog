@@ -14,7 +14,7 @@ Twitter 把 on-prem 服務的 Avro-formatted 訊息 push 到 Pub/Sub（兩條 st
 
 ## 判讀
 
-「把單一 high-volume stream 切成多 topic 做 partition」是 Pub/Sub 沒有 Kafka-style partition 概念下的應對策略。揭露 Pub/Sub 跟 Kafka 的選型差異不是 feature parity、是不同的擴張模型。
+「把單一 high-volume stream 切成多 topic 做 partition」是 Pub/Sub 沒有 Kafka-style partition 概念下的應對策略。揭露 Pub/Sub 跟 Kafka 的選型差異在擴張模型，而不在 feature parity。
 
 ## 對應大綱
 

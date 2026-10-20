@@ -39,7 +39,7 @@ Distributed load 適合用 Locust worker 擴展。當單機 Python runner 遇到
 
 判斷 Locust 壓測是否健康、最少看四件事：
 
-- **User class 設計**：每個 `HttpUser` / `User` subclass 是不是一個明確的 *persona*（mobile user / API client / admin user）、`wait_time` 是否反映真實使用者間隔（不是 0 拼最大 RPS、是 `between(1, 5)` 模擬 think time）、user state 是否在 instance 內封閉
+- **User class 設計**：每個 `HttpUser` / `User` subclass 是不是一個明確的 *persona*（mobile user / API client / admin user）、`wait_time` 是否反映真實使用者間隔（用 `between(1, 5)` 模擬 think time，而不是設 0 拼最大 RPS）、user state 是否在 instance 內封閉
 - **Task 比例**：`@task(weight)` 數字是否對應 production traffic mix（80% read / 15% write / 5% admin、不是每個 endpoint 等比例）、weight 是否走版控 review
 - **on_start lifecycle**：login / token fetch / session bootstrap 是否寫在 `on_start`（每個 user 一次）、不是寫在 `@task` 裡（每個 request 都重做）— 寫錯位置會讓 auth endpoint 變成主要 traffic
 - **Distributed master-worker**：worker 數量是否夠（單 worker 跑幾千 user 後 CPU 會先打死、不是目標服務先死）、master 是否獨立機器（master 也跑 user 時 aggregation 跟 Web UI 會卡）、`--expect-workers` 是否設、worker sync drift 是否觀察
@@ -50,7 +50,7 @@ Distributed load 適合用 Locust worker 擴展。當單機 Python runner 遇到
 
 **locustfile 結構**：locustfile.py 是 Python module、定義 `User` / `HttpUser` subclass、每個 user 有 `wait_time`、若干 `@task(weight)` method、`on_start` / `on_stop` lifecycle hook。執行用 `locust -f locustfile.py --host=https://target` 起 Web UI、或 `locust --headless -u 1000 -r 100 -t 10m` 在 CI 跑無 UI 模式。locustfile 應該走 Git review、不是 GUI 改完就跑。
 
-**Task weight / wait_time 設計**：weight 是 *相對權重*、不是百分比 —`@task(8)` + `@task(2)` 等於 80% / 20%。`wait_time = between(1, 5)` 在每個 task 之間等 1-5 秒、模擬 think time；若要拚最大 RPS 用 `constant(0)`、但同時要意識到這就不是 user behavior 模型、是 *throughput probe*。
+**Task weight / wait_time 設計**：weight 是 *相對權重*、不是百分比 —`@task(8)` + `@task(2)` 等於 80% / 20%。`wait_time = between(1, 5)` 在每個 task 之間等 1-5 秒、模擬 think time；若要拚最大 RPS 用 `constant(0)`，這時模型就成了 *throughput probe*，而不是 user behavior 模型。
 
 **on_start vs @task 的邊界**：`on_start(self)` 每個 user instance 啟動時跑一次、適合做 login、token fetch、cache warm、fixture lookup；`@task` 是 user 行為主迴圈、每次選一個 task 跑。把 login 寫在 `@task` 是常見錯誤、會讓 IdP 變成主壓力來源、不是目標 API。
 

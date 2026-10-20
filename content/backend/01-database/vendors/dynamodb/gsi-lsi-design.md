@@ -42,7 +42,7 @@ DynamoDB 的兩種 secondary index 解的問題不同：
 
 ## DAX 作為讀峰值補位
 
-DAX（DynamoDB Accelerator）不是 GSI / LSI 同層方案、不是 DynamoDB 預設配置、是「讀峰值持續高時的補位」。決定加 DAX 之前要先確認觸發條件：
+DAX（DynamoDB Accelerator）是「讀峰值持續高時的補位」，既不是 GSI / LSI 同層方案，也不是 DynamoDB 預設配置。決定加 DAX 之前要先確認觸發條件：
 
 **Lemino 案例公開使用 DAX**：「DAX 是 DynamoDB 讀 cache 的標準解法」、觸發條件是「當讀峰值持續高、加 DAX 減少 DynamoDB 讀次數、降低成本」（熱門節目首播時段、共用 metadata）。
 

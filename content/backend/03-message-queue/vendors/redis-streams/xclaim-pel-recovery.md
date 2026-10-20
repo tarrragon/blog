@@ -124,7 +124,7 @@ c3                           # 全部 4 筆 owner 變 c3
 
 ## min-idle-time：防止活 consumer 被搶單
 
-min-idle-time 不是裝飾參數、是接管機制的安全閥：它要求「只有 idle 超過門檻的 entry 才能被接管」。沒有這個門檻、兩個 consumer 會互相搶對方正在處理的訊息。
+min-idle-time 是接管機制的安全閥，而不是裝飾參數：它要求「只有 idle 超過門檻的 entry 才能被接管」。沒有這個門檻、兩個 consumer 會互相搶對方正在處理的訊息。
 
 驗證搶單防護——剛被 c3 claim 的訊息 idle 很低、用 60 秒門檻去 claim 會落空：
 

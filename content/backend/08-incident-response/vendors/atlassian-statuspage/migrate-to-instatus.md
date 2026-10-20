@@ -13,7 +13,7 @@ tags: ["backend", "incident-response", "vendor", "migration", "type-b", "drop-in
 | Component 上限       | 依 tier 提升                                       | Pro 有上限、Business 放寬                                        | 大型 page 要逐項確認        |
 | Notification channel | Email / SMS / Slack / Teams / webhook / RSS / Atom | Email / SMS / Slack / Discord / Teams / Telegram / RSS / Webhook | Instatus 多 chat channel    |
 | Metrics 圖表         | Datadog / Pingdom / New Relic / Library            | Datadog / Pingdom / New Relic / StatusCake / API                 | payload / auth 要重接       |
-| SAML SSO             | Enterprise tier                                    | Business tier                                                    | 不是產品缺口、是 tier 差異  |
+| SAML SSO             | Enterprise tier                                    | Business tier                                                    | 差在 tier，而不是產品缺口   |
 | Audit / activity log | Enterprise / team governance 能力                  | 需依 plan 確認                                                   | 強合規要逐項驗證            |
 | SLA / uptime report  | 內建能力較成熟                                     | 需確認 plan 或外接                                               | contract deliverable 要驗證 |
 | API parity           | 完整 REST                                          | REST API                                                         | endpoint / schema 不同      |

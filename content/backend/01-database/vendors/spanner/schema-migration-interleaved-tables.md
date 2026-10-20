@@ -22,7 +22,7 @@ Case anchor：Google 內部的 [Cloud Spanner planetary scale 案例](/backend/0
 
 ### Schema change 的 lifecycle
 
-Spanner DDL 不是同步 ALTER、是 *long-running operation*。TrueTime 給每次 schema change 分配一個 version timestamp、所有 read / write 用各自 transaction timestamp 對應「當下看到哪個 schema version」。讀者要理解的核心是：DDL 不是「鎖表→改→解鎖」、是「廣播新 schema version、讓現有 transaction 用舊 schema、新 transaction 用新 schema、背景 backfill 物理資料」。
+Spanner DDL 是 *long-running operation*，而不是同步 ALTER。TrueTime 給每次 schema change 分配一個 version timestamp、所有 read / write 用各自 transaction timestamp 對應「當下看到哪個 schema version」。讀者要理解的核心是：DDL 不是「鎖表→改→解鎖」、是「廣播新 schema version、讓現有 transaction 用舊 schema、新 transaction 用新 schema、背景 backfill 物理資料」。
 
 ```text
 時間軸：
@@ -57,7 +57,7 @@ DDL 本身瞬間完成的部分是 *metadata 廣播*（毫秒到秒級）、慢�
 
 ### Interleaved table 的設計
 
-[Interleaved Table](/backend/knowledge-cards/interleaved-table/) 把 parent table（如 `Customer`）跟 child table（如 `Order`）的 row 在 storage 層 *物理上交錯儲存* — child row 跟對應 parent row 在同一個 split。不是純 foreign key、是 storage layout：
+[Interleaved Table](/backend/knowledge-cards/interleaved-table/) 把 parent table（如 `Customer`）跟 child table（如 `Order`）的 row 在 storage 層 *物理上交錯儲存* — child row 跟對應 parent row 在同一個 split。它決定的是 storage layout，而不只是 foreign key：
 
 ```text
 傳統 PostgreSQL FK 設計（兩張獨立表）：

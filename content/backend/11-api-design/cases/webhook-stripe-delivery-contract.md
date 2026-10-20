@@ -14,7 +14,7 @@ Stripe webhooks 官方 docs 明文列出四項承諾。重試：live mode 對 de
 
 ## 判讀
 
-Stripe 是「對外承諾」的教科書樣本 —— 同一頁把 at-least-once（重複）、no-ordering、簽章驗證三個責任明文轉移給 consumer。可靠性的分工是：vendor 負責「至少送到一次加三天內重試」、consumer 負責「用 event ID 去重、不依賴順序、先 2xx 再處理」。webhook 不是可靠佇列、是把可靠性責任切一半給 consumer 的推送。
+Stripe 是「對外承諾」的教科書樣本 —— 同一頁把 at-least-once（重複）、no-ordering、簽章驗證三個責任明文轉移給 consumer。可靠性的分工是：vendor 負責「至少送到一次加三天內重試」、consumer 負責「用 event ID 去重、不依賴順序、先 2xx 再處理」。webhook 是把可靠性責任切一半給 consumer 的推送，而不是可靠佇列。
 
 ## 對應大綱
 

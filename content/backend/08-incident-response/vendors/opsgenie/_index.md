@@ -95,7 +95,7 @@ Opsgenie 的核心定位是 *Atlassian 生態內的 on-call 元件*、跟 [Pager
 
 ### Opsgenie → JSM Cloud / JSM Premium on-call 過渡
 
-子議題：原 Opsgenie 用戶遷移時程（Atlassian 官方公告 2027/4 EOL）、功能 parity 盤點（migration 前確認 integration / API / Terraform config 都有對應）、API 兼容（Opsgenie REST API 在 JSM 上是否保留 / 改路徑）。migration 不是換工具、是換產品架構 — schedule / escalation / integration / runbook 的 ID 都會變、要規劃 *parallel run 期* 而非 cutover。
+子議題：原 Opsgenie 用戶遷移時程（Atlassian 官方公告 2027/4 EOL）、功能 parity 盤點（migration 前確認 integration / API / Terraform config 都有對應）、API 兼容（Opsgenie REST API 在 JSM 上是否保留 / 改路徑）。migration 換的是產品架構，而不只是工具 — schedule / escalation / integration / runbook 的 ID 都會變、要規劃 *parallel run 期* 而非 cutover。
 
 ## 排錯快速判讀
 

@@ -193,7 +193,7 @@ WHERE status = 'pending'
 
 **Sandbox / staging 驗證**：不可逆或大規模修復、先在 staging 跑一次、確認 query plan、執行時間、lock 行為。Production 規模沒辦法在 staging 重現的話、至少要在 production 的某個低風險 tenant / region 先試跑、再擴大。
 
-**Approval gate（4-eyes process）**：超出單筆規模或修復金錢、權限、個資的場合、必須 *兩位以上人員* 各自看過 dry-run 結果再簽核。常見實作是：執行者提 PR / ticket 帶 dry-run output、reviewer 簽核後才能執行、執行後產出 audit log 帶兩人簽核紀錄。Reviewer 的責任不是橡皮圖章、是獨立驗證 dry-run 結果跟 incident 描述一致。
+**Approval gate（4-eyes process）**：超出單筆規模或修復金錢、權限、個資的場合、必須 *兩位以上人員* 各自看過 dry-run 結果再簽核。常見實作是：執行者提 PR / ticket 帶 dry-run output、reviewer 簽核後才能執行、執行後產出 audit log 帶兩人簽核紀錄。Reviewer 的責任是獨立驗證 dry-run 結果跟 incident 描述一致，而不是當橡皮圖章。
 
 ## Repair Patterns
 
@@ -256,7 +256,7 @@ SELECT ROW_COUNT();   -- 本批改到的列數，0 代表修完
 
 cache 跟 search index 是 derived state、出錯通常 *砍掉重建*。
 
-- 不是直接修 cache value、是 invalidate 讓下次 read 重算
+- invalidate 讓下次 read 重算，而不是直接修 cache value
 - 大規模重建用 batch job 跑、避免 thundering herd
 - 對應 [Tubi](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) feature store 重建模式
 

@@ -40,7 +40,7 @@ PostgreSQL 的 `SERIAL` / `bigserial` 在分散式系統下會製造熱點（單
 
 ### 根本不存在：PostgreSQL 重度功能
 
-部分 PostgreSQL 的進階功能不在 PG dialect 範圍內、團隊若依賴它們、遷移要先找替代路徑。常見的缺口包含：自訂 extension（PostGIS、pgvector 等需另尋路徑）、stored procedure / 觸發器生態、部分 window function 與進階型別、`LISTEN` / `NOTIFY`、以及 PostgreSQL 特有的 lock 與 vacuum 心智。這些缺口不是 bug、是「Spanner 不是 PostgreSQL」的直接後果。
+部分 PostgreSQL 的進階功能不在 PG dialect 範圍內、團隊若依賴它們、遷移要先找替代路徑。常見的缺口包含：自訂 extension（PostGIS、pgvector 等需另尋路徑）、stored procedure / 觸發器生態、部分 window function 與進階型別、`LISTEN` / `NOTIFY`、以及 PostgreSQL 特有的 lock 與 vacuum 心智。這些缺口是「Spanner 不是 PostgreSQL」的直接後果，而不是 bug。
 
 > **Scope warning**：PG dialect 的具體支援清單（支援哪些型別、function、語法）逐版本擴充、本文列舉的相容子集邊界屬 GCP 規格、實作前必須 cross-verify [Spanner PostgreSQL dialect 官方文件](https://cloud.google.com/spanner/docs/postgresql-interface) 的當前支援矩陣、不能依本文清單當最終依據。
 
@@ -87,7 +87,7 @@ dialect 不可變更、所以 rollback boundary 在「遷移評估階段」、�
 
 ### Dialect 鎖定後才發現需要另一種 dialect
 
-dialect 是 database 建立時的不可逆選擇、團隊選了 PG dialect、後續發現需要 GoogleSQL 才有的某個原生能力（或反之）、唯一路徑是建新 database 重遷全部資料。這個失敗的代價遠高於一般 config 錯誤 — 它不是改一行設定、是一次完整的資料遷移 + application cutover + 驗證 + rollback 規劃。回退路徑是把它當成一次 paradigm shift 級的遷移（遷移方法論裡的 Type E，階段規劃見 [migrate-from-cloud-sql-pg](../migrate-from-cloud-sql-pg/)）、不能當成 hotfix。預防勝於回退：在相容性 audit 階段就要把「未來可能需要哪種 dialect 的能力」一起評估、而不是只看當下的 SQL 通過率。
+dialect 是 database 建立時的不可逆選擇、團隊選了 PG dialect、後續發現需要 GoogleSQL 才有的某個原生能力（或反之）、唯一路徑是建新 database 重遷全部資料。這個失敗的代價遠高於一般 config 錯誤 — 它是一次完整的資料遷移 + application cutover + 驗證 + rollback 規劃，而不只是改一行設定。回退路徑是把它當成一次 paradigm shift 級的遷移（遷移方法論裡的 Type E，階段規劃見 [migrate-from-cloud-sql-pg](../migrate-from-cloud-sql-pg/)）、不能當成 hotfix。預防勝於回退：在相容性 audit 階段就要把「未來可能需要哪種 dialect 的能力」一起評估、而不是只看當下的 SQL 通過率。
 
 ### 以為換了 PG dialect 就不用懂 Spanner 分散式語意
 

@@ -95,7 +95,7 @@ Escalation policy 多 step + level-based timeout 在 Opsgenie 是 *step-based es
 - Deduplication：PagerDuty `dedup_key` → Opsgenie `alias`（行為相同、欄位名不同）
 - Severity mapping：PagerDuty `severity`（info/warning/error/critical） → Opsgenie `priority`（P1-P5）
 
-這 phase 的工作量主要塊不是 schema 翻譯、是 *每個 integration 都要重新測 deduplication + severity*。新 integration key 配上去後第一週要密切監控、避免 dedup key 重設導致同事故開 100 個 incident。
+這 phase 的工作量主要在 *每個 integration 都要重新測 deduplication + severity*，而不是 schema 翻譯。新 integration key 配上去後第一週要密切監控、避免 dedup key 重設導致同事故開 100 個 incident。
 
 完成標準：所有 alert source 都接 Opsgenie、PagerDuty 端 alert volume 降為 0。
 
@@ -107,7 +107,7 @@ Escalation policy 多 step + level-based timeout 在 Opsgenie 是 *step-based es
 
 ### Phase 5：PagerDuty 退役 + Opsgenie → JSM EOL 路徑規劃
 
-PagerDuty 退役後立即進入 *Opsgenie 2027 EOL 倒數*。這 phase 不是 PD migration 的尾巴、是 *下一條 migration 的起點*：
+PagerDuty 退役後立即進入 *Opsgenie 2027 EOL 倒數*。這 phase 是 *下一條 migration 的起點*，而不只是 PD migration 的尾巴：
 
 - 2025-2026：Atlassian 推 JSM Premium 的 on-call 能力、提供 Opsgenie → JSM 遷移工具
 - 2026-2027：實際遷 Opsgenie → JSM、schedule / integration / API 改線

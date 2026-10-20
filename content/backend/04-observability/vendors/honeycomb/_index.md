@@ -40,7 +40,7 @@ Honeycomb 跟 metrics-aggregation 平台不同。子議題：
 
 - Event = 一個 trace span（包含 dozens of attributes）
 - 不預先 aggregate、查詢時 group by 任意 attribute
-- High-cardinality 不是問題、是設計目標
+- High-cardinality 是設計目標，而不是要避開的負擔
 - 對應 [4.C2 Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)
 
 ### Instrumentation

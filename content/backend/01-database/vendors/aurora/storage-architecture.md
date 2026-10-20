@@ -142,7 +142,7 @@ db.IO.aurora_storage_xx       # storage layer I/O 細節
 修：
 
 - benchmark 要跑壓力測試、不能只測單筆 latency
-- 寫入 latency 不是 Aurora 的核心賣點、是 *可預測的 read replica lag + 韌性* 才是
+- Aurora 的核心賣點是 *可預測的 read replica lag + 韌性*，而不是寫入 latency
 - DraftKings 6ms 寫入是 production reference：跨 AZ quorum 的物理下界、不是 Aurora 慢
 
 ### AZ-level outage 期間寫入 latency spike

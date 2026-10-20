@@ -54,14 +54,14 @@ terraform {
 
 跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/)：
 
-| 維度               | 評估                                              | 等級 |
-| ------------------ | ------------------------------------------------- | ---- |
-| Schema / API       | HCL 完全相容、CLI command 對映 (terraform → tofu) | Low  |
-| Operational model  | 同 workflow (init / plan / apply)                 | Low  |
-| Paradigm           | 同 IaC declarative                                | Low  |
-| Components         | 同 single binary                                  | Low  |
-| Application change | 無（不是 application、是 infrastructure tool）    | Low  |
-| Data topology      | 同 single state file backend                      | Low  |
+| 維度               | 評估                                                  | 等級 |
+| ------------------ | ----------------------------------------------------- | ---- |
+| Schema / API       | HCL 完全相容、CLI command 對映 (terraform → tofu)     | Low  |
+| Operational model  | 同 workflow (init / plan / apply)                     | Low  |
+| Paradigm           | 同 IaC declarative                                    | Low  |
+| Components         | 同 single binary                                      | Low  |
+| Application change | 無（換的是 infrastructure tool，與 application 無關） | Low  |
+| Data topology      | 同 single state file backend                          | Low  |
 
 6 維皆 Low → Type B drop-in。
 

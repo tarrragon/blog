@@ -16,7 +16,7 @@ TrueTime 的設計目的是消滅 single coordinator bottleneck、讓 OLTP 拿�
 
 傳統 OLTP（PostgreSQL、MySQL、Cloud SQL）跨節點交易要靠一個 coordinator 決定全局順序、coordinator 本身就是 bottleneck。`1x node = 1x throughput` 的線性擴展在 single-primary 模型撞牆、想 scale 只能往應用層 sharding 走、付管理 shard key / 跨 shard query / resharding 的代價。Spanner 換掉這條路徑：TrueTime 把 wall-clock 變成跨 datacenter 可比較的 *interval*、Paxos 把 coordinator 變成「拓樸感知的多 leader」（每個 [Range Sharding](/backend/knowledge-cards/range-sharding/) split 自己的 Paxos group 各自前進）、commit timestamp 用 TrueTime 對齊到 real-time 順序、不再需要一個全局 coordinator 串行所有 transaction。
 
-[Cloud Spanner planetary scale 案例](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)（Google Ads、Play、Search 等內部服務跑在 Spanner 上的規模數據）揭露的線性擴展證據：「2 nodes → 45K reads/sec、4 nodes → 90K reads/sec」是 Spanner 設計目標的直接證據、不只是 marketing 數字。這組數字揭露 Spanner external consistency 不是「加強版 serializable isolation」、是「coordinator 換拓樸」的 paradigm shift。寫到這裡讀者該意識到一件事：選 Spanner 不是選一個更貴更強的 SQL、是選一條 *把 coordinator 拆掉* 的 scaling 路徑。
+[Cloud Spanner planetary scale 案例](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)（Google Ads、Play、Search 等內部服務跑在 Spanner 上的規模數據）揭露的線性擴展證據：「2 nodes → 45K reads/sec、4 nodes → 90K reads/sec」是 Spanner 設計目標的直接證據、不只是 marketing 數字。這組數字揭露 Spanner external consistency 不是「加強版 serializable isolation」、是「coordinator 換拓樸」的 paradigm shift。寫到這裡讀者該意識到一件事：選 Spanner 是選一條 *把 coordinator 拆掉* 的 scaling 路徑，而不是選一個更貴更強的 SQL。
 
 **Dogfood 邊界**：planetary scale 案例是 Google 內部自用（dogfood）的數據、不是 customer-facing capacity 參考。「10 億 req/sec」是 Google 全使用者加總、不是單一 instance 配額；「2 nodes → 45K reads / 4 nodes → 90K reads」是 Google internal benchmark 揭露的線性擴展 *模式*、不是客戶 SLA 承諾。
 
@@ -26,7 +26,7 @@ TrueTime 的設計目的是消滅 single coordinator bottleneck、讓 OLTP 拿�
 
 跨 region OLTP 想保證「全球用戶看到的交易順序跟 wall clock 一致」、但 NTP 同步誤差動輒 10-100ms、足夠讓 region A 已 commit 的計費事件被 region B 看到一個更新的 timestamp 卻是舊狀態。讀者徵兆通常從這幾個地方浮現：分散式系統團隊在 Cloud SQL / Aurora 多 region 上做 read replica、發現「跨 region read 順序顛倒」、audit log timestamp 不可靠、reconcile [對帳](/backend/knowledge-cards/data-reconciliation/)對不上、業務以為自己用了 transaction 就有「強一致」、實際只有 single-node 的 serializable isolation。
 
-真實壓力場景：Google Ads 計費需要把每筆扣款事件放進可驗證的 *外部* 順序、不只是 transaction 內部 serializable。讀者若把這套需求帶回自家系統、會發現一條共同訊號 — 「兩個 transaction 都 commit 成功、用戶體感卻違反順序」這種事故、不是 isolation level 的問題、是 *external consistency* 的問題。
+真實壓力場景：Google Ads 計費需要把每筆扣款事件放進可驗證的 *外部* 順序、不只是 transaction 內部 serializable。讀者若把這套需求帶回自家系統、會發現一條共同訊號 — 「兩個 transaction 都 commit 成功、用戶體感卻違反順序」這種事故，成因在 *external consistency*，而不在 isolation level。
 
 Case anchor：[Cloud Spanner planetary scale 案例](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) — Google Ads / Play 訂閱 / Search 計費跟 TrueTime 綁定。這個案例的數字受〈商業邏輯先行〉一節的 dogfood 邊界約束：它們是設計目標的證據，不是客戶可獲得的配額。
 

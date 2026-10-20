@@ -50,7 +50,7 @@ SELECT data->'name' FROM events;
 SELECT data->>'name' FROM events;  -- 取出 text
 ```
 
-5 個 sample 看出 MySQL → PostgreSQL 主要工作是 *SQL dialect translation*；不是 5-10 個函數差、是 *跨整個 application SQL surface 的 audit + 改寫*。對應 [diff dimension audit](/report/content-structure-by-max-diff-dimension/) 結果：
+5 個 sample 看出 MySQL → PostgreSQL 主要工作是 *SQL dialect translation*；工作量是 *跨整個 application SQL surface 的 audit + 改寫*，而不只是 5-10 個函數差。對應 [diff dimension audit](/report/content-structure-by-max-diff-dimension/) 結果：
 
 | 維度                   | 評估                                                   | 等級     |
 | ---------------------- | ------------------------------------------------------ | -------- |

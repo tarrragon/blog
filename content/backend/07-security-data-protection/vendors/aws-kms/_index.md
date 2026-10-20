@@ -40,7 +40,7 @@ AWS KMS 的核心定位是 *AWS-only 的 multi-tenant managed key management*，
 
 **Key Origin（key material 來源）**：`AWS_KMS`（KMS 內部生成、預設）；`EXTERNAL`（BYOK、組織自己生成 key material、import 進 KMS、可以隨時 reimport 或刪除）；`AWS_CLOUDHSM`（Custom Key Store、key material 存在自己的 CloudHSM cluster）；`EXTERNAL_KEY_STORE`（XKS、AWS 外的 HSM、控制面在 AWS、key material 在 on-prem）。多數場景用 `AWS_KMS` 就夠、合規 / 主權需求才走 EXTERNAL / Custom Key Store。
 
-**Key Policy 跟 IAM 的雙層**：KMS 跟其他 AWS service 最大差異是 *Key Policy 是主要授權機制*、IAM policy 單獨不夠。Key Policy 必含 `arn:aws:iam::ACCOUNT_ID:root` 給 root principal（不是 root user、是讓 IAM 能參與授權的開關）— 沒這條 key 變孤兒、即使 IAM 開了 admin 也救不回來。production 通常分三類 statement：admin（Create / Delete / Schedule、走 break-glass）、user（Encrypt / Decrypt / GenerateDataKey、給 app）、monitor（Describe / List、給 SRE）。
+**Key Policy 跟 IAM 的雙層**：KMS 跟其他 AWS service 最大差異是 *Key Policy 是主要授權機制*、IAM policy 單獨不夠。Key Policy 必含 `arn:aws:iam::ACCOUNT_ID:root` 給 root principal（這是讓 IAM 能參與授權的開關，而不是 root user）— 沒這條 key 變孤兒、即使 IAM 開了 admin 也救不回來。production 通常分三類 statement：admin（Create / Delete / Schedule、走 break-glass）、user（Encrypt / Decrypt / GenerateDataKey、給 app）、monitor（Describe / List、給 SRE）。
 
 **Grant 是程式化短期授權**：service-to-service 整合（[Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/) rotation Lambda、RDS 自動加密、EBS volume attach）通常走 Grant 而不是改 Key Policy — 每個 grant 有自己的 grant token、可以帶 TTL、可以 `RetireGrant` / `RevokeGrant` 收回、不跟 key policy 永久綁定。沒治理時 grant 累積上千個 / 沒人 retire 是常見問題、跟 [Failure: Credential Rotation Without Scope](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) 同類 — 沒 scope map 等於沒治理。
 

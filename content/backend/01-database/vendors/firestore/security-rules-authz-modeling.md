@@ -20,7 +20,7 @@ tags: ["backend", "database", "firestore", "security-rules", "authorization"]
 
 Firestore Security Rules 是一套宣告式 DSL，掛在 `match` path 上、對每個讀寫請求求值。理解它要抓住四個跟後端授權不同的點：
 
-**規則不是 filter，是 allow/deny 判定**。一條 `allow read: if <condition>` 不會「只回傳符合條件的 document」——它是對「這次請求能不能執行」的布林判定。query 若可能讀到任何不符合規則的 document，整個 query 被拒絕，不是默默過濾。這逼著 client 的 query 必須自帶與規則一致的條件（例如 `where('ownerId', '==', uid)`），規則才放行。
+**規則是 allow/deny 判定，而不是 filter**。一條 `allow read: if <condition>` 不會「只回傳符合條件的 document」——它是對「這次請求能不能執行」的布林判定。query 若可能讀到任何不符合規則的 document，整個 query 被拒絕，不是默默過濾。這逼著 client 的 query 必須自帶與規則一致的條件（例如 `where('ownerId', '==', uid)`），規則才放行。
 
 **規則預設拒絕**。沒有 `match` 命中的 path 一律拒絕。`rules_version = '2'` 下，`match /{document=**}` 遞迴匹配所有 subcollection，要小心別用一條寬鬆的遞迴規則蓋掉底下該嚴格的 path。
 

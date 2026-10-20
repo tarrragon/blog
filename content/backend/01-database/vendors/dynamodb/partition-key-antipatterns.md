@@ -23,7 +23,7 @@ DynamoDB 把 capacity 抽象成 RCU / WCU、但底下仍是物理 partition。�
 - **Adaptive Capacity**：跨 partition 重新分配閒置容量、但 *單 partition 仍硬上限*；不解 single-key 集中
 - **Splitting on heat**：vendor 偵測 hot partition 後自動 split、有分鐘級延遲；突發流量來不及 split 就先 throttle
 
-Amazon Ads 揭露同一 frame：「容量 = 每 partition 上限 × partition 數量、最熱 partition saturation 是工程天花板」。Amazon Ads 90M reads/sec 不是把單 partition 推到極限、是 *partition key 設計讓流量散到極多 partition*、每個 partition 都在合理區間。
+Amazon Ads 揭露同一 frame：「容量 = 每 partition 上限 × partition 數量、最熱 partition saturation 是工程天花板」。Amazon Ads 90M reads/sec 靠的是 *partition key 設計讓流量散到極多 partition*、每個 partition 都在合理區間，而不是把單 partition 推到極限。
 
 對應 knowledge card：[hot partition](/backend/knowledge-cards/hot-partition/)、[database-sharding](/backend/knowledge-cards/database-sharding/)。
 
@@ -181,11 +181,11 @@ DynamoDB Streams：可用來抓 hot key debugging — 寫入事件落 Lambda 後
 
 ### Tixcraft 6750x 擴展的工程拆解
 
-Tixcraft 揭露的數字：IOPS 從 20 衝到 135K（6750 倍）、6 servers 變 800 servers、總成本 $4200、throttle rate 0.26%。但「6750x 擴展」不是 DynamoDB 自己的魔法、是 *partition key 均勻分散 + 架構解耦* 的組合結果：
+Tixcraft 揭露的數字：IOPS 從 20 衝到 135K（6750 倍）、6 servers 變 800 servers、總成本 $4200、throttle rate 0.26%。但「6750x 擴展」是 *partition key 均勻分散 + 架構解耦* 的組合結果，而不是 DynamoDB 本身的特性：
 
 - **partition key 均勻**：composite key（`event_id` 加分散 suffix）把單一熱門場次散到多個 partition、每個 partition 都在合理區間（case 揭露概念、未揭露具體 shard 數）
 - **架構解耦**：DynamoDB 當 durable queue、後端傳統 server（金流 / 票庫）用自己節奏消費、不被前端 130x 流量拖垮（見 [single-table-design-pattern](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) 的 durable queue 段）
-- **付款層獨立**：付款不是 DynamoDB、是另一層獨立服務、避免搶票流量影響付款
+- **付款層獨立**：付款由另一層獨立服務處理，不經過 DynamoDB，避免搶票流量影響付款
 
 讀者該學的不是「DynamoDB 能撐 6750x」、是「composite key + 架構解耦 + 服務分層」三件事一起做才能撐。
 

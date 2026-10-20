@@ -120,7 +120,7 @@ docker buildx build --builder multi --platform linux/amd64,linux/arm64 -t app .
 
 ### QEMU 模擬非原生架構很慢
 
-在 arm64 主機 build（或跑）amd64 image，BuildKit 靠 [QEMU binfmt 模擬](/backend/knowledge-cards/qemu-binfmt-emulation/)，效能明顯掉。這在跑舊服務時特別有感——例如 MySQL 5.7 沒有 arm64 原生 image，在 Apple Silicon 上只能 `platform: linux/amd64` 走模擬，啟動與運算都比原生慢。這不是壞掉、是模擬的固有成本。判讀：dev 階段可以忍模擬的慢（換來跟 amd64 prod 的架構對齊）；如果模擬慢到影響開發，考慮在原生架構的遠端 builder 上 build。實際應用見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/) 的 arm64 段。
+在 arm64 主機 build（或跑）amd64 image，BuildKit 靠 [QEMU binfmt 模擬](/backend/knowledge-cards/qemu-binfmt-emulation/)，效能明顯掉。這在跑舊服務時特別有感——例如 MySQL 5.7 沒有 arm64 原生 image，在 Apple Silicon 上只能 `platform: linux/amd64` 走模擬，啟動與運算都比原生慢。這是模擬的固有成本，而不是故障。判讀：dev 階段可以忍模擬的慢（換來跟 amd64 prod 的架構對齊）；如果模擬慢到影響開發，考慮在原生架構的遠端 builder 上 build。實際應用見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/) 的 arm64 段。
 
 ### secret 用錯機制，還是進了 layer
 

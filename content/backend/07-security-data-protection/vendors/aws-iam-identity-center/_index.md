@@ -6,7 +6,7 @@ weight: 4
 tags: ["backend", "security", "vendor", "aws-iam-identity-center", "aws-sso", "identity", "aws"]
 ---
 
-AWS IAM Identity Center 是 AWS 原生的 workforce SSO 控制面、前身為 AWS SSO（2022 改名）。它承擔三個責任：人類身份進 AWS 多帳號的 *統一入口*（Access Portal）、把使用者映射到各帳號 IAM role 的 *Permission Set* 模板、以及對少量已整合 SAML app 的 SSO gateway。它不是 AWS IAM 的替代品、是疊在 AWS IAM 之上的 *人類入口層*。
+AWS IAM Identity Center 是 AWS 原生的 workforce SSO 控制面、前身為 AWS SSO（2022 改名）。它承擔三個責任：人類身份進 AWS 多帳號的 *統一入口*（Access Portal）、把使用者映射到各帳號 IAM role 的 *Permission Set* 模板、以及對少量已整合 SAML app 的 SSO gateway。它是疊在 AWS IAM 之上的 *人類入口層*，而不是 AWS IAM 的替代品。
 
 ## 服務定位
 
@@ -40,7 +40,7 @@ IAM Identity Center 是 *人類身份進 AWS 的 portal*、不是 cloud resource
 
 **Identity Source 是根信任**：Identity Center 支援三種 user/group 來源 — 內建 store、AWS Managed AD / on-prem AD via AD Connector、外部 SAML IdP（Okta / Entra ID 等、SCIM 推進來）。選了之後 user lifecycle 從哪來就鎖死、換 Identity Source 是大工程（要重建所有 Permission Set assignment、舊 user GUID 不通用）。早期決定錯比 Permission Set 設錯難救。
 
-**Permission Set 是 cross-account role template**：定義一次、apply 到多 account、實際在每個 account 部署成一個 AWS-Reserved 命名的 IAM role。Permission Set 本身不是 role、是 *role 的部署模板* — 改 Permission Set 會 push 到所有 account 上對應的 role。Customer Managed Policy reference 比 inline policy 好維護、但要先確保每個 target account 都有同名 policy、否則 assignment 會失敗。
+**Permission Set 是 cross-account role template**：定義一次、apply 到多 account、實際在每個 account 部署成一個 AWS-Reserved 命名的 IAM role。Permission Set 本身是 *role 的部署模板*，而不是 role — 改 Permission Set 會 push 到所有 account 上對應的 role。Customer Managed Policy reference 比 inline policy 好維護、但要先確保每個 target account 都有同名 policy、否則 assignment 會失敗。
 
 **Account Assignment**：把 user/group 綁到 Permission Set + 特定 account 的三元組。這層用 group 而不是個別 user、跟著 Identity Source 的 group 變動自動同步。臨時權限（離職員工延長、incident 應變）走 access request workflow 或 IAM Access Analyzer + Just-in-Time、不要永久 assignment。
 

@@ -71,7 +71,7 @@ Conftest 是 OPA 生態中 *最輕量的 CI-time tool* — 拿一份 Rego policy
 
 **Bundle 從 OCI registry pull + 簽章驗證**：`conftest pull oci://registry.example.com/policy-bundle:v1.2.3` 從 OCI registry 拉 policy bundle、policy distribution 走 container image 同一套 supply chain。配 [Sigstore cosign](https://docs.sigstore.dev/) 簽章驗證、policy bundle 也走 [7.12 供應鏈完整性](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) 的 release gate 邏輯 — policy 本身就是 artifact、需要 signing + verification。
 
-**跟 [Trivy](/backend/07-security-data-protection/vendors/trivy/) Config 混用**：實務上 *Trivy Config 跑預設 rule*（CIS / NSA / OWASP baseline、開箱即用）+ *Conftest 跑客製 rule*（organization-specific：必須有特定 label、必須走特定 namespace、必須引用特定 ConfigMap）。兩者 CI 階段都跑、報表合併。不是二選一、是 baseline + custom 的分工。
+**跟 [Trivy](/backend/07-security-data-protection/vendors/trivy/) Config 混用**：實務上 *Trivy Config 跑預設 rule*（CIS / NSA / OWASP baseline、開箱即用）+ *Conftest 跑客製 rule*（organization-specific：必須有特定 label、必須走特定 namespace、必須引用特定 ConfigMap）。兩者 CI 階段都跑、報表合併。兩者是 baseline + custom 的分工，而不是二選一。
 
 **跟 admission 雙層**：CI 階段 Conftest fail 之外、cluster 也裝 [Gatekeeper](/backend/07-security-data-protection/vendors/gatekeeper/) 接 admission。Gatekeeper 用 ConstraintTemplate（也是 Rego）、同一份 Rego policy 理論上 CI / runtime 共用 — 但實務上 admission 場景跟 static check 場景的 input shape 不同（admission 拿 AdmissionReview object、static 拿 raw manifest）、policy 通常分兩份維護或寫 abstraction layer 共用。
 

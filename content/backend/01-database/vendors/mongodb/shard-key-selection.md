@@ -57,7 +57,7 @@ Chunk 是 MongoDB 在 collection 上劃出的邏輯區塊，6.0 起預設大小 
 
 - 18B transactions / 月 ÷ 30 天 ÷ 86400 秒 ≈ 7K txn/sec（口徑：月度滾動平均、非瞬時尖峰）
 - 單一 MongoDB cluster 完全撐得下這個吞吐
-- Toyota 切 20 個 Atlas database **不是吞吐切分**、是 *microservice ownership* + *blast radius* 切分
+- Toyota 切 20 個 Atlas database 是 *microservice ownership* + *blast radius* 切分，而不是吞吐切分
 - 「每個 microservice 擁有自己的 DB、單一 DB 故障不影響其他服務」
 
 兩條路徑的判讀條件不同：

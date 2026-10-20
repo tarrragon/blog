@@ -106,7 +106,7 @@ p999（千分之 1）對 GC stop-the-world、leader election、retry storm 敏�
 
 ## Saturation 文件化：容量地圖
 
-Saturation discovery 跑完之後、產出 *容量地圖* — 不是一個數字、是一張表。
+Saturation discovery 跑完之後、產出 *容量地圖* — 產出是一張表，而不是一個數字。
 
 容量地圖至少要回答：
 

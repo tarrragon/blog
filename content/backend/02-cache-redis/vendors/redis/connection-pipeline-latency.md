@@ -10,9 +10,9 @@ tags: ["backend", "cache", "redis", "connection", "pipeline", "latency", "deep-a
 
 ## 延遲不在 Redis、在往返
 
-把單一 `GET` 丟進 `redis-cli --latency`，會看到 server 端執行時間是微秒級。但 application 端的 APM 量到的 Redis 呼叫卻是 1-3ms。這個差距不是 Redis 變慢了，是網路往返（round-trip time，RTT）——命令從 application 送到 Redis、結果送回來，這趟來回就是毫秒級，而 Redis 的執行只佔其中一小部分。
+把單一 `GET` 丟進 `redis-cli --latency`，會看到 server 端執行時間是微秒級。但 application 端的 APM 量到的 Redis 呼叫卻是 1-3ms。這個差距來自網路往返（round-trip time，RTT），而不是 Redis 變慢——命令從 application 送到 Redis、結果送回來，這趟來回就是毫秒級，而 Redis 的執行只佔其中一小部分。
 
-這個認知翻轉了 Redis 優化的方向：當你的服務每個請求要打 10 個 Redis 命令，瓶頸不是 Redis 的吞吐，是 10 次 RTT 疊加成 10-30ms。pipelining 常被講成「批次發命令省效能」，但它真正消除的是 RTT 稅——把 10 次往返打包成 1 次往返，server 端執行時間幾乎不變，但 application 端延遲從 10×RTT 降到 1×RTT。
+這個認知翻轉了 Redis 優化的方向：服務的每個請求要打 10 個 Redis 命令時，瓶頸是 10 次 RTT 疊加成的 10-30ms，而不是 Redis 的吞吐。pipelining 常被講成「批次發命令省效能」，但它真正消除的是 RTT 稅——把 10 次往返打包成 1 次往返，server 端執行時間幾乎不變，但 application 端延遲從 10×RTT 降到 1×RTT。
 
 對每次互動要查多個 cache 的服務，這筆 RTT 稅是延遲預算的主要支出。[Snap 在 multi-cloud 架構下的痛點](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/)正是這個放大版：application 在一個 cloud、cache 在另一個，每次 lookup 多吃 5-30ms 跨 cloud RTT，「5ms × 10 cache lookup = 50ms 額外延遲」。Snap 把 KeyDB 部署到同 cloud 減少跨 cloud RTT，本質就是降低往返稅。本文處理 RTT 的會計、連線池配置與 pipeline 的正確使用。
 

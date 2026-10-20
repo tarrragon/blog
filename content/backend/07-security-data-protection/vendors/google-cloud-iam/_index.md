@@ -49,7 +49,7 @@ Google Cloud IAM 的核心抽象是 *role binding on a resource scope*：把 rol
 
 **Service Account key（避免）**：user-managed JSON key 是 long-lived credential、無 TTL、無 IP 限制、外洩偵測難。應該以 Workload Identity Federation 或 Service Account Impersonation 取代；若必須用、走 Organization Policy `iam.disableServiceAccountKeyCreation` 預設禁用、例外申請走 ticket、key 進 [Secret Management](/backend/knowledge-cards/secret-management/)、季度盤點未使用 key 刪除。
 
-**Organization Policy（guardrail）**：跟 IAM 完全不同層 — 不是 grant、是 *限制可以做什麼設定*。常用 constraint：`iam.disableServiceAccountKeyCreation`、`iam.allowedPolicyMemberDomains`（限制只能 grant 給特定 domain 的 principal）、`compute.vmExternalIpAccess`（限制 VM external IP）、`storage.publicAccessPrevention`。Org Policy 在 Organization / Folder / Project 層設定、IAM 即使想 grant 也擋得住。
+**Organization Policy（guardrail）**：跟 IAM 完全不同層 — 它 *限制可以做什麼設定*，而不是 grant 權限。常用 constraint：`iam.disableServiceAccountKeyCreation`、`iam.allowedPolicyMemberDomains`（限制只能 grant 給特定 domain 的 principal）、`compute.vmExternalIpAccess`（限制 VM external IP）、`storage.publicAccessPrevention`。Org Policy 在 Organization / Folder / Project 層設定、IAM 即使想 grant 也擋得住。
 
 **Audit / handoff**：Admin Activity Log 預設開、不能關、保留 400 天免費；Data Access Log 預設關、開了會大量 log（也大量計費）— 對 sensitive resource（KMS key access、BigQuery dataset read、Secret Manager access）應該手動開；System Event Log 補基礎設施事件。三類都接 Cloud Logging sink 推到 SIEM、特別 alert 三件事 — IAM policy 變更、Service Account key 建立 / 上傳、Workload Identity Pool / Provider 變更。
 

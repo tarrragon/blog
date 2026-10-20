@@ -43,7 +43,7 @@ LLM 服務累積的 log / cache 比一般 service 多幾類載體：
 | Context cache / RAG   | 持久化的 context、embedding cache                      | 高、含原始文件內容                 |
 | Telemetry / metric    | tokens / cost / model / latency 等聚合                 | 一般、用 tenant tag 隔離           |
 
-跟一般 service 的差異點：**Prompt log / Response log 是新類別**、它們含的不是 API meta-data、是使用者實際的「想法 / 內容」、隱私敏感度遠高於一般 API log。
+跟一般 service 的差異點：**Prompt log / Response log 是新類別**、它們含的是使用者實際的「想法 / 內容」，而不是 API meta-data，隱私敏感度遠高於一般 API log。
 
 ## 分析模型
 

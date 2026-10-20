@@ -14,7 +14,7 @@ Global Tables 用 LWW 在 region 之間非同步複寫，多個 region 同時寫
 
 ## B2B SaaS vs B2C 業務 driver 對比
 
-Global Tables 不是預設選擇、是 *業務性質* 決定的工程投資。Genesys 揭露兩條關鍵 frame — 可用性目標的業務 driver、跟每多一個 9 的 cost 指數成長。
+Global Tables 是 *業務性質* 決定的工程投資，而不是預設選擇。Genesys 揭露兩條關鍵 frame — 可用性目標的業務 driver、跟每多一個 9 的 cost 指數成長。
 
 | 業務性質     | 典型可用性目標           | 年停機容忍           | Multi-region 投資邏輯                           |
 | ------------ | ------------------------ | -------------------- | ----------------------------------------------- |
@@ -26,7 +26,7 @@ Global Tables 不是預設選擇、是 *業務性質* 決定的工程投資。Ge
 
 **B2B SaaS** 99.95% 或 99.99% SLA 多半寫進合約、違約有具體金錢損失；Global Tables 的 N region cost 對比 SLA 違約成本通常 ROI 正向。critical 的是 *合約義務* 不是 *技術完美*。
 
-**客服平台類** 99.999% 是極端可用性目標、年停機 5.26 分鐘、Genesys 撐 8000+ orgs 的客服平台、客戶停線損失極大、跨 15 region 的 active-active 是合理投資。但 *不是每個 SaaS 都該追 99.999%*、是 *業務性質決定下限*。
+**客服平台類** 99.999% 是極端可用性目標、年停機 5.26 分鐘、Genesys 撐 8000+ orgs 的客服平台、客戶停線損失極大、跨 15 region 的 active-active 是合理投資。但 *業務性質決定下限*，並非每個 SaaS 都該追 99.999%。
 
 **成本對比**（Genesys 案例揭露）：15 region 成本約 = 1 region 的 15x（base table cost）+ 跨 region replication WCU。每多一個 9、容量規劃跟運維成本指數成長。
 

@@ -67,7 +67,7 @@ application change 看起來工作量最大（consumer / producer 都要改）�
 
 ## Migration 結構：application 重設計 + 部分 cutover + 長期混合
 
-RabbitMQ → Kafka 不是一次性 cutover，是按 workload 拆分、漸進遷移、長期共存：
+RabbitMQ → Kafka 是按 workload 拆分、漸進遷移、長期共存，而不是一次性 cutover：
 
 1. **Phase 0：workload 盤點** — 把現有 queue / exchange 逐一分類「適合 Kafka（event 性質）」vs「保留 RabbitMQ（task 性質）」。盤點輸出是清單，不是「全遷」。
 2. **Phase 1：application code 重設計** — 對判定要遷的 workload，重寫 producer（exchange routing → topic + partition key）跟 consumer（manual ack → offset commit + 自管重試 / DLQ）。這是 paradigm 翻譯，不是 SDK 替換。

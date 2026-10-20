@@ -216,7 +216,7 @@ Shadow read 的判讀重點：
 
 對應 [Zomato TiDB → DynamoDB migration](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — migration 期間用 shadow read 持續驗證 mapping 規則、抓到 mapping drift。
 
-Dual-write 跟 shadow read 的選擇不是互斥、是依風險組合：
+Dual-write 跟 shadow read 依風險組合使用，兩者並不互斥：
 
 | 風險場景                         | 建議組合                                                  |
 | -------------------------------- | --------------------------------------------------------- |

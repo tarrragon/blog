@@ -48,7 +48,7 @@ document / KV / multi-model NoSQL 的 vendor selection，核心責任是把讀�
 KV 適用度的核心判讀是 *partition key 天然均勻度*。partition key 不均勻會讓 vendor 廣告的「scale infinitely」變成「scale 到 hot partition 為止」、單一 logical key 流量超過該 partition 上限就 throttle 或 latency spike。
 
 - **天然均勻 PK + 穩定 access pattern**（meeting_id / player_id / message_id / user_id）→ DynamoDB / Cosmos DB Table API 適用、PK 不需 composite key 修補。Amazon Ads 用 ad_id 撐 90M reads/sec、Zoom 用 meeting_id、Capcom 用 player_id、PayPay 用 message_id、Disney+ 用 user_id — 五個 case 都揭露同一 frame：*業務天然存在均勻 key 時 KV 是最自然的選擇*。
-- **天然不均勻 PK**（event_id 一場演唱會集中 / date 時間序集中）→ 需 composite key 或 write sharding 修補。Tixcraft用 `event_id + user_id_hash` composite key 把單一熱門演唱會的 6750x spike 攤平到 partition 上 — 不是 DynamoDB 自身彈性、是 partition key 均勻分散的結果。
+- **天然不均勻 PK**（event_id 一場演唱會集中 / date 時間序集中）→ 需 composite key 或 write sharding 修補。Tixcraft用 `event_id + user_id_hash` composite key 把單一熱門演唱會的 6750x spike 攤平到 partition 上 — 這是 partition key 均勻分散的結果，而不是 DynamoDB 自身彈性。
 - **Access pattern 變動頻繁**（探索期、< 5 種 query 還會增加）→ 不適合 DynamoDB single-table design、回 RDB。Single-table 把 access pattern 編進 PK / SK 結構、增加新 query 等於改 schema、改 schema 等於重新 load 資料、成本不對。
 
 KV 適用度判讀的延伸細節（hot partition 反模式 / composite key 設計 / adaptive capacity）見 [DynamoDB partition key antipatterns](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)。
@@ -65,7 +65,7 @@ Consistency 需求的核心判讀是 *跨 partition / 跨 region transaction 是
 
 > 這三種路徑是從 Coinbase、Forbes、Microsoft 365三個案例歸納的共通結構，不是單一案例直接揭露。
 
-讀者進來時通常不是綠地、是 *既有系統演進*。這三種遷移路徑的風險、ROI、適用條件完全不同、選錯路徑會推到錯的 vendor。
+讀者進來時面對的通常是 *既有系統演進*，而不是綠地。這三種遷移路徑的風險、ROI、適用條件完全不同、選錯路徑會推到錯的 vendor。
 
 ### 保留原 DB + 補周邊工具
 
@@ -100,7 +100,7 @@ MongoDB → Cosmos DB MongoDB API、或 MongoDB → DocumentDB — wire protocol
 
 **Scope warning（Microsoft 365 dogfood）**：Microsoft 365 是 Microsoft 自家 dogfood、case 沒揭露具體 throughput / latency / cost 數字。dogfood 是 *高權重 selection signal*（雲商賭自家旗艦產品）、但 *不是 production benchmark*（沒公開數字可比對）。引用要明示「dogfood signal」而非「production proof」。
 
-**Scope warning（100% wire compat）**：Cosmos DB MongoDB API 廣告「100% wire compatibility」是 *vendor 行銷話術*、實際是「在某些 query pattern 下相容」。遷移時必須 *dual-write per query pattern* 驗證 — 不是看 vendor 文件 spec list、是用 production query corpus 跑一遍實測行為。遷移前的相容性盤點 checklist 應列出 unsupported aggregation stage、transaction edge case、index behavior 差異、change stream 跟 Change Feed 對應關係。
+**Scope warning（100% wire compat）**：Cosmos DB MongoDB API 廣告「100% wire compatibility」是 *vendor 行銷話術*、實際是「在某些 query pattern 下相容」。遷移時必須 *dual-write per query pattern* 驗證 — 用 production query corpus 跑一遍實測行為，而不是看 vendor 文件 spec list。遷移前的相容性盤點 checklist 應列出 unsupported aggregation stage、transaction edge case、index behavior 差異、change stream 跟 Change Feed 對應關係。
 
 延伸 Cosmos DB MongoDB API vs SQL API 選型見 [Cosmos DB MongoDB API vs SQL API](/backend/01-database/vendors/cosmosdb/mongodb-api-vs-sql-api/)。
 
@@ -136,7 +136,7 @@ Coinbase、Toyota Connected、Forbes 三個案例揭露的共同 frame 是：**�
 
 ### System role：control plane vs data plane
 
-DynamoDB 在 surge 場景能撐 nearly infinitely 不是 DynamoDB 自己神奇、是 *系統架構解耦* 的結果：
+DynamoDB 在 surge 場景能吸收 nearly infinitely 的寫入，是 *系統架構解耦* 的結果，而不是 DynamoDB 本身的特性：
 
 - **Control plane（metadata、state、user record）**：DynamoDB / MongoDB / Cosmos DB 適合 — 流量是 small payload + high QPS pattern
 - **Data plane（影音、大型 BLOB、media stream）**：CDN / S3 / object storage、*不在 DB3 範圍* — 流量是 large payload + bandwidth-bound
@@ -181,7 +181,7 @@ DynamoDB 在 surge 場景能撐 nearly infinitely 不是 DynamoDB 自己神奇�
 
 訊號：access pattern 還在探索期、5+ 種 query 還會增加、強一致 cross-partition transaction 是產品契約。應回 PostgreSQL / Aurora、不是繼續加碼 DynamoDB single-table design。
 
-DynamoDB 的 *正確* 用法包含 control plane KV（Zoom / Disney+ / Capcom）跟 durable queue / write buffer（Tixcraft 揭露的非 OLTP 正向用例）— DynamoDB 接「訂單」寫入、不是即時生效、是讓 traditional server（金流 / 票庫）用自己能承受的速度消費。這層解耦讓「前端可以擴 130 倍、後端不用同步擴」。
+DynamoDB 的 *正確* 用法包含 control plane KV（Zoom / Disney+ / Capcom）跟 durable queue / write buffer（Tixcraft 揭露的非 OLTP 正向用例）— DynamoDB 接「訂單」寫入，讓 traditional server（金流 / 票庫）用自己能承受的速度消費，寫入不會即時生效。這層解耦讓「前端可以擴 130 倍、後端不用同步擴」。
 
 ### 把 MongoDB 當 KV
 

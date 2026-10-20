@@ -35,7 +35,7 @@ printf 'set k1 0 0 5\r\nhello\r\nstats slabs\r\nquit\r\n' | nc localhost 11211 |
 
 **page 分配是單向的**。當某個 class 需要空間，Memcached 給它一個 1MB 的 page，切成該 class 的 chunk。這個 page 預設永久屬於這個 class——這就是 calcification 的來源。`-o slab_automove` 與手動 `slabs reassign` 可以把 page 在 class 間搬移，但預設行為偏保守。
 
-**LRU 是 per-slab-class 的**。淘汰不是全域的，是每個 slab class 維護自己的 LRU。所以「class 2 滿了開始淘汰、但 class 5 有空閒 page」是正常現象——淘汰看的是該 class 自己的空間，不是全域記憶體。
+**LRU 是 per-slab-class 的**。淘汰以 slab class 為單位，每個 slab class 維護自己的 LRU，而不是全域淘汰。所以「class 2 滿了開始淘汰、但 class 5 有空閒 page」是正常現象——淘汰看的是該 class 自己的空間，不是全域記憶體。
 
 這三點合起來解釋了開頭的悖論：evict 發生在某個 class 內，跟全域剩餘記憶體無關。
 

@@ -78,7 +78,7 @@ Gitleaks 的核心定位是 *git-aware secret scan 的 CLI 原語*、不是 secr
 
 **跟 SARIF + GHAS Code Scanning 整合補位**：Gitleaks CI 跑完輸出 SARIF、用 `github/codeql-action/upload-sarif` 上傳到 GHAS Code Scanning。GHAS Code Scanning 不限 CodeQL 來源、任何 SARIF tool 都收。意義是 *OSS scanner + GHAS dashboard* 是預算友善組合 — 不買 GHAS Secret Scanning license、但 finding 集中在 Security tab 跟 SAST 共看。對應 [GHAS Advanced Security](/backend/07-security-data-protection/vendors/github-advanced-security/) 的 Code Scanning section。
 
-**跟 Vault 自動 rotation pipeline**：Gitleaks 找到 leak 不是終點、是 *rotation trigger*。CI 把 finding 推 SOAR（或自家 webhook）、SOAR 呼叫 [Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/) API 對該 credential type rotate（dynamic credential 直接 revoke、static secret 換新版本）、再 broadcast 給依賴該 secret 的 service rolling restart。沒這條 pipeline、Gitleaks 只是 finding 列表沒實際治理價值。
+**跟 Vault 自動 rotation pipeline**：Gitleaks 找到 leak 是 *rotation trigger*，而不是終點。CI 把 finding 推 SOAR（或自家 webhook）、SOAR 呼叫 [Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/) API 對該 credential type rotate（dynamic credential 直接 revoke、static secret 換新版本）、再 broadcast 給依賴該 secret 的 service rolling restart。沒這條 pipeline、Gitleaks 只是 finding 列表沒實際治理價值。
 
 **Allowlist 治理（FP 不能無限）**：OSS 沒 validation endpoint、test fixture / mock token / sample config 一定觸發 FP。allowlist 治理三原則 — *每個 entry 帶 reason + owner + expire date*、*PR review 必問「為什麼 FP」*、*quarterly audit 刪過期項目*。沒這個治理 allowlist 會在 6–12 個月內膨脹到「半個 repo 都在白名單」、那時候 rule 已經沒用、refactor 成本比一開始嚴格更高。
 

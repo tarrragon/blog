@@ -46,7 +46,7 @@ Forecast 必須有 *誤差範圍*、不能單一數字。給上下界（最壞 /
 
 ## Headroom budget 設計
 
-Headroom 不是 over-provisioning 浪費、是容量規劃的安全邊界。常見比例 30-50%、按 saturation 行為跟工作負載敏感度調整。
+Headroom 是容量規劃的安全邊界，而不是 over-provisioning 浪費。常見比例 30-50%、按 saturation 行為跟工作負載敏感度調整。
 
 **為什麼是 30-50% 而不是 10%**：
 

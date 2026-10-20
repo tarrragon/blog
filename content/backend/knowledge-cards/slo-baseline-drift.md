@@ -9,7 +9,7 @@ SLO baseline drift 的核心概念是「SLO 訂了不是永遠不動 — 業務�
 
 ## 概念位置
 
-SLO drift 來源：structural surge（COVID 類外部衝擊讓 baseline 永久上移）、product change（新 feature 改變用戶 journey）、architectural improvement（DB 換型、cache 加強、CDN 擴點）、user behavior（mobile share 上升、跨 region 比例變化）。drift 不是 anomaly、是 *新常態*。可先對照 [SLI / SLO](/backend/knowledge-cards/sli-slo/)。
+SLO drift 來源：structural surge（COVID 類外部衝擊讓 baseline 永久上移）、product change（新 feature 改變用戶 journey）、architectural improvement（DB 換型、cache 加強、CDN 擴點）、user behavior（mobile share 上升、跨 region 比例變化）。drift 是 *新常態*，而不是 anomaly。可先對照 [SLI / SLO](/backend/knowledge-cards/sli-slo/)。
 
 ## 可觀察訊號與例子
 

@@ -12,7 +12,7 @@ tags: ["backend", "deployment", "docker", "upgrade", "versioning"]
 
 第一次要升版時，常見的問法是：「怎麼在不動原本 image 的前提下升級它？」這個問法裡藏了一個誤解——它假設「升級一個 image」是一個動作、而且會動到原本的 image。兩個假設都不成立。
 
-[image 是不可變的](/backend/knowledge-cards/immutable-image/)：你改 Dockerfile（`FROM php:8.2-fpm`）、`docker build`，得到的是一個**全新的 image、新的 tag**。原本的 image 動不到——不是你努力「不動它」，是它按設計就改不了。所以「不動原本映象」不是要小心維護的條件，是預設狀態。真正要花力氣的地方相反：怎麼**標清楚新舊、留得住舊版的定義、需要時切回去**。這篇講的就是這個管理面。
+[image 是不可變的](/backend/knowledge-cards/immutable-image/)：你改 Dockerfile（`FROM php:8.2-fpm`）、`docker build`，得到的是一個**全新的 image、新的 tag**。原本的 image 動不到——不是你努力「不動它」，是它按設計就改不了。所以「不動原本映象」是預設狀態，而不是要小心維護的條件。真正要花力氣的地方相反：怎麼**標清楚新舊、留得住舊版的定義、需要時切回去**。這篇講的就是這個管理面。
 
 ## 升級的實際步驟：複製、改 FROM、並跑對照
 

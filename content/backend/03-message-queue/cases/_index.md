@@ -6,7 +6,7 @@ weight: 80
 tags: ["backend", "message-queue", "case-study"]
 ---
 
-這個資料夾的核心責任是把 broker、queue 與語義治理的轉換壓力落到可執行判讀、並提供各 vendor 的真實 production case 庫支撐撰寫。案例不是事後舉例、是寫作 finding 的 source — 章節該討論的議題從 case 反推、不是先寫章節再找案例填。
+這個資料夾的核心責任是把 broker、queue 與語義治理的轉換壓力落到可執行判讀、並提供各 vendor 的真實 production case 庫支撐撰寫。案例是寫作 finding 的 source，而不是事後舉例 — 章節該討論的議題從 case 反推、不是先寫章節再找案例填。
 
 ## 通用案例（跨 vendor / 反例 / 規模對照）
 

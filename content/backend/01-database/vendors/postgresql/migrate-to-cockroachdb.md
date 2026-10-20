@@ -73,7 +73,7 @@ SRE 心智模型完全重訓：*無 primary 概念 / 無 streaming lag 概念 / 
 
 ## Migration 流程（混合形態）
 
-不是線性 phased、是 *phased + parallel + partial* 混合：
+流程是 *phased + parallel + partial* 混合，而不是線性 phased：
 
 ```text
 Phase 0: scope 判讀

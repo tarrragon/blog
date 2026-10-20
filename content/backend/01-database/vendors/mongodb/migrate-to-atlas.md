@@ -8,7 +8,7 @@ tags: ["backend", "database", "mongodb", "atlas", "managed", "migration", "type-
 
 這篇整理從 self-managed MongoDB 遷到 MongoDB Atlas 的 [migration](/backend/knowledge-cards/migration/) playbook：self-managed MongoDB 與 Atlas 在哪些面向相容、哪些 operational 面向要整套重建，遷移的階段與每個階段之間的 [migration gate](/backend/knowledge-cards/migration-gate/)（前一階段的驗證條件），cutover 的步驟，以及連線數、IP access list、backup retention、IAM token、billing 這幾類 production 踩雷。MongoDB 的服務定位在 [MongoDB](/backend/01-database/vendors/mongodb/)。
 
-## Atlas 不是 MongoDB + managed、是另一個 product
+## Atlas 與自管 MongoDB 的產品差異
 
 Atlas 與 self-managed MongoDB 在資料層相容：
 
@@ -91,7 +91,7 @@ Atlas tier mapping:
 - Cross-region replication add-on
 ```
 
-Atlas 不是 *自由 instance class*、是 *固定 tier*；workload 跨 tier 邊界時要選 *上一級* 而不是 push 下一級。
+Atlas 提供的是 *固定 tier*，而不是 *自由 instance class*；workload 跨 tier 邊界時要選 *上一級* 而不是 push 下一級。
 
 ### Connection pattern audit
 

@@ -12,7 +12,7 @@ tags: ["backend", "database", "postgresql", "timescaledb", "time-series", "exten
 
 ## TimescaleDB 是 PG 的 *Time-Series Specialization*
 
-TimescaleDB 不是獨立 DB、是 PG extension：
+TimescaleDB 是 PG extension，而不是獨立 DB：
 
 ```sql
 CREATE EXTENSION timescaledb;

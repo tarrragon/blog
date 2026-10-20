@@ -76,7 +76,7 @@ Standard Chartered 與 DraftKings 是反向佐證：金融帳本 / 博彩這類�
 
 ### 為什麼這是「升級門檻」而非「遷移」
 
-standard Aurora → DSQL 不是版本升級、是 paradigm 切換。Aurora PG/MySQL 用得好好的，不代表「升級到 DSQL 會更好」——多數情況會更差（失去 extension、交易要改、相容性縮窄）。只有 workload 真的需要 active-active multi-region write 或撞到 single-writer 上限，跨過去才划算。這跟「PostgreSQL major version upgrade」（同 paradigm、向後相容）是完全不同性質的決策。
+standard Aurora → DSQL 是 paradigm 切換，而不是版本升級。Aurora PG/MySQL 用得好好的，不代表「升級到 DSQL 會更好」——多數情況會更差（失去 extension、交易要改、相容性縮窄）。只有 workload 真的需要 active-active multi-region write 或撞到 single-writer 上限，跨過去才划算。這跟「PostgreSQL major version upgrade」（同 paradigm、向後相容）是完全不同性質的決策。
 
 ### Sibling 與 cross-link
 

@@ -14,7 +14,7 @@ SQS 跟 Pub/Sub 都是 cloud-managed 非同步訊息服務、都解「解耦 pro
 
 差別在 *消費抽象* 跟 *資料拓樸*。SQS 的核心實體是 queue：一條 region-scoped 的訊息隊列、訊息被一個 consumer 領走（in-flight）就對其他 consumer 隱形、處理完 DeleteMessage 就消失。要讓同一筆事件送給多個下游、SQS 端的做法是在 SNS 前面 fan-out、再各接一條 SQS queue。Pub/Sub 的核心實體是 topic + subscription 兩層：topic 收訊息、subscription 是 *first-class* 的消費端點、一個 topic 可掛 N 個 subscription、每個 subscription 各自維護消費進度、fan-out 是模型內建而不是外接。
 
-這個差別決定了遷移的形狀。如果原系統只是「一條 queue、一群 worker 競爭領取」、那 Pub/Sub 端是「一個 topic、一個 pull subscription」、對位乾淨、application 改動小。如果原系統靠 SNS-to-many-SQS 做扇出、那 Pub/Sub 端是「一個 topic、多個 subscription」、整個 fan-out 拓樸要重畫、這不是換 SDK、是重設計訊息流。先判斷自己屬於哪一種、再決定 playbook 的重量。
+這個差別決定了遷移的形狀。如果原系統只是「一條 queue、一群 worker 競爭領取」、那 Pub/Sub 端是「一個 topic、一個 pull subscription」、對位乾淨、application 改動小。如果原系統靠 SNS-to-many-SQS 做扇出、那 Pub/Sub 端是「一個 topic、多個 subscription」、整個 fan-out 拓樸要重畫、這是重設計訊息流，而不只是換 SDK。先判斷自己屬於哪一種、再決定 playbook 的重量。
 
 ## 為什麼會跨雲遷這條路徑
 
@@ -70,7 +70,7 @@ SQS visibility timeout 預設 30 秒、上限 12 小時、consumer 要延長就�
 
 ### Long polling → streaming pull
 
-這一組不是等價對位、是機制不同。SQS long polling 是 consumer 發一個 ReceiveMessage 請求、最多等 20 秒、有訊息就回、沒有就空回、本質仍是 *輪詢*、只是把空輪詢的頻率降下來省 cost。Pub/Sub 的 pull 在 client library 預設是 *streaming pull*：consumer 跟 Pub/Sub 建一條長連線、訊息一到就推過來、不是 consumer 反覆問。
+這一組的機制不同，不能等價對位。SQS long polling 是 consumer 發一個 ReceiveMessage 請求、最多等 20 秒、有訊息就回、沒有就空回、本質仍是 *輪詢*、只是把空輪詢的頻率降下來省 cost。Pub/Sub 的 pull 在 client library 預設是 *streaming pull*：consumer 跟 Pub/Sub 建一條長連線、訊息一到就推過來、不是 consumer 反覆問。
 
 對位時不要把 long polling 的「WaitTimeSeconds 20 秒」翻譯成某個 Pub/Sub 參數 — 沒有對應參數、因為機制不同。要關注的是 flow control：streaming pull 因為訊息會主動推來、要用 MaxOutstandingMessages / MaxAckPending 控制同時在處理的訊息量、否則 consumer 會被一次塞太多訊息壓垮。SQS 端「一次拉最多 10 條」的批次節流、在 Pub/Sub 端變成 flow control 設定。[Spotify autoscaling 的案例](/backend/03-message-queue/cases/pubsub-spotify-autoscaling-consumers/)揭露了相關陷阱：下游失敗時 consumer 不 ack 仍持續消耗 CPU、autoscaling 反而把資源越拉越高 — autoscale 訊號要看處理成功率、不是 backlog 加 CPU。
 

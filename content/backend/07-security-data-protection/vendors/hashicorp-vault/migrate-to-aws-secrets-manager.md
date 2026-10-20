@@ -188,7 +188,7 @@ secret = sm.get_secret_value(SecretId='myapp/db')['SecretString']
 1. **設 cache TTL 短於 rotation interval**：rotation 24 小時、cache TTL 1 小時、最壞情況 1 小時 stale
 2. **顯式 cache invalidation**：rotation Lambda 跑完發 SNS、application subscribe 主動 refresh
 3. **Connection-level retry**：DB connection 認證失敗時 application 重 fetch secret 跟重連
-4. **重新評估 rotation cadence**：AWS Lambda rotation 不是 *Vault dynamic*、是 *scheduled rotation*；不能假設兩者同 semantic
+4. **重新評估 rotation cadence**：AWS Lambda rotation 是 *scheduled rotation*，而不是 *Vault dynamic*；不能假設兩者同 semantic
 
 ### Case 3：Audit log 結構差、SOC dashboard 失效
 
@@ -218,7 +218,7 @@ secret = sm.get_secret_value(SecretId='myapp/db')['SecretString']
 
 **徵兆**：DR drill 切 region 後、application 連不到 secret；發現 us-west-2 的 Secrets Manager 沒有 us-east-1 的 secret。
 
-**根因**：AWS Secrets Manager 不是 *global resource*、是 *region-scoped*；Vault 自管 multi-DC replication；cutover 漏設 *cross-region replication*。
+**根因**：AWS Secrets Manager 是 *region-scoped*，而不是 *global resource*；Vault 自管 multi-DC replication；cutover 漏設 *cross-region replication*。
 
 **修法**：
 

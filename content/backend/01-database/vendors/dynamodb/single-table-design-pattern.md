@@ -211,7 +211,7 @@ DynamoDB 不是 universal store、不是 SQL 替代品。3 個 case 重複揭露
 
 Tixcraft 揭露 DynamoDB 的另一種正向用法 — *寫入緩衝層*、不是 OLTP：
 
-- 拓元用 DynamoDB 接「訂單」寫入、不是即時生效、是讓 traditional server（金流 / 票庫）用自己能承受的速度消費
+- 拓元用 DynamoDB 接「訂單」寫入，讓 traditional server（金流 / 票庫）用自己能承受的速度消費，寫入不會即時生效
 - 架構上 DynamoDB 扮演 durable queue、不是傳統 OLTP DB；這層解耦讓「前端可擴 130 倍、後端不用同步擴」
 - 對比 RDBMS：RDB 寫入要即時可讀、即時索引、即時 transaction commit；DynamoDB 寫入可以「先 durable、之後處理」
 - 採用時要在設計文件寫明：這是 *非預設* access pattern、是 flash-sale / 高峰寫入解耦的工程選擇、不是 DynamoDB 預設定位

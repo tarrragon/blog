@@ -101,7 +101,7 @@ PagerDuty incident.trigger → incident.io 開 channel、但 PagerDuty 上 incid
 
 ### 2. Severity 翻譯失真
 
-PagerDuty 的 P1-P5 跟 incident.io 的 SEV1-SEV4 不是 5:4 對應、是兩個獨立 schema。同一個事故在 PagerDuty 是 P2（高優先但非全面 outage）、進 incident.io 可能變 SEV2（部分服務影響）或 SEV1（依 incident.io custom severity 定義）。Phase 1 雙系統並行時 SRE 在 Slack 看到 SEV1 跑進 war room mode、PagerDuty 同 incident 是 P2 沒拉 stakeholder bridge — 同事故兩邊嚴重度不同步、回應節奏錯亂。修法是事先寫死 mapping table（PD P1 → IO SEV1、PD P2 → IO SEV2、不 case-by-case 判斷），並在 Phase 3 後讓 incident.io severity 變唯一 source of truth。
+PagerDuty 的 P1-P5 跟 incident.io 的 SEV1-SEV4 是兩個獨立 schema，而不是 5:4 對應。同一個事故在 PagerDuty 是 P2（高優先但非全面 outage）、進 incident.io 可能變 SEV2（部分服務影響）或 SEV1（依 incident.io custom severity 定義）。Phase 1 雙系統並行時 SRE 在 Slack 看到 SEV1 跑進 war room mode、PagerDuty 同 incident 是 P2 沒拉 stakeholder bridge — 同事故兩邊嚴重度不同步、回應節奏錯亂。修法是事先寫死 mapping table（PD P1 → IO SEV1、PD P2 → IO SEV2、不 case-by-case 判斷），並在 Phase 3 後讓 incident.io severity 變唯一 source of truth。
 
 ### 3. Schedule layer 漏 holiday override / restriction layer
 

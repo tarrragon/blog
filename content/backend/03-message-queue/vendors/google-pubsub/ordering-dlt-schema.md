@@ -67,7 +67,7 @@ Push 把投遞節奏交給 Pub/Sub：endpoint 回 2xx 視為 ack、回非 2xx �
 
 flow control 是 pull 的核心優勢：consumer 用 `max_outstanding_messages` 與 `max_outstanding_bytes` 設定「同時最多持有多少未 ack 訊息」，超過上限 client 就暫停從連線拉取，等 application ack 釋放額度才繼續。這讓 consumer 能把消費速率對齊到下游能吃的速率，而不是被 broker 灌爆。
 
-> Push vs pull 不是實作偏好，是「下游能否接受 push 衝擊」的判讀。Mercari 把外部行銷 webhook（Braze）轉成 Pub/Sub event 後，下游 worker 刻意用 pull subscription 精確控制每秒處理訊息數，因為下游要呼叫的外部 LINE API 有 RPS 限制 — push 會把瞬間流量直接打到受限的外部 API（[Mercari LINE：Pull subscription 對齊外部 RPS](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/)）。下游有硬性 RPS 上限時，pull + flow control 是讓消費速率可控的手段。
+> Push vs pull 取決於「下游能否接受 push 衝擊」，而不是實作偏好。Mercari 把外部行銷 webhook（Braze）轉成 Pub/Sub event 後，下游 worker 刻意用 pull subscription 精確控制每秒處理訊息數，因為下游要呼叫的外部 LINE API 有 RPS 限制 — push 會把瞬間流量直接打到受限的外部 API（[Mercari LINE：Pull subscription 對齊外部 RPS](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/)）。下游有硬性 RPS 上限時，pull + flow control 是讓消費速率可控的手段。
 
 ## Ordering Key：有序的代價是吞吐
 
@@ -224,7 +224,7 @@ deep article 的差異化價值在故障演練。以下五個徵兆對應前述�
 
 **徵兆**：某次 producer 部署後，該 service 的 publish 開始大量回 `INVALID_ARGUMENT: Could not parse message`，訊息發不出去；但 consumer 端風平浪靜、沒有任何解析錯誤、backlog 也沒異常。
 
-**根因**：這通常不是故障、是 schema enforcement 正常運作。producer 改了 payload 結構（加必填欄位 / 改型別 / 漏欄位），新 payload 不符 topic 綁定的 schema，broker 在 publish 路徑上擋下、訊息根本沒進 topic。徵兆出現在 producer 端（publish 失敗）而非 consumer 端（解析失敗），正是 schema 守門把問題前移到源頭的設計意圖。
+**根因**：這通常是 schema enforcement 正常運作，而不是故障。producer 改了 payload 結構（加必填欄位 / 改型別 / 漏欄位），新 payload 不符 topic 綁定的 schema，broker 在 publish 路徑上擋下、訊息根本沒進 topic。徵兆出現在 producer 端（publish 失敗）而非 consumer 端（解析失敗），正是 schema 守門把問題前移到源頭的設計意圖。
 
 **判讀與修法**：
 

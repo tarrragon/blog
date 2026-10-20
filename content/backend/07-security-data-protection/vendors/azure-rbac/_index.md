@@ -45,7 +45,7 @@ Azure RBAC 是 cloud resource permission engine、跟 [AWS IAM](/backend/07-secu
 
 **User / Group / lifecycle**：HRIS 推 SCIM 進 Entra ID、Entra ID 同步到下游 SaaS 跟 Azure RBAC group。決策點是 *source of truth* — 多數組織把 HRIS 設為人員來源、Entra ID 當分發層、避免雙寫造成 stale account。
 
-**Conditional Access 是 MFA *主要強制機制***：MFA 不是設在 user 屬性上、是 Conditional Access policy 在登入時判斷 user / device / location / app / risk 後觸發。常見設定錯誤包含 *exclude legacy auth 沒做、break-glass 規則太寬、emergency access 帳號沒獨立監控*。Conditional Access 規則設計錯、就是高權限 bypass 的入口。
+**Conditional Access 是 MFA *主要強制機制***：MFA 由 Conditional Access policy 在登入時判斷 user / device / location / app / risk 後觸發，而不是設在 user 屬性上。常見設定錯誤包含 *exclude legacy auth 沒做、break-glass 規則太寬、emergency access 帳號沒獨立監控*。Conditional Access 規則設計錯、就是高權限 bypass 的入口。
 
 **App Registration vs Enterprise Application**：開發者註冊 multi-tenant app 走 *App Registration*（app 的定義）、組織 admin 為某 app 設定 SAML SSO / admin consent 走 *Enterprise Application*（該 tenant 對 app 的信任）。兩者常被混講、但安全意義不同 — App Registration 是「我們做了一個 app」、Enterprise Application 是「我們信任這個 app 用我們的身份」。Consent phishing 攻擊就是針對後者。
 

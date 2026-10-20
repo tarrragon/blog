@@ -28,7 +28,7 @@ Little's Law 用一條等式 L = λW 把三個變數綁在一起：L 是系統�
 
 ## Queueing Theory：為什麼 80% 利用率就是 knee
 
-排隊論（M/M/c 模型）解釋了一個常見直覺：「系統在 50% utilization 看似還很閒、80% 就該擴、90% 已經太晚」。這個直覺不是經驗法則、是 *數學必然*。
+排隊論（M/M/c 模型）解釋了一個常見直覺：「系統在 50% utilization 看似還很閒、80% 就該擴、90% 已經太晚」。這個直覺有 *數學推導* 支撐，而不只是經驗法則。
 
 M/M/c 系統的平均 queue length 跟 utilization 之間是非線性關係。當 utilization 從 50% 漲到 70%、queue length 約增加 2-3 倍；從 70% 漲到 90%、queue length 增加 10 倍以上。latency 跟 queue length 成正比（Little's Law 又出現）、所以 latency 也呈現同樣的指數成長。
 

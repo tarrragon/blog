@@ -347,7 +347,7 @@ SELECT user_id, SUM(amount) FROM orders GROUP BY user_id;
 
 修法：
 
-- 接受 partition 不是 *讀效能* 工具、是 *write + archive 效能* 工具
+- 接受 partition 是 *write + archive 效能* 工具，而不是 *讀效能* 工具
 - 跨 partition aggregation 改 *materialized aggregation table*（trigger / scheduled job 維護）
 - 跨 partition reporting 改丟 OLAP DB（BigQuery / Snowflake / ClickHouse）
 

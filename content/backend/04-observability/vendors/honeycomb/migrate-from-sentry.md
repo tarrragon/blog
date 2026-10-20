@@ -8,7 +8,7 @@ tags: ["backend", "observability", "sentry", "honeycomb", "paradigm-shift", "mig
 
 > 本文是跨 vendor migration playbook、cross-link [Sentry](/backend/04-observability/vendors/sentry/) 跟 [Honeycomb](/backend/04-observability/vendors/honeycomb/)。跑 [migration-playbook-methodology 6 維 audit](/posts/migration-playbook-methodology/) 後對映 *Paradigm = High（error tracking ↔ wide-event observability）→ Type E paradigm shift*。
 
-## Trace 不是 error、是不同 paradigm
+## Trace 與 error tracking 的 paradigm 差異
 
 把 Sentry → Honeycomb 當「trace tool 替換」是最常見的誤判 — Sentry trace 是 *error 上下文*、Honeycomb trace 是 *observability 第一性*：
 
@@ -27,7 +27,7 @@ tags: ["backend", "observability", "sentry", "honeycomb", "paradigm-shift", "mig
 - Sentry 適合 *application-level error debug* — 拿到 error stack trace + minimal context、快速 fix
 - Honeycomb 適合 *system-level behavior debug* — 看流量分佈 / 多維 correlation / 異常 outlier、找 *為什麼這個 user 在這個時段在這個 endpoint 慢*
 
-**Migration scope 包含 *paradigm reset* — 不是 SDK 換、是 SRE / Dev team 對 observability 的心智模型重設**。
+**Migration scope 包含 *paradigm reset* — 要重設的是 SRE / Dev team 對 observability 的心智模型，而不只是換 SDK**。
 
 ## 為什麼遷：observability 成熟度 / cardinality / cost 三條 driver
 

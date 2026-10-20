@@ -19,7 +19,7 @@ tags: ["backend", "security"]
 1. 決策責任：確認例外的目的、邊界、批准者與受影響資產都被記下來（對應 risk scope 與 owner）。
 2. 期限責任：確認有明確到期日、下次審查時間，以及重評估條件（對應 expiry）。條件有兩種實作，兩者至少要有一種——時間驅動的定期審查日，或責任 4 的事件驅動 tripwire。外部要求自帶的期限（稽核 finding 的補正期限、合約的通報時限）優先於內部訂的到期日，兩者衝突時內部期限沒有效力。
 3. 補償責任：確認過渡期間加上額外監測、限制或人工檢查（對應 compensating controls）。
-4. 觸發責任：確認關閉依賴外部事件或時間不可預測的例外都掛了 [tripwire](/backend/knowledge-cards/tripwire/)（基數判斷標準在 [security exception](/backend/knowledge-cards/security-exception/) 卡）。tripwire 不是六欄之一、是以例外為觀察對象的獨立物件，所以這一項沒有對應欄位、而它的四要素（訊號 / 門檻 / 升級對象 / 決策路徑）在 tripwire 卡。
+4. 觸發責任：確認關閉依賴外部事件或時間不可預測的例外都掛了 [tripwire](/backend/knowledge-cards/tripwire/)（基數判斷標準在 [security exception](/backend/knowledge-cards/security-exception/) 卡）。tripwire 是以例外為觀察對象的獨立物件，而不是六欄之一，所以這一項沒有對應欄位、而它的四要素（訊號 / 門檻 / 升級對象 / 決策路徑）在 tripwire 卡。
 5. 關閉責任：確認關閉條件可驗證、且關閉後有回寫（對應 exit criteria 與 write-back target）。
 
 ## 判讀流程

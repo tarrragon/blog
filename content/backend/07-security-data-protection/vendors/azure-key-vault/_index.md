@@ -69,7 +69,7 @@ Azure Key Vault 的核心定位是 *三合一 secret + key + cert service 加 Az
 
 ## 進階主題
 
-**Managed HSM（dedicated）**：Managed HSM 是 *dedicated single-tenant HSM cluster*、FIPS 140-2 Level 3、跟 multi-tenant 的 Key Vault Premium 是不同 service。Managed HSM 適合 *主權合規*（key material 完全自有控制權、Microsoft 也不可存取）、*金融 / 醫療 / 政府場景*。代價是 *貴* 跟 *初始化要走 ceremony*（多人持有 activation key、Microsoft 不可單方面操作）— 不是 Premium 的簡單升級、是另一條 product line。
+**Managed HSM（dedicated）**：Managed HSM 是 *dedicated single-tenant HSM cluster*、FIPS 140-2 Level 3、跟 multi-tenant 的 Key Vault Premium 是不同 service。Managed HSM 適合 *主權合規*（key material 完全自有控制權、Microsoft 也不可存取）、*金融 / 醫療 / 政府場景*。代價是 *貴* 跟 *初始化要走 ceremony*（多人持有 activation key、Microsoft 不可單方面操作）— 它是另一條 product line，而不是 Premium 的簡單升級。
 
 **Premium tier HSM-backed Key**：Premium tier 的 key 有 `HSM-protected` 屬性、key material 在 multi-tenant HSM 內、API call 還是走標準 Key Vault endpoint、但 cryptographic operation 在 HSM 跑。比 Standard 慢一點、價格高、適合 *signing key / wrapping key / root encryption key* — 一般 application secret 還是 Standard 即可。
 

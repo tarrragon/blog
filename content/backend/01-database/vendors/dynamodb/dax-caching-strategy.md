@@ -47,7 +47,7 @@ DAX 只服務 eventually consistent read。application 若要求 strongly consis
 
 **query cache stale 的真實後果**：
 
-application 用 `Query` 列「某 user 的 active order」、結果被 query cache 快取；user 新建一筆 order、item cache 更新了該筆 item、但 *列表 query 的 cache 沒失效*、user 重整頁面在 TTL 內看不到新訂單。修法不是調 DAX、是判斷「這個 query 能不能接受 TTL 內 stale」— 不能接受的、該 query 不要走 DAX（直接打 DynamoDB）、或縮短該類 query 的 TTL。
+application 用 `Query` 列「某 user 的 active order」、結果被 query cache 快取；user 新建一筆 order、item cache 更新了該筆 item、但 *列表 query 的 cache 沒失效*、user 重整頁面在 TTL 內看不到新訂單。修法是判斷「這個 query 能不能接受 TTL 內 stale」，而不是調 DAX — 不能接受的、該 query 不要走 DAX（直接打 DynamoDB）、或縮短該類 query 的 TTL。
 
 > **Scope warning**：上述一致性語意屬 DAX vendor 規格 + 通用 cache 工程知識、非 production case 揭露；實際 staleness 視 cluster node 數、TTL 配置與讀寫分布而定。
 

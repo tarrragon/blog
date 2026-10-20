@@ -27,7 +27,7 @@ tags: ["backend", "deployment-platform", "docker-swarm", "kubernetes", "paradigm
 - **無 multi-region native**、災備受限
 - **生態縮、社群活躍度低、新 feature 緩**
 
-撞牆點不是「Swarm 跑不動」、是「Swarm 不會幫你解 *跨 service 治理* 問題、要自寫」。Kubernetes 不是 simpler、是 *把治理問題納入框架*。
+撞牆點不是「Swarm 跑不動」、是「Swarm 不會幫你解 *跨 service 治理* 問題、要自寫」。Kubernetes 的取捨是 *把治理需求納入框架*，代價是它並不比 Swarm 簡單。
 
 ## 為什麼遷：ceiling / ecosystem / multi-region 三條 driver
 

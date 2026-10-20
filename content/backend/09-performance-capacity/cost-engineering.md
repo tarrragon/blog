@@ -106,7 +106,7 @@ tags: ["backend", "performance", "capacity", "cost"]
 
 **「90% 工程工時下降」是管理 ROI 的關鍵**：重點是把工程資源從 *維持* 轉移到 *建構*、不是拿來吹噓技術。這條自建 vs managed 的人力成本對比、是 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/) 裡「計費隨規模成長、自建 TCO 出現交叉點」那條 tripwire 的算法側 — 選型方向在 0.22 判、成本量化在這裡做。
 
-對應案例：[Spotify Kafka → Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — 不是因為 Pub/Sub 便宜、是因為 Spotify 規模下自管 Kafka 的人力成本不划算；[Lemino 90% 工程工時降](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — managed 路線讓電信商級新串流服務只用 5-10 個工程師 launch；[Capcom DBA 釋放](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) — 把 DBA 時間從 patching 轉到遊戲品質。
+對應案例：[Spotify Kafka → Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — 理由是 Spotify 規模下自管 Kafka 的人力成本不划算，而不是 Pub/Sub 便宜；[Lemino 90% 工程工時降](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — managed 路線讓電信商級新串流服務只用 5-10 個工程師 launch；[Capcom DBA 釋放](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) — 把 DBA 時間從 patching 轉到遊戲品質。
 
 ## FinOps 跟容量規劃的整合
 

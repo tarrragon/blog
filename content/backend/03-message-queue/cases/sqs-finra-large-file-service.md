@@ -14,7 +14,7 @@ FINRA 金融監管機構、處理 broker-dealer 上傳大檔。Large File Servic
 
 ## 判讀
 
-S3 通知是 SQS 最經典 trigger、KMS + bucket policy + queue 權限的合規場景（金融業要保留稽核軌跡）。揭露金融場景的 IAM 設計不是一道權限、是多層稽核軌跡。
+S3 通知是 SQS 最經典 trigger、KMS + bucket policy + queue 權限的合規場景（金融業要保留稽核軌跡）。揭露金融場景的 IAM 設計是多層稽核軌跡，而不是一道權限。
 
 ## 對應大綱
 

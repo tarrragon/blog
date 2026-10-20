@@ -74,7 +74,7 @@ DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流�
 
 **評估項目**：
 
-- workload 在新 DB 上是否真的能跑（不是 marketing、是實測 POC）
+- workload 在新 DB 上是否真的能跑（依據實測 POC，而不是 marketing 資料）
 - 應用層改寫成本（哪些 query 需要改、哪些 ORM 需要換）
 - 遷移時程預估（含 *合規審查* lead time、如金融業可能 3-12 個月）
 - 成本對比（總成本曲線、不只當下 snapshot）

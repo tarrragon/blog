@@ -28,7 +28,7 @@ NTT DOCOMO Lemino 在 AWS 的關鍵數字（引自 [Lemino Case Study](https://a
 
 Lemino 案例揭露三個現代串流服務啟動的工程重點。
 
-1. **「connection limit 是 RDB 的隱性 bottleneck」是 OLTP 在 surge 下的典型問題**：傳統 RDB（PostgreSQL、MySQL）每個連線吃記憶體跟 process / thread、connection pool 上限通常 1K-5K 個。當突發流量湧入、第一個爆的不是 CPU 也不是 disk、是 *連線數量*。DynamoDB 的 HTTP API 模型沒有 connection state、天然解決這個問題。對應 [01 資料庫模組](/backend/01-database/) 的 connection pool 議題、跟 [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 遷移動機同類。
+1. **「connection limit 是 RDB 的隱性 bottleneck」是 OLTP 在 surge 下的典型問題**：傳統 RDB（PostgreSQL、MySQL）每個連線吃記憶體跟 process / thread、connection pool 上限通常 1K-5K 個。當突發流量湧入、第一個爆的是 *連線數量*，而不是 CPU 或 disk。DynamoDB 的 HTTP API 模型沒有 connection state、天然解決這個問題。對應 [01 資料庫模組](/backend/01-database/) 的 connection pool 議題、跟 [Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 遷移動機同類。
 2. **AWS Media Services 是「電視台級」串流基礎設施**：Elemental Link（encoding）、MediaConnect（transport）、MediaLive（live encoding）、MediaPackage（packaging + DRM）— 這套 stack 過往是電視台才買得起的硬體設備、AWS 把它變成 pay-per-use 服務。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 vendor-specific 串流服務評估。
 3. **90% 工程工時下降 = 走 managed 路線的真正價值**：傳統電信商 launch 串流服務、要養 50-100 個 SRE + DBA + network 工程師、Lemino 用 managed 服務只需 5-10 個。差距不在「能不能 launch」、在「launch 後的維運成本」。對應 [Capcom](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) 的同類訴求。
 

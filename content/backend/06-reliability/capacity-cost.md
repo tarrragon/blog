@@ -65,7 +65,7 @@ Capacity 與成本邊界是把容量規劃跟成本約束一起看，責任是�
 
 ## 快取容量的特殊性
 
-快取容量治理的核心責任是失溫時資料層仍可承受。headroom 不是看快取 QPS、是看命中率下滑後的回源放大係數 — 快取本身可能耐 10x 流量、資料層可能撐不到 1.5x。
+快取容量治理的核心責任是失溫時資料層仍可承受。headroom 要看命中率下滑後的回源放大係數，而不是快取 QPS — 快取本身可能耐 10x 流量、資料層可能撐不到 1.5x。
 
 對應 [P1 Pinterest 快取可靠性與容量驚奇治理](/backend/06-reliability/cases/pinterest/cache-reliability-and-capacity-surprises/)：揭露三個機制 — cache headroom（命中率下滑能承受多久）、graceful degradation（快取失效時如何降級）、rewarm strategy（熱資料如何有序回填）。
 

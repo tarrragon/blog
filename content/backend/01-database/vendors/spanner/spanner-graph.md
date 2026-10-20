@@ -101,7 +101,7 @@ graph 的核心風險是「資料模型的物理設計錯誤、且代價不可�
 
 代價之所以高、是因為它不在上線時暴露 — 小資料量下 full scan 也快、效能崩塌在資料長到一定規模、流量打到 production 之後才浮現。徵兆是特定遍歷的 latency 隨 edge table 成長而單調惡化、query plan 顯示 full scan 而非 range scan、Spanner CPU 被掃描打滿。
 
-回退路徑的代價是這個失敗的關鍵：edge table 的 PK 不能 in-place 變更、修正需要建一張新的 edge table（正確 PK 方向）、backfill 全部 edge、更新 graph schema 指向新表、驗證遍歷走 range scan、再 drop 舊表。對 100 億 edge 的圖、backfill 是數小時到數天的 long-running operation、期間要管 capacity 升幅、要保證 graph 查詢在切換期間的正確性。這不是 hotfix、是一次完整的 schema migration。所以這個失敗的真正教訓是「在設計 node / edge table 的階段就把最高頻遍歷方向定死」、而不是「上線後再優化」 — 設計階段花一天想清楚遍歷方向、勝過上線後花一週重建 edge table。
+回退路徑的代價是這個失敗的關鍵：edge table 的 PK 不能 in-place 變更、修正需要建一張新的 edge table（正確 PK 方向）、backfill 全部 edge、更新 graph schema 指向新表、驗證遍歷走 range scan、再 drop 舊表。對 100 億 edge 的圖、backfill 是數小時到數天的 long-running operation、期間要管 capacity 升幅、要保證 graph 查詢在切換期間的正確性。修正它要做一次完整的 schema migration，而不是 hotfix。所以這個失敗的真正教訓是「在設計 node / edge table 的階段就把最高頻遍歷方向定死」、而不是「上線後再優化」 — 設計階段花一天想清楚遍歷方向、勝過上線後花一週重建 edge table。
 
 ### Super node 讓遍歷扇出急遽放大
 
@@ -138,7 +138,7 @@ Spanner CPU during graph query    → 高扇出遍歷會打滿 CPU
 
 ### 何時用專用 graph DB
 
-純圖工作負載、需要豐富圖演算法（PageRank、最短路徑、社群偵測）、不需要跟 OLTP transaction 共用強一致資料 — 用專用 graph DB 或圖分析框架。Spanner Graph 不是要取代專用 graph engine、是要服務「OLTP 順便要關係查詢」的場景。把重度圖分析硬塞 Spanner Graph 是用錯工具。
+純圖工作負載、需要豐富圖演算法（PageRank、最短路徑、社群偵測）、不需要跟 OLTP transaction 共用強一致資料 — 用專用 graph DB 或圖分析框架。Spanner Graph 服務的是「OLTP 順便要關係查詢」的場景，而不是要取代專用 graph engine。把重度圖分析硬塞 Spanner Graph 是用錯工具。
 
 ### 相關的 Spanner 文章
 

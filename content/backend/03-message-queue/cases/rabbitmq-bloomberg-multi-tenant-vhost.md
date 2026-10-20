@@ -46,7 +46,7 @@ Bloomberg 建立了內部自助平台，團隊透過 API 或內部 portal 申請
 
 ### 配額與監控
 
-每個 vhost 有預設配額（max-length、max-connections）。超出配額時 broker 行為可配 — drop-head（丟最舊的訊息）或 reject-publish（拒絕新訊息）。配額不是懲罰機制，是保護共享 cluster 的防線。
+每個 vhost 有預設配額（max-length、max-connections）。超出配額時 broker 行為可配 — drop-head（丟最舊的訊息）或 reject-publish（拒絕新訊息）。配額是保護共享 cluster 的防線，而不是懲罰機制。
 
 監控用 RabbitMQ 的 management plugin + Prometheus exporter，按 vhost 維度匯出 queue depth、message rate、connection count。每個 vhost 的 dashboard 對應到 owner 團隊，讓團隊自行判讀自己的使用狀況。
 

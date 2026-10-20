@@ -115,7 +115,7 @@ SLO 與 performance budget 的責任是讓容量決策有「可衡量的目標 +
 - 99.9 → 99.99：成本 +50-100%
 - 99.99 → 99.999：成本 +200-500%
 
-**選 SLO 不是 marketing 決策、是工程經濟決策**：選太高、燒錢；選太低、用戶不滿。要算 *每個 9 對應的業務價值*、是否值得對應的容量投資。
+**選 SLO 是工程經濟決策，而不是 marketing 決策**：選太高、燒錢；選太低、用戶不滿。要算 *每個 9 對應的業務價值*、是否值得對應的容量投資。
 
 對應案例：[Amazon Ads 99.999%](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — 廣告計費 1 分鐘斷線損失幾百萬美金、5 個 9 是真實營收邊界；[Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — B2B 客服 SaaS、客戶停線 = 客戶失去用戶信任、5 個 9 是合約義務。
 
@@ -152,7 +152,7 @@ SLO 與 performance budget 的責任是讓容量決策有「可衡量的目標 +
 - Architectural improvement：DB 換型、cache 加強、CDN 擴點
 - User behavior：mobile share 上升、跨 region 比例變化
 
-**Drift 不是 anomaly、是 *新常態***。
+**Drift 是 *新常態*，而不是 anomaly**。
 
 **Review 節奏**：
 

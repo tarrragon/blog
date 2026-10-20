@@ -29,7 +29,7 @@ Capcom 案例揭露三個遊戲後端 KV 的工程重點。
 
 1. **遊戲後端 KV = 跨遊戲共用基礎設施**：Resident Evil / Street Fighter / Monster Hunter 是不同類型遊戲（單機+多人 / 對戰 / 合作打怪）、卻共用 *同一套後端 KV*。這個共用降低了單一遊戲的維運成本、也讓新遊戲上線時不用重做基礎設施。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 multi-tenant platform。
 2. **single-digit ms response time = 玩家體感「即時」的底線**：戰鬥動作、技能釋放、玩家對戰都要次秒級反應、超過 10ms 就「卡」。這個延遲門檻反推 Capcom 必須用 sub-region cache（ElastiCache / 本地 game server）+ DynamoDB DAX、不能單靠 DynamoDB。對應 [Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) 的延遲反推。
-3. **「工程資源從 DB 運維轉到遊戲品質」是 managed 服務的真實價值**：Capcom 不是 IT 公司、是遊戲公司。把 DBA 時間從「Postgres patching、replication 設定、backup 排程」釋放到「遊戲機制設計、玩家行為分析」、才是 30% 成本下降的本質。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/) 的人力成本工程化。
+3. **「工程資源從 DB 運維轉到遊戲品質」是 managed 服務的真實價值**：Capcom 是遊戲公司，而不是 IT 公司。把 DBA 時間從「Postgres patching、replication 設定、backup 排程」釋放到「遊戲機制設計、玩家行為分析」、才是 30% 成本下降的本質。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/) 的人力成本工程化。
 
 需要警惕：「billions of requests」沒指明時間單位（每秒、每天、每月）。讀案例時要找具體單位、不要直接套用到自家。
 

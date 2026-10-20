@@ -82,7 +82,7 @@ tags: ["backend", "security", "data-protection", "vendor"]
 
 ## Reading paths：vendor 的進入順序建議
 
-讀完 51 個 vendor 不是線性目的、是 *依組織當前的安全成熟度跳讀*。以下是四條常見路徑：
+這 51 個 vendor 的讀法是 *依組織當前的安全成熟度跳讀*，而不是線性讀完。以下是四條常見路徑：
 
 **Path A — Startup baseline（< 50 人、cloud-native）**：
 [Okta](/backend/07-security-data-protection/vendors/okta/) → [AWS IAM](/backend/07-security-data-protection/vendors/aws-iam/) / [Google Cloud IAM](/backend/07-security-data-protection/vendors/google-cloud-iam/) → [AWS Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/) / [Google Secret Manager](/backend/07-security-data-protection/vendors/google-secret-manager/) → [Cloudflare WAF](/backend/07-security-data-protection/vendors/cloudflare-waf/) → [GitHub Advanced Security](/backend/07-security-data-protection/vendors/github-advanced-security/) → [Datadog Security](/backend/07-security-data-protection/vendors/datadog-security/)。共 7-8 個 vendor、預算敏感、cloud-native、SaaS 優先。

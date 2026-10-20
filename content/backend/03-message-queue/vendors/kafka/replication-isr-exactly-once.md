@@ -22,7 +22,7 @@ ISR（in-sync replica、同步副本集）是一個 partition 當前「跟得上
 
 一個 follower 留在 ISR 內的條件是：它在 `replica.lag.time.max.ms`（預設 30 秒）內持續向 leader 拉取資料、且追上 leader 的 log end offset。當 follower 因為 broker 慢、網路抖動、GC 停頓或 disk 壓力而落後超過這個時間窗、leader 會把它移出 ISR — 這就是 ISR shrink（收縮）。當它恢復、重新追上、再被加回 ISR — 這是 ISR expand（擴張）。
 
-ISR 收縮本身不是故障、是 Kafka 對「這個 follower 暫時不可信」的誠實表態。真正的風險在於：ISR 收縮到某個程度後、`acks=all` 的寫入承諾會無法滿足 `min.insync.replicas` 而開始拒絕寫入。下一段的 acks 取捨直接建立在 ISR 這個概念上。
+ISR 收縮本身是 Kafka 標記「這個 follower 暫時不可信」的機制，而不是故障。真正的風險在於：ISR 收縮到某個程度後、`acks=all` 的寫入承諾會無法滿足 `min.insync.replicas` 而開始拒絕寫入。下一段的 acks 取捨直接建立在 ISR 這個概念上。
 
 實機看 ISR 的方式是 `kafka-topics.sh --describe`、Isr 欄位列出當前同步的 broker id：
 

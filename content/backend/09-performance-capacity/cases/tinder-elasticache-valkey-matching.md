@@ -6,7 +6,7 @@ weight: 6
 tags: ["backend", "performance", "capacity", "case-study", "cache", "aws", "sustained-growth"]
 ---
 
-這個案例的核心責任是說明「cache layer 在持續成長服務」的角色 — 不是峰值問題、是延遲 SLA 與成本曲線同時拉緊的長期工程議題。Tinder 的配對引擎需要在每次滑動都查多個快取（用戶 profile、距離、偏好過濾、推薦池），單次互動的延遲就是 UX 本身。
+這個案例的核心責任是說明「cache layer 在持續成長服務」的角色 — 這是延遲 SLA 與成本曲線同時拉緊的長期工程議題，而不是峰值事件。Tinder 的配對引擎需要在每次滑動都查多個快取（用戶 profile、距離、偏好過濾、推薦池），單次互動的延遲就是 UX 本身。
 
 ## 觀察
 
@@ -26,7 +26,7 @@ ElastiCache for Redis 7.1 在 r7g.4xlarge 上可達單節點 100 萬 RPS、單 c
 
 Tinder 案例值得讀的是「快取在 long-running 服務的角色變化」。
 
-1. **快取不是 DB 的補救、是主要服務面**：配對引擎每次互動讀 cache 不讀 DB、cache miss 是 *邊緣案例*。對應 [02 快取模組](/backend/02-cache-redis/) 的 cache-as-source-of-truth 與 [02.4 cache copy freshness boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/) 設計。
+1. **快取是主要服務面，而不是 DB 的補救**：配對引擎每次互動讀 cache 不讀 DB、cache miss 是 *邊緣案例*。對應 [02 快取模組](/backend/02-cache-redis/) 的 cache-as-source-of-truth 與 [02.4 cache copy freshness boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/) 設計。
 2. **次毫秒延遲是業務 KPI、不只是技術指標**：手指滑動之後 250ms 內必須給結果、否則「卡頓」。中間整個 chain（網路、cache、序列化）的 latency budget 必須緊。對應 [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) 的 latency budget 反推。
 3. **長期 sustained growth 的容量曲線是成本曲線**：47M MAU 沒有明顯峰谷、容量規劃變成「每月線性擴容 X%」的長期決策、不是峰值規劃。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/) 的長期成本工程。
 

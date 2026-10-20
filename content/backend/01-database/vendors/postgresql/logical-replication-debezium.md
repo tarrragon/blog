@@ -47,7 +47,7 @@ CREATE SUBSCRIPTION app_sub
 
 ## Debezium CDC：用 logical replication slot 但繞過 subscription
 
-Debezium 不是 PostgreSQL subscriber、是 *直接讀 replication slot* 的外部 consumer：
+Debezium 是 *直接讀 replication slot* 的外部 consumer，而不是 PostgreSQL subscriber：
 
 ```properties
 # Debezium PostgreSQL connector

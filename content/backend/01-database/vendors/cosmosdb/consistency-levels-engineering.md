@@ -29,7 +29,7 @@ Case anchor 是 [Minecraft Earth](/backend/09-performance-capacity/cases/minecra
 - 遊戲場景：玩家位置同步、跨 region 看到「玩家瞬移」回舊位置（遊戲體驗 bug）
 - 金融場景：跨服務寫入後立即 read confirm、看不到剛寫的 — 業務邏輯誤判「沒寫進去」、重試 / rollback
 
-consistency level 選錯不是 config 問題、是 *影響 user-facing 行為* 的 selection 決策、必須在 selection 階段釐清。
+consistency level 是 *影響 user-facing 行為* 的 selection 決策，而不是 config 細節，必須在 selection 階段釐清。
 
 ## 核心機制：5 個 level 的精確語義
 

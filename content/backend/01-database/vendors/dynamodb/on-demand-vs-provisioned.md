@@ -53,7 +53,7 @@ Amazon Ads 揭露的觀測軸：「讀寫比 *變化* 比讀寫比本身更重�
 - 業務邏輯改變（新增即時報表 / 新增推播 / 新增分析 query）會讓讀寫比跳一個量級
 - 觀測上加 metric：read / write ratio 7-day rolling average、超過 ±30% 偏移觸發 review
 
-把 trend 變化當 capacity mode 重新評估的訊號 — 不是固定週期 review、是 *trend 偏移* 觸發 review。
+把 trend 變化當 capacity mode 重新評估的訊號 — 觸發 review 的是 *trend 偏移*，而不是固定週期。
 
 ### surge 是 *暫時* 還是 *永久 baseline 上移*
 
@@ -136,7 +136,7 @@ peak/avg ratio + 讀寫比 trend + surge 性質
 → provisioned + auto-scaling / on-demand / scheduled scaling 三選一
 ```
 
-不是任一軸獨自決定、是各軸合成；軸間衝突時優先序：vendor crossover > DBA / SRE 工時釋放 > surge 性質（永久 vs 暫時）> 事件分級 > peak/avg ratio > 讀寫比 trend。
+決策由各軸合成，而不是任一軸獨自決定；軸間衝突時優先序：vendor crossover > DBA / SRE 工時釋放 > surge 性質（永久 vs 暫時）> 事件分級 > peak/avg ratio > 讀寫比 trend。
 
 #### provisioned 配 auto-scaling
 

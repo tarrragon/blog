@@ -114,7 +114,7 @@ Status page 是對外溝通入口、是法律 / SLA / 客戶信任的 evidence�
 
 ### Learning（Jeli）
 
-Learning 是事故後的組織學習、不是 retro template、是 longitudinal pattern analysis。**Jeli**（2023 PagerDuty 收購）narrative-based investigation + cross-incident pattern detection、源自 Honeycomb Production Excellence 文化。Jeli 跟 IR 平台的 retrospective 模組 complement、不取代 — IR retro 是單事故、Jeli 是跨事故學習。
+Learning 是事故後的組織學習，形式是 longitudinal pattern analysis，而不是 retro template。**Jeli**（2023 PagerDuty 收購）narrative-based investigation + cross-incident pattern detection、源自 Honeycomb Production Excellence 文化。Jeli 跟 IR 平台的 retrospective 模組 complement、不取代 — IR retro 是單事故、Jeli 是跨事故學習。
 
 選型判讀：深度 learning + multi-incident pattern → Jeli（PagerDuty 用戶）；單事故 retro template → IR 平台內建即可；組織學習 / 文化變革 → Jeli + 對應流程。
 

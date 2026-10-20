@@ -12,7 +12,7 @@ tags: ["backend", "message-queue", "google-pubsub", "push-pull", "ack-deadline",
 
 把 Pub/Sub 的 subscription 設成 push 還是 pull，常被當成「看團隊習慣」的實作選擇。但它其實是一個關於下游容量的判讀。差別在流量控制權在誰手上：push subscription 由 Pub/Sub 主動把訊息 HTTP POST 到目標 endpoint——流量節奏由 Pub/Sub 決定，尖峰時瞬間打過來；pull subscription 由 consumer 主動拉，要拉多少、多快由 consumer 自己控制。
 
-[Mercari 的 LINE 整合](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/)把這個判讀講得很具體：Braze webhook 進來轉成 Pub/Sub event，下游要呼叫 LINE API——而 **LINE API 有 RPS 限制**。如果用 push，Pub/Sub 會把訊息瞬間打到 worker、worker 再打 LINE、直接超過 LINE 的 RPS 上限。所以他們用 pull subscription，worker「精確控制每秒處理訊息數」來對齊 LINE 的限制。這個案例揭露的原則是——**push vs pull 不是實作偏好，是「下游能不能承受 push 的流量衝擊」的判讀**：下游有速率限制、處理能力有限、或需要平滑流量，就走 pull 自我節流。
+[Mercari 的 LINE 整合](/backend/03-message-queue/cases/pubsub-mercari-line-flow-control/)把這個判讀講得很具體：Braze webhook 進來轉成 Pub/Sub event，下游要呼叫 LINE API——而 **LINE API 有 RPS 限制**。如果用 push，Pub/Sub 會把訊息瞬間打到 worker、worker 再打 LINE、直接超過 LINE 的 RPS 上限。所以他們用 pull subscription，worker「精確控制每秒處理訊息數」來對齊 LINE 的限制。這個案例揭露的原則是——**push vs pull 取決於下游是否承受得住 push 的流量衝擊，而不是實作偏好**：下游有速率限制、處理能力有限、或需要平滑流量，就走 pull 自我節流。
 
 本文展開 subscription 模型、ack deadline、flow control 與 dead-letter topic——這些決定了訊息怎麼被可靠地、以下游能承受的速度消費。
 

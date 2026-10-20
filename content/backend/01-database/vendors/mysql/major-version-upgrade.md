@@ -137,7 +137,7 @@ START SLAVE;
     ALTER TABLE events RENAME COLUMN `window` TO event_window;  -- window 在 8.0 是 reserved word，改名時也要加 backtick
     ```
 
-多數 org 在 promote 完成、paradigm 還沒遷移的狀態停留更久 — paradigm 升級不是一次 big bang、是漸進。
+多數 org 在 promote 完成、paradigm 還沒遷移的狀態停留更久 — paradigm 升級是漸進的，而不是一次 big bang。
 
 ## Production 踩雷
 

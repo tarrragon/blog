@@ -52,19 +52,19 @@ Kafka 跟 NATS Core 是 *不同類產品* — 一個是 durable event log、一�
 2. **Latency 要求 < 1ms**：Kafka 對單 message latency 不是 SLA、NATS Core 是
 3. **Multi-tenant / multi-region 簡化**：NATS 內建 *account* + *leaf node* 拓樸、跨 region 是 first-class
 
-但這三條 driver 都 *只在特定 application 模式有效*。不是普世 better、是 *某類 workload 適合*。
+但這三條 driver 都 *只在特定 application 模式有效*。它適合的是 *某類 workload*，而不是普世 better。
 
 ## Migration 結構：application 重設計 + 部分 stream cutover
 
 跟前面四篇 migration 結構都不同、Kafka ↔ NATS 是 *混合*：
 
 1. **Phase 0：scope 判讀** — 列 application、區分「適合 NATS」vs「保留 Kafka」
-2. **Phase 1：application code 重設計** — 不是 SDK 換、是 *messaging pattern 改*（event sourcing → message bus / consumer group → durable consumer）
+2. **Phase 1：application code 重設計** — 改的是 *messaging pattern*，而不只是換 SDK（event sourcing → message bus / consumer group → durable consumer）
 3. **Phase 2：部分 stream parallel run** — 新 application 走 NATS、舊 application 持續 Kafka
 4. **Phase 3：cutover 適合的 stream**
 5. **Phase 4：長期混合架構** — Kafka 跟 NATS *共存*、不消滅一邊
 
-整體不是 *一次 migration*、是 *漸進拆分*。多數 production 環境 *永遠* 是混合架構。
+整體是 *漸進拆分*，而不是 *一次 migration*。多數 production 環境 *永遠* 是混合架構。
 
 ## Application 重設計範例：consumer group → durable consumer
 

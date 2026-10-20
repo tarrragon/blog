@@ -109,7 +109,7 @@ aws sqs set-queue-attributes \
   --attributes '{"RedrivePolicy":"{\"deadLetterTargetArn\":\"arn:aws:sqs:us-east-1:000000000000:demo-dlq\",\"maxReceiveCount\":\"5\"}"}'
 ```
 
-DLQ 不是訊息的墳場、是待診斷的暫存區。對應 [poison message quarantine](/backend/knowledge-cards/poison-message-quarantine/) 的思路、DLQ 累積要分兩種根因處理：訊息格式錯（永遠失敗、需要修 producer 或人工丟棄）vs 下游服務暫時 down（訊息本身沒問題、修好下游後可以重放）。後者用 redrive 把訊息從 DLQ 批次放回主 queue 重新處理、對應 [dlq drain](/backend/knowledge-cards/dlq-drain/) 的排空流程。判斷之前先看 DLQ 裡訊息的內容、不要不加判斷地 redrive — 把毒訊息 redrive 回去只會再走一輪 maxReceiveCount 又回到 DLQ。
+DLQ 是待診斷的暫存區，而不是訊息的墳場。對應 [poison message quarantine](/backend/knowledge-cards/poison-message-quarantine/) 的思路、DLQ 累積要分兩種根因處理：訊息格式錯（永遠失敗、需要修 producer 或人工丟棄）vs 下游服務暫時 down（訊息本身沒問題、修好下游後可以重放）。後者用 redrive 把訊息從 DLQ 批次放回主 queue 重新處理、對應 [dlq drain](/backend/knowledge-cards/dlq-drain/) 的排空流程。判斷之前先看 DLQ 裡訊息的內容、不要不加判斷地 redrive — 把毒訊息 redrive 回去只會再走一輪 maxReceiveCount 又回到 DLQ。
 
 `maxReceiveCount` 設多少是取捨：太小（例如 1-2）會讓「下游短暫抖動」這種暫時性失敗被誤判成毒訊息、過早送進 DLQ；太大（例如 100）會讓真正的毒訊息浪費大量 consumer 重試。多數 task queue 設 3-5 是合理起點 — 足以吸收幾次暫時性失敗、又不至於讓確定性失敗的訊息空轉太久。
 

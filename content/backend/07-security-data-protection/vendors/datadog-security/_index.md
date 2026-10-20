@@ -6,7 +6,7 @@ weight: 3
 tags: ["backend", "security", "vendor", "datadog-security", "siem", "cspm", "detection"]
 ---
 
-Datadog Security 是 Datadog observability platform 上的 security 套件、跟 Datadog logs / metrics / APM / infrastructure 共用同一個 control plane 與 data plane。它的設計起點不是 SIEM、是 *把資安訊號當成 observability 的一個維度*：alert 不只看 log、可以同時 pivot 到 APM trace、infra metrics 與 host context。這個定位決定了它的優勢（cloud-native + 混合 incident 偵測）與限制（SaaS-only + 計費隨 host 量線性漲、不適合 on-prem-heavy 或預算敏感場景）。
+Datadog Security 是 Datadog observability platform 上的 security 套件、跟 Datadog logs / metrics / APM / infrastructure 共用同一個 control plane 與 data plane。它的設計起點是 *把資安訊號當成 observability 的一個維度*，而不是 SIEM：alert 不只看 log、可以同時 pivot 到 APM trace、infra metrics 與 host context。這個定位決定了它的優勢（cloud-native + 混合 incident 偵測）與限制（SaaS-only + 計費隨 host 量線性漲、不適合 on-prem-heavy 或預算敏感場景）。
 
 ## 服務定位
 

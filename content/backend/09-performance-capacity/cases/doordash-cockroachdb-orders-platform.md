@@ -30,7 +30,7 @@ DoorDash 從 Aurora Postgres 遷到 CockroachDB 的關鍵敘述（引自 [Why Do
 
 DoorDash 的工程選擇揭露三個 OLTP 寫入容量設計重點。
 
-1. **Aurora 的「single-primary 寫入」是規模化的天花板**：Aurora 把 storage 跟 compute 分離、read replica 容易擴、*但寫入仍走唯一 primary*。1.636 M QPS 不是均勻分佈、是 hot table 集中寫爆。對應 [01.6 高併發資料存取](/backend/01-database/high-concurrency-access/) 的寫入容量規劃。CockroachDB 改成 Raft per range、每個 node 都能服務寫入、容量隨節點線性擴。
+1. **Aurora 的「single-primary 寫入」是規模化的天花板**：Aurora 把 storage 跟 compute 分離、read replica 容易擴、*但寫入仍走唯一 primary*。1.636 M QPS 集中在 hot table 寫爆，而不是均勻分佈。對應 [01.6 高併發資料存取](/backend/01-database/high-concurrency-access/) 的寫入容量規劃。CockroachDB 改成 Raft per range、每個 node 都能服務寫入、容量隨節點線性擴。
 2. **Migration 工具自製是先決條件、不是 nice-to-have**：DoorDash 沒「一次性遷整套」、而是先寫工具把 table 從主 cluster 拆到獨立 Aurora cluster（紓壓）、再寫第二套工具把 Aurora → CockroachDB（換引擎）。兩階段都要 *lossless* + *可回退*。對應 [01.4 database migration playbook](/backend/01-database/database-migration-playbook/) 的「先建工具、再遷資料」原則。
 3. **Cluster 數量增加、alert volume 卻下降**：直覺反過來、cluster 多 = 維運面變大、應該更多 alert。但每個 CockroachDB cluster 內建 Raft 自動容錯、單節點 fail 不會 page on-call、Aurora 時代的「primary failover alert」消失。對應 [04 可觀測性模組](/backend/04-observability/) 的「告警 surface 設計」與 [06.x reliability](/backend/06-reliability/) 的 graceful degradation。
 
@@ -40,9 +40,9 @@ DoorDash 的工程選擇揭露三個 OLTP 寫入容量設計重點。
 
 可重用的工程做法：
 
-1. **single-primary 撞牆前、先評估 multi-primary 選項**：Aurora / RDS Postgres 是 single-primary 為主、寫入量持續成長最終會撞天花板。轉折點不是 IOPS、是 *primary CPU + WAL flush rate*。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 的瓶頸辨識。
+1. **single-primary 撞牆前、先評估 multi-primary 選項**：Aurora / RDS Postgres 是 single-primary 為主、寫入量持續成長最終會撞天花板。轉折點是 *primary CPU + WAL flush rate*，而不是 IOPS。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 的瓶頸辨識。
 2. **遷 OLTP 引擎要走「兩階段紓壓」**：先在原引擎內把 hot table 拆出（降低主 cluster 壓力、爭取時間）、再規劃換引擎（架構級改造）。直接「一次性換引擎」風險過高。對應 [01.4 database migration playbook](/backend/01-database/database-migration-playbook/)。
-3. **PostgreSQL wire protocol 相容性是降低遷移成本的關鍵**：DoorDash 保留 PostgreSQL driver / ORM、應用層改動小。CockroachDB 不是 PostgreSQL fork、是 *protocol-level 相容*、實際 SQL 行為（serializable default、retry semantics、partial index）仍要驗證。對應 [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/) 的 PostgreSQL 相容性 audit 段。
+3. **PostgreSQL wire protocol 相容性是降低遷移成本的關鍵**：DoorDash 保留 PostgreSQL driver / ORM、應用層改動小。CockroachDB 是 *protocol-level 相容*，而不是 PostgreSQL fork，實際 SQL 行為（serializable default、retry semantics、partial index）仍要驗證。對應 [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/) 的 PostgreSQL 相容性 audit 段。
 
 跨平台等效：
 

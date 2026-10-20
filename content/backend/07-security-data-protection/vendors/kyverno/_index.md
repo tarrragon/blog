@@ -56,7 +56,7 @@ Kyverno 的定位是 *K8s admission controller-shaped policy engine、policy 用
 
 **GitOps 整合**：ClusterPolicy / Policy 是普通 K8s CRD、走 ArgoCD / Flux sync 沒任何特殊性。staging cluster 跑 Audit mode 24-48hr 看 PolicyReport 有多少違規 → tune rule 或加 PolicyException → 確認沒誤殺再 promote 到 production cluster 的 Enforce mode。對應 [Detection Engineering Lifecycle](/backend/07-security-data-protection/blue-team/detection-engineering-lifecycle/) 的 propose → staging → promote pattern。
 
-**Policy Reporter**：OSS dashboard（不是 Kyverno 內建、是社群專案）、把 PolicyReport CRD 視覺化、給 platform team / app team 看 cluster 違規概況。Nirmata 商業版有更完整的 multi-cluster dashboard + 歷史 trend + compliance mapping（CIS / NIST / PCI）。
+**Policy Reporter**：OSS dashboard（社群專案，而不是 Kyverno 內建）、把 PolicyReport CRD 視覺化、給 platform team / app team 看 cluster 違規概況。Nirmata 商業版有更完整的 multi-cluster dashboard + 歷史 trend + compliance mapping（CIS / NIST / PCI）。
 
 ## 核心取捨表
 
@@ -85,7 +85,7 @@ Kyverno 的定位是 *K8s admission controller-shaped policy engine、policy 用
 
 **Nirmata Enterprise**：商業版補三件事 — *Policy Library*（CIS / NIST / PCI / SOC 2 預製 policy pack）、*Multi-cluster Management*（中央 console 推 policy 到多 cluster + audit dashboard + drift detection）、*Policy Reporter Plus*（trend + compliance mapping + JIRA / Slack integration）。對大企業多 cluster + 合規驅動的場景值得評估、中小 deployment OSS Kyverno + 社群 Policy Reporter 夠用。
 
-**PolicyException 治理**：Kyverno 1.9+ 引入 PolicyException CRD、讓特定 resource 明確繞過特定 policy、避免「app team 為了 deploy 直接把 policy 改寬」。Exception 走 PR + 到期日 + owner、跟 [Detection Coverage and Signal Governance](/backend/07-security-data-protection/detection-coverage-and-signal-governance/) 的 exception lifecycle 對齊 — 例外不是黑箱、是 *暫時性、有 owner、有 review 日期*。
+**PolicyException 治理**：Kyverno 1.9+ 引入 PolicyException CRD、讓特定 resource 明確繞過特定 policy、避免「app team 為了 deploy 直接把 policy 改寬」。Exception 走 PR + 到期日 + owner、跟 [Detection Coverage and Signal Governance](/backend/07-security-data-protection/detection-coverage-and-signal-governance/) 的 exception lifecycle 對齊 — 例外是 *暫時性、有 owner、有 review 日期* 的，而不是黑箱。
 
 ## 排錯與失敗快速判讀
 

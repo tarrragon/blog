@@ -27,7 +27,7 @@ Niantic Pokémon GO 在 GCP 上的關鍵敘述（引自 [Bringing Pokémon GO to
 這個案例最重要的判讀是「surge load 跟可預測峰值是不同問題」。
 
 1. **50x surge 沒辦法事前規劃**：任何合理的 capacity planning 都不會預留 50x headroom — 那會讓平日成本爆炸。事前備足 50 倍容量不可行；事前要建的是緩衝、准入、卸除與退路，事中補的是容量，這次由 Google CRE 代為加上。對應 [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/) 的〈自動擴展（autoscaling）的反應時間與緩衝〉與〈擴展跟不上時的退路：panic mode、fast-fail 與分批上線〉。
-2. **CRE 不是技術、是 vendor 關係**：Google Customer Reliability Engineering 是 GCP 提供給戰略客戶的 24/7 工程支援團隊。能即時為 Niantic 補容量靠的是 *人 + 流程 + 工具* 的組合、不是純技術。對應 [00.6 操作控制服務選型](/backend/00-service-selection/operations-control-service-selection/) 的廠商支援能力評估。
+2. **CRE 是 vendor 關係，而不是技術**：Google Customer Reliability Engineering 是 GCP 提供給戰略客戶的 24/7 工程支援團隊。能即時為 Niantic 補容量靠的是 *人 + 流程 + 工具* 的組合、不是純技術。對應 [00.6 操作控制服務選型](/backend/00-service-selection/operations-control-service-selection/) 的廠商支援能力評估。
 3. **分區上線是預警，架構更換在分區之間完成**：原文寫澳洲與紐西蘭上線 15 分鐘，流量就「surged well past Niantic's expectations」，Niantic 在美國上線的前一天找 Google CRE 支援；之後在日本上線前升級 GKE 版本以容納多出上千個節點，並把 Network Load Balancer 換成 HTTP/S Load Balancer，日本上線時新註冊數是美國的 3 倍而沒有事故。「用 VM 會來不及」這類說法原文沒有，是推論。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 platform 選型。
 
 需要警惕：「Google CRE 即時補容量」這種敘述對中小客戶不適用。一般客戶在 surge 下能依賴的是 *自己的 autoscaler*、不是 vendor 工程師。設計 surge 對應策略時要假設「沒有 vendor 救援」。

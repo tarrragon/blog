@@ -108,7 +108,7 @@ Dashboard → Page Shield → Scripts 列出所有偵測到的 script、含 *建
 
 **徵兆**：切 Enforced 後、CSP violation report 從每天 ~500 漲到每分鐘 ~50K、Page Shield dashboard 變紅、SOC 收 alert 收到 silent。
 
-**根因**：browser extension（廣告攔截 / spell checker / password manager）注入 inline script 跟 connect、被 CSP block 同時觸發 report；不是真實 attack、是 user 端 extension 行為。
+**根因**：browser extension（廣告攔截 / spell checker / password manager）注入 inline script 跟 connect、被 CSP block 同時觸發 report；這是 user 端 extension 行為，而不是真實 attack。
 
 **修法**：
 
@@ -145,7 +145,7 @@ Dashboard → Page Shield → Scripts 列出所有偵測到的 script、含 *建
 
 **徵兆**：第三方 widget 突然不顯示、Page Shield 顯示 SRI mismatch、廠商 status page 沒事故公告。
 
-**根因**：廠商在 same URL（不是 versioned）下偷偷 push minor patch、hash 變了 → SRI 拒載；不是 attack、是 vendor 不遵守 immutable URL 慣例。
+**根因**：廠商在 same URL（不是 versioned）下偷偷 push minor patch、hash 變了 → SRI 拒載；這是 vendor 不遵守 immutable URL 慣例，而不是 attack。
 
 **修法**：
 
