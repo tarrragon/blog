@@ -91,7 +91,7 @@ Classifier 設計常用 [structured output](/llm/04-applications/application-pro
 
 **緩解策略**：
 
-- Classifier 用較弱模型但加 confidence 判讀、低 confidence 走 fallback path。confidence 拿來分流的前提是它在這類輸入上量過[機率校準](/llm/knowledge-cards/probability-calibration/)；沒量過時改用確定性規則分流。classifier 只輸出一個 token 時怎麼取得 confidence、怎麼跟一條確定性規則在升級量相近時比較放行錯誤，見 [4.23 System 1 決策模型的分流題](/llm/04-applications/system-one-decision-model/#分流題判斷題目要不要升級給-system-2)。
+- Classifier 用較弱模型但加 confidence 判讀、低 confidence 走 fallback path。confidence 拿來分流的前提是它在這類輸入上量過[機率校準](/llm/knowledge-cards/probability-calibration/)；沒量過時不按 confidence 分流，全部走主 path，或在有可用的確定性規則時改用規則。classifier 只輸出一個 token 時怎麼取得 confidence、怎麼跟一條確定性規則在升級量相近時比較放行錯誤，見 [4.23 System 1 決策模型的分流題](/llm/04-applications/system-one-decision-model/#分流題判斷題目要不要升級給-system-2)。
 - 簡化 path 數量（3-5 個內、保留必要切分即可）。
 - 設計「unknown / catch-all」path、不假設所有 input 都能歸類。
 

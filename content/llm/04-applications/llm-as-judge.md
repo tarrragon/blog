@@ -168,7 +168,7 @@ Judge 不該光信、要 calibrate：
 6. Calibrate 後的 judge 才能跑 production
 ```
 
-Calibration 是「judge 評什麼」跟「人類評什麼」對齊的步驟、跳過會讓 production eval 失準。這一步量的是評分對齊；模型輸出的機率是否等於答對的頻率是另一個量，叫[機率校準](/llm/knowledge-cards/probability-calibration/)。agreement rate 要跟「隨機猜中」與「永遠選推薦項」兩個基準比較才讀得出意義（pairwise 兩選一時，隨機猜中的一致率是 50%），而且不等於正確率，推導見 [4.23 的〈與人工裁定的一致率和正確率的差別〉](/llm/04-applications/system-one-decision-model/#與人工裁定的一致率和正確率的差別)。
+Calibration 是「judge 評什麼」跟「人類評什麼」對齊的步驟、跳過會讓 production eval 失準。這一步量的是評分對齊；模型輸出的機率是否等於答對的頻率是另一個量，叫[機率校準](/llm/knowledge-cards/probability-calibration/)。agreement rate 要跟兩個基準比較才讀得出意義：隨機猜中，以及永遠判同一側勝（例如永遠判先出現的或較長的那一個）的一致率；人的偏好不是各半時，永遠判同一側勝的一致率會高於 50%。評的題目有客觀正解時，人的評分也可能錯，一致率不等於正確率，推導見 [4.23 的〈與人工裁定的一致率和正確率的差別〉](/llm/04-applications/system-one-decision-model/#與人工裁定的一致率和正確率的差別)；評主觀品質時，與人一致本身就是目標。
 
 ## 跟 [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/) 的閉環
 

@@ -52,7 +52,7 @@ VLM 不是萬能、寫 code 場景的常見失敗：
 - 高細節任務開高解析度模式（API 的 `detail: high` 或本地 VLM 的 `min_pixels` 設高）
 - OCR-only 任務改用專門工具、不靠 VLM
 - 要 VLM 指出是哪一個元件時，在候選元件上疊編號、讓它以編號作答（[Set-of-Mark](/llm/knowledge-cards/set-of-mark-prompting/)）；編號本身會洩漏「這裡有元件」，對照做法見卡片
-- 比兩張截圖時先用像素比對找出差異區域，只把那一區的基準與新版裁切交給 VLM 判斷是不是缺陷，分工與判定門檻見 [4.23 System 1 決策模型](/llm/04-applications/system-one-decision-model/#system-1system-2-與確定性工具的分工)
+- 比兩張截圖時先用像素比對找出差異區域，只把那一區的基準與新版裁切交給 VLM 判斷是不是缺陷，並附上這次變更預期改動的描述（沒有它，VLM 分不出改版和錯誤），分工與判定門檻見 [4.23 System 1 決策模型](/llm/04-applications/system-one-decision-model/#system-1system-2-與確定性工具的分工)
 
 ## 本地 VLM 選型（2026/5）
 
