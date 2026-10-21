@@ -7,7 +7,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "vlm", "vision"]
 ---
 
-Set-of-Mark prompting（編號標記提示）是**在圖片的候選區域上疊加可見的編號或框，讓[視覺語言模型](/llm/knowledge-cards/vlm/)以編號回答「是哪一個」**的提示做法。Jianwei Yang 等人在 2023 年的論文 *Set-of-Mark Prompting Unleashes Extraordinary Visual Grounding in GPT-4V* 提出這個名稱。它把「在圖上定位一個元件」這個開放式問題，轉成「從這幾個編號裡選一個」的封閉選項題，模型不必輸出座標。
+Set-of-Mark prompting（編號標記提示）是**在圖片的候選區域上疊加可見的編號或框，讓[視覺語言模型](/llm/knowledge-cards/vlm/)以編號回答「是哪一個」**的提示做法。Jianwei Yang、Hao Zhang、Feng Li、Xueyan Zou、Chunyuan Li 與 Jianfeng Gao 在 2023 年的論文 *Set-of-Mark Prompting Unleashes Extraordinary Visual Grounding in GPT-4V* 提出這個名稱。它把「在圖上定位一個元件」這個開放式問題，轉成「從這幾個編號裡選一個」的封閉選項題，模型不必輸出座標。
 
 ## 概念位置
 
@@ -18,7 +18,7 @@ Set-of-Mark prompting（編號標記提示）是**在圖片的候選區域上疊
 | Set-of-Mark                                                                 | 一個編號               | 自動比對、可以搭配單 token 決策                  |
 | Set-of-Mark 加 [structured output](/llm/knowledge-cards/structured-output/) | 一個編號欄位           | 需要把答案交給程式處理時，以格式約束確保只回編號 |
 
-候選區域的來源可以是影像分割模型，也可以是產生畫面的程式本身（例如 UI 框架的元件樹提供每個元件的邊界）；元件樹給的邊界是精確的，可以省掉分割這一步。
+候選區域的來源可以是影像分割模型（原論文用 SEEM、SAM 這類互動式分割模型把圖片切成區域，再疊上數字、遮罩或框），也可以是產生畫面的程式本身（例如 UI 框架的元件樹提供每個元件的邊界）；元件樹給的邊界是精確的，可以省掉分割這一步。
 
 ## 設計責任
 
