@@ -171,12 +171,13 @@ Production trace 不只是 debug 工具、是 eval set 的活泉。Trace + eval 
 
 ## 跟其他 Eval 章節的分工
 
-| 章節                                                                    | 焦點                                                      |
-| ----------------------------------------------------------------------- | --------------------------------------------------------- |
-| [4.13 本章](/llm/04-applications/eval-design-framework/)                | **Meta**：先選軸、再選工具的設計座標系                    |
-| [4.14 Benchmarking](/llm/04-applications/benchmarking-and-evaluation/)  | 具體 benchmark 跟自家 eval set 的方法論                   |
-| [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/) | Trace 怎麼接 eval、production observability               |
-| [4.21 LLM-as-Judge](/llm/04-applications/llm-as-judge/)                 | Subjective eval 的核心工具、rubric / pairwise / bias 緩解 |
+| 章節                                                                      | 焦點                                                                                    |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| [4.13 本章](/llm/04-applications/eval-design-framework/)                  | **Meta**：先選軸、再選工具的設計座標系                                                  |
+| [4.14 Benchmarking](/llm/04-applications/benchmarking-and-evaluation/)    | 具體 benchmark 跟自家 eval set 的方法論                                                 |
+| [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/)   | Trace 怎麼接 eval、production observability                                             |
+| [4.21 LLM-as-Judge](/llm/04-applications/llm-as-judge/)                   | Subjective eval 的核心工具、rubric / pairwise / bias 緩解                               |
+| [4.23 System 1 決策模型](/llm/04-applications/system-one-decision-model/) | 封閉選項的單 token 決策器採用前的驗證：預先登記、決策表、小樣本的信賴上界與一致率的基準 |
 
 讀法建議：先讀本章建立座標系、再依當前痛點往對應章節展開。Subjective eval 痛點 → 4.21；自家 benchmark 設計 → 4.14；production observability → 4.20。
 

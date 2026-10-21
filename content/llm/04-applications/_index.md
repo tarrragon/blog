@@ -52,7 +52,7 @@ weight: 5
 4. **再 4.4 Agent 架構 + 4.5 人機協作**：把 Tool use 從「單次呼叫」延伸到「自主多步」、自然進入 agent；agent 自主後立刻面對人類介入時機問題。
 5. **再 4.6 應用層協議**：前面章節涉及 function calling、structured output、MCP 等術語、本章把這三個概念放回正確的層級、避免混為一談。
 6. **再 4.7 Workflow + 4.8 Multi-agent**：上層整合、把多 LLM call 跟多 agent 組合的設計模式整理成跨 framework 不變的概念地圖。
-7. **4.9 起進入 production / 細節**：部署資源、衍生產物管理、long context、embedding 內部、eval / benchmarking、tracing、judge——每個都是 production 場景遇到的具體議題。
+7. **4.9 起進入 production / 細節**：部署資源、衍生產物管理、long context、embedding 內部、eval / benchmarking、tracing、judge——每個都是 production 場景遇到的具體議題。4.23 System 1 決策模型排在 judge 之後，因為它拿 4.7 的 router、4.21 的 position bias 與 calibration、4.5 的代價分級當前提。
 8. **最後 hands-on**：把上述所有原理串成具體案例、看「實際做的時候、原理怎麼落」。
 
 每章可以單獨讀、但若你是第一次接觸 LLM 應用層、照順序讀最不容易迷路。

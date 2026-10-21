@@ -11,15 +11,15 @@ Probability calibration（機率校準）描述**模型給出的機率（經 [so
 
 ## 概念位置
 
-| 概念                                                                   | 量測對象                                                                                                |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| 準確率（accuracy）                                                     | 整體答對的比例，不看信心                                                                                |
-| 機率校準（probability calibration）                                    | 信心的高低與答對頻率是否相符                                                                            |
-| 取樣一致性（consistency）                                              | 同一題在 [temperature](/llm/knowledge-cards/sampling-constraint/) 大於 0 時多次取樣，是否給出同一個答案 |
-| 與裁定的一致率（agreement rate）                                       | 模型和人選了同一項的比例，跟取樣一致性是不同的量                                                        |
-| [LLM-as-Judge](/llm/04-applications/llm-as-judge/) 的 calibration 步驟 | judge 的評分與人的評分是否一致，屬於評分對齊，跟本卡的機率校準是不同的量測                              |
+| 概念                                                                   | 量測對象                                                                                                                                                                                  |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 準確率（accuracy）                                                     | 整體答對的比例，不看信心                                                                                                                                                                  |
+| 機率校準（probability calibration）                                    | 信心的高低與答對頻率是否相符                                                                                                                                                              |
+| 取樣一致性（consistency）                                              | 同一題在 [temperature](/llm/knowledge-cards/sampling-constraint/) 大於 0 時多次取樣，是否給出同一個答案；和 [self-consistency](/llm/knowledge-cards/test-time-compute/)（多數決解碼）不同 |
+| 與裁定的一致率（agreement rate）                                       | 模型和人選了同一項的比例，跟取樣一致性是不同的量                                                                                                                                          |
+| [LLM-as-Judge](/llm/04-applications/llm-as-judge/) 的 calibration 步驟 | judge 的評分與人的評分是否一致，屬於評分對齊，跟本卡的機率校準是不同的量測                                                                                                                |
 
-量測方式是把題目依模型的信心分組（例如 0–10%、10–20%⋯⋯），每組算實際答對的比例，畫成信心對準確率的圖；完全校準時各點落在對角線上。偏離對角線的程度可以濃縮成一個數字，常見的是 expected calibration error（ECE）：各組「信心與準確率的差距」依題數加權平均。Chuan Guo 等人（2017，*On Calibration of Modern Neural Networks*）量到現代神經網路普遍校準不良，並指出 temperature scaling（Platt scaling 的單參數變體）修正校準的效果出奇地好：在驗證集上學一個參數、把 softmax 前的數值整體縮放，事後修正信心而不改變模型選出的答案。
+量測方式是把題目依模型的信心分組（例如 0–10%、10–20%⋯⋯），每組算實際答對的比例，畫成信心對準確率的圖；完全校準時各點落在對角線上。每一組的答對比例本身也有取樣誤差，組裡題目少時誤差很大，算法見[二項比例信賴區間](/llm/knowledge-cards/binomial-proportion-confidence-interval/)。偏離對角線的程度可以濃縮成一個數字，常見的是 expected calibration error（ECE）：各組「信心與準確率的差距」依題數加權平均。Chuan Guo 等人（2017，*On Calibration of Modern Neural Networks*）量到現代神經網路普遍校準不良，並指出 temperature scaling（Platt scaling 的單參數變體）修正校準的效果出奇地好（論文的原話是 surprisingly effective）：在驗證集上學一個參數、把 softmax 前的數值整體縮放，事後修正信心而不改變模型選出的答案。
 
 ## 設計責任
 

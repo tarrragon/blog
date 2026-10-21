@@ -122,6 +122,8 @@ Pairwise 比較時、judge 對「先出現」的 candidate 有偏好（通常偏
 - 只 count 兩次都偏 A 的為「prefer A」、不一致為「tie」
 - 標準 LLM-as-Judge framework（如 MT-Bench）內建這做法
 
+選擇題格式另有一種成因不同的偏差：模型先天偏好某些選項代碼（例如 A），跟選項出現的順序無關。處理方式同樣是輪換選項順序並記錄對應，做法見 [4.23 System 1 決策模型的取得分布方式](/llm/04-applications/system-one-decision-model/#取得單-token-分布的方式token-機率與重複取樣)。
+
 ### 2. Verbosity bias（冗長偏見）
 
 Judge 傾向給「長答」高分、即使內容沒比「短答」更好。
@@ -166,7 +168,7 @@ Judge 不該光信、要 calibrate：
 6. Calibrate 後的 judge 才能跑 production
 ```
 
-Calibration 是「judge 評什麼」跟「人類評什麼」對齊的步驟、跳過會讓 production eval 失準。
+Calibration 是「judge 評什麼」跟「人類評什麼」對齊的步驟、跳過會讓 production eval 失準。這一步量的是評分對齊；模型輸出的機率是否等於答對的頻率是另一個量，叫[機率校準](/llm/knowledge-cards/probability-calibration/)。agreement rate 要跟「隨機猜中」與「永遠選推薦項」兩個基準比較才讀得出意義（pairwise 兩選一時，隨機猜中的一致率是 50%），而且不等於正確率，推導見 [4.23 的〈與人工裁定的一致率和正確率的差別〉](/llm/04-applications/system-one-decision-model/#與人工裁定的一致率和正確率的差別)。
 
 ## 跟 [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/) 的閉環
 

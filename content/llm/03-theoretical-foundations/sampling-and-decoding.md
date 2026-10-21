@@ -106,6 +106,7 @@ probabilities = softmax(adjusted_logits)
 - 寫 code 場景設 0.2 ~ 0.4 較穩。
 - 創意任務（寫故事、brainstorming）設 0.8 ~ 1.0。
 - Reproducible 測試設 0 + 固定 seed。
+- 要把多次取樣的比例當成模型原本分布的估計時（例如讓模型只輸出一個 token 做分類、再看各選項的比例），T 設 1.0，top-p、top-k、min-p 與重複懲罰設成停用值；理由與檢查方法見 [4.23 System 1 決策模型](/llm/04-applications/system-one-decision-model/#取得單-token-分布的方式token-機率與重複取樣)。
 - T > 1.5 失效症狀：產出開始出現拼字錯誤、語法破洞、UTF-8 byte 混亂、甚至跨語言突然切換；極端 T 等同近 uniform 分佈、模型結構被當作 dice。
 
 Temperature 在 sampling 鏈上的位置（行 26 的流程鏈）跟其他過濾步驟有疊加順序、值得展開：

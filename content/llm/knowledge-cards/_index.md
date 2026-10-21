@@ -236,14 +236,15 @@ weight: -1
 
 ### 評估指標 / Benchmark
 
-| 卡片                                                                     | 核心問題                                          |
-| ------------------------------------------------------------------------ | ------------------------------------------------- |
-| [SWE-bench](/llm/knowledge-cards/swe-bench/)                             | coding 能力如何被量化比較                         |
-| [LLM Benchmarks](/llm/knowledge-cards/llm-benchmarks/)                   | MMLU / HumanEval / SWE-bench 等覆蓋範圍與失效情境 |
-| [MTEB](/llm/knowledge-cards/mteb-benchmark/)                             | Embedding model 跨任務通用能力的標準 benchmark    |
-| [Needle in Haystack](/llm/knowledge-cards/needle-in-haystack/)           | 把事實藏在 long context 不同位置的 retrieval 測試 |
-| [Lost in the Middle](/llm/knowledge-cards/lost-in-the-middle/)           | Long context 中段內容 recall 顯著降的現象         |
-| [Probability calibration](/llm/knowledge-cards/probability-calibration/) | 模型給出的機率與實際答對頻率是否相符              |
+| 卡片                                                                                                     | 核心問題                                          |
+| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| [SWE-bench](/llm/knowledge-cards/swe-bench/)                                                             | coding 能力如何被量化比較                         |
+| [LLM Benchmarks](/llm/knowledge-cards/llm-benchmarks/)                                                   | MMLU / HumanEval / SWE-bench 等覆蓋範圍與失效情境 |
+| [MTEB](/llm/knowledge-cards/mteb-benchmark/)                                                             | Embedding model 跨任務通用能力的標準 benchmark    |
+| [Needle in Haystack](/llm/knowledge-cards/needle-in-haystack/)                                           | 把事實藏在 long context 不同位置的 retrieval 測試 |
+| [Lost in the Middle](/llm/knowledge-cards/lost-in-the-middle/)                                           | Long context 中段內容 recall 顯著降的現象         |
+| [Probability calibration](/llm/knowledge-cards/probability-calibration/)                                 | 模型給出的機率與實際答對頻率是否相符              |
+| [Binomial proportion confidence interval](/llm/knowledge-cards/binomial-proportion-confidence-interval/) | 從 n 題裡錯 k 題推出真實失誤率可能落在的範圍      |
 
 ### 應用層模式
 
