@@ -35,6 +35,8 @@ tags: ["monitoring", "collector", "data-integrity", "loss", "reliability", "back
 
 **App 強制終止**：iOS 的 `kill`、Android 的 process death、Python 的 `SIGKILL` — 記憶體 buffer 中未 flush 的事件全部遺失。[攢批送出策略](/monitoring/03-sdk-design/batch-flush/)的 close flush 嘗試在 app 正常退出時送出剩餘事件，但強制終止時連 close callback 都不會執行。
 
+**網頁跳頁中斷**：網頁的對應情形是頁面卸載。使用者點擊連結後頁面立刻跳轉，用一般 `fetch` 送出的事件請求會隨舊頁面一起被瀏覽器取消，點擊事件本身最容易在這裡遺失（點擊與跳轉發生在同一刻）。改用 `sendBeacon` 或 `keepalive` 的 `fetch`、並在 `visibilitychange` 時 flush 的做法見 [攢批送出策略](/monitoring/03-sdk-design/batch-flush/) 的關閉觸發段。
+
 **動態取樣**：收到 collector 的 HTTP 429（Too Many Requests，表示 collector 過載）後，SDK 自動降低取樣率（從 1.0 降到 0.5 → 0.1）。這是對 collector 過載的回饋反應 — 損失的事件量隨背壓程度增加。和靜態取樣的差異是動態取樣在正常情況下不生效，只在過載時啟用。
 
 ### 環節三：Transport 階段

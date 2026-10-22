@@ -19,5 +19,6 @@ tags: ["monitoring", "sentry", "crashlytics", "datadog", "mixpanel"]
 
 ## 跨分類引用
 
+- → [Vendor：各家追蹤碼的接入與驗證](/monitoring/vendors/)：選定一家之後的接入機制、事件對映與驗證方式（廣告平台像素、tag manager）
 - → [monitoring 模組八 商業利用](/monitoring/08-business-analytics/)：商業方案的核心賣點是行為分析功能
 - → [backend 04 可觀測性](/backend/04-observability/)：server-side 商業方案（Datadog / New Relic）的對照

@@ -32,6 +32,8 @@ SDK close 時強制 flush buffer 中所有剩餘事件。這是最後一道保�
 
 close flush 的挑戰是時間限制。iOS app 進入背景後約 5 秒會被系統 suspend，Android 的限制更嚴格。Close flush 必須在這個時間窗口內完成網路請求。如果 buffer 中事件太多導致 flush 超時，需要截斷 — 送出最近的 N 筆，放棄較舊的。
 
+網頁沒有 close 這個時機可以依賴：使用者點連結跳頁、關分頁、切到別的 App 時，頁面上還在途中的 `fetch` 可能隨頁面卸載被瀏覽器取消，`unload` 事件在行動瀏覽器上也不保證觸發。網頁 SDK 因此把關閉觸發註冊在 `visibilitychange`（頁面變成 `hidden` 時）與 `pagehide` 上，並改用 `navigator.sendBeacon` 或帶 `keepalive: true` 的 `fetch` 送出，讓瀏覽器在頁面卸載後繼續把請求送完；兩者共用的 payload 上限與 CORS 規則見 [JS/TS 平台適配](/monitoring/05-platform-adaptation/js-ts-platform/)。
+
 ## Buffer 管理
 
 ### 記憶體 buffer
