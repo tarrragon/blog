@@ -16,10 +16,10 @@ tags: ["monitoring", "vendor", "tracking", "pixel"]
 | [Meta Pixel 實測頁](/monitoring/vendors/meta-pixel-lab/)                         | 實測頁   | 按鈕觸發 PageView / ViewContent / Purchase、`_fbp` 與 `_fbc` 的產生、載入失敗態                   |
 | [Google Tag Manager](/monitoring/vendors/google-tag-manager/)                    | 機制文   | 資料層約定、預覽模式驗證、自訂 HTML 的治理、伺服器端代碼管理                                      |
 | [Google Tag Manager 實測頁](/monitoring/vendors/google-tag-manager-lab/)         | 實測頁   | 容器載入、資料層內容、容器載入前推入的事件、代碼送出的請求                                        |
-| 用 Playwright 擷取追蹤碼請求（`tracking-request-capture.md`，draft）             | 擷取紀錄 | 擷取方式、結果檔欄位、各次結果（標擷取時間與版本）                                                |
+| [用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)    | 擷取紀錄 | 擷取方式、結果檔欄位、各次結果（標擷取時間與版本）                                                |
 | [追蹤工具的帳號歸屬](/monitoring/vendors/tracking-account-ownership/)            | 機制文   | Meta 組合、GTM 帳戶與容器、GA4 帳戶與資源的擁有層級、權限分級、能否換擁有者、代理商與轉手時的歸屬 |
 
-擷取紀錄在第一次擷取完成之前維持 `draft: true`，沒有結果的頁面不發布。2026-10-23 GTM 與 Meta Pixel 各完成一次擷取，取消 draft 待作者決定。
+擷取紀錄在第一次擷取完成之前維持 `draft: true`；2026-10-23 GTM 與 Meta Pixel 各完成一次擷取之後發布。
 
 ## 篇目的收錄條件
 
@@ -31,16 +31,14 @@ tags: ["monitoring", "vendor", "tracking", "pixel"]
 
 - **獨立實測頁**：實作是 `layouts/shortcodes/vendor-lab.html`。頁面預設不注入任何第三方 script，讀者按下載入按鈕才注入；ID 由讀者填寫，預設值取 `hugo.toml` 的 `[params.vendorLab]`。`tests/vendor-lab.spec.ts` 把 vendor 網域攔下來回 stub，守住「按下之前零請求」與 ID 格式檢查。
 - **本機 Playwright 擷取**：`scripts/vendor-capture/capture.mjs` 操作實測頁並把請求、cookie、資料層寫成 JSON（`scripts/vendor-capture/results/`），每份結果帶擷取時間、瀏覽器版本、vendor script 的回應標頭與本體雜湊，因為 vendor 改版之後結果就不再適用。Meta Pixel 在無頭瀏覽器裡不送事件，擷取 Meta 要加 `--headed`（2026-10-23 實測）；腳本不改寫 User-Agent。
+- **測試 ID 不公開、實測頁不設預設值**（2026-10-23 決定）：Pixel ID、容器 ID 與評估 ID 本來就寫在網頁原始碼裡，公開它們不會讓別人登入帳號；風險在反方向，任何人都能拿 ID 往帳號送事件，而 Meta 的資料集不能刪除，被灌入假事件之後只能另建一個。文章因此只描述 ID 的格式與查詢位置，不寫本站測試帳號的實際值，也避免讀者照抄別人的 ID 去測試；`hugo.toml` 的 `[params.vendorLab]` 維持空白，讀者在實測頁填自己的 ID。擷取結果的 JSON 保留原始值，供日後比對。
 - **測試帳號**：Meta 商家資產管理組合「Tarragon Tech Notes」裡的資料集、GTM 帳戶 `vendor-lab-test`、GA4 帳戶 `vendor-lab-test`，都只放實測資產。建立時的取捨記在 [追蹤工具的帳號歸屬](/monitoring/vendors/tracking-account-ownership/) 的測試帳號一節。
 
 Conversions API 這類伺服器端路徑在本站有一個限制：本站的接收端是 Apps Script，而 Apps Script 的 `doPost` 讀不到請求的 HTTP header（拿不到 IP 與 User-Agent），Meta 對網站事件要求的 `client_user_agent` 只能由前端放進 payload，這又回到送完整 User-Agent 的隱私取捨上，所以伺服器端目前只寫機制、不做實測。
 
 ## Backlog
 
-| 項目                                                           | 類型 | 前置條件                                                                  | 規模 |
-| -------------------------------------------------------------- | ---- | ------------------------------------------------------------------------- | ---- |
-| 擷取紀錄取消 draft                                             | 案例 | 作者確認已發布的結果與測試 ID 可公開                                      | 小   |
-| 填 `[params.vendorLab]` 的預設 ID                              | 案例 | 測試用 Pixel 與容器已建立；容器裡還沒有以 `purchase` 事件為觸發條件的代碼 | 小   |
-| 隱私說明補一段實測頁載入的內容                                 | 案例 | 預設 ID 填入之後                                                          | 小   |
-| GA4 網頁版的事件模型與 Measurement Protocol（機制文 + 實測頁） | 主章 | 無                                                                        | 2    |
-| Mixpanel 的接入面（identify / alias、Ingestion API）           | 主章 | 無                                                                        | 1    |
+| 項目                                                           | 類型 | 前置條件 | 規模 |
+| -------------------------------------------------------------- | ---- | -------- | ---- |
+| GA4 網頁版的事件模型與 Measurement Protocol（機制文 + 實測頁） | 主章 | 無       | 2    |
+| Mixpanel 的接入面（identify / alias、Ingestion API）           | 主章 | 無       | 1    |

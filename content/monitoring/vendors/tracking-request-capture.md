@@ -1,7 +1,6 @@
 ---
 title: "用 Playwright 擷取追蹤碼請求：擷取方式、記錄欄位與各次結果"
 date: 2026-10-22
-draft: true
 description: "以 Playwright 操作 Meta Pixel 與 GTM 實測頁、記錄各家 script 實際送出的請求與 cookie 的方式，結果檔記錄的欄位與它們的用途，以及每一次擷取的時間、瀏覽器與 script 版本"
 weight: 5
 tags: ["monitoring", "vendor", "playwright", "meta-pixel", "google-tag-manager", "lab"]
@@ -46,9 +45,9 @@ node scripts/vendor-capture/capture.mjs --vendor meta-pixel --id <Pixel ID> \
 node scripts/vendor-capture/capture.mjs --vendor meta-pixel --id <Pixel ID> --headed
 ```
 
-`--vendor` 決定開哪一個實測頁、照哪一組動作操作。`--id` 是要填進實測頁欄位的 ID，用測試專用的 Pixel 與容器，擷取送出的事件才不會混進正式的廣告報表。`--url` 省略時開正式站的實測頁；`--out` 可以把結果檔寫到別的目錄；`--headed` 不帶值，加上它就以有視窗的瀏覽器執行，執行期間螢幕上會開一個 Chromium 視窗、跑完自動關閉。
+`--vendor` 決定開哪一個實測頁、照哪一組動作操作。`--id` 是要填進實測頁欄位的 ID，用測試專用的 Pixel 與容器，擷取送出的事件才不會混進正式的廣告報表。`--url` 省略時開正式站的實測頁；`--out` 可以把結果檔寫到別的目錄；`--headed` 不帶值，加上它就以有視窗的瀏覽器執行，執行期間螢幕上會開一個 Chromium 視窗、跑完自動關閉。本機安裝的 Chromium 版本與 `@playwright/test` 要求的不符時，用環境變數 `PW_CHROMIUM_PATH` 指定瀏覽器執行檔的路徑。
 
-Pixel ID 填錯時沒有任何錯誤訊息：`www.facebook.com/tr/` 對任何 ID 都回 200，`signals/config/<ID>` 對不存在的 ID 也回 200，內容是一個只有 `/* empty plugin */` 的設定檔。確認 ID 的方法是看結果檔裡 `signals/config` 那一筆之後有沒有對應的外掛被載入，或直接在事件管理工具的資料集頁面讀 ID。商家設定頁網址裡的 `selected_asset_id` 是設定頁內部的資產編號，與 Pixel ID 不同。本機安裝的 Chromium 版本與 `@playwright/test` 要求的不符時，用環境變數 `PW_CHROMIUM_PATH` 指定瀏覽器執行檔的路徑。
+Pixel ID 填錯時沒有任何錯誤訊息：`www.facebook.com/tr/` 對任何 ID 都回 200，`signals/config/<ID>` 對不存在的 ID 也回 200，內容是一個只有 `/* empty plugin */` 的設定檔。確認 ID 的方法是看結果檔裡 `signals/config` 那一筆之後有沒有對應的外掛被載入，或直接在事件管理工具的資料集頁面讀 ID。商家設定頁網址裡的 `selected_asset_id` 是設定頁內部的資產編號，與 Pixel ID 不同。
 
 執行環境要能連到 `connect.facebook.net`、`www.facebook.com`、`www.googletagmanager.com` 與各家代碼用到的網域。連不到的時候腳本照樣跑完並寫出結果檔，`steps` 會顯示 script 載入失敗、`requests` 裡那幾筆帶 `failure` 欄位，這份結果記錄的是「在這個網路環境下被擋下」，不是 vendor 的行為，不收進〈各次擷取的結果〉一節。
 
@@ -58,7 +57,7 @@ Pixel ID 填錯時沒有任何錯誤訊息：`www.facebook.com/tr/` 對任何 ID
 
 ### 2026-10-23 01:26（台北）：Meta Pixel，有視窗的瀏覽器
 
-擷取時間是 UTC 2026-10-22 17:26:10，瀏覽器是 Playwright 提供的 Chromium 148.0.7778.96（macOS、arm64）以 `--headed` 執行，User-Agent 不帶 `HeadlessChrome`；實測頁開在本機 build。Pixel `1405650704604671` 是測試用資料集，建立時沒有勾選把資料集連到轉換 API 的選項，所以 Meta 那一端沒有另一條伺服器端路徑。結果檔是 `scripts/vendor-capture/results/meta-pixel-20261022T1726Z.json`。
+擷取時間是 UTC 2026-10-22 17:26:10，瀏覽器是 Playwright 提供的 Chromium 148.0.7778.96（macOS、arm64）以 `--headed` 執行，User-Agent 不帶 `HeadlessChrome`；實測頁開在本機 build。Pixel 是測試用的資料集，建立時沒有勾選把資料集連到轉換 API 的選項，所以 Meta 那一端沒有另一條伺服器端路徑。結果檔是 `scripts/vendor-capture/results/meta-pixel-20261022T1726Z.json`。
 
 版本線索：`fbevents.js` 本體 435,058 位元組，SHA-256 開頭是 `6f3aa7a0d8d9`；`fbq.version` 是 `2.9.427`，`signals/config` 請求的查詢參數同樣帶 `v=2.9.427`、`r=stable`。這個 Pixel 的設定檔裡出現 26 個外掛名稱，其中與本篇觀察相關的是 `cookie`、`inferredevents` 與 `botblocking`，名稱分別對應寫 cookie、自動事件與機器人流量。不存在的 ID 拿到的設定檔裡一個外掛都沒有。
 
@@ -78,13 +77,13 @@ Pixel ID 填錯時沒有任何錯誤訊息：`www.facebook.com/tr/` 對任何 ID
 
 ### 2026-10-23 00:45（台北）：GTM 容器只帶一個 GA4 代碼
 
-擷取時間是 UTC 2026-10-22 16:45:30，瀏覽器是 Playwright 提供的 Chromium headless shell 148.0.7778.96（macOS、arm64），實測頁開在本機 build（`http://localhost:4173/blog/monitoring/vendors/google-tag-manager-lab/`）。容器 `GTM-TZNKXGM9` 是測試用容器，發布的版本裡只有一個 Google Analytics 代碼：評估 ID `G-TJ809Z5YBX`、觸發條件是 Initialization - All Pages，沒有任何以 `purchase` 為名的自訂事件觸發條件。結果檔是 `scripts/vendor-capture/results/gtm-20261022T1645Z.json`。
+擷取時間是 UTC 2026-10-22 16:45:30，瀏覽器是 Playwright 提供的 Chromium headless shell 148.0.7778.96（macOS、arm64），實測頁開在本機 build（`http://localhost:4173/blog/monitoring/vendors/google-tag-manager-lab/`）。容器是測試用容器，發布的版本裡只有一個 Google Analytics 代碼，觸發條件是 Initialization - All Pages，沒有任何以 `purchase` 為名的自訂事件觸發條件。結果檔是 `scripts/vendor-capture/results/gtm-20261022T1645Z.json`。
 
 版本線索：`gtm.js` 的回應本體 546,027 位元組，SHA-256 開頭是 `b970456b1ca6`；回應標頭只有 `content-type`、`date` 與 `cache-control: private, max-age=900`。
 
-**載入容器之後送出的請求。** 瀏覽器先向 `www.googletagmanager.com` 取得 `gtm.js?id=GTM-TZNKXGM9`（200），約 0.1 秒後由容器裡的 GA4 代碼向 `www.google-analytics.com/g/collect` 送出一筆 POST（204）。這一筆的事件資料全部放在網址的查詢參數裡，POST body 是空的：`tid` 是評估 ID，`en=page_view` 是事件名稱，`dl` 與 `dt` 是頁面網址與標題。`dl` 記錄的網址沒有連接埠號，實測頁實際開在 4173 埠。
+**載入容器之後送出的請求。** 瀏覽器先向 `www.googletagmanager.com` 取得 `gtm.js?id=<容器 ID>`（200），約 0.1 秒後由容器裡的 GA4 代碼向 `www.google-analytics.com/g/collect` 送出一筆 POST（204）。這一筆的事件資料全部放在網址的查詢參數裡，POST body 是空的：`tid` 是評估 ID，`en=page_view` 是事件名稱，`dl` 與 `dt` 是頁面網址與標題。`dl` 記錄的網址沒有連接埠號，實測頁實際開在 4173 埠。
 
-**GA4 代碼寫下的 cookie。** 一筆 `page_view` 之後，這個網域多出兩個 cookie。`_ga` 的值是 `GA1.1.` 接兩段數字，這兩段數字與 collect 請求的 `cid` 參數相同，GA4 用它辨識同一個瀏覽器。`_ga_TJ809Z5YBX` 的名稱帶著評估 ID 去掉 `G-` 的部分，值記錄這個瀏覽器在這個資源下的工作階段，`s` 之後的時間戳與 collect 請求的 `sid` 參數相同。兩個 cookie 都由 JavaScript 寫入（`httpOnly` 為 false）、`SameSite=Lax`，到期時間是擷取時間起算 400 天。
+**GA4 代碼寫下的 cookie。** 一筆 `page_view` 之後，這個網域多出兩個 cookie。`_ga` 的值是 `GA1.1.` 接兩段數字，這兩段數字與 collect 請求的 `cid` 參數相同，GA4 用它辨識同一個瀏覽器。第二個 cookie 的名稱是 `_ga_` 接上評估 ID 去掉 `G-` 的部分，值記錄這個瀏覽器在這個資源下的工作階段，`s` 之後的時間戳與 collect 請求的 `sid` 參數相同。兩個 cookie 都由 JavaScript 寫入（`httpOnly` 為 false）、`SameSite=Lax`，到期時間是擷取時間起算 400 天。
 
 **往資料層推 purchase 事件之後。** `window.dataLayer` 依序是實測頁推的 `gtm.js`、容器自己推的 `gtm.dom` 與 `gtm.load`，以及按鈕推的 `purchase`（帶 `order_id`、`value`、`currency`）。推入 `purchase` 之後沒有新的請求：這個容器裡沒有以 `purchase` 觸發的代碼，那一筆只留在陣列裡。這是 [Google Tag Manager](/monitoring/vendors/google-tag-manager/) 的資料層一節描述的分工在網路層的樣子，網站推什麼事件由前端決定，事件會不會變成送往某一家的請求由容器的設定決定。要讓購買事件送到 GA4，容器要另加一個 GA4 事件代碼，以名稱為 `purchase` 的自訂事件觸發條件啟動它。
 
