@@ -1,0 +1,172 @@
+{
+  "capturedAt": "2026-10-22T16:45:30.485Z",
+  "capturedAtTaipei": "2026-10-23 00:45:30",
+  "browser": "148.0.7778.96",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/148.0.7778.96 Safari/537.36",
+  "vendor": "gtm",
+  "id": "GTM-TZNKXGM9",
+  "labUrl": "http://localhost:4173/blog/monitoring/vendors/google-tag-manager-lab/",
+  "steps": [
+    {
+      "atMs": 4872,
+      "label": "load",
+      "status": "gtm.js 已載入。"
+    },
+    {
+      "atMs": 7900,
+      "label": "push-purchase",
+      "status": "gtm.js 已載入。"
+    }
+  ],
+  "vendorRuntime": {
+    "fbqVersion": null,
+    "gtmContainers": [
+      "debugGroupId",
+      "tcf",
+      "pscdl",
+      "GTM-TZNKXGM9",
+      "dataLayer",
+      "mb",
+      "r",
+      "sequence",
+      "SANDBOXED_JS_SEMAPHORE",
+      "autoEventsSettings",
+      "grl"
+    ],
+    "dataLayer": [
+      {
+        "gtm.start": 1792687532352,
+        "event": "gtm.js",
+        "gtm.uniqueEventId": 3
+      },
+      {
+        "event": "gtm.dom",
+        "gtm.uniqueEventId": 11
+      },
+      {
+        "event": "gtm.load",
+        "gtm.uniqueEventId": 12
+      },
+      {
+        "event": "purchase",
+        "order_id": "lab-mvjrvf2r",
+        "value": 1,
+        "currency": "TWD",
+        "gtm.uniqueEventId": 13
+      }
+    ]
+  },
+  "cookies": [
+    {
+      "name": "_ga_TJ809Z5YBX",
+      "value": "GS2.1.s1792687532$o1$g0$t1792687532$j60$l0$h0",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1827247532.667523,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.1.471503563.1792687533",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1827247532.667729,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "requests": [
+    {
+      "atMs": 1310,
+      "method": "GET",
+      "resourceType": "script",
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/mermaid@10.6.1/dist/mermaid.min.js",
+      "query": {},
+      "postData": null,
+      "status": 200,
+      "responseHeaders": {
+        "content-type": "application/javascript; charset=utf-8",
+        "etag": "W/\"2ccbcc-yZW3gvhqQPDjIgGi0zkw80XNmPU\"",
+        "date": "Thu, 22 Oct 2026 16:45:30 GMT",
+        "cache-control": "public, max-age=31536000, s-maxage=31536000, immutable"
+      }
+    },
+    {
+      "atMs": 2141,
+      "method": "GET",
+      "resourceType": "script",
+      "origin": "https://www.googletagmanager.com",
+      "path": "/gtm.js",
+      "query": {
+        "id": "GTM-TZNKXGM9"
+      },
+      "postData": null,
+      "status": 200,
+      "responseHeaders": {
+        "content-type": "application/javascript; charset=UTF-8",
+        "date": "Thu, 22 Oct 2026 16:45:32 GMT",
+        "cache-control": "private, max-age=900"
+      },
+      "body": {
+        "bytes": 546027,
+        "sha256": "b970456b1ca6b59659cd11b01c680dcfd829eeab54ba192c929e8b5b4b71614c"
+      }
+    },
+    {
+      "atMs": 2262,
+      "method": "POST",
+      "resourceType": "fetch",
+      "origin": "https://www.google-analytics.com",
+      "path": "/g/collect",
+      "query": {
+        "v": "2",
+        "tid": "G-TJ809Z5YBX",
+        "gtm": "45He6al0v9283125288za208zd9283125288xf1",
+        "_p": "1792687532352",
+        "gcd": "13l3l3l3l1l1",
+        "npa": "0",
+        "dma": "0",
+        "are": "1",
+        "cid": "471503563.1792687533",
+        "frm": "0",
+        "ngs": "1",
+        "pscdl": "noapi",
+        "rcb": "18",
+        "sr": "1280x720",
+        "uaa": "arm",
+        "uab": "64",
+        "uafvl": "Chromium;148.0.7778.96|HeadlessChrome;148.0.7778.96|Not%2FA)Brand;99.0.0.0",
+        "uam": "",
+        "uamb": "0",
+        "uap": "macOS",
+        "uapv": "26.5.0",
+        "uaw": "0",
+        "ul": "en-us",
+        "_s": "1",
+        "tag_exp": "115938465~115938469~118897920~118897930~120385423~120469145~120469153~121049589~121246026~121246034~121328667",
+        "sid": "1792687532",
+        "sct": "1",
+        "seg": "0",
+        "dl": "http://localhost/blog/monitoring/vendors/google-tag-manager-lab/",
+        "dt": "Google Tag Manager 實測頁：在瀏覽器裡觀察容器載入、資料層事件與代碼送出的請求 | Tarragon",
+        "en": "page_view",
+        "_fv": "1",
+        "_nsi": "1",
+        "_ss": "1",
+        "tfd": "2181"
+      },
+      "postData": null,
+      "status": 204,
+      "responseHeaders": {
+        "content-type": "text/plain",
+        "date": "Thu, 22 Oct 2026 16:45:32 GMT",
+        "cache-control": "no-cache, no-store, must-revalidate"
+      },
+      "failure": "net::ERR_ABORTED"
+    }
+  ]
+}

@@ -17,6 +17,7 @@
 // 連不到時 script 會載入失敗，結果檔照樣產生，可從 steps 與 requests 看出是哪一個請求被擋。
 
 import { chromium } from '@playwright/test';
+import { createHash } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -26,6 +27,8 @@ const LAB_PAGES = {
 };
 const COOKIE_PREFIXES = ['_fbp', '_fbc', '_ga', '_gid', '_gcl'];
 const KEPT_RESPONSE_HEADERS = ['content-type', 'last-modified', 'etag', 'date', 'cache-control'];
+// vendor script 本體：gtm.js 的回應不帶 last-modified 與 etag，改版要靠本體的長度與雜湊比對
+const VENDOR_SCRIPT_PATHS = ['/en_US/fbevents.js', '/gtm.js', '/gtag/js'];
 
 function parseArgs(argv) {
   const args = {};
@@ -56,11 +59,22 @@ page.on('requestfinished', async (req) => {
   if (new URL(req.url()).origin === labOrigin) return;
   const res = await req.response();
   const headers = res ? await res.allHeaders() : {};
-  requests.push(describe(req, res ? res.status() : null, headers));
+  const entry = describe(req, res ? res.status() : null, headers);
+  if (res && VENDOR_SCRIPT_PATHS.includes(entry.path)) {
+    const body = await res.body();
+    entry.body = { bytes: body.length, sha256: createHash('sha256').update(body).digest('hex') };
+  }
+  requests.push(entry);
 });
-page.on('requestfailed', (req) => {
+// GA4 的 g/collect 由 script 以 fetch 送出，伺服器回了 204 之後 Playwright 仍會把它記成 requestfailed（ERR_ABORTED）。
+// 所以先從 response 事件記下已收到的回應，失敗事件只在真的沒有回應時才代表請求沒送達。
+const responses = new Map();
+page.on('response', (res) => responses.set(res.request(), res));
+page.on('requestfailed', async (req) => {
   if (new URL(req.url()).origin === labOrigin) return;
-  requests.push({ ...describe(req, null, {}), failure: req.failure()?.errorText });
+  const res = responses.get(req);
+  const headers = res ? await res.allHeaders() : {};
+  requests.push({ ...describe(req, res ? res.status() : null, headers), failure: req.failure()?.errorText });
 });
 
 function describe(req, status, headers) {
