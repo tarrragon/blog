@@ -100,6 +100,8 @@ CI secrets 集中化的核心風險是把 *單一節點承載的憑證數量* �
 
 以下基於通用工程知識補充：secrets 分級的工程意義是讓事件期間的輪替能按風險排序、不靠 ad-hoc 判斷。缺分級時、組織要在壓力下做全面輪替、容易造成服務中斷或遺漏。日常演練要包含「假設整個 CI vendor 受損」的 fire drill、確認輪替路徑能在 vendor 失能時仍可執行，這是 7.6 跟 [6.x reliability](/backend/06-reliability/) 演練面的共同訴求。
 
+CI 主機已經被入侵時，憑證撤銷與重發的先後見 [8.25〈憑證撤銷與輪替的先後〉](/backend/08-incident-response/compromised-build-host-eradication/#憑證撤銷與輪替的先後)；事前讓管線的憑證只到部署為止的做法見 [7.44 多租戶平台的隔離層級](../multi-tenant-platform-isolation-tiers/)。
+
 ## 簽章金鑰跟長期信任根
 
 簽章金鑰是憑證治理的最高層信任根、生命週期治理要跟一般 token 分開。簽章金鑰一旦失守、攻擊者能偽造 *可被驗證* 的 token、繞過所有依賴該 issuer 的下游驗證；這跟一般 token 洩漏（仍受 token 自身 scope 限制）是不同層級的失效。

@@ -12,7 +12,7 @@ tags: ["backend", "security"]
 
 ## 本章涵蓋與不涵蓋
 
-本章聚焦身分接入這一層的多租戶設計。要不要委派、與自建的取捨在 [7.31 認證方式選型](../authentication-approach-selection/)。接上之後的停用同步、資料歸屬與多來源對應在 [7.38](../external-identity-local-record-lifecycle/)。租戶之間的資料與資源隔離是另一個問題，走 [tenant boundary](/backend/knowledge-cards/tenant-boundary/) 與 [7.2 身分與授權邊界](../identity-access-boundary/)——本章的每一個決定都建立在那條邊界已經成立的前提上，而它自己不負責建立它。機器對機器的跨組織信任走 [7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)。
+本章聚焦身分接入這一層的多租戶設計。要不要委派、與自建的取捨在 [7.31 認證方式選型](../authentication-approach-selection/)。接上之後的停用同步、資料歸屬與多來源對應在 [7.38](../external-identity-local-record-lifecycle/)。租戶之間的資料與資源隔離是另一個問題，走 [7.44 多租戶平台的隔離層級](../multi-tenant-platform-isolation-tiers/)（資料的放法與共用元件的權限範圍）與 [tenant boundary](/backend/knowledge-cards/tenant-boundary/)——本章的每一個決定都建立在那條邊界已經成立的前提上，而它自己不負責建立它。機器對機器的跨組織信任走 [7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)。
 
 ## 判讀軸：租戶歸屬由誰主張、由誰驗證
 
