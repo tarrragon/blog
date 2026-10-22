@@ -63,4 +63,4 @@ GTM 的代碼類型裡有一種自訂 HTML（Custom HTML），內容是任意的
 
 伺服器容器的預覽模式驗證的是另一段：它列出伺服器收到的請求、解析出的事件資料，以及轉送給各家的請求。網頁容器的預覽模式確認瀏覽器有送，伺服器容器的預覽模式確認轉送的內容對，兩段要分別驗。
 
-容器載入、資料層事件與代碼送出的請求，可以在 [Google Tag Manager 實測頁](/monitoring/vendors/google-tag-manager-lab/) 填入測試容器的 ID 實際觸發一次。容器屬於哪一個帳戶、帳戶與容器的權限分級，以及把容器移到另一個帳戶時要匯出匯入、網站上的容器 ID 跟著換的處理，見 [追蹤工具的帳號歸屬](/monitoring/vendors/tracking-account-ownership/)。
+容器載入、資料層事件與代碼送出的請求，可以在 [Google Tag Manager 實測頁](/monitoring/vendors/google-tag-manager-lab/) 填入測試容器的 ID 實際觸發一次。容器屬於哪一個帳戶、帳戶與容器的權限分級，以及把容器移到另一個帳戶時要匯出匯入、網站上的容器 ID 跟著換的處理，見 [追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)。

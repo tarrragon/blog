@@ -5,7 +5,7 @@
 
   頁面載入時不注入任何第三方 script；讀者按下「載入」按鈕才注入，
   所以這一頁的第三方請求全部由讀者的操作觸發。ID 由讀者填寫，
-  預設值取 hugo.toml 的 [params.vendorLab]（測試用帳號的 ID，本來就會出現在頁面原始碼裡）。
+  預設值取 hugo.toml 的 [params.vendorLab]；本站刻意留空，讀者填自己的測試 ID。
 
   面板只觀察、不改寫：請求清單來自 PerformanceObserver 的 resource 紀錄
   （只列跨網域的請求），cookie 清單來自 document.cookie。
