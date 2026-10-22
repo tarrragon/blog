@@ -17,11 +17,13 @@ tags: ["monitoring", "vendor", "playwright", "meta-pixel", "google-tag-manager",
 
 和實測頁面板相比，Playwright 從瀏覽器的網路層記錄請求，所以拿得到面板拿不到的三樣資訊：POST 請求的 body、回應的狀態碼與標頭、以及帶 `HttpOnly` 旗標而 `document.cookie` 讀不到的 cookie。
 
+腳本預設以無頭模式（headless）啟動 Chromium，這時瀏覽器的 User-Agent 帶 `HeadlessChrome` 字樣。實測時 Meta Pixel 的 `fbevents.js` 在無頭模式下照樣載入、照樣寫 cookie，事件請求卻一筆都不送出；同一個無頭瀏覽器只把 User-Agent 換成一般 Chrome 的字串，事件就送出了，所以 `fbevents.js` 依 User-Agent 判斷要不要送。Pixel 設定檔裡出現一個名為 `botblocking` 的外掛，名稱與這個行為相符，但沒有直接證據顯示過濾是它做的。GA4 在無頭模式下照常送出。所以擷取 Meta Pixel 要加 `--headed`，讓 Playwright 開一個有視窗的瀏覽器操作實測頁。腳本不改寫 User-Agent，有視窗的瀏覽器仍然是自動化控制的瀏覽器，Meta 之後若加入其他偵測條件，同一個指令的結果可能改變，這也是每份結果要記下擷取模式的理由。
+
 ## 結果檔記錄的欄位
 
 每次擷取寫出一份 JSON，檔名是 vendor 名稱加上 UTC 擷取時間（例如 `meta-pixel-20261022T0445Z.json`），放在 `scripts/vendor-capture/results/`。欄位分成三組：
 
-- **重現條件**：`capturedAt`（UTC）與 `capturedAtTaipei`、`browser`（Chromium 版本）、`userAgent`、`labUrl`、使用的 Pixel 或容器 ID。結果和這些條件綁在一起才有意義，換一個瀏覽器版本或 vendor 改版之後，同一個動作可能送出不同的參數。
+- **重現條件**：`capturedAt`（UTC）與 `capturedAtTaipei`、`browser`（Chromium 版本）、`userAgent`、`headless`（這次是否以無頭模式執行）、`labUrl`、使用的 Pixel 或容器 ID。結果和這些條件綁在一起才有意義，換一個瀏覽器版本或 vendor 改版之後，同一個動作可能送出不同的參數。
 - **vendor 版本線索**：`requests` 裡 `fbevents.js`、`gtm.js` 那幾筆的回應標頭（`last-modified`、`etag`、`date`）與 `body` 欄位（script 本體的位元組數與 SHA-256），以及 `vendorRuntime.fbqVersion`。`fbqVersion` 在 Meta 基本碼裡先被設成 `2.0`，`fbevents.js` 載入後是否覆寫成實際版本由 Meta 決定，所以判斷 script 有沒有改版以回應標頭與本體雜湊為主。`gtm.js` 的回應實測不帶 `last-modified` 與 `etag`，比對 GTM 只能靠本體雜湊；而 `gtm.js` 的內容由容器設定與 Google 的執行環境一起產生，雜湊變了之後要再到 GTM 後台的版本紀錄查容器那段期間有沒有發布，才分得出是哪一邊改的。
 - **觀察對象**：`steps`（每個動作之後實測頁狀態列的文字）、`requests`（每一筆跨網域請求的方法、網址、查詢參數、POST body、狀態碼）、`cookies`（追蹤 cookie 的名稱、值、網域、到期時間與旗標）、`vendorRuntime.dataLayer`（GTM 實測時資料層的完整內容）。
 
@@ -39,15 +41,40 @@ node scripts/vendor-capture/capture.mjs --vendor gtm --id <GTM-容器ID>
 # 改測本機 build：先 make site 並啟動測試用的靜態伺服器，再把 --url 指到本機的實測頁
 node scripts/vendor-capture/capture.mjs --vendor meta-pixel --id <Pixel ID> \
   --url http://localhost:4173/blog/monitoring/vendors/meta-pixel-lab/
+
+# 以有視窗的瀏覽器擷取：Meta Pixel 在無頭模式下不送事件，要記錄事件請求就加 --headed
+node scripts/vendor-capture/capture.mjs --vendor meta-pixel --id <Pixel ID> --headed
 ```
 
-`--vendor` 決定開哪一個實測頁、照哪一組動作操作。`--id` 是要填進實測頁欄位的 ID，用測試專用的 Pixel 與容器，擷取送出的事件才不會混進正式的廣告報表。`--url` 省略時開正式站的實測頁；`--out` 可以把結果檔寫到別的目錄。本機安裝的 Chromium 版本與 `@playwright/test` 要求的不符時，用環境變數 `PW_CHROMIUM_PATH` 指定瀏覽器執行檔的路徑。
+`--vendor` 決定開哪一個實測頁、照哪一組動作操作。`--id` 是要填進實測頁欄位的 ID，用測試專用的 Pixel 與容器，擷取送出的事件才不會混進正式的廣告報表。`--url` 省略時開正式站的實測頁；`--out` 可以把結果檔寫到別的目錄；`--headed` 不帶值，加上它就以有視窗的瀏覽器執行，執行期間螢幕上會開一個 Chromium 視窗、跑完自動關閉。
+
+Pixel ID 填錯時沒有任何錯誤訊息：`www.facebook.com/tr/` 對任何 ID 都回 200，`signals/config/<ID>` 對不存在的 ID 也回 200，內容是一個只有 `/* empty plugin */` 的設定檔。確認 ID 的方法是看結果檔裡 `signals/config` 那一筆之後有沒有對應的外掛被載入，或直接在事件管理工具的資料集頁面讀 ID。商家設定頁網址裡的 `selected_asset_id` 是設定頁內部的資產編號，與 Pixel ID 不同。本機安裝的 Chromium 版本與 `@playwright/test` 要求的不符時，用環境變數 `PW_CHROMIUM_PATH` 指定瀏覽器執行檔的路徑。
 
 執行環境要能連到 `connect.facebook.net`、`www.facebook.com`、`www.googletagmanager.com` 與各家代碼用到的網域。連不到的時候腳本照樣跑完並寫出結果檔，`steps` 會顯示 script 載入失敗、`requests` 裡那幾筆帶 `failure` 欄位，這份結果記錄的是「在這個網路環境下被擋下」，不是 vendor 的行為，不收進〈各次擷取的結果〉一節。
 
 ## 各次擷取的結果
 
 每一次擷取依時間由新到舊列在這裡，寫明擷取時間、瀏覽器版本、vendor script 的版本線索，以及和實測頁、兩篇機制文對照之後的觀察。
+
+### 2026-10-23 01:26（台北）：Meta Pixel，有視窗的瀏覽器
+
+擷取時間是 UTC 2026-10-22 17:26:10，瀏覽器是 Playwright 提供的 Chromium 148.0.7778.96（macOS、arm64）以 `--headed` 執行，User-Agent 不帶 `HeadlessChrome`；實測頁開在本機 build。Pixel `1405650704604671` 是測試用資料集，建立時沒有勾選把資料集連到轉換 API 的選項，所以 Meta 那一端沒有另一條伺服器端路徑。結果檔是 `scripts/vendor-capture/results/meta-pixel-20261022T1726Z.json`。
+
+版本線索：`fbevents.js` 本體 435,058 位元組，SHA-256 開頭是 `6f3aa7a0d8d9`；`fbq.version` 是 `2.9.427`，`signals/config` 請求的查詢參數同樣帶 `v=2.9.427`、`r=stable`。這個 Pixel 的設定檔裡出現 26 個外掛名稱，其中與本篇觀察相關的是 `cookie`、`inferredevents` 與 `botblocking`，名稱分別對應寫 cookie、自動事件與機器人流量。不存在的 ID 拿到的設定檔裡一個外掛都沒有。
+
+**事件請求的形式。** 每一筆事件都是向 `www.facebook.com/tr/` 送出的 POST，參數放在表單 body 裡，`rqm=formPOST`；Playwright 把這些請求的資源類型記成 `document`，因為 `fbevents.js` 是在一個隱藏的 iframe 裡提交表單。`ev` 是事件名稱，ViewContent 的 `cd[content_name]`、Purchase 的 `cd[value]` 與 `cd[currency]` 是 `fbq('track', …)` 第二個參數的內容，Purchase 的 `eid` 是第三個參數帶的 `eventID`，[Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/) 的去重一節靠的就是這個值。
+
+**Pixel 自己加送的事件。** 每按一次實測頁的按鈕，`fbevents.js` 都在實測頁呼叫的事件旁邊多送一筆 `SubscribedButtonClick`，兩筆在同一毫秒送出。這筆事件不是實測頁呼叫的，內容是被點的按鈕文字（`cd[buttonText]` 是「送 ViewContent」）、按鈕的 DOM 特徵（`cd[buttonFeatures]`）與頁面特徵（`cd[pageFeatures]`）。網站沒有寫任何程式，按鈕文字就送到了 Meta，盤點一個網站送出哪些資料時要把這一類算進去。
+
+**cookie 與參數的對應。** `_fbp` 的值是 `fb.0.` 接毫秒時間戳與一串隨機數，每一筆事件的 `fbp` 參數都帶著它。帶 `fbclid` 重新開啟頁面之後多了 `_fbc`，值是 `fb.0.` 接毫秒時間戳與 `fbclid` 的原值，那一次的 PageView 同時帶 `fbp` 與 `fbc` 兩個參數。兩個 cookie 都由 JavaScript 寫入（`httpOnly` 為 false）、`SameSite=Lax`，到期時間是擷取時間起算 90 天。
+
+**`o` 參數。** 每一筆事件都帶 `o=4126`。`fbevents.js` 原始碼裡把它定義成一組旗標的位元和，4126 拆開是 `FIRST_PARTY_COOKIES`、`AUTO_CONFIG`、`CONFIG_LOADING`、`SUPPORTS_DEFINE_PROPERTY` 與 `SUPPORTS_SEND_BEACON`。另一個參數 `coo` 在原始碼裡記錄的是免程式碼事件設定（codeless）是否被關閉，與 cookie 無關。
+
+### 2026-10-23 01:23（台北）：Meta Pixel，無頭模式
+
+擷取時間是 UTC 2026-10-22 17:23:23，瀏覽器是 Chromium headless shell 148.0.7778.96，其餘條件與上一則相同，只差在沒有加 `--headed`。結果檔是 `scripts/vendor-capture/results/meta-pixel-20261022T1723Z.json`。
+
+`fbevents.js` 與 `signals/config` 都載入成功，`_fbp` 與 `_fbc` 照樣寫入，向 `www.facebook.com/tr/` 的事件請求一筆都沒有：PageView、ViewContent、Purchase 都停在瀏覽器裡。同樣的實測頁、同樣的 Pixel 改用有視窗的瀏覽器就送得出去，所以差別落在無頭模式本身。實測頁狀態列顯示「fbevents.js 已載入」，從頁面上看不出事件沒送，這是 [Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/) 列的瀏覽器端損失路徑之外的另一種：script 載入成功、cookie 也寫了，事件在送出之前被 script 自己丟掉。
 
 ### 2026-10-23 00:45（台北）：GTM 容器只帶一個 GA4 代碼
 

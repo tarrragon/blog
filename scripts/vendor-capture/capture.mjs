@@ -10,6 +10,9 @@
 // 選項：
 //   --url <實測頁網址>   預設是正式站的實測頁；改測本機 build 時傳 http://localhost:4173/blog/...
 //   --out <目錄>         結果 JSON 的輸出目錄，預設 scripts/vendor-capture/results
+//   --headed             用有視窗的瀏覽器執行。Meta Pixel 的 botblocking 外掛會丟掉 User-Agent 帶
+//                        HeadlessChrome 的事件（請求根本不送出），要記錄一般瀏覽器送出的事件就加這個選項。
+//                        腳本不改 User-Agent；結果檔的 headless 欄位記錄這次用的模式。
 // 環境變數：
 //   PW_CHROMIUM_PATH     指定 Chromium 執行檔（瀏覽器版本與 @playwright/test 不符時用）
 //
@@ -30,23 +33,30 @@ const KEPT_RESPONSE_HEADERS = ['content-type', 'last-modified', 'etag', 'date', 
 // vendor script 本體：gtm.js 的回應不帶 last-modified 與 etag，改版要靠本體的長度與雜湊比對
 const VENDOR_SCRIPT_PATHS = ['/en_US/fbevents.js', '/gtm.js', '/gtag/js'];
 
+const BOOLEAN_FLAGS = ['headed'];
+
 function parseArgs(argv) {
   const args = {};
-  for (let i = 0; i < argv.length; i += 2) args[argv[i].replace(/^--/, '')] = argv[i + 1];
+  for (let i = 0; i < argv.length; i++) {
+    const key = argv[i].replace(/^--/, '');
+    args[key] = BOOLEAN_FLAGS.includes(key) ? true : argv[++i];
+  }
   return args;
 }
 
 const args = parseArgs(process.argv.slice(2));
 if (!LAB_PAGES[args.vendor] || !args.id) {
-  console.error('usage: capture.mjs --vendor meta-pixel|gtm --id <ID> [--url <lab page>] [--out <dir>]');
+  console.error('usage: capture.mjs --vendor meta-pixel|gtm --id <ID> [--url <lab page>] [--out <dir>] [--headed]');
   process.exit(2);
 }
 const labUrl = args.url || LAB_PAGES[args.vendor];
 const outDir = args.out || 'scripts/vendor-capture/results';
 
-const browser = await chromium.launch(
-  process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {},
-);
+const headless = !args.headed;
+const browser = await chromium.launch({
+  headless,
+  ...(process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {}),
+});
 const context = await browser.newContext();
 const page = await context.newPage();
 const labOrigin = new URL(labUrl).origin;
@@ -132,6 +142,7 @@ const result = {
   capturedAt: capturedAt.toISOString(),
   capturedAtTaipei: capturedAt.toLocaleString('sv-SE', { timeZone: 'Asia/Taipei' }),
   browser: browser.version(),
+  headless,
   userAgent: await page.evaluate(() => navigator.userAgent),
   vendor: args.vendor,
   id: args.id,
