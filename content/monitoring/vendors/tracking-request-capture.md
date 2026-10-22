@@ -18,7 +18,7 @@ tags: ["monitoring", "vendor", "playwright", "meta-pixel", "google-tag-manager",
 
 擷取腳本預設以無頭模式（headless）啟動 Chromium，這時瀏覽器的 User-Agent 帶 `HeadlessChrome` 字樣。實測時 Meta Pixel 在無頭模式下照樣載入、照樣寫 cookie，事件請求卻一筆都不送出，原因在 Pixel 的設定檔（`signals/config/<Pixel ID>`）帶來的 `botblocking` 外掛（plugin）：依擷取當時那一版設定檔的原始碼，這個外掛拿 `navigator.userAgent` 比對一份機器人規則清單，清單裡有 `HeadlessChrome/`，比對成功時由這個外掛在事件送出之前把它攔下（外掛程式碼裡對應的訊息字串是 `[Meta pixel] Bot traffic detected and blocked`）。`fbevents.js` 本體也偵測 `HeadlessChrome`，但只把結果寫進事件請求的 `o` 參數。
 
-作者另外做過一次對照，在 Playwright 的瀏覽器設定裡只把 User-Agent 換成一般 Chrome 的字串、其餘照舊以無頭模式執行，事件就送出了，和外掛依 User-Agent 比對的邏輯一致；這次對照沒有存成結果檔。GTM 容器裡的 GA4 代碼在無頭模式下照常送出事件請求。
+兩組對照支持這個歸因，都沒有存成結果檔。作者在 Playwright 的瀏覽器設定裡只把 User-Agent 換成一般 Chrome 的字串、其餘照舊以無頭模式執行，事件就送出了，這證明結果取決於 User-Agent，但 `fbevents.js` 本體同樣讀 User-Agent，單靠這一組分不出攔截的是外掛還是本體。另一組來自一次填錯 Pixel ID 的擷取：同樣是無頭模式，不存在的 ID 拿到的設定檔一個外掛都沒有，向 `www.facebook.com/tr/` 的事件請求卻照樣送出（那次是 GET，`o` 參數含 `IS_HEADLESS`），所以本體偵測到無頭模式之後並沒有攔截，攔截來自設定檔帶來的外掛。那份結果檔因為 ID 填錯而刪除了。GTM 容器裡的 GA4 代碼在無頭模式下照常送出事件請求。依 User-Agent 辨識自動化流量是通用的做法，本站自己的流量統計怎麼分辨機器流量見 [辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)。
 
 所以擷取 Meta Pixel 要加 `--headed`，讓 Playwright 開一個有視窗的瀏覽器操作實測頁。擷取腳本不改寫 User-Agent，有視窗的瀏覽器仍然是自動化控制的瀏覽器，Meta 之後若加入其他偵測條件，同一個指令的結果可能改變，這也是每份結果要記下擷取模式的理由。
 
@@ -30,7 +30,7 @@ tags: ["monitoring", "vendor", "playwright", "meta-pixel", "google-tag-manager",
 - **script 的版本線索**：`requests` 裡 `fbevents.js`、`gtm.js` 那幾筆的 `body` 欄位（script 本體的位元組數與 SHA-256）與回應標頭，以及 `vendorRuntime.fbqVersion`（頁面上 `fbq.version` 的值）。實測兩家的回應都不帶 `last-modified` 與 `etag`，所以讀結果的人判斷 script 有沒有改版，以本體雜湊為主。`fbq.version` 在網站安裝的 Pixel 基本碼（base code）裡先被設成 `2.0`，`fbevents.js` 載入後覆寫成實際版本。`gtm.js` 的內容由容器設定與 Google 提供的 GTM 執行時程式碼（runtime）一起產生，雜湊變了之後要再到 GTM 後台的版本紀錄查容器那段期間有沒有發布，才分得出是哪一邊改的。
 - **觀察對象**：`steps`（每個動作之後實測頁狀態訊息列的文字）、`requests`（每一筆跨網域請求的方法、網址、查詢參數、POST body、狀態碼）、`cookies`（追蹤 cookie 的名稱、值、網域、到期時間與旗標）、`vendorRuntime.dataLayer`（GTM 實測時資料層的完整內容）。
 
-判讀 `requests` 時，`status` 是主要訊號。Playwright 在瀏覽器收到回應之後才中止的請求，會同時記下 `status` 與 `failure`，這時以 `status` 為準：請求送達了。本篇的擷取裡只有 GA4 的 `g/collect` 出現這個組合，00:45 那一則記錄了它與作者用 Chrome DevTools Protocol 做的對照。`status` 為 `null` 而帶 `failure` 的，是沒有收到回應的請求。
+判讀 `requests` 時，`status` 是主要訊號。瀏覽器收到回應之後才被中止的請求，Playwright 會觸發失敗事件，擷取腳本在失敗事件裡也讀取已收到的回應，所以結果檔同時記下 `status` 與 `failure`，這時以 `status` 為準：請求送達了。本篇的擷取裡只有 GA4 的 `g/collect` 出現這個組合，00:45 那一則記錄了它與作者用 Chrome DevTools Protocol 做的對照。`status` 為 `null` 而帶 `failure` 的，是沒有收到回應的請求。
 
 ## 擷取用的測試帳號
 
@@ -51,7 +51,7 @@ Pixel ID 在事件管理工具（Events Manager）的資料集頁面讀，商家
 # 取得擷取腳本與實測頁的原始碼
 git clone https://github.com/tarrragon/blog.git && cd blog
 
-# 安裝相依套件與 Playwright 的 Chromium；少了後者，第一次執行會出現 Executable doesn't exist
+# 安裝相依套件與 Playwright 的 Chromium；沒有裝 Chromium 時，第一次執行會出現 Executable doesn't exist
 npm ci
 npx playwright install chromium
 ```
@@ -106,6 +106,8 @@ Pixel ID 填錯時沒有任何錯誤訊息：Meta 的伺服器對不存在的 ID
 ### 2026-10-23 01:23（台北）：Meta Pixel，無頭模式
 
 擷取時間是 UTC 2026-10-22 17:23:23，瀏覽器是 Chromium 148.0.7778.96 的無頭模式；Pixel、實測頁與操作順序與 01:26 那次以 `--headed` 執行的擷取相同，差別只在沒有加 `--headed`。結果檔是 `scripts/vendor-capture/results/meta-pixel-20261022T1723Z.json`。
+
+版本線索：`fbevents.js` 本體的位元組數與 SHA-256、`fbq.version` 都與 01:26 那一次相同，兩次擷取用的是同一版 script，差別只來自擷取模式。
 
 `fbevents.js` 與 `signals/config` 都載入成功，`_fbp` 與 `_fbc` 照樣寫入，向 `www.facebook.com/tr/` 的事件請求一筆都沒有：PageView、ViewContent、Purchase 都沒有送出。差別來自無頭模式的 User-Agent 帶 `HeadlessChrome`，攔下事件的是 Pixel 設定檔帶來的 `botblocking` 外掛，機制見〈擷取方式〉一節。實測頁狀態訊息列顯示「fbevents.js 已載入」，從頁面上看不出事件沒送。[Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/) 列的瀏覽器端損失路徑裡，script 被廣告攔截器擋下時網站還有機會察覺載入失敗；這一次是 script 載入成功、cookie 也寫了，事件在送出之前被設定檔帶來的外掛攔下。
 

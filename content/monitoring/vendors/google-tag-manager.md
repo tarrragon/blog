@@ -33,7 +33,7 @@ window.dataLayer.push({
 });
 ```
 
-`event` 這個鍵的值會被 GTM 的自訂事件觸發條件（Custom Event trigger）比對，名稱對上的代碼就執行；其餘的鍵可以在 GTM 裡建成 資料層 變數，讓代碼讀取。`purchase`、`order_id` 這些名稱由網站自己決定，GTM 不規定，所以它們要被當成一份 schema 管理：誰新增了哪個事件、欄位的型別與意義、改名時哪些代碼會受影響。[事件命名規範](/monitoring/01-mental-model/event-naming-convention/) 與 [Schema 版本演進策略](/monitoring/02-log-schema/schema-versioning/) 的做法同樣適用在這份約定上。
+`event` 這個鍵的值會被 GTM 的自訂事件觸發條件（Custom Event trigger）比對，名稱對上的代碼就執行，沒有任何觸發條件對上的事件只留在陣列裡、不產生請求（擷取紀錄見 [用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/) 的 GTM 那一則）；其餘的鍵可以在 GTM 裡建成 資料層 變數，讓代碼讀取。`purchase`、`order_id` 這些名稱由網站自己決定，GTM 不規定，所以它們要被當成一份 schema 管理：誰新增了哪個事件、欄位的型別與意義、改名時哪些代碼會受影響。[事件命名規範](/monitoring/01-mental-model/event-naming-convention/) 與 [Schema 版本演進策略](/monitoring/02-log-schema/schema-versioning/) 的做法同樣適用在這份約定上。
 
 兩種讀法的差別在前端改版的時候浮現。靠 DOM 抓的觸發條件綁在 CSS selector 上，前端重構把按鈕的 class 改名，觸發條件就不再命中，GTM 不報錯、事件安靜地消失，通常要等行銷發現報表的數字掉下來才會有人查。資料層 的推送寫在前端程式裡，改版時跟著程式碼一起被審查，所以分工會落成：前端工程負責在對的時機推對的事件，行銷負責把事件接到哪幾家代碼。
 
