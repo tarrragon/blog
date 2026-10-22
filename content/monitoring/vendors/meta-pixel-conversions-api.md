@@ -110,4 +110,4 @@ Events Manager 在每個 Pixel 底下有 Test Events 頁面，它即時列出這
 
 接了 Pixel 與 Conversions API 之後，同一個業務事件（一筆購買）會往三個地方送：自己的 collector、Meta 的瀏覽器端、Meta 的伺服器端。業務事件的定義只寫一次，送往各家時各自做名稱與欄位的對映，比在各個埋點位置分別呼叫三家的 API 好維護，改一個欄位不必找遍三種呼叫。這個分流結構與它的保留期、PII 取捨，在 [監控資料的雙重用途](/monitoring/telemetry-data-dual-use/) 有完整的推導。
 
-追蹤碼要由誰、用什麼流程放上網站，是另一層的決定。行銷團隊常用 tag manager 自行加 Pixel，那條路徑的約定與治理見 [Google Tag Manager](/monitoring/vendors/google-tag-manager/)。
+本篇描述的瀏覽器端行為可以在 [Meta Pixel 實測頁](/monitoring/vendors/meta-pixel-lab/) 按按鈕觸發、對照它實際送出的請求與 cookie。追蹤碼要由誰、用什麼流程放上網站，是另一層的決定。行銷團隊常用 tag manager 自行加 Pixel，那條路徑的約定與治理見 [Google Tag Manager](/monitoring/vendors/google-tag-manager/)。

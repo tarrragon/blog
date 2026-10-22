@@ -62,3 +62,5 @@ GTM 的代碼類型裡有一種自訂 HTML（Custom HTML），內容是任意的
 這條路徑帶來三個變化。事件送往網站自己的網域，避開以已知追蹤網域為對象的攔截清單；資料送出去之前會先經過自己控制的伺服器，可以在那裡拿掉不該送給第三方的欄位（作法同 [SDK redaction helper](/monitoring/03-sdk-design/redaction-helper/) 在 SDK 送出前做的遮蔽）；cookie 由自己的伺服器以 HTTP header 寫入，比 JavaScript 寫入的 cookie 受瀏覽器追蹤防護的限制少。代價是那台伺服器要自己跑：GTM 的伺服器容器部署在 Cloud Run 或自己的主機上，流量、費用與可用性都回到自架 collector 要面對的那些事，見 [Ingestion Scaling](/monitoring/04-collector/ingestion-scaling/)。
 
 伺服器容器的預覽模式驗證的是另一段：它列出伺服器收到的請求、解析出的事件資料，以及轉送給各家的請求。網頁容器的預覽模式確認瀏覽器有送，伺服器容器的預覽模式確認轉送的內容對，兩段要分別驗。
+
+容器載入、資料層事件與代碼送出的請求，可以在 [Google Tag Manager 實測頁](/monitoring/vendors/google-tag-manager-lab/) 填入測試容器的 ID 實際觸發一次。

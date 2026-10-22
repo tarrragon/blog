@@ -227,7 +227,7 @@ SDK 送出的同一份 event data 同時服務行為分析（funnel / cohort / a
 
 ### Vendor：各家追蹤碼的接入與驗證
 
-[Vendor 資料夾](/monitoring/vendors/) 一家一篇，寫商業追蹤方案接上之後的機制：事件模型、資料在哪些環節會掉、怎麼驗證送出的內容。跟模組六的分工是接入與選型——模組六決定要不要用某一家，vendor 篇寫用了之後它怎麼運作。目前收錄廣告平台的轉換追蹤（[Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/)）與追蹤碼的部署層（[Google Tag Manager](/monitoring/vendors/google-tag-manager/)）；要不要把各家追蹤碼實際埋在本站做實測的評估，記在 vendor 資料夾的目錄頁。
+[Vendor 資料夾](/monitoring/vendors/) 實測各家追蹤系統的設計：每一家有一篇機制文（事件模型、資料在哪些環節會掉、怎麼驗證送出的內容）與一頁實測頁（讀者按下按鈕才載入那一家的 script，頁面上即時列出它送出的請求與 cookie）。跟模組六的分工是接入與選型——模組六決定要不要用某一家，vendor 篇寫用了之後它怎麼運作。目前收錄廣告平台的轉換追蹤（[Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/)）與追蹤碼的部署層（[Google Tag Manager](/monitoring/vendors/google-tag-manager/)）。
 
 ## 學習路線
 

@@ -1,0 +1,238 @@
+{{- /*
+  vendor-lab：各家追蹤碼的實測面板（monitoring/vendors 的實測頁用）。
+
+  用法：{{< vendor-lab vendor="meta-pixel" >}} 或 {{< vendor-lab vendor="gtm" >}}
+
+  頁面載入時不注入任何第三方 script；讀者按下「載入」按鈕才注入，
+  所以這一頁的第三方請求全部由讀者的操作觸發。ID 由讀者填寫，
+  預設值取 hugo.toml 的 [params.vendorLab]（測試用帳號的 ID，本來就會出現在頁面原始碼裡）。
+
+  面板只觀察、不改寫：請求清單來自 PerformanceObserver 的 resource 紀錄
+  （只列跨網域的請求），cookie 清單來自 document.cookie。
+*/ -}}
+{{- $vendor := .Get "vendor" -}}
+{{- $cfg := index .Site.Params "vendorlab" -}}
+{{- $defaultId := "" -}}
+{{- if eq $vendor "meta-pixel" }}{{ with $cfg }}{{ $defaultId = index . "metapixelid" | default "" }}{{ end }}{{ end -}}
+{{- if eq $vendor "gtm" }}{{ with $cfg }}{{ $defaultId = index . "gtmcontainerid" | default "" }}{{ end }}{{ end -}}
+<div class="vendor-lab" data-vendor="{{ $vendor }}">
+  <style>
+    .vendor-lab { border: 1px solid currentColor; border-radius: 6px; padding: 1rem; margin: 1.5rem 0; }
+    .vendor-lab fieldset { border: 0; padding: 0; margin: 0 0 .75rem; }
+    .vendor-lab label { display: block; margin-bottom: .25rem; }
+    .vendor-lab input { font: inherit; padding: .25rem .5rem; min-width: 14rem; }
+    .vendor-lab button { font: inherit; margin: .25rem .5rem .25rem 0; padding: .25rem .75rem; cursor: pointer; }
+    .vendor-lab button[disabled] { cursor: not-allowed; opacity: .5; }
+    .vendor-lab h4 { margin: 1rem 0 .25rem; }
+    .vendor-lab ol { padding-left: 1.25rem; margin: 0; font-size: .875rem; overflow-wrap: anywhere; }
+    .vendor-lab pre { font-size: .8rem; max-height: 20rem; overflow: auto; }
+    .vendor-lab .vendor-lab-status { font-weight: bold; }
+  </style>
+
+  {{- if eq $vendor "meta-pixel" }}
+  <fieldset>
+    <label for="vendor-lab-id">Meta Pixel ID（Events Manager 裡那個 Pixel 的一串數字）</label>
+    <input id="vendor-lab-id" inputmode="numeric" autocomplete="off" value="{{ $defaultId }}" placeholder="例如 123456789012345">
+  </fieldset>
+  <div>
+    <button type="button" data-action="load">載入 Meta Pixel 並送 PageView</button>
+    <button type="button" data-action="view-content" disabled>送 ViewContent</button>
+    <button type="button" data-action="purchase" disabled>送 Purchase（帶 eventID）</button>
+    <button type="button" data-action="fbclid">帶 fbclid 參數重新開啟這一頁</button>
+  </div>
+  {{- else if eq $vendor "gtm" }}
+  <fieldset>
+    <label for="vendor-lab-id">GTM 容器 ID（GTM 後台右上角的 GTM- 開頭那一串）</label>
+    <input id="vendor-lab-id" autocomplete="off" value="{{ $defaultId }}" placeholder="例如 GTM-ABC1234">
+  </fieldset>
+  <div>
+    <button type="button" data-action="load">載入 GTM 容器</button>
+    <button type="button" data-action="push-purchase">往資料層推 purchase 事件</button>
+  </div>
+  {{- end }}
+  <div>
+    <button type="button" data-action="clear-cookies">清除這一頁的追蹤 cookie</button>
+  </div>
+
+  <p class="vendor-lab-status" role="status" aria-live="polite">尚未載入任何第三方 script。</p>
+
+  <h4>這一頁的操作紀錄</h4>
+  <ol class="vendor-lab-calls"></ol>
+
+  <h4>這一頁送出的跨網域請求</h4>
+  <ol class="vendor-lab-requests"></ol>
+
+  <h4>這個網域上的追蹤 cookie</h4>
+  <ol class="vendor-lab-cookies"></ol>
+
+  {{- if eq $vendor "gtm" }}
+  <h4>window.dataLayer 目前的內容</h4>
+  <pre class="vendor-lab-datalayer">（尚未建立）</pre>
+  {{- end }}
+</div>
+<script>
+  (function () {
+    var root = document.currentScript.previousElementSibling;
+    var vendor = root.getAttribute("data-vendor");
+    var idInput = root.querySelector("#vendor-lab-id");
+    var statusEl = root.querySelector(".vendor-lab-status");
+    var callsEl = root.querySelector(".vendor-lab-calls");
+    var requestsEl = root.querySelector(".vendor-lab-requests");
+    var cookiesEl = root.querySelector(".vendor-lab-cookies");
+    var dataLayerEl = root.querySelector(".vendor-lab-datalayer");
+    var startedAt = performance.now();
+
+    // 各家寫在網站網域上的 cookie 名稱前綴。只列這幾個，避免把本站其他 cookie 也印出來。
+    var COOKIE_PREFIXES = ["_fbp", "_fbc", "_ga", "_gid", "_gcl"];
+    var ID_PATTERN = { "meta-pixel": /^\d{5,20}$/, "gtm": /^GTM-[A-Z0-9]{4,12}$/ };
+
+    function item(list, text) {
+      var li = document.createElement("li");
+      li.textContent = text;   // 一律用 textContent：網址與 cookie 值來自外部，不當成 HTML 解析
+      list.appendChild(li);
+    }
+    function seconds() { return ((performance.now() - startedAt) / 1000).toFixed(1) + "s"; }
+    function logCall(text) { item(callsEl, seconds() + "  " + text); }
+    function setStatus(text) { statusEl.textContent = text; }
+
+    // 請求清單：resource timing 記錄這一頁載入過的每個資源（script、img、beacon、fetch）。
+    // buffered: true 讓面板也列出它建立之前已經發生的請求，例如本站自己的流量 beacon。
+    function showRequest(entry) {
+      var url;
+      try { url = new URL(entry.name); } catch (e) { return; }
+      if (url.origin === location.origin) return;
+      var params = [];
+      url.searchParams.forEach(function (v, k) { params.push(k + "=" + v); });
+      item(requestsEl, (entry.startTime / 1000).toFixed(1) + "s  [" + entry.initiatorType + "] "
+        + url.origin + url.pathname + (params.length ? "\n    " + params.join("\n    ") : ""));
+    }
+    try {
+      new PerformanceObserver(function (list) { list.getEntries().forEach(showRequest); })
+        .observe({ type: "resource", buffered: true });
+    } catch (e) {
+      item(requestsEl, "這個瀏覽器不支援 PerformanceObserver，請改用開發者工具的 Network 面板觀察。");
+    }
+
+    function refreshCookies() {
+      cookiesEl.textContent = "";
+      var found = document.cookie.split(/;\s*/).filter(function (c) {
+        return COOKIE_PREFIXES.some(function (p) { return c.indexOf(p) === 0; });
+      });
+      if (!found.length) item(cookiesEl, "（沒有）");
+      found.forEach(function (c) { item(cookiesEl, c); });
+    }
+    function refreshDataLayer() {
+      if (!dataLayerEl) return;
+      if (!window.dataLayer) { dataLayerEl.textContent = "（尚未建立）"; return; }
+      try { dataLayerEl.textContent = JSON.stringify(window.dataLayer, null, 2); }
+      catch (e) { dataLayerEl.textContent = "（內容含無法序列化的值）"; }
+    }
+    function refreshAll() { refreshCookies(); refreshDataLayer(); }
+
+    // cookie 可能寫在目前主機或它的上層網域，刪除時兩種 domain 屬性都試一次。
+    function clearCookies() {
+      var expired = "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+      document.cookie.split(/;\s*/).forEach(function (c) {
+        var name = c.split("=")[0];
+        if (!COOKIE_PREFIXES.some(function (p) { return name.indexOf(p) === 0; })) return;
+        document.cookie = name + expired;
+        document.cookie = name + expired + "; domain=" + location.hostname;
+        document.cookie = name + expired + "; domain=." + location.hostname;
+      });
+      logCall("清除追蹤 cookie");
+      refreshAll();
+    }
+
+    function readId() {
+      var id = idInput.value.trim();
+      if (!ID_PATTERN[vendor].test(id)) {
+        setStatus("ID 格式不符，沒有載入任何 script。");
+        return null;
+      }
+      return id;
+    }
+
+    // script 載入失敗多半是被廣告攔截器或瀏覽器的追蹤防護擋下，這個狀態本身就是實測結果。
+    function injectScript(src, label) {
+      var s = document.createElement("script");
+      s.async = true;
+      s.src = src;
+      s.onload = function () { setStatus(label + " 已載入。"); logCall(label + " 載入完成"); refreshAll(); };
+      s.onerror = function () { setStatus(label + " 載入失敗：請求被擋下（廣告攔截器、瀏覽器追蹤防護或網路政策）。"); logCall(label + " 載入失敗"); };
+      document.head.appendChild(s);
+    }
+
+    var actions = {};
+    var loaded = false;
+
+    if (vendor === "meta-pixel") {
+      var enable = function () {
+        root.querySelectorAll('[data-action="view-content"],[data-action="purchase"]').forEach(function (b) { b.disabled = false; });
+      };
+      actions.load = function () {
+        if (loaded) return;
+        var id = readId(); if (!id) return;
+        loaded = true;
+        // Meta 基本碼的展開版：先定義會排隊的 fbq，fbevents.js 載入後再把佇列送出
+        if (!window.fbq) {
+          var n = window.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+          if (!window._fbq) window._fbq = n;
+          n.push = n; n.loaded = true; n.version = "2.0"; n.queue = [];
+        }
+        injectScript("https://connect.facebook.net/en_US/fbevents.js", "fbevents.js");
+        fbq("init", id); logCall("fbq('init', '" + id + "')");
+        fbq("track", "PageView"); logCall("fbq('track', 'PageView')");
+        enable();
+      };
+      actions["view-content"] = function () {
+        fbq("track", "ViewContent", { content_name: "vendor-lab" });
+        logCall("fbq('track', 'ViewContent', {content_name: 'vendor-lab'})");
+        refreshAll();
+      };
+      actions.purchase = function () {
+        var eventId = "lab-" + Date.now().toString(36);
+        fbq("track", "Purchase", { value: 1, currency: "TWD" }, { eventID: eventId });
+        logCall("fbq('track', 'Purchase', {value: 1, currency: 'TWD'}, {eventID: '" + eventId + "'})");
+        refreshAll();
+      };
+      actions.fbclid = function () {
+        var url = new URL(location.href);
+        url.searchParams.set("fbclid", "lab" + Date.now().toString(36));
+        location.href = url.toString();
+      };
+    }
+
+    if (vendor === "gtm") {
+      actions.load = function () {
+        if (loaded) return;
+        var id = readId(); if (!id) return;
+        loaded = true;
+        // GTM 容器片段的展開版：先推一筆 gtm.js 事件記下開始時間，再載入容器
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+        logCall("dataLayer.push({'gtm.start': …, event: 'gtm.js'})");
+        injectScript("https://www.googletagmanager.com/gtm.js?id=" + encodeURIComponent(id), "gtm.js");
+        refreshAll();
+      };
+      actions["push-purchase"] = function () {
+        window.dataLayer = window.dataLayer || [];
+        var orderId = "lab-" + Date.now().toString(36);
+        window.dataLayer.push({ event: "purchase", order_id: orderId, value: 1, currency: "TWD" });
+        logCall("dataLayer.push({event: 'purchase', order_id: '" + orderId + "', value: 1, currency: 'TWD'})");
+        refreshAll();
+      };
+    }
+
+    actions["clear-cookies"] = clearCookies;
+
+    root.addEventListener("click", function (evt) {
+      var btn = evt.target.closest("button[data-action]");
+      if (!btn || !actions[btn.getAttribute("data-action")]) return;
+      actions[btn.getAttribute("data-action")]();
+      // 第三方 script 寫 cookie 與推資料層是非同步的，稍後再刷新一次
+      setTimeout(refreshAll, 1500);
+    });
+
+    refreshAll();
+  })();
+</script>

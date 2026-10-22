@@ -83,6 +83,12 @@ summaryLength = 200  # 摘要字數限制
   # 留空字串代表停用（partial 不會輸出任何 script）。設定說明見 posts 的 apps-script 流量統計實作文。
   analyticsBeacon = 'https://script.google.com/macros/s/AKfycbxBf3-Equ943Q-iKL09bzz8mn5AiU-C3Rkl1BA4A0ZcS7Q95oAnFl7Ds_Ig-SVvUxTF/exec'
 
+  # monitoring/vendors 實測頁的預設 ID（測試用帳號）。留空時讀者自己填。
+  # 這些 ID 會出現在頁面原始碼裡，本來就是公開值；不要填正式營運用的 Pixel / 容器。
+  [params.vendorLab]
+    metaPixelId = ''
+    gtmContainerId = ''
+
   # 作者資訊
   [params.author]
     name = 'tarragon'
