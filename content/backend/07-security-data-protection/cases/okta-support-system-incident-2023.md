@@ -24,7 +24,7 @@ Okta 2023 事件顯示支援系統若涉及高權限資料與工作流程，會�
 
 ## 下一步路由
 
-回 [7.2 identity/access boundary](/backend/07-security-data-protection/identity-access-boundary/) 與 [7.13 detection coverage](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)。
+回 [7.2 identity/access boundary](/backend/07-security-data-protection/identity-access-boundary/) 與 [7.13 detection coverage](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)。客服與營運後台的查詢怎麼限縮到每次一個租戶、批次匯出怎麼要第二人核准，見 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)。
 
 ## 引用源
 

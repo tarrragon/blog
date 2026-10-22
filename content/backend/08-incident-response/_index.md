@@ -295,6 +295,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | ITIL 的 functional / hierarchical escalation：8.24 同時做了兩種轉交而集合裡沒有這兩個名字；tiered-support 卡補名字、escalation-policy 卡反向連                                                                                                  | 知識卡 | 無                           | 小         |
 | on-call 與 customer-support 兩個 tag 涵蓋不齊：on-call 卡、8.6、8.12、handover-protocol、escalation-policy、alert-silence、8.18、Customer Liaison 與 Google Home 案例、status-page 卡未帶                                                       | 跨模組 | 無                           | 小         |
 | 8.25 的回指：8.3〈交接路由〉補 8.25、8.10 的補償段連 8.25〈對外承諾賠償的時機〉、8.20〈通訊與補償〉連 8.25 的宣告等級、Supply Chain Artifact Drill 連 8.25                                                                                      | 跨模組 | 無                           | 小         |
+| 8.25 第二批回指與術語：8.19〈決策類型〉的 security split 補根除期間的撤銷範圍、重建時點與監看期長度；reading-paths 的資安路線末端改成 8.17 → 8.25；dwell time 與 digital forensics 在 4 篇以上使用而沒有卡                                      | 跨模組 | 無                           | 小         |
 
 ### 後續推演大綱
 

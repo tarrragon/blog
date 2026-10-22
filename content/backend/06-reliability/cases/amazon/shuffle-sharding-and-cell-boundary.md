@@ -40,4 +40,4 @@ cell-based architecture 與 shuffle sharding 提供的是前置結構：先限�
 
 ## 下一步路由
 
-要把案例轉成可執行設計，先定義 [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/) 的依賴預算與共享邊界，再在 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/) 驗證局部化假設。事故時的分批回復流程回到 [8.14 Multi-incident Coordination](/backend/08-incident-response/multi-incident-coordination/)。
+要把案例轉成可執行設計，先定義 [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/) 的依賴預算與共享邊界，再在 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/) 驗證局部化假設。事故時的分批回復流程回到 [8.14 Multi-incident Coordination](/backend/08-incident-response/multi-incident-coordination/)。同一組 cell 結構在機密性上的度量（一個 cell 被入侵時碰得到幾個租戶），見 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)。

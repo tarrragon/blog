@@ -99,6 +99,7 @@ tags: ["backend", "security"]
 - 會話狀態放哪決定撤銷能力：[Session 處理](/operations/02-horizontal-scaling/session-handling/)
 - 憑證在請求中怎麼帶、以及登入端點的攻擊面：[7.36 憑證在請求中怎麼帶](../credential-transport-in-request/)
 - 機器憑證與 API key 的撤銷範圍：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
+- 外洩的是一台主機與它手上的全部機器憑證時，清查範圍、重建與撤銷順序：[8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)
 - 欄位分級與盤點（決定事發當下答不答得出來）：[7.4 資料保護與遮罩治理](../data-protection-and-masking-governance/)
 - 這件事算不算事故、算哪一級：[8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)
 - 一次只影響一個帳號時的處置與核身：[7.41 單一帳號被接管](../single-account-takeover-response/)

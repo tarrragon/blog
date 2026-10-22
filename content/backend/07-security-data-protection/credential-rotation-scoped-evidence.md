@@ -62,6 +62,8 @@ CircleCI 2023 案例的範圍量級壓力 governance frame 在 [7.6 § CI secret
 
 以下基於通用工程知識補充：tag 是事件期間的輪替排序前提 — metadata 完整時可從「high blast radius + critical tier」直接抽 subset 優先輪、再依資源展開。每個 secret 在 vault 裡帶 blast radius tag（local / shared / global）、business tier（critical / standard / experimental）、rotation cost（low / high）三維度。metadata 不足時排序退回全域輪替（成本高）或部分輪替（覆蓋風險）兩個 fallback。
 
+這一節的分批與新舊憑證並行窗口，適用於憑證還沒確認落入攻擊者手中的輪替。建置主機已確認被入侵時，讀得到新憑證存放位置的那幾把憑證（秘密管理服務、雲端帳號的存取金鑰）要在任何新憑證寫入之前撤銷、不留並行窗口，新憑證只放在重建過的主機與檢查過的保管位置，見 [8.25 建置主機被入侵後的根除與重建〈憑證撤銷與輪替的先後〉](/backend/08-incident-response/compromised-build-host-eradication/#憑證撤銷與輪替的先後)。
+
 ## 跨模組路由
 
 1. 與 7.6 的交接：治理原則回到 [Secrets and Machine Credential Governance](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)。
