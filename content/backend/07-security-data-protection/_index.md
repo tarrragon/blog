@@ -62,6 +62,8 @@ weight: 8
 
 **外洩已經發生**：先分這是一個帳號還是一批。單一帳號被接管（有人來說登不進去、或系統偵測到異常）走 [7.41 單一帳號被接管](/backend/07-security-data-protection/single-account-takeover-response/)，它的困難在於求助者的身分本身待證。一批帳號這一側從 [7.37 密碼外洩之後](/backend/07-security-data-protection/credential-breach-response/) 起步——它處理的是範圍查不出來時怎麼分層定重設對象、撤銷與重設的先後，以及通知門檻要交付哪些事實。要判斷手上的密碼儲存撐不撐得住，接 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。憑證與 token 的止血範圍走 [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 的生命週期段——它回答的是能不能在時限內完成撤銷與替換。這件事要不要當事故啟動、算哪一級，判斷標準在 [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)；對外要不要通知、什麼時候通知在 [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)。
 
+**要把多個客戶放上同一套系統**（電商後台、會員或客服這類 SaaS）：從 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/) 起步，它以「平台上一個元件被拿下時碰得到幾個租戶」為單位，比較資料的放法、建置管線與營運後台的權限範圍，以及跨租戶資料整合要付出的影響範圍。單一請求屬於哪個租戶怎麼判斷接 [7.40](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)，入口元件已經被入侵之後的清查與重建接 [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)。
+
 ## 從章節到實作的 chain
 
 全模組共用的交接規格住在 [資安與資料保護模組從章節走到實作的路徑](chapter-to-implementation-chain/)，本頁正文不會渲染。
@@ -125,12 +127,13 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [7.41 單一帳號被接管：求助的人是誰本身待證](/backend/07-security-data-protection/single-account-takeover-response/)                                                                                                                    | Account Takeover Response                         | 定義控制權動作的分類、核身的判斷標準與攻擊者留置的還原                                                                                                                             |
 | [7.42 密碼重設流程：與登入平行的另一道入口](/backend/07-security-data-protection/password-reset-flow/)                                                                                                                                 | Password Reset Flow                               | 定義重設路徑的證據判斷標準、權杖的五項性質與完成後的收尾                                                                                                                           |
 | [7.43 兩個網路之間的連線安全：可達範圍、連線方向與流入的資料、被入侵端改不到的限制、應用層認證、監控主機的位置、金鑰與控制平面、異地備份的寫入憑證與連線紀錄](/backend/07-security-data-protection/cross-network-connection-security/) | Cross-Network Connection                          | 定義連線清單上每一台（含管理者裝置）的可達範圍與假設入侵、限制要放在被入侵端沒有寫入路徑的地方、發起方向與流入的資料、VPN 之內的應用層認證、金鑰與控制平面，以及異地備份的寫入憑證 |
+| [7.44 多租戶平台的隔離層級：資料、運算、建置管線與營運存取各自的隔離範圍，以及跨租戶資料整合](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)                                                             | Multi-Tenant Platform Isolation                   | 以「一個元件被拿下時碰得到幾個租戶」定義 pool / bridge / silo / cell 的取捨、建置管線與營運後台的權限範圍、跨租戶資料整合的形態，以及事故報告要交代的隔離資訊                      |
 | [7.C 資安案例正文](/backend/07-security-data-protection/cases/)                                                                                                                                                                        | Security Cases                                    | 把控制面事件轉成可回寫治理控制與路由                                                                                                                                               |
 | [7.C11 選型：單人遠端 Shell](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)                                                                                                           | Tailscale vs Cloudflare Tunnel                    | 單人遠端 Shell 情境下的 tunnel 選型判讀與裝置綁定認證                                                                                                                              |
 
 ## 模組完成狀態
 
-主章分三層：問題節點與責任邊界（7.2-7.7）、判讀與治理節奏（7.8-7.9、7.15-7.26），以及選型層（7.28-7.43）。選型層承接的是問題節點判讀完成之後要下的具體決定——手上的機制解哪一類問題、呼叫方身分落在哪一層、密碼怎麼存、登入怎麼做、登入之後每個請求靠什麼帶身分、外洩之後要讓誰重設、身分交給外部之後本地那筆紀錄怎麼走、使用者手上的實體選哪一種載體、每個客戶各帶身分提供者時要做成幾組設定，機器憑證的機制、交付與代理關係，以及兩個網路接起來之後各自連得到什麼。章節列表末段的五篇 LLM 專題屬延伸章節帶、不佔主章編號：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。
+主章分三層：問題節點與責任邊界（7.2-7.7）、判讀與治理節奏（7.8-7.9、7.15-7.26），以及選型層（7.28-7.44）。選型層承接的是問題節點判讀完成之後要下的具體決定——手上的機制解哪一類問題、呼叫方身分落在哪一層、密碼怎麼存、登入怎麼做、登入之後每個請求靠什麼帶身分、外洩之後要讓誰重設、身分交給外部之後本地那筆紀錄怎麼走、使用者手上的實體選哪一種載體、每個客戶各帶身分提供者時要做成幾組設定，機器憑證的機制、交付與代理關係、兩個網路接起來之後各自連得到什麼，以及多個客戶共用一套系統時各元件的權限碰得到幾個租戶。章節列表末段的五篇 LLM 專題屬延伸章節帶、不佔主章編號：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。
 
 素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。
 
