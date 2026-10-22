@@ -6,11 +6,11 @@ weight: 489
 tags: ["backend", "security", "privacy", "data-protection"]
 ---
 
-假名化（pseudonymization）是用一個代碼取代姓名、電話、Email 這類直接識別欄位，而代碼要靠另外保管的金鑰或對照表才能還原回原本的值。金鑰或對照表還存在時，假名化的資料仍然可以連回當事人，所以在 GDPR 這類法規下仍屬個人資料；與它相對的是匿名化（anonymization），處理後的資料無法再連回個人。可先對照 [Tenant Boundary（租戶邊界）](/backend/knowledge-cards/tenant-boundary/) 與 [Message Authentication](/backend/knowledge-cards/message-authentication/)。
+假名化（pseudonymization）是用一個代碼取代姓名、電話、Email 這類直接識別欄位，而代碼要靠另外保管的金鑰或對照表才連得回原本的值：對照表直接查回，帶金鑰的雜湊則是對每個可能值重算一次再比對。對持有金鑰或對照表、能把代碼連回當事人的一方，假名化的資料在 GDPR 這類法規下仍屬個人資料；與它相對的是匿名化（anonymization），處理後的資料無法再連回個人。可先對照 [Tenant Boundary（租戶邊界）](/backend/knowledge-cards/tenant-boundary/) 與 [Message Authentication](/backend/knowledge-cards/message-authentication/)。
 
 ## 概念位置
 
-常見的做法是帶金鑰的雜湊（HMAC，構造見 [Message Authentication](/backend/knowledge-cards/message-authentication/)）：同一個電話號碼在同一把金鑰下得到同一個代碼，所以分析時仍能把同一個人的多筆紀錄串起來，而沒有金鑰的人算不出代碼對應的號碼。不帶金鑰的直接雜湊做不到這一點：電話、Email 的可能值有限，攻擊者把所有可能值都算一次雜湊就能回推。金鑰的保管位置決定了誰能串接、誰能還原：金鑰按租戶或 cell 分開保管時，同一個人在不同租戶的代碼不同，跨租戶串接不了；用一把跨租戶共用的金鑰時可以串接，而那把金鑰與保管它的服務就成為碰得到全部被串接租戶的共用元件。
+常見的做法是帶金鑰的雜湊（HMAC，構造見 [Message Authentication](/backend/knowledge-cards/message-authentication/)）：同一個電話號碼在同一把金鑰下得到同一個代碼，所以分析時仍能把同一個人的多筆紀錄串起來，而沒有金鑰的人算不出代碼對應的號碼。不帶金鑰的直接雜湊做不到這一點：電話、Email 的可能值有限，攻擊者把所有可能值都算一次雜湊就能回推。金鑰的保管位置決定了誰能串接、誰能還原：金鑰按租戶或 cell 分開保管時，同一個人在不同租戶的代碼不同，跨租戶串接不了；用一把跨租戶共用的金鑰時可以串接，而那把金鑰被拿走時，全部被串接租戶的代碼都能被窮舉回推；讓雜湊運算在保管金鑰的服務內執行、金鑰不離開服務，攻擊者要持續呼叫服務才算得出代碼，可以限流並稽核。
 
 ## 可觀察訊號與例子
 
