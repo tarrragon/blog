@@ -43,7 +43,7 @@ Attribution 的技術實作需要解決兩個問題：跨 session 的使用者�
 
 同一個使用者在不同 session、不同裝置、不同瀏覽器上的行為需要關聯到同一個人。
 
-Web 端用寫在網站自己網域上的 cookie（[第一方 cookie](/monitoring/knowledge-cards/first-party-cookie/)）或 login ID 關聯；Safari 會讓 JavaScript 寫入的 cookie 在使用者連續 7 天沒有與網站互動之後失效（從帶點擊 ID 的廣告連結進站時上限只有 24 小時），之後回來的人會被當成新的匿名 ID。Mobile 端用 device ID 或 login ID。跨裝置關聯需要使用者登入 — 未登入的使用者在不同裝置上是不同的匿名 ID。
+Web 端用寫在網站自己網域上的 cookie（[第一方 cookie](/monitoring/knowledge-cards/first-party-cookie/)）或 login ID 關聯；Safari 會讓 JavaScript 寫入的 cookie 在使用者 7 天沒有與網站互動之後失效；從廣告平台帶著點擊 ID 的連結進站時，落地頁寫下的 cookie 上限只有 24 小時（條件見 [First-party Cookie（第一方 cookie）](/monitoring/knowledge-cards/first-party-cookie/)），之後回來的人會被當成新的匿名 ID。Mobile 端用 device ID 或 login ID。跨裝置關聯需要使用者登入 — 未登入的使用者在不同裝置上是不同的匿名 ID。
 
 ### 觸點記錄
 

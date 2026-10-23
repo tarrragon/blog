@@ -14,7 +14,7 @@ tags: ["monitoring", "tracking", "privacy", "knowledge-card"]
 
 ## cookie 期限的設定者與瀏覽器上限
 
-cookie 的到期時間由寫入它的 script 設定，再受瀏覽器的規則截斷。Chrome 從 104 版起把任何 cookie 的到期時間上限訂為 400 天，要求更久的 cookie 會被改成 400 天。Safari 的 Intelligent Tracking Prevention（ITP）對追蹤碼常用的寫法另有三條限制，依 WebKit 的追蹤防護說明頁：由 JavaScript 寫入的 cookie 與其他 script 寫得到的儲存資料（例如 localStorage），在使用者連續 7 天沒有與這個網站互動之後刪除，重新起算的條件是互動、不是單純的造訪；使用者經由帶著點擊 ID 這類網址參數的連結進站時，落地頁上由 JavaScript 寫入的 cookie 期限上限是 24 小時；回應來自偽裝成第一方、實際指向第三方的伺服器（CNAME 或第三方 IP 偽裝）時，那個 HTTP 回應寫入的 cookie 期限上限是 7 天。所以同一個追蹤碼在不同瀏覽器上的 cookie 壽命不同：GA4 代碼替 `_ga` 與 `_ga_<評估 ID>` 設的預設期限是兩年，在 Chromium 上實測看到的 400 天是瀏覽器的上限，不是 GA4 的設定；從 Meta 廣告帶著 `fbclid` 點進來的那一次，`_fbc` 與 `_fbp` 正好在落地頁上由 JavaScript 寫入，在 Safari 上可能只留一天。
+cookie 的到期時間由寫入它的 script 設定，再受瀏覽器的規則截斷。Chrome 從 104 版起把任何 cookie 的到期時間上限訂為 400 天，要求更久的 cookie 會被改成 400 天。Safari 的 Intelligent Tracking Prevention（ITP）對追蹤碼常用的寫法另有三條限制，依 WebKit 的追蹤防護說明頁：由 JavaScript 寫入的 cookie 與其他 script 寫得到的儲存資料（例如 localStorage），在使用者 7 天沒有與這個網站互動之後刪除（WebKit 先前的說明以使用 Safari 的天數計，現行說明頁沒有寫單位），重新起算的條件是互動、不是單純的造訪；ITP 偵測到網址帶著點擊 ID 這類參數（link decoration）時，落地頁上由 JavaScript 寫入的 cookie 期限上限是 24 小時（WebKit 先前的說明寫明的條件是：把使用者導過來的網域被分類為追蹤者，而且網址帶查詢字串或片段）；回應來自偽裝成第一方、實際指向第三方的伺服器（CNAME 或第三方 IP 偽裝）時，那個 HTTP 回應寫入的 cookie 期限上限是 7 天。所以同一個追蹤碼在不同瀏覽器上的 cookie 壽命不同：GA4 代碼替 `_ga` 與 `_ga_<評估 ID>` 設的預設期限是兩年，在 Chromium 上實測看到的 400 天是瀏覽器的上限，不是 GA4 的設定；從 Meta 廣告帶著 `fbclid` 點進來的那一次，`_fbc` 與 `_fbp` 正好在落地頁上由 JavaScript 寫入，在 Safari 上可能只留一天。
 
 ## 可觀察訊號與例子
 
