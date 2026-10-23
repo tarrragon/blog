@@ -82,7 +82,7 @@ gcloud compute scp <local-file> <instance-name>:<remote-path> --zone=<zone> --tu
 gcloud compute start-iap-tunnel <windows-instance-name> 3389 --local-host-port=localhost:13389 --zone=<zone>
 ```
 
-本機的 port 用 3389 以外的號碼（這裡是 `13389`），管理員自己的 Windows 電腦開著遠端桌面時，本機的 3389 已經被占用。Ansible 這類用一般 `ssh` 連線的工具，在 ssh 設定裡把 `ProxyCommand` 設成 `gcloud compute start-iap-tunnel %h 22 --listen-on-stdin --zone=<zone>`，`--listen-on-stdin` 讓 `gcloud` 把通道接到標準輸入輸出，ssh 就經由 IAP 連到 `%h`（ssh 代入的主機名稱，這裡要填 VM 名稱）。
+本機的 port 用 3389 以外的號碼（這裡是 `13389`），管理員自己的 Windows 電腦開著遠端桌面時，本機的 3389 已經被占用。Ansible 這類用一般 `ssh` 連線的工具，在 ssh 設定裡把 `ProxyCommand` 設成 `gcloud compute start-iap-tunnel %h 22 --listen-on-stdin --zone=<zone>`，`--listen-on-stdin` 讓 `gcloud` 把通道接到標準輸入輸出，ssh 就經由 IAP 連到 `%h`（ssh 代入的主機名稱，這裡要填 VM 名稱）。VM 啟用了 OS Login 時，一般 `ssh` 不會像 `gcloud compute ssh` 那樣自動把公鑰登錄到帳號的 OS Login profile，所以先以那個服務帳號的身分登錄一次：`gcloud compute os-login ssh-keys add --key-file=<public-key-file> --impersonate-service-account=<ci-service-account-email>`，`<public-key-file>` 是 Ansible 用的那把金鑰的公鑰檔；ssh 的使用者名稱用同樣加上 `--impersonate-service-account` 的 `gcloud compute os-login describe-profile` 輸出裡的 `username`。
 
 IAP 通道的代價在傳輸速度：所有位元組都經過 Google 的轉送，傳大檔案比直連慢，大量傳檔適合改用 Cloud Storage 當中轉。
 
