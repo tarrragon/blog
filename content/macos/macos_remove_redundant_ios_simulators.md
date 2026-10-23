@@ -6,7 +6,7 @@ description: "磁碟空間不足、發現裝了多版 iOS Simulator runtime 時�
 tags: ["macos", "xcode", "ios-simulator", "disk-space", "troubleshooting"]
 ---
 
-每組 [iOS Simulator runtime](../macos_ios_simulator_runtime_architecture/) 約 16G（Bundle DMG + Runtime DMG），裝了兩個版本就佔 32G 以上。Flutter 和 Xcode 開發通常只需要最新版，舊版可以安全移除。移除的正確路徑是透過 Xcode 或 `simctl` 指令，不是手動刪除 `~/Library/Containers` 裡的檔案。
+每組 [iOS Simulator runtime](../macos_ios_simulator_runtime_architecture/) 約 8G 到 16G：較早的版本由 Bundle DMG 與 Runtime DMG 兩份映像組成，較新的版本只有一份映像（`Cryptex/Images/bundle` 底下是 0B），實際大小以 `xcrun simctl runtime list -v` 的 Size 加上 bundle 目錄的 `du` 為準，裝了兩個版本就可能佔掉十幾到三十幾 GB。Flutter 和 Xcode 開發通常只需要最新版，舊版可以安全移除。移除的正確路徑是透過 Xcode 或 `simctl` 指令，不是手動刪除 `~/Library/Containers` 裡的檔案。
 
 ## 確認目前裝了幾組
 
@@ -29,20 +29,22 @@ Total Disk Images: 2 (16.2G)
 
 ## 移除流程
 
-先清掉綁在舊 runtime 上的模擬器裝置，再刪 runtime 本體。順序顛倒的話，runtime 可能因為仍被裝置參照而拒絕刪除。
+先清掉綁在舊 runtime 上的模擬器裝置，再刪 runtime 本體。runtime 還裝著時，綁在它上面的裝置狀態是可用的，`xcrun simctl delete unavailable` 碰不到它們，所以要先用 `xcrun simctl list devices "<iOS 版本>"` 列出這些裝置，逐台用 UUID 刪除；`delete unavailable` 用來清掉 runtime 已經不存在的殘留裝置。
 
 ```bash
 # 1. 關閉所有正在跑的模擬器
 xcrun simctl shutdown all
 killall Simulator 2>/dev/null
 
-# 2. 清掉不可用的模擬器裝置（綁在已刪 runtime 或舊版本上的）
-xcrun simctl delete unavailable
+# 2. 列出綁在要刪除的 runtime 上的裝置，逐台用 UUID 刪除（引數換成要刪除的 iOS 版本與裝置 UUID）
+xcrun simctl list devices "iOS 18.5"
+xcrun simctl delete <裝置UDID>
 
 # 3. 刪除指定 runtime（用 runtime list 裡的 identifier）
 xcrun simctl runtime delete 6286F286-FA4F-4877-AAEF-62A162C6A2C4
 
-# 4. 確認
+# 4. 清掉 runtime 已不存在的殘留裝置，並確認
+xcrun simctl delete unavailable
 xcrun simctl runtime list
 ```
 
@@ -58,7 +60,7 @@ xcrun simctl delete <裝置UDID>
 
 ## 為什麼不能手動刪檔案
 
-一組 runtime 的資料散在多個位置（Runtime DMG、Bundle DMG、裝置資料、快取），各位置的關係和儲存機制見 [runtime 架構](../macos_ios_simulator_runtime_architecture/)。手動刪其中一處只會刪掉一部分，留下孤兒資料，讓 CoreSimulator 的索引跟實際檔案不一致。之後可能出現模擬器列表裡有裝置但開不了、或空間沒真正釋放的情況。`simctl runtime delete` 會同步清理所有相關位置。
+一組 runtime 的資料散在多個位置（Runtime DMG、Bundle DMG、裝置資料、快取），各位置的關係和儲存機制見 [runtime 架構](../macos_ios_simulator_runtime_architecture/)。手動刪其中一處只會刪掉一部分，留下孤兒資料，讓 CoreSimulator 的索引跟實際檔案不一致。之後可能出現模擬器列表裡有裝置但開不了、或空間沒真正釋放的情況。`simctl runtime delete` 會清理 runtime 的映像與它在 CoreSimulator 裡的登記；模擬器裝置的資料存在 `~/Library/Developer/CoreSimulator/Devices`，要另外用 `simctl delete` 刪除。各類佔用的判斷與定期清理的流程，在 [開發機的定期空間清理](../macos_developer_periodic_cleanup/)。
 
 ## Xcode GUI 的限制
 

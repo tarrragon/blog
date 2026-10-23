@@ -31,7 +31,7 @@ macOS 的系統架構、磁碟空間管理、程序資源配額、開發環境�
 - [App 聚合佔用報告](macos_app_footprint_report/) — 把散落在 ~/Library 各處的 App 資料聚合回各 App
 - [辨識 App 容器](macos_identify_app_containers/) — 讀 plist 辨識 UUID 容器是哪個 App
 - [移除多餘 iOS Simulator](macos_remove_redundant_ios_simulators/) — 透過 simctl 移除舊版 runtime
-- [開發機的定期空間清理](macos_developer_periodic_cleanup/) — 依刪除後由誰重建分類：專案產物、依賴快取、並存的工具鏈版本（Gradle、NDK、模擬器映像、Flutter SDK）、容器虛擬磁碟，以及被忽略的機密檔
+- [開發機的定期空間清理](macos_developer_periodic_cleanup/) — 依刪除後由誰重建分類：專案產物、套件與 App 的快取、並存的工具鏈版本（Gradle、NDK、Android 模擬器映像、iOS runtime、Flutter SDK）、容器虛擬磁碟、模擬器裝置與自己開發的 App 的沙箱容器
 
 ## 環境設定
 
