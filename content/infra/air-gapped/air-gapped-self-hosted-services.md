@@ -117,5 +117,5 @@ GitLab CE 把版控、CI/CD、container registry、package registry 打包在一
 - → [斷網環境的 IaC](/infra/air-gapped/air-gapped-iac/)：state backend（PostgreSQL）和 CI 的詳細設定
 - → [斷網環境的容器與映像管理](/infra/air-gapped/air-gapped-container/)：Harbor 和映像搬運的詳細操作
 - → [斷網環境的監控與可觀測性](/infra/air-gapped/air-gapped-monitoring/)：Prometheus + Grafana + Loki 的部署
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：Vault 的身分管理與 infra IAM 的關係
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：Vault 的身分管理與 infra IAM 的關係
 - → [模組八：治理好習慣](/infra/08-governance-habits/)：自建服務的 secret 管理與成本歸因

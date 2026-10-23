@@ -31,7 +31,7 @@ tags: ["infra", "iac", "environment", "module"]
 | 目錄分離   | 同 repo 內各環境有獨立目錄與 state | 多數早期團隊的平衡點                 | 低       |
 | Workspace  | 同份 code、執行期切換 state        | 環境高度同構、數量多                 | 最低     |
 
-光譜越靠粗的一端，隔離越強、跨環境共用越少、初始與維運成本越高；越靠細的一端，重複越少、邊界越隱性。多數早期團隊在目錄分離這一格落腳，因為它在顯式邊界與維運成本之間平衡得宜。當隔離需求升高（例如 prod 要法規等級的帳務與權限隔離），再沿光譜往帳號級或獨立 repo 移。帳號級隔離的權限邊界設計見[模組二：身分與憑證地基](/infra/02-identity-credentials/)。
+光譜越靠粗的一端，隔離越強、跨環境共用越少、初始與維運成本越高；越靠細的一端，重複越少、邊界越隱性。多數早期團隊在目錄分離這一格落腳，因為它在顯式邊界與維運成本之間平衡得宜。當隔離需求升高（例如 prod 要法規等級的帳務與權限隔離），再沿光譜往帳號級或獨立 repo 移。帳號級隔離的權限邊界設計見[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)。
 
 ### 目錄分離的結構
 
@@ -257,7 +257,7 @@ aws s3 cp s3://acme-tf-state/prod/terraform.tfstate \
 ## 跨分類引用
 
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：每個環境的 state 怎麼隔開
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：帳號級隔離的權限邊界
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：帳號級隔離的權限邊界
 - → [模組三：網路地基](/infra/03-network-foundation/)：跨可用區冗餘的網路面
 - → [模組五：核心服務上 IaC](/infra/05-core-services/)：核心服務怎麼用 module 跨環境重用
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：retrofit 的 plan 輸出怎麼進 review

@@ -1,5 +1,5 @@
 ---
-title: "7.C9 反例：憑證輪替未分 Scope"
+title: "7.C9 反例：存取憑證輪替未分 Scope"
 date: 2026-05-07
 description: "存取憑證輪替若未分域分批，容易造成跨系統連鎖中斷。"
 weight: 9

@@ -72,4 +72,4 @@ Testcontainers 的優勢是 test 和 fixture 在同一個程式碼檔案中，�
 - Protocol integration test 的定義 → [Protocol integration test 定義](/testing/03-protocol-integration-test/definition-and-boundary/)
 - WebSocket 的 protocol test 實作 → [WebSocket 協議測試實作](/testing/03-protocol-integration-test/websocket-protocol-test/)
 - 服務無法在 CI 自行啟動、只有共用環境 → [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)
-- 測試帳號的存放與 CI 注入 → [測試憑證管理](/testing/03-protocol-integration-test/credential-management/)
+- 測試帳號的存放與 CI 注入 → [測試存取憑證管理](/testing/03-protocol-integration-test/credential-management/)

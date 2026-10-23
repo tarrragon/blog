@@ -36,7 +36,7 @@ tags: ["backend", "security", "red-team"]
 
 ## 對應失效樣式卡
 
-- [7.R11.P5 重設憑證可重放且有效期過長](/backend/07-security-data-protection/red-team/problem-cards/fp-replayable-reset-token-with-long-ttl/)
+- [7.R11.P5 密碼重設 token 可重放且有效期過長](/backend/07-security-data-protection/red-team/problem-cards/fp-replayable-reset-token-with-long-ttl/)
 
 ## 演練 / 控制落地
 

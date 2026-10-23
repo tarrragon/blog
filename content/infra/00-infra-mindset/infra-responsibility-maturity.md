@@ -28,9 +28,9 @@ infra 承擔的是「應用程式之下、作業系統之上」那層共享資�
 
 ### 身分與存取憑證（identity）
 
-即使網路邊界畫得完美，一把權限過大的 access key 外洩了，攻擊者可以用 API 繞過所有網路規則直接操作資源——身分與憑證是五個面向中失守代價最高的一層。它的職責是讓人、服務、CI pipeline 各拿剛好夠用的權限（最小權限），並確保憑證有明確的生命週期。
+即使網路邊界畫得完美，一把權限過大的 access key 外洩了，攻擊者可以用 API 繞過所有網路規則直接操作資源——身分與存取憑證是五個面向中失守代價最高的一層。它的職責是讓人、服務、CI pipeline 各拿剛好夠用的權限（最小權限），並確保憑證有明確的生命週期。
 
-身分層的失效模式有兩類常見形態。權限擴散指的是一個 role 隨時間累積了遠超本職所需的權限——每次需求都加一條新的 action，卻從來沒人收斂已經用不到的舊權限。典型場景是一個 CI role 一開始只需要讀 S3、後來加了建 ECR image、再後來加了改 RDS parameter group，半年後這個 role 的 policy 有三十幾行 action，其中只有不到一半還在使用。憑證散落則指同一把 access key 被複製到越來越多地方——CI 環境變數、開發者筆電的 `~/.aws/credentials`、某段部署腳本裡的 hardcode。每多一個副本就多一個外洩點，而外洩後的回退要找出所有副本同步輪替，這在手動環境裡幾乎做不到。這兩者的完整處理在[模組二：身分與憑證地基](/infra/02-identity-credentials/)。
+身分層的失效模式有兩類常見形態。權限擴散指的是一個 role 隨時間累積了遠超本職所需的權限——每次需求都加一條新的 action，卻從來沒人收斂已經用不到的舊權限。典型場景是一個 CI role 一開始只需要讀 S3、後來加了建 ECR image、再後來加了改 RDS parameter group，半年後這個 role 的 policy 有三十幾行 action，其中只有不到一半還在使用。憑證散落則指同一把 access key 被複製到越來越多地方——CI 環境變數、開發者筆電的 `~/.aws/credentials`、某段部署腳本裡的 hardcode。每多一個副本就多一個外洩點，而外洩後的回退要找出所有副本同步輪替，這在手動環境裡幾乎做不到。這兩者的完整處理在[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)。
 
 ### 儲存（storage）
 
@@ -168,7 +168,7 @@ tripwire 的操作方式是在建立資源時就決定「觸發納管的條件�
 
 - → [模組負一：還沒有 infra 的手動環境](/infra/before-infra/)：階梯第 0 階的環境怎麼盡量做好
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：地基資源跨上成熟度階梯第 2 階的最小路徑
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：身分層的權限收斂與存取憑證生命週期
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：身分層的權限收斂與存取憑證生命週期
 - → [模組三：網路地基](/infra/03-network-foundation/)：網路層的隔離、路由與 security group 設計
 - → [模組四：環境分離與模組化](/infra/04-environment-separation/)：成熟度階梯第 3 階的切法
 - → [模組五：核心服務上 IaC](/infra/05-core-services/)：運算與儲存資源的 IaC 描述

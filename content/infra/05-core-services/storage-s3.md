@@ -180,4 +180,4 @@ resource "aws_lambda_permission" "allow_s3" {
 
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：checkov / tfsec 攔截缺少 public access block 或加密的 bucket
 - → [模組八：治理好習慣](/infra/08-governance-habits/)：bucket 的 tagging 與成本歸因
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：bucket policy 與 IAM policy 的權限模型交集
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：bucket policy 與 IAM policy 的權限模型交集

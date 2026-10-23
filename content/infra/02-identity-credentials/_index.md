@@ -1,12 +1,12 @@
 ---
-title: "模組二：身分與憑證地基 — IAM 與 OIDC"
+title: "模組二：身分與存取憑證地基 — IAM 與 OIDC"
 date: 2026-06-26
 description: "IAM role / policy 設計、最小權限，以及用 OIDC 短期憑證取代長期 access key"
 weight: 3
 tags: ["infra", "iam", "oidc", "security"]
 ---
 
-權限一旦散落，後面每一層都建在沙上。網路收斂得再好，只要一把權限過大的長期憑證流出，攻擊者就能繞過所有邊界直接動到核心資源；環境分得再乾淨，只要 production 跟 staging 共用同一組身分，一次誤操作就跨環境炸開。身分與憑證是地基層最先該收斂的能力，因為它決定了「誰能動什麼」這個問題有沒有可信的答案。這一章把這個地基設計好，讓後面的網路、環境分離、服務上線都有一個明確的權限模型可以掛靠。
+權限一旦散落，後面每一層都建在沙上。網路收斂得再好，只要一把權限過大的長期憑證流出，攻擊者就能繞過所有邊界直接動到核心資源；環境分得再乾淨，只要 production 跟 staging 共用同一組身分，一次誤操作就跨環境炸開。身分與存取憑證是地基層最先該收斂的能力，因為它決定了「誰能動什麼」這個問題有沒有可信的答案。這一章把這個地基設計好，讓後面的網路、環境分離、服務上線都有一個明確的權限模型可以掛靠。
 
 ## IAM 的心智模型
 
@@ -73,17 +73,17 @@ data "aws_iam_policy_document" "ci_trust" {
 
 環境之間的邊界，目的是讓 production 的權限與 staging、dev 完全不交叉，避免一次誤操作或一個被攻破的低敏感環境波及到核心資產。實作上常見的做法是每個環境用獨立的帳號（account）或獨立的 role，部署到 production 的身分拿不到 staging 的資源、反之亦然。這條邊界在 AWS 上有兩層具體機制可以落地：帳號級的護欄用 Organizations 把環境拆成獨立帳號，再用 SCP（Service Control Policy）對整個帳號或組織單位設定權限天花板，連帳號內的管理員都越不過去；role 級的護欄用 Permissions Boundary 這個 IAM 字面功能，給單一 role 設一個權限上限，限制它「最多能拿到什麼」，即使有人後來給它貼了過寬的 policy 也會被天花板擋住。前者收的是帳號與組織的整體範圍，後者收的是單一身分的上限，兩者疊起來才讓「權限邊界」從概念變成擋得住誤設的具體工具。判讀訊號是：如果一個 dev 環境的 CI role 能列出或刪除 production 的資源，邊界就沒有真正建立。環境隔離的更完整實作（帳號結構、模組化參數）會在[模組四：環境分離與模組化](/infra/04-environment-separation/)展開，這裡先確保身分層的權限不跨環境。
 
-這一章談的是身分與憑證 — 誰是誰、怎麼證明、能動什麼。憑證背後引用的應用層 secret（資料庫密碼、第三方 API key）怎麼安全儲存與注入，屬於[模組八：治理好習慣](/infra/08-governance-habits/)的 secret management 範圍，不在這裡處理。兩者的交集是：身分層決定「誰能讀到 secret store」，secret 層決定「secret 怎麼存與輪替」。
+這一章談的是身分與存取憑證 — 誰是誰、怎麼證明、能動什麼。憑證背後引用的應用層 secret（資料庫密碼、第三方 API key）怎麼安全儲存與注入，屬於[模組八：治理好習慣](/infra/08-governance-habits/)的 secret management 範圍，不在這裡處理。兩者的交集是：身分層決定「誰能讀到 secret store」，secret 層決定「secret 怎麼存與輪替」。
 
 ## 章節文章
 
-| 文章                                                                                                                  | 主題                                                                                                                                 |
-| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| [身分與憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/) | IAM 的 identity / policy / role 三元件、最小權限的持續收斂、用 OIDC 取代長期 access key，以及 SCP 與 Permissions Boundary 的環境隔離 |
-| [跨帳號策略 — Organizations、SCP 與帳號工廠](/infra/02-identity-credentials/multi-account-strategy/)                  | 用 Organizations 把環境拆成獨立帳號、用 SCP 設定帳號級護欄、用帳號工廠自動化新帳號的建立流程                                         |
-| [團隊權限分級與存取管理](/infra/02-identity-credentials/team-access-management/)                                      | 三級權限模型（admin / operator / viewer）、臨時提權、定期 access review、contractor 存取                                             |
-| [Access Key 輪替手冊](/infra/02-identity-credentials/access-key-rotation-playbook/)                                   | access key 盤點、輪替步驟、Secrets Manager 自動化輪替、key age 監控                                                                  |
-| [OIDC Trust Policy 設定指南](/infra/02-identity-credentials/oidc-trust-policy-setup/)                                 | GitHub Actions OIDC provider 設定、trust policy claim 收斂、plan/apply role 分離、常見錯誤排查                                       |
+| 文章                                                                                                                      | 主題                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| [身分與存取憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/) | IAM 的 identity / policy / role 三元件、最小權限的持續收斂、用 OIDC 取代長期 access key，以及 SCP 與 Permissions Boundary 的環境隔離 |
+| [跨帳號策略 — Organizations、SCP 與帳號工廠](/infra/02-identity-credentials/multi-account-strategy/)                      | 用 Organizations 把環境拆成獨立帳號、用 SCP 設定帳號級護欄、用帳號工廠自動化新帳號的建立流程                                         |
+| [團隊權限分級與存取管理](/infra/02-identity-credentials/team-access-management/)                                          | 三級權限模型（admin / operator / viewer）、臨時提權、定期 access review、contractor 存取                                             |
+| [Access Key 輪替手冊](/infra/02-identity-credentials/access-key-rotation-playbook/)                                       | access key 盤點、輪替步驟、Secrets Manager 自動化輪替、key age 監控                                                                  |
+| [OIDC Trust Policy 設定指南](/infra/02-identity-credentials/oidc-trust-policy-setup/)                                     | GitHub Actions OIDC provider 設定、trust policy claim 收斂、plan/apply role 分離、常見錯誤排查                                       |
 
 ## 跨分類引用
 

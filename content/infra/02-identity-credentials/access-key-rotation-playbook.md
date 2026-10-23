@@ -172,6 +172,6 @@ IAM Access Analyzer 的 unused access 功能（需啟用 analyzer）可以持續
 
 ## 跨分類引用
 
-- → [身分與憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：access key 風險的系統性分析、OIDC 作為長期 key 的替代方案
+- → [身分與存取憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：access key 風險的系統性分析、OIDC 作為長期 key 的替代方案
 - → [團隊權限分級與存取管理](/infra/02-identity-credentials/team-access-management/)：離職時的 key 撤銷流程
 - → [治理好習慣](/infra/08-governance-habits/tagging-secrets/)：secret 的儲存與引用紀律

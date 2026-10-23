@@ -32,5 +32,5 @@ tags: ["infra", "takeover", "legacy", "migration"]
 
 - → [模組負一：還沒有 infra 的環境](/infra/before-infra/)：接手完成後，環境的操作紀律對齊這裡
 - → [模組零：infra 是什麼](/infra/00-infra-mindset/)：成熟度階梯作為接手後評估現況的座標
-- → [模組二：身分與憑證](/infra/02-identity-credentials/)：接手時的 credential 盤點與輪替
+- → [模組二：身分與存取憑證](/infra/02-identity-credentials/)：接手時的 credential 盤點與輪替
 - → [模組八：治理好習慣](/infra/08-governance-habits/)：接手後的 tagging 與 secret 管理

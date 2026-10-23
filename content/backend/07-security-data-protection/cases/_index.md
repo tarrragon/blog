@@ -19,6 +19,6 @@ tags: ["backend", "security", "case-study"]
 | [7.C5](/backend/07-security-data-protection/cases/okta-support-system-incident-2023/)                   | Okta support 系統事件      | 支援系統存取憑證風險如何擴散到客戶租戶    |
 | [7.C6](/backend/07-security-data-protection/cases/okta-cross-tenant-impersonation-2023/)                | Okta cross-tenant 事件     | 跨租戶 impersonation 如何回寫防禦與偵測   |
 | [7.C7](/backend/07-security-data-protection/cases/okta-byo-telephony-security-shift/)                   | Okta BYO Telephony         | MFA 供應鏈責任如何轉為客戶可控治理        |
-| [7.C9](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/)           | 反例：憑證輪替失敗         | 存取憑證輪替未分 scope 導致跨系統連鎖中斷 |
+| [7.C9](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/)           | 反例：存取憑證輪替失敗     | 存取憑證輪替未分 scope 導致跨系統連鎖中斷 |
 | [7.C10](/backend/07-security-data-protection/cases/contrast-identity-governance-by-scale/)              | 對照：規模差異下身份治理   | 不同規模服務在 identity 控制面的風險差異  |
 | [7.C11](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/) | 選型：單人遠端 Shell       | 單人遠端 Shell 情境下的 tunnel 選型判讀   |

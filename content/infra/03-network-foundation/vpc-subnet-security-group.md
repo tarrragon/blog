@@ -205,7 +205,7 @@ aws ec2 describe-security-groups \
   --output table
 ```
 
-資料庫埠、SSH、內部 API 出現在這份清單上就是該收斂的目標。管理埠的存取更安全的替代方案是 SSM Session Manager — 它讓你透過 IAM 權限建立 shell session，完全不需要開 22 埠，連線經由 Systems Manager 的控制通道走、不走公網，同時自動留下 session log。另一種把管理埠移出公網的做法是私網 overlay（mesh VPN，如 Tailscale）：SSH 只綁 tailnet 私網介面、公網不開任何埠，連得到私網位址本身即代表通過 tailnet 認證。tailnet 裡每一台裝置都符合這個條件，預設政策下它們彼此互通，要收窄到只有管理用的那一台連得到 SSH 得靠 ACL，見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/)；tailnet 位址模型、NAT 穿透與第三方 control plane 取捨見 [Tailscale 深入](/linux/tools/remote/tailscale-tailnet-and-relay/)。誰能透過 IAM 改動這些規則，銜接[模組二：身分與憑證地基](/infra/02-identity-credentials/)。
+資料庫埠、SSH、內部 API 出現在這份清單上就是該收斂的目標。管理埠的存取更安全的替代方案是 SSM Session Manager — 它讓你透過 IAM 權限建立 shell session，完全不需要開 22 埠，連線經由 Systems Manager 的控制通道走、不走公網，同時自動留下 session log。另一種把管理埠移出公網的做法是私網 overlay（mesh VPN，如 Tailscale）：SSH 只綁 tailnet 私網介面、公網不開任何埠，連得到私網位址本身即代表通過 tailnet 認證。tailnet 裡每一台裝置都符合這個條件，預設政策下它們彼此互通，要收窄到只有管理用的那一台連得到 SSH 得靠 ACL，見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/)；tailnet 位址模型、NAT 穿透與第三方 control plane 取捨見 [Tailscale 深入](/linux/tools/remote/tailscale-tailnet-and-relay/)。誰能透過 IAM 改動這些規則，銜接[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)。
 
 在 CI 層面，[模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)用 tfsec / checkov 做靜態掃描，自動攔截「敏感埠 + 全開 CIDR」的組合，把 security group 的盤點從人工定期做變成每次 PR 自動做。
 
@@ -239,7 +239,7 @@ NACL 的特點是無狀態與支援顯式 deny。無狀態意味著放行了入�
 
 ## 跨分類引用
 
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：誰有權改動 security group 與路由表
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：誰有權改動 security group 與路由表
 - → [模組四：環境分離與模組化](/infra/04-environment-separation/)：環境之間的 VPC 怎麼分
 - → [模組五：核心服務上 IaC](/infra/05-core-services/)：核心服務怎麼落進規劃好的 subnet
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：tfsec / checkov 自動攔截 security group 全開

@@ -40,7 +40,7 @@ Credential rotation with scoped evidence 的核心責任是把存取憑證輪替
 
 ## 案例回寫
 
-這條路徑可用 [反例：憑證輪替失敗](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) 回寫。先看失敗是發生在分域、驗證還是撤銷，再回到本章補齊 scope map 與回退窗口。
+這條路徑可用 [反例：存取憑證輪替失敗](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) 回寫。先看失敗是發生在分域、驗證還是撤銷，再回到本章補齊 scope map 與回退窗口。
 
 這個案例主要支撐的是「輪替分域與證據鏈完整度」判讀，不直接支撐 incident 通訊節奏；外部通報回到 8.4/8.20。
 

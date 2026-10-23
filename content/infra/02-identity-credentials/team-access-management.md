@@ -6,7 +6,7 @@ weight: 3
 tags: ["infra", "iam", "access-management", "security"]
 ---
 
-IAM 的 role 與 policy 提供「某個身分能不能對某個資源做某件事」的技術機制（見[身分與憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)）。機制備妥後，下一個問題是組織層面的設計：團隊裡每個角色該拿到哪一級權限、臨時需要更高權限時怎麼提權、離職或合約結束時怎麼確保存取被回收。這些設計的目的是讓「誰能動什麼」在任何時間點都有可稽核的答案。
+IAM 的 role 與 policy 提供「某個身分能不能對某個資源做某件事」的技術機制（見[身分與存取憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)）。機制備妥後，下一個問題是組織層面的設計：團隊裡每個角色該拿到哪一級權限、臨時需要更高權限時怎麼提權、離職或合約結束時怎麼確保存取被回收。這些設計的目的是讓「誰能動什麼」在任何時間點都有可稽核的答案。
 
 ## 權限分級：admin / operator / viewer
 
@@ -170,7 +170,7 @@ Access review 的結果適合用兩個數字向管理層報告：**覆蓋率**�
 
 權限設計越集中在 role-based（用 IAM group 或 SSO permission set），離職處理越簡單——停用 SSO 帳號就自動切斷所有透過 SSO 取得的 role。反過來，如果有大量手動 attach 的 policy 或直接寫在 trust policy 裡的 user ARN，離職時要逐一找出並移除，容易遺漏。
 
-離職後的 credential rotation 有一個常被忽略的風險：輪替範圍沒有按作用域分批。一個反例是多個服務共用同一把 secret，輪替時切新存取憑證的服務跟還只認舊憑證的服務之間出現認證窗口不一致，導致跨系統連鎖中斷。穩定的做法是先分域隔離受影響服務、恢復雙憑證窗口、再逐批收斂（見 [反例：憑證輪替未分 Scope](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/)）。
+離職後的 credential rotation 有一個常被忽略的風險：輪替範圍沒有按作用域分批。一個反例是多個服務共用同一把 secret，輪替時切新存取憑證的服務跟還只認舊憑證的服務之間出現認證窗口不一致，導致跨系統連鎖中斷。穩定的做法是先分域隔離受影響服務、恢復雙憑證窗口、再逐批收斂（見 [反例：存取憑證輪替未分 Scope](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/)）。
 
 ### 交接的可執行性
 
@@ -202,7 +202,7 @@ Access review 的結果適合用兩個數字向管理層報告：**覆蓋率**�
 
 ## 跨分類引用
 
-- → [身分與憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：IAM role / policy / OIDC 的技術機制
+- → [身分與存取憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：IAM role / policy / OIDC 的技術機制
 - → [跨帳號策略](/infra/02-identity-credentials/multi-account-strategy/)：用 OU 和 SCP 在帳號層級隔離外部人員
 - → [治理好習慣](/infra/08-governance-habits/tagging-secrets/)：tagging 標注存取到期日、secrets 不進 code
 - → [怎麼把 infra 推動起來](/infra/09-driving-adoption/trust-alignment-knowledge-sharing/)：知識共享與交接的組織面

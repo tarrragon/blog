@@ -89,4 +89,4 @@ infra 的複雜度隨服務的使用者數量、團隊大小與合規要求遞�
 - → [模組零：infra 是什麼](/infra/00-infra-mindset/)：五個責任面向與成熟度階梯（從全手動到全程式碼治理的五階分級）的完整定義
 - → [模組負一：還沒有 infra 的環境](/infra/before-infra/)：手動環境怎麼守底線、降低未來納管成本
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：第一行 IaC 從哪裡開始
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：access key 的風險與替代方案
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：access key 的風險與替代方案

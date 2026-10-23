@@ -400,7 +400,7 @@ Long-lived repeatable export artifact 是事故後仍能持續產出資料的工
 
 | 紅隊案例                                                                                                                                                   | 攻擊鏈到資料層的路徑                                                        |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| [Snowflake 2024 憑證濫用](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)                          | 外洩 credential + 未強制 MFA → 直接 query 多家 tenant 資料                  |
+| [Snowflake 2024 存取憑證濫用](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)                      | 外洩 credential + 未強制 MFA → 直接 query 多家 tenant 資料                  |
 | [LastPass 2022 備份鏈](/backend/07-security-data-protection/red-team/cases/data-exfiltration/lastpass-2022-backup-chain/)                                  | 開發環境 → production backup 路徑 → 客戶加密 vault 外送                     |
 | [MOVEit 2023 mass exfiltration](/backend/07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/)                          | file transfer 產品零時差 → 後端資料批量外送                                 |
 | [Change Healthcare 2024 ops impact](/backend/07-security-data-protection/red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/)              | DB 入侵 → 醫療支付網路全面停擺、資料事件升級成業務中斷                      |

@@ -51,4 +51,4 @@ Test 要驗證的行為涉及外部服務的協議行為 — frame type 差異�
 
 還有一種情況落在這張決策表之外：驗證對象是「對後端行為的假設」本身。mock 與 [stub](/testing/knowledge-cards/stub/) 回放的內容由測試作者寫入，假設與斷言出自同一人之手——假設錯了，測試照樣綠燈，結構上驗證不出來。這時需要的是持有狀態、只固化已證實行為的[語意級假後端](/testing/01-test-strategy-layers/semantic-fake-backend/)。
 
-判定需要真實服務後，測試帳號的存放位置與 CI 注入方式見[測試憑證管理](/testing/03-protocol-integration-test/credential-management/)。Mock 邊界確定後，另一個影響 test 有效性的因素是[測試資料的代表性](/testing/05-test-design-judgment/test-data-representativeness/) — 測試輸入能否反映真實環境。Mock 遮蔽的結構性原因在 [testing 模組一 Mock 遮蔽機制分析](/testing/01-test-strategy-layers/mock-masking-mechanism/)中完整展開，判定需要真實服務後的成本評估見 [testing 模組三 成本判斷表](/testing/03-protocol-integration-test/cost-judgment/)。
+判定需要真實服務後，測試帳號的存放位置與 CI 注入方式見[測試存取憑證管理](/testing/03-protocol-integration-test/credential-management/)。Mock 邊界確定後，另一個影響 test 有效性的因素是[測試資料的代表性](/testing/05-test-design-judgment/test-data-representativeness/) — 測試輸入能否反映真實環境。Mock 遮蔽的結構性原因在 [testing 模組一 Mock 遮蔽機制分析](/testing/01-test-strategy-layers/mock-masking-mechanism/)中完整展開，判定需要真實服務後的成本評估見 [testing 模組三 成本判斷表](/testing/03-protocol-integration-test/cost-judgment/)。

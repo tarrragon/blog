@@ -81,7 +81,7 @@ IaC 工具會維護一份 state 記錄，追蹤每個環境裡實際建了哪些
 
 環境分離解決了「在哪裡驗證」和「為什麼 staging 跟 production 不同」的問題。但多環境運行後，一組後續的操作需求會依序浮現，每一個對應 infra 的一個能力層：
 
-**身分與權限隔離**。三個環境代表三組資源。如果所有人對所有環境都有完整操作權限，一次誤操作就可能改壞 production。production 的修改權限應該比 staging 嚴格、操作身分應該分開。這是[模組二：身分與憑證地基](/infra/02-identity-credentials/)的範圍。
+**身分與權限隔離**。三個環境代表三組資源。如果所有人對所有環境都有完整操作權限，一次誤操作就可能改壞 production。production 的修改權限應該比 staging 嚴格、操作身分應該分開。這是[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)的範圍。
 
 **變更審查流程**。多人同時操作 infra 時，沒有經過 review 的變更會互相覆蓋。把 infra 變更接上跟應用程式碼相同的 PR 流程 — 開分支、自動跑 plan、review 通過才 apply — 讓每一次改動都有提案、審查和歷史。這是[模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)的範圍。
 

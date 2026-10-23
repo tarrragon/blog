@@ -33,4 +33,4 @@ tags: ["backend", "security", "case-study", "red-team"]
 - [Fortinet 2023：CVE-2023-27997 SSL-VPN 溢位](/backend/07-security-data-protection/red-team/cases/edge-exposure/fortinet-cve-2023-27997-sslvpn-overflow/)
 - [FortiClient EMS 2023：CVE-2023-48788 SQL 注入](/backend/07-security-data-protection/red-team/cases/edge-exposure/forticlient-ems-cve-2023-48788-sqli/)
 - [ManageEngine 2021：CVE-2021-40539 認證繞過](/backend/07-security-data-protection/red-team/cases/edge-exposure/manageengine-adself-cve-2021-40539-auth-bypass/)
-- [USAHERDS 2021：CVE-2021-44207 硬編碼憑證](/backend/07-security-data-protection/red-team/cases/edge-exposure/usaherds-cve-2021-44207-hardcoded-credential/)
+- [USAHERDS 2021：CVE-2021-44207 硬編碼存取憑證](/backend/07-security-data-protection/red-team/cases/edge-exposure/usaherds-cve-2021-44207-hardcoded-credential/)

@@ -10,7 +10,7 @@ Cross-site scripting 的核心概念是攻擊者的程式碼在目標頁面的�
 
 ## 概念位置
 
-它是一批防護的共同前提失效點。任何以「攻擊者讀不到某個值」為基礎的機制在它之下一併失效——頁面帶出的隨機防偽值讀得到，放在瀏覽器本地儲存或程式變數裡的憑證讀得到，畫面上已經呈現的資料也讀得到。判讀憑證住址時要把這一層當成分界：標成 HttpOnly 的 cookie 在這個攻擊面下讀不出來，而為了寫進請求標頭而放在 JavaScript 可及位置的憑證讀得出來，兩種帶法的取捨見 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)。
+它是一批防護的共同前提失效點。任何以「攻擊者讀不到某個值」為基礎的機制在它之下一併失效——頁面帶出的隨機防偽值讀得到，放在瀏覽器本地儲存或程式變數裡的憑證讀得到，畫面上已經呈現的資料也讀得到。判讀憑證住址時要把這一層當成分界：標成 HttpOnly 的 cookie 在這個攻擊面下讀不出來，而為了寫進請求標頭而放在 JavaScript 可及位置的憑證讀得出來，兩種帶法的取捨見 [7.36 存取憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)。
 
 它與 [cross-site request forgery](/backend/knowledge-cards/cross-site-request-forgery/) 的關係是能力包含：這裡做得到那邊的全部動作，還多了讀取回應與竊取憑證。差別在門檻與後果的持續性——那邊只需要受害者載入一個外部頁面，動作限於受害者的瀏覽器與會話期間；這裡要先有注入點，得手之後憑證可以離開受害者的裝置，在任何地方使用到過期或被撤銷為止。
 

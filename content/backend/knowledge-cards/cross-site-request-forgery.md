@@ -12,7 +12,7 @@ Cross-site request forgery 的核心概念是攻擊者從自己控制的頁面�
 
 它與 [cross-site scripting](/backend/knowledge-cards/cross-site-scripting/) 的關係是能力包含而非並列。能在目標頁面上執行程式碼的攻擊者，做得到這裡的全部動作，還額外讀得到回應與同源儲存；反過來，只能誘發請求的攻擊者拿不到任何資料。兩者的門檻因此也不同——誘發請求只需要受害者載入一個頁面或點開一封信，而執行程式碼要先有一個注入點。
 
-它的存在條件由憑證怎麼被帶上決定，這個判斷怎麼做、以及各種組態的差別見 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)。憑證改由程式碼明確寫進請求標頭時這個機制不成立，因為攻擊者的頁面誘發不出一個帶著正確標頭的請求；代價是憑證移到 JavaScript 讀得到的位置，暴露面換成跨站指令碼那一類。伺服器對伺服器的呼叫沒有自動附上憑證的機制，這個概念在那一側不適用，判讀走 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)。
+它的存在條件由憑證怎麼被帶上決定，這個判斷怎麼做、以及各種組態的差別見 [7.36 存取憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)。憑證改由程式碼明確寫進請求標頭時這個機制不成立，因為攻擊者的頁面誘發不出一個帶著正確標頭的請求；代價是憑證移到 JavaScript 讀得到的位置，暴露面換成跨站指令碼那一類。伺服器對伺服器的呼叫沒有自動附上憑證的機制，這個概念在那一側不適用，判讀走 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)。
 
 ## 可觀察訊號與例子
 

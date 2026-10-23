@@ -228,6 +228,6 @@ aws cloudtrail lookup-events \
 
 ## 跨分類引用
 
-- → [身分與憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：OIDC 的概念基礎與權限邊界設計
+- → [身分與存取憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：OIDC 的概念基礎與權限邊界設計
 - → [infra 走 PR 流程](/infra/07-infra-as-pr/plan-review-apply-guardrails/)：plan/apply 的 CI pipeline 怎麼用這裡設定好的 role
 - → [跨帳號策略](/infra/02-identity-credentials/multi-account-strategy/)：多帳號環境下的 OIDC provider 配置

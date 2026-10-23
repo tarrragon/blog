@@ -177,7 +177,7 @@ data "aws_iam_policy_document" "payments_secrets" {
 ## 跨分類引用
 
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：state 後端的加密與存取控制是 secret 引用策略的安全地基
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：誰能讀哪些 secret 的 IAM 權限設計
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：誰能讀哪些 secret 的 IAM 權限設計
 - → [模組四：環境分離與模組化](/infra/04-environment-separation/)：tag 的環境值與 module 參數化的對齊
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：tag 合規與 secret 掃描整合進 CI pipeline
 - → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：密鑰生命週期、輪替策略與資料保護的完整討論

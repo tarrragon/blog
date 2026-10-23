@@ -249,5 +249,5 @@ DNS 跟 CA 之間有一個循環依賴：CA 簽發憑證時需要 DNS 解析（A
 - → [斷網環境的通用原則](/infra/air-gapped/air-gapped-principles/)：content ferry 和離線套件管理的通用操作模式
 - → [斷網環境的 IaC](/infra/air-gapped/air-gapped-iac/)：Vault 作為 Terraform 的 secret backend
 - → [斷網環境的容器與映像管理](/infra/air-gapped/air-gapped-container/)：Harbor 依賴 DNS 和 TLS、映像拉取需要信任內部 CA
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：Vault 的角色跟雲端的 Secrets Manager 對應
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：Vault 的角色跟雲端的 Secrets Manager 對應
 - → [模組八：治理好習慣](/infra/08-governance-habits/)：Secret 不進 code 的原則在斷網環境用 Vault 落地

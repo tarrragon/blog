@@ -10,7 +10,7 @@ tags: ["infra", "governance", "tagging", "secrets", "cost"]
 
 治理習慣的責任是讓基礎設施在規模長大後仍然可被盤點、可被追責、可被回收。資源數量從幾十個長到幾百個時，「這是誰的、為什麼存在、花了多少」這三個問題若沒有預先在資源上留下答案，就只能靠人腦記憶與口頭考古，而記憶會隨著人員流動蒸發。
 
-先界定這一章的邊界。身分與存取憑證本身怎麼設計 — IAM role、OIDC、最小權限 — 是模組二「身分與憑證地基」的範圍，這一章只談 secret 的儲存與引用：機密值放在哪、IaC 怎麼安全地指到它。成本這一塊也分兩層：把資源歸屬到擁有者與用途的地基（tagging、chargeback 的依據）在這一章，運行期怎麼用 reserved instance、spot、rightsizing 去壓低帳單，是 [運維 模組八：成本管理](/operations/08-cost-management/) 的範圍。
+先界定這一章的邊界。身分與存取憑證本身怎麼設計 — IAM role、OIDC、最小權限 — 是模組二「身分與存取憑證地基」的範圍，這一章只談 secret 的儲存與引用：機密值放在哪、IaC 怎麼安全地指到它。成本這一塊也分兩層：把資源歸屬到擁有者與用途的地基（tagging、chargeback 的依據）在這一章，運行期怎麼用 reserved instance、spot、rightsizing 去壓低帳單，是 [運維 模組八：成本管理](/operations/08-cost-management/) 的範圍。
 
 ## Tagging 規範：查帳與清資源的依據
 

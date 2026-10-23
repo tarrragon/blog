@@ -12,7 +12,7 @@ tags: ["backend", "security"]
 
 ## 本章涵蓋與不涵蓋
 
-本章聚焦身分從哪裡來、以及驗證用什麼材料這兩個決定。登入節奏、第二因子與權限分級屬 [7.2 身分與授權邊界](../identity-access-boundary/)——終端使用者那一側在該章的「終端使用者的登入節奏」一節，員工與高權限工具在其餘各節。存取憑證在請求中怎麼帶、狀態放伺服器還是放 token 是接在這兩個決定之後的另一條軸。狀態放哪裡的取捨（sticky session、外部 session store、無狀態 token，含撤銷成本）見 [Session 處理](/operations/02-horizontal-scaling/session-handling/)；憑證怎麼帶（cookie 自動附上與請求標頭明確附上各自的攻擊面）見 [7.36 憑證在請求中怎麼帶](../credential-transport-in-request/)。機器對機器的身分不在本章範圍，那條路徑的入口是 [7.29](../api-authentication-trust-boundaries/)；人類使用者持客戶端憑證登入（企業與政府的智慧卡）也不在本章的形態裡，它與硬體金鑰同屬一條軸、看實體持有而非猜測成本，判讀見 [7.39 使用者持有型憑證](../user-held-credential-carrier/)。
+本章聚焦身分從哪裡來、以及驗證用什麼材料這兩個決定。登入節奏、第二因子與權限分級屬 [7.2 身分與授權邊界](../identity-access-boundary/)——終端使用者那一側在該章的「終端使用者的登入節奏」一節，員工與高權限工具在其餘各節。存取憑證在請求中怎麼帶、狀態放伺服器還是放 token 是接在這兩個決定之後的另一條軸。狀態放哪裡的取捨（sticky session、外部 session store、無狀態 token，含撤銷成本）見 [Session 處理](/operations/02-horizontal-scaling/session-handling/)；憑證怎麼帶（cookie 自動附上與請求標頭明確附上各自的攻擊面）見 [7.36 存取憑證在請求中怎麼帶](../credential-transport-in-request/)。機器對機器的身分不在本章範圍，那條路徑的入口是 [7.29](../api-authentication-trust-boundaries/)；人類使用者持客戶端憑證登入（企業與政府的智慧卡）也不在本章的形態裡，它與硬體金鑰同屬一條軸、看實體持有而非猜測成本，判讀見 [7.39 使用者持有型憑證](../user-held-credential-carrier/)。
 
 ## 判讀軸：材料落在哪裡
 
@@ -113,4 +113,4 @@ B2B 多租戶是另一種形態：每個客戶帶自己的身分提供者，於�
 - 每個客戶各帶身分提供者時的設定、網域驗證與自助範圍：[7.40 B2B 多租戶的身分接入](../multi-tenant-identity-onboarding/)
 - 回復路徑本身怎麼設計（它決定實際上限）：[7.42 密碼重設流程](../password-reset-flow/)
 - 委派之後本地紀錄的狀態同步、資料歸屬與多來源對應：[7.38 外部身分與本地紀錄](../external-identity-local-record-lifecycle/)
-- 存取憑證在請求中怎麼帶（cookie 屬性、Authorization header、跨站請求偽造防護）：[7.36 憑證在請求中怎麼帶](../credential-transport-in-request/)
+- 存取憑證在請求中怎麼帶（cookie 屬性、Authorization header、跨站請求偽造防護）：[7.36 存取憑證在請求中怎麼帶](../credential-transport-in-request/)

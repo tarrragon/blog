@@ -103,7 +103,7 @@ grep -rn "<?=.*\\\$_" --include="*.php" .
 
 修法是所有輸出都經過 `htmlspecialchars($var, ENT_QUOTES, 'UTF-8')`。模板引擎（如 Twig、Blade）預設會做跳脫，使用模板引擎的專案 XSS 風險較低。按資料落點分別編碼的完整判斷標準與第二層的內容安全政策見 [cross-site scripting](/backend/knowledge-cards/cross-site-scripting/) 與 [content security policy](/backend/knowledge-cards/content-security-policy/)。
 
-接手 legacy 專案時要一併盤點跨站請求偽造那一面——它與 XSS 是不同的攻擊，靠輸出跳脫擋不住，而舊專案多半有一批用 GET 執行寫入的端點落在任何防護之外。盤點做法見 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/) 的判讀流程第 2 步。
+接手 legacy 專案時要一併盤點跨站請求偽造那一面——它與 XSS 是不同的攻擊，靠輸出跳脫擋不住，而舊專案多半有一批用 GET 執行寫入的端點落在任何防護之外。盤點做法見 [7.36 存取憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/) 的判讀流程第 2 步。
 
 ### 檔案包含（File Inclusion）
 
@@ -263,5 +263,5 @@ wpscan --url https://example.com --enumerate vp,vt,u
 - → [無 SSH 的 FTP / 面板管理環境接管](/infra/takeover/legacy-ftp-no-ssh/)：本文的前置步驟（程式碼與資料庫快照）
 - → [資料庫備份與變更管理](/infra/takeover/legacy-database-backup-migration/)：SQL injection 修復前先備份，避免修補過程造成資料遺失
 - → [無 SSH 環境的監控與告警](/infra/takeover/legacy-external-monitoring/)：安全事件的持續偵測與錯誤追蹤
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：credential 管理的系統性設計
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：credential 管理的系統性設計
 - → [Backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：應用層安全的完整討論

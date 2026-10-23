@@ -135,7 +135,7 @@ Atlantis 的代價是它本身是一個要部署、要升級、要保護的常�
 
 GitHub Actions workflow 的優點是不必額外維運服務、跟既有 CI 共用同一套 runner。缺點是 apply 的 gating 邏輯要自己用 workflow 條件拼出來。一個完整的 workflow 通常分成兩個 job：PR 觸發 plan job（跑 fmt / validate / scan / plan、把結果貼回 PR），合併到 main 才觸發 apply job。
 
-無論哪種執行層，自動化的 apply 都需要對雲端的寫入權限，而這個權限怎麼來是整條管線的安全根基。這裡正是[模組二：身分與憑證地基](/infra/02-identity-credentials/)鋪設的 OIDC 兌現的地方 — 管線不該存放長期的 access key，而是在 runner 執行時用 OIDC 向雲端換取短期 token。
+無論哪種執行層，自動化的 apply 都需要對雲端的寫入權限，而這個權限怎麼來是整條管線的安全根基。這裡正是[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)鋪設的 OIDC 兌現的地方 — 管線不該存放長期的 access key，而是在 runner 執行時用 OIDC 向雲端換取短期 token。
 
 ```yaml
 # 合併到主幹後，用 OIDC 換短期憑證再 apply（呼應模組二）
@@ -194,7 +194,7 @@ stateful 變更的真正回退仍然靠備份與快照，這正是[模組五：�
 ## 跨分類引用
 
 - → [CI/CD 教學](/ci/)：infra 管線用的就是這套驗證 / 發布 gate，plan / apply 對應 build / deploy 階段
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：管線用 OIDC 取得 apply 權限，本章是該章 OIDC 設計的回報兌現處
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：管線用 OIDC 取得 apply 權限，本章是該章 OIDC 設計的回報兌現處
 - → [模組三：網路地基](/infra/03-network-foundation/)：security group 收斂原則，本章用 tfsec / checkov 在 CI 攔下寫錯的全開規則
 - → [模組五：核心服務上 IaC](/infra/05-core-services/)：stateful 資源的保護策略，git revert 救不回資料層
 - → [模組八：治理好習慣](/infra/08-governance-habits/)：secret / state 保護
