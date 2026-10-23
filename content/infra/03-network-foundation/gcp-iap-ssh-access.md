@@ -78,11 +78,11 @@ gcloud compute ssh <instance-name> --zone=<zone> --tunnel-through-iap
 # Linux：透過 IAP 通道傳檔
 gcloud compute scp <local-file> <instance-name>:<remote-path> --zone=<zone> --tunnel-through-iap
 
-# Windows：把 VM 的 3389 port 經 IAP 轉到本機，再用 RDP 用戶端連 localhost:3389
-gcloud compute start-iap-tunnel <windows-instance-name> 3389 --local-host-port=localhost:3389 --zone=<zone>
+# Windows：把 VM 的 3389 port 經 IAP 轉到本機的 13389，再用 RDP 用戶端連 localhost:13389
+gcloud compute start-iap-tunnel <windows-instance-name> 3389 --local-host-port=localhost:13389 --zone=<zone>
 ```
 
-Ansible 這類用一般 `ssh` 連線的工具，在 ssh 設定裡把 `ProxyCommand` 設成 `gcloud compute start-iap-tunnel %h 22 --listen-on-stdin --zone=<zone>`，`--listen-on-stdin` 讓 `gcloud` 把通道接到標準輸入輸出，ssh 就經由 IAP 連到 `%h`（ssh 代入的主機名稱，這裡要填 VM 名稱）。
+本機的 port 用 3389 以外的號碼（這裡是 `13389`），管理員自己的 Windows 電腦開著遠端桌面時，本機的 3389 已經被占用。Ansible 這類用一般 `ssh` 連線的工具，在 ssh 設定裡把 `ProxyCommand` 設成 `gcloud compute start-iap-tunnel %h 22 --listen-on-stdin --zone=<zone>`，`--listen-on-stdin` 讓 `gcloud` 把通道接到標準輸入輸出，ssh 就經由 IAP 連到 `%h`（ssh 代入的主機名稱，這裡要填 VM 名稱）。
 
 IAP 通道的代價在傳輸速度：所有位元組都經過 Google 的轉送，傳大檔案比直連慢，大量傳檔適合改用 Cloud Storage 當中轉。
 
@@ -145,7 +145,7 @@ gcloud compute instances add-metadata <instance-name> --zone=<zone> --metadata s
 
 連 Serial Console 需要能修改這台 VM 的權限（例如 `roles/compute.instanceAdmin.v1`），而這個角色也是一般 VM 管理會用到的權限，所以光靠 IAM 收不窄救援入口；真正把它收窄的是組織政策 `compute.disableSerialPortAccess`（見〈組織層級的護欄〉）。組織強制了這條政策時，救援名單裡要有持有組織政策權限、能對專案解除它的人，只有 VM 權限的人開不了 Serial Console。
 
-沒有事先建救援帳號的 VM 出事時，還有兩條比較慢的路：在 metadata 設 `startup-script`，重開機時以 root 執行、用來建帳號或改回 sshd 設定；或把開機磁碟從 VM 卸下、掛到另一台 VM 上修改再掛回去。兩條都要重開機。救援入口平時保持關閉的理由見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈救援入口：管理通道斷掉時的備用路徑〉。
+沒有事先建救援帳號的 VM 出事時，還有兩條比較慢的路：在 metadata 設 `startup-script`（Linux VM 的鍵名；Windows VM 用 `windows-startup-script-ps1`），重開機時以 root 或 SYSTEM 執行、用來建帳號或改回 sshd 設定；或把開機磁碟從 VM 卸下、掛到另一台 VM 上修改再掛回去。兩條都要重開機。救援入口平時保持關閉的理由見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈救援入口：管理通道斷掉時的備用路徑〉。
 
 ### 啟用 IAP API、開啟稽核紀錄並建立只放行 IAP 來源的防火牆規則
 
@@ -316,19 +316,19 @@ gcloud compute firewall-rules create allow-app-to-db --network=default \
 
 - **IAP API 沒有啟用**：錯誤訊息直接說 API 未啟用，照〈啟用 IAP API、開啟稽核紀錄並建立只放行 IAP 來源的防火牆規則〉啟用。
 - **`4033`（not authorized）**：停在通道授權。這個帳號沒有 `roles/iap.tunnelResourceAccessor`、IAM Conditions 不允許這個 port 或 VM、條件的期限已過，或 VM 不存在、沒有在執行；用 Policy Troubleshooter 確認帳號實際拿不拿得到權限（見〈IAP 的 IAM 授權範圍：誰拿得到通道〉）。
-- **`4003`（failed to connect to backend）**：IAP 已經放行，但連不到 VM 的那個 port。依序查 VM 有沒有帶 tag、新規則的網路與 port、組織的階層式防火牆或 network firewall policy 有沒有先擋下（這類政策優先於專案規則，專案規則寫對了也連不上），以及 VM 上的作業系統防火牆（ufw、firewalld、Windows 防火牆）與 sshd 是否在監聽。防火牆這一段用 Connectivity Tests（`gcloud network-management connectivity-tests create`）模擬一次從 `35.235.240.0/20` 到 VM 的連線，結果會指出是哪一條規則或政策擋下。VM 內部的問題要從 Serial Console 進去看。
+- **`4003`（failed to connect to backend）**：IAP 已經放行，但連不到 VM 的那個 port。依序查 VM 有沒有帶 tag、新規則的網路與 port、組織的階層式防火牆或 network firewall policy 有沒有先擋下（這類政策優先於專案規則，專案規則寫對了也連不上），以及 VM 上的作業系統防火牆（ufw、firewalld、Windows 防火牆）與 sshd 是否在監聽。防火牆這一段用 Connectivity Tests 模擬一次 IAP 到 VM 的連線：`gcloud network-management connectivity-tests create <test-name> --source-ip-address=35.235.240.1 --destination-instance=<instance-uri> --destination-port=22 --protocol=TCP`，`--source-ip-address` 只收單一 IP，取 IAP 位址段裡的任一個；`<instance-uri>` 是 `projects/<project-id>/zones/<zone>/instances/<instance-name>`。結果會指出是哪一條規則或政策擋下。VM 內部的問題要從 Serial Console 進去看。
 - **通道開了、登入時 `Permission denied (publickey)`**：停在主機登入驗證。啟用了 OS Login 時查 OS Login 的登入角色與 `roles/iam.serviceAccountUser`；沒啟用時查 metadata 裡的公鑰與修改 metadata 的權限（見〈SSH 金鑰在 GCP 上的管理位置：metadata 金鑰與 OS Login 的啟用順序與還原〉）。
 
 ## IAP 的 IAM 授權範圍：誰拿得到通道
 
 改走 IAP 之後，VM 的連線權限改由 IAM 決定，所以 IAM policy 的寬度就是 SSH 與 RDP 的暴露面。幾個地方會讓這個範圍在不知不覺中變大或對不到人：
 
-- **專案層級的基本角色**：Owner 這一類基本角色涵蓋開通道的權限，而且不受 IAM Conditions 限制。日常登入用的帳號拿掉基本角色、改授本篇列出的具體角色，Owner 只留給緊急時才用的帳號；團隊全員都是 Owner 時，IAM Conditions 對任何人都不生效，OS Login 的單台先行驗證也找不到非 Owner 的人來做。綁定之前先用 `gcloud projects get-iam-policy <project-id>` 列出目前持有基本角色的成員，再用 IAM 的 Policy Troubleshooter 確認某個帳號實際拿不拿得到 `iap.tunnelInstances.accessViaIAP`；`get-iam-policy` 只列出直接綁定，群組與繼承來的權限以 Policy Troubleshooter 的結果為準。稽核要一份「所有拿得到通道的人」的清單時，用 Policy Analyzer（`gcloud asset analyze-iam-policy --organization=<org-id> --permissions=iap.tunnelInstances.accessViaIAP`），它把群組成員與繼承都展開；Policy Troubleshooter 一次只回答一個帳號。
+- **專案層級的基本角色**：Owner 這一類基本角色涵蓋開通道的權限，而且不受 IAM Conditions 限制。日常登入用的帳號拿掉基本角色、改授本篇列出的具體角色，Owner 只留給緊急時才用的帳號；團隊全員都是 Owner 時，IAM Conditions 對任何人都不生效，OS Login 的單台先行驗證也找不到非 Owner 的人來做。綁定之前先用 `gcloud projects get-iam-policy <project-id>` 列出目前持有基本角色的成員，再用 IAM 的 Policy Troubleshooter 確認某個帳號實際拿不拿得到 `iap.tunnelInstances.accessViaIAP`；`get-iam-policy` 只列出直接綁定，群組與繼承來的權限以 Policy Troubleshooter 的結果為準。稽核要一份「所有拿得到通道的人」的清單時，用 Policy Analyzer（`gcloud asset analyze-iam-policy --organization=<org-id> --permissions=iap.tunnelInstances.accessViaIAP --expand-groups`），`--expand-groups` 讓結果把 Google Group 展開成成員（預設不展開，只列到群組），要逐台列出 VM 時另加 `--expand-resources`；Policy Troubleshooter 一次只回答一個帳號。
 - **整批授權**：把 `roles/iap.tunnelResourceAccessor` 綁給 `domain:` 或大型群組，等於讓整個組織的帳號都能開通道。綁給負責維運的群組，並用 IAM Conditions 限定 port 與 VM。
 - **服務帳號**：CI 或自動化工具用的服務帳號若持有通道權限，它的金鑰外洩就等同一把能連進所有 VM 的鑰匙。GCP 上這類帳號用 Workload Identity Federation（[Workload Identity](/backend/knowledge-cards/workload-identity/)）取得短期存取憑證，不發長期金鑰：CI 平台簽發的 OIDC token 換成服務帳號的身分，設定方式以 GCP 的 Workload Identity Federation 文件為準，與 AWS 上用 OIDC 換取 IAM role 的對照見[身分與存取憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)的〈OIDC：給 CI/CD 的短期憑證〉。服務帳號要的角色與人相同：開通道的 `roles/iap.tunnelResourceAccessor`，啟用 OS Login 之後另加 OS Login 的登入角色，VM 掛著服務帳號時再加那個服務帳號的 `roles/iam.serviceAccountUser`。
-- **組織外的帳號**：外包人員用他自己公司或個人的 Google 帳號時，OS Login 預設不讓組織外的帳號登入，要在組織層級另外授予 `roles/compute.osLoginExternalUser`；組織若強制了 Organization Policy 的 `iam.allowedPolicyMemberDomains`（只允許組織網域的成員出現在 IAM 綁定裡），連綁定本身都會被拒絕。這類帳號也不受組織的兩步驟驗證強制管轄，所以替外包人員在組織的 Cloud Identity 建帳號，比授權給外部帳號更容易控制，合約到期時停用帳號、或用上面帶 `request.time` 的條件讓綁定自動失效。
+- **組織外的帳號**：外包人員用他自己公司或個人的 Google 帳號時，OS Login 預設不讓組織外的帳號登入，要在組織層級另外授予 `roles/compute.osLoginExternalUser`；組織若強制了 Organization Policy 的 `iam.allowedPolicyMemberDomains`（只允許組織網域的成員出現在 IAM 綁定裡），連綁定本身都會被拒絕；2024 年 5 月 3 日之後建立的 Organization 預設就強制這一條，用〈組織層級的護欄〉的 `org-policies list` 確認。這類帳號也不受組織的兩步驟驗證強制管轄，所以替外包人員在組織的 Cloud Identity 建帳號，比授權給外部帳號更容易控制，合約到期時停用帳號、或用上面帶 `request.time` 的條件讓綁定自動失效。
 
-通道授權改用 Google 帳號之後，帳號被釣魚，攻擊者就能從 IAP 開通道。GCP 上的對應設定是在 Google Workspace 或 Cloud Identity 對能開通道的帳號強制兩步驟驗證，管理員帳號用硬體安全金鑰或 [passkey](/backend/knowledge-cards/passkey/) 這類防釣魚的方式——一次性驗證碼會在釣魚頁面上被一起騙走。`gcloud` 登入之後會在本機保存 refresh token，管理員帳號停用前這份 token 一直可用，而 token 檔可以被複製；Workspace 與 Cloud Identity 的管理控制台有 Google Cloud 工作階段控制，設定多久要重新驗證一次，這個間隔就是本機 token 被複製之後能用多久的上限。需要再收緊時，Context-Aware Access 可以在 IAM 綁定上加 access level 條件（Access Context Manager 定義的一組連線條件，例如只允許公司管理的裝置或特定網段）。
+通道授權改用 Google 帳號之後，帳號被釣魚，攻擊者就能從 IAP 開通道。GCP 上的對應設定是在 Google Workspace 或 Cloud Identity 對能開通道的帳號強制兩步驟驗證，管理員帳號用硬體安全金鑰或 [passkey](/backend/knowledge-cards/passkey/) 這類防釣魚的方式——一次性驗證碼會在釣魚頁面上被一起騙走。`gcloud` 登入之後會在本機保存 refresh token，管理員帳號停用前這份 token 一直可用，而 token 檔可以被複製；Workspace 與 Cloud Identity 的管理控制台有 Google Cloud 工作階段控制，設定多久要重新驗證一次（1 到 24 小時）；這項設定預設關閉，啟用之後這個間隔才是本機 token 被複製之後能用多久的上限，被設成受信任而豁免的應用程式不受它限制。需要再收緊時，Context-Aware Access 可以在 IAM 綁定上加 access level 條件（Access Context Manager 定義的一組連線條件，例如只允許公司管理的裝置或特定網段）。
 
 人員異動時，移出群組或移除 IAM 綁定只擋下下一次開通道；已經開著的工作階段要另外在 VM 上結束，做法見下一節的最後一段。
 

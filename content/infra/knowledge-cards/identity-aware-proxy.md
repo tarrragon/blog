@@ -14,7 +14,7 @@ tags: ["infra", "knowledge-cards", "network", "access", "zero-trust"]
 
 它與 [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) 都讓內部主機不必各自對外，差別在對外接收連線的元件由誰維運、用什麼判斷身分：跳板機是自己維運的主機、用 SSH 金鑰判斷；身分感知代理是廠商提供或自己架設的代理服務、用 IdP 帳號判斷。它與一般反向代理的差別在轉送前多了一次身分驗證與授權。
 
-常見的實作有 GCP 的 IAP（Identity-Aware Proxy，對 HTTPS 應用與 TCP 連線各有一種模式，TCP forwarding 的來源位址段是 `35.235.240.0/20`，到得了同一家雲端裡的主機與經專線或 VPN 接進來的地端主機）、Cloudflare Access、Teleport 的 proxy。Cloudflare Access 與 Teleport 用反向連線把流量送進主機，主機上的 connector 怎麼往外連、斷線時會怎樣見 [Outbound Tunnel（出站隧道）](/backend/knowledge-cards/outbound-tunnel/)。這個模式的公開源頭是 Google 2014 年起發表的 BeyondCorp 系列論文。
+常見的實作有 GCP 的 IAP（Identity-Aware Proxy，對 HTTPS 應用與 TCP 連線各有一種模式，TCP forwarding 的來源位址段是 `35.235.240.0/20`，到得了同一家雲端裡的主機，以及經 Cloud Interconnect 或 Cloud VPN 接進來、而且 Cloud Router 對地端通告了這段位址的地端主機）、Cloudflare Access、Teleport 的 proxy。Cloudflare Access 與 Teleport 用反向連線把流量送進主機，主機上的 connector 怎麼往外連、斷線時會怎樣見 [Outbound Tunnel（出站隧道）](/backend/knowledge-cards/outbound-tunnel/)。這個模式的公開源頭是 Google 2014 年起發表的 BeyondCorp 系列論文。
 
 ## 可觀察訊號
 
@@ -26,7 +26,7 @@ tags: ["infra", "knowledge-cards", "network", "access", "zero-trust"]
 經由代理程式反向連線的模式（Cloudflare Tunnel、Teleport agent）：
 
 - 主機上有一個常駐的代理程式（例如 `cloudflared`、`teleport`），主機的入站規則完全沒有管理 port
-- 認證紀錄裡的 SSH 來源是 `127.0.0.1` 或代理程式所在的本機位址
+- 代理程式把連線轉送到 sshd 的實作（`cloudflared`），認證紀錄裡的 SSH 來源是 `127.0.0.1` 或代理程式所在的本機位址；Teleport 節點用自己的 SSH 伺服器，sshd 的紀錄裡不會出現這些連線
 
 兩種模式共同的樣子是主機沒有公開 IP，管理員仍然用 `ssh` 或廠商 CLI 連得進去。
 

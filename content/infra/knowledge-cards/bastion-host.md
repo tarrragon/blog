@@ -38,4 +38,4 @@ tags: ["infra", "knowledge-cards", "network", "ssh", "access", "bastion"]
 - [SSH](/infra/knowledge-cards/ssh/) — 跳板機轉接的協定與金鑰認證
 - [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) — 改用代理服務承擔對外接收連線
 - [Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/) — 跳板機本身連不上時的備用登入路徑
-- [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/#通道授權的身分來源存取者是誰身分由誰簽發) — 存取者是組織成員、外部合作方、個人或機器時，跳板機與其他做法的選擇條件
+- [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/#通道授權的身分來源存取者與主機擁有者的關係身分所在的帳號系統) — 存取者是組織成員、外部合作方、個人或機器時，跳板機與其他做法的選擇條件
