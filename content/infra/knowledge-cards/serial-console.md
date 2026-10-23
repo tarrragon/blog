@@ -10,9 +10,9 @@ tags: ["infra", "knowledge-cards", "access", "recovery"]
 
 ## 概念位置
 
-序列主控台與平時的管理通道設計方向相反：管理通道要隨時可用，救援入口平時關閉、只在需要時打開，因為它繞過了 [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) 或 [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) 這些平時的控制點。管理通道的網路可達性、通道授權或主機登入驗證任何一層設定錯了（這三層的分法見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)），序列主控台都還連得上，因為它不經過其中任何一層。
+序列主控台與平時的管理通道設計方向相反：管理通道要隨時可用，救援入口平時關閉、只在需要時打開，因為它繞過了 [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) 或 [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) 這些平時的控制點。管理通道的網路可達性、通道授權或主機登入驗證任何一層設定錯了（這三層的分法見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)），序列主控台都還連得上，因為它不經過那三層的設定。它有自己的授權：雲端上是雲端帳號的 IAM 權限與開啟它的開關，登入時用主機上的本機帳號密碼，所以雲端 IAM 或開關設錯時，它一樣進不去。
 
-不同環境的救援入口形態不同。地端實體伺服器用的是頻外管理介面（out-of-band management，其他中文資料常寫作「帶外管理」）：IPMI、Dell iDRAC、HPE iLO 這類嵌在主機板上的管理控制器，有自己的網路埠，在作業系統沒開機時也能看主控台、重開機、掛載安裝媒體。VPS 服務商多半在網頁後台提供一個瀏覽器裡的主控台（常叫 web console 或 VNC console），用法與雲端的序列主控台相同：不經過主機的網路設定，用本機帳號密碼登入。
+不同環境的救援入口形態不同。地端實體伺服器用的是頻外管理控制器（BMC，out-of-band management，其他中文資料常寫作「帶外管理」）：IPMI、Dell iDRAC、HPE iLO 這類嵌在主機板上的管理控制器，有自己的網路埠，在作業系統沒開機時也能看主控台、重開機、掛載安裝媒體。VPS 服務商多半在網頁後台提供一個在瀏覽器裡顯示主機畫面的主控台（常叫 VNC console），用法與雲端的序列主控台相同：不經過主機的網路設定，用本機帳號密碼登入。
 
 ## 可觀察訊號
 
@@ -22,12 +22,13 @@ tags: ["infra", "knowledge-cards", "access", "recovery"]
 
 ## 設計責任
 
-救援入口在出事當下才用得到，而出事當下已經來不及準備帳號與權限，所以規劃時要在主機正常時就決定：
+救援入口在出事當下才用得到，而帳號、權限與演練在主機正常時準備最快，所以規劃時要先決定：
 
-- **救援帳號**：序列主控台用本機帳號密碼登入，而用金鑰登入的主機通常沒有設密碼的帳號，所以救援帳號要在主機正常時就建好、密碼存放在受控的密碼庫
-- **開啟範圍與時機**：平時保持關閉，救援時只對單一主機開啟，用完關回去；存取權限只授予持有救援責任的少數帳號（GCP 上開啟 metadata 與連線都需要 `roles/compute.instanceAdmin.v1`）。GCP 可以用 Organization Policy 的 `compute.disableSerialPortAccess` 在組織層級預設關閉
+- **救援帳號**：序列主控台用本機帳號密碼登入，而用金鑰登入的主機通常沒有設密碼的帳號，所以救援帳號要在主機正常時就建好。密碼逐台隨機產生、存放在受控的密碼庫，sshd 維持只收金鑰；這組密碼不隨 IdP 收回，持有它的人離開時要逐台輪替。沒有事先建帳號時，雲端 VM 還有比較慢的路（GCP 的 startup-script、AWS 的 user-data 在重開機時以 root 執行，或把開機磁碟掛到另一台 VM 修改），地端主機只能重開機進單人模式
+- **演練**：建好救援帳號之後實際用序列主控台登入一次、確認 sudo 可用，再關回去。沒演練過的救援入口在出事當下才發現密碼不對或權限不足；平時不存在、事故時才開的權限叫 [Break-Glass Access](/backend/knowledge-cards/break-glass-access/)，事後回顧的做法在那張卡
+- **開啟範圍與時機**：平時保持關閉，救援時只對單一主機開啟，用完關回去；存取權限只授予持有救援責任的少數帳號（GCP 上開啟 metadata 與連線都需要 `roles/compute.instanceAdmin.v1`，而這也是一般 VM 管理會用到的角色，光靠它收不窄）。GCP 用 Organization Policy 的 `compute.disableSerialPortAccess` 在組織層級預設關閉時，只有能對專案解除這條政策的人開得了序列主控台，救援名單要包含這些人
 - **頻外管理介面的網路**：IPMI 這類控制器歷史上有多個認證弱點，它的網路埠接在獨立的管理網段，不接到一般網段或網際網路
-- **操作紀錄**：序列主控台的連線繞過了平時的稽核點，雲端廠商的 audit log 要開啟，才查得到誰在什麼時候開了主控台
+- **操作紀錄**：序列主控台的連線繞過了平時的稽核點與錄製位置，雲端廠商的 audit log 查得到誰在什麼時候開了主控台，查不到在裡面執行了什麼；有逐指令稽核要求時，救援時做了什麼要另外記錄
 
 ## 鄰卡
 

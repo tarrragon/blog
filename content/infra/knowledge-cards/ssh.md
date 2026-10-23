@@ -20,7 +20,7 @@ SSH 在接手維運的情境裡是一條關鍵分界線：有 SSH 存取就能�
 
 SSH 的認證方式有兩種：密碼（簡單但不安全，容易被暴力嘗試）和 SSH key pair（公鑰放在 server 的 `~/.ssh/authorized_keys`，私鑰留在 client）。生產環境應該用 key 認證並關閉密碼登入。
 
-接手維運時要確認：SSH 的登入帳號是什麼、用密碼還是 key、key 在哪裡、有沒有其他人也有存取權限。前任維護者的 SSH key 如果還在 `authorized_keys` 裡，離職後應該移除。
+接手維運時要確認：SSH 的登入帳號是什麼、用密碼還是 key、key 在哪裡、有沒有其他人也有存取權限。前任維護者的 SSH key 如果還在 `authorized_keys` 裡，離職後應該移除。主機一多，逐台刪除就難以盤點，這時改用隨帳號收回的 [OS Login](/infra/knowledge-cards/os-login/) 或會自動到期的 [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/)，選擇條件見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈主機登入驗證的做法：SSH 金鑰怎麼發、怎麼收回〉。
 
 ```bash
 # 產生 SSH key pair
@@ -33,3 +33,6 @@ ssh-copy-id -i ~/.ssh/id_ed25519.pub user@host
 ## 鄰卡
 
 - [FTP](/infra/knowledge-cards/ftp/) — 沒有 SSH 時的檔案傳輸替代方案
+- [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/) — 由 CA 簽發、會自動到期的 SSH 金鑰
+- [OS Login](/infra/knowledge-cards/os-login/) — GCP 上讓登入權限跟著帳號收回的做法
+- [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) — 只有一台主機對外開 SSH、其餘經由它轉接

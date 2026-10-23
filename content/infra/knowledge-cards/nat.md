@@ -14,7 +14,7 @@ NAT Gateway 在網路地基裡的角色是 private subnet 的出站閘道。它�
 
 傳統的 zonal NAT Gateway 綁定單一可用區，放在某個 public subnet 裡，實際生不生效由 private subnet 的 [route table](/infra/knowledge-cards/route-table/) 預設路由決定。這帶來一個架構取捨：共享一個 NAT（成本低、出站方向有單點）還是每個可用區各放一個（成本高、出站與 subnet 冗餘對齊）。AWS 在 2025 年 11 月另外推出 regional 模式的 NAT Gateway：一個 NAT 依工作負載所在的可用區自動擴展，不需要放進 public subnet；新的可用區出現工作負載後，擴展到那一區可能要等上一段時間（AWS 公告寫的是最多 60 分鐘）。選擇時要先確認用的是哪一種模式，上面的單點取捨只適用於 zonal 模式。
 
-GCP 的對應服務是 Cloud NAT，職責相同，結構不同：它建在 Cloud Router 上、以 region 為單位生效，不需要放進某個 subnet，也沒有可用區層級的單點取捨。管理通道改走代理之後要移除 VM 的外部 IP，出站就改由 Cloud NAT 承接，見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈移除公開入口之後的出站路徑〉。沒有外部 IP 的 VM 要存取 Google 自家的 API 時，subnet 開啟 Private Google Access 就能走內部路徑，作用與 AWS 的 VPC Endpoint 相近。
+GCP 的對應服務是 Cloud NAT，職責相同，結構不同：它建在 Cloud Router 上、以 region 為單位生效，不需要放進某個 subnet，也沒有可用區層級的單點取捨。管理通道改走代理之後要移除 VM 的外部 IP，出站就改由 Cloud NAT 承接，見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈移除公開 IP 之後的出站路徑〉。沒有外部 IP 的 VM 要存取 Google 自家的 API 時，subnet 開啟 Private Google Access 就能走內部路徑，作用與 AWS 的 VPC Endpoint 相近。
 
 ## 可觀察訊號
 

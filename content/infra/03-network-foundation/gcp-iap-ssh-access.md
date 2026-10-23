@@ -1,9 +1,9 @@
 ---
 title: "GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding"
 date: 2026-10-23
-description: "GCP 預設網路自帶的防火牆規則、IAP TCP forwarding 的連線路徑與來源範圍、切換前的盤點與救援準備、SSH 與 RDP 改走 IAP 並停用舊規則驗證的指令，以及 IAM 授權範圍、OS Login 的啟用與還原、Cloud NAT 與 Private Google Access、Organization Policy、階層式防火牆與稽核紀錄在 GCP 上的設定"
+description: "GCP 預設網路自帶的防火牆規則、IAP TCP forwarding 的連線路徑與日常連線指令、切換前的盤點與 Serial Console 救援準備、SSH 與 RDP 改走 IAP 並停用舊規則驗證的指令、IAP 通道連不上時的依層判讀，以及 IAM 授權範圍、OS Login 的啟用與還原、Cloud NAT 與 Private Google Access、Organization Policy、階層式防火牆、稽核紀錄與 Security Command Center 的 OPEN_SSH_PORT finding 在 GCP 上的處理"
 weight: 5
-tags: ["infra", "network", "gcp", "ssh", "iap", "firewall"]
+tags: ["infra", "network", "gcp", "ssh", "rdp", "iap", "firewall"]
 ---
 
 這篇整理 GCP Compute Engine 上管理員登入 VM 的通道（Linux 的 SSH、Windows 的 RDP），從防火牆對 `0.0.0.0/0` 開放 22 與 3389 port 改成走 Identity-Aware Proxy（IAP）TCP forwarding 的設定與指令。範圍從專案裡已經有 VM、而且用的是預設網路（`default` network）開始；自建網路上手寫的全開規則，處理方式相同，只要把指令裡的網路名稱與規則名稱換成自己的。IAP 這一類代理服務的共通機制見 [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/)。
@@ -16,9 +16,16 @@ tags: ["infra", "network", "gcp", "ssh", "iap", "firewall"]
 | 通道授權     | Google 帳號加 IAM role `roles/iap.tunnelResourceAccessor` |
 | 主機登入驗證 | Linux 用 OS Login；Windows 用 VM 上的 Windows 帳號        |
 
-三層之外的救援入口用 Serial Console，它是繞過這三層的另一條路徑。
+救援入口用 Serial Console，它不經過上面三層的設定，有自己的 IAM 權限與開關。
 
-這個組合假設組織的身分提供者（identity provider，IdP）是 Google 帳號：IAP 與 OS Login 都依 Google 的 IAM 判斷。組織用的是 Microsoft Entra ID、Okta 這類其他 IdP 時，通道授權要換成能接那個 IdP 的代理服務，網路可達性也跟著那個代理走（防火牆改放行它的位址段，或改用不開入站 port 的反向連線）；本篇的 Cloud NAT、移除外部 IP 與救援入口的做法仍然適用。
+這個組合假設組織的身分提供者（[identity provider](/backend/knowledge-cards/identity-provider/)，IdP）是 Google 帳號：IAP 與 OS Login 都依 Google 的 IAM 判斷。組織用的是 Microsoft Entra ID、Okta 這類其他 IdP 時，有兩條路。一條是讓 Cloud Identity 以 SAML 單一登入接那個 IdP、並由 IdP 把帳號同步進來，使用者在原本的 IdP 登入、拿到的是 Google 身分，本篇全部適用。另一條是通道授權改用能接那個 IdP 的代理服務，網路可達性跟著那個代理走（防火牆改放行它的位址段，或改用不開入站 port 的反向連線）；這時本篇依賴 Google 帳號的幾節——〈IAP 的 IAM 授權範圍〉、〈SSH 金鑰在 GCP 上的管理位置〉的 OS Login 與組織政策的 `compute.requireOsLogin`、稽核紀錄裡 IAP 的 Data Access 紀錄——都不適用，Cloud NAT、移除外部 IP、Serial Console 與防火牆規則的收斂仍然適用。
+
+另外四種環境要先調整做法再往下讀：
+
+- **由 managed instance group（MIG）或 GKE 管理的 VM**：tag、metadata、救援帳號與移除外部 IP 都要改在 instance template、node pool 設定或映像檔裡。逐台用 `gcloud` 修改，VM 在自動修復、升級或縮放時重建，修改就消失，tag 消失之後 IAP 規則也套不到新的 VM。GKE 節點的管理存取另有它自己的做法，不在本篇範圍。
+- **Shared VPC 的 service project**：防火牆規則住在 host project，本篇防火牆相關的指令要在 host project 執行；停用 `default-allow-ssh` 這類規則會同時影響其他 service project 的 VM。
+- **用 Terraform 這類 IaC 管理的專案**：本篇每一個 `gcloud` 修改都要改寫成程式碼。只在 CLI 加的 tag、IAM 授權與 metadata，若所屬資源在程式碼裡被完整定義（例如 `google_compute_instance` 寫了 `tags`、用 `google_project_iam_policy` 管 IAM），下一次 apply 會把它拿掉；只在 CLI 刪掉的規則與外部 IP，下一次 apply 會建回來。用 CLI 停用舊規則做驗證的期間要暫停所有 apply。兩個方向的落差與過渡期的做法見[兩套真相並存的過渡期操作](/infra/takeover/partial-iac-dual-truth-operation/)。
+- **新專案從零開始**：沒有舊規則要移走，〈切換前的盤點〉與停用驗證可以跳過，直接建 IAP 規則、OS Login 與 Cloud NAT；建 VM 時加 `--no-address` 就不配外部 IP。2024 年 5 月 3 日之後建立的 Organization 會預設強制一組 Organization Policy，其中可能已經包含本篇〈組織層級的護欄〉提到的幾項；用 `gcloud resource-manager org-policies list --organization=<org-id>` 查組織層級設定了哪些（`<org-id>` 用 `gcloud organizations list` 查）。
 
 ## 預設網路自帶的防火牆規則
 
@@ -33,7 +40,7 @@ tags: ["infra", "network", "gcp", "ssh", "iap", "firewall"]
 
 GCP 的防火牆規則依 priority 數字由小到大評估。這四條的 priority 是 65534，只排在 VPC 隱含的「拒絕所有入站」規則（65535）前面，所以自己建立的規則（不指定時是 1000）都會比它們先被評估。它們也沒有指定 target tag（防火牆規則用來挑選作用對象的標記），作用對象是這個網路裡的每一台 VM。
 
-只收掉 `default-allow-ssh` 會留下兩個暴露面。`default-allow-rdp` 讓每一台 Windows VM 的遠端桌面對整個網際網路開放，而 RDP 預設接受密碼登入。`default-allow-internal` 讓同一個網路裡的 VM 之間不受 port 限制，一台 VM 被入侵之後，攻擊者從那台機器能直接連到其他 VM 的資料庫 port 與管理 port，這種擴散方式叫[橫向移動（lateral movement）](/backend/knowledge-cards/lateral-movement/)。另外，這四條自動建立的規則預設沒有開啟 firewall rules logging，防火牆這一層不會留下被掃描或被連入的紀錄。管理 port 對外開放的風險（sshd 漏洞、金鑰的生命週期、RDP 的密碼登入）與廠商無關，見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈對外開放管理 port 的實際風險〉。
+只收掉 `default-allow-ssh` 會留下兩個暴露面。`default-allow-rdp` 讓每一台 Windows VM 的遠端桌面對整個網際網路開放，而 RDP 預設接受密碼登入。`default-allow-internal` 讓同一個網路裡的 VM 之間不受 port 限制，一台 VM 被入侵之後，攻擊者從那台機器能直接連到其他 VM 的資料庫 port 與管理 port，這種擴散方式叫[橫向移動（lateral movement）](/backend/knowledge-cards/lateral-movement/)。另外，這四條自動建立的規則預設沒有開啟 firewall rules logging，防火牆這一層不會留下被掃描或被連入的紀錄。管理 port 對外開放的風險與廠商無關，見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈對外開放管理 port 的實際風險〉。
 
 CIS Google Cloud Platform Foundation Benchmark 的 3.1 條因此建議專案裡不保留 `default` 網路，改用自己規劃 subnet 的 custom-mode VPC。已經有服務跑在 `default` 網路上的專案，可以先收斂這四條規則，搬遷網路排進另一次變更。
 
@@ -45,7 +52,7 @@ gcloud compute firewall-rules list --filter="network:default" \
   --format="table(name,priority,sourceRanges.list():label=SRC_RANGES,allowed[].map().firewall_rule().list():label=ALLOW,targetTags.list():label=TARGET_TAGS,disabled)"
 ```
 
-輸出裡要看 `SRC_RANGES` 欄是 `0.0.0.0/0` 的列，以及 `TARGET_TAGS` 欄是空白的列——空白代表規則套用到整個網路的每一台 VM。從 Security Command Center 的 `OPEN_SSH_PORT` 或 `OPEN_RDP_PORT` finding 進來的，finding 裡寫著被標記的那條規則的資源名稱，以那個名稱替換本篇指令裡的 `default-allow-ssh`；網路不是 `default` 時，把 `--filter` 裡的網路名稱一起換掉。
+輸出裡要看 `SRC_RANGES` 欄是 `0.0.0.0/0` 的列，以及 `TARGET_TAGS` 欄是空白的列——空白代表規則套用到整個網路的每一台 VM。這兩條規則要換掉、不能直接刪：刪除的當下，管理員自己的 SSH 與 RDP 連線會一起中斷，處理的順序見〈切換到 IAP 的順序〉。從 Security Command Center 的 `OPEN_SSH_PORT` 或 `OPEN_RDP_PORT` finding 進來的，finding 裡寫著被標記的那條規則的資源名稱，以那個名稱替換本篇指令裡的 `default-allow-ssh`；網路不是 `default` 時，把 `--filter` 裡的網路名稱一起換掉。
 
 ## IAP TCP forwarding 的連線路徑與來源範圍
 
@@ -58,34 +65,56 @@ IAP TCP forwarding 是 GCP 的身分感知代理：管理員的 `gcloud` 先用 
 | IAP 端點 | Google IAM                              | 這個 Google 帳號在這個 VM 上有沒有 `iap.tunnelInstances.accessViaIAP` 權限 |
 | VM 內部  | Linux 上的 sshd／Windows 的遠端桌面服務 | SSH 金鑰在不在授權清單裡（metadata 金鑰或 OS Login）／Windows 帳號密碼     |
 
-IAP 只決定是否允許開通道，開了通道之後登入 VM 仍然要過 VM 自己的認證，所以兩者要分開設定、分開稽核。
+IAP 只決定是否允許開通道，開了通道之後登入 VM 仍然要過 VM 自己的認證，所以兩者要分開設定、分開稽核：IAM 給得太寬，sshd 就暴露給不該碰這台 VM 的成員；VM 的金鑰管理鬆散，拿到通道的人就能用別人留下的金鑰登入。
 
 `35.235.240.0/20` 是 Google 文件公開的 IAP TCP forwarding 來源範圍，裡面包含 IAP 轉送時使用的全部位址。IPv6 的 VM 要另外放行 `2600:2d00:1:7::/64`；auto-mode 的 `default` 網路只有 IPv4 subnet，IPv6 的規則只在自建、開了 dual-stack subnet 的 custom-mode VPC 上用得到。這兩段位址是 Google 定義的規格值，每個專案都相同，可以直接寫進防火牆規則；Google 調整範圍時以 [IAP TCP forwarding 文件](https://cloud.google.com/iap/docs/using-tcp-forwarding)為準。
 
+設定完成之後，日常的連線指令是這幾條，`<instance-name>` 與 `<zone>` 用 `gcloud compute instances list` 查，第一欄是 VM 名稱、第二欄是 zone：
+
+```bash
+# Linux：透過 IAP 通道 SSH 進 VM
+gcloud compute ssh <instance-name> --zone=<zone> --tunnel-through-iap
+
+# Linux：透過 IAP 通道傳檔
+gcloud compute scp <local-file> <instance-name>:<remote-path> --zone=<zone> --tunnel-through-iap
+
+# Windows：把 VM 的 3389 port 經 IAP 轉到本機，再用 RDP 用戶端連 localhost:3389
+gcloud compute start-iap-tunnel <windows-instance-name> 3389 --local-host-port=localhost:3389 --zone=<zone>
+```
+
+Ansible 這類用一般 `ssh` 連線的工具，在 ssh 設定裡把 `ProxyCommand` 設成 `gcloud compute start-iap-tunnel %h 22 --listen-on-stdin --zone=<zone>`，`--listen-on-stdin` 讓 `gcloud` 把通道接到標準輸入輸出，ssh 就經由 IAP 連到 `%h`（ssh 代入的主機名稱，這裡要填 VM 名稱）。
+
 IAP 通道的代價在傳輸速度：所有位元組都經過 Google 的轉送，傳大檔案比直連慢，大量傳檔適合改用 Cloud Storage 當中轉。
 
-## 切換前的盤點：舊規則現在放行了哪些連線
+## 切換前的盤點：default-allow-ssh 與 default-allow-rdp 放行了哪些連線
 
 `default-allow-ssh` 放行的不只是管理員本人的 SSH。CI 或部署腳本用外部 IP 直連 VM、Ansible 這類設定管理工具、監控程式的探測、第三方廠商的維護連線，都可能經過這條規則，而刪掉它的那一刻，這些連線會和管理員的一起被拒絕。預設規則又沒有開 logging，所以手上沒有紀錄可以查出它們。
 
-盤點的做法是先對舊規則開啟 logging，觀察一段涵蓋完整部署週期的時間，再從紀錄裡列出所有來源 IP：
+盤點分兩步。先對舊規則開啟 logging，列出經過它的候選來源：
 
 ```bash
 # 對舊規則開啟 logging，之後每一次放行都會寫進 Cloud Logging
 gcloud compute firewall-rules update default-allow-ssh --enable-logging
 gcloud compute firewall-rules update default-allow-rdp --enable-logging
 
-# 觀察一段時間後，列出經由舊規則連進來的來源 IP 與次數
+# 觀察一段時間後，列出經由舊規則連進來的來源 IP 與次數（RDP 把規則名稱換成 default-allow-rdp）
 gcloud logging read \
   'logName:"compute.googleapis.com%2Ffirewall" AND jsonPayload.rule_details.reference:"default-allow-ssh"' \
   --freshness=7d --format="value(jsonPayload.connection.src_ip)" | sort | uniq -c
 ```
 
-`--freshness=7d` 是查詢往回看的時間長度，依自己的部署週期調整，要涵蓋到一次完整的部署與排程工作。來源 IP 裡不是管理員電腦的那些，要先改走 IAP 才能停用舊規則：CI 與自動化工具用服務帳號開 IAP 通道（`gcloud compute ssh --tunnel-through-iap` 同樣適用於服務帳號），權限範圍見〈IAP 的 IAM 授權範圍：誰拿得到通道〉。
+`--freshness=7d` 是查詢往回看的時間長度，依自己的部署週期調整，要涵蓋到一次完整的部署與排程工作。全開規則的紀錄大部分是網際網路掃描程式的來源，CI 託管執行環境的 IP 每次不同，混在裡面認不出來，所以實際依賴這條規則的連線，要從 VM 上的成功登入紀錄找：
+
+```bash
+# 在 Linux VM 上列出這段期間成功的 SSH 登入：帳號、來源 IP 與金鑰指紋
+sudo journalctl -u ssh -u sshd --since "7 days ago" | grep "Accepted publickey"
+```
+
+每一行的格式是 `Accepted publickey for <user> from <ip> ... <金鑰指紋>`，用帳號與金鑰指紋就認得出是哪個人或哪個自動化工具。Windows VM 看事件檢視器的安全性紀錄裡事件 ID 4624、登入類型 10（遠端互動，也就是 RDP）的事件。找出來的非人員來源要先改走 IAP 才能停用舊規則：CI 與自動化工具用服務帳號開 IAP 通道，一般 `ssh` 的工具照上一節的 `ProxyCommand` 改設定，服務帳號需要的角色見〈IAP 的 IAM 授權範圍：誰拿得到通道〉。
 
 ## 切換到 IAP 的順序
 
-`default-allow-ssh` 的來源 `0.0.0.0/0` 本身就涵蓋 IAP 的位址段，所以舊規則還在的時候，經由 IAP 的連線成功，可能是舊規則放行的，證明不了新規則寫對了。驗證新規則因此要先停用舊規則；而停用舊規則的那一刻，從公開網際網路來的 SSH 與 RDP 都會被拒絕，包括管理員自己的連線。舊規則掩蓋新規則、停用舊規則會切斷公開來源的連線，切換的順序由這兩點決定：救援入口（下一節的 Serial Console 與救援帳號）要在停用之前準備好，新規則與 IAM 權限要在停用之前建好，確認新路徑可用才刪除舊規則。與廠商無關的推導見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈切換管理通道時避免把自己鎖在外面〉。
+`default-allow-ssh` 的來源 `0.0.0.0/0` 本身就涵蓋 IAP 的位址段，所以舊規則還在的時候，經由 IAP 的連線成功，可能是舊規則放行的，證明不了新規則寫對了。驗證新規則因此要先停用舊規則；而停用舊規則的那一刻，從公開網際網路來的 SSH 與 RDP 都會被拒絕，包括管理員自己的連線。舊規則掩蓋新規則、停用舊規則會切斷公開來源的連線，切換的順序由這兩點決定：救援入口（下一節的 Serial Console 與救援帳號）要在停用之前準備好並實際登入過，新規則與 IAM 權限要在停用之前建好，確認新路徑可用才刪除舊規則。與廠商無關的推導見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈切換管理通道時避免把自己鎖在外面〉。
 
 ### 準備救援入口：Serial Console 與救援帳號
 
@@ -94,9 +123,12 @@ GCP 的 [Serial Console](/infra/knowledge-cards/serial-console/) 透過 VM 的�
 ```bash
 # 在每台 Linux VM 上建一個設了密碼的本機救援帳號（RHEL 系把 sudo 群組換成 wheel）
 sudo useradd -m rescue && sudo passwd rescue && sudo usermod -aG sudo rescue
+
+# 確認 sshd 仍然只收金鑰，救援帳號的密碼只在 Serial Console 上有效
+sudo sshd -T | grep -i passwordauthentication
 ```
 
-`rescue` 是自己取的帳號名稱，密碼存在團隊的密碼管理工具裡。Windows VM 的序列主控台（Special Administration Console）用 Windows 的本機管理員帳號登入，同樣要事先確認那個帳號的密碼在手上。
+`rescue` 是自己取的帳號名稱。密碼用密碼管理工具逐台隨機產生、存在團隊的密碼庫，不同 VM 不共用同一組；持有救援密碼的人離開團隊時，逐台輪替。`sshd -T` 印出 sshd 實際生效的設定，那一行要是 `passwordauthentication no`，否則救援帳號的密碼也能從 SSH 登入。Windows VM 的序列主控台（Special Administration Console）用 Windows 的本機管理員帳號登入，同樣要事先確認那個帳號的密碼在手上。
 
 Serial Console 的互動登入預設關閉，平時保持關閉，救援時才對單一 VM 開啟：
 
@@ -109,9 +141,13 @@ gcloud compute connect-to-serial-port <instance-name> --zone=<zone>
 gcloud compute instances add-metadata <instance-name> --zone=<zone> --metadata serial-port-enable=FALSE
 ```
 
-`<instance-name>` 與 `<zone>` 用 `gcloud compute instances list` 查，第一欄是 VM 名稱、第二欄是 zone。連 Serial Console 需要能修改這台 VM 的權限（例如 `roles/compute.instanceAdmin.v1`）。救援入口平時保持關閉的理由見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈救援入口：管理通道斷掉時的備用路徑〉。
+建好救援帳號之後，對一台 VM 照上面的指令開啟、用 `rescue` 登入並執行一次 `sudo -v` 確認 sudo 可用，再關回去；Windows VM 確認 SAC 有回應。救援入口沒有實際登入過，停用舊規則時手上就沒有確定可用的退路。
 
-### 啟用 IAP API 並建立只放行 IAP 來源的防火牆規則
+連 Serial Console 需要能修改這台 VM 的權限（例如 `roles/compute.instanceAdmin.v1`），而這個角色也是一般 VM 管理會用到的權限，所以光靠 IAM 收不窄救援入口；真正把它收窄的是組織政策 `compute.disableSerialPortAccess`（見〈組織層級的護欄〉）。組織強制了這條政策時，救援名單裡要有持有組織政策權限、能對專案解除它的人，只有 VM 權限的人開不了 Serial Console。
+
+沒有事先建救援帳號的 VM 出事時，還有兩條比較慢的路：在 metadata 設 `startup-script`，重開機時以 root 執行、用來建帳號或改回 sshd 設定；或把開機磁碟從 VM 卸下、掛到另一台 VM 上修改再掛回去。兩條都要重開機。救援入口平時保持關閉的理由見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈救援入口：管理通道斷掉時的備用路徑〉。
+
+### 啟用 IAP API、開啟稽核紀錄並建立只放行 IAP 來源的防火牆規則
 
 IAP 端點以 API 的形式在專案上開關，沒有啟用時，`--tunnel-through-iap` 的連線在 IAP 端點那一步就開不起來：
 
@@ -119,6 +155,8 @@ IAP 端點以 API 的形式在專案上開關，沒有啟用時，`--tunnel-thro
 # 啟用 IAP API（每個專案一次）
 gcloud services enable iap.googleapis.com
 ```
+
+同一步在 Google Cloud 控制台的「IAM 與管理 > 稽核記錄」為 Cloud Identity-Aware Proxy 開啟 Data Access 的資料讀取紀錄。這份紀錄記下每一次開通道的帳號與目標 VM，只記錄開啟之後的連線，切換當天就開，之後調查時才查得到切換以來的全部連線。也在同一步確認所有要開通道的 Google 帳號都已強制兩步驟驗證（見〈IAP 的 IAM 授權範圍：誰拿得到通道〉）。
 
 新規則只開需要的 port，並用 target tag 限定作用的 VM。把 `--rules` 寫成 `all` 並省略 `--target-tags`，IAP 來源就連得到網路裡每一台 VM 的每一個 port，等於把 `default-allow-internal` 的寬度複製給 IAP。
 
@@ -166,7 +204,7 @@ VM 分布在不同 zone 時，逐台以各自的 `--zone` 執行。
 
 ### 授予開通道的 IAM 權限
 
-開通道的權限是 IAM role `roles/iap.tunnelResourceAccessor`。下面的指令把它綁在專案層級，並用 IAM Conditions 限定可以連的 port；條件的寫法依環境選一種：
+開通道的權限是 IAM role `roles/iap.tunnelResourceAccessor`。下面的指令把它綁在專案層級，並用 IAM Conditions（在角色綁定上附加條件，條件成立時這個綁定才生效）限定可以連的 port 或期限；條件的寫法依環境選一種：
 
 ```bash
 # 只有 Linux VM：條件限定只能連 22 port
@@ -186,39 +224,36 @@ gcloud projects add-iam-policy-binding <project-id> \
   --member=user:<admin-email> \
   --role=roles/iap.tunnelResourceAccessor \
   --condition='expression=destination.port == 22 && destination.ip == "<vm-internal-ip>",title=iap-ssh-one-vm'
+
+# 外包或臨時存取：到期之後綁定自動失效
+gcloud projects add-iam-policy-binding <project-id> \
+  --member=user:<contractor-email> \
+  --role=roles/iap.tunnelResourceAccessor \
+  --condition='expression=destination.port == 22 && request.time < timestamp("<expiry-time>"),title=iap-ssh-until-expiry'
 ```
 
 - `<project-id>`：VM 所在的專案 ID，用 `gcloud config get-value project` 查目前設定的是哪一個。
-- `<admin-email>`：要給權限的人的 Google 帳號；給一群人時把 `user:` 換成 `group:` 加 Google Group 的位址，人員異動就在群組裡處理，不必改 IAM。
+- `<admin-email>`、`<contractor-email>`：要給權限的人的 Google 帳號；給一群人時把 `user:` 換成 `group:` 加 Google Group 的位址，人員異動就在群組裡處理，不必改 IAM；CI 這類機器身分把 `user:` 換成 `serviceAccount:` 加服務帳號的位址。
 - `<vm-internal-ip>`：VM 的內部 IP，`gcloud compute instances list` 的 `INTERNAL_IP` 欄查得到。
+- `<expiry-time>`：綁定失效的時間，RFC 3339 格式，例如 `2027-03-31T00:00:00Z`，填合約或臨時存取結束的那一刻。
 - `title`：這個條件的顯示名稱，自己取，會出現在 IAM 頁面上，用來辨認這條綁定。
 
-Linux VM 的 `gcloud compute ssh` 還需要 VM 端的登入權限，而它依 OS Login 有沒有啟用而不同。還沒啟用 OS Login 時，`gcloud compute ssh` 會把管理員的公鑰寫進專案或 VM 的 metadata，所以非 Owner 的帳號需要修改 metadata 的權限（例如 `roles/compute.instanceAdmin.v1`），VM 掛著服務帳號時另外需要那個服務帳號的 `roles/iam.serviceAccountUser`。已經啟用 OS Login 時，改由 OS Login 的登入角色決定，授予方式見本篇〈SSH 金鑰在 GCP 上的管理位置：metadata 與 OS Login〉。兩種情形都需要讀取 VM 與專案資訊的權限（例如 `roles/compute.viewer`）。
+Linux VM 的 `gcloud compute ssh` 還需要 VM 端的登入權限，而它依 OS Login 有沒有啟用而不同。還沒啟用 OS Login 時，`gcloud compute ssh` 會把管理員的公鑰寫進專案或 VM 的 metadata，所以非 Owner 的帳號需要修改 metadata 的權限（例如 `roles/compute.instanceAdmin.v1`），VM 掛著服務帳號時另外需要那個服務帳號的 `roles/iam.serviceAccountUser`。已經啟用 OS Login 時，改由 OS Login 的登入角色決定，授予方式見本篇〈SSH 金鑰在 GCP 上的管理位置：metadata 金鑰與 OS Login 的啟用順序與還原〉。兩種情形都需要讀取 VM 與專案資訊的權限（例如 `roles/compute.viewer`）。
 
 ### 停用舊規則，用 IAP 驗證新規則
 
-先在舊規則還在時，每一位管理員各自經由 IAP 連一次，確認 IAM 權限：
-
-```bash
-# Linux：透過 IAP 通道 SSH 進 VM
-gcloud compute ssh <instance-name> --zone=<zone> --tunnel-through-iap
-
-# Windows：把 VM 的 3389 port 經 IAP 轉到本機，再用 RDP 用戶端連 localhost:3389
-gcloud compute start-iap-tunnel <windows-instance-name> 3389 --local-host-port=localhost:3389 --zone=<zone>
-```
-
-加上 `--tunnel-through-iap` 時，`gcloud` 改走 IAP、不連 VM 的外部 IP；VM 還有外部 IP 時，少了這個參數的連線走的是舊路徑。這一輪連線驗證的是 IAM：IAP 端點會拒絕沒有權限的帳號。防火牆規則與 tag 這一輪驗不到，因為舊規則的 `0.0.0.0/0` 也放行 IAP 的位址段。
+先在舊規則還在時，每一位管理員各自用上面〈IAP TCP forwarding 的連線路徑與來源範圍〉的 `gcloud compute ssh --tunnel-through-iap` 或 `start-iap-tunnel` 連一次，確認 IAM 權限。加上 `--tunnel-through-iap` 時，`gcloud` 改走 IAP、不連 VM 的外部 IP；VM 還有外部 IP 時，少了這個參數的連線走的是舊路徑。這一次連線驗證的是 IAM：IAP 端點會拒絕沒有權限的帳號。防火牆規則與 tag 這一次驗不到，因為舊規則的 `0.0.0.0/0` 也放行 IAP 的位址段。
 
 接著停用舊規則（規則仍在，只是不生效），由一位管理員對 Linux 與 Windows 各一台 VM 再連一次：
 
 ```bash
-# 停用舊規則，再經由 IAP 連一次（Windows 照上面的 start-iap-tunnel 再連一次）
+# 停用舊規則，再經由 IAP 連一次（Windows 用 start-iap-tunnel 再連一次）
 gcloud compute firewall-rules update default-allow-ssh --disabled
 gcloud compute firewall-rules update default-allow-rdp --disabled
 gcloud compute ssh <instance-name> --zone=<zone> --tunnel-through-iap
 ```
 
-這一次連得上，代表放行連線的是新規則，因為涵蓋 IAP 位址段的舊規則已經停用；這個推論的前提是專案裡沒有其他來源涵蓋 `35.235.240.0/20` 的允許規則，〈預設網路自帶的防火牆規則〉那一節列出規則的指令可以確認這一點。新規則與 tag 是同一個 VPC 網路裡所有 VM 共用的設定，所以 Linux 與 Windows 各驗一台，就驗過了這條規則與 tag 對同類 VM 的效果；IAM 權限則是每個人各自的，由前一輪每位管理員各連一次驗過。新規則建立時加了 `--enable-logging`，也可以查防火牆紀錄確認命中的是哪一條規則：
+這一次連得上，代表放行連線的是新規則，因為涵蓋 IAP 位址段的舊規則已經停用；這個推論的前提是專案裡沒有其他來源涵蓋 `35.235.240.0/20` 的允許規則，〈預設網路自帶的防火牆規則〉那一節列出規則的指令可以確認這一點。這一次驗過的是新規則本身與那兩台 VM 的 tag。tag 是逐台加的，其他 VM 有沒有帶上 tag 要另外查，下一步列出沒帶 tag 的 VM。新規則建立時加了 `--enable-logging`，也可以查防火牆紀錄確認命中的是哪一條規則：
 
 ```bash
 # 查最近一小時經由 IAP 規則放行的連線
@@ -227,7 +262,7 @@ gcloud logging read \
   --freshness=1h --limit=10
 ```
 
-連不上時，用下面的指令把舊規則恢復，回頭查 tag 是否加在 VM 上、新規則的網路與 port 是否正確。防火牆規則透過 GCP 的 API 修改，SSH 連不上也改得回來：
+連不上時，用下面的指令把舊規則恢復，再照〈IAP 通道連不上時的依層判讀〉找出是哪一層。防火牆規則透過 GCP 的 API 修改，SSH 連不上也改得回來：
 
 ```bash
 # 只在停用後連不上時執行：恢復舊規則
@@ -237,6 +272,16 @@ gcloud compute firewall-rules update default-allow-rdp --no-disabled
 
 ### 刪除對外開放的規則
 
+刪除之前，列出還沒帶 tag 的 VM，兩份清單都要是空的（只有 Linux 或只有 Windows 時，查對應的那一份）：
+
+```bash
+# 列出沒帶 SSH tag 的 VM；Windows 那一份把 tag 換成 RDP 用的
+gcloud compute instances list --filter="NOT tags.items=<ssh-via-iap-tag>"
+gcloud compute instances list --filter="NOT tags.items=<rdp-via-iap-tag>"
+```
+
+清單裡出現的是另一種作業系統的 VM 時合理（Linux VM 本來就不帶 RDP 的 tag），其餘的要先補上 tag 再刪規則：
+
 ```bash
 # SSH 與 RDP 都在舊規則停用的狀態下驗證過之後，刪掉這兩條規則
 gcloud compute firewall-rules delete default-allow-ssh default-allow-rdp
@@ -245,10 +290,14 @@ gcloud compute firewall-rules delete default-allow-ssh default-allow-rdp
 刪除之後才發現有漏掉的連線來源時，可以照原樣把規則建回來，再回頭處理：
 
 ```bash
-# 緊急恢復：重建與預設規則相同內容的 SSH 規則
+# 緊急恢復：重建與預設規則相同內容的 SSH 與 RDP 規則（加上 logging，之後查得到經過它的連線）
 gcloud compute firewall-rules create default-allow-ssh --network=default \
-  --direction=INGRESS --action=allow --rules=tcp:22 --source-ranges=0.0.0.0/0 --priority=65534
+  --direction=INGRESS --action=allow --rules=tcp:22 --source-ranges=0.0.0.0/0 --priority=65534 --enable-logging
+gcloud compute firewall-rules create default-allow-rdp --network=default \
+  --direction=INGRESS --action=allow --rules=tcp:3389 --source-ranges=0.0.0.0/0 --priority=65534 --enable-logging
 ```
+
+### 收斂 default-allow-internal 與 default-allow-icmp
 
 `default-allow-internal` 要先確認 VM 之間實際需要哪些 port（應用連資料庫、節點之間的叢集通訊）再改成具體的規則，直接刪掉會中斷那些服務之間的連線。改法是為每一組需要的連線各建一條規則，例如應用連 PostgreSQL：
 
@@ -261,23 +310,33 @@ gcloud compute firewall-rules create allow-app-to-db --network=default \
 
 `<app-tag>`、`<db-tag>` 是自己取的 tag，加在應用與資料庫 VM 上；`tcp:5432` 換成實際的服務 port。每一組需要的連線都建好之後，再刪 `default-allow-internal`。`default-allow-icmp` 的處理看用途：監控或除錯流程會用 `ping` 確認 VM 存活時，保留並把來源縮到內部網段與監控主機（`gcloud compute firewall-rules update default-allow-icmp --source-ranges=10.128.0.0/9,<monitoring-host-ip>/32`）；沒有這種用途就一起刪除。
 
-用 Terraform 等 IaC 工具管防火牆的專案，這些新增、修改與刪除都要寫回程式碼；IaC 工具下一次執行 apply 時，會依程式碼把仍然存在的規則建回來（[drift](/infra/knowledge-cards/drift/)）。
+## IAP 通道連不上時的依層判讀
+
+`--tunnel-through-iap` 的連線失敗時，錯誤訊息與它停在哪一層對得起來，依序對照：
+
+- **IAP API 沒有啟用**：錯誤訊息直接說 API 未啟用，照〈啟用 IAP API、開啟稽核紀錄並建立只放行 IAP 來源的防火牆規則〉啟用。
+- **`4033`（not authorized）**：停在通道授權。這個帳號沒有 `roles/iap.tunnelResourceAccessor`、IAM Conditions 不允許這個 port 或 VM、條件的期限已過，或 VM 不存在、沒有在執行；用 Policy Troubleshooter 確認帳號實際拿不拿得到權限（見〈IAP 的 IAM 授權範圍：誰拿得到通道〉）。
+- **`4003`（failed to connect to backend）**：IAP 已經放行，但連不到 VM 的那個 port。依序查 VM 有沒有帶 tag、新規則的網路與 port、組織的階層式防火牆或 network firewall policy 有沒有先擋下（這類政策優先於專案規則，專案規則寫對了也連不上），以及 VM 上的作業系統防火牆（ufw、firewalld、Windows 防火牆）與 sshd 是否在監聽。防火牆這一段用 Connectivity Tests（`gcloud network-management connectivity-tests create`）模擬一次從 `35.235.240.0/20` 到 VM 的連線，結果會指出是哪一條規則或政策擋下。VM 內部的問題要從 Serial Console 進去看。
+- **通道開了、登入時 `Permission denied (publickey)`**：停在主機登入驗證。啟用了 OS Login 時查 OS Login 的登入角色與 `roles/iam.serviceAccountUser`；沒啟用時查 metadata 裡的公鑰與修改 metadata 的權限（見〈SSH 金鑰在 GCP 上的管理位置：metadata 金鑰與 OS Login 的啟用順序與還原〉）。
 
 ## IAP 的 IAM 授權範圍：誰拿得到通道
 
-改走 IAP 之後，VM 的連線權限改由 IAM 決定，所以 IAM policy 的寬度就是 SSH 與 RDP 的暴露面。三個地方會讓這個範圍在不知不覺中變大：
+改走 IAP 之後，VM 的連線權限改由 IAM 決定，所以 IAM policy 的寬度就是 SSH 與 RDP 的暴露面。幾個地方會讓這個範圍在不知不覺中變大或對不到人：
 
-- **專案層級的基本角色**：Owner 這一類基本角色涵蓋開通道的權限，而且不受 IAM Conditions 限制。綁定之前先用 `gcloud projects get-iam-policy <project-id>` 列出目前持有基本角色的成員，再用 IAM 的 Policy Troubleshooter 確認某個帳號實際拿不拿得到 `iap.tunnelInstances.accessViaIAP`；`get-iam-policy` 只列出直接綁定，群組與繼承來的權限以 Policy Troubleshooter 的結果為準。
+- **專案層級的基本角色**：Owner 這一類基本角色涵蓋開通道的權限，而且不受 IAM Conditions 限制。日常登入用的帳號拿掉基本角色、改授本篇列出的具體角色，Owner 只留給緊急時才用的帳號；團隊全員都是 Owner 時，IAM Conditions 對任何人都不生效，OS Login 的單台先行驗證也找不到非 Owner 的人來做。綁定之前先用 `gcloud projects get-iam-policy <project-id>` 列出目前持有基本角色的成員，再用 IAM 的 Policy Troubleshooter 確認某個帳號實際拿不拿得到 `iap.tunnelInstances.accessViaIAP`；`get-iam-policy` 只列出直接綁定，群組與繼承來的權限以 Policy Troubleshooter 的結果為準。稽核要一份「所有拿得到通道的人」的清單時，用 Policy Analyzer（`gcloud asset analyze-iam-policy --organization=<org-id> --permissions=iap.tunnelInstances.accessViaIAP`），它把群組成員與繼承都展開；Policy Troubleshooter 一次只回答一個帳號。
 - **整批授權**：把 `roles/iap.tunnelResourceAccessor` 綁給 `domain:` 或大型群組，等於讓整個組織的帳號都能開通道。綁給負責維運的群組，並用 IAM Conditions 限定 port 與 VM。
-- **服務帳號**：CI 或自動化工具用的服務帳號若持有通道權限，它的金鑰外洩就等同一把能連進所有 VM 的鑰匙。GCP 上這類帳號用 Workload Identity Federation 取得短期存取憑證，不發長期金鑰；原理與 AWS 上用 OIDC 換取 IAM role 短期憑證的做法相同，見[身分與存取憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)的〈OIDC：給 CI/CD 的短期憑證〉。
+- **服務帳號**：CI 或自動化工具用的服務帳號若持有通道權限，它的金鑰外洩就等同一把能連進所有 VM 的鑰匙。GCP 上這類帳號用 Workload Identity Federation（[Workload Identity](/backend/knowledge-cards/workload-identity/)）取得短期存取憑證，不發長期金鑰：CI 平台簽發的 OIDC token 換成服務帳號的身分，設定方式以 GCP 的 Workload Identity Federation 文件為準，與 AWS 上用 OIDC 換取 IAM role 的對照見[身分與存取憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)的〈OIDC：給 CI/CD 的短期憑證〉。服務帳號要的角色與人相同：開通道的 `roles/iap.tunnelResourceAccessor`，啟用 OS Login 之後另加 OS Login 的登入角色，VM 掛著服務帳號時再加那個服務帳號的 `roles/iam.serviceAccountUser`。
+- **組織外的帳號**：外包人員用他自己公司或個人的 Google 帳號時，OS Login 預設不讓組織外的帳號登入，要在組織層級另外授予 `roles/compute.osLoginExternalUser`；組織若強制了 Organization Policy 的 `iam.allowedPolicyMemberDomains`（只允許組織網域的成員出現在 IAM 綁定裡），連綁定本身都會被拒絕。這類帳號也不受組織的兩步驟驗證強制管轄，所以替外包人員在組織的 Cloud Identity 建帳號，比授權給外部帳號更容易控制，合約到期時停用帳號、或用上面帶 `request.time` 的條件讓綁定自動失效。
 
-通道授權改用 Google 帳號之後，帳號被釣魚，攻擊者就能從 IAP 開通道。GCP 上的對應設定是在 Google Workspace 或 Cloud Identity 對能開通道的帳號強制兩步驟驗證，管理員帳號用硬體安全金鑰或 passkey 這類防釣魚的方式——一次性驗證碼會在釣魚頁面上被一起騙走。需要再收緊時，Context-Aware Access 可以在 IAM 綁定上加 access level 條件（Access Context Manager 定義的一組連線條件，例如只允許公司管理的裝置或特定網段）。
+通道授權改用 Google 帳號之後，帳號被釣魚，攻擊者就能從 IAP 開通道。GCP 上的對應設定是在 Google Workspace 或 Cloud Identity 對能開通道的帳號強制兩步驟驗證，管理員帳號用硬體安全金鑰或 [passkey](/backend/knowledge-cards/passkey/) 這類防釣魚的方式——一次性驗證碼會在釣魚頁面上被一起騙走。`gcloud` 登入之後會在本機保存 refresh token，管理員帳號停用前這份 token 一直可用，而 token 檔可以被複製；Workspace 與 Cloud Identity 的管理控制台有 Google Cloud 工作階段控制，設定多久要重新驗證一次，這個間隔就是本機 token 被複製之後能用多久的上限。需要再收緊時，Context-Aware Access 可以在 IAM 綁定上加 access level 條件（Access Context Manager 定義的一組連線條件，例如只允許公司管理的裝置或特定網段）。
 
-## SSH 金鑰在 GCP 上的管理位置：metadata 與 OS Login
+人員異動時，移出群組或移除 IAM 綁定只擋下下一次開通道；已經開著的工作階段要另外在 VM 上結束，做法見下一節的最後一段。
 
-GCP 上把 SSH 公鑰交給 Linux VM 有兩種方式，分別對應[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)〈主機登入驗證的做法：SSH 金鑰怎麼發、怎麼收回〉裡的靜態公鑰與由中央服務動態提供公鑰：metadata 金鑰寫在專案或 VM 的 metadata（掛在專案或 VM 上的鍵值設定）裡，由 VM 上的 guest agent（GCP 映像檔內建、把 metadata 同步進 VM 的常駐程式）寫進 `authorized_keys`；[OS Login](/infra/knowledge-cards/os-login/) 依 Google 帳號與 IAM role 決定誰能登入、能不能用 sudo。兩者的機制與差別見 OS Login 卡，這一節處理啟用的順序與還原。
+## SSH 金鑰在 GCP 上的管理位置：metadata 金鑰與 OS Login 的啟用順序與還原
 
-啟用 OS Login 之後，VM 不再接受 metadata 裡的金鑰，原本靠 metadata 金鑰登入的管理員會立刻連不進去。所以啟用之前先把登入角色授予每一位管理員；VM 掛著服務帳號時（`gcloud compute instances describe` 輸出的 `serviceAccounts` 欄不是空的，用主控台建立的 VM 預設會掛上 Compute Engine 預設服務帳號），每一位管理員另外需要那個服務帳號的 `roles/iam.serviceAccountUser`，否則啟用之後連不進去：
+GCP 上把 SSH 公鑰交給 Linux VM 有兩種方式，分別對應[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)〈主機登入驗證的做法：SSH 金鑰怎麼發、怎麼收回〉裡的靜態公鑰與由中央服務決定的公鑰：metadata 金鑰寫在專案或 VM 的 metadata（掛在專案或 VM 上的鍵值設定）裡，由 VM 上的 guest agent（GCP 映像檔內建、把 metadata 同步進 VM 的常駐程式）寫進 `authorized_keys`；[OS Login](/infra/knowledge-cards/os-login/) 依 Google 帳號與 IAM role 決定誰能登入、能不能用 sudo。寫在專案 metadata 的公鑰對專案內每一台沒有啟用 OS Login 的 VM 都生效，成員離職時漏刪一把，那把金鑰就持續能登入整個專案，而沒啟用 OS Login 時 `gcloud compute ssh` 預設就是把公鑰寫進專案 metadata。兩者的機制與差別見 OS Login 卡，這一節處理啟用的順序與還原。
+
+啟用 OS Login 之後，VM 不再接受 metadata 裡的金鑰，原本靠 metadata 金鑰登入的管理員與自動化工具會立刻連不進去。所以啟用之前先把登入角色授予每一位管理員與每一個要登入 VM 的服務帳號（CI、Ansible）；VM 掛著服務帳號時（`gcloud compute instances describe` 輸出的 `serviceAccounts` 欄不是空的，用 Google Cloud 控制台以預設值建立的 VM 會掛上 Compute Engine 預設服務帳號），每一個登入者另外需要那個服務帳號的 `roles/iam.serviceAccountUser`，否則啟用之後連不進去：
 
 ```bash
 # 授予管理員 OS Login 的登入角色：一般登入與含 sudo 的兩種擇一
@@ -286,14 +345,20 @@ gcloud projects add-iam-policy-binding <project-id> \
 gcloud projects add-iam-policy-binding <project-id> \
   --member=user:<admin-email> --role=roles/compute.osAdminLogin
 
-# 查 VM 掛的服務帳號，並授予管理員使用它的權限
+# CI 或自動化工具的服務帳號同樣要授予（需要 sudo 時改用 osAdminLogin）
+gcloud projects add-iam-policy-binding <project-id> \
+  --member=serviceAccount:<ci-service-account-email> --role=roles/compute.osLogin
+
+# 查 VM 掛的服務帳號，並授予登入者使用它的權限（服務帳號登入者把 user: 換成 serviceAccount:）
 gcloud compute instances describe <instance-name> --zone=<zone> \
   --format="get(serviceAccounts[0].email)"
 gcloud iam service-accounts add-iam-policy-binding <service-account-email> \
   --member=user:<admin-email> --role=roles/iam.serviceAccountUser
 ```
 
-接著先對一台 VM 啟用，讓每一位非 Owner 的管理員各自用自己的帳號連通並確認 sudo 可用，再做專案層級。先在單一 VM 上啟用，是讓角色漏授這類錯誤只鎖住那一台；Owner 本身持有全部權限，只由 Owner 驗證會看不出漏授。
+`<ci-service-account-email>` 是 CI 或自動化工具開通道用的服務帳號，`<service-account-email>` 是上一條 `describe` 查出來、VM 掛的那個服務帳號，兩者不同。
+
+接著先對一台 VM 啟用，讓每一位非 Owner 的管理員各自用自己的帳號連通並確認 sudo 可用，CI 也對這台跑一次部署，再做專案層級。先在單一 VM 上啟用，是讓角色漏授這類錯誤只鎖住那一台；Owner 本身持有全部權限，只由 Owner 驗證會看不出漏授。
 
 ```bash
 # 先對單一 VM 啟用，連通確認
@@ -309,9 +374,11 @@ gcloud compute project-info add-metadata --metadata enable-oslogin=FALSE
 
 單一 VM 上的 `enable-oslogin=TRUE` 在專案層級也啟用之後可以留著，兩者的值相同。OS Login 只作用在 Linux VM，Windows VM 的登入仍由 Windows 帳號決定。
 
+專案層級啟用之後再盤點兩件事。VM 層級設了 `enable-oslogin=FALSE` 的 VM 會蓋過專案設定、仍然讀 metadata 金鑰，用 `gcloud compute instances list --format=json | jq -r '.[] | select(any(.metadata.items[]?; .key=="enable-oslogin" and (.value|ascii_downcase)=="false")) | .name'` 列出這些 VM 的名稱，逐台改成 `TRUE` 或移除這個鍵。專案 metadata 的 `ssh-keys` 仍然留著前任與現任成員的公鑰，OS Login 一旦還原成 `FALSE` 它們就又能用，確認全部 VM 都啟用之後用 `gcloud compute project-info remove-metadata --keys=ssh-keys` 清掉。
+
 OS Login 也可以要求登入時的兩步驟驗證（metadata 設 `enable-oslogin-2fa=TRUE`），讓每一次 SSH 登入都多一次 Google 帳號的第二因素。設定之前要確認每一位管理員的 Google 帳號都已啟用兩步驟驗證，沒有啟用的帳號會登不進去；同樣先對單一 VM 設定驗證，連不上時改回 `FALSE`。
 
-帳號停用或角色移除之後，下一次登入就會失敗；已經建立的工作階段不受影響，處理離職或帳號外洩時，管理員要另外登入 VM 結束那個使用者的工作階段（systemd 的發行版用 `sudo loginctl terminate-user <username>`，`<username>` 是 OS Login 由 Google 帳號轉成的使用者名稱）。
+帳號停用或角色移除之後，下一次登入就會失敗；已經建立的工作階段不受影響，處理離職或帳號外洩時，管理員要另外登入 VM 結束那個使用者的工作階段（systemd 的發行版用 `sudo loginctl terminate-user <username>`，`<username>` 是 OS Login 由 Google 帳號轉成的使用者名稱）。Windows VM 上用 `query session` 找出那個使用者的 RDP 工作階段，再用 `logoff <session-id>` 結束。
 
 ## 拿掉外部 IP 之後的出站路徑：Cloud NAT 與 Private Google Access
 
@@ -349,7 +416,7 @@ gcloud compute networks subnets update <subnet-name> \
 
 `<subnet-name>` 用 `gcloud compute networks subnets list --filter="region:<region>"` 查；`default` 網路在每個 region 各有一個名為 `default` 的 subnet，VM 分布在幾個 region 就對每個 region 各執行一次。
 
-移除外部 IP 之前確認兩件事。對外提供服務的 VM（網站、API）要先把流量入口換到負載平衡器，否則移除的當下服務就中斷，入口層的設計見[流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)。只做管理用途的 VM，要先經由 IAP 連進去實際跑一次出站的指令（例如 `sudo apt update` 或 `curl -I https://example.com`）確認 Cloud NAT 通了。外部 IP 設定在 VM 網卡的 access config 上，`delete-access-config` 要靠名稱指定移除哪一個，而這個名稱依 VM 建立的方式不同，所以先查出來：
+對外提供服務的 VM（網站、API）移除外部 IP 之前，要先把流量入口換到負載平衡器，否則移除的當下服務就中斷，入口層的設計見[流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)。只做管理用途的 VM 可以直接移除。網卡還帶著外部 IP 時，Cloud NAT 不處理這張網卡的出站流量，流量走的是 VM 自己的外部 IP，所以移除之前測出站一定是通的，證明不了 Cloud NAT 有效；驗證要在移除之後做，先在一台 VM 上移除、確認，再做其餘的 VM。外部 IP 設定在 VM 網卡的 access config 上，`delete-access-config` 要靠名稱指定移除哪一個，而這個名稱依 VM 建立的方式不同，所以先查出來：
 
 ```bash
 # 查 VM 第一張網卡的 access config 名稱
@@ -361,16 +428,16 @@ gcloud compute instances delete-access-config <instance-name> --zone=<zone> \
   --access-config-name="<access-config-name>"
 ```
 
-移除之後，這台 VM 只剩 IAP 一條管理路徑，連線一律加 `--tunnel-through-iap`。
+移除之後經由 IAP 連進這台 VM，執行 `curl -s https://ifconfig.me` 印出出站時對方看到的來源 IP，那個 IP 是 Cloud NAT 的外部 IP（`gcloud compute routers get-nat-ip-info <router-name> --region=<region>` 列得出來）就代表出站走了 Cloud NAT；連不到網際網路時，用 `gcloud compute instances add-access-config <instance-name> --zone=<zone>` 把外部 IP 加回去，再回頭查 Cloud NAT 的 region 與 subnet 設定。移除之後，這台 VM 只剩 IAP 一條管理路徑，連線一律加 `--tunnel-through-iap`。
 
 ## 組織層級的護欄：Organization Policy 與階層式防火牆
 
-`default` 網路與 `default-allow-ssh`、`default-allow-rdp` 這些預設規則，每個新建的專案都會重新長出來，所以單一專案的收斂只保護那一個專案。要讓組織裡的新專案不再帶著這些規則，在 Organization Policy 設定下面幾個 constraint。這一節的指令需要專案屬於一個 Organization 資源，執行者要有組織層級的權限（`roles/orgpolicy.policyAdmin` 與 `roles/compute.orgFirewallPolicyAdmin`）。
+`default` 網路與 `default-allow-ssh`、`default-allow-rdp` 這些預設規則，每個新建的專案都會重新長出來，所以單一專案的收斂只保護那一個專案。要讓組織裡的新專案不再帶著這些規則，在 Organization Policy 設定下面幾個 constraint。這一節的指令需要專案屬於一個 Organization 資源，執行者要有組織層級的權限（`roles/orgpolicy.policyAdmin` 與 `roles/compute.orgFirewallPolicyAdmin`）。2024 年 5 月 3 日之後建立的 Organization 會預設強制一組 constraint，先用 `gcloud resource-manager org-policies list --organization=<org-id>` 看哪些已經生效。
 
 - `compute.skipDefaultNetworkCreation`：新專案不再自動建立 `default` 網路。
 - `compute.vmExternalIpAccess`：只允許列在清單上的 VM 持有外部 IP，其餘 VM 建立時帶外部 IP 會被拒絕。
 - `compute.requireOsLogin`：新建的專案與 VM 啟用 OS Login，任何層級都無法用 metadata 把它關掉；既有 VM 是否已啟用要另外盤點，而既有的管理員要先拿到 OS Login 的登入角色。
-- `compute.disableSerialPortAccess`：關閉 Serial Console 的存取，讓救援入口平時保持關閉；救援時由持有組織政策權限的人對那個專案解除。
+- `compute.disableSerialPortAccess`：關閉 Serial Console 的存取，讓救援入口平時保持關閉；救援時由持有組織政策權限的人對那個專案解除，救援結束後恢復。
 
 ```bash
 # 在組織層級強制布林型的 constraint（skipDefaultNetworkCreation、requireOsLogin、disableSerialPortAccess 同一種寫法）
@@ -379,6 +446,10 @@ gcloud resource-manager org-policies enable-enforce compute.skipDefaultNetworkCr
 
 # 救援時，對單一專案解除 Serial Console 的限制
 gcloud resource-manager org-policies disable-enforce compute.disableSerialPortAccess \
+  --project=<project-id>
+
+# 救援結束後，刪掉專案層級的例外，讓專案重新繼承組織層級的強制
+gcloud resource-manager org-policies delete compute.disableSerialPortAccess \
   --project=<project-id>
 ```
 
@@ -410,15 +481,17 @@ gcloud compute firewall-policies associations create --firewall-policy=<policy-n
 
 ## 稽核與偵測：firewall log、Cloud Audit Logs 與 Security Command Center
 
-三個來源各自記錄的是不同的事件：
+[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)〈組織層級的護欄與稽核紀錄〉列出事後要查的三項事件，在 GCP 上分別從這幾個來源查：
 
-- **firewall rules logging**：建規則時加的 `--enable-logging` 讓防火牆把每一次放行寫進 Cloud Logging，紀錄裡有來源 IP、目的 VM、port 與命中的規則名稱；查詢方式見〈停用舊規則，用 IAP 驗證新規則〉。經由 IAP 的連線，來源 IP 都是 IAP 的位址段，從這份紀錄看不出是哪個人。
-- **Cloud Audit Logs**：在主控台「IAM 與管理 > 稽核記錄」裡為 Cloud Identity-Aware Proxy 開啟 Data Access 的資料讀取紀錄之後，每一次開通道都會留下發起的帳號與目標 VM——要知道是哪個人，靠的是這份紀錄。它只記錄開啟之後的連線，所以要在需要調查之前就開。開啟 Serial Console 的 metadata 修改屬於 Admin Activity 紀錄，預設就有。
-- **Security Command Center**：它的 Security Health Analytics 會持續掃描組織內的防火牆規則，`OPEN_SSH_PORT` 與 `OPEN_RDP_PORT` 這兩類 finding 對應的就是對外開放 22 與 3389 的規則；規則刪除或縮小來源之後，下一次掃描會把對應的 finding 標為已解決。
+- **誰在什麼時候經由哪條通道登入了哪台 VM**：開通道的帳號與目標 VM 記在 Cloud Audit Logs 裡 IAP 的 Data Access 紀錄（在〈啟用 IAP API、開啟稽核紀錄並建立只放行 IAP 來源的防火牆規則〉那一步開啟）；登入 VM 的帳號記在 VM 上的 sshd 紀錄，啟用 OS Login 時是由 Google 帳號轉成的使用者名稱。firewall rules logging 記錄每一次放行的來源 IP、目的 VM、port 與命中的規則名稱，經由 IAP 的連線來源都是 IAP 的位址段，從這份紀錄看不出是哪個人。
+- **誰在什麼時候開了救援入口**：開啟 Serial Console 的 metadata 修改與組織政策的解除屬於 Admin Activity 紀錄，預設就有。
+- **環境裡是否出現新的對外開放管理 port**：Security Command Center 的 Security Health Analytics 持續掃描組織內的防火牆規則，`OPEN_SSH_PORT` 與 `OPEN_RDP_PORT` 這兩類 finding 對應的就是對外開放 22 與 3389 的規則。處理方式是照〈切換到 IAP 的順序〉把規則換掉，直接刪除會中斷管理員自己的連線；規則刪除或縮小來源之後，下一次掃描會把對應的 finding 標為已解決。
+
+事件發生時才發現 IAP 的 Data Access 紀錄沒開，開啟之前的通道紀錄查不回來，剩下的來源是 Admin Activity 紀錄裡 metadata 與 IAM 的變更，以及 VM 上的 sshd 紀錄；sshd 紀錄只存在 VM 本機，取得 root 的攻擊者可以清掉，所以要保全時先把 VM 的磁碟做快照，證據的保全與分流見 [8.18 Incident Intake & Evidence Triage](/backend/08-incident-response/incident-intake-evidence-triage/)。
 
 AWS 上同類的盤點流程見 [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)：兩邊都是先列出來源是 `0.0.0.0/0` 的規則，逐條確認有沒有服務依賴，再刪除或縮小來源。
 
 ## 延伸閱讀：與廠商無關的設計模型與 VPC 的分層規則
 
-- → [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證三層的做法與選擇，以及救援入口](/infra/03-network-foundation/management-access-channel/)：跳板機、VPN、代理程式反向連線、SSH 憑證這些 GCP 以外的做法，以及依身分系統、主機位置與人員流動選擇組合的條件
+- → [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證三層的做法與選擇，以及救援入口](/infra/03-network-foundation/management-access-channel/)：跳板機、VPN、代理程式反向連線、SSH 憑證這些 GCP 以外的做法，以及依存取者身分、代理把連線送進主機的方式、金鑰收回方式選擇組合的依據
 - → [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/)：VPC 與 subnet 的分層與最小開放原則，本篇的防火牆規則是同一套原則在 GCP 上的寫法

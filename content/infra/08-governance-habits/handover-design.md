@@ -58,7 +58,18 @@ aws iam list-attached-user-policies --user-name departed-user
 - **基礎設施管理平台**（Terraform Cloud、Spacelift）：移除 team membership
 - **行銷追蹤後台**（Meta 商家資產管理組合、Google Tag Manager、GA4）：移除成員身分，GTM 容器的發布權限等同在網站上執行任意程式碼，優先收回。這三家的成員常是個人的 Facebook 或 Gmail 帳號，停用公司的 IdP 碰不到它們，要逐一移除；資產若建在員工自己的帳戶底下則移除不了，見 [追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)
 
-### 第五步：MFA 裝置解除註冊
+### 第五步：主機登入路徑
+
+停用 SSO / IdP 帳號不會碰到主機上的登入設定，所以登入過伺服器作業系統的人要另外處理這一步：
+
+- **靜態 SSH 公鑰**：逐台從 `~/.ssh/authorized_keys` 刪除那個人的公鑰；GCP 專案還要清專案與 VM metadata 裡的 `ssh-keys`，那裡的公鑰對每一台沒啟用 OS Login 的 VM 都有效
+- **隨帳號收回或會到期的金鑰**（OS Login、SSH 憑證）：停用帳號之後下一次登入就失敗，或最晚在憑證到期時失效；私鑰外洩而等不到到期時，把憑證加進撤銷清單
+- **已經建立的工作階段**：收回只擋下一次登入，仍開著的工作階段要在主機上結束（`loginctl terminate-user <username>`，Windows 用 `logoff`）
+- **共用的救援帳號密碼**：序列主控台這類救援入口用的本機帳號密碼不隨 IdP 收回，離職者拿得到時逐台輪替
+
+這幾類金鑰的收回方式與選擇條件見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈主機登入驗證的做法：SSH 金鑰怎麼發、怎麼收回〉。
+
+### 第六步：MFA 裝置解除註冊
 
 如果該人的 MFA 裝置仍然綁在帳號上（例如 root account 的 MFA），需要管理員介入解除並重新綁定。root account 的 MFA 裝置異動屬於高敏感操作，需要有第二人確認。
 
@@ -70,6 +81,7 @@ aws iam list-attached-user-policies --user-name departed-user
 | 長期 key 處理 | 24 小時內 | key 數量、各 key 處理方式（deactivate / 替換 / 刪除） |
 | IAM user 刪除 | 48 小時內 | 確認無殘留 user                                       |
 | 第三方服務    | 48 小時內 | 各平台的處理狀態                                      |
+| 主機登入路徑  | 24 小時內 | 刪除的公鑰、結束的工作階段、輪替的救援密碼            |
 | 管理層回報    | 48 小時內 | 一份清單確認所有存取路徑已關閉                        |
 
 這份回報不是形式 — 它是對管理層證明「離職者已無法存取任何系統」的書面紀錄，合規稽核時會被要求出示。
