@@ -14,7 +14,7 @@ MIG 裡的每一台 VM 都由 instance template 建出來。有幾種時機 MIG 
 
 這種消失沒有任何通知。重建通常發生在半夜的自動修復或下一次擴增，而只放行 IAP 來源的防火牆規則靠 network tag 選 VM：新建的 VM 沒有那個 tag，這條規則就套不到它。收斂管理通道時通常也已經刪掉 `default-allow-ssh`（GCP 預設網路裡放行任何來源連 22 port 的規則），兩者加在一起，新 VM 上沒有任何一條規則放行 SSH，它就從管理通道上消失了。所以這兩種環境的做法是：**管理通道的設定寫在建立 VM 的那一份設定裡**（MIG 的 instance template、GKE 的 node pool 設定、或映像檔），逐台的 `gcloud compute instances` 指令只用在臨時查看。
 
-要判斷一台 VM 屬不屬於 MIG，看它的 metadata（掛在 VM 上的鍵值設定，VM 內的程式與有讀取權限的帳號都讀得到）有沒有 `created-by` 這個鍵（值是那個 MIG 的資源路徑）；GKE 節點帶著 `goog-gke-node` 標籤。下面的指令用 `jq`（命令列的 JSON 處理工具）從 `gcloud` 的 JSON 輸出取出這個鍵，要先在本機裝好；`gcloud` 讀的是目前設定的專案，要查別的專案時加 `--project=<project-id>`：
+要判斷一台 VM 屬不屬於 MIG，看它的 metadata（掛在 VM 上的鍵值設定，VM 內的程式與有讀取權限的帳號都讀得到）有沒有 `created-by` 這個鍵（值是那個 MIG 的資源路徑）。這個鍵由 MIG 在建立 VM 時寫入，VM 被移出 MIG（abandon）之後仍然留著，所以它標出的是建立這台 VM 的 MIG；要確認 VM 現在是否仍是那個 MIG 的成員，用 `gcloud compute instance-groups managed list-instances <mig-name> --zone=<zone>` 列出 MIG 目前的 VM 來對照。GKE 節點帶著 `goog-gke-node` 標籤。下面的指令用 `jq`（命令列的 JSON 處理工具）從 `gcloud` 的 JSON 輸出取出這個鍵，要先在本機裝好；`gcloud` 讀的是目前設定的專案，要查別的專案時加 `--project=<project-id>`：
 
 ```bash
 # 列出 VM 與它所屬的 MIG（第二欄是 - 的就是單獨建立的 VM）
@@ -134,12 +134,12 @@ chroot /host
 
 - `<node-name>`：節點名稱，`kubectl get nodes` 的第一欄。
 - `--image=ubuntu`：除錯 Pod 用的映像檔，換成組織允許、帶著除錯工具的映像檔。
-- `--profile=sysadmin`：讓除錯 Pod 以[特權容器（privileged container）](/backend/knowledge-cards/privileged-container/)執行，`chroot /host`（把行程的根目錄換成 `/host`，之後執行的指令看到的是節點的檔案系統）需要這個權限；不加時 Pod 起得來，但存取不了節點的大部分資源。
+- `--profile=sysadmin`：讓除錯 Pod 以[特權容器（privileged container）](/backend/knowledge-cards/privileged-container/)執行。不加這個旗標時 kubectl 用預設的 `general` profile，除錯 Pod 同樣以 root 執行、共用節點的行程與網路 namespace，節點的根目錄同樣掛在 `/host`，所以 `chroot /host`（把行程的根目錄換成 `/host`，之後執行的指令看到的是節點的檔案系統）、讀寫節點的檔案、用 `crictl` 列出節點上的容器都做得到。`sysadmin` 多給的是需要額外 Linux capability 的操作，例如用 `nsenter` 進入節點 PID 1 的 namespace、掛載檔案系統；只查看檔案與 log 時 `general` 就夠了。
 - `--namespace=<namespace>`：除錯 Pod 建在哪個 [namespace](/backend/knowledge-cards/namespace/)。不給時落在 kubeconfig 目前設定的 namespace（通常是 `default`）；要用哪一個、怎麼建，見下面權限邊界那一段。
 
 這個 Pod 用完不會自動刪除，結束後用 `kubectl delete pod <debug-pod-name> --namespace=<namespace>` 刪掉（`kubectl get pods --namespace=<namespace>` 找名稱以 `node-debugger-` 開頭的那一個）。
 
-`kubectl debug node` 的權限邊界有兩道。[Kubernetes RBAC](/backend/knowledge-cards/kubernetes-rbac/) 決定誰能用它：在除錯 Pod 所在的 namespace 要有 `pods` 的 `create`（建 Pod）、`get`（等 Pod 起來）、`delete`（用完刪掉），以及 `pods/attach` 的 `create`（`-it` 在 Pod 建好之後附加到它的終端機），這幾項綁在那個 namespace 的 RoleBinding；另外要有 `nodes` 的 `get`，節點不屬於任何 namespace，這一項要用 ClusterRoleBinding 授予。少了 `pods/attach` 時 Pod 建得出來卻進不去；能在節點上建特權 Pod 的帳號，實質上就能以 root 操作那個節點，所以這個權限只給負責維運的群組。[Pod Security Admission](/backend/knowledge-cards/pod-security-admission/) 決定那個 namespace 接不接受特權 Pod：namespace 設了 `pod-security.kubernetes.io/enforce=baseline` 或 `restricted` 時，除錯 Pod 會被拒絕。反過來，沒有設這個 label 的 namespace（包括 `default`）在 GKE Standard 上預設接受特權 Pod，所以任何能在 `default` 建 Pod 的帳號，現在就能用這個方法以 root 操作節點。做法是把一般工作負載的 namespace 都設成 `baseline` 以上，節點除錯集中到一個刻意保留為 `privileged` 等級、而且只有維運群組能建 Pod 的 namespace，這個 namespace 由叢集管理員事先建好：
+`kubectl debug node` 的權限邊界有兩道。[Kubernetes RBAC](/backend/knowledge-cards/kubernetes-rbac/) 決定誰能用它：在除錯 Pod 所在的 namespace 要有 `pods` 的 `create`（建 Pod）、`list` 與 `watch`（kubectl 用 watch 等 Pod 進入執行狀態）、`delete`（用完刪掉），以及 `pods/attach` 的 `create`（`-it` 在 Pod 建好之後附加到它的終端機），這幾項綁在那個 namespace 的 RoleBinding；另外要有 `nodes` 的 `get`，節點不屬於任何 namespace，這一項要用 ClusterRoleBinding 授予。少了 `list` 或 `watch` 時 Pod 已經建好，kubectl 卻停在等待、反覆印出 `cannot list resource "pods"` 而不結束；少了 `pods/attach` 時 Pod 建得出來卻進不去。這兩種情形都會留下一個在跑的除錯 Pod，要用 `kubectl delete pod` 刪掉。能在節點上建除錯 Pod 的帳號，不論用哪個 profile 都能以 root 讀寫節點的檔案，所以這組權限只給負責維運的群組。[Pod Security Admission](/backend/knowledge-cards/pod-security-admission/) 決定那個 namespace 是否接受這類 Pod：`kubectl debug node` 建的 Pod 不論 profile 都帶著主機的行程與網路 namespace（hostPID、hostNetwork）與主機目錄掛載（hostPath），namespace 設了 `pod-security.kubernetes.io/enforce=baseline` 或 `restricted` 時，這三項都會讓除錯 Pod 被拒絕。反過來，沒有設這個 label 的 namespace（包括 `default`）在 GKE Standard 上預設接受特權 Pod，所以任何能在 `default` 建 Pod 的帳號，現在就能用這個方法以 root 操作節點。做法是把一般工作負載的 namespace 都設成 `baseline` 以上，節點除錯集中到一個刻意保留為 `privileged` 等級、而且只有維運群組能建 Pod 的 namespace，這個 namespace 由叢集管理員事先建好：
 
 ```bash
 # 建一個專門給節點除錯用的 namespace，並允許特權 Pod
@@ -147,19 +147,19 @@ kubectl create namespace <namespace>
 kubectl label namespace <namespace> pod-security.kubernetes.io/enforce=privileged
 ```
 
-`<namespace>` 自己取，例如 `node-debug`；建好之後只把它的 `pods` `create` 權限綁給維運群組。GKE Autopilot 預設拒絕特權 Pod（只有列入允許清單的合作夥伴工作負載例外），也不提供節點 SSH，查節點層的狀況靠 Cloud Logging 裡的節點紀錄與 GKE 主控台的節點狀態。
+`<namespace>` 自己取，例如 `node-debug`；建好之後只把上面那組 `pods` 與 `pods/attach` 的權限綁給維運群組。GKE Autopilot 預設拒絕特權 Pod（只有列入允許清單的合作夥伴工作負載例外），也不提供節點 SSH，查節點層的狀況靠 Cloud Logging 裡的節點紀錄與 GKE 主控台的節點狀態。
 
 節點仍要 SSH 時（GKE Standard），把單台 VM 那一篇的做法搬到 node pool 的設定上：
 
 - **節點不配外部 IP**：private nodes 指節點只有內部 IP 的設定。先確認節點所在 subnet 的 region 已經有 [Cloud NAT](/infra/knowledge-cards/nat/)：換成內部 IP 之後節點的出站都經過它，沒有它時節點拉不到外部 registry 的映像，工作負載起不來。新叢集在 `gcloud container clusters create` 加 `--enable-private-nodes`，作為整個叢集的預設；這個設定也可以逐個 node pool 設，既有叢集對每個 node pool 用 `gcloud container node-pools update <pool-name> --cluster=<cluster-name> --location=<location> --enable-private-nodes`，節點只剩內部 IP。既有 node pool 的這項變更由 GKE 依 node pool 的升級策略逐批重建節點，排在可以承受節點輪替的時段做。
 - **IAP 規則套到節點**：node pool 的 network tag 用 `gcloud container node-pools update <pool-name> --cluster=<cluster-name> --location=<location> --tags=<tag1>,<tag2>` 設定，這個指令會用給的清單**整組取代**使用者設定的 tag，所以要把現有的 tag 一起列進來（`gcloud container node-pools describe <pool-name> --cluster=<cluster-name> --location=<location>` 的 `config.tags`）。GKE 自動建立的防火牆規則用的是它自己產生的 tag，不受這個指令影響。`<location>` 是叢集所在的 zone 或 region。
-- **OS Login**：GKE Standard 支援用 OS Login 控制節點的 SSH，專案層級的 `enable-oslogin=TRUE` 會套用到節點，授權方式見那一篇的〈SSH 金鑰在 GCP 上的管理位置：metadata 金鑰與 OS Login 的啟用順序與還原〉；GKE 的 OS Login 文件註明節點有公開 IP 的叢集不支援，所以這一項的前提是節點已經是 private nodes，順序是先做 private nodes、再啟用 OS Login。
+- **OS Login**：授權方式見那一篇的〈SSH 金鑰在 GCP 上的管理位置：metadata 金鑰與 OS Login 的啟用順序與還原〉。Autopilot 叢集不能用 OS Login，因為節點由 GKE 管理。專案層級的 `enable-oslogin=TRUE` 是否套用到 GKE Standard 的節點，GKE 自己的兩份文件寫法相反：OS Login 的設定頁說專案層的設定套用到專案裡所有既有與新建的 VM，並說明怎麼對 GKE Standard 的節點強制啟用；node pool 的管理頁則寫 OS Login 在 GKE 節點上被明確停用，即使專案已經啟用。所以啟用之後經由 IAP 實際登入一個節點確認：登入時 `gcloud compute ssh` 用的是 OS Login 帳號（使用者名稱由 Google 帳號的 email 轉換而來），登入後執行 `whoami` 看到的也是這個帳號，才表示這個 node pool 的節點套用了 OS Login；看到的是 metadata 金鑰對應的本機帳號，代表節點沒有套用，SSH 仍由 metadata 金鑰控制。
 
 ## GKE 控制平面的存取：authorized networks 與 DNS-based endpoint
 
 控制平面的 API server 預設有一個公開的 IP 端點，任何地方都連得到，靠 Kubernetes 的認證（通道授權）與 [Kubernetes RBAC](/backend/knowledge-cards/kubernetes-rbac/)（主機登入驗證那一層的對應）擋下沒有權限的請求——在管理通道的模型裡，這等於網路可達性全開，與 `0.0.0.0/0` 開 22 port 是同一種狀態。收窄網路可達性的做法有 authorized networks、DNS-based endpoint 與 private endpoint：
 
-- **authorized networks**：只允許列出的來源 IP 範圍連到 API server 的 IP 端點，相當於來源 IP 白名單，代價與白名單相同（遠端工作、IP 會變動時要一直改，而且分辨不出個人）。`--master-authorized-networks` 每次都用給的清單整組取代舊清單，執行這條指令的人與 CI 的出口 IP 要列在裡面，漏列時指令一生效 `kubectl` 就連不上；`gcloud` 不經過這個端點，連不上時仍可以用同一條指令改回清單。另外，GCP 擁有的公開 IP（包括其他客戶的 VM）預設也連得到公開端點，要排除時加 `--no-enable-google-cloud-access`。
+- **authorized networks**：只允許列出的來源 IP 範圍連到 API server 的 IP 端點，相當於來源 IP 白名單，代價與白名單相同（遠端工作、IP 會變動時要一直改，而且分辨不出個人）。`--master-authorized-networks` 每次都用給的清單整組取代舊清單，執行這條指令的人與 CI 的出口 IP 要列在裡面，漏列時指令一生效 `kubectl` 就連不上；`gcloud` 不經過這個端點，連不上時仍可以用同一條指令改回清單。另外，沒有設 authorized networks 時，任何外部 IP 都連得到公開端點，包括 GCP 上其他客戶的 VM 的外部 IP；設了 authorized networks 之後，這些 GCP 外部 IP 是否放行由 `--enable-google-cloud-access` 與 `--no-enable-google-cloud-access` 決定，叢集目前的值是 `gcloud container clusters describe <cluster-name> --location=<location>` 輸出裡的 `gcpPublicCidrsAccessEnabled`。這項變更不會馬上生效，GKE 套用對應的防火牆規則可能要幾個小時。
 - **DNS-based endpoint**：叢集多一個專屬的網域名稱端點，請求先經過 Google Cloud、以 IAM 判斷這個帳號能不能連到這個叢集（`container.clusters.connect` 權限，`roles/container.developer` 這類角色裡有），通過之後才轉到 API server。它相當於控制平面前面的身分感知代理：網路可達性與通道授權改由 IAM 承擔，不必維護 IP 清單，GitHub Actions 這類外部 CI 也能用 [workload identity federation](/backend/knowledge-cards/workload-identity/) 換到的身分連進來，不必另架[跳板機](/infra/knowledge-cards/bastion-host/)。
 - **private endpoint**：控制平面只留內部 IP 端點（`--enable-private-endpoint`），只有 VPC 內與經 VPN 或 Interconnect 接進 VPC 的來源連得到，可以再加 `--enable-authorized-networks-on-private-endpoint` 收窄到 VPC 內的特定範圍。既有的 private cluster 多半是這種設定，從 VPC 外管理時要經過 VPN 或跳板機；改用 DNS-based endpoint 之後這一層可以拿掉。
 
