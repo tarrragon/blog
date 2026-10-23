@@ -16,7 +16,7 @@ tags: ["monitoring", "vendor", "playwright", "meta-pixel", "google-tag-manager",
 
 實測頁的面板用瀏覽器的 Resource Timing 列出跨網域請求，Playwright 則直接監看瀏覽器送出的每一個請求，所以擷取結果多了面板拿不到的資訊：POST 請求的 body、回應的狀態碼與標頭、帶 `HttpOnly` 旗標而 `document.cookie` 讀不到的 cookie，以及面板根本列不出來的請求。Meta Pixel 的事件請求就是最後一種：`fbevents.js` 以隱藏的表單把事件提交到一個 iframe，這類提交不進父頁面的 Resource Timing，所以實測頁面板上只看得到 `fbevents.js` 與它的設定檔，看不到任何一筆事件；在 Playwright 的紀錄與瀏覽器開發者工具的 Network 面板裡看得到。
 
-擷取腳本預設以無頭模式（headless）啟動 Chromium，這時瀏覽器的 User-Agent 帶 `HeadlessChrome` 字樣。實測時 Meta Pixel 在無頭模式下照樣載入、照樣寫 cookie，事件請求卻一筆都不送出，原因在 Pixel 的設定檔（`signals/config/<Pixel ID>`）帶來的 `botblocking` 外掛（plugin）：依擷取當時那一版設定檔的原始碼，這個外掛拿 `navigator.userAgent` 比對一份機器人規則清單，清單裡有 `HeadlessChrome/`，比對成功時由這個外掛在事件送出之前把它攔下（外掛程式碼裡對應的訊息字串是 `[Meta pixel] Bot traffic detected and blocked`）。`fbevents.js` 本體也偵測 `HeadlessChrome`，但只把結果寫進事件請求的 `o` 參數。
+擷取腳本預設以[無頭模式](/monitoring/knowledge-cards/headless-browser/)（headless）啟動 Chromium，這時瀏覽器的 User-Agent 帶 `HeadlessChrome` 字樣。實測時 Meta Pixel 在無頭模式下照樣載入、照樣寫 cookie，事件請求卻一筆都不送出，原因在 Pixel 的設定檔（`signals/config/<Pixel ID>`）帶來的 `botblocking` 外掛（plugin）：依擷取當時那一版設定檔的原始碼，這個外掛拿 `navigator.userAgent` 比對一份機器人規則清單，清單裡有 `HeadlessChrome/`，比對成功時由這個外掛在事件送出之前把它攔下（外掛程式碼裡對應的訊息字串是 `[Meta pixel] Bot traffic detected and blocked`）。`fbevents.js` 本體也偵測 `HeadlessChrome`，但只把結果寫進事件請求的 `o` 參數。
 
 兩組對照支持這個歸因，都沒有存成結果檔。作者在 Playwright 的瀏覽器設定裡只把 User-Agent 換成一般 Chrome 的字串、其餘照舊以無頭模式執行，事件就送出了，這證明結果取決於 User-Agent，但 `fbevents.js` 本體同樣讀 User-Agent，單靠這一組分不出攔截的是外掛還是本體。另一組來自一次填錯 Pixel ID 的擷取：同樣是無頭模式，不存在的 ID 拿到的設定檔一個外掛都沒有，向 `www.facebook.com/tr/` 的事件請求卻照樣送出（那次是 GET，`o` 參數含 `IS_HEADLESS`），所以本體偵測到無頭模式之後並沒有攔截，攔截來自設定檔帶來的外掛。那份結果檔因為 ID 填錯而刪除了。GTM 容器裡的 GA4 代碼在無頭模式下照常送出事件請求。依 User-Agent 辨識自動化流量是通用的做法，本站自己的流量統計怎麼分辨機器流量見 [辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)。
 
@@ -93,7 +93,7 @@ Pixel ID 填錯時沒有任何錯誤訊息：Meta 的伺服器對不存在的 ID
 
 擷取時間是 UTC 2026-10-22 17:26:10，瀏覽器是 Playwright 提供的 Chromium 148.0.7778.96，在 macOS 上以 `--headed` 執行，User-Agent 不帶 `HeadlessChrome`；實測頁開在本機建置的網站。Pixel 是〈擷取用的測試帳號〉一節建立的測試 Meta 資料集。結果檔是 `scripts/vendor-capture/results/meta-pixel-20261022T1726Z.json`。
 
-版本線索：`fbevents.js` 本體 435,058 位元組，SHA-256 開頭是 `6f3aa7a0d8d9`；`fbq.version` 是 `2.9.427`，`signals/config` 請求的查詢參數同樣帶 `v=2.9.427`、`r=stable`。這個 Pixel 的設定檔裡出現 26 個外掛名稱，與本篇觀察相關的是 `cookie`（寫 `_fbp` 與 `_fbc`）、`inferredevents`（自動事件）與 `botblocking`（機器人流量）；不存在的 ID 拿到的設定檔裡一個外掛都沒有。
+版本線索：`fbevents.js` 本體 435,058 位元組，SHA-256 開頭是 `6f3aa7a0d8d9`；`fbq.version` 是 `2.9.427`，`signals/config` 請求的查詢參數同樣帶 `v=2.9.427`、`r=stable`。這個 Pixel 的設定檔裡出現 26 個外掛名稱，與本篇觀察相關的是 `cookie`（寫 `_fbp` 與 `_fbc`）、`inferredevents`（[自動事件](/monitoring/knowledge-cards/autocapture/)）與 `botblocking`（機器人流量）；不存在的 ID 拿到的設定檔裡一個外掛都沒有。
 
 **事件請求的形式。** 每一筆事件都是向 `www.facebook.com/tr/` 送出的 POST，參數放在表單 body 裡，`rqm=formPOST`。`fbevents.js` 建立一個隱藏的表單，把它提交到一個 iframe，所以 Playwright 把這些請求記成 `document` 類型（`resourceType`），實測頁面板也因此列不出它們。`ev` 是事件名稱；`fbevents.js` 把 `fbq('track', …)` 的第三個引數（事件參數物件）轉成 `cd[...]` 參數，例如 ViewContent 的 `cd[content_name]`、Purchase 的 `cd[value]` 與 `cd[currency]`，第四個引數帶的 `eventID` 轉成 `eid`。網站同時從瀏覽器與伺服器送同一筆事件時，Meta 用 `eid` 把兩邊去重，機制見 [Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/) 的去重一節；這次的測試 Pixel 沒有伺服器端的事件來源，`eid` 只出現在瀏覽器端這一路。
 

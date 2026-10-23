@@ -16,7 +16,9 @@ tags: ["monitoring", "security", "sdk", "authentication", "client-side", "api-ke
 
 所有主流的 client-side telemetry 方案都面對同樣的限制。它們的共同策略是：承認 client credential 會暴露，把防線從「保護 credential」轉移到「限制 credential 被濫用的影響」。
 
-**Google Analytics 4**：Measurement ID（G-XXXXXXXXXX）直接寫在網頁的 JS snippet 中，任何人檢視網頁原始碼都能取得。GA4 的防護在 server-side — Google 用 domain 白名單過濾來源，加上自動的 bot traffic 偵測剔除機器流量。Measurement Protocol（server-to-server）需要額外的 API secret，但 client-side 的 gtag.js 不需要。
+**Google Analytics 4**：評估 ID（Measurement ID，形如 `G-XXXXXXXXXX`）直接寫在網頁的 JS snippet 中，任何人檢視網頁原始碼都能取得，拿到 ID 的人可以從別的網站把事件送進同一個資源。GA4 在接收端預設排除已知的機器人流量，另外提供要自己建立的主機名稱篩選器。已知機器人排除無法關閉：Google 依自己的研究與 IAB 維護的 International Spiders and Bots List 辨識機器人與爬蟲流量，排除了多少不會顯示在報表上。主機名稱篩選器（Web hostname traffic filter）是資源的資料篩選器之一，由編輯者以上的成員建立，設成「只包含」本站網域之後，主機名稱不符的事件不會被處理。篩選器生效要 24 到 36 小時、只套用到之後收到的資料，被排除的資料永久不會進報表與 BigQuery；說明頁另外提供測試狀態，只標記符合條件的資料、不排除，可以先看過標記結果再啟用。Google 的說明頁把這個篩選器寫成提高報表準確度的工具，沒有寫成防護；它比對的主機名稱取自 gtag.js 隨事件送出的頁面網址（`dl` 參數），這個值由送出請求的一方填寫，所以篩選器擋得掉別的網站誤裝或複製同一個 ID 送來的流量，擋不掉刻意把網址填成本站網域的偽造請求（由請求格式推出）。Measurement Protocol（server-to-server）需要額外的 API secret，但 client-side 的 gtag.js 不需要。
+
+**Meta Pixel**：Pixel ID（也就是 Meta 資料集的 ID）同樣寫在網頁的 snippet 裡，任何人都能拿它從別的網站送事件。瀏覽器端的過濾來自 Pixel 設定檔帶來的 `botblocking` 外掛：它拿瀏覽器的 User-Agent 比對一份機器人規則清單，比對成功的事件在送出之前就被攔下，所以這道過濾在送出端執行，自行構造請求、不經過 `fbevents.js` 的人不受它影響（實測與機制見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)）。ID 外流之後的處置比 GA4 少一條路：Meta 的資料集不能刪除也不能轉移，灌進假事件之後只能另建一個新的資料集、換掉網站上的 ID，舊資料集累積的事件不會跟著搬過去（資料集的歸屬規則見[追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)）。
 
 **Sentry**：DSN（Data Source Name）包含 project ID 和 public key，直接嵌在 SDK init 的程式碼中。Sentry 官方文件明確標示 DSN 是 public 的 — 攻擊者取得 DSN 只能送事件，不能讀取已收集的資料。防護靠 rate limit（每個 project 的 events/sec 上限）、allowed domains（只接受來自白名單 domain 的事件）、和 server-side 的 event 去重。
 
@@ -221,3 +223,4 @@ Dashboard 查詢預設排除 `_flags.suspicious = true` 的事件。需要調查
 - 行為分析和 rule engine → [Rule Engine 設計](/monitoring/04-collector/rule-engine/)
 - 偽造流量對資料完整性的影響 → [端到端資料完整性](/monitoring/04-collector/data-integrity/)
 - Error fingerprint 讓偽造 error 容易辨識 → [Error Fingerprint 與去重分群](/monitoring/04-collector/error-fingerprint/)
+- 商業追蹤碼的 ID 由哪個帳戶擁有、外流或被汙染之後能不能換掉 → [追蹤資產的歸屬：Meta、GTM 與 GA4 的擁有層級、權限分級與移交方式](/monitoring/vendors/tracking-account-ownership/)

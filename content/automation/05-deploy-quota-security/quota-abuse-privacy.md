@@ -35,6 +35,8 @@ tags: ["automation", "apps-script", "quota", "privacy", "abuse", "migration"]
 
 不收 PII 讓「處理個資刪除請求」這類負擔不會發生，但**同意機制的判斷不是由 PII 決定的**。歐盟 ePrivacy 指令第 5(3) 條管的是「在使用者終端設備儲存或讀取資訊」這個動作本身，與存的內容是否為個資無關——市面上宣稱免同意橫幅的分析服務（Plausible、Fathom）之所以能這樣宣稱，正是因為它們完全不在瀏覽器儲存任何識別碼。[模組六的訪客識別](/automation/06-reading-the-data/visitor-identity/)在 `localStorage` 存了兩個，因此那一步跨過了這條線。
 
+商業追蹤碼同樣跨過這條線，儲存的識別碼更多、送到的地方更遠。Meta Pixel 與 GA4 載入時都在網站自己的網域上寫識別碼 cookie，在 Chromium 上實測的到期時間分別是寫入起算 90 天與 400 天，而且這些識別碼會隨每一筆事件送到 Meta 與 Google 的伺服器（實測見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)）。所以同一個網站同時裝了本站的 beacon 與商業追蹤碼時，要不要取得同意、同意要涵蓋哪些用途，由商業追蹤碼的行為決定。
+
 實務上個人網站的合規風險與商業追蹤網路不在同一個量級，但這是取捨不是豁免。想更保守，可以尊重瀏覽器的 Do Not Track 訊號（`navigator.doNotTrack === "1"` 時不送 beacon），或者不存識別碼、只做頁面計數。
 
 ## 遷移訊號：什麼時候該離開 Sheets

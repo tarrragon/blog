@@ -24,6 +24,8 @@ tags: ["monitoring", "sdk-design", "sensor", "frontend", "instrumentation", "sam
 
 **Web（JS/TS）**：在 document 層級用 event delegation 攔截 click 事件，過濾出帶 `data-track` attribute 的元素。開發者在需要追蹤的元素上加 `data-track="connect-button"`，感測器自動收集。不追蹤所有 click — 只追蹤被標記的。
 
+商業追蹤碼走的是相反的預設，業界稱為[自動事件收集](/monitoring/knowledge-cards/autocapture/)（autocapture）：script 不等開發者標記，自己決定要送哪些互動。Meta Pixel 載入後，設定檔帶來的外掛對頁面上每一次按鈕點擊自動加送一筆 `SubscribedButtonClick`，內容包含按鈕文字與按鈕、頁面的特徵，網站沒有為那顆按鈕寫任何追蹤程式（實測見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)）。兩種預設的取捨方向相反：標記式感測器會漏掉沒被標記的元素，換到的是送出的欄位全部由開發者決定；自動收集不漏元素，而送出什麼由 vendor 的設定檔決定、會隨 vendor 改版變動，盤點網站送出哪些資料時要把這些自動事件一併算進去。
+
 **Flutter**：用 NavigatorObserver 或 custom GestureDetector wrapper。GestureDetector 包裝在需要追蹤的 widget 外層，onTap 觸發時送出事件。
 
 ### 效能影響
@@ -206,4 +208,5 @@ sensors:
 - 動機驅動的事件設計（哪些動機需要哪些感測器） → [動機驅動的事件設計](/monitoring/01-mental-model/motivation-to-event-mapping/)
 - 感測器的啟停控制和生命週期 → [感測器生命週期管理](/monitoring/03-sdk-design/sensor-lifecycle-management/)
 - 被動攔截機制（和感測器互補） → [自動攔截機制](/monitoring/03-sdk-design/auto-intercept/)
+- 商業追蹤碼在網站沒有呼叫的情況下自動送出的事件與內容 → [用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)
 - 安全敏感輸入的完整 checklist → [安全敏感輸入框的 IME 控制](/ux-design/03-input-mechanism/ime-security-checklist/)
