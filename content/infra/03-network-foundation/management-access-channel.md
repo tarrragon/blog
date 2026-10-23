@@ -73,7 +73,7 @@ sshd 接受哪些金鑰由主機登入驗證決定，而設計的重點是金鑰
 
 - **靜態 `authorized_keys`**：公鑰手動或由設定管理工具寫進主機。沒有到期時間，收回要逐台刪除，主機數量一多就難以盤點；金鑰認證的基本設定見 [SSH](/infra/knowledge-cards/ssh/)。
 - **由中央服務決定可用的公鑰**：主機在登入當下（或登入前由中央服務推送）取得這個帳號可用的公鑰，帳號或角色被移除，下一次登入就失敗。GCP 的 [OS Login](/infra/knowledge-cards/os-login/) 在登入當下向 Google 查詢，AWS 的 EC2 Instance Connect 在連線前推送只在短時間內有效的公鑰，兩者都綁定各自的雲端廠商。自建的版本是 sshd 的 `AuthorizedKeysCommand` 接到 LDAP 或 FreeIPA 這類目錄服務，與廠商無關。這一類都依賴中央服務在登入當下可用：目錄服務或雲端的 metadata server 中斷時，沒有快取的主機一起登不進去；FreeIPA 的用戶端 SSSD 會快取公鑰，目錄服務離線時仍能登入。
-- **SSH CA 簽發的短期憑證**：主機只信任一把 CA 公鑰（sshd 的 `TrustedUserCAKeys`），管理員登入前向簽發服務取得一張有效期有限的使用者憑證。憑證過期自動失效，不需要逐台收回；有效期就是能接受的最晚收回延遲。管理員手動簽發時常設成一個工作日左右，讓每天開工時簽一次；簽發由用戶端在連線時自動完成時（Teleport 的 `tsh`、smallstep 的 `step ssh`），有效期可以縮到幾小時以內。私鑰外洩而等不到到期時，sshd 用 `RevokedKeys` 指向撤銷清單提前作廢，這份清單要派送到每一台主機。[HashiCorp Vault](/infra/knowledge-cards/vault/) 的 SSH secrets engine 與 Teleport 都以這種方式運作；OpenSSH 本身就支援，用 `ssh-keygen -s` 簽發，所以這一種做法同時與廠商無關、又不需要逐台收回。
+- **SSH CA 簽發的短期憑證**：主機只信任一把 CA 公鑰（sshd 的 `TrustedUserCAKeys`），管理員登入前向簽發服務取得一張有效期有限的使用者憑證。憑證過期自動失效，不需要逐台收回；有效期就是能接受的最晚收回延遲。管理員手動簽發時常設成一個工作日左右，讓每天開工時簽一次；簽發由用戶端在連線時自動完成時（Teleport 的 `tsh`、smallstep 的 `step ssh`），有效期可以縮到幾小時以內。私鑰外洩而等不到到期時，sshd 用 `RevokedKeys` 指向撤銷清單提前作廢，這份清單要派送到每一台主機。[HashiCorp Vault](/infra/knowledge-cards/vault/) 的 SSH secrets engine 與 Teleport 都以這種方式運作；OpenSSH 本身就支援，用 `ssh-keygen -s` 簽發，所以這一種做法同時與廠商無關、又不需要逐台收回；只用 OpenSSH 導入的完整流程見 [OpenSSH 內建 CA 的導入](/infra/03-network-foundation/openssh-ca-setup/)。
 
 三種做法收回的都是下一次登入；SSH 憑證的「收回」是到期之後失效。已經建立的工作階段不受影響，處理離職或帳號外洩時，管理員要另外登入主機結束那個使用者的工作階段（systemd 的發行版用 `loginctl terminate-user <username>`），結束已建立工作階段的動作在應用程式的層次叫 [session invalidation](/backend/knowledge-cards/session-invalidation/)。
 

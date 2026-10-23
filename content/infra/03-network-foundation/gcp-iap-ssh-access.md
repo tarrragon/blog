@@ -22,7 +22,7 @@ tags: ["infra", "network", "gcp", "ssh", "rdp", "iap", "firewall"]
 
 另外四種環境要先調整做法再往下讀：
 
-- **由 managed instance group（MIG）或 GKE 管理的 VM**：tag、metadata、救援帳號與移除外部 IP 都要改在 instance template、node pool 設定或映像檔裡。逐台用 `gcloud` 修改，VM 在自動修復、升級或縮放時重建，修改就消失，tag 消失之後 IAP 規則也套不到新的 VM。GKE 節點的管理存取另有它自己的做法，不在本篇範圍。
+- **由 managed instance group（MIG）或 GKE 管理的 VM**：tag、metadata、救援帳號與移除外部 IP 都要改在 instance template、node pool 設定或映像檔裡。逐台用 `gcloud` 修改，VM 在自動修復、升級或縮放時重建，修改就消失，tag 消失之後 IAP 規則也套不到新的 VM。這兩種環境的設定位置、救援改用重建的做法與 GKE 控制層的存取，見[GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/03-network-foundation/gke-mig-management-access/)。
 - **Shared VPC 的 service project**：防火牆規則住在 host project，本篇防火牆相關的指令要在 host project 執行；停用 `default-allow-ssh` 這類規則會同時影響其他 service project 的 VM。
 - **用 Terraform 這類 IaC 管理的專案**：本篇每一個 `gcloud` 修改都要改寫成程式碼。只在 CLI 加的 tag、IAM 授權與 metadata，若所屬資源在程式碼裡被完整定義（例如 `google_compute_instance` 寫了 `tags`、用 `google_project_iam_policy` 管 IAM），下一次 apply 會把它拿掉；只在 CLI 刪掉的規則與外部 IP，下一次 apply 會建回來。用 CLI 停用舊規則做驗證的期間要暫停所有 apply。兩個方向的落差與過渡期的做法見[兩套真相並存的過渡期操作](/infra/takeover/partial-iac-dual-truth-operation/)。
 - **新專案從零開始**：沒有舊規則要移走，〈切換前的盤點〉與停用驗證可以跳過，直接建 IAP 規則、OS Login 與 Cloud NAT；建 VM 時加 `--no-address` 就不配外部 IP。2024 年 5 月 3 日之後建立的 Organization 會預設強制一組 Organization Policy，其中可能已經包含本篇〈組織層級的護欄〉提到的幾項；用 `gcloud resource-manager org-policies list --organization=<org-id>` 查組織層級設定了哪些（`<org-id>` 用 `gcloud organizations list` 查）。
