@@ -56,6 +56,7 @@ aws iam list-attached-user-policies --user-name departed-user
 - **CI 平台**（GitHub Actions secrets、GitLab CI variables）：如果該人曾設定過 CI secret，確認那些 secret 是否需要輪替
 - **監控與告警**（Grafana、PagerDuty、Datadog）：移除帳號或降權
 - **基礎設施管理平台**（Terraform Cloud、Spacelift）：移除 team membership
+- **行銷追蹤後台**（Meta 商家資產管理組合、Google Tag Manager、GA4）：移除成員身分，GTM 容器的發布權限等同在網站上執行任意程式碼，優先收回。這三家的成員常是個人的 Facebook 或 Gmail 帳號，停用公司的 IdP 碰不到它們，要逐一移除；資產若建在員工自己的帳戶底下則移除不了，見 [追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)
 
 ### 第五步：MFA 裝置解除註冊
 

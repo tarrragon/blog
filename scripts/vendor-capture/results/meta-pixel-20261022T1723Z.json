@@ -1,0 +1,172 @@
+{
+  "capturedAt": "2026-10-22T17:23:23.130Z",
+  "capturedAtTaipei": "2026-10-23 01:23:23",
+  "browser": "148.0.7778.96",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/148.0.7778.96 Safari/537.36",
+  "vendor": "meta-pixel",
+  "id": "1405650704604671",
+  "labUrl": "http://localhost:4173/blog/monitoring/vendors/meta-pixel-lab/",
+  "steps": [
+    {
+      "atMs": 5142,
+      "label": "load",
+      "status": "fbevents.js 已載入。"
+    },
+    {
+      "atMs": 8178,
+      "label": "view-content",
+      "status": "fbevents.js 已載入。"
+    },
+    {
+      "atMs": 11224,
+      "label": "purchase",
+      "status": "fbevents.js 已載入。"
+    },
+    {
+      "atMs": 14836,
+      "label": "load",
+      "status": "fbevents.js 已載入。"
+    }
+  ],
+  "vendorRuntime": {
+    "fbqVersion": "2.9.427",
+    "gtmContainers": null,
+    "dataLayer": null
+  },
+  "cookies": [
+    {
+      "name": "_fbp",
+      "value": "fb.0.1792689805674.195365304390468163",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1800465814,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_fbc",
+      "value": "fb.0.1792689814983.capturemvjt89jy",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1800465814,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "requests": [
+    {
+      "atMs": 1571,
+      "method": "GET",
+      "resourceType": "script",
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/mermaid@10.6.1/dist/mermaid.min.js",
+      "query": {},
+      "postData": null,
+      "status": 200,
+      "responseHeaders": {
+        "content-type": "application/javascript; charset=utf-8",
+        "etag": "W/\"2ccbcc-yZW3gvhqQPDjIgGi0zkw80XNmPU\"",
+        "date": "Thu, 22 Oct 2026 17:23:23 GMT",
+        "cache-control": "public, max-age=31536000, s-maxage=31536000, immutable"
+      }
+    },
+    {
+      "atMs": 2266,
+      "method": "GET",
+      "resourceType": "script",
+      "origin": "https://connect.facebook.net",
+      "path": "/en_US/fbevents.js",
+      "query": {},
+      "postData": null,
+      "status": 200,
+      "responseHeaders": {
+        "content-type": "application/x-javascript; charset=utf-8",
+        "date": "Thu, 22 Oct 2026 17:23:25 GMT",
+        "cache-control": "public, max-age=1200"
+      },
+      "body": {
+        "bytes": 435058,
+        "sha256": "6f3aa7a0d8d9e0d26c77588a1b0a37373ba34f1095b86d93a653273fc7d315ca"
+      }
+    },
+    {
+      "atMs": 2524,
+      "method": "GET",
+      "resourceType": "script",
+      "origin": "https://connect.facebook.net",
+      "path": "/signals/config/1405650704604671",
+      "query": {
+        "v": "2.9.427",
+        "r": "stable",
+        "domain": "localhost",
+        "hme": "766752a074f0cb0756dd3275a46fdecbcfe3de1ab8f573546734b619e44d384f",
+        "ex_m": "118,241,171,27,82,83,162,78,77,11,181,102,20,153,141,46,85,90,149,176,183,8,4,5,7,6,3,103,115,32,17,31,18,33,34,35,37,55,163,87,126,22,24,51,47,49,48,95,104,108,124,160,164,53,125,29,26,133,79,43,166,165,167,157,155,30,42,66,123,178,80,21,128,93,76,23,97,98,130,96,151,150,154,109,177,180,41,56,127,54,161,72,185,110,184,210,255,84,274,273,272,14,25,28,40,62,117,68,10,73,111,112,113,119,144,38,36,146,147,148,143,142,172,86,175,173,174,57,69,67,137,19,179,52,324,325,326,323,340,362,248,237,70,238,236,365,356,59,249,121,145,92,135,61,134,140,139,65,74,168,88,89,129,44,39,60,63,114,182,1,138,16,136,12,2,64,105,15,75,71,132,101,100,187,188,106,107,9,116,186,58,158,99,91,81,131,120,169,50,159,0,94,152,156,170,45,122,13,189"
+      },
+      "postData": null,
+      "status": 200,
+      "responseHeaders": {
+        "content-type": "application/x-javascript; charset=utf-8",
+        "date": "Thu, 22 Oct 2026 17:23:25 GMT",
+        "cache-control": "public, max-age=1200"
+      }
+    },
+    {
+      "atMs": 11255,
+      "method": "GET",
+      "resourceType": "script",
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/mermaid@10.6.1/dist/mermaid.min.js",
+      "query": {},
+      "postData": null,
+      "status": 200,
+      "responseHeaders": {
+        "content-type": "application/javascript; charset=utf-8",
+        "etag": "W/\"2ccbcc-yZW3gvhqQPDjIgGi0zkw80XNmPU\"",
+        "date": "Thu, 22 Oct 2026 17:23:23 GMT",
+        "cache-control": "public, max-age=31536000, s-maxage=31536000, immutable"
+      }
+    },
+    {
+      "atMs": 11833,
+      "method": "GET",
+      "resourceType": "script",
+      "origin": "https://connect.facebook.net",
+      "path": "/en_US/fbevents.js",
+      "query": {},
+      "postData": null,
+      "status": 200,
+      "responseHeaders": {
+        "content-type": "application/x-javascript; charset=utf-8",
+        "date": "Thu, 22 Oct 2026 17:23:25 GMT",
+        "cache-control": "public, max-age=1200"
+      },
+      "body": {
+        "bytes": 435058,
+        "sha256": "6f3aa7a0d8d9e0d26c77588a1b0a37373ba34f1095b86d93a653273fc7d315ca"
+      }
+    },
+    {
+      "atMs": 11849,
+      "method": "GET",
+      "resourceType": "script",
+      "origin": "https://connect.facebook.net",
+      "path": "/signals/config/1405650704604671",
+      "query": {
+        "v": "2.9.427",
+        "r": "stable",
+        "domain": "localhost",
+        "hme": "766752a074f0cb0756dd3275a46fdecbcfe3de1ab8f573546734b619e44d384f",
+        "ex_m": "118,241,171,27,82,83,162,78,77,11,181,102,20,153,141,46,85,90,149,176,183,8,4,5,7,6,3,103,115,32,17,31,18,33,34,35,37,55,163,87,126,22,24,51,47,49,48,95,104,108,124,160,164,53,125,29,26,133,79,43,166,165,167,157,155,30,42,66,123,178,80,21,128,93,76,23,97,98,130,96,151,150,154,109,177,180,41,56,127,54,161,72,185,110,184,210,255,84,274,273,272,14,25,28,40,62,117,68,10,73,111,112,113,119,144,38,36,146,147,148,143,142,172,86,175,173,174,57,69,67,137,19,179,52,324,325,326,323,340,362,248,237,70,238,236,365,356,59,249,121,145,92,135,61,134,140,139,65,74,168,88,89,129,44,39,60,63,114,182,1,138,16,136,12,2,64,105,15,75,71,132,101,100,187,188,106,107,9,116,186,58,158,99,91,81,131,120,169,50,159,0,94,152,156,170,45,122,13,189"
+      },
+      "postData": null,
+      "status": 200,
+      "responseHeaders": {
+        "content-type": "application/x-javascript; charset=utf-8",
+        "date": "Thu, 22 Oct 2026 17:23:25 GMT",
+        "cache-control": "public, max-age=1200"
+      }
+    }
+  ]
+}

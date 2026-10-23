@@ -225,6 +225,10 @@ SDK 送出的同一份 event data 同時服務行為分析（funnel / cohort / a
 
 完整的資料格式交叉、治理衝突與分流架構見 [監控資料的雙重用途](/monitoring/telemetry-data-dual-use/)。Client-side event 到 server-side trace 的完整串接見 [4.24 Client-to-Server 觀測串接](/backend/04-observability/client-server-trace-integration/)。
 
+### Vendor：各家追蹤碼的接入與驗證
+
+[Vendor 資料夾](/monitoring/vendors/) 實測各家追蹤系統的設計：每一家有一篇機制文（事件模型、資料在哪些環節會掉、怎麼驗證送出的內容）與一頁實測頁（讀者按下按鈕才載入那一家的 script，頁面上即時列出它送出的請求與 cookie）。跟模組六的分工是接入與選型——模組六決定要不要用某一家，vendor 篇寫用了之後它怎麼運作。目前收錄廣告平台的轉換追蹤（[Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/)）與追蹤碼的部署層（[Google Tag Manager](/monitoring/vendors/google-tag-manager/)），另有一篇以 Playwright 擷取各家實際送出內容的紀錄（[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)），與一篇跨三家的帳號治理（[追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)：追蹤資產建在誰的帳號底下、權限怎麼分、換代理商與轉手時怎麼移交）。
+
 ## 學習路線
 
 | 路線             | 適合讀者                               | 建議順序                                                                                 | 讀完能做什麼                                     |

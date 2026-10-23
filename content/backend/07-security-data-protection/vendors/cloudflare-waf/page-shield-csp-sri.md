@@ -138,7 +138,7 @@ Dashboard → Page Shield → Scripts 列出所有偵測到的 script、含 *建
 **修法**：
 
 1. CSP `script-src` 精準到 *只允許特定 path*、不是整個 domain（例：`https://cdn.vendor.com/sdk/v3/` 而不是 `https://cdn.vendor.com`）
-2. 評估 vendor 是否有 *static-only* 替代（多數 marketing / analytics SDK 不需要 dynamic loader、是 legacy 設計）
+2. 評估 vendor 是否有 *static-only* 替代；tag manager 類工具的設計目的就是在執行期載入代碼，Meta Pixel 現行版本也在執行期從設定檔載入外掛，這兩類沒有 static-only 的版本，而且 `gtm.js` 的內容由容器設定產生、回應不帶 `etag`，SRI 雜湊無從固定（實測見 [用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)），處置直接走下一點的 script monitoring
 3. 不能消除 dynamic loader 時、Page Shield monitoring 設 *new script alert*、廠商加 sub-script 即刻通知
 
 ### Case 4：SRI hash mismatch，vendor 偷偷更新

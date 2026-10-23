@@ -28,3 +28,13 @@ tags: ["monitoring", "knowledge-cards"]
 | [Cohort Analysis](/monitoring/knowledge-cards/cohort-analysis/) | 有共同特徵的使用者如何被分群比較         |
 | [Funnel Analysis](/monitoring/knowledge-cards/funnel-analysis/) | 多步驟流程每一步的轉換與流失如何被看見   |
 | [RFM](/monitoring/knowledge-cards/rfm/)                         | 使用者價值如何用近期、頻率與金額三軸切分 |
+
+## 追蹤碼在瀏覽器端的行為
+
+商業追蹤碼裝進網站之後，在瀏覽器裡做的事有三件會影響資料的解讀：識別碼存在哪裡、存多久，哪些訪客的事件根本不會送出，以及網站沒有呼叫的事件從哪裡來。
+
+| 卡片                                                                  | 核心問題                                         |
+| --------------------------------------------------------------------- | ------------------------------------------------ |
+| [First-party Cookie](/monitoring/knowledge-cards/first-party-cookie/) | 追蹤碼的識別碼寫在誰的網域上、期限由誰決定       |
+| [Headless Browser](/monitoring/knowledge-cards/headless-browser/)     | 不開視窗的自動化瀏覽器會被追蹤碼怎麼對待         |
+| [Autocapture](/monitoring/knowledge-cards/autocapture/)               | 網站沒有呼叫的事件由誰產生、帶著哪些頁面上的內容 |
