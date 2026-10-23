@@ -63,7 +63,7 @@ aws iam list-attached-user-policies --user-name departed-user
 停用 SSO / IdP 帳號不會碰到主機上的登入設定，所以登入過伺服器作業系統的人要另外處理這一步：
 
 - **靜態 SSH 公鑰**：逐台從 `~/.ssh/authorized_keys` 刪除那個人的公鑰；GCP 專案還要清專案與 VM metadata 裡的 `ssh-keys`，那裡的公鑰對每一台沒啟用 OS Login 的 VM 都有效
-- **隨帳號收回或會到期的金鑰**（OS Login、SSH 憑證）：停用帳號之後下一次登入就失敗，或最晚在憑證到期時失效；私鑰外洩而等不到到期時，把憑證加進撤銷清單
+- **隨帳號收回或會到期的金鑰**（OS Login、SSH 憑證）：OS Login 在停用帳號之後下一次登入就失敗；SSH 憑證在停止簽發之後，已經簽出的那一張最晚在到期時失效，私鑰外洩而等不到到期時，把憑證加進[撤銷清單](/infra/03-network-foundation/openssh-ca-setup/#憑證外洩時提前作廢krl-撤銷清單)
 - **已經建立的工作階段**：收回只擋下一次登入，仍開著的工作階段要在主機上結束（`loginctl terminate-user <username>`，Windows 用 `logoff`）
 - **共用的救援帳號密碼**：序列主控台這類救援入口用的本機帳號密碼不隨 IdP 收回，離職者拿得到時逐台輪替
 

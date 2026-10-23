@@ -15,7 +15,7 @@ tags: ["backend", "kubernetes", "security", "container", "knowledge-card"]
 ## 可觀察訊號與例子
 
 - Pod 的 YAML 裡有 `securityContext: { privileged: true }`，常伴隨 `hostPID: true`、`hostNetwork: true` 或掛載 `hostPath: /`。
-- `kubectl debug node/<node> --profile=sysadmin` 建出的 Pod 是特權容器，節點的根目錄掛在 `/host`，`chroot /host` 之後就是節點的 shell。
+- `kubectl debug node/<node> --profile=sysadmin` 建出的 Pod 是特權容器，節點的根目錄掛在 `/host`，`chroot /host` 之後就是節點的 shell；GKE 上這個做法需要的權限與專用 namespace 的建法見[GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/03-network-foundation/gke-mig-management-access/)。
 - GKE Autopilot 這類由雲端管理節點的模式，預設拒絕特權容器，只對列入允許清單的工作負載例外。
 
 ## 設計責任

@@ -26,4 +26,4 @@ Vault 重新啟動後處於 sealed 狀態，解封之前任何服務都讀不到
 
 - [IAM](/infra/knowledge-cards/iam/)：Vault 的存取政策跟 IAM 的 policy 概念類似
 - [SSL/TLS](/infra/knowledge-cards/ssl-tls/)：Vault 的 PKI engine 可以當內部 CA 簽發數位憑證
-- [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/)：Vault 的 SSH secrets engine 簽發的就是這種憑證；只用 OpenSSH 自己簽發的流程見 [OpenSSH 內建 CA 的導入](/infra/03-network-foundation/openssh-ca-setup/)
+- [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/)：Vault 的 SSH secrets engine 簽發的就是這種憑證；只用 OpenSSH 自己簽發的流程見 [OpenSSH 內建 CA 的 SSH 憑證導入](/infra/03-network-foundation/openssh-ca-setup/)
