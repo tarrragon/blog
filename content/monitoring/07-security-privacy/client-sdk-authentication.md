@@ -18,11 +18,11 @@ tags: ["monitoring", "security", "sdk", "authentication", "client-side", "api-ke
 
 **Google Analytics 4**：評估 ID（Measurement ID，形如 `G-XXXXXXXXXX`）直接寫在網頁的 JS snippet 中，任何人檢視網頁原始碼都能取得，拿到 ID 的人可以從別的網站把事件送進同一個 GA4 資源（property，GA4 接收資料、產生報表的單位）。GA4 在接收端預設排除已知的機器人流量，另外提供要自己建立的主機名稱篩選器。Measurement Protocol（server-to-server）需要額外的 API secret，但 client-side 的 gtag.js 不需要。
 
-已知機器人排除（known bot-traffic exclusion）無法關閉：Google 依自己的研究與 IAB（Interactive Advertising Bureau，網路廣告業的產業組織）維護的 International Spiders and Bots List 辨識機器人與爬蟲流量，排除了多少不會顯示在報表上。
+已知機器人排除（known bot-traffic exclusion）無法關閉：Google 依自己的研究與 IAB（Interactive Advertising Bureau，網路廣告業的產業組織）維護的 International Spiders and Bots List 辨識機器人與爬蟲流量，排除了多少不會顯示在報表上。這項排除認的是已知機器人的特徵，拿外流的 ID 偽造事件的人不必讓請求帶著這些特徵，所以它處理的是報表裡的爬蟲流量，不是對 ID 濫用的防護。
 
-主機名稱篩選器（Web hostname traffic filter）是資源的資料篩選器之一，由編輯者以上的成員建立，設成「只包含」本站網域之後，主機名稱不符的事件不會被處理。篩選器啟用後要 24 到 36 小時才生效、只套用到之後收到的資料，被排除的資料永久不會進報表與 BigQuery；篩選器另有測試狀態，只標記符合條件的資料、不排除，管理者可以先看過標記結果再啟用。Google 的說明頁把這個篩選器寫成提高報表準確度的工具，沒有寫成防護。說明頁沒有寫主機名稱從請求的哪一個欄位取得；gtag.js 送出的每一筆事件都帶著它組出的頁面網址（`dl` 參數），而這個網址與請求的其餘內容一樣由送出請求的一方填寫，所以篩選器擋得掉別的網站誤裝或複製同一個 ID 送來的流量，擋不掉刻意把網址填成本站網域的偽造請求（由請求格式推出）。
+主機名稱篩選器（Web hostname traffic filter）是資源的資料篩選器之一，由編輯者以上的成員建立，設成「只包含」自己網站的網域之後，主機名稱不符的事件不會被處理。篩選器啟用後要 24 到 36 小時才生效、只套用到之後收到的資料，被排除的資料永久不會進報表與 BigQuery；篩選器另有測試狀態，只標記符合條件的資料、不排除，作用是讓設定錯誤在排除生效之前就看得出來，因為排除生效之後被擋掉的資料找不回來。Google 的說明頁把這個篩選器寫成提高報表準確度的工具，沒有寫成防護。說明頁沒有寫主機名稱從請求的哪一個欄位取得；gtag.js 送出的每一筆事件都帶著它組出的頁面網址（`dl` 參數），而這個網址與請求的其餘內容一樣由送出請求的一方填寫，所以篩選器擋得掉別的網站誤裝或複製同一個 ID 送來的流量，擋不掉刻意把網址填成那個網站網域的偽造請求（由請求格式推出）。
 
-**Meta Pixel**：Pixel ID（也就是 Meta 資料集的 ID）同樣寫在網頁的 snippet 裡，任何人都能拿它從別的網站送事件。實測的這個 Pixel，瀏覽器端的過濾來自設定檔帶來的 `botblocking` 外掛：它拿瀏覽器的 User-Agent 比對一份機器人規則清單，比對成功的事件在送出之前就被攔下；這個外掛與它的規則由 Meta 依每個 Pixel 的設定檔下發，所以不同 Pixel、不同時間的結果可能不同。這道過濾在送出端執行，自行構造請求、不經過 `fbevents.js` 的人不受它影響（實測與機制見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)的〈擷取方式〉一節）。Meta 的資料集不能刪除也不能轉移，所以有人拿外流的 ID 送進假事件之後，網站能做的只有另建一個新的資料集、換掉網頁上的 ID，舊資料集累積的事件不會跟著搬過去（資料集的歸屬規則見[追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)的〈追蹤資產換擁有者的條件〉一節）。
+**Meta Pixel**：Pixel ID（也就是 Meta 資料集的 ID）同樣寫在網頁的 snippet 裡，任何人都能拿它從別的網站送事件。實測的這個 Pixel，瀏覽器端的過濾來自設定檔載入的 `botblocking` 模組（Pixel 設定檔怎麼載入模組見 [Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/)）：它拿瀏覽器的 User-Agent 比對一份機器人規則清單，比對成功的事件在送出之前就被攔下；這個模組與它的規則由 Meta 依每個 Pixel 的設定檔下發，所以不同 Pixel、不同時間的結果可能不同。這道過濾在訪客的瀏覽器裡、事件送出之前執行，自行構造請求、不經過 `fbevents.js` 的人不受它影響（實測與機制見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)的〈擷取方式〉一節）。Meta 的資料集不能刪除也不能轉移，所以有人拿外流的 ID 送進假事件之後，網站能做的只有另建一個新的資料集、換掉網頁上的 ID，舊資料集累積的事件不會跟著搬過去（資料集的歸屬規則見[追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)的〈追蹤資產換擁有者的條件〉一節）。
 
 **Sentry**：DSN（Data Source Name）包含 project ID 和 public key，直接嵌在 SDK init 的程式碼中。Sentry 官方文件明確標示 DSN 是 public 的 — 攻擊者取得 DSN 只能送事件，不能讀取已收集的資料。防護靠 rate limit（每個 project 的 events/sec 上限）、allowed domains（只接受來自白名單 domain 的事件）、和 server-side 的 event 去重。
 

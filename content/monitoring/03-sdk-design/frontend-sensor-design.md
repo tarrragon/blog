@@ -26,7 +26,7 @@ tags: ["monitoring", "sdk-design", "sensor", "frontend", "instrumentation", "sam
 
 **Flutter**：用 NavigatorObserver 或 custom GestureDetector wrapper。GestureDetector 包裝在需要追蹤的 widget 外層，onTap 觸發時送出事件。
 
-商業追蹤碼走的是相反的預設，業界稱為[自動事件收集](/monitoring/knowledge-cards/autocapture/)（autocapture）：由追蹤碼的 script 自己決定要送出哪些互動，開發者不必逐一標記。實測時 Meta Pixel 載入後，每按一次頁面上的按鈕，設定檔帶來的外掛就自動加送一筆 `SubscribedButtonClick`，內容包含按鈕文字與按鈕、頁面的特徵，網站沒有為那顆按鈕寫任何追蹤程式（實測見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)的〈各次擷取的結果〉）。兩種預設的取捨方向相反：標記式感測器會漏掉沒被標記的元素，換到的是送出的欄位全部由開發者決定；自動收集不漏元素，而送出什麼由 vendor 的設定檔決定、會隨 vendor 改版變動，盤點網站送出哪些資料時要把這些自動事件一併算進去。
+Web 感測器以 `data-track` 標記決定追蹤哪些元素，這種做法是手動埋點。商業追蹤碼走的是相反的預設，業界稱為[自動事件收集](/monitoring/knowledge-cards/autocapture/)（autocapture）：由追蹤碼的 script 自己決定要送出哪些互動，開發者不必逐一標記。實測時 Meta Pixel 載入後，每按一次頁面上的按鈕，[設定檔載入的模組](/monitoring/vendors/meta-pixel-conversions-api/)就自動加送一筆 `SubscribedButtonClick`，內容包含按鈕文字與按鈕、頁面的特徵，網站沒有為那顆按鈕寫任何追蹤程式（實測見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)的〈各次擷取的結果〉）。兩種預設的取捨方向相反：以 `data-track` 標記的感測器會漏掉沒被標記的元素，換到的是送出的欄位全部由開發者決定；自動收集不需要逐一標記，而涵蓋哪些元素、送出什麼由 vendor 的設定檔決定、會隨 vendor 改版變動，盤點網站送出哪些資料時要把這些自動事件一併算進去。
 
 ### 效能影響
 

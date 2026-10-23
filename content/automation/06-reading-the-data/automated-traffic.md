@@ -54,8 +54,6 @@ beacon 靠 JavaScript 觸發，所以**只有會執行 JS 的抓取工具才會�
 
 **UA 比對抓的是自我申報。** 搜尋引擎與正派的抓取服務會在 `User-Agent` 裡寫明自己是誰，這是它們與網站經營者之間的慣例。比對這個字樣不會誤判真人，因為真人的瀏覽器不會自稱是機器。
 
-Meta Pixel 在送出端做同一種比對，處置卻相反。實測的那個 Pixel，設定檔帶來一個 `botblocking` 外掛，拿 `navigator.userAgent` 比對一份機器人規則清單，清單裡有無頭 Chrome 的 `HeadlessChrome` 字樣，比對成功的事件在瀏覽器裡就被攔下、不送出；用 Playwright 預設的無頭模式打開實測頁，`fbevents.js` 照常載入、cookie 照常寫入，而 PageView、ViewContent 與購買事件一筆都沒有送出（實測與機制見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)的〈擷取方式〉一節）。同一次[無頭瀏覽器](/monitoring/knowledge-cards/headless-browser/)的訪問，本站的 beacon 照樣送出，訊號欄是 `webdriver,ua:headless`：`navigator.webdriver` 為真帶出 `webdriver`，User-Agent 裡的 `headless` 被〈具名比對與通用退回〉一節的通用比對接住；Meta 的報表裡沒有這一筆，所以兩邊的訪問數對不上時，差額裡有一部分是這種在送出端就被丟掉的機器流量。GA4 不在送出端過濾，它的代碼在無頭模式下照常送出事件，已知機器人的排除在 Google 的接收端進行（見[Client-side SDK 認證的根本限制](/monitoring/07-security-privacy/client-sdk-authentication/)的 GA4 段）。
-
 **空語言清單與零視窗尺寸原本是無頭環境的特徵，而這兩條正在失效。** Chrome 112 起的新無頭模式會建立一個不顯示的平台視窗，並帶有正常的語言偏好，兩項特徵大多不再成立。它們的誤差方向因此從「誤判真人」偏向「漏判機器」——保留是因為舊版工具仍在使用中，但不能當作主力。
 
 因為誤差方向不同，**記錄下來的是命中了哪些訊號、而不是一個布林結論**：
@@ -180,6 +178,8 @@ else if (generic) hits.push("ua:generic:" + generic[0].toLowerCase().replace(/[^
 **總量守恆檢查的前提就是列沒有被丟掉**。前端過濾會讓分母本身失真，而分母失真時所有比例都不可信。
 
 代價是試算表多存一些列，以及彙總時必須記得過濾。
+
+商業追蹤碼裡有一個選了另一種處置的對照。Meta Pixel 在訪客的瀏覽器裡、事件送出之前做同一種 User-Agent 比對，比對到無頭 Chrome 的 `HeadlessChrome` 字樣就把事件丟掉、不送出：用 Playwright 預設的[無頭瀏覽器](/monitoring/knowledge-cards/headless-browser/)打開實測頁時，`fbevents.js` 照常載入、cookie 照常寫入，而 PageView、ViewContent 與購買事件一筆都沒有送出（機制與實測見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)）。同一次訪問，本站的 beacon 照樣送出一列，訊號欄記下 `webdriver,ua:headless`。所以本站統計與 Meta 報表的訪問數對不上時，差額裡有一部分是 Meta 在瀏覽器裡就丟掉、本站只標記的機器流量，而這些事件事後也補不進 Meta 的報表。GA4 的代碼在無頭模式下照常送出事件，已知機器人的排除在 Google 的伺服器端進行，排除了多少看不到。
 
 對免費配額敏感、或流量大到列數成為問題時，取捨會反過來——那時應該只丟棄高信心訊號（`webdriver` 與具名 UA）命中的部分，中信心與行為訊號仍然照常記錄。
 

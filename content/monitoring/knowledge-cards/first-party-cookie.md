@@ -14,7 +14,7 @@ tags: ["monitoring", "cookie", "privacy", "vendor", "knowledge-card"]
 
 ## cookie 期限的設定者與瀏覽器上限
 
-cookie 的到期時間由寫入它的 script 設定，再受瀏覽器的規則截斷。Chrome 從 104 版起把任何 cookie 的到期時間上限訂為 400 天，要求更久的 cookie 會被改成 400 天；Safari 的 Intelligent Tracking Prevention（ITP）另外限制 JavaScript 寫入的儲存資料，Google 的 cookie 說明頁把它寫成使用者沒有再造訪時最長 7 天。所以同一個追蹤碼在不同瀏覽器上的 cookie 壽命不同：GA4 代碼替 `_ga` 與 `_ga_<評估 ID>` 設的預設期限是兩年，在 Chromium 上實測看到的 400 天是瀏覽器的上限，不是 GA4 的設定。
+cookie 的到期時間由寫入它的 script 設定，再受瀏覽器的規則截斷。Chrome 從 104 版起把任何 cookie 的到期時間上限訂為 400 天，要求更久的 cookie 會被改成 400 天；Safari 的 Intelligent Tracking Prevention（ITP）另外限制 JavaScript 寫入的儲存資料，Google 的 cookie 說明頁把這項限制寫成：使用者沒有再造訪時，cookie 最長留 7 天。所以同一個追蹤碼在不同瀏覽器上的 cookie 壽命不同：GA4 代碼替 `_ga` 與 `_ga_<評估 ID>` 設的預設期限是兩年，在 Chromium 上實測看到的 400 天是瀏覽器的上限，不是 GA4 的設定。
 
 ## 可觀察訊號與例子
 
@@ -22,7 +22,7 @@ cookie 的到期時間由寫入它的 script 設定，再受瀏覽器的規則�
 
 ## 判讀方式
 
-判斷一個 cookie 的限制條件時，先看它寫在哪個網域、由 JavaScript 寫入還是由伺服器回應的 `Set-Cookie` 標頭寫入：瀏覽器封鎖第三方 cookie 不影響第一方 cookie，而 ITP 對 JavaScript 寫入的第一方 cookie 仍然生效，所以同一個人隔一週以上才在 Safari 上回來時，可能被追蹤碼當成另一個瀏覽器。在歐盟 ePrivacy 指令下，判斷是否要取得使用者同意時，看的是「在使用者的裝置上儲存或讀取資訊」這個動作，第一方或第三方都在範圍內；把識別碼寫成第一方 cookie 改變的是瀏覽器的限制，改變不了這條同意的要求。
+一個 cookie 受哪些限制，取決於兩個屬性：它寫在哪個網域，以及它由 JavaScript 寫入還是由伺服器回應的 `Set-Cookie` 標頭寫入。寫入方式可以在 Network 面板分辨：某個回應的 `Set-Cookie` 標頭帶著這個名稱，就是伺服器寫的；所有回應都沒有、而它在 script 執行之後出現，就是 JavaScript 寫的。網域決定瀏覽器的第三方 cookie 封鎖管不管得到它，封鎖第三方 cookie 不影響第一方 cookie；寫入方式決定 ITP 管不管得到它，ITP 對 JavaScript 寫入的第一方 cookie 仍然生效，所以同一個人隔一週以上才在 Safari 上回來時，可能被追蹤碼當成另一個瀏覽器。在歐盟 ePrivacy 指令下，判斷是否要取得使用者同意時，看的是「在使用者的裝置上儲存或讀取資訊」這個動作，第一方或第三方都在範圍內；把識別碼寫成第一方 cookie 改變的是瀏覽器的限制，改變不了這條同意的要求。
 
 ## 完整章節
 
