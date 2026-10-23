@@ -12,16 +12,16 @@ tags: ["macos", "disk-space", "android", "flutter", "xcode", "docker", "tooling"
 
 判斷一項佔用是否可以刪除，依據是刪掉之後由誰把它重建回來，以及因此刪除前要先查證什麼。開發機上的大戶依這個依據分成四類：
 
-| 類別               | 刪除後由誰重建                                                 | 刪除前要查證的事                                 | 刪除的代價                               |
-| ------------------ | -------------------------------------------------------------- | ------------------------------------------------ | ---------------------------------------- |
-| 專案編譯產物       | 下次 build 由建置工具重新產生                                  | 清單裡是否混著被忽略的機密、文件或平台專案       | 下一次 build 變慢                        |
-| 快取               | 產生它的套件管理器、IDE 或 App，從原本的來源重新下載或重新產生 | 重建的來源是否還在                               | 下一次使用變慢，有些要消耗網路流量       |
-| 並存的工具鏈版本   | 還有設定指向它時，由建置工具自動下載，或由人重新安裝           | 是否還有仍在開發的專案、裝置設定或測試需求指向它 | 被刪的版本若仍被指向，需要重新下載或裝回 |
-| 狀態資料與虛擬磁碟 | 沒有人會重建                                                   | 裡面的資料是否還有人要                           | 資料直接消失                             |
+| 類別               | 刪除後由誰重建                                                       | 刪除前要查證的事                                 | 刪除的代價                               |
+| ------------------ | -------------------------------------------------------------------- | ------------------------------------------------ | ---------------------------------------- |
+| 專案編譯產物       | 下次 build 由建置工具重新產生                                        | 清單裡是否混著被忽略的機密、文件或平台專案       | 下一次 build 變慢                        |
+| 快取               | 產生它的套件管理器、IDE 或 App，從原本的來源重新下載或重新產生       | 重建的來源是否還在                               | 下一次使用變慢，有些要消耗網路流量       |
+| 並存的工具鏈版本   | 還有設定指向它時，Gradle 與 NDK 由建置工具自動下載，其餘由人重新安裝 | 是否還有仍在開發的專案、裝置設定或測試需求指向它 | 被刪的版本若仍被指向，需要重新下載或裝回 |
+| 狀態資料與虛擬磁碟 | 沒有人會重建                                                         | 裡面的資料是否還有人要                           | 資料直接消失                             |
 
 狀態資料指程式執行時寫下、無法從原始碼或網路重新取得的資料：資料庫內容、登入狀態、設定、使用者建立的檔案、模擬器裝置裡裝的 App 與資料。它沒有重建者，所以刪除的判斷依據換成「這些資料還有沒有人要」。
 
-編譯產物與快取刪除之後由工具自動重建，前提是重建所需的來源還在：產物要原始碼在，快取要原本的下載來源還能連得上。並存版本與狀態資料各有一個要先查的事，下列各節分別寫出查法。
+編譯產物與快取刪除之後由工具自動重建，前提是重建所需的來源還在：產物要原始碼在，快取要原本的下載來源還能連得上。並存版本要查是否還有設定指向它，狀態資料要查是否還有人要，各工具的查法寫在下列各節。
 
 ## 專案目錄內的編譯產物
 
@@ -100,13 +100,13 @@ pgrep -fl GradleDaemon
 
 `~/.gradle` 底下另有兩個目錄不屬於快取，兩者都是並存版本：`~/.gradle/wrapper/dists` 是各版本的 Gradle 本體，`~/.gradle/jdks` 是 Gradle toolchain 自動下載的 JDK，判斷方式見〈並存的工具鏈版本〉。
 
-`~/Library/Caches` 以外，`~/Library` 底下屬於 App 的資料（`Application Support`、`Containers`）多半是狀態資料，刪除後 App 會回到初次安裝的狀態，判斷方式不同。表格裡的 `vm_bundles` 雖然放在 `Application Support`，內容是 Claude 桌面版下載的虛擬機映像、沒有使用者資料，App 會自己重新佈建，所以歸在快取；兩者的分界與各位置的性質見 [macOS App 聚合佔用報告](../macos_app_footprint_report/)。
+`~/Library/Caches` 以外，`~/Library` 底下屬於 App 的資料（`Application Support`、`Containers`）多半是狀態資料，刪除後 App 會回到初次安裝的狀態，判斷方式不同。表格裡的 `vm_bundles` 雖然放在 `Application Support`，內容是 Claude 桌面版下載的虛擬機映像、沒有使用者資料，App 會自己重新佈建，所以歸在快取；`~/Library` 各位置裡快取與狀態資料的分界，見 [macOS App 聚合佔用報告](../macos_app_footprint_report/)。
 
 ## 並存的工具鏈版本
 
-並存版本是同一個工具的多個版本同時裝在機器上。它們累積的機制相同：每個專案各自指定要用的版本，建置工具照指定下載，而 NDK、Android SDK 元件、模擬器映像、iOS runtime、fvm 的 Flutter SDK 都沒有任何工具會在專案改用新版之後移除舊版。Gradle 本體與 Homebrew 是例外：兩者都有自動清理舊版的機制，只是清理要等工具本身執行過才會發生，各自的條件寫在下面對應的小節。
+並存版本是同一個工具的多個版本同時裝在機器上。它們累積的機制相同：每個專案各自指定要用的版本，建置工具照指定下載，而 NDK、Android SDK 元件、模擬器映像、iOS runtime、fvm 的 Flutter SDK 都沒有任何工具會在專案改用新版之後移除舊版。Gradle 本體與 Homebrew 的舊版套件同樣會累積，而兩者都有自動清理舊版的機制，只是清理要等工具本身執行過才會發生，各自的條件寫在下面對應的小節。
 
-判斷一個版本是否可以刪除，要查目前是否還有設定指向它，而且指向它的專案是否還在開發：已經封存並驗證過、之後不會再 build 的專案，它的設定不算數。指向它的設定依工具而不同：
+判斷一個版本是否可以刪除，要查目前是否還有設定指向它，而且指向它的專案是否還在開發：已經封存並驗證過、之後不會再 build 的專案，那個專案的設定不算數。指向它的設定依工具而不同：
 
 | 版本                                  | 指向它的設定                                                         |
 | ------------------------------------- | -------------------------------------------------------------------- |
@@ -117,14 +117,15 @@ pgrep -fl GradleDaemon
 | Android 模擬器映像                    | 模擬器裝置（AVD）的設定檔                                            |
 | iOS runtime                           | 是否還要在那個 iOS 版本上測試                                        |
 | Flutter SDK                           | 各專案的 `.fvmrc` 與 fvm 的全域版本                                  |
+| Homebrew 的舊版套件                   | 沒有設定指向舊版；Homebrew 每個套件只連結一個版本                    |
 
 被刪的版本若仍被指向，Gradle 會在下次 build 時由 wrapper 重新下載，NDK 與 Android SDK 元件在符合〈Android NDK〉寫的條件時由 Android Gradle Plugin 重新下載；模擬器映像、iOS runtime 與 Flutter SDK 要由人手動裝回。
 
-列出指向設定時，專案可能不只放在一個根目錄（Android Studio 預設建立在 `~/AndroidStudioProjects`），下列各節的 `find` 要對每個根目錄各跑一次。專案裡的巢狀 package（例如 `packages/` 底下的本地 plugin）有自己的 wrapper 與 `.fvmrc`，而建置 App 時用的是 App 本身的設定，巢狀 package 的設定不決定 App 的建置。
+列出指向設定時，專案可能不只放在一個根目錄（Android Studio 預設建立在 `~/AndroidStudioProjects`），下列各節的 `find` 要對每個根目錄各跑一次。專案裡的巢狀 package（例如 `packages/` 底下的本地 plugin）可能有自己的 Gradle wrapper 與 `.fvmrc`，這兩項不決定 App 的建置，建置 App 時用的是 App 本身的設定；但 Android plugin 各自的 `compileSdk` 與 `ndkVersion` 在 build App 時同樣會用到，列 platforms 與 NDK 時要一起算。
 
 ### Gradle 本體與 toolchain 的 JDK
 
-Gradle 的版本由每個專案的 `gradle/wrapper/gradle-wrapper.properties` 的 `distributionUrl` 指定，wrapper（專案裡的 `gradlew` 腳本，負責下載並啟動專案指定版本的 Gradle）照這個網址下載 Gradle 本體到 `~/.gradle/wrapper/dists/`。Gradle 也會自動刪除一段時間沒用過的舊版發行版，條件見〈套件管理器、IDE 與 App 的快取〉引用的同一份官方文件。列出所有專案指定的版本：
+Gradle 的版本由每個專案的 `gradle/wrapper/gradle-wrapper.properties` 的 `distributionUrl` 指定，wrapper（專案裡的 `gradlew` 腳本，負責下載並啟動專案指定版本的 Gradle）照這個網址下載 Gradle 本體到 `~/.gradle/wrapper/dists/`。Gradle 執行時會在背景刪除閒置一段時間的舊版發行版（官方文件寫的預設是 30 天，以〈套件管理器、IDE 與 App 的快取〉引用的那份文件為準）。列出所有專案指定的版本：
 
 ```bash
 # 引數 ~/project 換成存放專案的根目錄；-H 在每一行前面印出設定檔路徑，看得出是哪個專案指定的
@@ -134,22 +135,32 @@ find ~/project -name gradle-wrapper.properties -not -path '*/build/*' \
 
 `dists/` 裡不在這份清單上的版本可以刪。目錄名稱裡有一類要單獨辨識：目錄底下只有 `.zip.part` 與 `.zip.lck` 的，是下載中斷的殘檔；名稱像 `gradle-REPLACEME-all` 的，是某個專案範本的佔位字串沒有被替換，wrapper 照著字面去下載而留下的目錄。這兩類不會有專案能用，直接刪。
 
-`~/.gradle/jdks` 底下每個 JDK 一個目錄，對照各專案建置設定裡的 toolchain 版本，沒有專案指定的版本可以刪；目錄裡殘留的 `.tar.gz` 是下載後沒清掉的壓縮檔，直接刪。
+`~/.gradle/jdks` 底下每個 JDK 一個目錄，toolchain 是 Gradle 依專案建置設定指定的 JDK 版本自動下載並使用 JDK 的機制。對照各專案的 toolchain 版本，沒有專案指定的版本可以刪；目錄裡殘留的 `.tar.gz` 是下載後沒清掉的壓縮檔，直接刪：
+
+```bash
+# 引數 ~/project 換成存放專案的根目錄；列出各專案建置設定裡指定的 JDK 版本
+find ~/project \( -name 'build.gradle*' -o -name 'gradle-daemon-jvm.properties' \) -not -path '*/build/*' \
+  -exec grep -HE 'jvmToolchain|languageVersion|toolchainVersion' {} \;
+```
 
 ### Android NDK
 
-NDK 版本由專案的 `android/app/build.gradle`（新建的 Flutter 專案是 `build.gradle.kts`）的 `ndkVersion` 指定。Flutter 專案多半寫成 `ndkVersion = flutter.ndkVersion`，版本由使用中的 Flutter SDK 決定，值寫在 Flutter SDK 裡：
+NDK 版本由專案的 `android/app/build.gradle`（新建的 Flutter 專案是 `build.gradle.kts`）的 `ndkVersion` 指定。Flutter 專案多半寫成 `ndkVersion = flutter.ndkVersion`，版本由使用中的 Flutter SDK 決定，值寫在 Flutter SDK 的 Gradle 外掛裡：
 
 ```bash
 # 引數換成 Flutter SDK 的根目錄（fvm 管理的版本在 ~/fvm/versions/<版本> 底下）
-grep -n 'const ndkVersion' <flutter-sdk>/packages/flutter_tools/lib/src/android/gradle_utils.dart
+# 新版 SDK 的值在 FlutterExtension.kt 的 val ndkVersion，舊版在 Groovy 檔的 String ndkVersion
+grep -rnE 'val ndkVersion:|String ndkVersion =' <flutter-sdk>/packages/flutter_tools/gradle/
+
+# 本機沒安裝的 Flutter 版本，從 fvm 的 git 快取查；<版本> 換成 Flutter 的版本 tag，例如 3.29.0
+git -C ~/fvm/cache.git grep -nE 'val ndkVersion:|String ndkVersion =' <版本> -- packages/flutter_tools/gradle/
 ```
 
-所以同一個專案換了 Flutter 版本，要的 NDK 也跟著換。對照各專案使用的 Flutter 版本（各專案的版本寫在 `.fvmrc`，列法見〈Flutter SDK〉）列出需要的 NDK，保留這些版本，其餘的刪除。專案指定的 Flutter 版本本機沒有安裝時，查不到它要的 NDK，也不必為它保留：之後重新安裝那個 SDK、build 時，缺的 NDK 會自動下載。
+所以同一個專案換了 Flutter 版本，要的 NDK 也跟著換。對照各專案使用的 Flutter 版本（各專案的版本寫在 `.fvmrc`，列法見〈Flutter SDK〉）列出需要的 NDK，保留這些版本，其餘的刪除。專案指定的 Flutter 版本本機沒有安裝時，可以用上面第二條指令查出它要的 NDK；也可以不為那個專案保留 NDK：之後重新安裝那個 Flutter SDK、build 時，缺的 NDK 會自動下載。
 
 自動下載的條件是 Android Gradle Plugin 4.2 以上、而且已經用 `sdkmanager --licenses` 接受過授權；授權沒接受過，build 會直接失敗。
 
-比較 NDK 版本的新舊要看主版本號，版本號最後一段的 build 號只反映發行的先後：修補版可能在下一個主版本之後才發行，所以 28.2 的 build 號可能比 29.0 的大，而較新的仍是 29.0。
+比較 NDK 版本的新舊要看主版本號，版本號最後一段的 build 號只反映發行的先後：修補版可能在下一個主版本之後才發行，所以 `28.2.13676358` 的 build 號（13676358）比 `29.0.13599879` 的（13599879）大，而較新的仍是主版本號較大的 29.0。
 
 NDK、platforms、build-tools、模擬器映像這類 Android SDK 元件用 `sdkmanager` 移除，它會同時更新 SDK 的安裝紀錄。套件名稱要完整寫出，先列出已安裝的套件取得正確名稱：
 
@@ -179,7 +190,7 @@ SDKMANAGER=~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager
 grep -h 'image.sysdir' ~/.android/avd/*.avd/config.ini
 ```
 
-沒有被任何 AVD 指向的映像，同樣用 `sdkmanager --uninstall` 移除，套件名稱取自 `--list_installed` 的輸出。要保留一個映像以便日後建 AVD 時，保留最新 API 版本、符合測試需求的那一種：名稱帶 `google_apis_playstore` 的內建 Google Play 服務，測試登入、推播這類依賴 Play 服務的功能要用它；`google_apis` 有 Google API 但沒有 Play 商店，可以取得 root 權限；`default` 是不含 Google 服務的原生 Android。名稱另外帶 `ps16k` 的是 16KB 記憶體分頁的測試版本，帶 `tablet` 的是平板預設組態，只在需要測試這兩種情境時才用得到。
+沒有被任何 AVD 指向的映像，同樣用 `sdkmanager --uninstall` 移除，套件名稱取自 `--list_installed` 的輸出。要保留一個映像以便日後建 AVD 時，保留最新 API 版本、符合測試需求的那一種：`google_apis_playstore` 與 `google_apis` 都有 Google Play 服務，測試登入、推播用任一種都可以；`google_apis_playstore` 另外內建 Play 商店、以正式金鑰簽章，不能取得 root 權限，要測試從 Play 商店安裝的流程時用它；`default` 是不含 Google 服務的原生 Android。名稱另外帶 `ps16k` 的是 16KB 記憶體分頁的測試版本，帶 `tablet` 的是平板預設組態，只在需要測試這兩種情境時才用得到。
 
 ### iOS 模擬器 runtime 與模擬器裝置
 
@@ -193,9 +204,9 @@ xcrun simctl runtime list -v
 du -sh /Library/Developer/CoreSimulator/Cryptex/Images/bundle
 ```
 
-runtime 由哪幾個磁碟映像組成、各自存在哪裡，在 [iOS Simulator Runtime 架構](../macos_ios_simulator_runtime_architecture/)。判斷 runtime 是否可以刪除，依據是是否還要在那個 iOS 版本上測試，`Last Used At` 是參考。
+runtime 由哪幾個磁碟映像組成、各自存在哪裡，在 [iOS Simulator Runtime 架構](../macos_ios_simulator_runtime_architecture/)。判斷 runtime 是否可以刪除，依據是是否還要在那個 iOS 版本上測試；`Last Used At` 顯示這個 runtime 最後一次被模擬器使用的時間，很久沒用的版本是刪除的候選，最後仍以測試需求決定。
 
-模擬器裝置是另一份佔用：每一台裝置一個目錄，存在 `~/Library/Developer/CoreSimulator/Devices`，裡面是裝進去的 App 與它們的資料，屬於狀態資料。裝置綁在某一個 runtime 上，刪除 runtime 時，先刪掉綁在它上面的裝置，再刪 runtime：
+模擬器裝置是另一份佔用：每一台裝置一個目錄，存在 `~/Library/Developer/CoreSimulator/Devices`，裡面是裝進去的 App 與它們的資料，屬於狀態資料。裝置綁在某一個 runtime 上，刪除 runtime 時，先逐台刪除綁在它上面的裝置，再刪 runtime，最後清掉殘留的不可用裝置。先刪裝置的理由是逐台確認：裝置裡是狀態資料，逐台刪除時看得到刪的是哪一台；只刪 runtime 再一次清掉不可用裝置也能清乾淨，但不會經過這個確認：
 
 ```bash
 # 引數換成要刪除的 iOS 版本名稱（與 runtime list 顯示的一致），列出綁在它上面的裝置與各自的 UUID
@@ -211,7 +222,7 @@ xcrun simctl runtime delete <runtime-uuid>
 xcrun simctl delete unavailable
 ```
 
-`xcrun simctl delete unavailable` 只刪除 runtime 已經不存在的裝置；runtime 還裝著時，綁在它上面的裝置狀態是可用的，這條指令碰不到它們，所以要逐台用 UUID 刪除。要保留裝置、只清掉裡面的 App 與資料時，用 `xcrun simctl erase <device-uuid>`。
+`xcrun simctl delete unavailable` 刪除的是目前的 Xcode 不再支援的裝置，包括 runtime 已經被刪掉的裝置；runtime 還裝著而且 Xcode 支援時，綁在它上面的裝置狀態是可用的，這條指令碰不到它們。要保留裝置、只清掉裡面的 App 與資料時，用 `xcrun simctl erase <device-uuid>`。
 
 ### Flutter SDK
 
@@ -243,21 +254,27 @@ OrbStack、Docker Desktop 這類容器工具把整台 Linux 虛擬機的磁碟�
 # 列出 image、容器、volume 與 build cache 各佔多少，以及其中可回收的量
 docker system df
 
-# 只清快取類：沒有容器使用的 image（之後可以從 registry 重新拉取）與 build cache
+# 只清快取類：沒有容器使用的 image 與 build cache
+# 本機 build、沒推上 registry 的 image 也會被刪，刪除後只能重新 build；先用 docker images 確認
 docker image prune -a
+# 清掉未使用的 build cache；-a 的範圍依 Docker 版本而不同，用 --help 確認
 docker builder prune
 
 # 刪除停止的容器之前，先列出它們，逐一確認裡面沒有要留的資料
 docker ps -a --filter status=exited
 docker container prune
 
-# --volumes 刪除沒有容器使用的匿名 volume；有名稱的 volume（例如 compose 建立的資料庫 volume）要另外清
-# 兩條都會刪除資料，先確認 volume 裡沒有要留的東西
+# 列出沒有容器使用的 volume，逐一確認裡面沒有要留的資料
+docker volume ls --filter dangling=true
+
+# --volumes 刪除沒有容器使用的匿名 volume（沒有名稱的 volume）
 docker system prune -a --volumes
+
+# volume prune 加上 -a 時，連有名稱的 volume（例如 compose 建立的資料庫 volume）也一起刪除；不加 -a 只刪匿名 volume
 docker volume prune -a
 ```
 
-加上 `-a` 時，`docker image prune` 也刪除沒有任何容器使用的 image，少了它只會刪除沒有標籤的懸空（dangling）image。本機 build、沒有推上 registry 的 image 刪除之後只能重新 build，這類 image 要先確認 Dockerfile 還在。`docker system prune` 碰不到 OrbStack 的 Linux 機器，那些用 `orbctl list` 列出、`orbctl delete <機器名稱>` 刪除，或在 OrbStack 視窗裡刪除。
+加上 `-a` 時，`docker image prune` 也刪除沒有任何容器使用的 image，少了它只會刪除沒有標籤的懸空（dangling）image。`docker system prune` 碰不到 OrbStack 的 Linux 機器，那些用 `orbctl list` 列出、`orbctl delete <機器名稱>` 刪除，或在 OrbStack 視窗裡刪除。
 
 虛擬機裡釋放的空間要經過虛擬化層才回到主機，回收的方式依工具而定。清完之後用 `du -sh` 量一次虛擬磁碟檔確認是否變小：Docker Desktop 的虛擬磁碟檔位置在它的 Settings 裡 Resources 的 Disk image location；OrbStack 的資料目錄在 `~/Library/Group Containers/` 底下名稱含 `dev.orbstack` 的目錄裡。OrbStack 會在容器內刪除資料後自動縮小檔案；Docker Desktop 沒有縮小時，它的文件提供一條 `docker run --privileged --pid=host docker/desktop-reclaim-space` 指令觸發回收。
 
@@ -267,7 +284,7 @@ docker volume prune -a
 
 ```bash
 # 引數 ~/project 換成存放專案的根目錄；列出各專案 macOS 版的 bundle id，對照 ~/Library/Containers 底下的目錄名稱
-grep -H 'PRODUCT_BUNDLE_IDENTIFIER' ~/project/*/macos/Runner/Configs/AppInfo.xcconfig
+find ~/project -path '*/macos/Runner/Configs/AppInfo.xcconfig' -exec grep -H PRODUCT_BUNDLE_IDENTIFIER {} \;
 ```
 
 目錄裡是狀態資料，沒有重建者；專案停止開發之後，這些資料是開發時測試留下的，沒有人還需要，所以可以刪除。
@@ -276,14 +293,14 @@ grep -H 'PRODUCT_BUNDLE_IDENTIFIER' ~/project/*/macos/Runner/Configs/AppInfo.xcc
 
 ## 定期檢查清單：各類佔用的清理方式與刪除前的查證
 
-- **不再開發的專案的編譯產物**：在專案根目錄跑 `git clean -ndX` 預演，清單裡的目錄用 `find -type f` 看內容；全是產物時用 `git clean -fdX` 刪除，有金鑰、`.env`、文件、腳本或平台專案時逐個目錄刪除。已發佈版本的符號檔另外備份。
+- **不再開發的專案的編譯產物**：在專案根目錄跑 `git -c core.quotePath=false clean -ndX` 預演，清單裡的目錄用 `find -type f` 看內容；全是產物時用 `git clean -fdX` 刪除，有金鑰、`.env`、文件、腳本或平台專案時逐個目錄刪除。已發佈版本的符號檔另外備份。
 - **快取**：依快取表格的清理方式處理；刪除前確認 git 依賴的主機、私有 registry 與要人工重裝的工具，重建的來源都還在。
 - **Gradle 本體與 toolchain 的 JDK**：用 `distributionUrl` 與 toolchain 設定列出仍在開發的專案指定的版本，刪除 `~/.gradle/wrapper/dists` 與 `~/.gradle/jdks` 裡不在清單上的版本與殘檔。
 - **NDK 與 Android SDK 元件**：從仍在開發的專案使用的 Flutter 版本查出需要的 NDK，其餘用 `sdkmanager --uninstall` 移除，移除後確認資料夾已消失。
 - **Android 模擬器映像**：`emulator -list-avds` 與 AVD 設定檔的 `image.sysdir.1` 查出使用中的映像，其餘移除。
 - **iOS 模擬器 runtime 與裝置**：`xcrun simctl runtime list -v` 列出版本、大小與最後使用時間；不再測試的版本，先逐台刪除綁在它上面的裝置，再刪 runtime，最後 `xcrun simctl delete unavailable`。
 - **Flutter SDK**：對照仍在開發的專案的 `.fvmrc` 與 fvm 的全域版本，`fvm remove` 移除兩者都沒用到的版本。
-- **Homebrew 舊版**：`brew cleanup -n` 預演後執行；出現 Skipping 的套件先 `brew upgrade`。
+- **Homebrew 的舊版套件**：`brew cleanup -n` 預演後執行；出現 Skipping 的套件先 `brew upgrade`。
 - **容器工具的虛擬磁碟**：啟動容器工具後 `docker system df` 看可回收量；先清 image 與 build cache，停止的容器與 volume 逐一確認沒有要留的資料再清。
 - **自己開發的 App 的沙箱容器**：用 `AppInfo.xcconfig` 列出的 bundle id 對照 `~/Library/Containers`，確認專案已停止開發後刪除。
 

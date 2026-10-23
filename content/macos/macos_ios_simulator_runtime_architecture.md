@@ -6,7 +6,7 @@ description: "iOS Simulator runtime 以 disk image 形式儲存在 Data 卷上�
 tags: ["macos", "xcode", "ios-simulator", "disk-space", "apple-silicon"]
 ---
 
-iOS Simulator 讓開發者在 Mac 上跑 iOS App 而不需要實體裝置。每個 Simulator runtime 對應一個 iOS 版本——裝了 iOS 18.2 和 18.3.1 兩組 runtime，就能在兩個版本上測試。每組 runtime 約 16G，是 Mac 上最大的單一空間消耗者之一，但這個數字在日常開發中不容易察覺，直到磁碟空間不夠才會被發現。
+iOS Simulator 讓開發者在 Mac 上跑 iOS App 而不需要實體裝置。每個 Simulator runtime 對應一個 iOS 版本——裝了 iOS 18.2 和 18.3.1 兩組 runtime，就能在兩個版本上測試。每組 runtime 約 8G 到 16G（依版本而定，見〈一組 Runtime 的組成〉），是 Mac 上最大的單一空間消耗者之一，但這個數字在日常開發中不容易察覺，直到磁碟空間不夠才會被發現。
 
 ## 一組 Runtime 的組成
 
@@ -16,7 +16,7 @@ iOS Simulator 讓開發者在 Mac 上跑 iOS App 而不需要實體裝置。每�
 
 **Runtime DMG**（約 8G）：包含完整的 iOS 檔案系統——所有系統框架、內建 App、字型、語言資源。儲存在 `/System/Library/AssetsV2/com_apple_MobileAsset_iOSSimulatorRuntime/` 下。
 
-兩個 DMG 合起來約 16G，是一組 runtime 的完整大小。這個組成適用於較早的 runtime 版本：較新的 runtime 以單一的 Cryptex 磁碟映像安裝，`xcrun simctl runtime list -v` 的 Image Kind 顯示為 Patchable Cryptex，`Cryptex/Images/bundle` 底下是 0B，一組約 8G。判斷手上的 runtime 屬於哪一種，看 `runtime list -v` 的 Size 與 bundle 目錄的 `du`。
+兩個 DMG 合起來約 16G，是一組 runtime 的完整大小。這個組成適用於較早的 runtime 版本：較新的 runtime 以單一的 Cryptex 磁碟映像安裝，`xcrun simctl runtime list -v` 的 Image Kind 顯示為 Patchable Cryptex Disk Image，`Cryptex/Images/bundle` 底下是 0B，一組約 8G。判斷手上的 runtime 屬於哪一種，看 `runtime list -v` 的 Size 與 bundle 目錄的 `du`。
 
 ```bash
 # 查看已安裝的 runtime 和總大小

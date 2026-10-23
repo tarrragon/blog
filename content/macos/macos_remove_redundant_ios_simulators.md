@@ -38,7 +38,7 @@ killall Simulator 2>/dev/null
 
 # 2. 列出綁在要刪除的 runtime 上的裝置，逐台用 UUID 刪除（引數換成要刪除的 iOS 版本與裝置 UUID）
 xcrun simctl list devices "iOS 18.5"
-xcrun simctl delete <裝置UDID>
+xcrun simctl delete <裝置UUID>
 
 # 3. 刪除指定 runtime（用 runtime list 裡的 identifier）
 xcrun simctl runtime delete 6286F286-FA4F-4877-AAEF-62A162C6A2C4
@@ -48,14 +48,14 @@ xcrun simctl delete unavailable
 xcrun simctl runtime list
 ```
 
-如果步驟 3 跑完沒報錯但 runtime 還在列表裡，通常是因為還有模擬器裝置綁在上面。回到步驟 1 和 2 重跑，或用 `xcrun simctl list devices` 查看哪些裝置還在用那個 runtime，手動刪掉它們：
+步驟 3 跑完之後，runtime 的狀態會先顯示為 Deleting，背景刪除完成後才從列表消失，這段期間等一陣子再看。長時間仍留在列表裡時，用 `xcrun simctl list devices` 查看是否還有裝置綁在那個 runtime 上，手動刪掉它們：
 
 ```bash
 # 列出所有模擬器裝置
 xcrun simctl list devices
 
 # 刪除特定裝置
-xcrun simctl delete <裝置UDID>
+xcrun simctl delete <裝置UUID>
 ```
 
 ## 為什麼不能手動刪檔案

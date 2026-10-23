@@ -7,7 +7,7 @@ description: "專案要停止開發、把程式碼移到長期保存的遠端時
 tags: ["git", "github", "flutter", "disk-space", "work-log"]
 ---
 
-這篇整理一個專案停止開發、要把程式碼移到長期保存的遠端之前，需要盤點與收斂的事項，範圍從決定封存開始，到刪除本機的工作目錄為止。內容來自一次把幾個 Flutter 專案從自架的 Gitea 搬到 GitHub 私人倉庫的封存；git 的部分與語言無關，Flutter 出現在被忽略檔案、倉庫依賴與還原說明的例子裡。本篇的「封存的人」指執行這些步驟的工程師，「專案負責人」指能決定修改與分支去留的人，兩者可以是同一個人。
+這篇整理一個專案停止開發、要把程式碼移到長期保存的遠端之前，需要盤點與收斂的事項，範圍從決定封存開始，到刪除本機的工作目錄為止。內容來自一次把幾個 Flutter 專案從自架的 Gitea 搬到 GitHub 私人倉庫的封存；git 的部分與語言無關，Flutter 出現在被忽略檔案、倉庫依賴與還原說明的例子裡。本篇的「封存」指把專案移到長期保存的遠端這整個流程，GitHub 上把倉庫設成唯讀的同名設定另稱「GitHub 的 Archive 設定」；「封存的人」指執行這些步驟的工程師，「專案負責人」指能決定修改與分支去留的人，兩者可以是同一個人。
 
 ## 封存的驗收條件：在另一台機器上還原得出來
 
@@ -17,9 +17,9 @@ tags: ["git", "github", "flutter", "disk-space", "work-log"]
 
 ## 未提交的修改
 
-封存前的工作目錄常常停在某個開發中的狀態，`git status` 列出的修改要先決定 commit 或捨棄。這個決定屬於專案負責人：修改可能是完成一半的功能、也可能是實驗後放棄的嘗試，從 diff 判斷不出來。未追蹤的檔案裡常有該保存的設定，例如 fvm 的版本設定檔 `.fvmrc` 新建之後沒有 commit，捨棄之前逐項看過。
+封存前的工作目錄常常停在某個開發中的狀態，`git status` 列出的修改要先決定 commit 或捨棄。這個決定屬於專案負責人：修改可能是完成一半的功能、也可能是實驗後放棄的嘗試，從 diff 判斷不出來。未追蹤的檔案裡常有該保存的設定，例如 fvm（Flutter 的版本管理工具）的版本設定檔 `.fvmrc` 新建之後沒有 commit，捨棄之前逐項看過。
 
-處理未提交的修改排在盤點被忽略檔案之前。捨棄修改用的 `git restore` 會把工作目錄還原到最後一次 commit 的內容，盤點時用 `git add` 納入版控、還沒 commit 的新檔案也在還原範圍內，會從磁碟上被刪掉；先把未提交的修改處理乾淨，後面納入版控的檔案就不會被捲進來。
+處理未提交的修改排在盤點被忽略檔案之前。捨棄修改用的 `git restore` 會把工作目錄還原到最後一次 commit 的內容；已經 `git add`、還沒 commit 的新檔案也在還原範圍內，會從磁碟上被刪掉，而盤點被忽略檔案時納入版控的檔案，在 commit 之前正是這種狀態；先把未提交的修改處理乾淨，後面納入版控的檔案就不會被捲進來。
 
 ```bash
 # 捨棄已追蹤檔案的修改：--staged 清掉已暫存的修改，--worktree 清掉工作目錄裡的修改
@@ -55,7 +55,7 @@ git status --ignored --porcelain -z | tr '\0' '\n' | grep '^!!' | sed 's/^!! //'
 | 版本釘選檔         | fvm 的 `.fvmrc`、`.fvm/fvm_config.json`                           | 納入版控（`.fvm/` 裡指向 SDK 的連結仍然忽略）                      |
 | 誤被忽略的內容     | 設計文件、開發日誌、工具腳本、有客製內容的平台專案                | 修改 `.gitignore`、`git add` 之後立刻 commit                       |
 
-被忽略清單之外，還要查建置設定參照到的、不在工作目錄裡的檔案。Flutter 官方文件建議把 keystore 放在 repo 以外，這種金鑰既不會被追蹤、也不會出現在被忽略清單裡；`build.gradle` 裡讀取它的設定卻還在，fresh clone 之後 build 會因為找不到檔案而失敗：
+被忽略清單之外，還要查建置設定參照到的、不在工作目錄裡的檔案。Flutter 官方文件的範例把 keystore 產生在家目錄，這種放在 repo 以外的金鑰既不會被追蹤、也不會出現在被忽略清單裡；`build.gradle` 裡讀取它的設定卻還在，fresh clone 之後 build 會因為找不到檔案而失敗：
 
 ```bash
 # 在專案根目錄執行；列出 Android 建置設定讀取的金鑰與設定檔路徑
@@ -72,7 +72,11 @@ grep -rnE 'storeFile|rootProject\.file|keystoreProperties' android/app/build.gra
 
 ```bash
 # 引數換成要檢查的目錄；排除 Xcode 的使用者狀態目錄與 Flutter 的暫存目錄，只看檔案本身
+# find 會連已經被追蹤的檔案一起列出
 find doc ios linux macos windows web -type f -not -path '*/xcuserdata/*' -not -path '*/ephemeral/*'
+
+# 只列出這些目錄裡被忽略的檔案
+git ls-files --others --ignored --exclude-standard -- doc ios linux macos windows web
 ```
 
 Flutter 的平台目錄（`ios/`、`macos/`、`linux/`、`windows/`、`web/`）列出檔案之後分成兩種情形，判斷要分兩步：
@@ -98,13 +102,13 @@ grep -rnE 'example\.internal' doc scripts
 
 ### 簽章金鑰與環境變數
 
-簽章金鑰的處理依專案未來是否還會發版而定。Android 安裝更新時會比對新舊 APK 的簽章，簽章不同就拒絕覆蓋安裝。所以不經過 Google Play、直接用 APK 檔安裝（側載）的 App，以及自己保管最終簽章金鑰的 App，金鑰遺失之後，已安裝的裝置就無法再更新。加入 Google Play App Signing 的 App（2021 年 8 月之後新上架的 App 預設加入）不同：最終簽章由 Google 保管，本機那把只用來上傳新版本（上傳金鑰），遺失時可以向 Google Play 申請重設，已安裝的使用者不受影響。專案有可能恢復開發、或者要替已安裝的裝置推出修正版時，金鑰要備份到版控以外的地方（密碼管理器、離線儲存）；確定不會再發版時，金鑰可以和產物一起刪除。已發佈版本的符號檔跟著金鑰的決定走：還會有使用者回報那個版本的崩潰時，一起備份。
+簽章金鑰的處理依專案未來是否還會發版而定。Android 安裝更新時會比對新舊 APK 的簽章，簽章不同就拒絕覆蓋安裝。所以不經過 Google Play、直接用 APK 檔安裝（側載）的 App，以及自己保管最終簽章金鑰的 App，金鑰遺失之後，已安裝的裝置就無法再更新。加入 Google Play App Signing 的 App（2021 年 8 月起新上架的 App 必須用 App Bundle 發佈，因此一定加入）不同：最終簽章由 Google 保管，本機那把只用來上傳新版本（上傳金鑰），遺失時可以向 Google Play 申請重設，已安裝的使用者不受影響。專案有可能恢復開發、或者要替已安裝的裝置推出修正版時，金鑰要備份到版控以外的地方（密碼管理器、離線儲存）；確定不會再發版時，金鑰可以和產物一起刪除。已發佈版本的符號檔跟著金鑰的決定走：還會有使用者回報那個版本的崩潰時，一起備份。
 
 `.env` 這類環境變數檔的值不推上遠端，而欄位名稱要寫進還原說明。還原的人拿到程式碼之後，最先卡住的地方是不知道要準備哪些設定；欄位名稱加上用途說明，他才能向對應的服務重新申請。
 
 ### 已經提交進歷史的機密
 
-上面兩步只檢查工作目錄。機密若曾經在過去某個 commit 裡被提交、之後才被刪除或加進忽略規則，它仍然留在歷史裡，推上新遠端就跟著推上去：
+被忽略檔案的盤點與納入版控前的機密掃描，檢查的都是工作目錄裡現在的檔案。機密若曾經在過去某個 commit 裡被提交、之後才被刪除或加進忽略規則，它仍然留在歷史裡，推上新遠端就跟著推上去：
 
 ```bash
 # 引數換成要檢查的檔名樣式；--all 涵蓋所有分支，有輸出代表這些檔案曾經出現在歷史裡
@@ -113,6 +117,8 @@ git log --all --oneline -- '*.jks' '*.keystore' '*key.properties' '*.env' '*.env
 ```
 
 有輸出時，在〈分支的收斂〉與〈遠端搬遷〉之前，先從整段歷史裡移除，做法在 [Git Filter-Repo 使用說明](../remove_git_content/)。filter-repo 會重寫所有 commit 的 SHA，並且移除 origin 遠端，所以它要排在記錄分支 SHA 與搬遷遠端之前。做完之後只推改寫過的歷史：要保留全部分支時，在 `git clone --mirror` 取得的副本上執行 filter-repo，再用 `git push --mirror` 推到新遠端；不要把舊遠端加回來再 fetch，那會把舊遠端上沒有改寫、仍帶著機密的歷史抓回本機，再一起推上新遠端。
+
+做過 filter-repo 的專案，後續流程有兩處不同：〈分支的收斂〉的分支計數要在 filter-repo 之前、仍連得上舊遠端時完成；filter-repo 之後的所有推送都從改寫過的那份 repo 發出，原本的工作目錄不再推送，需要時從新遠端重新 clone。
 
 ## 對其他倉庫的依賴
 
@@ -128,12 +134,20 @@ grep -rnE 'git:|url:|maven|source ' pubspec.yaml .gitmodules android/*.gradle* a
 
 指向即將停用主機的依賴，逐一決定處理方式：把依賴的倉庫也照本篇封存到新遠端，再把這個專案的設定改指新網址；把依賴的程式碼直接放進這個倉庫；或在還原說明裡寫明依賴的來源與當時的版本。改指新網址時，把依賴固定在原本鎖定的 commit SHA 上（`pubspec.yaml` 的 `ref:` 寫完整 SHA），還原出來的版本才會跟封存前一致。依賴這個專案的一方，要在搬遷前列出來並通知對方。
 
+## 推上新遠端之前要處理的副作用
+
+推上新遠端之前，有幾項副作用要先處理：
+
+- **CI 設定**：GitHub 會執行倉庫裡 `.github/workflows` 的設定，而 Gitea Actions 在沒有 `.gitea/workflows` 時也會讀這個路徑；封存的倉庫不需要 CI 時，先移除或停用這些 workflow，避免推上去之後觸發建置或發佈。
+- **Git LFS 的物件**：倉庫用 Git LFS 存放大型檔案時，`git push` 只推指向檔案的指標；`git push` 只會上傳本機已經下載的 LFS 物件，本機沒 checkout 過的版本只有指標；要在 origin 仍指向舊遠端時先 `git lfs fetch --all origin` 把舊遠端的物件全部抓下來，再 `git lfs push --all <新遠端>`（只涵蓋本機分支可達的物件，只存在遠端追蹤參照的分支要先建成本地分支），否則舊遠端停用之後，那些檔案就不見了。
+- **單檔大小上限**：GitHub 拒絕超過 100MB 的單一檔案，歷史裡有這類檔案時推送會失敗，要改用 LFS 或從歷史裡移除。
+
 ## 分支的收斂
 
-開發到一半沒有合併的分支只存在本機，或者只存在即將停用的舊遠端上。專案負責人做取捨之前，封存的人先數有多少分支帶著主線沒有的 commit。本地分支與遠端追蹤參照（remote-tracking ref，本機保存的「上次 fetch 時遠端分支指向哪個 commit」的快照，名稱是 `origin/<分支>`）各查一次，兩份清單合起來去掉重複的分支名稱，就是只保留主線時會消失的分支。遠端追蹤參照是上次 fetch 時的狀態，其他人之後推上舊遠端的分支不在裡面，所以計數前先 fetch：
+開發到一半沒有合併的分支只存在本機，或者只存在即將停用的舊遠端上。專案負責人做取捨之前，封存的人先數有多少分支帶著主線沒有的 commit。本地分支與遠端追蹤參照（remote-tracking ref，本機保存的「上次 fetch 時遠端分支指向哪個 commit」的快照，名稱是 `origin/<分支>`）各查一次，遠端那份拿掉 `origin/` 前綴之後與本地那份合併、去掉重複的分支名稱，就是只保留主線時會消失的分支。遠端追蹤參照是上次 fetch 時的狀態，其他人之後推上舊遠端的分支不在裡面，所以計數前先 fetch：
 
 ```bash
-# 此時 origin 仍指向舊遠端；更新遠端追蹤參照，並刪掉舊遠端已經不存在的分支
+# 沒有做 filter-repo 的專案：此時 origin 仍指向舊遠端；更新遠端追蹤參照，並刪掉舊遠端已經不存在的分支
 git fetch --prune origin
 
 # main 換成主線分支的名稱；列出含有主線沒有的 commit 的本地分支
@@ -151,7 +165,7 @@ git branch -r --no-merged main
 
 ### 全部推上新遠端
 
-最少步驟的做法是鏡像複製：`git clone --mirror` 取得舊遠端的完整副本（所有分支與 tag），再用 `git push --mirror` 推到新遠端。它的前提是舊遠端還連得上，而且本機沒有只存在本機、沒推上舊遠端的分支。
+最少步驟的做法是鏡像複製：`git clone --mirror` 取得舊遠端的完整副本（所有分支與 tag），再用 `git push --mirror` 推到新遠端。它的前提是舊遠端還連得上，而且本機沒有任何沒推上舊遠端的 commit——包括只存在本機的分支，以及已有分支上本機領先舊遠端的 commit。`git log --branches --not --remotes --oneline` 沒有輸出時，這個前提才成立。
 
 舊遠端連不上、或本機另有分支時，在 origin 仍指向舊遠端的狀態下，把新遠端加成第二個遠端，分兩次推送：本地分支一次，只存在舊遠端的分支一次。這兩次推送要在 origin 改指新遠端、執行 `git fetch --prune` 之前做，因為 prune 會把舊遠端的遠端追蹤參照從本機刪掉：
 
@@ -160,16 +174,19 @@ git branch -r --no-merged main
 gh repo create owner/name --private --description "（已封存）"
 git remote add new https://github.com/owner/name.git
 
-# 推送所有本地分支
+# 推送所有本地分支與 tag；--all 只推分支，tag 要另外推
 git push new --all
+git push new --tags
 
 # origin/HEAD 是一個符號參照（symbolic ref，本身不指向 commit、而是指向另一個參照），記錄舊遠端的預設分支
-# 不刪掉它，下一條指令會在新遠端建立一個名為 HEAD 的分支
+# 下一條指令的 refs/remotes/origin/* 也會比對到 refs/remotes/origin/HEAD，不刪掉它，新遠端會多出一個名為 HEAD 的分支
 git remote set-head origin -d
 
 # 把舊遠端的每個遠端追蹤參照推成新遠端上的同名分支
 git push new 'refs/remotes/origin/*:refs/heads/*'
 ```
+
+本機與舊遠端都有的同名分支，最後一條推送可能回報 `! [rejected] ... (non-fast-forward)`：本地分支在第一次推送時已經推上新遠端，舊遠端那份的 commit 若不在本地分支的歷史裡，推送就被拒絕。用 `git merge-base --is-ancestor origin/<分支> <分支>` 判斷：指令成功（回傳 0）代表本地分支已經包含舊遠端的內容，這個拒絕可以忽略；失敗代表兩邊分岔，把舊遠端那份另外推成新分支保存，例如 `git push new origin/<分支>:refs/heads/<分支>-old`。
 
 推完之後，〈遠端搬遷〉的區塊裡 `gh repo create` 那一行可以跳過，因為倉庫已經建立了。
 
@@ -227,12 +244,6 @@ tag 常常標記著已發佈的版本或某次大改之前的備份點，所以�
 
 舊遠端要保留在本機設定裡作為對照時，不執行 `set-url` 那一行，改用 `git remote add github <url>` 新增第二個遠端，origin 維持指向舊遠端；這時兩條 `git push` 的 `origin` 都換成 `github`。
 
-推上新遠端還有幾項副作用要先看過：
-
-- **CI 設定**：GitHub 會執行倉庫裡 `.github/workflows` 的設定，而 Gitea Actions 用的也是同一個路徑；封存的倉庫不需要 CI 時，先移除或停用這些 workflow，避免推上去之後觸發建置或發佈。
-- **Git LFS 的物件**：倉庫用 Git LFS 存放大型檔案時，`git push` 只推指向檔案的指標；要先 `git lfs fetch --all origin` 把舊遠端的物件全部抓下來，再 `git lfs push --all <新遠端>`，否則舊遠端停用之後，那些檔案就不見了。
-- **單檔大小上限**：GitHub 拒絕超過 100MB 的單一檔案，歷史裡有這類檔案時推送會失敗，要改用 LFS 或從歷史裡移除。
-
 舊遠端本身在搬遷之後的去留，屬於舊主機管理者的決定：設成唯讀、留下指向新倉庫的說明、通知其他協作者，或維持原狀。
 
 保存媒介的選擇另有取捨。私人倉庫的好處是隨時可以 clone、可以在網頁上瀏覽，代價是依賴單一服務與單一帳號；`git bundle` 或把整個工作目錄打包成 tar 檔，可以存到任何儲存空間，tar 檔還能連被忽略的檔案一起保存，代價是要另外管理備份的位置。兩者可以並用。
@@ -249,18 +260,20 @@ tag 常常標記著已發佈的版本或某次大改之前的備份點，所以�
 寫完之後實際 clone 一次，照 README 走到 build 成功為止。驗證要在乾淨的環境裡做：同一台機器上的 `~/.pub-cache`、`~/.gradle`、已安裝的 SDK、連得上舊主機的 SSH 金鑰、放在 repo 以外的 keystore，都會讓驗證通過，而另一台機器上沒有這些快取、SDK 與金鑰。最直接的做法是換一台機器、虛擬機或容器；在同一台機器上驗證時，至少把快取目錄指到空的臨時目錄：
 
 ```bash
-# 引數換成新倉庫的網址；clone 到一個臨時目錄，驗證結束後把這個目錄整個刪除
-git clone https://github.com/owner/name.git /tmp/archive-verify
-cd /tmp/archive-verify
+# 引數換成新倉庫的網址；clone 到一個新建的臨時目錄，驗證結束後把這個目錄整個刪除
+VERIFY=$(mktemp -d)
+git clone https://github.com/owner/name.git "$VERIFY/repo"
+cd "$VERIFY/repo"
 
+# README 寫了產生程式碼的步驟時，先照做；用 fvm 的專案，flutter 指令改成 fvm flutter 才會用到專案指定的版本
 # PUB_CACHE 與 GRADLE_USER_HOME 指到空的臨時目錄，依賴全部從原本的來源重新下載
 # 依賴的主機已經停用或連不上時，這一步會失敗，正是要抓的情形
-PUB_CACHE=$(mktemp -d) GRADLE_USER_HOME=$(mktemp -d) flutter build apk
+PUB_CACHE=$(mktemp -d) GRADLE_USER_HOME=$(mktemp -d) fvm flutter build apk
 ```
 
-clone 驗證檢查的是遠端的內容，所以要在全新的 clone 上做：本機原本的工作目錄有被忽略的檔案與產生檔，在那裡 build 成功證明不了遠端完整。選擇全部推上新遠端的，另外用 `git ls-remote --heads` 對照分支清單，確認分支都到齊了；build 成功驗不到分支有沒有缺。
+clone 驗證檢查的是遠端的內容，所以要在全新的 clone 上做：本機原本的工作目錄有被忽略的檔案與產生檔，在那裡 build 成功證明不了遠端完整。選擇全部推上新遠端的，另外把 `git ls-remote --heads <新遠端網址>` 的輸出，與〈分支的收斂〉列出的本地分支、遠端追蹤參照清單對照，確認分支都到齊了；build 成功驗不到分支有沒有缺。
 
-GitHub 另有一個名為「封存」的倉庫設定（Archive），它把倉庫設成唯讀，之後不能 push、不能開 issue。是否設定，在 clone 驗證通過之後決定；設定方式是 `gh repo archive owner/name`，之後可以在倉庫設定裡取消。
+GitHub 的 Archive 設定（介面上也譯作「封存」，和本篇的封存流程是兩件事），它把倉庫設成唯讀，之後不能 push、不能開 issue。是否設定，在 clone 驗證通過之後決定；設定方式是 `gh repo archive owner/name`，之後可以在倉庫設定裡取消。
 
 ## 清理本機
 
@@ -276,11 +289,11 @@ clone 驗證通過之後，本機的工作目錄只剩編譯產物、快取，�
 - **被忽略的檔案**：`git status --ignored` 列出全部，逐項歸到產物、簽章金鑰、符號檔、環境變數與本機設定、版本釘選檔、誤被忽略的內容；被忽略的目錄先 `find -type f` 看檔案，平台目錄分辨產生檔與平台專案本體；掃過機密再 `git add` 並立刻 commit。
 - **repo 以外的金鑰**：從建置設定的 `storeFile`、`rootProject.file` 找出讀取的檔案，決定備份或刪除。
 - **簽章金鑰、符號檔與環境變數**：專案還可能發版時，簽章金鑰與已發佈版本的符號檔備份到版控以外；`.env` 的欄位名稱寫進 README。
-- **歷史裡的機密**：`git log --all -- '*key.properties' '*.env' ...` 有輸出時，先用 filter-repo 移除，再做分支與遠端搬遷，之後不再從舊遠端 fetch。
+- **歷史裡的機密**：`git log --all -- '*key.properties' '*.env' ...` 有輸出時，先完成分支計數，再用 filter-repo 移除，之後的推送都從改寫過的 repo 發出，不再從舊遠端 fetch。
 - **對其他倉庫的依賴**：列出 `git:` 依賴、submodule 與私有套件來源，指向即將停用主機的一併封存並固定 SHA；依賴這個專案的一方先通知。
-- **分支**：先 `git fetch --prune origin`，再用 `git branch --no-merged main` 與 `git branch -r --no-merged main` 查出帶有獨有 commit 的分支，決定全部推上、轉成 tag 或只留主線；要保留的分支在刪除前推上遠端，SHA 清單只當保險。
-- **tag**：推到新遠端（`git push origin --tags`，此時 origin 已改指新遠端）。
-- **新遠端**：建立時指定 `--private`，推送後用 `gh repo view` 確認可見度；先處理 workflow、LFS 物件與超過 100MB 的檔案。
+- **分支**：沒有做 filter-repo 的專案先 `git fetch --prune origin`，再用 `git branch --no-merged main` 與 `git branch -r --no-merged main` 查出帶有獨有 commit 的分支，決定全部推上、轉成 tag 或只留主線；要保留的分支在刪除前推上遠端，SHA 清單只當保險。
+- **tag**：推到新遠端（走 `set-url` 的是 `git push origin --tags`，走第二個遠端的是 `git push new --tags`）。
+- **新遠端**：推送前先處理 workflow、LFS 物件與超過 100MB 的檔案；建立時指定 `--private`，推送後用 `gh repo view` 確認可見度。
 - **還原說明**：寫進 README：工具鏈版本、產生程式碼的步驟、外部輸入、封存時的狀態。
 - **clone 驗證**：在乾淨的環境裡照 README build 成功；全部推上遠端的，對照分支清單。
 - **清理本機**：驗證通過之後才刪除產物與快取，或刪除整個工作目錄。

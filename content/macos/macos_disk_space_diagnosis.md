@@ -73,7 +73,7 @@ du -shx ~/Library/* 2>/dev/null | sort -rh | head -12
 | ollama 本地模型             | 約 9G    | 改用雲端後閒置的大模型可刪，小的 embedding 模型常是依賴 |
 | Xcode iOS DeviceSupport     | 約 4.5G  | 實體裝置接線除錯的符號快取，重連會自動重建              |
 
-Android NDK 的判讀要回到「誰在用它」：這次專案是 Flutter，NDK 版本由 `flutter.ndkVersion` 決定，而不是專案自己 pin。查當前 Flutter 要求的版本後發現，本機裝的兩版都是舊 Flutter 留下的殘留，於是保留較新的一版、刪掉最舊的。判斷可不可刪的關鍵是先確認「現在到底用哪版」，而不是看修改日期就動手。
+Android NDK 的判讀要回到「誰在用它」：這次專案是 Flutter，NDK 版本由 `flutter.ndkVersion` 決定，而不是專案自己 pin。查當前 Flutter 要求的版本後發現，本機裝的兩版都是舊 Flutter 留下的殘留；依「保留專案實際引用的版本」這條規則，兩版都可以刪，當時保留較新的一版只是預留。判斷可不可刪的關鍵是先確認「現在到底用哪版」，而不是看修改日期就動手。
 
 Claude 桌面的 `vm_bundles` 是最大單一項目（11G）。它是桌面 App 的 Cowork 功能在本地沙箱 VM 裡執行程式用的根檔案系統映像。關鍵判讀是：它是一次性佈建、之後沿用，而不是每次開 App 就重建——映像的修改日期停在數月前。只有實際使用 Cowork 沙箱時才會佈建和更新。所以對只用終端機 CLI、桌面 App 僅拿來聊天的人，這 11G 是純佔用，可以安全刪除；唯一後果是哪天實際開了 Cowork session，它會重新佈建。
 
