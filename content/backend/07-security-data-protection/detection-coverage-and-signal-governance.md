@@ -74,7 +74,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 案例觸發的責任是驗證偵測策略是否足以應對現實攻擊節奏。
 
 - 身分異常訊號不足導致擴散： [Uber 2022](/backend/07-security-data-protection/red-team/cases/identity-access/uber-2022-mfa-fatigue/)
-- 憑證濫用下的低噪音外送： [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
+- 存取憑證濫用下的低噪音外送： [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
 - 邊界設備高壓窗口下的偵測需求： [PAN-OS 2024](/backend/07-security-data-protection/red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/)
 
 ## 引用標準

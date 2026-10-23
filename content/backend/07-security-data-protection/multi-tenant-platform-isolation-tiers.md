@@ -18,7 +18,7 @@ tags: ["backend", "security", "multi-tenant", "isolation"]
 
 平台把每個商家各自做不好的事（修補漏洞、備份、監控、值班）集中由專責團隊做好，商家各自維運時的那些風險因此降低，這是平台的價值。平台附加風險是同一個集中的另一面：集中讓防禦有規模經濟，也讓一次入侵的收穫有規模經濟。所以設計多租戶平台時要算得出一個量：**平台上任何一個元件被入侵時，攻擊者存取得到幾個租戶的資料。** 這個數字就是該元件的**影響範圍（[Blast Radius](/backend/knowledge-cards/blast-radius/)）**，本章以租戶數為單位計算。
 
-影響範圍由兩件事共同決定，兩件事要分開看：**存放層的隔離**是資料放在一起的程度，**存取層的隔離**是能讀寫那些資料的元件與人手上的權限範圍。下文的**隔離層級**指同一層分得多細。存放層在常見實作下（bridge 共用一個高權限帳號連線）從細到粗是 silo、cell、bridge、pool；存取層從細到粗是每次存取限定單一租戶、限定一個 cell、一份憑證讀得到全部租戶。資料分得再細，只要有一個元件手上的憑證能讀所有分區，那個元件的影響範圍就是全部租戶。
+影響範圍由兩件事共同決定，兩件事要分開看：**存放層的隔離**是資料放在一起的程度，**存取層的隔離**是能讀寫那些資料的元件與人手上的權限範圍。下文的**隔離層級**指同一層分得多細。存放層在常見實作下（bridge 共用一個高權限帳號連線）從細到粗是 silo、cell、bridge、pool；存取層從細到粗是每次存取限定單一租戶、限定一個 cell、一份存取憑證讀得到全部租戶。資料分得再細，只要有一個元件手上的憑證能讀所有分區，那個元件的影響範圍就是全部租戶。
 
 ## 存放層的隔離模型
 
@@ -49,7 +49,7 @@ Shopify 的 pod 是 cell 的一個公開實例，它分開的是資料庫與快�
 
 換掉之後，管線手上剩下的是部署權：推送產物、觸發部署。部署出去的產物就是正式環境接下來要執行的程式，所以部署權等於讓正式環境執行任意程式，管線被入侵時攻擊者能做的事變成推送惡意產物，要靠兩項控制一起擋：
 
-- **憑證改成短期、按目標分開**：管線用工作負載身分（由執行環境發給這個工作、不必在管線設定裡存放長期金鑰的身分）換取只對單一環境有效的臨時憑證。臨時憑證的有效期以十幾分鐘到一小時計（AWS STS 預設一小時、最短十五分鐘，可在角色上調短），外洩之後可用的時間有上限（[7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)；GitHub Actions 的做法見 [環境保護與 OIDC 雲端認證](/backend/06-reliability/vendors/github-actions/environment-protection-and-oidc-cloud-auth/)）。CI 集中持有憑證時怎麼盤點每把憑證的擁有者與用途，見 [7.6 秘密管理與機器憑證治理〈CI secrets 集中化跟 blast radius〉](../secrets-and-machine-credential-governance/#ci-secrets-集中化跟-blast-radius)。
+- **存取憑證改成短期、按目標分開**：管線用工作負載身分（由執行環境發給這個工作、不必在管線設定裡存放長期金鑰的身分）換取只對單一環境有效的臨時憑證。臨時憑證的有效期以十幾分鐘到一小時計（AWS STS 預設一小時、最短十五分鐘，可在角色上調短），外洩之後可用的時間有上限（[7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)；GitHub Actions 的做法見 [環境保護與 OIDC 雲端認證](/backend/06-reliability/vendors/github-actions/environment-protection-and-oidc-cloud-auth/)）。CI 集中持有憑證時怎麼盤點每把憑證的擁有者與用途，見 [7.6 秘密管理與機器憑證治理〈CI secrets 集中化跟 blast radius〉](../secrets-and-machine-credential-governance/#ci-secrets-集中化跟-blast-radius)。
 - **產物由各 cell 驗證後拉取**：各 cell 驗證產物的簽章與來源證明（[Artifact Provenance](/backend/knowledge-cards/artifact-provenance/)）之後才拉取部署，並確認產物對應到經過審查的 commit，管線不必持有進入每個 cell 的憑證。簽章驗證擋得住惡意產物的前提是簽章在建置步驟碰不到的地方產生：獨立的簽章服務，或建置平台在建置步驟之外產生的來源證明。管線自己持有簽章金鑰時，攻擊者推上去的是簽好章的產物，簽章只證明它出自這條管線；建置管線上游被植入、已簽章產物照常發佈的實例見 [SolarWinds 2020](../red-team/cases/supply-chain/solarwinds-2020-sunburst/)，簽章金鑰為什麼要與一般憑證分開保管見 [7.6〈簽章金鑰跟長期信任根〉](../secrets-and-machine-credential-governance/#簽章金鑰跟長期信任根)。產物在部署前要驗證哪些屬性（來源、完整性、相依套件），見 [7.12 供應鏈完整性與 Artifact 信任](../supply-chain-integrity-and-artifact-trust/)。
 
 CI 平台本身被入侵、集中保管的 secrets 整批暴露的實例見 [CircleCI 2023](../red-team/cases/supply-chain/circleci-2023-secrets-rotation/)，CI 伺服器漏洞成為入口的實例見 [TeamCity 2023](../red-team/cases/supply-chain/teamcity-cve-2023-42793-ci-entrypoint/)。
@@ -128,7 +128,7 @@ LLM 功能是這個取捨最常出現的位置：把多個租戶的資料放進�
 ## 延伸閱讀：事後清查、短期憑證、產物驗證、跨網路連線與 cell 的故障局部化
 
 - 隔離層級定了之後，入口元件被入侵時的清查與重建：[8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)
-- 管線與工作負載的憑證改成短期、按目標分開：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)、[7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)
+- 管線與工作負載的存取憑證改成短期、按目標分開：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)、[7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)
 - 管線推送的產物如何被各環境驗證：[7.12 供應鏈完整性與 Artifact 信任](../supply-chain-integrity-and-artifact-trust/)
 - 兩個網路接起來之後各自連得到什麼、被入侵端改不到的限制放在哪裡：[7.43 兩個網路之間的連線安全](../cross-network-connection-security/)
 - 分組結構在可用性上的作用（一個租戶引發的故障同時讓另一個租戶失效的機率），與本章的機密性度量不同：[Amazon：Shuffle Sharding 與 Cell 邊界的失效局部化](/backend/06-reliability/cases/amazon/shuffle-sharding-and-cell-boundary/)

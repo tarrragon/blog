@@ -28,15 +28,15 @@ workflow 檢查點：部署凍結、artifact 驗證、分批輪替 secrets、版
 
 ## Workload identity 與聯邦信任
 
-這個主題處理非人類身份、跨平台 token 交換與短時憑證收斂。優先案例是 [Okta + Cloudflare 2023](/backend/07-security-data-protection/red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/)、[Cloudflare 2023](/backend/07-security-data-protection/red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/)、[Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)、[GitHub OAuth 2022](/backend/07-security-data-protection/red-team/cases/supply-chain/github-oauth-2022-token-supply-chain/)。
+這個主題處理非人類身份、跨平台 token 交換與短期憑證收斂。優先案例是 [Okta + Cloudflare 2023](/backend/07-security-data-protection/red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/)、[Cloudflare 2023](/backend/07-security-data-protection/red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/)、[Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)、[GitHub OAuth 2022](/backend/07-security-data-protection/red-team/cases/supply-chain/github-oauth-2022-token-supply-chain/)。
 
-workflow 檢查點：workload 身份來源回查、federation trust 重評估、短時憑證撤銷、跨平台 token scope 收斂。對應流程章節：[incident-report-to-workflow](/backend/08-incident-response/incident-report-to-workflow/)。
+workflow 檢查點：workload 身份來源回查、federation trust 重評估、短期憑證撤銷、跨平台 token scope 收斂。對應流程章節：[incident-report-to-workflow](/backend/08-incident-response/incident-report-to-workflow/)。
 
 ## 邊界設備與外網入口
 
 這個主題處理暴露面高與修補窗口短的組合風險。優先案例是 [MOVEit 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/)、[Ivanti 2024](/backend/07-security-data-protection/red-team/cases/edge-exposure/ivanti-2024-vpn-chain/)、[PAN-OS 2024](/backend/07-security-data-protection/red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/)、[Fortinet SSL-VPN 2024](/backend/07-security-data-protection/red-team/cases/edge-exposure/fortinet-ssl-vpn-cve-2024-21762/)、[Fortinet 2023（27997）](/backend/07-security-data-protection/red-team/cases/edge-exposure/fortinet-cve-2023-27997-sslvpn-overflow/)、[Citrix 2023（3519）](/backend/07-security-data-protection/red-team/cases/edge-exposure/citrix-cve-2023-3519-code-injection/)、[F5 BIG-IP 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/f5-bigip-cve-2023-46747-auth-bypass/)、[ProxyLogon 2021](/backend/07-security-data-protection/red-team/cases/edge-exposure/proxylogon-2021-exchange-entry-chain/)、[ProxyShell 2021](/backend/07-security-data-protection/red-team/cases/edge-exposure/proxyshell-2021-exchange-post-auth-chain/)、[Citrix 後續事件](/backend/07-security-data-protection/red-team/cases/edge-exposure/citrix-adc-2023-follow-on-session-risk/)。
 
-workflow 檢查點：漏洞公告即隔離、分區修補、修補後狀態驗證、session 或憑證全域收斂。對應流程章節：[incident-report-to-workflow](/backend/08-incident-response/incident-report-to-workflow/)。
+workflow 檢查點：漏洞公告即隔離、分區修補、修補後狀態驗證、session 或存取憑證全域收斂。對應流程章節：[incident-report-to-workflow](/backend/08-incident-response/incident-report-to-workflow/)。
 
 ## 資料外送與營運回復
 
