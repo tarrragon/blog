@@ -20,7 +20,7 @@ IaC 是 infra 系列的根概念，貫穿所有模組。[成熟度階梯](/infra
 
 ## 設計責任
 
-採用 IaC 時要決定的核心問題：
+IaC 要讓程式碼成為基礎設施的 source of truth，採用時的決定分別處理程式碼用什麼寫、state 放在哪裡、誰還能繞過程式碼直接改、以及哪些資源先納管：
 
 - 工具選型：宣告式 DSL vs 程式語言，取捨在審查透明度 vs 抽象複用能力
 - [State](/infra/knowledge-cards/state/) 的存放：remote backend 的選擇與保護

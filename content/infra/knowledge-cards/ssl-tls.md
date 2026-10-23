@@ -24,7 +24,7 @@ echo | openssl s_client -connect example.com:443 2>/dev/null | openssl x509 -noo
 
 ## 設計責任
 
-TLS 設定要決定：憑證從哪裡來（ACM 免費但只能用在 AWS 服務上、Let's Encrypt 免費且跨平台）、驗證方式（DNS 驗證適合自動化、email 驗證較手動）、是否需要多域名的 SAN 憑證（一張憑證涵蓋 `example.com` + `*.example.com`）、HTTP → HTTPS 的強制跳轉怎麼設。
+TLS 憑證過期會讓瀏覽器顯示安全警告、部分 client 直接拒絕連線，而續期是否能自動完成，取決於憑證的來源與驗證網域持有權的方式；設定時一併決定的是：憑證從哪裡來（ACM 免費但只能用在 AWS 服務上、Let's Encrypt 免費且跨平台）、驗證方式（DNS 驗證適合自動化、email 驗證較手動）、是否需要多域名的 SAN 憑證（一張憑證涵蓋 `example.com` + `*.example.com`）、HTTP → HTTPS 的強制跳轉怎麼設。
 
 ## 鄰卡
 

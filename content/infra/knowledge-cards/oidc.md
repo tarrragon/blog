@@ -24,7 +24,7 @@ OIDC 聯合在身分與存取憑證地基裡的角色是「雲外機器身分的
 
 ## 設計責任
 
-設定 OIDC 聯合時要決定：
+OIDC 聯合拿掉了 CI 環境裡的長期 access key，風險因此移到兩個位置：哪些 token 換得到 role，以及換到之後能做什麼。下面的設定分別收斂這兩個位置：
 
 - **Trust policy 的 claim 收斂**：限定 issuer + audience + 特定 repo + 特定 branch，每個條件都收到最緊
 - **Role 的權限範圍**：OIDC 換到的 role 仍然要遵循最小權限 — 只給 pipeline 需要的 action

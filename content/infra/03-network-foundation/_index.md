@@ -128,4 +128,3 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 | AWS Systems Manager Session Manager 知識卡（代理程式反向連線的代表實作）                                      | 知識卡 | 無       | 1    |
 | GKE 節點與 MIG 管理的 VM 的管理存取（private cluster、節點 SSH 的必要性、在 template 裡設定 tag 與 metadata） | 主章   | 無       | 1    |
 | OpenSSH 內建 CA 的導入：產生 CA 金鑰、派送 CA 公鑰、簽發與撤銷                                                | 主章   | 無       | 1    |
-| infra 知識卡〈設計責任〉引導句同一句型的存量改寫                                                              | 知識卡 | 無       | 中   |

@@ -20,7 +20,7 @@ Helm 在 K8s 生態裡的角色類似 apt 在 Linux、npm 在 Node.js——把�
 
 ## 設計責任
 
-使用 Helm 時要決定：chart 的粒度（一個 chart = 一個微服務 or 一整個平台）、values 的組織（per-environment values file）、chart 版本管理（chart version vs app version）、以及升級策略（`helm upgrade --atomic` 失敗自動回退）。
+chart 的粒度一旦定下，各環境的 values file 與版本號都依附在它上面，事後拆分或合併 chart 要連同這些一起改，所以 Helm 的設計從粒度開始：chart 的粒度（一個 chart = 一個微服務 or 一整個平台）、values 的組織（per-environment values file）、chart 版本管理（chart version vs app version）、以及升級策略（`helm upgrade --atomic` 失敗自動回退）。
 
 ## 鄰卡
 

@@ -24,7 +24,7 @@ ECS 的執行模式分 [EC2](/infra/knowledge-cards/ec2/) launch type（自己�
 
 ## 設計責任
 
-使用 ECS 時要決定：
+ECS 的設計決定多半是在劃責任交界：運算實例歸 AWS 還是團隊管理、權限歸哪個 role、映像版本歸 infra code 還是 CI/CD，最後再依服務的負載型態選擴容指標：
 
 - **Launch type**：Fargate（低運維、較高成本）還是 EC2（低成本、要管實例）。多數 web API 的初始選擇是 Fargate，流量穩定後再評估 EC2
 - **Task IAM role**：task execution role（拉 image 和寫 log 用）和 task role（應用程式存取其他 AWS 資源用）是兩個不同的 role，不要混用

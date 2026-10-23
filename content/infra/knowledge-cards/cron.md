@@ -45,7 +45,7 @@ ls /etc/cron.d/
 
 ## 設計責任
 
-cron job 要決定：排程頻率、執行失敗時的通知方式（cron 預設把輸出寄 email，但 email 常沒配好）、日誌記錄（指令的 stdout/stderr 導到 log 檔）。遷移或升級時，cron job 要隨著遷移——忘了搬等於停掉排程但沒人知道。
+cron job 跑失敗時不會有使用者看到錯誤畫面，除了排程頻率之外，設計時另外兩項決定的作用是讓失敗被人看見：執行失敗時的通知方式（cron 預設把輸出寄 email，但 email 常沒配好）、日誌記錄（指令的 stdout/stderr 導到 log 檔）。遷移或升級時，cron job 要隨著遷移——忘了搬等於停掉排程但沒人知道。
 
 雲端替代品：AWS CloudWatch Events / EventBridge、GCP Cloud Scheduler、Azure Logic Apps。這些服務提供 web UI 管理、失敗通知、執行歷史，但需要額外設定。
 

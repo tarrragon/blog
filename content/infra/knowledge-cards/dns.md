@@ -30,7 +30,7 @@ DNS 在 infra 裡扮演「服務的門牌」角色。平台遷移、環境切換
 
 ## 設計責任
 
-DNS 設定要決定：誰管這個域名的 zone（Route 53 / Cloudflare / 域名商）、子域怎麼委派（dev / staging 用 NS delegation 交給不同 zone）、TTL 設多少（平常 3600 秒夠用、遷移前降到 300）。ACM 的 DNS 驗證也依賴 DNS——建立 TXT 或 CNAME 記錄證明域名歸屬。
+一筆 DNS 記錄從修改到生效要經過兩段：先由有權限的人在負責的 zone 改記錄，再等各地 resolver 快取的舊記錄過期，設計時的決定分別落在這兩段：誰管這個域名的 zone（Route 53 / Cloudflare / 域名商）、子域怎麼委派（dev / staging 用 NS delegation 交給不同 zone）、TTL 設多少（平常 3600 秒夠用、遷移前降到 300）。ACM 的 DNS 驗證也依賴 DNS——建立 TXT 或 CNAME 記錄證明域名歸屬。
 
 ## 鄰卡
 

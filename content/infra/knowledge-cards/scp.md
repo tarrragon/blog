@@ -20,7 +20,7 @@ SCP 套用在 OU 上時會繼承給 OU 下所有帳號和子 OU。Management acc
 
 ## 設計責任
 
-SCP 的設計要決定：用 deny-list 策略（預設全開、明確列出禁止項）還是 allow-list 策略（預設全關、明確列出允許項）。Deny-list 較常見也較易維護——只需要管「哪些該禁」。Allow-list 更嚴格但維護成本高——每次有新服務需求都要更新 SCP。
+SCP 會繼承給 OU 底下每個帳號與子 OU，連帳號管理員都越不過，所以策略選錯時整個 OU 的帳號一起受影響；第一個要定的是用 deny-list 策略（預設全開、明確列出禁止項）還是 allow-list 策略（預設全關、明確列出允許項）。Deny-list 較常見也較易維護——只需要管「哪些該禁」。Allow-list 更嚴格但維護成本高——每次有新服務需求都要更新 SCP。
 
 套用 SCP 前要確認不會擋到正在運作的服務——先在 sandbox OU 測試，確認既有 workload 不受影響再推到 workload OU。SCP 的變更跟 [IAM](/infra/knowledge-cards/iam/) 一樣要走 PR review。跨帳號策略的完整設計見[跨帳號策略文章](/infra/02-identity-credentials/multi-account-strategy/)。
 

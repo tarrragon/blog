@@ -22,7 +22,7 @@ Remote backend 設定後，如果 `terraform init` 提示 state 遷移確認，�
 
 ## 設計責任
 
-選擇 remote state backend 時要決定：自管還是託管（取決於團隊規模和維運餘裕）、state bucket 的加密與存取控制（誰能讀 state 等於誰能看到所有資源的敏感屬性）、versioning 是否開啟（是 state 回捲的唯一退路）、以及鎖表的設定（DynamoDB 的表名和 partition key）。
+Remote state backend 同時保管 state 的完整副本與其中的敏感屬性，存取控制或版本保留一旦出錯，受影響的是整個 IaC 工作流程的依據；選擇時要定的是：自管還是託管（取決於團隊規模和維運餘裕）、state bucket 的加密與存取控制（誰能讀 state 等於誰能看到所有資源的敏感屬性）、versioning 是否開啟（是 state 回捲的唯一退路）、以及鎖表的設定（DynamoDB 的表名和 partition key）。
 
 State 絕不能進 git——它含明文敏感值，推進版控等於把密碼寫進每個 clone 的歷史裡。Backend 設定本身（bucket name、region、鎖表名稱）寫在 HCL 裡進 git，state 檔本身只存在 backend 裡。
 

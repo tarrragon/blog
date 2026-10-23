@@ -27,7 +27,7 @@ OS 升級或平台遷移時，如果從 Apache 換成 nginx，所有 `.htaccess`
 
 ## 設計責任
 
-nginx 設定要決定：server block（類似 Apache 的 VirtualHost）怎麼組織、upstream 指向哪個 app server、靜態檔案的 root 路徑、TLS 憑證掛在哪裡、access log 和 error log 的路徑。設定改完跑 `nginx -t` 驗證語法後再 `nginx -s reload`。
+nginx 把 Apache 分散在各目錄 `.htaccess` 的設定收回同一棵設定樹，每個站台的行為因此都要在這棵樹裡寫明：server block（類似 Apache 的 VirtualHost）怎麼組織、upstream 指向哪個 app server、靜態檔案的 root 路徑、TLS 憑證掛在哪裡、access log 和 error log 的路徑。設定改完跑 `nginx -t` 驗證語法後再 `nginx -s reload`。
 
 ## 鄰卡
 
