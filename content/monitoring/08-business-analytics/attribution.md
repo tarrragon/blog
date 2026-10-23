@@ -43,13 +43,13 @@ Attribution 的技術實作需要解決兩個問題：跨 session 的使用者�
 
 同一個使用者在不同 session、不同裝置、不同瀏覽器上的行為需要關聯到同一個人。
 
-Web 端用 cookie（first-party）或 login ID 關聯。Mobile 端用 device ID 或 login ID。跨裝置關聯需要使用者登入 — 未登入的使用者在不同裝置上是不同的匿名 ID。
+Web 端用 cookie（[first-party](/monitoring/knowledge-cards/first-party-cookie/)）或 login ID 關聯。Mobile 端用 device ID 或 login ID。跨裝置關聯需要使用者登入 — 未登入的使用者在不同裝置上是不同的匿名 ID。
 
 ### 觸點記錄
 
 每次使用者接觸產品的渠道需要記錄。Web 端記錄 referrer、UTM 參數（`utm_source`、`utm_medium`、`utm_campaign`）。Mobile 端記錄 deep link 參數、app store 來源（需要 attribution SDK 如 AppsFlyer、Adjust）。
 
-廣告平台另外在落地網址加上自己的點擊 ID（click ID），例如 Meta 廣告的 `fbclid` 與 Google Ads 自動標記加上的 `gclid`，平台用它把轉換對回那一次廣告點擊。Meta Pixel 把 `fbclid` 存成網站網域上的 cookie `_fbc`（值是 `fb.0.` 接毫秒時間戳與 `fbclid` 原值），之後的每一筆事件都帶著它；部分瀏覽器與 App 內開啟的連結會移除網址裡的 `fbclid`，那一次點擊就對不回廣告（cookie 與參數的對應見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)，瀏覽器端的其他損失路徑見[Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/)）。
+廣告平台另外在落地網址加上自己的點擊 ID（click ID），例如 Meta 廣告的 `fbclid` 與 Google Ads 自動標記加上的 `gclid`，平台用它把轉換對回那一次廣告點擊。Meta Pixel 把 `fbclid` 存成網站網域上的 cookie `_fbc`（值是 `fb.` 接 cookie 所在網域的層級數字、毫秒時間戳與 `fbclid` 原值；一般網站寫在 `example.com` 這一層時是 `fb.1.`，本站在 `localhost` 上實測看到的是 `fb.0.`），之後的每一筆事件都帶著它；部分瀏覽器與 App 內開啟的連結會移除網址裡的 `fbclid`，那一次點擊就對不回廣告（cookie 與參數的對應見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)的〈各次擷取的結果〉，瀏覽器端的其他損失路徑見[Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/)）。
 
 ## 自架方案的歸因能力
 

@@ -170,7 +170,7 @@ Access review 的結果適合用兩個數字向管理層報告：**覆蓋率**�
 
 權限設計越集中在 role-based（用 IAM group 或 SSO permission set），離職處理越簡單——停用 SSO 帳號就自動切斷所有透過 SSO 取得的 role。反過來，如果有大量手動 attach 的 policy 或直接寫在 trust policy 裡的 user ARN，離職時要逐一找出並移除，容易遺漏。
 
-SSO 切得斷的只有透過 SSO 登入的服務。行銷追蹤的後台（Meta 的商家資產管理組合、Google Tag Manager、Google Analytics 4）以個人帳號為成員單位：成員用個人的 Facebook 帳號或 Gmail 帳號加入時，公司停用他的 SSO 帳號不影響他在這些後台的權限，要由持有最高管理權的成員逐一到三家後台移除；用公司 Google Workspace 帳號加入 GTM 與 GA4 的成員，停用 Workspace 帳號之後就登不進去，但成員名單上仍然留著那一列。這類後台要另外列進離職清單，各自的權限分級與移除權限所需的角色見[追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)。
+SSO 切得斷的只有透過 SSO 登入的服務。行銷追蹤的後台（Meta 的商家資產管理組合、Google Tag Manager、Google Analytics 4）以個人帳號為成員單位：成員用個人的 Facebook 帳號或 Gmail 帳號加入時，公司停用他的 SSO 帳號不影響他在這些後台的權限，要由持有最高管理權的成員逐一到三家後台移除；用公司 Google Workspace 帳號加入 GTM 與 GA4 的成員，停用 Workspace 帳號之後就登不進去（由帳號機制推出），而成員權限本身要在兩個後台各自移除。這類後台要另外列進離職清單，各自的權限分級與移除權限所需的角色見[追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)的〈Meta、GTM 與 GA4 的權限分級〉。
 
 離職後的 credential rotation 有一個常被忽略的風險：輪替範圍沒有按作用域分批。一個反例是多個服務共用同一把 secret，輪替時切新憑證的服務跟還只認舊憑證的服務之間出現認證窗口不一致，導致跨系統連鎖中斷。穩定的做法是先分域隔離受影響服務、恢復雙憑證窗口、再逐批收斂（見 [反例：憑證輪替未分 Scope](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/)）。
 
@@ -192,6 +192,8 @@ SSO 切得斷的只有透過 SSO 登入的服務。行銷追蹤的後台（Meta 
 
 如果團隊已經有[跨帳號策略](/infra/02-identity-credentials/multi-account-strategy/)，把外部人員的 workload 放在獨立帳號或 sandbox OU 裡，用 SCP 限制該帳號能操作的服務類型，是比 role 級別限制更強的隔離。
 
+行銷代理商是外部 vendor 裡最常拿到長期存取的一類，而 Meta 的商家資產管理組合有專為這種關係設計的機制：公司把 Meta 資料集或廣告帳號分享給代理商自己的組合（合作夥伴存取），代理商的人員由代理商在自己的組合裡管理，合作結束時公司移除那一筆分享，就切斷了代理商所有人員透過分享取得的存取，不需要逐一移除個人；代理商建立的整合（例如網站上指向代理商帳戶的代碼、伺服器端事件用的存取權杖）不會跟著消失，要另外盤點。分享只能由擁有資產的組合發起，所以前提是資產建在公司自己的組合裡；資產建在代理商的組合裡時，Meta 資料集與在那個組合裡建立的廣告帳號，合作結束後公司拿不回來。歸屬的安排見[追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)的〈追蹤資產的歸屬安排〉，換代理商時的移交順序與整合盤點見同篇〈資產與權限的移交方式〉。
+
 ### 時限控制
 
 外部存取的 IAM user 或 SSO 帳號在建立時就設定到期日。多數雲端平台支援 session duration 限制（role 的 `max_session_duration`）和帳號層級的停用排程。合約結束日應該對應到存取到期日——這個對應關係寫進 IaC（用 tag 標注到期日）或團隊的 access review checklist，避免合約結束後存取仍然開著。
@@ -201,8 +203,6 @@ SSO 切得斷的只有透過 SSO 登入的服務。行銷追蹤的後台（Meta 
 外部人員的操作需要比內部人員更嚴格的稽核。CloudTrail 預設記錄所有 API 呼叫，但 review 的頻率要提高——外部人員的操作紀錄每週抽查，而非等到季度 access review 才回頭看。查的是：有沒有存取超出約定範圍的資源？有沒有在非工作時間操作？有沒有大量的 read 操作指向敏感資料？
 
 這些紀錄同時也是合約管理的依據——如果外部 vendor 的技術支援存取了超出約定範圍的資源，紀錄是釐清責任的事實基礎。
-
-行銷代理商是外部 vendor 裡最常拿到長期存取的一類，而 Meta 的商家資產管理組合有專為這種關係設計的機制：公司把 Meta 資料集或廣告帳號分享給代理商自己的組合（合作夥伴存取），代理商的人員由代理商在自己的組合裡管理，合作結束時公司移除那一筆分享，就切斷了代理商所有人員的存取，不需要逐一移除個人。分享只能由擁有資產的組合發起，所以前提是資產建在公司自己的組合裡；資產建在代理商的組合裡時，合作結束後公司拿不回來。歸屬的安排與換代理商的移交順序見[追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)。
 
 ## 跨分類引用
 

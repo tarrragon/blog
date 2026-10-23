@@ -65,7 +65,9 @@ Collector 的儲存清理應該自動化 — 手動清理依賴人記得執行�
 
 JSONL 儲存用「一天一檔」的命名（`events-2026-06-19.jsonl`），清理腳本每天刪除超過保留期限的檔案。Cron job 或 systemd timer 定期執行。
 
-上面的保留期間管的是 collector 那一端的儲存。瀏覽器那一端的識別碼另有自己的期限，而且多半由追蹤碼自己決定：在 Chromium 上實測，Meta Pixel 寫下的 `_fbp` 與 `_fbc` 到期時間是寫入起算 90 天，GA4 代碼寫下的 `_ga` 與 `_ga_<評估 ID>` 是 400 天（實測見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)）。網站同時裝了商業追蹤碼時，儲存限制的盤點要把這些 cookie 的期限列進去，它們的值會隨每一筆事件送到 vendor，vendor 那一端的保留期間另由 vendor 的設定與條款決定。
+### 瀏覽器端識別碼 cookie 的期限
+
+保留期間表與自動清理管的是 collector 儲存的事件。瀏覽器裡的識別碼 cookie 另有自己的期限，由寫入它的追蹤碼設定、再受瀏覽器的上限截斷：在 Chromium 上實測，Meta Pixel 寫下的 `_fbp` 與 `_fbc` 到期時間是寫入起算 90 天；GA4 代碼寫下的 `_ga` 與 `_ga_<評估 ID>` 是 400 天，那是 Chrome 的上限，GA4 自己設的預設是兩年（實測見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)的〈各次擷取的結果〉，期限的規則見 [First-party Cookie（第一方 cookie）](/monitoring/knowledge-cards/first-party-cookie/)）。網站同時裝了商業追蹤碼時，儲存限制的盤點要把這些 cookie 的期限列進去，它們的值會隨每一筆事件送到 vendor，vendor 那一端的保留期間另由 vendor 的設定與條款決定。
 
 ## 下一步路由
 

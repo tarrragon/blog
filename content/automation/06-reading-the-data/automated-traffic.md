@@ -22,14 +22,14 @@ Apps Script 的 [`doPost(e)`](/automation/knowledge-cards/doget-dopost/) 事件�
 
 beacon 靠 JavaScript 觸發，所以**只有會執行 JS 的抓取工具才會進入這份統計**。這一條大幅縮小要辨識的對象範圍，而它與直覺相反：
 
-| 抓取工具                                           | 執行 JS | 出現在統計裡 |
-| -------------------------------------------------- | ------- | ------------ |
-| Googlebot                                          | 會      | 會           |
-| 無頭瀏覽器驅動的抓取工具（Playwright / Puppeteer） | 會      | 會           |
-| 監控與可用性檢查服務                               | 多數會  | 會           |
-| GPTBot / ClaudeBot / PerplexityBot 等 AI 訓練爬蟲  | 不會    | 不會         |
-| facebookexternalhit 等連結預覽                     | 不會    | 不會         |
-| CCBot / AhrefsBot / SemrushBot                     | 不會    | 不會         |
+| 抓取工具                                                                                            | 執行 JS | 出現在統計裡 |
+| --------------------------------------------------------------------------------------------------- | ------- | ------------ |
+| Googlebot                                                                                           | 會      | 會           |
+| [無頭瀏覽器](/monitoring/knowledge-cards/headless-browser/)驅動的抓取工具（Playwright / Puppeteer） | 會      | 會           |
+| 監控與可用性檢查服務                                                                                | 多數會  | 會           |
+| GPTBot / ClaudeBot / PerplexityBot 等 AI 訓練爬蟲                                                   | 不會    | 不會         |
+| facebookexternalhit 等連結預覽                                                                      | 不會    | 不會         |
+| CCBot / AhrefsBot / SemrushBot                                                                      | 不會    | 不會         |
 
 **AI 訓練爬蟲不執行 JavaScript** 是其中最反直覺的一項。Vercel 在 2025 年對自家平台流量的量測顯示，GPTBot 與 ClaudeBot 都會抓取 JS 檔案卻從不執行；連結預覽服務只讀 HTML 的 meta 標籤。**在主流爬蟲裡，目前已知具備完整 JS 渲染的只有 Googlebot**——這是對演化中的世界所做的觀察，不是永久成立的分類，各家的渲染能力隨時可能改變。
 
@@ -54,7 +54,7 @@ beacon 靠 JavaScript 觸發，所以**只有會執行 JS 的抓取工具才會�
 
 **UA 比對抓的是自我申報。** 搜尋引擎與正派的抓取服務會在 `User-Agent` 裡寫明自己是誰，這是它們與網站經營者之間的慣例。比對這個字樣不會誤判真人，因為真人的瀏覽器不會自稱是機器。
 
-商業追蹤碼在送出端做同一種比對，處置卻相反。Meta Pixel 的設定檔帶來一個 `botblocking` 外掛，拿 `navigator.userAgent` 比對一份機器人規則清單，清單裡有無頭 Chrome 的 `HeadlessChrome` 字樣，比對成功的事件在瀏覽器裡就被攔下、不送出；用 Playwright 預設的無頭模式打開實測頁，`fbevents.js` 照常載入、cookie 照常寫入，而 PageView 與購買事件一筆都沒有送出（實測與機制見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)）。同一次無頭瀏覽器的訪問，本站的 beacon 會記下來並由通用層標成 `ua:bot`，Meta 的報表裡沒有這一筆，所以兩邊的訪問數對不上時，差額裡有一部分是這種在送出端就被丟掉的機器流量。
+Meta Pixel 在送出端做同一種比對，處置卻相反。實測的那個 Pixel，設定檔帶來一個 `botblocking` 外掛，拿 `navigator.userAgent` 比對一份機器人規則清單，清單裡有無頭 Chrome 的 `HeadlessChrome` 字樣，比對成功的事件在瀏覽器裡就被攔下、不送出；用 Playwright 預設的無頭模式打開實測頁，`fbevents.js` 照常載入、cookie 照常寫入，而 PageView、ViewContent 與購買事件一筆都沒有送出（實測與機制見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)的〈擷取方式〉一節）。同一次[無頭瀏覽器](/monitoring/knowledge-cards/headless-browser/)的訪問，本站的 beacon 照樣送出，訊號欄是 `webdriver,ua:headless`：`navigator.webdriver` 為真帶出 `webdriver`，User-Agent 裡的 `headless` 被〈具名比對與通用退回〉一節的通用比對接住；Meta 的報表裡沒有這一筆，所以兩邊的訪問數對不上時，差額裡有一部分是這種在送出端就被丟掉的機器流量。GA4 不在送出端過濾，它的代碼在無頭模式下照常送出事件，已知機器人的排除在 Google 的接收端進行（見[Client-side SDK 認證的根本限制](/monitoring/07-security-privacy/client-sdk-authentication/)的 GA4 段）。
 
 **空語言清單與零視窗尺寸原本是無頭環境的特徵，而這兩條正在失效。** Chrome 112 起的新無頭模式會建立一個不顯示的平台視窗，並帶有正常的語言偏好，兩項特徵大多不再成立。它們的誤差方向因此從「誤判真人」偏向「漏判機器」——保留是因為舊版工具仍在使用中，但不能當作主力。
 

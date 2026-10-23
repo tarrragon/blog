@@ -18,7 +18,7 @@ Meta 定義了一組標準事件（standard events）：`PageView`、`ViewConten
 
 ## Meta Pixel 在瀏覽器裡做的事
 
-Pixel 的基本碼從 `connect.facebook.net` 載入 `fbevents.js`，再用 `fbq()` 這個全域函式初始化並送事件。`fbevents.js` 載入後會再向 Meta 取得這個 Pixel 的設定檔，設定檔帶來的外掛會在網站沒有呼叫 `fbq()` 的情況下自己送事件，例如依按鈕點擊送出的 `SubscribedButtonClick`，內容包含按鈕文字；實測見 [用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/) 的 Meta Pixel 有視窗那一次。
+Pixel 的基本碼從 `connect.facebook.net` 載入 `fbevents.js`，再用 `fbq()` 這個全域函式初始化並送事件。`fbevents.js` 載入後會再向 Meta 取得這個 Pixel 的設定檔，設定檔帶來的外掛會在網站沒有呼叫 `fbq()` 的情況下[自己送事件](/monitoring/knowledge-cards/autocapture/)，例如依按鈕點擊送出的 `SubscribedButtonClick`，內容包含按鈕文字；實測見 [用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/) 的 Meta Pixel 有視窗那一次。
 
 ```html
 <script>
@@ -48,9 +48,9 @@ Pixel 也在網站自己的網域上寫 cookie：`_fbp` 記錄這個瀏覽器的
 Pixel 的事件從讀者的瀏覽器發出，所以它會在讀者端被擋下，而網站這一端收不到任何錯誤：
 
 - **廣告攔截器擋下 script 本身**：攔截清單收錄 `connect.facebook.net` 這類已知追蹤網域，`fbevents.js` 載不進來，`fbq()` 之後的所有事件都不會送出。
-- **瀏覽器的追蹤防護縮短 cookie 壽命**：Safari 的 Intelligent Tracking Prevention（ITP）會限制由 JavaScript 寫入的第一方 cookie 的有效期，`_fbp` 因此比預期更早消失，同一個人隔幾天回來購買時會被當成另一個瀏覽器；部分瀏覽器與 App 內開啟的連結也會移除網址裡的 `fbclid`。
+- **瀏覽器的追蹤防護縮短 cookie 壽命**：Safari 的 Intelligent Tracking Prevention（ITP）會限制由 JavaScript 寫入的第一方 cookie 的有效期，`_fbp` 因此比預期更早消失，同一個人隔一週以上才回來購買時可能被當成另一個瀏覽器（期限規則見 [First-party Cookie（第一方 cookie）](/monitoring/knowledge-cards/first-party-cookie/)）；部分瀏覽器與 App 內開啟的連結也會移除網址裡的 `fbclid`。
 - **同意聲明還沒取得**：在要求事先同意的法域（例如 GDPR 下的歐盟讀者），網站在使用者同意之前不能載入 Pixel，這段期間的事件依規定就不送。
-- **自動化與機器人流量過濾**：Pixel 設定檔裡的外掛依 User-Agent 判斷機器人流量，[無頭瀏覽器](/monitoring/knowledge-cards/headless-browser/)（User-Agent 帶 `HeadlessChrome`）送出的事件在瀏覽器裡就被攔下。`fbevents.js` 照常載入、cookie 照常寫入，網站這一端看不出事件沒送；用自動化工具驗證追蹤設定時會撞上這一條，實測見 [用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/) 的無頭模式那一次。
+- **自動化與機器人流量過濾**：實測的這個 Pixel，設定檔裡的外掛依 User-Agent 判斷機器人流量（外掛由 Meta 依各 Pixel 的設定檔下發），[無頭瀏覽器](/monitoring/knowledge-cards/headless-browser/)（User-Agent 帶 `HeadlessChrome`）送出的事件在瀏覽器裡就被攔下。`fbevents.js` 照常載入、cookie 照常寫入，網站這一端看不出事件沒送；用自動化工具驗證追蹤設定時會撞上這一條，實測見 [用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/) 的無頭模式那一次。
 - **跳頁中斷**：購買按鈕按下後立刻導向感謝頁，送事件的請求可能還沒送完頁面就被卸載。這是所有前端事件追蹤共通的狀況，機制與 `sendBeacon` 的解法見 [JS/TS 平台適配](/monitoring/05-platform-adaptation/js-ts-platform/)。
 
 每個網站被擋下的比例取決於讀者組成（裝攔截器的比例、iOS 的比例、歐盟流量的比例），網路上流傳的百分比是別人網站的數字。量自己網站的方式是對帳：同一段期間內，訂單資料庫裡的訂單數與 Events Manager 收到的 `Purchase` 數相比，差距就是這個網站的瀏覽器端損失。
