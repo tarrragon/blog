@@ -58,7 +58,7 @@ PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識
 | [EC2](/infra/knowledge-cards/ec2/)                                                   | AWS 的虛擬機器服務，由 AMI、instance type、EBS、security group 與 IAM role 組成           |
 | [AMI](/infra/knowledge-cards/ami/)                                                   | EC2 instance 的作業系統映像快照，從同一份 AMI 開出的 instance 起始狀態相同                |
 | [EBS](/infra/knowledge-cards/ebs/)                                                   | 掛在 instance 上的持久化區塊儲存，生命週期與 instance 獨立、支援 snapshot                 |
-| [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) | 依帳號身分決定要不要替外部連線開到內部主機的代理服務，主機不必持有公開 IP                 |
+| [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) | 依帳號身分決定是否替外部連線開到內部主機的代理服務，主機不必持有公開 IP                   |
 | [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/)                       | 放在公開網段、只負責轉接管理連線的主機，其他主機只接受來自它的 SSH                        |
 | [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/)               | SSH CA 簽發的短期使用者憑證，到期自動失效，主機只信任 CA 公鑰                             |
 | [OS Login](/infra/knowledge-cards/os-login/)                                         | GCP 依 Google 帳號與 IAM role 決定 VM 登入與 sudo 權限的機制                              |

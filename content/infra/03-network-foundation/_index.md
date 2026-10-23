@@ -1,7 +1,7 @@
 ---
 title: "模組三：網路地基 — VPC 與分層"
 date: 2026-06-26
-description: "VPC、public / private subnet 切分、route table、NAT、security group 設計"
+description: "要規劃 VPC 與 subnet 分層、設計 security group 與 NAT、收斂對外開放的 SSH 與 RDP 管理 port、或決定管理員登入伺服器的通道時，從這裡找對應的文章"
 weight: 4
 tags: ["infra", "network", "vpc", "security-group"]
 ---
@@ -105,13 +105,13 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 
 ## 章節文章
 
-| 文章                                                                                                                          | 主題                                                                                                                                                                                              |
-| ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/)                  | VPC CIDR 規劃、public / private subnet 切分、route table 與 NAT 的可用性成本取捨、security group 最小開放設計與 NACL 定位                                                                         |
-| [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)                                       | 0.0.0.0/0 偵測、未使用 SG 識別、依賴檢查、清理工作流、自動化治理                                                                                                                                  |
-| [流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)                                    | DNS、負載平衡（L4/L7）、reverse proxy、應用的責任鏈，TLS 終結位置、動靜分離、單機 nginx 與雲端 ALB 的選擇條件                                                                                     |
-| [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證與救援入口](/infra/03-network-foundation/management-access-channel/) | 管理通道拆成網路可達性、通道授權與主機登入驗證三層，各層的風險與做法（來源白名單、跳板機、VPN、身分感知代理、代理程式反向連線、短期憑證），出站路徑、救援入口、組織護欄與稽核，以及選擇組合的條件 |
-| [GCP VM 的 SSH 管理通道：從 default-allow-ssh 改走 IAP TCP forwarding](/infra/03-network-foundation/gcp-iap-ssh-access/)      | 管理通道模型在 GCP 上的實作：default 網路自帶規則、IAP 的連線路徑與來源範圍、切換指令、IAM 授權範圍、OS Login、Cloud NAT、Serial Console、Organization Policy 與稽核                              |
+| 文章                                                                                                                          | 主題                                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/)                  | VPC CIDR 規劃、public / private subnet 切分、route table 與 NAT 的可用性成本取捨、security group 最小開放設計與 NACL 定位                                                                                                                    |
+| [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)                                       | 0.0.0.0/0 偵測、未使用 SG 識別、依賴檢查、清理工作流、自動化治理                                                                                                                                                                             |
+| [流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)                                    | DNS、負載平衡（L4/L7）、reverse proxy、應用的責任鏈，TLS 終結位置、動靜分離、單機 nginx 與雲端 ALB 的選擇條件                                                                                                                                |
+| [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證與救援入口](/infra/03-network-foundation/management-access-channel/) | 管理通道拆成網路可達性、通道授權與主機登入驗證，各層的風險與做法（來源白名單、跳板機、VPN、身分感知代理、代理程式反向連線、SSH 憑證），依身分系統、主機位置與人員流動選擇組合的條件，出站路徑、救援入口、組織護欄與稽核                      |
+| [GCP VM 的 SSH 管理通道：從預設的全開 SSH 規則改走 IAP TCP forwarding](/infra/03-network-foundation/gcp-iap-ssh-access/)      | 管理通道模型在 GCP 上的實作：default 網路自帶規則、IAP 的連線路徑與來源範圍、切換與停用舊規則驗證的指令、IAM 授權範圍、OS Login 的啟用順序、Cloud NAT 與 Private Google Access、Serial Console、Organization Policy 與階層式防火牆、稽核紀錄 |
 
 ## 跨分類引用
 

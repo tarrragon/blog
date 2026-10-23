@@ -6,15 +6,15 @@ weight: 54
 tags: ["infra", "knowledge-cards", "network", "access", "zero-trust"]
 ---
 
-身分感知代理（identity-aware proxy）是一個放在網際網路與內部主機之間的 [Reverse Proxy](/infra/knowledge-cards/reverse-proxy/)：它接收外部連線，先向組織的 [Identity Provider](/backend/knowledge-cards/identity-provider/) 確認發起連線的帳號、再依授權規則決定是否替這條連線開到後端，通過的連線由代理從固定的內部位址段送進去。後端主機的防火牆只需要放行代理的位址段，主機本身不必持有公開 IP。它是 [Zero Trust（零信任）](/backend/knowledge-cards/zero-trust/) 原則在存取入口上的一種實作：放行的依據是每一次連線的身分，網路位置不構成信任的理由。
+身分感知代理（identity-aware proxy）是一個放在網際網路與內部主機之間的 [Reverse Proxy](/infra/knowledge-cards/reverse-proxy/)：它接收外部連線，先向組織的 [Identity Provider](/backend/knowledge-cards/identity-provider/) 確認發起連線的帳號、再依授權規則決定是否替這條連線開到後端。通過的連線送到後端的方式有兩種：由代理從它自己的固定位址段連到主機的內部 IP（GCP 的 IAP），這時主機的防火牆只放行那段代理位址；或經由主機上的 connector 主動往外建立的反向連線送進去（Cloudflare Tunnel、Teleport agent），這時主機不開任何入站 port。兩種方式下主機都不必持有公開 IP。它是 [Zero Trust（零信任）](/backend/knowledge-cards/zero-trust/) 原則在存取入口上的一種實作：放行的依據是每一次連線的身分，網路位置不構成信任的理由。
 
 ## 概念位置
 
-在伺服器管理通道的模型裡，身分感知代理同時承擔兩層：網路可達性（sshd 只對代理可見）與通道授權（用 IdP 帳號判斷誰可以開通道）。主機登入驗證仍由主機上的 sshd 負責，金鑰的發放方式另見 [OS Login](/infra/knowledge-cards/os-login/) 與 [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/)。
+在[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的模型裡，身分感知代理同時承擔兩層：網路可達性（sshd 只對代理可見）與通道授權（用 IdP 帳號判斷誰可以開通道）。主機登入驗證仍由主機上的 sshd 負責，金鑰的發放方式另見 [OS Login](/infra/knowledge-cards/os-login/) 與 [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/)。
 
-它與 [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) 解決同一件事——讓內部主機不必各自對外——差別在對外接收連線的那一台由誰維運、用什麼判斷身分：跳板機是自己維運的主機、用 SSH 金鑰判斷；身分感知代理是廠商或自管的代理服務、用 IdP 帳號判斷。它與一般反向代理的差別在轉送前多了一次身分驗證與授權。
+它與 [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) 解決同一件事——讓內部主機不必各自對外——差別在對外接收連線的元件由誰維運、用什麼判斷身分：跳板機是自己維運的主機、用 SSH 金鑰判斷；身分感知代理是廠商提供或自己架設的代理服務、用 IdP 帳號判斷。它與一般反向代理的差別在轉送前多了一次身分驗證與授權。
 
-常見的實作有 GCP 的 IAP（Identity-Aware Proxy，對 HTTPS 應用與 TCP 連線各有一種模式，TCP forwarding 的來源位址段是 `35.235.240.0/20`）、Cloudflare Access、Teleport 的 proxy。這個模式的公開源頭是 Google 2014 年起發表的 BeyondCorp 系列論文。
+常見的實作有 GCP 的 IAP（Identity-Aware Proxy，對 HTTPS 應用與 TCP 連線各有一種模式，TCP forwarding 的來源位址段是 `35.235.240.0/20`）、Cloudflare Access、Teleport 的 proxy。後兩者送進主機的方式是反向連線，在網路可達性上同時屬於管理通道設計那篇的「代理程式（agent）反向連線」。這個模式的公開源頭是 Google 2014 年起發表的 BeyondCorp 系列論文。
 
 ## 可觀察訊號
 
@@ -36,3 +36,4 @@ tags: ["infra", "knowledge-cards", "network", "access", "zero-trust"]
 - [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) — 同樣收斂對外入口，由自己維運的主機轉接
 - [Security Group](/infra/knowledge-cards/security-group/) — 放行代理位址段的那一條入站規則所在的位置
 - [Identity Provider](/backend/knowledge-cards/identity-provider/) — 代理用來確認帳號的系統
+- [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/) — 身分感知代理在網路可達性、通道授權、主機登入驗證三層模型裡的位置，以及與其他做法的選擇條件

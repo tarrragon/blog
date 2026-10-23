@@ -10,13 +10,13 @@ SSH 憑證（SSH certificate）是由一把 SSH CA 私鑰簽過名的 [SSH](/inf
 
 ## 概念位置
 
-SSH 憑證屬於伺服器管理通道模型裡的主機登入驗證這一層，處理的是金鑰的生命週期。它與另外兩種金鑰發放方式的差別在「收回」怎麼發生：
+SSH 憑證屬於[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)模型裡的主機登入驗證這一層，處理的是金鑰的生命週期。它與另外兩種金鑰發放方式的差別在「收回」怎麼發生：
 
 - 靜態 `authorized_keys`（見 [SSH](/infra/knowledge-cards/ssh/)）：沒有到期時間，收回要逐台刪除
 - 由中央服務在登入當下提供公鑰（見 [OS Login](/infra/knowledge-cards/os-login/)）：帳號或角色移除，下一次登入就失敗
-- SSH 憑證：憑證到期自動失效，有效期設成幾小時時，離職或權限變更最晚在一個有效期之後生效
+- SSH 憑證：憑證到期自動失效，離職或權限變更最晚在一個有效期之後生效
 
-簽發服務通常接在 [Identity Provider](/backend/knowledge-cards/identity-provider/) 後面：管理員用 IdP 帳號登入簽發服務，換到一張短期憑證，所以通道授權與主機登入驗證可以共用同一個身分來源。HashiCorp [Vault](/infra/knowledge-cards/vault/) 的 SSH secrets engine 與 Teleport 都以這種方式運作。
+簽發服務通常接在 [Identity Provider](/backend/knowledge-cards/identity-provider/) 後面：管理員用 IdP 帳號登入簽發服務，換到一張短期憑證，所以通道授權與主機登入驗證可以共用同一個身分來源。HashiCorp Vault 的 SSH secrets engine 與 Teleport 都以這種方式運作。三種做法收回的都是下一次登入，已經建立的工作階段要另外在主機上中斷。
 
 ## 可觀察訊號
 
@@ -29,10 +29,10 @@ SSH 憑證屬於伺服器管理通道模型裡的主機登入驗證這一層，�
 導入 SSH 憑證時要決定：
 
 - **CA 私鑰的保管**：CA 私鑰能簽出登入所有主機的憑證，它外洩的影響等於所有主機的所有金鑰一起外洩，所以放在 Vault 或硬體安全模組這類受控位置，不放在任何人的電腦上
-- **有效期長度**：越短越接近即時收回，代價是管理員要更常重新簽發；以小時計是常見的取值範圍
+- **有效期長度**：有效期等於能接受的最晚收回延遲——離職或權限移除之後，那張憑證最多還能用一個有效期。延遲上限越短，有效期越短，管理員重新簽發也越頻繁；管理員每個工作日開始時簽一次的節奏，對應的有效期是一個工作日左右
 - **principal 的對應**：憑證列出的帳號名稱與主機上的帳號怎麼對應，決定一張憑證能登入哪些主機的哪些帳號
 - **提前撤銷**：憑證還沒到期就要失效時（例如私鑰外洩），sshd 用 `RevokedKeys` 指向撤銷清單，這份清單要能派送到所有主機
-- **主機憑證**：同一個機制也能反過來簽主機的金鑰（`HostCertificate`），讓用戶端驗證主機身分，省掉第一次連線時確認主機指紋的步驟
+- **主機憑證**：同一個機制也能反過來簽主機的金鑰（`HostCertificate`），讓用戶端驗證主機身分，省掉第一次連線時確認主機指紋的步驟，前提是用戶端的 `known_hosts` 已加入 `@cert-authority` 與 CA 公鑰
 
 簽發的指令形式是 `ssh-keygen -s <ca-private-key> -I <identity> -n <principals> -V <validity> <user-public-key>`，實際運作時由簽發服務代為執行。
 
@@ -40,4 +40,5 @@ SSH 憑證屬於伺服器管理通道模型裡的主機登入驗證這一層，�
 
 - [SSH](/infra/knowledge-cards/ssh/) — 靜態金鑰認證與 `authorized_keys`
 - [OS Login](/infra/knowledge-cards/os-login/) — 另一種讓登入權限隨帳號收回的做法
-- [HashiCorp Vault](/infra/knowledge-cards/vault/) — 可以保管 CA 私鑰並簽發憑證
+- [HashiCorp Vault](/infra/knowledge-cards/vault/) — 集中保管機密的系統，可以用來保管 CA 私鑰
+- [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/) — 三種金鑰發放方式與其他層的選擇條件
