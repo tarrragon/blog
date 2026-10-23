@@ -6,7 +6,7 @@ weight: 491
 tags: ["backend", "security", "privacy", "compliance", "incident-response"]
 ---
 
-子處理者（sub-processor）是處理者再委託去處理控制者個人資料的另一個處理者：平台是商家的處理者，平台把商家的會員地址傳給串接的物流業者出貨時，那家物流業者就是子處理者。可先對照 [Data Controller and Data Processor（控制者與處理者）](/backend/knowledge-cards/data-controller-and-processor/)。
+子處理者（sub-processor）是處理者再委託去處理控制者個人資料的另一個處理者。這是業界與契約的慣用名稱，GDPR 條文寫的是「另一個處理者」（another processor）。例如平台是商家的處理者，平台把商家的會員地址傳給串接的物流業者出貨時，那家物流業者就是子處理者。可先對照 [Data Controller and Data Processor（控制者與處理者）](/backend/knowledge-cards/data-controller-and-processor/)。
 
 ## 概念位置
 
@@ -18,4 +18,4 @@ SaaS 平台公開的子處理者清單（列出雲端主機、寄信服務、支
 
 ## 設計責任
 
-處理者要知道自己把哪些控制者的哪些欄位傳給了哪個子處理者、它保存多久，這份紀錄決定子處理者外洩時受影響的範圍；資料處理協議要讓處理者在事故時拿得到子處理者的存取紀錄或鑑識結論。子處理者被入侵時的歸屬判定與通知範圍，見 [8.26 資料外洩時對商家的通知〈子處理者被入侵時的訊號與取證〉](/backend/08-incident-response/security-incident-customer-notification/#子處理者被入侵時的訊號與取證)；資料交給供應商之前契約要寫的通報時限與責任鏈見 [7.4 資料保護與遮罩治理〈各節點的收斂動作〉](/backend/07-security-data-protection/data-protection-and-masking-governance/#各節點的收斂動作)。
+處理者要知道自己把哪些控制者的哪些欄位傳給了哪個子處理者、它保存多久，這份紀錄決定子處理者外洩時受影響的範圍；資料處理協議要讓處理者在事故時拿得到子處理者的存取紀錄或鑑識結論。子處理者被入侵時的歸屬判定與通知範圍，見 [8.26 資料外洩時對商家的通知〈子處理者的入侵通報〉](/backend/08-incident-response/security-incident-customer-notification/#子處理者的入侵通報)；資料交給供應商之前契約要寫的通報時限與責任鏈見 [7.4 資料保護與遮罩治理〈各節點的收斂動作〉](/backend/07-security-data-protection/data-protection-and-masking-governance/#各節點的收斂動作)。
