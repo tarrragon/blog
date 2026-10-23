@@ -148,3 +148,4 @@ Incident intake 也需要 07 的 security evidence 邊界。涉及資料外洩�
 - 08.2 incident command roles：指派 IC、scribe 與 owner
 - 08.19 incident decision log：保留 intake 假設與證據
 - 07.7 audit trail：資安 evidence chain 來源
+- 資安訊號的外洩來源還沒確定時，歸屬判定的方法、要不要先發風險預警與預警的內容：[8.26 資安事故的客戶通知](/backend/08-incident-response/security-incident-customer-notification/)

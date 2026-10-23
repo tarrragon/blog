@@ -81,7 +81,7 @@ Incident communication channel 是事故期間的通訊控制面，責任是固�
 
 更新節奏需要雙軌：固定 cadence + 重大事件補播。固定 cadence 提供可預期性，重大事件補播提供時效性。
 
-資安事故的 Known facts 一欄能寫到哪一級（已切斷已知的入侵路徑、已確認受影響範圍、已移除攻擊者的立足點、事故已解除），各級成立的條件見 [8.25 建置主機被入侵後的根除與重建〈對外宣告已掌握狀況的條件〉](../compromised-build-host-eradication/#對外宣告已掌握狀況的條件)。
+資安事故的 Known facts 一欄能寫到哪一級（已切斷已知的入侵路徑、已確認受影響範圍、已移除攻擊者的立足點、事故已解除），各級成立的條件見 [8.25 建置主機被入侵後的根除與重建〈對外宣告已掌握狀況的條件〉](../compromised-build-host-eradication/#對外宣告已掌握狀況的條件)；外洩來源還沒確定時對商家發的風險預警，見 [8.26 資安事故的客戶通知](../security-incident-customer-notification/)。
 
 ## 主通道失效切換
 

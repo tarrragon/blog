@@ -163,8 +163,9 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [8.23 Control Plane Decision Log and Write-back 實作示範](/backend/08-incident-response/control-plane-decision-log-write-back/) | Control Plane Decision Log and Write-back 實作示範 | 以 rule/config rollout 事故示範 decision log 與 write-back 的完整閉環                                                                                                                      |
 | [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/)                                  | 客服回報的處理                                     | 客服當場答覆時用的資訊（內部狀態頁、已知錯誤清單、錯誤碼對照表、查詢工具）、立即通知值班與開單的條件、工程查證後的回覆內容、同一類回報的回寫                                               |
 | [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)                          | Compromised Build Host Eradication                 | 從主機上的憑證、憑證與網路連得到的系統推出清查清單、重建來源的確認、憑證撤銷與發新的先後、多波攻擊監看的結束條件、對外宣告已掌握狀況的分級條件與法定通報，以及賠償承諾先定認定標準再定結果 |
+| [8.26 資安事故的客戶通知](/backend/08-incident-response/security-incident-customer-notification/)                               | Security Incident Customer Notification            | 外洩來源的歸屬判定（共同洩漏點分析、已排除 / 未排除 / 指向平台）、歸屬未定時發風險預警的條件與內容、確認通知要交付各商家的事實、調查報告的時間軸與分層根因                                 |
 
-> 註：8.1-8.23 已完成概念層與第一篇實作示範正文；8.24 補事故候選之前的那一段（一則客服回報還不確定是不是事故時由誰處理），位置在 8.18 的上游，案例庫可支援 intake、decision、impact、write-back 的完整路由。8.25 補資安事故止血之後的根除與重建（8.3 處理的止血與回復之間的那一段），以運維事故沒有的「攻擊者會回來」為前提。後續重點為多事件對照與跨模組回寫精度提升。
+> 註：8.1-8.23 已完成概念層與第一篇實作示範正文；8.24 補事故候選之前的那一段（一則客服回報還不確定是不是事故時由誰處理），位置在 8.18 的上游，案例庫可支援 intake、decision、impact、write-back 的完整路由。8.25 補資安事故止血之後的根除與重建（8.3 處理的止血與回復之間的那一段），以運維事故沒有的「攻擊者會回來」為前提；8.26 補同一類事故對商家的通知，從歸屬未定時的風險預警到事後的調查報告。後續重點為多事件對照與跨模組回寫精度提升。
 
 ## 個案前拓展空間
 
@@ -269,7 +270,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 ## 模組完成狀態
 
-主章 8.1-8.25 已完成首輪正文，服務案例庫第一批正文已補齊（Cloudflare / AWS S3 / GitHub / GCP / Atlassian / Roblox / Fastly，以及 Slack / Datadog / Discord / Azure AD / Heroku / Reddit / Microsoft 365）。目前重點從「補案例檔案」轉為「補多事件對照與決策路徑精度」。
+主章 8.1-8.26 已完成首輪正文，服務案例庫第一批正文已補齊（Cloudflare / AWS S3 / GitHub / GCP / Atlassian / Roblox / Fastly，以及 Slack / Datadog / Discord / Azure AD / Heroku / Reddit / Microsoft 365）。目前重點從「補案例檔案」轉為「補多事件對照與決策路徑精度」。
 
 案例正文入口見 [事故案例庫](/backend/08-incident-response/cases/)。每篇案例至少要能回寫一個事故控制面章節（例如 8.18、8.19、8.20、8.21、8.22），避免只停在事故時間線描述。
 
