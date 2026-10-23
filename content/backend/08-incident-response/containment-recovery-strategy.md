@@ -10,7 +10,7 @@ tags: ["backend", "incident-response"]
 
 ## 概念定位
 
-止血、降級與回復是事故處理中不同時間尺度的三種策略。止血的責任是先把擴散停住，降級的責任是讓服務在功能變少的情況下仍能活著，回復的責任則是把系統帶回正常狀態。三者如果混在一起，現場就會失去優先序。資安事故在止血與回復之間多一段根除（移除攻擊者留下的憑證、後門與被改過的產物），因為攻擊者會換一條路徑回來，見 [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)。
+止血、降級與回復是事故處理中不同時間尺度的三種策略。止血的責任是先把擴散停住，降級的責任是讓服務在功能變少的情況下仍能活著，回復的責任則是把系統帶回正常狀態。三者如果混在一起，現場就會失去優先序。資安事故在止血與回復之間多一段根除（移除攻擊者留下的存取憑證、後門與被改過的產物），因為攻擊者會換一條路徑回來，見 [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)。
 
 這個節點先處理 containment，再處理完整回復。先問現在應不應該砍功能、切流量、停寫入、關入口，然後再問何時恢復、恢復後怎麼驗證。這樣讀，才會知道事故處理是先讓局勢可控，一下子把所有東西修好的思路反而會失序。
 
@@ -85,7 +85,7 @@ Cloudflare 2019 的教訓是規則推送錯誤會在秒級擴散，containment �
 - 08.15 vendor 事故：依賴方掛掉時的止血手段
 - [6.17 Feature Flag Governance](/backend/06-reliability/feature-flag-governance/)：ops flag（kill switch）作為事中止血手段
 - 08.17 security vs operational：止血策略差異
-- [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)：資安事故止血之後的根除：清查範圍、重建來源與憑證撤銷的先後
+- [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)：資安事故止血之後的根除：清查範圍、重建來源與存取憑證撤銷的先後
 - [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)：把止血邊界轉成演練門檻
 - [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)：用同一門檻判斷恢復完成
 - 08.19 incident decision log：記錄每一步的條件與回退門檻

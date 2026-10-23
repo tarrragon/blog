@@ -25,6 +25,6 @@ Non-repudiation 位在完整性與來源驗證之上的一層。完整性回答�
 
 設計時要先確認需求層級：雙方互信的點對點整合用共享密鑰即可，需要對第三方舉證或對不特定多方發佈可驗證憑證時才用非對稱簽章。這個判斷影響金鑰管理成本，過度提升層級會帶來不必要的治理負擔。
 
-私鑰即信任根，它的保存要與一般應用程式 secret 分層，納入 [Key Management](/backend/knowledge-cards/key-management/) 與 [HSM](/backend/knowledge-cards/hsm/) 的保護範圍。私鑰失守的後果是所有下游驗證同時失去意義，這與一般憑證洩漏受自身權限限制是不同層級的失效。
+私鑰即信任根，它的保存要與一般應用程式 secret 分層，納入 [Key Management](/backend/knowledge-cards/key-management/) 與 [HSM](/backend/knowledge-cards/hsm/) 的保護範圍。私鑰失守的後果是所有下游驗證同時失去意義，這與一般存取憑證洩漏受自身權限限制是不同層級的失效。
 
 簽章要涵蓋能識別責任主體與時點的欄位。只簽內容而不簽發起者與時間時，簽章證明了內容未被竄改，仍然無法回答是誰在什麼時候做的。

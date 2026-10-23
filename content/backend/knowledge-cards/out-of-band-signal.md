@@ -19,4 +19,4 @@ Watchdog 的心跳間隔最長是 `repeat_interval` 加一個 `group_interval`�
 
 ## 判讀方式
 
-判斷一個訊號是否夠格當 out-of-band signal，判讀的核心是失效域重疊度——共用同一個雲帳號、同一個網路、同一組憑證都算重疊。這類訊號平時難以自我辯護：沒事故時看不出價值，review 時最容易被當成過度準備砍掉，但它的 ROI 全押在觀測退化的那一小時。完整的機制拆解與客訴升級路徑見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)。
+判斷一個訊號是否夠格當 out-of-band signal，判讀的核心是失效域重疊度——共用同一個雲帳號、同一個網路、同一組存取憑證都算重疊。這類訊號平時難以自我辯護：沒事故時看不出價值，review 時最容易被當成過度準備砍掉，但它的 ROI 全押在觀測退化的那一小時。完整的機制拆解與客訴升級路徑見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)。

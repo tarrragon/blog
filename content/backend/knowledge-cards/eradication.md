@@ -1,7 +1,7 @@
 ---
 title: "Eradication（根除）"
 date: 2026-10-22
-description: "資安事故止血之後、要決定什麼時候可以把服務帶回來時，查攻擊者留在環境裡的憑證、後門與被改過的產物要移除到什麼程度"
+description: "資安事故止血之後、要決定什麼時候可以把服務帶回來時，查攻擊者留在環境裡的存取憑證、後門與被改過的產物要移除到什麼程度"
 weight: 487
 tags: ["backend", "security", "incident-response", "eradication"]
 ---

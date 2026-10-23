@@ -1,7 +1,7 @@
 ---
 title: "TLS / mTLS"
 date: 2026-04-23
-description: "說明傳輸加密與雙向憑證驗證如何保護跨邊界資料流"
+description: "說明傳輸加密與雙向數位憑證驗證如何保護跨邊界資料流"
 weight: 42
 ---
 
@@ -14,7 +14,7 @@ TLS 是公開網路服務的基本傳輸保護。mTLS 常用在 service-to-servi
 
 ## 可觀察訊號與例子
 
-系統需要 mTLS 的訊號是內部服務會傳遞付款、[PII](/backend/knowledge-cards/pii/)、企業資料或高權限操作。服務身份與憑證輪替納入設計後，橫向移動風險可以被更早偵測與限制。
+系統需要 mTLS 的訊號是內部服務會傳遞付款、[PII](/backend/knowledge-cards/pii/)、企業資料或高權限操作。服務身份與數位憑證輪替納入設計後，橫向移動風險可以被更早偵測與限制。
 
 ## 設計責任
 

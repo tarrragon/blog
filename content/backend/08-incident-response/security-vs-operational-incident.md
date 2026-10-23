@@ -46,7 +46,7 @@ Security Incident vs Operational Incident 分流是把事故的法規、證據�
 - 07 資安：security IR 的概念框架
 - 08.1 severity：分流影響 severity 計算
 - 08.3 containment：止血策略差異
-- [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)：分流到 security 之後，止血完成到事故解除之間的清查、重建與憑證撤銷順序
+- [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)：分流到 security 之後，止血完成到事故解除之間的清查、重建與存取憑證撤銷順序
 - [8.26 資料外洩時對商家的通知](/backend/08-incident-response/security-incident-customer-notification/)：外洩來源還沒確定時的歸屬判定，以及風險預警、確認通知與結案通知各自交付商家的事實
 - 08.5 [post-incident review](/backend/knowledge-cards/post-incident-review/)：證據保全與 [RCA](/backend/knowledge-cards/rca/) 範圍
 - 08.10 stakeholder：對外通訊的法規邊界
@@ -65,7 +65,7 @@ Security Incident vs Operational Incident 分流是把事故的法規、證據�
 - 07 資安：security IR 的概念框架
 - 08.1 severity：分流影響 severity 計算
 - 08.3 containment：止血策略差異
-- [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)：分流到 security 之後，止血完成到事故解除之間的清查、重建與憑證撤銷順序
+- [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)：分流到 security 之後，止血完成到事故解除之間的清查、重建與存取憑證撤銷順序
 - [8.26 資料外洩時對商家的通知](/backend/08-incident-response/security-incident-customer-notification/)：外洩來源還沒確定時的歸屬判定，以及風險預警、確認通知與結案通知各自交付商家的事實
 - 08.5 [post-incident review](/backend/knowledge-cards/post-incident-review/)：證據保全與 [RCA](/backend/knowledge-cards/rca/) 範圍
 - 08.10 stakeholder：對外通訊的法規邊界

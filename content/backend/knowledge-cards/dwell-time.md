@@ -6,7 +6,7 @@ weight: 492
 tags: ["backend", "security", "incident-response"]
 ---
 
-Dwell time（攻擊者駐留時間）是攻擊者最初進入環境，到防守方偵測到入侵之間經過的時間。網站分析裡也有一個 dwell time，指使用者在頁面上停留多久，與這裡的意思無關。駐留時間越長，攻擊者讀過的程式碼、拿到的憑證與佈下的立足點越多，根除（[Eradication](/backend/knowledge-cards/eradication/)）要清查的範圍跟著變大。
+Dwell time（攻擊者駐留時間）是攻擊者最初進入環境，到防守方偵測到入侵之間經過的時間。網站分析裡也有一個 dwell time，指使用者在頁面上停留多久，與這裡的意思無關。駐留時間越長，攻擊者讀過的程式碼、拿到的存取憑證與佈下的立足點越多，根除（[Eradication](/backend/knowledge-cards/eradication/)）要清查的範圍跟著變大。
 
 ## 概念位置
 
