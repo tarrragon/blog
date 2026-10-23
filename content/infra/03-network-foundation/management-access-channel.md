@@ -172,7 +172,7 @@ Windows 主機用 RDP 登入時，這一層是 Windows 帳號而不是 SSH 金�
 
 ### 不可變基礎設施下的臨時授權：通道平時關閉
 
-服務已經用不可變基礎設施（immutable infrastructure）的方式部署，也就是以重新建立主機取代登入修改時，管理通道只在除錯與救援時才用得到。這時可以讓通道平時對任何人都開不起來：管理員平時移除通道授權的權限綁定，除錯時才臨時授予，用完收回；這一整個循環叫 just-in-time access，授予與收回的流程與救援入口相同，見〈救援入口：管理通道斷掉時的備用路徑〉。
+服務已經用不可變基礎設施（immutable infrastructure）的方式部署，也就是以重新建立主機取代登入修改時，管理通道只在除錯與救援時才用得到。這時可以讓通道平時對任何人都開不起來：管理員平時移除通道授權的權限綁定，除錯時才臨時授予，用完收回；這一整個循環叫 just-in-time access，授予與收回的流程與救援入口相同，見〈救援入口：管理通道斷掉時的備用路徑〉。主機由 managed instance group 或 GKE 這類機制依 template 重建時，救援也多半改成重建一台而不是登入修，設定與做法見[GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/03-network-foundation/gke-mig-management-access/)。
 
 ## AWS 上對應的元件
 
@@ -182,4 +182,6 @@ Windows 主機用 RDP 登入時，這一層是 Windows 帳號而不是 SSH 金�
 
 - → [GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding](/infra/03-network-foundation/gcp-iap-ssh-access/)：IAP、OS Login、Cloud NAT、Serial Console 與組織政策的指令，包含切換時停用舊規則驗證的步驟
 - → [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/)：代理程式反向連線那條往外的連線怎麼建立、斷線時的故障模式
+- → [OpenSSH 內建 CA 的導入](/infra/03-network-foundation/openssh-ca-setup/)：只用 ssh-keygen 與 sshd 簽發、撤銷 SSH 憑證的完整流程，主機登入驗證選「收回靠到期」時的實作
+- → [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/03-network-foundation/gke-mig-management-access/)：主機由 template 重建時，三層的設定要寫在哪裡
 - → [7.C11 選型：單人遠端 Shell — Tailscale vs Cloudflare Tunnel](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)：mesh VPN 與代理程式反向連線用在同一個需求上的取捨

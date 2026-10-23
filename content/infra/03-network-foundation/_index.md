@@ -8,7 +8,7 @@ tags: ["infra", "network", "vpc", "security-group"]
 
 網路地基要先於核心服務存在。VPC、subnet、route table 與 security group 構成一張「服務能落在哪、誰能跟誰講話」的地圖，資料庫、運算節點與對外入口都得落在這張地圖規劃好的格子裡。先把邊界畫清楚，後面每個核心服務上線時只需要選一塊已經定義好安全等級的位置，而不是邊開服務邊補洞。
 
-這一章建立四層邊界：最外層的 VPC 隔離、中層的 public / private subnet 切分、流量進出的 route table 與 NAT、以及最貼近服務的 security group。每一層解決的問題不同，疊起來才是一個可審計、可收斂的網路。邊界畫好之後，管理員登入主機的那條通道也要落在這張地圖上：管理 port 對誰開放、用什麼身分打開、金鑰怎麼收回，由章節文章裡的管理通道兩篇處理。
+這一章建立四層邊界：最外層的 VPC 隔離、中層的 public / private subnet 切分、流量進出的 route table 與 NAT、以及最貼近服務的 security group。每一層解決的問題不同，疊起來才是一個可審計、可收斂的網路。邊界畫好之後，管理員登入主機的那條通道也要落在這張地圖上：管理 port 對誰開放、用什麼身分打開、金鑰怎麼收回，由章節文章裡的管理通道設計、GCP 實作、OpenSSH CA 導入與 MIG / GKE 管理存取四篇處理。
 
 ## VPC：網路隔離的最外層邊界
 
@@ -112,7 +112,7 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 | [流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)                                                                    | DNS、負載平衡（L4/L7）、reverse proxy、應用的責任鏈，TLS 終結位置、動靜分離、單機 nginx 與雲端 ALB 的選擇條件                                                                                                                                                                            |
 | [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證三層的做法與選擇，以及救援入口](/infra/03-network-foundation/management-access-channel/)             | 管理通道拆成網路可達性、通道授權與主機登入驗證，各層的風險與做法（來源白名單、跳板機、VPN、身分感知代理、代理程式反向連線、SSH 憑證），依存取者身分、連線送達方式與收回方式選擇組合的依據，出站路徑、切換順序、救援入口、組織護欄與稽核                                                  |
 | [GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding](/infra/03-network-foundation/gcp-iap-ssh-access/)                                    | 管理通道模型在 GCP 上的實作：default 網路自帶規則、IAP 的連線路徑與 SSH、RDP 連線指令、切換前的盤點、切換與停用舊規則驗證的指令、連不上時的依層判讀、IAM 授權範圍、OS Login 的啟用順序、Cloud NAT 與 Private Google Access、Serial Console、Organization Policy 與階層式防火牆、稽核紀錄 |
-| [OpenSSH 內建 CA 的導入：CA 金鑰、sshd 設定、簽發、principal、撤銷與主機憑證](/infra/03-network-foundation/openssh-ca-setup/)                                 | 只用 ssh-keygen 與 sshd 導入 SSH 憑證：使用者 CA 與主機 CA、TrustedUserCAKeys 與 AuthorizedPrincipalsFile、key ID 與有效期、KRL 撤銷、主機憑證與 @cert-authority、導入時會鎖住所有人的兩個設定陷阱                                                                                       |
+| [OpenSSH 內建 CA 的導入：CA 金鑰、sshd 設定、簽發、principal、撤銷與主機憑證](/infra/03-network-foundation/openssh-ca-setup/)                                 | 只用 ssh-keygen 與 sshd 導入 SSH 憑證：使用者 CA 與主機 CA、TrustedUserCAKeys 與 AuthorizedPrincipalsFile、key ID 與有效期、KRL 撤銷、主機憑證與 @cert-authority、導入時會讓所有人登不進去的設定（AuthorizedPrincipalsFile 的讀取權限、RevokedKeys 檔案不存在）                          |
 | [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取：instance template、node pool、kubectl debug 與控制層存取](/infra/03-network-foundation/gke-mig-management-access/) | 設定寫進 instance template 與 node pool 的理由與指令、MIG 用重建取代登入救援、kubectl debug node 的權限邊界、private nodes、authorized networks 與 DNS-based endpoint                                                                                                                    |
 
 ## 跨分類引用

@@ -20,9 +20,10 @@ Vault 在 infra 裡負責「機密值的集中管理」。跟直接把密碼寫�
 
 ## 設計責任
 
-Vault 重新啟動後處於 sealed 狀態，解封之前任何服務都讀不到機密，所以 unseal 方式與 storage backend 決定 Vault 停機後多快能恢復，認證方式與 secret engine 決定哪個身分能取得哪一種機密。要定的是：unseal 方式（連網用 cloud auto-unseal、斷網用 Shamir's secret sharing——需要 N 把 key 中的 M 把才能解鎖）、storage backend（Consul、PostgreSQL、filesystem）、認證方式（人用 LDAP/OIDC、機器用 AppRole）、secret engine 的選擇（KV 存靜態值、PKI 簽發數位憑證、database 動態產生 DB 帳號）。
+Vault 重新啟動後處於 sealed 狀態，解封之前任何服務都讀不到機密，所以 unseal 方式與 storage backend 決定 Vault 停機後多快能恢復，認證方式與 secret engine 決定哪個身分能取得哪一種機密。要定的是：unseal 方式（連網用 cloud auto-unseal、斷網用 Shamir's secret sharing——需要 N 把 key 中的 M 把才能解鎖）、storage backend（Consul、PostgreSQL、filesystem）、認證方式（人用 LDAP/OIDC、機器用 AppRole）、secret engine 的選擇（KV 存靜態值、PKI 簽發數位憑證、database 動態產生 DB 帳號、SSH 依登入身分簽發短期 SSH 憑證）。
 
 ## 鄰卡
 
 - [IAM](/infra/knowledge-cards/iam/)：Vault 的存取政策跟 IAM 的 policy 概念類似
 - [SSL/TLS](/infra/knowledge-cards/ssl-tls/)：Vault 的 PKI engine 可以當內部 CA 簽發數位憑證
+- [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/)：Vault 的 SSH secrets engine 簽發的就是這種憑證；只用 OpenSSH 自己簽發的流程見 [OpenSSH 內建 CA 的導入](/infra/03-network-foundation/openssh-ca-setup/)

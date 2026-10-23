@@ -182,43 +182,46 @@ weight: -1
 
 ## 入口與部署
 
-| 卡片                                                                                     | 核心問題                                 | 常見出現位置                            |
-| ---------------------------------------------------------------------------------------- | ---------------------------------------- | --------------------------------------- |
-| [Service Endpoint](/backend/knowledge-cards/endpoint/)                                   | 服務入口如何被路由與存取                 | API、service discovery、internal        |
-| [Public API Endpoint](/backend/knowledge-cards/public-api-endpoint/)                     | 面向 client 的穩定對外入口               | product API、SDK、client                |
-| [API Gateway](/backend/knowledge-cards/api-gateway/)                                     | 外部流量如何集中路由、驗證與轉發         | auth、rate limit、routing、request id   |
-| [Request Routing](/backend/knowledge-cards/request-routing/)                             | 入口流量如何分派到不同服務或版本         | host、path、tenant、version             |
-| [Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)                               | 高權限管理入口如何被隔離與稽核           | admin、backoffice、control plane        |
-| [Diagnostic Endpoint](/backend/knowledge-cards/diagnostic-endpoint/)                     | health、readiness 與 debug 入口          | liveness、probe、metrics snapshot       |
-| [Internal Endpoint](/backend/knowledge-cards/internal-endpoint/)                         | 服務內部通訊入口如何受控                 | service-to-service、control plane       |
-| [Container](/backend/knowledge-cards/container/)                                         | 服務如何被包裝成可交付單位               | image、runtime、CI、Kubernetes          |
-| [Container-per-Service（一容器一職責）](/backend/knowledge-cards/container-per-service/) | 一個系統為何拆成多個 container 而非全塞  | web / app / db、PID 1、編排前提         |
-| [QEMU binfmt Emulation（跨架構模擬）](/backend/knowledge-cards/qemu-binfmt-emulation/)   | 非原生架構的 image 怎麼被模擬跑起來      | arm64、amd64、buildx、exec format error |
-| [Immutable Image（不可變映像）](/backend/knowledge-cards/immutable-image/)               | image 改不了、升級是 build 新的          | digest、tag、rollback、可重現           |
-| [Load Balancer](/backend/knowledge-cards/load-balancer/)                                 | 流量如何分散、排空與導向健康節點         | ingress、draining、rolling update       |
-| [Draining](/backend/knowledge-cards/draining/)                                           | 服務如何先停新流量再完成既有工作         | rolling update、shutdown、cutover       |
-| [Sticky Session](/backend/knowledge-cards/sticky-session/)                               | 同一 client 如何維持命中同一實例         | session affinity、load balancer         |
-| [Idle Timeout](/backend/knowledge-cards/idle-timeout/)                                   | 連線或會話多久沒活動後要回收             | socket、load balancer、proxy            |
-| [Health Check](/backend/knowledge-cards/health-check/)                                   | 平台如何快速判斷服務狀態                 | load balancer、probe、diagnostic        |
-| [Resource Limit](/backend/knowledge-cards/resource-limit/)                               | 服務可用的 CPU / memory 上限如何影響行為 | container、scheduler、runtime           |
-| [Probe](/backend/knowledge-cards/probe/)                                                 | 平台如何判斷存活與接流量條件             | readiness、liveness、startup            |
-| [Config Rollout](/backend/knowledge-cards/config-rollout/)                               | 設定如何安全下發到運作中的服務實例       | feature flag、secret、runtime config    |
-| [Runtime Config](/backend/knowledge-cards/runtime-config/)                               | 執行時設定如何被讀取、組合與覆寫         | env var、secret、feature flag           |
-| [Canary Release](/backend/knowledge-cards/canary-release/)                               | 新版本流量如何分批放行                   | 部署策略、stop condition                |
-| [Serverless](/backend/knowledge-cards/serverless/)                                       | 執行環境與擴縮交給平台的邊界在哪         | 按用量計費、冷啟動                      |
-| [BaaS（Backend as a Service）](/backend/knowledge-cards/baas/)                           | 認證與資料存取如何由前端 SDK 直連        | 現成模組、前端直連                      |
-| [Startup Probe](/backend/knowledge-cards/startup-probe/)                                 | 慢啟動服務如何避免被過早重啟             | Kubernetes、liveness                    |
-| [Pod](/backend/knowledge-cards/pod/)                                                     | Kubernetes 排程與執行的最小單位是什麼    | 容器、ReplicaSet、Deployment            |
-| [Kubernetes Service](/backend/knowledge-cards/kubernetes-service/)                       | 一組會換 IP 的 Pod 如何有固定入口        | ClusterIP、EndpointSlice、DNS           |
-| [Ingress](/backend/knowledge-cards/ingress/)                                             | 叢集外 HTTP 流量如何依網域與路徑分流     | Ingress controller、Gateway API         |
-| [Control Loop（控制迴圈）](/backend/knowledge-cards/control-loop/)                       | 期望狀態如何被持續比對與修正             | 宣告式、reconcile、Kubernetes           |
-| [Namespace（命名空間）](/backend/knowledge-cards/namespace/)                             | 叢集裡的物件名稱如何劃分範圍             | kube-system、default、-n                |
-| [Taint 與 Toleration](/backend/knowledge-cards/taint-and-toleration/)                    | 節點如何擋下或趕走 Pod、Pod 如何容忍     | NotReady、驅逐、300 秒                  |
-| [Static Stability](/backend/knowledge-cards/static-stability/)                           | 控制面失效時資料面如何繼續服務           | 已知好配置、降級                        |
-| [Cell-Based Architecture](/backend/knowledge-cards/cell-based-architecture/)             | 系統如何切成互相隔離的 cell              | blast radius、隔離                      |
-| [Outbound Tunnel](/backend/knowledge-cards/outbound-tunnel/)                             | 出站連線如何轉成可達入口                 | 反向隧道、NAT 後方                      |
-| [Modular Monolith](/backend/knowledge-cards/modular-monolith/)                           | 單一部署單位如何維持模組邊界             | 架構折衷、拆分前                        |
-| [Strangler Fig Pattern](/backend/knowledge-cards/strangler-fig/)                         | 舊系統如何在共存中逐步下架               | 漸進替換、系統遷移                      |
+| 卡片                                                                                       | 核心問題                                 | 常見出現位置                            |
+| ------------------------------------------------------------------------------------------ | ---------------------------------------- | --------------------------------------- |
+| [Service Endpoint](/backend/knowledge-cards/endpoint/)                                     | 服務入口如何被路由與存取                 | API、service discovery、internal        |
+| [Public API Endpoint](/backend/knowledge-cards/public-api-endpoint/)                       | 面向 client 的穩定對外入口               | product API、SDK、client                |
+| [API Gateway](/backend/knowledge-cards/api-gateway/)                                       | 外部流量如何集中路由、驗證與轉發         | auth、rate limit、routing、request id   |
+| [Request Routing](/backend/knowledge-cards/request-routing/)                               | 入口流量如何分派到不同服務或版本         | host、path、tenant、version             |
+| [Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)                                 | 高權限管理入口如何被隔離與稽核           | admin、backoffice、control plane        |
+| [Diagnostic Endpoint](/backend/knowledge-cards/diagnostic-endpoint/)                       | health、readiness 與 debug 入口          | liveness、probe、metrics snapshot       |
+| [Internal Endpoint](/backend/knowledge-cards/internal-endpoint/)                           | 服務內部通訊入口如何受控                 | service-to-service、control plane       |
+| [Container](/backend/knowledge-cards/container/)                                           | 服務如何被包裝成可交付單位               | image、runtime、CI、Kubernetes          |
+| [Container-per-Service（一容器一職責）](/backend/knowledge-cards/container-per-service/)   | 一個系統為何拆成多個 container 而非全塞  | web / app / db、PID 1、編排前提         |
+| [QEMU binfmt Emulation（跨架構模擬）](/backend/knowledge-cards/qemu-binfmt-emulation/)     | 非原生架構的 image 怎麼被模擬跑起來      | arm64、amd64、buildx、exec format error |
+| [Immutable Image（不可變映像）](/backend/knowledge-cards/immutable-image/)                 | image 改不了、升級是 build 新的          | digest、tag、rollback、可重現           |
+| [Load Balancer](/backend/knowledge-cards/load-balancer/)                                   | 流量如何分散、排空與導向健康節點         | ingress、draining、rolling update       |
+| [Draining](/backend/knowledge-cards/draining/)                                             | 服務如何先停新流量再完成既有工作         | rolling update、shutdown、cutover       |
+| [Sticky Session](/backend/knowledge-cards/sticky-session/)                                 | 同一 client 如何維持命中同一實例         | session affinity、load balancer         |
+| [Idle Timeout](/backend/knowledge-cards/idle-timeout/)                                     | 連線或會話多久沒活動後要回收             | socket、load balancer、proxy            |
+| [Health Check](/backend/knowledge-cards/health-check/)                                     | 平台如何快速判斷服務狀態                 | load balancer、probe、diagnostic        |
+| [Resource Limit](/backend/knowledge-cards/resource-limit/)                                 | 服務可用的 CPU / memory 上限如何影響行為 | container、scheduler、runtime           |
+| [Probe](/backend/knowledge-cards/probe/)                                                   | 平台如何判斷存活與接流量條件             | readiness、liveness、startup            |
+| [Config Rollout](/backend/knowledge-cards/config-rollout/)                                 | 設定如何安全下發到運作中的服務實例       | feature flag、secret、runtime config    |
+| [Runtime Config](/backend/knowledge-cards/runtime-config/)                                 | 執行時設定如何被讀取、組合與覆寫         | env var、secret、feature flag           |
+| [Canary Release](/backend/knowledge-cards/canary-release/)                                 | 新版本流量如何分批放行                   | 部署策略、stop condition                |
+| [Serverless](/backend/knowledge-cards/serverless/)                                         | 執行環境與擴縮交給平台的邊界在哪         | 按用量計費、冷啟動                      |
+| [BaaS（Backend as a Service）](/backend/knowledge-cards/baas/)                             | 認證與資料存取如何由前端 SDK 直連        | 現成模組、前端直連                      |
+| [Startup Probe](/backend/knowledge-cards/startup-probe/)                                   | 慢啟動服務如何避免被過早重啟             | Kubernetes、liveness                    |
+| [Pod](/backend/knowledge-cards/pod/)                                                       | Kubernetes 排程與執行的最小單位是什麼    | 容器、ReplicaSet、Deployment            |
+| [Kubernetes Service](/backend/knowledge-cards/kubernetes-service/)                         | 一組會換 IP 的 Pod 如何有固定入口        | ClusterIP、EndpointSlice、DNS           |
+| [Ingress](/backend/knowledge-cards/ingress/)                                               | 叢集外 HTTP 流量如何依網域與路徑分流     | Ingress controller、Gateway API         |
+| [Control Loop（控制迴圈）](/backend/knowledge-cards/control-loop/)                         | 期望狀態如何被持續比對與修正             | 宣告式、reconcile、Kubernetes           |
+| [Namespace（命名空間）](/backend/knowledge-cards/namespace/)                               | 叢集裡的物件名稱如何劃分範圍             | kube-system、default、-n                |
+| [Taint 與 Toleration](/backend/knowledge-cards/taint-and-toleration/)                      | 節點如何擋下或趕走 Pod、Pod 如何容忍     | NotReady、驅逐、300 秒                  |
+| [Kubernetes RBAC（角色型存取控制）](/backend/knowledge-cards/kubernetes-rbac/)             | 誰能對叢集裡的哪些物件做什麼             | Role、binding、動詞與資源               |
+| [Pod Security Admission（Pod 安全准入）](/backend/knowledge-cards/pod-security-admission/) | 建出來的 Pod 能帶哪些安全設定            | privileged / baseline / restricted      |
+| [Privileged Container（特權容器）](/backend/knowledge-cards/privileged-container/)         | 拿掉容器隔離之後能對節點做什麼           | 節點 root、kubectl debug、Autopilot     |
+| [Static Stability](/backend/knowledge-cards/static-stability/)                             | 控制面失效時資料面如何繼續服務           | 已知好配置、降級                        |
+| [Cell-Based Architecture](/backend/knowledge-cards/cell-based-architecture/)               | 系統如何切成互相隔離的 cell              | blast radius、隔離                      |
+| [Outbound Tunnel](/backend/knowledge-cards/outbound-tunnel/)                               | 出站連線如何轉成可達入口                 | 反向隧道、NAT 後方                      |
+| [Modular Monolith](/backend/knowledge-cards/modular-monolith/)                             | 單一部署單位如何維持模組邊界             | 架構折衷、拆分前                        |
+| [Strangler Fig Pattern](/backend/knowledge-cards/strangler-fig/)                           | 舊系統如何在共存中逐步下架               | 漸進替換、系統遷移                      |
 
 ## 通訊協定
 

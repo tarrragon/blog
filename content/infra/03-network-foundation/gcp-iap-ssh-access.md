@@ -494,4 +494,6 @@ AWS 上同類的盤點流程見 [Security Group 稽核與清理](/infra/03-netwo
 ## 延伸閱讀：與廠商無關的設計模型與 VPC 的分層規則
 
 - → [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證三層的做法與選擇，以及救援入口](/infra/03-network-foundation/management-access-channel/)：跳板機、VPN、代理程式反向連線、SSH 憑證這些 GCP 以外的做法，以及依存取者身分、代理把連線送進主機的方式、金鑰收回方式選擇組合的依據
+- → [OpenSSH 內建 CA 的導入](/infra/03-network-foundation/openssh-ca-setup/)：主機不全在 GCP、OS Login 用不上時，改用 SSH 憑證讓登入權限自動到期
+- → [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/03-network-foundation/gke-mig-management-access/)：本篇的 tag、OS Login 與移除外部 IP 在 instance template 與 node pool 上的寫法，以及 GKE 控制平面的存取
 - → [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/)：VPC 與 subnet 的分層與最小開放原則，本篇的防火牆規則是同一套原則在 GCP 上的寫法

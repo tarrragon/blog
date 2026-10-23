@@ -40,6 +40,6 @@ CA 私鑰取代了每台主機上的公鑰清單，所以導入 SSH 憑證時的
 
 - [SSH](/infra/knowledge-cards/ssh/) — 靜態金鑰認證與 `authorized_keys`
 - [OS Login](/infra/knowledge-cards/os-login/) — 另一種讓登入權限隨帳號收回的做法
-- [OpenSSH 內建 CA 的導入](/infra/03-network-foundation/openssh-ca-setup/) — 產生 CA、設定 sshd、簽發與撤銷的指令與會鎖住所有人的設定陷阱
+- [OpenSSH 內建 CA 的導入](/infra/03-network-foundation/openssh-ca-setup/) — 產生 CA、設定 sshd、簽發與撤銷的指令，以及 AuthorizedPrincipalsFile 讀取權限與 RevokedKeys 檔案不存在這兩個會讓所有人登不進去的設定
 - [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) — 跳板機與目的主機不共用金鑰時，目的主機這一段可以改用憑證
 - [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/#主機登入驗證登入權限的收回靠人工刪除帳號連動或到期) — 人員流動、主機數量與帳號系統不同時，三種金鑰發放方式的選擇條件
