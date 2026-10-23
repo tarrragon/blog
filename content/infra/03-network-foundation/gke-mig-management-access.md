@@ -50,7 +50,7 @@ gcloud compute instance-templates create <new-template-name> \
 
 - `<current-template-name>`：MIG 目前用的 template，`gcloud compute instance-groups managed describe <mig-name> --zone=<zone>` 的 `instanceTemplate` 欄。
 - `<new-template-name>`：新 template 的名稱，自己取；template 不能改名也不能改內容，常見的做法是名稱帶版本或日期。
-- `--machine-type`、`--image-family`、`--image-project`、`--boot-disk-size`、`--network`、`--subnet`、`--region`、`--service-account`、`--scopes`、`--labels`、`--metadata-from-file=startup-script=`：照 `describe` 讀出來的值填，`describe` 裡還有其他欄位（額外的磁碟、GPU、其他 metadata 鍵）也要對應的旗標一起帶上。漏掉的欄位會回到預設值，常見的後果是 VM 換成預設的服務帳號而失去存取權限，或啟動腳本沒有執行。`--region` 是 `--subnet` 所在的 region。`describe` 的欄位與旗標不是一對一：映像在 `disks[].initializeParams.sourceImage`，多半是一個特定映像的完整路徑而不是 family，這時改用 `--image=<sourceImage 的值>` 取代 `--image-family` 與 `--image-project`；startup-script 在 `metadata.items` 裡 `key: startup-script` 的 `value`，先把它存成檔案再交給 `--metadata-from-file`；regional 的 template 讀取時 `describe` 要加 `--region=<region>`。
+- `--machine-type`、`--image-family`、`--image-project`、`--boot-disk-size`、`--network`、`--subnet`、`--region`、`--service-account`、`--scopes`、`--labels`、`--metadata-from-file=startup-script=`：照 `describe` 讀出來的值填，`describe` 裡還有其他欄位（額外的磁碟、GPU、其他 metadata 鍵）也要對應的旗標一起帶上。漏掉的欄位會回到預設值，常見的後果是 VM 換成預設的服務帳號而失去存取權限，或啟動腳本沒有執行。`--region` 是 `--subnet` 所在的 region。`describe` 的欄位與旗標不是一對一：映像在 `disks[].initializeParams.sourceImage`，值可能是一個特定映像的完整路徑，也可能是 `.../images/family/<family>` 這種 family 的路徑（用 `--image-family` 建的 template 讀出來是 family 的路徑），兩種都可以原樣交給 `--image=<sourceImage 的值>`，取代 `--image-family` 與 `--image-project`；服務帳號在 `serviceAccounts[].email`，template 用的是 Compute Engine 預設服務帳號時這一欄顯示 `default` 而不是 email，原樣寫成 `--service-account=default` 建出來的設定相同；startup-script 在 `metadata.items` 裡 `key: startup-script` 的 `value`，先把它存成檔案再交給 `--metadata-from-file`；regional 的 template 讀取時 `describe` 要加 `--region=<region>`。
 - `--tags=<ssh-via-iap-tag>`：與 [GCP VM 的 SSH 與 RDP 管理通道](/infra/03-network-foundation/gcp-iap-ssh-access/)〈啟用 IAP API、開啟稽核紀錄並建立只放行 IAP 來源的防火牆規則〉那條規則的 `--target-tags` 相同的 tag。新 template 只帶這裡列出的 tag，所以現行 template 已經有的其他 tag（`describe` 輸出的 `tags.items`，例如負載平衡器健康檢查用的）要一起列進來，逗號分隔。
 - `--metadata=enable-oslogin=TRUE`：讓這個 template 建出的 VM 都啟用 OS Login；專案層級已經啟用時可以省略。
 - `--no-address`：不配外部 IP。MIG 對外提供服務時，流量入口應該已經在負載平衡器上，VM 本身不需要外部 IP；這一點要先確認，`gcloud compute backend-services list --format="table(name, backends[].group)"` 的 `backends` 欄要有這個 MIG。服務若是靠 VM 的外部 IP 對外，canary 那一台只是收不到流量、不容易察覺，整組更新之後服務就斷了。出站改由 Cloud NAT 承接（見那一篇的〈拿掉外部 IP 之後的出站路徑：Cloud NAT 與 Private Google Access〉），所以 Cloud NAT 要在滾動更新之前建好。已經存在的 VM 在滾動更新把它換成新版時才失去外部 IP。
@@ -83,17 +83,33 @@ gcloud compute instance-groups managed wait-until <mig-name> --version-target-re
 gcloud compute instance-groups managed list-instances <mig-name> --zone=<zone>
 ```
 
-找到 canary 那一台之後，經由 IAP 連進去，確認 OS Login 登得進去、出站經過 Cloud NAT（驗證方式同單台 VM 那一篇）。整組更新之後同樣用 `wait-until` 等它完成。整組更新時另外可以加 `--max-surge=1 --max-unavailable=0`：每一批先多建一台新的、再刪一台舊的，更新期間可用台數不減少，但這兩個旗標只控制每一批的速度，更新仍會把整組換完。regional MIG 的 `--max-surge` 用固定數字時不能小於 VM 分布的 zone 數（分布在三個 zone 就至少是 3）。
+找到 canary 那一台之後，經由 IAP 連進去，確認 OS Login 登得進去、出站經過 Cloud NAT（驗證方式同單台 VM 那一篇）。整組更新之後同樣用 `wait-until` 等它完成。整組更新時另外可以加 `--max-surge=1 --max-unavailable=0`：每一批先多建一台新的、再刪一台舊的，更新期間可用台數不減少，但這兩個旗標只控制每一批的速度，更新仍會把整組換完。regional MIG 的 `--max-surge` 用固定數字時只接受 0，或不小於 VM 分布的 zone 數的值（分布在三個 zone 時是 0 或至少 3），設成 1 會被拒絕。
 
 ## MIG 的救援：recreate-instances、退回舊版 template 與 Serial Console
 
 單台 VM 的救援入口是 Serial Console 加一個事先建好的本機救援帳號（[Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/)）。MIG 裡的 VM 多了一條更便宜的路：一台 VM 連不上、而原因是那台 VM 自己壞了（sshd 設定改壞、磁碟滿），刪掉它讓 MIG 依 template 重建，比從 Serial Console 進去修快，也不必替每台 VM 維護救援密碼：
 
 ```bash
-# 依 template 重建一台 VM：MIG 會刪掉它，再依 MIG 目前的版本設定建一台新的
+# 依 template 重建一台 VM：開機磁碟換成依 MIG 目前的版本設定新建的一顆，VM 重新開機
 gcloud compute instance-groups managed recreate-instances <mig-name> \
   --instances=<instance-name> --zone=<zone>
 ```
+
+重建後的 VM 沿用原本的名稱與執行個體 ID，`gcloud compute instances describe` 的建立時間也不變，所以確認重建做完要看開機磁碟：MIG 建的 VM 開機磁碟預設與 VM 同名，`gcloud compute disks describe <instance-name> --zone=<zone> --format="value(creationTimestamp)"` 印出的是重建那一刻的時間，就代表磁碟已經換新。
+
+磁碟換新，VM 的 SSH 主機金鑰也跟著換新，而 `gcloud compute ssh` 在本機的 `~/.ssh/google_compute_known_hosts` 是用 `compute.<instance-id>` 記錄主機金鑰，ID 沒變，所以重建之後第一次連線會出現 `WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!` 並拒絕連線。這個警告也是中間人攻擊時會看到的訊息，處理方式是先確認新的金鑰確實來自這台 VM，再移除舊紀錄，不關掉主機金鑰檢查。確認的來源是 VM 回報到 guest attributes 的主機金鑰：專案或 template 的 metadata 設了 `enable-guest-attributes=TRUE`（專案層用 `gcloud compute project-info add-metadata --metadata enable-guest-attributes=TRUE`），VM 開機後會把主機金鑰寫上去，讀取時走 GCP 的 API、不經過那條 SSH 連線，所以這個設定排在需要重建之前先做好。gcloud 不會因為這個設定就自動更新已經存在的 known_hosts 紀錄，比對與移除要自己做：
+
+```bash
+# 讀出 VM 回報的 ED25519 主機金鑰指紋，與警告訊息裡 "The fingerprint for the ED25519 key sent by the remote host is" 下一行的 SHA256 值比對
+gcloud compute instances get-guest-attributes <instance-name> --zone=<zone> \
+  --query-path=hostkeys/ssh-ed25519 --format="value(value)" \
+  | awk '{print "ssh-ed25519 " $1}' | ssh-keygen -lf -
+
+# 兩個指紋相同之後，移除這台 VM 的舊紀錄，再用 gcloud compute ssh 連線
+ssh-keygen -R compute.<instance-id> -f ~/.ssh/google_compute_known_hosts
+```
+
+`<instance-id>` 是 `gcloud compute instances describe <instance-name> --zone=<zone> --format="value(id)"` 印出的數字。`ssh-keygen -R` 會把原本的檔案備份成同目錄的 `google_compute_known_hosts.old`。兩個指紋不同時不要移除，先查這條連線經過了什麼。
 
 `<instance-name>` 是要重建的那台 VM，`gcloud compute instance-groups managed list-instances <mig-name> --zone=<zone>` 列出 MIG 裡的 VM。重建的前提是 VM 上沒有只存在那一台的狀態：資料寫在外接的資料庫、物件儲存或另外掛載的磁碟上，VM 本身隨時可以丟。這也是 MIG 適合的工作負載本來就有的性質；VM 上有不能丟的狀態時有兩條路：MIG 的 stateful 設定（stateful policy 或 per-instance config）把指定的磁碟、IP 與 metadata 標為要保留，`recreate-instances` 重建時會沿用它們；狀態多到每台都不一樣時，它更適合當單獨的 VM 管理，而不是放進 MIG。
 
@@ -159,7 +175,7 @@ kubectl label namespace <namespace> pod-security.kubernetes.io/enforce=privilege
 
 控制平面的 API server 預設有一個公開的 IP 端點，任何地方都連得到，靠 Kubernetes 的認證（通道授權）與 [Kubernetes RBAC](/backend/knowledge-cards/kubernetes-rbac/)（主機登入驗證那一層的對應）擋下沒有權限的請求——在管理通道的模型裡，這等於網路可達性全開，與 `0.0.0.0/0` 開 22 port 是同一種狀態。收窄網路可達性的做法有 authorized networks、DNS-based endpoint 與 private endpoint：
 
-- **authorized networks**：只允許列出的來源 IP 範圍連到 API server 的 IP 端點，相當於來源 IP 白名單，代價與白名單相同（遠端工作、IP 會變動時要一直改，而且分辨不出個人）。`--master-authorized-networks` 每次都用給的清單整組取代舊清單，執行這條指令的人與 CI 的出口 IP 要列在裡面，漏列時指令一生效 `kubectl` 就連不上；`gcloud` 不經過這個端點，連不上時仍可以用同一條指令改回清單。另外，沒有設 authorized networks 時，任何外部 IP 都連得到公開端點，包括 GCP 上其他客戶的 VM 的外部 IP；設了 authorized networks 之後，這些 GCP 外部 IP 是否放行由 `--enable-google-cloud-access` 與 `--no-enable-google-cloud-access` 決定，叢集目前的值是 `gcloud container clusters describe <cluster-name> --location=<location>` 輸出裡的 `gcpPublicCidrsAccessEnabled`。這項變更不會馬上生效，GKE 套用對應的防火牆規則可能要幾個小時。
+- **authorized networks**：只允許列出的來源 IP 範圍連到 API server 的 IP 端點，相當於來源 IP 白名單，代價與白名單相同（遠端工作、IP 會變動時要一直改，而且分辨不出個人）。`--master-authorized-networks` 每次都用給的清單整組取代舊清單，執行這條指令的人與 CI 的出口 IP 要列在裡面，漏列時指令一生效 `kubectl` 就連不上；`gcloud` 不經過這個端點，連不上時仍可以用同一條指令改回清單。另外，沒有設 authorized networks 時，任何外部 IP 都連得到公開端點，包括 GCP 上其他客戶的 VM 的外部 IP；設了 authorized networks 之後，這些 GCP 外部 IP 是否放行由 `--enable-google-cloud-access` 與 `--no-enable-google-cloud-access` 決定，叢集目前的值是 `gcloud container clusters describe <cluster-name> --location=<location>` 輸出裡的 `gcpPublicCidrsAccessEnabled`。這個欄位要在其中一個旗標明確設定過一次之後才會出現，沒有出現代表這個叢集從沒設定過它，要確定 GCP 外部 IP 的放行狀態，就照需求明確執行一次其中一個旗標。這項變更不會馬上生效，GKE 套用對應的防火牆規則可能要幾個小時。
 - **DNS-based endpoint**：叢集多一個專屬的網域名稱端點，請求先經過 Google Cloud、以 IAM 判斷這個帳號能不能連到這個叢集（`container.clusters.connect` 權限，`roles/container.developer` 這類角色裡有），通過之後才轉到 API server。它相當於控制平面前面的身分感知代理：網路可達性與通道授權改由 IAM 承擔，不必維護 IP 清單，GitHub Actions 這類外部 CI 也能用 [workload identity federation](/backend/knowledge-cards/workload-identity/) 換到的身分連進來，不必另架[跳板機](/infra/knowledge-cards/bastion-host/)。
 - **private endpoint**：控制平面只留內部 IP 端點（`--enable-private-endpoint`），只有 VPC 內與經 VPN 或 Interconnect 接進 VPC 的來源連得到，可以再加 `--enable-authorized-networks-on-private-endpoint` 收窄到 VPC 內的特定範圍。既有的 private cluster 多半是這種設定，從 VPC 外管理時要經過 VPN 或跳板機；改用 DNS-based endpoint 之後這一層可以拿掉。
 
@@ -177,12 +193,12 @@ gcloud container clusters update <cluster-name> --location=<location> \
   --no-enable-ip-access
 ```
 
-- `<cidr1>,<cidr2>`：允許的來源 IP 範圍，[CIDR](/infra/knowledge-cards/cidr/) 格式（位址加上斜線後的前綴長度，表示一段範圍），單一個 IP 寫成 `/32`，例如公司對外的固定 IP。
+- `<cidr1>,<cidr2>`：允許的來源 IP 範圍，[CIDR](/infra/knowledge-cards/cidr/) 格式（位址加上斜線後的前綴長度，表示一段範圍），單一個 IP 寫成 `/32`，例如公司對外的固定 IP。清單只接受在網際網路上可路由的位址範圍，文件範例用的保留網段（例如 `203.0.113.0/24`）會被拒絕。
 - `--enable-dns-access` 與 `--no-enable-ip-access` 分成兩次執行：兩個旗標寫在同一條指令裡會在啟用的同時關掉 IP 端點，還在用 IP 端點的人與 CI 當場連不上。`--no-enable-ip-access` 關掉的是公開與內部兩個 IP 端點，VPC 內用內部 IP 連 API server 的跳板機、自架 runner 與 Terraform 也在要改的範圍內。
 - 確認有沒有改連的方法：每個人與每條 CI 用的 kubeconfig，`kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}'` 輸出的是網域名稱而不是 IP。DNS-based endpoint 預設只接受 Google 的 IAM 憑證，CI 或工具若用 kubeconfig 裡靜態的 Kubernetes ServiceAccount token 或 client certificate，要另外在 `clusters update` 加 `--enable-k8s-tokens-via-dns` 或 `--enable-k8s-certs-via-dns`，否則關掉 IP 端點之後它們連不上。關掉之後發現漏了，`gcloud` 不經過這個端點，用 `clusters update --enable-ip-access` 打開回來。
 - 改連 DNS-based endpoint 時，每個人在本機執行 `gcloud container clusters get-credentials <cluster-name> --location=<location> --dns-endpoint`，讓 kubeconfig（`kubectl` 讀取叢集位址與憑證的設定檔）指向那個網域名稱。
 
-`kubectl` 通過之後，Kubernetes RBAC 決定這個帳號能做什麼。IAM 與 RBAC 是前後兩道檢查、兩道都要設：缺了 IAM 的 `container.clusters.connect` 連不進叢集，缺了 RBAC 綁定連得進去而什麼都做不了。兩者要一起設計，原則與 [GCP VM 的 SSH 與 RDP 管理通道](/infra/03-network-foundation/gcp-iap-ssh-access/)〈IAP 的 IAM 授權範圍：誰拿得到通道〉相同：綁給負責維運的群組，不綁給整個網域。
+一個 `kubectl` 請求要通過兩次檢查。連進叢集的檢查是 IAM 的 `container.clusters.connect`：經 DNS-based endpoint 連線時缺了它，請求在進到 API server 之前就被 Google 的前端以 `403 Forbidden` 擋下。請求進到 API server 之後，API server 再判斷這個帳號是否有權限執行這個請求（例如列出節點），這項授權檢查在 GKE 上由 IAM 與 Kubernetes RBAC 共同決定，兩者任一個允許就放行：IAM 的 Kubernetes 物件權限（例如 `container.nodes.list`，`roles/container.developer` 這類角色裡有）或 RBAC 的 Role 與 RoleBinding。只拿到 `container.clusters.connect`（例如 `roles/container.clusterViewer`）的帳號連得進叢集，列出節點時會收到 `nodes is forbidden: User "<email>" cannot list resource "nodes"`，訊息後面寫著它要的 IAM 權限名稱。兩者要一起設計，原則與 [GCP VM 的 SSH 與 RDP 管理通道](/infra/03-network-foundation/gcp-iap-ssh-access/)〈IAP 的 IAM 授權範圍：誰拿得到通道〉相同：綁給負責維運的群組，不綁給整個網域。
 
 ## 延伸閱讀：單台 VM 的指令、管理通道模型與 IaC 的落差
 
