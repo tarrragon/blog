@@ -43,12 +43,12 @@ resource "aws_vpc" "main" {
 
 ### 兩類 subnet 的定位
 
-public subnet 放的是必須接收外部入站流量的元件 — 對外的負載平衡器、NAT Gateway、堡壘主機（bastion）。這些資源透過 route table 連到 Internet Gateway，因此能被外部 IP 直接觸及。private subnet 放的是只該在內網被存取的元件 — 應用伺服器、資料庫、快取、內部佇列。它們沒有通往 Internet Gateway 的路由，外部無法主動連入，需要對外時才透過 NAT 出去。
+public subnet 放的是必須接收外部入站流量的元件 — 對外的負載平衡器、NAT Gateway、[跳板機（bastion host）](/infra/knowledge-cards/bastion-host/)。這些資源透過 route table 連到 Internet Gateway，因此能被外部 IP 直接觸及。private subnet 放的是只該在內網被存取的元件 — 應用伺服器、資料庫、快取、內部佇列。它們沒有通往 Internet Gateway 的路由，外部無法主動連入，需要對外時才透過 NAT 出去。
 
-| Subnet 類型 | 典型住戶                      | 對外路徑                    |
-| ----------- | ----------------------------- | --------------------------- |
-| public      | 對外 LB、NAT Gateway、bastion | 經 Internet Gateway 雙向    |
-| private     | 應用節點、資料庫、快取、佇列  | 僅經 NAT 單向出站、不可入站 |
+| Subnet 類型 | 典型住戶                     | 對外路徑                    |
+| ----------- | ---------------------------- | --------------------------- |
+| public      | 對外 LB、NAT Gateway、跳板機 | 經 Internet Gateway 雙向    |
+| private     | 應用節點、資料庫、快取、佇列 | 僅經 NAT 單向出站、不可入站 |
 
 public subnet 的真實樣貌是「薄薄一層」：它通常只住負載平衡器與 NAT 這類入口設施，而不是業務邏輯。常見陷阱是為了 SSH 方便把應用伺服器直接開在 public subnet 並配公網 IP，等於把每一台業務主機的管理埠暴露在掃描流量下 — 全球的 bot 會在秒級頻率對公網 IP 的 22 埠嘗試登入。private subnet 的住戶反而是系統的主體 — 資料庫放這裡是因為它一旦能被外網定址，攻擊面就從「打穿入口層」變成「直接連資料庫埠試密碼」。
 
@@ -96,7 +96,7 @@ NAT（Network Address Translation）解決的問題是：private subnet 的資�
 
 ### 每 AZ 一個 NAT vs 共享 NAT 的取捨
 
-NAT Gateway 是綁定單一可用區的資源 — 一個 NAT Gateway 活在某一個 public subnet，也就活在那個可用區裡。這帶來一個架構取捨：
+AWS 的 NAT Gateway 有兩種模式。傳統的 zonal 模式綁定單一可用區：一個 NAT Gateway 放在某一個 public subnet 裡，也就在那個可用區裡。AWS 在 2025 年 11 月另外推出 regional 模式：一個 NAT Gateway 依工作負載所在的可用區自動擴展，不放進 public subnet，下面的單點取捨不適用（新的可用區出現工作負載後，擴展到那一區要等上一段時間），兩種模式的差別見 [NAT Gateway 卡](/infra/knowledge-cards/nat/)。用 zonal 模式時，這帶來一個架構取捨：
 
 **共享 NAT（成本優先）**：全部 private subnet 的 route table 都指向同一個 NAT。用一份 NAT 成本服務整個 VPC，代價是把 NAT 所在的可用區變成出站方向的單點 — 該可用區故障時，所有 private subnet 的對外連線同時中斷，即使其他可用區的節點本身健康。
 
@@ -205,7 +205,7 @@ aws ec2 describe-security-groups \
   --output table
 ```
 
-資料庫埠、SSH、內部 API 出現在這份清單上就是該收斂的目標。管理埠的存取更安全的替代方案是 SSM Session Manager — 它讓你透過 IAM 權限建立 shell session，完全不需要開 22 埠，連線經由 Systems Manager 的控制通道走、不走公網，同時自動留下 session log。另一種把管理埠移出公網的做法是私網 overlay（mesh VPN，如 Tailscale）：SSH 只綁 tailnet 私網介面、公網不開任何埠，連得到私網位址本身即代表通過 tailnet 認證。tailnet 裡每一台裝置都符合這個條件，預設政策下它們彼此互通，要收窄到只有管理用的那一台連得到 SSH 得靠 ACL，見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/)；tailnet 位址模型、NAT 穿透與第三方 control plane 取捨見 [Tailscale 深入](/linux/tools/remote/tailscale-tailnet-and-relay/)。誰能透過 IAM 改動這些規則，銜接[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)。
+資料庫埠、SSH、內部 API 出現在這份清單上就是該收斂的目標。管理埠的存取更安全的替代方案是 SSM Session Manager — 它讓管理員透過 IAM 權限建立 shell session，完全不需要開 22 埠，連線經由 Systems Manager 的控制通道走、不走公網，同時自動留下 session log。另一種把管理埠移出公網的做法是私網 overlay（mesh VPN，如 Tailscale）：SSH 只綁 tailnet 私網介面、公網不開任何埠，連得到私網位址本身即代表通過 tailnet 認證。tailnet 裡每一台裝置都符合這個條件，預設政策下它們彼此互通，要收窄到只有管理用的那一台連得到 SSH 得靠 ACL，見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/)；tailnet 位址模型、NAT 穿透與第三方 control plane 取捨見 [Tailscale 深入](/linux/tools/remote/tailscale-tailnet-and-relay/)。這幾種做法各自改變了管理通道的哪一層、依身分來源與主機分布怎麼選，見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)；GCP 上對應的設定見 [GCP VM 的 SSH 與 RDP 管理通道](/infra/03-network-foundation/gcp-iap-ssh-access/)。誰能透過 IAM 改動這些規則，銜接[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)。
 
 在 CI 層面，[模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)用 tfsec / checkov 做靜態掃描，自動攔截「敏感埠 + 全開 CIDR」的組合，把 security group 的盤點從人工定期做變成每次 PR 自動做。
 

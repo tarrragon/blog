@@ -18,7 +18,7 @@ Prometheus 在 infra 監控層負責「收集與儲存指標」。它搭配 [Gra
 
 ## 設計責任
 
-使用 Prometheus 時要決定：scrape interval（多久拉一次；程式預設 1 分鐘，官方範例設定寫 15 秒）、retention（資料保留多久、預設 15 天）、哪些 target 要監控（service discovery 或靜態設定）、告警規則的閾值和評估窗口。斷網環境的額外考量是 storage capacity——所有資料留在本地磁碟、沒有 cloud auto-scale。
+Prometheus 把每次拉取的指標寫進本地時序資料庫，target 數量、拉取頻率與保留天數一起決定磁碟用量，告警也建立在同一份資料上；要定的設定是：scrape interval（多久拉一次；程式預設 1 分鐘，官方範例設定寫 15 秒）、retention（資料保留多久、預設 15 天）、哪些 target 要監控（service discovery 或靜態設定）、告警規則的閾值和評估窗口。斷網環境的額外考量是 storage capacity——所有資料留在本地磁碟、沒有 cloud auto-scale。
 
 ## 鄰卡
 

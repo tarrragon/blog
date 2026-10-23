@@ -20,7 +20,7 @@ IAM 需要關注的訊號：某個 role 的 policy 有 `*:*` 或 `AdministratorA
 
 ## 設計責任
 
-IAM 設計時要決定：
+IAM 是其他所有資源的閘門，一個權限過寬的 role 等於把它碰得到的資源全部交給持有那份憑證的身分，設計時先劃清身分與權限的邊界，再排定之後收斂的節奏：
 
 - 身分類型區分：人用 SSO 登入（強制 MFA）、雲上服務用 instance profile / task role、雲外 CI 用 OIDC 聯合
 - 權限分級：admin / operator / viewer 三級，見[團隊權限分級](/infra/02-identity-credentials/team-access-management/)

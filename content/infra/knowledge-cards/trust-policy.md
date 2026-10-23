@@ -22,7 +22,7 @@ Trust policy 的設計要點是 claim 的收斂程度。只驗 issuer 而不驗 
 
 ## 設計責任
 
-設計 trust policy 時要決定：允許哪些外部身分 assume（issuer + subject 的精確匹配）、audience 是否需要額外驗證（AWS 預設 `sts.amazonaws.com`）、以及是否把 plan role 和 apply role 分開（plan 只需 read-only、apply 需要 write，用兩個 role 各自設不同 trust condition 來區分 branch 或 environment）。
+trust policy 只管哪些身分能取得這個 role，取得之後能做什麼由 role 的 IAM policy 另外限制，所以 trust policy 的條件全部圍繞 token 的 claim：允許哪些外部身分 assume（issuer + subject 的精確匹配）、audience 是否需要額外驗證（AWS 預設 `sts.amazonaws.com`）、以及是否把 plan role 和 apply role 分開（plan 只需 read-only、apply 需要 write，用兩個 role 各自設不同 trust condition 來區分 branch 或 environment）。
 
 Trust policy 的變更跟 [IAM](/infra/knowledge-cards/iam/) policy 一樣要走 PR review——因為改寬一個 condition 就等於給更多外部身分開門。設定指南見 [OIDC Trust Policy 設定指南](/infra/02-identity-credentials/oidc-trust-policy-setup/)。
 

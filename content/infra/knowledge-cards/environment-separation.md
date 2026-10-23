@@ -24,7 +24,7 @@ tags: ["infra", "knowledge-cards", "environment"]
 
 ## 設計責任
 
-環境分離的設計要決定：
+環境分離失效的典型形態是一次 `terraform apply` 改到了另一個環境的資源，以下的設計各自封住一條造成這種失效的路徑：
 
 - **隔離層級**：帳號級、目錄級、還是 workspace 級。判斷依據是團隊規模、合規要求、與維運餘裕
 - **參數化邊界**：dev 與 prod 之間的差異全部用參數表達（instance size、multi-AZ、backup retention），module 內部不寫環境判斷

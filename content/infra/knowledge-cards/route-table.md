@@ -20,7 +20,7 @@ private subnet 的服務突然拉不到外部套件或第三方 API 全部逾時
 
 ## 設計責任
 
-使用 route table 時要決定：每個 subnet 的預設路由指向什麼（Internet Gateway / NAT Gateway / Transit Gateway / 無）、VPC 內部流量是否需要自訂路由（peering、endpoint）、以及 main route table 是否該保持空白以避免新 subnet 意外取得對外路由。每一條路由的目的地網段和目標要在 IaC 裡明確描述，讓 route table 的語意可被 review。
+subnet 是 public 還是 private 由它關聯的 route table 決定，而沒有明確關聯的 subnet 會自動套用 main route table，所以路由設計集中在：每個 subnet 的預設路由指向什麼（Internet Gateway / NAT Gateway / Transit Gateway / 無）、VPC 內部流量是否需要自訂路由（peering、endpoint）、以及 main route table 是否該保持空白以避免新 subnet 意外取得對外路由。每一條路由的目的地網段和目標要在 IaC 裡明確描述，讓 route table 的語意可被 review。
 
 ## 鄰卡
 

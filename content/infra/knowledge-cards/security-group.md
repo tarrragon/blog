@@ -20,14 +20,16 @@ Security group 需要收斂的訊號：入站來源是 `0.0.0.0/0`（允許全�
 
 ## 設計責任
 
-設計 security group 時要決定：
+security group 是封包抵達資源前的最後一道網路檢查：規則寫得太寬會把服務的埠暴露出去，寫成固定位址又會在節點換 IP 時失效。設計時在這兩種失效之間收斂的項目是：
 
 - 引用方式：用 group 互相引用（推薦）vs 用 CIDR 限定範圍
 - 開放範圍：只開需要的埠與來源，`0.0.0.0/0` 只給對外 LB
-- 管理埠存取：SSH（22）改用 SSM Session Manager 取代，從公網清單上拿掉
+- 管理埠存取：SSH（22）改用 SSM Session Manager 這類不開入站 port 的做法，或只放行[身分感知代理](/infra/knowledge-cards/identity-aware-proxy/)的位址段，從公網清單上拿掉；各種做法的選擇見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)
 - 與 NACL 的分工：security group 是主力（有狀態、group 引用），NACL 留給少數需要 subnet 層顯式 deny 的情境
 
 ## 鄰卡
 
 - [VPC](/infra/knowledge-cards/vpc/) — security group 依附的網路容器
 - [Subnet](/infra/knowledge-cards/subnet/) — security group 與 subnet 各守不同層級的邊界
+- [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) — 目的主機的入站規則以跳板機的 security group 當來源
+- [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) — 管理 port 只放行代理位址段的做法

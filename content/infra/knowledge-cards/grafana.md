@@ -18,7 +18,7 @@ Grafana 在監控體系裡負責「讓指標和 log 變成人可以讀的畫面�
 
 ## 設計責任
 
-使用 Grafana 時要決定：dashboard 的組織（按服務、按環境、按角色）、資料源的連線設定、使用者權限（viewer / editor / admin）、告警通知管道（email / Slack / webhook）。告警規則放在 Grafana 還是留在 Prometheus 是一個取捨：放在 Grafana 時它停掉的期間沒有告警，換到的是能對 Prometheus 以外的資料來源告警、不寫 YAML 也能建規則，比較見 [Prometheus 指標的視覺化工具](/backend/04-observability/vendors/prometheus/visualization-tool-selection/)。斷網環境裡 Grafana 的 plugin 需要離線安裝（`grafana cli --pluginUrl <檔案位置> plugins install <plugin 名稱>` 指向本地檔案）。
+Grafana 本身不儲存資料，它的設計決定因此圍繞在怎麼連到外部資料源、畫面給誰看、出狀況時通知誰：dashboard 的組織（按服務、按環境、按角色）、資料源的連線設定、使用者權限（viewer / editor / admin）、告警通知管道（email / Slack / webhook）。告警規則放在 Grafana 還是留在 Prometheus 是一個取捨：放在 Grafana 時它停掉的期間沒有告警，換到的是能對 Prometheus 以外的資料來源告警、不寫 YAML 也能建規則，比較見 [Prometheus 指標的視覺化工具](/backend/04-observability/vendors/prometheus/visualization-tool-selection/)。斷網環境裡 Grafana 的 plugin 需要離線安裝（`grafana cli --pluginUrl <檔案位置> plugins install <plugin 名稱>` 指向本地檔案）。
 
 ## 鄰卡
 

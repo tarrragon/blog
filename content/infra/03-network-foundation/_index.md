@@ -1,14 +1,14 @@
 ---
 title: "模組三：網路地基 — VPC 與分層"
 date: 2026-06-26
-description: "VPC、public / private subnet 切分、route table、NAT、security group 設計"
+description: "要規劃 VPC 與 subnet 分層、設計 security group 與 NAT、收斂對外開放的 SSH 與 RDP 管理 port、或決定管理員登入伺服器的通道時，從這裡找對應的文章"
 weight: 4
 tags: ["infra", "network", "vpc", "security-group"]
 ---
 
 網路地基要先於核心服務存在。VPC、subnet、route table 與 security group 構成一張「服務能落在哪、誰能跟誰講話」的地圖，資料庫、運算節點與對外入口都得落在這張地圖規劃好的格子裡。先把邊界畫清楚，後面每個核心服務上線時只需要選一塊已經定義好安全等級的位置，而不是邊開服務邊補洞。
 
-這一章建立四層邊界：最外層的 VPC 隔離、中層的 public / private subnet 切分、流量進出的 route table 與 NAT、以及最貼近服務的 security group。每一層解決的問題不同，疊起來才是一個可審計、可收斂的網路。
+這一章建立四層邊界：最外層的 VPC 隔離、中層的 public / private subnet 切分、流量進出的 route table 與 NAT、以及最貼近服務的 security group。每一層解決的問題不同，疊起來才是一個可審計、可收斂的網路。邊界畫好之後，管理員登入主機的那條通道也要落在這張地圖上：管理 port 對誰開放、用什麼身分打開、金鑰怎麼收回，由章節文章裡的管理通道設計、GCP 實作、OpenSSH CA 導入與 MIG / GKE 管理存取四篇處理。
 
 ## VPC：網路隔離的最外層邊界
 
@@ -52,7 +52,7 @@ public subnet 的真實樣貌是「薄薄一層」：它通常只住負載平衡
 
 public subnet 的 route table 有一條 `0.0.0.0/0 → Internet Gateway`，讓未知目的地的流量直接出網、也讓外部可達。private subnet 的 route table 則把 `0.0.0.0/0` 指向 NAT Gateway。NAT（Network Address Translation）解決的問題是：private subnet 的資源需要主動對外（拉套件、呼叫第三方 API、抓 OS 更新），但不能因此變得可被外部入站連入。NAT 讓出站流量借用一個公網位址出去、把回應導回原請求者，同時不開放任何外部主動發起的連線。
 
-NAT Gateway 的核心取捨是成本與可用性。它是綁定單一可用區的資源 — 一個 NAT Gateway 活在某一個 public subnet、也就活在那個可用區裡。若全部 private subnet 的 route table 都指向同一個 NAT，這個設計用一份 NAT 成本服務整個 VPC，代價是把 NAT 所在的可用區變成出站方向的單點：該可用區故障時，所有 private subnet 的對外連線同時中斷，即使其他可用區的節點本身健康。要讓出站路徑與 subnet 的跨可用區冗餘對齊，做法是每個可用區各放一個 NAT Gateway，並讓每一區的 private subnet route table 指向同區的 NAT。下面用 `for_each` 在每個可用區建立一個 NAT，再讓每個 private subnet 的 route table 走本區出口。
+NAT Gateway 的核心取捨是成本與可用性。傳統的 zonal 模式綁定單一可用區 — 一個 NAT Gateway 放在某一個 public subnet、也就在那個可用區裡；AWS 2025 年 11 月推出的 regional 模式依工作負載所在的可用區自動擴展，下面的單點取捨只適用於 zonal 模式（見 [NAT Gateway 卡](/infra/knowledge-cards/nat/)）。若全部 private subnet 的 route table 都指向同一個 NAT，這個設計用一份 NAT 成本服務整個 VPC，代價是把 NAT 所在的可用區變成出站方向的單點：該可用區故障時，所有 private subnet 的對外連線同時中斷，即使其他可用區的節點本身健康。要讓出站路徑與 subnet 的跨可用區冗餘對齊，做法是每個可用區各放一個 NAT Gateway，並讓每一區的 private subnet route table 指向同區的 NAT。下面用 `for_each` 在每個可用區建立一個 NAT，再讓每個 private subnet 的 route table 走本區出口。
 
 ```hcl
 resource "aws_nat_gateway" "per_az" {
@@ -105,11 +105,15 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 
 ## 章節文章
 
-| 文章                                                                                                         | 主題                                                                                                                      |
-| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/) | VPC CIDR 規劃、public / private subnet 切分、route table 與 NAT 的可用性成本取捨、security group 最小開放設計與 NACL 定位 |
-| [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)                      | 0.0.0.0/0 偵測、未使用 SG 識別、依賴檢查、清理工作流、自動化治理                                                          |
-| [流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)                   | DNS、負載平衡（L4/L7）、reverse proxy、應用的責任鏈，TLS 終結位置、動靜分離、單機 nginx 與雲端 ALB 的選擇條件             |
+| 文章                                                                                                                                                          | 主題                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/)                                                  | VPC CIDR 規劃、public / private subnet 切分、route table 與 NAT 的可用性成本取捨、security group 最小開放設計與 NACL 定位                                                                                                                                                                |
+| [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)                                                                       | 0.0.0.0/0 偵測、未使用 SG 識別、依賴檢查、清理工作流、自動化治理                                                                                                                                                                                                                         |
+| [流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)                                                                    | DNS、負載平衡（L4/L7）、reverse proxy、應用的責任鏈，TLS 終結位置、動靜分離、單機 nginx 與雲端 ALB 的選擇條件                                                                                                                                                                            |
+| [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證三層的做法與選擇，以及救援入口](/infra/03-network-foundation/management-access-channel/)             | 管理通道拆成網路可達性、通道授權與主機登入驗證，各層的風險與做法（來源白名單、跳板機、VPN、身分感知代理、代理程式反向連線、SSH 憑證），依存取者身分、連線送達方式與收回方式選擇組合的依據，出站路徑、切換順序、救援入口、組織護欄與稽核                                                  |
+| [GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding](/infra/03-network-foundation/gcp-iap-ssh-access/)                                    | 管理通道模型在 GCP 上的實作：default 網路自帶規則、IAP 的連線路徑與 SSH、RDP 連線指令、切換前的盤點、切換與停用舊規則驗證的指令、連不上時的依層判讀、IAM 授權範圍、OS Login 的啟用順序、Cloud NAT 與 Private Google Access、Serial Console、Organization Policy 與階層式防火牆、稽核紀錄 |
+| [OpenSSH 內建 CA 的 SSH 憑證導入：CA 金鑰、sshd 設定、簽發、principal、撤銷與主機憑證](/infra/03-network-foundation/openssh-ca-setup/)                        | 只用 ssh-keygen 與 sshd 導入 SSH 憑證：使用者 CA 與主機 CA、TrustedUserCAKeys 與 AuthorizedPrincipalsFile、key ID 與有效期、KRL 撤銷、主機憑證與 @cert-authority、導入時會讓所有人登不進去的設定（AuthorizedPrincipalsFile 的讀取權限、RevokedKeys 檔案不存在）                          |
+| [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取：instance template、node pool、kubectl debug 與控制層存取](/infra/03-network-foundation/gke-mig-management-access/) | 設定寫進 instance template 與 node pool 的理由與指令、MIG 用重建取代登入救援、kubectl debug node 的權限邊界、private nodes、authorized networks 與 DNS-based endpoint                                                                                                                    |
 
 ## 跨分類引用
 
@@ -117,3 +121,10 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 - → [模組五：核心服務上 IaC](/infra/05-core-services/)：核心服務怎麼落進規劃好的 subnet
 - → [運維 模組一：負載平衡](/operations/01-load-balancing/)：入口流量怎麼分到 private subnet 的後端
 - → [運維 模組八：成本管理](/operations/08-cost-management/)：NAT 與出站流量的成本取捨
+
+## Backlog
+
+| 項目                                                                       | 類型   | 前置條件 | 規模 |
+| -------------------------------------------------------------------------- | ------ | -------- | ---- |
+| 管理通道模型在 AWS 上的實作篇（SSM Session Manager、EC2 Instance Connect） | 主章   | 無       | 1    |
+| AWS Systems Manager Session Manager 知識卡（代理程式反向連線的代表實作）   | 知識卡 | 無       | 1    |

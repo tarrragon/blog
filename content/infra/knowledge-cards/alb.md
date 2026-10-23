@@ -24,7 +24,7 @@ TLS 終結是 ALB 的標準職責：HTTPS listener 引用 ACM（AWS Certificate 
 
 ## 設計責任
 
-使用 ALB 時要決定：
+ALB 位於外部 client 與後端 target group 的交界：對 client 要保證連線加密、入口名稱穩定，對後端要判斷哪些 target 能接請求，設計決定分屬這兩個方向：
 
 - **健康檢查參數**：檢查路徑（用應用層的 health endpoint、不用根路徑）、間隔、閾值。閾值太寬鬆會把壞掉的後端留在輪替裡，太嚴格會在部署瞬間誤判
 - **HTTP → HTTPS redirect**：port 80 的 listener 設定固定回應 301 redirect 到 443，確保所有流量走加密

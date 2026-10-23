@@ -24,7 +24,7 @@ CloudTrail 預設記錄 management event（建立、修改、刪除資源的 API
 
 ## 設計責任
 
-使用 CloudTrail 時要決定：
+事故排查或稽核要調閱紀錄的時候，CloudTrail 得拿得出涵蓋那段期間與那類操作的紀錄，而且內容保持寫入時的原樣；下面的設定分別影響這兩項條件：
 
 - **保留期限**：預設 90 天免費查閱；超過需要建 trail 存到 S3，費用是 S3 儲存成本
 - **事件範圍**：management event 預設開啟；data event（S3 物件讀寫、Lambda invoke）要額外設定，且量大時儲存成本可觀

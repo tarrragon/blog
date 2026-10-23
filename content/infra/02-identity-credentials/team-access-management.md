@@ -158,16 +158,19 @@ Access review 的結果適合用兩個數字向管理層報告：**覆蓋率**�
 
 ### 離職 checklist
 
-| 項目                                            | 操作                                                                                   | 驗證方式                       |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------ |
-| IAM user / SSO 帳號                             | 停用或刪除                                                                             | credential report 裡不再出現   |
-| 長期 access key                                 | 撤銷所有 key                                                                           | `list-access-keys` 回傳空      |
-| 個人 MFA 裝置                                   | 解除綁定                                                                               | `list-mfa-devices` 回傳空      |
-| 被加進的 IAM group                              | 移除成員                                                                               | `get-group` 裡不再出現         |
-| 可 assume 的 role trust policy                  | 從 principal 清單移除                                                                  | trust policy 裡沒有該 user ARN |
-| 第三方服務的 SSO 授權                           | 撤銷（GitHub org、CI 平台、Slack workspace 等）                                        | 該帳號無法登入                 |
-| 共用密碼 / shared credential                    | 輪替（如果存在的話）                                                                   | Secrets Manager 版本更新       |
-| 行銷追蹤後台（Meta 商家資產管理組合、GTM、GA4） | 由最高管理權成員在各後台移除該成員；離職者是唯一的最高管理權成員時，先加入另一位再移除 | 各後台的成員清單裡不再出現     |
+| 項目                                                               | 操作                                                                                                                                                                           | 驗證方式                           |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| IAM user / SSO 帳號                                                | 停用或刪除                                                                                                                                                                     | credential report 裡不再出現       |
+| 長期 access key                                                    | 撤銷所有 key                                                                                                                                                                   | `list-access-keys` 回傳空          |
+| 個人 MFA 裝置                                                      | 解除綁定                                                                                                                                                                       | `list-mfa-devices` 回傳空          |
+| 被加進的 IAM group                                                 | 移除成員                                                                                                                                                                       | `get-group` 裡不再出現             |
+| 可 assume 的 role trust policy                                     | 從 principal 清單移除                                                                                                                                                          | trust policy 裡沒有該 user ARN     |
+| 第三方服務的 SSO 授權                                              | 撤銷（GitHub org、CI 平台、Slack workspace 等）                                                                                                                                | 該帳號無法登入                     |
+| 共用密碼 / shared credential                                       | 輪替（如果存在的話）                                                                                                                                                           | Secrets Manager 版本更新           |
+| 主機上的 SSH 公鑰（`authorized_keys`、GCP metadata 的 `ssh-keys`） | 逐台刪除；用 OS Login 時停用帳號即可；用 SSH 憑證時停止簽發，已簽出的憑證等到期或加進[撤銷清單](/infra/03-network-foundation/openssh-ca-setup/#憑證外洩時提前作廢krl-撤銷清單) | 主機上找不到該人的金鑰指紋         |
+| 主機上仍開著的工作階段                                             | 在主機上結束（`loginctl terminate-user`、Windows 的 `logoff`）                                                                                                                 | `loginctl list-users` 裡沒有該帳號 |
+| 救援帳號的共用密碼                                                 | 逐台輪替                                                                                                                                                                       | 密碼庫的版本更新                   |
+| 行銷追蹤後台（Meta 商家資產管理組合、GTM、GA4）                    | 由最高管理權成員在各後台移除該成員；離職者是唯一的最高管理權成員時，先加入另一位再移除                                                                                         | 各後台的成員清單裡不再出現         |
 
 權限設計越集中在 role-based（用 IAM group 或 SSO permission set），離職處理越簡單——停用 SSO 帳號就自動切斷所有透過 SSO 取得的 role。反過來，如果有大量手動 attach 的 policy 或直接寫在 trust policy 裡的 user ARN，離職時要逐一找出並移除，容易遺漏。
 

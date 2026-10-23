@@ -40,7 +40,7 @@ MySQL 5.7 → 8.0 的 breaking change 在接手和升級情境裡經常遇到：
 
 ## 設計責任
 
-MySQL 的 infra 設計要決定：備份頻率和保留天數（RDS 預設 7 天自動備份）、是否開 multi-AZ（failover 保護）、連線池設定（RDS Proxy 或應用層 pool）、慢查詢日誌是否開啟。
+MySQL 的資料遺失後只能從備份還原，infra 設計先保護資料、再處理連線與效能：備份頻率和保留天數（RDS 預設 7 天自動備份）、是否開 multi-AZ（failover 保護）、連線池設定（RDS Proxy 或應用層 pool）、慢查詢日誌是否開啟。
 
 ## 鄰卡
 

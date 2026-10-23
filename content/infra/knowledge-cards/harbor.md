@@ -18,7 +18,7 @@ Harbor 在容器生態裡負責「映像的儲存、分發和安全把關」。�
 
 ## 設計責任
 
-使用 Harbor 時要決定：project 的組織（按團隊、按環境、按產品線）、使用者認證（本地帳號 or LDAP 整合）、漏洞掃描政策（push 時自動掃、block 有 Critical CVE 的 image）、映像保留政策（保留最近 N 個 tag、自動清理舊 image）、以及 storage backend（本地磁碟或 NFS）。
+斷網環境裡每一次 image pull 都從 Harbor 拉，哪些 image 能被部署、誰能推送、舊 image 留多久，都取決於下面這些 Harbor 設定：project 的組織（按團隊、按環境、按產品線）、使用者認證（本地帳號 or LDAP 整合）、漏洞掃描政策（push 時自動掃、block 有 Critical CVE 的 image）、映像保留政策（保留最近 N 個 tag、自動清理舊 image）、以及 storage backend（本地磁碟或 NFS）。
 
 ## 鄰卡
 

@@ -63,7 +63,7 @@ done > inventory/s3-versioning.txt
 
 盤點不需要一次做完所有服務，但三件事要第一天就查：
 
-**對外暴露面**：security group 裡有沒有 `0.0.0.0/0` 入站規則指向非 HTTP/HTTPS 的 port（22、3306、5432、6379）。手動逐條查很慢 — 用安全掃描工具一次跑完更可靠。Prowler 是開源的 AWS 安全掃描工具，一次執行就能產出「哪些 SG 對外開放、哪些 S3 public、哪些 IAM 過寬」的分類報告：
+**對外暴露面**：security group 裡有沒有 `0.0.0.0/0` 入站規則指向非 HTTP/HTTPS 的 port（22、3306、5432、6379）。盤到 22 或 3389 對外開放時，前任留下的 CI 或監控可能正靠那條規則連線，直接刪除會讓它們跟著中斷，切換順序見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈切換管理通道時避免把自己鎖在外面〉。手動逐條查很慢 — 用安全掃描工具一次跑完更可靠。Prowler 是開源的 AWS 安全掃描工具，一次執行就能產出「哪些 SG 對外開放、哪些 S3 public、哪些 IAM 過寬」的分類報告：
 
 ```bash
 # 安裝後執行，針對最相關的服務掃描

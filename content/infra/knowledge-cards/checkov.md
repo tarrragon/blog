@@ -30,7 +30,7 @@ checkov 命中後要區分「真漏洞」和「情境合理的例外」。ALB �
 
 ## 設計責任
 
-引入 checkov 時要決定兩件事：啟用哪些規則（全部 vs 漸進啟用），以及命中時 CI 要不要擋（hard fail vs warning）。常見的漸進策略是先從高嚴重度規則開始、設為 hard fail，中低嚴重度設為 warning，隨團隊習慣逐步收緊。
+checkov 一開始就啟用全部規則並設為 hard fail 的話，既有程式碼裡的舊寫法也會讓 CI 擋下與它們無關的 PR，所以引入時的設計集中在兩個設定：啟用哪些規則（全部 vs 漸進啟用），以及命中時 CI 要不要擋（hard fail vs warning）。常見的漸進策略是先從高嚴重度規則開始、設為 hard fail，中低嚴重度設為 warning，隨團隊習慣逐步收緊。
 
 ## 鄰卡
 
