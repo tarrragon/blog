@@ -52,6 +52,44 @@ PII 欄位盤點（哪幾張表哪幾欄）、log serializer 遮罩這些欄位�
 
 Day one 最小集：部署紀錄、管理操作 log（誰改了誰的資料）、production DB 直連的紀錄與審批立場。完整 audit log 系統可延後、但「完全沒有紀錄」狀態每多活一天、就多一天無法回答「資料怎麼變這樣」。
 
+### 管理通道（主機與叢集的管理存取）
+
+自建或半託管（VM、Kubernetes 節點、自管資料庫主機）時才有這一項；全託管平台沒有主機可登入，跳過。管理通道是工程師登入主機與叢集的路徑，跟「內部人員怎麼存取客戶資料」是同一個問題在基礎設施層的形態，而它最常被沉默跳過：雲端專案預設的防火牆規則通常就放行全網連 22 與 3389。
+
+把它拆成三層加一個救援入口來問，每一層各自有失效方式：
+
+| 層           | 決定什麼                                   | Day one 預設                                                                                                     |
+| ------------ | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| 網路可達性   | 哪些來源連得到管理 port                    | VM 不配外部 IP；管理 port 只放行身分感知代理的位址段（GCP IAP 是 `35.235.240.0/20`），或改用不開入站 port 的代理程式（AWS SSM 這類） |
+| 通道授權     | 誰能打開通往某台主機的通道                 | 用身分（IAM 角色）決定、綁給維運群組、IAM Condition 限定 port 與期限；不用來源 IP 白名單分辨人                  |
+| 主機登入驗證 | 通道打開之後，誰能登入、能不能 sudo        | 由中央決定的公鑰：雲端的 OS Login，或 SSH 憑證（OpenSSH CA）讓權限自動到期；不在每台主機散放 `authorized_keys` |
+| 救援入口     | 以上三層有一層壞掉時怎麼進去               | 序列主控台加主機本機的救援帳號，平時關閉；上線前實際登入一次並確認 `sudo` 可用                                 |
+
+**設定範例（GCP，已實測）**：
+
+```bash
+# 網路可達性：只放行 IAP 位址段連到帶 tag 的 VM 的 22 port（規則開 logging，之後查得到誰經過它）
+gcloud compute firewall-rules create allow-ssh-from-iap --network=<network> \
+  --direction=INGRESS --action=allow --rules=tcp:22 \
+  --source-ranges=35.235.240.0/20 --target-tags=<ssh-tag> --enable-logging
+
+# 通道授權：只允許連 22 port，期限到了綁定自動失效
+gcloud projects add-iam-policy-binding <project> \
+  --member=group:<ops-group> --role=roles/iap.tunnelResourceAccessor \
+  --condition='expression=destination.port == 22 && request.time < timestamp("<expiry>"),title=iap-ssh'
+
+# 主機登入驗證：專案層啟用 OS Login，登入權限改由 roles/compute.osLogin / osAdminLogin 決定
+gcloud compute project-info add-metadata --metadata enable-oslogin=TRUE
+```
+
+追問與判讀要點：
+
+- **舊規則的處理順序**：預設的全開規則（GCP 的 `default-allow-ssh`）涵蓋代理的位址段，舊規則還在時連得上證明不了新規則對；先停用舊規則再驗新路徑，停用前救援入口要已經登入過。
+- **由 template 建的主機**（MIG、Kubernetes node pool）：tag、OS Login metadata、移除外部 IP 要寫在 instance template 或 node pool 設定裡，逐台修改在重建後消失。
+- **Kubernetes 控制平面**：公開的 API server 端點等同網路可達性全開。新叢集用 DNS-based endpoint（以 IAM 判斷能不能連、不受 IP 清單限制），authorized networks 是 IP 白名單、清單整組取代；`kubectl debug node` 建的 Pod 不論 profile 都以 root 讀寫節點檔案，一般工作負載的 namespace 設 Pod Security Admission 的 `baseline` 以上，節點除錯集中到只有維運能建 Pod 的 namespace。
+- **稽核**：開通道與登入要留下作業系統之外的紀錄。GCP 的 IAP 開通道紀錄屬於 Data Access 的 `ADMIN_READ` 類型（只開 `DATA_READ` 時一筆都沒有）；OS Login 每次登入留下 `CheckPolicy` 紀錄。開啟之後實際連一次、查到紀錄才算完成，見 [protection-proves-itself-by-firing](../principles/protection-proves-itself-by-firing.md)。
+- **人員離職**：撤銷 IAM 角色只擋下一次登入，已連著的工作階段要在主機上結束，並以該使用者的行程清單為空作為完成的判斷。
+
 ---
 
 ## 防護底線（non-negotiable）
@@ -63,6 +101,7 @@ Day one 最小集：部署紀錄、管理操作 log（誰改了誰的資料）�
 5. PII 欄位盤點完成、log 遮罩就位。
 6. 管理操作留下紀錄。
 7. Operator 帳號（雲 console、DB、部署平台、網域註冊商）全開 MFA — 一組管理憑證外洩等於全盤失守、成本接近零。
+8. 有主機或叢集要登入時：管理 port（22 / 3389 / Kubernetes API）只放行身分感知代理或 VPN 的位址段，通道授權依身分、救援入口上線前實際登入過一次。
 
 ---
 
@@ -75,6 +114,8 @@ Day one 最小集：部署紀錄、管理操作 log（誰改了誰的資料）�
 | Secret manager 服務  | secret 數量 > 10、或存取主體（服務 / 人）> 5  |
 | 滲透測試             | 上線後首次、之後隨重大架構變更                |
 | 單人認證升級帳號系統 | 從單人 / 自用變成多使用者、或要分享存取給他人 |
+| SSH 憑證（OpenSSH CA）取代 OS Login | 主機分散在多個雲或地端，雲端的登入服務管不到全部主機 |
+| 組織層級護欄（Organization Policy、階層式防火牆） | 專案數超過一個、或新專案由其他人建立 |
 
 ---
 

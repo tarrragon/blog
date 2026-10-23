@@ -141,6 +141,16 @@ load average 計的是正在跑加上排隊等待的執行緒。Linux 把等磁�
 
 判讀：`namei -l` + `stat` + `id` 三個先分掉大部分；mode 全對卻還 denied 才往 MAC / capability 查。
 
+## 結束某個使用者的所有工作階段（離職、帳號外洩）：以 `pgrep` 為準
+
+撤銷登入權限（移除 IAM 角色、停用帳號、刪 `authorized_keys`）只擋下一次登入，已經連著的工作階段不受影響，要另外在主機上結束。順序是先撤銷、再結束——反過來做，對方可以在兩步之間重新登入。
+
+1. `sudo loginctl terminate-user <user>`：結束 systemd-logind 登記過的這個使用者的全部工作階段（互動與非互動都算）。OS Login 的帳號名稱是 Google 帳號轉成的形式（例如 `alice_example_com`）。
+2. `pgrep -u <user> -a`：**用這一步判斷有沒有結束**，不用 `loginctl` 的回傳值。`pam_systemd` 在登入時登記失敗（`journalctl -b | grep "Failed to create session"` 有命中）的連線，logind 的清單裡沒有它們，這時 `terminate-user` 回報 `is not logged in or lingering`、exit 1，而那個使用者的行程仍在執行；反過來，exit 0 也只代表登記過的工作階段結束了。
+3. 還有剩下的行程：`sudo pkill -KILL -u <user>`，再跑一次 `pgrep -u <user> -a`，輸出是空的才算完成。
+
+`loginctl list-sessions` 查不到某個使用者、而 `pgrep -u` 看得到他的 `sshd: <user>@notty` 這類行程，就是登記失敗的徵兆；那台機器上之後的登入也可能一樣登記不到，處理離職時就以 `pkill` 加 `pgrep` 確認為主要手段。
+
 ## 被 kill / OOM / exit 137：查 kernel log
 
 程式無錯誤訊息就消失、或 systemd 顯示 `Killed` / `OOMKilled` / exit code 137（128+9=SIGKILL），userspace log 看不到原因——權威在 kernel ring buffer：`dmesg -T | grep -iE 'killed process|oom'`、`journalctl -k -b`。OOM killer 殺行程、I/O error、段錯誤都在這裡。
@@ -155,5 +165,6 @@ load average 計的是正在跑加上排隊等待的執行緒。Linux 把等磁�
 | 鎖沒鎖       | logind：`loginctl LockedHint`；合成器層：compositor / shell log |
 | 鎖屏死局     | `allow_session_lock_restore 1` + 起新鎖屏接管                   |
 | session 存活 | `zellij ls` / `tmux ls`；先保產出再清                           |
+| 某個使用者的工作階段結束了沒 | `pgrep -u <user> -a` 為空；`loginctl` 的回傳值不算數，殘留用 `pkill -KILL -u` |
 | 卡住原因     | `df -h` / `free` 先排資源，再懷疑相容                           |
 | 應用無聲     | `wpctl status`：Sinks 空 = 棧缺件；stream `[active]` = 真在播   |

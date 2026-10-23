@@ -1,10 +1,10 @@
 ---
 name: saas-tech-selection
-description: "初始化 SaaS repo 時的設計與選型訪談協議：定錨後先過交付形態 gate（託管平台 / 垂直 SaaS / 辦公生態自動化 / BaaS / 半託管 CMS / 自建）、自建成立才從使用者操作（BDD）推導功能與風險、依 SRP / OCP 切分 domain 與 event（DDD）、再把技術維度掛在領域骨架下逐項確認、每個維度附不可沉默跳過的防護底線、產出設計決策記錄與 scaffold 建議。Triggers: 初始化 repo, 新專案, 開新服務, SaaS 選型, 技術選型, tech stack, 要不要自建, 託管平台, Shopify, Wix, Firebase, WordPress, Apps Script, DDD, domain 切分, event 驅動, event storming, BDD, 行為情境, 使用者操作盤點, 選資料庫, 選 queue, 要不要 redis, 要不要 k8s, MVP 架構, repo scaffold, 專案起手, stack 評估, 選型訪談, 架構訪談."
+description: "初始化 SaaS repo 時的設計與選型訪談協議：定錨後先過交付形態 gate（託管平台 / 垂直 SaaS / 辦公生態自動化 / BaaS / 半託管 CMS / 自建）、自建成立才從使用者操作（BDD）推導功能與風險、依 SRP / OCP 切分 domain 與 event（DDD）、再把技術維度掛在領域骨架下逐項確認、每個維度附不可沉默跳過的防護底線、產出設計決策記錄與 scaffold 建議。Triggers: 初始化 repo, 新專案, 開新服務, SaaS 選型, 技術選型, tech stack, 要不要自建, 託管平台, Shopify, Wix, Firebase, WordPress, Apps Script, DDD, domain 切分, event 驅動, event storming, BDD, 行為情境, 使用者操作盤點, 選資料庫, 選 queue, 要不要 redis, 要不要 k8s, MVP 架構, repo scaffold, 專案起手, stack 評估, 選型訪談, 架構訪談, 管理通道, SSH 對外開放, IAP, OS Login, 救援入口, 預算警示, 支出停損, 帳單 kill switch."
 license: MIT
 metadata:
   portable: true
-  version: 1.9.2
+  version: 1.10.0
   category: selection-protocol
 ---
 
@@ -109,6 +109,8 @@ metadata:
 | 同一資料高頻重複讀、昂貴計算共用、session / presence                                        | `references/dimensions/cache.md`                                                                                            |
 | 產品有 client-side 元件（mobile app / SPA / desktop app）                                   | `references/dimensions/observability.md`（client-side 觸發展開段）+ `references/principles/client-side-observability.md`    |
 | 明確高峰活動、成本敏感、規模假設首年破十萬用戶                                              | `references/dimensions/capacity-performance.md`                                                                             |
+| 自建或半託管、有 VM / Kubernetes 節點 / 自管 DB 主機要登入                                  | `references/dimensions/security.md`（管理通道段）                                                                           |
+| 擔心服務出錯或被濫用時費用失控、要不要建支出停損                                            | `references/dimensions/capacity-performance.md`（支出停損段）+ `references/principles/protection-proves-itself-by-firing.md` |
 | 使用者問「之後長大怎麼辦」、或要寫 tripwire 總表                                            | `references/scale-stage-triggers.md`                                                                                        |
 | 防護底線逐項確認、或使用者要求跳過某條底線                                                  | `references/baseline-protections.md`                                                                                        |
 | 訪談收斂、要產出決策文件與 scaffold 建議                                                    | `references/decision-record-template.md`                                                                                    |
@@ -146,7 +148,8 @@ saas-tech-selection/
     │   ├── capability-outsourcing-depth.md  # 外包深度三分層（managed 基礎設施 / feature SaaS / 跨能力 bundle）+ commodity domain / 接縫成本判讀
     │   ├── screen-state-matrix-expansion.md # Stage 1.5：操作清單 → 畫面狀態矩陣展開、退出路徑檢查、gate 三問
     │   ├── three-layer-test-strategy.md     # 三層測試策略（unit / protocol integration / screen state）、mock 遮蔽意識
-    │   └── client-side-observability.md     # Client-side 觸發展開：四類事件分類、自架 vs 商業、SDK 設計
+    │   ├── client-side-observability.md     # Client-side 觸發展開：四類事件分類、自架 vs 商業、SDK 設計
+    │   └── protection-proves-itself-by-firing.md # 平常不動作的防護機制（停損、稽核、告警）以合成觸發驗收
     └── dimensions/
         ├── state-storage.md              # 正式狀態與資料儲存：DB 類型、多租戶資料模型、migration / 備份底線
         ├── cache.md                      # 快取：何時需要、失效策略先行、不可當 source of truth

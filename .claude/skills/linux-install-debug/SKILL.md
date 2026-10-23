@@ -12,10 +12,12 @@ description: >
   unbound variable, shell script 可攜, bash 3.2, timeout 找不到, 容器沒有 sudo,
   keyring 過期, PATH 沒吃到, load 很高, swap 滿, etcd 逾時, 磁碟滿, 檔案系統唯讀, OOM, exit 137, dmesg, 黑畫面, getty,
   chvt, 沒聲音, wpctl, DNS 解析不了, 機器沒回應, 服務告警, OnFailure, ntfy, 心跳監控,
+  host key changed, REMOTE HOST IDENTIFICATION HAS CHANGED, IAP, 4033, 4003, OS Login,
+  離職撤銷工作階段, loginctl terminate-user,
   linux install, linux debug, systemd, authoritative state.
 license: MIT
 metadata:
-  version: 1.19.0
+  version: 1.20.0
   category: ops-diagnostics
 ---
 
@@ -86,6 +88,8 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 - **安裝新系統 / 首次開機驗證** → [install-and-verify](references/install-and-verify.md)（含裝好後主動確認有無服務監控、沒有就建議建立）
 - **SSH 連不上（先做 timeout vs refused 分流）、終端機噴亂碼 / 亂碼輸入、要從 SSH 操控圖形桌面** → [remote-access](references/remote-access.md)
+- **主機金鑰變更警告（`REMOTE HOST IDENTIFICATION HAS CHANGED`，含雲端 VM 重建之後）、經 IAP 這類代理連線失敗（`4033` / `4003` / 通道開了而 publickey 被拒）** → [remote-access](references/remote-access.md) 的主機金鑰那一條與「經 IAP 這類身分感知代理連線」段（清舊金鑰之前先用不經 SSH 的管道核對指紋）
+- **要結束某個使用者的所有工作階段（離職、帳號外洩）** → [process-service-state](references/process-service-state.md) 的「結束某個使用者的所有工作階段」段（先撤銷權限再結束，以 `pgrep -u` 為準）
 - **（從 remote-access 分流後）機器沒回應、域名解析不了、虛擬機開不起來、疑似磁碟滿 / 檔案系統唯讀連鎖** → [machine-unreachable](references/machine-unreachable.md)
 - **判程式活著沒 / 服務歸誰 / 服務 failed 或一直重啟(restart loop) / 鎖沒鎖 / session 存活 / 卡住是資源還是相容** → [process-service-state](references/process-service-state.md)
 - **進程活著卻不運作（GUI shell / bar 畫得出來但點不動、keybind 叫不出東西、焦點視窗打字正常）** → [process-service-state](references/process-service-state.md) 的「進程活著 ≠ 子系統活著」段（讀 shell 自己的 log + IPC，別信 pgrep）

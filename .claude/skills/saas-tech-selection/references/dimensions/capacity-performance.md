@@ -13,7 +13,7 @@
 | 月度基礎設施預算的天花板？超了誰會知道？               | 雲端費用是用出來才看到的、預算 alert 是防呆不是優化              |
 | 哪個操作最貴（報表、匯出、批次）？跟線上流量搶資源嗎？ | 貴操作隔離（時段 / 資源池 / replica）是早期就能做的便宜決策      |
 
-**反向問**：「帳單比預期多三倍、你會在第幾天發現？」— 多數團隊的答案是「月底」、預算 alert 把這個數字變成「當天」。
+**反向問**：「帳單比預期多三倍、你會在第幾天發現？」— 多數團隊的答案是「月底」、預算 alert 把這個數字縮短到計費資料的延遲（通常是數小時、有時超過一天）。再追一句：「服務出錯或被濫用、一小時花掉一個月的預算，警示寄到之前已經花了多少？」— 答得出數字才知道需不需要支出停損。
 
 ---
 
@@ -22,7 +22,7 @@
 | 項目           | 最小實作                                                                     |
 | -------------- | ---------------------------------------------------------------------------- |
 | 容量假設文件化 | 三個數字進決策記錄：預期 QPS（平均 / 高峰）、資料月增量、單 request 成本估算 |
-| 預算 alert     | 雲端帳單 alert 設在預算的 50% / 80% / 100% 三檔                              |
+| 預算 alert     | 雲端帳單 alert 設在預算的 50% / 80% / 100% 三檔，另加一檔預測花費達 100%；確認通知寄到會被看到的信箱 |
 | 連線池算術     | 池上限 × 實例數 ≤ DB 連線上限、寫進設定註解；加實例時這條算式是第一個檢查項  |
 | 資源上限       | container / VM 的記憶體上限、request body 上限、分頁上限 — 讓失控有邊界      |
 
@@ -33,9 +33,41 @@
 ## 防護底線（non-negotiable）
 
 1. **容量假設有數字**：「應該夠用」不是假設；數字錯了沒關係、有數字才有「偏離多少」可言。
-2. **帳單有 alert**：預算超標要在天的尺度被發現、不是月的尺度。
+2. **帳單有 alert**：預算超標要在天的尺度被發現、不是月的尺度。警示只通知、不停止扣款；需要硬上限時另建支出停損（見下方〈支出停損〉），而停損上線時要實際觸發過一次。
 3. **連線池上限設定過、算式留痕**。
 4. **失控有邊界**：單一 client / 單一 query / 單一上傳能消耗的資源有上限（與入口維度的 rate limit 共用實作）。
+
+---
+
+## 支出停損（費用失控時自動停止計費）
+
+預算 alert 只寄通知，不會停止扣款；雲端帳單的「支出上限」功能通常只涵蓋少數服務（GCP 的強制執行支出上限只涵蓋 Cloud Run、Cloud Run Functions、Gemini API、Vertex AI 這類，Compute Engine 與 GKE 不在內）。服務出錯（無限重試、遞迴觸發）或被濫用（盜用的 API key、被拿去挖礦的 VM）時，費用的增長速度可以遠快於人工處理，這時的硬上限做法是**預算通知觸發程式、程式把專案從帳單帳戶解除連結**。
+
+**決策點**：停損切下去，專案裡所有需要帳單的資源一起停擺，等於一次自己造成的全面停機。所以先問：「被濫用而多付一筆費用」與「服務全停」哪一個代價高？小型專案、測試環境、個人專案通常是被濫用的費用代價高，建停損；正式服務多半是全面停機的代價高，改用警示加值班處理，或只對高風險專案建停損。
+
+**GCP 的做法（已實測）**：
+
+```bash
+# 預算通知送到 Pub/Sub topic；設定時會自動授權 billing-budget-alert@system.gserviceaccount.com 發布
+gcloud pubsub topics create budget-alerts
+gcloud billing budgets update <budget-name> --notifications-rule-pubsub-topic=projects/<project>/topics/budget-alerts
+
+# 停損程式的服務帳號：解除帳單連結用 billing.projectManager，讀取帳單狀態另外要 browser
+gcloud projects add-iam-policy-binding <project> --member=serviceAccount:<sa> --role=roles/billing.projectManager
+gcloud projects add-iam-policy-binding <project> --member=serviceAccount:<sa> --role=roles/browser
+
+# 部署由 topic 觸發的 function；--retry 讓失敗的那則通知會重送
+gcloud functions deploy <name> --gen2 --trigger-topic=budget-alerts --service-account=<sa> --retry ...
+
+# 觸發器用同一個服務帳號呼叫 function，要給它呼叫權限，否則每次推送都 403
+gcloud run services add-iam-policy-binding <name> --member=serviceAccount:<sa> --role=roles/run.invoker
+```
+
+程式的判斷規則：只看實際花費（通知裡的 `costAmount >= budgetAmount`），讀不懂的訊息不切斷；呼叫 Cloud Billing API 的 `projects.updateBillingInfo`、`billingAccountName` 給空字串就是解除連結。
+
+**實測的反應時間與限制**：從超支訊息發出到帳單停用約十幾秒，延遲幾乎全部來自計費資料——同一個專案已經跑過幾個小時的 VM 與 Kubernetes 叢集，預算通知裡的花費仍然是 0。所以停損限制的是損失的上限，不是即時止血。帳單停用期間資源清單會回傳空的，重新連結後資源都還在、計費恢復；空清單不代表資源已刪除，事後仍要清理。停損程式跑在被停用的專案上時，它自己也跟著停擺。
+
+**驗收**：部署成功、狀態 `ACTIVE` 不算完成。`run.invoker`、`browser` 與 `--retry` 這三項缺任何一個，停損都會在看似正常的狀態下失效（實測三個都踩到了）。上線時各發一則低於預算與超出預算的測試訊息到 topic，看到帳單狀態變成停用才算完成，見 [protection-proves-itself-by-firing](../principles/protection-proves-itself-by-firing.md)。
 
 ---
 
@@ -57,10 +89,11 @@
 | 正式 load test       | 首次可預期高峰前、或容量決策需要數字依據          |
 | 自動擴縮             | 流量波動大到人工調整跟不上、且 stateless 前提成立 |
 | 成本工程（右算規格） | 月帳單成長率連續超過用戶成長率                    |
+| 支出停損             | 出現第一次費用異常、對外公開可計費的 API key 或端點、或專案開始跑沒有人值守的批次與自動擴縮 |
 | 連線池／worker pool 分池或擴容 | 仲裁器回報不可棄請求無法服務（等待型無法服務、或推送型延後至接收視窗填滿），判斷標準見事件流負載仲裁方法論〈讓步與卸載順序〉、套用流程見 `event-flow-arbitration-design` skill |
 
 ---
 
 ## 決策記錄要記什麼
 
-容量假設三數字、預算與 alert 檔位、連線池算式、資源上限清單、防護底線段各條的狀態、高峰 readiness 的觸發承諾、連線池／worker pool 分池或擴容的觸發狀態（是否已收到仲裁器容量失敗訊號）。
+容量假設三數字、預算與 alert 檔位、支出停損建或不建與理由（建的話記下合成觸發的日期與結果）、連線池算式、資源上限清單、防護底線段各條的狀態、高峰 readiness 的觸發承諾、連線池／worker pool 分池或擴容的觸發狀態（是否已收到仲裁器容量失敗訊號）。
