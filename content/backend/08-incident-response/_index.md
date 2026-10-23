@@ -132,7 +132,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 - 來自 [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)：承接外送事件通報與影響盤點節奏。
 - 來自 [7.7 稽核追蹤與責任邊界](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)：承接證據結構與復盤責任閉環。
 - 來自 [7.16 從公開事故到工程 Workflow](/backend/07-security-data-protection/incident-case-to-control-workflow/)：承接事故案例如何回寫控制面。
-- 來自 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)：承接入口元件被入侵時存取得到的租戶數，作為 [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/) 清查範圍與對外說明的輸入。
+- 來自 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)：承接入口元件被入侵時存取得到的租戶數，作為 [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/) 清查範圍與對外說明的輸入，也作為 [8.26 資安事故的客戶通知](/backend/08-incident-response/security-incident-customer-notification/) 決定風險預警範圍與調查報告根因段的輸入。
 
 ## 主章規劃
 
@@ -298,6 +298,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | 8.25 的回指：8.3〈交接路由〉補 8.25、8.10 的補償段連 8.25〈對外承諾賠償的時機〉、8.20〈通訊與補償〉連 8.25 的宣告等級、Supply Chain Artifact Drill 連 8.25                                                                                                                                                                                                                        | 跨模組 | 無                           | 小         |
 | 8.25 第二批回指與術語：8.19〈決策類型〉的 security split 補根除期間的撤銷範圍、重建時點與監看期長度；reading-paths 的資安路線末端改成 8.17 → 8.25；dwell time 與 digital forensics 在 4 篇以上使用而沒有卡                                                                                                                                                                        | 跨模組 | 無                           | 小         |
 | 7.44 / 8.25 的異源複核：四輪審查都出自同一個 session（同一份 prompt 來源），instance 與 timing 兩軸沒有動過。觸發條件是有另一個執行者可用，或距 2026-10-22 已過一個月；形式是兩邊各自對兩篇跑理解探針與 steelman、各自報數再並排，驗收寫「有幾個判斷標準因為並排而被寫明」。Round 4 新加的寫法（diffoscope 比對、誘餌憑證、事故後加強監看、DBA 限時權限）尚未經獨立驗證，列為必查 | 跨模組 | 另一個執行者或時間           | 中         |
+| 8.26 的回指：8.17 的資安事故段連 8.26 的歸屬判定、8.10 的補償段連 8.26〈確認通知〉、8.19〈決策類型〉補「是否發風險預警」與「歸屬判定的重新判定」、8.20〈通訊與補償〉連 8.26 的通知對象（商家與會員分開）、7.37 的通知門檻段連 8.26〈風險預警〉                                                                                                                                    | 跨模組 | 無                           | 5 處（小） |
 
 ### 後續推演大綱
 
