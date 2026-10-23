@@ -113,7 +113,7 @@ Service discovery 是 5 模組多個 vendor 共同關心的議題、但實作差
 
 ### TLS / mTLS
 
-TLS / mTLS 在不同 vendor 由不同 layer 負責。**K8s** cert-manager（Let's Encrypt / 內部 CA）；**AWS ELB** ACM 自動憑證；**Traefik** ACME 自動 TLS；**nginx** ssl module + manual cert / cert-manager；**Envoy** filter chain（SDS 動態 cert）；**Consul Connect** mTLS 自動 sidecar；**Terraform** 不負責 TLS、提供 provider；**Docker / systemd** 不負責（交給 application 或上游 proxy）。
+TLS / mTLS 在不同 vendor 由不同 layer 負責。**K8s** cert-manager（Let's Encrypt / 內部 CA）；**AWS ELB** ACM 自動 TLS 憑證；**Traefik** ACME 自動 TLS；**nginx** ssl module + manual cert / cert-manager；**Envoy** filter chain（SDS 動態 cert）；**Consul Connect** mTLS 自動 sidecar；**Terraform** 不負責 TLS、提供 provider；**Docker / systemd** 不負責（交給 application 或上游 proxy）。
 
 選型判讀：cluster 內 mTLS → cert-manager / Consul Connect；外部 TLS → ACME（Traefik / 自管 cert-manager）；managed → AWS ELB / Cloudflare。
 

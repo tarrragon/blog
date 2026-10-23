@@ -30,7 +30,7 @@ tags: ["backend", "service-selection"]
 | 資料遮罩   | 匯出、[log](/backend/knowledge-cards/log/)、客服畫面要顯示多少敏感資訊                   | email、電話、身分證、付款資訊                                                                                                                                            |
 | 傳輸保護   | 資料在 client、service、[queue](/backend/knowledge-cards/queue/)、storage 之間如何被保護 | [TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、signed request、[certificate chain and trust root](/backend/knowledge-cards/certificate-chain-trust/)                  |
 | 身分來源   | 使用者的身分自建、委派給外部提供者、還是走 passkey                                       | [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)、[credential stuffing](/backend/knowledge-cards/credential-stuffing/)       |
-| 密鑰與秘密 | token、API key、憑證如何保存、輪替與撤銷                                                 | [Secret Management](/backend/knowledge-cards/secret-management/)、[Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)、key rotation |
+| 密鑰與秘密 | token、API key、數位憑證如何保存、輪替與撤銷                                             | [Secret Management](/backend/knowledge-cards/secret-management/)、[Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)、key rotation |
 | 稽核追蹤   | 高風險操作是否能被追蹤與事後審查                                                         | [audit log](/backend/knowledge-cards/audit-log/)、approval、admin action                                                                                                 |
 
 這張表是需求索引。資安討論要先定義資料與操作的保護等級，再決定具體平台、服務或產品。
@@ -110,7 +110,7 @@ tags: ["backend", "service-selection"]
 
 這類需求的陷阱是把秘密寫進設定檔、log、測試資料或部署指令。秘密管理要同時包含初次交付通道、保存位置、存取權限、輪替流程、撤銷流程、憑證續期流程與稽核紀錄——第一項最容易被漏掉，因為它只發生一次而且發生在監控與稽核開始看之前，判讀見 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)。
 
-這一組需求最前面的決定是登入本身要自己做多少——自建帳號、委派給外部身分提供者、還是 passkey，見 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)。選定之後還有四個接在後面的決定：登入之後每個請求靠什麼把身分帶上去（[7.36 憑證在請求中怎麼帶：附上的決定由誰做](/backend/07-security-data-protection/credential-transport-in-request/)）、使用者手上那個實體選哪一種載體（[7.39 使用者持有型憑證：那把憑證能不能離開它的載體](/backend/07-security-data-protection/user-held-credential-carrier/)）、委派之後本地那筆紀錄怎麼跟著外部身分走（[7.38 外部身分與本地紀錄：兩條生命週期在哪裡分岔](/backend/07-security-data-protection/external-identity-local-record-lifecycle/)），以及每個客戶各帶一個身分提供者時要做成幾組設定（[7.40 B2B 多租戶的身分接入：這個人屬於哪個租戶由誰說了算](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)）。接著還有兩個決定，它們在選型階段就要定、定錯之後上面這些流程都建立在錯的基礎上：這段資料該用加密、簽章還是不可逆轉換來保護（判讀主軸是金鑰放在哪裡，見 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/)），以及一個 API 請求裡的「人」「呼叫方系統」「跨系統身分對應」該各自用哪一層憑證（見 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)）。判到系統層之後先選機制（API key、共享密鑰簽章、mTLS、client credentials 的判斷標準見 [7.34 機器憑證的機制選型](/backend/07-security-data-protection/machine-credential-mechanism-selection/)），再處理那把憑證怎麼交到對方手上、以及這個交付動作能不能免掉，見 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)；請求是「某個系統代表某個特定的人」時，那層關係要不要寫進憑證本身見 [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)。使用者密碼的儲存屬於不可逆轉換那一類，參數定法與升級路徑見 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。
+這一組需求最前面的決定是登入本身要自己做多少——自建帳號、委派給外部身分提供者、還是 passkey，見 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)。選定之後還有四個接在後面的決定：登入之後每個請求靠什麼把身分帶上去（[7.36 憑證在請求中怎麼帶：附上的決定由誰做](/backend/07-security-data-protection/credential-transport-in-request/)）、使用者手上那個實體選哪一種載體（[7.39 使用者持有型憑證：那把憑證能不能離開它的載體](/backend/07-security-data-protection/user-held-credential-carrier/)）、委派之後本地那筆紀錄怎麼跟著外部身分走（[7.38 外部身分與本地紀錄：兩條生命週期在哪裡分岔](/backend/07-security-data-protection/external-identity-local-record-lifecycle/)），以及每個客戶各帶一個身分提供者時要做成幾組設定（[7.40 B2B 多租戶的身分接入：這個人屬於哪個租戶由誰說了算](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)）。接著還有兩個決定，它們在選型階段就要定、定錯之後上面這些流程都建立在錯的基礎上：這段資料該用加密、簽章還是不可逆轉換來保護（判讀主軸是金鑰放在哪裡，見 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/)），以及一個 API 請求裡的「人」「呼叫方系統」「跨系統身分對應」該各自用哪一層存取憑證（見 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)）。判到系統層之後先選機制（API key、共享密鑰簽章、mTLS、client credentials 的判斷標準見 [7.34 機器憑證的機制選型](/backend/07-security-data-protection/machine-credential-mechanism-selection/)），再處理那把存取憑證怎麼交到對方手上、以及這個交付動作能不能免掉，見 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)；請求是「某個系統代表某個特定的人」時，那層關係要不要寫進存取憑證本身見 [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)。使用者密碼的儲存屬於不可逆轉換那一類，參數定法與升級路徑見 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。
 
 下一步可讀：[7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)。
 
@@ -135,7 +135,7 @@ tags: ["backend", "service-selection"]
 1. 身分來源是否明確（自建、委派、或不建立持久身分；所有進得來的路徑含回復與 fallback 是否列全）
 2. 資料分級與角色責任是否明確（誰可讀、可改、可匯出）
 3. 資料流路徑是否明確（client、service、queue、storage）
-4. 秘密與憑證生命週期是否明確（保存、輪替、撤銷、續期）
+4. 秘密與數位憑證生命週期是否明確（保存、輪替、撤銷、續期）
 5. 稽核與事故追蹤要求是否明確（audit 欄位、保存、查核流程）
 
 下一步建議路由（按本章各議題對應）：

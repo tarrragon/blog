@@ -87,4 +87,4 @@ Audit log 本身也要納入 access control。能查敏感 audit 的人，通常
 
 ## 下一步路由
 
-Audit log + SIEM 完成後，加密與憑證讀 [Encryption / TLS / Key Management](../encryption-tls-key-management/)；備份事故讀 [PITR / Backup](../pitr-backup/)；安全治理讀 [Data Protection](/backend/07-security-data-protection/data-protection-and-masking-governance/)。
+Audit log + SIEM 完成後，加密與 TLS 憑證讀 [Encryption / TLS / Key Management](../encryption-tls-key-management/)；備份事故讀 [PITR / Backup](../pitr-backup/)；安全治理讀 [Data Protection](/backend/07-security-data-protection/data-protection-and-masking-governance/)。

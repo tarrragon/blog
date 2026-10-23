@@ -102,7 +102,7 @@ Cloud KMS 的核心定位是 *GCP-native envelope encryption + signing 控制面
 | 單一專屬 HSM 隔離 / 跨雲合規             | [CloudHSM](/backend/07-security-data-protection/vendors/cloudhsm/)                                                   |
 | GCP secret 管理（非 key）                | [Google Secret Manager](/backend/07-security-data-protection/vendors/google-secret-manager/)                         |
 | GCP IAM 治理基底                         | [Google Cloud IAM](/backend/07-security-data-protection/vendors/google-cloud-iam/)                                   |
-| 公開憑證 / PKI                           | Certificate Authority Service（GCP）或 [Let's Encrypt](/backend/07-security-data-protection/vendors/letsencrypt/)    |
+| 公開數位憑證 / PKI                       | Certificate Authority Service（GCP）或 [Let's Encrypt](/backend/07-security-data-protection/vendors/letsencrypt/)    |
 | Secret rotation 證據鏈                   | [7.5 Credential Rotation Scoped Evidence](/backend/07-security-data-protection/credential-rotation-scoped-evidence/) |
 
 ## 不在本頁內的主題

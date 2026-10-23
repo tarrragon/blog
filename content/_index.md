@@ -42,7 +42,7 @@ tags: ["首頁", "教學", "工程筆記"]
 - [UX Design 畫面設計](/ux-design/)：畫面狀態矩陣、gate fallback、輸入機制、錯誤回復、導航模式，mobile app 的 UX 設計判斷
 - [Monitoring 監控體系](/monitoring/)：四類事件分類、SDK 設計、collector 架構、商業方案比較、資安與隱私、行為資料商業利用
 - [運行期維運](/operations/)：負載平衡、水平擴展、流量管控、服務探活、容量規劃、高可用、突發流量應對、成本管理
-- [Infra 基礎設施建置指南](/infra/)：從零循序漸進把雲端基礎設施做起來 — IaC、身分憑證、網路地基、環境分離、核心服務、可觀測性、自動化 review、治理習慣與組織推動
+- [Infra 基礎設施建置指南](/infra/)：從零循序漸進把雲端基礎設施做起來 — IaC、身分與存取憑證、網路地基、環境分離、核心服務、可觀測性、自動化 review、治理習慣與組織推動
 - [Linux 完整指南](/linux/)：從零安裝 Linux、出問題怎麼除錯、各情境的工具選擇（CLI / 圖形桌面 / 遠端），以及用 dotfile 管理整個工作環境 — 安裝、除錯、工具選單與 dotfile 管理四大子分類
 - [免伺服器自動化實務指南](/automation/)：不租主機、用免費雲端服務給靜態站補上動態能力 — 以「幫 GitHub Pages blog 做流量統計」為貫穿案例，教 Google Apps Script + Sheets 的膠水層、beacon、Sheets 當資料庫、排程彙總與配額安全
 - [神經多樣性](/neurodiversity/)：為神經多樣性讀者（ADHD、自閉、需求迴避）設計 AI 與文件輸出 — 拆解三個真實 skill 各自解什麼問題、抽出共用的輸出設計方法論，再整合成單一可組合的 skill

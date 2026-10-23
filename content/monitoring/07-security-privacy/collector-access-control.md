@@ -33,7 +33,7 @@ func authMiddleware(next http.Handler) http.Handler {
 
 ### mTLS（Mutual TLS）
 
-Client 和 server 互相驗證對方的憑證。安全性比 API key 高 — 攻擊者即使取得 API key，沒有 client 憑證也無法連線。
+Client 和 server 互相驗證對方的數位憑證。安全性比 API key 高 — 攻擊者即使取得 API key，沒有 client 憑證也無法連線。
 
 mTLS 的設定成本較高（每個 client 需要產生和管理憑證），適合對安全性要求較高的環境。自用工具通常不需要 mTLS。
 

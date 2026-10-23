@@ -49,7 +49,7 @@ Container 解決服務包裝與 runtime 依賴；Kubernetes 解決多 instance �
 本模組承接 07 模組的概念判讀，並在服務實體層落地。交接基線如下：
 
 - 來自 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)：承接入口分級、管理平面分離、修補窗口節奏。
-- 來自 [7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)：承接 TLS/mTLS 與憑證佈署節奏。
+- 來自 [7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)：承接 TLS/mTLS 與數位憑證佈署節奏。
 - 來自 [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)：承接 runtime secret 與機器憑證交付模型。
 
 這個交接讓部署模組聚焦實體配置與平台語意，同時保持與資安判讀一致。

@@ -1,7 +1,7 @@
 ---
 title: "7.R11.P5 重設憑證可重放且有效期過長"
 date: 2026-04-24
-description: "說明密碼重設憑證可重放與長時效如何形成身份接管窗口"
+description: "說明密碼重設用的存取憑證可重放與長時效如何形成身份接管窗口"
 weight: 7235
 tags: ["backend", "security", "red-team"]
 ---

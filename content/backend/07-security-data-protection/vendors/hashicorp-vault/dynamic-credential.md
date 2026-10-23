@@ -10,7 +10,7 @@ tags: ["backend", "security", "vault", "secrets", "dynamic-credential", "deep-ar
 
 ## 問題情境
 
-Long-lived database credential 寫進 application config 是 production 環境最常見的 secret hygiene 失敗：credential 一旦外洩、輪替成本是 *跨團隊協調 + 多服務同步重啟*、實務上半年才換一次、credential 在 git history / log / dump file 留下軌跡。動態憑證（dynamic credential）的核心承諾是 *credential 生命週期跟 application session 對齊*、用完就 revoke、外洩窗口從幾個月縮到幾分鐘。
+Long-lived database credential 寫進 application config 是 production 環境最常見的 secret hygiene 失敗：credential 一旦外洩、輪替成本是 *跨團隊協調 + 多服務同步重啟*、實務上半年才換一次、credential 在 git history / log / dump file 留下軌跡。動態存取憑證（dynamic credential）的核心承諾是 *credential 生命週期跟 application session 對齊*、用完就 revoke、外洩窗口從幾個月縮到幾分鐘。
 
 但 dynamic credential 不是「換個 SDK 就好」、它把 *credential 治理* 從 secret rotation 問題轉成 *lease lifecycle* 問題。lease TTL 設多久、renewal 怎麼跑、DB 端 user 創建會不會撞 max_connections、Vault sealed 時 application 怎麼降級 — 每個都是 production-grade 議題、無法靠 vendor doc 預設值直接上線。
 

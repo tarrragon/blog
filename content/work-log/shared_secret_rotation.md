@@ -409,4 +409,4 @@ Shared Secret rotation 的本質是**有意識管理 secret 的 lifecycle**。�
 
 - [API 認證的三層信任邊界](/work-log/api_auth_trust_boundaries/) — 本文的主篇、Shared Secret 在「Layer 2 系統層」的位置
 - [Laravel Sanctum 的 Bearer Token 設計剖析](/work-log/laravel_sanctum_pat_design/) — Layer 1 使用者 token 的儲存原則（hash + constant-time）也適用於 Layer 2
-- [mTLS 實際怎麼設定與運維](/work-log/mtls_setup_and_operations/) — 不用 shared secret 的另一條路、憑證 lifecycle 跟 secret lifecycle 的對照
+- [mTLS 實際怎麼設定與運維](/work-log/mtls_setup_and_operations/) — 不用 shared secret 的另一條路、數位憑證 lifecycle 跟 secret lifecycle 的對照

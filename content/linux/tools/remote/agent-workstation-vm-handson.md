@@ -16,18 +16,18 @@ tags: ["linux", "remote", "docker", "zellij", "mosh", "ntfy", "agent", "handson"
 
 目標狀態：手機 → Tailscale 私網 → mosh 進 VM → zellij session → container 內的 Claude Code；跑完由 hooks 推 ntfy 通知回手機。
 
-| 步驟                      | 架構層     | 產出物                        |
-| ------------------------- | ---------- | ----------------------------- |
-| 1. 前置盤點               | ——         | 三台裝置與帳號的現況清單      |
-| 2. VM 基線可連入          | 連線層之下 | SSH 金鑰登入成功              |
-| 3. Tailscale 打通私網     | 連線層     | 手機與 VM 互 ping 得到        |
-| 4. mosh 補連線手感        | 連線層     | 漫遊不斷線的互動 shell        |
-| 5. zellij 常駐 session    | session 層 | detach / attach 後任務仍在    |
-| 6. Dockerfile 建工作環境  | 隔離層     | 可重建的 agent 工作環境 image |
-| 7. Claude Code 落地與憑證 | 隔離層     | container 重建後免重新登入    |
-| 8. hooks 接 ntfy 通知     | 通知       | 任務結束手機收到推播          |
-| 9. 手機端連線與輸入       | 行動端     | 手機可操作、按鍵齊全          |
-| 10. 端到端驗收            | 全部       | 三個情境全數通過              |
+| 步驟                          | 架構層     | 產出物                        |
+| ----------------------------- | ---------- | ----------------------------- |
+| 1. 前置盤點                   | ——         | 三台裝置與帳號的現況清單      |
+| 2. VM 基線可連入              | 連線層之下 | SSH 金鑰登入成功              |
+| 3. Tailscale 打通私網         | 連線層     | 手機與 VM 互 ping 得到        |
+| 4. mosh 補連線手感            | 連線層     | 漫遊不斷線的互動 shell        |
+| 5. zellij 常駐 session        | session 層 | detach / attach 後任務仍在    |
+| 6. Dockerfile 建工作環境      | 隔離層     | 可重建的 agent 工作環境 image |
+| 7. Claude Code 落地與存取憑證 | 隔離層     | container 重建後免重新登入    |
+| 8. hooks 接 ntfy 通知         | 通知       | 任務結束手機收到推播          |
+| 9. 手機端連線與輸入           | 行動端     | 手機可操作、按鍵齊全          |
+| 10. 端到端驗收                | 全部       | 三個情境全數通過              |
 
 ## Step 1：前置盤點
 

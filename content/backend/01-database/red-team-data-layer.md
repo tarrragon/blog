@@ -133,7 +133,7 @@ print(db.execute("SELECT username, email FROM users WHERE username = ?",
 - 常見錯誤：忘了 `WHERE tenant_id = ?`、用 application 層而非 DB 層強制
 - 進階防禦：Row-Level Security（PostgreSQL RLS）、由 DB 強制 tenant boundary
 
-**真實事件對照**：這一節的檢查都接受上游認證結果，身分本身被冒用時一起失效。[Snowflake 2024 credential abuse](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/) 是憑證外洩的例子：攻擊者拿到外洩 credential 後直接 query 多家客戶的 Snowflake account、大量外送資料，防護設計見〈認證 + 網路雙重防護〉。[Microsoft Storm-0558 紅隊版](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) 是認證信任根失守的例子：signing key 洩漏後攻擊者以任意 user 身份查任意 mailbox，application 層的 BOLA / BOPLA 檢查全部照常通過。
+**真實事件對照**：這一節的檢查都接受上游認證結果，身分本身被冒用時一起失效。[Snowflake 2024 credential abuse](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/) 是存取憑證外洩的例子：攻擊者拿到外洩 credential 後直接 query 多家客戶的 Snowflake account、大量外送資料，防護設計見〈認證 + 網路雙重防護〉。[Microsoft Storm-0558 紅隊版](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) 是認證信任根失守的例子：signing key 洩漏後攻擊者以任意 user 身份查任意 mailbox，application 層的 BOLA / BOPLA 檢查全部照常通過。
 
 ## 資料外洩類攻擊
 
@@ -261,7 +261,7 @@ UPDATE accounts SET credit = credit - 100 WHERE user_id = 1 AND credit >= 100;
 DB 事故的處置三角是 *同步* 執行三件事、共同消除攻擊者在處置間隙繼續入侵的時間窗：
 
 1. **漏洞修補**：補上被利用的具體漏洞或 misconfiguration
-2. **Session / 憑證失效**：撤銷所有可能被攻擊者拿到的 session、token、credential
+2. **Session / 存取憑證失效**：撤銷所有可能被攻擊者拿到的 session、token、credential
 3. **異常痕跡清查**：盤點攻擊者已經做了什麼、哪些資料動過、哪些 backdoor 留下
 
 同步執行的理由是 *攻擊者擁有平行能力*：用已拿到的 credential 在 patch 完成前重新進入、或用清查前還沒被發現的 backdoor 繞過修補。線性執行「先修漏洞、再失效憑證、再清查」時，憑證失效之前攻擊者仍能用已拿到的 credential 重新進入、清查完成之前仍能走還沒被發現的 backdoor，這兩段時間窗都會放大攻擊代價。
@@ -330,7 +330,7 @@ DB 認證 = 資料邊界、但雲端資料平台（Snowflake、BigQuery、Cosmos
 
 ## 批量憑證撤銷的工程能力
 
-批量憑證撤銷能力是事故當下「攔停攻擊者」的核心動作、要 *快速、大量、選擇性* 執行可疑憑證撤銷。這個能力屬於 *事先準備*、事故當下臨時建來不及。
+批量存取憑證撤銷能力是事故當下「攔停攻擊者」的核心動作、要 *快速、大量、選擇性* 執行可疑憑證撤銷。這個能力屬於 *事先準備*、事故當下臨時建來不及。
 
 **最小能力清單**：
 

@@ -1,12 +1,12 @@
 ---
 title: "BuildKit 與跨平台 build"
 date: 2026-07-06
-description: "docker build 每次重下載套件很慢、要同時出 amd64 與 arm64 image、或 build 時要用私有憑證卻不想烤進 image 時回來讀 — BuildKit 的 cache/secret mount 與 buildx 跨平台 build"
+description: "docker build 每次重下載套件很慢、要同時出 amd64 與 arm64 image、或 build 時要用私有存取憑證卻不想烤進 image 時回來讀 — BuildKit 的 cache/secret mount 與 buildx 跨平台 build"
 weight: 30
 tags: ["backend", "deployment", "docker", "buildkit", "buildx"]
 ---
 
-build 每次重下載套件、要同時出 amd64 與 arm64、build 時要用私有憑證卻不想烤進 image——這三個進階需求，是會寫 Dockerfile（[Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)）之後才撞上的。上游是 [Docker vendor overview](/backend/05-deployment-platform/vendors/docker/)。
+build 每次重下載套件、要同時出 amd64 與 arm64、build 時要用私有存取憑證卻不想烤進 image——這三個進階需求，是會寫 Dockerfile（[Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)）之後才撞上的。上游是 [Docker vendor overview](/backend/05-deployment-platform/vendors/docker/)。
 
 ## 舊 builder 做不好的三件事
 
@@ -14,7 +14,7 @@ build 每次重下載套件、要同時出 amd64 與 arm64、build 時要用私�
 
 - **build 加速**：每次 build，`RUN apt-get install` 或 `npm install` 都重新下載一次套件，就算內容一樣。legacy builder 只有 layer cache（整層命中或整層重跑），沒有「跨 build 保留下載快取」的機制。
 - **跨架構**：要同時出 amd64 跟 arm64 的 image（M 系列 Mac 開發、amd64 伺服器部署），legacy builder 一次只能 build 當前主機的架構。
-- **build-time secret**：build 時要用私有 registry 憑證或 SSH key 抓私有依賴，用 `COPY` 或 `ENV` 帶進去，secret 就永久烤進某層 image、`docker history` 挖得出來。
+- **build-time secret**：build 時要用私有 registry 存取憑證或 SSH key 抓私有依賴，用 `COPY` 或 `ENV` 帶進去，secret 就永久烤進某層 image、`docker history` 挖得出來。
 
 BuildKit 是重寫的 build engine，針對這三件重新設計；buildx 是它的前端命令，管 builder 實例與跨平台輸出。現代 Docker 預設就用 BuildKit，但上面三個能力要用對語法才吃得到。
 

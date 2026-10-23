@@ -28,7 +28,7 @@ Okta 是 *人類身份的控制面*、不是 cloud resource permission engine。
 判斷 Okta 配置是否健康、最少看四件事：
 
 - **誰能做什麼**：Super Admin / Org Admin / Read-Only Admin 的人數、是否走 Okta 自己的 access request workflow、是否強制 [phishing-resistant 認證](/backend/knowledge-cards/authentication/)
-- **憑證在哪裡**：API token 的 owner、scope、TTL、是否走 OAuth service app 而不是 personal API token；service account 是否獨立 audit
+- **存取憑證在哪裡**：API token 的 owner、scope、TTL、是否走 OAuth service app 而不是 personal API token；service account 是否獨立 audit
 - **入口如何暴露**：SSO 是 SAML 還是 OIDC、IdP-initiated 是否關閉、admin console 是否限 IP / device trust、helpdesk reset 是否要 callback / out-of-band 驗證
 - **證據是否可回查**：System Log 是否同步到 SIEM、admin / token / impersonation 事件是否 alert、是否保留 90 天以上
 

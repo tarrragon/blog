@@ -8,7 +8,7 @@ tags: ["backend", "observability", "vendor", "prometheus", "grafana"]
 
 > 這一篇屬於 [Prometheus](/backend/04-observability/vendors/prometheus/) 的實作系列，接在 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 或 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/) 之後：兩篇的 Grafana 都只綁在主機的 `127.0.0.1:3000`。下文的「監控主機」指跑 Grafana 的那一台，單機時就是唯一的那一台。
 
-這一篇整理 Grafana 只綁本機之後，讓其他電腦上的人看到它的做法，範圍是自己架設的 Grafana；託管服務的登入與網域由供應商處理，不在這裡。文中的設定取自一個短網址服務的監控（Grafana 13.2.3、Nginx 1.30），在 macOS 的 OrbStack 上實測過；雲端上的部分（DNS、正式憑證、負載平衡器）沒有實際部署過，寫的是要改的位置。
+這一篇整理 Grafana 只綁本機之後，讓其他電腦上的人看到它的做法，範圍是自己架設的 Grafana；託管服務的登入與網域由供應商處理，不在這裡。文中的設定取自一個短網址服務的監控（Grafana 13.2.3、Nginx 1.30），在 macOS 的 OrbStack 上實測過；雲端上的部分（DNS、正式的 TLS 憑證、負載平衡器）沒有實際部署過，寫的是要改的位置。
 
 ## SSH 通道或 VPN 與對外代理的選擇條件：看的人能不能經由既有的 SSH 或 VPN 連進來
 

@@ -209,7 +209,7 @@ nodes:
         metricsBindAddress: 0.0.0.0:10249
 ```
 
-以這份設定重建之後，四個程式都改聽所有介面；從叢集裡的一個 Pod 連過去，etcd 與 kube-proxy 回 200，controller-manager 與 scheduler 回 403（連得上，要帶認證才讀得到）。chart 附的讀取設定替 controller-manager 與 scheduler 帶著 Prometheus 的 ServiceAccount 憑證去讀，所以在這個叢集上裝好監控之後，四個讀取對象的 `up` 都是 1；裝好 15 分鐘後，上面那幾條控制平面的告警與 `etcdInsufficientMembers` 都沒有成立。綁到所有介面也讓節點網路上的其他程式連得到這些端點，正式叢集要搭配網路政策或防火牆限制來源。
+以這份設定重建之後，四個程式都改聽所有介面；從叢集裡的一個 Pod 連過去，etcd 與 kube-proxy 回 200，controller-manager 與 scheduler 回 403（連得上，要帶認證才讀得到）。chart 附的讀取設定替 controller-manager 與 scheduler 帶著 Prometheus 的 ServiceAccount 存取憑證去讀，所以在這個叢集上裝好監控之後，四個讀取對象的 `up` 都是 1；裝好 15 分鐘後，上面那幾條控制平面的告警與 `etcdInsufficientMembers` 都沒有成立。綁到所有介面也讓節點網路上的其他程式連得到這些端點，正式叢集要搭配網路政策或防火牆限制來源。
 
 已經在跑、不能重建的 kubeadm 叢集，改的是控制平面節點上 `/etc/kubernetes/manifests/` 裡 kube-controller-manager、kube-scheduler 與 etcd 的靜態 Pod 檔（kubelet 偵測到檔案變更會自己重啟它們），以及 `kube-system` 裡 `kube-proxy` 這個 ConfigMap 的 `metricsBindAddress`，改完重啟 kube-proxy 的 DaemonSet。之後的 `kubeadm upgrade` 會以叢集的 ClusterConfiguration 重寫靜態 Pod 檔，所以同一組設定也要寫進 `kube-system` 的 `kubeadm-config` ConfigMap。這一段沒有實測。k3s 與 k3d 不經過 kubeadm，控制平面元件合在同一個程序裡，綁定位址以 k3s 的啟動參數設定，這裡沒有涵蓋。
 

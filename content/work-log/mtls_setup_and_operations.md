@@ -3,7 +3,7 @@ title: "mTLS 實際怎麼設定與運維：CA 階層、憑證生命週期、撤�
 slug: "mtls_setup_and_operations"
 date: 2026-05-18
 draft: false
-description: "mTLS 落地的運維決策（CA 階層、憑證儲存、撤銷機制）與基礎設施整合（nginx / envoy / service mesh），以及跟 API Key / OAuth 的成本與安全取捨。"
+description: "mTLS 落地的運維決策（CA 階層、數位憑證儲存、撤銷機制）與基礎設施整合（nginx / envoy / service mesh），以及跟 API Key / OAuth 的成本與安全取捨。"
 tags: ["security", "mtls", "tls", "pki", "service-mesh", "operations"]
 ---
 
@@ -12,7 +12,7 @@ tags: ["security", "mtls", "tls", "pki", "service-mesh", "operations"]
 mTLS 的核心是把系統身分綁到 X.509 憑證與私鑰，而不是可重用的 shared secret。介紹文章常把它簡化成「雙向 TLS 憑證、適合金融醫療」，但實際落地時，設計責任會立刻延伸到 CA 階層、憑證生命週期、撤銷與基礎設施整合：
 
 - 自簽 CA 還是商業 CA？
-- 憑證放哪、怎麼 rotate？
+- 數位憑證放哪、怎麼 rotate？
 - 怎麼撤銷？CRL 還是 OCSP 還是 short-lived cert？
 - nginx 設定怎麼寫、service mesh 怎麼整合？
 - 跟 API Key、OAuth 比，什麼情境適合承擔 mTLS 的運維成本？
@@ -22,7 +22,7 @@ mTLS 的核心是把系統身分綁到 X.509 憑證與私鑰，而不是可重�
 本文拆解 mTLS 的工程實務：
 
 1. **CA 階層**：為什麼要分層、Root CA / Intermediate CA / Leaf cert
-2. **憑證生命週期**：簽發、儲存、rotation、撤銷
+2. **數位憑證生命週期**：簽發、儲存、rotation、撤銷
 3. **基礎設施整合**：nginx / envoy / service mesh 設定模式
 4. **跟其他 Layer 2 方案的取捨**：何時 mTLS 才是對的選擇
 
@@ -329,12 +329,12 @@ server {
 
 關鍵 directive：
 
-| Directive                | 作用                                        |
-| ------------------------ | ------------------------------------------- |
-| `ssl_client_certificate` | 信任的 CA chain                             |
-| `ssl_verify_client on`   | 強制 client 出示憑證、`optional` 則彈性接受 |
-| `ssl_verify_depth`       | chain 驗證深度、根據 PKI 階層調             |
-| `$ssl_client_s_dn`       | 傳 client cert 的 subject DN 給 backend     |
+| Directive                | 作用                                             |
+| ------------------------ | ------------------------------------------------ |
+| `ssl_client_certificate` | 信任的 CA chain                                  |
+| `ssl_verify_client on`   | 強制 client 出示 TLS 憑證、`optional` 則彈性接受 |
+| `ssl_verify_depth`       | chain 驗證深度、根據 PKI 階層調                  |
+| `$ssl_client_s_dn`       | 傳 client cert 的 subject DN 給 backend          |
 
 ### nginx 設定 mTLS client（呼叫上游）
 
@@ -377,7 +377,7 @@ listeners:
 跟 nginx 比、Envoy 的優勢：
 
 - 動態設定（xDS API、不需 reload）
-- 支援 SDS（Secret Discovery Service）動態取憑證
+- 支援 SDS（Secret Discovery Service）動態取得數位憑證
 - 跟 Istio / Linkerd 等 mesh 整合
 
 ### Service Mesh（Istio / Linkerd）

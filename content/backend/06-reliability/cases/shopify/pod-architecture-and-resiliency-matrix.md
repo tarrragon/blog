@@ -23,7 +23,7 @@ Shopify pod architecture 的核心責任是把多租戶流量限制在獨立的 
 | Resiliency matrix | 每個服務的失敗模式是否都有對應防護 | 防護覆蓋狀態 |
 | Game Day 整合     | matrix 的缺口如何轉成演練題目      | 演練驗證清單 |
 
-Pod boundary 的設計是每個 pod 擁有獨立的 DB（MySQL shard）與 cache（Redis、Memcached）；應用伺服器與背景工作的運算大部分跨 pod 共用，用來吸收任一 pod 的促銷尖峰。這讓 pod 之間在資料層隔離 — 一個 pod 的 DB 連線耗盡不會影響其他 pod 的查詢能力。運算跨 pod 共用在機密性上的含意（共用的應用伺服器手上有連到每個 pod 的憑證）見 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)。隔離的代價是資源利用率降低，但在峰值場景下，隔離帶來的故障局部化價值遠高於利用率損失。
+Pod boundary 的設計是每個 pod 擁有獨立的 DB（MySQL shard）與 cache（Redis、Memcached）；應用伺服器與背景工作的運算大部分跨 pod 共用，用來吸收任一 pod 的促銷尖峰。這讓 pod 之間在資料層隔離 — 一個 pod 的 DB 連線耗盡不會影響其他 pod 的查詢能力。運算跨 pod 共用在機密性上的含意（共用的應用伺服器手上有連到每個 pod 的存取憑證）見 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)。隔離的代價是資源利用率降低，但在峰值場景下，隔離帶來的故障局部化價值遠高於利用率損失。
 
 Tenant routing 決定商店到 pod 的映射。映射規則通常考慮商店規模（大商店獨立 pod 或少量共用）、地理區域、與風險等級（新商店 vs 穩定商店）。映射一旦建立，變更需要 migration — 這是隔離架構的操作成本之一。
 

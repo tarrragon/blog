@@ -101,7 +101,7 @@ Unit 這一層的「單元」有兩種定義，決定替身出現在模組邊界
 
 **自用工具的特殊優勢**：server 和 client 都在同一台機器上時，protocol integration test 的成本極低 — 啟動真實服務然後跑 test，不需要模擬器或真實裝置。
 
-服務無法本機啟動、只有共用測試環境時，這一層以[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)的形態存在：正規測試而非腳本、與整合套件同分類、預設可執行、離線降級為跳過、憑證失效必須紅燈——每一條設計都對應一個實際踩過的歧路。
+服務無法本機啟動、只有共用測試環境時，這一層以[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)的形態存在：正規測試而非腳本、與整合套件同分類、預設可執行、離線降級為跳過、存取憑證失效必須紅燈——每一條設計都對應一個實際踩過的歧路。
 
 > 章節入口：[WebSocket 協議測試](/testing/03-protocol-integration-test/websocket-protocol-test/)、[HTTP contract test](/testing/03-protocol-integration-test/http-contract-test/)、[服務 fixture 管理](/testing/03-protocol-integration-test/service-fixture-management/)、[測試憑證管理](/testing/03-protocol-integration-test/credential-management/)
 >

@@ -28,7 +28,7 @@ Keycloak 是 *自管控制面* 的 human identity 與 federation engine、不是
 判斷 Keycloak 部署是否健康、最少看 SaaS IdP 的四件事加上自管特有的四個維度：
 
 - **誰能做什麼**：master realm admin 的人數、是否走 access request workflow、admin console 是否限 IP / device trust、是否強制 [phishing-resistant 認證](/backend/knowledge-cards/authentication/)
-- **憑證在哪裡**：client secret 是否走 [secret management](/backend/knowledge-cards/secret-management/)、realm signing key 的 rotation 排程、admin token 的 TTL
+- **存取憑證在哪裡**：client secret 是否走 [secret management](/backend/knowledge-cards/secret-management/)、realm signing key 的 rotation 排程、admin token 的 TTL
 - **入口如何暴露**：哪些 realm 對外、reverse proxy / Ingress 是否做 rate limit、admin console（/auth/admin）是否限內網或 zero trust
 - **證據是否可回查**：Event Listener SPI 是否接 SIEM、admin event 跟 login event 是否分流、保留期是否符合稽核
 - **DB 健康**：PostgreSQL / MySQL 是否跨 AZ、是否有 PITR、是否做過 restore 演練（不是只有備份成功訊息）

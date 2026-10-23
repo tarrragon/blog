@@ -14,7 +14,7 @@ AWS ELB 是 AWS managed load balancer 系列、承擔三個責任：流量入口
 
 1. 建立 ALB / NLB、配置 listener + target group
 2. 設計 health check + connection draining
-3. 用 ACM 自動憑證 + SNI
+3. 用 ACM 自動 TLS 憑證 + SNI
 4. 用 ALB Ingress Controller / AWS Load Balancer Controller for K8s
 5. 評估 ALB vs NLB vs CloudFront vs API Gateway
 
@@ -87,7 +87,7 @@ curl "http://${ALB_DNS}"
 
 子議題：
 
-- ACM 自動憑證 + 續期
+- ACM 自動 TLS 憑證 + 續期
 - SNI：單 ALB 多 domain（最多 25 certificates）
 - TLS policy（min TLS version）
 - Mutual TLS（ALB 2023+）

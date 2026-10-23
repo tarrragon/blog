@@ -97,7 +97,7 @@ GSM 的定位是 *GCP-native 的 secret 集中點*、解決三件事：把 secre
 | 需要 built-in 四階段 rotation flow       | [AWS Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/)（若可遷 AWS）               |
 | Encryption-as-a-service / 內部 PKI       | [HashiCorp Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/) transit / PKI engine                |
 | FIPS 140-2 Level 3 HSM 需求              | [Cloud HSM](/backend/07-security-data-protection/vendors/google-cloud-kms/)（KMS 後端可改 HSM）                      |
-| 公開憑證 PKI                             | Google Certificate Authority Service / [Let's Encrypt](/backend/07-security-data-protection/vendors/letsencrypt/)    |
+| 公開數位憑證 PKI                         | Google Certificate Authority Service / [Let's Encrypt](/backend/07-security-data-protection/vendors/letsencrypt/)    |
 | K8s workload cert 自動化                 | [cert-manager](/backend/07-security-data-protection/vendors/cert-manager/)                                           |
 | Secret rotation 證據鏈                   | [7.5 Credential Rotation Scoped Evidence](/backend/07-security-data-protection/credential-rotation-scoped-evidence/) |
 

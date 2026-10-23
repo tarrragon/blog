@@ -45,7 +45,7 @@ tags: ["backend", "service-selection", "delivery-mode-selection"]
 
 ### 全託管平台：Wix、Shopify、Squarespace、Google Sites
 
-平台承擔整條技術棧：主機、憑證、防護、金流、版面。使用者操作的對象是「網站內容」、不是「程式碼」。電商走 Shopify、形象站與簡介站走 Wix / Google Sites、訂閱內容走 Substack 類 — 各平台的標準域內、上線時間以天計、且本系列 [0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 裡多數伺服器側的功課由平台承擔。
+平台承擔整條技術棧：主機、TLS 憑證、防護、金流、版面。使用者操作的對象是「網站內容」、不是「程式碼」。電商走 Shopify、形象站與簡介站走 Wix / Google Sites、訂閱內容走 Substack 類 — 各平台的標準域內、上線時間以天計、且本系列 [0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 裡多數伺服器側的功課由平台承擔。
 
 邊界訊號：客製需求開始對抗平台 — 結帳流程要插入平台不支援的步驟、資料要跟外部系統雙向同步、頁面效能撞到平台的模板天花板。在平台內 workaround 的程式碼（Shopify 的 liquid hack、Wix 的 Velo 腳本）累積越多、等於在用最差的開發環境自建。
 
@@ -103,7 +103,7 @@ WordPress 代表「半手動自定義」這一段：核心由開源專案提供�
 
 託管形態把伺服器帳單換成平台帳單、把維運人力換成平台依賴。權衡時五個方向都要看：
 
-1. **資安限制**：平台扛掉 patch、憑證、DDoS 防護 — 這對沒有資安人力的團隊是淨收益。代價是資料主權與稽核深度受限：資料落在平台的儲存裡、[audit log](/backend/knowledge-cards/audit-log/) 細度由平台決定、有資料落地或合規要求（金融、醫療、政府標案）的業務、託管形態可能直接出局。
+1. **資安限制**：平台扛掉 patch、TLS 憑證、DDoS 防護 — 這對沒有資安人力的團隊是淨收益。代價是資料主權與稽核深度受限：資料落在平台的儲存裡、[audit log](/backend/knowledge-cards/audit-log/) 細度由平台決定、有資料落地或合規要求（金融、醫療、政府標案）的業務、託管形態可能直接出局。
 2. **流量與穩定性**：平台的彈性通常優於小團隊自建（Shopify 扛 Black Friday 是它的本業）、但天花板不可協商 — API rate limit、配額、模板效能、撞到就是撞到。
 3. **平台費用**：月費 + 抽成（電商平台的交易抽成在量大後是實質稅率）。自建與託管的成本曲線會交叉、交叉點要算：平台月費 + 抽成 vs 自建的工程薪資 + 雲端帳單、在目前與三倍業務量下各是多少。
 4. **人力與操作**：託管形態讓非工程角色能直接維護（改文案、上商品、調流程）、這個能力在小團隊值很多錢；自建後每個改動都過工程隊列。

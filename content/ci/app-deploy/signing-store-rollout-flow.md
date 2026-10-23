@@ -49,7 +49,7 @@ Recovery 階段負責處理已安裝版本。App 常見止血工具是 remote co
 
 ## Release checklist
 
-Release checklist 的責任是把外部 gate 與內部 gate 接起來。App 發布牽涉商店、憑證、客服、行銷與後端相容，因此 checklist 應該是流程契約，不只是提醒清單。
+Release checklist 的責任是把外部 gate 與內部 gate 接起來。App 發布牽涉商店、簽章憑證、客服、行銷與後端相容，因此 checklist 應該是流程契約，不只是提醒清單。
 
 1. 確認 version、build number、commit 與 artifact 對應。
 2. 確認 signing secret、profile 或 keystore 仍有效。

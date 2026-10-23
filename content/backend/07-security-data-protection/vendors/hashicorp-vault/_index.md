@@ -12,7 +12,7 @@ HashiCorp Vault 是 self-hosted 的 secret management 控制面、解決三個�
 
 Vault 的核心定位是 *跨雲 + 跨環境 + 跨 secret 形態的單一 secret 控制面*。當組織同時跑 AWS + GCP + on-prem K8s、又需要 dynamic database credential + 內部 PKI + envelope encryption、用三個 cloud-native service 拼起來會出現 *secret 治理鏈不連續*（AWS 的 secret 怎麼授權 GCP service 取用、on-prem app 怎麼拿短期 cloud credential、內部 CA 跟外部 ACM 怎麼分工）。Vault 把這層 *統一抽象* — 應用端只跟 Vault 講話、Vault 後端接各雲 KMS / database / PKI。
 
-跟 [AWS Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/) / [Google Secret Manager](/backend/07-security-data-protection/vendors/google-secret-manager/) 相比、Vault 多了：*dynamic credential engine*（cloud-native 對應產品有限）、*transit engine* 做 encryption-as-a-service、*PKI engine* 自簽內部憑證、*跨雲統一介面*。代價是 *自管運維*（HA cluster、auto-unseal、replication、upgrade）— 跟自管 [Keycloak](/backend/07-security-data-protection/vendors/keycloak/) 的取捨同類。HCP Vault（HashiCorp Cloud Platform）是 HashiCorp 託管版、把運維交還、但綁 HashiCorp。
+跟 [AWS Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/) / [Google Secret Manager](/backend/07-security-data-protection/vendors/google-secret-manager/) 相比、Vault 多了：*dynamic credential engine*（cloud-native 對應產品有限）、*transit engine* 做 encryption-as-a-service、*PKI engine* 自簽內部數位憑證、*跨雲統一介面*。代價是 *自管運維*（HA cluster、auto-unseal、replication、upgrade）— 跟自管 [Keycloak](/backend/07-security-data-protection/vendors/keycloak/) 的取捨同類。HCP Vault（HashiCorp Cloud Platform）是 HashiCorp 託管版、把運維交還、但綁 HashiCorp。
 
 ## 本章目標
 
@@ -96,7 +96,7 @@ Vault 的核心定位是 *跨雲 + 跨環境 + 跨 secret 形態的單一 secret
 | GCP-only + 已用 Workload Identity                              | [Google Secret Manager](/backend/07-security-data-protection/vendors/google-secret-manager/)                                                  |
 | Azure-only + 已用 Managed Identity                             | [Azure Key Vault](/backend/07-security-data-protection/vendors/azure-key-vault/)                                                              |
 | 大型 cryptographic / [HSM](/backend/knowledge-cards/hsm/) 需求 | [CloudHSM](/backend/07-security-data-protection/vendors/cloudhsm/)（FIPS 140-2 Level 3、Vault auto-unseal 後端）                              |
-| 公開憑證 PKI（serving cert）                                   | [AWS ACM](/backend/07-security-data-protection/vendors/aws-acm/) / [Let's Encrypt](/backend/07-security-data-protection/vendors/letsencrypt/) |
+| 公開數位憑證 PKI（serving cert）                               | [AWS ACM](/backend/07-security-data-protection/vendors/aws-acm/) / [Let's Encrypt](/backend/07-security-data-protection/vendors/letsencrypt/) |
 | K8s workload cert 自動化                                       | [cert-manager](/backend/07-security-data-protection/vendors/cert-manager/)（可用 Vault 當 issuer）                                            |
 | 跨服務 workload identity (SPIFFE)                              | [SPIRE](/backend/07-security-data-protection/vendors/spire/)                                                                                  |
 | Secret 全公司 rotation 證據鏈                                  | [7.5 Credential Rotation Scoped Evidence](/backend/07-security-data-protection/credential-rotation-scoped-evidence/)                          |
