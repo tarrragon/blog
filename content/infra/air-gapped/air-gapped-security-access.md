@@ -34,7 +34,7 @@ tags: ["infra", "air-gapped", "security", "access-control"]
 
 **機房存取控制**：門禁卡 / 生物辨識的日誌要進入 infra 的稽核系統。每一次實體進出都要有記錄——誰、什麼時候、待了多久。伺服器機櫃如果有獨立的鎖，鎖的鑰匙管理也歸 infra。
 
-**Console 存取**：能直接操作伺服器 console（KVM、IPMI、iLO）的人等於擁有最高權限——可以繞過所有 OS 層的認證。console 存取要限制到最小人數，每次使用要記錄。
+**Console 存取**：能直接操作伺服器 console（KVM、IPMI、iLO 這類[頻外管理控制器](/infra/knowledge-cards/serial-console/)）的人等於擁有最高權限——可以繞過所有 OS 層的認證。console 存取要限制到最小人數，每次使用要記錄。
 
 **螢幕與攝影裝置**：敏感環境可能限制在安全區域內使用手機（防止拍攝螢幕上的資料）。這個政策的執行通常是 facility 負責，但政策的制定依據（什麼資料在螢幕上算敏感）是 infra 定義的。
 

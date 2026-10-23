@@ -22,7 +22,7 @@ default VPC 在每個 region 自動存在，它的特性是所有 subnet 都是 
 
 同一個精靈流程會出現 security group 選項。security group 是掛在機器網路介面上的防火牆規則，決定哪些來源 IP、哪些 port 的流量可以進出。
 
-預設建立的 security group 通常開放 SSH（port 22）給 `0.0.0.0/0` — 任何 IP 都能嘗試連線。對一台短期測試機來說，這讓操作者能連進去；對一台開始承載服務的機器來說，全球的自動掃描工具會在上線幾分鐘內開始對 SSH port 嘗試登入。這條規則是功能正確的（SSH 能連），但安全邊界是開放的（誰都能試）。
+預設建立的 security group 通常開放 SSH（port 22）給 `0.0.0.0/0` — 任何 IP 都能嘗試連線。對一台短期測試機來說，這讓操作者能連進去；對一台開始承載服務的機器來說，全球的自動掃描工具會在上線幾分鐘內開始對 SSH port 嘗試登入。這條規則是功能正確的（SSH 能連），但安全邊界是開放的（誰都能試）。收窄的做法從只放行自己的 IP、改走 mesh VPN，到讓主機完全不開入站 port，各自的代價見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)。
 
 ### IAM
 

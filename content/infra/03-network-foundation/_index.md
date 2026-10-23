@@ -52,7 +52,7 @@ public subnet 的真實樣貌是「薄薄一層」：它通常只住負載平衡
 
 public subnet 的 route table 有一條 `0.0.0.0/0 → Internet Gateway`，讓未知目的地的流量直接出網、也讓外部可達。private subnet 的 route table 則把 `0.0.0.0/0` 指向 NAT Gateway。NAT（Network Address Translation）解決的問題是：private subnet 的資源需要主動對外（拉套件、呼叫第三方 API、抓 OS 更新），但不能因此變得可被外部入站連入。NAT 讓出站流量借用一個公網位址出去、把回應導回原請求者，同時不開放任何外部主動發起的連線。
 
-NAT Gateway 的核心取捨是成本與可用性。它是綁定單一可用區的資源 — 一個 NAT Gateway 活在某一個 public subnet、也就活在那個可用區裡。若全部 private subnet 的 route table 都指向同一個 NAT，這個設計用一份 NAT 成本服務整個 VPC，代價是把 NAT 所在的可用區變成出站方向的單點：該可用區故障時，所有 private subnet 的對外連線同時中斷，即使其他可用區的節點本身健康。要讓出站路徑與 subnet 的跨可用區冗餘對齊，做法是每個可用區各放一個 NAT Gateway，並讓每一區的 private subnet route table 指向同區的 NAT。下面用 `for_each` 在每個可用區建立一個 NAT，再讓每個 private subnet 的 route table 走本區出口。
+NAT Gateway 的核心取捨是成本與可用性。傳統的 zonal 模式綁定單一可用區 — 一個 NAT Gateway 放在某一個 public subnet、也就在那個可用區裡；AWS 2025 年 11 月推出的 regional 模式依工作負載所在的可用區自動擴展，下面的單點取捨只適用於 zonal 模式（見 [NAT Gateway 卡](/infra/knowledge-cards/nat/)）。若全部 private subnet 的 route table 都指向同一個 NAT，這個設計用一份 NAT 成本服務整個 VPC，代價是把 NAT 所在的可用區變成出站方向的單點：該可用區故障時，所有 private subnet 的對外連線同時中斷，即使其他可用區的節點本身健康。要讓出站路徑與 subnet 的跨可用區冗餘對齊，做法是每個可用區各放一個 NAT Gateway，並讓每一區的 private subnet route table 指向同區的 NAT。下面用 `for_each` 在每個可用區建立一個 NAT，再讓每個 private subnet 的 route table 走本區出口。
 
 ```hcl
 resource "aws_nat_gateway" "per_az" {
@@ -122,13 +122,10 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 
 ## Backlog
 
-| 項目                                                                                                                                                                                                                                                 | 類型   | 前置條件 | 規模 |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------- | ---- |
-| 管理通道模型在 AWS 上的實作篇（SSM Session Manager、EC2 Instance Connect）                                                                                                                                                                           | 主章   | 無       | 1    |
-| AWS Systems Manager Session Manager 知識卡（代理程式反向連線的代表實作）                                                                                                                                                                             | 知識卡 | 無       | 1    |
-| GKE 節點與 MIG 管理的 VM 的管理存取（private cluster、節點 SSH 的必要性、在 template 裡設定 tag 與 metadata）                                                                                                                                        | 主章   | 無       | 1    |
-| OpenSSH 內建 CA 的導入：產生 CA 金鑰、派送 CA 公鑰、簽發與撤銷                                                                                                                                                                                       | 主章   | 無       | 1    |
-| 既有文章回連管理通道兩篇與新卡：vpc-subnet-security-group（並統一「跳板機」譯名）、security-group-audit-cleanup、security-group 卡、zero-trust 卡、personal-project-to-infra、takeover/cloud-no-iac、air-gapped-security-access、machine-unreachable | 跨模組 | 無       | 8    |
-| NAT Gateway「綁定單一可用區」的說法改寫，對齊 NAT 卡的 regional NAT Gateway（本頁正文與 vpc-subnet-security-group）                                                                                                                                  | 主章   | 無       | 2    |
-| air-gapped-principles 的「跳板機」改成「中轉閘道」，避免與 Bastion Host 卡同名異義                                                                                                                                                                   | 跨模組 | 無       | 1    |
-| infra 知識卡〈設計責任〉引導句同一句型的存量改寫                                                                                                                                                                                                     | 知識卡 | 無       | 中   |
+| 項目                                                                                                          | 類型   | 前置條件 | 規模 |
+| ------------------------------------------------------------------------------------------------------------- | ------ | -------- | ---- |
+| 管理通道模型在 AWS 上的實作篇（SSM Session Manager、EC2 Instance Connect）                                    | 主章   | 無       | 1    |
+| AWS Systems Manager Session Manager 知識卡（代理程式反向連線的代表實作）                                      | 知識卡 | 無       | 1    |
+| GKE 節點與 MIG 管理的 VM 的管理存取（private cluster、節點 SSH 的必要性、在 template 裡設定 tag 與 metadata） | 主章   | 無       | 1    |
+| OpenSSH 內建 CA 的導入：產生 CA 金鑰、派送 CA 公鑰、簽發與撤銷                                                | 主章   | 無       | 1    |
+| infra 知識卡〈設計責任〉引導句同一句型的存量改寫                                                              | 知識卡 | 無       | 中   |
