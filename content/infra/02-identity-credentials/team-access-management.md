@@ -83,7 +83,7 @@ Deny 語句確保即使未來有人不小心把過寬的 managed policy attach �
 
 ### Viewer
 
-Viewer 能讀取 Console、查 log、看 metric dashboard，但不能修改任何資源。適合的角色包括：值班但不需要改設定的 on-call、需要查 log 排查問題的技術支援（分層支援裡讀系統資料的那一層，見 [Tiered Support](/backend/knowledge-cards/tiered-support/)；一線客服改用只顯示必要欄位的查詢工具，見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#客服查詢工具的權限)）、需要看資源狀態的管理層。
+Viewer 能讀取 Console、查 log、看 metric dashboard，但不能修改任何資源。適合的角色包括：值班但不需要改設定的 on-call、需要查 log 排查問題的技術支援（分層支援裡讀系統資料的那一層，見 [Tiered Support](/backend/knowledge-cards/tiered-support/)；一線客服改用只顯示必要欄位的查詢工具（[客服後台](/backend/knowledge-cards/internal-admin-tool/)），見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#客服查詢工具的權限)）、需要看資源狀態的管理層。
 
 Viewer 用 AWS 的 managed policy `ReadOnlyAccess` 作為基線，再根據需要排除敏感資料的讀取（例如 Secrets Manager 的 `GetSecretValue`）。
 

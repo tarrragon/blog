@@ -18,7 +18,7 @@ Okta 2023 事件顯示支援系統若涉及高權限資料與工作流程，會�
 
 ## 策略
 
-1. 把 support tooling 納入同等級身份治理。
+1. 把 support tooling（[客服後台](/backend/knowledge-cards/internal-admin-tool/)與支援系統）納入同等級身份治理。
 2. 補強 session、token 與操作留痕控制。
 3. 將異常支援活動接入告警與 incident 路由。
 

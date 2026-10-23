@@ -13,6 +13,8 @@ Admin Endpoint 的核心概念是「只給受信任角色使用的高權限入�
 
 Admin Endpoint 位在內部網路、身份驗證與授權層之後，和一般 public API 分開管理。 可先對照 [Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)。
 
+客服後台上停用帳號、退款這類寫入按鈕背後呼叫的就是 admin endpoint；客服後台本身以讀取為主，讀取那一側的欄位、遮罩與查詢紀錄見 [Internal Admin Tool（客服後台）](/backend/knowledge-cards/internal-admin-tool/)。
+
 ## 可觀察訊號
 
 系統需要 admin endpoint 的訊號是操作會影響大量使用者、資料完整性或金流狀態，且需要額外稽核與來源限制。
