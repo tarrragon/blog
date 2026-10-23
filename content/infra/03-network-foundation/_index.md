@@ -105,11 +105,12 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 
 ## 章節文章
 
-| 文章                                                                                                         | 主題                                                                                                                      |
-| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/) | VPC CIDR 規劃、public / private subnet 切分、route table 與 NAT 的可用性成本取捨、security group 最小開放設計與 NACL 定位 |
-| [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)                      | 0.0.0.0/0 偵測、未使用 SG 識別、依賴檢查、清理工作流、自動化治理                                                          |
-| [流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)                   | DNS、負載平衡（L4/L7）、reverse proxy、應用的責任鏈，TLS 終結位置、動靜分離、單機 nginx 與雲端 ALB 的選擇條件             |
+| 文章                                                                                                                     | 主題                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/)             | VPC CIDR 規劃、public / private subnet 切分、route table 與 NAT 的可用性成本取捨、security group 最小開放設計與 NACL 定位       |
+| [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)                                  | 0.0.0.0/0 偵測、未使用 SG 識別、依賴檢查、清理工作流、自動化治理                                                                |
+| [流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)                               | DNS、負載平衡（L4/L7）、reverse proxy、應用的責任鏈，TLS 終結位置、動靜分離、單機 nginx 與雲端 ALB 的選擇條件                   |
+| [GCP VM 的 SSH 管理通道：從 default-allow-ssh 改走 IAP TCP forwarding](/infra/03-network-foundation/gcp-iap-ssh-access/) | 預設網路自帶規則的暴露面、IAP 的連線路徑與兩層驗證、切換順序、IAM 範圍、OS Login、Cloud NAT、Serial Console、組織層級護欄與稽核 |
 
 ## 跨分類引用
 
@@ -117,3 +118,10 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 - → [模組五：核心服務上 IaC](/infra/05-core-services/)：核心服務怎麼落進規劃好的 subnet
 - → [運維 模組一：負載平衡](/operations/01-load-balancing/)：入口流量怎麼分到 private subnet 的後端
 - → [運維 模組八：成本管理](/operations/08-cost-management/)：NAT 與出站流量的成本取捨
+
+## Backlog
+
+| 項目                                                | 類型   | 前置條件 | 規模 |
+| --------------------------------------------------- | ------ | -------- | ---- |
+| IAP、OS Login、Cloud NAT 知識卡（GCP 管理通道相關） | 知識卡 | 無       | 3    |
+| AWS SSM Session Manager 取代 22 port 的對應篇       | 主章   | 無       | 1    |
