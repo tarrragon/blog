@@ -156,7 +156,7 @@ IAP 端點以 API 的形式在專案上開關，沒有啟用時，`--tunnel-thro
 gcloud services enable iap.googleapis.com
 ```
 
-同一步在 Google Cloud 控制台的「IAM 與管理 > 稽核記錄」為 Cloud Identity-Aware Proxy 開啟 Data Access 的資料讀取紀錄。這份紀錄記下每一次開通道的帳號與目標 VM，只記錄開啟之後的連線，切換當天就開，之後調查時才查得到切換以來的全部連線。也在同一步確認所有要開通道的 Google 帳號都已強制兩步驟驗證（見〈IAP 的 IAM 授權範圍：誰拿得到通道〉）。
+同一步在 Google Cloud 控制台的「IAM 與管理 > 稽核記錄」為 Cloud Identity-Aware Proxy 開啟 Data Access 紀錄裡的「管理員讀取」（`ADMIN_READ`）類型。開通道時 IAP 檢查的權限 `iap.tunnelInstances.accessViaIAP` 歸在這個類型，每一次開通道會留下一筆方法名稱為 `AuthorizeUser` 的紀錄；只開「資料讀取」（`DATA_READ`）時，開通道不會留下任何紀錄。這份紀錄記下每一次開通道的帳號與目標 VM，只記錄開啟之後的連線，切換當天就開，之後調查時才查得到切換以來的全部連線。也在同一步確認所有要開通道的 Google 帳號都已強制兩步驟驗證（見〈IAP 的 IAM 授權範圍：誰拿得到通道〉）。
 
 新規則只開需要的 port，並用 target tag 限定作用的 VM。把 `--rules` 寫成 `all` 並省略 `--target-tags`，IAP 來源就連得到網路裡每一台 VM 的每一個 port，等於把 `default-allow-internal` 的寬度複製給 IAP。
 
@@ -260,6 +260,16 @@ gcloud compute ssh <instance-name> --zone=<zone> --tunnel-through-iap
 gcloud logging read \
   'logName:"compute.googleapis.com%2Ffirewall" AND jsonPayload.rule_details.reference:"allow-ssh-from-iap"' \
   --freshness=1h --limit=10
+```
+
+規則剛開啟 logging 的最初幾分鐘，紀錄裡的 `rule_details` 可能是空的，上面用規則名稱過濾的查詢查不到這幾筆。照本節的順序，新規則建好之後馬上停用舊規則、連線、查詢，正好落在這段時間，所以查不到不代表新規則沒有命中。這時改用來源 IP 查：`ip_in_net()` 判斷來源 IP 是否落在 IAP 的位址段，結果與 `rule_details` 是否已經填入無關；舊規則停用之後，這些來源的連線只會由新規則放行：
+
+```bash
+# 查最近一小時來源是 IAP 位址段、連到 22 port 的連線，並列出命中的規則（剛啟用 logging 時這一欄可能是空的）
+gcloud logging read \
+  'logName:"compute.googleapis.com%2Ffirewall" AND ip_in_net(jsonPayload.connection.src_ip, "35.235.240.0/20") AND jsonPayload.connection.dest_port=22' \
+  --freshness=1h --limit=10 \
+  --format="value(timestamp,jsonPayload.connection.src_ip,jsonPayload.rule_details.reference)"
 ```
 
 連不上時，用下面的指令把舊規則恢復，再照〈IAP 通道連不上時的依層判讀〉找出是哪一層。防火牆規則透過 GCP 的 API 修改，SSH 連不上也改得回來：
