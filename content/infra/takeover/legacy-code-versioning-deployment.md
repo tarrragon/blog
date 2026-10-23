@@ -54,7 +54,7 @@ git commit -m "production snapshot $(date +%Y-%m-%d)"
 
 ## Config 分離：讓 Git repo 不含機密值
 
-無 SSH 環境的 PHP 專案常把資料庫密碼、API key、SMTP 憑證直接寫在 `config.php` 或 `wp-config.php` 裡。這些檔案如果進了 Git，機密值就跟著 repo 走——推到 GitHub 就等於公開。
+無 SSH 環境的 PHP 專案常把資料庫密碼、API key、SMTP 存取憑證直接寫在 `config.php` 或 `wp-config.php` 裡。這些檔案如果進了 Git，機密值就跟著 repo 走——推到 GitHub 就等於公開。
 
 分離的模式是把設定拆成兩份：一份進 Git（結構與預設值）、一份不進 Git（實際機密值）。
 
@@ -222,7 +222,7 @@ jobs:
             **/config.local.php
 ```
 
-FTP 憑證存在 GitHub repo 的 Secrets 裡（Settings → Secrets and variables → Actions），不寫在 workflow 檔案裡。
+FTP 存取憑證存在 GitHub repo 的 Secrets 裡（Settings → Secrets and variables → Actions），不寫在 workflow 檔案裡。
 
 ### CI 化後的改變
 

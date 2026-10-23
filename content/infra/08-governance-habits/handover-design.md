@@ -128,7 +128,7 @@ aws cloudtrail lookup-events \
 - DNS 管理（域名註冊商、Route 53 hosted zone）
 - SSL 憑證管理（ACM、Let's Encrypt）
 
-### 憑證盤點
+### 存取憑證盤點
 
 - 長期 access key 清單（從 credential report 取得）
 - Secrets Manager / SSM Parameter Store 裡的 secret 清單

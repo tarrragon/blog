@@ -106,7 +106,7 @@ resource "aws_s3_bucket" "smoke_test" {
 
 第四步「再跑一次 plan」是容易被跳過卻最關鍵的一步。如果第一次 apply 之後立刻 plan 就出現差異，代表 provider 的行為和 HCL 描述之間有落差（例如某些屬性是雲端自動設的、HCL 沒寫），這類落差要在最小集合階段就修掉，等到正式服務上線後再修，成本會高很多。
 
-最小可行 IaC 跑通後，下一步是收斂身分與憑證——把 Console 唯讀鐵律從紀律升級成權限限制，見[模組二：身分與憑證地基](/infra/02-identity-credentials/)。
+最小可行 IaC 跑通後，下一步是收斂身分與存取憑證——把 Console 唯讀鐵律從紀律升級成權限限制，見[模組二：身分與憑證地基](/infra/02-identity-credentials/)。
 
 ## 跨分類引用
 

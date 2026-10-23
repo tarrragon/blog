@@ -170,7 +170,7 @@ Access review 的結果適合用兩個數字向管理層報告：**覆蓋率**�
 
 權限設計越集中在 role-based（用 IAM group 或 SSO permission set），離職處理越簡單——停用 SSO 帳號就自動切斷所有透過 SSO 取得的 role。反過來，如果有大量手動 attach 的 policy 或直接寫在 trust policy 裡的 user ARN，離職時要逐一找出並移除，容易遺漏。
 
-離職後的 credential rotation 有一個常被忽略的風險：輪替範圍沒有按作用域分批。一個反例是多個服務共用同一把 secret，輪替時切新憑證的服務跟還只認舊憑證的服務之間出現認證窗口不一致，導致跨系統連鎖中斷。穩定的做法是先分域隔離受影響服務、恢復雙憑證窗口、再逐批收斂（見 [反例：憑證輪替未分 Scope](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/)）。
+離職後的 credential rotation 有一個常被忽略的風險：輪替範圍沒有按作用域分批。一個反例是多個服務共用同一把 secret，輪替時切新存取憑證的服務跟還只認舊憑證的服務之間出現認證窗口不一致，導致跨系統連鎖中斷。穩定的做法是先分域隔離受影響服務、恢復雙憑證窗口、再逐批收斂（見 [反例：憑證輪替未分 Scope](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/)）。
 
 ### 交接的可執行性
 

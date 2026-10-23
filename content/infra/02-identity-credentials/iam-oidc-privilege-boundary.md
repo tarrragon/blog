@@ -263,6 +263,6 @@ SCP 與 Permissions Boundary 疊起來的效果是：SCP 在帳號層鎖住最�
 - → [模組四：環境分離與模組化](/infra/04-environment-separation/)：環境之間的帳號結構與隔離強度
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：CI/CD 管線用 OIDC 取得短期權限
 - → [模組八：治理好習慣](/infra/08-governance-habits/)：應用層 secret 的儲存與引用
-- → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：Secret Management 與憑證管理交集
+- → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：Secret Management 與存取憑證管理交集
 - → [Access Key 輪替手冊](/infra/02-identity-credentials/access-key-rotation-playbook/)：key 盤點與輪替的操作步驟
 - → [OIDC Trust Policy 設定指南](/infra/02-identity-credentials/oidc-trust-policy-setup/)：GitHub Actions OIDC 的 step-by-step 設定

@@ -6,7 +6,7 @@ weight: 26
 tags: ["infra", "knowledge-cards"]
 ---
 
-`.env` 是一個純文字檔案，每行一組 `KEY=VALUE` 的環境變數定義。它的用途是把機密值（資料庫密碼、API key、SMTP 憑證）和環境專屬設定（資料庫 host、debug 模式開關）從程式碼分離出來，讓同一份程式碼在不同環境（開發、staging、production）用不同的設定值，而且機密值不進版本控制。PHP 專案裡執行期設定的另一層在 [php.ini / .user.ini](/infra/knowledge-cards/php-ini/)。
+`.env` 是一個純文字檔案，每行一組 `KEY=VALUE` 的環境變數定義。它的用途是把機密值（資料庫密碼、API key、SMTP 存取憑證）和環境專屬設定（資料庫 host、debug 模式開關）從程式碼分離出來，讓同一份程式碼在不同環境（開發、staging、production）用不同的設定值，而且機密值不進版本控制。PHP 專案裡執行期設定的另一層在 [php.ini / .user.ini](/infra/knowledge-cards/php-ini/)。
 
 ## 概念位置
 

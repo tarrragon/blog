@@ -209,7 +209,7 @@ aws ec2 describe-security-groups \
 
 在 CI 層面，[模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)用 tfsec / checkov 做靜態掃描，自動攔截「敏感埠 + 全開 CIDR」的組合，把 security group 的盤點從人工定期做變成每次 PR 自動做。
 
-邊界設備漏洞帶來的教訓同樣適用於 security group 設計。[Check Point CVE-2024-24919](/backend/07-security-data-protection/red-team/cases/edge-exposure/check-point-cve-2024-24919-vpn-info-disclosure/) 事件顯示 VPN 邊界設備的資訊外洩漏洞可以直接轉為憑證與會話濫用，攻擊路徑是「邊界入口 → 會話竊取 → 內部橫向擴散」。[Citrix Bleed 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/) 則是邊界設備的會話資料外洩導致重放攻擊。這兩個案例的 infra 層教訓是：邊界設備（VPN concentrator、ADC、bastion）的 security group 只開必要的管理埠，且事件後需要全域 session/token 失效流程。
+邊界設備漏洞帶來的教訓同樣適用於 security group 設計。[Check Point CVE-2024-24919](/backend/07-security-data-protection/red-team/cases/edge-exposure/check-point-cve-2024-24919-vpn-info-disclosure/) 事件顯示 VPN 邊界設備的資訊外洩漏洞可以直接轉為存取憑證與會話濫用，攻擊路徑是「邊界入口 → 會話竊取 → 內部橫向擴散」。[Citrix Bleed 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/) 則是邊界設備的會話資料外洩導致重放攻擊。這兩個案例的 infra 層教訓是：邊界設備（VPN concentrator、ADC、bastion）的 security group 只開必要的管理埠，且事件後需要全域 session/token 失效流程。
 
 網路控制面的自動化也有風險。[Cloudflare 2026 Route Leak](/backend/07-security-data-protection/cases/cloudflare-route-leak-2026/) 事件中，自動化路由政策配置的錯誤導致流量擁塞。infra 層的教訓是：路由與 security group 規則的自動化變更需要 pre-check 與影響範圍評估，且要有快速撤回機制——這正是 [infra 走 PR 流程](/infra/07-infra-as-pr/)的 plan → review → apply 流程要擋的。
 

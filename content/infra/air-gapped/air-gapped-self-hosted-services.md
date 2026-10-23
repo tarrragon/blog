@@ -6,7 +6,7 @@ weight: 5
 tags: ["infra", "air-gapped", "self-hosted"]
 ---
 
-連網環境的 infra 團隊消費數十個 SaaS 服務：程式碼放 GitHub、CI 用 GitHub Actions、套件從 npm 和 PyPI 拉、container image 從 Docker Hub pull、憑證用 Let's Encrypt 自動簽、監控用 Datadog。這些服務的共同特性是「有人幫你維護」——infra 團隊只需要設定和使用，不需要部署、升級、備份。
+連網環境的 infra 團隊消費數十個 SaaS 服務：程式碼放 GitHub、CI 用 GitHub Actions、套件從 npm 和 PyPI 拉、container image 從 Docker Hub pull、TLS 憑證用 Let's Encrypt 自動簽、監控用 Datadog。這些服務的共同特性是「有人幫你維護」——infra 團隊只需要設定和使用，不需要部署、升級、備份。
 
 斷網環境裡這些服務全部要自建。每一個 SaaS 變成一個內部服務，infra 團隊承擔它的部署、設定、升級、備份、監控和使用者管理。這篇文章盤點完整的服務清單、推薦的自建工具、部署順序，以及容易被低估的維護成本。
 
