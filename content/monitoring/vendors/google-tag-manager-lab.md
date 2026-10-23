@@ -18,7 +18,7 @@ tags: ["monitoring", "vendor", "google-tag-manager", "gtm", "lab", "tracking"]
 
 ## 對照面板讀出容器的行為
 
-面板分成四塊：「操作紀錄」列出按鈕實際執行的 `dataLayer.push()`；「這一頁送出的跨網域請求」列出這一頁向其他網域發出的每一個請求；「追蹤 cookie」列出 `_ga`、`_gcl` 等前綴開頭的 cookie；「window.dataLayer 目前的內容」是資料層這個陣列的完整內容。
+面板分成四塊：「操作紀錄」列出按鈕實際執行的 `dataLayer.push()`；「這一頁送出的跨網域請求」列出這一頁向其他網域發出的每一個請求；「追蹤 cookie」列出 `_ga`、`_gcl` 等前綴開頭的[第一方 cookie](/monitoring/knowledge-cards/first-party-cookie/)；「window.dataLayer 目前的內容」是資料層這個陣列的完整內容。
 
 - **載入容器之後**：資料層除了按鈕推的 `gtm.js`，還會多出容器自己推入的事件（頁面的 DOM 就緒、視窗載入完成這類），它們是 GTM 內建觸發條件比對的對象。請求清單先出現 `gtm.js`，再出現容器裡各個代碼載入的 script 與送出的請求——容器設了 GA4 就會看到送往 Google Analytics 的請求，設了 Meta Pixel 就會看到 `fbevents.js`。
 - **往資料層推 purchase 事件**：資料層多一筆帶 `order_id`、`value`、`currency` 的物件。容器裡有以 `purchase` 為名的自訂事件觸發條件時，以它為觸發條件的代碼會在這時執行並送出請求；沒有的話這一筆只會留在陣列裡，請求清單不會變。資料層是約定、容器決定要不要讀它，從這裡可以直接看到兩者的分工。

@@ -162,7 +162,7 @@ if ($elapsed > 1.0) {
 
 ### 客戶端分析（不需 server 安裝）
 
-Google Analytics 或 Plausible（隱私友善替代品）只需要在頁面加一段 JavaScript。它們追蹤的是真實使用者的瀏覽行為（page view、session、referrer），跟 server 端的 access log 互補：server log 看所有請求（含 bot），GA/Plausible 只記錄會執行 JavaScript 的瀏覽器。能執行 JavaScript 的抓取工具也在其中：以 Playwright 驅動的無頭瀏覽器載入頁面時，GA4 的收集端照常收下請求（實測見 [用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)），GA4 的說明另寫明會自動排除已知機器人的流量（依 Google 的研究與 IAB 的已知機器人清單判定），沒有寫排除發生在收集端還是處理階段。接手時若頁面原始碼裡已有前人留下的 `G-` 或 `GTM-` ID，先查它們建在誰的帳戶底下再決定沿用或另建，見 [追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)。
+Google Analytics 或 Plausible（隱私友善替代品）只需要在頁面加一段 JavaScript。它們追蹤的是真實使用者的瀏覽行為（page view、session、referrer），跟 server 端的 access log 互補：server log 看所有請求（含 bot），GA/Plausible 只記錄會執行 JavaScript 的瀏覽器。能執行 JavaScript 的抓取工具也在其中：以 Playwright 驅動的[無頭瀏覽器](/monitoring/knowledge-cards/headless-browser/)載入頁面時，GA4 的收集端照常收下請求（實測見 [用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)），GA4 的說明另寫明會自動排除已知機器人的流量（依 Google 的研究與 IAB 的已知機器人清單判定），沒有寫排除發生在收集端還是處理階段。接手時若頁面原始碼裡已有前人留下的 `G-` 或 `GTM-` ID，先查它們建在誰的帳戶底下再決定沿用或另建，見 [追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)。
 
 ### Cloudflare 免費方案
 

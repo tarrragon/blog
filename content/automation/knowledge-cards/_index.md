@@ -17,3 +17,5 @@ tags: ["automation", "knowledge-card"]
 | [Time-Driven Trigger（時間觸發器）](/automation/knowledge-cards/time-driven-trigger/) | 讓 Apps Script 定時自動執行的排程機制                   |
 | [Browser Fingerprint（瀏覽器指紋）](/automation/knowledge-cards/browser-fingerprint/) | 單獨無害的環境屬性組合後足以辨識裝置的特徵集合          |
 | [Executions（執行項目）](/automation/knowledge-cards/executions-page/)                | 平台記錄每次函式執行的頁面，判斷請求有沒有抵達接收端    |
+
+商業追蹤碼在瀏覽器端的行為（識別碼 cookie 的期限、無頭瀏覽器被追蹤碼怎麼對待）是 monitoring 分類的卡片：[First-party Cookie（第一方 cookie）](/monitoring/knowledge-cards/first-party-cookie/)、[Headless Browser（無頭瀏覽器）](/monitoring/knowledge-cards/headless-browser/)。

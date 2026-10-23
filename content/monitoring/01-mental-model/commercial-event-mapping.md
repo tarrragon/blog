@@ -25,12 +25,12 @@ Sentry 的設計假設是「error 是主角，其他事件是 error 的 context�
 
 Firebase 把 error tracking 和行為分析拆成兩個獨立產品。
 
-| 四類事件  | Firebase 對應                | 說明                                             |
-| --------- | ---------------------------- | ------------------------------------------------ |
-| Event     | Analytics custom event       | GA4 的 event，有 parameters 附加屬性             |
-| Error     | Crashlytics exception        | fatal + non-fatal exception 分開處理             |
-| Metric    | Analytics event + parameters | 用 event 的 parameters 記錄數值（無原生 metric） |
-| Lifecycle | Analytics auto events        | screen_view、app_open 等自動收集                 |
+| 四類事件  | Firebase 對應                | 說明                                                                         |
+| --------- | ---------------------------- | ---------------------------------------------------------------------------- |
+| Event     | Analytics custom event       | GA4 的 event，有 parameters 附加屬性                                         |
+| Error     | Crashlytics exception        | fatal + non-fatal exception 分開處理                                         |
+| Metric    | Analytics event + parameters | 用 event 的 parameters 記錄數值（無原生 metric）                             |
+| Lifecycle | Analytics auto events        | screen_view、app_open 等[自動收集](/monitoring/knowledge-cards/autocapture/) |
 
 Firebase 的特點是 Crashlytics 和 Analytics 各自獨立運作 — error 資料在 Crashlytics console，行為資料在 Analytics console。Metric 沒有原生支援，只能用 Analytics event 的 parameters 欄位記錄數值（例如 `event: 'page_load', parameters: {duration_ms: 320}`），查詢時需要在 BigQuery export 中自行聚合。兩個 console 之間的關聯需要手動（在 Crashlytics 的 custom key 中設定 user ID，再到 Analytics 用同一個 ID 查行為）。
 

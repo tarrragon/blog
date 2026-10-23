@@ -30,7 +30,7 @@ Firebase Analytics 是 Google Analytics 4（GA4）的 mobile SDK 版本。記錄
 
 ### 自動收集事件
 
-GA4 SDK 自動收集一組預定義事件：`first_open`、`session_start`、`screen_view`、`user_engagement`。開發者不需要手動埋點就能得到基礎的使用統計。
+GA4 SDK [自動收集](/monitoring/knowledge-cards/autocapture/)一組預定義事件：`first_open`、`session_start`、`screen_view`、`user_engagement`。開發者不需要手動埋點就能得到基礎的使用統計。
 
 ### 自訂事件
 

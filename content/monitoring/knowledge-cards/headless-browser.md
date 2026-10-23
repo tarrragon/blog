@@ -3,10 +3,10 @@ title: "Headless Browser（無頭瀏覽器）"
 date: 2026-10-23
 description: "用 Playwright 或 Puppeteer 測追蹤碼、分析報表裡的機器流量，或自建統計與商業追蹤碼的訪問數對不上時"
 weight: 10
-tags: ["monitoring", "playwright", "bot-detection", "user-agent", "knowledge-card"]
+tags: ["monitoring", "tracking", "playwright", "bot-detection", "user-agent", "knowledge-card"]
 ---
 
-無頭瀏覽器（headless browser）是不開啟可見視窗的瀏覽器：頁面照常載入、JavaScript 照常執行，只是畫面不顯示出來。它多半由程式驅動，Playwright、Puppeteer 這類自動化工具預設就以無頭模式啟動 Chromium；而「被程式驅動」是另一個屬性，有視窗的瀏覽器同樣可以被程式驅動，所以無頭只是被程式驅動的瀏覽器的其中一種樣子。可先對照 [First-party Cookie（第一方 cookie）](/monitoring/knowledge-cards/first-party-cookie/)（無頭模式下追蹤碼照樣寫 cookie）與 [Autocapture（自動事件收集）](/monitoring/knowledge-cards/autocapture/)（網站沒有呼叫的事件由誰決定送出）；把無頭瀏覽器當成要辨識的訪客時的訊號設計，見 [辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)。
+無頭瀏覽器（headless browser）是不開啟可見視窗的瀏覽器：頁面照常載入、JavaScript 照常執行，只是畫面不顯示出來。無頭與被程式驅動是兩個獨立的屬性：有視窗的瀏覽器同樣可以被程式驅動，命令列直接執行 `chrome --headless` 輸出截圖也不經過任何自動化框架；Playwright、Puppeteer 這類自動化工具則多半同時具備兩者，預設就以無頭模式啟動 Chromium。可先對照 [First-party Cookie（第一方 cookie）](/monitoring/knowledge-cards/first-party-cookie/)（無頭模式下追蹤碼照樣寫 cookie）與 [Autocapture（自動事件收集）](/monitoring/knowledge-cards/autocapture/)（網站沒有呼叫的事件由誰決定送出）；把無頭瀏覽器當成要辨識的訪客時的訊號設計，見 [辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)；不靠 User-Agent、改從瀏覽器環境辨識自動化的做法，見 [Browser Fingerprint（瀏覽器指紋）](/automation/knowledge-cards/browser-fingerprint/)。
 
 ## 概念位置
 
@@ -18,7 +18,7 @@ tags: ["monitoring", "playwright", "bot-detection", "user-agent", "knowledge-car
 
 ## 判讀方式
 
-兩種模式的結果差異，量的是追蹤碼對無頭特徵的反應：有視窗模式下送得出、無頭模式下送不出的事件，是被比對 User-Agent 這類無頭特徵的規則攔下的。有視窗模式的 Playwright 仍然是被程式驅動的瀏覽器（`navigator.webdriver` 為真），所以它的結果不等於真人訪客的結果；追蹤碼改成依 `navigator.webdriver` 判斷時，有視窗模式也會被攔。比對自建統計與商業追蹤碼的訪問數時，差額裡可能有一部分是無頭瀏覽器的訪問：自建統計的接收端收下並標成機器流量，Meta Pixel 在瀏覽器裡就丟掉。
+兩次擷取用同一個 Pixel、在相近的時間、做相同的操作、只切換有沒有視窗時，兩種模式的結果差異量的是追蹤碼對無頭特徵的反應：有視窗模式下送得出、無頭模式下送不出的事件，是被比對 User-Agent 這類無頭特徵的規則攔下的。兩次之間隔得久，Pixel 的設定檔可能已經改版，差異就不能只歸給無頭模式。有視窗模式的 Playwright 仍然是被程式驅動的瀏覽器（`navigator.webdriver` 為真），所以它的結果不等於真人訪客的結果；追蹤碼改成依 `navigator.webdriver` 判斷時，有視窗模式也會被攔。比對自建統計與商業追蹤碼的訪問數時，差額裡可能有一部分是無頭瀏覽器的訪問：自建統計的接收端收下並標成機器流量，Meta Pixel 在瀏覽器裡就丟掉。反過來，GA4 的代碼在無頭模式下照常送出事件，所以拿正式網站的評估 ID 或 Pixel ID 跑自動化測試，事件會進正式報表、混進要分析的流量裡；擷取與測試用測試專用的帳戶與 ID，做法見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)的〈擷取用的測試帳號〉。
 
 ## 完整章節
 

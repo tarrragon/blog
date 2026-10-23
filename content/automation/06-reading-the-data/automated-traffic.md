@@ -179,7 +179,7 @@ else if (generic) hits.push("ua:generic:" + generic[0].toLowerCase().replace(/[^
 
 代價是試算表多存一些列，以及彙總時必須記得過濾。
 
-商業追蹤碼裡有一個選了另一種處置的對照。Meta Pixel 在訪客的瀏覽器裡、事件送出之前做同一種 User-Agent 比對，比對到無頭 Chrome 的 `HeadlessChrome` 字樣就把事件丟掉、不送出：用 Playwright 預設的[無頭瀏覽器](/monitoring/knowledge-cards/headless-browser/)打開實測頁時，`fbevents.js` 照常載入、cookie 照常寫入，而 PageView、ViewContent 與購買事件一筆都沒有送出（機制與實測見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)）。同一次訪問，本站的 beacon 照樣送出一列，訊號欄記下 `webdriver,ua:headless`。所以本站統計與 Meta 報表的訪問數對不上時，差額裡有一部分是 Meta 在瀏覽器裡就丟掉、本站只標記的機器流量，而這些事件事後也補不進 Meta 的報表。GA4 的代碼在無頭模式下照常送出事件，已知機器人的排除在 Google 的伺服器端進行，排除了多少看不到。
+商業追蹤碼裡有一個選了另一種處置的對照。實測的那個 Meta Pixel，設定檔讓它在訪客的瀏覽器裡、事件送出之前做同一種 User-Agent 比對，比對到無頭 Chrome 的 `HeadlessChrome` 字樣就把事件丟掉、不送出（這項設定由 Meta 依各 Pixel 下發，不保證每個 Pixel 都一樣）：用 Playwright 預設的[無頭瀏覽器](/monitoring/knowledge-cards/headless-browser/)打開實測頁時，`fbevents.js` 照常載入、cookie 照常寫入，而 PageView、ViewContent 與購買事件一筆都沒有送出（機制與實測見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)）。同一次訪問，本站的 beacon 照樣送出一列，訊號欄記下 `webdriver,ua:headless`。所以本站統計的列數與 Meta 報表的 PageView 事件數對不上時，差額裡有一部分是 Meta Pixel 在瀏覽器裡就丟掉、本站只標記的機器流量；網站只裝 Pixel、沒有從伺服器另外用 Conversions API 送事件時，這些事件事後也補不進 Meta 的報表。GA4 的代碼在無頭模式下照常送出事件，已知機器人的排除在 Google 的伺服器端進行，排除了多少看不到。
 
 對免費配額敏感、或流量大到列數成為問題時，取捨會反過來——那時應該只丟棄高信心訊號（`webdriver` 與具名 UA）命中的部分，中信心與行為訊號仍然照常記錄。
 

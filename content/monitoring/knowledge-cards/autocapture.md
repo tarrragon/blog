@@ -3,16 +3,16 @@ title: "Autocapture（自動事件收集）"
 date: 2026-10-23
 description: "盤點網站實際送出哪些事件與內容、報表裡出現網站沒有呼叫過的事件，或在手動埋點與自動收集之間取捨時"
 weight: 11
-tags: ["monitoring", "event", "sdk", "vendor", "privacy", "knowledge-card"]
+tags: ["monitoring", "tracking", "instrumentation", "event", "privacy", "knowledge-card"]
 ---
 
-自動事件收集（autocapture）是由追蹤碼自己決定送出哪些事件、網站不必逐一呼叫的做法：script 在頁面上監聽點擊、捲動、表單這類互動，或在頁面載入、工作階段開始這類時點，依 vendor 的規則產生事件並送出。涵蓋哪些互動由 vendor 的規則決定，不是頁面上的每一個互動都會送。相對的做法是手動埋點：開發者在要追蹤的元素或事件處自己寫追蹤程式（標上屬性或呼叫追蹤函式），只有這些互動才會送出。可先對照 [First-party Cookie（第一方 cookie）](/monitoring/knowledge-cards/first-party-cookie/)（自動事件同樣帶著識別碼 cookie 的值送出）與 [Headless Browser（無頭瀏覽器）](/monitoring/knowledge-cards/headless-browser/)（瀏覽器裡的機器人過濾對自動事件一樣生效）。自建 SDK 在事件送出前遮蔽欄位的做法見 [Redaction](/monitoring/knowledge-cards/redaction/)；商業追蹤碼的自動事件由 vendor 的 script 直接送出、不經過網站的遮蔽步驟，網站能控制的是開或關那一項自動收集。
+自動事件收集（autocapture）是由追蹤碼自己決定送出哪些事件、網站不必逐一呼叫的做法：script 在頁面上監聽點擊、捲動、表單這類互動，或在頁面載入、工作階段開始這類時點，依 vendor 的規則產生事件並送出。涵蓋哪些互動由 vendor 的規則決定，不是頁面上的每一個互動都會送。相對的做法是手動埋點：開發者在要追蹤的元素或事件處自己寫追蹤程式（標上屬性或呼叫追蹤函式），只有這些互動才會送出。可先對照 [First-party Cookie（第一方 cookie）](/monitoring/knowledge-cards/first-party-cookie/)（自動事件同樣帶著識別碼 cookie 的值送出）與 [Headless Browser（無頭瀏覽器）](/monitoring/knowledge-cards/headless-browser/)（瀏覽器裡的機器人過濾對自動事件一樣生效）。自建 SDK 在事件送出前遮蔽欄位的做法見 [Redaction](/monitoring/knowledge-cards/redaction/)；商業追蹤碼的自動事件由 vendor 的 script 直接送出，不經過網站自建 SDK 的遮蔽步驟，網站能用的是 vendor 自己提供的設定：GA4 在網頁資料串流上有資料遮蔽（data redaction），在瀏覽器裡、資料送出之前遮掉事件參數裡的 email 與指定的網址查詢參數；Meta Pixel 能做的是關閉自動事件（下文〈概念位置〉）。
 
 ## 概念位置
 
-自動事件收集決定的是「事件從哪裡來」，位置在事件產生的那一端，比管線上的[取樣](/monitoring/knowledge-cards/sampling/)與[遮蔽](/monitoring/knowledge-cards/redaction/)都早：事件的欄位由 vendor 的規則決定，網站要等它送出之後才看得到內容。名稱各家不同：Meta 把這類事件叫自動事件（automatic events），GA4 叫自動收集的事件（automatically collected events），本站把兩者統稱為自動事件。兩家的範圍與開關也不同。
+自動事件收集決定的是「事件從哪裡來」，位置在事件產生的那一端，比管線上的[取樣](/monitoring/knowledge-cards/sampling/)與[遮蔽](/monitoring/knowledge-cards/redaction/)都早：事件的欄位由 vendor 的規則決定，網站要等它送出之後才看得到內容。它與本站自建 SDK 的[自動攔截機制](/monitoring/03-sdk-design/auto-intercept/)（auto-intercept）同樣不需要開發者為每個事件寫程式，分辨兩者的依據是送出規則由誰持有：自動攔截的規則寫在網站自己的 SDK 程式碼裡，自動事件收集的規則由 vendor 決定，網站的原始碼裡看不到。名稱各家不同：Meta 把這類事件叫自動事件（automatic events），GA4 叫自動收集的事件（automatically collected events），本站把兩者統稱為自動事件。兩家的範圍與開關也不同。
 
-**Meta Pixel** 的自動事件由 Pixel 的設定檔指定的模組產生：`fbevents.js` 載入後會向 Meta 取得這個 Pixel 的設定檔，設定檔決定要載入哪些模組（plugin，見 [Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/) 的〈Meta Pixel 在瀏覽器裡做的事〉）。實測時每按一次頁面上的按鈕，`fbevents.js` 都在網站呼叫的事件之外多送一筆 `SubscribedButtonClick`，內容包含按鈕文字（`cd[buttonText]`）、按鈕的 DOM 特徵與頁面特徵；設定檔來自 Meta 的伺服器，所以送出哪些自動事件由 Meta 那一端的設定決定，網站的原始碼裡看不到。
+**Meta Pixel** 的自動事件由 Pixel 的設定檔指定的模組產生：`fbevents.js` 載入後會向 Meta 取得這個 Pixel 的設定檔，設定檔決定要載入哪些模組（plugin，見 [Meta Pixel 與 Conversions API](/monitoring/vendors/meta-pixel-conversions-api/) 的〈Meta Pixel 在瀏覽器裡做的事〉）。實測時每按一次頁面上的按鈕，`fbevents.js` 都在網站呼叫的事件之外多送一筆 `SubscribedButtonClick`，內容包含按鈕文字（`cd[buttonText]`）、按鈕的 DOM 特徵與頁面特徵；設定檔來自 Meta 的伺服器，所以送出哪些自動事件由 Meta 那一端的設定決定，網站的原始碼裡看不到。要關掉這些事件，Meta 的開發者文件給的做法是在 Pixel 基本碼裡、`fbq('init', …)` 之前加一行 `fbq('set', 'autoConfig', false, '<Pixel ID>')`，`<Pixel ID>` 換成自己的 Pixel ID。
 
 **GA4** 的自動收集事件分成只要裝了 Google 代碼就會送的基本事件，例如 `first_visit`、`session_start`、`user_engagement`，以及由加強型評估（enhanced measurement）控制的事件。加強型評估是網頁資料串流（GA4 資源裡代表一個網站資料來源的設定單位）上的一組開關，涵蓋捲動、外連點擊、站內搜尋、影片互動、檔案下載與表單互動，其中檔案下載會帶連結文字（`link_text`）、表單送出會帶送出按鈕的文字。`page_view` 也列在加強型評估底下，而它是其中唯一關不掉的一項。這組開關在 GA4 管理介面的資料串流設定裡，需要編輯者以上的權限。
 
@@ -22,7 +22,7 @@ tags: ["monitoring", "event", "sdk", "vendor", "privacy", "knowledge-card"]
 
 ## 判讀方式
 
-網站原始碼只列得出手動埋點的那一部分，網站實際送出的資料要從送出的請求裡數；按鈕文字、連結文字這類欄位也在送出範圍內，按鈕或連結上顯示了使用者的個人資料時，那段文字會一起送到 vendor。兩種埋點方式的取捨方向相反：手動埋點會漏掉沒有寫追蹤程式的互動，換到的是送出的欄位全部由開發者決定；自動收集不需要逐一標記，而涵蓋哪些互動、送出哪些欄位由 vendor 的規則決定、會隨 vendor 改版變動。vendor 改版不會通知網站，所以送出資料的盤點要定期重做；Meta Pixel 的版本可以在頁面的開發者工具 Console 輸入 `fbq.version` 讀出，與上次盤點記下的值比對。
+網站原始碼只列得出手動埋點的那一部分，網站實際送出的資料要從送出的請求裡數；按鈕文字、連結文字這類欄位也在送出範圍內，按鈕或連結上顯示了使用者的個人資料時，那段文字會一起送到 vendor。兩種埋點方式的取捨方向相反：手動埋點會漏掉沒有寫追蹤程式的互動，換到的是送出的欄位全部由開發者決定；自動收集不需要逐一標記，而涵蓋哪些互動、送出哪些欄位由 vendor 的規則決定、會隨 vendor 改版變動。vendor 改版不會通知網站，所以送出資料的盤點要定期重做；Meta Pixel 的 `fbevents.js` 版本可以在頁面的開發者工具 Console 輸入 `fbq.version` 讀出，但自動事件由每個 Pixel 的設定檔決定，設定檔或事件管理工具裡的設定改了，`fbq.version` 不會變，所以版本相同不代表送出的內容沒變，盤點仍要看實際送出的請求。
 
 ## 完整章節
 

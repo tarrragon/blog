@@ -119,7 +119,7 @@ Pixel ID 填錯時沒有任何錯誤訊息：Meta 的伺服器對不存在的 ID
 
 **載入容器之後送出的請求。** 瀏覽器先向 `www.googletagmanager.com` 取得 `gtm.js?id=<容器 ID>`（200），約 0.1 秒後由容器裡的 GA4 代碼向 `www.google-analytics.com/g/collect` 送出一筆 POST（204）。這一筆 collect 請求的事件資料全部放在網址的查詢參數裡，POST body 是空的：`tid` 是評估 ID（Measurement ID），`en=page_view` 是事件名稱，`dl` 與 `dt` 是頁面網址與標題。`dl` 記錄的網址沒有連接埠號，實測頁實際開在 4173 埠，所以在本機用不同埠號測試時，GA4 報表上的頁面網址看不出是哪一個埠號的伺服器送來的。
 
-**GA4 代碼寫下的 cookie。** 一筆 `page_view` 之後，實測頁所在的網域（這次是 `localhost`）多出兩個 cookie。`_ga` 的值是 `GA1.1.` 接兩段數字，這兩段數字與 collect 請求的 `cid` 參數相同，GA4 用它辨識同一個瀏覽器。另一個 cookie 的名稱是 `_ga_` 接上評估 ID 去掉 `G-` 的部分，值記錄這個瀏覽器在這個 GA4 資源（property）下的工作階段，`s` 之後的時間戳與 collect 請求的 `sid` 參數相同。兩個 cookie 都由 GA4 代碼以 JavaScript 寫入（`httpOnly` 為 false）、`SameSite=Lax`，到期時間是擷取時間起算 400 天。
+**GA4 代碼寫下的 cookie。** 一筆 `page_view` 之後，實測頁所在的網域（這次是 `localhost`）多出兩個 cookie。`_ga` 的值是 `GA1.1.` 接兩段數字，這兩段數字與 collect 請求的 `cid` 參數相同，GA4 用它辨識同一個瀏覽器。另一個 cookie 的名稱是 `_ga_` 接上評估 ID 去掉 `G-` 的部分，值記錄這個瀏覽器在這個 GA4 資源（property）下的工作階段，`s` 之後的時間戳與 collect 請求的 `sid` 參數相同。兩個 cookie 都由 GA4 代碼以 JavaScript 寫入（`httpOnly` 為 false）、`SameSite=Lax`，到期時間是擷取時間起算 400 天（這是 Chrome 對 cookie 到期時間的上限，GA4 代碼自己設的預設是兩年，見 [First-party Cookie（第一方 cookie）](/monitoring/knowledge-cards/first-party-cookie/)）。
 
 **往資料層推 purchase 事件之後。** `window.dataLayer` 依序是實測頁推的 `gtm.js`、容器自己推的 `gtm.dom` 與 `gtm.load`，以及實測頁的「往資料層推 purchase 事件」按鈕推的 `purchase`（帶 `order_id`、`value`、`currency`）。推入 `purchase` 之後沒有新的請求，成因是這個容器裡沒有以名稱為 `purchase` 的自訂事件觸發條件啟動的 GA4 事件代碼，那一筆只留在陣列裡。[Google Tag Manager](/monitoring/vendors/google-tag-manager/) 的資料層一節描述的分工，在網路請求上就是這個樣子：網站推什麼事件由前端決定，事件是否變成送往某一家的請求由容器的設定決定。
 

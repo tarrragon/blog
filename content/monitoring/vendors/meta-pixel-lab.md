@@ -18,10 +18,10 @@ Pixel ID 欄位填的是 Meta Events Manager 裡某個 Pixel 的 ID。欄位預�
 
 ## 對照面板讀出各個呼叫的效果
 
-面板分成三塊。「操作紀錄」列出按鈕實際執行的 `fbq()` 呼叫；「這一頁送出的跨網域請求」來自瀏覽器的 Resource Timing 紀錄，列出這一頁向其他網域發出的每一個請求與它的查詢參數；「追蹤 cookie」列出這個網域上以 `_fbp`、`_fbc` 等前綴開頭的 cookie。操作紀錄、請求與 cookie 並排讀，就能把一個呼叫對到它造成的網路請求與狀態變化。
+面板分成三塊。「操作紀錄」列出按鈕實際執行的 `fbq()` 呼叫；「這一頁送出的跨網域請求」來自瀏覽器的 Resource Timing 紀錄，列出這一頁向其他網域發出的每一個請求與它的查詢參數；「追蹤 cookie」列出這個網域上以 `_fbp`、`_fbc` 等前綴開頭的 cookie（這些是寫在網站網域上的[第一方 cookie](/monitoring/knowledge-cards/first-party-cookie/)）。操作紀錄、請求與 cookie 並排讀，就能把一個呼叫對到它造成的網路請求與狀態變化。
 
 - **載入 Pixel 之後**：請求清單出現 `fbevents.js` 與 `signals/config/<Pixel ID>`（這個 Pixel 的設定檔）兩個 script 請求，cookie 清單在幾秒內出現 `_fbp`。PageView 等事件請求不會出現在這個清單裡：`fbevents.js` 以隱藏的表單把事件以 POST 提交到一個 iframe，這類提交不進這一頁的 Resource Timing。要看事件請求，打開瀏覽器開發者工具的 Network 面板，篩選 `facebook.com/tr`；表單 body 裡的 `ev` 是事件名稱，其餘參數的名稱與意義由 Meta 決定、會隨版本調整，實測的參數對應見 [用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/) 的各次結果。
-- **送 Purchase**：操作紀錄裡的 `eventID` 是這次按鈕產生的值，在 Network 面板那一筆 `/tr/` 請求的表單 body 裡是 `eid` 參數，這就是 Conversions API 去重時要對上的那一個。`value` 與 `currency` 在同一筆的 `cd[value]` 與 `cd[currency]`。同一時間還會多一筆 `SubscribedButtonClick`，那是 Pixel 依按鈕點擊自動送出的事件，內容包含按鈕文字。
+- **送 Purchase**：操作紀錄裡的 `eventID` 是這次按鈕產生的值，在 Network 面板那一筆 `/tr/` 請求的表單 body 裡是 `eid` 參數，這就是 Conversions API 去重時要對上的那一個。`value` 與 `currency` 在同一筆的 `cd[value]` 與 `cd[currency]`。同一時間還會多一筆[自動事件](/monitoring/knowledge-cards/autocapture/) `SubscribedButtonClick`，那是 Pixel 依按鈕點擊自動送出的事件，內容包含按鈕文字。
 - **帶 fbclid 參數重新開啟這一頁**：按鈕把一個測試用的 `fbclid` 加進網址再重新載入。重新載入後再按一次「載入 Meta Pixel」，cookie 清單會多出 `_fbc`，值裡包含剛才的 `fbclid`。這是讀者從廣告點進網站時 Pixel 保存點擊來源的方式。
 - **載入失敗**：狀態列顯示「載入失敗」時，代表 `fbevents.js` 的請求被擋下，常見來源是廣告攔截器、瀏覽器的追蹤防護或公司網路的政策。這時按其他按鈕，`fbq()` 只會把呼叫排進佇列，請求清單裡不會出現任何送往 Meta 的請求。這正是瀏覽器端事件損失的樣子：網站這一端沒有任何錯誤訊息。
 

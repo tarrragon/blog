@@ -38,3 +38,5 @@ tags: ["monitoring", "knowledge-cards"]
 | [First-party Cookie](/monitoring/knowledge-cards/first-party-cookie/) | 追蹤碼的識別碼寫在誰的網域上、期限由誰決定       |
 | [Headless Browser](/monitoring/knowledge-cards/headless-browser/)     | 不開視窗的自動化瀏覽器會被追蹤碼怎麼對待         |
 | [Autocapture](/monitoring/knowledge-cards/autocapture/)               | 網站沒有呼叫的事件由誰產生、帶著哪些頁面上的內容 |
+
+識別碼與瀏覽器指紋這兩種識別途徑的差別，見 automation 分類的 [Browser Fingerprint（瀏覽器指紋）](/automation/knowledge-cards/browser-fingerprint/)。

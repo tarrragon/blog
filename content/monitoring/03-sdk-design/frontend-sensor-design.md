@@ -22,7 +22,7 @@ tags: ["monitoring", "sdk-design", "sensor", "frontend", "instrumentation", "sam
 
 ### 實作方式
 
-**Web（JS/TS）**：在 document 層級用 event delegation 攔截 click 事件，過濾出帶 `data-track` attribute 的元素。開發者在需要追蹤的元素上加 `data-track="connect-button"`，感測器自動收集。不追蹤所有 click — 只追蹤被標記的。
+**Web（JS/TS）**：在 document 層級用 event delegation 攔截 click 事件，過濾出帶 `data-track` attribute 的元素。開發者在需要追蹤的元素上加 `data-track="connect-button"`，感測器攔截到帶標記的點擊後送出事件。不追蹤所有 click — 只追蹤被標記的。
 
 **Flutter**：用 NavigatorObserver 或 custom GestureDetector wrapper。GestureDetector 包裝在需要追蹤的 widget 外層，onTap 觸發時送出事件。
 
@@ -94,7 +94,7 @@ History API 攔截是 SDK 層的通用做法（不依賴框架）；框架 Hook 
 
 ### Web Core Vitals
 
-Web 平台用 `PerformanceObserver` API 自動收集三個核心指標：
+Web 平台用 `PerformanceObserver` API 量測三個核心指標：
 
 - **LCP**（Largest Contentful Paint）：最大內容元素的載入時間
 - **FID**（First Input Delay）：首次互動的延遲

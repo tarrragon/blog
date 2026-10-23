@@ -18,4 +18,4 @@ Redaction 位在 SDK 端的事件產生和 collector 端的事件接收之間。
 
 ## 設計責任
 
-Redaction 要定義預設規則（哪些欄位名稱自動 redact）、自訂 pattern（正則表達式比對敏感值）、執行時機（event 進入 buffer 前還是 flush 時）、以及 redaction 失敗的處理（丟棄整筆事件 vs 只移除敏感欄位）。
+Redaction 要定義預設規則（哪些欄位名稱自動 redact）、自訂 pattern（正則表達式比對敏感值）、執行時機（event 進入 buffer 前還是 flush 時）、以及 redaction 失敗的處理（丟棄整筆事件 vs 只移除敏感欄位）。這些規則只管得到網站自己 SDK 送出的事件；同一個頁面上的商業追蹤碼由 vendor 的 script 直接送出，遮蔽要用 vendor 提供的設定，見 [Autocapture（自動事件收集）](/monitoring/knowledge-cards/autocapture/)。
