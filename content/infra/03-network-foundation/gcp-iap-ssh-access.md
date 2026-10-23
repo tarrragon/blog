@@ -85,7 +85,7 @@ gcloud logging read \
 
 ## 切換到 IAP 的順序
 
-`default-allow-ssh` 的來源 `0.0.0.0/0` 本身就涵蓋 IAP 的位址段，所以舊規則還在的時候，經由 IAP 的連線成功，可能是舊規則放行的，證明不了新規則寫對了。驗證新規則因此要先停用舊規則；而停用舊規則的那一刻，從公開網際網路來的 SSH 與 RDP 都會被拒絕，包括管理員自己的那一條。順序由這兩件事決定：救援入口要在停用之前準備好，新規則與 IAM 權限要在停用之前建好，確認新路徑可用才刪除舊規則。與廠商無關的推導見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈切換管理通道時避免把自己鎖在外面〉。
+`default-allow-ssh` 的來源 `0.0.0.0/0` 本身就涵蓋 IAP 的位址段，所以舊規則還在的時候，經由 IAP 的連線成功，可能是舊規則放行的，證明不了新規則寫對了。驗證新規則因此要先停用舊規則；而停用舊規則的那一刻，從公開網際網路來的 SSH 與 RDP 都會被拒絕，包括管理員自己的連線。舊規則掩蓋新規則、停用舊規則會切斷公開來源的連線，切換的順序由這兩點決定：救援入口（下一節的 Serial Console 與救援帳號）要在停用之前準備好，新規則與 IAM 權限要在停用之前建好，確認新路徑可用才刪除舊規則。與廠商無關的推導見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈切換管理通道時避免把自己鎖在外面〉。
 
 ### 準備救援入口：Serial Console 與救援帳號
 
@@ -209,7 +209,7 @@ gcloud compute start-iap-tunnel <windows-instance-name> 3389 --local-host-port=l
 
 加上 `--tunnel-through-iap` 時，`gcloud` 改走 IAP、不連 VM 的外部 IP；VM 還有外部 IP 時，少了這個參數的連線走的是舊路徑。這一輪連線驗證的是 IAM：IAP 端點會拒絕沒有權限的帳號。防火牆規則與 tag 這一輪驗不到，因為舊規則的 `0.0.0.0/0` 也放行 IAP 的位址段。
 
-接著停用舊規則（規則仍在，只是不生效），再連一次：
+接著停用舊規則（規則仍在，只是不生效），由一位管理員對 Linux 與 Windows 各一台 VM 再連一次：
 
 ```bash
 # 停用舊規則，再經由 IAP 連一次（Windows 照上面的 start-iap-tunnel 再連一次）
@@ -218,7 +218,7 @@ gcloud compute firewall-rules update default-allow-rdp --disabled
 gcloud compute ssh <instance-name> --zone=<zone> --tunnel-through-iap
 ```
 
-這一次連得上，代表放行連線的是新規則，因為另一條涵蓋 IAP 位址段的規則已經停用。tag 與新規則是整個網路共用的設定，每種 VM（Linux、Windows）各驗一台就涵蓋了；每一位管理員各連一次，驗的是各自的 IAM 權限。也可以查防火牆紀錄確認命中的規則：
+這一次連得上，代表放行連線的是新規則，因為涵蓋 IAP 位址段的舊規則已經停用；這個推論的前提是專案裡沒有其他來源涵蓋 `35.235.240.0/20` 的允許規則，〈預設網路自帶的防火牆規則〉那一節列出規則的指令可以確認這一點。新規則與 tag 是同一個 VPC 網路裡所有 VM 共用的設定，所以 Linux 與 Windows 各驗一台，就驗過了這條規則與 tag 對同類 VM 的效果；IAM 權限則是每個人各自的，由前一輪每位管理員各連一次驗過。新規則建立時加了 `--enable-logging`，也可以查防火牆紀錄確認命中的是哪一條規則：
 
 ```bash
 # 查最近一小時經由 IAP 規則放行的連線
