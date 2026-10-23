@@ -6,7 +6,7 @@ weight: 30
 tags: ["infra", "knowledge-cards"]
 ---
 
-SSH（Secure Shell）是加密的遠端 shell 連線協定，讓操作者在本地終端機執行遠端伺服器上的指令。連線建立後，操作者看到的是遠端伺服器的命令列——可以跑任何該伺服器上安裝的 CLI 工具。SSH 建立安全連線所依賴的公私鑰機制，跟 [SSL/TLS](/infra/knowledge-cards/ssl-tls/) 的憑證加密同屬非對稱加密的應用。
+SSH（Secure Shell）是加密的遠端 shell 連線協定，讓操作者在本地終端機執行遠端伺服器上的指令。連線建立後，操作者看到的是遠端伺服器的命令列——可以跑任何該伺服器上安裝的 CLI 工具。SSH 建立安全連線所依賴的公私鑰機制，跟 [SSL/TLS](/infra/knowledge-cards/ssl-tls/) 以數位憑證驗證伺服器身分同屬非對稱加密的應用。
 
 ## 概念位置
 

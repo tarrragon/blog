@@ -58,7 +58,7 @@ tags: ["backend", "security"]
 
 處置有兩層。**自動更新**：多數身分提供者發布中繼資料端點，平台定期抓取就能跟上簽章憑證輪替，這是最省事的一層。**到期監控**：抓不到中繼資料的租戶要把簽章憑證到期日記下來並排告警，而告警的收件者要包含平台這一側，因為客戶那一端多半不知道這條依賴存在。
 
-這與 [7.5 的憑證輪替覆蓋不足](../transport-trust-and-certificate-lifecycle/#問題節點出現在什麼樣的系統) 是同一個問題在身分層的形態，判別方式也相同：問「這個到期日清單的分母是從哪裡數出來的」。分母來自自動更新那套機制時，它衡量的是自動化管得到的那些，與實際租戶數無關。
+這與 [7.5 的數位憑證輪替覆蓋不足](../transport-trust-and-certificate-lifecycle/#問題節點出現在什麼樣的系統) 是同一個問題在身分層的形態，判別方式也相同：問「這個到期日清單的分母是從哪裡數出來的」。分母來自自動更新那套機制時，它衡量的是自動化管得到的那些，與實際租戶數無關。
 
 ## 判讀流程
 
@@ -95,6 +95,6 @@ tags: ["backend", "security"]
 - 接上之後的停用同步、資料歸屬與多來源對應：[7.38 外部身分與本地紀錄](../external-identity-local-record-lifecycle/)
 - 租戶之間的資料與資源隔離：[tenant boundary](/backend/knowledge-cards/tenant-boundary/)
 - 網域控制權證明的同型機制：[ACME 自動化](/backend/knowledge-cards/acme-automation/)
-- 每租戶簽章憑證到期清單的分母怎麼建：[7.5 憑證輪替覆蓋不足](../transport-trust-and-certificate-lifecycle/#問題節點出現在什麼樣的系統)——該章的對象是 TLS 憑證，這裡取的是它判別分母來源的方法而不是它的憑證形態
+- 每租戶簽章憑證到期清單的分母怎麼建：[7.5 數位憑證輪替覆蓋不足](../transport-trust-and-certificate-lifecycle/#問題節點出現在什麼樣的系統)——該章的對象是 TLS 憑證，這裡取的是它判別分母來源的方法而不是它的憑證形態
 - 設定變更要記什麼、保存多久：[7.7 稽核追蹤與責任邊界](../audit-trail-and-accountability-boundary/)
 - 機器對機器的跨組織信任與 token 範圍：[7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)

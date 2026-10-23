@@ -317,7 +317,7 @@ ls /usr/lib/modules/
 
 build 失敗的分流（本次未遇）：看是哪一層指令、跟 base image 版本漂移有關先查 tag / digest 是否固定；run 起來但檔案權限錯亂多半是 host / container 的 UID 對映問題（本次用 node(1000) 對齊 tar(1000) 避開）。
 
-## Step 7：Claude Code 落地與憑證持久化
+## Step 7：Claude Code 落地與存取憑證持久化
 
 ### 概念與工具
 

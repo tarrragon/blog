@@ -10,7 +10,7 @@ tags: ["backend", "security", "incident-response", "eradication"]
 
 ## 概念位置
 
-根除的範圍由攻擊者可能碰過的憑證、系統、資料與產物決定，而那份清單從被入侵元件的權限推出：它手上的憑證、憑證與網路連得到的系統、它建置的產物、它能讀寫的程式碼與資料。攻擊者從被入侵的元件往外擴散的方式見 [Lateral Movement（橫向移動）](/backend/knowledge-cards/lateral-movement/)；辨認同一個攻擊者是否回來的特徵見 [Indicator of Compromise（入侵指標）](/backend/knowledge-cards/indicator-of-compromise/)。
+根除的範圍由攻擊者可能碰過的憑證、系統、資料與產物決定，而那份清單從被入侵元件的權限推出：它手上的存取憑證、讀寫得到的資料與網路連得到的系統、它建置的產物、它能讀寫的程式碼與資料。攻擊者從被入侵的元件往外擴散的方式見 [Lateral Movement（橫向移動）](/backend/knowledge-cards/lateral-movement/)；辨認同一個攻擊者是否回來的特徵見 [Indicator of Compromise（入侵指標）](/backend/knowledge-cards/indicator-of-compromise/)。
 
 ## 可觀察訊號與例子
 

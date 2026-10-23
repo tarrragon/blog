@@ -6,7 +6,7 @@ weight: 11
 tags: ["backend", "security", "vendor", "spire", "spiffe", "workload-identity", "zero-trust"]
 ---
 
-SPIRE（SPIFFE Runtime Environment）是 SPIFFE 規範的 reference 實作、CNCF graduated 專案、解決 *workload identity attestation* 的核心問題：在 service mesh / 跨 cluster / 跨組織的環境裡、一個 workload 必須能 *被驗證* 它是誰（是哪個 namespace 的哪個 service account、跑在哪台 attested host 上）、而不是依靠 IP / hostname / 共用 API key 這種可偽造的識別。SPIRE 發出的識別憑證叫 *SVID*（SPIFFE Verifiable Identity Document）、識別格式是 URI 形式的 *SPIFFE ID*（例如 `spiffe://example.org/ns/prod/sa/api-gateway`）、TTL 是分鐘級短期、workload 透過本地 Unix socket（Workload API）持續拉新 SVID、不 mount file 一勞永逸。
+SPIRE（SPIFFE Runtime Environment）是 SPIFFE 規範的 reference 實作、CNCF graduated 專案、解決 *workload identity attestation* 的核心問題：在 service mesh / 跨 cluster / 跨組織的環境裡、一個 workload 必須能 *被驗證* 它是誰（是哪個 namespace 的哪個 service account、跑在哪台 attested host 上）、而不是依靠 IP / hostname / 共用 API key 這種可偽造的識別。SPIRE 發出的身分文件叫 *SVID*（SPIFFE Verifiable Identity Document，有 X.509 數位憑證與 JWT 兩種形態）、識別格式是 URI 形式的 *SPIFFE ID*（例如 `spiffe://example.org/ns/prod/sa/api-gateway`）、TTL 是分鐘級短期、workload 透過本地 Unix socket（Workload API）持續拉新 SVID、不 mount file 一勞永逸。
 
 ## 服務定位
 

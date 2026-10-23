@@ -48,7 +48,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
 
 這跟 layer cache 是兩回事：layer cache 是「整層沒變就跳過」，cache mount 是「就算這層要重跑，它用到的下載內容不必重來」。兩者疊加才是最快的 build。
 
-### secret mount：build 時用憑證但不留在 image
+### secret mount：build 時用存取憑證但不留在 image
 
 ```dockerfile
 RUN --mount=type=secret,id=npmtoken \

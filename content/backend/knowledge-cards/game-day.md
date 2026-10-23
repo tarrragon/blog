@@ -14,7 +14,7 @@ Game day 是 [on-call](/backend/knowledge-cards/on-call/)、[incident timeline](
 
 ## 可觀察訊號與例子
 
-系統需要 game day 的訊號是流程文件完整但實戰仍常卡住。團隊可在預備環境模擬 broker 中斷、database 延遲或憑證失效，觀察 MTTR 與升級節奏是否符合預期。
+系統需要 game day 的訊號是流程文件完整但實戰仍常卡住。團隊可在預備環境模擬 broker 中斷、database 延遲、存取憑證失效或 TLS 憑證過期，觀察 MTTR 與升級節奏是否符合預期。
 
 ## 設計責任
 

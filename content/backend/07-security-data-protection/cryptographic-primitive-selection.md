@@ -50,20 +50,20 @@ out-of-scope 的議題直接跳到對應章節。
 1. **機密性**：讓內容對持有密文的人不可讀。對應 [At-Rest Encryption](/backend/knowledge-cards/at-rest-encryption/) 與 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/)。
 2. **來源與完整性**：證明內容出自持有密鑰的一方且未被竄改。這一類有兩種形態，選型標準是「驗證方需不需要具備產生的能力」。
    - **共享密鑰**：雙方持同一把密鑰，對應 [Message Authentication](/backend/knowledge-cards/message-authentication/)。選型上要注意它的撤銷粒度與能力上限都由「雙方共同持有」這件事決定，機制細節在卡片。
-   - **非對稱簽章**：私鑰簽發、公鑰驗證，驗證方不具備產生能力。它能對不特定多方發佈可驗證的憑證，私鑰即 [信任根](/backend/knowledge-cards/certificate-chain-trust/)，失守的後果是所有下游驗證同時失去意義；判斷標準見 [Non-repudiation](/backend/knowledge-cards/non-repudiation/)。
+   - **非對稱簽章**：私鑰簽發、公鑰驗證，驗證方不具備產生能力。它能對不特定多方發佈可驗證的簽章資料，私鑰即 [信任根](/backend/knowledge-cards/certificate-chain-trust/)，失守的後果是所有下游驗證同時失去意義；判斷標準見 [Non-repudiation](/backend/knowledge-cards/non-repudiation/)。
 3. **可讀性遮蔽**：讓內容在載體上不以明文出現，抵擋不特定旁觀者。對應可逆編碼。
 4. **不可逆的單向轉換**：讓原值無法從結果還原，防的是取得儲存內容的攻擊者。使用者密碼的儲存（bcrypt、argon2 這類刻意放慢的雜湊）與內容校驗（checksum）都屬於這一類。它不依賴金鑰，判讀軸因此落在計算成本上：密碼儲存要選能調整 work factor 的演算法，讓攻擊者逐一嘗試的成本隨參數上升；校驗只要求碰撞難以構造，速度反而是優點。本章對這一類只給分界與路由：演算法怎麼選、參數怎麼量、既有參數怎麼升級（含它隨硬體變快而自己失效這個性質）見 [7.30 使用者密碼儲存](../password-storage-and-work-factor/)。
 
 判斷自己需要哪一類，看的是資料會在哪裡、被誰看到：
 
 - 資料會離開自己控制的範圍時要**機密性**——備份送到第三方儲存、跨區複製、筆記型電腦上的離線副本，以及法規明文要求加密的個資與醫療紀錄。
-- 系統之間互相呼叫、或要接收外部推送時要**來源與完整性**——webhook 訂閱、B2B API 整合、對外發佈的授權憑證都屬於這一類。
+- 系統之間互相呼叫、或要接收外部推送時要**來源與完整性**——webhook 訂閱、B2B API 整合、對外發佈的簽章授權文件都屬於這一類。
 - 內容要印在會被看到的載體上時要**可讀性遮蔽**——實體標籤、QR Code、放進網址的參數。
 - 存下來的東西本身就不該被還原時要**單向轉換**——使用者密碼、檔案指紋。
 
 一個系統通常同時需要好幾類，而它們各自獨立成立：使用者密碼用單向轉換存、傳輸過程用機密性保護、後端之間的呼叫用來源驗證，三者不能互相替代。
 
-需要對多方發佈憑證、或事後要追究是哪一方產生某個值時，選的是非對稱簽章；雙方點對點互相呼叫且互相信任時，共享密鑰的成本更低。
+需要對多方發佈簽章資料、或事後要追究是哪一方產生某個值時，選的是非對稱簽章；雙方點對點互相呼叫且互相信任時，共享密鑰的成本更低。
 
 前三類都依賴金鑰，差別在**金鑰放在哪裡**，而金鑰位置直接決定這個機制能對抗誰。以下的判讀主軸適用於這三類。
 
@@ -112,11 +112,11 @@ out-of-scope 的議題直接跳到對應章節。
 
 ## 問題節點（案例觸發式）
 
-| 問題節點         | 判讀訊號                         | 風險後果                         | 前置控制面                                                                                                                                     | 交接路由  |
-| ---------------- | -------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| 金鑰隨程式發佈   | 密鑰以常數形式存在於產出物       | 取得程式即可還原內容或偽造請求   | [secret-management](/backend/knowledge-cards/secret-management/)、[credential](/backend/knowledge-cards/credential/)                           | `05 + 06` |
-| 原語與威脅不匹配 | 用訊息驗證處理機密性需求，或反之 | 保護落空但團隊認為已受保護       | [message-authentication](/backend/knowledge-cards/message-authentication/)、[at-rest-encryption](/backend/knowledge-cards/at-rest-encryption/) | `05`      |
-| 簽章金鑰無隔離   | 簽發用金鑰與一般 secret 同層保存 | 失守後可偽造所有下游可驗證的憑證 | [key-management](/backend/knowledge-cards/key-management/)、[hsm](/backend/knowledge-cards/hsm/)                                               | `06 + 08` |
+| 問題節點         | 判讀訊號                         | 風險後果                             | 前置控制面                                                                                                                                     | 交接路由  |
+| ---------------- | -------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| 金鑰隨程式發佈   | 密鑰以常數形式存在於產出物       | 取得程式即可還原內容或偽造請求       | [secret-management](/backend/knowledge-cards/secret-management/)、[credential](/backend/knowledge-cards/credential/)                           | `05 + 06` |
+| 原語與威脅不匹配 | 用訊息驗證處理機密性需求，或反之 | 保護落空但團隊認為已受保護           | [message-authentication](/backend/knowledge-cards/message-authentication/)、[at-rest-encryption](/backend/knowledge-cards/at-rest-encryption/) | `05`      |
+| 簽章金鑰無隔離   | 簽發用金鑰與一般 secret 同層保存 | 失守後可偽造所有下游可驗證的簽章資料 | [key-management](/backend/knowledge-cards/key-management/)、[hsm](/backend/knowledge-cards/hsm/)                                               | `06 + 08` |
 
 ## 跨章議題交叉引用
 

@@ -297,7 +297,7 @@ Data repair 常常需要高權限、因此必須接到 audit 與資料保護邊�
 
 這裡要接到 [7.7 Audit Trail 與 Accountability Boundary](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)。資料修復同時是可靠性、資安與合規問題。
 
-### 權限分離與憑證時效
+### 權限分離與存取憑證時效
 
 修復權限不該是常駐權限。日常開發 / SRE 帳號只該有 read-only、修復需要時才透過 break-glass 流程申請臨時 write 權限。
 

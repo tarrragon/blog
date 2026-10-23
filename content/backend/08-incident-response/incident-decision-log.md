@@ -93,7 +93,7 @@ Rollback / failover 決策需要留下資料相容性。版本回退、流量切
 
 Customer communication 決策需要與 evidence 對齊。對外說法應引用當時已確認事實，並標示仍在查證的範圍，避免內外部敘事分裂。
 
-Security split 決策需要留下根除的範圍與時點。分流到資安流程之後，撤銷了哪些存取憑證、哪些主機以重建取代清理、重建的環境在什麼條件下才上線、監看期到什麼時候結束，都決定事故何時能宣告解除；各項的判斷標準見 [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/) 的〈憑證撤銷與輪替的先後〉與〈多波攻擊的監看與它的結束條件〉。
+Security split 決策需要留下根除的範圍與時點。分流到資安流程之後，撤銷了哪些存取憑證、哪些主機以重建取代清理、重建的環境在什麼條件下才上線、監看期到什麼時候結束，都決定事故何時能宣告解除；各項的判斷標準見 [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/) 的〈存取憑證撤銷與輪替的先後〉與〈多波攻擊的監看與它的結束條件〉。
 
 資料外洩事故另有兩類決策要進 log：外洩來源還沒確定時是否對客戶發風險預警，以及外洩來源歸屬判定的每一次重新判定。重新判定的時間記在 Follow-up，會讓判定改變或重開的訊號記在 Rollback condition；兩類決策各要記哪些依據，見 [8.26 資料外洩時對商家的通知〈事中決策紀錄〉](/backend/08-incident-response/security-incident-customer-notification/#事中決策紀錄通知延遲在事後被檢驗時的材料)。
 

@@ -16,7 +16,7 @@ HTTPS + token 走 credential helper，跟 SSH 走金鑰是兩條平行的 git �
 
 git 對 HTTPS 遠端操作（clone / fetch / push）需要憑證時，不自己去記，而是走一個標準協定呼叫 helper：git 把 `protocol=https`、`host=github.com` 這些欄位從 stdin 餵給 helper，helper 把 `username=...`、`password=...` 從 stdout 回傳，git 拿去組認證。整個過程不需要人打字，也不把憑證留在 git 的設定裡。
 
-## helper 是可替換的：換 helper 就換憑證後端
+## helper 是可替換的：換 helper 就換存取憑證後端
 
 `credential.helper` 設定值決定用哪個 helper，每個對應一種憑證儲存後端：
 

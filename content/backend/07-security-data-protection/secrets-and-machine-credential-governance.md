@@ -36,7 +36,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 兩條 chain 完成條件與模組級 chain 規格見 [資安與資料保護模組從章節走到實作的路徑](../chapter-to-implementation-chain/)。
 
-## 憑證治理模型
+## 存取憑證治理模型
 
 存取憑證治理的核心責任是讓每一種機器憑證都有清楚的用途邊界與收斂節奏。
 
@@ -100,7 +100,7 @@ CI secrets 集中化的核心風險是把 *單一節點承載的存取憑證數�
 
 以下基於通用工程知識補充：secrets 分級的工程意義是讓事件期間的輪替能按風險排序、不靠 ad-hoc 判斷。缺分級時、組織要在壓力下做全面輪替、容易造成服務中斷或遺漏。日常演練要包含「假設整個 CI vendor 受損」的 fire drill、確認輪替路徑能在 vendor 失能時仍可執行，這是 7.6 跟 [6.x reliability](/backend/06-reliability/) 演練面的共同訴求。
 
-CI 主機已經被入侵時，存取憑證撤銷與重發的先後見 [8.25〈憑證撤銷與輪替的先後〉](/backend/08-incident-response/compromised-build-host-eradication/#憑證撤銷與輪替的先後)；事前讓管線的存取憑證只到部署為止的做法見 [7.44 多租戶平台的隔離層級](../multi-tenant-platform-isolation-tiers/)。
+CI 主機已經被入侵時，存取憑證撤銷與重發的先後見 [8.25〈存取憑證撤銷與輪替的先後〉](/backend/08-incident-response/compromised-build-host-eradication/#存取憑證撤銷與輪替的先後)；事前讓管線的存取憑證只到部署為止的做法見 [7.44 多租戶平台的隔離層級](../multi-tenant-platform-isolation-tiers/)。
 
 ## 簽章金鑰跟長期信任根
 
