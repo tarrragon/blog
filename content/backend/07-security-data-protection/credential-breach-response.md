@@ -66,6 +66,8 @@ tags: ["backend", "security"]
 
 **產品層處理的是法定門檻之下的那一段，而它要在事前定。** 這一層問的是「還沒到法定門檻、但確實有疑慮時要不要說」，而在事件當下決定它的人會同時承受流失與聲譽的壓力，判斷因此偏向不通知。預先寫下觸發條件（例如第二層範圍涵蓋的帳號數超過某個比例、或涉及的欄位包含什麼）能讓這個決定回到事前，對外承諾的節奏與措辭則走 [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)。
 
+外洩的資料屬於客戶的使用者時（例如替商家保管會員資料的平台），法規層的兩條線由客戶以控制者的身分判斷，平台這一端要做的是儘早通知客戶，並交付判斷所需的事實。外洩來源還沒確定在平台這一側時，對客戶先發的風險預警，以及它的觸發條件為什麼同樣要在事前定下，見 [8.26 資料外洩時對商家的通知〈風險預警〉](/backend/08-incident-response/security-incident-customer-notification/#風險預警歸屬未定時的通知)。
+
 ## 判讀流程
 
 1. 記下發現的時點，法規時限從這裡起算。這一步在混亂的初期最容易漏，而它決定後面每一項的截止時間。
@@ -97,8 +99,9 @@ tags: ["backend", "security"]
 
 - 外洩前該把密碼存成什麼樣、參數老化與升級路徑：[7.30 使用者密碼儲存](../password-storage-and-work-factor/)
 - 會話狀態放哪決定撤銷能力：[Session 處理](/operations/02-horizontal-scaling/session-handling/)
-- 憑證在請求中怎麼帶、以及登入端點的攻擊面：[7.36 憑證在請求中怎麼帶](../credential-transport-in-request/)
+- 存取憑證在請求中怎麼帶、以及登入端點的攻擊面：[7.36 存取憑證在請求中怎麼帶](../credential-transport-in-request/)
 - 機器憑證與 API key 的撤銷範圍：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
+- 外洩的是一台主機與它手上的全部機器憑證時，清查範圍、重建與撤銷順序：[8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)
 - 欄位分級與盤點（決定事發當下答不答得出來）：[7.4 資料保護與遮罩治理](../data-protection-and-masking-governance/)
 - 這件事算不算事故、算哪一級：[8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)
 - 一次只影響一個帳號時的處置與核身：[7.41 單一帳號被接管](../single-account-takeover-response/)

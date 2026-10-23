@@ -33,7 +33,7 @@ printf 'CLAUDE_CODE_OAUTH_TOKEN=%s\n' "$TOKEN" > ~/.env && chmod 600 ~/.env
 docker run --rm --env-file ~/.env <image> claude -p "任務" --dangerously-skip-permissions
 ```
 
-這個「認證走環境變數注入的機密、不烤進 image 也不進 repo」正是 [機密 runtime 注入](/linux/dotfile/knowledge-cards/runtime-secret-injection/) 的實例。好處是認證跟 image、container 生命週期完全解耦：rebuild image 幾次都不影響認證、換憑證只改注入的檔。
+這個「認證走環境變數注入的機密、不烤進 image 也不進 repo」正是 [機密 runtime 注入](/linux/dotfile/knowledge-cards/runtime-secret-injection/) 的實例。好處是認證跟 image、container 生命週期完全解耦：rebuild image 幾次都不影響認證、換存取憑證只改注入的檔。
 
 ## 認證綁 token 注入、不綁 session
 

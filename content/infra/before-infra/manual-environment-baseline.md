@@ -35,7 +35,7 @@ aws iam generate-credential-report
 aws iam get-credential-report --output text --query Content | base64 -d
 ```
 
-第二步是替換路徑。對人類操作者，改用會過期的登入工作階段（如 AWS IAM Identity Center 的臨時憑證，幾小時後自動失效）。對跑在雲上的自動化（EC2 上的腳本、ECS task），改用平台原生的角色綁定 — instance profile 或 task role 會自動輪替短期憑證，程式碼不需要存任何 key。對跑在雲外的 CI/CD（如 GitHub Actions），改用 OIDC 聯合（見[模組二：身分與憑證地基](/infra/02-identity-credentials/)）。
+第二步是替換路徑。對人類操作者，改用會過期的登入工作階段（如 AWS IAM Identity Center 的臨時憑證，幾小時後自動失效）。對跑在雲上的自動化（EC2 上的腳本、ECS task），改用平台原生的角色綁定 — instance profile 或 task role 會自動輪替短期憑證，程式碼不需要存任何 key。對跑在雲外的 CI/CD（如 GitHub Actions），改用 OIDC 聯合（見[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)）。
 
 第三步是輪替紀律。把還在用的長期 key 設定定期輪替提醒（60 天或 90 天，對齊 AWS IAM credential report 的建議週期），每次輪替時問自己：這把 key 能不能這次就換成臨時憑證，讓它成為最後一次輪替？
 
@@ -218,7 +218,7 @@ aws s3api list-buckets --query 'Buckets[].Name'
 - → [接手維運](/infra/takeover/)：如果這個手動環境是接手來的，先走接手維運的盤點流程
 - → [模組零：infra 是什麼](/infra/00-infra-mindset/)：成熟度階梯上「全手動」這一階的定位
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：訊號出現後，第一步怎麼跨進 IaC
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：長期憑證護欄的系統性設計
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：長期憑證護欄的系統性設計
 - → [模組三：網路地基](/infra/03-network-foundation/)：手動階段網路大改的回退考量、之後的系統性設計
 - → [模組八：治理好習慣](/infra/08-governance-habits/)：tagging 在成本歸因與批次操作的後續價值
 - → [模組九：怎麼把 infra 推動起來](/infra/09-driving-adoption/)：資源不足時怎麼跟上層談優先級

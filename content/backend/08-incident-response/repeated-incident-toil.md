@@ -33,6 +33,7 @@ Repeated incident 與 [toil](/backend/knowledge-cards/toil/) 治理是把同型�
 - 同類 alert 是否週期性觸發
 - action items 是否在多次 [post-incident review](/backend/knowledge-cards/post-incident-review/) 重複出現
 - [toil](/backend/knowledge-cards/toil/) 是否佔據過多值班時間
+- 同一類客服回報是否每次都由工程手動查同一份資料：這種重複的手動查證也是 toil，查證結果要寫回知識文章、告警規則或客服查詢工具，見 [8.24 客服回報的處理〈重複出現的回報〉](/backend/08-incident-response/support-escalation-and-engineering-reply/#重複出現的回報查證結果寫回知識文章告警規則與查詢工具)
 - 是否已經有明確 automation 路線
 
 ## 案例對照

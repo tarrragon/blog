@@ -54,7 +54,7 @@ tags: ["backend", "security", "red-team"]
 案例觸發的責任是檢查偵測策略能否辨識低噪音高影響事件。
 
 - 低噪音身分擴散： [Uber 2022](/backend/07-security-data-protection/red-team/cases/identity-access/uber-2022-mfa-fatigue/)
-- 憑證濫用與資料外送： [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
+- 存取憑證濫用與資料外送： [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
 - 供應鏈事件中的長週期隱匿： [SolarWinds 2020](/backend/07-security-data-protection/red-team/cases/supply-chain/solarwinds-2020-sunburst/)
 
 ## 下一步路由

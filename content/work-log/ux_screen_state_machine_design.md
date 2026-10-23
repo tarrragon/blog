@@ -47,9 +47,9 @@ enum TerminalScreenUiState { idle, connecting, connected, error, disconnected }
 
 操作盤點表長這樣：
 
-| 操作     | 主情境                                | 失敗情境                                | 前端引導                                   |
-| -------- | ------------------------------------- | --------------------------------------- | ------------------------------------------ |
-| 日常連線 | Face ID → 讀憑證 → WS 連線 → 雙向 I/O | 辨識失敗；Tailscale 離線；ttyd 認證失敗 | 辨識失敗不讀憑證；連線失敗顯示「無法連線」 |
+| 操作     | 主情境                                    | 失敗情境                                | 前端引導                                       |
+| -------- | ----------------------------------------- | --------------------------------------- | ---------------------------------------------- |
+| 日常連線 | Face ID → 讀存取憑證 → WS 連線 → 雙向 I/O | 辨識失敗；Tailscale 離線；ttyd 認證失敗 | 辨識失敗不讀存取憑證；連線失敗顯示「無法連線」 |
 
 「前端引導」只有一句話。它沒有被展開成畫面狀態。「連線失敗顯示無法連線」這句話覆蓋了 `error` 狀態的**顯示**，但沒有回答**操作**（重連？返回？）和**退出**（怎麼離開這個畫面？）。
 
@@ -85,11 +85,11 @@ enum TerminalScreenUiState { idle, connecting, connected, error, disconnected }
 
 Gate = 使用者必須通過的關卡（biometric、network、auth）。每個 gate 的設計不只是「成功時怎麼做」，還包含「失敗時的替代路徑」。
 
-| Gate                        | 成功               | 失敗 fallback                           |
-| --------------------------- | ------------------ | --------------------------------------- |
-| Biometric（Face ID / 指紋） | 讀取憑證、繼續連線 | 密碼 fallback（`biometricOnly: false`） |
-| Network（Tailscale VPN）    | WS 連線            | 顯示「網路不可用」+ 重試                |
-| Auth（ttyd basic auth）     | 進入終端機         | 顯示「認證失敗」+ 建議重新配對          |
+| Gate                        | 成功                   | 失敗 fallback                           |
+| --------------------------- | ---------------------- | --------------------------------------- |
+| Biometric（Face ID / 指紋） | 讀取存取憑證、繼續連線 | 密碼 fallback（`biometricOnly: false`） |
+| Network（Tailscale VPN）    | WS 連線                | 顯示「網路不可用」+ 重試                |
+| Auth（ttyd basic auth）     | 進入終端機             | 顯示「認證失敗」+ 建議重新配對          |
 
 `biometricOnly: true` 就是缺少 fallback 的典型案例 — Face ID 不可用（戴口罩、光線差、指紋模糊）時使用者直接被擋住，沒有替代方案。改為 `biometricOnly: false` 讓系統提供密碼 fallback。
 

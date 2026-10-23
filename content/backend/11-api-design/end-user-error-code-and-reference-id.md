@@ -147,7 +147,7 @@ log_format withid '$remote_addr [$time_iso8601] "$request" $status rid=$request_
 
 ## 客服查詢工具的權限
 
-客服查詢工具讓客服以帳號或短碼查到資料的狀態，取代請工程查資料庫。工具的設計重點在客服看得到什麼、以及每一次查詢留下什麼紀錄：
+客服查詢工具（[Internal Admin Tool（客服後台）](/backend/knowledge-cards/internal-admin-tool/)）讓客服以帳號或短碼查到資料的狀態，取代請工程查資料庫。工具的設計重點在客服看得到什麼、以及每一次查詢留下什麼紀錄：
 
 - **只讀**：工具只顯示狀態，延長期限、退款、解除停用這類會改資料的動作另外走有核准流程的後台。
 - **欄位層級的遮罩**：客服看得到短碼的狀態、原始網址、到期日、建立時間與檢舉紀錄，以及帳號的方案、本月剩餘額度與本期的扣款紀錄；電子郵件、姓名這類個人資料不顯示，付款資訊只顯示卡號末四碼。遮罩的做法見 [Data Masking](/backend/knowledge-cards/data-masking/)。

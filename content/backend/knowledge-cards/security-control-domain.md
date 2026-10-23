@@ -14,13 +14,13 @@ Security control domain 的核心概念是「一條風險的防守責任歸給�
 
 控制面位在 [threat model](/backend/knowledge-cards/threat-model/) 與具體控制之間：威脅模型列舉風險的位置，控制面決定每個位置的責任歸屬，而 [authentication](/backend/knowledge-cards/authentication/)、[authorization](/backend/knowledge-cards/authorization/)、[data classification](/backend/knowledge-cards/data-classification/) 這些是各面底下的具體手段。它與 [defense in depth](/backend/knowledge-cards/defense-in-depth/) 的關係是同一組控制的兩種讀法——縱深問「同一條路徑上疊了幾層」，控制面問「這一層歸誰維護」。
 
-分派要區分主責與協作：主責控制面負責第一輪收斂，協作控制面負責擴散管理與回寫。一條風險同時落在兩面以上時（憑證外洩同時是身分問題與偵測問題），沒有指定主責的後果是兩邊都以為對方在處理。六個面各自的責任與承接位置在 [7.B1 防守控制面地圖](/backend/07-security-data-protection/blue-team/defense-control-map/) 展開。
+分派要區分主責與協作：主責控制面負責第一輪收斂，協作控制面負責擴散管理與回寫。一條風險同時落在兩面以上時（存取憑證外洩同時是身分問題與偵測問題），沒有指定主責的後果是兩邊都以為對方在處理。六個面各自的責任與承接位置在 [7.B1 防守控制面地圖](/backend/07-security-data-protection/blue-team/defense-control-map/) 展開。
 
 ## 可觀察訊號與例子
 
 需要控制面分類的訊號是風險描述完整而 owner 分工鬆散——事件寫得清楚、影響面也算得出來，但「誰要動手」的答案是一個團隊名而不是一個角色，或者每次都落到同一批人身上。另一個訊號是同類風險反覆由不同的人處理，因為歸屬從未被寫下來，每次都靠當下誰有空。
 
-分類本身不解決風險，它解決的是分派。憑證輪替沒做完這件事，判成身分控制面與判成入口控制面會得到不同的主責團隊與不同的驗證方式，而兩種判法都能自圓其說——所以分類的價值在於它被寫下來一次，而不在於它天然正確。
+分類本身不解決風險，它解決的是分派。存取憑證輪替沒做完這件事，判成身分控制面與判成入口控制面會得到不同的主責團隊與不同的驗證方式，而兩種判法都能自圓其說——所以分類的價值在於它被寫下來一次，而不在於它天然正確。
 
 ## 設計責任
 

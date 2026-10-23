@@ -47,6 +47,8 @@ Customer impact assessment 是把事故影響轉成用戶、產品與業務語�
 | 正確性   | 資料 / 交易是否受損可判定        | 補償與法規通報     |
 | 金額     | financial impact 可分層估算      | 補償與商務決策     |
 
+功能那一列寫成狀態頁與客服話術之後，客服答覆使用者時讀的是內部狀態頁上「對客戶的說法」那一欄；那一欄由誰更新、客服什麼時候把新的回報附到事故上，見 [8.24 客服回報的處理〈客服當場答覆時用的資訊〉](/backend/08-incident-response/support-escalation-and-engineering-reply/#客服當場答覆時用的資訊)。
+
 ## 影響維度
 
 Customer impact assessment 的影響維度要同時描述誰受影響、哪個功能受影響、影響多久，以及是否形成資料或金錢後果。
@@ -129,6 +131,10 @@ Stakeholder update 應描述範圍、信心與下一次更新時間。若影響�
 
 Compensation input 應接到可重算資料。affected users、duration、transaction amount、SLA tier、data correctness 與 customer segment 都應能被查詢與復核。
 
+資安事故的 status update 能宣告到哪一級（已切斷已知的入侵路徑、已確認受影響範圍、已移除攻擊者的立足點、事故已解除）由根除進度決定，前一級成立之後才能宣告下一級，各級的成立條件見 [8.25 建置主機被入侵後的根除與重建〈對外宣告已掌握狀況的條件〉](/backend/08-incident-response/compromised-build-host-eradication/#對外宣告已掌握狀況的條件)。
+
+外洩的是客戶的終端使用者資料時（例如平台替商家保管的會員資料），平台通知的對象是商家，會員由商家依自己的判斷通知；商家要拿到自己那一份的資料類別、會員數與筆數，才判斷得了是否通報主管機關、是否通知會員。對商家的各種通知見 [8.26 資料外洩時對商家的通知](/backend/08-incident-response/security-incident-customer-notification/)。
+
 ## 常見反模式
 
 Customer impact assessment 的反模式通常來自用單一技術指標代表所有影響。技術指標是 evidence，完整影響模型還需要客戶、功能、時間、正確性與金額維度。
@@ -150,6 +156,8 @@ Server error rate 即影響會讓事故分級失真。低錯誤率集中在核�
 Customer impact assessment 需要在資料外洩、授權錯誤與合規影響出現時啟動資安分流。這類事故的影響不只看可用性，也看資料類型、責任鏈、通知義務與證據保存。
 
 若 impact assessment 發現 PII、credential、audit log gap、cross-tenant access 或資料匯出異常，應交給 07 的資料保護與事故分流流程，並在 8.19 decision log 中標示 evidence handling 限制。
+
+多租戶平台的資安事故，受影響的租戶數先由入口元件（攻擊者最先入侵、再由此往內擴散的元件）的權限決定：入口是跨租戶共用的建置管線、營運後台或備份系統時，即使資料按租戶分開存放，影響範圍仍可能是全部租戶。各類共用元件碰得到的租戶數，見 [7.44 多租戶平台的隔離層級〈存取層的隔離〉](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/#存取層的隔離建置管線共用運算營運後台內部工具平台資料庫管理備份與其他共用元件的權限範圍)。
 
 ## 交接路由
 

@@ -91,7 +91,7 @@ Elastic Security 的核心定位是 *Elastic Stack 上的 security solution*、�
 - **Alert volume 爆炸 / SOC 看不完**：Sigma rule 全 enable 沒 tune、或 threshold rule 閾值太低 — staging space 跑 1 週統計 FP、tune threshold、加 exception list 排除已知合法 source、ML rule 補 user-specific baseline
 - **EQL sequence rule 跑不動 / timeout**：sequence span 太長（24h）或 by field cardinality 太高、查詢成本爆炸 — 縮短 maxspan、限定 index pattern、加 pre-filter 條件
 - **Cluster 查詢慢 / Kibana 卡**：hot tier 塞太多舊資料、沒做 hot-warm-cold tier 分層 — 開 ILM（Index Lifecycle Management）policy 自動 rollover、warm tier 用便宜 node、cold / frozen 走 Searchable Snapshots
-- **Fleet agent enrollment 失敗**：Fleet server 跟 Elasticsearch 之間網路 / 憑證 / token 問題 — 檢查 Fleet server health、確認 enrollment token 未過期、agent log 看 specific 錯誤
+- **Fleet agent enrollment 失敗**：Fleet server 跟 Elasticsearch 之間網路 / TLS 憑證 / token 問題 — 檢查 Fleet server health、確認 enrollment token 未過期、agent log 看 specific 錯誤
 - **Sigma rule import 後大量 FP**：Sigma rule 是 cross-SIEM 通用、沒有 environment-specific exclusion — 不要全 enable、staging tune 後再 promote、加 exception list（known scanner IP / 內部測試帳號）
 - **Resource-based pricing 超預算**：node 過度 scale 或 hot tier 留太多 — 開 hot-warm-cold ILM、把 retention 超過 30 天的 index 推到 frozen tier on S3、Searchable Snapshots 是預設應該開
 - **ML job anomaly score 不準**：training data 包含已 compromise 期間、baseline 被汙染 — 確認 training window 在乾淨期、定期重訓、配 detection rule 用 anomaly_score > 75 而非 > 50

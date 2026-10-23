@@ -1,7 +1,7 @@
 ---
 title: "0.10 知識網：容量、觀測與資安決策路徑"
 date: 2026-04-23
-description: "把容量、可觀測、備援、權限、憑證與稽核術語串成統一的服務治理語言"
+description: "把容量、可觀測、備援、權限、數位憑證與稽核術語串成統一的服務治理語言"
 weight: 11
 tags: ["backend", "service-selection"]
 ---
@@ -61,7 +61,7 @@ tags: ["backend", "service-selection"]
 
 - 身份與存取：  
   [Authentication](/backend/knowledge-cards/authentication/) / [Authorization](/backend/knowledge-cards/authorization/) / [Least Privilege](/backend/knowledge-cards/least-privilege/)
-- 傳輸與憑證：  
+- 傳輸與數位憑證：  
   [TLS/mTLS](/backend/knowledge-cards/tls-mtls/) / [Certificate Chain and Trust](/backend/knowledge-cards/certificate-chain-trust/) / [Certificate Revocation](/backend/knowledge-cards/certificate-revocation/)
 - 秘密與輪替：  
   [Secret Management](/backend/knowledge-cards/secret-management/) / [Certificate Rotation and Renewal](/backend/knowledge-cards/certificate-rotation-renewal/)

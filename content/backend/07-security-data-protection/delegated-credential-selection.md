@@ -1,14 +1,14 @@
 ---
 title: "7.33 委任型憑證：關係寫進憑證，還是留給驗證方拼湊"
 date: 2026-07-29
-description: "一個系統要代表特定使用者呼叫下游時，用來判斷這層關係該由發行方寫進憑證還是由各驗證方各自認定、以及換過去之後撤銷粒度實際落在哪裡"
+description: "一個系統要代表特定使用者呼叫下游時，用來判斷這層關係該由發行方寫進存取憑證還是由各驗證方各自認定、以及換過去之後撤銷粒度實際落在哪裡"
 weight: 108
 tags: ["backend", "security", "OAuth", "Token Exchange", "Delegation"]
 ---
 
 第二個下游服務接上來的時候，「這個系統獲准代表這位使用者」是在哪裡被檢查的。
 
-本章的責任是把「A 代表 B」這層關係的表達方式拆成可判讀的選型問題，讓兩張憑證（使用者的憑證加呼叫系統的憑證各一張）與一張委任型憑證各自的成本、撤銷路徑與驗證責任清楚。
+本章的責任是把「A 代表 B」這層關係的表達方式拆成可判讀的選型問題，讓兩張存取憑證（使用者的憑證加呼叫系統的憑證各一張）與一張委任型憑證各自的成本、撤銷路徑與驗證責任清楚。
 
 ## 本章涵蓋與不涵蓋
 
@@ -23,7 +23,7 @@ tags: ["backend", "security", "OAuth", "Token Exchange", "Delegation"]
 - 代理操作的授權範圍與多跳邊界 → [7.2](../identity-access-boundary/)
 - 身分維度的分層與混層訊號 → [7.29](../api-authentication-trust-boundaries/)
 - 機器憑證的核發與初次交付 → [7.32](../machine-credential-issuance/)
-- 憑證上線後的輪替與回收 → [7.6](../secrets-and-machine-credential-governance/)
+- 存取憑證上線後的輪替與回收 → [7.6](../secrets-and-machine-credential-governance/)
 - 跨平台工作負載的聯邦信任 → [7.10](../workload-identity-and-federated-trust/)
 
 Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節。
@@ -104,13 +104,13 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## 問題節點（案例觸發式）
 
-| 問題節點               | 判讀訊號                                     | 風險後果                                 | 前置控制面                                                                                                                             | 交接路由  |
-| ---------------------- | -------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| 委任關係由各驗證方認定 | 下游服務各自決定「兩張都有效」算不算獲准代理 | 任一寬鬆的驗證方讓合法系統可代理任何人   | [authorization](/backend/knowledge-cards/authorization/)、[trust-boundary](/backend/knowledge-cards/trust-boundary/)                   | `05 + 08` |
-| 撤銷粒度未實際成立     | 已發出的委任憑證在主體失效後仍通過驗證       | 停用動作與代理停止之間有殘留窗口         | [token-revocation](/backend/knowledge-cards/token-revocation/)、[session-invalidation](/backend/knowledge-cards/session-invalidation/) | `06 + 08` |
-| 交換結果失去雙重歸屬   | 下游紀錄只有被代理者，看不出是代理           | 事後無法回答哪個系統代表哪個人操作       | [audit-log](/backend/knowledge-cards/audit-log/)、[non-repudiation](/backend/knowledge-cards/non-repudiation/)                         | `08`      |
-| 代理後的權限取聯集     | 低權限使用者透過高權限應用取得應用的權限     | 代理路徑成為提權管道                     | [least-privilege](/backend/knowledge-cards/least-privilege/)、[authorization](/backend/knowledge-cards/authorization/)                 | `06 + 08` |
-| 委任型檢查未做         | `audience` 未比對，或授權判斷取內層代理方    | 憑證可跨服務使用，代理鏈成為權限累加路徑 | [authorization-scope](/backend/knowledge-cards/authorization-scope/)、[api-contract](/backend/knowledge-cards/api-contract/)           | `05 + 06` |
+| 問題節點               | 判讀訊號                                     | 風險後果                                     | 前置控制面                                                                                                                             | 交接路由  |
+| ---------------------- | -------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| 委任關係由各驗證方認定 | 下游服務各自決定「兩張都有效」算不算獲准代理 | 任一寬鬆的驗證方讓合法系統可代理任何人       | [authorization](/backend/knowledge-cards/authorization/)、[trust-boundary](/backend/knowledge-cards/trust-boundary/)                   | `05 + 08` |
+| 撤銷粒度未實際成立     | 已發出的委任憑證在主體失效後仍通過驗證       | 停用動作與代理停止之間有殘留窗口             | [token-revocation](/backend/knowledge-cards/token-revocation/)、[session-invalidation](/backend/knowledge-cards/session-invalidation/) | `06 + 08` |
+| 交換結果失去雙重歸屬   | 下游紀錄只有被代理者，看不出是代理           | 事後無法回答哪個系統代表哪個人操作           | [audit-log](/backend/knowledge-cards/audit-log/)、[non-repudiation](/backend/knowledge-cards/non-repudiation/)                         | `08`      |
+| 代理後的權限取聯集     | 低權限使用者透過高權限應用取得應用的權限     | 代理路徑成為提權管道                         | [least-privilege](/backend/knowledge-cards/least-privilege/)、[authorization](/backend/knowledge-cards/authorization/)                 | `06 + 08` |
+| 委任型檢查未做         | `audience` 未比對，或授權判斷取內層代理方    | 存取憑證可跨服務使用，代理鏈成為權限累加路徑 | [authorization-scope](/backend/knowledge-cards/authorization-scope/)、[api-contract](/backend/knowledge-cards/api-contract/)           | `05 + 06` |
 
 ## 問題節點出現在什麼樣的系統
 
@@ -142,7 +142,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 - 代理關係的檢查點列不出來時，代表這件事沒有被任何一方負責，而每個驗證方各自的實作都通過測試。收斂的第一步是拿本章「驗證方要檢查什麼」逐項對每個驗證方核對過去，核對不過的那幾項就是缺口清單。
 - 主體被停用之後，已發出的委任憑證的殘留時間超出事件處置能接受的窗口時，撤銷粒度只存在於帳面上。
-- 交換出來的憑證失去 `act` 而發行端的交換紀錄保存期短於稽核要求時，雙重歸屬在兩處同時消失。保存期限的定法見 [7.7 稽核追蹤與責任邊界](../audit-trail-and-accountability-boundary/)。
+- 交換出來的存取憑證失去 `act` 而發行端的交換紀錄保存期短於稽核要求時，雙重歸屬在兩處同時消失。保存期限的定法見 [7.7 稽核追蹤與責任邊界](../audit-trail-and-accountability-boundary/)。
 - 代理後的權限範圍與被代理者本人的權限範圍不同時，要能指出差異來自哪一邊；指不出來代表交集沒有被計算。
 - 多跳代理的層數超過紀錄能承載的層數時，收斂條件見 [7.2](../identity-access-boundary/#代理操作的授權邊界)。
 
@@ -156,9 +156,9 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 ## 下一步路由
 
 - 代理在授權層要配什麼、多跳可不可遞移：[7.2 代理操作的授權邊界](../identity-access-boundary/#代理操作的授權邊界)
-- 這張憑證在身分維度裡的位置與混層訊號：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)
+- 這張存取憑證在身分維度裡的位置與混層訊號：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)
 - 代理方本身那把機器憑證怎麼核發與交付：[7.32 機器憑證的配發](../machine-credential-issuance/)
-- 憑證上線後的輪替與回收：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
+- 存取憑證上線後的輪替與回收：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
 - 稽核紀錄要留什麼欄位：[7.7 稽核追蹤與責任邊界](../audit-trail-and-accountability-boundary/)
 - 驗證項寫進對外契約：[api-contract](/backend/knowledge-cards/api-contract/)；已上線的整合要改檢查項時走 [11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)
 - 事件發生後的止血與回復：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)

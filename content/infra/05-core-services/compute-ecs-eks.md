@@ -70,7 +70,7 @@ resource "aws_ecs_task_definition" "api" {
 
 **映像版本解耦**：`var.image_tag` 在 infra 的 `tfvars` 裡給一個穩定的預設值（如 `latest` 或某個基線版本），部署管線覆寫這個值推新版本。infra apply 不會因此改動映像、部署 pipeline 不會因此改動 subnet — 兩者的變更頻率與審查強度不同，混在一起會讓快的等慢的。如果每次部署新版本都要改 infra 的 Terraform code 並跑 apply，代表映像版本跟 infra 沒有解耦——應該讓部署管線直接用 `aws ecs update-service` 或修改 task definition 的 image tag，不走 Terraform。
 
-**兩個 IAM role 的分工**：`execution_role_arn` 是 ECS 代理用來拉映像和寫 log 的身分 — 它的權限是 ECS 平台層級的，跟業務邏輯無關。`task_role_arn` 是容器內的應用程式碼在執行期取得的身分 — 它的權限對應業務需求，例如讀寫某個 S3 bucket 或呼叫某個 SQS queue。兩者混在同一個 role 上，就是把平台權限跟業務權限混在一起，違反最小權限（見[模組二：身分與憑證地基](/infra/02-identity-credentials/)）。
+**兩個 IAM role 的分工**：`execution_role_arn` 是 ECS 代理用來拉映像和寫 log 的身分 — 它的權限是 ECS 平台層級的，跟業務邏輯無關。`task_role_arn` 是容器內的應用程式碼在執行期取得的身分 — 它的權限對應業務需求，例如讀寫某個 S3 bucket 或呼叫某個 SQS queue。兩者混在同一個 role 上，就是把平台權限跟業務權限混在一起，違反最小權限（見[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)）。
 
 ```hcl
 resource "aws_iam_role" "api_task" {
@@ -211,7 +211,7 @@ resource "aws_appautoscaling_policy" "api_cpu" {
 
 ## 跨分類引用
 
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：execution role 與 task role 的最小權限設計
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：execution role 與 task role 的最小權限設計
 - → [模組三：網路地基](/infra/03-network-foundation/)：運算放在 private subnet、security group 接線
 - → [模組六：可觀測性與 log](/infra/06-observability-logging/)：log group 與 task definition 同生命週期
 - → [運維 模組八：成本管理](/operations/08-cost-management/)：auto-scaling 的成本護欄與 spot/Fargate Spot 混用

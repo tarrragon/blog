@@ -12,7 +12,7 @@ Registrable domain 是「一個人能向註冊機構買下來的最小單位」�
 
 它的作用是界定「同一方」這個概念的範圍，而瀏覽器的各種機制對「同一方」用的切點並不一致。[Same-origin policy](/backend/knowledge-cards/same-origin-policy/) 的來源看的是協定、主機名與埠三者全等，於是 `a.example.com` 與 `b.example.com` 是兩個來源、互相讀不到回應。SameSite 屬性判定「站」時看的卻是可註冊網域，於是同樣這兩個主機在 cookie 的規則下屬於同一方、彼此的請求不算跨站。
 
-這條落差是多數跨站防護缺口的共同成因：防護以為自己守著一個主機，實際守著整個可註冊網域底下的所有主機。判讀見 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/) 與 [cross-site request forgery](/backend/knowledge-cards/cross-site-request-forgery/)。
+這條落差是多數跨站防護缺口的共同成因：防護以為自己守著一個主機，實際守著整個可註冊網域底下的所有主機。判讀見 [7.36 存取憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/) 與 [cross-site request forgery](/backend/knowledge-cards/cross-site-request-forgery/)。
 
 ## 可觀察訊號與例子
 
@@ -22,7 +22,7 @@ Registrable domain 是「一個人能向註冊機構買下來的最小單位」�
 
 ## 設計責任
 
-信任邊界要按實際的切點畫，而不是按「這是我們公司的主機」畫。把子網域交給外部維護時，主站的防護要包含一層不依賴可註冊網域判定的檢查——來源檢查或請求標頭層的判定，見 [7.36 憑證在請求中怎麼帶：附上的決定由誰做](/backend/07-security-data-protection/credential-transport-in-request/) 的三層防護。
+信任邊界要按實際的切點畫，而不是按「這是我們公司的主機」畫。把子網域交給外部維護時，主站的防護要包含一層不依賴可註冊網域判定的檢查——來源檢查或請求標頭層的判定，見 [7.36 存取憑證在請求中怎麼帶：附上的決定由誰做](/backend/07-security-data-protection/credential-transport-in-request/) 的三層防護。
 
 Cookie 的作用域設定要把這個範圍當成上限來看。把 cookie 設在可註冊網域這一層時，它會被送往底下所有主機；設在具體主機上則不會。這個決定與 [session](/backend/knowledge-cards/session-invalidation/) 的撤銷範圍互相牽動，在多子網域的架構上要一起定。
 

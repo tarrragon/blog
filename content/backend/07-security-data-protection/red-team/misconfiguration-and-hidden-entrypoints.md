@@ -13,7 +13,7 @@ tags: ["backend", "security", "red-team"]
 下列變動通常伴隨設定風險上升：
 
 - 新增環境、區域或新部署平台
-- 調整 CORS、網路白名單與憑證設定
+- 調整 CORS、網路白名單與 TLS 憑證設定
 - 引入 debug endpoint 與 feature flag
 - 擴大第三方整合與雲端資源權限
 

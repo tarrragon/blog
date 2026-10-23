@@ -69,7 +69,7 @@ curl -s http://localhost:8080/api/http/routers | jq '.[].rule'
 
 子議題：
 
-- Let's Encrypt 整合（自動憑證 + 續期）
+- Let's Encrypt 整合（自動 TLS 憑證 + 續期）
 - DNS challenge（適合 wildcard）vs HTTP challenge（適合單 domain）
 - 多 resolver 配置（staging / production / 不同 CA）
 - 對應 ACME storage（local / KV / Traefik Hub）

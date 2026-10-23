@@ -1,12 +1,12 @@
 ---
-title: "Credential"
+title: "Credential（存取憑證）"
 date: 2026-04-23
 description: "整理身分驗證與系統存取用秘密資料"
 weight: 1
 ---
 
 
-Credential 的核心概念是「讓主體能證明自己並取得存取權的秘密資料」。常見 credential 包含 password、API key、token、private key、service account secret 與 database credential。 可先對照 [Cutover / Switchover](/backend/knowledge-cards/cutover-switchover/)。
+Credential 的核心概念是「讓主體能證明自己並取得存取權的秘密資料」。常見 credential 包含 password、API key、token、private key、service account secret 與 database credential。中文資料常把 credential 與 certificate 都寫成「憑證」，本站把 credential 寫成存取憑證；由憑證機構簽章、本身可以公開的數位憑證另見 [Certificate（數位憑證）](/backend/knowledge-cards/certificate/)，與數位憑證配對的私鑰屬於存取憑證。 可先對照 [Cutover / Switchover](/backend/knowledge-cards/cutover-switchover/)。
 
 ## 概念位置
 

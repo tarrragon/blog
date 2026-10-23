@@ -26,7 +26,7 @@ tags: ["backend", "security", "case-study", "red-team"]
 
 ## 如果 workflow 少一步會發生什麼
 
-若缺少「合法更新異常行為審查」，團隊會把事件視為一般系統活動，延長停留時間與清除成本。
+若缺少「合法更新異常行為審查」，團隊會把事件視為一般系統活動，延長攻擊者的停留時間（[dwell time](/backend/knowledge-cards/dwell-time/)）與清除成本。
 
 ## 可落地的 workflow 檢查點
 
@@ -38,9 +38,9 @@ tags: ["backend", "security", "case-study", "red-team"]
 
 本案例是事故敘事 layer，沿三步 chain 進入 implementation：
 
-- **控制面**：[7.6 供應鏈完整性與 artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) + [7.5 工作負載身份與 federated trust](/backend/07-security-data-protection/workload-identity-and-federated-trust/) —— mitigation 的 mechanism / 前提 / context-dependence 在這裡定義。
+- **控制面**：[7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) + [7.10 Workload Identity 與聯邦信任邊界](/backend/07-security-data-protection/workload-identity-and-federated-trust/) —— mitigation 的 mechanism / 前提 / context-dependence 在這裡定義。
 - **演練 / 控制落地**：[Supply chain artifact drill](/backend/07-security-data-protection/blue-team/materials/scenarios/supply-chain-artifact-drill/) + [Vulnerability response pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/vulnerability-response-pattern/) + [Evidence chain pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/evidence-chain-pattern/) —— 把樣式轉成演練與控制欄位。
-- **跨章交接**：[backend/05-deployment-platform](/backend/05-deployment-platform/) 的交付與簽章治理、[backend/08-incident-response](/backend/08-incident-response/) 的供應鏈事件指揮流程。
+- **跨章交接**：[backend/05-deployment-platform](/backend/05-deployment-platform/) 的交付與簽章治理、[8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/) 的清查範圍、入侵期間產物的撤下與重建流程。
 
 供應鏈類事故的失效樣式不對應紅隊 problem-cards（後者集中於 tenant flow / identity flow 樣式），主要 chain 直接從控制面起步。
 

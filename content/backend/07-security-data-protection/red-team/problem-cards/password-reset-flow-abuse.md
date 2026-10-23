@@ -14,7 +14,7 @@ tags: ["backend", "security", "red-team"]
 
 ## 常見失效樣式
 
-- 重設憑證有效期過長且可重放。
+- 重設用的存取憑證有效期過長且可重放。
 - 重設後舊會話仍維持可用。
 - 重設流程缺少異常來源檢查。
 
@@ -36,7 +36,7 @@ tags: ["backend", "security", "red-team"]
 
 ## 對應失效樣式卡
 
-- [7.R11.P5 重設憑證可重放且有效期過長](/backend/07-security-data-protection/red-team/problem-cards/fp-replayable-reset-token-with-long-ttl/)
+- [7.R11.P5 密碼重設 token 可重放且有效期過長](/backend/07-security-data-protection/red-team/problem-cards/fp-replayable-reset-token-with-long-ttl/)
 
 ## 演練 / 控制落地
 

@@ -447,121 +447,130 @@ weight: -1
 
 ## 事故處理與復盤
 
-| 卡片                                                                                       | 核心問題                                   | 常見出現位置                         |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------ | ------------------------------------ |
-| [On-Call](/backend/knowledge-cards/on-call/)                                               | 值班制度如何承接告警與事故流程             | paging、handover、incident           |
-| [Tiered Support（分層支援）](/backend/knowledge-cards/tiered-support/)                     | 使用者回報由哪一層處理、何時往上轉         | 客服、技術支援、轉單                 |
-| [Known Error（已知錯誤）](/backend/knowledge-cards/known-error/)                           | 已確認未修好的問題怎麼讓客服與值班照著處理 | ITIL、KEDB、替代做法                 |
-| [Knowledge-Centered Service（KCS）](/backend/knowledge-cards/knowledge-centered-service/)  | 處理回報的當下怎麼留下下一次可用的答案     | 知識文章、Solve Loop、客服           |
-| [Cohort](/backend/knowledge-cards/cohort/)                                                 | 實驗與發布的影響範圍用什麼單位縮限         | blast radius、feature flag、canary   |
-| [FIT (Failure Injection Testing)](/backend/knowledge-cards/fit-failure-injection-testing/) | 請求路徑注入如何驗證失敗處理               | chaos、Netflix、blast radius         |
-| [Handover Protocol](/backend/knowledge-cards/handover-protocol/)                           | 值班或事故責任如何安全交接                 | on-call、escalation、incident        |
-| [Playbook](/backend/knowledge-cards/playbook/)                                             | 場景化處置如何快速啟動與執行               | incident workflow、recovery          |
-| [CI Pipeline](/backend/knowledge-cards/ci-pipeline/)                                       | 合併前如何自動驗證品質與相容性             | tests、checks、merge gate            |
-| [Load Test](/backend/knowledge-cards/load-test/)                                           | 預期流量下如何驗證容量與延遲               | performance、SLO、capacity           |
-| [Chaos Test](/backend/knowledge-cards/chaos-test/)                                         | 受控故障注入如何驗證韌性                   | resilience、failover、runbook        |
-| [Game Day](/backend/knowledge-cards/game-day/)                                             | 事故演練如何驗證流程與協作                 | drill、readiness、training           |
-| [Incident Severity](/backend/knowledge-cards/incident-severity/)                           | 事故如何依產品影響分級                     | on-call、incident、SLO               |
-| [Incident Command System](/backend/knowledge-cards/incident-command-system/)               | 事故期間如何分配指揮與執行角色             | commander、scribe、owner             |
-| [Incident Communication Channel](/backend/knowledge-cards/incident-communication-channel/) | 事故期間如何同步對內對外資訊               | internal chat、status update、bridge |
-| [Escalation Policy](/backend/knowledge-cards/escalation-policy/)                           | 事故無回應或無進展時如何升級               | on-call、paging、handover            |
-| [Incident Timeline](/backend/knowledge-cards/incident-timeline/)                           | 事故事件如何形成一致時間軸                 | incident log、communication          |
-| [Evidence Package](/backend/knowledge-cards/evidence-package/)                             | 觀測與事故證據如何交接與回放               | observability、verification、PIR     |
-| [Time Range](/backend/knowledge-cards/time-range/)                                         | 證據如何保留明確時間窗                     | evidence、incident timeline          |
-| [Query Link](/backend/knowledge-cards/query-link/)                                         | 證據如何保留可重跑查詢入口                 | evidence、handoff                    |
-| [Data Quality](/backend/knowledge-cards/data-quality/)                                     | 證據如何標示完整度與限制                   | evidence、sampling、freshness        |
-| [Confidence](/backend/knowledge-cards/confidence/)                                         | 證據如何標示判讀信心等級                   | evidence、gate decision              |
-| [Known Gap](/backend/knowledge-cards/known-gap/)                                           | 證據如何保存已知缺口                       | evidence、PIR、readiness             |
-| [Incident Decision Log](/backend/knowledge-cards/incident-decision-log/)                   | 事故決策如何保存證據與回退條件             | IC handoff、PIR、status update       |
-| [Steady State](/backend/knowledge-cards/steady-state/)                                     | 實驗與事故恢復如何定義成功狀態             | chaos、DR、recovery                  |
-| [Blast Radius](/backend/knowledge-cards/blast-radius/)                                     | 故障影響面如何估算與隔離                   | dependency、shared resource          |
-| [Noisy Neighbor（共用資源的鄰居干擾）](/backend/knowledge-cards/noisy-neighbor/)           | 共用同一份硬體的工作負載如何互相拖慢       | 共用主機、虛擬機、steal              |
-| [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)                           | 事故期間何時回滾與回切                     | deployment、release gate             |
-| [Post-Incident Review](/backend/knowledge-cards/post-incident-review/)                     | 事故後如何形成改進閉環                     | retrospective、action items          |
-| [RCA](/backend/knowledge-cards/rca/)                                                       | 根因分析如何從證據推導改進                 | timeline、control gap                |
-| [RTO](/backend/knowledge-cards/rto/)                                                       | 服務回復時間目標如何定義                   | SLA/SLO、DR                          |
-| [RPO](/backend/knowledge-cards/rpo/)                                                       | 可接受資料損失窗口如何定義                 | backup、replication                  |
-| [MTTR](/backend/knowledge-cards/mttr/)                                                     | 平均修復時間如何反映處置能力               | incident metrics、review             |
-| [Point-in-Time Recovery](/backend/knowledge-cards/point-in-time-recovery/)                 | 資料如何還原到過去任意時間點               | base backup、WAL、RPO                |
-| [Corruption Recovery](/backend/knowledge-cards/corruption-recovery/)                       | 資料損毀事故如何辨識來源並處置             | checksum、evidence、restore          |
-| [Containment](/backend/knowledge-cards/containment/)                                       | 擴散面如何被限制以爭取回復時間             | 止血、隔離                           |
-| [Impact Scope](/backend/knowledge-cards/impact-scope/)                                     | 受影響範圍如何被盤點                       | 通報、責任判讀                       |
-| [Stakeholder Mapping](/backend/knowledge-cards/stakeholder-mapping/)                       | 通報對象如何分層並對應 owner               | 分層通報、對外溝通                   |
-| [Status Page](/backend/knowledge-cards/status-page/)                                       | 對外狀態頁如何承接可用性承諾               | 通報、可用性承諾                     |
-| [Action Item Closure](/backend/knowledge-cards/action-item-closure/)                       | 復盤的行動項如何被驗證完成                 | 復盤、驗收證據                       |
-| [Session Invalidation](/backend/knowledge-cards/session-invalidation/)                     | 事件之後既有會話如何失效                   | 重放、撤銷                           |
+| 卡片                                                                                       | 核心問題                                       | 常見出現位置                         |
+| ------------------------------------------------------------------------------------------ | ---------------------------------------------- | ------------------------------------ |
+| [On-Call](/backend/knowledge-cards/on-call/)                                               | 值班制度如何承接告警與事故流程                 | paging、handover、incident           |
+| [Tiered Support（分層支援）](/backend/knowledge-cards/tiered-support/)                     | 使用者回報由哪一層處理、何時往上轉             | 客服、技術支援、轉單                 |
+| [Internal Admin Tool（客服後台）](/backend/knowledge-cards/internal-admin-tool/)           | 客服查使用者資料的內部頁面能看什麼、留什麼紀錄 | support tooling、back office、遮罩   |
+| [Known Error（已知錯誤）](/backend/knowledge-cards/known-error/)                           | 已確認未修好的問題怎麼讓客服與值班照著處理     | ITIL、KEDB、替代做法                 |
+| [Knowledge-Centered Service（KCS）](/backend/knowledge-cards/knowledge-centered-service/)  | 處理回報的當下怎麼留下下一次可用的答案         | 知識文章、Solve Loop、客服           |
+| [Cohort](/backend/knowledge-cards/cohort/)                                                 | 實驗與發布的影響範圍用什麼單位縮限             | blast radius、feature flag、canary   |
+| [FIT (Failure Injection Testing)](/backend/knowledge-cards/fit-failure-injection-testing/) | 請求路徑注入如何驗證失敗處理                   | chaos、Netflix、blast radius         |
+| [Handover Protocol](/backend/knowledge-cards/handover-protocol/)                           | 值班或事故責任如何安全交接                     | on-call、escalation、incident        |
+| [Playbook](/backend/knowledge-cards/playbook/)                                             | 場景化處置如何快速啟動與執行                   | incident workflow、recovery          |
+| [CI Pipeline](/backend/knowledge-cards/ci-pipeline/)                                       | 合併前如何自動驗證品質與相容性                 | tests、checks、merge gate            |
+| [Load Test](/backend/knowledge-cards/load-test/)                                           | 預期流量下如何驗證容量與延遲                   | performance、SLO、capacity           |
+| [Chaos Test](/backend/knowledge-cards/chaos-test/)                                         | 受控故障注入如何驗證韌性                       | resilience、failover、runbook        |
+| [Game Day](/backend/knowledge-cards/game-day/)                                             | 事故演練如何驗證流程與協作                     | drill、readiness、training           |
+| [Incident Severity](/backend/knowledge-cards/incident-severity/)                           | 事故如何依產品影響分級                         | on-call、incident、SLO               |
+| [Incident Command System](/backend/knowledge-cards/incident-command-system/)               | 事故期間如何分配指揮與執行角色                 | commander、scribe、owner             |
+| [Incident Communication Channel](/backend/knowledge-cards/incident-communication-channel/) | 事故期間如何同步對內對外資訊                   | internal chat、status update、bridge |
+| [Escalation Policy](/backend/knowledge-cards/escalation-policy/)                           | 事故無回應或無進展時如何升級                   | on-call、paging、handover            |
+| [Incident Timeline](/backend/knowledge-cards/incident-timeline/)                           | 事故事件如何形成一致時間軸                     | incident log、communication          |
+| [Evidence Package](/backend/knowledge-cards/evidence-package/)                             | 觀測與事故證據如何交接與回放                   | observability、verification、PIR     |
+| [Time Range](/backend/knowledge-cards/time-range/)                                         | 證據如何保留明確時間窗                         | evidence、incident timeline          |
+| [Query Link](/backend/knowledge-cards/query-link/)                                         | 證據如何保留可重跑查詢入口                     | evidence、handoff                    |
+| [Data Quality](/backend/knowledge-cards/data-quality/)                                     | 證據如何標示完整度與限制                       | evidence、sampling、freshness        |
+| [Confidence](/backend/knowledge-cards/confidence/)                                         | 證據如何標示判讀信心等級                       | evidence、gate decision              |
+| [Known Gap](/backend/knowledge-cards/known-gap/)                                           | 證據如何保存已知缺口                           | evidence、PIR、readiness             |
+| [Incident Decision Log](/backend/knowledge-cards/incident-decision-log/)                   | 事故決策如何保存證據與回退條件                 | IC handoff、PIR、status update       |
+| [Steady State](/backend/knowledge-cards/steady-state/)                                     | 實驗與事故恢復如何定義成功狀態                 | chaos、DR、recovery                  |
+| [Blast Radius](/backend/knowledge-cards/blast-radius/)                                     | 故障影響面如何估算與隔離                       | dependency、shared resource          |
+| [Noisy Neighbor（共用資源的鄰居干擾）](/backend/knowledge-cards/noisy-neighbor/)           | 共用同一份硬體的工作負載如何互相拖慢           | 共用主機、虛擬機、steal              |
+| [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)                           | 事故期間何時回滾與回切                         | deployment、release gate             |
+| [Post-Incident Review](/backend/knowledge-cards/post-incident-review/)                     | 事故後如何形成改進閉環                         | retrospective、action items          |
+| [RCA](/backend/knowledge-cards/rca/)                                                       | 根因分析如何從證據推導改進                     | timeline、control gap                |
+| [RTO](/backend/knowledge-cards/rto/)                                                       | 服務回復時間目標如何定義                       | SLA/SLO、DR                          |
+| [RPO](/backend/knowledge-cards/rpo/)                                                       | 可接受資料損失窗口如何定義                     | backup、replication                  |
+| [MTTR](/backend/knowledge-cards/mttr/)                                                     | 平均修復時間如何反映處置能力                   | incident metrics、review             |
+| [Point-in-Time Recovery](/backend/knowledge-cards/point-in-time-recovery/)                 | 資料如何還原到過去任意時間點                   | base backup、WAL、RPO                |
+| [Corruption Recovery](/backend/knowledge-cards/corruption-recovery/)                       | 資料損毀事故如何辨識來源並處置                 | checksum、evidence、restore          |
+| [Containment](/backend/knowledge-cards/containment/)                                       | 擴散面如何被限制以爭取回復時間                 | 止血、隔離                           |
+| [Impact Scope](/backend/knowledge-cards/impact-scope/)                                     | 受影響範圍如何被盤點                           | 通報、責任判讀                       |
+| [Stakeholder Mapping](/backend/knowledge-cards/stakeholder-mapping/)                       | 通報對象如何分層並對應 owner                   | 分層通報、對外溝通                   |
+| [Status Page](/backend/knowledge-cards/status-page/)                                       | 對外狀態頁如何承接可用性承諾                   | 通報、可用性承諾                     |
+| [Action Item Closure](/backend/knowledge-cards/action-item-closure/)                       | 復盤的行動項如何被驗證完成                     | 復盤、驗收證據                       |
+| [Session Invalidation](/backend/knowledge-cards/session-invalidation/)                     | 事件之後既有會話如何失效                       | 重放、撤銷                           |
+| [Dwell Time（攻擊者駐留時間）](/backend/knowledge-cards/dwell-time/)                       | 攻擊者被發現前待了多久、清查要追溯到哪一天     | 根除、清查範圍、入侵報告             |
+| [Digital Forensics（數位鑑識）](/backend/knowledge-cards/digital-forensics/)               | 證據怎麼在處置前保全、結論怎麼經得起複驗       | 保管鏈、外部鑑識、擷取次序           |
 
 ## 資安與資料保護
 
-| 卡片                                                                                             | 核心問題                             | 常見出現位置                     |
-| ------------------------------------------------------------------------------------------------ | ------------------------------------ | -------------------------------- |
-| [Authorization](/backend/knowledge-cards/authorization/)                                         | 誰能對哪些資源執行哪些操作           | RBAC、ABAC、tenant               |
-| [Authorization Scope](/backend/knowledge-cards/authorization-scope/)                             | 一次授權的顆粒由誰決定               | OAuth scope、API key 權限        |
-| [HSM (Hardware Security Module)](/backend/knowledge-cards/hsm/)                                  | 簽章金鑰如何在硬體邊界內受保護       | KMS、key ceremony、quorum        |
-| [Step-Up Authentication](/backend/knowledge-cards/step-up-authentication/)                       | 高風險操作如何動態升級認證強度       | MFA fatigue、session、passkey    |
-| [Authentication](/backend/knowledge-cards/authentication/)                                       | 系統如何確認呼叫者身份               | login、API key、mTLS             |
-| [Credential](/backend/knowledge-cards/credential/)                                               | 身分與系統存取用秘密如何保存與輪替   | API key、password、private key   |
-| [Workload Identity](/backend/knowledge-cards/workload-identity/)                                 | 機器身分如何與人類身分分開治理       | Kubernetes、CI/CD、跨雲整合      |
-| [Token Revocation](/backend/knowledge-cards/token-revocation/)                                   | 既有 token 如何在事件節奏內失效      | 事件收斂、短期 token、introspect |
-| [IAM](/backend/knowledge-cards/iam/)                                                             | 身分與權限如何集中治理               | SSO、roles、policy               |
-| [BOLA / IDOR](/backend/knowledge-cards/bola-idor/)                                               | 使用者如何被限制只能存取授權物件     | API、resource ID                 |
-| [BOPLA](/backend/knowledge-cards/bopla/)                                                         | 欄位層級如何授權讀寫                 | DTO、field policy                |
-| [Mass Assignment](/backend/knowledge-cards/mass-assignment/)                                     | 自動綁定欄位如何造成未授權修改       | API、ORM                         |
-| [Excessive Data Exposure](/backend/knowledge-cards/excessive-data-exposure/)                     | API 回傳過多資料如何增加外洩風險     | response、DTO                    |
-| [Unrestricted Resource Consumption](/backend/knowledge-cards/unrestricted-resource-consumption/) | API 如何限制昂貴資源使用             | upload、export、query            |
-| [Function-Level Authorization](/backend/knowledge-cards/function-level-authorization/)           | 功能操作本身如何授權                 | refund、export、admin            |
-| [Tenant Boundary](/backend/knowledge-cards/tenant-boundary/)                                     | 多租戶資料與資源如何隔離             | SaaS、RBAC                       |
-| [Least Privilege](/backend/knowledge-cards/least-privilege/)                                     | 身份如何只取得必要權限               | IAM、database user               |
-| [Security Misconfiguration](/backend/knowledge-cards/security-misconfiguration/)                 | 設定錯誤如何暴露內部能力             | CORS、debug、cloud               |
-| [Attack Surface](/backend/knowledge-cards/attack-surface/)                                       | 系統哪些對外暴露面最先被探測         | public API、admin route、webhook |
-| [Trust Boundary](/backend/knowledge-cards/trust-boundary/)                                       | 哪些位置要重建信任假設               | auth boundary、tenant、network   |
-| [Lateral Movement（橫向移動）](/backend/knowledge-cards/lateral-movement/)                       | 一台被入侵之後攻擊者還連得到哪些機器 | VPN、被拿下的機器、主機上的憑證  |
-| [Zero Trust（零信任）](/backend/knowledge-cards/zero-trust/)                                     | 連線能不能因為來自內網就被信任       | VPN、邊界模型、應用層認證        |
-| [WORM Storage（不可變儲存）](/backend/knowledge-cards/worm-storage/)                             | 寫入憑證外洩之後備份還刪不刪得掉     | 物件鎖定、版本保留、append-only  |
-| [Abuse Case](/backend/knowledge-cards/abuse-case/)                                               | 合法功能如何被惡意轉用               | export、invite、reset            |
-| [Threat Model](/backend/knowledge-cards/threat-model/)                                           | 風險的位置如何被逐項列舉             | 資產、邊界、攻擊者能力假設       |
-| [WAF](/backend/knowledge-cards/waf/)                                                             | 入口層如何過濾常見攻擊與濫用         | edge、bot、attack                |
-| [Feature Flag](/backend/knowledge-cards/feature-flag/)                                           | 功能開關如何分離部署與啟用           | rollout、experiment、rollback    |
-| [Security Exception](/backend/knowledge-cards/security-exception/)                               | 風險例外如何以期限與關閉條件治理     | risk acceptance、governance      |
-| [Release Freeze](/backend/knowledge-cards/release-freeze/)                                       | 高風險期間如何暫停特定變更           | incident、vulnerability window   |
-| [Tripwire](/backend/knowledge-cards/tripwire/)                                                   | 風險決策何時自動回到重評估流程       | threshold、escalation            |
-| [Allowlist](/backend/knowledge-cards/allowlist/)                                                 | 例外放行如何維持可控範圍             | freeze exception、policy control |
-| [Input Validation](/backend/knowledge-cards/input-validation/)                                   | 入口資料如何檢查格式與語意           | API、webhook                     |
-| [SSRF](/backend/knowledge-cards/ssrf/)                                                           | 伺服器端請求如何被濫用               | URL fetch、webhook               |
-| [PII](/backend/knowledge-cards/pii/)                                                             | 可識別個人的資料如何保護             | masking、retention               |
-| [Data Classification](/backend/knowledge-cards/data-classification/)                             | 資料分級如何決定保護規則             | security、compliance             |
-| [Data Masking](/backend/knowledge-cards/data-masking/)                                           | 敏感資料如何降低暴露                 | export、log、support tool        |
-| [Secret Management](/backend/knowledge-cards/secret-management/)                                 | token、key、password 如何保存與輪替  | credential、deployment           |
-| [TLS / mTLS](/backend/knowledge-cards/tls-mtls/)                                                 | 傳輸加密與雙向身份驗證如何保護資料流 | service-to-service、API          |
-| [Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)         | 網站憑證從簽發到續期與撤銷如何治理   | HTTPS、edge、ingress             |
-| [ACME Automation](/backend/knowledge-cards/acme-automation/)                                     | 網站憑證如何自動簽發與續期           | Let's Encrypt、DNS-01、HTTP-01   |
-| [Certificate Chain and Trust Root](/backend/knowledge-cards/certificate-chain-trust/)            | 憑證鏈與信任根如何影響握手           | intermediate CA、trust store     |
-| [Certificate Rotation and Renewal](/backend/knowledge-cards/certificate-rotation-renewal/)       | 憑證與私鑰如何不中斷更新             | expiry、zero-downtime            |
-| [Certificate Revocation](/backend/knowledge-cards/certificate-revocation/)                       | 憑證失效時如何撤銷與替換             | key compromise、incident         |
-| [Artifact Provenance](/backend/knowledge-cards/artifact-provenance/)                             | 交付物來源與完整性如何建立可驗證信任 | CI、supply chain、release gate   |
-| [Audit Log](/backend/knowledge-cards/audit-log/)                                                 | 高風險操作如何留下責任證據           | admin、export、permission        |
-| [Row-Level Security](/backend/knowledge-cards/row-level-security/)                               | 資料庫如何用 policy 過濾可見的 row   | RLS、多租戶、policy              |
-| [Message Authentication](/backend/knowledge-cards/message-authentication/)                       | 共享密鑰如何同時證明來源與完整性     | HMAC、webhook、簽章素材          |
-| [Replay Attack](/backend/knowledge-cards/replay-attack/)                                         | 合法請求被原封不動重送時如何收斂     | 新鮮度、去重、webhook            |
-| [Clock Skew](/backend/knowledge-cards/clock-skew/)                                               | 跨機器的時間落差如何影響時效判斷     | 時效窗口、憑證有效期、NTP        |
-| [Non-repudiation](/backend/knowledge-cards/non-repudiation/)                                     | 產生者能否否認如何決定簽章選型       | 非對稱簽章、追責、稽核           |
-| [Obfuscation](/backend/knowledge-cards/obfuscation/)                                             | 內容不以明文出現能擋住誰             | 混淆、客戶端金鑰、載體           |
-| [Defense in Depth](/backend/knowledge-cards/defense-in-depth/)                                   | 多層控制何時真的獨立生效             | 分層、弱環節辯護、blast radius   |
-| [Timing Attack](/backend/knowledge-cards/timing-attack/)                                         | 執行時間差異如何洩漏秘密             | 等時比較、token 驗證、側通道     |
-| [At-Rest Encryption](/backend/knowledge-cards/at-rest-encryption/)                               | 落地資料如何在儲存層加密             | tablespace、backup、金鑰         |
-| [Salt](/backend/knowledge-cards/salt/)                                                           | 相同密碼如何產生不同的雜湊值         | 密碼儲存、預算表反查、唯一性     |
-| [Credential Stuffing](/backend/knowledge-cards/credential-stuffing/)                             | 別處外洩的帳密拿來登入自己的服務     | 登入端點、外洩清單、第二因子     |
-| [Key Management](/backend/knowledge-cards/key-management/)                                       | 加密金鑰如何產生、保存與輪替         | KMS、keyring、rotation           |
-| [Break-Glass Access](/backend/knowledge-cards/break-glass-access/)                               | 緊急高權限存取如何用工單與時限治理   | emergency、ticket、audit         |
-| [Same-Origin Policy](/backend/knowledge-cards/same-origin-policy/)                               | 瀏覽器隔離的是讀取而非送出           | CORS、跨來源、前端整合           |
-| [Cross-Site Request Forgery](/backend/knowledge-cards/cross-site-request-forgery/)               | 攻擊者不必讀到憑證就能發動什麼       | cookie、SameSite、狀態變更端點   |
-| [Cross-Site Scripting](/backend/knowledge-cards/cross-site-scripting/)                           | 程式碼跑進來源之後取得哪些能力       | 輸出編碼、CSP、第三方腳本        |
-| [Passkey](/backend/knowledge-cards/passkey/)                                                     | 金鑰對取代共享秘密之後上限在哪       | 註冊起點、回復路徑、平台同步     |
-| [Registrable Domain](/backend/knowledge-cards/registrable-domain/)                               | 「站」的切點落在哪一層               | SameSite、子網域、信任邊界       |
-| [Identity Provider](/backend/knowledge-cards/identity-provider/)                                 | 登入交出去之後這邊還剩什麼責任       | SSO、SAML、OIDC、委派登入        |
-| [Pepper](/backend/knowledge-cards/pepper/)                                                       | 資料庫之外那把金鑰擋得住哪一種外洩   | 密碼儲存、金鑰住址、輪替         |
-| [Memory-Hard Function](/backend/knowledge-cards/memory-hard-function/)                           | 密碼雜湊向攻擊者收的是哪一種費       | Argon2、scrypt、平行度           |
-| [Content Security Policy](/backend/knowledge-cards/content-security-policy/)                     | 注入成立之後那段程式碼還能做什麼     | CSP、第三方腳本、違規回報        |
+| 卡片                                                                                                            | 核心問題                                     | 常見出現位置                            |
+| --------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------- |
+| [Authorization](/backend/knowledge-cards/authorization/)                                                        | 誰能對哪些資源執行哪些操作                   | RBAC、ABAC、tenant                      |
+| [Authorization Scope](/backend/knowledge-cards/authorization-scope/)                                            | 一次授權的顆粒由誰決定                       | OAuth scope、API key 權限               |
+| [HSM (Hardware Security Module)](/backend/knowledge-cards/hsm/)                                                 | 簽章金鑰如何在硬體邊界內受保護               | KMS、key ceremony、quorum               |
+| [Step-Up Authentication](/backend/knowledge-cards/step-up-authentication/)                                      | 高風險操作如何動態升級認證強度               | MFA fatigue、session、passkey           |
+| [Authentication](/backend/knowledge-cards/authentication/)                                                      | 系統如何確認呼叫者身份                       | login、API key、mTLS                    |
+| [Credential（存取憑證）](/backend/knowledge-cards/credential/)                                                  | 身分與系統存取用秘密如何保存與輪替           | API key、password、private key          |
+| [Certificate（數位憑證）](/backend/knowledge-cards/certificate/)                                                | 公鑰綁定身分的公開資料與要保密的私鑰怎麼分   | TLS、mTLS、X.509                        |
+| [Workload Identity](/backend/knowledge-cards/workload-identity/)                                                | 機器身分如何與人類身分分開治理               | Kubernetes、CI/CD、跨雲整合             |
+| [Token Revocation](/backend/knowledge-cards/token-revocation/)                                                  | 既有 token 如何在事件節奏內失效              | 事件收斂、短期 token、introspect        |
+| [IAM](/backend/knowledge-cards/iam/)                                                                            | 身分與權限如何集中治理                       | SSO、roles、policy                      |
+| [BOLA / IDOR](/backend/knowledge-cards/bola-idor/)                                                              | 使用者如何被限制只能存取授權物件             | API、resource ID                        |
+| [BOPLA](/backend/knowledge-cards/bopla/)                                                                        | 欄位層級如何授權讀寫                         | DTO、field policy                       |
+| [Mass Assignment](/backend/knowledge-cards/mass-assignment/)                                                    | 自動綁定欄位如何造成未授權修改               | API、ORM                                |
+| [Excessive Data Exposure](/backend/knowledge-cards/excessive-data-exposure/)                                    | API 回傳過多資料如何增加外洩風險             | response、DTO                           |
+| [Unrestricted Resource Consumption](/backend/knowledge-cards/unrestricted-resource-consumption/)                | API 如何限制昂貴資源使用                     | upload、export、query                   |
+| [Function-Level Authorization](/backend/knowledge-cards/function-level-authorization/)                          | 功能操作本身如何授權                         | refund、export、admin                   |
+| [Tenant Boundary](/backend/knowledge-cards/tenant-boundary/)                                                    | 多租戶資料與資源如何隔離                     | SaaS、RBAC                              |
+| [Least Privilege](/backend/knowledge-cards/least-privilege/)                                                    | 身份如何只取得必要權限                       | IAM、database user                      |
+| [Security Misconfiguration](/backend/knowledge-cards/security-misconfiguration/)                                | 設定錯誤如何暴露內部能力                     | CORS、debug、cloud                      |
+| [Attack Surface](/backend/knowledge-cards/attack-surface/)                                                      | 系統哪些對外暴露面最先被探測                 | public API、admin route、webhook        |
+| [Trust Boundary](/backend/knowledge-cards/trust-boundary/)                                                      | 哪些位置要重建信任假設                       | auth boundary、tenant、network          |
+| [Lateral Movement（橫向移動）](/backend/knowledge-cards/lateral-movement/)                                      | 一台被入侵之後攻擊者還連得到哪些機器         | VPN、被拿下的機器、主機上的存取憑證     |
+| [Eradication（根除）](/backend/knowledge-cards/eradication/)                                                    | 止血之後攻擊者留下的立足點要移除到什麼程度   | 重建、存取憑證撤銷、foothold            |
+| [Indicator of Compromise（入侵指標）](/backend/knowledge-cards/indicator-of-compromise/)                        | 怎麼認出同一個攻擊者是否活動過或回來         | IOC、告警、來源位址                     |
+| [Pseudonymization（假名化）](/backend/knowledge-cards/pseudonymization/)                                        | 換成代碼的資料還算不算個人資料、會不會被回推 | HMAC、去識別化、匿名化                  |
+| [Data Controller and Data Processor（控制者與處理者）](/backend/knowledge-cards/data-controller-and-processor/) | 外洩之後誰通報主管機關、誰通知誰             | GDPR、DPA、委託機關                     |
+| [Sub-processor（子處理者）](/backend/knowledge-cards/sub-processor/)                                            | 再委託的供應商外洩時算誰的責任               | 子處理者清單、GDPR 第 28 條             |
+| [Zero Trust（零信任）](/backend/knowledge-cards/zero-trust/)                                                    | 連線能不能因為來自內網就被信任               | VPN、邊界模型、應用層認證               |
+| [WORM Storage（不可變儲存）](/backend/knowledge-cards/worm-storage/)                                            | 寫入憑證外洩之後備份還刪不刪得掉             | 物件鎖定、版本保留、append-only         |
+| [Abuse Case](/backend/knowledge-cards/abuse-case/)                                                              | 合法功能如何被惡意轉用                       | export、invite、reset                   |
+| [Threat Model](/backend/knowledge-cards/threat-model/)                                                          | 風險的位置如何被逐項列舉                     | 資產、邊界、攻擊者能力假設              |
+| [WAF](/backend/knowledge-cards/waf/)                                                                            | 入口層如何過濾常見攻擊與濫用                 | edge、bot、attack                       |
+| [Feature Flag](/backend/knowledge-cards/feature-flag/)                                                          | 功能開關如何分離部署與啟用                   | rollout、experiment、rollback           |
+| [Security Exception](/backend/knowledge-cards/security-exception/)                                              | 風險例外如何以期限與關閉條件治理             | risk acceptance、governance             |
+| [Release Freeze](/backend/knowledge-cards/release-freeze/)                                                      | 高風險期間如何暫停特定變更                   | incident、vulnerability window          |
+| [Tripwire](/backend/knowledge-cards/tripwire/)                                                                  | 風險決策何時自動回到重評估流程               | threshold、escalation                   |
+| [Allowlist](/backend/knowledge-cards/allowlist/)                                                                | 例外放行如何維持可控範圍                     | freeze exception、policy control        |
+| [Input Validation](/backend/knowledge-cards/input-validation/)                                                  | 入口資料如何檢查格式與語意                   | API、webhook                            |
+| [SSRF](/backend/knowledge-cards/ssrf/)                                                                          | 伺服器端請求如何被濫用                       | URL fetch、webhook                      |
+| [PII](/backend/knowledge-cards/pii/)                                                                            | 可識別個人的資料如何保護                     | masking、retention                      |
+| [Data Classification](/backend/knowledge-cards/data-classification/)                                            | 資料分級如何決定保護規則                     | security、compliance                    |
+| [Data Masking](/backend/knowledge-cards/data-masking/)                                                          | 敏感資料如何降低暴露                         | export、log、support tool               |
+| [Secret Management](/backend/knowledge-cards/secret-management/)                                                | token、key、password 如何保存與輪替          | credential、deployment                  |
+| [TLS / mTLS](/backend/knowledge-cards/tls-mtls/)                                                                | 傳輸加密與雙向身份驗證如何保護資料流         | service-to-service、API                 |
+| [Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)                        | 網站憑證從簽發到續期與撤銷如何治理           | HTTPS、edge、ingress                    |
+| [ACME Automation](/backend/knowledge-cards/acme-automation/)                                                    | 網站憑證如何自動簽發與續期                   | Let's Encrypt、DNS-01、HTTP-01          |
+| [Certificate Chain and Trust Root](/backend/knowledge-cards/certificate-chain-trust/)                           | 憑證鏈與信任根如何影響握手                   | intermediate CA、trust store            |
+| [Certificate Rotation and Renewal](/backend/knowledge-cards/certificate-rotation-renewal/)                      | 數位憑證與私鑰如何不中斷更新                 | expiry、zero-downtime                   |
+| [Certificate Revocation](/backend/knowledge-cards/certificate-revocation/)                                      | 數位憑證失效時如何撤銷與替換                 | key compromise、incident                |
+| [Artifact Provenance](/backend/knowledge-cards/artifact-provenance/)                                            | 交付物來源與完整性如何建立可驗證信任         | CI、supply chain、release gate          |
+| [Audit Log](/backend/knowledge-cards/audit-log/)                                                                | 高風險操作如何留下責任證據                   | admin、export、permission               |
+| [Row-Level Security](/backend/knowledge-cards/row-level-security/)                                              | 資料庫如何用 policy 過濾可見的 row           | RLS、多租戶、policy                     |
+| [Message Authentication](/backend/knowledge-cards/message-authentication/)                                      | 共享密鑰如何同時證明來源與完整性             | HMAC、webhook、簽章素材                 |
+| [Replay Attack](/backend/knowledge-cards/replay-attack/)                                                        | 合法請求被原封不動重送時如何收斂             | 新鮮度、去重、webhook                   |
+| [Clock Skew](/backend/knowledge-cards/clock-skew/)                                                              | 跨機器的時間落差如何影響時效判斷             | 時效窗口、存取憑證與數位憑證有效期、NTP |
+| [Non-repudiation](/backend/knowledge-cards/non-repudiation/)                                                    | 產生者能否否認如何決定簽章選型               | 非對稱簽章、追責、稽核                  |
+| [Obfuscation](/backend/knowledge-cards/obfuscation/)                                                            | 內容不以明文出現能擋住誰                     | 混淆、客戶端金鑰、載體                  |
+| [Defense in Depth](/backend/knowledge-cards/defense-in-depth/)                                                  | 多層控制何時真的獨立生效                     | 分層、弱環節辯護、blast radius          |
+| [Timing Attack](/backend/knowledge-cards/timing-attack/)                                                        | 執行時間差異如何洩漏秘密                     | 等時比較、token 驗證、側通道            |
+| [At-Rest Encryption](/backend/knowledge-cards/at-rest-encryption/)                                              | 落地資料如何在儲存層加密                     | tablespace、backup、金鑰                |
+| [Salt](/backend/knowledge-cards/salt/)                                                                          | 相同密碼如何產生不同的雜湊值                 | 密碼儲存、預算表反查、唯一性            |
+| [Credential Stuffing](/backend/knowledge-cards/credential-stuffing/)                                            | 別處外洩的帳密拿來登入自己的服務             | 登入端點、外洩清單、第二因子            |
+| [Key Management](/backend/knowledge-cards/key-management/)                                                      | 加密金鑰如何產生、保存與輪替                 | KMS、keyring、rotation                  |
+| [Break-Glass Access](/backend/knowledge-cards/break-glass-access/)                                              | 緊急高權限存取如何用工單與時限治理           | emergency、ticket、audit                |
+| [Same-Origin Policy](/backend/knowledge-cards/same-origin-policy/)                                              | 瀏覽器隔離的是讀取而非送出                   | CORS、跨來源、前端整合                  |
+| [Cross-Site Request Forgery](/backend/knowledge-cards/cross-site-request-forgery/)                              | 攻擊者不必讀到存取憑證就能發動什麼           | cookie、SameSite、狀態變更端點          |
+| [Cross-Site Scripting](/backend/knowledge-cards/cross-site-scripting/)                                          | 程式碼跑進來源之後取得哪些能力               | 輸出編碼、CSP、第三方腳本               |
+| [Passkey](/backend/knowledge-cards/passkey/)                                                                    | 金鑰對取代共享秘密之後上限在哪               | 註冊起點、回復路徑、平台同步            |
+| [Registrable Domain](/backend/knowledge-cards/registrable-domain/)                                              | 「站」的切點落在哪一層                       | SameSite、子網域、信任邊界              |
+| [Identity Provider](/backend/knowledge-cards/identity-provider/)                                                | 登入交出去之後這邊還剩什麼責任               | SSO、SAML、OIDC、委派登入               |
+| [Pepper](/backend/knowledge-cards/pepper/)                                                                      | 資料庫之外那把金鑰擋得住哪一種外洩           | 密碼儲存、金鑰住址、輪替                |
+| [Memory-Hard Function](/backend/knowledge-cards/memory-hard-function/)                                          | 密碼雜湊向攻擊者收的是哪一種費               | Argon2、scrypt、平行度                  |
+| [Content Security Policy](/backend/knowledge-cards/content-security-policy/)                                    | 注入成立之後那段程式碼還能做什麼             | CSP、第三方腳本、違規回報               |
 
 ## 使用方式
 

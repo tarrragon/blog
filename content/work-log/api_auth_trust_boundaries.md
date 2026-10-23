@@ -27,7 +27,7 @@ tags: ["security", "authentication", "api", "backend", "provisioning"]
 
 ---
 
-> 呼叫方是瀏覽器裡的頁面時，憑證怎麼帶進每個請求（cookie 自動附上與請求標頭明確附上各自的攻擊面）見 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)；登入交給外部身分提供者（SAML / OIDC）的那一側見 [7.38 外部身分與本地紀錄：兩條生命週期在哪裡分岔](/backend/07-security-data-protection/external-identity-local-record-lifecycle/) 與 [7.40 B2B 多租戶的身分接入：這個人屬於哪個租戶由誰說了算](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)。
+> 呼叫方是瀏覽器裡的頁面時，存取憑證怎麼帶進每個請求（cookie 自動附上與請求標頭明確附上各自的攻擊面）見 [7.36 存取憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)；登入交給外部身分提供者（SAML / OIDC）的那一側見 [7.38 外部身分與本地紀錄：兩條生命週期在哪裡分岔](/backend/07-security-data-protection/external-identity-local-record-lifecycle/) 與 [7.40 B2B 多租戶的身分接入：這個人屬於哪個租戶由誰說了算](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)。
 
 ## Layer 1：使用者層（Bearer Token）
 
@@ -139,17 +139,17 @@ B 自問：這請求來自...
 
 ### 常見方案的取捨
 
-| 方案                         | 機制                                   | 撤銷粒度                                   | 適合情境                                | 主要代價                                    |
-| ---------------------------- | -------------------------------------- | ------------------------------------------ | --------------------------------------- | ------------------------------------------- |
-| **Shared Secret**            | 兩邊放同一把字串                       | 全部 caller                                | 內部單一夥伴、低變更頻率                | 多 client 時撤銷會牽動所有人                |
-| **API Key**                  | 每個 client 一把、server 有對照表      | per-client                                 | 對外開放、多 tenant                     | server 需維護 key → identity mapping        |
-| **HMAC 簽章**                | client 用 secret 簽 request body       | per-key                                    | secret 不想經過網路、需防 replay / 改寫 | 兩邊都要實作簽章邏輯、debug 較難            |
-| **mTLS**                     | 雙向 TLS 憑證                          | 撤憑證                                     | 金融、醫療、零信任網路                  | 憑證生命週期管理複雜、CA / CRL 基礎建設成本 |
-| **OAuth Client Credentials** | client_id + secret 換短期 access token | 撤 long-lived secret、短 token 自然 expire | 跨組織、權限粒度需要、需配合 scope      | 多一層 token endpoint、實作成本較高         |
+| 方案                         | 機制                                   | 撤銷粒度                                   | 適合情境                                | 主要代價                                        |
+| ---------------------------- | -------------------------------------- | ------------------------------------------ | --------------------------------------- | ----------------------------------------------- |
+| **Shared Secret**            | 兩邊放同一把字串                       | 全部 caller                                | 內部單一夥伴、低變更頻率                | 多 client 時撤銷會牽動所有人                    |
+| **API Key**                  | 每個 client 一把、server 有對照表      | per-client                                 | 對外開放、多 tenant                     | server 需維護 key → identity mapping            |
+| **HMAC 簽章**                | client 用 secret 簽 request body       | per-key                                    | secret 不想經過網路、需防 replay / 改寫 | 兩邊都要實作簽章邏輯、debug 較難                |
+| **mTLS**                     | 雙向 TLS 憑證                          | 撤 TLS 憑證                                | 金融、醫療、零信任網路                  | TLS 憑證生命週期管理複雜、CA / CRL 基礎建設成本 |
+| **OAuth Client Credentials** | client_id + secret 換短期 access token | 撤 long-lived secret、短 token 自然 expire | 跨組織、權限粒度需要、需配合 scope      | 多一層 token endpoint、實作成本較高             |
 
 選擇預設值的判斷：純內部固定夥伴可從 Shared Secret 起步；對外或多 client 直接上 API Key；公網跨組織 + 需要短期撤銷上 OAuth Client Credentials；合規或高威脅環境用 mTLS。
 
-mTLS 的 CA 階層、憑證生命週期、撤銷機制、nginx / service mesh 整合見 [mTLS 實際怎麼設定與運維](/work-log/mtls_setup_and_operations/)。
+mTLS 的 CA 階層、數位憑證生命週期、撤銷機制、nginx / service mesh 整合見 [mTLS 實際怎麼設定與運維](/work-log/mtls_setup_and_operations/)。
 
 ### Shared Secret 的隱形成本
 
@@ -353,11 +353,11 @@ Layer 3 不引入新的 secret、是「**建立兩邊身分關聯**」的 lifecy
 
 - **Layer 1（使用者）** → [Laravel Sanctum 的 Bearer Token 設計剖析](/work-log/laravel_sanctum_pat_design/)：`{PK}|{secret}` format 為什麼這樣設計、DB 儲存三原則、各語言 constant-time 函式對照、跟 GitHub / Stripe 的設計比較
 - **Layer 2（系統）→ Shared Secret 維運** → [Shared Secret 安全輪替設計](/work-log/shared_secret_rotation/)：雙密過渡期、自動化 rotation 工具（AWS Secrets Manager / Vault / GCP）、緊急 vs 定期流程、多 client 同步難題
-- **Layer 2（系統）→ mTLS 部署** → [mTLS 實際怎麼設定與運維](/work-log/mtls_setup_and_operations/)：CA 階層、憑證生命週期、撤銷機制（CRL / OCSP / short-lived）、nginx / Envoy / service mesh 整合
+- **Layer 2（系統）→ mTLS 部署** → [mTLS 實際怎麼設定與運維](/work-log/mtls_setup_and_operations/)：CA 階層、數位憑證生命週期、撤銷機制（CRL / OCSP / short-lived）、nginx / Envoy / service mesh 整合
 - **Layer 2（系統）→ 選哪一種機制** → [7.34 機器憑證的機制選型](/backend/07-security-data-protection/machine-credential-mechanism-selection/)：秘密要不要在每次呼叫裡送出去、撤銷粒度要多細、選定的機制要什麼基礎建設才跑得起來。本文的「常見方案的取捨」表是同一組選項的實作面對照，該章是選型面的判讀
 - **Layer 2（系統）→ 選了 HMAC 之後** → [7.35 簽章對接的驗證收斂](/backend/07-security-data-protection/signature-integration-verification/)：進入計算的素材怎麼定義、驗簽通過為什麼還擋不住重送
-- **Layer 2（系統）→ 憑證怎麼交到對方手上** → [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)：這個交付動作能不能免掉、核發與請求要不要分人、初次交付與登記。與上面兩篇的分工是那兩篇講機制怎麼運維，這一篇講交付這個動作本身
-- **跨 Layer 1 + 2 → 一個系統代表某個特定的人** → [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)：把「A 代表 B」寫進憑證本身（OAuth token exchange）還是留給每個驗證方自己拼湊，以及換過去之後撤銷粒度要另外做什麼才成立
+- **Layer 2（系統）→ 存取憑證怎麼交到對方手上** → [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)：這個交付動作能不能免掉、核發與請求要不要分人、初次交付與登記。與上面兩篇的分工是那兩篇講機制怎麼運維，這一篇講交付這個動作本身
+- **跨 Layer 1 + 2 → 一個系統代表某個特定的人** → [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)：把「A 代表 B」寫進存取憑證本身（OAuth token exchange）還是留給每個驗證方自己拼湊，以及換過去之後撤銷粒度要另外做什麼才成立
 
 ### 沒展開的延伸議題
 

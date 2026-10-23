@@ -6,7 +6,7 @@ weight: 2
 tags: ["infra", "iam", "organizations", "scp", "multi-account"]
 ---
 
-單一帳號走到某個規模後，帳號本身會變成隔離的瓶頸。IAM policy 能控制「誰能做什麼」，但同一個帳號裡的所有資源共用同一組 service quota、同一份 CloudTrail、同一張帳單，一個團隊的操作失誤或資源耗盡會波及整個帳號。把環境拆成獨立帳號，讓每個帳號只承載一個職責，是 IAM 之上的第二層隔離 — [模組二的身分與憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)控制的是「誰能做什麼」，帳號邊界控制的是「做錯了波及多遠」。
+單一帳號走到某個規模後，帳號本身會變成隔離的瓶頸。IAM policy 能控制「誰能做什麼」，但同一個帳號裡的所有資源共用同一組 service quota、同一份 CloudTrail、同一張帳單，一個團隊的操作失誤或資源耗盡會波及整個帳號。把環境拆成獨立帳號，讓每個帳號只承載一個職責，是 IAM 之上的第二層隔離 — [模組二的身分與存取憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)控制的是「誰能做什麼」，帳號邊界控制的是「做錯了波及多遠」。
 
 ## 單帳號 vs 多帳號：什麼時候該切
 
@@ -189,7 +189,7 @@ Organizations 的附帶收益是合併帳單（Consolidated Billing）。所有�
 
 ## 跨分類引用
 
-- → [身分與憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：IAM role / policy / OIDC 是帳號內的身分控制，本篇是帳號間的隔離
+- → [身分與存取憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：IAM role / policy / OIDC 是帳號內的身分控制，本篇是帳號間的隔離
 - → [環境分離與模組化](/infra/04-environment-separation/directory-module-parameterization/)：目錄與 state 分離環境的 IaC，帳號分離是雲端資源層的對應
 - → [成本可見性](/infra/08-governance-habits/cost-visibility-rhythm/)：合併帳單 + tagging 的成本歸屬
 - → [infra 走 PR 流程](/infra/07-infra-as-pr/plan-review-apply-guardrails/)：SCP 的 JSON 存 repo、變更走 PR review

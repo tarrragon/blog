@@ -86,7 +86,7 @@ Conversions API 讓網站的伺服器直接把事件 POST 到 Meta 的 Graph API
 - `action_source` 標明事件發生在哪裡，網站事件填 `website`。Meta 對網站事件另外要求 `event_source_url`（事件發生的頁面網址，網域要與 Meta 後台驗證過的網域一致）與 `client_user_agent`。
 - `user_data` 是 Meta 用來把這筆事件對回某個 Meta 使用者的資料。`fbp`、`fbc` 從請求帶上來的 cookie 讀，`client_ip_address` 與 `client_user_agent` 從下單那一次請求的 header 讀，這四個欄位原樣送出；email、電話這類個人資料要先依 Meta 規定的方式正規化（去空白、轉小寫等），再做 SHA-256 雜湊才送。給的欄位越多，Events Manager 顯示的事件比對品質（Event Match Quality）越高。
 
-請求要帶 Meta 發給這個 Pixel 的 access token，這個 token 只能放在伺服器上：放進前端程式碼等於公開，任何人都能用它往這個 Pixel 灌假事件。前端憑證會被提取的機制見 [Client-side SDK 認證的根本限制](/monitoring/07-security-privacy/client-sdk-authentication/)。`user_data` 裡雜湊過的 email 仍然是可以對回個人的資料，送出前的同意與用途說明照 [GDPR 最小化原則的工程落地](/monitoring/07-security-privacy/gdpr-minimization/) 的原則處理。
+請求要帶 Meta 發給這個 Pixel 的 access token，這個 token 只能放在伺服器上：放進前端程式碼等於公開，任何人都能用它往這個 Pixel 灌假事件。前端程式碼裡的存取憑證會被提取的機制見 [Client-side SDK 認證的根本限制](/monitoring/07-security-privacy/client-sdk-authentication/)。`user_data` 裡雜湊過的 email 仍然是可以對回個人的資料，送出前的同意與用途說明照 [GDPR 最小化原則的工程落地](/monitoring/07-security-privacy/gdpr-minimization/) 的原則處理。
 
 ## 兩路並送時的去重規則
 

@@ -24,7 +24,7 @@ tags: ["backend", "security"]
 
 - 入口暴露面 → [7.3](../entrypoint-and-server-protection/)
 - 資料外洩 → [7.4](../data-protection-and-masking-governance/)
-- 傳輸 / 憑證信任 → [7.5](../transport-trust-and-certificate-lifecycle/)
+- 傳輸 / 數位憑證信任 → [7.5](../transport-trust-and-certificate-lifecycle/)
 - 機器憑證 → [7.6](../secrets-and-machine-credential-governance/)
 - [workload identity](/backend/knowledge-cards/workload-identity/) → [7.10](../workload-identity-and-federated-trust/)
 - 偵測訊號 → [7.13](../detection-coverage-and-signal-governance/)
@@ -66,7 +66,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 | 登入驗證節奏失衡       | 異常驗證密度、異常地理切換、連續高風險操作                        | 身分擴散速度提升                                       | [authentication](/backend/knowledge-cards/authentication/)、[incident-severity](/backend/knowledge-cards/incident-severity/)           | `08 incident response` |
 | 授權範圍擴張過快       | 高權限操作集中、代理操作鏈過長                                    | 權限濫用影響面擴大                                     | [authorization](/backend/knowledge-cards/authorization/)、[least-privilege](/backend/knowledge-cards/least-privilege/)                 | `08 incident response` |
 | 會話失效節奏落後       | 修補後異常 session 持續、token 存續過久                           | 事件關閉時間延長                                       | [session-invalidation](/backend/knowledge-cards/session-invalidation/)、[token-revocation](/backend/knowledge-cards/token-revocation/) | `08 + 05`              |
-| 供應商身分鏈傳導       | 外部事件後內部憑證存續比例偏高                                    | 內部信任邊界承受外部衝擊                               | [credential](/backend/knowledge-cards/credential/)、[containment](/backend/knowledge-cards/containment/)                               | `08 + 06`              |
+| 供應商身分鏈傳導       | 外部事件後內部存取憑證存續比例偏高                                | 內部信任邊界承受外部衝擊                               | [credential](/backend/knowledge-cards/credential/)、[containment](/backend/knowledge-cards/containment/)                               | `08 + 06`              |
 | 單人裝置認證邊界轉移   | device 失竊後生物辨識可繞過、共享密鑰存本機、無中央會話可遠端失效 | 認證邊界落在 device 層、單點失效即全失效               | [authentication](/backend/knowledge-cards/authentication/)、裝置綁定 + 共享密鑰                                                        | `05 + 08`              |
 | 終端使用者登入節奏失控 | 整體登入失敗率上升而個別帳號的失敗次數都在門檻之下                | 別處外洩的帳密可直接登入成功、按帳號計數的防護看不到它 | [credential stuffing](/backend/knowledge-cards/credential-stuffing/)、[authentication](/backend/knowledge-cards/authentication/)       | `08 + 05`              |
 
@@ -78,13 +78,13 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 **授權範圍擴張過快**出現在長出代理操作能力的內部工具：客服要能替使用者查訂單、營運要能替商家改設定、管理後台要能切換身分重現問題。這些能力各自都有正當理由，而權限模型多半用角色承接，於是角色隨功能一路累積。識別特徵是系統裡有一個叫「管理員」的角色，而沒有人列得出它現在能做什麼——那份清單只存在於程式碼的判斷式裡。
 
-**會話失效節奏落後**出現在身分憑證有多個發行方的系統：SSO 發一種、API 金鑰是另一種、個人存取權杖第三種、裝了的 OAuth 應用各自持有第四種。每一種在導入當下都有清楚的用途，累積起來卻沒有任何地方記錄這個人總共握有幾種身分憑證。識別的檢查動作是挑一個離職超過半年的帳號，把各個發行方的紀錄逐一調出來對帳——只要有任何一方還留著有效的材料，這一格就成立。
+**會話失效節奏落後**出現在使用者憑證有多個發行方的系統：SSO 發一種、API 金鑰是另一種、個人存取權杖第三種、裝了的 OAuth 應用各自持有第四種。每一種在導入當下都有清楚的用途，累積起來卻沒有任何地方記錄這個人總共握有幾種使用者憑證。識別的檢查動作是挑一個離職超過半年的帳號，把各個發行方的紀錄逐一調出來對帳——只要有任何一方還留著有效的材料，這一格就成立。
 
 **終端使用者登入節奏失控**出現在面向一般消費者、而使用者自己設密碼的服務。成因不在自己這邊——使用者在數十個服務用同一組密碼，其中任何一家外洩，這裡的登入端點就多了一批可以直接試的真密碼。使用者群體與大型外洩事件的重疊度決定這一格的深淺，面向一般消費者的服務重疊度最高。識別的檢查動作是把登入失敗率拆兩層看：整體失敗率上升而個別帳號的失敗次數都在鎖定門檻之下時，這一格已經成形——按帳號計數的防護結構上看不到它。
 
 **供應商身分鏈傳導**在什麼都自己做的系統上不成立，而那樣的系統幾乎不存在——登入交給 SSO 供應商、支援工單走第三方平台、CI 服務持有原始碼倉庫的存取權，每一項都是理性的外包決定。所以這一格的問題是深淺而非有無，而深淺與組織規模成反比：越小的組織外包比例越高。識別特徵是存在一個外部系統，它那邊的帳號被盜之後自己這邊會發生事情，而那條因果鏈通常沒有寫在任何一份自己的文件裡。
 
-五個節點裡會話失效的後果最不直觀——「事件關閉時間延長」聽起來像流程指標而非風險。其餘四個不另寫：登入驗證與授權擴張的後果欄已經把話講完（誤點一次就進來、影響面擴大），供應商身分鏈傳導與終端使用者登入節奏在下方各有一節展開，前者還帶兩個真實案例。它的失敗長這樣：某位員工的帳號被回報異常，處置照著手冊跑完——密碼重設、SSO 的 session 全部踢掉、當事人確認登不進去了，事件就此關閉。幾週後同一個帳號的個人存取權杖仍在拉取倉庫內容，因為那把權杖是幾年前為了跑一次資料匯出而開的，它不經過 SSO、不受密碼重設影響，發行紀錄只留在當時的一則對話裡。查不出來的原因是撤銷動作分散在各個發行方，每一方都正確地完成了自己那一份並回報完成，而沒有任何一方負責回答「這個人還剩下什麼」。補起來要先建出身分憑證的清單，而清單本身要靠翻遍各系統的後台才生得出來。清單的欄位與維持方式走 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)（機器那一側的 inventory 與這一份是同一套欄位），撤銷動作本身的分工見下方[高權限工具的會話收斂節奏](#高權限工具的會話收斂節奏)。
+五個節點裡會話失效的後果最不直觀——「事件關閉時間延長」聽起來像流程指標而非風險。其餘四個不另寫：登入驗證與授權擴張的後果欄已經把話講完（誤點一次就進來、影響面擴大），供應商身分鏈傳導與終端使用者登入節奏在下方各有一節展開，前者還帶兩個真實案例。它的失敗長這樣：某位員工的帳號被回報異常，處置照著手冊跑完——密碼重設、SSO 的 session 全部踢掉、當事人確認登不進去了，事件就此關閉。幾週後同一個帳號的個人存取權杖仍在拉取倉庫內容，因為那把權杖是幾年前為了跑一次資料匯出而開的，它不經過 SSO、不受密碼重設影響，發行紀錄只留在當時的一則對話裡。查不出來的原因是撤銷動作分散在各個發行方，每一方都正確地完成了自己那一份並回報完成，而沒有任何一方負責回答「這個人還剩下什麼」。補起來要先建出使用者憑證的清單，而清單本身要靠翻遍各系統的後台才生得出來。清單的欄位與維持方式走 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)（機器那一側的 inventory 與這一份是同一套欄位），撤銷動作本身的分工見下方[高權限工具的會話收斂節奏](#高權限工具的會話收斂節奏)。
 
 ## 終端使用者的登入節奏
 
@@ -102,8 +102,8 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 本章「供應商身分鏈傳導」問題節點是跨章 SSoT——其他章節從不同 layer 補同議題的 specific 訊號：
 
-- [7.5 第三方信任重評估延遲](../transport-trust-and-certificate-lifecycle/)：傳輸層的 specific 訊號（憑證收斂滯後）
-- [7.6 供應商事件傳導未收斂](../secrets-and-machine-credential-governance/)：機器憑證層的 specific 訊號（憑證仍活躍）
+- [7.5 第三方信任重評估延遲](../transport-trust-and-certificate-lifecycle/)：傳輸層的 specific 訊號（數位憑證收斂滯後）
+- [7.6 供應商事件傳導未收斂](../secrets-and-machine-credential-governance/)：機器憑證層的 specific 訊號（機器憑證仍活躍）
 - [7.10 第三方授權範圍跟事件傳導半徑](../workload-identity-and-federated-trust/#第三方授權範圍跟事件傳導半徑)：workload identity 層的 specific 訊號（[federation](/backend/knowledge-cards/federation/) token scope 過寬）
 - [7.29 第三方授權範圍過寬](../api-authentication-trust-boundaries/#跨章議題交叉引用)：API 整合層的 specific 訊號（授權當下的 scope 決定事件發生時的暴露面）
 
@@ -121,7 +121,7 @@ MFA fatigue 是身分層擴散風險的代表機制：登入挑戰可被使用�
 
 授權範圍擴張過快的收斂點是把代理操作與直接操作分成兩種授權，而不是定期清理權限。客服「能查訂單」與客服「能以某位使用者的身分查訂單」是不同的能力：前者的資源邊界由操作類型決定（訂單這一類資料），後者的資源邊界由被代理的對象決定（那位使用者看得到的一切）。用角色承接時兩者長得一樣——都是角色上的一個項目——所以角色沿著功能一路長大，而每一次擴張在當下都有正當理由。
 
-判讀軸是問這個操作的資源邊界由什麼決定。由操作類型決定的放角色，因為它的範圍是靜態的、可以列舉；由被代理對象決定的要另外一層，那一層帶三樣角色層沒有的東西：發起的理由、有效時窗、以及紀錄裡的雙重歸屬（哪個員工、以誰的身分）。缺這三樣時，[稽核紀錄](/backend/knowledge-cards/audit-log/)只看得到「某位使用者做了什麼」，看不到那其實是客服代做的。客服以帳號查資料狀態的查詢工具是這一型的實例，它的欄位遮罩、附單號與稽核見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#客服查詢工具的權限) 的〈客服查詢工具的權限〉。
+判讀軸是問這個操作的資源邊界由什麼決定。由操作類型決定的放角色，因為它的範圍是靜態的、可以列舉；由被代理對象決定的要另外一層，那一層帶三樣角色層沒有的東西：發起的理由、有效時窗、以及紀錄裡的雙重歸屬（哪個員工、以誰的身分）。缺這三樣時，[稽核紀錄](/backend/knowledge-cards/audit-log/)只看得到「某位使用者做了什麼」，看不到那其實是客服代做的。客服以帳號查資料狀態的查詢工具（[客服後台](/backend/knowledge-cards/internal-admin-tool/)）是這一型的實例，它的欄位遮罩、附單號與稽核見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#客服查詢工具的權限) 的〈客服查詢工具的權限〉。
 
 這個結構與身分層的 [step-up 驗證](/backend/knowledge-cards/step-up-authentication/) 同形而不同層：step-up 把「登入成功」與「執行高風險操作」拆開、提高的是認證強度；代理授權把「持有這個角色」與「現在要代理某人」拆開、加的是有範圍與時窗的臨時授予，相鄰形態是 [break-glass access](/backend/knowledge-cards/break-glass-access/)。兩層獨立成立——身分層做了 step-up 而授權層沒拆時，攻擊者取得的是一個已經通過強認證、且能代理任何人的會話。
 
@@ -129,7 +129,7 @@ MFA fatigue 是身分層擴散風險的代表機制：登入挑戰可被使用�
 
 判讀訊號裡的「代理操作鏈過長」指的是多跳代理——某個員工以 B 的身分操作，而 B 本身也是一個代理身分。多跳本身有正當形態（廠商工程師經合作夥伴帳號、自動化代理處理已在代理狀態的租戶），問題出在歸屬：每一跳讓歸屬多一層轉換，而稽核紀錄多半只留最後一跳。
 
-收斂條件因此掛在紀錄能力上，而不是一律禁止：紀錄承載得了整條鏈時多跳可以開放，承載不了時代理不可遞移。既有標準有對應的表達方式：OAuth 2.0 Token Exchange 用 `act` claim 記錄「誰代表誰」，而這個欄位支援巢狀，正是為了保留完整的委任鏈。這種憑證的形態與最小判斷標準見 [7.29 身分維度分層模型](../api-authentication-trust-boundaries/#身分維度分層模型) 的委任型段落；機制選型（交換流程、兩端各自的撤銷路徑、驗證方要檢查哪些欄位）見 [7.33 委任型憑證](../delegated-credential-selection/)。
+收斂條件因此掛在紀錄能力上，而不是一律禁止：紀錄承載得了整條鏈時多跳可以開放，承載不了時代理不可遞移。既有標準有對應的表達方式：OAuth 2.0 Token Exchange 用 `act` claim 記錄「誰代表誰」，而這個欄位支援巢狀，正是為了保留完整的委任鏈。這種委任型憑證的形態與最小判斷標準見 [7.29 身分維度分層模型](../api-authentication-trust-boundaries/#身分維度分層模型) 的委任型段落；機制選型（交換流程、兩端各自的撤銷路徑、驗證方要檢查哪些欄位）見 [7.33 委任型憑證](../delegated-credential-selection/)。
 
 對應失效樣式 [代理操作濫用](../red-team/problem-cards/delegated-operation-abuse/) 與 [代理會話上下文混層](../red-team/problem-cards/fp-delegated-session-context-bleed/)。完整的授權模型選型（角色邊界與資源邊界的取捨、角色累積之後的收斂路徑）本模組尚無對應章節，已列入 backlog；在那之前，最小權限的判斷標準見 [least-privilege](/backend/knowledge-cards/least-privilege/)，緊急高權限存取的形態見 [break-glass-access](/backend/knowledge-cards/break-glass-access/)。
 
@@ -145,9 +145,9 @@ MFA fatigue 是身分層擴散風險的代表機制：登入挑戰可被使用�
 
 第三方身分鏈傳導的控制責任由客戶側承擔。當供應商公開事件、內部要有獨立 runbook 讓「閱讀公告」直接 trigger「全域 token 盤點 + 分批輪替」、停留在資訊接收層會把外部風險變成內部事故。這個收斂節奏的快慢、決定供應商事件能維持在「外部新聞」、或升級成「內部事故」。
 
-對應 [Okta + Cloudflare 2023](../red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/)：揭露支援工作流層三層失效控制面 — 支援資料流沒被視為高敏感資產、憑證或會話資料生命周期管理不足、供應商事件到客戶內部輪替流程沒有強制觸發。同事件鏈的 [Cloudflare 2023 follow-through](../red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/) 從客戶側補另外三層 — 供應商事件觸發條件與內部 runbook 連動不足、高權限 token 失效與輪替策略準備度不足、受影響資產盤點與證據保存流程分離。CF follow-through 案例「可落地檢查點」標明 mechanism 是讓供應商公告直接 trigger 內部盤點，並要求「輪替能力涵蓋第三方授權 token、不只內部 session」。
+對應 [Okta + Cloudflare 2023](../red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/)：揭露支援工作流層三層失效控制面 — 支援資料流沒被視為高敏感資產、存取憑證或會話資料生命周期管理不足、供應商事件到客戶內部輪替流程沒有強制觸發。同事件鏈的 [Cloudflare 2023 follow-through](../red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/) 從客戶側補另外三層 — 供應商事件觸發條件與內部 runbook 連動不足、高權限 token 失效與輪替策略準備度不足、受影響資產盤點與證據保存流程分離。CF follow-through 案例「可落地檢查點」標明 mechanism 是讓供應商公告直接 trigger 內部盤點，並要求「輪替能力涵蓋第三方授權 token、不只內部 session」。
 
-以下基於通用工程知識補充：第三方事件的判讀盲點是把控制責任當成廠商的事。廠商只能處理供應商側、客戶側的 token / session / 憑證仍是各組織自己的責任面。內部 runbook 要把「廠商公告」「客戶側盤點」「依範圍輪替」綁成一條 chain、不分先後執行；如果三件事都要等「下一步指引」、控制節奏會比攻擊節奏慢。
+以下基於通用工程知識補充：第三方事件的判讀盲點是把控制責任當成廠商的事。廠商只能處理供應商側、客戶側的 token / session / 存取憑證仍是各組織自己的責任面。內部 runbook 要把「廠商公告」「客戶側盤點」「依範圍輪替」綁成一條 chain、不分先後執行；如果三件事都要等「下一步指引」、控制節奏會比攻擊節奏慢。
 
 ## 單人裝置認證模型
 

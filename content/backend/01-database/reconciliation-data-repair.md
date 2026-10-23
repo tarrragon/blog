@@ -297,14 +297,14 @@ Data repair 常常需要高權限、因此必須接到 audit 與資料保護邊�
 
 這裡要接到 [7.7 Audit Trail 與 Accountability Boundary](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)。資料修復同時是可靠性、資安與合規問題。
 
-### 權限分離與憑證時效
+### 權限分離與存取憑證時效
 
 修復權限不該是常駐權限。日常開發 / SRE 帳號只該有 read-only、修復需要時才透過 break-glass 流程申請臨時 write 權限。
 
 常見實作：
 
 - **角色分離**：reviewer 跟 executor 是不同帳號、reviewer 不能執行、executor 不能 self-approve。系統強制檢查兩個帳號不同、避免一人偽造另一身分。
-- **時效性憑證**：申請 write 權限時帶 expiry（30 分鐘 / 2 小時）、過期自動回收。不是「給了就一直有」、避免遺留高權限帳號變成攻擊面。
+- **時效性存取憑證**：申請 write 權限時帶 expiry（30 分鐘 / 2 小時）、過期自動回收。不是「給了就一直有」、避免遺留高權限帳號變成攻擊面。
 - **範圍限定**：申請時要指定哪張表、哪個 tenant / region。粒度不細的話、一次申請就拿到全 production write、超出實際需求。
 - **同步 alert**：高權限被啟用要同步發 alert 到 security channel、給 security team reviewer 看見。事後若 audit log 跟 alert 對不上、表示權限被繞過。
 
@@ -443,7 +443,7 @@ DB 事故當下、*資安處置* 跟 *業務連續性處置* 要 *分軌並行*�
 | 修復沒 dry-run 直接執行            | 流程違規、事後無法佐證影響範圍       | 事後 audit、把 dry-run 列入 gate                |
 | Recovery 後 derived state 仍錯     | 重建 derived 時 source 還沒修        | 先修 source、再重建 derived                     |
 | Audit log 缺欄位                   | 事故時無法追究、難 rollback          | 補 audit schema、加 reviewer 欄位               |
-| 高權限帳號在非 incident 時段啟用   | 可能誤用或攻擊面、break-glass 沒回收 | 立刻檢查 audit log、回收憑證                    |
+| 高權限帳號在非 incident 時段啟用   | 可能誤用或攻擊面、break-glass 沒回收 | 立刻檢查 audit log、回收存取憑證                |
 | 跨服務 mismatch、各方都推卸        | 對帳 owner 沒分派、責任空白          | 補資料 owner / 對帳 owner / 執行 owner          |
 | anomaly alert 跟對帳 mismatch 混報 | 兩種訊號性質不同、reviewer 無法判讀  | 拆 dashboard、deterministic 跟 statistical 分開 |
 

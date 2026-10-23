@@ -10,7 +10,7 @@ tags: ["backend", "security", "case-study", "red-team"]
 
 2023 年 1 月，Mailchimp 公告指出攻擊者透過社交工程取得員工憑證，接觸客服/帳號管理工具並影響特定客戶帳號。
 
-**本案例的演示焦點**：員工社交工程 → 客服 / 帳號管理工具接管 → 客戶資料 read / 變更的 internal admin tool exfiltration。重點在「合法 admin 動作」跟「攻擊樣態」的偵測差異設計。
+**本案例的演示焦點**：員工社交工程 → 客服 / 帳號管理工具接管 → 客戶資料 read / 變更的 [internal admin tool](/backend/knowledge-cards/internal-admin-tool/) exfiltration。重點在「合法 admin 動作」跟「攻擊樣態」的偵測差異設計。
 
 ## 攻擊路徑
 

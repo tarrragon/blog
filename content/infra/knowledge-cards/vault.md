@@ -6,7 +6,7 @@ weight: 48
 tags: ["infra", "knowledge-cards"]
 ---
 
-HashiCorp Vault 是機密管理系統，集中存放和控制對敏感資料（密碼、API key、[TLS](/infra/knowledge-cards/ssl-tls/) 私鑰、資料庫憑證）的存取。每一次讀取都有稽核紀錄、每一份機密都有存取政策、憑證可以設定自動輪替。
+HashiCorp Vault 是機密管理系統，集中存放和控制對敏感資料（密碼、API key、[TLS](/infra/knowledge-cards/ssl-tls/) 私鑰、資料庫憑證）的存取。每一次讀取都有稽核紀錄、每一份機密都有存取政策、存取憑證可以設定自動輪替。
 
 ## 概念位置
 
@@ -20,9 +20,9 @@ Vault 在 infra 裡負責「機密值的集中管理」。跟直接把密碼寫�
 
 ## 設計責任
 
-使用 Vault 時要決定：unseal 方式（連網用 cloud auto-unseal、斷網用 Shamir's secret sharing——需要 N 把 key 中的 M 把才能解鎖）、storage backend（Consul、PostgreSQL、filesystem）、認證方式（人用 LDAP/OIDC、機器用 AppRole）、secret engine 的選擇（KV 存靜態值、PKI 簽發憑證、database 動態產生 DB 帳號）。
+使用 Vault 時要決定：unseal 方式（連網用 cloud auto-unseal、斷網用 Shamir's secret sharing——需要 N 把 key 中的 M 把才能解鎖）、storage backend（Consul、PostgreSQL、filesystem）、認證方式（人用 LDAP/OIDC、機器用 AppRole）、secret engine 的選擇（KV 存靜態值、PKI 簽發數位憑證、database 動態產生 DB 帳號）。
 
 ## 鄰卡
 
 - [IAM](/infra/knowledge-cards/iam/)：Vault 的存取政策跟 IAM 的 policy 概念類似
-- [SSL/TLS](/infra/knowledge-cards/ssl-tls/)：Vault 的 PKI engine 可以當內部 CA 簽發憑證
+- [SSL/TLS](/infra/knowledge-cards/ssl-tls/)：Vault 的 PKI engine 可以當內部 CA 簽發數位憑證

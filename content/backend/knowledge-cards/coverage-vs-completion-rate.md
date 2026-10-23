@@ -16,7 +16,7 @@ Coverage 與 completion rate 的核心區別是分母由誰列舉：**完成率�
 
 ## 可觀察訊號與例子
 
-訊號是完成率長期接近滿分而同類事故仍在發生。憑證輪替是最典型的形態：自動續期導入時涵蓋的是當時看得到的那批，之後完成率一直是滿分，而手動放進設定檔或燒進映像檔的那幾張從未進入分母——[7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/) 展開這個形態並給出三份獨立來源（外部連線側掃描、設定反推、簽發側列舉）。
+訊號是完成率長期接近滿分而同類事故仍在發生。數位憑證輪替是最典型的形態：自動續期導入時涵蓋的是當時看得到的那批，之後完成率一直是滿分，而手動放進設定檔或燒進映像檔的那幾張從未進入分母——[7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/) 展開這個形態並給出三份獨立來源（外部連線側掃描、設定反推、簽發側列舉）。
 
 治理指標有同構的形態：例外關閉率的分母是登記過的例外，沒登記的不在分母裡，所以這個數字與治理品質可以無關（見 [7.25 資安成熟度的組織節奏](/backend/07-security-data-protection/security-maturity-organization-cadence/) 的指標段）。偵測側的誤報率也一樣——關掉噪音大的規則會改善它，而被關掉的規則涵蓋的攻擊路徑不出現在任何分母裡。
 

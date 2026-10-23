@@ -2,7 +2,7 @@
 title: "Secret Management"
 tags: ["機密管理", "Secret Management"]
 date: 2026-04-23
-description: "說明 token、key、password 與憑證如何保存、輪替與撤銷"
+description: "說明 token、key、password 等存取憑證如何保存、輪替與撤銷"
 weight: 41
 ---
 

@@ -83,5 +83,5 @@ harness 立起後，測試輸出可能固定印出幾行「錯誤長相」的文
 
 - 策略層的完整判斷標準（什麼時候值得建假後端）→ [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
 - 配對的真實後端驗證（假後端行為漂移的防線）→ [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)
-- 憑證的存放與 CI 注入 → [測試憑證管理](/testing/03-protocol-integration-test/credential-management/)
+- 存取憑證的存放與 CI 注入 → [測試存取憑證管理](/testing/03-protocol-integration-test/credential-management/)
 - 各限制的完整 case：[headless 控制器](/work-log/flutter_headless_controller_test_bootstrap/)、[binding 互斥](/work-log/flutter_test_binding_blocks_real_network/)、[雜訊治理](/work-log/flutter_test_noise_expected_paths/)、[假後端序列化](/work-log/flutter_fake_backend_real_model_serialization/)

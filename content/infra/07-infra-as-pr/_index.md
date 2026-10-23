@@ -64,7 +64,7 @@ tfsec . --soft-fail=false
 
 選哪一種是機會成本的取捨。GitHub Actions workflow 的優點是不必額外維運一個服務、跟既有 CI 共用同一套權限與 runner；缺點是 apply 的 gating 邏輯（approve 後才能 apply、apply lock 避免兩個 PR 同時改同一份 state）要自己用 workflow 條件拼出來。Atlantis 的優點是這些 gating 與 state lock 是內建語意、跨多 repo 一致；缺點是它本身是一個要部署、要升級、要保護的常駐服務。團隊 repo 少、流程簡單時 Actions 划算；管理大量 Terraform repo、需要統一 apply 治理時 Atlantis 划算。
 
-無論哪種執行層，自動化的 apply 都需要對雲端的寫入權限，而這個權限怎麼來是整條管線的安全根基。這裡正是模組二：身分與憑證地基鋪設的 OIDC 兌現的地方 — 管線不該存放長期的 access key，而是在 runner 執行時用 OIDC 向雲端換取短期 token。模組二講的是怎麼建立這個信任關係，本章是它的回報處：因為有了 OIDC，自動 apply 才能在不持有靜態憑證的前提下安全執行，憑證外洩的攻擊面從「一把長期金鑰」縮到「單次執行的短期 token」。
+無論哪種執行層，自動化的 apply 都需要對雲端的寫入權限，而這個權限怎麼來是整條管線的安全根基。這裡正是模組二：身分與存取憑證地基鋪設的 OIDC 兌現的地方 — 管線不該存放長期的 access key，而是在 runner 執行時用 OIDC 向雲端換取短期 token。模組二講的是怎麼建立這個信任關係，本章是它的回報處：因為有了 OIDC，自動 apply 才能在不持有靜態憑證的前提下安全執行，憑證外洩的攻擊面從「一把長期金鑰」縮到「單次執行的短期 token」。
 
 ```yaml
 # 合併到主幹後，用 OIDC 換短期憑證再 apply（呼應模組二）
@@ -111,7 +111,7 @@ jobs:
 ## 跨分類引用
 
 - → [CI/CD 教學](/ci/)：infra 管線用的就是這套驗證 / 發布 gate，plan / apply 對應 build / deploy 階段
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：管線用 OIDC 取得 apply 權限，本章是該章 OIDC 設計的回報兌現處
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：管線用 OIDC 取得 apply 權限，本章是該章 OIDC 設計的回報兌現處
 - → [模組三：網路地基](/infra/03-network-foundation/)：security group 收斂原則，本章用 tfsec / checkov 在 CI 攔下寫錯的全開規則
 - → [模組九：怎麼把 infra 推動起來](/infra/09-driving-adoption/)：本章把知識留在 code 的技術機制，在該章展開成組織層的採用與知識共享
 - → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：S3 公開、敏感埠全開這類掃描攔截的反模式，對應的資料保護原則

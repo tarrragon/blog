@@ -33,8 +33,8 @@ ProxyLogon 事件顯示 CVE-2021-26855 與 CVE-2021-27065 這類企業郵件系�
 - 共同基線：以 [runbook](/backend/knowledge-cards/runbook/) 與 [incident timeline](/backend/knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：把郵件系統納入高風險資產修補路由。
 - 日常：追蹤異常 web shell 與命令執行行為。
-- 事故中：執行修補、清查、憑證輪替與重建驗證。
-- mechanism 總綱：邊界事件的核心是讓「漏洞修補」「會話 / 憑證失效」「異常痕跡清查」三件事同步發生、不分先後留下時間窗口（前提是事先有 inventory + 自動化失效 / 清查能力）。
+- 事故中：執行修補、清查、存取憑證輪替與重建驗證。
+- mechanism 總綱：邊界事件的核心是讓「漏洞修補」「會話 / 存取憑證失效」「異常痕跡清查」三件事同步發生、不分先後留下時間窗口（前提是事先有 inventory + 自動化失效 / 清查能力）。
 
 ## 從本案例到實作的 chain
 

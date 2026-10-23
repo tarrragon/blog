@@ -30,7 +30,7 @@ tags: ["backend", "security"]
 
 **預設問題與個人資料**在今天多數情境下不構成證據。母親的姓、第一輛車、出生地這一類的值在別處外洩過、或本來就查得到；使用者為了記得住而填真實答案，於是它們與公開資訊高度重疊。填假答案的使用者則會忘記自己填了什麼，這條路徑因此又回到客服。
 
-**已註冊的第二個裝置或憑證**是強度最高的一種，因為它要求攻擊者實體持有。代價是使用者要先註冊第二支，而消費端的註冊率低——這條取捨見 [7.39 掉了之後](../user-held-credential-carrier/#掉了之後)。
+**已註冊的第二個裝置或使用者持有型憑證**是強度最高的一種，因為它要求攻擊者實體持有。代價是使用者要先註冊第二支，而消費端的註冊率低——這條取捨見 [7.39 掉了之後](../user-held-credential-carrier/#掉了之後)。
 
 **人工核身**的強度由核身項目決定而非由「有人在看」決定，判斷標準與 [7.41 核身要求什麼](../single-account-takeover-response/#核身要求什麼) 相同：要問接管之前的事、要問攻擊者取得不了的資訊。
 
@@ -101,7 +101,7 @@ tags: ["backend", "security"]
 - 主路徑用什麼驗證使用者、以及回復路徑決定上限這個結論的來源：[7.31 認證方式選型](../authentication-approach-selection/)
 - 帳號已經被接管之後的處置與核身：[7.41 單一帳號被接管](../single-account-takeover-response/)
 - 大量帳號的強制重設、期限與容量攤平：[7.37 密碼外洩之後](../credential-breach-response/)
-- 憑證掉了的補發路徑（同一個問題在持有型憑證上的形態）：[7.39 使用者持有型憑證](../user-held-credential-carrier/)
+- 存取憑證掉了的補發路徑（同一個問題在持有型憑證上的形態）：[7.39 使用者持有型憑證](../user-held-credential-carrier/)
 - 撤銷會話的能力由狀態放哪決定：[Session 處理](/operations/02-horizontal-scaling/session-handling/)
 - 回應時間洩漏資訊的機制：[timing attack](/backend/knowledge-cards/timing-attack/)
 - 密碼存成什麼樣、參數怎麼定：[7.30 使用者密碼儲存](../password-storage-and-work-factor/)

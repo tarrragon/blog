@@ -6,7 +6,7 @@ weight: 8
 tags: ["infra", "air-gapped", "dns", "ntp", "ca", "vault"]
 ---
 
-斷網環境裡的 GitLab、[Harbor](/infra/knowledge-cards/harbor/)、[Prometheus](/infra/knowledge-cards/prometheus/)、Nexus 都有一個共同前提：它們需要名稱解析（[DNS](/infra/knowledge-cards/dns/)）才能互相找到、需要時間同步（NTP）才能讓 log 和憑證有效、需要 [TLS](/infra/knowledge-cards/ssl-tls/) 憑證（CA）才能走 HTTPS、需要機密儲存（[Vault](/infra/knowledge-cards/vault/)）才能安全管理密碼和 token。這四個是「服務的服務」——沒有它們，其他自建服務要麼無法啟動、要麼只能用不安全的 HTTP 明文通訊。
+斷網環境裡的 GitLab、[Harbor](/infra/knowledge-cards/harbor/)、[Prometheus](/infra/knowledge-cards/prometheus/)、Nexus 都有一個共同前提：它們需要名稱解析（[DNS](/infra/knowledge-cards/dns/)）才能互相找到、需要時間同步（NTP）才能讓 log 和數位憑證有效、需要 [TLS](/infra/knowledge-cards/ssl-tls/) 憑證（CA）才能走 HTTPS、需要機密儲存（[Vault](/infra/knowledge-cards/vault/)）才能安全管理密碼和 token。這四個是「服務的服務」——沒有它們，其他自建服務要麼無法啟動、要麼只能用不安全的 HTTP 明文通訊。
 
 ## Internal DNS：內部名稱解析
 
@@ -249,5 +249,5 @@ DNS 跟 CA 之間有一個循環依賴：CA 簽發憑證時需要 DNS 解析（A
 - → [斷網環境的通用原則](/infra/air-gapped/air-gapped-principles/)：content ferry 和離線套件管理的通用操作模式
 - → [斷網環境的 IaC](/infra/air-gapped/air-gapped-iac/)：Vault 作為 Terraform 的 secret backend
 - → [斷網環境的容器與映像管理](/infra/air-gapped/air-gapped-container/)：Harbor 依賴 DNS 和 TLS、映像拉取需要信任內部 CA
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：Vault 的角色跟雲端的 Secrets Manager 對應
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：Vault 的角色跟雲端的 Secrets Manager 對應
 - → [模組八：治理好習慣](/infra/08-governance-habits/)：Secret 不進 code 的原則在斷網環境用 Vault 落地

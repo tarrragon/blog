@@ -6,7 +6,7 @@ weight: 3
 tags: ["infra", "iam", "access-management", "security"]
 ---
 
-IAM 的 role 與 policy 提供「某個身分能不能對某個資源做某件事」的技術機制（見[身分與憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)）。機制備妥後，下一個問題是組織層面的設計：團隊裡每個角色該拿到哪一級權限、臨時需要更高權限時怎麼提權、離職或合約結束時怎麼確保存取被回收。這些設計的目的是讓「誰能動什麼」在任何時間點都有可稽核的答案。
+IAM 的 role 與 policy 提供「某個身分能不能對某個資源做某件事」的技術機制（見[身分與存取憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)）。機制備妥後，下一個問題是組織層面的設計：團隊裡每個角色該拿到哪一級權限、臨時需要更高權限時怎麼提權、離職或合約結束時怎麼確保存取被回收。這些設計的目的是讓「誰能動什麼」在任何時間點都有可稽核的答案。
 
 ## 權限分級：admin / operator / viewer
 
@@ -83,7 +83,7 @@ Deny 語句確保即使未來有人不小心把過寬的 managed policy attach �
 
 ### Viewer
 
-Viewer 能讀取 Console、查 log、看 metric dashboard，但不能修改任何資源。適合的角色包括：值班但不需要改設定的 on-call、需要查 log 排查問題的技術支援（分層支援裡讀系統資料的那一層，見 [Tiered Support](/backend/knowledge-cards/tiered-support/)；一線客服改用只顯示必要欄位的查詢工具，見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#客服查詢工具的權限)）、需要看資源狀態的管理層。
+Viewer 能讀取 Console、查 log、看 metric dashboard，但不能修改任何資源。適合的角色包括：值班但不需要改設定的 on-call、需要查 log 排查問題的技術支援（分層支援裡讀系統資料的那一層，見 [Tiered Support](/backend/knowledge-cards/tiered-support/)；一線客服改用只顯示必要欄位的查詢工具（[客服後台](/backend/knowledge-cards/internal-admin-tool/)），見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/#客服查詢工具的權限)）、需要看資源狀態的管理層。
 
 Viewer 用 AWS 的 managed policy `ReadOnlyAccess` 作為基線，再根據需要排除敏感資料的讀取（例如 Secrets Manager 的 `GetSecretValue`）。
 
@@ -172,7 +172,7 @@ Access review 的結果適合用兩個數字向管理層報告：**覆蓋率**�
 
 SSO 切得斷的只有透過 SSO 登入的服務。行銷追蹤的後台（Meta 的商家資產管理組合、Google Tag Manager、Google Analytics 4）以個人帳號為成員單位：成員用個人的 Facebook 帳號或 Gmail 帳號加入時，公司停用他的 SSO 帳號不影響他在這些後台的權限，要由持有最高管理權的成員逐一到三家後台移除；用公司 Google Workspace 帳號加入 GTM 與 GA4 的成員，停用 Workspace 帳號之後就登不進去，但成員名單上仍然留著那一列。這類後台要另外列進離職清單，各自的權限分級與移除權限所需的角色見[追蹤資產的歸屬](/monitoring/vendors/tracking-account-ownership/)。
 
-離職後的 credential rotation 有一個常被忽略的風險：輪替範圍沒有按作用域分批。一個反例是多個服務共用同一把 secret，輪替時切新憑證的服務跟還只認舊憑證的服務之間出現認證窗口不一致，導致跨系統連鎖中斷。穩定的做法是先分域隔離受影響服務、恢復雙憑證窗口、再逐批收斂（見 [反例：憑證輪替未分 Scope](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/)）。
+離職後的 credential rotation 有一個常被忽略的風險：輪替範圍沒有按作用域分批。一個反例是多個服務共用同一把 secret，輪替時切新存取憑證的服務跟還只認舊憑證的服務之間出現認證窗口不一致，導致跨系統連鎖中斷。穩定的做法是先分域隔離受影響服務、恢復雙憑證窗口、再逐批收斂（見 [反例：存取憑證輪替未分 Scope](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/)）。
 
 ### 交接的可執行性
 
@@ -206,7 +206,7 @@ SSO 切得斷的只有透過 SSO 登入的服務。行銷追蹤的後台（Meta 
 
 ## 跨分類引用
 
-- → [身分與憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：IAM role / policy / OIDC 的技術機制
+- → [身分與存取憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：IAM role / policy / OIDC 的技術機制
 - → [跨帳號策略](/infra/02-identity-credentials/multi-account-strategy/)：用 OU 和 SCP 在帳號層級隔離外部人員
 - → [治理好習慣](/infra/08-governance-habits/tagging-secrets/)：tagging 標注存取到期日、secrets 不進 code
 - → [怎麼把 infra 推動起來](/infra/09-driving-adoption/trust-alignment-knowledge-sharing/)：知識共享與交接的組織面

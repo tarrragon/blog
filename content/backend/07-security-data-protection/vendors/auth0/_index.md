@@ -28,7 +28,7 @@ Auth0 是 *customer identity 的控制面*、不是員工 SSO（員工走 [Okta 
 判斷 Auth0 tenant 是否健康、最少看四件事：
 
 - **誰能做什麼**：Dashboard admin、Management API token 的 owner 與 scope、Action 是否走 code review、tenant 之間（dev / staging / prod）是否分離且授權獨立
-- **憑證在哪裡**：Management API token / M2M client 的 scope 與 TTL、社交 connection 的 client secret 存放位置、signing key（per-tenant）的 rotation 節奏、是否啟用 Custom Domain（避免 token issuer 暴露 `*.auth0.com` 域名）
+- **存取憑證在哪裡**：Management API token / M2M client 的 scope 與 TTL、社交 connection 的 client secret 存放位置、signing key（per-tenant）的 rotation 節奏、是否啟用 Custom Domain（避免 token issuer 暴露 `*.auth0.com` 域名）
 - **入口如何暴露**：登入走 Universal Login（託管 UI）還是 Embedded Login（嵌自家 app）、Cross-Origin Authentication 是否打開、Attack Protection（bot detection / brute-force / breached password / suspicious IP throttling）配置強度
 - **證據是否可回查**：Tenant Log 是否同步到 SIEM（Log Stream 推 HTTP / Datadog / Splunk）、登入失敗 / Action 例外 / Management API 變更是否 alert、保留期是否符合合規要求
 

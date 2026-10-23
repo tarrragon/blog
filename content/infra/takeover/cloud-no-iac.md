@@ -313,5 +313,5 @@ aws cloudtrail describe-trails --query 'trailList[].{Name:Name,S3:S3BucketName,I
 - → [模組負一：還沒有 infra 的環境](/infra/before-infra/)：盤點完成後的操作紀律對齊
 - → [模組零：infra 是什麼](/infra/00-infra-mindset/)：成熟度階梯作為接手後現況評估的座標
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：盤點完成後的第一步 IaC 導入
-- → [模組二：身分與憑證](/infra/02-identity-credentials/)：credential 收斂的完整設計
+- → [模組二：身分與存取憑證](/infra/02-identity-credentials/)：credential 收斂的完整設計
 - → [團隊權限分級與存取管理](/infra/02-identity-credentials/team-access-management/)：接手後重新建立權限分級

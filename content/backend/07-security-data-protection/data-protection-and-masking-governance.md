@@ -72,7 +72,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 **高風險匯出節奏異常**的檢查從匯出功能的權限設定看起：有身分控制而沒有量的控制時，能匯出一筆的人技術上能匯出全部，這一格就成立。它長在組織裡本來就有一批人以匯出資料為工作內容的系統上——營運做報表、客服查歷史、業務要名單、分析取樣本，每一項都是正當需求，而權限給出去之後沒有任何既定工作會回頭問「他一次匯出多少」。
 
-**備份資產權限混層**出現在備份由獨立流程承擔的系統，而那套流程的權限是照「還原時要拿得到所有東西」設計的。成因是還原這個動作本身就需要完整存取，權限給小了備份就失去意義。這一格真正的特殊之處在時間維度：備份裡有正式環境已經刪除的資料，所以它跨越的是正式環境切開的邊界——跨服務、跨租戶、跨時間點。識別的檢查動作是把備份憑證的可讀範圍，與正式環境裡最寬的那一個角色並列比較；備份那一邊更大、或它讀得到已經刪除的紀錄時，這一格成形。
+**備份資產權限混層**出現在備份由獨立流程承擔的系統，而那套流程的權限是照「還原時要拿得到所有東西」設計的。成因是還原這個動作本身就需要完整存取，權限給小了備份就失去意義。這一格真正的特殊之處在時間維度：備份裡有正式環境已經刪除的資料，所以它跨越的是正式環境切開的邊界——跨服務、跨租戶、跨時間點。識別的檢查動作是把備份的存取憑證的可讀範圍，與正式環境裡最寬的那一個角色並列比較；備份那一邊更大、或它讀得到已經刪除的紀錄時，這一格成形。
 
 **跨組織交換責任鏈斷點**讓事件的起跑時間由對方決定：資料流出了組織邊界，而通報義務留在自己這邊，於是自己這邊的處置從「對方願意通知的那一刻」才開始。委外處理、SaaS 分析工具、合作夥伴之間的資料交換都落在這一格，成因是合約談的是資料能不能給、給哪些，很少談對方出事時誰在什麼時限內通知誰。
 
@@ -88,7 +88,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 **備份權限**的收斂是把還原能力與讀取能力拆成兩種授權。還原是寫入動作、可以要求走審批並留紀錄；讀取才是外送風險的來源。拆開之後備份憑證的日常權限只剩下寫入與驗證，讀取需要另一次授權；同一把憑證外洩之後備份被刪除或覆寫那一面，見 [7.43 的異地備份段](../cross-network-connection-security/#雲端對雲端與異地備份沒有共用私網時的接法)。同一格的第二道控制是備份加密加上金鑰與備份憑證分持——拿到備份憑證的人讀到的是密文，還原要另外取得金鑰，兩者由不同的授權路徑管理；機制見 [at-rest encryption](/backend/knowledge-cards/at-rest-encryption/)。對應失效樣式 [長效可重複匯出產物](../red-team/problem-cards/fp-long-lived-repeatable-export-artifact/)。備份憑證本身的輪替與收斂節奏走 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)，備份資料的保留期與刪除證據走 [7.11 資料落點、刪除與證據鏈](../data-residency-deletion-and-evidence-chain/)。
 
-**跨組織責任鏈**的收斂發生在合約階段，而不是事件當下。要寫進契約的是通報時限（對方發現後多久要通知）、通報對象（自己這邊的哪個角色、哪個管道）、以及資料範圍的可查性（對方能不能說出自己這邊有哪些資料受影響）。三者缺一時，事件當下的時間會花在建立聯絡管道而不是處置。供應商事件傳導到內部的收斂責任見 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導)。這裡要的是 inbound 那一向（對方出事之後多久通知自己），本站尚無專章；自己出事之後對外的通報節奏是另一向，走 [8.x 事故溝通](/backend/08-incident-response/incident-communication/)。
+**跨組織責任鏈**的收斂發生在合約階段，而不是事件當下。要寫進契約的是通報時限（對方發現後多久要通知）、通報對象（自己這邊的哪個角色、哪個管道）、以及資料範圍的可查性（對方能不能說出自己這邊有哪些資料受影響）。三者缺一時，事件當下的時間會花在建立聯絡管道而不是處置。供應商事件傳導到內部的收斂責任見 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導)。這裡要的是 inbound 那一向（對方出事之後多久通知自己），本站尚無專章；自己出事之後對外的通報節奏是另一向，走 [8.x 事故溝通](/backend/08-incident-response/incident-communication/)。交出資料的一方與接收的一方在資料處理裡各是什麼角色、通知的方向因此怎麼走，見 [Data Controller and Data Processor（控制者與處理者）](/backend/knowledge-cards/data-controller-and-processor/) 與 [Sub-processor（子處理者）](/backend/knowledge-cards/sub-processor/)。
 
 ## 常見風險邊界
 
@@ -96,7 +96,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 - 回應欄位持續出現分級外資料時，代表最小揭露模型已失效。
 - 匯出在異常時段由異常角色大量觸發時，代表資料外送風險已進入高壓區。
-- 備份帳號可直接取得正式環境資料時，代表復原邊界與外送邊界混層。
+- 備份帳號可直接取得正式環境資料時，代表復原邊界與外送邊界混層。多租戶平台的備份儲存位置、加密金鑰與還原權限怎麼按租戶分組分開，見 [7.44 多租戶平台的隔離層級〈存取層的隔離〉](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/#存取層的隔離建置管線共用運算營運後台內部工具平台資料庫管理備份與其他共用元件的權限範圍)。
 - 跨組織資料交換沒有同步通知與責任鏈時，代表事件時序與證據鏈不可驗證。
 
 ## 案例觸發參考
@@ -104,7 +104,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 案例觸發的責任是驗證資料路徑控制是否完整。
 
 - 支援工具被濫用導致資料外送： [Mailchimp 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/mailchimp-2023-support-tool-abuse/)
-- 憑證濫用導致資料平台外送： [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
+- 存取憑證濫用導致資料平台外送： [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
 - 備份鏈被轉為外洩路徑： [LastPass 2022](/backend/07-security-data-protection/red-team/cases/data-exfiltration/lastpass-2022-backup-chain/)
 
 ## 下一步路由

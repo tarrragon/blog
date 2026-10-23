@@ -79,7 +79,7 @@ AWS WAF 的核心定位是 *跟 AWS 服務深度耦合的 L7 防護層*。Web AC
 
 **AWS WAF Bot Control（add-on）**：付費 add-on、用 AWS 自家 bot fingerprinting 區分 *verified bot*（搜尋引擎）/ *signal: automated browser*（headless Chrome 等）/ *signal: known bot*（已標記 IoT / scraper），給每個請求 *bot category label*。Custom Rule 在 label 上做條件、決定 Block / Challenge / CAPTCHA。比 user-agent 過濾準很多、但要額外計費（per-request）。Bot Control 有兩個 inspection level：*common*（便宜、基礎指紋）與 *targeted*（貴、含 JavaScript challenge、CAPTCHA、token-based）。
 
-**Fraud Control（ATP / ACFP）**：*Account Takeover Prevention*（ATP）跟 *Account Creation Fraud Prevention*（ACFP）是 Managed Rule Group 的特殊類別、需付費啟用。ATP 看登入端點的 credential stuffing、ACFP 看註冊端點的 bot signup。兩者都用 AWS 自家 threat intel（被竊憑證 list、行為模型）打 label、客戶側用 Custom Rule 處理。對有 login / signup 端點的 SaaS / 電商有價值、純內部後台不必開。
+**Fraud Control（ATP / ACFP）**：*Account Takeover Prevention*（ATP）跟 *Account Creation Fraud Prevention*（ACFP）是 Managed Rule Group 的特殊類別、需付費啟用。ATP 看登入端點的 credential stuffing、ACFP 看註冊端點的 bot signup。兩者都用 AWS 自家 threat intel（被竊存取憑證 list、行為模型）打 label、客戶側用 Custom Rule 處理。對有 login / signup 端點的 SaaS / 電商有價值、純內部後台不必開。
 
 **CAPTCHA / Challenge**：AWS WAF 內建 CAPTCHA puzzle 與 silent JS Challenge、可在 rule action 直接呼叫。Challenge 在客戶端執行 proof-of-work、合法瀏覽器無感、headless 工具卡住；CAPTCHA 是視覺題、人類解、bot 不會。Production 標準做法：Bot Control 給 label → Custom Rule 看 label → likely bot 走 Challenge、known bad 走 Block、人類流量直接 Allow。
 

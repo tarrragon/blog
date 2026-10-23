@@ -11,7 +11,7 @@ tags: ["backend", "incident-response"]
 - 為何需要分流：兩類事故的決策模型、責任、通報、證據要求都不同
 - 分支判讀：影響類型（資料 / 可用性 / 機密）、是否有外部 actor、是否觸發法規通報
 - 平行 vs 切換：同事故可能同時是 operational + security（如 ransomware 同時影響可用性 + 資料）
-- 證據保全的優先序差異：operational 重 forensic-light、security 重 chain of custody
+- 證據保全的優先序差異：operational 重 forensic-light、security 重 chain of custody（保管鏈與擷取次序見 [Digital Forensics（數位鑑識）](/backend/knowledge-cards/digital-forensics/)）
 - 通報差異：operational 對客戶 / 內部、security 還要法規 / 執法 / 律師
 - 跟 [07 資安](/backend/07-security-data-protection/) 的交接：07 提供 security IR 的概念基底、08 提供 operational IR 的流程主幹
 - 跟 [8.3 containment](/backend/08-incident-response/containment-recovery-strategy/) 的整合：security 事故的止血優先序跟 operational 不同（隔離 vs 復原）
@@ -26,7 +26,7 @@ Security Incident vs Operational Incident 分流是把事故的法規、證據�
 
 ## 核心判讀
 
-判讀分流時，先看是否存在外部 actor 或資料外洩風險，再看是否需要切換到 security 流程。外洩的是使用者帳號憑證時，範圍怎麼分層、撤銷與重設的先後、通報要交付哪些事實見 [7.37 密碼外洩之後](/backend/07-security-data-protection/credential-breach-response/)。
+判讀分流時，先看是否存在外部 actor 或資料外洩風險，再看是否需要切換到 security 流程。外洩的是使用者帳號憑證時，範圍怎麼分層、撤銷與重設的先後、通報要交付哪些事實見 [7.37 密碼外洩之後](/backend/07-security-data-protection/credential-breach-response/)。外洩的是 B2B 平台替商家保管的會員資料、第一個訊號又是商家轉述的詐騙回報時，事故處理團隊分流到 security 之後先判斷平台這一側能否排除在外洩來源之外，判法與每一種判定結果對應的通知見 [8.26 資料外洩時對商家的通知〈外洩來源的歸屬判定〉](/backend/08-incident-response/security-incident-customer-notification/#外洩來源的歸屬判定)。
 
 重點訊號包括：
 
@@ -46,6 +46,8 @@ Security Incident vs Operational Incident 分流是把事故的法規、證據�
 - 07 資安：security IR 的概念框架
 - 08.1 severity：分流影響 severity 計算
 - 08.3 containment：止血策略差異
+- [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)：分流到 security 之後，止血完成到事故解除之間的清查、重建與存取憑證撤銷順序
+- [8.26 資料外洩時對商家的通知](/backend/08-incident-response/security-incident-customer-notification/)：外洩來源還沒確定時的歸屬判定，以及風險預警、確認通知與結案通知各自交付商家的事實
 - 08.5 [post-incident review](/backend/knowledge-cards/post-incident-review/)：證據保全與 [RCA](/backend/knowledge-cards/rca/) 範圍
 - 08.10 stakeholder：對外通訊的法規邊界
 - 04.12 audit log：證據鏈來源
@@ -63,6 +65,8 @@ Security Incident vs Operational Incident 分流是把事故的法規、證據�
 - 07 資安：security IR 的概念框架
 - 08.1 severity：分流影響 severity 計算
 - 08.3 containment：止血策略差異
+- [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)：分流到 security 之後，止血完成到事故解除之間的清查、重建與存取憑證撤銷順序
+- [8.26 資料外洩時對商家的通知](/backend/08-incident-response/security-incident-customer-notification/)：外洩來源還沒確定時的歸屬判定，以及風險預警、確認通知與結案通知各自交付商家的事實
 - 08.5 [post-incident review](/backend/knowledge-cards/post-incident-review/)：證據保全與 [RCA](/backend/knowledge-cards/rca/) 範圍
 - 08.10 stakeholder：對外通訊的法規邊界
 - 04.12 audit log：證據鏈來源

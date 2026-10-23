@@ -12,8 +12,8 @@ tags: ["backend", "incident-response"]
 - 跟 [8.4 incident communication](/backend/08-incident-response/incident-communication/) 的分工：8.4 是事中通訊節奏、8.10 是對外承諾與補償
 - [status page](/backend/knowledge-cards/status-page/) 設計：影響範圍、嚴重度標示、ETA、更新頻率
 - 對外溝通的三個窗：發現、定位、回復（什麼時候該說什麼）
-- 補償政策：SLA credit、refund、goodwill；何時主動 / 何時被動
-- 法規通報：資安事件 vs 可用性事件的法規差異（GDPR / 個資）
+- 補償政策：SLA credit、refund、goodwill；何時主動 / 何時被動。資安事故的賠償先承諾處理程序（認定受影響的標準、受害者要提出的證據、由誰判定與給付時程），不先承諾「所有損失由平台負責」這類結果，理由見 [8.25 建置主機被入侵後的根除與重建〈對外承諾賠償的時機〉](/backend/08-incident-response/compromised-build-host-eradication/#對外承諾賠償的時機)；替商家保管會員資料的平台在確認通知裡怎麼交代這一項，見 [8.26 資料外洩時對商家的通知〈確認通知與結案通知〉](/backend/08-incident-response/security-incident-customer-notification/#確認通知與結案通知外洩確認或排除之後交付的事實)
+- 法規通報：資安事件 vs 可用性事件的法規差異（GDPR / 個資）。平台替客戶處理個人資料時是處理者，通報主管機關的是客戶（控制者）；平台要無不當延遲地通知客戶，並交付客戶判斷是否通報、是否通知當事人所需的事實，分工見 [8.26 資料外洩時對商家的通知〈確認通知與結案通知〉](/backend/08-incident-response/security-incident-customer-notification/#確認通知與結案通知外洩確認或排除之後交付的事實)
 - 反模式：[status page](/backend/knowledge-cards/status-page/) 滯後、語焉不詳、過度承諾 ETA、通報義務漏判
 
 ## 概念定位

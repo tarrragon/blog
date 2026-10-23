@@ -1,12 +1,12 @@
 ---
-title: "身分與憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計"
+title: "身分與存取憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計"
 date: 2026-06-26
 description: "IAM 的 identity / policy / role 三元件、最小權限的持續收斂、用 OIDC 取代長期 access key，以及 SCP 與 Permissions Boundary 的環境隔離"
 weight: 1
 tags: ["infra", "iam", "oidc", "security"]
 ---
 
-權限一旦散落，後面每一層都建在沙上。網路收斂得再好，只要一把權限過大的長期憑證流出，攻擊者就能繞過所有邊界直接動到核心資源；環境分得再乾淨，只要 production 跟 staging 共用同一組身分，一次誤操作就跨環境炸開。身分與憑證是地基層最先該收斂的能力，因為它決定了「誰能動什麼」這個問題有沒有可信的答案。
+權限一旦散落，後面每一層都建在沙上。網路收斂得再好，只要一把權限過大的長期憑證流出，攻擊者就能繞過所有邊界直接動到核心資源；環境分得再乾淨，只要 production 跟 staging 共用同一組身分，一次誤操作就跨環境炸開。身分與存取憑證是地基層最先該收斂的能力，因為它決定了「誰能動什麼」這個問題有沒有可信的答案。
 
 ## IAM 的心智模型
 
@@ -100,7 +100,7 @@ aws accessanalyzer generate-policy \
 
 常見的散落路徑：部署腳本使用的 admin key 留在 CI 環境變數，建立者離職後沒人知道這把 key 的存在與權限範圍。這類情境的風險在於外洩後沒有手段限制影響範圍 — key 的權限有多大，影響範圍就有多大。用 credential report 定期盤點帳號內所有 access key 的建立時間與使用時間，見[模組負一：還沒有 infra 的環境](/infra/before-infra/)。
 
-長期憑證風險的實際規模可以從兩個案例看到。Snowflake 2024 事件中，攻擊者利用外洩的長期憑證登入缺少 MFA 的客戶環境，執行大量資料匯出，造成跨客戶的資料竊取與勒索（見 [Snowflake 2024：憑證濫用與資料竊取](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)）。LastPass 2022 事件則顯示備份路徑的憑證管理缺口會讓影響範圍沿信任鏈擴散——開發環境取得的資訊被用來存取雲端備份，整條路徑的金鑰隔離不足是根因（見 [LastPass 2022：備份路徑與鏈式入侵](/backend/07-security-data-protection/red-team/cases/data-exfiltration/lastpass-2022-backup-chain/)）。兩個案例的共同教訓是：長期憑證的風險不止於外洩本身，而在於外洩後缺乏限制影響範圍的機制。
+長期憑證風險的實際規模可以從兩個案例看到。Snowflake 2024 事件中，攻擊者利用外洩的長期憑證登入缺少 MFA 的客戶環境，執行大量資料匯出，造成跨客戶的資料竊取與勒索（見 [Snowflake 2024：存取憑證濫用與資料竊取](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)）。LastPass 2022 事件則顯示備份路徑的憑證管理缺口會讓影響範圍沿信任鏈擴散——開發環境取得的資訊被用來存取雲端備份，整條路徑的金鑰隔離不足是根因（見 [LastPass 2022：備份路徑與鏈式入侵](/backend/07-security-data-protection/red-team/cases/data-exfiltration/lastpass-2022-backup-chain/)）。兩個案例的共同教訓是：長期憑證的風險不止於外洩本身，而在於外洩後缺乏限制影響範圍的機制。
 
 ## OIDC：給 CI/CD 的短期憑證
 
@@ -252,9 +252,9 @@ SCP 與 Permissions Boundary 疊起來的效果是：SCP 在帳號層鎖住最�
 
 ## 身分層 vs 應用層 secret 的邊界
 
-這一章談的是身分與憑證 — 誰是誰、怎麼證明、能動什麼。憑證背後引用的應用層 secret（資料庫密碼、第三方 API key）怎麼安全儲存與注入，屬於[模組八：治理好習慣](/infra/08-governance-habits/)的 secret management 範圍。兩者的交集是：身分層決定「誰能讀到 secret store」，secret 層決定「secret 怎麼存與輪替」。把 IAM role 的 policy 收到只能讀取該服務路徑下的 secret（如 `prod/payments/*`），是同時落實最小權限與 secret 隔離的結合點。
+這一章談的是身分與存取憑證 — 誰是誰、怎麼證明、能動什麼。憑證背後引用的應用層 secret（資料庫密碼、第三方 API key）怎麼安全儲存與注入，屬於[模組八：治理好習慣](/infra/08-governance-habits/)的 secret management 範圍。兩者的交集是：身分層決定「誰能讀到 secret store」，secret 層決定「secret 怎麼存與輪替」。把 IAM role 的 policy 收到只能讀取該服務路徑下的 secret（如 `prod/payments/*`），是同時落實最小權限與 secret 隔離的結合點。
 
-身分與憑證的地基備妥後，下一步是劃清服務之間的網路邊界——這正是[模組三：網路地基](/infra/03-network-foundation/)的範圍。
+身分與存取憑證的地基備妥後，下一步是劃清服務之間的網路邊界——這正是[模組三：網路地基](/infra/03-network-foundation/)的範圍。
 
 ## 跨分類引用
 
@@ -263,6 +263,6 @@ SCP 與 Permissions Boundary 疊起來的效果是：SCP 在帳號層鎖住最�
 - → [模組四：環境分離與模組化](/infra/04-environment-separation/)：環境之間的帳號結構與隔離強度
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：CI/CD 管線用 OIDC 取得短期權限
 - → [模組八：治理好習慣](/infra/08-governance-habits/)：應用層 secret 的儲存與引用
-- → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：Secret Management 與憑證管理交集
+- → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：Secret Management 與存取憑證管理交集
 - → [Access Key 輪替手冊](/infra/02-identity-credentials/access-key-rotation-playbook/)：key 盤點與輪替的操作步驟
 - → [OIDC Trust Policy 設定指南](/infra/02-identity-credentials/oidc-trust-policy-setup/)：GitHub Actions OIDC 的 step-by-step 設定

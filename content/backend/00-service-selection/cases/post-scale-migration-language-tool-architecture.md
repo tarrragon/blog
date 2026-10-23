@@ -126,7 +126,7 @@ tags: ["backend", "service-selection", "case-study", "migration"]
 | 04 Observability              | 中           | [Honeycomb：Burn Rate 驅動操作](/backend/06-reliability/cases/honeycomb/burn-rate-driven-reliability-operations/)                 | 補「監控平台遷移」與「OpenTelemetry 導入遷移」案例                               |
 | 05 Deployment Platform        | 中           | [Reddit：2023 Kubernetes 升級事故](/backend/08-incident-response/cases/reddit/2023-kubernetes-upgrade-incident/)                  | 補「自建部署 -> Kubernetes/GitOps」轉換案例                                      |
 | 06 Reliability                | 高           | [Stripe：Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/)                 | 持續補不同產業的 rollout/rollback 對照                                           |
-| 07 Security / Data Protection | 中低         | [Cloudflare 2023 Control Plane Token Incident](/backend/08-incident-response/cases/cloudflare/2023-control-plane-token-incident/) | 補「憑證、金鑰、身分邊界治理轉換」案例                                           |
+| 07 Security / Data Protection | 中低         | [Cloudflare 2023 Control Plane Token Incident](/backend/08-incident-response/cases/cloudflare/2023-control-plane-token-incident/) | 補「存取憑證、金鑰、身分邊界治理轉換」案例                                       |
 | 08 Incident Response          | 高           | [GitHub 2018 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)             | 補「轉換期間事故」專題，建立遷移失敗模式索引                                     |
 
 ## 覆蓋門檻與缺口追蹤
@@ -156,13 +156,13 @@ tags: ["backend", "service-selection", "case-study", "migration"]
 
 這個索引的核心責任是讓讀者在「已經出錯」時，能快速找到對應回退失敗模式，而不是從頭重讀選型章節。
 
-| 分類                          | 回退失敗專題                                                                                                |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| 02 Cache / Redis              | [反例：快取切換失敗](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)              |
-| 03 Message Queue              | [反例：語義切換失敗](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)             |
-| 04 Observability              | [反例：OTel 訊號漂移](/backend/04-observability/cases/failure-otel-migration-signal-drift/)                 |
-| 05 Deployment Platform        | [反例：切流未先 drain](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)       |
-| 07 Security / Data Protection | [反例：憑證輪替失敗](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) |
+| 分類                          | 回退失敗專題                                                                                                    |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| 02 Cache / Redis              | [反例：快取切換失敗](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)                  |
+| 03 Message Queue              | [反例：語義切換失敗](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)                 |
+| 04 Observability              | [反例：OTel 訊號漂移](/backend/04-observability/cases/failure-otel-migration-signal-drift/)                     |
+| 05 Deployment Platform        | [反例：切流未先 drain](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)           |
+| 07 Security / Data Protection | [反例：存取憑證輪替失敗](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) |
 
 ## 回退判讀寫法
 
@@ -178,7 +178,7 @@ tags: ["backend", "service-selection", "case-study", "migration"]
 2. Queue：broker/語義轉換與 replay 風險控制
 3. Observability：監控平台遷移與資料品質治理
 4. Deployment：部署平台轉換與灰度/回滾策略
-5. Security：控制面信任邊界與憑證機制轉換
+5. Security：控制面信任邊界與存取憑證機制轉換
 
 ## 第二批外部案例補充（非 DB 類）
 

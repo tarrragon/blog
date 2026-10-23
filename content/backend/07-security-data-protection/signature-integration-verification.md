@@ -97,7 +97,7 @@ out-of-scope 的議題直接跳到對應章節。
 ## 案例觸發參考
 
 - 簽章方案在對外契約上的實際形態： [Stripe webhook 投遞契約](/backend/11-api-design/cases/webhook-stripe-delivery-contract/)
-- 硬編碼憑證與固定認證路徑： [USAHERDS 2021](../red-team/cases/edge-exposure/usaherds-cve-2021-44207-hardcoded-credential/)
+- 硬編碼存取憑證與固定認證路徑： [USAHERDS 2021](../red-team/cases/edge-exposure/usaherds-cve-2021-44207-hardcoded-credential/)
 
 ## 下一步路由
 

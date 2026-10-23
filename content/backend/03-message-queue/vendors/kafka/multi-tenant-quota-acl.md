@@ -304,7 +304,7 @@ Quota 與 ACL 是 broker-side 即時生效、不需重啟、可隨租戶調整�
 
 ### 跟安全模組對位
 
-ACL 是 Kafka 內建的授權層、處理 broker 級的 principal × resource 授權。完整的 secret 管理（SASL 認證憑證怎麼發、輪替、撤銷）屬於 [07 資料保護與安全模組](/backend/07-security-data-protection/)的範疇 —— ACL 綁的 principal 從哪來、由認證層決定、ACL 只負責「這個 principal 能做什麼」。多租戶的完整信任鏈是「認證確認身分（07）→ ACL 授權操作（本文）→ quota 限制用量（本文）」三層。
+ACL 是 Kafka 內建的授權層、處理 broker 級的 principal × resource 授權。完整的 secret 管理（SASL 認證用的存取憑證怎麼發、輪替、撤銷）屬於 [07 資料保護與安全模組](/backend/07-security-data-protection/)的範疇 —— ACL 綁的 principal 從哪來、由認證層決定、ACL 只負責「這個 principal 能做什麼」。多租戶的完整信任鏈是「認證確認身分（07）→ ACL 授權操作（本文）→ quota 限制用量（本文）」三層。
 
 ### 下一步議題
 
