@@ -106,6 +106,7 @@ Federation 信任漂移是 workload identity 獨有的失效模式：信任關�
 ## 下一步路由
 
 - 平台身分在某條整合上用不上時（該章列出的五種情形，涵蓋外部條件與自己的可靠性與合規需求）：[7.32 機器憑證的配發](../machine-credential-issuance/)
+- 多租戶平台的建置管線改用工作負載身分、每次只換得到單一環境的憑證時，影響範圍怎麼算：[7.44 多租戶平台的隔離層級〈存取層的隔離〉](../multi-tenant-platform-isolation-tiers/#存取層的隔離建置管線共用運算營運後台內部工具平台資料庫管理備份與其他共用元件的權限範圍)
 - 身份與平台邊界實作：`05-deployment-platform`
 - 憑證輪替與驗證節奏：`06-reliability`
 - 事件分級與收斂：`08-incident-response`

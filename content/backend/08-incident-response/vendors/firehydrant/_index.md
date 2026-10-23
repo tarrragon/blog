@@ -147,4 +147,5 @@ FireHydrant 後加 AI assist：incident summary 草稿、retrospective draft、s
 
 - 上游：[Drills and On-call Readiness](/backend/08-incident-response/drills-and-oncall-readiness/)
 - 平行：[incident.io](/backend/08-incident-response/vendors/incident-io/)、[Rootly](/backend/08-incident-response/vendors/rootly/)
+- 客服這一端：[8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/)：客服回報怎麼附到進行中的事故上、內部狀態頁上的說法由誰更新
 - 下游：[8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)

@@ -42,6 +42,7 @@ tags: ["backend", "security", "case-study", "red-team"]
 - **失效樣式**：[批次操作濫用](/backend/07-security-data-protection/red-team/problem-cards/bulk-operation-abuse/) + [Long-lived repeatable export artifact](/backend/07-security-data-protection/red-team/problem-cards/fp-long-lived-repeatable-export-artifact/) —— 把 leaked credential → bulk export 的 mechanism 抽象為可重用失效樣式。
 - **控制面**：[7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) + [7.9 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/) + [7.12 偵測涵蓋與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/) —— mitigation 的 mechanism / 前提 / context-dependence 在這裡定義。
 - **演練 / 控制落地**：[Low-frequency exfiltration tabletop](/backend/07-security-data-protection/blue-team/materials/scenarios/low-frequency-exfiltration-tabletop/) + [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/) —— 把樣式轉成 tabletop 與 release gate 欄位。
+- **跨章交接**：[8.26 資料外洩時對商家的通知〈資料流出的三類路徑〉](/backend/08-incident-response/security-incident-customer-notification/#資料流出的三類路徑) —— 資料是用客戶持有的帳號從平台上讀走、平台這一側沒有被入侵時，平台的歸屬判定怎麼下、要交付客戶哪些登入與讀取紀錄。
 
 ## 來源
 

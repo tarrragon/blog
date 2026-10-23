@@ -12,6 +12,8 @@ Tiered support（分層支援）是把處理使用者回報的人分成幾層的
 
 分層支援處理的是使用者回報，[Escalation Policy](/backend/knowledge-cards/escalation-policy/) 處理的是告警與事故：分層支援決定一則回報由哪一層的人回覆，升級策略決定一個沒有回應或沒有進展的事故轉給下一個值班的人。兩者在一個地方交會：客服判斷一則回報要立即呼叫值班時，它就從分層支援進入事故流程，由值班通知系統與升級策略接手。
 
+往上轉在 ITIL 的事件管理裡分成兩種：functional escalation 是把回報轉給專業能力更深的一層（一線客服轉技術支援、技術支援轉工程），hierarchical escalation 是往有權調動資源或做決定的人升（主管、事故指揮），通常發生在處理逾期或影響擴大時。同一則回報可能兩種都經過：客服把重複扣款的回報立即呼叫值班，是 functional escalation；開單之後工程逾期沒有回覆、客服往工程主管追，是 hierarchical escalation。
+
 分層之外另有一種做法叫 swarming（Consortium for Service Innovation 稱為 Intelligent Swarming）：回報不逐層轉，而是由能處理它的人直接協作處理。它省掉逐層轉手的等待，代價是每一則回報都要找到合適的人，適合問題種類多、單一層的資訊不夠用的組織。
 
 ## 可觀察訊號與例子

@@ -38,9 +38,9 @@ tags: ["backend", "security", "case-study", "red-team"]
 
 本案例是事故敘事 layer，沿三步 chain 進入 implementation：
 
-- **控制面**：[7.8 secrets 與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) + [7.6 供應鏈完整性與 artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) —— mitigation 的 mechanism / 前提 / context-dependence 在這裡定義。
+- **控制面**：[7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) + [7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) —— mitigation 的 mechanism / 前提 / context-dependence 在這裡定義。
 - **演練 / 控制落地**：[Supply chain artifact drill](/backend/07-security-data-protection/blue-team/materials/scenarios/supply-chain-artifact-drill/) + [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/) + [Recovery readiness pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/recovery-readiness-pattern/) —— 把樣式轉成輪替演練、credential 治理與回復欄位。
-- **跨章交接**：[backend/05-deployment-platform](/backend/05-deployment-platform/) 的 CI/CD 機制、[backend/08-incident-response](/backend/08-incident-response/) 的止血與回復順序。
+- **跨章交接**：[backend/05-deployment-platform](/backend/05-deployment-platform/) 的 CI/CD 機制、[8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/) 的清查範圍、憑證撤銷與重建順序。
 
 供應鏈類事故不對應紅隊 problem-cards，主要 chain 直接從控制面起步。
 

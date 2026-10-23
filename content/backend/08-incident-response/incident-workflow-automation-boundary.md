@@ -87,7 +87,7 @@ Customer impact statement 需要 comms 與 IC 協作。自動化可以產生初�
 
 Rollback execution 需要 service owner 確認。回滾可能受到 migration、feature flag、cache、client contract 與資料相容性影響，錯誤率只是判斷輸入之一。
 
-Security disclosure 需要資安與法務路由。涉及資料外洩、權限濫用或合規通知時，自動化只能建立容器與 evidence checklist，披露決策需要專責角色確認。
+Security disclosure 需要資安與法務路由。涉及資料外洩、權限濫用或合規通知時，自動化只能建立容器與 evidence checklist，披露決策需要專責角色確認。外洩來源還沒確定時先對客戶發預警的條件、確認之後的通知對象，各自的判斷依據見 [8.26 資料外洩時對商家的通知](/backend/08-incident-response/security-incident-customer-notification/)。
 
 ## Guardrail 設計
 

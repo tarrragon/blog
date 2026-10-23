@@ -24,7 +24,7 @@ Okta 2023 事件顯示支援系統若涉及高權限資料與工作流程，會�
 
 ## 下一步路由
 
-回 [7.2 identity/access boundary](/backend/07-security-data-protection/identity-access-boundary/) 與 [7.13 detection coverage](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)。客服與營運後台的查詢怎麼限縮到每次一個租戶、批次匯出怎麼要第二人核准，見 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)。
+回 [7.2 identity/access boundary](/backend/07-security-data-protection/identity-access-boundary/) 與 [7.13 detection coverage](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)。客服與營運後台的查詢怎麼限縮到每次一個租戶、批次匯出怎麼要第二人核准，見 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)。客戶上傳到支援系統的附件（例如帶著 session token 的 HAR 檔）外洩時，外洩是經由平台這一側發生的：幾家客戶的帳號同時被盜用時，要查這些憑證有沒有共同經過平台，判斷與對客戶的通知見 [8.26 資料外洩時對商家的通知〈回報、元件缺陷、子處理者通報與外部通知的取證路徑〉](/backend/08-incident-response/security-incident-customer-notification/#回報元件缺陷子處理者通報與外部通知的取證路徑)。
 
 ## 引用源
 

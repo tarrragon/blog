@@ -10,7 +10,7 @@ tags: ["backend", "security"]
 
 ## 本章涵蓋與不涵蓋
 
-本章聚焦信任鏈治理、會話收斂、憑證生命周期與第三方傳導。案例在問題被觸發時提供佐證。
+本章聚焦信任鏈治理、會話收斂、憑證（[Certificate（數位憑證）](/backend/knowledge-cards/certificate/)）生命周期與第三方傳導。案例在問題被觸發時提供佐證。
 
 ## 本章 threat scope
 

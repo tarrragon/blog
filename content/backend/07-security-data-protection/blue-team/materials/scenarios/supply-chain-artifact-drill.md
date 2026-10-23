@@ -32,6 +32,8 @@ weight: 72533
 4. Rollback：提供 clean artifact、uninstall 或 rollback route。
 5. Write-back：更新 release gate、build isolation 與 artifact evidence policy。
 
+第二個假設（build environment 受影響）成立時，建置主機的清查範圍、重建來源與憑證撤銷的先後，見 [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)。
+
 ## Evidence Target
 
 | 證據                    | 用途                     |

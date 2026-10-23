@@ -136,5 +136,6 @@ PagerDuty 公開 customer 多為大型 SaaS / 平台、下列案例可作為「p
 - 上游：[Drills and On-call Readiness](/backend/08-incident-response/drills-and-oncall-readiness/)、[Incident Severity Trigger](/backend/08-incident-response/incident-severity-trigger/)
 - 平行：[Opsgenie](/backend/08-incident-response/vendors/opsgenie/)、[Grafana OnCall](/backend/08-incident-response/vendors/grafana-oncall/)、[incident.io](/backend/08-incident-response/vendors/incident-io/)
 - 下游：[Incident Decision Log](/backend/08-incident-response/incident-decision-log/)、[Jeli](/backend/08-incident-response/vendors/jeli/)（postmortem 接手）
+- 客服這一端：[8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#轉給值班的條件與轉交方式)：客服在值班通知系統手動建立事件的入口，與以件數門檻自動建立事件的規則
 - 跨類：[Splunk](/backend/07-security-data-protection/vendors/splunk/)（Notable Event source）、[Cloudflare WAF](/backend/07-security-data-protection/vendors/cloudflare-waf/)（WAF alert source）
 - 官方：[PagerDuty Documentation](https://support.pagerduty.com/)

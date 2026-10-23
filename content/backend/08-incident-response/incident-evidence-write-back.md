@@ -137,5 +137,6 @@ Action item 停在待辦會讓改善失去落點。每個 [action item closure](
 - 6.23 verification evidence handoff：保存新驗證題目的輸出格式
 - 8.16 runbook lifecycle：把有效決策與缺口回寫 runbook
 - 8.21 automation boundary：把 bot 行為與人工確認缺口回寫 guardrail
+- [8.24 客服回報的處理〈重複出現的回報〉](/backend/08-incident-response/support-escalation-and-engineering-reply/#重複出現的回報查證結果寫回知識文章告警規則與查詢工具)：同一類使用者回報反覆出現時，把查證結果寫回知識文章、告警規則與客服查詢工具
 - [6.21 Reliability Debt Backlog](/backend/06-reliability/reliability-debt-backlog/)：事故教訓回寫成 reliability debt
 - [6.4 Chaos Testing](/backend/06-reliability/chaos-testing/)：事故暴露的弱點變成 chaos 演練新題目

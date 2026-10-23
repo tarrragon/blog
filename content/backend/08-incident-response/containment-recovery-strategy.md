@@ -85,6 +85,7 @@ Cloudflare 2019 的教訓是規則推送錯誤會在秒級擴散，containment �
 - 08.15 vendor 事故：依賴方掛掉時的止血手段
 - [6.17 Feature Flag Governance](/backend/06-reliability/feature-flag-governance/)：ops flag（kill switch）作為事中止血手段
 - 08.17 security vs operational：止血策略差異
+- [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)：資安事故止血之後的根除：清查範圍、重建來源與憑證撤銷的先後
 - [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)：把止血邊界轉成演練門檻
 - [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)：用同一門檻判斷恢復完成
 - 08.19 incident decision log：記錄每一步的條件與回退門檻

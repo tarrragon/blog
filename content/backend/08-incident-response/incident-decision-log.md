@@ -74,14 +74,16 @@ Expected effect 與 [rollback condition](/backend/knowledge-cards/rollback-condi
 
 Incident decision log 需要覆蓋事故期間會改變路由的決策。聊天可以保留在原頻道；每個會影響分級、止血、回復、通訊或責任的動作都應進 log。
 
-| 決策類型               | 記錄重點                          | 下游用途           |
-| ---------------------- | --------------------------------- | ------------------ |
-| Severity change        | impact scope、customer pain、SLO  | 對齊分級與通訊節奏 |
-| Containment            | 降級、限流、隔離、停用功能        | 判斷止血是否有效   |
-| Rollback / failover    | 版本、流量、資料相容性            | 支援回復與復盤     |
-| Customer communication | 對外說法、已知事實、限制          | 保持內外部訊息一致 |
-| Vendor escalation      | vendor、ticket、ETA、替代方案     | 管理外部依賴事故   |
-| Security split         | 資安 evidence、access、disclosure | 分流到 security IR |
+| 決策類型                  | 記錄重點                                                                     | 下游用途                             |
+| ------------------------- | ---------------------------------------------------------------------------- | ------------------------------------ |
+| Severity change           | impact scope、customer pain、SLO                                             | 對齊分級與通訊節奏                   |
+| Containment               | 降級、限流、隔離、停用功能                                                   | 判斷止血是否有效                     |
+| Rollback / failover       | 版本、流量、資料相容性                                                       | 支援回復與復盤                       |
+| Customer communication    | 對外說法、已知事實、限制                                                     | 保持內外部訊息一致                   |
+| Vendor escalation         | vendor、ticket、ETA、替代方案                                                | 管理外部依賴事故                     |
+| Security split            | 資安 evidence、access、disclosure；分流之後的撤銷範圍、重建時點與監看期長度  | 分流到 security IR、判斷根除是否完成 |
+| Risk warning              | 外洩來源的歸屬判定結果、法務對契約與法規的判斷、各觸發條件是否成立、發送範圍 | 事後檢驗通知延遲                     |
+| Attribution re-evaluation | 判定依據的紀錄與它記不到什麼、下一次重新判定的時間、會讓判定改變或重開的訊號 | 判定改變時對客戶發更新               |
 
 Severity change 需要留下 impact scope。升級或降級事故等級時，decision log 應能回答哪些客戶、功能、區域、SLO 或商業風險支撐這個決策。
 
@@ -90,6 +92,10 @@ Containment 決策需要留下副作用。限流、降級、停用功能或隔�
 Rollback / failover 決策需要留下資料相容性。版本回退、流量切換與資料 migration 可能互相影響，log 應記錄當時對資料風險的判斷。
 
 Customer communication 決策需要與 evidence 對齊。對外說法應引用當時已確認事實，並標示仍在查證的範圍，避免內外部敘事分裂。
+
+Security split 決策需要留下根除的範圍與時點。分流到資安流程之後，撤銷了哪些憑證、哪些主機以重建取代清理、重建的環境在什麼條件下才上線、監看期到什麼時候結束，都決定事故何時能宣告解除；各項的判斷標準見 [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/) 的〈憑證撤銷與輪替的先後〉與〈多波攻擊的監看與它的結束條件〉。
+
+資料外洩事故另有兩類決策要進 log：外洩來源還沒確定時是否對客戶發風險預警，以及外洩來源歸屬判定的每一次重新判定。重新判定的時間記在 Follow-up，會讓判定改變或重開的訊號記在 Rollback condition；兩類決策各要記哪些依據，見 [8.26 資料外洩時對商家的通知〈事中決策紀錄〉](/backend/08-incident-response/security-incident-customer-notification/#事中決策紀錄通知延遲在事後被檢驗時的材料)。
 
 資料 migration 決策需要留下 rollout 階段。暫停 backfill、回到 fallback read、停止 contract 或選擇 fail-forward 時，decision log 應連到 [validation query](/backend/knowledge-cards/validation-query/)、mismatch sample、[rollback window](/backend/knowledge-cards/rollback-window/) 與 owner；完整範例可接到 [1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)。
 
@@ -124,6 +130,8 @@ Post-incident review 應從 decision log 取出三種材料：正確決策、錯
 錯誤假設可以變成 readiness 或 experiment 題目。若當時相信 fallback 會吸收失敗但實際沒有，這個假設應回寫到 06 的 chaos 或 DR drill。
 
 缺少 evidence 的決策可以回寫到 04。若團隊因 telemetry data quality、trace 斷鏈或 impact scope 不清而延遲決策，缺口應回到 observability readiness 與 data quality。
+
+資料外洩事故的 decision log 在事後還有一群讀者：主管機關、客戶與受害者檢驗通知延遲時，查的是每一個時間點知道什麼、依據什麼做了判斷。事中留下的判定與通知紀錄，讓誤判與隱瞞在事後分得開，要記的項目見 [8.26 資料外洩時對商家的通知〈事中決策紀錄〉](/backend/08-incident-response/security-incident-customer-notification/#事中決策紀錄通知延遲在事後被檢驗時的材料)。
 
 ## 常見反模式
 

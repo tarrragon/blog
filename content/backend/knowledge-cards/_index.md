@@ -490,6 +490,8 @@ weight: -1
 | [Status Page](/backend/knowledge-cards/status-page/)                                       | 對外狀態頁如何承接可用性承諾               | 通報、可用性承諾                     |
 | [Action Item Closure](/backend/knowledge-cards/action-item-closure/)                       | 復盤的行動項如何被驗證完成                 | 復盤、驗收證據                       |
 | [Session Invalidation](/backend/knowledge-cards/session-invalidation/)                     | 事件之後既有會話如何失效                   | 重放、撤銷                           |
+| [Dwell Time（攻擊者駐留時間）](/backend/knowledge-cards/dwell-time/)                       | 攻擊者被發現前待了多久、清查要追溯到哪一天 | 根除、清查範圍、入侵報告             |
+| [Digital Forensics（數位鑑識）](/backend/knowledge-cards/digital-forensics/)               | 證據怎麼在處置前保全、結論怎麼經得起複驗   | 保管鏈、外部鑑識、擷取次序           |
 
 ## 資安與資料保護
 
@@ -500,7 +502,8 @@ weight: -1
 | [HSM (Hardware Security Module)](/backend/knowledge-cards/hsm/)                                                 | 簽章金鑰如何在硬體邊界內受保護               | KMS、key ceremony、quorum        |
 | [Step-Up Authentication](/backend/knowledge-cards/step-up-authentication/)                                      | 高風險操作如何動態升級認證強度               | MFA fatigue、session、passkey    |
 | [Authentication](/backend/knowledge-cards/authentication/)                                                      | 系統如何確認呼叫者身份                       | login、API key、mTLS             |
-| [Credential](/backend/knowledge-cards/credential/)                                                              | 身分與系統存取用秘密如何保存與輪替           | API key、password、private key   |
+| [Credential（存取憑證）](/backend/knowledge-cards/credential/)                                                  | 身分與系統存取用秘密如何保存與輪替           | API key、password、private key   |
+| [Certificate（數位憑證）](/backend/knowledge-cards/certificate/)                                                | 公鑰綁定身分的公開資料與要保密的私鑰怎麼分   | TLS、mTLS、X.509                 |
 | [Workload Identity](/backend/knowledge-cards/workload-identity/)                                                | 機器身分如何與人類身分分開治理               | Kubernetes、CI/CD、跨雲整合      |
 | [Token Revocation](/backend/knowledge-cards/token-revocation/)                                                  | 既有 token 如何在事件節奏內失效              | 事件收斂、短期 token、introspect |
 | [IAM](/backend/knowledge-cards/iam/)                                                                            | 身分與權限如何集中治理                       | SSO、roles、policy               |

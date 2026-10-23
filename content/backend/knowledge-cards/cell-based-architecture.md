@@ -11,6 +11,8 @@ Cell-based architecture 的核心責任是 blast radius 控制 — 把整個系�
 
 Cell-based architecture 處於系統架構的「失敗隔離」維度、跟 [database sharding](/backend/knowledge-cards/database-sharding/) 同概念但不同層級（sharding 切資料、cell 切完整 stack）。常見 cell 切分軸：按地理 region（AWS 把每個 region 視為獨立 cell）、按 tenant（multi-tenant SaaS 把大客戶各放獨立 cell）、按 user shard（user ID hash 分到 N 個 cell）、按業務 vertical（DoorDash dispatch / payment / merchant 各 cell）。Cell-based 跟 microservice 可以組合：每個 cell 內部用 microservice、跨 cell 也用 microservice 通訊、但 cell 邊界是故障隔離的硬邊界。
 
+另一種常見的變體只把資料庫與快取按組分開，應用伺服器與背景工作跨 cell 共用，[Shopify 的 pod](/backend/06-reliability/cases/shopify/pod-architecture-and-resiliency-matrix/) 屬於這一類：資料庫憑證外洩或單一資料庫故障的影響範圍是一組，而共用運算手上有連到每一個 cell 的憑證，它被入侵時影響範圍仍是全部 cell。[7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/) 與 8.26 說的 cell 指這個只分資料層的變體，兩種形態的差別在共用運算有沒有算進影響範圍。
+
 把租戶分組放進 cell 時，一個 cell 被入侵碰得到幾個租戶，以及建置管線與營運後台這類共用元件的權限如何讓 cell 分區失效，見 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)。
 
 ## 可觀察訊號與例子

@@ -147,3 +147,4 @@ Statuspage 的定位是 *對外狀態頁領導品牌*、責任邊界是 *把內�
 - 上游：[8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)
 - 平行：[Instatus](/backend/08-incident-response/vendors/instatus/)、[Opsgenie](/backend/08-incident-response/vendors/opsgenie/)、[incident.io](/backend/08-incident-response/vendors/incident-io/)
 - 下游：[8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)
+- 客服這一端：[8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#客服當場答覆時用的資訊)：對外狀態頁之外，客服答覆用的內部狀態頁多一欄「對客戶的說法」
