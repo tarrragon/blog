@@ -290,7 +290,7 @@ gcloud compute instances list --filter="NOT tags.items=<ssh-via-iap-tag>"
 gcloud compute instances list --filter="NOT tags.items=<rdp-via-iap-tag>"
 ```
 
-清單裡出現的是另一種作業系統的 VM 時合理（Linux VM 本來就不帶 RDP 的 tag），其餘的要先補上 tag 再刪規則：
+清單裡出現的是另一種作業系統的 VM 時合理（Linux VM 本來就不帶 RDP 的 tag），其餘的要先補上 tag 再刪規則。專案裡還沒有任何 VM 帶 tag 時，`gcloud` 會先印一行 `WARNING: The following filter keys were not present in any resource : tags.items`，這行只表示沒有任何 VM 有 `tags` 欄位，下面列出的 VM 清單仍然正確：
 
 ```bash
 # SSH 與 RDP 都在舊規則停用的狀態下驗證過之後，刪掉這兩條規則
@@ -388,7 +388,7 @@ gcloud compute project-info add-metadata --metadata enable-oslogin=FALSE
 
 OS Login 也可以要求登入時的兩步驟驗證（metadata 設 `enable-oslogin-2fa=TRUE`），讓每一次 SSH 登入都多一次 Google 帳號的第二因素。設定之前要確認每一位管理員的 Google 帳號都已啟用兩步驟驗證，沒有啟用的帳號會登不進去；同樣先對單一 VM 設定驗證，連不上時改回 `FALSE`。
 
-帳號停用或角色移除之後，下一次登入就會失敗；已經建立的工作階段不受影響，處理離職或帳號外洩時，管理員要另外登入 VM 結束那個使用者的工作階段（systemd 的發行版用 `sudo loginctl terminate-user <username>`，`<username>` 是 OS Login 由 Google 帳號轉成的使用者名稱）。Windows VM 上用 `query session` 找出那個使用者的 RDP 工作階段，再用 `logoff <session-id>` 結束。
+帳號停用或角色移除之後，下一次登入就會失敗；已經建立的工作階段不受影響，處理離職或帳號外洩時，管理員要另外登入 VM 結束那個使用者的工作階段（systemd 的發行版用 `sudo loginctl terminate-user <username>`，`<username>` 是 OS Login 由 Google 帳號轉成的使用者名稱，例如 `alice_example_com`）。結束之後用 `pgrep -u <username> -a` 確認那個使用者的行程已經全部結束：`loginctl` 只結束 systemd-logind 登記過的工作階段，登入時 `pam_systemd` 登記失敗的工作階段（VM 的日誌裡有 `pam_systemd(sshd:session): Failed to create session`）不在它的清單裡，這時 `terminate-user` 會回報使用者沒有登入，而行程仍在執行；還有剩下的行程時，用 `sudo pkill -KILL -u <username>` 結束。Windows VM 上用 `query session` 找出那個使用者的 RDP 工作階段，再用 `logoff <session-id>` 結束。
 
 ## 拿掉外部 IP 之後的出站路徑：Cloud NAT 與 Private Google Access
 
@@ -438,7 +438,7 @@ gcloud compute instances delete-access-config <instance-name> --zone=<zone> \
   --access-config-name="<access-config-name>"
 ```
 
-移除之後經由 IAP 連進這台 VM，執行 `curl -s https://ifconfig.me` 印出出站時對方看到的來源 IP，那個 IP 是 Cloud NAT 的外部 IP（`gcloud compute routers get-nat-ip-info <router-name> --region=<region>` 列得出來）就代表出站走了 Cloud NAT；連不到網際網路時，用 `gcloud compute instances add-access-config <instance-name> --zone=<zone>` 把外部 IP 加回去，再回頭查 Cloud NAT 的 region 與 subnet 設定。移除之後，這台 VM 只剩 IAP 一條管理路徑，連線一律加 `--tunnel-through-iap`。
+移除之後經由 IAP 連進這台 VM，執行 `curl -s https://ifconfig.me` 印出出站時對方看到的來源 IP，那個 IP 是 Cloud NAT 的外部 IP（`gcloud compute routers get-nat-ip-info <router-name> --region=<region>` 列得出來）就代表出站走了 Cloud NAT。判斷依據是這份清單；移除前後印出同一個 IP 時，出站也可能已經改走 Cloud NAT：`--auto-allocate-nat-external-ips` 在有 VM 需要出站時才配發 IP，配到的可能正好是這台 VM 剛釋放的那個外部 IP，這時移除前後印出的是同一個 IP，而它已經改由 Cloud NAT 持有（`gcloud compute addresses list` 的 `PURPOSE` 欄是 `NAT_AUTO`）；連不到網際網路時，用 `gcloud compute instances add-access-config <instance-name> --zone=<zone>` 把外部 IP 加回去，再回頭查 Cloud NAT 的 region 與 subnet 設定。移除之後，這台 VM 只剩 IAP 一條管理路徑，連線一律加 `--tunnel-through-iap`。
 
 ## 組織層級的護欄：Organization Policy 與階層式防火牆
 
@@ -493,7 +493,7 @@ gcloud compute firewall-policies associations create --firewall-policy=<policy-n
 
 [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)〈組織層級的護欄與稽核紀錄〉列出事後要查的三項事件，在 GCP 上分別從這幾個來源查：
 
-- **誰在什麼時候經由哪條通道登入了哪台 VM**：開通道的帳號與目標 VM 記在 Cloud Audit Logs 裡 IAP 的 Data Access 紀錄（在〈啟用 IAP API、開啟稽核紀錄並建立只放行 IAP 來源的防火牆規則〉那一步開啟）；登入 VM 的帳號記在 VM 上的 sshd 紀錄，啟用 OS Login 時是由 Google 帳號轉成的使用者名稱。firewall rules logging 記錄每一次放行的來源 IP、目的 VM、port 與命中的規則名稱，經由 IAP 的連線來源都是 IAP 的位址段，從這份紀錄看不出是哪個人。
+- **誰在什麼時候經由哪條通道登入了哪台 VM**：開通道的帳號與目標 VM 記在 Cloud Audit Logs 裡 IAP 的 Data Access 紀錄（在〈啟用 IAP API、開啟稽核紀錄並建立只放行 IAP 來源的防火牆規則〉那一步開啟）；登入 VM 的帳號記在 VM 上的 sshd 紀錄，啟用 OS Login 時是由 Google 帳號轉成的使用者名稱。啟用 OS Login 時，每一次登入另外在 Cloud Audit Logs 留下 OS Login 檢查登入權限的 Data Access 紀錄，記著 Google 帳號與目標 VM，而且存在 VM 之外，取得 VM root 的人清不掉：用 `gcloud logging read 'protoPayload.serviceName="oslogin.googleapis.com" AND protoPayload.methodName:"CheckPolicy"' --freshness=7d --format="value(timestamp,protoPayload.authenticationInfo.principalEmail,protoPayload.resourceName)"` 查；查不到時到「IAM 與管理 > 稽核記錄」確認 Cloud OS Login API 的 Data Access 紀錄有沒有開啟。firewall rules logging 記錄每一次放行的來源 IP、目的 VM、port 與命中的規則名稱，經由 IAP 的連線來源都是 IAP 的位址段，從這份紀錄看不出是哪個人。
 - **誰在什麼時候開了救援入口**：開啟 Serial Console 的 metadata 修改與組織政策的解除屬於 Admin Activity 紀錄，預設就有。
 - **環境裡是否出現新的對外開放管理 port**：Security Command Center 的 Security Health Analytics 持續掃描組織內的防火牆規則，`OPEN_SSH_PORT` 與 `OPEN_RDP_PORT` 這兩類 finding 對應的就是對外開放 22 與 3389 的規則。處理方式是照〈切換到 IAP 的順序〉把規則換掉，直接刪除會中斷管理員自己的連線；規則刪除或縮小來源之後，下一次掃描會把對應的 finding 標為已解決。
 
