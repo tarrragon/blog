@@ -10,7 +10,7 @@ tags: ["backend", "security", "privacy", "compliance", "incident-response"]
 
 ## 概念位置
 
-依 GDPR 第 28 條，處理者委託子處理者之前要取得控制者的書面授權（逐一的授權，或一般性授權加上變更前通知、讓控制者有機會反對），並把自己對控制者承擔的資料保護義務以契約加到子處理者身上；子處理者沒有履行時，原處理者對控制者負全部責任（第 28 條第 4 項）。所以子處理者外洩時，對控制者來說仍是處理者這一側的外洩，處理者照自己外洩的方式通知控制者（通知方向見 [Data Controller and Data Processor（控制者與處理者）](/backend/knowledge-cards/data-controller-and-processor/)）。
+依 GDPR 第 28 條，處理者委託子處理者之前要取得控制者的書面授權（逐一的授權，或一般性授權加上變更前通知、讓控制者有機會反對），並把自己對控制者承擔的資料保護義務以契約加到子處理者身上；子處理者沒有履行資料保護義務時，原處理者要為那個子處理者的義務履行對控制者負全部責任（第 28 條第 4 項）。從這個責任歸屬推得：子處理者外洩時，對控制者來說仍是處理者這一側的外洩，處理者照自己外洩的方式通知控制者（通知方向見 [Data Controller and Data Processor（控制者與處理者）](/backend/knowledge-cards/data-controller-and-processor/)）。
 
 ## 可觀察訊號與例子
 
@@ -18,4 +18,4 @@ SaaS 平台公開的子處理者清單（列出雲端主機、寄信服務、支
 
 ## 設計責任
 
-處理者要知道自己把哪些控制者的哪些欄位傳給了哪個子處理者、它保存多久，這份紀錄決定子處理者外洩時受影響的範圍；資料處理協議要讓處理者在事故時拿得到子處理者的存取紀錄或鑑識結論。子處理者被入侵時的歸屬判定與通知範圍，見 [8.26 資料外洩時對商家的通知〈子處理者的入侵通報〉](/backend/08-incident-response/security-incident-customer-notification/#子處理者的入侵通報)；資料交給供應商之前契約要寫的通報時限與責任鏈見 [7.4 資料保護與遮罩治理〈各節點的收斂動作〉](/backend/07-security-data-protection/data-protection-and-masking-governance/#各節點的收斂動作)。
+處理者要知道自己把哪些控制者的哪些欄位傳給了哪個子處理者、它保存多久，這份紀錄決定子處理者外洩時受影響的範圍；資料處理協議要讓處理者在事故時拿得到子處理者的存取紀錄或鑑識結論。子處理者被入侵時的歸屬判定與通知範圍，見 [8.26 資料外洩時對商家的通知〈回報、元件缺陷、子處理者通報與外部通知的取證路徑〉](/backend/08-incident-response/security-incident-customer-notification/#回報元件缺陷子處理者通報與外部通知的取證路徑)；資料交給供應商之前契約要寫的通報時限與責任鏈見 [7.4 資料保護與遮罩治理〈各節點的收斂動作〉](/backend/07-security-data-protection/data-protection-and-masking-governance/#各節點的收斂動作)。
