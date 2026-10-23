@@ -14,6 +14,8 @@ NAT Gateway 在網路地基裡的角色是 private subnet 的出站閘道。它�
 
 NAT Gateway 是綁定單一可用區的資源，活在某個 public subnet 裡，實際生不生效由該 subnet 的 [route table](/infra/knowledge-cards/route-table/) 預設路由決定。這帶來一個架構取捨：共享一個 NAT（成本低、出站方向有單點）還是每個可用區各放一個（成本高、出站與 subnet 冗餘對齊）。
 
+GCP 的對應服務是 Cloud NAT，職責相同，結構不同：它建在 Cloud Router 上、以 region 為單位生效，不需要放進某個 subnet，也沒有可用區層級的單點取捨。沒有外部 IP 的 VM 要存取 Google 自家的 API 時，subnet 開啟 Private Google Access 就能走內部路徑，作用與 AWS 的 VPC Endpoint 相近。
+
 ## 可觀察訊號
 
 以下狀況指向 NAT 相關問題：

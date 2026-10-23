@@ -6,7 +6,7 @@ weight: 5
 tags: ["infra", "network", "gcp", "ssh", "iap", "firewall"]
 ---
 
-這篇整理 GCP Compute Engine 上管理員登入 VM 的 SSH 通道，從防火牆對 `0.0.0.0/0` 開 22 port 改成走 Identity-Aware Proxy（IAP）TCP forwarding 的設定與指令。範圍從專案裡已經有 VM、而且用的是預設網路（`default` network）開始。
+這篇整理 GCP Compute Engine 上管理員登入 VM 的 SSH 通道，從防火牆對 `0.0.0.0/0` 開 22 port 改成走 Identity-Aware Proxy（IAP）TCP forwarding 的設定與指令。IAP 這一類代理服務的共通機制見 [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/)。範圍從專案裡已經有 VM、而且用的是預設網路（`default` network）開始。
 
 管理通道為什麼要收斂、它拆成哪幾層、各層有哪些與廠商無關的做法，在[伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證與救援入口](/infra/03-network-foundation/management-access-channel/)。本篇是那套模型在 GCP 上的一種組合：
 
@@ -32,7 +32,7 @@ GCP 在建立專案時會自動建一個叫 `default` 的 auto-mode VPC，並在
 
 這四條規則的 priority 都是 65534，只比 VPC 隱含的「拒絕所有入站」規則（65535）高一級，所以任何 priority 數字較小的規則都能蓋過它們。它們也沒有指定 target tag，作用對象是這個網路裡的每一台 VM。
 
-只收掉 `default-allow-ssh` 會留下兩個暴露面。`default-allow-rdp` 讓每一台 Windows VM 的遠端桌面對整個網際網路開放，而 RDP 預設接受密碼登入，被暴力嘗試的代價比 SSH 高。`default-allow-internal` 讓同一個網路裡的 VM 之間不受任何 port 限制，一台 VM 被入侵之後，攻擊者從那台機器能直接連到其他 VM 的資料庫埠與管理埠，這種擴散方式叫橫向移動（lateral movement）。另外，這四條自動建立的規則預設沒有開啟 firewall rules logging，被掃描或被連入都不會留下紀錄。管理 port 對外開放的風險（sshd 漏洞、金鑰的生命週期、RDP 的密碼登入）與廠商無關，見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈對外開放管理 port 的實際風險〉。
+只收掉 `default-allow-ssh` 會留下兩個暴露面。`default-allow-rdp` 讓每一台 Windows VM 的遠端桌面對整個網際網路開放，而 RDP 預設接受密碼登入，被暴力嘗試的代價比 SSH 高。`default-allow-internal` 讓同一個網路裡的 VM 之間不受任何 port 限制，一台 VM 被入侵之後，攻擊者從那台機器能直接連到其他 VM 的資料庫埠與管理埠，這種擴散方式叫[橫向移動（lateral movement）](/backend/knowledge-cards/lateral-movement/)。另外，這四條自動建立的規則預設沒有開啟 firewall rules logging，被掃描或被連入都不會留下紀錄。管理 port 對外開放的風險（sshd 漏洞、金鑰的生命週期、RDP 的密碼登入）與廠商無關，見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈對外開放管理 port 的實際風險〉。
 
 CIS Google Cloud Platform Foundation Benchmark 的 3.1 條因此建議專案裡不保留 `default` 網路，改用自己規劃 subnet 的 custom-mode VPC。已經有服務跑在 `default` 網路上的專案，可以先收斂這四條規則，搬遷網路排進另一次變更。
 
@@ -141,7 +141,7 @@ gcloud compute firewall-rules delete default-allow-ssh default-allow-rdp
 
 ## SSH 金鑰在 GCP 上的管理位置：metadata 與 OS Login
 
-GCP 上把 SSH 公鑰交給 VM 有兩種方式，分別對應[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)裡的靜態公鑰與由中央服務動態提供公鑰。metadata 金鑰把公鑰寫在專案或 VM 的 metadata 裡，VM 上的 guest agent 讀出來寫進 `authorized_keys`；它和 Google 帳號沒有連動，成員離職後要有人記得去 metadata 刪掉他的公鑰。OS Login 讓 VM 依 Google 帳號與 IAM 決定誰能登入：持有 `roles/compute.osLogin` 的帳號能以一般使用者登入，持有 `roles/compute.osAdminLogin` 的帳號另外拿得到 sudo，帳號停用或角色移除之後登入權限立即消失。
+GCP 上把 SSH 公鑰交給 VM 有兩種方式，分別對應[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)裡的靜態公鑰與由中央服務動態提供公鑰。metadata 金鑰把公鑰寫在專案或 VM 的 metadata 裡，VM 上的 guest agent 讀出來寫進 `authorized_keys`；它和 Google 帳號沒有連動，成員離職後要有人記得去 metadata 刪掉他的公鑰。[OS Login](/infra/knowledge-cards/os-login/) 讓 VM 依 Google 帳號與 IAM 決定誰能登入：持有 `roles/compute.osLogin` 的帳號能以一般使用者登入，持有 `roles/compute.osAdminLogin` 的帳號另外拿得到 sudo，帳號停用或角色移除之後登入權限立即消失。
 
 ```bash
 # 在專案層級啟用 OS Login，專案內的 VM 改依 IAM 決定登入權限
@@ -195,7 +195,7 @@ gcloud compute instances delete-access-config <instance-name> --zone=<zone> \
 
 ## 救援入口：Serial Console
 
-GCP 的 Serial Console 透過 VM 的虛擬序列埠提供登入，不經過網路與 sshd，在防火牆 tag 漏加、sshd 設定改壞、磁碟滿導致 sshd 起不來時當作救援入口。
+GCP 的 [Serial Console](/infra/knowledge-cards/serial-console/) 透過 VM 的虛擬序列埠提供登入，不經過網路與 sshd，在防火牆 tag 漏加、sshd 設定改壞、磁碟滿導致 sshd 起不來時當作救援入口。
 
 Serial Console 的互動登入預設關閉，對單一 VM 開啟用 metadata `serial-port-enable=TRUE`，存取權限由 IAM 控制。登入走 VM 內的本機帳號密碼，救援用帳號要在 VM 還正常時就建好；救援入口平時保持關閉的理由見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈救援入口：管理通道斷掉時的備用路徑〉。
 

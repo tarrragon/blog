@@ -13,8 +13,8 @@ tags: ["infra", "network", "ssh", "security", "access"]
 管理通道指管理員從自己的電腦登入伺服器作業系統的那條路徑。一次 SSH 登入要通過三件彼此獨立的事，每一件都可以單獨換做法：
 
 - **網路可達性**：管理員電腦送出的封包是否到達得了伺服器上 sshd 監聽的 port。防火牆規則、伺服器是否持有公開 IP、中間是否經過代理，決定的都是這一層。
-- **通道授權**：在封包抵達 sshd 之前，是否有一個元件先確認「這個人可以使用這條通道」，以及它憑什麼確認——來源 IP、VPN 憑證，或一個身分提供者（identity provider，IdP）上的帳號。
-- **主機登入驗證**：封包抵達 sshd 之後，sshd 用什麼判斷這個連線可以登入哪個帳號——`authorized_keys` 裡的靜態公鑰、由中央服務動態提供的公鑰，或 SSH CA 簽發的短期憑證。
+- **通道授權**：在封包抵達 sshd 之前，是否有一個元件先確認「這個人可以使用這條通道」，以及它憑什麼確認——來源 IP、VPN 憑證，或一個身分提供者（[identity provider](/backend/knowledge-cards/identity-provider/)，IdP）上的帳號。
+- **主機登入驗證**：封包抵達 sshd 之後，sshd 用什麼判斷這個連線可以登入哪個帳號——`authorized_keys` 裡的靜態公鑰、由中央服務動態提供的公鑰，或 SSH CA 簽發的短期憑證（[SSH Certificate](/infra/knowledge-cards/ssh-certificate/)）。
 
 防火牆對 `0.0.0.0/0` 開 22 port 的狀態，在這個模型裡是網路可達性全開、通道授權不存在、只剩主機登入驗證一層在擋。收斂管理通道的各種做法，差別在它們把前兩層換成什麼。
 
@@ -29,7 +29,7 @@ tags: ["infra", "network", "ssh", "security", "access"]
 - **金鑰的生命週期**：私鑰從筆電、CI 或共用資料夾外洩之後，持有者從任何地方都能登入；成員離職時沒從 `authorized_keys` 移除的公鑰持續有效。靜態公鑰沒有到期時間，所以「誰還拿得到這台主機」只能靠人工盤點查出來。
 - **RDP**：Windows 的遠端桌面預設接受帳號密碼，暴力嘗試的成功率比只收金鑰的 SSH 高，對外開放 3389 的風險高一級。
 
-同一個內部網段裡的主機之間如果所有 port 互通，一台主機被攻破後，攻擊者從那台機器可以直接連到其他主機的資料庫埠與管理埠，這種擴散方式叫橫向移動（lateral movement）。收斂對外的管理 port 時，內部網段之間的規則要一起盤點，最小開放的設計見[網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/)。
+同一個內部網段裡的主機之間如果所有 port 互通，一台主機被攻破後，攻擊者從那台機器可以直接連到其他主機的資料庫埠與管理埠，這種擴散方式叫[橫向移動（lateral movement）](/backend/knowledge-cards/lateral-movement/)。收斂對外的管理 port 時，內部網段之間的規則要一起盤點，最小開放的設計見[網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/)。
 
 ## 網路可達性的做法：管理 port 對誰開放
 
@@ -38,8 +38,8 @@ tags: ["infra", "network", "ssh", "security", "access"]
 **仍然接受入站、但縮小來源**的做法有三種：
 
 - **來源 IP 白名單**：防火牆只放行公司對外的固定 IP。設定成本最低；代價是遠端工作與 IP 變動時要一直改規則，而且公司網路裡任何一台被入侵的電腦都在白名單內。它同時兼任通道授權，而它用來判斷身分的依據是 IP。
-- **跳板機（bastion host）**：一台放在公開網段、只用來轉接 SSH 的主機，其他主機只接受來自它的連線。暴露面從每台主機收斂成一台，但那一台仍然對外開著管理 port，要修補、要監控，它的 sshd 漏洞就是整個環境的入口。好處是與廠商無關、可以集中錄製操作紀錄。
-- **身分感知代理（identity-aware proxy）**：由廠商或第三方提供的代理服務在網際網路上接收連線，驗過身分之後才從固定的內部位址段連到主機。防火牆只放行那段代理位址。GCP 的 IAP TCP forwarding、Cloudflare Access、Teleport 的 proxy 屬於這一類。主機本身不需要公開 IP。
+- **跳板機（[bastion host](/infra/knowledge-cards/bastion-host/)）**：一台放在公開網段、只用來轉接 SSH 的主機，其他主機只接受來自它的連線。暴露面從每台主機收斂成一台，但那一台仍然對外開著管理 port，要修補、要監控，它的 sshd 漏洞就是整個環境的入口。好處是與廠商無關、可以集中錄製操作紀錄。
+- **身分感知代理（[identity-aware proxy](/infra/knowledge-cards/identity-aware-proxy/)）**：由廠商或第三方提供的代理服務在網際網路上接收連線，驗過身分之後才從固定的內部位址段連到主機。防火牆只放行那段代理位址。GCP 的 IAP TCP forwarding、Cloudflare Access、Teleport 的 proxy 屬於這一類。主機本身不需要公開 IP。
 
 **主機不接受任何入站連線**的做法是代理程式反向連線：主機上跑一個代理程式，由它主動往外連到管理服務並維持一條連線，管理員的工作階段經由那條連線送進來。防火牆不必為管理用途開任何入站 port。AWS 的 SSM Session Manager 是這一類的代表；它的前提是代理程式要持續在主機上執行、而且主機要有連到管理服務端點的出站路徑。
 
@@ -62,7 +62,7 @@ CI 或自動化工具要使用管理通道時，它的身分是服務帳號或�
 主機登入驗證這一層決定 sshd 接受哪些金鑰，而設計的重點是金鑰的生命週期：誰發、多久失效、離職時怎麼收回。
 
 - **靜態 `authorized_keys`**：公鑰手動或由設定管理工具寫進主機。沒有到期時間，收回要逐台刪除，主機數量一多就難以盤點，接手時的回收方法見 [SSH](/infra/knowledge-cards/ssh/)。
-- **由中央服務動態提供公鑰**：主機在登入當下向中央服務查詢這個帳號的公鑰，帳號或角色被移除，下一次登入就失敗。GCP 的 OS Login、AWS 的 EC2 Instance Connect（推送只在短時間內有效的公鑰）屬於這一類。
+- **由中央服務動態提供公鑰**：主機在登入當下向中央服務查詢這個帳號的公鑰，帳號或角色被移除，下一次登入就失敗。GCP 的 [OS Login](/infra/knowledge-cards/os-login/)、AWS 的 EC2 Instance Connect（推送只在短時間內有效的公鑰）屬於這一類。
 - **SSH CA 簽發的短期憑證**：主機只信任一把 CA 公鑰（sshd 的 `TrustedUserCAKeys`），管理員每次登入前向簽發服務取得有效期以小時計的使用者憑證。憑證過期自動失效，不需要逐台收回。HashiCorp Vault 的 SSH secrets engine 與 Teleport 都以這種方式運作；OpenSSH 本身就支援，用 `ssh-keygen -s` 簽發。
 
 這一層與通道授權常由同一個系統提供（例如 Teleport 同時做代理與簽發憑證、GCP 的 IAP 與 OS Login 都依 IAM 判斷），但兩者仍然是兩次檢查：通道授權允許開通道，主機登入驗證決定進了通道之後能登入哪個帳號、是否取得 sudo。
@@ -85,7 +85,7 @@ CI 或自動化工具要使用管理通道時，它的身分是服務帳號或�
 
 ## 救援入口：管理通道斷掉時的備用路徑
 
-管理通道的任何一層出錯——防火牆規則寫錯、代理服務的權限設錯、sshd 設定改壞、磁碟滿導致 sshd 起不來——管理員就進不了主機。救援入口是一條不經過網路與 sshd 的路徑：雲端廠商的序列主控台（GCP 的 Serial Console、AWS 的 EC2 Serial Console）、地端主機的 IPMI 或 iDRAC 這類頻外管理介面。
+管理通道的任何一層出錯——防火牆規則寫錯、代理服務的權限設錯、sshd 設定改壞、磁碟滿導致 sshd 起不來——管理員就進不了主機。救援入口是一條不經過網路與 sshd 的路徑：雲端廠商的[序列主控台（serial console）](/infra/knowledge-cards/serial-console/)（GCP 的 Serial Console、AWS 的 EC2 Serial Console）、地端主機的 IPMI 或 iDRAC 這類頻外管理介面。
 
 救援入口本身也是一個能登入主機的入口，所以它的設計與管理通道相反：平時保持關閉或只授權給少數持有救援責任的帳號，只在救援時對單一主機開啟。序列主控台多半用主機上的本機帳號密碼登入，這個救援帳號要在主機還正常時就預先建好；等管理通道斷掉才想到要建，已經沒有路徑可以建。
 
