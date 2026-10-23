@@ -8,32 +8,34 @@ tags: ["infra", "knowledge-cards", "network", "ssh", "access"]
 
 管理員要登入 private [Subnet](/infra/knowledge-cards/subnet/) 裡的主機時，跳板機（bastion host，也稱 jump host；其他中文資料常寫作「堡壘主機」）是常見的中繼點：一台放在公開網段、只負責轉接管理連線的主機。其他主機的防火牆只接受來自跳板機的 SSH，管理員先連上跳板機，再從那裡連到目的主機。OpenSSH 用 `ssh -J <bastion-host> <target-host>`（設定檔裡的 `ProxyJump`）一次完成兩段連線，私鑰留在管理員自己的電腦上，不必複製到跳板機。
 
+跳板機處理的是主機以 [SSH](/infra/knowledge-cards/ssh/) 登入管理的情境：每台主機上跑著接受 SSH 連線的服務程式 sshd、預設監聽 22 port。只部署在 PaaS 或 serverless 平台、沒有任何可以 SSH 登入的主機時，平台自己的主控台與 CLI 就是管理入口，用不到跳板機。
+
 ## 概念位置
 
-跳板機在[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的模型裡屬於網路可達性這一層：它把「每台主機都對外開 22 port」收斂成「只有一台對外開」。它同時兼任通道授權，判斷依據是跳板機上的 SSH 金鑰；跳板機與目的主機接受同一把金鑰時，一把私鑰外洩就同時通過這兩層。它放在 public [Subnet](/infra/knowledge-cards/subnet/)，目的主機留在 private subnet，兩者之間的放行由 [Security Group](/infra/knowledge-cards/security-group/) 的來源引用表達。
+把管理通道拆成網路可達性、通道授權、主機登入驗證三層時（見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)），跳板機是網路可達性的做法之一：它把「每台主機都對外開 22 port」收斂成「只有一台對外開」。它同時兼任通道授權——決定誰能打開通往主機的連線——判斷依據是跳板機上的 SSH 金鑰；跳板機與目的主機接受同一把金鑰時，一把私鑰外洩就同時通過這兩層。
 
-暴露面收斂成一台，但沒有消失：跳板機仍然對網際網路開著管理 port，它的 sshd 漏洞與金鑰管理就是整個環境的入口。不讓任何自管主機對外的做法是 [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/)，對外接收連線的那一層改由代理服務承擔。
+跳板機放在 public subnet，目的主機留在 private subnet，兩者之間的放行用 [Security Group](/infra/knowledge-cards/security-group/) 的來源引用表達：目的主機的入站規則把來源寫成「跳板機所屬的那個 security group」而不是一個 IP，跳板機換了 IP 或多加一台，規則都不必改。
 
-雲端廠商也提供受管的跳板服務（例如 Azure Bastion），主機的修補由廠商負責，連線方式與身分驗證依各家服務而定，位置介於自建跳板機與身分感知代理之間。
+暴露面收斂成一台，但沒有消失：跳板機仍然對網際網路開著管理 port，它的 sshd 漏洞與金鑰管理就是整個環境的入口。不讓任何自管主機對外的做法是 [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/)，對外接收連線的那一層改由代理服務承擔。雲端廠商也提供受管的跳板服務（例如 Azure Bastion），主機的修補由廠商負責，連線方式與身分驗證依各家服務而定，位置介於自建跳板機與身分感知代理之間。
 
 ## 可觀察訊號
 
 - private subnet 主機的 security group 只允許來自某一個 security group（或某一台主機）的 22 port
 - 管理員的 `~/.ssh/config` 裡有 `ProxyJump` 設定，或團隊文件寫著「先連 bastion」
-- 跳板機的認證紀錄裡持續有來自陌生 IP 的失敗登入——這台主機承受的是整個環境的掃描流量
 
 ## 設計責任
 
-使用跳板機時要決定：
+自建跳板機時，整個環境對外的 SSH 暴露都集中在這一台上，所以下面這幾件事的標準比一般主機高：
 
-- **跳板機的來源範圍**：管理員有固定的對外 IP 時，跳板機的 22 port 只放行那幾個 IP；遠端工作、IP 會變動時，白名單縮不下來，跳板機的 22 port 實質上對全網開放，這時它的 sshd 修補速度就是整個環境的暴露期，對外入口改用 VPN 或身分感知代理承接比較划算
-- **私鑰不落地**：用 `ProxyJump` 讓認證在管理員電腦上完成；把私鑰放上跳板機、或開啟 agent forwarding，跳板機被入侵時攻擊者就拿得到通往所有主機的憑證，這種擴散見 [Lateral Movement（橫向移動）](/backend/knowledge-cards/lateral-movement/)
+- **跳板機的來源範圍**：管理員有固定的對外 IP 時，跳板機的 22 port 只放行那幾個 IP；遠端工作、IP 會變動時，白名單縮不下來，跳板機的 22 port 實質上對全網開放，認證紀錄裡會持續出現來自陌生 IP 的失敗登入，它的 sshd 修補速度就是整個環境的暴露期
+- **私鑰不落地**：agent forwarding 是讓遠端主機借用管理員本機 ssh-agent 裡的私鑰去做下一段認證的功能（`ssh -A` 或設定檔的 `ForwardAgent yes`），開著它時，任何在跳板機上取得 root 的人都能借那把私鑰連到其他主機；把私鑰直接放上跳板機的後果相同。`ProxyJump` 讓第二段認證也在管理員電腦上完成，不需要 agent forwarding。這種從一台主機往其他主機擴散的攻擊見 [Lateral Movement（橫向移動）](/backend/knowledge-cards/lateral-movement/)
+- **金鑰不共用**：跳板機與目的主機各用不同的金鑰或憑證，讓一把私鑰外洩只通過一層；目的主機的金鑰發放可以改用 [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/) 或 [OS Login](/infra/knowledge-cards/os-login/)
 - **修補與監控**：跳板機要比其他主機更快套用 sshd 的安全更新，並保留連線紀錄
-- **操作紀錄**：需要集中錄製管理員在目的主機上做了什麼時，跳板機是錄製的位置。多雲與地端混用的環境仍選用跳板機，理由有兩個：它與廠商無關、一套設定涵蓋所有環境，以及它是集中錄製的位置
+- **操作紀錄**：外包人員登入正式環境、或稽核要求逐條指令留紀錄時，需要集中錄製管理員在目的主機上執行了什麼；所有管理連線都經過跳板機，所以它是放錄製工具的位置。這個屬性與廠商無關，一套設定涵蓋多雲與地端混用的環境
 
 ## 鄰卡
 
 - [SSH](/infra/knowledge-cards/ssh/) — 跳板機轉接的協定與金鑰認證
 - [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) — 改用代理服務承擔對外接收連線
-- [Subnet](/infra/knowledge-cards/subnet/) — 跳板機放 public、目的主機放 private
-- [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/) — 跳板機與其他管理通道做法的選擇條件
+- [Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/) — 跳板機本身連不上時的備用登入路徑
+- [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/#通道授權的身分來源集中的-idp-與固定的對外-ip) — 管理員沒有集中帳號、或對外 IP 會變動時，跳板機與其他做法的選擇條件

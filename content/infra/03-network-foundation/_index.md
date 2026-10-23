@@ -8,7 +8,7 @@ tags: ["infra", "network", "vpc", "security-group"]
 
 網路地基要先於核心服務存在。VPC、subnet、route table 與 security group 構成一張「服務能落在哪、誰能跟誰講話」的地圖，資料庫、運算節點與對外入口都得落在這張地圖規劃好的格子裡。先把邊界畫清楚，後面每個核心服務上線時只需要選一塊已經定義好安全等級的位置，而不是邊開服務邊補洞。
 
-這一章建立四層邊界：最外層的 VPC 隔離、中層的 public / private subnet 切分、流量進出的 route table 與 NAT、以及最貼近服務的 security group。每一層解決的問題不同，疊起來才是一個可審計、可收斂的網路。
+這一章建立四層邊界：最外層的 VPC 隔離、中層的 public / private subnet 切分、流量進出的 route table 與 NAT、以及最貼近服務的 security group。每一層解決的問題不同，疊起來才是一個可審計、可收斂的網路。邊界畫好之後，管理員登入主機的那條通道也要落在這張地圖上：管理 port 對誰開放、用什麼身分打開、金鑰怎麼收回，由章節文章裡的管理通道兩篇處理。
 
 ## VPC：網路隔離的最外層邊界
 
@@ -105,13 +105,13 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 
 ## 章節文章
 
-| 文章                                                                                                                          | 主題                                                                                                                                                                                                                                         |
-| ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/)                  | VPC CIDR 規劃、public / private subnet 切分、route table 與 NAT 的可用性成本取捨、security group 最小開放設計與 NACL 定位                                                                                                                    |
-| [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)                                       | 0.0.0.0/0 偵測、未使用 SG 識別、依賴檢查、清理工作流、自動化治理                                                                                                                                                                             |
-| [流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)                                    | DNS、負載平衡（L4/L7）、reverse proxy、應用的責任鏈，TLS 終結位置、動靜分離、單機 nginx 與雲端 ALB 的選擇條件                                                                                                                                |
-| [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證與救援入口](/infra/03-network-foundation/management-access-channel/) | 管理通道拆成網路可達性、通道授權與主機登入驗證，各層的風險與做法（來源白名單、跳板機、VPN、身分感知代理、代理程式反向連線、SSH 憑證），依身分系統、主機位置與人員流動選擇組合的條件，出站路徑、救援入口、組織護欄與稽核                      |
-| [GCP VM 的 SSH 管理通道：從預設的全開 SSH 規則改走 IAP TCP forwarding](/infra/03-network-foundation/gcp-iap-ssh-access/)      | 管理通道模型在 GCP 上的實作：default 網路自帶規則、IAP 的連線路徑與來源範圍、切換與停用舊規則驗證的指令、IAM 授權範圍、OS Login 的啟用順序、Cloud NAT 與 Private Google Access、Serial Console、Organization Policy 與階層式防火牆、稽核紀錄 |
+| 文章                                                                                                                                              | 主題                                                                                                                                                                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/)                                      | VPC CIDR 規劃、public / private subnet 切分、route table 與 NAT 的可用性成本取捨、security group 最小開放設計與 NACL 定位                                                                                                                    |
+| [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)                                                           | 0.0.0.0/0 偵測、未使用 SG 識別、依賴檢查、清理工作流、自動化治理                                                                                                                                                                             |
+| [流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)                                                        | DNS、負載平衡（L4/L7）、reverse proxy、應用的責任鏈，TLS 終結位置、動靜分離、單機 nginx 與雲端 ALB 的選擇條件                                                                                                                                |
+| [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證三層的做法與選擇，以及救援入口](/infra/03-network-foundation/management-access-channel/) | 管理通道拆成網路可達性、通道授權與主機登入驗證，各層的風險與做法（來源白名單、跳板機、VPN、身分感知代理、代理程式反向連線、SSH 憑證），依身分來源、連線送達方式與收回方式選擇組合的依據，出站路徑、救援入口、組織護欄與稽核                  |
+| [GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding](/infra/03-network-foundation/gcp-iap-ssh-access/)                        | 管理通道模型在 GCP 上的實作：default 網路自帶規則、IAP 的連線路徑與來源範圍、切換與停用舊規則驗證的指令、IAM 授權範圍、OS Login 的啟用順序、Cloud NAT 與 Private Google Access、Serial Console、Organization Policy 與階層式防火牆、稽核紀錄 |
 
 ## 跨分類引用
 

@@ -10,9 +10,9 @@ tags: ["infra", "knowledge-cards", "access", "recovery"]
 
 ## 概念位置
 
-在[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的模型裡，序列主控台是救援入口：管理通道的網路可達性、通道授權或主機登入驗證任何一層出錯時的備用路徑。它與管理通道的設計方向相反——管理通道要隨時可用，救援入口平時關閉、只在需要時打開，因為它繞過了 [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) 或 [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) 這些平時的控制點。
+序列主控台與平時的管理通道設計方向相反：管理通道要隨時可用，救援入口平時關閉、只在需要時打開，因為它繞過了 [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) 或 [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) 這些平時的控制點。管理通道的網路可達性、通道授權或主機登入驗證任何一層設定錯了（這三層的分法見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)），序列主控台都還連得上，因為它不經過其中任何一層。
 
-地端實體伺服器的對應是頻外管理介面（out-of-band management）：IPMI、Dell iDRAC、HPE iLO 這類嵌在主機板上的管理控制器，有自己的網路埠，在作業系統沒開機時也能看主控台、重開機、掛載安裝媒體。
+不同環境的救援入口形態不同。地端實體伺服器用的是頻外管理介面（out-of-band management，其他中文資料常寫作「帶外管理」）：IPMI、Dell iDRAC、HPE iLO 這類嵌在主機板上的管理控制器，有自己的網路埠，在作業系統沒開機時也能看主控台、重開機、掛載安裝媒體。VPS 服務商多半在網頁後台提供一個瀏覽器裡的主控台（常叫 web console 或 VNC console），用法與雲端的序列主控台相同：不經過主機的網路設定，用本機帳號密碼登入。
 
 ## 可觀察訊號
 
@@ -22,10 +22,10 @@ tags: ["infra", "knowledge-cards", "access", "recovery"]
 
 ## 設計責任
 
-規劃序列主控台時要決定：
+救援入口在出事當下才用得到，而出事當下已經來不及準備帳號與權限，所以規劃時要在主機正常時就決定：
 
 - **救援帳號**：序列主控台用本機帳號密碼登入，而用金鑰登入的主機通常沒有設密碼的帳號，所以救援帳號要在主機正常時就建好、密碼存放在受控的密碼庫
-- **開啟範圍與時機**：平時保持關閉，救援時只對單一主機開啟，用完關回去；存取權限只授予持有救援責任的少數帳號。GCP 可以用 Organization Policy 的 `compute.disableSerialPortAccess` 在組織層級預設關閉
+- **開啟範圍與時機**：平時保持關閉，救援時只對單一主機開啟，用完關回去；存取權限只授予持有救援責任的少數帳號（GCP 上開啟 metadata 與連線都需要 `roles/compute.instanceAdmin.v1`）。GCP 可以用 Organization Policy 的 `compute.disableSerialPortAccess` 在組織層級預設關閉
 - **頻外管理介面的網路**：IPMI 這類控制器歷史上有多個認證弱點，它的網路埠接在獨立的管理網段，不接到一般網段或網際網路
 - **操作紀錄**：序列主控台的連線繞過了平時的稽核點，雲端廠商的 audit log 要開啟，才查得到誰在什麼時候開了主控台
 
@@ -34,4 +34,4 @@ tags: ["infra", "knowledge-cards", "access", "recovery"]
 - [SSH](/infra/knowledge-cards/ssh/) — 平時的管理通道，序列主控台在它斷掉時接手
 - [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) — 平時的通道控制點，救援入口繞過它
 - [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) — 另一種平時的通道控制點
-- [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/) — 救援入口與三層管理通道的關係
+- [GCP VM 的 SSH 與 RDP 管理通道](/infra/03-network-foundation/gcp-iap-ssh-access/#準備救援入口serial-console-與救援帳號) — 在 GCP 上建救援帳號、開啟與關閉 Serial Console 的指令

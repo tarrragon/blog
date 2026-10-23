@@ -10,30 +10,39 @@ tags: ["infra", "knowledge-cards", "network", "access", "zero-trust"]
 
 ## 概念位置
 
-在[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的模型裡，身分感知代理同時承擔兩層：網路可達性（sshd 只對代理可見）與通道授權（用 IdP 帳號判斷誰可以開通道）。主機登入驗證仍由主機上的 sshd 負責，金鑰的發放方式另見 [OS Login](/infra/knowledge-cards/os-login/) 與 [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/)。
+管理通道拆成網路可達性、通道授權、主機登入驗證三層來看時（模型見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)），身分感知代理同時承擔前兩層：sshd 只對代理可見，而能不能開通道由代理用 IdP 帳號判斷——這個判斷就是通道授權，指的是決定「這個人能不能打開通往主機的連線」，與登入主機時驗證 SSH 金鑰是兩回事。主機登入驗證仍由主機上的 sshd 負責，金鑰的發放方式另見 [OS Login](/infra/knowledge-cards/os-login/) 與 [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/)。
 
-它與 [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) 解決同一件事——讓內部主機不必各自對外——差別在對外接收連線的元件由誰維運、用什麼判斷身分：跳板機是自己維運的主機、用 SSH 金鑰判斷；身分感知代理是廠商提供或自己架設的代理服務、用 IdP 帳號判斷。它與一般反向代理的差別在轉送前多了一次身分驗證與授權。
+它與 [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) 都讓內部主機不必各自對外，差別在對外接收連線的元件由誰維運、用什麼判斷身分：跳板機是自己維運的主機、用 SSH 金鑰判斷；身分感知代理是廠商提供或自己架設的代理服務、用 IdP 帳號判斷。它與一般反向代理的差別在轉送前多了一次身分驗證與授權。
 
-常見的實作有 GCP 的 IAP（Identity-Aware Proxy，對 HTTPS 應用與 TCP 連線各有一種模式，TCP forwarding 的來源位址段是 `35.235.240.0/20`）、Cloudflare Access、Teleport 的 proxy。後兩者送進主機的方式是反向連線，在網路可達性上同時屬於管理通道設計那篇的「代理程式（agent）反向連線」。這個模式的公開源頭是 Google 2014 年起發表的 BeyondCorp 系列論文。
+常見的實作有 GCP 的 IAP（Identity-Aware Proxy，對 HTTPS 應用與 TCP 連線各有一種模式，TCP forwarding 的來源位址段是 `35.235.240.0/20`）、Cloudflare Access、Teleport 的 proxy。後兩者用反向連線把流量送進主機，主機上的 connector 怎麼往外連、斷線時會怎樣見 [Outbound Tunnel（出站隧道）](/backend/knowledge-cards/outbound-tunnel/)。這個模式的公開源頭是 Google 2014 年起發表的 BeyondCorp 系列論文。
 
 ## 可觀察訊號
 
-- 主機的防火牆規則只放行某一段固定的代理位址，沒有任何來源是 `0.0.0.0/0` 的管理 port 規則
-- 主機沒有公開 IP，管理員仍然用 `ssh` 或廠商 CLI 連得進去
+由代理連到內部 IP 的模式（GCP IAP）：
+
+- 主機的入站規則只放行某一段固定的代理位址，沒有任何來源是 `0.0.0.0/0` 的管理 port 規則
 - 主機上的認證紀錄裡，SSH 連線的來源 IP 全部落在代理的位址段，看不出是哪個人——要查人得看代理或 IdP 的 audit log
+
+經由 connector 反向連線的模式（Cloudflare Tunnel、Teleport agent）：
+
+- 主機上有一個常駐的 connector 程序（例如 `cloudflared`、`teleport`），主機的入站規則完全沒有管理 port
+- 認證紀錄裡的 SSH 來源是 `127.0.0.1` 或 connector 所在的本機位址
+
+兩種模式共同的樣子是主機沒有公開 IP，管理員仍然用 `ssh` 或廠商 CLI 連得進去。
 
 ## 設計責任
 
-導入身分感知代理時要決定：
+導入身分感知代理之後，主機自己不再判斷連線者是誰，下面這些判斷移到代理與 IdP 上：
 
-- **IdP 帳號的安全強度**：存取權限轉移到帳號上之後，帳號被釣魚等於通道被打開，所以 IdP 端要強制多因素驗證，管理員帳號優先用防釣魚的硬體金鑰
+- **IdP 帳號的安全強度**：存取權限轉移到帳號上之後，帳號被釣魚等於通道被打開，所以 IdP 端要強制多因素驗證，管理員帳號優先用防釣魚的硬體金鑰或 [Passkey](/backend/knowledge-cards/passkey/)
 - **授權範圍**：授權綁給負責維運的群組，並限定可以連的 port 與主機，避免整個組織的帳號都拿得到通道
 - **代理的可用性與延遲**：所有位元組都經過代理轉送，代理服務中斷時管理通道一起中斷，大量傳檔也比直連慢；救援時的備用路徑見 [Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/)
-- **稽核紀錄的位置**：主機端只看得到代理的位址，「誰在什麼時候連進哪台主機」要從代理或 IdP 的 audit log 取得，這份紀錄要先開啟
+- **稽核紀錄的位置與開啟時機**：主機端只看得到代理的位址，「誰在什麼時候連進哪台主機」要從代理或 IdP 的 audit log 取得。這份紀錄只記錄開啟之後的連線，事後要調查一次入侵時，開啟之前的連線查不回來，所以在切換到代理的同一天開啟
 
 ## 鄰卡
 
 - [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) — 同樣收斂對外入口，由自己維運的主機轉接
-- [Security Group](/infra/knowledge-cards/security-group/) — 放行代理位址段的那一條入站規則所在的位置
+- [Security Group](/infra/knowledge-cards/security-group/) — 放行代理位址段的那一條入站規則所在的位置；AWS 叫 security group，GCP 對應的是 VPC 防火牆規則
 - [Identity Provider](/backend/knowledge-cards/identity-provider/) — 代理用來確認帳號的系統
-- [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/) — 身分感知代理在網路可達性、通道授權、主機登入驗證三層模型裡的位置，以及與其他做法的選擇條件
+- [GCP VM 的 SSH 與 RDP 管理通道](/infra/03-network-foundation/gcp-iap-ssh-access/) — GCP IAP 的防火牆規則、IAM 權限與切換順序的實際指令
+- [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/#網路可達性代理怎麼把連線送進主機) — 由代理連入與 connector 反向連線兩種送達方式的選擇條件
