@@ -6,7 +6,7 @@ weight: 429
 tags: ["backend", "knowledge-card", "security", "authentication"]
 ---
 
-Passkey 的核心概念是用一組金鑰對取代共享秘密：服務端存公鑰，使用者的裝置保管私鑰，登入時由裝置對服務端送來的一段隨機值產生簽章。它的底層規格是 WebAuthn（FIDO2 的網頁認證標準），passkey 是這套規格搭配可跨裝置使用的憑證之後的產品名。服務端持有的那一份是公鑰，外洩不構成可還原的風險，於是 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/) 那一整套判讀（刻意放慢的雜湊、work factor、參數老化）對它不適用。它是 [authentication](/backend/knowledge-cards/authentication/) 人類身分分支底下與密碼並列的一個選項，取捨見 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)。
+Passkey 的核心概念是用一組金鑰對取代共享秘密：服務端存公鑰，使用者的裝置保管私鑰，登入時由裝置對服務端送來的一段隨機值產生簽章。它的底層規格是 WebAuthn（FIDO2 的網頁認證標準），passkey 是這套規格搭配可跨裝置使用的存取憑證之後的產品名。服務端持有的那一份是公鑰，外洩不構成可還原的風險，於是 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/) 那一整套判讀（刻意放慢的雜湊、work factor、參數老化）對它不適用。它是 [authentication](/backend/knowledge-cards/authentication/) 人類身分分支底下與密碼並列的一個選項，取捨見 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)。
 
 ## 概念位置
 

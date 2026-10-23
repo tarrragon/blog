@@ -15,7 +15,7 @@ Playbook 位在 [incident command system](/backend/knowledge-cards/incident-comm
 
 ## 可觀察訊號與例子
 
-系統需要 playbook 的訊號是某類事故反覆出現且處置步驟可預期。consumer lag 持續擴大、憑證即將過期、單區域流量異常等場景都適合建立專用 playbook。
+系統需要 playbook 的訊號是某類事故反覆出現且處置步驟可預期。consumer lag 持續擴大、數位憑證即將過期、單區域流量異常等場景都適合建立專用 playbook。
 
 ## 設計責任
 

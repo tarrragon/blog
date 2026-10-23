@@ -6,7 +6,7 @@ weight: 50
 tags: ["linux", "git", "auth", "knowledge-cards"]
 ---
 
-git credential helper 是一個 git 用來取得 HTTPS 認證的**可替換外部程式**：git 自己不儲存也不硬編任何帳密，每次要對遠端認證時把要求交給設定好的 helper、由它回傳使用者名與密碼。這讓「認證從哪來、存在哪」跟 git 本身解耦——換一個 helper 就換一套憑證來源，git 的其餘行為不動。理解這一點，就看得出「`gh auth login` 幫你設好」跟「手動把 helper 指到某個程式」是同一個機制的兩種配置，而不是兩件不相關的事。這條路徑只管 HTTPS；SSH 走的是另一條認證路，見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)。
+git credential helper 是一個 git 用來取得 HTTPS 認證的**可替換外部程式**：git 自己不儲存也不硬編任何帳密，每次要對遠端認證時把要求交給設定好的 helper、由它回傳使用者名與密碼。這讓「認證從哪來、存在哪」跟 git 本身解耦——換一個 helper 就換一套存取憑證來源，git 的其餘行為不動。理解這一點，就看得出「`gh auth login` 幫你設好」跟「手動把 helper 指到某個程式」是同一個機制的兩種配置，而不是兩件不相關的事。這條路徑只管 HTTPS；SSH 走的是另一條認證路，見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)。
 
 ## 概念位置
 
@@ -16,7 +16,7 @@ HTTPS + token 走 credential helper，跟 SSH 走金鑰是兩條平行的 git �
 
 git 對 HTTPS 遠端操作（clone / fetch / push）需要憑證時，不自己去記，而是走一個標準協定呼叫 helper：git 把 `protocol=https`、`host=github.com` 這些欄位從 stdin 餵給 helper，helper 把 `username=...`、`password=...` 從 stdout 回傳，git 拿去組認證。整個過程不需要人打字，也不把憑證留在 git 的設定裡。
 
-## helper 是可替換的：換 helper 就換憑證後端
+## helper 是可替換的：換 helper 就換存取憑證後端
 
 `credential.helper` 設定值決定用哪個 helper，每個對應一種憑證儲存後端：
 

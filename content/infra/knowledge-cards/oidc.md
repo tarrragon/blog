@@ -10,7 +10,7 @@ OIDC（OpenID Connect）聯合的核心職責是讓跑在雲外的 CI/CD 平台�
 
 ## 概念位置
 
-OIDC 聯合在身分與憑證地基裡的角色是「雲外機器身分的認證機制」。跑在雲上的 workload（EC2、ECS task）可以用平台原生的 [IAM](/infra/knowledge-cards/iam/) instance profile 或 task role 取得短期憑證；跑在雲外的 CI/CD 沒有這個管道，OIDC 就是替代方案。
+OIDC 聯合在身分與存取憑證地基裡的角色是「雲外機器身分的認證機制」。跑在雲上的 workload（EC2、ECS task）可以用平台原生的 [IAM](/infra/knowledge-cards/iam/) instance profile 或 task role 取得短期憑證；跑在雲外的 CI/CD 沒有這個管道，OIDC 就是替代方案。
 
 運作方式是建立信任關係：雲端帳號信任某個外部 identity provider（如 GitHub Actions 的 OIDC issuer），CI 執行時平台簽發一個帶 claim 的 token（描述哪個 repo、哪個 branch、哪個 workflow），雲端用這個 token 換出一段臨時憑證。
 

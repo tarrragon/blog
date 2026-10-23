@@ -10,7 +10,7 @@ IAM（Identity and Access Management）是雲端平台用來回答「某個身�
 
 ## 概念位置
 
-IAM 是[模組二：身分與憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)的核心機制。它決定了誰能動什麼——人、服務、CI pipeline 各拿剛好夠用的權限（最小權限），憑證有明確的生命週期。身分層失守的代價在五個 infra 責任面向中最高，因為它是其他所有資源的閘門。
+IAM 是[模組二：身分與存取憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)的核心機制。它決定了誰能動什麼——人、服務、CI pipeline 各拿剛好夠用的權限（最小權限），憑證有明確的生命週期。身分層失守的代價在五個 infra 責任面向中最高，因為它是其他所有資源的閘門。
 
 在 infra 系列中，IAM 的設計從三個維度展開：最小權限的持續收斂（不是一次設定就結束）、用 [OIDC](/infra/knowledge-cards/oidc/) 短期憑證取代長期 access key、以及跨帳號的權限邊界（SCP + Permissions Boundary）。
 

@@ -57,7 +57,7 @@ import 成本隨資源數量非線性增長。一個資源的逆向工程可控�
 
 光靠約定「別在 Console 改」維持不了多久，救火當下手最快的永遠是 Console。真正讓鐵律有效的，是把人的日常身分收斂成唯讀、把寫入權限留給跑 apply 的自動化身分，讓「在 Console 改不動」變成預設狀態。
 
-這道權限地基屬於[模組二：身分與憑證地基](/infra/02-identity-credentials/)的範圍，本階先確立紀律方向：人類日常用的 IAM 身分只有 `ReadOnlyAccess`，寫入權限只存在於 CI pipeline 使用的 role，這個 role 靠 OIDC 取得短期憑證（不存長期 key）。具體的 IAM 設計和 OIDC 信任關係在模組二展開。
+這道權限地基屬於[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)的範圍，本階先確立紀律方向：人類日常用的 IAM 身分只有 `ReadOnlyAccess`，寫入權限只存在於 CI pipeline 使用的 role，這個 role 靠 OIDC 取得短期憑證（不存長期 key）。具體的 IAM 設計和 OIDC 信任關係在模組二展開。
 
 ## 最小可行：能 apply 出一個完整環境的最小資源集合
 
@@ -92,7 +92,7 @@ resource "aws_s3_bucket" "smoke_test" {
 
 常見的過早引入包括：在最小集合裡就加 RDS（state 操作出問題時資料庫可能被影響）、在還沒有環境分離前就建多層 module 嵌套（驗證地基的複雜度不應該來自抽象層）、在一個人開發時就配好 Atlantis 或 Terraform Cloud 的完整 PR 流程（固定成本太高、且需要[模組七](/infra/07-infra-as-pr/)的完整護欄才能發揮價值）。
 
-網路骨架怎麼長、身分怎麼切，分別由[模組三：網路地基](/infra/03-network-foundation/)與[模組二：身分與憑證地基](/infra/02-identity-credentials/)接手深入；這一階只需要它們各自最薄的一層，湊出一個能 apply、能 destroy、能交接的閉環。
+網路骨架怎麼長、身分怎麼切，分別由[模組三：網路地基](/infra/03-network-foundation/)與[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)接手深入；這一階只需要它們各自最薄的一層，湊出一個能 apply、能 destroy、能交接的閉環。
 
 ### 驗證閉環
 
@@ -106,11 +106,11 @@ resource "aws_s3_bucket" "smoke_test" {
 
 第四步「再跑一次 plan」是容易被跳過卻最關鍵的一步。如果第一次 apply 之後立刻 plan 就出現差異，代表 provider 的行為和 HCL 描述之間有落差（例如某些屬性是雲端自動設的、HCL 沒寫），這類落差要在最小集合階段就修掉，等到正式服務上線後再修，成本會高很多。
 
-最小可行 IaC 跑通後，下一步是收斂身分與憑證——把 Console 唯讀鐵律從紀律升級成權限限制，見[模組二：身分與憑證地基](/infra/02-identity-credentials/)。
+最小可行 IaC 跑通後，下一步是收斂身分與存取憑證——把 Console 唯讀鐵律從紀律升級成權限限制，見[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)。
 
 ## 跨分類引用
 
 - → [IaC 工具選型與 state 地基](/infra/01-minimal-iac/iac-tool-state-backend/)：state 怎麼管、backend 怎麼選
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：Console 唯讀鐵律靠權限落地，人類唯讀、自動化身分持有寫入權
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：Console 唯讀鐵律靠權限落地，人類唯讀、自動化身分持有寫入權
 - → [模組三：網路地基](/infra/03-network-foundation/)：最小集合裡的 VPC 與 subnet 怎麼設計
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：state 變更與 apply 怎麼納入 review

@@ -21,3 +21,5 @@ Tenant boundary 是 authorization、data partition、rate limit、audit 與 bill
 Tenant boundary 要在 query、cache key、message、log、audit、rate limit 與測試中保持一致。測試要覆蓋跨 tenant IDOR、資料匯出與背景 job。
 
 這條邊界成立的前提是「這個請求屬於哪個租戶」判對了，而那個判斷本身怎麼建立、憑什麼可信，見 [7.40 B2B 多租戶的身分接入](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)。
+
+資料要隔到哪一層（共用表、每租戶一個 schema、每租戶一套、租戶分組），以及建置管線、營運後台與備份這類共用元件的權限如何繞過這條邊界，見 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)。

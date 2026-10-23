@@ -111,7 +111,7 @@ sudo ipa-server-install --setup-dns --no-forwarders
 
 ## 跨分類引用
 
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：連網環境的 IAM 設計，跟本篇的離線身分方案互補
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：連網環境的 IAM 設計，跟本篇的離線身分方案互補
 - → [斷網環境的通用原則](/infra/air-gapped/air-gapped-principles/)：content ferry 模式的操作流程
 - → [斷網環境的基礎服務](/infra/air-gapped/air-gapped-infrastructure-services/)：CA 和 Vault 是本篇認證和機密管理的技術基礎
 - → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：應用層的安全措施

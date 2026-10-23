@@ -32,7 +32,7 @@ tags: ["backend", "security", "case-study", "red-team"]
 
 - 發布前：高風險管理操作要求二次核准（multi-party approval、不只 MFA），mechanism 是讓單一帳號接管無法觸發影響客戶的決策。
 - 日常：針對員工身份建立 [alert runbook](/backend/knowledge-cards/alert-runbook/)（管理工具登入跨地理 / 跨裝置 / 異常時段）。
-- 事故中：執行分批憑證輪替與權限縮減、控制 [blast radius](/backend/knowledge-cards/blast-radius/)（前提是 token / 權限有 audit trail 可分批 scope）。
+- 事故中：執行分批存取憑證輪替與權限縮減、控制 [blast radius](/backend/knowledge-cards/blast-radius/)（前提是 token / 權限有 audit trail 可分批 scope）。
 
 ## 從本案例到實作的 chain
 

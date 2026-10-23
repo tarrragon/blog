@@ -33,8 +33,8 @@ tags: ["backend", "security", "case-study", "red-team"]
 - 共同基線：以 [runbook](/backend/knowledge-cards/runbook/) 與 [incident timeline](/backend/knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：高風險邊界設備準備替代路徑。
 - 日常：建立邊界設備健康與變更基線。
-- 事故中：執行隔離、重建、憑證輪替三段流程。
-- mechanism 總綱：邊界事件的核心是讓「漏洞修補」「會話 / 憑證失效」「異常痕跡清查」三件事同步發生、不分先後留下時間窗口（前提是事先有 inventory + 自動化失效 / 清查能力）。
+- 事故中：執行隔離、重建、存取憑證輪替三段流程。
+- mechanism 總綱：邊界事件的核心是讓「漏洞修補」「會話 / 存取憑證失效」「異常痕跡清查」三件事同步發生、不分先後留下時間窗口（前提是事先有 inventory + 自動化失效 / 清查能力）。
 
 ## 從本案例到實作的 chain
 

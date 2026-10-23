@@ -99,3 +99,4 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - 交付平台與部署治理：`05-deployment-platform`
 - 發佈驗證與回退演練：`06-reliability`
 - 分級與跨部門收斂：`08-incident-response`
+- 建置主機已確認被入侵時，入侵期間建置的產物怎麼重建比對、撤下與追蹤發佈對象：[8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)

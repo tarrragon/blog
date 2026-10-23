@@ -183,7 +183,7 @@ RDS 引擎版本（`engine_version`）寫進 IaC 後，版本升級就成為一�
 ## 跨分類引用
 
 - → [模組三：網路地基](/infra/03-network-foundation/)：資料庫的 subnet group 引用 private subnet
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：RDS Proxy 的 IAM role 與 secret 存取
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：RDS Proxy 的 IAM role 與 secret 存取
 - → [模組四：環境分離與模組化](/infra/04-environment-separation/)：prod / dev 用同一個 module、不同參數值
 - → [stateful 保護與跨 state 引用](/infra/05-core-services/stateful-protection-dependency/)：backup retention、deletion protection、multi-AZ 的完整討論
 - → [運算上 IaC](/infra/05-core-services/compute-ecs-eks/)：運算端怎麼引用資料庫端點

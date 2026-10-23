@@ -110,7 +110,7 @@ application_default_credentials.json
 
 ### SSH config 的特殊處理
 
-`~/.ssh/config`（host alias、ProxyJump 設定、port forwarding）本身不含 secret，可以進 repo——它記錄的是「連線要怎麼走」而不是「憑證是什麼」。但同一個 `~/.ssh/` 目錄下的私鑰絕對排除。
+`~/.ssh/config`（host alias、ProxyJump 設定、port forwarding）本身不含 secret，可以進 repo——它記錄的是「連線要怎麼走」而不是「存取憑證是什麼」。但同一個 `~/.ssh/` 目錄下的私鑰絕對排除。
 
 stow 管理時的目錄結構範例：
 

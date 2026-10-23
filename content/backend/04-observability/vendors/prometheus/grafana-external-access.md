@@ -8,7 +8,7 @@ tags: ["backend", "observability", "vendor", "prometheus", "grafana"]
 
 > 這一篇屬於 [Prometheus](/backend/04-observability/vendors/prometheus/) 的實作系列，接在 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 或 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/) 之後：兩篇的 Grafana 都只綁在主機的 `127.0.0.1:3000`。下文的「監控主機」指跑 Grafana 的那一台，單機時就是唯一的那一台。
 
-這一篇整理 Grafana 只綁本機之後，讓其他電腦上的人看到它的做法，範圍是自己架設的 Grafana；託管服務的登入與網域由供應商處理，不在這裡。文中的設定取自一個短網址服務的監控（Grafana 13.2.3、Nginx 1.30），在 macOS 的 OrbStack 上實測過；雲端上的部分（DNS、正式憑證、負載平衡器）沒有實際部署過，寫的是要改的位置。
+這一篇整理 Grafana 只綁本機之後，讓其他電腦上的人看到它的做法，範圍是自己架設的 Grafana；託管服務的登入與網域由供應商處理，不在這裡。文中的設定取自一個短網址服務的監控（Grafana 13.2.3、Nginx 1.30），在 macOS 的 OrbStack 上實測過；雲端上的部分（DNS、正式的 TLS 憑證、負載平衡器）沒有實際部署過，寫的是要改的位置。
 
 ## SSH 通道或 VPN 與對外代理的選擇條件：看的人能不能經由既有的 SSH 或 VPN 連進來
 
@@ -140,9 +140,9 @@ server {
 
 Nginx 只在載入設定時解析一次 `proxy_pass` 裡 `grafana` 的位址，之後一直沿用。Grafana 容器被重建而拿到不同的 IP 時，代理會一直回 502，直到代理重新載入。加上代理的那一次，Grafana 因為多了環境變數會被重建，代理在它之後才啟動，只有重建的那幾秒回 502；之後只重建 Grafana（例如升級映像）時，要一併 `docker compose restart grafana-proxy`。這和〈經由應用入口 Nginx 轉送的做法〉裡 `resolver` 加變數的寫法是同一個機制的兩面：變數讓 Nginx 每次請求都重新解析，代價是要另外設定解析伺服器。
 
-### 正式憑證與本機的自簽憑證
+### 正式 TLS 憑證與本機的自簽憑證
 
-憑證在雲端上由 Let's Encrypt 這類 CA 簽發，概念與續期見 [域名與 HTTPS 怎麼接上](/going-live/domain-and-https/) 的〈憑證怎麼拿：Let's Encrypt 讓它免費又自動〉。那裡的 `certbot --nginx` 改的是主機上的 Nginx，而這個代理在容器裡，所以改用 `certbot certonly` 只取得憑證檔：`--standalone` 要在驗證時暫時用到主機的 80 埠，DNS 驗證則不必開埠。`/etc/letsencrypt/live/<網域>/` 裡的檔案是指向 `archive/` 的符號連結，掛進容器時讀不到連結的目標，所以以續期的 `--deploy-hook` 把兩個檔案複製到 `GRAFANA_TLS_DIR`（`cp -L` 跟著連結取實檔），再讓代理重新載入（在專案目錄執行 `docker compose exec grafana-proxy nginx -s reload`）。這一段沒有實際簽發過。雲端主機上另外要把網域的 DNS A 記錄指向監控主機的公開位址，並在[安全群組](/infra/knowledge-cards/security-group/)或防火牆開放 443 的入站連線，否則瀏覽器連線逾時。
+憑證在雲端上由 Let's Encrypt 這類 CA 簽發，概念與續期見 [域名與 HTTPS 怎麼接上](/going-live/domain-and-https/) 的〈TLS 憑證怎麼拿：Let's Encrypt 讓它免費又自動〉。那裡的 `certbot --nginx` 改的是主機上的 Nginx，而這個代理在容器裡，所以改用 `certbot certonly` 只取得憑證檔：`--standalone` 要在驗證時暫時用到主機的 80 埠，DNS 驗證則不必開埠。`/etc/letsencrypt/live/<網域>/` 裡的檔案是指向 `archive/` 的符號連結，掛進容器時讀不到連結的目標，所以以續期的 `--deploy-hook` 把兩個檔案複製到 `GRAFANA_TLS_DIR`（`cp -L` 跟著連結取實檔），再讓代理重新載入（在專案目錄執行 `docker compose exec grafana-proxy nginx -s reload`）。這一段沒有實際簽發過。雲端主機上另外要把網域的 DNS A 記錄指向監控主機的公開位址，並在[安全群組](/infra/knowledge-cards/security-group/)或防火牆開放 443 的入站連線，否則瀏覽器連線逾時。
 
 本機測試用自簽憑證，`*.localhost` 在瀏覽器與 curl 都解析到本機：
 

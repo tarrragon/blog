@@ -2,7 +2,7 @@
 title: "Infra 基礎設施建置指南"
 breadcrumb: "Infra"
 date: 2026-06-26
-description: "從零循序漸進把雲端基礎設施做起來 — IaC、身分憑證、網路地基、環境分離、核心服務、可觀測性、自動化 review 與治理習慣，含怎麼在組織內推動"
+description: "從零循序漸進把雲端基礎設施做起來 — IaC、身分與存取憑證、網路地基、環境分離、核心服務、可觀測性、自動化 review 與治理習慣，含怎麼在組織內推動"
 weight: 39
 tags: ["infra"]
 ---
@@ -39,7 +39,7 @@ Backend 教「服務怎麼設計」、運維教「設計好的服務怎麼營運
 | [模組負一：還沒有 infra 的環境](/infra/before-infra/)         | 手動環境的底線、降低未來納管成本、導入訊號                    | 還沒有 IaC 時怎麼盡量把事情做對              |
 | [模組零：infra 是什麼](/infra/00-infra-mindset/)              | 責任邊界、成熟度階梯、day 1 鐵律                              | 為什麼地基要先做、不先做的代價是什麼         |
 | [模組一：最小可行 IaC](/infra/01-minimal-iac/)                | 工具選型、remote state、Console 唯讀鐵律                      | 第一行 IaC 該從哪裡開始                      |
-| [模組二：身分與憑證地基](/infra/02-identity-credentials/)     | IAM role / policy、OIDC 取代長期 key                          | 誰能動什麼、憑證怎麼不外洩                   |
+| [模組二：身分與存取憑證地基](/infra/02-identity-credentials/) | IAM role / policy、OIDC 取代長期 key                          | 誰能動什麼、存取憑證怎麼不外洩               |
 | [模組三：網路地基](/infra/03-network-foundation/)             | VPC、subnet 切分、route / NAT、security group                 | 服務之間的網路邊界怎麼劃                     |
 | [模組四：環境分離與模組化](/infra/04-environment-separation/) | dev / staging / prod、目錄結構、可重用 module                 | 怎麼讓 dev 跟 prod 不互相污染又共用一套 code |
 | [模組五：核心服務上 IaC](/infra/05-core-services/)            | 資料庫、運算、儲存、load balancer                             | 地基鋪好後核心服務怎麼接上去                 |

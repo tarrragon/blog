@@ -93,7 +93,7 @@ tunnel 把後端的可達性開到了外部、但它不認證。隧道網址可�
 
 1. 與 [5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/) 的交接：tunnel 的 startup / readiness / drain 對齊生命週期合約、只是 drain 對象換成隧道收斂。
 2. 與 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/) 的交接：tunnel 作為對外入口的威脅建模與認證疊法。
-3. 與 [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 的交接：tunnel 憑證與認證閘道密鑰的保管與輪替。
+3. 與 [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 的交接：tunnel 存取憑證與認證閘道密鑰的保管與輪替。
 4. 與 [4 觀測](/backend/04-observability/) 的交接：隧道連線狀態與重連次數要進監控、否則 network 層故障無訊號。
 
 ## 下一步路由

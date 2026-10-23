@@ -175,7 +175,7 @@ ExecStart=curl -fsS https://hc-ping.com/<你的-uuid>
 # 搭配一個 heartbeat.timer，OnUnitActiveSec=5min 定時打
 ```
 
-心跳超過 period + grace 沒到，healthchecks.io（或自架的 Uptime Kuma）就通知你。**體內的監控管不了自己這台的死亡，一定要有體外的一隻眼睛**——這跟 [機器連不到或起不來](../machine-unreachable/) 是同一個問題的兩面：那篇是機器已經不回應時從外面怎麼查，心跳是讓「不回應」這件事本身自動觸發告警。心跳只回答這台機器還在不在，不回答使用者連不連得到：網域、DNS、憑證或入口壞掉時心跳照常送達，那一種要從外面照使用者的路徑探測，見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
+心跳超過 period + grace 沒到，healthchecks.io（或自架的 Uptime Kuma）就通知你。**體內的監控管不了自己這台的死亡，一定要有體外的一隻眼睛**——這跟 [機器連不到或起不來](../machine-unreachable/) 是同一個問題的兩面：那篇是機器已經不回應時從外面怎麼查，心跳是讓「不回應」這件事本身自動觸發告警。心跳只回答這台機器還在不在，不回答使用者連不連得到：網域、DNS、TLS 憑證或入口壞掉時心跳照常送達，那一種要從外面照使用者的路徑探測，見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
 
 ## 第四層：要指標、趨勢、門檻（不只是 up/down）
 

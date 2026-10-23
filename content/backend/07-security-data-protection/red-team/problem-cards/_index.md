@@ -42,7 +42,7 @@ weight: 721
 - [提交與審核責任重疊](/backend/07-security-data-protection/red-team/problem-cards/fp-submitter-approver-overlap/)
 - [代理會話上下文混層](/backend/07-security-data-protection/red-team/problem-cards/fp-delegated-session-context-bleed/)
 - [帳號切換後沿用高權限 token](/backend/07-security-data-protection/red-team/problem-cards/fp-stale-privileged-token-after-account-switch/)
-- [重設憑證可重放且有效期過長](/backend/07-security-data-protection/red-team/problem-cards/fp-replayable-reset-token-with-long-ttl/)
+- [密碼重設 token 可重放且有效期過長](/backend/07-security-data-protection/red-team/problem-cards/fp-replayable-reset-token-with-long-ttl/)
 - [權限提升缺乏時效綁定](/backend/07-security-data-protection/red-team/problem-cards/fp-privilege-elevation-without-time-bound/)
 - [降級後能力回收延遲](/backend/07-security-data-protection/red-team/problem-cards/fp-entitlement-revocation-lag-after-plan-downgrade/)
 - [匯出檔案長時間可重複下載](/backend/07-security-data-protection/red-team/problem-cards/fp-long-lived-repeatable-export-artifact/)

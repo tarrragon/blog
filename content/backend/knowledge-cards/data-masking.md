@@ -6,7 +6,7 @@ weight: 40
 ---
 
 
-Data masking 的核心概念是「保留資料用途，同時降低敏感內容暴露」。遮罩可以套用在畫面、匯出檔案、log、客服後台、測試資料與分析資料集。 可先對照 [Data Reconciliation](/backend/knowledge-cards/data-reconciliation/)。
+Data masking 的核心概念是「保留資料用途，同時降低敏感內容暴露」。遮罩可以套用在畫面、匯出檔案、log、[客服後台](/backend/knowledge-cards/internal-admin-tool/)、測試資料與分析資料集。 可先對照 [Data Reconciliation](/backend/knowledge-cards/data-reconciliation/)。
 
 ## 概念位置
 

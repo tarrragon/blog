@@ -6,7 +6,7 @@ description: "MySQL at-rest encryption、TLS、keyring、certificate rotation、
 tags: ["backend", "database", "mysql", "security", "encryption", "tls"]
 ---
 
-MySQL encryption / TLS / key management 的核心責任是把資料庫保護拆成儲存加密、傳輸加密、[金鑰生命週期](/backend/knowledge-cards/key-management/)與連線憑證治理。Encryption 是多層保護設計；它涵蓋 InnoDB tablespace、redo / undo、binary log、backup artifact、client connection 與 keyring。
+MySQL encryption / TLS / key management 的核心責任是把資料庫保護拆成儲存加密、傳輸加密、[金鑰生命週期](/backend/knowledge-cards/key-management/)與連線的 TLS 憑證治理。Encryption 是多層保護設計；它涵蓋 InnoDB tablespace、redo / undo、binary log、backup artifact、client connection 與 keyring。
 
 這篇整理 MySQL 資料保護的各層設計：保護面的分層、keyring 與金鑰的責任邊界、TLS policy、backup 與 binlog 加密、輪替 runbook，以及加密常見的事故。
 
@@ -81,7 +81,7 @@ Rotation runbook 的核心責任是讓 key、certificate、password 都可定期
 1. Inventory：列出 DB user、TLS cert、KMS key、backup key。
 2. Impact：確認哪些 client / replica / backup job 使用它。
 3. Staging：先在 staging 旋轉並跑 smoke test。
-4. Rollout：使用雙憑證 / 雙 secret window。
+4. Rollout：使用雙 TLS 憑證 / 雙 secret window。
 5. Validation：查連線、replication、backup、restore。
 6. Cleanup：移除舊 key / cert / secret。
 

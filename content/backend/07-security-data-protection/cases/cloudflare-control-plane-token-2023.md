@@ -20,7 +20,7 @@ tags: ["backend", "security", "case-study"]
 
 1. 用工作負載身份替代長期共享 token。
 2. 強制 token rotation 與細粒度 scope。
-3. 把憑證事件寫入 release gate 與 incident triage。
+3. 把存取憑證事件寫入 release gate 與 incident triage。
 
 ## 下一步路由
 

@@ -32,7 +32,7 @@ DNS 各紀錄類型的細節見 [Infra DNS 卡](/infra/knowledge-cards/dns/)。
 
 瀏覽器內建信任一批 CA。伺服器出示 CA 簽的憑證，瀏覽器驗章通過，鎖頭就亮、連線加密。憑證怎麼運作、CA 信任鏈的細節見 [Infra SSL/TLS 卡](/infra/knowledge-cards/ssl-tls/)。
 
-## 憑證怎麼拿：Let's Encrypt 讓它免費又自動
+## TLS 憑證怎麼拿：Let's Encrypt 讓它免費又自動
 
 以前憑證要花錢買，現在 **Let's Encrypt** 這個免費 CA 讓它變成一行指令。它用 ACME 協議自動驗證「你確實控制這個域名」（通常是讓它連你的 server 或設一筆 DNS 紀錄），驗過就簽發，且能自動續期（憑證有 90 天效期）。
 

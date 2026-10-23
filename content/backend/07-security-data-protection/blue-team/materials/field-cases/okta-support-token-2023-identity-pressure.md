@@ -47,3 +47,4 @@ weight: 72521
 - [7.B6 Incident Triage Loop](/backend/07-security-data-protection/blue-team/incident-triage-loop/)
 - [Control owner pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/control-owner-pattern/)
 - [Evidence chain pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/evidence-chain-pattern/)
+- [8.26 資料外洩時對商家的通知](/backend/08-incident-response/security-incident-customer-notification/#回報元件缺陷子處理者通報與外部通知的取證路徑)：外洩的存取憑證共同經過平台這一側時的歸屬判定，與對受影響客戶的通知

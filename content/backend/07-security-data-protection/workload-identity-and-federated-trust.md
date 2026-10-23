@@ -1,7 +1,7 @@
 ---
 title: "7.10 Workload Identity 與聯邦信任邊界"
 date: 2026-04-24
-description: "定義非人類身份、跨平台信任與短效憑證治理問題"
+description: "定義非人類身份、跨平台信任與短效存取憑證治理問題"
 weight: 80
 tags: ["backend", "security"]
 ---
@@ -10,16 +10,16 @@ tags: ["backend", "security"]
 
 ## 本章涵蓋與不涵蓋
 
-本章聚焦 workload identity、federation、短效憑證與信任收斂，不討論雲廠商特定設定語法。走這條路徑的實際效果是取消憑證配發這個動作，展開見下方治理模型段；平台身分在某條整合上用不上時的核發與交付見 [7.32 機器憑證的配發](../machine-credential-issuance/)。
+本章聚焦 workload identity、federation、短效存取憑證與信任收斂，不討論雲廠商特定設定語法。走這條路徑的實際效果是取消憑證配發這個動作，展開見下方治理模型段；平台身分在某條整合上用不上時的核發與交付見 [7.32 機器憑證的配發](../machine-credential-issuance/)。
 
 ## 本章 threat scope
 
-**In-scope**：workload 身份來源不清 / 跨平台信任擴張過快 / federation token scope 漂移 / 短效憑證策略不完整 / federation 回查不足 / 第三方授權範圍跟事件傳導半徑。
+**In-scope**：workload 身份來源不清 / 跨平台信任擴張過快 / federation token scope 漂移 / 短效存取憑證策略不完整 / federation 回查不足 / 第三方授權範圍跟事件傳導半徑。
 
 **Out-of-scope**（路由到他章）：
 
 - 人類身分 → [7.2](../identity-access-boundary/)
-- 平台身分用不上時的憑證核發與初次交付 → [7.32](../machine-credential-issuance/)
+- 平台身分用不上時的存取憑證核發與初次交付 → [7.32](../machine-credential-issuance/)
 - 機器憑證 lifecycle / 簽章金鑰 → [7.6](../secrets-and-machine-credential-governance/)
 - 傳輸層 validation 路徑 → [7.5](../transport-trust-and-certificate-lifecycle/)
 - 供應鏈 artifact 信任 → [7.12](../supply-chain-integrity-and-artifact-trust/)
@@ -47,10 +47,10 @@ workload identity 的核心責任是把機器身份與人類身份分開治理�
 1. 身分分離：把人類操作身份與機器執行身份拆分責任。
 2. 邊界定義：把 workload 可觸及資源限制在最小業務範圍。
 3. 聯邦信任：把跨平台 token 交換限制在可驗證來源與用途。
-4. 短效憑證：把憑證有效時窗縮短，降低竊取後可利用時間。這個詞蓋住兩種形態，成本落點不同——**動態換發**是每次執行向平台換一把新的，長期憑證因此不存在，成本落在換發路徑的可用性；**壓短 TTL** 是既有憑證的有效期調小，長期憑證仍在，成本落在換發頻率與對發行方的依賴。判讀時要先確認講的是哪一種。
+4. 短效存取憑證：把憑證有效時窗縮短，降低竊取後可利用時間。這個詞蓋住兩種形態，成本落點不同——**動態換發**是每次執行向平台換一把新的，長期憑證因此不存在，成本落在換發路徑的可用性；**壓短 TTL** 是既有憑證的有效期調小，長期憑證仍在，成本落在換發頻率與對發行方的依賴。判讀時要先確認講的是哪一種。
 5. 收斂節奏：把外部事件後的信任重評估納入固定流程。
 
-這條路徑取消的是配發這個動作本身。workload 向自己的平台取得一份身分聲明、被呼叫方驗證那份聲明後當場換發短效憑證，過程中沒有任何憑證離開核發方——交付通道留下副本、擁有者失聯、初次交付被冒領這幾種失效因此不成立，而不是被控制住。平台身分在某條整合上用不上時（雙方沒有共同信任錨、執行環境不簽發身分、被呼叫方只接受長期憑證、或自己需要故障降級與合規指定的憑證形態），那條整合的核發、初次交付與登記見 [7.32 機器憑證的配發](../machine-credential-issuance/)。
+這條路徑取消的是配發這個動作本身。workload 向自己的平台取得一份身分聲明、被呼叫方驗證那份聲明後當場換發短效存取憑證，過程中沒有任何憑證離開核發方——交付通道留下副本、擁有者失聯、初次交付被冒領這幾種失效因此不成立，而不是被控制住。平台身分在某條整合上用不上時（雙方沒有共同信任錨、執行環境不簽發身分、被呼叫方只接受長期憑證、或自己需要故障降級與合規指定的憑證形態），那條整合的核發、初次交付與登記見 [7.32 機器憑證的配發](../machine-credential-issuance/)。
 
 ## 判讀流程
 
@@ -63,12 +63,12 @@ workload identity 的核心責任是把機器身份與人類身份分開治理�
 
 ## 問題節點（案例觸發式）
 
-| 問題節點            | 判讀訊號                     | 風險後果           | 前置控制面                                                     |
-| ------------------- | ---------------------------- | ------------------ | -------------------------------------------------------------- |
-| 機器身份來源不清    | credential 缺乏發放責任鏈    | 憑證可用窗口失控   | [credential](/backend/knowledge-cards/credential/)             |
-| 跨平台信任擴張過快  | token 使用面超出預期服務邊界 | 外部事件可快速傳導 | [trust-boundary](/backend/knowledge-cards/trust-boundary/)     |
-| 短效憑證策略不完整  | 失效節奏與授權節奏分離       | 撤銷成本上升       | [token-revocation](/backend/knowledge-cards/token-revocation/) |
-| federation 回查不足 | 信任來源與授權決策無法回串   | 事故判讀時間延長   | [audit-log](/backend/knowledge-cards/audit-log/)               |
+| 問題節點               | 判讀訊號                     | 風險後果             | 前置控制面                                                     |
+| ---------------------- | ---------------------------- | -------------------- | -------------------------------------------------------------- |
+| 機器身份來源不清       | credential 缺乏發放責任鏈    | 存取憑證可用窗口失控 | [credential](/backend/knowledge-cards/credential/)             |
+| 跨平台信任擴張過快     | token 使用面超出預期服務邊界 | 外部事件可快速傳導   | [trust-boundary](/backend/knowledge-cards/trust-boundary/)     |
+| 短效存取憑證策略不完整 | 失效節奏與授權節奏分離       | 撤銷成本上升         | [token-revocation](/backend/knowledge-cards/token-revocation/) |
+| federation 回查不足    | 信任來源與授權決策無法回串   | 事故判讀時間延長     | [audit-log](/backend/knowledge-cards/audit-log/)               |
 
 ## Federation 信任漂移跟跨平台 token 重評估
 
@@ -92,7 +92,7 @@ Federation 信任漂移是 workload identity 獨有的失效模式：信任關�
 
 - 機器憑證來源無法對應到責任主體時，代表信任鏈不可驗證。
 - 跨平台 token 在非預期服務長期可用時，代表 federation 邊界鬆動。
-- 短效憑證實作退化成長時存活時，代表撤銷窗口擴大。
+- 短效存取憑證實作退化成長時存活時，代表撤銷窗口擴大。
 - 供應商事件後內部 workload 權限未收斂時，代表外部風險仍在傳導。
 
 ## 案例觸發參考
@@ -101,11 +101,12 @@ Federation 信任漂移是 workload identity 獨有的失效模式：信任關�
 
 - 第三方身分鏈事件： [Okta + Cloudflare 2023](/backend/07-security-data-protection/red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/)
 - token 傳導與後續擴散： [Cloudflare 2023](/backend/07-security-data-protection/red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/)
-- 憑證濫用下的資料平台風險： [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
+- 存取憑證濫用下的資料平台風險： [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
 
 ## 下一步路由
 
 - 平台身分在某條整合上用不上時（該章列出的五種情形，涵蓋外部條件與自己的可靠性與合規需求）：[7.32 機器憑證的配發](../machine-credential-issuance/)
+- 多租戶平台的建置管線改用工作負載身分、每次只換得到單一環境的憑證時，影響範圍怎麼算：[7.44 多租戶平台的隔離層級〈存取層的隔離〉](../multi-tenant-platform-isolation-tiers/#存取層的隔離建置管線共用運算營運後台內部工具平台資料庫管理備份與其他共用元件的權限範圍)
 - 身份與平台邊界實作：`05-deployment-platform`
-- 憑證輪替與驗證節奏：`06-reliability`
+- 存取憑證輪替與驗證節奏：`06-reliability`
 - 事件分級與收斂：`08-incident-response`

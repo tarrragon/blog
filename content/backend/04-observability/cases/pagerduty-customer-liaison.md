@@ -26,4 +26,4 @@ Customer Liaison 把散落的客訴制度化成一個雙向 out-of-band 管道�
 
 ## 二手來源與狀態標注
 
-PagerDuty 這頁是通用 IR 角色、非專講「觀測退化」—— 本章只抽「客訴聚合成 scope 訊號」對接工具退化約束。完整角色定義與指揮鏈屬 08 事故處理章。
+PagerDuty 這頁是通用 IR 角色、非專講「觀測退化」—— 本章只抽「客訴聚合成 scope 訊號」對接工具退化約束。完整角色定義與指揮鏈屬 08 事故處理章：角色分工見 [8.2 事故指揮與角色分工](/backend/08-incident-response/incident-command-roles/)，對外聯絡人在內部狀態頁上寫給客服的說法、客服怎麼依它答覆並把回報附到事故上，見 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/)。

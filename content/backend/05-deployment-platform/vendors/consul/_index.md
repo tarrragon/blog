@@ -75,7 +75,7 @@ curl -s http://localhost:8500/v1/catalog/service/web | jq .
 
 - Sidecar proxy（Envoy-based）
 - Service intentions（誰可訪誰）
-- mTLS 自動憑證
+- 自動簽發 mTLS 憑證
 - 跟 Istio / Linkerd 對比
 
 ### DNS interface

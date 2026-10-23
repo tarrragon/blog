@@ -8,7 +8,7 @@ tags: ["backend", "security", "case-study", "red-team"]
 
 ## 事故摘要
 
-Cloudflare 在 2023 年事件說明中展示了供應商端事件如何傳導到客戶端身分流程，並觸發大規模憑證與 token 收斂作業。
+Cloudflare 在 2023 年事件說明中展示了供應商端事件如何傳導到客戶端身分流程，並觸發大規模存取憑證與 token 收斂作業。
 
 **本案例的演示焦點**：上游 Identity Provider 事件 → 下游客戶側 token / session 收斂壓力的 identity-chain 風險傳導。其他 threat surface（直接 phishing / 邊界零時差 / 供應鏈植入）由其他 case category 承擔。
 
@@ -16,7 +16,7 @@ Cloudflare 在 2023 年事件說明中展示了供應商端事件如何傳導到
 
 1. 攻擊者先利用供應商支援流程取得線索。
 2. 嘗試使用取得的資訊進入客戶端環境。
-3. 透過 token、session 或憑證鏈路擴展存取。
+3. 透過 token、session 或存取憑證的鏈路擴展存取。
 
 ## 失效控制面
 
@@ -31,8 +31,8 @@ Cloudflare 在 2023 年事件說明中展示了供應商端事件如何傳導到
 ## 可落地的 workflow 檢查點
 
 - 發布前：為第三方事件設計獨立 [runbook](/backend/knowledge-cards/runbook/) 與責任分工，mechanism 是讓供應商公告直接 trigger 內部盤點，不停在「閱讀公告」layer。
-- 日常：維護 [playbook](/backend/knowledge-cards/playbook/) 的憑證輪替優先級（依 token 範圍 / 受影響 tenant 分層、不是平均輪替）。
-- 事故中：先凍結高風險憑證、再分批恢復必要權限（前提是事先有 token 範圍 inventory、否則無法分批）。
+- 日常：維護 [playbook](/backend/knowledge-cards/playbook/) 的存取憑證輪替優先級（依 token 範圍 / 受影響 tenant 分層、不是平均輪替）。
+- 事故中：先凍結高風險存取憑證、再分批恢復必要權限（前提是事先有 token 範圍 inventory、否則無法分批）。
 
 ## 從本案例到實作的 chain
 

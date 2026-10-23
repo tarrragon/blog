@@ -26,13 +26,13 @@ Dropbox 2022 事件顯示員工帳號釣魚成功後，攻擊者可接觸私有�
 
 ## 如果 workflow 少一步會發生什麼
 
-若少了「程式碼資產異常存取升級」步驟，攻擊者可在內部環境延長停留時間並擴大探索範圍。
+若少了「程式碼資產異常存取升級」步驟，攻擊者可在內部環境延長停留時間（[dwell time](/backend/knowledge-cards/dwell-time/)）並擴大探索範圍。
 
 ## 可落地的 workflow 檢查點
 
-- 發布前：對高敏感 repo 操作要求強化 [authentication](/backend/knowledge-cards/authentication/)（phishing-resistant 因子、step-up 不只密碼 + OTP），mechanism 是讓 phishing-collected 憑證在 step-up 環節失效。
+- 發布前：對高敏感 repo 操作要求強化 [authentication](/backend/knowledge-cards/authentication/)（phishing-resistant 因子、step-up 不只密碼 + OTP），mechanism 是讓 phishing-collected 存取憑證在 step-up 環節失效。
 - 日常：將 repo 存取告警納入 [on-call](/backend/knowledge-cards/on-call/) 流程（異常 clone / push 模式、跨地理 / 跨裝置序列）。
-- 事故中：即時凍結可疑憑證與連線、保留時間軸證據（依賴 repo / SSO 事先有 audit log retention）。
+- 事故中：即時凍結可疑存取憑證與連線、保留時間軸證據（依賴 repo / SSO 事先有 audit log retention）。
 
 ## 從本案例到實作的 chain
 

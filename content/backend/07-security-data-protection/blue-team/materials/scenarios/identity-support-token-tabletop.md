@@ -29,7 +29,7 @@ weight: 72531
 1. Triage：確認支援附件是否含敏感 session 資料。
 2. Severity：依受影響 tenant、權限等級與 token 可用性分級。
 3. Owner：identity owner 主責，support owner 與 incident commander 協作。
-4. Containment：撤銷 session、鎖定附件下載、通知受影響客戶。
+4. Containment：撤銷 session、鎖定附件下載、通知受影響客戶（外洩來源還沒確定時的風險預警與確認之後的通知怎麼分，見 [8.26 資料外洩時對商家的通知](/backend/08-incident-response/security-incident-customer-notification/)）。
 5. Write-back：更新支援附件處理、HAR sanitizer、customer notification 與 runbook。
 
 ## Evidence Target

@@ -100,7 +100,7 @@ aws cloudtrail lookup-events \
 
 審計的目的是確認離職前 30 天內有沒有異常操作（大量資料下載、權限變更、新 key 建立），而非預設離職者有惡意。這是標準的安全衛生程序。
 
-如果團隊已經全面採用 OIDC 短期憑證（見[模組二：身分與憑證地基](/infra/02-identity-credentials/)），離職時的 credential rotation 範圍會大幅縮小 — 沒有長期 key 就沒有需要輪替的靜態憑證，SSO 停用後短期 token 自然失效。
+如果團隊已經全面採用 OIDC 短期憑證（見[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)），離職時的 credential rotation 範圍會大幅縮小 — 沒有長期 key 就沒有需要輪替的靜態憑證，SSO 停用後短期 token 自然失效。
 
 ## IaC 與 PR 歷史怎麼降低交接成本
 
@@ -129,7 +129,7 @@ aws cloudtrail lookup-events \
 - DNS 管理（域名註冊商、Route 53 hosted zone）
 - SSL 憑證管理（ACM、Let's Encrypt）
 
-### 憑證盤點
+### 存取憑證盤點
 
 - 長期 access key 清單（從 credential report 取得）
 - Secrets Manager / SSM Parameter Store 裡的 secret 清單
@@ -155,7 +155,7 @@ aws cloudtrail lookup-events \
 
 **SSO 作為單一存取撤銷點**：所有雲端存取走 SSO，離職時停用一個帳號就關閉所有路徑。沒有 SSO 時，每多一個平台就多一個需要手動撤銷的路徑，漏撤任何一個都是安全缺口。SSO 的覆蓋率越高，撤銷操作越接近 O(1)。
 
-**消除個人長期 key**：用 OIDC + role assumption 取代長期 access key（見[模組二：身分與憑證地基](/infra/02-identity-credentials/)）。沒有長期 key，離職時就沒有需要逐一追蹤和輪替的靜態憑證。credential rotation 的範圍從「所有 key」縮小到「共用 secret」。
+**消除個人長期 key**：用 OIDC + role assumption 取代長期 access key（見[模組二：身分與存取憑證地基](/infra/02-identity-credentials/)）。沒有長期 key，離職時就沒有需要逐一追蹤和輪替的靜態憑證。credential rotation 的範圍從「所有 key」縮小到「共用 secret」。
 
 **環境描述在程式碼裡**：IaC 讓環境結構對任何有 repo 存取的人可讀。交接的知識成本從「口頭傳授整個環境長什麼樣」降到「讀 code + PR 歷史」。見[模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)。
 
@@ -167,7 +167,7 @@ aws cloudtrail lookup-events \
 
 ## 跨分類引用
 
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：IAM 設計、OIDC 短期憑證、權限邊界
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：IAM 設計、OIDC 短期憑證、權限邊界
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：PR 作為知識載體、變更可追溯
 - → [模組九：怎麼把 infra 推動起來](/infra/09-driving-adoption/)：知識共享與 on-call 輪替
 - → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：Secret 輪替策略

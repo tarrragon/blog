@@ -48,7 +48,7 @@ infra 元件不被管理時，後果不會立刻出現 — 它們在特定條件
 
 可重建性的判斷標準：能不能在空白帳號裡，不靠記憶、不靠翻舊帳號 Console，把環境完整重建出來。
 
-### 憑證外洩
+### 存取憑證外洩
 
 access key 被推進 git 歷史 — `.env` 檔忘記加進 `.gitignore`，一次 push 就把 key 送上了公開 repo。GitHub 上有自動掃描工具在監控 commit，從 push 到 key 被利用可能只需要幾分鐘。常見的攻擊操作是在帳號裡開大量高規格 instance 跑礦機，帳單可以在幾小時內衝到數千美元。
 
@@ -89,4 +89,4 @@ infra 的複雜度隨服務的使用者數量、團隊大小與合規要求遞�
 - → [模組零：infra 是什麼](/infra/00-infra-mindset/)：五個責任面向與成熟度階梯（從全手動到全程式碼治理的五階分級）的完整定義
 - → [模組負一：還沒有 infra 的環境](/infra/before-infra/)：手動環境怎麼守底線、降低未來納管成本
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：第一行 IaC 從哪裡開始
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：access key 的風險與替代方案
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：access key 的風險與替代方案

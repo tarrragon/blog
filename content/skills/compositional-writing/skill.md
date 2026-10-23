@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 1.46.2
+  version: 1.46.3
   category: writing-methodology
 ---
 

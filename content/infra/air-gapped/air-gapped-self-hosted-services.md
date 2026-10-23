@@ -6,7 +6,7 @@ weight: 5
 tags: ["infra", "air-gapped", "self-hosted"]
 ---
 
-連網環境的 infra 團隊消費數十個 SaaS 服務：程式碼放 GitHub、CI 用 GitHub Actions、套件從 npm 和 PyPI 拉、container image 從 Docker Hub pull、憑證用 Let's Encrypt 自動簽、監控用 Datadog。這些服務的共同特性是「有人幫你維護」——infra 團隊只需要設定和使用，不需要部署、升級、備份。
+連網環境的 infra 團隊消費數十個 SaaS 服務：程式碼放 GitHub、CI 用 GitHub Actions、套件從 npm 和 PyPI 拉、container image 從 Docker Hub pull、TLS 憑證用 Let's Encrypt 自動簽、監控用 Datadog。這些服務的共同特性是「有人幫你維護」——infra 團隊只需要設定和使用，不需要部署、升級、備份。
 
 斷網環境裡這些服務全部要自建。每一個 SaaS 變成一個內部服務，infra 團隊承擔它的部署、設定、升級、備份、監控和使用者管理。這篇文章盤點完整的服務清單、推薦的自建工具、部署順序，以及容易被低估的維護成本。
 
@@ -117,5 +117,5 @@ GitLab CE 把版控、CI/CD、container registry、package registry 打包在一
 - → [斷網環境的 IaC](/infra/air-gapped/air-gapped-iac/)：state backend（PostgreSQL）和 CI 的詳細設定
 - → [斷網環境的容器與映像管理](/infra/air-gapped/air-gapped-container/)：Harbor 和映像搬運的詳細操作
 - → [斷網環境的監控與可觀測性](/infra/air-gapped/air-gapped-monitoring/)：Prometheus + Grafana + Loki 的部署
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：Vault 的身分管理與 infra IAM 的關係
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：Vault 的身分管理與 infra IAM 的關係
 - → [模組八：治理好習慣](/infra/08-governance-habits/)：自建服務的 secret 管理與成本歸因

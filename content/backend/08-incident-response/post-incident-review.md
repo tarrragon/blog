@@ -25,6 +25,8 @@ tags: ["backend", "incident-response"]
 
 復盤要包含影響摘要、時間線、根因、有效措施、無效措施、行動項與驗證期限。行動項需要指定 owner、完成標準與 [action item closure](/backend/knowledge-cards/action-item-closure/) 條件，避免停在會議紀錄。
 
+資安事故對外公布的調查報告，時間軸要記每一個判斷與它當時的依據，根因要寫到每一道沒擋住的控制，而不只是入侵路徑，見 [8.26 資料外洩時對商家的通知〈調查報告〉](/backend/08-incident-response/security-incident-customer-notification/#調查報告時間軸與根因要交代的內容)。
+
 ## 交接路由
 
 - 04.8 訊號治理閉環：偵測缺口回寫成新訊號

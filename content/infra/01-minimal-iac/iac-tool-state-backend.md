@@ -262,5 +262,5 @@ State 地基設好後，下一步是立 Console 唯讀鐵律、並用最小可�
 ## 跨分類引用
 
 - → [Console 唯讀鐵律與最小可行資源集合](/infra/01-minimal-iac/console-readonly-minimal-viable/)：state 管好之後，Console 唯讀紀律與最小 apply 閉環
-- → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：Console 唯讀鐵律靠權限落地
+- → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：Console 唯讀鐵律靠權限落地
 - → [模組四：環境分離與模組化](/infra/04-environment-separation/)：state 的 key 怎麼依環境切分

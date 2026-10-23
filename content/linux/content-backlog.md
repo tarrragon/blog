@@ -32,7 +32,7 @@ tags: ["linux", "backlog", "meta"]
 實作記錄 [agent-workstation-vm-handson](/linux/tools/remote/agent-workstation-vm-handson/) 十步驟 + 三情境已於 2026-07-08 全實機驗證發佈；同 session 衍生的手機 client 選型文、[Tailscale 專文](/linux/tools/remote/tailscale-tailnet-and-relay/)、[Claude Code 專文](/linux/tools/remote/claude-code-container-and-hooks/)、[pacman gotcha work-log](/work-log/pacman_syu_kernel_reboot_docker/) 亦已發佈。剩餘兩項：
 
 - **client 選型文的 Blink / iOS 側實測**：[mobile-terminal-client-selection](/linux/tools/remote/mobile-terminal-client-selection/) 已發佈，Termius / Android 側實測完（mosh 可用、擴充鍵列、CJK 用 SSH 非 mosh），但 Blink / iOS 側仍標「需實測」。待有 iOS 裝置驗 Blink 後回填結論。
-- **選型文隔離段 retrospective**：`setup-token` 是長效 token 的 env-var 注入模型、非「持久化 OAuth session 到 volume」——[選型文](/linux/tools/remote/agent-workstation-home-vs-vps/)隔離段講「狀態要顯式持久化」時把憑證與設定混講、該細化成「設定走 volume 持久化、認證走 runtime 注入的 secret」兩條分開。handson Step 7 與 Claude Code 專文已把機制講清、待回寫選型文隔離段對齊。
+- **選型文隔離段 retrospective**：`setup-token` 是長效 token 的 env-var 注入模型、非「持久化 OAuth session 到 volume」——[選型文](/linux/tools/remote/agent-workstation-home-vs-vps/)隔離段講「狀態要顯式持久化」時把存取憑證與設定混講、該細化成「設定走 volume 持久化、認證走 runtime 注入的 secret」兩條分開。handson Step 7 與 Claude Code 專文已把機制講清、待回寫選型文隔離段對齊。
 
 ## 維護提醒
 

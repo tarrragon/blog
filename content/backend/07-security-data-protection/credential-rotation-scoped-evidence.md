@@ -6,7 +6,7 @@ weight: 97
 tags: ["backend", "security", "credential-rotation", "implementation"]
 ---
 
-Credential rotation with scoped evidence 的核心責任是把憑證輪替從一次性操作改成分域、可驗證、可回退的控制流程。
+Credential rotation with scoped evidence 的核心責任是把存取憑證輪替從一次性操作改成分域、可驗證、可回退的控制流程。
 
 ## 服務路徑與控制範圍
 
@@ -40,7 +40,7 @@ Credential rotation with scoped evidence 的核心責任是把憑證輪替從一
 
 ## 案例回寫
 
-這條路徑可用 [反例：憑證輪替失敗](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) 回寫。先看失敗是發生在分域、驗證還是撤銷，再回到本章補齊 scope map 與回退窗口。
+這條路徑可用 [反例：存取憑證輪替失敗](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) 回寫。先看失敗是發生在分域、驗證還是撤銷，再回到本章補齊 scope map 與回退窗口。
 
 這個案例主要支撐的是「輪替分域與證據鏈完整度」判讀，不直接支撐 incident 通訊節奏；外部通報回到 8.4/8.20。
 
@@ -61,6 +61,8 @@ CircleCI 2023 案例的範圍量級壓力 governance frame 在 [7.6 § CI secret
 [CircleCI 2023](/backend/07-security-data-protection/red-team/cases/supply-chain/circleci-2023-secrets-rotation/) 案例「可落地檢查點」標明事故中 mechanism 為「按分級快速輪替、並記錄 MTTR」，前提是「事先有 secrets inventory 跟 owner mapping」。實作示範視角的補充是：分級要落到具體 metadata schema、不只是規範性說法。
 
 以下基於通用工程知識補充：tag 是事件期間的輪替排序前提 — metadata 完整時可從「high blast radius + critical tier」直接抽 subset 優先輪、再依資源展開。每個 secret 在 vault 裡帶 blast radius tag（local / shared / global）、business tier（critical / standard / experimental）、rotation cost（low / high）三維度。metadata 不足時排序退回全域輪替（成本高）或部分輪替（覆蓋風險）兩個 fallback。
+
+這一節的分批與新舊憑證並行窗口，適用於憑證還沒確認落入攻擊者手中的輪替。建置主機已確認被入侵時，讀得到新憑證存放位置的那幾把憑證（秘密管理服務、雲端帳號的存取金鑰）要在任何新憑證寫入之前撤銷、不留並行窗口，新憑證只放在重建過的主機與檢查過的保管位置，見 [8.25 建置主機被入侵後的根除與重建〈存取憑證撤銷與輪替的先後〉](/backend/08-incident-response/compromised-build-host-eradication/#存取憑證撤銷與輪替的先後)。
 
 ## 跨模組路由
 
