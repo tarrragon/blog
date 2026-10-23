@@ -6,7 +6,7 @@ weight: 97
 tags: ["backend", "security", "credential-rotation", "implementation"]
 ---
 
-Credential rotation with scoped evidence 的核心責任是把憑證輪替從一次性操作改成分域、可驗證、可回退的控制流程。
+Credential rotation with scoped evidence 的核心責任是把存取憑證輪替從一次性操作改成分域、可驗證、可回退的控制流程。
 
 ## 服務路徑與控制範圍
 

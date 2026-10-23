@@ -62,7 +62,7 @@ zsh
 | **元件數**             | 5（app → CF → CF Access → proxy → ttyd）         | 3（app → Tailscale → proxy/ttyd）                                               |
 | **需要自有網域**       | 是                                               | 否（MagicDNS 自動分配）                                                         |
 | **啟停行程數**         | 3（cloudflared + ttyd + proxy）                  | 2（ttyd + proxy），Tailscale daemon 常駐                                        |
-| **憑證包欄位**         | 8 欄（含 CF Access 憑證 + proxy token）          | ~5 欄（endpoint + ttyd 帳密）                                                   |
+| **存取憑證包欄位**     | 8 欄（含 CF Access 存取憑證 + proxy token）      | ~5 欄（endpoint + ttyd 帳密）                                                   |
 | **密鑰管理複雜度**     | 高（proxy token 需可插拔後端 keychain/file/env） | 低（僅 ttyd 帳密）                                                              |
 | **費用**               | 免費（Cloudflare 個人方案）                      | 免費（Tailscale 個人方案，100 裝置內）                                          |
 | **外部依賴**           | Cloudflare 邊緣網路 + CF Access 控制面           | Tailscale 協調伺服器 + DERP relay                                               |

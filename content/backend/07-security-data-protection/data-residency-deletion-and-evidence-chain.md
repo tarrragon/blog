@@ -54,7 +54,7 @@ tags: ["backend", "security"]
 案例觸發的責任是驗證資料位置與刪除證據是否能支撐現實事件回應。
 
 - 備份鏈與資料外送壓力： [LastPass 2022](/backend/07-security-data-protection/red-team/cases/data-exfiltration/lastpass-2022-backup-chain/)
-- 憑證濫用下的大量資料外送： [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
+- 存取憑證濫用下的大量資料外送： [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
 - 檔案服務暴露與資料治理壓力： [Progress WS_FTP 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/progress-wsftp-2023-file-service-breach/)
 
 ## 下一步路由
