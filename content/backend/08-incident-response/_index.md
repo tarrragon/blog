@@ -299,6 +299,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | 8.25 第二批回指與術語：8.19〈決策類型〉的 security split 補根除期間的撤銷範圍、重建時點與監看期長度；reading-paths 的資安路線末端改成 8.17 → 8.25；dwell time 與 digital forensics 在 4 篇以上使用而沒有卡                                                                                                                                                                        | 跨模組 | 無                           | 小         |
 | 7.44 / 8.25 的異源複核：四輪審查都出自同一個 session（同一份 prompt 來源），instance 與 timing 兩軸沒有動過。觸發條件是有另一個執行者可用，或距 2026-10-22 已過一個月；形式是兩邊各自對兩篇跑理解探針與 steelman、各自報數再並排，驗收寫「有幾個判斷標準因為並排而被寫明」。Round 4 新加的寫法（diffoscope 比對、誘餌憑證、事故後加強監看、DBA 限時權限）尚未經獨立驗證，列為必查 | 跨模組 | 另一個執行者或時間           | 中         |
 | 8.26 的回指：8.17 的資安事故段連 8.26 的歸屬判定、8.10 的補償段連 8.26〈確認通知〉、8.19〈決策類型〉補「是否發風險預警」與「歸屬判定的重新判定」、8.20〈通訊與補償〉連 8.26 的通知對象（商家與會員分開）、7.37 的通知門檻段連 8.26〈風險預警〉                                                                                                                                    | 跨模組 | 無                           | 5 處（小） |
+| confidence 的值域兩套：8.18 寫 confirmed / suspected / external-only，knowledge-cards/confidence 卡寫 confirmed / suspected / needs follow-up，8.19〈欄位模型〉連的是卡、8.26 用的是 8.18；統一值域或在卡上說明兩套的關係                                                                                                                                                         | 知識卡 | 無                           | 小         |
 
 ### 後續推演大綱
 
