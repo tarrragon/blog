@@ -45,42 +45,13 @@
 
 **決策點**：停損切下去，專案裡所有服務一起停擺，等於一次自己造成的全面停機；雲端文件另外警告停用帳單時資源可能被永久刪除。判斷的單位是專案，逐個專案問停機影響誰、資料能不能重建：停機沒有人受影響、資料都能重建（沙箱、只跑實驗的專案）→ 建停損；停機可以接受而資料不能遺失（共用 staging）→ 改成只停止花錢的資源（函式停 VM、MIG 縮到 0，同一條鏈只換函式與角色）；停機會影響使用者（正式服務，不論規模）→ 警示加即時限制（配額、最大執行個體數），或把高風險的工作負載拆到另一個專案再對那個專案建停損。
 
-**GCP 的做法**（停損鏈已實測；`--filter-projects`、`--credit-types-treatment` 與恢復指令依 gcloud 說明，未實跑）：接停損的預算與一般預算警示分開建。範圍用 `--filter-projects=projects/<project>` 限定在要停用的那一個專案（不限定時 `costAmount` 是整個帳單帳戶的合計，別的專案的花費也會觸發停損），金額設成這個專案本期能承受的最高花費，而不是預期花費。帳戶有大額抵免時加 `--credit-types-treatment=exclude-all-credits`，否則抵免用完前花費接近 0、停損不會觸發。
+**建置之前要決定的三件事**（平台無關）：接停損的預算與一般預算警示分開建，範圍限定在要停用的那一個專案；金額設成能承受的最高花費減掉帳單資料延遲期間最多能多花的金額，不是預期花費；帳戶有大額抵免時，預算要以抵免前的金額計算，否則抵免用完前停損不會觸發。
 
-```bash
-# 預算通知送到 Pub/Sub topic；設定時會自動授權 billing-budget-alert@system.gserviceaccount.com 發布
-gcloud pubsub topics create budget-alerts
-# 接停損的預算另外建，不接到既有的帳戶層級警示預算上；一個 topic 只接一個預算，
-# 好幾個預算共用一個 topic 時，任何一個超支都會讓接在 topic 上的每一個停損開關動作
-gcloud billing budgets create --billing-account=<billing-account-id> --display-name=<name> \
-  --budget-amount=<能承受的最高花費減掉延遲期間的花費><currency> --filter-projects=projects/<project> \
-  --notifications-rule-pubsub-topic=projects/<project>/topics/budget-alerts --billing-project=<project>
+**反應時間**：停損限制的是損失的上限，帳單資料延遲期間（數小時、有時超過一天）已經發生的費用攔不下來，所以即時的上限要靠配額與最大執行個體數。
 
-# 停損程式的服務帳號：解除帳單連結用 billing.projectManager，讀取帳單狀態另外要 browser；
-# --condition=None 讓專案裡已有條件式綁定時，非互動模式不會停下來要求選擇條件
-gcloud projects add-iam-policy-binding <project> --member=serviceAccount:<sa> --role=roles/billing.projectManager --condition=None
-gcloud projects add-iam-policy-binding <project> --member=serviceAccount:<sa> --role=roles/browser --condition=None
+**驗收**：部署成功、狀態正常不算完成。用合成觸發驗：先用第一則真實的預算通知確認預算到觸發來源那一段，再發低於與超出預算的兩則測試訊息、在終點看到帳單停用，最後重新連結；專案有停用後不能遺失的資料時改用分段驗證。判斷依據見 [protection-proves-itself-by-firing](../principles/protection-proves-itself-by-firing.md)。
 
-# 部署由 topic 觸發的 function；兩個服務帳號旗標都明確指定（--trigger-service-account 不給時，
-# gcloud 的說明寫用 Compute Engine 預設服務帳號，實測卻沿用 --service-account，依版本而異）；
-# --retry 讓失敗的那則通知會重送；--max-instances=1 讓多則通知依序處理、不並行送出解除連結的呼叫；
-# --runtime、--entry-point、--source、--region 依程式填，TARGET_PROJECT_ID 是要停用的專案
-gcloud functions deploy <name> --gen2 --trigger-topic=budget-alerts --service-account=<sa> \
-  --trigger-service-account=<sa> --retry --max-instances=1 --set-env-vars=TARGET_PROJECT_ID=<project> \
-  --runtime=<runtime> --entry-point=<function> --source=<dir> --region=<region>
-
-# 觸發器以 --trigger-service-account 的身分呼叫 function，要給它呼叫權限，否則每次推送都 403
-gcloud run services add-iam-policy-binding <name> --region=<region> --member=serviceAccount:<sa> --role=roles/run.invoker
-```
-
-程式的判斷規則：只看實際花費（通知裡的 `costAmount >= budgetAmount`），讀不懂的訊息不切斷；呼叫 Cloud Billing API 的 `projects.updateBillingInfo`、`billingAccountName` 給空字串就是解除連結。
-
-**反應時間與限制**：停損限制的是損失的上限，帳單資料延遲期間已經發生的費用攔不下來（實測從超支訊息發出到停用約十幾秒，延遲幾乎都在訊息發出之前）。帳單停用期間資源清單回傳空的，空清單不代表資源已刪除，重新連結後留下的資源繼續計費，清理以重新連結後的清單為準。實際因為超支而停用之後，先調高預算金額或刪掉函式再重新連結，否則下一則通知會再停用一次。停損程式跑在被停用的專案上時，它自己也跟著停擺。
-
-**驗收**：部署成功、狀態 `ACTIVE` 不算完成。`run.invoker`、`browser` 與 `--retry` 三項缺任何一個，停損都會在看似正常的狀態下失效。驗收分兩段，見 [protection-proves-itself-by-firing](../principles/protection-proves-itself-by-firing.md)：
-
-1. **topic 之前**：等第一則真實的預算通知，查函式紀錄裡的 `received`，確認 `budgetDisplayName` 是接停損的預算、`costAmount` 與帳單報表上這個專案本期的費用相符（接近 0 而報表不是，就是抵免或範圍設錯）。
-2. **topic 之後**：超出預算那一則會實際停用帳單、可能刪除資料，所以排在停機可以接受的時段做。專案有停用後不能遺失的資料時改用分段驗證：另部署一份換了函式名稱與 topic 的複本（例如 `budget-killswitch-test`、`budget-alerts-test`），`TARGET_PROJECT_ID` 指向可拋棄的空專案、兩個角色綁在那個空專案上，對複本的 topic 發訊息——沿用正式名稱會蓋掉正式函式，發到正式 topic 會停掉正式專案；正式專案只用 Policy Troubleshooter 確認函式的服務帳號持有 `resourcemanager.projects.deleteBillingAssignment` 與 `resourcemanager.projects.get`。先發低於預算的那一則（`gcloud pubsub topics publish budget-alerts --message='{"costAmount": <值>, "budgetAmount": <預算>}'`，`<值>` 低於 `<預算>`），確認函式紀錄有 `action=none`；再發 `<值>` 不低於 `<預算>` 的那一則，看到 `billingEnabled` 變成 `false`。最後用 `gcloud billing projects link <project> --billing-account=<billing-account-id>` 重新連結，連結完成才算驗收結束。
+**GCP 的指令、角色、函式、驗收步驟與停用後的恢復順序**見 [gcp-spend-kill-switch](../implementations/gcp-spend-kill-switch.md)。
 
 ---
 

@@ -3,7 +3,7 @@ name: system-design
 description: "接到新系統、新功能或服務升級需求時的系統設計流程：需求盤點、從業務推估容量、依改動成本決定定案／先做／延後、延後設計的觸發指標，涵蓋後端前端與基礎設施，含功能開關、A/B 測試、對外 API 改版、行動 App 上架與先擴充才能上線的變更。Triggers: 系統設計, system design, 過度設計, 何時擴充, feature flag, A/B test, 上線計畫, App 上架, 熱更新, 管理通道, 支出停損"
 metadata:
   portable: true
-  version: 0.13.4
+  version: 0.13.5
 ---
 
 # System Design
@@ -71,15 +71,15 @@ metadata:
 
 ## 和其他 skill 的分工
 
-| 情境                                                        | 用哪一個                                                                                                                                           |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 清單上某個決定有多個技術方案要比較、挑一個                  | `design-decision-framework` 或 `wrap-decision`                                                                                                     |
-| 延後項目要設重新評估的條件（觸發指標就是絆腳索）            | `wrap-decision` 的絆腳索                                                                                                                           |
-| 範圍內的需求要寫成可驗收的規格                              | `spec`                                                                                                                                             |
-| 先做類裡屬於專案地基的產物（測試鷹架、migration、可觀測性） | `foundation-design`                                                                                                                                |
-| 延後的設計被觸發，要擴充設備、遷移或切換                    | 本 skill 的 `references/release-and-rollout.md`〈先擴充才能上線或切換的變更〉                                                                      |
-| 既有專案只想處理管理通道或費用停損                          | `references/decision-timing.md`〈先做〉的那兩條決定何時做；實作讀 `saas-tech-selection` 的 security〈管理通道〉與 capacity-performance〈支出停損〉 |
-| 量測或監控要自架指標平台（Prometheus、exporter、Grafana）   | `observability-stack`                                                                                                                              |
+| 情境                                                        | 用哪一個                                                                                                                                                                       |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 清單上某個決定有多個技術方案要比較、挑一個                  | `design-decision-framework` 或 `wrap-decision`                                                                                                                                 |
+| 延後項目要設重新評估的條件（觸發指標就是絆腳索）            | `wrap-decision` 的絆腳索                                                                                                                                                       |
+| 範圍內的需求要寫成可驗收的規格                              | `spec`                                                                                                                                                                         |
+| 先做類裡屬於專案地基的產物（測試鷹架、migration、可觀測性） | `foundation-design`                                                                                                                                                            |
+| 延後的設計被觸發，要擴充設備、遷移或切換                    | 本 skill 的 `references/release-and-rollout.md`〈先擴充才能上線或切換的變更〉                                                                                                  |
+| 既有專案只想處理管理通道或費用停損                          | `references/decision-timing.md`〈先做〉的那兩條決定何時做；實作讀 `saas-tech-selection` 的 `references/implementations/gcp-management-access.md` 與 `gcp-spend-kill-switch.md` |
+| 量測或監控要自架指標平台（Prometheus、exporter、Grafana）   | `observability-stack`                                                                                                                                                          |
 
 表中的 skill 不一定安裝在每個專案；沒有安裝時，情境欄描述的工作仍然要做，改用專案自己的做法。本 skill 的決定清單是那些 skill 的輸入：清單上每一個需要挑方案、設絆腳索、寫規格或建立地基產物的決定，依上表的情境交給對應的 skill。不必等本 skill 全部走完——決策時機分類出現第一個定案項目時，就可以開始為它挑方案。
 

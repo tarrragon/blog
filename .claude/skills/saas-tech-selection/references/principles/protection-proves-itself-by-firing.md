@@ -1,6 +1,6 @@
 # Protection Proves Itself by Firing（防護機制以實際觸發驗收）
 
-> **角色**：本卡是 `saas-tech-selection` 的支撐型原則（principle）、被 security 維度的管理通道與稽核、capacity-performance 維度的支出停損、防護底線總表的「防護機制實際觸發過一次」那一列，以及 SKILL.md 路由表的支出停損列共同引用。
+> **角色**：本卡是 `saas-tech-selection` 的支撐型原則（principle）、被 security 維度的管理通道與稽核、capacity-performance 維度的支出停損、兩份 GCP 實作檔（`implementations/gcp-spend-kill-switch.md`、`implementations/gcp-management-access.md`）的驗收、防護底線總表的「防護機制實際觸發過一次」那一列，以及 SKILL.md 路由表的支出停損列共同引用。
 >
 > **何時讀**：部署停損開關、稽核紀錄、告警或自動處置這類平常不動作的防護機制之後，要判斷它算不算部署完成；或驗收紀錄寫著「部署成功」「狀態 ACTIVE」「設定已套用」、驗證查詢回傳零筆就被當成結論時。
 

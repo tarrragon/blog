@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.11.0 — 新增 references/implementations/：gcp-spend-kill-switch.md（預算、Pub/Sub、函式部署、判斷規則、驗收、停用後的恢復）與 gcp-management-access.md（IAP 與 OS Login 的設定指令、舊規則的停用與回退、由 template 建的主機、GKE 控制平面與節點除錯、稽核紀錄、人員離職）。capacity-performance〈支出停損〉與 security〈管理通道〉只留決策點、三層表與平台無關的判讀要點，GCP 實作外移（兩段各約佔原檔四成，訪談時每次都載入）。SKILL.md 路由表兩列改成訪談讀維度檔、實際建置時再讀實作檔；目錄樹補 implementations/。
+
 **Version**: 1.10.4 — 多輪審查 Round 4 修正：〈支出停損〉的決策點改成依停機影響誰與資料能否重建判斷，補上只停止花錢的資源那一格；驗收改成排在停機可接受的時段、有不能遺失的資料才用分段驗證，複本要換函式名稱與 topic，寫出 Policy Troubleshooter 要查的兩個權限；「已實測」標籤改成寫明哪些未實跑。baseline-protections 的管理 port 列縮短並指向 security。觸發詞拿掉 IAP、OS Login、救援入口（排查連線改由 linux-install-debug 承接）。principle 卡：完整證據、合成觸發的時機改成停機可接受的時段、中途注入一列標明是推導、靜默監看改名心跳監看。
 
 **Version**: 1.10.3 — 多輪審查 Round 3 修正：〈支出停損〉示範改成另建接停損的預算（create，不接到既有警示預算）、一個 topic 只接一個預算、金額扣掉延遲期間的花費；驗收分成 topic 之前（第一則真實通知對照帳單報表）與 topic 之後兩段，超出預算那一則只在未上線專案做、已上線改用可拋棄複本，測完重新連結。〈管理通道〉：外部 IP 只在管理用途時移除；底線第 8 條與 baseline-protections 的 Kubernetes API 改用 IAM 端點或只列維運與 CI 的 authorized networks；舊規則停用前先觀察、盤點 metadata 金鑰、寫出回退指令；離職移出群組而非移除群組綁定；救援入口測完關回；logging 初期的假陰性註解。principle 卡補上第四個位置「測試從中途注入」、處置指令的假陰性、事件型觸發來源的靜默監看與合成觸發有損害時的分段驗證。觸發詞的 IAP 改成 GCP IAP。

@@ -2,6 +2,8 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
+**Version**: 0.13.5 — decision-timing 兩條與 SKILL.md 分工表的實作指向改成 saas-tech-selection 新拆出的 implementations/ 兩份檔案。
+
 **Version**: 0.13.4 — 多輪審查 Round 4 修正：decision-timing 費用那一條的驗收程序縮成一句並指向 principle 卡與 saas-tech-selection、修正標點；觸發詞收窄成管理通道與支出停損。principle 卡同 saas-tech-selection 1.10.4。
 
 **Version**: 0.13.3 — 多輪審查 Round 3 修正：decision-timing 的觀察期寫明涵蓋最長週期的排程；停損驗收寫出先低於後超出、測完重新連結、已上線改用可拋棄複本，刪掉實測證據句。SKILL.md 分工表補「既有專案只想處理管理通道或費用停損」的路由。principle 卡同 saas-tech-selection 1.10.3。
