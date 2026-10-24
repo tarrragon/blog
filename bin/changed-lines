@@ -16,33 +16,45 @@
 index，別的 session 持有 index.lock 時失敗。這些情形都寫成 bin/tests/ 裡的測試。
 
 行為：
+- 路徑以執行時的目錄起算（在子目錄裡給 `s.md` 或在根目錄給 `sub/s.md` 都可以），工具轉成以
+  repo 根目錄起算，所有 git 呼叫都在根目錄執行。
 - 檔案在 HEAD 裡：取 `git diff -U0 HEAD -- <檔案>`（涵蓋 staged 與還沒 staged 的改動），
-  只收 hunk 裡的新增行，diff 標頭不收。
+  只收 hunk 裡的新增行，diff 標頭不收。刪除的檔案沒有新增行。
 - 檔案不在 HEAD 裡（新檔，不論有沒有 add）：整份檔案都是新增行。不寫 index。
-- stderr 結尾一定印 `changed-lines: N added line(s) from M file(s)`；M 要等於給的檔案數。
+- 二進位檔（含 NUL 位元組或不是 UTF-8）不印新增行。
+- stderr 結尾一定印 `changed-lines: N added line(s) from M file(s)`。N 是 0 有兩種情形：這次
+  只刪除文字（正常），或給錯了檔案；這次有新增文字而 N 是 0，就是後者。
 - 給的路徑在工作樹與 HEAD 都不存在時 exit 2。
 
-級別的判定（--level）：一處 hunk 是排版級，當它的刪除行與新增行數目相同且一一對應，
-每一對去掉空白、標點、表格符號與連結網址之後相同，或只有一個字元被替換成另一個字元
-（錯字；插入或刪掉一個字不算，中文裡那多半是換了詞），或兩行都是
-frontmatter 的 `weight:`／`date:`。任何一處 hunk 不是排版級、只有刪除或只有新增
-（刪掉一句也算改動）、或檔案是新檔，那個檔案就是措辭級以上。替換的字元逐處印成「錯字候選：舊→新」，
-讓 commit message 留得下判定的痕跡。措辭級與規則級的分界是語意判斷，這支工具不做。
+級別的判定（--level）：一處 hunk 是排版級，當它的刪除行與新增行數目相同且一一對應，而每一對
+符合下列其中一項：
+- 去掉空白、標點、表格符號與連結網址之後相同；
+- 只有一個字元被替換成另一個字元（錯字），而且替換前後的兩個字元都不是數字、拉丁字母，也不是
+  否定或情態字（不、沒、別、勿、無、非、未、莫、會、要、先、必、可、須、應、該、得、能）。
+  插入或刪掉一個字不算錯字，中文裡那多半是換了詞；改數字、否定或情態會改變規則的意思；
+- 兩行都在檔首 `---` frontmatter 區塊裡，是同一個 `weight:`（整數）或 `date:`（日期）欄位的值。
+任何一處 hunk 不符合、只有刪除或只有新增（刪掉一句、補一個 frontmatter 欄位都算改動）、檔案是
+新檔、或只有二進位內容與檔案權限的改動，那個檔案就是措辭級以上。替換的字元逐處印成
+「錯字候選：舊→新」，讓 commit message 留得下判定的痕跡。措辭級與規則級的分界是語意判斷，
+這支工具不做。
 
 測試：python3 -m unittest discover -s bin/tests
 """
 
 import argparse
+import os
 import re
 import subprocess
 import sys
 import unicodedata
 
+ROOT = None
 
-def git(*args, check=True):
-    r = subprocess.run(["git", *args], capture_output=True, text=True)
+
+def git(*args, check=True, text=True):
+    r = subprocess.run(["git", *args], capture_output=True, text=text, cwd=ROOT)
     if check and r.returncode != 0:
-        sys.stderr.write(r.stderr)
+        sys.stderr.write(r.stderr if text else r.stderr.decode("utf-8", "replace"))
         sys.exit(2)
     return r
 
@@ -51,30 +63,51 @@ def in_head(path):
     return git("cat-file", "-e", f"HEAD:{path}", check=False).returncode == 0
 
 
+HUNK = re.compile(r"^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@")
+
+
 def parse_hunks(diff_text):
-    """回傳 [(removed_lines, added_lines), ...]，只收 hunk 內容，不收 diff 標頭。"""
+    """回傳 [(removed, added), ...]；removed、added 是 [(行號, 內容), ...]，行號各自以 HEAD 版與工作樹版起算。"""
     hunks = []
     cur = None
+    old_no = new_no = 0
     for line in diff_text.split("\n"):
         if line.startswith("diff --git "):
             cur = None
             continue
-        if line.startswith("@@"):
+        m = HUNK.match(line)
+        if m:
+            old_no, new_no = int(m[1]), int(m[2])
             cur = ([], [])
             hunks.append(cur)
             continue
         if cur is None:
             continue  # 標頭（index、---、+++、new file mode…）
         if line.startswith("+"):
-            cur[1].append(line[1:])
+            cur[1].append((new_no, line[1:]))
+            new_no += 1
         elif line.startswith("-"):
-            cur[0].append(line[1:])
+            cur[0].append((old_no, line[1:]))
+            old_no += 1
     return hunks
+
+
+def frontmatter_range(text):
+    """回傳檔首 `---` 區塊內的行號範圍（1 起算，含頭尾兩行之間），沒有 frontmatter 時回傳空範圍。"""
+    lines = text.split("\n")
+    if not lines or lines[0].strip() != "---":
+        return range(0)
+    for i in range(1, len(lines)):
+        if lines[i].strip() == "---":
+            return range(2, i + 1)
+    return range(0)
 
 
 URL_IN_LINK = re.compile(r"\]\([^)]*\)")
 BARE_URL = re.compile(r"https?://\S+")
-FRONTMATTER_VALUE = re.compile(r"^(weight|date):")
+FRONTMATTER_VALUE = re.compile(r"^(weight):\s*-?\d+\s*$|^(date):\s*\d{4}-\d{2}-\d{2}([T ][0-9:+\-Z.]+)?\s*$")
+# 替換的任一側是這些字元時不算錯字：數字、拉丁字母，以及中文裡改了就改變規則意思的否定與情態字。
+MEANING_CHARS = set("不沒別勿無非未莫會要先必可須應該得能")
 
 
 def normalize(s):
@@ -97,69 +130,113 @@ def single_substitution(a, b):
     return diffs[0] if len(diffs) == 1 else None
 
 
-def hunk_layout_check(removed, added):
+def is_typo(sub):
+    for ch in sub:
+        if ch.isascii() and ch.isalnum() or ch.isdigit() or ch in MEANING_CHARS:
+            return False
+    return True
+
+
+def frontmatter_value_change(r, a, fm_old, fm_new):
+    (ro, rt), (ao, at) = r, a
+    mr, ma = FRONTMATTER_VALUE.match(rt), FRONTMATTER_VALUE.match(at)
+    if not (mr and ma and ro in fm_old and ao in fm_new):
+        return False
+    return rt.split(":")[0] == at.split(":")[0]
+
+
+def hunk_layout_check(removed, added, fm_old, fm_new):
     """回傳 (是否排版級, 錯字候選清單)。"""
     if not removed or not added or len(removed) != len(added):
         return False, []
     typos = []
     for r, a in zip(removed, added):
-        if FRONTMATTER_VALUE.match(r) and FRONTMATTER_VALUE.match(a) and r.split(":")[0] == a.split(":")[0]:
+        if frontmatter_value_change(r, a, fm_old, fm_new):
             continue
-        nr, na = normalize(r), normalize(a)
+        nr, na = normalize(r[1]), normalize(a[1])
         if nr == na:
             continue
         sub = single_substitution(nr, na)
-        if sub is None:
+        if sub is None or not is_typo(sub):
             return False, []
         typos.append(sub)
     return True, typos
 
 
+def read_text(path):
+    """回傳 (文字, 是否二進位)。"""
+    with open(os.path.join(ROOT, path), "rb") as f:
+        data = f.read()
+    if b"\0" in data:
+        return "", True
+    try:
+        return data.decode("utf-8"), False
+    except UnicodeDecodeError:
+        return "", True
+
+
 def main():
+    global ROOT
     ap = argparse.ArgumentParser(description="印出相對於 HEAD 的新增行，或判定改動的級別")
     ap.add_argument("--level", action="store_true", help="判定改動級別，不印新增行")
     ap.add_argument("paths", nargs="+")
     args = ap.parse_args()
 
+    top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    if top.returncode != 0:
+        sys.stderr.write("changed-lines: 不在 git repo 裡\n")
+        sys.exit(2)
+    ROOT = top.stdout.strip()
+    # 路徑以執行時的目錄起算，轉成以 repo 根目錄起算，之後所有 git 呼叫都在根目錄執行。
+    paths = [os.path.relpath(os.path.abspath(p), ROOT) for p in args.paths]
+
     total = 0
     files = 0
     overall_layout = True
-    for path in args.paths:
+    for path in paths:
+        reason = ""
+        verdict = None
         if in_head(path):
             diff = git("diff", "-U0", "--no-color", "--no-ext-diff", "HEAD", "--", path).stdout
             hunks = parse_hunks(diff)
-            new_file = False
+            if not hunks and git("diff", "--numstat", "HEAD", "--", path).stdout.strip():
+                verdict, reason = False, "二進位檔或檔案權限的改動"
         else:
-            try:
-                with open(path, encoding="utf-8") as f:
-                    content = f.read()
-            except FileNotFoundError:
+            if not os.path.lexists(os.path.join(ROOT, path)):
                 sys.stderr.write(f"changed-lines: {path} 不在工作樹也不在 HEAD\n")
                 sys.exit(2)
-            lines = content.split("\n")
-            if lines and lines[-1] == "":
-                lines.pop()
-            hunks = [([], lines)]
-            new_file = True
+            content, binary = read_text(path)
+            if binary:
+                hunks = []
+                verdict, reason = False, "新檔（二進位）"
+            else:
+                lines = content.split("\n")
+                if lines and lines[-1] == "":
+                    lines.pop()
+                hunks = [([], list(enumerate(lines, 1)))]
+                verdict, reason = False, "新檔"
         files += 1
-        added = [a for _, adds in hunks for a in adds]
+        added = [a for _, adds in hunks for _, a in adds]
         total += len(added)
         if args.level:
-            if new_file:
-                verdict, reason = False, "新檔"
-            elif not hunks:
-                verdict, reason = True, "沒有改動"
-            else:
-                checks = [hunk_layout_check(*h) for h in hunks]
-                bad = [c for c in checks if not c[0]]
-                verdict = not bad
-                typos = [t for ok, ts in checks if ok for t in ts]
-                if not verdict:
-                    reason = f"{len(bad)} 處改動不只排版"
-                elif typos:
-                    reason = "錯字候選：" + "、".join(f"{o}→{n}" for o, n in typos)
+            if verdict is None:
+                if not hunks:
+                    verdict, reason = True, "沒有改動"
                 else:
-                    reason = ""
+                    head_text = git("show", f"HEAD:{path}", check=False).stdout
+                    fm_old = frontmatter_range(head_text)
+                    if os.path.exists(os.path.join(ROOT, path)):
+                        fm_new = frontmatter_range(read_text(path)[0])
+                    else:
+                        fm_new = range(0)
+                    checks = [hunk_layout_check(rm, ad, fm_old, fm_new) for rm, ad in hunks]
+                    bad = [c for c in checks if not c[0]]
+                    verdict = not bad
+                    typos = [t for ok, ts in checks if ok for t in ts]
+                    if not verdict:
+                        reason = f"{len(bad)} 處改動不只排版"
+                    elif typos:
+                        reason = "錯字候選：" + "、".join(f"{o}→{n}" for o, n in typos)
             overall_layout = overall_layout and verdict
             label = "排版級" if verdict else "措辭級以上"
             print(f"{path}: {label}" + (f"（{reason}）" if reason else ""))

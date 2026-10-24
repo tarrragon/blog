@@ -9,7 +9,7 @@
 - **SSH 只用來做唯讀診斷與觸發**：`hyprctl`、`systemctl status`、讀 log、`pgrep`、執行 repo 內的部署腳本。
 - **ssh 指令不帶 `-o ProxyCommand=…`、`-o LocalCommand=…` 與 `PermitLocalCommand=yes`**：這幾個選項會在本機這台開發機執行任意命令，而「遠端環境壞了可以重建」這個前提保護不到本機。Claude Code 另有 hook 攔下這幾個選項（見 CLAUDE.md），其他 agent 沒有，靠這一條。
 - **該持久存在的檔案**（腳本、systemd unit、設定檔、cron、drop-in）先寫進 dotfiles repo、commit 與 push，再由遠端 `git pull` 加冪等的 deploy 部署。不用 scp、不用 heredoc 寫進 /tmp、不手動 `tee` 到 /etc。
-- **一次性驗證用的暫時檔**（探測腳本、測試用的 systemd unit）可以臨時放，名稱一律用 `verify-` 開頭，測完清掉，正式版收回 repo。腳本放在 `/tmp/verify-…`；unit 檔放不進 `/tmp`（systemd 只從 `/etc/systemd/system/`、`~/.config/systemd/user/` 這類目錄載入，`systemctl link` 也會在那裡留下 symlink），所以只用名稱的前綴標記。收尾時跑兩條檢查，任一條有輸出就是還沒清的暫時檔：`ssh <host> 'find /tmp -maxdepth 1 -name "verify-*"'`（不用 `ls -d /tmp/verify-*`：遠端的預設 shell 是 zsh，沒有匹配時 zsh 自己印 `no matches found`，清乾淨了反而有輸出），與 `ssh <host> "systemctl list-unit-files 'verify-*' --no-legend"`（user unit 另外加 `--user` 跑一次）；清不掉的照 `AGENTS.md`〈延到工作結束之後的動作〉寫進最後一則總結。固定的前綴讓「暫時」是一個查得到的事實，不是放置者自己的標籤。
+- **一次性驗證用的暫時檔**（探測腳本、測試用的 systemd unit）可以臨時放，名稱一律用 `verify-` 開頭，測完清掉，正式版收回 repo。腳本放在 `/tmp/verify-…`；unit 檔放不進 `/tmp`（systemd 只從 `/etc/systemd/system/`、`~/.config/systemd/user/` 這類目錄載入，`systemctl link` 也會在那裡留下 symlink），所以只用名稱的前綴標記。收尾時跑一條檢查，有任何一行輸出就是還沒清的暫時檔：`ssh <host> 'find /tmp -maxdepth 1 -name "verify-*"; systemctl list-unit-files "verify-*" --no-legend; systemctl --user list-unit-files "verify-*" --no-legend'`（`find` 不用 `ls -d /tmp/verify-*`：遠端的預設 shell 是 zsh，沒有匹配時 zsh 自己印 `no matches found`，清乾淨了反而有輸出）；清不掉的照 `AGENTS.md`〈延到工作結束之後的動作〉寫進最後一則總結。固定的前綴讓「暫時」是一個查得到的事實，不是放置者自己的標籤。
 
 dotfiles repo 裡的工具：
 

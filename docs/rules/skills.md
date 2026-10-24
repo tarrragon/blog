@@ -88,7 +88,8 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 - **patch**（0.1.0 → 0.1.1）：排版級與措辭級的改動（級別的定義在 `AGENTS.md`〈改動的級別〉）
 - **minor**（0.1.0 → 0.2.0）：新增 reference 或 principle 卡、擴充段落、加觸發詞
-- **major**（0.X → 1.0.0）：結構重組、支柱變動、改變既有行為
+- **major**（0.X → 1.0.0）：結構重組、支柱變動
+- 規則級的改動（`AGENTS.md`〈改動的級別〉）依範圍判：改一條規則的條件、判斷標準或處置是 minor；改掉支柱或整個流程的結構是 major
 - 未標版號的 skill 首次補標用 `1.0.0`。
 
 版號的住址：
@@ -107,7 +108,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 ### 從 report 卡到 skill 的標準流程
 
-流程從 report 卡開始：report 卡是原則的單一真實來源（有情境、根因、理想做法），skill 是它的操作化。兩者的責任不同：卡歸納缺陷與解法，skill 給處理方式與判斷方法。只改 skill、不涉及新原則時（修錯字、改步驟、對齊工具行為），從「修改 skill」那一步開始，commit message 寫出屬於這三種的哪一種。
+流程從 report 卡開始：report 卡是原則的單一真實來源（有情境、根因、理想做法），skill 是它的操作化。兩者的責任不同：卡歸納缺陷與解法，skill 給處理方式與判斷方法。只改 skill、不涉及新原則時，從「修改 skill」那一步開始，commit message 寫出 `AGENTS.md`〈改動的級別〉的判定。
 
 1. **建 report 卡**：在 `content/report/` 建卡。取號、查核與目錄頁的登記位置照 `content-folders.md`〈寫之前要做的查核〉；關係段與反向指標照 `writing-process.md`〈寫完之後的檢討〉的連結既有原則那一步。
 2. **評估要不要進 skill、進多少**：先問這一條進了 skill 之後 agent 的動作會不會不同，不會就留在卡裡，commit message 寫出這個判定。會的話，skill 寫出執行時要用的判斷標準、觸發條件與處置；推導、實例與「為什麼既有審查抓不到」留在 report 卡上，skill 用相對連結指向這張卡的 principle 副本（`references/principles/<slug>.md`，在「修改 skill」那一步建立），不連 `/report/`。驗收：一個沒讀過那張卡的 agent，照 skill 這一段做得出動作嗎。進 skill 的內容越多，skill 越長、agent 越讀不完，而每一段單獨看都有道理，所以決定要進的時候，同時寫出它取代或縮短 skill 裡的哪一段，寫進 commit message。
@@ -128,7 +129,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 - **用兩段式**：`echo n | skill-sync push <name> -m "…"` 取預覽，讀完再 `echo y | …`。agent 的 shell 沒有互動輸入，直接跑會被當成 N 而中止。
 - **預覽裡出現任何一行 `[WARNING]` 就不跑 `echo y`**：每一種警告的意思與處置照 skill-sync SKILL.md〈Report categories and non-interactive use〉的警告表，處理完重跑預覽。宣告 portable 的 skill 印出 `[Portability]` 清單並中止時，照〈Skill 的撰寫規則〉的可攜性掃描修掉再推。
-- **不帶 `--force`**：`--force` 拿掉警告之後的停點，並放行 portable skill 的可攜性閘門。只有使用者在這次的指示裡明說要用 `--force` 時才帶（`AGENTS.md`〈要先問使用者的情形〉），被放行的那幾條寫進這次 `skill-sync push -m` 的訊息。
+- **不帶 `--force`**：`--force` 拿掉警告之後的停點，並放行 portable skill 的可攜性閘門。沒有使用者在這次的指示裡明說就不帶（`AGENTS.md`〈要先問使用者的情形〉），被放行的那幾條寫進這次 `skill-sync push -m` 的訊息。
 
 `[Version] local X vs remote Y` 是給人對照 changelog 用的顯示行，不是判定依據：skill-sync 用內容雜湊判斷兩邊相不相同，X 高於 Y 不代表可以推送。要確定一支 skill 的版本，讀它 SKILL.md frontmatter 的 `metadata.version`。
 
@@ -139,7 +140,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 `skill-sync pull`（不帶參數）的分類與預設處置以 skill-sync SKILL.md〈Report categories and non-interactive use〉為準。本 repo 加的規則：
 
 - **`[SKIP]` 遠端沒有這個條目**：在〈只留在本 repo 的 skill〉清單裡的不推；不在清單裡的照 `AGENTS.md`〈推送〉推上去。
-- **`[DIVERGED]` 與 `[CONFLICT]`**：比對兩邊的歷史（共用庫 clone 裡那個 skill 路徑的 `git log`，對本 repo 的 `git log -- .claude/skills/<name>`），把兩邊各自改了什麼寫進 commit message，合併之後推。判斷不出哪一邊較新時，照 `AGENTS.md`〈要先問使用者的情形〉把兩邊的 log 給使用者。
+- **`[DIVERGED]` 與 `[CONFLICT]`**：比對兩邊的歷史（共用庫 clone 裡那個 skill 路徑的 `git log`，對本 repo 的 `git log -- .claude/skills/<name>`），把兩邊各自改了什麼寫進 commit message，合併之後推。兩邊在共同基底之後改到同一段文字（合併時有衝突）時，照 `AGENTS.md`〈要先問使用者的情形〉把兩邊的 log 與衝突的段落給使用者。
 - **`[SUSPECT REVERT]`**：不拉。查是誰把舊版推上共用庫，把較新的那一份推回去。
 - 遠端有新增的檔案（原則卡、hooks）時，用 `skill-sync pull <name>` 取到本地，再推合併版回遠端。
 - 遠端的版本加了 emoji 或把相對連結改成絕對路徑時，修正後推回：本專案禁止 emoji，skill 內的連結要是相對路徑。
@@ -153,7 +154,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 - `blogsearch-lifecycle`
 - `vendor-deep-article`
 
-新增一支只給本 repo 用的 skill 時，加進這份清單；要把清單裡的 skill 推上共用庫時，照 `AGENTS.md`〈要先問使用者的情形〉先問。
+新增一支只給本 repo 用的 skill 時，加進這份清單；清單裡的 skill 沒有使用者在這次的指示裡明說就不推上共用庫（`AGENTS.md`〈要先問使用者的情形〉）。
 
 ### Claude Code 與 Codex 共用的 skill 目錄
 

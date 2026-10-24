@@ -3,20 +3,21 @@
 
 用途：AGENTS.md〈推送〉的 blog repo 那一項。
 
-用法：bin/push-main --mine <這次 session 提交的 commit...>
-  --mine 列出這次 session 自己提交的每一個 commit（hash 前綴即可）。
+用法：
+  bin/push-main --mine <這次 session 提交的 commit...>   併進 main 並推送
+  bin/push-main --list-unpushed                          列出還沒推到任何遠端的 commit（含 detached HEAD 上的），不推送
+  --mine 列出這次 session 自己提交的每一個 commit（hash 前綴即可；bin/commit-files 每次都印出來）。
 
 行為：
 1. `git fetch -q origin`；失敗就 exit 2（沒有新的 origin/main，推送範圍判不準）。
-2. 目前不在 main 時，把目前的分支 fast-forward 進 main：main 已經 checkout 在某個 worktree
-   時，在那個 worktree 裡跑 `git merge --ff-only <分支>`（在別的 worktree 裡不能 checkout
-   main，`git checkout main` 會回 `already used by worktree`）；main 沒有被 checkout 時用
-   `git fetch . <分支>:main`。不能 fast-forward 就 exit 1。
-3. 列出 `origin/main..main` 的 commit；有不在 --mine 裡的，印出來、不推送、exit 3。
-   那些是別的 session 還沒推送的 commit，要先問使用者。
-4. `git push origin main`。
-
-分支與 worktree 用完的清理不在這支工具裡：`git worktree remove <路徑>` 之後才刪得掉分支。
+2. 推送範圍是 `origin/main..<目前的 commit>`（在 main 上時是 main）；有不在 --mine 裡的 commit，
+   印出來、不推送、exit 3，本地 main 不動。那些是別的 session 還沒推送的 commit，要先問使用者。
+3. 目前不在 main 時（分支、worktree 或 detached HEAD），把目前的 commit fast-forward 進 main：
+   main 已經 checkout 在某個 worktree 時，在那個 worktree 裡跑 `git merge --ff-only <sha>`（在別的
+   worktree 裡不能 checkout main）；沒有被 checkout 時用 `git update-ref`。不能 fast-forward 就 exit 1。
+4. `git push origin main`；成功後，不在 main 上時印 `[CLEANUP]` 與移除 worktree、刪分支的指令
+   （worktree 還在時刪不掉它的分支，所以先移除 worktree）。工具不自己執行它們：執行的目錄可能就是
+   要移除的那個 worktree。
 
 exit：0 推送完成或沒有要推的；1 fast-forward 或 push 失敗；2 fetch 失敗或用法錯誤；
 3 推送範圍裡有 --mine 以外的 commit，沒有推送。
@@ -25,6 +26,8 @@ exit：0 推送完成或沒有要推的；1 fast-forward 或 push 失敗；2 fet
 """
 
 import argparse
+import os
+import shlex
 import subprocess
 import sys
 
@@ -49,10 +52,26 @@ def main_worktree():
     return None
 
 
+def list_unpushed():
+    out = git("log", "--branches", "--not", "--remotes", "--oneline").stdout
+    head = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
+    if head == "HEAD":  # detached HEAD 上的 commit 不在任何分支上，--branches 列不到
+        out += git("log", "HEAD", "--not", "--remotes", "--branches", "--oneline").stdout
+    print(out, end="")
+    n = len([l for l in out.split("\n") if l])
+    sys.stderr.write(f"push-main: {n} unpushed commit(s)\n")
+
+
 def main():
     ap = argparse.ArgumentParser(description="併進 main 並推送；範圍裡有別人的 commit 時停下")
-    ap.add_argument("--mine", nargs="+", required=True)
+    ap.add_argument("--mine", nargs="+")
+    ap.add_argument("--list-unpushed", action="store_true", help="只列出還沒推到任何遠端的 commit，不推送")
     args = ap.parse_args()
+    if args.list_unpushed:
+        list_unpushed()
+        return
+    if not args.mine:
+        die("要給 --mine <這次 session 提交的 commit...>，或用 --list-unpushed", 2)
 
     mine = set()
     for c in args.mine:
@@ -66,30 +85,48 @@ def main():
         die("git fetch 失敗：" + r.stderr.strip(), 2)
 
     branch = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
-    if branch != "main":
-        wt = main_worktree()
-        if wt:
-            r = git("merge", "--ff-only", "-q", branch, cwd=wt)
-        else:
-            r = git("fetch", "-q", ".", f"{branch}:main")
-        if r.returncode != 0:
-            die(f"{branch} 不能 fast-forward 進 main：" + r.stderr.strip(), 1)
-        print(f"push-main: fast-forwarded main to {branch}")
+    target = git("rev-parse", "HEAD").stdout.strip()  # 一律用 sha，detached HEAD 也適用
+    if branch == "main":
+        target = git("rev-parse", "main").stdout.strip()
 
-    pending = git("rev-list", "--reverse", "origin/main..main").stdout.split()
+    # 先判斷推送範圍，再動本地的 main：exit 3 時 main 保持原狀。
+    pending = git("rev-list", "--reverse", f"origin/main..{target}").stdout.split()
     if not pending:
         print("push-main: nothing to push")
         return
     foreign = [c for c in pending if c not in mine]
     if foreign:
-        print("push-main: 推送範圍裡有 --mine 以外的 commit，沒有推送（先問使用者）：")
+        print("push-main: 推送範圍裡有 --mine 以外的 commit，沒有推送，本地 main 沒有移動（先問使用者）：")
         for c in foreign:
             print("  " + git("log", "-1", "--format=%h %s", c).stdout.strip())
         sys.exit(3)
+
+    if branch != "main":
+        if git("merge-base", "--is-ancestor", "main", target).returncode != 0:
+            die(f"{branch} 不能 fast-forward 進 main（main 有這個分支沒有的 commit）", 1)
+        wt = main_worktree()
+        if wt:
+            r = git("merge", "--ff-only", "-q", target, cwd=wt)
+        else:
+            old = git("rev-parse", "main").stdout.strip()
+            r = git("update-ref", "refs/heads/main", target, old)
+        if r.returncode != 0:
+            die("fast-forward main 失敗：" + r.stderr.strip(), 1)
+        print(f"push-main: fast-forwarded main to {target[:8]}")
+
     r = git("push", "-q", "origin", "main")
     if r.returncode != 0:
         die("git push 失敗：" + r.stderr.strip(), 1)
     print(f"push-main: pushed {len(pending)} commit(s)")
+
+    if branch != "main":
+        here = git("rev-parse", "--show-toplevel").stdout.strip()
+        wt = main_worktree()
+        print("[CLEANUP] 這個分支或 worktree 用完時，在 main 所在的目錄跑：")
+        if wt and os.path.realpath(wt) != os.path.realpath(here):
+            print(f"  git -C {shlex.quote(wt)} worktree remove {shlex.quote(here)}")
+        if branch != "HEAD":
+            print(f"  git -C {shlex.quote(wt or here)} branch -d {shlex.quote(branch)}")
 
 
 if __name__ == "__main__":

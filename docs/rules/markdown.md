@@ -31,7 +31,7 @@ rg "✅|❌|⚠️|🚨|🟡|🟢|⭐|📌|✓|✗" content/
 
 ### 路徑大小寫
 
-`content/` 的資料夾、檔名與站內連結 route 一律小寫（`content/ci` 對應 `/ci/`）。macOS 預設檔案系統不區分大小寫而 Linux CI 區分：目錄是 `content/CI`、連結寫 `/ci/` 時，`mdtools cards` 在 CI 判成 broken link。懷疑大小寫漂移時跑 `git ls-tree -r --name-only HEAD | rg '^content/[A-Z]'`。
+`content/` 的資料夾、檔名與站內連結 route 一律小寫（`content/ci` 對應 `/ci/`）。macOS 預設檔案系統不區分大小寫而 Linux CI 區分：目錄是 `content/CI`、連結寫 `/ci/` 時，`mdtools cards` 在 CI 判成 broken link。新增或改名 `content/` 底下的資料夾或檔案之後，跑 `git ls-tree -r --name-only HEAD | rg '^content/[A-Z]'`，有輸出就是大寫的路徑。
 
 ### 列表排序與 weight
 

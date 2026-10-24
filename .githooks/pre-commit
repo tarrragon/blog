@@ -4,8 +4,10 @@
 #
 # Pipeline:
 #   0. Test-First reminder if .spec.ts is staged (#69 / #72 L3 trigger).
-#   1. fmt --fix on each staged .md; re-stage if changed.
-#   2. lint on all staged .md; abort commit on error.
+#   1. fmt --fix on each staged .md (root files and docs/rules/ included: it re-aligns their
+#      tables too); re-stage if changed.
+#   2. lint on staged content/**/*.md only; abort commit on error. Root AGENTS.md, CLAUDE.md,
+#      README.md and docs/rules/ have no Hugo front matter and would fail front-matter-missing.
 #   3. cards on content/ globally; abort on error.
 #
 # Errors are fixed, not bypassed: AGENTS.md〈提交〉forbids `--no-verify`.

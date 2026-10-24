@@ -6,17 +6,21 @@
 `git add` 會因為 index.lock 而失敗。
 
 用法：bin/commit-files -F <訊息檔> <檔案...>
-  檔案寫從 repo 根目錄起算的路徑，列檔案不列目錄；刪除的檔案與改名的新舊兩個路徑都列。
+  路徑以執行時的目錄起算，列檔案不列目錄；刪除的檔案與改名的新舊兩個路徑都列。
 
 行為：
+0. repo 有 .githooks/ 而 `core.hooksPath` 不是 `.githooks` 時 exit 2：hook 沒有生效，fmt、lint、
+   cards 都不會跑，提交照樣成功而什麼檢查都沒做（新 clone 的 repo 要先跑 `make install-hooks`）。
 1. 用一份私有 index（暫存目錄裡）提交：`git read-tree HEAD` 初始化，`git add -A -- <檔案>`，
    pre-commit hook 照常執行（hook 裡的 `git add` 也落在這份私有 index）。
 2. 提交前比對 staged 清單（`--no-renames`，改名列出新舊兩個路徑）與給的清單，不一致就
    不提交、exit 1，並印出是哪一種：清單裡有目錄、檔案內容跟 HEAD 相同、或多出清單以外的檔案。
 3. 提交後讓共用 index 對齊 HEAD：已經跟 HEAD 相同就不動；這幾個檔案只剩提交前的版本時
    （`git diff --cached --name-only <commit>~1 -- <檔案>` 是空的），跑 `git reset -q -- <檔案>`。
-   共用 index 被鎖住、或別人也 staged 了同一個檔案（那條 diff 有輸出）時不 reset，
-   印出 `[FOLLOW-UP]` 與之後要跑的指令，exit 3；reset 會清掉別人的 staging。
+   共用 index 被鎖住、或共用 index 裡有這幾個檔案的其他版本（那條 diff 有輸出）時不 reset，
+   印出 `[FOLLOW-UP]`、要看的 diff 與判斷之後要跑的指令，exit 3：那個版本可能是另一個 session
+   staged 的，reset 會清掉它；也可能是這次 session 自己先前 `git add` 的舊版本。
+   路徑清單一律用 `-z` 取，非 ASCII 與含空白的路徑原樣比對；印出的指令替路徑加了引號。
 
 私有 index 隔離的是 staging，不隔離工作樹：兩個 session 改了同一個檔案時，對方在工作樹裡
 的修改會一起提交。這支工具看不到誰改了哪一段，所以執行前的 diff 對照留在規則裡。
@@ -25,22 +29,29 @@
 私有 index，兩條路徑各有自己的漏洞（`export GIT_INDEX_FILE` 在 agent 的 Bash 工具裡不會帶到
 下一次呼叫、改名讓 staged 清單比對失敗）。只留一條路徑，測試涵蓋得到全部情形。
 
-exit：0 提交完成且共用 index 已對齊；1 沒有提交（清單不一致或 commit 失敗）；
-2 用法錯誤；3 已經提交，但共用 index 要之後處理（照 `[FOLLOW-UP]` 那幾行做）。
+exit：0 提交完成且共用 index 已對齊；1 沒有提交（原因印在 stderr）；
+2 用法錯誤或 hook 沒有生效；3 已經提交，但共用 index 要之後處理（照 `[FOLLOW-UP]` 那幾行做）。
 
 測試：python3 -m unittest discover -s bin/tests
 """
 
 import argparse
 import os
+import shlex
 import shutil
 import subprocess
 import sys
 import tempfile
 
 
-def run(args, env=None, check=False):
+def run(args, env=None):
     return subprocess.run(args, capture_output=True, text=True, env=env)
+
+
+def names(args, env=None):
+    """`git diff --name-only -z` 的輸出切成路徑清單；-z 讓非 ASCII 與含空白的路徑原樣輸出。"""
+    out = run(["git", "diff", "--name-only", "-z", *args], env).stdout
+    return [p for p in out.split("\0") if p]
 
 
 def die(msg, code):
@@ -61,9 +72,15 @@ def main():
     msgfile = os.path.abspath(args.msgfile)
     if not os.path.isfile(msgfile):
         die(f"訊息檔不存在：{args.msgfile}", 2)
+    # 路徑以執行時的目錄起算，轉成以 repo 根目錄起算。
+    paths = [os.path.relpath(os.path.abspath(p), root) for p in args.paths]
     os.chdir(root)
 
-    dirs = [p for p in args.paths if os.path.isdir(p)]
+    hooks = run(["git", "config", "core.hooksPath"]).stdout.strip()
+    if hooks != ".githooks" and os.path.isdir(".githooks"):
+        die("core.hooksPath 不是 .githooks，pre-commit 的 fmt、lint、cards 不會跑（先跑 make install-hooks）", 2)
+
+    dirs = [p for p in paths if os.path.isdir(p)]
     if dirs:
         die("清單裡有目錄（列檔案，不列目錄）：" + " ".join(dirs), 1)
 
@@ -73,17 +90,17 @@ def main():
         r = run(["git", "read-tree", "HEAD"], env)
         if r.returncode != 0:
             die("git read-tree HEAD 失敗：" + r.stderr.strip(), 1)
-        r = run(["git", "add", "-A", "--", *args.paths], env)
+        r = run(["git", "add", "-A", "--", *paths], env)
         if r.returncode != 0:
             die("git add 失敗：" + r.stderr.strip(), 1)
-        staged = set(run(["git", "diff", "--cached", "--name-only", "--no-renames"], env).stdout.split("\n")) - {""}
-        expected = set(args.paths)
+        staged = set(names(["--cached", "--no-renames"], env))
+        expected = set(paths)
         missing = sorted(expected - staged)
         extra = sorted(staged - expected)
         if missing or extra:
             if missing:
                 sys.stderr.write(
-                    "commit-files: 這些檔案沒有出現在 staged 清單（內容跟 HEAD 相同，或路徑不是從 repo 根目錄起算）：\n"
+                    "commit-files: 這些檔案沒有出現在 staged 清單（內容跟 HEAD 相同，或路徑寫錯）：\n"
                     + "".join(f"  {p}\n" for p in missing)
                 )
             if extra:
@@ -99,23 +116,26 @@ def main():
     print(f"commit-files: committed {sha[:8]}")
 
     lock = run(["git", "rev-parse", "--git-path", "index.lock"]).stdout.strip()
-    paths = " ".join(args.paths)
-    check_cmd = f"git diff --cached --name-only {sha[:8]}~1 -- {paths}"
-    reset_cmd = f"git reset -q -- {paths}"
+    quoted = " ".join(shlex.quote(p) for p in paths)
+    check_cmd = f"git diff --cached --name-only {sha[:8]}~1 -- {quoted}"
+    reset_cmd = f"git reset -q -- {quoted}"
     if os.path.exists(lock):
         print("[FOLLOW-UP] 共用 index 被鎖住，還沒對齊 HEAD。lock 釋放之後跑：")
         print(f"  {check_cmd}")
-        print(f"  輸出是空的就跑：{reset_cmd}；有輸出就不 reset（別人也 staged 了那幾個檔案）")
+        print(f"  輸出是空的就跑：{reset_cmd}；有輸出就照下一次跑本工具時印的指示判斷")
         sys.exit(3)
-    if not run(["git", "diff", "--cached", "--name-only", "HEAD", "--", *args.paths]).stdout.strip():
+    if not names(["--cached", "HEAD", "--", *paths]):
         print("commit-files: shared index already matches HEAD")  # 例如這幾個檔案是用 git mv 或 git add 先 staged 的
         return
-    others = run(["git", "diff", "--cached", "--name-only", f"{sha}~1", "--", *args.paths]).stdout.split()
+    others = names(["--cached", f"{sha}~1", "--", *paths])
     if others:
-        print("[FOLLOW-UP] 共用 index 裡別人也 staged 了這些檔案，沒有 reset（reset 會清掉對方的 staging）：")
+        print("[FOLLOW-UP] 共用 index 裡有這幾個檔案的其他版本（不是提交前的版本，也不是這次提交的版本），沒有 reset：")
         print("".join(f"  {p}\n" for p in others), end="")
+        print(f"  看那個版本：git diff --cached HEAD -- {' '.join(shlex.quote(p) for p in others)}")
+        print("  那是這次 session 自己先前 git add 的舊版本時，跑：" + f"git reset -q -- {' '.join(shlex.quote(p) for p in others)}")
+        print("  不是（另一個 session staged 的）時不 reset，照 AGENTS.md〈要先問使用者的情形〉處理")
         sys.exit(3)
-    r = run(["git", "reset", "-q", "--", *args.paths])
+    r = run(["git", "reset", "-q", "--", *paths])
     if r.returncode != 0:
         print("[FOLLOW-UP] git reset 失敗：" + r.stderr.strip())
         print(f"  之後跑：{check_cmd}，空的就跑 {reset_cmd}")
