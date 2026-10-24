@@ -47,7 +47,7 @@ slug: "compound-problem-decompose-then-interact"
 - [#209 知識目標決定文章結構](../teach-judgment-not-procedure/)：判斷力導向的文章在面對多概念時自然走拆分結構——每個機制獨立教，讀者各自建立判斷力。
 - [#44 Single Source of Truth](../single-source-of-truth/)：拆分後各概念只在一個地方深度解釋，其他地方引用。
 - [#132 貫穿式案例是服務教材的教學骨架](../throughline-case-as-teaching-spine/)：複合問題的各概念用同一個案例串接時，案例本身就是貫穿線。磁碟空間系列裡「這台機器只剩 2G」是貫穿案例，四篇文章從不同角度解釋同一台機器的狀況。
-- AGENTS.md 原則三「商業邏輯先於 CASE」：先教各概念的系統層機制，再用複合問題當案例展示交互。
+- AGENTS.md〈系統層的概念寫在案例之前〉（舊版的原則三）「商業邏輯先於 CASE」：先教各概念的系統層機制，再用複合問題當案例展示交互。
 
 ## 判讀徵兆
 

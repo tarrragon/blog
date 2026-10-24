@@ -120,16 +120,16 @@ GitHub Actions 在 push 到 `main` 時：
 
 `.claude/skills/` 跟 `content/` 是兩個不同產出、規則互斥。同一份知識可以同時存在於兩處（如 `compositional-writing`）、但寫法不同。
 
-|                     | `.claude/skills/`（skill）                  | `content/`（文章）                           |
-| ------------------- | ------------------------------------------- | -------------------------------------------- |
-| **讀者**            | Claude runtime 呼叫                         | 人類讀者瀏覽                                 |
-| **目標**            | 跨專案 portable（複製整個目錄能移到別專案） | 服務本 blog 的脈絡與累積                     |
-| **格式**            | H1 + body、**無 Hugo frontmatter**          | 有 Hugo frontmatter（`title` / `date` 必填） |
-| **連結**            | 只能用 skill 內相對路徑                     | 可引用 report / posts / 其他 section         |
-| **抽象原則**        | 複製進 `references/principles/`、自包含     | 直接寫在 `content/report/`                   |
-| **Pre-commit lint** | 豁免 mdtools lint（fmt 仍跑）               | 跑全套 lint + cards                          |
+|                     | `.claude/skills/`（skill）                     | `content/`（文章）                           |
+| ------------------- | ---------------------------------------------- | -------------------------------------------- |
+| **讀者**            | agent runtime（Claude Code、Codex）載入        | 人類讀者瀏覽                                 |
+| **目標**            | 跨專案 portable（複製整個目錄能移到別專案）    | 服務本 blog 的脈絡與累積                     |
+| **格式**            | YAML frontmatter + H1 + body、**無 Hugo 欄位** | 有 Hugo frontmatter（`title` / `date` 必填） |
+| **連結**            | 只能用 skill 內相對路徑                        | 可引用 report / posts / 其他 section         |
+| **抽象原則**        | 複製進 `references/principles/`、自包含        | 直接寫在 `content/report/`                   |
+| **Pre-commit lint** | 豁免 mdtools lint 與 fmt                       | 跑全套 fmt + lint + cards                    |
 
-完整撰寫規範見 [AGENTS.md §9 Skill 撰寫規範](./AGENTS.md#9-skill-撰寫規範區別於文章)。
+完整撰寫規範見 [AGENTS.md〈Skill 的撰寫與同步〉](./AGENTS.md#skill-的撰寫與同步)。
 
 當前 skill（`.claude/skills/`）：
 

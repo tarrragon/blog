@@ -49,7 +49,7 @@ tags: ["report", "事後檢討", "工程方法論", "寫作", "原則"]
 
 - `.claude/skills/compositional-writing/SKILL.md`
 - `.claude/skills/compositional-writing/references/*.md`
-- `content/skills/compositional-writing/*.md`（mirror、AGENTS.md §9 規範同步）
+- `content/skills/compositional-writing/*.md`（mirror、AGENTS.md〈Skill 的撰寫與同步〉（舊版的 §9） 規範同步）
 - `content/report/*.md`（教學卡）
 ```
 

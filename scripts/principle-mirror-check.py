@@ -9,6 +9,16 @@
 用法：
     scripts/principle-mirror-check.py <slug>     # 查一張
     scripts/principle-mirror-check.py --all      # 全庫掃，列出 report 側較新的
+
+修改本腳本或 bin/skill-mirror 之後（新增 principle 卡會編輯 bin/skill-mirror 的
+find_report_slug()，它是本腳本的 mapping 來源），逐個跑過這四個驗收案例再提交：
+
+    multi-round-review-minimum-three-rounds  靠 H1 找到 minimum-three-rounds.md，並標為落後
+    teaching-article-context-method          靠 mapping table 找到 teaching-article-context.md
+    basics-anchor-the-advanced               靠同名找到
+    description-frames-the-article           副本 0 份
+
+前三個案例的正確輸出都至少有一行，所以「跑起來沒報錯」不算通過。
 """
 import sys, os, re, glob, subprocess
 
