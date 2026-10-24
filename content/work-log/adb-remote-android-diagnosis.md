@@ -2,11 +2,11 @@
 title: "用 adb 遠端診斷 Android 實機"
 slug: "adb-remote-android-diagnosis"
 date: 2026-09-21
-description: "機器不在手邊而要判斷畫面上是誰在擋、擷圖抓回來打不開、或 logcat 撈不到按下去那一刻時回來讀"
+description: "機器不在手邊，而要判斷畫面上是哪個 App 的視窗蓋住了操作、擷圖傳回電腦後無法開啟、或 logcat 的輸出裡找不到按下按鈕那一刻的紀錄時回來讀"
 tags: ["adb", "android", "debugging", "logcat", "pos"]
 ---
 
-這篇整理透過 Wi-Fi 連上 adb 之後，用來做遠端排查的指令與注意事項。範圍從 adb 已經接上那一刻開始——無線連線本身的配對與連接流程在[Android 無線調試連接指南](/other/android_wireless_debug/)。
+這篇整理電腦經由 Wi-Fi 用 adb 連線到 Android 手機之後，遠端排查用到的指令與注意事項。範圍從 `adb devices` 列出那台手機開始；無線連線本身的配對與連線流程在[Android 無線調試連接指南](/other/android_wireless_debug/)。
 
 ## 指定裝置
 
@@ -136,7 +136,7 @@ adb -s <serial> exec-out screencap -p -d <SurfaceFlinger 的編號> > screen.png
 adb -s <serial> shell dumpsys window | grep -iE "mCurrentFocus|mFocusedApp"
 ```
 
-輸出帶套件名與 Activity 名。多螢幕機器每個顯示器各印一組，沒有焦點的顯示器兩個欄位都是 `null`。讀輸出時跳過兩欄都是 `null` 的組，找到欄位有值的那一組——它對應的就是有焦點的顯示器。
+輸出帶套件名與 Activity 名。多螢幕的機器上，`dumpsys window` 替每個顯示器各印一組 `mCurrentFocus` 與 `mFocusedApp`，沒有焦點的顯示器這兩個欄位的值都是 `null`。讀輸出的人跳過值都是 `null` 的那幾組，值不是 `null` 的那一組就屬於有焦點的顯示器。
 
 一個視窗可以畫在有焦點的視窗之上而不取得焦點——`APPLICATION_OVERLAY` 且 `NOT_FOCUSABLE` 的視窗就是這樣，`mCurrentFocus` 的值不變。任何持有 `SYSTEM_ALERT_WINDOW` 的第三方套件都畫得出來。排除 overlay 的方法：
 
@@ -200,7 +200,7 @@ logcat 把 tag 欄補寬到八個字元。短於八個字元的 tag 後面補了
 grep -E 'ActivityTaskManager.*(START|Displayed)' install.log | grep -i <安裝器套件名>
 ```
 
-撈得到 `cmp=<套件>/.InstallStart`，代表安裝意圖已經送出去；撈不到，代表 App 沒有發出安裝意圖。
+這條 `grep` 的輸出裡有 `cmp=<套件>/.InstallStart` 這一行，代表 App 已經送出安裝意圖；輸出是空的，代表 App 沒有送出安裝意圖。
 
 ## 狀態查詢
 
@@ -229,7 +229,7 @@ Default mode: default
 
 ### dumpsys user
 
-要讀的是目標使用者底下的 `Effective restrictions`。`grep -i restriction` 還會撈到 `Guest restrictions`（guest 使用者型別的預設清單）、`mDefaultRestrictions`、`Device policy global restrictions`，它們都不是當前使用者的有效值。判別看它落在哪個標題底下：`UserInfo` 區塊裡的屬於那個使用者，`Device properties` 或使用者型別定義裡的是型別預設。`Guest restrictions` 裡面本來就列著 `no_install_unknown_sources`——乾淨機器上 grep 照樣撈到這一行，它與當前使用者的限制無關。
+要讀的是目標使用者底下的 `Effective restrictions`。`grep -i restriction` 的輸出還包括 `Guest restrictions`（guest 使用者型別的預設清單）、`mDefaultRestrictions`、`Device policy global restrictions`，它們都不是當前使用者的有效值。判別看它落在哪個標題底下：`UserInfo` 區塊裡的屬於那個使用者，`Device properties` 或使用者型別定義裡的是型別預設。`Guest restrictions` 裡面本來就列著 `no_install_unknown_sources`——在沒有設定任何使用者限制的機器上，`grep` 的輸出照樣包含這一行，它與當前使用者的限制無關。
 
 ### dumpsys device_policy
 

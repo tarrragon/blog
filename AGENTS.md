@@ -121,9 +121,9 @@
 
 範例（三條規則各一，取自實際改稿）：
 
-- 開場：「本篇的情境來自一次實際排查⋯⋯」→「這篇整理透過 Wi-Fi 連上 adb 之後，用來做遠端排查的指令與注意事項。」
-- 主詞完整：「回答的卻是沒問的那個問題」→「`dumpsys user` 的 `grep -i restriction` 會撈到 `Guest restrictions` 區塊裡的 `no_install_unknown_sources`，這是 guest 使用者型別的預設清單，與當前使用者的有效限制無關。」
-- 正確做法直接給：「不能預設第一行就是有焦點的那一組」→「讀輸出時跳過兩欄都是 `null` 的組，找到欄位有值的那一組。」
+- 開場：「本篇的情境來自一次實際排查⋯⋯」→「這篇整理電腦經由 Wi-Fi 用 adb 連線到 Android 手機之後，遠端排查用到的指令與注意事項。範圍從 `adb devices` 列出那台手機開始。」開場的句型依範圍取決於什麼而不同，其他寫法見 CLAUDE.md〈教學定位的產出形式〉。
+- 主詞完整：「回答的卻是沒問的那個問題」→「把 `dumpsys user` 的輸出交給 `grep -i restriction` 過濾時，比對到的行包括 `Guest restrictions` 區塊裡的 `no_install_unknown_sources`；這個區塊列的是 guest 使用者型別的預設限制，與目前使用者實際生效的限制無關。」結果寫成可以觀察到的狀態（安裝、執行、成功、失敗、沒有回應、回傳哪個錯誤碼），不寫「裝得起來」「被擋住」這類只有方向的說法。
+- 正確做法直接給：「不能預設第一行就是有焦點的那一組」→「`dumpsys window` 在多螢幕的機器上替每個顯示器各印一組 `mCurrentFocus` 與 `mFocusedApp`，沒有焦點的顯示器這兩個欄位的值都是 `null`。讀輸出的人跳過值都是 `null` 的那幾組，值不是 `null` 的那一組就屬於有焦點的顯示器。」
 
 判讀徵兆在 [#355](/report/teaching-is-not-lecturing/)。
 

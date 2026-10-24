@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.46.4 — 教室形式形態一到三的範例改寫：結果寫成可觀察的狀態（安裝、執行、成功、失敗、沒有回應、回傳錯誤碼）而不用「裝得起來」「被擋住」「撈到」；開場範例補上句型依範圍取決於什麼而不同；`dumpsys window` 範例寫出 `mCurrentFocus` 與 `mFocusedApp` 兩個欄位名與讀輸出的人
+
 **Version**: 1.46.3 — `judgment-content-needs-scenarios` 例三的正例引文把「系統憑證下放到客戶端」改成「系統存取憑證下放到客戶端」，對齊來源章節把 credential 義的「憑證」寫成存取憑證的用詞
 
 **Version**: 1.46.2 — 正文與 principle 卡的否定起手句（「不是 X、是 Y」）改成重點先行，核心概念移到句首、被否定的一半留作句尾對照；同步 blog 對應 report 卡的同一批改寫，語意不變
