@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+"""把這次 session 的 commit 併進 main 並推送；推送範圍裡有別人的 commit 時停下。
+
+用途：AGENTS.md〈推送〉的 blog repo 那一項。
+
+用法：bin/push-main --mine <這次 session 提交的 commit...>
+  --mine 列出這次 session 自己提交的每一個 commit（hash 前綴即可）。
+
+行為：
+1. `git fetch -q origin`；失敗就 exit 2（沒有新的 origin/main，推送範圍判不準）。
+2. 目前不在 main 時，把目前的分支 fast-forward 進 main：main 已經 checkout 在某個 worktree
+   時，在那個 worktree 裡跑 `git merge --ff-only <分支>`（在別的 worktree 裡不能 checkout
+   main，`git checkout main` 會回 `already used by worktree`）；main 沒有被 checkout 時用
+   `git fetch . <分支>:main`。不能 fast-forward 就 exit 1。
+3. 列出 `origin/main..main` 的 commit；有不在 --mine 裡的，印出來、不推送、exit 3。
+   那些是別的 session 還沒推送的 commit，要先問使用者。
+4. `git push origin main`。
+
+分支與 worktree 用完的清理不在這支工具裡：`git worktree remove <路徑>` 之後才刪得掉分支。
+
+exit：0 推送完成或沒有要推的；1 fast-forward 或 push 失敗；2 fetch 失敗或用法錯誤；
+3 推送範圍裡有 --mine 以外的 commit，沒有推送。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import argparse
+import subprocess
+import sys
+
+
+def git(*args, cwd=None):
+    return subprocess.run(["git", *args], capture_output=True, text=True, cwd=cwd)
+
+
+def die(msg, code):
+    sys.stderr.write(f"push-main: {msg}\n")
+    sys.exit(code)
+
+
+def main_worktree():
+    out = git("worktree", "list", "--porcelain").stdout
+    path = None
+    for line in out.split("\n"):
+        if line.startswith("worktree "):
+            path = line[len("worktree ") :]
+        elif line == "branch refs/heads/main":
+            return path
+    return None
+
+
+def main():
+    ap = argparse.ArgumentParser(description="併進 main 並推送；範圍裡有別人的 commit 時停下")
+    ap.add_argument("--mine", nargs="+", required=True)
+    args = ap.parse_args()
+
+    mine = set()
+    for c in args.mine:
+        r = git("rev-parse", "--verify", "--quiet", f"{c}^{{commit}}")
+        if r.returncode != 0:
+            die(f"--mine 的 {c} 不是 commit", 2)
+        mine.add(r.stdout.strip())
+
+    r = git("fetch", "-q", "origin")
+    if r.returncode != 0:
+        die("git fetch 失敗：" + r.stderr.strip(), 2)
+
+    branch = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
+    if branch != "main":
+        wt = main_worktree()
+        if wt:
+            r = git("merge", "--ff-only", "-q", branch, cwd=wt)
+        else:
+            r = git("fetch", "-q", ".", f"{branch}:main")
+        if r.returncode != 0:
+            die(f"{branch} 不能 fast-forward 進 main：" + r.stderr.strip(), 1)
+        print(f"push-main: fast-forwarded main to {branch}")
+
+    pending = git("rev-list", "--reverse", "origin/main..main").stdout.split()
+    if not pending:
+        print("push-main: nothing to push")
+        return
+    foreign = [c for c in pending if c not in mine]
+    if foreign:
+        print("push-main: 推送範圍裡有 --mine 以外的 commit，沒有推送（先問使用者）：")
+        for c in foreign:
+            print("  " + git("log", "-1", "--format=%h %s", c).stdout.strip())
+        sys.exit(3)
+    r = git("push", "-q", "origin", "main")
+    if r.returncode != 0:
+        die("git push 失敗：" + r.stderr.strip(), 1)
+    print(f"push-main: pushed {len(pending)} commit(s)")
+
+
+if __name__ == "__main__":
+    main()

@@ -8,8 +8,11 @@ hugotest/
 .hugo_build.lock
 resources/
 
-# mdtools build output (Go binary; see scripts/mdtools/README.md)
-bin/
+# Go build output in bin/ (mdtools: see scripts/mdtools/README.md; blogsearch: see scripts/blogsearch).
+# The rest of bin/ is tracked tooling (bin/tests/ holds its tests).
+bin/mdtools
+bin/blogsearch
+__pycache__/
 
 # OS files
 .DS_Store

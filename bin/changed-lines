@@ -1,0 +1,176 @@
+#!/usr/bin/env python3
+"""印出指定檔案相對於 HEAD 的新增行，或判定這次改動的級別。
+
+用途：字句層掃描的輸入（AGENTS.md〈寫作類 skill 的叫用〉）與改動級別的判定
+（AGENTS.md〈改動的級別〉）。
+
+用法：
+  bin/changed-lines <檔案...> > added.txt   新增行寫到 stdout，不帶 diff 的 `+` 前綴
+  bin/changed-lines --level <檔案...>       逐檔印級別，最後一行是 `level: 排版級` 或
+                                            `level: 措辭級以上`
+
+為什麼是一支工具而不是一條 shell 管線：管線版本在規則檔裡改過三次，每一次實跑都找出
+新的錯——`git diff -U0`（不帶 HEAD）漏掉已經 staged 的改動與還沒 add 的新檔；
+`grep '^+'` 把每一行的 `+` 留下來，讓 bank 裡以 `^` 錨定的 pattern 恆為零命中；
+`grep -v '^+++'` 丟掉內容本身以 `++` 開頭的行；補新檔用的 `git add -N` 寫的是共用
+index，別的 session 持有 index.lock 時失敗。這些情形都寫成 bin/tests/ 裡的測試。
+
+行為：
+- 檔案在 HEAD 裡：取 `git diff -U0 HEAD -- <檔案>`（涵蓋 staged 與還沒 staged 的改動），
+  只收 hunk 裡的新增行，diff 標頭不收。
+- 檔案不在 HEAD 裡（新檔，不論有沒有 add）：整份檔案都是新增行。不寫 index。
+- stderr 結尾一定印 `changed-lines: N added line(s) from M file(s)`；M 要等於給的檔案數。
+- 給的路徑在工作樹與 HEAD 都不存在時 exit 2。
+
+級別的判定（--level）：一處 hunk 是排版級，當它的刪除行與新增行數目相同且一一對應，
+每一對去掉空白、標點、表格符號與連結網址之後相同，或只有一個字元被替換成另一個字元
+（錯字；插入或刪掉一個字不算，中文裡那多半是換了詞），或兩行都是
+frontmatter 的 `weight:`／`date:`。任何一處 hunk 不是排版級、只有刪除或只有新增
+（刪掉一句也算改動）、或檔案是新檔，那個檔案就是措辭級以上。替換的字元逐處印成「錯字候選：舊→新」，
+讓 commit message 留得下判定的痕跡。措辭級與規則級的分界是語意判斷，這支工具不做。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import argparse
+import re
+import subprocess
+import sys
+import unicodedata
+
+
+def git(*args, check=True):
+    r = subprocess.run(["git", *args], capture_output=True, text=True)
+    if check and r.returncode != 0:
+        sys.stderr.write(r.stderr)
+        sys.exit(2)
+    return r
+
+
+def in_head(path):
+    return git("cat-file", "-e", f"HEAD:{path}", check=False).returncode == 0
+
+
+def parse_hunks(diff_text):
+    """回傳 [(removed_lines, added_lines), ...]，只收 hunk 內容，不收 diff 標頭。"""
+    hunks = []
+    cur = None
+    for line in diff_text.split("\n"):
+        if line.startswith("diff --git "):
+            cur = None
+            continue
+        if line.startswith("@@"):
+            cur = ([], [])
+            hunks.append(cur)
+            continue
+        if cur is None:
+            continue  # 標頭（index、---、+++、new file mode…）
+        if line.startswith("+"):
+            cur[1].append(line[1:])
+        elif line.startswith("-"):
+            cur[0].append(line[1:])
+    return hunks
+
+
+URL_IN_LINK = re.compile(r"\]\([^)]*\)")
+BARE_URL = re.compile(r"https?://\S+")
+FRONTMATTER_VALUE = re.compile(r"^(weight|date):")
+
+
+def normalize(s):
+    s = URL_IN_LINK.sub("]", s)
+    s = BARE_URL.sub("", s)
+    out = []
+    for ch in s:
+        cat = unicodedata.category(ch)
+        if cat[0] in ("P", "Z") or ch.isspace() or ch in "|-:`*_~":
+            continue
+        out.append(ch)
+    return "".join(out)
+
+
+def single_substitution(a, b):
+    """兩個字串長度相同、只有一個位置的字元不同時，回傳 (舊字元, 新字元)；否則回傳 None。"""
+    if len(a) != len(b):
+        return None
+    diffs = [(x, y) for x, y in zip(a, b) if x != y]
+    return diffs[0] if len(diffs) == 1 else None
+
+
+def hunk_layout_check(removed, added):
+    """回傳 (是否排版級, 錯字候選清單)。"""
+    if not removed or not added or len(removed) != len(added):
+        return False, []
+    typos = []
+    for r, a in zip(removed, added):
+        if FRONTMATTER_VALUE.match(r) and FRONTMATTER_VALUE.match(a) and r.split(":")[0] == a.split(":")[0]:
+            continue
+        nr, na = normalize(r), normalize(a)
+        if nr == na:
+            continue
+        sub = single_substitution(nr, na)
+        if sub is None:
+            return False, []
+        typos.append(sub)
+    return True, typos
+
+
+def main():
+    ap = argparse.ArgumentParser(description="印出相對於 HEAD 的新增行，或判定改動的級別")
+    ap.add_argument("--level", action="store_true", help="判定改動級別，不印新增行")
+    ap.add_argument("paths", nargs="+")
+    args = ap.parse_args()
+
+    total = 0
+    files = 0
+    overall_layout = True
+    for path in args.paths:
+        if in_head(path):
+            diff = git("diff", "-U0", "--no-color", "--no-ext-diff", "HEAD", "--", path).stdout
+            hunks = parse_hunks(diff)
+            new_file = False
+        else:
+            try:
+                with open(path, encoding="utf-8") as f:
+                    content = f.read()
+            except FileNotFoundError:
+                sys.stderr.write(f"changed-lines: {path} 不在工作樹也不在 HEAD\n")
+                sys.exit(2)
+            lines = content.split("\n")
+            if lines and lines[-1] == "":
+                lines.pop()
+            hunks = [([], lines)]
+            new_file = True
+        files += 1
+        added = [a for _, adds in hunks for a in adds]
+        total += len(added)
+        if args.level:
+            if new_file:
+                verdict, reason = False, "新檔"
+            elif not hunks:
+                verdict, reason = True, "沒有改動"
+            else:
+                checks = [hunk_layout_check(*h) for h in hunks]
+                bad = [c for c in checks if not c[0]]
+                verdict = not bad
+                typos = [t for ok, ts in checks if ok for t in ts]
+                if not verdict:
+                    reason = f"{len(bad)} 處改動不只排版"
+                elif typos:
+                    reason = "錯字候選：" + "、".join(f"{o}→{n}" for o, n in typos)
+                else:
+                    reason = ""
+            overall_layout = overall_layout and verdict
+            label = "排版級" if verdict else "措辭級以上"
+            print(f"{path}: {label}" + (f"（{reason}）" if reason else ""))
+        else:
+            for a in added:
+                print(a)
+
+    if args.level:
+        print("level: " + ("排版級" if overall_layout else "措辭級以上"))
+    sys.stderr.write(f"changed-lines: {total} added line(s) from {files} file(s)\n")
+
+
+if __name__ == "__main__":
+    main()

@@ -12,7 +12,7 @@
 
 # Claude Code 專屬的操作
 
-上方的 `@` 匯入由 Claude Code 自動內嵌：AGENTS.md 是規則的入口，`docs/rules/` 的分冊是各類工作的規則（分工見 AGENTS.md 開頭的路由表）。本檔只寫 Claude Code 才有的操作：回覆語言設定的注入、skill 的叫用機制、Agent tool 的派發（所有背景 agent 共用的送達規則、reviewer、理解探針、術語探針會讀到的系統提示）、Bash 工具跑私有 index 提交時的限制，以及 SSH 的權限與 hook。共用的規則不寫在這裡，要改就改 AGENTS.md 或對應的分冊。
+上方的 `@` 匯入由 Claude Code 自動內嵌：AGENTS.md 是規則的入口，`docs/rules/` 的分冊是各類工作的規則（分工見 AGENTS.md 開頭的路由表）。本檔只寫 Claude Code 才有的操作：回覆語言設定的注入、skill 的叫用機制、Agent tool 的派發（所有背景 agent 共用的送達規則、reviewer、理解探針、術語探針會讀到的系統提示），以及 SSH 的權限與 hook。共用的規則不寫在這裡，要改就改 AGENTS.md 或對應的分冊。
 
 ## 回覆語言的設定
 
@@ -60,17 +60,13 @@ Claude Code 依 `.claude/skills/<name>/SKILL.md` frontmatter 的 `description` �
 ```bash
 grep -c "<詞>" AGENTS.md docs/rules/*.md CLAUDE.md ~/.claude/CLAUDE.md \
   ~/.claude/projects/<換算後的專案目錄名>/memory/MEMORY.md
-grep -rc "<詞>" --include=SKILL.md .claude/skills ~/.claude/skills 2>/dev/null | grep -v ':0$'
+grep -rc "<詞>" --include=SKILL.md --exclude-dir=.trash .claude/skills ~/.claude/skills 2>/dev/null | grep -v ':0$'
 git log -20 --format=%s | grep -c "<詞>"
 ```
 
-skill 那一條數的是整份 SKILL.md，範圍比 description 寬；用 `grep -r --include` 而不用 `*/SKILL.md` 的 glob，因為 zsh 在 `~/.claude/skills/*` 沒有匹配時會讓整條指令不執行，專案自己的 skill 也一起被算成 0。plugin skill、agent 類型與 MCP 說明沒有固定的檔案位置，grep 數不到，要讀這一次系統提示裡的清單人工確認。`grep -c` 數的是含這個詞的行數，不是出現次數；判斷「是不是零」時兩者沒有差別。
+skill 那一條數的是整份 SKILL.md，範圍比 description 寬；`~/.claude/skills/.trash/` 底下是刪掉的 skill，不在系統提示裡，所以排除；用 `grep -r --include` 而不用 `*/SKILL.md` 的 glob，因為 zsh 在 `~/.claude/skills/*` 沒有匹配時會讓整條指令不執行，專案自己的 skill 也一起被算成 0。plugin skill、agent 類型與 MCP 說明沒有固定的檔案位置，grep 數不到，要讀這一次系統提示裡的清單人工確認。`grep -c` 數的是含這個詞的行數，不是出現次數；判斷「是不是零」時兩者沒有差別。
 
 讀回報時照 round-2-probes〈2-B⁶ 術語探針〉的詞頻判讀與四類讀法，判成「本批無結論」的詞，照 `docs/rules/review.md`〈理解探針〉末段登記「待驗」、寫進最後一則總結。`Agent` tool 沒有換工作目錄的參數，所以不嘗試「換到沒有規範檔的目錄」或「換一個乾淨的配置」重測。
-
-## 私有 index 提交在 Bash 工具裡的限制
-
-多個 session 共用 repo 時的提交程序在 `AGENTS.md`〈多個 session 共用 repo 時的提交〉。Bash 工具每次呼叫的 shell 狀態不保留，環境變數不會帶到下一次呼叫：`export GIT_INDEX_FILE=…` 與 `git add`、`git commit` 分在兩次呼叫時，`git add` 與 `git commit` 用的是共用的 index，而且不報錯。所以那段程序從 `export` 到 `unset` 在同一次 Bash 呼叫裡跑完；私有 index 的路徑寫 session scratchpad 的絕對路徑，因為每次呼叫的工作目錄可能不同。
 
 ## SSH 的權限與 ssh_guard hook
 

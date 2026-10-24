@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+"""只回報這次改動新增的 mdtools lint 問題，把既有的分開計數。
+
+用途：AGENTS.md〈提交〉的 lint 那一步。全量 lint（`bin/mdtools lint content/`）只用來看
+歷史基線；這次的品質看這支的輸出。
+
+用法：bin/lint-delta <content/ 底下的檔案...>
+
+行為：
+- 對每個檔案各 lint 兩次：工作樹的版本，以及 HEAD 的版本。HEAD 版放在暫存目錄裡的同一個
+  相對路徑再 lint，因為 mdtools 依路徑套用不同的規則（卡片目錄的 frontmatter 規則比一般
+  文章嚴，同一份內容放在 `content/report/` 是 error、放在別處是 warn）。
+- 比對鍵是「嚴重度、規則 ID、訊息、那一行的內容」，不含行號（前面插入一行，後面每一行的
+  行號都會變）。訊息要在鍵裡：frontmatter 類的問題一律報在第 1 行，那一行的內容都是
+  `---`，只用規則 ID 加行內容的話，「HEAD 缺 title、這次又缺 description」會被判成既有。
+- 新檔（不在 HEAD）的 lint 結果全部算新增。
+- 新增的問題照 mdtools 的格式印到 stdout；stderr 結尾一定印
+  `lint-delta: N new (E error), M existing, K file(s)`，K 要等於給的檔案數。
+
+exit：0 沒有新增的 error（可以有新增的 warn）；1 有新增的 error；2 用法錯誤或 mdtools 不存在。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import collections
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+
+LINE = re.compile(r"^(?P<path>[^:]+):(?P<line>\d+): \[(?P<sev>\w+)\] (?P<rule>\S+) (?P<msg>.*)$")
+
+
+def lint(mdtools, cwd, relpath):
+    r = subprocess.run([mdtools, "lint", relpath], capture_output=True, text=True, cwd=cwd)
+    with open(os.path.join(cwd, relpath), encoding="utf-8") as f:
+        lines = f.read().split("\n")
+    out = []
+    for raw in r.stdout.split("\n"):
+        m = LINE.match(raw)
+        if not m:
+            continue
+        n = int(m["line"])
+        content = lines[n - 1] if 0 < n <= len(lines) else ""
+        out.append(((m["sev"], m["rule"], m["msg"], content), raw))
+    return out
+
+
+def main():
+    if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
+        sys.stderr.write(__doc__)
+        sys.exit(2)
+    top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    if top.returncode != 0:
+        sys.stderr.write("lint-delta: 不在 git repo 裡\n")
+        sys.exit(2)
+    root = top.stdout.strip()
+    mdtools = os.path.join(root, "bin", "mdtools")
+    if not os.access(mdtools, os.X_OK):
+        sys.stderr.write("lint-delta: 找不到 bin/mdtools（在 scripts/mdtools 跑 go build -o ../../bin/mdtools .）\n")
+        sys.exit(2)
+
+    paths = [os.path.relpath(os.path.abspath(p), root) for p in sys.argv[1:]]
+    new_total = new_err = existing = 0
+    tmp = tempfile.mkdtemp(prefix="lint-delta-")
+    try:
+        for rel in paths:
+            if not os.path.isfile(os.path.join(root, rel)):
+                sys.stderr.write(f"lint-delta: {rel} 不在工作樹裡\n")
+                sys.exit(2)
+            now = lint(mdtools, root, rel)
+            head = subprocess.run(["git", "show", f"HEAD:{rel}"], capture_output=True, cwd=root)
+            before = collections.Counter()
+            if head.returncode == 0:
+                dest = os.path.join(tmp, rel)
+                os.makedirs(os.path.dirname(dest), exist_ok=True)
+                with open(dest, "wb") as f:
+                    f.write(head.stdout)
+                before = collections.Counter(k for k, _ in lint(mdtools, tmp, rel))
+            for key, raw in now:
+                if before[key] > 0:
+                    before[key] -= 1
+                    existing += 1
+                else:
+                    new_total += 1
+                    if key[0] == "error":
+                        new_err += 1
+                    print(raw)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    sys.stderr.write(f"lint-delta: {new_total} new ({new_err} error), {existing} existing, {len(paths)} file(s)\n")
+    sys.exit(1 if new_err else 0)
+
+
+if __name__ == "__main__":
+    main()

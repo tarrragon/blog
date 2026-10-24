@@ -51,7 +51,7 @@ macOS 文章在 `content/other/` 裡的演變過程：
 - [#212 不屬於這篇的內容要找出路](../misplaced-content-needs-route-not-deletion/)：找不到出路的內容可能指向一個不存在的分類。#212 是單篇層面的路由，#213 是多篇層面的組織。
 - [#211 複合問題先拆機制再談交互](../compound-problem-decompose-then-interact/)：拆分文章到獨立機制的深度是分類浮現的前置條件。沒拆分時所有概念塞在少數幾篇裡，看不出群聚。
 - [#139 新增頂層 content 資料夾要同步首頁入口](../top-level-content-folder-needs-homepage-entry/)：分類建立後的機械工序——首頁 `_index.md` 要同步加入口。#139 處理建完之後的同步，本卡處理何時該建。
-- `docs/rules/content-folders.md`〈文章放在哪一個資料夾〉：本卡補充「何時從 `other/` 畢業」的判斷標準，AGENTS.md 的判斷流程處理「新文章放哪」。
+- `docs/rules/content-folders.md`〈文章放在哪一個資料夾〉：本卡補充「何時從 `other/` 畢業」的判斷標準，那一節的判斷流程處理「新文章放哪」。
 
 ## 判讀徵兆
 

@@ -8,7 +8,7 @@
 #   2. lint on all staged .md; abort commit on error.
 #   3. cards on content/ globally; abort on error.
 #
-# Errors are fixed, not bypassed: AGENTS.md〈提交與驗證〉forbids `--no-verify`.
+# Errors are fixed, not bypassed: AGENTS.md〈提交〉forbids `--no-verify`.
 # See content/posts/markdown-writing-spec.md for the rule contract.
 
 set -euo pipefail

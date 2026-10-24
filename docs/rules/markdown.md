@@ -1,6 +1,6 @@
 # Markdown 排版與 mdtools
 
-這份分冊管 `content/` 的 Markdown 排版規範在哪裡、哪些類別由 mdtools 擋下、路徑大小寫、列表排序與 weight，以及修改 mdtools 時讀哪裡。提交前的 lint 與 cards 在 `AGENTS.md`〈提交與驗證〉。
+這份分冊管 `content/` 的 Markdown 排版規範在哪裡、哪些類別由 mdtools 擋下、路徑大小寫、列表排序與 weight，以及修改 mdtools 時讀哪裡。提交前的 lint 在 `AGENTS.md`〈提交〉。
 
 ## Markdown 與 mdtools
 

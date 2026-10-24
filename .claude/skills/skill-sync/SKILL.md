@@ -2,7 +2,7 @@
 name: skill-sync
 description: 'Sync Claude Code skills between local .claude/skills/ and a remote skills repository. Use for: pulling skills from remote, pushing local skills to remote, listing available remote skills.'
 metadata:
-  version: 1.25.2
+  version: 1.25.3
 ---
 
 # skill-sync
@@ -77,7 +77,7 @@ When a `push <name>` preview prints a `[WARNING]`, do not apply it. What each on
 | `Content changed since last sync … but version is still X` | content changed, version did not | bump the version, then push |
 | `Local content matches an older historical version` | the local copy equals an older commit of this skill in the publish repo; pushing would overwrite newer content with it | `pull <name>` first to see the current remote copy, then decide |
 | `--force ignored N direction warning(s)` | printed after a forced push succeeded; the warnings above it were not stopped on | read those warnings and confirm the push did not overwrite someone else's change |
-| `pruned N file(s) but preview promised M` | `--prune` deleted a different number of files than the preview listed | compare the remote clone against the preview before pushing again |
+| `pruned N file(s) but preview promised M` | `--prune` deleted a different number of files than the preview listed; printed after the prune is applied, so it never shows up in an `echo n` preview | compare the remote clone against the preview before pushing again |
 
 Despite reporting only, this path is not read-only: it re-records `.skill-sync-base` for up-to-date skills whose marker is missing or stale (see Notes).
 

@@ -2,6 +2,8 @@
 
 新到舊。版號有三個住址，bump 時必須一起動：本檔最上方的 `**Version**:` 條目、`SKILL.md` frontmatter 的 `metadata.version`、`pyproject.toml` 的 `project.version`。三者相等由 `tests/test_cli.py::test_three_version_addresses_agree` 斷言，漏動任何一處測試即紅並印出三個值。（`uv.lock` 也帶版號，但由 uv 依 `pyproject.toml` 自動重算，不是人工住址。）版號規則見專案的 skill 同步規範。
 
+**Version**: 1.25.3 — 警告處置表的 `pruned N file(s) but preview promised M` 一列註明它在 prune 套用之後才印，`echo n` 的預覽裡看不到。
+
 **Version**: 1.25.2 — SKILL.md 補 push 預覽的 `[WARNING]` 處置表（六種警告各自的意思與預設處置），以及兩種不會印出完整預覽的情形（portable 閘門中止、沒有變更）；行為不變
 
 **Version**: 1.25.1 — SKILL.md 補〈Report categories and non-interactive use〉：`pull`（不帶名字）的全部分類與預設處置（含 `[SKIP]` 兩種、`[OVERRIDE]`、`[SHOULD PUSH --PRUNE]`、`[SUSPECT REVERT]`），這條路徑會改寫 `.skill-sync-base`，以及非互動環境用 `echo n` 預覽、`echo y` 套用的兩段式；行為不變

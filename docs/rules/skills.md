@@ -1,6 +1,6 @@
 # Skill 的撰寫與同步
 
-這份分冊管 skill 與文章的分界、skill 的依賴邊界與撰寫規則、版號、skill-sync 在本 repo 加的規則、從 report 卡到 skill 的流程、推送前的檢查與同步時的判斷，以及改 report 卡時查 skill 裡的副本。skill-sync 工具本身的指令與分類以 `.claude/skills/skill-sync/SKILL.md` 為準。
+這份分冊管 skill 與文章的分界、skill 的依賴邊界與撰寫規則、版號、skill-sync 在本 repo 加的規則、從 report 卡到 skill 的流程、推送前的檢查與同步時的判斷、只留在本 repo 的 skill、Claude Code 與 Codex 共用的 skill 目錄，以及改 report 卡時查 skill 裡的副本。skill-sync 工具本身的指令與分類以 `.claude/skills/skill-sync/SKILL.md` 為準。
 
 ## Skill 的撰寫與同步
 
@@ -15,7 +15,7 @@
 | 可依賴 | 只依賴 skill 自身的內容與穩定的公開來源                                                             | 可引用 report、posts 與其他 section      |
 | 格式   | SKILL.md 以 YAML frontmatter（`name`、`description`、`metadata`）開頭，接 H1 與正文；不放 Hugo 欄位 | Hugo frontmatter（`title`、`date` 必填） |
 
-`content/skills/<name>/` 是 skill 的公開鏡像，給網站讀者讀，只有對外公開的方法論需要；內部協議型的 skill 只存在於 `.claude/skills/`。鏡像與源檔的正文相同，差在鏡像帶 Hugo frontmatter，由 `bin/skill-mirror` 產生（見〈從 report 卡到 skill 的標準流程〉）。要不要替一支 skill 建鏡像由使用者決定。
+`content/skills/<name>/` 是 skill 的公開鏡像，給網站讀者讀，只有對外公開的方法論需要；內部協議型的 skill 只存在於 `.claude/skills/`。鏡像與源檔的正文相同，差在鏡像帶 Hugo frontmatter，由 `bin/skill-mirror` 產生（見〈從 report 卡到 skill 的標準流程〉）。替一支 skill 建鏡像要使用者在這次的指示裡明說（`AGENTS.md`〈要先問使用者的情形〉）。
 
 ### Skill 的依賴邊界
 
@@ -67,10 +67,10 @@
 可攜性掃描：
 
 ```bash
-rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/report|content/posts|content/skills|_index\\.md)" .claude/skills/<name>
+rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/report|content/posts|content/skills|_index\\.md)" -g '*.md' .claude/skills/<name>
 ```
 
-這條 rg 掃的是本 blog 專屬的路徑。命中是候選：帶 `portability-allow` 標記的那一行是刻意保留的消費端（使用這支 skill 的專案）引用，豁免；其餘掃到的 blog route、`content/` 路徑、`/report/`、`/posts/`、`/skills/`、`_index.md`，改成 skill 內部的 principle、相對連結或中性名詞。
+這條 rg 掃的是 `.md` 檔裡本 blog 專屬的路徑；`-g '*.md'` 把腳本排除在外，因為腳本裡的 pattern 與註解本來就要寫出這些路徑（`compositional-writing` 的 `scripts/portability-check.sh` 就是），照下面的處置改會改壞腳本。命中是候選：帶 `portability-allow` 標記的那一行是刻意保留的消費端（使用這支 skill 的專案）引用，豁免；其餘掃到的 blog route、`content/` 路徑、`/report/`、`/posts/`、`/skills/`、`_index.md`，改成 skill 內部的 principle、相對連結或中性名詞。
 
 `skill-sync push` 另有一道可攜性閘門，範圍跟這條 rg 不同：它只掃 `.md` 全文與 `.py` 的 docstring 與 `#` 註解（不掃 `.sh` 這類其他檔案，也不掃 `references/project-integration/`），比對任何 `.claude/` 路徑（包括 skill 自己的 `.claude/skills/<自己的名字>/…`）與專案的 ticket ID，不比對 blog route。閘門只擋 SKILL.md frontmatter 宣告了 `metadata.portable: true` 的 skill，其餘只印一行計數。宣告 portable 的 skill，推送前直接跑閘門本身的檢查，不要自己拼 rg（自己拼的 pattern 會掃到腳本裡的 regex 程式碼，照著改會改壞腳本）：
 
@@ -78,7 +78,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 (cd .claude/skills/skill-sync && uv run -q python -I -c "import sys;sys.path.insert(0,'.');from pathlib import Path;from skill_sync.cli import check_portability as c;[print(v) for v in c(Path('../<name>'))]")
 ```
 
-或讀 `echo n | skill-sync push <name> -m x` 預覽裡的 `[Portability]` 清單。命中的路徑改成相對路徑或中性名詞；刻意保留的那一行，在行尾加 `<!-- portability-allow: <保留的理由> -->`（閘門比對的是那一行裡有沒有 `portability-allow` 這個字串，理由寫得讓後來的人判得出該不該信）。
+或讀 `echo n | skill-sync push <name> -m x` 預覽裡的 `[Portability]` 清單；預覽只列前 20 筆，其餘印成 `... and N more`，超過時用上面那行指令取完整清單。命中的路徑改成相對路徑或中性名詞；刻意保留的那一行，在行尾加 `<!-- portability-allow: <保留的理由> -->`（閘門比對的是那一行裡有沒有 `portability-allow` 這個字串，理由寫得讓後來的人判得出該不該信）。
 
 `.claude/skills/` 底下的 `.md` 在 pre-commit 同時跳過 mdtools 的 lint 與 fmt：重排會讓本地 skill 跟共用庫的版本分歧，而 fmt 會刪掉行內的 HTML 註解（理由寫在 `.githooks/pre-commit`）。
 
@@ -86,7 +86,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 修改 skill 內容後更新版號，版號遵循 semver：
 
-- **patch**（0.1.0 → 0.1.1）：修錯字、補連結、格式調整、改措辭而語意不變
+- **patch**（0.1.0 → 0.1.1）：排版級與措辭級的改動（級別的定義在 `AGENTS.md`〈改動的級別〉）
 - **minor**（0.1.0 → 0.2.0）：新增 reference 或 principle 卡、擴充段落、加觸發詞
 - **major**（0.X → 1.0.0）：結構重組、支柱變動、改變既有行為
 - 未標版號的 skill 首次補標用 `1.0.0`。
@@ -128,7 +128,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 - **用兩段式**：`echo n | skill-sync push <name> -m "…"` 取預覽，讀完再 `echo y | …`。agent 的 shell 沒有互動輸入，直接跑會被當成 N 而中止。
 - **預覽裡出現任何一行 `[WARNING]` 就不跑 `echo y`**：每一種警告的意思與處置照 skill-sync SKILL.md〈Report categories and non-interactive use〉的警告表，處理完重跑預覽。宣告 portable 的 skill 印出 `[Portability]` 清單並中止時，照〈Skill 的撰寫規則〉的可攜性掃描修掉再推。
-- **不帶 `--force`**：`--force` 拿掉警告之後的停點，並放行 portable skill 的可攜性閘門。只有使用者在這次的指示裡明說要用 `--force` 時才帶，被放行的那幾條寫進這次 `skill-sync push -m` 的訊息。
+- **不帶 `--force`**：`--force` 拿掉警告之後的停點，並放行 portable skill 的可攜性閘門。只有使用者在這次的指示裡明說要用 `--force` 時才帶（`AGENTS.md`〈要先問使用者的情形〉），被放行的那幾條寫進這次 `skill-sync push -m` 的訊息。
 
 `[Version] local X vs remote Y` 是給人對照 changelog 用的顯示行，不是判定依據：skill-sync 用內容雜湊判斷兩邊相不相同，X 高於 Y 不代表可以推送。要確定一支 skill 的版本，讀它 SKILL.md frontmatter 的 `metadata.version`。
 
@@ -139,7 +139,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 `skill-sync pull`（不帶參數）的分類與預設處置以 skill-sync SKILL.md〈Report categories and non-interactive use〉為準。本 repo 加的規則：
 
 - **`[SKIP]` 遠端沒有這個條目**：在〈只留在本 repo 的 skill〉清單裡的不推；不在清單裡的照 `AGENTS.md`〈推送〉推上去。
-- **`[DIVERGED]` 與 `[CONFLICT]`**：比對兩邊的歷史（共用庫 clone 裡那個 skill 路徑的 `git log`，對本 repo 的 `git log -- .claude/skills/<name>`），把兩邊各自改了什麼寫進 commit message，合併之後推。判斷不出哪一邊較新時，把兩邊的 log 貼給使用者，由使用者決定。
+- **`[DIVERGED]` 與 `[CONFLICT]`**：比對兩邊的歷史（共用庫 clone 裡那個 skill 路徑的 `git log`，對本 repo 的 `git log -- .claude/skills/<name>`），把兩邊各自改了什麼寫進 commit message，合併之後推。判斷不出哪一邊較新時，照 `AGENTS.md`〈要先問使用者的情形〉把兩邊的 log 給使用者。
 - **`[SUSPECT REVERT]`**：不拉。查是誰把舊版推上共用庫，把較新的那一份推回去。
 - 遠端有新增的檔案（原則卡、hooks）時，用 `skill-sync pull <name>` 取到本地，再推合併版回遠端。
 - 遠端的版本加了 emoji 或把相對連結改成絕對路徑時，修正後推回：本專案禁止 emoji，skill 內的連結要是相對路徑。
@@ -153,7 +153,22 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 - `blogsearch-lifecycle`
 - `vendor-deep-article`
 
-新增一支只給本 repo 用的 skill 時，加進這份清單；要把清單裡的 skill 推上共用庫之前，先問使用者，因為它們依賴本 blog 的結構，推上去之後別的專案用不了。
+新增一支只給本 repo 用的 skill 時，加進這份清單；要把清單裡的 skill 推上共用庫時，照 `AGENTS.md`〈要先問使用者的情形〉先問。
+
+### Claude Code 與 Codex 共用的 skill 目錄
+
+Claude Code 讀 `.claude/skills/`，Codex 讀 `.agents/skills/`。本 repo 用 directory symlink 讓兩者讀到同一份檔案：`.agents/skills` 與 `.codex/skills` 都指向 `../.claude/skills`。改 skill 時編輯 `.claude/skills/<name>/`；經由 symlink 的路徑改，改到的也是同一份，但 diff 與 `git log` 只記在 `.claude/skills/` 底下，所以引用與交給 `bin/commit-files` 的路徑都寫 `.claude/skills/` 的路徑。Anthropic SKILL.md 的 frontmatter（`name`、`description`）是 Codex SKILL.md frontmatter 的子集，Codex 直接讀 Anthropic 格式。
+
+symlink 不再適用、要拆成兩份獨立目錄的訊號：
+
+| 訊號                                         | 拆開之後的差異                                     |
+| -------------------------------------------- | -------------------------------------------------- |
+| Codex 加了 Anthropic 不認的 frontmatter 欄位 | `.agents/skills/<name>/` 獨立寫，加 Codex 專屬欄位 |
+| Anthropic 加了 Codex 不認的 frontmatter 欄位 | `.claude/skills/<name>/` 獨立寫，`.agents/` 拆出去 |
+| 需要 Codex 專屬的 `agents/openai.yaml`       | 放在 `.agents/skills/<name>/agents/openai.yaml`    |
+| skill 在兩個工具裡的行為要不同               | 拆成兩份，各自客製                                 |
+
+拆開的方式是刪除 symlink、`cp -r .claude/skills .agents/skills`，之後兩份各自維護。兩邊的 frontmatter 規格改版時，重新確認兩者還相容。
 
 ### 改既有 report 卡時查它在 skill 裡的副本
 
