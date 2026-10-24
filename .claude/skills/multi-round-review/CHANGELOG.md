@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.30.3 — SKILL.md 嚴重度量尺補連卡的例外：術語連到卡、定義住在卡上不算「離頁才讀得懂」，判定看離開那張卡之後本段的論證還走不走得下去；與專案規則檔的嚴重度轉述對齊
+
 **Version**: 2.30.2 — 對齊專案寫作規則的改版：round-1-compliance 1-E 的判斷標準成熟度與重算測試改成「讀者判斷得出自己落在哪一個條件與它的後果、理由」，教學文章寫成「看到 A → 做 X」列為手冊裝置的 finding；1-A 敘事姿態的「標題承載結論、開頭承載情境定位」改成標題寫主旨、開頭逐一列出內容、事件來源寫成開場之前的事件說明；teaching-is-not-lecturing（開場逐一列出各段主題、判讀徵兆改成「開場是情境敘事」、自問句的改法改成寫出條件與通過標準）、command-fragment-as-subject-hides-the-actor、criteria-fold-away 三份 principle 同步本體；SKILL.md 補審查紀錄（逐類表與探針歸因）要寫進 commit message 或工作紀錄
 
 **Version**: 2.30.1 — round-2-cadence 2-D 的教學定位特徵補第四項（輸出的讀法寫在指令旁邊），開場由「一句話交代適用範圍」改成逐一列出各段主題；round-2-probes〈2-B⁶ 術語探針〉的詞頻判讀補「有把握而給別的定義」與「詞頻為零」兩格的讀法，繼承來源補使用者層級指令、記憶索引與 skill description；〈探針的派發契約〉補跨模型家族沒有測過

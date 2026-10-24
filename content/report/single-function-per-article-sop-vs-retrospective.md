@@ -70,5 +70,5 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作", "內容�
 - → [#142 文章主體要對齊標題承諾](/report/article-body-must-align-with-title-commitment/)：#142 處理「章節內容偏離標題」，本卡處理「整篇文章功能定位混合」— #142 是段落層、本卡是文章層，同屬「內容要對齊承諾」家族
 - → [#122 cadence 同質化](/report/cadence-homogenization-in-batch-writing/)：本卡四篇文章中的 retrospective 段大量引用 #122 的 cadence 概念；拆分後 retrospective 段落成為 #122 的 evidence 文件，SOP 進 skill 不再重複
 - → [#154 教材的重點/總結段是內容發散訊號](/report/summary-section-signals-scattered-prose/)：#154 說「刪掉總結段看正文是否仍自足」，本卡的對應操作是「刪掉 SOP 段看 retrospective 是否仍自足」— 同類「減法測試」判斷標準
-- → AGENTS.md 跨 surface 內容處理原則：本卡的拆分動作跨 `.claude/skills/` 和 `content/` 兩個 surface，各自獨立、不交叉引用
+- → `docs/rules/writing-process.md`〈寫完之後的檢討〉末段的跨 surface 處理：本卡的拆分動作跨 `.claude/skills/` 和 `content/` 兩個 surface，各自獨立、不交叉引用
 - [#303 串連佔掉的是本篇的篇幅](../cross-links-eat-the-article-they-live-in/) 是相鄰的另一種稀釋：本卡的成因是一篇塞了兩種功能，那張卡的成因是功能只有一種而篇幅被鄰居的引用佔走。判定分得開——本卡問這一篇在做幾件事，那張卡問這一篇有幾成在講自己。

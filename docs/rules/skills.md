@@ -1,5 +1,7 @@
 # Skill 的撰寫與同步
 
+這份分冊管 skill 與文章的分界、skill 的依賴邊界與撰寫規則、版號、skill-sync 在本 repo 加的規則、從 report 卡到 skill 的流程、推送前的檢查與同步時的判斷，以及改 report 卡時查 skill 裡的副本。skill-sync 工具本身的指令與分類以 `.claude/skills/skill-sync/SKILL.md` 為準。
+
 ## Skill 的撰寫與同步
 
 ### Skill 與文章是兩個 surface
@@ -70,7 +72,13 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 這條 rg 掃的是本 blog 專屬的路徑。命中是候選：帶 `portability-allow` 標記的那一行是刻意保留的消費端（使用這支 skill 的專案）引用，豁免；其餘掃到的 blog route、`content/` 路徑、`/report/`、`/posts/`、`/skills/`、`_index.md`，改成 skill 內部的 principle、相對連結或中性名詞。
 
-`skill-sync push` 另有一道可攜性閘門，範圍跟這條 rg 不同：它比對任何 `.claude/` 路徑（包括 skill 自己的 `.claude/skills/<自己的名字>/…`）與專案的 ticket ID，不比對 blog route。閘門只擋 SKILL.md frontmatter 宣告了 `metadata.portable: true` 的 skill，其餘只印一行計數。所以宣告 portable 的 skill，要另外照閘門的範圍掃一次：`rg -n '\.claude/|[0-9]+\.[0-9]+\.[0-9]+-W[0-9]+-[0-9]+' .claude/skills/<name>`，命中的路徑改成相對路徑或中性名詞，刻意保留的那一行加 `portability-allow`。
+`skill-sync push` 另有一道可攜性閘門，範圍跟這條 rg 不同：它只掃 `.md` 全文與 `.py` 的 docstring 與 `#` 註解（不掃 `.sh` 這類其他檔案，也不掃 `references/project-integration/`），比對任何 `.claude/` 路徑（包括 skill 自己的 `.claude/skills/<自己的名字>/…`）與專案的 ticket ID，不比對 blog route。閘門只擋 SKILL.md frontmatter 宣告了 `metadata.portable: true` 的 skill，其餘只印一行計數。宣告 portable 的 skill，推送前直接跑閘門本身的檢查，不要自己拼 rg（自己拼的 pattern 會掃到腳本裡的 regex 程式碼，照著改會改壞腳本）：
+
+```bash
+(cd .claude/skills/skill-sync && uv run -q python -I -c "import sys;sys.path.insert(0,'.');from pathlib import Path;from skill_sync.cli import check_portability as c;[print(v) for v in c(Path('../<name>'))]")
+```
+
+或讀 `echo n | skill-sync push <name> -m x` 預覽裡的 `[Portability]` 清單。命中的路徑改成相對路徑或中性名詞；刻意保留的那一行，在行尾加 `<!-- portability-allow: <保留的理由> -->`（閘門比對的是那一行裡有沒有 `portability-allow` 這個字串，理由寫得讓後來的人判得出該不該信）。
 
 `.claude/skills/` 底下的 `.md` 在 pre-commit 同時跳過 mdtools 的 lint 與 fmt：重排會讓本地 skill 跟共用庫的版本分歧，而 fmt 會刪掉行內的 HTML 註解（理由寫在 `.githooks/pre-commit`）。
 
@@ -87,7 +95,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 - **該 skill 的 `CHANGELOG.md` 最上面一條**，格式為 `**Version**: X.Y.Z — 變更摘要`，新的一條加在最上面。
 - **`SKILL.md` frontmatter 的 `metadata.version`**。SKILL.md 正文只留一行指向 CHANGELOG：skill 是 runtime 整份載入的檔案，版本紀錄留在 SKILL.md 等於每次叫用都多讀一段沒有用的內容。
-- **帶 `pyproject.toml` 的 skill**（如 `skill-sync`）另有第三個住址 `project.version`。三者一致由那支 skill 自己的測試守著（`skill-sync` 是 `tests/test_cli.py` 的 `test_three_version_addresses_agree`），`bin/skill-version-check` 不比對 pyproject。
+- **帶 `pyproject.toml` 的 skill**（如 `skill-sync`）另有第三個住址 `project.version`。改了版號就跑那支 skill 的測試（`skill-sync` 是 `(cd .claude/skills/skill-sync && uv run pytest -q tests/test_cli.py -k three_version)`），三個住址不一致時這個測試會失敗；`bin/skill-version-check` 不比對 pyproject。
 
 改完跑 `bin/skill-version-check <name> …`（不給參數掃全部），它比對 frontmatter 的 `metadata.version` 與同目錄 `CHANGELOG.md` 最上面那一條，不一致的列出來。它結尾一定會印 `checked N skill(s), M failing`：零輸出代表腳本中途中止，不代表通過；N 要等於給的支數，名字打錯時它印 `skip: <name>（無 SKILL.md）` 而 N 是 0，exit 仍是 0。`bin/skill-mirror` 也會比對這兩個住址並在不一致時中止，但它只在有 `content/skills/` 鏡像的 skill 上執行。
 
@@ -102,7 +110,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 流程從 report 卡開始：report 卡是原則的單一真實來源（有情境、根因、理想做法），skill 是它的操作化。兩者的責任不同：卡歸納缺陷與解法，skill 給處理方式與判斷方法。只改 skill、不涉及新原則時（修錯字、改步驟、對齊工具行為），從「修改 skill」那一步開始，commit message 寫出屬於這三種的哪一種。
 
 1. **建 report 卡**：在 `content/report/` 建卡。取號、查核與目錄頁的登記位置照 `content-folders.md`〈寫之前要做的查核〉；關係段與反向指標照 `writing-process.md`〈寫完之後的檢討〉的連結既有原則那一步。
-2. **評估要不要進 skill、進多少**：先問這一條進了 skill 之後 agent 的動作會不會不同，不會就留在卡裡，commit message 寫出這個判定。會的話，skill 寫出執行時要用的判斷標準、觸發條件與處置；推導、實例與「為什麼既有審查抓不到」留在 report 卡上，skill 用相對連結指向「修改 skill」那一步建的 principle 副本，不連 `/report/`。驗收：一個沒讀過那張卡的 agent，照 skill 這一段做得出動作嗎。進 skill 的內容越多，skill 越長、agent 越讀不完，而每一段單獨看都有道理，所以決定要進的時候，同時寫出它取代或縮短 skill 裡的哪一段，寫進 commit message。
+2. **評估要不要進 skill、進多少**：先問這一條進了 skill 之後 agent 的動作會不會不同，不會就留在卡裡，commit message 寫出這個判定。會的話，skill 寫出執行時要用的判斷標準、觸發條件與處置；推導、實例與「為什麼既有審查抓不到」留在 report 卡上，skill 用相對連結指向這張卡的 principle 副本（`references/principles/<slug>.md`，在「修改 skill」那一步建立），不連 `/report/`。驗收：一個沒讀過那張卡的 agent，照 skill 這一段做得出動作嗎。進 skill 的內容越多，skill 越長、agent 越讀不完，而每一段單獨看都有道理，所以決定要進的時候，同時寫出它取代或縮短 skill 裡的哪一段，寫進 commit message。
 3. **修改 skill**：在 `.claude/skills/<name>/` 修改。要引用 report 卡的內容時，把那張卡複製成 `references/principles/<slug>.md` 並去專案化（〈Skill 的撰寫規則〉），skill 本文用相對連結連到這份副本。
 4. **新增 principle 卡時登記對應**：`bin/skill-mirror` 的 `find_report_slug()` 先在 `content/report/` 找同名的卡，找到就自動對應；副本的 slug 與 report 卡不同名，或本體是 `content/record/` 的文章時，在 `find_report_slug()` 裡的 `case` 加一條 principle slug → report 或 record slug 的對應。改了 `bin/skill-mirror` 之後，照 `scripts/principle-mirror-check.py` 檔頭的四個驗收案例跑過。
 5. **更新版號**：照〈版號〉，跑 `bin/skill-version-check <name>`。
@@ -112,14 +120,14 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 **principle 連結沒有對應時的訊號**：「登記對應」那一步漏了時，`bin/skill-mirror` 依連結寫在哪裡給出兩種結果。連結寫在 SKILL.md 時，鏡像把它降成不能點的純文字，stderr 印 `WARN: no report card for <slug> — hyperlink degraded to inert path`，cards 不會擋，結尾還是印 `All principle links resolved to /report/`；連結寫在 reference 檔時，鏡像原樣保留相對連結，stderr 印 `WARN: <ref> 引用的 <slug> 沒有對應 report 卡 — 原樣保留`，之後 commit 時 pre-commit 的 cards 以 broken link 擋下。兩種都回頭補對應，重跑同步鏡像那一步。
 
-批量推送多個 skill 時逐一執行 `skill-sync push`，不手動 clone 遠端 repo 操作：手動 clone 繞過了 skill-sync 的同步基底紀錄與預覽閘門，下一次 `pull` 會把這次的推送判成方向不明。
+批量推送多個 skill 時逐一執行 `skill-sync push`，不手動 clone 遠端 repo 操作：手動 clone 推上去的內容繞過了 skill-sync 的預覽閘門，也不會更新遠端的 `versions.json` 與本地的同步基底，之後的 `pull` 報告會在 `[SHOULD PUSH]` 與 `[SHOULD PULL]` 之間來回，看不出實際的方向。
 
 ### 推送前的檢查
 
 推送 skill 到共用庫之前確認三件事，細節以 `.claude/skills/skill-sync/SKILL.md` 為準：
 
 - **用兩段式**：`echo n | skill-sync push <name> -m "…"` 取預覽，讀完再 `echo y | …`。agent 的 shell 沒有互動輸入，直接跑會被當成 N 而中止。
-- **預覽裡出現任何一行 `[WARNING]` 就不跑 `echo y`**：照 skill-sync SKILL.md 寫的意思處理（合併、改用 pull、bump 版號），處理完重跑預覽。宣告 portable 的 skill 印出 `[Portability]` 清單並中止時，照〈Skill 的撰寫規則〉的可攜性掃描修掉再推。
+- **預覽裡出現任何一行 `[WARNING]` 就不跑 `echo y`**：每一種警告的意思與處置照 skill-sync SKILL.md〈Report categories and non-interactive use〉的警告表，處理完重跑預覽。宣告 portable 的 skill 印出 `[Portability]` 清單並中止時，照〈Skill 的撰寫規則〉的可攜性掃描修掉再推。
 - **不帶 `--force`**：`--force` 拿掉警告之後的停點，並放行 portable skill 的可攜性閘門。只有使用者在這次的指示裡明說要用 `--force` 時才帶，被放行的那幾條寫進這次 `skill-sync push -m` 的訊息。
 
 `[Version] local X vs remote Y` 是給人對照 changelog 用的顯示行，不是判定依據：skill-sync 用內容雜湊判斷兩邊相不相同，X 高於 Y 不代表可以推送。要確定一支 skill 的版本，讀它 SKILL.md frontmatter 的 `metadata.version`。
@@ -130,13 +138,22 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 `skill-sync pull`（不帶參數）的分類與預設處置以 skill-sync SKILL.md〈Report categories and non-interactive use〉為準。本 repo 加的規則：
 
-- **`[SKIP]` 遠端沒有這個條目**：先確認它是不是刻意只留在本 repo 的 blog 專屬 skill（例如 `blogsearch-lifecycle`、`vendor-deep-article`），是就不推；不是的話照 `AGENTS.md`〈推送〉推上去。
+- **`[SKIP]` 遠端沒有這個條目**：在〈只留在本 repo 的 skill〉清單裡的不推；不在清單裡的照 `AGENTS.md`〈推送〉推上去。
 - **`[DIVERGED]` 與 `[CONFLICT]`**：比對兩邊的歷史（共用庫 clone 裡那個 skill 路徑的 `git log`，對本 repo 的 `git log -- .claude/skills/<name>`），把兩邊各自改了什麼寫進 commit message，合併之後推。判斷不出哪一邊較新時，把兩邊的 log 貼給使用者，由使用者決定。
 - **`[SUSPECT REVERT]`**：不拉。查是誰把舊版推上共用庫，把較新的那一份推回去。
 - 遠端有新增的檔案（原則卡、hooks）時，用 `skill-sync pull <name>` 取到本地，再推合併版回遠端。
 - 遠端的版本加了 emoji 或把相對連結改成絕對路徑時，修正後推回：本專案禁止 emoji，skill 內的連結要是相對路徑。
 - 同步完本地 `.claude/skills/` 後，有 `content/skills/` 鏡像的 skill 跑一次 `bin/skill-mirror <name>`（pre-commit hook 會提醒）。
 - 不帶參數的 `pull` 不是唯讀：它會替已經同步的 skill 重寫 `.skill-sync-base`（被 gitignore，不會出現在 diff 裡）。
+
+### 只留在本 repo 的 skill
+
+下列 skill 是 blog 專屬的，刻意不推上共用 skill 庫（`skill-sync pull` 對它們印 `[SKIP]` … no remote entry），改了它們只提交 blog repo：
+
+- `blogsearch-lifecycle`
+- `vendor-deep-article`
+
+新增一支只給本 repo 用的 skill 時，加進這份清單；要把清單裡的 skill 推上共用庫之前，先問使用者，因為它們依賴本 blog 的結構，推上去之後別的專案用不了。
 
 ### 改既有 report 卡時查它在 skill 裡的副本
 
@@ -147,6 +164,6 @@ scripts/principle-mirror-check.py <report-或-record-卡的-slug>   # 查一張�
 scripts/principle-mirror-check.py --all                          # 全庫掃，列出本體較新的那些
 ```
 
-`--all` 列出的數量隨每一次 commit 變動，不抄進任何文件，要知道就跑一次。逐張判斷該不該同步：本體的變更改動了規則、判斷標準或處置時同步；只改了措辭或案例時，把改前的句子用 `grep -F '<改前的句子>' <副本路徑>` 在副本裡找一次：找得到，代表副本照抄了那一句（措辭本身可能就是 skill 用來判讀的依據），同步；找不到，代表副本已經改寫成 skill 自己的寫法，不必同步。commit message 寫出副本清單與每一份的判定。`--all` 看的是 commit 時間、不看內容，副本晚於本體 commit 而內容已經分岔的，它抓不到；要確認內容一致，打開兩份比對。同步時兩份的段標用同一組字串，之後靠 anchor 比對的檢查才不會錯位。副本落在 `content/skills/` 底下時，那是 `bin/skill-mirror` 產生的鏡像，改 `.claude/skills/` 的副本再重跑鏡像，不手改。
+`--all` 列出的數量隨每一次 commit 變動，不抄進任何文件，要知道就跑一次。逐張判斷該不該同步，判定只有兩條：一、本體的變更改動了規則、判斷標準或處置，同步。二、本體只改了措辭或案例，就把改前的句子用 `grep -F '<改前的句子>' <副本路徑>` 在副本裡找一次：找得到，代表副本逐字抄了那一句（措辭本身可能就是 skill 用來判讀的依據），同步；找不到，代表副本已經改寫成 skill 自己的寫法，不同步。commit message 寫出副本清單與每一份的判定。`--all` 看的是 commit 時間、不看內容，副本晚於本體 commit 而內容已經分岔的，它抓不到；要確認內容一致，打開兩份比對。同步時兩份的段標用同一組字串，之後逐段比對兩份（打開兩份、照段標對齊段落）時才對得上。副本落在 `content/skills/` 底下時，那是 `bin/skill-mirror` 產生的鏡像，改 `.claude/skills/` 的副本再重跑鏡像，不手改。
 
 修改 `scripts/principle-mirror-check.py` 或 `bin/skill-mirror` 之前，讀 `scripts/principle-mirror-check.py` 檔頭的驗收案例，改完逐個跑過再提交。

@@ -84,7 +84,7 @@ tags: ["方法論", "寫作", "SOLID", "知識管理", "卡片盒筆記"]
 
 依賴方向決定變動傳遞方向。案例更新（財報換季、公司改變策略）不會迫使方法論改寫；方法論修正會提示所有案例重檢——這個不對稱正是體系要的：抽象層穩定、具體層流動。
 
-實證：AGENTS.md 的既有規則「Backend 是語言無關層、各語言章節可連到 Backend 能力、Backend 不反向依賴語言實作」就是 D、先於本文存在。ddd/（方法論精神層）跟 flutter/（語言實作層）的模組拆分同樣路由單向。案例文章引用[企業評估定位](/business/financial-analysis/company-stage-model-evaluation/)做兩軸分析、方法論篇不需要知道任何一篇案例的存在。
+實證：規則檔（`docs/rules/content-folders.md`）的既有規則「Backend 是語言無關層、各語言章節可連到 Backend 能力、Backend 不反向依賴語言實作」就是 D、先於本文存在。ddd/（方法論精神層）跟 flutter/（語言實作層）的模組拆分同樣路由單向。案例文章引用[企業評估定位](/business/financial-analysis/company-stage-model-evaluation/)做兩軸分析、方法論篇不需要知道任何一篇案例的存在。
 
 違反訊號：讀方法論篇必須先讀過某篇案例才看得懂（抽象依賴了具體）；修改某篇案例時要回頭改方法論（變動反向傳遞）；方法論的判斷標準用某個案例的特殊條件寫成（過度擬合單一 case）。
 

@@ -20,7 +20,7 @@
 
 寫一篇文章之前，依序判斷：議題屬於某個教學模組的主題、要排進那個模組的章節序列 → 那個模組的資料夾；議題是 blog 內部的設定、Hugo、Markdown 或 mdtools → `posts/`；議題是用某個工具或技術時遇到的事件 → `work-log/`；議題是整理過的方法論或工作模式 → `record/`；議題是從個案抽出可以重用的工程原則 → `report/`；議題跟工程無關、是單一的知識點 → `til/`；議題是跟特定開發專案無關的工具小技巧 → `other/`；議題是推薦哪本書、怎麼選書 → `books/`。`content/skills/` 是 `bin/skill-mirror` 產生的 skill 公開鏡像，不放手寫的文章（見 `skills.md`〈Skill 與文章是兩個 surface〉）。
 
-`work-log/` 與 `other/` 的分界：工作中用某個工具時遇到的事件（有情境、有排查過程）放 `work-log/`；不依附任何一次事件的工具用法放 `other/`。
+`work-log/` 與 `other/` 的分界：工作中用某個工具時遇到的事件（有情境、有排查過程）放 `work-log/`；不依附任何一次事件的工具用法放 `other/`。表裡 work-log 那一列的「事件說明」定義在 `writing.md`〈寫給帶著疑問來查的讀者〉。
 
 分類邊界的案例：
 
@@ -37,14 +37,14 @@
 
 ### 寫之前要做的查核
 
-- **寫 `report/` 卡之前**：確認這個議題沒有被既有的卡涵蓋。`content/report/_index.md` 的〈場景導讀〉（依讀者遇到的情境分成多條閱讀路徑）不是全部卡的清單，目錄頁也有卡沒有登記，所以另外用議題的關鍵詞掃全部卡的 `title` 與 `description`（`rg -i '<關鍵詞>' content/report/*.md -g '!_index.md'`）。議題跟既有的卡重疊而角度不同時，把新卡定位成那張卡的 sibling（同層、補另一個面向的卡），在關係段的第一條寫出最接近的既有卡與本卡補的面向；這一條就是查核的紀錄。新卡的卡號取目前最大的 `weight` 加一：
+- **寫 `report/` 卡之前**：確認這個議題沒有被既有的卡涵蓋。`content/report/_index.md` 的〈場景導讀〉（依讀者遇到的情境分成多條閱讀路徑）不是全部卡的清單，目錄頁也有卡沒有登記，所以另外用議題的關鍵詞掃全部卡的 `title` 與 `description`（`rg -il '^(title|description):.*<關鍵詞>' content/report/ -g '!_index.md'`；`-g` 只對目錄掃描生效，所以給目錄、不給 `*.md`）。議題跟既有的卡重疊而角度不同時，把新卡定位成那張卡的 sibling（同層、補另一個面向的卡），在關係段的第一條寫出最接近的既有卡與本卡補的面向；這一條就是查核的紀錄。新卡的卡號取目前最大的 `weight` 加一：
 
   ```bash
   grep -h '^weight:' content/report/*.md | awk '{print $2}' | sort -n | tail -1
   ```
 
-  `awk` 那一步不能省：整行以 `weight:` 開頭時 `sort -n` 取不到數字，會退回字典序，回傳的不是最大號。既有的空號不回填。另一個 session 可能同時在建卡，提交前跑 `grep -h '^weight:' content/report/*.md | sort | uniq -d`，有輸出就是撞號，改取下一個號。
-- **寫 `report/` 卡時一起做的登記**：在 `content/report/_index.md` 加這張卡的條目。新卡的條目寫在它所屬的〈場景導讀〉路徑底下，接在那條路徑的說明之後；沒有合適的路徑就新開一條。〈篇目索引〉依輪次分組的那幾節是早期的登記，不再加新條目。關係段與反向指標照 `writing-process.md`〈寫完之後的檢討〉的連結既有原則那一步。
+  `awk` 那一步不能省：整行以 `weight:` 開頭時 `sort -n` 取不到數字，會退回字典序，回傳的不是最大號。既有的空號不回填。另一個 session 可能同時在建卡，提交前跑 `grep -h '^weight:' content/report/*.md | sort | uniq -d`，有輸出就是撞號，改取下一個號。這條檢查只看得到目前的工作樹：在 worktree 或分支裡建的卡，併進 `main` 之後在 `main` 再跑一次。
+- **寫 `report/` 卡時一起做的登記**：在 `content/report/_index.md` 加這張卡的條目。新卡的條目接在檔尾那份依卡號排列的清單最後（卡號 294 以後的條目都在那份清單裡；它目前位在〈場景導讀〉最後一條路徑之下）；條目寫出卡號、完整標題與連結、什麼情境讀這張卡。〈篇目索引〉依輪次分組的那幾節是早期的登記，不再加新條目。這張卡適合某一條閱讀路徑時，另外把卡號加進那條路徑的串列。關係段與反向指標照 `writing-process.md`〈寫完之後的檢討〉的連結既有原則那一步。
 - **改既有 `report/` 卡時**：跑 `scripts/principle-mirror-check.py <slug>` 找出 skill 裡的副本，判斷要不要同步照 `skills.md`〈改既有 report 卡時查它在 skill 裡的副本〉。
 - **寫 `posts/` 文章之前**：確認沒有既有文章在講同一個主題；補充既有指南的某個議題時，開場引用那篇指南。
 - **寫 `work-log/` 文章之前**：用這次事件的工具名與症狀關鍵詞掃 `content/work-log/`（`rg -il '<工具名>' content/work-log/`），確認沒有既有文章已經涵蓋同一個工具的同一類排查。同一個事件的延伸補進原文；工具相同而排查的對象不同，才另寫一篇，開場寫出跟那一篇的分工。
@@ -77,4 +77,4 @@
 
 - **適用範圍**：`content/` 底下所有有模組結構的分類。`report/`、`til/`、`work-log/`、`other/` 這幾個沒有模組結構的目錄沒有模組級的 Backlog；在這些目錄留下的未完成工作，寫進 commit message，並照 `AGENTS.md`〈延到工作結束之後的動作〉寫進給使用者的最後一則總結。
 - **段名固定為 `## Backlog`**，讓一條 grep 列得出所有有待辦的模組；段名自創的話，盤點時無法確定有沒有漏掉某個模組。
-- 標準表的欄位定義、哪些內容不進 Backlog（整個 `## Backlog` 段都只放待辦，表下方的 H3 也算）、分類總覽的維護規則，以 [Backlog 段格式規範](/posts/backlog-format-spec/) 為準，這裡不重寫。實例見 [content/backend/\_index.md](/backend/) 的〈Backlog 總覽〉。
+- 標準表的欄位定義、表下方 H3 的寫法（模組自己的規劃敘事）、哪些內容不進 Backlog（候選、絆腳索、已完成的項目，在表裡與 H3 都不放）、分類總覽的維護規則，以 [Backlog 段格式規範](/posts/backlog-format-spec/) 為準，這裡不重寫。實例見 [content/backend/\_index.md](/backend/) 的〈Backlog 總覽〉。

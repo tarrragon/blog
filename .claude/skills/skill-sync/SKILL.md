@@ -2,7 +2,7 @@
 name: skill-sync
 description: 'Sync Claude Code skills between local .claude/skills/ and a remote skills repository. Use for: pulling skills from remote, pushing local skills to remote, listing available remote skills.'
 metadata:
-  version: 1.25.1
+  version: 1.25.2
 ---
 
 # skill-sync
@@ -68,9 +68,20 @@ A `[SHOULD PULL]` classification only means "remote moved since local's last kno
 | `[DIVERGED]` | content differs and there is no sync base to tell direction | compare both sides' history (`git log` of the remote clone for that path vs. the local repo) to decide which is newer, then pull or push |
 | up to date | content hashes match | nothing |
 
+When a `push <name>` preview prints a `[WARNING]`, do not apply it. What each one means and the default handling:
+
+| Warning begins with | Meaning | Default handling |
+|---------------------|---------|------------------|
+| `Sync base shows both sides changed independently` | local and remote both moved since the last sync; pushing discards the remote change | read what remote changed in the `pull <name>` preview, merge section by section, push the merged copy |
+| `Sync base suggests this skill has only moved the other way` | only remote moved since the last sync | run `pull <name>` instead |
+| `Content changed since last sync … but version is still X` | content changed, version did not | bump the version, then push |
+| `Local content matches an older historical version` | the local copy equals an older commit of this skill in the publish repo; pushing would overwrite newer content with it | `pull <name>` first to see the current remote copy, then decide |
+| `--force ignored N direction warning(s)` | printed after a forced push succeeded; the warnings above it were not stopped on | read those warnings and confirm the push did not overwrite someone else's change |
+| `pruned N file(s) but preview promised M` | `--prune` deleted a different number of files than the preview listed | compare the remote clone against the preview before pushing again |
+
 Despite reporting only, this path is not read-only: it re-records `.skill-sync-base` for up-to-date skills whose marker is missing or stale (see Notes).
 
-**Non-interactive callers** (an agent's shell, CI): the `[y/N]` prompt of `pull <name>` and `push` reads stdin, and end-of-file counts as N — the command prints `Aborted.` and changes nothing. There is no `--dry-run`; run the command twice instead. `echo n | skill-sync push <name> -m "..."` prints the full preview (file list, every `[WARNING]`, any `[Portability]` or `[BannedTerm]` report) and aborts; read it, and only if nothing in it calls for a stop, run `echo y | skill-sync push <name> -m "..."`. Push has a single `[y/N]` stop, after all warnings have printed. `--force ignored N direction warning(s)` appears only after a forced push succeeds, so it never shows up in an `echo n` preview.
+**Non-interactive callers** (an agent's shell, CI): the `[y/N]` prompt of `pull <name>` and `push` reads stdin, and end-of-file counts as N — the command prints `Aborted.` and changes nothing. There is no `--dry-run`; run the command twice instead. `echo n | skill-sync push <name> -m "..."` prints the full preview (file list, every `[WARNING]`, any `[Portability]` or `[BannedTerm]` report) and aborts; read it, and only if nothing in it calls for a stop, run `echo y | skill-sync push <name> -m "..."`. Push has a single `[y/N]` stop, after all warnings have printed. Two cases print no full preview: a skill that declares `metadata.portable: true` and carries consumer-specific references aborts at the portability gate before the file list (the `[Portability]` list is what to read), and a push with no changes prints `No changes to push.` — that path still re-records `.skill-sync-base`. `--force ignored N direction warning(s)` appears only after a forced push succeeds, so it never shows up in an `echo n` preview.
 
 ## Configuration
 

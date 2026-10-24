@@ -31,7 +31,7 @@ tags: ["Markdown", "AI協作心得", "blog心得", "lint", "goldmark"]
 - 檔案結尾需有換行（MD047），POSIX 規範。
 - 行長度上限（MD013）— **預設關閉**，中英混用技術寫作不適用 80-char 慣例。
 
-前兩類混合在同一份寫作規範裡，因為都由同一個工具鏈檢查、都要落地到相同的 pre-commit hook。純靠紀律記住這十幾條在大型 repo 上不可行，純 regex 又無法穩定處理「平行結構下的標題重複」「卡片段落歸屬」這類語意判斷。因此 blog 專案採用 Go + goldmark AST 做自訂 linter：`scripts/mdtools`。本文是 linter 與寫作規範的對齊文件；AGENTS.md 引用本文作為排版規範來源。
+前兩類混合在同一份寫作規範裡，因為都由同一個工具鏈檢查、都要落地到相同的 pre-commit hook。純靠紀律記住這十幾條在大型 repo 上不可行，純 regex 又無法穩定處理「平行結構下的標題重複」「卡片段落歸屬」這類語意判斷。因此 blog 專案採用 Go + goldmark AST 做自訂 linter：`scripts/mdtools`。本文是 linter 與寫作規範的對齊文件；專案規則檔的 `docs/rules/markdown.md` 引用本文作為排版規範來源。
 
 ---
 
@@ -554,4 +554,4 @@ git config core.hooksPath .githooks
 
 ---
 
-本文為 blog 專案 Markdown 寫作規範的單一真實來源。repo 根目錄的 `AGENTS.md` 引用本文作為排版規範權威，規則與 `scripts/mdtools` 實作保持同步。
+本文為 blog 專案 Markdown 寫作規範的單一真實來源。專案規則檔的 `docs/rules/markdown.md` 引用本文作為排版規範權威，規則與 `scripts/mdtools` 實作保持同步。

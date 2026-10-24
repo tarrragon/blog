@@ -60,13 +60,13 @@ Claude Code 依 `.claude/skills/<name>/SKILL.md` frontmatter 的 `description` �
 ```bash
 grep -c "<詞>" AGENTS.md docs/rules/*.md CLAUDE.md ~/.claude/CLAUDE.md \
   ~/.claude/projects/<換算後的專案目錄名>/memory/MEMORY.md
-grep -c "<詞>" .claude/skills/*/SKILL.md ~/.claude/skills/*/SKILL.md 2>/dev/null | grep -v ':0$'
+grep -rc "<詞>" --include=SKILL.md .claude/skills ~/.claude/skills 2>/dev/null | grep -v ':0$'
 git log -20 --format=%s | grep -c "<詞>"
 ```
 
-skill 那一條數的是整份 SKILL.md，範圍比 description 寬；plugin skill、agent 類型與 MCP 說明沒有固定的檔案位置，grep 數不到，要讀這一次系統提示裡的清單人工確認。`grep -c` 數的是含這個詞的行數，不是出現次數；判斷「是不是零」時兩者沒有差別。
+skill 那一條數的是整份 SKILL.md，範圍比 description 寬；用 `grep -r --include` 而不用 `*/SKILL.md` 的 glob，因為 zsh 在 `~/.claude/skills/*` 沒有匹配時會讓整條指令不執行，專案自己的 skill 也一起被算成 0。plugin skill、agent 類型與 MCP 說明沒有固定的檔案位置，grep 數不到，要讀這一次系統提示裡的清單人工確認。`grep -c` 數的是含這個詞的行數，不是出現次數；判斷「是不是零」時兩者沒有差別。
 
-讀回報時照 round-2-probes〈2-B⁶ 術語探針〉的詞頻判讀與四類讀法，判成「本批無結論」的詞照 `docs/rules/review.md`〈理解探針〉的處置往下走。`Agent` tool 沒有換工作目錄的參數，所以不嘗試「換到沒有規範檔的目錄」或「換一個乾淨的配置」重測。
+讀回報時照 round-2-probes〈2-B⁶ 術語探針〉的詞頻判讀與四類讀法，判成「本批無結論」的詞，照 `docs/rules/review.md`〈理解探針〉末段登記「待驗」、寫進最後一則總結。`Agent` tool 沒有換工作目錄的參數，所以不嘗試「換到沒有規範檔的目錄」或「換一個乾淨的配置」重測。
 
 ## 私有 index 提交在 Bash 工具裡的限制
 
@@ -79,6 +79,6 @@ skill 那一條數的是整份 SKILL.md，範圍比 description 寬；plugin ski
 `ssh` 的 `-o ProxyCommand=…` 與 `-o LocalCommand=…`（配 `PermitLocalCommand=yes`）會在本機這台開發機執行任意命令，這條路徑不受「遠端可以重建」保護（規則本身在 `docs/rules/remote.md`〈遠端機器的操作〉），所以用 PreToolUse hook 攔下：
 
 - **機制**：`.claude/hooks/ssh_guard.py` 註冊為 `Bash` 的 PreToolUse hook。它用兩個 regex 比對整條指令的文字：`SSH_INVOCATION` 認出 `ssh` 以獨立的詞出現（`ssh` 的前一個字元是行首、空白或 `; & | ( )` 之一，後一個字元是空白或行尾），`LOCAL_EXEC_OPTS` 認出 ProxyCommand、LocalCommand 或 PermitLocalCommand（不分大小寫）。兩者在同一條指令的任何位置同時命中時，hook 回 `permissionDecision: deny`：那條指令不執行，工具回傳 hook 寫的拒絕理由。純遠端的唯讀診斷（`ssh <host> <readonly-cmd>`）照常執行。
-- **涵蓋範圍**：hook 只比對這一條指令的文字。看不到的形態有：寫在 `~/.ssh/config` 裡的選項、藏進變數或 wrapper script 的選項、用完整路徑呼叫的 `/usr/bin/ssh`（`ssh` 的前一個字元是 `/`），以及由別的指令間接呼叫 ssh 的形態（`scp -o …`、`rsync -e …`、`GIT_SSH_COMMAND=…`）；間接呼叫的那一類分屬 `scp`、`rsync`、`git` 的權限規則，不在 `Bash(ssh *)` 底下。在「agent 不是敵人，只是要避免它意外動到本機」這個威脅模型下，hook 擋得住誤用，擋不住刻意的繞過。
+- **涵蓋範圍**：hook 只比對這一條指令的文字。看不到的形態有：寫在 `~/.ssh/config` 裡的選項、藏進變數或 wrapper script 的選項、用完整路徑呼叫的 `/usr/bin/ssh`（`ssh` 的前一個字元是 `/`）、反引號的命令替換（`` `ssh …` ``，前一個字元是反引號），以及由別的指令間接呼叫 ssh 的形態（`scp -o …`、`rsync -e …`、`GIT_SSH_COMMAND=…`）；間接呼叫的那一類分屬 `scp`、`rsync`、`git` 的權限規則，不在 `Bash(ssh *)` 底下。在「agent 不是敵人，只是要避免它意外動到本機」這個威脅模型下，hook 擋得住誤用，擋不住刻意的繞過。
 - **已知副作用**：判定只看 `ssh` 的前一個字元與選項名有沒有出現，不看引號，所以兩種無害的指令也會被拒絕：要寫進檔案的文字（heredoc、`python3 - <<'EOF'` 的內容、`echo "note: ssh -o …"` 這種引號裡 `ssh` 前面是空白的字串）同時寫到 `ssh` 與選項名，以及遠端的唯讀指令本身提到選項名（`ssh <host> 'grep -i <選項名> ~/.ssh/config'`）。`ssh` 緊接在引號後面的（`echo 'ssh -o …'`）前一個字元是引號，不會被拒絕。要在檔案裡寫這些字串時，用 Write 或 Edit，不放進 Bash。
 - **維護**：選項清單與 ssh 呼叫的辨識邏輯在 hook 檔的那兩個 regex。改完把 payload 寫進檔案再餵 stdin 驗證：payload 是 `{"tool_name":"Bash","tool_input":{"command":"<要測的指令>"}}`；deny 的案例 stdout 印出含 `"permissionDecision": "deny"` 的 JSON，放行的案例沒有輸出。deny 的案例不直接寫進測試指令的文字，否則 hook 會拒絕測試指令本身。

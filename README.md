@@ -118,16 +118,9 @@ GitHub Actions 在 push 到 `main` 時：
 
 ## Skill vs 文章：兩種 surface
 
-`.claude/skills/` 跟 `content/` 是兩個不同產出、規則互斥。同一份知識可以同時存在於兩處（如 `compositional-writing`）、但寫法不同。
+`.claude/skills/` 跟 `content/` 是兩個不同產出，體例、格式與依賴上的規則互斥。同一份知識可以同時存在於兩處（如 `compositional-writing`）、但寫法不同。
 
-|                     | `.claude/skills/`（skill）                     | `content/`（文章）                           |
-| ------------------- | ---------------------------------------------- | -------------------------------------------- |
-| **讀者**            | agent runtime（Claude Code、Codex）載入        | 人類讀者瀏覽                                 |
-| **目標**            | 跨專案 portable（複製整個目錄能移到別專案）    | 服務本 blog 的脈絡與累積                     |
-| **格式**            | YAML frontmatter + H1 + body、**無 Hugo 欄位** | 有 Hugo frontmatter（`title` / `date` 必填） |
-| **連結**            | 只能用 skill 內相對路徑                        | 可引用 report / posts / 其他 section         |
-| **抽象原則**        | 複製進 `references/principles/`、自包含        | 直接寫在 `content/report/`                   |
-| **Pre-commit lint** | 豁免 mdtools lint 與 fmt                       | 跑全套 fmt + lint + cards                    |
+兩者在讀者、目標、格式、連結與 pre-commit 的處理上各有規則，以 `docs/rules/skills.md`〈Skill 與文章是兩個 surface〉為準。
 
 完整撰寫規範見 [docs/rules/skills.md](./docs/rules/skills.md)。
 
