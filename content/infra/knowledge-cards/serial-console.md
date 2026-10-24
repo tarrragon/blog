@@ -6,7 +6,7 @@ weight: 58
 tags: ["infra", "knowledge-cards", "access", "recovery"]
 ---
 
-序列主控台（serial console）承擔的是救援：當網路設定或 sshd 出錯而 [SSH](/infra/knowledge-cards/ssh/) 連不進去時，它提供一條不經過主機作業系統的網路設定與 sshd 的登入路徑。實體伺服器上它是一條接到序列埠的線；雲端 VM 把它做成虛擬序列埠，由廠商的網頁管理介面或 CLI 轉送，例如 GCP 的 Serial Console（`gcloud compute connect-to-serial-port`）與 AWS 的 EC2 Serial Console。登入時看到的是作業系統的文字主控台，用主機上的本機帳號密碼登入。
+序列主控台（serial console）承擔的是救援：當網路設定或 sshd 出錯而 [SSH](/infra/knowledge-cards/ssh/) 連不進去時，它提供一條不經過主機作業系統的網路設定與 sshd 的登入路徑。實體伺服器上它是一條接到序列埠的線；雲端 VM 把它做成虛擬序列埠，由廠商的網頁管理介面或 CLI 轉送，例如 GCP 的 Serial Console（`gcloud compute connect-to-serial-port`）、AWS 的 EC2 Serial Console，以及 Oracle Cloud 的 serial console connection（instance console connection 的一種：先在主控台替主機建一個主控台連線，再從自己的電腦用 SSH 連上，官方說明本機連線要用 RSA 金鑰）。連上之後看到的是作業系統的文字主控台；只看開機輸出不必登入，要在登入提示登進去時，用主機上設了密碼的本機帳號（Oracle Cloud 官方說明平台映像的 `opc` 沒有預設密碼）。
 
 ## 概念位置
 

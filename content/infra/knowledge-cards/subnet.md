@@ -6,7 +6,7 @@ weight: 5
 tags: ["infra", "knowledge-cards", "subnet", "network"]
 ---
 
-Subnet 是 [VPC](/infra/knowledge-cards/vpc/) 內部按暴露程度（在 AWS 上還按可用區）切出來的子網段。一塊資源對外暴露到什麼程度，取決於它被放進哪個 subnet——技術上的差別在於該 subnet 關聯的 route table 裡有沒有一條指向 Internet Gateway 的預設路由。
+Subnet 是 [VPC](/infra/knowledge-cards/vpc/) 內部按暴露程度（在 AWS 上還按可用區）切出來的子網段。一塊資源對外暴露到什麼程度，取決於它被放進哪個 subnet。在 AWS 上，公開與私有的差別只在該 subnet 關聯的 [route table](/infra/knowledge-cards/route-table/) 裡是否有一條指向 Internet Gateway 的預設路由；Oracle Cloud 另外在 subnet 上設一個禁止公開 IP 的屬性，Google Cloud 的 subnet 沒有公開與私有之分（見〈概念位置〉）。
 
 Subnet 分兩類：
 

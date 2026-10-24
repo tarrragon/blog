@@ -1,12 +1,12 @@
 ---
 title: "登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務"
 date: 2026-10-24
-description: "建立虛擬機時 SSH 金鑰欄位的幾個選項（讓業者產生、上傳、貼上、不放金鑰）各自把什麼放進主機、私鑰由誰保管，映像檔決定的預設使用者名稱，建立之後還能不能加金鑰、金鑰遺失時剩下哪些入口，以及完全不放金鑰時靠業者的哪些服務登入"
+description: "雲端主機建立頁 SSH 金鑰欄位的幾個選項（讓業者產生、上傳、貼上、不放金鑰）各自把什麼放進主機、私鑰由誰保管，映像檔決定的預設使用者名稱，建立之後還能不能加金鑰、金鑰遺失時剩下哪些入口，以及完全不放金鑰時靠業者的哪些服務登入"
 weight: 4
 tags: ["infra", "cloud-providers", "vm", "ssh", "access"]
 ---
 
-建立頁的 SSH 金鑰欄位決定主機第一次開機之後，誰能用哪一把金鑰、以哪一個帳號登入。範圍是第一次登入用的金鑰與帳號；長期給一個團隊用的登入設計（身分感知代理 identity-aware proxy、短效憑證、離職撤銷）見 [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)。
+建立頁的 SSH 金鑰欄位決定主機第一次開機之後，誰能用哪一把金鑰、以哪一個帳號登入。範圍是第一次登入用的金鑰與帳號；長期給一個團隊用的登入設計（[身分感知代理（identity-aware proxy）](/infra/knowledge-cards/identity-aware-proxy/)、短效憑證、離職撤銷）見 [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)。
 
 ## SSH 金鑰欄位把公鑰放進主機的方式
 
@@ -31,7 +31,7 @@ Oracle Cloud 的建立頁提供四個選項：
 
 建立之後能不能再加金鑰，看業者用什麼把金鑰寫進主機。Oracle Cloud 的金鑰由 cloud-init 在第一次開機時寫進主機一次，之後要加金鑰，做法是先用現有的金鑰登入，再在主機裡把新的公鑰加進 `authorized_keys`。Google Cloud 的 guest agent 持續同步中繼資料，主機建好之後把公鑰加進主機或專案的中繼資料，guest agent 就會把它寫進主機。AWS 的 Systems Manager Session Manager 不依賴主機上原有的金鑰，條件備齊時可以當成另一個入口。
 
-所以在 Oracle Cloud 上，金鑰遺失或一開始沒放、又沒有開 Bastion plugin 時，主機上沒有可以用 SSH 進去的入口。剩下的入口各有前提，而多數前提要在金鑰遺失之前就準備好：
+所以在 Oracle Cloud 上，金鑰遺失或一開始沒放、又沒有開代理程式的 Bastion plugin（讓 Oracle Cloud 的 Bastion 服務在建立工作階段時，把一把公鑰臨時放進主機的功能，見〈不放金鑰時的登入服務〉）時，主機上沒有可以用 SSH 進去的入口。剩下的入口各有前提，而多數前提要在金鑰遺失之前就準備好：
 
 - **序列主控台（serial console）**：不經過網路與 sshd，在主控台上建一個主控台連線就能看到主機的開機畫面與登入提示。要在登入提示登進去，主機裡要事先有一個設了密碼的帳號，而平台映像的預設使用者只用金鑰、沒有密碼；沒有這種帳號時，只能照官方範例從開機選單進維護模式重設金鑰，那份範例只寫了 Oracle Linux 的 `opc`。救援帳號怎麼事先準備見 [Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/) 的〈設計責任〉。
 - **Compute Instance Run Command**：在主控台送一段腳本到主機裡執行。官方說明這個 plugin 以 `ocarun` 這個使用者執行，要寫另一個使用者家目錄裡的 `authorized_keys`，得事先在主機上替 `ocarun` 設好 sudo（官方建議用 cloud-init 在建立時設）；送指令的人也要有對應的權限政策，主機上的代理程式要連得到 Oracle 的服務端點（主機在私有 subnet 時經由服務閘道）。
@@ -42,25 +42,29 @@ Oracle Cloud 的建立頁提供四個選項：
 
 選「不放金鑰」是一種刻意的設計：主機裡不放固定的公鑰，登入時由業者的服務決定這一次可以用哪一把金鑰。管理員登入一台主機要過三關，[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/) 把它們叫做網路可達性（連線怎麼到得了主機）、通道授權（誰可以開這條連線）與主機登入驗證（主機認不認這把金鑰）。業者的服務各自包辦其中幾關，所以三家對應的服務包辦的範圍不同：
 
-- **Oracle Cloud 的 Bastion**：Bastion 是業者託管的服務，不是自己架的 [跳板機（bastion host）](/infra/knowledge-cards/bastion-host/)。它在主機所在的 subnet 裡有一個私有端點，主機與 Bastion 都不需要公開 IP；誰能建工作階段由 Oracle Cloud 的權限政策決定。登入的流程是在主控台 Identity & Security → Bastion 建一個指向主機所在 subnet 的 Bastion，設定允許連入的來源位址範圍，再建一個工作階段（session），主控台會給出一條經由 Bastion 轉接的 `ssh` 指令。工作階段有兩種：managed SSH session 由主機上代理程式的 Bastion plugin 把建立工作階段時指定的公鑰臨時放進主機，到期就失效，網路可達性、通道授權與主機登入驗證都由 Bastion 包辦，所以主機可以不放任何金鑰；port forwarding session 只把連線轉到主機的 22 port，不經過代理程式，只包辦網路可達性與通道授權，主機登入驗證仍然是主機自己的 sshd 與 `authorized_keys` 裡原有的金鑰。
-- **Google Cloud 的 IAP 加 OS Login**：兩個服務各管一部分。IAP TCP forwarding 把連線轉進沒有外部 IP 的主機，誰能開這條通道由 IAM 決定，包辦網路可達性與通道授權；OS Login 在登入當下由 Google 查這個 Google 帳號登記的公鑰與 IAM 角色，決定能不能登入、以主機上的哪個 Linux 帳號登入，只包辦主機登入驗證。只開 OS Login 時，22 port 仍然要從外面連得到。做法見 [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/) 與 [OS Login](/infra/knowledge-cards/os-login/) 卡。
+- **Oracle Cloud 的 Bastion**：Bastion 是業者託管的服務，不是自己架的 [跳板機（bastion host）](/infra/knowledge-cards/bastion-host/)。它在主機所在的 subnet 裡有一個私有端點，主機與 Bastion 都不需要公開 IP；誰能建工作階段由 Oracle Cloud 的權限政策決定。登入的流程是在主控台 Identity & Security → Bastion 建一個指向主機所在 subnet 的 Bastion，設定允許連入的來源位址範圍，再建一個工作階段（session），主控台會給出一條經由 Bastion 轉接的 `ssh` 指令。官方〈Bastion〉概觀頁列的工作階段有三種，每一種都只在建立時設定的存續時間內能用來連線：
+
+  - **managed SSH session**：主機上代理程式的 Bastion plugin 把建立工作階段時指定的公鑰臨時放進主機。網路可達性、通道授權與主機登入驗證都由 Bastion 包辦，所以主機可以不放任何金鑰。
+  - **SSH port forwarding session**：只把連線轉到一台主機的 22 port，不經過代理程式，只包辦網路可達性與通道授權；主機登入驗證仍然是主機自己的 sshd 與 `authorized_keys` 裡原有的金鑰。
+  - **dynamic port forwarding（SOCKS5）session**：跟 SSH port forwarding session 一樣不經過代理程式，差別是轉接的目標不固定，可以動態連到私有 subnet 裡的任何資源；只登入一台主機時，用 managed SSH session 或 SSH port forwarding session 就夠。
+- **Google Cloud 的 IAP 加 OS Login**：兩個服務各管一部分。IAP TCP forwarding 把連線轉進沒有外部 IP 的主機，誰能開這條通道由 IAM 決定，包辦網路可達性與通道授權；OS Login 在登入當下由 Google 查這個 Google 帳號登記的公鑰與 IAM 角色，決定能不能登入、以主機上的哪個 Linux 帳號登入，只包辦主機登入驗證。只開 OS Login、不用 IAP 時，連線是一般的 SSH：從 VPC 外面登入的話，主機要有外部 IP，防火牆規則要放行登入者的位址連到 22 port。做法見 [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/) 與 [OS Login](/infra/knowledge-cards/os-login/) 卡。
 - **AWS 的 Systems Manager Session Manager**：經由主機上的 SSM Agent 開工作階段，不經過 SSH port，網路可達性、通道授權與主機登入驗證都由它包辦。**EC2 Instance Connect** 則只包辦主機登入驗證：它把一把公鑰推送到主機的中繼資料、有效時間很短，連線本身仍然是一般的 SSH，主機的 security group 要放行 22 port。
 
 這幾種服務需要的條件，依它包辦哪幾關而不同：
 
 - **主機上的代理程式**（agent）：Oracle Cloud 的 managed SSH session 要代理程式的 Bastion plugin，AWS 的 Session Manager 要 SSM Agent，在建立頁或主機頁面的代理程式設定裡打開，見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/)。Oracle Cloud 的 port forwarding session 與 Google Cloud 的 IAP 不需要代理程式，OS Login 由映像預先裝好的 guest environment 處理。
-- **主機自己的權限**：AWS 的 Systems Manager 預設沒有權限操作主機，要替主機掛一個 instance profile（主機用的 IAM 角色），或在帳號層級設定，SSM Agent 才註冊得上。
+- **主機自己的權限**：AWS 的 Systems Manager 預設沒有權限操作主機，要替主機掛一個 instance profile（主機用的 IAM 角色），或在 Systems Manager 的 Fleet Manager 打開 Default Host Management Configuration，兩者有一個 SSM Agent 才註冊得上。Default Host Management Configuration 以帳號加區域為範圍，替那一區的每一台主機套用一個預設的 IAM 角色，條件是主機用 IMDSv2、SSM Agent 在 3.2.582.0 以上。
 - **登入者的權限**：登入的人在雲端帳號裡要有建立工作階段、連到這台主機的權限，由管理員在身分與權限的政策裡授予。
-- **連線的路徑**：Oracle Cloud 的 managed SSH session 與 AWS 的 Session Manager，是主機上的代理程式主動往外連到業者的服務端點；主機在私有 subnet 時，這條往外的路要經由業者的私有連線（Oracle Cloud 的服務閘道，AWS 的 ssm、ssmmessages、ec2messages 這幾個 VPC endpoint）或 NAT 閘道，兩種有一種就夠。官方〈Bastion〉的說明寫明，建立 managed SSH session 之前，VCN 要有一個服務閘道、internet gateway 或 NAT 閘道，以及通往它的路由規則。Oracle Cloud 的 port forwarding session 與 Google Cloud 的 IAP 是服務往裡連到主機的 22 port，主機的防火牆規則要放行來自服務那一端的連線（Oracle Cloud 是同一個 subnet 裡 Bastion 的私有端點）。
+- **連線的路徑**：Oracle Cloud 的 managed SSH session 與 AWS 的 Session Manager，是主機上的代理程式主動往外連到業者的服務端點；主機在私有 subnet 時，這條往外的路要經由業者的私有連線（Oracle Cloud 的服務閘道，AWS 的 ssm、ssmmessages、ec2messages 這幾個 VPC endpoint）或 NAT 閘道，兩者有一個就夠；主機在公開 subnet 而且有公開 IP 時，經由 internet gateway。官方〈Bastion〉概觀頁對 managed SSH session 寫的是同一個要求：VCN 要有服務閘道、internet gateway、NAT 閘道三者之中的一個，以及通往那個閘道的路由規則。Oracle Cloud 的 port forwarding session 與 Google Cloud 的 IAP 是服務往裡連到主機的 22 port，主機的防火牆規則要放行來自服務那一端的連線：Oracle Cloud 是同一個 subnet 裡 Bastion 的私有端點，Google Cloud 是官方 IAP TCP forwarding 說明列的 IAP 來源位址範圍 `35.235.240.0/20`。
 
-少了一項時主機照樣建得起來，而登入會失敗，主機上又沒有放公鑰，能進去查原因的只剩〈建立之後加金鑰與金鑰遺失時的入口〉列的序列主控台、Run Command、掛開機磁碟與重建。在 Oracle Cloud 上第一次建主機、還不熟這些服務時，先放自己的公鑰比較保險：代理程式或 plugin 出問題、managed SSH session 建不起來時，port forwarding session 不經過代理程式，用自己的公鑰仍然登得進去。這條退路有兩個前提：主機讀得到中繼資料（cloud-init 要從那裡讀出公鑰寫進 `authorized_keys`，中繼資料的設定見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉），以及 security list 放行來自 Bastion 私有端點的 22 port。等 managed SSH session 走通了，再從 `authorized_keys` 拿掉那把公鑰。這個做法只適用於 Oracle Cloud：Google Cloud 開了 OS Login 之後，guest agent 會忽略中繼資料裡的 SSH 公鑰。
+上面這幾項條件少了任一項時，主機照樣建得起來，而登入會失敗；主機上又沒有放公鑰，能進去查原因的只剩〈建立之後加金鑰與金鑰遺失時的入口〉那一節列的序列主控台、Run Command、掛開機磁碟與重建。在 Oracle Cloud 上第一次建主機、還不熟這些服務時，先放自己的公鑰比較保險：代理程式或 plugin 出問題、managed SSH session 建不起來時，port forwarding session 不經過代理程式，用自己的公鑰仍然登得進去。這條退路有兩個前提：主機讀得到中繼資料（cloud-init 要從那裡讀出公鑰寫進 `authorized_keys`，中繼資料的設定見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉），以及 security list 放行來自 Bastion 私有端點的 22 port。等 managed SSH session 走通了，再從 `authorized_keys` 拿掉那把公鑰。這個做法只適用於 Oracle Cloud：Google Cloud 開了 OS Login 之後，guest agent 會忽略中繼資料裡的 SSH 公鑰。
 
 ## 各家的欄位名稱：金鑰欄位、預設使用者與不放金鑰時的登入服務
 
-| 概念                 | Oracle Cloud                                            | Google Cloud                                      | AWS                                                                 |
-| -------------------- | ------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------- |
-| 建立時放公鑰         | Add SSH keys                                            | SSH keys（metadata `ssh-keys`）                   | Key pair                                                            |
-| Ubuntu 預設使用者    | `ubuntu`                                                | 依 metadata 裡公鑰附帶的使用者名稱                | `ubuntu`                                                            |
-| 不放金鑰時的登入服務 | Bastion（managed SSH session、port forwarding session） | IAP TCP forwarding（連線）加 OS Login（登入驗證） | Systems Manager Session Manager；EC2 Instance Connect（只推送金鑰） |
+| 概念                 | Oracle Cloud                                                | Google Cloud                                      | AWS                                                                 |
+| -------------------- | ----------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------- |
+| 建立時放公鑰         | Add SSH keys                                                | SSH keys（metadata `ssh-keys`）                   | Key pair                                                            |
+| Ubuntu 預設使用者    | `ubuntu`                                                    | 依 metadata 裡公鑰附帶的使用者名稱                | `ubuntu`                                                            |
+| 不放金鑰時的登入服務 | Bastion（managed SSH session、SSH port forwarding session） | IAP TCP forwarding（連線）加 OS Login（登入驗證） | Systems Manager Session Manager；EC2 Instance Connect（只推送金鑰） |
 
-金鑰對了之後，連線還要通過的網路與防火牆見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/)；選 No SSH keys、改走 Bastion 時建立頁上要一起改的設定，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的 SSH keys 與 Management 段。
+金鑰對了之後，連線還要通過的網路與防火牆見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/)，SSH 連線逾時與連線被拒兩種症狀各自指向哪一層見 [Connection Refused vs. Timeout（連線被拒與逾時）](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)；選 No SSH keys、改走 Bastion 時建立頁上要一起改的設定，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的 SSH keys 與 Management 段。

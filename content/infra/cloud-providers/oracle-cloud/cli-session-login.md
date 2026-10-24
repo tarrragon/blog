@@ -30,7 +30,7 @@ oci session authenticate --region ap-batam-1 --profile-name DEFAULT
 
 登入過程中 CLI 會問兩個問題：區域與 profile 名稱，兩個都給在選項裡就不必互動輸入。這一點在 CLI 不是跑在互動式終端機裡時有差別——例如透過另一個程式代為執行、標準輸入沒有接到鍵盤——CLI 讀不到輸入，印出 `Abort` 後結束。實測少給 `--region` 時就是在區域清單之後直接 `Abort`。
 
-CLI 接著開瀏覽器到登入頁，並在本機的 `localhost:8181` 等登入結果。瀏覽器的登入頁跟主控台是同一個，先填租用戶，頁面要求選 identity domain 時選 `Default`，再填使用者名稱與密碼，各欄的填法見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈主控台登入〉。登入成功後瀏覽器把 token 送回 `localhost:8181`，終端機印出 `Completed browser authentication process!` 與 `Config written to: /Users/<user>/.oci/config`。瀏覽器頁面不小心關掉時，終端機上印著同一個登入網址，貼回瀏覽器就能繼續；網址裡帶著這次產生的臨時公鑰，所以只對正在等待的這一次登入有效。
+CLI 接著開瀏覽器到登入頁，並在本機的 `localhost:8181` 等登入結果。瀏覽器的登入頁跟主控台是同一個，先填租用戶，頁面要求選 identity domain 時選 `Default`，再填使用者名稱與密碼，各欄的填法見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈主控台登入：租用戶與使用者名稱兩個欄位，與「使用者名稱或密碼無效」〉。登入成功後瀏覽器把 token 送回 `localhost:8181`，終端機印出 `Completed browser authentication process!` 與 `Config written to: /Users/<user>/.oci/config`。瀏覽器頁面不小心關掉時，終端機上印著同一個登入網址，貼回瀏覽器就能繼續；網址裡帶著這次產生的臨時公鑰，所以只對正在等待的這一次登入有效。
 
 設定檔裡的這一組長這樣（值是佔位的）：
 
@@ -45,7 +45,7 @@ security_token_file=/Users/<user>/.oci/sessions/DEFAULT/token
 
 `tenancy` 是 tenancy 的 OCID：OCI 給每一個資源（tenancy、compartment、VCN、主機）一個以 `ocid1.<資源類型>.` 開頭的唯一識別碼，叫 OCID（Oracle Cloud ID），CLI 與 API 用它指定要操作哪一個資源，各資源的詳細頁上都有一個可以複製的 OCID 欄位。`key_file` 是 CLI 產生的臨時私鑰，`security_token_file` 是 OCI 簽發的 token，兩個檔都在 `~/.oci/sessions/<profile 名稱>/` 底下。
 
-不再使用時跑 `oci session terminate --profile <profile 名稱>`，CLI 會從設定檔移除這一組並刪掉它參照的金鑰與 token 檔。這個動作只清本機，OCI 那一端不會撤銷已經簽發的 token，所以這兩個檔被複製走時，拿到的人可以在 token 過期前自己跑 `oci session refresh`，影響的期限最長到登入後 24 小時。
+不再使用時跑 `oci session terminate --profile <profile 名稱>`。官方 CLI 參考對這條指令的說明是從設定檔移除這一組，並刪掉它參照的資源（例如金鑰檔），沒有寫 OCI 那一端會不會撤銷已經簽發的 token。所以 token 與私鑰檔在 terminate 之前被複製走時，要假設那份 token 仍然有效：拿到的人可以在它過期前跑 `oci session refresh`，按〈Session token 的時效與 refresh〉寫的上限，影響的期限最長到登入後 24 小時。
 
 ## 使用 session token 時每條指令要帶的設定：config file is invalid 與 user missing
 
@@ -81,7 +81,7 @@ oci session refresh --profile DEFAULT
 
 ## API 簽章金鑰：不需要每天登入的做法
 
-API 簽章金鑰在主控台的人像選單 → User settings 頁建立：在 API keys 那一區新增一把，讓主控台產生金鑰對並下載私鑰，完成後頁面顯示一段 `[DEFAULT]` 開頭的設定文字。
+API 簽章金鑰在主控台的人像選單 → User settings 頁建立。官方〈Required Keys and OCIDs〉對這一頁的寫法有兩種：一處寫進入「Token and keys」分頁，另一處寫左下角 Resources 區段裡的「API Keys」，畫面上找得到哪一個就用哪一個；兩者都從「Add API Key」按鈕開始。在 Add API Key 的對話框讓主控台產生金鑰對並下載私鑰（Download Private Key），按 Add 之後頁面顯示一段 `[DEFAULT]` 開頭的設定文字。官方寫明一個使用者最多三把 API 金鑰。
 
 那段文字是 CLI 設定檔的一組 profile，其中 `key_file` 是一個佔位路徑，CLI 會照這一行去讀私鑰，所以貼進 `~/.oci/config` 之後要把它改成私鑰實際存放的路徑。同一台機器已經照上面的步驟用 session token 登入過時，設定檔裡已經有一組 `[DEFAULT]`，貼上的這一組要改成另一個名稱（例如 `[apikey]`），兩組同名時 CLI 只會讀其中一組。私鑰檔的權限設成只有自己能讀寫，因為持有它的人能以這個使用者的全部權限呼叫 API：
 
@@ -92,10 +92,8 @@ unset OCI_CLI_AUTH                              # 前面設過 session token 的
 oci iam region-subscription list --profile apikey   # 不帶 --auth，CLI 用 API 簽章金鑰
 ```
 
-這把金鑰沒有到期時間。不用的時候回到 API keys 頁面刪掉它，持有私鑰的程式就無法再呼叫 API。私鑰外洩的影響範圍是這個使用者的全部權限，所以給排程與 CI 用的金鑰，建在一個只有必要權限的專用使用者底下，不建在申請時建立的管理員帳號底下。
+這把金鑰沒有到期時間。不用的時候回到 User settings 頁的 API 金鑰清單刪掉它，持有私鑰的程式就無法再呼叫 API。私鑰外洩的影響範圍是這個使用者的全部權限，所以給排程與 CI 用的金鑰，建在一個只有必要權限的專用使用者底下，不建在申請時建立的管理員帳號底下。
 
-## 延伸閱讀：帳號結構與免費額度
+## 延伸閱讀：帳號結構、免費額度與憑證設計
 
-- [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)：登入頁的租用戶與使用者名稱欄位、home region 對 Always Free 的限制
-- [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)：登入之後要建主機時，各家免費額度的計算方式
-- [身分與存取憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：session token 與 API 簽章金鑰這組取捨背後的概念，〈長期 access key 的風險〉與〈OIDC：給 CI/CD 的短期憑證〉
+登入頁的租用戶與使用者名稱欄位、home region 對 Always Free 的限制，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)；登入之後要建主機時各家免費額度的計算方式，見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)；session token 與 API 簽章金鑰這組取捨背後的概念，見 [身分與存取憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/) 的〈長期 access key 的風險〉與〈OIDC：給 CI/CD 的短期憑證〉。

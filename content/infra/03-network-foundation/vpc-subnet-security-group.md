@@ -193,6 +193,8 @@ resource "aws_security_group_rule" "db_from_app" {
 
 合理出現 `0.0.0.0/0` 的位置只有對外負載平衡器的 80 / 443 入站 — 因為它的工作本來就是接收公開流量。其餘所有 `0.0.0.0/0` 都該被質疑。
 
+盤點 `0.0.0.0/0` 規則的人，要把沒有人刻意寫過的規則也算進去：業者預先建好的網路與啟動精靈建的規則本身就放行 22 port。Google Cloud 專案的 `default` 網路帶一條 `default-allow-ssh` 規則，放行來源 `0.0.0.0/0` 的 TCP 22；Oracle Cloud 主控台建新 VCN 時一起建的 Default Security List 也放行 TCP 22，官方說明只寫來源是「authorized source IP addresses」，實際建出來的來源值要打開那份 security list 看；AWS 的 EC2 啟動精靈建的 security group 預設放行進來的 SSH 流量，VPC 的 default security group 則不放行。Oracle Cloud、Google Cloud 與 AWS 預設規則的內容與收緊的位置，見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/) 的〈各家預設網路規則對 SSH 的開放〉。下面的 CLI 查詢只掃得到 AWS 的 security group，Oracle Cloud 的 security list 與 Google Cloud 的 VPC 防火牆規則要在各自的主控台或 CLI 另外列。
+
 盤點的做法：列出所有 security group，過濾 source 是 `0.0.0.0/0` 的 ingress rule，逐條問「這個埠確實需要全世界都連得到嗎」。在 CLI 上可以用一條查詢掃：
 
 ```bash

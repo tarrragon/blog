@@ -117,6 +117,8 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 
 管理通道模型落到某一家雲端時的設定與實測紀錄，放在 [雲端業者的帳號申請與主機維運](/infra/cloud-providers/) 的業者子資料夾：GCP 的 IAP、OS Login 與 MIG、GKE 的管理存取在 [GCP](/infra/cloud-providers/gcp/)，Oracle Cloud 的帳號、主控台與建立主機的實測在 [Oracle Cloud](/infra/cloud-providers/oracle-cloud/)，Bastion 管理通道的實測列在那個資料夾的 Backlog。
 
+建立主機頁上與這個模組對應的欄位，vendor 中立的說明在 [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/)：subnet、公開 IP 與防火牆規則的欄位，以及 Oracle Cloud、Google Cloud 與 AWS 預設網路對 SSH 的開放，對應 VPC 那一篇，見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/)；SSH 金鑰欄位、金鑰遺失時的入口與不放金鑰時的登入服務，對應管理通道那一篇，見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/)。
+
 ## 跨分類引用
 
 - → [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：誰有權改動 security group 與路由表

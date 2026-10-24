@@ -13,7 +13,7 @@ build 每次重下載套件、要同時出 amd64 與 arm64、build 時要用私�
 理解 BuildKit 最快的方式，是先看它取代的舊 builder 卡在哪。Docker 最初的 legacy builder 逐層線性執行 Dockerfile，三個常見需求它都處理得很勉強：
 
 - **build 加速**：每次 build，`RUN apt-get install` 或 `npm install` 都重新下載一次套件，就算內容一樣。legacy builder 只有 layer cache（整層命中或整層重跑），沒有「跨 build 保留下載快取」的機制。
-- **跨架構**：要同時出 amd64 跟 arm64 的 image（M 系列 Mac 開發、amd64 伺服器部署），legacy builder 一次只能 build 當前主機的架構。
+- **跨架構**：要同時出 amd64 跟 arm64 的 image（M 系列 Mac 開發、amd64 伺服器部署，或在 amd64 的筆電與 CI 上 build、部署到 ARM 雲端主機），legacy builder 一次只能 build 當前主機的架構。雲端上有哪些 ARM 機型（Oracle Cloud 的 Ampere A1、AWS 的 Graviton、Google Cloud 的 Axion 與 Tau T2A），以及只有 `amd64` 的映像在 ARM 主機上啟動時出現的 `exec format error`，見 [機型與映像檔：CPU 架構、核心與記憶體、計費模式與作業系統](/infra/cloud-providers/vm-options/shape-and-image/) 的〈CPU 架構：x86 與 ARM〉。
 - **build-time secret**：build 時要用私有 registry 存取憑證或 SSH key 抓私有依賴，用 `COPY` 或 `ENV` 帶進去，secret 就永久烤進某層 image、`docker history` 挖得出來。
 
 BuildKit 是重寫的 build engine，針對這三件重新設計；buildx 是它的前端命令，管 builder 實例與跨平台輸出。現代 Docker 預設就用 BuildKit，但上面三個能力要用對語法才吃得到。
@@ -131,7 +131,7 @@ docker buildx build --builder multi --platform linux/amd64,linux/arm64 -t app .
 這些是進階能力、不是每個專案都要開：
 
 - **cache mount**：build 頻繁（CI 每次 commit build）、或依賴下載很重（大量 npm / apt 套件）時收益明顯。單機偶爾 build 一次的內部工具，layer cache 就夠。
-- **跨平台**：要發佈給不同架構使用者（open source image、公司同時有 M 系列 Mac 與 amd64 伺服器）才需要。只在單一架構部署就不必承受 QEMU 的複雜與慢。
+- **跨平台**：要發佈給不同架構使用者（open source image、公司同時有 M 系列 Mac 與 amd64 伺服器、部署目標是 ARM 雲端主機）才需要。只在單一架構部署就不必承受 QEMU 的複雜與慢。
 - **cache backend 選型**：本機開發用預設 local cache；CI 用 registry cache（`--cache-to/from type=registry`）或平台原生 cache（如 GitHub Actions 的 `type=gha`），讓每次 CI job 不必冷啟動重建。選哪個看 CI 環境提供什麼。
 
 ## 整合與下一步

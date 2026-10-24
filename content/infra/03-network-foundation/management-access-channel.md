@@ -103,11 +103,11 @@ Windows 主機用 RDP 登入時，這一層是 Windows 帳號而不是 SSH 金�
 
 ## 救援入口：管理通道斷掉時的備用路徑
 
-管理通道的任何一層出錯——防火牆規則寫錯、代理服務的權限設錯、sshd 設定改壞、磁碟滿導致 sshd 起不來——管理員就進不了主機。救援入口是一條不經過主機作業系統的網路設定與 sshd 的路徑：雲端廠商的[序列主控台（serial console）](/infra/knowledge-cards/serial-console/)（GCP 的 Serial Console、AWS 的 EC2 Serial Console）、VPS 商在管理面板提供、在瀏覽器裡顯示主機畫面的 VNC 主控台，以及地端主機的 IPMI、iDRAC 這類嵌在主機板上的頻外管理控制器（out-of-band management；其他中文資料常寫作「帶外管理」）。頻外管理控制器有自己的網路埠，它的網路要接在獨立的管理網段。救援入口不經過管理通道那三層的設定，但它有自己的授權：雲端上是雲端帳號的 IAM 權限與開啟它的開關，登入時用主機上的本機帳號密碼。
+管理通道的任何一層出錯——防火牆規則寫錯、代理服務的權限設錯、sshd 設定改壞、磁碟滿導致 sshd 起不來——管理員就進不了主機。救援入口是一條不經過主機作業系統的網路設定與 sshd 的路徑：雲端廠商的[序列主控台（serial console）](/infra/knowledge-cards/serial-console/)（GCP 的 Serial Console、AWS 的 EC2 Serial Console、Oracle Cloud 的 serial console connection）、VPS 商在管理面板提供、在瀏覽器裡顯示主機畫面的 VNC 主控台，以及地端主機的 IPMI、iDRAC 這類嵌在主機板上的頻外管理控制器（out-of-band management；其他中文資料常寫作「帶外管理」）。頻外管理控制器有自己的網路埠，它的網路要接在獨立的管理網段。救援入口不經過管理通道那三層的設定，但它有自己的授權：雲端上是雲端帳號的 IAM 權限與開啟它的開關，登入時用主機上的本機帳號密碼。
 
 救援入口本身也是一個能登入主機的入口，所以它的設計與管理通道相反：平時保持關閉或只授權給少數持有救援責任的帳號，只在救援時對單一主機開啟，用完關回去。組織層級預設關閉救援入口時，救援名單裡要有能對那台主機所在的專案或帳號解除這項限制的人，否則事故當下只有主機權限的人開不了它。這種「平時不存在、事故時才開、事後回顧」的權限叫 [break-glass access](/backend/knowledge-cards/break-glass-access/)，工單、時限與事後回顧的做法見[團隊權限分級與存取管理](/infra/02-identity-credentials/team-access-management/)的〈臨時提權（break-glass）〉。
 
-序列主控台與 VNC 主控台多半用主機上的本機帳號密碼登入，所以救援帳號要在主機還正常時就建好：密碼由密碼管理工具逐台隨機產生並存在受控的密碼庫，sshd 仍然維持只收金鑰（`PasswordAuthentication no`），持有救援密碼的人離開時輪替，並在切換管理通道之前用它實際登入一次，確認帳號、密碼與 sudo 都可用。地端與部分 VPS 沒有事先建好的帳號時，主機內部沒有任何不經登入的寫入路徑，只能重開機進單人模式或掛救援映像檔。雲端 VM 另外有不需要事先建帳號的修復路徑：GCP 在 metadata 設的 startup-script 每次開機都以 root 執行（Linux VM 用 `startup-script` 這個鍵），可以用來建帳號或改回 sshd 設定；AWS 的 user-data 預設只在第一次開機執行，要拿來救援得改成每次開機都執行的 cloud-init 格式，AWS 上更直接的是 SSM Run Command；兩家都可以把開機磁碟卸下、掛到另一台 VM 修改再掛回去。這些路徑都要重開機、比事先建好的帳號慢。救援工作階段不經過平時錄製操作的位置，有逐指令稽核要求的環境，要在事後把救援時做了什麼另外記錄下來。
+序列主控台與 VNC 主控台多半用主機上的本機帳號密碼登入，所以救援帳號要在主機還正常時就建好：密碼由密碼管理工具逐台隨機產生並存在受控的密碼庫，sshd 仍然維持只收金鑰（`PasswordAuthentication no`），持有救援密碼的人離開時輪替，並在切換管理通道之前用它實際登入一次，確認帳號、密碼與 sudo 都可用。地端與部分 VPS 沒有事先建好的帳號時，主機內部沒有任何不經登入的寫入路徑，只能重開機進單人模式或掛救援映像檔。雲端 VM 另外有不需要事先建帳號的修復路徑：GCP 在 metadata 設的 startup-script 每次開機都以 root 執行（Linux VM 用 `startup-script` 這個鍵），可以用來建帳號或改回 sshd 設定；AWS 的 user-data 預設只在第一次開機執行，要拿來救援得改成每次開機都執行的 cloud-init 格式；GCP、AWS 與 Oracle Cloud 都可以把開機磁碟卸下、掛到另一台 VM 修改再掛回去。這幾條路徑都要重開機或停機，比事先建好的帳號慢。不必重開機的路徑是業者在主機裡執行指令的服務：AWS 的 SSM Run Command，以及 Oracle Cloud 的 Run Command。Oracle Cloud 的 Run Command 以 `ocarun` 這個使用者執行腳本，要改 sshd 設定或別的帳號的 `authorized_keys`，得事先替它的 plugin 開好管理員權限。兩者都靠主機上的代理程式執行，代理程式沒在運作、或連不到業者的服務端點時用不上。Oracle Cloud 上序列主控台、Run Command、掛開機磁碟與重建這幾個入口各自要事先準備什麼，見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈建立之後加金鑰與金鑰遺失時的入口〉。救援工作階段不經過平時錄製操作的位置，有逐指令稽核要求的環境，要在事後把救援時做了什麼另外記錄下來。
 
 ## 組織層級的護欄與稽核紀錄
 

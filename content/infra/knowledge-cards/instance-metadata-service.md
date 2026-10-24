@@ -24,9 +24,9 @@ tags: ["infra", "knowledge-cards", "cloud", "security"]
 
 ## 設計責任
 
-- **新主機**：映像檔支援第二版時開啟強制要求。支援與否看映像裡讀中繼資料的程式版本，Oracle Cloud 官方寫的條件是 cloud-init 20.3 以上、Oracle Cloud Agent 0.0.19 以上；在不支援的映像上強制第二版，cloud-init 讀不到公鑰，主機會連不上。Oracle Cloud 上這個設定建立後可以在主機頁面改回兩版都允許、再重開，判斷與處置見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉
+- **新主機**：映像檔支援第二版時開啟強制要求。Oracle Cloud 官方列出支援的平台映像是 Oracle Linux 與 Oracle Autonomous Linux，其他平台映像（包括 Ubuntu）、多數自訂映像與多數市集映像不支援；自訂的 Linux 映像在 cloud-init 20.3 以上、Oracle Cloud Agent 0.0.19 以上時可能支援（官方給自訂映像的條件）。在不支援的映像上強制第二版，cloud-init 讀不到公鑰，主機會連不上。Oracle Cloud 上這個設定建立後可以在主機頁面改回兩版都允許、再重開，判斷與處置見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉
 - **既有主機改成只允許第二版**：先確認主機上讀中繼資料的程式（代理程式、SDK、自己的腳本）都已支援第二版，再切換
-- **主機的身分權限**：中繼資料服務發的憑證帶著主機身分的全部權限，權限只給這台主機上的程式需要的那些
+- **主機的身分權限**：主機被授權呼叫雲端 API 時（例如主機上的程式要寫物件儲存），業者經由中繼資料服務把代表主機身分的憑證交給主機上的程式——Oracle Cloud 叫 instance principal（權限由 dynamic group 加 policy 授予），AWS 是掛在主機上的 IAM role（經由 instance profile），Google Cloud 是掛在主機上的服務帳號。這份憑證帶著主機身分的全部權限，所以權限只給這台主機上的程式需要的那些
 
 ## 鄰卡
 

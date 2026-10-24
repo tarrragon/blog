@@ -6,7 +6,7 @@ weight: 5
 tags: ["infra", "cloud-providers", "gcp"]
 ---
 
-這個資料夾放 vendor 中立的概念落到 Google Cloud 上的實作，每一篇都對應一篇概念文章：管理通道的三層模型在 [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)，預算警示與停損的概念目前還寫在 GCP 那一篇裡（反應時間、兩種處置的判斷），vendor 中立的版本要從它抽出來放回 [運行期維運的成本管理](/operations/08-cost-management/)，記在那個模組的 Backlog。三篇的指令都在 GCP 測試專案上實跑過，實跑日期與未實跑的段落寫在各篇裡。
+這個資料夾放 vendor 中立的概念落到 Google Cloud 上的實作，每一篇都對應一篇概念文章：管理通道的三層模型在 [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)，預算警示與停損的概念目前還寫在 GCP 那一篇裡（反應時間、兩種處置的判斷），vendor 中立的版本要從它抽出來放回 [運行期維運的成本管理](/operations/08-cost-management/)，記在那個模組的 Backlog。篇中用到的建立 VM 欄位（網路與防火牆規則、登入、guest agent 與中繼資料）的 vendor 中立說明在 [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/)，試用額度與試用結束後的處置在 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。三篇的指令都在 GCP 測試專案上實跑過，實跑日期與未實跑的段落寫在各篇裡。
 
 ## 章節文章
 

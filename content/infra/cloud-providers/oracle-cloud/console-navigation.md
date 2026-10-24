@@ -1,5 +1,5 @@
 ---
-title: "Oracle Cloud 主控台導覽：頂端列、導覽選單的分類與常用頁面的路徑"
+title: "Oracle Cloud 主控台導覽：頂端列、導覽選單的分類、清單頁的 compartment 篩選器與常用頁面的路徑"
 date: 2026-10-24
 description: "Oracle Cloud 主控台頂端列各個按鈕（導覽選單、搜尋、區域、Cloud Shell、人像選單）做什麼，導覽選單各分類底下有哪些項目，清單頁的 compartment 篩選器，以及建立主機、網路、Bastion、預算、稽核紀錄、配額這些常用頁面在選單上的實際路徑"
 weight: 1
@@ -18,7 +18,7 @@ tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "console"]
 - **Developer tools**：兩個項目，Cloud Shell（瀏覽器裡的終端機，已經裝好 OCI CLI 並以目前登入的身分驗證，不必在本機安裝 CLI 或設定金鑰）與 Code Editor。
 - **通知（鈴鐺）**：Oracle 的公告，包括排定的硬體維護。
 - **說明（問號）**：文件與支援的入口。
-- **人像選單**：從上到下是目前的使用者名稱、identity domain（tenancy 裡存放使用者與群組的分區，新帳號只有 `Default` 一個）、tenancy 名稱（tenancy 是 Oracle Cloud 的帳號，一個客戶一個）、介面語言、User settings（個人的密碼、多因素驗證、API 簽章金鑰與其他憑證）、Console settings、Sign out。點 tenancy 名稱進入 Tenancy Details 頁，那裡看得到 home region 與 tenancy 的 OCID。
+- **人像選單**：從上到下是目前的使用者名稱、identity domain（tenancy 裡存放使用者與群組的分區，新帳號只有 `Default` 一個）、tenancy 名稱（tenancy 是 Oracle Cloud 的帳號，一個客戶一個）、介面語言、User settings（個人的密碼、多因素驗證、API 簽章金鑰與其他憑證）、Console settings、Sign out。點 tenancy 名稱進入 Tenancy Details 頁，那裡看得到 home region 與 tenancy 的 OCID（Oracle Cloud ID：Oracle Cloud 給每個資源的唯一識別碼，以 `ocid1.` 開頭，CLI 與 API 用它指定要操作的對象）。
 
 Free Tier 帳號在試用期間，頂端列上方另有一條「Free Tier account」的橫幅，說明試用結束後只剩 Always Free 資源，並附 Upgrade 連結。
 
@@ -48,24 +48,24 @@ Compartment 是 tenancy 底下用來分組資源與套用權限政策的容器�
 
 ## 常用頁面的路徑
 
-| 要做的事                       | 選單路徑                                                                                |
-| ------------------------------ | --------------------------------------------------------------------------------------- |
-| 建立、停止、刪除主機           | Compute → Instances                                                                     |
-| 建立 VCN、subnet，改防火牆規則 | Networking → Virtual cloud networks → 點進某個 VCN                                      |
-| 保留一個固定的公開 IP          | Networking → IP management → Reserved public IPs                                        |
-| 找刪除主機後留下的開機磁碟     | Storage → Block Storage → Block Volumes，再從頁面頂端的 Storage 子選單切到 Boot Volumes |
-| 建立 Bastion、開 SSH session   | Identity & Security → Bastion                                                           |
-| 建立實驗用的 compartment       | Identity & Security → Identity → Compartments                                           |
-| 加使用者、群組                 | Identity & Security → Identity → Domains → `Default`                                    |
-| 寫權限政策                     | Identity & Security → Identity → Policies                                               |
-| 開多因素驗證、建 API 簽章金鑰  | 人像選單 → User settings                                                                |
-| 設預算與警示                   | Billing & Cost Management → Cost Management → Budgets                                   |
-| 看這個月花了多少               | Billing & Cost Management → Cost Management → Cost Analysis                             |
-| 查誰做了什麼操作               | Observability & Management → Logging → Audit                                            |
-| 看主機指標、設告警             | Observability & Management → Monitoring                                                 |
-| 查某種資源的上限與用量         | Governance & Administration → Tenancy Management → Limits, quotas and usage             |
-| 看 home region 與 tenancy OCID | Governance & Administration → Account Management → Tenancy Details                      |
-| 訂閱其他區域（付費帳戶限定）   | Governance & Administration → Account Management → Region Management                    |
+| 要做的事                                                       | 選單路徑                                                                                                                     |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 建立、停止、刪除主機                                           | Compute → Instances                                                                                                          |
+| 建立 VCN、subnet，改防火牆規則                                 | Networking → Virtual cloud networks → 點進某個 VCN                                                                           |
+| 保留一個固定的公開 IP                                          | Networking → IP management → Reserved public IPs                                                                             |
+| 找刪除主機後留下的開機磁碟                                     | Storage → Block Storage → Block Volumes，再從頁面頂端的 Storage 子選單切到 Boot Volumes                                      |
+| 建立 Bastion、在它底下建立登入主機用的 SSH 工作階段（session） | Identity & Security → Bastion                                                                                                |
+| 建立實驗用的 compartment                                       | Identity & Security → Identity → Compartments                                                                                |
+| 加使用者、群組                                                 | Identity & Security → Identity → Domains → `Default`                                                                         |
+| 寫權限政策                                                     | Identity & Security → Identity → Policies                                                                                    |
+| 開多因素驗證、建 API 簽章金鑰                                  | 人像選單 → User settings；API 簽章金鑰在 Token and keys 分頁，或頁面左下角 Resources 區段的 API Keys（官方文件兩種寫法都有） |
+| 設預算與警示                                                   | Billing & Cost Management → Cost Management → Budgets                                                                        |
+| 看這個月花了多少                                               | Billing & Cost Management → Cost Management → Cost Analysis                                                                  |
+| 查誰做了什麼操作                                               | Observability & Management → Logging → Audit                                                                                 |
+| 看主機指標、設告警                                             | Observability & Management → Monitoring                                                                                      |
+| 查某種資源的上限與用量                                         | Governance & Administration → Tenancy Management → Limits, quotas and usage                                                  |
+| 看 home region 與 tenancy OCID                                 | Governance & Administration → Account Management → Tenancy Details                                                           |
+| 訂閱其他區域（付費帳戶限定）                                   | Governance & Administration → Account Management → Region Management                                                         |
 
 試用與 Free Tier 帳號只能有一個訂閱區域（就是 home region），升級成 Pay As You Go 之後還要先在 Limits, quotas and usage 申請提高 Subscribed region count，才能在 Region Management 訂閱第二個區域。
 
@@ -73,6 +73,4 @@ Compartment 是 tenancy 底下用來分組資源與套用權限政策的容器�
 
 ## 延伸閱讀：各頁面背後的概念
 
-- [雲端主控台的管理領域](/infra/cloud-providers/console-areas/)：這些分類各自管什麼，以及 Google Cloud 與 AWS 的對應名稱
-- [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)：從 Compute → Instances 進去之後，建立頁每個分頁的取值
-- [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)：Tenancy Details 頁上 home region 的意義
+這些分類各自管什麼、Google Cloud 與 AWS 的對應名稱，見 [雲端主控台的管理領域](/infra/cloud-providers/console-areas/)；從 Compute → Instances 進去之後建立頁每個分頁的取值，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)；Tenancy Details 頁上 home region 的意義與它對 Always Free 額度的限制，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。

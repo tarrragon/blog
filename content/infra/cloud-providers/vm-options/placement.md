@@ -1,7 +1,7 @@
 ---
 title: "位置：區域、可用區與故障域"
 date: 2026-10-24
-description: "建立虛擬機時的區域、可用區與故障域各自代表多大的範圍、各自決定主機的哪些性質（延遲、出口 IP 的國家、可用機型與容量、硬體故障的影響範圍），以及哪一層建立後就不能改"
+description: "雲端主機的區域、可用區與故障域各自代表多大的範圍、各自決定主機的哪些性質（延遲、出口 IP 的國家、可用機型與容量、硬體故障的影響範圍），以及哪一層建立後就不能改"
 weight: 1
 tags: ["infra", "cloud-providers", "vm", "region", "availability-zone"]
 ---
@@ -10,10 +10,11 @@ tags: ["infra", "cloud-providers", "vm", "region", "availability-zone"]
 
 ## 區域（region）：主機在哪個城市
 
-區域是一個地理位置上的資料中心群。Oracle Cloud 的區域識別碼帶城市（`ap-tokyo-1`），Google Cloud 與 AWS 用洲別、方位加編號（`asia-east1` 在台灣、`ap-northeast-1` 在東京），城市要查各家的區域對照表。區域決定主機的三種性質：
+區域是一個地理位置上的資料中心群。Oracle Cloud 的區域識別碼帶城市（`ap-tokyo-1`），Google Cloud 與 AWS 用洲別、方位加編號（`asia-east1` 在台灣、`ap-northeast-1` 在東京），城市要查各家的區域對照表。區域決定主機的下面這幾種性質：
 
 - **延遲**：從使用者所在地連到主機的延遲主要由距離決定，量級上同一洲之內是幾十毫秒、跨洲是一兩百毫秒；實際的值用各家提供的區域延遲測試頁量，或從自己的電腦對那一區的服務端點量往返時間。
 - **出口 IP 屬於哪個國家**：主機對外連線時，對方看到的來源 IP 登記在區域所在的國家。要讓連線看起來從某個國家發出（例如自架 VPN），只有那個國家的區域符合。
+- **資料受哪個國家的法律管轄**：主機與它的磁碟實體上放在區域所在的國家，裡面的資料受那個國家的法規管轄。服務有資料落地的要求（個人資料不出境、產業法規指定存放地）時，能選的區域只剩那個國家或那個法域裡的區域。
 - **能選的機型與服務**：區域之間提供的機型不同，新開的區域常常缺幾種舊機型。一個區域實際提供哪些機型，要在那一區的建立頁或 API 上查，不能從另一區推。
 
 主機建好之後不能搬到另一個區域。要換區域，做法是在新區域建一台新主機、把資料搬過去，再刪掉舊的。
@@ -26,7 +27,7 @@ tags: ["infra", "cloud-providers", "vm", "region", "availability-zone"]
 
 單一台主機選哪個可用區，影響的是兩件事：
 
-- **容量**：免費機型與熱門機型的容量是按可用區分配的。一個可用區回報容量不足時，同一區域的另一個可用區可能還有。只有一個可用區的區域少了這條退路——Oracle Cloud 的商用區域多數只有一個可用區，有三個可用區的只有少數幾個，名單與查證日期見 [Availability Zone（可用區）](/infra/knowledge-cards/availability-zone/) 卡；業者開新區域時這份名單會變，選區之前回到官方〈Regions and Availability Domains〉的區域表看一次。
+- **容量**：免費機型與熱門機型的容量是按可用區分配的。一個可用區回報容量不足時，同一區域的另一個可用區可能還有。換可用區是容量不足時的退路之一，其他退路（等待重試、不指定故障域、改小規格、建立前查容量、換架構、可被收回的容量、預留容量、升級付費帳戶）在 Oracle Cloud 上的完整清單，連同哪幾項會計費，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈A1 容量不足時的退路〉。只有一個可用區的區域少了換可用區這條退路——Oracle Cloud 的商用區域多數只有一個可用區，有三個可用區的只有少數幾個，名單與查證日期見 [Availability Zone（可用區）](/infra/knowledge-cards/availability-zone/) 卡；業者開新區域時這份名單會變，選區之前回到官方〈Regions and Availability Domains〉的區域表看一次。
 - **磁碟與主機要在同一個可用區**：開機磁碟與區塊磁碟屬於某一個可用區，主機只能掛同一個可用區的磁碟。從保留下來的開機磁碟重建主機時，新主機要建在那顆磁碟所在的可用區。
 
 主機建好之後也不能換可用區，換的做法跟換區域相同。
@@ -39,7 +40,7 @@ tags: ["infra", "cloud-providers", "vm", "region", "availability-zone"]
 
 故障域的作用在兩台以上。同一個服務的兩台主機，區域有多個可用區時先分到不同可用區，因為可用區隔離的是整棟資料中心的電力與網路，範圍比故障域大（見 [Availability Zone（可用區）](/infra/knowledge-cards/availability-zone/) 的〈設計責任〉）；區域只有一個可用區時，才靠故障域把兩台放在不同的硬體上，一組硬體故障時只停一台。跨可用區的代價是兩台之間的流量多一段距離：AWS 與 Google Cloud 對跨可用區的流量另外計費，兩台之間做同步複製時延遲也比同一個可用區裡高。
 
-Oracle Cloud 允許建立之後修改故障域。AWS 與 Google Cloud 沒有故障域這個欄位，對應的功能是放置政策（AWS 的 placement group 用 spread 策略、Google Cloud 的 spread placement policy），作用同樣是讓一組主機分散到不同的實體硬體上。兩家都能套用到既有的主機：AWS 要先停止主機才能把它換進或移出 placement group，Google Cloud 的 spread placement policy 在官方說明的條件下可以不停機套用到既有的主機。
+Oracle Cloud 允許建立之後修改故障域。AWS 與 Google Cloud 沒有故障域這個欄位，對應的功能是放置政策（AWS 的 placement group 用 spread 策略、Google Cloud 的 spread placement policy），作用同樣是讓一組主機分散到不同的實體硬體上。兩家都能套用到既有的主機：AWS 要先停止主機才能把它換進或移出 placement group，Google Cloud 的 spread placement policy 指定了多個 availability domain（官方的說明是彼此隔離、各自不同的一組硬體；它跟 Oracle Cloud 的 availability domain 同名、層級不同，Oracle Cloud 那一層對應的是可用區）時，官方說明可以不停機就套用到既有的主機；套用時 Compute Engine 可能要把主機搬到另一個 availability domain，搬的方式依主機的維護政策，是即時遷移或停止主機。
 
 ## 各家的欄位名稱：區域、可用區與故障域
 

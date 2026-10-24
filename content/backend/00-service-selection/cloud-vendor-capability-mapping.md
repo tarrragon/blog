@@ -37,7 +37,7 @@ tags: ["backend", "service-selection", "cloud", "vendor-mapping"]
 | Identity / IAM    | IAM                                  | IAM                         | Entra ID（前 AAD） + Azure RBAC         | 跨服務 policy、token lifetime、federation     |
 | CI/CD             | CodePipeline / CodeBuild             | Cloud Build / Cloud Deploy  | Azure Pipelines                         | 整合 Git 平台、執行環境彈性、計價單位         |
 
-這張表以全球 hyperscaler 三巨頭為主、不是市場全貌。**Oracle Cloud (OCI)** 在 enterprise / Java workload 跟金融受監管環境有顯著市佔；**Alibaba Cloud** 在亞太 / 跨境電商是主流；**IBM Cloud** 在金融 / 受監管環境仍存在；**Hetzner / DigitalOcean / Vultr** 在 cost-leader 區段提供完全不同的計價模型；**Sovereign cloud**（GDPR Schrems II 後在歐洲、JEDI / JWCC 在美國政府）是另一條獨立軸、跟資料主權合規綁定、比較對象不在這張表內。對照判讀邏輯（「對應 ≠ 等價」）可以同樣套用、但具體 vendor 名稱與差異維度要按目標廠商各自查證。
+這張表以全球 hyperscaler 三巨頭為主、不是市場全貌。**Oracle Cloud (OCI)** 在 enterprise / Java workload 跟金融受監管環境有顯著市佔；**Alibaba Cloud** 在亞太 / 跨境電商是主流；**IBM Cloud** 在金融 / 受監管環境仍存在；**Hetzner / DigitalOcean / Vultr** 在 cost-leader 區段提供完全不同的計價模型；**Sovereign cloud**（GDPR Schrems II 後在歐洲、JEDI / JWCC 在美國政府）是另一條獨立軸、跟資料主權合規綁定、比較對象不在這張表內。對照判讀邏輯（「對應 ≠ 等價」）可以同樣套用、但具體 vendor 名稱與差異維度要按目標廠商各自查證。本表對照的是服務層（某項後端能力在各家叫哪個服務）；主控台與建立主機頁那一層的對照另有專篇，涵蓋 Oracle Cloud、Google Cloud 與 AWS：各管理領域在三家主控台的選單名稱見 [雲端主控台的管理領域：身分、資源分組、運算、網路、儲存、費用、監控、稽核、安全服務與配額](/infra/cloud-providers/console-areas/)，建立虛擬機時各欄位的意義與三家的欄位名稱見 [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/)。
 
 ## 三家雲共同缺的能力分類
 

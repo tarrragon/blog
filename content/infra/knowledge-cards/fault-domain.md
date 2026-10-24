@@ -12,7 +12,7 @@ tags: ["infra", "knowledge-cards", "cloud", "availability"]
 
 故障域提供的是反親和性（anti-affinity）：把幾台主機刻意放在不同的實體硬體上，讓一次硬體事件不會讓它們同時停擺。它比[可用區](/infra/knowledge-cards/availability-zone/)小一層——可用區隔離的是整棟資料中心的電力與網路，故障域隔離的是同一棟裡的機櫃與實體主機。
 
-Oracle Cloud 以「故障域」這個名稱讓使用者在建立主機時直接選；AWS 與 Google Cloud 沒有對應的欄位名稱，同一個效果用放置政策取得：AWS 的 placement group（spread 策略）、Google Cloud 的 spread placement policy，作用都是讓一組主機分散到不同的實體硬體上。AWS 要先停止主機才能換進或移出 placement group，Google Cloud 可以把政策套用到既有的主機上。
+Oracle Cloud 以「故障域」這個名稱讓使用者在建立主機時直接選；AWS 與 Google Cloud 沒有對應的欄位名稱，同一個效果用放置政策取得：AWS 的 placement group（spread 策略）、Google Cloud 的 spread placement policy，作用都是讓一組主機分散到不同的實體硬體上。AWS 要先停止主機才能換進或移出 placement group。Google Cloud 的 spread placement policy 指定了多個 availability domain（官方說明是彼此隔離的一組硬體）時，可以不停機就套用到既有的主機，而套用時主機可能被搬到另一個 availability domain，搬的方式依主機的維護政策是即時遷移或停止主機。
 
 只有一台主機時，故障域沒有選擇的意義，那台主機總是只在一組硬體上。Oracle Cloud 建立頁的預設「讓 Oracle 選擇」會依當下容量挑一個，而手動指定會縮小可用的容量。
 

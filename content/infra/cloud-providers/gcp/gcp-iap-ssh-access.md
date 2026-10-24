@@ -362,7 +362,7 @@ gcloud compute firewall-rules create allow-app-to-db --network=default \
 
 ## SSH 金鑰在 GCP 上的管理位置：metadata 金鑰與 OS Login 的啟用順序與還原
 
-GCP 上把 SSH 公鑰交給 Linux VM 有兩種方式，分別對應[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)〈主機登入驗證的做法：SSH 金鑰怎麼發、怎麼收回〉裡的靜態公鑰與由中央服務決定的公鑰：metadata 金鑰寫在專案或 VM 的 metadata（掛在專案或 VM 上的鍵值設定）裡，由 VM 上的 guest agent（GCP 映像檔內建、把 metadata 同步進 VM 的常駐程式）寫進 `authorized_keys`；[OS Login](/infra/knowledge-cards/os-login/) 依 Google 帳號與 IAM role 決定誰能登入、能不能用 sudo。寫在專案 metadata 的公鑰對專案內每一台沒有啟用 OS Login 的 VM 都生效，成員離職時漏刪一把，那把金鑰就持續能登入整個專案，而沒啟用 OS Login 時 `gcloud compute ssh` 預設就是把公鑰寫進專案 metadata。兩者的機制與差別見 OS Login 卡，這一節處理啟用的順序與還原。
+GCP 上把 SSH 公鑰交給 Linux VM 有兩種方式，分別對應[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)〈主機登入驗證的做法：SSH 金鑰怎麼發、怎麼收回〉裡的靜態公鑰與由中央服務決定的公鑰：metadata 金鑰寫在專案或 VM 的 metadata（掛在專案或 VM 上的鍵值設定）裡，由 VM 上的 guest agent（GCP 映像檔內建、把 metadata 同步進 VM 的常駐程式）寫進 `authorized_keys`；[OS Login](/infra/knowledge-cards/os-login/) 依 Google 帳號與 IAM role 決定誰能登入、能不能用 sudo。寫在專案 metadata 的公鑰對專案內每一台沒有啟用 OS Login 的 VM 都生效，成員離職時漏刪一把，那把金鑰就持續能登入整個專案，而沒啟用 OS Login 時 `gcloud compute ssh` 預設就是把公鑰寫進專案 metadata。兩者的機制與差別見 OS Login 卡，這一節處理啟用的順序與還原。Oracle Cloud 與 AWS 上不放金鑰時由哪些服務登入、各自包辦管理通道的哪幾層，見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉。
 
 啟用 OS Login 之後，VM 不再接受 metadata 裡的金鑰，原本靠 metadata 金鑰登入的管理員與自動化工具會立刻連不進去。所以啟用之前先把登入角色授予每一位管理員與每一個要登入 VM 的服務帳號（CI、Ansible）；VM 掛著服務帳號時（`gcloud compute instances describe` 輸出的 `serviceAccounts` 欄不是空的，用 Google Cloud 控制台以預設值建立的 VM 會掛上 Compute Engine 預設服務帳號），每一個登入者另外需要那個服務帳號的 `roles/iam.serviceAccountUser`，否則啟用之後連不進去：
 
