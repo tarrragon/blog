@@ -43,9 +43,9 @@
 
 預算 alert 只寄通知，不會停止扣款；雲端帳單的「支出上限」功能通常只涵蓋少數服務（GCP 的強制執行支出上限只涵蓋 Cloud Run、Cloud Run functions、Gemini API、Vertex AI 這類，Compute Engine 與 GKE 不在內），而且一個上限只涵蓋一個專案裡的一項服務、暫停到預算期間結束為止、持續性資源的固定費用不暫停。服務出錯（無限重試、遞迴觸發）或被濫用（盜用的 API key、被拿去挖礦的 VM）時，費用的增長速度可以遠快於人工處理，這時涵蓋所有服務的做法是**預算通知觸發程式、程式把專案從帳單帳戶解除連結**。
 
-**決策點**：停損切下去，專案裡所有服務一起停擺，等於一次自己造成的全面停機；雲端文件另外警告停用帳單時資源可能被永久刪除。所以先問：「被濫用而多付一筆費用」與「服務全停、資料可能遺失」哪一個代價高？小型專案、測試環境、個人專案通常是被濫用的費用代價高，建停損；正式服務多半是全面停機的代價高，改用警示加值班處理，或只對高風險專案建停損。
+**決策點**：停損切下去，專案裡所有服務一起停擺，等於一次自己造成的全面停機；雲端文件另外警告停用帳單時資源可能被永久刪除。判斷的單位是專案，逐個專案問停機影響誰、資料能不能重建：停機沒有人受影響、資料都能重建（沙箱、只跑實驗的專案）→ 建停損；停機可以接受而資料不能遺失（共用 staging）→ 改成只停止花錢的資源（函式停 VM、MIG 縮到 0，同一條鏈只換函式與角色）；停機會影響使用者（正式服務，不論規模）→ 警示加即時限制（配額、最大執行個體數），或把高風險的工作負載拆到另一個專案再對那個專案建停損。
 
-**GCP 的做法（已實測）**：接停損的預算與一般預算警示分開建。範圍用 `--filter-projects=projects/<project>` 限定在要停用的那一個專案（不限定時 `costAmount` 是整個帳單帳戶的合計，別的專案的花費也會觸發停損），金額設成這個專案本期能承受的最高花費，而不是預期花費。帳戶有大額抵免時加 `--credit-types-treatment=exclude-all-credits`，否則抵免用完前花費接近 0、停損不會觸發。
+**GCP 的做法**（停損鏈已實測；`--filter-projects`、`--credit-types-treatment` 與恢復指令依 gcloud 說明，未實跑）：接停損的預算與一般預算警示分開建。範圍用 `--filter-projects=projects/<project>` 限定在要停用的那一個專案（不限定時 `costAmount` 是整個帳單帳戶的合計，別的專案的花費也會觸發停損），金額設成這個專案本期能承受的最高花費，而不是預期花費。帳戶有大額抵免時加 `--credit-types-treatment=exclude-all-credits`，否則抵免用完前花費接近 0、停損不會觸發。
 
 ```bash
 # 預算通知送到 Pub/Sub topic；設定時會自動授權 billing-budget-alert@system.gserviceaccount.com 發布
@@ -80,7 +80,7 @@ gcloud run services add-iam-policy-binding <name> --region=<region> --member=ser
 **驗收**：部署成功、狀態 `ACTIVE` 不算完成。`run.invoker`、`browser` 與 `--retry` 三項缺任何一個，停損都會在看似正常的狀態下失效。驗收分兩段，見 [protection-proves-itself-by-firing](../principles/protection-proves-itself-by-firing.md)：
 
 1. **topic 之前**：等第一則真實的預算通知，查函式紀錄裡的 `received`，確認 `budgetDisplayName` 是接停損的預算、`costAmount` 與帳單報表上這個專案本期的費用相符（接近 0 而報表不是，就是抵免或範圍設錯）。
-2. **topic 之後**：超出預算那一則會實際停用帳單、可能刪除資料，所以只在專案還沒有正式流量與要保留的資料時做；已上線的專案，把同一份函式部署成 `TARGET_PROJECT_ID` 指向可拋棄專案的複本來做，正式專案只用權限檢查工具確認那兩個權限。先發低於預算的那一則（`gcloud pubsub topics publish budget-alerts --message='{"costAmount": <值>, "budgetAmount": <預算>}'`，`<值>` 低於 `<預算>`），確認函式紀錄有 `action=none`；再發 `<值>` 不低於 `<預算>` 的那一則，看到 `billingEnabled` 變成 `false`。最後用 `gcloud billing projects link <project> --billing-account=<billing-account-id>` 重新連結，連結完成才算驗收結束。
+2. **topic 之後**：超出預算那一則會實際停用帳單、可能刪除資料，所以排在停機可以接受的時段做。專案有停用後不能遺失的資料時改用分段驗證：另部署一份換了函式名稱與 topic 的複本（例如 `budget-killswitch-test`、`budget-alerts-test`），`TARGET_PROJECT_ID` 指向可拋棄的空專案、兩個角色綁在那個空專案上，對複本的 topic 發訊息——沿用正式名稱會蓋掉正式函式，發到正式 topic 會停掉正式專案；正式專案只用 Policy Troubleshooter 確認函式的服務帳號持有 `resourcemanager.projects.deleteBillingAssignment` 與 `resourcemanager.projects.get`。先發低於預算的那一則（`gcloud pubsub topics publish budget-alerts --message='{"costAmount": <值>, "budgetAmount": <預算>}'`，`<值>` 低於 `<預算>`），確認函式紀錄有 `action=none`；再發 `<值>` 不低於 `<預算>` 的那一則，看到 `billingEnabled` 變成 `false`。最後用 `gcloud billing projects link <project> --billing-account=<billing-account-id>` 重新連結，連結完成才算驗收結束。
 
 ---
 

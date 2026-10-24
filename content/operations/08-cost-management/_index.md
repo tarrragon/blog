@@ -10,14 +10,22 @@ tags: ["devops", "cost-management", "cloud-cost", "reserved-instance", "spot-ins
 
 ## 章節
 
-| 章節                                                                                               | 回答什麼問題                                                       |
-| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| [計費模式理解](/operations/08-cost-management/billing-models/)                                     | 帳單維度、承諾模式、egress 這類隱藏成本                            |
-| [Right-sizing](/operations/08-cost-management/right-sizing/)                                       | 找過度配置、downsizing 不能砍過膝點、機型世代                      |
-| [成本監控與告警](/operations/08-cost-management/cost-monitoring/)                                  | 歸因、異常告警、showback vs chargeback                             |
-| [開發環境成本控制](/operations/08-cost-management/dev-environment-cost/)                           | 排程關機、ephemeral 環境、CI 跑 spot、per-team 上限                |
-| [自架 vs 雲端的成本交叉點](/operations/08-cost-management/self-hosted-vs-cloud/)                   | 兩條成本曲線、部署光譜、人力與 lock-in                             |
-| [GCP 上的雲端費用失控防護](/operations/08-cost-management/spend-protection-gcp-budget-killswitch/) | 預算警示的幣別與延遲、支出上限涵蓋的服務、自動停用帳單的建置與驗收 |
+| 章節                                                                                               | 回答什麼問題                                                                                                                             |
+| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| [計費模式理解](/operations/08-cost-management/billing-models/)                                     | 帳單維度、承諾模式、egress 這類隱藏成本                                                                                                  |
+| [Right-sizing](/operations/08-cost-management/right-sizing/)                                       | 找過度配置、downsizing 不能砍過膝點、機型世代                                                                                            |
+| [成本監控與告警](/operations/08-cost-management/cost-monitoring/)                                  | 歸因、異常告警、showback vs chargeback                                                                                                   |
+| [開發環境成本控制](/operations/08-cost-management/dev-environment-cost/)                           | 排程關機、ephemeral 環境、CI 跑 spot、per-team 上限                                                                                      |
+| [自架 vs 雲端的成本交叉點](/operations/08-cost-management/self-hosted-vs-cloud/)                   | 兩條成本曲線、部署光譜、人力與 lock-in                                                                                                   |
+| [GCP 上的雲端費用失控防護](/operations/08-cost-management/spend-protection-gcp-budget-killswitch/) | 預算警示的範圍、抵免與通知對象、支出上限涵蓋的服務、由預算通知觸發的兩種處置（解除帳單連結、只停止花錢的資源）的建置、驗收與停用後的恢復 |
+
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | 類型 | 前置條件                           | 規模 |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------------------------------- | ---- |
+| 〈GCP 上的雲端費用失控防護〉標「未實跑」部分的實機驗證：`--filter-projects` 與 `--credit-types-treatment` 的預算、通知管道（電子郵件類型）、只停止花錢的資源的函式與角色、管理專案架構、分段驗證（換名稱與主題的複本、Policy Troubleshooter）、解除連結之後的兩種恢復順序（含帳單停用期間能否撤銷金鑰）、心跳監看的縮窗驗收、函式的解碼錯誤處理；另查 `exclude-all-credits` 是否把免費方案也算進花費、停用期間留在訂閱裡的訊息重新連結後是否重送，驗完把標記改成實測 | 主章 | 使用者同意再停用一次測試專案的帳單 | 中   |
 
 ## 跨分類引用
 

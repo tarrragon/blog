@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.10.4 — 多輪審查 Round 4 修正：〈支出停損〉的決策點改成依停機影響誰與資料能否重建判斷，補上只停止花錢的資源那一格；驗收改成排在停機可接受的時段、有不能遺失的資料才用分段驗證，複本要換函式名稱與 topic，寫出 Policy Troubleshooter 要查的兩個權限；「已實測」標籤改成寫明哪些未實跑。baseline-protections 的管理 port 列縮短並指向 security。觸發詞拿掉 IAP、OS Login、救援入口（排查連線改由 linux-install-debug 承接）。principle 卡：完整證據、合成觸發的時機改成停機可接受的時段、中途注入一列標明是推導、靜默監看改名心跳監看。
+
 **Version**: 1.10.3 — 多輪審查 Round 3 修正：〈支出停損〉示範改成另建接停損的預算（create，不接到既有警示預算）、一個 topic 只接一個預算、金額扣掉延遲期間的花費；驗收分成 topic 之前（第一則真實通知對照帳單報表）與 topic 之後兩段，超出預算那一則只在未上線專案做、已上線改用可拋棄複本，測完重新連結。〈管理通道〉：外部 IP 只在管理用途時移除；底線第 8 條與 baseline-protections 的 Kubernetes API 改用 IAM 端點或只列維運與 CI 的 authorized networks；舊規則停用前先觀察、盤點 metadata 金鑰、寫出回退指令；離職移出群組而非移除群組綁定；救援入口測完關回；logging 初期的假陰性註解。principle 卡補上第四個位置「測試從中途注入」、處置指令的假陰性、事件型觸發來源的靜默監看與合成觸發有損害時的分段驗證。觸發詞的 IAP 改成 GCP IAP。
 
 **Version**: 1.10.2 — 多輪審查 Round 2 修正：capacity-performance〈支出停損〉補上接停損的預算要用 --filter-projects 限定單一專案、金額設成能承受的上限、大額抵免時用 exclude-all-credits；指令補 --billing-project、--condition=None、--max-instances=1、TARGET_PROJECT_ID 與 run.invoker 的 --region；實測段壓成三個可執行的結論並補上超支停用後的恢復順序。security〈管理通道〉：OS Login 範例先綁登入角色再啟用；Kubernetes 節點除錯另立一條、分開 debug profile 與 PSA 兩個同名的 baseline；離職完成判斷指名 pgrep。

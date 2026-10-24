@@ -143,15 +143,15 @@ load average 計的是正在跑加上排隊等待的執行緒。Linux 把等磁�
 
 ## 結束某個使用者的所有工作階段（離職、帳號外洩）：以 `pgrep` 為準
 
-撤銷登入權限（移除 IAM 角色、停用帳號、刪 `authorized_keys`）只會擋住之後的新登入，已經連著的工作階段不受影響，要另外在主機上結束。順序是先撤銷、再結束——反過來做，對方可以在兩步之間重新登入。
+撤銷登入權限（移除 IAM 角色、停用帳號、刪 `authorized_keys`）只會擋住之後的新登入，已經連著的工作階段不受影響，要另外在主機上結束。撤銷與結束都要做，而最後一次結束要排在撤銷生效之後——IAM 角色的移除通常要幾分鐘才生效，在那之前結束，對方還能重新登入。正在造成損害時先結束一次，撤銷生效之後再照下面的步驟結束一次。
 
-`<user>` 必須是那個人專屬的帳號。共用帳號（`ubuntu`、`deploy`、跑服務的帳號）不用 `-u` 結束，那會連服務行程一起殺掉；改成輪替該帳號的憑證，再用 `pgrep -u <user> -a` 找出那個人的 `sshd:` 行程，逐個 `kill`。
+`<user>` 必須是那個人專屬的帳號。共用帳號（`ubuntu`、`deploy`）不跑下面的 `loginctl terminate-user` 與 `pkill -u`，兩者都會連服務行程一起結束；改成先輪替該帳號的憑證，再結束這個帳號全部的互動工作階段（`pgrep -u <user> -a` 裡以 `sshd: <user>@` 開頭的行程），服務行程不動。共用帳號上分不出哪個工作階段屬於離職者，其他人用新憑證重新登入即可。
 
 1. `sudo loginctl terminate-user <user>`：結束 systemd-logind 登記過的這個使用者的全部工作階段（互動與非互動都算）。OS Login 的帳號名稱是 Google 帳號轉成的形式（例如 `alice_example_com`）。
 2. `pgrep -u <user> -a`：**用這一步判斷有沒有結束**，不用 `loginctl` 的回傳值。`pam_systemd` 在登入時登記失敗（`journalctl -b | grep "Failed to create session"` 有命中）的連線，logind 的清單裡沒有它們，這時 `terminate-user` 回報 `is not logged in or lingering`、exit 1，而那個使用者的行程仍在執行；反過來，exit 0 也只代表登記過的工作階段結束了。
 3. 還有剩下的行程：`sudo pkill -KILL -u <user>`，再跑一次 `pgrep -u <user> -a`，輸出是空的才算完成。
 
-`loginctl list-sessions` 查不到某個使用者、而 `pgrep -u` 看得到他的 `sshd: <user>@notty` 這類行程，就是登記失敗的徵兆。出現這個徵兆的機器，之後的登入也可能一樣登記不到，所以在那台機器上處理離職時，步驟 1 可以省略、直接做步驟 3；步驟 2 的 `pgrep` 確認在任何機器上都不省略。
+`loginctl list-sessions` 查不到某個使用者、而 `pgrep -u` 看得到他的 `sshd: <user>@notty` 這類行程，就是登記失敗的徵兆。
 
 ## 被 kill / OOM / exit 137：查 kernel log
 

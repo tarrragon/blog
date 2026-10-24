@@ -1,9 +1,9 @@
 ---
 name: system-design
-description: "接到新系統、新功能或服務升級需求時的系統設計流程：需求盤點、從業務推估容量、依改動成本決定定案／先做／延後、延後設計的觸發指標，涵蓋後端前端與基礎設施，含功能開關、A/B 測試、對外 API 改版、行動 App 上架與先擴充才能上線的變更。Triggers: 系統設計, system design, 過度設計, 何時擴充, feature flag, A/B test, 上線計畫, App 上架, 熱更新, 管理通道, SSH 對外開放, 預算警示, 支出停損"
+description: "接到新系統、新功能或服務升級需求時的系統設計流程：需求盤點、從業務推估容量、依改動成本決定定案／先做／延後、延後設計的觸發指標，涵蓋後端前端與基礎設施，含功能開關、A/B 測試、對外 API 改版、行動 App 上架與先擴充才能上線的變更。Triggers: 系統設計, system design, 過度設計, 何時擴充, feature flag, A/B test, 上線計畫, App 上架, 熱更新, 管理通道, 支出停損"
 metadata:
   portable: true
-  version: 0.13.3
+  version: 0.13.4
 ---
 
 # System Design
