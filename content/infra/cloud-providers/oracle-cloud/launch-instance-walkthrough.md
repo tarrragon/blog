@@ -20,7 +20,7 @@ tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "vm", "free-tier"]
 | Capacity type         | On-demand                                    | Always Free 以隨用隨付計算；preemptible 會被收回，見 [機型與映像檔](/infra/cloud-providers/vm-options/shape-and-image/) |
 | Fault domain          | Let Oracle choose the best fault domain      | 單一台主機指定故障域沒有好處，還會縮小可用容量                                                                          |
 | Image                 | Canonical Ubuntu 24.04（build 2026.09.18-0） | 平台映像，架構跟著機型選 aarch64                                                                                        |
-| Shape                 | `VM.Standard.A1.Flex`，1 OCPU、6 GB          | Always Free 上限是 2 OCPU、12 GB，先用一半，不夠再加（加要重開機，不必重建）                                            |
+| Shape                 | `VM.Standard.A1.Flex`，1 OCPU、6 GB          | Always Free 上限是 2 OCPU、12 GB，先用一半，另一半留給第二台主機；之後要加大不必重建，代價是重開機                      |
 
 「Change shape」的視窗依處理器分欄。這一區的 Ampere 欄有 `VM.Standard.A1.Flex` 並標示 Always Free-eligible；AMD 欄只有 `VM.Standard.E5.Flex`，沒有 Always Free 的 `VM.Standard.E2.1.Micro`。E5.Flex 不在免費額度內，選了會照一般價格計費。區域之間提供的機型不同，這一點見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。
 
@@ -39,12 +39,12 @@ Secure Boot、Measured Boot、Trusted Platform Module 三項預設都是 Disable
 | Private IPv4 address                     | Automatically assign                             |
 | Automatically assign public IPv4 address | 關閉（private subnet 不允許公開 IP，開關是灰的） |
 | VNIC name                                | 留空（顯示用，之後可以改）                       |
-| DNS record                               | Yes                                              |
+| DNS record                               | Yes（同一個 VCN 裡的其他主機可以用名稱連它）     |
 | Use network security groups              | No                                               |
 
 這一頁實測卡住的地方是 VCN 下拉選單：它只列出「Virtual cloud network compartment」那一欄選定的 compartment 裡的 VCN，而那一欄預設停在 root compartment。`verify-vcn` 建在 `blog-verify`，所以要先把那一欄切過去，選單裡才會出現它。
 
-選「Create new virtual cloud network」會建一個新的 VCN，它帶的預設 security list 對 `0.0.0.0/0` 開放 22 port，見 [網路](/infra/cloud-providers/vm-options/networking/) 的〈預設防火牆規則對外開放了 22 port〉。
+選「Create new virtual cloud network」會建一個新的 VCN，它帶的預設 security list 對 `0.0.0.0/0` 開放 22 port，見 [網路](/infra/cloud-providers/vm-options/networking/) 的〈Oracle Cloud 預設 security list 的入站規則〉。
 
 ## SSH keys
 
@@ -56,7 +56,7 @@ Secure Boot、Measured Boot、Trusted Platform Module 三項預設都是 Disable
 
 ## Management：Oracle Cloud Agent 與其他進階選項
 
-建立頁的摘要上，Oracle Cloud Agent 的預設是 Custom Logs Monitoring、Compute Instance Run Command、Compute Instance Monitoring、Cloud Guard Workload Protection 四項開啟，Bastion 與其餘 plugin 關閉。官方的 plugin 說明寫著 Custom Logs Monitoring 不支援 A1 機型，而建立頁上它在 A1 主機的預設值仍是開啟。
+建立頁的摘要上，Oracle Cloud Agent 的預設是 Custom Logs Monitoring、Compute Instance Run Command、Compute Instance Monitoring、Cloud Guard Workload Protection 四項開啟，Bastion 與其餘 plugin 關閉。官方的 plugin 說明頁對 Custom Logs Monitoring 前後不一致：頁面上的註記寫它不支援 A1 機型，同一頁的代理程式版本紀錄（1.29.0）寫已經支援 Arm 處理器；建立頁上它在 A1 主機的預設值是開啟。
 
 這次要改的只有一項：**把 Bastion 打開**。沒有放 SSH 金鑰的主機只能經由 Bastion 的 managed SSH session 登入，而這個 plugin 預設關閉。漏開時不必重建，主機建好之後可以在主機頁面的 Oracle Cloud Agent 分頁打開，官方說明最多 10 分鐘生效。
 
@@ -79,8 +79,9 @@ oci compute instance launch \
   --auth security_token
 ```
 
+- `--compartment-id`、`--subnet-id`：compartment 與 subnet 的 OCID，在主控台各自的詳細頁複製，或用 `oci iam compartment list` 與 `oci network subnet list --compartment-id <compartment 的 OCID>` 查。OCID 是什麼見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。
 - `--availability-domain`：AD 的完整名稱帶有 tenancy 專屬的前綴，用 `oci iam availability-domain list` 查，不能只寫 `AD-1`。
-- `--image-id`：映像檔的 OCID 每個區域不同、每次更新都會換，用 `oci compute image list --compartment-id <tenancy 的 OCID> --operating-system "Canonical Ubuntu" --shape VM.Standard.A1.Flex` 查最新的那一個；加了 `--shape` 回傳的就只有 aarch64 的映像檔。
+- `--image-id`：映像檔的 OCID 每個區域不同、每次更新都會換，用 `oci compute image list --compartment-id <tenancy 的 OCID> --operating-system "Canonical Ubuntu" --shape VM.Standard.A1.Flex` 查最新的那一個；這裡的 `--compartment-id` 填 tenancy 的 OCID 而不是實驗用的 compartment，因為平台映像列在 tenancy 的 root 層；加了 `--shape` 回傳的就只有 aarch64 的映像檔。
 - `--agent-config`：只列出要改的 plugin，其餘維持預設。這裡把 Bastion 設成 `ENABLED`。
 - 沒有給 `--ssh-authorized-keys-file`，等同主控台的 No SSH keys。
 
@@ -94,7 +95,7 @@ oci compute instance launch \
 Out of capacity for shape VM.Standard.A1.Flex in availability domain AD-1. Create the instance in a different availability domain or try again later.
 ```
 
-意思是這個 AD 裡跑 A1 的實體主機當下沒有空出來的資源，跟填的設定無關；同一段時間用 CLI 送出的請求回的是 `InternalError: Out of host capacity.`，偶爾是 `429 TooManyRequests`。訊息建議的兩條路在這一區都用不上：這一區只有一個 AD 可以換，fault domain 也已經是讓 Oracle 選。剩下的做法是隔一段時間再試，有人釋出資源時才會短暫空出位置。這次改用 CLI 每 5 分鐘重送一次同一組設定；重試結果與後續的 Bastion 登入測試記在本模組的 Backlog，完成後補進這一篇。
+意思是這個 AD 裡跑 A1 的實體主機當下沒有空出這個規格需要的資源；同一段時間用 CLI 送出的請求回的是 `InternalError: Out of host capacity.`，偶爾是 `429 TooManyRequests`。會影響容量的設定是 AD、fault domain 與規格大小：訊息建議換 AD，這一區只有一個 AD 可以換；Compute 的〈Known Issues〉頁另外建議不指定 fault domain（這次已經是讓 Oracle 選）與改用較小的規格。剩下的做法是隔一段時間再試，有人釋出資源時才會短暫空出位置。這次先以 90 秒的間隔重送，觸發限流之後改成每 5 分鐘一次；截至 2026-10-24，這組設定還沒有建立成功。
 
 ## 延伸閱讀：建立頁的概念與帳號層的限制
 

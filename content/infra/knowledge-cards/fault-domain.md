@@ -2,7 +2,7 @@
 title: "Fault Domain（故障域）"
 date: 2026-10-24
 description: "建立 Oracle Cloud 主機時看到 fault domain 欄位、要讓同一個服務的幾台主機不落在同一組實體硬體上，或所在區域只有一個可用區、要找可用區以外的隔離手段時，查故障域的範圍、它防的事件與各家對應的放置政策"
-weight: 103
+weight: 64
 tags: ["infra", "knowledge-cards", "cloud", "availability"]
 ---
 
@@ -12,13 +12,13 @@ tags: ["infra", "knowledge-cards", "cloud", "availability"]
 
 故障域提供的是反親和性（anti-affinity）：把幾台主機刻意放在不同的實體硬體上，讓一次硬體事件不會讓它們同時停擺。它比[可用區](/infra/knowledge-cards/availability-zone/)小一層——可用區隔離的是整棟資料中心的電力與網路，故障域隔離的是同一棟裡的機櫃與實體主機。
 
-Oracle Cloud 以「故障域」這個名稱讓使用者在建立主機時直接選；AWS 與 Google Cloud 沒有對應的欄位名稱，同一個效果用放置政策取得：AWS 的 placement group（spread 策略）、Google Cloud 的 spread placement policy，作用都是讓一組主機分散到不同的實體硬體上。
+Oracle Cloud 以「故障域」這個名稱讓使用者在建立主機時直接選；AWS 與 Google Cloud 沒有對應的欄位名稱，同一個效果用放置政策取得：AWS 的 placement group（spread 策略）、Google Cloud 的 spread placement policy，作用都是讓一組主機分散到不同的實體硬體上。AWS 要先停止主機才能換進或移出 placement group，Google Cloud 可以把政策套用到既有的主機上。
 
 只有一台主機時，故障域沒有選擇的意義，那台主機總是只在一組硬體上。Oracle Cloud 建立頁的預設「讓 Oracle 選擇」會依當下容量挑一個，而手動指定會縮小可用的容量。
 
 ## 可觀察訊號
 
-- 容量不足的錯誤訊息建議「不要指定 fault domain 再試一次」：指定故障域等於只接受那一個故障域裡的硬體，可用容量跟著變小
+- 建立主機時收到 `Out of host capacity`：Oracle Cloud 的 Compute〈Known Issues〉頁列的處置之一是不指定 fault domain 再建一次，因為指定故障域等於只接受那一個故障域裡的硬體，可用容量跟著變小
 - 同一個服務的兩台主機在主機詳細資訊裡顯示同一個 `FAULT-DOMAIN-<N>`：一次硬體維護可能同時重開兩台
 - 區域只有一個可用區：跨可用區做不到，故障域是同一個區域內剩下的硬體隔離手段
 

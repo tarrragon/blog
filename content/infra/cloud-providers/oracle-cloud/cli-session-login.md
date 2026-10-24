@@ -8,14 +8,14 @@ tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "cli", "authentication
 
 這篇整理在 macOS 上安裝 OCI CLI 之後，讓它取得操作 tenancy 的身分的兩種做法。範圍從 `oci` 指令裝好開始，到第一條查詢指令回傳資料為止；tenancy、home region 與主控台登入欄位見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。實測環境是 Homebrew 安裝的 OCI CLI 3.95.1，日期 2026-10-24。
 
-## CLI 拿什麼證明自己是誰
+## CLI 的兩種身分驗證：session token 與 API 簽章金鑰
 
 OCI 的 API 不收帳號密碼。CLI 送出的每一個請求都用一把私鑰簽章，OCI 用對應的公鑰驗證簽章、再查這把公鑰屬於哪個使用者，以那個使用者的權限執行請求。兩種做法的差別在這對金鑰從哪裡來、公鑰怎麼讓 OCI 認得：
 
 - **Session token**：CLI 在本機產生一對臨時金鑰，開瀏覽器讓使用者登入主控台；登入成功後 OCI 簽發一個綁定這把臨時公鑰的 token，token 過期之後這對金鑰就沒有用了。
 - **API 簽章金鑰**：使用者在主控台把一把公鑰登記到自己的帳號下，之後持有對應私鑰的程式都能以這個使用者的身分呼叫 API，直到公鑰被刪除為止。
 
-兩者在本機都會留下一個私鑰檔，差別在私鑰檔外洩之後能用多久。Session token 的私鑰在 token 過期後失效；API 簽章金鑰的私鑰在使用者到主控台刪掉公鑰之前一直有效。實驗與互動式操作用 session token，外洩時的影響範圍以小時計；排程腳本、CI 這類沒有人能開瀏覽器登入的場合才需要 API 簽章金鑰。
+兩者在本機都會留下一個私鑰檔，差別在私鑰檔外洩之後能用多久。Session token 的私鑰在 token 過期後失效；API 簽章金鑰的私鑰在使用者到主控台刪掉公鑰之前一直有效。實驗與互動式操作用 session token，私鑰外洩之後可被冒用的時間以小時計；排程腳本、CI 這類沒有人能開瀏覽器登入的場合才需要 API 簽章金鑰。
 
 ## 用瀏覽器登入換 session token
 
@@ -23,7 +23,7 @@ OCI 的 API 不收帳號密碼。CLI 送出的每一個請求都用一把私鑰�
 oci session authenticate --region ap-batam-1 --profile-name DEFAULT
 ```
 
-- `--region`：填 tenancy 的 home region 的識別碼（例如 `ap-tokyo-1`），CLI 用它決定開哪一區的登入頁、並寫進設定檔當成之後指令的預設區域。不給這個選項時，CLI 列出全部區域讓使用者輸入編號。
+- `--region`：填 tenancy 的 home region 的識別碼，這次實測的 home region 是 `ap-batam-1`，換成自己的。CLI 用它決定開哪一區的登入頁、並寫進設定檔當成之後指令的預設區域。識別碼與主控台上的顯示名稱（例如「Indonesia North (Batam)」）是兩種寫法，對照列在 Region Management 頁；不給這個選項時，CLI 也會列出全部區域的識別碼讓使用者輸入編號。
 - `--profile-name`：設定檔 `~/.oci/config` 裡這一組身分的名稱。`DEFAULT` 是 CLI 在指令沒有指定 `--profile` 時使用的那一組；同一台機器要切換多個 tenancy 時，每個 tenancy 用一個不同的 profile 名稱。
 
 登入過程中 CLI 會問兩個問題：區域與 profile 名稱，兩個都給在選項裡就不必互動輸入。這一點在 CLI 不是跑在互動式終端機裡時有差別——例如透過另一個程式代為執行、標準輸入沒有接到鍵盤——CLI 讀不到輸入，印出 `Abort` 後結束。實測少給 `--region` 時就是在區域清單之後直接 `Abort`。
@@ -37,11 +37,13 @@ CLI 接著開瀏覽器到登入頁，並在本機的 `localhost:8181` 等登入�
 fingerprint=<臨時公鑰的指紋>
 key_file=/Users/<user>/.oci/sessions/DEFAULT/oci_api_key.pem
 tenancy=<tenancy 的 OCID>
-region=ap-batam-1
+region=<home region 的識別碼>
 security_token_file=/Users/<user>/.oci/sessions/DEFAULT/token
 ```
 
-`key_file` 是 CLI 產生的臨時私鑰，`security_token_file` 是 OCI 簽發的 token。兩個檔都在 `~/.oci/sessions/<profile 名稱>/` 底下，這個目錄刪掉就等於登出。
+`tenancy` 是 tenancy 的 OCID：OCI 給每一個資源（tenancy、compartment、VCN、主機）一個以 `ocid1.<資源類型>.` 開頭的唯一識別碼，叫 OCID（Oracle Cloud ID），CLI 與 API 用它指定要操作哪一個資源，各資源的詳細頁上都有一個可以複製的 OCID 欄位。`key_file` 是 CLI 產生的臨時私鑰，`security_token_file` 是 OCI 簽發的 token，兩個檔都在 `~/.oci/sessions/<profile 名稱>/` 底下。
+
+不再使用時跑 `oci session terminate --profile <profile 名稱>`，CLI 會從設定檔移除這一組並刪掉它參照的金鑰與 token 檔。這個動作只清本機，OCI 那一端不會撤銷已經簽發的 token，所以檔案被複製走時，影響的期限仍是 token 剩下的效期。
 
 ## 使用 session token 時每條指令要帶的設定
 
@@ -78,7 +80,7 @@ oci session refresh --profile DEFAULT
 
 ## API 簽章金鑰：不需要每天登入的做法
 
-API 簽章金鑰在主控台建立：右上角人像選單 → My profile → API keys → Add API key，選 Generate API key pair 並下載私鑰，按 Add 之後頁面顯示一段 `[DEFAULT]` 開頭的設定文字。把私鑰放到 `~/.oci/`、權限設成只有自己能讀，把那段文字貼進 `~/.oci/config` 並把 `key_file` 改成私鑰的實際路徑：
+API 簽章金鑰在主控台建立，入口在右上角人像選單的 User settings 頁的 API keys 區塊，按 Add API key、選 Generate API key pair 並下載私鑰，按 Add 之後頁面顯示一段 `[DEFAULT]` 開頭的設定文字。那段文字是 CLI 設定檔的一組 profile，其中 `key_file` 是一個佔位路徑，CLI 會照這一行去讀私鑰，所以貼進 `~/.oci/config` 之後要把它改成私鑰實際存放的路徑；私鑰放在 `~/.oci/` 底下、權限設成只有自己能讀：
 
 ```bash
 chmod 600 ~/.oci/<下載的私鑰檔名>.pem   # 私鑰檔只允許擁有者讀寫

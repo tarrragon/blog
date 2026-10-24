@@ -22,13 +22,13 @@ tags: ["infra", "cloud-providers", "console", "iam", "cost"]
 
 管理使用者、群組、角色與權限政策，以及登入方式（密碼政策、多因素驗證、外部身分提供者）。日常的工作是加人、移除人、調整誰能動哪些資源，以及替程式建立服務帳號或 API 金鑰。
 
-新帳號開好之後最先要做的事都在這個領域：替申請時建立的管理員帳號開啟多因素驗證，並另外建一個日常使用、權限較小的帳號，管理員帳號只在必要時用。概念與設計見 [模組二：身分與存取憑證地基](/infra/02-identity-credentials/) 與 [IAM](/infra/knowledge-cards/iam/) 卡。
+新帳號開好之後最先要做的事都在這個領域：替申請時建立的管理員帳號開啟多因素驗證，並另外建一個日常使用、權限較小的帳號，管理員帳號只在必要時用。權限的分級與日常帳號的設計見 [團隊權限分級與存取管理](/infra/02-identity-credentials/team-access-management/)，概念見 [IAM](/infra/knowledge-cards/iam/) 卡。
 
 ## 資源分組與標籤：資源屬於哪個專案、誰付錢
 
 把資源分組，讓權限、預算與清理以組為單位進行；標籤則在組之外再加一層分類，用來分攤費用、篩選資源。Oracle Cloud 的分組是 compartment（可以巢狀），Google Cloud 是 project（上面還有 folder 與 organization），AWS 是帳號本身（多個帳號由 Organizations 統一管理）。
 
-實驗用的資源放進一個專用的分組，清理時刪那一組的資源，不會碰到正式環境；權限政策也能限定只作用在那一組。分組與環境分離的設計見 [模組四：環境分離與模組化](/infra/04-environment-separation/)。
+實驗用的資源放進一個專用的分組，清理時刪那一組的資源，不會碰到正式環境；權限政策也能限定只作用在那一組。用帳號或專案隔開環境的設計見 [跨帳號策略 — Organizations、SCP 與帳號工廠](/infra/02-identity-credentials/multi-account-strategy/)。
 
 ## 運算：主機與映像檔
 
@@ -36,7 +36,7 @@ tags: ["infra", "cloud-providers", "console", "iam", "cost"]
 
 ## 網路：虛擬網路、負載平衡、DNS 與公開 IP
 
-管理虛擬網路與 subnet、路由與閘道、防火牆規則、負載平衡器、DNS 區域、保留的公開 IP。主機能不能被連到、連得到誰，問題多半在這個領域找。概念見 [模組三：網路地基](/infra/03-network-foundation/)；建立主機時的網路欄位見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/)。
+管理虛擬網路與 subnet、路由與閘道、防火牆規則、負載平衡器、DNS 區域、保留的公開 IP。主機連不進去、或連不到其他服務時，原因多半在這個領域的路由與防火牆規則。概念見 [模組三：網路地基](/infra/03-network-foundation/)；建立主機時的網路欄位見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/)。
 
 ## 儲存：區塊磁碟、物件儲存與檔案系統
 
@@ -44,7 +44,7 @@ tags: ["infra", "cloud-providers", "console", "iam", "cost"]
 
 ## 帳單與成本：花了多少、會花多少
 
-查看帳單與付款方式、依服務與分組分析費用、設定預算與警示。新帳號開好之後要來這裡設一個預算警示，讓費用超過預期時有人收到通知；免費額度的帳號同樣要設，因為超出額度或用到非免費機型時費用就開始累積。成本管理的概念見 [運行期維運的成本管理](/operations/08-cost-management/)，預算通知觸發自動停損的建置目前只有 GCP 的實作篇 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)，免費額度的規則見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
+查看帳單與付款方式、依服務與分組分析費用、設定預算與警示。新帳號開好之後要來這裡設一個預算警示，讓費用超過預期時有人收到通知。帳號已經升級成付費帳戶、或試用金之外還有付款方式可以扣款時，超出免費額度或用到非免費機型的費用會直接累積，所以這類帳號一定要設；Oracle Cloud 沒有升級的帳號在試用結束後不會開始計費，設了也有用，可以在試用期間提早看到哪些資源不在免費額度內。成本管理的概念見 [運行期維運的成本管理](/operations/08-cost-management/)；從預算通知觸發自動停損的建置，目前只有 Google Cloud 的實作篇 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)。免費額度的規則見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
 
 ## 監控、日誌與告警：系統現在的狀態
 
@@ -52,7 +52,7 @@ tags: ["infra", "cloud-providers", "console", "iam", "cost"]
 
 ## 稽核紀錄：誰在什麼時候做了什麼
 
-業者自動記錄每一個對雲端資源的 API 呼叫：誰、什麼時間、從哪個 IP、做了什麼操作、對哪個資源。主控台上的每一個點擊最後都是 API 呼叫，所以也會留下紀錄。資源被改掉、被刪掉而沒人承認時，答案在這裡。稽核紀錄的保存期限各家不同，要長期保存時要另外匯出。AWS 的同一個功能見 [CloudTrail](/infra/knowledge-cards/cloudtrail/) 卡。
+業者自動記錄對雲端資源的管理操作（建立、修改、刪除）：誰、什麼時間、從哪個 IP、做了什麼操作、對哪個資源。主控台上的每一個點擊最後都是 API 呼叫，所以也會留下紀錄。要查出某個資源是誰、在什麼時候改掉或刪掉的，看這裡的紀錄。讀取資料這一類操作不一定預設記錄：Google Cloud 的 Data Access 稽核紀錄除了 BigQuery 之外預設關閉，AWS CloudTrail 的 Event history 只列管理操作，兩者都要另外打開。稽核紀錄的保存期限各家不同，要長期保存時要另外匯出。AWS 的同一個功能見 [CloudTrail](/infra/knowledge-cards/cloudtrail/) 卡。
 
 ## 安全服務：管理通道、金鑰、秘密與弱點掃描
 
@@ -64,26 +64,26 @@ tags: ["infra", "cloud-providers", "console", "iam", "cost"]
 
 ## 新帳號開好之後先看的領域
 
-帳號的第一小時要處理的安全底線——管理員帳號的多因素驗證、確認自己的登入身分、檢查既存的存取金鑰、確認稽核紀錄有在記、設帳單警報——整理在 [拿到雲端帳號的第一天](/infra/00-infra-mindset/first-day-with-cloud-account/) 的〈第一小時：安全底線〉，那一篇的操作路徑以 AWS 為例，其他業者對應的選單見下方〈各家的選單名稱〉。在那幾項之外，要開始建資源之前再看兩個領域：
+帳號的第一小時要處理的安全底線——管理員帳號的多因素驗證、確認自己的登入身分、檢查既存的存取金鑰、確認稽核紀錄有在記、設帳單警報——整理在 [拿到雲端帳號的第一天](/infra/00-infra-mindset/first-day-with-cloud-account/) 的〈第一小時：安全底線〉，那一篇的操作路徑以 AWS 為例，其他業者對應的選單見下方〈各家的選單名稱：各管理領域在三家主控台上的位置〉。在那幾項之外，要開始建資源之前再看兩個領域：
 
 - **資源分組**：建一個實驗用的分組，之後的資源都建在裡面，清理時整組處理。
 - **配額與限制**：確認要用的機型在這個帳號、這個區域的上限不是 0；上限不是 0 也不代表那一區有那種硬體。
 
-## 各家的選單名稱
+## 各家的選單名稱：各管理領域在三家主控台上的位置
 
-| 管理領域   | Oracle Cloud                                           | Google Cloud                               | AWS                                            |
-| ---------- | ------------------------------------------------------ | ------------------------------------------ | ---------------------------------------------- |
-| 身分與權限 | Identity & Security → Identity                         | IAM & Admin                                | IAM、IAM Identity Center                       |
-| 資源分組   | Identity & Security → Compartments                     | 專案選擇器、IAM & Admin → Manage resources | AWS Organizations                              |
-| 標籤       | Governance & Administration → Tag Namespaces           | IAM & Admin → Tags、Labels                 | Resource Groups & Tag Editor                   |
-| 運算       | Compute                                                | Compute Engine                             | EC2                                            |
-| 網路       | Networking                                             | VPC network、Network services              | VPC                                            |
-| 儲存       | Storage                                                | Cloud Storage、Compute Engine → Storage    | S3、EC2 → Elastic Block Store                  |
-| 帳單與成本 | Billing & Cost Management                              | Billing                                    | Billing and Cost Management                    |
-| 監控、日誌 | Observability & Management                             | Monitoring、Logging                        | CloudWatch                                     |
-| 稽核紀錄   | Observability & Management → Logging → Audit           | Logging（Cloud Audit Logs）                | CloudTrail                                     |
-| 安全服務   | Identity & Security                                    | Security                                   | Security Hub、Secrets Manager、Systems Manager |
-| 配額與限制 | Governance & Administration → Limits, quotas and usage | IAM & Admin → Quotas & System Limits       | Service Quotas                                 |
+| 管理領域   | Oracle Cloud                                                                | Google Cloud                               | AWS                                            |
+| ---------- | --------------------------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------- |
+| 身分與權限 | Identity & Security → Identity                                              | IAM & Admin                                | IAM、IAM Identity Center                       |
+| 資源分組   | Identity & Security → Identity → Compartments                               | 專案選擇器、IAM & Admin → Manage resources | AWS Organizations                              |
+| 標籤       | Governance & Administration → Tenancy Management → Tag Namespaces           | IAM & Admin → Tags、Labels                 | Resource Groups & Tag Editor                   |
+| 運算       | Compute                                                                     | Compute Engine                             | EC2                                            |
+| 網路       | Networking                                                                  | VPC network、Network services              | VPC                                            |
+| 儲存       | Storage                                                                     | Cloud Storage、Compute Engine → Storage    | S3、EC2 → Elastic Block Store                  |
+| 帳單與成本 | Billing & Cost Management                                                   | Billing                                    | Billing and Cost Management                    |
+| 監控、日誌 | Observability & Management                                                  | Monitoring、Logging                        | CloudWatch                                     |
+| 稽核紀錄   | Observability & Management → Logging → Audit                                | Logging（Cloud Audit Logs）                | CloudTrail                                     |
+| 安全服務   | Identity & Security                                                         | Security                                   | Security Hub、Secrets Manager、Systems Manager |
+| 配額與限制 | Governance & Administration → Tenancy Management → Limits, quotas and usage | IAM & Admin → Quotas & System Limits       | Service Quotas                                 |
 
 Oracle Cloud 的選單取自 2026-10-24 的主控台英文介面；選單名稱各家會隨改版調整，對不上時用搜尋框找服務名稱。Oracle Cloud 主控台各分類的完整內容見 [Oracle Cloud 主控台導覽](/infra/cloud-providers/oracle-cloud/console-navigation/)。
 

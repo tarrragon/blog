@@ -2,7 +2,7 @@
 title: "Instance Metadata Service（實例中繼資料服務）"
 date: 2026-10-24
 description: "看到建立主機頁上的 IMDSv2、authorization header、metadata 選項，主機上的程式要取得自己的 ID、區域或身分憑證，或評估網頁應用程式的 SSRF 漏洞會不會讓攻擊者讀到主機的憑證時，查中繼資料服務提供什麼、第二版的存取驗證防的是什麼"
-weight: 104
+weight: 65
 tags: ["infra", "knowledge-cards", "cloud", "security"]
 ---
 
@@ -24,7 +24,7 @@ tags: ["infra", "knowledge-cards", "cloud", "security"]
 
 ## 設計責任
 
-- **新主機**：開啟第二版的強制要求；Oracle Cloud 的條件是映像檔支援第二版，目前的平台映像都支援
+- **新主機**：映像檔支援第二版時開啟強制要求。Oracle Cloud 官方列出支援第二版的映像只有 Oracle Linux 與 Oracle Autonomous Linux，並寫明其他平台映像、多數自訂與市集映像不支援，在不支援的映像上強制第二版可能讓主機上的程式讀不到中繼資料；用其他映像時先查那個映像的說明
 - **既有主機改成只允許第二版**：先確認主機上讀中繼資料的程式（代理程式、SDK、自己的腳本）都已支援第二版，再切換
 - **主機的身分權限**：中繼資料服務發的憑證帶著主機身分的全部權限，權限只給這台主機上的程式需要的那些
 

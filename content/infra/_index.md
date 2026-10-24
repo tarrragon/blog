@@ -31,23 +31,23 @@ Backend 教「服務怎麼設計」、運維教「設計好的服務怎麼營運
 
 模組編號標示成熟度階梯的位置，不是閱讀順序。模組負一是還沒站上 IaC 第一階的真實起點（全手動環境）；模組零是貫穿全系列的共用心智模型、不佔階梯刻度；模組一以後才是一階一階往上的建置順序。「接手維運」、「環境升級」與「雲端業者的帳號申請與主機維運」是橫切模組，跟成熟度階梯平行——接手、升級與在某一家開帳號建主機可能發生在任何階段。
 
-| 模組                                                          | 主題                                                          | 回答什麼問題                                 |
-| ------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------- |
-| [雲端業者的帳號申請與主機維運](/infra/cloud-providers/)       | 各家的帳號結構、登入方式、免費額度規則與實測建置紀錄          | 在某一家開帳號、建第一台主機時會遇到哪些設定 |
-| [接手維運](/infra/takeover/)                                  | 別人建的環境怎麼盤點、接管、逐步正規化                        | 接手前人的專案，怎麼在不搞壞的前提下接管     |
-| [環境與系統升級](/infra/upgrade/)                             | runtime / 平台 / 資料庫 / OS 的帶電施工遷移                   | 系統在服務中怎麼升級而不中斷                 |
-| [斷網環境的 infra](/infra/air-gapped/)                        | 離線套件、provider mirror、private registry、self-hosted 監控 | 沒有網路時 IaC 和維運怎麼做                  |
-| [模組負一：還沒有 infra 的環境](/infra/before-infra/)         | 手動環境的底線、降低未來納管成本、導入訊號                    | 還沒有 IaC 時怎麼盡量把事情做對              |
-| [模組零：infra 是什麼](/infra/00-infra-mindset/)              | 責任邊界、成熟度階梯、day 1 鐵律                              | 為什麼地基要先做、不先做的代價是什麼         |
-| [模組一：最小可行 IaC](/infra/01-minimal-iac/)                | 工具選型、remote state、Console 唯讀鐵律                      | 第一行 IaC 該從哪裡開始                      |
-| [模組二：身分與存取憑證地基](/infra/02-identity-credentials/) | IAM role / policy、OIDC 取代長期 key                          | 誰能動什麼、存取憑證怎麼不外洩               |
-| [模組三：網路地基](/infra/03-network-foundation/)             | VPC、subnet 切分、route / NAT、security group、管理通道       | 服務之間的網路邊界怎麼劃、管理員怎麼登入主機 |
-| [模組四：環境分離與模組化](/infra/04-environment-separation/) | dev / staging / prod、目錄結構、可重用 module                 | 怎麼讓 dev 跟 prod 不互相污染又共用一套 code |
-| [模組五：核心服務上 IaC](/infra/05-core-services/)            | 資料庫、運算、儲存、load balancer                             | 地基鋪好後核心服務怎麼接上去                 |
-| [模組六：可觀測性與 log](/infra/06-observability-logging/)    | log group、metric、alarm 同生命週期管理                       | 出事時怎麼追得到、查得到                     |
-| [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)            | plan / apply review、tflint / checkov 護欄                    | infra 變更怎麼像 code 一樣可審查可回溯       |
-| [模組八：治理好習慣](/infra/08-governance-habits/)            | tagging、secrets、成本可見性、最小可行節奏                    | 規模長大後怎麼不失控                         |
-| [模組九：怎麼把 infra 推動起來](/infra/09-driving-adoption/)  | 技術正確 ≠ 推得動、期望值對齊、知識共享                       | 為什麼 infra 常推不動、怎麼推得動            |
+| 模組                                                          | 主題                                                                               | 回答什麼問題                                 |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------- |
+| [雲端業者的帳號申請與主機維運](/infra/cloud-providers/)       | 建立主機各欄位的意義、主控台各管理領域、各家的帳號結構、免費額度規則與實測建置紀錄 | 在某一家開帳號、建第一台主機時會遇到哪些設定 |
+| [接手維運](/infra/takeover/)                                  | 別人建的環境怎麼盤點、接管、逐步正規化                                             | 接手前人的專案，怎麼在不搞壞的前提下接管     |
+| [環境與系統升級](/infra/upgrade/)                             | runtime / 平台 / 資料庫 / OS 的帶電施工遷移                                        | 系統在服務中怎麼升級而不中斷                 |
+| [斷網環境的 infra](/infra/air-gapped/)                        | 離線套件、provider mirror、private registry、self-hosted 監控                      | 沒有網路時 IaC 和維運怎麼做                  |
+| [模組負一：還沒有 infra 的環境](/infra/before-infra/)         | 手動環境的底線、降低未來納管成本、導入訊號                                         | 還沒有 IaC 時怎麼盡量把事情做對              |
+| [模組零：infra 是什麼](/infra/00-infra-mindset/)              | 責任邊界、成熟度階梯、day 1 鐵律                                                   | 為什麼地基要先做、不先做的代價是什麼         |
+| [模組一：最小可行 IaC](/infra/01-minimal-iac/)                | 工具選型、remote state、Console 唯讀鐵律                                           | 第一行 IaC 該從哪裡開始                      |
+| [模組二：身分與存取憑證地基](/infra/02-identity-credentials/) | IAM role / policy、OIDC 取代長期 key                                               | 誰能動什麼、存取憑證怎麼不外洩               |
+| [模組三：網路地基](/infra/03-network-foundation/)             | VPC、subnet 切分、route / NAT、security group、管理通道                            | 服務之間的網路邊界怎麼劃、管理員怎麼登入主機 |
+| [模組四：環境分離與模組化](/infra/04-environment-separation/) | dev / staging / prod、目錄結構、可重用 module                                      | 怎麼讓 dev 跟 prod 不互相污染又共用一套 code |
+| [模組五：核心服務上 IaC](/infra/05-core-services/)            | 資料庫、運算、儲存、load balancer                                                  | 地基鋪好後核心服務怎麼接上去                 |
+| [模組六：可觀測性與 log](/infra/06-observability-logging/)    | log group、metric、alarm 同生命週期管理                                            | 出事時怎麼追得到、查得到                     |
+| [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)            | plan / apply review、tflint / checkov 護欄                                         | infra 變更怎麼像 code 一樣可審查可回溯       |
+| [模組八：治理好習慣](/infra/08-governance-habits/)            | tagging、secrets、成本可見性、最小可行節奏                                         | 規模長大後怎麼不失控                         |
+| [模組九：怎麼把 infra 推動起來](/infra/09-driving-adoption/)  | 技術正確 ≠ 推得動、期望值對齊、知識共享                                            | 為什麼 infra 常推不動、怎麼推得動            |
 
 ## 學習路線
 

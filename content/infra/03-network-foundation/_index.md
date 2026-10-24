@@ -8,7 +8,7 @@ tags: ["infra", "network", "vpc", "security-group"]
 
 網路地基要先於核心服務存在。VPC、subnet、route table 與 security group 構成一張「服務能落在哪、誰能跟誰講話」的地圖，資料庫、運算節點與對外入口都得落在這張地圖規劃好的格子裡。先把邊界畫清楚，後面每個核心服務上線時只需要選一塊已經定義好安全等級的位置，而不是邊開服務邊補洞。
 
-這一章建立四層邊界：最外層的 VPC 隔離、中層的 public / private subnet 切分、流量進出的 route table 與 NAT、以及最貼近服務的 security group。每一層解決的問題不同，疊起來才是一個可審計、可收斂的網路。邊界畫好之後，管理員登入主機的那條通道也要落在這張地圖上：管理 port 對誰開放、用什麼身分打開、金鑰怎麼收回，由章節文章裡的管理通道設計、GCP 實作、OpenSSH CA 導入與 MIG / GKE 管理存取四篇處理。
+這一章建立四層邊界：最外層的 VPC 隔離、中層的 public / private subnet 切分、流量進出的 route table 與 NAT、以及最貼近服務的 security group。每一層解決的問題不同，疊起來才是一個可審計、可收斂的網路。邊界畫好之後，管理員登入主機的那條通道也要落在這張地圖上：管理 port 對誰開放、用什麼身分打開、金鑰怎麼收回，由章節文章裡的管理通道設計與 OpenSSH CA 導入處理，GCP 上的實作見〈各家業者的實作〉。
 
 ## VPC：網路隔離的最外層邊界
 
@@ -115,7 +115,7 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 
 ## 各家業者的實作
 
-管理通道模型落到某一家雲端時的設定與實測紀錄，放在 [雲端業者的帳號申請與主機維運](/infra/cloud-providers/) 的業者子資料夾：GCP 的 IAP、OS Login 與 MIG、GKE 的管理存取在 [GCP](/infra/cloud-providers/gcp/)，Oracle Cloud 的 Bastion 實測在 [Oracle Cloud](/infra/cloud-providers/oracle-cloud/)。
+管理通道模型落到某一家雲端時的設定與實測紀錄，放在 [雲端業者的帳號申請與主機維運](/infra/cloud-providers/) 的業者子資料夾：GCP 的 IAP、OS Login 與 MIG、GKE 的管理存取在 [GCP](/infra/cloud-providers/gcp/)，Oracle Cloud 的帳號、主控台與建立主機的實測在 [Oracle Cloud](/infra/cloud-providers/oracle-cloud/)，Bastion 管理通道的實測列在那個資料夾的 Backlog。
 
 ## 跨分類引用
 

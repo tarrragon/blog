@@ -10,11 +10,11 @@ tags: ["infra", "cloud-providers", "gcp"]
 
 ## 章節文章
 
-| 文章                                                                                                                     | 對應的概念 | 主題                                                                                              |
-| ------------------------------------------------------------------------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------- |
-| [GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding](/infra/cloud-providers/gcp/gcp-iap-ssh-access/) | 管理通道   | default 網路自帶規則、IAP 的連線路徑與指令、切換與停用舊規則、連不上時的依層判讀、OS Login、稽核  |
-| [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/)                        | 管理通道   | instance template 與 node pool、MIG 用重建取代登入救援、kubectl debug node 的權限邊界、控制層存取 |
-| [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)                           | 成本管理   | 預算警示、強制執行支出上限、由預算通知觸發的停損開關的建置、驗收與恢復                            |
+| 文章                                                                                                                     | 對應的概念 | 主題                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------------------------------------------------------------------------------------------- |
+| [GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding](/infra/cloud-providers/gcp/gcp-iap-ssh-access/) | 管理通道   | default 網路自帶規則、IAP 的連線路徑與指令、切換與停用舊規則、連不上時的依層判讀、OS Login、稽核    |
+| [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/)                        | 管理通道   | instance template 與 node pool、MIG 用重建取代登入救援、kubectl debug node 的權限邊界、控制平面存取 |
+| [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)                           | 成本管理   | 預算警示、強制執行支出上限、由預算通知觸發的停損開關的建置、驗收與恢復                              |
 
 ## Backlog
 

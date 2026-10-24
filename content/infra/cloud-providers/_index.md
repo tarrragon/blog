@@ -1,33 +1,31 @@
 ---
 title: "雲端業者的帳號申請與主機維運"
 date: 2026-10-24
-description: "要向某一家雲端業者申請帳號、評估免費額度、建第一台主機或從本機用 CLI 管理它時，查各家帳號結構、登入方式、免費額度規則與實測過的建置紀錄"
+description: "要向某一家雲端業者申請帳號、評估免費額度、看懂建立主機頁上的各個欄位與主控台的管理領域，或從本機用 CLI 管理主機時，查 vendor 中立的選項說明、各家帳號結構、免費額度規則與實測過的建置紀錄"
 weight: -5
 tags: ["infra", "cloud-providers", "free-tier"]
 ---
 
 這個模組收各家雲端業者自己的那一層：帳號與區域在申請當下就固定的設定、主控台與 CLI 的登入方式、免費額度的計算規則，以及在那一家實際建主機、走管理通道的紀錄。成熟度階梯（模組零到九）講的是 vendor 中立的地基，這裡放的是同一件事落到某一家時才會遇到的設定與陷阱。
 
-模組是橫切的：任何一階實作時都可能需要先在某一家開帳號。內容的歸屬規則是：成熟度階梯的模組放 vendor 中立的概念，最多附一個參考實作（多數模組以 AWS 為例）；這個模組的根目錄放跨業者、在主控台與帳號層操作的內容（建立主機的選項、主控台的管理領域、免費額度比較）；某一家的實作與實測紀錄放在業者子資料夾，例如管理通道在 GCP 上的 IAP 實作、帳單停損在 GCP 上的建置。概念文章連到業者子資料夾，業者子資料夾的每一篇連回它實作的那個概念。
+模組是橫切的：任何一階實作時都可能需要先在某一家開帳號。內容的歸屬規則是：成熟度階梯的模組放 vendor 中立的概念，正文的範例以 AWS 為參考實作，但不收某一家的完整實作篇；這個模組的根目錄放跨業者、在主控台與帳號層操作的內容（建立主機的選項、主控台的管理領域、免費額度比較）；某一家的實作與實測紀錄放在業者子資料夾，例如管理通道在 GCP 上的 IAP 實作、帳單停損在 GCP 上的建置。概念文章連到業者子資料夾，業者子資料夾的每一篇連回它實作的那個概念。
 
 ## 章節文章
 
-| 文章                                                                                                  | 主題                                                                                                         |
-| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)                        | 計費單位、免費額度的區域限制、試用結束後的處置、出站流量                                                     |
-| [雲端主控台的管理領域](/infra/cloud-providers/console-areas/)                                         | 身分、資源分組、運算、網路、儲存、費用、監控、稽核、安全服務與配額各管什麼，新帳號先看哪幾個，三家的選單名稱 |
-| [Oracle Cloud 主控台導覽](/infra/cloud-providers/oracle-cloud/console-navigation/)                    | 頂端列、導覽選單各分類的內容、compartment 篩選器、常用頁面的路徑                                             |
-| [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) | tenancy、home region 不能改、主控台登入的租用戶與使用者名稱欄位                                              |
-| [從本機用 OCI CLI 操作 Oracle Cloud](/infra/cloud-providers/oracle-cloud/cli-session-login/)          | session token 登入、時效與 refresh、API 簽章金鑰的取捨                                                       |
-| [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)   | 主控台各分頁的 Always Free 設定值、等效 CLI 指令、容量不足與 VCN 選單的狀況                                  |
+| 文章                                                                           | 主題                                                                                                         |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/) | 計費單位、免費額度的區域限制、試用結束後的處置、出站流量                                                     |
+| [雲端主控台的管理領域](/infra/cloud-providers/console-areas/)                  | 身分、資源分組、運算、網路、儲存、費用、監控、稽核、安全服務與配額各管什麼，新帳號先看哪幾個，三家的選單名稱 |
 
 ## 子資料夾
 
-- [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/)：vendor 中立，依功能分類一類一篇（位置、機型與映像檔、網路、登入、磁碟、代理程式與維護、安全開機）
-- [Google Cloud](/infra/cloud-providers/gcp/)：IAP 管理通道、MIG 與 GKE 的管理存取、帳單停損開關
-- [Oracle Cloud](/infra/cloud-providers/oracle-cloud/)
+依 weight 排列（list.html 先列子資料夾、再列文章，所以兩篇根目錄文章在列表頁排在子資料夾之後）：
 
-新增一家業者時開一個子資料夾，並在收費比較那篇補上那一家的欄位。
+- [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/)：vendor 中立，依功能分類一類一篇（位置、機型與映像檔、網路、登入、磁碟、代理程式與維護、安全開機）
+- [Oracle Cloud](/infra/cloud-providers/oracle-cloud/)：主控台導覽、帳號結構與 home region、CLI 登入、建立主機的實測紀錄
+- [Google Cloud](/infra/cloud-providers/gcp/)：IAP 管理通道、MIG 與 GKE 的管理存取、帳單停損開關
+
+新增一家業者時開一個子資料夾，在收費比較那篇補上那一家的欄位，並用 `rg "三家|其他兩家|另兩家" content/infra/cloud-providers/` 掃一次各篇，把寫死成三家的句子與對照表一起更新。
 
 ## 跟其他模組的關係
 
@@ -37,10 +35,9 @@ tags: ["infra", "cloud-providers", "free-tier"]
 
 ## Backlog
 
-| 項目                                                                       | 類型   | 前置條件                                                   | 規模         |
-| -------------------------------------------------------------------------- | ------ | ---------------------------------------------------------- | ------------ |
-| 管理通道模型在 AWS 上的實作篇（SSM Session Manager、EC2 Instance Connect） | 主章   | 有可建 EC2 與 IAM role 的 AWS 測試帳號，篇內指令實跑過才寫 | 1 篇（中）   |
-| AWS Systems Manager Session Manager 知識卡（代理程式反向連線的代表實作）   | 知識卡 | 無                                                         | 1 張卡（小） |
-| Oracle Cloud 的 Bastion 管理通道實測（private subnet、managed SSH、稽核）  | 主章   | home region 的 A1 有容量（Batam 沒有 E2.1.Micro）          | 中           |
-| Home Region / OCPU 知識卡                                                  | 知識卡 | 無                                                         | 2            |
-| 收費比較補上 AWS、GCP 以外業者（例如 Linode、Vultr）                       | vendor | 實際申請過或查到官方規則                                   | 小           |
+| 項目                                                                                                      | 類型   | 前置條件                                                   | 規模         |
+| --------------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------------------------- | ------------ |
+| 管理通道模型在 AWS 上的實作篇（SSM Session Manager、EC2 Instance Connect），產出放 `cloud-providers/aws/` | 主章   | 有可建 EC2 與 IAM role 的 AWS 測試帳號，篇內指令實跑過才寫 | 1 篇（中）   |
+| AWS Systems Manager Session Manager 知識卡（代理程式反向連線的代表實作）                                  | 知識卡 | 無                                                         | 1 張卡（小） |
+| Home Region / OCPU 知識卡                                                                                 | 知識卡 | 無                                                         | 2 張卡（小） |
+| 收費比較補上 AWS、GCP 以外業者（例如 Linode、Vultr）                                                      | vendor | 實際申請過或查到官方規則                                   | 小           |
