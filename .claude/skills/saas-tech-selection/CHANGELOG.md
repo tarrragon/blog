@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.10.1 — capacity-performance〈支出停損〉依多輪審查與官方文件查證修正：強制執行支出上限一個只涵蓋一個專案的一項服務、暫停到預算期間結束、持續性資源的固定費用不暫停；停用帳單時雲端文件警告資源可能被永久刪除；部署指令明確指定 --trigger-service-account（gcloud 說明的預設值與實測不同）並補齊必填旗標；測試訊息給出 publish 指令；預算門檻統一成 50% / 90% / 100%；花費為 0 也可能來自抵免。security〈管理通道〉：kubectl debug 只有 general 與 sysadmin profile 掛節點目錄、authorized networks 寫明更新時整組取代、IAM Condition 的期限格式、撤銷角色只擋住之後的新登入、救援入口補英文錨點。principle 卡 protection-proves-itself-by-firing 同 system-design 0.13.1 的修正。
+
 **Version**: 1.10.0 — security 維度新增「管理通道（主機與叢集的管理存取）」子領域：網路可達性、通道授權、主機登入驗證三層加救援入口的 day one 預設，GCP 的防火牆規則、帶 Condition 的 IAP 角色與 OS Login 設定範例（已實測），舊規則的停用順序、由 template 建的主機、Kubernetes 控制平面與 `kubectl debug node` 的權限、稽核紀錄的類型（IAP 開通道是 `ADMIN_READ`）、離職時結束既有工作階段；防護底線加第 8 條、tripwire 補 SSH 憑證與組織層級護欄兩列。capacity-performance 修正反向問的「預算 alert 讓你當天發現」為計費資料的延遲，day one 的預算 alert 加預測花費一檔，防護底線寫明警示不停止扣款；新增「支出停損」段（何時值得建、GCP 的 Pub/Sub 加 function 做法與三個實測踩到的設定：`run.invoker`、`billing.projectManager` 讀不到帳單狀態要加 `browser`、預設不重試要加 `--retry`；實測反應時間與計費延遲、帳單停用期間資源清單為空、驗收要合成觸發），tripwire 與決策記錄各補一項。baseline-protections 的入口段加「管理 port 只放行身分感知代理或 VPN」、觀測段加「防護機制實際觸發過一次」。新增 principle 卡 `protection-proves-itself-by-firing`。SKILL.md 補兩條路由、目錄索引與觸發詞。來源是一次 GCP 測試專案上的管理通道與帳單停損開關實機驗證。
 
 **Version**: 1.9.2 — 多輪審查 Round 3（誤用梯度）：約束驗證腳本從 `pg_constraint` 檢查涵蓋全部約束、改壞預期的結束碼寫進決策記錄；schema 規格在空資料庫跑的指令與結束碼寫進決策記錄；多套實作的 dump 差異逐項處理到空，常見差異清單不是放行清單

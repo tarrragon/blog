@@ -26,7 +26,7 @@ OS Login 常與 GCP 的 [Identity-Aware Proxy（身分感知代理）](/infra/kn
 
 OS Login 啟用後，VM 只認 IAM 角色，metadata 裡的公鑰立即失效，所以啟用前要先把角色與順序排好：
 
-- **啟用順序**：先把登入角色授予每一位管理員與每一個要登入 VM 的服務帳號（CI、Ansible）、對一台 VM 啟用並連通，再做專案層級；順序反過來時，還沒拿到角色的管理員與自動化工具在啟用那一刻就登不進去
+- **啟用順序**：先把登入角色授予每一位管理員與每一個要登入 VM 的[服務帳號](/infra/knowledge-cards/service-account/)（CI、Ansible）、對一台 VM 啟用並連通，再做專案層級；順序反過來時，還沒拿到角色的管理員與自動化工具在啟用那一刻就登不進去
 - **啟用範圍**：專案層級啟用涵蓋專案內所有 VM，VM 層級的設定會蓋過專案層級；組織要新建的 VM 一律啟用時用 Organization Policy 的 `compute.requireOsLogin`，既有 VM 要另外盤點
 - **sudo 的授予**：`roles/compute.osAdminLogin` 只給確實需要 root 權限的群組，其餘給 `roles/compute.osLogin`
 - **服務帳號的附帶權限**：VM 以服務帳號身分執行時，登入的使用者另外需要那個服務帳號的 `roles/iam.serviceAccountUser`。從主控台用預設值建立的 VM 會掛上 Compute Engine default service account，所以多數 VM 都落在這個情況；VM 掛的是哪個服務帳號，看 `gcloud compute instances describe` 輸出的 `serviceAccounts[].email`

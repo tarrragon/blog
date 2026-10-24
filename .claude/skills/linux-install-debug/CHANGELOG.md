@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.20.1 — remote-access 依多輪審查修正：主機金鑰核對不寫死 ED25519，改成依警告寫的金鑰類型讀對應的那一把；指紋不同時寫出要確認的對象（IP 是否仍屬那台主機、中途有沒有代理或跳板）；IAM 綁定生效時間改成通常兩分鐘、有時七分鐘以上；connectivity test 的來源位址、本機 port 與結束通道的方式補上說明；OS Login 兩個角色寫明各自能不能 sudo；防火牆紀錄 rule_details 為空的因果順序改正。process-service-state 的撤銷權限句改成「只會擋住之後的新登入」，離職的處置寫成 pkill 結束、pgrep 輸出為空確認。
+
 **Version**: 1.20.0 — remote-access 的主機金鑰那一條改寫：原本直接 `ssh-keygen -R` 清除，改成先從警告抄下指紋、再用不經過這條 SSH 連線的管道（console 上的 `ssh-keygen -lf`、GCP guest attributes）核對，相同才清除；補 `gcloud compute ssh` 的紀錄在 `~/.ssh/google_compute_known_hosts`、鍵是 `compute.<instance-id>`，MIG 重建沿用同一個 ID 所以必定撞到警告，以及啟用 guest attributes 不會自動更新既有紀錄。remote-access 新增「經 IAP 這類身分感知代理連線：錯誤停在哪一層」段（`4033` 停在代理授權、`4003` 停在代理到 VM、通道開了而 publickey 被拒停在 OS Login 角色與 VM 服務帳號的 serviceAccountUser；IAM 綁定一到兩分鐘才生效；不用 `ProxyCommand` 的本機 port 轉送；防火牆紀錄初期 `rule_details` 為空時改用 `ip_in_net` 查），快速路由表補四列。process-service-state 新增「結束某個使用者的所有工作階段」段：先撤銷再結束、以 `pgrep -u` 判斷而不信 `loginctl` 的回傳值、`pam_systemd` 登記失敗時 `terminate-user` 回 exit 1 而行程仍在、用 `pkill -KILL -u` 補，快速路由補一列。SKILL.md 補兩條路由與觸發詞。來源是一次 GCP 測試專案上的管理通道實機驗證（Debian 12、IAP、OS Login、MIG 重建）。
 
 **Version**: 1.19.0 — machine-unreachable 新增「有外部觀察者時：先比對它們，再登入主機」段：心跳監看、外部探測與內部探測三者並排的判讀表（五種組合各自先查哪裡），心跳中斷時內部探測不可信，心跳與外部探測都正常而主機有說不出原因的異常時把監控主機被入侵列進候選；三個觀察者的結果各從哪裡讀（監看服務頁面、探測服務、Prometheus 的 `probe_success`）、只有兩個時怎麼用、同一列多個地方從最近改過的查起；快速路由表補一列。SKILL.md 的監控路由拆開：「怕整台機器當掉沒人知道」改導向體外心跳（OnFailure 靠 systemd、機器當掉時跟著停），並寫明監看服務的通知管道不能經過這台機器。來源是一組單機監控盲區與跨網路連線文章的判讀表與審查。

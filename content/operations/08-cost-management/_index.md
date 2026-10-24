@@ -1,7 +1,7 @@
 ---
 title: "模組八：成本管理"
 date: 2026-06-20
-description: "雲端帳單怎麼不失控 — reserved instance、spot instance、right-sizing、成本監控告警"
+description: "雲端帳單怎麼不失控 — reserved instance、spot instance、right-sizing、成本監控告警、預算警示與自動停用帳單"
 weight: 8
 tags: ["devops", "cost-management", "cloud-cost", "reserved-instance", "spot-instance"]
 ---

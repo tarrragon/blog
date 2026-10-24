@@ -10,23 +10,23 @@ SSH 連線本身、以及「你的終端機 ↔ 遠端 session」之間那條連
 - **`Connection refused`** → 網路通、但沒服務在聽 22。去機器上 `systemctl status sshd`；沒裝 / 沒起就 `pacman -S openssh && systemctl enable --now sshd`。
 - **`Permission denied (publickey)`** → key 沒對上。換帳號 + IP 直連走密碼繞過鎖死金鑰的別名：`ssh user@<IP>`；再重新佈 key。
 - **`Host key verification failed` / `REMOTE HOST IDENTIFICATION HAS CHANGED!`** → 目標送來的主機金鑰跟 `known_hosts` 記的不同。成因可能是重裝、換機、IP 重用、雲端 VM 重建了開機磁碟，也可能是連線被中間人攔截，所以清舊紀錄之前先核對新指紋：
-  1. 從警告裡 `The fingerprint for the ED25519 key sent by the remote host is` 下一行抄下 `SHA256:` 的值。
-  2. 用一條**不經過這條 SSH 連線**的管道讀出主機自己的指紋：實體或雲端主控台的 console 上執行 `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`；GCP 的 VM 在 metadata 設了 `enable-guest-attributes=TRUE` 時，用 `gcloud compute instances get-guest-attributes <vm> --zone=<zone> --query-path=hostkeys/ssh-ed25519 --format="value(value)" | awk '{print "ssh-ed25519 " $1}' | ssh-keygen -lf -`。
-  3. 兩個指紋相同才 `ssh-keygen -R <IP 或別名>` 清掉舊紀錄再連；核對不了、或指紋不同時不清，先查這條連線經過了什麼。
+  1. 從警告裡 `The fingerprint for the <type> key sent by the remote host is` 下一行抄下 `SHA256:` 的值；`<type>`（ED25519、ECDSA、RSA）決定下一步讀哪一把金鑰。
+  2. 用一條**不經過這條 SSH 連線**的管道讀出主機自己的指紋：實體或雲端主控台的 console 上執行 `ssh-keygen -lf /etc/ssh/ssh_host_<type>_key.pub`（`<type>` 寫成小寫的 `ed25519`、`ecdsa`、`rsa`）；GCP 的 VM 在 metadata 設了 `enable-guest-attributes=TRUE` 時，用 `gcloud compute instances get-guest-attributes <vm> --zone=<zone> --query-path=hostkeys/<key-type> --format="value(value)" | awk '{print "<key-type> " $1}' | ssh-keygen -lf -`，`<key-type>` 是 `ssh-ed25519`、`ecdsa-sha2-nistp256` 或 `ssh-rsa`。
+  3. 兩個指紋相同才 `ssh-keygen -R <IP 或別名>` 清掉舊紀錄再連；核對不了、或指紋不同時，不要清除舊紀錄；先確認連到的 IP 仍屬於那台主機（DNS 紀錄、IP 是否被重新分配），以及中途有沒有代理或跳板主機。
   - `gcloud compute ssh` 的紀錄不在 `~/.ssh/known_hosts`，在 `~/.ssh/google_compute_known_hosts`，鍵是 `compute.<instance-id>`。MIG 的 `recreate-instances` 重建時 VM 沿用同一個 ID 而換掉開機磁碟，所以重建之後必定撞到這個警告；清除要寫成 `ssh-keygen -R compute.<instance-id> -f ~/.ssh/google_compute_known_hosts`（ID 用 `gcloud compute instances describe <vm> --zone=<zone> --format="value(id)"` 查）。啟用 guest attributes 不會讓 gcloud 自動更新已存在的紀錄，比對與清除要自己做。
 
 根因通則：SSH 的別名 / 金鑰 / `known_hosts` 都綁「特定機器身分」，換機 / 重裝 / DHCP 重配後別名會連錯或被擋 → 用帳號 + IP 直連確認，再更新別名。
 
 ### 經 IAP 這類身分感知代理連線：錯誤停在哪一層
 
-連線經過代理（GCP 的 `gcloud compute ssh --tunnel-through-iap`、`gcloud compute start-iap-tunnel`）時，在 TCP 與 sshd 之間多了代理的授權與代理到 VM 的那一段，錯誤碼對應到的層不同。判讀要看完整輸出（`2>&1`），錯誤碼印在中段，只看最後一行只會看到 ssh 的 `return code [255]`。
+連線經過代理（GCP 的 `gcloud compute ssh --tunnel-through-iap`、`gcloud compute start-iap-tunnel`）時，在 TCP 與 sshd 之間多了代理的授權與代理到 VM 的那一段，每個錯誤碼各自對應到其中一層。判讀要看完整輸出（`2>&1`），錯誤碼印在中段，只看最後一行只會看到 ssh 的 `return code [255]`。
 
-- **`4033: 'not authorized'`** → 停在代理的授權：帳號沒有 `roles/iap.tunnelResourceAccessor`，或綁定的 IAM Condition（port、`destination.ip`、`request.time` 期限）不允許這次連線。IAM 綁定的新增與移除約一到兩分鐘才生效，剛改完權限先等兩分鐘再判。
-- **`4003: 'failed to connect to backend'`** → 代理已經放行，連不到 VM 的那個 port：VM 少了防火牆規則用的 network tag、規則的來源不含代理的位址段、組織層級的防火牆政策先擋下，或 VM 上的 sshd、OS 防火牆。防火牆這一段用 `gcloud network-management connectivity-tests create <name> --source-ip-address=35.235.240.1 --destination-instance=projects/<project>/zones/<zone>/instances/<vm> --destination-port=22 --protocol=TCP`，結果會指出擋下的規則名稱。
-- **通道開了、`Permission denied (publickey)`** → 停在主機登入：VM 啟用 OS Login 時，查帳號有沒有 `roles/compute.osLogin`（不能 sudo）或 `roles/compute.osAdminLogin`；VM 掛著服務帳號時另外要那個服務帳號的 `roles/iam.serviceAccountUser`，缺它同樣只回 publickey 被拒。啟用 OS Login 之後，metadata 裡的 SSH 金鑰對那台 VM 失效。
-- **要用一般 `ssh` 測（指定金鑰或使用者）**：先 `gcloud compute start-iap-tunnel <vm> 22 --local-host-port=localhost:2222 --zone=<zone> &` 把 port 轉到本機，再 `ssh -p 2222 <user>@localhost`；這條路不需要在 ssh 設定裡寫 `ProxyCommand`。
+- **`4033: 'not authorized'`** → 停在代理的授權：帳號沒有 `roles/iap.tunnelResourceAccessor`，或綁定的 IAM Condition（port、`destination.ip`、`request.time` 期限）不允許這次連線。IAM 綁定的變更通常兩分鐘內生效，有時要七分鐘以上；改完權限之後隔幾分鐘重試再判。
+- **`4003: 'failed to connect to backend'`** → 代理已經放行，連不到 VM 的那個 port：VM 少了防火牆規則用的 network tag、規則的來源不含代理的位址段、組織層級的防火牆政策先擋下，或 VM 上的 sshd、OS 防火牆。防火牆這一段用 `gcloud network-management connectivity-tests create <name> --source-ip-address=35.235.240.1 --destination-instance=projects/<project>/zones/<zone>/instances/<vm> --destination-port=22 --protocol=TCP`（`35.235.240.1` 是 IAP 位址段 `35.235.240.0/20` 裡的任一位址），結果會指出擋下的規則名稱。
+- **通道開了、`Permission denied (publickey)`** → 停在主機登入：VM 啟用 OS Login 時，查帳號有沒有 `roles/compute.osLogin`（可登入、不能 sudo）或 `roles/compute.osAdminLogin`（可 sudo）；VM 掛著服務帳號時另外要那個服務帳號的 `roles/iam.serviceAccountUser`，缺它同樣只回 publickey 被拒。啟用 OS Login 之後，metadata 裡的 SSH 金鑰對那台 VM 失效。
+- **要用一般 `ssh` 測（指定金鑰或使用者）**：先 `gcloud compute start-iap-tunnel <vm> 22 --local-host-port=localhost:2222 --zone=<zone> &` 把 port 轉到本機，再 `ssh -p 2222 <user>@localhost`；2222 換成任一個沒被占用的本機 port，兩處要相同，測完用 `kill %1` 結束通道。這條路不需要在 ssh 設定裡寫 `ProxyCommand`。
 
-驗證「新規則放行了 IAP 連線」時，用規則名稱查防火牆紀錄（`jsonPayload.rule_details.reference:"<rule>"`）在規則剛開 logging 的最初幾分鐘會查到零筆，那幾筆紀錄的 `rule_details` 是空的；改用來源位址段查：`gcloud logging read 'logName:"compute.googleapis.com%2Ffirewall" AND ip_in_net(jsonPayload.connection.src_ip, "35.235.240.0/20")' --freshness=1h`。
+驗證「新規則放行了 IAP 連線」時，規則剛開 logging 的最初幾分鐘寫入的紀錄 `rule_details` 是空的，所以用規則名稱查（`jsonPayload.rule_details.reference:"<rule>"`）會查到零筆；改用來源位址段查：`gcloud logging read 'logName:"compute.googleapis.com%2Ffirewall" AND ip_in_net(jsonPayload.connection.src_ip, "35.235.240.0/20")' --freshness=1h`。
 
 ## SSH 斷線後本機終端機噴亂碼 / 狂跳字元
 
@@ -68,13 +68,13 @@ SSH 連線本身、以及「你的終端機 ↔ 遠端 session」之間那條連
 
 ## 快速路由
 
-| 症狀                                | 檢查                        | 動作                              |
-| ----------------------------------- | --------------------------- | --------------------------------- |
-| 本機終端機噴 `數字;數字M`、動滑鼠時 | 只在動滑鼠時 → 滑鼠回報模式 | `reset` / 開新視窗                |
-| 遠端打字重複 / 錯位                 | `locale` vs `$TERM`+infocmp | 設 locale / `tic` 裝 terminfo     |
-| 圖形程式 SSH 下找不到 display       | 有無 `WAYLAND_DISPLAY`      | 補圖形 env 變數                   |
-| compositor SSH 起不來報 seat/DRM    | 是否從 SSH pty 起           | `chvt` + `getty@tty<N>` 回圖形 VT |
-| `REMOTE HOST IDENTIFICATION HAS CHANGED` | 不經 SSH 的管道讀主機指紋 | 指紋相同才 `ssh-keygen -R`；gcloud 用 `-f ~/.ssh/google_compute_known_hosts` |
-| IAP 連線 `4033`                     | IAM 角色與 Condition、等 2 分鐘 | 補角色或改 Condition         |
-| IAP 連線 `4003`                     | tag、防火牆規則、Connectivity Tests | 補 tag 或修規則             |
-| IAP 通道開了而 publickey 被拒       | OS Login 角色、VM 服務帳號的 serviceAccountUser | 補角色               |
+| 症狀                                     | 檢查                                            | 動作                                                                         |
+| ---------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------- |
+| 本機終端機噴 `數字;數字M`、動滑鼠時      | 只在動滑鼠時 → 滑鼠回報模式                     | `reset` / 開新視窗                                                           |
+| 遠端打字重複 / 錯位                      | `locale` vs `$TERM`+infocmp                     | 設 locale / `tic` 裝 terminfo                                                |
+| 圖形程式 SSH 下找不到 display            | 有無 `WAYLAND_DISPLAY`                          | 補圖形 env 變數                                                              |
+| compositor SSH 起不來報 seat/DRM         | 是否從 SSH pty 起                               | `chvt` + `getty@tty<N>` 回圖形 VT                                            |
+| `REMOTE HOST IDENTIFICATION HAS CHANGED` | 不經 SSH 的管道讀主機指紋                       | 指紋相同才 `ssh-keygen -R`；gcloud 用 `-f ~/.ssh/google_compute_known_hosts` |
+| IAP 連線 `4033`                          | IAM 角色與 Condition、等 2 分鐘                 | 補角色或改 Condition                                                         |
+| IAP 連線 `4003`                          | tag、防火牆規則、Connectivity Tests             | 補 tag 或修規則                                                              |
+| IAP 通道開了而 publickey 被拒            | OS Login 角色、VM 服務帳號的 serviceAccountUser | 補角色                                                                       |

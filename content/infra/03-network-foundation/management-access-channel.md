@@ -65,7 +65,7 @@ tags: ["infra", "network", "ssh", "security", "access", "vpn", "zero-trust"]
 
 IdP 帳號是 Google Workspace、Microsoft Entra ID、Okta 這類身分提供者上的帳號，通道服務把驗證交給它；GCP IAP 用的 Google 帳號就是一個實例。Cloudflare Access 可以接任何支援 OIDC 或 SAML（兩種把登入交給 IdP 的標準協定）的 IdP，Teleport 的 Enterprise 版也可以，Community 版的單一登入只接 GitHub。IdP 帳號在分辨個人與留下紀錄上比另外三種好，收回速度則由代理的 session 長度決定：IdP 停用一個帳號之後，代理已經簽給他的 session 或憑證（Cloudflare Access 的 session 最長可以設到一個月、Teleport 的使用者憑證有自己的有效期、`gcloud` 在本機保存 refresh token）要到期或被撤銷才失效，所以導入時要在代理端設定 session 長度，處理離職或帳號外洩時另外在代理端撤銷 session。選用 IdP 帳號之後，管理通道的風險轉移到那個帳號上，帳號被釣魚，攻擊者就能開通道。所以前提是 IdP 對可以開通道的帳號強制多因素驗證，至少管理員帳號用防釣魚的方式（硬體安全金鑰或 [passkey](/backend/knowledge-cards/passkey/)）——一次性驗證碼會在釣魚頁面上被一起騙走。要再收緊時，多數 IdP 與代理服務支援裝置狀態（device posture）條件，例如只允許公司管理的裝置。授權範圍也要一起設計：限定在負責維運的群組、限定可以連的 port 與主機，原則見[身分與存取憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)的〈最小權限：持續收斂而非一次設定〉。
 
-CI 或自動化工具要使用管理通道時，它的身分是服務帳號或機器身分。長期有效的機器金鑰外洩，等同一把能進所有主機的鑰匙，所以這類身分用 OIDC 換取短期存取憑證，做法見[身分與存取憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)的〈OIDC：給 CI/CD 的短期憑證〉。
+CI 或自動化工具要使用管理通道時，它的身分是[服務帳號](/infra/knowledge-cards/service-account/)或機器身分。長期有效的機器金鑰外洩，等同一把能進所有主機的鑰匙，所以這類身分用 OIDC 換取短期存取憑證，做法見[身分與存取憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)的〈OIDC：給 CI/CD 的短期憑證〉。
 
 ## 主機登入驗證的做法：SSH 金鑰怎麼發、怎麼收回
 

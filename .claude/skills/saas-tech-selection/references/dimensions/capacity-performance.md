@@ -19,12 +19,12 @@
 
 ## Day one 最小集
 
-| 項目           | 最小實作                                                                     |
-| -------------- | ---------------------------------------------------------------------------- |
-| 容量假設文件化 | 三個數字進決策記錄：預期 QPS（平均 / 高峰）、資料月增量、單 request 成本估算 |
-| 預算 alert     | 雲端帳單 alert 設在預算的 50% / 80% / 100% 三檔，另加一檔預測花費達 100%；確認通知寄到會被看到的信箱 |
-| 連線池算術     | 池上限 × 實例數 ≤ DB 連線上限、寫進設定註解；加實例時這條算式是第一個檢查項  |
-| 資源上限       | container / VM 的記憶體上限、request body 上限、分頁上限 — 讓失控有邊界      |
+| 項目           | 最小實作                                                                                             |
+| -------------- | ---------------------------------------------------------------------------------------------------- |
+| 容量假設文件化 | 三個數字進決策記錄：預期 QPS（平均 / 高峰）、資料月增量、單 request 成本估算                         |
+| 預算 alert     | 雲端帳單 alert 設在預算的 50% / 90% / 100% 三檔，另加一檔預測花費達 100%；確認通知寄到會被看到的信箱 |
+| 連線池算術     | 池上限 × 實例數 ≤ DB 連線上限、寫進設定註解；加實例時這條算式是第一個檢查項                          |
+| 資源上限       | container / VM 的記憶體上限、request body 上限、分頁上限 — 讓失控有邊界                              |
 
 連線池是容量維度最早撞到的隱形牆：水平擴展加實例、每個實例帶自己的池、DB 連線數以乘法增長 — 在加第二台實例之前想過這件事、跟事故當下才發現、是兩種成本。
 
@@ -39,11 +39,11 @@
 
 ---
 
-## 支出停損（費用失控時自動停止計費）
+## 支出停損（spend kill switch：費用失控時自動停止計費）
 
-預算 alert 只寄通知，不會停止扣款；雲端帳單的「支出上限」功能通常只涵蓋少數服務（GCP 的強制執行支出上限只涵蓋 Cloud Run、Cloud Run Functions、Gemini API、Vertex AI 這類，Compute Engine 與 GKE 不在內）。服務出錯（無限重試、遞迴觸發）或被濫用（盜用的 API key、被拿去挖礦的 VM）時，費用的增長速度可以遠快於人工處理，這時的硬上限做法是**預算通知觸發程式、程式把專案從帳單帳戶解除連結**。
+預算 alert 只寄通知，不會停止扣款；雲端帳單的「支出上限」功能通常只涵蓋少數服務（GCP 的強制執行支出上限只涵蓋 Cloud Run、Cloud Run functions、Gemini API、Vertex AI 這類，Compute Engine 與 GKE 不在內），而且一個上限只涵蓋一個專案裡的一項服務、暫停到預算期間結束為止、持續性資源的固定費用不暫停。服務出錯（無限重試、遞迴觸發）或被濫用（盜用的 API key、被拿去挖礦的 VM）時，費用的增長速度可以遠快於人工處理，這時涵蓋所有服務的做法是**預算通知觸發程式、程式把專案從帳單帳戶解除連結**。
 
-**決策點**：停損切下去，專案裡所有需要帳單的資源一起停擺，等於一次自己造成的全面停機。所以先問：「被濫用而多付一筆費用」與「服務全停」哪一個代價高？小型專案、測試環境、個人專案通常是被濫用的費用代價高，建停損；正式服務多半是全面停機的代價高，改用警示加值班處理，或只對高風險專案建停損。
+**決策點**：停損切下去，專案裡所有服務一起停擺，等於一次自己造成的全面停機；雲端文件另外警告停用帳單時資源可能被永久刪除。所以先問：「被濫用而多付一筆費用」與「服務全停、資料可能遺失」哪一個代價高？小型專案、測試環境、個人專案通常是被濫用的費用代價高，建停損；正式服務多半是全面停機的代價高，改用警示加值班處理，或只對高風險專案建停損。
 
 **GCP 的做法（已實測）**：
 
@@ -56,18 +56,21 @@ gcloud billing budgets update <budget-name> --notifications-rule-pubsub-topic=pr
 gcloud projects add-iam-policy-binding <project> --member=serviceAccount:<sa> --role=roles/billing.projectManager
 gcloud projects add-iam-policy-binding <project> --member=serviceAccount:<sa> --role=roles/browser
 
-# 部署由 topic 觸發的 function；--retry 讓失敗的那則通知會重送
-gcloud functions deploy <name> --gen2 --trigger-topic=budget-alerts --service-account=<sa> --retry ...
+# 部署由 topic 觸發的 function；兩個服務帳號旗標都明確指定（--trigger-service-account 不給時，
+# gcloud 的說明寫用 Compute Engine 預設服務帳號，實測卻沿用 --service-account，依版本而異）；
+# --retry 讓失敗的那則通知會重送；--runtime、--entry-point、--source、--region 依程式填
+gcloud functions deploy <name> --gen2 --trigger-topic=budget-alerts --service-account=<sa> \
+  --trigger-service-account=<sa> --retry --runtime=<runtime> --entry-point=<function> --source=<dir> --region=<region>
 
-# 觸發器用同一個服務帳號呼叫 function，要給它呼叫權限，否則每次推送都 403
+# 觸發器以 --trigger-service-account 的身分呼叫 function，要給它呼叫權限，否則每次推送都 403
 gcloud run services add-iam-policy-binding <name> --member=serviceAccount:<sa> --role=roles/run.invoker
 ```
 
 程式的判斷規則：只看實際花費（通知裡的 `costAmount >= budgetAmount`），讀不懂的訊息不切斷；呼叫 Cloud Billing API 的 `projects.updateBillingInfo`、`billingAccountName` 給空字串就是解除連結。
 
-**實測的反應時間與限制**：從超支訊息發出到帳單停用約十幾秒，延遲幾乎全部來自計費資料——同一個專案已經跑過幾個小時的 VM 與 Kubernetes 叢集，預算通知裡的花費仍然是 0。所以停損限制的是損失的上限，不是即時止血。帳單停用期間資源清單會回傳空的，重新連結後資源都還在、計費恢復；空清單不代表資源已刪除，事後仍要清理。停損程式跑在被停用的專案上時，它自己也跟著停擺。
+**實測的反應時間與限制**：從超支訊息發出到帳單停用約十幾秒；整段反應時間的主要部分在訊息發出之前，來自帳單資料的更新延遲——同一個專案已經跑過幾個小時的 VM 與 Kubernetes 叢集，預算通知裡的花費仍然是 0（預算用預設的抵免設定，抵免也可能讓這個數字偏低）。所以停損限制的是損失的上限，延遲期間已經發生的費用攔不下來。帳單停用約兩分半鐘期間資源清單回傳空的，重新連結後 Cloud Router、Cloud NAT 與 function 都還在、計費恢復（這次沒有觀察 VM 與資料庫）；空清單不代表資源已刪除，事後仍要清理，而停用時間更長時以雲端文件對資源處置的說明為準。停損程式跑在被停用的專案上時，它自己也跟著停擺。
 
-**驗收**：部署成功、狀態 `ACTIVE` 不算完成。`run.invoker`、`browser` 與 `--retry` 這三項缺任何一個，停損都會在看似正常的狀態下失效（實測三個都踩到了）。上線時各發一則低於預算與超出預算的測試訊息到 topic，看到帳單狀態變成停用才算完成，見 [protection-proves-itself-by-firing](../principles/protection-proves-itself-by-firing.md)。
+**驗收**：部署成功、狀態 `ACTIVE` 不算完成。`run.invoker`、`browser` 與 `--retry` 這三項缺任何一個，停損都會在看似正常的狀態下失效（實測三個都踩到了）。上線時各發一則低於預算與超出預算的測試訊息到 topic（`gcloud pubsub topics publish budget-alerts --message='{"costAmount": <值>, "budgetAmount": <預算>}'`，兩則的 `<值>` 分別低於與不低於 `<預算>`），看到帳單狀態變成停用才算完成，見 [protection-proves-itself-by-firing](../principles/protection-proves-itself-by-firing.md)。
 
 ---
 
@@ -84,12 +87,12 @@ gcloud run services add-iam-policy-binding <name> --member=serviceAccount:<sa> -
 
 ## 延後與 tripwire
 
-| 可延後項             | 建議重評條件                                      |
-| -------------------- | ------------------------------------------------- |
-| 正式 load test       | 首次可預期高峰前、或容量決策需要數字依據          |
-| 自動擴縮             | 流量波動大到人工調整跟不上、且 stateless 前提成立 |
-| 成本工程（右算規格） | 月帳單成長率連續超過用戶成長率                    |
-| 支出停損             | 出現第一次費用異常、對外公開可計費的 API key 或端點、或專案開始跑沒有人值守的批次與自動擴縮 |
+| 可延後項                       | 建議重評條件                                                                                                                                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 正式 load test                 | 首次可預期高峰前、或容量決策需要數字依據                                                                                                                                       |
+| 自動擴縮                       | 流量波動大到人工調整跟不上、且 stateless 前提成立                                                                                                                              |
+| 成本工程（右算規格）           | 月帳單成長率連續超過用戶成長率                                                                                                                                                 |
+| 支出停損                       | 出現第一次費用異常、對外公開可計費的 API key 或端點、或專案開始跑沒有人值守的批次與自動擴縮                                                                                    |
 | 連線池／worker pool 分池或擴容 | 仲裁器回報不可棄請求無法服務（等待型無法服務、或推送型延後至接收視窗填滿），判斷標準見事件流負載仲裁方法論〈讓步與卸載順序〉、套用流程見 `event-flow-arbitration-design` skill |
 
 ---

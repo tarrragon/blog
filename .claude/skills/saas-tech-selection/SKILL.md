@@ -4,7 +4,7 @@ description: "初始化 SaaS repo 時的設計與選型訪談協議：定錨後�
 license: MIT
 metadata:
   portable: true
-  version: 1.10.0
+  version: 1.10.1
   category: selection-protocol
 ---
 
@@ -92,29 +92,29 @@ metadata:
 
 ## 觸發路由
 
-| 訊號                                                                                        | 讀哪份 reference                                                                                                            |
-| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| 使用者的需求看起來用託管平台 / BaaS 就能解決（電商、表單流程、內容站、app 後端）            | `references/interview-core.md`（定錨段的交付形態 gate）                                                                     |
-| 產品是開源自架工具（開發者工具 / CLI 工具 / 自架服務、源碼公開）                            | `references/interview-core.md`（開源自架工具中間流程 + 開源替代品 check）                                                   |
-| 開始盤點功能、使用者說「我要做一個 X 的服務」                                               | `references/user-operations-bdd.md`（操作盤點）                                                                             |
-| 操作清單完成、產品有 UI 元件、要展開畫面狀態矩陣                                            | `references/user-operations-bdd.md`（Stage 1.5 畫面狀態矩陣展開）+ `references/principles/screen-state-matrix-expansion.md` |
-| 操作清單完成、要切 domain / 定 event                                                        | `references/domain-event-modeling.md`（domain / event 切分）                                                                |
-| 判斷一塊 domain / 維度該自建還是買、或候選 vendor 一次 cover 多維度（跨能力 bundle / BaaS） | `references/principles/capability-outsourcing-depth.md`（外包深度三分層）                                                   |
-| 領域模型完成、要判讀技術需求                                                                | `references/interview-core.md`（定錨 + 核心問題）                                                                           |
-| 正式狀態保存（帳號、訂單、合約、金流）                                                      | `references/dimensions/state-storage.md`（必）                                                                              |
-| 任何對外服務                                                                                | `references/dimensions/deployment-platform.md`（必）+ `references/dimensions/security.md`（必）                             |
-| 任何 production 服務                                                                        | `references/dimensions/observability.md`（必）+ `references/dimensions/reliability.md`（必）                                |
-| 任何有可執行產出的專案（app / 網站 / 服務 / CLI）、要定實機驗證環境                         | `references/dimensions/verification-surface.md`（必）                                                                       |
-| event catalog 有不可丟 event、或 request 外的可靠工作                                       | `references/dimensions/async-queue.md`                                                                                      |
-| 同一資料高頻重複讀、昂貴計算共用、session / presence                                        | `references/dimensions/cache.md`                                                                                            |
-| 產品有 client-side 元件（mobile app / SPA / desktop app）                                   | `references/dimensions/observability.md`（client-side 觸發展開段）+ `references/principles/client-side-observability.md`    |
-| 明確高峰活動、成本敏感、規模假設首年破十萬用戶                                              | `references/dimensions/capacity-performance.md`                                                                             |
-| 自建或半託管、有 VM / Kubernetes 節點 / 自管 DB 主機要登入                                  | `references/dimensions/security.md`（管理通道段）                                                                           |
+| 訊號                                                                                        | 讀哪份 reference                                                                                                             |
+| ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 使用者的需求看起來用託管平台 / BaaS 就能解決（電商、表單流程、內容站、app 後端）            | `references/interview-core.md`（定錨段的交付形態 gate）                                                                      |
+| 產品是開源自架工具（開發者工具 / CLI 工具 / 自架服務、源碼公開）                            | `references/interview-core.md`（開源自架工具中間流程 + 開源替代品 check）                                                    |
+| 開始盤點功能、使用者說「我要做一個 X 的服務」                                               | `references/user-operations-bdd.md`（操作盤點）                                                                              |
+| 操作清單完成、產品有 UI 元件、要展開畫面狀態矩陣                                            | `references/user-operations-bdd.md`（Stage 1.5 畫面狀態矩陣展開）+ `references/principles/screen-state-matrix-expansion.md`  |
+| 操作清單完成、要切 domain / 定 event                                                        | `references/domain-event-modeling.md`（domain / event 切分）                                                                 |
+| 判斷一塊 domain / 維度該自建還是買、或候選 vendor 一次 cover 多維度（跨能力 bundle / BaaS） | `references/principles/capability-outsourcing-depth.md`（外包深度三分層）                                                    |
+| 領域模型完成、要判讀技術需求                                                                | `references/interview-core.md`（定錨 + 核心問題）                                                                            |
+| 正式狀態保存（帳號、訂單、合約、金流）                                                      | `references/dimensions/state-storage.md`（必）                                                                               |
+| 任何對外服務                                                                                | `references/dimensions/deployment-platform.md`（必）+ `references/dimensions/security.md`（必）                              |
+| 任何 production 服務                                                                        | `references/dimensions/observability.md`（必）+ `references/dimensions/reliability.md`（必）                                 |
+| 任何有可執行產出的專案（app / 網站 / 服務 / CLI）、要定實機驗證環境                         | `references/dimensions/verification-surface.md`（必）                                                                        |
+| event catalog 有不可丟 event、或 request 外的可靠工作                                       | `references/dimensions/async-queue.md`                                                                                       |
+| 同一資料高頻重複讀、昂貴計算共用、session / presence                                        | `references/dimensions/cache.md`                                                                                             |
+| 產品有 client-side 元件（mobile app / SPA / desktop app）                                   | `references/dimensions/observability.md`（client-side 觸發展開段）+ `references/principles/client-side-observability.md`     |
+| 明確高峰活動、成本敏感、規模假設首年破十萬用戶                                              | `references/dimensions/capacity-performance.md`                                                                              |
+| 自建或半託管、有 VM / Kubernetes 節點 / 自管 DB 主機要登入                                  | `references/dimensions/security.md`（管理通道段）                                                                            |
 | 擔心服務出錯或被濫用時費用失控、要不要建支出停損                                            | `references/dimensions/capacity-performance.md`（支出停損段）+ `references/principles/protection-proves-itself-by-firing.md` |
-| 使用者問「之後長大怎麼辦」、或要寫 tripwire 總表                                            | `references/scale-stage-triggers.md`                                                                                        |
-| 防護底線逐項確認、或使用者要求跳過某條底線                                                  | `references/baseline-protections.md`                                                                                        |
-| 訪談收斂、要產出決策文件與 scaffold 建議                                                    | `references/decision-record-template.md`                                                                                    |
-| 決策記錄產出後、專案有 doc skill、要移交需求文件                                            | `references/decision-record-template.md`（銜接 doc 系統節）                                                                 |
+| 使用者問「之後長大怎麼辦」、或要寫 tripwire 總表                                            | `references/scale-stage-triggers.md`                                                                                         |
+| 防護底線逐項確認、或使用者要求跳過某條底線                                                  | `references/baseline-protections.md`                                                                                         |
+| 訪談收斂、要產出決策文件與 scaffold 建議                                                    | `references/decision-record-template.md`                                                                                     |
+| 決策記錄產出後、專案有 doc skill、要移交需求文件                                            | `references/decision-record-template.md`（銜接 doc 系統節）                                                                  |
 
 每份 reference 自包含：以該階段或維度為核心、把訪談問題、判斷標準、防護底線與 tripwire 收在同一檔。閱讀任一 reference 不需要回來看其他 reference。
 
