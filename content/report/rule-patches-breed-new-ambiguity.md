@@ -58,6 +58,7 @@ slug: "rule-patches-breed-new-ambiguity"
 
 ## 跟其他抽象層原則的關係
 
+- [規則的修法逐句驗證會通過、套到案例上才互撞：改完才查得到的事實管不了動手之前的步驟，修完要拿任務重走](/report/rule-fixes-pass-per-sentence-and-collide-per-case/)：本卡的下一輪。本卡的結構調整做完之後，修改那些結構的動作本身又產生新的歧義；那張卡追出四種機制，並替本卡的「共用的概念先定義再引用」補上時點這一問。
 - [Single Source of Truth：值的住址只能有一處](/report/single-source-of-truth/)：本卡最接近的既有卡，那張講的是值（CSS token、量測值）的住址；本卡把同一條原則用在規則檔自己的概念上，並補上那張卡沒有處理的兩種副本：摘要與轉述，以及散在各條規則裡的同一個例外。
 - [列舉與數字殘留在定義型文件會製造維護債務](/report/enumeration-creates-maintenance-debt/)：那張卡處理的是寫作過程留下的冗餘列舉；本卡的封閉列舉宣告的是全集，讀者靠它知道清單已經完整，失效的方式是別處新增成員之後它不報錯。修法因此不同：那張卡刪掉列舉，本卡把列舉移到唯一住址。
 - [要求執行者做判定的規則，要一併規定判定留下什麼痕跡](/report/judgment-rules-must-specify-their-trace/)：改動級別裡工具判不了的那一段（措辭級與規則級的分界）照那張卡的方式留下痕跡。
