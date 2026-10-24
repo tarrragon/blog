@@ -94,7 +94,7 @@ class ChangedLines(Base):
         write(self.root, "sub/s.md", "整句改寫成完全不同的內容\n")
         sub = os.path.join(self.root, "sub")
         r = tool("changed-lines", "--level", "s.md", cwd=sub)
-        self.assertIn("level: 措辭級以上", r.stdout, r.stdout + r.stderr)
+        self.assertIn("level: 不是排版級", r.stdout, r.stdout + r.stderr)
         r = tool("changed-lines", "s.md", cwd=sub)
         self.assertEqual(r.stdout, "整句改寫成完全不同的內容\n")
         # 在子目錄裡寫成根目錄起算的路徑，指的是不存在的 sub/sub/s.md：要報錯，不能安靜地判成沒有改動
@@ -107,13 +107,13 @@ class ChangedLines(Base):
             f.write(b"\x89PNG\x00\x01\xff")
         r = tool("changed-lines", "--level", "img.png", cwd=self.root)
         self.assertEqual(r.returncode, 0, r.stderr)
-        self.assertIn("措辭級以上（新檔（二進位））", r.stdout)
+        self.assertIn("不是排版級（新檔（二進位））", r.stdout)
         self.assertIn("from 1 file(s)", r.stderr)
 
     def test_permission_only_change_is_not_layout(self):
         os.chmod(os.path.join(self.root, "a.md"), 0o755)
         r = tool("changed-lines", "--level", "a.md", cwd=self.root)
-        self.assertIn("level: 措辭級以上", r.stdout)
+        self.assertIn("level: 不是排版級", r.stdout)
 
     def test_missing_path_exits_2(self):
         r = tool("changed-lines", "nope.md", cwd=self.root)
@@ -141,21 +141,21 @@ class ChangedLines(Base):
         for before, after in [("exit 1 結束\n", "exit 3 結束\n"), ("會提交\n", "不提交\n"), ("先問使用者\n", "不問使用者\n")]:
             with self.subTest(before=before):
                 out = self.level(before, after)
-                self.assertIn("level: 措辭級以上", out)
+                self.assertIn("level: 不是排版級", out)
 
     def test_level_weight_outside_frontmatter_or_non_numeric_is_wording(self):
         out = self.level("正文\nweight: 3 次重試\n", "正文\nweight: 永遠不重試\n")
-        self.assertIn("level: 措辭級以上", out)
+        self.assertIn("level: 不是排版級", out)
         out = self.level("---\ndate: 2026-01-01\n---\n", "---\ndate: 這裡寫了一整句新規則\n---\n")
-        self.assertIn("level: 措辭級以上", out)
+        self.assertIn("level: 不是排版級", out)
 
     def test_level_inserted_character_is_wording(self):
         out = self.level("看內容\n", "查看內容\n")
-        self.assertIn("level: 措辭級以上", out)
+        self.assertIn("level: 不是排版級", out)
 
     def test_level_deleted_sentence_is_wording(self):
         out = self.level("一\n二\n三\n", "一\n三\n")
-        self.assertIn("level: 措辭級以上", out)
+        self.assertIn("level: 不是排版級", out)
 
     def test_level_frontmatter_weight_is_layout(self):
         out = self.level("---\nweight: 3\n---\n", "---\nweight: 30\n---\n")
@@ -164,7 +164,7 @@ class ChangedLines(Base):
     def test_level_new_file_is_wording(self):
         write(self.root, "n.md", "x\n")
         r = tool("changed-lines", "--level", "n.md", cwd=self.root)
-        self.assertIn("n.md: 措辭級以上（新檔）", r.stdout)
+        self.assertIn("n.md: 不是排版級（新檔）", r.stdout)
 
 
 class CommitFiles(Base):

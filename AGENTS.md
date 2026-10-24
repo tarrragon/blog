@@ -1,6 +1,6 @@
 # Blog 專案的寫作與工程規則
 
-這份檔案是 blog 專案寫作與工程規則的入口，讀者是在這個 repo 工作的 agent。本檔放每個 session 都會用到的規則：怎麼讀分冊、規則的優先序與住址、改動的級別、寫作類 skill 的叫用、回覆語言、提交與推送（含要先問使用者的情形）、掃描工具的零輸出、決策分析的 WRAP 流程，以及各 agent 讀到的檔案。各類工作才會用到的規則放在 `docs/rules/` 的分冊。
+這份檔案是 blog 專案寫作與工程規則的入口，讀者是在這個 repo 工作的 agent。本檔放每個 session 都會用到的規則：怎麼讀分冊、規則的優先序與住址、改動的級別、寫作類 skill 的叫用、回覆語言、提交與推送（含要先問使用者的情形與沒有使用者明說就不做的動作）、掃描工具的零輸出、決策分析的 WRAP 流程，以及各 agent 讀到的檔案。各類工作才會用到的規則放在 `docs/rules/` 的分冊。
 
 拆成入口與分冊的原因是讀取上限：Codex 自動讀專案指令檔時有位元組上限（`project_doc_max_bytes`，預設 32 KiB），它載入的全部 AGENTS.md 合起來算進同一個上限，超過的部分不會進它的 context。所以本檔要維持在這個上限以內（`wc -c AGENTS.md` 小於 32768），新增的規則寫進對應的分冊。
 
@@ -68,7 +68,7 @@
 
 改錯字、標點或連結網址也照這一條叫用：動手之前不知道改動會停在哪一級，改一個字也可能改到規則。
 
-**改完之後的掃描**：措辭級以上的改動，照 `docs/rules/writing-process.md`〈文章產出流程〉的字句層掃描跑一次 bank，掃描對象是這次的新增行：
+**改完之後的掃描**：不是排版級的改動（措辭級與規則級），照 `docs/rules/writing-process.md`〈文章產出流程〉的字句層掃描跑一次 bank，掃描對象是這次的新增行：
 
 ```bash
 bin/changed-lines <這次的檔案...> > <暫存目錄>/added.txt   # 新增行，不帶 diff 的 + 前綴；新檔整份都算
@@ -84,8 +84,8 @@ bin/changed-lines <這次的檔案...> > <暫存目錄>/added.txt   # 新增行�
 
 ### 提交
 
-- **commit message 帶著這次的紀錄**：這次的 diff 動到書面產出（〈改動的級別〉）時，commit message（或同一個 commit 裡給讀者看的 work-log 文章）要有〈改動的級別〉的判定；措辭級以上另外要有 `docs/rules/writing-process.md`〈掃描與探針的紀錄寫進 repo〉要求的紀錄。沒有就先補，再 commit。排版級的改動沒有新增詞句，那一節的掃描與探針紀錄都不適用，紀錄就是級別的判定。
-- **`description` 與 `tags`**：新增的 `content/` 檔案一律補齊；修改既有 `content/` 檔案時，同檔缺這兩個欄位就在同一次變更補上。lint 把它們報在警告層，但它們不是可以新增的技術債。補這兩個欄位是新增行，那一次的改動因此是措辭級以上，照措辭級做紀錄與掃描。
+- **commit message 帶著這次的紀錄**：這次的 diff 動到書面產出（〈改動的級別〉）時，commit message（或同一個 commit 裡給讀者看的 work-log 文章）要有〈改動的級別〉的判定；不是排版級的改動另外要有 `docs/rules/writing-process.md`〈掃描與探針的紀錄寫進 repo〉要求的紀錄。沒有就先補，再 commit。排版級的改動沒有新增詞句，那一節的掃描與探針紀錄都不適用，紀錄就是級別的判定。
+- **`description` 與 `tags`**：新增的 `content/` 檔案一律補齊；修改既有 `content/` 檔案時，同檔缺這兩個欄位就在同一次變更補上。lint 把它們報在警告層，但它們不是可以新增的技術債。補這兩個欄位是新增行，那一次的改動因此不是排版級（一般文章是措辭級），照那一級做紀錄與掃描。
 - **lint**：這次動到 `content/` 的檔案時，提交前跑 `bin/lint-delta <這次的 content/ 檔案...>`。它只印這次新增的問題，既有的只計數；exit 1 代表這次新增了 error，修掉再提交，新增的 warn 寫進回報。全量 lint（`./bin/mdtools lint content/`）只用來觀察歷史基線，不用來判斷這次的品質。
 - **提交**：用 `bin/commit-files -F <訊息檔> <這次的檔案...>`，不直接 `git commit`。共用的 git index 裡可能有另一個 session（或另一個 agent）staged 的檔案，直接 commit 會把它們一起提交；這支工具經由私有 index 只提交列出的檔案，提交後讓共用 index 對齊。路徑以執行時的目錄起算，刪除的檔案與改名的新舊兩個路徑都列。
   - 跑之前先跑 `git diff HEAD -- <這次的檔案...>`，把 diff 跟這次自己做過的編輯逐段對照：私有 index 隔離的是 staging，不隔離工作樹，另一個 session 改了同一個檔案時，它在工作樹裡的修改會一起提交。有對不上的段落時，照〈要先問使用者的情形〉處理。自認都是自己寫的不改變本款：對照的是 diff 與編輯紀錄，不是印象。
@@ -97,7 +97,7 @@ bin/changed-lines <這次的檔案...> > <暫存目錄>/added.txt   # 新增行�
 commit 之後直接推送，不另外問使用者：使用者已經授權推送。使用者這次的指示只提到提交、沒有提到推送時，照常推送；指示另有要求時（「先不要推」「只推 blog」），照這次的指示。要停下來問的情形見〈要先問使用者的情形〉。
 
 - **blog repo**：跑 `bin/push-main --mine <這次 session 提交的 commit...>`（`bin/commit-files` 每次提交都印出它的 hash）。它先 fetch；推送範圍裡有 `--mine` 以外的 commit 時不推送、不動本地的 `main`，印出 `[ASK-USER]`；目前在分支、worktree 或 detached HEAD 上時，它把目前的 commit fast-forward 進 `main` 再推。推送之後印出 `[CLEANUP]` 時，分支或 worktree 用完就照那幾行清理。
-- **共用 skill 庫**：改過的 skill 照 `docs/rules/skills.md`〈推送前的檢查〉推（`skill-sync push` 的兩段式：`echo n` 取預覽、讀完再 `echo y`）。`echo y` 是 agent 自己執行的套用步驟，不是問使用者。`docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 不推（〈要先問使用者的情形〉）。skill 改動同時要推 blog 與共用 skill 庫時，兩者互不依賴，沒有先後。
+- **共用 skill 庫**：改過的 skill 照 `docs/rules/skills.md`〈推送前的檢查〉推（`skill-sync push` 的兩段式：`echo n` 取預覽、讀完再 `echo y`）。`echo y` 是 agent 自己執行的套用步驟，不是問使用者。`docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 不推（〈沒有使用者明說就不做的動作〉）。skill 改動同時要推 blog 與共用 skill 庫時，兩者互不依賴，沒有先後。
 - **dotfiles**：部署照 `docs/rules/remote.md`〈遠端機器的操作〉跑 `remote-sync.sh`，它本身會 push。
 
 直接推送拿掉的是「問使用者」這一步，不是檢查。工具印出 `[ASK-USER]` 時照〈要先問使用者的情形〉；其餘的非零 exit、預覽裡有 `[WARNING]`、pre-push 報錯、遠端拒絕時，停下來修，修不了就寫進〈延到工作結束之後的動作〉。還沒推送的 commit 用 `bin/push-main --list-unpushed` 列出：它列出所有分支與 detached HEAD 上還沒推到任何遠端的 commit，fetch 成功或失敗時都適用。
@@ -110,7 +110,9 @@ commit 之後直接推送，不另外問使用者：使用者已經授權推送�
 - **推送 blog 時**，`bin/push-main` 印出 `[ASK-USER]`：給它列出的 commit（別的 session 還沒推送的），由使用者決定要不要一起推。
 - **同步 skill 時**，`[DIVERGED]` 或 `[CONFLICT]` 的兩邊在共同基底之後改到同一段文字（合併時有衝突）：給兩邊的 `git log` 與衝突的段落（`docs/rules/skills.md`〈同步時的判斷〉）。
 
-下列動作沒有使用者在這次的指示裡明說就不做，也不主動提議：`skill-sync push --force`；替一支 skill 建 `content/skills/` 的公開鏡像；把 `docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 推上共用庫（那些 skill 依賴本 blog 的結構，推上去之後別的專案用不了）。
+### 沒有使用者明說就不做的動作
+
+這一節是這類動作的唯一住址。下列動作沒有使用者在這次的指示裡明說就不做，也不主動提議、不停下來問：`skill-sync push --force`；替一支 skill 建 `content/skills/` 的公開鏡像；把 `docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 推上共用庫（那些 skill 依賴本 blog 的結構，推上去之後別的專案用不了）。
 
 ### 延到工作結束之後的動作
 

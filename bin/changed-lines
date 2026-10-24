@@ -7,7 +7,7 @@
 用法：
   bin/changed-lines <檔案...> > added.txt   新增行寫到 stdout，不帶 diff 的 `+` 前綴
   bin/changed-lines --level <檔案...>       逐檔印級別，最後一行是 `level: 排版級` 或
-                                            `level: 措辭級以上`
+                                            `level: 不是排版級`
 
 為什麼是一支工具而不是一條 shell 管線：管線版本在規則檔裡改過三次，每一次實跑都找出
 新的錯——`git diff -U0`（不帶 HEAD）漏掉已經 staged 的改動與還沒 add 的新檔；
@@ -34,7 +34,7 @@ index，別的 session 持有 index.lock 時失敗。這些情形都寫成 bin/t
   插入或刪掉一個字不算錯字，中文裡那多半是換了詞；改數字、否定或情態會改變規則的意思；
 - 兩行都在檔首 `---` frontmatter 區塊裡，是同一個 `weight:`（整數）或 `date:`（日期）欄位的值。
 任何一處 hunk 不符合、只有刪除或只有新增（刪掉一句、補一個 frontmatter 欄位都算改動）、檔案是
-新檔、或只有二進位內容與檔案權限的改動，那個檔案就是措辭級以上。替換的字元逐處印成
+新檔、或只有二進位內容與檔案權限的改動，那個檔案就不是排版級。替換的字元逐處印成
 「錯字候選：舊→新」，讓 commit message 留得下判定的痕跡。措辭級與規則級的分界是語意判斷，
 這支工具不做。
 
@@ -238,14 +238,14 @@ def main():
                     elif typos:
                         reason = "錯字候選：" + "、".join(f"{o}→{n}" for o, n in typos)
             overall_layout = overall_layout and verdict
-            label = "排版級" if verdict else "措辭級以上"
+            label = "排版級" if verdict else "不是排版級"
             print(f"{path}: {label}" + (f"（{reason}）" if reason else ""))
         else:
             for a in added:
                 print(a)
 
     if args.level:
-        print("level: " + ("排版級" if overall_layout else "措辭級以上"))
+        print("level: " + ("排版級" if overall_layout else "不是排版級"))
     sys.stderr.write(f"changed-lines: {total} added line(s) from {files} file(s)\n")
 
 

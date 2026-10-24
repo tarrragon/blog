@@ -15,7 +15,7 @@
 | 可依賴 | 只依賴 skill 自身的內容與穩定的公開來源                                                             | 可引用 report、posts 與其他 section      |
 | 格式   | SKILL.md 以 YAML frontmatter（`name`、`description`、`metadata`）開頭，接 H1 與正文；不放 Hugo 欄位 | Hugo frontmatter（`title`、`date` 必填） |
 
-`content/skills/<name>/` 是 skill 的公開鏡像，給網站讀者讀，只有對外公開的方法論需要；內部協議型的 skill 只存在於 `.claude/skills/`。鏡像與源檔的正文相同，差在鏡像帶 Hugo frontmatter，由 `bin/skill-mirror` 產生（見〈從 report 卡到 skill 的標準流程〉）。替一支 skill 建鏡像要使用者在這次的指示裡明說（`AGENTS.md`〈要先問使用者的情形〉）。
+`content/skills/<name>/` 是 skill 的公開鏡像，給網站讀者讀，只有對外公開的方法論需要；內部協議型的 skill 只存在於 `.claude/skills/`。鏡像與源檔的正文相同，差在鏡像帶 Hugo frontmatter，由 `bin/skill-mirror` 產生（見〈從 report 卡到 skill 的標準流程〉）。替一支 skill 建鏡像要使用者在這次的指示裡明說（`AGENTS.md`〈沒有使用者明說就不做的動作〉）。
 
 ### Skill 的依賴邊界
 
@@ -129,7 +129,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 - **用兩段式**：`echo n | skill-sync push <name> -m "…"` 取預覽，讀完再 `echo y | …`。agent 的 shell 沒有互動輸入，直接跑會被當成 N 而中止。
 - **預覽裡出現任何一行 `[WARNING]` 就不跑 `echo y`**：每一種警告的意思與處置照 skill-sync SKILL.md〈Report categories and non-interactive use〉的警告表，處理完重跑預覽。宣告 portable 的 skill 印出 `[Portability]` 清單並中止時，照〈Skill 的撰寫規則〉的可攜性掃描修掉再推。
-- **不帶 `--force`**：`--force` 拿掉警告之後的停點，並放行 portable skill 的可攜性閘門。沒有使用者在這次的指示裡明說就不帶（`AGENTS.md`〈要先問使用者的情形〉），被放行的那幾條寫進這次 `skill-sync push -m` 的訊息。
+- **不帶 `--force`**：`--force` 拿掉警告之後的停點，並放行 portable skill 的可攜性閘門。沒有使用者在這次的指示裡明說就不帶（`AGENTS.md`〈沒有使用者明說就不做的動作〉），被放行的那幾條寫進這次 `skill-sync push -m` 的訊息。
 
 `[Version] local X vs remote Y` 是給人對照 changelog 用的顯示行，不是判定依據：skill-sync 用內容雜湊判斷兩邊相不相同，X 高於 Y 不代表可以推送。要確定一支 skill 的版本，讀它 SKILL.md frontmatter 的 `metadata.version`。
 
@@ -154,7 +154,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 - `blogsearch-lifecycle`
 - `vendor-deep-article`
 
-新增一支只給本 repo 用的 skill 時，加進這份清單；清單裡的 skill 沒有使用者在這次的指示裡明說就不推上共用庫（`AGENTS.md`〈要先問使用者的情形〉）。
+新增一支只給本 repo 用的 skill 時，加進這份清單；清單裡的 skill 沒有使用者在這次的指示裡明說就不推上共用庫（`AGENTS.md`〈沒有使用者明說就不做的動作〉）。
 
 ### Claude Code 與 Codex 共用的 skill 目錄
 
