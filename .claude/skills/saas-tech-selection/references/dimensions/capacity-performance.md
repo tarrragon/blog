@@ -50,9 +50,11 @@
 ```bash
 # 預算通知送到 Pub/Sub topic；設定時會自動授權 billing-budget-alert@system.gserviceaccount.com 發布
 gcloud pubsub topics create budget-alerts
-# <budget-name> 是 gcloud billing budgets list 印出的完整名稱 billingAccounts/<id>/budgets/<uuid>，不是顯示名稱
-gcloud billing budgets update <budget-name> --notifications-rule-pubsub-topic=projects/<project>/topics/budget-alerts \
-  --billing-project=<project>
+# 接停損的預算另外建，不接到既有的帳戶層級警示預算上；一個 topic 只接一個預算，
+# 好幾個預算共用一個 topic 時，任何一個超支都會讓接在 topic 上的每一個停損開關動作
+gcloud billing budgets create --billing-account=<billing-account-id> --display-name=<name> \
+  --budget-amount=<能承受的最高花費減掉延遲期間的花費><currency> --filter-projects=projects/<project> \
+  --notifications-rule-pubsub-topic=projects/<project>/topics/budget-alerts --billing-project=<project>
 
 # 停損程式的服務帳號：解除帳單連結用 billing.projectManager，讀取帳單狀態另外要 browser；
 # --condition=None 讓專案裡已有條件式綁定時，非互動模式不會停下來要求選擇條件
@@ -75,7 +77,10 @@ gcloud run services add-iam-policy-binding <name> --region=<region> --member=ser
 
 **反應時間與限制**：停損限制的是損失的上限，帳單資料延遲期間已經發生的費用攔不下來（實測從超支訊息發出到停用約十幾秒，延遲幾乎都在訊息發出之前）。帳單停用期間資源清單回傳空的，空清單不代表資源已刪除，重新連結後留下的資源繼續計費，清理以重新連結後的清單為準。實際因為超支而停用之後，先調高預算金額或刪掉函式再重新連結，否則下一則通知會再停用一次。停損程式跑在被停用的專案上時，它自己也跟著停擺。
 
-**驗收**：部署成功、狀態 `ACTIVE` 不算完成。`run.invoker`、`browser` 與 `--retry` 這三項缺任何一個，停損都會在看似正常的狀態下失效（實測三個都踩到了）。上線時各發一則低於預算與超出預算的測試訊息到 topic（`gcloud pubsub topics publish budget-alerts --message='{"costAmount": <值>, "budgetAmount": <預算>}'`，兩則的 `<值>` 分別低於與不低於 `<預算>`），看到帳單狀態變成停用才算完成，見 [protection-proves-itself-by-firing](../principles/protection-proves-itself-by-firing.md)。
+**驗收**：部署成功、狀態 `ACTIVE` 不算完成。`run.invoker`、`browser` 與 `--retry` 三項缺任何一個，停損都會在看似正常的狀態下失效。驗收分兩段，見 [protection-proves-itself-by-firing](../principles/protection-proves-itself-by-firing.md)：
+
+1. **topic 之前**：等第一則真實的預算通知，查函式紀錄裡的 `received`，確認 `budgetDisplayName` 是接停損的預算、`costAmount` 與帳單報表上這個專案本期的費用相符（接近 0 而報表不是，就是抵免或範圍設錯）。
+2. **topic 之後**：超出預算那一則會實際停用帳單、可能刪除資料，所以只在專案還沒有正式流量與要保留的資料時做；已上線的專案，把同一份函式部署成 `TARGET_PROJECT_ID` 指向可拋棄專案的複本來做，正式專案只用權限檢查工具確認那兩個權限。先發低於預算的那一則（`gcloud pubsub topics publish budget-alerts --message='{"costAmount": <值>, "budgetAmount": <預算>}'`，`<值>` 低於 `<預算>`），確認函式紀錄有 `action=none`；再發 `<值>` 不低於 `<預算>` 的那一則，看到 `billingEnabled` 變成 `false`。最後用 `gcloud billing projects link <project> --billing-account=<billing-account-id>` 重新連結，連結完成才算驗收結束。
 
 ---
 

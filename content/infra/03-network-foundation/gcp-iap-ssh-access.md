@@ -166,7 +166,14 @@ IAP 端點以 API 的形式在專案上開關，沒有啟用時，`--tunnel-thro
 gcloud services enable iap.googleapis.com
 ```
 
-同一步在 Google Cloud 控制台的「IAM 與管理 > 稽核記錄」為 Cloud Identity-Aware Proxy 開啟 Data Access 紀錄裡的「管理員讀取」（`ADMIN_READ`）類型。開通道時 IAP 檢查的權限 `iap.tunnelInstances.accessViaIAP` 歸在這個類型，每一次開通道會留下一筆方法名稱為 `AuthorizeUser` 的紀錄；只開「資料讀取」（`DATA_READ`）時，開通道不會留下任何紀錄。這份紀錄記下每一次開通道的帳號與目標 VM，只記錄開啟之後的連線，切換當天就開，之後調查時才查得到切換以來的全部連線。也在同一步確認所有要開通道的 Google 帳號都已強制兩步驟驗證（見〈IAP 的 IAM 授權範圍：誰拿得到通道〉）。
+同一步在 Google Cloud 控制台的「IAM 與管理 > 稽核記錄」為 Cloud Identity-Aware Proxy 開啟 Data Access 紀錄裡的「管理員讀取」（`ADMIN_READ`）類型。開通道時 IAP 檢查的權限 `iap.tunnelInstances.accessViaIAP` 歸在這個類型，每一次開通道會留下一筆方法名稱為 `AuthorizeUser` 的紀錄；只開「資料讀取」（`DATA_READ`）時，開通道不會留下任何紀錄。這份紀錄記下每一次開通道的帳號與目標 VM，只記錄開啟之後的連線，切換當天就開，之後調查時才查得到切換以來的全部連線。開啟之後經由 IAP 連一次，查到這次連線的紀錄才算開對了類型（`protoPayload.resourceName` 是 VM 的執行個體 ID）：
+
+```bash
+gcloud logging read 'protoPayload.serviceName="iap.googleapis.com" AND protoPayload.methodName="AuthorizeUser"' \
+  --freshness=1h --format="value(timestamp,protoPayload.authenticationInfo.principalEmail,protoPayload.resourceName)"
+```
+
+也在同一步確認所有要開通道的 Google 帳號都已強制兩步驟驗證（見〈IAP 的 IAM 授權範圍：誰拿得到通道〉）。
 
 新規則只開需要的 port，並用 target tag 限定作用的 VM。把 `--rules` 寫成 `all` 並省略 `--target-tags`，IAP 來源就連得到網路裡每一台 VM 的每一個 port，等於把 `default-allow-internal` 的寬度複製給 IAP。
 

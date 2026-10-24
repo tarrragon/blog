@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.10.3 — 多輪審查 Round 3 修正：〈支出停損〉示範改成另建接停損的預算（create，不接到既有警示預算）、一個 topic 只接一個預算、金額扣掉延遲期間的花費；驗收分成 topic 之前（第一則真實通知對照帳單報表）與 topic 之後兩段，超出預算那一則只在未上線專案做、已上線改用可拋棄複本，測完重新連結。〈管理通道〉：外部 IP 只在管理用途時移除；底線第 8 條與 baseline-protections 的 Kubernetes API 改用 IAM 端點或只列維運與 CI 的 authorized networks；舊規則停用前先觀察、盤點 metadata 金鑰、寫出回退指令；離職移出群組而非移除群組綁定；救援入口測完關回；logging 初期的假陰性註解。principle 卡補上第四個位置「測試從中途注入」、處置指令的假陰性、事件型觸發來源的靜默監看與合成觸發有損害時的分段驗證。觸發詞的 IAP 改成 GCP IAP。
+
 **Version**: 1.10.2 — 多輪審查 Round 2 修正：capacity-performance〈支出停損〉補上接停損的預算要用 --filter-projects 限定單一專案、金額設成能承受的上限、大額抵免時用 exclude-all-credits；指令補 --billing-project、--condition=None、--max-instances=1、TARGET_PROJECT_ID 與 run.invoker 的 --region；實測段壓成三個可執行的結論並補上超支停用後的恢復順序。security〈管理通道〉：OS Login 範例先綁登入角色再啟用；Kubernetes 節點除錯另立一條、分開 debug profile 與 PSA 兩個同名的 baseline；離職完成判斷指名 pgrep。
 
 **Version**: 1.10.1 — capacity-performance〈支出停損〉依多輪審查與官方文件查證修正：強制執行支出上限一個只涵蓋一個專案的一項服務、暫停到預算期間結束、持續性資源的固定費用不暫停；停用帳單時雲端文件警告資源可能被永久刪除；部署指令明確指定 --trigger-service-account（gcloud 說明的預設值與實測不同）並補齊必填旗標；測試訊息給出 publish 指令；預算門檻統一成 50% / 90% / 100%；花費為 0 也可能來自抵免。security〈管理通道〉：kubectl debug 只有 general 與 sysadmin profile 掛節點目錄、authorized networks 寫明更新時整組取代、IAM Condition 的期限格式、撤銷角色只擋住之後的新登入、救援入口補英文錨點。principle 卡 protection-proves-itself-by-firing 同 system-design 0.13.1 的修正。

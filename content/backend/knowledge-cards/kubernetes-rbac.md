@@ -16,7 +16,7 @@ RBAC 位在認證之後：誰在呼叫 API（使用者、群組、service accoun
 
 - `kubectl` 回 `Error from server (Forbidden): pods is forbidden: User "..." cannot create resource "pods" in API group "" in the namespace "..."`：認證通過、RBAC 拒絕，訊息裡寫出了被拒的動詞、資源與 namespace。
 - `kubectl auth can-i create pods --namespace=<namespace>` 回 `yes` 或 `no`，用來確認自己的帳號有沒有某個權限；管理員加 `--as=<user>` 替別人查。
-- 能在某個 namespace `create` `pods` 的身分，能用 [Privileged Container](/backend/knowledge-cards/privileged-container/) 取得節點的 root 權限（除非 [Pod Security Admission](/backend/knowledge-cards/pod-security-admission/) 擋下），所以 `pods` 的 `create` 是敏感權限，不只是「能部署」。
+- 能在某個 namespace `create` `pods` 的身分，能用 [Privileged Container](/backend/knowledge-cards/privileged-container/) 或主機目錄掛載（hostPath，`kubectl debug node` 預設的 `general` profile 就是這樣）取得節點的 root 權限（除非 [Pod Security Admission](/backend/knowledge-cards/pod-security-admission/) 擋下），所以 `pods` 的 `create` 是敏感權限，不只是「能部署」。
 
 ## 設計責任
 

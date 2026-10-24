@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.20.3 — 多輪審查 Round 3 修正：主機金鑰不得用 StrictHostKeyChecking=no 這類旗標繞過、預期中的警告仍要核對；離職結束工作階段排除共用帳號（改輪替憑證、逐個 kill 那個人的 sshd 行程）；快速路由表的 4033 等待時間改成 2–7 分鐘；觸發詞改成 GCP IAP、IAP 4033 這類限定寫法，避免 In-App Purchase 與 WebSocket 4003 誤觸發。
+
 **Version**: 1.20.2 — 多輪審查 Round 2 修正：remote-access 的一般 ssh 測試改成同一次 shell 呼叫內記下通道 PID、等通道監聽、用 HostKeyAlias 避開 localhost port 的 known_hosts 衝突；connectivity test 補 API 啟用與刪除；4003 的 VM 端成因拆成 sshd 沒在聽與作業系統防火牆。process-service-state 的登記失敗段寫明它與三個步驟的關係：只在出現徵兆的機器上省略 terminate-user，pgrep 確認一律不省。
 
 **Version**: 1.20.1 — remote-access 依多輪審查修正：主機金鑰核對不寫死 ED25519，改成依警告寫的金鑰類型讀對應的那一把；指紋不同時寫出要確認的對象（IP 是否仍屬那台主機、中途有沒有代理或跳板）；IAM 綁定生效時間改成通常兩分鐘、有時七分鐘以上；connectivity test 的來源位址、本機 port 與結束通道的方式補上說明；OS Login 兩個角色寫明各自能不能 sudo；防火牆紀錄 rule_details 為空的因果順序改正。process-service-state 的撤銷權限句改成「只會擋住之後的新登入」，離職的處置寫成 pkill 結束、pgrep 輸出為空確認。

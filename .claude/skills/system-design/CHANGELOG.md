@@ -2,6 +2,8 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
+**Version**: 0.13.3 — 多輪審查 Round 3 修正：decision-timing 的觀察期寫明涵蓋最長週期的排程；停損驗收寫出先低於後超出、測完重新連結、已上線改用可拋棄複本，刪掉實測證據句。SKILL.md 分工表補「既有專案只想處理管理通道或費用停損」的路由。principle 卡同 saas-tech-selection 1.10.3。
+
 **Version**: 0.13.2 — 多輪審查 Round 2 修正：decision-timing 管理通道條寫明「收斂」是第一台時沒做、事後才收掉全開規則的情形；費用失控條刪掉括號裡的實測證據，測試訊息改成低於與超出預算各一則，與 saas-tech-selection 一致。
 
 **Version**: 0.13.1 — decision-timing〈先做〉的管理通道條改寫：網路層只放行身分感知代理或 VPN、登入改用 OS Login 或 SSH 憑證，兩層分開寫（原句把 SSH 憑證放在「放行」那一層），成本枚舉限定在 GCP；費用失控條補上預算通知花費為 0 也可能來自抵免、停用帳單時資源可能被永久刪除。principle 卡 `protection-proves-itself-by-firing` 依多輪審查修正：段標改寫、補合成觸發的定義句、低於預算的訊息兩個權限都沒用到、正對照改成不依賴同一個欄位的查詢、靜默監看寫明監看的是觸發來源的訊息、補英文錨點。

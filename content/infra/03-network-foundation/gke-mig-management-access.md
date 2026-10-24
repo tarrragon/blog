@@ -10,7 +10,7 @@ tags: ["infra", "network", "gcp", "gke", "kubernetes", "ssh", "iap"]
 
 ## autohealing、滾動更新與擴增後消失的逐台設定：network tag、OS Login metadata 與外部 IP
 
-MIG 裡的每一台 VM 都由 instance template 建出來。有幾種時機 MIG 會刪掉一台 VM、再依 template 建一台新的：自動修復（autohealing，[健康檢查](/backend/knowledge-cards/health-check/)失敗時重建）、[滾動更新](/backend/knowledge-cards/rolling-update/)（rolling update，換成新版 template），以及 GKE 的節點升級與節點自動修復；[autoscaler](/backend/knowledge-cards/autoscaling/) 擴增台數時則直接依 template 新建。新建的 VM 只帶著 template 裡的設定，所以單台 VM 上做的修改——`gcloud compute instances add-tags` 加的 [network tag](/infra/knowledge-cards/network-tag/)（貼在 VM 上的標籤，防火牆規則用它選出要套用的 VM）、`add-metadata` 設的 `enable-oslogin`、登入之後 `useradd` 建的救援帳號、`delete-access-config` 移除的外部 IP——都只活到那台 VM 被重建為止，新加進來的 VM 則從一開始就沒有。
+MIG 裡的每一台 VM 都由 instance template 建出來。有幾種時機 MIG 會依 template 重建或替換一台 VM，原本開機磁碟上的修改都不會留下：自動修復（autohealing，[健康檢查](/backend/knowledge-cards/health-check/)失敗時重建）、[滾動更新](/backend/knowledge-cards/rolling-update/)（rolling update，換成新版 template），以及 GKE 的節點升級與節點自動修復；[autoscaler](/backend/knowledge-cards/autoscaling/) 擴增台數時則直接依 template 新建。新建的 VM 只帶著 template 裡的設定，所以單台 VM 上做的修改——`gcloud compute instances add-tags` 加的 [network tag](/infra/knowledge-cards/network-tag/)（貼在 VM 上的標籤，防火牆規則用它選出要套用的 VM）、`add-metadata` 設的 `enable-oslogin`、登入之後 `useradd` 建的救援帳號、`delete-access-config` 移除的外部 IP——都只活到那台 VM 被重建為止，新加進來的 VM 則從一開始就沒有。
 
 這種消失沒有任何通知。重建通常發生在半夜的自動修復或下一次擴增，而只放行 IAP 來源的防火牆規則靠 network tag 選 VM：新建的 VM 沒有那個 tag，這條規則就套不到它。收斂管理通道時通常也已經刪掉 `default-allow-ssh`（GCP 預設網路裡放行任何來源連 22 port 的規則），兩者加在一起，新 VM 上沒有任何一條規則放行 SSH，它就從管理通道上消失了。所以這兩種環境的做法是：**管理通道的設定寫在建立 VM 的那一份設定裡**（MIG 的 instance template、GKE 的 node pool 設定、或映像檔），逐台的 `gcloud compute instances` 指令只用在臨時查看。
 
@@ -87,7 +87,7 @@ gcloud compute instance-groups managed list-instances <mig-name> --zone=<zone>
 
 ## MIG 的救援：recreate-instances、退回舊版 template 與 Serial Console
 
-單台 VM 的救援入口是 Serial Console 加一個事先建好的本機救援帳號（[Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/)）。MIG 裡的 VM 多了一條更便宜的路：一台 VM 連不上、而原因是那台 VM 自己壞了（sshd 設定改壞、磁碟滿），刪掉它讓 MIG 依 template 重建，比從 Serial Console 進去修快，也不必替每台 VM 維護救援密碼：
+單台 VM 的救援入口是 Serial Console 加一個事先建好的本機救援帳號（[Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/)）。MIG 裡的 VM 多了一條更便宜的路：一台 VM 連不上、而原因是那台 VM 自己壞了（sshd 設定改壞、磁碟滿），讓 MIG 依 template 重建它，比從 Serial Console 進去修快，也不必替每台 VM 維護救援密碼：
 
 ```bash
 # 依 template 重建一台 VM：開機磁碟換成依 MIG 目前的版本設定新建的一顆，VM 重新開機

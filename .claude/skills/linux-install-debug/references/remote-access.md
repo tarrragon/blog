@@ -12,8 +12,8 @@ SSH 連線本身、以及「你的終端機 ↔ 遠端 session」之間那條連
 - **`Host key verification failed` / `REMOTE HOST IDENTIFICATION HAS CHANGED!`** → 目標送來的主機金鑰跟 `known_hosts` 記的不同。成因可能是重裝、換機、IP 重用、雲端 VM 重建了開機磁碟，也可能是連線被中間人攔截，所以清舊紀錄之前先核對新指紋：
   1. 從警告裡 `The fingerprint for the <type> key sent by the remote host is` 下一行抄下 `SHA256:` 的值；`<type>`（ED25519、ECDSA、RSA）決定下一步讀哪一把金鑰。
   2. 用一條**不經過這條 SSH 連線**的管道讀出主機自己的指紋：實體或雲端主控台的 console 上執行 `ssh-keygen -lf /etc/ssh/ssh_host_<type>_key.pub`（`<type>` 寫成小寫的 `ed25519`、`ecdsa`、`rsa`）；GCP 的 VM 在 metadata 設了 `enable-guest-attributes=TRUE` 時，用 `gcloud compute instances get-guest-attributes <vm> --zone=<zone> --query-path=hostkeys/<key-type> --format="value(value)" | awk '{print "<key-type> " $1}' | ssh-keygen -lf -`，`<key-type>` 是 `ssh-ed25519`、`ecdsa-sha2-nistp256` 或 `ssh-rsa`。
-  3. 兩個指紋相同才 `ssh-keygen -R <IP 或別名>` 清掉舊紀錄再連；核對不了、或指紋不同時，不要清除舊紀錄；先確認連到的 IP 仍屬於那台主機（DNS 紀錄、IP 是否被重新分配），以及中途有沒有代理或跳板主機。
-  - `gcloud compute ssh` 的紀錄不在 `~/.ssh/known_hosts`，在 `~/.ssh/google_compute_known_hosts`，鍵是 `compute.<instance-id>`。MIG 的 `recreate-instances` 重建時 VM 沿用同一個 ID 而換掉開機磁碟，所以重建之後必定撞到這個警告；清除要寫成 `ssh-keygen -R compute.<instance-id> -f ~/.ssh/google_compute_known_hosts`（ID 用 `gcloud compute instances describe <vm> --zone=<zone> --format="value(id)"` 查）。啟用 guest attributes 不會讓 gcloud 自動更新已存在的紀錄，比對與清除要自己做。
+  3. 兩個指紋相同才 `ssh-keygen -R <IP 或別名>` 清掉舊紀錄再連；核對不了、或指紋不同時，不要清除舊紀錄；先確認連到的 IP 仍屬於那台主機（DNS 紀錄、IP 是否被重新分配），以及中途有沒有代理或跳板主機。也不要用 `-o StrictHostKeyChecking=no`、`UserKnownHostsFile=/dev/null` 或 `gcloud compute ssh --strict-host-key-checking=no` 繞過，效果等於不核對就清除。
+  - `gcloud compute ssh` 的紀錄不在 `~/.ssh/known_hosts`，在 `~/.ssh/google_compute_known_hosts`，鍵是 `compute.<instance-id>`。MIG 的 `recreate-instances` 重建時 VM 沿用同一個 ID 而換掉開機磁碟，所以重建之後必定撞到這個警告；預期中的警告與中間人攔截送出的警告長得一樣，仍然照步驟 2 核對；清除要寫成 `ssh-keygen -R compute.<instance-id> -f ~/.ssh/google_compute_known_hosts`（ID 用 `gcloud compute instances describe <vm> --zone=<zone> --format="value(id)"` 查）。啟用 guest attributes 不會讓 gcloud 自動更新已存在的紀錄，比對與清除要自己做。
 
 根因通則：SSH 的別名 / 金鑰 / `known_hosts` 都綁「特定機器身分」，換機 / 重裝 / DHCP 重配後別名會連錯或被擋 → 用帳號 + IP 直連確認，再更新別名。
 
@@ -75,6 +75,6 @@ SSH 連線本身、以及「你的終端機 ↔ 遠端 session」之間那條連
 | 圖形程式 SSH 下找不到 display            | 有無 `WAYLAND_DISPLAY`                          | 補圖形 env 變數                                                              |
 | compositor SSH 起不來報 seat/DRM         | 是否從 SSH pty 起                               | `chvt` + `getty@tty<N>` 回圖形 VT                                            |
 | `REMOTE HOST IDENTIFICATION HAS CHANGED` | 不經 SSH 的管道讀主機指紋                       | 指紋相同才 `ssh-keygen -R`；gcloud 用 `-f ~/.ssh/google_compute_known_hosts` |
-| IAP 連線 `4033`                          | IAM 角色與 Condition、等 2 分鐘                 | 補角色或改 Condition                                                         |
+| IAP 連線 `4033`                          | IAM 角色與 Condition、等 2–7 分鐘再判           | 補角色或改 Condition                                                         |
 | IAP 連線 `4003`                          | tag、防火牆規則、Connectivity Tests             | 補 tag 或修規則                                                              |
 | IAP 通道開了而 publickey 被拒            | OS Login 角色、VM 服務帳號的 serviceAccountUser | 補角色                                                                       |

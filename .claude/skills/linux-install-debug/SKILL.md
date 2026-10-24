@@ -12,12 +12,12 @@ description: >
   unbound variable, shell script 可攜, bash 3.2, timeout 找不到, 容器沒有 sudo,
   keyring 過期, PATH 沒吃到, load 很高, swap 滿, etcd 逾時, 磁碟滿, 檔案系統唯讀, OOM, exit 137, dmesg, 黑畫面, getty,
   chvt, 沒聲音, wpctl, DNS 解析不了, 機器沒回應, 服務告警, OnFailure, ntfy, 心跳監控,
-  host key changed, REMOTE HOST IDENTIFICATION HAS CHANGED, IAP, 4033, 4003, OS Login,
+  host key changed, REMOTE HOST IDENTIFICATION HAS CHANGED, GCP IAP, Identity-Aware Proxy, IAP tunnel, IAP 4033, IAP 4003, failed to connect to backend, OS Login,
   離職撤銷工作階段, loginctl terminate-user,
   linux install, linux debug, systemd, authoritative state.
 license: MIT
 metadata:
-  version: 1.20.2
+  version: 1.20.3
   category: ops-diagnostics
 ---
 

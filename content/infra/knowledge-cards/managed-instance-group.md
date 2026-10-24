@@ -10,7 +10,7 @@ Managed Instance Group（MIG）是 GCP 依一份 instance template 自動維持�
 
 ## 概念位置
 
-MIG 把「一台 VM」換成「一份設定產生的一組 VM」：VM 隨時可能依 template 被重建（自動修復、滾動更新與 `recreate-instances` 沿用原本的名稱與執行個體 ID、換一顆新的開機磁碟；擴增則新建 VM），所以只存在某一台開機磁碟上的修改會在下一次重建時消失，要持久的設定一律寫進 template，改設定的方式是建一份新 template 再滾動更新。這是[不可變基礎設施](/backend/knowledge-cards/immutable-image/)的做法：它適合 VM 本身沒有不能丟的狀態的工作負載；有狀態時用 stateful 設定保留指定的磁碟與 IP，或改成單獨管理的 VM。GKE 的 node pool 在底下也是 MIG，但那一組由 GKE 管理，設定改在 node pool 上。template 裡的 [Network Tag（網路標籤）](/infra/knowledge-cards/network-tag/) 決定防火牆規則套不套得到新建的 VM。
+MIG 把「一台 VM」換成「一份設定產生的一組 VM」：VM 隨時可能依 template 被重建或替換：`recreate-instances`（實測）沿用原本的名稱與執行個體 ID、換一顆新的開機磁碟；滾動更新在 `--max-surge` 大於 0 時先建新的 VM 再刪舊的；擴增則新建 VM。不論哪一種，所以只存在某一台開機磁碟上的修改會在下一次重建時消失，要持久的設定一律寫進 template，改設定的方式是建一份新 template 再滾動更新。這是[不可變基礎設施](/backend/knowledge-cards/immutable-image/)的做法：它適合 VM 本身沒有不能丟的狀態的工作負載；有狀態時用 stateful 設定保留指定的磁碟與 IP，或改成單獨管理的 VM。GKE 的 node pool 在底下也是 MIG，但那一組由 GKE 管理，設定改在 node pool 上。template 裡的 [Network Tag（網路標籤）](/infra/knowledge-cards/network-tag/) 決定防火牆規則套不套得到新建的 VM。
 
 ## 可觀察訊號
 

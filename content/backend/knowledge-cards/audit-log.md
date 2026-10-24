@@ -21,4 +21,4 @@ Audit log 和一般 debug [log](/backend/knowledge-cards/log/) 的責任不同�
 
 Audit log 要包含 actor、action、resource、result、reason、[request id](/backend/knowledge-cards/request-id/)、來源位置與時間。它也需要防竄改、查詢權限、[retention](/backend/knowledge-cards/retention/) 與 [alert](/backend/knowledge-cards/alert/) 規則。
 
-開啟時機也是設計的一部分：多數雲端平台的資料存取類紀錄預設關閉，例如 GCP 的 Data Access audit log，而 audit log 只記錄開啟之後的事件，事後要調查時，開啟之前的存取查不回來。所以開啟的時點要排在它要記錄的那類存取開始之前，例如切換管理通道的同一天，見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈組織層級的護欄與稽核紀錄〉。
+開啟時機也是設計的一部分：多數雲端平台的資料存取類紀錄預設關閉，例如 GCP 的 Data Access audit log，而 audit log 只記錄開啟之後的事件，事後要調查時，開啟之前的存取查不回來。所以開啟的時點要排在它要記錄的那類存取開始之前，例如切換管理通道的同一天，見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈組織層級的護欄與稽核紀錄〉。開啟之後實際做一次它要記錄的存取、查到那一筆紀錄才算開對：雲端的稽核設定常分成好幾種類型，開錯類型時設定照樣被接受、紀錄一筆都沒有（見[平常不動作的防護機制的部署驗證](/report/protection-proves-itself-by-firing/)）。
