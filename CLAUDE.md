@@ -2,472 +2,89 @@
 
 ---
 
-# Claude Code 專屬補充
+# Claude Code 專屬的操作
 
-上方 `@AGENTS.md` 由 Claude Code 自動內嵌、AGENTS.md 是寫作 / 工程規範的 SSoT。本檔只放 **Claude Code 專屬行為**、不重複 AGENTS.md 內容。
+上方的 `@AGENTS.md` 由 Claude Code 自動內嵌；AGENTS.md 是寫作與工程規則的單一真實來源。本檔只寫 Claude Code 才有的操作：回覆語言、skill 的叫用、Agent tool 的派發（reviewer、理解探針、術語探針、審查規則檔時的限制）、多個 session 共用同一個 repo 時的 git 操作，以及 SSH 的權限與 hook。共用的規則不寫在這裡，要改就改 AGENTS.md。
 
-## 回覆語言：一律用繁體中文
+## 回覆語言
 
 給使用者的每一則回覆都用繁體中文，包括工具呼叫之間的短句與工作結束時的總結。指令、程式識別字、錯誤訊息原文、產品與服務名稱保留原文，其餘敘述用中文。
 
-這一條已經由使用者層級的 `~/.claude/settings.json`（`"language": "繁體中文"`）注入系統指示，寫在這裡是因為那段注入的指示在長 session 裡沒有被守住：2026-10-24 的一次雲端實測 session 中，多則回覆寫成了英文，多數是一長串工具操作之後的最後總結。那些回覆之前都是大量英文的指令、log、錯誤訊息與程式碼，所以前文越是英文密集，送出總結之前越要確認一次語言。
+使用者層級的 `~/.claude/settings.json`（`"language": "繁體中文"`）已經注入同一條指示，而長 session 裡最後的總結仍然會寫成英文，多數發生在一長串英文的指令、log、錯誤訊息與程式碼之後。所以前文越是英文密集，送出總結之前越要確認一次語言。
 
-## Skill 自動觸發
+## Skill 的叫用
 
-Claude Code 會根據對話內容自動觸發 `.claude/skills/` 內的 skill — 看 `SKILL.md` 開頭的 `description` / `trigger` 字串匹配當前任務。常用觸發詞：
+Claude Code 依 `.claude/skills/<name>/SKILL.md` frontmatter 的 `description` 比對當前任務，自動觸發 skill；系統提示裡會列出每個 skill 的 description。手動調用是在對話中打 `/<skill-name>`。
 
-| Skill                      | 觸發情境                                                   |
-| -------------------------- | ---------------------------------------------------------- |
-| `compositional-writing`    | 寫文章 / 卡片 / 註解 / 文件 / prompt 時                    |
-| `requirement-protocol`     | 模糊指令、反覆失敗、覆寫成本、確認嗎 / OK 嗎 / yes-no 二選 |
-| `frontend-with-playwright` | 前端 CSS / DOM / framework 共處 / Playwright 驗證 / a11y   |
-| `wrap-decision`            | 分析 / 決策 / 比較 / 提案、被困住、根因分析、個人化建議    |
-| `blogsearch-lifecycle`     | blogsearch rebuild、語意搜尋、content 變動後 index 過時    |
-| `knowledge-cards`          | 建卡 / 缺卡判定 / 卡片 audit / 回填連結 / 卡片目錄重構     |
+寫作類的 skill 主動 invoke，不等自動觸發：寫作任務常常以「幫我改這段」「補一句」「這裡讀起來怪怪的」進來，這些措辭不含 `compositional-writing` 的 description 裡任何一個觸發詞，而小改動累積出來的字句層違規跟整篇一樣多。所以：
 
-手動調用：對話中打 `/<skill-name>` 強制啟動。
+- 動到 `content/`、`.claude/skills/`、AGENTS.md 或本檔的任何一段文字之前，invoke `compositional-writing`。
+- 改完之後照 AGENTS.md〈文章產出流程〉的字句層掃描跑一次 bank，逐類表寫進 commit message 或 work-log（AGENTS.md〈掃描的紀錄寫進 repo〉）。
 
-skill 內容看 `.claude/skills/<name>/SKILL.md`。
+## Agent tool 的派發
 
-### 寫作類 skill 主動 invoke，不等自動觸發
+### Reviewer
 
-自動觸發靠 `description` 去匹配當前對話的措辭，而寫作任務多數不是用「寫文章」這種話進來的——「幫我改這段」「補一句」「這裡讀起來怪怪的」「順一下」都是寫作任務，而它們一個字都匹配不到。任務越小越不會觸發，但小改動累積出來的字句層違規跟整篇一樣多。
+多輪審查與教學模組流程的 reviewer 用 `subagent_type: "general-purpose"`、`run_in_background: true`，每位負責一個審查維度、平行跑。reviewer 要讀完整的稿件、案例與規範，自己的 context 會被佔滿；放在背景跑，主 session 只接收它的報告。reviewer 的 prompt 結構與產出契約以 `multi-round-review` 的 `references/reviewer-prompt.md` 為準。
 
-所以動到 `content/` 或 `.claude/skills/` 的任何一段文字之前，主動 invoke `compositional-writing`；改完之後照 AGENTS.md §5 步驟 4 跑一次它的字句層 bank，並把逐類表寫進回覆。
+### 理解探針
 
-逐類表的欄位、零命中要不要列、以及為什麼這張表是必要的，都在 AGENTS.md §5 的關鍵硬性規則段，這裡不重複。
+探針與 reviewer 的派發方式不同：reviewer 各審不同維度，要的是判斷力；探針每一份的指令完全一樣，要的是理解的樣本。
 
-## Skill ↔ Content 互斥
-
-寫作時要清楚目前在哪個 surface：
-
-| Surface           | 規則檔                                                                       | 自包含？          |
-| ----------------- | ---------------------------------------------------------------------------- | ----------------- |
-| `.claude/skills/` | `compositional-writing/references/reference-authoring-standards.md`          | 是、不引用 blog   |
-| `content/`        | `content/posts/markdown-writing-spec.md`（Hugo 規範）+ AGENTS.md（內容規範） | 否、可 cross-link |
-
-跨 surface 的引用會違反規範 — 寫 skill 時複製 principle 卡進 `references/principles/`、不寫外部連結（AGENTS.md §9.2-3）。
-
-## Hugo `_index.md` vs 文章檔案
-
-`content/` 下的 `_index.md` 是 Hugo 的 **section list page**（模組目錄頁），不是放文章內容的地方。文章內容必須是同目錄下的獨立 `.md` 檔案。
-
-| 檔案類型    | 用途                                                                                       | 內容量    |
-| ----------- | ------------------------------------------------------------------------------------------ | --------- |
-| `_index.md` | 模組目錄頁：frontmatter + 簡介（1-3 段）+ 章節文章表格 + 跨分類引用                        | 20-90 行  |
-| `<slug>.md` | 獨立文章：完整教學內容，有自己的 frontmatter（title / date / description / weight / tags） | 50-300 行 |
-
-新建教學模組時，先建 `_index.md` 寫模組簡介和文章表格，再建各篇獨立文章。**不要把文章內容寫進 `_index.md`**——Hugo 會把它渲染成 list page，文章內容不會以正確的單篇頁面呈現。
-
-參考既有模組的結構：`content/infra/00-infra-mindset/`（`_index.md` + 3 篇獨立文章）。
-
-**`_index.md` 的正文只給作者看，讀者看不到。** `layouts/_default/list.html` 只列出子資料夾與文章，不輸出 `.Content`，所以 `_index.md` 裡的推導源頭、章節表、問題落點表、範例資料都不會出現在網站上——這是刻意的，那一頁是作者與維護 agent 的工作底稿。由此推出兩條：
-
-- **讀者需要的東西不能只寫在 `_index.md`**：共用的範例資料、版本說明、術語約定這類跨篇查閱的內容，獨立成一篇文章（例：`content/backend/01-database/sql/sample-bookstore-database.md`），各篇連到那一篇。
-- **文章不連 `/<分類>/#錨點`**：那些錨點在渲染後的頁面上不存在，連結看起來正常而點下去什麼都沒有。掃法：`scripts/index-leak-check.py --anchors`（絕對與相對路徑、任何層數都解析）。**`mdtools cards` 對這一類放行**：它比對的是 markdown 裡有沒有那個段標，而目錄頁的 markdown 有，所以 `../#段名` 這種連結 cards 判合格、網站上卻不存在——books 與 backend/07 各有十幾處是這樣留下來的。先前寫在這裡的 `rg '\]\(/[a-z0-9-]+/#'` 只比對單層路徑，`/testing/06-agent-authored-code/#…` 這種多層的全數漏掉，一次全站掃描補出七處。「寫在[模組入口]」這類連到目錄頁本身、宣稱內容在那裡的句子是同一個問題，腳本抓不到，寫到模組入口時自己問一次：那段內容讀者看得到嗎。
-- **文章正文不引用目錄頁的段名或框架詞**：「模組入口的〈X〉那一節」「到這一篇，〈目錄頁的某個問題〉有了完整的答案」要讀者去一個看不到的地方找內容。掃法：`scripts/index-leak-check.py --all`（取 `_index.md` 段標片語比對同目錄文章正文，命中逐條判讀，見 [#366](/report/noun-without-its-owner-passes-the-slot-check/)）。
-
-## 文章寫作避免模板化
-
-Claude Code 寫 `content/` 文章時，不要為了整齊而把案例、反例、規模對照或 tripwire 抽成共通模板。不同情境的業務壓力、資料形狀、流量型態、失敗條件與回退路徑若不同，必須用該情境自己的敘事說明與判讀條件。
-
-表格只能輔助整理，不可取代情境判讀。若欄位化後讓內容變得僵硬、抽象或遺失細節，應改回段落式說明。
-
-## 教學定位的產出形式
-
-AGENTS.md 原則十一說 `content/` 底下一律教學定位。教學定位的產出是有序的說明——有脈絡、有原理、主詞受詞完整，讀者從任意位置落進來都能跟上。三條操作規則：
-
-1. **開場寫出這篇討論哪些東西**。讀這篇的人不一定知道這個主題由哪些部分組成，所以開場要讓沒有這個主題知識的讀者，讀完就能判斷這篇跟他要找的東西有沒有關係。做法是逐一列出各段落的主題，或用一兩句話寫明內容，寫到讀者能逐項對照自己需要的程度。適用的版本與環境、這篇沒有處理的面向、另有專篇的主題，接在內容說明之後寫。
-
-   改前：「本篇的情境來自一次實際排查：用 `adb install` 安裝同一個 APK 執行成功，改由 App 自己下載 APK 再呼叫系統的安裝程式時，安裝程式顯示一個對話框，安裝沒有繼續進行⋯⋯」（情境故事，讀者讀完不知道這篇有哪些內容）
-
-   改前：「這篇整理電腦經由 Wi-Fi 用 adb 連線到 Android 手機之後，遠端排查用到的指令與注意事項。範圍從 `adb devices` 列出那台手機開始。」（只交代起點，讀者要先知道遠端排查包含哪些工作，才知道起點之後有什麼）
-
-   改後：「這篇整理電腦經由 Wi-Fi 用 adb 連線到 Android 手機之後，遠端排查用到的指令：在多台裝置中指定要操作的那一台、擷取螢幕畫面與錄影並確認傳回的檔案完整、查出畫面最上層是哪個 App 的哪個 Activity、用 logcat 篩出某個元件啟動前後的紀錄、查詢 App 權限與使用者限制這類狀態，以及放寬安裝管控的修改型指令。Wi-Fi 配對與連線的步驟在〔Android 無線調試連接指南〕。」
-
-2. **每個指令與每段說明寫完整的操作主體**。每一句寫清楚是什麼工具對什麼對象做了什麼事，結果寫成可以觀察到的狀態：安裝、執行、成功、失敗、沒有回應、回傳哪個錯誤碼。「裝得起來」「跑不動」「被擋住」只說了結果的方向，沒有說出結果是什麼。
-
-   改前：「回答的卻是沒問的那個問題」（什麼工具回答的？回答了什麼？沒問的是哪個問題？）
-
-   改後：「把 `dumpsys user` 的輸出交給 `grep -i restriction` 過濾時，比對到的行包括 `Guest restrictions` 區塊裡的 `no_install_unknown_sources`；這個區塊列的是 guest 使用者型別的預設限制，與目前使用者實際生效的限制無關。」
-
-3. **正確的做法與讀法直接寫在指令旁邊**。某個輸出有多種讀法時，從一開始就引導讀者看對的欄位。
-
-   改前：「不能預設第一行就是有焦點的那一組」（提醒句，讀者要自己想出正確做法）
-
-   改後：「`dumpsys window` 在多螢幕的機器上替每個顯示器各印一組 `mCurrentFocus` 與 `mFocusedApp`，沒有焦點的顯示器這兩個欄位的值都是 `null`。讀輸出的人跳過值都是 `null` 的那幾組，值不是 `null` 的那一組就屬於有焦點的顯示器。」（正確做法直接給出來）
-
-根因分析在 [#355](/report/teaching-is-not-lecturing/)。寫 `content/` 的時候先過一次這三條再提交。
-
-## 正文裡的對象用它是什麼來命名（嚴重寫作瑕疵）
-
-教材裡被反覆提到的對象，名字的職責跟程式變數相同：**讀者只看到名字就知道它指什麼**。「三支」「七步」「第三步」「第五節」「第一級」「前提一」「A 那一列」「A1 與 C」都不行——它們是作者規劃結構時的索引，讀者要回頭翻才知道指什麼，跟把變數取名 `step3`、`a1` 是同一件事。
-
-- **寫的當下就用內容名**：分組用它回答的問題（「語意模型」），步驟用動作（「選寫法」），分級用它的判斷標準（「當場報錯」），並排的做法用描述（「日期差自連接」）。段標不帶序號，引用用節名或內容。標題與 slug 裡的計數一起改（舊網址用 `aliases` 保留）。
-- **「這個集合不會再變」不是保留序數的理由**：成員數不變的時候它已經讀不懂。
-- **跟它一起出現的編排思路句一併刪掉**：「本分類其餘各篇各自處理其中一步」「兩篇的分工：步驟的定義改本篇」這類句子在描述作者怎麼組織內容，是維護資訊，放 `_index.md`，不進正文。
-- **計數式摘要也是同一類**：介紹另一篇、寫 `description`、填目錄頁交付欄時，「四個追問、三種寫法、四類邊界」讀者讀完仍不知道那些是什麼、還是要點進去——數字只交付清單長度。寫出成員（「用自連接、視窗函數與相關子查詢各寫一次」），數字通常可以拿掉；grep 分不出合規與違規，在這些位置逐句問「沒讀過那一篇的人知不知道成員是什麼」。分析在 [#364](/report/counted-summary-delivers-only-the-length/)。
-- **還沒命名的對象是另一種形態**：「一部分」「另一半」「這部分」連索引都沒有，處理方式見〈抽變數〉一節。
-- **只寫編號的連結也是同一類**：`[SQL.13](/backend/01-database/sql/...)` 讀者要點進去才知道講什麼，連結文字寫完整標題。這條規則把標題搬進另一篇文章的句子裡，那一篇的讀者連本篇的主題都還不知道，所以標題要是主旨而不是結論句（AGENTS.md 原則十、[#369](/report/title-states-the-subject-not-a-premised-conclusion/)）。
-- **審查擋不住，要在生成端擋**：作者與同源 reviewer 都持有那張清單，讀到「第一支」都能當場解開；2026-09-24 一個 SQL 分類走過三輪多輪審查（含理解探針）後仍殘留五十幾處。掃描指令在 `compositional-writing` 的 keyword bank「序數、計數與字母代號當名字」類別，判讀用變數名稱測試與落點測試。
-
-分析在 [#363](/report/ordinal-labels-are-the-authors-index/)。
-
-## 抽變數：先界定一個概念並命名，之後用名字引用（嚴重寫作瑕疵）
-
-寫程式時同一段運算式出現第二次、或一個中間結果要被後面引用，就把它抽成變數並取一個說得出內容的名字。文章裡對應的動作是：**一個概念（一個理論、一種情形、一個案例）要被反覆談論之前，先在一個位置界定它、給它名字，之後每次都用名字指它。** 〈正文裡的對象用它是什麼來命名〉管的是名字取得好不好；本節管的是該有名字的地方有沒有名字。
-
-沒有抽變數的文章有兩種樣子。一種是**匿名暫存**：用「一部分」「另一半」「那一側」「這部分」「這件事」「這一類」承擔一個還沒被命名的概念，讀者要從例子自己歸納那一塊是什麼。另一種是**重複的運算式**：同一個概念每次出現都換一個描述重講一次，讀者分不出這幾次講的是不是同一件事。
-
-- **界定先於命名**：切開一個集合或提出一種情形時，第一個位置寫出界定它的依據——為什麼這個情境做得到、另一個做不到（「判斷時要讀的資訊，機器在那一刻讀不讀得到」），而不是結果（「有一部分交得出去」）。依據寫出來，每一塊的名字才有內容可以承載。
-- **名字依序從三處找**：業界已有的術語（靜態分析、約束、counterexample、test oracle）、文章裡現成的案例名（「不等於五的錯法」）、最後才是描述內容的短語。業界術語同時把讀者接到那個概念在外面的全部文獻；自創名字接不上任何既有概念。
-- **之後只用名字**：段落首句用名字開頭，不再用「這一部分」「另一半」回指；被切開的整體也要有名字（「同一條線的另一半」每一塊有名字而整體沒有，仍然違規）；同一組對象只用一組名字。
-- **好的樣子**：「預期值從哪裡取得叫 test oracle……『寫斷言的人與寫實作的人共用同一份誤解』叫 test provenance；『造不出分岔的資料』在 Mutation Testing 裡叫 equivalent mutant」——三個概念各自已有界定與名字，一句話引用三次，讀者不必重建任何定義。**壞的樣子**：同一節裡「這裡仍有一部分不必等人來判」「有一部分判斷標準交得出去」「交不出去的那一半」——同一個集合切了三次，三塊都沒有名字，切法要讀者自己拼。
-
-**為什麼是嚴重瑕疵**：讀者從匿名暫存裡解不出它指的是什麼，而作者與審查者都拿得到——他們手上有切法，讀到「那一半」當場解得開。更糟的是模糊的指代不必決定它指什麼，所以錯的論斷能藏在底下：一次全站掃描裡，存活者偏誤的通則「往被高估那一側走還是贏的結論仍然成立」與前一行矛盾、保證金模式的「猜對的另一邊付出的是同時被清算」把邏輯寫反，兩句都通順，替它們命名時才對不上。反方向也要防：命名時決定錯所指，就把一個新錯誤寫進文章（「與本地快照並列的另一個根因」而同段寫明兩者是包含關係），所以替換文字裡新出現的關係要回原文核對。
-
-**寫的當下與審的時候各問一次**：這一段反覆談論的每一個概念，說不說得出它的名字、以及界定它的那一句在哪裡；說不出名字、或界定它的那一句不存在，就先抽變數再往下寫。審查端把這一項列為必修（`multi-round-review` 的 `reviewer-prompt.md`〈嚴重度量的是讀者學不學得會〉）。字詞層候選的掃描在 `compositional-writing` bank 的「部分與一側當名字」類別，重複運算式那一種沒有字詞可掃。分析在 [#367](/report/unnamed-halves-are-unextracted-variables/)。
-
-## 讀起來工整的廢話：同義反覆的排比與命名的旁白（寫的當下擋）
-
-這兩種句子語法完整、每一句都成立、讀起來工整，而讀者讀完沒有拿到任何新的事。審查端抓得到的時候已經是事後：作者與同源審查者讀過全文，讀到空洞的位置會自動代入具體的對象，所以這兩種要在寫的當下擋。
-
-**同義反覆的排比**：排比的資訊全部在變動格裡；變動格填的是從話題定義推得出來的描述時，那個子句的資訊量是零。
-
-- 壞的樣子：「一層的問題盲區，由問另一個問題的層接手；一層的位置盲區，由站在另一個失效域的層接手」。問題盲區的定義是觀察者沒在問的故障，所以讀過定義就寫得出「問另一個問題的層」，不需要知道監控鏈裡有哪幾層。
-- 寫排比之前，先把每個子句的變動格填上具名的對象（元件、人、步驟），填不出名字的子句不進排比。總覽句寫在它所總覽的對象被介紹之前時最容易寫出這一種；那個位置改寫這組分類帶來、讀者從定義推不出的判斷（「補位置盲區，加的是放在另一個失效域的觀察者；在同一個失效域裡多加幾個，共用的依賴停掉時它們會一起停」）。
-- 自查兩步：定義代換（變動格是否只從話題的定義就推得出來）與語序翻轉（改成動作者在前，句子是否變得明顯空洞）。
-
-**命名的旁白**：命名由句子結構完成，取名這個動作不寫進正文。
-
-- 壞的樣子：「一個觀察者的盲區有兩種，各取一個名字，下文都用這兩個名字。」後半句刪掉，讀者什麼都沒少。
-- 好的樣子：「一個觀察者的盲區分成檢查範圍盲區與位置盲區。」下一句起逐一定義；成員更多時用清單列出名字，下一段起逐一解釋。
-- 判讀用刪除測試：刪掉這個子句，讀者少了什麼。「下文把這一串稱為**監控鏈**」帶著所指與名字，刪掉就沒有名字，保留。
-- 這一種是照〈抽變數〉寫時的副作用：規則描述的是寫的人要做的動作（先界定、再命名），寫的人把動作本身寫進了正文。
-
-同一篇裡常一起出現的兩種相關句型——「X 回答的問題是」這類框架詞（[#374](/report/question-answer-frame-blurs-problem-issue-request/)）與正反問句當名詞（[#372](/report/a-not-a-question-as-noun-clause/)）——掃描與判讀在 `compositional-writing` 的 bank。分析在 [#373](/report/parallel-clause-filled-with-the-topics-definition/) 與 [#367](/report/unnamed-halves-are-unextracted-variables/) 的〈命名由句子結構完成，取名的動作不寫進正文〉。
-
-## 「問題」這個詞：寫作發想時就決定它指什麼（嚴重寫作瑕疵）
-
-中文的「問題」一個詞對應英文的 question、problem、issue、topic，寫成「要解決的問題」時又常常指 requirement。LLM 生成的文字特別常用這個詞，也特別常拿它配「回答」組織內容（「X 回答的問題是：……」）。英文的作者寫的當下就要從那幾個詞裡選一個；中文同樣有現成的詞分得開——問句、故障、錯誤、事項、主題、需求——只要寫的人把它寫出來。
-
-**這個詞的歧義會往下游擴散，所以在發想階段就要擋。** 文章的組織框架一旦是「每一層回答一個問題」，之後的生成全部沿用它：自創術語建在上面（「問題盲區」同時讀得成觀察者沒在問的問句與看不到的故障），內容句被寫成正反問句（「連不連得到」「對不對」），總覽句寫成同義反覆的排比（「由問另一個問題的層接手」）。一次實例裡同一篇用了 51 次「問題」、至少承擔四種所指，事後改寫在那一篇做了 50 處替換，另有 8 個引用它的檔案跟著改。框架詞在大綱、段標與 `description` 定下來之後每一句都繼承它，審查端只能逐句改。
-
-- **發想與大綱階段**：決定文章的組織軸時，不拿「X 回答什麼問題」當軸。寫出每一層實際做的動作與對象（確認程序能回應、量測資源用量、記錄請求是否成功），自創術語也從動作與對象取名（檢查範圍盲區）。
-- **寫下每一個「問題」時**：問它翻成英文要從 question、problem、issue、topic、requirement 裡選哪一個，用那個意思的中文詞寫，並寫出內容——哪裡壞了、要處理什麼、屬於哪個範圍、誰需要什麼、問句本身是什麼。選不出來，代表那句話還沒決定它在講什麼。
-- **「回答」換成元件實際做的動作**：執行、量測、比對、送出、標記。系統元件不回答提問。
-- **合規**：場景裡有人實際提問、業界固定術語（「N+1 問題」）、動詞片語「出問題」（密集重複時才換成具體的詞）。
-- **同一類的變體：足夠性斷言裡的「撐」**。足夠性斷言是宣稱某個對象足以或不足以滿足某個需求的句子，「撐」這一族（撐得住、撐不起、扛不住、撐不久、會垮）是它最常見的寫法。它佔著需求與判斷標準的位置：「這個證據撐不住」沒說要支持哪個主張、「單台資料庫撐得住這個流量」沒說在什麼延遲門檻與請求量之下。寫的當下寫出需求（支持哪個決定、承受什麼負載）、判斷標準（滿足到什麼程度算夠）與機制（靠什麼屬性滿足、在哪一點不再滿足）；換成「足以支持」「維持不久」只是把同一個空位換個詞佔著。系統負載不豁免。描述關係、不是足夠性斷言的（論證掛在前提上、責任由誰扛）換成依賴、負責就完整。見 [#234](/report/word-choice-fits-concept-attributes/) 的〈足夠性斷言要寫出需求、判斷標準與機制〉。
-- **字句層清單裡的其他物理動詞也一樣先判斷佔住哪一格**：拖垮、壓垮佔住失效的形態（變慢、無回應、崩潰、資料錯誤）與傳遞路徑，硬扛佔住誰承擔哪些工作，掛在佔住關係或只是字面的技術附掛，站得住佔住可信度（多半整句不寫）。寫負載時「負載」本身要寫出單位，容量數字只留在文章自己的範例情境並標明來源（原則十二）。分類與負載情境的對照在 [#375](/report/physical-verbs-stand-in-for-content/)，預先分類用 `python3 scripts/physical-verb-scan.py`。
-
-掃描用 `rg "回答的問題|回答的是|問的是|問題是："` 找出框架集中的文章，再在那一篇裡逐處翻譯；單獨的「問題」詞頻太高，不適合全站直接掃。分析在 [#374](/report/question-answer-frame-blurs-problem-issue-request/)，掃描與判讀在 `compositional-writing` bank 的「『問題』與『回答』當框架詞」類別。
-
-## 句子層文法標準（全部書面產出適用）
-
-技術文章描述操作的每一句由四個槽位組成：**動作者**（人、腳本、工具、系統元件）、**動詞**（執行、轉換、比對、寫入）、**受詞**（動詞在這個領域裡能作用的對象）、**結果**（輸出或狀態變成什麼）。每個槽位填的是這個領域裡實際存在的東西。這條標準獨立於文章的定位，適用於 `content/`、`.claude/skills/`、AGENTS.md 的所有書面產出。
-
-寫操作句的順序是**先列槽位再成句**，寫的當下就判、不等審查——寫的跟審的是同一個模型，審查端對這一類的偵測率是零。判斷標準：**受詞是不是動詞在這個領域裡能作用的對象。**
-
-| 槽位   | 遠端沒有執行任何指令 | 遠端一個字都沒有執行 |
-| ------ | -------------------- | -------------------- |
-| 動作者 | 遠端                 | 遠端                 |
-| 動詞   | 執行                 | 執行                 |
-| 受詞   | 指令                 | 字                   |
-
-右邊語法完整、讀起來通順，而受詞在領域外——沒有任何系統逐字執行東西。「一個 X 都沒有 Y」在口語裡成立的前提是 X 是 Y 的計數單位，搬到「執行」上前提不成立，讀者要做四步還原（認出慣用語 → 字對回指令 → 一個都沒有對回零個 → 重組）。左邊直接就是終點：一個明確的判斷結果。
-
-同一個標準管以下幾種變體：
-
-1. **受詞填了領域外的名詞**——「遠端一個字都沒有執行」→「遠端沒有執行任何指令」
-2. **動作者填了指令片段**——「`tr -d '\r'` 處理的是行尾」（被處理的是輸出裡的位元組，行尾轉換是處理的結果）→「腳本裡每一行 `getprop` 的結尾都接了 `tr -d '\r'`，作用是去掉輸出裡的歸位字元」
-3. **位置槽位填了指示詞**——「字串比對在這裡會失敗」（「這裡」不是領域裡的位置）→「補進來的 `0x0D` 會讓 shell 的字串比對失敗」
-4. **量詞的範圍沒具名**——「徵兆與行尾被改寫完全一樣」（在全部什麼面向上？句內沒說，而下一節給了分辨方法）→「`file` 與 stderr 分不出兩種壞檔；分得出的是檔案開頭的位元組」。「任何指令」「兩個 md5 完全相同」範圍具名，過。
-5. **名詞缺它的所屬**——論斷句、段標、總結句、過渡句沒有動作者，四格查下來全部通過，缺口在本身要求「誰的、什麼的」的名詞裡：「錯的來源不只一種，而輸出都不帶訊號」（什麼的來源、誰的輸出、什麼的訊號；「錯」是形容詞當名詞用）→「答案錯掉的成因不只一種，而引擎一種都不會報錯」。判斷問句：這個名詞的所屬能不能從這一句或前一句逐字指出來。**這條標準的範圍是每一句，不只操作句**——先前寫成「描述操作的每一句」，而觸發條件比缺陷窄，規則在論斷句上從不生效（[#366](/report/noun-without-its-owner-passes-the-slot-check/)）。
-6. **動作者被藏起來、時機與觸發原因缺席**——句子以被討論的對象起手，逐格查下來每一格都填了名詞而讀者說不出誰做、在工作流程的哪一步、為什麼：條件句寫對象的狀態後接沒有主詞的祈使（「一個檔案同時對上兩列時，依……來分」）、被動句或「由……」只交代次要動作的動作者（「由工具改寫……處置是從統計排除」）、指標當主詞（「這個數字決定」）。動作者那一格問主詞能不能做這個動作，槽位另加時機（讀者工作流程裡的一步）與觸發原因，順序是誰 → 什麼時機 → 做什麼 → 為什麼（「工程師做 code review、查看檔案的修改紀錄時，從版本歷史發現它被幾個不同的需求修改過」）。審查修正是最常見的產地：修正的人讀過審查意見，只寫答案。見 [#378](/report/topic-first-sentence-drops-actor-and-timing/)。
-
-**判定者不代填槽位。** 單位要寫在句子裡；從上下文推得出來不算。判斷標準是是非題「有沒有寫在句子裡」，寫成「推不推得出來」它永遠通過——一次實測判定者替「完全一樣」補了單位然後放行。
-
-段落按讀者的問題序排列：讀者會看到什麼 → 這個工具做什麼 → 為什麼需要它（機制，系統元件指名）→ 不做的具體後果 → 副作用。動作者槽位填對之後段落順序通常自動修正。
-
-分析在 [#358](/report/command-fragment-as-subject-hides-the-actor/) 與 [#357](/report/spoken-emphasis-is-silent-in-text/)。
-
-## 教學模組寫作流程
-
-寫跨多章節的教學模組時（例：backend/01 資料庫模組 12 章）、走 [Case-First + Agent Team Review 標準流程](/posts/case-first-agent-team-review-workflow/)、不要直接用 LLM 自生內容塞章節。
-
-完整方法論看該文章、Claude Code 執行重點：
-
-1. **完整讀 case 庫抽 findings**：用 Read tool 完整讀目標 case（不只 frontmatter）、邊讀邊抽 findings 跟章節對應、邊際遞減訊號出現就停止 audit
-2. **內容生成**：寫稿時案例引用要回 case 原文驗證、避免把通用 best practice 包裝成「[case] 揭露」
-3. **Agent team review**：用 Agent tool spawn 3 個 `general-purpose` reviewer、各自指定不同維度（寫作規範 / 案例準確性 / 跨章一致性）、`run_in_background: true` 平行跑、主 context 只看彙整報告
-
-**為什麼 background**：reviewer 要讀完整 commit + 案例 + 章節、自身 context 會被佔滿；用 background 把 reviewer context 跟主 context 分開、主 context 只接收精煉摘要、節省 ~80% context。
-
-**何時用**：跨 5+ 章節模組 + 有 case 庫 + 品質高於速度。詳細適用 / 不適用條件見 AGENTS.md §5「教學模組級流程」段。
-
-**多輪審查硬底線**：寫完章節後跑 `multi-round-review` skill 時，至少跑三輪、不問「要不要繼續」。Round 3 的 steelman / outbound frame 每次實測都找出 10+ 項 Round 1-2 結構性盲區（漏選項、反向引用、搜尋落點、知識卡缺口）。「還要不要再跑一輪」這個問題，等 Round 3 跑完才輪到主 session 判斷；在那之前它不是判讀題、是執行紀律。詳見 [#202](/report/multi-round-review-minimum-three-rounds/)。
-
-### 低階 model 讀者探針的派發方式
-
-規範層（何時跑、五個設計條件、歸因與處置、不可信的三個維度）在 AGENTS.md §5 的「理解取樣：低階 model 讀者探針」段，這裡只記 Claude Code 的操作面。
-
-探針與上一段的 agent team reviewer 是兩種不同的派發，別套用同一組參數：reviewer 是 `general-purpose`、各自審不同維度、要的是判斷力；探針是 Haiku、每一份的指令完全一樣、要的是理解的樣本。
-
-用 `Agent` tool 派發、`model: "haiku"`、`run_in_background: true`。
-
-**一批的定義是「報告會被放在一起比對的那幾份」**：同一批之內，`prompt` 與餵給它的內容範圍都要逐字相同——複製同一個字串貼進每次呼叫，不要逐個微調措辭，否則回報的差異無法歸因到模型的理解，第一個設計條件當場失效。換問法（理解正確性換成閱讀負擔）或換讀的範圍就是另一批，兩批之間不比對。
-
-**prompt 必須含送達方式**，兩句缺一不可：
+- **模型**：用低階模型，目前對應的是 `model: "haiku"`；低階的判斷標準是推理較弱且成本低，以 `multi-round-review` 的 `references/round-2-probes.md` 為準。另加 `run_in_background: true`。
+- **一批的範圍**：一批是「報告會被放在一起比對的那幾份」。同一批之內，`prompt` 與餵給它的內容範圍逐字相同：複製同一個字串貼進每一次呼叫，不逐個微調措辭，否則份與份之間的差異無法歸因到模型的理解。換問法（理解正確性換成閱讀負擔）或換讀的範圍就是另一批，兩批之間不比對。
+- **prompt 必須寫送達方式**，兩句缺一不可：
 
 ```text
 完成後必須呼叫 SendMessage 把報告送到 `main`。
 只把報告寫在自己的回覆裡不算交付，主 session 讀不到。
 ```
 
-實測漏掉這兩句是 0/9 自行交件、寫了是 9/9，Haiku 也照做——這是指令有沒有寫的問題、不是模型能力問題。細節見 memory 的 `reviewer-agents-need-sendmessage-pull`。
+少了這兩句的話，背景的探針寫完報告就閒置，主 session 讀不到；寫了，Haiku 也照做。reviewer 閒置而沒有送報告時，用 SendMessage 向它索取，不重派。
 
-**術語探針的派發，第一步是查測試詞在不在探針自己的系統提示裡。** subagent 會繼承本檔與 AGENTS.md，而值得量的詞多半就寫在那兩份裡面——量到的會是詞頻不是語域，且兩者同向——一次量測裡，規範檔提過幾次的詞五份全數有把握並給出本站自己的定義，規範檔沒提過的五份全數沒把握。**那次量測的詞頻是當下的快照，而規範檔一直在改**，所以要拿它當依據就自己重量一次。列一次詞頻，指令是 `grep -c "<詞>" AGENTS.md CLAUDE.md`（兩份都要，subagent 兩份都繼承）。命中的換到沒有專案規範檔的目錄下派、或**同向的那幾個直接記成「本批無結論」**——`Agent` 沒有換工作目錄的參數，subagent 一律繼承本檔與 AGENTS.md，所以「換一個乾淨的配置重測」目前沒有跑通過的做法，別把它當成可執行的補救，否則唯一可執行的分支會變成豁免。詞頻全部是零的時候這個檢查是恆真的（規範檔沒涵蓋那個領域），通過不代表乾淨。逆向的命中（提示裡有而探針仍回報沒把握）可以直接採信。
+- **回報的格式**逐項列出：節名或行號、這一節讀到什麼、這個動作誰做、對什麼做、指涉詞各指誰、讀完之後第一個動作是什麼；明令「文章沒說就寫『文章沒說』，不要推測填補」。另外單獨開一段列出「有兩種以上讀法的位置」，逐條寫原文與各種讀法，這一段的價值最高。
+- **讀回報**：每份報告先歸因再處置（AGENTS.md〈理解探針〉）。歸因的方法是在原文 grep 那個讀法對應的字串。
 
-同批另放一個**安慰劑詞**，四個條件缺一就給假訊號：**與測試詞同域**（判別是「這兩個詞會不會出現在同一份該領域的教材或文件裡」；跨域的詞回報「沒見過」是因為領域不符，假陰性）、只在規範檔出現、語意不可由組成推出（可拆解的詞探針靠拆解就答得出來，假陽性）、詞頻與測試詞同量級。實測合格的安慰劑詞三份全數有把握並複述規範檔原文，所以這一項確實有效；但本檔涵蓋的是寫作方法論，替 `content/business/` 這類分類撈不到同域的安慰劑詞，那時報告上記「本批無污染對照」。通用性控制詞對這一種無感，因為通用詞讀不讀得到提示都收斂。見 [#309](/report/probe-reads-the-prompt-that-defines-the-term/)。
+### 術語探針與系統提示
 
-**第二步是控制詞。** 受測單位是一個詞而不是一段文字時（懷疑某個高頻用詞在目標語域沒有穩定所指、或某個譬喻太口語），prompt 要同時列出測試詞與**至少兩個已知通用的術語**，混在同一份清單裡、不標示哪個是控制，問法是「這幾個詞在<領域>裡各指什麼；沒把握或沒見過就直接寫沒見過，不要推測」。控制詞收斂才代表這批的分歧可歸因到詞本身，控制詞也分歧就整批作廢——少了這一步，「全部答不出來」與「這批模型不行」在報告上長得一樣。prompt 另外要求「有把握的那些，寫出它指的東西」——少了這一句，回報會退化成一張把握度清單，而同域佔用的證據全在定義的內容裡。回報分四類讀，收斂度只分得出前三類（收斂＝通用、各給不同定義而都有把握＝一名多義、全部沒見過＝非通用）；第四類是少數份有把握而它們一致指向另一個所指，代表這個詞在同一個領域已經有主人，它在收斂度上與非通用詞同區而處置嚴格得多——非通用可以就地定義後留用，同域佔用只能換掉，且要換成描述不是同義詞（見 [#307](/report/term-already-owned-inside-the-domain/)）。而**非通用不等於自創**：先查這個詞在別的領域有沒有穩定用法，有就是語域錯配。判定之後的替換要先列詞形分佈再按義項走，程序見 [#289](/report/term-probe-measures-register-not-invention/)。
+subagent 的系統提示會繼承本檔與 AGENTS.md，所以測試詞寫在這兩份檔案裡時，探針量到的是它在系統提示裡出現了幾次，不是這個詞在目標領域通不通用。派發術語探針之前：
 
-prompt 的其餘要求：回報格式逐項列出（節名或行號 / 這一節讀到什麼 / 這個動作誰做 / 對什麼做 / 指涉詞各指誰 / 讀完之後第一個動作是什麼），並明令「文章沒說就寫『文章沒說』，不要推測填補」。另外要它單獨開一段列出「有兩種以上讀法的位置」，逐條寫原文與各種讀法——那一段是這個 frame 產出價值最高的部分。
+1. 列出每個測試詞在兩份檔案的詞頻：`grep -c "<詞>" AGENTS.md CLAUDE.md`。
+2. 詞頻非零而探針回報「有把握，並給出本站自己的定義」時，這個詞的結果記成「本批無結論」，因為這個結果可以完全由系統提示解釋。
+3. 詞頻非零而探針仍回報「沒把握」時，結果可以採信。
+4. 詞頻全部是零時，這個檢查一定通過，通過不代表沒有受到系統提示的影響（規範檔沒涵蓋那個領域）。
 
-主 context 只接收彙整。每份報告讀進來之後先做歸因——在原文 grep 那個讀法對應的字串——再進處置，順序顛倒會把作者自己寫的矛盾誤判成讀者誤讀。
+`Agent` tool 沒有換工作目錄的參數，所以不嘗試「換到沒有規範檔的目錄」或「換一個乾淨的配置」重測。控制詞、安慰劑詞的條件與四類回報的讀法，以 `multi-round-review` 的 `references/round-2-probes.md`〈術語探針〉為準。
 
-## Content 路徑大小寫
+### 審查本檔與 AGENTS.md 時
 
-`content/` 的資料夾與對外 route 一律使用小寫（例如 `content/ci` ↔ `/ci/`）。在 macOS 本機大小寫錯誤可能不會浮現，但 Linux CI 會把 `content/CI` 與 `/ci/` 視為不同路徑，造成 `mdtools cards` 大量 broken link。
+審查對象就是本檔或 AGENTS.md 時，每一位 reviewer 與探針的系統提示裡都已經有受審文本的全文（而且可能是 session 開始時的舊版）：
 
-提交前最少做一次：
+- prompt 裡要求以 `git show HEAD:<檔名>` 讀到的版本為準。
+- 理解探針回報「讀懂了」不算通過，因為它可以用系統提示補完；只有「讀了仍然讀錯」的那一側可以採信。
+- 翻譯探針不跑：它的設計條件是譯者只拿得到文字，這裡結構上做不到。
 
-```bash
-./bin/mdtools cards content/
-```
+## 多個 session 共用同一個 repo
 
-若要快速掃描 repo 是否殘留大寫內容路徑：
-
-```bash
-git ls-tree -r --name-only HEAD | rg '^content/[A-Z]'
-```
-
-### Portable pass
-
-Claude Code 修改 `.claude/skills/` 時要把 skill 當成「可搬到空白專案的獨立目錄」。允許依賴同 skill 內的相對檔案；需要 report / posts 的抽象原則時，先抽成 `references/principles/<slug>.md`，再用相對連結引用。
-
-提交前掃描 portable 風險：
+另一個 session 正在使用 git 時，`git add` 或 `git commit` 會因為 `.git/index.lock` 存在而失敗。這時用私有的 index 提交，不刪除 lock：
 
 ```bash
-rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/report|content/posts|content/skills|_index\\.md)" .claude/skills/<name>
+export GIT_INDEX_FILE=<scratchpad>/idx   # 私有 index 的路徑，放在 scratchpad
+git read-tree HEAD                        # 以 HEAD 初始化私有 index
+git add <這次的檔案...>
+git commit -F <訊息檔>
+unset GIT_INDEX_FILE
 ```
 
-掃到 blog route、`content/` path、`/report/`、`/posts/`、`/skills/`、Hugo-only `_index.md` 時，改成 skill 內部 principle、相對連結或中性名詞（collection index / MOC / article / reference）。
+提交之後，共用的 index 裡那些檔案仍是舊版本；另一個 session 用它 commit 時，會把這次的改動改回去。lock 釋放之後，跑 `git reset -q -- <這次的檔案...>`，讓共用的 index 對齊 HEAD。
 
-## Content 排序與 mdtools 作用域
+## SSH 的權限與 ssh_guard hook
 
-Hugo 的列表排序是 weight 遞增、**未設 weight 的頁面排在全部有 weight 的頁面之後**、同 weight 才用日期遞減。這條語意衍生出幾個操作規則（背景見 [#221](/report/lint-scope-must-be-explicit-fact/)）：
+本專案是教學與實驗用途，`.claude/settings.local.json` 刻意放寬到 `Bash(ssh *)`，讓 agent 對受管的遠端機器做唯讀診斷時不必逐次核准；前提是遠端環境壞了可以重建。
 
-- **weight 全有或全無**：同一 section 混用會讓缺 weight 的頁面靜默沉到列表底部。`mdtools cards` 的 `L5-section-weight-consistency` 會對混合 section 警告。刻意用低 weight 置頂單篇的 section（如 `content/linux/tools/cli`）在 `scripts/mdtools/internal/rules/config.go` 的 `WeightExemptSections` 登記 — 豁免要有記錄、不能是沒人決定過的遺漏。`weight: 0` 在 Hugo 就是未設，頁面與 `_index.md` 都一樣會沉到同層最後；`cards` 的 `L9-weight-zero-is-unset` 以 error 擋下它，章節從 0 起算時最容易寫出這個值。
-- **後補文章的 weight 要放「屬於它的位置」**：值要落在該 section 既有編號帶之內、順序對得上這篇在模組裡的位置。只確認沒跟別人重號就填上去是不夠的，重號與否跟排序對不對是兩件事。實例：`07-security` 的 7.27 曾被給 27（其餘章節 72-95）而排到整個模組第一篇、`postgresql` 的 pgbouncer-config 曾被給 100 而沉到最後。L5 只查全有全無、對「有 weight 但值錯」沉默 — 補號前先看該 section 的既有編號帶（postgresql 有預留空號、mysql 是連續序）。
-- **新增卡片型目錄**（必填 `title` / `date` / `description` / `weight` 的）時在 `scripts/mdtools/internal/rules/config.go` 的 `FrontMatter.CardPaths` 登記（跟上面那條的 `WeightExemptSections` 同一個檔），否則卡片層 frontmatter 檢查永遠不涵蓋它、缺欄位不會被攔。規則存在不等於規則涵蓋、未納管目錄的零 error 跟合規目錄的零 error 訊號相同。
-- **frontmatter 的 date 是台北時間**：`hugo.toml` 已設 `timeZone = 'Asia/Taipei'`。拿掉這行的話、UTC 的 CI 在台北 00:00-08:00 之間 build 會把當日日期的文章判成未來文章而排除。
+`ssh` 的 `-o ProxyCommand=…` 與 `-o LocalCommand=…`（配 `PermitLocalCommand=yes`）會在本機這台開發機執行任意命令，這條路徑不受「遠端可以重建」保護，所以用 PreToolUse hook 攔下：
 
-### 改 mdtools 的守則
-
-- `go test ./...` 必跑、CI 的 md-check 也會跑（Test step 在 lint / cards 之前）。新增檢查邏輯要附測試、並用突變驗證測試不是恆真（改壞實作、確認對應 case 失敗）。
-- **跨檔規則放 `mdcards`、不放 `mdlint`**：pre-commit 只餵 staged 檔給 lint、跨檔規則在那裡會把「其他檔沒被 staged」誤判成違規。`cards` 是 whole-content scan。
-- **fmt 規則必須冪等**（`fmt(fmt(x)) == fmt(x)`）：CI 的 `fmt --fix` 會 auto-commit、非冪等規則會讓 bot 每次 push 都產生新 diff。`internal/mdfmt/fixer_test.go` 的 `TestApplyAllIdempotent` 守著這條、新 fmt 規則要加 fixture 進去。
-- 測試 fixture 不要用 map 迭代建圖（Go map 順序隨機、會做出碰巧通過的測試）、依賴走訪順序的行為要有正序 / 逆序各餵一次的測試。
-
-## Skill 庫同步
-
-本專案的 `.claude/skills/` 與遠端 skill 庫 `https://github.com/tarrragon/claude-skills.git` 共用同一組 skill。使用 `skill-sync` CLI 工具同步。`~/.local/bin/skill-sync` 是 `.claude/scripts/install-skill-clis.py` 產生的 shim，它以當前 git repo 的根目錄解析出 `.claude/skills/skill-sync` 再 `uv run --directory` 執行——**跑的是這個 repo 裡那份 source，不是一份全域安裝**（`uv tool list` 是空的），所以拉取這個 skill 等於升級工具本身、下一次呼叫即生效。
-
-### skill-sync 指令
-
-```bash
-# 列出遠端所有 skill
-skill-sync list
-
-# 盤點已安裝的 skill 與遠端的落差（report-only，一個檔案都不會動）
-# 輸出分三類：[SHOULD PULL] 本地未改而遠端前進、[SKIP] 遠端沒有這個條目、以及已同步的
-skill-sync pull
-
-# 實際套用的只有具名形式（新安裝或更新既有）
-skill-sync pull <skill-name>
-
-# 本地 → 遠端（修改 skill 後推送，自動更新 versions.json）
-skill-sync push <skill-name> -m "commit message"
-```
-
-### 版號規則（強制）
-
-修改 skill 內容後必須更新版本號。版本紀錄住在該 skill 目錄下的 `CHANGELOG.md`（新到舊），格式為 `**Version**: X.Y.Z — 變更摘要`，新的一條加在最上面。`SKILL.md` 本身只留一行指過去——**skill 是 runtime 整份載入的檔案，而沒有任何規則要求任何人讀版本紀錄**，把它留在 SKILL.md 等於每次叫用都付一次無效讀取（搬出去之前 `compositional-writing` 有 54% 是版本紀錄）。版號遵循 semver：
-
-- **patch**（0.1.0 → 0.1.1）：修錯字、補連結、格式調整
-- **minor**（0.1.0 → 0.2.0）：新增 reference / principle 卡、擴充段落、加觸發詞
-- **major**（0.X → 1.0.0）：結構重組、支柱變動、破壞既有行為
-
-未標版號的 skill 首次補標用 `1.0.0`。變更摘要簡述改了什麼，參考 compositional-writing 的版本紀錄格式。
-
-**版號有兩個住址，兩個都要改**：`CHANGELOG.md` 最上面那一條，以及 `SKILL.md` frontmatter 的 `metadata.version`。只改一個是高頻漏失，而**沒有任何一道流程會順便攔下它**——`bin/skill-mirror` 只確認 frontmatter 有版號（它拿那個值當權威、不比對 CHANGELOG），而且只跑在有 `content/skills/` 鏡像的 skill 上。一次全庫掃描的結果：三個 skill 的 frontmatter 分別落後一到四個版本，三個都沒有鏡像。比對兩個住址的是下面那支、以全部 skill 為對象。
-
-改完用這支掃全庫，兩個住址對不上的會列出來：
-
-```bash
-bin/skill-version-check            # 不給參數掃全部
-bin/skill-version-check <name> …   # 只掃指定的幾支
-```
-
-它比對的是 frontmatter 的 `metadata.version` 與同目錄 `CHANGELOG.md` 最上面那一條。**不取「SKILL.md 裡最大的三段數字」**——正文引用別的 skill 的裸版號會讓那種掃法給假陽性（`tdd` 曾被那樣誤報），而 CHANGELOG 的第一條只可能是這個 skill 自己的版號。
-
-這裡曾經放一段等效的 inline 迴圈，而同一個檢查同時有兩份實作正是它出事的方式：版本記錄從 SKILL.md 搬到 CHANGELOG.md 之後，腳本那一份沒跟著改、`grep` 找不到就回 1、`set -e` 讓它在第一個 skill 就靜默中止（exit 1 而 stdout 與 stderr 都零行），而文件這一份是對的，所以沒有人發現。現在只有一份實作，它腐爛時會有人叫用時撞到。**零輸出不是通過的樣子**——它結尾一定會印 `checked N skill(s), M failing`。
-
-### 標準操作流程
-
-流程從 report 卡開始，不從 skill 修改開始。report 是原則的 SSoT（有情境、根因、理想做法），skill 是 report 的操作化引用。先有 report 才有 skill 引用的依據。
-
-1. **建 report 卡**：在 `content/report/` 建卡，更新 `_index.md` 篇目索引
-2. **評估是否進 skill、以及進多少**：先問這一條進了 skill 之後 agent 的動作會不會不同——不會就留在卡裡。會的話只搬可執行的那一半（判斷標準、觸發條件、處置），推導、實例與「為什麼既有審查抓不到」留在卡上，skill 用一句話帶過並連回去。**report 不是 skill 的草稿，兩者的責任不同**：卡歸納問題與解法，skill 給處理方式與判斷方法。驗收問一句——一個沒讀過那張卡的 agent，照 skill 這一段做得出動作嗎；做得出就夠了，多的是說明。
-   搬多了的代價是 skill 膨脹到沒有人讀得完，而膨脹不可逆，因為每一段單獨看都有道理。決定要進的時候順便決定它擠掉誰的注意力
-3. **修改 skill**：在 `.claude/skills/<name>/` 修改 SKILL.md，引用 report 卡的路徑（`.claude/` 用 `references/principles/` 相對連結、`content/` 鏡像會自動轉成 `/report/` 路徑）
-4. **如果新增 principle 卡**：在 `references/principles/` 建卡，並在 `bin/skill-mirror` 的 mapping table 加上 principle slug → report slug 的對應
-5. **更新版本號**：SKILL.md 末尾加版本號（見上方版號規則）
-6. **commit 到 blog repo**
-7. **推送到 skill repo**：`skill-sync push <name> -m "描述"`（**不帶 `--force`**，理由見下方「推送前必讀那兩行」）
-8. **同步鏡像**：`bin/skill-mirror <name>`（自動處理 Hugo frontmatter、H1→H2、連結轉換、fmt）。**新增的 reference 第一次不會被鏡像**——鏡像保留自己的 frontmatter（`title` / `date` / `description` / `tags` 是為 blog 讀者寫的），所以工具不憑空建檔，只對已存在的鏡像填正文。先手動放一份只有 frontmatter 的 `content/skills/<name>/<ref>.md` 再重跑。漏掉這一步的症狀離成因很遠：別的 reference 指向它的相對連結在鏡像裡解析不到，由步驟 9 的 `cards` 擋下。工具會把無鏡像的檔名逐個印在 stderr
-9. **commit 鏡像**：`git add content/skills/<name>/skill.md && git commit`
-10. **push**
-
-步驟 9 若被 pre-commit 的 `cards` 擋下，最可能的成因是步驟 4 漏了——mapping table 沒有對應的 principle slug，鏡像因此留著 `references/principles/` 相對連結而在 `content/` 下解析不到。`bin/skill-mirror` 對這種情形只印 `WARN: N unresolved` 而不中止，所以真正攔下它的是 `cards`。回頭補 mapping、重跑步驟 8。
-
-簡化版（步驟 6-10）：
-
-```bash
-git add .claude/skills/<name>/ content/report/ && git commit
-skill-sync push <name> -m "vX.Y.Z: 描述"   # 讀完 [Version] 與 [WARNING] 兩行再按 y
-bin/skill-mirror <name>
-git add content/skills/<name>/skill.md && git commit
-git push
-```
-
-批量推送多個 skill 時逐一執行 `skill-sync push`，不要嘗試手動 clone 遠端 repo 操作。
-
-### 改既有 report 卡時要查鏡像
-
-上面的流程管的是新卡建立，改**既有**卡時另有一個缺口：卡的內容可能已經被抄成 skill 的 principle 卡，改了 report 側而沒改 skill 側，共用庫裡就留著一份已被推翻的規則，而下游專案 pull 到的是舊版。
-
-發現方式不能靠記憶，也不能用任何單一個名字去掃。副本與本體的對應在本庫有四種形態，每一種只有一個鍵抓得到：檔名相同、去專案化時改過標題（H1 相同）、兩者都改過（靠 `bin/skill-mirror` 的 mapping table）、只在正文引用（內容掃描）。四個鍵合起來才是完整的射程，所以這件事交給腳本：
-
-```bash
-scripts/principle-mirror-check.py <report-或-record-卡的-slug>   # 查一張，落後的會標出來
-scripts/principle-mirror-check.py --all                          # 全庫掃，列出本體較新的那些
-```
-
-**這支腳本取代了先前那段手寫的 `rg` + `find` 程序，而取代的理由要記住。** 那段程序先只用卡自己的 slug，後來補了 mapping table 反查，兩個版本都會對真正分岔的副本回報零命中——實測 `multi-round-review-minimum-three-rounds` 在兩個版本下都是零行，而 `.claude/skills/multi-round-review/references/principles/minimum-three-rounds.md` 就在那裡、H1 與 report 卡的 title 逐字相同、本體新兩個月。成因是 mapping table 的涵蓋率由「這個 skill 有沒有 `content/skills/` 鏡像」決定（`skill-mirror` 只在有鏡像的 skill 上跑），而查副本的需求由「這張卡有沒有任何副本」決定，兩個作用域不同：量測當下有三十幾張 principle 卡既非同名也不在 mapping 表裡（`find .claude/skills -path "*/principles/*.md"` 給的是含跨 skill 重複的份數，去重之後才是卡數，兩個口徑差三成）。
-
-驗收案例固定四個，改動 `scripts/principle-mirror-check.py` **或 `bin/skill-mirror`** 之後逐個跑過再提交——讓 mapping 這個鍵失效的多半是後者（每建一張異名的 principle 卡都要去編輯它），而綁在前者上的觸發永遠不會被那種改動叫起來——**其中兩個的正確輸出都是零行以外的東西，所以「跑起來沒報錯」不算通過**：
-
-| slug                                      | 該有的結果                                          |
-| ----------------------------------------- | --------------------------------------------------- |
-| `multi-round-review-minimum-three-rounds` | 靠 H1 抓到 `minimum-three-rounds.md`，並標為落後    |
-| `teaching-article-context-method`         | 靠 mapping table 抓到 `teaching-article-context.md` |
-| `basics-anchor-the-advanced`              | 靠同名抓到                                          |
-| `description-frames-the-article`          | 副本 0 份（真陰性）                                 |
-
-`--all` 會列出本體較新的那些卡，數量是兩位數。**這個值是 git commit 時間的函數，每一次 commit 都會動它**，所以不要把當下的數字抄進任何文件——要知道現在幾張就跑一次。落後的存量遠早於任何一批改動，處置是逐張判斷該不該同步，不是一次全改。
-
-`--all` 的判定看 commit 時間、不看內容，所以**副本晚於本體 commit 而內容已經分岔的，它抓不到**。實測過一例：某張卡兩份的敘述已經不同而時間戳讓它判為不落後。要確認內容是不是真的一致，還是得打開兩份比對。
-
-量測指令：
-
-```bash
-for f in $(find .claude/skills -path '*/principles/*.md'); do
-  slug=$(basename "$f" .md); grep -q "$slug" "$f" && echo "$slug"
-done | wc -l
-```
-
-同步時連段標一起對齊：同一個結構單位在兩份鏡像裡要用同一組 canonical 字串，否則之後靠 anchor 比對的自動化與人工檢查都會錯位。
-
-### 推送前必讀那兩行
-
-`--force` 除了跳過互動確認，還會**旁路 portability 閘門**與**三方方向警告**（skill-sync 1.14.0 / 1.18.0 的 CHANGELOG 記錄這兩個效果先前未文件化），而違規清單只印在 stderr。把它寫死在流程裡等於每次推送都預設關掉這兩道閘門，於是真違規混在正當豁免裡永遠不會被單獨看見。
-
-不帶 `--force` 推送時，決定按不按 y 之前讀這兩行，而**兩行的權重不同**：
-
-- `[WARNING] Sync base shows both sides changed independently` — **這是閘門**。它比對的是三方基底（雙方各自的基底與共同祖先），由內容雜湊算出。看到它就去逐段比對，不要按 y。
-- `[Version] local X vs remote Y` — 這是給人對照 changelog 用的顯示行，**不是判定依據**。`skill-sync` 自己已經把版本字串移出同步決策（`update_sync_manifest` 的 docstring 明寫理由：兩個獨立演化的分支可能巧合共用同一版本號而內容不同，semver 比較預設線性演進、對分支式分歧失準），內容同一性改用 hash。**X 高於 Y 不構成推送的許可**——本庫三次覆蓋裡有一次的版號正是遞增而基底是舊的。
-
-版號字串另有兩種讀錯的方式，兩種都讓顯示行與檔案內容分家：抽取邏輯的 `**Version**:` 分支搜尋全文、`version:` 分支只搜 frontmatter，SKILL.md 正文若出現前一種形式會勝過 frontmatter；而各專案自己解析 CHANGELOG 版號行的摘要工具會被破折號後緊接的反引號與日期括號截斷（併行專案實測兩例）。要確定某支 skill 的版本，讀它 SKILL.md frontmatter 的 `metadata.version`，不讀任何報告字串。
-
-確實要旁路時再手動加 `--force`，並把旁路掉的那幾條寫進 commit message。
-
-**查發佈庫的實際狀態用 `git clone`，不要用 `raw.githubusercontent.com`。** 那個端點有 CDN 快取、回讀到的是數分鐘前的內容，而它與真實狀態的落差沒有任何訊號——讀得到、格式正確、看起來就是答案。本庫實測踩過一次：據此判定「推上去的內容被覆蓋」而做了一輪多餘的重寫，那次重寫反而蓋掉對方已經寫好的修正。skill-sync 自己印的 `[Version]` 行比對的是 clone，可以信。
-
-### 同步判斷原則
-
-- 版本號相同但檔案有差異 → 本地是客製版，以本地為準推回遠端。
-- 遠端版本較新 → diff 審查後決定是否合併（`skill-sync pull <name>` + 本地比對）。無參數 `pull` 的 `[SHOULD PULL]` 分類本身已經代表「本地自上次同步後未改動」，落在那一類的 skill 沒有會被覆蓋的客製版，diff 審查的重點是看進來什麼、不是防遺失。
-- 本地版本較高 → 不覆蓋，本地為準。
-- 遠端有新增檔案（原則卡、hooks）→ `skill-sync pull` 取用到本地，再推合併版回遠端。
-
-### 注意事項
-
-- 本專案 AGENTS.md 禁 emoji（§8），遠端若加了 emoji 是倒退、要修正推回。
-- Skill 內連結必須是相對路徑（portable 原則），遠端若改成絕對路徑要修正推回。
-- 同步完本地 `.claude/skills/` 後，有 `content/skills/` 鏡像的 skill 要同步更新鏡像（pre-commit hook 會提醒）。
-
-## 遠端機器操作標準（dotfiles-driven，不 ad-hoc SSH）
-
-在 VM 或任何「我們管理的」遠端機器上做實機驗證 / 部署時，狀態改動一律走 dotfiles repo + git 同步，**不透過 SSH 手動放置持久性檔案或設定**。這條規則跟本 blog 教的 dotfile / bootstrap / infra-as-code 哲學一致：機器的狀態必須永遠能從 repo 重現，手放的東西下次重裝就消失、也沒人記得。
-
-### 硬規則
-
-- **SSH 只用來做唯讀診斷與觸發**：`hyprctl` / `systemctl status` / 讀 log / `pgrep` / 跑 repo 內的部署腳本這類，可以。
-- **任何該持久存在的東西**（腳本、systemd unit、設定檔、cron、drop-in）→ 先寫進 [dotfiles repo](https://github.com/tarrragon/dotfiles)、commit/push，再由遠端 `git pull` + 冪等 deploy 部署。**不 scp、不 heredoc 寫進 /tmp、不手動 `tee` 到 /etc。**
-- **一次性驗證用的暫時檔**（測試 service、探測腳本）可以臨時放，但測完必須清掉、且正式版要回收進 repo。
-
-### SSH 權限與本機逃逸攔截（ssh_guard hook）
-
-本專案是教學 / 實驗用途、`.claude/settings.local.json` 刻意放寬到 `Bash(ssh *)`、讓 agent 對受管遠端機器做唯讀診斷不必逐次核准。這個決定的前提是「遠端環境掛了重建就好」。
-
-但 `ssh *` 的語意涵蓋一個跟遠端無關的暴露面：ssh 的 `-o ProxyCommand=…` 與 `-o LocalCommand=…`（配 `PermitLocalCommand=yes`）會在**本機這台開發機**執行任意命令、等於繞過 sandbox。這條路徑不受「遠端可重建」保護、因此用一個 PreToolUse hook 攔下。
-
-- **機制**：`.claude/hooks/ssh_guard.py` 註冊為 `Bash` 的 PreToolUse hook。一條指令同時「呼叫 ssh」且「帶 ProxyCommand / LocalCommand / PermitLocalCommand」時回 `permissionDecision: deny`；純遠端唯讀診斷（`ssh <host> <readonly-cmd>`）照常放行。
-- **邊界**：只比對指令字串本身。ProxyCommand 若寫在 `~/.ssh/config` 而非命令列則看不到；防的是誤用 / 意外、不是防主動繞過的對手。以「agent 非敵人、只是別讓它不小心動到本機」的威脅模型足夠。
-- **已知副作用**：任何 Bash 指令的文字裡只要同時出現 ssh 呼叫 + 這些選項就會被擋（例如 `echo 'ssh -o ProxyCommand=…'` 這種示範字串）。要在指令裡引用這些字串時改用 Write / Edit 寫檔、不要塞進 Bash。
-- **維護**：改動危險選項清單改 `LOCAL_EXEC_OPTS` regex；改 ssh 呼叫辨識改 `SSH_INVOCATION`。改完用 payload 檔餵 stdin 驗證（deny 案例別直接寫進測試指令、否則 hook 會擋住測試指令本身）。
-
-### 可複用工具（在 dotfiles repo）
-
-| 工具                                         | 作用                                                                                                                                  |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/remote-sync.sh <host> [deploy-cmd]` | 管遠端機器的標準入口：本地 commit/push → 遠端 `git pull --ff-only` → 遠端跑冪等 deploy。本地有未提交變更就擋下（逼你走 repo，不繞過） |
-| `scripts/install.sh`                         | bootstrap：套件 → stow 部署 → zsh → Claude Code（家目錄層，冪等）                                                                     |
-| `<pkg>/deploy.sh`                            | 系統層（`/etc`、`/usr/local`）的部署橋，stow 管不到的用這個（如 `monitoring/deploy.sh`）                                              |
-
-標準流程：
-
-```bash
-# 本地改 → commit/push → 一鍵同步部署到遠端
-scripts/remote-sync.sh arch-vm                          # 跑完整 install.sh
-scripts/remote-sync.sh arch-vm 'sudo ./monitoring/deploy.sh'   # 只部署某個系統層套件
-```
-
-遠端在 feature 分支、無法 ff 時，正解是**在 repo 端把分支收斂**：本地 checkout 該分支、`git merge main`、解衝突、push，VM 再 `git pull --ff-only`。衝突在 repo 裡用正常編輯解、不在 VM 上 SSH 解。**不要用 `git checkout <ref> -- <paths>` 把檔塞進工作區**——它會把那些路徑 staged 進 index，下次 ff-pull 就被「index 有未提交變更」擋住（本次實測踩過、清理花了額外功夫）。stow 過的設定檔改內容不需重新 stow，symlink 會自動反映。
-
-### 家目錄 vs 系統層
-
-- **家目錄檔**（`~/.config/...`、`~/.local/bin/...`）→ 做成 stow 套件、`install.sh` 部署。
-- **系統檔**（`/etc/systemd/system/...`、`/usr/local/bin/...`，root-owned、stow 管不到）→ 套件內附 `deploy.sh`，在目標機 `sudo` 跑，冪等安裝。
-- **私密值**（ntfy topic、healthcheck UUID、token）→ **不進 git**，repo 只放 `.example` 佔位，deploy 只在目標不存在時建佔位、真值手填或走 gitignore 的本地檔。
-- **app 自己管理（atomic-write）的 config**（如 caelestia `shell.json`：程式會把 stow symlink 換成實檔、`stow --adopt` 還會把它改寫過的內容 clobber 回 repo）→ **不 stow，改 copy 部署**：套件內附 `deploy.sh` 以一般使用者 `cp` repo 版蓋過 live 檔、從 stow_pkgs 移除該套件。**repo 為唯一真實來源**——持久設定改 repo + 部署，**不要用該 app 的 GUI 改**（會寫進 live 檔、下次部署被覆蓋）。判斷訊號：部署後該檔從 symlink 變實檔、或內容被程式重排。
-
-## 跟 Codex / 其他 agent 的差異
-
-本 repo 同時支援 Claude Code 跟 Codex。差異點：
-
-- **規範**：CLAUDE.md 跟 AGENTS.md 共用內容（透過 `@AGENTS.md`）、Codex 直接讀 AGENTS.md
-- **Skill**：路徑不同（Claude Code 用 `.claude/skills/`、Codex 用 `.agents/skills/`）— 本 repo 用 directory symlink 共用（`.agents/skills` → `../.claude/skills`）、改 `.claude/skills/<name>/` 兩工具同步生效
-- 詳見 AGENTS.md §11
+- **機制**：`.claude/hooks/ssh_guard.py` 註冊為 `Bash` 的 PreToolUse hook。一條指令同時呼叫 ssh、又帶 ProxyCommand、LocalCommand 或 PermitLocalCommand 時，hook 回 `permissionDecision: deny`；純遠端的唯讀診斷（`ssh <host> <readonly-cmd>`）照常放行。
+- **涵蓋範圍**：hook 只比對指令字串本身，寫在 `~/.ssh/config` 裡的 ProxyCommand 看不到。在「agent 不是敵人，只是要避免它意外動到本機」這個威脅模型下，它擋得住誤用，擋不住刻意把選項寫進設定檔的繞過。
+- **已知副作用**：任何 Bash 指令的文字裡同時出現 ssh 呼叫與這些選項就會被擋，例如 `echo 'ssh -o ProxyCommand=…'` 這種示範字串。要在指令裡引用這些字串時，用 Write 或 Edit 寫進檔案，不放進 Bash。
+- **維護**：危險選項清單與 ssh 呼叫的辨識邏輯在 hook 檔裡。改完用 payload 檔餵 stdin 驗證；deny 的案例不直接寫進測試指令，否則 hook 會擋住測試指令本身。
