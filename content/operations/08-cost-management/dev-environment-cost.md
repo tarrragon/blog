@@ -34,5 +34,5 @@ CI 跟批次工作是 spot instance 的理想場景。spot 便宜（單位成本
 
 - CI 用的 spot、spot 的中斷風險怎麼管 → [模組五 成本模型](/operations/05-capacity-planning/cost-model/)
 - per-team 上限配的歸因與告警地基 → [成本監控與告警](/operations/08-cost-management/cost-monitoring/)
-- 上限在 GCP 上由哪些機制執行（預算警示、強制執行支出上限、自動停用帳單）與各自的反應時間 → [GCP 上的雲端費用失控防護](/operations/08-cost-management/spend-protection-gcp-budget-killswitch/)
+- 上限在 GCP 上由哪些機制執行（預算警示、強制執行支出上限、自動停用帳單）與各自的反應時間 → [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)
 - ephemeral 環境要能完全 IaC 重現的前提 → [infra 治理好習慣](/infra/08-governance-habits/)

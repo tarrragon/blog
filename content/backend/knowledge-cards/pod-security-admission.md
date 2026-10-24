@@ -16,7 +16,7 @@ Pod Security Admission 是 Kubernetes 內建的准入控制器（admission contr
 
 - 建 Pod 時回 `Error from server (Forbidden): ... violates PodSecurity "baseline:latest": privileged (container "..." must not set securityContext.privileged=true)`：這個 namespace 設了 `baseline` 的 `enforce`。
 - `kubectl get namespace <namespace> --show-labels` 看得到 `pod-security.kubernetes.io/enforce=baseline` 這類 label。
-- `kubectl debug node/<node>` 用預設的 `general` profile 或 `sysadmin` 時，Pod 使用主機的網路、行程與 IPC 的 Linux namespace（hostNetwork、hostPID、hostIPC）並把節點根目錄掛在 `/host`（hostPath），`sysadmin` 再加上 privileged，所以在設了 `baseline` 或 `restricted` 的 namespace 裡會被拒；`--profile=baseline` 或 `restricted` 不加這些設定，建得進去，但看不到節點的檔案。GKE 上給節點除錯用的專用 namespace 怎麼建，見[GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/03-network-foundation/gke-mig-management-access/)。
+- `kubectl debug node/<node>` 用預設的 `general` profile 或 `sysadmin` 時，Pod 使用主機的網路、行程與 IPC 的 Linux namespace（hostNetwork、hostPID、hostIPC）並把節點根目錄掛在 `/host`（hostPath），`sysadmin` 再加上 privileged，所以在設了 `baseline` 或 `restricted` 的 namespace 裡會被拒；`--profile=baseline` 或 `restricted` 不加這些設定，建得進去，但看不到節點的檔案。GKE 上給節點除錯用的專用 namespace 怎麼建，見[GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/)。
 - 叢集沒有另外設定預設等級時，沒有 `pod-security.kubernetes.io/enforce` label 的 namespace（包括 `default`）不受限制，等同 `privileged`：特權 Pod 建得進去，能在那裡建 Pod 的帳號就能取得節點的 root 權限。
 
 ## 設計責任

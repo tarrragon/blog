@@ -28,7 +28,7 @@ tags: ["backend", "observability", "monitoring", "alerting"]
 
 **第三方依賴。** 金流、簡訊、email、第三方登入的業者停掉時，結果依呼叫的方式而不同。同步呼叫的依賴（金流、第三方登入）停掉時，使用者的請求跟著失敗，錯誤率會上升，而從錯誤率看不出是哪一家；非同步呼叫的依賴（寄信、簡訊、送出的 webhook）停掉時，使用者的請求照常成功，只有寄出的信與簡訊沒送到，監控鏈的每一層都沒有訊號。監看的做法是把對每一個外部依賴的呼叫各自記成請求指標（成功率、耗時），失敗率升高時就知道是哪一家，同時訂閱業者的狀態頁，而判斷以自己逐依賴的請求指標為主：狀態頁是業者那一側的觀察者，可能落後，也可能跟著故障一起停。依賴關係的盤點見 [4.13 Service Topology 與 Dependency Map](/backend/04-observability/service-topology/)，依賴方停掉時的處理見 [8.15 Vendor / 第三方依賴事故處理](/backend/08-incident-response/vendor-dependency-incident/)。
 
-**成本。** 自動擴充失控、一支程式反覆重試、log 量暴增，服務照常運作而帳單成倍增加。雲端業者的預算告警是最基本的監看，而它讀的是帳單資料、落後數小時，也只通知不停止扣款（GCP 帳單資料的延遲與停止用量的做法見 [GCP 上的雲端費用失控防護](/operations/08-cost-management/spend-protection-gcp-budget-killswitch/)）；要分辨成本上升是因為流量還是因為效率變差，把每個服務的成本和它的流量並排看，見 [9.8 效能可觀測性](/backend/09-performance-capacity/performance-observability/) 的〈Cost dashboard〉。監控系統本身的成本見 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)。
+**成本。** 自動擴充失控、一支程式反覆重試、log 量暴增，服務照常運作而帳單成倍增加。雲端業者的預算告警是最基本的監看，而它讀的是帳單資料、落後數小時，也只通知不停止扣款（GCP 帳單資料的延遲與停止用量的做法見 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)）；要分辨成本上升是因為流量還是因為效率變差，把每個服務的成本和它的流量並排看，見 [9.8 效能可觀測性](/backend/09-performance-capacity/performance-observability/) 的〈Cost dashboard〉。監控系統本身的成本見 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)。
 
 ## 監控鏈事前偵測不到的異常在盤點時的位置
 

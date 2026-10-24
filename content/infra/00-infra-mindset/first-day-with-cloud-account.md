@@ -106,20 +106,7 @@ aws rds describe-db-instances \
 
 ## 雲端 Console 的基本導覽
 
-AWS Console 列出幾百個服務，日常 infra 工作常用的集中在以下幾個：
-
-| 服務       | 做什麼           | 什麼時候用                          |
-| ---------- | ---------------- | ----------------------------------- |
-| EC2        | 虛擬機器（運算） | 看有什麼機器在跑、管 security group |
-| S3         | 物件儲存         | 放檔案、放 Terraform state、放 log  |
-| IAM        | 身分與權限       | 管使用者、角色、權限                |
-| VPC        | 虛擬網路         | 管網路拓撲、子網路、路由            |
-| RDS        | 託管資料庫       | 看有沒有資料庫在跑                  |
-| CloudWatch | 監控與 log       | 看 metric、設 alarm、查 log         |
-| CloudTrail | 操作審計         | 查誰做了什麼                        |
-| Billing    | 帳單             | 看花了多少錢                        |
-
-Console 左上角的搜尋列可以直接搜服務名稱，不用從選單找。
+Console 的導覽選單依管理需求分類：身分與權限、運算、網路、儲存、帳單、監控與日誌、稽核紀錄等。AWS 上日常 infra 工作常用的是 EC2、S3、IAM、VPC、RDS、CloudWatch、CloudTrail 與 Billing。每個管理領域管什麼、清單看起來是空的時候要查哪兩個篩選條件（區域與資源分組），以及 AWS、Google Cloud、Oracle Cloud 各自把它放在選單的哪個名稱底下，見 [雲端主控台的管理領域](/infra/cloud-providers/console-areas/)。Console 左上角的搜尋列可以直接搜服務名稱，不用從選單找。
 
 每個服務在 Console 上的操作都有一個對應的 AWS CLI 指令和 API 呼叫。這個對應關係是 IaC 的基礎——[模組一](/infra/01-minimal-iac/)會教怎麼把 Console 上的操作轉成程式碼。
 

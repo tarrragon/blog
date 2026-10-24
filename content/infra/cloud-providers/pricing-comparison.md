@@ -46,7 +46,7 @@ tags: ["infra", "cloud-providers", "free-tier", "cost"]
 - **Google Cloud**：試用結束時如果沒有升級成付費帳戶，帳單會被停用、資源會被停止、帳號失去 Google Cloud 產品的存取權，有 30 天的寬限期可以升級回復。Free Tier 的固定額度要在付費帳戶上才能繼續用；升級之後超出額度的用量開始計費。
 - **AWS**：Free plan 帳號在開立 6 個月後或試用金用完時（先到者為準）自動關閉，除非升級到 Paid plan；升級之後超出額度的用量開始計費。
 
-三家的預設方向不同：Oracle Cloud 不升級也能留著免費資源，Google Cloud 與 AWS 不升級的話資源會停掉或帳號會關閉，而升級之後這兩家超出額度的部分會直接計費。升級成付費帳戶之前，先照 [GCP 帳單防護](/operations/08-cost-management/spend-protection-gcp-budget-killswitch/) 那篇的思路設好預算警示，讓超出額度的費用在發生時有人收到通知。
+三家的預設方向不同：Oracle Cloud 不升級也能留著免費資源，Google Cloud 與 AWS 不升級的話資源會停掉或帳號會關閉，而升級之後這兩家超出額度的部分會直接計費。升級成付費帳戶之前，先照 [GCP 帳單防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/) 那篇的思路設好預算警示，讓超出額度的費用在發生時有人收到通知。
 
 ## 出站流量與閒置回收
 
@@ -81,5 +81,5 @@ tags: ["infra", "cloud-providers", "free-tier", "cost"]
 ## 延伸閱讀：各家的實測紀錄與成本防護
 
 - [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)：Always Free 為什麼綁在 home region、選錯時有哪些路
-- [GCP 帳單防護](/operations/08-cost-management/spend-protection-gcp-budget-killswitch/)：升級成付費帳戶之後，用預算警示與停損開關限制超出額度的費用
+- [GCP 帳單防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)：升級成付費帳戶之後，用預算警示與停損開關限制超出額度的費用
 - [主機形態光譜](/going-live/hosting-spectrum/)：在比較 IaaS 主機之前，先決定服務要自己管到哪一層

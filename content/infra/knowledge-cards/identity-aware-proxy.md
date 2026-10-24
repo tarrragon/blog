@@ -45,5 +45,5 @@ tags: ["infra", "knowledge-cards", "network", "access", "zero-trust"]
 - [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) — 同樣收斂對外入口，由自己維運的主機轉接
 - [Security Group](/infra/knowledge-cards/security-group/) — 放行代理位址段的那一條入站規則所在的位置；AWS 叫 security group，GCP 對應的是 VPC 防火牆規則
 - [Identity Provider](/backend/knowledge-cards/identity-provider/) — 代理用來確認帳號的系統
-- [GCP VM 的 SSH 與 RDP 管理通道](/infra/03-network-foundation/gcp-iap-ssh-access/) — GCP IAP 的防火牆規則、IAM 權限與切換順序的實際指令
+- [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/) — GCP IAP 的防火牆規則、IAM 權限與切換順序的實際指令
 - [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/#網路可達性主機分布與代理把連線送進主機的方式) — 從代理位址段連入與代理程式反向連線兩種送達方式，依主機分布的選擇條件

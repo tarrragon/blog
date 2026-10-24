@@ -207,4 +207,4 @@ CA 與主機設定之間的依賴最直接：主機要信任的是 CA 公鑰，�
 - → [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/)：SSH 憑證與靜態金鑰、OS Login 三種金鑰發放方式的對照
 - → [HashiCorp Vault](/infra/knowledge-cards/vault/)：接 IdP 登入、自動簽發 SSH 憑證的簽發服務，也是保管 CA 私鑰的位置之一
 - → [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/#主機登入驗證登入權限的收回靠人工刪除帳號連動或到期)：SSH 憑證適合的情境（主機跨多個環境、進不了客戶帳號系統的外包團隊），以及它與跳板機、身分感知代理怎麼組合
-- → [GCP VM 的 SSH 與 RDP 管理通道](/infra/03-network-foundation/gcp-iap-ssh-access/)：主機全在 GCP 時改用 OS Login 讓登入權限跟著 Google 帳號走的做法
+- → [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/)：主機全在 GCP 時改用 OS Login 讓登入權限跟著 Google 帳號走的做法

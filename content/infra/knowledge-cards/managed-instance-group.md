@@ -27,4 +27,4 @@ MIG 把「一台 VM」換成「一份設定產生的一組 VM」：VM 隨時可�
 - [Network Tag（網路標籤）](/infra/knowledge-cards/network-tag/) — template 裡決定防火牆規則套不套得到新 VM 的欄位
 - [Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/) — 單台 VM 的救援入口；MIG 裡多了依 template 重建這條路
 - [IaC](/infra/knowledge-cards/iac/) — MIG 與 template 多半由 IaC 管理
-- 實作見 [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/03-network-foundation/gke-mig-management-access/)
+- 實作見 [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/)

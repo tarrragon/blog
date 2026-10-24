@@ -2,7 +2,8 @@
 title: "GCP 上的雲端費用失控防護：預算警示、強制執行支出上限與自動停用帳單的作用範圍、反應時間、建置與驗收"
 date: 2026-10-24
 description: "GCP 上為費用失控設防的機制：預算警示寄出通知的時機、範圍、抵免與通知對象、強制執行支出上限涵蓋的服務與暫停期間，以預算通知觸發函式停止用量的兩種處置（解除帳單連結、只停止花錢的資源）、建置步驟、權限與重試設定，帳單資料延遲對這些機制反應時間的影響，以及這個函式上線前後的驗收與停用後的恢復"
-weight: 6
+weight: 3
+aliases: ["/operations/08-cost-management/spend-protection-gcp-budget-killswitch/"]
 tags: ["devops", "cost-management", "gcp", "budget", "kill-switch", "security"]
 ---
 

@@ -12,7 +12,7 @@ tags: ["infra", "knowledge-cards", "gcp", "iam", "security"]
 
 服務帳號在 IAM 裡同時是一個身分、也是一個資源，權限也因此分成兩邊來設：
 
-- **它是一個身分：它能做什麼**。在 [IAM](/infra/knowledge-cards/iam/) 授予它角色，決定它能對哪些資源做什麼。例如一個[依預算通知停用帳單的函式](/operations/08-cost-management/spend-protection-gcp-budget-killswitch/)，它的服務帳號要有解除專案帳單連結的角色。
+- **它是一個身分：它能做什麼**。在 [IAM](/infra/knowledge-cards/iam/) 授予它角色，決定它能對哪些資源做什麼。例如一個[依預算通知停用帳單的函式](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)，它的服務帳號要有解除專案帳單連結的角色。
 - **它是一個資源：誰能以它的身分行事**。別的身分要「以它的身分行事」（把它掛到 VM 上、用它部署函式、用它的身分呼叫另一個服務），要對這個服務帳號本身持有角色。例如在啟用 OS Login 的 VM 上，登入一台掛著服務帳號的 VM 的人，要有那個服務帳號的 `roles/iam.serviceAccountUser`。
 
 兩邊漏設時的症狀不同。「誰能以它的身分行事」那一邊漏設時，部署或掛載的那一步就被拒絕；「它能做什麼」那一邊漏設時，部署與元件狀態都顯示正常，要到程式實際呼叫 API 的那一刻請求才被拒絕。

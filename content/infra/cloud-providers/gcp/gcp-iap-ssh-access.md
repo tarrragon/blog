@@ -2,7 +2,8 @@
 title: "GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding"
 date: 2026-10-23
 description: "GCP 預設網路自帶的防火牆規則、IAP TCP forwarding 的連線路徑與日常連線指令、切換前的盤點與 Serial Console 救援準備、SSH 與 RDP 改走 IAP 並停用舊規則驗證的指令、IAP 通道連不上時的依層判讀，以及 IAM 授權範圍、OS Login 的啟用與還原、Cloud NAT 與 Private Google Access、Organization Policy、階層式防火牆、稽核紀錄與 Security Command Center 的 OPEN_SSH_PORT finding 在 GCP 上的處理"
-weight: 5
+weight: 1
+aliases: ["/infra/03-network-foundation/gcp-iap-ssh-access/"]
 tags: ["infra", "network", "gcp", "ssh", "rdp", "iap", "firewall"]
 ---
 
@@ -22,7 +23,7 @@ tags: ["infra", "network", "gcp", "ssh", "rdp", "iap", "firewall"]
 
 另外四種環境要先調整做法再往下讀：
 
-- **由 managed instance group（MIG）或 GKE 管理的 VM**：tag、metadata、救援帳號與移除外部 IP 都要改在 instance template、node pool 設定或映像檔裡。逐台用 `gcloud` 修改，VM 在自動修復、升級或縮放時重建，修改就消失，tag 消失之後 IAP 規則也套不到新的 VM。這兩種環境的設定位置、救援改用重建的做法與 GKE 控制層的存取，見[GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/03-network-foundation/gke-mig-management-access/)。
+- **由 managed instance group（MIG）或 GKE 管理的 VM**：tag、metadata、救援帳號與移除外部 IP 都要改在 instance template、node pool 設定或映像檔裡。逐台用 `gcloud` 修改，VM 在自動修復、升級或縮放時重建，修改就消失，tag 消失之後 IAP 規則也套不到新的 VM。這兩種環境的設定位置、救援改用重建的做法與 GKE 控制層的存取，見[GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/)。
 - **Shared VPC 的 service project**：防火牆規則住在 host project，本篇防火牆相關的指令要在 host project 執行；停用 `default-allow-ssh` 這類規則會同時影響其他 service project 的 VM。
 - **用 Terraform 這類 IaC 管理的專案**：本篇每一個 `gcloud` 修改都要改寫成程式碼。只在 CLI 加的 tag、IAM 授權與 metadata，若所屬資源在程式碼裡被完整定義（例如 `google_compute_instance` 寫了 `tags`、用 `google_project_iam_policy` 管 IAM），下一次 apply 會把它拿掉；只在 CLI 刪掉的規則與外部 IP，下一次 apply 會建回來。用 CLI 停用舊規則做驗證的期間要暫停所有 apply。兩個方向的落差與過渡期的做法見[兩套真相並存的過渡期操作](/infra/takeover/partial-iac-dual-truth-operation/)。
 - **新專案從零開始**：沒有舊規則要移走，〈切換前的盤點〉與停用驗證可以跳過，直接建 IAP 規則、OS Login 與 Cloud NAT；建 VM 時加 `--no-address` 就不配外部 IP。2024 年 5 月 3 日之後建立的 Organization 會預設強制一組 Organization Policy，其中可能已經包含本篇〈組織層級的護欄〉提到的幾項；用 `gcloud resource-manager org-policies list --organization=<org-id>` 查組織層級設定了哪些（`<org-id>` 用 `gcloud organizations list` 查）。
@@ -543,5 +544,5 @@ AWS 上同類的盤點流程見 [Security Group 稽核與清理](/infra/03-netwo
 
 - → [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證三層的做法與選擇，以及救援入口](/infra/03-network-foundation/management-access-channel/)：跳板機、VPN、代理程式反向連線、SSH 憑證這些 GCP 以外的做法，以及依存取者身分、代理把連線送進主機的方式、金鑰收回方式選擇組合的依據
 - → [OpenSSH 內建 CA 的 SSH 憑證導入](/infra/03-network-foundation/openssh-ca-setup/)：主機不全在 GCP、OS Login 用不上時，改用 SSH 憑證讓登入權限自動到期
-- → [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/03-network-foundation/gke-mig-management-access/)：本篇的 tag、OS Login 與移除外部 IP 在 instance template 與 node pool 上的寫法，以及 GKE 控制平面的存取
+- → [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/)：本篇的 tag、OS Login 與移除外部 IP 在 instance template 與 node pool 上的寫法，以及 GKE 控制平面的存取
 - → [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/)：VPC 與 subnet 的分層與最小開放原則，本篇的防火牆規則是同一套原則在 GCP 上的寫法
