@@ -12,14 +12,16 @@ tags: ["infra", "cloud-providers", "free-tier"]
 
 ## 章節文章
 
-| 文章                                                                                                  | 主題                                                            |
-| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)                        | 計費單位、免費額度的區域限制、試用結束後的處置、出站流量        |
-| [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) | tenancy、home region 不能改、主控台登入的租用戶與使用者名稱欄位 |
-| [從本機用 OCI CLI 操作 Oracle Cloud](/infra/cloud-providers/oracle-cloud/cli-session-login/)          | session token 登入、時效與 refresh、API 簽章金鑰的取捨          |
+| 文章                                                                                                  | 主題                                                                        |
+| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)                        | 計費單位、免費額度的區域限制、試用結束後的處置、出站流量                    |
+| [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) | tenancy、home region 不能改、主控台登入的租用戶與使用者名稱欄位             |
+| [從本機用 OCI CLI 操作 Oracle Cloud](/infra/cloud-providers/oracle-cloud/cli-session-login/)          | session token 登入、時效與 refresh、API 簽章金鑰的取捨                      |
+| [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)   | 主控台各分頁的 Always Free 設定值、等效 CLI 指令、容量不足與 VCN 選單的狀況 |
 
-## 業者子資料夾
+## 子資料夾
 
+- [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/)：vendor 中立，依功能分類一類一篇（位置、機型與映像檔、網路、登入、磁碟、代理程式與維護、安全開機）
 - [Oracle Cloud](/infra/cloud-providers/oracle-cloud/)
 
 新增一家業者時開一個子資料夾，並在收費比較那篇補上那一家的欄位。
@@ -35,5 +37,5 @@ tags: ["infra", "cloud-providers", "free-tier"]
 | 項目                                                                      | 類型   | 前置條件                                          | 規模 |
 | ------------------------------------------------------------------------- | ------ | ------------------------------------------------- | ---- |
 | Oracle Cloud 的 Bastion 管理通道實測（private subnet、managed SSH、稽核） | 主章   | home region 的 A1 有容量（Batam 沒有 E2.1.Micro） | 中   |
-| Home Region / Availability Domain / OCPU 知識卡                           | 知識卡 | 無                                                | 3    |
+| Home Region / OCPU 知識卡                                                 | 知識卡 | 無                                                | 2    |
 | 收費比較補上 AWS、GCP 以外業者（例如 Linode、Vultr）                      | vendor | 實際申請過或查到官方規則                          | 小   |

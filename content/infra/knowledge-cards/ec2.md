@@ -36,3 +36,5 @@ EC2 是 infra 系列中「運算」面向的基礎單位。容器服務（[ECS](
 - [ECS](/infra/knowledge-cards/ecs/)
 - [Subnet](/infra/knowledge-cards/subnet/)
 - [Security Group](/infra/knowledge-cards/security-group/)
+- [Availability Zone（可用區）](/infra/knowledge-cards/availability-zone/)
+- [Instance Metadata Service（實例中繼資料服務）](/infra/knowledge-cards/instance-metadata-service/)
