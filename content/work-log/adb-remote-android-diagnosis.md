@@ -6,7 +6,7 @@ description: "機器不在手邊，而要判斷畫面上是哪個 App 的視窗�
 tags: ["adb", "android", "debugging", "logcat", "pos"]
 ---
 
-這篇整理電腦經由 Wi-Fi 用 adb 連線到 Android 手機之後，遠端排查用到的指令與注意事項。範圍從 `adb devices` 列出那台手機開始；無線連線本身的配對與連線流程在[Android 無線調試連接指南](/other/android_wireless_debug/)。
+這篇整理電腦經由 Wi-Fi 用 adb 連線到 Android 手機之後，遠端排查用到的指令：在多台裝置中指定要操作的那一台、擷取螢幕畫面與錄影並確認傳回的檔案完整、查出畫面最上層是哪個 App 的哪個 Activity、用 logcat 篩出某個元件啟動前後的紀錄、查詢 App 權限與使用者限制這類狀態，以及放寬安裝管控的修改型指令。Wi-Fi 配對與連線的步驟在[Android 無線調試連接指南](/other/android_wireless_debug/)。
 
 ## 指定裝置
 
