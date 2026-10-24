@@ -10,15 +10,15 @@ tags: ["infra", "cloud-providers", "vm", "compute"]
 
 ## 章節文章
 
-| 文章                                                                                            | 這一類選項決定什麼                                                     |
-| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| [位置：區域、可用區與故障域](/infra/cloud-providers/vm-options/placement/)                      | 主機的實體位置：延遲、出口 IP 的國家、可用機型、硬體故障時的影響範圍   |
-| [機型與映像檔](/infra/cloud-providers/vm-options/shape-and-image/)                              | CPU 架構與核心、記憶體大小，計費與可被收回的條件，作業系統與架構相容性 |
-| [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/)    | 主機在網路上的位置，誰連得到它、它連得到誰                             |
-| [登入：SSH 金鑰與預設使用者](/infra/cloud-providers/vm-options/login/)                          | 建好之後管理員用什麼身分、什麼金鑰登入，沒有金鑰時還有哪些入口         |
-| [磁碟：開機磁碟的大小、效能、加密與去留](/infra/cloud-providers/vm-options/storage/)            | 資料放在哪、能放多少、多快，刪除主機時資料會不會跟著刪                 |
-| [代理程式、中繼資料服務與維護行為](/infra/cloud-providers/vm-options/management/)               | 業者裝在主機裡的程式做什麼，主機怎麼取得自己的設定，硬體維護時會怎樣   |
-| [安全開機：Secure Boot、Measured Boot 與 TPM](/infra/cloud-providers/vm-options/shielded-boot/) | 開機過程有沒有被竄改的檢查                                             |
+| 文章                                                                                                       | 這一類選項決定什麼                                                     |
+| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [位置：區域、可用區與故障域](/infra/cloud-providers/vm-options/placement/)                                 | 主機的實體位置：延遲、出口 IP 的國家、可用機型、硬體故障時的影響範圍   |
+| [機型與映像檔](/infra/cloud-providers/vm-options/shape-and-image/)                                         | CPU 架構與核心、記憶體大小，計費與可被收回的條件，作業系統與架構相容性 |
+| [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/)               | 主機在網路上的位置，誰連得到它、它連得到誰                             |
+| [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) | 建好之後管理員用什麼身分、什麼金鑰登入，沒有金鑰時還有哪些入口         |
+| [磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/infra/cloud-providers/vm-options/storage/)             | 資料放在哪、能放多少、多快，刪除主機時資料會不會跟著刪                 |
+| [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/)        | 業者裝在主機裡的程式做什麼，主機怎麼取得自己的設定，硬體維護時會怎樣   |
+| [安全開機：Secure Boot、Measured Boot 與 TPM](/infra/cloud-providers/vm-options/shielded-boot/)            | 開機過程有沒有被竄改的檢查                                             |
 
 ## 各篇共用的寫法
 

@@ -18,7 +18,7 @@ tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "console"]
 - **Developer tools**：兩個項目，Cloud Shell（瀏覽器裡的終端機，已經裝好 OCI CLI 並以目前登入的身分驗證，不必在本機安裝 CLI 或設定金鑰）與 Code Editor。
 - **通知（鈴鐺）**：Oracle 的公告，包括排定的硬體維護。
 - **說明（問號）**：文件與支援的入口。
-- **人像選單**：從上到下是目前的使用者名稱、identity domain（新帳號是 `Default`）、tenancy 名稱、介面語言、User settings（個人的密碼、多因素驗證、API 簽章金鑰與其他憑證）、Console settings、Sign out。點 tenancy 名稱進入 Tenancy Details 頁，那裡看得到 home region 與 tenancy 的 OCID。
+- **人像選單**：從上到下是目前的使用者名稱、identity domain（tenancy 裡存放使用者與群組的分區，新帳號只有 `Default` 一個）、tenancy 名稱（tenancy 是 Oracle Cloud 的帳號，一個客戶一個）、介面語言、User settings（個人的密碼、多因素驗證、API 簽章金鑰與其他憑證）、Console settings、Sign out。點 tenancy 名稱進入 Tenancy Details 頁，那裡看得到 home region 與 tenancy 的 OCID。
 
 Free Tier 帳號在試用期間，頂端列上方另有一條「Free Tier account」的橫幅，說明試用結束後只剩 Always Free 資源，並附 Upgrade 連結。
 
@@ -44,7 +44,7 @@ Free Tier 帳號在試用期間，頂端列上方另有一條「Free Tier accoun
 
 ## 清單頁的 compartment 篩選器
 
-Instances、Virtual cloud networks、Block Volumes 這類清單頁的表格上方有一行「Applied filters」，其中的 Compartment 那一項篩選條件就是 compartment 篩選器，清單只列出選定 compartment 裡的資源。實測新帳號的預設是 root compartment，這一項篩選條件顯示為「<tenancy 名稱> (root)」。資源建在另一個 compartment 時，清單看起來是空的，要把篩選器切過去。建立頁上的下拉選單也一樣：VCN、subnet 的選單只列出「所在 compartment」那一欄選定的 compartment 裡的資源。
+Compartment 是 tenancy 底下用來分組資源與套用權限政策的容器，tenancy 本身是最上層的 root compartment，每個資源都建在某一個 compartment 裡。Instances、Virtual cloud networks、Block Volumes 這類清單頁的表格上方有一行「Applied filters」，其中的 Compartment 那一項篩選條件就是 compartment 篩選器，清單只列出選定 compartment 裡的資源。實測新帳號的預設是 root compartment，這一項篩選條件顯示為「<tenancy 名稱> (root)」。資源建在另一個 compartment 時，清單看起來是空的，要把篩選器切過去。建立頁上的下拉選單也一樣：VCN、subnet 的選單只列出「所在 compartment」那一欄選定的 compartment 裡的資源。
 
 ## 常用頁面的路徑
 
@@ -56,7 +56,8 @@ Instances、Virtual cloud networks、Block Volumes 這類清單頁的表格上�
 | 找刪除主機後留下的開機磁碟     | Storage → Block Storage → Block Volumes，再從頁面頂端的 Storage 子選單切到 Boot Volumes |
 | 建立 Bastion、開 SSH session   | Identity & Security → Bastion                                                           |
 | 建立實驗用的 compartment       | Identity & Security → Identity → Compartments                                           |
-| 加使用者、群組，寫權限政策     | Identity & Security → Identity → Domains → `Default`；Policies                          |
+| 加使用者、群組                 | Identity & Security → Identity → Domains → `Default`                                    |
+| 寫權限政策                     | Identity & Security → Identity → Policies                                               |
 | 開多因素驗證、建 API 簽章金鑰  | 人像選單 → User settings                                                                |
 | 設預算與警示                   | Billing & Cost Management → Cost Management → Budgets                                   |
 | 看這個月花了多少               | Billing & Cost Management → Cost Management → Cost Analysis                             |

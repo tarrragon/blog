@@ -1,12 +1,12 @@
 ---
-title: "雲端免費額度與小型主機的收費比較：計費單位、區域限制、試用結束後的處置與出站流量"
+title: "雲端免費額度與小型主機的收費比較：試用金與固定額度、計費單位、區域限制、試用結束後的處置、出站流量與查價項目"
 date: 2026-10-24
 description: "Oracle Cloud、Google Cloud 與 AWS 的免費方案分別由哪幾種額度組成，比較時要換算的計費單位，免費主機能放在哪些區域，試用期結束後帳號與資源會怎樣，以及付費主機的價格該去哪裡查"
 weight: 1
 tags: ["infra", "cloud-providers", "free-tier", "cost"]
 ---
 
-這篇整理比較各家雲端免費方案與小型主機費用時要對齊的項目。範圍是一台個人或實驗用的小型虛擬機：能不能免費開著、放在哪裡、什麼時候會開始收錢。各家的規則取自官方頁面，查證日期寫在比較表上；價格與額度會改，拿來做決定之前回到表上的連結看一次最新版本。
+這篇整理比較 Oracle Cloud、Google Cloud 與 AWS 的免費方案與小型主機費用時要對齊的項目。範圍是一台個人或實驗用的小型虛擬機：能不能免費開著、放在哪裡、什麼時候會開始收錢。各家的規則取自官方頁面，查證日期寫在比較表上；價格與額度會改，拿來做決定之前回到表上的連結看一次最新版本。
 
 ## 免費方案的兩種額度：有期限的試用金與沒有期限的固定額度
 
@@ -16,7 +16,7 @@ tags: ["infra", "cloud-providers", "free-tier", "cost"]
 
 **固定額度**是每個月重置、沒有期限的用量上限，只適用於指定的機型與服務。一台小主機要長期免費開著，靠的是這一種額度。各家對固定額度的稱呼不同：Oracle Cloud 叫 Always Free，Google Cloud 叫 Free Tier，AWS 叫 Always free services。
 
-要長期跑一台小主機時，看的是固定額度；試用金只影響開頭那一段期限（Oracle Cloud 30 天、Google Cloud 90 天、AWS 6 個月，見比較表）。
+要長期跑一台小主機時，看的是固定額度；試用金只影響開頭那一段期限（Oracle Cloud 30 天、Google Cloud 90 天、AWS 6 個月，見比較表）。AWS 目前的 Free plan 沒有 EC2 的固定額度，長期跑主機要升級成付費帳戶，見下一節。
 
 ## 計費單位的換算：OCPU、vCPU 與機型配額
 
@@ -36,17 +36,17 @@ tags: ["infra", "cloud-providers", "free-tier", "cost"]
 - **Google Cloud**：Free Tier 的 `e2-micro` 只適用於美國的三個區域：`us-west1`（奧勒岡）、`us-central1`（愛荷華）、`us-east1`（南卡羅來納）。在亞洲區域建同一個機型照一般價格計費。
 - **AWS**：Free plan 的頁面沒有寫明區域限制。
 
-用途需要特定國家的出口 IP 時（例如要讓連線看起來從日本發出），固定額度的區域限制是第一個篩選條件。Google Cloud 的固定額度只在美國；Oracle Cloud 的前提是申請時就把 home region 選在那個國家；AWS 的試用金可以花在其他區域，但 Free plan 帳號 6 個月後關閉，長期使用要升級成付費帳戶。
+用途需要特定國家的出口 IP 時（例如要讓連線看起來從日本發出），固定額度的區域限制是第一個篩選條件。Google Cloud 的固定額度只在美國；Oracle Cloud 的前提是申請時就把 home region 選在那個國家，而那個國家的區域多半只有一個可用區，A1 免費機型容量不足時沒有別的可用區可以換（見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈Always Free 的額度與它綁在 home region 上的範圍〉）；AWS 的試用金可以花在任何區域，包括日本，但 Free plan 帳號 6 個月後關閉，長期使用要升級成付費帳戶。
 
 ## 試用結束後帳號與資源的處置
 
-這一項決定沒有特別注意時會發生什麼事：試用期過了，主機是繼續免費、被停掉，還是開始收費。
+試用期結束、而沒有升級成付費帳戶時，主機繼續免費、被停掉還是開始收費，各家不同。
 
-- **Oracle Cloud**：試用結束後帳號照常存在，Always Free 資源不中斷。用試用金建的付費資源會被回收，除非升級成付費帳戶；A1 總量超過 2 OCPU、12 GB 時，全部 A1 主機會被停用、30 天後刪除。
-- **Google Cloud**：試用結束時如果沒有升級成付費帳戶，帳單會被停用、資源會被停止、帳號失去 Google Cloud 產品的存取權，有 30 天的寬限期可以升級回復。Free Tier 的固定額度要在付費帳戶上才能繼續用；升級之後超出額度的用量開始計費。
+- **Oracle Cloud**：試用結束後帳號照常存在，Always Free 資源不中斷。用試用金建的付費資源會被回收，除非升級成付費帳戶；試用期間用試用金建的 A1 主機合計超過 2 OCPU、12 GB 時，試用結束時全部 A1 主機都會被停用、30 天後刪除，連額度內的那一台也一樣。試用期間超出的部分由試用金支付，帳單上看不到費用，所以這件事在試用結束那一刻才浮現；要保留 A1 主機，試用結束前把 A1 主機合計的規格縮回 2 OCPU、12 GB 以內。
+- **Google Cloud**：試用結束時如果沒有升級成付費帳戶，帳單帳戶會被停用、資源會被停止、帳號失去 Google Cloud 產品的存取權，有 30 天的寬限期可以升級回復。Free Tier 的固定額度要在付費帳戶上才能繼續用；升級之後超出額度的用量開始計費。
 - **AWS**：Free plan 帳號在開立 6 個月後或試用金用完時（先到者為準）自動關閉，除非升級到 Paid plan；升級之後超出額度的用量開始計費。
 
-三家的預設方向不同：Oracle Cloud 不升級也能留著免費資源，Google Cloud 與 AWS 不升級的話資源會停掉或帳號會關閉，而升級之後這兩家超出額度的部分會直接計費。升級成付費帳戶之前先設好預算警示，讓超出額度的費用在發生時有人收到通知。預算與警示的設計見 [運行期維運的成本管理](/operations/08-cost-management/)；Google Cloud 上從預算通知觸發自動停損的建置見 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)，其他兩家目前沒有對應的實作篇。
+三家在不升級時的處置不同：Oracle Cloud 不升級也能留著免費資源，Google Cloud 與 AWS 不升級的話資源會停掉或帳號會關閉，而升級之後這兩家超出額度的部分會直接計費。升級成付費帳戶之前先設好預算警示，讓超出額度的費用在發生時有人收到通知。預算與警示的設計見 [運行期維運的成本管理](/operations/08-cost-management/)；Google Cloud 上從預算通知觸發自動停損的建置見 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)，其他兩家目前沒有對應的實作篇。
 
 ## 出站流量與閒置回收
 
@@ -56,7 +56,7 @@ tags: ["infra", "cloud-providers", "free-tier", "cost"]
 - **Google Cloud**：Free Tier 每月 1 GB 從北美送往各地的出站流量（不含中國與澳洲）；超過的部分計費。
 - **AWS**：Free plan 頁面沒有列流量額度，額度寫在 EC2 的價格頁：每月 100 GB 送往網際網路的出站流量免費，所有服務與區域合計（不含中國與 GovCloud 區域）。
 
-另一項只有 Oracle Cloud 明文寫出的規則是閒置回收：Always Free 主機在 7 天內的 CPU 使用率（取第 95 百分位）、網路使用率、記憶體使用率（只算 A1 機型）都低於 20% 時，Oracle 可能回收它，細節見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。一台大部分時間沒有流量的 VPN 或實驗機會落在這個條件裡。
+另一項只有 Oracle Cloud 明文寫出的規則是閒置回收：Always Free 主機在 7 天內的 CPU 使用率（取第 95 百分位）、網路使用率、記憶體使用率（只算 A1 機型）都低於 20% 時，Oracle 可能回收它；官方頁用的詞是 reclaim，沒有寫回收之後主機是停止還是刪除。規則的出處見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。一台大部分時間沒有流量的 VPN 或實驗機會落在這個條件裡。
 
 ## 三家免費方案比較表（查證日期 2026-10-24）
 
@@ -75,7 +75,7 @@ tags: ["infra", "cloud-providers", "free-tier", "cost"]
 
 - 運算：機型、核心數（注意 OCPU 與 vCPU 的換算）、記憶體、每月開機時數
 - 開機磁碟的容量與類型
-- 公開 IPv4 位址：部分業者對公開 IPv4 位址另外計費
+- 公開 IPv4 位址：AWS 對每個公開 IPv4 位址按小時另外計費，其他業者去各自價格頁的 IP 位址那一項查
 - 出站流量的預估量
 - 負載平衡器：服務對外、主機留在私有 subnet 時，負載平衡器另外計費
 

@@ -14,7 +14,7 @@ tags: ["infra", "knowledge-cards", "cloud", "security"]
 
 同一個特性也是它的風險：主機上任何能發 HTTP 請求的程式都讀得到它。網頁應用程式有 SSRF（server-side request forgery，伺服器端請求偽造）漏洞時，攻擊者可以讓應用程式替他去讀 `169.254.169.254`，取得主機的身分憑證，再拿那份憑證在雲端帳號裡以主機的權限行事。
 
-第二版的存取方式（AWS 與 Oracle Cloud 叫 IMDSv2）要求請求帶上特定的標頭或先取得一個 token，第一版不帶標頭的請求直接拒絕。多數 SSRF 漏洞只讓攻擊者控制網址、控制不了標頭，所以這一個要求就擋掉了大部分的攻擊路徑。Google Cloud 的中繼資料伺服器固定要求 `Metadata-Flavor: Google` 標頭，作用相同。
+第二版的存取方式（AWS 與 Oracle Cloud 叫 IMDSv2）要求請求帶上證明：AWS 要先用 PUT 請求取得一個 token、之後每個請求在標頭帶著它，Oracle Cloud 要每個請求帶 `Authorization: Bearer Oracle` 標頭並改打 `/opc/v2` 路徑。兩版可以並存，主機的設定改成只允許第二版之後，不帶證明的第一版請求才會被拒絕。多數 SSRF 漏洞只讓攻擊者控制網址、控制不了標頭，所以這一個要求就擋掉了大部分的攻擊路徑。Google Cloud 的中繼資料伺服器固定要求 `Metadata-Flavor: Google` 標頭，作用相同。
 
 ## 可觀察訊號
 
@@ -32,4 +32,4 @@ tags: ["infra", "knowledge-cards", "cloud", "security"]
 
 - [Service Account（服務帳號）](/infra/knowledge-cards/service-account/) — 中繼資料服務發放的憑證代表的身分
 - [IAM](/infra/knowledge-cards/iam/) — 決定那份憑證能做什麼
-- [代理程式、中繼資料服務與維護行為](/infra/cloud-providers/vm-options/management/) — 建立主機時的中繼資料服務選項
+- [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) — 建立主機時的中繼資料服務選項

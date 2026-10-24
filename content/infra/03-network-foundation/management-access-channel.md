@@ -178,6 +178,8 @@ Windows 主機用 RDP 登入時，這一層是 Windows 帳號而不是 SSH 金�
 
 這篇提到的 AWS 元件按層列在這裡，方便對照：網路可達性有 SSM Session Manager（代理程式反向連線）、EC2 Instance Connect Endpoint（從代理位址連入，支援原生 SSH 與 RDP）與 security group（防火牆規則）；通道授權由 AWS IAM 決定誰能開 Session Manager 的工作階段或使用 Instance Connect Endpoint；主機登入驗證有 EC2 Instance Connect（推送短效公鑰）；出站路徑有 NAT Gateway 與 VPC Endpoint；救援入口是 EC2 Serial Console；組織層級的護欄是 AWS Organizations 的 [SCP](/infra/knowledge-cards/scp/)。規則的盤點方式見 [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)。
 
+Oracle Cloud 的 Bastion 名字跟跳板機相同，位置在這張地圖上卻不一樣。它是業者託管的服務，不是放在公開網段、對外開 22 port 的那台主機：Bastion 在主機所在的 subnet 裡有一個私有端點，主機與 Bastion 都不需要公開 IP，所以它承擔網路可達性；誰能建立工作階段由 Oracle Cloud 的 IAM 政策決定，這是通道授權；managed SSH session 由主機上的代理程式臨時放進一把公鑰，承擔主機登入驗證。各欄位怎麼設定見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/)。
+
 ## 延伸閱讀：GCP 上的實作與反向連線的運作細節
 
 - → [GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding](/infra/cloud-providers/gcp/gcp-iap-ssh-access/)：IAP、OS Login、Cloud NAT、Serial Console 與組織政策的指令，包含切換時停用舊規則驗證的步驟
