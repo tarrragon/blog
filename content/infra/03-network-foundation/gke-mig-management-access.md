@@ -83,7 +83,7 @@ gcloud compute instance-groups managed wait-until <mig-name> --version-target-re
 gcloud compute instance-groups managed list-instances <mig-name> --zone=<zone>
 ```
 
-找到 canary 那一台之後，經由 IAP 連進去，確認 OS Login 登得進去、出站經過 Cloud NAT（驗證方式同單台 VM 那一篇）。整組更新之後同樣用 `wait-until` 等它完成。整組更新時另外可以加 `--max-surge=1 --max-unavailable=0`：每一批先多建一台新的、再刪一台舊的，更新期間可用台數不減少，但這兩個旗標只控制每一批的速度，更新仍會把整組換完。regional MIG 的 `--max-surge` 用固定數字時只接受 0，或不小於 VM 分布的 zone 數的值（分布在三個 zone 時是 0 或至少 3），所以 regional MIG 分布在兩個以上 zone 時，前面那組 `--max-surge=1` 會被拒絕。
+找到 canary 那一台之後，經由 IAP 連進去，確認 OS Login 登得進去、出站經過 Cloud NAT（驗證方式同單台 VM 那一篇）。整組更新之後同樣用 `wait-until` 等它完成。整組更新時另外可以加 `--max-surge=1 --max-unavailable=0`：每一批先多建一台新的、再刪一台舊的，更新期間可用台數不減少，但這兩個旗標只控制每一批的速度，更新仍會把整組換完。regional MIG 把每一批多建的 VM 分配到它分布的各個 zone，所以 `--max-surge` 用固定數字時，GCP 只接受 0 或不小於 zone 數的值（分布在三個 zone 時是 0 或至少 3），所以 regional MIG 分布在兩個以上 zone 時，前面那組 `--max-surge=1` 會被拒絕。
 
 ## MIG 的救援：recreate-instances、退回舊版 template 與 Serial Console
 
@@ -97,7 +97,9 @@ gcloud compute instance-groups managed recreate-instances <mig-name> \
 
 重建後的 VM 沿用原本的名稱與執行個體 ID，`gcloud compute instances describe` 的建立時間也不變，所以確認重建做完要看開機磁碟：MIG 建的 VM 開機磁碟預設與 VM 同名，`gcloud compute disks describe <instance-name> --zone=<zone> --format="value(creationTimestamp)"` 印出的時間落在重建的那一刻，就代表磁碟已經換新。
 
-磁碟換新，VM 的 SSH 主機金鑰也跟著換新，而 `gcloud compute ssh` 在本機的 `~/.ssh/google_compute_known_hosts` 是用 `compute.<instance-id>` 記錄主機金鑰，ID 沒變，所以重建之後第一次連線會出現 `WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!` 並拒絕連線。這個警告也是中間人攻擊時會看到的訊息，處理方式是先確認新的金鑰確實來自這台 VM，再移除舊紀錄，不關掉主機金鑰檢查。確認的來源是 VM 回報到 guest attributes（VM 寫回 metadata 伺服器、可以經由 GCP API 讀取的鍵值）的主機金鑰：專案或 template 的 metadata 設了 `enable-guest-attributes=TRUE`（專案層用 `gcloud compute project-info add-metadata --metadata enable-guest-attributes=TRUE`），VM 開機後會把主機金鑰寫進 guest attributes，讀取時走 GCP 的 API、不經過那條 SSH 連線，所以這個設定排在需要重建之前先做好。gcloud 不會因為這個設定就自動更新已經存在的 known_hosts 紀錄，比對與移除要自己做：
+磁碟換新，VM 的 SSH 主機金鑰也跟著換新，而 `gcloud compute ssh` 在本機的 `~/.ssh/google_compute_known_hosts` 是用 `compute.<instance-id>` 記錄主機金鑰，ID 沒變，所以重建之後第一次連線會出現 `WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!` 並拒絕連線。這個警告也是中間人攻擊時會看到的訊息，處理方式是先確認新的金鑰確實來自這台 VM，再移除舊紀錄，不關掉主機金鑰檢查。
+
+確認的來源是 VM 回報到 guest attributes（VM 寫回 metadata 伺服器、可以經由 GCP API 讀取的鍵值）的主機金鑰：專案或 template 的 metadata 設了 `enable-guest-attributes=TRUE`（專案層用 `gcloud compute project-info add-metadata --metadata enable-guest-attributes=TRUE`），VM 開機後會把主機金鑰寫進 guest attributes，讀取時走 GCP 的 API、不經過那條 SSH 連線，所以這個設定排在需要重建之前先做好。gcloud 不會因為這個設定就自動更新已經存在的 known_hosts 紀錄，比對與移除要自己做：
 
 ```bash
 # 讀出 VM 回報的 ED25519 主機金鑰指紋，與警告訊息裡 "The fingerprint for the ED25519 key sent by the remote host is" 下一行的 SHA256 值比對
@@ -109,7 +111,7 @@ gcloud compute instances get-guest-attributes <instance-name> --zone=<zone> \
 ssh-keygen -R compute.<instance-id> -f ~/.ssh/google_compute_known_hosts
 ```
 
-`<instance-id>` 是 `gcloud compute instances describe <instance-name> --zone=<zone> --format="value(id)"` 印出的數字。`ssh-keygen -R` 會把原本的檔案備份成同目錄的 `google_compute_known_hosts.old`。兩個指紋不同時不要移除，先確認連到的 IP 仍是這台 VM 的位址（`gcloud compute instances describe` 的網路介面欄位），以及連線是否經過了 IAP 以外的代理或跳板主機。指令裡的 `ED25519` 與 `ssh-ed25519` 對應警告訊息寫的金鑰類型；警告寫的是 ECDSA 時，兩處分別換成 `ECDSA` 與 `ecdsa-sha2-nistp256`。
+`<instance-id>` 是 `gcloud compute instances describe <instance-name> --zone=<zone> --format="value(id)"` 印出的數字。`ssh-keygen -R` 會把原本的檔案備份成同目錄的 `google_compute_known_hosts.old`。兩個指紋不同時不要移除，先確認連到的 IP 仍是這台 VM 的位址（`gcloud compute instances describe` 的網路介面欄位），以及連線是否經過了 IAP 以外的代理或跳板主機。兩項都正常而指紋仍不同時，先不經由這條連線登入，改從 [Serial Console](/infra/knowledge-cards/serial-console/) 登入 VM、讀 `/etc/ssh/ssh_host_ed25519_key.pub` 的指紋再比一次。指令裡的 `ED25519` 與 `ssh-ed25519` 對應警告訊息寫的金鑰類型；警告寫的是 ECDSA 時，兩處分別換成 `ECDSA` 與 `ecdsa-sha2-nistp256`。
 
 `<instance-name>` 是要重建的那台 VM，`gcloud compute instance-groups managed list-instances <mig-name> --zone=<zone>` 列出 MIG 裡的 VM。重建的前提是 VM 上沒有只存在那一台的狀態：資料寫在外接的資料庫、物件儲存或另外掛載的磁碟上，VM 本身隨時可以丟。這也是 MIG 適合的工作負載本來就有的性質；VM 上有不能丟的狀態時有兩條路：MIG 的 stateful 設定（stateful policy 或 per-instance config）把指定的磁碟、IP 與 metadata 標為要保留，`recreate-instances` 重建時會沿用它們；狀態多到每台都不一樣時，它更適合當單獨的 VM 管理，而不是放進 MIG。
 
@@ -155,7 +157,9 @@ chroot /host
 
 這個 Pod 用完不會自動刪除，結束後用 `kubectl delete pod <debug-pod-name> --namespace=<namespace>` 刪掉（`kubectl get pods --namespace=<namespace>` 找名稱以 `node-debugger-` 開頭的那一個）。
 
-`kubectl debug node` 的權限邊界有兩道。[Kubernetes RBAC](/backend/knowledge-cards/kubernetes-rbac/) 決定誰能用它：在除錯 Pod 所在的 namespace 要有 `pods` 的 `create`（建 Pod）、`list` 與 `watch`（kubectl 用 watch 等 Pod 進入執行狀態）、`delete`（用完刪掉），以及 `pods/attach` 的 `create`（`-it` 在 Pod 建好之後附加到它的終端機），這幾項綁在那個 namespace 的 RoleBinding；另外要有 `nodes` 的 `get`，節點不屬於任何 namespace，這一項要用 ClusterRoleBinding 授予。少了 `list` 或 `watch` 時 Pod 已經建好，kubectl 卻停在等待、反覆印出 `cannot list resource "pods"` 而不結束；少了 `pods/attach` 時 Pod 建得出來卻進不去。這兩種情形都會留下一個在跑的除錯 Pod，要用 `kubectl delete pod` 刪掉。能在節點上建除錯 Pod 的帳號，用預設的 `general` profile 就能以 root 讀寫節點的檔案，所以這組權限只給負責維運的群組。[Pod Security Admission](/backend/knowledge-cards/pod-security-admission/) 決定那個 namespace 是否接受這類 Pod：`kubectl debug node` 用 `general` 或 `sysadmin` profile 建的 Pod 帶著主機的網路、行程與 IPC 的 Linux namespace（hostNetwork、hostPID、hostIPC）與主機目錄掛載（hostPath），namespace 設了 `pod-security.kubernetes.io/enforce=baseline` 或 `restricted` 時，這幾項都會讓除錯 Pod 被拒絕；`--profile=baseline` 與 `restricted` 不加這些設定，建得進這類 namespace，但看不到節點的檔案。反過來，沒有設這個 label 的 namespace（包括 `default`）在 GKE Standard 上預設接受特權 Pod，所以任何能在 `default` 建 Pod 的帳號，現在就能用這個方法以 root 操作節點。做法是把一般工作負載的 namespace 都設成 `baseline` 以上，節點除錯集中到一個刻意保留為 `privileged` 等級、而且只有維運群組能建 Pod 的 namespace，這個 namespace 由叢集管理員事先建好：
+`kubectl debug node` 的權限邊界有兩道。[Kubernetes RBAC](/backend/knowledge-cards/kubernetes-rbac/) 決定誰能用它：在除錯 Pod 所在的 namespace 要有 `pods` 的 `create`（建 Pod）、`list` 與 `watch`（kubectl 用 watch 等 Pod 進入執行狀態）、`delete`（用完刪掉），以及 `pods/attach` 的 `create`（`-it` 在 Pod 建好之後附加到它的終端機），這幾項綁在那個 namespace 的 RoleBinding；另外要有 `nodes` 的 `get`，節點不屬於任何 namespace，這一項要用 ClusterRoleBinding 授予。少了 `list` 或 `watch` 時 Pod 已經建好，kubectl 卻停在等待、反覆印出 `cannot list resource "pods"` 而不結束；少了 `pods/attach` 時 Pod 建得出來卻進不去。這兩種情形都會留下一個在跑的除錯 Pod，要用 `kubectl delete pod` 刪掉。
+
+能在節點上建除錯 Pod 的帳號，用預設的 `general` profile 就能以 root 讀寫節點的檔案，所以這組權限只給負責維運的群組。[Pod Security Admission](/backend/knowledge-cards/pod-security-admission/) 決定那個 namespace 是否接受這類 Pod：`kubectl debug node` 用 `general` 或 `sysadmin` profile 建的 Pod 帶著主機的網路、行程與 IPC 的 Linux namespace（hostNetwork、hostPID、hostIPC）與主機目錄掛載（hostPath），namespace 設了 `pod-security.kubernetes.io/enforce=baseline` 或 `restricted` 時，這幾項都會讓除錯 Pod 被拒絕；用 `--profile=baseline` 或 `restricted` 建的除錯 Pod 不帶這些設定，建得進這類 namespace，但看不到節點的檔案。反過來，沒有設這個 label 的 namespace（包括 `default`）在 GKE Standard 上預設接受特權 Pod，所以任何能在 `default` 建 Pod 的帳號，現在就能用這個方法以 root 操作節點。做法是把一般工作負載的 namespace 都設成 `baseline` 以上，節點除錯集中到一個刻意保留為 `privileged` 等級、而且只有維運群組能建 Pod 的 namespace，這個 namespace 由叢集管理員事先建好：
 
 ```bash
 # 建一個專門給節點除錯用的 namespace，並允許特權 Pod
@@ -175,7 +179,7 @@ kubectl label namespace <namespace> pod-security.kubernetes.io/enforce=privilege
 
 控制平面的 API server 預設有一個公開的 IP 端點，任何地方都連得到，靠 Kubernetes 的認證（通道授權）與 [Kubernetes RBAC](/backend/knowledge-cards/kubernetes-rbac/)（主機登入驗證那一層的對應）擋下沒有權限的請求——在管理通道的模型裡，這等於網路可達性全開，與 `0.0.0.0/0` 開 22 port 是同一種狀態。收窄網路可達性的做法有 authorized networks、DNS-based endpoint 與 private endpoint：
 
-- **authorized networks**：只允許列出的來源 IP 範圍連到 API server 的 IP 端點，相當於來源 IP 白名單，代價與白名單相同（遠端工作、IP 會變動時要一直改，而且分辨不出個人）。`--master-authorized-networks` 每次都用給的清單整組取代舊清單，執行這條指令的人與 CI 的出口 IP 要列在裡面，漏列時指令一生效 `kubectl` 就連不上；`gcloud` 不經過這個端點，連不上時仍可以用同一條指令改回清單。另外，沒有設 authorized networks 時，任何外部 IP 都連得到公開端點，包括 GCP 上其他客戶的 VM 的外部 IP；設了 authorized networks 之後，這些 GCP 外部 IP 是否放行由 `--enable-google-cloud-access` 與 `--no-enable-google-cloud-access` 決定，叢集目前的值是 `gcloud container clusters describe <cluster-name> --location=<location>` 輸出裡的 `gcpPublicCidrsAccessEnabled`。這個欄位要在其中一個旗標明確設定過一次之後才會出現，沒有出現代表這個叢集從沒設定過它，要確定 GCP 外部 IP 的放行狀態，就照需求執行一次帶上其中一個旗標的 `gcloud container clusters update`。這項變更不會馬上生效，GKE 套用對應的防火牆規則可能要幾個小時。
+- **authorized networks**：只允許列出的來源 IP 範圍連到 API server 的 IP 端點，相當於來源 IP 白名單，代價與白名單相同（遠端工作、IP 會變動時要一直改，而且分辨不出個人）。`--master-authorized-networks` 每次都用給的清單整組取代舊清單，執行這條指令的人與 CI 的出口 IP 要列在裡面，漏列時指令一生效 `kubectl` 就連不上；`gcloud` 不經過這個端點，連不上時仍可以用同一條指令改回清單。另外，沒有設 authorized networks 時，任何外部 IP 都連得到公開端點，包括 GCP 上其他客戶的 VM 的外部 IP；設了 authorized networks 之後，這些 GCP 外部 IP 是否放行由叢集的 Google Cloud 外部 IP 存取設定決定，`--enable-google-cloud-access` 開啟、`--no-enable-google-cloud-access` 關閉，叢集目前的值是 `gcloud container clusters describe <cluster-name> --location=<location>` 輸出裡的 `gcpPublicCidrsAccessEnabled`。這個欄位要在其中一個旗標明確設定過一次之後才會出現，沒有出現代表這個叢集從沒設定過它，要確定 GCP 外部 IP 的放行狀態，就照需求執行一次帶上其中一個旗標的 `gcloud container clusters update`。這項變更不會馬上生效，GKE 套用對應的防火牆規則可能要幾個小時。
 - **DNS-based endpoint**：叢集多一個專屬的網域名稱端點，請求先經過 Google Cloud、以 IAM 判斷這個帳號能不能連到這個叢集（`container.clusters.connect` 權限，`roles/container.developer` 這類角色裡有），通過之後才轉到 API server。它相當於控制平面前面的身分感知代理：網路可達性與通道授權改由 IAM 承擔，不必維護 IP 清單，GitHub Actions 這類外部 CI 也能用 [workload identity federation](/backend/knowledge-cards/workload-identity/) 換到的身分連進來，不必另架[跳板機](/infra/knowledge-cards/bastion-host/)。
 - **private endpoint**：控制平面只留內部 IP 端點（`--enable-private-endpoint`），只有 VPC 內與經 VPN 或 Interconnect 接進 VPC 的來源連得到，可以再加 `--enable-authorized-networks-on-private-endpoint` 收窄到 VPC 內的特定範圍。既有的 private cluster 多半是這種設定，從 VPC 外管理時要經過 VPN 或跳板機；改用 DNS-based endpoint 之後這一層可以拿掉。
 

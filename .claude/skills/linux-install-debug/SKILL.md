@@ -17,7 +17,7 @@ description: >
   linux install, linux debug, systemd, authoritative state.
 license: MIT
 metadata:
-  version: 1.20.1
+  version: 1.20.2
   category: ops-diagnostics
 ---
 

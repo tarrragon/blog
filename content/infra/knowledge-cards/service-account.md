@@ -12,10 +12,10 @@ tags: ["infra", "knowledge-cards", "gcp", "iam", "security"]
 
 服務帳號在 IAM 裡同時是一個身分、也是一個資源，權限也因此分成兩邊來設：
 
-- **它是一個身分：它能做什麼**。在 [IAM](/infra/knowledge-cards/iam/) 授予它角色，決定它能對哪些資源做什麼。例如一個依預算通知停用帳單的函式，它的服務帳號要有解除專案帳單連結的角色。
+- **它是一個身分：它能做什麼**。在 [IAM](/infra/knowledge-cards/iam/) 授予它角色，決定它能對哪些資源做什麼。例如一個[依預算通知停用帳單的函式](/operations/08-cost-management/spend-protection-gcp-budget-killswitch/)，它的服務帳號要有解除專案帳單連結的角色。
 - **它是一個資源：誰能以它的身分行事**。別的身分要「以它的身分行事」（把它掛到 VM 上、用它部署函式、用它的身分呼叫另一個服務），要對這個服務帳號本身持有角色。例如在啟用 OS Login 的 VM 上，登入一台掛著服務帳號的 VM 的人，要有那個服務帳號的 `roles/iam.serviceAccountUser`。
 
-權限漏設時，部署與元件狀態都顯示正常，要到程式實際呼叫 API 的那一刻，請求才被拒絕。所以設定完要實際觸發一次它要做的事，看結果，而不是看部署的回傳值。
+兩邊漏設時的症狀不同。「誰能以它的身分行事」那一邊漏設時，部署或掛載的那一步就被拒絕；「它能做什麼」那一邊漏設時，部署與元件狀態都顯示正常，要到程式實際呼叫 API 的那一刻請求才被拒絕。
 
 程式取得服務帳號憑證的方式有兩種：在雲端裡執行的程式（VM、函式、容器）由平台自動提供短期憑證，不需要金鑰；在雲端外面的程式（CI、地端伺服器）可以下載一把長期金鑰，或改用 [workload identity](/backend/knowledge-cards/workload-identity/) 以外部平台簽發的 token 換到短期憑證。長期金鑰外洩等於這個身分外洩，能用短期憑證時不發金鑰。
 
@@ -23,13 +23,14 @@ tags: ["infra", "knowledge-cards", "gcp", "iam", "security"]
 
 - IAM 綁定裡出現 `serviceAccount:` 開頭的成員：`gcloud projects get-iam-policy <project-id>` 列得出專案層級的綁定
 - VM 掛著哪個服務帳號：`gcloud compute instances describe <instance-name> --zone=<zone>` 輸出的 `serviceAccounts[].email`；用主控台預設值建立的 VM 會掛上 Compute Engine 預設服務帳號（`<project-number>-compute@developer.gserviceaccount.com`），instance template 的 `describe` 對它顯示為 `default`
-- 程式的錯誤訊息是 `The caller does not have permission` 或 403，而部署與狀態都顯示正常：服務帳號缺少這個 API 呼叫需要的權限，用 `gcloud iam roles describe <role>` 查它持有的角色裡有沒有那一項
+- 程式的錯誤訊息是 `The caller does not have permission` 或 403，而部署與狀態都顯示正常：服務帳號缺少這個 API 呼叫需要的權限，用 `gcloud iam roles describe <role>` 查它持有的角色裡有沒有那一項；錯誤訊息沒寫權限名稱時，API 參考文件裡那個方法的頁面列出它需要的權限（例如 `projects.getBillingInfo` 需要 `resourcemanager.projects.get`）
 
 ## 設計責任
 
 - **一個用途一個服務帳號**：每個程式或每類工作用自己的服務帳號，角色只給它需要的那幾個（[least privilege](/backend/knowledge-cards/least-privilege/)）；共用預設服務帳號時，任何一個程式被入侵都拿得到其他程式的權限
 - **查角色實際包含哪些權限**：角色名稱看起來管的那件事，角色本身不一定涵蓋其中的每一個動作，`gcloud iam roles describe <role>` 列得出它的權限清單；例如 GCP 的 `roles/billing.projectManager` 只能建立與刪除專案的帳單連結，讀取帳單狀態要另外的權限
 - **呼叫鏈上的每一段都要授權**：由事件觸發的程式（Pub/Sub 推送、Eventarc 觸發器）有「觸發器以哪個身分呼叫程式」與「程式以哪個身分呼叫 API」兩段，兩段各自要有角色
+- **設定完以實際觸發驗收**：「它能做什麼」那一邊的缺漏在部署時看不出來，所以設定完要實際觸發一次它要做的事、看結果，而不是看部署的回傳值，做法見[平常不動作的防護機制的部署驗證](/report/protection-proves-itself-by-firing/)
 - **「以它的身分行事」的權限也是權限**：持有某個服務帳號的 `roles/iam.serviceAccountUser` 或可以產生它的 token 的人，等同持有那個服務帳號的全部角色，盤點權限時要一起算
 
 ## 鄰卡

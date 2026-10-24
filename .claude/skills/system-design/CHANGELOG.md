@@ -2,6 +2,8 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
+**Version**: 0.13.2 — 多輪審查 Round 2 修正：decision-timing 管理通道條寫明「收斂」是第一台時沒做、事後才收掉全開規則的情形；費用失控條刪掉括號裡的實測證據，測試訊息改成低於與超出預算各一則，與 saas-tech-selection 一致。
+
 **Version**: 0.13.1 — decision-timing〈先做〉的管理通道條改寫：網路層只放行身分感知代理或 VPN、登入改用 OS Login 或 SSH 憑證，兩層分開寫（原句把 SSH 憑證放在「放行」那一層），成本枚舉限定在 GCP；費用失控條補上預算通知花費為 0 也可能來自抵免、停用帳單時資源可能被永久刪除。principle 卡 `protection-proves-itself-by-firing` 依多輪審查修正：段標改寫、補合成觸發的定義句、低於預算的訊息兩個權限都沒用到、正對照改成不依賴同一個欄位的查詢、靜默監看寫明監看的是觸發來源的訊息、補英文錨點。
 
 **Version**: 0.13.0 — decision-timing〈先做〉新增兩條：登入主機與叢集的管理通道從第一台就只放行身分感知代理或 SSH 憑證（第一台時是一條規則、一個角色與一個 metadata 鍵，之後收斂要盤點依賴舊規則的連線、依序停用驗證刪除，救援入口事先登入過，template 建的主機寫進 template）；決定費用失控時的處置（警示不停止扣款、計費資料落後數小時以上，寫下誰收警示、多久處理、要不要自動解除帳單連結；建了停損就以超出預算的測試訊息實際觸發一次）。新增 principle 卡 `protection-proves-itself-by-firing`（平常不動作的防護機制以合成觸發驗收）。SKILL.md 補觸發詞。來源是一次 GCP 測試專案上的管理通道與帳單停損開關實機驗證。

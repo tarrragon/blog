@@ -68,7 +68,7 @@ Day one 最小集：部署紀錄、管理操作 log（誰改了誰的資料）�
 **設定範例（GCP，已實測）**：
 
 ```bash
-# 網路可達性：只放行 IAP 位址段連到帶 tag 的 VM 的 22 port（規則開 logging，之後查得到誰經過它）
+# 網路可達性：只放行 IAP 位址段連到帶 tag 的 VM 的 22 port（規則開 logging，之後查得到哪些連線經過這條規則）
 gcloud compute firewall-rules create allow-ssh-from-iap --network=<network> \
   --direction=INGRESS --action=allow --rules=tcp:22 \
   --source-ranges=35.235.240.0/20 --target-tags=<ssh-tag> --enable-logging
@@ -78,7 +78,9 @@ gcloud projects add-iam-policy-binding <project> \
   --member=group:<ops-group> --role=roles/iap.tunnelResourceAccessor \
   --condition='expression=destination.port == 22 && request.time < timestamp("<expiry>"),title=iap-ssh'
 
-# 主機登入驗證：專案層啟用 OS Login，登入權限改由 roles/compute.osLogin / osAdminLogin 決定
+# 主機登入驗證：先把登入角色綁給維運群組（要 sudo 時用 osAdminLogin，只登入、不 sudo 時用 osLogin），再在專案層啟用 OS Login；
+# 順序反過來，啟用那一刻還沒拿到角色的人就登不進去。<ops-group> 是群組的 email
+gcloud projects add-iam-policy-binding <project> --member=group:<ops-group> --role=roles/compute.osAdminLogin
 gcloud compute project-info add-metadata --metadata enable-oslogin=TRUE
 ```
 
@@ -86,9 +88,10 @@ gcloud compute project-info add-metadata --metadata enable-oslogin=TRUE
 
 - **舊規則的處理順序**：預設的全開規則（GCP 的 `default-allow-ssh`）涵蓋代理的位址段，舊規則還在時連得上，證明不了新規則放行了代理的連線；先停用舊規則再驗新路徑，停用前救援入口要已經登入過。
 - **由 template 建的主機**（MIG、Kubernetes node pool）：tag、OS Login metadata、移除外部 IP 要寫在 instance template 或 node pool 設定裡，逐台修改在重建後消失。
-- **Kubernetes 控制平面**：公開的 API server 端點等同網路可達性全開。新叢集用 DNS-based endpoint（以 IAM 判斷能不能連、不受 IP 清單限制），authorized networks 是 IP 白名單，更新時新清單整組取代舊清單（不是附加）；`kubectl debug node` 用預設的 `general` 或 `sysadmin` profile 建的 Pod 能以 root 讀寫節點檔案（`baseline`、`restricted` profile 不掛節點目錄），一般工作負載的 namespace 設 Pod Security Admission 的 `baseline` 以上，節點除錯集中到只有維運能建 Pod 的 namespace。
+- **Kubernetes 控制平面**：公開的 API server 端點等同網路可達性全開。新叢集用 DNS-based endpoint（以 IAM 判斷能不能連、不受 IP 清單限制），authorized networks 是 IP 白名單，更新時新清單整組取代舊清單（不是附加）。
+- **Kubernetes 節點除錯**：能在節點上建 `kubectl debug node` 除錯 Pod 的帳號，用預設的 `general`（或 `sysadmin`）debug profile 就能以 root 讀寫節點檔案；debug profile 裡同名的 `baseline`、`restricted` 不掛節點目錄，不在這個風險裡。處置是把一般工作負載的 namespace 設成 Pod Security Admission 的 `baseline` 等級以上（它會拒絕 `general` 與 `sysadmin` 建的除錯 Pod），節點除錯集中到一個只有維運能建 Pod 的 namespace。
 - **稽核**：開通道與登入要留下作業系統之外的紀錄。GCP 的 IAP 開通道紀錄屬於 Data Access 的 `ADMIN_READ` 類型（只開 `DATA_READ` 時一筆都沒有）；OS Login 每次登入留下 `CheckPolicy` 紀錄。開啟之後實際連一次、查到紀錄才算完成，見 [protection-proves-itself-by-firing](../principles/protection-proves-itself-by-firing.md)。
-- **人員離職**：撤銷 IAM 角色只會擋住之後的新登入，已連著的工作階段要在主機上結束，並以該使用者的行程清單為空作為完成的判斷。
+- **人員離職**：撤銷 IAM 角色只會擋住之後的新登入，已連著的工作階段要在主機上結束，並以 `pgrep -u <user> -a` 的輸出為空作為完成的判斷（做法見 linux-install-debug 的結束工作階段那一節）。
 
 ---
 

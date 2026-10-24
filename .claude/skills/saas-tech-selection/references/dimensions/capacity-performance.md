@@ -45,30 +45,35 @@
 
 **決策點**：停損切下去，專案裡所有服務一起停擺，等於一次自己造成的全面停機；雲端文件另外警告停用帳單時資源可能被永久刪除。所以先問：「被濫用而多付一筆費用」與「服務全停、資料可能遺失」哪一個代價高？小型專案、測試環境、個人專案通常是被濫用的費用代價高，建停損；正式服務多半是全面停機的代價高，改用警示加值班處理，或只對高風險專案建停損。
 
-**GCP 的做法（已實測）**：
+**GCP 的做法（已實測）**：接停損的預算與一般預算警示分開建。範圍用 `--filter-projects=projects/<project>` 限定在要停用的那一個專案（不限定時 `costAmount` 是整個帳單帳戶的合計，別的專案的花費也會觸發停損），金額設成這個專案本期能承受的最高花費，而不是預期花費。帳戶有大額抵免時加 `--credit-types-treatment=exclude-all-credits`，否則抵免用完前花費接近 0、停損不會觸發。
 
 ```bash
 # 預算通知送到 Pub/Sub topic；設定時會自動授權 billing-budget-alert@system.gserviceaccount.com 發布
 gcloud pubsub topics create budget-alerts
-gcloud billing budgets update <budget-name> --notifications-rule-pubsub-topic=projects/<project>/topics/budget-alerts
+# <budget-name> 是 gcloud billing budgets list 印出的完整名稱 billingAccounts/<id>/budgets/<uuid>，不是顯示名稱
+gcloud billing budgets update <budget-name> --notifications-rule-pubsub-topic=projects/<project>/topics/budget-alerts \
+  --billing-project=<project>
 
-# 停損程式的服務帳號：解除帳單連結用 billing.projectManager，讀取帳單狀態另外要 browser
-gcloud projects add-iam-policy-binding <project> --member=serviceAccount:<sa> --role=roles/billing.projectManager
-gcloud projects add-iam-policy-binding <project> --member=serviceAccount:<sa> --role=roles/browser
+# 停損程式的服務帳號：解除帳單連結用 billing.projectManager，讀取帳單狀態另外要 browser；
+# --condition=None 讓專案裡已有條件式綁定時，非互動模式不會停下來要求選擇條件
+gcloud projects add-iam-policy-binding <project> --member=serviceAccount:<sa> --role=roles/billing.projectManager --condition=None
+gcloud projects add-iam-policy-binding <project> --member=serviceAccount:<sa> --role=roles/browser --condition=None
 
 # 部署由 topic 觸發的 function；兩個服務帳號旗標都明確指定（--trigger-service-account 不給時，
 # gcloud 的說明寫用 Compute Engine 預設服務帳號，實測卻沿用 --service-account，依版本而異）；
-# --retry 讓失敗的那則通知會重送；--runtime、--entry-point、--source、--region 依程式填
+# --retry 讓失敗的那則通知會重送；--max-instances=1 讓多則通知依序處理、不並行送出解除連結的呼叫；
+# --runtime、--entry-point、--source、--region 依程式填，TARGET_PROJECT_ID 是要停用的專案
 gcloud functions deploy <name> --gen2 --trigger-topic=budget-alerts --service-account=<sa> \
-  --trigger-service-account=<sa> --retry --runtime=<runtime> --entry-point=<function> --source=<dir> --region=<region>
+  --trigger-service-account=<sa> --retry --max-instances=1 --set-env-vars=TARGET_PROJECT_ID=<project> \
+  --runtime=<runtime> --entry-point=<function> --source=<dir> --region=<region>
 
 # 觸發器以 --trigger-service-account 的身分呼叫 function，要給它呼叫權限，否則每次推送都 403
-gcloud run services add-iam-policy-binding <name> --member=serviceAccount:<sa> --role=roles/run.invoker
+gcloud run services add-iam-policy-binding <name> --region=<region> --member=serviceAccount:<sa> --role=roles/run.invoker
 ```
 
 程式的判斷規則：只看實際花費（通知裡的 `costAmount >= budgetAmount`），讀不懂的訊息不切斷；呼叫 Cloud Billing API 的 `projects.updateBillingInfo`、`billingAccountName` 給空字串就是解除連結。
 
-**實測的反應時間與限制**：從超支訊息發出到帳單停用約十幾秒；整段反應時間的主要部分在訊息發出之前，來自帳單資料的更新延遲——同一個專案已經跑過幾個小時的 VM 與 Kubernetes 叢集，預算通知裡的花費仍然是 0（預算用預設的抵免設定，抵免也可能讓這個數字偏低）。所以停損限制的是損失的上限，延遲期間已經發生的費用攔不下來。帳單停用約兩分半鐘期間資源清單回傳空的，重新連結後 Cloud Router、Cloud NAT 與 function 都還在、計費恢復（這次沒有觀察 VM 與資料庫）；空清單不代表資源已刪除，事後仍要清理，而停用時間更長時以雲端文件對資源處置的說明為準。停損程式跑在被停用的專案上時，它自己也跟著停擺。
+**反應時間與限制**：停損限制的是損失的上限，帳單資料延遲期間已經發生的費用攔不下來（實測從超支訊息發出到停用約十幾秒，延遲幾乎都在訊息發出之前）。帳單停用期間資源清單回傳空的，空清單不代表資源已刪除，重新連結後留下的資源繼續計費，清理以重新連結後的清單為準。實際因為超支而停用之後，先調高預算金額或刪掉函式再重新連結，否則下一則通知會再停用一次。停損程式跑在被停用的專案上時，它自己也跟著停擺。
 
 **驗收**：部署成功、狀態 `ACTIVE` 不算完成。`run.invoker`、`browser` 與 `--retry` 這三項缺任何一個，停損都會在看似正常的狀態下失效（實測三個都踩到了）。上線時各發一則低於預算與超出預算的測試訊息到 topic（`gcloud pubsub topics publish budget-alerts --message='{"costAmount": <值>, "budgetAmount": <預算>}'`，兩則的 `<值>` 分別低於與不低於 `<預算>`），看到帳單狀態變成停用才算完成，見 [protection-proves-itself-by-firing](../principles/protection-proves-itself-by-firing.md)。
 
