@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.32.0 — round-2-probes〈探針的處置門檻〉加「規則類文件的探針量讀錯，不量歧義數」：要探針列出有兩種讀法的位置是審查題，同檔兩批總數 20 與 13；改用封閉案例題加預期答案、換題目先量雜訊、同一組案例當回歸測試，停止條件改看讀錯。integrating-findings〈修完拿任務重走〉加修法預算、保守預設與交給異源讀者驗收。新增 principle 卡 listing-ambiguities-is-a-review-task-not-a-probe，rule-fixes-pass-per-sentence-and-collide-per-case 同步修法。
+
 **Version**: 2.31.0 — integrating-findings 加〈修完拿任務重走一次，再派下一輪〉與工作流第 8 步：審查對象是規則類文件時，修完拿探針的任務與本輪 finding 的案例重走修改後的規則，查同一步的兩種處置與沒有規則管的缺口；走之前查共用概念的時點與同一個對象上的其他規則。新增 principle 卡 rule-fixes-pass-per-sentence-and-collide-per-case。
 
 **Version**: 2.30.3 — SKILL.md 嚴重度量尺補連卡的例外：術語連到卡、定義住在卡上不算「離頁才讀得懂」，判定看離開那張卡之後本段的論證還走不走得下去；與專案規則檔的嚴重度轉述對齊

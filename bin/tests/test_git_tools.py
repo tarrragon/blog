@@ -333,6 +333,7 @@ class PushMain(Base):
         r = tool("push-main", "--mine", c, cwd=self.root)
         self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
         self.assertIn("other.md", r.stdout)
+        self.assertIn("[ASK-USER]", r.stdout)
         self.assertEqual(self.remote_head(), before)
 
     def test_foreign_commit_on_branch_leaves_main_unmoved(self):

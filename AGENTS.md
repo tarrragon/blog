@@ -6,7 +6,7 @@
 
 ## 怎麼讀分冊
 
-先看自己的 context 裡有沒有全部分冊（`docs/rules/*.md` 的每一份）的全文。Claude Code 經由 CLAUDE.md 開頭的 `@` 匯入，session 一開始就載入了本檔與全部分冊；Codex 與其他只自動讀 AGENTS.md 的 agent 沒有。全部分冊的全文都在 context 裡的，不必再打開分冊，做事時照分冊的規則做。沒有的，動手之前依這次要改的路徑讀下表對應的分冊，整份讀完；這次的改動對到好幾列時，每一列的分冊都讀。
+動手改任何檔案之前，依這次要改的路徑讀下表對應的分冊，每一份整份讀完；某一份分冊的全文已經在 context 裡的，那一份不必重讀。Claude Code 經由 CLAUDE.md 開頭的 `@` 匯入，session 一開始就有全部分冊的全文；Codex 與其他只自動讀 AGENTS.md 的 agent 沒有。這次的改動對到好幾列時，每一列的分冊都讀；新建的檔案照它的路徑對表。
 
 | 這次要改的路徑                                          | 要讀的分冊                                                                                           |
 | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -17,7 +17,7 @@
 | `bin/skill-mirror`、`scripts/principle-mirror-check.py` | `skills.md`                                                                                          |
 | dotfiles repo，或經由 SSH 操作遠端機器                  | `remote.md`                                                                                          |
 
-要改的檔案不論改動大小，都照這張表讀；只讀檔案、回答問題而不改任何檔案時，不必讀分冊。
+只讀檔案、回答問題而不改任何檔案時，不必讀分冊。
 
 規則之間用〈段名〉互相引用；段名在另一份檔案時，前面寫出檔名（`writing.md`〈開場列出這篇討論的內容〉）。
 
@@ -49,19 +49,18 @@
 
 ## 改動的級別
 
-級別要改完之後跑 `bin/changed-lines --level` 才查得到，所以它只用來決定改完之後要做的事：commit message 的紀錄、字句層掃描、多輪審查、skill 的版號。動手之前的步驟（讀分冊、叫用寫作類 skill）不看級別，改動多小都照做。用到級別的規則各自在自己的位置寫「哪一級以上要做」，級別與它用到的名字只在這裡定義：
+級別要改完之後跑 `bin/changed-lines --level` 才查得到，所以它只用來決定改完之後要做的事：commit message 的紀錄、字句層掃描、多輪審查、skill 的版號。動手之前的步驟（讀分冊、叫用寫作類 skill）不看級別，改動多小都照做。用到級別的規則各自在自己的位置寫「哪一級以上要做」，級別與它用到的兩個名字只在這裡定義：
 
 - **規則類文件**：本檔、`docs/rules/` 的分冊、CLAUDE.md、`.claude/skills/`，以及被規則檔指定為單一真實來源的 spec：`content/posts/markdown-writing-spec.md`、`content/posts/backlog-format-spec.md`。新增這樣的 spec 時加進這份清單。
 - **書面產出**：`content/`、`.claude/skills/`、本檔、`docs/rules/` 與 CLAUDE.md 底下的文字。
-- **規則**：規則類文件裡要執行者做、不做某件事，或依條件選擇做法的段落；一條規則由四件事組成（〈規則的優先序與住址〉的「新增或修改規則時」）：規則本身、判斷的標準、判斷之後的處置、讓執行者判得出適用邊界的理由。
 
 三個級別：
 
 - **排版級**：`bin/changed-lines --level <這次的檔案...>` 的最後一行是 `level: 排版級`，而且執行者逐一確認了它印的每一處「錯字候選：舊→新」都是同一個詞的錯字與正字。工具判的是 diff 上的事實：每一處改動的新增行與刪除行一一對應，每一對去掉空白、標點、表格符號與連結網址之後相同、只有一個字元被替換（數字、拉丁字母、否定與情態字的替換不算），或只改了 frontmatter 裡 `weight`、`date` 的值；完整的條件在工具的檔頭。刪掉一句、插入一個字、補一個 frontmatter 欄位（例如補 `description`）、新檔都不是排版級。有一處錯字候選換的是另一個詞，這次就不是排版級。
-- **措辭級**：不是排版級，也不是規則級。規則類文件以外的 `content/` 文章不訂規則，它的改動不是排版級就是措辭級。
-- **規則級**：規則類文件裡，至少一條規則的四件事之一被新增、刪除或改了意思，包括只改理由（理由決定執行者怎麼判邊界）。「改了意思」的判定方法是拿案例走：照改後的文字，至少有一個案例的判斷、處置或適用邊界跟改前不同。文字改了而每個案例的結果都相同，是措辭級。符合這一條就是規則級，`bin/changed-lines --level` 印出排版級也一樣：工具只比對字元，判不出改動的字在不在一條規則的四件事裡。
+- **措辭級**：規則類文件以外的書面產出（`content/` 的文章），改動不是排版級的。
+- **規則級**：規則類文件裡，改動不是排版級的。改的是措辭還是規則的意思不分開判：分開判要執行者判語意，而那條分界本身就是規則檔反覆被讀成兩種意思的位置；一律算規則級，代價是規則檔的措辭改動也照規則級走審查。
 
-工具判不了規則是否被改到，所以每一級都在 commit message 留下判定：排版級貼上 `bin/changed-lines --level` 的輸出（含「錯字候選」那幾行，讓讀 commit 的人看得到每一處被替換的字）；措辭級寫出改動的段落，改的是規則類文件時另外寫「每一條規則的四件事都沒改意思」與拿來走的案例；規則級寫出改了哪一條規則的哪一件事，以及結果變了的那個案例。
+每一級都在 commit message 留下判定：排版級貼上 `bin/changed-lines --level` 的輸出（含「錯字候選」那幾行，讓讀 commit 的人看得到每一處被替換的字）；措辭級與規則級寫出級別與改動的段落，規則級另外寫出改到哪幾條規則。
 
 ## 寫作類 skill 的叫用
 
@@ -90,25 +89,25 @@ bin/changed-lines <這次的檔案...> > <暫存目錄>/added.txt   # 新增行�
 - **lint**：這次動到 `content/` 的檔案時，提交前跑 `bin/lint-delta <這次的 content/ 檔案...>`。它只印這次新增的問題，既有的只計數；exit 1 代表這次新增了 error，修掉再提交，新增的 warn 寫進回報。全量 lint（`./bin/mdtools lint content/`）只用來觀察歷史基線，不用來判斷這次的品質。
 - **提交**：用 `bin/commit-files -F <訊息檔> <這次的檔案...>`，不直接 `git commit`。共用的 git index 裡可能有另一個 session（或另一個 agent）staged 的檔案，直接 commit 會把它們一起提交；這支工具經由私有 index 只提交列出的檔案，提交後讓共用 index 對齊。路徑以執行時的目錄起算，刪除的檔案與改名的新舊兩個路徑都列。
   - 跑之前先跑 `git diff HEAD -- <這次的檔案...>`，把 diff 跟這次自己做過的編輯逐段對照：私有 index 隔離的是 staging，不隔離工作樹，另一個 session 改了同一個檔案時，它在工作樹裡的修改會一起提交。有對不上的段落時，照〈要先問使用者的情形〉處理。自認都是自己寫的不改變本款：對照的是 diff 與編輯紀錄，不是印象。
-  - exit 1 是沒有提交，原因印在 stderr：原因落在這次的檔案上時照它修正；hook 擋下的是這次沒有改過的檔案時，照下面「pre-commit 報錯」那一條處理，不修那個檔案。exit 2 是用法錯誤，或 git 的 hook 沒有生效（它印出要跑的設定指令）。exit 3 是已經提交、共用 index 還沒對齊，照它印的 `[FOLLOW-UP]` 那幾行做；工作結束時還做不了，寫進〈延到工作結束之後的動作〉。
+  - 工具沒有提交時，原因印在 stderr：原因落在這次的檔案上時照它修正；hook 擋下的是這次沒有改過的檔案時，照下面「pre-commit 報錯」那一條處理，不修那個檔案。提交之後印出 `[FOLLOW-UP]` 時，照那幾行做；工作結束時還做不了，寫進〈延到工作結束之後的動作〉。各個 exit code 的意思寫在工具的檔頭。
 - **pre-commit 報錯**：讀訊息修正，不用 `--no-verify` 繞過。報錯落在這次沒有改過的檔案時（hook 的 `mdtools cards` 掃整個 `content/` 工作樹，另一個 session 寫到一半的檔案會擋下這次的 commit），不改也不繞過那個檔案，這次不提交，把要提交的檔案與擋下它的報錯寫進〈延到工作結束之後的動作〉；不在 session 裡反覆重試等它消失。
 
 ### 推送
 
 commit 之後直接推送，不另外問使用者：使用者已經授權推送。使用者這次的指示只提到提交、沒有提到推送時，照常推送；指示另有要求時（「先不要推」「只推 blog」），照這次的指示。要停下來問的情形見〈要先問使用者的情形〉。
 
-- **blog repo**：跑 `bin/push-main --mine <這次 session 提交的 commit...>`（`bin/commit-files` 每次提交都印出它的 hash）。它先 fetch；推送範圍裡有 `--mine` 以外的 commit 時不推送、不動本地的 `main`、exit 3；目前在分支、worktree 或 detached HEAD 上時，它把目前的 commit fast-forward 進 `main` 再推。推送之後印出 `[CLEANUP]` 時，分支或 worktree 用完就照那幾行清理。
+- **blog repo**：跑 `bin/push-main --mine <這次 session 提交的 commit...>`（`bin/commit-files` 每次提交都印出它的 hash）。它先 fetch；推送範圍裡有 `--mine` 以外的 commit 時不推送、不動本地的 `main`，印出 `[ASK-USER]`；目前在分支、worktree 或 detached HEAD 上時，它把目前的 commit fast-forward 進 `main` 再推。推送之後印出 `[CLEANUP]` 時，分支或 worktree 用完就照那幾行清理。
 - **共用 skill 庫**：改過的 skill 照 `docs/rules/skills.md`〈推送前的檢查〉推（`skill-sync push` 的兩段式：`echo n` 取預覽、讀完再 `echo y`）。`echo y` 是 agent 自己執行的套用步驟，不是問使用者。`docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 不推（〈要先問使用者的情形〉）。skill 改動同時要推 blog 與共用 skill 庫時，兩者互不依賴，沒有先後。
 - **dotfiles**：部署照 `docs/rules/remote.md`〈遠端機器的操作〉跑 `remote-sync.sh`，它本身會 push。
 
-直接推送拿掉的是「問使用者」這一步，不是檢查：工具回非零的 exit、預覽裡有 `[WARNING]`、pre-push 報錯、遠端拒絕時，停下來修，修不了就寫進〈延到工作結束之後的動作〉。還沒推送的 commit 用 `bin/push-main --list-unpushed` 列出：它列出所有分支與 detached HEAD 上還沒推到任何遠端的 commit，fetch 成功或失敗時都適用。
+直接推送拿掉的是「問使用者」這一步，不是檢查。工具印出 `[ASK-USER]` 時照〈要先問使用者的情形〉；其餘的非零 exit、預覽裡有 `[WARNING]`、pre-push 報錯、遠端拒絕時，停下來修，修不了就寫進〈延到工作結束之後的動作〉。還沒推送的 commit 用 `bin/push-main --list-unpushed` 列出：它列出所有分支與 detached HEAD 上還沒推到任何遠端的 commit，fetch 成功或失敗時都適用。
 
 ### 要先問使用者的情形
 
 這一節是「停下來等使用者決定」的唯一住址：別處的規則碰到這類情形時連到這裡，新增一種情形時加在這裡。下列情形停下來，把指定的材料給使用者，等使用者決定再往下做：
 
 - **提交前**，`git diff HEAD -- <這次的檔案...>` 有段落對不上這次自己做過的編輯：給那幾段 diff，由使用者決定是不是一起提交。
-- **推送 blog 時**，`bin/push-main` exit 3：給它列出的 commit（別的 session 還沒推送的），由使用者決定要不要一起推。
+- **推送 blog 時**，`bin/push-main` 印出 `[ASK-USER]`：給它列出的 commit（別的 session 還沒推送的），由使用者決定要不要一起推。
 - **同步 skill 時**，`[DIVERGED]` 或 `[CONFLICT]` 的兩邊在共同基底之後改到同一段文字（合併時有衝突）：給兩邊的 `git log` 與衝突的段落（`docs/rules/skills.md`〈同步時的判斷〉）。
 
 下列動作沒有使用者在這次的指示裡明說就不做，也不主動提議：`skill-sync push --force`；替一支 skill 建 `content/skills/` 的公開鏡像；把 `docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 推上共用庫（那些 skill 依賴本 blog 的結構，推上去之後別的專案用不了）。

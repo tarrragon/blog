@@ -11,7 +11,9 @@
 行為：
 1. `git fetch -q origin`；失敗就 exit 2（沒有新的 origin/main，推送範圍判不準）。
 2. 推送範圍是 `origin/main..<目前的 commit>`（在 main 上時是 main）；有不在 --mine 裡的 commit，
-   印出來、不推送、exit 3，本地 main 不動。那些是別的 session 還沒推送的 commit，要先問使用者。
+   印 `[ASK-USER]` 與那些 commit、不推送、exit 3，本地 main 不動。那些是別的 session 還沒推送的
+   commit，要由使用者決定。`[ASK-USER]` 是給規則檔對應處置用的標記，跟 `[FOLLOW-UP]`、
+   `[CLEANUP]` 同一套：讀輸出的人看標記，不看 exit code。
 3. 目前不在 main 時（分支、worktree 或 detached HEAD），把目前的 commit fast-forward 進 main：
    main 已經 checkout 在某個 worktree 時，在那個 worktree 裡跑 `git merge --ff-only <sha>`（在別的
    worktree 裡不能 checkout main）；沒有被 checkout 時用 `git update-ref`。不能 fast-forward 就 exit 1。
@@ -96,7 +98,7 @@ def main():
         return
     foreign = [c for c in pending if c not in mine]
     if foreign:
-        print("push-main: 推送範圍裡有 --mine 以外的 commit，沒有推送，本地 main 沒有移動（先問使用者）：")
+        print("[ASK-USER] 推送範圍裡有 --mine 以外的 commit，沒有推送，本地 main 沒有移動。把下面的 commit 給使用者，由使用者決定要不要一起推：")
         for c in foreign:
             print("  " + git("log", "-1", "--format=%h %s", c).stdout.strip())
         sys.exit(3)
