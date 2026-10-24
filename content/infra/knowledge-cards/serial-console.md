@@ -24,7 +24,7 @@ tags: ["infra", "knowledge-cards", "access", "recovery"]
 
 救援入口在出事當下才用得到，而帳號、權限與演練在主機正常時準備最快，所以規劃時要先決定：
 
-- **救援帳號**：序列主控台用本機帳號密碼登入，而用金鑰登入的主機通常沒有設密碼的帳號，所以救援帳號要在主機正常時就建好。密碼逐台隨機產生、存放在受控的密碼庫，sshd 維持只收金鑰；這組密碼不隨 IdP 收回，持有它的人離開時要逐台輪替。沒有事先建帳號時，雲端 VM 還有比較慢的路（GCP 的 startup-script 每次開機以 root 執行；AWS 的 user-data 預設只在第一次開機執行，要改成每次開機執行的 cloud-init 格式，或改用 SSM Run Command；兩家都能把開機磁碟掛到另一台 VM 修改；Oracle Cloud 同樣能掛開機磁碟，也能用 Run Command 送腳本，前提與入口清單見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈建立之後加金鑰與金鑰遺失時的入口〉，官方另為 Oracle Linux 附了經由序列主控台開進維護模式、重設 `opc` 金鑰的範例），地端主機只能重開機進單人模式
+- **救援帳號**：序列主控台用本機帳號密碼登入，而用金鑰登入的主機通常沒有設密碼的帳號，所以救援帳號要在主機正常時就建好。密碼逐台隨機產生、存放在受控的密碼庫，sshd 維持只收金鑰；這組密碼不隨 IdP 收回，持有它的人離開時要逐台輪替。沒有事先建帳號時，雲端 VM 還有要重開機或停機、因此比較慢的路（GCP 的 startup-script 每次開機以 root 執行；AWS 的 user-data 預設只在第一次開機執行，要改成每次開機執行的 cloud-init 格式；GCP、AWS 與 Oracle Cloud 都能把開機磁碟掛到另一台 VM 修改；官方另為 Oracle Linux 附了經由序列主控台開進維護模式、重設 `opc` 金鑰的範例），地端主機只能重開機進單人模式。不必重開機的路是業者在主機裡執行指令的服務：AWS 的 SSM Run Command 與 Oracle Cloud 的 Run Command，兩者都要主機上的代理程式在運作，代理程式停了或連不到業者的服務端點時用不上；Oracle Cloud 這幾個入口各自的前提見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈建立之後加金鑰與金鑰遺失時的入口〉
 - **演練**：建好救援帳號之後實際用序列主控台登入一次、確認 sudo 可用，再關回去。沒演練過的救援入口在出事當下才發現密碼不對或權限不足；平時不存在、事故時才開的權限叫 [Break-Glass Access](/backend/knowledge-cards/break-glass-access/)，事後回顧的做法在那張卡
 - **開啟範圍與時機**：平時保持關閉，救援時只對單一主機開啟，用完關回去；存取權限只授予持有救援責任的少數帳號（GCP 上開啟 metadata 與連線都需要 `roles/compute.instanceAdmin.v1`，而這也是一般 VM 管理會用到的角色，光靠它收不窄）。GCP 用 Organization Policy 的 `compute.disableSerialPortAccess` 在組織層級預設關閉時，只有能對專案解除這條政策的人開得了序列主控台，救援名單要包含這些人
 - **頻外管理介面的網路**：IPMI 這類控制器歷史上有多個認證弱點，它的網路埠接在獨立的管理網段，不接到一般網段或網際網路

@@ -22,14 +22,14 @@ Tenancy 可以另外訂閱其他區域（region subscription），訂閱之後�
 
 ## Always Free 的額度與它綁在 home region 上的範圍
 
-OCI 的免費方案有兩個部分。試用金是 300 美元、30 天內有效，可以用在大部分付費服務上；Always Free 是沒有期限的固定額度，試用結束之後仍然繼續。官方 Free Tier 頁的原文是「After your trial ends, your account remains active. There is no interruption to the availability of the Always Free Resources you have provisioned.」沒有升級成付費帳戶的帳號，試用結束後不會開始扣款；試用期間建的非免費資源用的是試用金，試用結束時會被回收。
+OCI 的免費方案有兩個部分。試用金是 300 美元、30 天內有效，可以用在大部分付費服務上；Always Free 是沒有期限的固定額度，試用結束之後仍然繼續。官方 Free Tier 頁的原文是「After your trial ends, your account remains active. There is no interruption to the availability of the Always Free Resources you have provisioned.」沒有升級成付費帳戶的帳號，試用結束後不會開始扣款；試用期間用試用金建的付費資源，在試用結束時被回收，A1 主機另有一條依合計規格停用的規則，見下方〈試用結束時超出額度〉那一項。試用中、試用結束而沒有升級、付費帳戶這三種狀態下超出額度各自的結果，整理在〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉。
 
 運算的 Always Free 額度有兩種機型：
 
 - **Ampere A1（`VM.Standard.A1.Flex`，ARM）**：每月 1,500 OCPU 小時與 9,000 GB 小時的記憶體，相當於 2 OCPU、12 GB 記憶體整個月開著。可以全部給一台，也可以拆成兩台各 1 OCPU。OCI 的 OCPU 是一顆實體核心，跟其他業者以 vCPU 計價時的單位不同，比較時見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
 - **AMD Micro（`VM.Standard.E2.1.Micro`，x86）**：最多兩台，每台 1/8 OCPU、1 GB 記憶體。
 
-儲存與網路另有額度：開機磁碟與區塊磁碟合計 200 GB（每台主機的開機磁碟預設 50 GB，也算在這 200 GB 裡）、備份最多 5 份、出站流量每月 10 TB；試用結束後沒有升級的 Free Tier tenancy，VCN 最多 2 個。
+儲存與網路另有額度：開機磁碟與區塊磁碟合計 200 GB（每台主機的開機磁碟預設 50 GB，這 50 GB 從同一份 200 GB 額度裡扣）、備份最多 5 份、出站流量每月 10 TB；試用結束後沒有升級的 Free Tier tenancy，VCN 最多 2 個。
 
 **運算與區塊磁碟的 Always Free 額度只能用在 home region。** Free Tier 頁寫的是「You can provision Always Free Autonomous AI Databases and compute instances only in the home region」；Always Free Resources 頁對區塊磁碟的原文是「the volume must be created in the home region of the tenancy」。升級成付費帳戶並訂閱其他區域之後，建在 home region 以外那些訂閱區域的主機照一般價格計費。
 
@@ -38,7 +38,7 @@ OCI 的免費方案有兩個部分。試用金是 300 美元、30 天內有效�
 Always Free 的主機另有兩條回收規則：
 
 - **閒置回收**：連續 7 天內 CPU 使用率（第 95 百分位）、網路使用率、記憶體使用率（只算 A1）三項指標各自都低於 20%，Oracle 可能回收這台主機。官方頁用的詞是 reclaim，沒有寫回收之後主機是停止還是刪除。只在需要時才登入的實驗機會符合這個條件。
-- **試用結束時超出額度**：Free Tier 頁的判斷單位是 tenancy 裡所有 A1 主機的合計（OCPU 加總、記憶體加總），合計超過 2 OCPU、12 GB 時，試用結束時 tenancy 裡的每一台 A1 主機都會被停用，規格本身在額度內的那一台也不例外，30 天後刪除，除非升級成付費帳戶；官方沒有寫已經被停用的主機在升級之後會不會恢復。用試用金建的其他付費資源在試用結束時同樣會被回收。試用期間超出的部分由試用金支付，帳單上看不到費用，所以 A1 合計超額的後果要到試用結束那一刻才浮現。合計要自己加：Compute → Instances 清單上每一台 A1 主機的 OCPU 與記憶體，清單一次只列一個 compartment，每個放過主機的 compartment 都要切過去看。要保留 A1 主機，試用結束前把合計壓回 2 OCPU、12 GB 以內：把其中幾台的 OCPU 或記憶體改小，或刪掉其中一台。
+- **試用結束時超出額度**：Free Tier 頁判斷 A1 是否超額，看的是 tenancy 裡全部 A1 主機的合計（OCPU 加總、記憶體加總），不看單台主機的規格。合計超過 2 OCPU、12 GB 時，試用結束那一刻 tenancy 裡的 A1 主機全部被停用，30 天後刪除，除非升級成付費帳戶。被停用的是每一台 A1 主機，包括單台規格在額度內的那幾台。官方沒有寫已經被停用的主機在升級之後會不會恢復。試用期間超出的部分由試用金支付，帳單上看不到費用，所以 A1 合計超額的後果要到試用結束那一刻才浮現。這個合計要自己加總：到 Compute → Instances 清單逐台記下 A1 主機的 OCPU 與記憶體；清單一次只列一個 compartment，每個放過主機的 compartment 都要切過去看。要保留 A1 主機，試用結束前把合計壓回 2 OCPU、12 GB 以內：把其中幾台的 OCPU 或記憶體改小，或刪掉其中一台。
 
 官方對閒置回收只寫了三項指標都要低於 20%，沒有寫網路使用率的 20% 是對什麼的比例，也沒有寫升級成付費帳戶之後這條規則還適不適用；被回收之後主機的狀態與能不能恢復同樣沒寫。
 
@@ -51,16 +51,16 @@ A1 免費機型在某個 AD 暫時沒有容量時，建立主機的 API 回 `Out
 - **不指定 fault domain**（Known Issues 頁）：建立頁的 Fault domain 欄選「Let Oracle choose the best fault domain」，不把主機限定在單一個 fault domain 的硬體上。
 - **改小規格**（Known Issues 頁）：同一個機型把 OCPU 或記憶體改小，需要的硬體少，容量比較容易拿到，仍然在免費額度內。
 - **建立前查容量**（Known Issues 頁）：用 `CreateComputeCapacityReport` 這個 API 查某個機型當下在某個 AD 有沒有容量，查完再送建立請求。
-- **換成 x86 機型**（會計費）：x86 的 Flex 機型不在免費額度內；試用期間用試用金建，當天就有主機可用，代價是試用結束時那台主機會被回收。換架構要重新確認軟體有沒有那個架構的版本，見 [機型與映像檔](/infra/cloud-providers/vm-options/shape-and-image/) 的〈CPU 架構：x86 與 ARM〉。免費的 x86 機型 E2.1.Micro 只在部分區域提供，見〈E2.1.Micro 在各區域的供應：服務配額表與 404 錯誤〉。
-- **改用可被收回的容量（preemptible）**（當成會計費處理）：官方 Always Free 頁與 Free Tier 頁都沒有提到 preemptible，所以它算不算在免費額度內查不到原文。業者需要容量時會直接終止這種主機，價格與限制見 [機型與映像檔](/infra/cloud-providers/vm-options/shape-and-image/) 的〈計費模式：隨用隨付、可被收回、預留容量與專屬主機〉。
+- **換成 x86 機型**（會計費）：x86 的 Flex 機型不在免費額度內；試用期間用試用金建，當天就有主機可用，代價是這台用試用金建的 x86 主機在試用結束時會被回收。換架構要重新確認軟體有沒有那個架構的版本，見 [機型與映像檔](/infra/cloud-providers/vm-options/shape-and-image/) 的〈CPU 架構：x86 與 ARM〉。免費的 x86 機型 E2.1.Micro 在一個區域裡只建得在一個 AD 上，2026-10-24 實測的 `ap-batam-1` 沒有這種機型，出處與實測見〈E2.1.Micro 在各區域的供應：服務配額表與 404 錯誤〉。
+- **改用可被收回的容量（preemptible）**（官方沒有寫它算不算免費額度，這裡按會計費看待）：官方 Always Free 頁與 Free Tier 頁都沒有提到 preemptible。業者需要容量時會直接終止這種主機，價格與限制見 [機型與映像檔](/infra/cloud-providers/vm-options/shape-and-image/) 的〈計費模式：隨用隨付、可被收回、預留容量與專屬主機〉。
 - **預留容量（capacity reservation）**（會計費）：先向業者保留某種機型的容量，保留期間的計費方式見 [機型與映像檔](/infra/cloud-providers/vm-options/shape-and-image/) 的〈計費模式：隨用隨付、可被收回、預留容量與專屬主機〉。
-- **升級成付費帳戶**（Always Free 頁）：升級之後 Always Free 的部分仍然不收費，額度以外建的資源照一般價格計費。
+- **升級成付費帳戶**（Always Free 頁）：官方寫升級之後能用的運算資源種類變多（原文「gives you access to more types of Compute resources」）。對容量不足來說，升級的作用是讓上面那幾項會計費的選項（x86 的 Flex 機型、可被收回的容量、預留容量）在試用金用完或試用結束之後仍然建得起來。Always Free 的部分仍然不收費，額度以外建的資源照一般價格計費。
 
-Home region 只有一個 AD、而且只用免費額度時，這份清單裡能用的剩等待重試、不指定 fault domain、改小規格與建立前查容量。這次在只有一個 AD 的 `ap-batam-1` 以 90 秒的間隔送了九次建立請求，前三次收到 429、後六次是 `Out of host capacity`。
+Home region 只有一個 AD、而且只用免費額度時，能用的退路是等待重試、不指定 fault domain、改小規格與建立前查容量這四項；換 AD 在這種區域不存在；x86 的 Flex 機型、可被收回的容量與預留容量不在免費額度內，要用試用金或升級成付費帳戶才建得起來。在只有一個 AD 的 `ap-batam-1` 實際重送的紀錄見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的〈按下 Create 之後的結果：容量不足〉。
 
 ## E2.1.Micro 在各區域的供應：服務配額表與 404 錯誤
 
-E2.1.Micro 是 Always Free 的另一種機型，而區域之間提供的機型不同：`ap-batam-1` 的 AD 沒有 E2.1.Micro 這種硬體，所以在這一區，A1 建不起來時改用 Micro 也建不起來。
+E2.1.Micro 是 Always Free 的另一種機型。官方 Always Free 頁對它的供應寫的是 AD 層級：「Instances using the VM.Standard.E2.1.Micro shape can only be created in one availability domain.」也就是一個區域裡只有一個 AD 建得了 Micro，而官方沒有列出是哪一個 AD、哪些區域完全沒有。2026-10-24 在 `ap-batam-1` 實測，這一區唯一的 AD 沒有 E2.1.Micro，所以在這一區，A1 建不起來時改用 Micro 也建不起來。
 
 主控台的服務配額表（Limits, quotas and usage 頁）上的數字是這個帳號允許開的台數上限，它不反映那一區是否提供那種硬體。這次的帳號在配額表上的 `vm-standard-e2-1-micro-count` 是 2，而 `ap-batam-1` 一台 Micro 也建不起來。
 
@@ -68,10 +68,10 @@ E2.1.Micro 是 Always Free 的另一種機型，而區域之間提供的機型�
 
 ## 超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果
 
-同一個動作（多建一台 A1、加大一顆磁碟、改用不在免費額度內的 x86 機型）超出 Always Free 的額度時，結果由帳號當下的狀態決定：
+多建一台 A1、加大一顆磁碟、改用不在免費額度內的 x86 機型，這類讓用量超出 Always Free 額度的操作，結果由帳號當下的狀態決定：
 
 - **試用中**：超出的部分由試用金支付，帳單上看不到費用。試用結束時，用試用金建的付費資源會被回收，A1 合計超額時全部 A1 主機會被停用。
-- **試用結束而沒有升級**：官方 Always Free 頁寫明，要建不在 Always Free 範圍內的資源，帳號必須是付費帳戶、或試用期間還有試用金，所以超出額度的資源建不了；Free Tier 頁另外寫明，不升級的話申請時填的信用卡不會被扣款。
+- **試用結束而沒有升級**：官方 Always Free 頁寫明，用不在 Always Free 範圍內的映像建主機，帳號必須是付費帳戶、或是還有試用金餘額的 Free Trial 帳號（原文「you must have a paid account or a Free Trial account with available credits」）；試用結束而沒有升級的帳號兩者都不是，所以超出額度的運算資源建不了，運算以外的資源這一頁沒有逐字寫；Free Tier 頁另外寫明，不升級的話申請時填的信用卡不會被扣款。
 - **升級成付費帳戶（Pay As You Go）**：Always Free 的部分仍然不收費，超出的部分照一般價格計費。
 
 站內各篇寫到「超出免費額度」的地方，指的都是這三種結果。升級之前先設好預算警示，見 [雲端主控台的管理領域](/infra/cloud-providers/console-areas/) 的〈帳單與成本：花了多少、會花多少〉。
@@ -80,14 +80,14 @@ E2.1.Micro 是 Always Free 的另一種機型，而區域之間提供的機型�
 
 Home region 在申請表上是一個下拉選單，選定的區域同時決定了免費主機的實體位置（出口 IP 的國家、延遲）與容量不足時有沒有別的 AD 可以換。選之前先確認這台免費主機要做什麼：
 
-- **用途需要特定國家的出口 IP**（例如要讓連線看起來從日本發出）：只有那個國家的區域符合，其他區域的延遲再低都達不到目的。出口 IP 的要求常跟「主要拿來實驗」那一條的「選 AD 多的區域」衝突：日本的兩個區域（東京 `ap-tokyo-1`、大阪 `ap-osaka-1`）都只有一個 AD，A1 容量不足時沒有別的 AD 可以換，而 E2.1.Micro 有沒有提供要申請之後才查得到。出口 IP 是硬條件時，接受 A1 容量不足時無處可換的風險；不是的話，選 AD 多的區域。東京與大阪之間，官方沒有公開各區的容量資訊，選哪一個只能看延遲。預算為零而容量一直不足時，能用的退路見〈A1 容量不足時的退路〉最後一段。
+- **用途需要特定國家的出口 IP**（例如要讓連線看起來從日本發出）：只有那個國家的區域符合，其他區域的延遲再低都達不到目的。以日本為例，這個條件與下方「主要拿來實驗」那一條的「選 AD 多的區域」同時滿足不了：日本的兩個區域（東京 `ap-tokyo-1`、大阪 `ap-osaka-1`）都只有一個 AD，選了日本，A1 容量不足時就沒有別的 AD 可以換，而 E2.1.Micro 有沒有提供要申請之後才查得到。兩者只能取一個：日本的出口 IP 是硬條件時，選日本的區域，接受 A1 容量不足時無處可換；出口 IP 只是加分項時，選 AD 多的區域，放棄日本的出口 IP。東京與大阪之間，官方沒有公開各區的容量資訊，選哪一個只能看延遲。預算為零而容量一直不足時，能用的退路見〈A1 容量不足時的退路〉最後一段。
 - **用途是給特定地區的使用者連**：選離使用者近的區域，延遲由距離決定。
 - **主要拿來實驗**：優先選 AD 多的區域（官方區域表上 AD 數為 3 的那幾個，名單見 [Availability Zone（可用區）](/infra/knowledge-cards/availability-zone/) 卡），A1 容量不足時有其他 AD 可以換。AD 多代表的是多了可以換的地方，不代表那一區的 A1 空閒容量比較多。
 - **資料要留在特定國家**（法規或合約要求）：只有那個國家的區域符合，跟出口 IP 那一條同樣是硬條件。
 
 ## 選錯 home region 之後的選項
 
-Home region 不能改；官方有刪除 tenancy 的流程（〈[Deleting a Free Tier Tenancy and Cloud Account](https://docs.oracle.com/en-us/iaas/Content/General/Tasks/deleting_tenancy_freetier.htm)〉：管理員在 Tenancy Details 頁按「Request tenancy deletion」），刪除後資源先被暫停、30 天後永久刪除且無法復原，而官方文件沒有寫明刪除之後能不能用同一個 email 與付款方式重新申請。走這條路之前，先開 support ticket 問清楚重新申請的條件。另一條路是升級成 Pay As You Go、在 Limits, quotas and usage 申請提高訂閱區域的上限（Subscribed region count），核准後訂閱想要的區域，在那裡建付費主機，Always Free 額度則繼續留在原本的 home region。
+Home region 不能改；官方有刪除 tenancy 的流程（〈[Deleting a Free Tier Tenancy and Cloud Account](https://docs.oracle.com/en-us/iaas/Content/General/Tasks/deleting_tenancy_freetier.htm)〉：管理員在 Tenancy Details 頁按「Request tenancy deletion」），刪除後資源先被暫停、30 天後永久刪除且無法復原，而官方文件沒有寫明刪除之後能不能用同一個 email 與付款方式重新申請。走這條路之前，先開 support ticket 問清楚重新申請的條件。不刪 tenancy 的做法是保留原帳號、在想要的區域另建付費主機：管理員先把帳號升級成 Pay As You Go，再到 Limits, quotas and usage 頁申請提高訂閱區域的上限（Subscribed region count）；核准之後訂閱想要的區域，在那一區建的主機照一般價格計費。Always Free 額度仍然只能用在原本的 home region。
 
 ## 主控台登入：租用戶與使用者名稱兩個欄位，與「使用者名稱或密碼無效」
 

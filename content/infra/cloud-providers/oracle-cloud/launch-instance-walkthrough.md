@@ -6,7 +6,7 @@ weight: 5
 tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "vm", "free-tier"]
 ---
 
-這篇記錄在 Oracle Cloud 主控台建立一台主機的實際設定，目標是 Always Free 額度內、沒有公開 IP、之後經由 Bastion 服務登入的 A1 Ubuntu 主機。Bastion 是 Oracle Cloud 代管的登入服務：它在主機所在的 subnet 裡有一個私有端點，替沒有公開 IP 的主機開有時效的 SSH 工作階段（session），主機與 Bastion 都不需要公開 IP，工作階段的種類與需要的條件見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉。範圍從建好前置的網路開始，到按下 Create 為止；每個欄位背後的概念連到 [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/) 底下對應的那一篇，這裡只寫 Oracle Cloud 的欄位與這次的取值。實測日期 2026-10-24，區域 `ap-batam-1`。這組設定當天因為容量不足沒有建立成功，所以 Bastion 登入這一段還沒有實測過。
+這篇記錄在 Oracle Cloud 主控台建立一台主機的實際設定，目標是 Always Free 額度內、沒有公開 IP、之後經由 Bastion 服務登入的 A1 Ubuntu 主機。Bastion 是 Oracle Cloud 代管的登入服務：建立 Bastion 時指定一個目標 subnet，它替那個 subnet 裡沒有公開 IP 的主機開有時效的 SSH 工作階段（session）；這次要用的 managed SSH session 這種工作階段，由主機上 Oracle Cloud Agent 的 Bastion plugin 在建立工作階段時把一把公鑰臨時放進主機。工作階段的種類與需要的條件見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉。範圍從建好前置的網路開始，到按下 Create 為止；每個欄位背後的概念連到 [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/) 底下對應的那一篇，這裡只寫 Oracle Cloud 的欄位與這次的取值。實測日期 2026-10-24，區域 `ap-batam-1`。這組設定當天因為容量不足沒有建立成功，所以 Bastion 登入這一段還沒有實測過。
 
 ## 進建立頁之前：compartment、VCN、閘道與 private subnet
 
@@ -18,7 +18,7 @@ tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "vm", "free-tier"]
 
 這份網路刻意沒有 NAT 閘道，主機只用來測 Bastion 登入；沒有 NAT 時，主機連不到 Ubuntu 的套件來源，`apt` 更新與安裝都會失敗。要當一般主機用，就另外建一個 NAT 閘道，在路由表加一條通往它的路由，並在 security list 的出站規則放行網際網路。
 
-- **security list `private-sl`**：入站只放行來源是同一個 subnet（`10.0.1.0/24`）的 22 port，因為 Bastion 的私有端點建在這個 subnet 裡，SSH 連線從那裡進來；出站只放行送往 Oracle 服務網段與同一個 subnet 的流量。
+- **security list `private-sl`**：入站只放行來源是同一個 subnet（`10.0.1.0/24`）的 22 port，因為 Bastion 的目標 subnet 設成這個 subnet，經由 Bastion 的 SSH 連線從這個 subnet 進來；出站只放行送往 Oracle 服務網段與同一個 subnet 的流量。
 - **subnet `private-subnet`**（`10.0.1.0/24`）：建立時設定禁止公開 IP，並掛上上面的路由表與 security list。
 
 ```bash
@@ -77,7 +77,7 @@ Secure Boot、Measured Boot、Trusted Platform Module 三項預設都是 Disable
 - ICMP type 3 code 4（Path MTU Discovery 需要的封包），來源 `0.0.0.0/0`
 - ICMP type 3，來源是 VCN 自己的位址範圍
 
-出站是全部放行。Subnet 沒有另外指定 security list 時套用的就是這一份，所以在新建的公開 subnet 裡建一台有公開 IP 的主機，那台主機的 SSH port 一建好就對整個網際網路開放。官方文件把這一條寫成允許「authorized source IP addresses」，而預設填的來源是 `0.0.0.0/0`，等於任何位址都算在內；官方建議把來源收緊。這份規則跟 NSG 怎麼合併、為什麼只在 NSG 裡不開 22 port 擋不住它，見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/) 的〈防火牆規則的位置與合併方式〉。
+出站是全部放行。Subnet 沒有另外指定 security list 時套用的就是這一份，所以在新建的公開 subnet 裡建一台有公開 IP 的主機，那台主機的 SSH port 一建好就對整個網際網路開放。官方文件把 TCP 22 那一條規則寫成允許「authorized source IP addresses」，而預設填的來源是 `0.0.0.0/0`，等於任何位址都算在內；官方建議把來源收緊。這份規則跟 NSG 怎麼合併，以及為什麼 NSG 裡不寫 22 port 的規則時，22 port 的連線照樣由這份 security list 放行通過，見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/) 的〈防火牆規則的位置與合併方式〉。
 
 ## SSH keys
 
@@ -108,11 +108,11 @@ Oracle Cloud Agent 的每一項功能是一個 plugin。官方列出的 plugin �
 
 官方的 plugin 說明頁對 Custom Logs Monitoring 在 A1 上的支援前後不一致：頁面上的註記寫它不支援 A1 機型，同一頁的代理程式版本紀錄（1.29.0）寫已經支援 Arm 處理器。這次維持建立頁的預設（開啟）：這個 plugin 只負責把日誌送進 Logging，要在 Logging 服務裡設定收哪些日誌之後才開始收，費用依收進來的日誌量計算（官方〈Custom Logs〉）；沒有設定時它不影響主機建立與登入。
 
-這次要改的只有一項：**把 Bastion 打開**。沒有放 SSH 金鑰的主機只能經由 Bastion 的 managed SSH session 登入，而這個 plugin 預設關閉。漏開時不必重建，主機建好之後可以在主機頁面的 Oracle Cloud Agent 分頁打開，官方說明最多 10 分鐘生效。
+這次要改的只有一項：**把 Bastion 打開**。沒有放 SSH 金鑰的主機，SSH 登入只能經由 Bastion 的 managed SSH session，而這個 plugin 預設關閉；不經過 SSH 的其他入口見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈建立之後加金鑰與金鑰遺失時的入口〉。漏開時不必重建，主機建好之後可以在主機頁面的 Oracle Cloud Agent 分頁打開，官方說明最多 10 分鐘生效。
 
 其餘維持預設，理由各自如下：
 
-- **Authorization header：Enabled**。這是建立頁對 Ubuntu 的預設，而官方列出支援中繼資料第二版的平台映像只有 Oracle Linux 系列，Ubuntu 不在清單上。這台主機沒有建成，所以還沒驗到開著這個選項時，cloud-init 寫公鑰與代理程式讀設定是否正常；要怎麼確認見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉。
+- **Authorization header：Enabled**。這是建立頁對 Ubuntu 的預設，而官方列出支援中繼資料第二版的平台映像只有 Oracle Linux 系列，Ubuntu 不在清單上。這台主機沒有建成，所以還沒驗到開著這個選項時，managed SSH session 能否經由 Bastion plugin 建立、代理程式讀中繼資料是否正常；cloud-init 從中繼資料讀出公鑰寫進 `authorized_keys` 這一段，這台選了 No SSH keys 驗不到，要另一台放了公鑰的主機驗。要怎麼確認見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉。
 - **Live migration：讓 Oracle 選擇**、**Restart after infrastructure maintenance：Enabled**：實驗機能接受維護時被遷移或重開。
 - **不放初始化腳本、不加標籤**：這台主機只用來測登入，沒有要預先裝的軟體。
 

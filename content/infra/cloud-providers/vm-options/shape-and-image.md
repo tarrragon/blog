@@ -23,13 +23,13 @@ ARM 機型的同等規格通常比較便宜，Oracle Cloud 的 Always Free 額�
 
 固定規格的機型名稱本身就決定了核心數與記憶體（AWS 的 `t3.micro`、Google Cloud 的 `e2-micro`）。彈性機型（Oracle Cloud 名稱以 `.Flex` 結尾的 shape、Google Cloud 的自訂機型）讓使用者在範圍內自己填核心數與記憶體，而記憶體能填的範圍隨核心數變動。
 
-各家計算核心的單位不同。vCPU 是作業系統看到的一個虛擬處理器；Oracle Cloud 用 OCPU，一個 OCPU 是一顆實體核心，x86 機型的一顆核心有兩個硬體執行緒、所以 1 OCPU 等於 2 個 vCPU，Ampere A1 沒有超執行緒、1 OCPU 等於 1 個 vCPU；其他兩家直接用 vCPU。共享核心機型（Google Cloud 的 `e2-micro`）作業系統看得到 2 個 vCPU，持續使用量卻只有 0.25 個。比較規格時的換算見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
+各家計算核心的單位不同。vCPU 是作業系統看到的一個虛擬處理器；Oracle Cloud 用 OCPU，官方把一個 OCPU 定義為一顆實體核心；Oracle Cloud 的 x86 機型（AMD、Intel）1 OCPU 等於 2 個 vCPU，因為多數 x86 處理器的一顆核心跑兩個硬體執行緒，Ampere A1 的 1 OCPU 等於 1 個 vCPU；其他兩家直接用 vCPU。x86 裡每核只跑一個執行緒的例外機型與 Oracle Cloud 較新的 Arm 機型怎麼換算，見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/) 的〈計費單位的換算：OCPU、vCPU 與機型配額〉。共享核心機型（Google Cloud 的 `e2-micro`）作業系統看得到 2 個 vCPU，持續使用量卻只有 0.25 個，三家規格放在一起比較時的換算也在同一節。
 
-核心數與記憶體建立之後可以調整，代價是一段停機。Oracle Cloud 的官方說明是主機在執行中時，改機型的過程會把它重開，私有 IP、公開 IP 與掛載的磁碟維持不變；改之前在作業系統裡先把應用程式正常關掉，避免寫到一半的資料損壞。官方的主控台步驟另外註明，主機掛了一顆以上的區塊磁碟時，要先把區塊磁碟卸下才能改機型。Google Cloud 與 AWS 要先把主機停止才能換機型，換完再啟動；AWS 停止再啟動時，自動指派的公開 IP 會換成新的。能調整的機型也有限：Oracle Cloud 的 `VM.Standard.E2.1.Micro` 不能調整，開了安全開機（shielded instance）的主機也不能改機型，A1 Flex 可以在 Always Free 額度內調整核心數與記憶體。
+核心數與記憶體建立之後可以調整，代價是一段停機。Oracle Cloud 的官方說明是主機在執行中時，改機型的過程會把它重開，私有 IP、公開 IP 與掛載的磁碟維持不變；改之前在作業系統裡先把應用程式正常關掉，避免寫到一半的資料損壞。官方的主控台步驟另外註明，主機掛了兩顆以上的區塊磁碟時（原文是 more than one block volume attached），要先把區塊磁碟卸下才能改機型。Google Cloud 與 AWS 要先把主機停止才能換機型，換完再啟動；AWS 停止再啟動時，自動指派的公開 IP 會換成新的。能調整的機型也有限：Oracle Cloud 的 `VM.Standard.E2.1.Micro` 不能調整，開了安全開機（shielded instance）的主機也不能改機型，A1 Flex 可以在 Always Free 額度內調整核心數與記憶體。
 
-既然改大只要一段停機、不必重建，實驗機先開小一點、不夠再加；前提是改大的時候那一區還有容量，A1 這種容量經常不足的機型，在建得起來的那一刻就要把規格想好；Oracle Cloud 的改機型說明建議改之前先用 `CreateComputeCapacityReport` 這個 API 查新機型當下有沒有容量。付費機型開小直接省錢，Always Free 的 A1（每月額度相當於 2 OCPU、12 GB 整個月開著，見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)）則是把剩下的額度留給第二台主機。「不夠」的訊號在主機的指標上：CPU 使用率長時間接近滿載、或記憶體用完開始用 swap、程式被 OOM 終止。
+既然改大只要一段停機、不必重建，實驗機先開小一點、不夠再加；前提是改大的時候那一區還有容量，A1 這種容量經常不足的機型，在建得起來的那一刻就要把規格想好；要在改機型之前確認新機型當下有沒有容量，Oracle Cloud 的改機型說明寫明用 `CreateComputeCapacityReport` 這個 API 查。付費機型開小直接省錢，Always Free 的 A1（每月額度相當於 2 OCPU、12 GB 整個月開著，見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)）則是把剩下的額度留給第二台主機。「不夠」的訊號在主機的指標上：CPU 使用率長時間接近滿載、或記憶體用完開始用 swap、程式被 OOM 終止。
 
-某個機型在一個區域建不起來（容量不足）時，本篇處理的是改小規格、換架構與改用可被收回的容量，代價看選哪一種；其餘的退路（換可用區、等待重試、不指定故障域、建立前查容量、升級付費帳戶）與這幾種排在一起的完整清單，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈A1 容量不足時的退路〉。在同一種機型裡改小規格，容量比較容易拿到，免費額度也不變；換到另一個架構（例如 A1 建不起來改用 x86 的 Flex 機型），要重新確認軟體有沒有那個架構的版本，而且 Oracle Cloud 上 x86 的 Flex 機型不在 Always Free 額度內，試用期間由試用金支付、當天就建得起來，試用結束之後的結果依帳號狀態而定，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉；改用可被收回的容量，價格低，但主機隨時可能被收回，而官方 Always Free 頁沒有寫這種容量是否算在免費額度內。換可用區的部分見 [位置：區域、可用區與故障域](/infra/cloud-providers/vm-options/placement/)。
+某個機型在一個區域建不起來（容量不足）時，本篇處理的是改小規格、換架構與改用可被收回的容量，代價看選哪一種；其餘的退路（換可用區、等待重試、不指定故障域、建立前查容量、預留容量、升級付費帳戶）與這幾種排在一起的完整清單，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈A1 容量不足時的退路〉。在同一種機型裡改小規格，容量比較容易拿到，免費額度也不變；換到另一個架構（例如 A1 建不起來改用 x86 的 Flex 機型），要重新確認軟體有沒有那個架構的版本，而且 Oracle Cloud 上 x86 的 Flex 機型不在 Always Free 額度內，試用期間由試用金支付、當天就建得起來，試用結束之後的結果依帳號狀態而定，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉；改用可被收回的容量，價格低，但主機隨時可能被收回，而官方 Always Free 頁沒有寫這種容量是否算在免費額度內。換可用區的部分見 [位置：區域、可用區與故障域](/infra/cloud-providers/vm-options/placement/)。
 
 ## 計費模式：隨用隨付、可被收回、預留容量與專屬主機
 
@@ -40,7 +40,7 @@ ARM 機型的同等規格通常比較便宜，Oracle Cloud 的 Always Free 額�
 - **預留容量（capacity reservation）**：先向業者保留一定數量的某種機型容量，之後建主機時從保留的額度裡扣。它處理的是「要用的時候沒有容量」，用在必須在某個時間點拿到主機的情境：大促前要擴容、災難時要在另一區重建、熱門機型經常容量不足。保留期間不論有沒有主機在用都計費。
 - **專屬主機（dedicated host）**：整台實體主機只給這個帳號的虛擬機用，不跟其他客戶共用硬體，用在合規要求或授權按實體主機計算的軟體。Oracle Cloud 只允許在建立時把主機放上專屬主機。
 
-Oracle Cloud 的 Capacity type 欄位一次只能選其中一種；AWS 的 capacity reservation 則是讓隨用隨付的主機去使用保留下來的容量，兩者同時成立。預留容量跟用一到三年的承諾換取折扣的 reserved instance 是兩件事：預留容量保證拿得到容量、不打折；AWS 的 reserved instance 打折，而保不保證容量看範圍，以區域為範圍的 regional reserved instance 不保留容量，指定可用區的 zonal reserved instance 另外保留那一區的容量。Reserved instance 與 savings plan 的承諾差異、什麼時候值得買，見 [計費模型](/operations/08-cost-management/billing-models/)。實驗用的小主機選隨用隨付。
+Oracle Cloud 的 Capacity type 欄位一次只能選其中一種；AWS 的 capacity reservation 則是讓隨用隨付的主機去使用保留下來的容量，兩者同時成立。預留容量跟用一到三年的承諾換取折扣的 reserved instance 是兩件事：預留容量保證拿得到容量、不打折；AWS 的 reserved instance 打折，而保不保證容量看範圍，以區域為範圍的 regional reserved instance 不保留容量，指定可用區的 zonal reserved instance 另外保留那一區的容量。Reserved instance 與 savings plan 的承諾差異、什麼時候值得買，見 [計費模式理解](/operations/08-cost-management/billing-models/) 的〈承諾模式：用彈性換折扣〉。實驗用的小主機選隨用隨付。
 
 ## 停止主機時的計費
 

@@ -40,7 +40,7 @@ tags: ["infra", "cloud-providers", "console", "iam", "cost"]
 
 ## 儲存：區塊磁碟、物件儲存與檔案系統
 
-三種儲存在選單上通常分開：區塊磁碟（主機的開機磁碟與資料磁碟、它們的備份）、物件儲存（以 bucket 存放檔案，經由 HTTP 存取）、共享檔案系統（多台主機同時掛載）。刪除主機之後留下的開機磁碟、沒有人記得的備份與 bucket 仍然是存在的資源，會繼續佔用免費額度，超出額度之後的結果依業者與帳號狀態而定（試用中由試用金支付、付費帳戶照一般價格計費），清理時要回來看。Oracle Cloud 三種帳號狀態各自的結果見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉，Google Cloud 與 AWS 的見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/) 的〈試用結束後帳號與資源的處置〉。開機磁碟的選項見 [磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/infra/cloud-providers/vm-options/storage/)。
+三種儲存在選單上通常分開：區塊磁碟（主機的開機磁碟與資料磁碟、它們的備份）、物件儲存（以 bucket 存放檔案，經由 HTTP 存取）、共享檔案系統（多台主機同時掛載）。刪除主機之後留下的開機磁碟、沒有人記得的備份與 bucket 仍然是存在的資源，會繼續佔用免費額度，超出額度之後的結果依業者與帳號狀態而定（例如試用中由試用金支付、付費帳戶照一般價格計費），清理時要回來看。Oracle Cloud 三種帳號狀態各自的結果見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉，Google Cloud 與 AWS 的見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/) 的〈試用結束後帳號與資源的處置〉。開機磁碟的選項見 [磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/infra/cloud-providers/vm-options/storage/)。
 
 ## 帳單與成本：花了多少、會花多少
 
@@ -71,7 +71,7 @@ Oracle Cloud 沒有升級的帳號在試用結束後不會開始計費，預算�
 - **身分與權限**：另外建一個日常使用、權限較小的帳號，理由見〈身分與權限：誰能登入、能做什麼〉。
 
 - **資源分組**：建一個實驗用的分組，之後的資源都建在裡面，清理時只看這一組。Oracle Cloud 建一個 compartment，compartment 要先清空裡面的所有資源才能刪除，刪除的順序見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的〈刪除這組資源的順序〉；Google Cloud 建一個 project，刪除 project 會連同裡面的資源一起刪；AWS 的分組單位是帳號本身，另開帳號要由組織的管理帳號在 AWS Organizations 裡做，被指派管理單一帳號的人在那個帳號裡改用標籤與 Resource Groups 分組。
-- **配額與限制**：上限依帳號類型而不同（Oracle Cloud 的〈Service Limits〉把 Universal Credits 帳號與 Pay As You Go、試用帳號分開列，兩欄的值不同），所以要用的機型在自己這個帳號、這個區域的上限是多少，要到這個領域的頁面查；上限是 0 時那種機型建不起來，要先申請調高。上限不是 0 也不代表那一區有那種硬體。
+- **配額與限制**：上限依帳號類型而不同（Oracle Cloud 的〈Service Limits〉在運算的上限表上分成 Universal Credits 一欄，與 Pay As You Go 和試用帳號共用的一欄（欄名「Pay As You Go or Trial」），兩欄的值不同），所以要用的機型在自己這個帳號、這個區域的上限是多少，要到這個領域的頁面查；上限是 0 時那種機型建不起來，要先申請調高。上限不是 0 也不代表那一區有那種硬體。
 
 ## 各家的選單名稱：各管理領域在三家主控台上的位置
 
