@@ -2,7 +2,7 @@
 title: "從本機用 OCI CLI 操作 Oracle Cloud：session token 登入、時效與 API 簽章金鑰"
 date: 2026-10-24
 description: "OCI CLI 的兩種身分驗證方式——瀏覽器登入換來的 session token 與上傳公鑰的 API 簽章金鑰——各自把什麼存在本機、有效多久、外洩時的影響範圍，以及登入時的互動提示與錯誤訊息怎麼讀"
-weight: 2
+weight: 3
 tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "cli", "authentication"]
 ---
 

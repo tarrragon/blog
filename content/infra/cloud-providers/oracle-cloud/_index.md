@@ -2,7 +2,7 @@
 title: "Oracle Cloud（OCI）"
 date: 2026-10-24
 description: "申請了 Oracle Cloud 免費帳號、要在 Always Free 額度內建主機並從本機管理時，查帳號結構、CLI 登入與實測紀錄"
-weight: 3
+weight: 4
 tags: ["infra", "cloud-providers", "oracle-cloud", "oci"]
 ---
 
@@ -12,6 +12,7 @@ Oracle Cloud Infrastructure（OCI）的免費方案分成 30 天的試用金與�
 
 | 文章                                                                                                  | 主題                                                       |
 | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| [Oracle Cloud 主控台導覽](/infra/cloud-providers/oracle-cloud/console-navigation/)                    | 頂端列、導覽選單、compartment 篩選器、常用頁面路徑         |
 | [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) | tenancy 與 home region、Always Free 的範圍、主控台登入欄位 |
 | [從本機用 OCI CLI 操作 Oracle Cloud](/infra/cloud-providers/oracle-cloud/cli-session-login/)          | `oci session authenticate`、token 時效、API 簽章金鑰       |
 | [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)   | 主控台各分頁的取值、等效 CLI 指令、容量不足                |

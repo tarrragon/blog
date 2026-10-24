@@ -2,7 +2,7 @@
 title: "Oracle Cloud 的帳號結構與 home region：tenancy、Always Free 的範圍與主控台登入欄位"
 date: 2026-10-24
 description: "OCI 的 tenancy、home region、compartment 與 availability domain 各自管什麼，home region 為什麼在申請當下就要決定，Always Free 額度的計算與回收規則，以及主控台登入時租用戶與使用者名稱兩個欄位的分工"
-weight: 1
+weight: 2
 tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "free-tier"]
 ---
 

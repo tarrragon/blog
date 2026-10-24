@@ -2,7 +2,7 @@
 title: "Oracle Cloud 建立主機的實測紀錄：主控台各分頁的 Always Free 設定值與遇到的錯誤"
 date: 2026-10-24
 description: "在 Oracle Cloud 主控台建立一台 Always Free 的 A1 Ubuntu 主機時，Basic information、Security、Networking、SSH keys、Storage 與 Management 各分頁填了什麼、為什麼這樣填，等效的 CLI 指令，以及容量不足、VCN 選單找不到、Bastion plugin 預設關閉這幾個實測遇到的狀況"
-weight: 3
+weight: 5
 tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "vm", "free-tier"]
 ---
 

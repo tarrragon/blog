@@ -12,12 +12,14 @@ tags: ["infra", "cloud-providers", "free-tier"]
 
 ## 章節文章
 
-| 文章                                                                                                  | 主題                                                                        |
-| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)                        | 計費單位、免費額度的區域限制、試用結束後的處置、出站流量                    |
-| [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) | tenancy、home region 不能改、主控台登入的租用戶與使用者名稱欄位             |
-| [從本機用 OCI CLI 操作 Oracle Cloud](/infra/cloud-providers/oracle-cloud/cli-session-login/)          | session token 登入、時效與 refresh、API 簽章金鑰的取捨                      |
-| [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)   | 主控台各分頁的 Always Free 設定值、等效 CLI 指令、容量不足與 VCN 選單的狀況 |
+| 文章                                                                                                  | 主題                                                                                                         |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)                        | 計費單位、免費額度的區域限制、試用結束後的處置、出站流量                                                     |
+| [雲端主控台的管理領域](/infra/cloud-providers/console-areas/)                                         | 身分、資源分組、運算、網路、儲存、費用、監控、稽核、安全服務與配額各管什麼，新帳號先看哪幾個，三家的選單名稱 |
+| [Oracle Cloud 主控台導覽](/infra/cloud-providers/oracle-cloud/console-navigation/)                    | 頂端列、導覽選單各分類的內容、compartment 篩選器、常用頁面的路徑                                             |
+| [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) | tenancy、home region 不能改、主控台登入的租用戶與使用者名稱欄位                                              |
+| [從本機用 OCI CLI 操作 Oracle Cloud](/infra/cloud-providers/oracle-cloud/cli-session-login/)          | session token 登入、時效與 refresh、API 簽章金鑰的取捨                                                       |
+| [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)   | 主控台各分頁的 Always Free 設定值、等效 CLI 指令、容量不足與 VCN 選單的狀況                                  |
 
 ## 子資料夾
 
