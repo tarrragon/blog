@@ -129,7 +129,7 @@ GitHub Actions 在 push 到 `main` 時：
 | **抽象原則**        | 複製進 `references/principles/`、自包含        | 直接寫在 `content/report/`                   |
 | **Pre-commit lint** | 豁免 mdtools lint 與 fmt                       | 跑全套 fmt + lint + cards                    |
 
-完整撰寫規範見 [AGENTS.md〈Skill 的撰寫與同步〉](./AGENTS.md#skill-的撰寫與同步)。
+完整撰寫規範見 [docs/rules/skills.md](./docs/rules/skills.md)。
 
 當前 skill（`.claude/skills/`）：
 

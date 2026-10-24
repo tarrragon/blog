@@ -50,4 +50,4 @@ scripts/mdtools/
 - Rule contract: `content/posts/markdown-writing-spec.md`
 - Architecture rationale: `content/posts/mdtools-design.md`
 - AST rationale: `content/posts/what-is-ast.md`
-- Agent integration: `AGENTS.md`〈Markdown 與 mdtools〉
+- Agent integration: `docs/rules/markdown.md`

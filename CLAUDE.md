@@ -1,20 +1,28 @@
 @AGENTS.md
+@docs/rules/content-folders.md
+@docs/rules/writing.md
+@docs/rules/sentences.md
+@docs/rules/writing-process.md
+@docs/rules/review.md
+@docs/rules/markdown.md
+@docs/rules/skills.md
+@docs/rules/remote.md
 
 ---
 
 # Claude Code 專屬的操作
 
-上方的 `@AGENTS.md` 由 Claude Code 自動內嵌；AGENTS.md 是寫作與工程規則的單一真實來源。本檔只寫 Claude Code 才有的操作：回覆語言設定的注入、skill 的叫用機制、Agent tool 的派發（所有背景 agent 共用的送達規則、reviewer、理解探針、術語探針、審查規則檔時的限制）、Bash 工具跑私有 index 提交時的限制，以及 SSH 的權限與 hook。共用的規則不寫在這裡，要改就改 AGENTS.md。
+上方的 `@` 匯入由 Claude Code 自動內嵌：AGENTS.md 是規則的入口，`docs/rules/` 的分冊是各類工作的規則（分工見 AGENTS.md 開頭的路由表）。本檔只寫 Claude Code 才有的操作：回覆語言設定的注入、skill 的叫用機制、Agent tool 的派發（所有背景 agent 共用的送達規則、reviewer、理解探針、術語探針、審查規則檔時的限制）、Bash 工具跑私有 index 提交時的限制，以及 SSH 的權限與 hook。共用的規則不寫在這裡，要改就改 AGENTS.md 或對應的分冊。
 
 ## 回覆語言的設定
 
-回覆語言的規則在 AGENTS.md〈回覆語言〉。使用者層級的 `~/.claude/settings.json`（`"language": "繁體中文"`）已經把同一條指示注入系統提示，而長 session 裡最後的總結仍然會寫成英文，多數發生在一長串英文的指令、log、錯誤訊息與程式碼之後。注入不能取代送出前的確認：每一則總結送出之前確認一次語言。
+回覆語言的規則在 `AGENTS.md`〈回覆語言〉。使用者層級的 `~/.claude/settings.json`（`"language": "繁體中文"`）已經把同一條指示注入系統提示，而長 session 裡最後的總結仍然會寫成英文，多數發生在一長串英文的指令、log、錯誤訊息與程式碼之後。注入不能取代送出前的確認：每一則總結送出之前確認一次語言。
 
 ## Skill 的叫用
 
 Claude Code 依 `.claude/skills/<name>/SKILL.md` frontmatter 的 `description` 比對當前任務，自動觸發 skill；系統提示裡會列出每個 skill 的 description。使用者在對話中打 `/<skill-name>` 手動叫用；agent 自己要叫用時用 Skill tool，不在回覆裡打斜線指令。
 
-寫作類 skill 不等自動觸發、由 agent 主動叫用的規則（什麼時候叫用、改完要留什麼紀錄），寫在 AGENTS.md〈規則的優先序與住址〉。
+寫作類 skill 不等自動觸發、由 agent 主動叫用的規則（什麼時候叫用、改完要留什麼紀錄），寫在 `AGENTS.md`〈規則的優先序與住址〉。
 
 ## Agent tool 的派發
 
@@ -41,7 +49,7 @@ Claude Code 依 `.claude/skills/<name>/SKILL.md` frontmatter 的 `description` �
 
 - **模型**：用低階模型，目前對應的是 `model: "haiku"`。「低階」的判斷標準是推理較弱、單位成本低到可以一次派好幾份，以 `multi-round-review` 的 `references/round-2-probes.md`〈探針的派發契約〉為準。
 - **背景**：`run_in_background: true`。
-- **prompt 的其餘內容**（一批的範圍與逐字相同的條件、回報格式、要求標記不確定）照〈探針的派發契約〉寫；派發之前要成立的條件與讀回報時的歸因方法，在 AGENTS.md〈理解探針〉。
+- **prompt 的其餘內容**（一批的範圍與逐字相同的條件、回報格式、要求標記不確定）照〈探針的派發契約〉寫；派發之前要成立的條件與讀回報時的歸因方法，在 `docs/rules/review.md`〈理解探針〉。
 
 ### 術語探針與系統提示
 
@@ -57,7 +65,7 @@ grep -c "<詞>" .claude/skills/*/SKILL.md | grep -v ':0$'   # 數整份 SKILL.md
 
 `grep -c` 數的是含這個詞的行數，不是出現次數；判斷「是不是零」時兩者沒有差別。
 
-**讀回報時**，每個測試詞依它的行數與探針的回報對下表記錄結果。「本批」指同一組放在一起比對的探針報告，結果記在 AGENTS.md〈掃描與探針的紀錄寫進 repo〉指定的位置。
+**讀回報時**，每個測試詞依它的行數與探針的回報對下表記錄結果。「本批」指同一組放在一起比對的探針報告，結果記在 `docs/rules/writing-process.md`〈掃描與探針的紀錄寫進 repo〉指定的位置。
 
 | 行數 | 探針的回報                       | 這個詞的結果怎麼記                                                                   |
 | ---- | -------------------------------- | ------------------------------------------------------------------------------------ |
@@ -78,13 +86,13 @@ grep -c "<詞>" .claude/skills/*/SKILL.md | grep -v ':0$'   # 數整份 SKILL.md
 
 ## 私有 index 提交在 Bash 工具裡的限制
 
-多個 session 共用 repo 時的提交程序在 AGENTS.md〈多個 session 共用 repo 時的提交〉。Bash 工具每次呼叫的 shell 狀態不保留，環境變數不會帶到下一次呼叫：`export GIT_INDEX_FILE=…` 與 `git add`、`git commit` 分在兩次呼叫時，`git add` 與 `git commit` 用的是共用的 index，而且不報錯。所以那段程序從 `export` 到 `unset` 在同一次 Bash 呼叫裡跑完；私有 index 的路徑寫 scratchpad 的絕對路徑，因為每次呼叫的工作目錄可能不同。
+多個 session 共用 repo 時的提交程序在 `AGENTS.md`〈多個 session 共用 repo 時的提交〉。Bash 工具每次呼叫的 shell 狀態不保留，環境變數不會帶到下一次呼叫：`export GIT_INDEX_FILE=…` 與 `git add`、`git commit` 分在兩次呼叫時，`git add` 與 `git commit` 用的是共用的 index，而且不報錯。所以那段程序從 `export` 到 `unset` 在同一次 Bash 呼叫裡跑完；私有 index 的路徑寫 scratchpad 的絕對路徑，因為每次呼叫的工作目錄可能不同。
 
 ## SSH 的權限與 ssh_guard hook
 
 本專案是教學與實驗用途，`.claude/settings.local.json` 刻意放寬到 `Bash(ssh *)`，讓 agent 對受管的遠端機器做唯讀診斷時不必逐次核准；前提是遠端環境壞了可以重建。
 
-`ssh` 的 `-o ProxyCommand=…` 與 `-o LocalCommand=…`（配 `PermitLocalCommand=yes`）會在本機這台開發機執行任意命令，這條路徑不受「遠端可以重建」保護（規則本身在 AGENTS.md〈遠端機器的操作〉），所以用 PreToolUse hook 攔下：
+`ssh` 的 `-o ProxyCommand=…` 與 `-o LocalCommand=…`（配 `PermitLocalCommand=yes`）會在本機這台開發機執行任意命令，這條路徑不受「遠端可以重建」保護（規則本身在 `docs/rules/remote.md`〈遠端機器的操作〉），所以用 PreToolUse hook 攔下：
 
 - **機制**：`.claude/hooks/ssh_guard.py` 註冊為 `Bash` 的 PreToolUse hook。它用兩個 regex 比對指令字串：`SSH_INVOCATION` 認出 `ssh` 以獨立的詞出現（前面是行首、空白或 `; & | ( )` 之一，後面是空白或行尾），`LOCAL_EXEC_OPTS` 認出 ProxyCommand、LocalCommand 或 PermitLocalCommand（不分大小寫）。兩者同時命中時 hook 回 `permissionDecision: deny`；純遠端的唯讀診斷（`ssh <host> <readonly-cmd>`）照常放行。
 - **涵蓋範圍**：hook 只比對這一條指令的字串。看不到的形態有：寫在 `~/.ssh/config` 裡的選項、藏進變數或 wrapper script 的選項，以及由別的指令間接呼叫 ssh 的形態（`scp -o …`、`rsync -e …`、`GIT_SSH_COMMAND=…`）；後一類分屬 `scp`、`rsync`、`git` 的權限規則，不在 `Bash(ssh *)` 底下。在「agent 不是敵人，只是要避免它意外動到本機」這個威脅模型下，hook 擋得住誤用，擋不住刻意的繞過。

@@ -60,7 +60,7 @@ fi
 
 # --- 1. fmt --fix + re-stage -----------------------------------------------
 echo "[pre-commit] mdtools fmt --fix on staged markdown"
-# .claude/skills/ 跳過 fmt，理由與 AGENTS.md〈Skill 的撰寫規則〉記的 lint 豁免相同：fmt 的表格欄寬對齊
+# .claude/skills/ 跳過 fmt，理由與 docs/rules/skills.md〈Skill 的撰寫規則〉記的 lint 豁免相同：fmt 的表格欄寬對齊
 # 服務 Hugo 呈現，而 skill 的消費者是 Claude runtime、不經 Hugo 渲染。豁免 lint
 # 卻不豁免 fmt 會有兩個代價——重排後的 skill 立即與 canonical 庫分歧，使
 # skill-sync 的 diverged 訊號分不清真實差異與格式噪音；行內 HTML 註解被當多餘
@@ -100,7 +100,7 @@ if [[ ${#lint_args[@]} -gt 0 ]]; then
 fi
 
 # --- 3.5 Skill mirror sync check (#96) ------------------------------------
-# AGENTS.md〈Skill 與文章是兩個 surface〉: .claude/skills/<x>/ 跟 content/skills/<x>/ 是 mirror、主體相同。
+# docs/rules/skills.md〈Skill 與文章是兩個 surface〉: .claude/skills/<x>/ 跟 content/skills/<x>/ 是 mirror、主體相同。
 # 改一邊沒改另一邊是 #95/#96 反覆踩到的 case — 同 surface 的同類風險區。
 # 這一步檢查：staged 動到一邊、另一邊沒 staged 就警告（非阻擋、避免 link 格式
 # 差異的 false positive；只抓「忘了同步」這個失誤模式）。
@@ -144,7 +144,7 @@ if [[ "${COMMIT_SKIP_MIRROR_CHECK:-0}" != "1" ]]; then
         echo "  [pre-commit] ⚠ Mirror staged unilaterally (#96 enumeration miss):"
         printf '%s' "$mirror_warnings"
         echo ""
-        echo "  Skill mirror requires both surfaces to update together (AGENTS.md〈從 report 卡到 skill 的標準流程〉)."
+        echo "  Skill mirror requires both surfaces to update together (docs/rules/skills.md〈從 report 卡到 skill 的標準流程〉)."
         echo "  Either stage the mirror too, or skip with COMMIT_SKIP_MIRROR_CHECK=1."
         if [[ -t 0 ]]; then
             read -r -p "  Continue commit anyway? [y/N] " response < /dev/tty

@@ -56,7 +56,7 @@ slug: "teach-judgment-not-procedure"
 - [#211 複合問題先拆機制再談交互](../compound-problem-decompose-then-interact/)：判斷力導向的文章在面對多概念交互時的展開結構。先由 #209 確認主線是機制理解，再用 #211 的拆分原則決定多個機制如何各自成篇。
 - [#170 Description 是 recall trigger](../description-as-recall-trigger/)：description 的功能建立在文章有明確的知識目標上。判斷力導向的文章，description 寫「什麼情境下需要這份判斷力」；流程導向的文章，description 寫「什麼情境下需要這份操作步驟」。
 - [#166 重點優先陳述是跨語言的資訊結構原則](../lead-with-the-point-cross-language/)：判斷力導向的文章天然符合核心先行——機制理解本身就是核心，操作步驟是衍生。
-- AGENTS.md〈系統層的概念寫在案例之前〉（舊版的原則三）「商業邏輯先於 CASE」：機制先於操作是同一個原則在不同粒度的體現。
+- `docs/rules/writing.md`〈系統層的概念寫在案例之前〉（舊版的原則三）「商業邏輯先於 CASE」：機制先於操作是同一個原則在不同粒度的體現。
 - [#306 按功能組織的教材裡「該用哪一個」沒有住址](../feature-organized-teaching-has-no-address-for-tool-choice/)：指出判斷力在按功能組織的教材裡沒有落腳的位置。單章寫成判斷力導向仍然不夠——選擇發生在章與章之間，要另外給它一層路由。
 
 [#361 比較的軸要落在讀者接下來要交出的那份產出上](/report/comparison-axis-comes-from-the-readers-decision/)問本卡的下一題：判斷力施加在哪一個對象上。對象是讀者要交出的那份產出，不是文章裡的寫法。
