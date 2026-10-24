@@ -27,9 +27,9 @@ ARM 機型的同等規格通常比較便宜，Oracle Cloud 的 Always Free 額�
 
 核心數與記憶體建立之後可以調整，代價是一段停機。Oracle Cloud 的官方說明是主機在執行中時，改機型的過程會把它重開，私有 IP、公開 IP 與掛載的磁碟維持不變；改之前在作業系統裡先把應用程式正常關掉，避免寫到一半的資料損壞。Google Cloud 與 AWS 要先把主機停止才能換機型，換完再啟動；AWS 停止再啟動時，自動指派的公開 IP 會換成新的。能調整的機型也有限：Oracle Cloud 的 `VM.Standard.E2.1.Micro` 不能調整，開了安全開機（shielded instance）的主機也不能改機型，A1 Flex 可以在 Always Free 額度內調整核心數與記憶體。
 
-既然改大只要一段停機、不必重建，實驗機先開小一點、不夠再加：付費機型開小直接省錢，Always Free 的 A1（每月額度相當於 2 OCPU、12 GB 整個月開著，見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)）則是把剩下的額度留給第二台主機。「不夠」的訊號在主機的指標上：CPU 使用率長時間接近滿載、或記憶體用完開始用 swap、程式被 OOM 終止。
+既然改大只要一段停機、不必重建，實驗機先開小一點、不夠再加；前提是改大的時候那一區還有容量，A1 這種容量經常不足的機型，在建得起來的那一刻就要把規格想好。付費機型開小直接省錢，Always Free 的 A1（每月額度相當於 2 OCPU、12 GB 整個月開著，見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)）則是把剩下的額度留給第二台主機。「不夠」的訊號在主機的指標上：CPU 使用率長時間接近滿載、或記憶體用完開始用 swap、程式被 OOM 終止。
 
-某個機型在一個區域建不起來（容量不足）時，換機型是換可用區之外的另一條退路，代價看換成哪一種。在同一種機型裡改小規格，容量比較容易拿到，免費額度也不變；換到另一個架構（例如 A1 建不起來改用 x86 的 Flex 機型），要重新確認軟體有沒有那個架構的版本，而且 Oracle Cloud 上 x86 的 Flex 機型不在 Always Free 額度內，會照一般價格計費；改用可被收回的容量，價格低，但主機隨時可能被收回。換可用區的部分見 [位置：區域、可用區與故障域](/infra/cloud-providers/vm-options/placement/)。
+某個機型在一個區域建不起來（容量不足）時，換機型是換可用區之外的另一條退路，代價看換成哪一種。在同一種機型裡改小規格，容量比較容易拿到，免費額度也不變；換到另一個架構（例如 A1 建不起來改用 x86 的 Flex 機型），要重新確認軟體有沒有那個架構的版本，而且 Oracle Cloud 上 x86 的 Flex 機型不在 Always Free 額度內，結果依帳號狀態而定：試用期間由試用金支付、當天就建得起來，但試用結束時會被回收；試用結束而沒有升級的帳號建不了；升級成付費帳戶之後照一般價格計費，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉；改用可被收回的容量，價格低，但主機隨時可能被收回。換可用區的部分見 [位置：區域、可用區與故障域](/infra/cloud-providers/vm-options/placement/)。
 
 ## 計費模式：隨用隨付、可被收回、預留容量與專屬主機
 
@@ -40,7 +40,7 @@ ARM 機型的同等規格通常比較便宜，Oracle Cloud 的 Always Free 額�
 - **預留容量（capacity reservation）**：先向業者保留一定數量的某種機型容量，之後建主機時從保留的額度裡扣。它處理的是「要用的時候沒有容量」，用在必須在某個時間點拿到主機的情境：大促前要擴容、災難時要在另一區重建、熱門機型經常容量不足。保留期間不論有沒有主機在用都計費。
 - **專屬主機（dedicated host）**：整台實體主機只給這個帳號的虛擬機用，不跟其他客戶共用硬體，用在合規要求或授權按實體主機計算的軟體。Oracle Cloud 只允許在建立時把主機放上專屬主機。
 
-這幾種模式互斥，一台主機只能選一種。實驗用的小主機選隨用隨付。
+Oracle Cloud 的 Capacity type 欄位一次只能選其中一種；AWS 的 capacity reservation 則是讓隨用隨付的主機去使用保留下來的容量，兩者同時成立。預留容量跟用一到三年的承諾換取折扣的 reserved instance 是兩件事：預留容量保證拿得到容量、不打折，reserved instance 打折、不保證容量，後者見 [計費模型](/operations/08-cost-management/billing-models/)。實驗用的小主機選隨用隨付。
 
 ## 停止主機時的計費
 
@@ -56,7 +56,7 @@ ARM 機型的同等規格通常比較便宜，Oracle Cloud 的 Always Free 額�
 
 同一個作業系統常有完整版與 minimal 版。Minimal 版只裝開機與連網需要的套件，開機磁碟用量小、要修補的套件少，代價是常用工具（文字編輯器、部分診斷工具）要自己裝。要登入主機手動操作、排錯的實驗機選完整版；只跑容器或由初始化腳本、[IaC](/infra/knowledge-cards/iac/) 裝好全部軟體、平常不登入的主機選 minimal 版。
 
-映像檔要跟機型的架構一致：清單上 Ubuntu 的 ARM 版名稱帶 `aarch64`，x86 版不帶。Oracle Cloud 的主控台只列出這一區有的機型，並把跟已選映像檔不相容的標成不可選；用 CLI 或 API 建立時沒有這層畫面上的提示，映像檔要自己挑對架構。查詢映像檔的指令是 `oci compute image list --compartment-id <tenancy 的 OCID> --shape <機型名稱>`：Oracle Cloud 給每個資源一個唯一識別碼叫 OCID，平台映像列在 tenancy（帳號本身，也是最上層的 compartment）底下，所以 `--compartment-id` 填 tenancy 的 OCID；`--shape` 填機型名稱（例如 `VM.Standard.A1.Flex`），CLI 只回傳跟那個機型相容的映像檔。tenancy 的 OCID 在哪裡查見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。映像檔也決定了預設的登入使用者名稱，見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/)。
+映像檔要跟機型的架構一致：Oracle Cloud 的映像清單上，Ubuntu 的 ARM 版名稱帶 `aarch64`、x86 版不帶；AWS 與 Google Cloud 的映像多半以 `arm64` 標示 ARM 版，名稱看不出時看映像詳細資料裡的架構欄位。Oracle Cloud 的主控台只列出這一區有的機型，並把跟已選映像檔不相容的標成不可選；用 CLI 或 API 建立時沒有這層畫面上的提示，映像檔要自己挑對架構。查詢映像檔的指令是 `oci compute image list --compartment-id <tenancy 的 OCID> --shape <機型名稱>`：Oracle Cloud 給每個資源一個唯一識別碼叫 OCID，平台映像列在 tenancy（帳號本身，也是最上層的 compartment）底下，所以 `--compartment-id` 填 tenancy 的 OCID；`--shape` 填機型名稱（例如 `VM.Standard.A1.Flex`），CLI 只回傳跟那個機型相容的映像檔。tenancy 的 OCID 在哪裡查見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。映像檔也決定了預設的登入使用者名稱，見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/)。
 
 映像檔只在建立的那一刻複製一次。之後作業系統的更新由主機自己的套件管理員處理，跟映像檔清單上出現的新版本無關；換作業系統同樣要用新的映像檔重建。
 

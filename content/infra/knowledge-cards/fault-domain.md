@@ -6,7 +6,7 @@ weight: 64
 tags: ["infra", "knowledge-cards", "cloud", "availability"]
 ---
 
-故障域（fault domain）是一個 [Availability Zone（可用區）](/infra/knowledge-cards/availability-zone/) 內部的一組實體硬體與基礎設施。Oracle Cloud 的每個可用區有三個故障域，官方說明它防的是兩種事件：某一組硬體的非預期故障，以及業者對那一組硬體做的計畫性維護。一個故障域受影響時，放在其他故障域的主機不受影響。
+故障域（fault domain）在這張卡上指 Oracle Cloud 建立主機時選的那個隔離單位：一個 [Availability Zone（可用區）](/infra/knowledge-cards/availability-zone/) 內部的一組實體硬體與基礎設施。它是 [Failure Domain（失效域）](/backend/knowledge-cards/failure-domain/) 這個一般概念的一種業者實作：失效域是會因同一個原因一起停掉的元件集合，Oracle Cloud 把可用區內的硬體組直接命名為 fault domain。Oracle Cloud 的每個可用區有三個故障域，官方說明它防的是兩種事件：某一組硬體的非預期故障，以及業者對那一組硬體做的計畫性維護。一個故障域受影響時，放在其他故障域的主機不受影響。
 
 ## 概念位置
 

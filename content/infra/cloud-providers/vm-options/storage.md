@@ -16,7 +16,7 @@ tags: ["infra", "cloud-providers", "vm", "storage", "block-volume"]
 
 ## 開機磁碟的大小
 
-開機磁碟的預設大小由映像檔決定，Oracle Cloud 的 Linux 平台映像預設是 50 GB。建立頁可以勾選自訂大小，範圍是 50 GB 到 32 TB，且不能小於映像檔的預設值。Oracle Cloud 的 Always Free（不會到期的免費額度）在儲存上給的是開機磁碟與區塊磁碟合計 200 GB；以 Linux 主機的開機磁碟預設 50 GB 算，額度最多夠四台預設大小的主機；一台主機的開機磁碟加大到 200 GB 就用完了全部額度，第二台主機的開機磁碟會開始計費。手上已經用掉多少，到 Block Storage 的 Boot Volumes 與 Block Volumes 清單把每顆磁碟的大小加起來，跟 200 GB 比。
+開機磁碟的預設大小由映像檔決定，Oracle Cloud 的 Linux 平台映像預設是 50 GB。建立頁可以勾選自訂大小，範圍是 50 GB 到 32 TB，且不能小於映像檔的預設值。Oracle Cloud 的 Always Free（不會到期的免費額度）在儲存上給的是開機磁碟與區塊磁碟合計 200 GB；以 Linux 主機的開機磁碟預設 50 GB 算，額度最多夠四台預設大小的主機；一台主機的開機磁碟加大到 200 GB 就用完了全部額度，第二台主機的開機磁碟就超出額度，超出的部分依帳號狀態而定：試用期間由試用金支付、試用結束時被回收，沒有升級的帳號建不了，付費帳戶照一般價格計費，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉。手上已經用掉多少，到 Block Storage 的 Boot Volumes 與 Block Volumes 清單把每顆磁碟的大小加起來，跟 200 GB 比。
 
 磁碟的大小**只能加大、不能縮小**。Oracle Cloud 支援在主機開著的時候線上加大，加大之後要在作業系統裡把分割區與檔案系統延伸到新的大小，作業系統才用得到新增的空間：一般 Linux 用 `growpart` 延伸分割區，再依檔案系統用 `resize2fs`（ext4）或 `xfs_growfs`（XFS）延伸檔案系統，Oracle Linux 的平台映像另附一支 `oci-growfs` 一次做完。所以建立時先用預設大小，空間不夠再加；一開始開得太大，之後想縮回去只能建新磁碟、把資料搬過去。
 
@@ -31,7 +31,7 @@ tags: ["infra", "cloud-providers", "vm", "storage", "block-volume"]
 | Higher Performance     | 20           | 資料庫這類讀寫頻繁的負載                         |
 | Ultra High Performance | 30 到 120    | 需要高 IOPS（每秒讀寫次數）與低延遲的負載        |
 
-VPU 另外計費：Lower Cost 只收儲存費，其餘等級在儲存費之外加收效能費。開機磁碟不能選 Lower Cost，預設是 Balanced。官方的 Always Free 頁只寫了 200 GB 的容量，沒有寫這 200 GB 涵蓋哪個效能等級；建立頁在 Always Free 主機上預設給的是 Balanced，實驗機維持預設，建好之後到 Billing & Cost Management 的 Cost Analysis 看區塊儲存有沒有出現費用，就能確認自己的帳號怎麼算。效能等級在磁碟建立之後可以修改，不必重建磁碟；主機上的磁碟延遲或 iowait 長時間偏高、資料庫查詢因為讀寫變慢時，就是該往上調的訊號。
+VPU 另外計費：Lower Cost 只收儲存費，其餘等級在儲存費之外加收效能費。開機磁碟不能選 Lower Cost，預設是 Balanced。官方的 Always Free 頁只寫了 200 GB 的容量，沒有寫這 200 GB 涵蓋哪個效能等級；建立頁在 Always Free 主機上預設給的是 Balanced，實驗機維持預設，建好之後到 Billing & Cost Management 的 Cost Analysis 看區塊儲存有沒有出現費用，就能確認自己的帳號怎麼算。Oracle Cloud 的效能等級在磁碟建立之後可以修改，不必重建磁碟；主機上的磁碟延遲或 iowait 長時間偏高、資料庫查詢因為讀寫變慢時，就是該往上調的訊號。
 
 ## 加密
 
@@ -48,9 +48,9 @@ VPU 另外計費：Lower Cost 只收儲存費，其餘等級在儲存費之外�
 - **Google Cloud**：開機磁碟預設跟著主機一起刪除，建立頁開機磁碟的 Deletion rule 預設是 Delete disk。
 - **AWS**：建立主機時一起掛上的根磁碟預設跟著主機一起刪除（`DeleteOnTermination` 預設為 true，這個值來自 AMI 的設定）；之後另外掛上的資料磁碟預設保留。
 
-在 Oracle Cloud 上刪除實驗機時，要嘛勾選刪除開機磁碟，要嘛在之後到 Block Storage → Boot Volumes 確認有沒有留下不要的磁碟。保留的磁碟是一個仍然存在的資源。官方的終止說明沒有寫它是否計費，而 Always Free 頁寫明 200 GB 算的是開機磁碟與區塊磁碟的合計，額度用完時要刪掉主機與它的開機磁碟才能空出空間；所以留下來的開機磁碟繼續佔著額度，額度用完之後新建的磁碟照一般價格計費。
+在 Oracle Cloud 上刪除實驗機時，要嘛勾選刪除開機磁碟，要嘛在之後到 Block Storage → Boot Volumes 確認有沒有留下不要的磁碟。保留的磁碟是一個仍然存在的資源。官方的終止說明沒有寫它是否計費，而 Always Free 頁寫明 200 GB 算的是開機磁碟與區塊磁碟的合計，額度用完時要刪掉主機與它的開機磁碟才能空出空間；所以留下來的開機磁碟繼續佔著額度，額度用完之後再建的磁碟就超出額度。
 
-這個預設最容易在反覆建刪實驗機時累積起來。用過 `docker rm` 或 Google Cloud、AWS 的人，習慣刪了主機就等於刪了磁碟；在 Oracle Cloud 上每刪一台都留下一顆 50 GB 的開機磁碟，而主機清單上已經看不到它，它列在另一個選單（Block Storage → Boot Volumes），額度還沒用完時帳單上也不會出現任何費用。建刪四輪之後 200 GB 就被這些磁碟佔滿，第五台主機的開機磁碟開始計費，這時才要回頭逐顆辨認哪些磁碟可以刪。
+這類主機刪了、自己卻還存在而沒有人記得的資源，叫孤兒資源（orphaned resource），各家的帳單上都會出現，見 [計費模型](/operations/08-cost-management/billing-models/) 的隱藏成本。Oracle Cloud 的這個預設最容易在反覆建刪實驗機時累積起來。用過 `docker rm` 或 Google Cloud、AWS 的人，習慣刪了主機就等於刪了磁碟；在 Oracle Cloud 上每刪一台都留下一顆 50 GB 的開機磁碟，而主機清單上已經看不到它，它列在另一個選單（Block Storage → Boot Volumes），額度還沒用完時帳單上也不會出現任何費用。建刪四輪之後 200 GB 就被這些磁碟佔滿，第五台主機的開機磁碟就超出額度，這時才要回頭逐顆辨認哪些磁碟可以刪。
 
 ## 各家的欄位名稱：開機磁碟、資料磁碟、效能等級與終止時的預設
 
@@ -64,4 +64,4 @@ VPU 另外計費：Lower Cost 只收儲存費，其餘等級在儲存費之外�
 ## 延伸閱讀：磁碟之外的建立選項
 
 - [機型與映像檔](/infra/cloud-providers/vm-options/shape-and-image/)：開機磁碟的內容來自哪一個映像檔、停止主機時哪些資源還在計費
-- [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/)：Oracle Cloud 代理程式的 Block Volume Management plugin 替主機設定區塊磁碟的連線
+- [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的 Management 段：Oracle Cloud 代理程式的 Block Volume Management plugin 與其他 plugin 的用途

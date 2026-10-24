@@ -31,7 +31,7 @@ Oracle Cloud 的官方〈Shielded Instances〉寫明，shielded instance 建好�
 開啟的代價在相容性：Secure Boot 會拒絕沒有簽章的核心模組與自己編譯的核心，要裝第三方驅動程式（部分 GPU、虛擬化或網路驅動）或自訂核心時會開不了機或載入失敗。業者的平台映像本身是簽過的，只跑一般套件時開著不會有感。在 Oracle Cloud 上另有一個代價在彈性：開了之後機型不能改，實驗機「先開小、不夠再加」的做法就走不通。
 
 - **跑一般服務、使用平台映像**：開或不開都可以；有合規要求（要求開機鏈可驗證）時開。
-- **要裝自訂核心或沒有簽章的驅動程式**：不開，或先確認那個驅動程式支援 Secure Boot 的簽章流程。
+- **要裝自訂核心或沒有簽章的驅動程式**：不開，或先確認那個驅動程式支援 Secure Boot 的簽章流程。在 Linux 上，這個流程是用自己的金鑰簽驅動程式、再把那把金鑰登錄進開機鏈信任的清單（Machine Owner Key，MOK）；合規要求開機鏈可驗證、又要裝這類驅動程式時，就要走這條路，做法以那個驅動程式與發行版的文件為準。
 - **實驗與學習用的主機**：維持建立頁的預設即可，要測試這個功能時另外建一台開啟的。Oracle Cloud 建立 A1 Ubuntu 主機時建立頁上三項預設都關閉（[實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)的 Security 段）；Google Cloud 的 Shielded VM 預設開啟 vTPM 與 integrity monitoring。
 
 ## 各家的欄位名稱：開機保護的總稱、Secure Boot、開機量測與 TPM

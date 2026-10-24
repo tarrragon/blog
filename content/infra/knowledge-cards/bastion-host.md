@@ -16,7 +16,7 @@ tags: ["infra", "knowledge-cards", "network", "ssh", "access", "bastion"]
 
 跳板機放在 public subnet，目的主機留在 private subnet，兩者之間的放行用 [Security Group](/infra/knowledge-cards/security-group/) 的來源引用表達：目的主機的入站規則把來源寫成「跳板機所屬的那個 security group」而不是一個 IP，跳板機換了 IP 或多加一台，規則都不必改。
 
-暴露面收斂成一台，但沒有消失：跳板機仍然對網際網路開著管理 port，它的 sshd 漏洞與金鑰管理就是整個環境的入口。不讓任何自管主機對外的做法是 [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/)，對外接收連線的那一層改由代理服務承擔。雲端廠商也提供受管的跳板服務（例如 Azure Bastion），主機的修補由廠商負責，連線方式與身分驗證依各家服務而定，位置介於自建跳板機與身分感知代理之間。
+暴露面收斂成一台，但沒有消失：跳板機仍然對網際網路開著管理 port，它的 sshd 漏洞與金鑰管理就是整個環境的入口。不讓任何自管主機對外的做法是 [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/)，對外接收連線的那一層改由代理服務承擔。雲端廠商也提供受管的跳板服務（例如 Azure Bastion、Oracle Cloud 的 Bastion），主機的修補由廠商負責，連線方式與身分驗證依各家服務而定，位置介於自建跳板機與身分感知代理之間。Oracle Cloud 的 Bastion 在主機所在的 subnet 裡有一個私有端點，主機與 Bastion 都不需要公開 IP，誰能開工作階段由 IAM 政策決定，設定方式見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉。
 
 ## 可觀察訊號
 

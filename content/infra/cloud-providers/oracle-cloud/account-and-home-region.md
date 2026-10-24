@@ -31,26 +31,43 @@ OCI 的免費方案有兩個部分。試用金是 300 美元、30 天內有效�
 
 儲存與網路另有額度：開機磁碟與區塊磁碟合計 200 GB（每台主機的開機磁碟預設 50 GB，也算在這 200 GB 裡）、備份最多 5 份、出站流量每月 10 TB；試用結束後沒有升級的 Free Tier tenancy，VCN 最多 2 個。
 
-**運算與區塊磁碟的 Always Free 額度只能用在 home region。** Free Tier 頁寫的是「You can provision Always Free Autonomous AI Databases and compute instances only in the home region」；Always Free Resources 頁對區塊磁碟的原文是「the volume must be created in the home region of the tenancy」。升級成付費帳戶並訂閱其他區域之後，在那一區建的主機照一般價格計費。所以 home region 同時決定了免費主機的實體位置：主機對外連線用的公開 IP 位址登記在 home region 所在的國家，對方看到的出口 IP 就在那個國家；從使用者所在地連過去的延遲也由那個位置決定。
+**運算與區塊磁碟的 Always Free 額度只能用在 home region。** Free Tier 頁寫的是「You can provision Always Free Autonomous AI Databases and compute instances only in the home region」；Always Free Resources 頁對區塊磁碟的原文是「the volume must be created in the home region of the tenancy」。升級成付費帳戶並訂閱其他區域之後，在那一區建的主機照一般價格計費。
 
-A1 免費機型在某個 AD 暫時沒有容量時，建立主機的 API 回 `Out of host capacity`。官方 Always Free 頁建議的退路是換一個 AD、等一段時間再試，或升級成付費帳戶；Compute 的〈Known Issues〉頁另外列了不指定 fault domain、改用較小的機型規格，以及建立前用 `CreateComputeCapacityReport` 這個 API 查某個機型當下有沒有容量。Home region 只有一個 AD 時，換 AD 這條退路不存在，剩下的是等待重試、改小規格與升級付費帳戶。這次在只有一個 AD 的 `ap-batam-1` 以 90 秒的間隔送了九次建立請求，前三次收到 `429 TooManyRequests`（請求太頻繁被限流）、後六次是 `Out of host capacity`；限流的門檻依帳號與 API 而定，間隔要看自己收到的回應碼調整，收到 429 就拉長。
+免費主機只能建在 home region，主機的實體位置因此就是 home region。這個位置決定兩件事。一是出口 IP 的國家：業者配給一台主機的公開 IP 位址，屬於那個區域所在國家的位址段，主機對外連線時，對方看到的來源 IP 就登記在那個國家。二是延遲：從使用者所在地連到主機的延遲，由兩地的距離決定。
 
-改用 E2.1.Micro 也不一定是退路，因為區域之間提供的機型不同，而帳號的服務配額表不會反映這一點。配額表列的是帳號允許開多少，不代表那一區有這種硬體：`ap-batam-1` 的 AD 根本沒有 E2.1.Micro，這個帳號的配額表照樣列出 `vm-standard-e2-1-micro-count` 為 2。
+A1 免費機型在某個 AD 暫時沒有容量時，建立主機的 API 回 `Out of host capacity`。官方 Always Free 頁建議的退路是換一個 AD、等一段時間再試，或升級成付費帳戶；Compute 的〈Known Issues〉頁另外列了不指定 fault domain、改用較小的機型規格，以及建立前用 `CreateComputeCapacityReport` 這個 API 查某個機型當下有沒有容量。Home region 只有一個 AD 時，換 AD 這條退路不存在，剩下的是等待重試、改小規格與升級付費帳戶。試用期間還有一條：用試用金建不在免費額度內的 x86 Flex 機型，當天就有主機可用，代價是試用結束時那台主機會被回收，見〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉。這次在只有一個 AD 的 `ap-batam-1` 以 90 秒的間隔送了九次建立請求，前三次收到 `429 TooManyRequests`（請求太頻繁被限流）、後六次是 `Out of host capacity`；限流的門檻依帳號與 API 而定，間隔要看自己收到的回應碼調整，收到 429 就拉長。
+
+改用另一種免費機型 E2.1.Micro，也不一定是退路。原因是區域之間提供的機型不同：`ap-batam-1` 的 AD 沒有 E2.1.Micro 這種硬體。
+
+帳號的服務配額表看不出這一點。服務配額表列的是這個帳號最多允許開幾台某種機型，跟那一區有沒有那種硬體是兩件事。這次的帳號在配額表上看得到 `vm-standard-e2-1-micro-count` 為 2，意思是帳號允許開兩台 Micro；而 `ap-batam-1` 一台 Micro 也建不起來。
 
 在沒有這個機型的區域建立 Micro 主機，API 回的是 `404 NotAuthorizedOrNotFound`，這個錯誤碼同時涵蓋權限不足與資源不存在，從訊息本身分不出是哪一種。一個區域實際提供哪些機型，用 `oci compute shape list --compartment-id <compartment 的 OCID> --availability-domain <AD 名稱>` 查，回傳的清單才是那個 AD 能建的機型；AD 名稱要填 `oci iam availability-domain list` 回傳的完整名稱，它帶有 tenancy 專屬的前綴，只寫 `AD-1` 會失敗。這條指令要先有 tenancy 才能跑，所以申請之前沒有辦法確認某一區有沒有 E2.1.Micro；申請之後才發現缺機型時，能做的事見〈選錯 home region 之後的選項〉。
 
 Always Free 的主機另有兩條回收規則：
 
 - **閒置回收**：連續 7 天內 CPU 使用率（第 95 百分位）、網路使用率、記憶體使用率（只算 A1）三項都低於 20%，Oracle 可能回收這台主機。官方頁用的詞是 reclaim，沒有寫回收之後主機是停止還是刪除。只在需要時才登入的實驗機會符合這個條件。
-- **試用結束時超出額度**：試用期間建的 A1 主機合計（所有 A1 主機的 OCPU 加總、記憶體加總）超過 2 OCPU、12 GB 時，試用結束時全部 A1 主機會被停用，連額度內的那一台也一樣，30 天後刪除，除非升級成付費帳戶；用試用金建的其他付費資源同樣會被回收。要保留 A1 主機，試用結束前把 A1 主機合計的規格降回 2 OCPU、12 GB 以內。
+- **試用結束時超出額度**：試用期間建的 A1 主機合計（所有 A1 主機的 OCPU 加總、記憶體加總）超過 2 OCPU、12 GB 時，試用結束時全部 A1 主機會被停用，連額度內的那一台也一樣，30 天後刪除，除非升級成付費帳戶；用試用金建的其他付費資源同樣會被回收。試用期間超出的部分由試用金支付，帳單上看不到費用，所以這件事要到試用結束那一刻才浮現。要保留 A1 主機，試用結束前把 A1 主機合計的規格縮回 2 OCPU、12 GB 以內，縮小規格或刪掉其中一台都可以。
+
+官方對閒置回收只寫了三項指標都要低於 20%，沒有寫網路使用率的 20% 是對什麼的比例，也沒有寫升級成付費帳戶之後這條規則還適不適用；被回收之後主機的狀態與能不能恢復同樣沒寫。
+
+## 超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果
+
+同一個動作（多建一台 A1、加大一顆磁碟、改用不在免費額度內的 x86 機型）超出 Always Free 的額度時，結果由帳號當下的狀態決定：
+
+- **試用中**：超出的部分由試用金支付，帳單上看不到費用。試用結束時，用試用金建的付費資源會被回收，A1 合計超額時全部 A1 主機會被停用。
+- **試用結束而沒有升級**：官方 Always Free 頁寫明，要建不在 Always Free 範圍內的資源，帳號必須是付費帳戶、或試用期間還有試用金，所以超出額度的資源建不了；Free Tier 頁另外寫明，不升級的話申請時填的信用卡不會被扣款。
+- **升級成付費帳戶（Pay As You Go）**：Always Free 的部分仍然不收費，超出的部分照一般價格計費。
+
+站內各篇寫到「超出免費額度」的地方，指的都是這三種結果。升級之前先設好預算警示，見 [雲端主控台的管理領域](/infra/cloud-providers/console-areas/) 的〈帳單與成本：花了多少、會花多少〉。
 
 ## 選 home region 時要先確認的事
 
 Home region 在申請表上是一個下拉選單，選定的區域同時決定了免費主機的實體位置（出口 IP 的國家、延遲）與容量不足時有沒有別的 AD 可以換。選之前先確認這台免費主機要做什麼：
 
-- **用途需要特定國家的出口 IP**（例如要讓連線看起來從日本發出）：只有那個國家的區域符合，其他區域的延遲再低都達不到目的。這一條常跟下面「選 AD 多的區域」衝突：日本的兩個區域（東京 `ap-tokyo-1`、大阪 `ap-osaka-1`）都只有一個 AD，A1 容量不足時沒有別的 AD 可以換，而 E2.1.Micro 有沒有提供要申請之後才查得到。出口 IP 是硬條件時，接受這個風險；不是的話，選 AD 多的區域。
+- **用途需要特定國家的出口 IP**（例如要讓連線看起來從日本發出）：只有那個國家的區域符合，其他區域的延遲再低都達不到目的。這一條常跟下面「選 AD 多的區域」衝突：日本的兩個區域（東京 `ap-tokyo-1`、大阪 `ap-osaka-1`）都只有一個 AD，A1 容量不足時沒有別的 AD 可以換，而 E2.1.Micro 有沒有提供要申請之後才查得到。出口 IP 是硬條件時，接受 A1 容量不足時無處可換的風險；不是的話，選 AD 多的區域。東京與大阪之間，官方沒有公開各區的容量資訊，選哪一個只能看延遲。預算為零而容量一直不足時，能做的只剩等待重試與改小規格。
 - **用途是給特定地區的使用者連**：選離使用者近的區域，延遲由距離決定。
-- **主要拿來實驗**：優先選 AD 多的大型區域（官方區域表上 AD 數為 3 的那幾個），A1 容量不足時有其他 AD 可以換。
+- **主要拿來實驗**：優先選 AD 多的區域（官方區域表上 AD 數為 3 的那幾個，名單見 [Availability Zone（可用區）](/infra/knowledge-cards/availability-zone/) 卡），A1 容量不足時有其他 AD 可以換。AD 多代表的是多了可以換的地方，不代表那一區的 A1 空閒容量比較多。
+- **資料要留在特定國家**（法規或合約要求）：只有那個國家的區域符合，跟出口 IP 那一條同樣是硬條件。
 
 ## 選錯 home region 之後的選項
 
@@ -69,4 +86,6 @@ OCI 的登入頁把登入拆成兩個欄位，依序出現：
 
 - [從本機用 OCI CLI 操作 Oracle Cloud](/infra/cloud-providers/oracle-cloud/cli-session-login/)：同一個 tenancy 從終端機登入，session token 的時效與 API 簽章金鑰的取捨
 - [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)：Always Free 的 home region 限制與 GCP、AWS 的區域限制並排
+- [位置：區域、可用區與故障域](/infra/cloud-providers/vm-options/placement/)：home region 這一層之下，可用區與故障域在建立主機時各決定什麼
+- [雲端主控台的管理領域](/infra/cloud-providers/console-areas/)：compartment 這種資源分組在三家主控台上的對應，與清理時要注意的地方
 - [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)：在 OCI 建好主機之後，管理員登入它要經過的網路可達性、通道授權與主機登入驗證三層各有哪些做法

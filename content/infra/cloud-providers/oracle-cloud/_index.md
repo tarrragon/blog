@@ -1,7 +1,7 @@
 ---
 title: "Oracle Cloud（OCI）"
 date: 2026-10-24
-description: "申請了 Oracle Cloud 免費帳號、要在 Always Free 額度內建主機並從本機管理時，查帳號結構、CLI 登入與實測紀錄"
+description: "準備申請或已經申請了 Oracle Cloud 免費帳號（home region 要在送出申請之前選）、要在 Always Free 額度內建主機並從本機管理時，查帳號結構、CLI 登入與實測紀錄"
 weight: 4
 tags: ["infra", "cloud-providers", "oracle-cloud", "oci"]
 ---
@@ -19,7 +19,10 @@ Oracle Cloud Infrastructure（OCI）的免費方案分成 30 天的試用金與�
 
 ## Backlog
 
-| 項目                                                                           | 類型 | 前置條件                                                | 規模       |
-| ------------------------------------------------------------------------------ | ---- | ------------------------------------------------------- | ---------- |
-| Bastion 管理通道實測文章（private subnet、managed SSH session、稽核紀錄）      | 主章 | home region 的 A1 建立請求成功（Batam 沒有 E2.1.Micro） | 1 篇（中） |
-| A1 建成之後把重試經過與結果補進〈Oracle Cloud 建立主機的實測紀錄〉的容量不足段 | 案例 | A1 建立請求成功                                         | 小         |
+| 項目                                                                                                                                                      | 類型 | 前置條件                                                | 規模       |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------- | ---------- |
+| Bastion 管理通道實測文章（private subnet、managed SSH session、port forwarding session 用自己的公鑰登入、建工作階段需要的 IAM 政策、稽核紀錄）            | 主章 | home region 的 A1 建立請求成功（Batam 沒有 E2.1.Micro） | 1 篇（中） |
+| A1 建成之後把結果補進〈Oracle Cloud 建立主機的實測紀錄〉：Authorization header 開著時 Ubuntu 的 cloud-init 寫公鑰與 plugin 狀態、刪除資源的順序實際跑一次 | 案例 | A1 建立請求成功                                         | 小         |
+| Run Command 寫回 `authorized_keys` 的實測（`ocarun` 的 sudo 設定、送指令的政策）                                                                          | 案例 | A1 建立請求成功                                         | 小         |
+| OCI 的最小權限：群組、限定 compartment 的 policy 範例（日常帳號、CI 專用使用者）；可併入 Bastion 那一篇                                                   | 主章 | 先查官方 policy 範例                                    | 中         |
+| Always Free 主機被閒置回收或試用結束停用之後的狀態與恢復                                                                                                  | 案例 | 遇到一次實際回收或停用                                  | 小         |

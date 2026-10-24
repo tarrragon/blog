@@ -46,7 +46,7 @@ tags: ["infra", "cloud-providers", "free-tier", "cost"]
 - **Google Cloud**：試用結束時如果沒有升級成付費帳戶，帳單帳戶會被停用、資源會被停止、帳號失去 Google Cloud 產品的存取權，有 30 天的寬限期可以升級回復。Free Tier 的固定額度要在付費帳戶上才能繼續用；升級之後超出額度的用量開始計費。
 - **AWS**：Free plan 帳號在開立 6 個月後或試用金用完時（先到者為準）自動關閉，除非升級到 Paid plan；升級之後超出額度的用量開始計費。
 
-三家在不升級時的處置不同：Oracle Cloud 不升級也能留著免費資源，Google Cloud 與 AWS 不升級的話資源會停掉或帳號會關閉，而升級之後這兩家超出額度的部分會直接計費。升級成付費帳戶之前先設好預算警示，讓超出額度的費用在發生時有人收到通知。預算與警示的設計見 [運行期維運的成本管理](/operations/08-cost-management/)；Google Cloud 上從預算通知觸發自動停損的建置見 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)，其他兩家目前沒有對應的實作篇。
+三家在不升級時的處置不同：Oracle Cloud 不升級也能留著免費資源，Google Cloud 與 AWS 不升級的話資源會停掉或帳號會關閉，而升級之後這兩家超出額度的部分會直接計費。升級成付費帳戶之前先設好預算警示，讓超出額度的費用在發生時有人收到通知。預算警示的門檻怎麼訂、從預算通知觸發停損的建置，目前只寫在 Google Cloud 的實作篇 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)；成本監控與異常告警的設計見 [運行期維運的成本管理](/operations/08-cost-management/)。Oracle Cloud 不同帳號狀態下超出額度的結果，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉。
 
 ## 出站流量與閒置回收
 
@@ -56,7 +56,7 @@ tags: ["infra", "cloud-providers", "free-tier", "cost"]
 - **Google Cloud**：Free Tier 每月 1 GB 從北美送往各地的出站流量（不含中國與澳洲）；超過的部分計費。
 - **AWS**：Free plan 頁面沒有列流量額度，額度寫在 EC2 的價格頁：每月 100 GB 送往網際網路的出站流量免費，所有服務與區域合計（不含中國與 GovCloud 區域）。
 
-另一項只有 Oracle Cloud 明文寫出的規則是閒置回收：Always Free 主機在 7 天內的 CPU 使用率（取第 95 百分位）、網路使用率、記憶體使用率（只算 A1 機型）都低於 20% 時，Oracle 可能回收它；官方頁用的詞是 reclaim，沒有寫回收之後主機是停止還是刪除。規則的出處見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。一台大部分時間沒有流量的 VPN 或實驗機會落在這個條件裡。
+另一項只有 Oracle Cloud 明文寫出的規則是閒置回收：Always Free 主機在 7 天內的 CPU 使用率（取第 95 百分位）、網路使用率、記憶體使用率（只算 A1 機型）都低於 20% 時，Oracle 可能回收它（官方沒有寫網路使用率的 20% 是對什麼的比例）；官方頁用的詞是 reclaim，沒有寫回收之後主機是停止還是刪除。規則的出處見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。一台大部分時間沒有流量的 VPN 或實驗機會落在這個條件裡。
 
 ## 三家免費方案比較表（查證日期 2026-10-24）
 
@@ -65,7 +65,8 @@ tags: ["infra", "cloud-providers", "free-tier", "cost"]
 | 試用金             | 300 美元、30 天                                                                                                                                                                                      | 300 美元、90 天                                                                    | 100 美元起、最多 200 美元、6 個月                                                                                     |
 | 固定額度的運算     | A1 每月 1,500 OCPU 小時與 9,000 GB 小時；E2.1.Micro 兩台                                                                                                                                             | 每月一台 `e2-micro`                                                                | 頁面未列出 EC2 的固定時數                                                                                             |
 | 固定額度的區域     | 只限 home region                                                                                                                                                                                     | `us-west1`、`us-central1`、`us-east1`                                              | 頁面未寫明                                                                                                            |
-| 試用結束、不升級時 | 帳號保留、Always Free 資源繼續                                                                                                                                                                       | 資源停止、帳號失去存取權                                                           | 帳號關閉                                                                                                              |
+| 固定額度的磁碟     | 開機磁碟與區塊磁碟合計 200 GB                                                                                                                                                                        | 30 GB-months 的 standard persistent disk（開機磁碟類型要選 standard 才算）         | 頁面未列出                                                                                                            |
+| 試用結束、不升級時 | 帳號保留、Always Free 資源繼續（A1 合計超額時全部 A1 停用）                                                                                                                                          | 資源停止、帳號失去存取權                                                           | 帳號關閉                                                                                                              |
 | 出站流量           | 每月 10 TB                                                                                                                                                                                           | 每月 1 GB（北美出發）                                                              | 每月 100 GB（所有服務合計，列在 EC2 價格頁）                                                                          |
 | 官方頁面           | [Free Tier](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier.htm)、[Always Free Resources](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm) | [Free cloud features](https://docs.cloud.google.com/free/docs/free-cloud-features) | [AWS Free Tier](https://aws.amazon.com/free/)、[EC2 On-Demand Pricing](https://aws.amazon.com/ec2/pricing/on-demand/) |
 
@@ -77,11 +78,12 @@ tags: ["infra", "cloud-providers", "free-tier", "cost"]
 - 開機磁碟的容量與類型
 - 公開 IPv4 位址：AWS 對每個公開 IPv4 位址按小時另外計費，其他業者去各自價格頁的 IP 位址那一項查
 - 出站流量的預估量
-- 負載平衡器：服務對外、主機留在私有 subnet 時，負載平衡器另外計費
+- 負載平衡器：服務對外、主機留在私有 subnet 時要用。Oracle Cloud 的 Always Free 含一個 10 Mbps 的負載平衡器，AWS 與 Google Cloud 另外計費
+- NAT 閘道：私有 subnet 的主機要下載套件更新時要用，AWS 的 NAT Gateway 與 Google Cloud 的 Cloud NAT 另外計費
 
 ## 延伸閱讀：各家的實測紀錄與成本防護
 
 - [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)：Always Free 為什麼綁在 home region、選錯時有哪些路
-- [運行期維運的成本管理](/operations/08-cost-management/)：升級成付費帳戶之後，預算警示與成本監控的設計
+- [運行期維運的成本管理](/operations/08-cost-management/)：升級成付費帳戶之後，成本監控與異常告警的設計
 - [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)：Google Cloud 上用預算通知觸發停損開關的建置
 - [主機形態光譜](/going-live/hosting-spectrum/)：在比較 IaaS 主機之前，先決定服務要自己管到哪一層

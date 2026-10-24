@@ -6,7 +6,7 @@ weight: 123
 ---
 
 
-SSRF 的核心概念是「攻擊者讓伺服器替他發出未授權的網路請求」。如果 API 接收 URL 並由後端抓取內容，攻擊者可能指向內部服務、metadata endpoint 或管理介面。 可先對照 [Stakeholder Mapping](/backend/knowledge-cards/stakeholder-mapping/)。
+SSRF 的核心概念是「攻擊者讓伺服器替他發出未授權的網路請求」。如果 API 接收 URL 並由後端抓取內容，攻擊者可能指向內部服務、metadata endpoint（雲端主機的中繼資料服務，見 [Instance Metadata Service](/infra/knowledge-cards/instance-metadata-service/)）或管理介面。 可先對照 [Stakeholder Mapping](/backend/knowledge-cards/stakeholder-mapping/)。
 
 ## 概念位置
 

@@ -33,3 +33,4 @@ security group 是封包抵達資源前的最後一道網路檢查：規則寫�
 - [Subnet](/infra/knowledge-cards/subnet/) — security group 與 subnet 各守不同層級的邊界
 - [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) — 目的主機的入站規則以跳板機的 security group 當來源
 - [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) — 管理 port 只放行代理位址段的做法
+- [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/) — Oracle Cloud 與 Google Cloud 上對應網卡層規則的元件與合併方式

@@ -18,7 +18,7 @@ tags: ["infra", "cloud-providers", "vm", "region", "availability-zone"]
 
 主機建好之後不能搬到另一個區域。要換區域，做法是在新區域建一台新主機、把資料搬過去，再刪掉舊的。
 
-免費額度常常綁在特定區域上：Oracle Cloud 的 Always Free 只能用在申請時選的 home region，Google Cloud 的 Free Tier 只適用於三個美國區域。這一層的限制比機型與網路都早生效，所以在申請帳號、還沒進建立頁之前就要想清楚，見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
+免費額度常常綁在特定區域上：Oracle Cloud 的 Always Free 只能用在申請時選的 home region，Google Cloud 的 Free Tier 只適用於三個美國區域。Oracle Cloud 的 home region 在申請帳號時就定了、之後不能改，所以這一層在 Oracle Cloud 上要在申請帳號之前想清楚；Google Cloud 的區域在建立主機時才選，選在三個美國區域以外就不算免費。各家的區域限制見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
 
 ## 可用區（availability zone / availability domain）：區域裡的哪一棟
 
@@ -37,7 +37,7 @@ tags: ["infra", "cloud-providers", "vm", "region", "availability-zone"]
 
 只有一台主機時，故障域沒有選擇的意義：不論放在哪一個，那台主機都只在一組硬體上。建立頁的預設「讓業者選」就是對的選擇，Oracle Cloud 會依當下的容量挑一個（[實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)在只有一個可用區的 `ap-batam-1` 就是這樣填的）。手動指定故障域還會縮小可用的容量：指定之後只接受那一個故障域裡的硬體。Oracle Cloud 的 Compute〈Known Issues〉頁對 `Out of host capacity` 列的處置裡，就有一項是不指定 fault domain 再建一次。
 
-故障域的作用在兩台以上。同一個服務的兩台主機，區域有多個可用區時先分到不同可用區，因為可用區隔離的是整棟資料中心的電力與網路，範圍比故障域大（見 [Availability Zone（可用區）](/infra/knowledge-cards/availability-zone/) 的〈設計責任〉）；區域只有一個可用區時，才靠故障域把兩台放在不同的硬體上，一組硬體故障時只停一台。
+故障域的作用在兩台以上。同一個服務的兩台主機，區域有多個可用區時先分到不同可用區，因為可用區隔離的是整棟資料中心的電力與網路，範圍比故障域大（見 [Availability Zone（可用區）](/infra/knowledge-cards/availability-zone/) 的〈設計責任〉）；區域只有一個可用區時，才靠故障域把兩台放在不同的硬體上，一組硬體故障時只停一台。跨可用區的代價是兩台之間的流量多一段距離：AWS 與 Google Cloud 對跨可用區的流量另外計費，兩台之間做同步複製時延遲也比同一個可用區裡高。
 
 Oracle Cloud 允許建立之後修改故障域。AWS 與 Google Cloud 沒有故障域這個欄位，對應的功能是放置政策（AWS 的 placement group 用 spread 策略、Google Cloud 的 spread placement policy），作用同樣是讓一組主機分散到不同的實體硬體上。兩家都能套用到既有的主機：AWS 要先停止主機才能把它換進或移出 placement group，Google Cloud 的 spread placement policy 在官方說明的條件下可以不停機套用到既有的主機。
 

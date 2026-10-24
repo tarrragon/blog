@@ -10,11 +10,11 @@ tags: ["infra", "cloud-providers", "console", "iam", "cost"]
 
 ## 主控台的共通結構：選單、區域選擇器與資源分組篩選器
 
-三家主控台的版面有三個共同的元件，第一次登入時先找到它們：
+主控台上有三種元件第一次登入時要先找到，各家有沒有、放在哪裡不同：
 
 - **導覽選單**：列出所有服務，依領域分類。Oracle Cloud 是左上角的 ☰，AWS 與 Google Cloud 也有同樣位置的選單，另外都有一個搜尋框，打服務名稱就能直接跳過去。不知道某個功能在哪一類底下時，搜尋框比翻選單快。
 - **區域選擇器**：大部分資源屬於某一個區域，主控台一次只顯示目前選定區域裡的資源。主機建在東京、選擇器停在新加坡時，主機清單是空的。Oracle Cloud 與 AWS 的選擇器在右上角；Google Cloud 的主控台不以區域切換，而是在清單上列出每個資源的區域。
-- **資源分組篩選器**：資源還歸屬於某一個分組（Oracle Cloud 的 compartment、Google Cloud 的 project、AWS 的帳號），清單頁只列出目前選定分組裡的資源。Oracle Cloud 的清單頁上有一個 compartment 篩選器，預設常停在 root；資源建在別的 compartment 時，要切過去才看得到。
+- **資源分組篩選器**：資源還歸屬於某一個分組（Oracle Cloud 的 compartment、Google Cloud 的 project、AWS 的帳號），清單頁只列出目前選定分組裡的資源。Oracle Cloud 的清單頁上有一個 compartment 篩選器，預設常停在 root，資源建在別的 compartment 時，要切過去才看得到；Google Cloud 在頂端列切換專案；AWS 的分組由目前登入的帳號決定，清單頁上沒有篩選器。
 
 清單看起來是空的、或剛建的資源找不到時，先查區域與分組這兩個篩選條件，多數時候資源還在，只是篩掉了。
 
@@ -22,7 +22,7 @@ tags: ["infra", "cloud-providers", "console", "iam", "cost"]
 
 管理使用者、群組、角色與權限政策，以及登入方式（密碼政策、多因素驗證、外部身分提供者）。日常的工作是加人、移除人、調整誰能動哪些資源，以及替程式建立服務帳號或 API 金鑰。
 
-新帳號開好之後最先要做的事，有兩件在這個領域：替申請時建立的管理員帳號開啟多因素驗證，並另外建一個日常使用、權限較小的帳號，管理員帳號只在必要時用。理由是管理員帳號能動整個帳號裡的一切，它的密碼外洩時沒有任何一層權限擋得住；日常操作用權限較小的帳號，外洩時影響範圍就限在那些權限裡。帳號不是自己申請的（公司指派、接手別人的帳號）時，先確認誰持有那個管理員帳號、它有沒有開多因素驗證。權限的分級與日常帳號的設計見 [團隊權限分級與存取管理](/infra/02-identity-credentials/team-access-management/)，概念見 [IAM](/infra/knowledge-cards/iam/) 卡。
+新帳號開好之後要先做的事（清單見〈新帳號開好之後先看的領域〉）有兩件在這個領域：替申請時建立的管理員帳號開啟多因素驗證，並另外建一個日常使用、權限較小的帳號，管理員帳號只在必要時用。理由是管理員帳號能動整個帳號裡的一切，它的密碼外洩時沒有任何一層權限擋得住；日常操作用權限較小的帳號，外洩時影響範圍就限在那些權限裡。帳號不是自己申請的（公司指派、接手別人的帳號）時，先確認誰持有那個管理員帳號、它有沒有開多因素驗證。公司的帳號常屬於一個組織，組織的政策（AWS Organizations 的 SCP、Google Cloud 的組織政策）可能讓某些選項建不起來，建立時收到權限不足的錯誤而自己的權限看起來沒問題時，去問管理組織的人。權限的分級與日常帳號的設計見 [團隊權限分級與存取管理](/infra/02-identity-credentials/team-access-management/)，概念見 [IAM](/infra/knowledge-cards/iam/) 卡。
 
 ## 資源分組與標籤：資源屬於哪個專案、誰付錢
 
@@ -46,7 +46,7 @@ tags: ["infra", "cloud-providers", "console", "iam", "cost"]
 
 查看帳單與付款方式、依服務與分組分析費用、設定預算與警示。新帳號開好之後要來這裡設一個預算警示，讓費用超過預期時有人收到通知。帳號已經升級成付費帳戶時，超出免費額度或用到非免費機型的費用會直接扣款，所以這類帳號一定要設。
 
-Oracle Cloud 沒有升級的帳號在試用結束後不會開始計費，預算警示在這種帳號上的用處是在試用期間提早看到哪些資源不在免費額度內。成本管理的概念見 [運行期維運的成本管理](/operations/08-cost-management/)；從預算通知觸發自動停損的建置，目前只有 Google Cloud 的實作篇 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)。免費額度的規則見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
+Oracle Cloud 沒有升級的帳號在試用結束後不會開始計費，預算警示在這種帳號上的用處是在試用期間提早看到哪些資源不在免費額度內。成本監控與異常告警見 [運行期維運的成本管理](/operations/08-cost-management/)；預算警示的門檻與從預算通知觸發自動停損的建置，目前只有 Google Cloud 的實作篇 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)。帳單上已經出現費用、要找出是哪個資源在計費時，在成本分析頁依服務與資源拆開；免費額度的帳號最常見的來源是刪除主機後留下的開機磁碟（[磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/infra/cloud-providers/vm-options/storage/) 的〈終止主機時開機磁碟的預設去留〉）、選到不在免費額度內的機型，以及 AWS 對公開 IPv4 位址的計費。免費額度的規則見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
 
 ## 監控、日誌與告警：系統現在的狀態
 
@@ -68,7 +68,7 @@ Oracle Cloud 沒有升級的帳號在試用結束後不會開始計費，預算�
 
 帳號的第一小時要處理的安全底線——管理員帳號的多因素驗證、確認自己的登入身分、檢查既存的存取金鑰、確認稽核紀錄有在記、設帳單警報——整理在 [拿到雲端帳號的第一天](/infra/00-infra-mindset/first-day-with-cloud-account/) 的〈第一小時：安全底線〉，那一篇的操作路徑以 AWS 為例，其他業者對應的選單見下方〈各家的選單名稱：各管理領域在三家主控台上的位置〉；接手已經有資源的帳號時，先看同一篇的〈帳號現況判讀：空帳號還是既有資源〉。在那幾項之外，要開始建資源之前再看兩個領域：
 
-- **資源分組**：建一個實驗用的分組，之後的資源都建在裡面，清理時整組處理。Oracle Cloud 建一個 compartment，Google Cloud 建一個 project；AWS 的分組單位是帳號本身，另開帳號要由組織的管理帳號在 AWS Organizations 裡做，被指派管理單一帳號的人在那個帳號裡改用標籤與 Resource Groups 分組。
+- **資源分組**：建一個實驗用的分組，之後的資源都建在裡面，清理時只看這一組。Oracle Cloud 建一個 compartment，compartment 要先清空裡面的所有資源才能刪除，刪除的順序見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的〈刪除這組資源的順序〉；Google Cloud 建一個 project，刪除 project 會連同裡面的資源一起刪；AWS 的分組單位是帳號本身，另開帳號要由組織的管理帳號在 AWS Organizations 裡做，被指派管理單一帳號的人在那個帳號裡改用標籤與 Resource Groups 分組。
 - **配額與限制**：確認要用的機型在這個帳號、這個區域的上限不是 0；上限不是 0 也不代表那一區有那種硬體。
 
 ## 各家的選單名稱：各管理領域在三家主控台上的位置
@@ -92,5 +92,5 @@ AWS 的身分與權限有兩處：公司帳號用 SSO 登入時，人員與他�
 ## 延伸閱讀：各領域的概念模組
 
 - [模組二：身分與存取憑證地基](/infra/02-identity-credentials/)：身分與權限領域裡的角色、政策與憑證設計
-- [運行期維運的成本管理](/operations/08-cost-management/)：帳單與成本領域裡的預算、警示與停損
+- [運行期維運的成本管理](/operations/08-cost-management/)：帳單與成本領域裡的成本監控、異常告警與計費模型
 - [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/)：運算領域裡建立主機時的每一個選項

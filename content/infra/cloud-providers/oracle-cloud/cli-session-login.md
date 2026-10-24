@@ -47,7 +47,7 @@ security_token_file=/Users/<user>/.oci/sessions/DEFAULT/token
 
 不再使用時跑 `oci session terminate --profile <profile 名稱>`，CLI 會從設定檔移除這一組並刪掉它參照的金鑰與 token 檔。這個動作只清本機，OCI 那一端不會撤銷已經簽發的 token，所以這兩個檔被複製走時，拿到的人可以在 token 過期前自己跑 `oci session refresh`，影響的期限最長到登入後 24 小時。
 
-## 使用 session token 時每條指令要帶的設定
+## 使用 session token 時每條指令要帶的設定：config file is invalid 與 user missing
 
 CLI 預設用 API 簽章金鑰的方式驗證身分，用 session token 時要明確告訴它。兩種寫法效果相同：
 
@@ -98,3 +98,4 @@ oci iam region-subscription list --profile apikey   # 不帶 --auth，CLI 用 AP
 
 - [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)：登入頁的租用戶與使用者名稱欄位、home region 對 Always Free 的限制
 - [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)：登入之後要建主機時，各家免費額度的計算方式
+- [身分與存取憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：session token 與 API 簽章金鑰這組取捨背後的概念，〈長期 access key 的風險〉與〈OIDC：給 CI/CD 的短期憑證〉

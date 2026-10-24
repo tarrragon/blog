@@ -1,7 +1,7 @@
 ---
 title: "模組八：成本管理"
 date: 2026-06-20
-description: "雲端帳單怎麼不失控 — reserved instance、spot instance、right-sizing、成本監控告警與預算警示；預算通知觸發停損開關的 GCP 建置在雲端業者模組"
+description: "雲端帳單怎麼不失控 — reserved instance、spot instance、right-sizing 與成本監控告警；預算警示與停損開關目前只有 GCP 的建置篇，放在雲端業者模組"
 weight: 8
 tags: ["devops", "cost-management", "cloud-cost", "reserved-instance", "spot-instance"]
 ---

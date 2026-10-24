@@ -20,7 +20,7 @@ OS/runtime/DB       platform 管佈署    平台管一切、可縮到零 供應�
 /web server 全自己  你只給 code
 ```
 
-- **VPS / IaaS**（DigitalOcean Droplet、AWS EC2、Hetzner）：平台給你一台（虛擬）機器，OS 以上全你自己裝——runtime（語言執行環境，如 Node/PHP）、web server、DB、開機自動啟動、更新。控制權最大，維運工作也最多。
+- **VPS / IaaS**（DigitalOcean Droplet、AWS EC2、Hetzner）：平台給你一台（虛擬）機器，OS 以上全你自己裝——runtime（語言執行環境，如 Node/PHP）、web server、DB、開機自動啟動、更新。控制權最大，維運工作也最多。選了這一格之後，各家免費額度怎麼算見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)，建立主機時每個欄位的意義見 [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/)。
 - **PaaS**（Heroku、Render、Railway、Cloud Run、App Runner）：你把 code（或 container image）交給平台，平台管佈署、擴縮、TLS（HTTPS 憑證）、健康檢查。你不碰機器。控制權少一些，省掉大量維運。
 - **Serverless / FaaS**（AWS Lambda、Cloud Functions、Cloudflare Workers）：你交的是一段函式，平台按請求觸發、沒流量時縮到零、不收錢（指函式本身；後面的 DB、儲存、API gateway 仍照計費）。最省維運，但要遷就它的執行模型（[無狀態](/going-live/twelve-factor-baseline/)、有執行時間上限、[冷啟動](/backend/knowledge-cards/cold-start/)——閒置後第一個請求要等它重新起來），本地開發與除錯也比較麻煩。
 - **BaaS（backend-as-a-service）**（Firebase、Supabase）：連資料庫、認證、後端邏輯層都幫你包，你主要寫前端 + 設定。部署這件事幾乎消失。（再往外就是現成的 SaaS 成品軟體——你只用、連 code 都不寫，那已經不在「部署」的範圍內。）

@@ -54,6 +54,8 @@ Root 帳號是雲端環境的最高權限，能做任何事，包括關閉整個
 
 設定路徑（AWS）：Console 搜尋 Billing → Budgets → Create budget → Cost budget。設一個月預算（如 $50 或 $100，依你的環境規模），超過 80% 和 100% 時發 email 通知。
 
+帳號是某一家的免費方案時，試用結束那一刻帳號與資源會怎樣（Oracle Cloud 不升級也保留免費資源，Google Cloud 停用帳單帳戶，AWS 關閉帳號），見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/) 的〈試用結束後帳號與資源的處置〉；其他業者的預算頁在哪裡見 [雲端主控台的管理領域](/infra/cloud-providers/console-areas/) 的選單表。
+
 ## 帳號現況判讀：空帳號還是既有資源
 
 安全底線做完後，下一步是搞清楚帳號的現況。這決定了你接下來走哪條路線。

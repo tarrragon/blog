@@ -39,7 +39,7 @@ tags: ["infra", "network", "gcp", "ssh", "rdp", "iap", "firewall"]
 | `default-allow-icmp`     | ICMP                                | `0.0.0.0/0`    |
 | `default-allow-internal` | 同網路內 TCP、UDP 所有 port 與 ICMP | `10.128.0.0/9` |
 
-GCP 的防火牆規則依 priority 數字由小到大評估。這四條的 priority 是 65534，只排在 VPC 隱含的「拒絕所有入站」規則（65535）前面，所以自己建立的規則（不指定時是 1000）都會比它們先被評估。它們也沒有指定 target tag（防火牆規則用來挑選作用對象的標記），作用對象是這個網路裡的每一台 VM。
+GCP 的防火牆規則依 priority 數字由小到大評估。這四條的 priority 是 65534，只排在 VPC 隱含的「拒絕所有入站」規則（65535）前面，所以自己建立的規則（不指定時是 1000）都會比它們先被評估。它們也沒有指定 target tag（防火牆規則用來挑選作用對象的標記），作用對象是這個網路裡的每一台 VM。Oracle Cloud 與 AWS 預設網路的同類規則見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/) 的〈各家預設網路規則對 SSH 的開放〉。
 
 只收掉 `default-allow-ssh` 會留下兩個暴露面。`default-allow-rdp` 讓每一台 Windows VM 的遠端桌面對整個網際網路開放，而 RDP 預設接受密碼登入。`default-allow-internal` 讓同一個網路裡的 VM 之間不受 port 限制，一台 VM 被入侵之後，攻擊者從那台機器能直接連到其他 VM 的資料庫 port 與管理 port，這種擴散方式叫[橫向移動（lateral movement）](/backend/knowledge-cards/lateral-movement/)。另外，這四條自動建立的規則預設沒有開啟 firewall rules logging，防火牆這一層不會留下被掃描或被連入的紀錄。管理 port 對外開放的風險與廠商無關，見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)的〈對外開放管理 port 的實際風險〉。
 

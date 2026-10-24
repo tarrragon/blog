@@ -131,7 +131,7 @@ Windows 主機用 RDP 登入時，這一層是 Windows 帳號而不是 SSH 金�
 - **主機擁有者授權給他們自己的帳號**（外部人員公司或個人的 Google 帳號）：部分通道服務接受，GCP 上要另外授予外部帳號登入 VM 的角色，而組織若限制 IAM 綁定只能用自己網域的成員，這種授權會被拒絕（指令見 GCP 篇〈IAP 的 IAM 授權範圍：誰拿得到通道〉）。組織 IdP 的多因素驗證強制管不到這些帳號，採用前要確認對方帳號的驗證方式。
 - **兩者都不行**：外部人員落在沒有可用帳號系統的處境（見本節最後一段）。合約結束、整個團隊一起離場是收回權限的時間點，所以要有一份清單，列出所有主機上屬於這個團隊的金鑰，或改用由主機擁有者的 SSH CA 簽發、會到期的 SSH 憑證（見〈主機登入驗證：登入權限的收回靠人工刪除、帳號連動或到期〉）。
 
-**個人**（一個人管理屬於自己的一台或幾台主機）用的身分是自己在 GitHub 或 Google 的個人帳號，這個帳號就是通道授權的依據，所以它同樣要開多因素驗證，能用硬體安全金鑰或 passkey 就用。主機屬於客戶時不是這一類，那是外部合作方：用個人帳號把客戶的主機接進自己的 tailnet 或 Cloudflare 帳號，主機擁有者就失去控制，合約結束時也沒有收回的位置。主機只有一台時，跳板機只是多開一台對外的主機，這時的選擇是 mesh VPN 或以個人帳號登入的代理程式反向連線（Cloudflare Tunnel 搭配 Access）：除了 SSH 還要連主機上其他 port、而且每台要連的裝置都能裝用戶端時選 mesh VPN；想從瀏覽器或沒裝用戶端的裝置登入時選反向連線，代價是依賴 Cloudflare 營運的服務。兩者更完整的取捨見 [7.C11 選型：單人遠端 Shell — Tailscale vs Cloudflare Tunnel](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)。
+**個人**（一個人管理屬於自己的一台或幾台主機）用的身分是自己在 GitHub 或 Google 的個人帳號，這個帳號就是通道授權的依據，所以它同樣要開多因素驗證，能用硬體安全金鑰或 passkey 就用。主機屬於客戶時不是這一類，那是外部合作方：用個人帳號把客戶的主機接進自己的 tailnet 或 Cloudflare 帳號，主機擁有者就失去控制，合約結束時也沒有收回的位置。主機在自己申請的雲端帳號裡時，身分已經在那一家的 IAM 裡，可以直接用那一家的代理（GCP 的 IAP、Oracle Cloud 的 Bastion、AWS 的 Session Manager），建立主機時的選法見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/) 的〈虛擬網路與 subnet：主機放在哪一段網路〉；自己有固定的對外 IP 時，來源 IP 白名單也可以用。主機分散在不同業者或家裡的機器上時，跳板機只是多開一台對外的主機，這時的選擇是 mesh VPN 或以個人帳號登入的代理程式反向連線（Cloudflare Tunnel 搭配 Access）：除了 SSH 還要連主機上其他 port、而且每台要連的裝置都能裝用戶端時選 mesh VPN；想從瀏覽器或沒裝用戶端的裝置登入時選反向連線，代價是依賴 Cloudflare 營運的服務。兩者更完整的取捨見 [7.C11 選型：單人遠端 Shell — Tailscale vs Cloudflare Tunnel](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)。
 
 **機器**（CI、Ansible 這類設定管理工具、監控探測）的身分不經過 IdP 的登入畫面，放在雲端的服務帳號上。跑在 CI 平台上的機器，用 CI 平台簽發的 OIDC token 換成服務帳號的身分（GCP 與 AWS 都稱為 workload identity federation，概念見 [Workload Identity](/backend/knowledge-cards/workload-identity/)，做法見〈通道授權的做法〉最後一段）；跑在雲端 VM 上的機器（一台定期執行 Ansible 的控制主機），用那台 VM 掛的服務帳號。收回是撤掉那個服務帳號的授權。主機登入驗證用 OS Login 這類帳號連動的做法、或 SSH 憑證時，機器不必持有長期金鑰；用靜態 `authorized_keys` 時，機器手上的 SSH 私鑰仍然長期有效，要定期輪替。
 
@@ -174,11 +174,11 @@ Windows 主機用 RDP 登入時，這一層是 Windows 帳號而不是 SSH 金�
 
 服務已經用不可變基礎設施（immutable infrastructure）的方式部署，也就是以重新建立主機取代登入修改時，管理通道只在除錯與救援時才用得到。這時可以讓通道平時對任何人都開不起來：管理員平時移除通道授權的權限綁定，除錯時才臨時授予，用完收回；這一整個循環叫 just-in-time access，授予與收回的流程與救援入口相同，見〈救援入口：管理通道斷掉時的備用路徑〉。主機由 managed instance group 或 GKE 這類機制依 template 重建時，救援也多半改成重建一台而不是登入修，設定與做法見[GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/)。
 
-## AWS 上對應的元件
+## AWS 與 Oracle Cloud 上對應的元件
 
 這篇提到的 AWS 元件按層列在這裡，方便對照：網路可達性有 SSM Session Manager（代理程式反向連線）、EC2 Instance Connect Endpoint（從代理位址連入，支援原生 SSH 與 RDP）與 security group（防火牆規則）；通道授權由 AWS IAM 決定誰能開 Session Manager 的工作階段或使用 Instance Connect Endpoint；主機登入驗證有 EC2 Instance Connect（推送短效公鑰）；出站路徑有 NAT Gateway 與 VPC Endpoint；救援入口是 EC2 Serial Console；組織層級的護欄是 AWS Organizations 的 [SCP](/infra/knowledge-cards/scp/)。規則的盤點方式見 [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)。
 
-Oracle Cloud 的 Bastion 名字跟跳板機相同，位置在這張地圖上卻不一樣。它是業者託管的服務，不是放在公開網段、對外開 22 port 的那台主機：Bastion 在主機所在的 subnet 裡有一個私有端點，主機與 Bastion 都不需要公開 IP，所以它承擔網路可達性；誰能建立工作階段由 Oracle Cloud 的 IAM 政策決定，這是通道授權；managed SSH session 由主機上的代理程式臨時放進一把公鑰，承擔主機登入驗證。各欄位怎麼設定見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/)。
+Oracle Cloud 的 Bastion 名字跟跳板機相同，位置在這張地圖上卻不一樣。它是業者託管的服務，不是放在公開網段、對外開 22 port 的那台主機：Bastion 在主機所在的 subnet 裡有一個私有端點，主機與 Bastion 都不需要公開 IP，所以它承擔網路可達性；誰能建立工作階段由 Oracle Cloud 的 IAM 政策決定，這是通道授權；managed SSH session 由主機上的代理程式臨時放進一把公鑰，承擔主機登入驗證；另一種 port forwarding session 只承擔網路可達性與通道授權，主機登入驗證仍然是主機自己的 sshd 與 `authorized_keys`。私有 subnet 裡的主機要用 managed SSH session，VCN 要有服務閘道之類的閘道與路由，實際的網路設定見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的〈進建立頁之前：compartment、VCN、閘道與 private subnet〉。各欄位怎麼設定見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉，金鑰遺失時 Oracle Cloud 的救援入口（序列主控台、Run Command、掛開機磁碟）見同一篇的〈建立之後加金鑰與金鑰遺失時的入口〉。
 
 ## 延伸閱讀：GCP 上的實作與反向連線的運作細節
 

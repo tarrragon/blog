@@ -227,7 +227,7 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 
 NACL 的特點是無狀態與支援顯式 deny。無狀態意味著放行了入站不代表回應的出站自動放行，回程封包得自己對得上另一條出站規則 — 這讓 NACL 的維護比 security group 複雜。支援顯式 deny 則是它獨有的能力：security group 只能說「誰可以進」，NACL 能說「誰一定不能進」，這在需要 subnet 邊界封鎖特定已知惡意網段時有用。
 
-多數設計的主力是 security group：它貼著服務、用 group 互相引用就能表達「誰能連誰」，已經涵蓋大部分最小開放需求。NACL 留給少數情境 — 需要在 subnet 邊界擋掉一整段已知惡意網段、或要對某類流量做顯式 deny 時才展開。多數環境讓 NACL 維持預設全通、把存取控制集中在 security group，是可以接受的選擇。重點是知道這一層存在、在需要 subnet 層粗篩時記得它。
+多數設計的主力是 security group：它貼著服務、用 group 互相引用就能表達「誰能連誰」，已經涵蓋大部分最小開放需求。NACL 留給少數情境 — 需要在 subnet 邊界擋掉一整段已知惡意網段、或要對某類流量做顯式 deny 時才展開。多數環境讓 NACL 維持預設全通、把存取控制集中在 security group，是可以接受的選擇。Oracle Cloud 與 Google Cloud 的這兩層規則合併方式不同（Oracle Cloud 的 security list 與 NSG 取聯集、Google Cloud 只有 VPC 一層），見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/) 的〈防火牆規則的位置與合併方式〉。重點是知道這一層存在、在需要 subnet 層粗篩時記得它。
 
 ## 為什麼網路要先於核心服務鋪好
 

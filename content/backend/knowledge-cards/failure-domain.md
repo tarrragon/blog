@@ -6,7 +6,7 @@ weight: 474
 tags: ["backend", "reliability", "observability", "failure-domain"]
 ---
 
-失效域（failure domain，也寫作 fault domain、故障域）是一組會因為同一類原因一起停掉的元件：對主機故障而言是同一台主機上的程序，對機房斷電而言是同一個機房裡的主機，對帳號停權而言是同一個雲端帳號底下的資源。判斷的單位是**共用的依賴**——兩個元件共用一個會失效的依賴（主機、電源、網路、帳號、DNS），對那一類失效就落在同一個失效域，備援與監控是否獨立都以這件事判斷。任何兩台主機都會共用某些依賴，所以「兩者是不是不同的失效域」要指明是對哪一類失效。以為獨立而其實共用觸發點的情形見 [Correlated Failure](/backend/knowledge-cards/correlated-failure/)。
+失效域（failure domain，也寫作 fault domain、故障域）是一組會因為同一類原因一起停掉的元件：對主機故障而言是同一台主機上的程序，對機房斷電而言是同一個機房裡的主機，對帳號停權而言是同一個雲端帳號底下的資源。Oracle Cloud 把可用區內的一組硬體直接命名為 fault domain，建立主機時可以指定，見 [Fault Domain（故障域）](/infra/knowledge-cards/fault-domain/)。判斷的單位是**共用的依賴**——兩個元件共用一個會失效的依賴（主機、電源、網路、帳號、DNS），對那一類失效就落在同一個失效域，備援與監控是否獨立都以這件事判斷。任何兩台主機都會共用某些依賴，所以「兩者是不是不同的失效域」要指明是對哪一類失效。以為獨立而其實共用觸發點的情形見 [Correlated Failure](/backend/knowledge-cards/correlated-failure/)。
 
 ## 概念位置
 
