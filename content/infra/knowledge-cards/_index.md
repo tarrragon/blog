@@ -62,6 +62,7 @@ PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識
 | [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/)                                    | 放在公開網段、只負責轉接管理連線的主機，其他主機只接受來自它的 SSH                        |
 | [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/)                            | SSH CA 簽發的短期使用者憑證，到期自動失效，主機只信任 CA 公鑰                             |
 | [OS Login](/infra/knowledge-cards/os-login/)                                                      | GCP 依 Google 帳號與 IAM role 決定 VM 登入與 sudo 權限的機制                              |
+| [Service Account（服務帳號）](/infra/knowledge-cards/service-account/)                            | 給程式使用的身分，權限分成「它能做什麼」與「誰能以它的身分行事」兩邊設定                  |
 | [Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/)                            | 不經過主機作業系統的網路設定與 sshd 的救援登入路徑，管理通道斷掉時的備用入口              |
 | [Managed Instance Group（MIG，代管執行個體群組）](/infra/knowledge-cards/managed-instance-group/) | GCP 依 instance template 自動建立、修復、擴增與更新一組 VM，持久設定要寫進 template       |
 | [Network Tag（GCP 網路標籤）](/infra/knowledge-cards/network-tag/)                                | 貼在 GCP VM 上、讓防火牆規則選出要套用的 VM 的標籤                                        |

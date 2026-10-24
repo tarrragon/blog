@@ -10,21 +10,14 @@ tags: ["devops", "cost-management", "cloud-cost", "reserved-instance", "spot-ins
 
 ## 章節
 
-| 章節                                                                             | 回答什麼問題                                        |
-| -------------------------------------------------------------------------------- | --------------------------------------------------- |
-| [計費模式理解](/operations/08-cost-management/billing-models/)                   | 帳單維度、承諾模式、egress 這類隱藏成本             |
-| [Right-sizing](/operations/08-cost-management/right-sizing/)                     | 找過度配置、downsizing 不能砍過膝點、機型世代       |
-| [成本監控與告警](/operations/08-cost-management/cost-monitoring/)                | 歸因、異常告警、showback vs chargeback              |
-| [開發環境成本控制](/operations/08-cost-management/dev-environment-cost/)         | 排程關機、ephemeral 環境、CI 跑 spot、per-team 上限 |
-| [自架 vs 雲端的成本交叉點](/operations/08-cost-management/self-hosted-vs-cloud/) | 兩條成本曲線、部署光譜、人力與 lock-in              |
-
-## Backlog
-
-| 項目                                                                                                                                                                                                                                                                                                                                           | 類型 | 前置條件                                                                       | 規模       |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------ | ---------- |
-| GCP 帳單帳戶的支出防護實作篇：預算警示（只通知、費用資料延遲數小時）、強制執行支出上限（只涵蓋 Cloud Run、Cloud Run Functions、Gemini API、Vertex AI 這類服務，Compute Engine 與 GKE 不在內）、以預算通知經 Pub/Sub 觸發 function 自動停用帳單，以及服務出錯或遭攻擊時費用暴增、人工來不及阻止的情境；自動停用帳單要在測試專案實際觸發一次再寫 | 主章 | 有連結 blog-test 帳單帳戶的 GCP 測試專案，自動停用帳單的 function 部署並觸發過 | 1 篇（中） |
-
-自動停用帳單是〈開發環境成本控制〉的「Per-team 成本上限」一節裡「超過就告警甚至自動限制」的實作面；兩邊的分工是那一節講為什麼要設上限，這一篇講在 GCP 上，預算警示、支出上限與自動停用帳單在費用超過門檻時各自做了什麼（寄出通知、暫停哪些服務的用量、讓專案的資源停止計費），以及從費用發生到這些動作生效之間的延遲。
+| 章節                                                                                               | 回答什麼問題                                                       |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [計費模式理解](/operations/08-cost-management/billing-models/)                                     | 帳單維度、承諾模式、egress 這類隱藏成本                            |
+| [Right-sizing](/operations/08-cost-management/right-sizing/)                                       | 找過度配置、downsizing 不能砍過膝點、機型世代                      |
+| [成本監控與告警](/operations/08-cost-management/cost-monitoring/)                                  | 歸因、異常告警、showback vs chargeback                             |
+| [開發環境成本控制](/operations/08-cost-management/dev-environment-cost/)                           | 排程關機、ephemeral 環境、CI 跑 spot、per-team 上限                |
+| [自架 vs 雲端的成本交叉點](/operations/08-cost-management/self-hosted-vs-cloud/)                   | 兩條成本曲線、部署光譜、人力與 lock-in                             |
+| [GCP 上的雲端費用失控防護](/operations/08-cost-management/spend-protection-gcp-budget-killswitch/) | 預算警示的幣別與延遲、支出上限涵蓋的服務、自動停用帳單的建置與驗收 |
 
 ## 跨分類引用
 
