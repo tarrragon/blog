@@ -1,0 +1,93 @@
+---
+title: "從本機用 OCI CLI 操作 Oracle Cloud：session token 登入、時效與 API 簽章金鑰"
+date: 2026-10-24
+description: "OCI CLI 的兩種身分驗證方式——瀏覽器登入換來的 session token 與上傳公鑰的 API 簽章金鑰——各自把什麼存在本機、有效多久、外洩時的影響範圍，以及登入時的互動提示與錯誤訊息怎麼讀"
+weight: 2
+tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "cli", "authentication"]
+---
+
+這篇整理在 macOS 上安裝 OCI CLI 之後，讓它取得操作 tenancy 的身分的兩種做法。範圍從 `oci` 指令裝好開始，到第一條查詢指令回傳資料為止；tenancy、home region 與主控台登入欄位見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。實測環境是 Homebrew 安裝的 OCI CLI 3.95.1，日期 2026-10-24。
+
+## CLI 拿什麼證明自己是誰
+
+OCI 的 API 不收帳號密碼。CLI 送出的每一個請求都用一把私鑰簽章，OCI 用對應的公鑰驗證簽章、再查這把公鑰屬於哪個使用者，以那個使用者的權限執行請求。兩種做法的差別在這對金鑰從哪裡來、公鑰怎麼讓 OCI 認得：
+
+- **Session token**：CLI 在本機產生一對臨時金鑰，開瀏覽器讓使用者登入主控台；登入成功後 OCI 簽發一個綁定這把臨時公鑰的 token，token 過期之後這對金鑰就沒有用了。
+- **API 簽章金鑰**：使用者在主控台把一把公鑰登記到自己的帳號下，之後持有對應私鑰的程式都能以這個使用者的身分呼叫 API，直到公鑰被刪除為止。
+
+兩者在本機都會留下一個私鑰檔，差別在私鑰檔外洩之後能用多久。Session token 的私鑰在 token 過期後失效；API 簽章金鑰的私鑰在使用者到主控台刪掉公鑰之前一直有效。實驗與互動式操作用 session token，外洩時的影響範圍以小時計；排程腳本、CI 這類沒有人能開瀏覽器登入的場合才需要 API 簽章金鑰。
+
+## 用瀏覽器登入換 session token
+
+```bash
+oci session authenticate --region ap-batam-1 --profile-name DEFAULT
+```
+
+- `--region`：填 tenancy 的 home region 的識別碼（例如 `ap-tokyo-1`），CLI 用它決定開哪一區的登入頁、並寫進設定檔當成之後指令的預設區域。不給這個選項時，CLI 列出全部區域讓使用者輸入編號。
+- `--profile-name`：設定檔 `~/.oci/config` 裡這一組身分的名稱。`DEFAULT` 是 CLI 在指令沒有指定 `--profile` 時使用的那一組；同一台機器要切換多個 tenancy 時，每個 tenancy 用一個不同的 profile 名稱。
+
+登入過程中 CLI 會問兩個問題：區域與 profile 名稱，兩個都給在選項裡就不必互動輸入。這一點在 CLI 不是跑在互動式終端機裡時有差別——例如透過另一個程式代為執行、標準輸入沒有接到鍵盤——CLI 讀不到輸入，印出 `Abort` 後結束。實測少給 `--region` 時就是在區域清單之後直接 `Abort`。
+
+CLI 接著開瀏覽器到登入頁，並在本機的 `localhost:8181` 等登入結果。瀏覽器的登入頁跟主控台是同一個，先填租用戶、再填使用者名稱與密碼。登入成功後瀏覽器把 token 送回 `localhost:8181`，終端機印出 `Completed browser authentication process!` 與 `Config written to: /Users/<user>/.oci/config`。瀏覽器頁面不小心關掉時，終端機上印著同一個登入網址，貼回瀏覽器就能繼續；網址裡帶著這次產生的臨時公鑰，所以只對正在等待的這一次登入有效。
+
+設定檔裡的這一組長這樣（值是佔位的）：
+
+```ini
+[DEFAULT]
+fingerprint=<臨時公鑰的指紋>
+key_file=/Users/<user>/.oci/sessions/DEFAULT/oci_api_key.pem
+tenancy=<tenancy 的 OCID>
+region=ap-batam-1
+security_token_file=/Users/<user>/.oci/sessions/DEFAULT/token
+```
+
+`key_file` 是 CLI 產生的臨時私鑰，`security_token_file` 是 OCI 簽發的 token。兩個檔都在 `~/.oci/sessions/<profile 名稱>/` 底下，這個目錄刪掉就等於登出。
+
+## 使用 session token 時每條指令要帶的設定
+
+CLI 預設用 API 簽章金鑰的方式驗證身分，用 session token 時要明確告訴它。兩種寫法效果相同：
+
+```bash
+# 每條指令各自指定
+oci iam region-subscription list --auth security_token
+# 整個 shell 工作階段都用 session token
+export OCI_CLI_AUTH=security_token
+```
+
+少了這個設定，CLI 照 API 簽章金鑰的流程檢查設定檔，而那個流程要求設定檔裡有 `user`（使用者的 OCID），session 登入寫出的設定檔沒有這一欄。實測 CLI 在送出請求之前就停下來，印出 `ERROR: The config file at ~/.oci/config is invalid`，表格裡列出 `user | missing`，提示去主控台找使用者的 OCID——照提示補上 `user` 是在改成 API 簽章金鑰的做法，對 session token 是錯的方向，該補的是 `--auth security_token`。
+
+確認登入成功、同時查出 tenancy 的基本資訊，可以跑這幾條：
+
+```bash
+oci session validate --auth security_token          # 印出 token 的到期時間
+oci iam region-subscription list --auth security_token   # 訂閱的區域，is-home-region 為 true 的是 home region
+oci iam availability-domain list --auth security_token   # home region 的 availability domain 清單
+```
+
+實測 Homebrew 版的 CLI 跑在 Python 3.15 上時，每條指令開頭都會印一行 `SyntaxWarning`，來源是 CLI 自己的程式碼裡的正規表示式字串，不影響結果。要讓輸出乾淨，執行前設 `export PYTHONWARNINGS=ignore`。
+
+## Session token 的時效與 refresh
+
+Token 的預設效期是 1 小時：實測 17:44 登入，`oci session validate` 回報到期時間 18:44。過期之前可以延長：
+
+```bash
+oci session refresh --profile DEFAULT
+```
+
+`--profile` 填登入時取的 profile 名稱。官方文件說明 refresh 要在 token 還有效時做，可以一路延長到登入後的 24 小時；超過 24 小時，或 token 已經過期，就要重新跑一次 `oci session authenticate`、在瀏覽器重新登入。
+
+## API 簽章金鑰：不需要每天登入的做法
+
+API 簽章金鑰在主控台建立：右上角人像選單 → My profile → API keys → Add API key，選 Generate API key pair 並下載私鑰，按 Add 之後頁面顯示一段 `[DEFAULT]` 開頭的設定文字。把私鑰放到 `~/.oci/`、權限設成只有自己能讀，把那段文字貼進 `~/.oci/config` 並把 `key_file` 改成私鑰的實際路徑：
+
+```bash
+chmod 600 ~/.oci/<下載的私鑰檔名>.pem   # 私鑰檔只允許擁有者讀寫
+oci iam region-subscription list         # 不帶 --auth，CLI 用 API 簽章金鑰
+```
+
+這把金鑰沒有到期時間。不用的時候回到 API keys 頁面刪掉它，持有私鑰的程式就無法再呼叫 API。私鑰外洩的影響範圍是這個使用者的全部權限，所以給排程與 CI 用的金鑰，建在一個只有必要權限的專用使用者底下，不建在申請時建立的管理員帳號底下。
+
+## 延伸閱讀：帳號結構與免費額度
+
+- [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)：登入頁的租用戶與使用者名稱欄位、home region 對 Always Free 的限制
+- [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)：登入之後要建主機時，各家免費額度的計算方式
