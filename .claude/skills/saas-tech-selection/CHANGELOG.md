@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.11.1 — implementations/gcp-spend-kill-switch.md 依測試專案上的第二次實跑補正：建立預算的兩道權限檢查（serviceusage 再帳單帳戶）、從既有預算拿掉 topic 要用預算 API PATCH、通知管道只接受電子郵件且 webhook 被拒時不說原因、抵免類型的寫法與 FREE_TIER 的推論、跨 zone 停 VM 的做法與角色、Policy Troubleshooter 的指令、心跳監看（日誌指標加缺席條件、時間窗上限 23 小時 30 分）、管理專案與帳單停用期間撤銷金鑰的實測結果、同專案函式停用後約一分鐘內仍會執行。
+
 **Version**: 1.11.0 — 新增 references/implementations/：gcp-spend-kill-switch.md（預算、Pub/Sub、函式部署、判斷規則、驗收、停用後的恢復）與 gcp-management-access.md（IAP 與 OS Login 的設定指令、舊規則的停用與回退、由 template 建的主機、GKE 控制平面與節點除錯、稽核紀錄、人員離職）。capacity-performance〈支出停損〉與 security〈管理通道〉只留決策點、三層表與平台無關的判讀要點，GCP 實作外移（兩段各約佔原檔四成，訪談時每次都載入）。SKILL.md 路由表兩列改成訪談讀維度檔、實際建置時再讀實作檔；目錄樹補 implementations/。
 
 **Version**: 1.10.4 — 多輪審查 Round 4 修正：〈支出停損〉的決策點改成依停機影響誰與資料能否重建判斷，補上只停止花錢的資源那一格；驗收改成排在停機可接受的時段、有不能遺失的資料才用分段驗證，複本要換函式名稱與 topic，寫出 Policy Troubleshooter 要查的兩個權限；「已實測」標籤改成寫明哪些未實跑。baseline-protections 的管理 port 列縮短並指向 security。觸發詞拿掉 IAP、OS Login、救援入口（排查連線改由 linux-install-debug 承接）。principle 卡：完整證據、合成觸發的時機改成停機可接受的時段、中途注入一列標明是推導、靜默監看改名心跳監看。
