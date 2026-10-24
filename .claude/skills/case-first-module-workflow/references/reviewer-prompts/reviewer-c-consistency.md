@@ -74,6 +74,7 @@
 - 預期 issue baseline：13-18 個
 - 報告儲存到 /tmp/<MODULE_ID>-reviewer-c-report.md
 - 不要佔我主 context、報告寫進檔即可
+- **報告的送達方式**：<依派發環境填寫：派發者在這裡寫明報告寫完之後怎麼送回派發者>
 ```
 
 ## 使用方式

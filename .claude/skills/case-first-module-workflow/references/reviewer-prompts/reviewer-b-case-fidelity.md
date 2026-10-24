@@ -89,6 +89,7 @@ content/backend/<MODULE_ID>/cases/ 下：
 - 預期 issue baseline：6-20 個（純 skeleton case 預期準確率 80-93%；含 rich case 預期 70-85%）
 - 報告儲存到 /tmp/<MODULE_ID>-reviewer-b-report.md
 - 不要佔我主 context、報告寫進檔即可
+- **報告的送達方式**：<依派發環境填寫：派發者在這裡寫明報告寫完之後怎麼送回派發者>
 ```
 
 ## 使用方式

@@ -2,7 +2,7 @@
 
 本 brief 為 Task 1（補卡 + 回填連結）完成後的下一階段工作。以 `backpressure.md` 為 worked example，示範如何從一個**已穩固的中心卡片**向外拓展知識網，讓鄰接概念形成雙向可達的網絡，而不只是散落的單點。
 
-執行前請先完成 Task 1 並讀取 `codex.md`、`.codex/briefs/knowledge-cards.md`。
+執行前請先完成 Task 1 並讀取 repo 根目錄的 `AGENTS.md`（規則入口，路由表指向 `docs/rules/` 的分冊）、`.codex/briefs/knowledge-cards.md`。
 
 ---
 
@@ -141,7 +141,7 @@ Task 2 完成 backpressure 子網後，以同樣方法推廣到其他 hub。下�
 1. 選定中心卡片（hub），完成 §2.1 的 L0–L3 節點分層（先腦力激盪列表，再自評）
 2. 對每個節點執行 §2.2 拓展四問，產出三份清單：新增 / 補強 / 雙向連結回填
 3. 依 §3.4 優先序批次執行（每批 3–5 張卡片 + 對應連結）
-4. 每批完成後執行 `codex.md §5` C1–C7 + `.codex/briefs/knowledge-cards.md §5` K1–K7 檢查循環
+4. 每批完成後照 `docs/rules/writing-process.md`〈完稿檢查清單〉逐項確認，再跑 `.codex/briefs/knowledge-cards.md §5` 的 K1–K7 卡片檢查
 5. 在對話中回覆本 hub 拓展成果：節點數、新增清單、連結回填摘要
 
 ---

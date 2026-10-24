@@ -86,7 +86,7 @@ slug: "judgment-content-needs-triggering-scenarios"
 
 ## 跟其他原則的關係
 
-- [#217 審查要有斷言支撐 frame](../review-needs-claim-support-frame/)：兩者都讓判斷標準無法使用，但斷點不同。#217 的判斷標準空殼是「停在維度清單、沒有條件到行動的映射」；本卡的判斷標準有映射，缺的是讀者不知道什麼時候會踩到這個判斷。前者是判斷標準本身沒寫完，後者是判斷標準寫完了但沒有入口。
+- [#217 審查要有斷言支撐 frame](../review-needs-claim-support-frame/)：兩者都讓判斷標準無法使用，但斷點不同。#217 的判斷標準空殼是「停在維度清單、沒有寫出各條件的後果」；本卡的判斷標準有條件與後果，缺的是讀者不知道什麼時候會踩到這個判斷。前者是判斷標準本身沒寫完，後者是判斷標準寫完了但沒有入口。
 - [常識是相對於讀者背景的](../common-knowledge-is-relative-to-reader-background/)：同構問題的不同層。那張卡處理術語（作者的常識不是讀者的常識），本卡處理情境（作者的經驗不是讀者的經驗）。兩者的共同機制是作者把自己的背景投射成讀者的背景，而同源審查者有完全相同的投射。
 - [多輪審查缺 outside-in 讀者 frame](../review-lacks-outside-in-reader-frames/)：本卡是它的一個新盲點實例。既有的 outside-in frame 問「讀者讀完要做什麼」與「他懂不懂這個術語」，還沒有人問「他想不想像得出來這些情況會發生」。
 - [#126 寫作 review 是多軸完整性、不是單軸深度](../writing-review-multi-axis-completeness/)：三輪審查通過而使用者一讀就發現，是缺一軸而非某軸不夠深。

@@ -182,7 +182,7 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 - Data IC 的特殊角色獨立段（300 字、含「為什麼不能讓 Tech IC 兼任」的失誤對照）
 - 事先準備 4 項各自延伸（不只列項目、解釋失效樣態）
 
-這樣 *每個項目都是情境* 而非 *硬塞的欄位*、符合 AGENTS.md「表格不是終點」原則。
+這樣 *每個項目都是情境* 而非 *硬塞的欄位*、符合專案寫作規則 `docs/rules/writing.md`〈表格裡的判斷要有出口〉（當時這條規則叫「表格不是終點」）。
 
 ### 情境敘事的判讀條件
 
@@ -217,9 +217,9 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 
 實作中使用的三個 reviewer：
 
-#### Reviewer A：寫作規範審查（AGENTS.md 核心原則）
+#### Reviewer A：寫作規範審查
 
-- 對照核心原則先行、正向陳述優先、商業邏輯先於 case、表格不是終點、情境優先於模板、可操作的判斷標準等八原則
+- 對照核心原則先行、正向陳述優先、商業邏輯先於 case、表格不是終點、情境優先於模板、可操作的判斷標準等八原則（這是寫這次實作時規則檔裡的八條；現行的審查範圍以專案規則檔為準，`case-first-module-workflow` skill 的 Reviewer A prompt 列出現行要審的段名，比這八條多了標題與段標、開場、句子槽位、命名與手冊裝置等規則）
 - 找首句用否定句切入、表格 / bullet 平鋪沒延伸、表格項硬塞模板等
 - 實作中抓出 25 個 issue
 

@@ -3,7 +3,7 @@ name: migration-playbook-methodology
 description: "跨 vendor migration playbook 寫作方法論：6 維 diff dimension audit (schema / operational / paradigm / components / application change / data topology) + 6 type 結構模板 (Type A phased translation / Type B drop-in / Type C operational hybrid / Type D parallel streams / Type E paradigm shift / Type F topology re-layout) + Stage 0 variant 規劃 (含 multi-element planning) + 4-reviewer audit pattern + Self-aware limitation。觸發詞：migration playbook、cross-vendor migration、Type A B C D E F、diff dimension audit、data topology audit、stage 0 variant、multi-element variant planning、migration 結構、cross-vendor process、Type F re-layout、major version upgrade、re-sharding、partition redesign、policy-driven migration、acquisition consolidation、compliance evidence migration。Trigger when writing migration playbook / cross-vendor process content."
 license: MIT
 metadata:
-  version: 1.0.1
+  version: 1.0.2
   category: writing-methodology
 ---
 
@@ -124,7 +124,7 @@ Step 7: 評估候選軸（current open question）
 
 寫完批量後、跑 4 reviewer 平行 background 審查、各覆蓋不同軸：
 
-- **Reviewer A**：寫作規範 + 字句層（AGENTS.md 八原則 / emoji / 裸 URL / MD036 / MD026）
+- **Reviewer A**：寫作規範 + 字句層（專案寫作規則的〈段落的第一句寫這一段的主題〉〈主要敘述用正向陳述〉〈系統層的概念寫在案例之前〉〈表格裡的判斷要有出口〉〈不預設讀者熟悉特定專案〉〈讀者是缺經驗的專業工程師〉〈判斷標準寫成條件、後果與理由〉〈每個情境用它自己的敘事，不套共通模板〉〈標題與段標寫主旨〉〈開場列出這篇討論的內容〉〈推導過重時拆篇，不壓縮成一句話的結論〉〈句子的槽位〉〈正文裡的對象用它是什麼來命名〉〈文章被寫成手冊的裝置〉/ emoji / 裸 URL / MD036 / MD026）
 - **Reviewer B**：概念邊界 + 跨檔一致性（術語 / 數字 / cross-link / hierarchy）
 - **Reviewer C**：案例引用準確性 + 數據準確性（行數 / 章節數 / 工作量 % / 死鏈）
 - **Reviewer D**：自一致性 + 邏輯漏洞 + 反例搜尋（結構性質疑、最深的批判）

@@ -251,7 +251,7 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 
 負載超過容量時的結果分級、各級的判斷標準與看得到它的監控層已寫成 9.16（overload-outcomes），負載退去後停在失效狀態另建 metastable-failure 卡；連到 9.16 的有 4.0、4.27、6.2、9.1、9.2、9.4、9.5、9.6、9.14、9.15、operations/07 的 queue-buffering 與 burst-classification、operations/02 的 scaling-triggers，以及 saturation-point、load-shedding、headroom-budget、timeout、degradation、health-check、cascading-failure 卡（`rg -l overload-outcomes content` 查現況）。剩下的是各模組的句子改寫：每一句寫出負載量、判斷標準與機制，失效用 9.16 的結果名（變慢、請求失敗、無回應、程序終止、停在失效）寫出是哪一種，非負載的用法（「靠契約撐住」「撐住過渡期」）改寫成依賴或負責。不做全站一次替換，因為同一個詞在不同句子佔住的格不同，要逐句判讀。
 
-預先分類用 `python3 scripts/physical-verb-scan.py <模組路徑>`，`--list 足夠性：負載` 這類參數列出單一類的每一行。腳本的詞表沒有收單字的「撐」（「MongoDB 撐 900 萬車輛」這種及物用法），改完一個模組後另跑 `rg -n '撐|扛|壓垮|拖垮|打爆' <模組路徑>` 補掃，「支撐」這類合規的命中逐條排除。數字的寫法受原則十二約束：通則句寫出句子的形狀與去哪裡量，具體數字只出現在文章自己的範例情境並標明來源。
+預先分類用 `python3 scripts/physical-verb-scan.py <模組路徑>`，`--list 足夠性：負載` 這類參數列出單一類的每一行。腳本的詞表沒有收單字的「撐」（「MongoDB 撐 900 萬車輛」這種及物用法），改完一個模組後另跑 `rg -n '撐|扛|壓垮|拖垮|打爆' <模組路徑>` 補掃，「支撐」這類合規的命中逐條排除。數字的寫法受 `docs/rules/writing.md`〈不寫會取代讀者查證的值〉約束（舊版的原則十二）：通則句寫出句子的形狀與去哪裡量，具體數字只出現在文章自己的範例情境並標明來源。
 
 ### 規劃方向
 

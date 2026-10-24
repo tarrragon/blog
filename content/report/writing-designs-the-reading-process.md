@@ -58,7 +58,7 @@ slug: "writing-designs-the-reading-process"
 | [#254 寫給帶問題來的讀者、不用演講姿態](../write-for-readers-not-audiences/)                     | 借來的讀者框架家族的判定（先問讀者實際處在什麼情境）是本卡的前提；本卡在情境判定之上給了閱讀體驗的三個設計軸             |
 | [#255 讀者重建不了的斷言清單，展開成讀者位置的走查](../assertion-list-needs-reader-walkthrough/) | 引導面的段落層機制——走查把讀者放到使用產物的位置逐步帶過去，正是「文章把工作做完、不派給讀者」在推導段的形態             |
 
-分層切入點的完整機制（術語角色 × 基線的判定矩陣）在[術語解釋分層方法論](/record/term-explanation-layering-methodology/)；讀者定位不降深度的取向同 AGENTS 原則六（讀者定位用內容體現）。
+分層切入點的完整機制（術語角色 × 基線的判定矩陣）在[術語解釋分層方法論](/record/term-explanation-layering-methodology/)；讀者定位不降深度的取向同 `docs/rules/writing.md`〈讀者是缺經驗的專業工程師〉（舊版的原則六）。
 
 ---
 

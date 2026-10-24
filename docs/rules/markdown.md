@@ -1,5 +1,7 @@
 # Markdown 排版與 mdtools
 
+這份分冊管 `content/` 的 Markdown 排版規範在哪裡、哪些類別由 mdtools 擋下、路徑大小寫、列表排序與 weight，以及修改 mdtools 時讀哪裡。提交前的 lint 與 cards 在 `AGENTS.md`〈提交與驗證〉。
+
 ## Markdown 與 mdtools
 
 `content/**` 所有 markdown 的排版與結構規範，以 `content/posts/markdown-writing-spec.md` 為單一真實來源；完整規則、識別碼白名單、TLD 清單、執行時機與擴充流程讀那一篇。工具鏈是 `scripts/mdtools`（Go 加 goldmark AST），在 pre-commit、pre-push 與 CI 執行。規則與 `scripts/mdtools/internal/rules/` 的實作保持同步，任一方修改時同步更新另一方與規範文章。
@@ -37,12 +39,9 @@ Hugo 的列表依 weight 遞增排序，未設 weight 的頁面排在全部有 w
 
 - **同一個 section 的 weight 全有或全無**：混用會讓缺 weight 的頁面沉到列表底部，`mdtools cards` 的 `L5-section-weight-consistency` 會警告。刻意用低 weight 置頂單篇的 section（如 `content/linux/tools/cli`）在 `scripts/mdtools/internal/rules/config.go` 的 `WeightExemptSections` 登記。`weight: 0` 在 Hugo 就是未設，`L9-weight-zero-is-unset` 以 error 擋下，章節從 0 起算時最容易寫出這個值。
 - **後補文章的 weight 放在屬於它的位置**：值落在該 section 既有的編號帶之內、順序對得上這篇在模組裡的位置。只確認沒跟別人重號不夠，重號與排序是兩件事。補號前先看該 section 既有的編號帶。L5 只查全有全無，對「有 weight 但值錯」不報。
-- **新增卡片型目錄**（必填 `title`、`date`、`description`、`weight`）時，在同一個 `config.go` 的 `FrontMatter.CardPaths` 登記，否則卡片層的 frontmatter 檢查不涵蓋它；未納管目錄的零 error 跟合規目錄的零 error 看起來一樣。依據：[檢查規則的作用域要顯式列舉：零 error 可能是沒被檢查](/report/lint-scope-must-be-explicit-fact/)。
+- **新增一個要求 `title`、`date`、`description`、`weight` 四個欄位都必填的目錄**（目前登記的是知識卡目錄與 `content/report/`）時，在同一個 `config.go` 的 `FrontMatter.CardPaths` 登記，否則卡片層的 frontmatter 檢查不涵蓋它；未納管目錄的零 error 跟合規目錄的零 error 看起來一樣。依據：[檢查規則的作用域要顯式列舉：零 error 可能是沒被檢查](/report/lint-scope-must-be-explicit-fact/)。
 - **frontmatter 的 date 是台北時間**：`hugo.toml` 設了 `timeZone = 'Asia/Taipei'`。拿掉這一行的話，在 UTC 的 CI 上、台北 00:00 到 08:00 之間 build，當日日期的文章會被判成未來文章而排除。
 
 ### 修改 mdtools
 
-- `(cd scripts/mdtools && go test ./...)` 必跑：`go.mod` 在 `scripts/mdtools/`，在 repo 根目錄跑 `go test ./...` 會失敗。CI 的 md-check 也會跑（Test step 在 lint 與 cards 之前）。新增檢查邏輯要附測試，並用突變驗證測試有作用：改壞實作，確認對應的 case 失敗。
-- **跨檔規則放 `mdcards`，不放 `mdlint`**：pre-commit 只餵 staged 的檔案給 lint，跨檔規則在那裡會把「其他檔案沒被 staged」誤判成違規。`cards` 掃整個 content。
-- **fmt 規則必須冪等**（`fmt(fmt(x)) == fmt(x)`）：CI 的 `fmt --fix` 會自動 commit，不冪等的規則會讓 bot 每次 push 都產生新的 diff。`scripts/mdtools/internal/mdfmt/fixer_test.go` 的 `TestApplyAllIdempotent` 守著這一條，新的 fmt 規則要加 fixture 進去。
-- 測試 fixture 不用 map 迭代建圖：Go 的 map 順序隨機，會做出碰巧通過的測試。依賴走訪順序的行為，要有正序與逆序各餵一次的測試。
+修改 `scripts/mdtools` 之前，讀 `scripts/mdtools/README.md` 的〈Development〉：那一節寫了測試要在哪個目錄跑、跨檔規則放哪個套件、fmt 規則的冪等要求與測試 fixture 的寫法。改完 mdtools 的規則時，同步更新 `content/posts/markdown-writing-spec.md` 與本分冊〈工具會擋的類別與要自己跑的類別〉的表。

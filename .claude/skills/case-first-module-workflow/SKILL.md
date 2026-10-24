@@ -3,7 +3,7 @@ name: case-first-module-workflow
 description: "Case-first + Agent team review 五階段流程、寫跨多章節教學模組（5+ 章、有 case 庫）時用。觸發詞：教學模組、case-first、case-driven、stage 1/2/3/4/5、agent team review、polish pass、fact vs derive、reviewer prompt、SSoT 對應、frame 重複、skeleton case vs rich case、case fidelity、自掃描 regex、模組擴章。Trigger when writing teaching modules across multiple chapters with an existing case library."
 license: MIT
 metadata:
-  version: 1.7.4
+  version: 1.7.5
   category: writing-methodology
 ---
 
@@ -109,7 +109,7 @@ Standard-driven 章節的寫作策略：
 
 Stage 2 commit 後、平行 spawn 3 個 reviewer（`subagent_type: general-purpose`、`run_in_background: true`）：
 
-- **Reviewer A**：寫作規範（AGENTS.md 八原則）— prompt 見 [reviewer-prompts/reviewer-a-standards](./references/reviewer-prompts/reviewer-a-standards.md)
+- **Reviewer A**：寫作規範（專案寫作規則的〈段落的第一句寫這一段的主題〉〈主要敘述用正向陳述〉〈系統層的概念寫在案例之前〉〈表格裡的判斷要有出口〉〈不預設讀者熟悉特定專案〉〈讀者是缺經驗的專業工程師〉〈判斷標準寫成條件、後果與理由〉〈每個情境用它自己的敘事，不套共通模板〉〈標題與段標寫主旨〉〈開場列出這篇討論的內容〉〈推導過重時拆篇，不壓縮成一句話的結論〉〈句子的槽位〉〈正文裡的對象用它是什麼來命名〉〈文章被寫成手冊的裝置〉）— prompt 見 [reviewer-prompts/reviewer-a-standards](./references/reviewer-prompts/reviewer-a-standards.md)
 - **Reviewer B**：案例引用準確性（對照原始 case、含 fact vs derive 分層）— prompt 見 [reviewer-prompts/reviewer-b-case-fidelity](./references/reviewer-prompts/reviewer-b-case-fidelity.md)
 - **Reviewer C**：跨章一致性（重複 frame / cross-link / 邊界）— prompt 見 [reviewer-prompts/reviewer-c-consistency](./references/reviewer-prompts/reviewer-c-consistency.md)
 
@@ -117,11 +117,13 @@ Stage 2 commit 後、平行 spawn 3 個 reviewer（`subagent_type: general-purpo
 
 **為什麼 background**：reviewer 要讀完整 commit + 案例 + 章節、自身 context 會被佔滿；用 background 把 reviewer context 跟主 context 分開、主 context 只接收精煉摘要、節省 ~80% context。
 
+**報告的送達方式**：三份 prompt 的〈重要規則〉都有一欄「報告的送達方式」，依派發環境填寫——派發者要在 prompt 裡寫明報告怎麼送回派發者。背景 reviewer 只把報告寫進檔或寫在自己的回覆裡時，派發者不一定讀得到，reviewer 寫完就閒置。
+
 預期 issue baseline：
 
 | Reviewer 維度          | 範圍            | 備註                                                                                                                                                                    |
 | ---------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Standards reviewer     | 20-45 issue     | 規範八原則、含「不是 X 而是 Y」變體段首、06 揭露「case 引用段首」、07 揭露「case 引用句構同質化」新 pattern                                                             |
+| Standards reviewer     | 20-45 issue     | 專案寫作規則（baseline 是審查維度只有前八條時量的）、含「不是 X 而是 Y」變體段首、06 揭露「case 引用段首」、07 揭露「case 引用句構同質化」新 pattern                                                             |
 | Case fidelity reviewer | 6-20 issue      | 準確率 70-93%、skeleton case 多會擴 over-extrapolation、medium case 多會擴實作層、rich case 多會混淆 fact vs derive、跨 case 合成 frame 易升級成 case 揭露（07 新發現） |
 | Consistency reviewer   | 13-18 issue     | 跟章節數 / 跨模組密度成正比                                                                                                                                             |
 | **總計**               | **47-71 issue** | 7 模組範圍（baseline 隨 standards reviewer 抓的 pattern 變多而擴大）                                                                                                    |

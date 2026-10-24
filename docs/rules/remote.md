@@ -1,5 +1,7 @@
 # 遠端機器的操作
 
+這份分冊管在 VM 或本專案管理的遠端機器上驗證與部署時的規則：狀態的改動經由 dotfiles repo、SSH 的用途與禁用的選項、dotfiles 的部署工具，以及各類檔案的部署方式。推送照 `AGENTS.md`〈推送〉，dotfiles 也一樣直接推送。
+
 ## 遠端機器的操作
 
 在 VM 或任何本專案管理的遠端機器上做驗證或部署時，狀態的改動一律經由 [dotfiles repo](https://github.com/tarrragon/dotfiles) 與 git 同步，不經由 SSH 手動放置持久的檔案或設定。機器的狀態要能從 repo 重現，手放的檔案下次重裝就消失，也沒有人記得它存在。
@@ -7,7 +9,7 @@
 - **SSH 只用來做唯讀診斷與觸發**：`hyprctl`、`systemctl status`、讀 log、`pgrep`、執行 repo 內的部署腳本。
 - **ssh 指令不帶 `-o ProxyCommand=…`、`-o LocalCommand=…` 與 `PermitLocalCommand=yes`**：這幾個選項會在本機這台開發機執行任意命令，而「遠端環境壞了可以重建」這個前提保護不到本機。Claude Code 另有 hook 攔下這幾個選項（見 CLAUDE.md），其他 agent 沒有，靠這一條。
 - **該持久存在的檔案**（腳本、systemd unit、設定檔、cron、drop-in）先寫進 dotfiles repo、commit 與 push，再由遠端 `git pull` 加冪等的 deploy 部署。不用 scp、不用 heredoc 寫進 /tmp、不手動 `tee` 到 /etc。
-- **一次性驗證用的暫時檔**（測試 service、探測腳本）可以臨時放，測完清掉，正式版收回 repo。
+- **一次性驗證用的暫時檔**（測試 service、探測腳本）可以臨時放，路徑一律用 `/tmp/verify-` 開頭，測完清掉，正式版收回 repo。收尾時跑 `ssh <host> 'ls -d /tmp/verify-* 2>/dev/null'`，有輸出就是還沒清的暫時檔；清不掉的照 `AGENTS.md`〈延到工作結束之後的動作〉寫進最後一則總結。固定的前綴讓「暫時」是一個查得到的事實，不是放置者自己的標籤。
 
 dotfiles repo 裡的工具：
 

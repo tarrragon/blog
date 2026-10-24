@@ -2,7 +2,7 @@
 name: skill-sync
 description: 'Sync Claude Code skills between local .claude/skills/ and a remote skills repository. Use for: pulling skills from remote, pushing local skills to remote, listing available remote skills.'
 metadata:
-  version: 1.25.0
+  version: 1.25.1
 ---
 
 # skill-sync
@@ -50,6 +50,27 @@ uv tool install --from .claude/skills/skill-sync skill-sync
 A content hash alone proves two copies differ, not which one is newer — that half still cannot be inferred. What changed: `pull <name>` and `push <name>` now leave behind a `.skill-sync-base` marker recording the content hash at that sync point (excluded from every comparison and from the content hash itself, same treatment as `.skill-sync-override`). The next `skill-sync pull` (no name) reads it back and, for a skill that has one, resolves direction from three points instead of two: local unchanged since that hash but remote isn't -> `[SHOULD PULL]`; remote unchanged but local isn't -> `[SHOULD PUSH]`; both moved independently -> `[CONFLICT]` (still needs manual comparison, same as before). A skill with no recorded base — never synced through this mechanism yet — falls back to the original `[DIVERGED]` output with both commands listed and no direction claimed. Version strings are still shown for reading, never compared: two copies that evolved separately can carry the same version number and different content.
 
 A `[SHOULD PULL]` classification only means "remote moved since local's last known point" — it says nothing about whether that move was forward. If the party who moved remote had no `.skill-sync-base` marker of their own (never synced this skill through this CLI before), their push carries no direction check at all, so a stale copy pushed over newer publish-repo content lands silently, and everyone else's `[SHOULD PULL]` recommendation would, if acted on, pull that regression back down. `skill-sync pull` (no name) closes this by checking, only for `[SHOULD PULL]` candidates, whether the remote's current content matches an older commit of that skill in the publish repo's own git history (a one-time, targeted `git log`/`git rev-parse` per candidate — see Notes for cost) rather than genuinely new content; a match reclassifies the entry as `[SUSPECT REVERT]` and names the historical commit it matches, so pulling it is a deliberate choice rather than a trap disguised as routine advice.
+
+## Report categories and non-interactive use
+
+`skill-sync pull` (no name) sorts every installed skill into one of these groups. The handling column is the default; a project can narrow it (for example, a project that keeps some skills deliberately unpublished).
+
+| Group | Meaning | Default handling |
+|-------|---------|------------------|
+| `[SKIP]` … no remote entry at all | the skill was never recorded in the remote `versions.json` | confirm whether the remote should have it; push it, or document why it stays local |
+| `[SKIP]` … remote entry but no hash data yet | the remote `versions.json` predates content hashes for this skill | nothing; the next push of any skill regenerates the manifest |
+| `[OVERRIDE]` | a `.skill-sync-override` marker declares the local copy a deliberate customization | skipped from the divergence check by design |
+| `[SHOULD PULL]` | local unchanged since the last sync, remote moved | read the incoming change in the `pull <name>` preview, then pull |
+| `[SUSPECT REVERT]` | a `[SHOULD PULL]` whose remote content matches an older commit of that skill | do not pull; find out who pushed the old copy and restore the newer one |
+| `[SHOULD PUSH]` | remote unchanged since the last sync, local moved | push |
+| `[SHOULD PUSH --PRUNE]` | the remote only differs by files deleted locally on purpose | push with `--prune`; pulling would restore the deleted files |
+| `[CONFLICT]` | both sides moved since the last sync | compare section by section, merge, then push the merged copy |
+| `[DIVERGED]` | content differs and there is no sync base to tell direction | compare both sides' history (`git log` of the remote clone for that path vs. the local repo) to decide which is newer, then pull or push |
+| up to date | content hashes match | nothing |
+
+Despite reporting only, this path is not read-only: it re-records `.skill-sync-base` for up-to-date skills whose marker is missing or stale (see Notes).
+
+**Non-interactive callers** (an agent's shell, CI): the `[y/N]` prompt of `pull <name>` and `push` reads stdin, and end-of-file counts as N — the command prints `Aborted.` and changes nothing. There is no `--dry-run`; run the command twice instead. `echo n | skill-sync push <name> -m "..."` prints the full preview (file list, every `[WARNING]`, any `[Portability]` or `[BannedTerm]` report) and aborts; read it, and only if nothing in it calls for a stop, run `echo y | skill-sync push <name> -m "..."`. Push has a single `[y/N]` stop, after all warnings have printed. `--force ignored N direction warning(s)` appears only after a forced push succeeds, so it never shows up in an `echo n` preview.
 
 ## Configuration
 

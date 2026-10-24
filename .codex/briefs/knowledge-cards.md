@@ -1,6 +1,6 @@
 # Codex Brief: knowledge-cards 擴建任務
 
-本 brief 指導 Codex 掃描 `content/backend/` 與 `content/go/`（含 `go-advanced/`）既有文章，識別尚未建立知識卡片的術語，補寫卡片並建立雙向連結。執行前請先讀取 `/Users/tarragon/Projects/blog/codex.md` 的寫作與檢查規範。
+本 brief 指導 Codex 掃描 `content/backend/` 與 `content/go/`（含 `go-advanced/`）既有文章，識別尚未建立知識卡片的術語，補寫卡片並建立雙向連結。執行前請先讀取 repo 根目錄的 `AGENTS.md` 與它路由到的 `docs/rules/` 分冊（寫作與檢查規則）。
 
 ---
 
@@ -8,9 +8,9 @@
 
 依序讀取：
 
-1. `/Users/tarragon/Projects/blog/codex.md` — blog 專案總規範（正面表述、檢查循環）
-2. `/Users/tarragon/Projects/book_overview_v1/.claude/skills/compositional-writing/SKILL.md` — 原子化寫作五大原則
-3. `/Users/tarragon/Projects/blog/content/backend/knowledge-cards/_index.md` — 既有卡片主題分類表
+1. `AGENTS.md` 與 `docs/rules/sentences.md`〈術語與知識卡〉、`docs/rules/writing.md`、`docs/rules/writing-process.md` — blog 專案的寫作規則、建卡原則與檢查流程
+2. 本 repo 的 `.claude/skills/knowledge-cards/SKILL.md`（建卡標準、缺卡判定、卡片格式的權威來源）與 `.claude/skills/compositional-writing/SKILL.md`（原子化寫作與字句層 keyword bank）；Codex 經由 `.codex/skills` 這條 symlink 讀到同一份
+3. `content/backend/knowledge-cards/_index.md` — 既有卡片主題分類表
 4. 既有卡片樣本（挑 3 張閱讀，熟悉格式）：
    - `content/backend/knowledge-cards/broker.md`（完整四段結構範例）
    - `content/backend/knowledge-cards/backpressure.md`（連結密度範例）
@@ -28,8 +28,8 @@
 | -------------- | ----------------------------------------------------------------------------------------- |
 | 術語覆蓋率     | backend + go 文章中會影響讀者理解或實作判斷的技術術語，皆有對應卡片；出現次數不是必要門檻 |
 | 雙向連結完整度 | 每張卡片被 ≥ 1 篇正文引用，每篇正文的術語首次出現皆連結到卡片                             |
-| 原子化合規     | 每張卡片聚焦單一概念，符合 `codex.md §5` 檢查循環                                         |
-| 正面表述       | 通過 `codex.md §5.2` 負向表述掃描                                                         |
+| 原子化合規     | 每張卡片聚焦單一概念，通過 §5 的檢查循環                                                  |
+| 正面表述       | 通過 `docs/rules/writing.md`〈主要敘述用正向陳述〉的正向陳述掃描                          |
 
 ### 1.1 當前任務範圍（Task 1：術語補卡 + 連結回填）
 
@@ -105,11 +105,11 @@ ls content/backend/knowledge-cards/ | sed 's/\.md$//' > /tmp/existing-cards.txt
 ---
 title: "Term Name"
 date: YYYY-MM-DD
-description: "一句話說明這個術語要解決的問題"
+description: "觸發條件：讀者在什麼情境下會帶著這個術語來查（知識卡一律寫觸發條件，見 docs/rules/writing.md〈`description` 的體例〉）"
 weight: <依主題分類排序>
 ---
 
-[術語] 的核心概念是「一句話定義，含關鍵角色與目的」。[補充 2-3 句，點出它在後端系統中的位置與取捨]。
+[術語] 的核心概念是 [定義，含關鍵角色與目的]。[接著寫出它在後端系統中的位置、承擔的責任與取捨，寫到沒讀過其他卡的讀者跟得上為止，不壓縮成只剩一個定義句]。
 
 ## 概念位置
 
@@ -139,10 +139,10 @@ weight: <依主題分類排序>
 | 卡片 → 正文    | 卡片本體以保持原子化為主，避免指回正文                            |
 | _index.md 更新 | 新卡片補到對應主題表格，依 weight 排序                            |
 
-### 3.3 正面表述（對齊 `codex.md §4`）
+### 3.3 正面表述（對齊 `docs/rules/writing.md`〈主要敘述用正向陳述〉）
 
 - 以「應以 X 為準 / 優先採用 X / 搭配 Y 使用」取代「不要 / 不可 / 禁止」
-- 保留否定詞僅限 §4.3 三類：**物理限制、安全警示、反模式對照**
+- 否定句不主導段落；反例段落用來對照時可以存在（規則見〈主要敘述用正向陳述〉）
 - 範例：
   - 原句候選：「不要在 hot key 上用普通 cache-aside」
   - 正面改寫：「hot key 情境優先採用 singleflight 或 request coalescing，以避免快取同時 miss 造成下游壓力」（此處「避免」屬安全警示，保留並隱含理由）
@@ -158,7 +158,7 @@ weight: <依主題分類排序>
 | 口語對話開場 | 「你問...」「先說結論 👉」「我用實戰方式講」                                              | 陳述句開場：「X 的核心概念是...」                                             |
 | 多概念混雜   | 一篇同時講 backpressure + rate limit + queue + pull-based + adaptive + concurrency + drop | 一張卡片聚焦**一個**概念；相鄰概念用連結引用                                  |
 | 列舉式教學   | 「1️⃣ 最直接：限制輸入」「2️⃣ 用 Queue 吃掉尖峰」「3️⃣ Pull-based」...（大量平行列舉）          | 四段結構（概念位置 / 可觀察訊號 / 例子 / 設計責任），避免把卡片寫成教科書章節 |
-| 元對話收尾   | 「如果你想更實用一點，可以跟我說你在哪種場景」「下一則可以直接給你 Java 範本」            | 卡片結尾停在「設計責任」或 HTML 檢查註解，不延伸對話                          |
+| 元對話收尾   | 「如果你想更實用一點，可以跟我說你在哪種場景」「下一則可以直接給你 Java 範本」            | 卡片結尾停在「設計責任」，不延伸對話                                          |
 | 強調語氣疊加 | 粗體 + 斜體 + 驚嘆號 + 👉 指向符號密集混用                                                | 關鍵術語用粗體或連結，指向符號僅限表格對照                                    |
 | 混合抽象層級 | 同一段從「物理比喻（餐廳廚房）」跳到「程式碼偽碼」再跳回「控制理論」                      | 一張卡片鎖定一個抽象層級；跨層需要時拆成相鄰卡片                              |
 | 過度鋪陳前言 | 「這就從概念進到工程實作核心了」「所有 X，本質都在調這三個旋鈕」                          | 第一段直接定義，刪除鋪陳                                                      |
@@ -188,9 +188,9 @@ weight: <依主題分類排序>
 4. **分類 + 排序**：依 §2.3 歸類、§2.4 排優先級。
 5. **批次撰寫**（每 5 張為一批）：
    - a. 撰寫 5 張卡片
-   - b. 對每張執行 `codex.md §5` C1–C7 檢查循環
-   - c. 執行 §5.2 負向表述掃描，有命中即改寫
-   - d. 在每張卡片尾端加入檢查記錄 HTML 註解
+   - b. 對每張執行 §5 的檢查循環
+   - c. 照 `docs/rules/writing-process.md`〈文章產出流程〉跑字句層掃描（`compositional-writing` 的字句層 keyword bank），有命中即判定、違規即改寫
+   - d. 把這一批的逐類掃描表寫進 commit message（規則見 `docs/rules/writing-process.md`〈掃描與探針的紀錄寫進 repo〉）
 6. **連結回填**：
    - 掃描 backend + go 正文，將新卡片對應的術語首次出現處加上連結
    - 更新 `_index.md` 主題表格
@@ -200,7 +200,7 @@ weight: <依主題分類排序>
 
 ## 5. 檢查循環（每張卡片必做）
 
-引用 `codex.md §5` 的 C1–C7，本 brief 補充卡片專屬檢查：
+通用的檢查以 `docs/rules/writing-process.md`〈完稿檢查清單〉為準，本 brief 補充卡片專屬檢查：
 
 | 編號 | 檢查項           | 通過條件                                                              |
 | ---- | ---------------- | --------------------------------------------------------------------- |
@@ -210,7 +210,7 @@ weight: <依主題分類排序>
 | K4   | 連結密度         | 首段與「概念位置」段至少各有 1 個相鄰卡片連結                         |
 | K5   | 例子中立性       | 範例不綁死 `server/` 專案，使用通用場景                               |
 | K6   | weight 合理      | 放在 `_index.md` 對應主題表格的邏輯位置，weight 與鄰近卡片銜接        |
-| K7   | 檢查記錄         | 卡片尾端有 HTML 註解（對齊 `codex.md §5.4`）                          |
+| K7   | 檢查記錄         | 逐類掃描表寫進 commit message（〈掃描與探針的紀錄寫進 repo〉）        |
 
 ---
 

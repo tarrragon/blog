@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.7.5 — Reviewer A 的審查維度從舊規則檔的「八原則」改成專案寫作規則的段名清單，補上〈標題與段標寫主旨〉〈開場列出這篇討論的內容〉〈不用一句話交代或總結；推導過重時拆篇〉〈句子的槽位〉〈正文裡的對象用它是什麼來命名〉〈文章被寫成手冊的裝置〉六條，SKILL.md 的 Reviewer A 描述與 baseline 表同步；三份 reviewer prompt 的〈重要規則〉補「報告的送達方式」一欄，SKILL.md 寫明派發者要在 prompt 裡寫出報告怎麼送回；case-citation-three-part 的 polish pass 修法不再以句數規定（「補一句」「1-2 句概念定義」），改成寫出概念定義、核心責任與它在本段論證裡的作用
+
 **Version**: 1.7.4 — reviewer-a-standards 的審查維度不再引用規則檔的舊節號「§1 寫作八原則」，改指向專案規則檔的段落；判斷標準那一條補上「讀者能判斷自己落在哪一個條件，以及各條件的後果與理由」
 
 **Version**: 1.7.3 — 正文與 principle 卡的否定起手句（「不是 X、是 Y」）改成重點先行，核心概念移到句首、被否定的一半留作句尾對照；同步 blog 對應 report 卡的同一批改寫，語意不變
