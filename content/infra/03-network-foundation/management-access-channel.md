@@ -6,7 +6,7 @@ weight: 4
 tags: ["infra", "network", "ssh", "security", "access", "vpn", "zero-trust"]
 ---
 
-這篇整理管理員登入伺服器作業系統的通道怎麼設計，內容與雲端廠商無關，適用於雲端 VM、地端主機與 VPS。適用的前提是服務跑在自己管理的主機上、而且有人要登入那台主機的作業系統；跑在不提供主機登入的平台（PaaS、serverless）上，就沒有這條通道要設計。機制以 SSH 說明，RDP 的差異在〈對外開放管理 port 的實際風險〉與〈主機登入驗證的做法〉另外交代。GCP 上的設定與指令見 [GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding](/infra/cloud-providers/gcp/gcp-iap-ssh-access/)。
+這篇整理管理員登入伺服器作業系統的通道怎麼設計，內容與雲端廠商無關，適用於雲端 VM、地端主機與 VPS。適用的前提是服務跑在自己管理的主機上、而且有人要登入那台主機的作業系統；跑在不提供主機登入的平台（PaaS、serverless）上，就沒有這條通道要設計。機制以 SSH 說明，RDP 的差異在〈對外開放管理 port 的實際風險〉與〈主機登入驗證的做法〉另外交代。GCP 上的機制見 [GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding](/infra/cloud-providers/gcp/gcp-iap-ssh-access/)，逐步的指令見 [GCP VM 的 SSH 與 RDP 改走 IAP 的實測紀錄](/infra/cloud-providers/gcp/hands-on/iap-ssh-migration-walkthrough/)。
 
 ## 管理通道的三層：網路可達性、通道授權、主機登入驗證
 
@@ -172,7 +172,7 @@ Windows 主機用 RDP 登入時，這一層是 Windows 帳號而不是 SSH 金�
 
 ### 不可變基礎設施下的臨時授權：通道平時關閉
 
-服務已經用不可變基礎設施（immutable infrastructure）的方式部署，也就是以重新建立主機取代登入修改時，管理通道只在除錯與救援時才用得到。這時可以讓通道平時對任何人都開不起來：管理員平時移除通道授權的權限綁定，除錯時才臨時授予，用完收回；這一整個循環叫 just-in-time access，授予與收回的流程與救援入口相同，見〈救援入口：管理通道斷掉時的備用路徑〉。主機由 managed instance group 或 GKE 這類機制依 template 重建時，救援也多半改成重建一台而不是登入修，設定與做法見[GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/)。
+服務已經用不可變基礎設施（immutable infrastructure）的方式部署，也就是以重新建立主機取代登入修改時，管理通道只在除錯與救援時才用得到。這時可以讓通道平時對任何人都開不起來：管理員平時移除通道授權的權限綁定，除錯時才臨時授予，用完收回；這一整個循環叫 just-in-time access，授予與收回的流程與救援入口相同，見〈救援入口：管理通道斷掉時的備用路徑〉。主機由 managed instance group 或 GKE 這類機制依 template 重建時，救援也多半改成重建一台而不是登入修，重建、退回舊版 template 與登入修各自適用的情形見[GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/)，重建一台 VM 的指令與實測結果見 [GCP 上 MIG 與 GKE 管理存取的實測紀錄](/infra/cloud-providers/gcp/hands-on/mig-gke-access-walkthrough/) 的〈重建一台壞掉的 VM：recreate-instances 與重建之後的主機金鑰〉。
 
 ## AWS 與 Oracle Cloud 上對應的元件
 
@@ -182,7 +182,7 @@ Oracle Cloud 的 Bastion 名字跟跳板機相同，位置在這張地圖上卻�
 
 ## 延伸閱讀：GCP 上的實作與反向連線的運作細節
 
-- → [GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding](/infra/cloud-providers/gcp/gcp-iap-ssh-access/)：IAP、OS Login、Cloud NAT、Serial Console 與組織政策的指令，包含切換時停用舊規則驗證的步驟
+- → [GCP VM 的 SSH 與 RDP 管理通道：從預設的全開規則改走 IAP TCP forwarding](/infra/cloud-providers/gcp/gcp-iap-ssh-access/)：IAP、OS Login、Cloud NAT、Serial Console 與組織政策在 GCP 上的機制與切換順序；停用舊規則驗證的逐步指令在 [GCP VM 的 SSH 與 RDP 改走 IAP 的實測紀錄](/infra/cloud-providers/gcp/hands-on/iap-ssh-migration-walkthrough/)
 - → [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/)：代理程式反向連線那條往外的連線怎麼建立、斷線時的故障模式
 - → [OpenSSH 內建 CA 的 SSH 憑證導入](/infra/03-network-foundation/openssh-ca-setup/)：只用 ssh-keygen 與 sshd 簽發、撤銷 SSH 憑證的完整流程，主機登入驗證選「收回靠到期」時的實作
 - → [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/)：主機由 template 重建時，三層的設定要寫在哪裡

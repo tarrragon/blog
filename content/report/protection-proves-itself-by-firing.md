@@ -9,7 +9,7 @@ slug: "protection-proves-itself-by-firing"
 
 ## 論述基礎與限制
 
-這張卡來自一次 GCP 測試專案上的實機驗證。驗證的對象是 [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/) 與 [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/) 兩篇教學文章的指令，以及一個依預算通知自動停用帳單的停損開關（kill switch，做法在 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)）。單一雲端供應商、單一個工作階段、每個現象各觀察到一到數次，所以卡上記的是這幾個機制在 2026 年 10 月當時的行為，而不是 GCP 的通則；卡要歸納的是驗證方法，不是那些行為本身。
+這張卡來自一次 GCP 測試專案上的實機驗證。驗證的對象是 [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/) 與 [GCP 上由 MIG 與 GKE 管理的 VM 的管理存取](/infra/cloud-providers/gcp/gke-mig-management-access/) 兩篇教學文章的指令，以及一個依預算通知自動停用帳單的停損開關（kill switch，做法在 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)）。這三篇的指令後來移到三篇實測紀錄：[GCP VM 的 SSH 與 RDP 改走 IAP 的實測紀錄](/infra/cloud-providers/gcp/hands-on/iap-ssh-migration-walkthrough/)、[GCP 上 MIG 與 GKE 管理存取的實測紀錄](/infra/cloud-providers/gcp/hands-on/mig-gke-access-walkthrough/)、[GCP 預算警示與停損開關的實測紀錄](/infra/cloud-providers/gcp/hands-on/budget-killswitch-walkthrough/)，原本的三篇留下機制與判斷依據。單一雲端供應商、單一個工作階段、每個現象各觀察到一到數次，所以卡上記的是這幾個機制在 2026 年 10 月當時的行為，而不是 GCP 的通則；卡要歸納的是驗證方法，不是那些行為本身。
 
 那次驗證裡有七個防護或驗證步驟，事後看都在還沒真正生效、或還沒真正查到的時候，給出了可以結案的訊號：稽核紀錄與停損開關的觸發、權限、重試這四項給的是成功的訊號，防火牆紀錄查詢與資源清單給的是零筆，`loginctl terminate-user` 回報的是「使用者沒有登入」。
 

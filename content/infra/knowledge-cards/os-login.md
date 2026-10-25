@@ -38,4 +38,5 @@ OS Login 啟用後，VM 只認 IAM 角色，metadata 裡的公鑰立即失效，
 - [SSH](/infra/knowledge-cards/ssh/) — OS Login 取代的是靜態 `authorized_keys` 的金鑰發放方式
 - [IAM](/infra/knowledge-cards/iam/) — OS Login 的登入權限由 IAM role 決定
 - [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) — 常一起使用的通道授權層
-- [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/#ssh-金鑰在-gcp-上的管理位置metadata-金鑰與-os-login-的啟用順序與還原) — 授予角色、單台先行啟用與還原的指令
+- [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/#ssh-金鑰在-gcp-上的管理位置metadata-金鑰與-os-login-的啟用條件) — OS Login 與 metadata 金鑰的差別，以及啟用的順序為什麼這樣排
+- [GCP VM 的 SSH 與 RDP 改走 IAP 的實測紀錄](/infra/cloud-providers/gcp/hands-on/iap-ssh-migration-walkthrough/#啟用-os-login先授角色單台先行再做專案層級) — 授予角色、單台先行啟用與還原的指令

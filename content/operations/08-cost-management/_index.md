@@ -20,8 +20,7 @@ tags: ["devops", "cost-management", "cloud-cost", "reserved-instance", "spot-ins
 
 ## 各家業者的實作
 
-預算警示與停損開關落到某一家雲端時的建置與驗收，放在 [雲端業者的帳號申請與主機維運](/infra/cloud-providers/) 的業者子資料夾，目前有 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)。用免費方案開帳號的人，決定是否在升級之前先建預算警示與停損時，依據是帳號在試用結束後是否開始計費；Oracle Cloud、Google Cloud 與 AWS 試用結束時帳號與資源的處置，見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/) 的〈試用結束後帳號與資源的處置〉。
-
+預算警示與停損開關落到某一家雲端時的建置與驗收，放在 [雲端業者的帳號申請與主機維運](/infra/cloud-providers/) 的業者子資料夾，目前有 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)（機制與判斷）與 [GCP 預算警示與停損開關的實測紀錄](/infra/cloud-providers/gcp/hands-on/budget-killswitch-walkthrough/)（建置與驗收）。用免費方案開帳號的人，決定是否在升級之前先建預算警示與停損時，依據是帳號在試用結束後是否開始計費；Oracle Cloud、Google Cloud 與 AWS 試用結束時帳號與資源的處置，見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/) 的〈試用結束後帳號與資源的處置〉。
 
 ## Backlog
 

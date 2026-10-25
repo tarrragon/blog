@@ -23,7 +23,7 @@ tags: ["infra", "cloud-providers", "free-tier"]
 
 - [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/)：vendor 中立，依功能分類一類一篇（位置、機型與映像檔、網路、登入、磁碟、代理程式與維護、安全開機）
 - [Oracle Cloud](/infra/cloud-providers/oracle-cloud/)：主控台導覽、帳號結構與 home region、CLI 登入、建立主機的實測紀錄
-- [Google Cloud](/infra/cloud-providers/gcp/)：IAP 管理通道、MIG 與 GKE 的管理存取、帳單停損開關
+- [Google Cloud](/infra/cloud-providers/gcp/)：IAP 管理通道、MIG 與 GKE 的管理存取、帳單停損開關，三個主題各有一篇概念文章與一篇實測紀錄
 
 新增一家業者時開一個子資料夾，在收費比較那篇補上那一家的欄位，再用下面這條掃一次，把寫死成目前業者組合的句子、並列句與對照表一起更新。掃描對象不寫死業者數，所以加過一家之後下一次照樣有效：
 

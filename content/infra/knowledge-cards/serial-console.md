@@ -35,4 +35,4 @@ tags: ["infra", "knowledge-cards", "access", "recovery"]
 - [SSH](/infra/knowledge-cards/ssh/) — 平時的管理通道，序列主控台在它斷掉時接手
 - [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) — 平時的通道控制點，救援入口繞過它
 - [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) — 另一種平時的通道控制點
-- [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/#準備救援入口serial-console-與救援帳號) — 在 GCP 上建救援帳號、開啟與關閉 Serial Console 的指令
+- [GCP VM 的 SSH 與 RDP 改走 IAP 的實測紀錄](/infra/cloud-providers/gcp/hands-on/iap-ssh-migration-walkthrough/#準備救援入口serial-console-與本機救援帳號) — 在 GCP 上建救援帳號、開啟與關閉 Serial Console 的指令

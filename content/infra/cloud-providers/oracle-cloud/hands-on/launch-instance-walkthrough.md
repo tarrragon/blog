@@ -324,7 +324,7 @@ oci compute console-history get-content --instance-console-history-id <上一條
 
 ### 成因：A1 加 Ubuntu 是官方列出的不支援組合
 
-Oracle 官方〈Known Issues for Bastion〉的第一條寫明，用 Arm 架構的 Ampere A1 機型建立、而且作業系統不是 Oracle Linux（例如 Ubuntu）的主機，不支援 managed SSH session；原文的理由是這類主機上的 Bastion plugin 沒有正確啟用（「isn't properly enabled on some Arm-based instances」），所以建立工作階段會失敗。這台正是 A1 加 Ubuntu 24.04。主控台上的 plugin 狀態是 `RUNNING`，跟原文說的「沒有正確啟用」在主控台上看不出差別，所以 plugin 的狀態不能當成這條路走得通的證據。官方給的替代做法是改用 SSH port forwarding session。同一頁的另一條是 Ubuntu 上的 Oracle Cloud Agent 低於 1.11 版時 managed SSH session 也會失敗（處置是在主機上跑 `sudo snap refresh oracle-cloud-agent`），這一條要登入主機才查得到版本。
+Oracle 官方〈Known Issues for Bastion〉的第一條寫明，用 Arm 架構的 Ampere A1 機型建立、而且作業系統不是 Oracle Linux（例如 Ubuntu）的主機，不支援 managed SSH session；原文的理由是這類主機上的 Bastion plugin 沒有正確啟用（「isn't properly enabled on some Arm-based instances」），所以建立工作階段會失敗。這台正是 A1 加 Ubuntu 24.04。主控台上的 plugin 狀態是 `RUNNING`，跟原文說的「沒有正確啟用」在主控台上看不出差別，所以 plugin 的狀態不能當成這條路走得通的證據。官方給的替代做法是改用 SSH port forwarding session。同一頁的另一條是 Ubuntu 上的 Oracle Cloud Agent 低於 1.11 版時 managed SSH session 也會失敗（處置是在主機上跑 `sudo snap refresh oracle-cloud-agent`）。這台主機的代理程式版本，後來用 Run Command 讀到是 1.61.0，這一條可以排除，見〈用 Run Command 讀代理程式的版本與日誌〉。
 
 上面那張表的三次是在查到這一條之前做的。官方〈Managed SSH Session Creation Failed〉列的成因，對這台的狀況是：代理程式與 Bastion plugin 都在跑；VCN 有 service gateway 與路由，缺 gateway 時 plugin 的狀態會是 `INVALID`，這台不是；`ubuntu` 是存在的使用者；sshd 設定那一項，這台沒有 SSH 登入的入口可以查。建 managed SSH session 之前先讀 Known Issues 那一頁，確認機型與作業系統的組合有支援，三次各 15 分鐘的等待就可以省掉。
 
@@ -410,6 +410,27 @@ ls: cannot open directory '/etc/sudoers.d/': Permission denied
 - **`FAILED` 的意思**：執行紀錄的 `exit-code` 是 2，來自腳本最後一行 `ls` 讀不了 `/etc/sudoers.d/`；同一筆紀錄的 `delivery-state` 是 `ACKED`，指令有送達並執行完。所以這裡的 `FAILED` 是腳本的結束碼，不是 plugin 沒有執行。
 - **plugin 在 A1 Ubuntu 上執行得了腳本**：Ubuntu 不在支援映像清單上，而腳本確實執行了。Ubuntu 上的 Oracle Cloud Agent 是 snap 套件，`ocarun` 的群組是 `snap_daemon` 與 `adm`（`adm` 讀得到 `/var/log` 底下的系統日誌）。
 - **`SUDO=no`**：`ocarun` 沒有 sudo，寫不了 `/home/ubuntu/.ssh/authorized_keys`，也加不了 sudoers 檔。要讓 `ocarun` 有 sudo，得先登入主機加 sudoers 檔，而這台正是登不進去才要用 Run Command，所以 Run Command 在這台主機上寫不了公鑰。建立時用初始化腳本放 sudoers 檔的做法，見〈Management：Oracle Cloud Agent 與其他進階選項〉。
+
+### 用 Run Command 讀代理程式的版本與日誌
+
+`ocarun` 寫不了其他使用者的檔案，讀得到的範圍則比較寬：它屬於 `adm` 群組，`/var/log` 底下開放給這個群組或所有人讀的檔案都讀得到。所以 Run Command 雖然救不回這台主機，仍然能在不登入的情況下查 managed SSH session 失敗時代理程式的狀態。2026-10-25 下午再送了兩次唯讀的腳本，送法同〈送出唯讀的探測腳本〉，只換腳本內容；兩次的內容合起來是：
+
+```bash
+#!/bin/bash
+# 只讀：代理程式的版本、日誌目錄、代理程式主日誌裡 Bastion plugin 的紀錄
+snap list oracle-cloud-agent 2>&1
+ls -l /var/log/oracle-cloud-agent/plugins/ 2>&1
+ls /var/log/oracle-cloud-agent/plugins/bastions/ 2>&1
+grep -ih bastion /var/log/oracle-cloud-agent/*.log 2>&1 | tail -n 20
+```
+
+第二次從送出到執行完約 2 分半鐘（06:19:43Z 到 06:22:10Z；主機已經在 dynamic group 裡，不再等第一次探測的 7 分鐘）。兩次讀到的是：
+
+- **代理程式的版本**：`snap list` 印出 `oracle-cloud-agent 1.61.0-6`，Notes 欄是 `classic,held`。Known Issues 第二條的 1.11 版以下不成立，這台的逾時只剩 A1 加 Ubuntu 那一條成因。
+- **Bastion plugin 的日誌讀不到**：plugin 的目錄叫 `bastions`（不是 `bastion`），裡面有 `bastions.log`，而目錄的權限是 `drwxr--r--`、擁有者與群組都是 `snap_daemon`；`ocarun` 的主要群組雖然是 `snap_daemon`，群組那一欄是 `r--`、沒有 `x`，列得出檔名、進不了目錄，讀不了裡面的檔案（其他使用者那一欄同樣是 `r--`，不在這個群組也是一樣）。`runcommand` 目錄的擁有者是 `ocarun`、群組 `adm`。
+- **代理程式的主日誌讀得到**：`/var/log/oracle-cloud-agent/agent.log` 開放所有人讀。它每 10 分鐘對 Bastion plugin 做一次健康檢查，紀錄是 `health check of plugin:[bastions], desiredState:[Enable], currentState:[running], status:[running] version:[1.61.0-6] err:[<nil>]`。讀到的是 05:51 與 06:01（UTC）這兩筆，都是 running、沒有錯誤；managed SSH session 逾時的那幾個時段（台北時間 11:04 到 12:07）的紀錄不在讀到的範圍裡。所以這次能確定的是：工作階段已經逾時三次之後，代理程式的健康檢查仍然回報 running，跟主控台上的 `RUNNING` 一樣看不出這個組合不支援。
+
+以文字保存的輸出只留最後 1 KB，`grep` 的結果被截斷；要讀完整的日誌，輸出改存到 Object Storage（`"outputType"` 改成 Object Storage 的那一種，這次沒有實跑）。
 
 ## 這台主機剩下的登入入口
 

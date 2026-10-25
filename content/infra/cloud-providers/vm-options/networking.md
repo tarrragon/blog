@@ -98,7 +98,7 @@ Oracle Cloud 建立頁上能設定的只有 NSG：「Use network security groups
 三家業者替使用者預先建好或順手建的網路，預設的規則都放行 22 port 的 SSH 流量。Google Cloud 那一條規則的來源是整個網際網路，Oracle Cloud 那一份的來源在 2026-10-24 實測時也是整個網際網路：
 
 - **Oracle Cloud**：建立頁選「建一個新的 VCN」時，主控台一起建一份「Default Security List」。官方〈Security Lists〉描述的是這條規則的用途：放行來自「authorized source IP addresses」的 TCP 22，讓使用者建好新的 VCN 與公開 subnet 之後，不必自己寫規則就能用 SSH 連上新建的 Linux 主機；這段描述沒有寫來源欄位的預設值。2026-10-24 實測時，主控台建出來的這條規則來源是 `0.0.0.0/0`。兩者不衝突：官方寫的是規則的用途，實測讀到的是那一次建出來的預設值。官方沒有寫預設值，所以建好之後到 subnet 的 security list 看一次實際的來源。Subnet 沒有另外指定 security list 時套用的就是這一份，所以這條規則的來源是 `0.0.0.0/0` 時，在新建的公開 subnet 裡建一台有公開 IP 的主機，那台主機的 SSH port 一建好就對網際網路開放。這份規則的完整內容（實測值）見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的 Networking 段。
-- **Google Cloud**：專案建立時就有的 `default` 網路帶一條 `default-allow-ssh` 規則，放行 `0.0.0.0/0` 的 TCP 22，套用在這個網路裡的每一台主機。換掉這條規則的步驟見 [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/)。
+- **Google Cloud**：專案建立時就有的 `default` 網路帶一條 `default-allow-ssh` 規則，放行 `0.0.0.0/0` 的 TCP 22，套用在這個網路裡的每一台主機。換掉這條規則的順序見 [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/) 的〈切換到 IAP 的順序〉，逐步的指令見 [GCP VM 的 SSH 與 RDP 改走 IAP 的實測紀錄](/infra/cloud-providers/gcp/hands-on/iap-ssh-migration-walkthrough/)。
 - **AWS**：EC2 啟動精靈順手建的 security group 預設放行進來的 SSH 流量（官方〈Prerequisites for EC2 Instance Connect〉的說明），放行的來源要在精靈的網路設定那一步確認並收緊。
 
 收緊的做法是把來源改成管理員的 IP，或改用不需要對外開放 SSH 的管理通道（見 [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)）。
