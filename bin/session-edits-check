@@ -1,0 +1,300 @@
+#!/usr/bin/env python3
+"""用這次 Claude Code session 的編輯紀錄重建 diff，確認要提交的改動都是這個 session 做的。
+
+用途：AGENTS.md〈提交〉的「確認 `git diff HEAD` 的每一段都是這次自己做的編輯」那一步。Claude Code
+裡 `bin/commit-files` 在提交前自己用 `--staged` 呼叫這支工具（CLAUDE.md〈提交前對照編輯紀錄〉）；
+單獨跑是用來在提交前先看結果。context 被壓縮之後，編輯紀錄不在 context 裡，憑印象對照等於沒有
+對照；transcript 裡 Edit 與 Write 的結果都還在，所以由工具重建。
+
+用法：
+  bin/session-edits-check [--staged] <這次的檔案...>
+  路徑以執行時的目錄起算，列檔案不列目錄。--staged 比對 index（`GIT_INDEX_FILE` 指的那一份）裡的
+  內容，不比對工作樹；commit-files 用它比對私有 index，檢查與提交之間的改動就進不來。
+  transcript 是 ~/.claude/projects/*/<$CLAUDE_CODE_SESSION_ID>.jsonl 與它的
+  <主檔名>/subagents/*.jsonl（主 session 派出的 subagent 與 teammate，它們的 sessionId 是主
+  session 的）。transcript 裡有一行的 sessionId 不是 $CLAUDE_CODE_SESSION_ID 時 exit 2：拿另一個
+  session 的 transcript 重播，會把那個 session 的改動判成自己的。
+  --transcript <檔> 與環境變數 SESSION_EDITS_TRANSCRIPT 只給測試用。
+
+行為：每個檔案各自判定。
+1. 起點是 HEAD 裡的版本（HEAD 沒有這個檔案時是「不存在」）。
+2. 取出這個檔案在 HEAD 最後一次 commit 它之後的 Edit 與 Write（比對時間：
+   `git log -1 --format=%ct -- <檔案>` 與 transcript 每一行的 timestamp），依時間重播：Edit 把
+   old_string 換成 new_string（replace_all 時換全部，否則 old_string 要剛好出現一次）；覆寫既有
+   檔案的 Write 套它的 structuredPatch，不拿全文（全文會把寫之前別人改的段落一起帶進來）；建立
+   新檔的 Write 用全文。紀錄留著編輯前的全文（originalFile）時，先確認它跟重播的內容相同。
+3. 重播的結果跟要提交的內容（工作樹，或 --staged 時的 index）逐字相同，印 `ok:`；否則印
+   `[ASK-USER]`、原因、能定位外來改動時的 unified diff（`+` 的那幾行是 transcript 解釋不了的
+   內容），以及這個檔案要提交的整份改動（`git diff HEAD`）。transcript 解釋不了的改動有：另一個
+   session 的編輯、Edit 與 Write 以外的寫檔方式（Bash 的 sed、heredoc、rm、git mv、git checkout，
+   NotebookEdit、MCP 的寫檔工具）、生成器產生的檔案、commit 與編輯落在同一秒而被重播兩次的那一筆。
+   工具不判斷是哪一種，交給 AGENTS.md〈要先問使用者的情形〉。
+檔案模式變了、是 symlink、不是 UTF-8、HEAD 與要提交的內容裡都沒有這個檔案時，不重播，直接印
+`[ASK-USER]`。工作樹裡被 Write 整份蓋掉的別人改動，在工作樹與 HEAD 裡都已經不在，這支工具看不到。
+
+結尾在 stderr 印 `session-edits-check: N file(s) checked, M ask-user (K edit(s) from J transcript(s))`；
+N 是給的檔案數。transcript 裡有 Edit 或 Write 的呼叫、卻一筆結果都解析不出來時 exit 2：transcript
+的格式跟這支工具讀的欄位對不上，這時每個檔案都會印 `[ASK-USER]`，看起來像別人改了所有檔案。
+
+exit：0 全部 ok；3 至少一個檔案印了 `[ASK-USER]`；2 用法錯誤（含給了目錄）、找不到 transcript
+（含沒有 CLAUDE_CODE_SESSION_ID）、transcript 不是這個 session 的、格式對不上、不在 git repo 裡，
+原因印在 stderr；其他 exit 是工具中途中止。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import argparse
+import datetime
+import difflib
+import glob
+import json
+import os
+import subprocess
+import sys
+
+
+def die(msg):
+    sys.stderr.write(f"session-edits-check: {msg}\n")
+    sys.exit(2)
+
+
+def git(*args, root):
+    return subprocess.run(["git", *args], capture_output=True, cwd=root)
+
+
+def find_transcript():
+    if os.environ.get("SESSION_EDITS_TRANSCRIPT"):
+        return os.environ["SESSION_EDITS_TRANSCRIPT"]
+    sid = os.environ.get("CLAUDE_CODE_SESSION_ID")
+    if not sid:
+        die("找不到這個 session 的 transcript：沒有 CLAUDE_CODE_SESSION_ID")
+    hits = glob.glob(os.path.expanduser(f"~/.claude/projects/*/{sid}.jsonl"))
+    if len(hits) != 1:
+        die(f"找不到這個 session 的 transcript：{sid}.jsonl 有 {len(hits)} 份")
+    return hits[0]
+
+
+def parse_ts(s):
+    return datetime.datetime.fromisoformat(s.replace("Z", "+00:00")).timestamp()
+
+
+def transcript_files(path):
+    """主 transcript 與它的 subagent transcript（<主檔名去掉 .jsonl>/subagents/*.jsonl）。"""
+    return [path, *sorted(glob.glob(os.path.join(path[: -len(".jsonl")], "subagents", "*.jsonl")))]
+
+
+def tool_calls(o):
+    """這一行裡 Edit 與 Write 的呼叫數，用來判斷 transcript 的格式對不對得上。"""
+    content = (o.get("message") or {}).get("content")
+    if not isinstance(content, list):
+        return 0
+    return sum(1 for b in content if isinstance(b, dict) and b.get("type") == "tool_use" and b.get("name") in ("Edit", "Write"))
+
+
+def load_ops(path):
+    """主 session 與 subagent 成功的 Edit 與 Write，依時間排序：(realpath, timestamp, op)。
+
+    op 是 ("edit", old, new, replace_all, originalFile)、("create", content)
+    或 ("update", structuredPatch, originalFile)；originalFile 沒有記下來時是 None。
+    """
+    sid = os.environ.get("CLAUDE_CODE_SESSION_ID")
+    files = transcript_files(path)
+    ops, calls = [], 0
+    for name in files:
+        with open(name, encoding="utf-8") as f:
+            for line in f:
+                try:
+                    o = json.loads(line)
+                except ValueError:
+                    continue
+                if not isinstance(o, dict):
+                    continue
+                if sid and o.get("sessionId") not in (None, sid):
+                    die(f"{name} 裡有 sessionId {o['sessionId']} 的紀錄，不是這個 session（{sid}）的 transcript")
+                calls += tool_calls(o)
+                r = o.get("toolUseResult")
+                if not isinstance(r, dict) or not r.get("filePath") or not o.get("timestamp"):
+                    continue
+                orig = r.get("originalFile") if isinstance(r.get("originalFile"), str) else None
+                if isinstance(r.get("oldString"), str) and isinstance(r.get("newString"), str):
+                    op = ("edit", r["oldString"], r["newString"], bool(r.get("replaceAll")), orig)
+                elif r.get("type") == "create" and isinstance(r.get("content"), str):
+                    op = ("create", r["content"])
+                elif r.get("type") == "update" and isinstance(r.get("structuredPatch"), list):
+                    op = ("update", r["structuredPatch"], orig)
+                else:
+                    continue
+                ops.append((os.path.realpath(r["filePath"]), parse_ts(o["timestamp"]), op))
+    if calls and not ops:
+        die(f"transcript 裡有 {calls} 次 Edit 或 Write 的呼叫，卻解析不出任何一筆結果：格式跟這支工具讀的欄位對不上")
+    ops.sort(key=lambda x: x[1])  # 穩定排序：同一刻的紀錄保留檔內順序
+    return ops, len(files)
+
+
+def apply_patch(state, hunks):
+    """把 Write 的 structuredPatch 套到 state；hunk 的舊側跟 state 對不上時回傳 None。
+
+    不直接拿 Write 的全文：全文是從寫之前的檔案改出來的，別的 session 先改的段落會跟著被
+    當成自己寫的。只套 hunk 的話，那些段落不會出現在重播的結果裡，跟工作樹比對時就對不上。
+    """
+    lines = state.split("\n")
+    offset = 0
+    for h in hunks:
+        old = [l[1:] for l in h["lines"] if l[:1] in (" ", "-")]
+        new = [l[1:] for l in h["lines"] if l[:1] in (" ", "+")]
+        start = h["oldStart"] - 1 + offset if h["oldLines"] else h["oldStart"] + offset
+        if lines[start : start + len(old)] != old:
+            return None
+        lines[start : start + len(old)] = new
+        offset += len(new) - len(old)
+    return "\n".join(lines)
+
+
+def repo_path(path, root):
+    """相對於 repo 根目錄的路徑；只解析目錄的部分，最後一段是 symlink 時判的是 symlink 本身。"""
+    d, base = os.path.split(os.path.abspath(path))
+    return os.path.relpath(os.path.join(os.path.realpath(d), base), root)
+
+
+def read_text(data):
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+
+
+class Target:
+    """要提交的內容：工作樹，或 --staged 時的 index。"""
+
+    def __init__(self, root, staged):
+        self.root, self.staged = root, staged
+
+    def diff_args(self, rel):
+        return ["diff", "--cached", "HEAD", "--", rel] if self.staged else ["diff", "HEAD", "--", rel]
+
+    def content(self, rel):
+        """(存不存在, 文字或 False)。"""
+        if self.staged:
+            r = git("show", f":{rel}", root=self.root)
+            return (True, read_text(r.stdout)) if r.returncode == 0 else (False, None)
+        full = os.path.join(self.root, rel)
+        if os.path.isfile(full) and not os.path.islink(full):
+            with open(full, "rb") as f:
+                return True, read_text(f.read())
+        return os.path.lexists(full), None
+
+    def mode_changed(self, rel):
+        """git 記錄的檔案模式變了、或這是 symlink：內容比對看不到這兩種改動。"""
+        raw = git(*self.diff_args(rel)[:-2], "--raw", "--", rel, root=self.root).stdout.decode()
+        for line in raw.splitlines():
+            old_mode, new_mode = line[1:].split()[:2]
+            if "000000" in (old_mode, new_mode):  # 新增或刪除，交給內容的重播判
+                continue
+            if old_mode != new_mode or "120000" in (old_mode, new_mode):
+                return True
+        if self.staged:
+            ls = git("ls-files", "-s", "--", rel, root=self.root).stdout.decode()
+            return ls.startswith("120000")
+        return os.path.islink(os.path.join(self.root, rel))
+
+    def diff(self, rel):
+        return git(*self.diff_args(rel), root=self.root).stdout.decode(errors="replace")
+
+
+def check(rel, target, ops):
+    """回傳 (ok, 訊息, 定位外來改動的 diff 或 None)。"""
+    root = target.root
+    ct = git("log", "-1", "--format=%ct", "--", rel, root=root).stdout.strip()
+    since = int(ct) if ct else float("-inf")
+    shown = git("show", f"HEAD:{rel}", root=root)
+    state = read_text(shown.stdout) if shown.returncode == 0 else None
+    exists, work = target.content(rel)
+    if state is None and not exists:
+        return False, "HEAD 與要提交的內容裡都沒有這個檔案（路徑打錯？）", None
+    if target.mode_changed(rel):
+        return False, "檔案模式變了或這是 symlink，內容的重播判斷不了", None
+    if state is False or work is False:
+        return False, "不是 UTF-8 文字，重播不了", None
+    mine = [op for p, ts, op in ops if p == os.path.realpath(os.path.join(root, rel)) and ts > since]
+
+    def located(a, b, a_label, b_label):
+        return "".join(
+            difflib.unified_diff((a or "").splitlines(True), (b or "").splitlines(True), fromfile=a_label, tofile=b_label)
+        )
+
+    for i, op in enumerate(mine, 1):
+        kind = op[0]
+        if kind == "create":
+            if state is not None:
+                return False, f"第 {i} 筆是 Write 建立新檔，而重播的內容裡這個檔案已經存在", None
+            state = op[1]
+            continue
+        orig = op[-1]
+        if orig is not None and orig != state:
+            # + 的那幾行是第 i 筆編輯之前就已經在檔案裡、而 transcript 解釋不了的內容
+            return (
+                False,
+                f"第 {i} 筆編輯之前，檔案已經有 transcript 解釋不了的改動",
+                located(state, orig, "重播的內容", f"第 {i} 筆編輯之前的檔案"),
+            )
+        if state is None:
+            return False, f"第 {i} 筆編輯時，重播的內容裡沒有這個檔案", None
+        if kind == "update":
+            patched = apply_patch(state, op[1])
+            if patched is None:
+                return False, f"第 {i} 筆 Write 的改動對不上重播的內容", None
+            state = patched
+            continue
+        _, old, new, replace_all, _ = op
+        n = state.count(old)
+        if n == 0 or (n > 1 and not replace_all):
+            where = "找不到" if n == 0 else f"出現 {n} 次"
+            return False, f"第 {i} 筆 Edit 的 old_string 在重播的內容裡{where}", None
+        state = state.replace(old, new) if replace_all else state.replace(old, new, 1)
+    if state == work:
+        return True, f"重播 {len(mine)} 筆編輯，跟要提交的內容相同", None
+    where = "index" if target.staged else "工作樹"
+    msg = "transcript 裡沒有這個檔案在最後一次 commit 之後的編輯" if not mine else f"重播 {len(mine)} 筆編輯之後跟{where}不同"
+    return False, msg, located(state, work, "重播的結果", where)
+
+
+def main():
+    ap = argparse.ArgumentParser(add_help=True)
+    ap.add_argument("--staged", action="store_true")
+    ap.add_argument("--transcript", help=argparse.SUPPRESS)
+    ap.add_argument("files", nargs="+")
+    a = ap.parse_args()
+    top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    if top.returncode != 0:
+        die("不在 git repo 裡")
+    root = os.path.realpath(top.stdout.strip())
+    dirs = [p for p in a.files if os.path.isdir(p) and not os.path.islink(p)]
+    if dirs:
+        die("清單裡有目錄（列檔案，不列目錄）：" + " ".join(dirs))
+    transcript = a.transcript or find_transcript()
+    if not os.path.isfile(transcript):
+        die(f"找不到這個 session 的 transcript：{transcript}")
+    ops, nfiles = load_ops(transcript)
+    target = Target(root, a.staged)
+    asks = 0
+    for path in a.files:
+        rel = repo_path(path, root)
+        ok, msg, located = check(rel, target, ops)
+        if ok:
+            print(f"ok: {path}：{msg}")
+            continue
+        asks += 1
+        print(f"[ASK-USER] {path}：{msg}")
+        if located:
+            print("transcript 解釋不了的內容（+ 的那幾行）：")
+            sys.stdout.write(located)
+        print(f"這個檔案要提交的整份改動（git {' '.join(target.diff_args(rel)[:-2])}）：")
+        sys.stdout.write(target.diff(rel))
+    sys.stderr.write(
+        f"session-edits-check: {len(a.files)} file(s) checked, {asks} ask-user ({len(ops)} edit(s) from {nfiles} transcript(s))\n"
+    )
+    sys.exit(3 if asks else 0)
+
+
+if __name__ == "__main__":
+    main()

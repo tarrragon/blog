@@ -12,7 +12,7 @@
 
 # Claude Code 專屬的操作
 
-上方的 `@` 匯入由 Claude Code 自動內嵌：AGENTS.md 是規則的入口，`docs/rules/` 的分冊是各類工作的規則（分工見 AGENTS.md 開頭的路由表）。本檔只寫 Claude Code 才有的操作：回覆語言設定的注入、skill 的叫用機制、Agent tool 的派發（所有背景 agent 共用的送達規則、reviewer、理解探針、術語探針會讀到的系統提示），以及 SSH 的權限與 hook。共用的規則不寫在這裡，要改就改 AGENTS.md 或對應的分冊。
+上方的 `@` 匯入由 Claude Code 自動內嵌：AGENTS.md 是規則的入口，`docs/rules/` 的分冊是各類工作的規則（分工見 AGENTS.md 開頭的路由表）。本檔只寫 Claude Code 才有的操作：回覆語言設定的注入、skill 的叫用機制、提交前用 transcript 對照編輯紀錄、Agent tool 的派發（所有背景 agent 共用的送達規則、reviewer、理解探針、術語探針會讀到的系統提示），以及 SSH 的權限與 hook。共用的規則不寫在這裡，要改就改 AGENTS.md 或對應的分冊。
 
 ## 回覆語言的設定
 
@@ -23,6 +23,15 @@
 Claude Code 依 `.claude/skills/<name>/SKILL.md` frontmatter 的 `description` 比對當前任務，自動觸發 skill；系統提示裡會列出每個 skill 的 description。使用者在對話中打 `/<skill-name>` 手動叫用；agent 自己要叫用時用 Skill tool，不在回覆裡打斜線指令。
 
 寫作類 skill 不等自動觸發、由 agent 主動叫用的規則，寫在 `AGENTS.md`〈寫作類 skill 的叫用〉。
+
+## 提交前對照編輯紀錄
+
+`AGENTS.md`〈提交〉要求提交前確認 `git diff HEAD -- <這次的檔案...>` 的每一段都是這次自己做的編輯。context 被壓縮之後，編輯紀錄不在 context 裡，憑印象對照等於沒有對照；而這個 session（主 session 與它派出的 subagent、teammate）的 transcript 留著每一次 Edit 與 Write 的結果。所以在 Claude Code 裡，`bin/commit-files` 提交前自己跑 `bin/session-edits-check --staged`：拿 transcript 重播的結果，比對私有 index 裡要提交的內容，不先判斷 context 有沒有被壓縮。比對的是同一份清單、同一刻的內容，檢查之後才進工作樹的改動不會被提交。重播的範圍與判定寫在 `bin/session-edits-check` 的檔頭；想在提交前先看結果，單獨跑 `bin/session-edits-check <這次的檔案...>`。輸出的讀法與處置：
+
+- **`bin/commit-files` 提交成功**：比對只確認了 diff 都是這個 session 的編輯；`AGENTS.md`〈提交〉的其餘各項（紀錄、lint）照樣在提交前做完。
+- **印出 `[ASK-USER]`、沒有提交**：照 `AGENTS.md`〈要先問使用者的情形〉處理。工具只重播 Edit 與 Write，所以這幾種改動每一次都會印 `[ASK-USER]`：Edit 與 Write 以外的寫檔方式（Bash 的 `sed`、heredoc、`python3 -` 腳本，NotebookEdit、MCP 的寫檔工具）、刪除與改名（`rm`、`git mv`）、生成器產生的檔案（例如 `bin/skill-mirror` 產生的 `content/skills/` 鏡像）。要提交的檔案的內容用 Edit 或 Write 改，系統提示（例如 auto mode）准許用 Bash 改檔時也一樣；刪除、改名與生成器照常做，每次交給使用者決定。已經印了 `[ASK-USER]` 的檔案不還原、不重做（`AGENTS.md`〈沒有使用者明說就不做的動作〉）。使用者看過 diff、決定一起提交之後，用 `bin/commit-files --skip-session-check` 提交。
+- **`session-edits-check` exit 2**：清單裡有目錄時改列檔案再跑。其他原因（找不到這個 session 的 transcript、transcript 不是這個 session 的、格式對不上）改用 `AGENTS.md`〈提交〉給其他 agent 的做法：拿 diff 跟 context 裡的編輯紀錄逐段對照，不在 context 裡的段落算對不上；全部對得上才用 `--skip-session-check` 提交，對不上的照〈要先問使用者的情形〉。不自己找一份 transcript 給工具：最近更新的那一份可能是另一個 session 的。
+- **其他 exit，或 stderr 沒有 `file(s) checked` 那一行**：工具中途中止（`AGENTS.md`〈掃描工具的零輸出〉），照 exit 2 的逐段對照處理。
 
 ## Agent tool 的派發
 

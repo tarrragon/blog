@@ -60,6 +60,7 @@ slug: "rule-patches-breed-new-ambiguity"
 
 - [要理解探針列出「有兩種讀法的位置」是審查題：同一份檔案兩批的總數差得比輪與輪之間還大，改用封閉案例題加預期答案](/report/listing-ambiguities-is-a-review-task-not-a-probe/)：限定本卡起點那個比較的效力：歧義總數是取樣雜訊，本卡的成因分類由逐則歸因得出，仍然成立。
 - [規則的修法逐句驗證會通過、套到案例上才互撞：改完才查得到的事實管不了動手之前的步驟，修完要拿任務重走](/report/rule-fixes-pass-per-sentence-and-collide-per-case/)：本卡的下一輪。本卡的結構調整做完之後，修改那些結構的動作本身又產生新的歧義；那張卡追出四種機制，並替本卡的「共用的概念先定義再引用」補上時點這一問。
+- [判定改動是誰做的檢查：重播差異而不拿全文、證據綁定這個 session、比對要提交的那一份內容](/report/attribution-check-replays-deltas-on-the-committed-content/)：補本卡「程序寫成有測試的工具」留下的一段：工具的測試由作者寫，只涵蓋作者想到的路徑；那張卡的工具測試全過，漏報路徑由審查在拋棄式 repo 裡實跑找出，再寫回失敗的測試。
 - [Single Source of Truth：值的住址只能有一處](/report/single-source-of-truth/)：本卡最接近的既有卡，那張講的是值（CSS token、量測值）的住址；本卡把同一條原則用在規則檔自己的概念上，並補上那張卡沒有處理的兩種副本：摘要與轉述，以及散在各條規則裡的同一個例外。
 - [列舉與數字殘留在定義型文件會製造維護債務](/report/enumeration-creates-maintenance-debt/)：那張卡處理的是寫作過程留下的冗餘列舉；本卡的封閉列舉宣告的是全集，讀者靠它知道清單已經完整，失效的方式是別處新增成員之後它不報錯。修法因此不同：那張卡刪掉列舉，本卡把列舉移到唯一住址。
 - [要求執行者做判定的規則，要一併規定判定留下什麼痕跡](/report/judgment-rules-must-specify-their-trace/)：改動級別裡工具判不了的那一段（措辭級與規則級的分界）照那張卡的方式留下痕跡。

@@ -88,7 +88,7 @@ bin/changed-lines <這次的檔案...> > <暫存目錄>/added.txt   # 新增行�
 - **`description` 與 `tags`**：新增的 `content/` 檔案一律補齊；修改既有 `content/` 檔案時，同檔缺這兩個欄位就在同一次變更補上。lint 把它們報在警告層，但它們不是可以新增的技術債。補這兩個欄位是新增行，那一次的改動因此不是排版級（一般文章是措辭級），照那一級做紀錄與掃描。
 - **lint**：這次動到 `content/` 的檔案時，提交前跑 `bin/lint-delta <這次的 content/ 檔案...>`。它只印這次新增的問題，既有的只計數；exit 1 代表這次新增了 error，修掉再提交，新增的 warn 寫進回報。全量 lint（`./bin/mdtools lint content/`）只用來觀察歷史基線，不用來判斷這次的品質。
 - **提交**：用 `bin/commit-files -F <訊息檔> <這次的檔案...>`，不直接 `git commit`。共用的 git index 裡可能有另一個 session（或另一個 agent）staged 的檔案，直接 commit 會把它們一起提交；這支工具經由私有 index 只提交列出的檔案，提交後讓共用 index 對齊。路徑以執行時的目錄起算，刪除的檔案與改名的新舊兩個路徑都列。
-  - 跑之前先跑 `git diff HEAD -- <這次的檔案...>`，把 diff 跟這次自己做過的編輯逐段對照：私有 index 隔離的是 staging，不隔離工作樹，另一個 session 改了同一個檔案時，它在工作樹裡的修改會一起提交。有對不上的段落時，照〈要先問使用者的情形〉處理。自認都是自己寫的不改變本款：對照的是 diff 與編輯紀錄，不是印象。
+  - 提交的內容要確認 `git diff HEAD -- <這次的檔案...>` 的每一段都是這次自己做的編輯：私有 index 隔離的是 staging，不隔離工作樹，另一個 session 改了同一個檔案時，它在工作樹裡的修改會一起提交。自己派出的 subagent 做的編輯也算自己的：提交的人替它們寫紀錄，改這些檔案的 subagent 還在跑時，等它完成再提交。Claude Code 裡 `bin/commit-files` 自己做這個確認（CLAUDE.md〈提交前對照編輯紀錄〉）；其他 agent 在跑 `bin/commit-files` 之前，把 diff 跟 context 裡的編輯紀錄逐段對照，編輯紀錄不在 context 裡的段落算對不上。`bin/commit-files` 印出 `[ASK-USER]`、或有對不上的段落時，照〈要先問使用者的情形〉處理。自認都是自己寫的不改變本款：對照的是 diff 與編輯紀錄，不是印象。
   - 工具沒有提交時，原因印在 stderr：原因落在這次的檔案上時照它修正；hook 擋下的是這次沒有改過的檔案時，照下面「pre-commit 報錯」那一條處理，不修那個檔案。提交之後印出 `[FOLLOW-UP]` 時，照那幾行做；工作結束時還做不了，寫進〈延到工作結束之後的動作〉。各個 exit code 的意思寫在工具的檔頭。
 - **pre-commit 報錯**：讀訊息修正，不用 `--no-verify` 繞過。報錯落在這次沒有改過的檔案時（hook 的 `mdtools cards` 掃整個 `content/` 工作樹，另一個 session 寫到一半的檔案會擋下這次的 commit），不改也不繞過那個檔案，這次不提交，把要提交的檔案與擋下它的報錯寫進〈延到工作結束之後的動作〉；不在 session 裡反覆重試等它消失。
 
@@ -106,23 +106,23 @@ commit 之後直接推送，不另外問使用者：使用者已經授權推送�
 
 這一節是「停下來等使用者決定」的唯一住址：別處的規則碰到這類情形時連到這裡，新增一種情形時加在這裡。下列情形停下來，把指定的材料給使用者，等使用者決定再往下做：
 
-- **提交前**，`git diff HEAD -- <這次的檔案...>` 有段落對不上這次自己做過的編輯：給那幾段 diff，由使用者決定是不是一起提交。
+- **提交前**，`bin/commit-files` 或 `bin/session-edits-check` 印出 `[ASK-USER]`，或 `git diff HEAD -- <這次的檔案...>` 有段落對不上這次自己做過的編輯：把工具印的 diff 或那幾段 diff 原文貼進回覆（太長時存成檔案，給路徑與 `git diff --stat`），並說明同意之後會照〈推送〉直接推送，由使用者決定是不是一起提交。這次清單裡的檔案都等使用者決定，不先提交其餘的：同一次改動的檔案可能必須在同一個 commit 裡（skill 的源檔與它的鏡像）。
 - **推送 blog 時**，`bin/push-main` 印出 `[ASK-USER]`：給它列出的 commit（別的 session 還沒推送的），由使用者決定要不要一起推。
 - **同步 skill 時**，`[DIVERGED]` 或 `[CONFLICT]` 的兩邊在共同基底之後改到同一段文字（合併時有衝突）：給兩邊的 `git log` 與衝突的段落（`docs/rules/skills.md`〈同步時的判斷〉）。
 
 ### 沒有使用者明說就不做的動作
 
-這一節是這類動作的唯一住址。下列動作沒有使用者在這次的指示裡明說就不做，也不主動提議、不停下來問：`skill-sync push --force`；替一支 skill 建 `content/skills/` 的公開鏡像；把 `docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 推上共用庫（那些 skill 依賴本 blog 的結構，推上去之後別的專案用不了）。
+這一節是這類動作的唯一住址。下列動作沒有使用者在這次的指示裡明說就不做，也不主動提議、不停下來問：`skill-sync push --force`；替一支 skill 建 `content/skills/` 的公開鏡像；把 `docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 推上共用庫（那些 skill 依賴本 blog 的結構，推上去之後別的專案用不了）；把工作樹裡不是這次自己做的改動還原或蓋掉（`git checkout --`、`git restore`、`git stash`、用 Write 整份重寫），那些改動可能是另一個 session 還沒提交的工作，蓋掉之後沒有任何紀錄。
 
 ### 延到工作結束之後的動作
 
-規則要求的動作做不到當下、要延到之後時（`bin/commit-files` 的 `[FOLLOW-UP]`、還沒推送的 commit、因為別人的檔案擋下而沒提交的改動、遠端的暫時檔、登記待驗的判定、沒有模組 Backlog 可記的未完成工作），寫進給使用者的最後一則總結，附要跑的指令。延後的動作沒有其他觀察者，只寫在對話中段的那一份不會有人回來做。
+規則要求的動作做不到當下、要延到之後時（`bin/commit-files` 的 `[FOLLOW-UP]`、還沒推送的 commit、因為別人的檔案擋下而沒提交的改動、印了 `[ASK-USER]` 而等使用者決定的提交、遠端的暫時檔、登記待驗的判定、沒有模組 Backlog 可記的未完成工作），寫進給使用者的最後一則總結，附要跑的指令。延後的動作沒有其他觀察者，只寫在對話中段的那一份不會有人回來做。
 
 ## 掃描工具的零輸出
 
 grep、lint、檢查腳本回報零命中有兩種成因：目標確實不存在，或是指令沒有在掃（pattern 打錯、shell 的 `|` 被轉義、變數沒有切詞、zsh 的 glob 沒有匹配而整條指令沒執行、腳本裡找不到工具、掃描範圍不含目標、餵進去的檔案集是空的）。所以把零輸出當成「通過」之前，先做兩件事：確認餵進去的檔案集不是空的（行數或檔案數不是 0），再餵一個已知會命中的輸入（正對照，positive control），確認它在這個寫法下會命中。正對照沒有命中時，修指令，不採用那次的零輸出。
 
-`bin/changed-lines`、`bin/lint-delta`、`bin/skill-version-check` 在結尾印計數（`from M file(s)`、`K file(s) linted, S skipped`、`checked N`），計數要對得上交給它的數量；計數沒有印出來，代表工具中途中止，不代表通過。
+`bin/changed-lines`、`bin/lint-delta`、`bin/session-edits-check`、`bin/skill-version-check` 在結尾印計數（`from M file(s)`、`K file(s) linted, S skipped`、`N file(s) checked`、`checked N`），計數要對得上交給它的數量；計數沒有印出來，代表工具中途中止，不代表通過。
 
 ## 決策分析：WRAP
 
