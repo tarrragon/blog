@@ -34,7 +34,7 @@ oci compute instance update --help | sed -n '/--metadata/,/--extended-metadata/p
 | Bastion SSH port forwarding session         | 同 managed SSH session；它不經過 plugin                | 支援，條件是主機裡有公鑰                                         |
 | Compute Instance Run Command                | Run Command 說明頁的支援映像清單                       | 清單上沒有 Ubuntu；實測執行得了指令，而 `ocarun` 沒有 sudo       |
 
-這幾項在建立之前都查得到，Run Command 要事先替 `ocarun` 設 sudo、第一次建主機先放公鑰比較保險這兩點，[登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 也有寫。2026-10-25 的建立沿用 2026-10-24 寫好的重送腳本，腳本的參數寫在讀這些文件之前，重新啟動時沒有再對一次。Known Issues 只寫到作業系統，沒有寫版本，而同一個作業系統的不同版本可用的 plugin 不同：後來重建時，2026-10-25 查到 Oracle Linux 10 沒有 Bastion plugin、9 有；這份清單隨代理程式的版本更新，要在建立當下自己查一次，查法見〈建立之前查映像檔版本與它可用的 plugin〉。
+這幾項在建立之前都查得到，Run Command 要事先替 `ocarun` 設 sudo、第一次建主機先放公鑰比較保險這兩點，[登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 也有寫。2026-10-25 的建立沿用 2026-10-24 寫好的重送腳本，腳本的參數寫在讀這些文件之前，重新啟動時沒有再對一次。Known Issues 只寫到作業系統，沒有寫版本，而同一個作業系統的不同版本可用的 plugin 不同：後來重建時，2026-10-25 查到 Oracle Linux 10 確定沒有 Bastion plugin，9 與 8 的結果跟查不到時的回應相同、分不出來；這份清單隨代理程式的版本更新，要在建立當下自己查一次，查法見〈建立之前查映像檔版本與它可用的 plugin〉。
 
 **兩條登入路徑各自依賴的元件**。這台只規劃了 managed SSH session 一條，它依賴 Bastion plugin 與支援範圍，而這次最沒有把握的正是這兩項。不經過 plugin 的 port forwarding session 要主機裡有公鑰，選了 No SSH keys 就沒有；兩種工作階段都經過 Bastion、security list 的 22 port 與主機的 sshd，所以有公鑰時，這一組擋得住 plugin 與支援範圍的問題，擋不住 sshd 改壞。不經過 sshd 的是序列主控台，它要一個設了密碼的帳號，Ubuntu 平台映像的 `ubuntu` 只用金鑰登入，要用初始化腳本在建立時建，而初始化腳本也是建立後不能改的欄位。所以這台建立的那一刻就只剩一條 SSH 路徑，而那條路徑是不支援的組合；剩下的入口是替換開機磁碟、把開機磁碟掛到另一台主機修改、序列主控台與重建，各自的條件見〈這台主機剩下的登入入口〉。
 
@@ -90,7 +90,7 @@ oci network subnet create -c <compartment 的 OCID> --vcn-id <VCN 的 OCID> --ci
 
 「Change shape」的視窗依處理器分欄。這一區的 Ampere 欄有 `VM.Standard.A1.Flex` 並標示 Always Free-eligible；AMD 欄只列出 `VM.Standard.E5.Flex`，Always Free 的 `VM.Standard.E2.1.Micro` 不在清單上。E5.Flex 不在免費額度內，選了之後的結果依帳號狀態而定（試用中由試用金支付、試用結束而沒有升級的帳號建不了、付費帳戶照一般價格計費），見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉；區域之間提供的機型不同，見同一篇的〈E2.1.Micro 在各區域的供應：服務配額表與 404 錯誤〉。
 
-這一頁影響後面結果最大的是映像檔。這次選 Ubuntu，A1 加 Ubuntu 落在 managed SSH session 不支援的組合裡（〈建立之前的檢查：套在這台主機上的查法與結果〉）。替代做法是 Oracle Linux 的 aarch64 平台映像：A1 加 Oracle Linux 是 managed SSH session 支援的組合，條件是選的版本可用的 plugin 裡有 Bastion（2026-10-25 實測 10 沒有、9 有，查法見〈建立之前查映像檔版本與它可用的 plugin〉），Oracle Linux 也在 Run Command 的支援映像清單上；換到的代價是預設使用者改成 `opc`、套件管理改用 `dnf`，照 Ubuntu 寫的教學指令要換寫法。映像檔建立之後只能換成同一個發行版（〈Replacing a Boot Volume〉），所以這一欄選錯，補救就是重建。
+這一頁影響後面結果最大的是映像檔。這次選 Ubuntu，A1 加 Ubuntu 落在 managed SSH session 不支援的組合裡（〈建立之前的檢查：套在這台主機上的查法與結果〉）。替代做法是 Oracle Linux 的 aarch64 平台映像：A1 加 Oracle Linux 是 managed SSH session 支援的組合，條件是選的版本可用的 plugin 裡有 Bastion（2026-10-25 實測 10 確定沒有，9 與 8 用查詢工具分不出，查法與讀法見〈建立之前查映像檔版本與它可用的 plugin〉），Oracle Linux 也在 Run Command 的支援映像清單上；換到的代價是預設使用者改成 `opc`、套件管理改用 `dnf`，照 Ubuntu 寫的教學指令要換寫法。映像檔建立之後只能換成同一個發行版（〈Replacing a Boot Volume〉），所以這一欄選錯，補救就是重建。
 
 ## Security：Shielded instance
 
@@ -440,13 +440,13 @@ Run Command 寫不了公鑰之後，這台主機剩下的入口與各自的條�
 - **替換開機磁碟**：官方〈Replacing a Boot Volume〉限定只能換成同一個 Linux 發行版，換不成 Oracle Linux。換成新的 Ubuntu 開機磁碟時，cloud-init 讀的仍是建立時的中繼資料，而 `ssh_authorized_keys` 是空的，所以新磁碟上也沒有公鑰；這是從兩份說明推出的結果，這次沒有實跑。換成自己做的 Ubuntu aarch64 自訂映像時，公鑰或設了密碼的救援帳號可以直接做進映像，不靠 cloud-init 從中繼資料讀；這條路不重建主機、不放掉 A1 的容量，代價是要自己做映像、匯入，而〈Replacing a Boot Volume〉沒有寫自訂映像在 A1 上能不能用，這次沒有實跑。
 - **把開機磁碟掛到另一台主機修改**：停止這台、卸下開機磁碟、掛到同一個可用區的另一台主機，在那裡把公鑰寫進 `authorized_keys` 再掛回來。另一台主機的架構不必相同：開機磁碟當成資料磁碟掛上去，讀寫的是上面的檔案系統，跟 CPU 架構無關（推論）。這個帳號在這一區能建的免費機型只有 A1，用 A1 要再搶一次容量；改用付費的 x86 機型（例如 `VM.Standard.E5.Flex` 的 1 OCPU）開幾十分鐘、改完就刪，付費 x86 機型通常不像 A1 那樣容量不足（推論，這一區沒有實測），費用依帳號狀態而定，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉。這次兩種都沒有實跑。
 - **序列主控台**：主機裡沒有設密碼的帳號，登入提示這一步登不進去；官方從開機選單進維護模式重設金鑰的範例只寫了 Oracle Linux，同樣的做法在這台 Ubuntu 上能不能用，官方沒有寫，這次也沒有實跑。
-- **重建主機**：重建時放自己的公鑰（不論映像），讓 port forwarding session 登得進去；要用 managed SSH session 時，另外選可用 plugin 裡有 Bastion 的 Oracle Linux 版本（例如 9）。只換成 Oracle Linux 而不放公鑰，選到沒有 Bastion plugin 的版本時一樣登不進去。重建要重新搶 A1 的容量；2026-10-25 照這一項重建了一台，見〈重建：Oracle Linux 映像加建立時放公鑰，經由 port forwarding session 登入〉。
+- **重建主機**：重建時放自己的公鑰（不論映像），讓 port forwarding session 登得進去；要用 managed SSH session 時，另外選可用 plugin 裡有 Bastion 的 Oracle Linux 版本（10 確定沒有；9、8、7.9 查詢工具分不出，要建起來才確認）。只換成 Oracle Linux 而不放公鑰，選到沒有 Bastion plugin 的版本時一樣登不進去。重建要重新搶 A1 的容量；2026-10-25 照這一項重建了一台，見〈重建：Oracle Linux 映像加建立時放公鑰，經由 port forwarding session 登入〉。
 
 截至 2026-10-25，這台主機還沒有登入過。登入是在另外重建的一台上完成的，見〈重建：Oracle Linux 映像加建立時放公鑰，經由 port forwarding session 登入〉。
 
 ## 重建：Oracle Linux 映像加建立時放公鑰，經由 port forwarding session 登入
 
-2026-10-25 晚上另外建了一台 A1 主機 `verify-a1-ol`，Ubuntu 那台 `verify-a1` 留著不動。Always Free 的 A1 額度合計 2 OCPU、12 GB（官方〈Always Free Resources〉），兩台各 1 OCPU、6 GB 剛好用滿；要再建一台 A1 而不超出額度，得先刪掉其中一台。超出時的結果依帳號狀態而定（試用中照樣建得起來，試用結束那一刻合計超額的 A1 會全部停用），見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈Always Free 的額度與它綁在 home region 上的範圍〉。`verify-a1-ol` 改了兩個建立時才能決定的設定：映像檔換成 Oracle Linux，避開〈Known Issues for Bastion〉第一條的 A1 加非 Oracle Linux；建立時放自己的公鑰，讓 port forwarding session 這條不經過 Bastion plugin 的路徑也登得進去。其餘的設定（compartment、private subnet、不配公開 IP、只允許中繼資料第二版、Bastion plugin 開啟）跟 `verify-a1` 相同。這一節的指令跟〈建立之後〉那一節一樣，先在 shell 裡 `export OCI_CLI_AUTH=security_token`。
+2026-10-25 晚上另外建了一台 A1 主機 `verify-a1-ol`，Ubuntu 那台 `verify-a1` 留著不動。Always Free 的 A1 額度合計 2 OCPU、12 GB（官方〈Always Free Resources〉），兩台各 1 OCPU、6 GB 剛好用滿；要再建一台 A1 而不超出額度，得先刪掉其中一台（同一天稍晚終止了 `verify-a1`，見〈刪除這組資源的順序〉）。超出時的結果依帳號狀態而定（試用中照樣建得起來，試用結束那一刻合計超額的 A1 會全部停用），見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈Always Free 的額度與它綁在 home region 上的範圍〉。`verify-a1-ol` 改了兩個建立時才能決定的設定：映像檔換成 Oracle Linux，避開〈Known Issues for Bastion〉第一條的 A1 加非 Oracle Linux；建立時放自己的公鑰，讓 port forwarding session 這條不經過 Bastion plugin 的路徑也登得進去。其餘的設定（compartment、private subnet、不配公開 IP、只允許中繼資料第二版、Bastion plugin 開啟）跟 `verify-a1` 相同。這一節的指令跟〈建立之後〉那一節一樣，先在 shell 裡 `export OCI_CLI_AUTH=security_token`。
 
 ### 建立之前查映像檔版本與它可用的 plugin
 
@@ -458,9 +458,10 @@ oci instance-agent available-plugins get -c <compartment 的 OCID> \
   --os-name "Oracle Linux" --os-version <作業系統版本> --all --query 'data[].name'
 ```
 
-- `--os-name`、`--os-version`：映像檔的作業系統名稱與版本，跟 `oci compute image list` 輸出的 `operating-system` 與 `operating-system-version` 欄同一套值。
-- 讀法：清單裡有 `Bastion` 才建得了 managed SSH session。這次查到的結果：版本填 `10` 或 `10.2`，清單裡沒有 `Bastion`；填 `9` 或 `8` 有；Ubuntu 的 `24.04` 也有，但它在 A1 上受〈Known Issues for Bastion〉第一條限制。
-- 版本填錯時不會報錯：官方 CLI 參考寫明查不到對應時回傳全部 plugin，實測填不存在的 `99`，回傳的清單裡有 `Bastion`，看起來跟有支援一樣。所以版本要照抄 `image list` 輸出的值。
+- `--os-name`、`--os-version`：照抄 `oci compute image list` 輸出的 `operating-system` 與 `operating-system-version` 欄。這一欄是大版本：映像名稱是 `Oracle-Linux-10.2-aarch64-…` 的那一個，這一欄是 `10`；相容 A1 的 Oracle Linux 映像在這一欄只有 `10`、`9`、`8`、`7.9` 四種值。
+- 先建一份對照：填一個不存在的版本（例如 `99`）查一次，記下回傳的清單。這支工具查不到對應時不報錯，回傳不分版本的全部 plugin（官方 CLI 參考寫明；實測填不存在的版本、或不存在的作業系統名稱，回傳的都是同一份 15 項的清單，裡面有 `Bastion`）。
+- 讀法：查到的清單跟對照不同，才算查到這個版本的資料，這時清單裡有 `Bastion` 才建得了 managed SSH session；跟對照相同時，分不出是這個版本提供全部 plugin，還是工具沒有它的資料。
+- 2026-10-25 的結果：Oracle Linux `10`（填 `10.2` 也一樣）回傳 8 項、沒有 `Bastion`，跟對照不同，確定沒有；Ubuntu `24.04` 回傳 12 項、有 `Bastion`，跟對照不同，確定有，但它在 A1 上受〈Known Issues for Bastion〉第一條限制；Oracle Linux `9`、`8`、`7.9` 與 Ubuntu `26.04` 回傳的清單跟對照完全相同，這支工具分不出它們有沒有 `Bastion`。要確認 Oracle Linux 9，剩下的做法是建一台再用 `plugin list` 看，或找官方逐版本列出 plugin 的文件（這次沒有找到）。
 
 `verify-a1-ol` 建立時沒有做這一步，選的是建立時間最新的 Oracle Linux 10.2，結果見〈結果：這台 Oracle Linux 10.2 主機上沒有 Bastion plugin〉。
 
@@ -484,7 +485,7 @@ oci --no-retry compute instance launch -c <compartment 的 OCID> --availability-
 ```
 
 - `-c <tenancy 的 OCID>`：理由同〈等效的 CLI 指令〉的 `--image-id` 那一項；這次填實驗用的 compartment 也列得出同樣的平台映像。
-- `--operating-system-version <大版本>`：決定取哪一個大版本，例如 `9`。不給時，`--sort-by TIMECREATED` 取到的是所有版本裡建立時間最新的那一個建置，這次取到 `Oracle-Linux-10.2-aarch64-2026.10.16-0`，也就是沒有 Bastion plugin 的版本。要用 managed SSH session，就填上一步查到清單裡有 `Bastion` 的版本。
+- `--operating-system-version <大版本>`：決定取哪一個大版本，例如 `9`。不給時，`--sort-by TIMECREATED` 取到的是所有版本裡建立時間最新的那一個建置，這次取到 `Oracle-Linux-10.2-aarch64-2026.10.16-0`，也就是沒有 Bastion plugin 的版本。要用 managed SSH session，填〈建立之前查映像檔版本與它可用的 plugin〉確定有 `Bastion` 的版本；Oracle Linux 這次沒有一個版本查得到確定有，`9`、`8`、`7.9` 的查詢結果一樣，要建起來用 `plugin list` 才知道。這篇的 Backlog 選 `9` 去驗，理由是它在沒有被確定排除的版本裡最新，不是因為查詢結果比 `8` 好。
 - `--ssh-authorized-keys-file`：公鑰檔的路徑，內容寫進主機的中繼資料 `ssh_authorized_keys`，開機時由 cloud-init 寫進預設使用者 `opc` 的 `authorized_keys`。這一項建立之後不能改（〈建立之前的檢查〉），所以要在這裡放。這次用自己另產的一組金鑰，跟 Bastion 工作階段用的那一組分開。用同一組也連得上，指令還少一把 `-i`；工作階段的私鑰外洩時，拿到的人還要一個有 IAM 權限的帳號替他建工作階段、來源 IP 也要在 Bastion 的允許清單裡，所以分開換到的主要是另一個方向：登入主機的私鑰外洩時，主機那一把要換（建立時放的這一把要另外改主機上的 `authorized_keys`），工作階段那一把不受影響（推論，這次沒有實跑）。
 
 這次第一次送出就建成，沒有遇到容量不足：台北時間 19:06:13 送出，19:07 查詢時已經是 `RUNNING`。容量是否不足依區域與時段而變，`verify-a1` 在同一區重送到第 16 次才建成（〈重送建立請求〉），所以重送腳本仍然要準備好。
@@ -550,14 +551,14 @@ Host <主機的別名>
 - **沒做時**（建立時沒放公鑰）：主機的 `authorized_keys` 是空的，而這台的 managed SSH session 又建不起來，結果跟 `verify-a1` 相同：兩種工作階段都登不進去，剩下的入口見〈這台主機剩下的登入入口〉。
 - **替代做法**：
   - 映像檔選 Ubuntu 加建立時放公鑰：port forwarding 同樣登得進去，managed SSH session 仍然受〈Known Issues for Bastion〉第一條限制（照 Known Issues 推出，這次沒有實跑）。
-  - 映像檔選 Oracle Linux 9 加建立時放公鑰：`available-plugins get` 查到 9 有 Bastion，managed SSH session 與 port forwarding 兩種工作階段都可用（照查到的 plugin 清單推出，這次沒有實跑）；換到的是 managed SSH session 這一條不依賴常駐公鑰的路徑，付出的是用比較舊的大版本。日常登入想讓主機上不留常駐金鑰、只在工作階段期間放臨時公鑰時，才值得為此選 9；只要登得進去，10.2 加公鑰加 port forwarding 已經夠用。
+  - 映像檔選 Oracle Linux 9 加建立時放公鑰：`available-plugins get` 對 9 的回應跟查不到時相同，有沒有 Bastion 要建起來才知道；有的話 managed SSH session 與 port forwarding 兩種工作階段都可用，沒有的話跟這次一樣靠 port forwarding（推論，這次沒有實跑）。有 Bastion 時換到的是 managed SSH session 這一條不依賴常駐公鑰的路徑，付出的是用比較舊的大版本。日常登入想讓主機上不留常駐金鑰、只在工作階段期間放臨時公鑰時，才值得為此選 9；只要登得進去，10.2 加公鑰加 port forwarding 已經夠用。
   - 選有 Bastion plugin 的版本、不放公鑰、只靠 managed SSH session：plugin 一旦沒有運作（像 `verify-a1` 那樣狀態是 `RUNNING` 卻建不起工作階段），就沒有任何 SSH 的入口。建立時放公鑰，換到的是一條不依賴 plugin 的路徑。兩種工作階段最後都經過主機上的 sshd，所以 sshd 本身壞掉時兩種都連不上（從兩種工作階段的機制推論）；那時剩下序列主控台與重建，序列主控台在 Oracle Linux 上有官方從開機選單進維護模式的範例（〈這台主機剩下的登入入口〉），這次沒有實跑。
 
 ## 刪除這組資源的順序
 
 實驗結束要清掉時，順序跟建立時相反，因為每一項資源被後面建的資源依賴著：
 
-1. 終止兩台主機（`verify-a1` 與 `verify-a1-ol`），在終止對話框勾選「Permanently delete the attached boot volume」，開機磁碟才會一起刪掉。本機的 port forwarding 轉送用 Ctrl-C 結束，工作階段到了 `--session-ttl` 自己失效。
+1. 終止兩台主機（`verify-a1` 與 `verify-a1-ol`），在終止對話框勾選「Permanently delete the attached boot volume」，開機磁碟才會一起刪掉。CLI 是 `oci compute instance terminate --instance-id <主機的 OCID> --preserve-boot-volume false --force`：`--preserve-boot-volume false` 對應那個勾選，`--force` 跳過確認提示。2026-10-25 用這一條終止了 `verify-a1`，約 67 秒後主機與它的開機磁碟都是 `TERMINATED`；用 `oci bv boot-volume list -c <compartment 的 OCID> --availability-domain <可用區名稱>` 確認開機磁碟的狀態。本機的 port forwarding 轉送用 Ctrl-C 結束，工作階段到了 `--session-ttl` 自己失效。
 2. 刪除 Run Command 用的政策與 dynamic group（`oci iam policy delete --policy-id <政策的 OCID>`、`oci iam dynamic-group delete --dynamic-group-id <dynamic group 的 OCID>`）。政策掛在 compartment 上，compartment 刪除之前要先刪；dynamic group 在 tenancy 層，不會隨 compartment 刪除，不刪的話它的比對規則仍然指著已經終止的主機 OCID。
 3. 刪除 Bastion（`oci bastion bastion delete --bastion-id <Bastion 的 OCID>`）。Bastion 的私有端點在目標 subnet 裡，Bastion 還在時 subnet 刪不掉；它的工作階段隨 Bastion 一起失效。
 4. 刪除 subnet。subnet 裡還有主機或網卡時刪不掉。
@@ -566,6 +567,6 @@ Host <主機的別名>
 7. 刪除 VCN。
 8. 刪除 compartment。官方〈Deleting a Compartment〉寫明 compartment 要先清空所有資源（包括掛在它上面的權限政策）才能刪除，刪除是非同步的工作，狀態會先變成 Deleting。
 
-這個順序還沒有實際跑過（截至 2026-10-25 主機還在），各項刪不掉時，看錯誤訊息指出的那一項依賴、先刪它。
+這個順序除了終止 `verify-a1` 那一步，還沒有實際跑過（截至 2026-10-25 `verify-a1-ol` 與網路都還在），各項刪不掉時，看錯誤訊息指出的那一項依賴、先刪它。
 
 要讓這組資源可以重建、清掉也不心疼，改用 IaC 描述它們，見 [IaC 工具選型與 state 地基](/infra/01-minimal-iac/iac-tool-state-backend/)；已經用主控台或 CLI 建好的資源要收進 IaC，做法見 [Unmanaged Resource 批次 Import 工作流](/infra/takeover/partial-iac-bulk-import/)。

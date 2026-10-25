@@ -1188,3 +1188,5 @@ Filter × Source 合成三選（從 #59 抽出）：
 **Last Updated**: 2026-10-25 — 新增 #383，由補「context 壓縮之後提交前怎麼對照 diff」這個規則缺口的工作抽出：用 transcript 重播編輯紀錄的工具第一版測試全過，三輪審查在拋棄式 repo 裡重現四條漏報（Write 的全文把別人的改動洗成自己的、拿別的 session 的 transcript、檢查到提交之間的改動、還原再重做讓標記消失）。修法是重播差異、證據綁定 session、比對移進提交工具對 staged 的內容做，還原與重做列進不做的動作。#380 補反向指標。
 
 **Last Updated**: 2026-10-25 — 新增 #384，由一次 Oracle Cloud 實測抽出：A1 加 Ubuntu、不放公鑰、只靠 Bastion managed SSH session 的主機，重送 16 次建成之後工作階段三次逾時（官方 Known Issues 列的不支援組合），Run Command 執行得了而 `ocarun` 沒有 sudo，公鑰欄位建立後不能改。三條成因合流讓主機沒有入口；建立前一天的概念文章已寫著兩項前提，建立時沿用前一天的重送腳本。#379 補反向指標。
+
+**Last Updated**: 2026-10-25 — #384 補作業系統版本這一層的支援檢查，由同一天照卡上當時的檢查重建 A1 Oracle Linux 主機的實測抽出：Known Issues 只寫到作業系統；依版本查詢的 `available-plugins get` 在 Oracle Linux 10 回傳少了 Bastion 的清單，在 9、8 與不存在的版本回傳同一份全部清單。核心原則的支援組合那一段與修法的讀三種文件那一項延長（用不存在的值做對照、分不開時改從別處確認），反模式與判讀徵兆各補兩項；論述基礎補上建立時放的公鑰讓 port forwarding session 登入成功的結果。
