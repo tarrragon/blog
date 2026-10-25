@@ -72,7 +72,7 @@ restart_dockerd() {  # 停掉 dockerd、等它結束、再啟動，並把測試�
 
 ## 用 network namespace 模擬 Cloudflare 與其他來源
 
-要測「只放行 Cloudflare 的位址」，需要兩個來源：一個的位址在 Cloudflare 的範圍裡，一個不在。`ns_setup` 在主機上建兩個 network namespace（核心裡各自獨立的一套網路介面與路由表），各用一對 veth（成對的虛擬網路介面，從一端送進去的封包從另一端出來）接到主機：`verify-cf` 的位址是 `173.245.48.10`（落在 Cloudflare 的 `173.245.48.0/20`），`verify-other` 的位址是 `203.0.113.10`（RFC 5737 保留給文件用的 TEST-NET-3，不在任何 Cloudflare 範圍）。兩者都對主機的 IP 發連線，封包從主機的 `vcf-h`、`voth-h` 介面進來，經過的防火牆路徑跟從網卡進來的封包相同。
+要測「只放行 Cloudflare 的位址」，需要兩個來源：一個的位址在 Cloudflare 的範圍裡，一個不在。`ns_setup` 在主機上建兩個 [network namespace](/infra/knowledge-cards/network-namespace/)（核心裡各自獨立的一套網路介面與路由表），各用一對 veth（成對的虛擬網路介面，從一端送進去的封包從另一端出來）接到主機：`verify-cf` 的位址是 `173.245.48.10`（落在 Cloudflare 的 `173.245.48.0/20`），`verify-other` 的位址是 `203.0.113.10`（RFC 5737 保留給文件用的 TEST-NET-3，不在任何 Cloudflare 範圍）。兩者都對主機的 IP 發連線，封包從主機的 `vcf-h`、`voth-h` 介面進來，經過的防火牆路徑跟從網卡進來的封包相同。
 
 ```bash
 ns_setup
@@ -198,7 +198,7 @@ probe 8083 >/dev/null; docker logs verify-web-v 2>&1 | tail -2
 [::ffff:203.0.113.10]:33384: response:200
 ```
 
-`DNAT` 那一條就是在主機防火牆之前改寫目的地的規則。容器的記錄裡兩個來源的位址原樣出現：容器看得到真正的來源，所以來源限制做得到，只是要寫在別的位置。只發佈在 `127.0.0.1` 的 8082 從兩個外部來源都連不到、主機本機連得到；這是 Docker 29.9.2 的結果，Docker〈Port publishing〉寫明 28.0.0 以前同一個 L2 網段的其他主機連得到發佈在 127.0.0.1 的連接埠。對外改由主機上的反向代理接時，反向代理受〈firewalld 以 ipset 只放行 Cloudflare 位址到主機本身的程式〉那種 rich rule 約束。
+`DNAT`（[目的位址轉換](/infra/knowledge-cards/dnat/)）那一條就是在主機防火牆之前改寫目的地的規則。容器的記錄裡兩個來源的位址原樣出現：容器看得到真正的來源，所以來源限制做得到，只是要寫在別的位置。只發佈在 `127.0.0.1` 的 8082 從兩個外部來源都連不到、主機本機連得到；這是 Docker 29.9.2 的結果，Docker〈Port publishing〉寫明 28.0.0 以前同一個 L2 網段的其他主機連得到發佈在 127.0.0.1 的連接埠。對外改由主機上的反向代理接時，反向代理受〈firewalld 以 ipset 只放行 Cloudflare 位址到主機本身的程式〉那種 rich rule 約束。
 
 ## DOCKER-USER 鏈的限制效果與規則的存續
 
@@ -215,7 +215,7 @@ add_cf_only
 probe 8081; probe 8083
 ```
 
-`< <(cat …; echo)` 補一個換行，因為 Cloudflare 的清單最後一行沒有換行，`read` 會漏讀最後一段。每一段各寫一條 `-s` 而不用 iptables 的 `-m set --match-set cloudflare-v4`：firewalld 的 nftables 後端把 ipset 建成 nftables 的集合，不是 iptables 的 `set` 模組讀的那種核心 ipset，推論 `-m set` 引用不到它，沒有實跑。`--ctorigdstport 8081` 比對連線追蹤記下的原始目的連接埠：封包到 `DOCKER-USER` 時目的地已經改成容器的 80，寫 `--dport 8081` 比對不到。`--ctdir ORIGINAL` 讓規則只看發起方向的封包，容器回覆的封包不進 `CF-ONLY`。`-I` 把規則插在 `DOCKER-USER` 最前面；最後那一條用 `DROP`，範圍外的來源等到逾時，換成 `REJECT` 會變成立即失敗，沒有比較。
+`< <(cat …; echo)` 補一個換行，因為 Cloudflare 的清單最後一行沒有換行，`read` 會漏讀最後一段。每一段各寫一條 `-s` 而不用 iptables 的 `-m set --match-set cloudflare-v4`：firewalld 的 nftables 後端把 ipset 建成 nftables 的集合，不是 iptables 的 `set` 模組讀的那種核心 ipset，推論 `-m set` 引用不到它，沒有實跑。`--ctorigdstport 8081` 比對[連線追蹤](/infra/knowledge-cards/conntrack/)記下的原始目的連接埠：封包到 `DOCKER-USER` 時目的地已經改成容器的 80，寫 `--dport 8081` 比對不到。`--ctdir ORIGINAL` 讓規則只看發起方向的封包，容器回覆的封包不進 `CF-ONLY`。`-I` 把規則插在 `DOCKER-USER` 最前面；最後那一條用 `DROP`，範圍外的來源等到逾時，換成 `REJECT` 會變成立即失敗，沒有比較。
 
 ```text
 == DOCKER-USER 只放行 Cloudflare 到原始目的連接埠 8081

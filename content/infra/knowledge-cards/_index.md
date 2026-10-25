@@ -81,3 +81,7 @@ PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識
 | [cron](/infra/knowledge-cards/cron/)                                                               | 按時間表自動執行指令的排程系統，接手維運時要先盤點既有 job                                |
 | [HCL](/infra/knowledge-cards/hcl/)                                                                 | Terraform 的宣告式設定語言，用 resource block 描述目標狀態                                |
 | [terraform plan / apply](/infra/knowledge-cards/terraform-plan-apply/)                             | IaC 的兩個核心操作：plan 只產出差異報告、apply 才執行差異                                 |
+| [CDN（內容遞送網路）](/infra/knowledge-cards/cdn/)                                                 | 代替源站接收連線、在邊緣快取與過濾的機房網路，經由它的請求在源站看來來自 CDN 的位址       |
+| [DNAT（目的位址轉換）](/infra/knowledge-cards/dnat/)                                               | 改寫入站封包目的地的動作，Docker 發佈的連接埠經由它繞過寫在 input 路徑上的主機防火牆      |
+| [conntrack（連線追蹤）](/infra/knowledge-cards/conntrack/)                                         | 核心記錄每條連線狀態與位址轉換對應的表，有狀態防火牆與比對原始連接埠都靠它                |
+| [Network Namespace（網路命名空間）](/infra/knowledge-cards/network-namespace/)                     | 核心切出的獨立網路環境，容器的網路隔離與在一台主機上模擬不同來源都用它                    |
