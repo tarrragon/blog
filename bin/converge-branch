@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+"""遠端停在 feature 分支、無法 fast-forward 時，在 dotfiles 端把那個分支收斂到 origin/main 並推送。
+
+用途：docs/rules/remote.md〈遠端機器的操作〉。在 dotfiles 的 clone 裡執行（根目錄有
+scripts/remote-sync.sh 的 repo）。收斂發生在 repo 端，不在遠端的工作區：不用
+`git checkout <ref> -- <paths>` 把檔案放進遠端，那會把那些路徑 staged 進遠端的 index，下一次 ff-pull
+會被「index 有未提交變更」擋下。
+
+用法：<blog repo 的路徑>/bin/converge-branch <分支>
+
+行為：
+0. 只在根目錄有 scripts/remote-sync.sh、而且不是工具所在 repo（比對 `git rev-parse --git-common-dir`，
+   worktree 也算同一個 repo）的 git repo 裡跑，否則 exit 2：在 blog 或它的 worktree 裡跑會繞過
+   bin/push-main 直接推分支，在無關的 repo 裡跑會把 main 併進不相干的分支。
+1. 工作樹有未提交的變更（`git status --porcelain` 有輸出）時 exit 2，並列出那些檔案：checkout 與 merge
+   會把它們捲進來。上一次的 merge 還沒完成（有 MERGE_HEAD）時 exit 1。
+2. `git fetch origin`；失敗就 exit 2。本地 main 有還沒推到 origin 的 commit 時 exit 2：併進分支的是
+   origin/main，本地多出的 commit 不會進去，之後 remote-sync.sh 也只推分支。本地與 origin 都沒有這個
+   分支時 exit 2（分支可能只在遠端機器上）。
+3. checkout 那個分支（本地沒有就從 origin/<分支> 建），先 `git merge --ff-only origin/<分支>` 跟上遠端
+   的版本，再 `git merge --no-edit origin/main`。
+4. 本地與 origin 的分支分岔時，或 merge 有衝突時，印 `[ASK-USER]` 與兩邊各自的 commit（衝突時另外
+   印每個衝突檔在兩邊最後改它的 commit），exit 1：要留哪一邊是使用者的決定，工具不選邊，也不印
+   rebase 或 reset 的建議（那兩條路都要 force push 或丟掉 commit）。衝突時停在衝突的狀態；
+   使用者決定之後，解完、`git add`、`git commit`，再重跑本工具，它會從第 3 步接著做。
+5. `git push -u origin <分支>`（-u 設好 upstream，remote-sync.sh 的 `git push` 才推得出去），印 `[NEXT]`：
+   在查分支名的那一台 host 跑 `scripts/remote-sync.sh <host>`（它推送目前的分支、在遠端
+   `git pull --ff-only` 並部署）；本地 clone 停在這個分支，部署完 `git checkout main`。
+
+exit：0 已經收斂並推送；1 印了 `[ASK-USER]`（分岔或衝突）、上一次的 merge 還沒完成、push 失敗
+（原因印在 stderr）；2 用法錯誤、不在 dotfiles 這類 repo 裡、工作樹不乾淨、fetch 失敗、本地 main 領先
+origin/main、找不到這個分支。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import os
+import subprocess
+import sys
+
+
+def git(*args):
+    return subprocess.run(["git", *args], capture_output=True, text=True)
+
+
+def die(msg, code):
+    sys.stderr.write(f"converge-branch: {msg}\n")
+    sys.exit(code)
+
+
+def common_dir(cwd):
+    r = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"], capture_output=True, text=True, cwd=cwd)
+    return os.path.realpath(r.stdout.strip()) if r.returncode == 0 else None
+
+
+def ask_user(title, lines):
+    print(f"[ASK-USER] {title}")
+    for line in lines:
+        print(f"  {line}")
+    print("  照 AGENTS.md〈要先問使用者的情形〉把上面的 commit 與衝突的段落給使用者，由使用者決定留哪一邊")
+
+
+def log_lines(rng):
+    return git("log", "--oneline", rng).stdout.splitlines() or ["（沒有）"]
+
+
+def main():
+    if len(sys.argv) != 2 or sys.argv[1].startswith("-"):
+        die("用法：<blog repo 的路徑>/bin/converge-branch <分支>", 2)
+    branch = sys.argv[1]
+    if branch == "main":
+        die("要收斂的是 feature 分支，不是 main", 2)
+    top = git("rev-parse", "--show-toplevel")
+    if top.returncode != 0:
+        die("不在 git repo 裡", 2)
+    root = top.stdout.strip()
+    own = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if common_dir(root) == common_dir(own):
+        die("這是工具所在的 repo（或它的 worktree）；這支工具在 dotfiles 的 clone 裡跑，blog 的推送照 AGENTS.md〈推送〉", 2)
+    if not os.path.isfile(os.path.join(root, "scripts", "remote-sync.sh")):
+        die("這個 repo 沒有 scripts/remote-sync.sh，不是 dotfiles 的 clone；先切到 dotfiles 的 clone 再跑", 2)
+    if git("rev-parse", "-q", "--verify", "MERGE_HEAD").returncode == 0:
+        die("上一次的 merge 還沒完成：照上一次印的 [ASK-USER] 處理（使用者決定之後解完、git add、git commit）再跑", 1)
+    dirty = git("status", "--porcelain").stdout
+    if dirty:
+        die("工作樹有未提交的變更，checkout 與 merge 會把它們捲進來（處置見 docs/rules/remote.md）：\n" + dirty, 2)
+    r = git("fetch", "-q", "origin")
+    if r.returncode != 0:
+        die("git fetch origin 失敗：" + r.stderr.strip(), 2)
+    ahead = git("rev-list", "--count", "origin/main..main")
+    if ahead.returncode == 0 and ahead.stdout.strip() not in ("", "0"):
+        die(f"本地 main 有 {ahead.stdout.strip()} 個還沒推到 origin 的 commit（處置見 docs/rules/remote.md）：\n"
+            + "\n".join(log_lines("origin/main..main")), 2)
+    has_local = git("rev-parse", "-q", "--verify", f"refs/heads/{branch}").returncode == 0
+    has_remote = git("rev-parse", "-q", "--verify", f"refs/remotes/origin/{branch}").returncode == 0
+    if not has_local and not has_remote:
+        die(f"本地與 origin 都沒有分支 {branch}：它可能只在遠端機器上，在遠端 push 屬於寫入（處置見 docs/rules/remote.md）", 2)
+    r = git("checkout", "-q", branch) if has_local else git("checkout", "-q", "-b", branch, f"origin/{branch}")
+    if r.returncode != 0:
+        die("checkout 失敗：" + r.stderr.strip(), 2)
+    if has_remote and git("merge", "--ff-only", "-q", f"origin/{branch}").returncode != 0:
+        ask_user(f"本地的 {branch} 跟 origin/{branch} 分岔了，沒有收斂：",
+                 ["只在本地：", *log_lines(f"origin/{branch}..{branch}"), f"只在 origin/{branch}：", *log_lines(f"{branch}..origin/{branch}")])
+        die("分岔", 1)
+    r = git("merge", "--no-edit", "-q", "origin/main")
+    if r.returncode != 0:
+        conflicts = git("diff", "--name-only", "--diff-filter=U").stdout.splitlines()
+        if not conflicts:
+            die("git merge 失敗：" + r.stderr.strip(), 1)
+        lines = []
+        for p in conflicts:
+            lines.append(f"{p}")
+            lines.append(f"  {branch} 這邊：" + (git("log", "-1", "--oneline", branch, "--", p).stdout.strip() or "（沒有）"))
+            lines.append("  origin/main 這邊：" + (git("log", "-1", "--oneline", "origin/main", "--", p).stdout.strip() or "（沒有）"))
+        lines.append("停在衝突的狀態。使用者決定之後：解完、git add <檔案>、git commit，再重跑；不收斂了：git merge --abort")
+        ask_user(f"把 origin/main 併進 {branch} 時有衝突：", lines)
+        die("merge 衝突", 1)
+    r = git("push", "-q", "-u", "origin", branch)  # -u：remote-sync.sh 的 git push 要有 upstream
+    if r.returncode != 0:
+        die("git push 失敗：" + r.stderr.strip(), 1)
+    print(f"converge-branch: {branch} 已併入 origin/main 並推送")
+    print(f"[NEXT] 在查分支名的那一台 host 跑 scripts/remote-sync.sh <host>（遠端 git pull --ff-only {branch} 並部署）；")
+    print(f"       本地 clone 停在 {branch}，部署完 git checkout main")
+
+
+if __name__ == "__main__":
+    main()

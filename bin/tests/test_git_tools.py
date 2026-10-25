@@ -10,6 +10,7 @@ main、推送範圍混進別人的 commit、context 壓縮後對不出別人改�
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -527,6 +528,279 @@ class SessionEditsCheck(Base):
         t2 = self.transcript((AFTER, self.edit("b.md", "乙", "丙")))
         r = tool("commit-files", "-F", msg, "b.md", cwd=self.root, env={"CLAUDECODE": "1", "SESSION_EDITS_TRANSCRIPT": t2})
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+
+def card(weight, slug):
+    return f'---\ntitle: "{slug}"\nweight: {weight}\n---\n\n正文提到 weight: 999 也不算。\n'
+
+
+class ReportWeight(Base):
+    def test_next_is_numeric_max_plus_one_and_ignores_index_and_body(self):
+        write(self.root, "content/report/a.md", card(9, "a"))
+        write(self.root, "content/report/b.md", card(10, "b"))  # 字典序裡 10 排在 9 前面
+        write(self.root, "content/report/_index.md", card(500, "index"))
+        r = tool("report-weight", "next", cwd=os.path.join(self.root, "content"))
+        self.assertEqual(r.stdout.strip(), "11", r.stderr)
+        self.assertIn("2 card(s) read", r.stderr)
+
+    def test_check_lists_duplicates(self):
+        write(self.root, "content/report/a.md", card(7, "a"))
+        write(self.root, "content/report/b.md", card(7, "b"))
+        sh(["git", "add", "content/report/a.md"], self.root)
+        sh(["git", "commit", "-q", "-m", "a"], self.root)
+        r = tool("report-weight", "check", cwd=self.root)
+        self.assertEqual(r.returncode, 1)
+        # 已提交的 a.md 不標，這次新建的 b.md 標「還沒提交」，並給下一個號碼
+        self.assertIn("weight 7：content/report/a.md、content/report/b.md（還沒提交）", r.stdout)
+        self.assertIn("下一個可用的號碼：8", r.stdout)
+
+    def test_no_cards_exits_2(self):
+        r = tool("report-weight", "next", cwd=self.root)
+        self.assertEqual(r.returncode, 2)
+
+    def test_unreadable_weight_exits_2_and_lists_the_card(self):
+        write(self.root, "content/report/a.md", card(9, "a"))
+        write(self.root, "content/report/q.md", '---\ntitle: "q"\nweight: "401"\n---\n')
+        r = tool("report-weight", "next", cwd=self.root)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("content/report/q.md", r.stderr)
+        self.assertEqual(r.stdout, "")
+
+
+class TermPromptCount(Base):
+    def test_counts_lines_per_source_and_skips_trash(self):
+        home = os.path.join(self.base, "home")
+        write(self.root, "AGENTS.md", "監控鏈 一\n監控鏈 監控鏈 二\n無關\n")
+        write(self.root, "docs/rules/x.md", "監控鏈\n")
+        write(self.root, ".claude/skills/s/SKILL.md", "監控鏈\n")
+        write(home, ".claude/skills/.trash/old/SKILL.md", "監控鏈\n")
+        mem = os.path.join(".claude", "projects", re.sub(r"[^A-Za-z0-9]", "-", os.path.realpath(self.root)), "memory", "MEMORY.md")
+        write(home, mem, "監控鏈\n")
+        r = tool("term-prompt-count", "監控鏈", "沒有的詞", cwd=self.root, env={"HOME": home})
+        self.assertEqual(r.returncode, 1, r.stderr)  # 兩份 CLAUDE.md 都讀不到：計數照印，exit 1
+        self.assertIn("監控鏈：5 行", r.stdout)  # AGENTS 2 行、分冊 1、skill 1、memory 1；.trash 不算
+        self.assertIn("2  AGENTS.md", r.stdout)
+        self.assertIn("沒有的詞：0 行", r.stdout)
+        self.assertIn("2 term(s), 4 file(s) scanned", r.stderr)
+        # 讀不到的固定來源要說出來：CLAUDE.md 與 ~/.claude/CLAUDE.md 都不存在
+        self.assertIn("讀不到固定來源", r.stderr)
+        self.assertIn(os.path.join(home, ".claude", "CLAUDE.md"), r.stderr)
+        self.assertNotIn("MEMORY.md", r.stderr)
+
+    def test_memory_dir_name_replaces_every_non_alphanumeric(self):
+        home = os.path.join(self.base, "home")
+        wt = os.path.join(self.root, ".claude", "worktrees", "a_b")
+        os.makedirs(wt)
+        sh(["git", "init", "-q", "-b", "main"], wt)
+        name = re.sub(r"[^A-Za-z0-9]", "-", os.path.realpath(wt))
+        self.assertIn("--claude-worktrees-a-b", name)
+        write(home, os.path.join(".claude", "projects", name, "memory", "MEMORY.md"), "監控鏈\n")
+        r = tool("term-prompt-count", "監控鏈", cwd=wt, env={"HOME": home})
+        self.assertIn("監控鏈：1 行", r.stdout, r.stderr)
+        self.assertIn("讀不到固定來源 docs/rules/*.md", r.stderr)  # 分冊一份都沒有也要說
+
+    def test_english_is_case_insensitive(self):
+        home = os.path.join(self.base, "home")
+        write(self.root, "AGENTS.md", "a Test Oracle here\nTEST ORACLE\n")
+        r = tool("term-prompt-count", "test oracle", cwd=self.root, env={"HOME": home})
+        self.assertIn("test oracle：2 行", r.stdout, r.stderr)
+
+
+class PrincipleMirrorDiff(Base):
+    def setUp(self):
+        super().setUp()
+        src = os.path.join(BIN, "..", "scripts", "principle-mirror-check.py")
+        os.makedirs(os.path.join(self.root, "scripts"))
+        shutil.copy(src, os.path.join(self.root, "scripts", "principle-mirror-check.py"))
+        write(self.root, "bin/skill-mirror", "")  # 腳本從這裡讀 mapping table；空的只會印警告
+        old = "這是改前的一句規則，副本逐字抄了它。\n這是另一句會被改寫的長句子，副本沒有抄。\n"
+        write(self.root, "content/report/c.md", '---\ntitle: "C 卡"\n---\n\n' + old)
+        write(self.root, ".claude/skills/k/references/principles/c.md", "# C 卡\n\n這是改前的一句規則，副本逐字抄了它。\n")
+        write(self.root, ".claude/skills/k/references/principles/d.md", "# D\n\n引用 c 卡，但用自己的寫法。提到 c。\n")
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "cards"], self.root)
+        write(self.root, "content/report/c.md", '---\ntitle: "C 卡"\n---\n\n改寫之後的句子。\n')
+
+    def run_diff(self, *args):
+        return subprocess.run(
+            ["python3", os.path.join(self.root, "scripts", "principle-mirror-check.py"), "c", *args],
+            capture_output=True, text=True, cwd=self.root,
+        )
+
+    def test_verbatim_copy_says_sync(self):
+        r = self.run_diff("--diff")
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("刪掉或改掉的句子：2 句", r.stdout)
+        verbatim = r.stdout.split("principles/c.md")[1].split("\n", 2)[1]
+        self.assertIn("逐字出現 1 句", verbatim)
+        self.assertIn("→ 同步", verbatim)
+
+    def test_rewritten_copy_says_wording_only_does_not_sync(self):
+        r = self.run_diff("--diff", "HEAD")
+        after_d = r.stdout.split("principles/d.md")[1]
+        self.assertIn("沒有逐字出現", after_d)
+
+    def test_bad_rev_exits_2(self):
+        r = self.run_diff("--diff", "no-such-rev")
+        self.assertEqual(r.returncode, 2)
+
+    def test_sentence_inside_paragraph_with_bold_and_link_is_found(self):
+        # 本體一段三句，帶粗體與連結；副本只抄了第二句、保留粗體、連結換了網址
+        para = "第一句講別的事情，副本沒有抄這一句。**第二句是副本逐字抄的那一句**，見[那張卡](/report/x/)。第三句也沒有抄進副本裡。\n"
+        write(self.root, "content/report/c.md", '---\ntitle: "C 卡"\n---\n\n' + para)
+        write(self.root, ".claude/skills/k/references/principles/c.md", "# C 卡\n\n**第二句是副本逐字抄的那一句**，見[那張卡](x.md)。\n")
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "para"], self.root)
+        write(self.root, "content/report/c.md", '---\ntitle: "C 卡"\n---\n\n改寫之後的段落。\n')
+        r = self.run_diff("--diff")
+        verbatim = r.stdout.split("principles/c.md")[1].split("\n", 2)[1]
+        self.assertIn("→ 同步", verbatim, r.stdout)
+
+    def test_zero_sentences_tells_no_change_from_additions_only(self):
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "commit the rewrite"], self.root)
+        r = self.run_diff("--diff")  # 改動已經提交，比 HEAD：沒有任何改動
+        self.assertIn("給的 commit 不對", r.stdout)
+        with open(os.path.join(self.root, "content/report/c.md"), "a", encoding="utf-8") as f:
+            f.write("\n補上的一個新案例，只有新增沒有刪除。\n")
+        r = self.run_diff("--diff")
+        self.assertIn("只有新增", r.stdout)
+
+    def commit_card(self, text):
+        write(self.root, "content/report/c.md", '---\ntitle: "C 卡"\n---\n\n' + text)
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "card"], self.root)
+
+    def test_short_changed_fragment_is_not_reported_as_additions_only(self):
+        self.commit_card("審查時列為必修。\n")
+        write(self.root, "content/report/c.md", '---\ntitle: "C 卡"\n---\n\n審查時列為可改。\n')
+        r = self.run_diff("--diff")
+        self.assertNotIn("只有新增", r.stdout)
+        self.assertIn("少於 12 字元的改前片段", r.stdout)
+        self.assertIn("照判定一確認", r.stdout)  # 「必修」是嚴重度的名字
+
+    def test_unchanged_sentence_in_the_same_paragraph_is_not_an_old_sentence(self):
+        # 副本抄了第一句；本體只改第二句：第一句還在改後版本裡，不算改前的句子
+        self.commit_card("第一句是副本逐字抄的那一句沒有改動。第二句是這次要改寫的那一句話。\n")
+        write(self.root, ".claude/skills/k/references/principles/c.md", "# C 卡\n\n第一句是副本逐字抄的那一句沒有改動。\n")
+        write(self.root, "content/report/c.md", '---\ntitle: "C 卡"\n---\n\n第一句是副本逐字抄的那一句沒有改動。第二句換成新的說法寫出來了。\n')
+        r = self.run_diff("--diff")
+        self.assertIn("刪掉或改掉的句子：1 句", r.stdout)
+        self.assertIn("沒有逐字出現", r.stdout.split("principles/c.md")[1].split("\n", 2)[1])
+
+    def test_meaning_chars_match_changed_lines(self):
+        def chars(path):
+            with open(path, encoding="utf-8") as f:
+                return set(re.search(r'MEANING_CHARS = (?:set\()?"([^"]+)"', f.read()).group(1))
+        self.assertEqual(chars(os.path.join(BIN, "changed-lines")), chars(os.path.join(BIN, "..", "scripts", "principle-mirror-check.py")))
+
+
+class ConvergeBranch(Base):
+    def setUp(self):
+        super().setUp()
+        write(self.root, "scripts/remote-sync.sh", "#!/bin/sh\n")  # 讓這個 repo 看起來是 dotfiles 的 clone
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "dotfiles"], self.root)
+        self.origin = os.path.join(self.base, "origin.git")
+        sh(["git", "init", "-q", "--bare", self.origin], self.base)
+        sh(["git", "remote", "add", "origin", self.origin], self.root)
+        sh(["git", "push", "-q", "origin", "main"], self.root)
+        sh(["git", "checkout", "-q", "-b", "feat"], self.root)
+        write(self.root, "f.md", "feature\n")
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "feat"], self.root)
+        sh(["git", "push", "-q", "origin", "feat"], self.root)
+        sh(["git", "checkout", "-q", "main"], self.root)
+
+    def advance_main(self, rel, text):
+        write(self.root, rel, text)
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "main moves"], self.root)
+        sh(["git", "push", "-q", "origin", "main"], self.root)
+
+    def test_merges_main_and_pushes(self):
+        self.advance_main("m.md", "main\n")
+        r = tool("converge-branch", "feat", cwd=self.root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("[NEXT]", r.stdout)
+        sh(["git", "merge-base", "--is-ancestor", "origin/main", "origin/feat"], self.root)
+        sh(["git", "rev-parse", "--abbrev-ref", "feat@{upstream}"], self.root)  # remote-sync 的 git push 要它
+
+    def test_local_main_ahead_of_origin_exits_2(self):
+        write(self.root, "m.md", "沒推的\n")
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "unpushed"], self.root)
+        r = tool("converge-branch", "feat", cwd=self.root)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("還沒推到 origin", r.stderr)
+
+    def test_refuses_to_run_in_its_own_repo(self):
+        r = tool("converge-branch", "feat", cwd=BIN)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("工具所在的 repo", r.stderr)
+
+    def test_repo_without_remote_sync_or_worktree_of_the_tool_repo_is_refused(self):
+        other = os.path.join(self.base, "other")
+        os.makedirs(other)
+        sh(["git", "init", "-q", "-b", "main"], other)
+        r = tool("converge-branch", "feat", cwd=other)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("不是 dotfiles 的 clone", r.stderr)
+        # 工具所在 repo 的 worktree：路徑不同、git-common-dir 相同，也要擋
+        toolrepo = os.path.join(self.base, "toolrepo")
+        os.makedirs(os.path.join(toolrepo, "bin"))
+        shutil.copy(os.path.join(BIN, "converge-branch"), os.path.join(toolrepo, "bin", "converge-branch"))
+        write(toolrepo, "scripts/remote-sync.sh", "#!/bin/sh\n")
+        sh(["git", "init", "-q", "-b", "main"], toolrepo)
+        sh(["git", "-c", "user.email=t@example.com", "-c", "user.name=t", "-c", "commit.gpgsign=false", "commit", "-q", "--allow-empty", "-m", "init"], toolrepo)
+        wt = os.path.join(self.base, "toolwt")
+        sh(["git", "worktree", "add", "-q", wt], toolrepo)
+        r = subprocess.run([os.path.join(toolrepo, "bin", "converge-branch"), "feat"], cwd=wt, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+        self.assertIn("工具所在的 repo", r.stderr)
+
+    def test_diverged_branch_asks_user_with_both_sides(self):
+        sh(["git", "checkout", "-q", "feat"], self.root)
+        sh(["git", "reset", "-q", "--hard", "main"], self.root)
+        write(self.root, "g.md", "本地的\n")
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "local only"], self.root)
+        sh(["git", "checkout", "-q", "main"], self.root)
+        r = tool("converge-branch", "feat", cwd=self.root)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("[ASK-USER]", r.stdout)
+        self.assertIn("local only", r.stdout)
+        self.assertNotIn("rebase", r.stdout + r.stderr)
+
+    def test_conflict_asks_user_and_resumes(self):
+        self.advance_main("f.md", "main 的版本\n")
+        r = tool("converge-branch", "feat", cwd=self.root)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("[ASK-USER]", r.stdout)
+        self.assertIn("f.md", r.stdout)
+        self.assertIn("origin/main 這邊：", r.stdout)
+        r = tool("converge-branch", "feat", cwd=self.root)  # 還在 merge 中
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("merge 還沒完成", r.stderr)
+        write(self.root, "f.md", "解完\n")
+        sh(["git", "add", "f.md"], self.root)
+        sh(["git", "commit", "-q", "--no-edit"], self.root)
+        r = tool("converge-branch", "feat", cwd=self.root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_dirty_worktree_and_unknown_branch_exit_2(self):
+        write(self.root, "a.md", "改了沒提交\n")
+        self.assertEqual(tool("converge-branch", "feat", cwd=self.root).returncode, 2)
+        sh(["git", "checkout", "-q", "--", "a.md"], self.root)
+        self.assertEqual(tool("converge-branch", "nope", cwd=self.root).returncode, 2)
+
+
+class SessionEditsCheckSources(Base):
+    """session-edits-check 的證據來源（subagent transcript）與路徑形態（symlink、打錯的路徑）。"""
+
+    transcript = SessionEditsCheck.transcript
+    edit = SessionEditsCheck.edit
+    run_check = SessionEditsCheck.run_check
 
     def test_subagent_transcript_is_replayed(self):
         t = self.transcript()

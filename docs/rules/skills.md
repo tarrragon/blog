@@ -180,6 +180,6 @@ scripts/principle-mirror-check.py <report-或-record-卡的-slug>   # 查一張�
 scripts/principle-mirror-check.py --all                          # 全庫掃，列出本體較新的那些
 ```
 
-`--all` 列出的數量隨每一次 commit 變動，不抄進任何文件，要知道就跑一次。逐張判斷該不該同步，判定只有兩條：一、本體的變更改動了規則、判斷標準或處置，同步。二、本體只改了措辭或案例，就把改前的句子用 `grep -F '<改前的句子>' <副本路徑>` 在副本裡找一次：找得到，代表副本逐字抄了那一句（措辭本身可能就是 skill 用來判讀的依據），同步；找不到，代表副本已經改寫成 skill 自己的寫法，不同步。commit message 寫出副本清單與每一份的判定。`--all` 看的是 commit 時間、不看內容，副本晚於本體 commit 而內容已經分岔的，它抓不到；要確認內容一致，打開兩份比對。同步時兩份的段標用同一組字串，之後逐段比對兩份（打開兩份、照段標對齊段落）時才對得上。副本落在 `content/skills/` 底下時，那是 `bin/skill-mirror` 產生的鏡像，改 `.claude/skills/` 的副本再重跑鏡像，不手改。
+`--all` 列出的數量隨每一次 commit 變動，不抄進任何文件，要知道就跑一次。逐張判斷該不該同步，判定只有兩條：一、本體的變更改動了規則、判斷標準或處置，同步。二、本體只改了措辭或案例，就跑 `scripts/principle-mirror-check.py <slug> --diff [<改動之前的 commit>]`：還沒提交時不給 commit（比對 HEAD）；已經提交時填 `<改動的 commit>^`。它把本體這次刪掉或改掉的句子逐句在每份副本裡找，印「→ 同步」的副本逐字抄了改前的句子（措辭本身可能就是 skill 用來判讀的依據），同步；印「沒有逐字出現」的副本已經改寫成 skill 自己的寫法，不同步。它印「沒有任何改動」時，給的 commit 不對，換成改動之前的 commit 再跑；印「只有新增」時，沒有改前的句子，副本不必因為措辭而同步；印「少於 12 字元的改前片段」時，打開本體與副本對照那幾處。它印「含數字、否定或情態字」的提醒時，那幾句的改動照判定一確認，判不出是不是改了規則就同步：判定一靠執行者判斷，執行者自認只改措辭，不改變本款結果。exit 1 是找不到這個 slug 的卡；exit 2 是引數錯（印出 usage）或 commit 打錯（印出 `git diff … 失敗`）。commit message 寫出副本清單與每一份的判定。`--all` 看的是 commit 時間、不看內容，副本晚於本體 commit 而內容已經分岔的，它抓不到；要確認內容一致，打開兩份比對。同步時兩份的段標用同一組字串，之後逐段比對兩份（打開兩份、照段標對齊段落）時才對得上。副本落在 `content/skills/` 底下時，那是 `bin/skill-mirror` 產生的鏡像，改 `.claude/skills/` 的副本再重跑鏡像，不手改。
 
 修改 `scripts/principle-mirror-check.py` 或 `bin/skill-mirror` 之前，讀 `scripts/principle-mirror-check.py` 檔頭的驗收案例，改完逐個跑過再提交。

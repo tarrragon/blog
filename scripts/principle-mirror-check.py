@@ -7,8 +7,19 @@
 報錯，只會讓清單變短——而清單變短與「本來就沒有副本」在畫面上長得一樣。
 
 用法：
-    scripts/principle-mirror-check.py <slug>     # 查一張
-    scripts/principle-mirror-check.py --all      # 全庫掃，列出 report 側較新的
+    scripts/principle-mirror-check.py <slug>                # 查一張
+    scripts/principle-mirror-check.py <slug> --diff [rev]   # 查一張，並判斷改前的句子在不在副本裡
+    scripts/principle-mirror-check.py --all                 # 全庫掃，列出 report 側較新的
+
+--diff 取本體在工作樹相對 rev（預設 HEAD，也就是這次還沒提交的改動）刪掉或改掉的行，依句末標點
+（。；！？）切成句子，逐句在每份副本裡找逐字的出現（兩邊都先拿掉粗體標記、把連結換成連結文字）：
+找得到，代表副本逐字抄了那一句（措辭本身可能就是 skill 用來判讀的依據），印「→ 同步」；找不到，
+代表副本已經改寫成 skill 自己的寫法，只改措辭或案例時不同步。改動是不是動了規則、判斷標準或處置，
+要人判斷；改前的句子含數字、否定或情態字（跟 bin/changed-lines 同一組）、必修或可改時，工具印出
+提醒：這類改動常常改了規則。同一段裡沒有改的句子不算改前的句子（扣掉改後版本裡還在的句子）。
+少於 12 個字元的片段不拿去比對，有的話印出它們的數量與一個例子。沒有任何改動時印「沒有任何改動」
+（給的 commit 不對）；diff 裡沒有任何刪掉或改掉的行時印「只有新增」。
+找不到 slug 時 exit 1；引數錯或 git diff 失敗時 exit 2。
 
 修改本腳本或 bin/skill-mirror 之後（新增 principle 卡會編輯 bin/skill-mirror 的
 find_report_slug()，它是本腳本的 mapping 來源），逐個跑過這四個驗收案例再提交：
@@ -96,6 +107,61 @@ def skill_files():
     return sorted(set(os.path.relpath(p, ROOT) for p in seen))
 
 
+def normalize(text):
+    """比對前兩邊都做的正規化：粗體標記拿掉、連結 [文字](網址) 只留文字。
+
+    副本去專案化時常改掉連結的網址、保留或拿掉粗體；只正規化一邊的話，逐字抄的句子會漏中。
+    """
+    return re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', text).replace('**', '')
+
+
+# 替換了就可能改掉規則意思的字：數字、否定與情態字、嚴重度的名字。跟 bin/changed-lines 的
+# MEANING_CHARS 是同一組（bin/tests 比對兩份）；改一邊要改另一邊。
+MEANING_CHARS = "不沒別勿無非未莫會要先必可須應該得能"
+MEANING_WORDS = ("必修", "可改")
+
+
+def sentences_of(lines):
+    """diff 的行依句末標點（。；！？）切成句子，正規化之後回傳 (≥12 字元的句子, 更短的片段)。"""
+    long_, short = [], []
+    for line in lines:
+        body = normalize(line.strip().lstrip('-*>').strip())
+        for s in re.split(r'[。；！？]', body):
+            s = s.strip()
+            if len(s) >= 12:
+                long_.append(s)
+            elif s:
+                short.append(s)
+    return long_, short
+
+
+def removed_sentences(src, rev):
+    """本體在工作樹相對 rev 刪掉或改掉的句子：(句子, 短片段, diff 有沒有任何 - 行)。
+
+    diff 的 - 行在 Markdown 裡多半是一整段，所以依句末標點切成句子：副本常常只抄了一段裡的一句。
+    同一段裡沒有改的句子也在 - 行裡，所以扣掉改後（+ 行）裡還在的句子，剩下的才是改前的句子。
+    少於 12 個字元的片段不拿去副本裡比對（單一個詞會到處誤中），另外回傳，讓輸出說出它們存在：
+    「審查時列為必修」改成「可改」這類短句的改動就落在這裡。git diff 失敗時回傳 (False, False, False)。
+    """
+    r = subprocess.run(['git', 'diff', '-U0', rev, '--', src],
+                       capture_output=True, text=True, cwd=ROOT)
+    if r.returncode != 0:
+        return False, False, False
+    minus = [l[1:] for l in r.stdout.splitlines() if l.startswith('-') and not l.startswith('---')]
+    plus = [l[1:] for l in r.stdout.splitlines() if l.startswith('+') and not l.startswith('+++')]
+    old_long, old_short = sentences_of(minus)
+    new_long, new_short = sentences_of(plus)
+    keep = set(new_long) | set(new_short)
+    return ([s for s in old_long if s not in keep], [s for s in old_short if s not in keep], bool(minus))
+
+
+def meaning_bearing(sentences):
+    """含數字、否定或情態字、嚴重度名字的句子：改了它們很可能改了規則，要照判定一。"""
+    return [s for s in sentences
+            if re.search(r'[0-9０-９一二三四五六七八九十兩]', s)
+            or any(c in s for c in MEANING_CHARS) or any(w in s for w in MEANING_WORDS)]
+
+
 def copies_of(slug, mt, files):
     src = source_for(slug)
     if not src:
@@ -149,12 +215,35 @@ def main():
         return 0
 
     slug = sys.argv[1]
+    rev = None
+    if len(sys.argv) > 2:
+        if sys.argv[2] != '--diff' or len(sys.argv) > 4:
+            print(__doc__)
+            return 2
+        rev = sys.argv[3] if len(sys.argv) == 4 else 'HEAD'
     src, hits = copies_of(slug, mt, files)
     if src is None:
         print(f"找不到 content/report/{slug}.md 或 content/record/{slug}.md")
         return 1
+    removed, short, had_minus = removed_sentences(src, rev) if rev else (None, None, None)
+    if removed is False:
+        print(f"git diff {rev} 失敗（rev 打錯？）")
+        return 2
     st = last_commit(src)
     print(f"{slug}  （本體：{src}）")
+    if removed is not None:
+        print(f"  本體相對 {rev} 刪掉或改掉的句子：{len(removed)} 句")
+        changed_any = had_minus or subprocess.run(['git', 'diff', '--quiet', rev, '--', src], cwd=ROOT).returncode == 1
+        if not changed_any:
+            print(f"  本體相對 {rev} 沒有任何改動：給的 commit 不對（改動已經提交時給改動之前的 commit）")
+        elif not had_minus:
+            print("  這次只有新增，沒有改前的句子：副本不必因為措辭而同步")
+        if short:
+            print(f"  另有 {len(short)} 個少於 12 字元的改前片段沒有拿去比對（例：{short[0]}）：打開本體與副本對照這幾處")
+        risky = meaning_bearing(removed + short)
+        if risky:
+            print(f"  改前的句子有 {len(risky)} 句含數字、否定或情態字、必修或可改（例：{risky[0][:40]}）："
+                  "這類改動常常改了規則，照判定一確認；判不出時同步")
     if not hits:
         print("  副本 0 份")
         return 0
@@ -163,6 +252,14 @@ def main():
         flag = '  ← 尚未 commit' if lc == 0 else (
             '  ← 落後，要同步' if lc < st else '')
         print(f"  [{why}] {f}{flag}")
+        if removed:
+            raw = normalize(read(os.path.join(ROOT, f)))
+            text = raw + '\n' + raw.replace('\n', '')  # 副本把一句拆成兩行時也比對得到
+            found = [s for s in removed if s in text]
+            if found:
+                print(f"      改前的句子在副本裡逐字出現 {len(found)} 句（例：{found[0][:40]}）→ 同步")
+            else:
+                print("      改前的句子沒有逐字出現在副本裡 → 只改措辭或案例時不同步；改了規則、判斷標準或處置時同步")
     return 0
 
 

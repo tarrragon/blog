@@ -27,7 +27,16 @@ scripts/remote-sync.sh <host> 'sudo ./monitoring/deploy.sh'    # 只部署某個
 
 兩個引數：`<host>` 填 `~/.ssh/config` 裡那台機器的 `Host` 名稱；第二個引數是要在遠端執行的 deploy 指令，不給時跑完整的 `install.sh`。這支腳本在 dotfiles repo 裡，blog repo 的 `scripts/` 沒有它，所以要先切到 dotfiles 的 clone 再跑。
 
-遠端停在 feature 分支、無法 fast-forward 時，在 repo 端把分支收斂：本地 checkout 該分支、`git merge main`、解衝突、push，遠端再 `git pull --ff-only`。不用 `git checkout <ref> -- <paths>` 把檔案放進遠端的工作區：它會把那些路徑 staged 進 index，下一次 ff-pull 會被「index 有未提交變更」擋下。stow 部署過的設定檔改內容不需要重新 stow，symlink 會自動反映。
+遠端停在 feature 分支、無法 fast-forward 時，在 repo 端把分支收斂：在 dotfiles 的 clone 裡跑 `<blog repo 的路徑>/bin/converge-branch <分支>`（工具在 blog repo，作用在執行時所在的 repo）；`<分支>` 填遠端目前所在的分支，在遠端的 dotfiles 目錄跑 `git branch --show-current` 查得到。它把 `origin/main` 併進那個分支並推送。輸出的讀法與處置：
+
+- **`[NEXT]`**：在查分支名的那一台 host 跑 `scripts/remote-sync.sh <host>`，讓遠端 `git pull --ff-only` 並部署；部署完在本地 `git checkout main`，本地 clone 停在 feature 分支時，之後的 `remote-sync.sh` 推的是那個分支。
+- **`[ASK-USER]`**（merge 有衝突、本地與 origin 的分支分岔）：照 `AGENTS.md`〈要先問使用者的情形〉，把它印的兩邊 commit 與衝突的段落給使用者；要留哪一邊由使用者決定，不用 `git checkout --theirs`／`--ours` 一律選一邊，不 rebase、不 reset。
+- **工作樹有未提交的變更**（exit 2，stderr 列出檔案）：這次自己做的改動先 commit（跟 `remote-sync.sh` 的要求相同）；`??` 的檔案與不是這次自己做的改動照 `AGENTS.md`〈要先問使用者的情形〉，不替它 commit，也不還原。
+- **本地 main 有還沒推的 commit**（exit 2）：是這次的 commit 就推 main 再跑；不是的照 `AGENTS.md`〈要先問使用者的情形〉。
+- **本地與 origin 都沒有這個分支**（exit 2）：分支只在遠端機器上，在遠端 push 是寫入，照 `AGENTS.md`〈要先問使用者的情形〉。
+- **其他非零 exit**：照 stderr 修正再跑；各個 exit code 的意思寫在工具的檔頭。
+
+不用 `git checkout <ref> -- <paths>` 把檔案放進遠端的工作區：它會把那些路徑 staged 進 index，下一次 ff-pull 會被「index 有未提交變更」擋下。stow 部署過的設定檔改內容不需要重新 stow，symlink 會自動反映。
 
 檔案的分類：
 

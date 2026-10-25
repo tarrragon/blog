@@ -108,6 +108,7 @@ commit 之後直接推送，不另外問使用者：使用者已經授權推送�
 
 - **提交前**，`bin/commit-files` 或 `bin/session-edits-check` 印出 `[ASK-USER]`，或 `git diff HEAD -- <這次的檔案...>` 有段落對不上這次自己做過的編輯：把工具印的 diff 或那幾段 diff 原文貼進回覆（太長時存成檔案，給路徑與 `git diff --stat`），並說明同意之後會照〈推送〉直接推送，由使用者決定是不是一起提交。這次清單裡的檔案都等使用者決定，不先提交其餘的：同一次改動的檔案可能必須在同一個 commit 裡（skill 的源檔與它的鏡像）。
 - **推送 blog 時**，`bin/push-main` 印出 `[ASK-USER]`：給它列出的 commit（別的 session 還沒推送的），由使用者決定要不要一起推。
+- **收斂遠端分支時**（`docs/rules/remote.md`〈遠端機器的操作〉）：`bin/converge-branch` 印出 `[ASK-USER]`（merge 衝突、分岔），給它印的兩邊 commit 與衝突的段落；dotfiles 的工作樹有 `??` 的檔案或不是這次自己做的未提交改動，給 `git status --short` 與那幾段 diff；本地 main 有不是這次的未推 commit、或分支只在遠端機器上，給那幾個 commit 或分支名。由使用者決定怎麼處理；不替它 commit、不還原、不在遠端寫入。
 - **同步 skill 時**，`[DIVERGED]` 或 `[CONFLICT]` 的兩邊在共同基底之後改到同一段文字（合併時有衝突）：給兩邊的 `git log` 與衝突的段落（`docs/rules/skills.md`〈同步時的判斷〉）。
 
 ### 沒有使用者明說就不做的動作
@@ -116,13 +117,13 @@ commit 之後直接推送，不另外問使用者：使用者已經授權推送�
 
 ### 延到工作結束之後的動作
 
-規則要求的動作做不到當下、要延到之後時（`bin/commit-files` 的 `[FOLLOW-UP]`、還沒推送的 commit、因為別人的檔案擋下而沒提交的改動、印了 `[ASK-USER]` 而等使用者決定的提交、遠端的暫時檔、登記待驗的判定、沒有模組 Backlog 可記的未完成工作），寫進給使用者的最後一則總結，附要跑的指令。延後的動作沒有其他觀察者，只寫在對話中段的那一份不會有人回來做。
+規則要求的動作做不到當下、要延到之後時（`bin/commit-files` 的 `[FOLLOW-UP]`、還沒推送的 commit、因為別人的檔案擋下而沒提交的改動、印了 `[ASK-USER]` 而等使用者決定的提交、`bin/converge-branch` 還沒處理的 `[ASK-USER]` 與還沒跑的 `[NEXT]`、遠端的暫時檔、登記待驗的判定、沒有模組 Backlog 可記的未完成工作），寫進給使用者的最後一則總結，附要跑的指令。延後的動作沒有其他觀察者，只寫在對話中段的那一份不會有人回來做。
 
 ## 掃描工具的零輸出
 
 grep、lint、檢查腳本回報零命中有兩種成因：目標確實不存在，或是指令沒有在掃（pattern 打錯、shell 的 `|` 被轉義、變數沒有切詞、zsh 的 glob 沒有匹配而整條指令沒執行、腳本裡找不到工具、掃描範圍不含目標、餵進去的檔案集是空的）。所以把零輸出當成「通過」之前，先做兩件事：確認餵進去的檔案集不是空的（行數或檔案數不是 0），再餵一個已知會命中的輸入（正對照，positive control），確認它在這個寫法下會命中。正對照沒有命中時，修指令，不採用那次的零輸出。
 
-`bin/changed-lines`、`bin/lint-delta`、`bin/session-edits-check`、`bin/skill-version-check` 在結尾印計數（`from M file(s)`、`K file(s) linted, S skipped`、`N file(s) checked`、`checked N`），計數要對得上交給它的數量；計數沒有印出來，代表工具中途中止，不代表通過。
+`bin/changed-lines`、`bin/lint-delta`、`bin/session-edits-check`、`bin/skill-version-check`、`bin/term-prompt-count`、`bin/report-weight` 在結尾印計數，格式寫在各工具的檔頭。交給它檔案清單的工具，計數要對得上交給它的數量；自己找檔案的工具（`bin/term-prompt-count`、`bin/report-weight`），計數是 0、或 stderr 列出讀不到的來源時，檔案集不對。計數沒有印出來，代表工具中途中止，不代表通過。
 
 ## 決策分析：WRAP
 

@@ -26,9 +26,9 @@ Claude Code 依 `.claude/skills/<name>/SKILL.md` frontmatter 的 `description` �
 
 ## 提交前對照編輯紀錄
 
-`AGENTS.md`〈提交〉要求提交前確認 `git diff HEAD -- <這次的檔案...>` 的每一段都是這次自己做的編輯。context 被壓縮之後，編輯紀錄不在 context 裡，憑印象對照等於沒有對照；而這個 session（主 session 與它派出的 subagent、teammate）的 transcript 留著每一次 Edit 與 Write 的結果。所以在 Claude Code 裡，`bin/commit-files` 提交前自己跑 `bin/session-edits-check --staged`：拿 transcript 重播的結果，比對私有 index 裡要提交的內容，不先判斷 context 有沒有被壓縮。比對的是同一份清單、同一刻的內容，檢查之後才進工作樹的改動不會被提交。重播的範圍與判定寫在 `bin/session-edits-check` 的檔頭；想在提交前先看結果，單獨跑 `bin/session-edits-check <這次的檔案...>`。輸出的讀法與處置：
+`AGENTS.md`〈提交〉要求提交前確認 `git diff HEAD -- <這次的檔案...>` 的每一段都是這次自己做的編輯。context 被壓縮之後，編輯紀錄不在 context 裡，憑印象對照等於沒有對照；而這個 session（主 session 與它派出的 subagent、teammate）的 transcript 留著每一次 Edit 與 Write 的結果。所以在 Claude Code 裡，`bin/commit-files` 提交前自己跑 `bin/session-edits-check --staged`：拿 transcript 重播的結果，比對私有 index 裡要提交的內容，不先判斷 context 有沒有被壓縮。比對的是同一份清單、同一刻的內容，檢查之後才進工作樹的改動不會被提交。重播的範圍與判定寫在 `bin/session-edits-check` 的檔頭；想在提交前先看結果，單獨跑 `bin/session-edits-check <這次的檔案...>`。這道比對只確認 diff 都是這個 session 的編輯，`AGENTS.md`〈提交〉的其餘各項（commit message 的紀錄、`bin/lint-delta`）在跑 `bin/commit-files` 之前做完。輸出的讀法與處置：
 
-- **`bin/commit-files` 提交成功**：比對只確認了 diff 都是這個 session 的編輯；`AGENTS.md`〈提交〉的其餘各項（紀錄、lint）照樣在提交前做完。
+- **`bin/commit-files` 提交成功**：照 `AGENTS.md`〈推送〉推送。
 - **印出 `[ASK-USER]`、沒有提交**：照 `AGENTS.md`〈要先問使用者的情形〉處理。工具只重播 Edit 與 Write，所以這幾種改動每一次都會印 `[ASK-USER]`：Edit 與 Write 以外的寫檔方式（Bash 的 `sed`、heredoc、`python3 -` 腳本，NotebookEdit、MCP 的寫檔工具）、刪除與改名（`rm`、`git mv`）、生成器產生的檔案（例如 `bin/skill-mirror` 產生的 `content/skills/` 鏡像）。要提交的檔案的內容用 Edit 或 Write 改，系統提示（例如 auto mode）准許用 Bash 改檔時也一樣；刪除、改名與生成器照常做，每次交給使用者決定。已經印了 `[ASK-USER]` 的檔案不還原、不重做（`AGENTS.md`〈沒有使用者明說就不做的動作〉）。使用者看過 diff、決定一起提交之後，用 `bin/commit-files --skip-session-check` 提交。
 - **`session-edits-check` exit 2**：清單裡有目錄時改列檔案再跑。其他原因（找不到這個 session 的 transcript、transcript 不是這個 session 的、格式對不上）改用 `AGENTS.md`〈提交〉給其他 agent 的做法：拿 diff 跟 context 裡的編輯紀錄逐段對照，不在 context 裡的段落算對不上；全部對得上才用 `--skip-session-check` 提交，對不上的照〈要先問使用者的情形〉。不自己找一份 transcript 給工具：最近更新的那一份可能是另一個 session 的。
 - **其他 exit，或 stderr 沒有 `file(s) checked` 那一行**：工具中途中止（`AGENTS.md`〈掃描工具的零輸出〉），照 exit 2 的逐段對照處理。
@@ -64,16 +64,7 @@ Claude Code 依 `.claude/skills/<name>/SKILL.md` frontmatter 的 `description` �
 
 在本 repo 底下派出的 subagent，系統提示裡已經有很多文字，至少包括：AGENTS.md 與全部分冊、本檔、使用者層級的 `~/.claude/CLAUDE.md`、memory 目錄的 `MEMORY.md` 索引、專案與使用者層級全部 skill 的 description（含 plugin 的 skill）、agent 類型與 MCP server 的說明，以及 git 狀態裡最近幾筆 commit 的標題。測試詞寫在其中任何一處時，探針回報「有把握」可能只是複述了系統提示裡的定義，而不是這個詞在目標領域的用法。
 
-**派發之前**，列出每個測試詞在這些文字裡出現的行數。檔案形式的來源用 grep；memory 目錄的路徑由工作目錄換算（把絕對路徑的 `/` 換成 `-`，放在 `~/.claude/projects/` 底下）：
-
-```bash
-grep -c "<詞>" AGENTS.md docs/rules/*.md CLAUDE.md ~/.claude/CLAUDE.md \
-  ~/.claude/projects/<換算後的專案目錄名>/memory/MEMORY.md
-grep -rc "<詞>" --include=SKILL.md --exclude-dir=.trash .claude/skills ~/.claude/skills 2>/dev/null | grep -v ':0$'
-git log -20 --format=%s | grep -c "<詞>"
-```
-
-skill 那一條數的是整份 SKILL.md，範圍比 description 寬；`~/.claude/skills/.trash/` 底下是刪掉的 skill，不在系統提示裡，所以排除；用 `grep -r --include` 而不用 `*/SKILL.md` 的 glob，因為 zsh 在 `~/.claude/skills/*` 沒有匹配時會讓整條指令不執行，專案自己的 skill 也一起被算成 0。plugin skill、agent 類型與 MCP 說明沒有固定的檔案位置，grep 數不到，要讀這一次系統提示裡的清單人工確認。`grep -c` 數的是含這個詞的行數，不是出現次數；判斷「是不是零」時兩者沒有差別。
+**派發之前**，跑 `bin/term-prompt-count <測試詞...>`（含空白的詞加引號；中文候選譯名連同英文原詞一起數，探針讀得到的定義常常寫在英文原詞底下），列出每個測試詞在這些文字裡出現的行數；數了哪些來源、跳過哪些目錄，寫在工具的檔頭。exit 1、stderr 的 `M file(s) scanned` 是 0、或 stderr 有「讀不到固定來源」時，那一次測試詞的 0 行不採用（`AGENTS.md`〈掃描工具的零輸出〉）。採用的 0 行只代表這些檔案裡沒有這個詞，不代表探針沒有別的污染來源：探針照派，回報照 round-2-probes〈2-B⁶ 術語探針〉的判讀讀。plugin skill、agent 類型與 MCP 說明沒有固定的檔案位置，工具數不到，要讀這一次系統提示裡的清單，人工確認測試詞有沒有出現在那份清單裡。
 
 讀回報時照 round-2-probes〈2-B⁶ 術語探針〉的詞頻判讀與四類讀法，判成「本批無結論」的詞，照 `docs/rules/review.md`〈理解探針〉末段登記「待驗」、寫進最後一則總結。`Agent` tool 沒有換工作目錄的參數，所以不嘗試「換到沒有規範檔的目錄」或「換一個乾淨的配置」重測。
 

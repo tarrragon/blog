@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+"""report 卡的卡號（frontmatter 的 weight）：取下一個號碼、檢查有沒有撞號。
+
+用途：docs/rules/content-folders.md〈寫之前要做的查核〉。卡號就是 content/report/ 底下各卡的
+`weight`，新卡取目前最大值加一，既有的空號不回填。
+
+用法：
+  bin/report-weight next     印出下一個卡號（目前最大的 weight 加一）
+  bin/report-weight check    列出被兩張以上的卡用到的 weight，還沒提交的卡標「（還沒提交）」，
+                             並印出下一個可用的號碼；有撞號時 exit 1
+  在 repo 裡任何目錄執行都可以（以 repo 根目錄為準）。
+
+讀的是工作樹裡 content/report/*.md（不含 _index.md）的 frontmatter，只認 frontmatter 裡的
+`weight: <整數>`（正文裡的 weight 字樣不算）。有一張卡讀不出這個格式（加了引號、行尾註解、沒有
+frontmatter）時 exit 2 並列出它（還沒提交的標「（還沒提交）」）：那張卡不在計算裡，next 可能取到它
+已經用的號、check 可能漏掉它。
+它看得到這個工作樹裡還沒提交的新卡，看不到另一個 worktree 或分支上的卡：在 worktree 或分支裡
+建的卡，併進 main 之後在 main 再跑一次 check。
+
+為什麼寫成工具：手打的 `grep -h '^weight:' … | sort -n | tail -1` 少了取數字的那一步時，`sort -n`
+取不到數字而退回字典序，回傳的不是最大號，而且沒有任何錯誤訊息。
+
+成功時在 stderr 印 `report-weight: N card(s) read of F file(s)`，N 等於 F。
+
+exit：0 完成（check 沒有撞號）；1 check 找到撞號；2 用法錯誤、不在 git repo 裡、content/report/
+底下沒有卡、有卡讀不出 weight（原因印在 stderr，這時不印計數）。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import collections
+import glob
+import os
+import re
+import subprocess
+import sys
+
+
+def die(msg):
+    sys.stderr.write(f"report-weight: {msg}\n")
+    sys.exit(2)
+
+
+def weights(root):
+    """({weight: [檔案...]}, 檔案數, 讀不出 weight 的檔案)。"""
+    out = collections.defaultdict(list)
+    unread = []
+    paths = [p for p in sorted(glob.glob(os.path.join(root, "content", "report", "*.md"))) if os.path.basename(p) != "_index.md"]
+    for path in paths:
+        rel = os.path.relpath(path, root)
+        with open(path, encoding="utf-8-sig") as f:
+            text = f.read()
+        m = re.match(r"---\n(.*?)\n---\n", text, re.S)
+        w = re.search(r"^weight:\s*(\d+)\s*$", m.group(1), re.M) if m else None
+        if w:
+            out[int(w.group(1))].append(rel)
+        else:
+            unread.append(rel)
+    return out, len(paths), unread
+
+
+def uncommitted(root, rel):
+    """這張卡在 HEAD 裡沒有、或跟 HEAD 不同：多半是這次（或另一個還沒提交的 session）建的或改的。"""
+    if subprocess.run(["git", "cat-file", "-e", f"HEAD:{rel}"], capture_output=True, cwd=root).returncode != 0:
+        return True
+    return subprocess.run(["git", "diff", "--quiet", "HEAD", "--", rel], cwd=root).returncode != 0
+
+
+def mark(root, rel):
+    return f"{rel}（還沒提交）" if uncommitted(root, rel) else rel
+
+
+def main():
+    if len(sys.argv) != 2 or sys.argv[1] not in ("next", "check"):
+        die("用法：bin/report-weight next | check")
+    top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    if top.returncode != 0:
+        die("不在 git repo 裡")
+    root = top.stdout.strip()
+    ws, total, unread = weights(root)
+    n = sum(len(v) for v in ws.values())
+    if not total:
+        die("content/report/ 底下沒有任何卡（不在這個 repo 裡？）")
+    if unread:
+        # 讀不出 weight 的卡不在計算裡：next 可能取到它已經用的號，check 可能漏掉它的撞號
+        die("這些卡的 frontmatter 讀不出 `weight: <整數>`（處置見 docs/rules/content-folders.md）：\n"
+            + "".join(f"  {mark(root, p)}\n" for p in unread))
+    sys.stderr.write(f"report-weight: {n} card(s) read of {total} file(s)\n")
+    if sys.argv[1] == "next":
+        print(max(ws) + 1)
+        return
+    dups = {w: fs for w, fs in sorted(ws.items()) if len(fs) > 1}
+    for w, fs in dups.items():
+        print(f"weight {w}：" + "、".join(mark(root, f) for f in fs))
+    if dups:
+        print(f"下一個可用的號碼：{max(ws) + 1}")
+    sys.exit(1 if dups else 0)
+
+
+if __name__ == "__main__":
+    main()
