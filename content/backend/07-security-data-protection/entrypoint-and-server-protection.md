@@ -124,5 +124,6 @@ inventory 在本章出現三次都是當作前提——可達面要靠它才盤�
 - 平台入口與配置：[5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/)
 - 壓力與回復驗證：[6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)、[6.x release gate](/backend/06-reliability/release-gate/)
 - 分級與收斂流程：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)
+- 源站放在 CDN 後面時的主機防火牆（只放行 CDN 位址、Docker 發佈的連接埠繞過主機防火牆、出站 DNS 限制）：[CDN 後面的源站主機防火牆](/infra/03-network-foundation/origin-host-firewall/)
 - 遠端接入路徑的入口形態與部署合約：[5.10 Outbound Tunnel 入口](/backend/05-deployment-platform/outbound-tunnel-entry/)
 - 接入之後的會話收斂與權限回收：[7.2 身分與授權邊界](../identity-access-boundary/)

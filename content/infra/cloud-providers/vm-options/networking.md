@@ -91,7 +91,7 @@ AWS 對每個公開 IPv4 位址按小時另外計費，見 [雲端免費額度�
 
 Oracle Cloud 建立頁上能設定的只有 NSG：「Use network security groups to control traffic」這個選項把主機的網卡加入某幾個 NSG，只有選既有的 VCN 時才出現。Security list 要到 VCN 的頁面設。官方文件說明 NSG 讓 subnet 的切法與應用程式的安全需求分開管理：同一個 subnet 裡的資料庫主機與網頁主機可以開不同的 port，不必為了開不同的 port 拆成兩個 subnet。
 
-作業系統的防火牆（`iptables`、`nftables`、`ufw`）由主機自己管，不在雲端的主控台上。雲端那一道關放行了某個 port、連線仍然被拒絕時，要進主機查作業系統這一道。Oracle Cloud 的平台映像出廠就帶著一組作業系統防火牆規則，其中有讓主機連到開機磁碟與區塊磁碟的 iSCSI 端點的必要規則，官方〈Images〉建議不要移除；官方〈Images〉那一頁另外寫明在 Ubuntu 映像上不要用 `ufw` 改規則，用它改可能讓主機開不了機。SSH 連不上時，先看症狀是連線逾時還是連線被拒：逾時代表封包沒有送到主機（雲端規則、路由或作業系統防火牆丟棄了封包），被拒代表封包到了主機而 22 port 沒有程式接受連線或防火牆明確回拒，分辨方法見 [Connection Refused vs. Timeout（連線被拒與逾時）](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)。
+作業系統的防火牆（`iptables`、`nftables`、`ufw`）由主機自己管，不在雲端的主控台上。雲端那一道關放行了某個 port、連線仍然被拒絕時，要進主機查作業系統這一道。Oracle Cloud 的平台映像出廠就帶著一組作業系統防火牆規則，其中有讓主機連到開機磁碟與區塊磁碟的 iSCSI 端點的必要規則，官方〈Images〉建議不要移除；官方〈Images〉那一頁另外寫明在 Ubuntu 映像上不要用 `ufw` 改規則，用它改可能讓主機開不了機。SSH 連不上時，先看症狀是連線逾時還是連線被拒：逾時代表封包沒有送到主機（雲端規則、路由或作業系統防火牆丟棄了封包），被拒代表封包到了主機而 22 port 沒有程式接受連線或防火牆明確回拒，分辨方法見 [Connection Refused vs. Timeout（連線被拒與逾時）](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)。主機上跑 Docker 時，容器發佈的連接埠由 Docker 在作業系統防火牆之前轉給容器，`ufw` 與 `firewalld` 的一般規則管不到它；封包路徑與限制的寫法見 [CDN 後面的源站主機防火牆](/infra/03-network-foundation/origin-host-firewall/) 的〈Docker 發佈的連接埠：封包路徑與限制的寫法〉。
 
 ## 各家預設網路規則對 SSH 的開放
 
