@@ -18,15 +18,16 @@ Oracle Cloud Infrastructure（OCI）的免費方案分成 30 天的試用金與�
 
 ## 子資料夾
 
-- [Oracle Cloud 的實作紀錄](/infra/cloud-providers/oracle-cloud/hands-on/)：照著做就能重現的操作紀錄（建立 A1 主機與建立前的檢查、容量不足時的重送腳本、Bastion 工作階段逾時的排查、Run Command 補公鑰的嘗試），概念寫在本層的文章，實作文章連回來
+- [Oracle Cloud 的實作紀錄](/infra/cloud-providers/oracle-cloud/hands-on/)：照著做就能重現的操作紀錄（建立 A1 主機與建立前的檢查、容量不足時的重送腳本、Bastion 工作階段逾時的排查、Run Command 補公鑰的嘗試、改用 Oracle Linux 並放公鑰重建後經由 port forwarding session 登入），概念寫在本層的文章，實作文章連回來
 
 ## Backlog
 
-| 項目                                                                                                                                                                                          | 類型 | 前置條件                                                              | 規模       |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | --------------------------------------------------------------------- | ---------- |
-| Bastion 管理通道實作文章，放 `hands-on/`（private subnet、port forwarding session 用自己的公鑰登入、managed SSH session 在 A1 加 Oracle Linux 上走一次、建工作階段需要的 IAM 政策、稽核紀錄） | 主章 | 一台放了公鑰的 A1 主機，或一台 A1 Oracle Linux 主機（都要重新搶容量） | 1 篇（中） |
-| 2026-10-25 那台 A1 Ubuntu 主機的去留：Run Command 已試過（`ocarun` 沒有 sudo），剩下自訂映像替換開機磁碟、開機磁碟掛到另一台主機或重建；結果補進〈Oracle Cloud 建立主機的實測紀錄〉           | 案例 | 使用者決定要不要重搶 A1 容量                                          | 小         |
-| 〈Oracle Cloud 建立主機的實測紀錄〉補兩項：cloud-init 在 Authorization header 開著時寫公鑰、刪除資源的順序實際跑一次                                                                          | 案例 | 新建一台放了公鑰的 A1 主機；刪除排在上一列結案之後                    | 小         |
-| Run Command 寫回 `authorized_keys` 的實測：建立時用 cloud-init 放 `ocarun` 的 sudoers、再用 Run Command 寫公鑰，以及一般使用者送指令要的政策                                                  | 案例 | 新建一台主機（A1 要重新搶容量）                                       | 小         |
-| OCI 的最小權限：群組、限定 compartment 的 policy 範例（日常帳號、CI 專用使用者）；可併入 Bastion 那一篇                                                                                       | 主章 | 先查官方 policy 範例                                                  | 中         |
-| Always Free 主機被閒置回收或試用結束停用之後的狀態與恢復                                                                                                                                      | 案例 | 遇到一次實際回收或停用                                                | 小         |
+| 項目                                                                                                                                                                  | 類型 | 前置條件                                                                                                                  | 規模       |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| Bastion 管理通道實作文章，放 `hands-on/`（managed SSH session 在 A1 加 Oracle Linux 上走一次、建工作階段需要的 IAM 政策、稽核紀錄）                                   | 主章 | 一台 A1 Oracle Linux 9 主機（`available-plugins get` 查到 9 有 Bastion plugin、10 沒有）；A1 額度已被兩台用滿，要先刪一台 | 1 篇（中） |
+| 〈Oracle Cloud 建立主機的實測紀錄〉的刪除資源順序實際跑一次                                                                                                           | 案例 | 使用者決定刪除 `verify-a1` 與 `verify-a1-ol` 兩台主機與網路                                                               | 小         |
+| Run Command 寫回 `authorized_keys` 的實測：建立時用 cloud-init 放 `ocarun` 的 sudoers、再用 Run Command 寫公鑰，以及一般使用者送指令要的政策                          | 案例 | 政策那一半可以在 `verify-a1-ol` 上驗；sudoers 那一半要新建主機，A1 額度先騰出一台                                         | 小         |
+| Ubuntu 平台映像在 Authorization header 開著（只允許中繼資料第二版）時，cloud-init 寫不寫得進公鑰；Oracle Linux 10.2 已在 2026-10-25 驗過寫得進                        | 案例 | 一台放了公鑰的 A1 Ubuntu 主機，A1 額度先騰出一台                                                                          | 小         |
+| OCI 的最小權限：群組、限定 compartment 的 policy 範例（日常帳號、CI 專用使用者）；可併入 Bastion 那一篇                                                               | 主章 | 先查官方 policy 範例                                                                                                      | 中         |
+| Always Free 主機被閒置回收或試用結束停用之後的狀態與恢復                                                                                                              | 案例 | 遇到一次實際回收或停用                                                                                                    | 小         |
+| 2026-10-25 審查列出、還沒查證的登入替代做法：Cloud Shell 接私有網路直接 ssh、主控台建立頁依映像列出的可用 plugin、dynamic port forwarding（SOCKS5）session 的連線指令 | 案例 | `verify-a1-ol`；Cloud Shell 那一項要先查 Private Network 需要的政策                                                       | 小         |

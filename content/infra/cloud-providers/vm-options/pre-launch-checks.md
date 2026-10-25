@@ -6,7 +6,7 @@ weight: 8
 tags: ["infra", "cloud-providers", "vm", "ssh", "access"]
 ---
 
-雲端主機建立頁上的設定，有一部分建立之後只能重建才改得了，而登入要經過的業者服務各自只在一部分機型與作業系統上成立。這一篇把這兩類條件整理成按下建立之前要做的檢查：建好就改不了的設定，以及怎麼從業者的文件與工具查出來；登入路徑上每一個業者服務支援的機型與作業系統，以及元件狀態顯示正常為什麼不能當成支援的證據；兩條登入路徑各自依賴哪些元件、哪些元件仍然共用、不經過 sshd 的救援入口，以及停用其他入口之前要先確認什麼；機型容量難取得時，設定為什麼要選補救代價低的那一種；以及 Oracle Cloud、Google Cloud 與 AWS 查這些事的位置。各項設定本身的機制在 [位置：區域、可用區與故障域](/infra/cloud-providers/vm-options/placement/)、[機型與映像檔：CPU 架構、核心與記憶體、計費模式與作業系統](/infra/cloud-providers/vm-options/shape-and-image/)、[網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/)、[登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 與 [安全開機：Secure Boot、Measured Boot 與 TPM](/infra/cloud-providers/vm-options/shielded-boot/)；一次沒做這些檢查的實測經過（2026-10-25 在 Oracle Cloud 的 `ap-batam-1` 建了一台 A1 Ubuntu 主機，建好之後登不進去）在 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)。
+雲端主機建立頁上的設定，有一部分建立之後只能重建才改得了，而登入要經過的業者服務各自只在一部分機型與作業系統上成立。這一篇把這兩類條件整理成按下建立之前要做的檢查：建好就改不了的設定，以及怎麼從業者的文件與工具查出來；登入路徑上每一個業者服務支援的機型與作業系統，以及元件狀態顯示正常為什麼不能當成支援的證據；兩條登入路徑各自依賴哪些元件、哪些元件仍然共用、不經過 sshd 的救援入口，以及停用其他入口之前要先確認什麼；機型容量難取得時，設定為什麼要選補救代價低的那一種；以及 Oracle Cloud、Google Cloud 與 AWS 查這些事的位置。各項設定本身的機制在 [位置：區域、可用區與故障域](/infra/cloud-providers/vm-options/placement/)、[機型與映像檔：CPU 架構、核心與記憶體、計費模式與作業系統](/infra/cloud-providers/vm-options/shape-and-image/)、[網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/)、[登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 與 [安全開機：Secure Boot、Measured Boot 與 TPM](/infra/cloud-providers/vm-options/shielded-boot/)；一次沒做這些檢查的實測經過（2026-10-25 在 Oracle Cloud 的 `ap-batam-1` 建了一台 A1 Ubuntu 主機，建好之後登不進去；之後改用 Oracle Linux 並放公鑰重建一台，經由 port forwarding session 登入）在 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)。
 
 ## 建好就改不了的設定：補救的代價與查法
 
@@ -26,10 +26,11 @@ tags: ["infra", "cloud-providers", "vm", "ssh", "access"]
 
 登入一台沒有公開 IP 的主機，連線要經過幾個業者服務：哪個服務負責網路可達性、通道授權與主機登入驗證，見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉。每一個服務都只在一部分機型與作業系統上成立，而這份範圍寫在服務自己的文件裡，不寫在建立頁上：建立頁讓任何映像檔配任何相容架構的機型，建立會成功，登入在之後才失敗。
 
-所以建立之前，對路徑上每一個服務讀三種文件：
+所以建立之前，對路徑上每一個服務讀下面三種文件，業者另外提供查詢工具時再查一次：
 
 - **支援的作業系統與映像檔清單**：例如 Oracle Cloud 的 Run Command 列出的是 Oracle Autonomous Linux、Oracle Linux、CentOS、Windows Server 與以它們為基礎的自訂映像，沒有 Ubuntu。不在清單上代表官方不保證，不代表一定不能執行：2026-10-25 在一台 A1 Ubuntu 主機上實測，Run Command 的 plugin 確實執行了指令，而能做到哪些事還要看下面的前置條件。AWS 的 EC2 Instance Connect 要主機用預先裝好它的 AMI，或在官方列為支援的 AMI 上自己安裝。
-- **Known Issues**：支援清單寫的是作業系統，機型與作業系統的組合不支援的情形常常只寫在這一頁。Oracle Cloud〈Known Issues for Bastion〉的第一條是 Arm 架構的 A1 機型加非 Oracle Linux 的主機不支援 managed SSH session；這個組合在建立頁上建立會成功，A1 是 Always Free 的機型、Ubuntu 是建立頁列出的平台映像，兩者放在一起時 managed SSH session 才不支援。
+- **Known Issues**：支援清單寫的是作業系統，機型與作業系統的組合不支援的情形常常只寫在這一頁。Oracle Cloud〈Known Issues for Bastion〉的第一條是 Arm 架構的 A1 機型加非 Oracle Linux 的主機不支援 managed SSH session；這個組合在建立頁上建立會成功，A1 是 Always Free 的機型、Ubuntu 是建立頁列出的平台映像，兩者放在一起時 managed SSH session 才不支援。這一條只寫到作業系統，沒有寫版本。
+- **可以查詢的支援清單**：文件寫到作業系統為止時，作業系統的版本之間仍然可能不同，而有些業者提供依版本查詢的工具。Oracle Cloud 的 `oci instance-agent available-plugins get` 依作業系統名稱與版本列出代理程式可用的 plugin：2026-10-25 查到 Oracle Linux 10 沒有 Bastion plugin、9 與 8 有，所以同樣是 A1 加 Oracle Linux，選 10 的主機一樣建不起 managed SSH session。這類工具查不到對應時可能回傳全部的項目而不是報錯（這支工具填不存在的版本 `99` 時，回傳的清單裡有 Bastion），所以版本要照抄映像檔的值，第一次用時先拿一個不存在的值看它怎麼回應。查法與重建的經過在 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的〈建立之前查映像檔版本與它可用的 plugin〉。
 - **前置條件**：服務在主機上用哪個使用者執行、要什麼權限。Oracle Cloud 的 Run Command 以 `ocarun` 這個使用者執行，要寫其他使用者的檔案得先替它設 sudo；官方列的做法有兩種，建立時用 cloud-init 放 sudoers 檔，或建好之後登入主機設定。主機登不進去時才想用 Run Command 救援，只剩前一種，而初始化腳本是建立後不能改的欄位，所以這件事要在建立之前決定。AWS 的 Session Manager 要主機上有 SSM Agent，並讓 Systems Manager 取得操作這台主機的權限。
 
 元件的狀態欄顯示的是元件啟動了，這個組合能不能完成登入，寫在支援清單與 Known Issues 裡，兩者描述的是不同的事。Oracle Cloud 的主機頁面上，A1 Ubuntu 主機的 Bastion plugin 顯示 `RUNNING`，Bastion 的工作階段照樣在約 15 分鐘後逾時。缺了前置條件時，狀態欄也一樣顯示正常：同一台主機的 Run Command plugin 也是 `RUNNING`，指令確實執行了，而 `ocarun` 沒有 sudo，寫不了 `authorized_keys`。
@@ -62,10 +63,10 @@ tags: ["infra", "cloud-providers", "vm", "ssh", "access"]
 
 ## 各家查建立後不能改的欄位、登入服務支援組合與代理程式狀態的位置
 
-| 要查的事                     | Oracle Cloud                                                                         | Google Cloud                                   | AWS                                                                   |
-| ---------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------- | --------------------------------------------------------------------- |
-| 哪些欄位建立後不能改         | `oci compute instance update --help` 各欄位的說明；〈Replacing a Boot Volume〉的限制 | Compute Engine 文件修改各項屬性的頁面          | EC2 文件修改主機屬性的頁面與 `aws ec2 modify-instance-attribute help` |
-| 登入服務支援的組合           | Bastion 的〈Known Issues for Bastion〉；Run Command 說明頁的支援映像清單             | OS Login 與 IAP TCP forwarding 的說明頁        | EC2 Instance Connect 的〈Prerequisites〉；Session Manager 的前置條件  |
-| 代理程式與 plugin 的執行狀態 | 主機頁面的 Oracle Cloud Agent 分頁，或 `oci instance-agent plugin list`              | `get-serial-port-output` 裡 guest agent 的啟動 | Systems Manager 的 Fleet Manager 列出的受管主機                       |
+| 要查的事                     | Oracle Cloud                                                                                                                                        | Google Cloud                                   | AWS                                                                   |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------- |
+| 哪些欄位建立後不能改         | `oci compute instance update --help` 各欄位的說明；〈Replacing a Boot Volume〉的限制                                                                | Compute Engine 文件修改各項屬性的頁面          | EC2 文件修改主機屬性的頁面與 `aws ec2 modify-instance-attribute help` |
+| 登入服務支援的組合           | Bastion 的〈Known Issues for Bastion〉；Run Command 說明頁的支援映像清單；依作業系統版本查可用 plugin 的 `oci instance-agent available-plugins get` | OS Login 與 IAP TCP forwarding 的說明頁        | EC2 Instance Connect 的〈Prerequisites〉；Session Manager 的前置條件  |
+| 代理程式與 plugin 的執行狀態 | 主機頁面的 Oracle Cloud Agent 分頁，或 `oci instance-agent plugin list`                                                                             | `get-serial-port-output` 裡 guest agent 的啟動 | Systems Manager 的 Fleet Manager 列出的受管主機                       |
 
-「代理程式與 plugin 的執行狀態」那一列查到的是元件有沒有啟動；〈登入路徑上各服務的支援組合：支援清單、Known Issues 與元件狀態〉那一節的支援清單與 Known Issues，仍然要另外讀。
+「代理程式與 plugin 的執行狀態」那一列查到的是元件有沒有啟動；〈登入路徑上各服務的支援組合：支援清單、Known Issues 與元件狀態〉那一節的支援清單與 Known Issues，仍然要另外讀。設定也不等於實際：Oracle Cloud 主機的 `agent-config` 寫著 Bastion 是 `ENABLED` 只是期望的狀態，`plugin list` 裡根本沒有 Bastion 這一項時，代表這個映像版本不提供這個 plugin（2026-10-25 的 Oracle Linux 10.2 主機就是這樣）。

@@ -14,7 +14,7 @@ tags: ["infra", "cloud-providers", "vm", "agent", "metadata"]
 
 Oracle Cloud 把每一項功能做成一個 plugin，在建立頁上個別開關。判斷要開哪些，看會不會用到它背後的那個服務：
 
-- **要用 Oracle Cloud 的 Bastion 服務、以 managed SSH session 登入**：一定要開 Bastion plugin，主機有沒有放自己的公鑰都一樣；沒開時 managed SSH session 建不起來，主機放了自己的公鑰的話，還能走不經代理程式的 port forwarding session。
+- **要用 Oracle Cloud 的 Bastion 服務、以 managed SSH session 登入**：一定要開 Bastion plugin，主機有沒有放自己的公鑰都一樣；沒開時 managed SSH session 建不起來，主機放了自己的公鑰的話，還能走不經代理程式的 port forwarding session。開了是必要條件、不是充分條件：映像的作業系統版本不提供 Bastion plugin 時，開著也沒有這個 plugin（2026-10-25 的 Oracle Linux 10.2 就是這樣），建立之前用 `oci instance-agent available-plugins get` 依版本查，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的〈建立之前查映像檔版本與它可用的 plugin〉。
 - **要在主控台看主機的 CPU、記憶體圖表**：維持 Compute Instance Monitoring 開啟。
 - **要掛區塊磁碟、想讓代理程式替主機設定連線**：開 Block Volume Management。
 - **其餘**：維持建立頁的預設。官方說明一台主機支援哪些 plugin 依 Oracle Cloud Agent 的版本與映像而定，所以預設清單也隨映像不同。預設關閉的 plugin 背後的服務（作業系統修補、弱點掃描這類）都要在各自的服務裡另外啟用，用到時再回來打開。
