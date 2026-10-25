@@ -36,7 +36,7 @@ VPU 另外計費：Lower Cost 只收儲存費，其餘等級在儲存費之外�
 ## 加密
 
 - **靜態加密（encryption at rest）**：Oracle Cloud 與 Google Cloud 的磁碟預設就是加密的，金鑰由業者管理，不必另外設定；AWS 的 EBS 要在每個區域打開 EBS encryption by default，新磁碟才會預設加密。要自己掌握金鑰時（合規要求、要能撤銷金鑰讓資料失效），可以改用自己在金鑰管理服務（Oracle Cloud 的 Vault）建立的金鑰。Oracle Cloud 的區塊儲存只支援 AES 金鑰，不支援 RSA 金鑰。
-- **傳輸中加密（in-transit encryption）**：主機與磁碟之間經由網路傳送的資料也加密。Oracle Cloud 的虛擬機可以選擇開或不開，建立頁的預設是開啟（[實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)的 Storage 段，2026-10-24 建立 A1 Ubuntu 主機時）；支援的裸機主機則固定開啟。用自己的 Vault 金鑰時，同一把金鑰也用在傳輸中加密。
+- **傳輸中加密（in-transit encryption）**：主機與磁碟之間經由網路傳送的資料也加密。Oracle Cloud 的虛擬機可以選擇開或不開，建立頁的預設是開啟（[實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)的 Storage 段，2026-10-24 建立 A1 Ubuntu 主機時）；支援的裸機主機則固定開啟。用自己的 Vault 金鑰時，同一把金鑰也用在傳輸中加密。
 
 在 Oracle Cloud 上兩項都維持預設不會降低安全性，也不影響費用；在 AWS 上要先確認那個區域的預設加密有打開。
 
@@ -64,4 +64,4 @@ VPU 另外計費：Lower Cost 只收儲存費，其餘等級在儲存費之外�
 ## 延伸閱讀：磁碟之外的建立選項
 
 - [機型與映像檔](/infra/cloud-providers/vm-options/shape-and-image/)：開機磁碟的內容來自哪一個映像檔、停止主機時哪些資源還在計費
-- [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的 Management 段：Oracle Cloud 代理程式的 Block Volume Management plugin 與其他 plugin 的用途
+- [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的 Management 段：Oracle Cloud 代理程式的 Block Volume Management plugin 與其他 plugin 的用途

@@ -70,4 +70,4 @@ Oracle Cloud 的 Capacity type 欄位一次只能選其中一種；AWS 的 capac
 | 預留容量 | Capacity reservation | Reservation         | Capacity Reservation                                       |
 | 映像檔   | Image                | Image               | [AMI](/infra/knowledge-cards/ami/)（Amazon Machine Image） |
 
-映像檔複製到的那顆開機磁碟能設定的大小、效能與加密，見 [磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/infra/cloud-providers/vm-options/storage/)；一台 Always Free 的 A1 Ubuntu 主機實際選的規格與映像檔，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的 Basic information 段。
+映像檔複製到的那顆開機磁碟能設定的大小、效能與加密，見 [磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/infra/cloud-providers/vm-options/storage/)；一台 Always Free 的 A1 Ubuntu 主機實際選的規格與映像檔，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的 Basic information 段。

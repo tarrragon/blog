@@ -70,7 +70,7 @@ Oracle Cloud 沒有升級的帳號在試用結束後不會開始計費，預算�
 
 - **身分與權限**：另外建一個日常使用、權限較小的帳號，理由見〈身分與權限：誰能登入、能做什麼〉。
 
-- **資源分組**：建一個實驗用的分組，之後的資源都建在裡面，清理時只看這一組。Oracle Cloud 建一個 compartment，compartment 要先清空裡面的所有資源才能刪除，刪除的順序見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的〈刪除這組資源的順序〉；Google Cloud 建一個 project，刪除 project 會連同裡面的資源一起刪；AWS 的分組單位是帳號本身，另開帳號要由組織的管理帳號在 AWS Organizations 裡做，被指派管理單一帳號的人在那個帳號裡改用標籤與 Resource Groups 分組。
+- **資源分組**：建一個實驗用的分組，之後的資源都建在裡面，清理時只看這一組。Oracle Cloud 建一個 compartment，compartment 要先清空裡面的所有資源才能刪除，刪除的順序見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的〈刪除這組資源的順序〉；Google Cloud 建一個 project，刪除 project 會連同裡面的資源一起刪；AWS 的分組單位是帳號本身，另開帳號要由組織的管理帳號在 AWS Organizations 裡做，被指派管理單一帳號的人在那個帳號裡改用標籤與 Resource Groups 分組。
 - **配額與限制**：上限依帳號類型而不同（Oracle Cloud 的〈Service Limits〉在運算的上限表上分成 Universal Credits 一欄，與 Pay As You Go 和試用帳號共用的一欄（欄名「Pay As You Go or Trial」），兩欄的值不同），所以要用的機型在自己這個帳號、這個區域的上限是多少，要到這個領域的頁面查；上限是 0 時那種機型建不起來，要先申請調高。上限不是 0 也不代表那一區有那種硬體。
 
 ## 各家的選單名稱：各管理領域在三家主控台上的位置

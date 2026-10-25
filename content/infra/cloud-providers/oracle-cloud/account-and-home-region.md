@@ -56,7 +56,7 @@ A1 免費機型在某個 AD 暫時沒有容量時，建立主機的 API 回 `Out
 - **預留容量（capacity reservation）**（會計費）：先向業者保留某種機型的容量，保留期間的計費方式見 [機型與映像檔](/infra/cloud-providers/vm-options/shape-and-image/) 的〈計費模式：隨用隨付、可被收回、預留容量與專屬主機〉。
 - **升級成付費帳戶**（Always Free 頁）：官方寫升級之後能用的運算資源種類變多（原文「gives you access to more types of Compute resources」）。對容量不足來說，升級的作用是讓上面那幾項會計費的選項（x86 的 Flex 機型、可被收回的容量、預留容量）在試用金用完或試用結束之後仍然建得起來。Always Free 的部分仍然不收費，額度以外建的資源照一般價格計費。
 
-Home region 只有一個 AD、而且只用免費額度時，能用的退路是等待重試、不指定 fault domain、改小規格與建立前查容量這四項；換 AD 在這種區域不存在；x86 的 Flex 機型、可被收回的容量與預留容量不在免費額度內，要用試用金或升級成付費帳戶才建得起來。在只有一個 AD 的 `ap-batam-1` 實際重送的紀錄見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的〈按下 Create 之後的結果：容量不足〉。
+Home region 只有一個 AD、而且只用免費額度時，能用的退路是等待重試、不指定 fault domain、改小規格與建立前查容量這四項；換 AD 在這種區域不存在；x86 的 Flex 機型、可被收回的容量與預留容量不在免費額度內，要用試用金或升級成付費帳戶才建得起來。在只有一個 AD 的 `ap-batam-1` 實際重送的紀錄、OCI CLI 在一條指令裡自己重送造成的限流，以及依回應碼調整間隔的重送腳本，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的〈重送建立請求：CLI 自己的重送、限流門檻與重送腳本〉。
 
 ## E2.1.Micro 在各區域的供應：服務配額表與 404 錯誤
 

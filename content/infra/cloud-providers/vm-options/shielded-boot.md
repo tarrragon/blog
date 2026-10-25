@@ -32,7 +32,7 @@ Oracle Cloud 的官方〈Shielded Instances〉寫明，shielded instance 建好�
 
 - **跑一般服務、使用平台映像**：開或不開都可以；有合規要求（要求開機鏈可驗證）時開。
 - **要裝自訂核心或沒有簽章的驅動程式**：不開，或先確認那個驅動程式支援 Secure Boot 的簽章流程。在 Linux 上，這個流程是用自己的金鑰簽驅動程式、再把那把金鑰登錄進開機鏈信任的清單（Machine Owner Key，MOK）；合規要求開機鏈可驗證、又要裝這類驅動程式時，就要走這條路，做法以那個驅動程式與發行版的文件為準。這一組條件最容易在主機建好幾個月之後才遇到：用 DKMS（套件更新時自動重新編譯核心模組的機制）安裝的驅動程式，編譯與套件安裝都會成功，到 `modprobe` 載入模組時才被拒絕，錯誤訊息是 `Key was rejected by service`；而 Oracle Cloud 上安全開機的設定建立後不能關，只能登錄 MOK 或重建主機。官方另外寫明，主機終止時登錄過的 MOK 會一起刪除，重建的主機要先用標準簽章的核心開機、再重新登錄 MOK。
-- **實驗與學習用的主機**：維持建立頁的預設即可，要測試這個功能時另外建一台開啟的。Oracle Cloud 建立 A1 Ubuntu 主機時建立頁上三項預設都關閉（[實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)的 Security 段）；Google Cloud 的 Shielded VM 預設開啟 vTPM 與 integrity monitoring。
+- **實驗與學習用的主機**：維持建立頁的預設即可，要測試這個功能時另外建一台開啟的。Oracle Cloud 建立 A1 Ubuntu 主機時建立頁上三項預設都關閉（[實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)的 Security 段）；Google Cloud 的 Shielded VM 預設開啟 vTPM 與 integrity monitoring。
 
 ## 各家的欄位名稱：開機保護的總稱、Secure Boot、開機量測與 TPM
 

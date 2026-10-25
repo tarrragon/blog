@@ -17,7 +17,7 @@ Oracle Cloud 的建立頁提供四個選項：
 - **讓業者產生一對金鑰（Generate a key pair for me）**：業者產生一對 RSA 金鑰，公鑰放進主機，私鑰讓使用者在這一頁下載。私鑰只能在這一刻下載，離開頁面之後就拿不到；官方提醒持有私鑰的人都能登入這台主機，要存在安全的位置。
 - **上傳公鑰檔（Upload public key files）**：上傳自己電腦上已經有的公鑰（`.pub` 檔）。私鑰從頭到尾只在自己的電腦上。
 - **貼上公鑰（Paste public keys）**：同上，改成貼上公鑰的文字。誤貼私鑰時頁面會報錯。
-- **不放金鑰（No SSH keys）**：主機裡沒有任何允許登入的公鑰，而且官方說明選了之後就不能再提供公鑰。SSH 登入只能經由 Bastion 的 managed SSH session（見〈不放金鑰時的登入服務〉）；Bastion 的 port forwarding session 要用主機 `authorized_keys` 裡事先放好的公鑰，選了 No SSH keys 的主機用不了它。其餘的入口是〈建立之後加金鑰與金鑰遺失時的入口〉列的救援入口。
+- **不放金鑰（No SSH keys）**：主機裡沒有任何允許登入的公鑰，而且官方說明選了之後就不能再提供公鑰。SSH 登入只能經由 Bastion 的 managed SSH session（見〈不放金鑰時的登入服務〉）；Bastion 的 port forwarding session 要用主機 `authorized_keys` 裡事先放好的公鑰，選了 No SSH keys 的主機用不了它。所以 A1 機型加非 Oracle Linux 的主機（managed SSH session 不支援的組合，見〈不放金鑰時的登入服務〉）選了 No SSH keys，就沒有 SSH 登入的入口。其餘的入口是〈建立之後加金鑰與金鑰遺失時的入口〉列的救援入口。
 
 自己已經在用 SSH 的話，上傳或貼上自己的公鑰比較好：私鑰不經過任何網頁，也不必管理另一把專門給這台主機的金鑰。本機還沒有金鑰時，用 `ssh-keygen -t ed25519` 產生一對（ed25519 是新版 OpenSSH 的 `ssh-keygen` 預設產生的型別），公鑰在 `~/.ssh/id_ed25519.pub`；那個路徑已經有一把金鑰時，`ssh-keygen` 會問要不要覆寫，回答 n，或用 `-f <新的檔名>` 另存一把。
 
@@ -44,7 +44,7 @@ Oracle Cloud 的建立頁提供四個選項：
 
 - **Oracle Cloud 的 Bastion**：Bastion 是業者託管的服務，不是自己架的 [跳板機（bastion host）](/infra/knowledge-cards/bastion-host/)。官方〈Bastion〉概觀頁的說明是 Bastion 位在公開 subnet（原文 reside in a public subnet），替使用者建好連到私有 subnet 裡目標資源所需的網路設施，所以經由它登入的主機不需要公開 IP；同一頁寫明 Bastion 不收費，但有服務配額（service limits）。誰能建工作階段由 Oracle Cloud 的權限政策決定。登入的流程是在主控台 Identity & Security → Bastion 建一個 Bastion，選一個目標 subnet、設定允許連入的來源位址範圍，再建一個工作階段（session），主控台會給出一條經由 Bastion 轉接的 `ssh` 指令。官方建立 Bastion 的說明頁寫明，目標 subnet 要是主機所在的 subnet，或主機所在的 subnet 接受其流量的另一個 subnet。概觀頁列的工作階段有三種，每一種都只在建立時設定的存續時間內能用來連線：
 
-  - **managed SSH session**：主機上代理程式的 Bastion plugin 把建立工作階段時指定的公鑰臨時放進主機。網路可達性、通道授權與主機登入驗證都由 Bastion 包辦，所以主機可以不放任何金鑰。
+  - **managed SSH session**：主機上代理程式的 Bastion plugin 把建立工作階段時指定的公鑰臨時放進主機。網路可達性、通道授權與主機登入驗證都由 Bastion 包辦，所以主機可以不放任何金鑰。官方〈Known Issues for Bastion〉寫明，用 Arm 架構的 Ampere A1 機型建立、作業系統不是 Oracle Linux（例如 Ubuntu）的主機不支援這種工作階段，要改用下一項的 port forwarding session；Always Free 的 A1 主機選 Ubuntu 時就落在這個組合，實測的經過見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的〈建立之後：Bastion managed SSH session 逾時的排查〉。
   - **SSH port forwarding session**：只把連線轉到一台主機的 22 port，不經過代理程式，只包辦網路可達性與通道授權；主機登入驗證仍然是主機自己的 sshd 與 `authorized_keys` 裡事先放好的公鑰。
   - **dynamic port forwarding（SOCKS5）session**：跟 SSH port forwarding session 一樣不經過代理程式，差別是轉接的目標不固定，可以動態連到私有 subnet 裡的任何資源；只登入一台主機時，用 managed SSH session 或 SSH port forwarding session 就夠。
 - **Google Cloud 的 IAP 加 OS Login**：兩個服務各管一部分。IAP TCP forwarding 把連線轉進沒有外部 IP 的主機，誰能開這條通道由 IAM 決定，包辦網路可達性與通道授權；OS Login 在登入當下由 Google 查這個 Google 帳號登記的公鑰與 IAM 角色，決定能不能登入、以主機上的哪個 Linux 帳號登入，只包辦主機登入驗證。只開 OS Login、不用 IAP 時，連線是一般的 SSH：從 VPC 外面登入的話，主機要有外部 IP，防火牆規則要放行登入者的位址連到 22 port。做法見 [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/) 與 [OS Login](/infra/knowledge-cards/os-login/) 卡。
@@ -71,4 +71,4 @@ Oracle Cloud 的建立頁提供四個選項：
 | Ubuntu 預設使用者    | `ubuntu`                                                                                        | 依 metadata 裡公鑰附帶的使用者名稱                | `ubuntu`                                                            |
 | 不放金鑰時的登入服務 | Bastion：登入單一主機用 managed SSH session 或 SSH port forwarding session，另有 SOCKS5 session | IAP TCP forwarding（連線）加 OS Login（登入驗證） | Systems Manager Session Manager；EC2 Instance Connect（只推送金鑰） |
 
-金鑰對了之後，連線還要通過的網路與防火牆見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/)，SSH 連線逾時與連線被拒兩種症狀各自指向哪一層見 [Connection Refused vs. Timeout（連線被拒與逾時）](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)；選 No SSH keys、改走 Bastion 時建立頁上要一起改的設定，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的 SSH keys 與 Management 段。
+金鑰對了之後，連線還要通過的網路與防火牆見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/infra/cloud-providers/vm-options/networking/)，SSH 連線逾時與連線被拒兩種症狀各自指向哪一層見 [Connection Refused vs. Timeout（連線被拒與逾時）](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)；選 No SSH keys、改走 Bastion 時建立頁上要一起改的設定，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的 SSH keys 與 Management 段。

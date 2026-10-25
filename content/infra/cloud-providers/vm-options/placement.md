@@ -36,7 +36,7 @@ tags: ["infra", "cloud-providers", "vm", "region", "availability-zone"]
 
 故障域是可用區內部的一組硬體與基礎設施，Oracle Cloud 的每個可用區有三個。它防的是兩種事件：某一組實體主機的硬體故障，以及業者對那一組硬體做的計畫性維護。一個故障域出事時，放在其他故障域的主機不受影響。知識卡見 [Fault Domain（故障域）](/infra/knowledge-cards/fault-domain/)。
 
-只有一台主機時，故障域沒有選擇的意義：不論放在哪一個，那台主機都只在一組硬體上。建立頁的預設「讓業者選」就是對的選擇，Oracle Cloud 會依當下的容量挑一個（[實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)在只有一個可用區的 `ap-batam-1` 就是這樣填的）。手動指定故障域還會縮小可用的容量：指定之後只接受那一個故障域裡的硬體。Oracle Cloud 的 Compute〈Known Issues〉頁對 `Out of host capacity` 列的處置裡，就有一項是不指定 fault domain 再建一次。
+只有一台主機時，故障域沒有選擇的意義：不論放在哪一個，那台主機都只在一組硬體上。建立頁的預設「讓業者選」就是對的選擇，Oracle Cloud 會依當下的容量挑一個（[實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)在只有一個可用區的 `ap-batam-1` 就是這樣填的）。手動指定故障域還會縮小可用的容量：指定之後只接受那一個故障域裡的硬體。Oracle Cloud 的 Compute〈Known Issues〉頁對 `Out of host capacity` 列的處置裡，就有一項是不指定 fault domain 再建一次。
 
 故障域的作用在兩台以上。同一個服務的兩台主機，區域有多個可用區時先分到不同可用區，因為可用區隔離的是整棟資料中心的電力與網路，範圍比故障域大（見 [Availability Zone（可用區）](/infra/knowledge-cards/availability-zone/) 的〈設計責任〉）；區域只有一個可用區時，才靠故障域把兩台放在不同的硬體上，一組硬體故障時只停一台。跨可用區的代價是兩台之間的流量多一段距離：AWS 與 Google Cloud 對跨可用區的流量另外計費，兩台之間做同步複製時延遲也比同一個可用區裡高。
 

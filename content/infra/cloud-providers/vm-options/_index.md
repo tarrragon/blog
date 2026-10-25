@@ -22,7 +22,7 @@ tags: ["infra", "cloud-providers", "vm", "compute"]
 
 ## 各篇共用的寫法
 
-每一篇都寫這幾項：這一類選項是什麼、建立後能不能改（改不了的才需要在建立頁上想清楚）、對費用的影響、選錯時的徵兆、實驗用的小主機怎麼選，結尾是三家的欄位名稱對照。維護時照這一份清單檢查各篇。主要例子取自 Oracle Cloud（實測在那一家），寫通則句之前先確認另兩家的行為，只對一家成立的句子在句首寫明業者。各家的實測紀錄放在業者子資料夾，例如 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)，那一篇照主控台的分頁順序，每一欄連回這裡對應的那一篇。
+每一篇都寫這幾項：這一類選項是什麼、建立後能不能改（改不了的才需要在建立頁上想清楚）、對費用的影響、選錯時的徵兆、實驗用的小主機怎麼選，結尾是三家的欄位名稱對照。維護時照這一份清單檢查各篇。主要例子取自 Oracle Cloud（實測在那一家），寫通則句之前先確認另兩家的行為，只對一家成立的句子在句首寫明業者。各家的實測紀錄放在業者子資料夾底下的 `hands-on/`，例如 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)，那一篇照主控台的分頁順序，每一欄連回這裡對應的那一篇。
 
 ## Backlog
 

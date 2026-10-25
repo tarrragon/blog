@@ -73,4 +73,4 @@ Compartment 是 tenancy 底下用來分組資源與套用權限政策的容器�
 
 ## 延伸閱讀：各頁面背後的概念
 
-這些分類各自管什麼、Google Cloud 與 AWS 的對應名稱，見 [雲端主控台的管理領域](/infra/cloud-providers/console-areas/)；從 Compute → Instances 進去之後建立頁每個分頁的取值，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)；Tenancy Details 頁上 home region 的意義與它對 Always Free 額度的限制，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。
+這些分類各自管什麼、Google Cloud 與 AWS 的對應名稱，見 [雲端主控台的管理領域](/infra/cloud-providers/console-areas/)；從 Compute → Instances 進去之後建立頁每個分頁的取值，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)；Tenancy Details 頁上 home region 的意義與它對 Always Free 額度的限制，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。

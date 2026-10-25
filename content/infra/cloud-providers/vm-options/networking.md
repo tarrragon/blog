@@ -33,7 +33,7 @@ tags: ["infra", "cloud-providers", "vm", "network", "security"]
 - **有一個服務要讓網際網路的人直接連（例如自架 VPN）**：放公開 subnet、給公開 IP，防火牆規則只放行那一個服務的 port。管理員的 SSH 不必跟著對外：來源收緊成自己的 IP，或先連上 VPN、再經由主機的私有 IP 登入。
 - **網頁這類 HTTP 服務**：主機放私有 subnet，由放在公開 subnet 的負載平衡器承接網際網路來的連線。Oracle Cloud 的 Always Free 含一個 10 Mbps 的負載平衡器；AWS 與 Google Cloud 的負載平衡器另外計費，計費項目見各家價格頁。
 
-建立頁替主機準備網路的方式，各家預先準備的東西不一樣。Oracle Cloud 的建立頁提供「選既有的 VCN」與「建一個新的 VCN」兩條路，選「建新的」時，主控台會順手建一個 VCN、一個 subnet 與一份預設的防火牆規則；Google Cloud 的專案預先就有一個 `default` 網路，建立頁預設把主機放進去；AWS 的啟動精靈把主機放進帳號的預設 VPC，並順手建一個新的 security group。要把主機放進自己設計過的網路時，先在網路的頁面建好虛擬網路與 subnet，再回到建立頁選那個 subnet。Oracle Cloud 的網路下拉選單還受 compartment（tenancy 底下分組資源的容器）篩選，只列出選定的 compartment 裡的 VCN；篩選的規則見 [Oracle Cloud 主控台導覽](/infra/cloud-providers/oracle-cloud/console-navigation/) 的〈清單頁的 compartment 篩選器〉，實際卡住的情形見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的 Networking 段。
+建立頁替主機準備網路的方式，各家預先準備的東西不一樣。Oracle Cloud 的建立頁提供「選既有的 VCN」與「建一個新的 VCN」兩條路，選「建新的」時，主控台會順手建一個 VCN、一個 subnet 與一份預設的防火牆規則；Google Cloud 的專案預先就有一個 `default` 網路，建立頁預設把主機放進去；AWS 的啟動精靈把主機放進帳號的預設 VPC，並順手建一個新的 security group。要把主機放進自己設計過的網路時，先在網路的頁面建好虛擬網路與 subnet，再回到建立頁選那個 subnet。Oracle Cloud 的網路下拉選單還受 compartment（tenancy 底下分組資源的容器）篩選，只列出選定的 compartment 裡的 VCN；篩選的規則見 [Oracle Cloud 主控台導覽](/infra/cloud-providers/oracle-cloud/console-navigation/) 的〈清單頁的 compartment 篩選器〉，實際卡住的情形見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的 Networking 段。
 
 ## 私有 IP：主機在虛擬網路裡的位址
 
@@ -97,7 +97,7 @@ Oracle Cloud 建立頁上能設定的只有 NSG：「Use network security groups
 
 三家業者替使用者預先建好或順手建的網路，預設的規則都放行 22 port 的 SSH 流量。Google Cloud 那一條規則的來源是整個網際網路，Oracle Cloud 那一份的來源在 2026-10-24 實測時也是整個網際網路：
 
-- **Oracle Cloud**：建立頁選「建一個新的 VCN」時，主控台一起建一份「Default Security List」。官方〈Security Lists〉描述的是這條規則的用途：放行來自「authorized source IP addresses」的 TCP 22，讓使用者建好新的 VCN 與公開 subnet 之後，不必自己寫規則就能用 SSH 連上新建的 Linux 主機；這段描述沒有寫來源欄位的預設值。2026-10-24 實測時，主控台建出來的這條規則來源是 `0.0.0.0/0`。兩者不衝突：官方寫的是規則的用途，實測讀到的是那一次建出來的預設值。官方沒有寫預設值，所以建好之後到 subnet 的 security list 看一次實際的來源。Subnet 沒有另外指定 security list 時套用的就是這一份，所以這條規則的來源是 `0.0.0.0/0` 時，在新建的公開 subnet 裡建一台有公開 IP 的主機，那台主機的 SSH port 一建好就對網際網路開放。這份規則的完整內容（實測值）見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/) 的 Networking 段。
+- **Oracle Cloud**：建立頁選「建一個新的 VCN」時，主控台一起建一份「Default Security List」。官方〈Security Lists〉描述的是這條規則的用途：放行來自「authorized source IP addresses」的 TCP 22，讓使用者建好新的 VCN 與公開 subnet 之後，不必自己寫規則就能用 SSH 連上新建的 Linux 主機；這段描述沒有寫來源欄位的預設值。2026-10-24 實測時，主控台建出來的這條規則來源是 `0.0.0.0/0`。兩者不衝突：官方寫的是規則的用途，實測讀到的是那一次建出來的預設值。官方沒有寫預設值，所以建好之後到 subnet 的 security list 看一次實際的來源。Subnet 沒有另外指定 security list 時套用的就是這一份，所以這條規則的來源是 `0.0.0.0/0` 時，在新建的公開 subnet 裡建一台有公開 IP 的主機，那台主機的 SSH port 一建好就對網際網路開放。這份規則的完整內容（實測值）見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的 Networking 段。
 - **Google Cloud**：專案建立時就有的 `default` 網路帶一條 `default-allow-ssh` 規則，放行 `0.0.0.0/0` 的 TCP 22，套用在這個網路裡的每一台主機。換掉這條規則的步驟見 [GCP VM 的 SSH 與 RDP 管理通道](/infra/cloud-providers/gcp/gcp-iap-ssh-access/)。
 - **AWS**：EC2 啟動精靈順手建的 security group 預設放行進來的 SSH 流量（官方〈Prerequisites for EC2 Instance Connect〉的說明），放行的來源要在精靈的網路設定那一步確認並收緊。
 

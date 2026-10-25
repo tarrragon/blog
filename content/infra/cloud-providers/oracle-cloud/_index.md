@@ -15,14 +15,18 @@ Oracle Cloud Infrastructure（OCI）的免費方案分成 30 天的試用金與�
 | [Oracle Cloud 主控台導覽](/infra/cloud-providers/oracle-cloud/console-navigation/)                    | 頂端列、導覽選單、compartment 篩選器、常用頁面路徑         |
 | [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) | tenancy 與 home region、Always Free 的範圍、主控台登入欄位 |
 | [從本機用 OCI CLI 操作 Oracle Cloud](/infra/cloud-providers/oracle-cloud/cli-session-login/)          | `oci session authenticate`、token 時效、API 簽章金鑰       |
-| [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/)   | 主控台各分頁的取值、等效 CLI 指令、容量不足                |
+
+## 子資料夾
+
+- [Oracle Cloud 的實作紀錄](/infra/cloud-providers/oracle-cloud/hands-on/)：照著做就能重現的操作紀錄（建立 A1 主機、容量不足時的重送腳本、Bastion 工作階段逾時的排查），概念寫在本層的文章，實作文章連回來
 
 ## Backlog
 
-| 項目                                                                                                                                                                                                                                                                    | 類型 | 前置條件                                                | 規模       |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------- | ---------- |
-| Bastion 管理通道實測文章（private subnet、managed SSH session、port forwarding session 用自己的公鑰登入、建工作階段需要的 IAM 政策、稽核紀錄）                                                                                                                          | 主章 | home region 的 A1 建立請求成功（Batam 沒有 E2.1.Micro） | 1 篇（中） |
-| A1 建成之後把結果補進〈Oracle Cloud 建立主機的實測紀錄〉：Authorization header 開著時 Ubuntu 上 managed SSH session 能否經由 Bastion plugin 建立、代理程式讀中繼資料是否正常（這台選 No SSH keys）；cloud-init 寫公鑰要另一台放了公鑰的主機驗；刪除資源的順序實際跑一次 | 案例 | A1 建立請求成功                                         | 小         |
-| Run Command 寫回 `authorized_keys` 的實測（`ocarun` 的 sudo 設定、送指令的政策）                                                                                                                                                                                        | 案例 | A1 建立請求成功                                         | 小         |
-| OCI 的最小權限：群組、限定 compartment 的 policy 範例（日常帳號、CI 專用使用者）；可併入 Bastion 那一篇                                                                                                                                                                 | 主章 | 先查官方 policy 範例                                    | 中         |
-| Always Free 主機被閒置回收或試用結束停用之後的狀態與恢復                                                                                                                                                                                                                | 案例 | 遇到一次實際回收或停用                                  | 小         |
+| 項目                                                                                                                                                                                          | 類型 | 前置條件                                                                  | 規模       |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------- | ---------- |
+| Bastion 管理通道實作文章，放 `hands-on/`（private subnet、port forwarding session 用自己的公鑰登入、managed SSH session 在 A1 加 Oracle Linux 上走一次、建工作階段需要的 IAM 政策、稽核紀錄） | 主章 | 一台放了公鑰的 A1 主機，或一台 A1 Oracle Linux 主機（都要重新搶容量）     | 1 篇（中） |
+| 讓 2026-10-25 那台 A1 Ubuntu 主機（No SSH keys）登得進去：用 Run Command 把公鑰寫進 `authorized_keys` 再走 port forwarding session；結果補進〈Oracle Cloud 建立主機的實測紀錄〉               | 案例 | 建 Run Command 要的 dynamic group 與 IAM 政策（帳號層的設定，先問使用者） | 小         |
+| 〈Oracle Cloud 建立主機的實測紀錄〉補兩項：cloud-init 在 Authorization header 開著時寫公鑰、刪除資源的順序實際跑一次                                                                          | 案例 | 新建一台放了公鑰的 A1 主機；刪除排在上一列結案之後                        | 小         |
+| Run Command 寫回 `authorized_keys` 的實測（`ocarun` 的 sudo 設定、送指令的政策）                                                                                                              | 案例 | 無                                                                        | 小         |
+| OCI 的最小權限：群組、限定 compartment 的 policy 範例（日常帳號、CI 專用使用者）；可併入 Bastion 那一篇                                                                                       | 主章 | 先查官方 policy 範例                                                      | 中         |
+| Always Free 主機被閒置回收或試用結束停用之後的狀態與恢復                                                                                                                                      | 案例 | 遇到一次實際回收或停用                                                    | 小         |

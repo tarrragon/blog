@@ -12,7 +12,7 @@
 
 # Claude Code 專屬的操作
 
-上方的 `@` 匯入由 Claude Code 自動內嵌：AGENTS.md 是規則的入口，`docs/rules/` 的分冊是各類工作的規則（分工見 AGENTS.md 開頭的路由表）。本檔只寫 Claude Code 才有的操作：回覆語言設定的注入、skill 的叫用機制、提交前用 transcript 對照編輯紀錄、Agent tool 的派發（所有背景 agent 共用的送達規則、reviewer、理解探針、術語探針會讀到的系統提示），以及 SSH 的權限與 hook。共用的規則不寫在這裡，要改就改 AGENTS.md 或對應的分冊。
+上方的 `@` 匯入由 Claude Code 自動內嵌：AGENTS.md 是規則的入口，`docs/rules/` 的分冊是各類工作的規則（分工見 AGENTS.md 開頭的路由表）。本檔只寫 Claude Code 才有的操作：回覆語言設定的注入、skill 的叫用機制、提交前用 transcript 對照編輯紀錄、memory 該記什麼、Agent tool 的派發（所有背景 agent 共用的送達規則、reviewer、理解探針、術語探針會讀到的系統提示），以及 SSH 的權限與 hook。共用的規則不寫在這裡，要改就改 AGENTS.md 或對應的分冊。
 
 ## 回覆語言的設定
 
@@ -32,6 +32,24 @@ Claude Code 依 `.claude/skills/<name>/SKILL.md` frontmatter 的 `description` �
 - **印出 `[ASK-USER]`、沒有提交**：照 `AGENTS.md`〈要先問使用者的情形〉處理。工具只重播 Edit 與 Write，所以這幾種改動每一次都會印 `[ASK-USER]`：Edit 與 Write 以外的寫檔方式（Bash 的 `sed`、heredoc、`python3 -` 腳本，NotebookEdit、MCP 的寫檔工具）、刪除與改名（`rm`、`git mv`）、生成器產生的檔案（例如 `bin/skill-mirror` 產生的 `content/skills/` 鏡像）。要提交的檔案的內容用 Edit 或 Write 改，系統提示（例如 auto mode）准許用 Bash 改檔時也一樣；刪除、改名與生成器照常做，每次交給使用者決定。已經印了 `[ASK-USER]` 的檔案不還原、不重做（`AGENTS.md`〈沒有使用者明說就不做的動作〉）。使用者看過 diff、決定一起提交之後，用 `bin/commit-files --skip-session-check` 提交。
 - **`session-edits-check` exit 2**：清單裡有目錄時改列檔案再跑。其他原因（找不到這個 session 的 transcript、transcript 不是這個 session 的、格式對不上）改用 `AGENTS.md`〈提交〉給其他 agent 的做法：拿 diff 跟 context 裡的編輯紀錄逐段對照，不在 context 裡的段落算對不上；全部對得上才用 `--skip-session-check` 提交，對不上的照〈要先問使用者的情形〉。不自己找一份 transcript 給工具：最近更新的那一份可能是另一個 session 的。
 - **其他 exit，或 stderr 沒有 `file(s) checked` 那一行**：工具中途中止（`AGENTS.md`〈掃描工具的零輸出〉），照 exit 2 的逐段對照處理。
+
+## Memory 只記 repo 與文章以外的事
+
+Claude Code 的 memory 目錄（`~/.claude/projects/<專案>/memory/`）不在版本控制裡，只有這台機器上的 Claude Code 讀得到；網站讀者、Codex 與換一台機器的操作者都讀不到。本 repo 是教學部落格，操作的過程（步驟、指令、遇到的錯誤與處置、量到的門檻與時間）是 `content/` 文章的材料：讀者照著文章重做同一件事，而只寫進 memory 的操作經驗不會出現在文章裡，下一位照文章做的人會在同一個位置卡住。
+
+**寫 memory 之前**，先判斷這筆內容是誰要用的：
+
+- **網站讀者照某篇文章重做那個主題時用得到**（指令與它的參數、步驟與順序、錯誤訊息與處置、限流這類量到的值、資源的建立與清理順序）：寫進 `content/` 的文章，落點與寫法照 `docs/rules/content-folders.md`〈文章放在哪一個資料夾〉與〈概念文章與實作文章：`hands-on/` 子資料夾〉，走 `docs/rules/writing-process.md`〈文章產出流程〉。使用者這次的要求不包括寫或改文章時，不為了這筆內容另寫一篇發佈：把材料記進承接這個主題的資料夾（之後寫成文章時會放的那個資料夾）`_index.md` 的 `## Backlog`，memory 先留著內容並寫一行指向那一列，在最後一則總結提出來，由使用者決定要不要寫。
+- **在本 repo 工作的 agent 要照做的程序與規則**：照 `AGENTS.md`〈規則的優先序與住址〉寫進規則檔、skill 或 `bin/` 的工具。
+- **只有這台機器上的 agent 用得到**：agent 工作環境裡工具的行為與已知的失敗情形（本機 shell 的別名與函式、工具的配額、磁碟與記憶體的限制）、Claude Code 專屬的操作細節、使用者的偏好與對工作方式的回饋、外部資源的指標（網址、儀表板），以及只對這一個帳號或這一台機器成立的值（資源名、IP、帳號狀態、日期）：寫進 memory。
+- **跨 session 的待辦**：教學模組的未完成工作記在承接那件事的資料夾 `_index.md` 的 `## Backlog`，沒有模組結構的照 `docs/rules/content-folders.md`〈模組的 Backlog〉寫進 commit message 與最後一則總結；memory 只記這兩處都放不進的待辦（等使用者決定的事、跟 repo 檔案無關的事）。
+- **兩者都有**（某次操作留下的狀態，加上做這件事的方法）：方法照「網站讀者照某篇文章重做那個主題時用得到」那一項寫進文章，memory 只留狀態與文章的路徑。
+
+**既有的 memory 檔裡寫著操作方法時**，改到那個檔的哪一段，就搬那一段的方法（沒改到的段落不必一起搬），順序是：
+
+1. 方法寫進文章，memory 裡那一段標上「待刪：<文章路徑>」。
+2. 文章照〈提交前對照編輯紀錄〉提交並推送。提交被 `[ASK-USER]` 或 pre-commit 擋下而延後時，停在這一步，把待刪的那一段寫進最後一則總結（`AGENTS.md`〈延到工作結束之後的動作〉）：memory 不在版本控制裡，刪掉之後方法只剩工作樹裡還沒提交的那一份。
+3. 推送之後，拿推送後的文章逐項對照，每一項方法寫出它落在哪一篇的哪一段；找得到的才刪，找不到的（審查時刪掉的、Claude Code 專屬的細節）留在 memory，或照上面的分法另找住址。
 
 ## Agent tool 的派發
 
