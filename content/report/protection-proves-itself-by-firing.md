@@ -90,4 +90,5 @@ slug: "protection-proves-itself-by-firing"
 - **[#371 觀察者與限制的獨立性](../independence-is-what-the-guarded-side-cannot-disable/)**：停損開關切斷帳單之後，它自己也跑在那個專案上，此後的通知它都處理不了；被保護的專案裡被入侵的身分若有編輯權限，也能直接刪掉它。合成觸發會讓前一種當場浮現，後一種要另外問；兩者是否可接受，都要用 #371 的失效域問一次。
 - **[#253 寫註解的動機是怕被改壞時，要處理的是那個約束](../protective-comment-signals-missing-enforcement/)**：#253 說防護要交給會發聲的機制、而判定靠當場破壞；本卡說交出去之後，那個機制自己是否會發聲也要當場破壞一次來確認。
 - **[#291 掃描指令壞掉時不會報錯，它報一個數字](../broken-scan-reports-a-plausible-number/)**：驗證查詢回傳零筆是同一個現象在雲端紀錄上的形態，修法也相同——先用一個已知會命中的輸入確認查詢本身。
+- **[#384 只能在建立時決定的設定](../launch-time-settings-need-support-check-and-second-path/)**：本卡的「元件顯示正常」處理部署之後怎麼驗；#384 把同一個訊號放到建立之前：元件狀態正常而組合不在支援範圍時，要在建立之前從支援清單與 Known Issues 查出來，建好之後才發現，補救的代價是整個資源。
 - **[#227 可重現性只有乾淨機器重跑才驗得出](../clean-room-reproduce-reveals-non-repo-state/)**：同樣是「讀設定驗不出來、要實際跑一次」的一類；#227 驗的是能否重建，本卡驗的是建好之後是否會動作。

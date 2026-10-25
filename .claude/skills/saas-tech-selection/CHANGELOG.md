@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.12.0 — security〈管理通道〉的追問與判讀要點新增「建立主機之前的檢查」：找出只能建立時決定的設定、對登入路徑上每個服務讀支援清單與 Known Issues 與前置條件（元件狀態 running 不是支援的證據、換機型演練驗不出機型特有的問題）、兩條登入路徑逐項列出各自依賴的元件（代理程式型的工作階段有的經過 sshd、有的自己開 shell；第二條可以就是救援入口）、第二條路徑用自己公鑰時是暫時的、容量稀缺時選補救代價低的設定（跟機型無關的先在容易重建的機型上驗）與重送腳本重啟前再對一次；訪談階段的產出是決策記錄裡的兩列。來源是一次 A1 加 Ubuntu 主機建好之後登不進去的實測：managed SSH session 是官方列的不支援組合、Run Command 的 `ocarun` 沒有 sudo、建立時沒放公鑰而公鑰欄位建立後不能改。
+
 **Version**: 1.11.1 — implementations/gcp-spend-kill-switch.md 依測試專案上的第二次實跑補正：建立預算的兩道權限檢查（serviceusage 再帳單帳戶）、從既有預算拿掉 topic 要用預算 API PATCH、通知管道只接受電子郵件且 webhook 被拒時不說原因、抵免類型的寫法與 FREE_TIER 的推論、跨 zone 停 VM 的做法與角色、Policy Troubleshooter 的指令、心跳監看（日誌指標加缺席條件、時間窗上限 23 小時 30 分）、管理專案與帳單停用期間撤銷金鑰的實測結果、同專案函式停用後約一分鐘內仍會執行。
 
 **Version**: 1.11.0 — 新增 references/implementations/：gcp-spend-kill-switch.md（預算、Pub/Sub、函式部署、判斷規則、驗收、停用後的恢復）與 gcp-management-access.md（IAP 與 OS Login 的設定指令、舊規則的停用與回退、由 template 建的主機、GKE 控制平面與節點除錯、稽核紀錄、人員離職）。capacity-performance〈支出停損〉與 security〈管理通道〉只留決策點、三層表與平台無關的判讀要點，GCP 實作外移（兩段各約佔原檔四成，訪談時每次都載入）。SKILL.md 路由表兩列改成訪談讀維度檔、實際建置時再讀實作檔；目錄樹補 implementations/。

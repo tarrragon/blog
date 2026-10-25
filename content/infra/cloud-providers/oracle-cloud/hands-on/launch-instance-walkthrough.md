@@ -1,15 +1,43 @@
 ---
-title: "Oracle Cloud 建立主機的實測紀錄：前置網路、主控台各分頁的 Always Free 設定值、等效的 CLI 指令、容量不足的重送與 Bastion 工作階段逾時"
+title: "Oracle Cloud 建立主機的實測紀錄：建立前的檢查、前置網路、主控台各分頁的 Always Free 設定值、等效的 CLI 指令、容量不足的重送、Bastion 工作階段逾時與 Run Command 補公鑰的嘗試"
 date: 2026-10-24
-description: "在 Oracle Cloud 建立一台 Always Free 的 A1 Ubuntu 主機時，前置的 compartment、VCN 與閘道怎麼建，主控台各分頁填了什麼、為什麼這樣填，等效的 CLI 指令與它跟主控台預設值的差異，Oracle Cloud Agent 各 plugin 的用途，容量不足時 CLI 自己的重送、限流門檻與依回應碼調整間隔的重送腳本，建好之後建立 Bastion、managed SSH session 建立逾時的排查與 A1 加 Ubuntu 不支援的官方說明，以及刪除這組資源的順序"
+description: "要在 Oracle Cloud 建一台沒有公開 IP、經由 Bastion 登入的 Always Free A1 主機，想照一次實測重做、看建立頁每一欄的取值與換一種做法的結果時讀；也用在建立請求一直回容量不足、managed SSH session 建立逾時，或沒放公鑰的主機想用 Run Command 救援的時候"
 weight: 5
 aliases: ["/infra/cloud-providers/oracle-cloud/launch-instance-walkthrough/"]
 tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "vm", "free-tier"]
 ---
 
-實測日期是 2026-10-24 與 2026-10-25，區域 `ap-batam-1`，帳號是 Oracle Cloud 的 Free Tier，在本機用 OCI CLI 與主控台建立一台 A1 Ubuntu 24.04 主機，再從本機經由 Bastion 建立登入的工作階段。
+實測日期是 2026-10-24 與 2026-10-25，區域 `ap-batam-1`，帳號是 Oracle Cloud 的 Free Tier，在本機用 OCI CLI 與主控台建立一台 A1 Ubuntu 24.04 主機，再從本機經由 Bastion 建立登入的工作階段；2026-10-25 下午另外用 Run Command 對同一台主機送指令。
 
-這篇記錄在 Oracle Cloud 建立一台主機的實際操作，目標是 Always Free 額度內、沒有公開 IP、之後經由 Bastion 服務登入的 A1 Ubuntu 主機。Bastion 是 Oracle Cloud 代管的登入服務：建立 Bastion 時指定一個目標 subnet，它替那個 subnet 裡沒有公開 IP 的主機開有時效的 SSH 工作階段（session）；這次要用的 managed SSH session 這種工作階段，由主機上 Oracle Cloud Agent 的 Bastion plugin 在建立工作階段時把一把公鑰臨時放進主機。工作階段的種類與需要的條件見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉。內容依操作的順序是：前置的 compartment、VCN、service gateway 與 private subnet；主控台建立頁 Basic information、Security、Networking、SSH keys、Storage、Management 各分頁的取值與理由，含 Oracle Cloud Agent 各 plugin 的用途；等效的 CLI 指令；按下 Create 之後的容量不足，CLI 自己的重送、這個帳號量到的限流門檻與依回應碼調整間隔的重送腳本；主機建好之後建立 Bastion 與 managed SSH session、工作階段建立逾時的排查與官方列出的成因；以及刪除這組資源的順序。每個欄位背後的概念連到 [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/) 底下對應的那一篇，這裡只寫 Oracle Cloud 的欄位、這次的取值與實際跑過的指令。
+這篇記錄在 Oracle Cloud 建立一台主機的實際操作，目標是 Always Free 額度內、沒有公開 IP、之後經由 Bastion 服務登入的 A1 Ubuntu 主機。Bastion 是 Oracle Cloud 代管的登入服務：建立 Bastion 時指定一個目標 subnet，它替那個 subnet 裡沒有公開 IP 的主機開有時效的 SSH 工作階段（session）；這次要用的 managed SSH session 這種工作階段，由主機上 Oracle Cloud Agent 的 Bastion plugin 在建立工作階段時把一把公鑰臨時放進主機。工作階段的種類與需要的條件見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉。內容依操作的順序是：建立之前的檢查（哪些設定建好就改不了、登入路徑上每個服務支援哪些機型與作業系統、登入路徑要有兩條、各自依賴哪些元件、容量稀缺時怎麼選設定）；前置的 compartment、VCN、service gateway 與 private subnet；主控台建立頁 Basic information、Security、Networking、SSH keys、Storage、Management 各分頁的取值與理由，含 Oracle Cloud Agent 各 plugin 的用途；等效的 CLI 指令；按下 Create 之後的容量不足，CLI 自己的重送、這個帳號量到的限流門檻與依回應碼調整間隔的重送腳本；主機建好之後建立 Bastion 與 managed SSH session、工作階段建立逾時的排查與官方列出的成因；用 Run Command 補公鑰時建立的 dynamic group 與 IAM 政策、送指令與讀結果的指令，以及 `ocarun` 沒有 sudo 的結果；這台主機剩下的登入入口；以及刪除這組資源的順序。每一節除了這次的取值，也寫出那一步沒做時會看到什麼、有哪些替代做法與各自換到什麼。每個欄位背後的概念連到 [建立雲端虛擬機的選項](/infra/cloud-providers/vm-options/) 底下對應的那一篇，這裡只寫 Oracle Cloud 的欄位、這次的取值與實際跑過的指令。
+
+這次的實測沒有在建立之前做那幾項檢查，結果是主機建好之後登不進去：managed SSH session 逾時三次，Run Command 執行得了指令卻沒有 sudo，主機又沒有公鑰。所以〈建立之前的檢查：套在這台主機上的查法與結果〉是事後補上的檢查。
+
+## 建立之前的檢查：套在這台主機上的查法與結果
+
+這些檢查的判斷依據在 [建立主機之前的檢查](/infra/cloud-providers/vm-options/pre-launch-checks/)，這一節是套在這台主機（A1、Ubuntu 24.04、private subnet、經由 Bastion 登入）上的查法與結果。這些檢查排在進建立頁之前，因為結果會改變建立頁上的選擇：映像檔、SSH keys 欄位與要打開的 plugin。
+
+**建好就改不了的設定**。用 CLI 讀修改主機的說明，找出建立後不能改的欄位：
+
+```bash
+oci compute instance update --help | sed -n '/--metadata/,/--extended-metadata/p'
+```
+
+說明裡寫明 `user_data` 與 `ssh_authorized_keys` 建立後不能改，送出修改的請求會被拒絕。這台的設定裡落在這一種的是 SSH keys（選了 No SSH keys）、初始化腳本（沒放）、映像檔（Ubuntu；替換開機磁碟只能換同一個發行版）與 Shielded instance（Secure Boot、Measured Boot、Trusted Platform Module 都關閉）。指令裡 `sed -n` 的範圍從 `--metadata` 印到下一個選項 `--extended-metadata`，這是本機這一版 CLI 的選項順序；版本不同、順序不同時，把結束的 pattern 換成 `--metadata` 之後的那一個選項。
+
+**登入路徑上各服務的支援組合**。這台規劃的 managed SSH session、不經過 plugin 的 port forwarding session，與事後想用的 Run Command，在官方文件上的結果：
+
+| 服務                                | 要讀的文件                         | A1 加 Ubuntu 的結果                                        |
+| ----------------------------------- | ---------------------------------- | ---------------------------------------------------------- |
+| Bastion managed SSH session         | 〈Known Issues for Bastion〉第一條 | 不支援                                                     |
+| Bastion SSH port forwarding session | 同上；它不經過 plugin              | 支援，條件是主機裡有公鑰                                   |
+| Compute Instance Run Command        | Run Command 說明頁的支援映像清單   | 清單上沒有 Ubuntu；實測執行得了指令，而 `ocarun` 沒有 sudo |
+
+三項的文件在建立之前都讀得到，Run Command 要事先替 `ocarun` 設 sudo、第一次建主機先放公鑰比較保險這兩點，[登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 也有寫。2026-10-25 的建立沿用 2026-10-24 寫好的重送腳本，腳本的參數寫在讀這些文件之前，重新啟動時沒有再對一次。
+
+**兩條登入路徑各自依賴的元件**。這台只規劃了 managed SSH session 一條，它依賴 Bastion plugin 與支援範圍，而這次最沒有把握的正是這兩項。不經過 plugin 的 port forwarding session 要主機裡有公鑰，選了 No SSH keys 就沒有；兩種工作階段都經過 Bastion、security list 的 22 port 與主機的 sshd，所以有公鑰時，這一組擋得住 plugin 與支援範圍的問題，擋不住 sshd 改壞。不經過 sshd 的是序列主控台，它要一個設了密碼的帳號，Ubuntu 平台映像的 `ubuntu` 只用金鑰登入，要用初始化腳本在建立時建，而初始化腳本也是建立後不能改的欄位。所以這台建立的那一刻就只剩一條 SSH 路徑，而那條路徑是不支援的組合；剩下的入口是替換開機磁碟、把開機磁碟掛到另一台主機修改、序列主控台與重建，各自的條件見〈這台主機剩下的登入入口〉。
+
+**容量稀缺時的取捨**。A1 在這一區的容量要靠重送腳本搶（〈重送建立請求：CLI 自己的重送、限流門檻與重送腳本〉），選錯建立後不能改的設定，補救就是再搶一次。照這一項，這台的設定該選補救代價低的那一種：放自己的公鑰、或改用 Oracle Linux 映像（A1 加 Oracle Linux 是 managed SSH session 支援的組合）。「完全不放金鑰」裡跟機型無關的部分（Bastion 與 plugin 的設定、security list）可以在容易重建的機型上驗，而 A1 加 Ubuntu 這個組合支不支援只能讀 Known Issues，演練驗不到。這一區的 Change shape 視窗沒有列出 E2.1.Micro（見〈Basic information：名稱、compartment、位置、映像檔與機型〉），所以這個帳號找不到容易重建的免費機型；這時的做法是建這台時就選 A1 加 Oracle Linux 這個支援的組合來驗「完全不放金鑰」；它同樣要搶 A1 的容量，差別在組合不支援的風險已經由 Known Issues 排除，失敗的代價同樣是再搶一次。
 
 ## 進建立頁之前：compartment、VCN、閘道與 private subnet
 
@@ -40,6 +68,13 @@ oci network subnet create -c <compartment 的 OCID> --vcn-id <VCN 的 OCID> --ci
 - `--prohibit-public-ip-on-vnic true`：這個 subnet 裡的網卡不能指派公開 IP，也就是 private subnet。
 - 網段 `10.0.0.0/16` 與 `10.0.1.0/24` 是這次選的私有位址，換成自己規劃的也可以，security list 的來源要跟著改成 subnet 的網段。
 
+這幾項各自沒做時的結果與替代做法：
+
+- **不建 compartment、資源放在 root**：主機照樣建立成功（照文件推出，這次沒有在 root 建）。清理時要在 root 的資源清單裡逐項挑出這次建的，權限政策也只能寫成整個 tenancy 的範圍；〈Run Command 補公鑰的嘗試：dynamic group、IAM 政策與 ocarun 沒有 sudo 的結果〉那條政策寫成 `in compartment blog-verify`，範圍就只到這組實驗資源。
+- **不用 private subnet、改用公開 subnet 加公開 IP**：主機有公開 IP，security list 只放行自己的公開 IP 連 22 port，就能用 `ssh` 直接登入，不需要 Bastion（照文件推出，這次沒有建公開 subnet）；代價是主機的位址暴露在網際網路上，家用網路的公開 IP 改變時規則要跟著改。兩種做法對管理通道各層的影響見 [網路](/infra/cloud-providers/vm-options/networking/) 的〈公開 IP：網際網路上的入口〉與 [伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)。
+- **不建 service gateway 與它的路由**：主機上的 Oracle Cloud Agent 連不到 Oracle 的服務端點。官方〈Managed SSH Session Creation Failed〉寫明這時 Bastion plugin 的狀態是 `INVALID`、managed SSH session 建不起來；Run Command 的說明頁只對腳本或輸出放在 Object Storage 的用法寫了出站條件，純文字的用法同樣要讓 plugin 連得到服務端點才領得到指令，這一點是推論，這次沒有在缺閘道的情況下實跑。替代做法是 NAT 閘道：它同樣讓代理程式連得到服務端點，另外讓主機連得到網際網路上的套件來源。
+- **security list 的 22 port 放行 `0.0.0.0/0`**：這個 subnet 禁止公開 IP，網際網路上的來源本來就到不了主機，所以結果相同（從網路設定推出，這次沒有改成全開驗證）；收窄成同一個 subnet，是讓這份 security list 之後被掛到另一個允許公開 IP 的 subnet 時，那個 subnet 的 22 port 不會跟著對網際網路開放。
+
 ## Basic information：名稱、compartment、位置、映像檔與機型
 
 | 欄位                  | 這次的值                                     | 理由與對應的概念篇                                                                                                                                                                                                   |
@@ -53,6 +88,8 @@ oci network subnet create -c <compartment 的 OCID> --vcn-id <VCN 的 OCID> --ci
 | Shape                 | `VM.Standard.A1.Flex`，1 OCPU、6 GB          | Always Free 的 A1 上限是 2 OCPU、12 GB，先用一半，另一半留給第二台主機；之後要加大不必重建，代價是重開機                                                                                                             |
 
 「Change shape」的視窗依處理器分欄。這一區的 Ampere 欄有 `VM.Standard.A1.Flex` 並標示 Always Free-eligible；AMD 欄只列出 `VM.Standard.E5.Flex`，Always Free 的 `VM.Standard.E2.1.Micro` 不在清單上。E5.Flex 不在免費額度內，選了之後的結果依帳號狀態而定（試用中由試用金支付、試用結束而沒有升級的帳號建不了、付費帳戶照一般價格計費），見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉；區域之間提供的機型不同，見同一篇的〈E2.1.Micro 在各區域的供應：服務配額表與 404 錯誤〉。
+
+這一頁影響後面結果最大的是映像檔。這次選 Ubuntu，A1 加 Ubuntu 落在 managed SSH session 不支援的組合裡（〈建立之前的檢查：套在這台主機上的查法與結果〉）。替代做法是 Oracle Linux 的 aarch64 平台映像：A1 加 Oracle Linux 是 managed SSH session 支援的組合，Oracle Linux 也在 Run Command 的支援映像清單上；換到的代價是預設使用者改成 `opc`、套件管理改用 `dnf`，照 Ubuntu 寫的教學指令要換寫法。映像檔建立之後只能換成同一個發行版（〈Replacing a Boot Volume〉），所以這一欄選錯，補救就是重建。
 
 ## Security：Shielded instance
 
@@ -84,7 +121,14 @@ Secure Boot、Measured Boot、Trusted Platform Module 三項預設都是 Disable
 
 ## SSH keys
 
-這次選 No SSH keys，目的是驗證主機完全不放金鑰時，managed SSH session 這條路本身走不走得通；managed SSH session 在主機有放公鑰時照樣能用，只是那樣就驗不出這件事。選了之後主機裡不放任何長期有效的公鑰，登入改用 Bastion 的 managed SSH session，由主機上的 Bastion plugin 臨時放進一把公鑰。Oracle Cloud 對這個選項的說明是選了之後就不能再提供公鑰，所以這條路要求〈Management：Oracle Cloud Agent 與其他進階選項〉那一節的 Bastion plugin 一定打開。這次刻意不留退路，代價在〈建立之後：Bastion managed SSH session 逾時的排查〉那一節出現：工作階段的建立逾時之後，主機上沒有任何 SSH 登入的入口，要查原因只剩 Run Command 或重建主機。第一次建主機、還沒走通 Bastion 時先放自己的公鑰、改用不經過 plugin 的 SSH port forwarding session 登入的做法與它的前提，見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉。
+這次選 No SSH keys，目的是驗證主機完全不放金鑰時，managed SSH session 這條路本身走不走得通；managed SSH session 在主機有放公鑰時照樣能用，只是那樣就驗不出這件事。選了之後主機裡不放任何長期有效的公鑰，登入改用 Bastion 的 managed SSH session，由主機上的 Bastion plugin 臨時放進一把公鑰。Oracle Cloud 對這個選項的說明是選了之後就不能再提供公鑰，所以這條路要求〈Management：Oracle Cloud Agent 與其他進階選項〉那一節的 Bastion plugin 一定打開。這次刻意不留退路，代價在〈建立之後：Bastion managed SSH session 逾時的排查〉與〈Run Command 補公鑰的嘗試：dynamic group、IAM 政策與 ocarun 沒有 sudo 的結果〉兩節出現：工作階段的建立逾時之後，主機上沒有任何 SSH 登入的入口，Run Command 又寫不了 `ubuntu` 的 `authorized_keys`。
+
+放公鑰與不放公鑰，差在 managed SSH session 失敗之後還剩什麼：
+
+- **放自己的公鑰**（上傳或貼上）：managed SSH session 失敗時，改建不經過 plugin 的 SSH port forwarding session，用那把公鑰登入。主機在 private subnet、沒有公開 IP，這把公鑰只對經由 Bastion 進來的連線有用；代價是這把金鑰要自己保管。這次如果這樣選，cloud-init 在 Authorization header 開著時寫入公鑰、security list 放行 Bastion 目標 subnet 的 22 port 這兩項成立的話，三次逾時之後就能登入主機查 plugin 的日誌；這是推論，cloud-init 寫公鑰這一段沒有在這台實跑。
+- **No SSH keys**：主機裡沒有長期有效的公鑰，登入完全依賴 Bastion plugin，而這個欄位建立後不能改（`ssh_authorized_keys` 不接受修改）。plugin 這條路不通時，剩下的入口見〈這台主機剩下的登入入口〉。
+
+第一次建主機、還沒走通 Bastion 時先放公鑰的做法與它的前提，見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉。
 
 ## Storage
 
@@ -117,7 +161,7 @@ Oracle Cloud Agent 的每一項功能是一個 plugin。官方列出的 plugin �
 
 - **Authorization header：Enabled**。這是建立頁對 Ubuntu 的預設，而官方列出支援中繼資料第二版的平台映像只有 Oracle Linux 系列，Ubuntu 不在清單上。2026-10-25 建好的主機開著這個選項，代理程式照常回報各 plugin 的狀態；managed SSH session 的建立逾時時，暫時改成允許第一版也一樣逾時，所以這個選項不是那次失敗的成因，見〈建立之後：Bastion managed SSH session 逾時的排查〉。cloud-init 從中繼資料讀出公鑰寫進 `authorized_keys` 這一段，這台選了 No SSH keys 驗不到，要另一台放了公鑰的主機驗。要怎麼確認見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉。
 - **Live migration：讓 Oracle 選擇**、**Restart after infrastructure maintenance：Enabled**：實驗機能接受維護時被遷移或重開。
-- **不放初始化腳本、不加標籤**：這台主機只用來測登入，沒有要預先裝的軟體。
+- **不放初始化腳本、不加標籤**：這台主機只用來測登入，沒有要預先裝的軟體。沒放初始化腳本的結果，到了要用 Run Command 救援時才出現：Run Command 以 `ocarun` 執行，沒有 sudo（〈Run Command 補公鑰的嘗試：dynamic group、IAM 政策與 ocarun 沒有 sudo 的結果〉），而替 `ocarun` 設 sudo 的 sudoers 檔，官方列的做法有兩種：建立時用 cloud-init 放，或建好之後登入主機設定；登不進去時只剩前一種。所以要把 Run Command 當成救援入口，替代做法是在這一欄放一段 cloud-init，建立時把官方說明頁列的那一行 sudoers（`ocarun ALL=(ALL) NOPASSWD:ALL`，或只列救援要用的指令）寫進 `/etc/sudoers.d/` 底下的一個檔；這個欄位也是建立後不能改的那一種。這段 cloud-init 的寫法這次沒有實跑，所以這裡不附，實跑過再補（記在 Oracle Cloud 目錄頁的 Backlog）。給 `ocarun` 不限指令的 sudo，等於讓有權限送 Run Command 的人取得主機的 root，所以送指令的權限政策要跟著收窄。
 
 ## 等效的 CLI 指令
 
@@ -210,9 +254,11 @@ done
 
 2026-10-25 實際跑的版本另外在開跑前查一次有沒有同名主機、把每次的結果寫進紀錄檔，重送與間隔的邏輯跟上面相同；上面這一份用一支假的 `oci` 指令跑過四組回應，確認每個分支的間隔與結束碼：依序回 500、429、500 與成功（間隔 110、220、210 秒，exit 0）、先在標準錯誤印警告再印 OCID（只送一次，exit 0）、回一段沒有回應碼的錯誤（exit 3）、回 401（exit 2）；四組都在第一次送出之前先延長了一次 token。
 
+不用腳本時，替代做法是在主控台隔一段時間按一次 Create：每一次要有人在場，間隔不固定；2026-10-24 在主控台手動按 Create、加上背景以 90 秒與 5 分鐘間隔跑的 CLI 迴圈，整天的回應都是容量不足。不加 `--no-retry`、沿用 CLI 自己的重送時，外層的每一次嘗試送出好幾個請求，同樣的間隔下更早被限流（2026-10-24 以 90 秒送，前三次就收到 429）。換區域、換機型、改付費這些不在重送範圍內的退路，與各自是否計費，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈A1 容量不足時的退路〉。腳本送出的建立參數是寫腳本那一刻的設定，重新啟動腳本之前，參數要再拿〈建立之前的檢查：套在這台主機上的查法與結果〉對一次。
+
 ## 建立之後：Bastion managed SSH session 逾時的排查
 
-這一節的指令跟腳本一樣用 session token 驗證：先在 shell 裡 `export OCI_CLI_AUTH=security_token`，或每條指令加 `--auth security_token`，兩種寫法等效。
+這一節記錄主機建好之後建立 Bastion 與 managed SSH session、工作階段停在 `CREATING` 約 15 分鐘後轉成 `DELETED`、從 work request 讀到的兩則錯誤，以及對照官方 Known Issues 找到的成因。這一節的指令跟腳本一樣用 session token 驗證：先在 shell 裡 `export OCI_CLI_AUTH=security_token`，或每條指令加 `--auth security_token`，兩種寫法等效。
 
 ### 建立 Bastion 與 managed SSH session
 
@@ -282,26 +328,112 @@ Oracle 官方〈Known Issues for Bastion〉的第一條寫明，用 Arm 架構�
 
 上面那張表的三次是在查到這一條之前做的。官方〈Managed SSH Session Creation Failed〉列的成因，對這台的狀況是：代理程式與 Bastion plugin 都在跑；VCN 有 service gateway 與路由，缺 gateway 時 plugin 的狀態會是 `INVALID`，這台不是；`ubuntu` 是存在的使用者；sshd 設定那一項，這台沒有 SSH 登入的入口可以查。建 managed SSH session 之前先讀 Known Issues 那一頁，確認機型與作業系統的組合有支援，三次各 15 分鐘的等待就可以省掉。
 
-### 這台主機接下來的登入入口
+Port forwarding session 不經過 plugin，主機的登入驗證仍然是主機上的 sshd 與 `authorized_keys`；這台建立時選了 No SSH keys，主機裡沒有任何公鑰，所以 port forwarding session 建得起來也登不進去。下一節試的是先用 Run Command 把公鑰寫進主機。
 
-Port forwarding session 不經過 plugin，主機的登入驗證仍然是主機上的 sshd 與 `authorized_keys`；這台建立時選了 No SSH keys，主機裡沒有任何公鑰，所以 port forwarding session 建得起來也登不進去。要讓這台登得進去，可走的路是：
+## Run Command 補公鑰的嘗試：dynamic group、IAM 政策與 ocarun 沒有 sudo 的結果
 
-- **Compute Instance Run Command**：從 API 在主機上執行指令，把公鑰寫進 `authorized_keys`，再用 port forwarding session 登入。要另外建 dynamic group（依規則把主機本身當成 IAM 主體的群組）與允許它執行指令的 IAM 政策，這次沒有做。
-- **重建主機**：重建時放自己的公鑰、改用 port forwarding session；或改用 Oracle Linux 映像，A1 加 Oracle Linux 是 managed SSH session 支援的組合。兩種都要重新搶 A1 的容量。
+Run Command 從 API 把一段腳本送進主機執行，由主機上的 Run Command plugin 定期向服務領取。要用它寫公鑰，有三件事要同時成立：主機有權限領取指令、plugin 在這個作業系統上執行得了腳本、執行腳本的使用者寫得了 `ubuntu` 家目錄裡的 `authorized_keys`。後兩件在官方文件上都不利：Run Command 說明頁的支援映像清單沒有 Ubuntu，而 plugin 以 `ocarun` 這個使用者執行，要以管理員權限執行得先在主機上加 sudoers 檔。主機頁面上這個 plugin 的狀態是 `RUNNING`，而〈成因：A1 加 Ubuntu 是官方列出的不支援組合〉已經看過 plugin 的狀態不能當成支援的證據，所以第一次只送唯讀的探測腳本，先查 `ocarun` 能不能 sudo，再決定要不要寫公鑰。
 
-截至 2026-10-25，這台主機的 Bastion 登入還沒有走通。
+plugin 的狀態用這條指令列：
+
+```bash
+oci instance-agent plugin list --instanceagent-id <主機的 OCID> --compartment-id <compartment 的 OCID> \
+  --query 'data[].{name:name,status:status}' --output table
+```
+
+這台列出 Compute Instance Run Command、Bastion、Custom Logs Monitoring、Compute Instance Monitoring、Cloud Guard Workload Protection 是 `RUNNING`，其餘是 `STOPPED` 或 `NOT_SUPPORTED`。
+
+### 讓主機領得到指令：dynamic group 與 IAM 政策
+
+主機向 Run Command 服務領取指令，用的是主機自己的身分，所以要先把主機放進一個 dynamic group，再寫政策允許這個群組領取與回報指令：
+
+```bash
+oci iam dynamic-group create --compartment-id <tenancy 的 OCID> --name verify-a1-runcommand \
+  --description "<用途說明>" --matching-rule "ALL {instance.id = '<主機的 OCID>'}"
+
+oci iam policy create --compartment-id <compartment 的 OCID> --name verify-a1-runcommand --description "<用途說明>" \
+  --statements '["Allow dynamic-group verify-a1-runcommand to use instance-agent-command-execution-family in compartment blog-verify"]'
+```
+
+- **dynamic group**：依比對規則把資源本身當成 IAM 主體的群組。它建在 tenancy 層（`--compartment-id` 填 tenancy 的 OCID）；這個帳號只有 Default 這一個 identity domain（Oracle Cloud 存放使用者、群組與 dynamic group 的身分網域，`oci iam domain list --compartment-id <tenancy 的 OCID>` 列得出來），`oci iam dynamic-group create` 直接建在它底下；有多個 identity domain 的帳號，dynamic group 建在哪一個 domain 要另外確認，這次沒有實跑。`--matching-rule` 寫成 `instance.id = '<主機的 OCID>'`，群組裡只有這一台；改寫成 `instance.compartment.id = '<compartment 的 OCID>'` 會納入整個 compartment 的主機，之後新建的主機也自動有領取指令的身分（這時政策要加下一項說的 `where` 條件）。
+- **政策**：建在 `blog-verify` 這個 compartment，`instance-agent-command-execution-family` 是領取與回報指令的權限，對象只有這個 dynamic group。官方〈Required IAM Policy for Working with Instances〉的範例在句尾多了 `where request.instance.id=target.instance.id`，限制每台主機只領取送給自己的指令；這次群組裡只有一台主機，加不加結果相同，比對規則改成整個 compartment 時要加上，否則群組裡的每一台主機都領得到送給其他主機的指令。政策裡的 `blog-verify` 與 `verify-a1-runcommand` 換成自己的 compartment 與群組名稱。
+- **送指令的人**：這次用 tenancy 的管理員帳號送，沒有另外寫送指令的政策；一般使用者要送指令，另外需要送指令的權限政策，Run Command 說明頁指向官方〈Required IAM Policy for Working with Instances〉，這次沒有實跑。
+
+沒有這組政策時，官方的疑難排解寫明 plugin 的日誌（`/var/log/oracle-cloud-agent/plugins/runcommand/runcommand.log`）會出現 `NotAuthorizedOrNotFound` 的 404，plugin 領不到指令。官方寫的等待時間依建立的先後而定：先建 dynamic group、再建主機時，主機一建好就開始領取；主機建好之後才加進 dynamic group 時，最多要 30 分鐘。這次屬於後一種，政策在 13:03:06（台北時間）建好，13:03:26 送出指令，13:10:27 執行完，從送出到執行完約 7 分鐘。
+
+### 送出唯讀的探測腳本
+
+探測腳本只讀狀態，不改主機上的任何東西：
+
+```bash
+#!/bin/bash
+# 第一次 Run Command：只讀，確認 ocarun 的身分與能不能 sudo
+id
+. /etc/os-release && echo "$PRETTY_NAME"
+if sudo -n true 2>/dev/null; then echo "SUDO=yes"; else echo "SUDO=no"; fi
+ls -l /etc/sudoers.d/ 2>&1
+```
+
+`sudo -n` 在需要輸入密碼時直接失敗、不等待輸入，Run Command 不支援會要求輸入的腳本。腳本以文字的形式放進指令內容的 JSON，再送出：
+
+```bash
+python3 -c 'import json;print(json.dumps({"source":{"sourceType":"TEXT","text":open("runcmd-probe.sh").read()},"output":{"outputType":"TEXT"}}))' > probe-content.json
+
+oci instance-agent command create --compartment-id <compartment 的 OCID> --display-name verify-probe \
+  --timeout-in-seconds 600 --target '{"instanceId":"<主機的 OCID>"}' --content file://probe-content.json
+```
+
+- `runcmd-probe.sh` 是上面那支腳本存成的檔名。用 `json.dumps` 產生 JSON，腳本裡的換行與引號會自動跳脫；以文字送出的腳本上限 4 KB。
+- `"outputType":"TEXT"`：輸出以文字保存在指令的執行紀錄裡，只保留最後 1 KB；要完整的輸出改存到 Object Storage。
+- `--timeout-in-seconds 600`：腳本執行的逾時。這個選項的名稱是 `--timeout-in-seconds`，寫成 API 欄位名稱的 `--execution-time-out-in-seconds` 時，CLI 回 `No such option`。
+
+### 讀結果：ocarun 沒有 sudo
+
+送出之後指令先停在 `ACCEPTED`，plugin 領取並執行完才改變狀態。狀態與輸出各用一條指令讀：
+
+```bash
+oci instance-agent command-execution get --command-id <指令的 OCID> --instance-id <主機的 OCID> \
+  --query 'data."lifecycle-state"' --raw-output
+oci instance-agent command-execution get --command-id <指令的 OCID> --instance-id <主機的 OCID> \
+  --query 'data.content.text' --raw-output
+```
+
+`<指令的 OCID>` 是 `command create` 輸出裡的 `id`。這次每 30 秒查一次，前 405 秒都是 `ACCEPTED`，之後是 `FAILED`，輸出是：
+
+```text
+uid=999(ocarun) gid=584788(snap_daemon) groups=584788(snap_daemon),4(adm)
+Ubuntu 24.04.5 LTS
+SUDO=no
+ls: cannot open directory '/etc/sudoers.d/': Permission denied
+```
+
+- **`FAILED` 的意思**：執行紀錄的 `exit-code` 是 2，來自腳本最後一行 `ls` 讀不了 `/etc/sudoers.d/`；同一筆紀錄的 `delivery-state` 是 `ACKED`，指令有送達並執行完。所以這裡的 `FAILED` 是腳本的結束碼，不是 plugin 沒有執行。
+- **plugin 在 A1 Ubuntu 上執行得了腳本**：Ubuntu 不在支援映像清單上，而腳本確實執行了。Ubuntu 上的 Oracle Cloud Agent 是 snap 套件，`ocarun` 的群組是 `snap_daemon` 與 `adm`（`adm` 讀得到 `/var/log` 底下的系統日誌）。
+- **`SUDO=no`**：`ocarun` 沒有 sudo，寫不了 `/home/ubuntu/.ssh/authorized_keys`，也加不了 sudoers 檔。要讓 `ocarun` 有 sudo，得先登入主機加 sudoers 檔，而這台正是登不進去才要用 Run Command，所以 Run Command 在這台主機上寫不了公鑰。建立時用初始化腳本放 sudoers 檔的做法，見〈Management：Oracle Cloud Agent 與其他進階選項〉。
+
+## 這台主機剩下的登入入口
+
+Run Command 寫不了公鑰之後，這台主機剩下的入口與各自的條件：
+
+- **替換開機磁碟**：官方〈Replacing a Boot Volume〉限定只能換成同一個 Linux 發行版，換不成 Oracle Linux。換成新的 Ubuntu 開機磁碟時，cloud-init 讀的仍是建立時的中繼資料，而 `ssh_authorized_keys` 是空的，所以新磁碟上也沒有公鑰；這是從兩份說明推出的結果，這次沒有實跑。換成自己做的 Ubuntu aarch64 自訂映像時，公鑰或設了密碼的救援帳號可以直接做進映像，不靠 cloud-init 從中繼資料讀；這條路不重建主機、不放掉 A1 的容量，代價是要自己做映像、匯入，而〈Replacing a Boot Volume〉沒有寫自訂映像在 A1 上能不能用，這次沒有實跑。
+- **把開機磁碟掛到另一台主機修改**：停止這台、卸下開機磁碟、掛到同一個可用區的另一台主機，在那裡把公鑰寫進 `authorized_keys` 再掛回來。另一台主機的架構不必相同：開機磁碟當成資料磁碟掛上去，讀寫的是上面的檔案系統，跟 CPU 架構無關（推論）。這個帳號在這一區能建的免費機型只有 A1，用 A1 要再搶一次容量；改用付費的 x86 機型（例如 `VM.Standard.E5.Flex` 的 1 OCPU）開幾十分鐘、改完就刪，付費 x86 機型通常不像 A1 那樣容量不足（推論，這一區沒有實測），費用依帳號狀態而定，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉。這次兩種都沒有實跑。
+- **序列主控台**：主機裡沒有設密碼的帳號，登入提示這一步登不進去；官方從開機選單進維護模式重設金鑰的範例只寫了 Oracle Linux，同樣的做法在這台 Ubuntu 上能不能用，官方沒有寫，這次也沒有實跑。
+- **重建主機**：重建時放自己的公鑰，或改用 Oracle Linux 映像。兩種都要重新搶 A1 的容量。
+
+截至 2026-10-25，這台主機還沒有登入過。
 
 ## 刪除這組資源的順序
 
 實驗結束要清掉時，順序跟建立時相反，因為每一項資源被後面建的資源依賴著：
 
 1. 終止主機，在終止對話框勾選「Permanently delete the attached boot volume」，開機磁碟才會一起刪掉。
-2. 刪除 Bastion（`oci bastion bastion delete --bastion-id <Bastion 的 OCID>`）。Bastion 的私有端點在目標 subnet 裡，Bastion 還在時 subnet 刪不掉；它的工作階段隨 Bastion 一起失效。
-3. 刪除 subnet。subnet 裡還有主機或網卡時刪不掉。
-4. 刪除 subnet 用過的路由表與 security list。
-5. 刪除 service gateway。
-6. 刪除 VCN。
-7. 刪除 compartment。官方〈Deleting a Compartment〉寫明 compartment 要先清空所有資源（包括掛在它上面的權限政策）才能刪除，刪除是非同步的工作，狀態會先變成 Deleting。
+2. 刪除 Run Command 用的政策與 dynamic group（`oci iam policy delete --policy-id <政策的 OCID>`、`oci iam dynamic-group delete --dynamic-group-id <dynamic group 的 OCID>`）。政策掛在 compartment 上，compartment 刪除之前要先刪；dynamic group 在 tenancy 層，不會隨 compartment 刪除，不刪的話它的比對規則仍然指著已經終止的主機 OCID。
+3. 刪除 Bastion（`oci bastion bastion delete --bastion-id <Bastion 的 OCID>`）。Bastion 的私有端點在目標 subnet 裡，Bastion 還在時 subnet 刪不掉；它的工作階段隨 Bastion 一起失效。
+4. 刪除 subnet。subnet 裡還有主機或網卡時刪不掉。
+5. 刪除 subnet 用過的路由表與 security list。
+6. 刪除 service gateway。
+7. 刪除 VCN。
+8. 刪除 compartment。官方〈Deleting a Compartment〉寫明 compartment 要先清空所有資源（包括掛在它上面的權限政策）才能刪除，刪除是非同步的工作，狀態會先變成 Deleting。
 
 這個順序還沒有實際跑過（截至 2026-10-25 主機還在），各項刪不掉時，看錯誤訊息指出的那一項依賴、先刪它。
 

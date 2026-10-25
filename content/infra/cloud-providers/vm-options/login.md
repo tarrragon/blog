@@ -34,7 +34,7 @@ Oracle Cloud 的建立頁提供四個選項：
 所以在 Oracle Cloud 上，金鑰遺失或一開始沒放、又沒有開代理程式的 Bastion plugin（讓 Oracle Cloud 的 Bastion 服務在建立工作階段時，把一把公鑰臨時放進主機的功能，見〈不放金鑰時的登入服務〉）時，主機上沒有可以用 SSH 進去的入口。剩下的入口各有前提，而多數前提要在金鑰遺失之前就準備好：
 
 - **序列主控台（serial console）**：不經過網路與 sshd，在主控台上建一個主控台連線就能看到主機的開機畫面與登入提示。要在登入提示登進去，主機裡要事先有一個設了密碼的帳號，而平台映像的預設使用者只用金鑰、沒有密碼；沒有這種帳號時，只能照官方範例從開機選單進維護模式重設金鑰，那份範例只寫了 Oracle Linux 的 `opc`。救援帳號怎麼事先準備見 [Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/) 的〈設計責任〉。
-- **Compute Instance Run Command**：在主控台送一段腳本到主機裡執行。官方說明這個 plugin 以 `ocarun` 這個使用者執行，要寫另一個使用者家目錄裡的 `authorized_keys`，得事先在主機上替 `ocarun` 設好 sudo（官方建議用 cloud-init 在建立時設）；送指令的人也要有對應的權限政策，主機上的代理程式要連得到 Oracle 的服務端點（主機在私有 subnet 時經由服務閘道或 NAT 閘道；官方只對「腳本或輸出放在 Object Storage」這種用法寫明出站條件，列的是 NAT 閘道、服務閘道或 internet gateway 其中一種）。
+- **Compute Instance Run Command**：在主控台送一段腳本到主機裡執行。官方說明這個 plugin 以 `ocarun` 這個使用者執行，要寫另一個使用者家目錄裡的 `authorized_keys`，得事先在主機上替 `ocarun` 設好 sudo（官方列的做法是建立時用 cloud-init 設，或建好之後登入主機設；主機登不進去時只剩前一種）；2026-10-25 對一台沒設的 A1 Ubuntu 主機實測，`ocarun` 沒有 sudo，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的〈Run Command 補公鑰的嘗試：dynamic group、IAM 政策與 ocarun 沒有 sudo 的結果〉；送指令的人也要有對應的權限政策，主機上的代理程式要連得到 Oracle 的服務端點（主機在私有 subnet 時經由服務閘道或 NAT 閘道；官方只對「腳本或輸出放在 Object Storage」這種用法寫明出站條件，列的是 NAT 閘道、服務閘道或 internet gateway 其中一種）。
 - **把開機磁碟掛到另一台主機**：停止這台主機、把它的開機磁碟卸下，當成資料磁碟掛到另一台主機上，直接修改裡面的 `authorized_keys`，再掛回去開機。這一條不需要事先準備，代價是一段停機。
 - **重建**：終止這台主機，帶著新的公鑰重建。官方對金鑰遺失列的處置就是重建與序列主控台這兩種。
 
@@ -61,7 +61,7 @@ Oracle Cloud 的建立頁提供四個選項：
 
   Oracle Cloud 的 port forwarding session 與 Google Cloud 的 IAP 是服務往裡連到主機的 22 port，主機的防火牆規則要放行來自服務那一端的連線。Oracle Cloud 那一端是建立 Bastion 時選的目標 subnet，主機的 security list 要放行來自那個 subnet 的 22 port；Google Cloud 那一端是官方 IAP TCP forwarding 說明列的 IAP 來源位址範圍 `35.235.240.0/20`。
 
-上面這幾項條件少了任一項時，主機照樣建得起來，而登入會失敗；主機上又沒有放公鑰，能進去查原因的只剩〈建立之後加金鑰與金鑰遺失時的入口〉那一節列的序列主控台、Run Command、把開機磁碟掛到另一台主機修改，以及重建。在 Oracle Cloud 上第一次建主機、還不熟這些服務時，先放自己的公鑰比較保險：代理程式或 plugin 出問題、managed SSH session 建不起來時，port forwarding session 不經過代理程式，用自己的公鑰仍然登得進去。這條退路有兩個前提：主機讀得到中繼資料（cloud-init 要從那裡讀出公鑰寫進 `authorized_keys`，中繼資料的設定見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉），以及主機的 security list 放行來自 Bastion 目標 subnet 的 22 port。等 managed SSH session 走通了，再從 `authorized_keys` 拿掉那把公鑰。這個做法只適用於 Oracle Cloud：Google Cloud 開了 OS Login 之後，guest agent 會忽略中繼資料裡的 SSH 公鑰。
+上面這幾項條件少了任一項時，主機照樣建得起來，而登入會失敗；主機上又沒有放公鑰，能進去查原因的只剩〈建立之後加金鑰與金鑰遺失時的入口〉那一節列的序列主控台、Run Command、把開機磁碟掛到另一台主機修改，以及重建。在 Oracle Cloud 上第一次建主機、還不熟這些服務時，先放自己的公鑰比較保險：代理程式或 plugin 出問題、managed SSH session 建不起來時，port forwarding session 不經過代理程式，用自己的公鑰仍然登得進去。這條退路有兩個前提：主機讀得到中繼資料（cloud-init 要從那裡讀出公鑰寫進 `authorized_keys`，中繼資料的設定見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉），以及主機的 security list 放行來自 Bastion 目標 subnet 的 22 port。managed SSH session 走通之後，這把公鑰拿掉與否取決於還有沒有另一條不經過代理程式的入口：拿掉之後只剩代理程式那一條；先建好序列主控台的救援帳號並登入過，拿掉公鑰時才仍然有兩條入口，判斷依據見 [建立主機之前的檢查](/infra/cloud-providers/vm-options/pre-launch-checks/) 的〈兩條登入路徑：各自依賴的元件與仍然共用的部分〉。這個做法只適用於 Oracle Cloud：Google Cloud 開了 OS Login 之後，guest agent 會忽略中繼資料裡的 SSH 公鑰。
 
 ## 各家的欄位名稱：金鑰欄位、預設使用者與不放金鑰時的登入服務
 
