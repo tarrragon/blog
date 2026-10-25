@@ -559,7 +559,7 @@ Host <主機的別名>
 實驗結束要清掉時，順序跟建立時相反，因為每一項資源被後面建的資源依賴著：
 
 1. 終止兩台主機（`verify-a1` 與 `verify-a1-ol`），在終止對話框勾選「Permanently delete the attached boot volume」，開機磁碟才會一起刪掉。CLI 是 `oci compute instance terminate --instance-id <主機的 OCID> --preserve-boot-volume false --force`：`--preserve-boot-volume false` 對應那個勾選，`--force` 跳過確認提示。2026-10-25 用這一條終止了 `verify-a1`，約 67 秒後主機與它的開機磁碟都是 `TERMINATED`；用 `oci bv boot-volume list -c <compartment 的 OCID> --availability-domain <可用區名稱>` 確認開機磁碟的狀態。本機的 port forwarding 轉送用 Ctrl-C 結束，工作階段到了 `--session-ttl` 自己失效。
-2. 刪除 Run Command 用的政策與 dynamic group（`oci iam policy delete --policy-id <政策的 OCID>`、`oci iam dynamic-group delete --dynamic-group-id <dynamic group 的 OCID>`）。政策掛在 compartment 上，compartment 刪除之前要先刪；dynamic group 在 tenancy 層，不會隨 compartment 刪除，不刪的話它的比對規則仍然指著已經終止的主機 OCID。
+2. 刪除 Run Command 用的政策與 dynamic group（`oci iam policy delete --policy-id <政策的 OCID>`、`oci iam dynamic-group delete --dynamic-group-id <dynamic group 的 OCID>`）。政策建在 compartment 上，compartment 刪除之前要先刪；dynamic group 在 tenancy 層，不會隨 compartment 刪除，不刪的話它的比對規則仍然指著已經終止的主機 OCID。2026-10-25 終止 `verify-a1` 之後照這個順序刪了兩者，兩條都加 `--force` 跳過確認提示；刪完之後再 `oci iam policy get` 與 `oci iam dynamic-group get`，兩者都回 `404 NotAuthorizedOrNotFound`，代表已經不存在。
 3. 刪除 Bastion（`oci bastion bastion delete --bastion-id <Bastion 的 OCID>`）。Bastion 的私有端點在目標 subnet 裡，Bastion 還在時 subnet 刪不掉；它的工作階段隨 Bastion 一起失效。
 4. 刪除 subnet。subnet 裡還有主機或網卡時刪不掉。
 5. 刪除 subnet 用過的路由表與 security list。
@@ -567,6 +567,6 @@ Host <主機的別名>
 7. 刪除 VCN。
 8. 刪除 compartment。官方〈Deleting a Compartment〉寫明 compartment 要先清空所有資源（包括掛在它上面的權限政策）才能刪除，刪除是非同步的工作，狀態會先變成 Deleting。
 
-這個順序除了終止 `verify-a1` 那一步，還沒有實際跑過（截至 2026-10-25 `verify-a1-ol` 與網路都還在），各項刪不掉時，看錯誤訊息指出的那一項依賴、先刪它。
+這個順序除了終止 `verify-a1` 與刪除政策和 dynamic group 這兩步，還沒有實際跑過（截至 2026-10-25 `verify-a1-ol` 與網路都還在），各項刪不掉時，看錯誤訊息指出的那一項依賴、先刪它。
 
 要讓這組資源可以重建、清掉也不心疼，改用 IaC 描述它們，見 [IaC 工具選型與 state 地基](/infra/01-minimal-iac/iac-tool-state-backend/)；已經用主控台或 CLI 建好的資源要收進 IaC，做法見 [Unmanaged Resource 批次 Import 工作流](/infra/takeover/partial-iac-bulk-import/)。
