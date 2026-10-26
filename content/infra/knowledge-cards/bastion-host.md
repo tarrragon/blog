@@ -27,7 +27,7 @@ tags: ["infra", "knowledge-cards", "network", "ssh", "access", "bastion"]
 
 自建跳板機時，整個環境對外的 SSH 暴露都集中在這一台上，所以下面這幾件事的標準比一般主機高：
 
-- **跳板機的來源範圍**：管理員有固定的對外 IP 時，跳板機的 22 port 只放行那幾個 IP；遠端工作、IP 會變動時，白名單縮不下來，跳板機的 22 port 實質上對全網開放，認證紀錄裡會持續出現來自陌生 IP 的失敗登入，它的 sshd 修補速度就是整個環境的暴露期
+- **跳板機的來源範圍**：管理員有固定的對外 IP 時，跳板機的 22 port 只放行那幾個 IP；遠端工作、IP 會變動時，白名單縮不下來，跳板機的 22 port 實質上對全網開放，認證紀錄裡會持續出現來自陌生 IP 的失敗登入，它的 sshd 修補速度就是整個環境的暴露期。只放行管理員 IP 時，ISP 重新分配了那個 IP，管理員就連不進跳板機，舊 IP 的新使用者反而在放行範圍裡；這一類會在主機外面改變的設定怎麼定期比對，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈會到期與會改變的外部設定〉
 - **私鑰不落地**：agent forwarding 是讓遠端主機借用管理員本機 ssh-agent 裡的私鑰去做下一段認證的功能（`ssh -A` 或設定檔的 `ForwardAgent yes`），開著它時，任何在跳板機上取得 root 的人都能借那把私鑰連到其他主機；把私鑰直接放上跳板機的後果相同。`ProxyJump` 讓第二段認證也在管理員電腦上完成，不需要 agent forwarding。這種從一台主機往其他主機擴散的攻擊見 [Lateral Movement（橫向移動）](/backend/knowledge-cards/lateral-movement/)
 - **金鑰不共用、不可複製**：跳板機與目的主機各用不同的金鑰或憑證，讓一把私鑰外洩只通過一層；目的主機的金鑰發放可以改用 [SSH Certificate（SSH 憑證）](/infra/knowledge-cards/ssh-certificate/) 或 [OS Login](/infra/knowledge-cards/os-login/)；跳板機與目的主機信任同一把 SSH CA 時，用不同的 principal 把兩層分開，做法見 [OpenSSH 內建 CA 的 SSH 憑證導入](/infra/03-network-foundation/openssh-ca-setup/)。管理員的私鑰放在硬體安全金鑰裡（OpenSSH 8.2 起的 `ed25519-sk`）時，私鑰檔無法被複製走
 - **修補與監控**：跳板機要比其他主機更快套用 sshd 的安全更新，並保留連線紀錄

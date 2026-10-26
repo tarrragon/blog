@@ -18,7 +18,7 @@ tags: ["python", "oop", "inheritance"]
 
 ## 場景說明
 
-假設 Hook 系統需要支援新的配置格式（例如 TOML），我們需要：
+假設 Hook 系統需要支援新的配置格式（例如 [TOML](/infra/knowledge-cards/toml/)），我們需要：
 
 1. 建立繼承自 `BaseParser` 的 `TomlParser` 類別
 2. 實作所有抽象方法

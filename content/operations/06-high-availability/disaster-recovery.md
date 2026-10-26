@@ -42,5 +42,6 @@ DR 演練跟 chaos testing 容易混淆，但驗的是不同的事。chaos 驗�
 
 - RPO 的來源——同步 vs 非同步副本 → [冗餘設計模式](/operations/06-high-availability/redundancy-patterns/)
 - 恢復順序的循環等待與分批恢復 → [Failover 機制](/operations/06-high-availability/failover-mechanism/)
+- 計畫內的暫停之後恢復一台主機：恢復工具不必避開已經故障的控制面，順序由每一段要用到前一段的產出、對外開放之前先裝好更新這兩個依賴決定 → [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)〈恢復的順序：依元件之間的依賴排列〉
 - 這一切要付多少、值不值得 → [高可用的成本](/operations/06-high-availability/ha-cost/)
 - DR 與 rollback 演練的完整方法 → [backend DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)

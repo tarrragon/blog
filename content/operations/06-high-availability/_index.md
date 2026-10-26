@@ -33,3 +33,4 @@ tags: ["devops", "high-availability", "failover", "disaster-recovery", "redundan
 - → [運維 模組四 服務探活](/operations/04-service-health/)：探活是 failover 的觸發條件
 - → [Infra 核心服務上 IaC — Stateful 資源保護](/infra/05-core-services/stateful-protection-dependency/)：multi-AZ 是 infra 層的可用區冗餘能力，本模組的 HA 策略（健康檢查、自動恢復、failover 機制）建立在這個能力之上
 - → [Infra 網路地基](/infra/03-network-foundation/)：跨可用區的 subnet 與 NAT 冗餘設計是 HA 的網路前提
+- → [運維 模組九 單台主機的長期維護、服務暫停與恢復上線](/operations/09-host-lifecycle/)：計畫內的暫停與恢復，恢復順序由元件之間的依賴決定；本模組處理沒有預期的故障之後的恢復

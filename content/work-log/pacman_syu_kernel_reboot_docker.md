@@ -58,3 +58,5 @@ systemctl start docker && systemctl is-active docker   # active
 - **一個修法「當下成功」不代表沒有副作用** → `-Syu` 修好了 404、也升了 kernel。修完一個問題後、下一個看似無關的故障要把最近的變更列進嫌疑名單，即使它們表面上不相干。
 
 讀權威狀態、以機器實際狀態為準而非症狀表象，是這類「症狀與根因差好幾層」問題的通用解法。
+
+同一個錯配在長期上線、會自動裝更新的伺服器上同樣會發生：核心更新裝上去之後，執行中的核心仍是舊版，直到重開機。RHEL 系的 `needs-restarting -r` 與 Debian 系的 `/var/run/reboot-required` 回報主機是否處在這個狀態；Arch 沒有對應的工具，比對方式就是上面的 `uname -r` 對 `/usr/lib/modules`。要不要讓排程在更新後自動重開機，取決於重開機之後服務會不會自己回來、沒回來時有沒有人知道，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈會老化的軟體：各條更新管道與更新後的重開機〉。

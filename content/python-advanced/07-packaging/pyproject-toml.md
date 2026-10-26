@@ -47,6 +47,8 @@ pyproject.toml 的優點：
 └── 支援多種建構後端
 ```
 
+TOML 的寫法（`鍵 = 值`、方括號的表頭、陣列表）、值的型別怎麼由寫法決定，以及它跟 JSON、YAML 的差別，見 [TOML](/infra/knowledge-cards/toml/)。
+
 ### 相關 PEP
 
 | PEP     | 內容             | 狀態   |

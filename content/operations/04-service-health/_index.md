@@ -29,4 +29,5 @@ tags: ["devops", "health-check", "liveness", "readiness", "systemd", "auto-recov
 - → [monitoring 模組四 Dashboard DevOps](/monitoring/04-collector/dashboard-devops/)：DevOps dashboard 的服務狀態卡依賴 health check
 - → [backend 部署平台生命週期契約](/backend/05-deployment-platform/platform-lifecycle-contract/)：startup / readiness / liveness / drain 的平台端契約
 - → [Linux 除錯：服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)：本模組的概念（探活、WatchdogSec、Restart=on-failure）在單機 systemd 層的具體實作——`OnFailure=` 鉤子 + 推播、canary 驗證管線
+- → [運維 模組九 單台主機的長期維護、服務暫停與恢復上線](/operations/09-host-lifecycle/)：程序正常而主機狀態漂移的那一類（磁碟累積、待裝的安全更新、到期的設定）；更新後自動重開機時「服務會不會自己回來」跟本模組的自動重啟是同一個前提
 - → [Linux 除錯：ntfy 推送通知](/linux/debug/ntfy-push-notification-service/)：把服務失效告警推到手機的最小可用通道

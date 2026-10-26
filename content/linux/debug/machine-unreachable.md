@@ -75,6 +75,8 @@ systemctl status systemd-resolved
 
 這裡有一個容易搞錯的點：**清錯了地方**。宿主跟 guest 是兩個獨立的檔案系統；虛擬機的宿主磁碟滿，跟 guest 內部磁碟滿，是兩件事。如果你 SSH 進 guest 裡 `df` 看到還有空間就以為沒事，但真正滿的是宿主的磁碟，那問題不會解決。判讀時要分清這串故障是「哪一台機器的哪個檔案系統」滿了——在宿主上 `df -h` 看宿主、在 guest 裡 `df -h` 看 guest，兩邊都要確認。清空間也要清在滿了的那一邊：宿主滿就清宿主，guest 滿就清 guest。
 
+長期上線的主機在沒有人操作的期間也會寫滿磁碟：nginx 與 syslog 的 log、journal、套件快取、容器的 log 與映像檔各有自己的寫入者，清理機制（logrotate、journald 的容量上限、容器 log 的大小設定）沒有涵蓋到的那一個會一直增長。各寫入者的清理機制，以及寫滿時 nginx 繼續服務、應用程式回錯誤、資料庫停止這幾種反應的差別，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈會累積的資料：寫入者、清理機制與磁碟寫滿的後果〉。
+
 ## 判讀路由
 
 - SSH timeout（TCP 卡住）→ 網路層或機器沒跑，查 `ip neigh`（`INCOMPLETE` = 對方沒回應）→ 去主控台看 `ip -brief a` / 網路服務。

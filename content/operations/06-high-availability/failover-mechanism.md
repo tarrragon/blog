@@ -39,4 +39,5 @@ Failover 能不能乾淨切換，很大程度取決於依賴有沒有被隔離�
 - Failover 的觸發前提——探活怎麼做 → [模組四 服務探活](/operations/04-service-health/)
 - 冗餘準備好才有得切、切換對上層透明的前提 → [冗餘設計模式](/operations/06-high-availability/redundancy-patterns/)
 - 恢復順序、restore 驗證與演練節奏 → [Disaster recovery 策略](/operations/06-high-availability/disaster-recovery/)
+- 計畫內的暫停之後恢復一台主機：控制面沒有故障，不會出現循環等待，順序由每一段要用到前一段的產出、對外開放之前先裝好更新這兩個依賴決定 → [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)〈恢復的順序：依元件之間的依賴排列〉
 - Bulkhead 隔離怎麼切斷共享相依 → [模組三 流量管控](/operations/03-traffic-management/)

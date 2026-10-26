@@ -35,3 +35,4 @@ tags: ["devops", "cost-management", "cloud-cost", "reserved-instance", "spot-ins
 - → [運維 模組五 容量規劃](/operations/05-capacity-planning/)：容量規劃的成本面
 - → [infra 模組八 治理好習慣](/infra/08-governance-habits/)：成本歸因的 tagging 地基 — tag 在 IaC 裡強制長出來，這裡的部門歸屬與帳單拆分才有依據
 - → [monitoring 模組六 商業方案](/monitoring/06-commercial-comparison/)：監控 SaaS 的帳單也是成本管理的一部分
+- → [運維 模組九 單台主機的長期維護、服務暫停與恢復上線](/operations/09-host-lifecycle/)：單台主機暫停時仍在計費的資源（磁碟、保留的 IP、備份、網路元件）與在作業系統裡關機不停止計費的情形；本模組處理帳單層的監控
