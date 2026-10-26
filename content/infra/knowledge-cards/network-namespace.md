@@ -16,7 +16,7 @@ tags: ["infra", "knowledge-cards", "network", "linux"]
 
 - **`ip netns list` 與 `ip netns exec <名稱> <指令>`**：手動建的 namespace 用 `ip netns add` 建立，`ip netns exec` 讓一條指令跑在那個 namespace 裡。Docker 建的 namespace 放在 `/var/run/docker/netns`，不在 `ip netns` 讀的 `/run/netns`，所以列不出來；要進容器的 namespace，用 `docker inspect -f '{{.State.Pid}}' <容器>` 取得容器程序的 PID，再用 `nsenter -t <PID> -n <指令>` 執行。
 - **主機上多出 `veth` 開頭的介面**：容器每接一個 bridge 網路就有一條，另一端在容器的 namespace 裡（第一條叫 `eth0`，再接一個網路是 `eth1`）。
-- **一台主機上模擬兩個來源位址**：建兩個 namespace，各給一個位址（例如一個落在 Cloudflare 的位址段、一個落在範圍外），從各自的 namespace 連主機，就能驗證「只放行某些來源」的防火牆規則，不需要第二台主機。這個做法的完整指令見 [源站防火牆只放行 Cloudflare 位址的實測紀錄](/infra/03-network-foundation/hands-on/origin-firewall-walkthrough/) 的〈用 network namespace 模擬 Cloudflare 與其他來源〉。
+- **一台主機上模擬兩個來源位址**：建兩個 namespace，各給一個位址（例如一個落在 Cloudflare 的位址段、一個落在範圍外），從各自的 namespace 連主機，就能驗證「只放行某些來源」的防火牆規則，不需要第二台主機。這個做法的完整指令見 [源站防火牆只放行 Cloudflare 位址的實測紀錄：firewalld、Docker 發佈的連接埠、DOCKER-USER、nftables 表與出站 DNS](/infra/03-network-foundation/hands-on/origin-firewall-walkthrough/) 的〈用 network namespace 模擬 Cloudflare 與其他來源〉；ufw 主機上的版本，以及替兩個來源加 IPv6 位址的 `ns_setup6`，見 [ufw 主機上 Docker 發佈連接埠的實測紀錄：ufw 規則的效果、DOCKER-USER 規則的存續與 after.rules、IPv6 的 docker-proxy、compose 內建 DNS 的出站路徑](/infra/03-network-foundation/hands-on/ufw-docker-walkthrough/) 的〈共用的函式與兩個測試來源〉。
 
 ## 判讀方式
 

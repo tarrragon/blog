@@ -26,6 +26,7 @@ security group 是封包抵達資源前的最後一道網路檢查：規則寫�
 - 開放範圍：只開需要的埠與來源，`0.0.0.0/0` 只給對外 LB
 - 管理埠存取：SSH（22）改用 SSM Session Manager 這類不開入站 port 的做法，或只放行[身分感知代理](/infra/knowledge-cards/identity-aware-proxy/)的位址段，從公網清單上拿掉；各種做法的選擇見[伺服器管理通道的設計](/infra/03-network-foundation/management-access-channel/)
 - 與 NACL 的分工：security group 是主力（有狀態、group 引用），NACL 留給少數需要 subnet 層顯式 deny 的情境
+- 規則數上限：一條規則只放一段來源時，放一份外部位址清單（例如只放行 CDN 回源的位址）要「段數 × 連接埠數」條，會撞到每個 group 的規則數上限；AWS 文件寫的預設是入站 60 條、IPv4 與 IPv6 分開算，Oracle Cloud 的 NSG 實測是入站加出站合計 120 條，見 [Cloudflare 回源的實測紀錄：Oracle Cloud NSG 只放行 Cloudflare 位址與規則數上限、回源的來源位址、Authenticated Origin Pulls、Worker 偽造 CF-Connecting-IP 與 Tunnel 的出站連接埠](/infra/03-network-foundation/hands-on/cloudflare-origin-pull-walkthrough/) 的〈公開子網路、只放行 Cloudflare 的 NSG 與它的規則數上限〉
 
 ## 鄰卡
 

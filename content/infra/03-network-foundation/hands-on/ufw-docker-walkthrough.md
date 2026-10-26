@@ -150,7 +150,7 @@ ufw route delete deny proto tcp from any to any port 8081
 
 ## DOCKER-USER 規則的效果，以及它在 ufw reload、Docker 重啟與重開機之後的存續
 
-`DOCKER-USER` 排在 FORWARD 鏈最前面，裡面的規則由使用者寫。封包到這裡時目的地已經改成容器的 80，所以比對 [conntrack](/infra/knowledge-cards/conntrack/)（連線追蹤）記下的原始目的連接埠 8081：
+[`DOCKER-USER`](/infra/knowledge-cards/docker-user/) 排在 FORWARD 鏈最前面，裡面的規則由使用者寫。封包到這裡時目的地已經改成容器的 80，所以比對 [conntrack](/infra/knowledge-cards/conntrack/)（連線追蹤）記下的原始目的連接埠 8081：
 
 ```bash
 iptables -I DOCKER-USER -p tcp -m conntrack --ctorigdstport 8081 --ctdir ORIGINAL ! -s 173.245.48.0/20 -j DROP
@@ -311,7 +311,7 @@ LISTEN 0  4096     0.0.0.0:8081   0.0.0.0:*   users:(("docker-proxy",pid=616,fd=
 LISTEN 0  4096        [::]:8081      [::]:*   users:(("docker-proxy",pid=622,fd=8))
 ```
 
-`[::]:8081` 由 docker-proxy 這個主機上的程式接聽，它收下連線、再自己連到容器的 IPv4 位址。IPv6 的連線因此送到主機上的程式，走的是 input 路徑。IPv4 的 `0.0.0.0:8081` 也由 docker-proxy 聽著，而外部來的 IPv4 封包在 prerouting 就被 DNAT 改寫成容器位址，到不了它；它接的是不經過 prerouting 的連線，例如主機本機連 `127.0.0.1:8081`（依 Docker 的規則推論，沒有實跑）。用〈共用的函式與兩個測試來源〉的 `ns_setup6` 與 `probe6` 驗證，ufw 預設拒絕入站、沒有任何 IPv6 的放行規則時：
+`[::]:8081` 由 docker-proxy 這個主機上的程式（[Userland Proxy](/infra/knowledge-cards/userland-proxy/) 的一種）接聽，它收下連線、再自己連到容器的 IPv4 位址。IPv6 的連線因此送到主機上的程式，走的是 input 路徑。IPv4 的 `0.0.0.0:8081` 也由 docker-proxy 聽著，而外部來的 IPv4 封包在 prerouting 就被 DNAT 改寫成容器位址，到不了它；它接的是不經過 prerouting 的連線，例如主機本機連 `127.0.0.1:8081`（依 Docker 的規則推論，沒有實跑）。用〈共用的函式與兩個測試來源〉的 `ns_setup6` 與 `probe6` 驗證，ufw 預設拒絕入站、沒有任何 IPv6 的放行規則時：
 
 ```bash
 probe6 8081

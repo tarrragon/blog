@@ -13,7 +13,7 @@ tags: ["infra", "network", "firewall", "podman", "docker", "rootless", "ufw", "f
 ## 前置條件與測試來源
 
 - **兩台主機**：一台用 ufw 的 Ubuntu、一台用 firewalld 的 RHEL 系（這次是 Oracle Linux）。OrbStack 的建法是 `orb create ubuntu:noble verify-ufw` 與 `orb create oracle:10 verify-fwd`。兩台的 Docker 都照 Docker 官方套件庫的步驟裝，Podman 用發行版自己的套件（`apt-get install podman`、`dnf install podman`），所以兩台的 Podman 版本不同（4.9.3 與 5.8.2）。下文 rootful Podman 在兩台的結果不同，成因可能是防火牆、也可能是 Podman 的版本，這次沒有拿同一個版本在兩種防火牆上比較來分開兩者。
-- **兩個測試來源**：每台都照 [ufw 主機上 Docker 發佈連接埠的實測紀錄：ufw 規則的效果、DOCKER-USER 規則的存續與 after.rules、IPv6 的 docker-proxy、compose 內建 DNS 的出站路徑](/infra/03-network-foundation/hands-on/ufw-docker-walkthrough/) 的〈共用的函式與兩個測試來源〉建 `verify-cf`（`173.245.48.10`，在 Cloudflare 範圍內）與 `verify-other`（`203.0.113.10`，範圍外）兩個 namespace，用同一個 `probe <連接埠>` 函式從兩個來源各連一次。`rc=0  200` 是連上，`rc=7` 是立即回拒，`rc=28  000` 是逾時。
+- **兩個測試來源**：每台都照 [ufw 主機上 Docker 發佈連接埠的實測紀錄：ufw 規則的效果、DOCKER-USER 規則的存續與 after.rules、IPv6 的 docker-proxy、compose 內建 DNS 的出站路徑](/infra/03-network-foundation/hands-on/ufw-docker-walkthrough/) 的〈共用的函式與兩個測試來源〉建 `verify-cf`（`173.245.48.10`，在 Cloudflare 範圍內）與 `verify-other`（`203.0.113.10`，範圍外）兩個 [network namespace](/infra/knowledge-cards/network-namespace/)，用同一個 `probe <連接埠>` 函式從兩個來源各連一次。`rc=0  200` 是連上，`rc=7` 是立即回拒，`rc=28  000` 是逾時（兩種失敗的分辨見 [Connection Refused vs. Timeout（連線被拒與逾時）](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)）。
 - **網頁檔**：`/var/tmp/verify-fw/www/index.html`，內容隨意（`mkdir -p /var/tmp/verify-fw/www; echo ok > /var/tmp/verify-fw/www/index.html`）。
 - **起始狀態**：Ubuntu 那一台從 ufw 那一篇的〈DOCKER-USER 規則的效果…〉之前的狀態接著做：ufw 已經啟用（`ufw default deny incoming`、`ufw --force enable`；雲端主機先 `ufw allow 22/tcp`），Docker 的 `verify-web` 發佈著 8081（下文比較 Docker 與 Podman 時用到）。從一台新機器開始時，照那一篇的〈共用的函式與兩個測試來源〉與〈ufw 的入站規則與 route 規則對發佈連接埠的效果〉的前兩個區塊做到這個狀態。Oracle Linux 那一台只要 firewalld 執行中、`public` zone 是預設值。
 
@@ -58,7 +58,7 @@ probe 8082
 
 只有範圍內的來源連得到。`10.88.0.2` 是容器的位址，取自上面那條 DNAT 規則的 `--to-destination`；容器重建之後位址可能變，規則要跟著改，這是 route 規則寫在位址轉換之後的代價。同一台主機上 Docker 的 8081 在 `deny routed` 下照樣對兩個來源開放（Docker 的 `DOCKER-FORWARD` 排在 ufw 的鏈之前、先接受了），所以同一台主機上 Docker 與 Podman 對同一條 ufw 設定的結果相反。
 
-主機上也裝了 Docker 時，Podman 的轉送封包也經過 `DOCKER-USER`。為了只看 `DOCKER-USER` 的效果，先把 route 規則與 8082 的容器拿掉、routed 改回 `allow`（否則 FORWARD 的 DROP 會先把兩個來源都擋下），再發佈一個 8089 並看跳轉順序：
+主機上也裝了 Docker 時，Podman 的轉送封包也經過 [`DOCKER-USER`](/infra/knowledge-cards/docker-user/)。為了只看 `DOCKER-USER` 的效果，先把 route 規則與 8082 的容器拿掉、routed 改回 `allow`（否則 FORWARD 的 DROP 會先把兩個來源都擋下），再發佈一個 8089 並看跳轉順序：
 
 ```bash
 podman rm -f verify-pod-web
@@ -134,7 +134,7 @@ Ubuntu 那一台被擋，是因為 ufw 把 iptables 的 FORWARD 預設政策設�
 
 ## rootless Docker：rootlesskit 的接收路徑、ufw 入站規則與容器看到的來源位址
 
-rootless 模式的 dockerd 以一般使用者執行，它不能改主機的 iptables，發佈連接埠改由 RootlessKit（rootless 模式替 dockerd 代辦網路的程式）在主機上聽那個連接埠、收下連線再轉進容器。安裝與啟動（以 root 建使用者、以那個使用者執行設定工具）：
+rootless 模式的 dockerd 以一般使用者執行，它不能改主機的 iptables，發佈連接埠改由 RootlessKit（rootless 模式替 dockerd 代辦網路的程式，屬於 [Userland Proxy](/infra/knowledge-cards/userland-proxy/) 這一類）在主機上聽那個連接埠、收下連線再轉進容器。安裝與啟動（以 root 建使用者、以那個使用者執行設定工具）：
 
 ```bash
 apt-get install -y docker-ce-rootless-extras uidmap

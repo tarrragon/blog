@@ -87,7 +87,7 @@ Windows 主機用 RDP 登入時，這一層是 Windows 帳號而不是 SSH 金�
 
 出站需求的對應做法是 [NAT](/infra/knowledge-cards/nat/)：讓內部主機主動往外連、外部無法主動連進來。存取同一家雲端廠商的服務（物件儲存、容器 registry）時，多數廠商提供不經過 NAT 的私有端點，流量不出公網。計費依端點類型不同：GCP 的 Private Google Access 與 AWS 的 Gateway Endpoint（S3、DynamoDB）不另收費，可以省下 NAT 的處理費用；AWS 的 Interface Endpoint 另有按小時與傳輸量的計費。主機還帶著公開 IP 時，雲端廠商的 NAT 不處理這台主機的出站流量，流量走的是它自己的公開 IP，所以在移除公開 IP 之前測出站，結果一定是通的、證明不了 NAT 有效；確認的方式是比對出站時對方看到的來源 IP（例如 `curl -s https://ifconfig.me`），印出的是 NAT 的 IP 才代表流量走了 NAT。
 
-採用代理程式反向連線的環境，管理通道本身也走出站路徑：代理程式要連到管理服務端點，出站路徑一斷，管理通道也跟著斷。這種中斷不會出現在服務的監控上。收緊出站規則的理由通常與管理通道無關（拿掉 NAT 省費用、限縮出站的目的地），而對外服務的請求不經過代理程式那條連線，服務照常回應；管理通道平時只在除錯時才有人用，除非另外監看管理服務端顯示的代理程式連線狀態，第一個發現它斷掉的人就是下一次要登入主機的人，往往是在事故當下。出站規則若在雲端防火牆上，透過雲端廠商的 API 改得回來，代價是事故處理要等找出並恢復出站路徑之後才能繼續；規則若在主機上的防火牆（ufw、nftables），就只能從救援入口改回來。所以收緊出站規則時，要把管理服務端點列進必須保留的目的地。
+採用代理程式反向連線的環境，管理通道本身也走出站路徑：代理程式要連到管理服務端點，出站路徑一斷，管理通道也跟著斷。這種中斷不會出現在服務的監控上。收緊出站規則的理由通常與管理通道無關（拿掉 NAT 省費用、限縮出站的目的地），而對外服務的請求不經過代理程式那條連線，服務照常回應；管理通道平時只在除錯時才有人用，除非另外監看管理服務端顯示的代理程式連線狀態，第一個發現它斷掉的人就是下一次要登入主機的人，往往是在事故當下。出站規則若在雲端防火牆上，透過雲端廠商的 API 改得回來，代價是事故處理要等找出並恢復出站路徑之後才能繼續；規則若在主機上的防火牆（ufw、nftables），就只能從救援入口改回來。所以收緊出站規則時，要把管理服務端點列進必須保留的目的地。網站經由 Cloudflare Tunnel 對外時，`cloudflared` 也是這一類的出站依賴：它用 QUIC 連 Cloudflare 的 UDP 7844、以 http2 連 TCP 7844，實測擋掉 UDP 7844 時 quick tunnel 一直重試 QUIC 而沒有改用 http2，網站回 Cloudflare 的 530，見 [Cloudflare 回源的實測紀錄：Oracle Cloud NSG 只放行 Cloudflare 位址與規則數上限、回源的來源位址、Authenticated Origin Pulls、Worker 偽造 CF-Connecting-IP 與 Tunnel 的出站連接埠](/infra/03-network-foundation/hands-on/cloudflare-origin-pull-walkthrough/) 的〈Cloudflare Tunnel：源站不開入站，以及出站要放行的連接埠〉。
 
 對外提供服務的主機（網站、API）移除公開 IP 之前，要先把流量入口換到負載平衡器，見[流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)。
 

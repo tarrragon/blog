@@ -6,7 +6,7 @@ weight: 5
 tags: ["infra", "network", "firewall", "cdn", "cloudflare", "docker", "security"]
 ---
 
-這篇整理網站放在 [CDN](/infra/knowledge-cards/cdn/)（內容遞送網路，content delivery network：代替源站接收使用者連線、在邊緣做快取與過濾的服務，例如 Cloudflare）後面時，源站主機的防火牆要限制什麼、限制放在哪裡：請求避開 CDN 直接連到源站的成因（源站位址從 DNS 歷史紀錄、憑證透明度紀錄與其他記錄外洩）、來源限制放在雲端防火牆、主機防火牆或 CDN 端驗證時各自擋得住什麼、只放行 CDN 位址的規則什麼時候套上去、管理通道與同一台主機上不經 CDN 的服務怎麼處理、Docker 發佈的連接埠為什麼不受 `ufw` 與 `firewalld` 的一般規則約束、Podman 與 rootless 模式的容器在這一點上的差異，以及不發佈、只發佈在本機位址、`DOCKER-USER` 鏈、firewalld 的 `StrictForwardPorts`、掛在位址轉換之前的 nftables 表、雲端防火牆與 Cloudflare Tunnel 這幾種做法、出站的 DNS 只准送往指定解析器擋得住與擋不住的部分，以及地理封鎖放在 CDN 邊緣的理由。
+這篇整理網站放在 [CDN](/infra/knowledge-cards/cdn/)（內容遞送網路，content delivery network：代替源站接收使用者連線、在邊緣做快取與過濾的服務，例如 Cloudflare）後面時，源站主機的防火牆要限制什麼、限制放在哪裡：請求避開 CDN 直接連到源站的成因（源站位址從 DNS 歷史紀錄、憑證透明度紀錄與其他記錄外洩）、來源限制放在雲端防火牆、主機防火牆或 CDN 端驗證時各自擋得住什麼、只放行 CDN 位址的規則什麼時候套上去、管理通道與同一台主機上不經 CDN 的服務怎麼處理、Docker 發佈的連接埠為什麼不受 `ufw` 與 `firewalld` 的一般規則約束、Podman 與 rootless 模式的容器在這一點上的差異，以及不發佈、只發佈在本機位址、[`DOCKER-USER`](/infra/knowledge-cards/docker-user/) 鏈、firewalld 的 `StrictForwardPorts`、掛在位址轉換之前的 nftables 表、雲端防火牆與 Cloudflare Tunnel 這幾種做法、出站的 DNS 只准送往指定解析器擋得住與擋不住的部分，以及地理封鎖放在 CDN 邊緣的理由。
 
 機制以 Linux 主機、Cloudflare 與以 root 執行的 Docker（預設的 iptables 後端；compose 發佈連接埠的方式與 `docker run -p` 相同）說明。其他 CDN 對應的是它公佈的、連回源站時使用的位址清單與它的回源驗證功能。Podman 與 rootless 模式的 Docker 轉送連接埠的方式不同，判斷的依據相同（容器執行環境有沒有在主機防火牆之前改寫封包的目的地），各自量到的結果見〈Docker 發佈的連接埠：封包路徑與限制的寫法〉裡 Docker 以外的容器執行方式那一段；Kubernetes 的 NodePort 沒有驗證。
 
@@ -69,7 +69,7 @@ CDN 的位址清單會變動。Cloudflare 的〈Cloudflare IP addresses〉寫明
 
 經過位址轉換的那一份，Docker 保留封包原本的來源位址，容器裡的程式看到的是真正的連線來源（實測容器的存取記錄裡，兩個經由 IPv4 連的測試來源位址都原樣出現），所以來源限制在技術上做得到。
 
-`-p 8080:80` 同時發佈在 IPv4 與 IPv6，而兩份走的路徑不同。容器所在的網路沒有開 IPv6（Docker 預設的 bridge 網路就是），而 Docker 的 `userland-proxy` 是預設的開著時，IPv6 那一份由 docker-proxy 這個主機上的程式接聽、再自己連到容器的 IPv4 位址，連線走 input 路徑：實測在 ufw 與 firewalld 上，沒有放行規則時經由 IPv6 連發佈的連接埠都被擋下，加了 IPv6 的放行規則之後才連得到，跟 IPv4 那一份正好相反，所以 IPv6 這一份照放行式寫在主機防火牆的入站規則上。代價是來源位址：docker-proxy 自己連進容器，實測容器記到的 IPv6 那一筆來源是預設網路的閘道 `172.17.0.1`（compose 建的自訂網路閘道是別的位址，`docker network inspect <網路名>` 的 `Gateway` 欄查得到），容器裡的反向代理依來源位址做的判斷（只信任 CDN 位址段送來的 `CF-Connecting-IP`、存取紀錄）對經由 IPv6 回源的請求都不成立。Docker 的 `userland-proxy` 設成 `false` 時，實測在 ufw 主機上 IPv6 那一份根本沒有發佈：`docker ps` 只列 `0.0.0.0` 的那一份、ip6tables 沒有轉換規則，經由 IPv6 連都被拒。網路建立時帶 `--ipv6`、容器有 IPv6 位址時，依 Docker〈Port publishing〉的說明，IPv6 那一份改由 ip6tables 的位址轉換送進容器，走轉送路徑，規則要寫在 ip6tables 的 `DOCKER-USER` 或 nftables 的 `ip6 saddr`；這一種沒有實跑。
+`-p 8080:80` 同時發佈在 IPv4 與 IPv6，而兩份走的路徑不同。容器所在的網路沒有開 IPv6（Docker 預設的 bridge 網路就是），而 Docker 的 `userland-proxy` 是預設的開著時，IPv6 那一份由 docker-proxy 這個主機上的程式（[Userland Proxy](/infra/knowledge-cards/userland-proxy/) 的一種）接聽、再自己連到容器的 IPv4 位址，連線走 input 路徑：實測在 ufw 與 firewalld 上，沒有放行規則時經由 IPv6 連發佈的連接埠都被擋下，加了 IPv6 的放行規則之後才連得到，跟 IPv4 那一份正好相反，所以 IPv6 這一份照放行式寫在主機防火牆的入站規則上。代價是來源位址：docker-proxy 自己連進容器，實測容器記到的 IPv6 那一筆來源是預設網路的閘道 `172.17.0.1`（compose 建的自訂網路閘道是別的位址，`docker network inspect <網路名>` 的 `Gateway` 欄查得到），容器裡的反向代理依來源位址做的判斷（只信任 CDN 位址段送來的 `CF-Connecting-IP`、存取紀錄）對經由 IPv6 回源的請求都不成立。Docker 的 `userland-proxy` 設成 `false` 時，實測在 ufw 主機上 IPv6 那一份根本沒有發佈：`docker ps` 只列 `0.0.0.0` 的那一份、ip6tables 沒有轉換規則，經由 IPv6 連都被拒。網路建立時帶 `--ipv6`、容器有 IPv6 位址時，依 Docker〈Port publishing〉的說明，IPv6 那一份改由 ip6tables 的位址轉換送進容器，走轉送路徑，規則要寫在 ip6tables 的 `DOCKER-USER` 或 nftables 的 `ip6 saddr`；這一種沒有實跑。
 
 限制發佈連接埠的做法，從「讓連接埠不對外」到「在主機之外擋」依序是：
 

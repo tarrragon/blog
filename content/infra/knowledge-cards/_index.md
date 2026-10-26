@@ -85,3 +85,5 @@ PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識
 | [DNAT（目的位址轉換）](/infra/knowledge-cards/dnat/)                                               | 改寫入站封包目的地的動作，Docker 發佈的連接埠經由它繞過寫在 input 路徑上的主機防火牆      |
 | [conntrack（連線追蹤）](/infra/knowledge-cards/conntrack/)                                         | 核心記錄每條連線狀態與位址轉換對應的表，有狀態防火牆與比對原始連接埠都靠它                |
 | [Network Namespace（網路命名空間）](/infra/knowledge-cards/network-namespace/)                     | 核心切出的獨立網路環境，容器的網路隔離與在一台主機上模擬不同來源都用它                    |
+| [DOCKER-USER（Docker 留給使用者的轉送規則鏈）](/infra/knowledge-cards/docker-user/)                | 發佈的連接埠在轉送路徑上第一個能寫限制的位置，存續依防火牆而異                            |
+| [Userland Proxy（使用者空間的連接埠轉送程式）](/infra/knowledge-cards/userland-proxy/)             | 在主機上接聽再轉進容器的程式，入站規則管得到、容器看不到真實來源                          |
