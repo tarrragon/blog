@@ -55,9 +55,43 @@ def format_markdown(content):
     content = re.sub(fence_pattern, add_lang_to_fence, content)
     
     # Fix excessive blank lines (only outside code fences)
-    content = re.sub(r'\n{3,}', '\n\n', content)
-    
+    content = collapse_blank_lines_outside_fences(content)
+
     return content.rstrip() + '\n'
+
+FENCE_RE = re.compile(r'^\s*(`{3,}|~{3,})')
+
+def collapse_blank_lines_outside_fences(content):
+    """Collapse runs of blank lines to one, leaving fenced code untouched.
+
+    Fenced code keeps its blank lines verbatim: Python separates top-level
+    definitions with two blank lines, and a code block published in an article
+    must stay byte-identical to the source it was copied from.
+    """
+    out = []
+    fence = None      # opening fence string while inside a code block
+    prev_blank = False
+    for line in content.split('\n'):
+        m = FENCE_RE.match(line)
+        if fence is None:
+            if m:
+                fence = m.group(1)
+                prev_blank = False
+                out.append(line)
+                continue
+            is_blank = line.strip() == ''
+            if is_blank and prev_blank:
+                continue
+            prev_blank = is_blank
+            out.append(line)
+        else:
+            out.append(line)
+            # closing fence: same character, at least as long, nothing after it
+            if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence) \
+                    and line.strip() == m.group(1):
+                fence = None
+                prev_blank = False
+    return '\n'.join(out)
 
 # Main execution
 try:
