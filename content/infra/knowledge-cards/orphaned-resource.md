@@ -6,7 +6,7 @@ weight: 74
 tags: ["infra", "knowledge-cards", "cloud", "cost"]
 ---
 
-孤兒資源（orphaned resource）是雲端帳號裡，原本為某一台主機或某一項服務建立、而那台主機已經刪除或停用之後仍然存在的資源：沒有掛在任何主機上的磁碟、沒有附在任何主機上的保留 IP、主機刪除後留下的快照與備份、後面已經沒有主機的負載平衡器與 NAT 閘道。它們在帳單上各自計費、各自佔用免費額度，而主控台的主機列表裡看不到它們。跟它相關的是 [Deletion Protection](/infra/knowledge-cards/deletion-protection/)（刪除保護）：刪除保護防的是該留的資源被誤刪，孤兒資源是該刪的資源沒有刪。
+孤兒資源（orphaned resource）是雲端帳號裡，原本為某一台主機或某一項服務建立、而那台主機已經刪除或停用之後仍然存在的資源：沒有掛在任何主機上的磁碟、沒有附在任何主機上的保留 IP、主機刪除後留下的快照與備份、後面已經沒有主機的負載平衡器與 NAT 閘道。它們在對這類資源收費的業者帳單上各自計費、各自佔用免費額度，而主控台的主機列表裡看不到它們。跟它相關的是 [Deletion Protection](/infra/knowledge-cards/deletion-protection/)（刪除保護）：刪除保護防的是該留的資源被誤刪，孤兒資源是該刪的資源沒有刪。
 
 同名而所指不同的兩個詞：Linux 的孤兒程序（orphan process）是父程序先結束、被 PID 1 收養的程序；套件管理器的孤兒套件是當初作為相依被裝進來、而依賴它的套件已經移除的套件（`pacman -Qtd`、`dnf autoremove` 處理的對象）。本卡講的是雲端帳號裡的資源。
 

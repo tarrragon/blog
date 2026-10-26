@@ -1,12 +1,12 @@
 ---
 title: "Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建"
 date: 2026-10-26
-description: "要在 Oracle Cloud 沒有公開 IP 的私有子網路裡跑一台 Ubuntu 主機、讓它裝得到套件更新，或要經由序列主控台看主機的開機過程，或主機被閒置回收、停止或刪除之後要照原樣重建時，查實際跑過的指令、錯誤原文、重建腳本與每一步的讀法"
+description: "要在 Oracle Cloud 沒有公開 IP 的私有子網路裡跑一台 Ubuntu 主機、讓它裝得到套件更新，或要經由序列主控台看主機的開機過程，或主機被閒置回收、停止或刪除之後要照原樣重建，或想知道 NAT gateway 要不要另外付費、開機磁碟扣掉多少區塊磁碟額度時，查實際跑過的指令、錯誤原文、重建腳本與每一步的讀法"
 weight: 6
 tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "ubuntu", "serial-console", "network", "free-tier", "hands-on"]
 ---
 
-> **事件說明**：2026-10-26，在 Oracle Cloud 的 `ap-batam-1` 區域，從一台 macOS 開發機用 OCI CLI 操作。tenancy 以 Free Tier 註冊，2026-10-27 確認它已經是付費帳戶（升級的日期這次沒有記錄）。主機是 A1 機型（`VM.Standard.A1.Flex`，1 OCPU、6 GB），映像檔是 `Canonical-Ubuntu-24.04-aarch64-2026.09.18-0`，放在既有的私有子網路裡、沒有公開 IP，經由 Bastion 的 port forwarding session 登入。當時在做的操作是：在雲端主機上確認 Ubuntu 的自動更新預設與核心更新前後的重開機判斷，並實際連一次序列主控台。2026-10-27 另外跑了重建腳本，並終止了重建腳本建出的 `verify-ubuntu-rebuild`。
+> **事件說明**：2026-10-26（本篇沒有標 UTC 的日期與時刻都是台北時間），在 Oracle Cloud 的 `ap-batam-1` 區域，從一台 macOS 開發機用 OCI CLI 操作。tenancy 以 Free Tier 註冊，2026-10-27 確認它已經是付費帳戶（升級的日期這次沒有記錄）。主機是 A1 機型（`VM.Standard.A1.Flex`，1 OCPU、6 GB），映像檔是 `Canonical-Ubuntu-24.04-aarch64-2026.09.18-0`，放在既有的私有子網路裡、沒有公開 IP，經由 Bastion 的 port forwarding session 登入。當時在做的操作是：在雲端主機上確認 Ubuntu 的自動更新預設與核心更新前後的重開機判斷，並實際連一次序列主控台。2026-10-27 另外跑了重建腳本，並終止了重建腳本建出的 `verify-ubuntu-rebuild`；同一天又把 `verify-ubuntu` 停止、啟動，在三種狀態下各跑一次重建腳本，用 `oci limits` 與 usage API 查區塊磁碟額度與帳務，最後照刪除順序收掉 `verify-ubuntu` 的 NAT gateway 與 NSG。
 
 這篇記錄在 Oracle Cloud 的私有子網路裡建一台 Ubuntu 24.04 主機之後，讓它連得到套件來源、連上序列主控台，以及主機不見之後怎麼照原樣重建。各節依序是：
 
@@ -16,7 +16,7 @@ tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "ubuntu", "serial-cons
 - 加上 NAT gateway、路由規則與只掛在這台主機上的出站 NSG（network security group：套在個別網卡上的一組防火牆規則）之後，`apt-get update` 成功。
 - 序列主控台：產生 RSA 金鑰、建立序列主控台連線（instance console connection）、把官方的連線字串改寫成 ssh 的 ProxyJump 設定，以及看到的開機輸出。
 - 主機被閒置回收、停止或刪除之後：怎麼發現、哪些資源會留下、主機與序列主控台連線的重建腳本、每一步的讀法、重建之後要重做的事與耗時。
-- 費用與額度，以及刪除這組資源的順序。
+- 費用與額度（A1 的免費量、開機磁碟從區塊磁碟額度扣掉多少與用量的查法、在價目表與帳務明細裡找 NAT gateway 收費項目的結果），以及刪除這組資源的順序與實際刪除時的錯誤訊息（NSG 還掛在網卡上時的 412，NAT gateway 還被路由表指著時外層 400、內含 409）。
 
 主機上量到的自動更新預設、核心更新前後的 `needrestart -b` 與 `reboot-required`，寫在 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)（下文稱「維護篇」）〈會老化的軟體：各條更新管道與更新後的重開機〉，這裡只寫在 Oracle Cloud 上建立與連線的操作。本篇自己的 OCID 與 IP 一律是佔位值：OCID 用 `oci ... list` 查，私有 IP 用 `oci compute instance list-vnics` 查；錯誤原文裡的位址是 Canonical 鏡像站的。
 
@@ -295,18 +295,18 @@ oci compute instance list -c <compartment 的 OCID> --display-name verify-ubuntu
 - 印 `STOPPED`：主機被停止，開機磁碟、VNIC 與私有 IP 都還在，啟動之後回到 `RUNNING`；啟動也可能失敗，例如 A1 容量不足時（推論，這次沒有遇到）。
 - 印 `TERMINATED`、或 `get` 回 404、`list` 找不到：主機被刪除，要重建。開機磁碟是否一起刪掉，官方沒有寫，到 Block Storage → Boot Volumes 查。舊磁碟還在時有兩種處理：拿它重建主機（`oci compute instance launch` 以 `--source-boot-volume-id <開機磁碟的 OCID>` 代替 `--image-id`，沒有實跑），裝過的更新與設定都還在；或刪掉它，釋放它佔的區塊磁碟額度。主機終止時開機磁碟的預設去留見 [磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/infra/cloud-providers/vm-options/storage/)〈刪除（終止）主機時開機磁碟的預設去留〉。
 
-**兩種情形各自留下與消失的資源**（停止的那一欄依停止主機的機制推論；刪除的那一欄依終止主機的機制推論，標了實跑的兩格是主動終止 `verify-ubuntu-rebuild` 時看到的，不是回收；回收實際做的是哪一種，這次沒有遇到）：
+**兩種情形各自留下與消失的資源**。格內寫「實跑」的是主動操作時看到的，不是回收：停止那一欄的是 2026-10-27 主動停止 `verify-ubuntu` 再啟動時看到的，刪除那一欄的是主動終止 `verify-ubuntu-rebuild` 時看到的。格內沒寫「實跑」的，停止那一欄依停止主機的機制推論，刪除那一欄依終止主機的機制推論。回收實際做的是停止還是刪除，這次沒有遇到：
 
-| 資源                                                   | 主機被停止                         | 主機被刪除                                                           |
-| ------------------------------------------------------ | ---------------------------------- | -------------------------------------------------------------------- |
-| compartment、VCN、私有子網路、service gateway、Bastion | 留下                               | 留下                                                                 |
-| NAT gateway、路由規則、NSG 與它的規則                  | 留下                               | 留下                                                                 |
-| 主機、它的 VNIC 與私有 IP                              | 留下（啟動之後私有 IP 不變）       | 消失；重建的主機拿到新的私有 IP                                      |
-| NSG 掛在 VNIC 上的關係                                 | 留下                               | 跟著 VNIC 消失，要重新掛                                             |
-| 開機磁碟與上面裝過的更新                               | 留下                               | 指定刪除時一起刪掉（主動終止時實跑，不是回收）；回收時的去留官方沒寫 |
-| 序列主控台連線                                         | 平時沒有；排查時建的那一條用完就刪 | 變成 `DELETED`（主動終止時實跑，不是回收）；平時本來就沒有           |
-| port forwarding session                                | 1 小時後本來就會失效               | 同左                                                                 |
-| 本機的 ssh 設定與 known_hosts                          | 不用改                             | IP 與 host key 都換了，要重寫                                        |
+| 資源                                                   | 主機被停止                                                                                                                                                                                                                                    | 主機被刪除                                                           |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| compartment、VCN、私有子網路、service gateway、Bastion | 留下                                                                                                                                                                                                                                          | 留下                                                                 |
+| NAT gateway、路由規則、NSG 與它的規則                  | 留下（主動停止時實跑）                                                                                                                                                                                                                        | 留下                                                                 |
+| 主機、它的 VNIC 與私有 IP                              | 留下，啟動之後私有 IP 不變（主動停止時實跑）                                                                                                                                                                                                  | 消失；重建的主機拿到新的私有 IP                                      |
+| NSG 掛在 VNIC 上的關係                                 | 留下（主動停止時實跑）                                                                                                                                                                                                                        | 跟著 VNIC 消失，要重新掛                                             |
+| 開機磁碟與上面裝過的更新                               | 留下（主動停止時實跑）                                                                                                                                                                                                                        | 指定刪除時一起刪掉（主動終止時實跑，不是回收）；回收時的去留官方沒寫 |
+| 序列主控台連線                                         | 平時沒有；排查時建的那一條用完就刪                                                                                                                                                                                                            | 變成 `DELETED`（主動終止時實跑，不是回收）；平時本來就沒有           |
+| port forwarding session                                | 1 小時後本來就會失效                                                                                                                                                                                                                          | 同左                                                                 |
+| 本機的 ssh 設定與 known_hosts                          | 不用改；例外是 `host-<名稱>.env` 還沒有記下這台主機時（主機不是重建腳本建的，例如照〈建 Ubuntu 24.04 主機與經由 port forwarding 登入〉手動建的），重建腳本第一次跑會清空 known_hosts 一次，下一次登入自動重新記下（見下面重建腳本的實跑結果） | IP 與 host key 都換了，要重寫                                        |
 
 **重建腳本**：下面這支腳本把「停止就啟動、不見就重建」與之後要重新接上的每一項資源與設定寫在一起。每一步先查後建，重跑不會重複建立；例外是 port forwarding session，它最長 1 小時就失效，所以每次都新建一個。每一步至少印一行「已存在」「新建」「啟動」「重送」或「改寫」；任何一條 `oci` 指令失敗，腳本就停下來，印出那條指令寫在 stderr 的內容，不會把失敗當成「查無結果」往下走。它的每一個建立指令都是〈建 Ubuntu 24.04 主機與經由 port forwarding 登入〉與〈加出站：NAT gateway、路由規則與只掛在這台主機上的 NSG〉兩節實跑過的那一條，先查後建與錯誤處理的部分是新加的。
 
@@ -318,19 +318,21 @@ oci compute instance list -c <compartment 的 OCID> --display-name verify-ubuntu
 
 雲端實跑是 2026-10-27 在同一個 tenancy 上跑的；假的 `oci` 是一支依劇本回傳主機狀態與建立請求回應、也能讓單一種呼叫失敗的指令，搭配一支不等待、只記下秒數的假 `sleep`。兩者的結果都在腳本之後。序列主控台連線的重建腳本也列在同一張表；它在雲端跑的是訊息還寫「主控台連線」、還沒有錯誤處理與換金鑰處理的前一版：
 
-| 路徑                                                                                        | 在雲端實跑過                                                                                       | 用假的 `oci` 測過             |
-| ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------- |
-| 主機已經是 `RUNNING`                                                                        | 沒有等待迴圈的版本                                                                                 | 現在這一版                    |
-| 找不到同名主機，新建                                                                        | 沒有等待迴圈的版本跑到 `RUNNING` 之後中止；加上等待迴圈的版本從主機已經是 `RUNNING` 的狀態接著跑完 | 現在這一版                    |
-| 主機 `STOPPED`、`STOPPING`、`PROVISIONING`、`STARTING`                                      | 沒有                                                                                               | 現在這一版                    |
-| 主機停在其他狀態（`TERMINATING`）、或狀態讀不出                                             | 沒有                                                                                               | 現在這一版                    |
-| 建立請求回 500 或 429 後重送、回 400 或 401、讀不出回應碼、OCID 前有警告、查不到映像檔      | 沒有（雲端那一次第一次送出就成功）                                                                 | 現在這一版                    |
-| NAT gateway 與 NSG 新建、路由表少了 0.0.0.0/0 那一條、VNIC 已經掛著其他 NSG                 | 沒有                                                                                               | 現在這一版                    |
-| 路由表裡有其他規則、主機跟上次記下的不是同一台                                              | 沒有                                                                                               | 現在這一版                    |
-| 查詢或寫入的 `oci` 失敗（查主機、啟動、查 NAT、讀與改路由表、讀與加 NSG 規則、讀與改 VNIC） | 沒有                                                                                               | 現在這一版                    |
-| `instance action`、`wait_state` 實際等待的時間                                              | 沒有量                                                                                             | 不適用（假的 `sleep` 不等待） |
-| 序列主控台連線：沒有 `ACTIVE` 的連線就建                                                    | 前一版                                                                                             | 現在這一版                    |
-| 序列主控台連線：已有連線就沿用、新產生金鑰時換掉舊連線、找不到主機、`oci` 失敗              | 沒有                                                                                               | 現在這一版                    |
+| 路徑                                                                                        | 在雲端實跑過                                                                                                                                                                                                                                               | 用假的 `oci` 測過             |
+| ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| 主機已經是 `RUNNING`                                                                        | 沒有等待迴圈的版本                                                                                                                                                                                                                                         | 現在這一版                    |
+| 找不到同名主機，新建                                                                        | 沒有等待迴圈的版本跑到 `RUNNING` 之後中止；加上等待迴圈的版本從主機已經是 `RUNNING` 的狀態接著跑完                                                                                                                                                         | 現在這一版                    |
+| 主機 `STOPPED`、`STOPPING`、`STARTING`                                                      | 現在這一版                                                                                                                                                                                                                                                 | 現在這一版                    |
+| 主機 `PROVISIONING`                                                                         | 沒有                                                                                                                                                                                                                                                       | 現在這一版                    |
+| 主機停在其他狀態（`TERMINATING`）、或狀態讀不出                                             | 沒有                                                                                                                                                                                                                                                       | 現在這一版                    |
+| 建立請求回 500 或 429 後重送、回 400 或 401、讀不出回應碼、OCID 前有警告、查不到映像檔      | 沒有（雲端那一次第一次送出就成功）                                                                                                                                                                                                                         | 現在這一版                    |
+| NAT gateway 與 NSG 新建、路由表少了 0.0.0.0/0 那一條、VNIC 已經掛著其他 NSG                 | 沒有                                                                                                                                                                                                                                                       | 現在這一版                    |
+| 路由表裡有其他規則                                                                          | 沒有                                                                                                                                                                                                                                                       | 現在這一版                    |
+| 主機跟上次記下的不是同一台                                                                  | 現在這一版，`host-<名稱>.env` 還沒有記下主機的情形（`STOPPED` 那一次）                                                                                                                                                                                     | 現在這一版                    |
+| 查詢或寫入的 `oci` 失敗（查主機、啟動、查 NAT、讀與改路由表、讀與加 NSG 規則、讀與改 VNIC） | 沒有                                                                                                                                                                                                                                                       | 現在這一版                    |
+| `instance action`、`wait_state` 實際等待的時間                                              | `instance action` 等到 `RUNNING`：現在這一版，`STOPPED`、`STOPPING` 兩次，從腳本開始到印出「啟動」各約 9 秒；`wait_state` 的 10 秒輪詢與 900 秒逾時：沒有跑到，進到 `wait_state` 的 `STOPPING` 與 `STARTING`（第二次試）兩次，都在第一次查詢就拿到目標狀態 | 不適用（假的 `sleep` 不等待） |
+| 序列主控台連線：沒有 `ACTIVE` 的連線就建                                                    | 前一版                                                                                                                                                                                                                                                     | 現在這一版                    |
+| 序列主控台連線：已有連線就沿用、新產生金鑰時換掉舊連線、找不到主機、`oci` 失敗              | 沒有                                                                                                                                                                                                                                                       | 現在這一版                    |
 
 ```bash
 #!/bin/bash
@@ -590,7 +592,7 @@ echo "下一步：ssh -F $CONF $NAME 'cloud-init status --wait; uptime'"
 - **金鑰的檔名**：`verify-a1-key`（登入主機）與 `session_key`（Bastion session）；序列主控台連線的重建腳本另外用 `console_rsa`，不存在時以 RSA 3072 位元（`-b 3072`）產生。
 - **`ids.env` 裡七個鍵的值**。
 
-`ids.env` 的鍵與查法在〈前置條件：沿用 Oracle Cloud 建立主機實測紀錄的網路、Bastion 與金鑰〉的表，格式是一行一個 `鍵=值`（例如 `C=<compartment 的 OCID>`），腳本開頭 `source` 它。NAT gateway 與 NSG 不論是已存在還是腳本新建的，腳本都把它們的 OCID 以 `NAT=` 與 `NSGU=` 記進檔尾，已經有同樣的一行就不重複寫，所以跑過一次之後，〈刪除這組資源的順序〉要填的值都在這個檔裡。`host-<名稱>.env` 是這一台主機的紀錄：腳本每次新建主機或 session 就在檔尾多加一行 `IID=` 或 `SPF=`，同一個鍵出現好幾次時，最後一行才是現在有效的值。腳本只讀它最後一行的 `IID=`，拿來跟這次查到的主機比對：不是同一台時（新建，或主機在別處重建過），舊的 host key 紀錄對不上，腳本就清空 known_hosts 並補記這次的 `IID=`。
+`ids.env` 的鍵與查法在〈前置條件：沿用 Oracle Cloud 建立主機實測紀錄的網路、Bastion 與金鑰〉的表，格式是一行一個 `鍵=值`（例如 `C=<compartment 的 OCID>`），腳本開頭 `source` 它。NAT gateway 與 NSG 不論是已存在還是腳本新建的，腳本都把它們的 OCID 以 `NAT=` 與 `NSGU=` 記進檔尾，已經有同樣的一行就不重複寫，所以跑過一次之後，〈刪除這組資源的順序〉要填的值都在這個檔裡。`host-<名稱>.env` 是這一台主機的紀錄：腳本每次新建主機或 session 就在檔尾多加一行 `IID=` 或 `SPF=`，同一個鍵出現好幾次時，最後一行才是現在有效的值。腳本只讀它最後一行的 `IID=`，拿來跟這次查到的主機比對：不是同一台時（新建，或主機在別處重建過），舊的 host key 紀錄對不上，腳本就清空 known_hosts 並補記這次的 `IID=`。檔案裡還沒有任何一行 `IID=` 時（主機不是重建腳本建的，例如照〈建 Ubuntu 24.04 主機與經由 port forwarding 登入〉手動建的，或是腳本較早的版本建的），腳本拿空字串比對，同樣判成不是同一台、清空一次。
 
 兩支腳本都假設 CLI 用 session token 登入（〈前置條件：沿用 Oracle Cloud 建立主機實測紀錄的網路、Bastion 與金鑰〉的 CLI 登入那一項）。改用 API 簽章金鑰的話，拿掉三處：`export` 那一行的 `OCI_CLI_AUTH=security_token`、開頭的 `oci session validate` 檢查，以及重建腳本重送迴圈裡每 1800 秒跑一次的 `oci session refresh`；拿掉之後 CLI 改用設定檔裡的 API 簽章金鑰（沒有實跑）。
 
@@ -599,7 +601,7 @@ echo "下一步：ssh -F $CONF $NAME 'cloud-init status --wait; uptime'"
 **輸出的讀法**：主機那一步（第 1 步）依查到的狀態印不同的行：
 
 - **主機已經是 `RUNNING`**：印「已存在」。
-- **主機被停止（`STOPPED`）**：印「啟動」（`STOPPED → RUNNING`）。`STOPPING` 時先等到 `STOPPED` 再啟動，`STARTING`、`PROVISIONING` 時等到 `RUNNING` 再印「已存在」。啟動失敗時（例如容量不足，推論）印出 `instance action` 的錯誤並以 2 結束。這幾條只用假的 `oci` 測過。
+- **主機被停止（`STOPPED`）**：印「啟動」（`STOPPED → RUNNING`）。`STOPPING` 時先等到 `STOPPED` 再啟動，`STARTING`、`PROVISIONING` 時等到 `RUNNING` 再印「已存在」。啟動失敗時（例如容量不足，推論）印出 `instance action` 的錯誤並以 2 結束。`STOPPED`、`STOPPING`、`STARTING` 三條在雲端跑過（結果在下面「在雲端實跑的結果」的第一項）；`PROVISIONING` 與啟動失敗只用假的 `oci` 測過。
 - **找不到還沒終止的同名主機**：印「新建」與映像檔名稱，容量不足（500）或被限流（429）時中間會有幾行「重送」（例：`[重送] 第 1 次 500："message": "Out of host capacity."，112 秒後再送`，這一行出自假的 `oci`）。建立請求回 500、429、401 以外的回應碼時（例如 `<可用網域>` 沒換掉而回 400），腳本印出回應碼與 `message` 就以 4 結束，不重送：這類回應代表請求本身有誤，重送幾次都是同一個結果，照訊息改好參數再跑。
 - **主機停在其他狀態**（`TERMINATING`、`MOVING`、`CREATING_IMAGE` 這類）：腳本不猜下一步，印出狀態並以 2 結束，等它變成 `RUNNING`、`STOPPED` 或 `TERMINATED` 再重跑。
 
@@ -610,11 +612,18 @@ echo "下一步：ssh -F $CONF $NAME 'cloud-init status --wait; uptime'"
 - **路由**（第 4 步）：已經有 0.0.0.0/0 指向 NAT gateway 那一條就印「已存在」；印「改寫」代表路由表被整份替換成 service gateway 與 NAT gateway 兩條，也就是先前少了 0.0.0.0/0 那一條，或它指向別的出口。
 - **NSG 掛到 VNIC**（第 6 步）：印「改寫」代表 VNIC 原本沒有掛這個 NSG，主機重建之後的新 VNIC 一定走這一條。
 - **port forwarding session**（第 7 步）：每次都印「新建」。
-- **ssh 設定**（第 8 步）：每次都印「改寫」，並註明 known_hosts 是保留還是清空；清空代表這次的主機跟 `host-<名稱>.env` 最後記下的不是同一台。
+- **ssh 設定**（第 8 步）：每次都印「改寫」，並註明 known_hosts 是保留還是清空；清空代表這次的主機跟 `host-<名稱>.env` 最後記下的不是同一台，或那個檔案還沒有記下任何一台（主機不是重建腳本建的；實跑結果在下面的 `STOPPED` 那一項）。
 
 任何一步印「錯誤」時腳本以 2 結束（建立請求被拒的 4 在上一項），錯誤那一行寫出是哪一步；`oci` 失敗時，冒號後面接的是那條指令寫在 stderr 的內容。修好之後重跑整支腳本即可，前面已經完成的步驟會印「已存在」。例外是建立請求的回應讀不出回應碼（exit 3）：設定檔錯誤、網路中斷都會走到這裡，而網路中斷時請求可能已經在 Oracle 那一端成功，所以重跑之前先用 `oci compute instance list -c <compartment 的 OCID> --display-name <主機名稱>` 確認沒有還在的同名主機。
 
-**在雲端實跑的結果**（沒有等待迴圈的版本與加上等待迴圈的版本）：
+**在雲端實跑的結果**（主機 `STOPPED`、`STOPPING`、`STARTING` 跑的是現在這一版；「主機已經是 `RUNNING`」與「名稱不存在」兩項跑的是較早的版本，各項用的版本寫在項目裡）：
+
+- **主機 `STOPPED`、`STOPPING`、`STARTING`**（現在這一版，2026-10-27 對 `verify-ubuntu` 連跑四次，`STARTING` 試了兩次；每次之前用 `oci compute instance action --instance-id <主機的 OCID> --action STOP` 或 `--action START` 讓主機落在那個狀態）。四次都是 exit 0，網路設定那幾步都印「已存在」，port forwarding session 每次都印「新建」。各次全程的秒數不同，差在 API 回應的快慢：port forwarding session 那一行以外，log 各行的時間戳之間都不到 10 秒，沒有任何一步走進 `sleep`，而 port forwarding session 那一行就從 8 秒到 22 秒不等。下面的「從腳本開始到這一行」是用 log 最後一行的時間減去全程秒數推算的，時間戳只到秒，誤差約 1 秒：
+  - **`STOPPED`**：先帶 `--wait-for-state STOPPED` 停機，6 秒回 `STOPPED`。腳本全程 28 秒，第一行印「啟動」（`STOPPED → RUNNING`），從腳本開始到這一行約 9 秒，`instance action` 的 START 等到 `RUNNING` 包含在內。登入時 `uptime` 是 `up 0 min`，`cloud-init status --wait` 回 `done`，`apt-get update` 照常連到套件來源。
+  - **`STOPPING`**：送出 STOP 不帶 `--wait-for-state`，CLI 回傳時是 `STOPPING`，再查一次仍是 `STOPPING`，接著跑腳本。腳本查到 `STOPPING`，全程 35 秒，第一行印「啟動」（`STOPPING → RUNNING`），從腳本開始到這一行約 9 秒。這 9 秒裡有登入檢查、查主機、查狀態、`wait_state` 的查詢與 START 共五次 API 呼叫，`wait_state` 要是睡過一次 10 秒就不可能少於 10 秒，所以它第一次查時主機已經是 `STOPPED`，沒有進 `sleep`（從時間戳推論）。
+  - **`STARTING`**：試了兩次，第二次才走到這條分支。兩次都是主機停好之後送出 START 不帶 `--wait-for-state`。第一次在送出 START 與跑腳本之間多查了一次狀態（回 `STARTING`），腳本開始時主機已經是 `RUNNING`，第一行印「已存在」（`RUNNING`），全程 21 秒，走的是主機已經是 `RUNNING` 的那一條；從腳本開始到第一行只有約 2 秒，所以 `STARTING` 在多查的那一次之後幾秒內就變成 `RUNNING`（推論，沒有量 `STARTING` 維持多久）。第二次送出 START 之後立刻跑腳本：腳本查到 `STARTING`，進 `wait_state` 之後第一次查就已經是 `RUNNING`，沒有進到兩次查詢之間的 10 秒 `sleep`（從腳本開始到第一行只有約 4 秒推論）；全程 55 秒，第一行印「已存在」（等到 `RUNNING`）。
+  - **VNIC 的等待迴圈**：四次的 VNIC 那一行都在主機那一行之後 3 到 9 秒內印出，主機沒有換過、VNIC 一直掛著，迴圈第一次查就拿到，沒有進 `sleep`（從時間戳推論）。
+  - **known_hosts**：`STOPPED` 那一次印「known_hosts 已清空（換了一台主機）」，而主機是同一台。`verify-ubuntu` 是手動建的，之後只跑過腳本較早的版本（那一版只在新建主機時記 `IID`），`host-verify-ubuntu.env` 裡只有 session 的紀錄、沒有 `IID` 那一行，腳本拿空字串跟查到的 OCID 比，判成不同，同時寫進這一行；之後三次都印「保留」。下面假的 `oci` 測試表裡「主機 `STOPPED`」那一列印「保留」，是因為那一組測試的 `host-<名稱>.env` 已經記著同一台的 `IID`。清空之後，ssh 設定的 `StrictHostKeyChecking accept-new` 讓下一次登入重新記下這台的 host key（`Permanently added '<私有 IP>' (ED25519)`），登入沒有受影響；主機沒有重裝，host key 應該沒換，但清空之前的紀錄已經是空的，沒有舊的 key 可以比對。
 
 - **主機已經是 `RUNNING`**（沒有等待迴圈的版本）：exit 0，全程 34 秒；主機那一步到掛 NSG 那一步都印「已存在」，port forwarding session 的建立佔了其中約 17 秒，最後兩行是 session 的「新建」與 ssh 設定的「改寫」。照產生的 `ssh-verify-ubuntu.conf` 登入之後，`apt-get update` 照常連到 Ubuntu 的套件來源。
 - **名稱不存在**：建立請求第一次送出就成功。沒有等待迴圈的版本在印出「已 RUNNING」之後，接著以「查不到主機的 VNIC」結束（exit 2）；加上等待迴圈的版本從主機已經是 `RUNNING` 的狀態接著跑，exit 0，80 秒：掛 NSG 那一步印「改寫」，替新主機的 VNIC 掛上出站 NSG；port forwarding session 這一次要 64 秒才變成 `SUCCEEDED`，比既有主機的那一次長。登入時主機已開機 3 分鐘，`cloud-init status --wait` 立刻回 `done`，`apt-get update` 9 秒下載 39.9 MB，速率 4468 kB/s。
@@ -775,7 +784,7 @@ echo "用完就刪：oci compute instance-console-connection delete --instance-c
 2. 主機被刪除重建時，映像檔又是建立那一天的版本：照〈加出站：NAT gateway、路由規則與只掛在這台主機上的 NSG〉最後那兩條，`sudo unattended-upgrade` 之後 `sudo systemctl reboot`（這次 402 秒、升級 64 個套件），才把映像檔之後的安全更新補上。只是被停止再啟動時，更新還在，不必重做。
 3. 序列主控台連線平時不留，重建之後不必另外建。要排查時才跑序列主控台連線的重建腳本，再 `ssh -tt -F ssh-console.conf verify-console`；排查完用腳本結尾印出的那條 `delete` 刪掉。
 
-**耗時**：這次量到的是單步的時間，建立請求送出到回傳約 4 秒，約 20 秒後的下一次查詢時主機已經是 `RUNNING`，cloud-init 約 1 分鐘，port forwarding session 約 1 分鐘，`unattended-upgrade` 402 秒，核心開始開機到登入提示約 27 秒。重建腳本在主機還在時 34 秒跑完；名稱不存在的那一次，那一版沒有等待主機的狀態，建立請求到 `RUNNING` 的確切時間沒有量到（2 分 30 秒後重跑時已經是 `RUNNING`），之後接上網路與登入的部分 80 秒，其中 port forwarding session 佔 64 秒；這一版從建主機那一步一次跑到底的時間沒有量。A1 容量不足時，建立那一步要重送，時間取決於區域當時的容量，重送的間隔與限流門檻在建主機那篇〈重送建立請求：CLI 自己的重送、限流門檻與重送腳本〉。
+**耗時**：這次量到的是單步的時間，建立請求送出到回傳約 4 秒，約 20 秒後的下一次查詢時主機已經是 `RUNNING`，cloud-init 約 1 分鐘，port forwarding session 約 1 分鐘，`unattended-upgrade` 402 秒，核心開始開機到登入提示約 27 秒。重建腳本在主機還在時 34 秒跑完，主機停止、停止中、啟動中三種狀態各 28、35、55 秒（差在各步 API 的回應與 port forwarding session 的快慢）；名稱不存在的那一次，那一版沒有等待主機的狀態，建立請求到 `RUNNING` 的確切時間沒有量到（2 分 30 秒後重跑時已經是 `RUNNING`），之後接上網路與登入的部分 80 秒，其中 port forwarding session 佔 64 秒；這一版從建主機那一步一次跑到底的時間沒有量。A1 容量不足時，建立那一步要重送，時間取決於區域當時的容量，重送的間隔與限流門檻在建主機那篇〈重送建立請求：CLI 自己的重送、限流門檻與重送腳本〉。
 
 ### 重建的其他做法：用 IaC 描述這組資源、建立時交給 cloud-init 升級、只靠手動
 
@@ -785,25 +794,69 @@ echo "用完就刪：oci compute instance-console-connection delete --instance-c
 
 ## 費用與額度：A1、開機磁碟、出站流量與 NAT gateway
 
-- **A1**：帳號篇記錄的 Always Free 額度是每月 1,500 OCPU 小時與 9,000 GB 小時（相當於 2 OCPU、12 GB 整月開著）。2026-10-26 讀到的 Oracle 的 Compute 價目頁（頁名這次沒有記下）寫的是「Each paid tenancy gets the first 3,000 OCPU hours and 18,000 GB hours per month for free」，對象是付費 tenancy，相當於 4 OCPU、24 GB 整月開著。這個 tenancy 是付費帳戶：重建腳本實跑之前，同一個 tenancy 已經有三台各 1 OCPU、6 GB 的 A1 主機在跑（2026-10-27 用 `oci compute instance list` 查到 `verify-a1-ol`、`verify-origin`、`verify-ubuntu` 三台是 `RUNNING`），腳本建出的第四台讓合計變成 4 OCPU、24 GB，剛好等於付費 tenancy 每月的免費量，建立沒有被擋下。試用結束那一刻、A1 合計超過 2 OCPU、12 GB 就全部停用的規則，只管沒有升級的帳號（帳號篇〈Always Free 的額度與它綁在 home region 上的範圍〉）；付費帳戶超出免費量的部分照一般價格計費（帳號篇〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉）。
-- **開機磁碟**：每台 50 GB，從 Always Free 的 200 GB 區塊磁碟額度裡扣。序列主控台記下的開機輸出寫 `[sda] 97677312 512-byte logical blocks: (50.0 GB/46.6 GiB)`；`oci bv boot-volume list` 的 `size-in-gbs` 回 47，數值等於 46.6 GiB 進位，兩者是同一顆磁碟的兩種單位。照 50 GB 算，四台合計 200 GB，額度在終止 `verify-ubuntu-rebuild` 之前已經用滿。這 200 GB 是以 10 進位的 GB 還是 GiB 計，這次沒有確認；查法是網頁主控台的 Limits, Quotas and Usage 頁，或 `oci limits resource-availability get`（帶 `--service-name`、`--limit-name` 與 `-c <tenancy 的 OCID>`，限制名稱用 `oci limits definition list` 查；兩條都沒有實跑）。
+- **A1**：帳號篇記錄的 Always Free 額度是每月 1,500 OCPU 小時與 9,000 GB 小時（相當於 2 OCPU、12 GB 整月開著）。2026-10-26 讀到的 Oracle 的 Compute 價目頁（頁名這次沒有記下）寫的是「Each paid tenancy gets the first 3,000 OCPU hours and 18,000 GB hours per month for free」，對象是付費 tenancy，相當於 4 OCPU、24 GB 整月開著。這個 tenancy 是付費帳戶：重建腳本實跑之前，同一個 tenancy 已經有三台各 1 OCPU、6 GB 的 A1 主機在跑（2026-10-27 用 `oci compute instance list` 查到 `verify-a1-ol`、`verify-origin`、`verify-ubuntu` 三台是 `RUNNING`），腳本建出的第四台讓合計變成 4 OCPU、24 GB，剛好等於付費 tenancy 每月的免費量，建立沒有被擋下。試用結束那一刻、A1 合計超過 2 OCPU、12 GB 就全部停用的規則，只管沒有升級的帳號（帳號篇〈Always Free 的額度與它綁在 home region 上的範圍〉）；付費帳戶超出免費量的部分照一般價格計費（帳號篇〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉）。免費量是帳務的規則，能建出幾個 OCPU 由 compute 的 service limit 決定，兩者是分開的：查法跟下面開機磁碟那一項同一組，`oci limits definition list -c <tenancy 的 OCID> --service-name compute` 先找出 A1 的 OCPU 與記憶體限制名稱，再用 `oci limits resource-availability get` 帶那個名稱與 `--availability-domain <可用網域>` 查（兩條都沒有實跑）。超出免費量時，停止主機對 OCPU 與記憶體費用的影響見 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)〈暫停期間仍在計費的資源〉；停止的主機的開機磁碟照樣佔著區塊磁碟額度。
+- **開機磁碟**：每台的開機磁碟從 Always Free 的 200 GB 區塊磁碟額度裡扣。這顆磁碟有三種寫法：序列主控台記下的開機輸出寫 `[sda] 97677312 512-byte logical blocks: (50.0 GB/46.6 GiB)`；`oci bv boot-volume list` 對 `verify-ubuntu` 回 `size-in-mbs` 47694，正好是 97677312 × 512 位元組換成 MiB；同一條回的 `size-in-gbs` 是 47，是 46.6 GiB 進位。另外兩台 Oracle Linux 主機的 `size-in-mbs` 是 47719，換成 GiB 同樣是 46.6，`size-in-gbs` 同樣是 47。每顆磁碟的大小與額度的用量用下面三條查（2026-10-27 實跑）。`<tenancy 的 OCID>` 是最上層 compartment（root）的 OCID，`~/.oci/config` 裡 `tenancy=` 那一行就是它。這次的 compartment 直接建在 root 底下，所以 `oci iam compartment get --compartment-id <compartment 的 OCID> --query 'data."compartment-id"' --raw-output` 印出的上一層也是 tenancy 的 OCID（實跑，跟 `tenancy=` 的值相同）；compartment 是巢狀的時候，這條印出的是另一個 compartment，要讀 `~/.oci/config`。
+
+  ```bash
+  # 列出每顆還沒終止的開機磁碟與它的大小；<可用網域> 是建主機時用的那一個
+  oci bv boot-volume list -c <compartment 的 OCID> --availability-domain <可用網域> \
+    --query 'data[?"lifecycle-state"!=`TERMINATED`].{name:"display-name",gb:"size-in-gbs",mb:"size-in-mbs"}' --output table
+  # 列出區塊儲存的限制名稱；區域層的免費額度叫 total-free-storage-gb-regional，
+  # 可用網域層另有一個 total-free-storage-gb，這個 tenancy 兩者的上限都是 200。
+  # 建立磁碟時是哪一個在擋（還是兩個都要有餘量），這次沒有查證
+  oci limits definition list -c <tenancy 的 OCID> --service-name block-storage --all \
+    --query 'data[].{name:name,desc:description,scope:"scope-type"}' --output table
+  # 查用量：used 是已經扣掉的量，available 是還剩的量。
+  # 查可用網域層那一個時，--limit-name 換成 total-free-storage-gb，並加 --availability-domain <可用網域>
+  oci limits resource-availability get -c <tenancy 的 OCID> --service-name block-storage \
+    --limit-name total-free-storage-gb-regional
+  ```
+
+  2026-10-27 終止 `verify-ubuntu-rebuild` 之後查，剩三台主機時回 `"used": 141`、`"available": 59`，可用網域層那一個查出來的數字相同。這個 tenancy 裡只有這一個 compartment（`oci iam compartment list -c <tenancy 的 OCID> --compartment-id-in-subtree true --all` 只列出它），它與 root 底下都沒有開機磁碟以外的區塊磁碟（兩處的 `oci bv volume list -c <…的 OCID>` 都列不出任何一顆，root 底下也沒有開機磁碟；都是實跑），而 141 正好是三顆 `size-in-gbs` 47 的合計；三顆的 MiB 加起來是 139.8 GiB，總和進位會是 140，所以進位是每一顆各自做的。由此推論額度扣的數字就是每顆磁碟的 `size-in-gbs`：照預設大小建的主機，每台扣 47（額度以 GB 標示，數值是 46.6 GiB 進位），不是 50。照這個推算，終止 `verify-ubuntu-rebuild` 之前四台同時存在時合計扣 188，額度還剩 12（四台同時存在時沒有查用量，那台照同一個映像檔與預設大小算 47）；第五台的 47 會超過 200，帳號篇〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉記的官方寫法是付費帳戶超出的部分照一般價格計費；而區塊儲存另有上限 200 的 `total-free-storage-gb-regional` 這條 limit，超出時這條 limit 是否擋下建立，這次沒有試。網頁主控台的 Limits, quotas and usage 頁（路徑在 [Oracle Cloud 主控台導覽：頂端列、導覽選單的分類、清單頁的 compartment 篩選器與常用頁面的路徑](/infra/cloud-providers/oracle-cloud/console-navigation/)）這次沒有看。超出 200 GB 之後要知道有沒有開始計費，可以用下面 NAT gateway 那一項的 usage API 查詢，看 Block Storage 底下除了 `Block Volume - Free` 有沒有多出別的 SKU（推論，這次沒有超出過）。
 - **出站流量**：每月前 10 TB 免費（Oracle〈Virtual Cloud Network Pricing〉），這台只拿來下載套件。
-- **NAT gateway**：2026-10-26 讀到的〈Virtual Cloud Network Pricing〉頁沒有列 NAT gateway 這一項，它是否收費這次沒有確認；查法是網頁主控台的 Billing & Cost Management → Cost Analysis，依服務分組看有沒有網路類的費用。
+- **NAT gateway**：Oracle 的 [Cloud Price List](https://www.oracle.com/cloud/price-list/)（2026-10-27 讀）在 Networking 那一節只列入站流量與出站流量，沒有 NAT gateway 這一項；[Virtual Cloud Network Pricing](https://www.oracle.com/cloud/networking/virtual-cloud-network/pricing/) 頁同樣只寫區域內的流量、對外的出站流量、Dedicated connectivity 與 site-to-site VPN。實際的帳務用 usage API 依服務與 SKU 分組讀（2026-10-27 實跑）。usage API 讀的是網頁主控台 Cost Analysis 頁（Billing & Cost Management → Cost Management → Cost Analysis）背後同一份用量資料，CLI 的服務名是 `usage-api`；SKU 是帳務明細上的計費品項，例如 `Standard - A1`。`--query` 收的是 JMESPath 運算式，上一項 `boot-volume list` 的篩選也是：
+
+  ```bash
+  # COST 換成 USAGE 時印的是用量。要看每一項記在哪個資源上，--group-by 加 "resourceId"，
+  # --query 的投影也要加 res:"resource-id"，否則表格裡不會多出資源那一欄（兩處都改過的版本實跑過）
+  # 起訖填要看的那幾天（UTC），這次只用過日界的整點
+  # tenancy 的 OCID 跟上一項 oci limits 用的是同一個。這次 CLI 設定的區域就是 home region，
+  # 沒有試從其他區域呼叫 usage API 的結果
+  oci usage-api usage-summary request-summarized-usages --tenant-id <tenancy 的 OCID> \
+    --time-usage-started 2026-10-24T00:00:00Z --time-usage-ended 2026-10-27T00:00:00Z \
+    --granularity DAILY --query-type COST --group-by '["service","skuName"]' \
+    --query 'data.items[].{day:"time-usage-started",service:service,sku:"sku-name",cost:"computed-amount",qty:"computed-quantity"}' \
+    --output table
+  ```
+
+  `verify-nat` 在 2026-10-26 13:18（UTC）建立，同一天 19:11（UTC，台北時間 10-27 03:11）前後刪除，存在約 6 小時，整段都落在明細的 2026-10-26 那一天裡（區間延長到 10-28 重查，明細也只到 10-26）。那一天的明細只有四項：Compute 的 `Standard - A1` 與 `Standard - A1 - Memory`、Block Storage 的 `Block Volume - Free`、Virtual Cloud Network 的 `Outbound Data Transfer Zone 2`，金額都是 0，沒有 NAT gateway 的項目。出站流量那一項以 `resourceId` 分組時有四筆，都記在 VNIC 上；用 `oci network vnic get` 對回去，其中一筆是 `verify-ubuntu` 的 VNIC（它只經 NAT gateway 出站），一筆是有公開 IP 的 `verify-origin`，另外兩筆的 VNIC 已經隨主機刪掉、查不到。所以經 NAT gateway 出去的流量記在送出流量的那台主機的 VNIC 上、照出站流量計，算進每月 10 TB 的免費量（從這一天的明細推論）。`verify-ubuntu` 那一筆是一整天的合計，NAT gateway 建立之前它也經 service gateway 送封包到 Oracle 服務網路，這次沒有把兩段分開，所以沒有確認這一筆裡經 NAT 的流量佔多少，也沒有確認 service gateway 那段是否計入出站流量。這只涵蓋 NAT gateway 存在的那約 6 小時；查詢是在 2026-10-26 19:3x（UTC）做的，那一天還沒結束，而這次也沒有查 usage API 的資料會延遲多久才出現，所以那一天的明細可能還不完整。`verify-nat` 已經刪除（〈刪除這組資源的順序〉），沒有讀完一個帳單週期的 Cost Analysis；隔幾天用同一條查詢、起訖涵蓋 10-26 重查一次，就能確認那一天的明細補齊之後有沒有多出 NAT gateway 的項目。`Outbound Data Transfer Zone 2` 的 Zone 是帳務替出站流量分的區；價目表依流量的出發地分成北美歐洲英國、亞太日本南美、中東非洲三組，三組的前 10 TB 都免費，Zone 2 對應哪一組這次沒有查。
+
+  所以就兩份價目頁與建立當天的明細來看，NAT gateway 本身沒有收費項目，開一個 NAT gateway 多出的費用只有經它出去的流量，而流量照一般的出站流量計、先扣每月 10 TB 的免費量。這是推論：證據只涵蓋約 6 小時、而且那一天的明細可能還不完整，也沒有讀完一個帳單週期；這次也沒有查 Oracle 的 NAT gateway 文件是否明文寫了收費規則。
 
 ## 刪除這組資源的順序
 
-順序跟建立相反：每一步拿掉的，都是會擋下下一步刪除的引用。指令裡要填的值的來源：`<NAT gateway 的 OCID>` 與 `<NSG 的 OCID>` 是 `ids.env` 的 `NAT` 與 `NSGU`（重建腳本跑過一次就會記進去；沒跑過的話，用 `oci network nat-gateway list -c <compartment 的 OCID> --vcn-id <VCN 的 OCID> --display-name verify-nat --query 'data[0].id' --raw-output` 與同樣寫法的 `oci network nsg list … --display-name verify-ubuntu-egress` 查，兩條沒有實跑），`<Oracle 服務網路的目的地名稱>` 是 `SGCIDR`，`<路由表的 OCID>` 與 `<service gateway 的 OCID>` 是 `RT` 與 `SG`；`<VNIC 的 OCID>` 用 `oci compute instance list-vnics --instance-id <主機的 OCID> --query 'data[0].id' --raw-output` 查，`<連線的 OCID>` 用〈序列主控台：RSA 金鑰、建立連線、ProxyJump 設定與看到的開機輸出〉的 `instance-console-connection list` 查（把 `--query` 換成 `'data[0].id'`）。
+順序跟建立相反，依賴有兩組，兩組之間互不依賴：NSG 要先從 VNIC 拿掉才刪得掉，NAT gateway 要先不再被路由表指著才刪得掉；終止主機時 VNIC 與序列主控台連線跟著消失。指令裡要填的值的來源：`<NAT gateway 的 OCID>` 與 `<NSG 的 OCID>` 是 `ids.env` 的 `NAT` 與 `NSGU`，同一個鍵有好幾行時取最後一行，`source ids.env` 之後用 `$NAT`、`$NSGU` 拿到的就是最後一行的值（重建腳本跑過一次就會記進去；沒跑過的話，用 `oci network nat-gateway list -c <compartment 的 OCID> --vcn-id <VCN 的 OCID> --display-name verify-nat --query 'data[0].id' --raw-output` 與同樣寫法的 `oci network nsg list … --display-name verify-ubuntu-egress` 查，兩條沒有實跑），`<Oracle 服務網路的目的地名稱>` 是 `SGCIDR`，`<路由表的 OCID>` 與 `<service gateway 的 OCID>` 是 `RT` 與 `SG`；`<VNIC 的 OCID>` 用 `oci compute instance list-vnics --instance-id <主機的 OCID> --query 'data[0].id' --raw-output` 查，`<主機的 OCID>` 是 `host-<名稱>.env` 最後一行的 `IID`（沒有這個檔時，用〈被回收之後的重建：怎麼發現、留下與消失的資源、重建腳本〉的 `instance list` 查），`<連線的 OCID>` 用〈序列主控台：RSA 金鑰、建立連線、ProxyJump 設定與看到的開機輸出〉的 `instance-console-connection list` 查（把 `--query` 換成 `'data[0].id'`）。
 
-主機也要一起刪時，先做終止主機那一步（第 6 步），再刪 NSG、改路由表、刪 NAT gateway：VNIC 隨主機一起消失，序列主控台連線變成 `DELETED`，所以從 VNIC 拿掉 NSG 那一步（第 1 步）與刪序列主控台連線那一步（第 5 步）可以省略。留著主機、只收掉出站設定時，做從 VNIC 拿掉 NSG 到刪 NAT gateway 那四步（第 1 到第 4 步）；排查到一半、序列主控台連線還在時，再加刪連線那一步（第 5 步）：
+主機也要一起刪時，先做終止主機那一步（第 6 步），再刪 NSG、改路由表、刪 NAT gateway：VNIC 隨主機一起消失，序列主控台連線變成 `DELETED`，所以從 VNIC 拿掉 NSG 那一步（第 1 步）與刪序列主控台連線那一步（第 5 步）可以省略。留著主機、只收掉出站設定時，做從 VNIC 拿掉 NSG 到刪 NAT gateway 那四步（第 1 到第 4 步）；排查到一半、序列主控台連線還在時，再加刪連線那一步（第 5 步）。第 1 到第 4 步帶的 `--wait-for-state` 讓 CLI 等到這一步的資源回到 `AVAILABLE` 或變成 `TERMINATED` 才回傳，同一組依賴裡，後一步的刪除依賴前一步已經生效（NSG 要先從 VNIC 拿掉才刪得掉，路由表要先不再指著 NAT gateway 它才刪得掉）；2026-10-26 那一次刪除沒有帶，這次帶了，兩種寫法在同一組資源上的差別沒有比較：
 
-1. 把 NSG 從主機的 VNIC 拿掉：`oci network vnic update --vnic-id <VNIC 的 OCID> --nsg-ids '[]' --force`（VNIC 另外掛著別的 NSG 時，清單裡留下那幾個）。NSG 還掛在 VNIC 上時刪不掉：2026-10-26 刪另一組實驗資源（一個公開子網路、它的路由表與 security list、一個 internet gateway 與一個 NSG）時，`nsg delete` 回 `412 PreconditionFailed`，訊息是 `cannot be deleted since it still has vnics attached to it`。
-2. 刪 NSG：`oci network nsg delete --nsg-id <NSG 的 OCID> --force`。
-3. 路由表改回只有 service gateway 那一條：`oci network route-table update --rt-id <路由表的 OCID> --force --route-rules '[{"destination":"<Oracle 服務網路的目的地名稱>","destinationType":"SERVICE_CIDR_BLOCK","networkEntityId":"<service gateway 的 OCID>"}]'`。路由表還指著 NAT gateway 時，NAT gateway 刪不掉（從同一次刪除裡 internet gateway 回的 `409 Conflict` 推論，那一次的訊息是路由表還引用著那個 internet gateway；NAT gateway 這次沒有實測）。`--route-rules` 是整份替換，路由表裡還有 service gateway 與 0.0.0.0/0 以外的規則時，要把它們一起寫進清單，否則會跟著被刪掉；先用〈加出站：NAT gateway、路由規則與只掛在這台主機上的 NSG〉的 `route-table get` 列出現有的規則。
-4. 刪 NAT gateway：`oci network nat-gateway delete --nat-gateway-id <NAT gateway 的 OCID> --force`。
+1. 把 NSG 從主機的 VNIC 拿掉：`oci network vnic update --vnic-id <VNIC 的 OCID> --nsg-ids '[]' --force --wait-for-state AVAILABLE`。`--nsg-ids` 是整份替換，先用 `oci network vnic get --vnic-id <VNIC 的 OCID> --query 'data."nsg-ids"'` 列出 VNIC 現在掛著的 NSG（2026-10-27 實跑，只列出 `verify-ubuntu-egress` 一個）；清單裡還有別的 NSG 時，`'[]'` 換成去掉 `<NSG 的 OCID>` 之後的清單，否則別的 NSG 會一起被拿掉。NSG 還掛在 VNIC 上時刪不掉：2026-10-27 先試刪 `verify-ubuntu-egress`，`nsg delete` 回 `412 PreconditionFailed`，訊息是 `cannot be deleted since it still has vnics attached to it`；2026-10-26 刪另一組實驗資源的 NSG 時也是同一個回應。
+2. 刪 NSG：`oci network nsg delete --nsg-id <NSG 的 OCID> --force --wait-for-state TERMINATED`。
+3. 路由表改回只有 service gateway 那一條：`oci network route-table update --rt-id <路由表的 OCID> --force --wait-for-state AVAILABLE --route-rules '[{"destination":"<Oracle 服務網路的目的地名稱>","destinationType":"SERVICE_CIDR_BLOCK","networkEntityId":"<service gateway 的 OCID>"}]'`。路由表還指著 NAT gateway 時，NAT gateway 刪不掉：2026-10-27 在改路由表之前先試刪 `verify-nat`，`nat-gateway delete` 回 `400 InvalidParameter`，訊息裡包著內層的 `409, Conflict`：`The Route Table references the NAT_GATEWAY <NAT gateway 的 OCID>. You must remove the reference to proceed with this operation.`。外層的回應碼是 400 而不是 409，寫腳本或排查的人只看回應碼時，會把它讀成參數錯誤，要讀到 `message` 裡的那一句才知道是路由表的引用。`--route-rules` 是整份替換，路由表裡還有 service gateway 與 0.0.0.0/0 以外的規則時，要把它們一起寫進清單，否則會跟著被刪掉；先用〈加出站：NAT gateway、路由規則與只掛在這台主機上的 NSG〉的 `route-table get` 列出現有的規則。
+4. 刪 NAT gateway：`oci network nat-gateway delete --nat-gateway-id <NAT gateway 的 OCID> --force --wait-for-state TERMINATED`。
 5. 刪序列主控台連線：`oci compute instance-console-connection delete --instance-console-connection-id <連線的 OCID> --force --wait-for-state DELETED`。連線平時不留（〈序列主控台：RSA 金鑰、建立連線、ProxyJump 設定與看到的開機輸出〉），所以只有排查到一半、連線還在的時候才需要這一步。這一條的 `--wait-for-state` 收的是連線本身的狀態（2026-10-27 實跑，10 秒後 `DELETED`），跟終止主機那一步收 work request 狀態的 `terminate` 不同。主機終止時連線也會跟著變成 `DELETED`（終止主機那一步實跑時看到的）。
 6. 終止主機並刪掉開機磁碟：`oci compute instance terminate --instance-id <主機的 OCID> --preserve-boot-volume false --force --wait-for-state SUCCEEDED --wait-for-state FAILED`。`terminate --help` 列出 `--wait-for-state` 只接受 work request 的四種狀態（`ACCEPTED`、`IN_PROGRESS`、`FAILED`、`SUCCEEDED`），所以寫成主機的 `TERMINATED` 時，CLI 會以參數錯誤結束、請求不會送出（從 `--help` 推論，沒有實跑）。
 
-2026-10-27 對重建腳本建出的 `verify-ubuntu-rebuild` 實跑了終止主機那一步：work request 66 秒後 `SUCCEEDED`，主機變成 `TERMINATED`，那台的序列主控台連線變成 `DELETED`；用 `oci bv boot-volume list` 加上 `lifecycle-state != TERMINATED` 的篩選列出開機磁碟時，清單裡已經沒有那顆磁碟。[Oracle Cloud 建立主機的實測紀錄：建立前的檢查、前置網路、主控台各分頁的 Always Free 設定值、等效的 CLI 指令、容量不足的重送、Bastion 工作階段逾時、Run Command 補公鑰的嘗試與重建後經由 port forwarding 登入](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)（建主機那篇）〈刪除這組資源的順序〉寫的是開機磁碟的狀態變成 `TERMINATED`，篩掉 `TERMINATED` 之後就不在清單裡，兩者不衝突。NSG、路由規則與 NAT gateway 還有 `verify-ubuntu` 在用，所以沒有刪。從 VNIC 拿掉 NSG 到刪 NAT gateway 那四步這次沒有實跑，各項刪不掉時，看錯誤訊息指出的那一項依賴、先刪它。網路、Bastion 與 compartment 的刪除順序在建主機那篇〈刪除這組資源的順序〉。
+2026-10-27 對重建腳本建出的 `verify-ubuntu-rebuild` 實跑了終止主機那一步：work request 66 秒後 `SUCCEEDED`，主機變成 `TERMINATED`，那台的序列主控台連線變成 `DELETED`；用 `oci bv boot-volume list` 加上 `lifecycle-state != TERMINATED` 的篩選列出開機磁碟時，清單裡已經沒有那顆磁碟。[Oracle Cloud 建立主機的實測紀錄：建立前的檢查、前置網路、主控台各分頁的 Always Free 設定值、等效的 CLI 指令、容量不足的重送、Bastion 工作階段逾時、Run Command 補公鑰的嘗試與重建後經由 port forwarding 登入](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)（建主機那篇）〈刪除這組資源的順序〉寫的是開機磁碟的狀態變成 `TERMINATED`，篩掉 `TERMINATED` 之後就不在清單裡，兩者不衝突。
+
+同一天留著 `verify-ubuntu`、照從 VNIC 拿掉 NSG 到刪 NAT gateway 那四步（第 1 到第 4 步）收掉它的出站設定（實跑）：四條各在 1 到 2 秒內結束，結束碼都是 0；之後 `nat-gateway get` 與 `nsg get` 都回 `404 NotAuthorizedOrNotFound`，兩者的 `list` 也已經列不出來，路由表剩 service gateway 那一條。主機上的 `apt-get update` 回到〈只接 service gateway 的私有子網路：apt 連到套件來源時的錯誤原文與成因〉那一節的錯誤：IPv6 位址印 `Network is unreachable`，IPv4 位址印 `connection timed out`。刪掉之後，`ids.env` 的 `NAT` 與 `NSGU` 指向已經不存在的資源；重建腳本依名稱查 NAT gateway 與 NSG，查不到 `AVAILABLE` 的同名資源就重建並記下新的 OCID，所以要恢復出站時重跑重建腳本（依腳本的邏輯推論，並用假的 `oci` 測過：上面測試表的「NAT gateway 與 NSG 都不存在、路由表少一條」那一列；刪除之後沒有在雲端重跑）。新的 OCID 以新的一行接在 `ids.env` 檔尾，舊的那一行還在；`source` 時後面那一行蓋過前面的，手動抄值時取最後一行。
+
+**只暫停出站、不刪資源的做法**（三種都沒有實跑，結果依 `--help` 與重建腳本的邏輯推論）：NAT gateway 本身看來沒有收費項目（〈費用與額度：A1、開機磁碟、出站流量與 NAT gateway〉），刪掉它換到的主要是帳號裡不留下沒在用的資源，代價是重建之後 NAT gateway 與 NSG 的 OCID 都換了，NAT gateway 的出站 IP 也會換：在第三方服務用這個 IP 做白名單的話，白名單要跟著改（`nat-gateway create --public-ip-id <保留公開 IP 的 OCID>` 可以讓重建的 NAT gateway 沿用一個保留的公開 IP，沒有實跑，保留 IP 是否收費沒有查）。只想暫停時有三種做法：
+
+- **只拿掉路由表的 0.0.0.0/0 那一條**：做第 3 步就好。要恢復時重跑重建腳本，路由那一步查到少了 0.0.0.0/0，會印「改寫」補回來。
+- **只把 NSG 從 VNIC 拿掉**：做第 1 步就好。security list 不放行網際網路出站（〈加出站：NAT gateway、路由規則與只掛在這台主機上的 NSG〉），所以出站跟著斷掉。要恢復時重跑重建腳本，掛 NSG 那一步查到 VNIC 沒有掛它，會印「改寫」重新掛上。
+- **`oci network nat-gateway update --nat-gateway-id <NAT gateway 的 OCID> --block-traffic true`**：NAT gateway 停止轉送流量，路由與 NSG 都不動。要恢復時要另外跑同一條、帶 `--block-traffic false`：重建腳本只依名稱與 `AVAILABLE` 找 NAT gateway，被設成擋流量的 NAT gateway 仍然是 `AVAILABLE`，腳本每一步都印「已存在」、以 0 結束，出站卻還是不通，`apt-get update` 回到逾時，沒有任何訊息指出原因。
+
+各項刪不掉時，看錯誤訊息指出的那一項依賴、先刪它。網路、Bastion 與 compartment 的刪除順序在建主機那篇〈刪除這組資源的順序〉。
 
 ## 延伸閱讀：建主機的前置網路、閒置回收的規則、序列主控台的比較、主機上的更新與 NAT 閘道的計費
 

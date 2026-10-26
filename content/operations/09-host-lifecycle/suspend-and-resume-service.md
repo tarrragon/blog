@@ -53,7 +53,7 @@ tags: ["operations", "maintenance", "cost-management", "dns", "cdn"]
 - **磁碟**：開機磁碟與資料磁碟只要存在就佔用儲存，業者的區塊儲存依佈建的容量按月計價，文件沒有針對主機停止另寫例外（這一點是從價目的計法推論，沒有在帳單上看過）。終止主機時開機磁碟的預設去留各家不同：預設保留的業者（Oracle Cloud 是這一種），終止之後磁碟仍在、仍佔免費帳號的區塊儲存額度。[磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/infra/cloud-providers/vm-options/storage/) 的〈刪除（終止）主機時開機磁碟的預設去留〉一節列出各家的預設與欄位名稱。
 - **公開 IP**：保留的 IP 存在到被刪除為止，有些業者在 IP 沒有附在執行中的主機上時另外計費；AWS 對所有公開 IPv4 計費，包括附在執行中主機上的那些。各家要在價目表逐項查。
 - **備份與快照**：依容量計費，刪除主機不會刪除它們。
-- **網路元件**：負載平衡器、NAT 閘道、bastion 這類元件，在多數業者依存在的時間計費（例如 AWS 的 NAT Gateway），跟後面的主機有沒有在執行無關；也有業者的同類元件不另外收費，各家要在價目表逐項查。
+- **網路元件**：負載平衡器、NAT 閘道、bastion 這類元件，在多數業者依存在的時間計費（例如 AWS 的 NAT Gateway），跟後面的主機有沒有在執行無關；也有業者的同類元件不另外收費（例如 Oracle Cloud 的價目表沒有 NAT gateway 這一項，見 [雲端免費額度與小型主機的收費比較：試用金與固定額度、計費單位、區域限制、試用結束後的處置、出站流量與查價項目](/infra/cloud-providers/pricing-comparison/)〈查付費主機價格時要輸入的項目〉），各家要在價目表逐項查。
 - **主機以外的服務**：網域的註冊費、DNS 的代管費（有些業者依 zone 按月收費）、CDN 與監控 SaaS 的付費方案。
 
 免費方案的額度同樣要算進來：免費的區塊儲存額度是開機磁碟與資料磁碟合計，保留下來的磁碟也佔著它，合計的範圍見 [Oracle Cloud 的帳號結構與 home region：tenancy、Always Free 的範圍與主控台登入欄位](/infra/cloud-providers/oracle-cloud/account-and-home-region/)〈Always Free 的額度與它綁在 home region 上的範圍〉。

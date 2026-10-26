@@ -29,7 +29,7 @@ OCI 的免費方案有兩個部分。試用金是 300 美元、30 天內有效�
 - **Ampere A1（`VM.Standard.A1.Flex`，ARM）**：每月 1,500 OCPU 小時與 9,000 GB 小時的記憶體，相當於 2 OCPU、12 GB 記憶體整個月開著。可以全部給一台，也可以拆成兩台各 1 OCPU。付費 tenancy 的免費量比這個大：2026-10-26 讀到的 Oracle 的 Compute 價目頁（頁名這次沒有記下）寫的是「Each paid tenancy gets the first 3,000 OCPU hours and 18,000 GB hours per month for free」，也就是每月 3,000 OCPU 小時、18,000 GB 小時，相當於 4 OCPU、24 GB 整個月開著。OCI 的 OCPU 是一顆實體核心，跟其他業者以 vCPU 計價時的單位不同，比較時見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
 - **AMD Micro（`VM.Standard.E2.1.Micro`，x86）**：最多兩台，每台 1/8 OCPU、1 GB 記憶體。
 
-儲存與網路另有額度：開機磁碟與區塊磁碟合計 200 GB（每台主機的開機磁碟預設 50 GB，這 50 GB 從同一份 200 GB 額度裡扣）、備份最多 5 份、出站流量每月 10 TB；試用結束後沒有升級的 Free Tier tenancy，VCN 最多 2 個。
+儲存與網路另有額度：開機磁碟與區塊磁碟合計 200 GB（每台主機的開機磁碟預設 50 GB，從同一份 200 GB 額度裡扣）、備份最多 5 份、出站流量每月 10 TB；試用結束後沒有升級的 Free Tier tenancy，VCN 最多 2 個。預設 50 GB 的開機磁碟實際扣 47 GB 額度，數值是 46.6 GiB 進位（2026-10-27 從用量推論），查法見 [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈費用與額度：A1、開機磁碟、出站流量與 NAT gateway〉。
 
 **運算與區塊磁碟的 Always Free 額度只能用在 home region。** Free Tier 頁寫的是「You can provision Always Free Autonomous AI Databases and compute instances only in the home region」；Always Free Resources 頁對區塊磁碟的原文是「the volume must be created in the home region of the tenancy」。升級成付費帳戶並訂閱其他區域之後，建在 home region 以外那些訂閱區域的主機照一般價格計費。
 
