@@ -6,7 +6,7 @@ weight: 1
 tags: ["operations", "maintenance", "ansible", "terraform", "toml", "systemd", "hands-on"]
 ---
 
-> **事件說明**：2026-10-26，在一台 Apple Silicon 的 macOS 開發機上，用 OrbStack 提供的 Docker Engine 29.8.2（核心 `7.2.12-orbstack`，arm64，[cgroup（控制群組）](/backend/knowledge-cards/cgroup/) v2）建立可拋棄的容器，把多台主機的維護清單從 Terraform 產生 inventory、用 Ansible 部署到兩台主機並執行檢查腳本。受管主機（managed node，Ansible 連過去執行任務的主機）是兩個 Oracle Linux 10.2 容器（systemd 257 當 PID 1，OpenSSH 9.9p1、Python 3.12.15、sudo 1.9.17、dnf-automatic 4.20.0），以 `--privileged --cgroupns=private` 執行。控制端（control node，執行 `ansible` 與 Terraform 指令的機器）是一個 `python:3.12-slim` 容器（Debian 13，OpenSSH 用戶端 10.0p2），裝 ansible-core 2.17.7（Jinja2 3.1.6）與 Terraform 1.9.8，Terraform 的 `hashicorp/local` provider（Terraform 操作某一類資源的外掛）是 2.5.2。檢查腳本是沒有公開的 `host-check.py`（2026-10-26 的版本），原樣複製一份來用。
+> **事件說明**：2026-10-26，在一台 Apple Silicon 的 macOS 開發機上，用 OrbStack 提供的 Docker Engine 29.8.2（核心 `7.2.12-orbstack`，arm64，[cgroup（控制群組）](/backend/knowledge-cards/cgroup/) v2）建立可拋棄的容器，把多台主機的維護清單從 Terraform 產生 inventory、用 Ansible 部署到兩台主機並執行檢查腳本。受管主機（managed node，Ansible 連過去執行任務的主機）是兩個 Oracle Linux 10.2 容器（systemd 257 當 PID 1，OpenSSH 9.9p1、Python 3.12.15、sudo 1.9.17、dnf-automatic 4.20.0），以 `--privileged --cgroupns=private` 執行。控制端（control node，執行 `ansible` 與 Terraform 指令的機器）是一個 `python:3.12-slim` 容器（Debian 13，OpenSSH 用戶端 10.0p2），裝 ansible-core 2.17.7（Jinja2 3.1.6）與 Terraform 1.9.8，Terraform 的 `hashicorp/local` provider（Terraform 操作某一類資源的外掛）是 2.5.2。檢查腳本是 `host-check.py` 在 2026-10-26 的版本（作者私有專案的 commit `3fc41c0`），原樣複製一份來用，它的原始碼在 [只讀檢查腳本 host-check.py 的原始碼與逐段說明：選項的切分與各工具的白名單規則、清單的載入與驗證、指令的執行、各項檢查、路徑與時間的量測、結果檔與命令列，以及這一版的已知限制](/operations/09-host-lifecycle/hands-on/host-check-script-source/)。
 
 這篇把 [多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/operations/09-host-lifecycle/multi-host-manifest/) 的做法在兩台可拋棄的受管主機上從安裝走到清理，一台只當 web、另一台同時是 web 與 db。各節依序是：
 
@@ -41,7 +41,7 @@ tags: ["operations", "maintenance", "ansible", "terraform", "toml", "systemd", "
           ├── group_vars/db.yml      # db 角色的值
           ├── host_vars/mh-web1.yml  # 只有 mh-web1 不同的值
           ├── host.toml.j2           # 清單的範本
-          ├── files/host-check.py    # 檢查腳本
+          ├── files/host-check.py    # 檢查腳本（由原始碼那一篇的區塊接成）
           ├── deploy.yml             # 部署腳本與清單的 playbook
           └── check.sh               # 對每台執行檢查的 ad-hoc 指令（不寫 playbook、直接執行單一模組）
   ```
@@ -54,7 +54,7 @@ tags: ["operations", "maintenance", "ansible", "terraform", "toml", "systemd", "
 
   `ansible/` 與 `tf/` 目錄要在起控制端容器之前建好。`inventory.yml` 跟 `group_vars/`、`host_vars/` 放在同一個目錄，是 Ansible 載入這兩個目錄的條件：Ansible 從 inventory 檔所在的目錄（以及 playbook 所在的目錄）找 `group_vars/` 與 `host_vars/`。
 
-- **檢查腳本**：`host-check.py` 沒有公開，照著做時換成自己的檢查腳本。這篇的步驟用到的腳本行為有下面這幾項，替代的腳本要全部滿足，或照它的行為改寫對應的步驟：
+- **檢查腳本**：`host-check.py` 的原始碼在 [只讀檢查腳本 host-check.py 的原始碼與逐段說明：選項的切分與各工具的白名單規則、清單的載入與驗證、指令的執行、各項檢查、路徑與時間的量測、結果檔與命令列，以及這一版的已知限制](/operations/09-host-lifecycle/hands-on/host-check-script-source/)，把那一篇的 `python` 區塊照它開頭寫的接法接起來，存成 `files/host-check.py`。換成自己的檢查腳本時，這篇的步驟用到的腳本行為有下面這幾項，替代的腳本要全部滿足，或照它的行為改寫對應的步驟：
   - 有一個只載入與驗證清單、不執行檢查的函式或模式，清單格式錯時以非零結束（`host-check.py` 是 `load_manifest()`，格式錯時丟出例外）；部署時的 `validate` 用它。
   - exit code 0 代表沒有 `WARN`、1 代表至少一項 `WARN`、2 代表清單格式錯；跨主機的輸出靠每台的 `rc` 分出這三種情形（`rc` 是 Ansible 回報的、那台主機上指令的 return code，執行檢查時就是檢查腳本的 exit code）。
   - 結尾一定印一行 `summary:`；腳本沒有開始或沒有跑完時，靠這一行分辨。
@@ -333,7 +333,7 @@ min_free_bytes: 2147483648       # 這台的根檔案系統至少留 2 GiB
 - **`[listen_audit]` 是 `protocols` 與 `allow`**：允許接聽的連接埠由兩處合起來，`where = "host"` 的每一筆 `[[entrypoint]]` 自動算進去，`allow` 只寫入口以外、刻意允許的連接埠（每一筆是 `{ port, protocol, reason }`）。所以入口的串列取聯集之後，`listen_audit` 就跟著有了兩個角色的連接埠，`allow` 這次是空的。
 - **`[[filesystem]]` 的門檻是 `min_free_bytes`**：剩餘空間的位元組數下限。
 - **`exposure` 只能是 `public`、`cdn-only`、`admin-only`、`loopback`**：寫了清單外的值（例如 `private`）時，檢查腳本把清單判成格式錯（exit code 2），〈一台變成 WARN、一台清單格式錯、一台連不上：ansible 的 exit code 與每台的 rc〉實測過。
-- **`[[entrypoint]]` 要有 `protocol`、`where`、`enforced_by`，每一層防護各一筆 `[[entrypoint.verify]]`**：`enforced_by` 列出這個入口靠哪幾種防護限制來源（雲端防火牆、主機防火牆這類），每一種是一「層」，各寫一筆 `[[entrypoint.verify]]` 說明怎麼確認那一層。`where` 寫在哪裡要確認：`host` 是檢查腳本在主機上自己確認，`console` 是要人到業者主控台確認。這次每個入口寫一層 `cloud-firewall`，`where = "console"`，執行時印成要到主控台確認的 `MANUAL`。
+- **`[[entrypoint]]` 要有 `protocol`、`where`、`enforced_by`，每一層防護至少一筆 `[[entrypoint.verify]]`**：`enforced_by` 列出這個入口靠哪幾種防護限制來源（雲端防火牆、主機防火牆這類），每一種是一「層」，每一層至少寫一筆 `[[entrypoint.verify]]` 說明怎麼確認那一層（同一層寫兩筆也可以，這次每層寫一筆）。`where` 寫在哪裡要確認：`host` 是檢查腳本在主機上自己確認，`console` 是要人到業者主控台確認。這次每個入口寫一層 `cloud-firewall`，`where = "console"`，執行時印成要到主控台確認的 `MANUAL`。
 - **`[[log]]`、`[[accumulation]]`、`[updates]`、`[[suspend]]`、`[[resume]]` 都是必填**：少了任何一段，腳本判成格式錯。這次各寫一筆最小的內容。`[[suspend]]` 與 `[[resume]]` 的每一步要寫出主機停下來時還計不計費（`billed_when_stopped` 這幾個欄位）；容器沒有計費，填 `unknown`，欄位的意思在 [主機維護清單寫成 TOML：JSON、YAML、TOML 的取捨、TOML 1.0 與 1.1 的版本差異、清單的欄位設計與只讀檢查腳本](/operations/09-host-lifecycle/host-manifest-in-toml/)〈清單欄位的設計：檢查腳本要讀的與人要讀的〉。
 
 跟概念文章那份範本對照：概念文章的範本是示範值怎麼代入的節錄，鍵名有幾個是那篇自己取的，例如它的 `[[filesystem]]` 用 `warn_percent`（使用率的百分比），檢查腳本不認得這個鍵。
@@ -502,7 +502,7 @@ ansible-playbook -i inventory.yml deploy.yml
 
 **這次遇到的錯誤**：建目錄的任務是第一次實跑失敗之後加的。最初的 playbook 只有 copy 與 template 兩個任務，`--check --diff` 預覽時兩台都回報 `changed=2`、`failed=0`；實際執行時兩台都在 copy 那一步失敗，訊息是 `Destination directory /opt/host-check does not exist`，exit code 2。copy 與 template 都不建上層目錄（template 單獨執行時同樣以 `Destination directory … does not exist` 失敗，另外單獨實跑過一次確認），而 check 模式沒有實際寫檔，碰不到這個錯誤，所以預覽的 `failed=0` 不代表實際執行會成功。
 
-**`validate` 用的是檢查腳本自己的載入函式**。[多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/operations/09-host-lifecycle/multi-host-manifest/)〈產生時驗證清單與比對主機上的清單〉的 `validate` 範例只用 `tomllib` 解析，驗得到語法、驗不到欄位。`host-check.py` 的 `load_manifest()` 讀清單並逐欄驗證，格式錯時丟出 `ManifestError`，不執行任何檢查，所以 `validate` 用 `runpy.run_path` 載入腳本、只呼叫這個函式：函式丟出例外時 Python 以 exit 1 結束，Ansible 判成驗證失敗，那一台的清單維持原樣。
+**`validate` 用的是檢查腳本自己的載入函式**。[多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/operations/09-host-lifecycle/multi-host-manifest/)〈產生時驗證清單與比對主機上的清單〉的 `validate` 範例只用 `tomllib` 解析，驗得到語法、驗不到欄位。`host-check.py` 的 `load_manifest()` 讀清單並逐欄驗證（逐欄驗證的程式在原始碼那一篇〈清單的載入與驗證：Probe、_Validator、load_manifest 與 validate〉），格式錯時丟出 `ManifestError`，不執行任何檢查，所以 `validate` 用 `runpy.run_path` 載入腳本、只呼叫這個函式：函式丟出例外時 Python 以 exit 1 結束，Ansible 判成驗證失敗，那一台的清單維持原樣。
 
 - **用 `runpy.run_path` 載入腳本**：腳本開頭有 `from __future__ import annotations`，`dataclass` 要從 `sys.modules` 找到這個模組。`runpy.run_path` 執行期間會把它登記進去，`run_name="hc"` 讓腳本結尾的 `if __name__ == "__main__"` 不成立，`main()` 不會跑。
 - **`%s` 與 `{{ checker_path }}`**：`%s` 由 Ansible 換成暫存檔的路徑，`{{ checker_path }}` 換成上一個任務放好的腳本。`validate` 在受管主機上執行，用的是主機上的 Python 與主機上那一份腳本，所以 copy 的任務要排在 template 之前，主機上的 Python 也要是 3.11 以上（`tomllib`）。
@@ -568,11 +568,11 @@ chmod +x check.sh
 | 2                                  | 至少一台主機的任務失敗（標成 `FAILED!`） |
 | 4                                  | 有主機連不上（標成 `UNREACHABLE!`）      |
 
-| 每台的 `rc`（檢查腳本的 exit code） | 代表            |
-| ----------------------------------- | --------------- |
-| 0                                   | 沒有 `WARN`     |
-| 1                                   | 至少一項 `WARN` |
-| 2                                   | 清單格式錯      |
+| 每台的 `rc`（檢查腳本的 exit code） | 代表                                                                    |
+| ----------------------------------- | ----------------------------------------------------------------------- |
+| 0                                   | 沒有 `WARN`                                                             |
+| 1                                   | 至少一項 `WARN`                                                         |
+| 2                                   | 清單格式錯，或命令列參數錯（stderr 印用法說明而不是 `manifest error:`） |
 
 讀的順序：先看整批的值決定要不要告警，再看每台的 `rc` 決定處置；`rc` 是 1 時另看輸出裡有沒有 `summary:` 那一行。
 
@@ -724,6 +724,7 @@ rm -rf <工作目錄> <工作目錄的上一層>/host-image <工作目錄的上�
 
 - [多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/operations/09-host-lifecycle/multi-host-manifest/)：每台相同、依角色不同、每台不同的分類、合併放在部署時的理由、`to_json` 的跳脫與 YAML 的隱式型別、exit code 2 與 4 的讀法與集中執行的安全代價
 - [主機維護清單寫成 TOML：JSON、YAML、TOML 的取捨、TOML 1.0 與 1.1 的版本差異、清單的欄位設計與只讀檢查腳本](/operations/09-host-lifecycle/host-manifest-in-toml/)：清單每一段的欄位、檢查腳本的白名單、`systemd-run` 各屬性在 Oracle Linux 10 容器上的實測效果與結果檔
+- [只讀檢查腳本 host-check.py 的原始碼與逐段說明：選項的切分與各工具的白名單規則、清單的載入與驗證、指令的執行、各項檢查、路徑與時間的量測、結果檔與命令列，以及這一版的已知限制](/operations/09-host-lifecycle/hands-on/host-check-script-source/)：這篇部署與執行的那支腳本的完整原始碼，`load_manifest` 的逐欄驗證、`summary:` 與各個 exit code 的出口、結果檔的寫法，以及 `runpy` 載入時不執行主程式的條件
 - [Configuration Management（組態管理）](/infra/knowledge-cards/configuration-management/)：inventory、群組變數與主機變數各放什麼；同一個變數在幾層都有值時的合併順序，在概念文章〈用 Ansible 的 inventory、群組變數與範本產生每台的清單〉
 - [State（IaC 狀態檔）](/infra/knowledge-cards/state/)：IaC 工具記錄每個納管資源上一次 apply 之後樣貌的快照，以及它的存放位置、加密與鎖機制
 - [terraform plan / apply](/infra/knowledge-cards/terraform-plan-apply/)：plan 比對 State、雲端現況與設定檔產出差異報告而不改動任何資源，apply 執行那份差異；手改的 inventory 被 plan 判成重新建立的機制，在概念文章〈主機由 Terraform 建立時由它的輸出產生 inventory〉
