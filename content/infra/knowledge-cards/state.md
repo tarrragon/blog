@@ -33,3 +33,4 @@ state 的設定裡事後最難改的是分割策略：資源分進不同的 stat
 - [IaC](/infra/knowledge-cards/iac/) — state 是 IaC 工具的核心依賴
 - [Drift](/infra/knowledge-cards/drift/) — state 與現實的落差
 - [Configuration Management（組態管理）](/infra/knowledge-cards/configuration-management/) — 由 Terraform 的輸出產生 Ansible 的 inventory 時，那份檔案的內容記在 state 裡
+- [多台主機維護清單的實作紀錄：在容器上安裝 ansible-core 與 Terraform、由 Terraform 產生 inventory、用 Ansible 的範本部署每台的清單、以 sudo 與 systemd-run 執行檢查腳本，以及清理](/operations/09-host-lifecycle/hands-on/multi-host-manifest-walkthrough/) — 本機 state 放在掛進容器的工作目錄、清理時先 `terraform destroy` 再刪控制端的實際操作

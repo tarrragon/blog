@@ -27,7 +27,7 @@ plan 輸出的三種動作標記：
 | `-/+` | 先刪後建（forces replacement） | 高（stateful 資源如 RDS 代表資料遺失）                   |
 | `-`   | 刪除資源                       | 高（不可逆）                                             |
 
-review plan 時最需要警惕的是 `-/+`（forces replacement）——看起來只是改一個屬性，但某些屬性的修改會觸發資源重建（例如 RDS 的 `identifier` 改名）。
+review plan 時最需要警惕的是 `-/+`（forces replacement）——看起來只是改一個屬性，但某些屬性的修改會觸發資源重建（例如 RDS 的 `identifier` 改名）。`local_file` 只改 `file_permission` 也會印 `# forces replacement`，實跑的輸出在 [多台主機維護清單的實作紀錄：在容器上安裝 ansible-core 與 Terraform、由 Terraform 產生 inventory、用 Ansible 的範本部署每台的清單、以 sudo 與 systemd-run 執行檢查腳本，以及清理](/operations/09-host-lifecycle/hands-on/multi-host-manifest-walkthrough/)〈由 Terraform 產生 inventory：init、plan、apply 與 local_file 的檔案權限〉。
 
 plan 與 apply 之間可能有時間差。如果 plan 之後、apply 之前有人手動改了雲端資源，apply 時的實際行為可能跟 plan 預期的不同。多數團隊在 apply 階段會重跑一次 plan 並要求結果一致。
 

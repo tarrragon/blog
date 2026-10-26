@@ -8,14 +8,14 @@ tags: ["operations", "maintenance", "ansible", "terraform", "toml"]
 
 這篇處理 [主機維護清單寫成 TOML：JSON、YAML、TOML 的取捨、TOML 1.0 與 1.1 的版本差異、清單的欄位設計與只讀檢查腳本](/operations/09-host-lifecycle/host-manifest-in-toml/) 那份單台清單要套用到好幾台主機時的做法：清單裡的值依「每台相同、依角色不同、每台不同」分類，以及每台各複製一份時，漏改的那一份為什麼沒有任何訊號；合併這些值的步驟可以放在部署時產生每台一份完整的清單、由檢查腳本自己讀多份檔案合併、一份清單裡的項目依角色過濾、或共用一份清單再由執行時的參數覆寫，各自的代價與適用的條件；用 [組態管理](/infra/knowledge-cards/configuration-management/) 工具 Ansible 的 inventory、`group_vars` 與 `host_vars`、Jinja2 範本產生每台清單的實測，包括變數合併的優先順序（同層的兩個群組依名稱排序，`ansible_group_priority` 要寫在 inventory 檔、寫在 `group_vars` 裡沒有效果）、兼任兩種角色的主機、YAML 把 `no` 讀成 `false`、用 `to_json` 把值寫進 TOML 時的跳脫與 BMP 以外字元被拒、範本的 `{{ }}` 與清單自己的替換語法同形時的兩種結果，以及在產生的那一步就驗證清單；主機由 Terraform 建立時，由它的輸出產生 inventory、再交給 Ansible 產生清單，以及這個做法對 autoscaling 的主機不成立的原因；清單裡要到雲端主控台確認的防火牆規則，`terraform plan` 比對得到與比對不到的範圍；用 Ansible 對多台主機執行檢查腳本時，`ansible` 指令的 exit code（2、4）與每台的 `rc` 怎麼讀、由 Ansible 執行時換來的安全代價；最後是單台清單夠用的條件與改成分層的時機。
 
-Ansible 與 Terraform 的指令都在容器裡實跑過（ansible-core 2.17.7、Terraform 1.9.8），產生的清單用 Python 3.12 的 `tomllib` 解析過；主機的 IP 用文件保留的位址段（203.0.113.0/24）當佔位值。TOML 那一篇的只讀檢查腳本 `host-check.py` 這次沒有拿來執行產生的清單，所以這篇確認的是清單解析得出預期的值；部署到遠端主機的指令沒有實跑，各處另外標出。用 Ansible 管理主機上的套件與服務設定（playbook 與 role）不在這篇的範圍。
+Ansible 與 Terraform 的指令都在容器裡實跑過（ansible-core 2.17.7、Terraform 1.9.8），產生的清單用 Python 3.12 的 `tomllib` 解析過；主機的 IP 用文件保留的位址段（203.0.113.0/24）當佔位值。這篇的範本是簡化過的示範，確認的是清單解析得出預期的值；照檢查腳本實際要求的欄位寫範本、經由 SSH 部署到兩台容器、以 `-b` 與 `systemd-run` 執行 TOML 那一篇的只讀檢查腳本 `host-check.py`，以及跨主機的 exit code，在 [多台主機維護清單的實作紀錄：在容器上安裝 ansible-core 與 Terraform、由 Terraform 產生 inventory、用 Ansible 的範本部署每台的清單、以 sudo 與 systemd-run 執行檢查腳本，以及清理](/operations/09-host-lifecycle/hands-on/multi-host-manifest-walkthrough/) 實際走過一次。用 Ansible 管理主機上的套件與服務設定（playbook 與 role）不在這篇的範圍。
 
 ## 主機變成多台時清單裡的值：每台相同、依角色不同、每台不同
 
 單台的清單裡每個值都只描述那一台主機；主機變成多台時，同一份清單的值依它跨主機的變化分成三類：
 
 - **每台相同的值**：檢查項目本身、檢查腳本的白名單、log 的 regex、會累積的資料的檢查方式、暫停與恢復的步驟（TOML 那一篇示範清單的 `[[suspend]]` 與 `[[resume]]` 段）。這些描述的是「怎麼檢查」，跟主機是哪一台無關。白名單是檢查腳本允許執行的工具與每個工具允許的選項，腳本載入清單時逐條比對，有一條不符就把整份清單判成格式錯、一項都不執行；它的規則與比對方式寫在 TOML 那一篇的〈只讀檢查腳本的白名單、輸出、exit code 與結果檔〉。
-- **依角色不同的值**：主機的角色決定它上面跑什麼服務，也就決定要檢查哪些入口與 log。跑 nginx 的 web 主機要檢查 443 與 80 的入口、讀 nginx 的 access log；跑 PostgreSQL 的資料庫主機要檢查 5432 只對內網開放、讀資料庫的 log。TOML 那一篇示範清單的 `[[entrypoint]]`、`[[log]]` 與 `[listen_audit]` 段（loopback 以外允許接聽的連接埠）都是依角色不同的值。
+- **依角色不同的值**：主機的角色決定它上面跑什麼服務，也就決定要檢查哪些入口與 log。跑 nginx 的 web 主機要檢查 443 與 80 的入口、讀 nginx 的 access log；跑 PostgreSQL 的資料庫主機要檢查 5432 只開放給管理者的來源（清單裡寫 `exposure = "admin-only"`）、讀資料庫的 log。TOML 那一篇示範清單的 `[[entrypoint]]`、`[[log]]` 與 `[listen_audit]` 段（loopback 以外允許接聽的連接埠）都是依角色不同的值。
 - **每台不同的值**：主機名、公開 IP、網域、資料庫檔案的路徑、依這台的磁碟大小訂的剩餘空間門檻。
 
 同一個值可以跨兩類：先給所有主機一個共用的預設，再由角色或某一台覆寫，〈用 Ansible 的 inventory、群組變數與範本產生每台的清單〉範例裡的剩餘空間門檻就是這樣，`all` 給 80、web 角色改成 85、`web1` 再改成 90。分類看的是一個值最後在各台之間有沒有不同、在哪一層開始不同。
@@ -38,7 +38,7 @@ Ansible 與 Terraform 的指令都在容器裡實跑過（ansible-core 2.17.7、
 - **每台不同的只有字串（主機名、網域、路徑），而且所有主機的角色相同**：執行時覆寫最省事，不需要任何新工具，清單不必分層；代價是覆寫的值散在各台的排程裡。
 - **角色不只一種，而每台不同的值只有字串**：依角色過濾加上執行時覆寫就夠，角色決定執行哪些項目，`--set` 給每台的字串；所有主機讀同一份清單，規則最少，前提是檢查腳本可以改（示範腳本沒有過濾的功能）。
 - **每台不同的值有數字或結構（某一台的門檻、某一台多一個入口）**：過濾與覆寫都表達不了，剩下部署時產生與檢查腳本讀多份合併。已經有產生設定檔的工具（Ansible、Terraform），或檢查腳本是別人維護的、不能改時，用部署時產生，換到的是腳本不必改、每台的完整清單看得到；沒有任何產生工具時，部署時產生要另外付引進工具（學一個工具、多一個步驟與一份 inventory）或在部署端寫一支合併程式的成本，而讀多份合併把這份成本換成在檢查腳本裡寫並維護合併規則，所以檢查腳本可以改、又不想在部署端多一個步驟時，讀多份合併是剩下的那一個。
-- **主機由 Terraform 建立**：它負責的是產生 Ansible 要讀的 inventory，清單仍由 Ansible 依範本產生（做法在〈主機由 Terraform 建立時由它的輸出產生 inventory〉）；Terraform 自己的 `templatefile()` 也能直接寫出每台的清單，但它不負責把檔案送到主機上，部署仍要另一個步驟。
+- **主機由 Terraform 建立**：它負責的是產生 Ansible 要讀的 inventory，清單仍由 Ansible 依範本產生（做法在〈主機由 Terraform 建立時由它的輸出產生 inventory〉）；Terraform 自己的 `templatefile()` 也能直接寫出每台的清單，放進主機的 user_data 時由 cloud-init 在第一次開機寫到主機上；代價是它只在建立主機時寫一次，之後改清單時，業者不是要重建主機、就是不再套用新的 user_data，主機上的清單就落後了（從 cloud-init 只在第一次開機執行的機制推論，沒有實測），所以會改的值仍要另一個部署步驟。
 
 ## 用 Ansible 的 inventory、群組變數與範本產生每台的清單
 
@@ -79,7 +79,7 @@ web_entrypoints:
 # group_vars/db.yml：資料庫角色的值
 db_listen_ports: [22, 5432]
 db_entrypoints:
-  - { name: postgres, port: 5432, exposure: private }
+  - { name: postgres, port: 5432, exposure: admin-only }
 ```
 
 ```yaml
@@ -104,7 +104,7 @@ exposure = {{ ep.exposure | to_json(ensure_ascii=False) }}
 
 同時屬於 web 與 db 的主機，產生出來的清單有三筆 `[[entrypoint]]`（https、http、postgres），只屬於 web 的主機有前兩筆，`tomllib` 讀出來都是表格陣列。每個角色的值仍然只寫在那個角色的變數檔裡一次。連接埠的聯集兩邊都有 22，串接之後要用 `unique` 去掉重複（寫法在下面的範本節錄）。聯集只適用於串列；兩個角色各自給了一個單一值（例如各自的剩餘空間門檻）時，範本要寫出取法（取嚴的那一個，`[web_disk_warn, db_disk_warn] | min`），或把那個值放在 `host_vars`，因為兼任的主機只有一台，它的單一值本來就屬於每台不同的值。入口與 log 這類「一串項目、每項幾個欄位」的值，用 `{% for %}` 逐欄輸出成表格陣列，不直接 `to_json` 整串：`to_json` 輸出的是 JSON 物件，TOML 讀不懂（下面〈值寫進 TOML 的方式〉那幾種結果的最後一項）。
 
-Ansible 的 `template` 模組依範本把這些值寫進每台的清單。下面是範本 `host.toml.j2` 其餘段落的節錄（上面的 `[[entrypoint]]` 迴圈也在同一份範本裡）。段名沿用 TOML 那一篇的示範清單；段裡的鍵分兩類：`[host]` 的 `name`、`[vars]` 的 `collector_db`、`[[suspend]]` 的 `verify`、`command`、`expect_stdout`，以及 `[[entrypoint]]` 的 `name`、`port` 與 `exposure` 是那份清單的欄位（`[[entrypoint]]` 在那份清單裡另有 `protocol`、`where`、`enforced_by` 與各層的 `verify`，這裡省略），其餘的（`allowed_ports`、`[[filesystem]]` 的 `mount` 與 `warn_percent`、`[vars]` 的 `country`、`[[suspend]]` 的 `name`）是為了這裡的示範取的。所以這份範本示範的是值怎麼代入，不能直接配 `host-check.py` 使用，要換成那份清單實際的鍵名：
+Ansible 的 `template` 模組依範本把這些值寫進每台的清單。下面是範本 `host.toml.j2` 其餘段落的節錄（上面的 `[[entrypoint]]` 迴圈也在同一份範本裡）。段名沿用 TOML 那一篇的示範清單；段裡的鍵分兩類：`[host]` 的 `name`、`[vars]` 的 `collector_db`、`[[suspend]]` 的 `verify`、`command`、`expect_stdout`，以及 `[[entrypoint]]` 的 `name`、`port` 與 `exposure` 是那份清單的欄位（`[[entrypoint]]` 在那份清單裡另有 `protocol`、`where`、`enforced_by` 與各層的 `verify`，這裡省略），其餘的（`allowed_ports`、`[[filesystem]]` 的 `mount` 與 `warn_percent`、`[vars]` 的 `country`、`[[suspend]]` 的 `name`）是為了這裡的示範取的。所以這份範本示範的是值怎麼代入，不能直接配 `host-check.py` 使用，要換成那份清單實際的鍵名；那份清單另有必填的段落與欄位（`[host]` 的 `provider`、`region`、`role`，以及 `[[log]]`、`[[accumulation]]`、`[updates]`、`[[suspend]]`、`[[resume]]`），其中 `role` 是單一字串，兼任兩個角色的主機要把群組名串成一個值。照那份清單的欄位寫成的範本在 [多台主機維護清單的實作紀錄：在容器上安裝 ansible-core 與 Terraform、由 Terraform 產生 inventory、用 Ansible 的範本部署每台的清單、以 sudo 與 systemd-run 執行檢查腳本，以及清理](/operations/09-host-lifecycle/hands-on/multi-host-manifest-walkthrough/)〈變數檔與範本：檢查腳本實際要求的欄位、兼任兩種角色的主機〉：
 
 ```jinja
 [host]
@@ -132,7 +132,7 @@ ansible all -i inventory.yml -c local -m template \
   -a "src=host.toml.j2 dest=out/{{ inventory_hostname }}.toml"
 ```
 
-`ansible` 指令直接執行單一模組（ad-hoc 指令），不必另外寫 playbook。指令裡要依環境換的位置：`all` 是要產生清單的主機範圍，可以換成一個群組名（`web`）；`src` 是範本的檔名；`-c local` 讓三台的檔案都寫在執行指令的這台機器上，`dest` 裡的 `{{ inventory_hostname }}` 由 Ansible 換成每台的主機名，所以每台各得到一份。要直接部署到各台主機時拿掉 `-c local`，Ansible 改成經由 SSH 連到每台主機；上面手寫的 inventory 只寫了主機名，Ansible 會拿 `web1` 當成連線的位址，所以每台要加上 `ansible_host: <IP 或 DNS 名稱>`，或讓 `~/.ssh/config` 有同名的 `Host`。同時，`dest` 改成檢查腳本在主機上讀清單的固定位置（絕對路徑）；保留相對路徑的話，檔案會寫在遠端的工作目錄底下。部署到遠端的這個寫法沒有實跑。
+`ansible` 指令直接執行單一模組（ad-hoc 指令），不必另外寫 playbook。指令裡要依環境換的位置：`all` 是要產生清單的主機範圍，可以換成一個群組名（`web`）；`src` 是範本的檔名；`-c local` 讓三台的檔案都寫在執行指令的這台機器上，`dest` 裡的 `{{ inventory_hostname }}` 由 Ansible 換成每台的主機名，所以每台各得到一份。要直接部署到各台主機時拿掉 `-c local`，Ansible 改成經由 SSH 連到每台主機；上面手寫的 inventory 只寫了主機名，Ansible 會拿 `web1` 當成連線的位址，所以每台要加上 `ansible_host: <IP 或 DNS 名稱>`，或讓 `~/.ssh/config` 有同名的 `Host`。同時，`dest` 改成檢查腳本在主機上讀清單的固定位置（絕對路徑）；保留相對路徑的話，檔案會寫在遠端的工作目錄底下。`template` 與 `copy` 不會建立 `dest` 的上層目錄，目錄不存在時實際執行以 `Destination directory … does not exist` 失敗，而 `--check` 的預覽報不出這個錯，所以部署時先用 `file` 模組建目錄。部署到兩台容器的完整 playbook 在 [多台主機維護清單的實作紀錄：在容器上安裝 ansible-core 與 Terraform、由 Terraform 產生 inventory、用 Ansible 的範本部署每台的清單、以 sudo 與 systemd-run 執行檢查腳本，以及清理](/operations/09-host-lifecycle/hands-on/multi-host-manifest-walkthrough/)〈部署清單：建目錄、copy 與 template、validate 改用檢查腳本的載入函式、--check 的預覽〉。
 
 ### 值寫進 TOML 的方式：直接輸出、to_json 與 ensure_ascii
 
@@ -161,9 +161,9 @@ Jinja2 把變數寫進檔案時，用的是 Python 的寫法，不是 TOML 的�
 ansible all -i inventory.yml -c local -m template -a '{"src": "host.toml.j2", "dest": "out/{{ inventory_hostname }}.toml", "validate": "python3 -c \"import tomllib,sys; tomllib.load(open(sys.argv[1],'"'"'rb'"'"'))\" %s"}'
 ```
 
-實測的結果：範本產生出 `flag = True` 這種 TOML 讀不懂的值時，那一台以 `failed to validate` 失敗，訊息帶著 `TOMLDecodeError: Invalid value`，目的地沒有寫出任何檔案；範本正常時照常寫出。`validate` 只驗得到 TOML 的語法；清單的欄位與白名單是否符合，要讓檢查腳本自己讀一次才知道，示範腳本沒有「只載入、不執行」的模式，這一層驗證要靠在 CI 或一台測試主機上實際跑一次。
+實測的結果：範本產生出 `flag = True` 這種 TOML 讀不懂的值時，那一台以 `failed to validate` 失敗，訊息帶著 `TOMLDecodeError: Invalid value`，目的地沒有寫出任何檔案；範本正常時照常寫出。用 `tomllib` 當 `validate` 只驗得到 TOML 的語法；清單的欄位與白名單是否符合，要讓檢查腳本自己讀一次才知道。檢查腳本的 `load_manifest()` 只載入與驗證清單、不執行任何檢查，用 Python 的 `runpy` 載入腳本再呼叫它當 `validate` 時，`exposure` 寫了不在允許值裡的值那一台以 `failed to validate` 失敗，主機上的清單維持舊版；`validate` 的完整寫法與載入方式的取捨在 [多台主機維護清單的實作紀錄：在容器上安裝 ansible-core 與 Terraform、由 Terraform 產生 inventory、用 Ansible 的範本部署每台的清單、以 sudo 與 systemd-run 執行檢查腳本，以及清理](/operations/09-host-lifecycle/hands-on/multi-host-manifest-walkthrough/)〈部署清單：建目錄、copy 與 template、validate 改用檢查腳本的載入函式、--check 的預覽〉。
 
-主機上的清單跟範本算出來的內容是否一致，用 `--check --diff` 比對：`ansible <主機> -i inventory.yml -m template -a "src=host.toml.j2 dest=<清單的路徑>" --check --diff` 不寫任何檔案，只印出兩者的差異。實測時先把產生好的檔案手改成別的內容，這條指令印出 `--- before` 與 `+++ after` 兩邊的差異行、把那一台標成 `CHANGED`，檔案維持手改後的內容。定期對所有主機跑一次，標成 `CHANGED` 的那幾台，就是清單落後於 repo、或在主機上被改過的主機（在容器裡用 `-c local` 實測，對遠端主機沒有實跑）。
+主機上的清單跟範本算出來的內容是否一致，用 `--check --diff` 比對：`ansible <主機> -i inventory.yml -m template -a "src=host.toml.j2 dest=<清單的路徑>" --check --diff` 不寫任何檔案，只印出兩者的差異。實測時先把產生好的檔案手改成別的內容，這條指令印出 `--- before` 與 `+++ after` 兩邊的差異行、把那一台標成 `CHANGED`，檔案維持手改後的內容。定期對所有主機跑一次，標成 `CHANGED` 的那幾台，就是清單落後於 repo、或在主機上被改過的主機。這條指令有主機標成 `CHANGED` 時，`ansible` 的 exit code 仍是 0，所以接上排程時要讀輸出裡的 `CHANGED`，不能只看 exit code（對兩台容器經由 SSH 實測，在其中一台手改清單之後）。
 
 ## 主機由 Terraform 建立時由它的輸出產生 inventory
 
@@ -180,7 +180,8 @@ locals {
 
 # 依角色分組，寫出 Ansible 讀得懂的 inventory.yml
 resource "local_file" "inventory" {
-  filename = "${path.module}/inventory.yml"
+  filename        = "${path.module}/inventory.yml"
+  file_permission = "0644" # 預設值是 "0777"，實際權限再扣掉建立檔案那個程序的 umask
   content = yamlencode({
     all = {
       children = {
@@ -200,6 +201,8 @@ output "hosts" { value = local.hosts }
 
 這個做法的前提是每台主機都在 State 裡。由 autoscaling 群組或 instance pool 依流量開關的主機，Terraform 只宣告群組本身，個別主機由業者的服務建立與刪除，不在 State 裡，從 State 產生的 inventory 是空的、或一直落後於實際的主機。這一類主機多半是同一個角色、彼此可以互相取代，每台不同的值只剩主機名這類字串，比較貼近〈合併每台相同、依角色不同、每台不同的值的位置〉的執行時覆寫：同一份清單放進主機的映像檔，或在開機時寫入，主機名由執行時的參數給（這是從機制推出的做法，沒有實測）。這類主機生命週期短，結果檔裡常常沒有上一次的紀錄可比，跨主機的比較要交給監控。
 
+`local_file` 寫出的 inventory 只存在執行 `apply` 的那台機器上。團隊共用 remote backend 的 State、或在 CI 上跑 `plan` 時，那台機器的工作目錄裡沒有這個檔（或內容不同），每一次 `plan` 都回報 `local_file.inventory will be created`；〈清單裡要到主控台確認的項目與 terraform plan 的比對範圍〉用 `plan` 偵測防火牆規則的漂移時，同一份 State 的 `plan` 因此永遠不是 `No changes`，漂移告警不是一直響、就是被忽略。這種情形下改用直接讀 State 的 inventory plugin（Ansible 的 `cloud.terraform` collection 的 `terraform_state`），inventory 不寫成檔案，每次執行時從 State 讀出主機（依那個 collection 的文件推論，沒有實測）；`local_file` 適合只有一個人、在同一台機器上 `apply` 與執行 Ansible 的情形。
+
 ## 清單裡要到主控台確認的項目與 terraform plan 的比對範圍
 
 TOML 那一篇的清單裡，`where = "console"` 的項目（雲端的網路安全群組（Network Security Group，NSG）規則，概念見 [Security Group](/infra/knowledge-cards/security-group/)）只印出來、等人到主控台確認。主機與防火牆規則都由 Terraform 建立時，那些規則的宣告就在 Terraform 的設定裡，[`terraform plan`](/infra/knowledge-cards/terraform-plan-apply/) 會比對 State 裡每個資源的屬性跟雲端的實際值，有人在主控台改了某一條由 Terraform 建立的規則，plan 會列出差異（[Drift（設定漂移）](/infra/knowledge-cards/drift/)）。plan 看不到的是 State 裡沒有的資源：規則在 Terraform 裡寫成各自獨立的資源時（Oracle Cloud 的 `oci_core_network_security_group_security_rule` 是一條規則一個資源），有人在主控台另外新增一條規則，那一條不在 State 裡，plan 照樣回報 `No changes`。所以 plan 能取代的是確認既有的規則沒有被改，確認沒有多出來的規則仍然要列出雲端上的規則跟宣告比對。這是從 plan 的比對機制推出的做法，這次沒有對雲端的防火牆規則實測。
@@ -214,19 +217,23 @@ ansible all -i inventory.yml -c local -m command \
   -a "sh -c 'case {{ inventory_hostname }} in web2) exit 1;; db1) exit 2;; esac'" -o
 ```
 
-輸出裡 web1 標成 `CHANGED`，web2 與 db1 標成 `FAILED!`，各自的 `"rc"` 欄位是 1 與 2；`ansible` 指令本身的 exit code 是 2，依 Ansible 的文件，這個值代表至少一台主機的任務失敗，跟失敗的是哪一台、各自回了什麼 `rc` 無關；有主機連不上時這個值是 4（這次沒有實測）。所以接上排程時，告警的條件寫成 `ansible` 的 exit code 不是 0，再讀每台的 `rc` 決定處置；連不上的主機依文件標成 `UNREACHABLE!`、沒有 `rc`，處置是查連線與 SSH，跟清單或主機上的檢查無關。換成檢查腳本時，它的 exit code 1（至少一項 `WARN`）與 2（清單格式錯）在 Ansible 的輸出裡同樣標成 `FAILED!`，兩者的處置不同（處理主機或改清單），要讀每台的 `rc` 才分得開；`command` 模組每次執行都回報 `CHANGED`，這個字不代表主機被改動，只代表指令執行了。
+輸出裡 web1 標成 `CHANGED`，web2 與 db1 標成 `FAILED!`，各自的 `"rc"` 欄位是 1 與 2；`ansible` 指令本身的 exit code 是 2，依 Ansible 的文件，這個值代表至少一台主機的任務失敗，跟失敗的是哪一台、各自回了什麼 `rc` 無關；有主機連不上時這個值是 4（停掉一台容器實測）。所以接上排程時，告警的條件寫成 `ansible` 的 exit code 不是 0，再讀每台的 `rc` 決定處置；連不上的主機標成 `UNREACHABLE!`、沒有 `rc`，處置是查連線與 SSH，跟清單或主機上的檢查無關。換成檢查腳本時，它的 exit code 1（至少一項 `WARN`）與 2（清單格式錯）在 Ansible 的輸出裡同樣標成 `FAILED!`，兩者的處置不同（處理主機或改清單），要讀每台的 `rc` 才分得開；`command` 模組每次執行都回報 `CHANGED`，這個字不代表主機被改動，只代表指令執行了。
 
 換成檢查腳本時，執行的身分與限制要跟單台時相同：TOML 那一篇的腳本以 root 執行，並套上 `systemd-run` 的檔案系統與網路限制。Ansible 經由 SSH 登入的帳號不是 root，要加 `--become`（`-b`）讓 Ansible 在主機上經由 sudo 切成 root：
 
 ```bash
-# 部署後對每台執行檢查（沒有實跑）；systemd-run 的屬性照 TOML 那一篇〈只讀檢查腳本的白名單、輸出、exit code 與結果檔〉
+# 部署後對每台執行檢查；systemd-run 的屬性照 TOML 那一篇〈只讀檢查腳本的白名單、輸出、exit code 與結果檔〉
 ansible all -i inventory.yml -b -m command \
   -a "systemd-run --wait --pipe --collect -p ProtectSystem=strict ... python3 <host-check.py 的路徑> --manifest <清單在主機上的路徑>" -o
 ```
 
-`...` 是 TOML 那一篇那段 `systemd-run` 的其他屬性，`<host-check.py 的路徑>` 與 `<清單在主機上的路徑>` 換成部署時放檔案的位置。不加 `-b` 時，腳本以登入帳號執行，那一篇用專用帳號實測過，讀不到 firewalld、sshd 設定與幾個目錄，`PASS` 的項目從 37 項掉到 29 項；sudo 要不要密碼、密碼怎麼交給 Ansible，依主機的 sudoers 設定而定，不在這篇的範圍。
+`...` 是 TOML 那一篇那段 `systemd-run` 的其他屬性，`<host-check.py 的路徑>` 與 `<清單在主機上的路徑>` 換成部署時放檔案的位置。不加 `-b` 時，這條指令裡的 `systemd-run` 以登入帳號執行，以 `Access denied` 失敗、`rc` 是 1，跟檢查腳本至少一項 `WARN` 的 `rc` 相同；兩者要看輸出裡有沒有檢查腳本結尾的 `summary:` 那一行才分得開（[多台主機維護清單的實作紀錄：在容器上安裝 ansible-core 與 Terraform、由 Terraform 產生 inventory、用 Ansible 的範本部署每台的清單、以 sudo 與 systemd-run 執行檢查腳本，以及清理](/operations/09-host-lifecycle/hands-on/multi-host-manifest-walkthrough/)〈以 -b 與 systemd-run 執行檢查腳本：每台的輸出與 ansible 的 exit code〉）。拿掉 `systemd-run`、以登入帳號直接執行腳本時，腳本讀不到 firewalld、sshd 設定與幾個目錄：那一篇用加了 `systemd-journal` 與 `adm` 群組的專用帳號實測，`PASS` 的項目從 37 項掉到 29 項；沒有這兩個群組的登入帳號另外讀不到 journal（實作紀錄的同一節）。sudo 要不要密碼依主機的 sudoers 設定而定，要密碼時的兩種給法（`-K` 在執行時輸入、放進 Ansible Vault 加密的變數）在實作紀錄〈受管主機與控制端的容器：Oracle Linux 10 加 systemd 與 sshd、python:3.12-slim 加 ansible-core 與 Terraform〉。
 
-由 Ansible 加 `-b` 執行的代價是安全上的：執行 Ansible 的那台機器（控制端）要握有能 SSH 登入每台主機、再經由 sudo 切成 root 的憑證。單台時，檢查是主機自己的 timer 以 root 在本機執行，沒有任何一個地方拿得到所有主機的 root；改由 Ansible 集中執行之後，控制端被入侵就等於每台主機都被入侵，檢查腳本「不改動主機」的保證管不到這一條路。只為了集中收 exit code 時，另一個做法是每台照舊用自己的 timer 執行，控制端用不帶 `-b` 的帳號讀每台的結果檔，或由監控收集。
+由 Ansible 加 `-b` 執行的代價是安全上的：執行 Ansible 的那台機器（控制端）要握有能 SSH 登入每台主機、再經由 sudo 切成 root 的憑證。單台時，檢查是主機自己的 timer 以 root 在本機執行，沒有任何一個地方拿得到所有主機的 root；改由 Ansible 集中執行之後，控制端被入侵就等於每台主機都被入侵，檢查腳本「不改動主機」的保證管不到這一條路。縮小這個範圍的做法有三種，都沒有實測：
+
+- **每台照舊用自己的 timer 執行，集中的只有結果**：結果檔的目錄是 `StateDirectoryMode=0700`、擁有者是 root，不帶 `-b` 的帳號讀不到；要讓控制端用一般帳號讀，得把那個目錄改成 0750 並給一個讀取用的群組，或由監控在主機上收集結果再送出去。
+- **sudoers 只允許那一條檢查指令**：Ansible 的 become 會把指令包成 `/bin/sh -c '…'` 再交給 sudo，限定指令的 sudoers 對不上，所以執行檢查時不加 `-b`，在 `command` 模組裡自己寫 `sudo -n systemd-run …`；部署用另一個帳號與另一把金鑰，只在部署時使用。排程用的那把金鑰被偷時，拿到的只是以 root 執行檢查（從 become 的機制推論）。
+- **ansible-pull**：每台定時從 repo 拉 playbook，在本機產生自己的清單並執行檢查，沒有任何一個地方握有所有主機的 root；代價是每台主機要裝 Ansible、要有讀 repo 的憑證，而且主機要知道自己屬於哪些角色。
 
 每台主機的結果檔照舊留在那台主機上（`/var/lib/host-check/last.json`），每台跟自己的上一次比較；腳本不比較同一個角色的不同主機（web1 的 access log 計數遠高於 web2 這類），這種跨主機的比較要把每台的數字收集到一個地方，那是監控的範圍，各主機的指標怎麼收集見 [多台主機的指標收集：讀取架構、主機標籤、目標清單、監控主機的位置與主機消失的偵測](/backend/04-observability/vendors/prometheus/multi-host-scraping/)。
 
