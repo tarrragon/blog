@@ -46,3 +46,4 @@ HCL 的定位在 JSON 和通用語言之間——比 JSON 有表達力（能做�
 
 - [IaC](/infra/knowledge-cards/iac/)
 - [State](/infra/knowledge-cards/state/)
+- [TOML](/infra/knowledge-cards/toml/)：只描述資料、沒有變數與函式的設定檔格式

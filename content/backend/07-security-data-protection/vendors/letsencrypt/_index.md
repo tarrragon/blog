@@ -1,7 +1,7 @@
 ---
 title: "Let's Encrypt"
 date: 2026-05-18
-description: "免費 + 自動化的公共 ACME CA、90 天 TTL 強制自動化、跨雲跨平台 public TLS cert 的事實基礎"
+description: "免費 + 自動化的公共 ACME CA、短 TTL（90 天，2027 年起逐步縮短）強制自動化、跨雲跨平台 public TLS cert 的事實基礎"
 weight: 10
 tags: ["backend", "security", "vendor", "letsencrypt", "acme", "pki", "tls"]
 ---
@@ -46,22 +46,22 @@ Let's Encrypt 的角色是 *跨雲、跨平台、跨組織規模* 的公共 DV c
 
 **Staging environment 必用於測試**：`acme-staging-v02.api.letsencrypt.org` 是 Let's Encrypt 的測試 endpoint、cert 不被瀏覽器信任、但 *rate limit 寬鬆很多*（30000 cert/week / 60 duplicate cert/week）。debug ACME client 設定、新 deploy pipeline、CI 跑 cert renewal test 都應該先指 staging、確認 OK 再切 production endpoint。直接在 production 試錯撞 rate limit 是常見事故。
 
-**90 天 TTL + 60 天 renew cadence**：Let's Encrypt cert 固定 90 天 TTL、ACME client convention 是 *過 60 天就開始 renew*、留 30 天 buffer 給 retry。90 天是 *設計選擇*、不是技術限制 — 短 TTL 強迫自動化、把「過期前手動處理」這個失敗模式從設計中拿掉。如果你的 cert renewal 還需要人介入、表示 ACME client / deployment pipeline / monitoring 哪邊沒做好、要在 60 天 buffer 內修。
+**短 TTL 與依比例的 renew cadence**：Let's Encrypt 的預設 cert 是 90 天 TTL，而效期正在縮短：Let's Encrypt 公告從 2027 年 2 月 10 日起預設簽發 64 天的 cert、2028 年再縮到 45 天（[Let's Encrypt 的公告](https://letsencrypt.org/2026/10/07/64-day-certs)）。ACME client 過去的慣例是 *過 60 天就開始 renew*、留 30 天 buffer 給 retry，這個寫死的天數在效期縮短之後會讓 cert 在 renew 之前就過期；公告建議改成在效期約三分之二時 renew，或用支援 ACME Renewal Info（ARI）的 client、由 CA 通知 renew 的時間。短 TTL 是 *設計選擇*、不是技術限制 — 短 TTL 強迫自動化、把「過期前手動處理」這個失敗模式從設計中拿掉。如果 cert renewal 還需要人介入、表示 ACME client / deployment pipeline / monitoring 哪邊沒做好；單台主機上檢查 renew 時機的做法見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈會到期與會改變的外部設定〉。
 
 **CT log 公開可查**：Let's Encrypt cert 都會進 Certificate Transparency log（CT log）、可以用 [crt.sh](https://crt.sh) 查任何 domain 的歷史 cert。對 production 意義有兩面：blue team 可以監控自家 domain 的 unexpected cert（attacker 用相似 domain 釣魚會留痕）；red team 可以查 target 公司新出現的 internal hostname（cert 上的 SAN 等於公開的 service inventory）。對 *internal-only* hostname、不要用 Let's Encrypt cert、否則 SAN 變成 recon 資料源 — 內部服務走 Vault PKI / 私有 CA。
 
 ## 核心取捨表
 
-| 取捨維度   | Let's Encrypt                           | AWS ACM                                    | 商業 CA（DigiCert / Sectigo）   | Vault PKI（internal CA）                           |
-| ---------- | --------------------------------------- | ------------------------------------------ | ------------------------------- | -------------------------------------------------- |
-| 信任範圍   | Public（公共瀏覽器信任）                | Public（公共瀏覽器信任）                   | Public（公共瀏覽器信任）        | Internal（需要客戶端裝 CA cert）                   |
-| 部署範圍   | 跨雲、跨平台、on-prem                   | 限 AWS-managed service（ALB / CF / APIGW） | 跨雲、跨平台                    | 自管、跨雲皆可                                     |
-| Cert 等級  | DV（Domain Validation）                 | DV（ACM）/ Private CA 任意                 | DV / OV / EV                    | 自定義（內部信任）                                 |
-| 費用       | 免費                                    | 免費（ACM public）/ Private CA 收費        | 收費（DV / OV / EV 各價位）     | 自管成本                                           |
-| 自動化     | ACME protocol 標準化                    | ACM 自動 renew（限 AWS-managed service）   | 多數需手動 / API 申請、自動化弱 | 自管 + ACME server 可選                            |
-| TTL        | 90 天（硬性）                           | 13 個月（AWS rotate）                      | 1-2 年                          | 自訂                                               |
-| 適合場景   | public-facing、跨雲、open source、SaaS  | AWS-only + ALB/CloudFront 內               | 金融、政府、需要 EV 顯示組織    | internal mTLS、workload identity、企業內部 service |
-| 不適合場景 | internal mTLS、EV cert、cert 內需含組織 | 跨雲、export 出 AWS                        | 需要快速自動化、預算敏感        | public-facing、不能要求客戶端裝 CA                 |
+| 取捨維度   | Let's Encrypt                                | AWS ACM                                    | 商業 CA（DigiCert / Sectigo）   | Vault PKI（internal CA）                           |
+| ---------- | -------------------------------------------- | ------------------------------------------ | ------------------------------- | -------------------------------------------------- |
+| 信任範圍   | Public（公共瀏覽器信任）                     | Public（公共瀏覽器信任）                   | Public（公共瀏覽器信任）        | Internal（需要客戶端裝 CA cert）                   |
+| 部署範圍   | 跨雲、跨平台、on-prem                        | 限 AWS-managed service（ALB / CF / APIGW） | 跨雲、跨平台                    | 自管、跨雲皆可                                     |
+| Cert 等級  | DV（Domain Validation）                      | DV（ACM）/ Private CA 任意                 | DV / OV / EV                    | 自定義（內部信任）                                 |
+| 費用       | 免費                                         | 免費（ACM public）/ Private CA 收費        | 收費（DV / OV / EV 各價位）     | 自管成本                                           |
+| 自動化     | ACME protocol 標準化                         | ACM 自動 renew（限 AWS-managed service）   | 多數需手動 / API 申請、自動化弱 | 自管 + ACME server 可選                            |
+| TTL        | 90 天（2027-02 起預設 64 天、2028 年 45 天） | 13 個月（AWS rotate）                      | 1-2 年                          | 自訂                                               |
+| 適合場景   | public-facing、跨雲、open source、SaaS       | AWS-only + ALB/CloudFront 內               | 金融、政府、需要 EV 顯示組織    | internal mTLS、workload identity、企業內部 service |
+| 不適合場景 | internal mTLS、EV cert、cert 內需含組織      | 跨雲、export 出 AWS                        | 需要快速自動化、預算敏感        | public-facing、不能要求客戶端裝 CA                 |
 
 選 Let's Encrypt 的核心訴求：*public-facing + DV 等級夠用 + 跨平台 + 需要自動化*。需要 EV cert 走商業 CA、需要 internal mTLS 走 Vault PKI、AWS-only + 留在 ALB / CloudFront 內走 ACM 更省事。
 
@@ -81,7 +81,7 @@ Let's Encrypt 的角色是 *跨雲、跨平台、跨組織規模* 的公共 DV c
 
 - **ACME challenge 失敗**：HTTP-01 拉不到 `/.well-known/acme-challenge/<token>`、檢查 port 80 reachability、firewall、CDN 是否擋；DNS-01 TXT record 沒生效、檢查 DNS provider API permission、TXT TTL 是否設太長
 - **撞 rate limit**：50 cert/week per registered domain 撞牆、整個 week 不能發新 cert — production 必須先 *staging 測完* 再切 production、cert reuse 機制要開（同 SAN 組合不重發）、長期解走 wildcard / SAN consolidation / rate limit exemption
-- **Renewal 沒在 60 天前開始**：cert 過期前才 renew、撞到 ACME server 暫時不可用會直接過期 — ACME client 設 60 天 renew threshold、cert expiry 30 天前 alert 給 oncall
+- **Renewal 時機寫死天數或太晚開始**：cert 過期前才 renew、撞到 ACME server 暫時不可用會直接過期；寫死「第 60 天 renew」的設定在效期縮短到 64 天、45 天之後也會來不及 — ACME client 設成在效期約三分之二時 renew（或用 ARI）、cert expiry 前依效期比例留 buffer 的 alert 給 oncall
 - **Account key 沒備份**：account key 弄丟、可以重新註冊但 *舊 cert 的 revocation 權限沒了*（除非用 cert 私鑰 revoke）— account key 跟 root signing key 同等級保護、離線備份
 - **CT log 暴露 internal hostname**：Let's Encrypt cert 進 CT log、internal-only hostname 的 SAN 變 recon 資料源 — internal service 不用 Let's Encrypt、改 Vault PKI / 私有 CA
 - **Wildcard cert 用 HTTP-01**：`*.example.com` 申請失敗、Let's Encrypt 政策強制 wildcard 走 DNS-01 — 切到 DNS-01 solver、設定 DNS provider API access

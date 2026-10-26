@@ -119,7 +119,7 @@ Hot tier 保留完整精度與完整索引，能支援即席診斷的所有維�
 
 Dashboard 的時間範圍選擇直接觸發跨層查詢。使用者從「最近 1 小時」（全部在 hot tier）拉到「最近 7 天」（hot + warm tier），查詢延遲從毫秒跳到秒級。再拉到「最近 90 天」（hot + warm + cold tier），延遲可能跳到十秒甚至分鐘級。
 
-這種延遲跳變在事故中的影響是：incident commander 想看長期趨勢來判斷異常是突發還是漸進時，dashboard 卡在載入。應對方式是在 dashboard 設計時就把「長時間趨勢」panel 指向 [recording rule](/backend/knowledge-cards/recording-rule/) 或 rollup series，讓它讀取預聚合資料而非跨層掃描 raw data。
+這種延遲跳變在事故中的影響是：incident commander 想看長期趨勢來判斷異常是突發（[步階變化](/backend/knowledge-cards/step-change/)）還是漸進時，dashboard 卡在載入。應對方式是在 dashboard 設計時就把「長時間趨勢」panel 指向 [recording rule](/backend/knowledge-cards/recording-rule/) 或 rollup series，讓它讀取預聚合資料而非跨層掃描 raw data。
 
 ### Tier 邊界依訊號類型差異化
 

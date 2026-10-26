@@ -56,7 +56,7 @@ tags: ["infra", "cloud-providers", "free-tier", "cost", "oracle-cloud", "gcp", "
 - **Google Cloud**：Free Tier 每月 1 GB 從北美送往各地的出站流量（不含中國與澳洲）；超過的部分計費。
 - **AWS**：Free plan 頁面沒有列流量額度，額度寫在 EC2 的價格頁：每月 100 GB 送往網際網路的出站流量免費，所有服務與區域合計（不含中國與 GovCloud 區域）。
 
-另一項只有 Oracle Cloud 明文寫出的規則是閒置回收：Always Free 主機在 7 天內的 CPU 使用率（取第 95 百分位）、網路使用率、記憶體使用率（只算 A1 機型）都低於 20% 時，Oracle 可能回收它（官方沒有寫網路使用率的 20% 是對什麼的比例）；官方頁用的詞是 reclaim，沒有寫回收之後主機是停止還是刪除。規則的出處見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。一台大部分時間沒有流量的 VPN 或實驗機會落在這個條件裡。
+另一項只有 Oracle Cloud 明文寫出的規則是閒置回收：Always Free 主機在 7 天內的 CPU 使用率（取第 95 百分位）、網路使用率、記憶體使用率（只算 A1 機型）都低於 20% 時，Oracle 可能回收它（官方沒有寫網路使用率的 20% 是對什麼的比例）；官方頁用的詞是 reclaim，沒有寫回收之後主機是停止還是刪除。規則的出處見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/)。一台大部分時間沒有流量的 VPN 或實驗機會落在這個條件裡。主機會被回收、而回收是停止還是刪除不明時，維護與暫停期間要先做的準備（資料備份到主機以外、確認照 repo 重建得出來），見 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)〈暫停時保留的範圍：只停服務、停止主機、終止主機、全部刪除〉。
 
 ## 三家免費方案比較表（查證日期 2026-10-24）
 

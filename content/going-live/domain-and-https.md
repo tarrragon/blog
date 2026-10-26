@@ -34,7 +34,7 @@ DNS 各紀錄類型的細節見 [Infra DNS 卡](/infra/knowledge-cards/dns/)。
 
 ## TLS 憑證怎麼拿：Let's Encrypt 讓它免費又自動
 
-以前憑證要花錢買，現在 **Let's Encrypt** 這個免費 CA 讓它變成一行指令。它用 ACME 協議自動驗證「你確實控制這個域名」（通常是讓它連你的 server 或設一筆 DNS 紀錄），驗過就簽發，且能自動續期（憑證有 90 天效期）。
+以前憑證要花錢買，現在 **Let's Encrypt** 這個免費 CA 讓它變成一行指令。它用 ACME 協議自動驗證「你確實控制這個域名」（通常是讓它連你的 server 或設一筆 DNS 紀錄），驗過就簽發，且能自動續期（預設效期 90 天，Let's Encrypt 公告 2027 年 2 月起改為 64 天、2028 年再縮到 45 天，所以續期的時機要依效期比例設定，不寫死天數，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈會到期與會改變的外部設定〉）。
 
 - **自己顧機器（VPS）**：用 `certbot` 之類的工具，指令大致是 `certbot --nginx -d example.com`——它自動取得憑證、改好 nginx 設定、排程續期。
 - **用 PaaS**：平台通常自動幫你上憑證，你只要把域名指過去（設 CNAME）就有 HTTPS，完全不碰 certbot。

@@ -87,3 +87,4 @@ PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識
 | [Network Namespace（網路命名空間）](/infra/knowledge-cards/network-namespace/)                     | 核心切出的獨立網路環境，容器的網路隔離與在一台主機上模擬不同來源都用它                    |
 | [DOCKER-USER（Docker 留給使用者的轉送規則鏈）](/infra/knowledge-cards/docker-user/)                | 發佈的連接埠在轉送路徑上第一個能寫限制的位置，存續依防火牆而異                            |
 | [Userland Proxy（使用者空間的連接埠轉送程式）](/infra/knowledge-cards/userland-proxy/)             | 在主機上接聽再轉進容器的程式，入站規則管得到、容器看不到真實來源                          |
+| [TOML](/infra/knowledge-cards/toml/)                                                               | 型別由寫法決定、可寫註解、用表頭分組的設定檔格式，1.0 與 1.1 的解析器支援範圍不同         |

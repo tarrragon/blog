@@ -55,7 +55,7 @@ npm 2016 年的規則與短碼的佔位紀錄，共同做法是**佔位**：名�
 
 **懸空 DNS**（dangling DNS）指一筆 DNS 紀錄還指向一個已經刪除的雲端資源。客戶在自己的網域設定一筆 CNAME，指向雲端服務給的主機名稱；資源刪除之後，這筆紀錄如果沒有一起刪除，而那個主機名稱又被別人重新申請，客戶的子網域就由別人提供內容，稱為**子網域接管**（subdomain takeover）。Microsoft 的文件寫明接管者能做的事不只放一個假網頁：「a threat actor can use the hijacked subdomain to apply for and receive a valid SSL certificate」（[Microsoft Learn](https://learn.microsoft.com/en-us/azure/security/fundamentals/subdomain-takeover)）。
 
-客戶這一側的防護是刪除雲端資源之前先刪掉指向它的 DNS 紀錄，並定期拿自家網域裡指向雲端主機名的 CNAME 對照仍存在的資源；本節展開的是提供者這一側。防止子網域接管的工作橫跨客戶與提供者兩方：DNS 紀錄在客戶的網域裡，提供者無法替客戶刪除；主機名稱在提供者的命名空間裡，能不能被別人重新申請由提供者決定。提供者這一側能做的有下列幾件：
+同一種成因也出現在 A 紀錄上：紀錄指向雲端主機的公開 IP，主機終止（有些業者是停止）時業者收回這個 IP、再分配給別的客戶，拿到它的人就收得到這個網域的流量，也能用 HTTP 驗證替它申請憑證；哪些暫停與重建的做法會把 IP 還給業者，見 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)〈暫停期間仍指向這台主機的外部設定〉。客戶這一側的防護是刪除雲端資源（或釋放 IP）之前先刪掉指向它的 DNS 紀錄，並定期拿自家網域裡指向雲端主機名的 CNAME 與指向雲端 IP 的 A 紀錄對照仍存在的資源；本節展開的是提供者這一側。防止子網域接管的工作橫跨客戶與提供者兩方：DNS 紀錄在客戶的網域裡，提供者無法替客戶刪除；主機名稱在提供者的命名空間裡，能不能被別人重新申請由提供者決定。提供者這一側能做的有下列幾件：
 
 - **刪除後保留名稱一段時間**，只給原本的租用戶重新使用（〈名稱的保留與回收：套件名稱、雲端資源名稱與短碼〉一節的 Azure 規則）。
 - **要求驗證網域的所有權**：GitHub Pages 讓帳號驗證自己的網域，驗證之後只有這個帳號能把網站發布到這個網域，並列出接管發生的情形：「when you delete your repository, when your billing plan is downgraded, or after any other change which unlinks the custom domain or disables GitHub Pages while the domain remains configured for GitHub Pages and is not verified」（[GitHub Docs](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/verifying-your-custom-domain-for-github-pages)）。

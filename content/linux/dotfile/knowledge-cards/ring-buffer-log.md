@@ -33,6 +33,6 @@ logcat -d        # 倒出，終點
 
 ## 與 journald 的差別
 
-`systemd-journald` 不是環狀緩衝區：它寫的是磁碟上的檔案，靠 `SystemMaxUse` 這類設定與輪替來限制總量，所以它的紀錄跨得過重開機，而環狀緩衝區的內容開機就沒了。查一件昨天發生的事該去 journal，查一件剛剛發生而且與核心或裝置有關的事該去環狀緩衝區——兩者涵蓋的時間範圍不同，選錯會得到一個空結果而不是一則錯誤。
+`systemd-journald` 不是環狀緩衝區：它寫的是檔案，靠 `SystemMaxUse` 這類設定與輪替來限制總量。檔案寫在磁碟的 `/var/log/journal` 時（這個目錄存在，或設定了 `Storage=persistent`），它的紀錄跨得過重開機，而環狀緩衝區的內容開機就沒了；`/var/log/journal` 不存在而 `Storage` 是預設的 `auto` 時，journald 只寫到記憶體裡的 `/run/log/journal`，重開機一樣清空，Oracle Linux 10.2 的雲端映像檔就是這個狀態，查法與處置見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈會累積的資料：寫入者、清理機制與磁碟寫滿的後果〉。查一件昨天發生的事該去 journal，查一件剛剛發生而且與核心或裝置有關的事該去環狀緩衝區——兩者涵蓋的時間範圍不同，選錯會得到一個空結果而不是一則錯誤。
 
 Android 沒有 journald，`logcat` 就是全部，所以那個平台上「事後才想到要看 log」的成功率明顯較低，值得在操作之前就先把範圍界定好。完整的參數與篩選做法見 [adb 遠端診斷 Android 實機](/work-log/adb-remote-android-diagnosis/)。
