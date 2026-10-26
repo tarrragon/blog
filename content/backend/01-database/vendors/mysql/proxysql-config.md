@@ -188,7 +188,7 @@ Application user `default_hostgroup` 設 20 (reader)、INSERT / UPDATE / DELETE 
 修法：
 
 - 每次 `LOAD ... TO RUNTIME` 後立刻 `SAVE ... TO DISK`（變成 habit）
-- 用 IaC（Terraform / Ansible）管 ProxySQL config、不要手動改 admin
+- 用 IaC 與[組態管理](/infra/knowledge-cards/configuration-management/)工具管 ProxySQL config（Terraform 建主機與網路，Ansible 這類工具寫 ProxySQL 的設定檔）、不要手動改 admin
 - 監控：對比 `runtime_mysql_servers` 跟 `disk.mysql_servers`、有 diff 即告警（`main.mysql_servers` 是 memory 那一層，`LOAD` 之後它與 runtime 一致、比不出沒有 `SAVE` 的情形）
 
 ### Mirror traffic 副作用：INSERT 鏡像到 staging 寫了兩次

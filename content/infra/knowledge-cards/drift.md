@@ -18,7 +18,7 @@ Drift 是 Console 唯讀鐵律存在的根本理由。[模組一：Console 唯�
 
 Drift 存在的訊號：`terraform plan` 在沒人改過程式碼的情況下顯示變更（代表有人在 Console 動了東西）、團隊開始說「跑 plan 前先看看有沒有奇怪的差異」、某次例行 apply 意外改掉了不該改的設定。
 
-偵測 drift 的主動方式是定期跑 `terraform plan` 但不 apply，把 diff 輸出當成 drift 偵測的報告。Terraform Cloud 有內建的 drift detection 功能，定期比對 state 與雲端現實。
+偵測 drift 的主動方式是定期跑 `terraform plan` 但不 apply，把 diff 輸出當成 drift 偵測的報告。plan 只比對 state 裡有的資源：有人在主控台另外新增、不在 state 裡的資源（例如寫成獨立資源的一條防火牆規則），plan 照樣回報 `No changes`，範圍見 [多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/operations/09-host-lifecycle/multi-host-manifest/)〈清單裡要到主控台確認的項目與 terraform plan 的比對範圍〉（從比對機制推論，沒有實測）。Terraform Cloud 有內建的 drift detection 功能，定期比對 state 與雲端現實。
 
 ## 設計責任
 
@@ -32,3 +32,4 @@ Drift 出現之後，團隊先要判斷 Console 上那次手動修改是失誤�
 
 - [State](/infra/knowledge-cards/state/) — drift 是 state 與現實的落差
 - [IaC](/infra/knowledge-cards/iac/) — drift 破壞 IaC 的 source of truth 地位
+- [Configuration Management（組態管理）](/infra/knowledge-cards/configuration-management/) — 主機內部的套件與設定檔跟宣告不一致，由組態管理工具處理

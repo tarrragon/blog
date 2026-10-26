@@ -6,7 +6,7 @@ weight: 3
 tags: ["operations", "maintenance", "toml", "config", "python"]
 ---
 
-這篇把 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/) 與 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/) 要檢查的項目，寫成一份機器讀得懂、人也讀得懂的資料檔，並用一台實際的主機示範：為什麼要從文件改成資料檔；這份清單對檔案格式有哪些需求，以及 JSON、[YAML](/infra/knowledge-cards/yaml/)、TOML 逐項比對的結果（含 YAML 與 TOML 隱式型別的逐行實測）；清單用到的 TOML 寫法（表格、表格陣列、巢狀的表格陣列、寫在同一行的表格、兩種字串與 regex 的跳脫）；TOML 1.0 與 1.1 的差異，以及解析器版本對不上時的兩種結果；欄位依讀者分成檢查腳本要讀的與人要讀的兩類，各自怎麼設計；最後是讀這份清單的只讀檢查腳本，它的白名單要擋下哪些寫法才能保證不改動受檢查的設定與服務、哪些寫入白名單管不到而要靠系統層限制、輸出與 exit code 怎麼讀、結果檔怎麼跟上一次比對，以及它第一次在真主機上跑出的結果。TOML 的語法速查在 [TOML](/infra/knowledge-cards/toml/) 知識卡。示範用的清單（`host.toml`）與檢查腳本（`host-check.py`）放在作者的私有專案裡，完整內容沒有公開，本篇摘錄其中的段落，網域、IP 與帳號相關的值在摘錄裡用佔位值。
+這篇把 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/) 與 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/) 要檢查的項目，寫成一份機器讀得懂、人也讀得懂的資料檔，並用一台實際的主機示範：為什麼要從文件改成資料檔；這份清單對檔案格式有哪些需求，以及 JSON、[YAML](/infra/knowledge-cards/yaml/)、TOML 逐項比對的結果（含 YAML 與 TOML 隱式型別的逐行實測）；清單用到的 TOML 寫法（表格、表格陣列、巢狀的表格陣列、寫在同一行的表格、兩種字串與 regex 的跳脫）；TOML 1.0 與 1.1 的差異，以及解析器版本對不上時的兩種結果；欄位依讀者分成檢查腳本要讀的與人要讀的兩類，各自怎麼設計；最後是讀這份清單的只讀檢查腳本，它的白名單要擋下哪些寫法才能保證不改動受檢查的設定與服務、哪些寫入白名單管不到而要靠系統層限制、輸出與 exit code 怎麼讀、結果檔怎麼跟上一次比對，以及它第一次在真主機上跑出的結果。TOML 的語法速查在 [TOML](/infra/knowledge-cards/toml/) 知識卡。示範用的清單（`host.toml`）與檢查腳本（`host-check.py`）放在作者的私有專案裡，完整內容沒有公開，本篇摘錄其中的段落，網域、IP 與帳號相關的值在摘錄裡用佔位值。同一份清單要套用到好幾台主機時，每台相同、依角色不同、每台不同的值怎麼分層，以及用 Ansible 的範本或 Terraform 的輸出產生每台清單的做法，在 [多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/operations/09-host-lifecycle/multi-host-manifest/)。
 
 ## 從維護文件改成資料檔
 
@@ -98,9 +98,9 @@ enforced_by = ["oci-nsg", "firewalld"]
 verify = { command = "sqlite3 -init /dev/null -readonly -safe {{collector_db}} 'pragma quick_check'", expect_stdout = "ok" }
 ```
 
-`{{collector_db}}` 是清單自己的替換語法，檢查腳本在執行前換成 `[vars]` 段寫的路徑；TOML 本身沒有變數，這兩個大括號在 TOML 看來只是字串裡的普通字元。TOML 1.0 的 inline table 要寫在一行內、結尾不能有逗號；1.1 放寬了這兩條，解析器版本不同時會怎樣，寫在〈TOML 1.0 與 1.1 的差異與解析器的版本〉。
+`{{collector_db}}` 是清單自己的替換語法，檢查腳本在執行前換成 `[vars]` 段寫的路徑；TOML 本身沒有變數，這兩個大括號在 TOML 看來只是字串裡的普通字元。清單改由 Jinja2 的範本（Ansible 的 `template` 模組）產生時，這個寫法跟範本自己的替換語法同形，產生的那一步會先處理它，處理方式見 [多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/operations/09-host-lifecycle/multi-host-manifest/)〈範本的 {{ }} 與清單自己的替換語法同形〉。TOML 1.0 的 inline table 要寫在一行內、結尾不能有逗號；1.1 放寬了這兩條，解析器版本不同時會怎樣，寫在〈TOML 1.0 與 1.1 的差異與解析器的版本〉。
 
-字串有兩種寫法，差在跳脫：雙引號的基本字串（basic string）會處理反斜線跳脫，regex 裡的 `\.` 要寫成 `\\.`；單引號的字面字串（literal string）不處理任何跳脫，寫什麼就是什麼。清單裡的 regex 用基本字串寫成 `"(example\\.com|www\\.example\\.com)"`，解析出來是 `(example\.com|www\.example\.com)`。檢查腳本另外提供 `--set 名稱=值` 參數，讓維護的人在執行時覆寫清單裡的值；這個值不經過 TOML 解析，腳本原樣代入，所以反斜線只寫一個。值經過 shell 傳給腳本時，雙引號裡的反斜線會被 shell 處理一次，經 SSH 在遠端執行時，本機與遠端的 shell 可能各處理一次，送進腳本的值會少掉反斜線；經 SSH 傳時，外層用雙引號、值本身用單引號包住，遠端的 shell 就不再處理裡面的反斜線。另一個要注意的是這個值被代入的位置：示範清單把 `host_re` 嵌進一條更長的 regex 中間（先跳過前面幾個以 tab 分隔的欄位，再比對 `Host` 那一欄），值本身帶了 `^`、`$` 錨點時，錨點出現在 pattern 的中間，一行都比對不到。要覆寫 regex 這類值時，先讀清單裡引用它的那一行，知道它被嵌在哪裡，再決定值要怎麼寫。
+字串有兩種寫法，差在跳脫：雙引號的基本字串（basic string）會處理反斜線跳脫，regex 裡的 `\.` 要寫成 `\\.`；單引號的字面字串（literal string）不處理任何跳脫，寫什麼就是什麼。清單裡的 regex 用基本字串寫成 `"(example\\.com|www\\.example\\.com)"`，解析出來是 `(example\.com|www\.example\.com)`。檢查腳本另外提供 `--set 名稱=值` 參數，讓維護的人在執行時覆寫清單 `[vars]` 段裡已有的值（`[vars]` 沒有那個名稱時，腳本把它判成清單格式錯）；這個值不經過 TOML 解析，腳本原樣代入，所以反斜線只寫一個。值經過 shell 傳給腳本時，雙引號裡的反斜線會被 shell 處理一次，經 SSH 在遠端執行時，本機與遠端的 shell 可能各處理一次，送進腳本的值會少掉反斜線；經 SSH 傳時，外層用雙引號、值本身用單引號包住，遠端的 shell 就不再處理裡面的反斜線。另一個要注意的是這個值被代入的位置：示範清單把 `host_re` 嵌進一條更長的 regex 中間（先跳過前面幾個以 tab 分隔的欄位，再比對 `Host` 那一欄），值本身帶了 `^`、`$` 錨點時，錨點出現在 pattern 的中間，一行都比對不到。要覆寫 regex 這類值時，先讀清單裡引用它的那一行，知道它被嵌在哪裡，再決定值要怎麼寫。
 
 數字寫成整數時就是整數：位元組上限寫 `limit_bytes = 1073741824`，解析出來就是 Python 的 `int`，檢查腳本不必再轉型。TOML 1.0 允許用底線分隔位數（`1_073_741_824`），讓人讀得出數量級。
 
@@ -135,13 +135,39 @@ TOML 1.0.0 在 2021 年 1 月發佈，1.1.0 在 2025 年 12 月發佈。1.1 新�
 
 ## 只讀檢查腳本的白名單、輸出、exit code 與結果檔
 
-檢查腳本 `host-check.py` 只用 Python 標準函式庫（`tomllib`、`subprocess`、`shlex` 這類），在主機上以 root 執行，讀清單、執行 `where = "host"` 的項目、印出報告，並把這次的結果寫進自己的結果檔。腳本這一層能保證的範圍是不改動受檢查的設定與服務狀態：不改設定檔、不啟停服務、不安裝或移除套件、不刪資料。白名單上的工具自己照常寫的檔案不在這個範圍裡：在 Oracle Linux 10 的容器實測，`dnf -q history list` 與 `dnf needs-restarting -r` 每次都寫 `/var/log/dnf.log`、`dnf.librepo.log`、`dnf.rpm.log`、`hawkey.log` 與 `/var/cache/dnf/expired_repos.json`，加 `-C` 時仍寫那四份 log；`rpm -q` 會更新 rpm 資料庫的 `rpmdb.sqlite-shm`；`sqlite3` 讀一個 WAL 模式的資料庫時，資料庫旁邊的 `-wal` 與 `-shm` 檔不存在的話（服務停掉之後就是這個狀態）會把它們建出來。要讓這些寫入也不發生，得靠下面講的系統層限制。腳本這一層的保證靠的是三件事：
+檢查腳本 `host-check.py` 只用 Python 標準函式庫（`tomllib`、`subprocess`、`shlex` 這類），在主機上以 root 執行，讀清單、執行 `where = "host"` 的項目、印出報告，並把這次的結果寫進自己的結果檔。腳本這一層能保證的範圍是不改動受檢查的設定與服務狀態：不改設定檔、不啟停服務、不安裝或移除套件、不刪資料。白名單上的工具自己照常寫的檔案不在這個範圍裡：在 Oracle Linux 10 的容器實測，`dnf -q history list` 與 `dnf needs-restarting -r` 每次都寫 `/var/log/dnf.log`、`dnf.librepo.log`、`dnf.rpm.log`、`hawkey.log` 與 `/var/cache/dnf/expired_repos.json`，加 `-C` 時仍寫那四份 log；`rpm -q` 會更新 rpm 資料庫的 `rpmdb.sqlite-shm`；`sqlite3` 讀一個 WAL 模式的資料庫時，資料庫旁邊的 `-wal` 與 `-shm` 檔不存在的話（服務停掉之後就是這個狀態）會把它們建出來。要讓這些寫入也不發生，得靠下面講的系統層限制，其中 dnf 要寫的整個 `/var/log` 與 `/var/cache/dnf` 是實測之後要刻意放行的兩個目錄。腳本這一層的保證靠的是三件事：
 
 - **不經過 shell**：指令用 `shlex` 切成參數之後直接執行，沒有管線、轉向與命令替換，清單裡的字串在腳本這一層組不出第二條指令。白名單裡的工具自己仍可能有執行 shell 的選項：`rpm` 帶 `--pipe <指令>` 時，會把輸出交給 `/bin/sh` 執行那條指令，所以這一點要靠白名單的選項規則擋下。
 - **執行任何一條之前先比對白名單**：清單欄位裡的指令，以及腳本自己用清單的值組出來的指令（用 `systemctl is-enabled <timer>` 與 `systemctl is-active <timer>` 查自動更新的排程、用 `journalctl -u <unit>` 查服務的紀錄、用 `ss` 列接聽的連接埠），都在載入清單時比對一次，執行前再比對一次。載入時有一條不符，整份清單算格式錯，一條指令都不執行：一條不符代表清單裡寫了一條白名單不認得的指令，可能是筆誤，也可能是有人寫進了會改動主機的指令，在分清楚之前，同一份清單的其他項目也不能信。代價是清單裡一個筆誤會讓全部檢查停掉，所以接上排程時要對 exit code 2 告警（見下面 exit code 那一段）。執行前那一次比對是保險，正常情形下載入時已經擋下；萬一它不通過，腳本立刻停下、以 exit code 2 結束，在它之前的指令已經執行過。
 - **清理與暫停的動作只印出來**：它們寫在 `manual_command`、`purge_command` 這些給人讀的欄位裡，腳本裡沒有執行這些欄位的程式碼。
 
-腳本這一層之外，另一種做法是在系統層限制腳本能碰到的範圍：用 systemd 的 service unit（或 `systemd-run`）執行它，設 `ProtectSystem=strict` 讓整個檔案系統唯讀、`StateDirectory=host-check` 只開放結果檔的目錄、`NoNewPrivileges=yes`、`IPAddressDeny=any` 禁止對外連線、`SystemCallFilter=` 限制系統呼叫；或不以 root 執行，改用專用帳號加上讀 log 需要的群組（`systemd-journal`、`adm`），只把非 root 不能做的幾條（`sshd -T` 要讀 host key、`ausearch` 要讀 audit log）寫進 sudoers。系統層限制換到的是：白名單解析錯了，指令照樣寫不進受保護的路徑、連不到外面，dnf 的 log 與 sqlite 的 `-shm` 這類工具自己的寫入也一起擋下。付出的是：dnf 在唯讀的檔案系統上寫不了 log，可能報錯；`PrivateNetwork=` 會讓 `ss` 只看得到一個空的網路命名空間，所以禁止對外連線要用 `IPAddressDeny=`；sudoers 要跟清單各維護一份，sudoers 的萬用字元本身也容易把範圍放寬。這幾項付出是從 systemd.exec 與 sudoers 的文件推的，示範腳本沒有實際接上系統層限制、沒有實跑。兩層的分工是：白名單擋下清單裡寫錯或寫壞的指令，系統層限制擋下白名單漏掉的寫入；下面記的兩輪缺口每一個都是白名單漏掉的寫入或執行，所以只靠白名單時，保證的強度就是白名單解析的正確度。
+腳本這一層之外，另一種做法是在系統層限制腳本能碰到的範圍，有兩條路：用 systemd 的 service unit 或 `systemd-run` 執行腳本，由 systemd 在啟動程序之前套上檔案系統、網路與權限的限制；或不以 root 執行，改用專用帳號。兩條路都在一個以 systemd 257 為 init、用 `--privileged --cgroupns=private` 執行的 Oracle Linux 10 容器裡實測過。量之前先確認限制已經套上：`ProtectSystem=strict` 底下 `touch /var/x` 回 `Read-only file system`，`IPAddressDeny=any` 底下 `curl` 逾時（exit 28）。量測環境本身可能讓限制失效而不報錯：OrbStack 的 Linux machine 是 LXC 容器（`systemd-detect-virt` 印 `lxc`），systemd 在裡面沒有套上命名空間，也沒有印出任何錯誤或警告，`ProtectSystem=strict` 底下照樣寫得進 `/var`，在那種環境量到的是沒有限制的結果。
+
+systemd 的限制用 `systemd-run` 套上的寫法如下，各屬性實測的效果列在後面的表裡：
+
+```bash
+# 以 root 執行；腳本與清單的路徑換成主機上實際的位置
+systemd-run --wait --pipe --collect \
+  -p ProtectSystem=strict -p 'ReadWritePaths=/var/log /var/cache/dnf' \
+  -p StateDirectory=host-check -p StateDirectoryMode=0700 \
+  -p NoNewPrivileges=yes -p PrivateTmp=yes -p IPAddressDeny=any \
+  python3 <host-check.py 的路徑>
+```
+
+| 屬性                                                         | 實測的效果                                                                                                                                                                                | 要另外加的設定                                                                                                                                                   |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ProtectSystem=strict`                                       | 整個檔案系統唯讀。dnf 每次都要寫 log，`dnf needs-restarting -r` 以 exit 1 結束，錯誤是 `Read-only file system: '/var/log/dnf.log'`；`dnf -C check-update` 只用快取時同樣因為寫 log 而失敗 | `ReadWritePaths=` 放行 `/var/log` 與 `/var/cache/dnf` 之後 exit 0；只放行 `/var/log` 時改報 `/var/cache/dnf/metadata_lock.pid` 寫不進去；`/var/lib/dnf` 不必可寫 |
+| `StateDirectory=host-check`                                  | 結果檔的目錄 `/var/lib/host-check` 可寫，其餘仍唯讀                                                                                                                                       | 目錄預設建成 0755，而且每次啟動都被改回 0755，腳本建目錄時給的 0700 只在目錄不存在時有效；加 `StateDirectoryMode=0700` 之後目錄 0700、結果檔 0600                |
+| `NoNewPrivileges=yes`、`PrivateTmp=yes`、`IPAddressDeny=any` | 腳本不提權、不用 `/tmp`、不連網，對每一項檢查都沒有看得到的影響                                                                                                                           | 無                                                                                                                                                               |
+| `PrivateNetwork=yes`                                         | `ss -tlnp` 只印出表頭，看不到主機上任何接聽的程式；四個入口的檢查全部變成 `WARN`，`listen_audit` 卻判成 `PASS`（一個 socket 都看不到，也就沒有多出來的連接埠）                            | 不開這一項；禁止對外連線由 `IPAddressDeny=` 負責                                                                                                                 |
+
+其他工具在唯讀的檔案系統上：`rpm -q` 照常查得到，`rpmdb.sqlite-shm` 原本就在；`sqlite3 -init /dev/null -readonly -safe` 讀一個服務正在寫、`-wal` 與 `-shm` 都在的資料庫，照常讀得到。服務停掉之後那兩個檔被收掉，同一條指令以 `unable to open database file (14)` 失敗，因為它要建那兩個檔而檔案系統是唯讀的；暫停時停掉服務再跑的那一輪檢查就是這個情形，從這個 exit 14 推論那一項會是 `WARN`（實測只跑了單獨的 `sqlite3` 指令，沒有在服務停掉時跑整份清單）。沒有套限制時，同一條指令讀得到，代價是在資料庫旁邊建出 `-shm`（32768 位元組）與 `-wal`（0 位元組）。dnf 那兩個路徑是單獨對 `dnf needs-restarting -r` 量的；整份清單以 root 執行時只在沒有 `ReadWritePaths=` 與 `StateDirectoryMode=` 的設定下跑過（`StateDirectoryMode=` 在專用帳號那一組用過），那一次比沒套限制時多出的 `WARN` 只有 dnf 那一項，結果檔照常寫進 `StateDirectory`，第二次執行的差異段也照常印出。
+
+接上限制之後，這一版的腳本有一個判定要另外讀：dnf 因為寫不了 log 而以 exit 1 結束時，`reboot_check` 把它印成「更新之後需要重開機」，dnf 的錯誤訊息沒有印出來。狀態是對的（`WARN`），理由是錯的，所以看到這一行時先確認 `ReadWritePaths=` 有沒有放行 dnf 的兩個路徑。這個判定與上面 `PrivateNetwork=` 的假 `PASS`，示範腳本的 repo 開了修正的工作項目，還沒修好。
+
+專用帳號實測換回的範圍很小。以 `useradd -r` 建的帳號、加上 `systemd-journal` 與 `adm` 兩個群組執行，root 下 37 項 `PASS` 的那份清單只剩 29 項，其餘變成 `WARN`。讀不到的有：firewalld 的查詢（`firewall-cmd` 以 exit 253 回 `NotAuthorizedException`）、`sshd -T`（`/etc/ssh/sshd_config` 的權限是 0600）、服務的資料庫（所在目錄 0750）、放在 `/home/opc` 底下的建置產物（家目錄 0700）、nginx 的 log 目錄（0711，進得去、列不出檔名）；audit log 在這個容器裡沒有，沒量到，主機上它是 0600 root，從權限推論同樣要 root。資料庫、nginx 的 log 目錄與建置產物這三項讀不到的路徑，這一版的腳本印成「路徑不存在」，在同一個修正的工作項目裡。加了群組換回來的只有讀 journal 的兩項，而且前提是 `/var/log/journal` 的群組與 ACL 由 systemd-tmpfiles 設好：持久 journal 的目錄由 journald 自己建出時是 root:root、檔案 0640，`systemd-journal` 群組的 `journalctl` 回 `No journal files were opened due to insufficient permissions.`，跑過 `systemd-tmpfiles --create --prefix /var/log/journal` 之後才讀得到。限定指令的 sudoers 這一條走不通，是從腳本的結構推的，沒有實測：腳本直接執行白名單裡的指令、不經過 sudo，sudoers 只能授權整支 `python3 host-check.py`，範圍跟用 root 執行相同。
+
+所以實測之後的做法是以 root 執行，外面套上上面那段 `systemd-run` 的屬性。換到的是：白名單解析錯了，指令照樣寫不進受保護的路徑、連不到外面，sqlite 的 `-shm` 這類工具自己的寫入也一起擋下；為了 dnf 刻意放行的是整個 `/var/log` 與 `/var/cache/dnf` 兩個目錄，nginx 這類其他服務的 log 也在 `/var/log` 底下，白名單漏掉的指令寫得進這兩個目錄裡的任何檔案（只放行 dnf 那四份 log 檔的寫法沒有實測）。兩層的分工是：白名單擋下清單裡寫錯或寫壞的指令，系統層限制擋下白名單漏掉的寫入；下面記的兩輪缺口每一個都是白名單漏掉的寫入或執行，所以只靠白名單時，保證的強度就是白名單解析的正確度。
 
 白名單列的是允許的寫法，不在表上的一律拒絕。另一種寫法是列禁止的寫法：只擋已知會改變狀態的選項，其餘放行。列禁止的寫法要把工具現有的每一個會改變狀態的選項都列進去，漏一個就放行一個，工具日後新增的選項也會被放行；列允許的寫法沒有這個問題，代價是清單要用到新的選項時，得先把它加進白名單。白名單分三層比對：
 

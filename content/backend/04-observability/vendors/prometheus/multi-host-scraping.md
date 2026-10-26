@@ -120,7 +120,7 @@ scrape_configs:
 
 `/etc/prometheus/targets/` 是容器裡的路徑，Prometheus 的服務要把 repo 裡放清單的目錄掛進去。〈單機 Compose 的最小監控堆疊〉把整個 Prometheus 設定目錄掛到 `/etc/prometheus`，清單放在那個目錄的 `targets/` 底下就讀得到；掛的是目錄而不是單一檔案，部署工具以換檔方式改寫清單時，容器才看得到新的內容。檔案不存在或讀不到時 Prometheus 照樣啟動，只寫一行日誌，這個 job 沒有任何讀取對象。從〈單機 Compose 的最小監控堆疊〉改過來時，每一個 job 都要這樣改：那一篇以 compose 的服務名稱寫的讀取對象，在另一台監控主機上解析不到，留著 `static_configs` 的 job 會全部讀取失敗；只有讀 Prometheus 自己與 Alertmanager 的兩個 job 和它們在同一台，可以留著，`host` 改成監控主機的名稱。
 
-Prometheus 會監看這個檔案，內容改了就重新讀取，不必重新載入設定；`refresh_interval` 是監看失效時的定時重讀。在那個短網址服務上（macOS 的 OrbStack），清單加上一台主機之後 13 秒，它就出現在 Prometheus 的 Targets 頁面；另一次把 `refresh_interval` 設成 10 分鐘來測，改檔後 4 秒生效，所以生效靠的是監看而不是定時重讀。這份檔案由 Ansible、Terraform 這類部署工具從主機清單產生，主機清單是部署的依據，監控因此跟著部署走，不靠人記得同步。這個前提是主機只由部署工具建立與移除；有部署工具以外的機制會開關主機時（Auto Scaling、搶占式執行個體被回收），檔案清單會落後實際的主機，被汰換的一直是 `up` 為 0、新開的不在監控裡，這時改用雲端的服務發現（見本節〈雲端的服務發現〉那一段）。
+Prometheus 會監看這個檔案，內容改了就重新讀取，不必重新載入設定；`refresh_interval` 是監看失效時的定時重讀。在那個短網址服務上（macOS 的 OrbStack），清單加上一台主機之後 13 秒，它就出現在 Prometheus 的 Targets 頁面；另一次把 `refresh_interval` 設成 10 分鐘來測，改檔後 4 秒生效，所以生效靠的是監看而不是定時重讀。這份檔案由 Ansible、Terraform 這類部署工具從主機清冊（Ansible 叫 inventory，見 [Configuration Management（組態管理）](/infra/knowledge-cards/configuration-management/)）產生，主機清冊是部署的依據；由 Terraform 的輸出寫出 inventory 的設定與實測見 [多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/operations/09-host-lifecycle/multi-host-manifest/)〈主機由 Terraform 建立時由它的輸出產生 inventory〉，監控因此跟著部署走，不靠人記得同步。這個前提是主機只由部署工具建立與移除；有部署工具以外的機制會開關主機時（Auto Scaling、搶占式執行個體被回收），檔案清單會落後實際的主機，被汰換的一直是 `up` 為 0、新開的不在監控裡，這時改用雲端的服務發現（見本節〈雲端的服務發現〉那一段）。
 
 **雲端的服務發現**：在 AWS 上用 `ec2_sd_configs`，Prometheus 定時向 EC2 的 API 查詢執行個體，依 tag 篩選要監控的那些。執行個體的 tag 以 `__meta_ec2_tag_<tag 名稱>` 的形式出現，用 relabel 搬到 `host`：
 

@@ -73,7 +73,7 @@ nameserver 10.0.1.10
 search internal
 ```
 
-如果環境有 DHCP server，在 DHCP option 裡配 DNS server 位址，新加入的機器自動取得。沒有 DHCP 就靠 provisioning 腳本或 Ansible playbook 推送。
+如果環境有 DHCP server，在 DHCP option 裡配 DNS server 位址，新加入的機器自動取得。沒有 DHCP 就靠 provisioning 腳本或 Ansible 這類[組態管理](/infra/knowledge-cards/configuration-management/)工具的 playbook 推送。
 
 ## NTP：內部時間同步
 

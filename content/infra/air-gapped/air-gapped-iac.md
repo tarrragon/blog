@@ -134,7 +134,7 @@ state 的備份紀律不變——定期 `terraform state pull > backup.json`，b
 - VMware vSphere：`hashicorp/vsphere`
 - OpenStack：`terraform-provider-openstack/openstack`
 - Proxmox：`telmate/proxmox`（社群維護）
-- 裸機管理：用 `null_resource` + `local-exec` 呼叫 Ansible 或 shell script
+- 裸機管理：用 `null_resource` + `local-exec` 呼叫 Ansible（主機內部的設定交給[組態管理](/infra/knowledge-cards/configuration-management/)工具）或 shell script
 
 provider 的離線管理方式相同——mirror 或 plugin cache。
 

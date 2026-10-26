@@ -29,7 +29,7 @@ ssh-keygen -t ed25519 -f host_ca -C "host-ca"
 - `-C`：註解，只是讓人辨認這把金鑰，不影響驗證。
 - 執行時會要求輸入 passphrase，CA 私鑰要設：之後每次簽發都要輸入它，私鑰檔被複製走時攻擊者也還要猜這個 passphrase。
 
-CA 私鑰能簽出登入所有主機的憑證，它外洩的影響等於所有主機的所有金鑰一起外洩，所以它的保管位置決定了這套做法的安全上限：放在一台專用、不對外開放、只有少數人能登入的簽發主機上，或放在[硬體安全模組（HSM）](/backend/knowledge-cards/hsm/)裡（`ssh-keygen` 支援用 `-D` 指定 PKCS#11 函式庫，讓私鑰留在硬體裡簽名；PKCS#11 是程式存取硬體金鑰的標準介面。這時 `-s` 給的是 CA 的公鑰檔，`ssh-keygen` 用它找出硬體裡對應的那把私鑰，簽發指令寫成 `ssh-keygen -D <pkcs11-library-path> -s user_ca.pub -I ... id_ed25519.pub`，函式庫路徑看硬體廠商的文件）。成本介於兩者之間的做法是把 CA 私鑰放進 FIDO 或 PIV 這類硬體金鑰、經由 `ssh-agent` 簽名（`ssh-keygen -U -s user_ca.pub ...`，`-U` 表示私鑰在 agent 裡），私鑰同樣不以檔案形式存在。不放在任何人的筆電硬碟上，也不放進版本控制。公鑰（`.pub`）不是機密，可以放進設定管理工具派送。
+CA 私鑰能簽出登入所有主機的憑證，它外洩的影響等於所有主機的所有金鑰一起外洩，所以它的保管位置決定了這套做法的安全上限：放在一台專用、不對外開放、只有少數人能登入的簽發主機上，或放在[硬體安全模組（HSM）](/backend/knowledge-cards/hsm/)裡（`ssh-keygen` 支援用 `-D` 指定 PKCS#11 函式庫，讓私鑰留在硬體裡簽名；PKCS#11 是程式存取硬體金鑰的標準介面。這時 `-s` 給的是 CA 的公鑰檔，`ssh-keygen` 用它找出硬體裡對應的那把私鑰，簽發指令寫成 `ssh-keygen -D <pkcs11-library-path> -s user_ca.pub -I ... id_ed25519.pub`，函式庫路徑看硬體廠商的文件）。成本介於兩者之間的做法是把 CA 私鑰放進 FIDO 或 PIV 這類硬體金鑰、經由 `ssh-agent` 簽名（`ssh-keygen -U -s user_ca.pub ...`，`-U` 表示私鑰在 agent 裡），私鑰同樣不以檔案形式存在。不放在任何人的筆電硬碟上，也不放進版本控制。公鑰（`.pub`）不是機密，可以放進[組態管理](/infra/knowledge-cards/configuration-management/)工具派送。
 
 ## 設定主機的 sshd：信任使用者 CA
 
@@ -137,7 +137,7 @@ ssh-keygen -Q -f revoked.krl id_ed25519-cert.pub
 - `krl.spec`：規格檔，一行一項，`serial: 1001` 撤銷那個序號，`id: alice@example.com` 撤銷那個識別字串簽出的所有憑證。
 - `-Q`：查詢一把金鑰或一張憑證是否在清單裡。
 
-sshd 每次驗證都重新讀這份檔案，換掉檔案之後不必重新載入 sshd。撤銷清單的成本在派送：它要送到每一台主機，送不到的那幾台仍然接受被撤銷的憑證，所以派送要交給設定管理工具或 IaC 這類會回報失敗的機制，派送失敗時有人看得到。撤銷擋下的是下一次登入，已經建立的工作階段要另外在主機上結束，用的是 systemd 管理登入工作階段的 `loginctl`（要 root 權限）：一人一個帳號時用 `sudo loginctl terminate-user <username>`；多人共用一個帳號（`deploy`、`ubuntu`）時 `terminate-user` 會結束所有人的工作階段，改用 `loginctl list-sessions` 列出工作階段、對照 sshd 紀錄裡那一行 `Accepted publickey` 的來源 IP 與時間找出那個人的 `<session-id>`，再用 `sudo loginctl terminate-session <session-id>` 只結束它。
+sshd 每次驗證都重新讀這份檔案，換掉檔案之後不必重新載入 sshd。撤銷清單的成本在派送：它要送到每一台主機，送不到的那幾台仍然接受被撤銷的憑證，所以派送要交給組態管理工具或 [IaC](/infra/knowledge-cards/iac/) 這類會回報失敗的機制，派送失敗時有人看得到。撤銷擋下的是下一次登入，已經建立的工作階段要另外在主機上結束，用的是 systemd 管理登入工作階段的 `loginctl`（要 root 權限）：一人一個帳號時用 `sudo loginctl terminate-user <username>`；多人共用一個帳號（`deploy`、`ubuntu`）時 `terminate-user` 會結束所有人的工作階段，改用 `loginctl list-sessions` 列出工作階段、對照 sshd 紀錄裡那一行 `Accepted publickey` 的來源 IP 與時間找出那個人的 `<session-id>`，再用 `sudo loginctl terminate-session <session-id>` 只結束它。
 
 有效期短的時候，撤銷清單能爭取到的時間有限：一張八小時的憑證剩下的有效時間最多八小時，派送清單到每台主機若也要花上幾小時，撤銷只比自然到期早一點生效。撤銷清單是給「等不到到期」的情形用的，而 CA 私鑰本身外洩時撤銷清單也救不了，那時要換掉 CA：產生新的 CA、把新公鑰加進每台主機的 `TrustedUserCAKeys`、同一次就拿掉舊的那一把、重新簽發所有人的憑證。改 `TrustedUserCAKeys` 要逐台改設定；撤銷清單也收 CA 公鑰本身（`ssh-keygen -k -u -f revoked.krl user_ca.pub`，這把 CA 簽的所有憑證一起作廢），已經演練過的清單派送路徑能比逐台改設定更早送到，兩者可以一起做。〈設定主機的 sshd〉講的新舊兩把並列一段時間，是有計畫輪替 CA 時的做法；私鑰外洩時舊的那一把每多留一刻，攻擊者就多一刻能簽出有效憑證。
 
@@ -198,7 +198,7 @@ echo "@cert-authority *.example.com $(cat host_ca.pub)" >> ~/.ssh/known_hosts
 
 CA 與主機設定之間的依賴最直接：主機要信任的是 CA 公鑰，所以 CA 先產生、私鑰先放進簽發主機或硬體安全模組，才有公鑰可以派送。主機那一側加 `TrustedUserCAKeys`、`AuthorizedPrincipalsFile`、`RevokedKeys` 三行之前，先把使用者 CA 公鑰、principals 檔與一份空的撤銷清單放到位：三行設定指向的檔案只要有一個不在，〈設定主機的 sshd：信任使用者 CA〉講的兩個陷阱就會在重新載入的那一刻讓所有人登不進去。這時 `authorized_keys` 仍然有效，憑證是多出來的一條路。
 
-憑證與 `authorized_keys` 之間的依賴決定什麼時候能拿掉舊路徑：每位管理員都用憑證登入過每一類主機、並在 sshd 紀錄裡看到自己那一行帶著 `ID <自己的識別字串>` 的 `Accepted publickey` 之後，`authorized_keys` 才可以停用。停用的做法是在 `sshd_config` 加 `AuthorizedKeysFile none`（先 `sshd -t` 再重新載入），而不只是清空檔案：只清空檔案時，任何登入過的帳號都能把自己的公鑰寫回 `~/.ssh/authorized_keys`，這把金鑰不受憑證有效期與撤銷清單約束，收回延遲有上限的前提就不成立。撤銷清單的派送也要在停用之前接上設定管理工具並實際演練一次——撤銷一張測試憑證、確認每台主機都拒絕它——因為停用 `authorized_keys` 之後，收回一個人的權限只剩兩個手段：不再替他簽發、等手上的憑證到期，以及把他的憑證加進撤銷清單，而撤銷清單要靠演練過的派送才送得到每台主機。救援用的本機帳號（給 [Serial Console](/infra/knowledge-cards/serial-console/) 這類救援入口用、不經過 sshd 金鑰登入的帳號）不跟著清掉，它的密碼與保管方式另外管理。
+憑證與 `authorized_keys` 之間的依賴決定什麼時候能拿掉舊路徑：每位管理員都用憑證登入過每一類主機、並在 sshd 紀錄裡看到自己那一行帶著 `ID <自己的識別字串>` 的 `Accepted publickey` 之後，`authorized_keys` 才可以停用。停用的做法是在 `sshd_config` 加 `AuthorizedKeysFile none`（先 `sshd -t` 再重新載入），而不只是清空檔案：只清空檔案時，任何登入過的帳號都能把自己的公鑰寫回 `~/.ssh/authorized_keys`，這把金鑰不受憑證有效期與撤銷清單約束，收回延遲有上限的前提就不成立。撤銷清單的派送也要在停用之前接上組態管理工具並實際演練一次——撤銷一張測試憑證、確認每台主機都拒絕它——因為停用 `authorized_keys` 之後，收回一個人的權限只剩兩個手段：不再替他簽發、等手上的憑證到期，以及把他的憑證加進撤銷清單，而撤銷清單要靠演練過的派送才送得到每台主機。救援用的本機帳號（給 [Serial Console](/infra/knowledge-cards/serial-console/) 這類救援入口用、不經過 sshd 金鑰登入的帳號）不跟著清掉，它的密碼與保管方式另外管理。
 
 主機憑證與使用者憑證之間沒有依賴，可以獨立導入；它的前提是用戶端的 `known_hosts` 已經加了 `@cert-authority` 那一行，否則用戶端仍然逐台確認指紋，主機憑證放上去也不會被用到。
 

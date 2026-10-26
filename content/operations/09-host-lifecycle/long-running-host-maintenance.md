@@ -8,7 +8,7 @@ tags: ["operations", "maintenance", "linux", "security", "logging"]
 
 這篇整理一台單獨部署、要長期放在公開網路上的主機，在沒有人登入、也沒有部署新版本的期間仍然會改變的狀態，以及維護時對每一類狀態做的事：會累積的資料（nginx 的 log、[journald](/linux/dotfile/knowledge-cards/journald/)、syslog 的檔案、套件快取、容器的 log 與映像檔、應用程式自己寫的資料、建置產物）各自由誰寫入、由什麼機制清理，以及磁碟寫滿時不同寫入者的反應；定期要讀的 log 與每一份要看的欄位；對外入口在主機與雲端防火牆兩層怎麼盤點、哪些入口該關或該收窄；安全更新依軟體的安裝管道各自由什麼更新、更新後是否自動重開機的條件；會到期與會改變的設定（憑證、網域、雲端 CLI 的登入、管理者的 IP、CDN 的位址段、免費額度的閒置回收）；怎麼從每一類狀態的變化速度推出檢查間隔、哪些項目要改成自動處理；最後是接手或第一次盤點一台已經上線的主機時，先處理哪幾項。
 
-範圍是一台主機加上它前面的 CDN 與雲端防火牆，例子取自 Oracle Linux 10.2 上跑 nginx 與一個寫 SQLite 的服務的主機；Debian 系發行版與 Docker 的對照寫在各節，Debian 的部分都沒有在 Debian 主機上實測。服務要暫停一段時間時的處理在 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)，把本篇的項目寫成機器讀得懂的清單在 [主機維護清單寫成 TOML：JSON、YAML、TOML 的取捨、TOML 1.0 與 1.1 的版本差異、清單的欄位設計與只讀檢查腳本](/operations/09-host-lifecycle/host-manifest-in-toml/)。
+範圍是一台主機加上它前面的 CDN 與雲端防火牆（主機有好幾台、要依角色分組時，清單的值怎麼分層、怎麼產生每台的清單，在 [多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/operations/09-host-lifecycle/multi-host-manifest/)），例子取自 Oracle Linux 10.2 上跑 nginx 與一個寫 SQLite 的服務的主機；Debian 系發行版與 Docker 的對照寫在各節。Debian 系的套件預設，是在 Debian 12、Debian 13 與 Ubuntu 24.04 的官方容器映像檔裡裝上同名套件之後讀出來的，沒有在 Debian 系的雲端主機上跑過；雲端映像檔預先裝了哪些套件，要在主機上用 `dpkg -s <套件名>` 查。服務要暫停一段時間時的處理在 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)，把本篇的項目寫成機器讀得懂的清單在 [主機維護清單寫成 TOML：JSON、YAML、TOML 的取捨、TOML 1.0 與 1.1 的版本差異、清單的欄位設計與只讀檢查腳本](/operations/09-host-lifecycle/host-manifest-in-toml/)。
 
 ## 沒有人操作時主機上會改變的狀態
 
@@ -38,6 +38,8 @@ tags: ["operations", "maintenance", "linux", "security", "logging"]
 
 這張表裡的預設值是一台 Oracle Linux 10.2 主機上查到的，換發行版或版本時會不同。查法是讀 `/etc/logrotate.d/` 底下對應的檔案、`systemd-analyze cat-config systemd/journald.conf`（印出主設定檔與全部 `.d` 目錄合併後的內容）與套件管理器的設定檔；沒有寫在設定檔裡的值，要讀主機上那個版本自己的 man page（`man journald.conf`），而不是線上最新版的文件。Docker 的 json-file 驅動預設不輪替，這一點寫在 Docker 的文件裡；`daemon.json` 改了之後，既有的容器不會套用新的設定，要重新建立容器才生效。服務跑在容器裡時，量測的位置也要跟著換：nginx 在容器裡通常把 log 寫到標準輸出，主機上的 `/var/log/nginx` 量到的是空目錄，這個零不代表 log 很小。
 
+Debian 系的對應預設在 Debian 12、Debian 13 與 Ubuntu 24.04 上相同（logrotate 3.21 與 3.22）：nginx 套件的 logrotate 設定是每天輪替、保留 14 份、壓縮舊檔，輪替之後執行 `invoke-rc.d nginx rotate` 讓 nginx 重新開檔；`/etc/logrotate.conf` 的全域預設是每週輪替、保留 4 份，沒有開 `dateext`，所以輪替出來的檔名是 `.1`、`.2.gz` 這種序號，Oracle Linux 10.2 開了 `dateext`，檔名帶日期。logrotate 由 `logrotate.timer` 每天觸發；`/etc/cron.daily/logrotate` 也在，但這支腳本在 `/run/systemd/system` 存在（systemd 是 init）時直接結束，所以實際執行的只有 timer 那一份。syslog 檔案那一列要先確認 rsyslog 在不在：這三個容器裝了 systemd、logrotate、nginx、unattended-upgrades 與 needrestart 之後都沒有 rsyslog，`/var/log/auth.log`、`/var/log/syslog` 也就不存在。
+
 ### journald 的紀錄存在記憶體還是磁碟
 
 journald 的紀錄存在磁碟還是記憶體，由 `Storage` 決定，這個預設值正好是線上文件與主機不一致的例子：systemd 最新版的文件寫的預設是 `persistent`，而 Oracle Linux 10.2 的 systemd 257 預設是 `auto`，`/var/log/journal` 目錄存在時才寫到磁碟。兩種狀態的結果不同：
@@ -46,6 +48,8 @@ journald 的紀錄存在磁碟還是記憶體，由 `Storage` 決定，這個預
 - **兩者都沒有**：紀錄只存在 `/run` 底下的記憶體裡，每次重開機就清空；上限改由 `RuntimeMaxUse` 與 `RuntimeKeepFree` 依 `/run` 的大小計算。重開機之前的 sshd 失敗登入、自動更新的執行結果，在 journal 裡都查不到，只剩 rsyslog 轉出的 `/var/log/secure` 與 `/var/log/messages`。主機重開過機、`journalctl --list-boots` 卻只列出一次開機，或 `/var/log/journal` 不存在，就代表主機處在這個狀態；上線之後還沒重開過機的主機，紀錄存在磁碟上時同樣只列出一次開機，所以只看開機次數分不出兩種狀態。
 
 上面兩組上限各自另有 4G 的上限，算出來超過 4G 時以 4G 為準。Oracle Cloud 的 Oracle Linux 10.2 映像檔處在紀錄只存在記憶體的那一種狀態；在 `/etc/systemd/journald.conf.d/` 放一個寫了 `Storage=persistent` 的設定檔並重啟 systemd-journald 之後，那台主機的 `journalctl --list-boots` 在下一次重開機後列出兩次開機。
+
+Debian 系的預設落在另一種狀態：Debian 12、Debian 13 與 Ubuntu 24.04 的 systemd 套件（252、257、255）在安裝時由套件的 postinst 腳本建立 `/var/log/journal`，`Storage` 同樣是預設的 `auto`，所以紀錄寫在磁碟上、跨得過重開機。雲端映像檔是由同一個套件裝出來的，目錄應該也在，這一點是從 postinst 推論，沒有在雲端主機上確認，`ls -ld /var/log/journal` 查得到。
 
 ### 磁碟寫滿時各寫入者的反應
 
@@ -90,7 +94,7 @@ journald 的紀錄存在磁碟還是記憶體，由 `Storage` 決定，這個預
 
 各列的紀錄去哪裡讀：
 
-- **sshd**：RHEL 系的 unit 是 `sshd.service`、Debian 系是 `ssh.service`，名稱用 `systemctl list-units '*ssh*'` 查；unit 名稱寫錯時 `journalctl -u` 的輸出也是零，所以零要搭配確認 unit 名稱存在才算數。journal 不保留到重開機之後的主機，讀 rsyslog 寫的 `/var/log/secure`（RHEL 系）或 `/var/log/auth.log`（Debian 系）。
+- **sshd**：RHEL 系的 unit 是 `sshd.service`、Debian 系是 `ssh.service`，名稱用 `systemctl list-units '*ssh*'` 查；unit 名稱寫錯時 `journalctl -u` 的輸出也是零，所以零要搭配確認 unit 名稱存在才算數。journal 不保留到重開機之後的主機，讀 rsyslog 寫的 `/var/log/secure`（RHEL 系）或 `/var/log/auth.log`（Debian 系，有裝 rsyslog 時才有這個檔案）。
 - **強制存取控制**：SELinux 用 `ausearch -m AVC`；Debian 系的 AppArmor 在核心 log 裡找 `apparmor="DENIED"`。
 - **自動更新**：`journalctl -u dnf-automatic.service` 與 `dnf history`；journal 不保留時讀 `/var/log/messages`。Debian 系的 unattended-upgrades 寫在 `/var/log/unattended-upgrades/`。
 - **重啟計數**：`systemctl show -p NRestarts <unit>`。
@@ -118,27 +122,44 @@ sshd 與強制存取控制這兩列的正常值都是零，偏離零就可以直
 安全更新的維護包含兩件獨立的事：把更新裝上去，以及讓更新後的程式碼實際開始執行。兩件事都要依軟體是從哪一條管道裝上去的來判斷，因為每一條管道由不同的機制更新，主人得知有修補的方式與能不能交給排程也各不相同：
 
 - **發行版套件庫裡的套件**（nginx、OpenSSH、核心、函式庫）：修補由發行版發佈，套件管理器讀得到；可以交給排程自動套用，下面寫它的設定。
-- **第三方套件庫的套件**（nginx.org 的官方套件庫、docker-ce 這類）：一樣由套件管理器更新，但要看那個套件庫有沒有發佈安全公告；只裝安全更新的設定依公告的類型挑套件，沒有發佈公告的套件庫，裡面的套件不會被挑到（從 dnf 依 updateinfo 公告篩選的機制推論，沒有實測）。dnf-automatic 的 `upgrade_type` 對整台主機生效，沒有逐一套件庫的設定，要對單一套件庫套用全部的更新，就另寫一個 [systemd timer](/linux/dotfile/knowledge-cards/systemd-timer/) 執行 `dnf repository-packages <套件庫> upgrade`：它只升級那個套件庫的套件，相依的套件仍從全部套件庫取；`dnf upgrade --repo=<套件庫>` 會停用其他套件庫，新版本多了其他套件庫的相依套件時解析不到（兩者的行為讀自 Oracle Linux 10 上 dnf 4.20 的說明，沒有實際升級過）；Debian 系在 unattended-upgrades 的 `Origins-Pattern` 加上這個來源。
+- **第三方套件庫的套件**（nginx.org 的官方套件庫、docker-ce 這類）：一樣由套件管理器更新，但要看那個套件庫有沒有發佈安全公告；只裝安全更新的設定依公告的類型挑套件，沒有發佈公告的套件庫，裡面的套件不會被挑到（從 dnf 依 updateinfo 公告篩選的機制推論，沒有實測）。dnf-automatic 的 `upgrade_type` 對整台主機生效，沒有逐一套件庫的設定，要對單一套件庫套用全部的更新，就另寫一個 [systemd timer](/linux/dotfile/knowledge-cards/systemd-timer/) 執行 `dnf repository-packages <套件庫> upgrade`：它只升級那個套件庫的套件，相依的套件仍從全部套件庫取；`dnf upgrade --repo=<套件庫>` 會停用其他套件庫，新版本多了其他套件庫的相依套件時解析不到。在 Oracle Linux 10.2 的容器（dnf 4.20）用一個自建的本機套件庫實測：主機裝著 `demo-1`，套件庫裡的 `demo-2` 多了一個要從發行版套件庫取的相依套件 `jq`；`dnf upgrade --repo=localdemo` 以 `nothing provides jq needed by demo-2-1.noarch from localdemo` 失敗，`dnf repository-packages localdemo upgrade` 只升級 `demo`，`jq` 與它的相依套件從 `ol10_baseos_latest` 一起裝上。相依套件都已經裝好時（nginx.org 套件庫的 nginx 從 1.30.2 升到 1.30.6），兩條指令的結果相同；Debian 系在 unattended-upgrades 的 `Origins-Pattern` 加上這個來源。
 - **容器映像檔裡的軟體**：主機的套件管理器管不到。修補要等上游的映像檔發新版，得知的方式是上游的發佈通知或映像檔的漏洞掃描工具；重新拉取、重新建立容器可以排程，代價是沒有人在場時換了版本，所以多半在維護時段做。
 - **應用程式自己的更新機制**（WordPress 的核心與外掛這類 CMS）：由應用程式自己的更新功能處理，主機的排程碰不到。看應用程式有沒有自動更新的設定（WordPress 的外掛可以逐個開自動更新）；沒開的，列進維護時段。
-- **自己建置的程式**（自己編譯的 Go、Rust 程式）：依賴的函式庫或語言的標準函式庫有漏洞時，要重新建置、重新部署才修得到。得知的方式是對依賴跑語言的漏洞掃描工具（Go 的 `govulncheck`），掃描可以排程，重建與部署多半由人在維護時段做。
+- **自己建置的程式**（自己編譯的 Go、Rust 程式）：依賴的函式庫或語言的標準函式庫有漏洞時，要重新建置、重新部署才修得到。得知的方式是對依賴跑語言的漏洞掃描工具（Go 的 `govulncheck`），掃描可以排程，重建與部署多半由人在維護時段做。`govulncheck ./...` 只回報程式碼實際呼叫得到的漏洞，找到時 exit code 是 3，沒有時是 0（govulncheck 1.1.3 對一個依賴 `golang.org/x/text` v0.3.5 的程式實測，升到 v0.21.0 之後變成 0），所以排程的 timer 可以直接依 exit code 決定要不要告警。
 - **從上游下載的預先建置檔案**（官方發佈頁下載的二進位檔、`curl | sh` 裝的工具）：沒有任何套件管理器記得它裝過，要人去換；得知的方式是訂閱上游的發佈通知，並把它列進清單，否則它會一直停在安裝那天的版本。
 
-發行版套件庫這一條可以交給排程。Oracle Linux 與 RHEL 系由 `dnf-automatic.timer` 定期觸發 `dnf-automatic`，它讀 `/etc/dnf/automatic.conf` 的兩個鍵：`upgrade_type` 決定裝哪一類更新（`security` 只裝安全更新），`apply_updates` 決定下載之後要不要安裝（預設 `no` 只下載）。timer 沒有啟用時，設定檔改了也不會執行；`systemctl list-timers dnf-automatic.timer` 列得出下一次執行的時間，才代表排程在跑。Debian 系用 `unattended-upgrades`。這裡有兩個獨立的選擇：
+發行版套件庫這一條可以交給排程。Oracle Linux 與 RHEL 系由 `dnf-automatic.timer` 定期觸發 `dnf-automatic`，它讀 `/etc/dnf/automatic.conf` 的兩個鍵：`upgrade_type` 決定裝哪一類更新（`security` 只裝安全更新），`apply_updates` 決定下載之後要不要安裝（預設 `no` 只下載）。timer 沒有啟用時，設定檔改了也不會執行；`systemctl list-timers dnf-automatic.timer` 列得出下一次執行的時間，才代表排程在跑。
+
+Debian 系用 `unattended-upgrades`，排程由兩個 timer 分工：`apt-daily.timer`（每天 6 點與 18 點，加最多 12 小時的隨機延遲）更新套件清單，`apt-daily-upgrade.timer`（每天 6 點，加最多 60 分鐘）執行安裝；要不要安裝由 `/etc/apt/apt.conf.d/20auto-upgrades` 的 `APT::Periodic::Unattended-Upgrade` 決定，非互動安裝這個套件時，它的值預設是 `"1"`（套件的 debconf 問題 `enable_auto_updates` 預設 true）。裝哪些來源的更新寫在 `/etc/apt/apt.conf.d/50unattended-upgrades`，兩家的預設不同：Debian 12 與 13 的 `Origins-Pattern` 除了 `label=Debian-Security` 的兩筆，還有 `label=Debian` 那一筆，也就是穩定版的點版本更新（point release）同樣自動套用；Ubuntu 24.04 的 `Allowed-Origins` 是發行時的版本、`-security` 與兩個 ESM 的安全來源，不含 `-updates`，自動套用的只有安全更新。以上是三個發行版的容器裡裝上 unattended-upgrades 2.9 到 2.12 之後讀出的值。
+
+這裡有兩個獨立的選擇：
 
 - **要不要讓排程自動套用**：自動套用時，一個漏洞從修補發佈到這台主機套用，最多隔一個排程的間隔；不自動套用時，這段時間等於兩次人工更新之間的間隔，那段時間裡公開的漏洞在這台主機上都還在。
 - **只裝安全更新，還是連一般更新一起裝**：安全更新多半是把修補移植回目前的版本，變更的範圍小，改變服務行為的機會比一般更新小，適合在沒有人看著的時候自動套用。只裝安全更新時，一般更新會長期落後，之後整批升級時一次跨過的版本差距大，那一次要安排在有人在場的維護時段做。
 
 套件庫的設定決定自動更新拿得到什麼：有些發行版的套件庫鎖在固定的版本，自動更新只會在那個版本裡更新，拿不到之後發佈的修補。Amazon Linux 2023 預設把套件庫鎖在建立那個 AMI 時的版本，要用 `dnf upgrade --releasever=<版本>` 才換到新版本的套件庫（AWS 文件〈Deterministic upgrades through versioned repositories on AL2023〉，沒有實測）。發行版本身過了支援期限（EOL）之後，套件庫不再發佈安全更新，排程照常執行而什麼都裝不到；EOL 的判斷與升級的做法見 [OS 與基礎軟體更換](/infra/upgrade/os-base-software-upgrade/)〈EOL 風險評估〉。確認自動更新實際裝了套件，讀它的執行紀錄（〈定期讀的 log〉表格的自動更新那一列）。
 
-裝上去的更新要等使用它的程序重新啟動才生效：已經在執行的程序把舊版的函式庫留在記憶體裡，核心更新要重開機才換成新核心。`needs-restarting`（Oracle Linux 10.2 由 `yum-utils` 套件提供；Debian 系看 `/var/run/reboot-required` 存不存在）回報兩件事：`-r` 回報需不需要重開機，`-s` 列出用到了已更新函式庫、重啟就能生效的服務。只有函式庫更新時，重啟 `-s` 列出的服務就夠，不必重開機。核心更新要重開機時，可以交給 dnf-automatic 自己（`automatic.conf` 的 `reboot` 鍵：`never`、`when-changed`、`when-needed`），或另寫一個在維護時段執行的 systemd timer，依 `needs-restarting -r` 的結果決定要不要重開。
+裝上去的更新要等使用它的程序重新啟動才生效：已經在執行的程序把舊版的函式庫留在記憶體裡，核心更新要重開機才換成新核心。`needs-restarting`（Oracle Linux 10.2 由 `yum-utils` 套件提供）回報兩件事：`-r` 回報需不需要重開機，`-s` 列出用到了已更新函式庫、重啟就能生效的服務。只有函式庫更新時，重啟 `-s` 列出的服務就夠，不必重開機。核心更新要重開機時，可以交給 dnf-automatic 自己（`automatic.conf` 的 `reboot` 鍵：`never`、`when-changed`、`when-needed`），或另寫一個在維護時段執行的 systemd timer，依 `needs-restarting -r` 的結果決定要不要重開。
+
+Debian 系把這兩件事分給兩個機制：
+
+- **需不需要重開機**：看 `/var/run/reboot-required` 存不存在，需要重開機的套件名寫在 `/var/run/reboot-required.pkgs`。這個檔案由核心套件安裝後執行的 `/etc/kernel/postinst.d/` 底下的腳本建立，在 Debian 12 與 13 上，那支腳本屬於 unattended-upgrades 套件，沒裝這個套件的主機，核心更新之後這個檔案不會出現，它不存在不代表不需要重開；Ubuntu 24.04 的 update-notifier-common 另外帶了 `notify-reboot-required` 與登入訊息（motd）的 `98-reboot-required`，從檔名與位置推論是建立這個檔案並在登入時顯示，沒有實測。
+- **哪些服務要重啟**：needrestart 套件在每次 apt 安裝之後（`/etc/apt/apt.conf.d/99needrestart` 的 hook）檢查用到舊函式庫的服務；`needrestart -b` 用批次格式印出結果，`NEEDRESTART-SVC` 每行一個要重啟的服務，`NEEDRESTART-KSTA` 是核心的狀態（依 needrestart 的說明：`1` 沒有待生效的核心，`2` 與 `3` 有新核心等重開機，`0` 是判斷不出來）。容器裡跑 `needrestart -b` 時核心屬於宿主，KSTA 印出 `0`，前三個值要在主機上才看得到（這一點沒有在主機上量過）。
+
+unattended-upgrades 自己重開機的設定是 `50unattended-upgrades` 裡的 `Unattended-Upgrade::Automatic-Reboot`，預設 `"false"`；改成 `"true"` 時，安裝完成而 `reboot-required` 存在，它就在 `Automatic-Reboot-Time` 指定的時間重開；這個鍵的預設是 `"now"`，也就是安裝一完成就立刻重開，設定檔裡被註解掉的 `"02:00"` 是範例值，要固定在維護時段重開就得自己寫上時間（這是設定檔註解寫的行為，容器裡沒有實際重開機）。
 
 是否讓它自動重開，取決於兩個條件：重開機之後服務會不會自己回來，以及服務沒回來時有沒有人知道。
 
 - **服務會不會自己回來**：看服務的 unit 是否 enabled（`systemctl is-enabled <unit>`）、容器的 restart policy、主機防火牆的規則是不是寫進了永久設定；最可靠的確認是在有人在場的維護時段手動重開一次。例如服務當初是在終端機裡手動啟動、一直沒有寫成 systemd unit，平常主機一直開著所以看不出來，排程在凌晨重開機之後服務就不在了。服務不會自己回來時，先把它改成會自己回來（enable unit、設 restart policy），再看下一個條件。這個條件跟更新無關也成立：主機因為停電或業者的硬體維護重開時，結果相同。
 - **服務沒回來時有沒有人知道**：要有一個跑在這台主機以外的觀察者（另一台主機上的外部探測、或心跳監看：主機定期送訊號、停送時由外部服務告警），以及告警實際送得到人；跑在同一台主機上的監控，重開機時跟著停掉，報不出這台主機沒回來。外部探測的位置與判讀見 [4.28 單台主機的監控盲區與失效域以外的觀察者：主機停機、使用者路徑中斷與告警鏈中斷，心跳監看與外部探測各自回答的問題與位置，以及與內部探測並排的判讀](/backend/04-observability/single-host-monitoring-outside-view/)〈頻外訊號：心跳監看與外部探測〉。
 
-兩個條件都成立時，讓它在固定時段自動重開，代價是每次一段可預期的停機，服務沒回來時探測會叫人；新核心開不了機時，修復要從雲端業者的序列主控台進去，停機的長度就不再可預期，自動重開機的時段要選在救援得到的時候。序列主控台要在出事之前準備好三件事：帳號或主機層級已經啟用（部分業者要事先開啟）、有一個能在主控台登入的方式（雲端映像檔的使用者通常只有金鑰、沒有密碼）、開機選單（GRUB）選得回上一版核心；這幾件沒準備好時，救援只剩業者的救援開機，或把磁碟掛到另一台主機上修（各家業者的預設沒有逐一實查）。
+兩個條件都成立時，讓它在固定時段自動重開，代價是每次一段可預期的停機，服務沒回來時探測會叫人；新核心開不了機時，修復要從雲端業者的序列主控台進去，停機的長度就不再可預期，自動重開機的時段要選在救援得到的時候。序列主控台要在出事之前準備好三件事：帳號或主機層級已經啟用（部分業者要事先開啟）、有一個能在主控台登入的方式（雲端映像檔的使用者通常只有金鑰、沒有密碼）、開機選單（GRUB）選得回上一版核心；這幾件沒準備好時，救援只剩業者的救援開機，或把磁碟掛到另一台主機上修。三家業者文件寫的預設如下，都沒有實際連過：
+
+- **AWS**：帳號層級預設不允許使用序列主控台，要在每個區域分別開啟，使用者另外要有 `ec2-instance-connect:SendSerialConsoleSSHPublicKey` 的 IAM 權限；連得上之後要登入作業系統，主機上得有一個設了密碼的使用者，而 AWS 提供的 AMI 預設沒有，要事先在每台主機用 `passwd` 設好（AWS 文件〈Configure access to the EC2 Serial Console〉）。
+- **Google Cloud**：互動式的序列埠存取預設關閉，在專案或主機的中繼資料設 `serial-port-enable` 為 `TRUE` 才開；連線用 SSH 金鑰驗證，出現登入提示時要本機使用者的密碼，Google 提供的 Linux 映像檔預設不允許密碼登入，要事先用 `sudo passwd` 或開機腳本設好（Google Cloud 文件〈Troubleshooting using the serial console〉）。
+- **Oracle Cloud**：要先替主機建立一個主控台連線（instance console connection），上傳一把 RSA 公鑰，經由 SSH 連進去；只看開機輸出不必登入，要登入作業系統時，Oracle Cloud 不替 `opc` 使用者設預設密碼，要事先替它或另一個使用者設好（Oracle Cloud 文件〈Instance Console Connections〉）。
+
+三家的共同點是登入作業系統要密碼，而雲端映像檔的使用者預設只有金鑰，所以「能登入」這一件要在主機正常時先做；設了密碼的使用者也讓經由 SSH 以外的登入多了一條路，密碼的強度與只在主控台使用的限制（例如 sshd 設成不接受密碼登入）要一起決定。
 
 觀察者還沒有時，先加上它，外部探測與心跳監看都有免費的服務。暫時加不了時，不自動重開機，主機處在「更新已裝、但核心的修補還沒生效」的狀態，直到有人安排重開為止；這段時間要被看見，所以把 `needs-restarting -r` 的結果寫進人會讀的位置：登入時顯示的訊息（motd），或維護時段讀的檢查報告（例如清單裡的一項 `WARN`），讓它在下一次登入或維護時被看到。
 

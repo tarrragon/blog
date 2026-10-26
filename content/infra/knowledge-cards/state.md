@@ -32,3 +32,4 @@ state 的設定裡事後最難改的是分割策略：資源分進不同的 stat
 
 - [IaC](/infra/knowledge-cards/iac/) — state 是 IaC 工具的核心依賴
 - [Drift](/infra/knowledge-cards/drift/) — state 與現實的落差
+- [Configuration Management（組態管理）](/infra/knowledge-cards/configuration-management/) — 由 Terraform 的輸出產生 Ansible 的 inventory 時，那份檔案的內容記在 state 裡

@@ -14,7 +14,7 @@ tags: ["infra", "network", "gcp", "ssh", "rdp", "iap", "firewall", "hands-on"]
 
 ## 切換前的盤點：依賴舊規則的連線
 
-`default-allow-ssh` 放行的不只是管理員本人的 SSH：CI 或部署腳本用外部 IP 直連 VM、Ansible 這類設定管理工具、監控程式的探測、第三方廠商的維護連線，都可能經過這條規則，而預設規則沒有開 logging，手上沒有紀錄可以查出它們。盤點分兩步。先對舊規則開啟 logging，列出經過它的候選來源：
+`default-allow-ssh` 放行的不只是管理員本人的 SSH：CI 或部署腳本用外部 IP 直連 VM、Ansible 這類[組態管理](/infra/knowledge-cards/configuration-management/)工具、監控程式的探測、第三方廠商的維護連線，都可能經過這條規則，而預設規則沒有開 logging，手上沒有紀錄可以查出它們。盤點分兩步。先對舊規則開啟 logging，列出經過它的候選來源：
 
 ```bash
 # 對舊規則開啟 logging，之後每一次放行都會寫進 Cloud Logging

@@ -6,7 +6,7 @@ weight: 73
 tags: ["infra", "knowledge-cards", "yaml", "config"]
 ---
 
-YAML（YAML Ain't Markup Language）是一種用縮排表示結構的資料格式：`鍵: 值` 組成對應表，`- ` 開頭的行組成清單，子項目往右縮排一層，可以寫 `#` 開頭的註解，不加引號的值由解析器依寫法推測型別。Kubernetes 的 manifest、GitHub Actions 的 workflow、Ansible 的 playbook、Docker Compose 的設定檔都用這個格式。同樣是給人手動編輯的設定檔格式，[TOML](/infra/knowledge-cards/toml/) 用表頭分組、型別完全由寫法決定；[HCL](/infra/knowledge-cards/hcl/) 另外有變數與函式，YAML 與 TOML 一樣只描述資料。
+YAML（YAML Ain't Markup Language）是一種用縮排表示結構的資料格式：`鍵: 值` 組成對應表，`- ` 開頭的行組成清單，子項目往右縮排一層，可以寫 `#` 開頭的註解，不加引號的值由解析器依寫法推測型別。Kubernetes 的 manifest、GitHub Actions 的 workflow、Ansible 的 playbook 與 inventory、Docker Compose 的設定檔都用這個格式（Ansible 的變數檔一樣受下面的隱式型別影響，見 [Configuration Management（組態管理）](/infra/knowledge-cards/configuration-management/)）。同樣是給人手動編輯的設定檔格式，[TOML](/infra/knowledge-cards/toml/) 用表頭分組、型別完全由寫法決定；[HCL](/infra/knowledge-cards/hcl/) 另外有變數與函式，YAML 與 TOML 一樣只描述資料。
 
 ## 概念位置
 

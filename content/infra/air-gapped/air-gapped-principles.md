@@ -97,7 +97,7 @@ npm install --prefer-offline --cache ./npm-cache
 
 ### 離線 Configuration Management：Ansible
 
-斷網環境的 OS 設定、套件安裝、服務啟動等 configuration management 需求，Ansible 是運作良好的工具——它不需要在目標機器安裝 agent、透過 SSH 推送 playbook 執行，playbook 本身是 YAML 可版本控制。在沒有雲端 IaC（Terraform 管的是雲端資源 API）的地端斷網環境裡，Ansible 負責 configuration management 層。Ansible 自身的安裝只需要 Python，控制端安裝後即可透過 SSH 管理內部所有機器。
+斷網環境的 OS 設定、套件安裝、服務啟動等 [configuration management（組態管理）](/infra/knowledge-cards/configuration-management/) 需求，Ansible 是運作良好的工具——它不需要在目標機器安裝 agent、透過 SSH 推送 playbook 執行，playbook 本身是 YAML 可版本控制。在沒有雲端 IaC（Terraform 管的是雲端資源 API）的地端斷網環境裡，Ansible 負責 configuration management 層。Ansible 自身的安裝只需要 Python，控制端安裝後即可透過 SSH 管理內部所有機器。
 
 ## 變更追蹤：沒有 GitHub 怎麼辦
 

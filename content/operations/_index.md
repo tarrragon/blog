@@ -25,17 +25,17 @@ Backend 教「服務怎麼設計」，運行期維運教「設計好的服務怎
 
 ## 教學模組
 
-| 模組                                                           | 主題                                                              | 回答什麼問題                                                       |
-| -------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------ |
-| [模組一：負載平衡](/operations/01-load-balancing/)             | 反向代理、負載分散、健康檢查路由                                  | 流量進來怎麼分給多個服務實例                                       |
-| [模組二：水平擴展](/operations/02-horizontal-scaling/)         | Stateless 設計、shared storage、session 處理                      | 一個實例不夠時怎麼加第二個                                         |
-| [模組三：流量管控](/operations/03-traffic-management/)         | 背壓、rate limit、熔斷、bulkhead                                  | 收到的流量超過處理能力時怎麼辦                                     |
-| [模組四：服務探活](/operations/04-service-health/)             | 探活、liveness/readiness、自動重啟                                | 服務掛了怎麼自動發現和恢復                                         |
-| [模組五：容量規劃](/operations/05-capacity-planning/)          | 壓力測試、峰值估算、成本模型                                      | 要準備多少資源才夠                                                 |
-| [模組六：高可用](/operations/06-high-availability/)            | 冗餘、failover、disaster recovery                                 | 一個節點掛了服務怎麼不中斷                                         |
-| [模組七：突發流量](/operations/07-burst-traffic/)              | 突發流量應對、降級策略、queue 緩衝                                | 行銷活動或新聞曝光帶來 10x 流量怎麼撐                              |
-| [模組八：成本管理](/operations/08-cost-management/)            | 雲端成本、reserved instance、spot instance                        | 帳單怎麼不失控                                                     |
-| [模組九：主機的長期維護與暫停](/operations/09-host-lifecycle/) | 會自己改變的狀態、定期檢查、暫停的程度、恢復的順序、TOML 主機清單 | 主機放著不動時哪些狀態在變、暫停時哪些資源還在計費、恢復前要查什麼 |
+| 模組                                                           | 主題                                                                                  | 回答什麼問題                                                       |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [模組一：負載平衡](/operations/01-load-balancing/)             | 反向代理、負載分散、健康檢查路由                                                      | 流量進來怎麼分給多個服務實例                                       |
+| [模組二：水平擴展](/operations/02-horizontal-scaling/)         | Stateless 設計、shared storage、session 處理                                          | 一個實例不夠時怎麼加第二個                                         |
+| [模組三：流量管控](/operations/03-traffic-management/)         | 背壓、rate limit、熔斷、bulkhead                                                      | 收到的流量超過處理能力時怎麼辦                                     |
+| [模組四：服務探活](/operations/04-service-health/)             | 探活、liveness/readiness、自動重啟                                                    | 服務掛了怎麼自動發現和恢復                                         |
+| [模組五：容量規劃](/operations/05-capacity-planning/)          | 壓力測試、峰值估算、成本模型                                                          | 要準備多少資源才夠                                                 |
+| [模組六：高可用](/operations/06-high-availability/)            | 冗餘、failover、disaster recovery                                                     | 一個節點掛了服務怎麼不中斷                                         |
+| [模組七：突發流量](/operations/07-burst-traffic/)              | 突發流量應對、降級策略、queue 緩衝                                                    | 行銷活動或新聞曝光帶來 10x 流量怎麼撐                              |
+| [模組八：成本管理](/operations/08-cost-management/)            | 雲端成本、reserved instance、spot instance                                            | 帳單怎麼不失控                                                     |
+| [模組九：主機的長期維護與暫停](/operations/09-host-lifecycle/) | 會自己改變的狀態、定期檢查、暫停的程度、恢復的順序、TOML 主機維護清單與多台主機的分層 | 主機放著不動時哪些狀態在變、暫停時哪些資源還在計費、恢復前要查什麼 |
 
 ## 學習路線
 

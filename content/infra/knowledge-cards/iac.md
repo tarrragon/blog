@@ -32,3 +32,4 @@ IaC 要讓程式碼成為基礎設施的 source of truth，採用時的決定分
 - [State](/infra/knowledge-cards/state/) — IaC 工具追蹤現實的記憶機制
 - [Drift](/infra/knowledge-cards/drift/) — state 與現實不一致時的狀態
 - [環境分離](/infra/knowledge-cards/environment-separation/) — 同一份 IaC 描述套用到多環境
+- [Configuration Management（組態管理）](/infra/knowledge-cards/configuration-management/) — IaC 建出主機之後，主機內部的套件、設定檔與服務由組態管理工具管
