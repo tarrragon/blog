@@ -6,7 +6,7 @@ weight: 3
 tags: ["operations", "maintenance", "toml", "config", "python"]
 ---
 
-這篇把 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/) 與 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/) 要檢查的項目，寫成一份機器讀得懂、人也讀得懂的資料檔，並用一台實際的主機示範：為什麼要從文件改成資料檔；這份清單對檔案格式有哪些需求，以及 JSON、YAML、TOML 逐項比對的結果（含 YAML 與 TOML 隱式型別的逐行實測）；清單用到的 TOML 寫法（表格、表格陣列、巢狀的表格陣列、寫在同一行的表格、兩種字串與 regex 的跳脫）；TOML 1.0 與 1.1 的差異，以及解析器版本對不上時的兩種結果；欄位依讀者分成檢查腳本要讀的與人要讀的兩類，各自怎麼設計；最後是讀這份清單的只讀檢查腳本，它的白名單要擋下哪些寫法才能保證不改動主機、輸出與 exit code 怎麼讀，以及它第一次在真主機上跑出的結果。TOML 的語法速查在 [TOML](/infra/knowledge-cards/toml/) 知識卡。示範用的清單（`host.toml`）與檢查腳本（`host-check.py`）放在作者的私有專案裡，完整內容沒有公開，本篇摘錄其中的段落，網域、IP 與帳號相關的值在摘錄裡用佔位值。
+這篇把 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/) 與 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/) 要檢查的項目，寫成一份機器讀得懂、人也讀得懂的資料檔，並用一台實際的主機示範：為什麼要從文件改成資料檔；這份清單對檔案格式有哪些需求，以及 JSON、[YAML](/infra/knowledge-cards/yaml/)、TOML 逐項比對的結果（含 YAML 與 TOML 隱式型別的逐行實測）；清單用到的 TOML 寫法（表格、表格陣列、巢狀的表格陣列、寫在同一行的表格、兩種字串與 regex 的跳脫）；TOML 1.0 與 1.1 的差異，以及解析器版本對不上時的兩種結果；欄位依讀者分成檢查腳本要讀的與人要讀的兩類，各自怎麼設計；最後是讀這份清單的只讀檢查腳本，它的白名單要擋下哪些寫法才能保證不改動受檢查的設定與服務、哪些寫入白名單管不到而要靠系統層限制、輸出與 exit code 怎麼讀、結果檔怎麼跟上一次比對，以及它第一次在真主機上跑出的結果。TOML 的語法速查在 [TOML](/infra/knowledge-cards/toml/) 知識卡。示範用的清單（`host.toml`）與檢查腳本（`host-check.py`）放在作者的私有專案裡，完整內容沒有公開，本篇摘錄其中的段落，網域、IP 與帳號相關的值在摘錄裡用佔位值。
 
 ## 從維護文件改成資料檔
 
@@ -95,7 +95,7 @@ enforced_by = ["oci-nsg", "firewalld"]
 只有幾個欄位的子項目可以寫成同一行的表格（inline table），例如暫停步驟裡確認資料庫完整的那一項：
 
 ```toml
-verify = { command = "sqlite3 -readonly -safe {{collector_db}} 'pragma quick_check'", expect_stdout = "ok" }
+verify = { command = "sqlite3 -init /dev/null -readonly -safe {{collector_db}} 'pragma quick_check'", expect_stdout = "ok" }
 ```
 
 `{{collector_db}}` 是清單自己的替換語法，檢查腳本在執行前換成 `[vars]` 段寫的路徑；TOML 本身沒有變數，這兩個大括號在 TOML 看來只是字串裡的普通字元。TOML 1.0 的 inline table 要寫在一行內、結尾不能有逗號；1.1 放寬了這兩條，解析器版本不同時會怎樣，寫在〈TOML 1.0 與 1.1 的差異與解析器的版本〉。
@@ -119,49 +119,79 @@ TOML 1.0.0 在 2021 年 1 月發佈，1.1.0 在 2025 年 12 月發佈。1.1 新�
 
 清單的每個欄位，讀者是檢查腳本或人。設計時逐個欄位先決定它的讀者，因為兩種讀者對欄位的要求不同：腳本要的是可以照著執行、可以比對的值；人要的是判斷時需要的脈絡。
 
-**`where` 決定一個項目誰能檢查**：`"host"` 是主機上執行得了的只讀指令，腳本會執行它；`"external"` 要在主機外的機器上做（例如從開發機直連源站，確認繞過 CDN 時連不進來）；`"console"` 要在雲端主控台上看（NSG 的規則、CDN 的 SSL 模式）。後兩種腳本只印出來，標成待人工確認。分出這個欄位，是因為入口的防護有幾層不在主機上（雲端的 NSG、CDN 的 SSL 模式），只從主機裡面量的話，雲端那一層的設定改了也看不出來。
+**`where` 決定一個項目誰能檢查**：`"host"` 是主機上執行得了的只讀指令，腳本會執行它；`"external"` 要在主機外的機器上做（例如從開發機直連源站，確認繞過 CDN 時連不進來）；`"console"` 要在雲端主控台上看（Oracle Cloud 的網路安全群組 Network Security Group，簡稱 NSG，裡的規則、CDN 的 SSL 模式）。`external` 與 `console` 兩種，腳本只印出來，標成待人工確認。分出這個欄位，是因為入口的防護有幾層不在主機上（雲端的 NSG、CDN 的 SSL 模式），只從主機裡面量的話，雲端那一層的設定改了也看不出來。
 
-**`enforced_by` 與 `verify` 一對一**：每個入口宣告它由哪幾層擋住，每一層都要有一筆對應的驗證方式。腳本載入清單時比對兩邊，宣告了某一層而沒有寫怎麼驗證的、或寫了驗證而沒有宣告的，都算清單格式錯。這條規則讓「這個入口有幾層防護」從一句宣稱變成每一層都可以查的事實。
+**`enforced_by` 與 `verify` 互相對得上**：每個入口宣告它由哪幾層擋住，每一層至少要有一筆驗證方式，每一筆驗證的 `layer` 都要在 `enforced_by` 裡。腳本載入清單時比對兩邊，宣告了某一層而沒有寫怎麼驗證的、或寫了驗證而沒有宣告的，都算清單格式錯；同一層寫兩筆驗證是允許的。這條規則讓「這個入口有幾層防護」從一句宣稱變成每一層都可以查的事實。
 
-**探針的欄位**（`command`、`expect_exit`、`ok_exit`、`expect_stdout`、`expect_contains`）描述一次檢查：執行什麼指令、什麼結果算通過。`expect_exit` 是唯一算通過的 exit code；沒有寫 `expect_exit` 時，exit code 落在 `ok_exit` 列的任何一個值都算通過（預設只有 0）。`ok_exit` 是為了 `grep -c` 這類指令而設的：找不到時它印 0、exit code 是 1，這是正常的結果，不是失敗。
+**探針的欄位**（`command`、`expect_exit`、`ok_exit`、`expect_stdout`、`expect_contains`、`expect_not_contains`）描述一次檢查：執行什麼指令、什麼結果算通過。exit code 怎麼判通過分兩種情形：寫了 `expect_exit` 時，只有等於它的 exit code 算通過，`ok_exit` 不作用；沒有寫 `expect_exit` 時，exit code 落在 `ok_exit` 列的任何一個值都算通過，`ok_exit` 也沒有寫時只有 0 算通過。`ok_exit` 是為了 `grep -c` 這類指令而設的：找不到時它印 0、exit code 是 1，這是正常的結果，不是失敗。
 
-**計數的欄位**（`measure` 與 `warn_above`）讓 log 的檢查變成數字的比對：探針的指令執行之後，`measure` 決定怎麼從輸出取出數字（`lines` 算非空行數、`value` 取印出的數值、`age_days` 算印出的時間距今幾天），取出的數字大於 `warn_above` 時警告。清單在 log 那一段的註解寫明「門檻是第一次上線時的起點，不是量過的基準」：讀到警告的人要知道，門檻本身可能需要調整。
+**計數的欄位**（`measure` 與 `warn_above`）讓 log 的檢查變成數字的比對：探針的指令執行之後，`measure` 決定怎麼從輸出取出數字（`lines` 算非空行數、`value` 取印出的數值、`age_days` 算印出的時間距今幾天；輸出是 `鍵=值` 的形式時，`value` 與 `age_days` 取等號後面那一段，`systemctl show -p NRestarts` 印出的 `NRestarts=0` 就是這種），取出的數字大於 `warn_above` 時警告。清單在 log 那一段的註解寫明「門檻是第一次上線時的起點，不是量過的基準」：讀到警告的人要知道，門檻本身可能需要調整。
 
-**只印不執行的欄位**：`purge_command` 寫清理資料的做法，只在那一項警告時印在同一行；`[[log]]` 段落本身的 `command` 寫人讀那份 log 用的指令，`[[suspend]]` 與 `[[resume]]` 段落本身的 `command` 寫要人執行的動作，兩者都只印出來。同一個欄位名 `command`，在探針裡會被執行、在這幾個段落本身只印出來，差別由它所在的段落決定：腳本只在探針的位置（`[[entrypoint.verify]]`、`[[log.alert]]`、`verify` 那個同一行的表格）執行 `command`。這是示範清單的一個設計弱點：讀清單的人要記得段落的規則，才分得出一行 `command` 會不會被執行；用不同的欄位名（例如只印不執行的叫 `manual_command`）可以讓欄位名自己說出這件事。清理資料與停止主機這類動作要人判斷時機，腳本沒有執行它們的路徑。
+**只印不執行的指令寫在 `manual_command`**：`command` 一律會被執行，而且要通過白名單；只印給人讀、不執行的指令寫在 `manual_command`，清理資料的做法寫在 `purge_command`（只在那一項警告時印在同一行）。`manual_command` 出現在 `[[log]]` 段落本身（人讀那份 log 用的指令）、`[[suspend]]` 與 `[[resume]]` 的步驟（要人執行的動作），以及 `where` 不是 `"host"` 的 `[[entrypoint.verify]]`（在主機外做的確認）。欄位名分開的理由是讀清單的人只看一行就分得出 `command` 與 `manual_command` 會不會被執行：示範清單的第一版裡，會執行的指令與只印的指令都叫 `command`，一行 `command` 會不會被執行由它所在的段落決定；在 `[[entrypoint.verify]]` 這張表裡，同一個欄位名又依那一筆的 `where` 決定：`where = "host"` 的會執行，其他的只印。讀的人要記得這些規則才分得出來。改名之後，腳本在只印的位置讀到舊名 `command` 時判成清單格式錯（exit code 2），沿用第一版清單的人不會讓一行只印的指令被安靜地略過。`manual_command` 與 `purge_command` 寫的是清理資料與停止主機這類要人判斷時機的動作，腳本裡沒有執行這兩個欄位的程式碼。名字不帶 `manual_` 而會被執行的欄位還有兩個：會累積的資料用 `oldest_command` 查最舊一筆資料的時間，`[updates]` 用 `reboot_check` 查要不要重開機，兩者同樣在載入清單時比對白名單。
 
 **允許「不知道」的值**：暫停步驟的 `billed_when_stopped` 欄位，除了 `yes`、`no`、`n/a` 之外，還允許 `unknown`；清單的註解約定，寫 `unknown` 時在 `billing_basis` 寫出要去哪裡查（腳本只檢查這個欄位存在）。只給是與否兩個值時，查不到答案的人只能二選一，寫進清單的就是一個猜測；有 `unknown` 這個值，查不到的項目留下的是一個待查的標記。這個欄位只描述停止主機這一種暫停範圍，終止主機或全部刪除時各項資源的去留與計費，要照 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)〈暫停期間仍在計費的資源〉逐項決定；要讓清單涵蓋其他範圍，欄位就要依範圍分開寫。
 
-**清單沒有存的資料：上一次的結果**。維護時 access log 的計數要跟前一次比，恢復時要跟暫停當下記下的值比，而示範清單只描述「要檢查什麼、允許的範圍是什麼」，沒有任何欄位存上一次量到的值。這是刻意的：`tomllib` 只能讀不能寫，腳本也被設計成不寫任何檔案，清單因此可以放在 repo 裡、只在有人改它時才改變。上一次的結果要另外存，例如讓腳本把每次的計數寫到它自己的結果檔（放在主機上 `/var/lib` 底下、不在 repo 裡），或由維護的人把報告貼進維護紀錄；選結果檔時，「只讀」的範圍要改寫成「不改動受檢查的系統，只寫自己的結果檔」。
+**清單沒有存的資料：上一次的結果**。維護時 access log 的計數要跟前一次比，恢復時要跟暫停之前的狀態比，而清單只描述「要檢查什麼、允許的範圍是什麼」，沒有任何欄位存上一次量到的值。這是刻意的：`tomllib` 只能讀不能寫，清單放在 repo 裡、只在有人改它時才改變，量到的值每次執行都不同，不屬於 repo。上一次的結果由檢查腳本寫進它自己的結果檔，預設是主機上的 `/var/lib/host-check/last.json`，不在 repo 裡；結果檔的格式與比對寫在〈只讀檢查腳本的白名單、輸出、exit code 與結果檔〉。結果檔只在同一個階段之間比較（這一次的維護跟上一次的維護比，這一次的恢復跟上一次的恢復比），所以要比暫停前後的入口與計數，暫停之前跑一次維護的檢查、恢復之後再跑一次，恢復後那一次的差異就是跟暫停前的比較。公開 IP、管理者 IP、憑證效期這類不是數字的值不在結果檔裡，要照 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)〈恢復上線前要重新確認的漂移〉另外記下來。
 
-## 只讀檢查腳本的白名單、輸出與 exit code
+## 只讀檢查腳本的白名單、輸出、exit code 與結果檔
 
-檢查腳本 `host-check.py` 只用 Python 標準函式庫（`tomllib`、`subprocess`、`shlex` 這類），在主機上以 root 執行，讀清單、執行 `where = "host"` 的項目、印出報告。它要保證不改動主機，靠的是三件事：
+檢查腳本 `host-check.py` 只用 Python 標準函式庫（`tomllib`、`subprocess`、`shlex` 這類），在主機上以 root 執行，讀清單、執行 `where = "host"` 的項目、印出報告，並把這次的結果寫進自己的結果檔。腳本這一層能保證的範圍是不改動受檢查的設定與服務狀態：不改設定檔、不啟停服務、不安裝或移除套件、不刪資料。白名單上的工具自己照常寫的檔案不在這個範圍裡：在 Oracle Linux 10 的容器實測，`dnf -q history list` 與 `dnf needs-restarting -r` 每次都寫 `/var/log/dnf.log`、`dnf.librepo.log`、`dnf.rpm.log`、`hawkey.log` 與 `/var/cache/dnf/expired_repos.json`，加 `-C` 時仍寫那四份 log；`rpm -q` 會更新 rpm 資料庫的 `rpmdb.sqlite-shm`；`sqlite3` 讀一個 WAL 模式的資料庫時，資料庫旁邊的 `-wal` 與 `-shm` 檔不存在的話（服務停掉之後就是這個狀態）會把它們建出來。要讓這些寫入也不發生，得靠下面講的系統層限制。腳本這一層的保證靠的是三件事：
 
 - **不經過 shell**：指令用 `shlex` 切成參數之後直接執行，沒有管線、轉向與命令替換，清單裡的字串在腳本這一層組不出第二條指令。白名單裡的工具自己仍可能有執行 shell 的選項：`rpm` 帶 `--pipe <指令>` 時，會把輸出交給 `/bin/sh` 執行那條指令，所以這一點要靠白名單的選項規則擋下。
-- **只讀的白名單**：每一條要執行的指令，在載入清單時與執行之前各比對一次白名單，不符的整份清單算格式錯，一條指令都不執行。
-- **清理與暫停的動作只印出來**：它們寫在給人讀的欄位裡，腳本沒有執行它們的路徑。
+- **執行任何一條之前先比對白名單**：清單欄位裡的指令，以及腳本自己用清單的值組出來的指令（用 `systemctl is-enabled <timer>` 與 `systemctl is-active <timer>` 查自動更新的排程、用 `journalctl -u <unit>` 查服務的紀錄、用 `ss` 列接聽的連接埠），都在載入清單時比對一次，執行前再比對一次。載入時有一條不符，整份清單算格式錯，一條指令都不執行：一條不符代表清單裡寫了一條白名單不認得的指令，可能是筆誤，也可能是有人寫進了會改動主機的指令，在分清楚之前，同一份清單的其他項目也不能信。代價是清單裡一個筆誤會讓全部檢查停掉，所以接上排程時要對 exit code 2 告警（見下面 exit code 那一段）。執行前那一次比對是保險，正常情形下載入時已經擋下；萬一它不通過，腳本立刻停下、以 exit code 2 結束，在它之前的指令已經執行過。
+- **清理與暫停的動作只印出來**：它們寫在 `manual_command`、`purge_command` 這些給人讀的欄位裡，腳本裡沒有執行這些欄位的程式碼。
 
-白名單分兩層。工具這一層列允許的寫法：只有列在白名單裡的工具（`ss`、`systemctl`、`journalctl`、`firewall-cmd`、`find`、`sqlite3`、`openssl` 這類）可以執行，其餘一律拒絕。工具的選項這一層，讀取類的工具多半同時有會改變狀態的選項，所以有這類選項的工具各自要有規則；示範腳本裡 `grep`、`du`、`stat` 這類沒有會改變狀態的選項的工具，選項不另外檢查，其餘的工具兩種寫法都有：
+腳本這一層之外，另一種做法是在系統層限制腳本能碰到的範圍：用 systemd 的 service unit（或 `systemd-run`）執行它，設 `ProtectSystem=strict` 讓整個檔案系統唯讀、`StateDirectory=host-check` 只開放結果檔的目錄、`NoNewPrivileges=yes`、`IPAddressDeny=any` 禁止對外連線、`SystemCallFilter=` 限制系統呼叫；或不以 root 執行，改用專用帳號加上讀 log 需要的群組（`systemd-journal`、`adm`），只把非 root 不能做的幾條（`sshd -T` 要讀 host key、`ausearch` 要讀 audit log）寫進 sudoers。系統層限制換到的是：白名單解析錯了，指令照樣寫不進受保護的路徑、連不到外面，dnf 的 log 與 sqlite 的 `-shm` 這類工具自己的寫入也一起擋下。付出的是：dnf 在唯讀的檔案系統上寫不了 log，可能報錯；`PrivateNetwork=` 會讓 `ss` 只看得到一個空的網路命名空間，所以禁止對外連線要用 `IPAddressDeny=`；sudoers 要跟清單各維護一份，sudoers 的萬用字元本身也容易把範圍放寬。這幾項付出是從 systemd.exec 與 sudoers 的文件推的，示範腳本沒有實際接上系統層限制、沒有實跑。兩層的分工是：白名單擋下清單裡寫錯或寫壞的指令，系統層限制擋下白名單漏掉的寫入；下面記的兩輪缺口每一個都是白名單漏掉的寫入或執行，所以只靠白名單時，保證的強度就是白名單解析的正確度。
 
-- **列允許的寫法**：`systemctl` 只允許 `is-active`、`is-enabled`、`is-failed`、`show`、`status`、`list-timers` 這類讀取的子命令；`firewall-cmd` 只允許 `--query-*`、`--list-*`、`--get-*`、`--info-*`、`--state`，以及指定查詢對象的 `--permanent`、`--zone=`（擋下 `--add-service`、`--reload` 這類會改設定的選項）；`openssl` 只允許 `x509 -noout` 加上讀取憑證欄位的選項；`sshd` 的第一個參數要是 `-T`（印出生效中的設定）。
-- **列禁止的寫法**：`ss` 擋下 `-K`（關掉符合條件的連線）與 `-D`；`find` 擋下 `-delete`、`-exec`、`-execdir`、`-ok`、`-okdir`（執行指令或刪檔）與 `-fprint`、`-fprint0`、`-fprintf`、`-fls`（把輸出寫進檔案）；`journalctl` 擋下 `--vacuum-*`、`--rotate`、`--flush`、`--sync`、`--relinquish-var`、`--smart-relinquish-var`、`--setup-keys`、`--update-catalog`。
+白名單列的是允許的寫法，不在表上的一律拒絕。另一種寫法是列禁止的寫法：只擋已知會改變狀態的選項，其餘放行。列禁止的寫法要把工具現有的每一個會改變狀態的選項都列進去，漏一個就放行一個，工具日後新增的選項也會被放行；列允許的寫法沒有這個問題，代價是清單要用到新的選項時，得先把它加進白名單。白名單分三層比對：
 
-列禁止的寫法要把工具現有的每一個會改變狀態的選項都列進去，漏一個就放行一個，工具日後新增的選項也會被放行；列允許的寫法則會拒絕清單以外的一切，所以列允許的寫法比較安全。寫這篇時另派的事實核對者，拿示範腳本的白名單函式逐條測、再在 Oracle Linux 10 容器裡實際執行，找到五個缺口，依成因分成兩種：
+- **執行檔的路徑**：指令的第一個參數只能是裸的工具名，或 `/usr/bin`、`/usr/sbin`、`/bin`、`/sbin` 底下的路徑。只比對檔名的話，`/tmp/evil/grep` 與 `./grep` 都會被當成 `grep` 放行，執行的是別的程式。裸的工具名依執行時的 `PATH` 找檔案，腳本又把呼叫者的環境變數傳給指令，所以腳本要經由 sudo（它的 `secure_path` 會重設 `PATH`）或 systemd 的 unit（環境是乾淨的）執行；從一個 `PATH` 被改過的 root shell 直接執行時，這一層擋不住 `PATH` 前面的同名檔案。
+- **工具**：只有白名單上的工具可以執行。其中 `grep`、`wc`、`stat`、`du`、`df`、`test`、`id`、`uname`、`getenforce`、`sestatus`、`getsebool` 沒有寫檔或執行其他程式的選項（在 Oracle Linux 10 上逐支讀過 `--help`；`df --sync` 會先把快取寫回磁碟，不改任何檔案的內容），選項不另外比對；其餘的工具各自有選項的規則。
+- **工具的選項**：有選項規則的工具，各自列出允許的子命令與選項，表外的拒絕；長選項的縮寫（`--cursor-fi` 這種只寫前幾個字元的寫法）也拒絕，因為 `journalctl` 這類工具接受沒有歧義的前綴，把 `--cursor-fi` 當成 `--cursor-file` 執行，只比對全名的規則會放行它。
 
-- **規則沒有涵蓋到的選項**：列禁止寫法的 `journalctl` 漏了 `--cursor-file=<檔案>`，它會把游標寫回指定的檔案；`rpm` 與 `sshd` 的規則只檢查第一個參數（`rpm` 要以 `-q` 開頭、`sshd` 要是 `-T`），後面接的 `rpm --pipe <指令>` 會執行 shell 指令，`sshd -T -E <檔案>` 會建立那個檔案，三者都通過了白名單。
-- **列允許的寫法沒有照工具的參數規則切出子命令**：`systemctl` 的 `-p` 會吃掉下一個參數當作它的值，示範腳本卻把第一個不以 `-` 開頭的參數當成子命令，所以 `systemctl -p show stop nginx` 被當成 `show` 放行，而 systemctl 實際執行的是 `stop`；`dnf -x <套件>` 也一樣，`dnf -x history -x list install <套件>` 通過白名單，實際執行到安裝的步驟。列允許的寫法比較安全的前提，是判斷「允許的那個子命令」時用的是工具自己的解析規則。同一位核對者另外記下一個候選：`systemctl` 的 `-H`（`--host`）會以執行者的身分經由 `ssh` 連到另一台主機執行，帶著它的 `status` 照樣通過白名單，屬於執行其他程式的出口（讀自 systemctl 的 man page，沒有實跑）。
+選項要照工具自己的參數規則切分，比對的結果才可靠。`systemctl`、`journalctl`、`ss` 用 `getopt_long` 的語法；`rpm` 用 popt、`dnf` 與 `needs-restarting` 用 Python 的 argparse，這三支各自的解析器在下面這幾點的切法跟 `getopt_long` 相同。腳本對這六支用同一套切分：短選項可以合併（`-qa`）；需要帶值的選項，值可以直接接在選項後面（`-pX`），也可以是下一個參數；長選項寫成 `--名稱` 或 `--名稱=值`；`--` 之後全部是位置參數。示範腳本的第一版把第一個不以 `-` 開頭的參數當成子命令，這套切分規則一條都沒有用上，於是放行了兩種寫法：`systemctl -p show stop nginx` 被第一版判成子命令是 `show`，而 systemctl 自己解析時把 `show` 當成 `-p` 的值，執行的子命令是 `stop`；`dnf -x history -x list install <套件>` 裡，兩個 `-x` 各把 `history`、`list` 當成要排除的套件，第一版看到的是允許的 `history list`，dnf 執行的是 `install`。現在的版本先把每個選項連同它的值切出來，再判斷剩下的參數裡哪一個是子命令。其餘的工具各有自己的語法：`find` 的運算式不是選項語法，腳本逐個參數比對；`sshd`、`openssl`、`sqlite3`、`ausearch` 用單一連字號的長選項或自己的解析器，腳本逐個參數整字比對；`firewall-cmd` 逐個參數比對允許的樣式。各工具允許的寫法：
 
-這幾個缺口在示範腳本裡都還沒有修，已登記成待修的工作項目；有一條 `rpm --pipe` 這種寫法寫進清單，以 root 執行的檢查腳本就會照著執行它。每加一支工具進白名單，先查它有沒有執行 shell 的選項或中介指令、寫檔的選項或函式、執行其他程式的子命令，以及哪些選項會吃掉下一個參數；資料庫的命令列客戶端常帶著這類出口，`sqlite3` 就是一例。
+- **`systemctl`**：子命令只允許 `is-active`、`is-enabled`、`is-failed`、`show`、`status`、`cat`、`list-timers`、`list-units`、`list-unit-files`；需要帶值的選項只允許 `-p`／`--property`、`-P`、`-t`／`--type`、`--state`、`-n`／`--lines`、`-o`／`--output`、`--timestamp`。`-H`／`--host`（經由 `ssh` 在另一台主機上執行）與 `-M`／`--machine`（改在容器裡執行）不在表上，`--root`、`--user` 也不在。
+- **`dnf` 與 `needs-restarting`**：`dnf` 只允許 `needs-restarting` 與 `history list`、`history info` 這幾個子命令，子命令之前只接受 `-q`、`-C`，子命令之後的選項只有 `needs-restarting` 的 `-r`、`-s`、`--reboothint`、`--services`；單獨呼叫的 `needs-restarting` 也只允許這四個。`-x`、`--setopt`、`--installroot`、`-y` 不在表上。
+- **`rpm`**：第一個參數要是 `-q` 開頭或 `--query`（查詢模式），格式只能用 `--qf`／`--queryformat` 指定；`--pipe`、`--eval`、`-D`／`--define`、`--macros`、`--rcfile`、`--root`、`--dbpath` 不在表上。
+- **`journalctl`**：需要帶值的選項只允許 `-u`、`--since`、`--until`、`-o`、`-g`、`-p`、`-t`，`-n` 的值可帶可不帶；`--cursor-file`（把這次讀到的位置標記 cursor 寫進指定的檔案）、`--vacuum-*`、`--rotate`、`--flush`、`-f` 不在表上。
+- **`ss`**：只允許列出連線的選項（`-H`、`-l`、`-n`、`-t`、`-u`、`-a`、`-p`、`-4`、`-6` 這些），加上帶值的 `-f`／`--family`、`-A`／`--query`；`-K`（關掉符合條件的連線）、`-D`、`-N`（換到另一個網路命名空間）、`-F`（從檔案讀過濾條件）、`-r`（反查 DNS，會對外連線）不在表上。
+- **`find`**：只允許比對條件（`-name`、`-path`、`-type`、`-mtime`、`-size`、`-user`、`-perm`、`-maxdepth` 這些）與 `-print`、`-print0`、`-printf`；`-delete`、`-exec`、`-execdir`、`-ok`、`-okdir`（執行指令或刪檔）與 `-fprint`、`-fls`（把輸出寫進檔案）不在表上。
+- **`sshd`**：參數只能是單獨一個 `-T`（印出生效中的設定）；`-T -E <檔案>`（把 log 寫進那個檔案）、`-f`、`-o` 都拒絕。
+- **`firewall-cmd`、`openssl`、`ausearch`**：`firewall-cmd` 只允許 `--query-*`、`--list-*`、`--get-*`、`--info-*`、`--state`，以及指定查詢對象的 `--permanent`、`--zone=`；`openssl` 只允許 `x509 -noout` 加上讀取憑證欄位的選項；`ausearch` 只允許篩選紀錄的選項（`-m`、`-k`、`-ts`、`-te`、`-i` 這些），`--checkpoint`（把讀到的位置寫進檔案）與 `-if`（改讀別的檔案）不在表上。
+- **`sqlite3`**：一定要同時帶 `-init /dev/null`、`-readonly`、`-safe`，其餘只允許控制輸出格式與執行方式的選項（`-header`、`-csv`、`-json`、`-separator`、`-bail`、`-batch` 這些）；寫在 SQL 參數裡、以 `.` 開頭的 dot-command（`.shell`、`.output`）也拒絕，不只靠 `-safe`。理由寫在下面講 `sqlite3` 的那一段。
 
-`sqlite3` 是讀取類工具裡最需要注意的一支：`-readonly` 只讓資料庫檔案唯讀，`sqlite3` 的 dot-command（`.shell`、`.system`）照樣能執行 shell 指令，SQL 函式 `writefile()` 照樣能寫檔案系統；`-safe` 依 sqlite 的 CLI 文件會關掉除了指定資料庫檔案以外、所有可能改動主機的功能（`.shell`、`.system`、`.output` 這類 dot-command，`writefile()`、`readfile()`、`edit()` 這類 SQL 函式，以及 `ATTACH`），實測加上它之後 `.shell` 與 `writefile()` 都被拒絕。白名單因此要求 `sqlite3` 同時帶 `-readonly` 與 `-safe`。sqlite 的版本紀錄寫了 `--safe` 在 3.37.0 加入、3.40.1 修正成確實擋下 `writefile()` 這類 SQL 函式、3.41.0 再補強它擋下的危險 SQL 函式，所以較舊的主機認得這個選項，某些函式卻可能照樣執行得了：主機上的 sqlite 要是 3.41.0 以上（Debian 12 的 3.40.1 介於兩次修正之間），或在主機上對一個測試用的資料庫實際跑一次 `sqlite3 -readonly -safe <資料庫> "select writefile('/tmp/x','a')"`，確認被拒絕（Oracle Linux 10 的 sqlite 3.46.1 符合）。
+上面這份白名單是兩次測試修出來的。對第一版的白名單函式逐條測試、再在 Oracle Linux 10 容器裡實際執行，找到的缺口是：`systemctl -p` 與 `dnf -x` 這兩種沒有照參數規則切分而放行的寫法；`journalctl` 的規則是列禁止的寫法，漏了 `--cursor-file`；`rpm` 與 `sshd` 的規則只檢查第一個參數，`rpm -q <套件> --pipe <指令>` 會以 root 執行 shell 指令，`sshd -T -E <檔案>` 會建立那個檔案；`systemctl -H` 會讓 systemctl 執行 `ssh`，當時只讀了 man page、沒有實跑。修補時在同一種容器裡實測，在 `PATH` 放一個會記錄參數的假 `ssh`，`systemctl -H <使用者>@<主機> status nginx` 讓 systemctl 以 root 執行了 `ssh -xT -- <使用者>@<主機> systemd-stdio-bridge`；第一版只因為把分開寫的 `-H <主機>` 裡的 `<主機>` 當成子命令而拒絕了它，`-H<主機>` 與 `--host=<主機>` 都會放行。修補時另外找到三個缺口：`rpm` 的 `--eval "%(<指令>)"` 與 `-D` 會經由巨集執行 shell 指令，實測建立了檔案；執行檔的路徑沒有檢查，就是上面「執行檔的路徑」那一層；`sqlite3` 啟動時讀的 init 檔會在 `-safe` 生效之前執行，見下面講 `sqlite3` 的那一段。
 
-輸出每項一行 `PASS`、`WARN` 或 `MANUAL`，結尾印計數；exit code 0 代表全部 `PASS`（或只剩 `MANUAL`），1 代表至少一項 `WARN`，2 代表清單格式錯。把格式錯與檢查失敗分成兩個 exit code，是因為兩者的處置不同：格式錯要改清單，檢查失敗要處理主機。`MANUAL` 不影響 exit code，所以把腳本接上排程或告警時，主機外的項目永遠不會觸發告警；那些項目要另外排進維護時段。它們是有人隨時可能做的改動（在主控台改 NSG、改 CDN 的 SSL 模式），改變是[步階變化](/backend/knowledge-cards/step-change/)、沒有變化速度可算，檢查的間隔由能接受那個狀態持續多久決定，會造成對外暴露的要另外排定期比對，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈檢查間隔與哪些項目改成自動處理的推算〉裡「改變是步階變化」的那一類；腳本只把它們印成 `MANUAL`，比對要由那個排程或維護的人做。
+除了執行檔的路徑那一個，這些缺口有同一個成因：寫規則的人以為工具會怎麼解析這串參數，工具實際照它自己的解析規則解析，而且支援執行其他程式與寫檔的功能。一支工具要列出哪些選項規則，看它有沒有這幾類功能：執行 shell 的選項或中介機制（巨集、管線、清單能指定的設定檔）、寫檔的選項或函式、執行其他程式或連到別台主機的選項，以及哪些選項需要帶值；這次選項層的缺口全部落在這幾類裡，有這類功能的工具照樣可以進白名單，選項規則要把那些功能排除在允許的寫法之外。另外兩類功能選項規則管不到，要靠上面講的系統層限制：工具不帶任何選項也會寫的檔案（dnf 的 log 與快取、資料庫的 `-shm` 檔），以及讀取本身就有副作用的對象（在接了 LDAP 這類目錄服務的主機上，`id <使用者>` 與 `stat` 查使用者名稱時會連到目錄伺服器；讀裝置檔、碰到自動掛載點會觸發動作；這兩種是從機制推的，沒有實跑）。
+
+白名單防的是清單的內容，所以清單能指定的設定檔都要擋：`rpm` 的 `--macros`、`--rcfile`，`sqlite3` 的 `-init <檔案>`。root 自己擁有的預設設定檔不在白名單的防護範圍內：容器實測，在 `/root/.rpmmacros` 寫進一個 `%(touch <檔案>)` 巨集，`rpm -q bash` 就建出了那個檔案，跟 `sqlite3` 的 `~/.sqliterc` 是同一類；`openssl` 讀的 `openssl.cnf`、`dnf` 載入的 plugin 也一樣。能改這些檔案的人已經有 root 權限，用不著經過清單。`sqlite3` 要求 `-init /dev/null` 的主要理由是清單本身寫得出 `-init <檔案>`，順帶蓋過了 `~/.sqliterc`。執行檔的路徑那一個缺口的成因在工具這一層之前：規則只比對了檔名，沒有比對要執行的是哪一個檔案。示範腳本的修補對照每一個缺口寫了單元測試，在 Python 3.12 與 3.15 上各跑一次，兩個版本都全部通過。
+
+`sqlite3` 執行 shell 與寫檔的途徑有三條：dot-command、SQL 函式與啟動時讀的 init 檔。`-readonly` 只讓資料庫檔案唯讀，`sqlite3` 的 dot-command（`.shell`、`.system`）照樣能執行 shell 指令，SQL 函式 `writefile()` 照樣能寫檔案系統；`-safe` 依 sqlite 的 CLI 文件會關掉除了指定資料庫檔案以外、所有可能改動主機的功能（`.shell`、`.system`、`.output` 這類 dot-command，`writefile()`、`readfile()`、`edit()` 這類 SQL 函式，以及 `ATTACH`），實測加上它之後 `.shell` 與 `writefile()` 都被拒絕。`-safe` 管不到的是啟動時讀的 init 檔：`sqlite3` 啟動時先執行 `-init <檔案>` 指定的檔案，沒有指定時執行執行者家目錄的 `~/.sqliterc`，兩者都在 `-safe` 生效之前執行，實測 init 檔裡的 `.shell touch <檔案>` 照樣建出了檔案。`-init /dev/null` 會取代 `~/.sqliterc`，寫在 `-readonly -safe` 之前或之後都擋得住；把 `HOME` 設成不存在的目錄擋不住，因為 `sqlite3` 先從系統的帳號資料庫（`/etc/passwd` 這一類，經由 `getpwuid()`）查執行者的家目錄，不看 `HOME`。白名單因此要求 `sqlite3` 同時帶 `-init /dev/null`、`-readonly` 與 `-safe`，`-init` 的值只接受 `/dev/null`。sqlite 的版本紀錄寫了 `--safe` 在 3.37.0 加入、3.40.1 修正成確實擋下 `writefile()` 這類 SQL 函式、3.41.0 再補強它擋下的危險 SQL 函式，所以較舊的主機認得這個選項，某些函式卻可能照樣執行得了：主機上的 sqlite 要是 3.41.0 以上（Debian 12 的 3.40.1 介於兩次修正之間），或在主機上對一個測試用的資料庫實際跑一次 `sqlite3 -init /dev/null -readonly -safe <資料庫> "select writefile('/tmp/x','a')"`，確認被拒絕（Oracle Linux 10 的 sqlite 3.46.1 符合）。
+
+輸出每項一行 `PASS`、`WARN` 或 `MANUAL`，結尾印計數；exit code 0 代表沒有任何 `WARN`（只有 `PASS` 與 `MANUAL`），1 代表至少一項 `WARN`，2 代表清單格式錯。把格式錯與檢查失敗分成兩個 exit code，是因為兩者的處置不同：格式錯要改清單，檢查失敗要處理主機。把腳本接上排程或告警時，exit code 不是 0 就要告警：只對 1 告警的話，清單格式錯（2）的那段期間一項檢查都沒有跑，也收不到任何通知。`MANUAL` 不影響 exit code，所以主機外的項目永遠不會觸發告警；那些項目要另外排進維護時段。它們是有人隨時可能做的改動（在主控台改 NSG、改 CDN 的 SSL 模式），改變是[步階變化](/backend/knowledge-cards/step-change/)、沒有變化速度可算，檢查的間隔由能接受那個狀態持續多久決定，會造成對外暴露的要另外排定期比對，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈檢查間隔與哪些項目改成自動處理的推算〉裡「改變是步階變化」的那一類；腳本只把它們印成 `MANUAL`，比對要由那個排程或維護的人做。
+
+結果檔讓每一次的報告能跟前一次比。腳本用 `--phase` 指定這次跑的是維護（`maintain`，預設）、暫停（`suspend`）還是恢復（`resume`）的檢查，每次執行結束時，把這一次的結果寫進結果檔裡同一個階段的那一段，其他階段的紀錄不動：
+
+```json
+{"format": 1,
+ "phases": {"maintain": {"finished_at": "2026-10-26T09:27:01.975703+00:00",
+                         "manifest": "/path/to/host.toml",
+                         "counts": {"PASS": 41, "WARN": 1, "MANUAL": 7},
+                         "items": {"filesystem/root": {"status": "PASS", "value": 72560254976}}}}}
+```
+
+這段 JSON 是節錄：`items` 只留了一項，`manifest` 的路徑是佔位的值，`counts` 借用本節最後那台雲端主機修正之後再跑一次的結果，`filesystem/root` 的值取自下一段本機容器連跑兩次的第一次；實際的結果檔依鍵名排序、每層縮排兩格，這裡壓成幾行。`format` 是結果檔格式的版本號，腳本讀到不是 1 的版本時，把它當成壞掉的結果檔處理。`items` 每一項記下狀態與量到的數字，數字來自有 `measure` 的探針、會累積的資料的總位元組與檔案系統的可用位元組，其他項目是 `null`。
+
+報告在每項的結果之後、計數之前，印出跟上一次的差異。第一行寫上一次的時間（`since: <上一次的 finished_at>`），之後每個不同的項目一行：狀態變了的印 `CHANGED <項目> WARN→PASS`，數字變了的印 `DELTA <項目> 舊值 → 新值（差）`，這次新增的與上一次有而這次沒有的項目各印 `NEW`、`GONE`。在本機的 Oracle Linux 10 容器裡連跑兩次，根檔案系統的可用空間印成 `DELTA filesystem/root 72560254976 → 72541392896（-18862080）`，也就是兩次之間少了 18862080 位元組（約 18 MiB）。結果檔裡沒有這個階段的上一次紀錄時（第一次執行、第一次跑這個 `--phase`、結果檔壞掉），這一段只印 `since: 沒有前一次的結果（<路徑>）`；兩次完全相同時印 `since: <時間>，與前一次相同`；帶 `--no-state` 時不印這一段。
+
+結果檔預設在 `/var/lib/host-check/last.json`，`--state-file <路徑>` 換位置、`--no-state` 不讀也不寫。放在 `/var/lib` 而不放 `/run`，是因為 `/run` 在記憶體裡、重開機就清空，而停止主機再啟動等於重開機，放 `/run` 就比不到暫停前的紀錄；終止主機而不保留開機磁碟時 `/var/lib` 也一起消失，終止之前要把 `last.json` 拷出主機。腳本先把內容寫進同一個目錄裡的暫存檔並寫到磁碟，再用 `os.replace` 換上正式的檔名：同一個檔案系統裡的換名是一次完成的動作，所以程序在寫到一半時被中斷，正式的檔名仍然指著上一次的完整內容（中斷時可能留下一個暫存檔）。目錄以 0700、檔案以 0600 的權限建立，因為結果檔記著主機的連接埠、log 計數與磁碟用量，只給 root 讀。結果檔不是合法的 JSON、格式版本不認得、讀不到或寫不進去時（例如不是以 root 執行），腳本在 stderr 印以 `note:` 開頭的說明（讀與寫各一行），壞掉的檔案照常覆寫，exit code 照檢查的結果決定：結果檔是比對用的輔助資料，它出錯不代表主機有問題。
 
 這支腳本先在開發機上的 Oracle Linux 10 容器裡測過，第一次在一台 Oracle Linux 10.2 的雲端主機上執行時，結果是 36 項 `PASS`、12 項 `WARN`、7 項 `MANUAL`。12 項 `WARN` 依成因分成四種：
 
 - **主機的實際狀態跟清單不符**（8 項）：映像檔預設啟用的 `rpcbind`（111，TCP 與 UDP）與效能監測套件 PCP 的 `pmcd`（44321）、`pmlogger`（4330），在 IPv4 與 IPv6 的所有介面上接聽，它們不在清單預期的入口裡。從開發機對公開 IP 實測，TCP 的三個連接埠都連不上，UDP 111 用 `rpcinfo -u` 查詢得到逾時，雲端規則與主機防火牆都擋住了它們；開發機上測試用的容器映像檔沒有裝這幾個套件，所以在容器裡沒有出現。
 - **紀錄的保存方式跟預期不同**（1 項）：腳本在 journal 裡找不到自動更新的執行紀錄，因為這台主機的 journal 只存在記憶體裡，在那次執行之前的重開機就清空了；成因與兩種狀態的差別見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈會累積的資料：寫入者、清理機制與磁碟寫滿的後果〉。
-- **門檻把預期中的紀錄算進去**（2 項）：error log 裡那一行是 413 防護攔下過大的 body 時記下的正常紀錄，要改的是清單的計數條件。access log 的 `Host` 那一項有兩個成因疊在一起：部署腳本自己的冒煙測試送出 `Host: 127.0.0.1`，讓計數本來就不是零，冒煙測試這個成因要改清單的計數條件（排除主機自己送的請求）；那一次執行又用 `--set` 傳了一個帶 `^`、`$` 錨點的網域 regex，錨點被嵌進 pattern 的中間，每一行都比對不到，計數被放大成全部的 130 行，錨點這個成因是執行時的值寫錯了，改用清單裡的值就消失。
+- **門檻把預期中的紀錄算進去**（2 項）：error log 裡那一行是 413 防護攔下過大的 body 時記下的正常紀錄，要改的是清單的計數條件。access log 的 `Host` 那一項有兩個成因疊在一起：部署腳本自己的 [冒煙測試](/testing/knowledge-cards/smoke-test/) 送出 `Host: 127.0.0.1`，讓計數本來就不是零，冒煙測試這個成因要改清單的計數條件（排除主機自己送的請求）；那一次執行又用 `--set` 傳了一個帶 `^`、`$` 錨點的網域 regex，這一項計數的是 `Host` 不是自己網域的行數，而錨點被嵌進 pattern 的中間之後，沒有一行比對得到自己的網域，於是 log 裡全部 130 行都被算成不是自己網域的請求。錨點造成的那一部分是執行時傳入的值寫錯了，改用清單裡的值就消失。
 - **腳本自己的解析錯誤**（1 項）：systemd 回傳的時間格式（`Mon 2026-10-26 07:07:43 GMT`）腳本讀不懂。
 
-主機的實際狀態與紀錄的保存方式，都是讀文件推不出、要在那台主機上量才知道的事；門檻的計數條件與腳本的解析錯誤，是清單與腳本第一次碰到真實資料時要修正的地方。四種成因的處置都不一樣，讀警告時，成因決定要改的是主機、清單還是腳本。這一次的處置是：部署腳本停用並遮蔽 `rpcbind` 與 PCP、把 journal 改存到磁碟，清單的兩個計數條件排除主機自己的請求與防護的正常紀錄，腳本補上 systemd 時間格式的解析。修正部署之後在同一台主機上再跑一次，結果是 41 項 `PASS`、1 項 `WARN`、7 項 `MANUAL`；剩下的那一項是自動更新的執行紀錄，它上一次執行時 journal 還只存在記憶體裡，紀錄在之後的重開機被清掉，要等下一次排程執行才會留下。
+主機的實際狀態與紀錄的保存方式，都是讀文件推不出、要在那台主機上量才知道的事；門檻的計數條件與腳本的解析錯誤，是清單與腳本第一次碰到真實資料時要修正的地方。四種成因的處置都不一樣，讀警告時，成因決定要改的是主機、清單還是腳本。這一次的處置是：部署腳本停用並遮蔽 `rpcbind` 與 PCP、把 journal 改存到磁碟，清單的兩個計數條件排除主機自己的請求與防護的正常紀錄，腳本補上 systemd 時間格式的解析。修正部署之後在同一台主機上再跑一次，結果是 41 項 `PASS`、1 項 `WARN`、7 項 `MANUAL`；剩下的那一項是自動更新的執行紀錄：自動更新上一次執行時，這台主機的 journal 還只存在記憶體裡，那一次的紀錄在之後的重開機被清掉，要等下一次排程執行才會在磁碟上的 journal 留下紀錄。

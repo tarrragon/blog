@@ -31,6 +31,7 @@ PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識
 | [VPC](/infra/knowledge-cards/vpc/)                                                                 | 雲端帳號內的一塊邏輯隔離私有網段，是所有網路切分的起點與容器                              |
 | [checkov](/infra/knowledge-cards/checkov/)                                                         | IaC 靜態安全掃描工具，比對 HCL 裡的已知壞寫法與安全反模式                                 |
 | [Deletion Protection](/infra/knowledge-cards/deletion-protection/)                                 | 防止誤刪 stateful 資源的平台級保護機制，開啟後刪除需先顯式關閉保護                        |
+| [Orphaned Resource（孤兒資源）](/infra/knowledge-cards/orphaned-resource/)                         | 主機刪除或停用之後仍然存在、各自計費的磁碟、保留 IP、快照與網路元件                       |
 | [Fargate](/infra/knowledge-cards/fargate/)                                                         | AWS ECS 的無伺服器容器執行模式，不需管理 EC2 instance                                     |
 | [Remote State Backend](/infra/knowledge-cards/remote-state-backend/)                               | 團隊共享、有鎖、有加密的 state 存放機制                                                   |
 | [Route Table](/infra/knowledge-cards/route-table/)                                                 | subnet 的流量轉送規則，決定封包離開 subnet 後往哪走                                       |
@@ -88,3 +89,4 @@ PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識
 | [DOCKER-USER（Docker 留給使用者的轉送規則鏈）](/infra/knowledge-cards/docker-user/)                | 發佈的連接埠在轉送路徑上第一個能寫限制的位置，存續依防火牆而異                            |
 | [Userland Proxy（使用者空間的連接埠轉送程式）](/infra/knowledge-cards/userland-proxy/)             | 在主機上接聽再轉進容器的程式，入站規則管得到、容器看不到真實來源                          |
 | [TOML](/infra/knowledge-cards/toml/)                                                               | 型別由寫法決定、可寫註解、用表頭分組的設定檔格式，1.0 與 1.1 的解析器支援範圍不同         |
+| [YAML](/infra/knowledge-cards/yaml/)                                                               | 用縮排表示結構的資料格式，不加引號的值由解析器依 YAML 1.1 或 1.2 的規則推測型別           |

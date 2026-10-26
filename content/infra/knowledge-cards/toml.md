@@ -60,6 +60,7 @@ exposure = "admin-only"
 
 ## 鄰卡
 
+- [YAML](/infra/knowledge-cards/yaml/)
 - [HCL](/infra/knowledge-cards/hcl/)
 - [.env](/infra/knowledge-cards/dotenv/)
 - [php.ini / .user.ini](/infra/knowledge-cards/php-ini/)

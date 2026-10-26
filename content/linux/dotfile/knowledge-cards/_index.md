@@ -21,21 +21,25 @@ Linux 系列（dotfile / 安裝 / 除錯 / 工具）共用的關鍵術語。各�
 
 ## 系統概念
 
-| 卡片                                                                                                                | 主題                                                               |
-| ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| [TTY](/linux/dotfile/knowledge-cards/tty/)                                                                          | Linux 核心的純文字終端機介面，桌面故障時的救生通道                 |
-| [PTY（Pseudo-Terminal，虛擬終端機）](/linux/dotfile/knowledge-cards/pty/)                                           | 核心提供的一對虛擬終端機裝置，行規則為何會改寫穿過它的位元組       |
-| [Ring Buffer（環狀緩衝區）](/linux/dotfile/knowledge-cards/ring-buffer-log/)                                        | 固定大小、寫滿覆蓋最舊的紀錄區，log 能回溯多久由寫入速率決定       |
-| [initramfs](/linux/dotfile/knowledge-cards/initramfs/)                                                              | 開機初期掛真 root 之前的臨時根檔系統，ESP 大小要算進它             |
-| [UEFI Boot Chain（開機鏈）](/linux/dotfile/knowledge-cards/uefi-boot-chain/)                                        | 韌體到 kernel 的交棒過程，bootloader 選型與開機故障的依據          |
-| [Partition Identification（分區識別，PARTUUID / FSUUID）](/linux/dotfile/knowledge-cards/partition-identification/) | 分區的穩定識別方式，fstab / bootloader 怎麼指涉分區                |
-| [字型的可用集合在 process 啟動時決定](/linux/dotfile/knowledge-cards/font-availability-at-startup/)                 | 裝了字型但畫面還是豆腐時的判讀依據                                 |
-| [Session Lock](/linux/dotfile/knowledge-cards/session-lock/)                                                        | 鎖屏是 compositor 持有的安全狀態，殺 process 不等於解鎖            |
-| [Compositor（合成器）](/linux/dotfile/knowledge-cards/compositor/)                                                  | Wayland 下把畫面合成與視窗管理合一的核心程式，多個系統狀態的持有者 |
-| [fontconfig](/linux/dotfile/knowledge-cards/fontconfig/)                                                            | 字型搜尋、匹配與 fallback 的底層服務，fc-* 工具分工                |
-| [logind Session 與 Seat](/linux/dotfile/knowledge-cards/logind-session-seat/)                                       | 誰持有 VT 與輸入權，SSH 起不了桌面與 loginctl 假象的根因           |
-| [systemd OnFailure](/linux/dotfile/knowledge-cards/systemd-onfailure/)                                              | 服務進 failed 時觸發另一個 unit，每次失敗都觸發的告警洗爆陷阱      |
-| [systemd drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/)                                                  | 不改原檔疊加設定，升級不覆蓋、一次套所有 service、systemctl edit   |
+| 卡片                                                                                                                      | 主題                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| [TTY](/linux/dotfile/knowledge-cards/tty/)                                                                                | Linux 核心的純文字終端機介面，桌面故障時的救生通道                         |
+| [PTY（Pseudo-Terminal，虛擬終端機）](/linux/dotfile/knowledge-cards/pty/)                                                 | 核心提供的一對虛擬終端機裝置，行規則為何會改寫穿過它的位元組               |
+| [Ring Buffer（環狀緩衝區）](/linux/dotfile/knowledge-cards/ring-buffer-log/)                                              | 固定大小、寫滿覆蓋最舊的紀錄區，log 能回溯多久由寫入速率決定               |
+| [initramfs](/linux/dotfile/knowledge-cards/initramfs/)                                                                    | 開機初期掛真 root 之前的臨時根檔系統，ESP 大小要算進它                     |
+| [UEFI Boot Chain（開機鏈）](/linux/dotfile/knowledge-cards/uefi-boot-chain/)                                              | 韌體到 kernel 的交棒過程，bootloader 選型與開機故障的依據                  |
+| [Partition Identification（分區識別，PARTUUID / FSUUID）](/linux/dotfile/knowledge-cards/partition-identification/)       | 分區的穩定識別方式，fstab / bootloader 怎麼指涉分區                        |
+| [字型的可用集合在 process 啟動時決定](/linux/dotfile/knowledge-cards/font-availability-at-startup/)                       | 裝了字型但畫面還是豆腐時的判讀依據                                         |
+| [Session Lock](/linux/dotfile/knowledge-cards/session-lock/)                                                              | 鎖屏是 compositor 持有的安全狀態，殺 process 不等於解鎖                    |
+| [Compositor（合成器）](/linux/dotfile/knowledge-cards/compositor/)                                                        | Wayland 下把畫面合成與視窗管理合一的核心程式，多個系統狀態的持有者         |
+| [fontconfig](/linux/dotfile/knowledge-cards/fontconfig/)                                                                  | 字型搜尋、匹配與 fallback 的底層服務，fc-* 工具分工                        |
+| [logind Session 與 Seat](/linux/dotfile/knowledge-cards/logind-session-seat/)                                             | 誰持有 VT 與輸入權，SSH 起不了桌面與 loginctl 假象的根因                   |
+| [systemd OnFailure](/linux/dotfile/knowledge-cards/systemd-onfailure/)                                                    | 服務進 failed 時觸發另一個 unit，每次失敗都觸發的告警洗爆陷阱              |
+| [systemd drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/)                                                        | 不改原檔疊加設定，升級不覆蓋、一次套所有 service、systemctl edit           |
+| [journald（systemd-journald）](/linux/dotfile/knowledge-cards/journald/)                                                  | systemd 的紀錄收集服務，紀錄存在記憶體還是磁碟、總量上限與速率限制         |
+| [logrotate](/linux/dotfile/knowledge-cards/logrotate/)                                                                    | 依排程輪替文字 log 檔，postrotate 讓程式重新開檔，兩次觸發之間的增長管不到 |
+| [systemd timer](/linux/dotfile/knowledge-cards/systemd-timer/)                                                            | systemd 的排程，錯過的執行可以補跑、輸出進 journal，跟 cron 的取捨         |
+| [Mandatory Access Control（強制存取控制）：SELinux 與 AppArmor](/linux/dotfile/knowledge-cards/mandatory-access-control/) | 核心依政策決定程序能存取什麼，權限都對仍被拒絕、搬移與還原後標籤錯掉的成因 |
 
 ## 容器與 prod 對齊
 

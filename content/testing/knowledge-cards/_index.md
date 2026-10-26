@@ -15,6 +15,7 @@ tags: ["testing", "knowledge-cards"]
 | [Nominal Integration Test（名義整合測試）](/testing/knowledge-cards/nominal-integration-test/)                 | 測試分層          | 名為 integration 實為 mock 的測試型態辨識                                  |
 | [Screen State Test](/testing/knowledge-cards/screen-state-test/)                                               | 測試分層          | 驗證畫面狀態覆蓋度與轉換完整性的測試層級                                   |
 | [Consumer-Driven Contract Test](/testing/knowledge-cards/consumer-driven-contract-test/)                       | 測試分層          | 後端不可寫入或跨團隊維護時，用契約取代協議整合測試                         |
+| [Smoke Test（冒煙測試）](/testing/knowledge-cards/smoke-test/)                                                 | 測試分層          | 部署或重建後的最小檢查，判斷有沒有整個壞掉，涵蓋不到只在部分輸入出現的錯誤 |
 | [Semantic Fake Backend（語意級假後端）](/testing/knowledge-cards/semantic-fake-backend/)                       | 假後端 + 流程測試 | 持有狀態、只固化已證實行為的測試假件                                       |
 | [Flow Test（流程測試）](/testing/knowledge-cards/flow-test/)                                                   | 假後端 + 流程測試 | 在假後端上驅動真實服務鏈的跨服務業務旅程驗證                               |
 | [Real-Backend Verification Test（真實後端驗證測試）](/testing/knowledge-cards/real-backend-verification-test/) | 假後端 + 流程測試 | 對共用測試環境常駐斷言後端行為、承接假後端漂移警報                         |
