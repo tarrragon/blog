@@ -6,9 +6,9 @@ weight: 1
 tags: ["operations", "maintenance", "linux", "security", "logging"]
 ---
 
-這篇整理一台單獨部署、要長期放在公開網路上的主機，在沒有人登入、也沒有部署新版本的期間仍然會改變的狀態，以及維護時對每一類狀態做的事：會累積的資料（nginx 的 log、[journald](/linux/dotfile/knowledge-cards/journald/)、syslog 的檔案、套件快取、容器的 log 與映像檔、應用程式自己寫的資料、建置產物）各自由誰寫入、由什麼機制清理，以及磁碟寫滿時不同寫入者的反應；定期要讀的 log 與每一份要看的欄位；對外入口在主機與雲端防火牆兩層怎麼盤點、哪些入口該關或該收窄；安全更新依軟體的安裝管道各自由什麼更新、更新後是否自動重開機的條件；會到期與會改變的設定（憑證、網域、雲端 CLI 的登入、管理者的 IP、CDN 的位址段、免費額度的閒置回收）；怎麼從每一類狀態的變化速度推出檢查間隔、哪些項目要改成自動處理；最後是接手或第一次盤點一台已經上線的主機時，先處理哪幾項。
+這篇整理一台單獨部署、要長期放在公開網路上的主機，在沒有人登入、也沒有部署新版本的期間仍然會改變的狀態，以及維護時對每一類狀態做的事：會累積的資料（nginx 的 log、[journald](/linux/dotfile/knowledge-cards/journald/)、syslog 的檔案、套件快取、容器的 log 與映像檔、應用程式自己寫的資料、建置產物）各自由誰寫入、由什麼機制清理，以及磁碟寫滿時不同寫入者的反應；定期要讀的 log 與每一份要看的欄位；對外入口在主機與雲端防火牆兩層怎麼盤點、哪些入口該關或該收窄；安全更新依軟體的安裝管道各自由什麼更新（含語言與容器映像檔的漏洞掃描工具在排程裡的 exit code）、更新後是否自動重開機的條件與序列主控台的準備；會到期與會改變的設定（憑證、網域、雲端 CLI 的登入、管理者的 IP、CDN 的位址段、免費額度的閒置回收）；怎麼從每一類狀態的變化速度推出檢查間隔、哪些項目要改成自動處理；最後是接手或第一次盤點一台已經上線的主機時，先處理哪幾項。
 
-範圍是一台主機加上它前面的 CDN 與雲端防火牆（主機有好幾台、要依角色分組時，清單的值怎麼分層、怎麼產生每台的清單，在 [多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/operations/09-host-lifecycle/multi-host-manifest/)），例子取自 Oracle Linux 10.2 上跑 nginx 與一個寫 SQLite 的服務的主機；Debian 系發行版與 Docker 的對照寫在各節。Debian 系的套件預設，是在 Debian 12、Debian 13 與 Ubuntu 24.04 的官方容器映像檔裡裝上同名套件之後讀出來的，沒有在 Debian 系的雲端主機上跑過；雲端映像檔預先裝了哪些套件，要在主機上用 `dpkg -s <套件名>` 查。服務要暫停一段時間時的處理在 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)，把本篇的項目寫成機器讀得懂的清單在 [主機維護清單寫成 TOML：JSON、YAML、TOML 的取捨、TOML 1.0 與 1.1 的版本差異、清單的欄位設計與只讀檢查腳本](/operations/09-host-lifecycle/host-manifest-in-toml/)。
+範圍是一台主機加上它前面的 CDN 與雲端防火牆（主機有好幾台、要依角色分組時，清單的值怎麼分層、怎麼產生每台的清單，在 [多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/operations/09-host-lifecycle/multi-host-manifest/)），例子取自 Oracle Linux 10.2 上跑 nginx 與一個寫 SQLite 的服務的主機；Debian 系發行版與 Docker 的對照寫在各節。Debian 系的套件預設，是在 Debian 12、Debian 13 與 Ubuntu 24.04 的官方容器映像檔裡裝上同名套件之後讀出來的，再拿 Oracle Cloud 上一台 Ubuntu 24.04 的雲端主機對照（預先裝了哪些套件、journal 的目錄、核心更新前後的重開機判斷）；其他業者的映像檔與 Debian 12 的雲端映像檔預先裝了哪些套件，要在主機上用 `dpkg -s <套件名>` 查。服務要暫停一段時間時的處理在 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)，把本篇的項目寫成機器讀得懂的清單在 [主機維護清單寫成 TOML：JSON、YAML、TOML 的取捨、TOML 1.0 與 1.1 的版本差異、清單的欄位設計與只讀檢查腳本](/operations/09-host-lifecycle/host-manifest-in-toml/)。
 
 ## 沒有人操作時主機上會改變的狀態
 
@@ -49,7 +49,7 @@ journald 的紀錄存在磁碟還是記憶體，由 `Storage` 決定，這個預
 
 上面兩組上限各自另有 4G 的上限，算出來超過 4G 時以 4G 為準。Oracle Cloud 的 Oracle Linux 10.2 映像檔處在紀錄只存在記憶體的那一種狀態；在 `/etc/systemd/journald.conf.d/` 放一個寫了 `Storage=persistent` 的設定檔並重啟 systemd-journald 之後，那台主機的 `journalctl --list-boots` 在下一次重開機後列出兩次開機。
 
-Debian 系的預設落在另一種狀態：Debian 12、Debian 13 與 Ubuntu 24.04 的 systemd 套件（252、257、255）在安裝時由套件的 postinst 腳本建立 `/var/log/journal`，`Storage` 同樣是預設的 `auto`，所以紀錄寫在磁碟上、跨得過重開機。雲端映像檔是由同一個套件裝出來的，目錄應該也在，這一點是從 postinst 推論，沒有在雲端主機上確認，`ls -ld /var/log/journal` 查得到。
+Debian 系的預設落在另一種狀態：Debian 12、Debian 13 與 Ubuntu 24.04 的 systemd 套件（252、257、255）在安裝時由套件的 postinst 腳本建立 `/var/log/journal`，`Storage` 同樣是預設的 `auto`，所以紀錄寫在磁碟上、跨得過重開機。雲端映像檔在 Oracle Cloud 的 Ubuntu 24.04 映像檔（2026 年 9 月的版本）上確認過：第一次開機之後 `ls -ld /var/log/journal` 印出 `drwxr-sr-x+ root systemd-journal`，目錄與裡面的 journal 檔（`-rw-r-----+ root systemd-journal`）已經套好群組與 ACL，只屬於 `systemd-journal` 群組的系統帳號跑 `journalctl -n 1` 以 exit 0 讀得到，不必另外處理；這個映像檔同時預先裝了 rsyslog，`/var/log/syslog` 與 `/var/log/auth.log` 另外有一份。Debian 12 的雲端映像檔沒有確認，`ls -ld /var/log/journal` 查得到。
 
 ### 磁碟寫滿時各寫入者的反應
 
@@ -128,9 +128,25 @@ sshd 與強制存取控制這兩列的正常值都是零，偏離零就可以直
 - **自己建置的程式**（自己編譯的 Go、Rust 程式）：依賴的函式庫或語言的標準函式庫有漏洞時，要重新建置、重新部署才修得到。得知的方式是對依賴跑語言的漏洞掃描工具（Go 的 `govulncheck`），掃描可以排程，重建與部署多半由人在維護時段做。`govulncheck ./...` 只回報程式碼實際呼叫得到的漏洞，找到時 exit code 是 3，沒有時是 0（govulncheck 1.1.3 對一個依賴 `golang.org/x/text` v0.3.5 的程式實測，升到 v0.21.0 之後變成 0），所以排程的 timer 可以直接依 exit code 決定要不要告警。
 - **從上游下載的預先建置檔案**（官方發佈頁下載的二進位檔、`curl | sh` 裝的工具）：沒有任何套件管理器記得它裝過，要人去換；得知的方式是訂閱上游的發佈通知，並把它列進清單，否則它會一直停在安裝那天的版本。
 
+容器映像檔的漏洞掃描排程時，要讀的是掃描工具的 exit code，而它的預設跟 govulncheck 不同。以 trivy 0.57.1（官方映像檔 `aquasec/trivy:0.57.1`）實測：
+
+```bash
+trivy image --download-db-only                                     # 只下載漏洞資料庫，獨立成一次執行
+trivy image --skip-db-update --exit-code 7 <映像檔>                # 有漏洞回 7、沒有回 0、掃描失敗回 1
+trivy image --skip-db-update --exit-code 7 --exit-on-eol 5 <映像檔> # 映像檔的發行版已經 EOL 時回 5
+```
+
+- **exit code 的讀法**：不帶 `--exit-code` 時，找到漏洞照樣回 0（一個 2023 年 6 月的 Debian 12 映像檔掃出 371 個漏洞，exit 0），所以排程一定要帶這個參數。掃描本身失敗（映像檔名稱打錯、逾時、離線抓不到映像檔、資料庫下載失敗）一律回 1，不受 `--exit-code` 影響；`--exit-code` 設成 1 時，「找到漏洞」與「沒有掃成」都是 1，timer 分不開，所以設成 1 以外的值；上面的 7 與 5 是這次挑的值，跟排程裡其他會用到的 exit code 不重複就可以。`--severity HIGH,CRITICAL` 與 `--ignore-unfixed` 只縮小計數，篩完還有漏洞時一樣回那個值。
+- **已經 EOL 的映像檔**：發行版過了支援期限時，資料庫裡不再有它的新漏洞，trivy 掃出 0 個、回 0，只在 stderr 印兩行 WARN：`This OS version is no longer supported by the distribution` 與 `The vulnerability detection may be insufficient because security updates are not provided`（alpine 3.15 實測）。exit 0 在這裡看起來跟乾淨一樣，帶 `--exit-on-eol <值>` 才變成一個看得到的 exit code。
+- **資料庫**：壓縮檔約 130 MiB，解開後的 `trivy.db` 約 1.6 GB（1,637,429,248 位元組），放在快取目錄（預設 `/root/.cache/trivy`）的 `db/`。`--timeout`（`--help` 印出的預設是 `5m0s`）的倒數包含下載資料庫的時間：快取是空的時，設 30 秒的那一次照樣下載了約 2 分鐘，跑完才以 `context deadline exceeded` 失敗，下載的內容沒有留下。資料庫已在本機時，一次掃描的時間主要花在從 registry 拉映像檔的 layer 與分析（一個 Debian 映像檔約 40 到 50 秒，layer 已在快取時幾秒）。所以下載資料庫與掃描分成兩次執行，各自有自己的逾時。
+- **資料庫的新舊與更新失敗**：0.57.1 帶 `--skip-db-update`、用過期的資料庫掃描時（快取的 `metadata.json` 把 `UpdatedAt` 改成一年多前）不印任何警告，結果照常輸出，資料庫的新舊要由排程自己讀 `metadata.json` 的 `UpdatedAt`。分成兩次執行之後，掃描仍然會被更新的失敗拖累：離線時 `--download-db-only` 失敗，trivy 刪掉 `metadata.json`（`trivy.db` 留著）；連網而逾時失敗，整個 `db/` 目錄都被刪掉。兩種情形之後帶 `--skip-db-update` 的掃描都以 `The first run cannot skip downloading DB` 失敗、回 1，跟其他掃描失敗分不開。所以更新那一次的 exit 1 本身要告警；在更新之前備份 `metadata.json`、失敗後放回去，離線那一種掃描就恢復正常（實測），逾時那一種要整個 `db/` 一起備份。另一種寫法是把更新下載到另一個快取目錄（`--cache-dir`），成功之後才換掉掃描用的那一份，這個寫法沒有實跑。
+- **掃本機才有的映像檔**：trivy 跑在容器裡時讀不到主機的映像檔，有兩種給法：把主機的 `/var/run/docker.sock` 掛進去，或在主機上 `docker save -o <檔名>.tar <映像檔>` 再用 `trivy image --input` 讀那個檔。兩種掃出的結果相同；掛 docker.sock 等於把主機 Docker daemon 的完整控制權交給這個容器（能啟動特權容器、掛主機的根目錄），`docker save` 那一種容器只拿到一個以 `:ro` 掛進去的檔案，代價是每次掃描前要重新匯出一次。
+
 發行版套件庫這一條可以交給排程。Oracle Linux 與 RHEL 系由 `dnf-automatic.timer` 定期觸發 `dnf-automatic`，它讀 `/etc/dnf/automatic.conf` 的兩個鍵：`upgrade_type` 決定裝哪一類更新（`security` 只裝安全更新），`apply_updates` 決定下載之後要不要安裝（預設 `no` 只下載）。timer 沒有啟用時，設定檔改了也不會執行；`systemctl list-timers dnf-automatic.timer` 列得出下一次執行的時間，才代表排程在跑。
 
-Debian 系用 `unattended-upgrades`，排程由兩個 timer 分工：`apt-daily.timer`（每天 6 點與 18 點，加最多 12 小時的隨機延遲）更新套件清單，`apt-daily-upgrade.timer`（每天 6 點，加最多 60 分鐘）執行安裝；要不要安裝由 `/etc/apt/apt.conf.d/20auto-upgrades` 的 `APT::Periodic::Unattended-Upgrade` 決定，非互動安裝這個套件時，它的值預設是 `"1"`（套件的 debconf 問題 `enable_auto_updates` 預設 true）。裝哪些來源的更新寫在 `/etc/apt/apt.conf.d/50unattended-upgrades`，兩家的預設不同：Debian 12 與 13 的 `Origins-Pattern` 除了 `label=Debian-Security` 的兩筆，還有 `label=Debian` 那一筆，也就是穩定版的點版本更新（point release）同樣自動套用；Ubuntu 24.04 的 `Allowed-Origins` 是發行時的版本、`-security` 與兩個 ESM 的安全來源，不含 `-updates`，自動套用的只有安全更新。以上是三個發行版的容器裡裝上 unattended-upgrades 2.9 到 2.12 之後讀出的值。
+Debian 系用 `unattended-upgrades`，排程由兩個 timer 分工：`apt-daily.timer`（每天 6 點與 18 點，加最多 12 小時的隨機延遲）更新套件清單，`apt-daily-upgrade.timer`（每天 6 點，加最多 60 分鐘）執行安裝；要不要安裝由 `/etc/apt/apt.conf.d/20auto-upgrades` 的 `APT::Periodic::Unattended-Upgrade` 決定，非互動安裝這個套件時，它的值預設是 `"1"`（套件的 debconf 問題 `enable_auto_updates` 預設 true）。裝哪些來源的更新寫在 `/etc/apt/apt.conf.d/50unattended-upgrades`，兩家的預設不同：Debian 12 與 13 的 `Origins-Pattern` 除了 `label=Debian-Security` 的兩筆，還有 `label=Debian` 那一筆，也就是穩定版的點版本更新（point release）同樣自動套用；Ubuntu 24.04 的 `Allowed-Origins` 是發行時的版本、`-security` 與兩個 ESM 的安全來源，不含 `-updates`，自動套用的只有安全更新。以上是三個發行版的容器裡裝上 unattended-upgrades 2.9 到 2.12 之後讀出的值；Oracle Cloud 的 Ubuntu 24.04 映像檔預先裝了 unattended-upgrades 與 needrestart，`20auto-upgrades` 的兩個值與 `Allowed-Origins` 的來源跟容器裡讀出的相同，兩個 timer 都是 enabled。
+
+雲端映像檔是某一天建的，主機第一次開機時就已經落後：上面那個映像檔開機之後有 60 個來自 `-security` 的更新待裝，其中包括核心。手動觸發一次 `unattended-upgrade`（`apt-daily-upgrade.timer` 啟動的 `apt.systemd.daily install` 呼叫的也是它）花了 402 秒，升級了 64 個套件，其中包括新核心；裝完之後還有 18 個可以更新的套件，全部來自 `-updates`，照預設沒有裝。所以新建的主機在第一次排程執行之前，要先手動跑一次更新並重開機，否則從開機到排程第一次執行之間，映像檔建立之後公開的漏洞都還在。排程裝得到更新的前提是主機連得到套件來源：同一台主機放在只接了 Oracle 服務網路出口（service gateway）的私有子網路時，`apt-get update` 以 `connect (101: Network is unreachable)` 與連線逾時失敗；這個子網路加上 NAT gateway、主機放行出站的 80 與 443 之後，同一條指令從 `ports.ubuntu.com` 取得了套件清單，所以 Ubuntu 的套件來源在 Oracle 的服務網路之外。排程在這種主機上照常觸發而裝不到任何套件（從 `apt-get update` 的失敗推論，沒有等 timer 觸發實測），讀它的執行紀錄才看得出來。
 
 這裡有兩個獨立的選擇：
 
@@ -143,8 +159,8 @@ Debian 系用 `unattended-upgrades`，排程由兩個 timer 分工：`apt-daily.
 
 Debian 系把這兩件事分給兩個機制：
 
-- **需不需要重開機**：看 `/var/run/reboot-required` 存不存在，需要重開機的套件名寫在 `/var/run/reboot-required.pkgs`。這個檔案由核心套件安裝後執行的 `/etc/kernel/postinst.d/` 底下的腳本建立，在 Debian 12 與 13 上，那支腳本屬於 unattended-upgrades 套件，沒裝這個套件的主機，核心更新之後這個檔案不會出現，它不存在不代表不需要重開；Ubuntu 24.04 的 update-notifier-common 另外帶了 `notify-reboot-required` 與登入訊息（motd）的 `98-reboot-required`，從檔名與位置推論是建立這個檔案並在登入時顯示，沒有實測。
-- **哪些服務要重啟**：needrestart 套件在每次 apt 安裝之後（`/etc/apt/apt.conf.d/99needrestart` 的 hook）檢查用到舊函式庫的服務；`needrestart -b` 用批次格式印出結果，`NEEDRESTART-SVC` 每行一個要重啟的服務，`NEEDRESTART-KSTA` 是核心的狀態（依 needrestart 的說明：`1` 沒有待生效的核心，`2` 與 `3` 有新核心等重開機，`0` 是判斷不出來）。容器裡跑 `needrestart -b` 時核心屬於宿主，KSTA 印出 `0`，前三個值要在主機上才看得到（這一點沒有在主機上量過）。
+- **需不需要重開機**：看 `/var/run/reboot-required` 存不存在，需要重開機的套件名寫在 `/var/run/reboot-required.pkgs`。這個檔案由核心套件安裝後執行的 `/etc/kernel/postinst.d/` 底下的腳本建立，在 Debian 12 與 13 上，那支腳本屬於 unattended-upgrades 套件，沒裝這個套件的主機，核心更新之後這個檔案不會出現，它不存在不代表不需要重開；Ubuntu 24.04 的 `/etc/kernel/postinst.d/` 底下另有一支 `update-notifier`，`dpkg -S` 查得到它與登入訊息（motd）的 `/etc/update-motd.d/98-reboot-required` 都屬於 update-notifier-common。在 Oracle Cloud 的 Ubuntu 24.04 主機上，`unattended-upgrade` 裝完新核心之後，`/var/run/reboot-required` 的內容是 `*** System restart required ***`，`.pkgs` 列出新核心的套件與 `linux-base`，重開機之後兩個檔案都不在了；兩支腳本都裝著，所以這次分不出是哪一支建的，登入訊息也沒有實際看過。
+- **哪些服務要重啟**：needrestart 套件在每次 apt 安裝之後（`/etc/apt/apt.conf.d/99needrestart` 的 hook）檢查用到舊函式庫的服務；`needrestart -b` 用批次格式印出結果，`NEEDRESTART-SVC` 每行一個要重啟的服務，`NEEDRESTART-KSTA` 是核心的狀態（依 needrestart 的說明：`1` 沒有待生效的核心，`2` 與 `3` 有新核心等重開機，`0` 是判斷不出來）。容器裡跑 `needrestart -b` 時核心屬於宿主，KSTA 印出 `0`，其他值要在主機上才看得到。在 Oracle Cloud 的 Ubuntu 24.04 主機上量了三個時間點：開機時 `1`；`unattended-upgrade` 裝了下一個主要版本的核心之後是 `3`，`NEEDRESTART-KCUR` 是執行中的舊核心、`NEEDRESTART-KEXP` 是新裝的核心，同一次另外印出 `dbus.service`、`systemd-logind.service` 與 `unattended-upgrades.service` 三行 `NEEDRESTART-SVC`；重開機之後回到 `1`，KCUR 與 KEXP 相同。`2`（新核心與執行中的核心 ABI 相容）這次沒有遇到。
 
 unattended-upgrades 自己重開機的設定是 `50unattended-upgrades` 裡的 `Unattended-Upgrade::Automatic-Reboot`，預設 `"false"`；改成 `"true"` 時，安裝完成而 `reboot-required` 存在，它就在 `Automatic-Reboot-Time` 指定的時間重開；這個鍵的預設是 `"now"`，也就是安裝一完成就立刻重開，設定檔裡被註解掉的 `"02:00"` 是範例值，要固定在維護時段重開就得自己寫上時間（這是設定檔註解寫的行為，容器裡沒有實際重開機）。
 
@@ -153,11 +169,11 @@ unattended-upgrades 自己重開機的設定是 `50unattended-upgrades` 裡的 `
 - **服務會不會自己回來**：看服務的 unit 是否 enabled（`systemctl is-enabled <unit>`）、容器的 restart policy、主機防火牆的規則是不是寫進了永久設定；最可靠的確認是在有人在場的維護時段手動重開一次。例如服務當初是在終端機裡手動啟動、一直沒有寫成 systemd unit，平常主機一直開著所以看不出來，排程在凌晨重開機之後服務就不在了。服務不會自己回來時，先把它改成會自己回來（enable unit、設 restart policy），再看下一個條件。這個條件跟更新無關也成立：主機因為停電或業者的硬體維護重開時，結果相同。
 - **服務沒回來時有沒有人知道**：要有一個跑在這台主機以外的觀察者（另一台主機上的外部探測、或心跳監看：主機定期送訊號、停送時由外部服務告警），以及告警實際送得到人；跑在同一台主機上的監控，重開機時跟著停掉，報不出這台主機沒回來。外部探測的位置與判讀見 [4.28 單台主機的監控盲區與失效域以外的觀察者：主機停機、使用者路徑中斷與告警鏈中斷，心跳監看與外部探測各自回答的問題與位置，以及與內部探測並排的判讀](/backend/04-observability/single-host-monitoring-outside-view/)〈頻外訊號：心跳監看與外部探測〉。
 
-兩個條件都成立時，讓它在固定時段自動重開，代價是每次一段可預期的停機，服務沒回來時探測會叫人；新核心開不了機時，修復要從雲端業者的序列主控台進去，停機的長度就不再可預期，自動重開機的時段要選在救援得到的時候。序列主控台要在出事之前準備好三件事：帳號或主機層級已經啟用（部分業者要事先開啟）、有一個能在主控台登入的方式（雲端映像檔的使用者通常只有金鑰、沒有密碼）、開機選單（GRUB）選得回上一版核心；這幾件沒準備好時，救援只剩業者的救援開機，或把磁碟掛到另一台主機上修。三家業者文件寫的預設如下，都沒有實際連過：
+兩個條件都成立時，讓它在固定時段自動重開，代價是每次一段可預期的停機，服務沒回來時探測會叫人；新核心開不了機時，修復要從雲端業者的序列主控台進去，停機的長度就不再可預期，自動重開機的時段要選在救援得到的時候。序列主控台要在出事之前準備好三件事：帳號或主機層級已經啟用（部分業者要事先開啟）、有一個能在主控台登入的方式（雲端映像檔的使用者通常只有金鑰、沒有密碼）、開機選單（GRUB）選得回上一版核心；這幾件沒準備好時，救援只剩業者的救援開機，或把磁碟掛到另一台主機上修。三家業者文件寫的預設如下，Oracle Cloud 與 Google Cloud 實際連過，AWS 只取自文件：
 
 - **AWS**：帳號層級預設不允許使用序列主控台，要在每個區域分別開啟，使用者另外要有 `ec2-instance-connect:SendSerialConsoleSSHPublicKey` 的 IAM 權限；連得上之後要登入作業系統，主機上得有一個設了密碼的使用者，而 AWS 提供的 AMI 預設沒有，要事先在每台主機用 `passwd` 設好（AWS 文件〈Configure access to the EC2 Serial Console〉）。
-- **Google Cloud**：互動式的序列埠存取預設關閉，在專案或主機的中繼資料設 `serial-port-enable` 為 `TRUE` 才開；連線用 SSH 金鑰驗證，出現登入提示時要本機使用者的密碼，Google 提供的 Linux 映像檔預設不允許密碼登入，要事先用 `sudo passwd` 或開機腳本設好（Google Cloud 文件〈Troubleshooting using the serial console〉）。
-- **Oracle Cloud**：要先替主機建立一個主控台連線（instance console connection），上傳一把 RSA 公鑰，經由 SSH 連進去；只看開機輸出不必登入，要登入作業系統時，Oracle Cloud 不替 `opc` 使用者設預設密碼，要事先替它或另一個使用者設好（Oracle Cloud 文件〈Instance Console Connections〉）。
+- **Google Cloud**：互動式的序列埠存取預設關閉，在專案或主機的中繼資料設 `serial-port-enable` 為 `TRUE` 才開；連線用 SSH 金鑰驗證，出現登入提示時要本機使用者的密碼，Google 提供的 Linux 映像檔預設不允許密碼登入，要事先用 `sudo passwd` 或開機腳本設好（Google Cloud 文件〈Troubleshooting using the serial console〉）。在 Debian 12 的 VM 上先建一個設了密碼的救援帳號、再開啟序列埠登入的完整步驟與實測，在 [GCP VM 的 SSH 與 RDP 改走 IAP 的實測紀錄：盤點、救援入口、IAP 規則與 IAM、停用舊規則驗證、OS Login 啟用與移除外部 IP](/infra/cloud-providers/gcp/hands-on/iap-ssh-migration-walkthrough/)〈準備救援入口：Serial Console 與本機救援帳號〉。
+- **Oracle Cloud**：要先替主機建立一個主控台連線（instance console connection），上傳一把 RSA 公鑰，經由 SSH 連進去；只看開機輸出不必登入，要登入作業系統時，Oracle Cloud 不替 `opc` 使用者設預設密碼，要事先替它或另一個使用者設好（Oracle Cloud 文件〈Instance Console Connections〉）。在一台 Ubuntu 24.04 的 A1 主機上實際連過：`oci compute instance-console-connection create` 帶 RSA 公鑰建立連線，主控台給的連線字串是一條經由 443 埠跳板的 ssh 指令；連上之後讓主機重開機，看得到 UEFI 韌體的輸出、核心開機訊息，開機後約 27 秒在 `ttyAMA0` 印出登入提示，所以只看開機過程（核心卡在哪一步）時不必登入。這台主機的 `ubuntu` 使用者，`passwd -S ubuntu` 印出的狀態是 `L`（密碼鎖定），這次也沒有替任何使用者設密碼，所以登入那一步沒有做。
 
 三家的共同點是登入作業系統要密碼，而雲端映像檔的使用者預設只有金鑰，所以「能登入」這一件要在主機正常時先做；設了密碼的使用者也讓經由 SSH 以外的登入多了一條路，密碼的強度與只在主控台使用的限制（例如 sshd 設成不接受密碼登入）要一起決定。
 
