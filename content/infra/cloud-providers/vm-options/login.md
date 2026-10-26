@@ -33,7 +33,7 @@ Oracle Cloud 的建立頁提供四個選項：
 
 所以在 Oracle Cloud 上，金鑰遺失或一開始沒放、又沒有開代理程式的 Bastion plugin（讓 Oracle Cloud 的 Bastion 服務在建立工作階段時，把一把公鑰臨時放進主機的功能，見〈不放金鑰時的登入服務〉）時，主機上沒有可以用 SSH 進去的入口。剩下的入口各有前提，而多數前提要在金鑰遺失之前就準備好：
 
-- **序列主控台（serial console）**：不經過網路與 sshd，在主控台上建一個主控台連線就能看到主機的開機畫面與登入提示。要在登入提示登進去，主機裡要事先有一個設了密碼的帳號，而平台映像的預設使用者只用金鑰、沒有密碼；沒有這種帳號時，只能照官方範例從開機選單進維護模式重設金鑰，那份範例只寫了 Oracle Linux 的 `opc`。救援帳號怎麼事先準備見 [Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/) 的〈設計責任〉。
+- **序列主控台（serial console）**：不經過網路與 sshd，在主控台上建一個主控台連線就能看到主機的開機畫面與登入提示。要在登入提示登進去，主機裡要事先有一個設了密碼的帳號，而平台映像的預設使用者只用金鑰、沒有密碼；沒有這種帳號時，只能照官方範例從開機選單進維護模式重設金鑰，那份範例只寫了 Oracle Linux 的 `opc`。救援帳號怎麼事先準備見 [Serial Console（序列主控台）](/infra/knowledge-cards/serial-console/) 的〈設計責任〉；在 Oracle Cloud 的 Ubuntu 24.04 主機上建序列主控台連線、改寫成 ProxyJump 設定與連上之後看到的開機輸出，見 [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈序列主控台：RSA 金鑰、建立連線、ProxyJump 設定與看到的開機輸出〉。
 - **Compute Instance Run Command**：在主控台送一段腳本到主機裡執行。官方說明這個 plugin 以 `ocarun` 這個使用者執行，要寫另一個使用者家目錄裡的 `authorized_keys`，得事先在主機上替 `ocarun` 設好 sudo（官方列的做法是建立時用 cloud-init 設，或建好之後登入主機設；主機登不進去時只剩前一種）；2026-10-25 對一台沒設的 A1 Ubuntu 主機實測，`ocarun` 沒有 sudo，見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) 的〈Run Command 補公鑰的嘗試：dynamic group、IAM 政策與 ocarun 沒有 sudo 的結果〉；送指令的人也要有對應的權限政策，主機上的代理程式要連得到 Oracle 的服務端點（主機在私有 subnet 時經由服務閘道或 NAT 閘道；官方只對「腳本或輸出放在 Object Storage」這種用法寫明出站條件，列的是 NAT 閘道、服務閘道或 internet gateway 其中一種）。
 - **把開機磁碟掛到另一台主機**：停止這台主機、把它的開機磁碟卸下，當成資料磁碟掛到另一台主機上，直接修改裡面的 `authorized_keys`，再掛回去開機。這一條不需要事先準備，代價是一段停機。
 - **重建**：終止這台主機，帶著新的公鑰重建。官方對金鑰遺失列的處置就是重建與序列主控台這兩種。

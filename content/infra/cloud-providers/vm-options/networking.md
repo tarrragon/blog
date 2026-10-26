@@ -24,7 +24,7 @@ tags: ["infra", "cloud-providers", "vm", "network", "security"]
 
 所以 AWS 私有 subnet 裡的主機可以有公開 IP，而那個公開 IP 收不到網際網路來的連線。Google Cloud 沒有公開與私有 subnet 之分，任何 subnet 裡的主機都可以有外部 IP。另外，AWS 的一個 subnet 只在一個可用區裡，兩台主機要分到不同可用區時，要放進兩個不同可用區的 subnet；Oracle Cloud 與 Google Cloud 的 subnet 可以跨同一區域內的可用區，見 [位置：區域、可用區與故障域](/infra/cloud-providers/vm-options/placement/)。
 
-在 Oracle Cloud 上，公開 subnet 裡沒有公開 IP 的主機完全沒有出站路徑：官方〈Internet Gateway〉的說明是，要經由 internet gateway 連網際網路的資源必須在公開 subnet 裡、而且有公開 IP，只有私有 IP 的資源要改走 NAT 閘道。所以在 Oracle Cloud 上，放進公開 subnet 的主機要同時給公開 IP 才有出站路徑；不給公開 IP 的主機放私有 subnet，出站走 NAT 閘道。
+在 Oracle Cloud 上，公開 subnet 裡沒有公開 IP 的主機完全沒有出站路徑：官方〈Internet Gateway〉的說明是，要經由 internet gateway 連網際網路的資源必須在公開 subnet 裡、而且有公開 IP，只有私有 IP 的資源要改走 NAT 閘道。所以在 Oracle Cloud 上，放進公開 subnet 的主機要同時給公開 IP 才有出站路徑；不給公開 IP 的主機放私有 subnet，出站走 NAT 閘道。在私有 subnet 的 Ubuntu 主機上實際加過 NAT 閘道、路由規則與只掛在那台主機上的 NSG，指令與加之前的錯誤原文見 [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈加出站：NAT gateway、路由規則與只掛在這台主機上的 NSG〉。
 
 替單一台實驗機選 subnet 與公開 IP 時，要先確定三項需求：主機上是否有服務要讓網際網路的人連、管理員從哪裡登入、主機自己是否要對外連線（下載套件更新）。下面各條依對外服務與登入方式的組合寫出放法，出站路徑寫在各條裡：
 

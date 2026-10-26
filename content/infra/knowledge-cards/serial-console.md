@@ -6,7 +6,7 @@ weight: 58
 tags: ["infra", "knowledge-cards", "access", "recovery"]
 ---
 
-序列主控台（serial console）承擔的是救援：當網路設定或 sshd 出錯而 [SSH](/infra/knowledge-cards/ssh/) 連不進去時，它提供一條不經過主機作業系統的網路設定與 sshd 的登入路徑。實體伺服器上它是一條接到序列埠的線；雲端 VM 把它做成虛擬序列埠，由廠商的網頁管理介面或 CLI 轉送，例如 GCP 的 Serial Console（`gcloud compute connect-to-serial-port`）、AWS 的 EC2 Serial Console，以及 Oracle Cloud 的 serial console connection（instance console connection 的一種：先在主控台替主機建一個主控台連線，再從自己的電腦用 SSH 連上，官方說明本機連線要用 RSA 金鑰）。連上之後看到的是作業系統的文字主控台；只看開機輸出不必登入，要在登入提示登進去時，用主機上設了密碼的本機帳號（Oracle Cloud 官方說明平台映像的 `opc` 沒有預設密碼）。
+序列主控台（serial console）承擔的是救援：當網路設定或 sshd 出錯而 [SSH](/infra/knowledge-cards/ssh/) 連不進去時，它提供一條不經過主機作業系統的網路設定與 sshd 的登入路徑。實體伺服器上它是一條接到序列埠的線；雲端 VM 把它做成虛擬序列埠，由廠商的網頁管理介面或 CLI 轉送，例如 GCP 的 Serial Console（`gcloud compute connect-to-serial-port`）、AWS 的 EC2 Serial Console，以及 Oracle Cloud 的 serial console connection（先替主機建一個序列主控台連線（instance console connection），再從自己的電腦用 SSH 連上，官方說明本機連線要用 RSA 金鑰）。連上之後看到的是作業系統的文字主控台；只看開機輸出不必登入，要在登入提示登進去時，用主機上設了密碼的本機帳號（Oracle Cloud 官方說明平台映像的 `opc` 沒有預設密碼）。
 
 ## 概念位置
 
@@ -36,3 +36,4 @@ tags: ["infra", "knowledge-cards", "access", "recovery"]
 - [Identity-Aware Proxy（身分感知代理）](/infra/knowledge-cards/identity-aware-proxy/) — 平時的通道控制點，救援入口繞過它
 - [Bastion Host（跳板機）](/infra/knowledge-cards/bastion-host/) — 另一種平時的通道控制點
 - [GCP VM 的 SSH 與 RDP 改走 IAP 的實測紀錄](/infra/cloud-providers/gcp/hands-on/iap-ssh-migration-walkthrough/#準備救援入口serial-console-與本機救援帳號) — 在 GCP 上建救援帳號、開啟與關閉 Serial Console 的指令
+- [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈序列主控台：RSA 金鑰、建立連線、ProxyJump 設定與看到的開機輸出〉 — 在 Oracle Cloud 上建序列主控台連線、把官方的連線字串改寫成 ProxyJump 設定，以及連上之後看到的開機輸出

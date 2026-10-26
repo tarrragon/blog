@@ -1,7 +1,7 @@
 ---
 title: "Oracle Cloud 的實作紀錄"
 date: 2026-10-25
-description: "要在 Oracle Cloud 照著建一台 Always Free 的 A1 主機、在容量不足時重送建立請求，排查 Bastion managed SSH session 建立逾時，或改用 port forwarding session 登入時，查實際跑過的指令、輸出與除錯過程"
+description: "要在 Oracle Cloud 照著建一台 Always Free 的 A1 主機、在容量不足時重送建立請求，排查 Bastion managed SSH session 建立逾時，改用 port forwarding session 登入，讓私有子網路的主機經由 NAT gateway 連到套件來源，連上序列主控台，或主機被回收之後要重建時，查實際跑過的指令、輸出與除錯過程"
 weight: 10
 tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "hands-on"]
 ---
@@ -10,6 +10,7 @@ tags: ["infra", "cloud-providers", "oracle-cloud", "oci", "hands-on"]
 
 ## 章節文章
 
-| 文章                                                                                                         | 主題                                                                                                                                                                                                                             |
-| ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/) | 建立前的檢查、前置網路、主控台各分頁的取值與替代做法、等效 CLI 指令、容量不足與重送腳本、Bastion 工作階段逾時的排查、Run Command 補公鑰的嘗試、改用 Oracle Linux 並放公鑰重建後經由 port forwarding session 登入、刪除資源的順序 |
+| 文章                                                                                                                                                                                                                    | 主題                                                                                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)                                                                                                            | 建立前的檢查、前置網路、主控台各分頁的取值與替代做法、等效 CLI 指令、容量不足與重送腳本、Bastion 工作階段逾時的排查、Run Command 補公鑰的嘗試、改用 Oracle Linux 並放公鑰重建後經由 port forwarding session 登入、刪除資源的順序    |
+| [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/) | 私有子網路的 Ubuntu 24.04 主機連不到 Canonical 鏡像站的錯誤與成因、NAT gateway 加路由加只掛在這台的 NSG、序列主控台的 RSA 金鑰與 ProxyJump 寫法、閒置回收之後的發現方式、留下與消失的資源、先查後建的重建腳本、費用與額度、刪除順序 |

@@ -48,7 +48,7 @@ oci compute instance update --help | sed -n '/--metadata/,/--extended-metadata/p
 - **VCN `verify-vcn`**（`10.0.0.0/16`，位址範圍的寫法見 [CIDR](/infra/knowledge-cards/cidr/) 卡）：主機所在的虛擬網路。
 - **service gateway 與路由表 `private-rt`**：私有 subnet 沒有通往網際網路的路由，主機上的 Oracle Cloud Agent 要連到 Oracle 自己的服務端點，經由 service gateway 出去；路由表裡那一條規則把送往 Oracle 服務網段的流量導向 service gateway。managed SSH session 對閘道與路由的要求見 [登入](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉，這次在其中選了 service gateway。
 
-這份網路刻意沒有 NAT 閘道，主機只用來測 Bastion 登入；沒有 NAT 時，主機連不到 Ubuntu 的套件來源，`apt` 更新與安裝都會失敗。要當一般主機用，就另外建一個 NAT 閘道，在路由表加一條通往它的路由，並在 security list 的出站規則放行網際網路。
+這份網路刻意沒有 NAT 閘道，主機只用來測 Bastion 登入；沒有 NAT 時，主機連不到 Ubuntu 的套件來源，`apt` 更新與安裝都會失敗。要當一般主機用，就另外建一個 NAT 閘道，在路由表加一條通往它的路由，並在 security list 的出站規則放行網際網路。這三項在 Ubuntu 24.04 主機上實際加過一次，出站規則改放在只掛在那台主機上的 NSG，指令與錯誤原文見 [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈加出站：NAT gateway、路由規則與只掛在這台主機上的 NSG〉。
 
 - **security list `private-sl`**：入站只放行來源是同一個 subnet（`10.0.1.0/24`）的 22 port，因為 Bastion 的目標 subnet 設成這個 subnet，經由 Bastion 的 SSH 連線從這個 subnet 進來；出站只放行送往 Oracle 服務網段與同一個 subnet 的流量。
 - **subnet `private-subnet`**（`10.0.1.0/24`）：建立時設定禁止公開 IP，並掛上上面的路由表與 security list。
@@ -126,7 +126,7 @@ Secure Boot、Measured Boot、Trusted Platform Module 三項預設都是 Disable
 
 放公鑰與不放公鑰，差在 managed SSH session 失敗之後還剩什麼：
 
-- **放自己的公鑰**（上傳或貼上）：managed SSH session 失敗時，改建不經過 plugin 的 SSH port forwarding session，用那把公鑰登入。主機在 private subnet、沒有公開 IP，這把公鑰只對經由 Bastion 進來的連線有用；代價是這把金鑰要自己保管。這次如果這樣選，cloud-init 在 Authorization header 開著時寫入公鑰、security list 放行 Bastion 目標 subnet 的 22 port 這兩項成立的話，三次逾時之後就能登入主機查 plugin 的日誌；這是推論，cloud-init 寫公鑰這一段沒有在這台實跑；後來重建的 Oracle Linux 10.2 主機在 Authorization header 開著時寫入了公鑰（〈重建：Oracle Linux 映像加建立時放公鑰，經由 port forwarding session 登入〉），Ubuntu 平台映像仍然沒有驗。
+- **放自己的公鑰**（上傳或貼上）：managed SSH session 失敗時，改建不經過 plugin 的 SSH port forwarding session，用那把公鑰登入。主機在 private subnet、沒有公開 IP，這把公鑰只對經由 Bastion 進來的連線有用；代價是這把金鑰要自己保管。這次如果這樣選，cloud-init 在 Authorization header 開著時寫入公鑰、security list 放行 Bastion 目標 subnet 的 22 port 這兩項成立的話，三次逾時之後就能登入主機查 plugin 的日誌；這是推論，cloud-init 寫公鑰這一段沒有在這台實跑；後來重建的 Oracle Linux 10.2 主機在 Authorization header 開著時寫入了公鑰（〈重建：Oracle Linux 映像加建立時放公鑰，經由 port forwarding session 登入〉），2026-10-26 在 Ubuntu 24.04 平台映像上也驗過寫得進（[Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈建 Ubuntu 24.04 主機與經由 port forwarding 登入〉）。
 - **No SSH keys**：主機裡沒有長期有效的公鑰，登入完全依賴 Bastion plugin，而這個欄位建立後不能改（`ssh_authorized_keys` 不接受修改）。plugin 這條路不通時，剩下的入口見〈這台主機剩下的登入入口〉。
 
 第一次建主機、還沒走通 Bastion 時先放公鑰的做法與它的前提，見 [登入：SSH 金鑰、預設使用者、建立後加金鑰與不放金鑰時的登入服務](/infra/cloud-providers/vm-options/login/) 的〈不放金鑰時的登入服務〉。
@@ -160,7 +160,7 @@ Oracle Cloud Agent 的每一項功能是一個 plugin。官方列出的 plugin �
 
 其餘維持預設，理由各自如下：
 
-- **Authorization header：Enabled**。這是建立頁對 Ubuntu 的預設，而官方列出支援中繼資料第二版的平台映像只有 Oracle Linux 系列，Ubuntu 不在清單上。2026-10-25 建好的主機開著這個選項，代理程式照常回報各 plugin 的狀態；managed SSH session 的建立逾時時，暫時改成允許第一版也一樣逾時，所以這個選項不是那次失敗的成因，見〈建立之後：Bastion managed SSH session 逾時的排查〉。cloud-init 從中繼資料讀出公鑰寫進 `authorized_keys` 這一段，這台選了 No SSH keys 驗不到；後來重建的 Oracle Linux 10.2 主機開著這個選項時寫入了，Ubuntu 平台映像要另一台放了公鑰的 Ubuntu 主機驗。要怎麼確認見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉。
+- **Authorization header：Enabled**。這是建立頁對 Ubuntu 的預設，而官方列出支援中繼資料第二版的平台映像只有 Oracle Linux 系列，Ubuntu 不在清單上。2026-10-25 建好的主機開著這個選項，代理程式照常回報各 plugin 的狀態；managed SSH session 的建立逾時時，暫時改成允許第一版也一樣逾時，所以這個選項不是那次失敗的成因，見〈建立之後：Bastion managed SSH session 逾時的排查〉。cloud-init 從中繼資料讀出公鑰寫進 `authorized_keys` 這一段，這台選了 No SSH keys 驗不到；後來重建的 Oracle Linux 10.2 主機開著這個選項時寫入了，2026-10-26 另一台放了公鑰的 Ubuntu 24.04 主機開著這個選項時也寫入了（〈SSH keys〉那一節的「放自己的公鑰」那一項）。要怎麼確認見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉。
 - **Live migration：讓 Oracle 選擇**、**Restart after infrastructure maintenance：Enabled**：實驗機能接受維護時被遷移或重開。
 - **不放初始化腳本、不加標籤**：這台主機只用來測登入，沒有要預先裝的軟體。沒放初始化腳本的結果，到了要用 Run Command 救援時才出現：Run Command 以 `ocarun` 執行，沒有 sudo（〈Run Command 補公鑰的嘗試：dynamic group、IAM 政策與 ocarun 沒有 sudo 的結果〉），而替 `ocarun` 設 sudo 的 sudoers 檔，官方列的做法有兩種：建立時用 cloud-init 放，或建好之後登入主機設定；登不進去時只剩前一種。所以要把 Run Command 當成救援入口，替代做法是在這一欄放一段 cloud-init，建立時把官方說明頁列的那一行 sudoers（`ocarun ALL=(ALL) NOPASSWD:ALL`，或只列救援要用的指令）寫進 `/etc/sudoers.d/` 底下的一個檔；這個欄位也是建立後不能改的那一種。這段 cloud-init 的寫法這次沒有實跑，所以這裡不附，實跑過再補（記在 Oracle Cloud 目錄頁的 Backlog）。給 `ocarun` 不限指令的 sudo，等於讓有權限送 Run Command 的人取得主機的 root，所以送指令的權限政策要跟著收窄。
 
@@ -238,7 +238,8 @@ while :; do
     "")  echo "讀不出回應碼，停下來看輸出：$out"; exit 3 ;;   # 設定檔錯誤、網路錯誤這類沒有回應碼的失敗
     401) echo "認證失效，重新登入"; exit 2 ;;
     429) back=$(( back * 2 > 600 ? 600 : back * 2 )) ;;   # 被限流：間隔加倍，上限 600 秒
-    *)   back=$(( back - 10 < 60 ? 60 : back - 10 )) ;;   # 其他回應（容量不足）：每次縮 10 秒，下限 60 秒
+    500) back=$(( back - 10 < 60 ? 60 : back - 10 )) ;;   # 容量不足：每次縮 10 秒，下限 60 秒
+    *)   echo "回應碼 ${status}，重送也不會好，停下來看訊息：$(grep -o '"message": "[^"]*"' <<<"$out" | head -1)"; exit 4 ;;   # 400 參數錯誤這類
   esac
   echo "$(date +%H:%M:%S) ${status:-?}，約 ${back} 秒後再送"
   sleep $(( back - 15 + RANDOM % 31 ))                   # 加 ±15 秒的隨機抖動
@@ -246,14 +247,14 @@ done
 ```
 
 - 四個佔位值的查法與〈等效的 CLI 指令〉那一節相同；`--display-name verify-a1` 是主機在清單上的名稱，換成自己要的名稱時，〈重複建立的風險〉那一項查同名主機的指令也跟著換；`--shape-config` 到 `--instance-options` 是那一節的同一組設定，`--no-retry` 是寫在子命令之前的全域選項。
-- **間隔的調整方式**：收到 429 時間隔加倍，其他回應每次縮 10 秒，所以間隔會在「剛好不被限流」的附近來回。被限流的期間就算剛好有容量空出來也送不進去，所以把頻率壓在門檻下、讓請求能長時間穩定地送，比把間隔縮到最短更有機會碰上容量釋出的那一刻。120、600、60 這三個值是起點、上限與下限，換帳號時從 120 起跑，讓腳本自己往門檻靠。
+- **間隔的調整方式**：收到 429 時間隔加倍，收到容量不足的 500 時每次縮 10 秒，所以間隔會在「剛好不被限流」的附近來回。被限流的期間就算剛好有容量空出來也送不進去，所以把頻率壓在門檻下、讓請求能長時間穩定地送，比把間隔縮到最短更有機會碰上容量釋出的那一刻。120、600、60 這三個值是起點、上限與下限，換帳號時從 120 起跑，讓腳本自己往門檻靠。
 - **抖動（jitter）**：每次的等待多加 ±15 秒的隨機值，讓送出的時間點不落在固定的週期上。間隔加倍的退避做法見 [Exponential Backoff](/backend/knowledge-cards/exponential-backoff/) 卡，那張卡把 jitter 列為退避要一起搭配的一項；抖動對這次搶到容量有沒有影響，這次沒有量。
 - **驗證方式**：`export OCI_CLI_AUTH=security_token` 等同每條指令都帶 `--auth security_token`。`--profile DEFAULT` 填 `oci session authenticate` 時取的 profile 名稱，沒有另外取名時就是 `DEFAULT`。
 - **判斷建立成功的方式**：輸出裡找得到 `ocid1.instance.` 開頭的 OCID 就算成功。標準錯誤併進了 `$out`，CLI 在 OCID 之前印出警告時（例如設定檔權限的警告），整段輸出就不是以 OCID 開頭；只比對開頭的話，已經建成的這一次會被當成失敗、再送一次，建出第二台。
-- **結束條件**：建立成功（exit 0）、session token 無法再延長或收到 401（exit 2）、輸出裡讀不出回應碼（exit 3，設定檔或網路錯誤這類，重送也不會好）。`last_refresh=0` 讓腳本開跑時先延長一次 token，開跑時 token 只剩不到 30 分鐘也不會在第一次延長之前過期。session token 一次登入最長延到 24 小時，超過就要重跑 `oci session authenticate`，見 [從本機用 OCI CLI 操作 Oracle Cloud](/infra/cloud-providers/oracle-cloud/cli-session-login/)；要讓腳本跑超過一天，改用 API 簽章金鑰，並拿掉 `OCI_CLI_AUTH` 與延長 token 的那一段。
+- **結束條件**：建立成功（exit 0）、session token 無法再延長或收到 401（exit 2）、輸出裡讀不出回應碼（exit 3，設定檔或網路錯誤這類，重送也不會好）、收到 500 與 429 以外的回應碼（exit 4）。只有 500（容量不足）與 429（限流）是等一段時間就可能變好的回應；400 這類回應代表請求本身有誤（例如 `<AD 的完整名稱>` 沒換掉或填錯），重送幾次都是同一個結果，所以腳本印出回應碼與 `message` 就結束，照訊息改好參數再跑。`last_refresh=0` 讓腳本開跑時先延長一次 token，開跑時 token 只剩不到 30 分鐘也不會在第一次延長之前過期。session token 一次登入最長延到 24 小時，超過就要重跑 `oci session authenticate`，見 [從本機用 OCI CLI 操作 Oracle Cloud](/infra/cloud-providers/oracle-cloud/cli-session-login/)；要讓腳本跑超過一天，改用 API 簽章金鑰，並拿掉 `OCI_CLI_AUTH` 與延長 token 的那一段。
 - **重複建立的風險**：建立成功就結束，所以收得到回應時，同一支腳本不會建出第二台。收不到回應的情形擋不住：建立請求在 Oracle 那一端已經成功、回應卻因為網路中斷沒有回到本機，這一次會落進讀不出回應碼的分支而結束（exit 3）。所以腳本以 exit 3 結束、或要再次執行之前，先用 `oci compute instance list -c <compartment 的 OCID> --display-name verify-a1` 確認沒有還在的同名主機。
 
-2026-10-25 實際跑的版本另外在開跑前查一次有沒有同名主機、把每次的結果寫進紀錄檔，重送與間隔的邏輯跟上面相同；上面這一份用一支假的 `oci` 指令跑過四組回應，確認每個分支的間隔與結束碼：依序回 500、429、500 與成功（間隔 110、220、210 秒，exit 0）、先在標準錯誤印警告再印 OCID（只送一次，exit 0）、回一段沒有回應碼的錯誤（exit 3）、回 401（exit 2）；四組都在第一次送出之前先延長了一次 token。
+2026-10-25 實際跑的版本另外在開跑前查一次有沒有同名主機、把每次的結果寫進紀錄檔，重送與間隔的邏輯跟上面相同，只是那時遇到 500 與 429 以外的回應碼也會重送；2026-10-25 那一輪回的都是 500 與 429，沒有走到這個分支。2026-10-27 補上 exit 4 那一個分支之後，上面這一份用一支假的 `oci` 指令跑過六組回應，確認每個分支的間隔與結束碼：依序回 500、429、500 與成功（間隔 110、220、210 秒，exit 0）、先在標準錯誤印警告再印 OCID（只送一次，exit 0）、回一段沒有回應碼的錯誤（exit 3）、回 401（exit 2）、回 400（只送一次，印出回應碼與 `message`，exit 4）、先回 500 再回 400（重送一次之後 exit 4）；六組都在第一次送出之前先延長了一次 token。400 那兩組的 `message` 是假的 `oci` 自己編的，Oracle 實際回的訊息這次沒有看過。
 
 不用腳本時，替代做法是在主控台隔一段時間按一次 Create：每一次要有人在場，間隔不固定；2026-10-24 在主控台手動按 Create、加上背景以 90 秒與 5 分鐘間隔跑的 CLI 迴圈，整天的回應都是容量不足。不加 `--no-retry`、沿用 CLI 自己的重送時，外層的每一次嘗試送出好幾個請求，同樣的間隔下更早被限流（2026-10-24 以 90 秒送，前三次就收到 429）。換區域、換機型、改付費這些不在重送範圍內的退路，與各自是否計費，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈A1 容量不足時的退路〉。腳本送出的建立參數是寫腳本那一刻的設定，重新啟動腳本之前，參數要再拿〈建立之前的檢查：套在這台主機上的查法與結果〉對一次。
 
@@ -446,7 +447,7 @@ Run Command 寫不了公鑰之後，這台主機剩下的入口與各自的條�
 
 ## 重建：Oracle Linux 映像加建立時放公鑰，經由 port forwarding session 登入
 
-2026-10-25 晚上另外建了一台 A1 主機 `verify-a1-ol`，Ubuntu 那台 `verify-a1` 留著不動。Always Free 的 A1 額度合計 2 OCPU、12 GB（官方〈Always Free Resources〉），兩台各 1 OCPU、6 GB 剛好用滿；要再建一台 A1 而不超出額度，得先刪掉其中一台（同一天稍晚終止了 `verify-a1`，見〈刪除這組資源的順序〉）。超出時的結果依帳號狀態而定（試用中照樣建得起來，試用結束那一刻合計超額的 A1 會全部停用），見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈Always Free 的額度與它綁在 home region 上的範圍〉。`verify-a1-ol` 改了兩個建立時才能決定的設定：映像檔換成 Oracle Linux，避開〈Known Issues for Bastion〉第一條的 A1 加非 Oracle Linux；建立時放自己的公鑰，讓 port forwarding session 這條不經過 Bastion plugin 的路徑也登得進去。其餘的設定（compartment、private subnet、不配公開 IP、只允許中繼資料第二版、Bastion plugin 開啟）跟 `verify-a1` 相同。這一節的指令跟〈建立之後〉那一節一樣，先在 shell 裡 `export OCI_CLI_AUTH=security_token`。
+2026-10-25 晚上另外建了一台 A1 主機 `verify-a1-ol`，Ubuntu 那台 `verify-a1` 留著不動。Free Tier 與試用中的 tenancy，Always Free 的 A1 額度合計 2 OCPU、12 GB（官方〈Always Free Resources〉；付費 tenancy 的免費量比這個大，見 [Oracle Cloud 的帳號結構與 home region：tenancy、Always Free 的範圍與主控台登入欄位](/infra/cloud-providers/oracle-cloud/account-and-home-region/)〈Always Free 的額度與它綁在 home region 上的範圍〉），兩台各 1 OCPU、6 GB 剛好用滿；要再建一台 A1 而不超出額度，得先刪掉其中一台（同一天稍晚終止了 `verify-a1`，見〈刪除這組資源的順序〉）。超出時的結果依帳號狀態而定（試用中照樣建得起來，試用結束那一刻合計超額的 A1 會全部停用），見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈Always Free 的額度與它綁在 home region 上的範圍〉。`verify-a1-ol` 改了兩個建立時才能決定的設定：映像檔換成 Oracle Linux，避開〈Known Issues for Bastion〉列為不支援 managed SSH session 的 A1 加非 Oracle Linux；建立時放自己的公鑰，讓 port forwarding session 這條不經過 Bastion plugin 的路徑也登得進去。其餘的設定（compartment、private subnet、不配公開 IP、只允許中繼資料第二版、Bastion plugin 開啟）跟 `verify-a1` 相同。這一節的指令跟〈建立之後〉那一節一樣，先在 shell 裡 `export OCI_CLI_AUTH=security_token`。
 
 ### 建立之前查映像檔版本與它可用的 plugin
 
@@ -560,12 +561,13 @@ Host <主機的別名>
 
 1. 終止兩台主機（`verify-a1` 與 `verify-a1-ol`），在終止對話框勾選「Permanently delete the attached boot volume」，開機磁碟才會一起刪掉。CLI 是 `oci compute instance terminate --instance-id <主機的 OCID> --preserve-boot-volume false --force`：`--preserve-boot-volume false` 對應那個勾選，`--force` 跳過確認提示。2026-10-25 用這一條終止了 `verify-a1`，約 67 秒後主機與它的開機磁碟都是 `TERMINATED`；用 `oci bv boot-volume list -c <compartment 的 OCID> --availability-domain <可用區名稱>` 確認開機磁碟的狀態。本機的 port forwarding 轉送用 Ctrl-C 結束，工作階段到了 `--session-ttl` 自己失效。
 2. 刪除 Run Command 用的政策與 dynamic group（`oci iam policy delete --policy-id <政策的 OCID>`、`oci iam dynamic-group delete --dynamic-group-id <dynamic group 的 OCID>`）。政策建在 compartment 上，compartment 刪除之前要先刪；dynamic group 在 tenancy 層，不會隨 compartment 刪除，不刪的話它的比對規則仍然指著已經終止的主機 OCID。2026-10-25 終止 `verify-a1` 之後照這個順序刪了兩者，兩條都加 `--force` 跳過確認提示；刪完之後再 `oci iam policy get` 與 `oci iam dynamic-group get`，兩者都回 `404 NotAuthorizedOrNotFound`，代表已經不存在。
-3. 刪除 Bastion（`oci bastion bastion delete --bastion-id <Bastion 的 OCID>`）。Bastion 的私有端點在目標 subnet 裡，Bastion 還在時 subnet 刪不掉；它的工作階段隨 Bastion 一起失效。
-4. 刪除 subnet。subnet 裡還有主機或網卡時刪不掉。
-5. 刪除 subnet 用過的路由表與 security list。
-6. 刪除 service gateway。
-7. 刪除 VCN。
-8. 刪除 compartment。官方〈Deleting a Compartment〉寫明 compartment 要先清空所有資源（包括掛在它上面的權限政策）才能刪除，刪除是非同步的工作，狀態會先變成 Deleting。
+3. VCN 裡另外建了 NAT gateway 與 NSG 時，先刪它們：NSG 要先從網卡拿掉才刪得掉，NAT gateway 要先從路由表拿掉那一條路由，順序與指令見 [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈刪除這組資源的順序〉。
+4. 刪除 Bastion（`oci bastion bastion delete --bastion-id <Bastion 的 OCID>`）。Bastion 的私有端點在目標 subnet 裡，Bastion 還在時 subnet 刪不掉；它的工作階段隨 Bastion 一起失效。
+5. 刪除 subnet。subnet 裡還有主機或網卡時刪不掉。
+6. 刪除 subnet 用過的路由表與 security list。
+7. 刪除 service gateway。
+8. 刪除 VCN。
+9. 刪除 compartment。官方〈Deleting a Compartment〉寫明 compartment 要先清空所有資源（包括掛在它上面的權限政策）才能刪除，刪除是非同步的工作，狀態會先變成 Deleting。
 
 這個順序除了終止 `verify-a1` 與刪除政策和 dynamic group 這兩步，還沒有實際跑過（截至 2026-10-25 `verify-a1-ol` 與網路都還在），各項刪不掉時，看錯誤訊息指出的那一項依賴、先刪它。
 

@@ -26,7 +26,7 @@ OCI 的免費方案有兩個部分。試用金是 300 美元、30 天內有效�
 
 運算的 Always Free 額度有兩種機型：
 
-- **Ampere A1（`VM.Standard.A1.Flex`，ARM）**：每月 1,500 OCPU 小時與 9,000 GB 小時的記憶體，相當於 2 OCPU、12 GB 記憶體整個月開著。可以全部給一台，也可以拆成兩台各 1 OCPU。OCI 的 OCPU 是一顆實體核心，跟其他業者以 vCPU 計價時的單位不同，比較時見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
+- **Ampere A1（`VM.Standard.A1.Flex`，ARM）**：每月 1,500 OCPU 小時與 9,000 GB 小時的記憶體，相當於 2 OCPU、12 GB 記憶體整個月開著。可以全部給一台，也可以拆成兩台各 1 OCPU。付費 tenancy 的免費量比這個大：2026-10-26 讀到的 Oracle 的 Compute 價目頁（頁名這次沒有記下）寫的是「Each paid tenancy gets the first 3,000 OCPU hours and 18,000 GB hours per month for free」，也就是每月 3,000 OCPU 小時、18,000 GB 小時，相當於 4 OCPU、24 GB 整個月開著。OCI 的 OCPU 是一顆實體核心，跟其他業者以 vCPU 計價時的單位不同，比較時見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
 - **AMD Micro（`VM.Standard.E2.1.Micro`，x86）**：最多兩台，每台 1/8 OCPU、1 GB 記憶體。
 
 儲存與網路另有額度：開機磁碟與區塊磁碟合計 200 GB（每台主機的開機磁碟預設 50 GB，這 50 GB 從同一份 200 GB 額度裡扣）、備份最多 5 份、出站流量每月 10 TB；試用結束後沒有升級的 Free Tier tenancy，VCN 最多 2 個。
@@ -40,7 +40,7 @@ Always Free 的主機另有兩條回收規則：
 - **閒置回收**：連續 7 天內 CPU 使用率（第 95 百分位）、網路使用率、記憶體使用率（只算 A1）三項指標各自都低於 20%，Oracle 可能回收這台主機。官方頁用的詞是 reclaim，沒有寫回收之後主機是停止還是刪除。只在需要時才登入的實驗機會符合這個條件。
 - **試用結束時超出額度**：Free Tier 頁判斷 A1 是否超額，看的是 tenancy 裡全部 A1 主機的合計（OCPU 加總、記憶體加總），不看單台主機的規格。合計超過 2 OCPU、12 GB 時，試用結束那一刻 tenancy 裡的 A1 主機全部被停用，30 天後刪除，除非升級成付費帳戶。被停用的是每一台 A1 主機，包括單台規格在額度內的那幾台。官方沒有寫已經被停用的主機在升級之後會不會恢復。試用期間超出的部分由試用金支付，帳單上看不到費用，所以 A1 合計超額的後果要到試用結束那一刻才浮現。這個合計要自己加總：到 Compute → Instances 清單逐台記下 A1 主機的 OCPU 與記憶體；清單一次只列一個 compartment，每個放過主機的 compartment 都要切過去看。要保留 A1 主機，試用結束前把合計壓回 2 OCPU、12 GB 以內：把其中幾台的 OCPU 或記憶體改小，或刪掉其中一台。
 
-官方對閒置回收只寫了三項指標都要低於 20%，沒有寫網路使用率的 20% 是對什麼的比例，也沒有寫升級成付費帳戶之後這條規則還適不適用；被回收之後主機的狀態與能不能恢復同樣沒寫。
+官方對閒置回收只寫了三項指標都要低於 20%，沒有寫網路使用率的 20% 是對什麼的比例，也沒有寫升級成付費帳戶之後這條規則還適不適用；被回收之後主機的狀態與能不能恢復同樣沒寫。回收之後是停止或刪除兩種情形各自留下哪些資源、怎麼發現，以及照原樣重建一台 A1 主機的腳本，見 [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈被回收之後的重建：怎麼發現、留下與消失的資源、重建腳本〉。
 
 ## A1 容量不足時的退路
 
@@ -72,7 +72,7 @@ E2.1.Micro 是 Always Free 的另一種機型。官方 Always Free 頁對它的�
 
 - **試用中**：超出的部分由試用金支付，帳單上看不到費用。試用結束時，用試用金建的付費資源會被回收，A1 合計超額時全部 A1 主機會被停用。
 - **試用結束而沒有升級**：官方 Always Free 頁寫明，用不在 Always Free 範圍內的映像建主機，帳號必須是付費帳戶、或是還有試用金餘額的 Free Trial 帳號（原文「you must have a paid account or a Free Trial account with available credits」）；試用結束而沒有升級的帳號兩者都不是，所以超出額度的運算資源建不了，運算以外的資源這一頁沒有逐字寫；Free Tier 頁另外寫明，不升級的話申請時填的信用卡不會被扣款。
-- **升級成付費帳戶（Pay As You Go）**：Always Free 的部分仍然不收費，超出的部分照一般價格計費。
+- **升級成付費帳戶（Pay As You Go）**：Always Free 的部分仍然不收費，超出的部分照一般價格計費。A1 的免費量是每月 3,000 OCPU 小時、18,000 GB 小時（相當於 4 OCPU、24 GB 整個月開著），出處是 2026-10-26 讀到的 Oracle 的 Compute 價目頁，見〈Always Free 的額度與它綁在 home region 上的範圍〉的 A1 那一項。
 
 站內各篇寫到「超出免費額度」的地方，指的都是這三種結果。升級之前先設好預算警示，見 [雲端主控台的管理領域](/infra/cloud-providers/console-areas/) 的〈帳單與成本：花了多少、會花多少〉。
 

@@ -91,3 +91,4 @@ PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識
 | [TOML](/infra/knowledge-cards/toml/)                                                               | 型別由寫法決定、可寫註解、用表頭分組的設定檔格式，1.0 與 1.1 的解析器支援範圍不同           |
 | [YAML](/infra/knowledge-cards/yaml/)                                                               | 用縮排表示結構的資料格式，不加引號的值由解析器依 YAML 1.1 或 1.2 的規則推測型別             |
 | [Configuration Management（組態管理）](/infra/knowledge-cards/configuration-management/)           | 把一群主機內部的套件、設定檔與服務寫成宣告再套用；inventory 的分層與合併規則、跟 IaC 的分界 |
+| [VNIC（虛擬網路卡）](/infra/knowledge-cards/vnic/)                                                 | 主機接上虛擬網路的網卡，私有 IP 與網卡層的防火牆規則掛在它上面，主機重建時跟著換新          |
