@@ -6,13 +6,13 @@ weight: 1
 tags: ["infra", "network", "firewall", "firewalld", "nftables", "docker", "cloudflare", "hands-on"]
 ---
 
-> **事件說明**：2026-10-25，在 Oracle Cloud `ap-batam-1` 區域的一台 A1 主機（Arm 架構，Oracle Linux 10.2，核心 `6.12.0-207.111.5.1.el10uek.aarch64`，1 OCPU、6 GB）上實測。主機在私有 subnet、沒有公開 IP，管理員經由 Oracle Cloud Bastion 的 port forwarding session 登入（建法見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)）。firewalld 2.4.3、nftables 後端、預設 zone `public`，`public` zone 只開 `ssh` 與 `dhcpv6-client`；Docker 用官方的靜態二進位檔 29.9.2（iptables 後端），測試容器是 `busybox:1.37`。實測分成幾輪跑，每一輪結束時清理；文章把它們排成一條讀者可以從頭跑到尾的順序，每一節開頭寫這一節需要的狀態，改動全域設定的那幾節在結尾還原。
+> **事件說明**：2026-10-25，在 Oracle Cloud `ap-batam-1` 區域的一台 A1 主機（Arm 架構，Oracle Linux 10.2，核心 `6.12.0-207.111.5.1.el10uek.aarch64`，1 OCPU、6 GB）上實測。主機在私有 subnet、沒有公開 IP，管理員經由 Oracle Cloud Bastion 的 port forwarding session 登入（建法見 [Oracle Cloud 建立主機的實測紀錄](/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)）。firewalld 2.4.3、nftables 後端、預設 zone `public`，`public` zone 只開 `ssh` 與 `dhcpv6-client`；Docker 用官方的靜態二進位檔 29.9.2（iptables 後端），測試容器是 `busybox:1.37`。2026-10-26 另在本機 OrbStack 2.2.5 建的一台 Oracle Linux 10.2 機器上（核心是 OrbStack 的 `7.2.12-orbstack`，firewalld 2.4.3 nftables 後端、Docker CE 29.9.2 以套件安裝、由 systemd 執行）測了 zone 的 sources、IPv6、daemon 的 `ip` 設定、policy 上的 forward-port、本機 forward-port，以及 reload 清掉 `DOCKER-USER` 的條件。OrbStack 的核心是它自己編的版本，量到的是 firewalld、iptables-nft、nftables 與 Docker 這幾個使用者層程式的行為，跟 Oracle Linux 映像核心的差異沒有比較。
 
-這篇記錄在一台 Linux 主機上驗證「源站只放行 Cloudflare 的位址」這類防火牆規則的過程：用兩個 network namespace 模擬位址在 Cloudflare 範圍內與範圍外的兩個來源、firewalld 以 ipset 與 rich rule 只放行 Cloudflare 位址到主機本身的程式、Docker 發佈的連接埠不受這條規則約束、`DOCKER-USER` 鏈的規則在 `firewall-cmd --reload` 之後消失而在 dockerd 重啟之後還在、firewalld policy 擋不到發佈的連接埠與它的原因、`StrictForwardPorts=yes` 只管得到連接埠、掛在目的位址轉換之前的 nftables 表與它的開機載入、出站 DNS 只准送往 VCN 解析器的 policy 對主機與容器的不同效果、清理，以及各寫法在 reload、dockerd 重啟與重開機之後的對照表。每一種限制寫法的機制與取捨寫在概念文章 [CDN 後面的源站主機防火牆](/infra/03-network-foundation/origin-host-firewall/)，這裡不重寫。實測沒有用到 Cloudflare 帳號，也沒有讓 Cloudflare 實際回源：防火牆比對的只有來源位址，所以用 Cloudflare 位址段裡的一個位址當來源，就能驗證規則；Cloudflare 回源時實際用哪些位址、Authenticated Origin Pulls 與 Tunnel 都沒有在這次測到。
+這篇記錄在一台 Linux 主機上驗證「源站只放行 Cloudflare 的位址」這類防火牆規則的過程：用兩個 network namespace 模擬位址在 Cloudflare 範圍內與範圍外的兩個來源、firewalld 以 ipset 與 rich rule 只放行 Cloudflare 位址到主機本身的程式、Docker 發佈的連接埠不受這條規則約束、`DOCKER-USER` 鏈的規則在 dockerd 重啟之後還在、在 `firewall-cmd --reload` 之後是否消失取決於 firewalld 的後端與主機有沒有 direct 設定（iptables 後端時一律清掉；nftables 後端時看有沒有 direct rule 或 passthrough，OCI 的 Oracle Linux 映像自帶 passthrough）、firewalld policy 擋不到發佈的連接埠與它的原因、`StrictForwardPorts=yes` 只管得到連接埠、掛在目的位址轉換之前的 nftables 表與它的開機載入、出站 DNS 只准送往 VCN 解析器的 policy 對主機與容器的不同效果、清理，以及各寫法在 reload、dockerd 重啟與重開機之後的對照表。每一種限制寫法的機制與取捨寫在概念文章 [CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/infra/03-network-foundation/origin-host-firewall/)，這裡不重寫。這篇沒有用到 Cloudflare 帳號，也沒有讓 Cloudflare 實際回源：防火牆比對的只有來源位址，所以用 Cloudflare 位址段裡的一個位址當來源，就能驗證規則。Cloudflare 回源時實際用的位址、Authenticated Origin Pulls、Worker 與 Tunnel，接上實際的 Cloudflare 帳號量在 [Cloudflare 回源的實測紀錄：Oracle Cloud NSG 只放行 Cloudflare 位址與規則數上限、回源的來源位址、Authenticated Origin Pulls、Worker 偽造 CF-Connecting-IP 與 Tunnel 的出站連接埠](/infra/03-network-foundation/hands-on/cloudflare-origin-pull-walkthrough/)。
 
 ## 前置條件：主機、登入方式與測試檔案
 
-- **一台跑 firewalld 的 Linux 主機，有 sudo**：指令以 Oracle Linux 10 與 firewalld 的 nftables 後端寫成。`firewall-cmd --state` 回 `running`、`sudo grep FirewallBackend /etc/firewalld/firewalld.conf` 回 `nftables` 才跟這次相同。主機上要有 `curl`、`dig`（套件 `bind-utils`）、`python3`、`iptables`（套件 `iptables-nft`）與 `nft`，`command -v curl dig python3 iptables nft` 印得出五個路徑就齊了；這台的平台映像都已經裝好。用 `ufw` 的主機（Ubuntu）上，Docker 發佈的連接埠同樣繞過 ufw（Docker〈Packet filtering and firewalls〉寫明），規則在 `ufw reload` 之後的存續沒有測。
+- **一台跑 firewalld 的 Linux 主機，有 sudo**：指令以 Oracle Linux 10 與 firewalld 的 nftables 後端寫成。`firewall-cmd --state` 回 `running`、`sudo grep FirewallBackend /etc/firewalld/firewalld.conf` 回 `nftables` 才跟這次相同。主機上要有 `curl`、`dig`（套件 `bind-utils`）、`python3`、`iptables`（套件 `iptables-nft`）與 `nft`，`command -v curl dig python3 iptables nft` 印得出五個路徑就齊了；這台的平台映像都已經裝好。用 `ufw` 的主機（Ubuntu）上，Docker 發佈的連接埠同樣繞過 ufw，規則在 `ufw reload` 與重開機之後的存續、寫進 `/etc/ufw/after.rules` 的做法，記在 [ufw 主機上 Docker 發佈連接埠的實測紀錄：ufw 規則的效果、DOCKER-USER 規則的存續與 after.rules、IPv6 的 docker-proxy、compose 內建 DNS 的出站路徑](/infra/03-network-foundation/hands-on/ufw-docker-walkthrough/)。
 - **登入路徑跟要測的連接埠分開**：這次經由 Bastion 連 SSH 的連接埠 22，測試只改動 8080 到 8083，`public` zone 的 `ssh` 沒有動，規則寫錯也不會把自己鎖在外面。主機有公開 IP、從網際網路直接 SSH 時，同樣只動測試用的連接埠。
 - **Docker 與測試映像**：這台主機在私有 subnet，只有連到 Oracle 服務的 service gateway，連不到 `download.docker.com` 與 Docker Hub。所以在本機下載靜態二進位檔、匯出映像與 Cloudflare 的位址清單，再傳上主機：
 
@@ -122,8 +122,8 @@ ipset 裡是 15 段，跟下載的清單相同。正式設定時把 `8080` 換�
 
 - **`--permanent` 加 `--reload`，或不帶 `--permanent`**：帶 `--permanent` 的規則寫進設定檔；不帶時只改執行中的規則，下一次 `--reload` 就消失。這次用 `--permanent`，dockerd 啟動之後與 reload 之後 8080 的結果都跟上面相同（實測）；重開機之後依 `--permanent` 的機制會在，重開機後沒有再連 8080。
 - **ipset，或每一段各寫一條 rich rule**：每段一條也行得通，15 段就是 15 條規則，清單更新時要逐條比對；ipset 更新時只換集合的內容，rich rule 不動。依 firewalld 的規則寫法推論，沒有實跑。
-- **把 ipset 加到 zone 的 sources（`--zone=trusted --add-source=ipset:cloudflare-v4`）**：來源落在 ipset 的連線改由那個 zone 處理，放行的範圍是那個 zone 開的全部服務，不只 8080；依 firewalld 的 zone 機制推論，沒有實跑。
-- **IPv6**：這台主機沒有全域的 IPv6 位址，沒有測。有的話照同樣的步驟建 `--option=family=inet6` 的 ipset，放進 `ips-v6` 的清單，rich rule 寫 `family="ipv6"`；放行式的規則漏寫 IPv6 時，經由 IPv6 回源的連線會被 zone 的預設回拒擋下。Docker 的 `-p 8081:80` 同時發佈在 IPv6（Docker〈Port publishing〉），下文 `DOCKER-USER` 與 nftables 表的 IPv4 規則管不到那一份。
+- **把 ipset 加到一個 zone 的 sources**：來源落在 ipset 的連線改由那個 zone 處理，放行的範圍是那個 zone 開的全部服務與連接埠。OrbStack 那一台上建了一個只開 8080 的 zone，sources 放 `ipset:cloudflare-v4`（實測時這個 zone 叫 `verify-cf`，跟 namespace 同名，這裡改名避免混淆；`firewall-cmd --permanent --new-zone=verify-cfzone`、`--zone=verify-cfzone --add-source=ipset:cloudflare-v4`、`--zone=verify-cfzone --add-port=8080/tcp`）：`verify-cf` 連 8080 拿到 200、`verify-other` 被回拒，跟 rich rule 的結果相同；差別在 `verify-cf` 連 22 時回 `No route to host`（被 `verify-cfzone` 回拒，它沒有開 ssh），`verify-other` 連 22 仍由 `public` zone 處理。zone sources 接管的是那些位址的全部入站連線，來源落在清單裡的連線只看這個 zone 開了什麼，`public` zone 的設定對它們不再生效。用 `trusted` zone 時則相反，那些位址連任何連接埠都放行。Docker 發佈的 8081 照樣兩個來源都連得到，zone 管不到轉送路徑。測完以 `firewall-cmd --permanent --delete-zone=verify-cfzone` 加 `firewall-cmd --reload` 刪掉這個 zone。
+- **IPv6**：OCI 這台主機沒有全域的 IPv6 位址，在 OrbStack 那一台上用一個 ULA（unique local address，`fd00::/8` 裡只在本地使用的 IPv6 位址）`fd00:beef::1` 當主機的 IPv6 位址（兩個來源加 IPv6 位址的指令見 ufw 那一篇〈共用的函式與兩個測試來源〉的 `ns_setup6`）、兩個 namespace 各加一個 IPv6 位址（`verify-cf` 用 Cloudflare 的 `2606:4700::10`，`verify-other` 用文件保留的 `2001:db8::10`）測。`--option=family=inet6` 建的 ipset 放進 `ips-v6` 的 7 段，rich rule 寫 `family="ipv6"`：`verify-cf` 經由 IPv6 連 8080 拿到 200、`verify-other` 被回拒，跟 IPv4 相同。同一組 IPv6 位址也拿來量 Docker 發佈的 8081，結果寫在〈Docker 發佈的連接埠與 firewalld 的規則〉裡 IPv6 那一份發佈的那一段。測完以 `--remove-rich-rule` 刪掉這一段與那一段加的兩條 IPv6 rich rule（8080 與 8081）再 reload；namespace 裡的 IPv6 位址隨清理段刪 namespace 一起消失，`lo` 上的 ULA 與 `cloudflare-v6` ipset 寫在清理段。
 
 ## Docker 發佈的連接埠與 firewalld 的規則
 
@@ -200,6 +200,10 @@ probe 8083 >/dev/null; docker logs verify-web-v 2>&1 | tail -2
 
 `DNAT`（[目的位址轉換](/infra/knowledge-cards/dnat/)）那一條就是在主機防火牆之前改寫目的地的規則。容器的記錄裡兩個來源的位址原樣出現：容器看得到真正的來源，所以來源限制做得到，只是要寫在別的位置。只發佈在 `127.0.0.1` 的 8082 從兩個外部來源都連不到、主機本機連得到；這是 Docker 29.9.2 的結果，Docker〈Port publishing〉寫明 28.0.0 以前同一個 L2 網段的其他主機連得到發佈在 127.0.0.1 的連接埠。對外改由主機上的反向代理接時，反向代理受〈firewalld 以 ipset 只放行 Cloudflare 位址到主機本身的程式〉那種 rich rule 約束。
 
+預設的發佈位址可以在 Docker 的設定裡改，OrbStack 那一台實跑了兩種。`/etc/docker/daemon.json` 寫 `{ "ip": "127.0.0.1" }` 並重啟 Docker 之後，預設 bridge 網路上 `-p 8085:80` 的容器發佈在 `127.0.0.1:8085`，兩個外部來源都連不到；同時間另一個接在自訂網路（`docker network create verify-custom`）上、`-p 8086:80` 的容器仍發佈在 `0.0.0.0:8086` 與 `[::]:8086`，兩個外部來源都連得到：`ip` 選項只作用在預設的 bridge 網路。自訂網路建立時帶 `-o com.docker.network.bridge.host_binding_ipv4=127.0.0.1`（這次建的網路叫 `verify-hb`），那個網路上 `-p 8087:80` 的容器就發佈在 `127.0.0.1:8087`。`docker ps` 的 PORTS 欄看得到每個容器實際發佈在哪個位址。compose 的自訂網路在 `networks:` 底下的 `driver_opts` 寫同一個選項，沒有實跑。測完要還原，否則之後各節重建的容器都會發佈在 `127.0.0.1`、結果跟文章不同：刪掉這三個容器、`docker network rm verify-custom verify-hb`、`rm /etc/docker/daemon.json`、`systemctl restart docker`。
+
+IPv6 那一份發佈走另一條路。OrbStack 那一台用〈firewalld 以 ipset 只放行 Cloudflare 位址到主機本身的程式〉的 IPv6 那一項建的位址量：Docker 的 `-p 8081:80` 同時發佈在 IPv6，而容器的網路沒有開 IPv6 時，`[::]:8081` 由 docker-proxy 這個主機上的程式接聽。沒有任何規則時兩個來源經由 IPv6 連 8081 都被 `public` zone 回拒，加一條 `rule family="ipv6" source ipset="cloudflare-v6" port port="8081" protocol="tcp" accept` 之後只有 `verify-cf` 連得到。IPv6 那一份走 input 路徑、受 zone 管，跟 IPv4 那一份相反；同一條 rich rule 加上之後，IPv4 的 8081 仍然兩個來源都連得到。容器的網路帶 `--ipv6` 時，Docker 改用 ip6tables 的位址轉換處理 IPv6，那一種沒有測。
+
 ## DOCKER-USER 鏈的限制效果與規則的存續
 
 在 `DOCKER-USER` 寫一條跳到自建鏈 `CF-ONLY` 的規則，`CF-ONLY` 對 Cloudflare 的每一段回到原本的流程（RETURN），其餘丟棄。這一組指令在這一節會跑兩次，所以寫成函式：
@@ -214,6 +218,8 @@ add_cf_only() {
 add_cf_only
 probe 8081; probe 8083
 ```
+
+正式設定把 8081 換成 80 與 443 時，跳轉那一條要加 `-m conntrack --ctstate DNAT`，只比對送往發佈連接埠、經過位址轉換的連線；少了它，容器自己往外連 443、容器之間連 80 的封包也會進 `CF-ONLY` 被丟掉（ufw 那一篇在 Ubuntu 上補測過：[ufw 主機上 Docker 發佈連接埠的實測紀錄：ufw 規則的效果、DOCKER-USER 規則的存續與 after.rules、IPv6 的 docker-proxy、compose 內建 DNS 的出站路徑](/infra/03-network-foundation/hands-on/ufw-docker-walkthrough/) 的〈DOCKER-USER 規則的效果，以及它在 ufw reload、Docker 重啟與重開機之後的存續〉）。
 
 `< <(cat …; echo)` 補一個換行，因為 Cloudflare 的清單最後一行沒有換行，`read` 會漏讀最後一段。每一段各寫一條 `-s` 而不用 iptables 的 `-m set --match-set cloudflare-v4`：firewalld 的 nftables 後端把 ipset 建成 nftables 的集合，不是 iptables 的 `set` 模組讀的那種核心 ipset，推論 `-m set` 引用不到它，沒有實跑。`--ctorigdstport 8081` 比對[連線追蹤](/infra/knowledge-cards/conntrack/)記下的原始目的連接埠：封包到 `DOCKER-USER` 時目的地已經改成容器的 80，寫 `--dport 8081` 比對不到。`--ctdir ORIGINAL` 讓規則只看發起方向的封包，容器回覆的封包不進 `CF-ONLY`。`-I` 把規則插在 `DOCKER-USER` 最前面；最後那一條用 `DROP`，範圍外的來源等到逾時，換成 `REJECT` 會變成立即失敗，沒有比較。
 
@@ -255,7 +261,60 @@ firewall-cmd --reload; sleep 3; iptables -S | grep -c VERIFY-T
 grep -i firewalld $D/dockerd.log | tail -3
 ```
 
-兩次都是 reload 之前 3、reload 之後 0：清掉 iptables 裡自建規則的是 firewalld 的重新載入，跟 dockerd 有沒有在跑無關；dockerd 的記錄裡只有它在 reload 之後重建自己 zone 與 policy 的訊息（`Firewalld: docker zone already exists, returning` 這類）。這台主機的 `/etc/firewalld/firewalld.conf` 是 `FlushAllOnReload=yes`；〈firewalld.conf〉寫明這是預設值，作用是 reload 時清掉全部執行中的規則。改成 `no` 時 iptables 裡的自建規則會不會留下，這次沒有測。
+兩次都是 reload 之前 3、reload 之後 0：清掉 iptables 裡自建規則的是 firewalld 的重新載入，跟 dockerd 有沒有在跑無關；dockerd 的記錄裡只有它在 reload 之後重建自己 zone 與 policy 的訊息（`Firewalld: docker zone already exists, returning` 這類）。這台主機的 `/etc/firewalld/firewalld.conf` 是 `FlushAllOnReload=yes`；〈firewalld.conf〉寫明這是預設值，作用是 reload 時清掉全部執行中的規則。
+
+OrbStack 那一台的 firewalld 沒有任何 direct 設定（`firewall-cmd --direct --get-all-rules` 與 `--get-all-passthroughs` 都沒有輸出），`DOCKER-USER` 裡的同一條規則在 `FlushAllOnReload=yes` 與 `no` 下 reload 之後都還在、照樣擋得住。在那一台加一條 direct rule 之後：
+
+```bash
+firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 0 -d 169.254.0.0/16 -p tcp -j ACCEPT
+firewall-cmd --reload
+iptables -N VERIFY-T; iptables -I DOCKER-USER -j VERIFY-T
+iptables -I DOCKER-USER -p tcp -m conntrack --ctorigdstport 8081 --ctdir ORIGINAL ! -s 173.245.48.0/20 -j DROP
+firewall-cmd --reload; sleep 3
+iptables -S DOCKER-USER; iptables -S VERIFY-T
+```
+
+```text
+-N DOCKER-USER
+iptables: No chain/target/match by that name.
+```
+
+reload 之後 `DOCKER-USER` 只剩空鏈、自建鏈 `VERIFY-T` 整條不見，範圍外的來源又連得到；`FlushAllOnReload` 改成 `no` 再做一次，結果相同。那條 direct rule 只是用來觸發 firewalld 管理 iptables，內容不重要。測完 `firewall-cmd --permanent --direct --remove-rule …` 移除它，`/etc/firewalld/direct.xml` 會留下一個只有 `<direct>` 空元素的檔，刪掉再 reload。
+
+direct 設定的另一種是 passthrough（直接交給 iptables 的一行規則）。同一台改加一條 passthrough、不加 direct rule：
+
+```bash
+firewall-cmd --permanent --direct --add-passthrough ipv4 -A OUTPUT -d 169.254.0.2/32 -p tcp --dport 3260 -j ACCEPT
+firewall-cmd --reload; sleep 3
+iptables -I DOCKER-USER -p tcp -m conntrack --ctorigdstport 8081 --ctdir ORIGINAL ! -s 173.245.48.0/20 -j DROP
+firewall-cmd --reload; sleep 3
+iptables -S DOCKER-USER
+```
+
+```text
+-N DOCKER-USER
+```
+
+只有一條 passthrough 時 reload 也清掉了 `DOCKER-USER` 的規則；加 passthrough 之前（沒有任何 direct 設定時），同一條規則留過了 reload。量完移除 passthrough、刪掉 `direct.xml` 再 reload，`--get-all-passthroughs` 回 0。所以在 nftables 後端（這兩台都是）上，清掉 iptables 自建規則的條件是 firewalld 有沒有 direct 設定（direct rule 或 passthrough 任一種），跟 `FlushAllOnReload` 的值無關。查的時候兩個指令都要跑：`--get-all-rules` 只列 direct rule，不列 passthrough。
+
+firewalld 改用 iptables 後端時沒有這個條件。OrbStack 那一台把 `/etc/firewalld/firewalld.conf` 的 `FirewallBackend` 改成 `iptables`、重啟 firewalld 與 Docker，`--get-all-rules` 與 `--get-all-passthroughs` 都是 0，`DOCKER-USER` 裡的同一條規則在 `firewall-cmd --reload` 之後一樣不見了：原因依後端的設計推論是 iptables 後端的 firewalld 自己管理 iptables 的表，reload 時整張重建。量完改回 `nftables`、重啟兩個服務，`nft list tables | grep -c 'inet firewalld'` 回 1、`iptables -t nat -S DOCKER | grep -c 8081` 回 1，firewalld 的表與 Docker 的位址轉換規則都回來了。direct 設定也不是主機固定的屬性：之後裝的軟體可能再加進來，例如 fail2ban 的 `firewallcmd-*` 動作在 jail 啟動時寫 direct rule（依 fail2ban 的動作設定推論，沒有實跑），查的時候沒有、之後 reload 才清掉。只寫在執行中設定、沒有 `--permanent` 的 direct rule 是否同樣觸發，沒有量。
+
+OCI 的 Oracle Linux 映像本來就有 passthrough。2026-10-26 用同一個映像（`Oracle-Linux-10.2-aarch64-2026.10.16-0`）建的另一台主機上：
+
+```bash
+ls -l /etc/firewalld/direct.xml
+grep -c '<passthrough' /etc/firewalld/direct.xml
+firewall-cmd --direct --get-all-rules | wc -l; firewall-cmd --direct --get-all-passthroughs | wc -l
+```
+
+```text
+-rw-r--r--. 1 root root 8495 Aug  8 00:48 /etc/firewalld/direct.xml
+32
+0
+32
+```
+
+`direct.xml` 有 32 條 passthrough，內容是 `BareMetalInstanceServices` 鏈：主機送往 `169.254.0.0/16`（Oracle Cloud 的執行個體中繼資料、iSCSI、DNS 與 NTP 這類服務）的連線，只放行列出的幾個服務連接埠，其中 iSCSI 的 3260 與部分 80 只限 root 的程式，其餘 TCP 與 UDP 一律回拒；每一條的註解寫著修改或移除之前先讀 Oracle 文件的〈Oracle-Provided Images〉。`--get-all-rules` 只列 direct rule、不列 passthrough，所以回 0；要用 `--get-all-passthroughs` 才看得到。依 OrbStack 那一台的 passthrough 結果，這 32 條就是第一輪 reload 清掉 `DOCKER-USER` 的原因；在這台主機上沒有移除它們再 reload 確認。這幾條規則保護主機與中繼資料服務之間的連線，刪掉它們換取 `DOCKER-USER` 的存續不划算；在 OCI 的 Oracle Linux 上，要長期使用的限制改寫進下文的自建 nftables 表。
 
 再把同一組規則加回去，只重啟 dockerd、不動 firewalld：
 
@@ -386,16 +445,27 @@ restart_dockerd; probe 8081
   verify-other  -> :8081  rc=0  200
 ```
 
-firewalld 依這條 rich rule 在 `filter_FORWARD_dnat` 寫的放行是 `ct original proto-dst 8081 accept`，只比對原始目的連接埠，rich rule 的來源條件沒有寫進這一條，所以範圍外的來源也連得到；dockerd 重啟之後結果相同。rich rule 的來源條件只出現在 firewalld 依同一條規則另外寫的那條目的位址轉換裡，而 Docker 自己的位址轉換已經先改寫了封包。這一段沒有試不帶來源條件的 forward-port、或寫在 policy 上的 forward-port。還原這一節改的設定：
+firewalld 依這條 rich rule 在 `filter_FORWARD_dnat` 寫的放行是 `ct original proto-dst 8081 accept`，只比對原始目的連接埠，rich rule 的來源條件沒有寫進這一條，所以範圍外的來源也連得到；dockerd 重啟之後結果相同。rich rule 的來源條件只出現在 firewalld 依同一條規則另外寫的那條目的位址轉換裡，而 Docker 自己的位址轉換已經先改寫了封包。
+
+OrbStack 那一台另外在 `StrictForwardPorts=yes` 下試了兩種 forward-port。一是寫在 policy 上：新建 policy `verify-fp`（`--new-policy=verify-fp`、`--add-ingress-zone=public`、`--add-egress-zone=docker`），從 `public` 到 `docker`，rich rule 一樣帶來源 ipset 與 `to-addr`。`firewall-cmd` 接受這條規則（回 `success`），reload 之後 `filter_FORWARD_dnat` 裡仍然只有 `reject with icmpx admin-prohibited`，沒有任何放行，兩個來源連 8081 都被回拒：policy 上的 forward-port 沒有在 `StrictForwardPorts` 的那條鏈裡留下放行。二是不帶 `to-addr`、轉到本機另一個連接埠：
+
+```bash
+firewall-cmd --permanent --zone=public --add-rich-rule='rule family="ipv4" source ipset="cloudflare-v4" forward-port port="8088" protocol="tcp" to-port="8080"'
+firewall-cmd --reload; sleep 3; probe 8088
+```
+
+`public` zone 沒有開 8080，而 `verify-cf` 連 8088 拿到 8080 那個主機程式的回應、`verify-other` 被回拒：轉到本機的 forward-port 帶著來源條件，結果是只有 Cloudflare 連得到。它轉到的是主機上的程式（封包改寫成本機位址之後走 input 路徑，見 [DNAT](/infra/knowledge-cards/dnat/) 卡），不是容器，所以只適用於網站由主機上的程式（或聽在主機位址上的反向代理）提供的情形。還原這一節改的設定：
 
 ```bash
 firewall-cmd --permanent --zone=public --remove-rich-rule="rule family=\"ipv4\" source ipset=\"cloudflare-v4\" forward-port port=\"8081\" protocol=\"tcp\" to-port=\"80\" to-addr=\"$CIP\""
+firewall-cmd --permanent --delete-policy=verify-fp             # OrbStack 那一台試的 policy
+firewall-cmd --permanent --zone=public --remove-rich-rule='rule family="ipv4" source ipset="cloudflare-v4" forward-port port="8088" protocol="tcp" to-port="8080"'
 mv /etc/firewalld/firewalld.conf.verify-bak /etc/firewalld/firewalld.conf
 firewall-cmd --reload; sleep 3
 grep '^StrictForwardPorts=' /etc/firewalld/firewalld.conf; firewall-cmd --zone=public --list-rich-rules
 ```
 
-`grep` 回 `StrictForwardPorts=no`，rich rule 只剩 8080 那一條。
+`grep` 回 `StrictForwardPorts=no`，rich rule 只剩 8080 那一條。OrbStack 那一台改 `StrictForwardPorts` 時用的是 `sed` 直接改值，沒有備份檔，還原也用 `sed` 改回 `no`；`mv` 那一行是 OCI 那一台的做法。
 
 ## 自己的 nftables 表：掛在目的位址轉換之前
 
@@ -500,8 +570,8 @@ probe 8081; probe 8083
 這一步的替代做法：
 
 - **自己寫一個開機時執行 `nft -f /etc/nftables/verify-cf-only.nft` 的 systemd oneshot unit**：不經過 `nftables.service`，避開它的 `flush ruleset`，誤下 `systemctl restart nftables` 也不會清掉 firewalld 的表；代價是多一個要維護的 unit，沒有實跑。
-- **把同樣的規則寫成 firewalld 的 direct rule 或 passthrough**：firewalld 會在每次重新載入時重寫，但〈firewalld.direct〉寫明 direct 介面已經棄用、由 policy 取代，沒有實跑。
-- **把 `{ 8081 }` 換成 `{ 80, 443 }`**：這是正式設定的寫法。拿掉 `tcp dport` 這個條件時，規則變成對整台主機所有連接埠的 Cloudflare 限制，那時要另外排除管理通道進來的介面或來源，否則 SSH 一起被擋。
+- **把同樣的規則寫成 firewalld 的 direct rule 或 passthrough**：firewalld 會在每次重新載入時重寫，但〈firewalld.direct〉寫明 direct 介面已經棄用、由 policy 取代；而且主機一有 direct 設定，reload 就會清掉 iptables 裡其他自建的規則（〈DOCKER-USER 鏈的限制效果與規則的存續〉量到的），沒有實跑這個寫法本身。
+- **把 `{ 8081 }` 換成 `{ 80, 443 }`**：這是正式設定的寫法，但要多一個條件 `fib daddr type local`（目的地是這台主機自己的位址）。少了它時，容器自己往外連 443、容器之間連 80 的封包也從 docker0 進 prerouting、目的連接埠一樣是 443 或 80、來源不在清單，一起被丟掉。OrbStack 那一台補測：規則寫成 `iifname != "lo" tcp dport { 80, 443, 8081 } ip saddr != @cloudflare_v4 drop` 時，一個 `busybox` 容器 `wget https://www.cloudflare.com/` 與連另一個容器的 80 都失敗；改成 `iifname != "lo" fib daddr type local tcp dport { 80, 443, 8081 } ip saddr != @cloudflare_v4 drop` 之後兩者恢復，範圍外的來源連 8081 仍然逾時。拿掉 `tcp dport` 這個條件時，規則變成對整台主機所有連接埠的 Cloudflare 限制，那時要另外排除管理通道進來的介面或來源，否則 SSH 一起被擋。
 
 這張表的規則不出現在 `firewall-cmd --list-all` 裡，查的指令是 `nft list table inet verify_cf_only`。
 
@@ -573,7 +643,7 @@ check
 : > $D/listen.log; docker run --rm busybox:1.37 nslookup -timeout=2 oracle.com 203.0.113.10 >/dev/null 2>&1; sleep 1; wc -l < $D/listen.log
 ```
 
-只有主機 `dig @203.0.113.10` 時對方收到 0 個，`dig` 印 `communications error to 203.0.113.10#53: connection refused`；只有容器 `nslookup` 時對方收到 4 個。這條 policy 擋下主機本身的查詢，容器的查詢走轉送路徑、不經過 `HOST`，照樣送出去；送往 443 的連線在加限制之前與之後都送到。這裡的容器跑在預設的 bridge 網路（介面 docker0），查詢直接從容器送出；compose 的自訂網路上容器先問 Docker 內建的解析器 `127.0.0.11`，結果可能不同，沒有測。容器送出的查詢另外寫在 `DOCKER-USER`（自訂網路的介面是 `br-` 開頭，`-i docker0` 改成 `-i br-+` 或兩條都寫）：
+只有主機 `dig @203.0.113.10` 時對方收到 0 個，`dig` 印 `communications error to 203.0.113.10#53: connection refused`；只有容器 `nslookup` 時對方收到 4 個。這條 policy 擋下主機本身的查詢，容器的查詢走轉送路徑、不經過 `HOST`，照樣送出去；送往 443 的連線在加限制之前與之後都送到。這裡的容器跑在預設的 bridge 網路（介面 docker0），查詢直接從容器送出。compose 的自訂網路上，容器先問 Docker 內建的解析器 `127.0.0.11`，內建解析器往外查的封包由主機送出，結果反過來：OrbStack 那一台上把這條 policy 改成拒絕主機送出的全部 `dns`，compose 容器經由 `127.0.0.11` 的查詢失敗、bridge 容器照常；量法與 conntrack 的輸出在 [ufw 主機上 Docker 發佈連接埠的實測紀錄：ufw 規則的效果、DOCKER-USER 規則的存續與 after.rules、IPv6 的 docker-proxy、compose 內建 DNS 的出站路徑](/infra/03-network-foundation/hands-on/ufw-docker-walkthrough/) 的〈compose 自訂網路的容器經由 127.0.0.11 查詢時，DNS 封包從哪裡送出〉。容器自己送出的查詢另外寫在 `DOCKER-USER`（自訂網路的介面是 `br-` 開頭，`-i docker0` 改成 `-i br-+` 或兩條都寫）：
 
 ```bash
 iptables -I DOCKER-USER -i docker0 -p udp --dport 53 ! -d $RESOLVER -j REJECT
@@ -587,7 +657,21 @@ check
   203.0.113.10 收到的封包：1 tcp443 from 192.0.2.5;
 ```
 
-這兩條寫在 `DOCKER-USER`，有〈DOCKER-USER 鏈的限制效果與規則的存續〉量到的問題：`firewall-cmd --reload` 之後規則消失，重開機之後也不在。要長期使用就改寫進自建的 nftables 表（鏈接在 forward hook、比對 `iifname "docker0"`），這一個寫法這次沒有實跑。
+這兩條寫在 `DOCKER-USER`，有〈DOCKER-USER 鏈的限制效果與規則的存續〉量到的問題：這台主機上 `firewall-cmd --reload` 之後規則消失，重開機之後也不在。要長期使用就改寫進自建的 nftables 表，鏈接在 forward hook 上。OrbStack 那一台實跑了這個寫法（`RESOLVER` 是〈共用的變數與函式〉填的主機解析器）：
+
+```bash
+cat > $D/verify-egress.nft <<EOF
+table inet verify_egress {
+  chain forward {
+    type filter hook forward priority filter - 10; policy accept;
+    iifname { "docker0", "br-*" } meta l4proto { tcp, udp } th dport 53 ip daddr != $RESOLVER drop
+  }
+}
+EOF
+nft -f $D/verify-egress.nft
+```
+
+`"br-*"` 比對 compose 自訂網路的介面；`th dport 53` 同時比對 TCP 與 UDP 的目的連接埠；優先序 `filter - 10` 排在 firewalld 的轉送鏈（`filter + 10`）之前。bridge 容器與 compose 容器直接問 `1.1.1.1` 的查詢都失敗，經由各自預設解析器的照常；`firewall-cmd --reload` 之後 `nft list tables` 仍列得出 `table inet verify_egress`，結果相同。compose 容器經由 `127.0.0.11` 的那一路不經過 forward hook，要靠上面主機的 policy。開機載入的做法同〈自己的 nftables 表：掛在目的位址轉換之前〉。
 
 ## 清理：容器、dockerd、防火牆設定與暫存檔
 
@@ -612,6 +696,13 @@ cd /; rm -rf /tmp/verify-fw
 systemctl reboot
 ```
 
+OrbStack 那一台另外多了幾項，各節測完已經還原的（zone `verify-cfzone`、IPv6 的 rich rule、`daemon.json`、policy `verify-fp`、8088 的 forward-port、`table inet verify_egress`）不必再清，剩下的是 `lo` 上的 ULA 與 IPv6 的 ipset；這兩行沒有實跑：
+
+```bash
+ip -6 addr del fd00:beef::1/128 dev lo
+firewall-cmd --permanent --delete-ipset=cloudflare-v6; firewall-cmd --reload
+```
+
 ipset 排在引用它的 rich rule 之後刪。Docker 建的 `docker` zone 與 `docker-forwarding` policy 寫進了 firewalld 的永久設定，dockerd 停掉之後還在。`/var/lib/docker` 與 `/var/lib/containerd` 存著 Docker 的映像、容器與 volume；這次的主機原本沒有 Docker，所以整個刪掉。主機原本就有 Docker、這次只是借用時，只刪這次建的三個容器（`busybox:1.37` 原本就有的話也留著），zone、policy 與這兩個目錄都留著，dockerd 與 containerd 用 `systemctl` 管，不用 `pkill`。重開機是為了清掉 dockerd 留在 iptables 的 nat 與 filter 規則，以及被它改成 1 的 `ip_forward`。重開之後：
 
 ```bash
@@ -625,13 +716,16 @@ find /tmp /var/tmp -maxdepth 1 -name 'verify-*'
 
 ## 各種寫法在重新載入、dockerd 重啟與重開機之後的結果
 
-這張表的「範圍外的來源」欄量的是規則剛套上時；其餘三欄量的是規則套上之後各做一次那個動作，範圍外的來源還連不連得到、規則還在不在。
+這張表的「範圍外的來源」欄量的是規則剛套上時；其餘三欄量的是規則套上之後各做一次那個動作，範圍外的來源還連不連得到、規則還在不在。「沒有單獨測」是那個動作做過、但這條規則不是當時要量的對象，沒有記錄它的狀態；「沒有測」是沒有做那個動作。`DOCKER-USER` 那一列只比對連接埠，正式改成 80、443 時要加 `--ctstate DNAT`，自建 nftables 表那一列要加 `fib daddr type local`（各節的說明）。
 
-| 寫法                                               | 範圍外的來源連發佈的連接埠        | `firewall-cmd --reload` 之後 | dockerd 重啟之後 | 重開機之後                         |
-| -------------------------------------------------- | --------------------------------- | ---------------------------- | ---------------- | ---------------------------------- |
-| firewalld rich rule（只放行 ipset，寫在 zone 上）  | 連得到（規則管不到轉送路徑）      | 規則還在                     | 規則還在         | 沒有測（`--permanent` 依機制會在） |
-| 只發佈在 `127.0.0.1`                               | 連不到                            | 沒有測                       | 沒有測           | 沒有測（發佈位址屬於容器設定）     |
-| `DOCKER-USER` 跳到自建鏈                           | 被擋（逾時）                      | 規則消失                     | 規則還在         | 沒有單獨測（依機制不在）           |
-| firewalld policy（`public` 到 `docker`）           | 連得到（`ct status dnat accept`） | 以 reload 套用，見正文       | 連得到           | 沒有測                             |
-| `StrictForwardPorts=yes` 加限定來源的 forward-port | 連得到（放行規則只比對連接埠）    | 連得到（規則以 reload 套用） | 連得到           | 沒有測                             |
-| 自建 nftables 表（prerouting，位址轉換之前）       | 被擋（逾時）                      | 規則還在                     | 規則還在         | 規則還在（`nftables.service`）     |
+| 寫法                                                 | 範圍外的來源連發佈的連接埠        | `firewall-cmd --reload` 之後                                                                                    | dockerd 重啟之後 | 重開機之後                             |
+| ---------------------------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------- | ---------------- | -------------------------------------- |
+| firewalld rich rule（只放行 ipset，寫在 zone 上）    | 連得到（規則管不到轉送路徑）      | 規則還在                                                                                                        | 規則還在         | 沒有單獨測（`--permanent` 依機制會在） |
+| 只發佈在 `127.0.0.1`                                 | 連不到                            | 沒有單獨測                                                                                                      | 沒有測           | 沒有測（發佈位址屬於容器設定）         |
+| `DOCKER-USER` 跳到自建鏈                             | 被擋（逾時）                      | nftables 後端有 direct rule 或 passthrough 時、或 iptables 後端時規則消失（OCI 的映像有 passthrough），其餘還在 | 規則還在         | 沒有單獨測（依機制不在）               |
+| firewalld policy（`public` 到 `docker`）             | 連得到（`ct status dnat accept`） | 以 reload 套用，見正文                                                                                          | 連得到           | 沒有測                                 |
+| `StrictForwardPorts=yes` 加限定來源的 forward-port   | 連得到（放行規則只比對連接埠）    | 連得到（規則以 reload 套用）                                                                                    | 連得到           | 沒有測                                 |
+| `StrictForwardPorts=yes` 加 policy 上的 forward-port | 連不到（範圍內的也被回拒）        | 以 reload 套用                                                                                                  | 沒有測           | 沒有測                                 |
+| 自建 nftables 表（prerouting，位址轉換之前）         | 被擋（逾時）                      | 規則還在                                                                                                        | 規則還在         | 規則還在（`nftables.service`）         |
+
+OrbStack 那一台補測的幾列（`DOCKER-USER` 在沒有 direct 設定時的存續、policy 上的 forward-port）環境與 OCI 那一台不同，見事件說明；轉到本機程式的 forward-port 與自建表的出站 DNS 限制不是限制發佈的連接埠，不列在這張表，結果在各自的段落。

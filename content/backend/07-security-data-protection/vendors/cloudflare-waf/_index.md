@@ -50,7 +50,7 @@ Cloudflare WAF 的核心定位是 *把攻擊擋在 origin 之前的一站式 edg
 
 **API Shield**：用 OpenAPI schema validation、auto-discovery API endpoint、mTLS 驗證、JWT validation。對於有 schema 的 API、可以擋掉 *schema 不符的請求*（多餘欄位、型別錯誤、缺必要欄位）— 比 generic WAF rule 精準。
 
-**Origin 暴露面收緊**：Cloudflare 唯一有效的前提是 *流量必須經過 Cloudflare*。如果攻擊者拿到 origin 真實 IP（DNS 歷史記錄、漏洞披露網站、SSL cert SAN）、可以繞過 Cloudflare 直打 origin。控制方法：origin firewall 只允許 Cloudflare IP range 入站、Argo Tunnel（origin 主動建 outbound 連線到 Cloudflare、不開任何入站 port）、Authenticated Origin Pull（origin 用 cert 驗證請求來自 Cloudflare）三選一或組合。
+**Origin 暴露面收緊**：Cloudflare 唯一有效的前提是 *流量必須經過 Cloudflare*。如果攻擊者拿到 origin 真實 IP（DNS 歷史記錄、漏洞披露網站、SSL cert SAN）、可以繞過 Cloudflare 直打 origin。控制方法有三種，擋的範圍不同、通常組合使用：origin firewall 只允許 Cloudflare IP range 入站，擋得住不經 Cloudflare 的直連，擋不住從 Cloudflare 位址送來、卻不是替這個網域轉送的請求（任何帳號的 Worker 都從 Cloudflare 的位址送出，還能自己寫 `CF-Connecting-IP`）；Authenticated Origin Pull 用 Cloudflare 共用的憑證時只證明請求來自 Cloudflare 的網路，上傳自己的用戶端憑證（zone 層級或每個主機名稱）才分辨得出是自己的網域；Cloudflare Tunnel（舊名 Argo Tunnel，origin 主動建 outbound 連線到 Cloudflare、不開任何入站 port）讓 origin 沒有入站路徑。實測與三者各自擋得住什麼見 [CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/infra/03-network-foundation/origin-host-firewall/) 的〈限制放在哪一層：雲端防火牆、主機防火牆與 CDN 端的驗證〉。
 
 **API token 治理**：避免 Global API Key（全帳號 root token）、改用 *scoped API token*（限 zone + 限 permission + 限 IP + 限 TTL）。token 進 [Secret Management](/backend/knowledge-cards/secret-management/) / [Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/)、定期 rotate。對應 [Cloudflare control plane token 2023](/backend/07-security-data-protection/cases/cloudflare-control-plane-token-2023/) 揭示的 lesson：Cloudflare 自己也踩過 token 治理不足、客戶側不能假設 vendor 完美。
 
@@ -86,7 +86,7 @@ Cloudflare WAF 的核心定位是 *把攻擊擋在 origin 之前的一站式 edg
 - **Managed Rule 誤殺合法請求**：High sensitivity 開後 business endpoint 變慢 / 報錯 — 看 Security Events 找 rule_id、用 Custom Rule skip 該 rule 在特定 path / 特定 user-agent、不要全 zone 關 rule
 - **Bot Management 太嚴 / 太鬆**：bot score threshold 設不對、合法 API client 被當 bot、或攻擊者拿到 verified bot 假冒 — 用 *Bot Analytics* 看分數分布、調整 threshold 同時加白名單（API key + IP CIDR）
 - **Rate Limit 誤殺 NAT 用戶**：per-IP rate limit 在 NAT 出口 IP 上炸 — 改 per-session（cookie-based）或 cf.threat_score 條件
-- **Origin IP 外洩**：DNS 歷史 + 漏洞披露 + cert SAN 揭露真實 origin、攻擊繞 Cloudflare 直打 — 換 IP + 開 origin firewall（只允許 Cloudflare CIDR）+ Argo Tunnel
+- **Origin IP 外洩**：DNS 歷史 + 漏洞披露 + cert SAN 揭露真實 origin、攻擊繞 Cloudflare 直打 — 換 IP + 開 origin firewall（只允許 Cloudflare CIDR，擋直連）+ 自己上傳憑證的 Authenticated Origin Pull 或 Cloudflare Tunnel（擋經由別的帳號送來的請求）
 - **API token over-scoped**：CI / 第三方 SaaS 拿到 Global API Key、整 account 都被改 — 改 scoped token、限 zone + permission + IP、進 [Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/)
 - **Security Events 沒進 SIEM**：事件只在 dashboard、跨來源 correlation 沒法做 — 配 Logpush + alert 規則
 - **Page Shield 沒裝**：客戶端 JS 被植入、伺服器端日誌看不到攻擊、第三方 script CDN 被打 — 啟用 Page Shield + CSP report-uri 雙軌

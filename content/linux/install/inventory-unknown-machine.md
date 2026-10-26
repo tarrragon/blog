@@ -112,7 +112,7 @@ sudo iptables -L -n 2>/dev/null | head -30
 sudo ufw status 2>/dev/null; sudo firewall-cmd --list-all 2>/dev/null
 ```
 
-判讀時把 listen address 分成三類：`127.0.0.1` 只服務本機、`0.0.0.0`（或 `*`）對所有介面開放、特定 IP 只綁那個介面。對外開放又不認得的 port 優先查——`ss -tlnp` 輸出的進程名回頭對服務清單。防火牆四個指令會有幾個查無結果，這正常：發行版各用不同框架，有輸出的那個才是這台在用的。主機跑 Docker 時，`ufw status` 與 `firewall-cmd --list-all` 列不出容器發佈的連接埠，這些連接埠也不受 ufw 的規則與 firewalld 預設設定（`StrictForwardPorts=no`）下的規則約束：Docker 改寫封包的目的地、把它轉給容器，ufw 的入站規則碰不到它，firewalld 則在轉送鏈開頭就放行經過位址轉換的連線。`nft list ruleset` 與 `iptables -t nat -S` 的輸出裡看得到 Docker 的 DNAT 規則，但要逐條讀。發佈的連接埠直接查比較快：`docker ps` 的 PORTS 欄列出每個容器發佈在哪個位址與連接埠（`0.0.0.0:8080->80/tcp` 是對所有 IPv4 介面開放，同一列的 `[::]:8080->80/tcp` 是 IPv6 的那一份），dockerd 預設開著 userland proxy 時，`ss -tlnp` 裡由 `docker-proxy` 聽的也是它們；原因與限制寫法見 [CDN 後面的源站主機防火牆](/infra/03-network-foundation/origin-host-firewall/) 的〈Docker 發佈的連接埠：封包路徑與限制的寫法〉。
+判讀時把 listen address 分成三類：`127.0.0.1` 只服務本機、`0.0.0.0`（或 `*`）對所有介面開放、特定 IP 只綁那個介面。對外開放又不認得的 port 優先查——`ss -tlnp` 輸出的進程名回頭對服務清單。防火牆四個指令裡，發行版各用不同框架，有輸出的那個是這台在用的，其餘的查無結果。主機跑 Docker 時，`ufw status` 與 `firewall-cmd --list-all` 列不出容器發佈的連接埠，這些連接埠也不受 ufw 的規則與 firewalld 預設設定（`StrictForwardPorts=no`）下的規則約束：Docker 改寫封包的目的地、把它轉給容器，ufw 的入站規則碰不到它，firewalld 則在轉送鏈開頭就放行經過位址轉換的連線。`nft list ruleset` 與 `iptables -t nat -S` 的輸出裡看得到 Docker 的 DNAT 規則，但要逐條讀。發佈的連接埠直接查比較快：`docker ps` 的 PORTS 欄列出每個容器發佈在哪個位址與連接埠（`0.0.0.0:8080->80/tcp` 是對所有 IPv4 介面開放，同一列的 `[::]:8080->80/tcp` 是 IPv6 的那一份；容器的網路沒有開 IPv6 時，IPv6 那一份由 `docker-proxy` 這個主機程式接收，受 ufw 與 firewalld 的入站規則管，跟 IPv4 那一份相反），dockerd 預設開著 userland proxy 時，`ss -tlnp` 裡由 `docker-proxy` 聽的也是它們；原因與限制寫法見 [CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/infra/03-network-foundation/origin-host-firewall/) 的〈Docker 發佈的連接埠：封包路徑與限制的寫法〉。
 
 ## 裝了什麼
 

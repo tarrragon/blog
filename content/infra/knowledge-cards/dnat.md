@@ -12,7 +12,7 @@ tags: ["infra", "knowledge-cards", "nat", "network", "firewall"]
 
 Linux 處理封包的框架叫 netfilter，它在封包流程上留了幾個固定位置（hook）讓規則掛上去。DNAT 掛在 prerouting 這個 hook：封包剛進主機、核心還沒決定路由之前就改寫（iptables 寫在 nat 表的 PREROUTING 鏈，nftables 寫在 `type nat` 的鏈；主機本機發出的連線則在 OUTPUT 那一段改寫）。改寫之後，核心依新的目的地決定路由：目的地是容器或另一台主機時，封包走轉送（forward）路徑送給另一個介面，不經過管主機本身入站連線的 input 路徑；改寫成主機本機的位址或連接埠時（iptables 的 REDIRECT、firewalld 不帶目的位址的 forward-port），封包仍走 input 路徑。
 
-Docker 用 `-p 8081:80` 發佈連接埠屬於目的地改成容器的那一種：寫在 input 路徑上的主機防火牆規則（ufw、firewalld 的 zone）管不到它，而轉送路徑上 Docker 與 firewalld 預設都放行經過位址轉換的連線（Docker 的 `DOCKER-FORWARD` 鏈、firewalld 的 `ct status dnat accept`），所以這些連接埠繞過了主機防火牆。雲端的 [Security Group](/infra/knowledge-cards/security-group/) 在封包到達主機、還沒被改寫之前就比對完，不受這個改寫影響。
+Docker 用 `-p 8081:80` 發佈連接埠時，IPv4 那一份屬於目的地改成容器的那一種：寫在 input 路徑上的主機防火牆規則（ufw、firewalld 的 zone）管不到它（容器網路沒開 IPv6 時，IPv6 那一份不經 DNAT，由主機上的 docker-proxy 程式接收、走 input 路徑，見 [ufw 主機上 Docker 發佈連接埠的實測紀錄：ufw 規則的效果、DOCKER-USER 規則的存續與 after.rules、IPv6 的 docker-proxy、compose 內建 DNS 的出站路徑](/infra/03-network-foundation/hands-on/ufw-docker-walkthrough/)），而轉送路徑上 Docker 與 firewalld 預設都放行經過位址轉換的連線（Docker 的 `DOCKER-FORWARD` 鏈、firewalld 的 `ct status dnat accept`），所以這些連接埠繞過了主機防火牆。雲端的 [Security Group](/infra/knowledge-cards/security-group/) 在封包到達主機、還沒被改寫之前就比對完，不受這個改寫影響。
 
 ## 可觀察訊號與例子
 

@@ -15,7 +15,7 @@ CDN 排在請求路徑的最前面，在源站的 [Reverse Proxy](/infra/knowled
 ## 可觀察訊號與例子
 
 - **回應標頭帶著 CDN 的標記**：Cloudflare 代理的網站回應帶 `cf-ray` 與 `server: cloudflare`。看到它代表這一次請求經過了 CDN，不代表所有訪客都經過：其他訪客的 DNS 快取可能還指向源站的舊位址。
-- **源站的存取記錄裡全是同幾段位址**：那是 CDN 機房的位址；要記錄使用者的位址，反向代理要設定成只信任來自 CDN 位址段的 `CF-Connecting-IP`（nginx 的 `set_real_ip_from` 加 `real_ip_header`）。
+- **源站的存取記錄裡全是同幾段位址**：那是 CDN 機房的位址；要記錄使用者的位址，反向代理要設定成只信任來自 CDN 位址段的 `CF-Connecting-IP`（nginx 的 `set_real_ip_from` 加 `real_ip_header`）。這個設定擋得下不經 CDN 的直連偽造，擋不下從 CDN 位址送來的偽造：任何帳號的 Cloudflare Worker 都從 Cloudflare 的位址送出、標頭可以自己寫，實測見 [Cloudflare 回源的實測紀錄：Oracle Cloud NSG 只放行 Cloudflare 位址與規則數上限、回源的來源位址、Authenticated Origin Pulls、Worker 偽造 CF-Connecting-IP 與 Tunnel 的出站連接埠](/infra/03-network-foundation/hands-on/cloudflare-origin-pull-walkthrough/)。
 - **CDN 公佈的位址清單**：Cloudflare 在 `https://www.cloudflare.com/ips-v4` 與 `ips-v6` 公佈回源用的位址段，2026-10-25 是 15 段 IPv4 與 7 段 IPv6；源站的防火牆規則就是拿這份清單寫的。
 
 ## 判讀方式
