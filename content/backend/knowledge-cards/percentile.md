@@ -20,4 +20,4 @@ Percentile 是 [SLI](/backend/knowledge-cards/sli-slo/) 的常見型別 — late
 
 ## 設計責任
 
-Percentile 要搭配 histogram bucket 設計 — bucket boundary 決定 percentile 計算的精度。Bucket 太少（只有 100ms / 500ms / 1s）會讓 p99 的估計跳躍式變化。Bucket 太多會增加 [cardinality](/backend/knowledge-cards/metric-cardinality/)。低流量服務的高 percentile 容易受少量樣本影響，alert 閾值要考慮統計穩定性。詳見 [4.2 metrics basics](/backend/04-observability/metrics-basics/) 跟 [4.6 SLI/SLO 訊號設計](/backend/04-observability/sli-slo-signal/)。
+Percentile 要搭配 histogram bucket 設計 — bucket boundary 決定 percentile 計算的精度。Bucket 太少（只有 100ms / 500ms / 1s）會讓 p99 的估計跳躍式變化。Bucket 太多會增加 [cardinality](/backend/knowledge-cards/metric-cardinality/)。低流量服務的高 percentile 容易受少量樣本影響，alert 閾值要考慮統計穩定性。Percentile 不能跨來源相加或平均：兩個實例、兩台壓測機各自算好的 p99 取平均，得到的不是合併之後的 p99；要合併的是各來源的 histogram（同一組 bucket 逐一加總），再從合併後的分布算 percentile。所以要跨實例看延遲的指標用 histogram 型，不用各實例自己算好 percentile 的 summary 型。詳見 [4.2 metrics basics](/backend/04-observability/metrics-basics/) 跟 [4.6 SLI/SLO 訊號設計](/backend/04-observability/sli-slo-signal/)。

@@ -17,4 +17,4 @@ Workload model 至少包含五個維度：平均吞吐、peak/avg ratio、操作
 
 ## 設計責任
 
-設計時要決定「synthetic load」vs「production traffic replay」vs「混合」。synthetic 好控制但容易脫離 reality；replay 最貼真實但消耗下游資源；混合是常見折衷。模型必須驗證：壓測 *同時* 對比 production metrics、看誤差有多大。
+設計時要決定「synthetic load」vs「production traffic replay」vs「混合」。synthetic 好控制但容易脫離 reality；replay 最貼真實但消耗下游資源；混合是常見折衷。模型必須驗證：壓測 *同時* 對比 production metrics、看誤差有多大。壓測依到達率還是依同時在線的使用者數送出請求，也是模型的一部分，選法見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)。

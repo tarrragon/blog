@@ -428,6 +428,8 @@ weight: -1
 | [CPU Steal Time（被虛擬化層拿走的 CPU 時間）](/backend/knowledge-cards/cpu-steal-time/) | 雲端虛擬機被其他租戶搶走的 CPU 時間            | hypervisor、noisy neighbor、可突發機型   |
 | [cgroup（控制群組）](/backend/knowledge-cards/cgroup/)                                  | 容器的用量統計與資源限制建立在哪裡             | cpu.max、memory.max、cAdvisor            |
 | [Workload Model](/backend/knowledge-cards/workload-model/)                              | production traffic shape 如何量化重播          | load test、capacity、forecast            |
+| [Open / Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)    | 壓測依到達率還是同時在線人數送出請求           | injection、coordinated omission、knee    |
+| [Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/)        | 瓶頸在受測服務還是在施壓端                     | injector、GC、ulimit                     |
 | [Tail Latency](/backend/knowledge-cards/tail-latency/)                                  | p99 / p999 為何比平均更能反映 saturation       | SLO、GC、cross-zone                      |
 | [Hot Partition](/backend/knowledge-cards/hot-partition/)                                | 單一 partition 流量過熱、名義容量達不到        | DynamoDB、partition key、saturation      |
 | [Peak Forecast](/backend/knowledge-cards/peak-forecast/)                                | 預期峰值如何預測 — 容量公式輸入                | capacity、event、growth                  |

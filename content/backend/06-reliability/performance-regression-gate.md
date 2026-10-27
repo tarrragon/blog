@@ -143,3 +143,4 @@ CDN cache hit rate 是隱性的 regression 指標。code 變更如果改變了 c
 - [6.17 feature flag](/backend/06-reliability/feature-flag-governance/)：flag 切換後的效能驗證
 - [6.21 reliability debt](/backend/06-reliability/reliability-debt-backlog/)：延後修復的 regression 進入 debt backlog
 - [6.23 evidence handoff](/backend/06-reliability/verification-evidence-handoff/)：接受 regression 時的理由留存
+- [Gatling 在效能 regression gate 的用法](/backend/06-reliability/vendors/gatling/gatling-performance-regression-gate/)：本章的三種判讀方法換成 Gatling 時，assertion 寫得出哪一種、OSS 要另外補的跨次比較，以及 gate 失敗的排查順序
