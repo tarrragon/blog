@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.47.0 — `managing-article-collections.md` 新增〈同一個對象在兩個集合各有一頁〉：兩頁各自從所屬集合的讀者要做的判斷往回寫，逐段依序問兩件事（是不是操作細節；其餘段落原封不動放進另一頁還成立嗎），分成操作細節、知識卡（單一概念；沒有知識卡系統時寫成概念短頁）、對象層深度內容、本集合觀點、寫錯頁的另一集合觀點；集合規定的固定章節照工程師的視角寫出不同的順序與權重；兩頁互相連結；重疊時不合併；SKILL.md 路由表加這個觸發；新增 principle 卡 `same-tool-page-per-module-derives-from-the-modules-question`。
+
 **Version**: 1.46.6 — 對齊專案寫作規則的改版：判斷標準的第三層從「條件到行動的映射」改成條件層（讀者判斷得出自己落在哪一個條件、各條件的後果與理由），條件到行動的逐項對應標明是 skill 與手冊 surface 的形態（SKILL.md、criteria-need-condition-action-mapping、criteria-fold-away-the-condition-that-produces-the-symptom、rule-must-point-at-something-openable、teaching-is-not-lecturing）；教室形式形態一刪掉「或用一兩句話寫明內容」、teaching-is-not-lecturing 的開場改成逐一列出各段主題；write-for-readers-not-audiences 與 no-fabricated-experience-or-attribution 的事件來源改成開場之前的事件說明（日期、環境、做什麼操作時發生）、開頭改成逐一列出內容；command-fragment-as-subject-hides-the-actor 的讀者疑問順序寫明是段與段之間的順序、工具的動作寫成對什麼對象做什麼與輸出；management-reportable-info、translation-review 的句數規定改成寫出要交付的內容；writing-articles 的段落順序句寫明是描述同一個工具的幾段之間的順序，教室形式的判讀徵兆從「開場超過一句話的情境敘事」改成「開場是情境敘事、沒有逐一列出內容」（writing-articles 與 teaching-is-not-lecturing 同步）；managing-article-collections 的模板：抽象層原則與情境檢討兩份模板的關係段名統一成「跟其他抽象層原則的關係」（Idiom 5 的位置說明同步），「[一句話、加粗]」「[一兩句說明這條路徑的閱讀邏輯]」兩種句數佔位改成寫出要交付的內容；字句層 keyword bank 節末補逐類表要寫進版本控制看得到的位置
 
 **Version**: 1.46.5 — 教室形式形態一改成開場寫出這篇討論哪些東西（逐一列出各段落主題或寫明內容），判別改成不熟這個主題的讀者讀完開場能不能判斷這篇與他要找的東西有沒有關係；只交代範圍起點與終點不算

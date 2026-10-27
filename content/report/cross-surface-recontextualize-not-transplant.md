@@ -35,6 +35,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作規範", "S
 - [#44 Single Source of Truth](/report/single-source-of-truth/)：逐字搬運讓同一段論述以兩份完整複本存在、誰是權威沒有任何標記。比一般 SSoT 違反更難修 — 第一步的困難不在改、在發現同源關係存在。
 - [#122 Cadence 同質化是模板的隱形維度](/report/cadence-homogenization-in-batch-writing/)：偵測手段同構 — 都是 grep 句子層的字面重複；差別在範圍：#122 抓同 surface 多檔的句式骨架重複、本卡抓跨 surface 的完整句逐字重複。兩個掃描可以同一輪跑。
 - [#147 規範化跟自審是兩種認知任務](/report/rule-codification-vs-self-audit/)：本卡的 case 正是規範已存在（「各寫一份、語境化在各 surface 內」白紙黑字）、執行時仍搬運 — 立規範的人在執行時用了「各寫一份」的字面（檔案確實是兩個）、漏了「語境化」的實質（句子是同一批）。規範的字面合規與實質合規是兩層檢查。
+- [#385 同一個工具在兩個模組各有一頁：兩頁從工具往外寫就會重疊，從各自模組讀者要做的判斷往回推才分得開，原封不動搬到另一頁仍成立的段落抽成知識卡](/report/same-tool-page-per-module-derives-from-the-modules-question/)：本卡管的是兩種 surface；同一個 surface 裡同一個對象出現在兩個模組時，兩頁同樣要各自為模組的讀者寫，而兩頁之間內容與順序都相同的事實不各寫一份，抽成知識卡讓兩邊連。
 - [#150 教材用中性陳述、不對讀者喊話](/report/teaching-register-states-not-addresses-reader/)：register 是語境化最敏感的維度 — 教材的中性陳述、協議的指令語氣、訪談的問句、三種 register 不可互換；搬運最先破壞的就是 register 對位。
 
 ## 觸發 case

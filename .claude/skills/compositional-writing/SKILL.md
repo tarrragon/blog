@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 1.46.6
+  version: 1.47.0
   category: writing-methodology
 ---
 
@@ -262,7 +262,7 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 | 要撰寫完整長篇技術文章（blog post / post-mortem / 架構決策 / 除錯復盤 / 技術評估）                                                                                                                   | `references/writing-articles.md`                                                                                   |
 | 要把外部分析文章 / 產業評論 / 投資人備忘錄 / 高密度研究材料轉成教學型分析文章，把從業者經驗談（訪談 / 社群貼文 / 口述）轉成分析教學（機制重建），或把 AI 改寫稿從摘要升級成可遷移框架                | `references/source-to-teaching-analysis.md`                                                                        |
 | 要翻譯 / 轉譯文章、把英文材料改寫成中文、檢查術語誤譯、中文譯名放回句子後是否成立、或譯文有沒有超譯（強度被拉高成口號）                                                                              | `references/translation-review.md`                                                                                 |
-| 要管理多篇相關文章的結構（系列、文集、知識庫、素材庫比例、MOC、跨篇引用、何時抽抽象層 / Pattern 卡片）                                                                                               | `references/managing-article-collections.md`                                                                       |
+| 要管理多篇相關文章的結構（系列、文集、知識庫、素材庫比例、MOC、跨篇引用、何時抽抽象層 / Pattern 卡片、同一個對象在兩個集合各有一頁）                                                                   | `references/managing-article-collections.md`                                                                       |
 | 要做文章 / 模組 / 系列的結構決策（該不該拆篇、擴充點設計、方法論與案例的依賴方向、多讀者分流）、剛把一份文件拆成多檔要查交界、或用結構原則 review 既有文集                                           | `references/structuring-with-solid.md`                                                                             |
 | 要對既有高 stakes 內容（資安 / concurrency / distributed / financial / medical）做 reviewer-style audit、找 false sense of security / 對位失效 / context 缺 / citation 過時 / 強度失準（誇飾或降格） | `references/auditing-articles.md`                                                                                  |
 | 要寫或檢查判讀 / 選型 / 決策類內容（回答「該怎麼判斷」那一層），或讀者提問「什麼情況會需要這個」「什麼樣的系統會這樣做」「沒有範例看不懂」                                                           | `references/judgment-content-needs-scenarios.md`                                                                   |
@@ -304,7 +304,6 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 ## 字句層 keyword bank（完整清單）
 
 **這一節是本站字句層檢查的唯一權威清單。** 其他地方（本檔的 frontmatter description、multi-round-review 的 Round 1-A、專案規範）出現的枚舉都是摘要，數量與成員以這一節為準。做字句層審查時打開這一節逐類跑，不要憑記憶重編 pattern——重編版通常把不同類別的詞混進同一條 regex，命中之後無法判定是哪一類違規。
-
 
 寫多篇章節 / report 卡 / knowledge card 後做**多輪 agent reviewer audit** 時、本 skill 應該跟 multi-round-review skill 同時啟動。觸發詞「多輪審查 / Round 1/2/3 / batch review / 寫作 audit」會同時啟動兩個 skill：
 

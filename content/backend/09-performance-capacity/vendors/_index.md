@@ -49,7 +49,7 @@ tags: ["backend", "performance", "capacity", "vendor", "tools"]
 | [k6](k6/)                                                   | —            | [← JMeter (Type E)](k6/migrate-from-jmeter/)                                |
 | [Datadog Continuous Profiler](datadog-continuous-profiler/) | —            | [← Pyroscope (Type C)](datadog-continuous-profiler/migrate-from-pyroscope/) |
 
-其他 T1 工具（JMeter / Gatling / Locust / Vegeta / GoReplay / Service Mesh Mirroring / AWS VPC Traffic Mirroring / Pyroscope / Parca / Akamas / Vantage / CloudHealth / AWS Cost Explorer）尚未開始。跟 [06 vendors](/backend/06-reliability/vendors/) 共用部分工具（k6 / JMeter / Gatling / Locust），未來寫 deep article 時需明確區分「驗證流程的工具鏈」（06）跟「效能工程的工具鏈」（09）的角度。對應的 backlog 議題見上方「T1 工具頁」段每個工具頁要回答的核心責任、跟各工具 `_index.md` 的「預計實作話題」段。
+其他 T1 工具（JMeter / Gatling / Locust / Vegeta / GoReplay / Service Mesh Mirroring / AWS VPC Traffic Mirroring / Pyroscope / Parca / Akamas / Vantage / CloudHealth / AWS Cost Explorer）的 overview 已經寫在各自的 `_index.md`，deep article 尚未開始。跟 [06 vendors](/backend/06-reliability/vendors/) 共用部分工具（k6 / JMeter / Gatling / Locust），寫或改這幾頁時照[同一個工具在兩個模組各有一頁](/report/same-tool-page-per-module-derives-from-the-modules-question/)跟 06 的同名頁並排分段：「驗證流程的工具鏈」（06）跟「效能工程的工具鏈」（09）各自寫取捨與排錯的順序和權重，共通的概念寫成知識卡。對應的 backlog 議題見上方「T1 工具頁」段每個工具頁要回答的核心責任、跟各工具 `_index.md` 的「預計實作話題」段。
 
 ## 後續候選
 
