@@ -10,12 +10,12 @@ tags: ["devops", "burst-traffic", "degradation", "queue", "scaling"]
 
 ## 章節
 
-| 章節                                                                 | 回答什麼問題                                 |
-| -------------------------------------------------------------------- | -------------------------------------------- |
-| [突發流量的分類](/operations/07-burst-traffic/burst-classification/) | 可預期 vs 不可預期、持續時間和倍率           |
-| [降級策略](/operations/07-burst-traffic/degradation-strategy/)       | 動態取樣、事件優先級、功能降級、聚合前移     |
-| [Queue 緩衝](/operations/07-burst-traffic/queue-buffering/)          | Kafka / NATS / Redis Streams 做 burst buffer |
-| [規模分級應對表](/operations/07-burst-traffic/scale-tier-response/)  | 自用 → 中型 → 大型 → 商業網站                |
+| 章節                                                                 | 回答什麼問題                                                   |
+| -------------------------------------------------------------------- | -------------------------------------------------------------- |
+| [突發流量的分類](/operations/07-burst-traffic/burst-classification/) | 可預期 vs 不可預期、持續時間和倍率、活動前的準備項目與前置時間 |
+| [降級策略](/operations/07-burst-traffic/degradation-strategy/)       | 動態取樣、事件優先級、功能降級、聚合前移                       |
+| [Queue 緩衝](/operations/07-burst-traffic/queue-buffering/)          | Kafka / NATS / Redis Streams 做 burst buffer                   |
+| [規模分級應對表](/operations/07-burst-traffic/scale-tier-response/)  | 自用 → 中型 → 大型 → 商業網站                                  |
 
 ## 跨分類引用
 
@@ -24,3 +24,11 @@ tags: ["devops", "burst-traffic", "degradation", "queue", "scaling"]
 - → [backend 非同步佇列](/backend/03-message-queue/)：Queue 的選型和操作實務
 - → [運維 模組五 容量規劃](/operations/05-capacity-planning/)：預期突發的容量預備
 - → [端到端資料完整性](/monitoring/04-collector/data-integrity/)：被自己 SDK DDoS 的三種場景
+
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                                                                                                                                                                                                                                    | 類型 | 前置條件                                                                               | 規模 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------- | ---- |
+| 〈降級策略〉動態取樣的觸發條件只有 collector 回 429 的次數與持續時間，429 在接收佇列滿了才出現、位置在膝點之後；9.11〈T-90 → T-0 準備時程〉的降級門檻從壓測的膝點推出、設在目標利用率對應的處理量。補一列以寫入延遲或接收速率為訊號、門檻取自壓測的觸發條件，429 那一列改成第二道，並寫出 N、M 從哪裡量 | 主章 | 無；inbound：〈突發流量的分類〉〈容量預備的前置時間與 collector 在活動前要準備的項目〉 | 小   |

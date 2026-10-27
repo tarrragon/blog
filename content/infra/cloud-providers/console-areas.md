@@ -62,7 +62,7 @@ Oracle Cloud 沒有升級的帳號在試用結束後不會開始計費，預算�
 
 ## 配額與限制：帳號最多能開多少
 
-每個帳號對每種資源都有數量上限（主機台數、核心數、公開 IP 數），超過時建立會失敗。這個領域列出每項上限與目前用量，要開更多時從這裡申請調高。上限是帳號允許的數量，不保證那一區有那麼多硬體——Oracle Cloud 的配額表會列出某一區根本沒有提供的機型，實例見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈E2.1.Micro 在各區域的供應：服務配額表與 404 錯誤〉。
+每個帳號對每種資源都有數量上限（主機台數、核心數、公開 IP 數），超過時建立會失敗。這個領域列出每項上限與目前用量，要開更多時從這裡申請調高。上限是帳號允許的數量，不保證那一區有那麼多硬體——Oracle Cloud 的配額表會列出某一區根本沒有提供的機型，實例見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈E2.1.Micro 在各區域的供應：服務配額表與 404 錯誤〉。為一次預知的活動調高上限時，申請要排在活動前多久、被拒時怎麼辦，見 [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)〈T-90 → T-0 準備時程〉的 T-30。
 
 ## 新帳號開好之後先看的領域
 

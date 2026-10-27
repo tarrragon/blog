@@ -82,7 +82,7 @@ Disney+（Marvel / Star Wars 首日 metadata 流量 3-5 倍、持續時段較長
 
 兩者都不是「peak/avg > 5x → on-demand」單軸決策能解。
 
-> **Scope warning**：上表 predictable-peak 的「提前 1-2 天可預備」這個 lead time 是經驗值、case 未揭露具體時間。pre-scale 的 lead time 依事件性質決定。
+> **Scope warning**：上表 predictable-peak 的「提前 1-2 天可預備」這個 lead time 是經驗值、case 未揭露具體時間。pre-scale 的 lead time 依事件性質決定；提早加開換到的時間與多出的計費時數怎麼取捨，見 [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)〈T-90 → T-0 準備時程〉的 T-2。
 
 ### DBA / SRE 工時釋放
 

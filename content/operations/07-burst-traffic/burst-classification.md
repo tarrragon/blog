@@ -1,12 +1,12 @@
 ---
 title: "突發流量的分類"
 date: 2026-06-20
-description: "可預期 vs 不可預期的突發流量 — 不同來源、持續時間和倍率決定不同的應對策略"
+description: "突發流量依能不能事前知道分成兩類：各自的來源、倍率與持續時間，可預期突發的準備要提前多久由什麼決定、collector 在活動前要準備的項目，以及 collector 遇到 error storm 時的資料保留"
 weight: 1
 tags: ["devops", "burst-traffic", "classification", "marketing", "error-storm"]
 ---
 
-突發流量按可預測性分成兩類。可預期的突發（行銷活動、新聞發佈）可以事前準備容量；不可預期的突發（病毒傳播、error storm）只能靠架構設計吸收衝擊。
+這篇把突發流量依能不能事前知道分成兩類，各列來源、流量倍率、持續時間與特徵。可預期的一類（行銷活動、新聞曝光）可以事前準備容量，這篇寫準備要從活動前多久開始由什麼決定，以及 collector 在活動前要準備的接收端台數與配額、寫入儲存層的壓測與 SDK 端的取樣設定；各項目排在活動前幾天的完整時程在 [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)。不可預期的一類（病毒傳播、error storm）靠架構設計吸收衝擊，這篇寫 collector 遇到 error storm 時保留哪些資料。
 
 ## 可預期突發
 
@@ -21,15 +21,13 @@ tags: ["devops", "burst-traffic", "classification", "marketing", "error-storm"]
 
 可預期突發的應對核心是**容量預備** — 活動前擴容、活動後縮回。
 
-### 預備清單
+### 容量預備的前置時間與 collector 在活動前要準備的項目
 
-| 項目     | 做什麼                        | 何時做      |
-| -------- | ----------------------------- | ----------- |
-| 容量估算 | 歷史峰值 × 安全係數（1.5-2x） | 活動前 1 週 |
-| 擴容     | 加實例 / 加資源 / 預熱 cache  | 活動前 1 天 |
-| 降級預案 | 設定動態取樣的觸發閾值        | 活動前 1 天 |
-| 壓力測試 | 模擬預期流量打 staging        | 活動前 3 天 |
-| 值班     | 安排值班人員監控 dashboard    | 活動期間    |
+可預期突發能事前準備，而準備要從活動前多久開始，由各準備項目的產出交給誰、它發現的狀況要多久修好決定。容量估算、配額申請、壓力測試（[Load Test](/backend/knowledge-cards/load-test/)）、故障演練（[Game Day](/backend/knowledge-cards/game-day/)）與預先擴容各排在活動前幾天、為什麼排在那裡，以及準備時間不夠時被壓縮掉的是什麼，在 [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)〈T-90 → T-0 準備時程〉與〈Event tier 分級〉。容量估算有兩種算法：平常的流量乘上歷史倍率、再加安全係數，在 [峰值估算](/operations/05-capacity-planning/peak-estimation/)〈用歷史倍率階梯推可預期峰值〉與〈安全係數的數學根據在飽和曲線〉；從業務預估經換算鏈與三點估計算出各層台數，連同活動的預算，在 [預知的大流量要加多大、編多少預算：從業務預估到擴容規格與費用區間的換算鏈、給決策者與會計的數字，以及每次活動之後的校準](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)〈從業務預估到台數：換算鏈、換算係數的來源與三點估計〉。
+
+套到 collector 上，活動前要準備的是三件事。接收端的台數與配額，從活動期間 SDK 送出的事件量估，事件量跟著使用者數與每人觸發的事件數變。壓力測試除了量接收端，也要量寫入儲存層的處理量：直接寫 PostgreSQL 的架構，背壓（[Backpressure](/monitoring/knowledge-cards/backpressure/)）常常先從寫入那一段出現（[規模分級應對表](/operations/07-burst-traffic/scale-tier-response/)〈Tier 3：大型（10000-100000 events/sec）〉）。SDK 端的動態取樣與事件優先級，在活動前設好觸發條件並演練一次；SDK 從 collector 回傳的 429 判斷要不要降低取樣率（[降級策略](/operations/07-burst-traffic/degradation-strategy/)〈觸發條件〉）。這一項的前置時間取決於設定怎麼送到客戶端：取樣設定由遠端設定下發時，活動前幾天改得到；編在 app 裡時，改設定要發新版，設定要比活動提早至少「發版審查加上使用者更新」所需的時間改好（新版本的流量峰值在推送後 24-48 小時，見上面〈可預期突發〉的來源表）。
+
+配額申請被拒、或壓測測出的寫入瓶頸在活動前修不完時，collector 有兩種處置。一是超出容量的事件量由 queue 先接住、事後追趕（[Queue 緩衝](/operations/07-burst-traffic/queue-buffering/)），代價是排在 queue 裡的事件在活動期間看不到；錯誤與延遲這類要即時看的事件，依事件優先級走不排隊的路徑。二是由 SDK 降低取樣率，減少送進來的事件。
 
 ## 不可預期突發
 

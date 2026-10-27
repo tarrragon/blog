@@ -1,7 +1,7 @@
 ---
 title: "9.11 高峰事件準備"
 date: 2026-05-12
-description: "活動、季節性流量、推廣事件的 capacity readiness 流程"
+description: "可預期峰值從 T-90 到 T-0 的準備時程：容量計畫、quota 申請、壓測、game day 與 pre-scaling 各排在事件前幾天、排在那裡的理由與項目之間的依賴，pre-scaling 的做法、watch room、event tier 分級與準備時間不夠時被壓縮的部分，以及事後 retro"
 weight: 11
 tags: ["backend", "performance", "capacity", "peak-event"]
 ---
@@ -28,19 +28,19 @@ tags: ["backend", "performance", "capacity", "peak-event"]
 
 ## T-90 → T-0 準備時程
 
-可預期極端峰值的完整準備時程：
+可預期極端峰值的完整準備時程。時程上的項目之間有輸入與輸出的依賴：一台主機在目標利用率下的處理量是容量計畫換算台數的輸入；容量計畫算出的台數是 quota 申請與 pre-scaling 規格的輸入，算出的峰值請求量是壓測要送出的請求量；壓測量到的膝點（請求量再往上加、延遲就開始上升的那一點，[Saturation Point](/backend/knowledge-cards/saturation-point/)）是降級觸發門檻的輸入。沒有台數的服務（按請求計費的 serverless），台數的位置換成同時執行數（峰值請求量 × 平均執行時間），quota 申請的是並行上限，膝點與降級門檻落在下游那一層（資料庫、外部 API）。目標利用率是膝點處理量的一個小於一的比例，目標利用率對應的處理量因此低於膝點；兩者之間留出的餘裕吸收秒級的波動與故障，也涵蓋降級開關生效之前負載爬升的量（[預知的大流量要加多大、編多少預算：從業務預估到擴容規格與費用區間的換算鏈、給決策者與會計的數字，以及每次活動之後的校準](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)〈從業務預估到台數：換算鏈、換算係數的來源與三點估計〉）。每個 T 點離事件多遠，取決於那一項的產出要交給哪幾項，以及它發現的狀況（壓測找到的瓶頸、被拒的 quota 申請、演練時沒有生效的降級）要多久修好；T-2 的 pre-scaling 另外是計費時數的取捨。
 
-**T-90 天**：流量 forecast + 容量計畫敲定。確認預期峰值倍數、確認 headroom 比例、確認跨 region / AZ 分布。產出 *容量計畫文件*。
+**T-90 天**：流量 forecast + 容量計畫敲定。確認峰值請求量：從業務預估經換算鏈算出，預估的誤差用保守、預期、樂觀三點估計帶著，各自換算出台數（[預知的大流量要加多大、編多少預算](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)〈從業務預估到台數：換算鏈、換算係數的來源與三點估計〉；沒有歷史峰值時的起步在同一篇〈每次活動之後的校準，以及沒有歷史資料時的起步〉）。確認 headroom 比例（[Headroom Budget](/backend/knowledge-cards/headroom-budget/)）：用三點估計帶預估的誤差時，headroom 只涵蓋秒級的波動與故障，不再把預估的誤差算進去一次。確認跨 region / AZ 分布。產出 *容量計畫文件*。容量計畫換算台數用的單台處理量沿用最近一次壓測量到的值；服務是新的、從來沒量過時，先用同一種機型做一次小規模的階梯加壓量出單台的值，再敲定容量計畫。T-14 的壓測量完之後回頭校正台數。
 
-**T-30 天**：基礎設施 quota 申請。雲端 instance limit、connection pool、API rate limit、DynamoDB throughput、Lambda concurrency 都要 *提前申請*、不能事件當天才發現 quota 不夠。AWS Infrastructure Event Management（IEM）等服務在這階段啟動。
+**T-30 天**：基礎設施 quota 申請。雲端 instance limit、connection pool、API rate limit、DynamoDB throughput、Lambda concurrency 都要 *提前申請*、不能事件當天才發現 quota 不夠。AWS Infrastructure Event Management（IEM）等服務在這階段啟動。查上限與申請調高的位置見 [雲端主控台的管理領域](/infra/cloud-providers/console-areas/)〈配額與限制：帳號最多能開多少〉。排在這裡的原因：業者不一定當場核准，也可能拒絕，而 T-14 的正式規模壓測也要用到這份 quota。申請時的台數還沒經過 T-14 壓測的校正，所以申請量取容量計畫的保守那一點，再加上活動中補容量的餘裕；quota 調高之後最大花費速度跟著變大，停損的門檻與信用卡額度要依新的值重算（[預知的大流量要加多大、編多少預算](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)〈從台數到預算：計費時數、計費模式、跟著用量計費的項目與付款時點〉）。壓測校正之後的保守點台數仍然超出已核准的 quota 時，T-14 之後要再申請一次，這一次能等核准的時間比 T-30 那一次短。申請被拒時，能開的台數停在已核准的 quota，超出的處理量交給降級、等候室或改活動形式（分批或錯開開放，壓低同一時段湧入的比例；同一篇〈給決策者的選項：規格、費用區間、不足時的後果、回退方式與適合的條件〉），不需要即時回應的寫入另外可以先進 queue（[Queue 緩衝](/operations/07-burst-traffic/queue-buffering/)）；這幾項本身也要準備時間，所以申請排在壓測與 game day 之前。
 
-**T-14 天**：第一輪 production-like 壓測。驗證在預期峰值的請求率下延遲與錯誤率是否仍在 SLO 內、找出第一輪 bottleneck。
+**T-14 天**：第一輪 production-like 壓測。用階梯加壓（ramp-up）把請求量逐步提高到預期峰值以上、量出各層的膝點（[規模拐點判斷](/operations/05-capacity-planning/scaling-inflection-point/)〈用 ramp-up 找膝點，不用單點壓測〉），驗證在預期峰值的請求率下延遲與錯誤率是否仍在 SLO 內、找出第一輪 bottleneck。排在這裡的原因：要留出修正瓶頸、再測一次的時間，量到的單台處理量也要回頭校正容量計畫的台數。資料庫這類瓶頸的修法（加索引、拆分讀寫、換規格）修完之後要重跑一次壓測。測試環境的資料量、快取命中率或依賴跟 production 不同時，量到的膝點會偏高；用 production traffic replay 或 shadow traffic 量到的比較接近 production（[9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)），代價是送出的是平常的流量組成，不是活動當天的組成。台數校正之後，增量費用照預算的算法重算，超出已核准的預算時在活動前送追加。
 
-**T-7 天**：完整 game day 演練。注入故障場景（DB failure、AZ outage、第三方 quota 耗盡）、驗證降級、failover、rollback 流程。修正最後問題、更新 runbook。
+**T-7 天**：完整 game day 演練。注入故障場景（DB failure、AZ outage、第三方 quota 耗盡）、驗證降級、failover、rollback 流程。修正最後問題、更新 runbook。降級的觸發門檻從 T-14 量到的膝點推出，所以 game day 排在壓測之後。門檻的預設值是：目標利用率對應的單台處理量 × 活動當天實際開得出的台數（quota 沒核准到計畫的台數時，用已核准的台數），讓降級在延遲開始上升之前生效；觸發點與膝點之間的餘裕，至少要涵蓋降級開關生效之前負載會爬升的量，開關要重新部署才生效時，觸發點要再往下移。測試環境的資料量、快取命中率或依賴跟 production 不同（T-14 那一項）時，膝點可能偏高，另外用 p99 延遲接近 SLO 當第二道觸發條件，兩道哪一道先到就先降級。演練時降級沒有觸發、或觸發之後沒有生效，T-7 到 T-2 之間還有時間修正。
 
-**T-2 天**：pre-scaling 開始。CDN cache pre-warm、Lambda provisioned concurrency 啟動、autoscaler scheduled 開始、DB capacity 預先 scale up。避免事件當天還在 boot。
+**T-2 天**：pre-scaling 開始。CDN cache pre-warm、Lambda provisioned concurrency 啟動、autoscaler scheduled 開始、DB capacity 預先 scale up。避免事件當天還在 boot。排在這裡的原因：加開的實例開得越早，建立時回傳容量不足、或加開之後發現規格不對時，越有時間換機型或換可用區；代價是計費時數從加開那一刻起算。快取與連線的預熱本身通常要 30 分鐘到 2 小時（下面〈Pre-scaling 策略〉的 pre-warm window），起點只依預熱與加開之後驗證規格的時間決定時，是事件前幾小時。也可以先建立容量預留（capacity reservation），確保當天開得出機器，再在事件前幾小時加開與預熱，預留從建立那一刻起計費。各種起點的費用算法在 [預知的大流量要加多大、編多少預算](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)〈從台數到預算：計費時數、計費模式、跟著用量計費的項目與付款時點〉。
 
-**T-0 day**：watch room 待命、runbook 開機可執行。所有相關 oncall 跨團隊聯合 channel、dashboard 集中、escalation path 清楚。
+**T-0 day**：watch room 待命、runbook 開機可執行。所有相關 oncall 跨團隊聯合 channel、dashboard 集中、escalation path 清楚。值班表在 T-0 之前排好；值班持續到事件結束之後、每秒請求數回到平常的水準並維持一段時間為止（流量有日週期時，觀察到隔天同一時段，才看得到回流的使用者），之後才縮回 pre-scaling 加開的實例。
 
 **T+7 天**：retro。對比預測 vs 實際、紀錄 incident 跟 near-miss、列下個事件要改的事。寫進 [06 cases](/backend/06-reliability/cases/) 或本模組 cases。
 
@@ -151,7 +151,7 @@ T-7 階段的核心活動、把 readiness 從計畫變實戰。
 **Major event**（季度行銷、新功能發布）：
 
 - pre-scaling + watch room
-- 簡化版 T-14 → T-0 流程
+- 簡化版流程：容量計畫與 quota 申請照樣要做（單台處理量可以沿用最近一次壓測的值），準備時間至少要排得進 quota 核准的等待；從 T-14 起的壓測與 game day 縮減輪數
 - 跨 team coordination
 
 **Critical event**（年度大促、Super Bowl、IPL）：
@@ -160,6 +160,8 @@ T-7 階段的核心活動、把 readiness 從計畫變實戰。
 - vendor IEM + game day
 - 24/7 watch room
 - C-level visibility
+
+事件的準備時間比它所屬等級需要的時間短時（例如從公布到舉辦只有一週的 Major event），項目之間的依賴不變，準備的團隊能壓縮的是每一項之後的修正時間；quota 核准、業者的事件支援這類由業者決定的等待時間壓縮不了，排不進去時那一項整個拿不到。壓測測出資料庫的瓶頸時，修完之後重跑壓測的時間排不進去，降級門檻沿用最近一次量到的膝點，而那一次之後改過的查詢與依賴會讓這個值偏離現況，所以 p99 延遲接近 SLO 的那一道觸發（T-7 那一項）照樣要設。來不及壓測時，另一條路是用偏高的係數加開，代價是規格與預算變大（[預知的大流量要加多大、編多少預算](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)〈每次活動之後的校準，以及沒有歷史資料時的起步〉）。超出處理量的請求交給降級（關掉推薦這類功能，減少每個請求的查詢）、改活動形式或等候室；降級開關與等候室本身也要準備時間，準備時間短時能用的只有已經建好、演練過的那幾項。等候室的做法見 [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/)〈准入控制：虛擬等候室（virtual waiting room）、waitlist 與事前註冊〉。
 
 對應案例：[FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) regular game → playoff → Super Bowl 三 tier — NFL 賽季 baseline → playoffs 升 2-3x → championship 升 4-5x → Super Bowl 升 5-10x、每 tier 對應不同準備強度。
 
@@ -210,3 +212,4 @@ T+7 retro 是讓 readiness 持續改進的關鍵。
 - [Game Day](/backend/knowledge-cards/game-day/)
 - [Peak Forecast](/backend/knowledge-cards/peak-forecast/)
 - [Headroom Budget](/backend/knowledge-cards/headroom-budget/)
+- [Saturation Point](/backend/knowledge-cards/saturation-point/)
