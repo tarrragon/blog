@@ -2,13 +2,15 @@
 title: "新增頂層 content 資料夾要同步首頁 _index.md 入口"
 date: 2026-05-20
 weight: 139
-description: "Hugo 不會 auto-list 頂層資料夾、首頁的模組清單是 content/_index.md 的手動 curated markdown。新增 content/<module>/ 後若沒同步加入口、模組在首頁完全不可發現；讀者只能靠搜尋或直接打 URL 才進得去。本卡把『新增頂層資料夾 + 首頁入口』綁成同 commit 的雙生動作、避免下次再漏。是 #44 SSoT 在『首頁清單』維度 + #97 metadata surface 在『上層索引』維度的具體案例。"
+description: "Hugo 不會 auto-list 頂層資料夾、首頁的模組清單是 content/_index.md 的手動 curated markdown。新增 content/<module>/ 後若沒同步加入口、模組在首頁完全不可發現；讀者只能靠搜尋或直接打 URL 才進得去；大分類（如 content/devops/）底下新增或收進來的教學模組，入口同樣要寫進首頁那個大分類底下的子項。本卡把『新增頂層資料夾 + 首頁入口』綁成同 commit 的雙生動作、避免下次再漏。是 #44 SSoT 在『首頁清單』維度 + #97 metadata surface 在『上層索引』維度的具體案例。"
 tags: ["report", "事後檢討", "工程方法論", "原則", "Hugo", "教材結構"]
 ---
 
 ## 核心原則
 
 新增頂層 content 資料夾的同個 commit、必須同步把該模組入口加進首頁 `content/_index.md` 的對應分類段。Hugo 不會自動把 content/ 下的頂層目錄列在首頁、首頁完全靠 `content/_index.md` 的 markdown 內容渲染。模組內部建得再完整、首頁沒入口 = 該模組對新讀者不可發現。
+
+大分類（幾個教學模組收進同一個上層資料夾，例如 `content/devops/` 收了 going-live、infra、ci、operations、monitoring）底下的教學模組也是首頁入口：`content/_index.md` 把它列成那個大分類底下的子項。所以在大分類底下新增教學模組時，同一個 commit 改兩處：大分類 `_index.md` 列教學模組的那張表，以及首頁裡那個大分類底下的子項。把既有的頂層模組收進大分類時，首頁那一條入口從頂層的分類段移到大分類底下，連結改成新網址。
 
 | 動作                                              | 是否會在首頁顯示                 |
 | ------------------------------------------------- | -------------------------------- |
@@ -50,8 +52,10 @@ business: 新增商業教材模組 + 首頁入口
 `docs/rules/writing-process.md`〈完稿檢查清單〉明列：
 
 ```text
-- [ ] 新增頂層 content/<module>/ 資料夾時、已同步更新 content/_index.md 對應分類段
+- [ ] 新增頂層資料夾或大分類底下的教學模組時，入口已照 content-folders.md〈寫之前要做的查核〉的「新增頂層資料夾或大分類底下的教學模組時」那一項登記。
 ```
+
+（清單項原本只寫頂層資料夾；大分類建立之後改成上面這一句，登記的位置寫在它指向的規則裡。）
 
 寫完模組準備 commit 前、過 checklist 時會被 catch。
 
@@ -103,8 +107,10 @@ backend / llm / ci 等過去新模組可能也遇過相同 gap、但當時被建
 - **適用範圍**：
   - 新增 `content/<module>/` 頂層教學資料夾（Backend / LLM / CI / Business / 未來新模組）
   - 把既有頂層資料夾「升格」成正式教學系列（例如從草稿區抽出獨立 surface）
+  - 在大分類底下新增教學模組（例如 `content/devops/<module>/`）：首頁入口是大分類底下的子項，另外登記在大分類 `_index.md` 列教學模組的表
+  - 把既有頂層模組收進大分類：首頁的入口從頂層分類段移到大分類底下的子項
 - **不適用**：
-  - 新增現有模組的子章節（例如 `content/backend/01-database/` 下新檔）— 這由模組自己的 `_index.md` 路由、不涉及首頁
+  - 新增現有模組的子章節（例如 `content/backend/01-database/`、`content/devops/infra/03-network-foundation/` 下新檔）— 這由模組自己的 `_index.md` 路由、不涉及首頁
   - 新增 `content/posts/` 下單篇文章 — posts 是 chronological feed、首頁分類段不負責列每篇文章
   - 新增 `content/work-log/` 或 `content/report/` 下單張卡片 — 同上、這些是已建立的 surface、清單在各自 `_index.md`
 - **邊界**：本卡只處理「首頁入口」一個 surface；其他上游引用點（例如 sibling 模組 `_index.md` 提及本模組、`AGENTS.md` 提及本模組、`CLAUDE.md` 提及本模組）是同 pattern 的延伸、但個別 cross-link 要靠該位置自己的 review 維護
