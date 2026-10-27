@@ -105,7 +105,10 @@ fi
 # alias 等於另一頁的網址時 Hugo 不發警告（頁面直接蓋過 alias，舊網址導向那一頁），cards 也不讀 aliases。
 # 搬移之後空出來的舊網址前綴，任何人在那裡新建一頁都會靜靜蓋掉 alias，所以每次動到 content/ 都查
 # （content-folder-migration skill 的驗證表與 bin/alias-check 的檔頭）。
-if git diff --cached --name-only | grep -q '^content/'; then
+# 先存進變數再交給 grep：管線寫法在 set -o pipefail 下，grep -q 找到第一筆就結束，staged 的檔案多時
+# git diff 收到 SIGPIPE（exit 141），整條判成假，這一步就被靜默跳過。
+staged_names=$(git diff --cached --name-only)
+if grep -q '^content/' <<< "$staged_names"; then
     echo "[pre-commit] alias-check"
     if ! bin/alias-check; then
         echo "[pre-commit] alias collisions present; see bin/alias-check output above" >&2
