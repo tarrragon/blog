@@ -2,7 +2,6 @@
 title: "監控案例庫的來源與預期案例：JSONL 查詢效能、寫入 buffer、SDK 離線緩衝、跨平台時間戳、錯誤去重、遮罩誤判、聚合查詢掃描量"
 date: 2026-10-27
 description: "想知道監控案例庫收錄哪一類案例、案例從哪裡來，或想先看實作 SDK 與 Collector 時預期會遇到哪些狀況、各自在什麼條件下出現時讀"
-weight: 1
 tags: ["monitoring", "case-study"]
 ---
 
