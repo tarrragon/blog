@@ -2,7 +2,7 @@
 title: "開發環境成本控制"
 date: 2026-07-03
 description: "壓非 production 環境的隱形浪費時，用排程關機、用完即拆的 ephemeral 環境、CI 跑 spot、以及 per-team 成本上限"
-weight: 4
+weight: 5
 tags: ["devops", "cost-management", "dev-environment", "auto-shutdown", "spot"]
 ---
 
@@ -36,5 +36,6 @@ CI 跟批次工作是 spot instance 的理想場景。spot 便宜（單位成本
 
 - CI 用的 spot、spot 的中斷風險怎麼管 → [模組五 成本模型](/operations/05-capacity-planning/cost-model/)
 - per-team 上限配的歸因與告警地基 → [成本監控與告警](/operations/08-cost-management/cost-monitoring/)
+- 上限的值怎麼從每月能接受的花費、費用訊號的延遲與配額推出來，超過時停到哪一層 → [租用雲端主機之前的費用規劃：費用訊號的延遲、停止之前的最大超支、扣款的信用卡額度、配額與預算門檻的計算，以及停損停到哪一層](/operations/08-cost-management/spend-planning-before-renting/)
 - 上限在 GCP 上由哪些機制執行（預算警示、強制執行支出上限、自動停用帳單）與各自的反應時間 → [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)
 - ephemeral 環境要能完全 IaC 重現的前提 → [infra 治理好習慣](/infra/08-governance-habits/)

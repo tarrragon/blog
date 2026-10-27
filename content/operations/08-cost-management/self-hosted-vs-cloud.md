@@ -2,7 +2,7 @@
 title: "自架 vs 雲端的成本交叉點"
 date: 2026-07-03
 description: "判斷該自架還是用雲端/商業方案時，看兩條成本曲線的交叉點、部署光譜的漸進選項、以及人力與 lock-in 這些不在帳單上的成本"
-weight: 5
+weight: 6
 tags: ["devops", "cost-management", "self-hosted", "vendor-lock-in", "crossover"]
 ---
 

@@ -39,4 +39,5 @@ tags: ["devops", "capacity-planning", "peak-estimation", "safety-factor", "headr
 - 峰值估算的輸入——流量模型怎麼建 → [流量模型建立](/operations/05-capacity-planning/traffic-model/)
 - 安全係數背後的飽和曲線、膝點怎麼找 → [規模拐點判斷](/operations/05-capacity-planning/scaling-inflection-point/)
 - 用壓測驗證系統撐不撐得住估出來的峰值 → [壓力測試工具與方法](/operations/05-capacity-planning/load-testing-tools/)
+- 從業務預估換算成擴容規格與預算、交給決策者與會計，以及活動後怎麼校準集中比例、每人請求數、每台處理量與單位請求成本 → [預知的大流量要加多大、編多少預算：從業務預估到擴容規格與費用區間的換算鏈、給決策者與會計的數字，以及每次活動之後的校準](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)
 - 突發流量的即時應對（估不到的爆量怎麼撐）→ [模組七 突發流量](/operations/07-burst-traffic/)

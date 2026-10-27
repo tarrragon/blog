@@ -175,6 +175,7 @@ Headroom 是容量規劃的安全邊界，而不是 over-provisioning 浪費。�
 - 下游：[9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/)（容量翻成成本）
 - 下游：[9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)
 - 跨模組：[05 部署平台模組](/backend/05-deployment-platform/) autoscaler 實作
+- 跨模組：[預知的大流量要加多大、編多少預算：從業務預估到擴容規格與費用區間的換算鏈、給決策者與會計的數字，以及每次活動之後的校準](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)（預測誤差改用三點估計帶著走時 headroom 怎麼取，以及容量換成給會計的預算）
 
 ## 既建知識卡片
 

@@ -2,7 +2,7 @@
 title: "容器化資源設計"
 date: 2026-07-03
 description: "把容量規劃落到容器上時，怎麼定 memory 與 CPU 限制不觸發 OOMKill 或 throttle、以及 overlay filesystem 對高頻寫入的 I/O 影響"
-weight: 6
+weight: 7
 tags: ["devops", "capacity-planning", "container", "docker", "resource-limit", "oomkill"]
 ---
 

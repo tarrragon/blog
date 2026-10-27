@@ -16,7 +16,7 @@ tags: ["infra", "cloud-providers", "vm", "storage", "block-volume"]
 
 ## 開機磁碟的大小
 
-開機磁碟的預設大小由映像檔決定，Oracle Cloud 的 Linux 平台映像預設是 50 GB。建立頁可以勾選自訂大小，範圍是 50 GB 到 32 TB，且不能小於映像檔的預設值。免費額度按磁碟容量計算時，加大開機磁碟會直接吃掉額度：Oracle Cloud 的 Always Free（不會到期的免費額度）給的是開機磁碟與區塊磁碟合計 200 GB，一台主機的開機磁碟加大到 200 GB，第二台主機的開機磁碟就超出額度。超出之後的結果依帳號狀態而定，見 [Oracle Cloud 的帳號結構與 home region](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉；手上已經用掉多少，到區塊儲存服務的開機磁碟與區塊磁碟清單把每顆的大小加起來。
+開機磁碟的預設大小由映像檔決定，Oracle Cloud 的 Linux 平台映像預設是 50 GB。建立頁可以勾選自訂大小，範圍是 50 GB 到 32 TB，且不能小於映像檔的預設值。免費額度按磁碟容量計算時，加大開機磁碟會直接吃掉額度：Oracle Cloud 的 Always Free（不會到期的免費額度）給的是開機磁碟與區塊磁碟合計 200 GB，一台主機的開機磁碟加大到 200 GB，第二台主機的開機磁碟就超出額度。Oracle Cloud 在付費帳戶新建一顆開機磁碟時，判定免費與否的單位是整顆磁碟：放不進剩餘額度的那一顆整顆不算免費，不是只有超出的那幾 GB（2026-10-27 實測，預設效能等級、home region；把既有的免費磁碟加大到超過剩餘額度、或另建資料磁碟時怎麼算，沒有測。見 [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈費用與額度：A1、開機磁碟、出站流量與 NAT gateway〉）。超出之後的結果依帳號狀態而定，見 [Oracle Cloud 的帳號結構與 home region：tenancy、Always Free 的範圍與主控台登入欄位](/infra/cloud-providers/oracle-cloud/account-and-home-region/) 的〈超出 Always Free 額度時：試用中、未升級與付費帳戶各自的結果〉；手上已經用掉多少，到區塊儲存服務的開機磁碟與區塊磁碟清單把每顆的大小加起來。
 
 磁碟的大小**只能加大、不能縮小**。Oracle Cloud 支援在主機開著的時候線上加大，加大之後要在作業系統裡把分割區與檔案系統延伸到新的大小，作業系統才用得到新增的空間：一般 Linux 用 `growpart` 延伸分割區，再依檔案系統用 `resize2fs`（ext4）或 `xfs_growfs`（XFS）延伸檔案系統，Oracle Linux 的平台映像另附一支 `oci-growfs` 一次做完。所以建立時先用預設大小，空間不夠再加；一開始開得太大，之後想縮回去只能建新磁碟、把資料搬過去。
 
@@ -48,7 +48,7 @@ VPU 另外計費：Lower Cost 只收儲存費，其餘等級在儲存費之外�
 - **Google Cloud**：開機磁碟預設跟著主機一起刪除，建立頁開機磁碟的 Deletion rule 預設是 Delete disk。
 - **AWS**：建立主機時一起掛上的根磁碟預設跟著主機一起刪除（`DeleteOnTermination` 預設為 true，這個值來自 AMI 的設定）；之後另外掛上的資料磁碟預設保留。
 
-在 Oracle Cloud 上刪除實驗機時，要嘛勾選刪除開機磁碟，要嘛在之後到區塊儲存服務的開機磁碟清單確認有沒有留下不要的磁碟。保留的磁碟是一個仍然存在的資源。官方的終止說明沒有寫它是否計費，而 Always Free 頁寫明 200 GB 算的是開機磁碟與區塊磁碟的合計，額度用完時要刪掉主機與它的開機磁碟才能空出空間；所以留下來的開機磁碟繼續佔著額度，額度用完之後再建的磁碟就超出額度。
+在 Oracle Cloud 上刪除實驗機時，要嘛勾選刪除開機磁碟，要嘛在之後到區塊儲存服務的開機磁碟清單確認有沒有留下不要的磁碟。保留的磁碟是一個仍然存在的資源。官方的終止說明沒有寫它是否計費，而 Always Free 頁寫明 200 GB 算的是開機磁碟與區塊磁碟的合計，額度用完時要刪掉主機與它的開機磁碟才能空出空間；所以留下來的開機磁碟繼續佔著額度，之後再建的磁碟放不進剩下的額度時就整顆超出額度（判定以整顆磁碟為單位，實測連結在〈開機磁碟的大小〉）。
 
 這類主機刪了、自己卻還存在而沒有人記得的資源，叫孤兒資源（orphaned resource），各家的帳單上都會出現，見 [計費模式理解](/operations/08-cost-management/billing-models/) 的〈隱藏成本：帳單上的意外〉。Oracle Cloud 的這個預設最容易在反覆建刪實驗機時累積起來。用過 Google Cloud、AWS 的人，習慣刪了主機就等於刪了開機磁碟；在 Oracle Cloud 上每刪一台都留下一顆 50 GB 的開機磁碟，而主機清單上已經看不到它，它列在另一個選單（區塊儲存服務的開機磁碟清單），額度還沒用完時帳單上也不會出現任何費用。額度扣的是每顆磁碟以 GiB 進位的大小，預設的 50 GB 開機磁碟扣 47 GB（46.6 GiB 進位，2026-10-27 查用量推論，查法在 [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈費用與額度：A1、開機磁碟、出站流量與 NAT gateway〉），建刪四輪之後這些磁碟佔掉 188 GB，第五台主機的開機磁碟就超出額度，這時才要回頭逐顆辨認哪些磁碟可以刪。刻意終止主機、保留磁碟以便之後重建的情形，什麼時候比停止主機或全部刪除划算，見 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)〈暫停時保留的範圍：只停服務、停止主機、終止主機、全部刪除〉。
 

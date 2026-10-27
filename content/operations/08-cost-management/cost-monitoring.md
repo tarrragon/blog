@@ -2,7 +2,7 @@
 title: "成本監控與告警"
 date: 2026-07-03
 description: "要讓雲端帳單不失控時，靠歸因把每筆花費追到擁有者、用異常告警抓突增、以及選 showback 或 chargeback 讓成本有人負責"
-weight: 3
+weight: 4
 tags: ["devops", "cost-management", "cost-monitoring", "showback", "chargeback"]
 ---
 
@@ -16,7 +16,7 @@ tags: ["devops", "cost-management", "cost-monitoring", "showback", "chargeback"]
 
 ## 異常告警：抓突增，然後定位
 
-成本監控要主動、不能等月底帳單。做法是設異常告警——日均花費超過基線某個幅度就通知，把「這個月怎麼這麼貴」的驚訝提前到花費突增之後的一天左右：告警讀的是帳單資料，而帳單資料本身落後數小時、有時超過一天（GCP 上的實測見 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)的〈費用失控的來源與反應時間〉）。雲端提供成本異常偵測（如 AWS 的 anomaly monitor，可設每日頻率、超過某個絕對影響就發通知），這套 IaC 也由 infra 的治理地基提供，成本管理引用它、聚焦在告警觸發後的處置。
+成本監控要主動、不能等月底帳單。做法是設異常告警——日均花費超過基線某個幅度就通知，把「這個月怎麼這麼貴」的驚訝提前到花費突增之後的一天左右：告警讀的是帳單資料，而帳單資料本身落後數小時、有時超過一天（三家的延遲與出處見 [租用雲端主機之前的費用規劃：費用訊號的延遲、停止之前的最大超支、扣款的信用卡額度、配額與預算門檻的計算，以及停損停到哪一層](/operations/08-cost-management/spend-planning-before-renting/)〈費用訊號的延遲：從資源建立到扣款〉；GCP 上的實測見 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)的〈費用失控的來源與反應時間〉）。雲端提供成本異常偵測（如 AWS 的 anomaly monitor，可設每日頻率、超過某個絕對影響就發通知），這套 IaC 也由 infra 的治理地基提供，成本管理引用它、聚焦在告警觸發後的處置。
 
 告警的價值在於它配上歸因能立刻定位。成本突增的三個常見來源都很具體：開發者開了大型機器測完忘了關、自動擴縮的上限設太高在尖峰長出一堆機器、NAT gateway 的出站流量灌爆帳單。告警響的時候，因為資源都有標記，可以馬上看出是哪個團隊的哪類資源在漲，而不是對著一個總數乾瞪眼。抓到之後的處置就接回前面幾章：忘了關的關掉、規格過大的做 [right-sizing](/operations/08-cost-management/right-sizing/)、可中斷的批次轉 spot。
 
@@ -35,4 +35,5 @@ tags: ["devops", "cost-management", "cost-monitoring", "showback", "chargeback"]
 - tag schema、成本分攤標籤啟用、anomaly monitor 的 IaC 地基 → [infra 治理好習慣](/infra/08-governance-habits/)
 - 告警抓到過度配置之後怎麼調規格 → [Right-sizing](/operations/08-cost-management/right-sizing/)
 - 非 production 環境的成本怎麼系統性壓下去 → [開發環境成本控制](/operations/08-cost-management/dev-environment-cost/)
+- 告警之外，花費超過門檻時由配額、預算門檻與停損層級把費用停住，各個值怎麼從每月能接受的上限推出來 → [租用雲端主機之前的費用規劃：費用訊號的延遲、停止之前的最大超支、扣款的信用卡額度、配額與預算門檻的計算，以及停損停到哪一層](/operations/08-cost-management/spend-planning-before-renting/)
 - 成本 review 對應的容量檢討 → [模組五 容量規劃](/operations/05-capacity-planning/)

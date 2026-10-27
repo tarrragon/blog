@@ -57,4 +57,5 @@ Error storm 的矛盾：error 事件是 debug 最需要的資料，但 storm 時
 - 突發時的降級策略 → [降級策略](/operations/07-burst-traffic/degradation-strategy/)
 - 不可預期突發依來源（真人需求、應用層濫用流量、體積型攻擊）分流的處置，以及負載卸除、等候室與流量清洗 → [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/)
 - Queue 做 burst 緩衝 → [Queue 緩衝](/operations/07-burst-traffic/queue-buffering/)
+- 可預期突發的擴容規格與預算怎麼從業務預估算出來、做成給決策者與會計的數字 → [預知的大流量要加多大、編多少預算：從業務預估到擴容規格與費用區間的換算鏈、給決策者與會計的數字，以及每次活動之後的校準](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)
 - 不同規模的應對方案 → [規模分級應對表](/operations/07-burst-traffic/scale-tier-response/)

@@ -36,7 +36,7 @@ rg -n "[一二三四五六七八九]家|其他兩家|另兩家|Google Cloud 與 
 ## 跟其他模組的關係
 
 - → [模組三：網路地基](/infra/03-network-foundation/)：管理通道的三層模型，各家實作的實測對照它
-- → [運行期維運的成本管理](/operations/08-cost-management/)：成本監控與計費模型；預算警示的中立篇還在那個模組的 Backlog，要不要建停損，依據是各家試用結束後會不會自動開始計費
+- → [模組八：成本管理](/operations/08-cost-management/)：成本監控與計費模型；不分業者的預算門檻、信用卡額度、配額當費用上限與停損層級的推算在 [租用雲端主機之前的費用規劃：費用訊號的延遲、停止之前的最大超支、扣款的信用卡額度、配額與預算門檻的計算，以及停損停到哪一層](/operations/08-cost-management/spend-planning-before-renting/)；要不要建停損，依據是各家試用結束後會不會自動開始計費
 - → [接手維運](/infra/takeover/)：用主控台建好的資源要收進 IaC 時的匯入流程
 - → [主機形態光譜](/going-live/hosting-spectrum/)：選 IaaS 之前先決定要管多少
 

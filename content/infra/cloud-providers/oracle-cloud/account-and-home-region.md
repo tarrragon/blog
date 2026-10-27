@@ -72,9 +72,9 @@ E2.1.Micro 是 Always Free 的另一種機型。官方 Always Free 頁對它的�
 
 - **試用中**：超出的部分由試用金支付，帳單上看不到費用。試用結束時，用試用金建的付費資源會被回收，A1 合計超額時全部 A1 主機會被停用。
 - **試用結束而沒有升級**：官方 Always Free 頁寫明，用不在 Always Free 範圍內的映像建主機，帳號必須是付費帳戶、或是還有試用金餘額的 Free Trial 帳號（原文「you must have a paid account or a Free Trial account with available credits」）；試用結束而沒有升級的帳號兩者都不是，所以超出額度的運算資源建不了，運算以外的資源這一頁沒有逐字寫；Free Tier 頁另外寫明，不升級的話申請時填的信用卡不會被扣款。
-- **升級成付費帳戶（Pay As You Go）**：Always Free 的部分仍然不收費，超出的部分照一般價格計費。A1 的免費量是每月 3,000 OCPU 小時、18,000 GB 小時（相當於 4 OCPU、24 GB 整個月開著），出處是 2026-10-26 讀到的 Oracle 的 Compute 價目頁，見〈Always Free 的額度與它綁在 home region 上的範圍〉的 A1 那一項。
+- **升級成付費帳戶（Pay As You Go）**：Always Free 的部分仍然不收費，超出的部分照一般價格計費。區塊磁碟的「超出的部分」以整顆磁碟計：沒有用 compartment quota 另設上限時，合計超過 200 GB 的建立請求不會被擋下，新建而放不進剩餘額度的那一顆整顆不算免費額度（2026-10-27 實測，見 [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈費用與額度：A1、開機磁碟、出站流量與 NAT gateway〉）。A1 的免費量是每月 3,000 OCPU 小時、18,000 GB 小時（相當於 4 OCPU、24 GB 整個月開著），出處是 2026-10-26 讀到的 Oracle 的 Compute 價目頁，見〈Always Free 的額度與它綁在 home region 上的範圍〉的 A1 那一項。
 
-站內各篇寫到「超出免費額度」的地方，指的都是這三種結果。升級之前先設好預算警示，見 [雲端主控台的管理領域](/infra/cloud-providers/console-areas/) 的〈帳單與成本：花了多少、會花多少〉。
+站內各篇寫到「超出免費額度」的地方，指的都是這三種結果。升級之前先設好預算警示，見 [雲端主控台的管理領域](/infra/cloud-providers/console-areas/) 的〈帳單與成本：花了多少、會花多少〉；升級時的 100 美元預先授權、扣款的信用卡要留多少額度、預算門檻與配額怎麼從每月能接受的上限推出來，見 [租用雲端主機之前的費用規劃：費用訊號的延遲、停止之前的最大超支、扣款的信用卡額度、配額與預算門檻的計算，以及停損停到哪一層](/operations/08-cost-management/spend-planning-before-renting/)。
 
 ## 選 home region 時要先確認的事
 

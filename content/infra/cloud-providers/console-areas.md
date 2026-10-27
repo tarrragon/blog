@@ -46,7 +46,7 @@ tags: ["infra", "cloud-providers", "console", "iam", "cost"]
 
 負責付款的人在這個領域查看帳單與付款方式、依服務與分組分析費用、設定預算與警示。新帳號開好之後要來這裡設一個預算警示，讓費用超過預期時有人收到通知。帳號已經升級成付費帳戶時，超出免費額度或用到非免費機型的費用會直接扣款，所以這類帳號一定要設。
 
-Oracle Cloud 沒有升級的帳號在試用結束後不會開始計費，預算警示在這種帳號上的用處是在試用期間提早看到哪些資源不在免費額度內。成本監控與異常告警見 [運行期維運的成本管理](/operations/08-cost-management/)；預算警示的門檻依據目前只寫在 Google Cloud 的 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)，門檻比例、建立指令與從預算通知觸發自動停損的建置在 [GCP 預算警示與停損開關的實測紀錄](/infra/cloud-providers/gcp/hands-on/budget-killswitch-walkthrough/)。帳單上已經出現費用、要找出是哪個資源在計費時，在成本分析頁依服務與資源拆開；免費額度的帳號最常見的來源是刪除主機後留下的開機磁碟（[磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/infra/cloud-providers/vm-options/storage/) 的〈刪除（終止）主機時開機磁碟的預設去留〉）、選到不在免費額度內的機型，以及 AWS 對公開 IPv4 位址的計費。免費額度的規則見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
+Oracle Cloud 沒有升級的帳號在試用結束後不會開始計費，預算警示在這種帳號上的用處是在試用期間提早看到哪些資源不在免費額度內。成本監控與異常告警見 [運行期維運的成本管理](/operations/08-cost-management/)；預算門檻怎麼從每月能接受的上限與費用訊號的延遲推出來、扣款的信用卡要留多少額度，在 [租用雲端主機之前的費用規劃：費用訊號的延遲、停止之前的最大超支、扣款的信用卡額度、配額與預算門檻的計算，以及停損停到哪一層](/operations/08-cost-management/spend-planning-before-renting/)；Google Cloud 各機制的範圍在 [GCP 上的雲端費用失控防護](/infra/cloud-providers/gcp/spend-protection-gcp-budget-killswitch/)，門檻比例、建立指令與從預算通知觸發自動停損的建置在 [GCP 預算警示與停損開關的實測紀錄](/infra/cloud-providers/gcp/hands-on/budget-killswitch-walkthrough/)。帳單上已經出現費用、要找出是哪個資源在計費時，在成本分析頁依服務與資源拆開；免費額度的帳號最常見的來源是刪除主機後留下的開機磁碟（[磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/infra/cloud-providers/vm-options/storage/) 的〈刪除（終止）主機時開機磁碟的預設去留〉）、選到不在免費額度內的機型，以及 AWS 對公開 IPv4 位址的計費。免費額度的規則見 [雲端免費額度與小型主機的收費比較](/infra/cloud-providers/pricing-comparison/)。
 
 ## 監控、日誌與告警：系統現在的狀態
 

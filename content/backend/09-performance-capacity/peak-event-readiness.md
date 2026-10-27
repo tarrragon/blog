@@ -201,6 +201,7 @@ T+7 retro 是讓 readiness 持續改進的關鍵。
 - 跨模組：[5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/)（CDN pre-warm / origin protection 是 T-2 核心）
 - 平行：[9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/)（沒有準備窗口時的流量來源辨識、擴展緩衝、負載卸除與准入控制）
 - 跨模組：[06.20 experiment safety boundary](/backend/06-reliability/experiment-safety-boundary/) / [08 事故處理模組](/backend/08-incident-response/)
+- 跨模組：[預知的大流量要加多大、編多少預算：從業務預估到擴容規格與費用區間的換算鏈、給決策者與會計的數字，以及每次活動之後的校準](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)（T-90 容量計畫裡的規格與預算：從業務預估換算峰值請求量、各層台數與費用區間，以及給決策者的選項與給會計的數字）
 
 ## 既建知識卡片
 

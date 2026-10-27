@@ -2,7 +2,7 @@
 title: "Right-sizing"
 date: 2026-07-03
 description: "把配置規格調到貼近實際用量時，怎麼找出過度配置的資源、downsizing 不能砍過膝點、以及機型世代與 reserved 過剩的回收"
-weight: 2
+weight: 3
 tags: ["devops", "cost-management", "right-sizing", "utilization", "downsizing"]
 ---
 

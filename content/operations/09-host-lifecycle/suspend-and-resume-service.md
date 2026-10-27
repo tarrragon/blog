@@ -60,7 +60,7 @@ tags: ["operations", "maintenance", "cost-management", "dns", "cdn"]
 
 在作業系統裡下 `shutdown` 關機，雲端業者那一端記錄的主機狀態不一定跟著變成停止；Oracle Cloud 官方文件〈[Resource Billing for Stopped Instances](https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/resource-billing-stopped-instances.htm)〉寫明這樣關機不會停止計費，要從主控台或 API 停止主機。
 
-要確認暫停期間不會被扣費，得在暫停前把這幾類逐項列出來、每一項決定保留或刪除：主控台的主機清單只列主機，看不到這些分開計費的資源；成本分析與預算告警看得到它們，但要等業者的計費資料延遲之後才出現，延遲多久查各家成本分析頁的說明。
+要確認暫停期間不會被扣費，得在暫停前把這幾類逐項列出來、每一項決定保留或刪除：主控台的主機清單只列主機，看不到這些分開計費的資源；成本分析與預算告警看得到它們，但要等業者的計費資料延遲之後才出現，三家的延遲與出處整理在 [租用雲端主機之前的費用規劃：費用訊號的延遲、停止之前的最大超支、扣款的信用卡額度、配額與預算門檻的計算，以及停損停到哪一層](/operations/08-cost-management/spend-planning-before-renting/)〈費用訊號的延遲：從資源建立到扣款〉。
 
 ## 暫停期間仍指向這台主機的外部設定
 

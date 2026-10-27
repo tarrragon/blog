@@ -1,7 +1,7 @@
 ---
 title: "模組八：成本管理"
 date: 2026-06-20
-description: "雲端帳單怎麼不失控 — reserved instance、spot instance、right-sizing 與成本監控告警；預算警示與停損開關目前只有 GCP 的建置篇，放在雲端業者模組"
+description: "雲端帳單怎麼不失控 — reserved instance、spot instance、right-sizing 與成本監控告警；預算門檻、配額與停損層級的推算在本模組，各家的建置篇目前只有 GCP，放在雲端業者模組"
 weight: 8
 tags: ["devops", "cost-management", "cloud-cost", "reserved-instance", "spot-instance"]
 ---
@@ -10,13 +10,14 @@ tags: ["devops", "cost-management", "cloud-cost", "reserved-instance", "spot-ins
 
 ## 章節
 
-| 章節                                                                             | 回答什麼問題                                        |
-| -------------------------------------------------------------------------------- | --------------------------------------------------- |
-| [計費模式理解](/operations/08-cost-management/billing-models/)                   | 帳單維度、承諾模式、egress 這類隱藏成本             |
-| [Right-sizing](/operations/08-cost-management/right-sizing/)                     | 找過度配置、downsizing 不能砍過膝點、機型世代       |
-| [成本監控與告警](/operations/08-cost-management/cost-monitoring/)                | 歸因、異常告警、showback vs chargeback              |
-| [開發環境成本控制](/operations/08-cost-management/dev-environment-cost/)         | 排程關機、ephemeral 環境、CI 跑 spot、per-team 上限 |
-| [自架 vs 雲端的成本交叉點](/operations/08-cost-management/self-hosted-vs-cloud/) | 兩條成本曲線、部署光譜、人力與 lock-in              |
+| 章節                                                                                                                                                                                        | 回答什麼問題                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| [計費模式理解](/operations/08-cost-management/billing-models/)                                                                                                                              | 帳單維度、承諾模式、egress 這類隱藏成本                                                  |
+| [租用雲端主機之前的費用規劃：費用訊號的延遲、停止之前的最大超支、扣款的信用卡額度、配額與預算門檻的計算，以及停損停到哪一層](/operations/08-cost-management/spend-planning-before-renting/) | 費用訊號各落後多久、停止之前的最大超支、信用卡額度、配額與預算門檻怎麼算、停損停到哪一層 |
+| [Right-sizing](/operations/08-cost-management/right-sizing/)                                                                                                                                | 找過度配置、downsizing 不能砍過膝點、機型世代                                            |
+| [成本監控與告警](/operations/08-cost-management/cost-monitoring/)                                                                                                                           | 歸因、異常告警、showback vs chargeback                                                   |
+| [開發環境成本控制](/operations/08-cost-management/dev-environment-cost/)                                                                                                                    | 排程關機、ephemeral 環境、CI 跑 spot、per-team 上限                                      |
+| [自架 vs 雲端的成本交叉點](/operations/08-cost-management/self-hosted-vs-cloud/)                                                                                                            | 兩條成本曲線、部署光譜、人力與 lock-in                                                   |
 
 ## 各家業者的實作
 
@@ -26,9 +27,9 @@ tags: ["devops", "cost-management", "cloud-cost", "reserved-instance", "spot-ins
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                                                                                            | 類型 | 前置條件                                                                                           | 規模 |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------- | ---- |
-| vendor 中立的費用失控防護篇：從〈GCP 上的雲端費用失控防護〉抽出費用失控的來源與反應時間、預算警示的門檻依據、解除帳單連結與只停止花錢的資源兩種處置的判斷，GCP 篇只留實作與實測 | 主章 | 無；inbound：cloud-providers 的 pricing-comparison 與 console-areas 指向本模組承接預算與停損的設計 | 中   |
+| 項目                                                                                                                                                                                                                                                | 類型 | 前置條件                                        | 規模 |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ----------------------------------------------- | ---- |
+| 〈GCP 上的雲端費用失控防護〉〈費用失控的來源與反應時間〉裡不分業者的部分（兩類來源、不經過帳務資料的限制）搬進〈租用雲端主機之前的費用規劃〉，新篇與 cost-monitoring 改連新篇；GCP 篇隨後縮成 GCP 的實作，那一項登記在雲端業者 GCP 資料夾的 Backlog | 主章 | 無；inbound：GCP 篇〈費用失控的來源與反應時間〉 | 中   |
 
 ## 跨分類引用
 
