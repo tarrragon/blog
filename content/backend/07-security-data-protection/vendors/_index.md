@@ -40,7 +40,7 @@ tags: ["backend", "security", "data-protection", "vendor"]
 | [HashiCorp Vault](hashicorp-vault/) | [dynamic-credential](hashicorp-vault/dynamic-credential/)  | [→ AWS Secrets Manager](hashicorp-vault/migrate-to-aws-secrets-manager/) |
 | [Splunk](splunk/)                   | [risk-based-alerting](splunk/risk-based-alerting/)         | [→ Elastic Security](splunk/migrate-to-elastic-security/)                |
 
-本章節 vendor 服務頁覆蓋率高（51 個 vendor 服務頁、上方「T1 服務頁大綱」跟「後續候選」段已全部建立），但 deep article / migration playbook 還在早期階段。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務群要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+本章節 vendor 服務頁覆蓋率高（51 個 vendor 服務頁、上方「T1 服務頁大綱」跟「後續候選」段已全部建立），但 deep article / migration playbook 還在早期階段。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務群要回答的核心問題、跟各 vendor `_index.md` 的「進階主題」段。
 
 ## 服務頁標準章節
 

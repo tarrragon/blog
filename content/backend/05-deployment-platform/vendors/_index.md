@@ -40,7 +40,7 @@ tags: ["backend", "deployment", "vendor"]
 | [Terraform](terraform/)   | —                                                                                                                                                                                          | [→ OpenTofu](terraform/migrate-to-opentofu/)            |
 | [Consul](consul/)         | —                                                                                                                                                                                          | [← etcd](consul/migrate-from-etcd/)                     |
 
-其他 T1 vendor（Docker / systemd / nginx / Envoy / AWS ELB / Traefik）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+其他 T1 vendor（Docker / systemd / nginx / Envoy / AWS ELB / Traefik）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「進階主題」段。
 
 ## 服務頁撰寫欄位
 

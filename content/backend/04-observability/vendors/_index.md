@@ -46,7 +46,7 @@ tags: ["backend", "observability", "vendor"]
 | [Prometheus](prometheus/)              | [容量規劃與故障模式](prometheus/capacity-failure-modes/) / [PromQL 與 Recording Rules](prometheus/promql-recording-rules/) / [Remote Write 與長期儲存](prometheus/remote-write-long-term-storage/) / [單機 Compose 最小監控堆疊](prometheus/single-host-compose-stack/) / [視覺化工具](prometheus/visualization-tool-selection/) / [多台主機](prometheus/multi-host-scraping/) | —                                                                                                     |
 | [Sentry](sentry/)                      | [Error Grouping Fingerprinting](sentry/error-grouping-fingerprinting/) / [Release Tracking Session Replay](sentry/release-tracking-session-replay/)                                                                                                                                                                                                                            | —                                                                                                     |
 
-進度（2026-06-23）：9 個 T1 vendor 全部有 deep article（共 21 篇）。OpenTelemetry 後續候選：Sampling 策略 / Auto-instrumentation。各 vendor 進階主題的更多 deep article 見各自 `_index.md` 的「預計實作話題」段。
+進度（2026-06-23）：9 個 T1 vendor 全部有 deep article（共 21 篇）。OpenTelemetry 後續候選：Sampling 策略 / Auto-instrumentation。各 vendor 進階主題的更多 deep article 見各自 `_index.md` 的「進階主題」段。
 
 ## 服務頁撰寫欄位
 

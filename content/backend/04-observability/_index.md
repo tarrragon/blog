@@ -10,7 +10,7 @@ tags: ["backend", "observability", "operations"]
 
 ## Vendor / Platform 清單
 
-實作時的常用選擇見 [vendors](/backend/04-observability/vendors/) — T1 收錄 OpenTelemetry / Prometheus / Grafana Stack / Datadog / Elastic Stack / Honeycomb / AWS CloudWatch / GCP Cloud Operations / Sentry，每個 vendor 有定位、適用場景、取捨與預計實作話題的骨架。Error tracking 是獨立子維度（Sentry），跟 metrics / logs / traces 三角互補。
+實作時的常用選擇見 [vendors](/backend/04-observability/vendors/) — T1 收錄 OpenTelemetry / Prometheus / Grafana Stack / Datadog / Elastic Stack / Honeycomb / AWS CloudWatch / GCP Cloud Operations / Sentry，每個 vendor 有定位、適用場景、取捨與進階主題的骨架。Error tracking 是獨立子維度（Sentry），跟 metrics / logs / traces 三角互補。
 
 進入 vendor 比較前，先回到 [觀測、可靠性與事故服務選型](/backend/00-service-selection/operations-control-service-selection/) 判斷目前缺的是訊號層、驗證層、響應層還是閉環層。可觀測性 vendor 選型只處理訊號層與部分告警入口；可靠性驗證與事故協作要交給可靠性與事故流程。
 

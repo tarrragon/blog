@@ -42,7 +42,7 @@ tags: ["backend", "incident-response", "vendor"]
 | [Opsgenie](opsgenie/)                         | —            | [← PagerDuty (Type A)](opsgenie/migrate-from-pagerduty/)         |
 | [Atlassian Statuspage](atlassian-statuspage/) | —            | [→ Instatus (Type B)](atlassian-statuspage/migrate-to-instatus/) |
 
-其他 T1 vendor（Grafana OnCall / incident.io / FireHydrant / Rootly / Instatus / Jeli）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+其他 T1 vendor（Grafana OnCall / incident.io / FireHydrant / Rootly / Instatus / Jeli）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「進階主題」段。
 
 ## 服務頁撰寫欄位
 

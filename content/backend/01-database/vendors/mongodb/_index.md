@@ -15,7 +15,7 @@ MongoDB 服務頁的教學目標是把 document model、schema flexibility、ind
 | 學習段            | 核心問題                                                 | 對應段落                                                                       |
 | ----------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | Document shape    | 哪些資料適合 aggregate root 與 nested document           | 定位、適用場景                                                                 |
-| Schema governance | schema flexibility 如何搭配 validation、版本與 migration | 容量規劃要點、預計實作話題                                                     |
+| Schema governance | schema flexibility 如何搭配 validation、版本與 migration | 容量規劃要點、Deep article（已完成）                                           |
 | Query / index     | index、aggregation pipeline、ad-hoc query 如何影響成本   | 容量特性、常見陷阱                                                             |
 | Sharding          | shard key、chunk、balancer 如何把資料形狀變容量問題      | 容量規劃要點、[Database Sharding](/backend/knowledge-cards/database-sharding/) |
 | 替代路由          | 何時轉 PostgreSQL、DynamoDB、Cosmos DB 或 search         | 不適用場景、跟其他 vendor 的取捨                                               |

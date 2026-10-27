@@ -46,7 +46,7 @@ tags: ["backend", "reliability", "vendor"]
 | [Chaos Mesh](chaos-mesh/)         | [Workflow + Scope + Steady State Probe](chaos-mesh/workflow-experiment-scope-and-steady-state-probe/) | —                                                 |
 | [Sloth](sloth/)                   | [SLO YAML + Multi-burn-rate Alert](sloth/slo-yaml-and-multi-burn-rate-alert-generation/)              | —                                                 |
 
-其他 T1 vendor（CircleCI / Gatling / JMeter / Locust / LitmusChaos / Gremlin / Toxiproxy / Nobl9）的 deep article 尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+其他 T1 vendor（CircleCI / Gatling / JMeter / Locust / LitmusChaos / Gremlin / Toxiproxy / Nobl9）的 deep article 尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「進階主題」段。
 
 ## 服務頁撰寫欄位
 

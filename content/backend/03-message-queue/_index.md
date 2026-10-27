@@ -10,7 +10,7 @@ tags: ["backend", "message-queue", "event-delivery"]
 
 ## Vendor / Platform 清單
 
-實作時的常用選擇見 [vendors](/backend/03-message-queue/vendors/) — T1 收錄 RabbitMQ / Kafka / NATS / Redis Streams / AWS SQS / Google Pub/Sub，每個 vendor 有定位、適用場景、取捨與預計實作話題的骨架。
+實作時的常用選擇見 [vendors](/backend/03-message-queue/vendors/) — T1 收錄 RabbitMQ / Kafka / NATS / Redis Streams / AWS SQS / Google Pub/Sub，每個 vendor 有定位、適用場景、取捨與進階主題的骨架。
 
 Deep article（vendor 自身的配置、故障、容量）跟 migration playbook（跨 vendor 遷移流程）的撰寫進度見 [vendors/](/backend/03-message-queue/vendors/) 的「內容覆蓋進度」段。
 

@@ -12,13 +12,13 @@ MySQL 是大型網路服務的常見選擇、簡單 query 效能跟 [database sh
 
 MySQL 服務頁的教學目標是把「簡單 SQL 查詢」推進到高併發 OLTP、replication、online schema change 與 [sharding governance](/backend/knowledge-cards/database-sharding/)。讀者讀完後要能判斷 MySQL 何時是成熟預設、何時已經進入 Vitess / PlanetScale 或 application sharding 的討論。
 
-| 學習段        | 核心問題                                                 | 對應段落                   |
-| ------------- | -------------------------------------------------------- | -------------------------- |
-| OLTP 基線     | MySQL 適合哪種大量簡單查詢與交易路徑                     | 定位、適用場景             |
-| Replication   | replica、failover、lag 與 read scaling 如何影響服務      | 容量特性、容量規劃要點     |
-| Schema change | online schema change 與 migration 如何保護高流量服務     | 容量規劃要點、預計實作話題 |
-| Sharding      | Vitess、PlanetScale 與 application sharding 何時變成主線 | 跟其他 vendor 的取捨       |
-| 替代路由      | 何時轉 PostgreSQL、Aurora、DynamoDB 或 distributed SQL   | 不適用場景、下一步路由     |
+| 學習段        | 核心問題                                                 | 對應段落                                                  |
+| ------------- | -------------------------------------------------------- | --------------------------------------------------------- |
+| OLTP 基線     | MySQL 適合哪種大量簡單查詢與交易路徑                     | 定位、適用場景                                            |
+| Replication   | replica、failover、lag 與 read scaling 如何影響服務      | 容量特性、容量規劃要點                                    |
+| Schema change | online schema change 與 migration 如何保護高流量服務     | 容量規劃要點、Deep article + Migration playbook（已完成） |
+| Sharding      | Vitess、PlanetScale 與 application sharding 何時變成主線 | 跟其他 vendor 的取捨                                      |
+| 替代路由      | 何時轉 PostgreSQL、Aurora、DynamoDB 或 distributed SQL   | 不適用場景、下一步路由                                    |
 
 ## 定位：高併發簡單 SQL + 強分片生態
 

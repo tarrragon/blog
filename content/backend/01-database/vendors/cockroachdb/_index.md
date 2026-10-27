@@ -17,7 +17,7 @@ CockroachDB 服務頁的教學目標是把 PostgreSQL-like 介面背後的 range
 | Distributed SQL      | SQL 介面如何藏住 range sharding 與 Raft replication                | 定位、容量特性                                                             |
 | Serializable default | transaction retry、contention、latency 如何影響應用設計            | 容量規劃要點、[Isolation Level](/backend/knowledge-cards/isolation-level/) |
 | Region placement     | multi-region table、leaseholder、survival goal 如何服務產品需求    | 適用場景、跟其他 vendor 的取捨                                             |
-| Migration pressure   | 從 PostgreSQL / MySQL 或自管 sharding 過來時要檢查哪些差異         | 預計實作話題、案例對照                                                     |
+| Migration pressure   | 從 PostgreSQL / MySQL 或自管 sharding 過來時要檢查哪些差異         | 後續擴充（仍待補）、案例對照                                               |
 | 替代路由             | 何時留 PostgreSQL、用 Spanner、Aurora DSQL 或 application sharding | 不適用場景、下一步路由                                                     |
 
 ## 定位：Spanner 的開源 / 跨雲替代
