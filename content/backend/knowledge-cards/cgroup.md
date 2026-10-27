@@ -20,7 +20,7 @@ cgroup（control group）是 Linux 核心替一組行程記帳與設限的機制
 | `memory.low`、`memory.min` | 記憶體保留：主機吃緊時盡量（low）或一定（min）不回收這個群組的記憶體     | `--memory-reservation` 對應 low       |
 | `io.max`、`io.weight`      | 磁碟讀寫的上限與權重，效果依磁碟與排程器而定                             | `--device-read-bps` 等                |
 
-各層級的隔離能做到什麼、做不到什麼，見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈隔離的層級與代價〉；單一容器的值怎麼定，見 [Resource Limit](/backend/knowledge-cards/resource-limit/)。
+各層級的隔離能做到什麼、做不到什麼，見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)〈隔離的層級與代價〉；單一容器的值怎麼定，見 [Resource Limit](/backend/knowledge-cards/resource-limit/)。
 
 ## 可觀察訊號與例子
 

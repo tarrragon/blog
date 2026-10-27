@@ -154,7 +154,7 @@ FinOps 是 *財務跟工程的協作框架*、把成本決策從事後對帳變�
 - 上游：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)
 - 下游：[9.8 效能可觀測性](/backend/09-performance-capacity/performance-observability/)（cost attribution）
 - 跨模組：[04.14 cost attribution](/backend/04-observability/cost-attribution/)
-- 跨模組：[預知的大流量要加多大、編多少預算：從業務預估到擴容規格與費用區間的換算鏈、給決策者與會計的數字，以及每次活動之後的校準](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)（本篇的 headroom 取捨套到一次預知的活動上時：從業務預估換算各層台數、擴容期間的計費時數與費用區間，以及依保守點、預期點加降級、等候室各自要編的預算）
+- 跨模組：[預知的大流量要加多大、編多少預算：從業務預估到擴容規格與費用區間的換算鏈、給決策者與會計的數字，以及每次活動之後的校準](/devops/operations/05-capacity-planning/planned-peak-sizing-and-budget/)（本篇的 headroom 取捨套到一次預知的活動上時：從業務預估換算各層台數、擴容期間的計費時數與費用區間，以及依保守點、預期點加降級、等候室各自要編的預算）
 
 ## 既建知識卡片
 

@@ -30,7 +30,7 @@ tags: ["backend", "security"]
 
 **改掉密碼不會讓已經發出的會話失效，除非系統另外做了這件事。**於是常見的形態是：使用者收到通知、改了密碼、認為處理完了，而攻擊者手上那個在外洩之前建立的會話仍然有效，直到它自己過期。
 
-處置的順序因此是先撤銷、再重設。撤銷的能力取決於會話狀態放在哪裡——狀態放在自己查得到的地方時，全面撤銷是一次寫入；無狀態的簽章 token 沒有這個能力，要靠額外維護的撤銷清單，或者等它過期。這條依賴在事件當下補建不起來，取捨要在設計階段決定，見 [Session 處理](/operations/02-horizontal-scaling/session-handling/) 與 [token revocation](/backend/knowledge-cards/token-revocation/)、[session invalidation](/backend/knowledge-cards/session-invalidation/)。
+處置的順序因此是先撤銷、再重設。撤銷的能力取決於會話狀態放在哪裡——狀態放在自己查得到的地方時，全面撤銷是一次寫入；無狀態的簽章 token 沒有這個能力，要靠額外維護的撤銷清單，或者等它過期。這條依賴在事件當下補建不起來，取捨要在設計階段決定，見 [Session 處理](/devops/operations/02-horizontal-scaling/session-handling/) 與 [token revocation](/backend/knowledge-cards/token-revocation/)、[session invalidation](/backend/knowledge-cards/session-invalidation/)。
 
 兩個動作的代價差距是分層設計的基礎。**撤銷會話便宜**——使用者重新登入一次，多數人甚至不會注意到。**強制重設貴**——使用者要想一個新密碼、可能走進忘記密碼流程、可能就此不再回來。把便宜的那個做滿、貴的那個按證據施加，是這一章處置設計的核心。
 
@@ -98,7 +98,7 @@ tags: ["backend", "security"]
 ## 下一步路由
 
 - 外洩前該把密碼存成什麼樣、參數老化與升級路徑：[7.30 使用者密碼儲存](../password-storage-and-work-factor/)
-- 會話狀態放哪決定撤銷能力：[Session 處理](/operations/02-horizontal-scaling/session-handling/)
+- 會話狀態放哪決定撤銷能力：[Session 處理](/devops/operations/02-horizontal-scaling/session-handling/)
 - 存取憑證在請求中怎麼帶、以及登入端點的攻擊面：[7.36 存取憑證在請求中怎麼帶](../credential-transport-in-request/)
 - 機器憑證與 API key 的撤銷範圍：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
 - 外洩的是一台主機與它手上的全部機器憑證時，清查範圍、重建與撤銷順序：[8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)

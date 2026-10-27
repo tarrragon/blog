@@ -20,4 +20,4 @@ tags: ["automation", "apps-script", "triggers", "aggregation", "scheduling"]
 ## 跨分類引用
 
 - → [模組三：Sheets 當資料庫](/automation/03-sheet-as-database/)：被彙總的 raw log 從哪來
-- → [Monitoring：漏斗分析](/monitoring/08-business-analytics/funnel-analysis/)：彙總後的資料能做什麼分析
+- → [Monitoring：漏斗分析](/devops/monitoring/08-business-analytics/funnel-analysis/)：彙總後的資料能做什麼分析

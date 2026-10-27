@@ -56,9 +56,9 @@ tags: ["backend", "performance", "capacity", "overload", "observability"]
 
 最常見的成因是記憶體。記憶體的佔用來自兩處：進行中的請求（請求與回應的物件、連線的緩衝區），排隊的請求越多佔得越多；以及服務持有的狀態（快取、session、監控後端的時間序列），隨狀態的數量成長。任一處到了上限，程序就被終止。
 
-主機的記憶體耗盡時另有兩種走法。主機有 swap 時，記憶體耗盡先表現為大量換頁，整台主機的請求一起變慢到無回應，OOM killer 很晚才介入。主機層級的 OOM killer 依各程序用掉的記憶體（常駐記憶體加 swap）佔可用記憶體的比例評分，再加上 `oom_score_adj`，結束分數最高的程序；同一台主機上的資料庫或快取常駐記憶體大，常先被挑中，後端看到的是依賴失敗，也就是請求失敗（[共用主機的資源爭用](/operations/05-capacity-planning/shared-host-contention/)）。
+主機的記憶體耗盡時另有兩種走法。主機有 swap 時，記憶體耗盡先表現為大量換頁，整台主機的請求一起變慢到無回應，OOM killer 很晚才介入。主機層級的 OOM killer 依各程序用掉的記憶體（常駐記憶體加 swap）佔可用記憶體的比例評分，再加上 `oom_score_adj`，結束分數最高的程序；同一台主機上的資料庫或快取常駐記憶體大，常先被挑中，後端看到的是依賴失敗，也就是請求失敗（[共用主機的資源爭用](/devops/operations/05-capacity-planning/shared-host-contention/)）。
 
-另一個成因是平台的存活檢查：Kubernetes 的 liveness probe 連續逾時達到門檻時，kubelet 重啟容器；過載讓 probe 回應變慢，程序沒有壞也會被重啟，重啟期間其餘實例分到更多負載而跟著被重啟。終止原因沒有 `OOMKilled`、事件裡有 liveness probe 失敗，就是這一種。應對是讓 liveness 只檢查程序內部是否卡死、不經過依賴，逾時設得比過載時的延遲寬（[Liveness](/backend/knowledge-cards/health-check-liveness/)、[Liveness 與 Readiness](/operations/04-service-health/liveness-vs-readiness/)〈探針靈敏度是雙向的取捨〉）。
+另一個成因是平台的存活檢查：Kubernetes 的 liveness probe 連續逾時達到門檻時，kubelet 重啟容器；過載讓 probe 回應變慢，程序沒有壞也會被重啟，重啟期間其餘實例分到更多負載而跟著被重啟。終止原因沒有 `OOMKilled`、事件裡有 liveness probe 失敗，就是這一種。應對是讓 liveness 只檢查程序內部是否卡死、不經過依賴，逾時設得比過載時的延遲寬（[Liveness](/backend/knowledge-cards/health-check-liveness/)、[Liveness 與 Readiness](/devops/operations/04-service-health/liveness-vs-readiness/)〈探針靈敏度是雙向的取捨〉）。
 
 重啟讓程序回來，而負載沒有變。重啟期間其他實例分到這一台的流量；重啟回來時程序內的快取是空的，原本由它回應的讀取全部打到資料庫，所以在負載下重啟常讓其他實例與資料庫跟著過載。應對依佔用的來源而定：進行中的請求佔掉的記憶體與進行中的請求數成正比，要限制[進行中的請求](/backend/knowledge-cards/in-flight/)數（上限可以固定，也可以依量到的延遲自動調整，即 adaptive concurrency limit）並卸除負載，讓重啟回來的程序不會再被推到記憶體上限；狀態佔掉的記憶體要限制狀態的數量（例如時間序列數的上限），限制進行中的請求數不會讓它下降。平台的自動重啟本身不會通知任何人，所以連續重啟要由一條告警看到（4.0〈容器與程序的自檢〉）。重啟回來的實例快取是空的，readiness 等快取預熱完成才回報就緒（[Readiness](/backend/knowledge-cards/readiness/)、[Cache Warmup](/backend/knowledge-cards/cache-warmup/)），負載平衡器加回它時讓流量分段增加（slow start）。
 
@@ -78,9 +78,9 @@ Slack 2021 年 1 月 4 日的事故可以拿來對照觸發仍在的過載：假
 
 非同步的消費端也會停在失效：入列速率回到平常，消費端成功處理的速率仍低於入列速率，落後量持續增加（[Consumer Lag](/backend/knowledge-cards/consumer-lag/)）；先進先出的佇列先處理已經過期的舊訊息時最容易這樣。
 
-**擺盪**：卸除或擴縮的切換太快，服務在兩個狀態之間來回：卸除一啟動負載就下降，卸除解除後又過載；或擴充之後利用率下降、隨即縮減、延遲又超過門檻。9.15 引用 Stripe 的經驗寫到卸除削得太快會擺盪，[擴展的觸發與縮回](/operations/02-horizontal-scaling/scaling-triggers/) 以冷卻時間避免擴縮的抖動。應對是讓卸除與恢復都分段進行，擴縮設冷卻時間，縮減的門檻低於擴充的門檻，讓兩個切換點之間留出間隔。健康檢查也會造成擺盪：實例過載被移出，負載降下來後恢復、被加回，加回後又過載；應對是加回時讓流量分段增加（負載平衡器的 slow start），移出與加回用不同的連續次數門檻。
+**擺盪**：卸除或擴縮的切換太快，服務在兩個狀態之間來回：卸除一啟動負載就下降，卸除解除後又過載；或擴充之後利用率下降、隨即縮減、延遲又超過門檻。9.15 引用 Stripe 的經驗寫到卸除削得太快會擺盪，[擴展的觸發與縮回](/devops/operations/02-horizontal-scaling/scaling-triggers/) 以冷卻時間避免擴縮的抖動。應對是讓卸除與恢復都分段進行，擴縮設冷卻時間，縮減的門檻低於擴充的門檻，讓兩個切換點之間留出間隔。健康檢查也會造成擺盪：實例過載被移出，負載降下來後恢復、被加回，加回後又過載；應對是加回時讓流量分段增加（負載平衡器的 slow start），移出與加回用不同的連續次數門檻。
 
-**恢復時的第二波湧入**：一個依賴故障期間，呼叫它的請求在用戶端或佇列裡累積；依賴恢復的那一刻，累積的請求與重試一起到達，讓剛恢復的依賴再過載一次（[突發流量的分類](/operations/07-burst-traffic/burst-classification/#不可預期突發) 的〈不可預期突發〉）。第二波湧入本身是一次尖峰，累積的請求送完就結束；再過載之後如果重試維持住過載，就轉成停在失效。應對是讓累積的請求分散到達：用戶端的重試加退避與隨機延遲（[jitter](/backend/knowledge-cards/jitter/)）、寫入的重試帶冪等鍵，[Circuit Breaker](/backend/knowledge-cards/circuit-breaker/) 在半開狀態只放少量請求試探，佇列的消費端恢復後逐步提高消費速率，已經過了 deadline 的累積請求直接丟掉。
+**恢復時的第二波湧入**：一個依賴故障期間，呼叫它的請求在用戶端或佇列裡累積；依賴恢復的那一刻，累積的請求與重試一起到達，讓剛恢復的依賴再過載一次（[突發流量的分類](/devops/operations/07-burst-traffic/burst-classification/#不可預期突發) 的〈不可預期突發〉）。第二波湧入本身是一次尖峰，累積的請求送完就結束；再過載之後如果重試維持住過載，就轉成停在失效。應對是讓累積的請求分散到達：用戶端的重試加退避與隨機延遲（[jitter](/backend/knowledge-cards/jitter/)）、寫入的重試帶冪等鍵，[Circuit Breaker](/backend/knowledge-cards/circuit-breaker/) 在半開狀態只放少量請求試探，佇列的消費端恢復後逐步提高消費速率，已經過了 deadline 的累積請求直接丟掉。
 
 ## 降級回應：回應成功而內容縮減
 
@@ -118,7 +118,7 @@ Slack 2021 年 1 月 4 日的事故可以拿來對照觸發仍在的過載：假
 
 先耗盡的是哪一個資源，看元件指標的飽和度（[USE Method](/backend/knowledge-cards/use-method/)、9.5 瓶頸定位流程）；容器的 CPU 要看被暫停的時間（`container_cpu_cfs_throttled_seconds_total`，見 [cgroup](/backend/knowledge-cards/cgroup/)），只看主機的 CPU 會把它排除。CPU（含配額）與記憶體標為不適用，是因為等 CPU 的排程佇列與記憶體配置都沒有應用程式能設的等待上限。
 
-同一個機制可以走到不同的結果。[Queue 緩衝](/operations/07-burst-traffic/queue-buffering/) 寫的「goroutine 積壓 → 記憶體上升 → 最終 OOM 或 response timeout」就是兩條路：記憶體先到上限就是程序終止，用戶端的逾時先到就是無回應。[9.14 連線池放大解法](/backend/09-performance-capacity/connection-pool-amplification/) 的〈連線池放大的物理本質〉也是三種結果並存：記憶體耗盡而被 OOM 終止、行程切換變多而變慢、超過資料庫最大連線數而連線建立失敗。壓測時除了記下在多少負載越過 SLO，還要記下先耗盡的是哪一個資源、呈現的是哪一種結果，9.4〈Saturation 文件化：容量地圖〉的清單裡列了這一項。
+同一個機制可以走到不同的結果。[Queue 緩衝](/devops/operations/07-burst-traffic/queue-buffering/) 寫的「goroutine 積壓 → 記憶體上升 → 最終 OOM 或 response timeout」就是兩條路：記憶體先到上限就是程序終止，用戶端的逾時先到就是無回應。[9.14 連線池放大解法](/backend/09-performance-capacity/connection-pool-amplification/) 的〈連線池放大的物理本質〉也是三種結果並存：記憶體耗盡而被 OOM 終止、行程切換變多而變慢、超過資料庫最大連線數而連線建立失敗。壓測時除了記下在多少負載越過 SLO，還要記下先耗盡的是哪一個資源、呈現的是哪一種結果，9.4〈Saturation 文件化：容量地圖〉的清單裡列了這一項。
 
 ## 影響範圍：從單一 key 到依賴與上游
 

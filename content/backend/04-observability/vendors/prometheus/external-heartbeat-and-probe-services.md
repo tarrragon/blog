@@ -6,7 +6,7 @@ weight: 18
 tags: ["backend", "observability", "vendor", "prometheus", "alertmanager", "monitoring"]
 ---
 
-> 這一篇屬於 [Prometheus](/backend/04-observability/vendors/prometheus/) 的實作系列。只有一台主機時為什麼需要失效域以外的觀察者、心跳監看與外部探測各回答什麼問題，見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)；手上有另一個失效域的主機、要自己架觀察者時的條件，見 [小型服務的兩到三台主機配置](/operations/06-high-availability/small-service-host-layout/) 的〈兩台主機互相監看〉，本篇的 ping 網址、`/fail` 與路由在自架時同樣適用。
+> 這一篇屬於 [Prometheus](/backend/04-observability/vendors/prometheus/) 的實作系列。只有一台主機時為什麼需要失效域以外的觀察者、心跳監看與外部探測各回答什麼問題，見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)；手上有另一個失效域的主機、要自己架觀察者時的條件，見 [小型服務的兩到三台主機配置](/devops/operations/06-high-availability/small-service-host-layout/) 的〈兩台主機互相監看〉，本篇的 ping 網址、`/fail` 與路由在自架時同樣適用。
 
 以第三方服務做心跳監看（dead man's switch）與外部探測時，挑選服務要看的條件，以及把 Alertmanager 接到心跳監看服務的設定，整理在這一篇。第三方服務提供的是失效域以外的位置，以及它自己的存活由業者維運。設定接在 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/) 那份路由與 `Watchdog` 規則之上，還沒有 Alertmanager 的從 [單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 起步。心跳監看以 healthchecks 為例：它是開源專案，有託管版 healthchecks.io，也可以自架。文中的行為以自架的 healthchecks 4.4 與 Alertmanager 0.34.1 在 macOS 的 OrbStack 上實測，通知信寄到本機的 Mailpit；本篇沒有實際接過託管版 healthchecks.io，兩者的網址結構與判斷方式相同，回應碼的差異寫在下文，通知管道與方案限制以託管版的文件為準。外部探測服務本篇只寫挑選條件，沒有實際接過任何一家。
 
@@ -100,11 +100,11 @@ notify-fail 檢查項目平時不收 ping，所以「到服務的頁面確認收
 - **送出去的資料。** 送到探測業者的是探測的設定（網址、預期的回應內容）與服務的回應，不是告警 JSON；告警內容不能離開組織的服務，要查業者存了哪些回應內容，回應裡有內部資訊時改打只回固定內容的端點。
 - **對服務的影響。** 探測請求會出現在服務的存取紀錄與指標裡；探測打的是會記錄點擊的轉址路徑時，點擊數會被探測灌高，要在服務的統計裡以來源或 User-Agent 排除，或改打不記錄的端點。
 
-外部探測服務的候選（UptimeRobot、Better Stack、Pingdom 這類）與各自的免費方案對照，見 [無 SSH 環境的監控與告警](/infra/takeover/legacy-external-monitoring/) 的〈工具選型〉。自己有另一個失效域的主機時，外部探測也可以自己跑（例如在那台主機上跑 Prometheus 的 blackbox_exporter 或 Gatus），條件是那台主機不與服務主機共用失效域，而且它停掉時有人知道；兩台主機互相監看時，用來分辨兩台之間連線中斷的那一個探測要同時避開服務主機與監控主機的失效域，理由見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/) 的〈觀察者的位置：第三方服務、另一個失效域的主機（含互相監看）與另一個業者的排程平台〉。
+外部探測服務的候選（UptimeRobot、Better Stack、Pingdom 這類）與各自的免費方案對照，見 [無 SSH 環境的監控與告警](/devops/infra/takeover/legacy-external-monitoring/) 的〈工具選型〉。自己有另一個失效域的主機時，外部探測也可以自己跑（例如在那台主機上跑 Prometheus 的 blackbox_exporter 或 Gatus），條件是那台主機不與服務主機共用失效域，而且它停掉時有人知道；兩台主機互相監看時，用來分辨兩台之間連線中斷的那一個探測要同時避開服務主機與監控主機的失效域，理由見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/) 的〈觀察者的位置：第三方服務、另一個失效域的主機（含互相監看）與另一個業者的排程平台〉。
 
 ## 延伸閱讀：觀察者的位置、Alertmanager 的路由與自架的觀察者
 
 - 心跳監看與外部探測放在第三方、另一個失效域的主機或兩台互相監看時各自的差別，以及心跳監看、外部探測與主機內部探測並排時怎麼判讀，見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
 - 心跳之外的通知管道（ntfy、email、Slack）、Watchdog 的時間參數與通知送不出去的偵測規則，見 [Alertmanager 的通知管道](/backend/04-observability/vendors/prometheus/alertmanager-notification-channels/)。
-- 觀察者改成自架、跑在另一個失效域的主機上時，VPN、互相監看的條件與兩台同時停掉的風險，見 [小型服務的兩到三台主機配置](/operations/06-high-availability/small-service-host-layout/)。
+- 觀察者改成自架、跑在另一個失效域的主機上時，VPN、互相監看的條件與兩台同時停掉的風險，見 [小型服務的兩到三台主機配置](/devops/operations/06-high-availability/small-service-host-layout/)。
 - 心跳監看的判斷方式見 [Dead Man's Switch（心跳監看）](/backend/knowledge-cards/dead-mans-switch/)。

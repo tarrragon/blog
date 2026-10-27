@@ -26,4 +26,4 @@ tags: ["ux-design", "gate", "fallback", "biometric", "authentication"]
 ## 跨分類引用
 
 - → [testing 模組一 測試策略](/testing/01-test-strategy-layers/)：gate fallback 的 mock vs 真機行為差異需要 protocol test
-- → [monitoring 模組七 資安](/monitoring/07-security-privacy/)：biometric fallback 的安全 vs 可用性取捨
+- → [monitoring 模組七 資安](/devops/monitoring/07-security-privacy/)：biometric fallback 的安全 vs 可用性取捨

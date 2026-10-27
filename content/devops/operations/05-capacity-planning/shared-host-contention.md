@@ -1,0 +1,74 @@
+---
+title: "共用主機的資源競爭：容量估算、故障範圍、隔離層級與監控的位置"
+date: 2026-10-12
+description: "多個服務、資料庫與監控放在同一台主機（或同一台實體機上的多台虛擬機）時，資源競爭在容量估算、故障範圍、隔離的做法與監控的位置上各自要考慮什麼：共用發生在哪些層、量到的數字什麼時候能互相比較、哪些服務適合放在一起、從同機加限制到專用實體機的隔離層級與各層的觸發條件"
+weight: 8
+tags: ["devops", "capacity-planning", "isolation", "noisy-neighbor", "monitoring"]
+aliases: ["/operations/05-capacity-planning/shared-host-contention/"]
+---
+
+多個工作負載共用同一份硬體資源，是部署與容量規劃的一個設計條件；這篇整理它在容量估算、故障範圍、隔離與監控上各要考慮什麼。共用有三種常見的形態：一台主機上用 Docker Compose 跑整個系統（應用程式、資料庫、快取與監控都在一起）、雲端的虛擬機與其他租戶共用同一台實體機，以及開發用的筆電上 Docker 的虛擬機與其他程式共用 CPU 與磁碟。三者的共同點是：某一個工作負載用掉的資源，會從其他工作負載能用的那一份裡扣掉，而被扣掉的那一方沒有做錯任何事。這個現象叫 [Noisy Neighbor](/backend/knowledge-cards/noisy-neighbor/)。本篇處理整台主機層級的取捨，單一容器的 CPU 與記憶體限制怎麼設另見 [容器化資源設計](/devops/operations/05-capacity-planning/container-resource-design/)。
+
+## 一次開發環境共用主機過載的量測
+
+一個短網址服務的開發環境在同一台虛擬機裡跑入口 Nginx、兩個後端、PostgreSQL、Valkey 與監控，虛擬機由 macOS 上的 OrbStack 提供。Mac 上其他程式把 [load average](/backend/knowledge-cards/load-average/)（在跑或在等 CPU 的平均行程數，除以核心數大於 1 代表有行程在排隊）推到 55 到 78、持續數小時的那段時間，這台 8 顆核心的 Mac 上：
+
+- **所有工作都變慢**：PostgreSQL 產生 200 萬個數字的查詢要 4 秒，同一個查詢在 Mac 沒被佔用時約一百多毫秒，相差二、三十倍；1.2 萬列的批次寫入要十幾秒。這個比較量的正是主機造成的差距。
+- **各服務受影響的程度不同**：外部探測要求回應時間低於 500 ms，Go 後端達標的比例是 92.5%、最慢 2.1 秒；Laravel 後端只有 49%、最慢 6.0 秒，未達標的全是慢、沒有錯誤（探測的回應時間也含探測程式自己的等待，見 4.27）。
+
+同一段時間，監控自己讀取各 [exporter](/backend/knowledge-cards/prometheus-exporter/) 的耗時也逼近逾時，而虛擬機裡的 load 除以核心數最高只有 1.28，從虛擬機的數字判斷不出 CPU 在排隊；這一面的量測與告警寫法見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)。容量拿不準、服務一起出事，是下面兩節的題目。
+
+## 容量估算：共用主機時分得到的資源量
+
+容量估算把「每秒多少請求」換成「需要多少 CPU、記憶體與連線」，前提是這些資源在需要的時候拿得到。共用主機時，拿得到的量由其他工作負載決定：
+
+- **同一台主機上的其他服務**：資料庫的重查詢、批次工作、監控本身的讀取，和線上的請求搶 CPU 與磁碟。估算時要把它們的尖峰時段疊在一起看，而不是各自算平均。
+- **同一台實體機上的其他租戶**：雲端的虛擬機分到的 CPU 時間會被虛擬化層（hypervisor）分給別的虛擬機，Linux 虛擬機裡的 steal 時間（`/proc/stat` 的 steal，[node_exporter](/backend/knowledge-cards/prometheus-exporter/) 的 `node_cpu_seconds_total{mode="steal"}`）記錄這段被拿走的時間。
+- **雲端機型自己的 CPU 額度**：可突發型的機型（例如 AWS 的 T 系列）另有 CPU 額度：standard 模式下額度用完只剩基準效能；unlimited 模式（T3、T3a、T4g 等的預設）可以繼續突發，超出基準的部分另外計費。額度剩多少看雲端自己的監控（AWS 是 CloudWatch 的 `CPUCreditBalance` 與 `CPUSurplusCreditBalance`），虛擬機裡的 node_exporter 看不到它。
+- **開發環境**：筆電上的其他程式。這一層無法控制，所以在筆電上量到的數字只代表那一刻的那台機器。
+
+所以量到的數字含有主機當下的負載：同一個服務在主機安靜時與過載時量到的上限，差的是主機而不是服務，拿來比較服務本身的表現（兩個版本、兩種設定）時兩者不能互相比較。量測紀錄因此附上當時主機的 load、核心數與可用磁碟，而且要在主機本身看，不是在 Docker 的虛擬機裡（macOS 用 `uptime`、`sysctl -n hw.ncpu`、`df -h`，Linux 用 `uptime`、`nproc`、`df -h`）；虛擬機裡的數字為什麼不能用，見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)〈監控所在層看不到的範圍：虛擬機與主機〉。主機的 load 除以核心數或磁碟使用率超過事先定好的門檻時，量到的數字不拿去和其他時間比較服務的表現，採用的門檻也寫進紀錄。主機狀態要在量測期間持續記錄，不只在開始前看一次；壓測工具跑在同一台主機上時，它用的 CPU 也從服務那一份扣掉。單次取樣的數字本身也會跳動，判讀方式見 4.26〈單次取樣與時間窗〉。
+
+## 故障範圍：同一台主機上服務的相關失效
+
+共用同一台主機的服務，失效是相關的：主機的 CPU、記憶體、磁碟或網路任一樣耗盡，上面全部的服務一起受影響；主機重開或磁碟寫滿，全部一起停。[Blast Radius](/backend/knowledge-cards/blast-radius/) 的估算因此要把「放在同一台主機」當成一條依賴，同一台主機上的服務落在同一個[失效域](/backend/knowledge-cards/failure-domain/)。實例是同一個開發環境稍早的一次：Mac 的磁碟剩不到 1 GB 時，OrbStack 的虛擬機連同裡面全部的容器被停掉了三次。
+
+這帶出部署時要決定的幾件事：
+
+- **哪些服務適合放在一起**：延遲敏感的線上請求與吃滿 CPU 的批次工作（重算報表、匯出）放在一起時，批次工作的尖峰就是線上請求的延遲尖峰。分開放，或至少用限制與權重讓線上請求優先。
+- **資料庫與應用程式要不要同機**：同機省下網路延遲與一台機器的成本，代價在記憶體。主機的記憶體耗盡時，Linux 的 [OOM killer](/linux/dotfile/knowledge-cards/oom-exit-code-137/) 依各行程常駐的記憶體（與可調的 `oom_score_adj`）挑一個結束，佔用最多的最先被挑中；資料常駐記憶體的 Redis、Valkey，或 `shared_buffers` 調大的 PostgreSQL，常是佔用最多的那一個（PostgreSQL 多數的快取在作業系統的 page cache，不算進去）。所以應用程式的記憶體暴增時，被結束的可能是資料庫或快取；PostgreSQL 的一個行程被結束，主行程會中斷所有連線、做損毀復原（crash recovery）之後才收得了新連線。給應用程式的容器設記憶體上限，暴增時被結束的就只會是那個容器；PostgreSQL 官方文件另建議把主行程的 `oom_score_adj` 調低。這時被終止的程序與負載增加的程序不是同一個，後端看到的是依賴失敗，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/) 的〈程序終止：被系統結束、當機或反覆重啟〉。
+- **監控放在哪裡**：監控與被監控的服務放在同一台主機時，主機出事的那一刻監控也跟著退化或停止，見〈監控的位置〉。
+
+## 隔離的層級與代價
+
+隔離可以分成幾個層級，越往下隔離得越徹底，成本與管理負擔也越高：
+
+| 層級                         | 做法                                                                                                                                                                                                                                                                                                                                                    | 隔離得了                                                         | 隔離不了                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------- |
+| 同一台主機，不設限制         | Compose 的預設                                                                                                                                                                                                                                                                                                                                          | —                                                                | 任何一個服務吃滿資源，其他全部受影響     |
+| 同一台主機，設上限與權重     | 容器的 CPU 上限（`--cpus`，[cgroup](/backend/knowledge-cards/cgroup/) 的 `cpu.max`）、把容器釘在指定核心（`--cpuset-cpus`）、相對權重（`--cpu-shares`，`cpu.weight`）、記憶體上限                                                                                                                                                                       | 單一服務吃掉全部 CPU 或記憶體                                    | 磁碟讀寫與網路的爭用、主機本身的故障     |
+| 同一台主機，保留資源與優先權 | Kubernetes 的 requests 與 QoS（requests 等於 limits 的 Pod 屬於 Guaranteed，最後才被 OOM 結束）、`PriorityClass`（資源不夠排程時先排它，必要時驅逐低優先權的 Pod）；cgroup v2 的記憶體保留（`memory.min`、`memory.low`，Docker 的 `--memory-reservation`）；Compose 的 `oom_score_adj`；systemd 的 slice（把一組服務放進同一個 cgroup，給它權重或上限） | 主機記憶體吃緊時，重要的服務與監控的記憶體最後被回收、最後被結束 | 主機本身的故障                           |
+| 不同主機或虛擬機             | 依角色分開部署（資料庫、應用程式、監控各自一台），Kubernetes 的 anti-affinity（排程時不讓指定的 Pod 落在同一個節點）                                                                                                                                                                                                                                    | 一台主機的資源耗盡與故障                                         | 同一台實體機上其他租戶的競爭（虛擬機時） |
+| 專用的實體機                 | 雲端的 dedicated host、自己的機房                                                                                                                                                                                                                                                                                                                       | 其他租戶，含共用的 CPU 快取與記憶體頻寬                          | 同一個機櫃、同一個機房的共同故障         |
+
+機房與可用區層級的隔離見 [冗餘設計模式](/devops/operations/06-high-availability/redundancy-patterns/)。
+
+CPU 的硬上限有代價：碰到上限的容器會被暫停執行（CPU throttling），延遲因此升高而主機的 CPU 不一定滿（[Resource Limit](/backend/knowledge-cards/resource-limit/)）。單一容器的上限怎麼定見 [容器化資源設計](/devops/operations/05-capacity-planning/container-resource-design/)〈CPU 限制：hard limit 還是相對權重〉，不設上限只設權重的取捨見 [5.1 container 與 runtime](/backend/05-deployment-platform/container-runtime/)〈CPU request 與 limit 的設定策略〉；核心依 `cpu.weight` 分配比例只在搶資源時生效，不會讓服務被暫停。
+
+保留資源與優先權那一層在 CPU 上用的是同一個權重機制，它多出來的是記憶體耗盡時誰先被結束。這一層的觸發條件是：有服務沒設上限（監控元件常是這樣），或上限加總再加上主機自己的行程超過主機的記憶體，每個服務都沒超過自己的上限，主機一樣會耗盡記憶體；這時決定被結束順序的就是 QoS、優先權與 `oom_score_adj`，而 `memory.min`、`memory.low` 影響的是核心回收記憶體時先避開誰，不影響 OOM killer 挑誰結束。Kubernetes 上 kubelet 在節點記憶體或磁碟吃緊時會先依 QoS 驅逐 Pod，驅逐發生在核心的 OOM 之前。主機有 swap 時，耗盡的樣子常是全面變慢（不斷換頁），而不是某個行程被結束。
+
+CPU 與記憶體的限制是成熟的做法；磁碟讀寫與網路頻寬的隔離（cgroup v2 的 `io.max`、`io.weight`）實際效果依磁碟與排程器而定，本篇沒有實測。磁碟爭用的樣子是：備份或大量匯入與資料庫的寫入同時進行時，資料庫每次提交都要等資料寫到磁碟上，寫入延遲跟著另一個服務的寫入量起伏，而兩邊的 CPU 用量都不高。所以高頻寫入的服務（資料庫、事件的寫入）在同一台主機上最容易互相拖累，也最常是第一個被分出去的。
+
+選哪一個層級，看兩件事：一起出事的代價（故障範圍內的服務對使用者有多重要），以及拆開的成本（多一台機器、多一份部署與監控）。練習或早期的服務放在一台主機上是合理的起點，前提是知道哪些事會一起發生，並在它們開始發生時看得到。在一台主機上，「開始發生」長的是前面幾節的樣子：批次工作的時段線上請求的 p95 跟著上升、資料庫被 OOM killer 結束、磁碟寫滿讓全部服務一起停。前兩種先在同一台主機上補限制、權重或保留。磁碟寫滿先找出是誰寫滿的（日誌、映像、備份或資料庫本身），擴充磁碟或加上清理：Docker 預設的 json-file 日誌不會輪替，在 compose 設 `logging.options.max-size` 與 `max-file`；寫入量大的服務放在自己的檔案系統或設配額，寫滿時只影響它自己；同一個服務的寫入反覆把磁碟寫滿、或它的磁碟讀寫反覆拖慢資料庫，才是把它分到另一台主機的時候。限制、權重與保留都補了之後同一種情形仍反覆出現，也是分出去的時候。雲端虛擬機的 steal 時間長期偏高、換成非突發型機型也沒有改善時，才輪到專用的實體機。
+
+## 監控的位置
+
+裝在虛擬機裡的監控看不到虛擬機以外的競爭從哪裡來：Mac 上的其他程式完全看不到；實體機上的其他租戶只留下 [steal 時間](/backend/knowledge-cards/cpu-steal-time/)這一個間接訊號（見〈容量估算〉）。兩種情形在服務的指標上都長成全部服務同時變慢，而它們各自的用量都不高。各層的監控能看到什麼、主機的磁碟怎麼一起涵蓋，見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)。
+
+監控和服務放在同一台主機時還會一起退化：探測與 Prometheus 自己也在等 CPU，量到的延遲包含它們自己的等待，讀取逾時會在資料裡留下空洞。所以正式環境至少要有一個訊號來自那台主機之外（另一個失效域的機器上的探測、外部的 uptime 服務；位置怎麼選見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)，多台主機怎麼分配見 [小型服務的兩到三台主機配置](/devops/operations/06-high-availability/small-service-host-layout/)），這是 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/) 在共用主機上的形態；告警怎麼寫、怎麼依主機飽和收斂各服務的症狀，見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)。
+
+## 延伸閱讀：單一容器的限制、資源分艙與單點盤點
+
+- 單一容器的記憶體與 CPU 限制怎麼從基準量推出來、CPU 用完配額而被暫停（throttling）時的症狀，見 [容器化資源設計](/devops/operations/05-capacity-planning/container-resource-design/)。
+- 本篇的隔離停在主機與容器這一層；同一個服務裡把連線池、執行緒依用途分開，讓一個依賴的故障不讓其他請求一起失敗，是同一個想法在應用層的做法，見 [Bulkhead](/backend/knowledge-cards/bulkhead/) 與 [Bulkhead 隔離](/devops/operations/03-traffic-management/bulkhead/)。
+- 單點盤點的方法（逐條列出依賴、問每一條失效時誰受影響），見 [單點故障盤點](/devops/operations/06-high-availability/spof-inventory/)；「放在同一台主機」可以當成其中一條依賴列進去。

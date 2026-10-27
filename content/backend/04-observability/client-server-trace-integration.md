@@ -6,7 +6,7 @@ weight: 24
 tags: ["backend", "observability", "tracing", "rum", "client-server"]
 ---
 
-Client-to-server 端到端觀測串接的核心責任是讓一次使用者操作的完整路徑 — 從 browser click 到 server 處理到 response rendering — 可以用同一個 [trace](/backend/knowledge-cards/trace/) ID 串起來。[4.10 Client-side / Synthetic / RUM](/backend/04-observability/client-side-monitoring/) 講的是概念和 vendor 定位；本篇走完一個具體場景的實作鏈路。[Monitoring 模組 03 SDK 設計](/monitoring/03-sdk-design/) 講的是 client 端怎麼埋點；本篇講 server 端怎麼接收和整合。
+Client-to-server 端到端觀測串接的核心責任是讓一次使用者操作的完整路徑 — 從 browser click 到 server 處理到 response rendering — 可以用同一個 [trace](/backend/knowledge-cards/trace/) ID 串起來。[4.10 Client-side / Synthetic / RUM](/backend/04-observability/client-side-monitoring/) 講的是概念和 vendor 定位；本篇走完一個具體場景的實作鏈路。[Monitoring 模組 03 SDK 設計](/devops/monitoring/03-sdk-design/) 講的是 client 端怎麼埋點；本篇講 server 端怎麼接收和整合。
 
 ## 完整鏈路
 
@@ -159,6 +159,6 @@ Client perceived latency 跟 server-side latency 的差異本身就是一個觀�
 - [4.3 Tracing Context](/backend/04-observability/tracing-context/)：server-side trace context 設計
 - [4.22 Checkout API Evidence Package](/backend/04-observability/checkout-api-evidence-package/)：evidence 整合到 release gate
 - [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)：evidence 欄位標準
-- [Monitoring 03 SDK 設計](/monitoring/03-sdk-design/)：client-side SDK 埋點設計
-- [Monitoring 06 商業方案](/monitoring/06-commercial-comparison/)：Sentry / Datadog RUM 的 client-side 能力比較
-- [監控資料的雙重用途](/monitoring/telemetry-data-dual-use/)：同一份 event data 如何同時服務行為分析與訊號治理
+- [Monitoring 03 SDK 設計](/devops/monitoring/03-sdk-design/)：client-side SDK 埋點設計
+- [Monitoring 06 商業方案](/devops/monitoring/06-commercial-comparison/)：Sentry / Datadog RUM 的 client-side 能力比較
+- [監控資料的雙重用途](/devops/monitoring/telemetry-data-dual-use/)：同一份 event data 如何同時服務行為分析與訊號治理

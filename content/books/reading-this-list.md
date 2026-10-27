@@ -26,4 +26,4 @@ tags: ["books", "reading"]
 
 ## 書單跟教學系列的邊界
 
-書單只放外部書籍與選讀判斷。書中概念怎麼在自己的專案落地，回到教學系列：交付管線與部署 gate 看 [CI/CD 教學](/ci/)，服務探活與容量規劃看 [運行期維運](/operations/)，事故分級、指揮角色與復盤制度看 [事故處理與復盤](/backend/08-incident-response/)，客戶端遙測的收集鏈路看 [Monitoring 監控體系](/monitoring/)，交付生命週期的全景看 [DevOps 全景](/devops/)，商業術語看 [商業概念與策略分析](/business/)。
+書單只放外部書籍與選讀判斷。書中概念怎麼在自己的專案落地，回到教學系列：交付管線與部署 gate 看 [CI/CD：驗證與發布 gate、artifact、失敗到修復的流程，以及各部署場域的差異](/devops/ci/)，服務探活與容量規劃看 [運行期維運](/devops/operations/)，事故分級、指揮角色與復盤制度看 [事故處理與復盤](/backend/08-incident-response/)，客戶端遙測的收集鏈路看 [Monitoring 監控體系](/devops/monitoring/)，交付生命週期的全景看 [DevOps 全景](/devops/)，商業術語看 [商業概念與策略分析](/business/)。

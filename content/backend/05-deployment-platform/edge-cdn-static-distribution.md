@@ -104,7 +104,7 @@ CDN 跟「加速工具」的混淆，會讓 origin protection 跟一致性責任
 
 CDN 專注「靜態與半靜態內容的網路層分發」。當問題進入動態 API 的延遲、跨服務一致性、寫入路徑保護，責任分別交給 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)、[02 cache aside](/backend/02-cache-redis/cache-aside/) 與 [03 message queue](/backend/03-message-queue/) 模組。
 
-跟 [07 入口治理](/backend/07-security-data-protection/entrypoint-and-server-protection/) 的交接：CDN 同時是公網入口，需要承接 WAF、bot mitigation、TLS termination 等資安責任。邊緣層的安全設定不可遺漏，否則 origin 被繞過直接攻擊；源站主機怎麼只讓 CDN 連進來、Docker 發佈的連接埠為什麼繞過主機防火牆，見 [CDN 後面的源站主機防火牆](/infra/03-network-foundation/origin-host-firewall/)。
+跟 [07 入口治理](/backend/07-security-data-protection/entrypoint-and-server-protection/) 的交接：CDN 同時是公網入口，需要承接 WAF、bot mitigation、TLS termination 等資安責任。邊緣層的安全設定不可遺漏，否則 origin 被繞過直接攻擊；源站主機怎麼只讓 CDN 連進來、Docker 發佈的連接埠為什麼繞過主機防火牆，見 [CDN 後面的源站主機防火牆](/devops/infra/03-network-foundation/origin-host-firewall/)。
 
 ## 案例回寫
 

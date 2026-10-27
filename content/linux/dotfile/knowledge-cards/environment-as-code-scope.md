@@ -44,4 +44,4 @@ dotfile、Dockerfile、IaC（Terraform）常被當成三個各自獨立的技術
 
 三層裡最容易混的是「把你的 ergonomics（dotfile 性質）裝進 app 的 container（Dockerfile 領域）」——那是兩個尺度的交會。正解是把它們**分層**：app 的 runtime image 只放 app 需要的（Dockerfile 領域、跟 app 走），你的 shell/vim 裝進跑起來的 container 可寫層、不進 image（見 [不可變 Image](/backend/knowledge-cards/immutable-image/) 與 [dotfile 跨進 runtime container](/linux/dotfile/10-prod-parity/container-ergonomics/)）。混進一個 image 就是把兩個尺度攪在一起、失去各自的可重現性。
 
-實作上這條光譜怎麼落地見各尺度的教材：個人 [Dotfile 管理](/linux/dotfile/)、應用 [Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)、組織 [Infra 指南](/infra/)。
+實作上這條光譜怎麼落地見各尺度的教材：個人 [Dotfile 管理](/linux/dotfile/)、應用 [Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)、組織 [Infra 指南](/devops/infra/)。

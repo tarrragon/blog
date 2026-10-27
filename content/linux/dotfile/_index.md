@@ -12,12 +12,12 @@ dotfile 管理解決的核心問題是**環境可重現性**。一台新機器�
 
 ## 和其他系列的關係
 
-| 系列                          | 聚焦                                          | 和 Dotfile 的交集                                                               |
-| ----------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------- |
-| [Infra](/infra/)              | 雲端基礎設施地基（IaC、網路、身分、環境分離） | Infra 是組織的環境 as code，Dotfile 是個人的環境 as code，思想平行              |
-| [DevOps](/operations/)        | 服務營運（負載、擴展、容量、成本）            | DevOps 工程師的日常工具鏈（多終端機、SSH、log tail）正是 dotfile 高度客製的場景 |
-| [CLI 工具](/linux/tools/cli/) | TUI 工具、多工器、檔案管理器                  | CLI 工具的配置檔是 dotfile 管理的核心對象                                       |
-| [Monitoring](/monitoring/)    | 客戶端監控體系                                | Monitoring 有獨立的 hands-on 專案做實測，Dotfile 也會有 VM 實測專案             |
+| 系列                              | 聚焦                                          | 和 Dotfile 的交集                                                               |
+| --------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------- |
+| [Infra](/devops/infra/)           | 雲端基礎設施地基（IaC、網路、身分、環境分離） | Infra 是組織的環境 as code，Dotfile 是個人的環境 as code，思想平行              |
+| [DevOps](/devops/operations/)     | 服務營運（負載、擴展、容量、成本）            | DevOps 工程師的日常工具鏈（多終端機、SSH、log tail）正是 dotfile 高度客製的場景 |
+| [CLI 工具](/linux/tools/cli/)     | TUI 工具、多工器、檔案管理器                  | CLI 工具的配置檔是 dotfile 管理的核心對象                                       |
+| [Monitoring](/devops/monitoring/) | 客戶端監控體系                                | Monitoring 有獨立的 hands-on 專案做實測，Dotfile 也會有 VM 實測專案             |
 
 Infra 教「組織的地基怎麼用 code 管理」，Dotfile 教「個人的工作桌面怎麼用 code 管理」。模組九把兩者接起來——當個人 dotfile 的思想擴展到團隊，就是 devcontainer 和標準化開發環境。
 
@@ -45,4 +45,4 @@ Infra 教「組織的地基怎麼用 code 管理」，Dotfile 教「個人的工
 
 ## VM 實測專案
 
-模組四到七的 Linux 桌面配置會搭配一個獨立的 VM 專案做 hands-on 實測（類似 [Monitoring](/monitoring/) 系列搭配 monitor 專案的關係）。教材負責概念與配置邏輯的說明，VM 專案負責實際安裝、調教、截圖驗證。VM 專案會在教材完成後另外建立。
+模組四到七的 Linux 桌面配置會搭配一個獨立的 VM 專案做 hands-on 實測（類似 [Monitoring](/devops/monitoring/) 系列搭配 monitor 專案的關係）。教材負責概念與配置邏輯的說明，VM 專案負責實際安裝、調教、截圖驗證。VM 專案會在教材完成後另外建立。

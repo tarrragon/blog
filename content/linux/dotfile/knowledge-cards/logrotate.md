@@ -10,7 +10,7 @@ logrotate 是 Linux 上依排程輪替 log 檔的程式：到了設定的週期�
 
 ## 概念位置
 
-logrotate 自己不常駐，由排程觸發：Oracle Linux 10 由 `logrotate.timer`（一個 [systemd timer](/linux/dotfile/knowledge-cards/systemd-timer/)）每天觸發一次；Debian 12 的套件同時裝了 `logrotate.timer` 與 [cron](/infra/knowledge-cards/cron/) 的 `/etc/cron.daily/logrotate`，cron 的那一份在 systemd 執行中時直接結束，所以實際由 timer 觸發，沒有 systemd 的環境（例如容器）才改由 cron 觸發，前提是那個環境裡有 cron 在執行。這帶出它在磁碟用量裡的限制：輪替只發生在它被觸發的那一刻，兩次觸發之間 log 長多大它都不管，所以一份 log 在一天之內暴增（大量被拒絕的請求寫進 access log）時，logrotate 擋不住，這一類增長要靠磁碟用量的告警，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈對外寫入端點的增長速度〉，以及 [Step Change（步階變化）](/backend/knowledge-cards/step-change/)。
+logrotate 自己不常駐，由排程觸發：Oracle Linux 10 由 `logrotate.timer`（一個 [systemd timer](/linux/dotfile/knowledge-cards/systemd-timer/)）每天觸發一次；Debian 12 的套件同時裝了 `logrotate.timer` 與 [cron](/devops/infra/knowledge-cards/cron/) 的 `/etc/cron.daily/logrotate`，cron 的那一份在 systemd 執行中時直接結束，所以實際由 timer 觸發，沒有 systemd 的環境（例如容器）才改由 cron 觸發，前提是那個環境裡有 cron 在執行。這帶出它在磁碟用量裡的限制：輪替只發生在它被觸發的那一刻，兩次觸發之間 log 長多大它都不管，所以一份 log 在一天之內暴增（大量被拒絕的請求寫進 access log）時，logrotate 擋不住，這一類增長要靠磁碟用量的告警，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/devops/operations/09-host-lifecycle/long-running-host-maintenance/)〈對外寫入端點的增長速度〉，以及 [Step Change（步階變化）](/backend/knowledge-cards/step-change/)。
 
 ## 可觀察訊號
 

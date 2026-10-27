@@ -81,7 +81,7 @@ docker push ghcr.io/<org>/myapp:1
 - image 不可變：升級是 build 新的、不是改舊的
 - 多版本 stack 並存、並跑對照、切換與退役
 - 版本相依的升級順序（如 MySQL 8 認證外掛換版）
-- 對應 [不可變 Image](/backend/knowledge-cards/immutable-image/)、線上帶電升級 [Infra 環境升級](/infra/upgrade/)
+- 對應 [不可變 Image](/backend/knowledge-cards/immutable-image/)、線上帶電升級 [Infra 環境升級](/devops/infra/upgrade/)
 
 ## 進階主題（按需閱讀）
 
@@ -133,7 +133,7 @@ docker push ghcr.io/<org>/myapp:1
 
 子議題：
 
-- Rootless mode（Docker / Podman 都支援）：發佈的連接埠由主機上的轉送程式（rootlesskit、rootlessport）接收，主機防火牆的入站規則管得到，容器看到的來源是轉送程式那一端的位址；實測見 [Podman 與 rootless Docker 發佈連接埠的實測紀錄：rootful Podman 在 ufw 與 firewalld 上的轉送路徑、rootless Docker 與 rootless Podman 由主機程式接收的連接埠與容器看到的來源位址](/infra/03-network-foundation/hands-on/podman-rootless-ports-walkthrough/)
+- Rootless mode（Docker / Podman 都支援）：發佈的連接埠由主機上的轉送程式（rootlesskit、rootlessport）接收，主機防火牆的入站規則管得到，容器看到的來源是轉送程式那一端的位址；實測見 [Podman 與 rootless Docker 發佈連接埠的實測紀錄：rootful Podman 在 ufw 與 firewalld 上的轉送路徑、rootless Docker 與 rootless Podman 由主機程式接收的連接埠與容器看到的來源位址](/devops/infra/03-network-foundation/hands-on/podman-rootless-ports-walkthrough/)
 - User namespace mapping
 - Seccomp / AppArmor / SELinux profile
 - 對應 [07 security](/backend/07-security-data-protection/) container security

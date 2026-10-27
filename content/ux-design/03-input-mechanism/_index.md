@@ -27,4 +27,4 @@ tags: ["ux-design", "input", "keyboard", "mobile", "ime"]
 ## 跨分類引用
 
 - → [testing 模組三 協議整合測試](/testing/03-protocol-integration-test/)：整行 vs 逐字元影響 protocol test 斷言
-- → [monitoring 模組七 資安](/monitoring/07-security-privacy/)：IME 個人化學習 = secret 洩漏風險
+- → [monitoring 模組七 資安](/devops/monitoring/07-security-privacy/)：IME 個人化學習 = secret 洩漏風險

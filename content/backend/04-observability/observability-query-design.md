@@ -249,4 +249,4 @@ CQRS 在 application 層透過 event handler、projector、read store 實作。�
 - [4.15 cost attribution](/backend/04-observability/cost-attribution/)：query 資源的成本歸屬
 - [4.17 telemetry data quality](/backend/04-observability/telemetry-data-quality/)：pre-aggregation 與 raw data 的一致性驗證
 - [4.18 operating model](/backend/04-observability/observability-operating-model/)：query 資源治理的 ownership
-- [Monitoring 讀寫分離](/monitoring/04-collector/read-write-separation/)：Monitor 專案的讀寫分離具體應用
+- [Monitoring 讀寫分離](/devops/monitoring/04-collector/read-write-separation/)：Monitor 專案的讀寫分離具體應用

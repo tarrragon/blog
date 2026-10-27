@@ -92,7 +92,7 @@ steps:
 - **環境變數旗標**：測試環境部署時設一個旗標（如 `TEST_ENV=staging`），測試開始前檢查。風險在於旗標可以被手動覆寫——旗標被設成 `production` 的那天、防線失效。
 - **Host 比對**：從 URL 中解析 host 並比對已知的生產 host 清單（黑名單而非白名單）。覆蓋面比 allowlist 寬（未知 host 放行），適合測試環境頻繁更換的團隊。
 
-三者的預設行為在判定失敗時都應該是拒絕：「判定不了歸屬的環境」比照「可能是生產環境」處理。偏好的順序：URL allowlist（最窄、最安全）→ host 比對（較寬、較靈活）→ 環境變數旗標（可被覆寫、最後手段）。環境可判定性的完整討論見 [infra 模組四：環境分離與模組化](/infra/04-environment-separation/)，供給側的環境設計契約見 [6.26 共用測試環境的設計契約](/backend/06-reliability/qa-environment-design/)。
+三者的預設行為在判定失敗時都應該是拒絕：「判定不了歸屬的環境」比照「可能是生產環境」處理。偏好的順序：URL allowlist（最窄、最安全）→ host 比對（較寬、較靈活）→ 環境變數旗標（可被覆寫、最後手段）。環境可判定性的完整討論見 [infra 模組四：環境分離與模組化](/devops/infra/04-environment-separation/)，供給側的環境設計契約見 [6.26 共用測試環境的設計契約](/backend/06-reliability/qa-environment-design/)。
 
 ## 失效偵測
 
@@ -107,6 +107,6 @@ steps:
 ## 下一步路由
 
 - 存取憑證存放決策的實際應用 → [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)
-- 環境判定的基礎設施面 → [環境分離與模組化](/infra/04-environment-separation/)
+- 環境判定的基礎設施面 → [環境分離與模組化](/devops/infra/04-environment-separation/)
 - 測試環境的供給側契約 → [共用測試環境的設計契約](/backend/06-reliability/qa-environment-design/)
 - CI stage 設計與 skip 計數的治理 → [CI 中的服務 fixture 管理](/testing/03-protocol-integration-test/service-fixture-management/)

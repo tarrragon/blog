@@ -50,4 +50,4 @@ Tom DeMarco 與 Timothy Lister 的兩本分屬不同主題：《Peopleware》在
 
 ## 教學系列裡的相關實作內容
 
-書單處理選讀判斷，技術實作在教學系列：交付管線與部署 gate 看 [CI/CD 教學](/ci/)，服務探活、容量規劃與高可用看 [運行期維運](/operations/)，事故分級、指揮角色與復盤制度看 [事故處理與復盤](/backend/08-incident-response/)，客戶端遙測的四類事件與收集鏈路看 [Monitoring 監控體系](/monitoring/)，交付生命週期全景看 [DevOps 全景](/devops/)。既有團隊的結構評估協議看 [發射管制隊視角：評估工作團隊設計](/record/launch-control-team-lens-methodology/)。
+書單處理選讀判斷，技術實作在教學系列：交付管線與部署 gate 看 [CI/CD：驗證與發布 gate、artifact、失敗到修復的流程，以及各部署場域的差異](/devops/ci/)，服務探活、容量規劃與高可用看 [運行期維運](/devops/operations/)，事故分級、指揮角色與復盤制度看 [事故處理與復盤](/backend/08-incident-response/)，客戶端遙測的四類事件與收集鏈路看 [Monitoring 監控體系](/devops/monitoring/)，交付生命週期全景看 [DevOps 全景](/devops/)。既有團隊的結構評估協議看 [發射管制隊視角：評估工作團隊設計](/record/launch-control-team-lens-methodology/)。

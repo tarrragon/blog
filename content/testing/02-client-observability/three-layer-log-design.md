@@ -53,7 +53,7 @@ Protocol log 在 release mode 應該能關閉。這層 log 量大（每次鍵盤
 
 使用者行為 log 在兩個場景有價值：第一，debug 時還原使用者操作路徑 — 「使用者做了什麼導致問題出現」；第二，結合狀態矩陣（[ux-design 模組一](/ux-design/01-screen-state-machine/)）做狀態轉換的實際覆蓋率分析 — 哪些狀態轉換在真實使用中經常發生，哪些從未發生。
 
-使用者行為 log 在 release mode 啟用時需要注意隱私。記錄「使用者切換了畫面」是合理的；記錄「使用者輸入了密碼 abc123」需要 redaction 機制（[monitoring 模組七 資安](/monitoring/07-security-privacy/)）。
+使用者行為 log 在 release mode 啟用時需要注意隱私。記錄「使用者切換了畫面」是合理的；記錄「使用者輸入了密碼 abc123」需要 redaction 機制（[monitoring 模組七 資安](/devops/monitoring/07-security-privacy/)）。
 
 ## 三層的關係
 
@@ -72,4 +72,4 @@ Protocol log 在 release mode 應該能關閉。這層 log 量大（每次鍵盤
 - 在功能規格中定義 log 點 → [功能規格中的 log 點定義方法](/testing/02-client-observability/log-point-in-spec/)
 - 事後補 log 和設計產物 log 的品質差異 → [「事後補 log」vs「設計產物 log」的品質差異](/testing/02-client-observability/hotfix-log-vs-designed-log/)
 - Log 收集方案選擇 → [自架 log endpoint vs 商業方案](/testing/02-client-observability/log-endpoint-tradeoff/)
-- 事件分類與收集策略 → [monitoring 模組一 監控心智模型](/monitoring/01-mental-model/)
+- 事件分類與收集策略 → [monitoring 模組一 監控心智模型](/devops/monitoring/01-mental-model/)

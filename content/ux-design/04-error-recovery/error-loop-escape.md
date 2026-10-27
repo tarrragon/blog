@@ -64,4 +64,4 @@ error → retry → error 循環是指使用者遇到錯誤、點擊重試、再
 - 重試策略的選擇 → [Retry 機制 UX](/ux-design/04-error-recovery/retry-mechanism-ux/)
 - 畫面狀態矩陣的退出路徑檢查 → [ux-design 模組一 畫面狀態機](/ux-design/01-screen-state-machine/)
 - Mock 遮蔽 error 場景的問題 → [testing 模組一 測試策略分層](/testing/01-test-strategy-layers/)
-- Error 事件的分類與收集 → [monitoring 模組一 監控心智模型](/monitoring/01-mental-model/)
+- Error 事件的分類與收集 → [monitoring 模組一 監控心智模型](/devops/monitoring/01-mental-model/)

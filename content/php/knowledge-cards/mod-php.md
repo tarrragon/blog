@@ -6,7 +6,7 @@ weight: 3
 tags: ["php", "apache", "knowledge-cards"]
 ---
 
-mod_php 是編譯成 Apache 模組的 PHP，Apache 啟動時用 `LoadModule` 載入，之後 Apache 的每個子程序裡都有一份 PHP 直譯器，收到 `.php` 請求就在自己的程序裡執行。它的 [SAPI](/php/knowledge-cards/sapi/) 名稱是 `apache2handler`。可先對照 [PHP-FPM](/php/knowledge-cards/php-fpm/) 與 [Apache MPM](/infra/knowledge-cards/apache-mpm/)。
+mod_php 是編譯成 Apache 模組的 PHP，Apache 啟動時用 `LoadModule` 載入，之後 Apache 的每個子程序裡都有一份 PHP 直譯器，收到 `.php` 請求就在自己的程序裡執行。它的 [SAPI](/php/knowledge-cards/sapi/) 名稱是 `apache2handler`。可先對照 [PHP-FPM](/php/knowledge-cards/php-fpm/) 與 [Apache MPM](/devops/infra/knowledge-cards/apache-mpm/)。
 
 ## 概念位置
 
@@ -21,4 +21,4 @@ mod_php 把直譯器放進 web 伺服器的程序裡：省掉 CGI 每請求啟�
 
 ## 設計責任
 
-從 mod_php 搬到 PHP-FPM 時，`.htaccess` 裡的 `php_value` / `php_flag` 要移到 `.user.ini`（見 [php.ini / .user.ini](/infra/knowledge-cards/php-ini/)）。完整的行為與實測見 [mod_php](/php/01-server-runtime/mod-php/)。
+從 mod_php 搬到 PHP-FPM 時，`.htaccess` 裡的 `php_value` / `php_flag` 要移到 `.user.ini`（見 [php.ini / .user.ini](/devops/infra/knowledge-cards/php-ini/)）。完整的行為與實測見 [mod_php](/php/01-server-runtime/mod-php/)。

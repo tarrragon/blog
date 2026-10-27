@@ -16,7 +16,7 @@ async function recordVendorRequests(page: Page) {
 test.describe('vendor lab pages', () => {
   test('Meta Pixel 實測頁：載入前零請求、填錯 ID 不載入、按下後注入 fbevents.js', async ({ page }) => {
     const requests = await recordVendorRequests(page);
-    await page.goto('/blog/monitoring/vendors/meta-pixel-lab/');
+    await page.goto('/blog/devops/monitoring/vendors/meta-pixel-lab/');
     await page.waitForLoadState('networkidle');
     expect(requests).toEqual([]);
 
@@ -37,7 +37,7 @@ test.describe('vendor lab pages', () => {
 
   test('GTM 實測頁：載入前零請求、按下後以填入的容器 ID 注入 gtm.js 並推資料層', async ({ page }) => {
     const requests = await recordVendorRequests(page);
-    await page.goto('/blog/monitoring/vendors/google-tag-manager-lab/');
+    await page.goto('/blog/devops/monitoring/vendors/google-tag-manager-lab/');
     await page.waitForLoadState('networkidle');
     expect(requests).toEqual([]);
 
@@ -53,7 +53,7 @@ test.describe('vendor lab pages', () => {
 
   test('script 被擋下時狀態列回報載入失敗', async ({ page }) => {
     await page.route(VENDOR_HOSTS, (route: Route) => route.abort('blockedbyclient'));
-    await page.goto('/blog/monitoring/vendors/meta-pixel-lab/');
+    await page.goto('/blog/devops/monitoring/vendors/meta-pixel-lab/');
     const lab = page.locator('.vendor-lab');
     await lab.locator('#vendor-lab-id').fill('123456789012345');
     await lab.locator('[data-action="load"]').click();

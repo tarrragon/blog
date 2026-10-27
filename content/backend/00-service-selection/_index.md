@@ -10,7 +10,7 @@ tags: ["backend", "service-selection"]
 
 進入需求分類之前、先確認一個更早的判斷：**這個服務值得自建嗎**。差異化在商品、內容或服務品質、需求落在 Wix / Shopify、Google Apps Script、Firebase、WordPress 這類現成平台標準域的業務、託管形態可能是成本上更誠實的起點；判讀方式與可遷出保險見 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/)、日後升級自建 tripwire 觸發的遷出執行見 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)。本模組其餘章節預設自建已成立。
 
-如果你連「把服務放上線」都還沒做過，這個模組的選型理論會太高——先走 [服務上線的業界常識地基](/going-live/) 建立部署、主機、域名、備份的地基，再回來做選型。
+如果你連「把服務放上線」都還沒做過，這個模組的選型理論會太高——先走 [服務上線：部署、主機形態、域名與 HTTPS、十二要素、自架或託管、備份與還原](/devops/going-live/) 建立部署、主機、域名、備份的地基，再回來做選型。
 
 本模組先建立跨分類的選型語言。後續進入 [database](/backend/knowledge-cards/database/)、Redis、message [queue](/backend/knowledge-cards/queue/)、observability 或 deployment 資料夾時，每個資料夾開頭都應延續同一個形式：先說明這類服務解決什麼問題，再比較同質服務的差異，最後才進入實作細節。
 

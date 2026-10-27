@@ -20,4 +20,4 @@ tags: ["automation", "mental-model", "beacon", "serverless"]
 ## 跨分類引用
 
 - → [模組二：流量 beacon 實作](/automation/02-analytics-beacon/)：把本章的 beacon 架構實際做出來
-- → [Monitoring 監控體系](/monitoring/)：想清楚「要收集什麼事件」的概念層
+- → [Monitoring 監控體系](/devops/monitoring/)：想清楚「要收集什麼事件」的概念層

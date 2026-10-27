@@ -6,7 +6,7 @@ weight: 28
 tags: ["backend", "observability", "reliability", "monitoring", "failure-domain"]
 ---
 
-這一篇整理服務與監控放在同一台主機（或同一個失效域）時，監控結構上判斷不了的故障，以及從失效域以外送出訊號的方式。觀測與被觀測系統一起退化的一般機制在 [4.25 觀測共命運失效：工具退化時的訊號與人層設計](/backend/04-observability/observability-shared-fate/)，這一篇處理其中最小的情形：只有一台主機。第三方服務的挑選與接法見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)，多台主機怎麼分配服務與監控見 [小型服務的兩到三台主機配置](/operations/06-high-availability/small-service-host-layout/)。在 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 的分法裡，主機停機與告警鏈停掉是位置盲區（觀察者跟著被觀察的對象一起停），使用者路徑中斷是服務網路內探測的檢查範圍盲區（公開入口不在它的檢查範圍裡），通知送不出去是讀取缺口，由送失敗的訊號偵測，各層的接手關係見那一篇；本篇的外部探測就是那一篇的使用者路徑合成監控（[Synthetic Monitoring](/backend/knowledge-cards/synthetic-monitoring/)），主機內部探測是服務網路內的探測。
+這一篇整理服務與監控放在同一台主機（或同一個失效域）時，監控結構上判斷不了的故障，以及從失效域以外送出訊號的方式。觀測與被觀測系統一起退化的一般機制在 [4.25 觀測共命運失效：工具退化時的訊號與人層設計](/backend/04-observability/observability-shared-fate/)，這一篇處理其中最小的情形：只有一台主機。第三方服務的挑選與接法見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)，多台主機怎麼分配服務與監控見 [小型服務的兩到三台主機配置](/devops/operations/06-high-availability/small-service-host-layout/)。在 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/) 的分法裡，主機停機與告警鏈停掉是位置盲區（觀察者跟著被觀察的對象一起停），使用者路徑中斷是服務網路內探測的檢查範圍盲區（公開入口不在它的檢查範圍裡），通知送不出去是讀取缺口，由送失敗的訊號偵測，各層的接手關係見那一篇；本篇的外部探測就是那一篇的使用者路徑合成監控（[Synthetic Monitoring](/backend/knowledge-cards/synthetic-monitoring/)），主機內部探測是服務網路內的探測。
 
 ## 監控與服務共用失效域時看不到的故障：主機停機、使用者路徑中斷與告警鏈中斷
 
@@ -38,7 +38,7 @@ tags: ["backend", "observability", "reliability", "monitoring", "failure-domain"
 
 ### 外部探測：使用者看到的結果
 
-這一篇的外部探測指從服務主機的失效域以外，在使用者連線出發的那一側網路照使用者的路徑對服務發請求：公開服務的使用者從公開的網際網路來，探測就解析公開的網域、經過 HTTPS 與公開的入口，檢查回應的狀態碼與內容（也叫 synthetic monitoring 或 blackbox 探測，多地區探測的做法見 [4.10 Client-side / Synthetic / RUM](/backend/04-observability/client-side-monitoring/) 的〈Synthetic Monitoring〉）；只在公司內網或 VPN 裡提供的服務，探測端要放在那個網路裡。站內 [多容器服務的存活監看](/operations/04-service-health/multi-container-monitoring/) 的外部探測是從同一台主機上另一個容器發出的，「外部」是相對於服務的程序；它在服務程序卡住時有用，而主機停掉時跟著停，不是這裡要的觀察者。
+這一篇的外部探測指從服務主機的失效域以外，在使用者連線出發的那一側網路照使用者的路徑對服務發請求：公開服務的使用者從公開的網際網路來，探測就解析公開的網域、經過 HTTPS 與公開的入口，檢查回應的狀態碼與內容（也叫 synthetic monitoring 或 blackbox 探測，多地區探測的做法見 [4.10 Client-side / Synthetic / RUM](/backend/04-observability/client-side-monitoring/) 的〈Synthetic Monitoring〉）；只在公司內網或 VPN 裡提供的服務，探測端要放在那個網路裡。站內 [多容器服務的存活監看](/devops/operations/04-service-health/multi-container-monitoring/) 的外部探測是從同一台主機上另一個容器發出的，「外部」是相對於服務的程序；它在服務程序卡住時有用，而主機停掉時跟著停，不是這裡要的觀察者。
 
 外部探測回答的是使用者連不連得到、回應對不對，涵蓋主機整台停掉與使用者路徑中斷。它不回答監控還在不在運作：服務照常回應、Alertmanager 已經停了一整天，外部探測全部成功。
 
@@ -50,7 +50,7 @@ tags: ["backend", "observability", "reliability", "monitoring", "failure-domain"
 
 **第三方服務。** 心跳監看與外部探測都有現成的託管服務，它們跑在別人的機房與網路上。業者維運的意思是業者自己知道服務停了，購買服務的一方並不會因此收到通知：檢查項目被刪除、業者自己停擺，心跳都只是不再被看著。購買服務的一方能做的是定期演練（見〈心跳監看、外部探測與內部探測並排時的判讀〉的演練那一段），以及訂閱業者的狀態頁。代價是告警的內容（標籤、主機名）與被監看服務的公開網址會送到第三方，以及多了一個要管理的帳號與私密網址。
 
-**另一個失效域的主機。** 心跳監看的邏輯不複雜（記下最後一次心跳的時間，距離它超過週期與寬限的總和就通知），開源的心跳監看服務也可以自架。自架的觀察者成立的前提有兩個。第一，觀察者所在的主機與它要避開的那台主機不共用失效域：換一個雲端業者，或一台在雲端、一台在地端，是分開的起點；分開之後還要逐項比對兩台仍共用的依賴（付款方式與帳號、通知用的郵件服務、DNS 業者），比對方式見 [Failure Domain](/backend/knowledge-cards/failure-domain/) 的〈判讀方式〉。第二，觀察者自己停掉時有人知道，這又分成兩種情形。**主機停掉**：只多租一台主機專門跑觀察者、監控仍留在服務主機上時，由服務主機上的 Prometheus 探測那一台；監控搬到第二台時，由**互相監看**處理，服務主機上跑心跳監看程式，接收監控主機送出的心跳，監控主機讀取服務主機的指標（讀不到時，監控主機上那個讀取對象的 `up` 變成 0，這也是一種由觀察者主動發出的訊號），服務主機停掉時由監控主機上的 Alertmanager 通知值班的人，任一台主機停掉，另一台都會發現。**監看程式這個程序停掉、主機照常運作**：由監控主機對它發探測。兩邊的通知管道也要彼此獨立：服務主機上的監看程式直接寄 email 或走另一個推播服務，不經過監控主機上的 Alertmanager。心跳的接收端點不對外開放、監看程式怎麼被探測、兩台同時停掉的風險，見 [小型服務的兩到三台主機配置](/operations/06-high-availability/small-service-host-layout/) 的〈兩台主機互相監看〉。
+**另一個失效域的主機。** 心跳監看的邏輯不複雜（記下最後一次心跳的時間，距離它超過週期與寬限的總和就通知），開源的心跳監看服務也可以自架。自架的觀察者成立的前提有兩個。第一，觀察者所在的主機與它要避開的那台主機不共用失效域：換一個雲端業者，或一台在雲端、一台在地端，是分開的起點；分開之後還要逐項比對兩台仍共用的依賴（付款方式與帳號、通知用的郵件服務、DNS 業者），比對方式見 [Failure Domain](/backend/knowledge-cards/failure-domain/) 的〈判讀方式〉。第二，觀察者自己停掉時有人知道，這又分成兩種情形。**主機停掉**：只多租一台主機專門跑觀察者、監控仍留在服務主機上時，由服務主機上的 Prometheus 探測那一台；監控搬到第二台時，由**互相監看**處理，服務主機上跑心跳監看程式，接收監控主機送出的心跳，監控主機讀取服務主機的指標（讀不到時，監控主機上那個讀取對象的 `up` 變成 0，這也是一種由觀察者主動發出的訊號），服務主機停掉時由監控主機上的 Alertmanager 通知值班的人，任一台主機停掉，另一台都會發現。**監看程式這個程序停掉、主機照常運作**：由監控主機對它發探測。兩邊的通知管道也要彼此獨立：服務主機上的監看程式直接寄 email 或走另一個推播服務，不經過監控主機上的 Alertmanager。心跳的接收端點不對外開放、監看程式怎麼被探測、兩台同時停掉的風險，見 [小型服務的兩到三台主機配置](/devops/operations/06-high-availability/small-service-host-layout/) 的〈兩台主機互相監看〉。
 
 **另一個業者的排程平台。** 自己寫的觀察者不一定要跑在一台主機上，也可以是另一個業者的排程或無伺服器平台上、以組織自己的帳號執行的程式。它與主機的故障分屬不同失效域，帳號、付款方式與通知管道仍要逐項比對；資料留在自己的帳號裡，而那個業者也是要多管理的一個帳號。這種觀察者要能接收心跳並保存最後一次心跳的時間，它自己停掉時，可以由主機上的 Prometheus 定時探測它來發現；本篇沒有實作這一種。
 
@@ -81,6 +81,6 @@ tags: ["backend", "observability", "reliability", "monitoring", "failure-domain"
 ## 延伸閱讀：觀察者改由第三方提供、主機變成兩台、失效範圍擴大到觀測系統與主機過載
 
 - 觀察者改由第三方服務提供時，要挑的條件（服務的位置、通知管道、告警資料留在哪裡）、healthchecks 的 ping 網址與 `/fail`、Alertmanager 送心跳與送失敗通知的路由，見 [第三方心跳監看與外部探測服務](/backend/04-observability/vendors/prometheus/external-heartbeat-and-probe-services/)。
-- 主機從一台變成兩台時，監控搬到另一個失效域、兩台之間的 VPN 與互相監看、雲端業者處理與不處理的故障，見 [小型服務的兩到三台主機配置](/operations/06-high-availability/small-service-host-layout/)。
+- 主機從一台變成兩台時，監控搬到另一個失效域、兩台之間的 VPN 與互相監看、雲端業者處理與不處理的故障，見 [小型服務的兩到三台主機配置](/devops/operations/06-high-availability/small-service-host-layout/)。
 - 失效的範圍從一台主機擴大到觀測系統本身時，依賴耦合、反噬與供應商單點三種機制，狀態頁的失效域隔離與人在盲飛時的應對，見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)。
 - 主機沒有停而是過載時，監控自己也在等 CPU 的訊號與資源隔離，見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)。

@@ -64,4 +64,4 @@ Dekker 的另一本《Just Culture》處理的是懲戒界線——哪些行為�
 
 偏差累積的另一面是系統層級的回饋延遲：每次放寬標準都沒有立即後果，因此沒有訊號阻止下一次。那個機制走 [問題定義與系統思考的選讀書目](../problem-definition/)。
 
-事故分級怎麼定、指揮角色怎麼分工、復盤產出怎麼進下一輪演練，這些制度實作看 [事故處理與復盤](/backend/08-incident-response/)。事故的偵測面——客戶端遙測怎麼收、告警怎麼收斂——看 [Monitoring 監控體系](/monitoring/)。服務探活與高可用看 [運行期維運](/operations/)。
+事故分級怎麼定、指揮角色怎麼分工、復盤產出怎麼進下一輪演練，這些制度實作看 [事故處理與復盤](/backend/08-incident-response/)。事故的偵測面——客戶端遙測怎麼收、告警怎麼收斂——看 [Monitoring 監控體系](/devops/monitoring/)。服務探活與高可用看 [運行期維運](/devops/operations/)。

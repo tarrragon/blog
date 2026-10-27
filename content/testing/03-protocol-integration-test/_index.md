@@ -27,5 +27,5 @@ tags: ["testing", "integration-test", "websocket", "protocol", "contract-test"]
 
 ## 跨分類引用
 
-- → [monitoring 模組三 SDK 設計](/monitoring/03-sdk-design/)：SDK 的 transport 行為也需要 protocol test
+- → [monitoring 模組三 SDK 設計](/devops/monitoring/03-sdk-design/)：SDK 的 transport 行為也需要 protocol test
 - ← [ux-design 模組三 輸入機制](/ux-design/03-input-mechanism/)：輸入設計（整行 vs 逐字元）影響 protocol test 的斷言

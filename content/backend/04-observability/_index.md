@@ -63,11 +63,11 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 ## 跟 Monitoring 模組的串接
 
-[Monitoring 模組](/monitoring/) 聚焦非 server 端 runtime — mobile app、web 頁面、本機腳本的行為蒐集、錯誤回報與 SDK 設計。本模組聚焦 server-side observability。兩者的交叉點是 trace context propagation 和 event transport format。
+[Monitoring 模組](/devops/monitoring/) 聚焦非 server 端 runtime — mobile app、web 頁面、本機腳本的行為蒐集、錯誤回報與 SDK 設計。本模組聚焦 server-side observability。兩者的交叉點是 trace context propagation 和 event transport format。
 
 - [4.10 Client-side / Synthetic / RUM](/backend/04-observability/client-side-monitoring/)：概念定位、RUM 與 synthetic 的 server-side 整合
 - [4.24 Client-to-Server 觀測串接](/backend/04-observability/client-server-trace-integration/)：從 browser click 到 server span 的完整 trace 鏈路
-- [監控資料的雙重用途](/monitoring/telemetry-data-dual-use/)：同一份 event data 如何同時服務行為分析（monitoring/08）與訊號治理（04）
+- [監控資料的雙重用途](/devops/monitoring/telemetry-data-dual-use/)：同一份 event data 如何同時服務行為分析（monitoring/08）與訊號治理（04）
 - [0.15 跨模組 Checkout Episode](/backend/00-service-selection/cross-module-checkout-episode/)：從 DB write 到 observability evidence 的四層端到端串聯
 
 ## 與語言教材的分工
@@ -208,4 +208,4 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 ## 跟 Infra 可觀測性的分界
 
-[Infra 模組六：可觀測性與 log](/infra/06-observability-logging/) 處理基礎設施層的訊號 — log group、CloudWatch metric、alarm 跟資源同生命週期的 IaC 管理。本模組處理應用層的訊號 — 服務的延遲、錯誤率、trace、業務指標；自架環境的主機與容器資源監控（4.26 到 4.28）也放在本模組，因為它與應用層的訊號放在同一套 Prometheus 與同一份儀表板裡對照。分界的判讀是：這個訊號是「資源建立時就該存在」還是「功能開發時才埋」——前者進 infra 的 IaC，後者進本模組的應用程式碼。事故排查時兩層合流：infra alarm 告訴你哪個資源異常，本模組的 trace 告訴你哪個請求路徑受影響。
+[Infra 模組六：可觀測性與 log](/devops/infra/06-observability-logging/) 處理基礎設施層的訊號 — log group、CloudWatch metric、alarm 跟資源同生命週期的 IaC 管理。本模組處理應用層的訊號 — 服務的延遲、錯誤率、trace、業務指標；自架環境的主機與容器資源監控（4.26 到 4.28）也放在本模組，因為它與應用層的訊號放在同一套 Prometheus 與同一份儀表板裡對照。分界的判讀是：這個訊號是「資源建立時就該存在」還是「功能開發時才埋」——前者進 infra 的 IaC，後者進本模組的應用程式碼。事故排查時兩層合流：infra alarm 告訴你哪個資源異常，本模組的 trace 告訴你哪個請求路徑受影響。

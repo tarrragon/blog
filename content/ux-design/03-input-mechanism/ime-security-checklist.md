@@ -75,5 +75,5 @@ Review 安全敏感輸入框的 TextField 實作時，逐項確認：
 ## 下一步路由
 
 - 四維度決策表總覽 → [輸入機制決策表](/ux-design/03-input-mechanism/four-dimension-decision/)
-- IME 個人化學習在 monitoring 中的安全考量 → [monitoring 模組七 資安](/monitoring/07-security-privacy/)
+- IME 個人化學習在 monitoring 中的安全考量 → [monitoring 模組七 資安](/devops/monitoring/07-security-privacy/)
 - Terminal 場景的完整輸入設計 → [Terminal app 輸入設計](/ux-design/03-input-mechanism/terminal-input-design/)

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// 在本機用 Playwright 操作 monitoring/vendors 的實測頁，記錄各家追蹤碼實際送出的請求與寫下的 cookie。
+// 在本機用 Playwright 操作 devops/monitoring/vendors 的實測頁，記錄各家追蹤碼實際送出的請求與寫下的 cookie。
 //
 // 結果會隨 vendor 改版而過期，所以每一份結果都記下擷取時間、瀏覽器版本與 vendor script 的版本資訊；
 // 寫進文章時要連同這幾項一起寫。
@@ -25,8 +25,8 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const LAB_PAGES = {
-  'meta-pixel': 'https://tarrragon.github.io/blog/monitoring/vendors/meta-pixel-lab/',
-  gtm: 'https://tarrragon.github.io/blog/monitoring/vendors/google-tag-manager-lab/',
+  'meta-pixel': 'https://tarrragon.github.io/blog/devops/monitoring/vendors/meta-pixel-lab/',
+  gtm: 'https://tarrragon.github.io/blog/devops/monitoring/vendors/google-tag-manager-lab/',
 };
 const COOKIE_PREFIXES = ['_fbp', '_fbc', '_ga', '_gid', '_gcl'];
 const KEPT_RESPONSE_HEADERS = ['content-type', 'last-modified', 'etag', 'date', 'cache-control'];

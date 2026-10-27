@@ -6,7 +6,7 @@ weight: 11
 tags: ["backend", "performance", "rate-limit", "middleware", "redis"]
 ---
 
-[Rate limit](/backend/knowledge-cards/rate-limit/) 的實作分成三個層次：單機 middleware（一個 server instance 內的限速）、分散式限速（多個 instance 共用的限速狀態）、配額設計（不同 client 和 endpoint 的差異化配額）。Rate limit 的概念基礎（token bucket / sliding window / 和背壓的區別）見 [運行期維運 流量管控](/operations/03-traffic-management/rate-limiting/)，本章聚焦後端的程式碼實作。
+[Rate limit](/backend/knowledge-cards/rate-limit/) 的實作分成三個層次：單機 middleware（一個 server instance 內的限速）、分散式限速（多個 instance 共用的限速狀態）、配額設計（不同 client 和 endpoint 的差異化配額）。Rate limit 的概念基礎（token bucket / sliding window / 和背壓的區別）見 [運行期維運 流量管控](/devops/operations/03-traffic-management/rate-limiting/)，本章聚焦後端的程式碼實作。
 
 ## 單機 Middleware 實作
 
@@ -146,8 +146,8 @@ Dashboard 視圖：rate limit hit 的時間趨勢 + 按 client 和 endpoint 分�
 
 ## 下一步路由
 
-- Rate limit 的概念基礎 → [運行期維運 流量管控 — Rate Limiting](/operations/03-traffic-management/rate-limiting/)
-- 背壓機制（被動的流量控制）→ [運行期維運 背壓機制](/operations/03-traffic-management/backpressure/)
+- Rate limit 的概念基礎 → [運行期維運 流量管控 — Rate Limiting](/devops/operations/03-traffic-management/rate-limiting/)
+- 背壓機制（被動的流量控制）→ [運行期維運 背壓機制](/devops/operations/03-traffic-management/backpressure/)
 - Rate limit 知識卡 → [Rate Limit](/backend/knowledge-cards/rate-limit/)
 - 依系統狀態拒絕請求的負載卸除、與限流的分工，以及瞬時大流量時的優先等級 → [9.15 無預警瞬時大流量：流量來源辨識、擴展緩衝、請求優先等級、准入控制、體積型攻擊與退路](/backend/09-performance-capacity/unplanned-traffic-surge/)
-- 監控系統中的 ingestion 限速 → [Monitoring Ingestion Scaling](/monitoring/04-collector/ingestion-scaling/)
+- 監控系統中的 ingestion 限速 → [Monitoring Ingestion Scaling](/devops/monitoring/04-collector/ingestion-scaling/)

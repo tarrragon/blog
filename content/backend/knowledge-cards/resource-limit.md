@@ -17,7 +17,7 @@ Resource Limit 位在 container、runtime、deployment platform 與 scheduler �
 系統需要 resource limit 的訊號是：
 
 - 多個 instance 需要共享固定主機資源
-- 單一服務可能因記憶體成長或 CPU 尖峰影響其他服務（共用資源的干擾從哪裡看得到見 [Noisy Neighbor](/backend/knowledge-cards/noisy-neighbor/)；上限之外還有保留資源、分機、專用實體機等更深的隔離層級，見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈隔離的層級與代價〉）
+- 單一服務可能因記憶體成長或 CPU 尖峰影響其他服務（共用資源的干擾從哪裡看得到見 [Noisy Neighbor](/backend/knowledge-cards/noisy-neighbor/)；上限之外還有保留資源、分機、專用實體機等更深的隔離層級，見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)〈隔離的層級與代價〉）
 - 平台需要用上限保護整體節點穩定性
 
 ## 接近真實網路服務的例子

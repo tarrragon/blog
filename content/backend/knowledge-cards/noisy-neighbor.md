@@ -16,7 +16,7 @@ Noisy neighbor 是多個工作負載共用同一份硬體資源時，其中一�
 | 同一台實體機的虛擬機 | CPU 時間、磁碟與網路頻寬    | Linux 虛擬機的 [steal 時間](/backend/knowledge-cards/cpu-steal-time/)（`node_cpu_seconds_total{mode="steal"}`）                                                                                          |
 | 開發用筆電上的虛擬機 | 筆電的 CPU 與磁碟           | CPU 負載只有筆電本身看得到（`uptime`），筆電忙的時候虛擬機裡的 load 仍然很低；磁碟要看虛擬機有沒有掛進筆電的那一顆（OrbStack 以 virtiofs 掛入，node_exporter 看得到，剩餘比例正確而位元組數放大 256 倍） |
 
-被干擾的服務自己的監控通常看不到成因：它的 CPU 用量低、錯誤少，只有延遲高，成因在它與其他工作負載共用的那一份資源上，而且常在監控所在層之外。隔離由淺到深是同機設上限與權重（[Resource Limit](/backend/knowledge-cards/resource-limit/)）、同機保留資源與優先權、分到不同主機、專用實體機，各層級隔離得了與隔離不了什麼，見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈隔離的層級與代價〉。
+被干擾的服務自己的監控通常看不到成因：它的 CPU 用量低、錯誤少，只有延遲高，成因在它與其他工作負載共用的那一份資源上，而且常在監控所在層之外。隔離由淺到深是同機設上限與權重（[Resource Limit](/backend/knowledge-cards/resource-limit/)）、同機保留資源與優先權、分到不同主機、專用實體機，各層級隔離得了與隔離不了什麼，見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)〈隔離的層級與代價〉。
 
 ## 可觀察訊號與例子
 

@@ -130,7 +130,7 @@ Sentry 是 error tracking 的事實標準、承擔三個責任：跨 frontend / 
 
 ## 跟 Monitoring 模組的分工
 
-本頁從 server-side 觀測平台角度說明 Sentry — error grouping 的告警整合、performance monitoring 的 SLI 指標設計、self-hosted vs SaaS 成本、跟 OTel 的 context 整合。Client-side 的使用體驗（SDK 自動攔截設計、error grouping 的 client 端行為、session replay 的操作重播、跟自架 monitor 的比較）見 [Monitoring 模組 Sentry 深入](/monitoring/06-commercial-comparison/sentry-deep-dive/)。
+本頁從 server-side 觀測平台角度說明 Sentry — error grouping 的告警整合、performance monitoring 的 SLI 指標設計、self-hosted vs SaaS 成本、跟 OTel 的 context 整合。Client-side 的使用體驗（SDK 自動攔截設計、error grouping 的 client 端行為、session replay 的操作重播、跟自架 monitor 的比較）見 [Monitoring 模組 Sentry 深入](/devops/monitoring/06-commercial-comparison/sentry-deep-dive/)。
 
 兩者的交叉點是 error event 的格式和 trace context propagation — client SDK 捕獲的 error 帶 trace context，server-side 的 Sentry 用同一個 trace 串接完整路徑。
 

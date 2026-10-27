@@ -25,6 +25,6 @@ tags: ["testing", "observability", "logging", "client-side"]
 
 ## 跨分類引用
 
-- → [monitoring 模組二 Log Schema](/monitoring/02-log-schema/)：本模組教「設計 log 點」，monitoring 教「log 收集到之後怎麼處理」
-- → [monitoring 模組七 資安](/monitoring/07-security-privacy/)：log 內容可能含 secret，SDK redaction 在這裡介入
+- → [monitoring 模組二 Log Schema](/devops/monitoring/02-log-schema/)：本模組教「設計 log 點」，monitoring 教「log 收集到之後怎麼處理」
+- → [monitoring 模組七 資安](/devops/monitoring/07-security-privacy/)：log 內容可能含 secret，SDK redaction 在這裡介入
 - ← [ux-design 模組一](/ux-design/01-screen-state-machine/)：狀態矩陣可加「可觀測性」欄位

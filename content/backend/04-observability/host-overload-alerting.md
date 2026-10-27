@@ -6,7 +6,7 @@ weight: 27
 tags: ["backend", "observability", "alerting", "prometheus", "monitoring"]
 ---
 
-多個服務共用一台主機（或一台虛擬機）而主機本身過載時，各服務的探測與告警會一起報失敗；這篇整理這個情形下的告警寫法。共用主機在容量估算、故障範圍與隔離層級上各要考慮什麼，另見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)。告警的一般機制（抑制、分組、條件持續才觸發、burn rate）在 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)，各層的指標從哪裡收見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)。
+多個服務共用一台主機（或一台虛擬機）而主機本身過載時，各服務的探測與告警會一起報失敗；這篇整理這個情形下的告警寫法。共用主機在容量估算、故障範圍與隔離層級上各要考慮什麼，另見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)。告警的一般機制（抑制、分組、條件持續才觸發、burn rate）在 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)，各層的指標從哪裡收見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)。
 
 文中的數字來自一個短網址服務的開發環境：macOS 上的 OrbStack 2.2.3（在 Mac 上以一台 Linux 虛擬機跑 Docker 的工具）跑 Docker Compose，外部探測用 Gatus 5.37.0（定時打各服務端點、判斷成功與否的工具），指標與告警是 Prometheus 3.15.0 與 Alertmanager 0.34.1。下文的告警規則以 `promtool check rules` 檢查回報 SUCCESS，抑制規則補上 route 與 receivers 之後以 `amtool check-config` 檢查通過。
 
@@ -156,14 +156,14 @@ curl -s 'http://127.0.0.1:9093/api/v2/alerts?active=false&silenced=false&unproce
 
 ## 資源隔離：讓監控不比服務先失效
 
-正式環境給重要的服務與監控設定資源的保留量或優先權，主機吃緊時這些服務與監控先分到資源，監控也不會比服務先失效；各個隔離層級的做法與代價見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈隔離的層級與代價〉。
+正式環境給重要的服務與監控設定資源的保留量或優先權，主機吃緊時這些服務與監控先分到資源，監控也不會比服務先失效；各個隔離層級的做法與代價見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)〈隔離的層級與代價〉。
 
 開發用的 Mac 上，容器的資源保留只在 Docker 的虛擬機之內生效，管不到 Mac 上的其他程式。Mac 被其他程式佔滿的那段時間，各後端的延遲會讓 `ProbeSlow` 成立，而成因不在服務；那段時間量到的數字能不能拿來和其他時間比較，見共用主機的資源競爭〈容量估算〉。
 
 ## 延伸閱讀：告警的分組與分級、SLO 告警與監控的分層
 
 - 抑制之外的降噪手段（分組、條件持續與恢復時的遲滯）與告警的嚴重度分級，見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)。
-- 探測工具怎麼選、怎麼接進 Compose，以及容器自己的 healthcheck 與外部探測的分工，見 [多容器服務的存活監看](/operations/04-service-health/multi-container-monitoring/)。
+- 探測工具怎麼選、怎麼接進 Compose，以及容器自己的 healthcheck 與外部探測的分工，見 [多容器服務的存活監看](/devops/operations/04-service-health/multi-container-monitoring/)。
 - 本篇的延遲告警用固定的門檻 0.5 秒；門檻改由 SLO 推出、以錯誤預算的消耗速度判斷的寫法在 [4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/) 與 [Burn Rate](/backend/knowledge-cards/burn-rate/)。
 - 告警描述症狀而不是內部指標的理由，見 [Symptom-based Alert](/backend/knowledge-cards/symptom-based-alert/)。
 - 本篇的主機飽和規則算的是虛擬機的 load 與 steal；監控裝在哪一層就看不到哪些範圍、主機的磁碟怎麼一起涵蓋，見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)。

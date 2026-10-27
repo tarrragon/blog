@@ -63,4 +63,4 @@ infra 教學模組的 22 篇文章完成三輪寫作審查（compliance / cadenc
 
 - → [讀者是缺經驗的專業人士、不是外行人](/report/audience-is-professional-not-layperson/)：本卡是該原則的延伸——讀者是專業人士，他們的工作流程包含向上彙報，教材應該支援這個流程
 - → [跨專業溝通用情境遞進、不用比喻堆疊](/report/cross-expertise-communication-scenario-not-analogy/)：管理層資訊用量級和範圍表達，不用比喻——「月費約 $32」比「大約一頓飯的錢」精確且專業
-- → [infra 投資的商業論證](/infra/09-driving-adoption/infra-business-justification/)：該文集中處理商業論證，本卡講的是把商業素材分散嵌入技術段落，兩者互補
+- → [infra 投資的商業論證](/devops/infra/09-driving-adoption/infra-business-justification/)：該文集中處理商業論證，本卡講的是把商業素材分散嵌入技術段落，兩者互補

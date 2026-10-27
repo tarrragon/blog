@@ -22,14 +22,14 @@ Apps Script 的 [`doPost(e)`](/automation/knowledge-cards/doget-dopost/) 事件�
 
 beacon 靠 JavaScript 觸發，所以**只有會執行 JS 的抓取工具才會進入這份統計**。這一條大幅縮小要辨識的對象範圍，而它與直覺相反：
 
-| 抓取工具                                                                                            | 執行 JS | 出現在統計裡 |
-| --------------------------------------------------------------------------------------------------- | ------- | ------------ |
-| Googlebot                                                                                           | 會      | 會           |
-| [無頭瀏覽器](/monitoring/knowledge-cards/headless-browser/)驅動的抓取工具（Playwright / Puppeteer） | 會      | 會           |
-| 監控與可用性檢查服務                                                                                | 多數會  | 會           |
-| GPTBot / ClaudeBot / PerplexityBot 等 AI 訓練爬蟲                                                   | 不會    | 不會         |
-| facebookexternalhit 等連結預覽                                                                      | 不會    | 不會         |
-| CCBot / AhrefsBot / SemrushBot                                                                      | 不會    | 不會         |
+| 抓取工具                                                                                                   | 執行 JS | 出現在統計裡 |
+| ---------------------------------------------------------------------------------------------------------- | ------- | ------------ |
+| Googlebot                                                                                                  | 會      | 會           |
+| [無頭瀏覽器](/devops/monitoring/knowledge-cards/headless-browser/)驅動的抓取工具（Playwright / Puppeteer） | 會      | 會           |
+| 監控與可用性檢查服務                                                                                       | 多數會  | 會           |
+| GPTBot / ClaudeBot / PerplexityBot 等 AI 訓練爬蟲                                                          | 不會    | 不會         |
+| facebookexternalhit 等連結預覽                                                                             | 不會    | 不會         |
+| CCBot / AhrefsBot / SemrushBot                                                                             | 不會    | 不會         |
 
 **AI 訓練爬蟲不執行 JavaScript** 是其中最反直覺的一項。Vercel 在 2025 年對自家平台流量的量測顯示，GPTBot 與 ClaudeBot 都會抓取 JS 檔案卻從不執行；連結預覽服務只讀 HTML 的 meta 標籤。**在主流爬蟲裡，目前已知具備完整 JS 渲染的只有 Googlebot**——這是對演化中的世界所做的觀察，不是永久成立的分類，各家的渲染能力隨時可能改變。
 
@@ -179,7 +179,7 @@ else if (generic) hits.push("ua:generic:" + generic[0].toLowerCase().replace(/[^
 
 代價是試算表多存一些列，以及彙總時必須記得過濾。
 
-商業追蹤碼裡有一個選了另一種處置的對照。實測的那個 Meta Pixel，設定檔讓它在訪客的瀏覽器裡、事件送出之前做同一種 User-Agent 比對，比對到無頭 Chrome 的 `HeadlessChrome` 字樣就把事件丟掉、不送出（這項設定由 Meta 依各 Pixel 下發，不保證每個 Pixel 都一樣）：用 Playwright 預設的[無頭瀏覽器](/monitoring/knowledge-cards/headless-browser/)打開實測頁時，`fbevents.js` 照常載入、cookie 照常寫入，而 PageView、ViewContent 與購買事件一筆都沒有送出（機制與實測見[用 Playwright 擷取追蹤碼請求](/monitoring/vendors/tracking-request-capture/)）。同一次訪問，本站的 beacon 照樣送出一列，訊號欄記下 `webdriver,ua:headless`。所以本站統計的列數與 Meta 報表的 PageView 事件數對不上時，差額裡有一部分是 Meta Pixel 在瀏覽器裡就丟掉、本站只標記的機器流量；網站只裝 Pixel、沒有從伺服器另外用 Conversions API 送事件時，這些事件事後也補不進 Meta 的報表（有串 Conversions API 時，伺服器端送的事件有沒有經過機器流量過濾，本篇沒有查證）。GA4 的代碼在無頭模式下照常送出事件，已知機器人的排除在 Google 的伺服器端進行，排除了多少看不到。
+商業追蹤碼裡有一個選了另一種處置的對照。實測的那個 Meta Pixel，設定檔讓它在訪客的瀏覽器裡、事件送出之前做同一種 User-Agent 比對，比對到無頭 Chrome 的 `HeadlessChrome` 字樣就把事件丟掉、不送出（這項設定由 Meta 依各 Pixel 下發，不保證每個 Pixel 都一樣）：用 Playwright 預設的[無頭瀏覽器](/devops/monitoring/knowledge-cards/headless-browser/)打開實測頁時，`fbevents.js` 照常載入、cookie 照常寫入，而 PageView、ViewContent 與購買事件一筆都沒有送出（機制與實測見[用 Playwright 擷取追蹤碼請求](/devops/monitoring/vendors/tracking-request-capture/)）。同一次訪問，本站的 beacon 照樣送出一列，訊號欄記下 `webdriver,ua:headless`。所以本站統計的列數與 Meta 報表的 PageView 事件數對不上時，差額裡有一部分是 Meta Pixel 在瀏覽器裡就丟掉、本站只標記的機器流量；網站只裝 Pixel、沒有從伺服器另外用 Conversions API 送事件時，這些事件事後也補不進 Meta 的報表（有串 Conversions API 時，伺服器端送的事件有沒有經過機器流量過濾，本篇沒有查證）。GA4 的代碼在無頭模式下照常送出事件，已知機器人的排除在 Google 的伺服器端進行，排除了多少看不到。
 
 對免費配額敏感、或流量大到列數成為問題時，取捨會反過來——那時應該只丟棄高信心訊號（`webdriver` 與具名 UA）命中的部分，中信心與行為訊號仍然照常記錄。
 

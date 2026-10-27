@@ -6,7 +6,7 @@ weight: 448
 tags: ["backend", "api-design", "mobile", "versioning", "knowledge-card"]
 ---
 
-Minimum Supported Version（最低支援版本）的核心概念是「由服務方保存一個版本下限，低於它的客戶端不再被服務，使用者要更新才能繼續使用」。它是服務方讓自家行動 App 舊版退場的手段；桌面客戶端把同一個值放在 [Update Feed](/ci/knowledge-cards/update-feed/) 裡。公開 API 的整合方要自己改程式，服務方對它們只能在退場日拒絕舊呼叫，沒辦法把使用者帶到更新畫面。可先對照 [Deprecation Lifecycle](/backend/knowledge-cards/deprecation-lifecycle/) 與 [Feature Flag](/backend/knowledge-cards/feature-flag/)。
+Minimum Supported Version（最低支援版本）的核心概念是「由服務方保存一個版本下限，低於它的客戶端不再被服務，使用者要更新才能繼續使用」。它是服務方讓自家行動 App 舊版退場的手段；桌面客戶端把同一個值放在 [Update Feed](/devops/ci/knowledge-cards/update-feed/) 裡。公開 API 的整合方要自己改程式，服務方對它們只能在退場日拒絕舊呼叫，沒辦法把使用者帶到更新畫面。可先對照 [Deprecation Lifecycle](/backend/knowledge-cards/deprecation-lifecycle/) 與 [Feature Flag](/backend/knowledge-cards/feature-flag/)。
 
 ## 概念位置
 

@@ -6,7 +6,7 @@ weight: 2
 tags: ["dotfile", "iac", "workflow"]
 ---
 
-[Infra 基礎設施建置指南](/infra/)教的是用 Terraform 或 OpenTofu 把雲端資源（VPC、IAM role、EC2 instance）寫成代碼，讓基礎設施可重現、可 review、可回滾。Dotfile 做的事在概念上完全平行：把個人工作環境（shell、editor、terminal、window manager）寫成代碼，達成同樣的可重現性。
+[Infra 建置：IaC、身分與存取、網路、環境分離、核心服務、可觀測性、PR 流程與治理](/devops/infra/)教的是用 Terraform 或 OpenTofu 把雲端資源（VPC、IAM role、EC2 instance）寫成代碼，讓基礎設施可重現、可 review、可回滾。Dotfile 做的事在概念上完全平行：把個人工作環境（shell、editor、terminal、window manager）寫成代碼，達成同樣的可重現性。
 
 ## 共用的核心原則
 

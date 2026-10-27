@@ -73,4 +73,4 @@ Risk accepted: someone with device PIN can access the app
 
 - Gate 設計的通用方法論 → [Gate 分類與三問設計法](/ux-design/02-gate-fallback/gate-three-questions/)
 - 開發環境遮蔽 gate 問題 → [開發環境 vs 真機的 gate 行為差異表](/ux-design/02-gate-fallback/dev-vs-real-gate-behavior/)
-- 安全 vs 可用性在 monitoring 中的對應 → [monitoring 模組七 資安](/monitoring/07-security-privacy/)
+- 安全 vs 可用性在 monitoring 中的對應 → [monitoring 模組七 資安](/devops/monitoring/07-security-privacy/)

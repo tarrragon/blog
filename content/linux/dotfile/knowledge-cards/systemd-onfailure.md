@@ -10,7 +10,7 @@ tags: ["dotfile", "linux", "systemd", "onfailure", "knowledge-cards"]
 
 ## 概念位置
 
-相關概念：[systemd drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/)（全域套用 `OnFailure=` 的機制、以及清空繼承值的空賦值）、[服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)（`OnFailure` 告警鏈的完整單機實作）。從單機告警往上到概念層的探活、liveness 與自動重啟見 [DevOps：systemd watchdog 與自動重啟](/operations/04-service-health/systemd-watchdog-restart/)。
+相關概念：[systemd drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/)（全域套用 `OnFailure=` 的機制、以及清空繼承值的空賦值）、[服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)（`OnFailure` 告警鏈的完整單機實作）。從單機告警往上到概念層的探活、liveness 與自動重啟見 [DevOps：systemd watchdog 與自動重啟](/devops/operations/04-service-health/systemd-watchdog-restart/)。
 
 它最反直覺、也最容易踩的一點是觸發時機：`OnFailure` 不是「放棄才觸發」，而是**每一次失敗都觸發**——包含搭配 `Restart=on-failure` 時每次 auto-restart 中途的那些失敗。[服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/) 實測一個重試 3 次後放棄的服務，`OnFailure` 觸發了 4 次（3 次 auto-restart 加 1 次最終 `start-limit-hit`）。所以只掛 `OnFailure=` 加 `Restart=`，每次瞬斷都會發一則告警、把信箱洗爆。（這個觸發次數是特定 systemd 版本的實測、跨版本調整過，機制本身「每次失敗都觸發」則跨版本成立。）
 

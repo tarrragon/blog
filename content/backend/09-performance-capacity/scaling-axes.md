@@ -150,7 +150,7 @@ Zomato 跟 Netflix 不在這份案例清單裡的原因要先講清楚：擴展�
 2. 與 [9.6 容量規劃](/backend/09-performance-capacity/capacity-planning/) 的交接：擴展軸選定後，容量規劃決定具體數字。
 3. 與 [10.1 服務拆分](/backend/10-system-evolution/service-decomposition-boundaries/) 的交接：水平擴展常常是服務拆分的觸發點，反之亦然。
 4. 與 [01 database high-concurrency-access](/backend/01-database/high-concurrency-access/) 的交接：資料層水平擴展（sharding、replica）的具體機制。
-5. 與 devops 的交接：垂直 vs 水平判斷、無狀態設計與擴縮觸發的運維落地在 [運維 模組二：水平擴展](/operations/02-horizontal-scaling/)。
+5. 與 devops 的交接：垂直 vs 水平判斷、無狀態設計與擴縮觸發的運維落地在 [運維 模組二：水平擴展](/devops/operations/02-horizontal-scaling/)。
 
 ## 下一步路由
 

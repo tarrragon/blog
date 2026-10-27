@@ -31,7 +31,7 @@ sudo chmod 440 /etc/sudoers.d/20-nopasswd
 
 **同一份 workflow 搬到自架的 runner 上，這個前提就消失了。** 同一份文件指出 self-hosted runner 沒有「乾淨、用完即丟」的保證，workflow 裡不受信任的程式碼可以在那台機器上留下持續性的入侵，也就是在下一個 job 開始時仍然存在的後門或被改過的檔案。這時在 runner 機器上開全機 NOPASSWD，爆炸半徑就是那台機器本身與它連得到的所有系統。要在自架環境重現 GitHub-hosted runner 的安全前提，做法是讓每個 job 都在新的虛擬機或容器裡跑、跑完就銷毀；只照搬無密碼 sudo 這一項，無密碼 sudo 成立的前提（用完即丟的環境）並沒有跟著搬過來。
 
-**Ansible 這類[組態管理](/infra/knowledge-cards/configuration-management/)工具的條件正好相反：它操作的是長期運作、不會被丟掉的機器。** 所以常見做法是讓目標機器維持需要密碼的 sudo，把密碼交給工具。執行時加 `--ask-become-pass`（縮寫 `-K`）讓人輸入一次 sudo 密碼，或用 `ansible_become_password` 變數從 Ansible Vault（Ansible 內建的檔案加密功能）加密的檔案讀取。後者沒有人在場也能跑，代價是 sudo 密碼以加密形式跟著 playbook 存放，拿得到 Vault 密碼的人或程序就拿得到每台目標機器的 sudo。只給可拋棄的測試主機時改用 `NOPASSWD`、控制端的私鑰因此等於每台的 root，這個取捨的實際設定在 [多台主機維護清單的實作紀錄：在容器上安裝 ansible-core 與 Terraform、由 Terraform 產生 inventory、用 Ansible 的範本部署每台的清單、以 sudo 與 systemd-run 執行檢查腳本，以及清理](/operations/09-host-lifecycle/hands-on/multi-host-manifest-walkthrough/)〈受管主機與控制端的容器：Oracle Linux 10 加 systemd 與 sshd、python:3.12-slim 加 ansible-core 與 Terraform〉。
+**Ansible 這類[組態管理](/devops/infra/knowledge-cards/configuration-management/)工具的條件正好相反：它操作的是長期運作、不會被丟掉的機器。** 所以常見做法是讓目標機器維持需要密碼的 sudo，把密碼交給工具。執行時加 `--ask-become-pass`（縮寫 `-K`）讓人輸入一次 sudo 密碼，或用 `ansible_become_password` 變數從 Ansible Vault（Ansible 內建的檔案加密功能）加密的檔案讀取。後者沒有人在場也能跑，代價是 sudo 密碼以加密形式跟著 playbook 存放，拿得到 Vault 密碼的人或程序就拿得到每台目標機器的 sudo。只給可拋棄的測試主機時改用 `NOPASSWD`、控制端的私鑰因此等於每台的 root，這個取捨的實際設定在 [多台主機維護清單的實作紀錄：在容器上安裝 ansible-core 與 Terraform、由 Terraform 產生 inventory、用 Ansible 的範本部署每台的清單、以 sudo 與 systemd-run 執行檢查腳本，以及清理](/devops/operations/09-host-lifecycle/hands-on/multi-host-manifest-walkthrough/)〈受管主機與控制端的容器：Oracle Linux 10 加 systemd 與 sshd、python:3.12-slim 加 ansible-core 與 Terraform〉。
 
 另一種常見的限縮是只對特定指令開 NOPASSWD，適合固定腳本呼叫固定指令的自動化：
 

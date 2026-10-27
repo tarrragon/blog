@@ -39,5 +39,5 @@ tags: ["automation", "beacon", "analytics", "bot-detection", "privacy", "data-qu
 - → [模組二：流量 beacon 實作](/automation/02-analytics-beacon/)：payload 的基本欄位與 CORS 障礙，本章的補強都疊在那個實作上
 - → [模組三：Sheets 當資料庫](/automation/03-sheet-as-database/)：欄位增加後的資料模型與容量影響
 - → [模組五：部署、配額與安全](/automation/05-deploy-quota-security/)：隱私邊界與防濫用的完整討論，本章的 opt-out 是那一章「過濾自己的瀏覽」的具體實作
-- → [Monitoring 的事件分類](/monitoring/)：要收哪些事件、怎麼分類的概念層
-- → [Monitoring 的行為資料商業利用](/monitoring/)：漏斗、cohort 與歸因的分析框架，本章只處理自建管線的資料品質
+- → [Monitoring 的事件分類](/devops/monitoring/)：要收哪些事件、怎麼分類的概念層
+- → [Monitoring 的行為資料商業利用](/devops/monitoring/)：漏斗、cohort 與歸因的分析框架，本章只處理自建管線的資料品質

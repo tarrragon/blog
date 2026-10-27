@@ -22,7 +22,7 @@ Client-side、Synthetic 與 RUM 訊號是把使用者實際感知納入觀測系
 
 服務端 200 率正常只代表 backend 有回應。使用者是否真的能完成操作，還要看 DNS 解析、CDN 快取、ISP 路由、瀏覽器渲染與 client-side JavaScript 執行。這些環節每一個都可能讓使用者的體驗跟 server-side dashboard 顯示的完全不同。
 
-跟 [monitoring 模組](/monitoring/) 的分工：monitoring 模組聚焦「非 server 端 runtime 的監控體系」（SDK 設計、collector 架構、rule engine）；本章聚焦「backend 觀測系統如何整合 client-side 訊號」。交叉點是事件格式跟 transport。
+跟 [monitoring 模組](/devops/monitoring/) 的分工：monitoring 模組聚焦「非 server 端 runtime 的監控體系」（SDK 設計、collector 架構、rule engine）；本章聚焦「backend 觀測系統如何整合 client-side 訊號」。交叉點是事件格式跟 transport。
 
 ## Server-side 觀測的盲區
 
@@ -146,6 +146,6 @@ RUM SDK 跟 backend 的 trace 串接讓一個 user action 的完整路徑可追�
 - [4.3 tracing](/backend/04-observability/tracing-context/)：client trace 跟 server trace 的 context 串接
 - [05 部署](/backend/05-deployment-platform/)：CDN / edge 配置變更影響 RUM 訊號
 - [08 incident response](/backend/08-incident-response/)：客戶感知影響量化
-- [Monitoring 模組](/monitoring/)：非 server 端的監控體系設計
+- [Monitoring 模組](/devops/monitoring/)：非 server 端的監控體系設計
 - [4.24 Client-to-Server 觀測串接](/backend/04-observability/client-server-trace-integration/)：從 browser click 到 server span 的完整 trace 鏈路實作
 - [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)：服務與監控只有一台主機時，外部探測與心跳監看要放在哪裡、與內部探測並排怎麼判讀

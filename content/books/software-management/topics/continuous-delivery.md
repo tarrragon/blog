@@ -88,4 +88,4 @@ Weinberg 的《Quality Software Management, Vol. 2: First-Order Measurement》�
 
 如果團隊已經在追指標、數字卻長期沒有改善，瓶頸通常在資料的可信度這一層而非指標選擇——沒有人願意回報壞消息時，所有指標都會漂亮。那條路徑走 [組織文化與心理安全感的選讀書目](../culture-safety/)。
 
-具體的管線設計、部署 gate 與環境分離看 [CI/CD 教學](/ci/)，服務探活與容量規劃看 [運行期維運](/operations/)。
+具體的管線設計、部署 gate 與環境分離看 [CI/CD：驗證與發布 gate、artifact、失敗到修復的流程，以及各部署場域的差異](/devops/ci/)，服務探活與容量規劃看 [運行期維運](/devops/operations/)。

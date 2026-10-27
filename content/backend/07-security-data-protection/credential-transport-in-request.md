@@ -12,7 +12,7 @@ tags: ["backend", "security"]
 
 ## 本章涵蓋與不涵蓋
 
-本章聚焦存取憑證在每次請求裡怎麼被附上，以及這個選擇把攻擊面換成了什麼形狀。存取憑證本身用什麼機制是上游的決定（[7.31](../authentication-approach-selection/) 決定拿什麼驗證使用者、[7.28 密碼學原語選型](../cryptographic-primitive-selection/) 決定原語）。登入狀態放伺服器還是放 token、以及隨之而來的撤銷成本，見 [Session 處理](/operations/02-horizontal-scaling/session-handling/)——那條軸問狀態放哪、本章問存取憑證怎麼送，兩者可以任意組合，放外部 session store 的狀態一樣可以用 cookie 或 header 帶。機器對機器的呼叫沒有本章的核心機制（瀏覽器依網域自動附上），入口是 [7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/) 與 [7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)。頁面本身怎麼避免執行到別人的程式碼（輸出編碼、內容安全政策）屬前端的責任面，章節層尚未寫，最小判斷標準見 [cross-site scripting](/backend/knowledge-cards/cross-site-scripting/) 的設計責任段；本章把它的結果當成前提來判讀，而不涵蓋它的做法。
+本章聚焦存取憑證在每次請求裡怎麼被附上，以及這個選擇把攻擊面換成了什麼形狀。存取憑證本身用什麼機制是上游的決定（[7.31](../authentication-approach-selection/) 決定拿什麼驗證使用者、[7.28 密碼學原語選型](../cryptographic-primitive-selection/) 決定原語）。登入狀態放伺服器還是放 token、以及隨之而來的撤銷成本，見 [Session 處理](/devops/operations/02-horizontal-scaling/session-handling/)——那條軸問狀態放哪、本章問存取憑證怎麼送，兩者可以任意組合，放外部 session store 的狀態一樣可以用 cookie 或 header 帶。機器對機器的呼叫沒有本章的核心機制（瀏覽器依網域自動附上），入口是 [7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/) 與 [7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)。頁面本身怎麼避免執行到別人的程式碼（輸出編碼、內容安全政策）屬前端的責任面，章節層尚未寫，最小判斷標準見 [cross-site scripting](/backend/knowledge-cards/cross-site-scripting/) 的設計責任段；本章把它的結果當成前提來判讀，而不涵蓋它的做法。
 
 ## 判讀軸：附上的決定由誰做
 
@@ -83,7 +83,7 @@ Authorization header 不會自己出現在請求裡，程式碼要在每次呼�
 3. 對每個端點問「它憑什麼認為這個請求來自我自己的頁面」。答案若是「請求帶了 cookie」，這個答案不成立——跨站請求上 cookie 一樣會被附上，除非有一層防護明確擋掉。
 4. 選一組防護，並把每一層的失效條件寫下來：SameSite 由瀏覽器執行、對 GET 導覽與同註冊網域的子網域有缺口；Origin 檢查由自己執行、需要維護允許清單；額外值需要跨站指令碼防護成立。寫得出失效條件，覆蓋範圍才算評估過。
 5. 存取憑證改走 header 的話，寫出它存在哪，並判斷那個位置在跨站指令碼下會發生什麼。寫不出住址代表這個決定還沒做完，因為存取憑證總是存在某個地方。
-6. 最後回頭確認撤銷需求。需要能立即讓單一使用者失效時，狀態要放在自己查得到的地方，取捨見 [Session 處理](/operations/02-horizontal-scaling/session-handling/)。
+6. 最後回頭確認撤銷需求。需要能立即讓單一使用者失效時，狀態要放在自己查得到的地方，取捨見 [Session 處理](/devops/operations/02-horizontal-scaling/session-handling/)。
 
 ## 這個決定失敗時長什麼樣
 
@@ -104,7 +104,7 @@ Authorization header 不會自己出現在請求裡，程式碼要在每次呼�
 ## 下一步路由
 
 - 決定拿什麼驗證使用者（自建、委派、passkey）：[7.31 認證方式選型](../authentication-approach-selection/)
-- 登入狀態放伺服器還是放 token、撤銷成本怎麼算：[Session 處理](/operations/02-horizontal-scaling/session-handling/)
+- 登入狀態放伺服器還是放 token、撤銷成本怎麼算：[Session 處理](/devops/operations/02-horizontal-scaling/session-handling/)
 - 呼叫方是系統而非人時的身分分層與撤銷粒度：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)
 - 機器憑證要不要在每次呼叫裡送出秘密：[7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)
 - 終端使用者的登入節奏與會話收斂：[7.2 身分與授權邊界](../identity-access-boundary/)

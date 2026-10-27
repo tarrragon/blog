@@ -83,7 +83,7 @@ SaaS 服務的可靠性直接綁定客戶合約，依賴 budget 的分配需要�
 - 6.6 SLO / [error budget](/backend/knowledge-cards/error-budget/)：把依賴可靠性納入目標計算
 - 6.8 release gate：把依賴健康度變成放行條件
 - 08.15 vendor 事故：第三方事故的事中處理
-- [運維 模組六：單點故障盤點](/operations/06-high-availability/spof-inventory/)：依賴 budget、失效局部化、pre-mortem 的運維落地
+- [運維 模組六：單點故障盤點](/devops/operations/06-high-availability/spof-inventory/)：依賴 budget、失效局部化、pre-mortem 的運維落地
 
 ## 判讀訊號
 

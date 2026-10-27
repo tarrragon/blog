@@ -50,4 +50,4 @@ Polars 走的是另一條類似的路：介面接近 DataFrame，而它的延遲
 
 **推回去之後要用的語法對照**：[8.4 SQL 子句與 pandas 方法的對應：篩選、連接、分組彙總、視窗函數，以及空值、索引與順序的語意差異](/python/08-data-analysis/same-relational-algebra/) 給篩選、連接、分組彙總與視窗函數在兩邊的實測比對，以及翻譯時最容易靜默出錯的空值處理。
 
-**這批資料算出來之後拿去做什麼**：[monitoring 模組八](/monitoring/08-business-analytics/) 寫留存、分群與轉換率各自怎麼定義，以及事件當初的屬性設計決定了哪些指標事後算得出來。
+**這批資料算出來之後拿去做什麼**：[monitoring 模組八](/devops/monitoring/08-business-analytics/) 寫留存、分群與轉換率各自怎麼定義，以及事件當初的屬性設計決定了哪些指標事後算得出來。

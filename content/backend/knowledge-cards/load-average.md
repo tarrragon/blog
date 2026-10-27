@@ -30,4 +30,4 @@ load 高而 CPU 使用率不高時，多半是磁碟在排隊：Linux 的 load �
 
 ## 設計責任
 
-拿 load 判斷主機飽和時，先寫下量到的是哪一層（主機、虛擬機或容器）、核心數是哪一層的核心數；告警門檻寫成除以核心數之後的值（例如 1.5），並註明 Linux 的 load 含等磁碟的行程。壓測或效能比較的紀錄附上當時主機本身的 load 與核心數，見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉。
+拿 load 判斷主機飽和時，先寫下量到的是哪一層（主機、虛擬機或容器）、核心數是哪一層的核心數；告警門檻寫成除以核心數之後的值（例如 1.5），並註明 Linux 的 load 含等磁碟的行程。壓測或效能比較的紀錄附上當時主機本身的 load 與核心數，見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉。

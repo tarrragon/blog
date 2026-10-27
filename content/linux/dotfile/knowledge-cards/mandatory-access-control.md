@@ -10,7 +10,7 @@ tags: ["dotfile", "linux", "security", "selinux", "knowledge-cards"]
 
 ## 概念位置
 
-MAC 在一台對外服務的主機上負責的是程序被入侵之後的範圍：nginx 的程序被利用時，DAC 只看它以哪個使用者執行，MAC 另外把它限制在政策准許 web 伺服器碰的檔案與連接埠裡。代價是一類 DAC 看不出原因的拒絕：`ls -l` 的權限都對、程式也找得到檔案，存取照樣失敗。長期上線的主機上，拒絕紀錄要定期讀（AppArmor 的那一份在 [journald（systemd-journald）](/linux/dotfile/knowledge-cards/journald/) 收下的核心訊息裡），正常值是零，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈定期讀的 log：每一份要看的欄位與它代表的狀態〉；從備份還原之後要核對的標籤，見 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/operations/09-host-lifecycle/suspend-and-resume-service/)。
+MAC 在一台對外服務的主機上負責的是程序被入侵之後的範圍：nginx 的程序被利用時，DAC 只看它以哪個使用者執行，MAC 另外把它限制在政策准許 web 伺服器碰的檔案與連接埠裡。代價是一類 DAC 看不出原因的拒絕：`ls -l` 的權限都對、程式也找得到檔案，存取照樣失敗。長期上線的主機上，拒絕紀錄要定期讀（AppArmor 的那一份在 [journald（systemd-journald）](/linux/dotfile/knowledge-cards/journald/) 收下的核心訊息裡），正常值是零，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/devops/operations/09-host-lifecycle/long-running-host-maintenance/)〈定期讀的 log：每一份要看的欄位與它代表的狀態〉；從備份還原之後要核對的標籤，見 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/devops/operations/09-host-lifecycle/suspend-and-resume-service/)。
 
 ## 可觀察訊號
 

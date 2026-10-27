@@ -70,4 +70,4 @@ Mock 的價值在於簡化 — 把複雜的外部依賴替換成行為可預測�
 
 - 如何辨認偽裝成 integration test 的 mock test → [名義 integration test 的識別與修正](/testing/01-test-strategy-layers/nominal-integration-test/)
 - 判斷自己的服務是否存在這種斷裂 → [判斷原則：什麼時候需要 protocol integration test](/testing/01-test-strategy-layers/when-protocol-integration-test/)
-- 想看 SDK 自動攔截如何影響 mock 遮蔽 → [monitoring 模組三 SDK 設計](/monitoring/03-sdk-design/)
+- 想看 SDK 自動攔截如何影響 mock 遮蔽 → [monitoring 模組三 SDK 設計](/devops/monitoring/03-sdk-design/)

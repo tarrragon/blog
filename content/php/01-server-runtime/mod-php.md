@@ -26,7 +26,7 @@ mod_php 是編譯成 Apache 模組的 PHP（Debian 系的套件裡檔名是 `lib
 
 ## mod_php 要搭配 prefork MPM
 
-Apache 處理並發的方式由 MPM（Multi-Processing Module）決定，常見的有三種（見 [Apache MPM](/infra/knowledge-cards/apache-mpm/)）：
+Apache 處理並發的方式由 MPM（Multi-Processing Module）決定，常見的有三種（見 [Apache MPM](/devops/infra/knowledge-cards/apache-mpm/)）：
 
 | MPM     | 並發的單位                                                                                       |
 | ------- | ------------------------------------------------------------------------------------------------ |
@@ -72,7 +72,7 @@ pid=18 user=www-data rss_kb=9928  libphp_mapped=6
 mod_php 的 PHP 跟 Apache 是同一個程序，所以 PHP 的設定跟 Apache 綁在一起：
 
 - **`php.ini` 改了要重新載入 Apache**：設定在子程序啟動時讀入，改了檔案要 `apachectl graceful` 讓 Apache 換掉子程序才生效。重啟 PHP 就是重啟 Apache。
-- **`.htaccess` 可以改 PHP 設定**：mod_php 在 Apache 裡註冊了 `php_value`、`php_flag` 這些指令，站台在自己目錄的 [.htaccess](/infra/knowledge-cards/htaccess/) 裡寫 `php_value upload_max_filesize 64M` 就能覆寫設定，不必有伺服器的管理權限。這是共享主機時代最常用的調整方式。
+- **`.htaccess` 可以改 PHP 設定**：mod_php 在 Apache 裡註冊了 `php_value`、`php_flag` 這些指令，站台在自己目錄的 [.htaccess](/devops/infra/knowledge-cards/htaccess/) 裡寫 `php_value upload_max_filesize 64M` 就能覆寫設定，不必有伺服器的管理權限。這是共享主機時代最常用的調整方式。
 
 ## 從 mod_php 換到 PHP-FPM 時 .htaccess 的變化
 
@@ -86,7 +86,7 @@ PHP 官方文件現在對 Apache 的建議是：新的部署用 PHP-FPM 搭配 A
 
 `.htaccess` 一旦有 Apache 不認得的指令，整份檔案都不能用，所以壞掉的是整個目錄，不只是 PHP 的請求。
 
-PHP-FPM（以及 CGI）下對應的機制是 `.user.ini`：放在站台目錄裡、語法跟 `php.ini` 相同的檔案，PHP 官方文件寫明它只由 CGI/FastCGI SAPI 處理（見 [php.ini / .user.ini](/infra/knowledge-cards/php-ini/)）。所以搬家時要把 `.htaccess` 裡的 `php_value` 與 `php_flag` 移到 `.user.ini`，並刪掉 `.htaccess` 裡的那幾行。`.user.ini` 不是每個請求都重讀：PHP 依 `user_ini.cache_ttl`（預設 300 秒）快取它，改了之後最多要等這段時間才生效。
+PHP-FPM（以及 CGI）下對應的機制是 `.user.ini`：放在站台目錄裡、語法跟 `php.ini` 相同的檔案，PHP 官方文件寫明它只由 CGI/FastCGI SAPI 處理（見 [php.ini / .user.ini](/devops/infra/knowledge-cards/php-ini/)）。所以搬家時要把 `.htaccess` 裡的 `php_value` 與 `php_flag` 移到 `.user.ini`，並刪掉 `.htaccess` 裡的那幾行。`.user.ini` 不是每個請求都重讀：PHP 依 `user_ini.cache_ttl`（預設 300 秒）快取它，改了之後最多要等這段時間才生效。
 
 ## mod_php 適合的場合
 

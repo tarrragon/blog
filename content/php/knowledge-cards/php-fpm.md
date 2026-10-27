@@ -10,7 +10,7 @@ PHP-FPM 是 PHP 內建的 FastCGI 程序管理器：一個 master 程序加一�
 
 ## 概念位置
 
-PHP-FPM 把直譯器放在 web 伺服器外面的常駐程序裡：程序活過很多請求，應用程式狀態仍然只活一個請求（[shared-nothing](/php/knowledge-cards/shared-nothing-request/)）。它只講 FastCGI，所以前面一定要有一個講 HTTP 的 web 伺服器（[nginx](/infra/knowledge-cards/nginx/) 或 Apache 的 `mod_proxy_fcgi`）。PHP 5.3.3 起隨 PHP 本體發行。
+PHP-FPM 把直譯器放在 web 伺服器外面的常駐程序裡：程序活過很多請求，應用程式狀態仍然只活一個請求（[shared-nothing](/php/knowledge-cards/shared-nothing-request/)）。它只講 FastCGI，所以前面一定要有一個講 HTTP 的 web 伺服器（[nginx](/devops/infra/knowledge-cards/nginx/) 或 Apache 的 `mod_proxy_fcgi`）。PHP 5.3.3 起隨 PHP 本體發行。
 
 ## 可觀察訊號與例子
 

@@ -53,7 +53,7 @@ Saturation discovery 的責任是量出系統在延遲與錯誤率目標之內�
 
 **CPU**：utilization 100% *不一定* 等於 saturation。要看 load average 跟 run queue。utilization 80% 但 run queue 不斷增長 → 已 saturate；utilization 100% 但 run queue 空 → 還沒有工作在排隊等 CPU（單純 CPU bound），再加負載就開始排隊。
 
-在 Docker 的虛擬機或與其他工作負載共用的主機上壓測時，虛擬機裡的 load 看不到主機上的排隊（見 [4.26](/backend/04-observability/host-traffic-resource-monitoring/)〈監控所在層看不到的範圍〉），量到的上限要附上主機本身的負載（見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉）。
+在 Docker 的虛擬機或與其他工作負載共用的主機上壓測時，虛擬機裡的 load 看不到主機上的排隊（見 [4.26](/backend/04-observability/host-traffic-resource-monitoring/)〈監控所在層看不到的範圍〉），量到的上限要附上主機本身的負載（見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉）。
 
 **Memory**：not OOM 即可？不夠。GC pause（Java、Go）、swap（Linux）、cache eviction 都是隱性 saturation。記憶體不直接 OOM 但 GC 飆 → 已影響 [tail latency](/backend/knowledge-cards/tail-latency/)。
 

@@ -80,7 +80,7 @@ tunnel 把後端的可達性開到了外部、但它不認證。隧道網址可�
 | 外部拿到 530、一直重試 QUIC     | 出站擋了 UDP 7844                     | 放行 UDP 與 TCP 7844，或改用 http2                                    |
 | 部署切換隧道時對外中斷拉長      | 關閉順序錯位、tunnel 未先收斂         | 先停 tunnel 帶入新連線、再退後端                                      |
 
-「外部拿到 530」那一列是 quick tunnel 的實測：出站擋掉 UDP 7844、TCP 7844 開著時，cloudflared 一直重試 QUIC 而沒有自動改用 http2，以 `--protocol http2` 啟動之後改走 TCP 7844 連上，見 [Cloudflare 回源的實測紀錄：Oracle Cloud NSG 只放行 Cloudflare 位址與規則數上限、回源的來源位址、Authenticated Origin Pulls、Worker 偽造 CF-Connecting-IP 與 Tunnel 的出站連接埠](/infra/03-network-foundation/hands-on/cloudflare-origin-pull-walkthrough/) 的〈Cloudflare Tunnel：源站不開入站，以及出站要放行的連接埠〉；具名的 tunnel 預設的協定選擇沒有測。
+「外部拿到 530」那一列是 quick tunnel 的實測：出站擋掉 UDP 7844、TCP 7844 開著時，cloudflared 一直重試 QUIC 而沒有自動改用 http2，以 `--protocol http2` 啟動之後改走 TCP 7844 連上，見 [Cloudflare 回源的實測紀錄：Oracle Cloud NSG 只放行 Cloudflare 位址與規則數上限、回源的來源位址、Authenticated Origin Pulls、Worker 偽造 CF-Connecting-IP 與 Tunnel 的出站連接埠](/devops/infra/03-network-foundation/hands-on/cloudflare-origin-pull-walkthrough/) 的〈Cloudflare Tunnel：源站不開入站，以及出站要放行的連接埠〉；具名的 tunnel 預設的協定選擇沒有測。
 
 ## 常見誤區
 

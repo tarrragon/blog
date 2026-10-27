@@ -35,7 +35,7 @@ tags: ["automation", "apps-script", "quota", "privacy", "abuse", "migration"]
 
 不收 PII 讓「處理個資刪除請求」這類負擔不會發生，但**同意機制的判斷不是由 PII 決定的**。歐盟 ePrivacy 指令第 5(3) 條管的是「在使用者終端設備儲存或讀取資訊」這個動作本身，與存的內容是否為個資無關——市面上宣稱免同意橫幅的分析服務（Plausible、Fathom）之所以能這樣宣稱，正是因為它們完全不在瀏覽器儲存任何識別碼。[模組六的訪客識別](/automation/06-reading-the-data/visitor-identity/)在 `localStorage` 存了兩個，因此那一步跨過了這條線。
 
-商業追蹤碼同樣跨過「在使用者終端設備儲存識別碼」這條線，而且跨得更遠：Meta Pixel 與 GA4 載入時都在網站自己的網域上寫識別碼的[第一方 cookie](/monitoring/knowledge-cards/first-party-cookie/)，並把識別碼隨每一筆事件送到 Meta 與 Google 的伺服器，供廣告歸因與分析報表使用（cookie 的期限見 [GDPR 最小化原則的工程落地](/monitoring/07-security-privacy/gdpr-minimization/)的〈瀏覽器端識別碼 cookie 的期限〉）。所以同一個網站同時裝了本站的 beacon 與商業追蹤碼時，同意機制要涵蓋的範圍由商業追蹤碼決定：它存了哪些識別碼、送到哪家的伺服器、供什麼用途。
+商業追蹤碼同樣跨過「在使用者終端設備儲存識別碼」這條線，而且跨得更遠：Meta Pixel 與 GA4 載入時都在網站自己的網域上寫識別碼的[第一方 cookie](/devops/monitoring/knowledge-cards/first-party-cookie/)，並把識別碼隨每一筆事件送到 Meta 與 Google 的伺服器，供廣告歸因與分析報表使用（cookie 的期限見 [GDPR 最小化原則的工程落地](/devops/monitoring/07-security-privacy/gdpr-minimization/)的〈瀏覽器端識別碼 cookie 的期限〉）。所以同一個網站同時裝了本站的 beacon 與商業追蹤碼時，同意機制要涵蓋的範圍由商業追蹤碼決定：它存了哪些識別碼、送到哪家的伺服器、供什麼用途。
 
 實務上個人網站的合規風險與商業追蹤網路不在同一個量級，但這是取捨不是豁免。想更保守，可以尊重瀏覽器的 Do Not Track 訊號（`navigator.doNotTrack === "1"` 時不送 beacon），或者不存識別碼、只做頁面計數。
 

@@ -33,7 +33,7 @@ console templates 是 Prometheus 提供的另一條路：用 Go 的模板語法�
 
 ## Grafana
 
-Grafana 是開源的視覺化平台，本身不收集資料，向外部的資料來源查詢再畫成儀表板（概念見 [Grafana](/infra/knowledge-cards/grafana/)）。依視覺化層的責任逐項看，另外加上現成的儀表板一項：
+Grafana 是開源的視覺化平台，本身不收集資料，向外部的資料來源查詢再畫成儀表板（概念見 [Grafana](/devops/infra/knowledge-cards/grafana/)）。依視覺化層的責任逐項看，另外加上現成的儀表板一項：
 
 **查詢與呈現**：Prometheus 是它內建的資料來源之一，查詢直接寫 PromQL，儀表板變數可以從 Prometheus 的標籤值產生下拉選單。
 

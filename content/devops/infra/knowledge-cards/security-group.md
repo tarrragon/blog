@@ -1,0 +1,38 @@
+---
+title: "Security Group"
+date: 2026-06-26
+description: "掛在資源網卡層級的有狀態防火牆，逐埠決定哪些來源能連進這個資源"
+weight: 6
+tags: ["infra", "knowledge-cards", "security-group", "network"]
+aliases: ["/infra/knowledge-cards/security-group/"]
+---
+
+Security group 是掛在資源網卡（ENI）層級的有狀態防火牆，規則描述的是「哪些來源能連到這個資源的哪個埠」。「有狀態」的意思是放行一條入站連線後，對應的回應出站自動允許——規則只需描述入站方向想開放什麼。這面防火牆依附在資源所在的 [VPC](/devops/infra/knowledge-cards/vpc/) 網路邊界之內。
+
+設計原則是最小開放：每條規則只開「這個服務確實需要被誰連的那個埠」。資料庫的 security group 入站只允許來自應用層 security group 的資料庫埠（如 5432），而不是某個 IP 範圍。用 security group 互相引用（source 指向另一個 group 而非 [CIDR](/devops/infra/knowledge-cards/cidr/)）讓規則跟著成員身分走、不跟著位址走——應用節點會隨擴縮而換 IP，引用 group 不會因此失效。
+
+## 概念位置
+
+Security group 是[模組三：網路地基](/devops/infra/03-network-foundation/vpc-subnet-security-group/)的最內層邊界——貼著服務的最後一道網路防線。即使封包順著 route table 抵達了 private [subnet](/devops/infra/knowledge-cards/subnet/)，security group 仍能逐埠決定放不放行。[模組七：infra 走 PR 流程](/devops/infra/07-infra-as-pr/plan-review-apply-guardrails/)用 tfsec / checkov 在 CI 攔截 `0.0.0.0/0` 全開的規則。
+
+## 可觀察訊號
+
+Security group 需要收斂的訊號：入站來源是 `0.0.0.0/0`（允許全網連入），且目標埠是資料庫（5432、3306、6379）或管理埠（22、3389）——合理出現 `0.0.0.0/0` 的位置只有對外負載平衡器的 80 / 443。盤點方式是列出所有 source 為 `0.0.0.0/0` 的規則，逐條問「這個埠需要全世界都連得到嗎」。
+
+## 設計責任
+
+security group 是封包抵達資源前的最後一道網路檢查：規則寫得太寬會把服務的埠暴露出去，寫成固定位址又會在節點換 IP 時失效。設計時在這兩種失效之間收斂的項目是：
+
+- 引用方式：用 group 互相引用（推薦）vs 用 CIDR 限定範圍
+- 開放範圍：只開需要的埠與來源，`0.0.0.0/0` 只給對外 LB
+- 管理埠存取：SSH（22）改用 SSM Session Manager 這類不開入站 port 的做法，或只放行[身分感知代理](/devops/infra/knowledge-cards/identity-aware-proxy/)的位址段，從公網清單上拿掉；各種做法的選擇見[伺服器管理通道的設計](/devops/infra/03-network-foundation/management-access-channel/)
+- 與 NACL 的分工：security group 是主力（有狀態、group 引用），NACL 留給少數需要 subnet 層顯式 deny 的情境
+- 規則數上限：一條規則只放一段來源時，放一份外部位址清單（例如只放行 CDN 回源的位址）要「段數 × 連接埠數」條，會撞到每個 group 的規則數上限；AWS 文件寫的預設是入站 60 條、IPv4 與 IPv6 分開算，Oracle Cloud 的 NSG 實測是入站加出站合計 120 條，見 [Cloudflare 回源的實測紀錄：Oracle Cloud NSG 只放行 Cloudflare 位址與規則數上限、回源的來源位址、Authenticated Origin Pulls、Worker 偽造 CF-Connecting-IP 與 Tunnel 的出站連接埠](/devops/infra/03-network-foundation/hands-on/cloudflare-origin-pull-walkthrough/) 的〈公開子網路、只放行 Cloudflare 的 NSG 與它的規則數上限〉
+
+## 鄰卡
+
+- [VPC](/devops/infra/knowledge-cards/vpc/) — security group 依附的網路容器
+- [Subnet](/devops/infra/knowledge-cards/subnet/) — security group 與 subnet 各守不同層級的邊界
+- [Bastion Host（跳板機）](/devops/infra/knowledge-cards/bastion-host/) — 目的主機的入站規則以跳板機的 security group 當來源
+- [Identity-Aware Proxy（身分感知代理）](/devops/infra/knowledge-cards/identity-aware-proxy/) — 管理 port 只放行代理位址段的做法
+- [網路：subnet、私有 IP、公開 IP 與防火牆規則](/devops/infra/cloud-providers/vm-options/networking/) — Oracle Cloud 與 Google Cloud 上對應網卡層規則的元件與合併方式

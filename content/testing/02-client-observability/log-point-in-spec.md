@@ -85,4 +85,4 @@ Log 點定義是功能規格的一部分，和 API schema 同級。功能規格�
 
 - 三層 log 的詳細設計 → [三層 log 設計](/testing/02-client-observability/three-layer-log-design/)
 - 事後補 log 和設計產物 log 的差異 → [「事後補 log」vs「設計產物 log」的品質差異](/testing/02-client-observability/hotfix-log-vs-designed-log/)
-- Log 中的敏感資訊處理 → [monitoring 模組七 資安](/monitoring/07-security-privacy/)
+- Log 中的敏感資訊處理 → [monitoring 模組七 資安](/devops/monitoring/07-security-privacy/)

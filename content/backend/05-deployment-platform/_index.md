@@ -133,4 +133,4 @@ Container 解決服務包裝與 runtime 依賴；Kubernetes 解決多 instance �
 
 ## 跨分類引用
 
-- → [infra 模組五：核心服務上 IaC](/infra/05-core-services/)：ECS / EKS 的 IaC 描述（subnet 接線、IAM task role、映像版本解耦）是部署平台的地基層
+- → [infra 模組五：核心服務上 IaC](/devops/infra/05-core-services/)：ECS / EKS 的 IaC 描述（subnet 接線、IAM task role、映像版本解耦）是部署平台的地基層

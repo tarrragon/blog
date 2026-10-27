@@ -14,4 +14,4 @@ Load test 的核心概念是「以接近真實流量模型驗證系統容量」�
 
 ## 設計責任
 
-設計時要定義流量模型、成功標準與可回應行動，避免只跑壓測數字而沒有決策結論。壓測跑在共用主機或筆電上的 Docker 虛擬機裡時，量到的上限含有主機當下的負載，紀錄方式見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉。
+設計時要定義流量模型、成功標準與可回應行動，避免只跑壓測數字而沒有決策結論。壓測跑在共用主機或筆電上的 Docker 虛擬機裡時，量到的上限含有主機當下的負載，紀錄方式見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉。

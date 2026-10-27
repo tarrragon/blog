@@ -6,7 +6,7 @@ weight: 10
 tags: ["linux", "inventory", "takeover", "sysadmin"]
 ---
 
-這篇處理的情境跟本系列其他篇相反：機器已經裝好、已經在跑，裝它的人可能已離職、可能只留下一句「都在上面了」。系列主線教你把一台空機器變成能跑活的機器；這篇教你把一台「不知道在跑什麼的機器」變成「盤點清楚、敢動手維護的機器」。對照 infra 樹，這篇是 [拿到雲端帳號的第一天](/infra/00-infra-mindset/first-day-with-cloud-account/) 的 OS 層對等篇——那篇盤點的是雲端帳號裡有什麼資源，這篇盤點的是單一台 Linux 機器裡有什麼狀態。
+這篇處理的情境跟本系列其他篇相反：機器已經裝好、已經在跑，裝它的人可能已離職、可能只留下一句「都在上面了」。系列主線教你把一台空機器變成能跑活的機器；這篇教你把一台「不知道在跑什麼的機器」變成「盤點清楚、敢動手維護的機器」。對照 infra 樹，這篇是 [拿到雲端帳號的第一天](/devops/infra/00-infra-mindset/first-day-with-cloud-account/) 的 OS 層對等篇——那篇盤點的是雲端帳號裡有什麼資源，這篇盤點的是單一台 Linux 機器裡有什麼狀態。
 
 核心紀律只有一條：**盤點期間只讀不改**。這跟 [診斷心法](../../debug/diagnosis-read-authoritative-state/) 的「讀權威狀態」是同一個紀律的不同應用——診斷是出問題後讀狀態找根因，盤點是還沒出問題時讀狀態建立現況清單。改動留到盤點完成、你能回答「這台機器停掉會影響誰」之後。本篇所有指令都是唯讀查詢，照著跑不會改變機器狀態；少數需要 root 權限的會標明。
 
@@ -112,7 +112,7 @@ sudo iptables -L -n 2>/dev/null | head -30
 sudo ufw status 2>/dev/null; sudo firewall-cmd --list-all 2>/dev/null
 ```
 
-判讀時把 listen address 分成三類：`127.0.0.1` 只服務本機、`0.0.0.0`（或 `*`）對所有介面開放、特定 IP 只綁那個介面。對外開放又不認得的 port 優先查——`ss -tlnp` 輸出的進程名回頭對服務清單。防火牆四個指令裡，發行版各用不同框架，有輸出的那個是這台在用的，其餘的查無結果。主機跑 Docker 時，`ufw status` 與 `firewall-cmd --list-all` 列不出容器發佈的連接埠，這些連接埠也不受 ufw 的規則與 firewalld 預設設定（`StrictForwardPorts=no`）下的規則約束：Docker 改寫封包的目的地、把它轉給容器，ufw 的入站規則碰不到它，firewalld 則在轉送鏈開頭就放行經過位址轉換的連線。`nft list ruleset` 與 `iptables -t nat -S` 的輸出裡看得到 Docker 的 DNAT 規則，但要逐條讀。發佈的連接埠直接查比較快：`docker ps` 的 PORTS 欄列出每個容器發佈在哪個位址與連接埠（`0.0.0.0:8080->80/tcp` 是對所有 IPv4 介面開放，同一列的 `[::]:8080->80/tcp` 是 IPv6 的那一份；容器的網路沒有開 IPv6 時，IPv6 那一份由 `docker-proxy` 這個主機程式（[Userland Proxy](/infra/knowledge-cards/userland-proxy/)）接收，受 ufw 與 firewalld 的入站規則管，跟 IPv4 那一份相反），dockerd 預設開著 userland proxy 時，`ss -tlnp` 裡由 `docker-proxy` 聽的也是它們；原因與限制寫法見 [CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/infra/03-network-foundation/origin-host-firewall/) 的〈Docker 發佈的連接埠：封包路徑與限制的寫法〉。
+判讀時把 listen address 分成三類：`127.0.0.1` 只服務本機、`0.0.0.0`（或 `*`）對所有介面開放、特定 IP 只綁那個介面。對外開放又不認得的 port 優先查——`ss -tlnp` 輸出的進程名回頭對服務清單。防火牆四個指令裡，發行版各用不同框架，有輸出的那個是這台在用的，其餘的查無結果。主機跑 Docker 時，`ufw status` 與 `firewall-cmd --list-all` 列不出容器發佈的連接埠，這些連接埠也不受 ufw 的規則與 firewalld 預設設定（`StrictForwardPorts=no`）下的規則約束：Docker 改寫封包的目的地、把它轉給容器，ufw 的入站規則碰不到它，firewalld 則在轉送鏈開頭就放行經過位址轉換的連線。`nft list ruleset` 與 `iptables -t nat -S` 的輸出裡看得到 Docker 的 DNAT 規則，但要逐條讀。發佈的連接埠直接查比較快：`docker ps` 的 PORTS 欄列出每個容器發佈在哪個位址與連接埠（`0.0.0.0:8080->80/tcp` 是對所有 IPv4 介面開放，同一列的 `[::]:8080->80/tcp` 是 IPv6 的那一份；容器的網路沒有開 IPv6 時，IPv6 那一份由 `docker-proxy` 這個主機程式（[Userland Proxy](/devops/infra/knowledge-cards/userland-proxy/)）接收，受 ufw 與 firewalld 的入站規則管，跟 IPv4 那一份相反），dockerd 預設開著 userland proxy 時，`ss -tlnp` 裡由 `docker-proxy` 聽的也是它們；原因與限制寫法見 [CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/devops/infra/03-network-foundation/origin-host-firewall/) 的〈Docker 發佈的連接埠：封包路徑與限制的寫法〉。
 
 ## 裝了什麼
 
@@ -176,4 +176,4 @@ systemctl list-timers | grep -iE 'heart|health|canary'
 - **收斂進版本控制**：把盤出來的套件清單、設定改動、服務定義逐步收進 repo，讓機器狀態從「只存在於這台機器上」變成「可從 repo 重現」。這是 [模組零講的心智模型](/linux/dotfile/00-dotfile-mindset/) 應用在接手情境——差別在素材從盤點來、不是從零設計。
 - **補監控與補文件**：監控空白的服務掛 OnFailure、無人知道的排程補失敗告警、盤點清單本身放進 repo 當文件。
 
-機器在雲端的話，OS 層盤完還有帳號層——這台 instance 是誰開的、掛在哪個 VPC、security group 開了什麼，見 [infra 的接手維運模組](/infra/takeover/)。盤點過程中發現已經在壞的狀態（服務起不來、連線異常），從盤點模式切到除錯模式，入口是 [診斷心法](../../debug/diagnosis-read-authoritative-state/)。
+機器在雲端的話，OS 層盤完還有帳號層——這台 instance 是誰開的、掛在哪個 VPC、security group 開了什麼，見 [infra 的接手維運模組](/devops/infra/takeover/)。盤點過程中發現已經在壞的狀態（服務起不來、連線異常），從盤點模式切到除錯模式，入口是 [診斷心法](../../debug/diagnosis-read-authoritative-state/)。

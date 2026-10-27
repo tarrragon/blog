@@ -6,7 +6,7 @@ weight: 15
 tags: ["backend", "api-design", "mobile", "versioning", "release"]
 ---
 
-這篇整理自家行動 App 呼叫自家後端 API 時，在 [11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/) 之外多出來的契約機制，也收進商店審核、分階段發布與熱更新這幾項發布端的約束，因為它們決定 API 什麼時候上線、舊版要支援多久。範圍是經公開商店（App Store、Google Play）散布、透過自家 API 存取資料的原生或跨平台 App，使用者不論有沒有登入，服務方都沒有一份能逐一通知、要求更新的名單；從最早上架的版本該內建什麼開始，到多個版本同時在線、新版出問題時怎麼回退為止。以 WebView 包網頁的 App、PWA、經企業裝置管理（MDM）派送的 App，以及直接用 SDK 連 BaaS 而沒有自家 API 的 App，前提不同，不在本篇範圍內。公開 API 的版本方案與退場工具在 [11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)，App 的簽章、送審與 CI 流程在 [App 簽章、商店審核與分批發布流程](/ci/app-deploy/signing-store-rollout-flow/)。
+這篇整理自家行動 App 呼叫自家後端 API 時，在 [11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/) 之外多出來的契約機制，也收進商店審核、分階段發布與熱更新這幾項發布端的約束，因為它們決定 API 什麼時候上線、舊版要支援多久。範圍是經公開商店（App Store、Google Play）散布、透過自家 API 存取資料的原生或跨平台 App，使用者不論有沒有登入，服務方都沒有一份能逐一通知、要求更新的名單；從最早上架的版本該內建什麼開始，到多個版本同時在線、新版出問題時怎麼回退為止。以 WebView 包網頁的 App、PWA、經企業裝置管理（MDM）派送的 App，以及直接用 SDK 連 BaaS 而沒有自家 API 的 App，前提不同，不在本篇範圍內。公開 API 的版本方案與退場工具在 [11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)，App 的簽章、送審與 CI 流程在 [App 簽章、商店審核與分批發布流程](/devops/ci/app-deploy/signing-store-rollout-flow/)。
 
 ## 自家行動 App 在消費者形態裡的位置
 
@@ -23,7 +23,7 @@ tags: ["backend", "api-design", "mobile", "versioning", "release"]
 - **客戶端啟動檢查**與**對「需要更新」錯誤碼的處理**：讓舊版能被帶到更新畫面（〈最低支援版本與強制更新〉）。
 - **對回應裡多出的欄位、未知的列舉值與空值的容錯**：後端之後依版本調整回應、新增欄位時，舊版才不會壞（〈新版 App 或新功能出問題時的回退手段〉）。
 - **讀取遠端設定**，而且讀取間隔要短到出問題時關得掉功能，或整合即時更新（〈功能提前內建與上線日遠端啟用〉）。
-- **帶版本標記的當機回報**：回退手段的觸發都靠先發現問題；當機回報與依版本分組的監控見 [App 簽章、商店審核與分批發布流程](/ci/app-deploy/signing-store-rollout-flow/)。
+- **帶版本標記的當機回報**：回退手段的觸發都靠先發現問題；當機回報與依版本分組的監控見 [App 簽章、商店審核與分批發布流程](/devops/ci/app-deploy/signing-store-rollout-flow/)。
 - 要用熱更新的話，**熱更新服務**也要在送審的版本裡整合（〈熱更新：不經商店審核的程式更新〉）。
 
 服務方另外多了一個公開 API 沒有的限制——自己的修正也要排隊等商店審核。
@@ -117,7 +117,7 @@ Android 另有 Google Play 提供的 [In-app Updates](https://developer.android.
 
 ## App Store 與 Google Play 的分階段發布：新版的擴散與新功能的曝光
 
-分階段發布是把新版先給一部分使用者、再逐步放大比例的發布方式（發布策略的總覽見 [Rollout Strategy](/ci/knowledge-cards/rollout-strategy/)）。兩個商店的做法如下：
+分階段發布是把新版先給一部分使用者、再逐步放大比例的發布方式（發布策略的總覽見 [Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/)）。兩個商店的做法如下：
 
 | 項目           | App Store 的分階段發布                                               | Google Play 的分階段推出                   |
 | -------------- | -------------------------------------------------------------------- | ------------------------------------------ |
@@ -125,7 +125,7 @@ Android 另有 Google Play 提供的 [In-app Updates](https://developer.android.
 | 涵蓋哪些使用者 | 開啟自動更新的使用者裡隨機抽出的一部分；任何人都能到商店手動下載新版 | 隨機選出的使用者，比例外的使用者拿不到新版 |
 | 發現問題時     | 可以暫停，暫停時間總計最多 30 天，恢復後從暫停的那一天接著走         | 可以停止推出，已更新的使用者停留在那個版本 |
 
-「涵蓋哪些使用者」那一列決定了新功能的曝光要怎麼控制。App Store 的分階段發布擋不住主動更新的使用者，所以新功能接觸到多少人，要由 Feature Flag 的開啟比例控制，分階段發布只降低一個出問題的版本被自動推給所有人的風險。Google Play 的分階段推出本身就限制了拿到新版的人，再加上 Feature Flag，可以分別控制「誰拿到新版」與「誰看到新功能」；同一個限制也讓比例外的使用者拿不到新版，提高最低支援版本時要等推出到 100%（見〈使用者拿不到新版的情況〉）。資料來源是 Apple 的 [分階段發布說明](https://developer.apple.com/help/app-store-connect/update-your-app/release-a-version-update-in-phases) 與 Google Play 的 [分階段推出說明](https://support.google.com/googleplay/android-developer/answer/6346149)；分階段發布時該看哪些指標、何時暫停，見 [App 簽章、商店審核與分批發布流程](/ci/app-deploy/signing-store-rollout-flow/) 的〈流程定位〉。
+「涵蓋哪些使用者」那一列決定了新功能的曝光要怎麼控制。App Store 的分階段發布擋不住主動更新的使用者，所以新功能接觸到多少人，要由 Feature Flag 的開啟比例控制，分階段發布只降低一個出問題的版本被自動推給所有人的風險。Google Play 的分階段推出本身就限制了拿到新版的人，再加上 Feature Flag，可以分別控制「誰拿到新版」與「誰看到新功能」；同一個限制也讓比例外的使用者拿不到新版，提高最低支援版本時要等推出到 100%（見〈使用者拿不到新版的情況〉）。資料來源是 Apple 的 [分階段發布說明](https://developer.apple.com/help/app-store-connect/update-your-app/release-a-version-update-in-phases) 與 Google Play 的 [分階段推出說明](https://support.google.com/googleplay/android-developer/answer/6346149)；分階段發布時該看哪些指標、何時暫停，見 [App 簽章、商店審核與分批發布流程](/devops/ci/app-deploy/signing-store-rollout-flow/) 的〈流程定位〉。
 
 ## 熱更新：不經商店審核的程式更新
 
@@ -180,6 +180,6 @@ Google Play 不能把已發布的版本退回舊版；要回到舊的程式，�
 - 消費者依更新能力分成的形態（能跟服務端一起部署、自己決定何時更新、無法被強制更新），以及 breaking 變更的定義與檢查方式：[11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)
 - App 不再呼叫某個舊 API 之後，那個 API 本身怎麼退場；公開 API 的分階段日期、in-band warning 與 brownout：[11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)
 - 依消費者身分與版本統計呼叫量的觀測維度、常設的衰減曲線：[11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)
-- 送審之前的簽章、測試矩陣、release checklist、分階段發布時的觀察指標與停損條件，以及推播與本機資料這幾種 API 以外的多版本共存契約：[App 簽章、商店審核與分批發布流程](/ci/app-deploy/signing-store-rollout-flow/)
+- 送審之前的簽章、測試矩陣、release checklist、分階段發布時的觀察指標與停損條件，以及推播與本機資料這幾種 API 以外的多版本共存契約：[App 簽章、商店審核與分批發布流程](/devops/ci/app-deploy/signing-store-rollout-flow/)
 - Feature Flag 的角色分類、壽命管理，以及 kill switch 的觸發延遲與 fallback 設計：[6.17 Feature Flag Governance](/backend/06-reliability/feature-flag-governance/)
 - 事故當下以伺服器端為中心的止血與回復策略：[8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)

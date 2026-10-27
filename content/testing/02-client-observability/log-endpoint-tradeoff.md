@@ -62,4 +62,4 @@ Client (Flutter) → HTTP POST /log → Go receiver → JSON file → grep/jq
 
 - 三層 log 的詳細設計 → [三層 log 設計](/testing/02-client-observability/three-layer-log-design/)
 - 在功能規格中定義 log 點 → [功能規格中的 log 點定義方法](/testing/02-client-observability/log-point-in-spec/)
-- Log 收集後的 schema 設計 → [monitoring 模組二 Log Schema](/monitoring/02-log-schema/)
+- Log 收集後的 schema 設計 → [monitoring 模組二 Log Schema](/devops/monitoring/02-log-schema/)

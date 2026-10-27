@@ -116,8 +116,8 @@ SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場�
 
 ## 跨分類引用
 
-- → [infra 模組五：資料庫上 IaC](/infra/05-core-services/deployment-order-database/)：RDS 的 IaC 描述（subnet group、parameter group、連線管理、read replica）與部署順序
-- → [infra 模組五：Stateful 資源保護](/infra/05-core-services/stateful-protection-dependency/)：multi-AZ、backup retention、deletion protection、PITR 的 IaC 設定
+- → [infra 模組五：資料庫上 IaC](/devops/infra/05-core-services/deployment-order-database/)：RDS 的 IaC 描述（subnet group、parameter group、連線管理、read replica）與部署順序
+- → [infra 模組五：Stateful 資源保護](/devops/infra/05-core-services/stateful-protection-dependency/)：multi-AZ、backup retention、deletion protection、PITR 的 IaC 設定
 
 ## 跨語言適配評估
 

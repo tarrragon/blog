@@ -20,7 +20,7 @@ tags: ["backend", "security", "waf", "cdn", "detection", "monitoring"]
 - 事件的「Action」欄寫的是哪一層做了什麼決定，判讀一筆事件要先知道它是哪一層留下的。
 - 背景流量多半在最前面的幾層就被處置，所以事件頁上量最大的那一類，多半是對這個網站最沒有威脅的那一類；針對性的訊號要從被放行、或只被記錄的那些請求裡找。
 
-上游的源站防火牆系列（[CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/infra/03-network-foundation/origin-host-firewall/)）處理的是「流量一定先經過邊緣」這個前提；本系列從流量進了邊緣之後開始。
+上游的源站防火牆系列（[CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/devops/infra/03-network-foundation/origin-host-firewall/)）處理的是「流量一定先經過邊緣」這個前提；本系列從流量進了邊緣之後開始。
 
 ## 章節規劃
 

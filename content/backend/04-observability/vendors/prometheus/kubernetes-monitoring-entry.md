@@ -8,7 +8,7 @@ tags: ["backend", "observability", "vendor", "prometheus", "kubernetes"]
 
 > 這一篇屬於 [Prometheus](/backend/04-observability/vendors/prometheus/) 的實作系列。[單機 Compose 的最小監控堆疊](/backend/04-observability/vendors/prometheus/single-host-compose-stack/) 與 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/) 在 Docker Compose 上以檔案寫讀取對象（scrape target）的清單、規則與儀表板；這一篇把同一件事搬到 Kubernetes 上。Kubernetes 的元件與物件（[Pod](/backend/knowledge-cards/pod/)、Deployment、[Service](/backend/knowledge-cards/kubernetes-service/)、[namespace](/backend/knowledge-cards/namespace/)）見 [Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/)。
 
-這一篇整理在 Kubernetes 叢集裡以 kube-prometheus-stack 這個 Helm chart 接上監控之後，讀取對象、告警規則與儀表板各自怎麼宣告，以及哪些宣告會被忽略而不報錯。範圍從 chart 裝好開始，Helm 本身的用法見 [Helm](/infra/knowledge-cards/helm/)。文中的行為在 macOS（Apple Silicon）上的 kind 0.33（Kubernetes v1.37）實測，chart 是 kube-prometheus-stack 92.3.0（Prometheus Operator v0.94.1、Grafana 13.2.3），以 Helm 4.3 安裝；kind 是在一台電腦上以容器模擬節點的工具，見 [單機練習用的 Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/local-practice-clusters/)。
+這一篇整理在 Kubernetes 叢集裡以 kube-prometheus-stack 這個 Helm chart 接上監控之後，讀取對象、告警規則與儀表板各自怎麼宣告，以及哪些宣告會被忽略而不報錯。範圍從 chart 裝好開始，Helm 本身的用法見 [Helm](/devops/infra/knowledge-cards/helm/)。文中的行為在 macOS（Apple Silicon）上的 kind 0.33（Kubernetes v1.37）實測，chart 是 kube-prometheus-stack 92.3.0（Prometheus Operator v0.94.1、Grafana 13.2.3），以 Helm 4.3 安裝；kind 是在一台電腦上以容器模擬節點的工具，見 [單機練習用的 Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/local-practice-clusters/)。
 
 ## kube-prometheus-stack 裝了什麼
 

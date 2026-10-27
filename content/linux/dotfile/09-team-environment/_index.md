@@ -19,5 +19,5 @@ tags: ["dotfile", "devcontainer", "nix", "team"]
 
 - → [模組零：Dotfile 心智模型](/linux/dotfile/00-dotfile-mindset/)：個人環境 as code 跟組織 IaC 的平行
 - → [模組八：同步、Bootstrap 與環境重建](/linux/dotfile/08-sync-bootstrap/)：bootstrap script 是團隊腳本化層級的基礎
-- → [Infra 基礎設施建置指南](/infra/)：Infra IaC 是組織層的環境 as code
-- → [Infra 斷網模組](/infra/air-gapped/)：離線環境的 devcontainer 限制
+- → [Infra 建置：IaC、身分與存取、網路、環境分離、核心服務、可觀測性、PR 流程與治理](/devops/infra/)：Infra IaC 是組織層的環境 as code
+- → [Infra 斷網模組](/devops/infra/air-gapped/)：離線環境的 devcontainer 限制

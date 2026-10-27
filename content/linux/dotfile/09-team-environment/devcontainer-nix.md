@@ -77,7 +77,7 @@ Devcontainer 管的是「專案需要什麼」，但你在容器裡工作時還�
 - **Docker 是前提**：團隊每個人的機器都要裝 Docker，macOS 上要跑 Docker Desktop 或 OrbStack
 - **GUI 應用不適合**：devcontainer 定位是 headless 開發環境，不處理圖形桌面
 - **效能折扣**：檔案系統操作在 macOS 上的 Docker volume 有效能折扣（Linux 上幾乎沒差）
-- **離線環境**：建容器需要拉 image 和 feature，斷網環境要另外處理（見 [Infra 斷網模組](/infra/air-gapped/)）
+- **離線環境**：建容器需要拉 image 和 feature，斷網環境要另外處理（見 [Infra 斷網模組](/devops/infra/air-gapped/)）
 - **管的是 dev image、不是線上 runtime**：devcontainer 對齊的是「團隊成員之間的開發環境一致」，不保證這個 image 等於 client 的線上 runtime。當目標是讓本機逐項對齊一個凍結的線上舊環境（PHP 7.2 / MySQL 5.7），那是另一件事，見 [Prod Parity 對齊](/linux/dotfile/10-prod-parity/)——兩者都用 container，但對齊的對象不同。
 
 ## Nix：宣告式的環境管理

@@ -10,7 +10,7 @@ tags: ["php", "cgi", "deployment"]
 
 ## CGI 怎麼把請求交給外部程式
 
-CGI 是 web 伺服器呼叫外部程式來產生回應的介面，規格寫成 RFC 3875（CGI/1.1），RFC 自己記載這個介面從 1993 年起就在 web 上使用。它跟語言無關：被呼叫的可以是 Perl、C、shell script 或 PHP，早期網站的 `cgi-bin/` 目錄放的就是這類程式（見 [CGI](/infra/knowledge-cards/cgi/)）。
+CGI 是 web 伺服器呼叫外部程式來產生回應的介面，規格寫成 RFC 3875（CGI/1.1），RFC 自己記載這個介面從 1993 年起就在 web 上使用。它跟語言無關：被呼叫的可以是 Perl、C、shell script 或 PHP，早期網站的 `cgi-bin/` 目錄放的就是這類程式（見 [CGI](/devops/infra/knowledge-cards/cgi/)）。
 
 一個請求經過 CGI 的過程：
 

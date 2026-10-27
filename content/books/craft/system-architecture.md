@@ -77,4 +77,4 @@ Robert Martin 的《Clean Architecture》常被列在這個位置，不收的理
 
 往下一個尺度走，模組與介面該怎麼切看 [設計判斷標準與日常實踐的選讀書目](../design-and-practice/)；架構定了之後既有程式碼怎麼搬過去看 [改既有程式的選讀書目](../changing-existing-code/)。
 
-具體的資料庫、快取、佇列與可觀測性選型看 [Backend 服務實務指南](/backend/)，部署與環境看 [Infra 基礎設施建置指南](/infra/)。
+具體的資料庫、快取、佇列與可觀測性選型看 [Backend 服務實務指南](/backend/)，部署與環境看 [Infra 建置：IaC、身分與存取、網路、環境分離、核心服務、可觀測性、PR 流程與治理](/devops/infra/)。

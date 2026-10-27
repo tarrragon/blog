@@ -15,7 +15,7 @@ Blast radius 與 [degradation](/backend/knowledge-cards/degradation/)、[failove
 
 ## 可觀察訊號與例子
 
-系統需要 blast radius 判斷的訊號是單點異常開始波及更多路徑。某個推薦服務超時最初只影響商品頁，若重試策略失控，可能進一步拖慢共用 database 與 checkout 路徑。同一台主機上的服務共用記憶體、磁碟與 CPU，任一樣耗盡都會擴大到整台主機，見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈故障範圍〉。
+系統需要 blast radius 判斷的訊號是單點異常開始波及更多路徑。某個推薦服務超時最初只影響商品頁，若重試策略失控，可能進一步拖慢共用 database 與 checkout 路徑。同一台主機上的服務共用記憶體、磁碟與 CPU，任一樣耗盡都會擴大到整台主機，見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)〈故障範圍〉。
 
 ## 設計責任
 

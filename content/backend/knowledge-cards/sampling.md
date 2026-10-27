@@ -19,4 +19,4 @@ Sampling 是觀測成本控制工具。它可以是固定比例、依錯誤保�
 
 Sampling 要定義保留規則、偏差、查詢限制與事故期間調整方式。抽樣後的資料適合診斷趨勢，但某些 audit 或法規資料需要完整保留。
 
-監控 SDK 中靜態取樣和動態取樣（背壓觸發）的具體實作見 [監控知識卡：Sampling](/monitoring/knowledge-cards/sampling/)。
+監控 SDK 中靜態取樣和動態取樣（背壓觸發）的具體實作見 [監控知識卡：Sampling](/devops/monitoring/knowledge-cards/sampling/)。

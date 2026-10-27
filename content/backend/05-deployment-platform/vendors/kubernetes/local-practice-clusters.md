@@ -195,4 +195,4 @@ CI 裡跑需要 Ingress 的整合測試時，kind 與 k3d 兩條都成立，分�
 - 本篇用到的 Pod、Service、EndpointSlice、Ingress 各自負責什麼，以及請求在它們之間的路徑：[Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/)。
 - 在單機叢集上練的滾動更新與 probe，要決定批次節奏、加上 liveness 與 startup probe 的判斷：[5.2 Kubernetes 部署策略](/backend/05-deployment-platform/kubernetes-deployment/)。
 - 單機上只需要把幾個容器串起來、不需要 Kubernetes 的控制迴圈時，Compose 的寫法與它的適用範圍：[Docker Compose：多 service dev 環境編排](/backend/05-deployment-platform/vendors/docker/docker-compose/)。
-- 練習完要在雲端上選平台，託管 Kubernetes 與不用 Kubernetes 的託管容器服務怎麼取捨：[運算平台上 IaC — ECS 與 EKS](/infra/05-core-services/compute-ecs-eks/)。
+- 練習完要在雲端上選平台，託管 Kubernetes 與不用 Kubernetes 的託管容器服務怎麼取捨：[運算平台上 IaC — ECS 與 EKS](/devops/infra/05-core-services/compute-ecs-eks/)。

@@ -10,7 +10,7 @@ journald（程式名是 `systemd-journald`）是 systemd 的紀錄收集服務�
 
 ## 概念位置
 
-journald 在一台主機的紀錄來源裡是預設的那一份：用 systemd 管的服務不必自己寫 log 檔，輸出就進了 journal。有裝 rsyslog 的發行版（Oracle Linux、RHEL 是這一種）另外從 journald 轉出一份文字檔到 `/var/log/messages`、`/var/log/secure`，這兩份文字檔由 [logrotate](/linux/dotfile/knowledge-cards/logrotate/) 輪替，journal 本身不經過 logrotate。長期上線的主機上 journal 存在哪裡、上限多少、要讀哪些欄位，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/operations/09-host-lifecycle/long-running-host-maintenance/)〈journald 的紀錄存在記憶體還是磁碟〉；桌面主機上的讀法見 [日誌判讀與診斷工具](/linux/dotfile/07-desktop-maintenance/log-reading-diagnostic-tools/)。服務失敗時主動通知、而不是事後翻 journal，見 [systemd OnFailure（失敗觸發鉤子）](/linux/dotfile/knowledge-cards/systemd-onfailure/)。
+journald 在一台主機的紀錄來源裡是預設的那一份：用 systemd 管的服務不必自己寫 log 檔，輸出就進了 journal。有裝 rsyslog 的發行版（Oracle Linux、RHEL 是這一種）另外從 journald 轉出一份文字檔到 `/var/log/messages`、`/var/log/secure`，這兩份文字檔由 [logrotate](/linux/dotfile/knowledge-cards/logrotate/) 輪替，journal 本身不經過 logrotate。長期上線的主機上 journal 存在哪裡、上限多少、要讀哪些欄位，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/devops/operations/09-host-lifecycle/long-running-host-maintenance/)〈journald 的紀錄存在記憶體還是磁碟〉；桌面主機上的讀法見 [日誌判讀與診斷工具](/linux/dotfile/07-desktop-maintenance/log-reading-diagnostic-tools/)。服務失敗時主動通知、而不是事後翻 journal，見 [systemd OnFailure（失敗觸發鉤子）](/linux/dotfile/knowledge-cards/systemd-onfailure/)。
 
 ## 可觀察訊號
 

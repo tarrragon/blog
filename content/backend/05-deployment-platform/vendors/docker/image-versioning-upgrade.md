@@ -74,11 +74,11 @@ PHP 7.2 → 8.2 跨了好幾個大版本，有移除的語法與大量 deprecati
 
 ## 容量：這篇到哪為止
 
-這篇講的是**自用 / 小規模的版本升級**——建新的、並跑對照、切換。它刻意不碰「線上服務不中斷的帶電升級」：那涉及在流量中把舊版逐步排空、新版逐步接手、出錯即時回退，是另一個量級的工程，見 [Infra 環境與系統升級](/infra/upgrade/)。判斷標準很簡單：自用能接受「切換時停一下」就用這篇的做法；線上不能停就走 infra 的 zero-downtime 遷移。
+這篇講的是**自用 / 小規模的版本升級**——建新的、並跑對照、切換。它刻意不碰「線上服務不中斷的帶電升級」：那涉及在流量中把舊版逐步排空、新版逐步接手、出錯即時回退，是另一個量級的工程，見 [Infra 環境與系統升級](/devops/infra/upgrade/)。判斷標準很簡單：自用能接受「切換時停一下」就用這篇的做法；線上不能停就走 infra 的 zero-downtime 遷移。
 
 ## 整合與下一步
 
 - image 為什麼改不了、tag vs digest 的差別，見 [不可變 Image](/backend/knowledge-cards/immutable-image/)。
 - tag 精確度與可重現性，見 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/)。
 - 這個升級的實際 artifact（`runtimes/php72-mysql57/` 與 `runtimes/php82-mysql8/` 兩版並存）是 [Dotfile 模組十 Prod Parity](/linux/dotfile/10-prod-parity/) 的延伸——凍結版跟升級版是同一套版本管理紀律的兩個方向。
-- 線上不中斷的帶電升級，見 [Infra 環境與系統升級](/infra/upgrade/)。
+- 線上不中斷的帶電升級，見 [Infra 環境與系統升級](/devops/infra/upgrade/)。

@@ -13,7 +13,7 @@ build 每次重下載套件、要同時出 amd64 與 arm64、build 時要用私�
 理解 BuildKit 最快的方式，是先看它取代的舊 builder 卡在哪。Docker 最初的 legacy builder 逐層線性執行 Dockerfile，三個常見需求它都處理得很勉強：
 
 - **build 加速**：每次 build，`RUN apt-get install` 或 `npm install` 都重新下載一次套件，就算內容一樣。legacy builder 只有 layer cache（整層命中或整層重跑），沒有「跨 build 保留下載快取」的機制。
-- **跨架構**：要同時出 amd64 跟 arm64 的 image（M 系列 Mac 開發、amd64 伺服器部署，或在 amd64 的筆電與 CI 上 build、部署到 ARM 雲端主機），legacy builder 一次只能 build 當前主機的架構。雲端上有哪些 ARM 機型（Oracle Cloud 的 Ampere A1、AWS 的 Graviton、Google Cloud 的 Axion 與 Tau T2A），以及只有 `amd64` 的映像在 ARM 主機上啟動時出現的 `exec format error`，見 [機型與映像檔：CPU 架構、核心與記憶體、計費模式與作業系統](/infra/cloud-providers/vm-options/shape-and-image/) 的〈CPU 架構：x86 與 ARM〉。
+- **跨架構**：要同時出 amd64 跟 arm64 的 image（M 系列 Mac 開發、amd64 伺服器部署，或在 amd64 的筆電與 CI 上 build、部署到 ARM 雲端主機），legacy builder 一次只能 build 當前主機的架構。雲端上有哪些 ARM 機型（Oracle Cloud 的 Ampere A1、AWS 的 Graviton、Google Cloud 的 Axion 與 Tau T2A），以及只有 `amd64` 的映像在 ARM 主機上啟動時出現的 `exec format error`，見 [機型與映像檔：CPU 架構、核心與記憶體、計費模式與作業系統](/devops/infra/cloud-providers/vm-options/shape-and-image/) 的〈CPU 架構：x86 與 ARM〉。
 - **build-time secret**：build 時要用私有 registry 存取憑證或 SSH key 抓私有依賴，用 `COPY` 或 `ENV` 帶進去，secret 就永久烤進某層 image、`docker history` 挖得出來。
 
 BuildKit 是重寫的 build engine，針對這三件重新設計；buildx 是它的前端命令，管 builder 實例與跨平台輸出。現代 Docker 預設就用 BuildKit，但上面三個能力要用對語法才吃得到。
@@ -138,4 +138,4 @@ docker buildx build --builder multi --platform linux/amd64,linux/arm64 -t app .
 
 - Dockerfile 指令與 layer 的基礎（cache mount 疊在 layer cache 之上），見 [Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)。
 - 多 service 的 dev 環境編排，見 [Docker Compose 深度設計](/backend/05-deployment-platform/vendors/docker/docker-compose/)。
-- image build 進 CI/CD pipeline、跟供應鏈掃描接起來，見 [Docker / Image 部署 CI/CD](/ci/docker-deploy/)。
+- image build 進 CI/CD pipeline、跟供應鏈掃描接起來，見 [Docker / Image 部署 CI/CD](/devops/ci/docker-deploy/)。

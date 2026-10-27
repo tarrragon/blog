@@ -52,7 +52,7 @@ tags: ["backend", "security"]
 
 改掉密碼**不會**讓已經發出的會話失效，也不會移除攻擊者留下的持久存取。這兩件事在重設流程裡都要接上，否則使用者拿回的是一個仍然開著的帳號。
 
-**撤銷全部會話**是必要的收尾。撤銷得掉的前提是會話狀態放在自己查得到的地方，見 [Session 處理](/operations/02-horizontal-scaling/session-handling/) 與 [7.37 撤銷會話與重設密碼是兩個動作](../credential-breach-response/#撤銷會話與重設密碼是兩個動作)。
+**撤銷全部會話**是必要的收尾。撤銷得掉的前提是會話狀態放在自己查得到的地方，見 [Session 處理](/devops/operations/02-horizontal-scaling/session-handling/) 與 [7.37 撤銷會話與重設密碼是兩個動作](../credential-breach-response/#撤銷會話與重設密碼是兩個動作)。
 
 **通知使用者**這件事剛剛發生，並在通知裡給一條「這不是我做的」的路徑。這封信要寄到**變更前**的聯絡方式——寄到變更後的話，收到的是攻擊者。
 
@@ -102,6 +102,6 @@ tags: ["backend", "security"]
 - 帳號已經被接管之後的處置與核身：[7.41 單一帳號被接管](../single-account-takeover-response/)
 - 大量帳號的強制重設、期限與容量攤平：[7.37 密碼外洩之後](../credential-breach-response/)
 - 存取憑證掉了的補發路徑（同一個問題在持有型憑證上的形態）：[7.39 使用者持有型憑證](../user-held-credential-carrier/)
-- 撤銷會話的能力由狀態放哪決定：[Session 處理](/operations/02-horizontal-scaling/session-handling/)
+- 撤銷會話的能力由狀態放哪決定：[Session 處理](/devops/operations/02-horizontal-scaling/session-handling/)
 - 回應時間洩漏資訊的機制：[timing attack](/backend/knowledge-cards/timing-attack/)
 - 密碼存成什麼樣、參數怎麼定：[7.30 使用者密碼儲存](../password-storage-and-work-factor/)

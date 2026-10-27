@@ -100,7 +100,7 @@ Workload model 不是一次抽完就永久有效。業務變化會讓模型過�
 - 下游：[9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)（用什麼工具實作 model）
 - 下游：[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)（用 model 跑 ramp-up）
 - 跨模組：[04 可觀測性模組](/backend/04-observability/)（production log 來源）
-- 跨模組：[運維 模組五：流量模型建立](/operations/05-capacity-planning/traffic-model/)（峰均比、到達型態、從 log 抽模型的容量規劃入口）
+- 跨模組：[運維 模組五：流量模型建立](/devops/operations/05-capacity-planning/traffic-model/)（峰均比、到達型態、從 log 抽模型的容量規劃入口）
 
 ## 既建知識卡片
 

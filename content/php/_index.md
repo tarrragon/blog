@@ -19,8 +19,8 @@ tags: ["php"]
 
 ## 跨分類的相關內容
 
-- [Infra 知識卡](/infra/knowledge-cards/)：[CGI](/infra/knowledge-cards/cgi/)、[Apache MPM](/infra/knowledge-cards/apache-mpm/)、[nginx](/infra/knowledge-cards/nginx/)、[.htaccess](/infra/knowledge-cards/htaccess/)、[php.ini / .user.ini](/infra/knowledge-cards/php-ini/)
-- [接手舊系統](/infra/takeover/)：共享主機與舊 PHP 站台的接手、遷移與安全稽核
+- [Infra 知識卡](/devops/infra/knowledge-cards/)：[CGI](/devops/infra/knowledge-cards/cgi/)、[Apache MPM](/devops/infra/knowledge-cards/apache-mpm/)、[nginx](/devops/infra/knowledge-cards/nginx/)、[.htaccess](/devops/infra/knowledge-cards/htaccess/)、[php.ini / .user.ini](/devops/infra/knowledge-cards/php-ini/)
+- [接手舊系統](/devops/infra/takeover/)：共享主機與舊 PHP 站台的接手、遷移與安全稽核
 - [Container per Service](/backend/knowledge-cards/container-per-service/)：一個容器一個職責的慣例，對應 Nginx 與 PHP-FPM 要不要拆成兩個容器
 
 ## Backlog

@@ -14,12 +14,12 @@ tags: ["backend", "observability", "vendor", "prometheus", "grafana"]
 
 Grafana 綁在 `127.0.0.1:3000` 時，只有在監控主機上的程式連得到它。讓別台電腦上的人看到它有兩類做法，分別對應兩種讀者：
 
-- **要看的人有這台主機的 SSH 帳號或 VPN 帳號**：在他自己的電腦上開一條 [SSH](/infra/knowledge-cards/ssh/) 通道，或者經由 VPN 連進主機所在的網路。Grafana 的連接埠不對外，登入頁不出現在網際網路上，也不必準備網域與憑證。
-- **要看的人沒有 SSH 或 VPN 帳號**：主管、行銷或外部合作方只需要看儀表板，不該拿到能登入主機或進入內部網路的帳號。這時 Grafana 要以一個網域、經過 HTTPS 對外，前面放一個 [反向代理](/infra/knowledge-cards/reverse-proxy/) 處理 TLS 與來源限制（只放行指定網段的連線）。
+- **要看的人有這台主機的 SSH 帳號或 VPN 帳號**：在他自己的電腦上開一條 [SSH](/devops/infra/knowledge-cards/ssh/) 通道，或者經由 VPN 連進主機所在的網路。Grafana 的連接埠不對外，登入頁不出現在網際網路上，也不必準備網域與憑證。
+- **要看的人沒有 SSH 或 VPN 帳號**：主管、行銷或外部合作方只需要看儀表板，不該拿到能登入主機或進入內部網路的帳號。這時 Grafana 要以一個網域、經過 HTTPS 對外，前面放一個 [反向代理](/devops/infra/knowledge-cards/reverse-proxy/) 處理 TLS 與來源限制（只放行指定網段的連線）。
 
 兩者的差別在於誰承擔「這個人能不能連進來」的判斷。SSH 與 VPN 由既有的 SSH 或 VPN 帳號判斷，對外的做法則把判斷交給 Grafana 的登入頁加上代理的來源限制，而登入頁一旦對外，就會被掃描與猜密碼（見〈Grafana 登入失敗的帳號鎖定，與認證放在哪裡〉）。所以只有工程師要看時，SSH 通道就夠；「沒有 SSH 或 VPN 帳號的人也要看」是加反向代理的觸發條件。代理因此寫成一個可選的 compose 檔：它一啟動就有一個對外的登入頁，所以觸發條件成立之前，監控主機的 `COMPOSE_FILE` 不列進它。
 
-來源限制的效果取決於看的人從哪裡連進來。他們都在辦公室、出口位址固定時，代理只放行那個網段（[CIDR](/infra/knowledge-cards/cidr/) 寫法），其他人連不到登入頁；看的人用手機、在出差地或各自的網路上連進來，沒有固定的網段可寫時，代理只能放行全部來源，登入頁等於對整個網際網路開放。這時把認證移到代理前面的身分驗證服務（這時 SSH 通道與 VPN 不再能直接連 Grafana，見〈Grafana 登入失敗的帳號鎖定，與認證放在哪裡〉裡的「代理前面的身分驗證服務」），或替看的人開 VPN 帳號改走 SSH 或 VPN 那一類，而不是只靠 Grafana 的密碼。為了看儀表板開的 VPN 帳號要限定只能連到 Grafana 的位址：VPN 接進來之後碰得到整個內部網路，包括只有 basic auth 的 Prometheus、Alertmanager 與綁在私有位址的 exporter。
+來源限制的效果取決於看的人從哪裡連進來。他們都在辦公室、出口位址固定時，代理只放行那個網段（[CIDR](/devops/infra/knowledge-cards/cidr/) 寫法），其他人連不到登入頁；看的人用手機、在出差地或各自的網路上連進來，沒有固定的網段可寫時，代理只能放行全部來源，登入頁等於對整個網際網路開放。這時把認證移到代理前面的身分驗證服務（這時 SSH 通道與 VPN 不再能直接連 Grafana，見〈Grafana 登入失敗的帳號鎖定，與認證放在哪裡〉裡的「代理前面的身分驗證服務」），或替看的人開 VPN 帳號改走 SSH 或 VPN 那一類，而不是只靠 Grafana 的密碼。為了看儀表板開的 VPN 帳號要限定只能連到 Grafana 的位址：VPN 接進來之後碰得到整個內部網路，包括只有 basic auth 的 Prometheus、Alertmanager 與綁在私有位址的 exporter。
 
 ## SSH 通道的連法
 
@@ -142,7 +142,7 @@ Nginx 只在載入設定時解析一次 `proxy_pass` 裡 `grafana` 的位址，�
 
 ### 正式 TLS 憑證與本機的自簽憑證
 
-憑證在雲端上由 Let's Encrypt 這類 CA 簽發，概念與續期見 [域名與 HTTPS 怎麼接上](/going-live/domain-and-https/) 的〈TLS 憑證怎麼拿：Let's Encrypt 讓它免費又自動〉。那裡的 `certbot --nginx` 改的是主機上的 Nginx，而這個代理在容器裡，所以改用 `certbot certonly` 只取得憑證檔：`--standalone` 要在驗證時暫時用到主機的 80 埠，DNS 驗證則不必開埠。`/etc/letsencrypt/live/<網域>/` 裡的檔案是指向 `archive/` 的符號連結，掛進容器時讀不到連結的目標，所以以續期的 `--deploy-hook` 把兩個檔案複製到 `GRAFANA_TLS_DIR`（`cp -L` 跟著連結取實檔），再讓代理重新載入（在專案目錄執行 `docker compose exec grafana-proxy nginx -s reload`）。這一段沒有實際簽發過。雲端主機上另外要把網域的 DNS A 記錄指向監控主機的公開位址，並在[安全群組](/infra/knowledge-cards/security-group/)或防火牆開放 443 的入站連線，否則瀏覽器連線逾時。
+憑證在雲端上由 Let's Encrypt 這類 CA 簽發，概念與續期見 [域名與 HTTPS 怎麼接上](/devops/going-live/domain-and-https/) 的〈TLS 憑證怎麼拿：Let's Encrypt 讓它免費又自動〉。那裡的 `certbot --nginx` 改的是主機上的 Nginx，而這個代理在容器裡，所以改用 `certbot certonly` 只取得憑證檔：`--standalone` 要在驗證時暫時用到主機的 80 埠，DNS 驗證則不必開埠。`/etc/letsencrypt/live/<網域>/` 裡的檔案是指向 `archive/` 的符號連結，掛進容器時讀不到連結的目標，所以以續期的 `--deploy-hook` 把兩個檔案複製到 `GRAFANA_TLS_DIR`（`cp -L` 跟著連結取實檔），再讓代理重新載入（在專案目錄執行 `docker compose exec grafana-proxy nginx -s reload`）。這一段沒有實際簽發過。雲端主機上另外要把網域的 DNS A 記錄指向監控主機的公開位址，並在[安全群組](/devops/infra/knowledge-cards/security-group/)或防火牆開放 443 的入站連線，否則瀏覽器連線逾時。
 
 本機測試用自簽憑證，`*.localhost` 在瀏覽器與 curl 都解析到本機：
 

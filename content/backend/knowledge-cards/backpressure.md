@@ -28,7 +28,7 @@ Backpressure 導入後，團隊需要定義以下邊界：[buffer](/backend/know
 
 設計取捨的核心是 buffer 尺度：buffer 太小會讓瞬間尖峰被過度拒絕，流失可接受的請求；buffer 太大則延遲失控並可能拖累記憶體。穩定做法是「有限 buffer + 明確拒絕策略」，讓系統在超載時 fail fast，避免把壓力延後累積成更大的雪崩。
 
-監控系統中 collector 用 HTTP 429 向 SDK 傳遞背壓的具體實作見 [監控知識卡：Backpressure](/monitoring/knowledge-cards/backpressure/)。
+監控系統中 collector 用 HTTP 429 向 SDK 傳遞背壓的具體實作見 [監控知識卡：Backpressure](/devops/monitoring/knowledge-cards/backpressure/)。
 
 <!--
 codex-check:

@@ -201,7 +201,7 @@ lifecycle contract 是部署模組的概念基底，後續章節都會引用本�
 4. 與 5.10 的交接：tunnel 入口的 readiness 與 drain 對齊回到 [Outbound Tunnel 入口](/backend/05-deployment-platform/outbound-tunnel-entry/)。
 5. 與 4.20 的交接：lifecycle 事件的證據收集回到 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
 6. 與 6.8 的交接：lifecycle 狀態作為 release gate 判定條件回到 [Release Gate](/backend/06-reliability/release-gate/)。
-7. 與 devops 的交接：startup / readiness / liveness / drain 的概念層探活、probe 語意與自動恢復進入 [運維 模組四：服務探活](/operations/04-service-health/)。
+7. 與 devops 的交接：startup / readiness / liveness / drain 的概念層探活、probe 語意與自動恢復進入 [運維 模組四：服務探活](/devops/operations/04-service-health/)。
 
 ## 下一步路由
 

@@ -121,7 +121,7 @@ min by (device, fstype) (
 所以監控的範圍由它裝在哪一層決定：
 
 - **Linux 主機直接跑 Docker**：node_exporter 看到的就是真正的主機，上表的落差不存在。
-- **macOS 或 Windows 上的 Docker**：主機的 CPU 負載只量得到主機那一端，node_exporter 有 macOS 的版本可以裝在 Mac 本機（本篇沒有實測）；磁碟看虛擬機有沒有掛進主機的那一顆。在這種環境量到的數字為什麼要附上主機的負載，見 [共用主機的資源競爭](/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉。
+- **macOS 或 Windows 上的 Docker**：主機的 CPU 負載只量得到主機那一端，node_exporter 有 macOS 的版本可以裝在 Mac 本機（本篇沒有實測）；磁碟看虛擬機有沒有掛進主機的那一顆。在這種環境量到的數字為什麼要附上主機的負載，見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉。
 - **雲端的虛擬機**：同一個問題換成「同一台實體機上的其他租戶」。Linux 的 [steal 時間](/backend/knowledge-cards/cpu-steal-time/)（`node_cpu_seconds_total{mode="steal"}`）累計虛擬機想用 CPU 而被虛擬化層（hypervisor）分給別人的時間；它只增不減，所以看 `rate(node_cpu_seconds_total{mode="steal"}[5m])` 換算出的比例，這個比例持續高於平常時，慢的原因在虛擬機之外。
 
 ## 監控來源接上之後仍沒在監控的情形與驗收

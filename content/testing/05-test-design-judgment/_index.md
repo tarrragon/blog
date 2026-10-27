@@ -40,4 +40,4 @@ tags: ["testing", "assertion", "flaky", "test-data", "mock"]
 
 ## 跨分類引用
 
-- → [monitoring 模組五 平台適配](/monitoring/05-platform-adaptation/)：各平台的 error 攔截機制差異影響 test 設計
+- → [monitoring 模組五 平台適配](/devops/monitoring/05-platform-adaptation/)：各平台的 error 攔截機制差異影響 test 設計
