@@ -55,3 +55,8 @@ jobs:
 
       - name: mdtools cards
         run: ./bin/mdtools cards content/
+
+      # Hugo does not warn when an alias equals another page's URL (the page
+      # silently wins), and cards does not read aliases.
+      - name: alias collisions
+        run: python3 bin/alias-check

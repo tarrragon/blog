@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+"""列出 content/ 裡衝突的 aliases：alias 等於某一頁的網址，或兩頁宣告同一個 alias。
+
+用途：搬移資料夾或文章之後（bin/content-move 會替每一頁加上舊網址的 alias）確認舊網址導向的是對的頁面。
+Hugo build 在 alias 等於另一頁的網址時不發警告（`--printPathWarnings` 也沒有輸出），頁面直接蓋過 alias，
+舊網址導向的是那一頁；`mdtools cards` 依檔案路徑解析連結，不讀 aliases。所以這一類只有這支工具看得到。
+站內連結解析不解析得到頁面，由 `mdtools cards` 的 L1-broken-link 檢查，不在這支工具的範圍。
+
+用法：
+  bin/alias-check          掃整個 content/
+在 repo 裡任何目錄執行都可以（以 repo 根目錄為準）。
+
+頁面網址的算法與 bin/content-move 相同：檔案路徑，slug 取代檔名，hugo.toml 的 [permalinks] 只支援 :slug。
+aliases 認單行陣列（`aliases: ["/a/", "/b/"]`）與 YAML 清單（`aliases:` 下一行起接 `  - "/a/"`）兩種寫法；
+TOML frontmatter（`+++`）不讀。
+
+輸出：每個衝突一行 `<alias>\t<說明>`。stderr 結尾印 `alias-check: P page(s), A alias(es), C collision(s)`。
+
+exit：0 沒有衝突；1 有衝突；2 用法錯誤、不在 git repo、content/ 底下沒有 .md。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import collections
+import os
+import re
+import subprocess
+import sys
+
+try:
+    import tomllib
+except ImportError:  # pragma: no cover
+    tomllib = None
+
+
+def die(msg):
+    sys.stderr.write(f"alias-check: {msg}\n")
+    sys.exit(2)
+
+
+def frontmatter(text):
+    lines = text.split("\n")
+    if lines and lines[0].strip() == "---":
+        for i in range(1, len(lines)):
+            if lines[i].strip() == "---":
+                return lines[1:i]
+    return []
+
+
+def fm_value(lines, key):
+    for line in lines:
+        m = re.match(rf"^{key}:\s*(.*)$", line)
+        if m:
+            return m.group(1).strip().strip("\"'")
+    return None
+
+
+def aliases_of(lines):
+    for i, line in enumerate(lines):
+        m = re.match(r"^aliases:\s*(.*)$", line)
+        if not m:
+            continue
+        inline = m.group(1).strip()
+        if inline.startswith("["):
+            return [a or b for a, b in re.findall(r"\"([^\"]+)\"|'([^']+)'", inline)]
+        found = []
+        for item in lines[i + 1 :]:
+            im = re.match(r"^\s+-\s*(.+)$", item)
+            if not im:
+                break
+            found.append(im.group(1).strip().strip("\"'"))
+        return found
+    return []
+
+
+def norm(u):
+    return u if u.endswith("/") else u + "/"
+
+
+def main():
+    if sys.argv[1:]:
+        die("用法：bin/alias-check")
+    r = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    if r.returncode != 0:
+        die("不在 git repo 裡")
+    root = r.stdout.strip()
+    content = os.path.join(root, "content")
+    perm = {}
+    hugo = os.path.join(root, "hugo.toml")
+    if os.path.exists(hugo) and tomllib is not None:
+        with open(hugo, "rb") as f:
+            perm = tomllib.load(f).get("permalinks", {})
+
+    page_url, alias_owner = {}, collections.defaultdict(list)
+    for d, dirs, files in os.walk(content):
+        dirs[:] = [x for x in dirs if not x.startswith(".")]
+        for fn in files:
+            if not fn.endswith(".md"):
+                continue
+            rel = os.path.relpath(os.path.join(d, fn), content).replace(os.sep, "/")
+            with open(os.path.join(d, fn), encoding="utf-8") as f:
+                fm = frontmatter(f.read())
+            parts = rel.split("/")
+            if fn == "_index.md":
+                url = "/" + "/".join(parts[:-1]) + "/" if len(parts) > 1 else "/"
+            else:
+                slug = fm_value(fm, "slug") or fn[:-3]
+                if len(parts) > 1 and parts[0] in perm:
+                    url = perm[parts[0]].replace(":slug", slug)
+                else:
+                    url = "/" + "/".join(parts[:-1] + [slug]) + "/"
+            page_url[url] = rel
+            for a in aliases_of(fm):
+                alias_owner[norm(a)].append(rel)
+    if not page_url:
+        die(f"{content} 底下沒有 .md")
+
+    collisions = []
+    for alias, owners in sorted(alias_owner.items()):
+        if alias in page_url:
+            collisions.append((alias, f"等於 content/{page_url[alias]} 的網址，宣告者 {', '.join(owners)}"))
+        if len(owners) > 1:
+            collisions.append((alias, f"被兩頁以上宣告：{', '.join(owners)}"))
+    for alias, msg in collisions:
+        print(f"{alias}\t{msg}")
+    sys.stderr.write(
+        f"alias-check: {len(page_url)} page(s), {len(alias_owner)} alias(es), {len(collisions)} collision(s)\n"
+    )
+    sys.exit(1 if collisions else 0)
+
+
+if __name__ == "__main__":
+    main()

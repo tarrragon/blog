@@ -1,0 +1,479 @@
+#!/usr/bin/env python3
+"""把 content/ 底下的一個資料夾或一篇文章搬到新位置，並改寫全站指向它的連結。
+
+用途：收斂首頁分類時，把整個模組搬進另一個大分類底下（content/infra → content/devops/infra），
+或把單篇文章搬進 hands-on/。手動做要逐檔改連結、補 aliases、把相對連結改成絕對路徑，這支工具
+一次做完，預設只印計畫不改檔。
+
+用法：
+  bin/content-move <src> <dest>            dry-run：印出搬移的頁數、要改寫的連結與殘留的引用
+  bin/content-move --apply <src> <dest>    實際搬移與改寫
+  bin/content-move --list <src> <dest>     另外逐筆印出網址對照、改寫的連結與殘留引用的那一行；可與 --apply 併用
+  bin/content-move --manifest <檔案> ...   把這次碰到的檔案（被搬檔案的舊路徑與新路徑、改寫連結的檔案）
+                                           逐行附加到 <檔案>（路徑以 repo 根目錄起算）；連續搬好幾次時給同一個
+                                           檔案，之後的格式化、lint-delta 與提交清單都從它取，不從整份 git status 取
+  <src> 是 content/ 底下既有的資料夾或 .md 檔；<dest> 是搬過去之後的完整路徑（不存在的路徑，
+  不是「放進哪個資料夾」），例如 content/devops/infra。路徑以執行時的目錄起算。
+
+做的事：
+  1. 依檔案路徑與 hugo.toml 的 [permalinks]（只支援 :slug）算出每一頁搬移前後的網址。
+  2. 網址改變的每一頁（含 _index.md）把舊網址加進 frontmatter 的 aliases，舊網址繼續導向新頁；
+     [permalinks] 分類裡網址取 slug 的頁面，在同一個分類裡換資料夾時網址不變，不加。
+  3. 改寫 content/、docs/、AGENTS.md、CLAUDE.md 裡的 markdown 連結（inline 與 reference 定義，
+     略過 fenced code block；.claude/、.codex/ 與 content/skills/ 裡的連結不改寫，列進殘留——content/skills/
+     是 bin/skill-mirror 從 .claude/skills/ 產生的鏡像，直接改會在下一次產生鏡像時被蓋回去）：
+     - 目的地是被搬的頁面時改成新網址，保留 anchor 與原本有沒有尾斜線；
+     - 被搬的頁面裡的相對連結一律改成絕對路徑（深度變了，相對路徑會斷）；
+     - 其他檔案裡指向被搬頁面的相對連結改成新網址的絕對路徑。
+     docs/、AGENTS.md、CLAUDE.md 只改絕對網址，它們的相對連結指的是 repo 裡的檔案。
+  4. 列出殘留的引用：舊網址前綴（也比對帶 hugo.toml baseURL 路徑的寫法，例如 /blog/infra/ 與完整網址）
+     或 content/<舊路徑>，出現在第 3 項沒有改寫的位置——content/、docs/ 與入口檔裡連結以外的文字與程式碼
+     區塊，以及其餘每一個檔案的任何一行（連結也算）。掃描範圍是 `git ls-files -co --exclude-standard`
+     列出的全部檔案（追蹤中與還沒追蹤、沒被 .gitignore 排除的），讀不出 UTF-8 的檔案跳過。工具不改這些，
+     逐處判讀。repo 以外的目錄（例如 Claude Code 的 memory 目錄）不在掃描範圍。
+  5. 頁面搬回它以前的位置時（新網址等於自己既有的某個 alias），移除那個 alias 並列進警告，否則它跟
+     頁面自己的網址衝突。
+
+沒有處理的事：dest 的上層資料夾缺 _index.md 時只警告（那一層沒有 title 與 description，列表頁顯示
+資料夾名；不在 content/ 第一層時它不是 Hugo 的 section，搬進去的頁面列在更上一層）；weight 不調整，
+搬進新 section 之後的排序照 docs/rules/markdown.md〈列表排序與 weight〉自己排；TOML frontmatter
+的頁面不加 aliases，列進警告；relref shortcode 依檔名解析，搬移不改檔名，所以不動。
+
+為什麼寫成工具：被搬的頁面可能上百篇，連結散在全站，相對連結的解析依頁面的網址而不是檔案位置，
+手動或逐檔請 agent 改，既耗 token 也容易漏掉 anchor 與尾斜線的寫法。
+
+stderr 結尾印 `content-move: N page(s) moved, L link(s) rewritten in F file(s), A alias(es) added,
+R residual reference(s) in G file(s)`；dry-run 時前面加 `(dry-run)`。
+
+exit：0 完成；2 用法錯誤、不在 git repo、src 不存在或不在 content/ 底下、dest 已經存在或在 src
+裡面、hugo.toml 的 permalinks 用了 :slug 以外的變數、permalink 分類裡的頁面沒有 slug。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import argparse
+import os
+import posixpath
+import re
+import subprocess
+import sys
+import urllib.parse
+
+try:
+    import tomllib
+except ImportError:  # pragma: no cover
+    tomllib = None
+
+LINK_RE = re.compile(r"\]\(([^)\s]+)((?:\s+\"[^\"]*\")?)\)")
+REFDEF_RE = re.compile(r"^(\s{0,3}\[[^\]]+\]:\s*)(\S+)(.*)$")
+FENCE_RE = re.compile(r"^\s*(```|~~~)")
+EXTERNAL_RE = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|//|#)", re.I)
+
+
+def die(msg):
+    sys.stderr.write(f"content-move: {msg}\n")
+    sys.exit(2)
+
+
+def repo_root():
+    r = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    if r.returncode != 0:
+        die("不在 git repo 裡")
+    return r.stdout.strip()
+
+
+def load_permalinks(root):
+    path = os.path.join(root, "hugo.toml")
+    if not os.path.exists(path) or tomllib is None:
+        return {}
+    with open(path, "rb") as f:
+        perm = tomllib.load(f).get("permalinks", {})
+    for section, pattern in perm.items():
+        if re.sub(r":slug", "", pattern).count(":"):
+            die(f"hugo.toml 的 permalinks.{section} = {pattern!r} 用了 :slug 以外的變數，工具算不出網址")
+    return perm
+
+
+def split_frontmatter(text):
+    """回傳 (分隔符, frontmatter 行, 正文起始 index)；沒有 frontmatter 時分隔符是 None。"""
+    lines = text.split("\n")
+    if lines and lines[0].strip() in ("---", "+++"):
+        delim = lines[0].strip()
+        for i in range(1, len(lines)):
+            if lines[i].strip() == delim:
+                return delim, lines, i
+    return None, lines, 0
+
+
+def fm_value(text, key):
+    delim, lines, end = split_frontmatter(text)
+    if delim is None:
+        return None
+    sep = ":" if delim == "---" else "="
+    for line in lines[1:end]:
+        m = re.match(rf"^{re.escape(key)}\s*{sep}\s*(.*)$", line)
+        if m:
+            return m.group(1).strip().strip("\"'")
+    return None
+
+
+def url_of(rel, text, permalinks):
+    """rel 是相對於 content/ 的 posix 路徑，回傳 Hugo 給這一頁的網址（尾端有斜線）。"""
+    parts = rel.split("/")
+    if parts[-1] == "_index.md":
+        d = "/".join(parts[:-1])
+        return f"/{d}/" if d else "/"
+    slug = fm_value(text, "slug") or parts[-1][:-3]
+    if len(parts) > 1 and parts[0] in permalinks:
+        if fm_value(text, "slug") is None:
+            die(f"content/{rel} 在 permalink 分類 {parts[0]} 裡卻沒有 slug，網址取決於 title，工具算不出來")
+        return permalinks[parts[0]].replace(":slug", slug)
+    return "/" + "/".join(parts[:-1] + [slug]) + "/"
+
+
+def split_target(target):
+    """把連結目的地拆成 (路徑, 尾巴)；尾巴是 #anchor 或 ?query。"""
+    m = re.match(r"^([^#?]*)(.*)$", target)
+    return m.group(1), m.group(2)
+
+
+def normalize(path):
+    return path if path.endswith("/") else path + "/"
+
+
+def resolve(base, path):
+    """以頁面網址 base 解析相對路徑；逃出網站根目錄時回傳 None。"""
+    joined = posixpath.normpath(posixpath.join(base, path))
+    if joined.startswith(".."):
+        return None
+    return joined if joined.startswith("/") else "/" + joined
+
+
+def rewrite_links(text, mapping, base, moved, relative_ok):
+    """回傳 (新文字, 改寫筆數, 改寫清單)。base 是這個檔案搬移前的網址；relative_ok 為 False 時
+    不解析相對連結（docs/ 這類 repo 檔案的相對連結指的是檔案路徑）。"""
+    out, count, changes, in_fence = [], 0, [], False
+
+    def fix(target):
+        path, tail = split_target(target)
+        if not path or EXTERNAL_RE.match(target):
+            return None
+        if path.startswith("/"):
+            abs_path = path
+        elif relative_ok:
+            abs_path = resolve(base, path)
+            if abs_path is None:
+                return None
+        else:
+            return None
+        key = normalize(abs_path)
+        if key in mapping:
+            new = mapping[key]
+            if not path.endswith("/") and new != "/":
+                new = new.rstrip("/")
+            return new + tail
+        if not path.startswith("/") and moved:
+            # 被搬的頁面裡指向別處的相對連結：深度變了，改成絕對路徑
+            return abs_path + ("/" if path.endswith("/") and not abs_path.endswith("/") else "") + tail
+        return None
+
+    for line in text.split("\n"):
+        if FENCE_RE.match(line):
+            in_fence = not in_fence
+            out.append(line)
+            continue
+        if in_fence:
+            out.append(line)
+            continue
+
+        def sub_inline(m):
+            nonlocal count
+            new = fix(m.group(1))
+            if new is None or new == m.group(1):
+                return m.group(0)
+            count += 1
+            changes.append((m.group(1), new))
+            return f"]({new}{m.group(2)})"
+
+        before = len(changes)
+        line = LINK_RE.sub(sub_inline, line)
+        # 連結文字照抄目的地網址時（[/ops/x/](/ops/x/)），文字跟著換，否則讀者看到的是舊網址
+        for old, new in changes[before:]:
+            line = line.replace(f"[{old}]({new}", f"[{new}]({new}")
+        m = REFDEF_RE.match(line)
+        if m:
+            new = fix(m.group(2))
+            if new is not None and new != m.group(2):
+                count += 1
+                changes.append((m.group(2), new))
+                line = f"{m.group(1)}{new}{m.group(3)}"
+        out.append(line)
+    return "\n".join(out), count, changes
+
+
+def add_alias(text, alias, drop=None):
+    """把 alias 加進 YAML frontmatter 的 aliases，並移除等於 drop（這一頁的新網址）的既有 alias：
+    頁面搬回它以前的位置時，那個 alias 會跟頁面自己的網址衝突。回傳 (新文字, 是否移除了 drop)；
+    沒有任何改變或加不了時新文字是 None。"""
+    delim, lines, end = split_frontmatter(text)
+    if delim != "---":
+        return None, False
+    for i in range(1, end):
+        m = re.match(r"^aliases:\s*\[(.*)\]\s*$", lines[i])
+        if m:
+            items = [a or b for a, b in re.findall(r"\"([^\"]*)\"|'([^']*)'", m.group(1))]
+            kept = [a for a in items if drop is None or normalize(a) != normalize(drop)]
+            dropped = len(kept) != len(items)
+            if alias not in kept:
+                kept.append(alias)
+            if kept == items:
+                return None, False
+            lines[i] = "aliases: [" + ", ".join(f'"{a}"' for a in kept) + "]"
+            return "\n".join(lines), dropped
+        if re.match(r"^aliases:\s*$", lines[i]):
+            j, present, dropped = i + 1, False, False
+            while j < end and re.match(r"^\s+-\s", lines[j]):
+                value = lines[j].split("-", 1)[1].strip().strip("\"'")
+                if drop is not None and normalize(value) == normalize(drop):
+                    del lines[j]
+                    end -= 1
+                    dropped = True
+                    continue
+                present = present or value == alias
+                j += 1
+            if not present:
+                lines.insert(j, f'  - "{alias}"')
+            elif not dropped:
+                return None, False
+            return "\n".join(lines), dropped
+    lines.insert(end, f'aliases: ["{alias}"]')
+    return "\n".join(lines), False
+
+
+def walk_md(root, rel_dir):
+    base = os.path.join(root, rel_dir)
+    if os.path.isfile(base):
+        return [rel_dir] if base.endswith(".md") else []
+    found = []
+    for d, dirs, files in os.walk(base):
+        dirs[:] = sorted(x for x in dirs if not x.startswith("."))
+        for f in sorted(files):
+            if f.endswith(".md"):
+                found.append(os.path.relpath(os.path.join(d, f), root).replace(os.sep, "/"))
+    return found
+
+
+def to_repo_rel(root, p):
+    return os.path.relpath(os.path.abspath(p), root).replace(os.sep, "/")
+
+
+REWRITE_SCOPE = ("content/", "docs/", "AGENTS.md", "CLAUDE.md")  # 連結由第 3 項改寫的檔案
+MIRROR_DIR = "content/skills/"  # bin/skill-mirror 產生的鏡像：改源檔再重跑鏡像，這裡只列殘留
+
+
+def rewritable(rel):
+    return rel.startswith(REWRITE_SCOPE) and not rel.startswith(MIRROR_DIR)
+
+
+def base_path(root):
+    """hugo.toml 的 baseURL 的路徑段（https://x.github.io/blog/ → blog），沒有時回傳空字串。"""
+    path = os.path.join(root, "hugo.toml")
+    if not os.path.exists(path) or tomllib is None:
+        return ""
+    with open(path, "rb") as f:
+        base = tomllib.load(f).get("baseURL", "")
+    return urllib.parse.urlparse(base).path.strip("/")
+
+
+def repo_files(root):
+    """工作樹裡追蹤中、與還沒追蹤而沒被 .gitignore 排除的全部檔案。"""
+    r = subprocess.run(
+        ["git", "ls-files", "-co", "--exclude-standard", "-z"], cwd=root, capture_output=True, text=True
+    )
+    return [p for p in r.stdout.split("\0") if p]
+
+
+def residual_scan(root, contents, old_paths, needles, skip_link_text):
+    """在連結以外的位置找 needles；contents 是已經改寫好的檔案內容（以新路徑為鍵），
+    old_paths 是被搬的檔案的舊路徑，不再從磁碟讀。needle 前一個字元是路徑字元時不算命中，
+    否則 /infra/ 會命中 /devops/infra/；網址另外比對帶 baseURL 路徑的寫法（/blog/infra/、
+    https://x.github.io/blog/infra/），它的前一個字元可以是斜線。"""
+    hits = {}
+    base = base_path(root)
+    parts = []
+    for n in needles:
+        # content/<舊路徑> 前面可以是 ./ 或 ../（README 與相對路徑的寫法）；網址前面不行
+        parts.append((r"(?<![\w-])" if n.startswith("content/") else r"(?<![\w./-])") + re.escape(n))
+        if base and n.startswith("/"):
+            parts.append(r"(?<![\w.-])" + re.escape(base + n))
+    pattern = re.compile("|".join(parts))
+    paths = repo_files(root)
+    for rel in sorted((set(paths) - set(old_paths)) | set(contents)):
+        if rel in contents:
+            text = contents[rel]
+        else:
+            full = os.path.join(root, rel)
+            if not os.path.isfile(full):
+                continue
+            try:
+                with open(full, encoding="utf-8") as f:
+                    text = f.read()
+            except (UnicodeDecodeError, OSError):
+                continue
+        for n, line in enumerate(text.split("\n"), 1):
+            # 連結已經改寫過的檔案只看連結以外的文字；其餘檔案的連結沒有改寫，整行都要看
+            in_scope = rel.endswith(".md") and rewritable(rel)
+            check = skip_link_text(line) if in_scope else line
+            if pattern.search(check):
+                hits.setdefault(rel, []).append((n, line.strip()))
+    return hits
+
+
+def main():
+    ap = argparse.ArgumentParser(add_help=True)
+    ap.add_argument("--apply", action="store_true")
+    ap.add_argument("--list", action="store_true")
+    ap.add_argument("--manifest")
+    ap.add_argument("src")
+    ap.add_argument("dest")
+    args = ap.parse_args()
+
+    root = repo_root()
+    src = to_repo_rel(root, args.src).rstrip("/")
+    dest = to_repo_rel(root, args.dest).rstrip("/")
+    for name, p in (("src", src), ("dest", dest)):
+        if not p.startswith("content/") or ".." in p.split("/"):
+            die(f"{name} 要在 content/ 底下：{p}")
+    if not os.path.exists(os.path.join(root, src)):
+        die(f"src 不存在：{src}")
+    if os.path.exists(os.path.join(root, dest)):
+        die(f"dest 已經存在：{dest}（dest 是搬過去之後的完整路徑，不是要放進去的資料夾）")
+    if dest.startswith(src + "/"):
+        die("dest 在 src 裡面")
+    src_is_file = os.path.isfile(os.path.join(root, src))
+    if src_is_file and not dest.endswith(".md"):
+        die("src 是檔案時 dest 要是 .md 路徑")
+
+    permalinks = load_permalinks(root)
+    moved_files = walk_md(root, src)
+    if not moved_files:
+        die(f"{src} 底下沒有 .md 檔")
+
+    def new_path(old):
+        return dest + old[len(src):]
+
+    texts = {}
+    for rel in moved_files:
+        with open(os.path.join(root, rel), encoding="utf-8") as f:
+            texts[rel] = f.read()
+
+    mapping, old_url, new_url = {}, {}, {}
+    for rel in moved_files:
+        o = url_of(rel[len("content/"):], texts[rel], permalinks)
+        n = url_of(new_path(rel)[len("content/"):], texts[rel], permalinks)
+        old_url[rel], new_url[rel] = o, n
+        if o != n:
+            mapping[o] = n
+
+    # 掃描範圍：content/ 全部 .md（被搬的用新路徑當鍵），docs/ 與入口檔只改絕對連結
+    scope = [(p, True) for p in walk_md(root, "content") if p not in texts and rewritable(p)]
+    scope += [(p, False) for p in walk_md(root, "docs")]
+    scope += [(p, False) for p in ("AGENTS.md", "CLAUDE.md") if os.path.isfile(os.path.join(root, p))]
+
+    contents, link_total, link_files, alias_total, warnings, details = {}, 0, 0, 0, [], []
+    for rel in moved_files:
+        text, n, ch = rewrite_links(texts[rel], mapping, old_url[rel], True, True)
+        if old_url[rel] != new_url[rel]:
+            aliased, dropped = add_alias(text, old_url[rel], drop=new_url[rel])
+            if aliased is not None:
+                text = aliased
+                alias_total += 1
+                if dropped:
+                    warnings.append(f"{new_path(rel)} 移除了等於自己新網址的 alias {new_url[rel]}（搬回以前的位置）")
+            elif split_frontmatter(text)[0] != "---":
+                warnings.append(f"{rel} 不是 YAML frontmatter，沒有加 aliases（舊網址 {old_url[rel]}）")
+        contents[new_path(rel)] = text
+        if n:
+            link_total += n
+            link_files += 1
+            details.append((new_path(rel), ch))
+    for rel, relative_ok in scope:
+        with open(os.path.join(root, rel), encoding="utf-8") as f:
+            text = f.read()
+        base = url_of(rel[len("content/"):], text, permalinks) if rel.startswith("content/") else "/"
+        new, n, ch = rewrite_links(text, mapping, base, False, relative_ok)
+        if n:
+            contents[rel] = new
+            link_total += n
+            link_files += 1
+            details.append((rel, ch))
+
+    # 殘留：舊網址前綴（資料夾）或舊網址（單篇）與 content/<舊路徑>，出現在連結以外的位置
+    if src_is_file:
+        needles = [old_url[moved_files[0]], src]
+    else:
+        needles = [old_url[src + "/_index.md"]] if (src + "/_index.md") in old_url else []
+        needles = needles or ["/" + src[len("content/"):] + "/"]
+        needles.append(src + "/")
+
+    def strip_links(line):
+        return LINK_RE.sub("](", REFDEF_RE.sub(r"\1", line))
+
+    residual = residual_scan(root, contents, moved_files, needles, strip_links)
+    # 被搬的頁面自己的 aliases 行就是舊網址，不算殘留
+    for rel in list(residual):
+        residual[rel] = [h for h in residual[rel] if not h[1].startswith("aliases:")]
+        if not residual[rel]:
+            del residual[rel]
+
+    parent = os.path.dirname(dest)
+    if parent != "content" and not os.path.exists(os.path.join(root, parent, "_index.md")):
+        warnings.append(
+            f"{parent}/ 沒有 _index.md：先寫它的目錄頁。少了它，這一層沒有 title 與 description，"
+            "列表頁顯示資料夾名；不在 content/ 第一層時它不是 Hugo 的 section"
+        )
+
+    tag = "(dry-run) " if not args.apply else ""
+    print(f"{tag}搬移 {src} → {dest}：{len(moved_files)} 頁，網址改變 {len(mapping)} 頁")
+    if args.list:
+        for o, n in sorted(mapping.items()):
+            print(f"  {o} → {n}")
+    print(f"連結改寫：{link_total} 處，{link_files} 個檔案")
+    for rel, ch in details:
+        print(f"  {rel}: {len(ch)}")
+        if args.list:
+            for a, b in ch:
+                print(f"      {a} → {b}")
+    if residual:
+        print(f"殘留的引用（連結以外的位置，工具沒有改，逐處判讀）：")
+        for rel, hs in residual.items():
+            print(f"  {rel}: {len(hs)}")
+            if args.list:
+                for n, line in hs:
+                    print(f"      {n}: {line[:160]}")
+    for w in warnings:
+        print(f"警告：{w}")
+
+    if args.manifest and args.apply:  # dry-run 不寫：沒有採用的計畫不該進提交清單
+        touched = set(moved_files) | set(contents)
+        with open(args.manifest, "a", encoding="utf-8") as f:
+            f.write("".join(p + "\n" for p in sorted(touched)))
+
+    if args.apply:
+        srcfull, destfull = os.path.join(root, src), os.path.join(root, dest)
+        os.makedirs(os.path.dirname(destfull), exist_ok=True)
+        os.rename(srcfull, destfull)
+        for rel, text in contents.items():
+            with open(os.path.join(root, rel), "w", encoding="utf-8") as f:
+                f.write(text)
+
+    res_count = sum(len(v) for v in residual.values())
+    sys.stderr.write(
+        f"content-move: {tag}{len(moved_files)} page(s) moved, {link_total} link(s) rewritten in "
+        f"{link_files} file(s), {alias_total} alias(es) added, {res_count} residual reference(s) in "
+        f"{len(residual)} file(s)\n"
+    )
+
+
+if __name__ == "__main__":
+    main()

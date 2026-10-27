@@ -1,0 +1,169 @@
+#!/usr/bin/env python3
+"""列出讀者點進去是空列表的 section：內容只寫在 _index.md，底下沒有可以點的文章或子分類。
+
+用途：layouts/_default/list.html 只列子分類與文章、不輸出 _index.md 的正文（docs/rules/
+content-folders.md〈目錄頁 `_index.md` 與文章檔的分工〉），所以一個 section 底下沒有任何會列出的
+頁面時，讀者在網站上看到的是「沒有文章」，_index.md 裡寫的內容一個字都看不到。這類 section
+要把 _index.md 的正文改寫成文章，或把相關的資料夾搬進來（bin/content-move）。
+
+用法：
+  bin/empty-sections              掃整個 content/
+  bin/empty-sections <dir>...     只掃這些資料夾（含底下各層）
+路徑以執行時的目錄起算。
+
+判定（照 Hugo 的歸屬）：
+  - section 是有 _index.md 的資料夾，加上 content/ 的第一層資料夾（Hugo 對第一層不要求 _index.md）。
+  - 一篇文章（_index.md 以外的 .md）列在最近一層 section 祖先的列表裡；中間層沒有 _index.md 的
+    資料夾不是 section，它的文章往上算。
+  - 子分類是直接的子 section；它本身是空的也算一個連結（讀者點得進去，空的那一層另外列出）。
+  - frontmatter 有 `draft: true`，或 `build`／`_build` 底下有 `list: never` 的頁面不列出，不算。
+  - 根目錄 content/ 不判定（首頁）。
+
+輸出依 _index.md 正文的非空行數由多到少排：`<資料夾>  body=<行數>  <title>`。正文行數越多，
+代表越多內容只寫在讀者看不到的位置。
+
+stderr 結尾印 `empty-sections: E empty of S section(s) scanned`。
+
+exit：0 沒有空的 section；1 找到空的 section；2 用法錯誤、不在 git repo、給的路徑不在 content/ 底下
+或不存在、掃描範圍裡沒有任何 section。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import os
+import re
+import subprocess
+import sys
+
+
+def die(msg):
+    sys.stderr.write(f"empty-sections: {msg}\n")
+    sys.exit(2)
+
+
+def repo_root():
+    r = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    if r.returncode != 0:
+        die("不在 git repo 裡")
+    return r.stdout.strip()
+
+
+def read(path):
+    with open(path, encoding="utf-8") as f:
+        return f.read()
+
+
+def frontmatter_and_body(text):
+    lines = text.split("\n")
+    if lines and lines[0].strip() in ("---", "+++"):
+        delim = lines[0].strip()
+        for i in range(1, len(lines)):
+            if lines[i].strip() == delim:
+                return lines[1:i], lines[i + 1 :]
+    return [], lines
+
+
+def listed(text):
+    """這一頁會不會出現在 section 的列表裡。"""
+    fm, _ = frontmatter_and_body(text)
+    in_build = False
+    for line in fm:
+        if re.match(r"^draft\s*[:=]\s*true\b", line):
+            return False
+        if re.match(r"^_?build\s*[:=]", line):
+            in_build = True
+            if re.search(r"list\s*[:=]\s*[\"']?never", line):
+                return False
+            continue
+        if in_build and re.match(r"^\s+list\s*:\s*[\"']?never", line):
+            return False
+        if not line.startswith((" ", "\t")):
+            in_build = False
+    return True
+
+
+def title_of(text):
+    fm, _ = frontmatter_and_body(text)
+    for line in fm:
+        m = re.match(r"^title\s*[:=]\s*(.*)$", line)
+        if m:
+            return m.group(1).strip().strip("\"'")
+    return ""
+
+
+def body_lines(text):
+    _, body = frontmatter_and_body(text)
+    return sum(1 for line in body if line.strip())
+
+
+def main():
+    args = sys.argv[1:]
+    if any(a.startswith("-") for a in args):
+        die("用法：bin/empty-sections [<content/ 底下的資料夾>...]")
+    root = repo_root()
+    content = os.path.join(root, "content")
+
+    # 先找出全部 section：有 _index.md 的資料夾，加上第一層資料夾
+    sections = set()
+    for d, dirs, files in os.walk(content):
+        dirs[:] = [x for x in dirs if not x.startswith(".")]
+        rel = os.path.relpath(d, content).replace(os.sep, "/")
+        if rel == ".":
+            continue
+        if "_index.md" in files or "/" not in rel:
+            sections.add(rel)
+
+    def owner(rel_dir):
+        """rel_dir 底下的文章列在哪個 section；回傳 None 表示是首頁。"""
+        while rel_dir not in ("", "."):
+            if rel_dir in sections:
+                return rel_dir
+            rel_dir = os.path.dirname(rel_dir)
+        return None
+
+    children = {s: 0 for s in sections}
+    for d, dirs, files in os.walk(content):
+        dirs[:] = [x for x in dirs if not x.startswith(".")]
+        rel = os.path.relpath(d, content).replace(os.sep, "/")
+        rel = "" if rel == "." else rel
+        for f in files:
+            if not f.endswith(".md") or f == "_index.md":
+                continue
+            o = owner(rel)
+            if o is not None and listed(read(os.path.join(d, f))):
+                children[o] += 1
+    for s in sections:
+        parent = owner(os.path.dirname(s))
+        if parent is not None:
+            idx = os.path.join(content, s, "_index.md")
+            if not os.path.exists(idx) or listed(read(idx)):
+                children[parent] += 1
+
+    scope = sorted(sections)
+    if args:
+        prefixes = []
+        for a in args:
+            rel = os.path.relpath(os.path.abspath(a), content).replace(os.sep, "/").rstrip("/")
+            if rel.startswith("..") or not os.path.isdir(os.path.join(content, rel)):
+                die(f"不是 content/ 底下的資料夾：{a}")
+            prefixes.append("" if rel == "." else rel)
+        scope = [s for s in scope if any(p == "" or s == p or s.startswith(p + "/") for p in prefixes)]
+    if not scope:
+        die("掃描範圍裡沒有任何 section")
+
+    empty = []
+    for s in scope:
+        if children[s]:
+            continue
+        idx = os.path.join(content, s, "_index.md")
+        text = read(idx) if os.path.exists(idx) else ""
+        empty.append((body_lines(text), s, title_of(text)))
+    for n, s, t in sorted(empty, key=lambda x: (-x[0], x[1])):
+        print(f"content/{s}/  body={n}  {t}")
+
+    sys.stderr.write(f"empty-sections: {len(empty)} empty of {len(scope)} section(s) scanned\n")
+    sys.exit(1 if empty else 0)
+
+
+if __name__ == "__main__":
+    main()

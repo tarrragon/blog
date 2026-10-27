@@ -101,6 +101,18 @@ if [[ ${#lint_args[@]} -gt 0 ]]; then
     fi
 fi
 
+# --- 2.5 alias collisions --------------------------------------------------
+# alias 等於另一頁的網址時 Hugo 不發警告（頁面直接蓋過 alias，舊網址導向那一頁），cards 也不讀 aliases。
+# 搬移之後空出來的舊網址前綴，任何人在那裡新建一頁都會靜靜蓋掉 alias，所以每次動到 content/ 都查
+# （content-folder-migration skill 的驗證表與 bin/alias-check 的檔頭）。
+if git diff --cached --name-only | grep -q '^content/'; then
+    echo "[pre-commit] alias-check"
+    if ! bin/alias-check; then
+        echo "[pre-commit] alias collisions present; see bin/alias-check output above" >&2
+        exit 1
+    fi
+fi
+
 # --- 3.5 Skill mirror sync check (#96) ------------------------------------
 # docs/rules/skills.md〈Skill 與文章是兩個 surface〉: .claude/skills/<x>/ 跟 content/skills/<x>/ 是 mirror、主體相同。
 # 改一邊沒改另一邊是 #95/#96 反覆踩到的 case — 同 surface 的同類風險區。
