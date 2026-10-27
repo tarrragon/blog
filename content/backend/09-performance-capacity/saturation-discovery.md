@@ -134,6 +134,8 @@ Saturation discovery 跑完之後、產出 *容量地圖* — 產出是一張表
 - 上游：[9.1 壓測理論](/backend/09-performance-capacity/performance-theory/) / [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)
 - 下游：[9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)（找到 knee 之後、定位是哪個 resource）
 - 工具：[Gatling 在容量探測的用法](/backend/09-performance-capacity/vendors/gatling/gatling-capacity-probing/)（本章的 ramp-up 寫成 Gatling 的注入步驟，以及從 report 的四張圖判讀 knee）
+- 工具：[JMeter 在容量探測的用法：thread group 固定的負載變數、逐級加壓、knee 的判讀、施壓端與分散施壓的檢查、多 protocol 的涵蓋範圍與排查順序](/backend/09-performance-capacity/vendors/jmeter/jmeter-capacity-probing/)（各種 thread group 固定的負載變數與選錯時飽和點偏向的方向，以及用 Open Model Thread Group 的排程寫出逐級加壓）
+- 工具：[Locust 在容量探測的用法：closed model 下的逐級加壓、吞吐量與延遲的換算、pacing 的上限、worker 的檢查與排查順序](/backend/09-performance-capacity/vendors/locust/locust-capacity-probing/)（只有 closed model 時用 LoadTestShape 逐級增加使用者數，以及從吞吐量與延遲換算受測服務的狀態）
 - 下游：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)（用 knee 算 headroom）
 - 跨模組：[04 可觀測性模組](/backend/04-observability/)（量測訊號）
 

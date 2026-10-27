@@ -44,13 +44,15 @@ tags: ["backend", "performance", "capacity", "vendor", "tools"]
 
 每個工具頁下會擴充兩類文章：deep article（工具自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨工具遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「← X」代表從 X 遷入。
 
-| Vendor                                                      | Deep article                                                        | Migration playbook                                                          |
-| ----------------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| [k6](k6/)                                                   | —                                                                   | [← JMeter (Type E)](k6/migrate-from-jmeter/)                                |
-| [Gatling](gatling/)                                         | [容量探測：逐級加壓與 knee 判讀](gatling/gatling-capacity-probing/) | —                                                                           |
-| [Datadog Continuous Profiler](datadog-continuous-profiler/) | —                                                                   | [← Pyroscope (Type C)](datadog-continuous-profiler/migrate-from-pyroscope/) |
+| Vendor                                                      | Deep article                                                                       | Migration playbook                                                          |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| [k6](k6/)                                                   | —                                                                                  | [← JMeter (Type E)](k6/migrate-from-jmeter/)                                |
+| [Gatling](gatling/)                                         | [容量探測：逐級加壓與 knee 判讀](gatling/gatling-capacity-probing/)                | —                                                                           |
+| [JMeter](jmeter/)                                           | [容量探測：thread group 的負載模型與 knee 判讀](jmeter/jmeter-capacity-probing/)   | —                                                                           |
+| [Locust](locust/)                                           | [容量探測：closed model 的逐級加壓與 worker 檢查](locust/locust-capacity-probing/) | —                                                                           |
+| [Datadog Continuous Profiler](datadog-continuous-profiler/) | —                                                                                  | [← Pyroscope (Type C)](datadog-continuous-profiler/migrate-from-pyroscope/) |
 
-其他 T1 工具（JMeter / Locust / Vegeta / GoReplay / Service Mesh Mirroring / AWS VPC Traffic Mirroring / Pyroscope / Parca / Akamas / Vantage / CloudHealth / AWS Cost Explorer）的 overview 已經寫在各自的 `_index.md`，deep article 尚未開始。跟 [06 vendors](/backend/06-reliability/vendors/) 共用部分工具（k6 / JMeter / Gatling / Locust），Gatling 已照這個做法分成兩篇與 open/closed workload model、施壓端飽和兩張卡；寫或改其餘幾頁時照[同一個工具在兩個模組各有一頁](/report/same-tool-page-per-module-derives-from-the-modules-question/)跟 06 的同名頁並排分段：「驗證流程的工具鏈」（06）跟「效能工程的工具鏈」（09）各自寫取捨與排錯的順序和權重，共通的概念寫成知識卡。對應的 backlog 議題見上方「T1 工具頁」段每個工具頁要回答的核心責任、跟各工具 `_index.md` 的「進階主題」段。
+其他 T1 工具（Vegeta / GoReplay / Service Mesh Mirroring / AWS VPC Traffic Mirroring / Pyroscope / Parca / Akamas / Vantage / CloudHealth / AWS Cost Explorer）的 overview 已經寫在各自的 `_index.md`，deep article 尚未開始。跟 [06 vendors](/backend/06-reliability/vendors/) 共用部分工具（k6 / JMeter / Gatling / Locust），Gatling、JMeter、Locust 已照這個做法各分成兩篇，共通概念寫在 open/closed workload model、施壓端飽和兩張卡；寫或改其餘幾頁時照[同一個工具在兩個模組各有一頁](/report/same-tool-page-per-module-derives-from-the-modules-question/)跟 06 的同名頁並排分段：「驗證流程的工具鏈」（06）跟「效能工程的工具鏈」（09）各自寫取捨與排錯的順序和權重，共通的概念寫成知識卡。對應的 backlog 議題見上方「T1 工具頁」段每個工具頁要回答的核心責任、跟各工具 `_index.md` 的「進階主題」段。
 
 ## 後續候選
 

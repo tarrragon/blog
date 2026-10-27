@@ -144,3 +144,5 @@ CDN cache hit rate 是隱性的 regression 指標。code 變更如果改變了 c
 - [6.21 reliability debt](/backend/06-reliability/reliability-debt-backlog/)：延後修復的 regression 進入 debt backlog
 - [6.23 evidence handoff](/backend/06-reliability/verification-evidence-handoff/)：接受 regression 時的理由留存
 - [Gatling 在效能 regression gate 的用法](/backend/06-reliability/vendors/gatling/gatling-performance-regression-gate/)：本章的三種判讀方法換成 Gatling 時，assertion 寫得出哪一種、OSS 要另外補的跨次比較，以及 gate 失敗的排查順序
+- [JMeter 在效能 regression gate 的用法：JMeter 之外的門檻判定、逐筆 assertion 與統計門檻的分工、thread group 的負載模型、施壓端設定與基準的可比性、PR 與 nightly 的分工、證據保存與 gate 失敗的排查順序](/backend/06-reliability/vendors/jmeter/jmeter-performance-regression-gate/)：JMeter 結束時的狀態不帶門檻結果，本章的三種判讀改由後處理或外層工具判定時各做得到哪幾種，以及 thread group 的負載模型對兩版比較的影響
+- [Locust 在效能 regression gate 的用法：exit code 與門檻判定、預熱與 on_start 的請求、closed model 下的比較、custom client 回報的請求範圍、PR 與 nightly 的分工、證據保存與 gate 失敗的排查順序](/backend/06-reliability/vendors/locust/locust-performance-regression-gate/)：內建 exit code 只判有沒有失敗，延遲與錯誤比例的門檻在 quitting 事件裡自己判定，以及 closed model 下退化出現在哪個指標

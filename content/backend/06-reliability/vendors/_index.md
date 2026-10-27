@@ -44,10 +44,12 @@ tags: ["backend", "reliability", "vendor"]
 | [GitHub Actions](github-actions/) | [Environment Protection + OIDC](github-actions/environment-protection-and-oidc-cloud-auth/)           | [← Jenkins](github-actions/migrate-from-jenkins/) |
 | [k6](k6/)                         | [Threshold CI Gate + Scenario](k6/threshold-ci-gate-and-scenario-design/)                             | —                                                 |
 | [Gatling](gatling/)               | [Regression gate 的 assertion 與排查](gatling/gatling-performance-regression-gate/)                   | —                                                 |
+| [JMeter](jmeter/)                 | [Regression gate 的門檻判定與排查](jmeter/jmeter-performance-regression-gate/)                        | —                                                 |
+| [Locust](locust/)                 | [Regression gate 的 exit code 與排查](locust/locust-performance-regression-gate/)                     | —                                                 |
 | [Chaos Mesh](chaos-mesh/)         | [Workflow + Scope + Steady State Probe](chaos-mesh/workflow-experiment-scope-and-steady-state-probe/) | —                                                 |
 | [Sloth](sloth/)                   | [SLO YAML + Multi-burn-rate Alert](sloth/slo-yaml-and-multi-burn-rate-alert-generation/)              | —                                                 |
 
-其他 T1 vendor（CircleCI / JMeter / Locust / LitmusChaos / Gremlin / Toxiproxy / Nobl9）的 deep article 尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「進階主題」段。
+其他 T1 vendor（CircleCI / LitmusChaos / Gremlin / Toxiproxy / Nobl9）的 deep article 尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「進階主題」段。
 
 ## 服務頁撰寫欄位
 
