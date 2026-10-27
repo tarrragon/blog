@@ -319,12 +319,62 @@ class LintDelta(Base):
         self.assertNotIn("0 existing", r.stderr, r.stdout + r.stderr)
         self.assertIn("lint-delta: 0 new", r.stderr)
 
+    def test_rewritten_link_and_realigned_spaces_keep_issue_existing(self):
+        write(self.root, "content/posts/p.md", "---\ntitle: 文\n---\n\n這個判準見 [x](../other/)。\n")
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "p"], self.root)
+        # 搬移把相對連結改成絕對路徑、fmt 改了空白；同一檔另外新增一處違規，那一處要算新的
+        write(self.root, "content/posts/p.md", "---\ntitle: 文\n---\n\n這個判準見  [x](/posts/other/)。\n\n新的判準。\n")
+        r = tool("lint-delta", "content/posts/p.md", cwd=self.root)
+        self.assertIn("lint-delta: 1 new (1 error)", r.stderr, r.stdout + r.stderr)
+        self.assertIn(":7: [error] TERM-abbreviation", r.stdout)
+        self.assertNotIn(":5:", r.stdout)
+
     def test_renames_chain_maps_last_path_to_first(self):
         self.commit_short_page()
         os.makedirs(os.path.join(self.root, "content/c"))
         os.rename(os.path.join(self.root, "content/posts/p.md"), os.path.join(self.root, "content/c/p.md"))
         write(self.root, "r.txt", "content/posts/p.md\tcontent/b/p.md\ncontent/b/p.md\tcontent/c/p.md\n")
         r = tool("lint-delta", "--renames", "r.txt", "content/c/p.md", cwd=self.root)
+        self.assertIn("lint-delta: 0 new", r.stderr, r.stdout + r.stderr)
+
+    def test_renames_path_reused_after_move_keeps_order(self):
+        # foo 搬成 foo-old 之後，bar 搬進 foo 這個路徑；foo-old 要對 foo 的 HEAD 版本，不是 bar 的
+        write(self.root, "content/posts/foo.md", "---\ntitle: 文\n---\n\n乾淨。\n")
+        write(self.root, "content/posts/bar.md", "---\ntitle: 文\n---\n\n這裡有判準。\n")
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "fb"], self.root)
+        os.rename(os.path.join(self.root, "content/posts/foo.md"), os.path.join(self.root, "content/posts/foo-old.md"))
+        os.rename(os.path.join(self.root, "content/posts/bar.md"), os.path.join(self.root, "content/posts/foo.md"))
+        write(self.root, "content/posts/foo-old.md", "---\ntitle: 文\n---\n\n乾淨。\n\n這裡有判準。\n")
+        write(self.root, "r.txt", "content/posts/foo.md\tcontent/posts/foo-old.md\ncontent/posts/bar.md\tcontent/posts/foo.md\n")
+        r = tool("lint-delta", "--renames", "r.txt", "content/posts/foo-old.md", "content/posts/foo.md", cwd=self.root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("content/posts/foo-old.md:7:", r.stdout)
+        self.assertNotIn("content/posts/foo.md:", r.stdout)
+
+    def test_line_number_inside_message_is_not_a_change(self):
+        text = "---\ntitle: 文\n---\n\n## 步驟\n\n## 步驟\n"
+        write(self.root, "content/posts/h.md", text)
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "h"], self.root)
+        write(self.root, "content/posts/h.md", text.replace("title: 文\n", "title: 文\naliases: [/x/]\n"))
+        lint = subprocess.run([MDTOOLS, "lint", "content/posts/h.md"], cwd=self.root, capture_output=True, text=True)
+        self.assertIn("first seen at line 6", lint.stdout)  # 前提：行號確實位移了
+        r = tool("lint-delta", "content/posts/h.md", cwd=self.root)
+        self.assertIn("lint-delta: 0 new", r.stderr, r.stdout + r.stderr)
+
+    def test_option_after_files_exits_2(self):
+        r = tool("lint-delta", "content/x.md", "--renames", "r.txt", cwd=self.root)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("選項要放在檔案之前", r.stderr)
+
+    def test_renames_equals_form_accepted(self):
+        self.commit_short_page()
+        os.makedirs(os.path.join(self.root, "content/c"))
+        os.rename(os.path.join(self.root, "content/posts/p.md"), os.path.join(self.root, "content/c/p.md"))
+        write(self.root, "r.txt", "content/posts/p.md\tcontent/c/p.md\n")
+        r = tool("lint-delta", "--renames=r.txt", "content/c/p.md", cwd=self.root)
         self.assertIn("lint-delta: 0 new", r.stderr, r.stdout + r.stderr)
 
     def test_renames_file_missing_or_malformed_exits_2(self):

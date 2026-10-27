@@ -6,7 +6,8 @@
 
 用法：bin/lint-delta [--renames <檔案>] <這次的檔案...>
   路徑以執行時的目錄起算。--renames 的檔案每行是「舊路徑<TAB>新路徑」（路徑以 repo 根目錄起算），
-  `bin/content-move --renames` 寫出的就是這個格式；同一個檔案搬了兩次（A→B、B→C）時，C 配對到 A。
+  `bin/content-move --renames` 寫出的就是這個格式；同一個檔案搬了兩次（A→B、B→C）時，C 配對到 A；行的順序要是搬移的先後（content-move 照這個順序寫）。
+  --renames（或 --renames=<檔案>）只能放在第一個位置，其他位置出現 `-` 開頭的參數時 exit 2。
   不是 `content/` 底下的 `.md` 的檔案、以及這次刪除的檔案，印一行
   `skip` 並跳過，所以可以把這次的檔案整組交給它。
 
@@ -17,6 +18,9 @@
 - 比對鍵是「嚴重度、規則 ID、訊息、那一行的內容」，不含行號（前面插入一行，後面每一行的
   行號都會變）。訊息要在鍵裡：frontmatter 類的問題一律報在第 1 行，那一行的內容都是
   `---`，只用規則 ID 加行內容的話，「HEAD 缺 title、這次又缺 description」會被判成既有。
+  行內容先抽掉 markdown 連結的網址（`[文字](網址)` 比成 `[文字]()`）、連續空白壓成一個：搬移改寫連結
+  網址、`fmt` 重新對齊表格欄寬，都只改這兩樣，那一行既有的問題不因此算成新的。訊息裡的行號（MD024 的
+  `first seen at line N`）同樣換掉：搬移在 frontmatter 加 aliases，後面每一行的行號都會變。
 - 新檔（不在 HEAD）的 lint 結果全部算新增。staged 的改名（`git mv`）拿舊路徑的 HEAD 版本比對；
   沒有 staged 的改名在 git 看來是刪除加新檔，lint 結果全部算新增，先 `git mv` 或 `git add` 再跑。
   git 只把內容相似度 50% 以上的配對成改名，連結改寫多的短檔 staged 了也配對不到；這種改名用
@@ -39,6 +43,13 @@ import sys
 import tempfile
 
 LINE = re.compile(r"^(?P<path>[^:]+):(?P<line>\d+): \[(?P<sev>\w+)\] (?P<rule>\S+) (?P<msg>.*)$")
+LINK_TARGET = re.compile(r"\]\([^)\s]*(\s+\"[^\"]*\")?\)")
+SPACES = re.compile(r"\s+")
+LINE_NO = re.compile(r"\bline \d+")
+
+
+def normalize(line):
+    return SPACES.sub(" ", LINK_TARGET.sub("]()", line)).strip()
 
 
 def lint(mdtools, cwd, relpath):
@@ -51,8 +62,9 @@ def lint(mdtools, cwd, relpath):
         if not m:
             continue
         n = int(m["line"])
-        content = lines[n - 1] if 0 < n <= len(lines) else ""
-        out.append(((m["sev"], m["rule"], m["msg"], content), raw))
+        content = normalize(lines[n - 1]) if 0 < n <= len(lines) else ""
+        msg = LINE_NO.sub("line N", m["msg"])
+        out.append(((m["sev"], m["rule"], msg, content), raw))
     return out
 
 
@@ -73,7 +85,12 @@ def renames(root):
 
 
 def load_renames(path):
-    """讀「舊路徑<TAB>新路徑」，回傳 {新路徑: 最初的舊路徑}；依檔案裡的順序接起連續的搬移。"""
+    """讀「舊路徑<TAB>新路徑」，回傳 {新路徑: 最初的舊路徑}。
+
+    依檔案裡的順序接起連續的搬移（A→B、B→C）。順序就是搬移發生的先後（content-move 依執行順序附加），
+    同一個路徑先被搬走、之後又被別的檔案搬進來時（foo→foo-old、bar→foo），只有照順序才分得出
+    foo-old 的來源是 foo、不是 bar。
+    """
     if not os.path.isfile(path):
         sys.stderr.write(f"lint-delta: 找不到 --renames 的檔案：{path}\n")
         sys.exit(2)
@@ -100,8 +117,14 @@ def main():
             sys.stderr.write(__doc__)
             sys.exit(2)
         rename_file, args = args[1], args[2:]
+    elif args[:1] and args[0].startswith("--renames="):  # content-move 用 argparse，兩種寫法都收
+        rename_file, args = args[0][len("--renames="):], args[1:]
     if not args or args[0] in ("-h", "--help"):
         sys.stderr.write(__doc__)
+        sys.exit(2)
+    stray = [a for a in args if a.startswith("-")]
+    if stray:  # 放錯位置的 --renames 會被當成兩個 skip 的檔案，被搬的檔案全部算成新檔而 exit 照常
+        sys.stderr.write(f"lint-delta: 選項要放在檔案之前：{' '.join(stray)}\n")
         sys.exit(2)
     top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
     if top.returncode != 0:

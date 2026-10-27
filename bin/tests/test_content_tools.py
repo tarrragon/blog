@@ -159,7 +159,7 @@ class ContentMoveTest(unittest.TestCase):
         self.assertIn("content/skills/x/skill.md: 1", r.stdout.split("殘留")[1])
 
     def test_manifest_lists_old_new_and_rewritten(self):
-        r = self.repo.run("content-move", "--apply", "--manifest", "m.txt", "content/infra", "content/devops/infra")
+        r = self.repo.run("content-move", "--apply", "--manifest", "m.txt", "--renames", "r.txt", "content/infra", "content/devops/infra")
         self.assertEqual(r.returncode, 0, r.stderr)
         lines = self.repo.read("m.txt").splitlines()
         self.assertIn("content/infra/net/vpc.md", lines)  # 舊路徑（刪除）
@@ -183,6 +183,13 @@ class ContentMoveTest(unittest.TestCase):
         self.assertFalse(self.repo.exists("m.txt"))
         self.assertFalse(self.repo.exists("r.txt"))
 
+    def test_apply_with_manifest_requires_renames(self):
+        r = self.repo.run("content-move", "--apply", "--manifest", "m.txt", "content/infra", "content/devops/infra")
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("--renames", r.stderr)
+        self.assertTrue(self.repo.exists("content/infra/net/vpc.md"))  # 沒有搬
+        self.assertFalse(self.repo.exists("m.txt"))
+
     def test_renames_pairs_old_and_new_paths(self):
         r = self.repo.run("content-move", "--apply", "--renames", "r.txt", "content/infra", "content/devops/infra")
         self.assertEqual(r.returncode, 0, r.stderr)
@@ -204,6 +211,17 @@ class ContentMoveTest(unittest.TestCase):
         r = self.repo.run("content-move", "--apply", "content/work-log/bug.md", "content/devops/bug.md")
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertIn('aliases: ["/work-log/bug/"]', self.repo.read("content/devops/bug.md"))
+
+    def test_single_file_rename_updates_slug_and_keeps_old_url(self):
+        self.repo.write("content/backend/foo.md", page("Foo", extra="slug: foo\n"))
+        self.repo.write("content/backend/a.md", page("A", "見 [foo](/backend/foo/)。"))
+        r = self.repo.run("content-move", "--apply", "content/backend/foo.md", "content/backend/hands-on/bar.md")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        bar = self.repo.read("content/backend/hands-on/bar.md")
+        self.assertIn("slug: bar\n", bar)
+        self.assertNotIn("slug: foo", bar)
+        self.assertIn('aliases: ["/backend/foo/"]', bar)
+        self.assertIn("(/backend/hands-on/bar/)", self.repo.read("content/backend/a.md"))
 
     def test_link_to_permalink_page_rewritten(self):
         self.repo.write("content/backend/a.md", page("A", "見 [bug](/work-log/bug/)。"))

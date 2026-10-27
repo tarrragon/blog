@@ -14,7 +14,9 @@
                                            檔案，之後的格式化、lint-delta 與提交清單都從它取，不從整份 git status 取
   bin/content-move --renames <檔案> ...    把每一個被搬的 .md 逐行附加成「舊路徑<TAB>新路徑」；連續搬好幾次時給
                                            同一個檔案，交給 `bin/lint-delta --renames`，讓它拿舊路徑的 HEAD 版本比對
-                                           （git 配對不到內容相似度低於 50% 的改名）
+                                           （git 配對不到內容相似度低於 50% 的改名）。--apply 給了 --manifest 時
+                                           --renames 必填：之後的 lint 從 manifest 取檔案、從配對表取舊路徑，
+                                           漏寫的那一次事後補不回來（連續搬移時 HEAD 沒有中間那一層的路徑）
   <src> 是 content/ 底下既有的資料夾或 .md 檔；<dest> 是搬過去之後的完整路徑（不存在的路徑，
   不是「放進哪個資料夾」），例如 content/devops/infra。路徑以執行時的目錄起算。
 
@@ -34,7 +36,9 @@
      區塊，以及其餘每一個檔案的任何一行（連結也算）。掃描範圍是 `git ls-files -co --exclude-standard`
      列出的全部檔案（追蹤中與還沒追蹤、沒被 .gitignore 排除的），讀不出 UTF-8 的檔案跳過。工具不改這些，
      逐處判讀。repo 以外的目錄（例如 Claude Code 的 memory 目錄）不在掃描範圍。
-  5. 頁面搬回它以前的位置時（新網址等於自己既有的某個 alias），移除那個 alias 並列進警告，否則它跟
+  5. src 是單篇、檔名改了、frontmatter 有 slug 時，把 slug 改成新檔名（slug 要跟檔名一致）。舊網址用
+     改之前的 slug 算，所以 slug 不要先手改：先改的話舊網址算成新網址，alias 與連結改寫都會漏掉。
+  6. 頁面搬回它以前的位置時（新網址等於自己既有的某個 alias），移除那個 alias 並列進警告，否則它跟
      頁面自己的網址衝突。
 
 沒有處理的事：dest 的上層資料夾缺 _index.md 時只警告（那一層沒有 title 與 description，列表頁顯示
@@ -48,7 +52,7 @@
 stderr 結尾印 `content-move: N page(s) moved, L link(s) rewritten in F file(s), A alias(es) added,
 R residual reference(s) in G file(s)`；dry-run 時前面加 `(dry-run)`。
 
-exit：0 完成；2 用法錯誤、不在 git repo、src 不存在或不在 content/ 底下、dest 已經存在或在 src
+exit：0 完成；2 用法錯誤（含 --apply 給了 --manifest 而沒給 --renames）、不在 git repo、src 不存在或不在 content/ 底下、dest 已經存在或在 src
 裡面、hugo.toml 的 permalinks 用了 :slug 以外的變數、permalink 分類裡的頁面沒有 slug。
 
 測試：python3 -m unittest discover -s bin/tests
@@ -118,6 +122,18 @@ def fm_value(text, key):
         if m:
             return m.group(1).strip().strip("\"'")
     return None
+
+
+def set_slug(text, slug):
+    """把 YAML frontmatter 裡 slug 那一行的值換成 slug；沒有 slug 行時原樣回傳。"""
+    delim, lines, end = split_frontmatter(text)
+    if delim != "---":
+        return text
+    for i in range(1, end):
+        if re.match(r"^slug\s*:", lines[i]):
+            lines[i] = f"slug: {slug}"
+            return "\n".join(lines)
+    return text
 
 
 def url_of(rel, text, permalinks):
@@ -343,6 +359,8 @@ def main():
     args = ap.parse_args()
 
     root = repo_root()
+    if args.apply and args.manifest and not args.renames:
+        die("--apply 給了 --manifest 時也要給 --renames（檔頭的用法）")
     src = to_repo_rel(root, args.src).rstrip("/")
     dest = to_repo_rel(root, args.dest).rstrip("/")
     for name, p in (("src", src), ("dest", dest)):
@@ -371,9 +389,17 @@ def main():
         with open(os.path.join(root, rel), encoding="utf-8") as f:
             texts[rel] = f.read()
 
+    # 單篇改檔名時，frontmatter 的 slug 由工具改成新檔名（規則要求 slug 與檔名一致）：舊網址要用改之前的
+    # slug 算，先手改 slug 的話舊網址算成新網址，alias 與連結改寫都會漏掉
+    new_slug = None
+    if src_is_file and posixpath.basename(src) != posixpath.basename(dest) and fm_value(texts[src], "slug") is not None:
+        new_slug = posixpath.basename(dest)[: -len(".md")]
+
     mapping, old_url, new_url = {}, {}, {}
     for rel in moved_files:
         o = url_of(rel[len("content/"):], texts[rel], permalinks)
+        if new_slug is not None:
+            texts[rel] = set_slug(texts[rel], new_slug)
         n = url_of(new_path(rel)[len("content/"):], texts[rel], permalinks)
         old_url[rel], new_url[rel] = o, n
         if o != n:
