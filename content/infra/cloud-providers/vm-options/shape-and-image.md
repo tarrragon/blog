@@ -37,7 +37,7 @@ ARM 機型的同等規格通常比較便宜，Oracle Cloud 的 Always Free 額�
 
 - **隨用隨付（on-demand）**：預設值。在共享的實體主機上開一台虛擬機，開著的時間計費，業者不會因為別人要用而收回它。Oracle Cloud 的官方 Always Free 頁沒有提到其他計費模式，在 Always Free 額度內建主機時維持這個預設。
 - **可被收回（preemptible）**：同樣的機型，價格較低，而業者需要容量時會直接終止它。Oracle Cloud 的 preemptible 是隨用隨付價格的一半，沒有保證的最短執行時間，終止前兩分鐘發出一個事件通知，建立後不能停止、啟動或重開，也不能轉成隨用隨付。Google Cloud 與 AWS 的同類機型叫 Spot，規則各自不同，例如 Google Cloud 的 Spot VM 被收回之後可以再啟動。適合跑得斷、可以重來的批次工作；要一直開著的服務與手動設定過的實驗機不適合，被收回時設定會跟著消失。
-- **預留容量（capacity reservation）**：先向業者保留一定數量的某種機型容量，之後建主機時從保留的額度裡扣。它處理的是「要用的時候沒有容量」，用在必須在某個時間點拿到主機的情境：大促前要擴容、災難時要在另一區重建、熱門機型經常容量不足。保留期間不論有沒有主機在用都計費。
+- **預留容量（capacity reservation）**：先向業者保留一定數量的某種機型容量，之後建主機時從保留的額度裡扣。它處理的是「要用的時候沒有容量」，用在必須在某個時間點拿到主機的情境：大促前要擴容、災難時要在另一區重建、熱門機型經常容量不足。保留期間不論有沒有主機在用都計費。大促前什麼情形才需要預留容量，以及預留期間的費用怎麼從建立預留那一刻算進活動預算，見 [預知的大流量要加多大、編多少預算：從業務預估到擴容規格與費用區間的換算鏈、給決策者與會計的數字，以及每次活動之後的校準](/operations/05-capacity-planning/planned-peak-sizing-and-budget/)。
 - **專屬主機（dedicated host）**：整台實體主機只給這個帳號的虛擬機用，不跟其他客戶共用硬體，用在合規要求或授權按實體主機計算的軟體。Oracle Cloud 只允許在建立時把主機放上專屬主機。
 
 Oracle Cloud 的 Capacity type 欄位一次只能選其中一種；AWS 的 capacity reservation 則是讓隨用隨付的主機去使用保留下來的容量，兩者同時成立。預留容量跟用一到三年的承諾換取折扣的 reserved instance 是兩件事：預留容量保證拿得到容量、不打折；AWS 的 reserved instance 打折，而保不保證容量看範圍，以區域為範圍的 regional reserved instance 不保留容量，指定可用區的 zonal reserved instance 另外保留那一區的容量。Reserved instance 與 savings plan 的承諾差異、什麼時候值得買，見 [計費模式理解](/operations/08-cost-management/billing-models/) 的〈承諾模式：用彈性換折扣〉。實驗用的小主機選隨用隨付。
