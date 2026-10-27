@@ -12,6 +12,9 @@
   bin/content-move --manifest <檔案> ...   把這次碰到的檔案（被搬檔案的舊路徑與新路徑、改寫連結的檔案）
                                            逐行附加到 <檔案>（路徑以 repo 根目錄起算）；連續搬好幾次時給同一個
                                            檔案，之後的格式化、lint-delta 與提交清單都從它取，不從整份 git status 取
+  bin/content-move --renames <檔案> ...    把每一個被搬的 .md 逐行附加成「舊路徑<TAB>新路徑」；連續搬好幾次時給
+                                           同一個檔案，交給 `bin/lint-delta --renames`，讓它拿舊路徑的 HEAD 版本比對
+                                           （git 配對不到內容相似度低於 50% 的改名）
   <src> 是 content/ 底下既有的資料夾或 .md 檔；<dest> 是搬過去之後的完整路徑（不存在的路徑，
   不是「放進哪個資料夾」），例如 content/devops/infra。路徑以執行時的目錄起算。
 
@@ -334,6 +337,7 @@ def main():
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--manifest")
+    ap.add_argument("--renames")
     ap.add_argument("src")
     ap.add_argument("dest")
     args = ap.parse_args()
@@ -458,6 +462,9 @@ def main():
         touched = set(moved_files) | set(contents)
         with open(args.manifest, "a", encoding="utf-8") as f:
             f.write("".join(p + "\n" for p in sorted(touched)))
+    if args.renames and args.apply:
+        with open(args.renames, "a", encoding="utf-8") as f:
+            f.write("".join(f"{p}\t{new_path(p)}\n" for p in moved_files))
 
     if args.apply:
         srcfull, destfull = os.path.join(root, src), os.path.join(root, dest)

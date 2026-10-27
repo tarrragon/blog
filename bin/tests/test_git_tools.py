@@ -300,6 +300,41 @@ class LintDelta(Base):
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         self.assertIn("lint-delta: 0 new", r.stderr)
 
+    def commit_short_page(self):
+        write(self.root, "content/posts/p.md", "---\ntitle: 文\n---\n\n# 標題\n")
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "p"], self.root)
+
+    def test_renames_file_pairs_low_similarity_move(self):
+        self.commit_short_page()
+        os.makedirs(os.path.join(self.root, "content/devops/posts"))
+        os.rename(os.path.join(self.root, "content/posts/p.md"), os.path.join(self.root, "content/devops/posts/p.md"))
+        # 改掉大半內容，相似度低於 50%：staged 了 git 也只看得到刪除加新檔
+        write(self.root, "content/devops/posts/p.md", "---\ntitle: 文\naliases: [/posts/p/]\n---\n\n# 標題\n\n見 [x](/devops/a/)、[y](/devops/b/)。\n")
+        sh(["git", "add", "-A"], self.root)
+        r = tool("lint-delta", "content/devops/posts/p.md", cwd=self.root)
+        self.assertIn("0 existing", r.stderr)  # 對照組：沒有配對時，既有的問題被當成新的
+        write(self.root, "r.txt", "content/posts/p.md\tcontent/devops/posts/p.md\n")
+        r = tool("lint-delta", "--renames", "r.txt", "content/devops/posts/p.md", cwd=self.root)
+        self.assertNotIn("0 existing", r.stderr, r.stdout + r.stderr)
+        self.assertIn("lint-delta: 0 new", r.stderr)
+
+    def test_renames_chain_maps_last_path_to_first(self):
+        self.commit_short_page()
+        os.makedirs(os.path.join(self.root, "content/c"))
+        os.rename(os.path.join(self.root, "content/posts/p.md"), os.path.join(self.root, "content/c/p.md"))
+        write(self.root, "r.txt", "content/posts/p.md\tcontent/b/p.md\ncontent/b/p.md\tcontent/c/p.md\n")
+        r = tool("lint-delta", "--renames", "r.txt", "content/c/p.md", cwd=self.root)
+        self.assertIn("lint-delta: 0 new", r.stderr, r.stdout + r.stderr)
+
+    def test_renames_file_missing_or_malformed_exits_2(self):
+        r = tool("lint-delta", "--renames", "nope.txt", "content/x.md", cwd=self.root)
+        self.assertEqual(r.returncode, 2)
+        write(self.root, "r.txt", "content/a.md content/b.md\n")
+        r = tool("lint-delta", "--renames", "r.txt", "content/x.md", cwd=self.root)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("第 1 行", r.stderr)
+
     def test_non_content_and_deleted_files_are_skipped(self):
         write(self.root, "content/report/z.md", "---\ntitle: 卡\ndescription: d\nweight: 2\ndate: 2026-01-01\n---\n\n正文。\n")
         sh(["git", "add", "."], self.root)

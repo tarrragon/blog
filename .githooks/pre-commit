@@ -137,7 +137,8 @@ if [[ "${COMMIT_SKIP_MIRROR_CHECK:-0}" != "1" ]]; then
             *) continue ;;
         esac
         [[ ! -f "$mirror_path" ]] && continue
-        if ! echo "$staged_set" | grep -qFx "$mirror_path"; then
+        # here-string 而不是 echo | grep -q：理由同 2.5，管線在 pipefail 下會因 SIGPIPE 判成「沒有 staged」而誤報
+        if ! grep -qFx "$mirror_path" <<< "$staged_set"; then
             mirror_warnings+="    $claude_path → $mirror_path"$'\n'
         fi
     done <<< "$(echo "$staged_set" | grep -E '^\.claude/skills/[^/]+/(SKILL\.md|references/.+\.md)$' || true)"
@@ -152,7 +153,7 @@ if [[ "${COMMIT_SKIP_MIRROR_CHECK:-0}" != "1" ]]; then
             *) mirror_path=".claude/skills/$skill/references/$rest" ;;
         esac
         [[ ! -f "$mirror_path" ]] && continue
-        if ! echo "$staged_set" | grep -qFx "$mirror_path"; then
+        if ! grep -qFx "$mirror_path" <<< "$staged_set"; then
             mirror_warnings+="    $content_path → $mirror_path"$'\n'
         fi
     done <<< "$(echo "$staged_set" | grep -E '^content/skills/[^/]+/[^/]+\.md$' || true)"

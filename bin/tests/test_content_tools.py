@@ -179,8 +179,17 @@ class ContentMoveTest(unittest.TestCase):
         self.assertIn("content/backend/c.md: 1", residual)
 
     def test_manifest_not_written_on_dry_run(self):
-        self.repo.run("content-move", "--manifest", "m.txt", "content/infra", "content/devops/infra")
+        self.repo.run("content-move", "--manifest", "m.txt", "--renames", "r.txt", "content/infra", "content/devops/infra")
         self.assertFalse(self.repo.exists("m.txt"))
+        self.assertFalse(self.repo.exists("r.txt"))
+
+    def test_renames_pairs_old_and_new_paths(self):
+        r = self.repo.run("content-move", "--apply", "--renames", "r.txt", "content/infra", "content/devops/infra")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        lines = self.repo.read("r.txt").splitlines()
+        self.assertIn("content/infra/net/vpc.md\tcontent/devops/infra/net/vpc.md", lines)
+        self.assertTrue(all(line.count("\t") == 1 for line in lines))
+        self.assertNotIn("content/backend/cards/waf.md", self.repo.read("r.txt"))  # 只改寫連結的檔案不算改名
 
     def test_moving_back_drops_alias_equal_to_new_url(self):
         self.repo.run("content-move", "--apply", "content/infra", "content/devops/infra")

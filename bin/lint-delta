@@ -4,8 +4,10 @@
 用途：AGENTS.md〈提交〉的 lint 那一步。全量 lint（`bin/mdtools lint content/`）只用來看
 歷史基線；這次的品質看這支的輸出。
 
-用法：bin/lint-delta <這次的檔案...>
-  路徑以執行時的目錄起算。不是 `content/` 底下的 `.md` 的檔案、以及這次刪除的檔案，印一行
+用法：bin/lint-delta [--renames <檔案>] <這次的檔案...>
+  路徑以執行時的目錄起算。--renames 的檔案每行是「舊路徑<TAB>新路徑」（路徑以 repo 根目錄起算），
+  `bin/content-move --renames` 寫出的就是這個格式；同一個檔案搬了兩次（A→B、B→C）時，C 配對到 A。
+  不是 `content/` 底下的 `.md` 的檔案、以及這次刪除的檔案，印一行
   `skip` 並跳過，所以可以把這次的檔案整組交給它。
 
 行為：
@@ -17,10 +19,13 @@
   `---`，只用規則 ID 加行內容的話，「HEAD 缺 title、這次又缺 description」會被判成既有。
 - 新檔（不在 HEAD）的 lint 結果全部算新增。staged 的改名（`git mv`）拿舊路徑的 HEAD 版本比對；
   沒有 staged 的改名在 git 看來是刪除加新檔，lint 結果全部算新增，先 `git mv` 或 `git add` 再跑。
+  git 只把內容相似度 50% 以上的配對成改名，連結改寫多的短檔 staged 了也配對不到；這種改名用
+  --renames 給配對，它優先於 git 的偵測。
 - 新增的問題照 mdtools 的格式印到 stdout；stderr 結尾一定印
   `lint-delta: N new (E error), M existing, K file(s) linted, S skipped`，K 加 S 要等於給的檔案數。
 
-exit：0 沒有新增的 error（可以有新增的 warn）；1 有新增的 error；2 用法錯誤或 mdtools 不存在。
+exit：0 沒有新增的 error（可以有新增的 warn）；1 有新增的 error；2 用法錯誤、mdtools 不存在、--renames 的
+檔案不存在或有一行不是「舊路徑<TAB>新路徑」。
 
 測試：python3 -m unittest discover -s bin/tests
 """
@@ -67,8 +72,35 @@ def renames(root):
     return result
 
 
+def load_renames(path):
+    """讀「舊路徑<TAB>新路徑」，回傳 {新路徑: 最初的舊路徑}；依檔案裡的順序接起連續的搬移。"""
+    if not os.path.isfile(path):
+        sys.stderr.write(f"lint-delta: 找不到 --renames 的檔案：{path}\n")
+        sys.exit(2)
+    result = {}
+    with open(path, encoding="utf-8") as f:
+        for n, raw in enumerate(f, 1):
+            line = raw.rstrip("\n")
+            if not line:
+                continue
+            parts = line.split("\t")
+            if len(parts) != 2:
+                sys.stderr.write(f"lint-delta: {path} 第 {n} 行不是「舊路徑<TAB>新路徑」\n")
+                sys.exit(2)
+            old, new = parts
+            result[new] = result.pop(old, old)
+    return result
+
+
 def main():
-    if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
+    args = sys.argv[1:]
+    rename_file = None
+    if args[:1] == ["--renames"]:
+        if len(args) < 2:
+            sys.stderr.write(__doc__)
+            sys.exit(2)
+        rename_file, args = args[1], args[2:]
+    if not args or args[0] in ("-h", "--help"):
         sys.stderr.write(__doc__)
         sys.exit(2)
     top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
@@ -81,8 +113,10 @@ def main():
         sys.stderr.write("lint-delta: 找不到 bin/mdtools（在 scripts/mdtools 跑 go build -o ../../bin/mdtools .）\n")
         sys.exit(2)
 
-    paths = [os.path.relpath(os.path.abspath(p), root) for p in sys.argv[1:]]
+    paths = [os.path.relpath(os.path.abspath(p), root) for p in args]
     moved = renames(root)
+    if rename_file:
+        moved.update(load_renames(rename_file))
     new_total = new_err = existing = skipped = 0
     tmp = tempfile.mkdtemp(prefix="lint-delta-")
     try:
