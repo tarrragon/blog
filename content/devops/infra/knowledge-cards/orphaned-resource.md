@@ -20,7 +20,7 @@ DNS 層有一個對應的情形：主機與 IP 都刪了，DNS 紀錄還指著�
 ## 可觀察訊號
 
 - 主機都刪了，帳單上的區塊儲存、公開 IP 或快照費用沒有歸零。
-- 免費帳號建新主機時回報區塊儲存額度不足，而執行中的主機加起來沒有用到那麼多。Oracle Cloud 的付費帳戶在額度不足時照樣建好、不報錯，對應的訊號是區塊儲存的總用量（含付費磁碟的 `total-storage-gb`）大於掛在執行中主機上的磁碟合計；只看免費額度的用量會漏掉，因為有付費磁碟時它比總用量小（建立不被擋下是 2026-10-27 實測，見 [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/devops/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈費用與額度：A1、開機磁碟、出站流量與 NAT gateway〉）。
+- 免費帳號建新主機時回報區塊儲存額度不足，而執行中的主機加起來沒有用到那麼多。Oracle Cloud 的付費帳戶在額度不足時，沒有設 compartment quota 的話照樣建好、不報錯（設了 quota 時超額的建立回 400），對應的訊號是區塊儲存的總用量（含付費磁碟的 `total-storage-gb`）大於掛在執行中主機上的磁碟合計；只看免費額度的用量會漏掉，因為有付費磁碟時它比總用量小（建立不被擋下是 2026-10-27 實測，見 [Oracle Cloud 私有子網路 Ubuntu 主機的實測紀錄：套件來源的出站（NAT gateway、路由與 NSG）、序列主控台的連線，以及被回收之後的重建](/devops/infra/cloud-providers/oracle-cloud/hands-on/private-ubuntu-egress-console-rebuild/)〈費用與額度：A1、開機磁碟與區塊儲存額度、出站流量與 NAT gateway〉）。
 - 主控台的磁碟列表裡有狀態是「未掛載」的磁碟（AWS 的 EBS 叫 `available`），名稱裡帶著已經不存在的主機名。
 - 公開 IP 列表裡有沒有附在任何主機上的保留 IP。
 

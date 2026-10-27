@@ -45,7 +45,7 @@ Oracle Cloud 的 Capacity type 欄位一次只能選其中一種；AWS 的 capac
 
 ## 停止主機時的計費
 
-停止（stop）跟終止（terminate）是兩件事：停止是關機，主機與磁碟都保留，之後可以再開；終止是刪除主機。Oracle Cloud 的標準機型在停止期間暫停計算資源的計費，但仍然佔用服務配額；Dense I/O、HPC 與多數 GPU 機型停止時照樣計費，要終止才會停。官方另外提醒，在作業系統裡下 `shutdown` 不會停止計費，要從主控台或 API 停止主機。Google Cloud 與 AWS 的規則方向相同：停止期間不收 vCPU 與記憶體的費用，磁碟與保留的公開 IP 照樣計費。磁碟的計費跟主機是否開著無關，見 [磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/devops/infra/cloud-providers/vm-options/storage/)。服務要暫停一段時間時，在只停服務、停止主機、終止主機與全部刪除之間怎麼選，以及停止之後仍在計費、仍被 DNS 指向的資源，見 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/devops/operations/09-host-lifecycle/suspend-and-resume-service/)。
+停止（stop）跟終止（terminate）是兩件事：停止是關機，主機與磁碟都保留，之後可以再開；終止是刪除主機。Oracle Cloud 的標準機型在停止期間暫停計算資源的計費，但仍然佔用服務配額（2026-10-27 一台 A1 停止的那一小時，逐小時的帳務明細沒有 A1 的項目，而 A1 的核心數與記憶體用量照算，見 [Oracle Cloud 主機的暫停與恢復上線實測紀錄：暫停前的基準、收窄入口、停止主機、停止期間的計費與 Cloudflare 的回應、恢復上線的每一步與耗時，以及收尾時 DNS 紀錄與主機的刪除順序](/devops/infra/cloud-providers/oracle-cloud/hands-on/suspend-resume-drill/)）；Dense I/O、HPC 與多數 GPU 機型停止時照樣計費，要終止才會停。官方另外提醒，在作業系統裡下 `shutdown` 不會停止計費，要從主控台或 API 停止主機。Google Cloud 與 AWS 的規則方向相同：停止期間不收 vCPU 與記憶體的費用，磁碟與保留的公開 IP 照樣計費。磁碟的計費跟主機是否開著無關，見 [磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/devops/infra/cloud-providers/vm-options/storage/)。服務要暫停一段時間時，在只停服務、停止主機、終止主機與全部刪除之間怎麼選，以及停止之後仍在計費、仍被 DNS 指向的資源，見 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/devops/operations/09-host-lifecycle/suspend-and-resume-service/)。
 
 ## 映像檔：開機磁碟上的作業系統
 

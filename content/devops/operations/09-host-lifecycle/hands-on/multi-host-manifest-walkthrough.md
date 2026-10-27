@@ -112,7 +112,7 @@ docker run --rm mh-ctl:1 sh -c 'ansible --version | head -1; terraform version |
 
 受管主機的 Containerfile 最後兩行讓 systemd 當容器的 PID 1：`CMD ["/usr/sbin/init"]` 啟動 systemd，`STOPSIGNAL SIGRTMIN+3` 讓 `docker stop` 送出 systemd 認得的關機訊號。systemd 收到 SIGRTMIN+3 才照正常的關機流程停下各個 unit；Docker 預設送的是 SIGTERM，systemd 不把它當成關機，`docker stop` 會等到逾時再強制結束容器（依 systemd 文件對訊號的說明推論，沒有實跑拿掉這一行的結果）。
 
-**這次遇到的錯誤**：第一次建受管主機的映像檔時套件名寫成 `'dnf-command(needs-restarting)'`，dnf 回 `Unable to find a match`，在 Oracle Linux 10 上 `needs-restarting` 由 `dnf-plugins-core` 提供，`oraclelinux:10` 的映像檔已經裝了它。Containerfile 仍把 `dnf-plugins-core` 寫進安裝清單，讓檢查腳本依賴的套件明示在這一行：換成沒有預裝它的底層映像檔時，建映像檔那一步會裝上它，不會漏掉。
+**這次遇到的錯誤**：第一次建受管主機的映像檔時套件名寫成 `'dnf-command(needs-restarting)'`，dnf 回 `Unable to find a match`，在 Oracle Linux 10 上，檢查腳本用的 `dnf needs-restarting` 子命令由 `dnf-plugins-core` 提供（外掛檔案在它依賴的 `python3-dnf-plugins-core` 裡），`oraclelinux:10` 的映像檔已經裝了它；另一個獨立的 `/usr/bin/needs-restarting` 指令屬於 `yum-utils`（2026-10-27 在 `oraclelinux:10` 容器裡用 `rpm -qf` 查到，Oracle Linux 10.2）。Containerfile 仍把 `dnf-plugins-core` 寫進安裝清單，讓檢查腳本依賴的套件明示在這一行：換成沒有預裝它的底層映像檔時，建映像檔那一步會裝上它，不會漏掉。
 
 換成 VM 或別的發行版、不開特權、sudo 要密碼、改用別的安裝方式時的結果，在〈這一節的其他做法：容器或 VM、作業系統、遮蔽的 unit、privileged、sudo 密碼、安裝版本與雜湊、金鑰密碼〉。
 
