@@ -94,6 +94,6 @@ commit message 寫出這次檢討判定的層次，以及新卡的 slug 或已�
 - [ ] 術語依角色與前置知識選了行內展開、連卡或裸用，缺的卡已建；譯名過了判斷問句（`sentences.md`〈術語的解釋方式〉`sentences.md`〈譯名避開介面上已有的同名元素〉）。
 - [ ] 每條路由都去目的地確認過它承接這個主題、到站第一屏看得到，並交代了目的地會給什麼（〈文章產出流程〉的結構掃描、〈教學文章的脈絡〉的可動項）。依據：[跨模組路由要驗證目的地承接該主題、不只驗證目的地存在](/report/routing-destination-must-own-the-topic/)。
 - [ ] `description` 的體例對得上內容定位，遮住它只看標題猜不出全部內容（`writing.md`〈`description` 的體例〉）。
-- [ ] 新增頂層 `content/<module>/` 時，已同步更新 `content/_index.md`（`content-folders.md`〈寫之前要做的查核〉）。
+- [ ] 新增頂層資料夾或大分類底下的教學模組時，入口已照 `content-folders.md`〈寫之前要做的查核〉的「新增頂層資料夾或大分類底下的教學模組時」那一項登記。
 - [ ] 這次留下的未完成工作已記進模組的 `## Backlog`，完成的項目已刪除（`content-folders.md`〈模組的 Backlog〉）。
 - [ ] 這次要留的紀錄都寫進了 commit message 或 work-log（〈掃描與探針的紀錄寫進 repo〉）。

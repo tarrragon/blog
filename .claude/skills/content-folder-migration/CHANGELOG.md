@@ -1,0 +1,3 @@
+# CHANGELOG
+
+**Version**: 1.0.0 — 新建。來源是 2026-10-27 把 `content/` 的 going-live、infra、ci、operations、monitoring 收進 `content/devops/` 的那一次搬移：`bin/empty-sections`、`bin/content-move`、`bin/alias-check` 的順序、涵蓋的搬移（資料夾收進大分類、單篇搬進 `hands-on/` 或改檔名）與交給使用者決定的其他搬移、搬移前的兩道檢查、基準值與驗證表、殘留引用的處置表（`references/residual-references.md`）。驗證表另外跑 `bin/alias-check`，依據是同一天在最小 Hugo 站（v0.148.2）的實測：alias 等於另一頁的網址時 `--printPathWarnings` 沒有輸出，該網址輸出的是那一頁本身；兩頁宣告同一個 alias 時它印 `WARN Duplicate target paths`。`mdtools cards` 依檔案路徑解析連結、不讀 aliases；它的 L1-broken-link 涵蓋全站的絕對與相對連結（在一般文章放壞連結，它報錯），所以連結檢查交給 `cards`，沒有另寫工具。那一次的殘留掃描還看不到帶 baseURL 路徑的網址與 repo 根目錄的檔案，審查時才找出漏掉的五處，之後 `bin/content-move` 改成掃全部追蹤中的檔案。

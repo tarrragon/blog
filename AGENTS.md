@@ -110,10 +110,11 @@ commit 之後直接推送，不另外問使用者：使用者已經授權推送�
 - **推送 blog 時**，`bin/push-main` 印出 `[ASK-USER]`：給它列出的 commit（別的 session 還沒推送的），由使用者決定要不要一起推。
 - **收斂遠端分支時**（`docs/rules/remote.md`〈遠端機器的操作〉）：`bin/converge-branch` 印出 `[ASK-USER]`（merge 衝突、分岔），給它印的兩邊 commit 與衝突的段落；dotfiles 的工作樹有 `??` 的檔案或不是這次自己做的未提交改動，給 `git status --short` 與那幾段 diff；本地 main 有不是這次的未推 commit、或分支只在遠端機器上，給那幾個 commit 或分支名。由使用者決定怎麼處理；不替它 commit、不還原、不在遠端寫入。
 - **同步 skill 時**，`[DIVERGED]` 或 `[CONFLICT]` 的兩邊在共同基底之後改到同一段文字（合併時有衝突）：給兩邊的 `git log` 與衝突的段落（`docs/rules/skills.md`〈同步時的判斷〉）。
+- **搬移 `content/` 的資料夾或文章、在 `--apply` 之前**（`content-folder-migration` skill 的「搬移前的檢查：要搬的位置」與「dry-run、基準值與搬移前的檢查：要改寫的檔案」兩步；這次自己的其他改動在搬移之前先提交），下列任一項成立：要搬的資料夾或 dry-run 列出要改寫的檔案，`git status`、其他 worktree 的 `git status` 或其他分支的 `git log main..<分支>` 有輸出（已經在這次搬移的 manifest 裡的檔案不算）；dry-run 的殘留引用列出 `hugo.toml` 的 `[permalinks]` 裡以被搬資料夾為名的鍵（搬走之後那一組頁面的網址格式改變）；dry-run 的「網址改變」頁數少於頁數，而那些頁面不在 `[permalinks]` 有鍵的 section 裡。給 dry-run 的輸出與 skill 那一步檢查指令的輸出，由使用者決定搬不搬、怎麼搬。
 
 ### 沒有使用者明說就不做的動作
 
-這一節是這類動作的唯一住址。下列動作沒有使用者在這次的指示裡明說就不做，也不主動提議、不停下來問：`skill-sync push --force`；替一支 skill 建 `content/skills/` 的公開鏡像；把 `docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 推上共用庫（那些 skill 依賴本 blog 的結構，推上去之後別的專案用不了）；把工作樹裡不是這次自己做的改動還原或蓋掉（`git checkout --`、`git restore`、`git stash`、用 Write 整份重寫），那些改動可能是另一個 session 還沒提交的工作，蓋掉之後沒有任何紀錄。
+這一節是這類動作的唯一住址。下列動作沒有使用者在這次的指示裡明說就不做，也不主動提議、不停下來問：`skill-sync push --force`；替一支 skill 建 `content/skills/` 的公開鏡像；把 `docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 推上共用庫（那些 skill 依賴本 blog 的結構，推上去之後別的專案用不了）；把工作樹裡不是這次自己做的改動還原或蓋掉（`git checkout --`、`git restore`、`git stash`、用 Write 整份重寫），那些改動可能是另一個 session 還沒提交的工作，蓋掉之後沒有任何紀錄；搬移或改名 `content/` 底下含 `_index.md` 的資料夾（收進或移出大分類、建立或撤掉大分類、在模組之間搬子資料夾；`docs/rules/content-folders.md`〈文章放在哪一個資料夾〉），首頁的分類結構、網址與讀者的閱讀路線由使用者決定，搬錯了再搬一次時每一頁要多一筆 `aliases`；使用者提出要搬之後，跑 dry-run 與 `bin/empty-sections` 提供材料不算主動提議。
 
 ### 延到工作結束之後的動作
 
@@ -123,7 +124,7 @@ commit 之後直接推送，不另外問使用者：使用者已經授權推送�
 
 grep、lint、檢查腳本回報零命中有兩種成因：目標確實不存在，或是指令沒有在掃（pattern 打錯、shell 的 `|` 被轉義、變數沒有切詞、zsh 的 glob 沒有匹配而整條指令沒執行、腳本裡找不到工具、掃描範圍不含目標、餵進去的檔案集是空的）。所以把零輸出當成「通過」之前，先做兩件事：確認餵進去的檔案集不是空的（行數或檔案數不是 0），再餵一個已知會命中的輸入（正對照，positive control），確認它在這個寫法下會命中。正對照沒有命中時，修指令，不採用那次的零輸出。
 
-`bin/changed-lines`、`bin/lint-delta`、`bin/session-edits-check`、`bin/skill-version-check`、`bin/term-prompt-count`、`bin/report-weight` 在結尾印計數，格式寫在各工具的檔頭。交給它檔案清單的工具，計數要對得上交給它的數量；自己找檔案的工具（`bin/term-prompt-count`、`bin/report-weight`），計數是 0、或 stderr 列出讀不到的來源時，檔案集不對。計數沒有印出來，代表工具中途中止，不代表通過。
+`bin/changed-lines`、`bin/lint-delta`、`bin/session-edits-check`、`bin/skill-version-check`、`bin/term-prompt-count`、`bin/report-weight`、`bin/content-move`、`bin/empty-sections`、`bin/alias-check` 在結尾印計數，格式寫在各工具的檔頭。交給它檔案清單的工具，計數要對得上交給它的數量；自己找檔案的工具（`bin/term-prompt-count`、`bin/report-weight`、`bin/content-move`、`bin/empty-sections`、`bin/alias-check`），代表掃描範圍的那一個計數是 0、或 stderr 列出讀不到的來源時，檔案集不對；那一個計數是 `content-move` 的 `page(s) moved`、`empty-sections` 的 `section(s) scanned`、`alias-check` 的 `page(s)`，同一行的其他計數（`collision(s)`、`empty`）是 0 代表通過。計數沒有印出來，代表工具中途中止，不代表通過。
 
 ## 決策分析：WRAP
 
