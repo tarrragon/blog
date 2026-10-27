@@ -3,7 +3,7 @@ name: vendor-deep-article
 description: "Vendor 深度技術文章的寫作方法論：從 vendor overview 往下寫單一功能的深度文章。選題標準（3 條 + 反向判斷標準）、6 段結構模板（問題情境 → 概念 → 配置 → 故障演練 → 容量 → 整合）、跟 overview 與 hands-on 實作文章的職責劃分、寫作流程 7 step、批次 cadence variant 規劃。觸發詞：deep article、vendor 深度文章、vendor feature、pgBouncer、Patroni、寫 vendor 文章、sub-tool article、feature deep dive。Trigger when writing vendor-specific deep implementation articles."
 license: MIT
 metadata:
-  version: 1.2.0
+  version: 1.3.0
   category: writing-methodology
 ---
 
@@ -15,9 +15,14 @@ Vendor 深度技術文章的寫作方法論 — vendor overview 飽和後、往�
 
 ## 適用情境
 
-- Vendor overview 頁尾「預計實作話題」backlog 中的議題
+deep article 的候選議題是符合下列情形之一的議題：
+
+- 已經排進待寫清單的議題：vendor overview 裡列待寫議題的那一段（段名依專案而定，例如「後續擴充」），或 vendor 頁所在章節資料夾的待辦清單（Backlog）。待辦清單常常只寫「這個 vendor 要補 deep article」、不寫議題，這時待辦清單決定輪到哪一個 vendor，議題從那個 vendor 的 overview（待寫議題那一段或「進階主題」段）取。待辦清單或它指向的表列的是還沒有 overview 的 vendor 時，那是要先寫的 overview，不是 deep article 的候選：deep article 寫在 overview 之後。專案沒有這兩種清單時，跳過這一項
 - 跨 vendor 議題、不適合塞單一 vendor overview
 - Overview 的「進階主題」段已經點到但 7-15 行說不清楚
+- 同一個工具在別的模組也有一頁時，照〈同一個 vendor 在兩個模組各有一頁〉分段之後歸成本模組觀點的段落；以及歸成工具層深度內容、落點在這一邊的議題
+
+待寫清單上的項目不一定是 deep article：讀者照著做的操作（lab、restore drill）寫成實作文章，換 vendor 或升級拓樸的完整流程寫成 migration playbook，該不該選這個 vendor 的判斷寫回 overview。這三類不算候選議題。
 
 不適用：
 
@@ -33,7 +38,7 @@ Vendor 深度技術文章的寫作方法論 — vendor overview 飽和後、往�
 
 ### 判斷標準一：被讀者問或被自己在 production 踩過
 
-Overview backlog 的 9 項都重要、但寫作 ROI 不一樣。優先寫讀者最常問或自己踩最痛的、不是清單前幾項。
+〈適用情境〉的候選議題都重要、但寫作 ROI 不一樣。這一條在候選議題之內決定先寫哪一個，不把〈適用情境〉以外的議題拉進候選：優先寫讀者最常問或自己踩最痛的、不照任何一份清單的排列順序挑。
 
 ### 判斷標準二：跨 vendor 議題
 
@@ -74,7 +79,7 @@ Overview 中 7-15 行的進階主題段、dynamic credential 怎麼 call / lease
 | ---------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | 一、這一段是不是操作細節                       | 是                           | 操作細節（安裝、設定步驟、介面操作）                                            | 放 `hands-on/`（已經有一邊有就放那裡，都沒有就放這次改的那一邊），或連到官方文件       |
 | 二、其餘的段落，原封不動放進另一頁還成立嗎     | 成立，而且是一個概念         | 工具所屬那一類做法的通用模型（open 與 closed model、注入節奏、施壓端飽和）       | 寫成知識卡（先查有沒有現成的卡，一段裡有幾個概念就拆幾張），兩頁各改成一句連到卡     |
-|                                                | 成立，而且拆不成單一概念     | 工具層的深度內容（版本沿革、JVM 調校、商業版與開源版的差異）                    | 寫成其中一邊的 deep article（已經有這個工具 deep article 的那一邊），另一頁連過去      |
+|                                                | 成立，而且拆不成單一概念     | 工具層的深度內容（版本沿革、JVM 調校、商業版與開源版的差異）                    | 寫成其中一邊的 deep article（已經有這個工具 deep article 的那一邊；兩邊都還沒有時，放在這次寫或改的那一邊），另一頁連過去 |
 |                                                | 只在本模組成立               | 本模組的觀點                                                                    | 留在本頁，往下寫深；deep article 的選題從這裡取                                        |
 |                                                | 只在另一個模組成立           | 另一個模組的觀點（寫錯頁了）                                                    | 移到另一個模組的那一頁（已有同一個判斷就併進那一段），本頁需要時連過去               |
 
@@ -84,13 +89,13 @@ Overview 中 7-15 行的進階主題段、dynamic credential 怎麼 call / lease
 
 標題與 description 寫出這一頁的觀點，兩頁不用同一個標題：讀者在搜尋結果與連結文字上只看得到這兩處。兩頁互相連結，連結文字寫出另一頁的觀點（「這個工具在容量規劃裡的用法：找飽和點與施壓端的檢查」）。
 
-判錯的代價：把重疊看成「兩邊在維護同一份東西」，處置就會變成合併或指定其中一頁當唯一的頁面；照從工具往外寫的現狀合併，留下來的是通用材料，另一個模組的觀點段落在合併後的那一頁沒有位置。分類之後某一頁歸成本模組觀點的段落是 0 段時，那一頁照現狀保留，在那一頁所在章節資料夾的規劃（Backlog）記下分段結果與「這個模組的章節改為直接連卡」的候選，刪頁與搬頁不在這一步做。推導與個案見 [same-tool-page-per-module-derives-from-the-modules-question](references/principles/same-tool-page-per-module-derives-from-the-modules-question.md)。
+判錯的代價：把重疊看成「兩邊在維護同一份東西」，處置就會變成合併或指定其中一頁當唯一的頁面；照從工具往外寫的現狀合併，留下來的是通用材料，另一個模組的觀點段落在合併後的那一頁沒有位置。分類之後某一頁歸成本模組觀點的段落是 0 段時，那一頁照現狀保留，在那一頁所在章節資料夾的待辦清單（Backlog）記下分段結果與「這個模組的章節改為直接連卡」的候選，刪頁與搬頁不在這一步做。推導與個案見 [same-tool-page-per-module-derives-from-the-modules-question](references/principles/same-tool-page-per-module-derives-from-the-modules-question.md)。
 
 ## 寫作流程
 
 ### Step 1：選題 + 經驗驗證
 
-從 vendor overview 頁尾 backlog 挑一個、確認自己在 production 踩過或處理過。沒踩過的議題寫不出有價值的故障演練段。同一個工具在別的模組也有一頁時，先照〈同一個 vendor 在兩個模組各有一頁〉分段，選題從歸成本模組觀點的段落裡挑；歸成工具層深度內容的議題，只在它的落點那一邊寫。
+從〈適用情境〉的候選議題挑一個、確認自己在 production 踩過或處理過。沒踩過的議題寫不出有價值的故障演練段。同一個工具在別的模組也有一頁時，先照〈同一個 vendor 在兩個模組各有一頁〉分段，再依分段結果決定每個候選議題寫在哪裡：歸成本模組觀點的，寫在這一邊；歸成工具層深度內容的，寫在它的落點那一邊（落點是這一邊時就在這一邊寫，另一邊時這一邊只連過去）；歸成操作細節的，寫成實作文章；歸成知識卡的，建卡。分段之後這一邊沒有任何候選議題時（本模組觀點的段落是 0 段，工具層深度內容的落點也不在這一邊），這一邊不寫 deep article：這一頁照現狀保留，在它所在章節資料夾的待辦清單（Backlog）記下分段結果。
 
 ### Step 2：草稿 outline + 真實 config
 
