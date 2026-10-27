@@ -1,9 +1,9 @@
 ---
 name: blogsearch-lifecycle
-description: "blogsearch 向量 index 的生命週期管理：偵測 index 過時或不存在、觸發 rebuild、驗證結果。適用於有 blogsearch 語意搜尋工具的專案。觸發詞：blogsearch、rebuild index、ingest、向量搜尋、語意搜尋、index 過時、content 變動、pull 後 rebuild、新增文章後搜尋。Trigger when content changes may have made the search index stale, or when semantic search is needed."
+description: "blogsearch 向量 index 的生命週期管理：偵測 index 過時或不存在、觸發 rebuild、驗證結果。觸發詞：blogsearch、rebuild index、ingest、向量搜尋、語意搜尋、index 過時、content 變動、content 搬移、pull 後 rebuild、新增文章後搜尋。Use when content changes make the index stale or semantic search is needed."
 license: MIT
 metadata:
-  version: 1.4.3
+  version: 1.5.0
   category: tooling-lifecycle
 ---
 
@@ -27,9 +27,18 @@ metadata:
 | -------------------------- | --------------------------------------------- | ---------------------------------------- |
 | Index 不存在               | `.blogsearch/` 目錄不存在                     | 提示 full rebuild                        |
 | 寫完新文章                 | 對話中剛建立 `content/**/*.md`                | 提示 rebuild                             |
+| 刪除、搬移或改名 content 的檔案 | 表格下方「index 裡已經不存在的路徑」那條指令有輸出 | 提示 rebuild；index 記的是舊路徑，搜尋結果會指向已經不存在的檔案 |
 | git pull 拉到 content 變動 | `git diff --name-only HEAD@{1}` 含 `content/` | 提示 rebuild                             |
 | 用戶要求語意搜尋           | 對話中提到搜尋相關內容                        | 先檢查 index 是否存在，不存在就提示      |
 | 換 embedding model         | `embed.go` 的 Model 變數被修改                | 提示 full rebuild（舊 embedding 不相容） |
+
+index 裡已經不存在的路徑（在 repo 根目錄跑）：
+
+```bash
+jq -r '.metas[].source' .blogsearch/meta.json | sort -u | while read p; do [ -f "content/$p" ] || echo "$p"; done
+```
+
+每一行是 index 記著、而工作樹裡已經不存在的路徑（相對於 `content/`），行數就是提示裡的 N。它直接比對 index 自己記的路徑，已提交與還沒提交的刪除、搬移都看得到，不受 commit 時間影響。`meta.json` 不存在時 `jq` 報錯而沒有輸出，那是「Index 不存在」那一列，不是「沒有過時」。
 
 ### 手動觸發
 
@@ -104,10 +113,11 @@ cd scripts/blogsearch && make verify     # status + test query
 | 用戶要求語意搜尋但 index 不存在 | 提示「index 不存在，要先 rebuild 嗎？」     |
 | 寫完文章、對話自然結束          | 提示「新文章還沒進 index，要 rebuild 嗎？」 |
 | git pull 後                     | 不主動提，除非用戶接著做語意搜尋            |
+| 刪除、搬移或改名 content 之後   | 整批改完、提交之後提示「index 裡有 N 個路徑已經不存在，要 rebuild 嗎？全量重建，以目前規模約 X 分鐘」，N 是〈偵測觸發〉表格下方那條指令的輸出行數 |
 
 原則：rebuild 需要 Ollama 在跑（外部 dependency），不適合無條件自動執行。提示優先於自動。
 
-全量重建無增量選項這件事會改變提示的內容。單篇文章觸發的 rebuild 要一併說出當前規模的耗時量級，讓對方拿得到「現在跑 vs 累積幾篇再跑」這個取捨；只說「要 rebuild 嗎」而不說成本，答應的人不知道自己答應了什麼。
+全量重建無增量選項這件事會改變提示的內容。每一種提示都要一併說出當前規模的耗時量級，讓對方拿得到「現在跑 vs 累積幾篇再跑」這個取捨；只說「要 rebuild 嗎」而不說成本，答應的人不知道自己答應了什麼。
 
 ## 跟其他流程的關係
 
