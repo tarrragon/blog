@@ -40,7 +40,7 @@ JMeter 是 Apache 出品的老牌 load test 工具、承擔三個責任：GUI-dr
 - `-n` non-GUI
 - `-t` test file / `-l` log file
 - `-e -o` 產生 HTML dashboard
-- CLI 模式正常跑完時 exit code 是 0，sample 失敗與 assertion 失敗都不改變 exit code；gate 的通過與否要在 JMeter 之外讀結果判定（[JMeter 在效能 regression gate 的用法](/backend/06-reliability/vendors/jmeter/jmeter-performance-regression-gate/)）
+- CLI 模式正常跑完時 exit code 是 0，sample 失敗與 assertion 失敗都不改變 exit code；gate 的通過與否要在 JMeter 之外讀結果判定（[JMeter 在效能 regression gate 的用法](/backend/06-reliability/vendors/jmeter/jmeter-performance-regression-gate/)；sample 失敗時 exit code 仍是 0 的實測見 [JMeter 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/jmeter/hands-on/jmeter-local-lab/) 的〈CLI mode 執行與 JTL〉）
 
 ### Distributed testing
 
@@ -75,6 +75,7 @@ JMeter 是 Apache 出品的老牌 load test 工具、承擔三個責任：GUI-dr
 - CSV Data Set Config
 - 各 thread 取不同資料
 - 適合 data-driven test
+- 比例控制器的週期跟 CSV 的行數對齊時，某幾行資料永遠不被請求：[JMeter 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/jmeter/hands-on/jmeter-local-lab/) 的〈Throughput Controller 與 CSV Data Set 的週期對齊：某個商品編號沒被請求到的成因與改法〉
 
 ### CI / Jenkins integration
 
@@ -105,7 +106,7 @@ JMeter 是 Apache 出品的老牌 load test 工具、承擔三個責任：GUI-dr
 
 ### Distributed RMI 連不上
 
-操作原則：firewall + RMI port 不對。
+操作原則：firewall + RMI port 不對。在 Docker network 裡關掉 RMI SSL、設 `java.rmi.server.hostname` 與固定 port 的實際設定，見 [JMeter 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/jmeter/hands-on/jmeter-local-lab/) 的〈remote testing：一台 client 與兩台 server〉。
 
 ### Assertion noise
 

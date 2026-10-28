@@ -100,7 +100,7 @@ jmeter -g probe-run.jtl -o report-level-240/ \
   -Jjmeter.reportgenerator.end_date=20261028143500
 ```
 
-這條指令照官方〈Generating Report Dashboard〉的設定名組成，沒有實跑。`probe-run.jtl` 是這次執行寫出的 JTL，`report-level-240/` 是輸出目錄（要是空的或不存在）；兩個日期是那一級穩態的開始與結束，格式是 `jmeter.reportgenerator.date_format` 的預設 `yyyyMMddHHmmss`，時區要跟 JTL 裡的時間戳記一致（產生 dashboard 的機器跟執行測試的機器時區不同時，官方文件要求格式加上 `zzz` 寫明時區），從排程推算，或從 Active Threads Over Time 那張圖讀出每一級開始的時刻。這樣產生的 Statistics 表才是單一級的 p99。這張表的百分位數把失敗的 sample 也算進去，而 Response times Percentiles Over Time 只算成功的回應；受測服務開始很快地回錯誤時，失敗的 sample 把 Statistics 表的 p99 拉低，knee 看起來往後移。所以判讀 knee 的 p99 用 Percentiles Over Time 那張圖、或只取成功的 sample；Statistics 表的 p99 只在那一級的錯誤率接近 0 時跟它相同。隨時間變化的圖預設每一分鐘一個點（`jmeter.reportgenerator.overall_granularity`，預設 60000 毫秒，官方寫明不能低於 1000），每級 5 分鐘只有五個點，看級內的趨勢時要把它調小。
+這條指令照官方〈Generating Report Dashboard〉的設定名組成，沒有實跑；不帶起訖日期的 `-g`，以及輸出目錄不是空的時候的錯誤訊息，實測見 [JMeter 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/jmeter/hands-on/jmeter-local-lab/) 的〈dashboard、statistics.json 與從 JTL 重新產生報告〉。`probe-run.jtl` 是這次執行寫出的 JTL，`report-level-240/` 是輸出目錄（要是空的或不存在）；兩個日期是那一級穩態的開始與結束，格式是 `jmeter.reportgenerator.date_format` 的預設 `yyyyMMddHHmmss`，時區要跟 JTL 裡的時間戳記一致（產生 dashboard 的機器跟執行測試的機器時區不同時，官方文件要求格式加上 `zzz` 寫明時區），從排程推算，或從 Active Threads Over Time 那張圖讀出每一級開始的時刻。這樣產生的 Statistics 表才是單一級的 p99。這張表的百分位數把失敗的 sample 也算進去，而 Response times Percentiles Over Time 只算成功的回應；受測服務開始很快地回錯誤時，失敗的 sample 把 Statistics 表的 p99 拉低，knee 看起來往後移。所以判讀 knee 的 p99 用 Percentiles Over Time 那張圖、或只取成功的 sample；Statistics 表的 p99 只在那一級的錯誤率接近 0 時跟它相同。隨時間變化的圖預設每一分鐘一個點（`jmeter.reportgenerator.overall_granularity`，預設 60000 毫秒，官方寫明不能低於 1000），每級 5 分鐘只有五個點，看級內的趨勢時要把它調小。
 
 open model 下判讀用到的圖與換算：
 

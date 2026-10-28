@@ -86,7 +86,7 @@ closed model 下要模擬瞬間湧入（搶票開賣這類），`tick()` 回傳�
 
 `--csv <前綴>` 讓 Locust 寫出 `<前綴>_stats.csv`、`<前綴>_failures.csv`、`<前綴>_exceptions.csv` 與 `<前綴>_stats_history.csv` 四個檔（官方文件〈Configuration〉的〈Save test statistics in CSV format〉；同一頁的選項表只列了其中三個）。逐級判讀用的是 `_stats_history.csv`：它在整次執行中定期追加列，每列有時間戳、`User Count`（當時的使用者數）、`Requests/s`、`Failures/s` 與各百分位數。附加的間隔在原始碼 `locust/stats.py` 的 `CSV_STATS_INTERVAL_SEC` 是 1 秒，官方文件寫的是預設兩秒。`Requests/s` 是最近十秒左右的平均，包含失敗的請求，所以成功的每秒請求數是 `Requests/s` 減 `Failures/s`。
 
-百分位數那幾欄的算法，官方文件與原始碼的寫法不同：官方文件把歷史紀錄寫成十秒的滑動視窗；原始碼只在加了 `--csv-full-history` 時用約十秒的視窗，這時每個請求名稱各寫一列、`Name` 是 Aggregated 的整體那一列也用視窗；不加時只寫 Aggregated 那一列，它的百分位數從執行開始累積到當時，前幾級的低延遲一直混在後面的讀數裡，knee 被沖淡。逐級判讀要的是每一級自己的延遲，所以執行時加 `--csv-full-history`，讀各請求名稱那幾列與 Aggregated 列的百分位數；沒加的那次執行，Aggregated 列的百分位數不能直接當成每一級的延遲。這段讀法來自原始碼，沒有實跑核對。
+百分位數那幾欄的算法，官方文件與原始碼的寫法不同：官方文件把歷史紀錄寫成十秒的滑動視窗；原始碼只在加了 `--csv-full-history` 時用約十秒的視窗，這時每個請求名稱各寫一列、`Name` 是 Aggregated 的整體那一列也用視窗；不加時只寫 Aggregated 那一列，它的百分位數從執行開始累積到當時，前幾級的低延遲一直混在後面的讀數裡，knee 被沖淡（不加 `--csv-full-history` 時只有 Aggregated 一列、百分位數從頭累積的實際輸出，見 [Locust 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/locust/hands-on/locust-local-lab/) 的〈headless 執行、終端機的統計表與 CSV〉）。逐級判讀要的是每一級自己的延遲，所以執行時加 `--csv-full-history`，讀各請求名稱那幾列與 Aggregated 列的百分位數；沒加的那次執行，Aggregated 列的百分位數不能直接當成每一級的延遲。這段讀法來自原始碼，沒有實跑核對。
 
 closed model 下，Little's Law 寫成每秒 task 數 X 等於 N 除以（W 加平均停頓 Z），W 是前面定義的每一輪 task 的時間：`between(1, 3)` 的 Z 平均是 2 秒，一個 task 只送一個請求時，X 就是每秒請求數；一個 task 送 k 個請求時，每秒請求數是 X 乘以 k。
 

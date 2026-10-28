@@ -80,7 +80,7 @@ Locust 是 Python-based load test 工具、承擔三個責任：Python class-bas
 
 子議題：
 
-- Headless mode + exit code：內建只在有失敗的請求或未處理的例外時回 1，延遲與吞吐量的門檻要在 `quitting` 事件裡自己判定、寫進 `process_exit_code`
+- Headless mode + exit code：內建只在有失敗的請求或未處理的例外時回 1，延遲與吞吐量的門檻要在 `quitting` 事件裡自己判定、寫進 `process_exit_code`（三種情形的實測與 listener 怎麼蓋掉內建判定，見 [Locust 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/locust/hands-on/locust-local-lab/) 的〈內建的 exit code：有失敗、沒有失敗但變慢〉與〈quitting 事件裡的門檻判定〉）
 - CSV / JSON report
 - 門檻判定、預熱的請求與 gate 失敗的排查：[Locust 在效能 regression gate 的用法](/backend/06-reliability/vendors/locust/locust-performance-regression-gate/)；gate 在 release 流程裡的位置：[6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/)
 
@@ -147,6 +147,6 @@ Locust 是 Python-based load test 工具、承擔三個責任：Python class-bas
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                                                                                                                                                            | 類型   | 前置條件     | 規模 |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------ | ---- |
-| locust-local-lab〈master 與兩個 worker〉的 heartbeat 失聯：2026-10-28 前兩次分散執行 worker 停住約 4 秒、之後五次沒有重現，成因沒有查出；重現時同時收集施壓機的 CPU 與 worker 的 log，查出成因後把排查經過寫成 work-log、實作文章那一段改連過去 | vendor | 能重現的環境 | 小   |
+| 項目                                                                                                                                                                                                                                                                                                                                                                                                                                 | 類型   | 前置條件     | 規模 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ------------ | ---- |
+| locust-local-lab〈master 與兩個 worker〉的 heartbeat 失聯：2026-10-28 前兩次分散執行 worker 停住約 4 秒，之後照原條件共重跑 15 次都沒有重現，成因沒有查出。已排除 VM 內的 CPU 競爭、名稱解析、bridge 重建、冷 page cache 的 import；未排除主機沒有排程 VM 的 vCPU、heartbeat greenlet 卡在 zmq 的 send（第二次失聯的 worker 仍送得出 spawning 訊息）。重現時先用 py-spy dump worker，查出成因後寫成 work-log、實作文章那一段改連過去 | vendor | 能重現的環境 | 小   |

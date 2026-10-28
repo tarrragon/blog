@@ -172,7 +172,7 @@ JMeter 預設輸出 JTL XML（per-sample 一行）、有 listener 後處理。k6
 
 ### 5. CI integration 重做（distributed runner 模型不同）
 
-JMeter 在 CI 跑要：JVM provision、plugin install、`.jmx` upload、non-GUI mode 跑、JTL 結果 parse、exit code 對應 threshold。k6 在 CI 跑：`k6 run script.js`、threshold pass / fail 直接 exit code、result 進 Prometheus / k6 Cloud。
+JMeter 在 CI 跑要：JVM provision、plugin install、`.jmx` upload、non-GUI mode 跑、JTL 結果 parse、exit code 對應 threshold。k6 在 CI 跑：`k6 run script.js`、threshold pass / fail 直接 exit code、result 進 Prometheus / k6 Cloud。JMeter 這一側的實際流程（CLI mode、sample 失敗時 exit code 仍是 0、讀 `statistics.json` 判門檻的後處理、remote testing 的 `-G` 與 `-J`）的實測，見 [JMeter 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/jmeter/hands-on/jmeter-local-lab/)。
 
 看起來 k6 簡單、但有踩雷：
 
