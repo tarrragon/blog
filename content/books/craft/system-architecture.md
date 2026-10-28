@@ -1,7 +1,7 @@
 ---
 title: "系統架構的選讀書目"
 date: 2026-08-19
-description: "架構的概念與座標、以及拆分時每個選項都有代價的決定，各由哪一本書承接，還有承接機制知識的公開課與它接不住的取捨判斷"
+description: "架構的概念與座標、以及拆分時每個選項都有代價的決定，分別由哪一本書討論，還有教機制知識的公開課與它涵蓋不到的取捨判斷"
 weight: 30
 tags: ["books", "reading", "craft", "architecture", "trade-off"]
 ---
@@ -10,7 +10,7 @@ tags: ["books", "reading", "craft", "architecture", "trade-off"]
 
 這個主題只有兩本，按有沒有詞彙分：《Fundamentals of Software Architecture》先建立一整套可以用來討論的概念，《Software Architecture: The Hard Parts》再處理那些用了概念仍然沒有標準答案的決定。
 
-所以先拿哪一本很好判斷：架構討論還停在「我覺得微服務比較好」這種層次，缺的是詞彙，從 [Fundamentals of Software Architecture](#起點書fundamentals-of-software-architecture) 開始；詞彙已經夠用而卡在某個拆分的每個選項都有代價，直接走 [The Hard Parts](#software-architecture-the-hard-parts已經在拆分而每個選項都有代價時的選讀)。讀不動長篇文字的走文末的課程段，那裡有兩門完整的課教架構決定要用到的分散式系統機制。不確定自己落在哪一格，就從 [Fundamentals of Software Architecture](#起點書fundamentals-of-software-architecture) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+所以先拿哪一本很好判斷：架構討論還停在「我覺得微服務比較好」這種層次，缺的是詞彙，從 [Fundamentals of Software Architecture](#起點書fundamentals-of-software-architecture) 開始；詞彙已經夠用而卡在某個拆分的每個選項都有代價，直接讀 [The Hard Parts](#software-architecture-the-hard-parts已經在拆分而每個選項都有代價時的選讀)。讀不動長篇文字的讀者可以看文末的課程段，那裡有兩門完整的課教架構決定要用到的分散式系統機制。不確定自己落在哪一格，就從 [Fundamentals of Software Architecture](#起點書fundamentals-of-software-architecture) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
 ## 起點書：Fundamentals of Software Architecture
 
@@ -37,11 +37,11 @@ Mark Richards 與 Neal Ford 這本的主要貢獻是一整套詞彙，而詞彙�
 
 書中處理資料該怎麼跟著服務拆的論述特別值得注意，因為它是拆分服務時最常被低估的一段。服務可以切開，資料的一致性需求切不開；書中對於哪些資料該複製、哪些該共用、交易邊界該畫在哪，給的是可以逐項走的判斷，而不是「盡量避免分散式交易」這種沒有出口的建議。
 
-它跟 Fundamentals 的關係是前置與承接：Fundamentals 讓人說得出這個系統要什麼，這本接手說得出之後仍然沒有標準答案的那些決定。順序不要顛倒——沒有架構特性的詞彙時，這本的取捨分析會讀成一堆並列的技術選項。
+它跟 Fundamentals 的關係是先後：Fundamentals 讓讀者說得出這個系統要什麼，The Hard Parts 處理說得出之後仍然沒有標準答案的那些決定。順序不要顛倒——沒有架構特性的詞彙時，這本的取捨分析會讀成一堆並列的技術選項。
 
-證據來源同樣是跨客戶的顧問經驗加跨組織案例，而它比前一本更依賴一個貫穿全書的虛構案例。時效上，書出版於 2021 年，微服務相關的工具生態已有變化；取捨分析的做法與資料拆分的判斷不依賴那些工具。
+證據來源同樣是跨客戶的顧問經驗加跨組織案例，而它比 Fundamentals 更依賴一個貫穿全書的虛構案例。時效上，書出版於 2021 年，微服務相關的工具生態已有變化；取捨分析的做法與資料拆分的判斷不依賴那些工具。
 
-這本要有正在拆、或已經拆了一個系統的處境才讀得出東西——沒有那個處境時，六種粒度拆分訊號（服務範圍與功能、程式碼變動頻率、擴展性與吞吐量、容錯、安全、可擴充性）每一種都同樣有道理，而它們的用途是在其中認出正在發生的那一種。可以先知道它存在，開始拆的時候再拿出來。繁體中文版《軟體架構：困難部分》。
+這本要有正在拆、或已經拆了一個系統的處境才讀得出用處——沒有那個處境時，六種粒度拆分訊號（服務範圍與功能、程式碼變動頻率、擴展性與吞吐量、容錯、安全、可擴充性）每一種都同樣有道理，而它們的用途是在其中認出正在發生的那一種。可以先知道它存在，開始拆的時候再拿出來。繁體中文版《軟體架構：困難部分》。
 
 - [Amazon（Software Architecture: The Hard Parts）](https://www.amazon.com/Software-Architecture-Trade-Off-Distributed-Architectures/dp/1492086894)
 - [博客來（軟體架構：困難部分）](https://www.books.com.tw/products/0010927173)
@@ -52,29 +52,29 @@ Mark Richards 與 Neal Ford 這本的主要貢獻是一整套詞彙，而詞彙�
 
 架構的書市有一大類是特定架構風格的推廣書（微服務怎麼做、事件驅動怎麼做）。那類的問題是它們預設風格已經選定，而選擇本身才是架構工作最難的部分——分辨方式是看它有沒有寫「什麼情況下不要用這個風格」，而架構風格的邊界通常落在規模與團隊數上——同一個風格在三個團隊與三十個團隊下的代價差一個量級，不交代這一項的多半是在推銷而不是在分析。
 
-Robert Martin 的《Clean Architecture》常被列在這個位置，不收的理由與 [設計判斷標準與日常實踐的選讀書目](../design-and-practice/) 對《Clean Code》的處理相同。SEI 的《Software Architecture in Practice》是學術系統化的另一條路線（品質屬性、ATAM 評估法），繁中版也在，讀者定位偏向需要正式架構評估流程的組織——手上要跑正式評估的人往那裡找，這一篇處理的是還沒有那道流程時怎麼決定。
+Robert Martin 的《Clean Architecture》常被歸在架構風格推廣書這一類，這裡不收它的理由與 [設計判斷標準與日常實踐的選讀書目](../design-and-practice/) 對《Clean Code》的處理相同。SEI 的《Software Architecture in Practice》是學術系統化的另一條路線（品質屬性、ATAM 評估法），繁中版也在，讀者定位偏向需要正式架構評估流程的組織——手上要跑正式評估的人往那裡找，這一篇處理的是還沒有那道流程時怎麼決定。
 
 資料密集系統的設計（複製、分片、一致性模型）不在這個主題，那屬於 [Backend 服務實務指南](/backend/) 的責任範圍。
 
 ## 公開課：MIT 6.824 與 Kleppmann 的分散式系統課
 
-這是技藝線唯一接得住公開課的主題，而它接住的只有一半。架構決定要用到機制知識與取捨判斷兩者：機制知識是複製怎麼做、一致性有幾種、共識協定在解什麼、分割之後交易怎麼辦；取捨判斷是在資訊不足時把每個選項的代價講清楚。機制教得了，判斷教不了——這跟本篇兩本書的分工同向，起點書先給詞彙、The Hard Parts 才處理用了詞彙仍然沒有標準答案的決定。
+這是工程技藝書單裡唯一有公開課可收的主題，而那些課只涵蓋架構決定要用到的機制知識，不涵蓋取捨判斷。架構決定要用到機制知識與取捨判斷兩者：機制知識是複製怎麼做、一致性有幾種、共識協定在解什麼、分割之後交易怎麼辦；取捨判斷是在資訊不足時把每個選項的代價講清楚。機制教得了，判斷教不了——這跟本篇兩本書的分工同向，起點書先給詞彙、The Hard Parts 才處理用了詞彙仍然沒有標準答案的決定。
 
 **MIT 6.824 Distributed Systems（Spring 2020）** 由 Robert Morris 主講、20 講、每講約 80 分鐘，走的是讀論文加講解的形式。講次依序走過 GFS、主備複製、Raft（連三講）、ZooKeeper、CRAQ 的鏈式複製、Aurora、Frangipani 與 Memcached 的快取一致性、分散式交易、Spanner、樂觀並行控制、Spark、COPS 的因果一致性，最後兩講是 Bitcoin 與 Blockstack。它給的是本篇兩本書在談元件切分與資料所有權時預設讀者知道、而兩本書都不從頭建立的那些機制。這門課要寫 Go 的實驗作業（MapReduce 與 Raft 各一份），只看講課不做實驗仍然走得完，代價是共識協定那幾講會停在聽得懂而不是做得出來。
 
-**Martin Kleppmann 的 Distributed Systems lecture series** 是劍橋的課，8 講切成 23 段影片、每段 10 到 20 分鐘，全長約七小時。同一位作者的《Designing Data-Intensive Applications》不在這一篇——資料密集系統的設計屬於 [Backend 服務實務指南](/backend/) 的範圍，這裡收的只有這門課。它跟前一門的差別在密度與門檻：Morris 那門一講一篇論文、每講約 80 分鐘、假設聽眾是研究生；Kleppmann 這門從電腦網路與時鐘開始建立，單段短、可以零碎聽完。兩門的「講」不是同一個單位——比長度要用總時數，6.824 二十講約二十六小時。想先建立整體地圖的從這一門開始，想追某個機制怎麼被證明的走前一門。
+**Martin Kleppmann 的 Distributed Systems lecture series** 是劍橋的課，8 講切成 23 段影片、每段 10 到 20 分鐘，全長約七小時。同一位作者的《Designing Data-Intensive Applications》不在這一篇——資料密集系統的設計屬於 [Backend 服務實務指南](/backend/) 的範圍，這裡收的只有這門課。它跟 6.824 的差別在密度與門檻：Morris 那門一講一篇論文、每講約 80 分鐘、假設聽眾是研究生；Kleppmann 這門從電腦網路與時鐘開始建立，單段短、可以零碎聽完。兩門的「講」不是同一個單位——比長度要用總時數，6.824 二十講約二十六小時。想先建立整體地圖的從這一門開始，想追某個機制怎麼被證明的讀者看 6.824。
 
 兩門課的材料是已經發表的論文與已經定案的協定，時效因此不隨版本更新而動；會改變的是它們順帶提到的雲端服務與工具介面。兩門都是英語授課，而且不像 Open Yale 的課附官方逐字稿，字幕以 YouTube 當下提供的為準、可能是自動生成。這個主題沒有中文的對應課。
 
-取捨判斷那一半沒查到課，而缺口的成因就是這個主題的核心能力本身——在資訊不足的時候把取捨講清楚，包括講清楚自己選的那個爛在哪。這種能力的教材是別人做過的決定與它後來的代價，而那些代價要好幾年才顯現，一學期的課承載不了。整條線的供給狀況寫在 [工程技藝書單的公開課段](../craft-line-guide/#各主題的公開課涵蓋狀況)。
+教取捨判斷的課沒查到，而缺口的成因就是這個主題的核心能力本身——在資訊不足的時候把取捨講清楚，包括講清楚自己選的那個爛在哪。這種能力的教材是別人做過的決定與它後來的代價，而那些代價要好幾年才顯現，一學期的課承載不了。工程技藝書單整體的公開課供給狀況寫在 [工程技藝書單的公開課段](../craft-line-guide/#各主題的公開課涵蓋狀況)。
 
 - [YouTube 播放清單（MIT 6.824 Distributed Systems，Robert Morris，Spring 2020，20 講）](https://www.youtube.com/playlist?list=PLrw6a1wE39_tb2fErI4-WkMbsvGQk9_UB)
 - [YouTube 播放清單（Distributed Systems lecture series，Martin Kleppmann，8 講、23 段影片）](https://www.youtube.com/playlist?list=PLeKd45zvjcDFUEv_ohr_HdUFe97RItdiB)
 
 ## 系統架構的相鄰主題與接續閱讀
 
-架構決定的代價一半落在組織上——介面畫在哪裡，決定了哪兩個團隊要天天開會。那條路徑走 [組織結構與團隊設計的選讀書目](../../software-management/topics/team-design/)，Team Topologies 與這裡的架構風格處理的是同一件事的兩端。
+架構決定的代價一半落在組織上——介面畫在哪裡，決定了哪兩個團隊要天天開會。團隊怎麼切的選書收在 [組織結構與團隊設計的選讀書目](../../software-management/topics/team-design/)，Team Topologies 與這裡的架構風格處理的是同一件事的兩端。
 
-往下一個尺度走，模組與介面該怎麼切看 [設計判斷標準與日常實踐的選讀書目](../design-and-practice/)；架構定了之後既有程式碼怎麼搬過去看 [改既有程式的選讀書目](../changing-existing-code/)。
+往下一個尺度，模組與介面該怎麼切看 [設計判斷標準與日常實踐的選讀書目](../design-and-practice/)；架構定了之後既有程式碼怎麼搬過去看 [改既有程式的選讀書目](../changing-existing-code/)。
 
 具體的資料庫、快取、佇列與可觀測性選型看 [Backend 服務實務指南](/backend/)，部署與環境看 [Infra 建置：IaC、身分與存取、網路、環境分離、核心服務、可觀測性、PR 流程與治理](/devops/infra/)。

@@ -6,7 +6,7 @@ weight: 10
 tags: ["books", "reading", "management", "engineering-leadership", "career"]
 ---
 
-這一頁的正文不會渲染，是維護這條線的人用的。讀者要的五種位置、單一起點、各位置起點書與套書購買說明在 [軟體管理與組織書單：依位置與依主題的選書入口](management-line-guide/)。
+這一頁的正文不會渲染，是維護這個書單的人用的。讀者要的五種位置、單一起點、各位置起點書與套書購買說明在 [軟體管理與組織書單：依位置與依主題的選書入口](management-line-guide/)。
 
 ## Backlog
 
@@ -22,7 +22,7 @@ tags: ["books", "reading", "management", "engineering-leadership", "career"]
 | 補上台灣的 Hofstede 分數（2027 年 8 月前處理，否則併入那次公開課重掃） | 案例   | [跨文化協作與行為判讀的選讀書目](topics/cross-cultural-collaboration/) 目前只告訴讀者台灣有公開分數與去哪裡查，沒有寫出數值；六個維度的實際分數要從可核對的來源取得，長期導向那一項在不同資料版本之間有出入、要標明版本                                                                                                                                                                    | 1 段  |
 | 新增主題篇時面向清單先於選書寫出                                       | 主章   | [起點書怎麼選出來的](topics/starting-book-selection/#起點書的選擇標準涵蓋面證據與可操作性的優先序) 自承二十篇都是後於選書才寫面向清單，而跨文化那篇是第一次實際靠它做判定。這一列只往前生效、成本為零：下一篇新主題篇動筆前先寫面向清單，寫完再選書，第一個可核對的對象就是它                                                                                                              | 1 次  |
 | 建「技術性與適應性的區分」知識卡                                       | 知識卡 | 全站唯一說明埋在 [困難對話與無權限影響力的選讀書目](topics/influence-conversation/) 的一段裡，而繁體中文管理書市沒有以它為主題的在售書，讀者搜不到落點。卡內要標一個轉述差：Heifetz 原文是 technical / adaptive work 與 challenge，《變革抗拒》轉述成「學習」。另註 `content/report/threat-model-explicitness.md` 有一處 adaptive challenge 是資安語境的同名異義                           | 1 張  |
-| 建「競爭承諾與四欄地圖」知識卡                                         | 知識卡 | 與 [Satir 四種不一致姿態](/til/behavior/satir-coping-stances/) 的先例不對稱——同樣是從一本書借來的個人層模型，那個有卡而這個沒有；「四欄地圖怎麼填」這類操作型查詢目前沒有承接處。落 `content/til/behavior/`                                                                                                                                                                                | 1 張  |
+| 建「競爭承諾與四欄地圖」知識卡                                         | 知識卡 | 與 [Satir 四種不一致姿態](/til/behavior/satir-coping-stances/) 的先例不對稱——同樣是從一本書借來的個人層模型，那個有卡而這個沒有；讀者帶著「四欄地圖怎麼填」這類操作型查詢來找時，站上目前沒有任何一篇涵蓋它。落 `content/til/behavior/`                                                                                                                                                    | 1 張  |
 | 補《變革抗拒》與 Heifetz 那組區分的反向互指                            | 跨模組 | 五處既有內容與新增內容高度對應而無連結：culture-safety 的 Argyris 節（組織層有、個人層缺）、team-design 的溫伯格第 4 卷節（兩種「抗拒」同名不同單位、不加區隔句讀者會合併）、problem-definition（症狀逐字對應）、voice-and-silence（自承交付不了的那一半正是四欄地圖）、roles/own-output。roles/others-output 與 roles/people 判定不加——會誘發拿四欄地圖分析部屬，而書與卡都明寫是自我觀察 | 5 處  |
 | 處境句補出讀法、前置段補約束分流                                       | 主章   | 四個讀者個案實跑後浮現：[困難對話與無權限影響力的選讀書目](topics/influence-conversation/) 多數處境句只寫了不相容的一側就把換算退回讀者，而 [書單推薦](/books/) 的規格要求處境相容性導出的是讀法而非讀不讀；同篇前置段的分流軸只問影響方向，不問語言、僱傭關係、協作形態與有無可討論對象，而那四項支配四個個案裡三個的答案                                                                 | 中    |
 | 重寫排除 Cialdini 的理由                                               | 主章   | [困難對話與無權限影響力的選讀書目](topics/influence-conversation/) 以「一次性場合有效」排除，而現行版第七個原則 Unity 正是共同身分的長期關係機制，直接反駁該理由；另依證據來源分類，Cialdini 是受控實驗而同篇已收的 Crucial Conversations 自述是作者群訓練公司的案例與自辦調查                                                                                                             | 1 段  |
