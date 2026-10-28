@@ -18,19 +18,9 @@ Locust 是 Python-based load test 工具、承擔三個責任：Python class-bas
 4. 設計 task weight + on_start / on_stop hook
 5. 評估 Locust vs k6 / Gatling 的選用
 
-## 最短路徑：5 分鐘把 Locust 跑起來
+## 實作紀錄：在本機用 Docker 跑 Locust
 
-```bash
-# 1. 安裝
-# TODO: pip install locust
-
-# 2. 寫 locustfile.py
-# TODO: class User(HttpUser): wait_time = ..., @task def hello(self): ...
-
-# 3. 跑
-# TODO: locust -f locustfile.py --host=http://target
-# TODO: 瀏覽器 http://localhost:8089 操作
-```
+實際跑過的完整流程在 `hands-on/`：[Locust 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/locust/hands-on/locust-local-lab/)，用 Docker 跑受測服務與 Locust、locustfile、headless 執行與 CSV、內建的 exit code、quitting 事件裡的門檻判定、--reset-stats 與 on_start、master 與 worker 的分散執行。Web UI 的操作不在那次的實測裡。
 
 ## 日常操作與決策形狀
 
@@ -110,7 +100,7 @@ Locust 是 Python-based load test 工具、承擔三個責任：Python class-bas
 
 ### Worker disconnect
 
-操作原則：master / worker network 不通、heartbeat timeout。判讀：log + master UI。
+操作原則：master / worker network 不通、heartbeat timeout。判讀：log + master UI。heartbeat 的間隔與判定失聯的次數、一次實際遇到的失聯與查法，見 [Locust 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/locust/hands-on/locust-local-lab/) 的〈master 與兩個 worker〉。
 
 ### Custom protocol 報告不正確
 
@@ -152,3 +142,11 @@ Locust 是 Python-based load test 工具、承擔三個責任：Python class-bas
 - 上游概念：[6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/)
 - 平行 vendor：[k6](/backend/06-reliability/vendors/k6/)、[Gatling](/backend/06-reliability/vendors/gatling/)
 - 下游能力：[09 performance capacity](/backend/09-performance-capacity/)
+
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                                                                                                                                                                            | 類型   | 前置條件     | 規模 |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------ | ---- |
+| locust-local-lab〈master 與兩個 worker〉的 heartbeat 失聯：2026-10-28 前兩次分散執行 worker 停住約 4 秒、之後五次沒有重現，成因沒有查出；重現時同時收集施壓機的 CPU 與 worker 的 log，查出成因後把排查經過寫成 work-log、實作文章那一段改連過去 | vendor | 能重現的環境 | 小   |

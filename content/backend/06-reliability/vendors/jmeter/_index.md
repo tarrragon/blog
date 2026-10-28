@@ -18,18 +18,9 @@ JMeter 是 Apache 出品的老牌 load test 工具、承擔三個責任：GUI-dr
 4. 用 JMeter Plugins Manager 加擴展
 5. 評估 JMeter vs 現代 CLI-first（k6 / Gatling / Locust）的選用
 
-## 最短路徑：5 分鐘把 JMeter 跑起來
+## 實作紀錄：在本機用 Docker 跑 JMeter
 
-```bash
-# 1. 安裝
-# TODO: brew install jmeter / 下載 zip
-
-# 2. GUI 設計 .jmx
-# TODO: 開 jmeter GUI、加 Thread Group / HTTP Sampler / Listener
-
-# 3. CI 跑 non-GUI mode
-# TODO: jmeter -n -t test.jmx -l result.jtl -e -o report/
-```
+實際跑過的完整流程在 `hands-on/`：[JMeter 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/jmeter/hands-on/jmeter-local-lab/)，用 Docker 自建 image、手寫 test plan、CSV Data Set、CLI mode 與 JTL、dashboard 與 statistics.json、JMeter 之外的門檻判定、remote testing 的 client 與 server。
 
 ## 日常操作與決策形狀
 

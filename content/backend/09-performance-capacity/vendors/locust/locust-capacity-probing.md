@@ -136,7 +136,7 @@ closed model 讓權重之外還有一層效應：使用者在一個變慢的 tas
 
 worker 數要量出來，數字依施壓機的規格、client 的種類、task 裡的計算量與回應大小而變，別人機器上的數字不能直接用。量法是用一個 worker 程序、同一個 client 種類與 task 結構，只把 endpoint 換成近乎零成本的那一個，打這個幾乎不做事的 endpoint（健康檢查、回固定內容的靜態頁面），逐級增加使用者數：這個 endpoint 在受測服務上的處理時間接近零，延遲開始上升、吞吐量停住或出現 CPU 警告的那一級，就是一個 worker 程序在這份 locustfile 下送得出的上限。task 裡的計算量與回應大小跟受測的 endpoint 不同時，再用受測的 endpoint 在受測服務還在線性區的負載下，比對 Locust 量到的延遲與受測服務入口量到的延遲：兩者的差距隨每個 worker 的使用者數變大時，那個使用者數就是這份 locustfile 的實際上限。需要的 worker 程序數是探測要到的最大使用者數除以這個上限，再留一段餘裕，讓最後一級也沒有任何一個 worker 接近上限；餘裕留多少依上限量測時的變異決定。
 
-master 不執行任何使用者，只負責 web UI 與告訴 worker 什麼時候啟動或停止使用者（官方文件〈Distributed load generation〉）。`--expect-workers N` 搭配 `--headless` 時，master 等到 N 個 worker 連上才開始這次執行；它的預設值是 1（原始碼 `locust/argument_parser.py`），沒有設時第一個 worker 連上就開始加壓，使用者分到已連上的 worker，每個 worker 的使用者數比規劃的多，先碰到上限。執行中途才連上的 worker，依原始碼（`locust/runners.py`）只有加了 `--enable-rebalancing`（標成實驗性）時，master 才把已經在跑的使用者重新分配過去。
+master 不執行任何使用者，只負責 web UI 與告訴 worker 什麼時候啟動或停止使用者（官方文件〈Distributed load generation〉）。`--expect-workers N` 搭配 `--headless` 時，master 等到 N 個 worker 連上才開始這次執行；它的預設值是 1（原始碼 `locust/argument_parser.py`），沒有設時第一個 worker 連上就開始加壓，使用者分到已連上的 worker，每個 worker 的使用者數比規劃的多，先碰到上限。執行中途才連上的 worker，master 會把使用者重新分配過去：原始碼（`locust/runners.py`）處理 worker 連上的那一段，在測試執行中會再呼叫一次 `start()`，不看 `--enable-rebalancing`；那個選項（標成實驗性）管的是 worker 失聯時要不要把它的使用者分給其他 worker。所以晚連上的 worker 之前那一段，負載集中在先連上的 worker，那一段量到的延遲可能混著施壓端的上限。一台機器上一個 master 加兩個 worker 的啟動指令、master 的 log，以及一次 worker 被判失聯（heartbeat 大約 4 秒沒送到）時那一次結果為什麼不能用，見 [Locust 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/locust/hands-on/locust-local-lab/) 的〈master 與兩個 worker〉。
 
 ```bash
 # 在 master 那台：等 4 個 worker 連上才開始，結果寫到 results/ 底下

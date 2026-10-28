@@ -122,6 +122,7 @@ JMeter 在 09 案例庫中適合作為 enterprise load test 承接點。它可�
 
 ## 下一步路由
 
+- 實作：[JMeter 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/jmeter/hands-on/jmeter-local-lab/)（Docker 自建 image、CLI mode 與 JTL、dashboard 與 statistics.json、remote testing 的 client、server 與 `-G`、`-J` 的差別）
 - 上游：[9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)
 - 上游：[9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)
 - 平行：[k6](/backend/09-performance-capacity/vendors/k6/)、[Gatling](/backend/09-performance-capacity/vendors/gatling/)、[Locust](/backend/09-performance-capacity/vendors/locust/)

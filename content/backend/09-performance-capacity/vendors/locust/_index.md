@@ -151,6 +151,7 @@ Locust 適合回寫需要高度自訂 user behavior 的案例。它可接 [9.C28
 
 ## 下一步路由
 
+- 實作：[Locust 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/locust/hands-on/locust-local-lab/)（locustfile、headless 執行與 CSV、exit code、quitting 事件裡的判定、一個 master 加兩個 worker 的啟動與 heartbeat 失聯的判讀）
 - 上游：[9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/)
 - 上游：[9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)
 - 上游：[9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)
