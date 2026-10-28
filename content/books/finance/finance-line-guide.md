@@ -1,14 +1,14 @@
 ---
 title: "財務與投資書單：資本配置、個人理財、會計與總體經濟的選書入口"
 date: 2026-09-24
-description: "財務這條書線跟另外兩條的分界、依要不要讀者做決定分出決定層、讀懂層與解釋層的依據、哪些財務知識不該用書當載體、這條線最要注意的倖存者偏誤，以及依資本責任劃分的位置"
+description: "財務這條書線跟其他書線的分界、依要不要讀者做決定分出決定層、讀懂層與解釋層的依據、哪些財務知識不該用書當載體、這條線最要注意的倖存者偏誤，以及依資本責任劃分的位置"
 weight: 1
 tags: ["books", "finance", "reading"]
 ---
 
-這條線處理的是**資本與現金流怎麼配置**。它跟另外兩條線的分界在決定的對象：[軟體管理與組織](/books/software-management/) 的決定落在人與制度上，[工程技藝](/books/craft/) 的決定落在產物上，這條線的決定落在錢上。多數情況那是讀者自己的錢，而 [依資本責任選書](/books/finance/positions/) 列的四個位置裡有兩個不是（對他人的資產負責、對一門生意的損益負責），分界因此畫在決定的對象而不是它的所有權。三條線為什麼按這個軸分開，說明在 [書單推薦怎麼用](/books/reading-this-list/)。
+這條線處理的是**資本與現金流怎麼配置**。它跟其他書線的分界在決定的對象：[軟體管理與組織](/books/software-management/) 的決定落在人與制度上，[工程技藝](/books/craft/) 的決定落在產物上，[媒介與輿論](/books/media-public-opinion/) 的決定落在讀者對世界的判斷上，這條線的決定落在錢上。多數情況那是讀者自己的錢，而 [依資本責任選書](/books/finance/positions/) 列的四個位置裡有兩個不是（對他人的資產負責、對一門生意的損益負責），分界因此畫在決定的對象而不是它的所有權。各線為什麼按這個軸分開，說明在 [書單推薦怎麼用](/books/reading-this-list/)。
 
-書的描述沿用同一套維度（[證據來源](/books/knowledge-cards/evidence-provenance/)、時效狀態、[處境相容性](/books/knowledge-cards/context-compatibility/)、讀得出價值的前提），定義與這些判定的來源說明在 [書單怎麼描述一本書](/books/describing-a-book/)。起點書判斷標準的第一層跟另外兩條線相同（涵蓋面優先），完整的三層寫在 [起點書的選擇標準：涵蓋面、證據與可操作性的優先序](/books/software-management/topics/starting-book-selection/#起點書的選擇標準涵蓋面證據與可操作性的優先序)。後兩層在這條線會隨主題調整，依據是下面那張表的最後一欄——這個主題要求讀者做什麼，決定「可操作性」算不算加分。
+書的描述沿用同一套維度（[證據來源](/books/knowledge-cards/evidence-provenance/)、時效狀態、[處境相容性](/books/knowledge-cards/context-compatibility/)、讀得出價值的前提），定義與這些判定的來源說明在 [書單怎麼描述一本書](/books/describing-a-book/)。起點書判斷標準的第一層跟其他書線相同（涵蓋面優先），完整的三層寫在 [起點書的選擇標準：涵蓋面、證據與可操作性的優先序](/books/software-management/topics/starting-book-selection/#起點書的選擇標準涵蓋面證據與可操作性的優先序)。後兩層在這條線會隨主題調整，依據是下面那張表的最後一欄——這個主題要求讀者做什麼，決定「可操作性」算不算加分。
 
 ## 主題的分層：決定層、讀懂層與解釋層
 
