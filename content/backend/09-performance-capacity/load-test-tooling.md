@@ -22,7 +22,7 @@ tags: ["backend", "performance", "capacity", "tooling"]
 
 **協議支援**：HTTP / WebSocket / gRPC / TCP / 自家二進位協議。WebSocket 跟 gRPC 是現代後端常見、傳統工具（JMeter、wrk）可能要 plugin 補。
 
-**規模能力**：單機可以發多少 RPS、能不能分散式擴容。本機 wrk 可發 10K-50K RPS；分散式 Locust 可發 1M+ RPS。決定因素：CPU 效率、async I/O 模型、是否單機 bound。
+**規模能力**：一台施壓機發得出多少請求、是否能分散到多台施壓機擴容。一台施壓機的上限取決於工具的 I/O 模型（Go runtime、JVM 的 async engine、每個使用者一個 OS thread、gevent 只用一顆 CPU 的程序）、script 的內容與那台機器的 CPU 和網路，所以要在自己的施壓機上逐級加量量出來：施壓機的 CPU 或網路先到頂、而受測服務的指標還沒有變化的那一級，就是這台施壓機的上限（[Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/)）。量到的單機上限低於要的施壓量時，差距要靠工具的分散式擴容方式（Locust 的 master／worker、JMeter 的 remote testing、託管的 cloud runner）補足，擴容方式決定補足這段差距要付多少維運成本。
 
 **CI 整合**：能不能在 PR 上跑 lightweight perf check、結果能不能機器可讀（JSON / Prometheus exposition）、能不能跟 baseline diff。沒有 CI 整合的工具只能做「事件型壓測」、無法做 continuous perf governance。
 
@@ -41,13 +41,13 @@ tags: ["backend", "performance", "capacity", "tooling"]
 | Vegeta   | CLI     | 中   | 低       | CLI driven、quick HTTP 壓測                 |
 | wrk/wrk2 | C       | 高   | 低       | 單機極限 RPS、saturation discovery 用       |
 
-**k6** 是過去 5 年崛起的綜合首選。JavaScript 腳本（前端工程師也能寫）、原生 dashboard、Prometheus exposition、CI 友善。Grafana 收購後生態加速。缺點：複雜 stateful 場景（DB connection pool 共享）需要繞 workaround。
+**k6** 是過去 5 年崛起的綜合首選。JavaScript 腳本（前端工程師也能寫）、原生 dashboard、Prometheus exposition、CI 友善。Grafana 收購後生態加速。缺點：複雜 stateful 場景（DB connection pool 共享）需要繞 workaround。executor 的選擇、threshold 與 Grafana 的整合在 [k6 的工具頁](/backend/09-performance-capacity/vendors/k6/)，從 JMeter 換到 k6 時 thread group 怎麼對到 executor 在 [JMeter → k6 的遷移](/backend/09-performance-capacity/vendors/k6/migrate-from-jmeter/)。
 
-**JMeter** 是企業常見的 incumbent。協議支援廣（含 LDAP、JDBC、JMS）、有 GUI 編輯器。缺點：腳本是 XML、版本控制困難；GUI 主要用來生成腳本、實際跑壓測還是要 headless。已經在用的團隊建議繼續、新團隊不必特意選它。
+**JMeter** 是企業常見的 incumbent。協議支援廣（含 LDAP、JDBC、JMS）、有 GUI 編輯器。缺點：腳本是 XML、版本控制困難；GUI 主要用來生成腳本、實際跑壓測還是要 headless。已經在用的團隊建議繼續、新團隊不必特意選它。拿 JMeter 找飽和點時，thread group 與 timer 決定量的是 open 還是 closed model，Open Model Thread Group 的逐級加壓、knee 的判讀、施壓端與 TLS 連線的失真寫在 [JMeter 在容量探測的用法：thread group 固定的負載變數、逐級加壓、knee 的判讀、施壓端與分散施壓的檢查、多 protocol 的涵蓋範圍與排查順序](/backend/09-performance-capacity/vendors/jmeter/jmeter-capacity-probing/)；工具本身的定位、listener 與分散施壓的設定在 [Apache JMeter 在效能容量的工具總覽](/backend/09-performance-capacity/vendors/jmeter/)。
 
-**Gatling** 高 throughput 純 async、性能優秀、報表精美。缺點：Scala / Kotlin DSL 學習曲線陡、新版本（11+）改了 DSL 不向後相容。
+**Gatling** 高 throughput 純 async、性能優秀、報表精美。缺點：Scala / Kotlin DSL 學習曲線陡、新版本（11+）改了 DSL 不向後相容。Gatling 的注入步驟分成 open 與 closed 兩組，用 open model 逐級加壓、從 report 判讀 knee point、檢查施壓端與 feeder 資料的分佈寫在 [Gatling 在容量探測的用法：open model 的逐級加壓、knee point 的判讀、施壓端的檢查、feeder 資料的分佈與排查順序](/backend/09-performance-capacity/vendors/gatling/gatling-capacity-probing/)；工具本身的定位與 Enterprise 版的差異在 [Gatling 的工具頁](/backend/09-performance-capacity/vendors/gatling/)。
 
-**Locust** 是 Python 生態的選擇、特別適合複雜業務邏輯（用 Python 寫 user journey 自然）。分散式部署原生支援。缺點：Python 單線程 throughput 受限、要靠分散式擴容。
+**Locust** 是 Python 生態的選擇、特別適合複雜業務邏輯（用 Python 寫 user journey 自然）。分散式部署原生支援。缺點：一個 worker 程序只用得到一顆 CPU、throughput 受限、要靠多個 worker 擴容。Locust 只有 closed model，逐級增加使用者時怎麼從每秒 task 數與延遲換算受測服務的狀態、pacing 的上限與 worker 的檢查寫在 [Locust 在容量探測的用法：closed model 下的逐級加壓、吞吐量與延遲的換算、pacing 的上限、worker 的檢查與排查順序](/backend/09-performance-capacity/vendors/locust/locust-capacity-probing/)；工具本身的定位、custom client 與 worker 的擴展在 [Locust 在效能容量的工具總覽](/backend/09-performance-capacity/vendors/locust/)。
 
 **Vegeta** 跟 **wrk** 是「quick check」工具、用於單一 endpoint 的極限測試。不適合複雜場景、適合 saturation discovery 第一輪「找這個服務的天花板」。
 
@@ -91,7 +91,7 @@ tags: ["backend", "performance", "capacity", "tooling"]
 
 ## 壓測結果失真的原因
 
-選好工具之後，結果仍可能失真：只測單一 API 而不測使用者動線、壓測機跟被測機在同一網段、壓測時主機被其他工作負載佔用、工具自己先飽和、只看平均延遲（[tail latency](/backend/knowledge-cards/tail-latency/) 被蓋掉）、壓測環境跟 production 硬體不一致、沒拿結果驗證流量模型。每一種的訊號與避法見 [壓力測試工具與方法](/devops/operations/05-capacity-planning/load-testing-tools/)〈讓結果失真的反模式〉。
+選好工具之後，結果仍可能失真：只測單一 API 而不測使用者動線、壓測機跟被測機在同一網段、壓測時主機被其他工作負載佔用、工具自己先飽和（[Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/)）、注入方式跟 production 流量的模型不同（到達率型的流量用固定人數的 closed model 壓，服務變慢時工具自己減壓，見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)）、只看平均延遲（[tail latency](/backend/knowledge-cards/tail-latency/) 被蓋掉）、壓測環境跟 production 硬體不一致、沒拿結果驗證流量模型。每一種的訊號與避法見 [壓力測試工具與方法](/devops/operations/05-capacity-planning/load-testing-tools/)〈讓結果失真的反模式〉。
 
 ## 案例對照
 

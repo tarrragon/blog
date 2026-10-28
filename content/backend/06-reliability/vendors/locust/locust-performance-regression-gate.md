@@ -162,7 +162,7 @@ locust -f locustfile.py --headless -u 50 -r 5 -t 10m --reset-stats \
 
 PR 那一份負載低於飽和點（[Saturation Point](/backend/knowledge-cards/saturation-point/)）、只涵蓋關鍵流程，抓的是一次變更造成的明顯延遲退化，用〈quitting listener 的寫法：統計的範圍、百分位數的分桶與回應的驗證〉那段讀基準值檔的 listener 做相對退化的判讀，這是 6.13 定給 slow path 的主要判讀。它抓不到的有兩類。一類是要長時間維持負載才出現的退化：記憶體洩漏、連線池慢慢耗盡、GC 暫停隨堆積的物件變長。另一類是每個請求的資源成本變高：一個請求多用了三成 CPU，請求的延遲主要花在等 I/O 時，低負載下延遲幾乎不變，要到接近飽和時才看得出來；後一類有兩種做法：在 gate 裡另外記錄受測服務每個請求的 CPU 用量、拿它跟基準版本比，或交給 nightly 在接近飽和的負載下量。nightly 那一份時間長、task 組合完整，加上長時間維持負載的 soak 階段，抓的是與時間有關的退化；它也把每一次的 `_stats.csv` 與 `_stats_history.csv` 存下來，替跨次比較的程式累積統計顯著性要的歷次樣本。
 
-兩份共用同一份 locustfile：task 與 User class 只寫一份，流程改動時兩份量的仍然是同一個流程，PR 那一份用命令列指定 User class 或用 `--tags` 篩選 task（官方文件〈Writing a locustfile〉的〈@tag decorator〉）。兩份也共用同一組測試資料（帳號、商品編號），gate 只量得到測試資料走到的路徑：資料只有少數幾個熱門商品時，讀資料庫的長尾路徑兩版都沒有被請求到，這一版的變更若改到那條路徑，gate 對它沒有訊號。CI 跑 Locust 的環境要跟其他工作隔開：staging 上同時有別的 QA 流量或排程工作時，它們的負載混進受測服務的延遲與吞吐量，前後兩版的差距落在這些雜訊裡。這跟 6.13〈Variance 控制〉表裡 shared runner 鄰居效應那一列的性質類似，差在被共用的是受測環境，不是執行測試的 runner。
+兩份共用同一份 locustfile：task 與 User class 只寫一份，流程改動時兩份量的仍然是同一個流程，PR 那一份用命令列指定 User class 或用 `--tags` 篩選 task（官方文件〈Writing a locustfile〉的〈@tag decorator〉）。兩份也共用同一組測試資料（帳號、商品編號），gate 只量得到測試資料走到的路徑：資料只有少數幾個熱門商品時，讀資料庫的長尾路徑兩版都沒有被請求到，這一版的變更若改到那條路徑，gate 對它沒有訊號。CI 跑 Locust 的環境要跟其他工作隔開：staging 上同時有別的 QA 流量或排程工作時，它們的負載混進受測服務的延遲與吞吐量，前後兩版的差距落在這些雜訊裡。這是 [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/)〈Variance 控制〉表裡共用受測環境那一列的噪音：被共用的是受測環境，不是執行測試的 runner，控制方式是測試期間保留專用的受測環境，做不到時記下同一時段的其他流量、比較時排除重疊的那幾段。
 
 ## CSV、HTML report 與執行條件的保存
 

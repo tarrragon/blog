@@ -11,7 +11,7 @@ k6 不是 JMeter 的 *「script 版本」*。
 
 實際上 k6 的 *Virtual User (VU)* 跟 JMeter 的 *Thread* 是 *兩種不同的使用者行為建模方式*：
 
-- **JMeter Thread**：一個 OS thread = 一個 user、`numThreads=100` 就 *固定 100 個 concurrent 使用者一直跑*、ramp-up period 控制怎麼啟動、無 explicit arrival rate 概念
+- **JMeter Thread**：一個 OS thread = 一個 user、內建 Thread Group 的 `numThreads=100` 就 *固定 100 個 concurrent 使用者一直跑*、ramp-up period 控制怎麼啟動，是 closed model；JMeter 也有依到達率建立 thread 的 thread group（5.5 起內建、官方標為 experimental 的 Open Model Thread Group，以及 plugin 的 Arrivals Thread Group），只是多數既有的 `.jmx` 用的是內建 Thread Group（兩種模型的差別見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)）
 - **k6 VU**：一個 goroutine-like execution context、預設 `vus` 是 *concurrent VU pool*、但 k6 更推薦用 `arrival-rate executor` — 直接表達 *每秒進來幾個 request*、VU 是 *為了達到 arrival rate 動態起的 worker*
 
 差別在 *測量視角*：JMeter 預設視角是 *「我有 100 個使用者在用系統」*、k6 預設視角是 *「我每秒有 N 個請求進來」*。兩種視角下 *同一個系統的瓶頸結果完全不同*：100 concurrent user 模型在 server 慢時 throughput 會自動降（user 等回應）、100 RPS arrival rate 模型在 server 慢時 queue 會累積、暴露 *真實 production behavior*（user 不會體諒、會繼續送請求）。
@@ -40,8 +40,8 @@ Schema High + Paradigm High 兩軸 High。按優先序 Schema > Paradigm、預�
 - **`.jmx` XML 在 git 內 diff 不可讀**：兩個 `.jmx` PR 的 diff 是 XML attribute reorder noise、reviewer 看不出來實際邏輯改了什麼；JavaScript 是純文字 + AST、PR diff 直接可讀
 - **GUI 學習曲線**：JMeter GUI 不是現代 IDE、不熟的工程師寫一個 scenario 要花半天找對的 sampler 跟 listener；JavaScript 用既有 IDE（VS Code / IntelliJ）、autocomplete + lint + format 全有
 - **CI integration 步驟差**：JMeter 在 CI 跑要 packaging plugin + non-GUI mode + result XML parser；k6 直接 `k6 run script.js`、result 是 JSON / Prometheus metrics、threshold pass/fail 直接 exit code
-- **單機 VU 容量**：JMeter 單機通常 ~500-1000 thread（受 JVM 跟 OS thread limit）、k6 單機可跑 30K-50K VU（Go runtime + goroutine）、distributed runner 需求降低
-- **Workload model expressiveness**：k6 `arrival-rate executor` + `ramping-vus` + `constant-vus` 三種 executor 直接對應 *open system / ramping / closed system* 三種測量視角、不像 JMeter 需要組合 Constant Throughput Timer + Synchronizing Timer + thread group 才達到
+- **單機施壓量**：JMeter 的每個 thread 是一個 JVM 的 OS thread，k6 的 VU 跑在 Go runtime 上，同一台施壓機上 k6 通常跑得了較多 VU；實際上限取決於 script 的內容、回應的大小與那台機器的 CPU、記憶體與網路，要在自己的施壓機上逐級加量量出來（[Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/)），量到的上限低於要的施壓量時才需要 distributed runner
+- **Workload model expressiveness**：k6 的 `constant-arrival-rate`、`ramping-arrival-rate` executor 是 open model，`constant-vus`、`ramping-vus` 是 closed model，選 executor 就是選模型；JMeter 的內建 Thread Group 是 closed model，要 open model 時換成 Open Model Thread Group 或 Arrivals Thread Group，而 Constant Throughput Timer 這類 timer 只是限制請求率的 pacing，加在 thread group 上仍是 closed model（受測服務變慢時 thread 沒有剩下的等待可以縮短，請求率跟著下降）
 
 這條 driver 在 *QA 團隊 GUI 維護 .jmx asset* 的 org 沒拉力（GUI 反而是優勢）、但對 *dev / SRE 寫 performance test 進 CI* 的 org 是強拉力。Audience 不同、migration value 完全不同。
 
@@ -131,12 +131,12 @@ GUI / QA 團隊維護的 `.jmx` *不動* — 那些通常是 multi-protocol（JD
 
 ### 1. Thread group → VU 直接翻譯（最常見、Phase 2 必踩）
 
-把 `numThreads=100` 翻成 `vus: 100` 就完事 — 結果 RPS 跟 JMeter 不一致、p95 完全不同形狀。原因：JMeter 100 thread 是 *closed model*（thread 等回應才送下一個）、k6 `vus: 100` 預設也是 closed model、但 *iteration 結束就立刻送下一個*（無 think time）— 兩者的 *throughput 行為* 差異來自 think time / response time。
+把 `numThreads=100` 翻成 `vus: 100` 就完事 — 結果 RPS 跟 JMeter 不一致、p95 完全不同形狀。原因：JMeter 100 thread 是 *closed model*（thread 等回應才送下一個）、k6 `vus: 100` 也是 closed model，兩邊都是一輪跑完就開始下一輪，內建的 Thread Group 與 k6 的 VU 都不帶預設的等待時間。兩者的 *throughput 行為* 差異來自 `.jmx` 裡另外加的 timer（Constant Timer、Gaussian Random Timer、Constant Throughput Timer 這類），以及一輪裡的請求組合是否照原樣翻過去。
 
 修法：
 
 - 不用 `vus: N`、用 `constant-arrival-rate` 或 `ramping-arrival-rate`、直接表達 *每秒幾個請求*
-- 如果一定要 closed model（pre-existing JMeter scenario 對比）、在 default function 內加 `sleep(thinkTime)` 模擬 JMeter Think Time
+- 如果一定要 closed model（跟既有的 JMeter scenario 對比）、先列出 `.jmx` 裡每個 timer 掛在哪個 sampler 上、延遲多久，再在 k6 script 的對應位置用 `sleep()` 重現；`.jmx` 沒有 timer 時，k6 這邊也不加
 
 ### 2. Arrival rate vs concurrent VU 混淆
 
@@ -176,7 +176,7 @@ JMeter 在 CI 跑要：JVM provision、plugin install、`.jmx` upload、non-GUI 
 
 看起來 k6 簡單、但有踩雷：
 
-- Distributed run model 不同：JMeter 用 master-slave、k6 OSS 不內建 distributed、要 Grafana Cloud k6 或自建 k6-operator on Kubernetes
+- Distributed run model 不同：JMeter 用 remote testing（官方用語是 client／server，舊資料寫成 master／slave）、k6 OSS 不內建 distributed、要 Grafana Cloud k6 或自建 k6-operator on Kubernetes
 - 大規模負載（> 50K VU）必須 distributed、Phase 2 評估時要先確認 distributed setup 不是 blocker
 - CI runner 資源：k6 是 native binary、CPU / memory 用量比 JMeter（JVM）低、但 runner spec 要按 max VU 估
 
@@ -199,14 +199,14 @@ JMeter 在 CI 跑要：JVM provision、plugin install、`.jmx` upload、non-GUI 
 
 ## 容量與成本對照
 
-| 項目                    | JMeter            | k6 OSS                  | Grafana Cloud k6          |
-| ----------------------- | ----------------- | ----------------------- | ------------------------- |
-| Cost                    | Free (Apache)     | Free (Apache 2.0)       | $49+ / mo (Pro)           |
-| 單機 VU 容量            | ~500-1000 thread  | 30K-50K VU              | unlimited（cloud runner） |
-| Distributed             | master-slave 內建 | 不內建、需 k6-operator  | cloud-native              |
-| Result store            | JTL XML（local）  | stdout / JSON / Prom    | cloud retained            |
-| CI integration          | 需 packaging      | native CLI              | native + cloud            |
-| Multi-protocol coverage | 廣                | 窄（HTTP/gRPC/WS）+ xk6 | 同 OSS                    |
+| 項目                    | JMeter                              | k6 OSS                     | Grafana Cloud k6         |
+| ----------------------- | ----------------------------------- | -------------------------- | ------------------------ |
+| Cost                    | Free (Apache)                       | Free (Apache 2.0)          | $49+ / mo (Pro)          |
+| 單機 VU 容量            | 依施壓機量測（JVM thread）          | 依施壓機量測（Go runtime） | 由 cloud runner 數量決定 |
+| Distributed             | client-server（remote testing）內建 | 不內建、需 k6-operator     | cloud-native             |
+| Result store            | JTL XML（local）                    | stdout / JSON / Prom       | cloud retained           |
+| CI integration          | 需 packaging                        | native CLI                 | native + cloud           |
+| Multi-protocol coverage | 廣                                  | 窄（HTTP/gRPC/WS）+ xk6    | 同 OSS                   |
 
 對 dev-driven CI gate use case：k6 OSS 已經夠用、Grafana Cloud k6 在 *跨 region runner + result retention + dashboard 整合* 時才有 ROI。對既有 multi-protocol .jmx asset：考慮 Phase 3 hybrid stable state、不要強推 Phase 4。
 
@@ -215,7 +215,7 @@ JMeter 在 CI 跑要：JVM provision、plugin install、`.jmx` upload、non-GUI 
 - **multi-protocol coverage 是核心需求**：JDBC + JMS + LDAP + FTP 必要、xk6 extension 不夠成熟、留 JMeter
 - **QA 團隊維護 GUI .jmx**：QA 不寫 code、`.jmx` GUI 是團隊資產、貿然轉 k6 等於 throwaway QA team
 - **既有 multi-year .jmx asset 大量**：500+ scenario 全部翻譯成本 > k6 ergonomic 收益、考慮 Phase 3 stable hybrid
-- **Distributed run 需求極大（> 100K VU）但 ops budget 緊**：k6-operator on Kubernetes 不便宜、Grafana Cloud k6 對應 tier 也不便宜、JMeter master-slave 仍是 cost-effective 選項
+- **Distributed run 需求極大（> 100K VU）但 ops budget 緊**：k6-operator on Kubernetes 不便宜、Grafana Cloud k6 對應 tier 也不便宜、JMeter 的 remote testing（client／server）仍是 cost-effective 選項
 
 ## 下一步路由
 

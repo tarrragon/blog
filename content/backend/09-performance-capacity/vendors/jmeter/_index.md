@@ -1,7 +1,7 @@
 ---
-title: "Apache JMeter"
+title: "Apache JMeter 在效能容量的工具總覽：多 protocol 壓測、thread group 的負載模型與分散施壓"
 date: 2026-05-15
-description: "用 GUI、plugin 與多 protocol sampler 承接企業壓測資產的效能工程工具"
+description: "要用 JMeter 既有的 test plan 或多 protocol sampler 做容量探測、判斷 thread group 與 timer 產生的是哪一種負載，或在 JMeter 與 k6、Gatling、Locust 之間選容量工程的工具時讀"
 weight: 2
 tags: ["backend", "performance", "capacity", "vendor", "jmeter", "load-test"]
 ---
@@ -30,9 +30,9 @@ Legacy 測試資產適合保留 JMeter。既有 `.jmx` 檔案、listener、plugi
 
 判斷 JMeter deployment 是否健康、最少看四件事：
 
-- **Thread group 設計**：thread count / ramp-up / loop count / duration 是否反映真實流量模型、有沒有用 *Stepping Thread Group*（plugin）或 *Concurrency Thread Group* 控制 arrival rate、不是把 thread 當「user」直接綁
+- **Thread group 設計**：thread group 的種類決定負載模型是 open 還是 closed（[Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)）。內建 Thread Group、plugin 的 Stepping 與 Concurrency Thread Group 固定同時在線的 thread 數，是 closed model，受測服務變慢時實際的請求率跟著下降；要固定到達率時用 5.5 起內建的 Open Model Thread Group（官方標為 experimental），或 plugin 的 Arrivals Thread Group（碰到 Concurrency Limit 之後退回 closed）
 - **Listener 配置**：GUI listener（View Results Tree / Aggregate Report / Graph）只在 design / debug 階段開、正式跑必須改 *Simple Data Writer* 輸出 JTL、結果分析交給離線 HTML report 或外部 Grafana
-- **Distributed mode 設定**：單機 thread 上限約 3000-5000（受 JVM heap 與 thread context switch 限制）、超過要走 *master + slave*（remote engine）；slave 機器 plugin / JMeter version / JVM 參數要跟 master 一致、否則結果不可信
+- **Distributed mode 設定**：一台施壓機跑得了多少 thread 取決於那台機器的 CPU、heap、網路與 test plan 的內容，要在施壓機上量（[Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/)）：逐級加 thread，施壓機的 CPU、GC 暫停或網路先到頂的那一級就是這台的上限，超過時改走 remote testing（官方用語是 client／server，舊資料寫成 master／slave）；各台 server 的 plugin、JMeter 版本、JVM 參數要跟 client 一致、否則結果不可信
 - **GUI vs CLI 模式區分**：GUI 是 design / debug only、production load 一律走 `jmeter -n -t plan.jmx -l result.jtl`；GUI 跑大規模測試會把 listener 拉爆記憶體、結果反而失真
 
 四件事任一缺、就是 [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/) 邊界的待補項目。
@@ -60,16 +60,16 @@ JMeter 和 Locust 的主要差異是自訂能力。JMeter 依賴 plugin 與 samp
 
 JMeter 和 Vegeta 的主要差異是複雜度。Vegeta 適合快速 HTTP saturation probe；JMeter 適合多步驟、多 dependency 與可交接測試計畫。
 
-| 取捨維度        | JMeter                          | k6                          | Locust                        | Gatling                        |
-| --------------- | ------------------------------- | --------------------------- | ----------------------------- | ------------------------------ |
-| 描述語言        | XML（`.jmx`）+ GUI              | JavaScript                  | Python（class-based）         | Scala / Java / Kotlin DSL      |
-| Protocol 覆蓋   | HTTP/JDBC/JMS/SOAP/FTP/SMTP/TCP | HTTP/WebSocket/gRPC         | HTTP + 任何 Python lib custom | HTTP/JMS/MQTT                  |
-| 單機 throughput | 中（thread-per-user）           | 高（Go goroutine）          | 中（gevent / async）          | 高（Akka async）               |
-| Runtime model   | JVM thread                      | Go runtime                  | Python gevent                 | JVM async actor                |
-| CI 友善度       | 需 packaging `.jmx` + plugin    | 強 — 單一 JS file + CLI     | 強 — pip + Python file        | 強 — sbt / Maven + Scala file  |
-| GUI             | 完整 GUI（design / debug）      | 無（CLI only）              | Web UI（runtime monitoring）  | 無（HTML report only）         |
-| Distributed     | Master + Slave（remote engine） | k6 Cloud / Operator         | Master + Worker               | Gatling Enterprise / FrontLine |
-| 適合場景        | Enterprise QA + 多 protocol     | Dev / SRE + HTTP-heavy + CI | Python 團隊 + custom protocol | JVM 團隊 + 複雜 scenario       |
+| 取捨維度        | JMeter                            | k6                          | Locust                        | Gatling                        |
+| --------------- | --------------------------------- | --------------------------- | ----------------------------- | ------------------------------ |
+| 描述語言        | XML（`.jmx`）+ GUI                | JavaScript                  | Python（class-based）         | Scala / Java / Kotlin DSL      |
+| Protocol 覆蓋   | HTTP/JDBC/JMS/SOAP/FTP/SMTP/TCP   | HTTP/WebSocket/gRPC         | HTTP + 任何 Python lib custom | HTTP/JMS/MQTT                  |
+| 單機 throughput | 中（thread-per-user）             | 高（Go goroutine）          | 中（gevent / async）          | 高（Akka async）               |
+| Runtime model   | JVM thread                        | Go runtime                  | Python gevent                 | JVM async actor                |
+| CI 友善度       | 需 packaging `.jmx` + plugin      | 強 — 單一 JS file + CLI     | 強 — pip + Python file        | 強 — sbt / Maven + Scala file  |
+| GUI             | 完整 GUI（design / debug）        | 無（CLI only）              | Web UI（runtime monitoring）  | 無（HTML report only）         |
+| Distributed     | client + server（remote testing） | k6 Cloud / Operator         | Master + Worker               | Gatling Enterprise / FrontLine |
+| 適合場景        | Enterprise QA + 多 protocol       | Dev / SRE + HTTP-heavy + CI | Python 團隊 + custom protocol | JVM 團隊 + 複雜 scenario       |
 
 ## 操作成本
 
@@ -96,11 +96,11 @@ Evidence package 的核心用途是讓結果可審查。JMeter 測試計畫常�
 
 ## 進階主題
 
-**JMeter Plugins 生態**：[jmeter-plugins.org](https://jmeter-plugins.org/) 社群維護的 plugin 集合補齊原版 JMeter 的不足 — *Custom Thread Groups*（Stepping / Ultimate / Concurrency / Arrivals）讓 thread schedule 反映真實 arrival rate、*PerfMon* 抓 remote server CPU / memory、*Throughput Shaping Timer* 直接以 RPS 為目標而非 thread count、*Dummy Sampler* 拿來 mock dependency。Plugin Manager 統一安裝、CI image 要把 plugin 清單固定（`PluginsManagerCMD.sh install <plugins>`）避免漂移。
+**JMeter Plugins 生態**：[jmeter-plugins.org](https://jmeter-plugins.org/) 社群維護的 plugin 集合補齊原版 JMeter 的不足 — *Custom Thread Groups* 裡的 Stepping、Ultimate 與 Concurrency 讓 thread 數依排程變化，仍是 closed model，只有 Arrivals 依到達率建立 thread（碰到 Concurrency Limit 之後退回 closed）；*PerfMon* 抓 remote server CPU / memory；*Throughput Shaping Timer* 以每秒請求數為目標，但它只能延後 thread、不會多開 thread，thread 數不夠時到不了目標值（jmeter-plugins.org 的說明），plugin 文件的搭配方式是在 Concurrency Thread Group 的 Target Concurrency 填 Throughput Shaping Timer 的 Schedule Feedback Function（`${__tstFeedback(...)}`），由它依目標請求率增減 thread，上限是函式參數裡的最大 thread 數；*Dummy Sampler* 拿來 mock dependency。Plugin Manager 統一安裝、CI image 要把 plugin 清單固定（`PluginsManagerCMD.sh install <plugins>`）避免漂移。
 
-**BlazeMeter Cloud / Distributed execution**：自建 distributed mode（master + slave 跨多 VM）成本高 — slave 機器要同 JMeter 版本、同 plugin、同 JVM 參數、RMI port 開通、結果回傳網路足夠。[BlazeMeter](https://www.blazemeter.com/)（Perforce / 前 CA）是 JMeter SaaS、直接吃 `.jmx` 跑 cloud-scale 壓測、附 geo-distributed runner、適合短期 spike 測試不想自建 distributed cluster 的團隊。trade-off 是 vendor lock-in 跟 per-test 計費 — 長期高頻測試自建較划算。
+**BlazeMeter Cloud / Distributed execution**：自建 remote testing（一台 client 加多台 server VM）成本高 — 每台 server 要同 JMeter 版本、同 plugin、同 JVM 參數、RMI port 開通、結果回傳網路足夠。[BlazeMeter](https://www.blazemeter.com/)（Perforce / 前 CA）是 JMeter SaaS、直接吃 `.jmx` 跑 cloud-scale 壓測、附 geo-distributed runner、適合短期 spike 測試不想自建 distributed cluster 的團隊。trade-off 是 vendor lock-in 跟 per-test 計費 — 長期高頻測試自建較划算。
 
-**Distributed mode 細節**：master 機器發 control plane（thread group 配置、test plan 分發）、slave 跑 thread 並回傳 sample 結果。瓶頸常出在 *master 收結果*（RMI / 自訂 protocol），不是 slave 跑不動 — 大規模測試應該關掉 GUI listener、用 *Backend Listener* 把 metric 即時推到外部時序資料庫、master 只收彙整指標而非每個 sample。同步要點：所有 slave 用同一份 `.jmx` 與 test data CSV，CSV 不能依賴 master local path。
+**Distributed mode 細節**：client 負責控制（分發 test plan、啟動與停止），各台 server 跑 thread 並回傳 sample 結果；每台 server 跑的是完整的 test plan，所以 thread group 裡設定的 thread 數與到達率是每一台各自的量，合計要乘以 server 台數。瓶頸常出在 *client 收結果*（RMI），不是 server 跑不動 — 大規模測試應該關掉 GUI listener、用 *Backend Listener* 把 metric 即時推到外部時序資料庫、client 只收彙整指標而非每個 sample。同步要點：所有 server 用同一份 `.jmx` 與 test data CSV，CSV 要放在每一台 server 的同一個路徑，不能只放在 client。
 
 **Backend Listener + Grafana 整合**：JMeter 原生 *Backend Listener* 支援 InfluxDB / Graphite / Elasticsearch、把 active thread / response time / hit / error 即時推出去、Grafana 配 [official JMeter dashboard](https://grafana.com/grafana/dashboards/5496-apache-jmeter-dashboard/) 即時看 throughput / latency curve。這個組合取代 GUI listener、是 distributed mode 的標準觀測方式 — listener overhead 從 master 移到外部時序系統、master 不再被 GUI 拉爆。配合 [4 observability](/backend/04-observability/) 的時序資料庫已有時、JMeter metric 進同一個 Grafana、跟 application 端的 latency / error 並列、加速 [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/) 的對照判讀。
 
@@ -108,11 +108,11 @@ Evidence package 的核心用途是讓結果可審查。JMeter 測試計畫常�
 
 - **GUI 模式吃記憶體爆 / OOM**：GUI listener（View Results Tree / Graph）會把所有 sample 留在 heap、跑大規模就 OutOfMemoryError — 設計階段才開 GUI、正式跑切 `jmeter -n` non-GUI、listener 用 Simple Data Writer 寫 JTL 而非 in-memory aggregate
 - **Listener 拖累 throughput / 結果失真**：太多 listener 同時開、每個 sample 都被多個 listener 處理、JMeter 自身成為瓶頸 — 正式測試只留 Simple Data Writer + Backend Listener、結果分析離線跑 `jmeter -g result.jtl -o report/` 產 HTML
-- **Thread group 計算錯 / 真實流量對不上**：把 thread 當「user」直接設、忽略 think time + ramp-up、結果壓出來的是 thread 全速跑而非業務流量 — 改用 Concurrency Thread Group 或 Throughput Shaping Timer 直接以 RPS 為目標、配 Constant Timer 模擬 think time
-- **Distributed mode 結果跟單機對不上**：slave 機器 plugin / JMeter version / JVM heap 不一致、或 CSV 路徑只存在 master — 把 slave 環境 container 化（同 Docker image）、CSV 隨 `.jmx` 一起分發、`--remote-start` 統一啟動
+- **Thread group 計算錯 / 真實流量對不上**：把 thread 當「user」直接設、忽略 think time + ramp-up、結果壓出來的是 thread 全速跑而非業務流量；production 是到達率型的流量時，closed 型的 thread group 在受測服務變慢時自己減壓，量到的延遲比 production 低 — 改用 Open Model Thread Group 或 Arrivals Thread Group 固定到達率；只想限制請求率時用 Constant 或 Precise Throughput Timer，它們是 pacing，仍是 closed model（[Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)）
+- **Distributed mode 結果跟單機對不上**：server 的 plugin / JMeter version / JVM heap 不一致、或 CSV 只放在 client — 把 server 環境 container 化（同 Docker image）、CSV 隨 `.jmx` 一起放到每一台 server、`--remote-start` 統一啟動
 - **`.jmx` XML diff 不可 review / merge conflict 多**：多人同時改測試計畫、GUI 改完 XML 結構大變 — 拆 fragment（Test Fragment + Module Controller）、scenario 分檔、parameterization 走外部 CSV / properties、PR review 看截圖 + 跑結果而非 raw XML diff
 - **Plugin 版本漂移 / CI 結果不可重現**：dev 機器 plugin 跟 CI image 不同版 — 固定 plugin manifest、CI image 用 `PluginsManagerCMD.sh install-for-jmx plan.jmx` 從 plan 自動安裝、版本鎖到 image tag
-- **HTTPS / TLS 連線數爆炸**：JMeter 預設每 thread 一個 TLS handshake、large thread count 讓 server 的 CPU 耗在 TLS handshake 上、量到的是 TLS 的上限而不是 app 的 — 開 *HTTP Cache Manager* 跟 *KeepAlive*、必要時調 `httpclient4.idletimeout`
+- **HTTPS / TLS 連線數爆炸**：每個 thread 有自己的 SSL context，每一輪開頭是否關掉連線、重做 TLS handshake，由 thread group 的 *Same user on each iteration* 決定：勾選時保留連線，沒勾選時看 `httpclient.reset_state_on_thread_group_iteration`（預設 true，每一輪關掉連線並重設 SSL 狀態）。每一輪都重做 handshake 時，受測服務的 CPU 耗在 TLS 上、量到的是 TLS 的上限而不是 app 的；production 的用戶端會重用連線時，勾選 *Same user on each iteration* 並在 HTTP sampler 開 *Use KeepAlive*。HTTP Cache Manager 管的是回應快取，跟 TLS 連線無關。Open Model Thread Group 每次抵達建立一個新 thread、跑完一輪就結束，每次抵達都重做 handshake，這是它的模型本身（[JMeter 在容量探測的用法](/backend/09-performance-capacity/vendors/jmeter/jmeter-capacity-probing/)）
 
 ## 案例回寫
 

@@ -1,7 +1,7 @@
 ---
-title: "Apache JMeter"
+title: "Apache JMeter 在可靠性驗證的工具總覽：test plan、non-GUI 執行、分散施壓與 regression gate"
 date: 2026-05-01
-description: "老牌 load test 工具、GUI + plugins"
+description: "團隊用 JMeter 維護 test plan、要把它接進 release 前的效能 regression gate，或在 JMeter 與 k6、Gatling、Locust 之間選擇驗證流程的工具時讀"
 weight: 5
 tags: ["backend", "reliability", "vendor"]
 ---
@@ -14,7 +14,7 @@ JMeter 是 Apache 出品的老牌 load test 工具、承擔三個責任：GUI-dr
 
 1. 用 GUI 設計 test plan（thread group / sampler / listener / assertion）
 2. 跑 non-GUI mode 給 CI
-3. 用 Distributed mode（master / slave）擴張 VU
+3. 用 remote testing（官方用語是 client／server：client 分發 test plan、收結果，各台 server 執行 thread）擴張施壓量
 4. 用 JMeter Plugins Manager 加擴展
 5. 評估 JMeter vs 現代 CLI-first（k6 / Gatling / Locust）的選用
 
@@ -49,15 +49,15 @@ JMeter 是 Apache 出品的老牌 load test 工具、承擔三個責任：GUI-dr
 - `-n` non-GUI
 - `-t` test file / `-l` log file
 - `-e -o` 產生 HTML dashboard
-- Exit code 0 / 1（搭配 backend listener / assertion）
+- CLI 模式正常跑完時 exit code 是 0，sample 失敗與 assertion 失敗都不改變 exit code；gate 的通過與否要在 JMeter 之外讀結果判定（[JMeter 在效能 regression gate 的用法](/backend/06-reliability/vendors/jmeter/jmeter-performance-regression-gate/)）
 
 ### Distributed testing
 
 子議題：
 
-- Master / slave 配置
+- client／server 配置（官方用語；舊資料寫成 master／slave）
 - RMI port 設定
-- Result aggregation 在 master
+- 結果彙整在 client
 
 ## 進階主題（按需閱讀）
 

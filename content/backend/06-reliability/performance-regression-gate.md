@@ -69,13 +69,14 @@ CI 環境的噪音是 perf gate 最大的干擾源。噪音讓真實退化被遮
 
 主要噪音來源與對應控制方式：
 
-| 噪音來源               | 機制                                    | 控制方式                               |
-| ---------------------- | --------------------------------------- | -------------------------------------- |
-| Shared runner 鄰居效應 | 其他 job 搶 CPU / memory / I/O          | Dedicated runner 或 ephemeral instance |
-| Cold start             | JIT warmup、cache miss、connection 建立 | Warmup iteration（丟棄前 N 次結果）    |
-| GC pause               | 記憶體壓力觸發 stop-the-world GC        | 固定 heap size、GC log 同步收集        |
-| Network jitter         | 跨服務通訊的延遲波動                    | Local dependency（mock / sidecar）     |
-| Hardware 差異          | 不同世代 runner 的 CPU 效能不同         | Pinned hardware config / instance type |
+| 噪音來源               | 機制                                                                                                                           | 控制方式                                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| Shared runner 鄰居效應 | 其他 job 搶 CPU / memory / I/O                                                                                                 | Dedicated runner 或 ephemeral instance                                                           |
+| 共用受測環境           | 同一套 staging 在測試期間也接其他團隊的 QA 流量、其他測試或批次工作，受測服務與它的 database、cache 承受的負載不只來自這次測試 | 測試期間保留專用的受測環境；做不到時，記錄同一時段受測環境的其他流量，兩版比較時排除重疊的那幾段 |
+| Cold start             | JIT warmup、cache miss、connection 建立                                                                                        | Warmup iteration（丟棄前 N 次結果）                                                              |
+| GC pause               | 記憶體壓力觸發 stop-the-world GC                                                                                               | 固定 heap size、GC log 同步收集                                                                  |
+| Network jitter         | 跨服務通訊的延遲波動                                                                                                           | Local dependency（mock / sidecar）                                                               |
+| Hardware 差異          | 不同世代 runner 的 CPU 效能不同                                                                                                | Pinned hardware config / instance type                                                           |
 
 Variance 控制的投資報酬是讓 regression 門檻可以設得更敏感。當 variance 從 15% 降到 3%，gate 就能攔住 5% 的退化；否則只能設 20% 門檻，等於放過大量漸進退化。
 

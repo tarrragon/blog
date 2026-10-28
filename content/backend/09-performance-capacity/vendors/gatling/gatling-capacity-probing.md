@@ -19,7 +19,7 @@ slug: "gatling-capacity-probing"
 
 找飽和點時用哪一種注入模型，跟著 production 流量的來源走（判斷的方法在 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈可觀察訊號與例子〉）。面向公眾的服務用 open model；用 closed model 量的話，延遲目標內的到達率會被估高，飽和點找在比實際更高的位置。呼叫端數量固定的服務（固定 worker 數的批次程式、連線池大小固定的內部呼叫方）照同一張卡〈設計責任〉對 closed 型流量的做法：逐級增加同時在線的使用者數（`rampConcurrentUsers`、`incrementConcurrentUsers`），report 的讀法在〈從 report 判讀 knee point〉講 closed model 的那一段。這一節只寫 open model 的寫法，它的注入步驟放在 `injectOpen(...)` 裡，同一條注入鏈只能用 open model 的步驟。
 
-9.4 的 ramp-up 從平常時段的流量起按倍數加壓（1x、2x、4x、8x），每一級維持 5 到 10 分鐘看穩態。Gatling 有兩種寫法對應：
+[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)〈Ramp-up 測試方法〉的 ramp-up 從平常時段的流量起按倍數加壓（1x、2x、4x、8x），每一級維持 5 到 10 分鐘看穩態。Gatling 有兩種寫法對應：
 
 ```java
 // 倍數加壓：每秒抵達的使用者，每一級是前一級的兩倍，各維持 5 分鐘
@@ -75,11 +75,11 @@ Gatling 的 HTML report 有四張隨時間變化的圖用來判讀 knee point：
 - **cliff**：成功的回應數低於每秒請求數，同時在線數在同一級之內持續上升：抵達的比處理完的多，沒處理完的請求在累積。延遲隨時間一直往上走，接著出現逾時與錯誤；這之後服務呈現的是變慢、請求失敗、無回應還是程序終止，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)。
 - **失敗比例上升**：回應數（含失敗）跟得上請求數，但失敗的回應比例隨級數上升，分兩種情形。一種是受測服務在過載時直接拒絕（429、斷路器開路、立即回 503），失敗的回應很快回來，總回應數跟得上，同時在線數甚至下降。另一種是請求等到 Gatling 的逾時才失敗，同時在線數停在一個上限（每個使用者最多卡在逾時值那麼久）。兩種情形的延遲百分位數圖都看不到這些失敗的請求，因為那張圖只統計成功的請求，所以只看總回應數或延遲圖，會把這種狀態讀成線性區或 knee；判讀看的是失敗的比例。它屬於 cliff 之後的過載表現，同樣見 9.16。
 
-線性區與 knee 的判讀單位是每一級的穩態（略過級與級之間的升高）；cliff 在同一級之內就不持平，判讀看的是同一級之內的趨勢。接近 knee 時，排隊收斂到穩態的時間會拉長，同一級的同時在線數可能在 5 分鐘內仍在上升、只是越升越慢，這時比較那一級的後半與前半：增幅在收斂，就延長那一級再判，不急著讀成 cliff；5 分鐘是 9.4 建議的下限，不是固定值。
+線性區與 knee 的判讀單位是每一級的穩態（略過級與級之間的升高）；cliff 在同一級之內就不持平，判讀看的是同一級之內的趨勢。接近 knee 時，排隊收斂到穩態的時間會拉長，同一級的同時在線數可能在 5 分鐘內仍在上升、只是越升越慢，這時比較那一級的後半與前半：增幅在收斂，就延長那一級再判，不急著讀成 cliff；5 分鐘是 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 建議的下限，不是固定值。
 
 9.4〈Ramp-up 測試方法〉把「throughput 從線性成長轉成 sub-linear」列成 knee 的訊號，那是吞吐量隨負載增加的形狀。open model 下，吞吐量在受測服務處理得了的範圍內跟著設定的到達率走，到達率加一倍、成功的回應數也加一倍，所以 sub-linear 在 open model 的 report 上表現成成功的回應數低於每秒請求數，也就是 cliff 那一種，出現在 knee point 之後；在 open model 下，knee point 的訊號是更早出現的 p99 上升。
 
-closed model 的 report 讀法不同：同時在線數是設定值，不會隨服務變慢而上升，要看的是成功的每秒請求數與延遲。逐級增加同時在線數時，成功的每秒請求數跟著增加、延遲持平是線性區；某一級起成功的每秒請求數不再隨同時在線數增加、延遲開始上升，那一級的同時在線數就是 closed 型服務的飽和點，容量結論的單位是「同時在線多少個使用者時，每秒成功處理多少個請求、延遲多少」。服務快速回錯誤時，closed model 下總請求數會繼續上升，所以這裡同樣只看成功的那一部分。
+closed model 的 report 讀法不同：同時在線數是設定值，不會隨服務變慢而上升，要看的是成功的每秒請求數與延遲。逐級增加同時在線數時，成功的每秒請求數跟同時在線數同比例增加、延遲持平是線性區；某一級起成功的每秒請求數的增幅小於同時在線數的增幅、延遲開始上升，那一級是 closed 型服務的 knee：同時在線數固定時，吞吐量等於同時在線數除以一個使用者每輪花的時間（延遲加停頓，[Little's Law](/backend/knowledge-cards/little-law/)），增幅變小代表每個請求在受測服務裡花的時間開始變長。再加同時在線數而成功的每秒請求數不再增加時，已經越過服務的上限，多出來的使用者只是在受測服務裡排隊（[Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈設計責任〉）。容量結論的單位是「同時在線多少個使用者時，每秒成功處理多少個請求、延遲多少」。服務快速回錯誤時，closed model 下總請求數會繼續上升，所以這裡同樣只看成功的那一部分。
 
 knee 落在哪一級之後，同一段時間對照受測服務的資源指標，照 9.4〈Resource saturation 的六個維度〉找出先飽和的資源，定位的流程在 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)；那一項資源才是容量結論裡「要加什麼」的依據。
 
@@ -98,7 +98,7 @@ knee 落在哪一級之後，同一段時間對照受測服務的資源指標，
 - **各台同時開始、時鐘一致**：各台的 simulation 要同時啟動、系統時鐘要同步，每一級的開始與結束才對得齊；對不齊時，加總之後每一級的穩態被拉平，knee 看不清楚。
 - **哪些數字可以跨台加總**：Users start rate、每秒請求數、每秒回應數與同時在線數是計數，各台相加就是總數；百分位數不能相加或平均（[Percentile](/backend/knowledge-cards/percentile/) 的〈設計責任〉）。所以延遲從受測服務那一端讀，前提是受測服務的延遲指標用 histogram 型、可以跨副本加總之後再算百分位數，而且量測點跟延遲目標的量測點一致（目標訂在入口或用戶端時，就從入口或用戶端量）；受測服務的指標是各副本自己算好的百分位數時，各副本的 p99 平均起來同樣不是整體的 p99，這次探測的延遲結論就不可用。
 
-Gatling Enterprise 預設把 simulation 的注入步驟分配到各台施壓端、把結果合在一起；`noShard` 這個設定關掉分配，讓每台施壓端各自跑完整的注入步驟（官方文件〈Injection〉的 `noShard` 一節）。Enterprise 也能從不同的區域施壓。兩者的取捨在容量探測裡看的是需要的負載量與施壓的位置：單台送得出需要的到達率時 OSS 就夠；台數增加之後，OSS 要自己分配到達率、切分 feeder、對齊時鐘、加總計數、從受測服務那一端讀延遲，每多一台施壓端，這幾件事各多一份要核對的資料；要從幾個區域同時施壓時，OSS 還要在每個區域各自部署施壓端。選 Enterprise 時另有兩個條件：受測環境在私有網路裡時，雲端的施壓端進不去，要另外架設自管的施壓端；測試結果存在廠商的服務上，有資料存放規定的團隊要先確認可不可以。另一個選項是換用 OSS 版本就支援分散施壓的工具（Locust 的 master 與 worker、JMeter 的分散式模式），各工具的取捨在 [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)。
+Gatling Enterprise 預設把 simulation 的注入步驟分配到各台施壓端、把結果合在一起；`noShard` 這個設定關掉分配，讓每台施壓端各自跑完整的注入步驟（官方文件〈Injection〉的 `noShard` 一節）。Enterprise 也能從不同的區域施壓。兩者的取捨在容量探測裡看的是需要的負載量與施壓的位置：單台送得出需要的到達率時 OSS 就夠；台數增加之後，OSS 要自己分配到達率、切分 feeder、對齊時鐘、加總計數、從受測服務那一端讀延遲，每多一台施壓端，這幾件事各多一份要核對的資料；要從幾個區域同時施壓時，OSS 還要在每個區域各自部署施壓端。選 Enterprise 時另有兩個條件：受測環境在私有網路裡時，雲端的施壓端進不去，要另外架設自管的施壓端；測試結果存在廠商的服務上，有資料存放規定的團隊要先確認可不可以。另一個選項是換用 OSS 版本就支援分散施壓的工具（Locust 的 master 與 worker、JMeter 的 remote testing），各工具在一台施壓機的上限怎麼量、分散擴容用什麼方式的比較，在 [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/) 的規模能力那一個選型維度。
 
 ## feeder 資料的分佈、脫敏與快取命中率
 
@@ -106,7 +106,7 @@ feeder 是 Gatling 餵資料給 scenario 的機制，每個虛擬使用者從 fe
 
 feeder 的分佈偏差在容量探測裡的影響比在效能 regression gate 裡大。gate 比較前後兩版，兩次用同一份 feeder，偏差造成的偏移兩版都有，比較的是差距（gate 的盲區是這一版改到 feeder 沒走到的路徑，寫在 [Gatling 在效能 regression gate 的用法](/backend/06-reliability/vendors/gatling/gatling-performance-regression-gate/) 的 PR 與 nightly 那一節）。容量探測的結論是一個絕對的數字（處理得了每秒多少個使用者），偏差直接算進那個數字。所以 feeder 的資料量與 key 的分佈要對得上 production，包括很少被存取的長尾。
 
-feeder 的資料從 production 產生時，帳號、電話、地址這類個人資料要先匿名化或替換，並讓替換後的值的種類數（cardinality）跟 production 一致：種類數變少，同一批值被反覆請求，快取命中率又會偏高。做法見 9.2〈從 production log 抽 workload model〉裡脫敏處理的那一步（hash 加 salt、保留種類數）。資料也要定期重新產生：過期的 token、已經下架的商品讓請求回錯誤，錯誤率上升看起來像服務到了 cliff。Gatling 的 feeder 有依序（`queue`，預設）、打亂（`shuffle`）、隨機（`random`）與循環（`circular`）四種取用方式；依序與打亂兩種用完資料時，Gatling 報錯並中止這次執行，隨機與循環不會用完（官方文件〈Feeders〉）。
+feeder 的資料從 production 產生時，帳號、電話、地址這類個人資料要先匿名化或替換，並讓替換後的值的種類數（cardinality）跟 production 一致：種類數變少，同一批值被反覆請求，快取命中率又會偏高。做法見 [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/)〈從 production log 抽 workload model〉裡脫敏處理的那一步（hash 加 salt、保留種類數）。資料也要定期重新產生：過期的 token、已經下架的商品讓請求回錯誤，錯誤率上升看起來像服務到了 cliff。Gatling 的 feeder 有依序（`queue`，預設）、打亂（`shuffle`）、隨機（`random`）與循環（`circular`）四種取用方式；依序與打亂兩種用完資料時，Gatling 報錯並中止這次執行，隨機與循環不會用完（官方文件〈Feeders〉）。
 
 ## 讀取與寫入的高峰錯開的流量：多個 scenario 同時注入
 
@@ -114,7 +114,7 @@ feeder 的資料從 production 產生時，帳號、電話、地址這類個人�
 
 ## 量完之後寫成容量結論要記下的條件
 
-容量探測的結論寫成條件句：「在這個配置下、p99 低於多少毫秒的條件下，處理得了每秒多少個使用者，先飽和的是哪一項資源，距離飽和點還剩多少餘裕（[Headroom Budget](/backend/knowledge-cards/headroom-budget/)）」（9.4〈概念定位〉、〈Saturation 文件化：容量地圖〉）；closed 型服務的單位換成同時在線的使用者數。這個結論是 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) 的輸入，那一章拿 knee 與 headroom 換算成預期的峰值要幾個副本。條件句的每一項都要能回溯到這次執行：simulation 的版本、注入步驟與到達率、每個 scenario 的請求數、feeder 的來源與產生日期、受測環境的配置與版本、測試期間的副本數與 autoscaler 設定、負載打在 CDN 還是 origin、Gatling 的版本、施壓端的台數與規格、下游哪些服務是 mock。reviewer 從結論回到這些條件，判斷得了一次結果是受測服務的容量訊號，還是測試設計造成的偏差（feeder 偏差、施壓端飽和、副本數中途改變、下游 mock 的回應比實際的下游服務快）。欄位的組織方式照 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 的〈Evidence 欄位〉。
+容量探測的結論寫成條件句：「在這個配置下、p99 低於多少毫秒的條件下，處理得了每秒多少個使用者，先飽和的是哪一項資源，距離飽和點還剩多少餘裕（[Headroom Budget](/backend/knowledge-cards/headroom-budget/)）」（[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)〈概念定位〉、〈Saturation 文件化：容量地圖〉）；closed 型服務的單位換成同時在線的使用者數。這個結論是 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) 的輸入，那一章拿 knee 與 headroom 換算成預期的峰值要幾個副本。條件句的每一項都要能回溯到這次執行：simulation 的版本、注入步驟與到達率、每個 scenario 的請求數、feeder 的來源與產生日期、受測環境的配置與版本、測試期間的副本數與 autoscaler 設定、負載打在 CDN 還是 origin、Gatling 的版本、施壓端的台數與規格、下游哪些服務是 mock。reviewer 從結論回到這些條件，判斷得了一次結果是受測服務的容量訊號，還是測試設計造成的偏差（feeder 偏差、施壓端飽和、副本數中途改變、下游 mock 的回應比實際的下游服務快）。欄位的組織方式照 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 的〈Evidence 欄位〉。
 
 ## 延遲上升或吞吐量停滯時的排查順序
 
@@ -124,7 +124,7 @@ Gatling 的容量探測量到延遲上升或吞吐量停在某個值時，有幾
 2. **feeder 資料的有效性**：錯誤的明細裡有大量認證失敗或找不到資源（HTTP 401、404）時，先分辨成因：feeder 的資料過期時，這類錯誤從第一級起就以大致固定的比例出現；錯誤比例隨級數上升時，比較可能是負載造成的（認證服務本身飽和、讀取 replica 的延遲讓剛寫入的資料讀不到），那是容量的訊號。級數是依時間排的，所以資料在執行中途失效時（token 的有效期限比整次執行短、`circular` 的 feeder 繞完一圈之後重用只能用一次的資料），錯誤也會隨級數上升；分辨的依據是錯誤開始增加的時點對齊什麼：對齊級與級的交界，是負載造成的；對齊某個時鐘時間（token 到期的時刻）或 feeder 繞完一圈的時點，是資料的問題。拿 feeder 的產生日期與 token 的有效期限對照，或用新產生的資料重跑同一級，就能確認。這一項排在每秒請求數之前，因為過期資料造成的錯誤會經由 scenario 裡依回應決定是否繼續的步驟，讓下一項的每秒請求數跟著變少，也會讓 cliff 看起來提早出現。
 3. **每秒請求數與換算值**：每秒請求數低於 Users start rate 乘以 scenario 的請求數時（兩種注入模型都用 Users start rate 換算，它在 report 上都有），使用者實際送出的請求比流程少。Gatling 預設不會因為一個請求失敗就中止 scenario，所以這種落差來自 scenario 裡依回應決定是否繼續的步驟（`exitHereIfFailed`、依前一個回應決定要不要送下一個請求的條件分支）：受測服務開始回錯誤時，後面的請求沒有送出，受測服務收到的負載比換算的少。這時 knee 落在哪一級的判讀，要用實際的每秒請求數計算。
 4. **knee 所在的一級與先飽和的資源**：施壓端、feeder 的有效性與實際送出的請求都排除之後，照判讀 knee point 的方法找出 knee 所在的那一級，再對照受測服務的資源指標找出先飽和的資源。這一項的結果就是容量結論。
-5. **量到的容量與 production 經驗的差距**：量到的容量高於 production 實際觀察到的值時，查 feeder 的分佈與快取命中率、下游 mock 的回應時間，它們讓容量被估高。新服務或新區域沒有 production 的值可比時，比對的對象改成跟這次量測互相獨立的參照：測試期間的快取命中率對照 9.2 推出的 key 分佈預期會有的命中率、下游 mock 的回應時間對照真實依賴的延遲、另外加跑一次快取冷啟動或只打長尾 key 的變體；三者都做不到時，容量結論註明「未經 production 校準」。9.6 的模型拿這次的量測當輸入，不能反過來當成驗證這次量測的參照。這一項在 knee 之後查，因為要先有 knee 與先飽和資源的結論，才知道高估了多少。
+5. **量到的容量與 production 經驗的差距**：量到的容量高於 production 實際觀察到的值時，查 feeder 的分佈與快取命中率、下游 mock 的回應時間，它們讓容量被估高。新服務或新區域沒有 production 的值可比時，比對的對象改成跟這次量測互相獨立的參照：測試期間的快取命中率對照 [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/) 推出的 key 分佈預期會有的命中率、下游 mock 的回應時間對照真實依賴的延遲、另外加跑一次快取冷啟動或只打長尾 key 的變體；三者都做不到時，容量結論註明「未經 production 校準」。[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)拿這次的量測當輸入，不能反過來當成驗證這次量測的參照。這一項在 knee 之後查，因為要先有 knee 與先飽和資源的結論，才知道高估了多少。
 
 同樣看到 p99 變慢，用 Gatling 做 regression gate 時，排查先比對兩次執行的條件，再排除施壓端飽和與雜訊範圍，要判斷的是這一版有沒有退化、擋不擋 release，順序與這裡不同，寫在 [Gatling 在效能 regression gate 的用法：assertion 的門檻、ramp-up 與量測區間、注入模型、PR 與 nightly 的分工、證據保存與 gate 失敗的排查順序](/backend/06-reliability/vendors/gatling/gatling-performance-regression-gate/) 的排查順序那一節。
 
@@ -134,4 +134,4 @@ Gatling 的容量探測量到延遲上升或吞吐量停在某個值時，有幾
 - [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/)：注入步驟的到達率、feeder 的資料分佈與脫敏從這裡取。
 - [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)：找到 knee 之後，定位是哪一項資源、哪一段程式先飽和。
 - [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)：把容量結論與 headroom 換算成預期峰值要的副本數。
-- [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)：Gatling 與 k6、JMeter、Locust 在語言、引擎與報表上的取捨。
+- [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)：Gatling 與 k6、JMeter、Locust 在腳本表達能力、協議支援、規模能力、CI 整合、結果分析與學習曲線上的取捨。

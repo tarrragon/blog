@@ -1,7 +1,7 @@
 ---
-title: "Locust"
+title: "Locust 在可靠性驗證的工具總覽：user class、headless 執行、分散施壓與 regression gate"
 date: 2026-05-01
-description: "Python-based load test、distributed、易擴展"
+description: "Python 團隊要用 Locust 寫驗證用的負載測試、把它接進 release 前的效能 regression gate，或在 Locust 與 k6、Gatling、JMeter 之間選擇驗證流程的工具時讀"
 weight: 6
 tags: ["backend", "reliability", "vendor"]
 ---
@@ -90,9 +90,9 @@ Locust 是 Python-based load test 工具、承擔三個責任：Python class-bas
 
 子議題：
 
-- Headless mode + exit code
+- Headless mode + exit code：內建只在有失敗的請求或未處理的例外時回 1，延遲與吞吐量的門檻要在 `quitting` 事件裡自己判定、寫進 `process_exit_code`
 - CSV / JSON report
-- 對應 [6.8 Release Gate](/backend/06-reliability/release-gate/)
+- 門檻判定、預熱的請求與 gate 失敗的排查：[Locust 在效能 regression gate 的用法](/backend/06-reliability/vendors/locust/locust-performance-regression-gate/)；gate 在 release 流程裡的位置：[6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/)
 
 ### Distributed scaling
 
