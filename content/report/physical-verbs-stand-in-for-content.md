@@ -81,6 +81,7 @@ python3 scripts/physical-verb-scan.py content/backend        # 只掃指定路�
 - [#299 文章寫題目本身，不寫作者怎麼認識它](/report/article-writes-the-topic-not-the-authors-path-to-it/)——可信度那一類的上游：多數時候「站得住」整句不必寫，那張卡處理是否該寫，本卡處理必須寫時寫出什麼。
 - [#267 入口由違規形態寫不寫得成 pattern 決定](/report/keyword-list-needs-dominant-violating-sense/)——掃描清單的成員規則；本卡的腳本沿用同一組詞形，而分類是在命中之後才做。
 - [#372 正反問句嵌進句子當名詞](/report/a-not-a-question-as-noun-clause/)——評價謂語「對不對」佔住判斷標準，與足夠性斷言佔住的格相同。
+- [#387 結構譬喻頂替主詞與動詞](/report/structural-metaphor-replaces-actor-and-verb/)——同一個機制的另一組詞：空間、路線與居住的譬喻（線、面、接、承接、走、住在、落在）佔住主詞、單位名與動作。這組詞不在本卡的清單裡，來源是內容集合自己的組織方式，會經由範本傳給新稿。
 
 ## 判讀徵兆
 
