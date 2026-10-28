@@ -73,7 +73,7 @@ Robert Martin 的《Clean Architecture》常被歸在架構風格推廣書這一
 
 ## 系統架構的相鄰主題與接續閱讀
 
-架構決定的代價一半落在組織上——介面畫在哪裡，決定了哪兩個團隊要天天開會。團隊怎麼切的選書收在 [組織結構與團隊設計的選讀書目](../../software-management/topics/team-design/)，Team Topologies 與這裡的架構風格處理的是同一件事的兩端。
+架構決定的代價一半落在組織上——介面畫在哪裡，決定了哪兩個團隊之間要持續協調。團隊怎麼切的選書收在 [組織結構與團隊設計的選讀書目](../../software-management/topics/team-design/)，Team Topologies 與這裡的架構風格處理的是同一件事的兩端。
 
 往下一個尺度，模組與介面該怎麼切看 [設計判斷標準與日常實踐的選讀書目](../design-and-practice/)；架構定了之後既有程式碼怎麼搬過去看 [改既有程式的選讀書目](../changing-existing-code/)。
 
