@@ -430,6 +430,8 @@ weight: -1
 | [Workload Model](/backend/knowledge-cards/workload-model/)                              | production traffic shape 如何量化重播          | load test、capacity、forecast            |
 | [Open / Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)    | 壓測依到達率還是同時在線人數送出請求           | injection、coordinated omission、knee    |
 | [Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/)        | 瓶頸在受測服務還是在施壓端                     | injector、GC、ulimit                     |
+| [TLS Handshake 的成本](/backend/knowledge-cards/tls-handshake-cost/)                    | 建一條新連線的延遲與 CPU 成本、重用攤平多少    | Connect Time、keep-alive、TLS 終結層     |
+| [Gevent Monkey Patching](/backend/knowledge-cards/gevent-monkey-patching/)              | Locust 的 worker 為何被 C 擴充的 I/O 卡住      | greenlet、psycopg2、--processes          |
 | [Tail Latency](/backend/knowledge-cards/tail-latency/)                                  | p99 / p999 為何比平均更能反映 saturation       | SLO、GC、cross-zone                      |
 | [Hot Partition](/backend/knowledge-cards/hot-partition/)                                | 單一 partition 流量過熱、名義容量達不到        | DynamoDB、partition key、saturation      |
 | [Peak Forecast](/backend/knowledge-cards/peak-forecast/)                                | 預期峰值如何預測 — 容量公式輸入                | capacity、event、growth                  |

@@ -133,7 +133,7 @@ knee 落在哪一級之後，同一段時間對照受測服務的資源指標，
 - **JVM heap 與 GC**：JMeter 預設以 1 GB 的 heap 執行（啟動腳本的 `HEAP`，預設 `-Xms1g -Xmx1g`），預設的 GC 是 G1（`GC_ALGO`；5.6.3 的啟動腳本設 `MaxGCPauseMillis=100`，官方〈Getting Started〉仍寫 250）。open model 的同時在線數隨受測服務變慢而增加，thread 越多、heap 用得越多，GC 暫停也越頻繁，而暫停的時間算進那段時間內每一筆 sample 的延遲。heap 要給多少依 test plan 與 thread 數而定，官方沒有給數字；量法是開 GC log 跑一級，看暫停的頻率與長度在各級之間是否跟著上升。GC log 用 JVM 的 `-Xlog:gc*:file=<路徑>` 開啟（Java 9 以後的寫法），經由啟動腳本的 `JVM_ARGS` 環境變數傳進去，這個寫法沒有實跑。
 - **連線的重用與 TLS handshake**：thread group 的種類決定每個請求是否要重做 TLS handshake，量到的上限可能因此屬於終結 TLS 的那一層，機制、各 thread group 的行為與判讀寫在清單之後的幾段。
 
-連線與 TLS handshake 的機制：官方 Component Reference 寫明每個 thread 用自己的 SSL context，所以一個 thread 關掉連線的時機，決定了下一個請求是否要重做 TLS handshake。handshake 主要耗用受測端終結 TLS 那一層的 CPU（負載平衡器、反向代理或應用程式本身）。每個請求都重做 handshake 時，探測量到的 knee 可能落在那一層的 CPU 上，而不在應用程式上。
+連線與 TLS handshake 的機制：官方 Component Reference 寫明每個 thread 用自己的 SSL context，所以一個 thread 關掉連線的時機，決定了下一個請求是否要重做 TLS handshake。handshake 主要耗用受測端終結 TLS 那一層的 CPU（負載平衡器、反向代理或應用程式本身）。每個請求都重做 handshake 時，探測量到的 knee 可能落在那一層的 CPU 上，而不在應用程式上。握手的延遲與 CPU 成本怎麼來、重用連線攤平多少，以及 k6、Gatling、Locust 各自什麼時候建新連線，見 [TLS Handshake（TLS 握手）的成本與連線重用](/backend/knowledge-cards/tls-handshake-cost/)。
 
 各 thread group 關掉連線的時機與這篇的確認程度：
 
