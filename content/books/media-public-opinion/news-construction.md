@@ -32,6 +32,7 @@ Maxwell McCombs 的《議題設定》是這個理論提出者之一對自己半�
 
 - [三民（議程設置：大眾媒介與輿論，第 2 版，郭鎮之、徐培喜譯，北京大學出版社 2018 年簡體中文版）](https://www.sanmin.com.tw/product/index/006657098)
 - [三民（議程設置：新聞媒體與輿論，第 3 版，北京大學出版社 2023 年簡體中文版）](https://www.sanmin.com.tw/product/index/012577646)
+- [Amazon（Setting the Agenda: Mass Media and Public Opinion，第 3 版，Polity，2021）](https://www.amazon.com/Setting-Agenda-Media-Public-Opinion/dp/1509535802)
 
 ## 《幻象》：為了被報導而製造出來的假事件
 
@@ -51,6 +52,7 @@ Daniel Boorstin 的《幻象》提出假事件（pseudo-event）這個概念：�
 
 - [三民（幻象：偽真實的預製時代，王翎譯，麥田，2025）](https://www.sanmin.com.tw/product/index/014086218)
 - [三民（幻象，南海出版公司 2023 年簡體中文版）](https://www.sanmin.com.tw/product/index/012206954)
+- [Amazon（The Image: A Guide to Pseudo-Events in America，Vintage，1992 平裝）](https://www.amazon.com/Image-Guide-Pseudo-Events-America/dp/0679741801)
 
 ## 《做新聞》：新聞室把事件分類成新聞的工作程序
 
@@ -70,6 +72,7 @@ Gaye Tuchman 的《做新聞》進到新聞室裡，回答新聞是怎麼被做�
 
 - [三民（做新聞：現實的社會建構，中國人民大學出版社 2022 年簡體中文版）](https://www.sanmin.com.tw/product/index/010579121)
 - [三民（做新聞，麻爭旗、劉笑盈、徐揚譯，華夏出版社 2008 年簡體中文版）](https://www.sanmin.com.tw/product/index/000807986)
+- [Amazon（Making News，Free Press，1980 平裝）](https://www.amazon.com/Making-News-Gaye-Tuchman/dp/0029329604)
 
 ## 新聞建構各書的分工與沒收錄的新聞學教科書
 

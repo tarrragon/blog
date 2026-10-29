@@ -29,6 +29,7 @@ Christopher Achen 與 Larry Bartels 的《Democracy for Realists》挑戰他們�
 繁體與簡體中文版這一輪用「現實主義者的民主」「阿亨」「巴特爾斯」在三民、豆瓣與一般網路搜尋查不到；中文的書評有人把書名譯成《現實主義談民主》，那是書評裡的譯名，不是一個出版的譯本。平裝版加了作者的新後記。
 
 - [三民（Democracy for Realists，Princeton University Press，2017 平裝，附新後記）](https://www.sanmin.com.tw/product/index/006355772)
+- [Amazon（Democracy for Realists: Why Elections Do Not Produce Responsive Government，Princeton University Press，2017 平裝，附新後記）](https://www.amazon.com/Democracy-Realists-Elections-Responsive-Government/dp/0691178240)
 
 ## 《Not Born Yesterday》：人不容易被說服的反方論證
 
@@ -47,6 +48,7 @@ Hugo Mercier 的《Not Born Yesterday》站在跟《Democracy for Realists》常
 繁體中文版譯名《為什麼這麼荒謬還有人信？》（鍾沛君譯，商周，2020），書名跟原書名差很多，用原書名或作者的中文譯名梅西耶查得到。簡體中文版《你當我好騙嗎？》2024 年由浙江科學技術出版社出版，這一筆只在圖書館編目看到。
 
 - [三民（為什麼這麼荒謬還有人信？：揭開你我選擇相信與拒絕相信的心理學，鍾沛君譯，商周，2020）](https://www.sanmin.com.tw/product/index/007742597)
+- [Amazon（Not Born Yesterday: The Science of Who We Trust and What We Believe，Princeton University Press，2022 平裝）](https://www.amazon.com/Not-Born-Yesterday-Science-Believe/dp/0691208921)
 
 ## 《快思慢想》：刻板印象的認知心理學基礎
 

@@ -29,6 +29,7 @@ Renée DiResta 的《Invisible Rulers》描述一個由三方共同運作的系�
 繁體與簡體中文版這一輪用「Invisible Rulers」「隱形統治者」「迪瑞斯塔」「黛瑞斯塔」在三民、豆瓣與一般網路搜尋都查不到。
 
 - [三民（Invisible Rulers: The People Who Turn Lies into Reality，PublicAffairs，2024）](https://www.sanmin.com.tw/product/index/012994039)
+- [Amazon（Invisible Rulers: The People Who Turn Lies into Reality，PublicAffairs，2024 精裝）](https://www.amazon.com/Invisible-Rulers-People-Turn-Reality/dp/1541703375)
 
 ## 《Network Propaganda》：美國媒體生態極化的大規模資料分析
 
@@ -48,6 +49,7 @@ Yochai Benkler、Robert Faris 與 Hal Roberts 的《Network Propaganda》用大�
 
 - [OAPEN（Network Propaganda，開放取用全文的書目頁）](https://library.oapen.org/handle/20.500.12657/28351)
 - [三民（Network Propaganda，Oxford University Press，2018，平裝）](https://www.sanmin.com.tw/product/index/006943378)
+- [Amazon（Network Propaganda: Manipulation, Disinformation, and Radicalization in American Politics，Oxford University Press，2018 平裝）](https://www.amazon.com/Network-Propaganda-Manipulation-Disinformation-Radicalization/dp/0190923636)
 
 ## Gurri《The Revolt of the Public》：資訊爆炸瓦解機構權威的論證
 
@@ -66,6 +68,7 @@ Martin Gurri 的《The Revolt of the Public》處理的是李普曼「交給專�
 繁體與簡體中文版這一輪用「公眾的反叛」「Martin Gurri」「馬丁．格里」在三民、豆瓣與一般網路搜尋查不到；這組查詢命中的是 Ortega y Gasset 的《大眾的反叛》，那是另一本書。
 
 - [Stripe Press（The Revolt of the Public，2018 增訂版的書頁）](https://press.stripe.com/the-revolt-of-the-public)
+- [Amazon（The Revolt of the Public and the Crisis of Authority in the New Millennium，Stripe Press，2018 增訂版精裝）](https://www.amazon.com/Revolt-Public-Crisis-Authority-Millennium/dp/1732265143)
 
 ## 《The Filter Bubble》：個人化讓每個人看到不同世界的原始論述
 
@@ -85,6 +88,7 @@ Eli Pariser 的《The Filter Bubble》提出過濾泡泡這個概念：搜尋引
 
 - [三民（搜尋引擎沒告訴你的事，宋瑛堂譯，左岸文化，2012）](https://www.sanmin.com.tw/product/index/002815923)
 - [三民（過濾泡：互聯網對我們的隱秘操縱，中國人民大學出版社 2020 年簡體中文版）](https://www.sanmin.com.tw/product/index/007795032)
+- [Amazon（The Filter Bubble: How the New Personalized Web Is Changing What We Read and How We Think，Penguin，2012 平裝）](https://www.amazon.com/Filter-Bubble-Personalized-Changing-Think/dp/0143121235)
 
 ## 《娛樂至死》：電視時代的媒介形式批判
 
@@ -104,6 +108,7 @@ Neil Postman 的《娛樂至死》主張媒介的形式決定了什麼樣的內�
 
 - [三民（娛樂至死：追求表象、歡笑和激情的媒體時代，2016 增修版，蔡承志譯，貓頭鷹）](https://www.sanmin.com.tw/product/index/005760669)
 - [三民（娛樂至死，章艷譯，中信出版社 2015 年簡體中文版）](https://www.sanmin.com.tw/product/index/004958719)
+- [Amazon（Amusing Ourselves to Death: Public Discourse in the Age of Show Business，Penguin，2005 二十週年版平裝）](https://www.amazon.com/Amusing-Ourselves-Death-Discourse-Business/dp/014303653X)
 
 ## 平台時代各書的分工與沒收錄的平台研究
 

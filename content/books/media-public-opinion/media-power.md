@@ -32,6 +32,7 @@ Edward Herman 與 Noam Chomsky 的《製造共識》借用李普曼「製造同�
 
 - [三民（製造共識：媒體政治經濟學，沈聿德譯，野人文化，2021）](https://www.sanmin.com.tw/product/index/010124180)
 - [豆瓣書目（製造共識：大眾傳媒的政治經濟學，邵紅松譯，北京大學出版社 2011 年簡體中文版）](https://book.douban.com/isbn/9787301193280/)
+- [Amazon（Manufacturing Consent: The Political Economy of the Mass Media，Knopf Doubleday，2002 平裝）](https://www.amazon.com/Manufacturing-Consent-Political-Economy-Media/dp/0375714499)
 
 ## Habermas《公共領域的結構轉型》：公共討論空間的歷史與它被商業化的過程
 
@@ -53,6 +54,8 @@ Jürgen Habermas 的《公共領域的結構轉型》描述一個特定的歷史
 
 - [三民（公共領域的結構轉型，曹衛東等譯，聯經，2002）](https://www.sanmin.com.tw/product/index/000302106)
 - [三民（公共領域的新結構轉型與審議政治，趙崇任譯，麥田，2026）](https://www.sanmin.com.tw/product/index/015567791)
+- [Amazon（英譯本 The Structural Transformation of the Public Sphere，MIT Press，1991 平裝）](https://www.amazon.com/Structural-Transformation-Public-Sphere-Contemporary/dp/0262581086)
+- [Amazon（續篇英譯本 A New Structural Transformation of the Public Sphere and Deliberative Politics，Polity，2023）](https://www.amazon.com/Structural-Transformation-Public-Deliberative-Politics/dp/1509558942)
 
 ## 《沉默的螺旋》：感知輿論氣候之後的自我噤聲
 
@@ -72,6 +75,7 @@ Elisabeth Noelle-Neumann 的《沉默的螺旋》解釋一個常見的現象：�
 
 - [三民（民意：沈默螺旋的發現之旅，翁秀琪等譯，遠流，1994）](https://www.sanmin.com.tw/product/index/000105601)
 - [三民（沉默的螺旋：輿論．我們的社會皮膚，董璐譯，北京大學出版社 2021 年簡體中文版）](https://www.sanmin.com.tw/product/index/004079360)
+- [Amazon（英譯本 The Spiral of Silence: Public Opinion - Our Social Skin，第 2 版，University of Chicago Press，1993）](https://www.amazon.com/Spiral-Silence-Public-Opinion-Social/dp/0226589366)
 
 ## 媒介權力各書的分工與沒收錄的政治經濟學專書
 

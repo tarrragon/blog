@@ -31,6 +31,7 @@ Lippmann 的《輿論》提出了三個概念，這個書單裡後來一百年�
 - [三民（公眾輿論：訊息與真實的明辨，陳琪徨譯，大寫，2025）](https://www.sanmin.com.tw/product/index/014361607)
 - [三民（輿論，常江、肖寒譯，北京大學出版社 2018 年簡體中文版）](https://www.sanmin.com.tw/product/index/006792226)
 - [Project Gutenberg（Public Opinion，英文全文）](https://www.gutenberg.org/ebooks/6456)
+- [Amazon（Public Opinion，Free Press，1997 重印平裝）](https://www.amazon.com/Public-Opinion-Walter-Lippmann/dp/0684833271)
 
 ## 《幻影公眾》：公眾判斷能力的懷疑論與它縮小後的角色
 
@@ -50,6 +51,7 @@ Lippmann 的《幻影公眾》把《輿論》對公民的懷疑推得更遠。�
 
 - [三民（幻影公眾：民意與治理的慎思，許珈瑜譯，大寫，2025）](https://www.sanmin.com.tw/product/index/014361608)
 - [三民（幻影公眾，林牧茵譯，北京聯合出版公司 2020 年簡體中文版）](https://www.sanmin.com.tw/product/index/007956072)
+- [Amazon（The Phantom Public，Routledge，1993 平裝）](https://www.amazon.com/Phantom-Public-Library-Conservative-Thought/dp/1560006773)
 
 ## 杜威《公眾及其問題》：公眾透過溝通形成判斷的回應
 
@@ -69,6 +71,7 @@ John Dewey 的《公眾及其問題》是對李普曼的直接回應。他從另
 
 - [三民（公眾及其問題，復旦大學出版社 2015 年簡體中文版）](https://www.sanmin.com.tw/product/index/005083925)
 - [三民（公眾及其問題，新華出版社 2017 年簡體中文版）](https://www.sanmin.com.tw/product/index/006634199)
+- [Amazon（The Public and Its Problems: An Essay in Political Inquiry，Penn State University Press，2012）](https://www.amazon.com/Public-Its-Problems-Political-Inquiry/dp/0271055693)
 
 ## 伯內斯《宣傳》：把「製造同意」寫成公關實務的當事人宣言
 
@@ -88,6 +91,7 @@ Edward Bernays 的《宣傳》是這一組裡唯一的實務書。Bernays 被稱
 
 - [Readmoo（宣傳學，楊理然譯，麥田，2020，電子書）](https://readmoo.com/book/210160635000101)
 - [三民（宣傳，中國傳媒大學出版社 2014 年簡體中文版）](https://www.sanmin.com.tw/product/index/006755642)
+- [Amazon（Propaganda，Ig Publishing，2004 平裝）](https://www.amazon.com/Propaganda-Edward-Bernays/dp/0970312598)
 
 ## 李普曼與同時代各書的分工與沒收錄的書
 
