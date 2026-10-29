@@ -29,6 +29,7 @@ Charles Kindleberger 與 Robert Aliber 的《瘋狂、恐慌與崩盤》給出�
 讀得出價值的前提是對至少一次資產泡沫有過近距離的印象，親身參與或旁觀都算。缺這個印象時，書中的階段讀起來是一串發生在別人身上的事，而它要讓人認出來的是下一次。
 
 - [三民（瘋狂、恐慌與崩盤：一部投資人必讀的金融崩潰史，樂金文化，2020）](https://www.sanmin.com.tw/product/index/007742603)
+- [Amazon（Manias, Panics, and Crashes: A History of Financial Crises，第 8 版，Palgrave Macmillan，2023 平裝）](https://www.amazon.com/Manias-Panics-Crashes-History-Financial/dp/303116007X)
 
 ## 《大債危機》：債務循環的階段模板與分岔條件
 
@@ -47,6 +48,7 @@ Ray Dalio 的《大債危機》把 [《瘋狂、恐慌與崩盤》](#起點書�
 讀得出價值的前提是先讀過一次循環的敘事版本，起點書提供的程度就夠。直接從模板讀起時，那組圖表看起來像一套已經驗證的規律，而它的性質是假說。取得成本這一項有一個要注意的地方：作者的網站提供全書的免費電子檔，代價是留下電子郵件並訂閱後續內容。
 
 - [三民（大債危機：橋水基金應對債務危機的原則，商業周刊，2019）](https://www.sanmin.com.tw/product/index/007228915)
+- [Amazon（Principles for Navigating Big Debt Crises，Avid Reader Press，2022 精裝）](https://www.amazon.com/Principles-Navigating-Big-Debt-Crises/dp/1668009293)
 
 ## 《這次不一樣》：可以公開覆核的長期危機紀錄
 
@@ -65,6 +67,7 @@ Carmen Reinhart 與 Kenneth Rogoff 的《這次不一樣》提供《瘋狂、恐
 讀得出價值的前提是帶著一個具體問題進來。全書的主體是圖表與附錄資料，沒有問題時讀到的是一疊數字；帶著「現在這個情況跟哪幾次像」進來時，附錄查得到對照。
 
 - [三民（這次不一樣：800 年金融危機史，大牌出版，2020）](https://www.sanmin.com.tw/product/index/007763783)
+- [Amazon（This Time Is Different: Eight Centuries of Financial Folly，Princeton University Press，2011 平裝）](https://www.amazon.com/This-Time-Different-Centuries-Financial/dp/0691152640)
 
 ## 總體經濟各書的分工與沒收錄的教科書、預測書
 

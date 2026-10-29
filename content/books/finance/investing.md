@@ -42,6 +42,7 @@ Burton G. Malkiel 的《漫步華爾街》是本篇涵蓋面最廣的一本，�
 
 - [天瓏（漫步華爾街：超越股市漲跌的成功投資策略，50 週年增訂版，天下文化）](https://www.tenlong.com.tw/products/9786263551886)
 - [三民（A Random Walk Down Wall Street, 13th Edition, W. W. Norton, 2023）](https://www.sanmin.com.tw/product/index/010819535)
+- [Amazon（A Random Walk Down Wall Street，第 13 版，W. W. Norton，2023 精裝）](https://www.amazon.com/Random-Walk-Down-Wall-Street/dp/1324051132)
 
 ## Triumph of the Optimists 與 Expected Returns：要知道報酬數字本來長什麼樣時的選讀
 
@@ -61,6 +62,8 @@ Antti Ilmanen 的《Expected Returns》討論下一步：歷史報酬要怎麼�
 
 - [三民（Triumph of the Optimists: 101 Years of Global Investment Returns, Princeton University Press, 2002）](https://www.sanmin.com.tw/product/index/003107626)
 - [三民（Expected Returns: An Investor's Guide to Harvesting Market Rewards, John Wiley & Sons, 2011）](https://www.sanmin.com.tw/product/index/002199978)
+- [Amazon（Triumph of the Optimists: 101 Years of Global Investment Returns，Princeton University Press，2002 精裝）](https://www.amazon.com/Triumph-Optimists-Global-Investment-Returns/dp/0691091943)
+- [Amazon（Expected Returns: An Investor's Guide to Harvesting Market Rewards，Wiley，2011 精裝）](https://www.amazon.com/Expected-Returns-Investors-Harvesting-Rewards/dp/1119990726)
 
 ## 《智慧型投資人》：逐檔判斷的估值紀律
 
@@ -80,6 +83,7 @@ Jason Zweig 自 2003 年的修訂版起為各章加寫評註，2024 年的第三
 
 - [三民（智慧型投資人：價值投資權威著作，75 週年紀念．全新譯本，寰宇）](https://www.sanmin.com.tw/product/index/015104596)
 - [三民（The Intelligent Investor, 3rd Edition, Harper Business, 2024）](https://www.sanmin.com.tw/product/index/013460326)
+- [Amazon（The Intelligent Investor，第 3 版，Harper Business，2024 平裝）](https://www.amazon.com/Intelligent-Investor-Third-Investing-Financial/dp/0063423537)
 
 ## 《窮查理的普通常識》：做判斷的人與誤判心理
 
@@ -103,6 +107,7 @@ Charlie Munger 的《窮查理的普通常識》由 Peter Kaufman 編成，內�
 
 - [三民（窮查理的普通常識，紀念典藏版，商業周刊）](https://www.sanmin.com.tw/product/index/013152041)
 - [Stripe Press（Poor Charlie's Almanack，節選版）](https://press.stripe.com/poor-charlies-almanack)
+- [Amazon（Poor Charlie's Almanack: The Essential Wit and Wisdom of Charles T. Munger，Stripe Press，2023 精裝，節選版）](https://www.amazon.com/Poor-Charlies-Almanack-Essential-Charles/dp/1953953239)
 
 ## 投資各書的分工與沒收錄的操作法書、當期商品比較
 

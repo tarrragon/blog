@@ -74,6 +74,7 @@ James Bach 與 Michael Bolton 這本（Wiley，2025 年 11 月）是 Rapid Softw
 
 - [Wiley（Taking Testing Seriously: The Rapid Software Testing Approach）](https://www.wiley.com/en-us/Taking+Testing+Seriously:+The+Rapid+Software+Testing+Approach-p-00416398)
 - [天瓏（Taking Testing Seriously，原文版）](https://www.tenlong.com.tw/products/9781394253197)
+- [Amazon（Taking Testing Seriously: The Rapid Software Testing Approach，Wiley，2025 精裝）](https://www.amazon.com/Taking-Testing-Seriously-Software-Approach/dp/1394253192)
 
 ## Effective Software Testing：要一套推出測試案例的程序時的選讀
 
@@ -87,6 +88,7 @@ Maurício Aniche 這本（Manning，2022）處理的是四本立場書都沒有�
 
 - [Manning（Effective Software Testing: A Developer's Guide）](https://www.manning.com/books/effective-software-testing)
 - [天瓏（Effective Software Testing: A Developer's Guide，原文版）](https://www.tenlong.com.tw/products/9781633439931)
+- [Amazon（Effective Software Testing: A Developer's Guide，Manning，2022 平裝）](https://www.amazon.com/Effective-Software-Testing-developers-guide/dp/1633439933)
 
 ## 測試各書的分工與沒收錄的框架手冊、規則推廣書
 

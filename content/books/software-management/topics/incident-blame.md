@@ -43,6 +43,7 @@ Google 的《Site Reliability Engineering》裡的事後檢討章節，是 Dekke
 它的性質是單一組織的深度重建，形式是制度紀錄，因此提供的是一份可以參照的範本而非通則。這本書的完整描述在 [持續交付與交付效能的選讀書目](../continuous-delivery/)，此處只標出它在事故檢討這個主題裡的用途。全文免費線上閱讀。
 
 - [Google SRE 官方免費線上版](https://sre.google/books/)
+- [Amazon（Site Reliability Engineering: How Google Runs Production Systems，O'Reilly，2016 平裝）](https://www.amazon.com/Site-Reliability-Engineering-Production-Systems/dp/149192912X)
 
 ## 事故檢討各書的分工與沒收錄的安全科學書
 

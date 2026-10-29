@@ -30,6 +30,7 @@ Nick Maggiulli 的《持續買進》是本篇涵蓋面最廣的一本，把排�
 
 - [三民（持續買進：資料科學家的投資終極解答，存錢及致富的實證方法，商業周刊，2023）](https://www.sanmin.com.tw/product/index/011841001)
 - [三民（Just Keep Buying: Proven Ways to Save Money and Build Your Wealth, Harriman House, 2022）](https://www.sanmin.com.tw/product/index/010098953)
+- [Amazon（Just Keep Buying: Proven Ways to Save Money and Build Your Wealth，Harriman House，2022 平裝）](https://www.amazon.com/Just-Keep-Buying-Proven-wealth/dp/0857199250)
 
 ## 《致富心態》：財務決定偏離排序算式的行為成因
 
@@ -47,6 +48,7 @@ Morgan Housel 的《致富心態》處理的是排序算式管不到的行為：
 
 - [三民（致富心態：關於財富、貪婪與幸福的 20 堂理財課，全球暢銷千萬增訂版，天下文化，2026）](https://www.sanmin.com.tw/product/index/015197445)
 - [三民（The Psychology of Money, Harriman House, 2020）](https://www.sanmin.com.tw/product/index/007823405)
+- [Amazon（The Psychology of Money，Harriman House，2020 平裝）](https://www.amazon.com/Psychology-Money-Timeless-lessons-happiness/dp/0857197681)
 
 ## 《跟錢好好相處》：把支出換算成生命時間的排序方法
 
@@ -63,6 +65,7 @@ Vicki Robin 與 Joe Dominguez 的《跟錢好好相處》從支出端進入同�
 讀得出價值的前提是願意逐筆記錄一段時間的支出。跳過記錄而只讀方法時，換算沒有輸入。
 
 - [三民（跟錢好好相處：幸福的關鍵，是找到金錢與人生的平衡點，商業周刊，2023）](https://www.sanmin.com.tw/product/index/012048106)
+- [Amazon（Your Money or Your Life，2018 修訂版，Penguin Books，平裝）](https://www.amazon.com/Your-Money-Life-Transforming-Relationship/dp/0143115766)
 
 ## 個人理財各書的分工、沒收錄的當期規劃書與風險保障的缺口
 

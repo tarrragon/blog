@@ -45,6 +45,7 @@ Howard Schilit、Jeremy Perler 與 Yoni Engelhart 的《財報詭計》處理選
 讀得出價值的前提是讀得懂三張報表，起點書提供的程度就夠。缺這個底子時，書中的手法讀起來是一串名詞。
 
 - [三民（財報詭計：識破財報三表中的會計舞弊與騙局，全新修訂版，感電，2024，譯自 Financial Shenanigans 第四版）](https://www.sanmin.com.tw/product/index/012945324)
+- [Amazon（Financial Shenanigans: How to Detect Accounting Gimmicks and Fraud in Financial Reports，第 4 版，McGraw Hill，2018 精裝）](https://www.amazon.com/Financial-Shenanigans-Fourth-Accounting-Financial/dp/126011726X)
 
 ## 《大會計師教你從財報數字看懂經營本質》：從報表回推生意的經營判讀
 

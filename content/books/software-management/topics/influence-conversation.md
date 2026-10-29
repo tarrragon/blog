@@ -101,6 +101,8 @@ Heifetz 的繁體中文譯本有三本、分屬三家出版社，現在全部絕
 - [三民（Immunity to Change: How to Overcome It and Unlock the Potential in Yourself and Your Organization）](https://www.sanmin.com.tw/product/index/000760678)
 - [三民（變革抗拒：哈佛組織心理學家教你不靠意志力，啟動變革開關）](https://www.sanmin.com.tw/product/index/006309786)
 - [三民（Leadership on the Line，2017 年加寫新版序的版本，Heifetz 與 Linsky）](https://www.sanmin.com.tw/product/index/006112936)
+- [Amazon（Immunity to Change，Harvard Business Review Press，2009 精裝）](https://www.amazon.com/Immunity-Change-Potential-Organization-Leadership/dp/1422117367)
+- [Amazon（Leadership on the Line, With a New Preface，Harvard Business Review Press，2017 精裝）](https://www.amazon.com/Leadership-Line-New-Preface-Staying/dp/1633692833)
 
 ## 困難對話各書的分工與沒收錄的溝通技巧書
 
