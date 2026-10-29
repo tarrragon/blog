@@ -1,8 +1,8 @@
 # Blog 專案的寫作與工程規則
 
-這份檔案是 blog 專案寫作與工程規則的入口，讀者是在這個 repo 工作的 agent。本檔放每個 session 都會用到的規則：怎麼讀分冊、規則的優先序與住址、改動的級別、寫作類 skill 的叫用、回覆語言、提交與推送（含要先問使用者的情形與沒有使用者明說就不做的動作）、掃描工具的零輸出、決策分析的 WRAP 流程，以及各 agent 讀到的檔案。各類工作才會用到的規則放在 `docs/rules/` 的分冊。
+這份檔案是 blog 專案寫作與工程規則的入口，讀者是在這個 repo 工作的 agent。本檔放每個 session 都會用到的規則：怎麼讀分冊、規則的優先序與住址、改動的級別、寫作類 skill 的叫用、回覆語言、提交與推送（含要先問使用者的情形與沒有使用者明說就不做的動作）、掃描工具的零輸出、破壞性指令的目標寫在指令文字裡（以及檢查與刪除分成兩次執行）、決策分析的 WRAP 流程，以及各 agent 讀到的檔案。各類工作才會用到的規則放在 `docs/rules/` 的分冊。
 
-拆成入口與分冊的原因是讀取上限：Codex 自動讀專案指令檔時有位元組上限（`project_doc_max_bytes`，預設 32 KiB），它載入的全部 AGENTS.md 合起來算進同一個上限，超過的部分不會進它的 context。所以本檔要維持在這個上限以內（`wc -c AGENTS.md` 小於 32768），新增的規則寫進對應的分冊。
+拆成入口與分冊的原因是讀取上限：Codex 自動讀專案指令檔時有位元組上限（`project_doc_max_bytes`，預設 32 KiB），它載入的全部 AGENTS.md 合起來算進同一個上限，超過的部分不會進它的 context。所以本檔要維持在這個上限以內（`wc -c AGENTS.md` 小於 32768），新增的規則寫進對應的分冊；任何 session 都可能碰到、觸發條件是一個動作而不是這次要改的路徑、所以〈怎麼讀分冊〉的路由表對不到的規則（例如執行破壞性的 shell 指令時），寫進本檔。
 
 ## 怎麼讀分冊
 
@@ -114,7 +114,7 @@ commit 之後直接推送，不另外問使用者：使用者已經授權推送�
 
 ### 沒有使用者明說就不做的動作
 
-這一節是這類動作的唯一住址。下列動作沒有使用者在這次的指示裡明說就不做，也不主動提議、不停下來問：`skill-sync push --force`；替一支 skill 建 `content/skills/` 的公開鏡像；把 `docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 推上共用庫（那些 skill 依賴本 blog 的結構，推上去之後別的專案用不了）；把工作樹裡不是這次自己做的改動還原或蓋掉（`git checkout --`、`git restore`、`git stash`、用 Write 整份重寫），那些改動可能是另一個 session 還沒提交的工作，蓋掉之後沒有任何紀錄；搬移或改名 `content/` 底下含 `_index.md` 的資料夾（收進或移出大分類、建立或撤掉大分類、在模組之間搬子資料夾；`docs/rules/content-folders.md`〈文章放在哪一個資料夾〉），首頁的分類結構、網址與讀者的閱讀路線由使用者決定，搬錯了再搬一次時每一頁要多一筆 `aliases`；使用者提出要搬之後，跑 dry-run 與 `bin/empty-sections` 提供材料不算主動提議。
+這一節是這類動作的唯一住址。下列動作沒有使用者在這次的指示裡明說就不做，也不主動提議、不停下來問：`skill-sync push --force`；替一支 skill 建 `content/skills/` 的公開鏡像；把 `docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 推上共用庫（那些 skill 依賴本 blog 的結構，推上去之後別的專案用不了）；把工作樹裡不是這次自己做的改動還原或蓋掉（`git checkout --`、`git checkout .`、`git restore`、`git stash`、`git reset --hard`、`git clean`、用 Write 整份重寫），那些改動可能是另一個 session 還沒提交的工作，蓋掉之後沒有任何紀錄；搬移或改名 `content/` 底下含 `_index.md` 的資料夾（收進或移出大分類、建立或撤掉大分類、在模組之間搬子資料夾；`docs/rules/content-folders.md`〈文章放在哪一個資料夾〉），首頁的分類結構、網址與讀者的閱讀路線由使用者決定，搬錯了再搬一次時每一頁要多一筆 `aliases`；使用者提出要搬之後，跑 dry-run 與 `bin/empty-sections` 提供材料不算主動提議。
 
 ### 延到工作結束之後的動作
 
@@ -125,6 +125,19 @@ commit 之後直接推送，不另外問使用者：使用者已經授權推送�
 grep、lint、檢查腳本回報零命中有兩種成因：目標確實不存在，或是指令沒有在掃（pattern 打錯、shell 的 `|` 被轉義、變數沒有切詞、zsh 的 glob 沒有匹配而整條指令沒執行、腳本裡找不到工具、掃描範圍不含目標、餵進去的檔案集是空的）。所以把零輸出當成「通過」之前，先做兩件事：確認餵進去的檔案集不是空的（行數或檔案數不是 0），再餵一個已知會命中的輸入（正對照，positive control），確認它在這個寫法下會命中。正對照沒有命中時，修指令，不採用那次的零輸出。
 
 `bin/changed-lines`、`bin/lint-delta`、`bin/session-edits-check`、`bin/skill-version-check`、`bin/term-prompt-count`、`bin/report-weight`、`bin/content-move`、`bin/empty-sections`、`bin/alias-check` 在結尾印計數，格式寫在各工具的檔頭。交給它檔案清單的工具，計數要對得上交給它的數量；自己找檔案的工具（`bin/term-prompt-count`、`bin/report-weight`、`bin/content-move`、`bin/empty-sections`、`bin/alias-check`），代表掃描範圍的那一個計數是 0、或 stderr 列出讀不到的來源時，檔案集不對；那一個計數是 `content-move` 的 `page(s) moved`、`empty-sections` 的 `section(s) scanned`、`alias-check` 的 `page(s)`，同一行的其他計數（`collision(s)`、`empty`）是 0 代表通過。計數沒有印出來，代表工具中途中止，不代表通過。
+
+## 破壞性指令的目標寫在指令文字裡，檢查與刪除分成兩次執行
+
+這一節管 agent 執行的 shell 指令，以及規則檔、skill、`bin/` 與 `.githooks/` 的 shell 腳本裡的指令；既有的指令只在這次改到那一行時才照改。`bin/` 與 skill 裡的 Python 由程式算出路徑、由各自的測試驗證，不在此列；容器、雲端資源這類檔案以外的刪除也不在此列；agent 執行 repo 內的工具（`bin/skill-mirror`、`mdtools fmt`、`bin/content-move --apply`）時，被改寫的檔案由工具自己決定、由它的檔頭與測試管（有預覽或 dry-run 的先跑那一步），也不套本節的觸發；`content/` 文章裡給讀者照做的示範指令不套本節。「一次執行」指一次工具呼叫（Claude Code 的一次 Bash 呼叫、Codex 的一次指令執行），裡面用 `;`、`&&`、`|` 串起來的都算同一次。「暫存目錄」指 repo 以外、這次工作專屬的目錄：Claude Code 是系統提示列出的 scratchpad，其他 agent 用 `mktemp -d` 新建；腳本自己用 `mktemp` 建的檔與目錄也算。
+
+**破壞性動作的目標寫在指令文字裡。** 破壞性動作依效果判：刪除、移動或覆寫一個已經存在的檔案，例如 `rm`、`mv`、`git rm`、`git clean`、`find … -delete`、`find … -exec rm`、`xargs rm`、`rsync --delete`、`sed -i`、`truncate`，以及 `>`、`tee`、`cp` 寫到已經存在的檔案；寫進暫存目錄裡、這次工作自己建的檔（新建或重跑時覆寫，例如 `bin/changed-lines … > <暫存目錄>/added.txt`）與 `/dev/null` 不算。目標由變數、字串截取、命令替換、glob、`find` 的條件或前一段管線決定時，核准這次工具呼叫的使用者、事後讀 log 與 transcript 的人在指令文字裡讀不到要刪的路徑，而審核的實際動作是讀指令的文字。展開失敗也不報錯，只改變刪除範圍：`S` 為空時，`rm -rf ${S%/content/books}/` 展開成 `rm -rf /`（其餘的展開結果在依據卡）。
+
+- **觸發**：破壞性動作的目標不是寫在指令文字裡的絕對路徑。常見的形態：目標含 `$`（`$HOME` 也算）、反引號或 glob；由 `find` 的條件、管線、檔案內容（`xargs rm < list.txt`）或直譯器（`python3 -c`）算出；相對路徑，而同一次執行的開頭沒有 `cd` 到一個字面的絕對路徑（cwd 不在指令文字裡，前一次呼叫的 `cd` 會延續）。`~` 開頭的路徑算絕對路徑。
+- **處置**：改成字面的絕對路徑。目標要靠 glob 或條件選出時（agent 自己下的 `for` 迴圈也是），先在一次執行裡只列出目標（`ls`、不帶 `-delete` 的 `find`），讓核准刪除的人看過那份清單，下一次執行用清單上的字面路徑刪；清單長到寫不進一條指令時，下一次執行用同一個條件加 `-delete`，條件跟列出清單的那一次逐字相同。shell 腳本裡的相對路徑照腳本檔頭寫明的執行目錄起算，不套觸發裡相對路徑那一種。shell 腳本（含腳本裡的迴圈）用變數組出目標時，組成路徑的每一個變數都寫成 `${X:?}`（截取之前的 `${S:?}`、`${SKILL_NAME:?}`），只檢查組好的那個字串擋不到空值：`content/skills/${SKILL_NAME}/skill.md` 在名字為空時仍然不是空字串。截取的結果另存一個變數、印到 stderr，再交給刪除：非互動的腳本裡沒有人在刪除之前核准，印出來的路徑讓事後讀 log 的人看得到實際刪了什麼。`git clean` 不跑：它刪的是工作樹裡的未追蹤檔，其中可能有另一個 session 還沒提交的新檔（〈沒有使用者明說就不做的動作〉）；刪自己建的未追蹤檔，用 `rm` 加字面的絕對路徑。
+- **檢查與刪除分成兩次執行**：掃描、正對照、驗證這類唯讀的指令（〈掃描工具的零輸出〉的正對照就是一種）不在同一次執行裡串進刪除或覆蓋。串在一起時，核准的人看的是「這次在檢查什麼」，核准檢查就核准了那次刪除。要清理時另開一次只做清理的執行，讓核准的人知道自己在核准刪除。shell 腳本在一次執行裡先檢查、再清理自己建的暫存檔不受這一項限制，照「處置」那一條的變數寫法處理。
+- **手動建的正對照假資料留著不刪**：放在暫存目錄底下的新子目錄（`mktemp -d <暫存目錄>/pc.XXXXXX`），重跑時再建一個。暫存目錄本來就跟專案隔開，刪除換到的整潔抵不過它帶進來的風險。工具與測試在自己的 `finally`、`tearDown` 裡清掉自己建的暫存目錄不在此列。檢查的工具只讀 repo 工作樹、假資料非放進 repo 不可時，檢查跑完另開一次執行、用字面路徑刪掉，提交之前用 `git status --short` 確認它不在工作樹裡：留在 `content/` 的假資料會被 pre-commit 掃到，擋下其他 session 的提交。
+
+依據：[破壞性指令的目標用變數的字串截取組出來時，審核的人看不到要刪什麼；空值、尾斜線與截取對不上會改變刪除範圍，而這類清理夾在檢查指令裡時，核准一次檢查就核准了一次刪除](/report/destructive-target-built-by-string-expansion/)。
 
 ## 決策分析：WRAP
 

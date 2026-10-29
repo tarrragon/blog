@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.49.0 — bank〈結構譬喻頂替主詞與動詞〉跟規則檔 sentences.md 新節對齊：規則類文件的未判定範圍從兩個片語改成依用法分類（承接、住在、落在描述路由目的地、資料夾、或規則與推導寫在哪個檔），處置加「改寫到這些行時保留原詞」；合規邊界補讀者或改動「落在」某個條件、選項或分類；描述系統、市場或領域對象的命中多半合規，仍逐處問主詞做不做得了這個動作。〈替讀者假設情境與頻率〉的來源寫法從「依來源（書、文件）中的分析」改成寫出來源的名字（前者的「來源」缺所屬）。principle 卡同步。
+
 **Version**: 1.48.0 — 字句層 keyword bank 新增兩類：〈結構譬喻頂替主詞與動詞〉（集合的組織譬喻「線、面、接、承接、走、住在、落在、承擔的角色」與轉化句「把 X 從印象變成數字」「X 的決定落在 Y」佔住主詞、單位名與動作；三種形態的修法；同一組詞在其他集合也大量出現，先用 pattern 掃再補集合特有的詞；與〈連貫靠句句推進〉的「承接」分工；合規邊界列實際會命中的形態）（判讀分兩種問法：空間與搬運譬喻先問是不是集合的結構，轉化句與「承擔的角色」改問主詞做不做得了這個動作；替換詞再掃一次、不全篇換成同一個詞；補集合特有的詞先抽樣、違規義項佔多數才加，逐類表寫出補了什麼）與〈替讀者假設情境與頻率〉（「每週都會遇到的那場對話」把條件寫成讀者的日常；寫成職責或條件並寫出前提，誇大的頻率換回機制；判讀問這個頻率描述的是誰的經歷，條件要是讀者對照得了的事實；主要防線是異源冷讀，pattern 是輔助）；〈連貫靠鞏固形狀〉與〈連貫靠句句推進〉的範例與修法名稱拿掉「承接」，改寫出實際的動作；`managing-article-collections` 的場景導讀模板拿掉「接住」，補一句模板會跟著範本進正文；〈批量 sibling 寫作的生成端輪替〉補一段：範本與生成端自己的習慣都可能把同一組句型缺陷帶進新稿，寫之前掃範本、寫完掃自己的初稿；frontmatter description 的 bank 摘要補兩類；新增 principle 卡 `structural-metaphor-replaces-actor-and-verb`、`sentence-assumes-the-readers-situation`；`physical-verbs-stand-in-for-content`、`no-fabricated-experience-or-attribution`、`cadence-homogenization`、`coherence-by-advancing-not-recapping`、`topic-first-sentence-drops-actor-and-timing`、`word-choice-fits-concept-attributes` 補連到新卡的相關原則。
 
 **Version**: 1.47.0 — `managing-article-collections.md` 新增〈同一個對象在兩個集合各有一頁〉：兩頁各自從所屬集合的讀者要做的判斷往回寫，逐段依序問兩件事（是不是操作細節；其餘段落原封不動放進另一頁還成立嗎），分成操作細節、知識卡（單一概念；沒有知識卡系統時寫成概念短頁）、對象層深度內容、本集合觀點、寫錯頁的另一集合觀點；集合規定的固定章節照工程師的視角寫出不同的順序與權重；兩頁互相連結；重疊時不合併；SKILL.md 路由表加這個觸發；新增 principle 卡 `same-tool-page-per-module-derives-from-the-modules-question`。

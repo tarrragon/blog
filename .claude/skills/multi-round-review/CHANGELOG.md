@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.34.0 — round-2-cadence〈2-B′ 冷讀〉加一問：稿件寫到讀者的處境或一本書、一個做法的用途時，問這一句描述的處境沒經歷過的讀者對不對得上（替讀者假設經歷或頻率的句子對同源 reviewer 讀起來是順的），判斷標準連到 compositional-writing bank〈替讀者假設情境與頻率〉。
+
 **Version**: 2.33.0 — round-1-compliance〈1-A〉的字句層摘要拿掉「這裡沒有列到的至少有…四類」這份封閉列舉：compositional-writing 的 bank 新增類別之後它就過期，執行者照摘要跑會漏掉新類別；改成類別清單以 bank 那一節為準。
 
 **Version**: 2.32.0 — round-2-probes〈探針的處置門檻〉加「規則類文件的探針量讀錯，不量歧義數」：要探針列出有兩種讀法的位置是審查題，同檔兩批總數 20 與 13；改用封閉案例題加預期答案、換題目先量雜訊、同一組案例當回歸測試，停止條件改看讀錯。integrating-findings〈修完拿任務重走〉加修法預算、保守預設與交給異源讀者驗收。新增 principle 卡 listing-ambiguities-is-a-review-task-not-a-probe，rule-fixes-pass-per-sentence-and-collide-per-case 同步修法。
