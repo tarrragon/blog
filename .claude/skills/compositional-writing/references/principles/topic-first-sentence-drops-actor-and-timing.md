@@ -80,3 +80,4 @@
 - [noun-without-its-owner-passes-the-slot-check](noun-without-its-owner-passes-the-slot-check.md)——那一張的缺口在名詞的所屬，本卡在動作者與時機；兩者都是主詞謂語都在而讀者還原不出命題。
 - [teaching-is-not-lecturing](teaching-is-not-lecturing.md)——形態二「省略主詞與受詞」是最早的記錄；本卡是它在被動句、指標主詞與條件句上的延伸。
 - [question-answer-frame-blurs-problem-issue-request](question-answer-frame-blurs-problem-issue-request.md)——那一張是系統元件被寫成回答問題的一方；本卡是指標被寫成做決定的一方，兩者都把動作交給了不能做這個動作的主詞。
+- [structural-metaphor-replaces-actor-and-verb](structural-metaphor-replaces-actor-and-verb.md)——限定本卡「誰做」那一問的適用邊界：「這條線處理的是……」的動作者那一格填了名詞，照本卡逐字找會找到「線」而放行；那張卡補上再問一次這個名詞是不是集合結構的譬喻、它做不做得了這個動作。

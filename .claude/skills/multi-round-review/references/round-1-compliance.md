@@ -14,7 +14,7 @@
 
 專案寫作規範（如 AGENTS.md / markdown-writing-spec）/ compositional-writing 規範遵循
 
-- **字句層 grep（必跑）**——**下面是摘要、不是完整清單**。完整的一份在 `compositional-writing` 的「字句層 keyword bank（完整清單）」節，類數以那一節為準；這裡沒有列到的至少有澄清式框架、歸因語氣、宣導語氣、脈絡懸置（等下再討論 / 前面兩個小節 / 用一句話總結 / 列舉鳥瞰）四類。派 reviewer 時把它導去那一節逐類跑，不要只跑這裡列到的：
+- **字句層 grep（必跑）**——**下面是摘要、不是完整清單**。完整的一份在 `compositional-writing` 的「字句層 keyword bank（完整清單）」節，類別清單以那一節為準，這裡不列「還缺哪幾類」（那份清單每加一類就過期）。派 reviewer 時把它導去那一節逐類跑，不要只跑這裡列到的：
   - 正向陳述優先：`rg "不[行可是要能該支對符夠必]|無法|沒[做有]|而非|而不是" <files>` — 不主導段落的少量負向（反例對照）可保留、主要敘述要正向
   - 口語修辭（`compositional-writing` 的 colloquial-rhetoric 卡）：`rg "其實|實務上|真的|碰巧|立刻撞牆|沒事" <files>`
   - 地區用語（`compositional-writing` 的 regional-terminology 卡）：單詞層 `rg "集群|默認|質量|視頻|函數|文件夾|接口" <files>`；慣用語層 `rg "拍腦袋|拍板|靠譜|給力|接地氣|一波|死磕|躺平|內卷" <files>`（已知個案、**非窮舉**——慣用語是開放集合、同源 reviewer 對這層有結構盲區、回報「clean」不可當真、新個案要靠目標地區讀者冷讀；見 compositional-writing 的 `regional-idioms-evade-keyword-bank` principle）
