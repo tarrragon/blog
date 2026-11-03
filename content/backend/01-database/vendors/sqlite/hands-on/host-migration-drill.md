@@ -270,7 +270,7 @@ docker volume ls -q | grep -E '^(lab-|oldhost_|newhost_|uidlab_)'
 
 ## 未涵蓋的範圍：附件資料夾、物件儲存的 replica、入口切換與大型資料庫
 
-- **附件資料夾**：應用程式把附件存成檔案、資料庫只記路徑時，Litestream 只複製資料庫，附件資料夾要用另一個工具備份與搬遷，還原後要比對資料庫裡的路徑與實際存在的檔案。
+- **附件資料夾**：應用程式把附件存成檔案、資料庫只記路徑時，Litestream 只複製資料庫，附件資料夾要用另一個工具備份與搬遷，還原後要比對資料庫裡的路徑與實際存在的檔案。用 restic 這類加密備份工具時，新主機要拿到它的密碼才打得開備份，密碼只存在舊主機上時換機後就打不開；sidecar 容器的密碼操作在 [restic sidecar 容器的密碼操作](/backend/07-security-data-protection/hands-on/restic-sidecar-password-operations/)，密碼的保管在 [7.45 加密備份的密碼、key 檔與主金鑰](/backend/07-security-data-protection/backup-encryption-password-and-master-key/)。
 - **物件儲存的 replica**：存取憑證的權限與物件版本保留決定備份能不能被覆寫，失敗推演在 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/) 的異地備份那一段。
 - **兩台實體主機與網路入口的切換**：Tailscale 這類入口在換機時要把裝置名稱或 DNS 指到新主機，這次沒有涉及。
 - **大型資料庫的還原時間**：這次的資料庫只有 16 KB。
