@@ -6,11 +6,11 @@
 
 ### 文章放在哪一個資料夾
 
-**大分類**是收斂首頁分類時建立的上層資料夾：幾個原本在 `content/` 第一層的教學模組搬進同一個資料夾。目前只有 `content/devops/`；新增或撤掉大分類時改這一句，它收了哪些模組只登記在它自己 `_index.md` 的表，搬移的程序在 `content-folder-migration` skill。大分類的 `_index.md` 是那張登記表，跨模組的未完成工作（例如各模組之間的導讀文章）記在它的 `## Backlog`。
+**大分類**是收斂首頁分類時建立的上層資料夾：幾個原本在 `content/` 第一層的教學模組搬進同一個資料夾。目前有 `content/devops/`、`content/programming/` 與 `content/software-design/`；新增或撤掉大分類時改這一句。每個大分類收了哪些模組，只登記在那個大分類自己 `_index.md` 的表；搬移的程序在 `content-folder-migration` skill。大分類的 `_index.md` 是那張登記表，跨模組的未完成工作（例如各模組之間的導讀文章）記在它的 `## Backlog`。
 
 建大分類之前要知道它換到什麼、付出什麼，這是使用者決定要不要建的材料。首頁的分組只靠改 `content/_index.md` 的清單就做得到（首頁顯示的就是那一頁的正文），不必搬檔案。搬進大分類另外換到的是網址的階層（`/devops/infra/`）與大分類的列表頁列得出所收的模組；付出的是：每一個被搬的頁面多一筆永久的 `aliases`（網站部署在 GitHub Pages，沒有伺服器端的轉址，舊網址靠 alias 頁面轉一次）、其他分支在被搬路徑上的新檔 merge 回來時會衝突、規則與 skill 裡寫到的路徑要跟著改，以及搜尋頁的「類型」篩選與麵包屑的色相依第一層 section 決定（`layouts/partials/` 的 `.Section`），被收進來的模組在那兩處會併成大分類一項。
 
-教學模組（`backend/`、`devops/infra/`、`linux/`、`ddd/` 這類主題資料夾）以外，歸檔用的資料夾各自收錄不同的主題：
+教學模組（`backend/`、`devops/infra/`、`linux/`、`software-design/ddd/` 這類主題資料夾）以外，歸檔用的資料夾各自收錄不同的主題：
 
 | 資料夾      | 收錄的主題                                          | 典型內容                                          | 結構                                             |
 | ----------- | --------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------ |
@@ -56,7 +56,7 @@
 
 分開的理由是兩種文章的讀者在做不同的事。讀概念文章的人在腦中建立判斷依據，一段完整的操作流程與上百行程式碼會蓋住論證；照實作文章操作的人要的是不漏步的順序與每一步該看到的輸出，觀念的推導夾在步驟之間會打斷操作。兩邊用連結接起來：讀概念的人知道實際操作寫在哪一篇，照著做的人知道每一步背後的觀念在哪一篇。資料夾名沿用站上既有的 `hands-on`（`content/llm/`、`content/backend/01-database/vendors/*/` 底下已經有），讀者在一個模組認得這個位置，到另一個模組也認得；同一種角色用兩個名字，讀者會以為是兩種不同用途的資料夾。
 
-- **放哪一個 `hands-on/`**：這裡的「模組」指教學模組的根資料夾，有兩種：`content/` 第一層的主題資料夾（`content/backend/`），以及大分類（〈文章放在哪一個資料夾〉開頭）底下第一層的資料夾（`content/devops/infra/`）。大分類本身（`content/devops/`）不算模組，把幾個模組收進大分類不改變它們各自的範圍。實作文章操作的是某一家業者或某一個工具，而模組裡有那家業者或那個工具的資料夾時，放在那個資料夾底下（`content/devops/infra/cloud-providers/oracle-cloud/hands-on/`）；沒有的話，放在它連回的概念文章所在的資料夾底下（概念文章是 `content/devops/infra/cloud-providers/vm-options/` 裡的一篇，就放 `vm-options/hands-on/`）；連回的概念文章分在同一個模組的幾個資料夾時，放在包含那幾個資料夾的最近一層（`vm-options/` 與 `content/devops/infra/03-network-foundation/` 的最近一層是 `content/devops/infra/`，放 `content/devops/infra/hands-on/`）；連回的概念文章跨了幾個模組時，放在主要操作對象所屬的那個模組。落點在建檔時決定，之後連結增減不搬家。`rg --files content | rg '/hands-on/'` 列得出全站的實作文章。
+- **放哪一個 `hands-on/`**：這裡的「模組」指教學模組的根資料夾，有兩種：`content/` 第一層的主題資料夾（`content/backend/`），以及大分類（〈文章放在哪一個資料夾〉開頭）底下第一層的資料夾（`content/devops/infra/`）。大分類本身（`content/devops/`）不算模組，把幾個模組收進大分類本身不改變它們各自的範圍。大分類底下第一層的資料夾可以再分成系列子資料夾：系列子資料夾是模組 `_index.md` 那張以「系列」為欄名的表上列的子資料夾，目前只有 `content/programming/python/` 與 `content/programming/go/` 的 `basic/` 與 `advanced/`（搬移之前是第一層的兩個模組），新增或撤掉系列時改這一句；其餘子資料夾（`content/programming/php/01-server-runtime/`）是章節資料夾。有系列子資料夾時，模組仍是第一層的那個資料夾，系列子資料夾不是模組；章節表在系列子資料夾的 `_index.md`，在系列裡新增章節時更新的是那一份（`writing-process.md`〈文章產出流程〉的更新模組大綱那一步），Backlog 怎麼分層見〈模組的 Backlog〉。實作文章操作的是某一家業者或某一個工具，而模組裡有那家業者或那個工具的資料夾時，放在那個資料夾底下（`content/devops/infra/cloud-providers/oracle-cloud/hands-on/`）；沒有的話，放在它連回的概念文章所在的資料夾底下（概念文章是 `content/devops/infra/cloud-providers/vm-options/` 裡的一篇，就放 `vm-options/hands-on/`）；連回的概念文章分在同一個模組的幾個資料夾時，放在包含那幾個資料夾的最近一層（`vm-options/` 與 `content/devops/infra/03-network-foundation/` 的最近一層是 `content/devops/infra/`，放 `content/devops/infra/hands-on/`）；連回的概念文章跨了幾個模組時，放在主要操作對象所屬的那個模組。落點在建檔時決定，之後連結增減不搬家。`rg --files content | rg '/hands-on/'` 列得出全站的實作文章。
 - **上層的 `_index.md` 與 Backlog**：`hands-on/` 是 Hugo 的 section，要有自己的 `_index.md`（〈目錄頁 `_index.md` 與文章檔的分工〉），weight 照 `markdown.md`〈列表排序與 weight〉；它的 `title` 用中文寫出對象與內容（「Oracle Cloud 的實作紀錄」），讀者在列表頁讀到的是標題，資料夾名只出現在網址裡。`hands-on/` 的上一層資料夾（`oracle-cloud/hands-on/` 的上一層是 `oracle-cloud/`）的 `_index.md` 列出這個子資料夾與它收的操作。實作文章留下的未完成工作也記在這個上一層資料夾 `_index.md` 的 `## Backlog`（〈模組的 Backlog〉），`hands-on/_index.md` 不另開 Backlog。
 - **概念文章的寫法**：指令只留說明觀念需要的關鍵語法（指令的形狀、哪個參數決定了什麼）；判斷流程寫成判斷依據，不寫成逐步的操作清單；需要完整流程時，連到 `hands-on/` 裡對應的實作文章，連結寫出那一篇做了什麼操作、量到了什麼（`writing-process.md`〈教學文章的脈絡〉的「交代了目的地沒有」）。既有的概念文章裡夾著從前置條件到完成的操作流程時，這次的改動就是在重寫那段流程（一整節以上）才在同一次拆出去；其餘的改動不拆，記進那篇概念文章所在資料夾的 `_index.md` 的 `## Backlog`。不在 `hands-on/` 的既有實作類文章（模組根目錄的實測紀錄、`*-lab.md`）同樣照這個條件，改寫一整節以上時才搬。
 - **實作文章的寫法**：照 `writing.md`〈三種書面產出的體例〉裡讀者照著做的程序那一段，可以用編號步驟，每一步寫出它為什麼在這個位置、做錯會看到什麼。每一步（文章以表格或段落逐欄寫、沒有編號步驟時，一欄或一個段落就是一步）另外依它的情形分三類寫：
@@ -78,7 +78,7 @@
 - **寫 `hands-on/` 實作文章之前**：用這次操作的工具名或業者名掃同一個模組（定義在〈概念文章與實作文章：`hands-on/` 子資料夾〉的「放哪一個 `hands-on/`」那一項）裡的全部 `hands-on/`（`rg -il '<工具名>' content/<模組>/ -g '**/hands-on/**'`），確認沒有既有的實作文章已經涵蓋同一個操作。同一個操作指的是既有那一篇標題寫的操作目標：補的是同一個目標（上一次沒走通的步驟）就補進原文；目標不同（同一台主機建好之後裝軟體、接監控）另寫一篇，兩篇互相連結。
 - **寫或改 vendor 或工具頁之前**：用工具名找同一個工具在別的模組或章節資料夾有沒有頁面：`rg --files content | rg -i '<工具名>' | rg -v '^content/(report|skills)/'`（`<工具名>` 填工具的英文名，例如 `gatling`、`nginx`；工具頁不一定在 `vendors/` 底下，nginx 在 backend、devops 與 php 各有一頁）。列出的清單裡應該有這一頁自己，沒有代表工具名打錯，修正之後重跑；新頁還沒建檔時，先用同一個章節資料夾裡已經存在的另一個工具名跑一次，確認指令有命中。逐一讀命中的頁面，是同一個工具而且在別的模組或章節資料夾時，照〈教學模組之間的主題邊界〉的「同一個工具或元件在兩個模組各有一頁時」那一項寫。同一家業者的不同產品（`elastic-security` 與 `elastic-stack`）不做逐段並排，只問一件事：有沒有業者層的共通事實（同一支 agent、授權與計費、帳號結構）要寫成知識卡；找這類頁面用業者名掃一次：`rg --files content | rg -i '/vendors/<業者名>'`（`<業者名>` 取資料夾名裡業者那一段，`elastic-security` 取 `elastic`）。
 - **任何資料夾**：frontmatter 的 `slug` 與檔名一致（見 `content/posts/markdown-writing-spec.md` §6.5）。
-- **新增頂層資料夾或大分類底下的教學模組時**：新增頂層 `content/<module>/` 資料夾時，在 `content/_index.md` 對應的分類段加上入口。在大分類底下新增教學模組時，入口登記在大分類 `_index.md` 列教學模組的那張表，以及 `content/_index.md` 裡那個大分類底下的子項。依據：[新增頂層 content 資料夾要同步首頁 _index.md 入口](/report/top-level-content-folder-needs-homepage-entry/)。
+- **新增頂層資料夾或大分類底下的教學模組時**：新增頂層 `content/<module>/` 資料夾時，在 `content/_index.md` 對應的分類段加上入口。在大分類底下新增教學模組時，入口登記在大分類 `_index.md` 列教學模組的那張表，以及 `content/_index.md` 裡那個大分類底下的子項。在模組底下新增系列子資料夾時（定義在〈概念文章與實作文章：`hands-on/` 子資料夾〉的「放哪一個 `hands-on/`」那一項），登記在三處：模組 `_index.md` 的系列表、大分類 `_index.md` 列模組那張表裡那個模組的收錄欄，以及 `content/_index.md` 裡那個模組那一列的系列行內連結。依據：[新增頂層 content 資料夾要同步首頁 _index.md 入口](/report/top-level-content-folder-needs-homepage-entry/)。
 
 ### 目錄頁 `_index.md` 與文章檔的分工
 
@@ -107,5 +107,6 @@
 教學模組的未完成工作記在該模組 `_index.md` 的 `## Backlog` 段，格式的單一真實來源是 [Backlog 段格式規範](/posts/backlog-format-spec/)；寫模組大綱、記錄待辦或做跨模組盤點之前先讀那一篇。
 
 - **適用範圍**：`content/` 底下所有有模組結構的分類。`report/`、`til/`、`work-log/`、`other/` 這幾個沒有模組結構的目錄沒有模組級的 Backlog；在這些目錄留下的未完成工作，寫進 commit message，並照 `AGENTS.md`〈延到工作結束之後的動作〉寫進給使用者的最後一則總結。
+- **系列子資料夾**（`content/programming/python/` 的 `basic/` 與 `advanced/`）：只屬於一個系列的待辦記在那個系列的 `_index.md`（沒有就新增 `## Backlog`），不在模組那一份重列；跨系列的待辦（兩個系列之間術語不一致）記在模組那一份 `_index.md`。模組的定義在〈概念文章與實作文章：`hands-on/` 子資料夾〉的「放哪一個 `hands-on/`」那一項。
 - **段名固定為 `## Backlog`**，讓一條 grep 列得出所有有待辦的模組；段名自創的話，盤點時無法確定有沒有漏掉某個模組。
 - 標準表的欄位定義、表下方 H3 的寫法（模組自己的規劃敘事）、哪些內容不進 Backlog（候選、絆腳索、已完成的項目，在表裡與 H3 都不放）、分類總覽的維護規則，以 [Backlog 段格式規範](/posts/backlog-format-spec/) 為準，這裡不重寫。實例見 [content/backend/\_index.md](/backend/) 的〈Backlog 總覽〉。
