@@ -71,7 +71,7 @@ ref.listen(dataManagementEventStreamProvider, (_, __) => loadData());
 這一段看起來把「資料變更」接進 provider 圖了——但接進來的節點是**業務事件流**、不是資料狀態。兩個新問題浮出來：
 
 1. **涵蓋面仍靠枚舉，只是枚舉對象換了**。導航補償要枚舉入口、事件橋接要枚舉「每條寫入路徑都有發事件」。實際盤點發現搜尋加書與掃描加書路徑沒有發布任何 domain event——這兩條路的刷新斷鏈，導航補償被迫保留、兩套機制並存。
-2. **domain event 被借用成 UI 刷新訊號**。事件系統的設計語意是「記錄發生了什麼」（跨 domain 通知、日誌、審計）；拿它當刷新訊號後，「要不要發這個事件」開始被「某頁要不要刷新」綁架。監聽端也只能全事件監聽再考慮過濾——任何無關事件都觸發一次重新查詢。這條界線的完整推導在 [domain event 與狀態流](/ddd/domain-event-vs-state-stream/)。
+2. **domain event 被借用成 UI 刷新訊號**。事件系統的設計語意是「記錄發生了什麼」（跨 domain 通知、日誌、審計）；拿它當刷新訊號後，「要不要發這個事件」開始被「某頁要不要刷新」綁架。監聽端也只能全事件監聽再考慮過濾——任何無關事件都觸發一次重新查詢。這條界線的完整推導在 [domain event 與狀態流](/software-design/ddd/domain-event-vs-state-stream/)。
 
 ### 第三段：repository 補觀測出口
 
@@ -113,12 +113,12 @@ final watchBooksProvider = StreamProvider<List<Book>>((ref) async* {
 | Riverpod 型別（`StreamProvider`） | 框架語言、進 domain 介面就是洩漏              |
 | SQLite 型別（`Database`）         | infrastructure 語言、同上                     |
 
-`Stream<List<Book>> watchBooks()` 全句只用語言標準庫加 domain entity——它是 `getAllBooks()` 的 push 版本、放 domain repository 介面語意自然。需求從消費者出發決定介面**該不該存在**；介面**放哪一層**由表達語言決定。這條判斷標準的完整推導（含機制層與組裝層的歸屬）在 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。
+`Stream<List<Book>> watchBooks()` 全句只用語言標準庫加 domain entity——它是 `getAllBooks()` 的 push 版本、放 domain repository 介面語意自然。需求從消費者出發決定介面**該不該存在**；介面**放哪一層**由表達語言決定。這條判斷標準的完整推導（含機制層與組裝層的歸屬）在 [觀測出口的職責三分](/software-design/ddd/observation-outlet-responsibility-split/)。
 
 ## 下一步
 
-- 契約／機制／組裝三層歸屬的完整判斷標準：[觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)
-- 事件與狀態流的語意分界（為什麼 EventBus 橋接是越權）：[domain event 與狀態流](/ddd/domain-event-vs-state-stream/)
+- 契約／機制／組裝三層歸屬的完整判斷標準：[觀測出口的職責三分](/software-design/ddd/observation-outlet-responsibility-split/)
+- 事件與狀態流的語意分界（為什麼 EventBus 橋接是越權）：[domain event 與狀態流](/software-design/ddd/domain-event-vs-state-stream/)
 - watchBooks 落地的三個實作點（broadcast、初始值、dispose）：[StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)
 - provider 圖與容器的關係（狀態屬於容器、宣告只是配方）：[App 永遠卡在載入畫面](/work-log/flutter_riverpod_dual_container_state_desync/)
 - 同一事故的 UX 分析角度（happy-path-only 資料版）：[加書後返回不刷新統計](/ux-design/cases/back-navigation-stale-statistics/)

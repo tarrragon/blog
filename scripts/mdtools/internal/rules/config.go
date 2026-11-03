@@ -79,7 +79,7 @@ type FrontMatterRules struct {
 
 // CardRules governs §7 of the spec.
 type CardRules struct {
-	CardsRoots             []string // e.g. []string{"content/backend/knowledge-cards", "content/ddd/knowledge-cards"}
+	CardsRoots             []string // e.g. []string{"content/backend/knowledge-cards", "content/software-design/ddd/knowledge-cards"}
 	CheckLinkValidity      bool   // L1
 	CheckOrphans           bool   // L2
 	CheckK4StructureLinks  bool   // L4
@@ -159,13 +159,13 @@ func Default() Config {
 				"content/business/retail-instruments/knowledge-cards",
 				"content/devops/ci/knowledge-cards",
 				"content/devops/monitoring/knowledge-cards",
-				"content/ddd/knowledge-cards",
-				"content/design-principles/knowledge-cards",
-				"content/flutter/knowledge-cards",
+				"content/software-design/ddd/knowledge-cards",
+				"content/software-design/design-principles/knowledge-cards",
+				"content/programming/flutter/knowledge-cards",
 				"content/devops/infra/knowledge-cards",
 				"content/llm/knowledge-cards",
-				"content/php/knowledge-cards",
-				"content/python/knowledge-cards",
+				"content/programming/php/knowledge-cards",
+				"content/programming/python/basic/knowledge-cards",
 				"content/report",
 				"content/backend/01-database/sql/knowledge-cards",
 				"content/testing/knowledge-cards",
@@ -183,13 +183,13 @@ func Default() Config {
 				"content/business/retail-instruments/knowledge-cards",
 				"content/devops/ci/knowledge-cards",
 				"content/devops/monitoring/knowledge-cards",
-				"content/ddd/knowledge-cards",
-				"content/design-principles/knowledge-cards",
-				"content/flutter/knowledge-cards",
+				"content/software-design/ddd/knowledge-cards",
+				"content/software-design/design-principles/knowledge-cards",
+				"content/programming/flutter/knowledge-cards",
 				"content/devops/infra/knowledge-cards",
 				"content/llm/knowledge-cards",
-				"content/php/knowledge-cards",
-				"content/python/knowledge-cards",
+				"content/programming/php/knowledge-cards",
+				"content/programming/python/basic/knowledge-cards",
 				"content/backend/01-database/sql/knowledge-cards",
 				"content/testing/knowledge-cards",
 				"content/ux-design/knowledge-cards",

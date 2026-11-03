@@ -1,6 +1,6 @@
 import { expect, Page, test } from '@playwright/test';
 
-const ARTICLE_PATH = '/blog/go/00-philosophy/simplicity/';
+const ARTICLE_PATH = '/blog/programming/go/basic/00-philosophy/simplicity/';
 
 async function tocState(page: Page) {
   return page.evaluate(() => {

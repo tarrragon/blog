@@ -69,18 +69,18 @@ SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場�
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                                                     | 類型   | 前置條件                                   | 規模       |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------ | ---------- |
-| 六個 vendor 的後續擴充（Aurora 13 / CockroachDB 12 / DynamoDB 15 / MongoDB 13 / Cosmos DB 14 / Spanner 12 項）                           | vendor | 各 vendor `_index.md` 已列項               | 大         |
-| 觀念網路五方向的章節回寫（state ownership / query boundary / migration safety / reconciliation / data protection）                       | 主章   | 無                                         | 中         |
-| migration validation 知識卡                                                                                                              | 知識卡 | 無                                         | 1 張（小） |
-| 1.16 的六個例子全取自交易型系統，換成事件流／IoT 時有兩條答不出來                                                                        | 主章   | 無                                         | 小         |
-| 1.16 補 `NOT VALID`、雙寫、回填、孤兒列的就地定義或連卡                                                                                  | 主章   | `dual-write` 與 `backfill` 卡已存在        | 小         |
-| 1.16 的 collation 那一節要交代 PostgreSQL 前置條件（需帶 ICU 編譯、`CREATE COLLATION` 權限）                                             | 主章   | 無                                         | 1 句       |
-| 1.17 的 PHP（Laravel）實作篇：PDO、Query Builder、Eloquent 對照 1.17 的分層，含 PHP-FPM 下的連線模型與 PgBouncer 下的預先解析查詢        | 跨模組 | 實作篇放 `content/php/`，輸出要實際跑過    | 中         |
-| 1.17 的 Python 實作篇：psycopg、SQLAlchemy Core 與 ORM、Django ORM 對照 1.17 的分層                                                      | 跨模組 | 實作篇放 `content/python/`，輸出要實際跑過 | 中         |
-| Optimistic Locking、Lost Update、Upsert 三張知識卡：10.6、1.3、isolation-level 卡與多篇 vendor 文章行內定義而沒有卡                      | 知識卡 | 無                                         | 3 張（小） |
-| 1.17 讀寫分離的「寫後讀」依複製位置判斷（PostgreSQL 的 `pg_last_wal_replay_lsn()`、MySQL 的 GTID、ProxySQL 的 causal reads）專篇，含實測 | 主章   | 主從複製的實驗環境                         | 中         |
+| 項目                                                                                                                                     | 類型   | 前置條件                                               | 規模       |
+| ---------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------ | ---------- |
+| 六個 vendor 的後續擴充（Aurora 13 / CockroachDB 12 / DynamoDB 15 / MongoDB 13 / Cosmos DB 14 / Spanner 12 項）                           | vendor | 各 vendor `_index.md` 已列項                           | 大         |
+| 觀念網路五方向的章節回寫（state ownership / query boundary / migration safety / reconciliation / data protection）                       | 主章   | 無                                                     | 中         |
+| migration validation 知識卡                                                                                                              | 知識卡 | 無                                                     | 1 張（小） |
+| 1.16 的六個例子全取自交易型系統，換成事件流／IoT 時有兩條答不出來                                                                        | 主章   | 無                                                     | 小         |
+| 1.16 補 `NOT VALID`、雙寫、回填、孤兒列的就地定義或連卡                                                                                  | 主章   | `dual-write` 與 `backfill` 卡已存在                    | 小         |
+| 1.16 的 collation 那一節要交代 PostgreSQL 前置條件（需帶 ICU 編譯、`CREATE COLLATION` 權限）                                             | 主章   | 無                                                     | 1 句       |
+| 1.17 的 PHP（Laravel）實作篇：PDO、Query Builder、Eloquent 對照 1.17 的分層，含 PHP-FPM 下的連線模型與 PgBouncer 下的預先解析查詢        | 跨模組 | 實作篇放 `content/programming/php/`，輸出要實際跑過    | 中         |
+| 1.17 的 Python 實作篇：psycopg、SQLAlchemy Core 與 ORM、Django ORM 對照 1.17 的分層                                                      | 跨模組 | 實作篇放 `content/programming/python/`，輸出要實際跑過 | 中         |
+| Optimistic Locking、Lost Update、Upsert 三張知識卡：10.6、1.3、isolation-level 卡與多篇 vendor 文章行內定義而沒有卡                      | 知識卡 | 無                                                     | 3 張（小） |
+| 1.17 讀寫分離的「寫後讀」依複製位置判斷（PostgreSQL 的 `pg_last_wal_replay_lsn()`、MySQL 的 GTID、ProxySQL 的 causal reads）專篇，含實測 | 主章   | 主從複製的實驗環境                                     | 中         |
 
 ### 觀念網路補完方向
 

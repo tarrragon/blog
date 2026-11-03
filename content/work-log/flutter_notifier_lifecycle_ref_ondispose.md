@@ -81,5 +81,5 @@ final isbnScannerViewModelProvider = NotifierProvider<IsbnScannerViewModel, Isbn
 ## 相關閱讀
 
 - 生命週期的另一頭：[await 回來的時候、頁面已經關了](/work-log/flutter_unmounted_ref_async_gap/)——本文管銷毀時的清理、那篇管銷毀後的 `ref` 使用
-- provider 圖的整體邊界：[Riverpod 的 reactive 邊界](/flutter/riverpod-reactive-boundary/)——依賴經 `ref.watch` 取得才在圖上、正是本文遷移的理由
-- DI 的概念地基：[Dependency Injection](/ddd/knowledge-cards/dependency-injection/)——建構與使用分成兩個責任、Notifier 的工廠與 build() 是這個分工的框架版
+- provider 圖的整體邊界：[Riverpod 的 reactive 邊界](/programming/flutter/riverpod-reactive-boundary/)——依賴經 `ref.watch` 取得才在圖上、正是本文遷移的理由
+- DI 的概念地基：[Dependency Injection](/software-design/ddd/knowledge-cards/dependency-injection/)——建構與使用分成兩個責任、Notifier 的工廠與 build() 是這個分工的框架版

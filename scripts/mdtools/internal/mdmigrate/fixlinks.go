@@ -230,8 +230,8 @@ func filterCardCandidates(candidates []string, cardsRoot string) []string {
 }
 
 // filterSameTopLevel returns candidates whose top-level content subdir
-// matches the source's. For sourcePath=content/go/xxx.md, the top-level
-// is "go" and candidates under content/go/** are preferred.
+// matches the source's. For sourcePath=content/backend/xxx.md, the top-level
+// is "backend" and candidates under content/backend/** are preferred.
 func filterSameTopLevel(candidates []string, sourcePath string) []string {
 	srcTop := topLevelUnderContent(sourcePath)
 	if srcTop == "" {

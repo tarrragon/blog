@@ -12,7 +12,7 @@ tags: ["backend", "database", "connection-pool", "knowledge-card"]
 
 連線在程式碼上不一定以「連線」的樣子出現，查詢結果的讀取物件（[Cursor](/backend/knowledge-cards/cursor/)）與交易（[Transaction](/backend/knowledge-cards/transaction/)）都各自佔著一條，所以借出的位置常常不明顯。各語言最常見的借出點：
 
-- **Go 的 `database/sql`**：查詢回傳的 `*sql.Rows` 在 `Close` 或讀到最後一列之前佔著一條連線；`*sql.Tx` 在 `Commit` 或 `Rollback` 之前佔著一條連線。讀到一半就 `return`、又沒有 `defer rows.Close()` 是最常見的洩漏（實測見 [10.1 database/sql：連線池、查詢結果的讀取與交易](/go/10-database-access/database-sql/)〈查詢結果讀取物件（*sql.Rows）的關閉與連線洩漏〉）。`QueryRowContext` 回傳的 `*sql.Row` 要呼叫 `Scan` 才歸還連線，`db.Conn(ctx)` 借出的專用連線要 `Close`。pgx 的 `pgxpool` 用 `Acquire` 明確借出時，要對應一次 `Release`。
+- **Go 的 `database/sql`**：查詢回傳的 `*sql.Rows` 在 `Close` 或讀到最後一列之前佔著一條連線；`*sql.Tx` 在 `Commit` 或 `Rollback` 之前佔著一條連線。讀到一半就 `return`、又沒有 `defer rows.Close()` 是最常見的洩漏（實測見 [10.1 database/sql：連線池、查詢結果的讀取與交易](/programming/go/basic/10-database-access/database-sql/)〈查詢結果讀取物件（*sql.Rows）的關閉與連線洩漏〉）。`QueryRowContext` 回傳的 `*sql.Row` 要呼叫 `Scan` 才歸還連線，`db.Conn(ctx)` 借出的專用連線要 `Close`。pgx 的 `pgxpool` 用 `Acquire` 明確借出時，要對應一次 `Release`。
 - **Python**：`psycopg_pool` 的 `getconn()` 要對應 `putconn()`，SQLAlchemy 的 `engine.connect()` 與 `Session` 要關閉；寫成 `with` 區塊時，區塊結束就歸還，洩漏多半出在沒有用 `with` 的那幾處。
 - **PHP-FPM**：沒有開持久連線（`PDO::ATTR_PERSISTENT`）時，請求結束時 PHP 釋放這個請求的所有資源，連線跟著關閉，所以單一請求內的洩漏不會跨請求累積；改成常駐 worker（Laravel Octane、FrankenPHP 的 worker 模式），以及本來就常駐的佇列 worker（`php artisan queue:work`）之後，跨請求或跨工作留著的物件就可能一直握著連線；Python 的 Celery worker 同理。
 

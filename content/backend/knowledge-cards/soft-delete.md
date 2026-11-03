@@ -18,7 +18,7 @@ UPDATE customers SET deleted_at = now() WHERE id = 3 AND deleted_at IS NULL;
 SELECT * FROM customers WHERE email = 'yawen@example.com' AND deleted_at IS NULL;
 ```
 
-各語言的 [ORM](/backend/knowledge-cards/orm/) 用不同的方式加上那個條件：Laravel 的 model 使用 `SoftDeletes` trait 之後，查詢自動帶 `whereNull('deleted_at')`，`withTrashed()` 連同已刪除的一起查、`forceDelete()` 永久刪除、`restore()` 復原；GORM 的 model 帶 `gorm.DeletedAt` 型別的欄位（嵌入 `gorm.Model` 就有）時同樣自動加條件，`Unscoped()` 取消它（實測見 [10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/go/10-database-access/gorm-model-and-soft-delete/)）；Django ORM 與 SQLAlchemy 沒有內建，要自己加條件（Django 改寫 model 預設的查詢入口 `Manager`，SQLAlchemy 在查詢上加篩選），或用第三方套件。Django 改寫預設 `Manager` 之後，ORM 自己仍有一條路徑不經過它：從訂單存取所屬顧客（`order.customer`）這種正向關聯走的是 `_base_manager`，讀得到已刪除的顧客。
+各語言的 [ORM](/backend/knowledge-cards/orm/) 用不同的方式加上那個條件：Laravel 的 model 使用 `SoftDeletes` trait 之後，查詢自動帶 `whereNull('deleted_at')`，`withTrashed()` 連同已刪除的一起查、`forceDelete()` 永久刪除、`restore()` 復原；GORM 的 model 帶 `gorm.DeletedAt` 型別的欄位（嵌入 `gorm.Model` 就有）時同樣自動加條件，`Unscoped()` 取消它（實測見 [10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/programming/go/basic/10-database-access/gorm-model-and-soft-delete/)）；Django ORM 與 SQLAlchemy 沒有內建，要自己加條件（Django 改寫 model 預設的查詢入口 `Manager`，SQLAlchemy 在查詢上加篩選），或用第三方套件。Django 改寫預設 `Manager` 之後，ORM 自己仍有一條路徑不經過它：從訂單存取所屬顧客（`order.customer`）這種正向關聯走的是 `_base_manager`，讀得到已刪除的顧客。
 
 條件由 ORM 加，所以不經過那個 ORM 的路徑都看得到已刪除的資料：手寫的 SQL（GORM 的 `Raw`、Laravel 的 `DB::select`）、報表與資料倉儲的匯出、共用同一個資料庫的其他服務、直接連進資料庫查問題的人。刪除前就存好的讀取結果也一樣：快取裡的那一筆與搜尋索引裡的文件不會因為加了標記就消失，要在刪除時一併清掉（見 [Cache Invalidation](/backend/knowledge-cards/cache-invalidation/)、[Search Index](/backend/knowledge-cards/search-index/)）。
 

@@ -77,4 +77,4 @@ enum CheckoutErrorCode implements ErrorCode {
 
 - 同一個 model 的另外兩個切面：[會員/計價/支付原子切換](/work-log/pos_member_pricing_payment_atomic_switch/)（耦合欄位的單次替換）、[桌子跟購物車是兩個聚合](/work-log/pos_table_cart_lifecycle_decoupling/)（結帳模式兩布林的組合空間）
 - 被結構性消滅的 bug 家族：[新增欄位忘記同步 reset](/work-log/reset_state_leak_cross_test/)——人工重置清單 vs 丟棄即重置
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——entity 生命週期章節、ephemeral 物件是「生命週期由業務流程定義」的極短端
+- 概念地基：[DDD 領域驅動設計指南](/software-design/ddd/)——entity 生命週期章節、ephemeral 物件是「生命週期由業務流程定義」的極短端

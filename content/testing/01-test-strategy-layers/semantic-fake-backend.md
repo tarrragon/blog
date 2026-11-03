@@ -94,7 +94,7 @@ spike 走完會分出兩條路。立得起來——平台通道（行動端的�
 
 決定建假後端後，按以下順序推進：
 
-1. **可測性閘門 spike**：用一條最小測試驗證編排的宿主（控制器或服務入口）能否在測試環境立起來——這一步的答案決定後續全部形態（Dart/Flutter 生態的平台耦合中和手段見[流程測試基礎設施](/flutter/flow-test-infrastructure/)）
+1. **可測性閘門 spike**：用一條最小測試驗證編排的宿主（控制器或服務入口）能否在測試環境立起來——這一步的答案決定後續全部形態（Dart/Flutter 生態的平台耦合中和手段見[流程測試基礎設施](/programming/flutter/flow-test-infrastructure/)）
 2. **掛載形態決定**：依服務碰後端的方式（共用 client 介面 / 各自發 HTTP）選 in-process 注入或假 server
 3. **狀態模型**：定義假後端持有的資料實體與初始 seed builder
 4. **第一條已證實行為**：對真實後端取證（診斷資訊 / 探測 / 埋 log），固化為假後端的第一個 handler
@@ -108,4 +108,4 @@ spike 走完會分出兩條路。立得起來——平台通道（行動端的�
 - 配對的另一半 → [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)
 - stub 回放假設的完整案例 → [凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)
 - 測試該寫成什麼樣子 → [測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/)
-- Dart/Flutter 生態的實作限制（headless 立控制器、binding 互斥、假後端序列化）→ [流程測試基礎設施](/flutter/flow-test-infrastructure/)
+- Dart/Flutter 生態的實作限制（headless 立控制器、binding 互斥、假後端序列化）→ [流程測試基礎設施](/programming/flutter/flow-test-infrastructure/)

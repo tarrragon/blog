@@ -70,4 +70,4 @@ BDD 操作盤點列出了所有使用者操作（UC）。每個 UC 對應至少�
 - 畫面狀態矩陣完整定義 → [畫面狀態矩陣的定義與填寫方法](/ux-design/01-screen-state-machine/state-matrix-definition/)
 - 想測試導航路徑的正確性 → [testing 模組四 UI 自動化](/testing/04-ui-automation/)
 - 想設計完整導航模式 → [ux-design 模組五 導航模式](/ux-design/05-navigation-patterns/)
-- 想從設計層理解「功能完成但入口失聯」的測試證言與強制層選擇 → [組裝層的可達性](/ddd/composition-root-reachability/)
+- 想從設計層理解「功能完成但入口失聯」的測試證言與強制層選擇 → [組裝層的可達性](/software-design/ddd/composition-root-reachability/)

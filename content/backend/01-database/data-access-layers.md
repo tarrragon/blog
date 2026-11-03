@@ -6,7 +6,7 @@ weight: 17
 tags: ["backend", "database", "orm", "data-access"]
 ---
 
-這篇整理應用程式存取關聯式資料庫的工具分層，與語言無關：每一類工具替程式接手了哪一段工作、接手之後哪些行為從程式碼上消失、選型時比較什麼。各語言的工具名稱與 API 不同，分層相同，所以文中每一類都對照 Go、PHP（Laravel）與 Python 的代表工具。Go 的實際寫法在 [Go 的資料庫存取模組](/go/10-database-access/)；PHP 與 Python 目前只有執行模型與 ORM 回傳值的相關篇章，列在文末。工具分層與資料庫的種類也無關；文中錯誤代碼、預先解析查詢與連線上限的例子用 PostgreSQL，其他資料庫的差異在各節註明。
+這篇整理應用程式存取關聯式資料庫的工具分層，與語言無關：每一類工具替程式接手了哪一段工作、接手之後哪些行為從程式碼上消失、選型時比較什麼。各語言的工具名稱與 API 不同，分層相同，所以文中每一類都對照 Go、PHP（Laravel）與 Python 的代表工具。Go 的實際寫法在 [Go 的資料庫存取模組](/programming/go/basic/10-database-access/)；PHP 與 Python 目前只有執行模型與 ORM 回傳值的相關篇章，列在文末。工具分層與資料庫的種類也無關；文中錯誤代碼、預先解析查詢與連線上限的例子用 PostgreSQL，其他資料庫的差異在各節註明。
 
 [1.4 Repository Adapter 實作](/backend/01-database/repository-adapter/) 把工具分成 Raw SQL、查詢建構器（Query Builder）、ORM 三類；這篇沿用那三類，再把 Raw SQL 細分成驅動、結果對映與從 SQL 產生程式碼，因為這三種工具都由程式寫 SQL，差別在取得連線並執行、把查詢結果對映成程式的值這兩項工作由誰做。
 
@@ -65,7 +65,7 @@ ORM 接手寫 SQL、取得連線與交易、對映結果這三件事，所以看
 
 #### ORM 送出的查詢次數：延遲載入與 N+1
 
-延遲載入（lazy loading）在程式每次存取關聯屬性時才發出一次查詢。這個存取寫在迴圈裡，迴圈跑 N 次就多出 N 次查詢，加上取主列表的那一次就是 N+1（見 [1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/)）。各框架都有預先載入（eager loading）的寫法：Laravel 的 `with`、SQLAlchemy 的 `selectinload`、Django 的 `select_related` 與 `prefetch_related`、GORM 的 `Preload`。也有在開發時把延遲載入變成錯誤的開關：Laravel 的 `Model::preventLazyLoading()`、SQLAlchemy 關聯設定的 `lazy="raise"`。GORM 沒有延遲載入，它的 N+1 來自程式自己在迴圈裡發的查詢（見 [10.5 GORM：model、關聯載入與 ORM 送出的 SQL](/go/10-database-access/gorm/)）。
+延遲載入（lazy loading）在程式每次存取關聯屬性時才發出一次查詢。這個存取寫在迴圈裡，迴圈跑 N 次就多出 N 次查詢，加上取主列表的那一次就是 N+1（見 [1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/)）。各框架都有預先載入（eager loading）的寫法：Laravel 的 `with`、SQLAlchemy 的 `selectinload`、Django 的 `select_related` 與 `prefetch_related`、GORM 的 `Preload`。也有在開發時把延遲載入變成錯誤的開關：Laravel 的 `Model::preventLazyLoading()`、SQLAlchemy 關聯設定的 `lazy="raise"`。GORM 沒有延遲載入，它的 N+1 來自程式自己在迴圈裡發的查詢（見 [10.5 GORM：model、關聯載入與 ORM 送出的 SQL](/programming/go/basic/10-database-access/gorm/)）。
 
 #### ORM 的交易邊界：GORM、Laravel、Django 與 SQLAlchemy
 
@@ -83,7 +83,7 @@ ORM 要決定 `UPDATE` 要寫哪幾個欄位，常見的規則有三種：
 
 - **變更追蹤（dirty tracking）**：Eloquent 與 SQLAlchemy 追蹤哪些屬性被改過，只寫改過的。
 - **寫回全部欄位**：Django 的 `save()` 預設把 model 的每個欄位都寫回（傳 `update_fields` 才只寫指定的），兩個請求同時改同一列的不同欄位時，後寫的請求會用它讀出時的舊值，蓋掉先寫的請求改過的欄位。
-- **跳過零值**：GORM 的 `Updates` 傳入 struct 時不追蹤變更（`Save` 則寫回全部欄位，找不到那一列時還會改成 upsert，見 [10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/go/10-database-access/gorm-model-and-soft-delete/)），而是跳過值為零值的欄位。Go 的 struct 欄位沒有「未設定」這個狀態，沒給值就是 0、空字串或 false（Go 稱為零值），所以 GORM 分不出「沒有設定」與「要改成 0」。
+- **跳過零值**：GORM 的 `Updates` 傳入 struct 時不追蹤變更（`Save` 則寫回全部欄位，找不到那一列時還會改成 upsert，見 [10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/programming/go/basic/10-database-access/gorm-model-and-soft-delete/)），而是跳過值為零值的欄位。Go 的 struct 欄位沒有「未設定」這個狀態，沒給值就是 0、空字串或 false（Go 稱為零值），所以 GORM 分不出「沒有設定」與「要改成 0」。
 
 以「把金額從 300 改成 0」為例：變更追蹤看到金額被改過，寫入 0；GORM 看到金額是零值，當成沒有設定而略過金額這一欄，也不回報錯誤；model 沒有其他要寫的欄位時不送出任何 `UPDATE`，model 有 `UpdatedAt`（`gorm.Model` 就帶這個欄位）時仍會送出只更新 `updated_at` 的 `UPDATE`，影響列數是 1，看起來像更新成功。
 
@@ -103,7 +103,7 @@ ORM 要決定 `UPDATE` 要寫哪幾個欄位，常見的規則有三種：
 | Python：多個 worker 程序（例如 gunicorn），每個程序各自持有連線                       | 每個程序各自的池（SQLAlchemy 的 engine 內建池；psycopg 用 `psycopg_pool`，沒設 `max_size` 時上限等於 `min_size`，而 `min_size` 預設 4）；Django 的連線依執行緒分開，預設 `CONN_MAX_AGE = 0`，每個請求開一條連線、請求結束時關閉，Django 5.1 起可在資料庫設定的 `OPTIONS` 開啟 `pool`（用的是 `psycopg_pool`） | 實例數 × worker 數 × 每個程序同時持有的連線數（有池時是池的上限；沒有池時是每個程序的執行緒或協程數） |
 | PHP-FPM：每個請求從空白開始                                                           | 預設每個請求開一條連線、請求結束時關閉；開啟 PDO 的持久連線（persistent connection）時，每個 FPM worker 保留一條                                                                                                                                                                                              | 實例數 × FPM worker 數（一個 worker 同時只處理一個請求，所以兩者相同）                                |
 
-所以「池的大小設多少」在 Go 是一個設定，在 Python 要乘上 worker 數，而 gunicorn 用多執行緒或 gevent worker 時，一個程序裡的每個執行緒或協程各自取用連線，所以每個程序同時持有的連線不只一條。PHP-FPM 沒有程序內的池，連線數跟著 FPM 的 worker 數走（FPM 的程序模型見 [PHP-FPM：常駐 PHP worker 的程序管理與主要的調校旋鈕](/php/01-server-runtime/php-fpm/)），每台機器的 `pm.max_children` 乘上機器數就是可能的連線數。PHP 改成常駐 worker（Laravel Octane、FrankenPHP 的 worker 模式）之後，應用程式跨請求留在記憶體裡，資料庫連線也跟著保留，行為往 Python 那一列靠（常駐 worker 模型本身見 [常駐 worker 模型：FrankenPHP worker 模式、Laravel Octane 與跨請求殘留的狀態](/php/01-server-runtime/long-running-workers/)）。
+所以「池的大小設多少」在 Go 是一個設定，在 Python 要乘上 worker 數，而 gunicorn 用多執行緒或 gevent worker 時，一個程序裡的每個執行緒或協程各自取用連線，所以每個程序同時持有的連線不只一條。PHP-FPM 沒有程序內的池，連線數跟著 FPM 的 worker 數走（FPM 的程序模型見 [PHP-FPM：常駐 PHP worker 的程序管理與主要的調校旋鈕](/programming/php/01-server-runtime/php-fpm/)），每台機器的 `pm.max_children` 乘上機器數就是可能的連線數。PHP 改成常駐 worker（Laravel Octane、FrankenPHP 的 worker 模式）之後，應用程式跨請求留在記憶體裡，資料庫連線也跟著保留，行為往 Python 那一列靠（常駐 worker 模型本身見 [常駐 worker 模型：FrankenPHP worker 模式、Laravel Octane 與跨請求殘留的狀態](/programming/php/01-server-runtime/long-running-workers/)）。
 
 三種情形都用同一條原則估算上限：全部實例加起來的連線數，要小於資料庫的 `max_connections` 扣掉維運保留的那幾條（有些託管的資料庫服務另外保留一部分給自己的管理程式）。例如 8 個 Go 實例、每個的池上限設 25，總共 200 條，超過 PostgreSQL 預設的 `max_connections = 100`；平時流量用不滿池，問題要到流量尖峰，或滾動部署時才出現——滾動部署期間新實例已經啟動、舊實例還沒關閉，實例數短時間變多，新開的連線收到 `FATAL: sorry, too many clients already`。PostgreSQL 每條連線是一個獨立的程序，上限不能無限調高（成本見 [PostgreSQL Connection Scaling：process-per-connection model 跟為什麼 pooler 是必裝](/backend/01-database/vendors/postgresql/connection-scaling/)）。
 
@@ -139,7 +139,7 @@ ORM 要決定 `UPDATE` 要寫哪幾個欄位，常見的規則有三種：
 
 SQLAlchemy 沒有內建這個功能，要覆寫 `Session.get_bind` 自己寫規則。
 
-GORM 那一列是實測結果（dbresolver v1.6.2，用兩個內容不同的資料庫當主庫與副本，看每個查詢讀到哪一邊的資料，程式與輸出見 [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)〈讀寫分離：GORM 的 dbresolver 與程式自己持有兩個池〉）；Laravel 那一列取自它的 `Connection::getReadPdo`：交易層數大於零、或開了 `sticky` 而這個連線物件已經寫過資料，就改用寫入的連線；Django 的官方文件明寫它的主從路由範例不處理複製延遲，也不考慮交易與路由的交互作用。表上的差異集中在剛寫入之後的讀取（[Read-After-Write Consistency](/backend/knowledge-cards/read-after-write/)），而這種讀取有兩種形狀。一種在同一個請求裡：建立訂單之後，同一個請求接著讀出訂單內容放進回應；Laravel 的 `sticky` 處理的是這一種，GORM 的 dbresolver 不處理。另一種跨兩個請求：使用者送出表單，寫入的請求回應之後瀏覽器被導回列表頁，列表是一個新的請求；`sticky` 記在連線物件上，新請求不知道剛才寫過，三個框架都照常把列表查詢送到副本，複製落後時讀不到剛寫入的那一筆。同一個請求裡的讀取，由程式在那個查詢上指定主庫：GORM 寫 `Clauses(dbresolver.Write)`，Laravel 的 Query Builder 寫 `useWritePdo()`、Eloquent 寫 `Model::onWriteConnection()`，Django 寫 `.using("default")`（`default` 是主庫的資料庫別名）。跨請求的讀取要程式自己記住「這個使用者剛寫過」，常見做法是寫入時在 session 記下時間，之後幾秒內這個使用者的讀取都送主庫。
+GORM 那一列是實測結果（dbresolver v1.6.2，用兩個內容不同的資料庫當主庫與副本，看每個查詢讀到哪一邊的資料，程式與輸出見 [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/programming/go/basic/10-database-access/choosing-data-access/)〈讀寫分離：GORM 的 dbresolver 與程式自己持有兩個池〉）；Laravel 那一列取自它的 `Connection::getReadPdo`：交易層數大於零、或開了 `sticky` 而這個連線物件已經寫過資料，就改用寫入的連線；Django 的官方文件明寫它的主從路由範例不處理複製延遲，也不考慮交易與路由的交互作用。表上的差異集中在剛寫入之後的讀取（[Read-After-Write Consistency](/backend/knowledge-cards/read-after-write/)），而這種讀取有兩種形狀。一種在同一個請求裡：建立訂單之後，同一個請求接著讀出訂單內容放進回應；Laravel 的 `sticky` 處理的是這一種，GORM 的 dbresolver 不處理。另一種跨兩個請求：使用者送出表單，寫入的請求回應之後瀏覽器被導回列表頁，列表是一個新的請求；`sticky` 記在連線物件上，新請求不知道剛才寫過，三個框架都照常把列表查詢送到副本，複製落後時讀不到剛寫入的那一筆。同一個請求裡的讀取，由程式在那個查詢上指定主庫：GORM 寫 `Clauses(dbresolver.Write)`，Laravel 的 Query Builder 寫 `useWritePdo()`、Eloquent 寫 `Model::onWriteConnection()`，Django 寫 `.using("default")`（`default` 是主庫的資料庫別名）。跨請求的讀取要程式自己記住「這個使用者剛寫過」，常見做法是寫入時在 session 記下時間，之後幾秒內這個使用者的讀取都送主庫。
 
 **資料庫前面的代理依規則路由**：應用程式只連一個位址，由代理判斷每個語句送哪裡（MySQL 的 ProxySQL 用比對 SQL 文字的規則，見 [MySQL ProxySQL 配置：connection / query / route / response 四段 lifecycle 跟 query rule 設計](/backend/01-database/vendors/mysql/proxysql-config/)；PostgreSQL 有 Pgpool-II 這類代理）。程式碼完全不用改，而代理同樣要判斷交易內的讀取與剛寫入之後的讀取，判斷依據只剩 SQL 文字與連線狀態，比框架知道的更少。
 
@@ -155,7 +155,7 @@ GORM 那一列是實測結果（dbresolver v1.6.2，用兩個內容不同的資�
 - **讀出的結果決定接下來的寫入**：檢查庫存再扣、檢查 email 有沒有被用過再建立。這類讀取讀到舊值就會寫錯，一律送主庫，需要鎖住那一列時用 `SELECT ... FOR UPDATE`（Laravel 的 `lockForUpdate()`、Django 的 `select_for_update()`）；Django 的路由器在 `transaction.atomic` 裡照樣把一般讀取送副本，這一類要明確指定主庫。
 - **背景工作讀剛寫入的資料**：寫入之後派送的佇列工作（Laravel 的 job、Celery 的 task）在另一個程序裡執行，既不在同一個請求裡，也沒有 session 可記。工作要在交易提交之後才派送（Laravel 的 `afterCommit`、Django 的 `transaction.on_commit`），並由工作自己指定讀主庫，或帶著要處理的資料內容出發。
 
-分出唯讀副本之後，每個應用程式實例對資料庫開的連線總數也跟著變：每個實例對主庫與每一個副本各開一個池，所以「實例數 × 池的上限」要對主庫與每一個副本各算一次，各自小於那個資料庫的 `max_connections`（Python 的多 worker 部署再乘上 worker 數）。ORM 提供的「取得底層連線池」方法多半只回傳主庫那一個，副本的池要另外設上限與監控（GORM 的情形見 [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/go/10-database-access/choosing-data-access/)）。
+分出唯讀副本之後，每個應用程式實例對資料庫開的連線總數也跟著變：每個實例對主庫與每一個副本各開一個池，所以「實例數 × 池的上限」要對主庫與每一個副本各算一次，各自小於那個資料庫的 `max_connections`（Python 的多 worker 部署再乘上 worker 數）。ORM 提供的「取得底層連線池」方法多半只回傳主庫那一個，副本的池要另外設上限與監控（GORM 的情形見 [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/programming/go/basic/10-database-access/choosing-data-access/)）。
 
 **多個資料庫**是另一種情形：資料依業務拆在不同的資料庫裡（例如訂單一個、會員一個），而不是同一份資料的副本。各框架都支援一個程式連多個資料庫（Laravel 的 `DB::connection('name')`、Django 的 `using()`、GORM dbresolver 依 model 指定資料庫），而三件事跨不過資料庫的邊界：一個交易、外鍵與 `JOIN`。Django 的文件明寫不支援跨資料庫的外鍵與多對多關聯。需要一起成功的寫入落在兩個資料庫時，交易邊界要重新設計（見 [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/)）。
 
@@ -187,6 +187,6 @@ GORM 那一列是實測結果（dbresolver v1.6.2，用兩個內容不同的資�
 
 ## 各語言的實作
 
-- Go：[Go 的資料庫存取模組](/go/10-database-access/) 依本篇的分層，逐一示範 `database/sql`、pgx、sqlx、sqlc 與 GORM，每一篇的輸出都在 PostgreSQL 上實際跑過。
-- Python：ORM 與 DataFrame 在回傳值與查詢送出時機上的差別見 [8.3 ORM 與 DataFrame 的分辨：回傳值的形狀、連線物件與查詢送出的時機](/python/08-data-analysis/orm-and-dataframe/)。
-- PHP：PHP-FPM 的程序模型見 [PHP-FPM：常駐 PHP worker 的程序管理與主要的調校旋鈕](/php/01-server-runtime/php-fpm/)，連線跨請求保留的常駐 worker 模型見 [常駐 worker 模型：FrankenPHP worker 模式、Laravel Octane 與跨請求殘留的狀態](/php/01-server-runtime/long-running-workers/)。
+- Go：[Go 的資料庫存取模組](/programming/go/basic/10-database-access/) 依本篇的分層，逐一示範 `database/sql`、pgx、sqlx、sqlc 與 GORM，每一篇的輸出都在 PostgreSQL 上實際跑過。
+- Python：ORM 與 DataFrame 在回傳值與查詢送出時機上的差別見 [8.3 ORM 與 DataFrame 的分辨：回傳值的形狀、連線物件與查詢送出的時機](/programming/python/basic/08-data-analysis/orm-and-dataframe/)。
+- PHP：PHP-FPM 的程序模型見 [PHP-FPM：常駐 PHP worker 的程序管理與主要的調校旋鈕](/programming/php/01-server-runtime/php-fpm/)，連線跨請求保留的常駐 worker 模型見 [常駐 worker 模型：FrankenPHP worker 模式、Laravel Octane 與跨請求殘留的狀態](/programming/php/01-server-runtime/long-running-workers/)。

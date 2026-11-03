@@ -18,7 +18,7 @@ EXECUTE orders_by_customer(1);
 EXECUTE orders_by_customer(2);
 ```
 
-應用程式多半不直接寫 `PREPARE`，而是由驅動代勞，而驅動的連線來自 [Connection Pool](/backend/knowledge-cards/connection-pool/)：有的驅動每次執行都先解析再丟棄，有的會在每條連線上快取執行過的查詢（Go 的 pgx 預設如此，在 PostgreSQL 的語句記錄（`log_statement`）裡會看到以 `stmtcache_` 開頭的名字被重複執行，見 [10.2 pgx：PostgreSQL 驅動的原生介面、連線池與 COPY 大量寫入](/go/10-database-access/pgx/)）。
+應用程式多半不直接寫 `PREPARE`，而是由驅動代勞，而驅動的連線來自 [Connection Pool](/backend/knowledge-cards/connection-pool/)：有的驅動每次執行都先解析再丟棄，有的會在每條連線上快取執行過的查詢（Go 的 pgx 預設如此，在 PostgreSQL 的語句記錄（`log_statement`）裡會看到以 `stmtcache_` 開頭的名字被重複執行，見 [10.2 pgx：PostgreSQL 驅動的原生介面、連線池與 COPY 大量寫入](/programming/go/basic/10-database-access/pgx/)）。
 
 ## 可觀察訊號與例子
 

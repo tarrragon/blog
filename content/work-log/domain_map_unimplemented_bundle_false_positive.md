@@ -8,7 +8,7 @@ tags: ["domain-map", "false-positive", "documentation-drift", "verification"]
 
 domain-map 的 bundle 界定表是測試策略、任務派發、對齊度分析的權威依據——表上列了什麼 bundle，下游就對什麼 bundle 建測試、開工作項目。這張表如果混入了程式碼中不存在的概念，下游產出的工作項目在執行時才會發現目標不存在，整條工作鏈從分析到建票到派發全部白費。
 
-本章處理的判斷標準：bundle 界定表的每一列是否對應到程式碼中實際存在的結構。與[組裝層的可達性](/ddd/composition-root-reachability/)互補——組裝層可達性守的是「已實作的功能有沒有接到入口」，本章守的是「文件宣告的結構有沒有在程式碼中存在」。兩者的共同根因是宣告與現況的落差，差別在觀察面：前者從程式碼往入口看，後者從文件往程式碼看。
+本章處理的判斷標準：bundle 界定表的每一列是否對應到程式碼中實際存在的結構。與[組裝層的可達性](/software-design/ddd/composition-root-reachability/)互補——組裝層可達性守的是「已實作的功能有沒有接到入口」，本章守的是「文件宣告的結構有沒有在程式碼中存在」。兩者的共同根因是宣告與現況的落差，差別在觀察面：前者從程式碼往入口看，後者從文件往程式碼看。
 
 ## 一個 bundle 的失敗鏈
 
@@ -127,6 +127,6 @@ bundle 界定表的「已實作」和「規劃中」是兩種不同的語意，�
 
 ## 與其他章節的關係
 
-- [組裝層的可達性](/ddd/composition-root-reachability/)：組裝層守「程式碼到入口」的連通性，本章守「文件到程式碼」的一致性。兩者的共同上游判斷標準是「宣告的東西要能被驗證為存在」
-- [不變式的強制層次](/ddd/invariant-enforcement-layers/)：bundle 的實作狀態是一種文件層的不變式——「已實作」的 bundle 必須有對應的程式碼路徑。不變式的強制方式是產出時的 `ls`/`grep` 驗證，跟程式碼中不變式的強制方式（型別系統、建構子驗證）同源
-- [跨邊界參照與狀態所有權](/ddd/cross-boundary-reference-ownership/)：bundle 名稱是 domain-map 對程式碼的參照，「程式碼有沒有這個名稱」是參照有效性的問題。判斷標準一的驗證跟該章的「參照有效性三問」第一問（「對方的哪些操作會讓這個參照死亡？」）同源
+- [組裝層的可達性](/software-design/ddd/composition-root-reachability/)：組裝層守「程式碼到入口」的連通性，本章守「文件到程式碼」的一致性。兩者的共同上游判斷標準是「宣告的東西要能被驗證為存在」
+- [不變式的強制層次](/software-design/ddd/invariant-enforcement-layers/)：bundle 的實作狀態是一種文件層的不變式——「已實作」的 bundle 必須有對應的程式碼路徑。不變式的強制方式是產出時的 `ls`/`grep` 驗證，跟程式碼中不變式的強制方式（型別系統、建構子驗證）同源
+- [跨邊界參照與狀態所有權](/software-design/ddd/cross-boundary-reference-ownership/)：bundle 名稱是 domain-map 對程式碼的參照，「程式碼有沒有這個名稱」是參照有效性的問題。判斷標準一的驗證跟該章的「參照有效性三問」第一問（「對方的哪些操作會讓這個參照死亡？」）同源

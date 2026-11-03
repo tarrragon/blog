@@ -71,4 +71,4 @@ final cartDiscountAmount = rawCartDiscount > itemsSubtotal ? itemsSubtotal : ...
 ## 相關閱讀
 
 - 同專案的資料語意背景：[桌子跟購物車是兩個聚合](/work-log/pos_table_cart_lifecycle_decoupling/)——提前結帳的生命週期設計是本文「份數扣減」需求的來源；[同一個品項、四個 model](/work-log/dart_pos_item_four_lifecycle_models/)——合併產出的 `OrderedCartItem` 與 `sourceDetailIds` 的身份設計
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——領域計算的歸屬、以及「從操作推導領域」（提前結帳這個操作逼出了整個 view 函式）
+- 概念地基：[DDD 領域驅動設計指南](/software-design/ddd/)——領域計算的歸屬、以及「從操作推導領域」（提前結帳這個操作逼出了整個 view 函式）

@@ -1,6 +1,6 @@
 # Codex Brief: knowledge-cards 擴建任務
 
-本 brief 指導 Codex 掃描 `content/backend/` 與 `content/go/`（含 `go-advanced/`）既有文章，識別尚未建立知識卡片的術語，補寫卡片並建立雙向連結。執行前請先讀取 repo 根目錄的 `AGENTS.md` 與它路由到的 `docs/rules/` 分冊（寫作與檢查規則）。
+本 brief 指導 Codex 掃描 `content/backend/` 與 `content/programming/go/`（含 `basic/` 與 `advanced/`）既有文章，識別尚未建立知識卡片的術語，補寫卡片並建立雙向連結。執行前請先讀取 repo 根目錄的 `AGENTS.md` 與它路由到的 `docs/rules/` 分冊（寫作與檢查規則）。
 
 ---
 
@@ -54,10 +54,10 @@
 rg -o '\[([^\]]+)\]\(\.\./[^)]+\)' content/backend/ --no-filename | sort -u
 
 # go 正文中可能提及的後端術語（過濾英文大寫詞與常見技術詞）
-rg -o '\b[A-Z][a-zA-Z-]{3,}\b' content/go/ content/go-advanced/ --no-filename | sort | uniq -c | sort -rn | head -100
+rg -o '\b[A-Z][a-zA-Z-]{3,}\b' content/programming/go/ --no-filename | sort | uniq -c | sort -rn | head -100
 
 # 中文書寫的技術術語（手動複核）
-rg '(?:快取|佇列|訊息|事件|重試|降級|限流|熔斷|冪等|讀取模型|寫入模型|同步|非同步)' content/backend/ content/go/ -l
+rg '(?:快取|佇列|訊息|事件|重試|降級|限流|熔斷|冪等|讀取模型|寫入模型|同步|非同步)' content/backend/ content/programming/go/ -l
 ```
 
 ### 2.2 既有卡片比對
@@ -146,7 +146,6 @@ weight: <依主題分類排序>
 - 範例：
   - 原句候選：「不要在 hot key 上用普通 cache-aside」
   - 正面改寫：「hot key 情境優先採用 singleflight 或 request coalescing，以避免快取同時 miss 造成下游壓力」（此處「避免」屬安全警示，保留並隱含理由）
-
 
 ### 3.4 反模式禁寫清單（對話式 AI 產出常見問題）
 

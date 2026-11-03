@@ -1,0 +1,86 @@
+---
+title: "模組三：進階設計模式"
+date: 2026-01-20
+description: "將元編程知識應用於實際架構設計，建立型別安全、可擴展的系統"
+weight: 3
+tags: ["python", "python-advanced", "design-patterns"]
+aliases: ["/python-advanced/03-design-patterns/"]
+---
+
+本模組將元編程的「機制理解」轉化為「架構設計能力」，學習如何建立型別安全、錯誤處理完善、可擴展的 Python 系統。
+
+## 本模組補上入門知識到架構設計之間的落差
+
+在入門系列中，我們學習了：
+
+- 型別提示的基礎用法
+- 異常處理的基本策略
+- `with` 語句的使用
+- 單例與快取模式
+
+這些知識足以應付日常開發，但當你要設計：
+
+- **可重用的 Repository 層**：需要泛型進階技巧
+- **大型專案的錯誤處理架構**：需要異常層級設計
+- **資源管理複雜的系統**：需要進階上下文管理
+- **支援擴展的框架**：需要插件系統設計
+
+你就需要本模組的進階設計模式。
+
+## 模組定位
+
+```text
+模組二 元編程 → 模組 3.5 設計模式 → 模組三 CPython
+   (機制)           (應用)            (底層)
+```
+
+元編程教你「如何建立抽象機制」，本模組教你「如何應用這些機制設計系統」。
+
+## 章節列表
+
+| 章節                                                                                      | 主題               | 關鍵收穫               |
+| ----------------------------------------------------------------------------------------- | ------------------ | ---------------------- |
+| [3.5.1 泛型進階](/programming/python/advanced/03-design-patterns/generics/)               | 泛型進階           | 建立型別安全的抽象層   |
+| [3.5.2 異常設計架構](/programming/python/advanced/03-design-patterns/exception-design/)   | 異常設計架構       | 設計大型專案的錯誤處理 |
+| [3.5.3 進階上下文管理](/programming/python/advanced/03-design-patterns/context-managers/) | 進階上下文管理     | 複雜資源的優雅管理     |
+| [3.5.4 插件系統設計](/programming/python/advanced/03-design-patterns/plugin-system/)      | 插件系統設計       | 建立可擴展的架構       |
+| [3.5.5 設計模式整合案例](/programming/python/advanced/03-design-patterns/integration/)    | 設計模式整合案例   | 綜合應用所有模式       |
+| [3.5.6 軟體設計的取捨藝術](/programming/python/advanced/03-design-patterns/trade-offs/)   | 軟體設計的取捨藝術 | 取捨決策框架與業界經驗 |
+
+## 案例研究
+
+基於 `.claude/lib` 實際程式碼的進階案例：
+
+| 案例                                                                                              | 素材              | 學習重點                  |
+| ------------------------------------------------------------------------------------------------- | ----------------- | ------------------------- |
+| [快取生命週期管理](/programming/python/advanced/03-design-patterns/case-studies/cache-lifecycle/) | config_loader.py  | Context Manager           |
+| [插件架構設計](/programming/python/advanced/03-design-patterns/case-studies/plugin-architecture/) | hook_validator.py | Protocol + 註冊機制       |
+| [異常設計架構](/programming/python/advanced/03-design-patterns/case-studies/exception-hierarchy/) | hook_io.py        | 異常階層 + ExceptionGroup |
+| [泛型驗證器](/programming/python/advanced/03-design-patterns/case-studies/generic-validator/)     | hook_validator.py | Generic + TypeVar         |
+
+## 先備知識
+
+| 章節           | 需要先讀                                                                                       |
+| -------------- | ---------------------------------------------------------------------------------------------- |
+| 3.1 泛型進階   | 入門系列 [2.2 Optional、Union、泛型](/programming/python/basic/02-type-system/optional-union/) |
+| 3.2 異常設計   | 入門系列 [5.1 異常處理策略](/programming/python/basic/05-error-testing/exception/)             |
+| 3.3 上下文管理 | 入門系列的 `with` 語句使用                                                                     |
+| 3.4 插件系統   | 本進階系列 [模組二：元編程](/programming/python/advanced/02-metaprogramming/)                  |
+| 3.5 整合案例   | 本模組 3.1-3.4                                                                                 |
+| 3.6 取捨藝術   | 本模組 3.1-3.5（應用全部設計模式的決策思維）                                                   |
+
+## 學習路徑
+
+本模組適合以下學習路徑：
+
+- **路徑 A（Web/API 開發）**：asyncio → **設計模式** → 打包
+- **路徑 B（框架開發）**：元編程 → **設計模式** → CPython → 打包
+
+## 學習時間
+
+每章節約 30-45 分鐘，全模組約 3-4 小時
+
+---
+
+*上一模組：[模組二：元編程](/programming/python/advanced/02-metaprogramming/)*
+*下一模組：[模組三：CPython 內部機制](/programming/python/advanced/04-cpython-internals/)*

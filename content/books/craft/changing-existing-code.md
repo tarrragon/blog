@@ -75,6 +75,6 @@ Joshua Kerievsky 的《Refactoring to Patterns》把重構手法接到設計模�
 
 改動的技術要用在對的地方，靠的是設計判斷標準——什麼樣的結構值得改成、什麼樣的複雜度是根本問題。這類判斷的選書收在 [設計判斷標準與日常實踐的選讀書目](../design-and-practice/)。
 
-要動的程式碼沒有測試而需要先補，測試該怎麼分層與設計看 [Testing 測試策略](/testing/)；大規模重構怎麼分階段推進、途中的常見失誤與作用域回歸風險，看 [Python 維護指南的重構章](/python/07-refactoring/)，那裡有一個跨版本重構的完整實作案例。
+要動的程式碼沒有測試而需要先補，測試該怎麼分層與設計看 [Testing 測試策略](/testing/)；大規模重構怎麼分階段推進、途中的常見失誤與作用域回歸風險，看 [Python 維護指南的重構章](/programming/python/basic/07-refactoring/)，那裡有一個跨版本重構的完整實作案例。
 
 如果重構一直被排不進時程，那不是技藝問題，相關的選書收在 [估算、承諾與決策偏誤的選讀書目](../../software-management/topics/estimation-decision/) 與 [組織結構與團隊設計的選讀書目](../../software-management/topics/team-design/)。

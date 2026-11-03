@@ -24,14 +24,14 @@ tags: ["首頁", "教學", "工程筆記"]
 
 第一次要把服務放上網際網路的讀者，從 [服務上線：部署、主機形態、域名與 HTTPS、十二要素、自架或託管、備份與還原](/devops/going-live/) 開始：它依序交代部署是什麼、主機怎麼選、域名與 HTTPS 怎麼接、資料庫自架或託管、備份怎麼做，每一篇再連到 Backend 與 DevOps 底下談同一件事的深入章節。
 
-- [Python 維護指南](/python/)：入門教學，以 Hook 系統為範例
-- [Python 進階指南](/python-advanced/)：深入內部機制與擴展開發
-- [Go 維護指南](/go/)：理解 Go 語言精神與核心開發能力
-- [Go 進階指南](/go-advanced/)：深入 Go 並發、WebSocket、runtime 與服務架構
-- [PHP 伺服器執行模型](/php/)：CGI、mod_php、FastCGI、PHP-FPM、OPcache 到常駐 worker，PHP 在伺服器上被執行的方式與各自的成本
-- [Flutter 實戰指南](/flutter/)：Dart 型別設計、狀態與渲染、測試策略與工具鏈，從實際專案 case 抽出判斷標準
-- [DDD 領域驅動設計指南](/ddd/)：領域模型的理論與判斷標準層 — entity 判斷標準、不變式強制層次、稽核軌跡，實作限制路由到各語言模組
-- [軟體設計原則](/design-principles/)：語言無關的設計原則與對應的壞味道 — 單一職責以改變的理由定義、發散式變更與散彈式修改，各語言模組的拆檔與類別設計引用這裡的定義
+- [程式語言：Python、Go、PHP、Flutter](/programming/)：綁定特定語言或框架的教學系列
+  - [Python](/programming/python/)：[入門](/programming/python/basic/)以 Hook 系統為範例；[進階](/programming/python/advanced/)深入內部機制與擴展開發
+  - [Go](/programming/go/)：[入門](/programming/go/basic/)理解 Go 語言精神與核心開發能力；[進階](/programming/go/advanced/)深入 Go 並發、WebSocket、runtime 與服務架構
+  - [PHP 伺服器執行模型](/programming/php/)：CGI、mod_php、FastCGI、PHP-FPM、OPcache 到常駐 worker，PHP 在伺服器上被執行的方式與各自的成本
+  - [Flutter 實戰指南](/programming/flutter/)：Dart 型別設計、狀態與渲染、測試策略與工具鏈，從實際專案 case 抽出判斷標準
+- [軟體設計：設計原則與 DDD 領域驅動設計](/software-design/)：語言無關的設計理論，各語言系列引用這裡的定義
+  - [軟體設計原則](/software-design/design-principles/)：語言無關的設計原則與對應的壞味道 — 單一職責以改變的理由定義、發散式變更與散彈式修改，各語言模組的拆檔與類別設計引用這裡的定義
+  - [DDD 領域驅動設計指南](/software-design/ddd/)：領域模型的理論與判斷標準層 — entity 判斷標準、不變式強制層次、稽核軌跡，實作限制路由到各語言模組
 - [Backend 服務實務指南](/backend/)：整理資料庫（含 [SQL 查詢語言的設計](/backend/01-database/sql/)）、快取、訊息佇列、觀測、部署與可靠性驗證等跨語言後端能力
 - [DevOps：服務上線、基礎設施、CI/CD、運行期維運與監控](/devops/)：軟體從本機放上網際網路、建置雲端基礎設施、驗證與交付變更，到服務在 production 持續運作與監控的教學系列
   - [服務上線：部署、主機形態、域名與 HTTPS、十二要素、自架或託管、備份與還原](/devops/going-live/)：第一次把服務放上網際網路時要做的決定，不綁特定業者

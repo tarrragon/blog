@@ -57,4 +57,4 @@ tags: ["books", "craft", "reading"]
 
 ## 工程技藝書單跟教學系列的邊界
 
-書單給選讀判斷，實作在教學系列：各語言的寫法與慣例看 [Python](/python/)、[Go](/go/)、[Flutter](/flutter/)，測試分層與 mock 判斷看 [Testing 測試策略](/testing/)，領域模型的切法看 [DDD 領域驅動設計指南](/ddd/)。
+書單給選讀判斷，實作在教學系列：各語言的寫法與慣例看 [Python](/programming/python/basic/)、[Go](/programming/go/basic/)、[Flutter](/programming/flutter/)，測試分層與 mock 判斷看 [Testing 測試策略](/testing/)，領域模型的切法看 [DDD 領域驅動設計指南](/software-design/ddd/)。

@@ -20,17 +20,17 @@ Tarragon 的個人技術部落格。內容涵蓋後端工程教學系列、開�
 
 ### 教學系列
 
-| 區塊                                                                        | 內容                                                                                                                   |
-| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| [go/](./content/go/) [go-advanced/](./content/go-advanced/)                 | Go 語言教材（語言精神 + 工程實踐 + 並發 / WebSocket / 服務架構）                                                       |
-| [python/](./content/python/) [python-advanced/](./content/python-advanced/) | Python 教材（Hook 系統 + 內部機制 / 擴展開發）                                                                         |
-| [backend/](./content/backend/)                                              | 語言無關的後端能力 — 資料庫、快取、訊息佇列、觀測、部署、可靠性                                                        |
-| [cli/](./content/cli/)                                                      | CLI 圖形化工具 — TUI / ASCII 圖表 / 多工器 / 遠端操作選型                                                              |
-| [devops/](./content/devops/)                                                | 服務上線、基礎設施（IaC、身分憑證、網路、環境分離）、CI/CD、運行期維運（負載、擴展、容量、成本）與非伺服器端程式的監控 |
-| [llm/](./content/llm/)                                                      | 本地 LLM 寫 code 實務 — Apple Silicon + VS Code 整合                                                                   |
-| [testing/](./content/testing/)                                              | 測試策略 — 三層分層、mock 遮蔽、protocol integration test                                                              |
-| [ux-design/](./content/ux-design/)                                          | 畫面設計 — 狀態矩陣、gate fallback、輸入機制、導航模式                                                                 |
-| [business/](./content/business/)                                            | 商業概念與策略分析 — 商業模式、單位經濟、WRAP 案例拆解                                                                 |
+| 區塊                                                 | 內容                                                                                                                   |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [programming/go/](./content/programming/go/)         | Go 語言教材（語言精神 + 工程實踐 + 並發 / WebSocket / 服務架構）                                                       |
+| [programming/python/](./content/programming/python/) | Python 教材（Hook 系統 + 內部機制 / 擴展開發）                                                                         |
+| [backend/](./content/backend/)                       | 語言無關的後端能力 — 資料庫、快取、訊息佇列、觀測、部署、可靠性                                                        |
+| [cli/](./content/cli/)                               | CLI 圖形化工具 — TUI / ASCII 圖表 / 多工器 / 遠端操作選型                                                              |
+| [devops/](./content/devops/)                         | 服務上線、基礎設施（IaC、身分憑證、網路、環境分離）、CI/CD、運行期維運（負載、擴展、容量、成本）與非伺服器端程式的監控 |
+| [llm/](./content/llm/)                               | 本地 LLM 寫 code 實務 — Apple Silicon + VS Code 整合                                                                   |
+| [testing/](./content/testing/)                       | 測試策略 — 三層分層、mock 遮蔽、protocol integration test                                                              |
+| [ux-design/](./content/ux-design/)                   | 畫面設計 — 狀態矩陣、gate fallback、輸入機制、導航模式                                                                 |
+| [business/](./content/business/)                     | 商業概念與策略分析 — 商業模式、單位經濟、WRAP 案例拆解                                                                 |
 
 ### 筆記與檢討
 

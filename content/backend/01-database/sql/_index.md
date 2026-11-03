@@ -160,7 +160,7 @@ tags: ["sql", "database", "query"]
 - → [backend 1.16 Schema 設計決定的查詢代價](/backend/01-database/design-decisions-price-every-query/)：**查詢還不存在的時候**那一側。本分類每一篇都把表的形狀當成給定的，而那個形狀是建表時的六個決定造出來的——欄位允不允許為空、鍵唯不唯一、長欄位放哪一張表、常一起取的資料切在幾張表、字串的比較規則寫在哪一層、外鍵生不生效。六條各自替查詢定了什麼價在那一篇有實測
 - → [PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)：在真實系統上讀計畫要用的三層工具與四個 production case，本分類只到概念層
 - → [Test Oracle（判斷標準來源）](/testing/knowledge-cards/test-oracle/)：一段查詢問對了沒有，判斷標準從哪裡取得、各種取法各自抓不到什麼，在測試那一側有完整的分類；[SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/) 只把它放回 SQL 的兩層裡講
-- → [python 模組八 8.4 SQL 子句與 pandas 方法的對應](/python/08-data-analysis/same-relational-algebra/)：同一組操作換成 DataFrame 介面的四組對應，以及對應斷掉的三個位置
+- → [python 模組八 8.4 SQL 子句與 pandas 方法的對應](/programming/python/basic/08-data-analysis/same-relational-algebra/)：同一組操作換成 DataFrame 介面的四組對應，以及對應斷掉的三個位置
 
 ## Backlog
 

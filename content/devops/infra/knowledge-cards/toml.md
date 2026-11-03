@@ -11,7 +11,7 @@ TOML（Tom's Obvious, Minimal Language）是一種給人讀寫的設定檔格式
 
 ## 概念位置
 
-TOML 在設定檔格式裡的位置介於 JSON 與 YAML 之間：跟 JSON 一樣每個值的型別都由寫法明確決定，跟 YAML 一樣可以寫註解、適合人手動編輯。它只描述資料，需要變數、迴圈與條件來描述基礎設施時用的是 [HCL](/devops/infra/knowledge-cards/hcl/) 這類設定語言。它在本站被用來寫主機的維護清單，選它的理由與實測見 [主機維護清單寫成 TOML：JSON、YAML、TOML 的取捨、TOML 1.0 與 1.1 的版本差異、清單的欄位設計與只讀檢查腳本](/devops/operations/09-host-lifecycle/host-manifest-in-toml/)；Python 打包設定裡的 TOML 用法見 [6.1 pyproject.toml 完整指南](/python-advanced/07-packaging/pyproject-toml/)。
+TOML 在設定檔格式裡的位置介於 JSON 與 YAML 之間：跟 JSON 一樣每個值的型別都由寫法明確決定，跟 YAML 一樣可以寫註解、適合人手動編輯。它只描述資料，需要變數、迴圈與條件來描述基礎設施時用的是 [HCL](/devops/infra/knowledge-cards/hcl/) 這類設定語言。它在本站被用來寫主機的維護清單，選它的理由與實測見 [主機維護清單寫成 TOML：JSON、YAML、TOML 的取捨、TOML 1.0 與 1.1 的版本差異、清單的欄位設計與只讀檢查腳本](/devops/operations/09-host-lifecycle/host-manifest-in-toml/)；Python 打包設定裡的 TOML 用法見 [6.1 pyproject.toml 完整指南](/programming/python/advanced/07-packaging/pyproject-toml/)。
 
 ## 可觀察訊號
 

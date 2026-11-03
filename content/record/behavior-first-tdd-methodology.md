@@ -95,7 +95,7 @@ Sociable 的定義是把測試邊界畫在模組的公開 API 上，模組內部
 
 **找出模組的邊界**。判斷標準是「這組類別對外承諾了什麼」，承諾的那個介面就是測試邊界，其餘都是實作細節。這個承諾要有機制撐著才存在——可見性修飾（package-private、internal）、套件結構、import 規則任一種都行；沒有任何機制擋住外部直接呼叫內部類別時，「邊界」只是一個口頭約定。邊界找錯的常見形態是把每個類別都當成一個模組，那會實際落成 Solitary 而寫的人不自知。
 
-**讓 Domain 物件用真實實例**。[值物件](/ddd/knowledge-cards/value-object/)、[實體](/ddd/knowledge-cards/entity/)、純計算的協作者一律不替換——這些是不碰外部世界、只做計算與持有狀態的物件。造不起來時回到症狀三的分流。
+**讓 Domain 物件用真實實例**。[值物件](/software-design/ddd/knowledge-cards/value-object/)、[實體](/software-design/ddd/knowledge-cards/entity/)、純計算的協作者一律不替換——這些是不碰外部世界、只做計算與持有狀態的物件。造不起來時回到症狀三的分流。
 
 **把替換限制在應用邊界**。跨出本應用進程、需要外部世界回應的依賴才替換：資料庫、檔案系統、外部服務、時鐘、亂數。優先用 [stub](/testing/knowledge-cards/stub/)（寫死回應）或 fake（有狀態的簡化實作）而不是 mock（斷言呼叫發生過），因為斷言的對象是最終狀態，不是呼叫過程。五種替身的分野在 [test double 分類](/testing/knowledge-cards/test-double-taxonomy/)那張卡。
 
@@ -103,9 +103,9 @@ Sociable 的定義是把測試邊界畫在模組的公開 API 上，模組內部
 
 Clean Architecture 跟 Sociable 建立在同一條前提上：業務邏輯獨立於外部世界。所以兩者組合起來沒有額外的對接成本，而且它的分層本身就是那個「撐住邊界的機制」。站內的實作路線在 [Clean Architecture 實作指引](../clean-architecture-implementation-methodology/)。
 
-Use Cases 層對外提供公開 API、對內只使用 Domain Entities、透過介面隔離外部依賴。這個結構直接給出上面三件事各自的答案：Use Case 的公開 API 是測試邊界，Domain Entities 用真實物件，要替換的只有 [Repository](/ddd/knowledge-cards/repository/) 這一層。
+Use Cases 層對外提供公開 API、對內只使用 Domain Entities、透過介面隔離外部依賴。這個結構直接給出上面三件事各自的答案：Use Case 的公開 API 是測試邊界，Domain Entities 用真實物件，要替換的只有 [Repository](/software-design/ddd/knowledge-cards/repository/) 這一層。
 
-這個組合多買到一件事：對 Use Case 的單元測試同時就是業務驗收測試。一個名為「使用者提交訂單成功」的測試案例，不需要啟動 UI、不需要真實資料庫，驗證的卻是完整的業務流程。Alistair Cockburn 的 Hexagonal Architecture（又稱 Ports and Adapters，主張應用核心對外只透過抽象的埠溝通、UI 與資料庫都只是可替換的轉接器，構件層見 [port](/ddd/knowledge-cards/port/) 與 [adapter](/ddd/knowledge-cards/adapter/)）把測試當成系統的另一種使用者，講的是同一個結構性質。
+這個組合多買到一件事：對 Use Case 的單元測試同時就是業務驗收測試。一個名為「使用者提交訂單成功」的測試案例，不需要啟動 UI、不需要真實資料庫，驗證的卻是完整的業務流程。Alistair Cockburn 的 Hexagonal Architecture（又稱 Ports and Adapters，主張應用核心對外只透過抽象的埠溝通、UI 與資料庫都只是可替換的轉接器，構件層見 [port](/software-design/ddd/knowledge-cards/port/) 與 [adapter](/software-design/ddd/knowledge-cards/adapter/)）把測試當成系統的另一種使用者，講的是同一個結構性質。
 
 ## 行為快照落在兩種做法之外
 

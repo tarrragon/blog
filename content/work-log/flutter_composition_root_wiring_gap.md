@@ -10,7 +10,7 @@ tags: ["flutter", "dart", "ddd", "riverpod", "testing", "composition-root"]
 > **觸發場景**：Flutter 書籍管理 App 的一個版本完成 113 張票、單元測試 100% 通過、收尾驗收通過；實機測試（Android 實體機）找出五個問題——其中三個是「功能做完了、使用者到不了」
 > **疑問來源**：規格審查、測試、版本收尾三道防線都在運作，為什麼五個問題全數漏網？
 > **整理目的**：記下佔位實作讓測試綠燈的機制、反向追溯提案與 use case 文件的結果、以及修補時「規格層／測試層／發版層」的分層落點
-> **本文邊界**：素材是該專案 v0.38.1 修復批次的分析記錄；DDD 觀念層的判斷標準另見 [組裝層的可達性](/ddd/composition-root-reachability/)
+> **本文邊界**：素材是該專案 v0.38.1 修復批次的分析記錄；DDD 觀念層的判斷標準另見 [組裝層的可達性](/software-design/ddd/composition-root-reachability/)
 
 ---
 
@@ -66,7 +66,7 @@ override 同時是解藥跟盲點，而且是同一個機制。判讀訊號有�
 
 五個問題各自的修法：三個接線問題把真實依賴、真實頁面、導航 callback 接回入口；zone 警告把 binding 初始化移進 runZonedGuarded、與 runApp 收在同一個 zone；PRAGMA 失敗把 journal mode 設定改走 rawQuery（回傳結果列的查詢路徑）。修掉之外，修補按層放了三組防線，涵蓋範圍超出「把五個問題修掉」本身：
 
-**規格層**：use case 文件補上「端到端可達性」成功保證條款（路由指向真實頁面、callback 已接線、provider 在無 override 環境可解析），並新增 use case 撰寫檢核：名詞可定位、路徑連通、狀態完備、環境差異——問句全文與判定方式見 [組裝層的可達性](/ddd/composition-root-reachability/)。
+**規格層**：use case 文件補上「端到端可達性」成功保證條款（路由指向真實頁面、callback 已接線、provider 在無 override 環境可解析），並新增 use case 撰寫檢核：名詞可定位、路徑連通、狀態完備、環境差異——問句全文與判定方式見 [組裝層的可達性](/software-design/ddd/composition-root-reachability/)。
 
 **測試層**：區分行為測試與接線測試。行為測試維持 mock override（驗功能邏輯）；接線測試零 override、用真實路由表與真實依賴，只驗「port 有沒有插上 adapter」——本案是 local-first 單機 app、零 override 做得到全量；有遠端依賴的專案，零 override 的範圍是組裝路徑、最外圈 infrastructure 在邊界替換。修復前先補了十三個案例，其中十一個對目標行為斷言、修復前確定性紅燈——修復票以這批測試變綠為驗收點。
 

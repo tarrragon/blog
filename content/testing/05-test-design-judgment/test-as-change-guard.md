@@ -43,7 +43,7 @@ tags: ["testing", "test-design", "refactoring", "comment", "regression"]
 | 命名                                   | 讀到呼叫點時                | 動手前多看一眼，但不會自動發聲                                                     |
 | 註解                                   | 剛好讀到宣告處時            | 批次整理與重構的人常常根本不經過那一行                                             |
 
-型別的訊號最早，但裝得下的約束窄——「不該是負數」交給非負型別，違反它的程式碼根本寫不出來；「必須活過某次重設」這種跨函式的讀寫順序，違反的程式碼寫得出來、而且編譯得過。跨時間必須恆真的條件（[不變式](/ddd/knowledge-cards/invariant/)）落在型別外面時，測試是唯一以行為為斷言對象、在改壞當下發聲的位置。前提是它會自動跑——掛在 pre-commit（commit 前自動執行的 git hook）或 [CI](/devops/ci/knowledge-cards/ci-pipeline/) 上，沒有人手動觸發它也發得了聲。
+型別的訊號最早，但裝得下的約束窄——「不該是負數」交給非負型別，違反它的程式碼根本寫不出來；「必須活過某次重設」這種跨函式的讀寫順序，違反的程式碼寫得出來、而且編譯得過。跨時間必須恆真的條件（[不變式](/software-design/ddd/knowledge-cards/invariant/)）落在型別外面時，測試是唯一以行為為斷言對象、在改壞當下發聲的位置。前提是它會自動跑——掛在 pre-commit（commit 前自動執行的 git hook）或 [CI](/devops/ci/knowledge-cards/ci-pipeline/) 上，沒有人手動觸發它也發得了聲。
 
 命名把約束帶到每個呼叫點——批次操作案例裡的用途值取 `purposeSurvivingReset` 這種名字，動手的人在改之前會多看一眼。但 IDE 的批次 rename 與自動重構不讀語意，名字擋不下工具驅動的變更；它是有價值的輔助，不是防護的終點。
 
@@ -53,7 +53,7 @@ tags: ["testing", "test-design", "refactoring", "comment", "regression"]
 
 這條分界就是[斷言品質三問](/testing/05-test-design-judgment/assertion-quality/)的第一問（斷言的是行為嗎），防護視角補上它的理由：重構需要的是「行為被改壞才發聲」的訊號，對實作發聲的測試把訊號稀釋成噪音。
 
-加功能時，既有測試定義舊行為的邊界。新功能動到[共享可變狀態](/ddd/knowledge-cards/shared-mutable-state/)、舊測試紅，代表新功能改壞了舊契約——這顆紅燈正是建立時那個「未來哪種改壞」的兌現，它在合併之前就浮現，不必等使用者回報。
+加功能時，既有測試定義舊行為的邊界。新功能動到[共享可變狀態](/software-design/ddd/knowledge-cards/shared-mutable-state/)、舊測試紅，代表新功能改壞了舊契約——這顆紅燈正是建立時那個「未來哪種改壞」的兌現，它在合併之前就浮現，不必等使用者回報。
 
 ## review 爭論時：測試與註解的分工
 

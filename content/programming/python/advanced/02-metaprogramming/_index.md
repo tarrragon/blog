@@ -1,0 +1,91 @@
+---
+title: "模組二：元編程"
+date: 2026-01-20
+description: "深入 Python 的元編程機制，理解框架的實現原理"
+weight: 2
+tags: ["python", "python-advanced", "metaprogramming"]
+aliases: ["/python-advanced/02-metaprogramming/"]
+---
+
+元編程（Metaprogramming）是指撰寫可以操作程式碼的程式碼。Python 提供了豐富的元編程機制，包括 Descriptor、Metaclass、類別裝飾器等。
+
+## 你已經在使用元編程
+
+如果你完成了入門系列，你其實已經接觸過元編程了：
+
+```python
+# 1. @property - Descriptor Protocol 的應用
+class User:
+    @property
+    def full_name(self):
+        return f"{self.first} {self.last}"
+
+# 2. @dataclass - 類別裝飾器 + 元類別技術
+@dataclass
+class Config:
+    name: str
+    timeout: int = 30
+
+# 3. ABC - 元類別控制子類別行為
+from abc import ABC, abstractmethod
+class Parser(ABC):
+    @abstractmethod
+    def parse(self, content: str) -> dict:
+        pass
+```
+
+這些都是元編程的入門應用。本模組將深入探討它們背後的原理，以及如何創建自己的元編程工具。
+
+## 元編程是理解框架與建立抽象的基礎
+
+理解元編程機制有多重好處：
+
+- **理解框架**：Django Model、SQLAlchemy、Pydantic 都大量使用元編程
+- **建立抽象**：可以設計更優雅的 API
+- **深入 Python**：理解 Python 物件模型的本質
+
+## 章節列表
+
+| 章節                                                                                             | 主題                         | 關鍵收穫              |
+| ------------------------------------------------------------------------------------------------ | ---------------------------- | --------------------- |
+| [2.1 Descriptor Protocol 完整指南](/programming/python/advanced/02-metaprogramming/descriptors/) | Descriptor Protocol 完整指南 | 理解 @property 的本質 |
+| [2.2 Metaclass 設計與應用](/programming/python/advanced/02-metaprogramming/metaclasses/)         | Metaclass 設計與應用         | 控制類別的建立過程    |
+| [2.3 類別裝飾器與動態類別](/programming/python/advanced/02-metaprogramming/class-creation/)      | 類別裝飾器與動態類別         | @dataclass 的實現原理 |
+| [2.4 反射與 inspect 模組](/programming/python/advanced/02-metaprogramming/introspection/)        | 反射與 inspect 模組          | 程式檢視自身的能力    |
+
+## 案例研究
+
+基於 `.claude/lib` 實際程式碼的進階案例：
+
+| 案例                                                                                                | 素材              | 學習重點               |
+| --------------------------------------------------------------------------------------------------- | ----------------- | ---------------------- |
+| [宣告式驗證](/programming/python/advanced/02-metaprogramming/case-studies/declarative-validation/)  | hook_validator.py | Descriptor Protocol    |
+| [自動註冊機制](/programming/python/advanced/02-metaprogramming/case-studies/auto-registration/)     | hook_validator.py | Metaclass              |
+| [類似 Django Field](/programming/python/advanced/02-metaprogramming/case-studies/field-descriptor/) | hook_io.py        | Descriptor + dataclass |
+
+## 先備知識
+
+- 入門系列 [4.4 單例與快取](/programming/python/basic/04-oop/singleton-cache/)
+- 熟悉 Python 的類別與物件
+
+## 元編程從簡單方案開始、深度定制才用 Metaclass
+
+元編程強大但複雜，使用前請考慮：
+
+| 場景           | 建議                     |
+| -------------- | ------------------------ |
+| 需要驗證屬性   | 先考慮 @property         |
+| 需要修改類別   | 先考慮類別裝飾器         |
+| 需要控制子類別 | 先考慮 __init_subclass__ |
+| 需要深度定制   | 才考慮 Metaclass         |
+
+**原則**：能用簡單方案解決就不用複雜方案。
+
+## 學習時間
+
+每章節約 30-45 分鐘，全模組約 2-3 小時
+
+---
+
+*上一模組：[模組一：非同步程式設計](/programming/python/advanced/01-asyncio/)*
+*下一模組：[模組三：CPython 內部機制](/programming/python/advanced/04-cpython-internals/)*

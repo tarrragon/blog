@@ -11,7 +11,7 @@ Infra 知識卡收錄基礎設施領域的核心術語。每張卡自包含、�
 
 知識卡的職責是建立術語的語意錨點。教學模組負責情境推導與操作判斷標準，知識卡負責「這個詞是什麼、什麼時候會碰到、使用時要決定什麼」。兩者互相引用但各自完整。
 
-PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識卡](/php/knowledge-cards/)。
+PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識卡](/programming/php/knowledge-cards/)。
 
 ## 卡片清單
 

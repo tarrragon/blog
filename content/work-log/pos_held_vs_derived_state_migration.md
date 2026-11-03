@@ -10,7 +10,7 @@ tags: ["ddd", "read-model", "projection", "state-ownership", "sync", "pos"]
 > **觸發場景**：POS App 前端有多個服務各自持有「以單據 id 為 key」的狀態——輪詢的差異比對基準、事件追蹤記錄、當前品項快照。後端合併兩張單據後，舊 id 全部作廢，這些狀態何去何從？
 > **疑問來源**：最初的直覺是「全部搬家」——把每一份狀態的 key 都改成新 id。實作後發現有些搬了是白搬、有些不搬會出大事，差異在哪？
 > **整理目的**：把「上游身份轉移時的前端狀態遷移」整理成一個二分判斷標準：自持 vs 可導出。
-> **本文邊界**：讀側設計的完整階梯見 [讀模型的升級條件](/ddd/read-model-upgrade-signals/)。
+> **本文邊界**：讀側設計的完整階梯見 [讀模型的升級條件](/software-design/ddd/read-model-upgrade-signals/)。
 
 ---
 
@@ -42,7 +42,7 @@ tags: ["ddd", "read-model", "projection", "state-ownership", "sync", "pos"]
 
 ## 4. 與讀模型階梯的關係
 
-「可導出狀態」就是讀模型精神在前端的形態：它是上游真相的投影，正確性靠「可隨時重建」保證，而不是靠維護它的每一次增量修改都正確。判斷標準也同構——[讀模型的升級條件](/ddd/read-model-upgrade-signals/)問「讀的形狀還是 aggregate（聚合根）的形狀」，這裡問「這份狀態的真相在誰手上」。真相在上游 → 投影化、別自持；真相只在本端 → 承認自持、為它設計完整的生命週期（包含身份轉移）。
+「可導出狀態」就是讀模型精神在前端的形態：它是上游真相的投影，正確性靠「可隨時重建」保證，而不是靠維護它的每一次增量修改都正確。判斷標準也同構——[讀模型的升級條件](/software-design/ddd/read-model-upgrade-signals/)問「讀的形狀還是 aggregate（聚合根）的形狀」，這裡問「這份狀態的真相在誰手上」。真相在上游 → 投影化、別自持；真相只在本端 → 承認自持、為它設計完整的生命週期（包含身份轉移）。
 
 長期方向：自持狀態越少越好。本案的追蹤記錄之所以必須自持，是因為上游不保存事件的處理進度——若上游未來補上這份資料，追蹤記錄就能降級為投影，「合併搬家」的程式碼隨之刪除。**每一份自持狀態都是一筆負債，債主是所有會改變上游身份的操作。**
 
@@ -55,7 +55,7 @@ tags: ["ddd", "read-model", "projection", "state-ownership", "sync", "pos"]
 
 ## 下一步
 
-- 自持 vs 可導出的遷移判斷標準（理論層）→ [跨邊界參照與狀態所有權](/ddd/cross-boundary-reference-ownership/)
-- 讀側階梯的理論層 → [讀模型的升級條件](/ddd/read-model-upgrade-signals/)
+- 自持 vs 可導出的遷移判斷標準（理論層）→ [跨邊界參照與狀態所有權](/software-design/ddd/cross-boundary-reference-ownership/)
+- 讀側階梯的理論層 → [讀模型的升級條件](/software-design/ddd/read-model-upgrade-signals/)
 - 身份轉移的參照層問題 → [跨邊界參照的生命週期](/work-log/pos_cross_boundary_reference_lifecycle/)
 - 順序陷阱被抓到的過程 → [流程測試首跑抓到順序 bug](/testing/cases/flow-test-first-run-ordering-catch/)

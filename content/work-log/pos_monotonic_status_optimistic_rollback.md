@@ -10,7 +10,7 @@ tags: ["ddd", "state-machine", "invariant", "optimistic-update", "rollback", "po
 > **觸發場景**：POS App 的品項處理進度（未確認 → 已確認 → 已完成）由員工在前端推進、同步到後端。兩個設計決策被測試逼著說清楚：為什麼狀態只能往前？為什麼後端拒絕時一定要回滾樂觀更新？
 > **疑問來源**：狀態遞增的守則寫在模型方法裡、回滾寫在服務層——兩條規則的「為什麼」散在註解裡，直到為它們補測試時才發現各自對應一個業務不變式。
 > **整理目的**：把「單調狀態機」與「樂觀更新的回滾契約」整理成判斷標準，並記錄它們與防護鏈的依賴關係。
-> **本文邊界**：不變式落點的理論層見 [不變式的強制層次](/ddd/invariant-enforcement-layers/)。
+> **本文邊界**：不變式落點的理論層見 [不變式的強制層次](/software-design/ddd/invariant-enforcement-layers/)。
 
 ---
 
@@ -27,7 +27,7 @@ tags: ["ddd", "state-machine", "invariant", "optimistic-update", "rollback", "po
 | 已完成  | 不可（回退） | 不可   | 不可（已交付） |
 | 已取消  | 不可         | 不可   | 不可           |
 
-單調＋終態側分支，是「進度追蹤」類狀態機的常見形狀；把它寫成模型方法的入口守則，比散在各呼叫端的 if 檢查可靠一個量級——這正是[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)講的「領域方法作為唯一變更路徑」。
+單調＋終態側分支，是「進度追蹤」類狀態機的常見形狀；把它寫成模型方法的入口守則，比散在各呼叫端的 if 檢查可靠一個量級——這正是[狀態轉換與稽核軌跡](/software-design/ddd/state-transition-and-audit-trail/)講的「領域方法作為唯一變更路徑」。
 
 ## 2. 樂觀更新的回滾契約
 
@@ -59,6 +59,6 @@ tags: ["ddd", "state-machine", "invariant", "optimistic-update", "rollback", "po
 
 ## 下一步
 
-- 不變式落點的理論層 → [不變式的強制層次](/ddd/invariant-enforcement-layers/)
-- 變更路徑收斂的理論層 → [狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)
+- 不變式落點的理論層 → [不變式的強制層次](/software-design/ddd/invariant-enforcement-layers/)
+- 變更路徑收斂的理論層 → [狀態轉換與稽核軌跡](/software-design/ddd/state-transition-and-audit-trail/)
 - 這組契約的測試寫法 → [測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/)

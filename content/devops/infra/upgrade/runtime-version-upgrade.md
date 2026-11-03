@@ -213,7 +213,7 @@ systemctl reload php8.2-fpm
 apachectl graceful
 ```
 
-`php -r "opcache_reset();"` 清不到網頁請求用的快取：命令列執行的 PHP 是另一個程序，有自己的一塊（而且 `opcache.enable_cli` 預設關閉）。實測在 PHP-FPM 容器裡執行它回傳 `false`，PHP-FPM 的快取命中次數照樣往上加；reload PHP-FPM 之後才歸零。快取與程序壽命的關係見 [OPcache 與程序壽命](/php/01-server-runtime/opcache/)。
+`php -r "opcache_reset();"` 清不到網頁請求用的快取：命令列執行的 PHP 是另一個程序，有自己的一塊（而且 `opcache.enable_cli` 預設關閉）。實測在 PHP-FPM 容器裡執行它回傳 `false`，PHP-FPM 的快取命中次數照樣往上加；reload PHP-FPM 之後才歸零。快取與程序壽命的關係見 [OPcache 與程序壽命](/programming/php/01-server-runtime/opcache/)。
 
 ### Composer 的 PHP 版本鎖定
 

@@ -59,4 +59,4 @@ final pastTenseEndings = ['ed', 'ted', 'ned', 'ched', 'ded'];
 
 - 同紀律的另一現場：[溢出 714px 的 stale ticket 考古](/work-log/flutter_renderflex_overflow_prevention_spec/)——票面快照 vs 現實的漂移
 - 偵測 / 判定分界的原則層：[#149 keyword bank 命中是候選、不是判決](/report/keyword-bank-hit-is-candidate-not-verdict/)
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——事件建模章節；事件與命令的責任結構差異是「從操作推導領域」的一部分
+- 概念地基：[DDD 領域驅動設計指南](/software-design/ddd/)——事件建模章節；事件與命令的責任結構差異是「從操作推導領域」的一部分

@@ -11,7 +11,7 @@ Apache MPM 決定 Apache 用程序還是執行緒處理並發的連線：prefork
 
 ## 概念位置
 
-MPM 是 Apache 的並發模型，跟 [nginx](/devops/infra/knowledge-cards/nginx/) 的事件驅動模型是同一個問題的不同答案；它也跟 PHP 的執行方式互相限制：[mod_php](/php/knowledge-cards/mod-php/) 把 PHP 放進 Apache 的程序裡，沒有以 [ZTS](/php/knowledge-cards/zts/) 編譯時只能搭配 prefork；PHP 改由 [PHP-FPM](/php/knowledge-cards/php-fpm/) 在外面執行（Apache 用 `mod_proxy_fcgi` 轉送）時，Apache 就能用 event。
+MPM 是 Apache 的並發模型，跟 [nginx](/devops/infra/knowledge-cards/nginx/) 的事件驅動模型是同一個問題的不同答案；它也跟 PHP 的執行方式互相限制：[mod_php](/programming/php/knowledge-cards/mod-php/) 把 PHP 放進 Apache 的程序裡，沒有以 [ZTS](/programming/php/knowledge-cards/zts/) 編譯時只能搭配 prefork；PHP 改由 [PHP-FPM](/programming/php/knowledge-cards/php-fpm/) 在外面執行（Apache 用 `mod_proxy_fcgi` 轉送）時，Apache 就能用 event。
 
 ## 可觀察訊號與例子
 
@@ -21,4 +21,4 @@ MPM 是 Apache 的並發模型，跟 [nginx](/devops/infra/knowledge-cards/nginx
 
 ## 設計責任
 
-從 mod_php 換到 PHP-FPM 時，可以順便把 MPM 換成 event，讓 Apache 用較少的資源處理大量連線。詳見 [mod_php](/php/01-server-runtime/mod-php/)。
+從 mod_php 換到 PHP-FPM 時，可以順便把 MPM 換成 event，讓 Apache 用較少的資源處理大量連線。詳見 [mod_php](/programming/php/01-server-runtime/mod-php/)。

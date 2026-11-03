@@ -54,4 +54,4 @@ UC-06 交付時的狀態：`BookLoan` value object 完整（借閱類型、日�
 
 - 同族的增量版：[新增欄位忘記同步 reset](/work-log/reset_state_leak_cross_test/)——entity 加欄位時的同步點清單（constructor / copyWith / toJson / fromJson / schema / mapper），本文的 Case 2 就是清單裡 schema 與 mapper 兩項長期缺席的結果
 - 同構原則：[#221 檢查規則的作用域要顯式列舉](/report/lint-scope-must-be-explicit-fact/)——「測試存在」與「測試涵蓋持久化迴圈」是兩個獨立的 fact，全綠只證明前者
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——entity 的完整性包含它跨越持久化邊界的能力
+- 概念地基：[DDD 領域驅動設計指南](/software-design/ddd/)——entity 的完整性包含它跨越持久化邊界的能力

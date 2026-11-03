@@ -65,4 +65,4 @@ final mockCandidates = <SearchCandidateWithScore>[
 
 - 鏡像篇：[192 個測試全過、實機全壞](/work-log/testing_three_layer_strategy/)——mock 在測試側 vs mock 在產品側，同一個「綠燈失義」的兩個方向
 - 同構原則：[#221 檢查規則的作用域要顯式列舉](/report/lint-scope-must-be-explicit-fact/)——「測試全綠」的訊號跟「沒被測到」的訊號長一樣；本文的 63 個寫不出來的測試就是把「沒被測到」變成可見訊號的機制
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——ViewModel 作為 UseCase 與 UI 的膠水層、它的「真實性」就是有沒有真的在協調 UseCase
+- 概念地基：[DDD 領域驅動設計指南](/software-design/ddd/)——ViewModel 作為 UseCase 與 UI 的膠水層、它的「真實性」就是有沒有真的在協調 UseCase

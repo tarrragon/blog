@@ -14,7 +14,7 @@ import (
 //
 // Card-to-card links do not count toward preventing orphan status,
 // per spec §5: the inbound edge must come from non-card content
-// (articles in content/backend/, content/go/, etc.).
+// (articles in content/backend/, content/programming/, etc.).
 //
 // Reported at warn level — orphans are a content-coverage signal,
 // not a formatting failure, and Task 2 (knowledge-web-expansion) is

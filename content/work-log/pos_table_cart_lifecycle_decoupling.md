@@ -70,6 +70,6 @@ tags: ["dart", "flutter", "ddd", "aggregate", "domain-model", "pos", "lifecycle"
 
 ## 相關閱讀
 
-- 概念地基：[DDD 領域驅動設計指南](/ddd/) 的「從操作推導領域」章節
+- 概念地基：[DDD 領域驅動設計指南](/software-design/ddd/) 的「從操作推導領域」章節
 - 非法組合封鎖的原則層：[#222 約束要讓違反路徑走不通](/report/design-intent-needs-enforcement-layer/)——「提前結帳 + 釋放桌子」正是「不允許任意組合的欄位」判斷標準的另一個實例
 - 同專案的品項生命週期：[同一個品項、四個 model](/work-log/dart_pos_item_four_lifecycle_models/)——桌位與購物車是資源層的生命週期、品項是資料層的生命週期，同一個 domain 的兩個切面

@@ -35,5 +35,5 @@ nginx 把 Apache 分散在各目錄 `.htaccess` 的設定收回同一棵設定�
 - [.htaccess](/devops/infra/knowledge-cards/htaccess/) — Apache 的分散設定，遷移到 nginx 時需要轉換
 - [ALB](/devops/infra/knowledge-cards/alb/) — 雲端環境裡承擔部分 nginx 職責
 - [Apache MPM](/devops/infra/knowledge-cards/apache-mpm/) — Apache 的並發模型，決定能不能搭配 mod_php
-- [PHP-FPM](/php/knowledge-cards/php-fpm/) — nginx 用 `fastcgi_pass` 轉請求給它的 PHP 程序管理器
+- [PHP-FPM](/programming/php/knowledge-cards/php-fpm/) — nginx 用 `fastcgi_pass` 轉請求給它的 PHP 程序管理器
 - [流量入口層](/devops/infra/03-network-foundation/traffic-entry-layer/) — nginx 作為單機 reverse proxy 在請求責任鏈的位置、以及跟雲端 ALB 的選擇條件

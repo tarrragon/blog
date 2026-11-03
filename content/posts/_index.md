@@ -7,7 +7,7 @@ description: "blog 規範文件、Hugo/Markdown 操作經驗、AI 協作與工�
 tags: ["posts", "hugo", "markdown", "blog"]
 ---
 
-這個資料夾收錄 blog 本身的**規範文件**、**設計/架構筆記**，以及不屬於特定語言教材區（`content/backend/`、`content/go/`、`content/python/` 等）的雜項技術筆記。
+這個資料夾收錄 blog 本身的**規範文件**、**設計/架構筆記**，以及不屬於特定語言教材區（`content/backend/`、`content/programming/` 等）的雜項技術筆記。
 
 內容大致分三類：
 

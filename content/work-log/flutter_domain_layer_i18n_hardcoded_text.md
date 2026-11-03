@@ -83,5 +83,5 @@ exhaustive switch 讓這個橋接有編譯期保證：Domain 新增一個代碼�
 ## 相關閱讀
 
 - 方法論全貌：[業務層 i18n 管理方法論](/record/business-layer-i18n-management-methodology/)——本文是該方法論在 Domain 層的實機重構記錄
-- 概念地基：[DDD 領域驅動設計指南](/ddd/) 的分層責任章節
+- 概念地基：[DDD 領域驅動設計指南](/software-design/ddd/) 的分層責任章節
 - 同族判斷標準：[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)——兩篇的共同結構是「每一處都便利的局部選擇、累積成架構問題」，差別在洩漏方向（呈現滲入領域 vs 變更繞過領域）

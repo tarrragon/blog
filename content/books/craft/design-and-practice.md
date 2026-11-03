@@ -75,4 +75,4 @@ Robert Martin 的《Clean Code》常被歸在規則推廣書這一類，而這�
 
 寫得好而團隊切錯時，交付一樣會卡，團隊怎麼切的選書收在 [組織結構與團隊設計的選讀書目](../../software-management/topics/team-design/)。想知道自己在職涯位置上該補什麼，讀 [依位置選書](../../software-management/roles/)。
 
-各語言的具體寫法與慣例看 [Python 維護指南](/python/)、[Go 維護指南](/go/)、[Flutter 實戰指南](/flutter/)；測試怎麼分層與設計看 [Testing 測試策略](/testing/)。
+各語言的具體寫法與慣例看 [Python 維護指南](/programming/python/basic/)、[Go 維護指南](/programming/go/basic/)、[Flutter 實戰指南](/programming/flutter/)；測試怎麼分層與設計看 [Testing 測試策略](/testing/)。

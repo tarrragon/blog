@@ -11,7 +11,7 @@ CGI 是 web 伺服器呼叫外部程式來產生回應的介面，規格是 RFC 
 
 ## 概念位置
 
-CGI 是「web 伺服器負責 HTTP、外部程式負責產生內容」這個分工的起點。後來的 FastCGI 保留了同一套參數名稱，只改掉程序壽命（程序常駐、處理很多請求），PHP 的實作是 [PHP-FPM](/php/knowledge-cards/php-fpm/)。[.htaccess](/devops/infra/knowledge-cards/htaccess/) 時代的共享主機常用 CGI 加 suEXEC 讓每個站台以自己的帳號執行。
+CGI 是「web 伺服器負責 HTTP、外部程式負責產生內容」這個分工的起點。後來的 FastCGI 保留了同一套參數名稱，只改掉程序壽命（程序常駐、處理很多請求），PHP 的實作是 [PHP-FPM](/programming/php/knowledge-cards/php-fpm/)。[.htaccess](/devops/infra/knowledge-cards/htaccess/) 時代的共享主機常用 CGI 加 suEXEC 讓每個站台以自己的帳號執行。
 
 ## 可觀察訊號與例子
 
@@ -21,4 +21,4 @@ CGI 是「web 伺服器負責 HTTP、外部程式負責產生內容」這個分�
 
 ## 設計責任
 
-接手 CGI 部署時，要知道它的每請求啟動成本與隔離方式；換成 PHP-FPM 時，用 pool 的執行帳號保留原本 suEXEC 提供的隔離。詳見 [CGI](/php/01-server-runtime/cgi/)。
+接手 CGI 部署時，要知道它的每請求啟動成本與隔離方式；換成 PHP-FPM 時，用 pool 的執行帳號保留原本 suEXEC 提供的隔離。詳見 [CGI](/programming/php/01-server-runtime/cgi/)。

@@ -56,4 +56,4 @@ sqflite 底下的 SQLite 只接受 `num`、`String`、`Uint8List` 三種型別�
 
 - 出口語意的原則版：[VO 封裝擺盪](/work-log/flutter_value_object_encapsulation_oscillation/)——那篇論證「原始值要有語意明確的官方出口」，本文是 `toString()` 被當出口用的實際風險清單
 - 持久化邊界的另一面：[功能完成卻從未持久化](/work-log/flutter_feature_complete_never_persisted/)——那篇是欄位沒進出邊界、本文是進了邊界但轉換錯誤，roundtrip 測試同時守住兩者
-- 概念地基：[DDD 領域驅動設計指南](/ddd/) 的 entity 持久化邊界章節
+- 概念地基：[DDD 領域驅動設計指南](/software-design/ddd/) 的 entity 持久化邊界章節

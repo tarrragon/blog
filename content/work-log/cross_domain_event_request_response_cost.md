@@ -74,4 +74,4 @@ DIP 同樣成立（Loan 不認識 Library、只認識自己定義的 Port）、�
 
 - 便宜選項的實戰：[mock 55 個方法只用 5 個：Port 介面](/work-log/flutter_port_interface_mock_hell_isp/)——同專案後期用 Port 解依賴的完整記錄
 - 事件的正確場合：[Domain Event 命名的過去式](/work-log/domain_event_naming_past_tense/)——事件是已發生的事實、`BookInfoRequested` 這個名字本身就洩漏了它其實是請求不是事實
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——跨領域邊界與事件建模；工具量級的選擇也是「從操作推導」的一部分
+- 概念地基：[DDD 領域驅動設計指南](/software-design/ddd/)——跨領域邊界與事件建模；工具量級的選擇也是「從操作推導」的一部分

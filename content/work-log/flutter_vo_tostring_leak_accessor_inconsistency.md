@@ -57,4 +57,4 @@ helper 把「每個 VO 怎麼取原始值」的知識**集中在一個檔案**�
 
 - 成因的完整弧線：[VO 封裝擺盪](/work-log/flutter_value_object_encapsulation_oscillation/)——四種取法是全移除、完全封裝、加回 getter 幾輪擺盪的沉積物
 - toString 語意寄生的另一個現場：[SQLite 只吃三種型別](/work-log/flutter_sqlite_value_object_serialization_boundary/)——除錯表示被借去當持久化通道
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——value object 的介面也是模組的公開契約、家族一致性是契約的一部分
+- 概念地基：[DDD 領域驅動設計指南](/software-design/ddd/)——value object 的介面也是模組的公開契約、家族一致性是契約的一部分

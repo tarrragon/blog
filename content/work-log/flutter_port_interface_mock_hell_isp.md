@@ -73,6 +73,6 @@ abstract class BookQueryPort {
 
 ## 相關閱讀
 
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——service 與 repository 的邊界、以及分工表裡「domain 持有的是能力需求」
+- 概念地基：[DDD 領域驅動設計指南](/software-design/ddd/)——service 與 repository 的邊界、以及分工表裡「domain 持有的是能力需求」
 - 硬吞測試痛的反面教材：[1101 行自建測試基礎設施](/work-log/flutter_mock_infrastructure_overengineering_deleted/)——mock 難寫的兩種回應：修介面（本文）vs 蓋更大的 mock 系統（該篇）
 - 投機式預留的另一形態：[過度設計震盪](/work-log/flutter_async_query_overdesign_oscillation/)——那篇的迭代期沉積跟本文的預留方法同源，差別是 Port 案例的預留有 TODO 加啟用條件、不是無主地放著

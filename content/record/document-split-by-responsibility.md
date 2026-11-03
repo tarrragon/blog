@@ -8,11 +8,11 @@ tags: ["方法論", "寫作", "文件設計", "SRP", "重構"]
 
 規則文件、操作手冊、範本這類文字文件的拆分，判斷依據與程式模組相同：一份文件被幾種互不相干的主題修改，就承擔了幾種職責。範圍包括從修改紀錄讀出職責、沿哪條軸切開，以及拆完之後原檔與引用的處理；文件放在版本控制裡；放在 wiki 的文件用頁面歷史代替修改紀錄，wiki 的編輯摘要多半是空的，歸類改成讀每次修改的差異落在哪幾節，找引用改用 wiki 本身的反向連結功能。
 
-程式模組要不要拆、依什麼切在[從修改紀錄畫模組邊界](/design-principles/module-boundary-from-change-history/)；拆完之後保留原本入口的程式做法（改成同名套件並重新匯出，對應本篇的原檔導覽表）在[拆分 Python 模組](/python/07-refactoring/python-module-split/)，文章與系列之間的責任分配在 [SOLID 寫作方法論](/record/solid-writing-methodology/)。一份文件只剩一種職責之後，內部怎麼把每次都要讀的內容與按需查閱的細節分層，是[規則文件的精簡](/record/non-code-refactoring/)的主題，那一篇的案例是 AI 代理人每次都整份讀進來的規則文件。
+程式模組要不要拆、依什麼切在[從修改紀錄畫模組邊界](/software-design/design-principles/module-boundary-from-change-history/)；拆完之後保留原本入口的程式做法（改成同名套件並重新匯出，對應本篇的原檔導覽表）在[拆分 Python 模組](/programming/python/basic/07-refactoring/python-module-split/)，文章與系列之間的責任分配在 [SOLID 寫作方法論](/record/solid-writing-methodology/)。一份文件只剩一種職責之後，內部怎麼把每次都要讀的內容與按需查閱的細節分層，是[規則文件的精簡](/record/non-code-refactoring/)的主題，那一篇的案例是 AI 代理人每次都整份讀進來的規則文件。
 
 ## 修改紀錄裡的職責訊號
 
-[單一職責原則](/design-principles/knowledge-cards/single-responsibility-principle/)把職責定義成「改變的理由」，Robert C. Martin 把「理由」對到提出變更的人或角色。這個定義對文件同樣成立：一份文件被一個不相干的主題修改——另一群人提出、要求另一種改動——就多一個改變它的理由。[SOLID 寫作方法論](/record/solid-writing-methodology/)的變動理由測試要作者預測「這篇會因為什麼事件需要更新」，版本歷史記的是實際發生過的更新；把預測與紀錄並排，紀錄裡有而預測沒有的那些主題，就是預測漏掉的修改來源。
+[單一職責原則](/software-design/design-principles/knowledge-cards/single-responsibility-principle/)把職責定義成「改變的理由」，Robert C. Martin 把「理由」對到提出變更的人或角色。這個定義對文件同樣成立：一份文件被一個不相干的主題修改——另一群人提出、要求另一種改動——就多一個改變它的理由。[SOLID 寫作方法論](/record/solid-writing-methodology/)的變動理由測試要作者預測「這篇會因為什麼事件需要更新」，版本歷史記的是實際發生過的更新；把預測與紀錄並排，紀錄裡有而預測沒有的那些主題，就是預測漏掉的修改來源。
 
 文件的 commit 多半不帶需求編號，所以修改的主題要靠讀 commit 標題人工歸類；標題讀不出主題時（「docs: update」），改看那次修改的差異落在哪幾節，squash merge 把幾個主題壓成一筆時，同一個 commit 可能要歸進好幾類。這套歸類方法的推導，以及用在專案規則檔上的做法，整理在 report 的[文件的職責數從修改紀錄讀出](/report/change-history-counts-a-documents-responsibilities/)：
 

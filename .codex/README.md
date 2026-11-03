@@ -6,7 +6,7 @@
 
 ## 目錄結構
 
-```
+```text
 .codex/
 ├── README.md                  # 本檔：目錄導航與讀取順序
 ├── skills -> ../.claude/skills  # symlink：與 Claude Code 共用同一組 skill
@@ -51,11 +51,11 @@ Codex 在本專案的行為建立在三個核心承諾上：
 
 ## 與 blog 專案其他文件的關係
 
-| 資料        | 位置                               | 用途                                                              |
-| ----------- | ---------------------------------- | ----------------------------------------------------------------- |
-| 文章內容    | `content/`                         | 教材正文（go / go-advanced / backend / python / python-advanced） |
-| 知識卡片    | `content/backend/knowledge-cards/` | 後端通用術語原子化解說                                            |
-| Go 專屬術語 | `content/go/glossary.md`           | Go 語言專屬詞彙表                                                 |
+| 資料        | 位置                                       | 用途                                                              |
+| ----------- | ------------------------------------------ | ----------------------------------------------------------------- |
+| 文章內容    | `content/`                                 | 教材正文（go / go-advanced / backend / python / python-advanced） |
+| 知識卡片    | `content/backend/knowledge-cards/`         | 後端通用術語原子化解說                                            |
+| Go 專屬術語 | `content/programming/go/basic/glossary.md` | Go 語言專屬詞彙表                                                 |
 
 本 `.codex/` 資料夾只承載**行為規範**與**任務 brief**，不承載教材內容。
 
