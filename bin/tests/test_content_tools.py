@@ -131,6 +131,20 @@ class ContentMoveTest(unittest.TestCase):
         self.assertIn("[/devops/infra/net/](/devops/infra/net/)", b)
         self.assertIn("[網路](/devops/infra/net/)", b)
 
+    def test_longer_fence_containing_shorter_fence_lines(self):
+        # 四個反引號的區塊裡只出現一行 ```python：它不結束外層區塊，帶 info string 的 fence 行也不能當結束
+        body = "\n".join([
+            "````markdown", "```python", "x = '/infra/net/'", "[內](/infra/net/)", "````",
+            "", "[外](/infra/net/)", "", "```", "[碼](/infra/net/)", "```", "", "[後](/infra/net/)",
+        ])
+        self.repo.write("content/backend/b.md", page("B", body))
+        self.repo.run("content-move", "--apply", "content/infra", "content/devops/infra")
+        b = self.repo.read("content/backend/b.md")
+        self.assertIn("[內](/infra/net/)", b)  # 外層區塊裡的連結不動
+        self.assertIn("[外](/devops/infra/net/)", b)
+        self.assertIn("[碼](/infra/net/)", b)
+        self.assertIn("[後](/devops/infra/net/)", b)
+
     def test_lookalike_prefix_untouched(self):
         self.repo.run("content-move", "--apply", "content/infra", "content/devops/infra")
         self.assertIn("(/infra-notes/x/)", self.repo.read("content/infra-notes/_index.md"))

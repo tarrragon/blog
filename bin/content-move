@@ -73,7 +73,7 @@ except ImportError:  # pragma: no cover
 
 LINK_RE = re.compile(r"\]\(([^)\s]+)((?:\s+\"[^\"]*\")?)\)")
 REFDEF_RE = re.compile(r"^(\s{0,3}\[[^\]]+\]:\s*)(\S+)(.*)$")
-FENCE_RE = re.compile(r"^\s*(```|~~~)")
+FENCE_RE = re.compile(r"^\s{0,3}(`{3,}|~{3,})(.*)$")
 EXTERNAL_RE = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|//|#)", re.I)
 
 
@@ -171,7 +171,7 @@ def resolve(base, path):
 def rewrite_links(text, mapping, base, moved, relative_ok):
     """回傳 (新文字, 改寫筆數, 改寫清單)。base 是這個檔案搬移前的網址；relative_ok 為 False 時
     不解析相對連結（docs/ 這類 repo 檔案的相對連結指的是檔案路徑）。"""
-    out, count, changes, in_fence = [], 0, [], False
+    out, count, changes, fence = [], 0, [], None  # fence：開啟中的 code block 的 fence 字串
 
     def fix(target):
         path, tail = split_target(target)
@@ -197,11 +197,18 @@ def rewrite_links(text, mapping, base, moved, relative_ok):
         return None
 
     for line in text.split("\n"):
-        if FENCE_RE.match(line):
-            in_fence = not in_fence
+        m = FENCE_RE.match(line)
+        if m and fence is None:
+            fence = m.group(1)
             out.append(line)
             continue
-        if in_fence:
+        # 結束的 fence 要同一種字元、不短於開啟的那一個、後面沒有 info string（CommonMark）；
+        # 四個反引號的區塊裡展示的 ```python 因此不會被當成結束
+        if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence) and not m.group(2).strip():
+            fence = None
+            out.append(line)
+            continue
+        if fence is not None:
             out.append(line)
             continue
 
