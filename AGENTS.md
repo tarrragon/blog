@@ -114,7 +114,7 @@ commit 之後直接推送，不另外問使用者：使用者已經授權推送�
 
 ### 沒有使用者明說就不做的動作
 
-這一節是這類動作的唯一住址。下列動作沒有使用者在這次的指示裡明說就不做，也不主動提議、不停下來問：`skill-sync push --force`；替一支 skill 建 `content/skills/` 的公開鏡像；把 `docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 推上共用庫（那些 skill 依賴本 blog 的結構，推上去之後別的專案用不了）；把工作樹裡不是這次自己做的改動還原或蓋掉（`git checkout --`、`git checkout .`、`git restore`、`git stash`、`git reset --hard`、`git clean`、用 Write 整份重寫），那些改動可能是另一個 session 還沒提交的工作，蓋掉之後沒有任何紀錄；搬移或改名 `content/` 底下含 `_index.md` 的資料夾（收進或移出大分類、建立或撤掉大分類、在模組之間搬子資料夾；`docs/rules/content-folders.md`〈文章放在哪一個資料夾〉），首頁的分類結構、網址與讀者的閱讀路線由使用者決定，搬錯了再搬一次時每一頁要多一筆 `aliases`；使用者提出要搬之後，跑 dry-run 與 `bin/empty-sections` 提供材料不算主動提議。
+這一節是這類動作的唯一住址。下列動作沒有使用者在這次的指示裡明說就不做，也不主動提議、不停下來問：`skill-sync push --force`；替一支 skill 建 `content/skills/` 的公開鏡像；把 `docs/rules/skills.md`〈只留在本 repo 的 skill〉清單裡的 skill 推上共用庫（那些 skill 依賴本 blog 的結構，推上去之後別的專案用不了）；把工作樹裡不是這次自己做的改動還原或蓋掉（`git checkout --`、`git checkout .`、`git restore`、`git stash`、`git reset --hard`、`git clean`、用 Write 整份重寫），那些改動可能是另一個 session 還沒提交的工作，蓋掉之後沒有任何紀錄；搬移或改名 `content/` 底下含 `_index.md` 的資料夾（任何一種都算，例如收進或移出大分類、建立或撤掉大分類、把幾個模組合成一個模組底下的系列子資料夾、在模組之間或系列子資料夾之間搬子資料夾；`docs/rules/content-folders.md`〈文章放在哪一個資料夾〉），首頁的分類結構、網址與讀者的閱讀路線由使用者決定，搬錯了再搬一次時每一頁要多一筆 `aliases`；使用者提出要搬之後，跑 dry-run 與 `bin/empty-sections` 提供材料不算主動提議。
 
 ### 延到工作結束之後的動作
 

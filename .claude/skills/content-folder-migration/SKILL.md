@@ -2,7 +2,7 @@
 name: content-folder-migration
 description: 把 content/ 的資料夾收進大分類、把單篇文章搬進 hands-on/ 或改檔名時用：dry-run、搬移前的檢查、殘留引用、驗證與提交。觸發詞：content 搬移、資料夾遷移、首頁分類收斂、大分類、改網址、Hugo aliases、空 section、空列表。
 metadata:
-  version: 1.1.0
+  version: 1.2.0
 ---
 
 # content 資料夾與文章的搬移
@@ -22,8 +22,9 @@ metadata:
 ## 涵蓋的搬移
 
 - **資料夾收進大分類**：走下面每一步。
+- **幾個模組合成大分類底下一個模組的系列子資料夾**（python、python-advanced 成為 `content/programming/python/` 的 `basic/`、`advanced/`）：走資料夾那條路，`<dest>` 寫到系列子資料夾。另外四件事：「大分類的 `_index.md`」那一步一併建模組的 `_index.md`（只寫 frontmatter），正文在「改寫大分類的 `_index.md`」那一步寫：以「系列」為欄名的表與 `## Backlog`，原本各模組 Backlog 裡牽涉對方的項目照〈模組的 Backlog〉重判落點；「重排模組的 weight」那一步另把各系列的 weight 照使用者給的順序改成 1 到 N，系列的 `breadcrumb` 跟模組同名時改成系列名；首頁那一步把系列寫成模組那一列裡的行內連結；新系列加進 `content-folders.md` 列出系列的那一句（放規則的 commit）。
 - **單篇文章搬進 `hands-on/`，或改單篇的檔名**：走「搬移前的檢查：要搬的位置」「dry-run、基準值與搬移前的檢查：要改寫的檔案」「`--apply`」「殘留引用」「格式化」「驗證」「提交」這幾步，`<dest>` 寫到 `.md`。改檔名時，frontmatter 的 `slug` 不要先手改：`bin/content-move` 在 `<dest>` 的檔名不同時自己把 `slug` 改成新檔名，舊網址用改之前的 slug 算；先手改的話舊網址算成新網址，alias 與連結改寫都會漏掉。「搬移前的檢查：要搬的位置」那一步的三類指令，這條路查的是那一篇檔案，加上這次要手改的 `_index.md`（原資料夾的，以及已經存在的 `hands-on/_index.md`）。搬進 `hands-on/` 另外三件事照 `content-folders.md`〈概念文章與實作文章〉：`hands-on/_index.md` 不存在時建（dry-run 印出「沒有 _index.md」的警告之後、`--apply` 之前建，在搬移前的位置檢查之後，那一步才不會查到自己新建的檔案）、原資料夾 `_index.md` 章節表刪掉那一列、`hands-on/_index.md` 的章節表登記；被搬那一篇的 `weight` 照 `markdown.md`〈列表排序與 weight〉放進新 section 的編號帶。這兩個 `_index.md` 是手改的檔案，記進 `hand.txt`。
-- **其他搬移**（移出或撤掉大分類、在模組之間搬子資料夾、改資料夾名）：這份 skill 沒有實際走過，照 AGENTS.md〈沒有使用者明說就不做的動作〉由使用者決定。使用者決定要做時，步驟照資料夾那條路，另外把大分類 `_index.md` 的模組表、`content/_index.md` 的入口與 weight 改成搬移之後的狀態。
+- **其他搬移**（移出或撤掉大分類、在模組之間或系列子資料夾之間搬子資料夾、改資料夾名）：這份 skill 沒有實際走過，照 AGENTS.md〈沒有使用者明說就不做的動作〉由使用者決定。使用者決定要做時，步驟照資料夾那條路，另外把大分類 `_index.md` 的模組表、`content/_index.md` 的入口與 weight 改成搬移之後的狀態。
 
 ## 流程
 
@@ -69,7 +70,7 @@ metadata:
 
 ## 範例：going-live、infra、ci、operations、monitoring 收進 devops
 
-`content/devops/` 原本只有 `_index.md`，`bin/empty-sections` 把它列為空的 section。使用者決定依 going-live、infra、ci、operations、monitoring 的順序收進來；infra 的 dry-run 是 186 頁、186 頁網址改變、1859 處連結、277 個檔案。apply 之後要改的殘留是 `config.go` 的知識卡路徑（六行）、`hugo.toml` 的一行註解、三份 `_index.md` 裡寫成文字的路徑、`content-folders.md` 與 `markdown.md` 的路徑範例；那時殘留掃描還看不到帶 `/blog/` 的網址與 README.md，事後另外補了一份文章裡讀者照抄的指令、README.md、e2e 測試與擷取腳本的網址。格式化修了 76 個表格；`Aliases` 從 54 變成 452，多出的 398 是 399 個 `alias(es) added` 減去 1 頁 draft。
+使用者決定依 going-live、infra、ci、operations、monitoring 的順序收進來；infra 的 dry-run 是 186 頁、186 頁網址改變、1859 處連結、277 個檔案。apply 之後要改的殘留是 `config.go` 的知識卡路徑（六行）、`hugo.toml` 的一行註解、三份 `_index.md` 裡寫成文字的路徑、`content-folders.md` 與 `markdown.md` 的路徑範例。格式化修了 76 個表格；`Aliases` 從 54 變成 452，多出的 398 是 399 個 `alias(es) added` 減去 1 頁 draft。
 
 ## `bin/content-move` 不處理、要手動補的情形
 
