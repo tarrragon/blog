@@ -8,12 +8,19 @@ import (
 	"blog/scripts/mdtools/internal/rules"
 )
 
-func init() {
-	// Blog content mixes CJK and ASCII; ambiguous-width chars (like
-	// fullwidth punctuation) should count as 2 columns to match the
-	// visual layout in a CJK-aware monospace font.
-	runewidth.EastAsianWidth = true
-}
+// tableWidth measures cell display width with East Asian Ambiguous runes
+// (→, —, …, §) counted as 1 column, whatever the caller's locale.
+// runewidth.StringWidth reads DefaultCondition, which runewidth's own init
+// derives from LANG / LC_ALL: under zh_TW.UTF-8 ambiguous runes count as 2,
+// under CI's C.UTF-8 as 1, so the same file aligned differently on a CJK
+// workstation and pre-push flagged every table CI had already formatted.
+// The committed content follows CI (width 1); setting the package variable
+// runewidth.EastAsianWidth after init does not reach DefaultCondition.
+var tableWidth = func() *runewidth.Condition {
+	c := runewidth.NewCondition()
+	c.EastAsianWidth = false
+	return c
+}()
 
 // FixTables normalizes pipe tables per rules.Tables.Style. Supports:
 //
@@ -128,7 +135,7 @@ func normalizeAlignedTable(rows []string) []string {
 			continue // don't let separator dashes drive width
 		}
 		for c, cell := range row {
-			w := runewidth.StringWidth(cell)
+			w := tableWidth.StringWidth(cell)
 			if w > widths[c] {
 				widths[c] = w
 			}
@@ -156,7 +163,7 @@ func normalizeAlignedTable(rows []string) []string {
 				b.WriteString(strings.Repeat("-", widths[c]))
 			} else {
 				b.WriteString(content)
-				pad := widths[c] - runewidth.StringWidth(content)
+				pad := widths[c] - tableWidth.StringWidth(content)
 				if pad < 0 {
 					pad = 0
 				}

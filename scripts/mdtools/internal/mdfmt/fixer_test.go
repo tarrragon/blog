@@ -5,6 +5,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/mattn/go-runewidth"
+
 	"blog/scripts/mdtools/internal/rules"
 )
 
@@ -119,6 +121,24 @@ func TestApplyAllBehaviors(t *testing.T) {
 			}
 		}
 	})
+}
+
+// The table rule must align the same way on a zh_TW workstation and on
+// CI's C locale. runewidth derives DefaultCondition from LANG at init, so
+// flipping DefaultCondition here simulates a CJK locale; "→" is East Asian
+// Ambiguous and must still count as 1 column.
+func TestTableWidthIgnoresLocale(t *testing.T) {
+	saved := runewidth.DefaultCondition.EastAsianWidth
+	t.Cleanup(func() { runewidth.DefaultCondition.EastAsianWidth = saved })
+
+	src := "| a | b |\n| --- | --- |\n| →→→→ | x |\n"
+	want := "| a    | b   |\n| ---- | --- |\n| →→→→ | x   |\n"
+	for _, eastAsian := range []bool{false, true} {
+		runewidth.DefaultCondition.EastAsianWidth = eastAsian
+		if got := string(applyAll([]byte(src), rules.Default())); got != want {
+			t.Errorf("EastAsianWidth=%v:\n got: %q\nwant: %q", eastAsian, got, want)
+		}
+	}
 }
 
 // displayWidth mirrors the CJK double-width convention the table rule
