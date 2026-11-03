@@ -68,14 +68,19 @@ LiteFS 的 incident route 要從 writer ownership 開始查。若出現 write er
 
 Failure modes 的核心責任是把 replicated SQLite 的事故從「資料庫壞了」拆成可排查訊號。SQLite file、WAL、object storage、filesystem layer、deployment platform 與 application retry 都可能是問題來源。
 
-| Failure mode           | 判讀訊號                          | 立即處理                                   |
-| ---------------------- | --------------------------------- | ------------------------------------------ |
-| Replica lag            | last replicated time 落後         | 降低 write rate、檢查 credential / network |
-| Restore lag            | WAL files 過多、restore time 變長 | 觸發 snapshot、演練 restore                |
-| Stale read             | 使用者讀到舊資料                  | fallback primary read、標記 freshness      |
-| Writer lease confusion | 多 instance write error           | 暫停寫入、確認 primary、fencing old writer |
-| Object storage failure | backup upload error               | 切換 credential / destination、補上重送    |
-| Sidecar file mismatch  | restore / copy 後 integrity fail  | 回到 backup API / official restore path    |
+| Failure mode             | 判讀訊號                                                                                                  | 立即處理                                   |
+| ------------------------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Replica lag              | last replicated time 落後                                                                                 | 降低 write rate、檢查 credential / network |
+| Restore lag              | WAL files 過多、restore time 變長                                                                         | 觸發 snapshot、演練 restore                |
+| Stale read               | 使用者讀到舊資料                                                                                          | fallback primary read、標記 freshness      |
+| Writer lease confusion   | 多 instance write error                                                                                   | 暫停寫入、確認 primary、fencing old writer |
+| Object storage failure   | backup upload error                                                                                       | 切換 credential / destination、補上重送    |
+| Sidecar file mismatch    | restore / copy 後 integrity fail                                                                          | 回到 backup API / official restore path    |
+| 兩台主機寫同一個 replica | 換機後舊主機的 Litestream 仍在執行（`docker ps`、`systemctl is-enabled` 查得到），兩台 `status` 都是 `ok` | 停用舊主機的複製，從 replica 還原確認內容  |
+
+兩台主機寫同一個 replica 出現在換機之後：新主機從 replica 還原、接著往同一個 replica 路徑複製，而舊主機的 Litestream 沒有停用，開機後又被帶起來。兩台的交易編號從同一個位置往後長、寫出同名的 `.ltx` 檔，後寫的蓋掉先寫的。兩次約半分鐘的實測裡，兩邊的 `litestream status` 都是 `ok`，舊主機只在啟動時印一行 INFO 層級的 `detected database behind replica`；從 replica 還原出來的資料，兩次都少了舊主機在那段期間的寫入。哪一台的寫入留下來取決於兩台寫檔的時間，換一次執行可能是另一台的寫入不見。replica 的檔案一直有新主機在寫，從 replica 的檔案分不出有沒有第二個寫入者，要查舊主機本身。操作順序、量到的日誌與還原結果在 [SQLite 換機搬遷演練](/backend/01-database/vendors/sqlite/hands-on/host-migration-drill/)。
+
+Replica 放在 object storage 時，另有一種讓 replica 失效的路徑：Litestream 用來上傳的存取憑證在主機被入侵時落到攻擊者手上。物件儲存沒開版本保留時，同一把憑證就能把既有的 replica 檔覆寫掉，失敗推演寫在 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/) 的異地備份那一段。
 
 Replica lag 要接到 alert。對 Litestream，它意味著 RPO 正在擴大；對 LiteFS，它可能同時影響 read freshness 與 failover confidence。
 
@@ -113,4 +118,4 @@ Decision route 的核心責任是把資料保護、讀擴展與高可用分開�
 
 ## 下一步路由
 
-Litestream / LiteFS replication 完成後，下一步要回到 SQLite operation evidence。File copy、backup API 與 WAL sidecar 請讀 [file lifecycle / backup boundary](/backend/01-database/vendors/sqlite/file-lifecycle-backup-boundary/)；busy、lock 與 writer 壓力請讀 [WAL concurrency / locking](/backend/01-database/vendors/sqlite/wal-concurrency-locking/)；完整 runbook 請讀 [SQLite observability / runbook](/backend/01-database/vendors/sqlite/observability-runbook/)。
+Litestream / LiteFS replication 完成後，下一步要回到 SQLite operation evidence。File copy、backup API 與 WAL sidecar 請讀 [file lifecycle / backup boundary](/backend/01-database/vendors/sqlite/file-lifecycle-backup-boundary/)；busy、lock 與 writer 壓力請讀 [WAL concurrency / locking](/backend/01-database/vendors/sqlite/wal-concurrency-locking/)；完整 runbook 請讀 [SQLite observability / runbook](/backend/01-database/vendors/sqlite/observability-runbook/)；用 Litestream 把資料庫搬到另一台主機的實際步驟（停止順序、`litestream restore`、UID 對齊、兩台寫同一個 replica 的結果）在 [SQLite 換機搬遷演練](/backend/01-database/vendors/sqlite/hands-on/host-migration-drill/)。

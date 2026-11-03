@@ -9,13 +9,14 @@ SQLite hands-on 操作路線的核心責任是把單檔正式狀態轉成可演�
 
 ## 章節列表
 
-| 章節                                            | 主題                                                         | 產出 artifact                                 |
-| ----------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------- |
-| [Local file quickstart](local-file-quickstart/) | 建立 `.db`、schema、seed data、basic query                   | database file、schema version、query sample   |
-| [Backup restore drill](backup-restore-drill/)   | `.backup` / `VACUUM INTO` / restore validation               | backup file、restore record、validation query |
-| [WAL busy reproduction](wal-busy-reproduction/) | long transaction、`SQLITE_BUSY`、checkpoint growth           | busy error sample、WAL size evidence          |
-| [Migration fixture lab](migration-fixture-lab/) | `user_version`、table rebuild、fixture snapshot              | migration log、fixture DB、rollback note      |
-| [D1 / Turso preview lab](d1-turso-preview-lab/) | local SQLite 到 edge SQLite product 的 compatibility preview | export / import note、compatibility gap       |
+| 章節                                            | 主題                                                                                            | 產出 artifact                                             |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| [Local file quickstart](local-file-quickstart/) | 建立 `.db`、schema、seed data、basic query                                                      | database file、schema version、query sample               |
+| [Backup restore drill](backup-restore-drill/)   | `.backup` / `VACUUM INTO` / restore validation                                                  | backup file、restore record、validation query             |
+| [WAL busy reproduction](wal-busy-reproduction/) | long transaction、`SQLITE_BUSY`、checkpoint growth                                              | busy error sample、WAL size evidence                      |
+| [Migration fixture lab](migration-fixture-lab/) | `user_version`、table rebuild、fixture snapshot                                                 | migration log、fixture DB、rollback note                  |
+| [D1 / Turso preview lab](d1-turso-preview-lab/) | local SQLite 到 edge SQLite product 的 compatibility preview                                    | export / import note、compatibility gap                   |
+| [換機搬遷演練](host-migration-drill/)           | Litestream sidecar 容器、停止順序、`litestream restore`、UID 對齊、舊主機複製沒停用時的 replica | 停止前後的筆數、restore 驗證、兩台寫同一個 replica 的日誌 |
 
 ## 設計原則
 
