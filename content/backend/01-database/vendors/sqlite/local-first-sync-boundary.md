@@ -1,13 +1,13 @@
 ---
 title: "SQLite Local-first Sync Boundary"
 date: 2026-05-21
-description: "SQLite local-first app、multi-device sync、server authority、拉取變更的接續標記（updated_at 漏列與 server 版本號）、第一次同步的分批、tombstone 保留期限與全量重新同步、conflict resolution、delete propagation 與 offline-first trade-off"
+description: "SQLite local-first app、multi-device sync、server authority、拉取變更的接續標記（updated_at 漏列與 server 版本號）、第一次同步的分批、tombstone 保留期限與全量重新同步、conflict resolution 與多值資料（JSON 陣列或關聯表）的合併單位、delete propagation 與 offline-first trade-off"
 tags: ["backend", "database", "sqlite", "local-first", "sync", "deep-article"]
 ---
 
 SQLite local-first sync boundary 的核心責任是把「本機可用」和「多端一致」分成兩個問題。SQLite 很適合保存 device-local state；但它不提供 identity、transport、[conflict resolution](/backend/knowledge-cards/conflict-resolution/)、delete propagation、server authority 或 audit trail。當資料要跨裝置、跨使用者或跨服務同步時，SQLite 只是 local replica / working copy。
 
-本文的範圍是 [local-first](/backend/knowledge-cards/local-first/) app 裡 SQLite local store 與 sync layer 的責任分界：SQLite 負責 local durability，sync layer 負責資料合併、順序、權威來源與錯誤修復；各節依序處理本機資料角色、衝突時的 authority model、pending mutation 的傳送、裝置從 server 拉取變更時記下的接續標記（cursor），包括它用時間戳還是 server 遞增的版本號、第一次同步上萬筆時怎麼分批、tombstone 過了保留期限之後怎麼辦、conflict resolution 與 delete propagation。
+本文的範圍是 [local-first](/backend/knowledge-cards/local-first/) app 裡 SQLite local store 與 sync layer 的責任分界：SQLite 負責 local durability，sync layer 負責資料合併、順序、權威來源與錯誤修復；各節依序處理本機資料角色、衝突時的 authority model、pending mutation 的傳送、裝置從 server 拉取變更時記下的接續標記（cursor），包括它用時間戳還是 server 遞增的版本號、第一次同步上萬筆時怎麼分批、tombstone 過了保留期限之後怎麼辦、conflict resolution（含多值資料存成 JSON 陣列或關聯表時，合併單位的差別）與 delete propagation。
 
 ## Local state taxonomy
 
@@ -143,6 +143,21 @@ Conflict resolution 的核心責任是讓兩個合法 local write 合併成可�
 
 Conflict policy 要在資料模型設計時決定。等衝突發生後才補策略，通常會導致資料修復、客服流程與 audit evidence 同時缺位。
 
+### 多值資料的存法與合併單位：JSON 陣列欄位與關聯表
+
+LWW（last-write-wins：同一個合併單位以較晚寫入的版本取勝，衝突處理的各種策略在 [Conflict Resolution](/backend/knowledge-cards/conflict-resolution/)）與 field merge（逐欄位合併：各欄位各自取較新的值）都要先定義「合併單位」：同步層拿來比較先後、整組取勝或整組落敗的那一組資料，可以是一整列、一個欄位，或一組一起寫的欄位。在這種以欄位或列為最小單位比較先後的策略下，合併單位怎麼切由資料表的形狀決定，而這個決定在建表時就做完了。採用 CRDT（conflict-free replicated data type：資料結構本身定義了並行修改怎麼合併）的同步引擎（Automerge、Yjs 這一類），在資料模型把陣列建成它的 list 或 set 型別時，會把陣列的元素逐一合併，不受這一段的限制（陣列只是一個普通欄位的值時，在那類引擎裡仍可能整欄比先後，要看引擎文件），代價是同步層換成那一套資料模型；用操作紀錄同步的做法（上表 Ordered operation 那一列，重播「加入情境 X」這樣的一筆筆操作），合併單位是一筆操作，同樣不受限制。
+
+同一份「這個任務屬於哪些情境」的資料，有兩種存法，合併的結果不同：
+
+- **存成一個 JSON 陣列欄位**（任務表的「情境」欄，內容是 `["家裡","電腦前"]`）：整個陣列是一個合併單位。兩台裝置離線時各替同一個任務加了一個情境，同步層把兩份陣列比先後，較晚寫的那一份整個取勝，另一台加的情境靜默消失，沒有任何錯誤。
+- **存成關聯表**（`任務情境(任務編號, 情境編號, deleted_at)`，主鍵是任務編號加情境編號）：每一列是一個合併單位。兩台裝置各加的那一列主鍵不同，同步之後兩列都在；刪除寫成 `deleted_at` 的時間（上面〈tombstone 的保留期限與全量重新同步〉的軟刪除），也是逐列比先後，一台刪掉 A、另一台加了 B，兩件事都保留。兩台碰的是同一個元素時（一台刪掉 A、另一台在同一段時間裡重新加回 A），兩邊改的是同一個主鍵的那一列，仍然整列比先後，要事先決定「加入優先」還是「刪除優先」。
+
+JSON 陣列另有一個跟同步無關的代價：陣列裡的情境編號沒有外鍵保護，情境被刪除之後，陣列裡留下指不到任何一列的編號，每一段讀它的程式都要自己略過。關聯表的那一欄可以宣告外鍵（[SQL.18 外鍵與參照完整性](/backend/01-database/sql/foreign-key-and-referential-integrity/)）。
+
+改用關聯表之後，外鍵的保護有兩個限制。刪除用 `deleted_at` 軟刪除時，被刪的情境那一列還在，外鍵照樣滿足，它只保證那一列存在、不保證它沒被刪（SQL.18 的〈外鍵涵蓋不到的寫入與規則〉談的就是外鍵不看狀態）。同步層套用遠端變更的順序若是子列先於父列，開了外鍵執法的本機副本（SQLite 要每條連線執行 `PRAGMA foreign_keys = ON` 才檢查）會拒收那筆寫入，所以同步層套用時要先父後子；參照有循環、排不出先後時，改成把外鍵檢查延後到交易提交（SQLite 的 `PRAGMA defer_foreign_keys = ON`，或把外鍵宣告成 `DEFERRABLE INITIALLY DEFERRED`，延後檢查的行為在 SQL.18 的〈宣告與生效分開的位置〉），一批遠端變更在同一個交易裡套用完才檢查。SQLite 3.43.2 實測：交易裡先寫子列、再寫父列，提交成功；提交時仍有指不到父列的子列，`COMMIT` 回傳 `FOREIGN KEY constraint failed`。真實的同步引擎這次沒有跑。
+
+所以判斷一個多值欄位要不要拆成關聯表，在 local-first 的系統裡多了一個要判斷的條件：這組值會不會在兩台裝置上被分別修改。會的話，存成單一欄位等於把整組值綁成一個合併單位，衝突時只能整組二選一。單一使用者的多台裝置，在兩次同步之間各自改了同一組值的機會比多人協作低，在單人的系統裡發生的次數少，但每一次都是靜默的資料遺失；到了多人協作，兩台裝置分別改同一組值的機會變高，發生的次數也跟著變多。這一段的合併結果是從 LWW 的定義推導的，頻率的比較也是推論，兩者都沒有用實際的同步引擎跑過或量測過。
+
 ## Delete propagation 與 privacy
 
 Delete propagation 的核心責任是讓 server、device、backup 與 sync queue 對「刪除」有一致語意。Local-first app 常見風險是 server 已刪，但 device local DB、pending queue 或 OS backup 還留著資料。
@@ -167,7 +182,7 @@ Pending mutation 沒有 idempotency key 的核心風險是重送造成重複副�
 
 Last-write-wins 的核心風險是把衝突靜默變成資料遺失。Preference 類資料可接受；草稿、文件、表單、付款資料通常需要更清楚的 conflict handling。
 
-修正方向是依資料價值分層。低價值設定用 LWW；高價值內容用 field merge、manual conflict 或 operation log。
+修正方向是依資料價值分層。低價值設定用 LWW；高價值內容用 field merge、manual conflict 或 operation log。多值資料存在一個 JSON 欄位時，field merge 照樣整組二選一，原因在〈多值資料的存法與合併單位〉。
 
 ### Delete 沒傳到離線裝置，重新上線時把已刪資料同步回來
 
@@ -188,6 +203,7 @@ Local-first SQLite 設計要回答：
 7. Sync worker 是否有 backoff、dead-letter、reconciliation。
 8. Device backup 是否會保存已刪資料。
 9. Server 是否能拒絕過期 local write。
+10. 會在多台裝置上分別修改的多值資料，存成關聯表（逐列合併）還是單一欄位（整組二選一）。
 
 ## 下一步路由
 

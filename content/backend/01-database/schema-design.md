@@ -137,7 +137,7 @@ index 設計要從查詢路徑反推、不是從欄位列表前推。每個高�
 - 用 OR 條件依賴單一 index：query planner 不一定能用
 - 大表 ALTER INDEX 不分批：lock 整個表
 
-本節從查詢路徑反推的是索引，而同一個反推對其餘的 schema 決定同樣成立——欄位允不允許為空、排序鍵唯不唯一、長欄位放在哪一張表、常一起取的資料切在幾張表、字串的比較規則寫在哪一層、宣告的外鍵生不生效，每一個都在替往後每一次查詢定價，而每一個決定的兩種選法在設計當下看不出差別。這幾個決定各自的查詢代價、浮現條件與遷移成本，逐條實測在 [1.16 Schema 設計決定的查詢代價：可空性、排序鍵唯一性、表寬、一對多的切法、比較規則與外鍵執法](/backend/01-database/design-decisions-price-every-query/)。
+本節從查詢路徑反推的是索引，而同一個反推對其餘的 schema 決定同樣成立——欄位允不允許為空、排序鍵唯不唯一、長欄位放在哪一張表、常一起取的資料切在幾張表、字串的比較規則寫在哪一層、宣告的外鍵生不生效、從另一張表取得的值是產生時複製還是查詢時引用，每一個都在替往後每一次查詢定價，而每一個決定的兩種選法在設計當下看不出差別。這幾個決定各自的查詢代價、浮現條件與遷移成本，逐條實測在 [1.16 Schema 設計決定的查詢代價：可空性、排序鍵唯一性、表寬、一對多的切法、比較規則、外鍵執法，以及從另一張表取值時的複製與引用](/backend/01-database/design-decisions-price-every-query/)。
 
 ## Denormalization 模式
 
@@ -154,8 +154,10 @@ normalize 是 SQL 的預設、但 denormalize 有時是更好的工程選擇。
 
 - 小量 1-many 關係可以 embed 成 JSONB / nested column
 - 例：`order.line_items` JSON column、不另建 line_items table
-- 風險：個別 line item 查詢不便
+- 風險：個別 line item 查詢不便；JSON 裡指向其他表的編號沒有外鍵保護；多台裝置離線同步時，整個 JSON 欄位是一個合併單位，兩邊各改一項時只會留下一邊（見 [SQLite Local-first Sync Boundary](/backend/01-database/vendors/sqlite/local-first-sync-boundary/) 的〈多值資料的存法與合併單位〉）
 - 適合：line items 通常一起讀寫（同 transaction boundary）
+
+明細在下單那一刻抄下商品的單價與名稱，形狀像反正規化，目的卻不同：反正規化為了讀得快，資料仍然以來源為準；下單時的複製是一筆正式狀態，之後改商品價格也不該改到它。兩者的判斷方式與改錯之後的代價，在 [1.16 Schema 設計決定的查詢代價](/backend/01-database/design-decisions-price-every-query/) 的〈從另一張表取得的值的存法〉。
 
 **Materialized view**：
 

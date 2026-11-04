@@ -47,6 +47,8 @@ State ownership 的責任是判斷哪些資料是 [source of truth](/backend/kno
 - 寫入永遠先寫 canonical、再 propagate 到 derived
 - derived 出錯只能 rebuild、不能拿來「修正 canonical」
 
+一個從另一張表複製來的值不一定是 derived state。訂單明細在下單那一刻抄下的成交單價，來源是商品表，它卻是一筆 canonical state：之後改了商品價格，也不能用商品表重算它，否則舊訂單的金額會被改寫。這一類值該在什麼時候複製、什麼時候改用引用，在 [1.16 Schema 設計決定的查詢代價](/backend/01-database/design-decisions-price-every-query/) 的〈從另一張表取得的值的存法〉。
+
 ## CQRS 在資料庫情境的應用
 
 [CQRS](/backend/knowledge-cards/cqrs/) 的概念定義、設計判斷標準與代價見知識卡。本段聚焦在資料庫層面：state ownership 的決策如何影響要不要分離讀寫模型。

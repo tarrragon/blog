@@ -25,7 +25,7 @@ SELECT * FROM customers WHERE email = 'yawen@example.com' AND deleted_at IS NULL
 ## 可觀察訊號與例子
 
 - **刪掉再建立同一筆資料撞唯一約束**：顧客刪除帳號之後用同一個 email 重新註冊，`email` 上的唯一約束仍然看得到那一列，回報重複（PostgreSQL 的 SQLSTATE `23505`）。PostgreSQL 與 SQLite 的處理方式是只對未刪除的列建唯一索引（部分索引（partial index），`CREATE UNIQUE INDEX ... ON customers (email) WHERE deleted_at IS NULL`）；MySQL 沒有部分索引，常見做法有兩種：加一個未刪除時等於 email、刪除後為 NULL 的產生欄位（generated column），在它上面建唯一索引，因為唯一索引允許多個 NULL；或讓 `deleted_at` 用 0 代表未刪除（不用 NULL），再建 `(email, deleted_at)` 的複合唯一索引。換成部分索引之後，`INSERT ... ON CONFLICT (email)` 要寫出同樣的 `WHERE deleted_at IS NULL` 才對得上那個索引，否則 PostgreSQL 回報找不到相符的約束（`42P10`）。應用程式端的唯一性檢查也要排除已刪除的列（Laravel 的驗證規則寫 `Rule::unique('customers')->withoutTrashed()`）。
-- **外鍵不會因為軟刪除而動作**：軟刪除是 `UPDATE`，外鍵的 `ON DELETE CASCADE` 與「還有子表資料就不准刪」的檢查都不會被觸發。顧客被軟刪除之後，那位顧客的訂單仍然指著那一列；訂單列表用 ORM 載入顧客時，Laravel 拿到的是 null、GORM 是零值的 struct，Django 的正向關聯則讀到已刪除的顧客。之後要永久刪除那位顧客，外鍵才擋下來（`23503`）。
+- **外鍵不會因為軟刪除而動作**（外鍵只檢查被指向的那一列在不在、不看它的狀態，見 [SQL.18 外鍵與參照完整性](/backend/01-database/sql/foreign-key-and-referential-integrity/) 的〈外鍵涵蓋不到的寫入與規則〉）：軟刪除是 `UPDATE`，外鍵的 `ON DELETE CASCADE` 與「還有子表資料就不准刪」的檢查都不會被觸發。顧客被軟刪除之後，那位顧客的訂單仍然指著那一列；訂單列表用 ORM 載入顧客時，Laravel 拿到的是 null、GORM 是零值的 struct，Django 的正向關聯則讀到已刪除的顧客。之後要永久刪除那位顧客，外鍵才擋下來（`23503`）。
 - **計數對不上**：頁面上的顧客數由 ORM 算（帶條件），報表直接寫 SQL 算（不帶條件），兩個數字差的就是已刪除的那些。
 - **刪除請求沒有刪掉個資**：使用者依個資法規要求刪除時，軟刪除只加了標記，資料原封不動，要另外做永久刪除或匿名化（見 [PII](/backend/knowledge-cards/pii/)）。
 - **增量同步收不到刪除**：依 `updated_at` 取「上次之後改過的列」的同步，要靠軟刪除同時更新 `updated_at` 才看得到刪除。Laravel 的 `SoftDeletes` 會一併更新，GORM 的軟刪除只寫 `deleted_at`，那種同步永遠看不到 GORM 刪掉的列；同步要另外取 `deleted_at` 晚於上次同步的列，或改用資料庫的變更紀錄（見 [Change Data Capture](/backend/knowledge-cards/change-data-capture/)）。
