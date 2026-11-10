@@ -2,7 +2,7 @@
 title: "家用音響的知識卡片"
 slug: "knowledge-cards"
 date: 2026-11-11
-description: "讀家用音響各篇、規格表或評測時碰到 dB、音壓、阻抗、頻率響應、靈敏度、取樣率、藍牙編碼、D 類、指向性、駐波、SBIR、唱頭、循軌力這類術語，要查它的定義、在訊號流程裡的位置與判讀方式時"
+description: "讀家用音響各篇、規格表或評測時碰到 dB、音壓、阻抗、頻率響應、靈敏度、取樣率、藍牙編碼、LHDC、LE Audio、D 類、數位擴大機、USB-C 供電、指向性、駐波、SBIR、唱頭、唱頭殼、循軌力、受過訓練的聽者這類術語，要查它的定義、在訊號流程裡的位置與判讀方式時"
 weight: 9
 tags: ["til", "音響", "knowledge-cards"]
 ---
@@ -35,27 +35,35 @@ tags: ["til", "音響", "knowledge-cards"]
 | [Clock Jitter（時脈抖動）](/til/audio/knowledge-cards/clock-jitter/)                             | 數位音訊的取樣時間點偏離理想時刻的量，轉成類比時變成失真                                       |
 | [Ground Loop（接地迴路）](/til/audio/knowledge-cards/ground-loop/)                               | 兩台設備經由兩條接地路徑相連時形成的迴路，產生交流電頻率的嗡聲                                 |
 | [Bluetooth Audio Codec（藍牙的音訊編碼格式）](/til/audio/knowledge-cards/bluetooth-audio-codec/) | 藍牙傳送端壓縮、接收端解碼的格式，兩端共同支援的才會被使用，同一種格式裡位元率決定丟掉多少資訊 |
+| [LHDC（藍牙高解析編碼格式）](/til/audio/knowledge-cards/lhdc/)                                   | Savitech 開發、跟 LDAC 同類的高位元率藍牙格式，兩端都支援才用得到，iPhone 不支援               |
+| [LE Audio and LC3（低功耗藍牙音訊與 LC3 編碼）](/til/audio/knowledge-cards/le-audio-lc3/)        | 低功耗藍牙上的音訊架構與它的必備格式 LC3，跟傳統藍牙的格式並存，另有一對多的 Auracast 廣播     |
+| [USB-C Power Delivery（USB-C PD 供電）](/til/audio/knowledge-cards/usb-c-power-delivery/)        | USB-C 供電時兩端協商一檔固定電壓，協商到的電壓與充電器的瓦數決定擴大機的輸出上限               |
 
 ### 擴大機與喇叭的構造
 
-| 卡片                                                                             | 核心內容                                                                                                 |
-| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| [Class D Amplifier（D 類擴大機）](/til/audio/knowledge-cards/class-d-amplifier/) | 輸出級以高速開關工作的擴大機，特有的是輸出濾波器與負載的互動；外接電源的小型機另有供電電壓限制的輸出上限 |
-| [Crossover（分音器）](/til/audio/knowledge-cards/crossover/)                     | 把全頻訊號依頻率分給不同單體的電路或 DSP，分頻點與斜率是它的規格                                         |
-| [Directivity（指向性）](/til/audio/knowledge-cards/directivity/)                 | 喇叭的聲音集中往正前方的程度，隨頻率收窄，決定喇叭往牆面送出的聲音量與音色                               |
+| 卡片                                                                                  | 核心內容                                                                                                 |
+| ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [Class D Amplifier（D 類擴大機）](/til/audio/knowledge-cards/class-d-amplifier/)      | 輸出級以高速開關工作的擴大機，特有的是輸出濾波器與負載的互動；外接電源的小型機另有供電電壓限制的輸出上限 |
+| [Digital Amplifier（數位擴大機）](/til/audio/knowledge-cards/digital-amplifier/)      | D 類擴大機的俗稱；「數位」可能指 D 類的輸出級或數位輸入，兩件事分開查，放大過程本身是類比的              |
+| [Filterless Class D（無濾波器 D 類）](/til/audio/knowledge-cards/filterless-class-d/) | 不接輸出濾波器、靠喇叭音圈的電感濾掉開關雜訊的 D 類，要求喇叭線短                                        |
+| [Crossover（分音器）](/til/audio/knowledge-cards/crossover/)                          | 把全頻訊號依頻率分給不同單體的電路或 DSP，分頻點與斜率是它的規格                                         |
+| [Directivity（指向性）](/til/audio/knowledge-cards/directivity/)                      | 喇叭的聲音集中往正前方的程度，隨頻率收窄，決定喇叭往牆面送出的聲音量與音色                               |
 
 ### 唱盤
 
-| 卡片                                                                                                           | 核心內容                                                                       |
-| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| [MM and MC Cartridges（動磁式與動圈式唱頭）](/til/audio/knowledge-cards/mm-and-mc-cartridges/)                 | 依跟著針桿動的是磁鐵還是線圈分成兩種唱頭，輸出電壓、增益、負載與換針方式不同   |
-| [Effective Mass and Compliance（有效質量與順服度）](/til/audio/knowledge-cards/effective-mass-and-compliance/) | 唱臂折算到唱針的質量加上唱頭的重量，與唱頭針桿的軟硬，決定唱臂與唱頭的共振頻率 |
-| [Tracking Force（循軌力）](/til/audio/knowledge-cards/tracking-force/)                                         | 唱針壓在溝槽上的力，以公克計，太輕時在溝槽裡跳動而失真、太重時加快磨耗         |
+| 卡片                                                                                                           | 核心內容                                                                                       |
+| -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [MM and MC Cartridges（動磁式與動圈式唱頭）](/til/audio/knowledge-cards/mm-and-mc-cartridges/)                 | 依跟著針桿動的是磁鐵還是線圈分成兩種唱頭，輸出電壓、增益、負載與換針方式不同                   |
+| [Effective Mass and Compliance（有效質量與順服度）](/til/audio/knowledge-cards/effective-mass-and-compliance/) | 唱臂折算到唱針的質量加上唱頭的重量，與唱頭針桿的軟硬，決定唱臂與唱頭的共振頻率                 |
+| [Moving Iron Cartridge（動鐵式唱頭，MI）](/til/audio/knowledge-cards/moving-iron-cartridge/)                   | 針桿只帶一小塊鐵片、磁鐵與線圈都固定的唱頭，輸出電壓依型號落在 MC 到 MM 的範圍，接法看輸出電壓 |
+| [Headshell（唱頭殼）](/til/audio/knowledge-cards/headshell/)                                                   | S 臂、J 臂前端可拆的唱頭固定件，重量算進唱臂與唱頭共振的總質量                                 |
+| [Tracking Force（循軌力）](/til/audio/knowledge-cards/tracking-force/)                                         | 唱針壓在溝槽上的力，以公克計，太輕時在溝槽裡跳動而失真、太重時加快磨耗                         |
 
 ### 房間與聽感比較
 
-| 卡片                                                         | 核心內容                                                             |
-| ------------------------------------------------------------ | -------------------------------------------------------------------- |
-| [Room Modes（駐波）](/til/audio/knowledge-cards/room-modes/) | 房間尺寸決定的低頻共振，讓聆聽位置的低音在某些頻率特別多或特別少     |
-| [SBIR（喇叭與邊界的干涉）](/til/audio/knowledge-cards/sbir/) | 喇叭後方牆面的反射跟直達聲反相抵消，凹陷的頻率由喇叭到後牆的距離決定 |
-| [ABX Test（ABX 測試）](/til/audio/knowledge-cards/abx-test/) | 音量對齊之後隨機播放、讓聽者判斷 X 是 A 還是 B 的盲聽方法            |
+| 卡片                                                                               | 核心內容                                                                         |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| [Room Modes（駐波）](/til/audio/knowledge-cards/room-modes/)                       | 房間尺寸決定的低頻共振，讓聆聽位置的低音在某些頻率特別多或特別少                 |
+| [SBIR（喇叭與邊界的干涉）](/til/audio/knowledge-cards/sbir/)                       | 喇叭後方牆面的反射跟直達聲反相抵消，凹陷的頻率由喇叭到後牆的距離決定             |
+| [ABX Test（ABX 測試）](/til/audio/knowledge-cards/abx-test/)                       | 音量對齊之後隨機播放、讓聽者判斷 X 是 A 還是 B 的盲聽方法                        |
+| [Trained Listener（受過訓練的聽者）](/til/audio/knowledge-cards/trained-listener/) | 經過系統的聽音訓練、能穩定辨認聲音缺陷的聽者；盲聽結論常分這一組與未受訓練的一組 |
