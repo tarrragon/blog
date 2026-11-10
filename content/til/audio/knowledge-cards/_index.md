@@ -25,32 +25,32 @@ tags: ["til", "音響", "knowledge-cards"]
 
 ### 設備之間的搭配
 
-| 卡片                                                                                             | 核心內容                                                                           |
-| ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| [Load Impedance（負載阻抗）](/til/audio/knowledge-cards/load-impedance/)                         | 下一級設備對訊號呈現的阻抗，決定上一級要供多少電流                                 |
-| [Output Impedance（輸出阻抗）](/til/audio/knowledge-cards/output-impedance/)                     | 訊號源內部的阻抗，跟負載阻抗的比值決定負載端拿到的電壓與頻率響應                   |
-| [Sensitivity（靈敏度）](/til/audio/knowledge-cards/sensitivity/)                                 | 喇叭或耳機在固定輸入下發出的音壓，決定要多少功率或電壓                             |
-| [Line Level（線路電平）](/til/audio/knowledge-cards/line-level/)                                 | 訊源與前級之間約定的訊號電壓範圍，唱頭與喇叭的訊號都不在這個範圍                   |
-| [DAC（數位類比轉換器）](/til/audio/knowledge-cards/dac/)                                         | 把數位音訊的取樣值轉成類比電壓的元件，內建在多數播放設備裡                         |
-| [Clock Jitter（時脈抖動）](/til/audio/knowledge-cards/clock-jitter/)                             | 數位音訊的取樣時間點偏離理想時刻的量，轉成類比時變成失真                           |
-| [Crossover（分音器）](/til/audio/knowledge-cards/crossover/)                                     | 把全頻訊號依頻率分給不同單體的電路或 DSP，分頻點與斜率是它的規格                   |
-| [Ground Loop（接地迴路）](/til/audio/knowledge-cards/ground-loop/)                               | 兩台設備經由兩條接地路徑相連時形成的迴路，產生交流電頻率的嗡聲                     |
-| [Bluetooth Audio Codec（藍牙的音訊編碼格式）](/til/audio/knowledge-cards/bluetooth-audio-codec/) | 藍牙傳送端壓縮、接收端解碼的格式，兩端共同支援的才會被使用，位元率決定丟掉多少資訊 |
+| 卡片                                                                                             | 核心內容                                                                                       |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| [Load Impedance（負載阻抗）](/til/audio/knowledge-cards/load-impedance/)                         | 下一級設備對訊號呈現的阻抗，決定上一級要供多少電流                                             |
+| [Output Impedance（輸出阻抗）](/til/audio/knowledge-cards/output-impedance/)                     | 訊號源內部的阻抗，跟負載阻抗的比值決定負載端拿到的電壓與頻率響應                               |
+| [Sensitivity（靈敏度）](/til/audio/knowledge-cards/sensitivity/)                                 | 喇叭或耳機在固定輸入下發出的音壓，決定要多少功率或電壓                                         |
+| [Line Level（線路電平）](/til/audio/knowledge-cards/line-level/)                                 | 訊源與前級之間約定的訊號電壓範圍，唱頭與喇叭的訊號都不在這個範圍                               |
+| [DAC（數位類比轉換器）](/til/audio/knowledge-cards/dac/)                                         | 把數位音訊的取樣值轉成類比電壓的元件，內建在多數播放設備裡                                     |
+| [Clock Jitter（時脈抖動）](/til/audio/knowledge-cards/clock-jitter/)                             | 數位音訊的取樣時間點偏離理想時刻的量，轉成類比時變成失真                                       |
+| [Ground Loop（接地迴路）](/til/audio/knowledge-cards/ground-loop/)                               | 兩台設備經由兩條接地路徑相連時形成的迴路，產生交流電頻率的嗡聲                                 |
+| [Bluetooth Audio Codec（藍牙的音訊編碼格式）](/til/audio/knowledge-cards/bluetooth-audio-codec/) | 藍牙傳送端壓縮、接收端解碼的格式，兩端共同支援的才會被使用，同一種格式裡位元率決定丟掉多少資訊 |
 
 ### 擴大機與喇叭的構造
 
-| 卡片                                                                             | 核心內容                                                             |
-| -------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| [Class D Amplifier（D 類擴大機）](/til/audio/knowledge-cards/class-d-amplifier/) | 輸出級以高速開關工作的擴大機，輸出濾波器與供電電壓是它特有的搭配條件 |
-| [Directivity（指向性）](/til/audio/knowledge-cards/directivity/)                 | 喇叭的聲音集中往正前方的程度，隨頻率收窄，決定房間反射聲的量與音色   |
+| 卡片                                                                             | 核心內容                                                                                             |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| [Class D Amplifier（D 類擴大機）](/til/audio/knowledge-cards/class-d-amplifier/) | 輸出級以高速開關工作的擴大機，特有的搭配條件是輸出濾波器與負載的互動，以及外接電源機種的供電電壓上限 |
+| [Crossover（分音器）](/til/audio/knowledge-cards/crossover/)                     | 把全頻訊號依頻率分給不同單體的電路或 DSP，分頻點與斜率是它的規格                                     |
+| [Directivity（指向性）](/til/audio/knowledge-cards/directivity/)                 | 喇叭的聲音集中往正前方的程度，隨頻率收窄，決定喇叭往牆面送出的聲音量與音色                           |
 
 ### 唱盤
 
-| 卡片                                                                                                           | 核心內容                                                                     |
-| -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [MM and MC Cartridges（動磁式與動圈式唱頭）](/til/audio/knowledge-cards/mm-and-mc-cartridges/)                 | 依跟著針桿動的是磁鐵還是線圈分成兩種唱頭，輸出電壓、增益、負載與換針方式不同 |
-| [Effective Mass and Compliance（有效質量與順服度）](/til/audio/knowledge-cards/effective-mass-and-compliance/) | 唱臂折算到唱針的質量與唱頭針桿的軟硬，兩者決定唱臂與唱頭的共振頻率           |
-| [Tracking Force（循軌力）](/til/audio/knowledge-cards/tracking-force/)                                         | 唱針壓在溝槽上的力，以公克計，太輕跳針、太重加快磨耗                         |
+| 卡片                                                                                                           | 核心內容                                                                       |
+| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [MM and MC Cartridges（動磁式與動圈式唱頭）](/til/audio/knowledge-cards/mm-and-mc-cartridges/)                 | 依跟著針桿動的是磁鐵還是線圈分成兩種唱頭，輸出電壓、增益、負載與換針方式不同   |
+| [Effective Mass and Compliance（有效質量與順服度）](/til/audio/knowledge-cards/effective-mass-and-compliance/) | 唱臂折算到唱針的質量加上唱頭的重量，與唱頭針桿的軟硬，決定唱臂與唱頭的共振頻率 |
+| [Tracking Force（循軌力）](/til/audio/knowledge-cards/tracking-force/)                                         | 唱針壓在溝槽上的力，以公克計，太輕時在溝槽裡跳動而失真、太重時加快磨耗         |
 
 ### 房間與聽感比較
 

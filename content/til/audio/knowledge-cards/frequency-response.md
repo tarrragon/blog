@@ -14,7 +14,7 @@ tags: ["til", "音響", "knowledge-cards"]
 頻率響應是描述電子設備的三項規格之一，另外兩項是總諧波失真加雜訊（THD+N，total harmonic distortion plus noise）與訊噪比（SNR）。同一個名詞套在不同設備上，理想的曲線形狀不同：
 
 - **電子設備**（DAC、擴大機）：理想的曲線是一條水平線，代表每個頻率經過設備之後的比例不變；實際的偏離以零點幾 dB 計。
-- **喇叭**：起伏以幾 dB 計，還分正前方（軸向）與各角度（離軸）的多條曲線。
+- **喇叭**：起伏以幾 dB 計，還分正前方（軸向）與各角度（[離軸](/til/audio/knowledge-cards/directivity/)）的多條曲線。
 - **房間**：在聆聽位置量到的曲線，低頻常有 10 dB 以上的起伏，成因是 [駐波](/til/audio/knowledge-cards/room-modes/)。
 - **耳機**：用人工耳（ear simulator）量耳膜位置的聲音；人的耳廓與耳道本身會放大 2 到 5 kHz，所以耳機的目標曲線在那一段有突起。
 
