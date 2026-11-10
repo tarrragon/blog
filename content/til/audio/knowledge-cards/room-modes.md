@@ -11,7 +11,7 @@ tags: ["til", "音響", "knowledge-cards"]
 
 ## 概念位置
 
-駐波屬於低頻：約 300 Hz 以下的聲波波長在 1 公尺以上，跟房間的長、寬、高同一個量級。房間對聲音的影響分兩段，300 Hz 以下是駐波，中高頻是牆面與家具的早期反射（early reflections）。
+駐波屬於低頻：約 300 Hz 以下的聲波波長在 1 公尺以上，跟房間的長、寬、高同一個量級。房間對聲音的影響分兩段，300 Hz 以下是駐波，中高頻是牆面與家具的[早期反射](/til/audio/knowledge-cards/early-reflections/)（early reflections）。
 
 駐波的起伏由來回反射的聲波之間的[相位](/til/audio/knowledge-cards/phase/)決定：同相的位置加強，反相的位置抵消。以長度方向最低的那一個為例，它在兩端的牆面最大聲、在正中央互相抵消。所以房間裡量到的[頻率響應](/til/audio/knowledge-cards/frequency-response/)在低頻常有 10 dB 以上的起伏，而且起伏的形狀隨量測位置改變。
 

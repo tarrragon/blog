@@ -7,7 +7,7 @@ description: "喇叭放進房間之後低音忽多忽少、換位置聲音就變
 tags: ["til", "音響", "房間聲學", "駐波", "喇叭擺位", "房間校正"]
 ---
 
-這篇寫房間怎麼改變聆聽位置聽到的聲音，以及能做的處理：先依房間裡哪些擺設改得了，分成位置與擺設都能改、家具位置固定、租屋不能施工三種情形；低頻的[駐波](/til/audio/knowledge-cards/room-modes/)怎麼形成，調整聆聽位置、DSP 房間校正、多顆超低音喇叭與低頻吸音各自的效果與限制；中高頻的早期反射與第一反射點；喇叭的擺位，包括離牆距離造成的低頻增強與凹陷、兩顆喇叭與聆聽位置的三角形，以及喇叭朝向聆聽位置轉的角度；最後是低音經由建築結構與空氣傳到鄰居家的兩條路徑。[共振](/til/audio/knowledge-cards/resonance/)的模型、[相位](/til/audio/knowledge-cards/phase/)與頻段在〔[家用音響的基礎概念](../audio-fundamentals/)〕；超低音喇叭的接法與設定、喇叭的[指向性](/til/audio/knowledge-cards/directivity/)在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕。
+這篇寫房間怎麼改變聆聽位置聽到的聲音，以及能做的處理：先依房間裡哪些擺設改得了，分成位置與擺設都能改、家具位置固定、租屋不能施工三種情形；低頻的[駐波](/til/audio/knowledge-cards/room-modes/)怎麼形成，調整聆聽位置、DSP [房間校正](/til/audio/knowledge-cards/room-correction/)、多顆超低音喇叭與低頻吸音各自的效果與限制；中高頻的[早期反射](/til/audio/knowledge-cards/early-reflections/)與第一反射點；喇叭的擺位，包括離牆距離造成的低頻增強與凹陷、兩顆喇叭與聆聽位置的三角形，以及喇叭朝向聆聽位置轉的角度；最後是低音經由建築結構與空氣傳到鄰居家的兩條路徑。[共振](/til/audio/knowledge-cards/resonance/)的模型、[相位](/til/audio/knowledge-cards/phase/)與頻段在〔[家用音響的基礎概念](../audio-fundamentals/)〕；超低音喇叭的接法與設定、喇叭的[指向性](/til/audio/knowledge-cards/directivity/)在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕。
 
 ## 房間對聲音的影響：低頻的駐波與中高頻的反射
 

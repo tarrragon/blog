@@ -11,9 +11,9 @@ tags: ["til", "音響", "knowledge-cards"]
 
 ## 概念位置
 
-DAC 位在數位訊源與擴大電路之間，是數位串流這一路訊號變成類比的位置；黑膠的訊號從唱頭出來就是類比，對應的位置是唱頭放大器。手機、電腦與電視都內建 DAC，擴大機、主動式喇叭與串流播放器也常內建；獨立的 DAC 是一台專門做這件事的機器。
+DAC 位在數位訊源與擴大電路之間，是數位串流這一路訊號變成類比的位置；黑膠的訊號從唱頭出來就是類比，對應的位置是[唱頭放大器](/til/audio/knowledge-cards/phono-preamp/)。手機、電腦與電視都內建 DAC，擴大機、主動式喇叭與串流播放器也常內建；獨立的 DAC 是一台專門做這件事的機器。
 
-取樣的兩個參數決定 DAC 收到的資料能記錄什麼：[取樣率](/til/audio/knowledge-cards/sample-rate-and-bit-depth/)（sample rate）決定最高頻率（取樣率的一半，CD 的 44.1 kHz 記錄到 22.05 kHz），位元深度（bit depth）決定動態範圍（dynamic range：16 位元約 96 dB，24 位元理論上約 144 dB，都是電壓比的 [dB](/til/audio/knowledge-cards/decibel/)）。DAC 的類比輸出端以電子設備的三項規格描述：[頻率響應](/til/audio/knowledge-cards/frequency-response/)、總諧波失真加雜訊（THD+N）與訊噪比（SNR，signal-to-noise ratio）。
+取樣的兩個參數決定 DAC 收到的資料能記錄什麼：[取樣率](/til/audio/knowledge-cards/sample-rate-and-bit-depth/)（sample rate）決定最高頻率（取樣率的一半，CD 的 44.1 kHz 記錄到 22.05 kHz），位元深度（bit depth）決定動態範圍（dynamic range：16 位元約 96 dB，24 位元理論上約 144 dB，都是電壓比的 [dB](/til/audio/knowledge-cards/decibel/)）。DAC 的類比輸出端以電子設備的三項規格描述：[頻率響應](/til/audio/knowledge-cards/frequency-response/)、[總諧波失真加雜訊](/til/audio/knowledge-cards/thd-n/)（THD+N）與訊噪比（SNR，signal-to-noise ratio）。
 
 ## 可觀察訊號與例子
 
@@ -24,7 +24,7 @@ DAC 位在數位訊源與擴大電路之間，是數位串流這一路訊號變�
 - 擴大機是沒有數位輸入的老機器。
 - 要推高阻抗或低靈敏度的耳機，內建耳機輸出的電壓不夠。
 
-這幾種情形一台小型的 USB DAC 就補得上。四種都不成立時，一台規格達到辨識門檻（設備的量測達到這組數值時，在音量對齊的盲聽裡多半已經聽不出差別）的外接 DAC，換到的多半是介面與功能。
+這幾種情形一台小型的 USB DAC 就補得上。四種都不成立時，一台規格達到[辨識門檻](/til/audio/knowledge-cards/audibility-threshold/)（設備的量測達到這組數值時，在音量對齊的盲聽裡多半已經聽不出差別）的外接 DAC，換到的多半是介面與功能。
 
 ## 判讀方式
 

@@ -16,7 +16,7 @@ tags: ["til", "音響", "knowledge-cards"]
 
 ## 概念位置
 
-dB 是家用音響裡各種比較量共用的單位，每一種量各自屬於一種算法。擴大機功率與音壓的關係用功率比；唱頭放大器的增益（gain，輸出電壓對輸入電壓的放大倍數）、訊噪比（SNR，signal-to-noise ratio）、動態範圍（dynamic range）與[位元深度](/til/audio/knowledge-cards/sample-rate-and-bit-depth/)（bit depth）換算出來的 dB 用電壓比。
+dB 是家用音響裡各種比較量共用的單位，每一種量各自屬於一種算法。擴大機功率與音壓的關係用功率比；[唱頭放大器](/til/audio/knowledge-cards/phono-preamp/)的增益（gain，輸出電壓對輸入電壓的放大倍數）、訊噪比（SNR，signal-to-noise ratio）、動態範圍（dynamic range）與[位元深度](/til/audio/knowledge-cards/sample-rate-and-bit-depth/)（bit depth）換算出來的 dB 用電壓比。
 
 功率比與電壓比之間的換算要經過阻抗：在同一個負載上，功率跟電壓的平方成正比，所以電壓多 20 dB，功率也多 20 dB。唱頭放大器的輸入端與輸出端阻抗不同，電壓的 dB 因此換不成功率的倍數；負載上的阻抗怎麼定義，在 [負載阻抗](/til/audio/knowledge-cards/load-impedance/)。
 

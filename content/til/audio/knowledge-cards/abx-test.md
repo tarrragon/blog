@@ -16,7 +16,7 @@ ABX 測試（ABX test）用來判斷兩台設備、兩種格式或兩條線之�
 - **音量**：音量差在 1 dB 以下時，聽者分辨不出哪一個比較大聲，大聲的那一組仍然容易被偏好。對齊的做法是固定其中一組的音量、調整另一組，用音壓計（或手機的分貝計 App）量兩組播放同一段粉紅噪音（pink noise：每個八度能量相同的測試訊號）時的 [音壓](/til/audio/knowledge-cards/sound-pressure-level/)。
 - **看得到是哪一台**：Floyd Toole 與 Sean Olive 在 1994 年比較同一批聽者的盲聽與**明聽**（sighted listening：看得到品牌、價格與外觀）結果，明聽時的評分明顯受品牌與外觀影響。盲聽的做法是請另一個人切換、不告訴聽者順序，或遮住設備；ABX 再加上隨機的 X 與重複次數，讓結果可以跟猜測比較。
 
-設備的差別在音量對齊的盲聽裡分不出來時，稱為**聽不出差別**（量測社群常說 audibly transparent）。電子設備的辨識門檻，就是一組量測達到之後在這類比較裡多半已經聽不出差別的數值，涵蓋 [頻率響應](/til/audio/knowledge-cards/frequency-response/)、失真加雜訊與訊噪比。
+設備的差別在音量對齊的盲聽裡分不出來時，稱為**聽不出差別**（量測社群常說 audibly transparent）。電子設備的[辨識門檻](/til/audio/knowledge-cards/audibility-threshold/)，就是一組量測達到之後在這類比較裡多半已經聽不出差別的數值，涵蓋 [頻率響應](/til/audio/knowledge-cards/frequency-response/)、失真加雜訊與訊噪比。
 
 ## 可觀察訊號與例子
 

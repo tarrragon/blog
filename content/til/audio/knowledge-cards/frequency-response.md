@@ -11,7 +11,7 @@ tags: ["til", "音響", "knowledge-cards"]
 
 ## 概念位置
 
-頻率響應是描述電子設備的三項規格之一，另外兩項是總諧波失真加雜訊（THD+N，total harmonic distortion plus noise）與訊噪比（SNR）。同一個名詞套在不同設備上，理想的曲線形狀不同：
+頻率響應是描述電子設備的三項規格之一，另外兩項是[總諧波失真加雜訊](/til/audio/knowledge-cards/thd-n/)（THD+N，total harmonic distortion plus noise）與訊噪比（SNR）。同一個名詞套在不同設備上，理想的曲線形狀不同：
 
 - **電子設備**（DAC、擴大機）：理想的曲線是一條水平線，代表每個頻率經過設備之後的比例不變；實際的偏離以零點幾 dB 計。
 - **喇叭**：起伏以幾 dB 計，還分正前方（軸向）與各角度（[離軸](/til/audio/knowledge-cards/directivity/)）的多條曲線。
@@ -24,7 +24,7 @@ tags: ["til", "音響", "knowledge-cards"]
 
 - 輸出阻抗 1 Ω 到 3 Ω 以上的真空管擴大機接同一顆喇叭，頻率響應依阻抗曲線起伏約 2 dB 到 5 dB：阻抗高的低音共振處變大聲、阻抗低的頻段變小聲。
 - Harman 目標曲線（Harman target curve）是 Sean Olive 與 Todd Welti 用盲聽研究得出、多數聽者偏好的耳機頻率響應：低頻比中頻高，耳罩式約高 4 到 6 dB，入耳式約高 8 到 10 dB。
-- 現代的 DAC 與固態擴大機，第三方量測裡多數達到辨識門檻的頻率響應：可聽範圍兩端的衰減在正負 0.5 dB 以內。
+- 現代的 DAC 與固態擴大機，第三方量測裡多數達到[辨識門檻](/til/audio/knowledge-cards/audibility-threshold/)的頻率響應：可聽範圍兩端的衰減在正負 0.5 dB 以內。
 
 ## 判讀方式
 

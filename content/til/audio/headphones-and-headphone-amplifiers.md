@@ -7,7 +7,7 @@ description: "以耳機為主要的聆聽方式，在耳罩式、入耳式、無
 tags: ["til", "音響", "耳機", "耳機擴大機", "DAC", "入耳式耳機"]
 ---
 
-這篇寫以耳機為主的聆聽：耳機的訊號流程跟喇叭系統差在哪裡（沒有房間這個環節，換成耳機與耳朵之間的密合）；耳機的種類（開放式與封閉式耳罩、入耳式）與單體（動圈、平衡電樞、平面振膜）；耳機的[頻率響應](/til/audio/knowledge-cards/frequency-response/)怎麼量、目標曲線是什麼、為什麼等化在耳機上特別有效；從耳機的[靈敏度](/til/audio/knowledge-cards/sensitivity/)與[阻抗](/til/audio/knowledge-cards/load-impedance/)推算要多少電壓與功率，以及高阻抗耳機與平面振膜耳機各缺什麼；耳機擴大機的[輸出阻抗](/til/audio/knowledge-cards/output-impedance/)跟耳機阻抗的比例；高靈敏度入耳式耳機與[底噪](/til/audio/knowledge-cards/noise-floor/)；無線耳機的編碼、主動降噪與內建等化；最後是手機或電腦直接推、小型 USB [DAC](/til/audio/knowledge-cards/dac/) 耳擴、桌上型 DAC 耳擴，以及一台 DAC 耳擴同時接主動式喇叭的組法。[dB](/til/audio/knowledge-cards/decibel/)、底噪、頻率響應、阻抗的基礎概念在〔[家用音響的基礎概念](../audio-fundamentals/)〕，喇叭系統的組成在〔[家用音響系統的組成](../home-audio-system-guide/)〕，推喇叭的擴大機在〔[擴大機的選擇](../amplifier-selection/)〕。文中的數值是常見的範圍，實際以各型號的規格表與量測為準。
+這篇寫以耳機為主的聆聽：耳機的訊號流程跟喇叭系統差在哪裡（沒有房間這個環節，換成耳機與耳朵之間的密合）；耳機的種類（開放式與封閉式耳罩、入耳式）與單體（[動圈](/til/audio/knowledge-cards/dynamic-driver/)、平衡電樞、平面振膜）；耳機的[頻率響應](/til/audio/knowledge-cards/frequency-response/)怎麼量、目標曲線是什麼、為什麼等化在耳機上特別有效；從耳機的[靈敏度](/til/audio/knowledge-cards/sensitivity/)與[阻抗](/til/audio/knowledge-cards/load-impedance/)推算要多少電壓與功率，以及高阻抗耳機與平面振膜耳機各缺什麼；耳機擴大機的[輸出阻抗](/til/audio/knowledge-cards/output-impedance/)跟耳機阻抗的比例；高靈敏度入耳式耳機與[底噪](/til/audio/knowledge-cards/noise-floor/)；無線耳機的編碼、主動降噪與內建等化；最後是手機或電腦直接推、小型 USB [DAC](/til/audio/knowledge-cards/dac/) 耳擴、桌上型 DAC 耳擴，以及一台 DAC 耳擴同時接主動式喇叭的組法。[dB](/til/audio/knowledge-cards/decibel/)、底噪、頻率響應、阻抗的基礎概念在〔[家用音響的基礎概念](../audio-fundamentals/)〕，喇叭系統的組成在〔[家用音響系統的組成](../home-audio-system-guide/)〕，推喇叭的擴大機在〔[擴大機的選擇](../amplifier-selection/)〕。文中的數值是常見的範圍，實際以各型號的規格表與量測為準。
 
 ## 耳機的訊號流程：跟喇叭系統的差別
 

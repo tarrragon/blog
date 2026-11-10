@@ -25,4 +25,4 @@ LE Audio 改變的有兩層。編碼層：LC3 在較低的位元率達到跟 SBC
 
 判斷 LE Audio 對自己有沒有用，先看兩端是否都支援：手機、耳機或電視只要有一端只有傳統藍牙，就用不到 LC3 與 Auracast。兩端都支援時，LC3 換到的是在較低位元率下維持音質，對連線穩定度與耗電有利；它跟 LDAC、LHDC 這類高位元率格式的設計目標不同，位元率也只在同一種格式之內比得出高低，兩者沒有在同樣條件下的盲聽對照。想收聽公共場所的 Auracast 廣播，耳機要支援 Auracast 接收，這一項跟音質無關。
 
-藍牙格式的選擇規則與延遲在〔[數位訊源的構造與選擇](/til/audio/digital-streaming-source-guide/)〕的〈藍牙的音訊編碼格式：SBC、AAC、aptX、LDAC 與手機的支援〉；無線耳機的連線與內建處理在〔[耳機與耳機擴大機](/til/audio/headphones-and-headphone-amplifiers/)〕的〈無線耳機：編碼、主動降噪與內建等化〉。
+藍牙格式的選擇規則與延遲在〔[數位訊源的構造與選擇](/til/audio/digital-streaming-source-guide/)〕的〈藍牙的音訊編碼格式：SBC、AAC、aptX、LDAC、LHDC、LE Audio 與手機的支援〉；無線耳機的連線與內建處理在〔[耳機與耳機擴大機](/til/audio/headphones-and-headphone-amplifiers/)〕的〈無線耳機：編碼、主動降噪與內建等化〉。

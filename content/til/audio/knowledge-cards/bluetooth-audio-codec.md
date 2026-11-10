@@ -24,7 +24,7 @@ tags: ["til", "音響", "knowledge-cards"]
 - **[LHDC](/til/audio/knowledge-cards/lhdc/)**（Savitech）：跟 LDAC 同一類的高位元率格式，主要在部分 Android 品牌的手機上。
 - **LC3**：[LE Audio](/til/audio/knowledge-cards/le-audio-lc3/) 的必備格式，走低功耗藍牙這一條傳輸，跟上面幾種傳統藍牙的格式是兩套並存的系統。
 
-iPhone 與 iPad 只支援 SBC 與 AAC（2026 年），接標榜 aptX 或 LDAC 的喇叭或耳機時，接收端也支援 AAC 就以 AAC 播放，不支援就用 SBC。Android 手機實際用的格式，可以在「開發人員選項」的藍牙音訊編解碼器看到。部分入門唱盤有藍牙輸出，唱盤的類比訊號經過內建的唱頭放大器之後，同樣要經過一次藍牙的有損編碼。
+iPhone 與 iPad 只支援 SBC 與 AAC（2026 年），接標榜 aptX 或 LDAC 的喇叭或耳機時，接收端也支援 AAC 就以 AAC 播放，不支援就用 SBC。Android 手機實際用的格式，可以在「開發人員選項」的藍牙音訊編解碼器看到。部分入門唱盤有藍牙輸出，唱盤的類比訊號經過內建的[唱頭放大器](/til/audio/knowledge-cards/phono-preamp/)之後，同樣要經過一次藍牙的有損編碼。
 
 ## 判讀方式
 
@@ -34,4 +34,4 @@ iPhone 與 iPad 只支援 SBC 與 AAC（2026 年），接標榜 aptX 或 LDAC �
 
 延遲（latency）是另一項跟格式有關的性質：從手機送出到喇叭發聲多在一百到兩百毫秒或更長，看影片時聲音與嘴型對不上；部分格式與設備有低延遲模式，電視與擴大機的影音延遲設定也可以讓聲音跟畫面對齊。
 
-各格式的位元率與手機的支援在〔[數位訊源的構造與選擇](/til/audio/digital-streaming-source-guide/)〕的〈藍牙的音訊編碼格式：SBC、AAC、aptX、LDAC 與手機的支援〉；盲聽測試的條件在同一篇的〈有損與無損壓縮〉；不經過藍牙編碼的 Wi-Fi 串流協定在同一篇的〈Wi-Fi 串流協定〉；電視的影音延遲設定在同一篇的〈有線介面：USB、光纖、同軸與 HDMI ARC〉；藍牙喇叭的單體與限制器在〔[喇叭的規格與構造](/til/audio/speaker-components-and-upgrade-path/)〕的〈各種配置的適用條件：多媒體、近場、書架、超低音（2.1）、落地、多顆超低音與多聲道〉；無線耳機的編碼、降噪與內建等化在〔[耳機與耳機擴大機](/til/audio/headphones-and-headphone-amplifiers/)〕的〈無線耳機：編碼、主動降噪與內建等化〉。
+各格式的位元率與手機的支援在〔[數位訊源的構造與選擇](/til/audio/digital-streaming-source-guide/)〕的〈藍牙的音訊編碼格式：SBC、AAC、aptX、LDAC、LHDC、LE Audio 與手機的支援〉；盲聽測試的條件在同一篇的〈有損與無損壓縮〉；不經過藍牙編碼的 Wi-Fi 串流協定在同一篇的〈Wi-Fi 串流協定〉；電視的影音延遲設定在同一篇的〈有線介面：USB、光纖、同軸與 HDMI ARC〉；藍牙喇叭的單體與限制器在〔[喇叭的規格與構造](/til/audio/speaker-components-and-upgrade-path/)〕的〈各種配置的適用條件：多媒體、近場、書架、超低音（2.1）、落地、多顆超低音與多聲道〉；無線耳機的編碼、降噪與內建等化在〔[耳機與耳機擴大機](/til/audio/headphones-and-headphone-amplifiers/)〕的〈無線耳機：編碼、主動降噪與內建等化〉。

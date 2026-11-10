@@ -7,7 +7,7 @@ description: "要替一對喇叭挑擴大機、讀擴大機的功率與阻抗規
 tags: ["til", "音響", "擴大機", "功率", "阻抗", "真空管", "D 類"]
 ---
 
-這篇寫挑擴大機時要算與要看的項目：功率怎麼從喇叭的[靈敏度](/til/audio/knowledge-cards/sensitivity/)、[阻抗](/til/audio/knowledge-cards/load-impedance/)、聆聽距離與目標音量推算出來，擴大機的功率規格要對上哪些量測條件；喇叭的最低阻抗與擴大機的電流供應；擴大機的[輸出阻抗](/til/audio/knowledge-cards/output-impedance/)怎麼跟喇叭的阻抗曲線互相作用，反電動勢與阻尼因數；前級與後級、唱頭與唱頭放大器、耳機孔與耳機之間的阻抗搭配；固態 AB 類、[D 類](/til/audio/knowledge-cards/class-d-amplifier/)與真空管擴大機各自的特性，真空管再分單端與推挽；以及把功率、電流供應、輸出阻抗與擴大機的種類合起來看，擴大機之間在哪些條件下聽得出差別。[dB](/til/audio/knowledge-cards/decibel/)、阻抗與[共振](/til/audio/knowledge-cards/resonance/)的定義在〔[家用音響的基礎概念](../audio-fundamentals/)〕；前級、後級與綜合擴大機在整套系統裡的分工與花費順序在〔[家用音響系統的組成](../home-audio-system-guide/)〕的〈訊號流程〉與〈下一筆錢放在哪一個環節〉；喇叭這一端的規格（單體的構造與功率壓縮）在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕；推耳機的擴大機在〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕。
+這篇寫挑擴大機時要算與要看的項目：功率怎麼從喇叭的[靈敏度](/til/audio/knowledge-cards/sensitivity/)、[阻抗](/til/audio/knowledge-cards/load-impedance/)、聆聽距離與目標音量推算出來，擴大機的功率規格要對上哪些量測條件；喇叭的最低阻抗與擴大機的電流供應；擴大機的[輸出阻抗](/til/audio/knowledge-cards/output-impedance/)怎麼跟喇叭的阻抗曲線互相作用，反電動勢與阻尼因數；前級與後級、唱頭與[唱頭放大器](/til/audio/knowledge-cards/phono-preamp/)、耳機孔與耳機之間的阻抗搭配；固態 AB 類、[D 類](/til/audio/knowledge-cards/class-d-amplifier/)與真空管擴大機各自的特性，真空管再分單端與推挽；以及把功率、電流供應、輸出阻抗與擴大機的種類合起來看，擴大機之間在哪些條件下聽得出差別。[dB](/til/audio/knowledge-cards/decibel/)、阻抗與[共振](/til/audio/knowledge-cards/resonance/)的定義在〔[家用音響的基礎概念](../audio-fundamentals/)〕；前級、後級與綜合擴大機在整套系統裡的分工與花費順序在〔[家用音響系統的組成](../home-audio-system-guide/)〕的〈訊號流程〉與〈下一筆錢放在哪一個環節〉；喇叭這一端的規格（單體的構造與功率壓縮）在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕；推耳機的擴大機在〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕。
 
 ## 功率：先算電壓，再依阻抗換成瓦
 
@@ -64,7 +64,7 @@ tags: ["til", "音響", "擴大機", "功率", "阻抗", "真空管", "D 類"]
 
 ## 擴大機的種類：固態 AB 類、D 類與真空管
 
-- **固態 AB 類**（Class AB）：輸出級用電晶體線性放大，發熱較多、體積較大。輸出阻抗低、量測多半達到辨識門檻（一組常用來判斷電子設備在音量對齊的[盲聽](/til/audio/knowledge-cards/abx-test/)裡已經聽不出差別的量測數值，在〔[家用音響系統的組成](../home-audio-system-guide/)〕的〈各環節對聲音的影響量級〉），對喇叭的阻抗變化不敏感。
+- **固態 AB 類**（Class AB）：輸出級用電晶體線性放大，發熱較多、體積較大。輸出阻抗低、量測多半達到[辨識門檻](/til/audio/knowledge-cards/audibility-threshold/)（一組常用來判斷電子設備在音量對齊的[盲聽](/til/audio/knowledge-cards/abx-test/)裡已經聽不出差別的量測數值，在〔[家用音響系統的組成](../home-audio-system-guide/)〕的〈各環節對聲音的影響量級〉），對喇叭的阻抗變化不敏感。
 - **D 類**（Class D）：輸出級用高速開關的方式工作，效率高、發熱少、體積小，入門機與主動式喇叭多用這種。商品頁常把它叫做**[數位擴大機](/til/audio/knowledge-cards/digital-amplifier/)**：D 是排在 A、B、C 之後的字母，開關式的輸出級看起來像數位的開與關，放大過程本身是類比的；「數位」兩個字也可能指機器有 USB、光纖這類數位輸入，兩件事要分開查規格表。輸出端有一組濾掉開關雜訊的**輸出濾波器**（output filter），部分機種在 10 kHz 以上的響應隨喇叭的阻抗改變；第三方量測只用電阻負載量時看不出這一項，要找用模擬喇叭負載量測的評測。
 - **真空管**（vacuum tube，也叫膽機）：功率多半較小，輸出阻抗較高，失真隨輸出功率上升。輸出級的接法分兩種，失真的組成不同：**單端**（single-ended）用一支或並聯的幾支管子推動整個波形，失真以二次諧波為主，少用負回授的機種在正常音量下就有 1% 上下；**推挽**（push-pull）用兩組管子各推波形的一半，偶次諧波大部分互相抵消，剩下的以三次諧波為主，同樣回授量下失真比單端低。搭配高靈敏度喇叭時擴大機工作在低功率，失真也跟著低；搭配低靈敏度、阻抗起伏大的喇叭時，頻率響應的起伏與失真都會變大。真空管會隨使用時數老化，要定期更換。
 

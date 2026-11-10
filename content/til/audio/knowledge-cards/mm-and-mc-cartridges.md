@@ -32,4 +32,4 @@ tags: ["til", "音響", "knowledge-cards"]
 
 唱頭裝上唱臂之後還有兩項跟著新唱頭改變。唱臂與唱頭的低頻共振由唱臂的[有效質量與唱頭的順服度](/til/audio/knowledge-cards/effective-mass-and-compliance/)決定，換唱頭時照新唱頭的重量與順服度重算，MM 或 MC 的名稱代替不了這個數字。[循軌力](/til/audio/knowledge-cards/tracking-force/)照新唱頭規格表的建議值重設。
 
-兩種唱頭的構造、電壓與換針在〔[黑膠唱盤的構造、選購與安裝調整](/til/audio/turntable-buying-guide/)〕的〈MM 與 MC 唱頭：發電方式、輸出電壓與換針〉；MM 的負載電容在同一篇的〈唱頭放大器的三種位置：內建在唱盤、內建在擴大機、獨立一台〉；唱頭放大器的增益與規格在同一篇的〈唱頭放大器的規格〉；喇叭的動圈單體在〔[喇叭的規格與構造](/til/audio/speaker-components-and-upgrade-path/)〕的〈動圈單體的構造：振膜、懸吊、音圈、磁路與共振頻率〉。
+兩種唱頭的構造、電壓與換針在〔[黑膠唱盤的構造、選購與安裝調整](/til/audio/turntable-buying-guide/)〕的〈MM 與 MC 唱頭：發電方式、輸出電壓與換針〉；MM 的負載電容在同一篇的〈唱頭放大器的三種位置：內建在唱盤、內建在擴大機、獨立一台〉；唱頭放大器的增益與規格在同一篇的〈唱頭放大器的規格〉；喇叭的[動圈單體](/til/audio/knowledge-cards/dynamic-driver/)在〔[喇叭的規格與構造](/til/audio/speaker-components-and-upgrade-path/)〕的〈動圈單體的構造：振膜、懸吊、音圈、磁路與共振頻率〉。

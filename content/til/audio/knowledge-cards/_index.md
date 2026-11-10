@@ -2,7 +2,7 @@
 title: "家用音響的知識卡片"
 slug: "knowledge-cards"
 date: 2026-11-11
-description: "讀家用音響各篇、規格表或評測時碰到 dB、音壓、阻抗、頻率響應、靈敏度、取樣率、藍牙編碼、LHDC、LE Audio、D 類、數位擴大機、USB-C 供電、指向性、駐波、SBIR、唱頭、唱頭殼、循軌力、受過訓練的聽者這類術語，要查它的定義、在訊號流程裡的位置與判讀方式時"
+description: "讀家用音響各篇、規格表或評測時碰到 dB、音壓、阻抗、頻率響應、THD+N、辨識門檻、靈敏度、取樣率、藍牙編碼、LHDC、LE Audio、唱頭放大器、D 類、數位擴大機、USB-C 供電、動圈單體、指向性、駐波、早期反射、房間校正、SBIR、唱頭、唱頭殼、循軌力、受過訓練的聽者這類術語，要查它的定義、在訊號流程裡的位置與判讀方式時"
 weight: 9
 tags: ["til", "音響", "knowledge-cards"]
 ---
@@ -22,6 +22,7 @@ tags: ["til", "音響", "knowledge-cards"]
 | [Phase（相位）](/til/audio/knowledge-cards/phase/)                                                     | 波形在一個週期裡走到的位置，以角度計；兩個同頻率的波之間的相位差決定疊加時加強還是抵消       |
 | [Resonance（共振）](/til/audio/knowledge-cards/resonance/)                                             | 彈簧加質量的系統在某個頻率反應特別大，阻尼決定峰值多尖                                       |
 | [Sample Rate and Bit Depth（取樣率與位元深度）](/til/audio/knowledge-cards/sample-rate-and-bit-depth/) | PCM 每秒量幾次與每個值用幾個位元記錄，分別限制能記錄的最高頻率與動態範圍                     |
+| [THD+N（總諧波失真加雜訊）](/til/audio/knowledge-cards/thd-n/)                                         | 設備在原訊號之外額外產生的諧波與雜訊佔輸出的比例，比例與成分都影響聽不聽得出來               |
 
 ### 設備之間的搭配
 
@@ -31,6 +32,7 @@ tags: ["til", "音響", "knowledge-cards"]
 | [Output Impedance（輸出阻抗）](/til/audio/knowledge-cards/output-impedance/)                     | 訊號源內部的阻抗，跟負載阻抗的比值決定負載端拿到的電壓與頻率響應                               |
 | [Sensitivity（靈敏度）](/til/audio/knowledge-cards/sensitivity/)                                 | 喇叭或耳機在固定輸入下發出的音壓，決定要多少功率或電壓                                         |
 | [Line Level（線路電平）](/til/audio/knowledge-cards/line-level/)                                 | 訊源與前級之間約定的訊號電壓範圍，唱頭與喇叭的訊號都不在這個範圍                               |
+| [Phono Preamp（唱頭放大器）](/til/audio/knowledge-cards/phono-preamp/)                           | 把唱頭的幾毫伏訊號放大到線路電平並還原 RIAA 曲線的電路，可以內建在唱盤、擴大機或獨立一台       |
 | [DAC（數位類比轉換器）](/til/audio/knowledge-cards/dac/)                                         | 把數位音訊的取樣值轉成類比電壓的元件，內建在多數播放設備裡                                     |
 | [Clock Jitter（時脈抖動）](/til/audio/knowledge-cards/clock-jitter/)                             | 數位音訊的取樣時間點偏離理想時刻的量，轉成類比時變成失真                                       |
 | [Ground Loop（接地迴路）](/til/audio/knowledge-cards/ground-loop/)                               | 兩台設備經由兩條接地路徑相連時形成的迴路，產生交流電頻率的嗡聲                                 |
@@ -46,6 +48,7 @@ tags: ["til", "音響", "knowledge-cards"]
 | [Class D Amplifier（D 類擴大機）](/til/audio/knowledge-cards/class-d-amplifier/)      | 輸出級以高速開關工作的擴大機，特有的是輸出濾波器與負載的互動；外接電源的小型機另有供電電壓限制的輸出上限 |
 | [Digital Amplifier（數位擴大機）](/til/audio/knowledge-cards/digital-amplifier/)      | D 類擴大機的俗稱；「數位」可能指 D 類的輸出級或數位輸入，兩件事分開查，放大過程本身是類比的              |
 | [Filterless Class D（無濾波器 D 類）](/til/audio/knowledge-cards/filterless-class-d/) | 不接輸出濾波器、靠喇叭音圈的電感濾掉開關雜訊的 D 類，要求喇叭線短                                        |
+| [Dynamic Driver（動圈單體）](/til/audio/knowledge-cards/dynamic-driver/)              | 音圈在磁場裡推動振膜的發聲單元，振膜、懸吊、音圈與磁路各自決定低頻、分割振動與老化                       |
 | [Crossover（分音器）](/til/audio/knowledge-cards/crossover/)                          | 把全頻訊號依頻率分給不同單體的電路或 DSP，分頻點與斜率是它的規格                                         |
 | [Directivity（指向性）](/til/audio/knowledge-cards/directivity/)                      | 喇叭的聲音集中往正前方的程度，隨頻率收窄，決定喇叭往牆面送出的聲音量與音色                               |
 
@@ -61,9 +64,12 @@ tags: ["til", "音響", "knowledge-cards"]
 
 ### 房間與聽感比較
 
-| 卡片                                                                               | 核心內容                                                                         |
-| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| [Room Modes（駐波）](/til/audio/knowledge-cards/room-modes/)                       | 房間尺寸決定的低頻共振，讓聆聽位置的低音在某些頻率特別多或特別少                 |
-| [SBIR（喇叭與邊界的干涉）](/til/audio/knowledge-cards/sbir/)                       | 喇叭後方牆面的反射跟直達聲反相抵消，凹陷的頻率由喇叭到後牆的距離決定             |
-| [ABX Test（ABX 測試）](/til/audio/knowledge-cards/abx-test/)                       | 音量對齊之後隨機播放、讓聽者判斷 X 是 A 還是 B 的盲聽方法                        |
-| [Trained Listener（受過訓練的聽者）](/til/audio/knowledge-cards/trained-listener/) | 經過系統的聽音訓練、能穩定辨認聲音缺陷的聽者；盲聽結論常分這一組與未受訓練的一組 |
+| 卡片                                                                                 | 核心內容                                                                             |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| [Room Modes（駐波）](/til/audio/knowledge-cards/room-modes/)                         | 房間尺寸決定的低頻共振，讓聆聽位置的低音在某些頻率特別多或特別少                     |
+| [SBIR（喇叭與邊界的干涉）](/til/audio/knowledge-cards/sbir/)                         | 喇叭後方牆面的反射跟直達聲反相抵消，凹陷的頻率由喇叭到後牆的距離決定                 |
+| [Early Reflections（早期反射）](/til/audio/knowledge-cards/early-reflections/)       | 喇叭的聲音經一次反射到達聆聽位置，影響中高頻的定位與寬度，音色由喇叭的離軸響應決定   |
+| [Room Correction（房間校正）](/til/audio/knowledge-cards/room-correction/)           | 量測聆聽位置再用等化器壓下低頻突起的 DSP 功能，補不了抵消造成的凹陷                  |
+| [Audibility Threshold（辨識門檻）](/til/audio/knowledge-cards/audibility-threshold/) | 電子設備的頻率響應、失真加雜訊與訊噪比達到時，音量對齊的盲聽多半聽不出差別的一組數值 |
+| [ABX Test（ABX 測試）](/til/audio/knowledge-cards/abx-test/)                         | 音量對齊之後隨機播放、讓聽者判斷 X 是 A 還是 B 的盲聽方法                            |
+| [Trained Listener（受過訓練的聽者）](/til/audio/knowledge-cards/trained-listener/)   | 經過系統的聽音訓練、能穩定辨認聲音缺陷的聽者；盲聽結論常分這一組與未受訓練的一組     |
