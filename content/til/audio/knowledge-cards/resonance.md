@@ -12,7 +12,7 @@ tags: ["til", "音響", "knowledge-cards"]
 決定共振頻率的有兩項：
 
 - **質量**（mass）：越重，彈得越慢，共振頻率越低。
-- **彈簧有多硬**：用**彈性係數**（spring constant，越大越硬）描述；音響規格常用它的倒數**順服度**（compliance，越大越軟）。越軟，共振頻率越低。
+- **彈簧有多硬**：用**彈性係數**（spring constant，越大越硬）描述；音響規格常用它的倒數**[順服度](/til/audio/knowledge-cards/effective-mass-and-compliance/)**（compliance，越大越軟）。越軟，共振頻率越低。
 
 共振頻率約等於 1 ÷（2π × √（質量 × 順服度））。
 

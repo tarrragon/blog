@@ -27,7 +27,7 @@ tags: ["til", "音響", "knowledge-cards"]
 
 超低音喇叭的擺位改了，到聆聽位置的距離跟著改，相位就要重調；分頻點與音量改了之後，分頻點附近的銜接也跟著變，相位要再確認一次。
 
-喇叭後方那面牆的反射跟直達聲在特定頻率反相，形成一個凹陷，叫喇叭與邊界的干涉（SBIR，speaker boundary interference response）：凹陷的頻率約等於聲速除以（4 × 喇叭到牆的距離），離牆 1 公尺約在 86 Hz。
+喇叭後方那面牆的反射跟直達聲在特定頻率反相，形成一個凹陷，叫[喇叭與邊界的干涉](/til/audio/knowledge-cards/sbir/)（SBIR，speaker boundary interference response）：凹陷的頻率約等於聲速除以（4 × 喇叭到牆的距離），離牆 1 公尺約在 86 Hz。
 
 DSP 主動分音的喇叭可以把離耳朵較近或較遠的單體的訊號延遲，讓各單體的聲音同時到達聆聽位置，這叫時間對齊（time alignment）。
 

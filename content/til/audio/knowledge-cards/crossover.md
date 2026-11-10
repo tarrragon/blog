@@ -7,7 +7,7 @@ weight: 14
 tags: ["til", "音響", "knowledge-cards"]
 ---
 
-一顆單體涵蓋不了全部頻率：大單體推得動低頻需要的空氣體積，高頻的擴散角度卻窄；小單體高頻擴散得好，推不動低頻。分音器（crossover）把全頻的訊號依頻率分給各個單體：**高通濾波器**（high-pass filter）讓高頻進高音單體，**低通濾波器**（low-pass filter）讓低頻進低音單體。兩組濾波器交接的頻率是分音點，濾波的陡峭程度（斜率）以每八度衰減幾 dB 表示，常見 6、12、18、24 dB；分音點與斜率決定交接頻段的[頻率響應](/til/audio/knowledge-cards/frequency-response/)。
+一顆單體涵蓋不了全部頻率：大單體推得動低頻需要的空氣體積，高頻的[擴散角度](/til/audio/knowledge-cards/directivity/)卻窄；小單體高頻擴散得好，推不動低頻。分音器（crossover）把全頻的訊號依頻率分給各個單體：**高通濾波器**（high-pass filter）讓高頻進高音單體，**低通濾波器**（low-pass filter）讓低頻進低音單體。兩組濾波器交接的頻率是分音點，濾波的陡峭程度（斜率）以每八度衰減幾 dB 表示，常見 6、12、18、24 dB；分音點與斜率決定交接頻段的[頻率響應](/til/audio/knowledge-cards/frequency-response/)。
 
 ## 概念位置
 

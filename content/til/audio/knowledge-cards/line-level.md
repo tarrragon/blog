@@ -13,7 +13,7 @@ tags: ["til", "音響", "knowledge-cards"]
 
 線路電平是訊號流程中段的共同格式。數位訊源經過 [DAC](/til/audio/knowledge-cards/dac/)、唱盤經過唱頭放大器（phono preamp）之後，訊號都是線路電平的類比訊號，擴大機、喇叭與房間由兩種訊源共用；前級（preamplifier）選擇輸入、調整音量，輸出的仍是線路電平；後級（power amplifier）再把它放大成推動喇叭單體的功率。
 
-唱頭的訊號要放大很多倍才到這個範圍，倍數以電壓比的 [dB](/til/audio/knowledge-cards/decibel/) 計：MM 唱頭多在 2.5 mV 到 5 mV，比線路電平小一百倍到幾百倍，唱頭放大器的增益（gain）約 35 dB 到 40 dB；MC 唱頭多在 0.2 mV 到 0.5 mV，小一千倍到一萬倍，增益要 55 dB 到 65 dB。主動式喇叭的主動分音同樣在線路電平這一段處理訊號，分好頻段之後再交給每一個單體各自的擴大電路。
+唱頭的訊號要放大很多倍才到這個範圍，倍數以電壓比的 [dB](/til/audio/knowledge-cards/decibel/) 計：[MM 唱頭](/til/audio/knowledge-cards/mm-and-mc-cartridges/)多在 2.5 mV 到 5 mV，比線路電平小一百倍到幾百倍，唱頭放大器的增益（gain）約 35 dB 到 40 dB；MC 唱頭多在 0.2 mV 到 0.5 mV，小一千倍到一萬倍，增益要 55 dB 到 65 dB。主動式喇叭的主動分音同樣在線路電平這一段處理訊號，分好頻段之後再交給每一個單體各自的擴大電路。
 
 ## 可觀察訊號與例子
 

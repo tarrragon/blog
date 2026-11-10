@@ -7,7 +7,7 @@ description: "要替一對喇叭挑擴大機、讀擴大機的功率與阻抗規
 tags: ["til", "音響", "擴大機", "功率", "阻抗", "真空管", "D 類"]
 ---
 
-這篇寫挑擴大機時要算與要看的項目：功率怎麼從喇叭的[靈敏度](/til/audio/knowledge-cards/sensitivity/)、[阻抗](/til/audio/knowledge-cards/load-impedance/)、聆聽距離與目標音量推算出來，擴大機的功率規格要對上哪些量測條件；喇叭的最低阻抗與擴大機的電流供應；擴大機的[輸出阻抗](/til/audio/knowledge-cards/output-impedance/)怎麼跟喇叭的阻抗曲線互相作用，反電動勢與阻尼因數；前級與後級、唱頭與唱頭放大器、耳機孔與耳機之間的阻抗搭配；固態 AB 類、D 類與真空管擴大機各自的特性，真空管再分單端與推挽；以及把功率、電流供應、輸出阻抗與擴大機的種類合起來看，擴大機之間在哪些條件下聽得出差別。[dB](/til/audio/knowledge-cards/decibel/)、阻抗與[共振](/til/audio/knowledge-cards/resonance/)的定義在〔[家用音響的基礎概念](../audio-fundamentals/)〕；前級、後級與綜合擴大機在整套系統裡的分工與花費順序在〔[家用音響系統的組成](../home-audio-system-guide/)〕的〈訊號流程〉與〈下一筆錢放在哪一個環節〉；喇叭這一端的規格（單體的構造與功率壓縮）在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕；推耳機的擴大機在〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕。
+這篇寫挑擴大機時要算與要看的項目：功率怎麼從喇叭的[靈敏度](/til/audio/knowledge-cards/sensitivity/)、[阻抗](/til/audio/knowledge-cards/load-impedance/)、聆聽距離與目標音量推算出來，擴大機的功率規格要對上哪些量測條件；喇叭的最低阻抗與擴大機的電流供應；擴大機的[輸出阻抗](/til/audio/knowledge-cards/output-impedance/)怎麼跟喇叭的阻抗曲線互相作用，反電動勢與阻尼因數；前級與後級、唱頭與唱頭放大器、耳機孔與耳機之間的阻抗搭配；固態 AB 類、[D 類](/til/audio/knowledge-cards/class-d-amplifier/)與真空管擴大機各自的特性，真空管再分單端與推挽；以及把功率、電流供應、輸出阻抗與擴大機的種類合起來看，擴大機之間在哪些條件下聽得出差別。[dB](/til/audio/knowledge-cards/decibel/)、阻抗與[共振](/til/audio/knowledge-cards/resonance/)的定義在〔[家用音響的基礎概念](../audio-fundamentals/)〕；前級、後級與綜合擴大機在整套系統裡的分工與花費順序在〔[家用音響系統的組成](../home-audio-system-guide/)〕的〈訊號流程〉與〈下一筆錢放在哪一個環節〉；喇叭這一端的規格（單體的構造與功率壓縮）在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕；推耳機的擴大機在〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕。
 
 ## 功率：先算電壓，再依阻抗換成瓦
 
@@ -57,7 +57,7 @@ tags: ["til", "音響", "擴大機", "功率", "阻抗", "真空管", "D 類"]
 同樣的電壓分配也出現在其他兩台設備相接的位置（輸出阻抗與輸入阻抗的定義在〔[家用音響的基礎概念](../audio-fundamentals/)〕的〈阻抗〉）：
 
 - **[線路電平](/til/audio/knowledge-cards/line-level/)的輸出與輸入阻抗**：**前級**（preamplifier）負責選擇輸入與調整音量，**後級**（power amplifier）把訊號放大成推動喇叭的功率，兩者之間、以及 DAC 與擴大機之間傳的是**線路電平**（line level：家用設備之間的標準訊號強度，約零點幾伏特到兩伏特；各設備的分工在〔[家用音響系統的組成](../home-audio-system-guide/)〕的〈訊號流程〉）。前級或 DAC 的輸出阻抗高（部分真空管前級、只用一個可變電阻調音量的**被動前級**，passive preamp），接到輸入阻抗低的後級時，低頻或高頻會衰減。一般固態設備的輸出阻抗在幾十到幾百歐姆、輸入阻抗在一萬歐姆以上，兩者相差百倍以上時不受影響。
-- **MM 唱頭的負載**：MM（動磁式，moving magnet）唱頭的高頻響應受唱頭放大器的輸入電容與訊號線電容影響，原因在〔[黑膠唱盤的構造、選購與安裝調整](../turntable-buying-guide/)〕的〈唱頭放大器的三種位置〉。
+- **MM 唱頭的負載**：[MM](/til/audio/knowledge-cards/mm-and-mc-cartridges/)（動磁式，moving magnet）唱頭的高頻響應受唱頭放大器的輸入電容與訊號線電容影響，原因在〔[黑膠唱盤的構造、選購與安裝調整](../turntable-buying-guide/)〕的〈唱頭放大器的三種位置〉。
 - **耳機孔**：綜合擴大機與 AV 擴大機（處理電影多聲道、驅動五顆以上喇叭的擴大機）的耳機孔，常見做法是在喇叭輸出上串一顆 100 到 470 Ω 的電阻，輸出阻抗因此很高；耳機阻抗跟輸出阻抗的比例怎麼影響聲音，在〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕的〈耳機擴大機的輸出阻抗〉。
 
 ## 擴大機的種類：固態 AB 類、D 類與真空管
