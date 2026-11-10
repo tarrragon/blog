@@ -662,15 +662,42 @@ class TermPromptCount(Base):
         mem = os.path.join(".claude", "projects", re.sub(r"[^A-Za-z0-9]", "-", os.path.realpath(self.root)), "memory", "MEMORY.md")
         write(home, mem, "監控鏈\n")
         r = tool("term-prompt-count", "監控鏈", "沒有的詞", cwd=self.root, env={"HOME": home})
-        self.assertEqual(r.returncode, 1, r.stderr)  # 兩份 CLAUDE.md 都讀不到：計數照印，exit 1
+        self.assertEqual(r.returncode, 1, r.stderr)  # repo 的 CLAUDE.md 讀不到：計數照印，exit 1
         self.assertIn("監控鏈：5 行", r.stdout)  # AGENTS 2 行、分冊 1、skill 1、memory 1；.trash 不算
         self.assertIn("2  AGENTS.md", r.stdout)
         self.assertIn("沒有的詞：0 行", r.stdout)
         self.assertIn("2 term(s), 4 file(s) scanned", r.stderr)
-        # 讀不到的固定來源要說出來：CLAUDE.md 與 ~/.claude/CLAUDE.md 都不存在
-        self.assertIn("讀不到固定來源", r.stderr)
-        self.assertIn(os.path.join(home, ".claude", "CLAUDE.md"), r.stderr)
+        # 讀不到的固定來源要說出來：repo 的 CLAUDE.md 不存在
+        self.assertIn("讀不到固定來源 " + os.path.join(os.path.realpath(self.root), "CLAUDE.md"), r.stderr)
         self.assertNotIn("MEMORY.md", r.stderr)
+        # ~/.claude/CLAUDE.md 不存在是選用來源的正常狀態，另一行說明，不算讀不到
+        self.assertNotIn("讀不到固定來源 " + os.path.join(home, ".claude", "CLAUDE.md"), r.stderr)
+        self.assertIn("~/.claude/CLAUDE.md 不存在（選用的來源", r.stderr)
+
+    def test_absent_user_claude_md_alone_exits_zero(self):
+        home = os.path.join(self.base, "home")
+        write(self.root, "AGENTS.md", "監控鏈\n")
+        write(self.root, "CLAUDE.md", "x\n")
+        write(self.root, "docs/rules/x.md", "x\n")
+        write(self.root, ".claude/skills/s/SKILL.md", "x\n")
+        mem = os.path.join(".claude", "projects", re.sub(r"[^A-Za-z0-9]", "-", os.path.realpath(self.root)), "memory", "MEMORY.md")
+        write(home, mem, "x\n")
+        r = tool("term-prompt-count", "監控鏈", cwd=self.root, env={"HOME": home})
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertNotIn("讀不到固定來源", r.stderr)
+        self.assertIn("不存在（選用的來源", r.stderr)
+        # 存在卻讀不到（這裡是同名的目錄）仍然是讀不到
+        os.makedirs(os.path.join(home, ".claude", "CLAUDE.md"))
+        r = tool("term-prompt-count", "監控鏈", cwd=self.root, env={"HOME": home})
+        self.assertEqual(r.returncode, 1, r.stderr)
+        self.assertIn("讀不到固定來源 " + os.path.join(home, ".claude", "CLAUDE.md"), r.stderr)
+        # 選用來源存在而可讀時照常計數
+        os.rmdir(os.path.join(home, ".claude", "CLAUDE.md"))
+        write(home, ".claude/CLAUDE.md", "監控鏈\n")
+        r = tool("term-prompt-count", "監控鏈", cwd=self.root, env={"HOME": home})
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("監控鏈：2 行", r.stdout)
+        self.assertNotIn("不存在（選用的來源", r.stderr)
 
     def test_memory_dir_name_replaces_every_non_alphanumeric(self):
         home = os.path.join(self.base, "home")
