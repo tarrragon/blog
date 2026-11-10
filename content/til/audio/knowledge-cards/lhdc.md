@@ -7,18 +7,18 @@ weight: 27
 tags: ["til", "音響", "knowledge-cards"]
 ---
 
-LHDC（Low latency High-Definition audio Codec）是台灣的音訊晶片公司 Savitech 開發的[藍牙音訊編碼格式](/til/audio/knowledge-cards/bluetooth-audio-codec/)，跟 LDAC 屬於同一類：用比 SBC、AAC 高的位元率傳送，主打高解析音訊。依公開的規格整理，位元率的範圍約 160 到 1000 kbps；第 3、4 版的上限約 900 kbps，第 5 版約 1000 kbps，並宣稱支援 24 位元、192 kHz。
+LHDC（Low latency High-Definition audio Codec）是台灣的音訊晶片公司 Savitech 開發的[藍牙音訊編碼格式](/til/audio/knowledge-cards/bluetooth-audio-codec/)，跟 LDAC 屬於同一類：用比 SBC、AAC 高的位元率傳送，主打高解析音訊。依公開的規格整理，位元率的範圍約 160 到 1000 kbps；第 3、4 版的上限約 900 kbps，第 5 版約 1000 kbps；第 5 版宣稱支援 24 位元、192 kHz。
 
 ## 概念位置
 
-LHDC 跟其他藍牙格式一樣，要傳送端與接收端都支援才會被使用，兩端沒有共同支援時退回 AAC 或 SBC。支援它的主要是部分 Android 手機品牌（第一支支援的手機是 2017 年的 Huawei Mate 10，之後有 OPPO、OnePlus、Xiaomi、Nothing 的部分機型）；iPhone 不支援（2026 年）。Android 的原生系統對 LHDC 的支援比 LDAC 晚，一支 Android 手機是否支援，看那個品牌是否自己把它加進了系統。
+LHDC 跟其他藍牙格式一樣，要傳送端與接收端都支援才會被使用，兩端沒有共同支援時退回 AAC 或 SBC。支援它的主要是部分 Android 手機品牌（第一支支援的手機是 2017 年的 Huawei Mate 10，之後有 OPPO、OnePlus、Xiaomi、Nothing 的部分機型）；iPhone 不支援（2026 年）。LDAC 從 Android 8.0 起就是 Android 原生支援的格式；LHDC 到 2026 年的 Android 17 才在 Pixel 的開發人員選項以 LHDC v5 出現（依 Android Authority 等媒體的報導）。在這之前與其他品牌的手機上，支援與否取決於那個品牌有沒有自己把它加進系統。
 
 它宣稱的 24 位元、192 kHz 描述的是編碼器接受的格式；耳機收到多少資訊，仍由實際傳送的位元率決定，跟檔案的[取樣率與位元深度](/til/audio/knowledge-cards/sample-rate-and-bit-depth/)是兩回事。
 
 ## 可觀察訊號與例子
 
 - Android 手機的「開發人員選項」→ 藍牙音訊編解碼器裡列出 LHDC，代表手機支援；實際用的是哪一種，要在連上耳機之後看同一個選項。
-- 耳機或喇叭的包裝印有 Hi-Res Audio Wireless 標章，常見的對應格式是 LDAC 或 LHDC。
+- 耳機或喇叭的包裝印有 Hi-Res Audio Wireless 標章，常見的對應格式是 LDAC 或 LHDC，aptX Adaptive、LC3plus 等格式也通過了這個標章的認證。
 - Nothing 的手機預設開啟 LHDC（官方說明），其他品牌多半要在藍牙設定裡手動選。
 
 ## 判讀方式
