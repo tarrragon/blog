@@ -6,6 +6,8 @@ weight: 15
 tags: ["dotfile", "hyprland", "wayland", "security", "knowledge-cards"]
 ---
 
+Wayland session lock 是 [compositor](/linux/dotfile/knowledge-cards/compositor/) 依 ext-session-lock-v1 協議持有的鎖屏狀態：鎖屏工具（Hyprlock、Swaylock）啟動後向 compositor 取得這個鎖，compositor 一直擋住畫面，直到鎖屏工具通過認證、送出解鎖的 request 才釋放。它跟 [systemd-logind](/linux/dotfile/knowledge-cards/logind-session-seat/) 記錄的會話鎖定提示（`LockedHint`）是兩個獨立的層，兩者的值可以不一致。
+
 ## 概念位置
 
 持鎖的那個 compositor 到底是什麼、還握著哪些系統狀態，見 [Compositor 術語卡](/linux/dotfile/knowledge-cards/compositor/)；整合式 shell（如 Caelestia）的鎖屏由 [Quickshell](/linux/dotfile/knowledge-cards/quickshell/) 主程式畫、主程式死掉會連帶觸發失效保護。

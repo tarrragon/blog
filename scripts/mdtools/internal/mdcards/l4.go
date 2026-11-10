@@ -31,7 +31,7 @@ func checkL4K4Structure(g *Graph, cardsRoot, conceptHeadingTitle string) []repor
 		}
 
 		// First paragraph of the body.
-		firstPara := firstBodyParagraph(fn.AST)
+		firstPara := firstBodyParagraph(fn.AST, fn.Src)
 		if firstPara == nil {
 			out = append(out, report.Violation{
 				Path:    fn.Path,
@@ -80,14 +80,50 @@ func checkL4K4Structure(g *Graph, cardsRoot, conceptHeadingTitle string) []repor
 }
 
 // firstBodyParagraph returns the first Paragraph child of the document
-// root, or nil. Heading-first layouts skip the lookup.
-func firstBodyParagraph(doc ast.Node) ast.Node {
+// root that comes before any heading, or nil. A card whose body starts
+// with a heading has no opening paragraph: searching past the heading
+// would return a paragraph from that section (often "概念位置", which
+// carries card links) and let the missing opening pass the check.
+//
+// The parser does not strip YAML front matter: the opening `---` becomes a
+// thematic break and the front matter lines plus the closing `---` become a
+// setext heading. Nodes that start inside the front matter, and line-less
+// nodes before the body (the thematic break), are skipped so the front
+// matter is not mistaken for a heading-first body.
+func firstBodyParagraph(doc ast.Node, src []byte) ast.Node {
+	bodyStart := frontMatterEnd(src)
+	inBody := bodyStart == 0
 	for child := doc.FirstChild(); child != nil; child = child.NextSibling() {
-		if _, ok := child.(*ast.Paragraph); ok {
+		if !inBody {
+			lines := child.Lines()
+			if lines == nil || lines.Len() == 0 || lines.At(0).Start < bodyStart {
+				continue
+			}
+			inBody = true
+		}
+		switch child.(type) {
+		case *ast.Heading:
+			return nil
+		case *ast.Paragraph:
 			return child
 		}
 	}
 	return nil
+}
+
+// frontMatterEnd returns the byte offset just past the closing `---` line
+// of a leading YAML front matter block, or 0 when src has none. It uses the
+// same delimiters as frontMatterOf.
+func frontMatterEnd(src []byte) int {
+	s := string(src)
+	if !strings.HasPrefix(s, "---\n") {
+		return 0
+	}
+	end := strings.Index(s[4:], "\n---")
+	if end < 0 {
+		return 0
+	}
+	return 4 + end + len("\n---")
 }
 
 // headingSection returns the list of top-level nodes under a heading
