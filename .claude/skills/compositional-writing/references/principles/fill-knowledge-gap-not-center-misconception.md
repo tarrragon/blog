@@ -45,10 +45,7 @@
 
 ## keyword bank + 判定
 
-```text
-澄清式框架：
-  最容易誤 / 容易誤判 / 常見的誤判 / 要點破 / 直覺帶偏 / 抵抗…的直覺 / 你以為 / 會困惑 / 值得記
-```
+澄清式框架的詞表以本 skill 的 `keyword-bank.md`〈澄清式框架〉那一條的 pattern 為準（代表詞：最容易誤、容易誤判、常見的誤判、要點破、你以為、會誤以為、會困惑），這裡不另抄一份。
 
 **命中是候選、不是判決**：grep 命中後要一個語意判定步驟——這處在「補正向知識」還是「提醒讀者會犯錯」。自問「拿掉這個誤會 framing、正確知識還在不在」：在 → 刪 framing；不在 → 這處根本沒給知識、要補的是機制不是警告。register 類同義變體多、無穩定關鍵詞、reader-simulation 語意 pass 是主、keyword bank 是輔。判定層的完整論述見 [multi-pass-review-frame-granularity](multi-pass-review-frame-granularity.md)。
 
