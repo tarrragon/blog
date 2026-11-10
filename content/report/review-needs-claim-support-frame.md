@@ -81,7 +81,7 @@ Round 3-B steelman reviewer 的檢查項包含「數字 / 閾值有無源頭」�
 
 - [#302 定位決定體例，而共用的寫作規範會把一個 surface 的體例搬到另一個上](../positioning-decides-form-before-any-rule-applies/) 是本卡在跨 surface 方向的對應。本卡比對的是模組的知識類型跟它所在分類的 house style，兩邊都在同一個 surface 裡面；那張卡處理的是一份給人讀的教材套上了給 agent 執行的體例，而那兩個 surface 的 house style 本來就該不同，比對 sibling 比不出來。
 - [審查的 frame 全部在問規則的效力，沒有一個問它的代價](/report/review-frames-ask-efficacy-never-cost/)：同一個偵測法用在另一個維度。本卡看 finding 的**層級**分佈（全部落在表面層代表深層無人在看），那一張看**方向**分佈（全部在問漏了什麼代表反向無人在問）。兩者共用同一句推論——一整片空白代表那個維度沒有人負責，而空白與通過在報告上長得一樣。
-- [#389 把一段說法改寫成教學文章時，說法留在正文裡當討論對象](/report/rewritten-claim-kept-as-the-subject/)：限定本卡 frame 的修法方向。這個 frame 問「轉述是否忠實、條件是否寫出」，素材是使用者貼來的論壇說法或問答時，它對一段判決不完整的段落給的 finding 是對的，照著修卻會把判決補完整；那句說法只是素材時，修法是刪掉轉述、直接寫機制。
+- [#389 把一段說法改寫成教學文章時，說法留在正文裡當討論對象](/report/rewritten-claim-kept-as-the-subject/)：限定本卡 frame 的修法方向。這個 frame 遇到引用的說法時會追問「轉述是否忠實、條件是否寫出」，素材含從外部引用或轉述的說法時（論壇說法、問答、AI 回答，作者自己蒐集或憑記憶寫的流行說法），它對一段判決不完整的段落給的 finding 是對的，照著修卻會把判決補完整；那句說法只是素材時，修法是刪掉轉述、直接寫機制。
 
 ## 判讀徵兆
 
