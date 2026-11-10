@@ -752,6 +752,19 @@ class PrincipleMirrorDiff(Base):
         after_d = r.stdout.split("principles/d.md")[1]
         self.assertIn("沒有逐字出現", after_d)
 
+    def test_h1_match_ignores_english_case_and_spaces(self):
+        # 檔名不同、沒有 mapping、正文沒提到 slug：只剩 H1 這一把鍵，而副本把 frame 改成大寫 Frame
+        write(self.root, "content/report/stop-signal.md", '---\ntitle: "停止訊號是 frame 涵蓋"\n---\n\n本體。\n')
+        write(self.root, ".claude/skills/k/references/principles/stopping.md", "# 停止訊號是 Frame  涵蓋\n\n副本。\n")
+        write(self.root, ".claude/skills/k/references/principles/other.md", "# 停止訊號是 frame 數量\n\n別的卡。\n")
+        r = subprocess.run(
+            ["python3", os.path.join(self.root, "scripts", "principle-mirror-check.py"), "stop-signal"],
+            capture_output=True, text=True, cwd=self.root,
+        )
+        self.assertIn("principles/stopping.md", r.stdout, r.stderr)
+        self.assertIn("H1 相同", r.stdout)
+        self.assertNotIn("principles/other.md", r.stdout)
+
     def test_bad_rev_exits_2(self):
         r = self.run_diff("--diff", "no-such-rev")
         self.assertEqual(r.returncode, 2)

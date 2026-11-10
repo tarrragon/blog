@@ -2,7 +2,8 @@
 """找出一張 report / record 卡在 skill 側的副本，並回報哪一邊比較新。
 
 為什麼不用單一個鍵：副本與本體的對應在本庫有四種形態，每一種只有一個鍵抓得到。
-檔名相同的用檔名；去專案化時改過標題的用 H1；兩者都改過的靠 bin/skill-mirror
+檔名相同的用檔名；去專案化時改過檔名的用 H1（比對前兩邊都轉小寫、拿掉空白：
+去專案化常改英文字的大小寫）；兩者都改過的靠 bin/skill-mirror
 的 mapping table；只在正文引用的靠內容掃描。少任何一個鍵，漏掉的那一群不會
 報錯，只會讓清單變短——而清單變短與「本來就沒有副本」在畫面上長得一樣。
 
@@ -48,6 +49,11 @@ def title_of(path):
         return m.group(1).strip()
     m = re.search(r'^title:\s*([^"\n].*?)\s*$', read(path), re.M)
     return m.group(1).strip() if m else None
+
+
+def title_key(text):
+    """H1 與 title 比對用的鍵：拿掉空白、轉小寫。只差英文大小寫的兩份標題（Frame／frame）是同一張卡。"""
+    return re.sub(r'\s+', '', text).casefold()
 
 
 def h1_of(path):
@@ -173,7 +179,7 @@ def copies_of(slug, mt, files):
         why = []
         if base == slug:
             why.append('同名')
-        if title and h1_of(os.path.join(ROOT, f)) == title:
+        if title and title_key(h1_of(os.path.join(ROOT, f))) == title_key(title):
             why.append('H1 相同')
         if mt.get(base) == slug:
             why.append('mapping table')
