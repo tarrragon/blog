@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "architecture", "training"]
 
 Residual connection（殘差連接、skip connection）的核心概念是「把 layer 的輸入直接加到輸出上」、形式是 `output = layer(x) + x`。這個簡單加法解決了深層網路的訓練退化問題：沒有 residual、模型加深會反而變差（成因是 [gradient](/llm/knowledge-cards/gradient/) 在反向傳播中衰減太多，而不是過擬合）；有 residual、訓練幾十甚至上百層都穩。
 
-## 概念位置
+## 跟其他概念的關係
 
 Residual connection 在 Transformer block 中出現兩次：
 
@@ -40,6 +40,6 @@ Transformer block：
 2. **Layer 學「殘差」而不是「完整轉換」**：每層學「該怎麼微調輸入」、不用學「從零生成輸出」、優化更容易。
 3. **跟 [LayerNorm](/llm/knowledge-cards/layer-normalization/) 配對**：兩者一起是深層 Transformer 訓得起來的基礎。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 residual connection 後可以判讀 Transformer 能堆幾十層的根本原因（residual + LayerNorm 讓深層仍可訓練，而不是 attention）；也能看懂 ResNet、ViT 等其他用 residual 架構的設計。LLM 推論時 residual 不算 bottleneck、但在訓練 / fine-tune 時、residual 是 gradient flow 健康度的關鍵。

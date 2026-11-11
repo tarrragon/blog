@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/trust-policy/"]
 
 Trust policy 是附加在 [IAM](/devops/infra/knowledge-cards/iam/) role 上的一份 JSON 文件，定義「誰被允許臨時取得（assume）這個 role 的權限」。跟 IAM policy 的差別是：IAM policy 描述「這個 role 能做什麼」，trust policy 描述「誰能變成這個 role」。兩者合在一起才構成完整的授權——先過 trust policy 的門、再受 IAM policy 的限。
 
-## 概念位置
+## 跟其他概念的關係
 
 Trust policy 是 [OIDC](/devops/infra/knowledge-cards/oidc/) 聯合的核心配件。當 CI/CD 平台（GitHub Actions、GitLab CI）要用短期憑證存取雲端資源時，trust policy 用 OIDC token 裡的 claim（issuer、audience、subject）決定「這個 token 代表的身分能不能 assume 這個 role」。
 
@@ -21,7 +21,7 @@ Trust policy 的設計要點是 claim 的收斂程度。只驗 issuer 而不驗 
 
 另一個訊號是 trust policy 的 condition 用了 `StringLike` 但 pattern 太寬（如 `repo:my-org/*`），讓非預期的 repo 也能 assume——這類過寬的 trust policy 在安全稽核時會被標記。
 
-## 設計責任
+## 判斷條件與後果
 
 trust policy 只管哪些身分能取得這個 role，取得之後能做什麼由 role 的 IAM policy 另外限制，所以 trust policy 的條件全部圍繞 token 的 claim：允許哪些外部身分 assume（issuer + subject 的精確匹配）、audience 是否需要額外驗證（AWS 預設 `sts.amazonaws.com`）、以及是否把 plan role 和 apply role 分開（plan 只需 read-only、apply 需要 write，用兩個 role 各自設不同 trust condition 來區分 branch 或 environment）。
 

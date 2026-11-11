@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "paradigm", "architecture"]
 
 Deterministic vs Fuzzy engineering 的核心概念是「**LLM 軟體跟傳統軟體在設計典範上的根本差異**」。Deterministic 軟體建立在「同 input → 同 output」假設、fuzzy 軟體建立在「同 input → 分佈」假設。兩者在資料、邏輯、行為一致性、實驗成本四維度都不同、設計直覺要分開。實務上一個 LLM 應用是兩者混合、[guardrail](/llm/knowledge-cards/guardrail/) 設計是把 fuzzy 邊界包進 deterministic 約束。
 
-## 概念位置
+## 跟其他概念的關係
 
 四維對照：
 
@@ -31,7 +31,7 @@ User input
    ↓ Deterministic（發送 / 寫入）
 ```
 
-## 設計責任
+## 判斷條件與後果
 
 讀 LLM 應用設計文章或開始設計 production AI 系統時、這個 framing 決定每個 step 的工具選擇。實作判讀：
 

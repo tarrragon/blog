@@ -8,10 +8,10 @@ weight: 157
 
 BFF 的核心概念是「為特定前端體驗提供專用後端聚合層」。它可降低前端多次呼叫與資料拼裝成本。 可先對照 [Blast Radius](/backend/knowledge-cards/blast-radius/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 常見於 Web 與 App 需求差異明顯時，BFF 會整合多個下游 API 並回傳前端所需形狀。 可先對照 [Blast Radius](/backend/knowledge-cards/blast-radius/)。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義聚合邊界、快取策略、超時控制與降級策略，避免單一 BFF 成為新瓶頸。

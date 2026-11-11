@@ -8,7 +8,7 @@ weight: 15
 
 Transaction boundary 的核心概念是「一組資料變更必須一起成功或一起回復的範圍」。交易邊界決定哪些狀態需要被 [database](/backend/knowledge-cards/database/) [transaction](/backend/knowledge-cards/transaction/) 保護，哪些外部動作應放在交易之外。
 
-## 概念位置
+## 跟其他概念的關係
 
 交易適合保護同一個 database 內的正式狀態變更。建立訂單與扣庫存可能需要同一個交易；寄信、呼叫外部 API 或發布 [broker](/backend/knowledge-cards/broker/) 訊息則常需要 [outbox pattern](/backend/knowledge-cards/outbox-pattern/) 或補償流程，因為它們超出 database transaction 能力。
 
@@ -16,6 +16,6 @@ Transaction boundary 的核心概念是「一組資料變更必須一起成功�
 
 系統需要交易邊界的訊號是「半成功」會造成產品錯誤。若付款紀錄已建立但訂單狀態未更新，客服與帳務會看到衝突狀態；若通知寄送失敗，通常可以重試或補送。
 
-## 設計責任
+## 判斷條件與後果
 
 交易邊界要盡量短，並明確處理 deadlock、[retry policy](/backend/knowledge-cards/retry-policy/)、[timeout](/backend/knowledge-cards/timeout/) 與錯誤分類。跨 database 或跨服務的一致性要改用 outbox、saga、補償或 [data reconciliation](/backend/knowledge-cards/data-reconciliation/)，而非假設單一交易能包住所有事情。邊界定好之後，交易物件要傳到邊界內的每一個資料存取呼叫，傳遞方式見 [Transaction Propagation](/backend/knowledge-cards/transaction-propagation/)。

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards"]
 
 Batching 的核心概念是「**多個 request 在同一個 forward pass 內一起跑、攤平 model weights 從記憶體讀到處理器的成本**」。是 production LLM inference 的核心優化——跟 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 瓶頸對接：讀一次 model weights、能 process N 個 request、單 request 的 effective throughput 上升 N 倍。
 
-## 概念位置
+## 跟其他概念的關係
 
 Batching 介於 inference engine 內部、跟 [KV cache](/llm/knowledge-cards/kv-cache/) 一起決定一個 GPU / Apple Silicon 能服務多少並發 user。但 batching 不是 free——靜態 batching 要等湊滿才跑、延遲首字延遲；連續 batching 平衡 throughput + latency 但實作複雜。Single-user 場景常無 batching（local Mac 跑 Ollama 即此情境）、production multi-tenant 必有 batching。
 
@@ -23,7 +23,7 @@ Batching 介於 inference engine 內部、跟 [KV cache](/llm/knowledge-cards/kv
 
 實務觀察：production LLM 服務 throughput 在 batch size 4-32 之間有明顯提升、超過 GPU memory 上限後反而下降（KV cache 跟 model weight 競爭記憶體）。
 
-## 設計責任
+## 判斷條件與後果
 
 選 batching 策略看兩維度：
 

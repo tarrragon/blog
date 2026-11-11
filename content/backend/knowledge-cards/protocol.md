@@ -7,7 +7,7 @@ weight: 128
 
 Communication Protocol 的核心概念是「雙方對資料格式、順序、錯誤與互動方式達成一致的規則」。它描述的是通訊雙方如何交換資料，以及在失敗時如何解讀結果。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Communication Protocol 位在 application、client、broker、[API Gateway](/backend/knowledge-cards/api-gateway/) 或 service 之間，決定兩端如何交換資料與解讀狀態。
 
@@ -19,6 +19,6 @@ Communication Protocol 位在 application、client、broker、[API Gateway](/bac
 
 請求/回應型通訊、queue message schema、webhook payload 與簽章驗證，都屬於 communication protocol 問題。這類約定需要被拆到更具體的子卡，才能維持原子性。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義版本相容、錯誤處理、欄位演進與測試方式。Communication Protocol 的目標是讓雙方知道哪些行為是約定的一部分，格式複雜度應盡量收斂。

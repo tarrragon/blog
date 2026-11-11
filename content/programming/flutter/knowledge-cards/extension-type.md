@@ -9,10 +9,10 @@ aliases: ["/flutter/knowledge-cards/extension-type/"]
 
 Extension type 是 Dart 3 引入的語言特性：在編譯期把一個型別包裝成另一個名字、限縮可用的 API、而 runtime 不存在額外物件（零成本抽象）。它跟 class 的差異在「沒有 runtime 開銷、但也沒有 runtime 的型別檢查——`is` 跟 `as` 看到的是底層型別」。同樣是「限縮型別可用介面」的目標，[freezed](/programming/flutter/knowledge-cards/freezed/) 生成的 class 走 runtime 路徑、extension type 走編譯期路徑，兩者是互斥的實作選擇。
 
-## 概念位置
+## 跟其他概念的關係
 
 Extension type 是實作 [value object](/software-design/ddd/knowledge-cards/value-object/) 語意封閉的一種載體。金額用 extension type 包 Decimal：開放的運算限於領域有意義的集合（加減、乘數量、乘倍率），差集裡的誤用（金額乘金額）在編譯期就走不通。跟用 class 包裝的差異：class 有 runtime 身份（`is Money` 為 true）但有 overhead；extension type 零 overhead 但 runtime 是透明的。這條分野也決定了誰適合搭 [copyWith](/programming/flutter/knowledge-cards/copywith/)——extension type 沒有 runtime 物件可覆寫欄位，逐欄位覆寫語意只在 class 路徑上成立。
 
-## 設計責任
+## 判斷條件與後果
 
 Extension type 的 subtype 決策要在設計時做好——它是底層型別的 subtype（寬鬆：可以隱式 upcast 回底層型別）還是獨立型別（嚴格：只能顯式拆封）。前者方便、但封裝邊界弱；後者安全、但每個需要底層型別的銜接點都要顯式拆封。顯式拆封的出口要有語意明確的名字（如 `toDecimal()`），見 [建構路徑設計](/software-design/ddd/construction-path-design/)。Migration 案例見 [Money 三段遷移](/work-log/dart_money_extension_type_migration/)。

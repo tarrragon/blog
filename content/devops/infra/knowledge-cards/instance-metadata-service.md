@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/instance-metadata-service/"]
 
 實例中繼資料服務（instance metadata service，IMDS）是雲端業者在每台主機上提供的一個 HTTP 端點，位址固定是 `169.254.169.254`，只有主機自己連得到。主機上的程式向它查詢這台主機的資訊：主機 ID、所在區域與可用區、網路設定、建立時放進去的 SSH 公鑰與初始化腳本，以及業者發給這台主機的身分憑證（讓主機上的程式不必存放長期金鑰就能呼叫雲端 API，見 [Service Account（服務帳號）](/devops/infra/knowledge-cards/service-account/)）。
 
-## 概念位置
+## 跟其他概念的關係
 
 開機流程依賴它：cloud-init 在主機第一次開機時從中繼資料服務讀出 [SSH](/devops/infra/knowledge-cards/ssh/) 公鑰寫進 `authorized_keys`、讀出初始化腳本並執行。業者的代理程式也從這裡讀主機的設定。
 
@@ -23,7 +23,7 @@ aliases: ["/infra/knowledge-cards/instance-metadata-service/"]
 - 主機上的舊程式或舊版工具讀不到中繼資料、請求回錯誤：它還在用第一版的請求方式
 - 安全掃描報告指出某台主機允許 IMDSv1：那台主機上的應用程式一旦有 SSRF 漏洞，身分憑證就讀得到
 
-## 設計責任
+## 判斷條件與後果
 
 - **新主機**：映像檔支援第二版時開啟強制要求。Oracle Cloud 官方列出支援的平台映像是 Oracle Linux 與 Oracle Autonomous Linux，其他平台映像（包括 Ubuntu）、多數自訂映像與多數市集映像不支援；自訂的 Linux 映像在 cloud-init 20.3 以上、Oracle Cloud Agent 0.0.19 以上時可能支援（官方給自訂映像的條件）。在不支援的映像上強制第二版，cloud-init 讀不到公鑰，主機會連不上。Oracle Cloud 上這個設定建立後可以在主機頁面改回兩版都允許、再重開，判斷與處置見 [代理程式、中繼資料服務、初始化腳本、維護行為與標籤](/devops/infra/cloud-providers/vm-options/management/) 的〈中繼資料服務與 Authorization header〉
 - **既有主機改成只允許第二版**：先確認主機上讀中繼資料的程式（代理程式、SDK、自己的腳本）都已支援第二版，再切換

@@ -21,7 +21,7 @@ tags: ["sql", "engine", "portability", "knowledge-card"]
 
 **回哪一批列。** 這一項由[關聯代數](/backend/01-database/sql/knowledge-cards/relational-algebra/)的組合規則定死，各家一致。三值邏輯、外連接補 `NULL`、`NOT IN` 的展開方式都在這一層，所以那幾類錯誤換引擎不會消失（[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
 
-## 概念位置
+## 跟其他概念的關係
 
 **引擎是「文字之外」那幾方裡射程最大的一方**——識別字規則、寬鬆度與設定、[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)都由它定義與實作，而權限系統是它另外管的一層（[SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)）。所以「換一家引擎」這句話涵蓋的變動比它聽起來的多。
 

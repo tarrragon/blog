@@ -8,7 +8,7 @@ tags: ["backend", "security", "incident-response"]
 
 Internal admin tool（客服後台）是只給公司內部人員使用的網頁介面：客服輸入使用者的帳號、email 或訂單編號，查出那一位使用者的訂單、付款狀態、登入紀錄與最近的錯誤，用來查證使用者回報的狀況，一線客服因此不必請工程去查資料庫。這一類工具在業界沒有單一固定名稱，internal admin tool、support tooling、support console、back office tool 指的都是它，本站寫作客服後台。Okta、Keycloak 這類產品自己的 admin console 是設定那個產品的介面，不是這裡說的工具。客服後台以讀取為主，少數會改資料的操作（停用帳號、退款、改方案）背後呼叫的是 [Admin Endpoint（管理端點）](/backend/knowledge-cards/admin-endpoint/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 在 [Tiered Support（分層支援）](/backend/knowledge-cards/tiered-support/) 裡，客服後台決定一則回報是否停在一線：客服查得到那一筆資料的狀態，就能當場答覆；查不到，回報就要轉給工程。它與兩個相鄰的概念分工不同。管理端點負責改資料，客服後台上的寫入按鈕只是它的入口，核准與稽核的要求跟著端點走。代登入（impersonation）讓客服以使用者的身分登入產品，看到的畫面與權限和該使用者相同，涵蓋整個產品；客服後台只顯示挑出來、遮罩過的欄位，查得到的範圍比代登入窄。代登入的授權邊界見 [7.2 身分與授權邊界〈代理操作的授權邊界〉](/backend/07-security-data-protection/identity-access-boundary/#代理操作的授權邊界)。
 
@@ -18,7 +18,7 @@ Internal admin tool（客服後台）是只給公司內部人員使用的網頁�
 
 客服後台讀得到全部客戶的資料，所以它也是攻擊者的目標。Mailchimp 在 2023 年 1 月公告，攻擊者以社交工程取得員工的帳號密碼，進入客服與帳號管理工具，存取了特定客戶的帳號（見 [Mailchimp 2023 支援工具路徑](/backend/07-security-data-protection/red-team/cases/data-exfiltration/mailchimp-2023-support-tool-abuse/)）；同年 Okta 的客服支援系統被入侵，風險從支援系統擴散到客戶的租戶（見 [Okta 支援系統事件](/backend/07-security-data-protection/cases/okta-support-system-incident-2023/)）。兩起事件裡攻擊者的每一次操作都經過正常的權限檢查，權限檢查分不出合法的客服查詢與攻擊者的查詢。
 
-## 設計責任
+## 判斷條件與後果
 
 設計客服後台時要決定讀寫範圍、欄位、查詢的理由與紀錄。讀寫範圍：預設只讀，寫入操作逐項列出並走管理端點的核准流程。欄位：只顯示客服答覆需要的欄位，個人資料與付款資訊做欄位層級的遮罩（見 [Data Masking（資料遮罩）](/backend/knowledge-cards/data-masking/)）。查詢的理由：查詢附上還在處理中的客服單號，結案的單號解不開查詢，每一次查詢因此都有理由與有效期間。紀錄：誰、什麼時間、以哪一張單、查了哪個帳號都寫進 [Audit Log（稽核紀錄）](/backend/knowledge-cards/audit-log/)，並對每個客服帳號的查詢量設告警，查詢量突然升高的帳號可能已經被盜用。客服帳號本身依 [Least Privilege（最小權限）](/backend/knowledge-cards/least-privilege/) 只給它負責的範圍。
 

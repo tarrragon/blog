@@ -15,7 +15,7 @@ import (
 // Rules (per content/posts/markdown-writing-spec.md §5):
 //   - L1 link validity: every relative link resolves to an existing file.
 //   - L2 orphan detection: every card has an inbound edge from non-card content.
-//   - L4 K4 structure: first paragraph + "概念位置" section each link to adjacent cards.
+//   - L4 K4 structure: first paragraph + "跟其他概念的關係" section each link to adjacent cards.
 //
 // Unlike fmt and lint, cards parses the full content/ tree each run
 // because the graph checks are inherently cross-file. Parse cost scales

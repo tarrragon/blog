@@ -9,7 +9,7 @@ weight: 43
 
 Audit log 的核心概念是「記錄誰在何時對哪個資源做了什麼高風險操作」。它支援事故調查、合規稽核、權限濫用追蹤與資料匯出責任判斷。 可先對照 [Log](/backend/knowledge-cards/log/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Audit log 和一般 debug [log](/backend/knowledge-cards/log/) 的責任不同。Debug log 幫助排查程式行為；audit log 保留安全與責任證據，因此需要更穩定的 schema、權限保護與保留策略。
 
@@ -17,7 +17,7 @@ Audit log 和一般 debug [log](/backend/knowledge-cards/log/) 的責任不同�
 
 系統需要 audit log 的訊號是操作會影響權限、金錢、[PII](/backend/knowledge-cards/pii/)、合約或資料匯出。管理員調整角色、客服查看敏感資料、使用者匯出訂單、API key 輪替都應留下 audit record。
 
-## 設計責任
+## 判斷條件與後果
 
 Audit log 要包含 actor、action、resource、result、reason、[request id](/backend/knowledge-cards/request-id/)、來源位置與時間。它也需要防竄改、查詢權限、[retention](/backend/knowledge-cards/retention/) 與 [alert](/backend/knowledge-cards/alert/) 規則。
 

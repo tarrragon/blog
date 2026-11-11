@@ -8,7 +8,7 @@ tags: ["dotfile", "linux", "arch", "aur", "package-management"]
 
 AUR（Arch User Repository）是 Arch 的社群自建套件庫：官方 repo 沒收的軟體，由使用者上傳一份叫 `PKGBUILD` 的建置腳本，別人抓下來在自己機器上**從原始碼編譯**成套件再安裝。它補的是官方 repo 的覆蓋缺口——冷門工具、專有軟體的封裝、開發版（`-git`）套件，多半只在 AUR。跟 [Package Manager 抽象層](/linux/dotfile/knowledge-cards/package-manager-abstraction/) 抽象掉的官方套件管理員不同，AUR 是 Arch 特有的第三方來源。
 
-## 概念位置
+## 跟其他概念的關係
 
 相關概念：[GNU Stow](/linux/dotfile/knowledge-cards/gnu-stow/)（dotfile 部署、與套件管理正交）、[Compositor](/linux/dotfile/knowledge-cards/compositor/)（Hyprland 等常以 `-git` AUR 套件安裝）、[平台差異](/linux/install/platform-divergence-map/)（AUR 是 Arch 特有、其他發行版有各自的第三方套件來源）。
 

@@ -8,7 +8,7 @@ tags: ["backend", "message-queue"]
 
 Partition 的核心概念是「把事件流切分成多個可並行處理的片段」。同一 partition 內保留順序，不同 partition 可以平行處理。Partition 數量決定 consumer 的最大並行度 — 一個 [consumer group](/backend/knowledge-cards/consumer-group/) 中 consumer 數量不能超過 partition 數量。
 
-## 概念位置
+## 跟其他概念的關係
 
 Partition 是 throughput、ordering 與 hot key 之間的取捨核心。它跟 [topic](/backend/knowledge-cards/topic/) 的關係是：topic 是邏輯分類（order events、payment events），partition 是 topic 內的物理分片。Partition key 決定同一類事件會落到哪個 partition；選錯 key 會造成 hot partition（單一 partition 過載）或讓需要順序的事件被拆散。
 
@@ -20,6 +20,6 @@ Partition 是 throughput、ordering 與 hot key 之間的取捨核心。它跟 [
 
 Partition 數量也影響 [offset](/backend/knowledge-cards/offset/) 管理的複雜度 — 每個 partition 有獨立的 offset，consumer group 的 rebalance 要重新分配 partition ownership。
 
-## 設計責任
+## 判斷條件與後果
 
 Partition 設計要定義 partition key（通常是業務實體 ID）、partition 數量（建議初期設多一點，Kafka partition 數量只能增加不能減少）、順序需求（同 key 保序 vs 全域保序）與 lag 觀測（per-partition lag 能定位 hot partition）。重新分 partition 可能影響順序、consumer group 配置與 replay 範圍。

@@ -11,7 +11,7 @@ aliases: ["/infra/knowledge-cards/orphaned-resource/"]
 
 同名而所指不同的兩個詞：Linux 的孤兒程序（orphan process）是父程序先結束、被 PID 1 收養的程序；套件管理器的孤兒套件是當初作為相依被裝進來、而依賴它的套件已經移除的套件（`pacman -Qtd`、`dnf autoremove` 處理的對象）。本卡講的是雲端帳號裡的資源。
 
-## 概念位置
+## 跟其他概念的關係
 
 孤兒資源的成因是建立與刪除的範圍不對稱：建立主機的精靈一次建出主機、開機磁碟、公開 IP，有時連網路一起建；刪除時每一項的去留各有預設，業者為了避免誤刪資料，常把磁碟（AWS 的 [EBS](/devops/infra/knowledge-cards/ebs/) 這類區塊磁碟）的預設設成保留（Oracle Cloud 終止主機時開機磁碟預設保留）。各家的預設與欄位名稱見 [磁碟：開機磁碟與區塊磁碟的大小、效能、加密與去留](/devops/infra/cloud-providers/vm-options/storage/)〈刪除（終止）主機時開機磁碟的預設去留〉；暫停一台主機時逐項要決定保留或刪除的資源，見 [服務暫停與恢復上線：只停服務、停止主機、終止主機到全部刪除各自保留的資源，暫停期間仍計費與仍被指向的資源，恢復前要查的漂移與恢復的順序](/devops/operations/09-host-lifecycle/suspend-and-resume-service/)〈暫停期間仍在計費的資源〉。帳單層看到的「被遺忘的資源」是同一件事，見 [計費模式理解](/devops/operations/08-cost-management/billing-models/)〈隱藏成本：帳單上的意外〉。
 
@@ -24,7 +24,7 @@ DNS 層有一個對應的情形：主機與 IP 都刪了，DNS 紀錄還指著�
 - 主控台的磁碟列表裡有狀態是「未掛載」的磁碟（AWS 的 EBS 叫 `available`），名稱裡帶著已經不存在的主機名。
 - 公開 IP 列表裡有沒有附在任何主機上的保留 IP。
 
-## 設計責任
+## 判斷條件與後果
 
 孤兒資源的處理分在建立、刪除與盤點三個時間點：
 

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "tokenization"]
 
 BPE（Byte-Pair Encoding、Sennrich et al., 2015 引入 NLP）的核心概念是「**從字元開始、反覆找『出現頻率最高的字元對』把它合併成新 [token](/llm/knowledge-cards/token/)、直到達到目標詞彙表大小**」。是 GPT、Llama、Mistral 等主流 LLM 的 tokenization 演算法、能在「字元」跟「整詞」之間找平衡。
 
-## 概念位置
+## 跟其他概念的關係
 
 BPE 訓練 tokenizer 的流程（簡化）：
 
@@ -36,6 +36,6 @@ BPE 的變體：
 1. **Byte-level BPE**：把每個 byte 當基底（256 個）、所以任何 Unicode / 二進制都能 tokenize、不會有 unknown token。GPT-2 開始的標準。
 2. **[SentencePiece](/llm/knowledge-cards/sentencepiece/) BPE**：跟 SentencePiece 框架結合、處理多語言更靈活。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 model card 看到 `tokenizer: BPE` 就是這個演算法。BPE 對英文友好（高頻單詞整個一 token）、中文 / 日韓較不友好（單字符常被當獨立 token）；這就是為什麼同一段中文翻譯成英文後、英文 token 數常常更少、雲端 LLM 用中文 API 比英文貴。但越新的模型（Gemma 4、Qwen3 等）vocab 越大（256K+）、對中文友善度提升中。

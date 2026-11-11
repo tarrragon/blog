@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "evaluation", "production"]
 
 LLM-as-Judge 的核心概念是「**用一個 LLM（judge）對另一個 LLM（test subject）的輸出做品質評估**」。給 judge 一個 rubric（評分標準）跟 (input, output) pair、judge 輸出分數或 pairwise 偏好。是 production LLM eval 的主流方法（跟標準 [LLM benchmark](/llm/knowledge-cards/llm-benchmarks/) 互補、500-5000× 比 human eval 便宜、80%+ 跟人類同意度）、但有 bias 要處理（position / verbosity / self-preference）。
 
-## 概念位置
+## 跟其他概念的關係
 
 跟其他 eval 路徑的對比：
 
@@ -26,7 +26,7 @@ LLM-as-Judge 的核心概念是「**用一個 LLM（judge）對另一個 LLM（t
 3. **A/B test**：兩個 prompt / model 變體、judge 做 pairwise 比較
 4. **Synthetic data quality**：用大模型生 fine-tune 資料、judge 過濾低品質
 
-## 設計責任
+## 判斷條件與後果
 
 讀 eval framework / production AI app 看到「LLM as judge」「pairwise eval」「LLM evaluator」就是這 framing。寫 code 場景的判讀：
 

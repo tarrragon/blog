@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/serial-console/"]
 
 序列主控台（serial console）承擔的是救援：當網路設定或 sshd 出錯而 [SSH](/devops/infra/knowledge-cards/ssh/) 連不進去時，它提供一條不經過主機作業系統的網路設定與 sshd 的登入路徑。實體伺服器上它是一條接到序列埠的線；雲端 VM 把它做成虛擬序列埠，由廠商的網頁管理介面或 CLI 轉送，例如 GCP 的 Serial Console（`gcloud compute connect-to-serial-port`）、AWS 的 EC2 Serial Console，以及 Oracle Cloud 的 serial console connection（先替主機建一個序列主控台連線（instance console connection），再從自己的電腦用 SSH 連上，官方說明本機連線要用 RSA 金鑰）。連上之後看到的是作業系統的文字主控台；只看開機輸出不必登入，要在登入提示登進去時，用主機上設了密碼的本機帳號（Oracle Cloud 官方說明平台映像的 `opc` 沒有預設密碼）。
 
-## 概念位置
+## 跟其他概念的關係
 
 序列主控台與平時的管理通道設計方向相反：管理通道要隨時可用，救援入口平時關閉、只在需要時打開，因為它繞過了 [Identity-Aware Proxy（身分感知代理）](/devops/infra/knowledge-cards/identity-aware-proxy/) 或 [Bastion Host（跳板機）](/devops/infra/knowledge-cards/bastion-host/) 這些平時的控制點。管理通道的網路可達性、通道授權或主機登入驗證任何一層設定錯了（這三層的分法見[伺服器管理通道的設計](/devops/infra/03-network-foundation/management-access-channel/)），序列主控台都還連得上，因為它不經過那三層的設定。它有自己的授權：雲端上是雲端帳號的 IAM 權限與開啟它的開關，登入時用主機上的本機帳號密碼，所以雲端 IAM 或開關設錯時，它一樣進不去。
 
@@ -21,7 +21,7 @@ aliases: ["/infra/knowledge-cards/serial-console/"]
 - 開機過程卡住（檔案系統檢查、`/etc/fstab` 寫錯）時，序列主控台看得到開機訊息，SSH 在那個階段還沒有啟動
 - 雲端帳號或專案的設定裡，序列主控台存取是關閉的（GCP 預設關閉互動登入，用 metadata `serial-port-enable=TRUE` 對單一 VM 開啟；AWS 要在帳號層級先允許）
 
-## 設計責任
+## 判斷條件與後果
 
 救援入口在出事當下才用得到，而帳號、權限與演練在主機正常時準備最快，所以規劃時要先決定：
 

@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/update-feed/"]
 
 Update Feed 的核心概念是「告訴已安裝客戶端該取得哪個版本」。它連接 [Release Channel](/devops/ci/knowledge-cards/release-channel/) 與 [App Signing](/devops/ci/knowledge-cards/app-signing/)，讓自動更新具備信任與回復能力。
 
-## 概念位置
+## 跟其他概念的關係
 
 Update Feed 位在 signed [artifact](/devops/ci/knowledge-cards/artifact/)、release channel 與已安裝 app 之間，常包含版本號、下載 URL、signature、checksum、release notes 與[最低支援版本](/backend/knowledge-cards/minimum-supported-version/)。
 
@@ -23,6 +23,6 @@ Update Feed 位在 signed [artifact](/devops/ci/knowledge-cards/artifact/)、rel
 
 Electron app 啟動時讀取 stable feed，取得最新 signed installer 與 signature。若新版本 crash rate 升高，團隊先撤下 feed 指向，讓未更新使用者停止取得錯誤版本。
 
-## 設計責任
+## 判斷條件與後果
 
 Update Feed 要定義簽章驗證、channel 分流、版本比較、fallback installer、撤版策略與 telemetry，讓已安裝客戶端安全升級。

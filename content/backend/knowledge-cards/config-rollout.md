@@ -9,7 +9,7 @@ weight: 153
 
 Config Rollout 的核心概念是「把設定變更從程式部署中分離，並以可控方式送到正在運作的服務」。它處理的是設定版本、下發節奏、回復方式與觀察驗證，不是單純修改一個環境變數值。 可先對照 [Connection Pool](/backend/knowledge-cards/connection-pool/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Config Rollout 位在 configuration source、deployment platform 與 running instances 之間。它通常與 service discovery、container runtime、feature flag、secret management 或配置中心一起出現。 可先對照 [Connection Pool](/backend/knowledge-cards/connection-pool/)。
 
@@ -25,6 +25,6 @@ Config Rollout 位在 configuration source、deployment platform 與 running ins
 
 新增下游 endpoint、切換第三方金鑰、調整 feature flag、更新來源白名單或變更 retry policy，都屬於 config rollout 問題。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義設定來源、分發順序、驗證方式、回復方式與影響範圍。Config Rollout 應該讓設定變更可預測，而不是把風險藏在部署流程裡。

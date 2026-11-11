@@ -8,7 +8,7 @@ weight: 1
 
 Deployment Contract 的核心概念是「application 與平台對啟動、存活、接流量與停止方式達成一致」。它把服務生命週期變成可預期的協作規則。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Deployment Contract 位在 application、container、Kubernetes、systemd 與 rollout control 之間。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
@@ -20,6 +20,6 @@ Deployment Contract 位在 application、container、Kubernetes、systemd 與 ro
 
 readiness、shutdown、[draining](/backend/knowledge-cards/draining/) 與 [resource limit](/backend/knowledge-cards/resource-limit/) 都屬於 deployment contract。實際發版節奏與批次切換則交給 [rolling update](/backend/knowledge-cards/rolling-update/) 或 cutover 類卡片處理。
 
-## 設計責任
+## 判斷條件與後果
 
 Deployment Contract 要明確定義何時可接流量、何時應停止接流量、資源不足時如何回應，以及變更失敗時如何回復。

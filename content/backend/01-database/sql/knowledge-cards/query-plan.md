@@ -9,7 +9,7 @@ tags: ["sql", "query-plan", "performance", "knowledge-card"]
 
 Query plan 是引擎為一段查詢決定的執行步驟，內容是一棵運算子樹：哪張表用什麼方式讀、用哪種演算法做連接、中間結果怎麼傳遞。它由 [query optimizer](/backend/01-database/sql/knowledge-cards/query-optimizer/) 產生，而樹上每個節點的輸入與輸出都是一個 [relation](/backend/01-database/sql/knowledge-cards/relation/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 計畫是查詢文字與實際代價之間唯一的橋。SQL 只描述要什麼結果，所以掃全表或走索引、雜湊連接或巢狀迴圈這些決定都不在查詢的文字裡，要問引擎才知道。連接的兩種演算法差在做法：巢狀迴圈對左邊的每一列去右邊找一次，雜湊連接先把一邊建成雜湊表再逐列去查它。連接要保護哪一側是查詢說了算（見 [outer join](/backend/01-database/sql/knowledge-cards/outer-join/)），而用什麼演算法達成它由計畫決定。
 
@@ -37,6 +37,6 @@ Query plan 是引擎為一段查詢決定的執行步驟，內容是一棵運算
 
 DuckDB 的 `EXPLAIN` 換一種呈現，回一棵運算子樹，節點標著 `HASH_JOIN`、`SEQ_SCAN` 這類名稱與估計的列數；`EXPLAIN ANALYZE` 另外附上實際跑出來的列數與耗時。
 
-## 設計責任
+## 判斷條件與後果
 
 估計值與實際值差很多的時候，先懷疑統計資訊而不是查詢的寫法——最佳化器是照估計值選的，估計錯了選擇就跟著錯。判讀計畫要對照當時的資料量，把在小資料上量到的計畫套到 production 是常見的誤判來源。

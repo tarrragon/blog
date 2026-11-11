@@ -8,7 +8,7 @@ weight: 137
 
 Database 的核心概念是「保存服務正式狀態並提供可查詢資料邊界」。它通常承擔 [source of truth](/backend/knowledge-cards/source-of-truth/)、[transaction](/backend/knowledge-cards/transaction/)、索引、約束、備份、權限與 [data lifecycle](/backend/knowledge-cards/data-lifecycle/) 責任。
 
-## 概念位置
+## 跟其他概念的關係
 
 Database 是產品狀態與操作證據的核心依賴。Cache、search index、read replica、event stream 與報表通常都是衍生資料；資料衝突時，團隊需要知道哪個 database 或資料表承擔正式判斷。 可先對照 [Source of Truth](/backend/knowledge-cards/source-of-truth/)。
 
@@ -16,6 +16,6 @@ Database 是產品狀態與操作證據的核心依賴。Cache、search index、
 
 系統需要 database 設計的訊號是資料要被長期保存、查詢、修改與稽核。訂單服務需要保存訂單狀態、付款紀錄、出貨狀態與取消原因；這些資料會影響客服、帳務、出貨與報表。
 
-## 設計責任
+## 判斷條件與後果
 
 Database 設計要包含 [schema migration](/backend/knowledge-cards/schema-migration/)、[transaction boundary](/backend/knowledge-cards/transaction-boundary/)、[isolation level](/backend/knowledge-cards/isolation-level/)、[connection pool](/backend/knowledge-cards/connection-pool/)、備份回復、權限、資料保留與觀測指標。操作上要能看 query latency、lock、[replication lag](/backend/knowledge-cards/replication-lag/)、connection pool 使用量與錯誤分類。

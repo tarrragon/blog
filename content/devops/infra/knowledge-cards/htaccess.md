@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/htaccess/"]
 
 `.htaccess`（Hypertext Access）是 Apache Web Server 的目錄層級設定檔。它讓使用者在沒有伺服器管理員權限的情況下，覆寫 Apache 的部分全域設定——包括 URL 重寫規則、目錄存取控制、PHP 設定覆寫、HTTPS 強制跳轉、以及 HTTP 安全標頭。每個目錄可以有自己的 `.htaccess`，Apache 處理請求時會從根目錄到目標目錄逐層讀取並套用。常搭配 [php.ini / .user.ini](/devops/infra/knowledge-cards/php-ini/) 一起管理 PHP 應用的行為。
 
-## 概念位置
+## 跟其他概念的關係
 
 在 Apache 為主的主機環境（多數共享主機和部分 VPS），`.htaccess` 是不需要重啟伺服器就能調整行為的設定機制。WordPress、Laravel、Drupal 等 PHP 框架都依賴 `.htaccess` 的 URL rewrite 規則來實現 pretty URL（把 `/blog/post-title` 轉成 `index.php?page=post-title`）。相對地 [nginx](/devops/infra/knowledge-cards/nginx/) 沒有對等機制、設定要集中寫在主設定檔。
 
@@ -17,7 +17,7 @@ aliases: ["/infra/knowledge-cards/htaccess/"]
 
 站台根目錄有 `.htaccess` 檔案（注意它是隱藏檔，FTP client 要啟用「顯示隱藏檔案」才看得到）。上傳目錄（`uploads/`）、後台目錄（`admin/`、`wp-admin/`）可能各有一份獨立的 `.htaccess` 做額外的存取控制。
 
-## 設計責任
+## 判斷條件與後果
 
 `.htaccess` 的規則分散在各目錄的隱藏檔裡、每次請求即時生效，站台的 URL 結構、存取限制與 PHP 設定可能只記錄在這些檔案裡；接手維運時要逐一找出的內容有：
 

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "safety", "monitoring"]
 
 Refusal rate 的核心概念是「LLM 拒絕回答 prompt 的比例」。LLM 在訓練階段（特別是 [RLHF](/llm/knowledge-cards/rlhf/)）會學到「對特定類型的請求說『我不能幫忙這個』」、production 服務通常會監控這個比例作為對齊強度跟異常行為偵測的訊號之一。
 
-## 概念位置
+## 跟其他概念的關係
 
 Refusal 行為的典型形態：
 
@@ -28,7 +28,7 @@ Refusal rate 作為偵測訊號的兩個方向：
 
 > **事實查核註**：refusal rate 的標準化測量方式、跟「對齊強度」的對應關係仍在研究演進、不同 vendor 跟 model 的 baseline 差異大、引用前以對應模型的 model card 跟最新研究為準。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 refusal rate 後可以解釋兩個現象：為什麼 production LLM 服務監控 refusal rate（變化是異常訊號）、為什麼開源模型的 refusal rate 通常低於商業旗艦（前者 safety RLHF 投入較少）。
 

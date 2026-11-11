@@ -8,7 +8,7 @@ weight: 149
 
 Certificate rotation and renewal 的核心概念是「在不中斷服務的前提下更新憑證與私鑰」。續期關注到期前更新，輪替關注主動替換既有憑證與金鑰材料。 可先對照 [Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 續期與輪替是 [website certificate lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/) 的穩定性核心，並與 [downtime](/backend/knowledge-cards/downtime/) 風險直接相關。流程設計不完整時，憑證到期會直接造成服務中斷。
 
@@ -16,6 +16,6 @@ Certificate rotation and renewal 的核心概念是「在不中斷服務的前�
 
 系統需要續期與輪替設計的訊號是憑證有效期縮短或多環境併行部署。支付入口在到期日前未完成灰度更新，可能在流量尖峰觸發連線失敗。
 
-## 設計責任
+## 判斷條件與後果
 
 設計要定義到期門檻 [alert](/backend/knowledge-cards/alert/)、灰度部署、回滾條件、私鑰輪替、兼容測試與驗證清單。變更後應以 [dashboard](/backend/knowledge-cards/dashboard/) 追蹤握手錯誤率與憑證剩餘天數。

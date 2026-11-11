@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/prometheus/"]
 
 Prometheus 是開源的 metrics 收集與告警系統。它用 pull 模式運作——定期從被監控的 target（應用程式、伺服器、資料庫）的 HTTP endpoint 拉取指標，存進本地的時序資料庫，之後交給 [Grafana](/devops/infra/knowledge-cards/grafana/) 做視覺化查詢。
 
-## 概念位置
+## 跟其他概念的關係
 
 Prometheus 在 infra 監控層負責「收集與儲存指標」。它搭配 [Grafana](/devops/infra/knowledge-cards/grafana/) 做視覺化（Prometheus 自己的 UI 只有基礎的 query 介面）、搭配 Alertmanager 做告警路由（Prometheus 偵測異常、Alertmanager 決定通知誰）。斷網環境裡它是取代 Datadog / New Relic 的預設方案——不需要連外、self-hosted、社群龐大。
 
@@ -17,7 +17,7 @@ Prometheus 在 infra 監控層負責「收集與儲存指標」。它搭配 [Gra
 
 系統需要 Prometheus 的訊號是：需要追蹤隨時間變化的數值指標（CPU 使用率、request 延遲、佇列深度、錯誤率），且這些指標要能查詢歷史趨勢和設定告警閾值。如果只需要 log（文字紀錄），Loki 或 ELK 更適合；Prometheus 處理的是結構化的數值 metrics。
 
-## 設計責任
+## 判斷條件與後果
 
 Prometheus 把每次拉取的指標寫進本地時序資料庫，target 數量、拉取頻率與保留天數一起決定磁碟用量，告警也建立在同一份資料上；要定的設定是：scrape interval（多久拉一次；程式預設 1 分鐘，官方範例設定寫 15 秒）、retention（資料保留多久、預設 15 天）、哪些 target 要監控（service discovery 或靜態設定）、告警規則的閾值和評估窗口。斷網環境的額外考量是 storage capacity——所有資料留在本地磁碟、沒有 cloud auto-scale。
 

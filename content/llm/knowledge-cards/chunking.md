@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards"]
 
 Chunking 的核心概念是「把長文件切成可被 retrieval 系統獨立檢索的片段」。是 [RAG](/llm/knowledge-cards/rag/) 系統的關鍵設計決策——chunk 太小、retrieval 拿到的 fragment 缺脈絡；太大、retrieval 精確度低且浪費 [context window](/llm/knowledge-cards/context-window/)。「resolution vs context loss」是無法兩全的設計取捨。
 
-## 概念位置
+## 跟其他概念的關係
 
 Chunking 介於 corpus 跟 [embedding model](/llm/knowledge-cards/embedding-model/) 之間、決定 embedding 的單位。同一份 corpus 不同 chunking 策略產出不同 index、retrieval 行為完全不同。Chunk 邊界也決定 retrieval 命中後給 LLM 的 context 邊界——chunk 邊界穿過語意單位、會把連貫資訊切散。
 
@@ -29,7 +29,7 @@ Chunking 介於 corpus 跟 [embedding model](/llm/knowledge-cards/embedding-mode
 
 跨 chunk 重複（overlap）：相鄰 chunk 留 10-20% 重疊、避免邊界訊號丟失。
 
-## 設計責任
+## 判斷條件與後果
 
 Chunking 之前要回答四個問題：
 

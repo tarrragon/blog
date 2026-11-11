@@ -8,7 +8,7 @@ tags: ["backend", "deployment", "kubernetes", "knowledge-card"]
 
 Pod 的核心概念是「Kubernetes 排程與執行的最小單位」：一個 Pod 包含一個或多個容器，這些容器共用同一個網路位址、一定排在同一個節點上。Kubernetes 不直接排程容器，排程的是 Pod。可先對照 [Container](/backend/knowledge-cards/container/) 與 [Kubernetes Service](/backend/knowledge-cards/kubernetes-service/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Pod 位在 [Container](/backend/knowledge-cards/container/) 之上、工作負載物件之下。容器是被執行的程式與它的執行環境；Pod 是把幾個必須放在同一台機器上一起執行的容器包成一個排程單位，給它們一個共用的 IP，讓它們能用 `localhost` 互連、共用掛載的磁碟區。Pod 通常不由使用者直接建立，而是由 ReplicaSet（維持固定數量）或其上層的 Deployment（負責換版本，見 [Rolling Update](/backend/knowledge-cards/rolling-update/)）依 Pod 範本建立。其他服務找到一組 Pod 的方式是 [Kubernetes Service](/backend/knowledge-cards/kubernetes-service/)。
 
@@ -21,6 +21,6 @@ Pod 位在 [Container](/backend/knowledge-cards/container/) 之上、工作負�
 
 完整的元件與物件關係見 [Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/)。
 
-## 設計責任
+## 判斷條件與後果
 
 服務要能承受 Pod 隨時被替換：狀態存在 Pod 外面（資料庫、快取、物件儲存），啟動時能自己讀到設定，收到終止訊號時把進行中的請求處理完。每個 Pod 範本要寫 `resources.requests`，排程器依此決定 Pod 放在哪個節點，HPA（[Autoscaling](/backend/knowledge-cards/autoscaling/) 在 Kubernetes 裡的實作）的 CPU 使用率百分比也以它為分母。

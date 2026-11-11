@@ -8,7 +8,7 @@ weight: 106
 
 Request ID 的核心概念是「識別單次 request 的 ID」。它讓同一個 request 在 [API Gateway](/backend/knowledge-cards/api-gateway/)、application、database log 與 error response 之間可以被追蹤。
 
-## 概念位置
+## 跟其他概念的關係
 
 Request ID 是同步 request 診斷的基本欄位。它通常比 trace 簡單，適合放在 log、response header 與客服查詢流程中。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
@@ -16,6 +16,6 @@ Request ID 是同步 request 診斷的基本欄位。它通常比 trace 簡單�
 
 系統需要 request ID 的訊號是使用者回報錯誤時，工程師需要快速找到對應 log。錯誤頁顯示 request ID，客服可以把 ID 交給工程師查完整處理路徑。 錯誤畫面上怎麼顯示、入口怎麼產生並傳給後端與 log，見 [11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/)。
 
-## 設計責任
+## 判斷條件與後果
 
 Request ID 要在入口統一產生或接受可信上游傳入，並在 response、log、trace 與下游呼叫中保留。安全設計要避免讓外部可控 ID 汙染內部查詢或造成 spoofing。

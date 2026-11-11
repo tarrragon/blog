@@ -8,7 +8,7 @@ weight: 5
 
 Replay runbook 的核心概念是「把事件重放變成可控操作」。Replay 會讓歷史訊息再次進入處理流程，因此 [runbook](/backend/knowledge-cards/runbook/) 要定義重放範圍、順序、速率、驗證方式、回滾策略與負責人。
 
-## 概念位置
+## 跟其他概念的關係
 
 Replay 常用在修復資料、補送事件、重建投影、重新產生搜尋索引或處理 [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/)。它是一種高權限操作，因為同一批事件再次執行可能觸發通知、扣款、出貨、積分或外部 API 呼叫。
 
@@ -20,6 +20,6 @@ Replay 常用在修復資料、補送事件、重建投影、重新產生搜尋�
 
 會員等級計算服務因部署錯誤漏掉一天事件。團隊可以從 event log 重放該日事件重建會員等級；runbook 需要指定時間範圍、只重建等級投影、暫停對外通知，並在重放後比對抽樣帳號與總量指標。
 
-## 設計責任
+## 判斷條件與後果
 
 Replay runbook 應包含 dry run、資料備份、權限核准、[rate limit](/backend/knowledge-cards/rate-limit/)、觀測 [dashboard](/backend/knowledge-cards/dashboard/) 與停止條件。設計重點是讓重放成為可審核、可停止、可驗證的操作，而非臨時手動補資料。

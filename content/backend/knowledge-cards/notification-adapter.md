@@ -8,7 +8,7 @@ weight: 1
 
 Notification Adapter 的核心概念是「把 domain event 或業務狀態，轉成 email、push、webhook 或其他通知格式」。 可先對照 [Object Storage](/backend/knowledge-cards/object-storage/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Notification Adapter 位在 application 與通知渠道之間。它負責把內部事件轉成適合發送的外部 payload。 可先對照 [Object Storage](/backend/knowledge-cards/object-storage/)。
 
@@ -20,6 +20,6 @@ Notification Adapter 位在 application 與通知渠道之間。它負責把內�
 
 付款完成後寄送 email、訂單更新後送 push、事件變更後發 webhook，通常都由 notification adapter 負責。
 
-## 設計責任
+## 判斷條件與後果
 
 Notification Adapter 要處理 payload mapping、模板選擇、渠道限制、發送失敗與重試責任，避免通知細節污染業務流程。

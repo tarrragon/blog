@@ -8,7 +8,7 @@ tags: ["dotfile", "linux", "wayland", "compositor", "hyprland"]
 
 Compositor（合成器）是 Wayland 下負責把各個應用視窗的畫面合成到螢幕、同時管理視窗位置與輸入的核心程式。它一個角色承擔了舊 X11 世界裡分給多個程式的責任——畫面合成、視窗管理、輸入處理，在 Wayland 架構裡合在同一個程式。[Hyprland](/linux/dotfile/05-hyprland-config/) 就是一個 Wayland compositor。使用者對它外觀與行為的客製化，見 [Rice](/linux/dotfile/knowledge-cards/rice/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 相關概念：[TTY](/linux/dotfile/knowledge-cards/tty/)（不依賴 compositor 的救生通道）、[Session Lock](/linux/dotfile/knowledge-cards/session-lock/)（compositor 持有的鎖定狀態）、[Rice](/linux/dotfile/knowledge-cards/rice/)（在 compositor 上做視覺客製）、[Quickshell](/linux/dotfile/knowledge-cards/quickshell/)（在 compositor 之上渲染桌面 UI 的 runtime）。
 

@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/checkov/"]
 
 checkov 是一個開源的靜態分析工具，掃描 Terraform / CloudFormation / Kubernetes 等 [IaC](/devops/infra/knowledge-cards/iac/) 程式碼，比對內建的規則庫找出安全漏洞與合規違規。它在 `plan` 之前或之後執行、不建立任何雲端資源，所以是 CI pipeline 裡最便宜的安全檢查之一。
 
-## 概念位置
+## 跟其他概念的關係
 
 checkov 在 [infra PR 流程](/devops/infra/07-infra-as-pr/plan-review-apply-guardrails/)裡的位置是 `fmt` → `validate` → **checkov / tfsec** → `plan`。前兩步檢查語法正確，checkov 檢查語意安全，plan 檢查實際差異。checkov 補的是 reviewer 肉眼容易漏的盲區——一條 [security group](/devops/infra/knowledge-cards/security-group/) 規則寫成 `0.0.0.0/0` 在 HCL 裡只是一行字串，人會看漏，規則不會。
 
@@ -29,7 +29,7 @@ checkov 的規則庫最廣（涵蓋 CIS Benchmark、SOC 2、PCI DSS 等合規框
 
 checkov 命中後要區分「真漏洞」和「情境合理的例外」。ALB 的 HTTPS listener 在 port 443 開 `0.0.0.0/0` 是設計本意，不是漏洞。豁免用行內註解標記並寫理由：`#checkov:skip=CKV_AWS_260:ALB public HTTPS listener`。詳細的規則配置與豁免管理見 [checkov 與 tfsec 規則配置](/devops/infra/07-infra-as-pr/checkov-tfsec-rule-customization/)。
 
-## 設計責任
+## 判斷條件與後果
 
 checkov 一開始就啟用全部規則並設為 hard fail 的話，既有程式碼裡的舊寫法也會讓 CI 擋下與它們無關的 PR，所以引入時的設計集中在兩個設定：啟用哪些規則（全部 vs 漸進啟用），以及命中時 CI 要不要擋（hard fail vs warning）。常見的漸進策略是先從高嚴重度規則開始、設為 hard fail，中低嚴重度設為 warning，隨團隊習慣逐步收緊。
 

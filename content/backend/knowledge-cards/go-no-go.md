@@ -8,7 +8,7 @@ tags: ["backend", "knowledge-card", "reliability", "release-gate"]
 
 Go/no-go 的核心概念是「在明確時點、由既定角色依事前判斷標準各自表態，任何一票 no-go 即停止」。它是 [gate decision](/backend/knowledge-cards/gate-decision/) 的會議形式——gate decision 說明證據怎麼轉成下一步，go/no-go 說明這個決策在什麼時點、由誰、以什麼儀式做出。名稱來自航太發射：發射前逐站點名，每個崗位回報 go 或 no-go，全數 go 才進入倒數。
 
-## 概念位置
+## 跟其他概念的關係
 
 Go/no-go 位在 [release gate](/backend/knowledge-cards/release-gate/)、[cutover window](/backend/knowledge-cards/cutover-window/) 與 [stop condition](/backend/knowledge-cards/stop-condition/) 之間。Release gate 定義要過哪些檢查，cutover window 定義變更只能在哪個時段發生，go/no-go 把兩者收斂成一個決策時點：窗口開始前，該到的票都到、才放行。Stop condition 是 no-go 的事前定義——會議上的 no-go 應該是「某條 stop condition 成立」的宣告，而非臨場發明的疑慮。
 
@@ -31,6 +31,6 @@ Go/no-go 位在 [release gate](/backend/knowledge-cards/release-gate/)、[cutove
 
 服務把資料庫 migration 的讀寫切換排在凌晨低谷窗口。窗口前三十分鐘開 go/no-go：SRE 報容量與 error budget、DBA 報 replication lag 是否低於預定閾值、值班報當下有無進行中事故、產品報對外公告狀態。DBA 回報 lag 高於閾值——這是事前寫好的 stop condition，一票 no-go，切換改期到下一個窗口。沒有這個時點，同樣的 lag 數字會變成「應該還好吧」的滑行。
 
-## 設計責任
+## 判斷條件與後果
 
 Go/no-go 的設計要指定：時點與改期規則、哪些職能各持一票、每張票對應的檢查與 stop condition、以及 no-go 之後的路徑（改期、降範圍、還是取消）。決策結果與各票的依據要進 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 或發布記錄——事後回放「當時誰依什麼放行」是這個制度可稽核的原因。票的分持是制度的核心：主持人可以主持、但不能代投別人的票。

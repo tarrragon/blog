@@ -116,7 +116,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 [GitHub OAuth 2022](../red-team/cases/supply-chain/github-oauth-2022-token-supply-chain/) 展示授予範圍如何決定暴露面：整合持有的 token 權限過寬，第三方事件因此直接通往下游客戶的資產。[Okta 與 Cloudflare 2023](../red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/) 展示同一層的另一條傳導路徑 —— 承載身分材料的是支援流程本身，收斂點落在資料分級與供應商事件觸發的輪替，而非授權當下給了多少權限。
 
-以下基於通用工程知識補充：收斂 scope 的成本最低的時機是授權當下，之後的每一個窗口都要協調對方，各窗口的成本排序見 [authorization scope](/backend/knowledge-cards/authorization-scope/) 的設計責任段。本章要接住的是它在分層上的後果——第三方持有的那把憑證屬系統層，它的範圍決定了對方事件傳導進來的面積，而這一格的收斂與撤銷都由對方的排期決定。那時協調管道已經開著，順手把 scope 收斂進去不額外增加成本。
+以下基於通用工程知識補充：收斂 scope 的成本最低的時機是授權當下，之後的每一個窗口都要協調對方，各窗口的成本排序見 [authorization scope](/backend/knowledge-cards/authorization-scope/) 的「判斷條件與後果」段。本章要接住的是它在分層上的後果——第三方持有的那把憑證屬系統層，它的範圍決定了對方事件傳導進來的面積，而這一格的收斂與撤銷都由對方的排期決定。那時協調管道已經開著，順手把 scope 收斂進去不額外增加成本。
 
 ## 何時可以合併層級
 

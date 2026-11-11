@@ -19,7 +19,7 @@ SQL 的語句按它改動的對象分成兩類。**DDL**（Data Definition Langu
 
 DML 的權限掛在表上——`GRANT SELECT ON 顧客`。DDL 的權限多數掛在更上面一層：能不能建新表由 [schema](/backend/01-database/sql/knowledge-cards/schema-namespace/) 那一層決定，不是由某一張表決定，因為建的時候那張表還不存在。
 
-## 概念位置
+## 跟其他概念的關係
 
 這條線切的是語句改動的對象，而 SQL 的其餘概念多數只活在 DML 這一側——[relation](/backend/01-database/sql/knowledge-cards/relation/)、[外連接](/backend/01-database/sql/knowledge-cards/outer-join/)、分組、[子查詢](/backend/01-database/sql/knowledge-cards/subquery/) 全部是在既有結構上取資料的方式。DDL 決定那個結構長什麼樣，它跑完之後才輪到那些概念。
 

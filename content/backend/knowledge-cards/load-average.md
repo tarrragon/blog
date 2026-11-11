@@ -8,7 +8,7 @@ tags: ["backend", "capacity-planning", "observability", "knowledge-card"]
 
 Load average 是一段時間內處於可執行狀態的平均行程數：正在用 CPU 的，加上在佇列裡等 CPU 的。Linux 另外把處於不可中斷睡眠（D 狀態，通常是在等磁碟讀寫）的行程也算進去，所以 Linux 的 load 同時反映 CPU 與磁碟的排隊。`uptime` 與 `/proc/loadavg` 給的三個數字是 1 分鐘、5 分鐘、15 分鐘的指數平均，node_exporter 以 `node_load1`、`node_load5`、`node_load15` 輸出。它是 [USE Method](/backend/knowledge-cards/use-method/) 裡 Saturation 的代表訊號之一。
 
-## 概念位置
+## 跟其他概念的關係
 
 load 本身是行程數，要除以核心數才讀得出意思；它和 [CPU Steal Time](/backend/knowledge-cards/cpu-steal-time/) 量的是不同的現象，被虛擬化層拿走的 CPU 時間不會讓 load 升高：
 
@@ -28,6 +28,6 @@ load 高而 CPU 使用率不高時，多半是磁碟在排隊：Linux 的 load �
 - **容器裡看到的 load 是整台主機的**：`/proc/loadavg` 沒有依容器分開，在容器裡跑 `uptime` 看到的是主機（或虛擬機）的值，不是那個容器自己的排隊。
 - **load 1 分鐘的值跳動大**：它是指數平均，短暫的批次工作就能拉高；判斷持續的飽和看 5 分鐘、15 分鐘的值，或在告警規則加 `for`。
 
-## 設計責任
+## 判斷條件與後果
 
 拿 load 判斷主機飽和時，先寫下量到的是哪一層（主機、虛擬機或容器）、核心數是哪一層的核心數；告警門檻寫成除以核心數之後的值（例如 1.5），並註明 Linux 的 load 含等磁碟的行程。壓測或效能比較的紀錄附上當時主機本身的 load 與核心數，見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉。

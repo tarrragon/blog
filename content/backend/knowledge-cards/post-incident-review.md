@@ -9,7 +9,7 @@ weight: 157
 
 Post-incident review 的核心概念是「事故後把事實、原因與改進行動整理成可驗證輸出」。它的目標是提升系統與流程，不是追究個人。 可先對照 [Incident Timeline](/backend/knowledge-cards/incident-timeline/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 復盤連接 [incident timeline](/backend/knowledge-cards/incident-timeline/)、[rca](/backend/knowledge-cards/rca/) 與 [runbook](/backend/knowledge-cards/runbook/) 更新。它也是可靠性改進與工程優先序調整的輸入來源。
 
@@ -17,6 +17,6 @@ Post-incident review 的核心概念是「事故後把事實、原因與改進�
 
 系統需要復盤流程的訊號是同類事故反覆發生。若每次都只做當下修補，沒有形成結構化改進，事故頻率通常不會下降。
 
-## 設計責任
+## 判斷條件與後果
 
 復盤要包含影響摘要、時間線、根因、有效措施、無效措施、行動項與驗證期限。行動項需要指定 owner 與完成標準，避免停在會議紀錄。

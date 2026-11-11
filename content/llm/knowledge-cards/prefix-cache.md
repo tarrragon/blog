@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "kv-cache", "optimization", "production"]
 
 Prefix Cache 的核心概念是「當多個請求共用相同的前綴 prompt（如同一 system prompt、同一 few-shot 範例）、把該前綴的 [KV cache](/llm/knowledge-cards/kv-cache/) 算一次、後續請求共用、省下重複 [prefill](/llm/knowledge-cards/prefill/) 算力」。是 production LLM 服務的常見優化、能大幅降低 latency 跟成本；但在多租戶場景下、跨租戶共用 prefix cache 是直接的隱私洩漏面。
 
-## 概念位置
+## 跟其他概念的關係
 
 Prefix Cache 在推論流程中的角色：
 
@@ -37,7 +37,7 @@ Prefix Cache 在推論流程中的角色：
 
 > **事實查核註**：prefix cache 的命名、設定方式、tenant 隔離預設行為依推論引擎跟版本差異大、引用前以對應引擎的官方文件為準（如 [vLLM Automatic Prefix Caching](https://docs.vllm.ai/)、SGLang RadixAttention 等）。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 prefix cache 後可以解釋兩個現象：為什麼 production LLM 服務的 latency 在啟用 prefix cache 後大幅下降（system prompt 不再每次重算）、為什麼 prefix cache 在多租戶場景是隱私風險（A 租戶的 prefix 可能被 B 看到、見 [llm-multi-tenant-isolation](/backend/07-security-data-protection/llm-multi-tenant-isolation/)）。
 

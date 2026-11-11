@@ -8,13 +8,13 @@ tags: ["backend", "architecture", "database"]
 
 Projection 從事件流或資料變更中持續推算出特定用途的讀取視圖，連接寫入端（事件產生）跟讀取端（查詢消費）。Projection 的輸出是 [read model](/backend/knowledge-cards/read-model/) — 為特定查詢需求反正規化的資料形狀。
 
-## 概念位置
+## 跟其他概念的關係
 
 Projection 在 [event sourcing](/backend/knowledge-cards/event-sourcing/) 架構中扮演「event → current state」的推算角色。Event log 是 append-only 的事件序列，直接對 event log 做查詢效率低；projection 持續消費事件、維護可查詢的 read model，讓讀取端不需要每次 replay 整條事件流。
 
 Projection 不限於 event sourcing。CDC（Change Data Capture）把資料庫的 row 變更推送到下游、下游建立搜尋索引或統計摘要，這也是 projection — 來源是 row change event 而非 domain event。觀測領域的 [recording rule](/backend/knowledge-cards/recording-rule/) 也是一種 projection — 從 raw time series 持續推算預聚合的 metrics。
 
-## 設計責任
+## 判斷條件與後果
 
 設計 projection 時要定義四個面向：
 

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "coding-agent", "context-window"]
 
 Context budget 的核心概念是「**把 [context window](/llm/knowledge-cards/context-window/) 視為有限資源、明確規劃 system prompt / tool schema / history / file content / reasoning trace / tool result 各佔多少**」。coding agent 的最大失敗模式是「context 用爆 → 模型開始遺忘關鍵指令 → 行為飄」、預算化是 harness 設計的核心責任。
 
-## 概念位置
+## 跟其他概念的關係
 
 典型 coding agent 的 context 構成（以 200K 模型為例）：
 
@@ -43,7 +43,7 @@ Context budget 的核心概念是「**把 [context window](/llm/knowledge-cards/
 | Margin ≥ 10%                 | Generation 階段才不會被 context limit 截斷                                                         |
 | Reasoning trace 配長 context | Reasoning model 至少配 64K context、見 [reasoning-model 卡](/llm/knowledge-cards/reasoning-model/) |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 coding agent 設計 / harness paper 看到「context budget」「context engineering」「token budgeting」就是這 framing。寫 code 場景的判讀：
 

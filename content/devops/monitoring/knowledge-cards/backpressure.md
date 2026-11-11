@@ -9,7 +9,7 @@ aliases: ["/monitoring/knowledge-cards/backpressure/"]
 
 背壓（backpressure）的通用概念見 [Backend 知識卡：Backpressure](/backend/knowledge-cards/backpressure/) — 下游處理能力不足時向上游回傳「慢下來」訊號。本卡聚焦監控系統中的具體實作：collector 是下游、SDK 是上游，collector 的寫入 channel 滿時回 HTTP 429（Too Many Requests），SDK 收到 429 後自動降低[取樣](/devops/monitoring/knowledge-cards/sampling/)率。可先對照 [rate limiting](/devops/monitoring/knowledge-cards/rate-limiting/)（per-client 的配額限制）。
 
-## 概念位置
+## 跟其他概念的關係
 
 背壓位在 SDK 和 collector 之間的 HTTP 通訊層。觸發順序：collector 的寫入 channel 容量耗盡 → HTTP handler 無法送入事件 → 回 429 → SDK 收到 429 → SDK 降低[取樣](/devops/monitoring/knowledge-cards/sampling/)率（從 1.0 → 0.5 → 0.1）。背壓是全域的容量訊號 — 所有 SDK 同時收到，所有 SDK 同時降速。
 

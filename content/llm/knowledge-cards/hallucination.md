@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "model-behavior", "safety"]
 
 Hallucination 的核心概念是「LLM 生成的內容語法、語氣、結構看起來合理、但內容上是事實錯誤、引用不存在的來源、虛構不存在的 entity」。這是 LLM 基於統計分布生成的固有特性；以目前的研究跟工程實踐、靠「更大模型」或「更好對齊」（如 [RLHF](/llm/knowledge-cards/rlhf/)）很難徹底消除、可控的做法是用工程手段降低觸發率跟下游偵測。
 
-## 概念位置
+## 跟其他概念的關係
 
 Hallucination 的常見形態：
 
@@ -30,7 +30,7 @@ Hallucination 的常見形態：
 
 > **事實查核註**：Hallucination 的研究跟降低技術仍在快速演進、不同模型、不同任務類型的 hallucination rate 變化大、引用前以最新研究跟具體 model card 為準。Stanford [TruthfulQA](https://arxiv.org/abs/2109.07958) 等 benchmark 是常見參考。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 hallucination 後可以解釋兩個現象：為什麼 LLM 給的「具體事實」（人名 / 數字 / 引用）特別要驗證（生成機制本身就會虛構）、為什麼 LLM 寫的 code 看似合理但 import 不存在的 package（hallucinate 出 library API）。
 

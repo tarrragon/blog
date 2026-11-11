@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "client-side", "browser", "deployment"]
 
 Client-side LLM / embedding 的核心概念是「**模型權重下載到使用者瀏覽器、用 WebGPU 或 WebAssembly 直接在 browser 內推論、不經過任何 server**」。代表 runtime：WebLLM（MLC AI、用 WebGPU）、wllama（llama.cpp 的 WebAssembly port）、`@xenova/transformers`（瀏覽器版 transformers）。是「靜態網站做 [RAG](/llm/knowledge-cards/rag/)」、「離線可用 LLM 應用」這類場景的關鍵基底。
 
-## 概念位置
+## 跟其他概念的關係
 
 跟其他 LLM deployment 形態的對比：
 
@@ -27,7 +27,7 @@ Client-side LLM / embedding 的核心概念是「**模型權重下載到使用�
 | wllama                 | WASM、llama.cpp 編譯版               | GGUF Q4 等量化模型、< 4B 為主                    | 0.5-4 GB / 模型 |
 | `transformers.js`      | WASM、跟 `@xenova/transformers` 同源 | 同上                                             | 同上            |
 
-## 設計責任
+## 判斷條件與後果
 
 讀靜態網站 / 前端 RAG / 離線 LLM 教學看到「WebGPU LLM」「browser-side embedding」「offline LLM」就是這 paradigm。寫 code 場景的判讀：
 

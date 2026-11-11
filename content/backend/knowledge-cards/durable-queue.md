@@ -8,7 +8,7 @@ weight: 145
 
 Durable queue 的核心概念是「待處理工作在 process 重啟或節點故障後仍可被取回」。它把 queue 從記憶體暫存提升為可恢復的工作通道。 可先對照 [Queue](/backend/knowledge-cards/queue/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Durable queue 是 [queue](/backend/knowledge-cards/queue/) 與 [message persistence](/backend/knowledge-cards/message-persistence/) 的組合，常由 [broker](/backend/knowledge-cards/broker/) 提供，並搭配 [ack/nack](/backend/knowledge-cards/ack-nack/)、[retry policy](/backend/knowledge-cards/retry-policy/) 與 [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/)。
 
@@ -16,6 +16,6 @@ Durable queue 是 [queue](/backend/knowledge-cards/queue/) 與 [message persiste
 
 當工作可延遲但不可遺失時，durable queue 是常見候選。例如付款後通知、對帳同步、背景轉檔。若僅需在線即時廣播，通常 [pub/sub](/backend/knowledge-cards/pub-sub/) 成本更低。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義保存期限、重試上限、去重策略、queue lag 告警與回復流程，避免把可靠性責任留給人工排障。

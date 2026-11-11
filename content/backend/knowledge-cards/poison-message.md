@@ -8,7 +8,7 @@ weight: 66
 
 Poison message 的核心概念是「某一則訊息的內容會穩定造成 consumer 失敗」。它可能是格式錯誤、schema 不相容、資料狀態衝突、權限不足或程式 bug 觸發條件。 可先對照 [Post-Incident Review](/backend/knowledge-cards/post-incident-review/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Poison message 是 queue pipeline 的隔離對象。系統要把它從主要處理路徑移開，讓正常訊息繼續前進，同時保留診斷資料給人工或修復流程。 可先對照 [Post-Incident Review](/backend/knowledge-cards/post-incident-review/)。
 
@@ -16,6 +16,6 @@ Poison message 是 queue pipeline 的隔離對象。系統要把它從主要處�
 
 系統需要 poison message 判斷的訊號是同一訊息每次投遞都失敗。新版 producer 多送一個 consumer 還不支援的 enum 值，可能讓舊版 consumer 持續失敗。
 
-## 設計責任
+## 判斷條件與後果
 
 Poison message 要進入 dead-letter，並保留 payload 摘要、schema version、錯誤類型、consumer version、correlation id 與重放條件。修復後才應 replay。

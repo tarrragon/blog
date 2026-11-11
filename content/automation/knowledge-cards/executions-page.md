@@ -8,7 +8,7 @@ tags: ["automation", "apps-script", "debugging", "observability", "knowledge-car
 
 執行項目是 Apps Script 編輯器左側的一個頁面，列出這個專案每一次函式執行的時間、耗時、觸發方式與狀態。它記錄的是平台實際跑過什麼，因此是這類架構裡唯一不依賴推測的觀測點——程式碼只顯示它宣稱會做什麼，執行項目顯示它做了什麼。接收 [beacon](/automation/knowledge-cards/beacon/) 的 [doPost](/automation/knowledge-cards/doget-dopost/) 每被呼叫一次就在這裡留下一列。
 
-## 概念位置
+## 跟其他概念的關係
 
 這個頁面回答的問題是「請求有沒有抵達端點」，而它把故障範圍切成兩半：**有執行紀錄但狀態失敗**代表請求送達了、接收端出錯；**完全沒有對應時間的執行紀錄**代表請求根本沒送出來，問題在瀏覽器端或網路。兩者的排查方向相反，而在此之前它們的症狀完全相同——試算表都沒有新資料。
 
@@ -20,6 +20,6 @@ tags: ["automation", "apps-script", "debugging", "observability", "knowledge-car
 
 版本欄位還洩漏另一件事：它顯示這次執行用的是哪一個部署版本，因此「程式碼改了但端點跑舊版」這個假故障在這裡看得出來。
 
-## 判讀方式
+## 判斷條件與後果
 
 排查「資料沒進來」時先開這一頁，再決定往哪個方向查——這一步的成本是開一個頁面，而它省下的是往錯誤方向排查的整段時間。實際運用見[假故障與靜默失效的診斷](/automation/06-reading-the-data/diagnosing-silent-failures/)。

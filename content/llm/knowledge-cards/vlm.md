@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "vlm", "multimodal", "vision"]
 
 VLM（Vision-Language Model、視覺語言模型）的核心概念是「**同時接受圖片 + 文字輸入、產生文字輸出的 LLM 變體**」。內部結構是「[vision encoder](/llm/knowledge-cards/vision-encoder/) 把圖片轉成 [image token](/llm/knowledge-cards/image-token/)、跟文字 token 一起進 Transformer」。寫 code 場景的 VLM 用途：看截圖 debug、看 mockup 寫前端 code、看 architecture 白板照片寫文件。
 
-## 概念位置
+## 跟其他概念的關係
 
 VLM 跟純文字 LLM 的差異：
 
@@ -38,7 +38,7 @@ text token 與 image token 混合進 Transformer 的機制細節、見 [multimod
 
 > **事實查核註**：主流 VLM family、本地可跑狀態、coding 場景強項在 2026/5 是估計、依模型更新跟推論伺服器支援度持續變化、引用前以對應 model card 跟 Hugging Face leaderboard 為準。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 model card 看到「vision」「VL」「multimodal」「-VL」「visual」就是 VLM。寫 code 場景的判讀：
 

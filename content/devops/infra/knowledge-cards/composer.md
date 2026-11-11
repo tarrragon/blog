@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/composer/"]
 
 Composer 是 PHP 的套件管理工具，角色等同於 Node.js 的 npm、Python 的 pip、Go 的 go mod。它負責宣告專案需要哪些第三方套件、鎖定每個套件的確切版本、以及把套件安裝到專案目錄裡；PHP 專案的設定值管理則交給 [.env](/devops/infra/knowledge-cards/dotenv/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 接手 PHP 專案時，Composer 是判斷「專案依賴了什麼、版本有沒有已知漏洞」的入口，執行環境仰賴 [php.ini / .user.ini](/devops/infra/knowledge-cards/php-ini/) 的 CLI 設定。專案根目錄通常有三個 Composer 相關的檔案：
 
@@ -23,7 +23,7 @@ Composer 是 PHP 的套件管理工具，角色等同於 Node.js 的 npm、Pytho
 
 接手專案時如果根目錄有 `composer.json` 但沒有 `vendor/`，代表需要先跑 `composer install` 才能讓專案運作。如果連 `composer.lock` 都沒有，代表套件版本沒有鎖定——每次安裝可能拿到不同版本。
 
-## 設計責任
+## 判斷條件與後果
 
 兩個常用指令的差別：
 

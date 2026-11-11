@@ -53,7 +53,7 @@ WHERE 訂單.訂單編號 IS NULL;
 
 `NOT IN` 的行為與這兩條分岔：子查詢的結果裡出現一個 [NULL](/backend/01-database/sql/knowledge-cards/null/)，整段就回零列且不報錯。反連接的安全寫法因此落在 `NOT EXISTS` 與外連接這兩條上（[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
 
-## 概念位置
+## 跟其他概念的關係
 
 半連接與反連接跟連接一樣是導出運算：半連接等於連接之後只投影左邊的欄位再去重，反連接等於左邊減去半連接的結果。[關聯代數](/backend/01-database/sql/knowledge-cards/relational-algebra/)的正典運算清單因此多半只列到連接，而「有沒有對應資料」這一族問題全部落在這兩個運算上——找出下過單的顧客、找出從未下單的顧客、找出比前一天熱的日子，題目與寫法各異而運算只有這兩個。
 

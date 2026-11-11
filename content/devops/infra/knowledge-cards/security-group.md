@@ -11,7 +11,7 @@ Security group 是掛在資源網卡（ENI）層級的有狀態防火牆，規�
 
 設計原則是最小開放：每條規則只開「這個服務確實需要被誰連的那個埠」。資料庫的 security group 入站只允許來自應用層 security group 的資料庫埠（如 5432），而不是某個 IP 範圍。用 security group 互相引用（source 指向另一個 group 而非 [CIDR](/devops/infra/knowledge-cards/cidr/)）讓規則跟著成員身分走、不跟著位址走——應用節點會隨擴縮而換 IP，引用 group 不會因此失效。
 
-## 概念位置
+## 跟其他概念的關係
 
 Security group 是[模組三：網路地基](/devops/infra/03-network-foundation/vpc-subnet-security-group/)的最內層邊界——貼著服務的最後一道網路防線。即使封包順著 route table 抵達了 private [subnet](/devops/infra/knowledge-cards/subnet/)，security group 仍能逐埠決定放不放行。[模組七：infra 走 PR 流程](/devops/infra/07-infra-as-pr/plan-review-apply-guardrails/)用 tfsec / checkov 在 CI 攔截 `0.0.0.0/0` 全開的規則。
 
@@ -19,7 +19,7 @@ Security group 是[模組三：網路地基](/devops/infra/03-network-foundation
 
 Security group 需要收斂的訊號：入站來源是 `0.0.0.0/0`（允許全網連入），且目標埠是資料庫（5432、3306、6379）或管理埠（22、3389）——合理出現 `0.0.0.0/0` 的位置只有對外負載平衡器的 80 / 443。盤點方式是列出所有 source 為 `0.0.0.0/0` 的規則，逐條問「這個埠需要全世界都連得到嗎」。
 
-## 設計責任
+## 判斷條件與後果
 
 security group 是封包抵達資源前的最後一道網路檢查：規則寫得太寬會把服務的埠暴露出去，寫成固定位址又會在節點換 IP 時失效。設計時在這兩種失效之間收斂的項目是：
 

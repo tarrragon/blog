@@ -9,7 +9,7 @@ tags: ["til", "音響", "knowledge-cards"]
 
 比較兩台設備的音色平衡、判斷一台設備改變了哪些頻段的音量時，看的是它的頻率響應（frequency response）：設備在各頻率的輸出大小畫成的一條曲線，橫軸是頻率（對數刻度，20 Hz 到 20 kHz，每個八度（octave：頻率加倍）佔同樣的寬度），縱軸是音量（[dB](/til/audio/knowledge-cards/decibel/)）。規格表常寫成「20 Hz–20 kHz ±0.5 dB」，意思是在這個範圍內，曲線上下偏離不超過 0.5 dB。
 
-## 概念位置
+## 跟其他概念的關係
 
 頻率響應是描述電子設備的三項規格之一，另外兩項是[總諧波失真加雜訊](/til/audio/knowledge-cards/thd-n/)（THD+N，total harmonic distortion plus noise）與訊噪比（SNR）。同一個名詞套在不同設備上，理想的曲線形狀不同：
 
@@ -26,7 +26,7 @@ tags: ["til", "音響", "knowledge-cards"]
 - Harman 目標曲線（Harman target curve）是 Sean Olive 與 Todd Welti 用盲聽研究得出、多數聽者偏好的耳機頻率響應：低頻比中頻高，耳罩式約高 4 到 6 dB，入耳式約高 8 到 10 dB。
 - 現代的 DAC 與固態擴大機，第三方量測裡多數達到[辨識門檻](/til/audio/knowledge-cards/audibility-threshold/)的頻率響應：可聽範圍兩端的衰減在正負 0.5 dB 以內。
 
-## 判讀方式
+## 判斷條件與後果
 
 讀一條曲線看三件事：
 

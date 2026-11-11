@@ -8,7 +8,7 @@ tags: ["backend", "deployment", "kubernetes", "knowledge-card"]
 
 Ingress 的核心概念是「叢集外 HTTP 流量的路由規則」：一個 Ingress 物件寫明哪個 Host、哪個路徑要轉到哪個 [Kubernetes Service](/backend/knowledge-cards/kubernetes-service/)，由叢集裡的 Ingress controller 實際接收流量並照規則轉發。可先對照 [Request Routing](/backend/knowledge-cards/request-routing/) 與 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Ingress 是 Kubernetes 對 [Request Routing](/backend/knowledge-cards/request-routing/) 的標準描述格式，把路由規則與執行路由的反向代理分開：規則是 Ingress 物件，執行者是 Ingress controller（Traefik、NGINX 系列、Envoy 系列等），兩者靠 IngressClass 對應：IngressClass 物件登記叢集裡有哪些 controller，Ingress 用 `ingressClassName` 指定由哪一個處理。多個 HTTP 服務共用同一個對外入口時，只需要一個 [Load Balancer](/backend/knowledge-cards/load-balancer/) 把流量送到 controller。要在入口做驗證、限流與 API 管理時，入口的角色更接近 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
@@ -21,6 +21,6 @@ Ingress 是 Kubernetes 對 [Request Routing](/backend/knowledge-cards/request-ro
 
 實際的設定與各種失敗回應見 [Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/)，本機叢集各自附了哪種 controller 見 [單機練習用的 Kubernetes](/backend/05-deployment-platform/vendors/kubernetes/local-practice-clusters/)。
 
-## 設計責任
+## 判斷條件與後果
 
 選 controller 時確認它的維護狀態與 Gateway API 支援；路由以外的功能（改寫路徑、限流、驗證）多半寫在 controller 專屬的 annotation（物件 metadata 裡的自由鍵值，由各 controller 自行解讀）裡，換 controller 時要逐條改寫，所以這類設定要記錄它依賴哪一個 controller。

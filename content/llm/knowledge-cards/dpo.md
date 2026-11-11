@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "training", "alignment"]
 
 DPO（Direct Preference Optimization、直接偏好最佳化）的核心概念是「**用人類偏好資料直接 fine-tune LLM、不訓 reward model、不用 RL**」。Rafailov et al. (2023) 提出、用數學變形把 [RLHF](/llm/knowledge-cards/rlhf/) 的「reward model + PPO」兩階段合併成單一個 supervised loss、訓練流程大幅簡化。
 
-## 概念位置
+## 跟其他概念的關係
 
 DPO vs [RLHF](/llm/knowledge-cards/rlhf/) 的對比：
 
@@ -31,6 +31,6 @@ loss = -log σ( β · (log π(y_w|x)/π_ref(y_w|x) - log π(y_l|x)/π_ref(y_l|x)
 
 直覺：讓 policy 對偏好 response 的機率增加（相對 ref）、對拒絕 response 的機率降低（相對 ref）。
 
-## 設計責任
+## 判斷條件與後果
 
 讀開源 LLM 的 paper / model card 看到「DPO-tuned」「preference fine-tuning」就是這個流程。實務上 DPO 訓練成本只是 RLHF 的一小部分、許多 fine-tune 平台（如 Hugging Face TRL）內建支援。後續還有 IPO、KTO、ORPO 等變體、都是「直接用偏好 fine-tune、不訓 reward」這條路線的進一步演化。

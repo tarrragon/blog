@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/state-lock/"]
 
 State Lock 的核心概念是「讓同一份基礎設施狀態一次只被一個 apply 修改」。它支撐 [Infrastructure Drift](/devops/ci/knowledge-cards/infrastructure-drift/) 的治理，避免 CI job 或人工操作併發覆寫 state。
 
-## 概念位置
+## 跟其他概念的關係
 
 State Lock 位在 [IaC state](/devops/ci/knowledge-cards/infrastructure-drift/) backend、plan / apply workflow 與平台資源之間，常由 Terraform backend、Pulumi state 或平台鎖定機制提供。
 
@@ -23,6 +23,6 @@ State Lock 位在 [IaC state](/devops/ci/knowledge-cards/infrastructure-drift/) 
 
 兩個 PR 同時修改 production network。第一個 workflow 取得 state lock 後進入 apply，第二個 workflow 等待或失敗，避免兩次變更同時寫入 state。
 
-## 設計責任
+## 判斷條件與後果
 
 State Lock 要定義 lock backend、timeout、人工解鎖條件、環境隔離與失敗處理，讓 IaC apply 保持序列化。

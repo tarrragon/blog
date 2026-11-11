@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/ssl-tls/"]
 
 TLS（Transport Layer Security）加密 client 與 server 之間的通訊，防止中間人竊聽或竄改。HTTPS 就是 HTTP 加上 TLS 加密層。SSL 是 TLS 的前身、所有版本都已被棄用，但「SSL 憑證」這個稱呼仍然廣泛使用——實際上指的是 TLS 憑證。TLS 憑證的核發常搭配 [DNS](/devops/infra/knowledge-cards/dns/) 驗證持有權。
 
-## 概念位置
+## 跟其他概念的關係
 
 TLS 在 infra 裡負責「傳輸安全」。[ALB](/devops/infra/knowledge-cards/alb/) 的 HTTPS listener 需要掛一張 TLS 憑證；ACM（AWS Certificate Manager）提供免費的憑證申請與自動續期；Let's Encrypt 是跨平台的免費 CA（Certificate Authority，憑證簽發機構）。
 
@@ -23,7 +23,7 @@ TLS 憑證有到期日。過期的憑證會讓瀏覽器顯示安全警告、部�
 echo | openssl s_client -connect example.com:443 2>/dev/null | openssl x509 -noout -dates -issuer
 ```
 
-## 設計責任
+## 判斷條件與後果
 
 TLS 憑證過期會讓瀏覽器顯示安全警告、部分 client 直接拒絕連線，而續期是否能自動完成，取決於憑證的來源與驗證網域持有權的方式；設定時一併決定的是：憑證從哪裡來（ACM 免費但只能用在 AWS 服務上、Let's Encrypt 免費且跨平台）、驗證方式（DNS 驗證適合自動化、email 驗證較手動）、是否需要多域名的 SAN 憑證（一張憑證涵蓋 `example.com` + `*.example.com`）、HTTP → HTTPS 的強制跳轉怎麼設。
 

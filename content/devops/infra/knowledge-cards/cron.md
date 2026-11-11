@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/cron/"]
 
 cron 是 Unix/Linux 系統內建的排程工作管理器，按預定的時間表自動執行指令。一個 cron job 定義「什麼時間跑什麼指令」，系統背景的 cron daemon 負責到時間就執行，管理 cron 通常透過 [SSH](/devops/infra/knowledge-cards/ssh/) 存取伺服器。
 
-## 概念位置
+## 跟其他概念的關係
 
 cron 在接手維運時是容易被忽略的隱藏工作——它不像 web 服務有明顯的入口，但可能負責資料庫備份、快取清除、報表產出、日誌清理等關鍵任務。漏掉一個 cron job 可能讓備份停止、快取永不過期、報表不再更新，而且不會立刻有人發現；常見的資料庫備份工具見 [mysqldump](/devops/infra/knowledge-cards/mysqldump/)。
 
@@ -44,7 +44,7 @@ ls /etc/cron.d/
 
 沒有 SSH 時（cPanel 環境），在 cPanel 的「Cron 工作」頁面查看和匯出。
 
-## 設計責任
+## 判斷條件與後果
 
 cron job 跑失敗時不會有使用者看到錯誤畫面，除了排程頻率之外，設計時另外兩項決定的作用是讓失敗被人看見：執行失敗時的通知方式（cron 預設把輸出寄 email，但 email 常沒配好）、日誌記錄（指令的 stdout/stderr 導到 log 檔）。遷移或升級時，cron job 要隨著遷移——忘了搬等於停掉排程但沒人知道。
 

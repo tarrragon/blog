@@ -8,7 +8,7 @@ weight: 1
 
 Provider Adapter 的核心概念是「把外部供應商的 API、錯誤與限制，轉成 application 需要的形狀」。 可先對照 [Pub/Sub](/backend/knowledge-cards/pub-sub/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Provider Adapter 位在 application 與 payment、notification、storage、identity 等第三方服務之間。 可先對照 [Pub/Sub](/backend/knowledge-cards/pub-sub/)。
 
@@ -20,6 +20,6 @@ Provider Adapter 位在 application 與 payment、notification、storage、ident
 
 付款 provider adapter、簡訊 provider adapter、email provider adapter 都是 provider adapter 的例子。
 
-## 設計責任
+## 判斷條件與後果
 
 Provider Adapter 要隔離外部 API 差異、標準化錯誤、保留關聯欄位，並確保供應商更換不會直接擾動業務邏輯。

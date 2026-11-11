@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/flaky-test/"]
 
 Flaky Test 的核心概念是「同一版本在相同條件下測試結果不穩定」。它會把紅燈從有效訊號降級成噪音，直接影響 [CI](/devops/ci/knowledge-cards/ci-pipeline/) gate 信任度。
 
-## 概念位置
+## 跟其他概念的關係
 
 Flaky Test 位在 test stage 與 release gate 之間，會放大[重跑](/devops/ci/knowledge-cards/rerun/)成本與判讀延遲。
 
@@ -23,7 +23,7 @@ Flaky Test 位在 test stage 與 release gate 之間，會放大[重跑](/devops
 
 UI 測試在動畫未完成時抓取元素，或整合測試依賴不穩定第三方 API，都容易出現 flaky pattern。
 
-## 設計責任
+## 判斷條件與後果
 
 Flaky Test 治理要建立 owner、隔離策略、修復 SLA 與觀測指標，讓測試結果恢復可判讀性。
 

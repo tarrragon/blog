@@ -8,7 +8,7 @@ tags: ["dotfile", "linux", "tty"]
 
 TTY（TeleTYpewriter）是 Linux 核心直接提供的純文字終端機介面，獨立於任何桌面環境或圖形介面，故障時可繞過 [Compositor](/linux/dotfile/knowledge-cards/compositor/) 直接操作系統。
 
-## 概念位置
+## 跟其他概念的關係
 
 相關概念：[Rice](/linux/dotfile/knowledge-cards/rice/)（桌面客製化）、[GNU Stow](/linux/dotfile/knowledge-cards/gnu-stow/)（dotfile 管理）。
 

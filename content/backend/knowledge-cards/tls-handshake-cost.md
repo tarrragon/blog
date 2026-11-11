@@ -8,7 +8,7 @@ tags: ["backend", "performance", "load-test", "tls", "knowledge-card"]
 
 TLS 握手（TLS handshake）是用戶端與伺服器在一條新的 TCP 連線上傳送應用資料之前做的協商：雙方決定協定版本與加密套件、伺服器出示數位憑證並用私鑰簽名、雙方交換金鑰算出這條連線的對稱金鑰。它在安全上負責的事見 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/)；這張卡講它的成本：每建一條新連線就付一次，付在延遲與受測端的 CPU 上，而重用連線的程度決定了一個請求平均要分攤多少。
 
-## 概念位置
+## 跟其他概念的關係
 
 一次完整的握手有兩種成本。延遲成本是來回的次數：TLS 1.3 的完整握手比 TCP 的三次握手多一趟來回，TLS 1.2 多兩趟；用戶端離伺服器越遠，每一趟越長。CPU 成本落在終結 TLS 的那一層，可能是負載平衡器、反向代理，也可能是應用程式本身：伺服器每次握手都要用憑證的私鑰做一次簽名，加上一次金鑰交換的運算，這兩項是非對稱加密，每次的運算量遠大於之後用對稱金鑰加解密一個請求。
 
@@ -27,6 +27,6 @@ TLS 握手（TLS handshake）是用戶端與伺服器在一條新的 TCP 連線�
 
 例子：一個面向手機 App 的 API 前面有負載平衡器。用 JMeter 的 Open Model Thread Group 探測，每次抵達都握手，knee 落在負載平衡器的 CPU 上；改用內建 Thread Group 勾選 Same user on each iteration 之後，同樣的到達率下負載平衡器的 CPU 只用了一小部分，knee 往後移到應用程式的資料庫連線池。兩次量到的都是各自那種連線方式下的實際上限，差在哪一種連線方式接近 production：App 的用戶端多半長時間重用連線，勾選 Same user on each iteration 的那一次比較接近；每次造訪都重新建立連線的短暫流量，Open Model Thread Group 的那一次比較接近。
 
-## 設計責任
+## 判斷條件與後果
 
 負載工具的連線設定要跟 production 的用戶端重用連線的方式一致，握手佔每個請求的比例才相同，所以設計壓測的人要先知道 production 怎麼重用連線（瀏覽器與 App 多半 keep-alive 加 HTTP/2，服務之間的呼叫多半有連線池，短暫造訪、爬蟲與每次重新登入的流量常常每次重建），才選得出工具的設定；把這次用的連線設定寫進壓測的執行條件，下一次比較時才知道兩次的握手比例相同。量到的上限落在 TLS 終結層時，容量結論寫明它是那一層在這個連線方式下的上限，要擴的是那一層（多開代理、換成簽名較便宜的 ECDSA 憑證、開 session resumption），不是應用程式的副本數。施壓端自己也要做握手的運算，每次都重建連線時施壓端的 CPU 也比較早到頂（[Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/)）；短連線大量建立時，施壓端的來源埠可能停在 TIME_WAIT 而用完。到達率與在線人數這兩種注入方式對連線的影響見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)。

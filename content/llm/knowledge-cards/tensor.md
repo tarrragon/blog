@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "math", "linear-algebra"]
 
 Tensor（張量）的核心概念是「**N 維陣列**」。Scalar 是 0D tensor、vector 是 1D、matrix 是 2D、再往上加維度就是 3D、4D。PyTorch、MLX、JAX、TensorFlow 等所有深度學習 framework 的核心型別都叫 Tensor、所有 LLM 內部運算（[matrix multiplication](/llm/knowledge-cards/matrix-multiplication/)、[softmax](/llm/knowledge-cards/softmax/)、[layer norm](/llm/knowledge-cards/layer-normalization/) 等）都對 tensor 做。
 
-## 概念位置
+## 跟其他概念的關係
 
 LLM 中常見的 tensor 維度：
 
@@ -27,6 +27,6 @@ LLM 中常見的 tensor 維度：
 3. **Broadcasting**：不同 shape 的 tensor 自動擴展配對、如 `(seq, hidden) + (hidden,)`。
 4. **Indexing / slicing**：抽出子 tensor、如 `tensor[:, -1, :]` 取最後一個 token 的 hidden。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 PyTorch / MLX 推論 / 訓練 code 看到 `torch.Tensor`、`mx.array`、`tf.Tensor` 等就是這個型別、所有 LLM 運算都建在它上面。寫 code 場景的判讀：報錯訊息看到 `shape mismatch` / `size of dimension X` 通常是 tensor 維度配錯；[KV cache](/llm/knowledge-cards/kv-cache/) 內部存的就是 4D tensor `(num_layers, 2, batch, num_kv_heads, seq, head_dim)` 之類的結構、量化 KV cache 就是改這個 tensor 的 dtype。

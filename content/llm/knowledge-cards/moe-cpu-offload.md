@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "moe", "discrete-gpu", "memory"]
 
 MoE CPU 卸載的核心概念是「[Mixture-of-Experts](https://en.wikipedia.org/wiki/Mixture_of_experts) 模型每個 token 只啟用少數專家、把不活躍的專家權重留在系統 RAM、用到再走 PCIe 拉回 GPU」。它讓 16GB VRAM 卡能載入 30B / 70B 等級的 MoE 模型、是 [獨立 GPU 場景](/llm/05-discrete-gpu/) 相對 [統一記憶體](/llm/knowledge-cards/unified-memory/) 場景多出的工程選項。
 
-## 概念位置
+## 跟其他概念的關係
 
 MoE 卸載屬於「推論時的權重位置管理」、跟 [量化](/llm/knowledge-cards/quantization/) 屬於「權重精度壓縮」是兩個獨立維度、可以疊加（如 30B MoE Q4 + 卸載部分層、模型精度跟記憶體位置同時被處理）。它跟 [KV cache](/llm/knowledge-cards/kv-cache/) 量化是 PC 場景常一起使用的兩個工具：卸載騰出 VRAM、KV cache 量化讓騰出的 VRAM 拿去開大 [context window](/llm/knowledge-cards/context-window/)。
 
@@ -29,7 +29,7 @@ MoE 卸載屬於「推論時的權重位置管理」、跟 [量化](/llm/knowled
 
 社群常見的觀察是：MoE 卸載對生字速度的衰減幅度、相對於「Dense 模型把同樣比例的層卸載到 CPU」較小、原因是 MoE 每 token 只啟用少數專家、PCIe 上的權重傳輸量也較少；具體幅度依模型架構（active parameter 比例、專家數）變化。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 MoE 卸載後、可以解釋三個 PC 場景的現象：16GB VRAM 卡能載入 30B 級 MoE 模型（透過部分卸載而非全載 VRAM）、PC 場景 64GB RAM 相對 32GB 在 MoE 卸載空間上明顯更寬裕（可卸載更多層）、Mac 統一記憶體場景較少需要「卸載」這個概念（VRAM 跟 RAM 共用、不需要在兩個區域之間搬資料）。
 

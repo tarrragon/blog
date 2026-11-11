@@ -8,7 +8,7 @@ tags: ["backend", "message-queue"]
 
 Consumer 的核心概念是「從等待區取得工作、事件或資料並執行處理的角色」。這張卡講的是訊息佇列側的角色；對外 API 契約另一端的那種「消費者」是同名異義，見 [API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/)。它可以從 [queue](/backend/knowledge-cards/queue/)、[broker](/backend/knowledge-cards/broker/)、[stream pipeline](/backend/knowledge-cards/stream-pipeline/)、[database](/backend/knowledge-cards/database/) table 或 [in-process channel](/backend/knowledge-cards/in-process-channel/) 取得資料，再更新狀態、呼叫外部服務或產生衍生資料。
 
-## 概念位置
+## 跟其他概念的關係
 
 Consumer 位在資料流的下游。它跟 [producer](/backend/knowledge-cards/producer/) 構成 MQ 的基本角色對 — producer 負責把工作送進等待區，consumer 負責取出並處理。
 
@@ -20,7 +20,7 @@ Consumer 位在資料流的下游。它跟 [producer](/backend/knowledge-cards/p
 
 Consumer 的處理模式影響系統的可靠性保證。[Ack / nack](/backend/knowledge-cards/ack-nack/) 的時機決定「訊息什麼時候算處理完成」；[idempotency](/backend/knowledge-cards/idempotency/) 決定「重複收到同一筆訊息時是否會產生副作用」。
 
-## 設計責任
+## 判斷條件與後果
 
 Consumer 要定義併發數、[ack / nack](/backend/knowledge-cards/ack-nack/) 條件、錯誤分類（暫時性 vs 永久性）、[idempotency](/backend/knowledge-cards/idempotency/)、[retry policy](/backend/knowledge-cards/retry-policy/)、隔離區、[graceful shutdown](/backend/knowledge-cards/graceful-shutdown/) 與觀測欄位。
 

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "tokenization"]
 
 Special tokens（特殊 token）的核心概念是「**在 [vocab](/llm/knowledge-cards/vocabulary-size/) 中保留給控制 / 邊界 / 結構用途的 token**」、不是正常字面意義的詞。常見如 `<bos>`（begin of sequence）、`<eos>`（end of sequence）、`<pad>`（padding）、`<|user|>`、`<|assistant|>`、`<|tool_call|>` 等。
 
-## 概念位置
+## 跟其他概念的關係
 
 LLM 中 special tokens 的常見類型：
 
@@ -29,6 +29,6 @@ LLM 中 special tokens 的常見類型：
 2. **Chat template 把這些組合起來**：把使用者輸入 + 系統 prompt + 對話歷史依特定格式插入這些 token、組成模型訓練時看過的格式。
 3. **`<eos>` 的 sampling 行為**：模型輸出 `<eos>` 後、推論伺服器停止生成、所以「為什麼回答突然停了」很多時候就是模型決定發 EOS。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 tokenizer config（`tokenizer_config.json`）看到 `bos_token`、`eos_token`、`chat_template` 等就是這組設定。寫 code 場景的判讀：用 Continue.dev / Ollama 時、伺服器會自動套用模型的 chat template、把使用者輸入轉成正確的 special tokens 格式；自己寫 inference code 時、要呼叫 `tokenizer.apply_chat_template()` 避免格式錯亂導致模型輸出爛。

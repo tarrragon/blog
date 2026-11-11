@@ -8,7 +8,7 @@ tags: ["dotfile", "container", "prod-parity", "knowledge-cards"]
 
 glibc 與 musl 是兩套不同的 C 標準函式庫實作。C 標準庫是幾乎每個 Linux 程式都會鏈結的最底層，負責記憶體配置、字串處理、DNS 解析、locale、執行緒這些基本能力。選哪一套會滲透到上層程式的行為，而不只是體積差異，是 [prod-parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/) 要盯的底層項目之一。
 
-## 概念位置
+## 跟其他概念的關係
 
 這條規則跟 [image tag pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/) 同源：都是把 runtime 底層凍結到跟 prod 相同。判斷標準見 [prod-parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/)。選 base image 的實作見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/) 與 [Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)。
 

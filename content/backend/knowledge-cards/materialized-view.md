@@ -8,11 +8,11 @@ tags: ["backend", "observability", "database"]
 
 Materialized view 把查詢結果預先計算並持久儲存，是 [read model](/backend/knowledge-cards/read-model/) 的一種實作方式。它跟一般 view 的差別在於 materialized view 有實體儲存，查詢時讀取的是快照而非即時計算。
 
-## 概念位置
+## 跟其他概念的關係
 
 Materialized view 是 [read model](/backend/knowledge-cards/read-model/) 的一種實作方式。在關聯式資料庫中它是 SQL-level 的物化查詢；在觀測領域，[recording rule](/backend/knowledge-cards/recording-rule/) 扮演類似角色 — 把聚合計算的結果寫成新的 time series。兩者的共同設計問題是更新頻率、一致性延遲與維護成本。
 
-## 設計責任
+## 判斷條件與後果
 
 設計 materialized view 時要定義刷新策略（定時 / 觸發 / 手動）、資料新鮮度容忍上限、儲存成本與失效重建流程。刷新頻率決定讀取的 freshness — 每分鐘刷新的 materialized view 最多落後一分鐘，對 dashboard 場景通常足夠，對即席事故診斷可能不夠。
 

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "coding-agent", "agent-architecture"]
 
 Subagent 的核心概念是「**把 coding agent 切成多個專責子 agent、每個有獨立 [context window](/llm/knowledge-cards/context-window/) 跟 system prompt、由 main agent 透過 handoff 機制調度**」。代表設計：Claude Code 的 Task agent、OpenAI Agents SDK 的 handoff、Anthropic multi-agent research。是「context budget 不夠 + 任務跨多個 specialty」場景的工程選擇。
 
-## 概念位置
+## 跟其他概念的關係
 
 Single agent vs subagent 架構的對比：
 
@@ -42,7 +42,7 @@ Subagent 架構：
 2. **跨 subagent 共享狀態**：codebase 知識、history、要避免重複 work
 3. **失敗模式**：subagent 之間互相 deadlock、main agent 失去 high-level view、subagent 邊界劃錯
 
-## 設計責任
+## 判斷條件與後果
 
 讀 multi-agent / subagent paper / coding agent docs 看到「subagent」「handoff」「Task tool」「specialist agent」就是這 framing。寫 code 場景的判讀：
 

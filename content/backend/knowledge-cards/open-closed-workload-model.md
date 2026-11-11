@@ -8,7 +8,7 @@ tags: ["backend", "performance", "load-test", "knowledge-card"]
 
 Open workload model 與 closed workload model 是負載測試產生請求的兩種方式，差別在新的請求什麼時候送出。open model 依到達率送出：每秒抵達多少個新的虛擬使用者是事先設定的，跟受測服務回應得多快無關；closed model 依同時在線的虛擬使用者數送出：固定數量的虛擬使用者各自送出請求、等到回應、再送下一個，回應沒回來，那個使用者的下一個請求就不會送出。兩種模型各自固定了 [Little's Law](/backend/knowledge-cards/little-law/)（L = λW：L 是同時在系統內的請求數，λ 是到達率，W 是一個請求在系統內停留的時間）裡的一個變數：open model 固定到達率 λ，closed model 固定虛擬使用者的總數 N。虛擬使用者在兩個請求之間沒有停頓（think time）時，N 就是 L；有停頓時，停頓中的使用者不在系統內，L 小於 N。
 
-## 概念位置
+## 跟其他概念的關係
 
 兩種模型的差別在受測服務變慢、也就是 W 變長的時候才看得到。open model 下 λ 固定，W 變長時 L 跟著上升：沒完成的請求在服務裡累積，排隊的時間算進量到的延遲，延遲在負載接近 [Saturation Point](/backend/knowledge-cards/saturation-point/) 時急遽上升。closed model 下 N 固定，每個虛擬使用者每送出一個請求要花 W 加上停頓的時間，所以吞吐量等於 N 除以（W 加停頓），W 變長時 λ 只能下降：每個虛擬使用者送出下一個請求的時間往後延，實際的請求率跟著下降，負載工具配合受測服務的速度少送了請求。在 production 裡，那些少送的請求會照樣抵達、在服務外排隊，壓測沒有送出它們，它們的等待時間也就沒有被量到；這種少算業界稱為 coordinated omission。
 
@@ -32,6 +32,6 @@ Locust 的使用者數由 `-u`（`--users`，同時在線的使用者數）或 `
 
 JMeter 用 thread group 與 timer 區分：內建的 Thread Group 與 plugin 的 Concurrency Thread Group 固定同時在線的 thread 數，是 closed model；5.5 起內建的 Open Model Thread Group（官方標為 experimental）依排程在每次抵達時建立一個新的 thread、跑完一輪就結束，plugin 的 Arrivals Thread Group 在現有的 thread 都忙時建立新的 thread，兩者都是 open model，Arrivals Thread Group 碰到它的 Concurrency Limit 之後退回 closed；Constant Throughput Timer 與 Precise Throughput Timer 是 pacing。plugin 的 Throughput Shaping Timer 以每秒請求數為目標，但它只能延後 thread、不會多開 thread，thread 數不夠時到不了目標值（jmeter-plugins.org 的說明），所以只有在 thread 數給夠時才接近 open model。
 
-## 設計責任
+## 判斷條件與後果
 
 設計壓測時先判斷 production 流量的模型，再選工具的注入方式；工具的預設值不一定是 production 的那一種。找飽和點的方式跟著模型走：open 型流量逐級提高到達率，量的是延遲在哪一個到達率開始不成比例上升，用 closed model 量的話，工具的減壓讓那個到達率被估高；closed 型流量逐級增加虛擬使用者的總數，量的是 N 加到多少時 W 開始上升、吞吐量的增幅開始小於 N 的增幅，那一級是 knee；再加 N 而吞吐量不再增加時，已經越過服務的上限。兩次結果要互相比較時（同一個 release gate 的前後兩版），兩次用同一種模型與同樣的參數。兩種模型都假設抵達不受服務的速度影響（open）或只因等回應而變慢（closed），而 production 的用戶端常常會重試：服務變慢、逾時增加時，重試讓實際的抵達率反而上升，兩種模型都沒有涵蓋這個放大，壓測量到的結果因此比 production 樂觀；用戶端有重試時，壓測要另外模擬重試的行為，或在結論裡註明沒有涵蓋。

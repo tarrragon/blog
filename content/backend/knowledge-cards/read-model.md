@@ -8,7 +8,7 @@ tags: ["backend", "architecture", "database"]
 
 Read model 的核心概念是「為特定查詢需求建立專用的資料形狀」。它跟正式狀態（[source of truth](/backend/knowledge-cards/source-of-truth/)）的責任分離 — 正式狀態為寫入的正確性最佳化，read model 為讀取的效率與體驗最佳化。
 
-## 概念位置
+## 跟其他概念的關係
 
 Read model 是 [CQRS](/backend/knowledge-cards/cqrs/) 的讀取面產物。在 CQRS 架構中，write model 跟 read model 各自獨立，read model 透過同步機制（event handler、CDC、定期刷新）從 write model 更新。
 
@@ -16,7 +16,7 @@ Read model 的來源可以是 [projection](/backend/knowledge-cards/projection/)
 
 在觀測領域，[recording rule](/backend/knowledge-cards/recording-rule/) 跟 [rollup](/backend/knowledge-cards/rollup/) 扮演類似 read model 的角色 — 從 raw time series 預計算聚合結果，讓 dashboard 讀取預聚合資料而非重算 raw data。
 
-## 設計責任
+## 判斷條件與後果
 
 設計 read model 時要定義同步延遲（read model 落後 write model 多久可以接受）、重建流程（read model 損壞或 schema 變更時如何從頭重建）、欄位語意（read model 的欄位定義跟 write model 可能不同）與查詢邊界（這個 read model 能回答什麼問題、不能回答什麼問題）。
 

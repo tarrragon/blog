@@ -8,7 +8,7 @@ tags: ["backend", "deployment", "docker", "container", "knowledge-cards"]
 
 QEMU binfmt 模擬是「讓一台機器跑另一種 CPU 架構的執行檔」的機制。[container](/backend/knowledge-cards/container/) image 綁特定架構（amd64 / arm64），當 image 的架構跟主機不同時，核心透過 binfmt_misc 把該執行檔交給 QEMU 動態翻譯指令、模擬跑起來。它解釋了兩件在混架構環境常撞到的事：為什麼某些 image 在你的機器上「跑得起來但很慢」，以及為什麼有時直接「跑不起來」。
 
-## 概念位置
+## 跟其他概念的關係
 
 QEMU binfmt 位在 image 架構與主機架構之間，是跨架構相容的底層機制。它被兩個場景依賴：跑一個非主機架構的 image（如 arm64 主機跑 amd64 的 [container](/backend/knowledge-cards/container/)），以及 buildx 一次 build 多架構 image 時模擬非主機架構的那一份。
 

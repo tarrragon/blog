@@ -9,7 +9,7 @@ aliases: ["/php/knowledge-cards/php-fpm/"]
 
 PHP-FPM 是 PHP 內建的 FastCGI 程序管理器：一個 master 程序加一群常駐的 worker，master 負責讀設定、開 worker、補死掉的 worker 與處理訊號，worker 實際執行 PHP，透過 FastCGI 協定接收 web 伺服器轉來的請求。它的 [SAPI](/programming/php/knowledge-cards/sapi/) 名稱是 `fpm-fcgi`。可先對照 [mod_php](/programming/php/knowledge-cards/mod-php/) 與 [OPcache](/programming/php/knowledge-cards/opcache/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 PHP-FPM 把直譯器放在 web 伺服器外面的常駐程序裡：程序活過很多請求，應用程式狀態仍然只活一個請求（[shared-nothing](/programming/php/knowledge-cards/shared-nothing-request/)）。它只講 FastCGI，所以前面一定要有一個講 HTTP 的 web 伺服器（[nginx](/devops/infra/knowledge-cards/nginx/) 或 Apache 的 `mod_proxy_fcgi`）。PHP 5.3.3 起隨 PHP 本體發行。
 
@@ -20,6 +20,6 @@ PHP-FPM 把直譯器放在 web 伺服器外面的常駐程序裡：程序活過�
 - **預設監聽 `9000`**：FastCGI 沒有驗證，PHP 官方文件要求 php-fpm 不能讓不受信任的網路連到。
 - **pool**：每個 pool 可以指定執行帳號，讓不同站台的 PHP 互相讀不到檔案。
 
-## 設計責任
+## 判斷條件與後果
 
 部署 PHP-FPM 要決定 `max_children`（以最重請求的記憶體峰值估）、`max_requests`、`request_terminate_timeout` 與 `process_control_timeout`，並把 FastCGI 埠限制在信任的網路內。各設定的實測見 [PHP-FPM](/programming/php/01-server-runtime/php-fpm/)。

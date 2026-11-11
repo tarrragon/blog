@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "rag", "retrieval"]
 
 Hybrid search 的核心概念是「**同時跑字面 retrieval（BM25 / tf-idf）跟語意 retrieval（embedding similarity）、用 Reciprocal Rank Fusion 等方法合併結果**」。補單一路線的盲點：BM25 抓不到語意相似（同義詞 / 不同表述）、embedding 抓不到精確 keyword（術語 / 識別碼 / 罕見 entity）。是 production [RAG](/llm/knowledge-cards/rag/) 的標配。
 
-## 概念位置
+## 跟其他概念的關係
 
 兩條 retrieval 路線的盲點：
 
@@ -56,7 +56,7 @@ score = α × BM25_score_normalized + (1-α) × embedding_score_normalized
 優點：可以調 α 偏 BM25 或 embedding
 缺點：要 normalize 兩個 score scale、調 α 是 hyper-parameter
 
-## 設計責任
+## 判斷條件與後果
 
 讀 RAG production / retrieval framework 看到「hybrid search」「BM25 + dense」「RRF」就是這 framing。寫 code 場景的判讀：
 

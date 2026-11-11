@@ -8,7 +8,7 @@ tags: ["backend", "http-caching", "vary", "cache-key", "knowledge-card"]
 
 快取找保存的回應時，規範要求至少比對請求方法與網址；同一個網址會因為某個請求標頭回出不同內容時（例如依 `Accept-Encoding` 回 gzip 或 br 壓縮的版本），origin 在回應上寫 `Vary: <標頭名稱>`，快取就把那個請求標頭的值也加進比對條件，不同的值各存一份、各自重用。它是 [Cache-Control](/backend/knowledge-cards/cache-control/) 以外，回應影響「誰拿到哪一份保存內容」的另一個標頭。
 
-## 概念位置
+## 跟其他概念的關係
 
 Vary 屬於快取鍵這一層：Cache-Control 決定一份回應能不能保存、能用多久，Vary 決定保存的這一份可以拿去回應哪些請求。它與 [Cache Hit Rate](/backend/knowledge-cards/cache-hit-rate/) 直接相關，列進去的標頭值越分散，同一個網址就被切成越多份，每一份被重用的機會越少。`Vary: *` 讓比對永遠失敗，這份回應每次被重用前都要先向 origin 驗證。
 
@@ -18,7 +18,7 @@ Vary 屬於快取鍵這一層：Cache-Control 決定一份回應能不能保存�
 
 `Vary: Cookie` 是另一端：Cookie 的值幾乎每個使用者都不同，共用快取存下的份數接近使用者數，命中率接近零。個人化回應的建議做法是寫 `Cache-Control: private` 讓共用快取不保存，而不是用 `Vary: Cookie`。
 
-## 判讀方式
+## 判斷條件與後果
 
 看到一個回應帶 Vary，先問列出的標頭在實際流量裡有幾種值：值少而且有意義（壓縮方式、語系）時 Vary 讓不同版本安全地共用快取；值幾乎一人一種（Cookie、未經正規化的完整 `User-Agent` 字串）時它實質上關掉了共用快取，要改用 `private` 或在快取前先把標頭正規化成少數幾種值。
 

@@ -8,11 +8,17 @@ tags: ["backend", "architecture", "database"]
 
 Event sourcing 的核心概念是「不存 current state、存產生 current state 的所有事件」。儲存層是 [event log](/backend/knowledge-cards/event-log/)，讀取面透過 [projection](/backend/knowledge-cards/projection/) 推算 current state。每一次狀態變更被記錄為一筆不可變的事件（event），current state 透過重播（replay）事件序列推算出來。正式紀錄是事件流本身，current state 是派生物。
 
-## 概念位置
+## 跟其他概念的關係
 
 Event sourcing 是一種資料持久化策略，改變的是「狀態怎麼被記錄」而非「狀態怎麼被讀取」。它跟 [CQRS](/backend/knowledge-cards/cqrs/) 經常搭配但概念獨立 — event sourcing 處理寫入模型（append-only event log 取代 mutable row），CQRS 處理讀寫分離。可以有 event sourcing 但沒有 CQRS（讀寫都直接操作 event store），也可以有 CQRS 但沒有 event sourcing（寫入仍用 CRUD）。
 
 Event sourcing 的儲存層是 [event log](/backend/knowledge-cards/event-log/)。讀取面透過 [projection](/backend/knowledge-cards/projection/) 把事件流轉換成查詢用的 [read model](/backend/knowledge-cards/read-model/)。
+
+- [Event log](/backend/knowledge-cards/event-log/) — event sourcing 的儲存層，append-only 的事件序列
+- [Projection](/backend/knowledge-cards/projection/) — 把 event log 轉換成可查詢的 read model 的機制
+- [Read model](/backend/knowledge-cards/read-model/) — projection 的輸出，為特定查詢需求最佳化的資料形狀
+- [CQRS](/backend/knowledge-cards/cqrs/) — 讀寫分離的設計框架，event sourcing 是其中一種 write model 實作
+- [Saga](/backend/knowledge-cards/saga/) — 跨服務的分散事務，event sourcing 提供每個 step 的事件紀錄
 
 ## 設計判斷標準
 
@@ -40,11 +46,3 @@ Event sourcing 的設計價值來自「需要完整變更歷史」的業務需�
 **儲存成長**：事件永不刪除（或只做 retention），儲存量隨時間持續成長。高頻寫入的系統可能需要 snapshot 機制（定期存一份 current state 快照，replay 從 snapshot 開始而非從頭）來控制 replay 時間。
 
 **除錯難度**：bug 可能是某個 event handler 在 replay 時產生錯誤結果。除錯需要重現特定事件序列的 replay，比查一筆 mutable record 的 diff 更複雜。
-
-## 跟其他概念的關係
-
-- [Event log](/backend/knowledge-cards/event-log/) — event sourcing 的儲存層，append-only 的事件序列
-- [Projection](/backend/knowledge-cards/projection/) — 把 event log 轉換成可查詢的 read model 的機制
-- [Read model](/backend/knowledge-cards/read-model/) — projection 的輸出，為特定查詢需求最佳化的資料形狀
-- [CQRS](/backend/knowledge-cards/cqrs/) — 讀寫分離的設計框架，event sourcing 是其中一種 write model 實作
-- [Saga](/backend/knowledge-cards/saga/) — 跨服務的分散事務，event sourcing 提供每個 step 的事件紀錄

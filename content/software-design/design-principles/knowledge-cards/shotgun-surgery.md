@@ -9,7 +9,7 @@ aliases: ["/design-principles/knowledge-cards/shotgun-surgery/"]
 
 Shotgun Surgery（散彈式修改，其他中文資料常寫作「霰彈式修改」或「散彈槍手術」）是 Martin Fowler 在《Refactoring》列出的程式碼壞味道：每做一種變更，都要在很多個模組裡各做一點小修改。它是 [Divergent Change（發散式變更）](/software-design/design-principles/knowledge-cards/divergent-change/) 的反方向——那一種是多個不相干的需求改同一個模組，這一種是一個需求要改多個模組。依 [Single Responsibility Principle（單一職責原則）](/software-design/design-principles/knowledge-cards/single-responsibility-principle/) 的說法，這是把因同一個理由改變的程式碼拆散了。
 
-## 概念位置
+## 跟其他概念的關係
 
 [單一職責原則](/software-design/design-principles/knowledge-cards/single-responsibility-principle/)有兩句方向相反的指示：把因不同理由改變的程式碼分開，把因同一個理由改變的程式碼放在一起。只照前一句切，最常出現的結果就是 Shotgun Surgery——切的人看到「做了好幾件事」就切開，沒有檢查那幾件事是不是總是一起改。它與 [Divergent Change](/software-design/design-principles/knowledge-cards/divergent-change/) 都是改變的理由與模組沒有一對一對應的情形，修正方向相反，所以拆檔之後要兩個方向都檢查。
 
@@ -23,6 +23,6 @@ Fowler 指出這種壞味道的主要風險是漏改：變更散在很多地方�
 
 站內偵測規則與修正範例（Extract Interface、Introduce Facade）在 [Code Smell 檢查清單](/record/code_smell/)。
 
-## 設計責任
+## 判斷條件與後果
 
 修正 Shotgun Surgery 的方向是提高[內聚](/software-design/design-principles/knowledge-cards/cohesion/)，把總是一起改的函式與資料收回同一個模組：用 Move Function、Move Field 把散落的函式與資料移到一處，散開的那幾個模組若只剩空殼就用 Inline Class 併回去。判斷問句是：最近幾次同一類變更，各改了哪幾個檔案；每次都改同一組檔案，那一組就是應該合併的候選。合併之後回頭檢查另一個方向：新的模組是否因此開始被不相干的需求修改，是的話就併過頭了，變成 [Divergent Change](/software-design/design-principles/knowledge-cards/divergent-change/)。

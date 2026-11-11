@@ -9,7 +9,7 @@ weight: 1
 
 Load Balancer Contract 的核心概念是「服務如何告訴流量入口自己能否安全接流量」。它描述 [health check](/backend/knowledge-cards/health-check/)、排空、切流與超時行為。
 
-## 概念位置
+## 跟其他概念的關係
 
 Load Balancer Contract 位在 application、load balancer、ingress 與 service discovery 之間。 可先對照 [Health Check](/backend/knowledge-cards/health-check/)。
 
@@ -21,6 +21,6 @@ Load Balancer Contract 位在 application、load balancer、ingress 與 service 
 
 [health check](/backend/knowledge-cards/health-check/)、readiness、[draining](/backend/knowledge-cards/draining/) 與 [idle timeout](/backend/knowledge-cards/idle-timeout/) 都屬於 load balancer contract；[sticky session](/backend/knowledge-cards/sticky-session/) 則是另一種負載分派策略，應獨立理解。
 
-## 設計責任
+## 判斷條件與後果
 
 Load Balancer Contract 要定義什麼情況可接新流量、什麼情況要排空、切換需要等待多久，以及健康檢查失敗後的處理方式。

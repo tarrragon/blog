@@ -8,7 +8,7 @@ tags: ["backend", "observability", "alerting", "knowledge-card"]
 
 Alert inhibition 是「原因」的告警成立時，自動壓下它造成的「症狀」告警的機制：通知改由原因那一則說明，收到告警的人看到的是一則原因，而不是一串症狀。Prometheus 生態裡由 Alertmanager 的 `inhibit_rules` 實作，規則寫明哪些告警是原因（`source_matchers`）、哪些是症狀（`target_matchers`），以及兩者要在哪些標籤上相同才算同一件事（`equal`）。它是 [Alert Fatigue](/backend/knowledge-cards/alert-fatigue/) 的降噪手段之一，與 [Symptom-Based Alert](/backend/knowledge-cards/symptom-based-alert/) 的分級一起決定誰該被壓下。
 
-## 概念位置
+## 跟其他概念的關係
 
 | 機制                                                       | 由什麼決定                 | 適用                                           |
 | ---------------------------------------------------------- | -------------------------- | ---------------------------------------------- |
@@ -24,6 +24,6 @@ Alert inhibition 是「原因」的告警成立時，自動壓下它造成的「
 - **抑制安靜地不發生**：`equal` 用的標籤在原因與症狀兩邊的值不同（例如用 `instance` 當主機，而它是讀取對象的位址；主機標籤的加法見 [多台主機的指標收集](/backend/04-observability/vendors/prometheus/multi-host-scraping/) 的〈代表主機的 host 標籤〉）；原因規則在虛擬機裡看不到虛擬機外的競爭而不成立；原因比症狀晚成立或先解除。這幾種情形都不會報錯，症狀照常通知。
 - **抑制藏起不該藏的**：同一段時間另一個服務自己壞了，它的症狀也符合 `target_matchers`，一起被壓下。
 
-## 設計責任
+## 判斷條件與後果
 
 寫抑制規則時寫下原因與症狀的對應、`equal` 的標籤在兩邊各從哪裡來，並讓原因規則的觸發不晚於症狀、恢復不早於症狀（Prometheus 的 `keep_firing_for`）。驗證用合成告警送入一組標籤符合規則的原因與症狀，確認症狀的狀態是 `suppressed`，再送一則 `equal` 標籤值不同的症狀確認它維持 active；Prometheus 的原因規則會不會在實際狀況下成立另以故障注入確認。

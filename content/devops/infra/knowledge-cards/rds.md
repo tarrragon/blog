@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/rds/"]
 
 RDS（Relational Database Service）是 AWS 提供的受管關聯式資料庫服務。它在 [EC2](/devops/infra/knowledge-cards/ec2/) instance 上跑資料庫引擎（MySQL、PostgreSQL、MariaDB、Oracle、SQL Server），但把作業系統更新、自動備份、跨可用區 failover、磁碟擴容這些運維工作交給 AWS 代管。使用者操作的是資料庫層級的設定（schema、query、parameter group），不需要 SSH 進機器管 OS。
 
-## 概念位置
+## 跟其他概念的關係
 
 RDS 是 infra 系列中 stateful 資源的代表。它持有不可重建的資料，所以它的 IaC 描述、備份策略、[刪除保護](/devops/infra/knowledge-cards/deletion-protection/)、變更審查都比 stateless 資源（如 EC2 web server）嚴格。模組五（核心服務）和接手維運模組的資料庫相關段落都以 RDS 為主要範例。
 
@@ -17,7 +17,7 @@ RDS 是 infra 系列中 stateful 資源的代表。它持有不可重建的資�
 
 需要理解 RDS 的情境包括：接手一個已經在跑的 production 資料庫、評估要不要從自建 MySQL 遷移到 RDS、設定資料庫的備份和高可用、或在 IaC 裡描述資料庫資源。
 
-## 設計責任
+## 判斷條件與後果
 
 RDS 持有無法重建的資料，下表的設定設錯時代價依項目不同：backup retention 與 deletion protection 設錯，損失的是救不回來的資料；instance class、engine version 與部分 parameter group 參數事後調整，代價是重開機或一段停機窗口。
 

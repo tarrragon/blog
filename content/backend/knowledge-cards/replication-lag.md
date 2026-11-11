@@ -8,7 +8,7 @@ weight: 81
 
 Replication lag 的核心概念是「資料副本落後正式來源的時間或位置差距」。Replica、搜尋索引、read model、cache 與資料倉儲都可能有 lag。 可先對照 [Database](/backend/knowledge-cards/database/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Replication lag 是資料一致性與讀取路徑的風險指標。讀 replica 可以降低正式 [database](/backend/knowledge-cards/database/) 壓力，但 lag 會讓剛寫入的資料在副本上暫時看不到；哪些查詢被送到副本，由應用程式、ORM 或代理的路由規則決定，見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈讀寫分離與多個資料庫：連線的路由由哪一層決定〉。
 
@@ -16,6 +16,6 @@ Replication lag 是資料一致性與讀取路徑的風險指標。讀 replica �
 
 系統需要 replication lag 觀測的訊號是使用者寫入後立刻讀取。使用者更新地址後，客服後台若讀 replica，可能短時間內仍看到舊地址；付款與出貨流程則應讀 [source of truth](/backend/knowledge-cards/source-of-truth/)。
 
-## 設計責任
+## 判斷條件與後果
 
 Lag 設計要定義可接受延遲、讀取路徑、強一致需求與 [fallback](/backend/knowledge-cards/fallback/)。觀測上要能看每個 replica、index 或 [stream pipeline](/backend/knowledge-cards/stream-pipeline/) 的 lag 與最舊未同步資料。

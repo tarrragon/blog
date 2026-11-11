@@ -9,7 +9,7 @@ weight: 267
 
 Token revocation 的核心概念是「在事件節奏內讓既有 token 失去授權效力」。它是第三方事件與身分事件中的關鍵收斂能力。 可先對照 [Authorization](/backend/knowledge-cards/authorization/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Token revocation 位在 [authorization](/backend/knowledge-cards/authorization/)、[secret-management](/backend/knowledge-cards/secret-management/)、[incident-severity](/backend/knowledge-cards/incident-severity/) 與 [runbook](/backend/knowledge-cards/runbook/) 之間。它常與 token 分域策略一起使用。
 
@@ -17,6 +17,6 @@ Token revocation 位在 [authorization](/backend/knowledge-cards/authorization/)
 
 系統需要 token 撤銷能力的訊號是供應商事件後 token 仍可存取敏感資產，或可疑 token 在事件後持續被使用。OAuth token、API token 與 service token 都屬於常見對象。
 
-## 設計責任
+## 判斷條件與後果
 
 token 撤銷要定義分域、優先級、批次策略與可回查紀錄。事件中要能先撤銷高風險 token，再依業務優先級逐步恢復必要授權。

@@ -8,7 +8,7 @@ tags: ["dotfile", "container", "prod-parity", "knowledge-cards"]
 
 Prod parity 是「讓本機 runtime 跟線上環境逐項相同」的目標。它對齊的方向常跟開發者的直覺相反：要把環境**凍結成線上那個特定的、通常偏舊的形狀**，而非升到最新、最乾淨。凍結的目標是行為對齊、不是版本追新，這跟 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/) 用 tag 精確度落地凍結是同一件事的兩層。
 
-## 概念位置
+## 跟其他概念的關係
 
 這條原則是個人 dotfile「環境可重現性」思想往 runtime 層的延伸：[模組零：Dotfile 心智模型](/linux/dotfile/00-dotfile-mindset/) 教的是工作站可重現，parity 教的是 runtime 可重現。要凍結到多細見 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/)。實作見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/)。
 

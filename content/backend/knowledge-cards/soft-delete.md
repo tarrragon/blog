@@ -8,7 +8,7 @@ tags: ["backend", "database", "orm", "knowledge-card"]
 
 軟刪除（soft delete）是「刪除」時把那一列留在表裡，在列上記一個刪除標記（多半是 `deleted_at` 時間欄位），之後的查詢一律加上「沒有刪除標記」的條件。被刪的資料因此還在表裡，可以復原、可以稽核，那一列的識別碼也繼續被佔著、不會發給別人，而對使用者來說它已經不存在。這個「一律加上條件」通常由 [ORM](/backend/knowledge-cards/orm/) 代勞，所以軟刪除的行為大半落在 ORM 的慣例裡；單一資料庫裡的軟刪除標記，要傳到副本、離線裝置或下游系統時就是 [Tombstone](/backend/knowledge-cards/tombstone/)；它和資料保存期限的關係見 [Retention](/backend/knowledge-cards/retention/)，和永久刪除的分工見 [資料生命週期](/backend/knowledge-cards/data-lifecycle/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 ```sql
 -- 刪除：把標記寫上去
@@ -30,7 +30,7 @@ SELECT * FROM customers WHERE email = 'yawen@example.com' AND deleted_at IS NULL
 - **刪除請求沒有刪掉個資**：使用者依個資法規要求刪除時，軟刪除只加了標記，資料原封不動，要另外做永久刪除或匿名化（見 [PII](/backend/knowledge-cards/pii/)）。
 - **增量同步收不到刪除**：依 `updated_at` 取「上次之後改過的列」的同步，要靠軟刪除同時更新 `updated_at` 才看得到刪除。Laravel 的 `SoftDeletes` 會一併更新，GORM 的軟刪除只寫 `deleted_at`，那種同步永遠看不到 GORM 刪掉的列；同步要另外取 `deleted_at` 晚於上次同步的列，或改用資料庫的變更紀錄（見 [Change Data Capture](/backend/knowledge-cards/change-data-capture/)）。
 
-## 設計責任
+## 判斷條件與後果
 
 用軟刪除之前先決定它要解決的是哪一件事。保留稽核紀錄、誤刪後能復原、表示業務狀態這三個目的各有替代做法，不會帶來唯一約束衝突、手寫 SQL 讀到已刪除列、計數不一致與增量同步收不到刪除這些問題；讓識別碼不被重用則是軟刪除本身要解的問題：
 

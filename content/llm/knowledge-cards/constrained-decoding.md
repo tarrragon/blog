@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "sampling", "structured-output"]
 
 Constrained decoding（受限解碼）的核心概念是「**推論時用 grammar 動態算出每個位置的合法 token mask、把不合法 token 的 [logit](/llm/knowledge-cards/logit/) 設成 -∞、[softmax](/llm/knowledge-cards/softmax/) 後機率為 0**」。是 [structured output](/llm/04-applications/application-protocols/)（JSON mode / function calling 的合法性保證）背後的 sampling 機制。代表實作：XGrammar、outlines、lm-format-enforcer、guidance、SGLang。
 
-## 概念位置
+## 跟其他概念的關係
 
 跟既有 sampling 概念的層次：
 
@@ -42,7 +42,7 @@ Constrained decoding（受限解碼）的核心概念是「**推論時用 gramma
 | guidance           | Microsoft 系、API 較高階                     | 自家 server                       |
 | llama.cpp grammar  | Built-in GBNF（GGML BNF）                    | llama.cpp 內建                    |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 sampling / structured output / function calling 進階文件看到「constrained decoding」「grammar mask」「JSON schema enforcement」就是這 framing。寫 code 場景的判讀：
 

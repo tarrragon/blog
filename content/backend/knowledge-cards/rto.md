@@ -9,7 +9,7 @@ weight: 159
 
 RTO 的核心概念是「事故後服務恢復到可接受狀態所需的最長時間」。它是產品承諾與技術設計之間的時間約束。 可先對照 [Downtime](/backend/knowledge-cards/downtime/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 RTO 連接 [downtime](/backend/knowledge-cards/downtime/)、[failover](/backend/knowledge-cards/failover/) 與 [rollback-strategy](/backend/knowledge-cards/rollback-strategy/)。更短 RTO 通常需要更高操作準備與基礎設施成本。
 
@@ -17,6 +17,6 @@ RTO 連接 [downtime](/backend/knowledge-cards/downtime/)、[failover](/backend/
 
 系統需要 RTO 的訊號是停機時間會直接影響收入或合約責任。付款服務若目標 RTO 為 15 分鐘，值班流程與切換能力都要圍繞這個目標設計。
 
-## 設計責任
+## 判斷條件與後果
 
 RTO 要對應分級、責任角色、演練頻率與驗證方式。設定後需用演練與真實事故資料驗證是否達成。

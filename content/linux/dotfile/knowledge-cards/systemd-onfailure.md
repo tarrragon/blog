@@ -8,7 +8,7 @@ tags: ["dotfile", "linux", "systemd", "onfailure", "knowledge-cards"]
 
 `OnFailure=` 是 systemd unit 的一個指令：當這個 unit 進入 failed 狀態時，自動啟動它指定的另一個 unit。它承擔的語意是「失敗時的鉤子」——把「某個服務掛了」這個事件，接到一段你自己定義的處理（送告警、跑修復腳本）。告警邏輯因此不必是額外的 daemon，寫成一個普通的 oneshot service 掛在 `OnFailure=` 上就成，零額外常駐依賴。這是 systemd 環境裡最正統的服務失效告警起點；沒有 systemd 的容器或被 orchestrator 管的服務用不上這套，改走外部探針或平台的健康檢查。要一次套到所有 service，靠的是 [systemd drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/) 的疊加機制。
 
-## 概念位置
+## 跟其他概念的關係
 
 相關概念：[systemd drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/)（全域套用 `OnFailure=` 的機制、以及清空繼承值的空賦值）、[服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)（`OnFailure` 告警鏈的完整單機實作）。從單機告警往上到概念層的探活、liveness 與自動重啟見 [DevOps：systemd watchdog 與自動重啟](/devops/operations/04-service-health/systemd-watchdog-restart/)。
 

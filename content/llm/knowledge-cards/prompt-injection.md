@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "security", "owasp"]
 
 Prompt injection 的核心概念是「攻擊者把惡意指令藏進 LLM 會讀到的內容（檔案、網頁、issue、tool 回傳）、誘導 LLM 忽略原本的 [system prompt](/llm/knowledge-cards/system-prompt/)、改執行攻擊者意圖的動作」。OWASP [LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/) 把它列為 LLM01、是 LLM application 安全的頭號威脅。
 
-## 概念位置
+## 跟其他概念的關係
 
 Prompt injection 的兩種主要形態：
 
@@ -37,7 +37,7 @@ injection → LLM 輸出 → 下游動作（這裡才是真正攻擊面）
                        └── 觸發下一個 agent
 ```
 
-## 設計責任
+## 判斷條件與後果
 
 理解 prompt injection 後可以解釋兩個現象：為什麼「擋住 injection」對 production LLM application 是不切實際的目標（外部內容會持續引入）、為什麼防禦重點應該放在「下游動作的可逆性 + review checkpoint」（injection 不可完全擋住、但後果可以收斂）。
 

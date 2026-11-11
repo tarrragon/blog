@@ -8,7 +8,7 @@ weight: 1
 
 Validation Middleware 的核心概念是「在 request 進入業務處理前，先確認輸入格式與基本條件」。 可先對照 [WAF](/backend/knowledge-cards/waf/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Validation Middleware 位在 transport layer 與 handler 之間。它負責共通輸入驗證，而不是 domain 規則本身。 可先對照 [WAF](/backend/knowledge-cards/waf/)。
 
@@ -20,6 +20,6 @@ Validation Middleware 位在 transport layer 與 handler 之間。它負責共�
 
 JSON schema 檢查、header 驗證、基本參數完整性與 payload shape 檢查，都適合放在 validation middleware。
 
-## 設計責任
+## 判斷條件與後果
 
 Validation Middleware 要快速拒絕明顯無效的 request，並把輸入錯誤與 domain 錯誤區分開。

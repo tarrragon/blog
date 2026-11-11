@@ -9,7 +9,7 @@ aliases: ["/design-principles/knowledge-cards/dry-principle/"]
 
 DRY（Don't Repeat Yourself）出自 Andy Hunt 與 Dave Thomas 1999 年的《The Pragmatic Programmer》：「Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.」系統裡的每一份知識——一條業務規則、一個資料格式、一個設定值——只能有一個權威的表示。違反 DRY 的後果是 [Shotgun Surgery（散彈式修改）](/software-design/design-principles/knowledge-cards/shotgun-surgery/)：同一份知識的每一份複本都要找出來改，漏掉一處就不一致。
 
-## 概念位置
+## 跟其他概念的關係
 
 DRY 管的對象是知識，不是程式碼的字面。2019 年的第二版特別說明，很多讀者把 DRY 讀成「不要複製貼上程式碼」，而 Hunt 與 Thomas 指的是知識與意圖的重複：同一件事寫在兩個地方，即使兩處的寫法完全不同（一段程式碼與描述它的文件、一份資料庫綱要與對應的資料結構），也是重複。
 
@@ -25,6 +25,6 @@ DRY 管的對象是知識，不是程式碼的字面。2019 年的第二版特�
 
 判斷兩段相似的程式碼要不要合併時，Martin Fowler 在《Refactoring》引述 Don Roberts 的 Rule of Three：第一次照寫，第二次寫出相似的程式碼時先容忍重複，第三次才抽出共用的部分。Rule of Three 決定的是什麼時候判斷，要不要合併仍由下一節的判斷問句決定：等到有三份相似的程式碼，才累積得出足夠的修改紀錄，看得出它們是不是一起改。
 
-## 設計責任
+## 判斷條件與後果
 
 套用 DRY 的設計責任是讓每一份知識只有一個權威來源，而合併之前先確認那幾段程式碼是同一份知識。判斷問句是：這幾處過去的修改，是否每次都一起改、而且由同一個需求驅動；兩個條件都成立才是同一份知識，合併；任一個不成立，字面相同也分開保留。合併之後，函式裡開始需要一個參數來分支成兩套行為，代表那兩套行為各自由不同的理由改變，是合併錯了的訊號。

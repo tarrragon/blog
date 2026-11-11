@@ -8,7 +8,7 @@ weight: 29
 
 Rate limit 的核心概念是「限制某個主體在一段時間內可以使用的資源量」。主體可以是 user、API key、IP、tenant、endpoint、worker、[producer](/backend/knowledge-cards/producer/) 或內部服務。
 
-## 概念位置
+## 跟其他概念的關係
 
 Rate limit 是容量保護與公平性工具。它可以保護登入、搜尋、匯出、第三方 API、webhook endpoint 與下游服務，降低單一來源耗盡共享資源的風險；被擋下之後對消費者承諾什麼邊界（429 / Retry-After 的契約語意）、由 [Rate Limit Contract](/backend/knowledge-cards/rate-limit-contract/) 卡承擔。 可先對照 [Producer](/backend/knowledge-cards/producer/)。
 
@@ -16,7 +16,7 @@ Rate limit 是容量保護與公平性工具。它可以保護登入、搜尋、
 
 系統需要 rate limit 的訊號是少數使用者或客戶端造成大量 request。匯出報表 API 缺少 rate limit 時，單一 tenant 的批次工作可能佔滿 [database](/backend/knowledge-cards/database/) [connection pool](/backend/knowledge-cards/connection-pool/)，影響其他 tenant 的正常查詢。
 
-## 設計責任
+## 判斷條件與後果
 
 限流設計要定義主體、窗口、配額、超限回應、例外權限與觀測欄位。對外 API 要提供清楚的 retry-after 或配額資訊；內部服務要搭配 [alert](/backend/knowledge-cards/alert/)、[token bucket](/backend/knowledge-cards/token-bucket/) 與容量規劃。完整的實作指南（單機 middleware、Redis 分散式限速、配額設計）見 [Rate Limit 實作](/backend/09-performance-capacity/rate-limit-implementation/)。
 

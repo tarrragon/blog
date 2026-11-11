@@ -8,7 +8,7 @@ tags: ["backend", "deployment", "tunnel", "knowledge-card"]
 
 Outbound tunnel 是一種入口形態：本機進程主動對外連到邊緣節點，把流量沿反向隧道帶回來，路由器零開 port、對公網零入站面。跟傳統 port-forward（從外往內開 port）的責任方向相反 — 連線由內部發起、外部只能沿已建立的隧道回來。與 [load balancer](/backend/knowledge-cards/load-balancer/) 的責任方向不同：LB 假設 instance 有公開可達位址，tunnel 由內部主動外連。
 
-## 概念位置
+## 跟其他概念的關係
 
 Outbound tunnel 位在本機進程與公網之間，取代傳統的 port-forward 或 [load balancer](/backend/knowledge-cards/load-balancer/) 入口。常與 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/) 搭配保護隧道內的傳輸安全，認證則疊在 tunnel 之後由 [authentication middleware](/backend/knowledge-cards/authentication-middleware/) 處理。
 

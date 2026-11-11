@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/dotenv/"]
 
 `.env` 是一個純文字檔案，每行一組 `KEY=VALUE` 的環境變數定義。它的用途是把機密值（資料庫密碼、API key、SMTP 存取憑證）和環境專屬設定（資料庫 host、debug 模式開關）從程式碼分離出來，讓同一份程式碼在不同環境（開發、staging、production）用不同的設定值，而且機密值不進版本控制。PHP 專案裡執行期設定的另一層在 [php.ini / .user.ini](/devops/infra/knowledge-cards/php-ini/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 `.env` 是跨語言的設定分離慣例。PHP 用 [Composer](/devops/infra/knowledge-cards/composer/) 安裝的 `vlucas/phpdotenv` 套件讀取、Node.js 用 `dotenv` 套件、Python 用 `python-dotenv`、Go 用 `godotenv`。這些套件的行為相同：程式啟動時讀 `.env` 檔案，把裡面的變數載入到執行環境的環境變數裡，讓程式碼用 `$_ENV['KEY']`（PHP）或 `process.env.KEY`（Node）存取。
 
@@ -17,7 +17,7 @@ aliases: ["/infra/knowledge-cards/dotenv/"]
 
 站台根目錄有 `.env` 或 `.env.production` 檔案；`.gitignore` 裡有 `.env` 這一行；repo 裡有 `.env.example` 或 `.env.sample` 列出所有需要的變數但不填實際值。如果接手的專案沒有 `.env` 但 `config.php` 裡直接寫了資料庫密碼，代表設定分離還沒做——這是接手後應該處理的事。
 
-## 設計責任
+## 判斷條件與後果
 
 使用 `.env` 時有三個紀律：
 

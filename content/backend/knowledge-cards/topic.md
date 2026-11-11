@@ -8,7 +8,7 @@ tags: ["backend", "message-queue"]
 
 Topic 的核心概念是「用主題名稱描述一類事件或訊息」。[Producer](/backend/knowledge-cards/producer/) 把事件發布到 topic，[broker](/backend/knowledge-cards/broker/) 再依照訂閱關係、[routing rule](/backend/knowledge-cards/routing-rule/) 或 stream 模型把事件交給對應 [consumer](/backend/knowledge-cards/consumer/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Topic 是事件分流的命名邊界。它讓訂單、付款、會員、通知、庫存等事件可以被不同服務訂閱，也讓團隊用事件種類思考資料流與責任範圍。
 
@@ -22,6 +22,6 @@ Topic 跟 [partition](/backend/knowledge-cards/partition/) 的關係是：topic 
 
 Topic 命名規則影響長期治理。`orders.payment.completed` 比 `event_1` 更容易被搜尋跟管理。命名規則要在團隊間統一、進 [queue contract](/backend/knowledge-cards/queue-contract/) 管理。
 
-## 設計責任
+## 判斷條件與後果
 
 Topic 設計要定義命名規則、事件 schema、相容性策略（schema evolution）、權限控制（誰能 publish / subscribe）、[retention](/backend/knowledge-cards/retention/) 期限、[replay runbook](/backend/knowledge-cards/replay-runbook/) 範圍與 ownership（哪個團隊負責這個 topic）。操作面要能依 topic 查看 publish rate、[consumer lag](/backend/knowledge-cards/consumer-lag/)、錯誤率與 [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) 數量。

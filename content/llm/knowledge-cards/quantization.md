@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards"]
 
 Quantization（量化）的核心概念是「把模型權重從高精度（如 16-bit float）改用較低精度（如 4-bit integer）表示」。權重數量不變，但每個權重佔的 bytes 變少；模型總大小變小、每秒能讀過的權重變多，[生字速度](/llm/knowledge-cards/tokens-per-second/) 直接變快。
 
-## 概念位置
+## 跟其他概念的關係
 
 量化是讓 LLM 跑在 consumer 等級硬體上的關鍵技術。沒有量化、Apple Silicon Mac 跑不動 30B+ 模型，因為原始 bf16 權重會超出記憶體預算。量化方法主要分兩類：[GGUF](/llm/knowledge-cards/gguf/) 系統用的 K-quants（Q4_K_M、Q5_K_M 等）、以及 [MLX](/llm/knowledge-cards/mlx/) 等系統用的 4-bit / 8-bit 量化。
 
@@ -26,6 +26,6 @@ Quantization（量化）的核心概念是「把模型權重從高精度（如 1
 
 「`_K_M`」的 K 指 K-quants（較新的量化方法）、M 指 mixed-medium（不同層用不同量化）。Q3 70B 模型在 coding 任務上常輸給 Q5 14B 模型；模型大小跟模型實用品質是兩件事。
 
-## 設計責任
+## 判斷條件與後果
 
 選量化等級時看三個維度：記憶體預算（量化後是否塞得進）、體感速度（量化越激進、tok/s 越高）、品質容忍度（過低量化會明顯衰減）。寫 code 場景的甜蜜點通常是 Q4_K_M；想再換更激進量化前、先用同等記憶體預算下的較小模型 Q5 對比，常會發現後者品質更好。

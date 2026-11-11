@@ -8,7 +8,7 @@ weight: 64
 
 Requeue 的核心概念是「把未完成的訊息重新放回可投遞集合」。它讓暫時失敗的工作有機會再次被處理，但也可能造成同一訊息反覆佔用 consumer。 可先對照 [Resource Limit](/backend/knowledge-cards/resource-limit/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Requeue 是 nack / retry 流程的一種選擇。暫時性錯誤可以 requeue；永久性錯誤應進入 dead-letter 或人工處理流程。Requeue 需要搭配次數限制與 backoff。 可先對照 [Resource Limit](/backend/knowledge-cards/resource-limit/)。
 
@@ -16,6 +16,6 @@ Requeue 是 nack / retry 流程的一種選擇。暫時性錯誤可以 requeue�
 
 系統需要控制 requeue 的訊號是同一訊息反覆進出 queue。外部 API 權限被拒絕時，requeue 只會重複失敗；網路短暫中斷時，requeue 搭配 backoff 可能成功。
 
-## 設計責任
+## 判斷條件與後果
 
 Requeue 設計要包含最大次數、錯誤分類、delay、dead-letter 條件與觀測欄位。Runbook 應能查出 requeue loop 的訊息與原因。

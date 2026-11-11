@@ -6,9 +6,9 @@ weight: 467
 tags: ["backend", "observability", "prometheus", "knowledge-card"]
 ---
 
-Prometheus exporter 是把某個系統的狀態轉成 Prometheus 指標格式、開一個 HTTP 端點讓 Prometheus 定期來讀（scrape）的程式。被監控的系統本身不必懂 Prometheus：node_exporter 讀 Linux 的 `/proc` 與 `/sys` 輸出主機的 CPU、記憶體與磁碟；cAdvisor 讀 cgroup 輸出每個容器的用量；postgres_exporter 連進 PostgreSQL 查統計視圖；nginx-prometheus-exporter 讀 Nginx 的 `stub_status`。應用程式自己用 client library 開的 `/metrics` 是另一條路：程式直接輸出自己的指標，不經過轉接。兩條路收到的訊號種類不同，見下方〈概念位置〉與 [USE Method](/backend/knowledge-cards/use-method/)、[RED Method](/backend/knowledge-cards/red-method/)。丟掉整個讀取對象或其中一部分指標的規則見 [Relabeling](/backend/knowledge-cards/relabeling/)。
+Prometheus exporter 是把某個系統的狀態轉成 Prometheus 指標格式、開一個 HTTP 端點讓 Prometheus 定期來讀（scrape）的程式。被監控的系統本身不必懂 Prometheus：node_exporter 讀 Linux 的 `/proc` 與 `/sys` 輸出主機的 CPU、記憶體與磁碟；cAdvisor 讀 cgroup 輸出每個容器的用量；postgres_exporter 連進 PostgreSQL 查統計視圖；nginx-prometheus-exporter 讀 Nginx 的 `stub_status`。應用程式自己用 client library 開的 `/metrics` 是另一條路：程式直接輸出自己的指標，不經過轉接。兩條路收到的訊號種類不同，見下方〈跟其他概念的關係〉與 [USE Method](/backend/knowledge-cards/use-method/)、[RED Method](/backend/knowledge-cards/red-method/)。丟掉整個讀取對象或其中一部分指標的規則見 [Relabeling](/backend/knowledge-cards/relabeling/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 | 來源                  | 誰輸出指標                                | 指標的名稱由誰決定 | 適用                                             |
 | --------------------- | ----------------------------------------- | ------------------ | ------------------------------------------------ |
@@ -26,6 +26,6 @@ Prometheus exporter 是把某個系統的狀態轉成 Prometheus 指標格式、
 - **對象沒了數字還在**：容器停掉之後，cAdvisor 繼續輸出它最後的數值，依服務分組的圖維持在停掉前的值；停止前進的是 `container_last_seen`。
 - **標籤組合爆量**：exporter 把每個連線、每個查詢都當成一個標籤值輸出時，時間序列的數量暴增，見 [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)。
 
-## 設計責任
+## 判斷條件與後果
 
 exporter 接上之後的完成條件有三項：Prometheus 讀得到 exporter（`up` 是 1）而且 exporter 連得到它監控的服務（`pg_up`、`redis_up` 這類 exporter 自己輸出的連線狀態是 1）、每一個預期的對象都出現在標籤裡、刻意製造一次它該看到的狀況而數字有反應。另外寫下它裝在哪一層、看不到哪些層，看不到的層改由裝在那一層的 exporter 補上，或在那一層直接檢查（例如在主機上跑 `uptime`）。

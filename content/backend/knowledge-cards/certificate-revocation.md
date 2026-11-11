@@ -8,7 +8,7 @@ weight: 150
 
 Certificate revocation 的核心概念是「在憑證不再可信時快速宣布失效」。常見觸發情境是私鑰洩漏、錯誤簽發、身份資訊不再有效或資安事件需要立即切斷信任。 可先對照 [Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 憑證撤銷是 [website certificate lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/) 的事故處理能力，與 [secret management](/backend/knowledge-cards/secret-management/) 與 [audit log](/backend/knowledge-cards/audit-log/) 一起構成憑證風險控制邊界。
 
@@ -16,7 +16,7 @@ Certificate revocation 的核心概念是「在憑證不再可信時快速宣布
 
 系統需要撤銷流程的訊號是金鑰材料疑似外洩或錯誤部署到不該公開的環境。若缺少撤銷與替換流程，攻擊者可能持續利用舊憑證偽裝服務端點。
 
-## 設計責任
+## 判斷條件與後果
 
 設計要定義撤銷觸發條件、責任人、替換時序、客戶端影響評估、溝通流程與回復 [runbook](/backend/knowledge-cards/runbook/)。事故後要以 [post-incident](/backend/knowledge-cards/runbook/) 更新偵測與輪替策略。
 

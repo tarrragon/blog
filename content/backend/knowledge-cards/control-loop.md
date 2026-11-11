@@ -8,7 +8,7 @@ tags: ["backend", "deployment", "kubernetes", "knowledge-card"]
 
 Control Loop（控制迴圈）的核心概念是「持續比對期望狀態與實際狀態，發現落差就動手修正」的程式結構。使用者只描述要什麼（三個副本、這個版本），由控制迴圈負責讓實際狀態追上它，並在之後任何時候偏離時再拉回來。這種只描述結果、不寫步驟的寫法叫宣告式（declarative），比對與修正的動作在 Kubernetes 文件裡叫 reconcile。可先對照 [Control Plane](/backend/knowledge-cards/control-plane/) 與 [Pod](/backend/knowledge-cards/pod/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 控制迴圈是 Kubernetes [Control Plane](/backend/knowledge-cards/control-plane/) 的運作方式：控制平面由許多控制迴圈組成，各自負責一種物件：ReplicaSet controller 維持 [Pod](/backend/knowledge-cards/pod/) 的數量、Deployment controller 執行 [Rolling Update](/backend/knowledge-cards/rolling-update/)、node controller 把失聯的節點標成 NotReady、EndpointSlice controller 依 [Readiness](/backend/knowledge-cards/readiness/) 更新 [Kubernetes Service](/backend/knowledge-cards/kubernetes-service/) 的後端清單。Docker Compose 的設定檔同樣是宣告式的，差別在比對的時機：`docker compose up` 只在指令執行時比對一次，控制迴圈在之後的任何時候都持續比對。名稱相近的 [Data Reconciliation](/backend/knowledge-cards/data-reconciliation/) 講的是兩份資料的對帳，是另一件事。
 
@@ -21,6 +21,6 @@ Control Loop（控制迴圈）的核心概念是「持續比對期望狀態與�
 
 實測輸出見 [Kubernetes 的元件與請求路徑](/backend/05-deployment-platform/vendors/kubernetes/components-and-request-path/)。
 
-## 設計責任
+## 判斷條件與後果
 
 用控制迴圈管理的系統，變更要改期望狀態（設定檔、Git 裡的 manifest），不直接改實際狀態，否則下一次比對會把手動改動蓋掉。排查問題時從期望狀態與實際狀態的差距讀起：哪個物件的 `status` 追不上 `spec`、對應的控制迴圈留下了什麼事件。

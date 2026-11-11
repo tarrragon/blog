@@ -7,7 +7,7 @@ weight: 30
 
 Stale-while-revalidate（SWR）的核心概念是「[TTL](/backend/knowledge-cards/ttl/) 過期後仍可立即回舊版本給使用者、同時背景發出 origin request 拉取新版本更新快取」。使用者體驗永遠快、新鮮度有「最多 stale `max-age + swr`」秒的上限。是天然的 [cache stampede](/backend/knowledge-cards/cache-stampede/) 緩解機制 — 把「TTL 過期那一刻 N 個請求同時打 origin」變成「TTL 過期那一刻 1 個請求打 origin、其他 N-1 個拿舊版」。
 
-## 概念位置
+## 跟其他概念的關係
 
 SWR 處於 HTTP cache 失效策略層、跟 [TTL](/backend/knowledge-cards/ttl/)、[Cache Invalidation](/backend/knowledge-cards/cache-invalidation/) 是兄弟概念。TTL 定義「何時 expire」、SWR 定義「expire 之後仍允許用舊版的時間窗口」、cache invalidation 定義「主動清掉」。跟 [Stale-If-Error](/backend/knowledge-cards/stale-if-error/) 屬不同維度但常一起配置 — SWR 處理過期、SIE 處理錯誤。它是 [Cache-Control](/backend/knowledge-cards/cache-control/) 的擴充指令（RFC 5861），回應同時寫了 `s-maxage` 時，規範的答案是共用快取不延用過期副本；規範條文、窗口語意與 Varnish、nginx、瀏覽器的支援差異見 [12.6 過期副本的延用：stale-while-revalidate 與 stale-if-error](/backend/12-http-caching/serving-stale/)。
 
@@ -17,6 +17,6 @@ SWR 處於 HTTP cache 失效策略層、跟 [TTL](/backend/knowledge-cards/ttl/)
 
 新鮮度敏感的場景（庫存、價格、權限）應限縮 SWR 範圍或關閉、保住 stale 風險的上限；blog 文章、商品描述、靜態 metadata 適合 SWR 降低 origin 壓力。
 
-## 設計責任
+## 判斷條件與後果
 
 選擇 SWR window 要在「origin 壓力」跟「freshness budget」間取捨。Window 越長、origin 壓力越低、stale 容忍度越高；window 越短、freshness 越接近 TTL、但 cache stampede 緩解效果下降。常見組合是 `stale-while-revalidate` 設成 `max-age` 的 5-10 倍。資料新鮮度敏感場景要走白名單路徑、由 endpoint 個別 opt-in 開啟 SWR。

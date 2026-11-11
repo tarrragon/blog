@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "math", "linear-algebra"]
 
 Dot product（內積、inner product）的核心概念是「**兩個向量對應位置相乘再加總**」：`a · b = a₁b₁ + a₂b₂ + ... + aₙbₙ`。幾何意義是「a 在 b 方向上的投影長度 × b 的長度」。Dot product 是 LLM 中**最頻繁出現的運算之一**：[attention](/llm/knowledge-cards/attention/) 的核心是 dot product、cosine similarity 的本體也是 dot product。
 
-## 概念位置
+## 跟其他概念的關係
 
 Dot product 在 LLM 中的核心應用：
 
@@ -33,6 +33,6 @@ a · b = |a| × |b| × cos(θ)
 
 LLM 推論性能上、dot product 是「[matrix multiplication](/llm/knowledge-cards/matrix-multiplication/) 的基本單元」、整個 forward pass 可以看成大量 dot product 的批次運算；這是為什麼 GPU / Apple Silicon Neural Engine 都針對 dot product 做硬體優化。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 attention / RAG 相關內容看到「inner product」「dot product」「QK^T」就是這個運算。寫 code 場景的判讀：用 vector database 時、選 distance metric 看：cosine 適合未 normalized 的 embedding、dot product 適合 L2-normalized 的 embedding（兩者結果同、後者較快）；attention 的 KV cache 量化（K=Q8 / V=Q4）對品質的不對稱影響、根本原因是 K 用於 dot product（誤差累積快）、V 用於加權平均（誤差被平均化）。

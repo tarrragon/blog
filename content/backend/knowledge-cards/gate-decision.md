@@ -8,7 +8,7 @@ tags: ["backend", "knowledge-card", "reliability", "release-gate"]
 
 Gate decision 的核心概念是「release gate 根據證據做出的明確下一步」。這類在明確時點做放行判斷的決策，業界慣稱 [go/no-go](/backend/knowledge-cards/go-no-go/) decision——發射體制、變更管理與 cutover 演練裡的 go/no-go 會議指的都是同一件事。它連接 [release gate](/backend/knowledge-cards/release-gate/)、[evidence package](/backend/knowledge-cards/evidence-package/) 與 [stop condition](/backend/knowledge-cards/stop-condition/)，讓 gate 不只寫檢查結果，也寫出能不能前進。
 
-## 概念位置
+## 跟其他概念的關係
 
 Gate decision 位在 [confidence](/backend/knowledge-cards/confidence/)、[rollback window](/backend/knowledge-cards/rollback-window/) 與 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 之間。Checks 描述檢查結果，gate decision 把結果轉成放行、暫停、回退、fail-forward 或補證據。
 
@@ -25,6 +25,6 @@ Gate decision 位在 [confidence](/backend/knowledge-cards/confidence/)、[rollb
 
 資料庫 migration 的 gate decision 可以寫成 `allow next 10% backfill; block customer-visible read cutover`。這句話比 `migration pass` 更可操作，因為它同時說明允許前進的範圍與被擋住的風險面。
 
-## 設計責任
+## 判斷條件與後果
 
 Gate decision 要包含決策內容、支撐 checks、stop condition、rollback window 與 owner。它要能被 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 承接，讓放行後出現異常時能回放當時依據。

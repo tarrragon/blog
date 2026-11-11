@@ -8,7 +8,7 @@ tags: ["linux", "remote", "mosh", "terminal", "knowledge-cards"]
 
 mosh 的本地回顯預測是它在高延遲鏈路下打字順的關鍵：客戶端不等伺服器把你打的字回傳、而是在本地先猜測並立刻顯示，之後再用伺服器的真實輸出校正。這消掉了每個按鍵一趟 round-trip 的黏滯感。代價是「預測」要猜字元怎麼佔位，撞上寬度不是一格的字元（[CJK 雙寬字](/linux/dotfile/knowledge-cards/terminal-cjk-input/)）時會算錯、顯示錯位。理解這個機制，才知道 mosh 什麼時候好用、什麼時候反而該關掉或改用 SSH。
 
-## 概念位置
+## 跟其他概念的關係
 
 雙寬字與終端輸入的更完整討論見 [終端 CJK 雙寬字與即時輸入](/linux/dotfile/knowledge-cards/terminal-cjk-input/)。mosh 為什麼能扛換網路、以及它跟 SSH 在漫遊上的分野，見 [TCP 連線與漫遊](/linux/dotfile/knowledge-cards/tcp-connection-roaming/)。
 

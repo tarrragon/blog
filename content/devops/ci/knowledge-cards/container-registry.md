@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/container-registry/"]
 
 Container Registry 的核心概念是「管理可部署 [image](/devops/ci/knowledge-cards/image-digest/) 的供應鏈節點」。它負責保存、授權、保留與推進已驗證影像。
 
-## 概念位置
+## 跟其他概念的關係
 
 Container Registry 位在 image build、scan、promotion 與 runtime deploy 之間，連接 [CI](/devops/ci/knowledge-cards/ci-pipeline/) 產物與環境發布。
 
@@ -23,6 +23,6 @@ Container Registry 位在 image build、scan、promotion 與 runtime deploy 之�
 
 團隊以 immutable digest 推進 staging 與 production，並透過 registry policy 控制 retention、pull 權限與 promotion 路徑。
 
-## 設計責任
+## 判斷條件與後果
 
 Container Registry 要定義命名策略、權限模型、保留策略與來源追溯，讓 image 發布具備可審計性。

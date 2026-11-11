@@ -8,7 +8,7 @@ tags: ["backend", "knowledge-card", "observability", "incident-response"]
 
 Query link 的核心概念是「保存可重跑的查詢入口」。它連接 [evidence package](/backend/knowledge-cards/evidence-package/)、[time range](/backend/knowledge-cards/time-range/) 與 [data quality](/backend/knowledge-cards/data-quality/)，讓後續接手者能重新驗證同一個判讀。
 
-## 概念位置
+## 跟其他概念的關係
 
 Query link 位在 [dashboard](/backend/knowledge-cards/dashboard/)、[validation query](/backend/knowledge-cards/validation-query/) 與 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 之間。截圖適合溝通當下狀態，query link 則保留可回放、可調整、可驗證的入口。
 
@@ -25,6 +25,6 @@ Query link 位在 [dashboard](/backend/knowledge-cards/dashboard/)、[validation
 
 Checkout API evidence package 可以保存錯誤率 query、p95 latency query 與 provider timeout query 的連結。資料庫 migration evidence package 則可以保存 row count、mismatch sample 與 replication lag query link。
 
-## 設計責任
+## 判斷條件與後果
 
 Query link 要保留查詢版本、參數、time range、資料來源與 owner。它要搭配 [known gap](/backend/knowledge-cards/known-gap/) 記錄查詢未覆蓋的資料範圍，避免截圖或 dashboard 名稱被誤當成完整證據。

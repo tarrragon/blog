@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "transformer", "architecture"]
 
 RoPE（Rotary Position Embedding、旋轉位置編碼、Su et al., 2021）的核心概念是「**把 token 在序列中的位置資訊用旋轉矩陣直接旋轉進 [attention](/llm/knowledge-cards/attention/) 的 Q 跟 K 向量裡**、不是用加法疊加另一個 embedding」。RoPE 是 Llama、Gemma、Qwen、Mistral 等現代 LLM 的標配、相對早期的 absolute / learned positional embedding 有更好的長 context 推廣性。
 
-## 概念位置
+## 跟其他概念的關係
 
 位置編碼的演化路線：
 
@@ -32,6 +32,6 @@ attention score = Q_m @ K_n^T
 
 關鍵性質：RoPE 算出的 attention score 只依賴**相對位置**、所以推廣到比訓練長度更長的 context 時有自然的數學基礎、配合 RoPE scaling（YaRN、NTK-aware、Position Interpolation）就能把 8K 訓練的模型擴展到 128K / 1M context。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 model card 看到 `rope_theta: 10000`、`rope_scaling: {type: yarn, factor: 8}` 等就是 RoPE 配置。寫 code 場景的意涵：long context 模型（如 Llama 3 128K）的推廣能力主要靠 RoPE + scaling、不是直接訓練 128K 全長；但聲稱 context 跟「實用 context」仍有差距、長 context 上模型表現會逐步衰減。

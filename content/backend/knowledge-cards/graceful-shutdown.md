@@ -8,7 +8,7 @@ weight: 12
 
 Graceful shutdown 的核心概念是「instance 收到停止訊號後，以可控流程結束服務」。它會先停止接收新工作，再讓正在處理的 request、長連線、consumer 或背景任務在期限內完成、保存狀態或交回 broker。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Graceful shutdown 是 application 與部署平台的停止合約。平台負責送出停止訊號、移出流量與設定期限；application 負責停止入口、排空處理中工作、釋放連線、提交 checkpoint、送出最後 log 與 metrics。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
@@ -20,6 +20,6 @@ Graceful shutdown 是 application 與部署平台的停止合約。平台負責�
 
 背景 worker 正在處理影片轉檔時收到部署停止訊號。Graceful shutdown 應停止取得新工作，讓目前轉檔在期限內完成；若超過期限，worker 需要保存進度或讓 broker 重新投遞，並留下可追蹤的狀態。
 
-## 設計責任
+## 判斷條件與後果
 
 Graceful shutdown 要搭配 timeout、[draining](/backend/knowledge-cards/draining/)、[idle timeout](/backend/knowledge-cards/idle-timeout/)、idempotency 與觀測訊號。Runbook 應能看到停止期間的 in-flight request、consumer ack、長連線數、錯誤率與強制終止次數，讓部署問題可以被定位。

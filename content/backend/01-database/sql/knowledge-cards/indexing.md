@@ -13,7 +13,7 @@ Index 是為了加快查找而額外維護的一份資料結構，內容是某�
 
 索引建了而引擎不走它有兩個常見的成因。一個是[統計資訊](/backend/01-database/sql/knowledge-cards/query-statistics/)沒更新——索引決定有沒有一條快的路，統計決定引擎知不知道該走那一條。另一個是條件把索引欄位包進了函式或運算裡，那時引擎沒有可以拿去比對的值，[Sargable](/backend/01-database/sql/knowledge-cards/sargable/) 那張卡寫這個形狀怎麼判、怎麼改。
 
-## 概念位置
+## 跟其他概念的關係
 
 索引是查詢代價的主要變數之一，而它不出現在查詢的文字裡。同一段 SQL 在有索引與沒索引的資料庫上執行方式完全不同，結果卻一模一樣——這正是宣告式語言的分工：查詢說要什麼，索引與計畫決定怎麼拿。
 
@@ -25,7 +25,7 @@ SQLite 的計畫用 `SCAN` 與 `SEARCH` 分開兩種取法：`SCAN 訂單` 表�
 
 計畫裡那幾個關鍵字（`AUTOMATIC`、`COVERING`、`BLOOM FILTER`）各指什麼，在 [query plan](/backend/01-database/sql/knowledge-cards/query-plan/)。
 
-## 設計責任
+## 判斷條件與後果
 
 索引由查詢的形狀決定，不由表的形狀決定。要建哪些索引取決於實際會執行哪些查詢，所以它是在知道查詢模式之後才做得準的決定。
 

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "training", "math"]
 
 KL divergence（Kullback-Leibler divergence、KL 散度）的核心概念是「衡量兩個機率分佈 P 跟 Q 的差距」：`KL(P ‖ Q) = sum(P(x) × log(P(x) / Q(x)))`。它**不對稱**（`KL(P ‖ Q) ≠ KL(Q ‖ P)`）、所以不算「距離」、是「散度」。在 LLM 訓練中是 [RLHF](/llm/knowledge-cards/rlhf/) / [DPO](/llm/knowledge-cards/dpo/) 等 alignment 階段防止模型「為了 reward 偏離太遠」的關鍵約束。
 
-## 概念位置
+## 跟其他概念的關係
 
 KL divergence 在 LLM 中的兩個主要角色：
 
@@ -39,6 +39,6 @@ KL divergence 在 LLM 中的兩個主要角色：
 | KL divergence | 否     | Alignment 訓練的偏離約束              |
 | JS divergence | 是     | 兩個分佈的對稱差距、研究比較多        |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 alignment paper 看到 β、KL penalty、KL coefficient 等詞、知道這些是控制「模型在追 reward 時偏離 base 多遠的容忍度」。β 太小、模型容易 reward hacking（找 reward 高但實質爛的輸出）；β 太大、模型動不了、reward 升不上去。DPO 把 KL 約束內嵌進 loss、不像 RLHF 需要顯式 KL term、是 DPO 比 RLHF 簡單的原因之一。

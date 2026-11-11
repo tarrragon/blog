@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/php-ini/"]
 
 `php.ini` 是 PHP 的全域設定檔，控制 PHP 的 runtime 行為——記憶體上限、檔案上傳大小、最大執行時間、錯誤報告層級、時區、session 處理方式。`.user.ini` 是 PHP 5.3 之後支援的目錄層級覆寫機制，放在站台目錄裡可以覆寫部分 `php.ini` 的設定，不需要伺服器管理員權限；與管應用程式設定的 [.env](/devops/infra/knowledge-cards/dotenv/) 是不同層級的設定檔。
 
-## 概念位置
+## 跟其他概念的關係
 
 `php.ini` 由伺服器管理員管理，租用主機的使用者通常不能直接修改。`.user.ini` 是使用者層級的設定覆寫——功能上類似 [.htaccess](/devops/infra/knowledge-cards/htaccess/) 對 Apache 的角色，但只管 PHP 設定。在 cPanel 環境裡，部分設定也可以透過「PHP 選擇器」的圖形介面調整。
 
@@ -17,7 +17,7 @@ aliases: ["/infra/knowledge-cards/php-ini/"]
 
 PHP 行為異常時要檢查的第一個地方。常見的情境：上傳檔案失敗（`upload_max_filesize` 太小）、長時間運算被中斷（`max_execution_time` 太短）、記憶體不足錯誤（`memory_limit` 太低）、看不到錯誤訊息（`display_errors` 關閉）。用 `phpinfo()` 可以看到每一項設定的目前值和來源（`php.ini` / `.user.ini` / `.htaccess`）。
 
-## 設計責任
+## 判斷條件與後果
 
 同一項 PHP 設定可能同時寫在 `php.ini`、`.user.ini` 與 `.htaccess` 裡，接手維運時先用 `phpinfo()` 讀出每一項的目前值與來源，再對照下表確認是否符合業務需求：
 

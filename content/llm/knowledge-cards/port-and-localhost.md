@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "network"]
 
 Port 與 Localhost 的核心概念是「網路 server 暴露在哪個地址、聽哪個 port、讓誰能連進來」。本地 LLM 場景中、Ollama 預設聽 `127.0.0.1:11434`、Continue.dev 等介面層透過這個地址呼叫 [OpenAI 相容 API](/llm/knowledge-cards/openai-compatible-api/)；理解 listen address 跟 port 的角色、才能判讀「為什麼 port 撞 / 為什麼 LAN 上另一台連不到 / 暴露到 internet 安全嗎」。
 
-## 概念位置
+## 跟其他概念的關係
 
 完整的 server 入口由兩個欄位定義：
 
@@ -55,7 +55,7 @@ curl http://<本機 LAN IP>:11434/api/version # 若 listen 在 0.0.0.0、會通�
 
 「為什麼桌機跑 Ollama、筆電連不到」的最常見原因就是 Ollama 沒改 listen address、預設只接受 loopback。
 
-## 設計責任
+## 判斷條件與後果
 
 選 listen address 是信任邊界決定：
 

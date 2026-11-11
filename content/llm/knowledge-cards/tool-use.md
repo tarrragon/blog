@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "application", "agent"]
 
 Tool use 的核心概念是「LLM 不只生成文字、還能透過結構化呼叫外部工具來執行讀檔、查資料庫、發 API request、跑程式等動作」。它擴展 LLM 從「對話模型」變成「能影響真實世界的 agent」。實作上常見透過 [function calling](/llm/knowledge-cards/function-calling/) 或 [MCP](/llm/knowledge-cards/mcp/) 協定。
 
-## 概念位置
+## 跟其他概念的關係
 
 Tool use 的典型流程：
 
@@ -34,7 +34,7 @@ Tool use 跟 function calling、MCP 的關係：
 | Function calling                 | OpenAI 提出的 API 規範、用 JSON schema 定義 function                    |
 | [MCP](/llm/knowledge-cards/mcp/) | Anthropic 推動的開放協議、定義 LLM client 跟 tool server 之間的通訊格式 |
 
-## 設計責任
+## 判斷條件與後果
 
 理解 tool use 後可以解釋三個現象：為什麼 LLM 「能跑 shell」其實是 client 跑、不是模型跑（職責切分）、為什麼 tool spec 設計直接影響攻擊面（spec 越鬆、injection 後果越大）、為什麼 [agent loop](/llm/knowledge-cards/agent-loop/) 比單次 tool call 危險（多步 tool use 中 injection 累積）。
 

@@ -8,7 +8,7 @@ tags: ["backend", "knowledge-card", "database", "migration"]
 
 Fallback read 的核心概念是「新讀取路徑尚未穩定時，暫時回到舊資料語意或舊讀取來源」。它連接 [read compatibility](/backend/knowledge-cards/read-compatibility/)、[fallback](/backend/knowledge-cards/fallback/) 與 [rollback-window](/backend/knowledge-cards/rollback-window/)，讓 cutover 失敗時可以先限制在讀取判讀層。
 
-## 概念位置
+## 跟其他概念的關係
 
 Fallback read 位在 [cutover / switchover](/backend/knowledge-cards/cutover-switchover/)、[schema migration](/backend/knowledge-cards/schema-migration/) 與 [rollback strategy](/backend/knowledge-cards/rollback-strategy/) 之間。它保留新資料結構、暫時把讀取判斷交回舊語意或舊來源，比完整 rollback 成本低且破壞性小。
 
@@ -25,6 +25,6 @@ Fallback read 位在 [cutover / switchover](/backend/knowledge-cards/cutover-swi
 
 訂單服務把付款狀態拆到 `payment_state` 後，客服後台若發現新欄位判讀 mismatch 升高，可以先回到舊 `status` 的付款語意讀取，讓客服分類回到基線，同時保留 backfill 與 validation query 繼續查證。
 
-## 設計責任
+## 判斷條件與後果
 
 Fallback read 要定義觸發條件、讀取優先順序、可維持多久、哪些入口適用，以及何時重新嘗試 cutover。它要與 [validation query](/backend/knowledge-cards/validation-query/) 和 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 對齊，避免讀取回退變成沒有證據的永久分岔。

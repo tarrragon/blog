@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "transformer", "architecture"]
 
 Multi-Head Attention（MHA、多頭注意力）的核心概念是「把 [self-attention](/llm/knowledge-cards/self-attention/) 的 Q/K/V 投影切成多個獨立的 **head**、各自算 attention、最後再 concat 起來」。直覺：每個 head 可以學會關注不同類型的關係（語法 / 語意 / 位置 / 共指 etc.）、比單一 attention 表達能力強。
 
-## 概念位置
+## 跟其他概念的關係
 
 MHA 的計算結構：
 
@@ -33,6 +33,6 @@ Head h：Q_h、K_h、V_h → attention_h
 | GQA（Grouped-Query Attention）     | h         | h/g（每 g 個 Q head 共用一組 K/V） | 1/g                                             | Llama 2 / 3、Mistral、Gemma      |
 | MLA（Multi-head Latent Attention） | h         | 用 latent 壓縮再展開               | 更激進壓縮                                      | DeepSeek-V2 / V3                 |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 model card 看到 `num_attention_heads: 32`、`num_key_value_heads: 8` 等就是 MHA / GQA 設定（Q=32、K/V=8 表示 GQA、g=4）。寫 code 場景的意涵：GQA / MLA 的 [KV cache](/llm/knowledge-cards/kv-cache/) 體積小、長 context / 高併發場景更友善、是現代 LLM 大量採用的設計。

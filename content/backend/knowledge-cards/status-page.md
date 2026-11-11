@@ -8,7 +8,7 @@ weight: 314
 
 Status page 的核心概念是「把事故影響、處理節奏與回復進度公開成單一對外契約」。它和 [incident communication channel](/backend/knowledge-cards/incident-communication-channel/) 與 [incident severity](/backend/knowledge-cards/incident-severity/) 一起決定外部看到的真實版本。
 
-## 概念位置
+## 跟其他概念的關係
 
 Status page 位在 [incident communication channel](/backend/knowledge-cards/incident-communication-channel/)、[stakeholder mapping](/backend/knowledge-cards/stakeholder-mapping/) 與 [post-incident-review](/backend/knowledge-cards/post-incident-review/) 之間。它把內部節奏轉成客戶可讀的更新，並把 ETA、影響範圍與下一次更新時間固定下來。
 
@@ -16,7 +16,7 @@ Status page 位在 [incident communication channel](/backend/knowledge-cards/inc
 
 系統需要 status page 的訊號是事故已經影響外部使用者，但內部的戰情室節奏還不能直接交給客戶。常見例子包括區域性 outage、身份平台失效、外部供應商中斷與多租戶服務退化。
 
-## 設計責任
+## 判斷條件與後果
 
 客服逐一回覆用的內部版本比對外狀態頁多一欄「對客戶的說法」，見 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#客服當場答覆時用的資訊)。
 

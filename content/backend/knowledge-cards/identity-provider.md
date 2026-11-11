@@ -8,7 +8,7 @@ tags: ["backend", "knowledge-card", "security", "authentication"]
 
 Identity provider（身分提供者，常縮寫為 IdP）是集中保管帳號並代為驗證使用者的系統，驗證完之後對接入方發出一段可驗證的宣告，說明這是誰。企業內部常用的形態是目錄服務加上單一登入入口，消費端的形態是各家平台的「用某某帳號登入」。接入方（依協定用語稱為信賴方或服務提供者）拿到宣告之後建立自己的會話，對接的協定通常是 SAML 或 OIDC。它解的是 [authentication](/backend/knowledge-cards/authentication/) 這一段，而使用者手上拿什麼向它證明身分是另一個決定，見 [passkey](/backend/knowledge-cards/passkey/) 與 [credential](/backend/knowledge-cards/credential/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 它承擔的是[認證](/backend/knowledge-cards/authentication/)這一段——確認人是誰。授權（這個人能做什麼）通常留在接入方，因為權限與各服務自己的資源模型綁定；身分提供者能送過來的是群組或角色這類粗粒度的屬性，細部判斷見 [authorization](/backend/knowledge-cards/authorization/) 與 [authorization scope](/backend/knowledge-cards/authorization-scope/)。
 
@@ -22,7 +22,7 @@ Identity provider（身分提供者，常縮寫為 IdP）是集中保管帳號�
 
 另一個訊號是登入強度的上限落在對方手上。對方只支援密碼時，接入方就算想要更強的驗證方式也拿不到；對方的密碼政策鬆，實際強度就是那個鬆的水準。
 
-## 設計責任
+## 判斷條件與後果
 
 導入時要把三件事寫進契約而非留給事發當時：帳號狀態怎麼同步過來、使用者離開那個來源之後這邊的資料歸誰、以及對方故障時有沒有替代路徑。第三項最容易被跳過，而它的後果是對方的控制面出事時這邊沒有任何一條路能讓使用者進來。
 

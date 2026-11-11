@@ -8,7 +8,7 @@ tags: ["backend", "message-queue"]
 
 Offset 的核心概念是「consumer 在事件流中的讀取位置」。它是 [consumer group](/backend/knowledge-cards/consumer-group/) 的進度記錄，讓 consumer 知道自己已經處理到哪裡，也讓系統可以從某個位置繼續或重放。
 
-## 概念位置
+## 跟其他概念的關係
 
 Offset 是 [consumer group](/backend/knowledge-cards/consumer-group/) 的進度記錄、[consumer lag](/backend/knowledge-cards/consumer-lag/) 的計算基準、[replay runbook](/backend/knowledge-cards/replay-runbook/) 的起點定位。在 Kafka 中，offset 是每個 [partition](/backend/knowledge-cards/partition/) 內的遞增整數；在 Redis Streams 中是 entry ID（timestamp-sequence）；在 SQS 中沒有顯式 offset，改用 visibility timeout 控制消費進度。
 
@@ -20,6 +20,6 @@ Offset 提交太早（處理前就 commit）可能造成處理遺失 — consume
 
 Offset 也是 replay 操作的控制參數。「重設 offset 到三天前」意味著 consumer group 會從三天前的位置重新處理所有事件 — 下游需要有 idempotent 設計才能承受重播。
 
-## 設計責任
+## 判斷條件與後果
 
 Offset 提交策略要和業務處理完成條件對齊。Auto-commit（定期自動提交）實作簡單但在 crash 時有遺失風險；manual commit（處理完成後手動提交）更安全但程式碼更複雜。Runbook 應說明如何查 current offset、committed offset、lag、重設 offset 的操作步驟與 replay 對下游的影響。

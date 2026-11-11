@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/iam/"]
 
 IAM（Identity and Access Management）是雲端平台用來回答「某個身分能不能對某個資源做某件事」的授權系統。它把授權拆成三個獨立的元件：identity（身分，發起動作的主體）、policy（政策，描述「允許或拒絕對哪些資源做哪些動作」的規則）、role（角色，一組可以被臨時取得的權限集合，常見透過 [OIDC](/devops/infra/knowledge-cards/oidc/) 換發短期憑證）。這三者的分工是後面所有憑證決策的前提。
 
-## 概念位置
+## 跟其他概念的關係
 
 IAM 是[模組二：身分與存取憑證地基](/devops/infra/02-identity-credentials/iam-oidc-privilege-boundary/)的核心機制。它決定了誰能動什麼——人、服務、CI pipeline 各拿剛好夠用的權限（最小權限），憑證有明確的生命週期。身分層失守的代價在五個 infra 責任面向中最高，因為它是其他所有資源的閘門。
 
@@ -19,7 +19,7 @@ IAM 是[模組二：身分與存取憑證地基](/devops/infra/02-identity-crede
 
 IAM 需要關注的訊號：某個 role 的 policy 有 `*:*` 或 `AdministratorAccess`（權限過大）；credential report 顯示有長期 access key 超過 90 天未輪替（憑證散落風險）；Access Analyzer 顯示某個 role 的實際使用 action 遠少於授予的 action（權限擴散）；dev 環境的 CI role 能列出 production 的資源（環境隔離失效）。
 
-## 設計責任
+## 判斷條件與後果
 
 IAM 是其他所有資源的閘門，一個權限過寬的 role 等於把它碰得到的資源全部交給持有那份憑證的身分，設計時先劃清身分與權限的邊界，再排定之後收斂的節奏：
 

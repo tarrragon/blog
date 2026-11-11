@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/fargate/"]
 
 Fargate 是 AWS [ECS](/devops/infra/knowledge-cards/ecs/) 的一種 launch type，把容器的運算實例交給 AWS 代管。使用 Fargate 時不需要配 EC2 instance、不需要管 capacity provider 的 scaling、不需要更新 AMI——只描述 task 需要多少 vCPU 和記憶體，AWS 負責分配運算資源。
 
-## 概念位置
+## 跟其他概念的關係
 
 ECS 有兩種 launch type，差別在運算層的管理責任：
 
@@ -26,7 +26,7 @@ Fargate 降低的是運維面（不用管 OS patch、不用管 instance 容量�
 
 Fargate Spot 是介於兩者之間的選項：費用約為 on-demand Fargate 的 30%，但 AWS 可以隨時中斷 task（提前 2 分鐘通知）。適合可容忍中斷的 workload（批次處理、非即時的資料轉換），不適合面對使用者的即時 API。常見的混合策略是用 on-demand Fargate 跑基線流量、Fargate Spot 跑彈性擴張的部分。
 
-## 設計責任
+## 判斷條件與後果
 
 Fargate 把運算實例交給 AWS 代管之後，團隊能調整的只剩 task 本身的規格與行為，設計集中在：task 的 vCPU / memory 規格（Fargate 只提供固定的幾種 vCPU 與 memory 組合）、是否混用 Spot、以及 health check 的 grace period（Fargate 的 cold start 比 EC2 長，health check 太早判定失敗會讓 task 反覆重啟）。
 

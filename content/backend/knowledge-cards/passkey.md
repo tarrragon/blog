@@ -8,7 +8,7 @@ tags: ["backend", "knowledge-card", "security", "authentication"]
 
 Passkey 的核心概念是用一組金鑰對取代共享秘密：服務端存公鑰，使用者的裝置保管私鑰，登入時由裝置對服務端送來的一段隨機值產生簽章。它的底層規格是 WebAuthn（FIDO2 的網頁認證標準），passkey 是這套規格搭配可跨裝置使用的存取憑證之後的產品名。服務端持有的那一份是公鑰，外洩不構成可還原的風險，於是 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/) 那一整套判讀（刻意放慢的雜湊、work factor、參數老化）對它不適用。它是 [authentication](/backend/knowledge-cards/authentication/) 人類身分分支底下與密碼並列的一個選項，取捨見 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 它擋掉的是兩類與共享秘密綁在一起的攻擊。[Credential stuffing](/backend/knowledge-cards/credential-stuffing/) 失效的原因是沒有可重用的秘密——別處外洩的那些值在這裡沒有可以對上的秘密。釣魚失效的原因是簽章由瀏覽器綁在當下的網域上，釣魚站的網域不同就產不出可用的簽章，而這一項與使用者有沒有警覺無關。
 
@@ -22,7 +22,7 @@ Passkey 的核心概念是用一組金鑰對取代共享秘密：服務端存公
 
 導入之後判斷它實際擋掉了什麼，看的是還有哪些路徑進得來。密碼路徑仍然開著時，攻擊面由那條路徑決定，而採用率、登入失敗率這些指標量的是另一件事，兩者之間沒有關聯。
 
-## 設計責任
+## 判斷條件與後果
 
 這一類憑證偽造不了，於是攻擊者的最短路徑改成宣稱自己掉了——帳號回復路徑因此要在主路徑上線前設計完，安全上限跟著落在補發那條路上——補發若要求可猜測的材料（預設問題、寄到信箱的重設連結），上限就等於那份材料。降低這個壓力最有效的做法是要求註冊第二支憑證，讓遺失變成不便而非事故。
 

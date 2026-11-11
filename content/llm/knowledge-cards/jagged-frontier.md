@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "capability", "human-ai-collaboration"]
 
 Jagged frontier（鋸齒狀邊界、HBS / UPenn / Wharton BCG 顧問研究、2023）是 AI 能力分佈的 framing，呼應 [capability spectrum](/llm/knowledge-cards/capability-spectrum/) 對能力光譜的刻畫：**「AI 能做的任務」呈鋸齒狀分佈，而非按人類直覺的難易連續排列**——某些看起來簡單的任務 AI 容易壞、某些看起來複雜的任務 AI 反而做得好。原因是能力分佈跟訓練資料 / tokenizer / 推論機制相關、不跟人類直覺的「難易」對齊。
 
-## 概念位置
+## 跟其他概念的關係
 
 典型對照（2024-2025 觀察、會隨模型升級漂移）：
 
@@ -21,7 +21,7 @@ Jagged frontier（鋸齒狀邊界、HBS / UPenn / Wharton BCG 顧問研究、202
 
 各失敗的機制各不相同：算術靠符號操作 + tokenizer 把數字切碎、計數跟 attention 機制不對盤、冷僻格式不在訓練分佈中、URL [hallucination](/llm/knowledge-cards/hallucination/) 是模型分辨不了「真實 vs 看起來合理」。Reasoning model + tool use 普及後 frontier 會移動、表的價值在 framing「不規則」、不是具體 4 個 case 當定論。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 AI 應用設計文章看到「jagged frontier」「AI capability boundary」「falling asleep at the wheel」就是這個 framing。設計判讀：
 

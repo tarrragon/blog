@@ -8,7 +8,7 @@ weight: 440
 
 Threat model 的核心概念是「把系統攤成資產、邊界與攻擊者能力，讓風險的位置可以逐項列舉，而不是靠印象判斷哪裡危險」。它是列舉框架，產出的是一張「哪個資產在哪條邊界上、面對什麼能力的攻擊者」的對照，具體的濫用情境由 [abuse case](/backend/knowledge-cards/abuse-case/) 承接。 可先對照 [Trust Boundary](/backend/knowledge-cards/trust-boundary/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Threat model 位在 [attack surface](/backend/knowledge-cards/attack-surface/)、[trust boundary](/backend/knowledge-cards/trust-boundary/) 與 [abuse case](/backend/knowledge-cards/abuse-case/) 之間，三者的分工是問題不同：attack surface 問「哪裡先被看見」，trust boundary 問「哪裡開始不能沿用前一段的驗證」，threat model 問「誰會來、想拿什麼、能做到什麼程度」。列舉的結果會分配到 [authentication](/backend/knowledge-cards/authentication/)、[authorization](/backend/knowledge-cards/authorization/)、[data classification](/backend/knowledge-cards/data-classification/) 與 [defense in depth](/backend/knowledge-cards/defense-in-depth/) 各自承接。
 
@@ -20,6 +20,6 @@ Threat model 位在 [attack surface](/backend/knowledge-cards/attack-surface/)�
 
 一個實際的形態是端對端加密的設計討論：模型要先寫下攻擊者是誰（拿到伺服器儲存的人、拿到傳輸中的人、拿到客戶端裝置的人），三個假設對應的金鑰位置完全不同，而在假設寫下來之前，任何原語選擇都無法被驗證是否對準風險。這條推導在 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 展開。
 
-## 設計責任
+## 判斷條件與後果
 
 Threat model 要交出資產清單、邊界清單、攻擊者能力假設，以及每個假設對應的控制意圖。它的責任是讓風險的位置可列舉、可複查、可在條件變化時重跑；模型本身不提供保證，同一份模型在攻擊者能力假設更新之後就要重新走一次。模型的產出接 [7.21 資安如何成為服務設計輸入](/backend/07-security-data-protection/security-as-service-design-input/) 的設計輸入欄位，濫用情境的細節交給 [abuse case](/backend/knowledge-cards/abuse-case/)。

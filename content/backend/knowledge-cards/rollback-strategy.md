@@ -8,7 +8,7 @@ weight: 156
 
 Rollback strategy 的核心概念是「在事故期間用可驗證條件決定是否回滾」。回滾是根據影響面、資料風險與回復速度做出的風險控制決策，當成預設答案會忽略回滾本身的代價。 可先對照 [Incident Severity](/backend/knowledge-cards/incident-severity/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 回滾策略連接 [incident severity](/backend/knowledge-cards/incident-severity/)、[blast radius](/backend/knowledge-cards/blast-radius/)、[cutover / switchover](/backend/knowledge-cards/cutover-switchover/) 與 [fallback plan](/backend/knowledge-cards/fallback-plan/)；是否放行變更則會受 [Release Gate](/backend/knowledge-cards/release-gate/) 影響，而實際可行性則應由 [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/) 驗證。
 
@@ -16,6 +16,6 @@ Rollback strategy 的核心概念是「在事故期間用可驗證條件決定�
 
 系統需要 rollback strategy 的訊號是新版本上線後出現錯誤率上升。若回滾可在 5 分鐘內顯著降低使用者影響，通常優先回滾，再在低風險環境分析根因。
 
-## 設計責任
+## 判斷條件與後果
 
 回滾策略要定義觸發條件、資料相容性檢查、回滾步驟、停止條件與回滾後驗證。高風險變更應在發版前先演練回滾流程。

@@ -8,7 +8,7 @@ weight: 113
 
 BOLA / IDOR 的核心概念是「使用者透過修改物件 ID 存取未授權資源」。BOLA 是 Broken Object Level Authorization；IDOR 是 Insecure Direct Object Reference。 可先對照 [BOPLA](/backend/knowledge-cards/bopla/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 BOLA 是 API 安全中常見的授權問題。Authentication 只能確認呼叫者身份；每次讀寫訂單、檔案、帳戶、發票或 tenant 資源時，仍要檢查該身份是否能操作該物件。 可先對照 [BOPLA](/backend/knowledge-cards/bopla/)。
 
@@ -16,6 +16,6 @@ BOLA 是 API 安全中常見的授權問題。Authentication 只能確認呼叫�
 
 系統需要 BOLA 防護的訊號是 API path 或 body 中包含資源 ID。使用者把 `/orders/1001` 改成 `/orders/1002` 時，系統必須確認 1002 是否屬於該使用者或其 tenant。
 
-## 設計責任
+## 判斷條件與後果
 
 BOLA 防護要在 usecase 或 policy 層檢查 resource ownership、tenant boundary 與角色權限。測試要覆蓋跨使用者、跨 tenant、低權限操作與猜測 ID。

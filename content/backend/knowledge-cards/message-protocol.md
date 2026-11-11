@@ -8,7 +8,7 @@ weight: 1
 
 Message Protocol 的核心概念是「producer 與 consumer 對訊息格式、處理順序與失敗結果達成一致」。 可先對照 [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Message Protocol 位在 producer、broker 與 consumer 之間。它適用於 queue、stream 與事件傳遞。 可先對照 [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)。
 
@@ -20,6 +20,6 @@ Message Protocol 位在 producer、broker 與 consumer 之間。它適用於 que
 
 訂單事件、付款事件、通知事件與分析事件都需要 message protocol。消息格式變更時，producer 與 consumer 都要能解讀版本演進。
 
-## 設計責任
+## 判斷條件與後果
 
 Message Protocol 要定義欄位結構、版本相容、錯誤處理與重播安全。它與 queue contract 不同，前者偏向資料交換語意，後者偏向交付保證。

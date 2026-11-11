@@ -8,7 +8,7 @@ tags: ["backend", "database", "security", "knowledge-card"]
 
 SQL 注入（SQL injection）是使用者輸入的內容被資料庫當成 SQL 的一部分執行。成因只有一種：程式把值拼進 SQL 的字串裡，值裡的引號與關鍵字就和 SQL 的文字混在一起，資料庫分不出哪一段是程式寫的、哪一段是使用者送的。防範方式是用佔位符（placeholder）把值交給驅動處理，各語言的資料存取工具都有這個機制（各類工具的分層見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)），常和 [Prepared Statement](/backend/knowledge-cards/prepared-statement/) 一起出現。
 
-## 概念位置
+## 跟其他概念的關係
 
 ```go
 // 值拼進字串：email 若是 ' OR '1'='1，WHERE 條件永遠成立，查詢回傳整張表
@@ -38,6 +38,6 @@ cur.execute("SELECT * FROM customers WHERE email = %s", (email,))
 - 預存程序或資料庫函式裡用字串串接組出 `EXECUTE` 的 SQL，應用程式端用了佔位符也擋不住；PostgreSQL 改用 `EXECUTE ... USING` 傳值，識別字用 `format('%I', ...)`。
 - 錯誤訊息或資料庫的語句記錄裡出現語法錯誤，而觸發它的輸入含有引號，是有地方在拼字串的訊號。
 
-## 設計責任
+## 判斷條件與後果
 
 審查資料存取的程式碼時，找出每一個 SQL 字串是怎麼組出來的：值一律走佔位符；必須動態的識別字一律走白名單。注入的後果不限於讀出別人的資料，也包括改寫或刪除整張表，越權查詢與資料外洩路徑的判讀見 [1.5 攻擊者視角（紅隊）：資料層弱點判讀](/backend/01-database/red-team-data-layer/)。

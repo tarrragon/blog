@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/terraform-plan-apply/"]
 
 `terraform plan` 和 `terraform apply` 是 Terraform 操作基礎設施的兩個核心指令。plan 比對三方（[state](/devops/infra/knowledge-cards/state/) 檔、雲端現況、HCL 描述）產出差異報告，告訴使用者「如果 apply 會發生什麼」，但不做任何改動。apply 執行 plan 算出的差異，在雲端建立、修改或刪除資源。
 
-## 概念位置
+## 跟其他概念的關係
 
 plan/apply 的分離是 [IaC](/devops/infra/knowledge-cards/iac/) 可審查性的基礎。模組七（PR 流程）的核心機制就是「PR 觸發 plan → plan 結果貼回 PR → reviewer 看 plan 再決定要不要 apply」。這個「先看再動」的流程跟手動操作（直接在 Console 改）的根本差別。
 
@@ -17,7 +17,7 @@ plan/apply 的分離是 [IaC](/devops/infra/knowledge-cards/iac/) 可審查性�
 
 需要理解 plan/apply 的情境包括：第一次跑 Terraform、review 別人的 infra PR（看 plan 輸出）、排查 drift（plan 在沒有 code 變更的情況下顯示差異）、或決定一次 apply 是否安全。
 
-## 設計責任
+## 判斷條件與後果
 
 plan 輸出的三種動作標記：
 

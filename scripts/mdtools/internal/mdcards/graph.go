@@ -6,7 +6,7 @@
 // Checks (per content/posts/markdown-writing-spec.md §5):
 //   - L1 link validity: every relative link resolves to an existing file.
 //   - L2 orphan detection: every card has ≥ 1 inbound edge from non-card content.
-//   - L4 K4 structure: a card's first paragraph and "概念位置" section
+//   - L4 K4 structure: a card's first paragraph and "跟其他概念的關係" section
 //                      each contain ≥ 1 adjacent-card link.
 //   - L6 index registration: every card is listed in its own directory
 //                      index, so it is reachable by browsing and not

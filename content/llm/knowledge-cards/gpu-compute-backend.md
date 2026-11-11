@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "hardware", "gpu", "cuda", "rocm"]
 
 GPU compute backend 的核心概念是「推論軟體（如 llama.cpp、PyTorch，常被 [推論伺服器](/llm/knowledge-cards/inference-server/) 封裝）跟 GPU 之間的計算 API 抽象層」。不同廠商 GPU 對應不同 backend、同一推論軟體通常要為每個 backend 編譯獨立 build。選對 backend 直接影響 GPU 算力能否被有效利用。
 
-## 概念位置
+## 跟其他概念的關係
 
 各家 GPU 對應的常見 backend（2026 年 5 月狀態、依社群實踐變化）：
 
@@ -26,7 +26,7 @@ GPU compute backend 的核心概念是「推論軟體（如 llama.cpp、PyTorch�
 
 > **事實查核註**：上表的「llama.cpp 生態成熟度」是社群常見回報、不是經本卡系統實測的 benchmark；各 backend 的支援度跟 throughput 依推論軟體版本快速演進、引用前以對應 backend 的官方文件跟 [llama.cpp release notes](https://github.com/ggml-org/llama.cpp/releases) 為準。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 GPU compute backend 後可以解釋三個現象：為什麼下載 llama.cpp release 要選 CUDA / ROCm / Vulkan 版本（每個 build 對應一種 backend）、為什麼同樣硬體 throughput 差很多（backend 不對或 fallback 到 CPU）、為什麼非 NVIDIA GPU 跑 LLM 經驗較少（CUDA 生態太成熟、其他 backend 仍在演進）。
 

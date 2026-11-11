@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "training", "math"]
 
 Cross-entropy（交叉熵）的核心概念是「衡量兩個機率分佈的距離」。LLM 預訓練的標準 [loss function](/llm/knowledge-cards/loss-function/) 是 cross-entropy：對每個 token、把模型預測的 vocab 機率分佈跟「真實答案是 one-hot 分佈」做 cross-entropy、加總。
 
-## 概念位置
+## 跟其他概念的關係
 
 Cross-entropy 在 next-token prediction 訓練裡的具體計算：
 
@@ -30,6 +30,6 @@ cross-entropy = -sum(y_i × log(p_i))
 | [KL divergence](/llm/knowledge-cards/kl-divergence/) | Cross-entropy = entropy(真實) + KL(真實 ‖ 預測)、訓練時 entropy 是常數、所以 minimize cross-entropy 等於 minimize KL |
 | [Softmax](/llm/knowledge-cards/softmax/)             | Cross-entropy 通常吃 softmax 的輸出當「預測機率」                                                                    |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 LLM 訓練 / paper 時看到「training loss」幾乎都是 cross-entropy。實務判讀：cross-entropy 直接代表「模型對真實 token 的預測機率有多差」、loss = 2 大致對應「真實 token 被預測機率 ≈ 0.135」（exp(-2)）。模型在 pretrain 階段 cross-entropy 從約 11（純隨機）降到約 2-3（成熟模型）、SFT 階段再略降。

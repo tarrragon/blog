@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/image-digest/"]
 
 Image Digest 的核心概念是「用內容雜湊識別不可變 image」。它補足 [Container Registry](/devops/ci/knowledge-cards/container-registry/) 的命名治理，讓 [Artifact Handoff](/devops/ci/knowledge-cards/artifact-handoff/) 可以鎖定精準產物。
 
-## 概念位置
+## 跟其他概念的關係
 
 Image Digest 位在 image build、scan、[registry](/devops/ci/knowledge-cards/container-registry/) promotion 與 runtime deploy 之間，通常以 `sha256:...` 形式標識 image manifest 或 image index。
 
@@ -23,6 +23,6 @@ Image Digest 位在 image build、scan、[registry](/devops/ci/knowledge-cards/c
 
 CI build image 後推到 registry，scan 報告綁定 digest。Kubernetes manifest 在 production 使用同一個 digest，事故時可從 running pod 反查 workflow run 與 source commit。
 
-## 設計責任
+## 判斷條件與後果
 
 Image Digest 要納入 deployment manifest、scan report、release note 與 rollback 記錄，讓 image 發布具備可追溯與可審計能力。

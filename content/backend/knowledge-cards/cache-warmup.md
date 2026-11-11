@@ -8,7 +8,7 @@ weight: 91
 
 Cache warmup 的核心概念是「在正式流量大量進入前預先載入快取」。它降低 cold start 與 cache miss 對下游造成的尖峰壓力。 可先對照 [Cascading Failure](/backend/knowledge-cards/cascading-failure/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Warmup 是快取與部署流程的交界。新 instance、Redis 清空、熱門活動開始或版本切換時，快取可能是空的；warmup 可以先建立高價值資料。 可先對照 [Cascading Failure](/backend/knowledge-cards/cascading-failure/)。
 
@@ -16,6 +16,6 @@ Warmup 是快取與部署流程的交界。新 instance、Redis 清空、熱門�
 
 系統需要 warmup 的訊號是部署後前幾分鐘 latency 升高，或活動開始時資料庫突然被打滿。大型促銷前，可以預先載入熱門商品、價格與庫存摘要。
 
-## 設計責任
+## 判斷條件與後果
 
 Warmup 要定義資料來源、載入順序、速率限制、失敗行為與 readiness 關係。Warmup 本身也會產生下游流量，因此要納入容量規劃。

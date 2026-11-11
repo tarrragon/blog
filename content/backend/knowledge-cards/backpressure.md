@@ -8,7 +8,7 @@ weight: 28
 
 Backpressure 的核心概念是「下游處理能力不足時，讓上游感知並放慢」。它把上游從「盲目送出」轉為「依下游能力送出」，讓系統在壓力下排隊、拒絕、降級或削峰，以保護下游資源並維持整體可預測性。Backpressure 的本質是「壓力從下游往上游傳遞」的訊號通道，覆蓋範圍比單純的拒絕策略更廣。 可先對照 [In-Process Channel](/backend/knowledge-cards/in-process-channel/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Backpressure 出現在 [in-process channel](/backend/knowledge-cards/in-process-channel/)、[queue](/backend/knowledge-cards/queue/)、[worker pool](/backend/knowledge-cards/worker-pool/)、[HTTP client](/backend/knowledge-cards/http-client/)、[connection pool](/backend/knowledge-cards/connection-pool/)、[broker](/backend/knowledge-cards/broker/) 的 [consumer](/backend/knowledge-cards/consumer/) 與 [stream pipeline](/backend/knowledge-cards/stream-pipeline/)。它處理的是速度不匹配：進入速度高於處理速度。
 
@@ -22,7 +22,7 @@ Backpressure 與 [rate limit](/backend/knowledge-cards/rate-limit/) 的差別在
 
 通知服務在行銷活動期間收到大量派送任務。若任務直接交給 worker 處理，worker 很快會塞滿下游第三方 API 的連線配額，latency 暴增、重試加倍，最終把佇列塞爆。導入 backpressure 後，服務依下游 API 實際吞吐動態調整 worker 取件速度：API 回應變慢時 worker 取件速度自動下降，上游請求端收到「任務已接收但延後送達」的回覆。整條 pipeline 的處理速度由最慢的一段決定，系統保留在可預測、可恢復的狀態。
 
-## 設計責任
+## 判斷條件與後果
 
 Backpressure 導入後，團隊需要定義以下邊界：[buffer](/backend/knowledge-cards/buffer/) 大小、排隊上限、等待期限、拒絕策略、[retry policy](/backend/knowledge-cards/retry-policy/)、[load shedding](/backend/knowledge-cards/load-shedding/) 與對使用者的回饋（429 / 503 / 延後通知）。觀測上應能看到 [queue depth](/backend/knowledge-cards/queue-depth/)、in-flight 數量、處理耗時、drop count、[timeout](/backend/knowledge-cards/timeout/)、下游 error rate，並把關鍵指標放進 [dashboard](/backend/knowledge-cards/dashboard/)。
 
@@ -35,7 +35,7 @@ codex-check:
   C1-intent: pass
   C2-atomic: pass (聚焦 backpressure 本身，相鄰概念皆以連結引用)
   C3-business-first: pass (定義段落說明要解決的問題)
-  C4-reasoning-path: pass (概念位置 → 訊號 → 例子 → 設計責任)
+  C4-reasoning-path: pass (跟其他概念的關係 → 訊號 → 例子 → 判斷條件與後果)
   C5-searchable: pass (關鍵詞 backpressure / buffer / queue depth 皆 grep 友善)
   C6-positive-framing: pass (「避免」僅用於安全警示語境，屬正面表述例外（物理限制、安全警示、反模式對照）)
   C7-source-verified: pass

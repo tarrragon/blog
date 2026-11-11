@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "reasoning", "inference"]
 
 Test-time compute（推論時計算）的核心概念是「**在推論階段花更多計算量、換取更高品質的答案**」、不是只在訓練時投入算力。是 2024-2026 LLM 的 paradigm shift：GPT-3 → GPT-4 主要靠「更大模型 + 更多訓練資料」；o1 / DeepSeek-R1 等 [reasoning model](/llm/knowledge-cards/reasoning-model/) → 主要靠「同模型、推論時想更久」。
 
-## 概念位置
+## 跟其他概念的關係
 
 LLM 算力分配的兩條軸：
 
@@ -37,7 +37,7 @@ Test-time compute 的常見實作形式：
 
 DeepSeek-R1 paper 顯示「reasoning trace 長度跟 benchmark 表現正相關、可透過 RL 拉長」— 把 test-time compute 變成可訓練、可 scale 的維度。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 paper / benchmark 看到「pass@1 vs pass@10」「budget tokens」「thinking time」等就跟 test-time compute 相關。寫 code 場景的判讀：
 

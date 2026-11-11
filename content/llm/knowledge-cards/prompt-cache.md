@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "inference-optimization", "cost"]
 
 Prompt cache 的核心概念是「**LLM 服務端 / 推論伺服器把重複出現的 prompt prefix（如 system prompt + tool schema）的 [KV cache](/llm/knowledge-cards/kv-cache/) 暫存起來、後續 query 跳過該 prefix 的 [prefill](/llm/knowledge-cards/prefill/) 階段**」。Anthropic / OpenAI / Bedrock / Gemini 都提供、最高 90% cost 折扣 + 13-31% [TTFT](/llm/knowledge-cards/ttft/) 改善、是 coding agent / long-context 應用的核心 cost / latency 槓桿。
 
-## 概念位置
+## 跟其他概念的關係
 
 跟既有 cache 概念的層次：
 
@@ -29,7 +29,7 @@ Prompt cache 的「保留範圍」跟「定價」是商業 LLM 的 product featu
 
 > **事實查核註**：定價跟 TTL 隨時間更新、引用前以對應 vendor 當前文件為準。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 LLM API docs / coding agent 設計 / cost optimization blog 看到「prompt cache」「context caching」「cache_control」就是這機制。寫 code 場景的判讀：
 

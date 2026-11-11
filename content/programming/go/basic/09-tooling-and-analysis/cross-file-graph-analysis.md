@@ -190,7 +190,7 @@ func checkL2Orphans(g *Graph, cardsRoot string) []report.Violation {
 
 ## L4：AST 跟 Graph 混用
 
-這條規則複雜：「卡片的首段跟『概念位置』section 都要各有至少一個鄰卡連結」。要用 graph 抓候選，再用 AST 精確判讀在哪個 paragraph / section 內。
+這條規則複雜：「卡片的首段跟『跟其他概念的關係』section 都要各有至少一個鄰卡連結」（段名由參數 `conceptHeadingTitle` 帶入，設定在 `config.go`）。要用 graph 抓候選，再用 AST 精確判讀在哪個 paragraph / section 內。
 
 ```go
 // scripts/mdtools/internal/mdcards/l4.go
@@ -217,7 +217,7 @@ func checkL4K4Structure(g *Graph, cardsRoot, conceptHeadingTitle string) []repor
 				Path:    fn.Path,
 				Rule:    "L4-missing-concept-position",
 				Level:   report.LevelWarn,
-				Message: "card missing 概念位置 section",
+				Message: fmt.Sprintf("card is missing the %q section", conceptHeadingTitle),
 			})
 			continue
 		}

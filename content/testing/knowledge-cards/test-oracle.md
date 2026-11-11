@@ -8,7 +8,7 @@ tags: ["testing", "test-oracle", "assertion", "verification"]
 
 Test oracle 是測試判定「這次執行算通過還是算失敗」所依據的判斷標準來源。斷言只是 oracle 的表達形式，真正的問題是那個預期值從哪裡取得——取得的路徑決定這個測試能發現什麼。規格給的 oracle 抓得出實作偏離需求；[characterization test](/testing/knowledge-cards/characterization-test/) 用現狀當 oracle，只抓得出行為改變；而 [stub](/testing/knowledge-cards/stub/) 餵進去的資料若同時也是斷言的依據，這個測試沒有 oracle 可言，它驗證的是自己寫下的假設。
 
-## 概念位置
+## 跟其他概念的關係
 
 測試三層（unit / [protocol integration](/testing/knowledge-cards/protocol-integration-test/) / [screen state](/testing/knowledge-cards/screen-state-test/)）回答的是驗證發生在哪一層，oracle 回答的是憑什麼判定，兩者正交：同一層的兩個測試可以有完全不同的 oracle，而 oracle 決定了紅燈的意義。
 
@@ -29,7 +29,7 @@ Oracle problem 指的是被測對象沒有可直接取得的預期輸出這個�
 
 另一種訊號來自紅燈的歧義：一個測試變紅時如果分不出「這代表行為改了」還是「這代表行為不對」，通常是同一個檔案裡混用了規格 oracle 與現狀 oracle。
 
-## 設計責任
+## 判斷條件與後果
 
 每個測試的作者要能指出預期值是從哪裡取得的。指不出來時最常見的實情是預期值取自實作的執行結果——先跑一次、把印出來的值貼進斷言，那是用實作驗證實作，不是驗證。這個退化在測試與實作由同一次生成產出時是預設會發生的事，判定方式見 [test provenance](/testing/knowledge-cards/test-provenance/)。
 

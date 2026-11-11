@@ -9,7 +9,7 @@ tags: ["sql", "aggregate", "group-by", "knowledge-card"]
 
 Aggregate function 把一組列收成一個值：`count` 數幾列、`sum` 加總、`avg` 取平均、`max` 與 `min` 取極值。它的輸入是一組列，輸出是一個值——這個形狀決定了它能寫在哪裡，也決定了它在 [outer join](/backend/01-database/sql/knowledge-cards/outer-join/) 之後為什麼容易算錯。
 
-## 概念位置
+## 跟其他概念的關係
 
 **「一組」是由 `GROUP BY` 的鍵決定的，所以聚合要等到分組發生之後才有意義。** 這解釋了一個看起來像限制的行為：聚合寫進 `WHERE` 會被拒絕，因為那一步分組還沒發生，沒有組就沒有組的計數。同一件事寫進 `HAVING` 通過，因為那一步分組已經完成。
 
@@ -19,7 +19,7 @@ Aggregate function 把一組列收成一個值：`count` 數幾列、`sum` 加�
 
 `count(*)` 與 `count(欄位)` 數的不是同一件事：前者數列，後者只數那一欄有值的列。書店的兩張訂單接上評價之後有三列，而其中一列的星等是空的，於是 `count(*)` 回 3、`count(評價.星等)` 回 2。差額就是空缺的數量（見 [NULL](/backend/01-database/sql/knowledge-cards/null/)）。
 
-## 設計責任
+## 判斷條件與後果
 
 **連接之後做聚合，算的是連接結果的列，不是來源表的列。** 一列配到多列就被複製一次，所以 `count` 會多、`sum` 會重複加。
 

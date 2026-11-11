@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "hardware", "memory"]
 
 VRAM（Video RAM）的核心概念是「顯卡晶片上的高速記憶體、跟系統主機板上的 RAM 是物理上獨立的兩塊預算」。獨立 GPU 場景下、模型權重要載入 VRAM 才能用 GPU 高速計算；VRAM 容量直接決定能跑多大模型。跟 Apple Silicon 的 [統一記憶體](/llm/knowledge-cards/unified-memory/) 不同、PC 上 VRAM 跟系統 RAM 兩塊預算要分開規劃。
 
-## 概念位置
+## 跟其他概念的關係
 
 VRAM 同時影響「能載入什麼」跟「跑多快」兩個維度：
 
@@ -29,7 +29,7 @@ VRAM 容量是選 GPU 跑本地 LLM 的第一決策軸、頻寬是第二決策�
 
 > **事實查核註**：上表是 2026 年 5 月主流消費級 NVIDIA GPU 規格的數量級對照、實際 VRAM 容量、頻寬、GDDR 版本依特定型號、廠商 / SKU、製造時間變化、引用前以 [NVIDIA 官方規格頁](https://www.nvidia.com/en-us/geforce/graphics-cards/) 為準。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 VRAM 後可以解釋三個現象：為什麼同樣 16GB 容量、不同卡的生字速度差很多（頻寬不同）；為什麼 MoE 模型在 16GB VRAM 上跑得了 30B 級模型（透過卸載）；為什麼 [PCIe](/llm/knowledge-cards/pcie/) 頻寬在 PC 場景影響 MoE 卸載的速度（系統 RAM 跟 VRAM 之間的橋）。
 

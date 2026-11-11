@@ -8,7 +8,7 @@ tags: ["business", "knowledge-cards", "financial-analysis"]
 
 Capex（Capital Expenditure，資本支出）是企業為了未來營收而投入的長期資產支出——建廠、買設備、併購、系統建置。跟日常營業費用（OpEx）的差別：OpEx 當期消耗完畢，capex 的效益延伸多年但需要[折舊攤銷](/business/knowledge-cards/depreciation-amortization/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Capex 是追蹤企業策略意圖最直接的財報工具——管理層的法說會敘事可能模糊或樂觀，但錢投在哪裡騙不了人。當一間公司口說「食品轉型」但 capex 持續加碼飼料產能，行動跟敘事不一致。跟[自由現金流](/business/knowledge-cards/free-cash-flow/)直接連動：FCF = 營業現金流 - Capex。Capex 過高會壓縮可配發的股利和可用於併購的餘裕。
 

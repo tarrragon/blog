@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/preview-environment/"]
 
 Preview Environment 的核心概念是「在合併前提供接近正式環境的可驗證入口」，補強 [CI Pipeline](/devops/ci/knowledge-cards/ci-pipeline/) 的靜態檢查。它把 code review 從靜態 diff 延伸到真實互動行為。
 
-## 概念位置
+## 跟其他概念的關係
 
 Preview Environment 位在 pull request workflow 與[正式部署流程](/devops/ci/knowledge-cards/cd-pipeline/)之間，常由臨時 URL、隔離資源與到期清理組成。
 
@@ -23,6 +23,6 @@ Preview Environment 位在 pull request workflow 與[正式部署流程](/devops
 
 前端 PR 自動建 preview URL 給 reviewer 驗證。後端則可能建立 review app 供 API 與整合測試使用。
 
-## 設計責任
+## 判斷條件與後果
 
 Preview Environment 要定義建立條件、資源上限、可見範圍與清理策略，避免成本與風險失控。

@@ -8,7 +8,7 @@ tags: ["backend", "database", "transaction", "knowledge-card"]
 
 交易傳遞（transaction propagation）處理兩件事：一個在某處開始的 [Transaction](/backend/knowledge-cards/transaction/)，怎麼讓後續每一個資料存取呼叫都跑在它裡面；以及一個「自己需要交易」的函式在已經有交易的地方被呼叫時，要加入那個交易、另開一個，還是在裡面設一個儲存點（savepoint）。哪些寫入該放進同一個交易是 [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/) 決定的；交易傳遞是把那個邊界落實到程式碼的機制。Java 的 Spring 把巢狀呼叫時的這幾個選項取了名字（`REQUIRED` 加入既有交易、`REQUIRES_NEW` 另開一個、`NESTED` 用儲存點），英文資料多半沿用這組詞。
 
-## 概念位置
+## 跟其他概念的關係
 
 交易屬於一條資料庫連線，所以「怎麼傳」取決於程式碼裡的資料存取呼叫怎麼拿到連線：
 
@@ -23,6 +23,6 @@ tags: ["backend", "database", "transaction", "knowledge-card"]
 - **交易裡的某個查詢卡到逾時**（明確傳遞的語言才有）：交易先 `UPDATE` 了某一張訂單（拿到這一列的鎖），接著程式誤用連線池上的 `db` 再更新同一列。這個誤用的 `UPDATE` 在另一條連線上等那把鎖，而鎖要等交易結束才釋放，交易又在等這個 `UPDATE` 回來。資料庫看到的只是一條連線在等另一條閒置中的交易，不構成它能偵測的死結，所以不會報錯；實測要等到 context 的逾時（`timeout: context deadline exceeded`）才結束；在連線上設 PostgreSQL 的 `lock_timeout`，可以讓等鎖的語句提早失敗，錯誤訊息直接指出是在等鎖。連線池上限是 1 時，誤用的 `db` 連一條連線都借不到，同樣等到逾時。
 - **同一個交易的語句出現在不同連線上**：PostgreSQL 的 `log_line_prefix` 加上 `%p`（後端程序 ID）之後，同一個交易該有的語句出現在兩個不同的 ID 底下。
 
-## 設計責任
+## 判斷條件與後果
 
 一個專案只用一種傳遞方式，並且寫進 repository 的簽章：參數傳遞就讓每個方法都收交易或連線的介面，放進 `context` 就讓每個 repository 都從同一個 key 取。隱含傳遞的框架要注意的是相反的情形：需要獨立提交的寫入（例如交易失敗也要留下的稽核紀錄）要明確用另一條連線或在交易外寫。巢狀呼叫時用儲存點還是加入外層交易，各框架的預設不同，跨框架移植程式時要重新確認。

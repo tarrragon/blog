@@ -8,10 +8,10 @@ weight: 164
 
 Fuzz test 的核心概念是「用大量變異輸入找出非預期崩潰與解析漏洞」。它特別適合 parser、協議處理與輸入邊界驗證。 可先對照 [Game Day](/backend/knowledge-cards/game-day/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 這張卡位在 [Game Day](/backend/knowledge-cards/game-day/) 附近，可和它一起看。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義輸入範圍、崩潰判定與回歸樣本保留，確保問題可重現與可修復。

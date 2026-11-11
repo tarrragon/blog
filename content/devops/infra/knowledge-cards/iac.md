@@ -11,7 +11,7 @@ Infrastructure as Code（IaC）的核心概念是用版本控制的程式碼描�
 
 IaC 工具分兩條路線：宣告式 DSL（Terraform / OpenTofu，用 [HCL](/devops/infra/knowledge-cards/hcl/) 描述資源）與程式語言（AWS CDK / Pulumi，用 TypeScript / Python / Go 生成資源）。兩者都能達成「用程式碼描述、由工具收斂」的目標，差別在閱讀門檻與抽象能力。
 
-## 概念位置
+## 跟其他概念的關係
 
 IaC 是 infra 系列的根概念，貫穿所有模組。[成熟度階梯](/devops/infra/00-infra-mindset/infra-responsibility-maturity/)的第二階（宣告式 IaC）是 IaC 正式生效的起點，第三階（[環境分離](/devops/infra/knowledge-cards/environment-separation/)）和第四階（PR 流程治理）都建立在 IaC 之上。沒有 IaC，後續所有模組的能力都無法落地。
 
@@ -19,7 +19,7 @@ IaC 是 infra 系列的根概念，貫穿所有模組。[成熟度階梯](/devop
 
 需要 IaC 的訊號是規模與協作的函數：環境數量超過一套、多人同時改資源、環境事故頻率上升、外部稽核要求變更紀錄。詳見[模組負一：該開始導入 IaC 的訊號](/devops/infra/before-infra/manual-environment-baseline/)。
 
-## 設計責任
+## 判斷條件與後果
 
 IaC 要讓程式碼成為基礎設施的 source of truth，採用時的決定分別處理程式碼用什麼寫、state 放在哪裡、誰還能繞過程式碼直接改、以及哪些資源先納管：
 

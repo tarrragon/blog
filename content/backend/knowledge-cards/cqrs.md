@@ -8,7 +8,7 @@ tags: ["backend", "architecture"]
 
 CQRS（Command Query Responsibility Segregation）的核心概念是「把寫入路徑跟讀取路徑拆成各自獨立的模型，各自依自身需求最佳化」。分離後讀取面的具體產物是 [read model](/backend/knowledge-cards/read-model/)。它處理的根本問題是讀寫不對稱 — 同一份資料的寫入形狀跟讀取形狀不同、寫入頻率跟讀取頻率不同、寫入 SLA 跟讀取 SLA 不同。
 
-## 概念位置
+## 跟其他概念的關係
 
 CQRS 是一種架構分離策略，位於資料存取模式的設計層。它跟 [read model](/backend/knowledge-cards/read-model/) 的關係是：CQRS 是分離的決策框架，read model 是分離之後「讀取面」的具體產物。
 

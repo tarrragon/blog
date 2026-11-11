@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/cloudtrail/"]
 
 CloudTrail 的核心職責是把 AWS 帳號內每一個 API 呼叫記錄成可查詢的稽核日誌 — 哪個身分、在什麼時間、對哪個資源、呼叫了哪個 API、結果是成功還是拒絕。它是事故排查和合規稽核的事實來源，記錄的「身分」對應 [IAM](/devops/infra/knowledge-cards/iam/) 裡的 identity。
 
-## 概念位置
+## 跟其他概念的關係
 
 CloudTrail 在 infra 治理裡的角色是「發生了什麼」的最後防線。人工變更日誌記錄「為什麼改」，CloudTrail 記錄「改了什麼」— 兩者一起才能從事故回推到可回退的操作。
 
@@ -23,7 +23,7 @@ CloudTrail 預設記錄 management event（建立、修改、刪除資源的 API
 - 安全稽核要求提供「過去 90 天內所有 IAM policy 變更的紀錄」— CloudTrail 是標準的證據來源
 - 發現不預期的資源變更（drift），需要確認是人為操作還是自動化觸發 — CloudTrail 的 `userIdentity` 欄位區分人類使用者和 assume-role 的服務
 
-## 設計責任
+## 判斷條件與後果
 
 事故排查或稽核要調閱紀錄的時候，CloudTrail 得拿得出涵蓋那段期間與那類操作的紀錄，而且內容保持寫入時的原樣；下面的設定分別影響這兩項條件：
 

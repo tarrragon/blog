@@ -8,10 +8,10 @@ weight: 153
 
 Rolling update 的核心概念是「逐批替換舊版本實例，維持服務持續可用」。它可降低一次性切換風險。 可先對照 [Readiness](/backend/knowledge-cards/readiness/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 常搭配 [readiness](/backend/knowledge-cards/readiness/)、[graceful shutdown](/backend/knowledge-cards/graceful-shutdown/) 與 [service discovery](/backend/knowledge-cards/service-discovery/)。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義每批比例、健康檢查門檻、回滾條件與流量切換節奏。

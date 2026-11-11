@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/deployment-dry-run/"]
 
 Deployment Dry Run 的核心概念是「在正式部署前預演關鍵步驟」。它讓流程在低風險條件下先驗證 [artifact](/devops/ci/knowledge-cards/artifact/)、權限與目標環境配置。
 
-## 概念位置
+## 跟其他概念的關係
 
 Deployment Dry Run 位在 build / test 完成後、production deploy 之前，通常以 preflight check、模擬發布或目標環境校驗實作，與 [Readiness / Health Check](/devops/ci/knowledge-cards/readiness-health-check/) 同屬部署放行前的驗證關卡。
 
@@ -23,6 +23,6 @@ Deployment Dry Run 位在 build / test 完成後、production deploy 之前，�
 
 部署腳本先驗證 artifact 存在、環境密鑰可讀、目標 bucket 或 registry 可寫，再進入正式 deploy。
 
-## 設計責任
+## 判斷條件與後果
 
 Deployment Dry Run 要定義檢查範圍、成功條件、失敗回饋與執行時機，並和正式部署命令保持一致語意。

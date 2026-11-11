@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "supply-chain", "model-trust"]
 
 Model card 的核心概念是「模型發布時附帶的 metadata 文件、列出模型的來源、訓練資料、預期用途、能力上限、已知限制跟授權條款」。Hugging Face 上每個 model repo 的 `README.md` 就是 model card；它是個人 dev 跟 production 場景下判讀「該不該用這個模型」的最主要資訊來源、也是評估 [model supply chain trust](/llm/knowledge-cards/model-supply-chain-trust/) 的第一手依據。
 
-## 概念位置
+## 跟其他概念的關係
 
 典型的 model card 包含哪些區段（依平台跟模型而異）：
 
@@ -25,7 +25,7 @@ Model card 的核心概念是「模型發布時附帶的 metadata 文件、列�
 
 > **事實查核註**：Hugging Face 推動 Model Card 規範跟 [Model Card Toolkit](https://github.com/huggingface/hub-docs)、但實際填寫品質依 organization 變化、部分 repo 的 model card 內容很簡略、不能 100% 依賴。引用前以該 repo 當前內容為準。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 model card 後可以解釋兩個現象：為什麼選模型不能只看名字（同個 base model 的不同 fine-tune 版本能力差很多）、為什麼商用前要看 license（Llama Community License、Apache 2.0、MIT 等差異大）。
 

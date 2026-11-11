@@ -8,7 +8,7 @@ weight: 129
 
 Container 的核心概念是「把應用程式與執行環境封裝成可交付單位」。它通常承載 application binary、runtime 依賴、config 與啟動命令。 可先對照 [Resource Limit](/backend/knowledge-cards/resource-limit/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Container 位在 build、deploy、runtime 與 platform 之間，是服務交付與資源限制的基本單位。 可先對照 [Resource Limit](/backend/knowledge-cards/resource-limit/)。
 
@@ -20,6 +20,6 @@ Container 位在 build、deploy、runtime 與 platform 之間，是服務交付�
 
 當服務要被放進 Kubernetes、CI pipeline 或 VM 上的標準化部署流程時，container 可以把 binary、system dependency 與啟動參數打包成固定形狀，降低環境差異。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義 image 內容（Dockerfile 指令與 layer 怎麼組見 [Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)）、啟動命令、[resource limit](/backend/knowledge-cards/resource-limit/) 與環境變數來源；image 用哪個 tag 凍結成固定形狀見 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/)。Container 是讓服務交付、擴容與回滾更一致的手段，目的在服務層面。一個系統該切成幾個 container（一服務一個、還是全塞一個）見 [一容器一職責](/backend/knowledge-cards/container-per-service/)。

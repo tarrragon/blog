@@ -8,7 +8,7 @@ weight: 86
 
 Correctness check 的核心概念是「用明確規則驗證新舊結果是否一致或可接受」。它不只比對字面相等，也要理解哪些差異符合預期，哪些差異代表資料錯誤。 可先對照 [Migration Gate](/backend/knowledge-cards/migration-gate/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Correctness check 是 migration、refactoring、shadow read、backfill 與 cutover 的決策依據。沒有正確性檢查，團隊只能憑錯誤率或使用者回報判斷新系統。 可先對照 [Migration Gate](/backend/knowledge-cards/migration-gate/)。
 
@@ -16,6 +16,6 @@ Correctness check 是 migration、refactoring、shadow read、backfill 與 cutov
 
 系統需要 correctness check 的訊號是新舊系統會並行一段時間。價格計算服務重寫後，要比對總價、折扣、稅額、幣別與 rounding 規則，而不只是比對 response 字串。
 
-## 設計責任
+## 判斷條件與後果
 
 Correctness check 要定義比對欄位、容忍差異、抽樣策略、錯誤分類與停止條件。高風險差異要能追到 request id、資料版本與規則版本，並作為 [Migration Gate](/backend/knowledge-cards/migration-gate/) 的依據。

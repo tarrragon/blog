@@ -8,7 +8,7 @@ tags: ["dotfile", "linux", "systemd", "logging", "knowledge-cards"]
 
 journald（程式名是 `systemd-journald`）是 systemd 的紀錄收集服務：每個 systemd 服務寫到標準輸出與標準錯誤的內容、程式經由 syslog 介面送出的訊息、核心的訊息，都由它收下，加上服務名、程序 ID、開機編號、時間這些欄位，存成二進位的 journal 檔，再用 `journalctl` 依欄位查詢。它跟 [Ring Buffer（環狀緩衝區）](/linux/dotfile/knowledge-cards/ring-buffer-log/) 的差別在儲存：環狀緩衝區是固定大小、寫滿覆蓋的記憶體區塊，journald 寫的是檔案，靠設定的上限刪掉最舊的檔案。
 
-## 概念位置
+## 跟其他概念的關係
 
 journald 在一台主機的紀錄來源裡是預設的那一份：用 systemd 管的服務不必自己寫 log 檔，輸出就進了 journal。有裝 rsyslog 的發行版（Oracle Linux、RHEL 是這一種）另外從 journald 轉出一份文字檔到 `/var/log/messages`、`/var/log/secure`，這兩份文字檔由 [logrotate](/linux/dotfile/knowledge-cards/logrotate/) 輪替，journal 本身不經過 logrotate。長期上線的主機上 journal 存在哪裡、上限多少、要讀哪些欄位，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/devops/operations/09-host-lifecycle/long-running-host-maintenance/)〈journald 的紀錄存在記憶體還是磁碟〉；桌面主機上的讀法見 [日誌判讀與診斷工具](/linux/dotfile/07-desktop-maintenance/log-reading-diagnostic-tools/)。服務失敗時主動通知、而不是事後翻 journal，見 [systemd OnFailure（失敗觸發鉤子）](/linux/dotfile/knowledge-cards/systemd-onfailure/)。
 
@@ -19,7 +19,7 @@ journald 在一台主機的紀錄來源裡是預設的那一份：用 systemd �
 - 某個服務的紀錄裡出現 `Suppressed N messages from <服務>`：那個服務在一段時間內寫得太多，超過速率限制的部分被丟掉了。
 - `/var/log/journal` 目錄不存在：在 `Storage=auto` 的預設下，journal 只寫到 `/run/log/journal`。
 
-## 設計責任
+## 判斷條件與後果
 
 journald 的行為由 `/etc/systemd/journald.conf` 與 `/etc/systemd/journald.conf.d/*.conf` 決定，合併之後的值用 `systemd-analyze cat-config systemd/journald.conf` 讀；沒有寫出來的鍵取預設值，預設值要讀主機上那個版本的 `man journald.conf`，線上最新版的文件可能已經改了預設。下面的預設值取自 Oracle Linux 10 的 systemd 257 的 man page：
 

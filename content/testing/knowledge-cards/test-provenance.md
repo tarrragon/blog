@@ -10,7 +10,7 @@ tags: ["testing", "test-provenance", "ai-generated-code", "test-oracle"]
 
 代理會在兩個位置失準，記住它們就知道什麼時候不能只看出處：同源產出而判斷標準是一條從需求來的不變量時，驗證力仍在；獨立產出而寫測試那一方被餵了 API schema 時，判斷標準仍有一部分是推導來的。這跟 [stub](/testing/knowledge-cards/stub/) 那張卡描述的失效是同一個機制在不同層級的形態——stub 是餵資料的人同時寫斷言，出處問題是寫實作的人同時寫斷言。
 
-## 概念位置
+## 跟其他概念的關係
 
 出處是 [oracle 來源](/testing/knowledge-cards/test-oracle/)之外的第二個維度。同一個 oracle 類型可以有不同的出處：規格 oracle 由人寫規格、機器寫實作時獨立，由機器同時產出規格與實作時不獨立。測試三層（unit / [protocol integration](/testing/knowledge-cards/protocol-integration-test/) / [screen state](/testing/knowledge-cards/screen-state-test/)）對這個維度不作區分——分層決定驗證發生在哪，出處決定驗證是不是在照鏡子。
 
@@ -22,7 +22,7 @@ tags: ["testing", "test-provenance", "ai-generated-code", "test-oracle"]
 
 規格層的錯誤是這類測試的系統性盲區。危險處理順序寫反、狀態機少一個轉換、幣別換算方向顛倒——這些在實作與測試共用同一個誤解時全部通過，因為兩邊錯得一致。[mutation testing](/testing/knowledge-cards/mutation-testing/) 也發現不了它們，理由與突變的產生方式有關、在那張卡上。
 
-## 設計責任
+## 判斷條件與後果
 
 出處是可以被設計的，不是給定的：需求的來源、產出的順序、產出的主體、以及兩者之間的時間間隔，四者各自可動。四個變數的取捨、成本與操作方式在[判斷標準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)那一章展開。
 

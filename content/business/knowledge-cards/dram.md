@@ -8,7 +8,7 @@ tags: ["business", "knowledge-cards", "electronics", "supply-chain"]
 
 DRAM（Dynamic Random Access Memory，動態隨機存取記憶體）是電腦運行時暫存資料的記憶體晶片。CPU 或 GPU 處理資料時，先從儲存裝置（SSD/HDD）把資料搬進 DRAM，再從 DRAM 高速讀寫。DRAM 是揮發性記憶體——斷電後資料消失，跟儲存用的 NAND Flash（斷電保留資料）定位不同。手機、筆電、伺服器、AI 加速卡都需要 DRAM，是[大宗商品](/business/knowledge-cards/commodity-business/)特徵最明顯的半導體品類之一。
 
-## 概念位置
+## 跟其他概念的關係
 
 DRAM 產業是典型的寡占結構：三星、SK 海力士、美光三家合計全球市佔超過 95%。產品高度標準化（DDR4、DDR5 等規格由國際標準組織 JEDEC 統一制定），差異化極低，具大宗商品特徵——但寡占結構讓三家廠商在供給端有一定的產能紀律，景氣谷底會同步減產止血。
 
@@ -22,6 +22,6 @@ DRAM 合約價有活躍的週報市場（DRAMeXchange / TrendForce 每週報價�
 
 2023 年是典型的谷底年——三大廠同步減產，DRAM [ASP](/business/knowledge-cards/asp/) 跌幅超過 40%，三星記憶體事業出現罕見的季度虧損。2024 年隨 AI 需求拉動 HBM，傳統 DRAM 也因產能被擠壓而供給趨緊，價格反轉上漲。
 
-## 判讀方式
+## 判斷條件與後果
 
 DRAM 的 ASP 波動極大（一年內可以漲跌 50%+），營收成長可能完全來自漲價而非出貨量增加——前者是週期性的，後者才是結構性的。看一家記憶體廠的長期競爭力，看製程節點推進速度（每顆晶粒的位元密度）和 HBM 等高階品類的營收佔比，而非短期的 ASP 漲幅。

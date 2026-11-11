@@ -7,7 +7,7 @@ weight: 1
 
 Webhook Protocol 的核心概念是「外部系統把事件送進來時，雙方如何對齊驗證、payload 與失敗語意」。 可先對照 [Webhook](/backend/knowledge-cards/webhook/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Webhook Protocol 位在 external system、HTTP endpoint 與 service 之間。它是外部事件導入的通訊約定。 可先對照 [Webhook](/backend/knowledge-cards/webhook/)。
 
@@ -19,6 +19,6 @@ Webhook Protocol 位在 external system、HTTP endpoint 與 service 之間。它
 
 付款通知、物流更新、SaaS 事件同步與第三方 callback 都會使用 webhook protocol。呼叫方與接收方都需要知道成功與失敗時的行為。
 
-## 設計責任
+## 判斷條件與後果
 
 Webhook Protocol 要定義[簽章](/backend/knowledge-cards/message-authentication/)、timestamp、重送、payload schema 與錯誤回應。它應與 public API 分開看待，因為它承擔的是外部推送而不是主動查詢。

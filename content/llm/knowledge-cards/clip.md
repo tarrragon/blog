@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "vlm", "vision", "pretraining"]
 
 CLIP（Contrastive Language-Image Pre-training、Radford et al., 2021）的核心概念是「**用 4 億組 (image, caption) 對、訓 image encoder 跟 text encoder、讓對應圖文的 embedding 在共享空間靠近**」。CLIP 本身不是 VLM、但它的 image encoder 成為現代幾乎所有 [VLM](/llm/knowledge-cards/vlm/) 的 [vision encoder](/llm/knowledge-cards/vision-encoder/) 起點。
 
-## 概念位置
+## 跟其他概念的關係
 
 CLIP 的訓練架構（簡化）：
 
@@ -48,7 +48,7 @@ VLM 訓練時：
 
 跟 SigLIP 的關係：SigLIP（Zhai et al., 2023）是 Google 提出的 CLIP 變體、用 sigmoid loss 取代原本 InfoNCE、訓練更穩、品質略佳；Gemma 3 / Idefics 等用 SigLIP 而非原 CLIP。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 VLM paper / model card 看到「CLIP backbone」「SigLIP encoder」「OpenCLIP weights」就是這 family。寫 code 場景的判讀：
 

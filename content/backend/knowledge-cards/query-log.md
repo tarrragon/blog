@@ -8,7 +8,7 @@ tags: ["backend", "database", "orm", "observability", "knowledge-card"]
 
 SQL 語句記錄（query log）是把送往資料庫的每一段 SQL 記下來的紀錄。它有兩個來源，記到的內容不同：**應用程式端**由 [ORM](/backend/knowledge-cards/orm/) 或資料存取函式庫印出它送出的語句；**資料庫端**由資料庫記錄它收到的語句。用 ORM 的程式碼上看不到 SQL，這兩種記錄是確認實際行為的地方。本站文章把應用程式端那一種稱為 ORM 的 SQL 記錄（GORM 的 SQL 記錄），資料庫端那一種稱為語句記錄（PostgreSQL 的 `log_statement`）；它們和一般的應用程式記錄的關係見 [Log](/backend/knowledge-cards/log/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 | 來源       | 開啟方式                                                                                                                                                                           | 記到的內容                                                                                                                  |
 | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
@@ -25,6 +25,6 @@ SQL 語句記錄（query log）是把送往資料庫的每一段 SQL 記下來�
 - **應該出現卻沒出現的語句**：GORM 用 struct 更新時跳過零值欄位，記錄裡的 `UPDATE` 少了那個欄位，要改的欄位全是零值時整句 `UPDATE` 都不會出現（model 帶 `UpdatedAt` 時只剩更新 `updated_at` 的那一句）；交易邊界不如預期時，資料庫端的 `begin` 與 `commit` 位置對不上（各 ORM 的差異見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈ORM 的交易邊界：GORM、Laravel、Django 與 SQLAlchemy〉）。
 - **正式環境的慢查詢**：用 `log_min_duration_statement` 只記慢的語句；要看哪些查詢加總起來最耗時，PostgreSQL 的 `pg_stat_statements` 依查詢形狀彙總次數與總耗時，比逐筆記錄省空間。把慢查詢記錄定期彙整、接進審查流程的做法見 [1.14 Production Slow Log Closed Loop](/backend/01-database/production-slow-log-loop/)。
 
-## 設計責任
+## 判斷條件與後果
 
 開發與測試環境把兩種記錄都打開，審查 ORM 程式碼時對照的是它們，不只是方法呼叫。正式環境的 `log_statement = 'all'` 與應用程式端的逐筆記錄量都很大，而且參數裡有 email、地址這類個人資料，所以正式環境通常只記慢查詢與 DDL，記錄的保存與遮罩比照其他含個資的記錄處理（見 [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)）。追查「這一筆資料被誰改過」用 [Audit Log](/backend/knowledge-cards/audit-log/)（PostgreSQL 端可以用 pgaudit 擴充記錄指定的語句類別）；語句記錄保存期短、正式環境不一定開著，靠不住。

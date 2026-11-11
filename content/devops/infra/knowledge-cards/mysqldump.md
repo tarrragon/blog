@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/mysqldump/"]
 
 mysqldump 是 [MySQL](/devops/infra/knowledge-cards/mysql/) 和 MariaDB 內建的命令列備份工具，把整個資料庫（或指定的表）匯出成一份包含 CREATE TABLE 和 INSERT 語句的 SQL 純文字檔。還原時把這份檔案餵給 `mysql` client 就能重建資料。
 
-## 概念位置
+## 跟其他概念的關係
 
 mysqldump 是有 SSH 存取（或 remote MySQL 存取）時的主要備份手段。比 [phpMyAdmin](/devops/infra/knowledge-cards/phpmyadmin/) 的匯出更可靠——不受 web server 的 timeout 和記憶體限制影響，可以處理數 GB 的資料庫。沒有 SSH 的環境只能退回 phpMyAdmin 匯出。
 
@@ -17,7 +17,7 @@ mysqldump 是有 SSH 存取（或 remote MySQL 存取）時的主要備份手段
 
 接手時如果 server 上有 [cron](/devops/infra/knowledge-cards/cron/) job 在跑 mysqldump，代表前任有做自動備份——確認輸出的 dump 檔案存在哪、保留幾天、有沒有被驗證過能還原。如果沒有任何 mysqldump cron，代表備份可能只靠 phpMyAdmin 手動匯出或完全沒做。
 
-## 設計責任
+## 判斷條件與後果
 
 常用的 flag 組合：
 

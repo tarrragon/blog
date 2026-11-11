@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/oidc/"]
 
 OIDC（OpenID Connect）聯合的核心職責是讓跑在雲外的 CI/CD 平台（GitHub Actions、GitLab CI）用每次執行才簽發、幾分鐘後就失效的短期憑證存取雲端資源，從根本上消除「在 CI 環境裡存放長期 access key」這個攻擊面，信任關係的收斂條件寫在 [trust policy](/devops/infra/knowledge-cards/trust-policy/) 裡。
 
-## 概念位置
+## 跟其他概念的關係
 
 OIDC 聯合在身分與存取憑證地基裡的角色是「雲外機器身分的認證機制」。跑在雲上的 workload（EC2、ECS task）可以用平台原生的 [IAM](/devops/infra/knowledge-cards/iam/) instance profile 或 task role 取得短期憑證；跑在雲外的 CI/CD 沒有這個管道，OIDC 就是替代方案。
 
@@ -23,7 +23,7 @@ OIDC 聯合在身分與存取憑證地基裡的角色是「雲外機器身分的
 - Trust policy 只驗 issuer 不驗 repo — 任何掛在同一個 CI 平台的專案都能假扮這個 role
 - Pipeline 突然無法取得權限 — 可能是 trust policy 的 condition 跟 token claim 不匹配（常見於 repo 改名或 branch 改名後）
 
-## 設計責任
+## 判斷條件與後果
 
 OIDC 聯合拿掉了 CI 環境裡的長期 access key，風險因此移到兩個位置：哪些 token 換得到 role，以及換到之後能做什麼。下面的設定分別收斂這兩個位置：
 

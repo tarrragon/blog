@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "math", "information-theory"]
 
 Entropy（熵）的核心概念是「衡量一個機率分佈的不確定性」。Shannon entropy 公式：`H(P) = -sum(P(x) × log P(x))`。直覺：分佈越「平」、entropy 越大（任何結果都可能）；分佈越「尖」、entropy 越小（結果很確定）。Entropy 是 [cross-entropy](/llm/knowledge-cards/cross-entropy/)、[KL divergence](/llm/knowledge-cards/kl-divergence/)、資訊壓縮等概念的基底。
 
-## 概念位置
+## 跟其他概念的關係
 
 Entropy 跟 LLM 相關概念的關係：
 
@@ -28,6 +28,6 @@ Entropy 在 LLM 中的具體意義：
 
 範例：vocab = 128K、uniform 分佈的 entropy = log(128K) ≈ 11.76（接近 12）；成熟模型在文本上的平均 entropy 約 2-3、與 [perplexity](/llm/knowledge-cards/perplexity/) 存在指數關係（見下）。
 
-## 設計責任
+## 判斷條件與後果
 
 Entropy 本身在 LLM 訓練 / 推論很少直接出現、但理解它能解釋一些現象：[perplexity](/llm/knowledge-cards/perplexity/) = exp(cross-entropy) 是模型平均不確定性的指數形式；temperature 控制 sampling entropy（高 T → 高 entropy → 多樣輸出）；某些評估方法（如 entropy-based uncertainty estimation）會看模型輸出分佈的 entropy 來判讀「模型有多確定」。

@@ -19,7 +19,7 @@ apt 把「算出要裝什麼」跟「實際裝」分成先後兩步：
 
 這是刻意的設計。系統套件之間有依賴關係，半裝的狀態（裝了 a、b 因為 c 失敗而中途停）會留下依賴不完整的系統，比「全部沒裝」更難收拾。全有或全無讓系統永遠停在一致的狀態。
 
-## 概念位置
+## 跟其他概念的關係
 
 這解釋了為什麼跨發行版的套件清單要 curate、不能照抄，跟 [Package Manager 抽象層](/linux/dotfile/knowledge-cards/package-manager-abstraction/) 的「套件名分歧要逐項吸收」是同一件事的兩面。哪些工具在保守發行版沒打包，見 [發行版打包粒度](/linux/dotfile/knowledge-cards/distro-package-granularity/)。清單 curate 的實作見 [工作站 dotfile 跨發行版落地](/linux/dotfile/10-prod-parity/workstation-cross-distro/)。
 

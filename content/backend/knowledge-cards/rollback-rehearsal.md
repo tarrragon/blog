@@ -8,7 +8,7 @@ weight: 157
 
 Rollback Rehearsal 的核心概念是「在低風險環境實際走一次回滾流程，確認步驟、權限與耗時都符合預期」。 可先對照 [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Rollback Rehearsal 位在 release gate、rollback strategy、migration 與 disaster recovery 之間。它是把回滾步驟實際走過一次的演練，文件審查無法替代實機驗證。 可先對照 [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)。
 
@@ -25,6 +25,6 @@ Rollback Rehearsal 位在 release gate、rollback strategy、migration 與 disas
 
 資料表結構變更前先在接近正式環境演練 rollback，可以確認舊欄位是否還能恢復、資料補回是否可逆、以及切回舊版本後是否還能接流量。服務替換前做 rollback rehearsal，也能驗證 DNS、load balancer 與設定切換的回復時間。
 
-## 設計責任
+## 判斷條件與後果
 
 Rollback Rehearsal 要定義環境、資料範圍、演練步驟、驗證項目與紀錄方式。演練的重點是找出「看似可回滾、實際回不去」的缺口。

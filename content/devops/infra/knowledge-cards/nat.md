@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/nat/"]
 
 NAT Gateway（Network Address Translation Gateway）的核心職責是讓 [private subnet](/devops/infra/knowledge-cards/subnet/) 的資源能主動發起對外連線（拉套件、呼叫第三方 API、下載 OS 更新），同時不開放任何外部主動發起的入站連線。它借用一個公網 IP 把出站封包送出去，再把回應導回原請求者。
 
-## 概念位置
+## 跟其他概念的關係
 
 NAT Gateway 在網路地基裡的角色是 private subnet 的出站閘道。它解決的問題是：private subnet 的設計意圖是「外部連不進來」，但服務仍需要主動對外。沒有 NAT，private subnet 的資源完全無法對外通訊 — 連 `apt update` 或 `pip install` 都做不到。
 
@@ -25,7 +25,7 @@ GCP 的對應服務是 Cloud NAT，職責相同，結構不同：它建在 Cloud
 - 只有某一個可用區的節點受影響 — 該區的 NAT 或其所在 subnet 可能故障
 - 雲帳單裡 NAT Gateway 的流量費用異常高 — 大量走 NAT 的流量（S3 備份、跨區同步）可用 VPC Endpoint 繞過
 
-## 設計責任
+## 判斷條件與後果
 
 zonal 模式下每多放一個 NAT Gateway 就多一筆固定月費，少放一個就讓某些可用區的出站依賴別區的 NAT，而經過 NAT 的每 GB 流量另外計費（這兩種費用是 AWS 的收法；Oracle Cloud 的價目表沒有 NAT gateway 這一項，見 [雲端免費額度與小型主機的收費比較：試用金與固定額度、計費單位、區域限制、試用結束後的處置、出站流量與查價項目](/devops/infra/cloud-providers/pricing-comparison/)〈查付費主機價格時要輸入的項目〉）；下面的決定都在出站可用性與這兩種費用之間取捨：
 

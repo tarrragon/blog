@@ -11,7 +11,7 @@ aliases: ["/infra/knowledge-cards/configuration-management/"]
 
 同名而所指不同的兩個詞：軟體工程裡的軟體組態管理（software configuration management，SCM）指原始碼的版本控制、基線與變更控制；中國大陸工業控制業界的「組態」（组态软件）指在 SCADA 或 HMI 軟體裡設定畫面與點位。本卡講的是主機設定的管理工具。
 
-## 概念位置
+## 跟其他概念的關係
 
 組態管理工具都有兩個部分：主機清冊，與每台主機要套用的內容。Ansible 把主機清冊叫 inventory（列出受管主機與分組的檔案），跟商業領域的存貨（inventory）同字而無關；要套用的內容寫在 playbook（依序列出要對哪些主機套用哪些模組的 YAML 檔）與 role（把一類主機要用的任務、範本與變數收成一個可重用的目錄）裡，這個 playbook 跟事故處理的 [Playbook](/backend/knowledge-cards/playbook/) 同名而所指不同。inventory 把主機分成群組（`web`、`db`），變數依層次放在 `group_vars/<群組>.yml` 與 `host_vars/<主機>.yml`，一台主機最後拿到的值是各層合併的結果，合併時越具體的層越優先：`host_vars` 蓋過群組的值，子群組蓋過 `all`。一台主機同時屬於兩個同層的群組、而兩個群組給了同一個變數不同的值時，依群組名稱的字母順序，排在後面的蓋過前面的；要指定誰優先，在 inventory 檔本身替群組設 `ansible_group_priority`（預設 1，數字大的較晚合併而勝出），寫在 `group_vars` 檔裡沒有效果；優先順序只會讓其中一組勝出，兼任兩種角色的主機需要兩組值都生效時，要讓兩個角色用不同的變數名、在範本裡取聯集。這幾條用 ansible-core 2.17 實測過，`ansible-inventory --host <主機>` 印得出合併後的值，實測的檔案與輸出見 [多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/devops/operations/09-host-lifecycle/multi-host-manifest/)。inventory 與 `group_vars` 是 [YAML](/devops/infra/knowledge-cards/yaml/)，所以 YAML 1.1 的隱式型別照樣作用：`country: no` 讀出來是布林值 `false`。
 
@@ -25,7 +25,7 @@ Ansible 由執行指令的那台機器經由 SSH 連到每台主機，把要執�
 - 維護的人改一台主機的設定時，改的是 repo 裡的變數或範本，再對那一組主機執行一次，不登入主機手改。
 - 同一個設定檔在每台主機上的內容只有主機名、IP、角色相關的幾行不同。
 
-## 設計責任
+## 判斷條件與後果
 
 - **每個值放在哪一層**：所有主機都相同的放 `all`，依角色不同的放群組，只有一台不同的放 `host_vars`。同一個值在兩層都寫了時，讀檔的人要知道合併規則才知道哪一個生效；對哪一個值生效有疑問時，用 `ansible-inventory --host` 查合併後的值。
 - **套用要能重複執行**：每個步驟執行第二次時不改變結果（[Idempotency](/backend/knowledge-cards/idempotency/)），排程定期套用時才不會每次都重啟服務或重寫檔案。Ansible 的模組多半這樣設計，`command` 與 `shell` 模組例外：它們每次都執行、每次都回報 changed，要用 `creates`、`removes` 或 `changed_when` 寫出什麼情形下不必執行、什麼結果算有改變。

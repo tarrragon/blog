@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "embedding", "evaluation"]
 
 MTEB（Massive Text Embedding Benchmark、Muennighoff et al., 2022）的核心概念是「**評估 [embedding model](/llm/knowledge-cards/embedding-model/) 跨多種任務通用能力的標準 benchmark**」。覆蓋 8 大類任務（classification、clustering、pair classification、reranking、retrieval、STS、summarization、bitext mining）、56 個 dataset、112 種語言。是現在挑選 embedding model 最常用的 leaderboard。
 
-## 概念位置
+## 跟其他概念的關係
 
 MTEB 的 8 大任務類別：
 
@@ -38,7 +38,7 @@ MTEB 的 8 大任務類別：
 
 > **事實查核註**：MTEB 數字依模型版本、評估配置變動、上述為 2026/5 大致排名、引用前以 [MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard) 當前狀態為準。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 embedding model 比較看到「MTEB score」就是這 benchmark。寫 code / RAG 場景的判讀：
 

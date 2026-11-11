@@ -83,7 +83,7 @@ SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場�
 | 1.17 讀寫分離的「寫後讀」依複製位置判斷（PostgreSQL 的 `pg_last_wal_replay_lsn()`、MySQL 的 GTID、ProxySQL 的 causal reads）專篇，含實測                                                                                        | 主章   | 主從複製的實驗環境                                     | 中           |
 | 1.16 複製與引用那一節補第三條路：引用帶生效期間的價格版本（明細存版本編號），比較它跟複製在查詢多一次連接、改回來補得回當時的值、各家 system-versioned table 的支援；要實測                                                     | 主章   | 無                                                     | 小           |
 | SQL.18 狀態轉換那一段的可執行檢查：觸發器擋下會讓指向它的規則出錯的狀態改變（SQLite `RAISE(ABORT)`）、「狀態 × 關聯」的測試寫法，含實測；sql/_index.md 的問題落點表加「改了一列狀態，foreign_key_check 全部通過而答案錯了」一列 | 主章   | 無                                                     | 小           |
-| Last-Write-Wins 與 CRDT 兩張知識卡（backend 行內使用而沒有卡），卡內寫出合併單位由資料形狀決定；conflict-resolution 卡的設計責任補合併單位並連到 local-first 的〈多值資料的存法與合併單位〉                                     | 知識卡 | 無                                                     | 2 張卡（小） |
+| Last-Write-Wins 與 CRDT 兩張知識卡（backend 行內使用而沒有卡），卡內寫出合併單位由資料形狀決定；conflict-resolution 卡的「判斷條件與後果」段補合併單位並連到 local-first 的〈多值資料的存法與合併單位〉                         | 知識卡 | 無                                                     | 2 張卡（小） |
 | 反向連結：DDD 的 Snapshot 卡、〈凍結快照的正當用途〉與 work-log POS 那一篇連回 1.16 複製與引用那一節（資料表層的代價與改回來的成本）                                                                                            | 跨模組 | 無                                                     | 小           |
 
 ### 觀念網路補完方向

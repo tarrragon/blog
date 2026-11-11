@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/cd-pipeline/"]
 
 CD Pipeline 的核心概念是「把已驗證產物安全交付到目標環境」。它把 build、[artifact](/devops/ci/knowledge-cards/artifact/)、deploy 與 release gate 串成可重播流程。
 
-## 概念位置
+## 跟其他概念的關係
 
 CD Pipeline 位在 [CI](/devops/ci/knowledge-cards/ci-pipeline/) 驗證之後，負責 artifact promotion、部署執行、環境保護與回復路徑。
 
@@ -23,6 +23,6 @@ CD Pipeline 位在 [CI](/devops/ci/knowledge-cards/ci-pipeline/) 驗證之後，
 
 靜態站會在 CI 成功後上傳 artifact 到 hosting。後端服務會推進同一個 image tag 到 staging 與 production，並以 rollout strategy 控制風險。
 
-## 設計責任
+## 判斷條件與後果
 
 CD Pipeline 要明確定義放行條件、部署順序、例外流程與回復策略，確保發布節奏與風險控制一致。

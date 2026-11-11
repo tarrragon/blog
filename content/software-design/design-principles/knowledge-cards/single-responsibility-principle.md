@@ -9,7 +9,7 @@ aliases: ["/design-principles/knowledge-cards/single-responsibility-principle/"]
 
 單一職責原則（Single Responsibility Principle，SRP）的定義是：一個模組應該只有一個改變的理由。Robert C. Martin 把「理由」對到提出變更的人——一個模組的變更應該只來自一群緊密合作、代表單一業務職能的人，這樣一群人算一個理由。違反這條原則的模組，在修改紀錄上呈現成 [Divergent Change（發散式變更）](/software-design/design-principles/knowledge-cards/divergent-change/)：同一個模組因為不同的理由、以不同的方式反覆被修改；把同一個理由的程式碼拆散到好幾個模組，則是與 Divergent Change 成對的 [Shotgun Surgery（散彈式修改）](/software-design/design-principles/knowledge-cards/shotgun-surgery/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 SRP 是 SOLID 五原則的第一條。Martin 在《Agile Software Development: Principles, Patterns, and Practices》（2002）把它寫成「一個類別應該只有一個改變的理由」；2014 年他在〈The Single Responsibility Principle〉一文說明「理由」指的是人，並把原則改寫成兩句方向相反的指示：
 
@@ -36,7 +36,7 @@ Martin 的例子是一個 `Employee` 類別，裡面有三個方法：`calculate
 
 依改動種類計數理由的判斷也適用於文件：一份文件被好幾個不相干的主題修改，就有好幾個改變它的理由，做法在[依職責拆分文字文件](/record/document-split-by-responsibility/)。
 
-## 設計責任
+## 判斷條件與後果
 
 套用 SRP 的設計責任是讓每一群提出變更的人，各自只需要改一個地方，而且改的時候不會動到別人在乎的行為。執行的判斷問句是：列出一段時間內改過這個模組的需求（範圍要涵蓋幾輪需求，選法見[從修改紀錄畫模組邊界](/software-design/design-principles/module-boundary-from-change-history/)〈用 git 歷史量出熱點〉的「統計的時間範圍」一條），逐一寫出要求的是哪一種改動、由哪一個職能決定；改動種類有兩種以上，就有兩個以上的理由，可以考慮依理由切開。
 

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "inference", "training"]
 
 Forward pass（前向傳播）的核心概念是「input 從第一層算到最後一層、得到 output 的單向計算流程」。LLM 推論時生成一個 [token](/llm/knowledge-cards/token/)、就是跑一次 forward pass；訓練時、每個 batch 也都先跑 forward pass 算出 [loss](/llm/knowledge-cards/loss-function/)、再跑 [backpropagation](/llm/knowledge-cards/backpropagation/) 算 gradient。
 
-## 概念位置
+## 跟其他概念的關係
 
 LLM 一次 forward pass 的大略流程：
 
@@ -36,6 +36,6 @@ probability distribution → 挑下一個 token
 | [Speculative decoding](/llm/knowledge-cards/speculative-decoding/) | 一次 forward pass 同時驗證多個猜測 token                     |
 | [Backpropagation](/llm/knowledge-cards/backpropagation/)           | 訓練時 forward pass 的反向延伸、推論不需要                   |
 
-## 設計責任
+## 判斷條件與後果
 
 理解 forward pass 後可以判讀 LLM 的記憶體與速度：每次 forward pass 都要把整份模型權重從記憶體讀到處理器一次、所以 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 是推論瓶頸；[KV cache](/llm/knowledge-cards/kv-cache/) 的存在是為了避免每次 forward pass 重算前面 token 的 K/V；MTP / speculative decoding 都是「一次 forward pass 攤平多個 token 成本」的優化路徑。

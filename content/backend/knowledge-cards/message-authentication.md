@@ -7,7 +7,7 @@ weight: 418
 
 Message Authentication 的核心概念是用雙方共享的密鑰為訊息產生一段驗證值，接收方重算後比對，同時確認「訊息出自持有密鑰的一方」與「內容在傳輸中沒有被改過」。這段驗證值在多數 API 文件裡稱為 signature 或 MAC。它承擔的是來源與完整性，訊息本身照常明文傳輸；需要內容不可讀時要疊加 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/) 或 [At-Rest Encryption](/backend/knowledge-cards/at-rest-encryption/)，密鑰的保存與輪替接回 [Key Management](/backend/knowledge-cards/key-management/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Message Authentication 位在 [Authentication](/backend/knowledge-cards/authentication/) 的機器對機器分支。人類身分驗證回答「這個人是誰」並依賴 session 或 token；訊息驗證回答「這個請求出自哪個系統、內容是否原封不動」，每個請求各自獨立驗證，沒有 session 狀態。它與 [Token Revocation](/backend/knowledge-cards/token-revocation/) 的差異在撤銷粒度：token 可以個別撤銷，共享密鑰的撤銷是換掉密鑰、影響所有使用該密鑰的呼叫方，因此屬於 [Secret Management](/backend/knowledge-cards/secret-management/) 的輪替範疇。
 
@@ -25,7 +25,7 @@ HMAC（Hash-based Message Authentication Code）是這個機制的主流建構�
 
 跨團隊對接時的高頻落差是雙方對驗證素材的定義不一致：欄位順序、分隔符、空請求時 payload 段落填什麼、時間戳的單位是秒或毫秒。這些差異在驗證值上只會表現成「對不起來」，錯誤訊息無法指出是哪一項。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要把驗證素材的組成寫成雙方共同的規格：涵蓋哪些欄位、串接順序、編碼方式、時間戳單位與有效窗口、輸出格式。規格明確之後，對接失敗才能逐項核對而非反覆重試。素材的逐項拆解與兩端對齊的實作見 [HMAC 簽章對接](/work-log/hmac_signature_field_alignment/)，規格與重放窗口在對接階段的收斂判讀見 [7.35 簽章對接的驗證收斂](/backend/07-security-data-protection/signature-integration-verification/)。
 

@@ -8,7 +8,7 @@ tags: ["ux-design", "knowledge-card", "interaction-feedback", "button-states"]
 
 Debounce 的核心概念是「短時間內的重複觸發只算一次」。同一顆按鈕在 300ms 內被點三次，系統只執行一次操作 — 剩下兩次點擊被視為誤觸或焦慮性連點而忽略。它跟 [Doherty Threshold](/ux-design/knowledge-cards/doherty-threshold/) 同屬互動回饋的時間參數：前者管「重複輸入怎麼收斂」、後者管「輸出多快要回來」。
 
-## 概念位置
+## 跟其他概念的關係
 
 Debounce 站在互動回饋的輸入端：[Touch Target](/ux-design/knowledge-cards/touch-target/) 管點擊有沒有落在可反應的區域、debounce 管落進來的重複點擊怎麼收斂、[Doherty Threshold](/ux-design/knowledge-cards/doherty-threshold/) 管收斂後的輸出多快要回來——三張卡沿著「一次點擊的生命週期」排開。它的守備範圍是同步按鈕（導航、切換）；非同步按鈕的重複提交由 loading + disabled 狀態防守，兩者分工見可觀察訊號段。
 
@@ -27,6 +27,6 @@ Throttle 是近親：固定時間窗內至多執行一次、但持續觸發會�
 
 需要 debounce 的訊號是同一個操作被觸發多次的紀錄：導航堆疊被 push 兩層一樣的頁面、後端收到毫秒級間隔的重複請求、表單被建立兩筆相同資料。非同步按鈕通常用 Loading + disabled 防重複提交，debounce 主要負責同步按鈕（導航、切換）— 這些按鈕操作瞬間完成、沒有 loading 狀態可以擋。
 
-## 設計責任
+## 判斷條件與後果
 
 Debounce 的設計責任是在不犧牲第一次點擊即時性的前提下吸收重複觸發。時間窗常見慣例值是 300ms 上下，依操作型態調整。完整的防連點決策（哪類按鈕用 debounce、哪類用 disabled）見[互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)的兩類按鈕段。

@@ -11,7 +11,7 @@ State 是 [IaC](/devops/infra/knowledge-cards/iac/) 工具用來記錄「上一�
 
 State 裡通常含有資源的真實 ID、相依關係，以及部分敏感屬性（例如資料庫的初始密碼、private key 的輸出值）。這帶來兩條硬邊界：state 不能進 git（含敏感值，推進版控等於把密碼寫進每個 clone 的歷史）、state 不能只放本地（本地 state 的失敗模式是記憶綁在一台筆電上，多人並行 apply 會互相覆蓋）。
 
-## 概念位置
+## 跟其他概念的關係
 
 State 是 [IaC](/devops/infra/knowledge-cards/iac/) 的記憶機制。[模組一：最小可行 IaC](/devops/infra/01-minimal-iac/iac-tool-state-backend/) 的核心主題就是怎麼把 state 管好——remote backend、加密、鎖機制。State 管不好，後續所有 IaC 操作都建立在不可靠的記憶上。
 
@@ -19,7 +19,7 @@ State 是 [IaC](/devops/infra/knowledge-cards/iac/) 的記憶機制。[模組一
 
 State 出問題的訊號包括：`terraform plan` 顯示大量非預期的變更（state 與現實不一致）、兩個人同時 apply 後環境出現矛盾狀態、`state list` 的資源數與 Console 上看到的不一致。
 
-## 設計責任
+## 判斷條件與後果
 
 state 的設定裡事後最難改的是分割策略：資源分進不同的 state 之後，要移動就得在兩份 state 之間逐個資源遷移。存放位置、加密、版本保留與鎖機制管的是 state 的安全與復原：防止兩次 apply 同時寫入、限制外洩的範圍、在損壞後回捲到上一個版本：
 

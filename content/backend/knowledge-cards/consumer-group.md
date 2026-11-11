@@ -8,7 +8,7 @@ tags: ["backend", "message-queue"]
 
 Consumer group 的核心概念是「一組 [consumer](/backend/knowledge-cards/consumer/) 共同承擔某個 stream 或 [topic](/backend/knowledge-cards/topic/) 的處理進度」。同一 group 內的 consumer 分攤工作（每筆訊息只被 group 內的一個 consumer 處理）；不同 group 可以各自獨立處理同一批事件，實現 [fan-out](/backend/knowledge-cards/fan-out/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Consumer group 是事件流跟多服務訂閱的協調模型。分析服務、搜尋索引服務、通知服務可以用不同 group 讀同一 topic — 每個 group 有自己的 [offset](/backend/knowledge-cards/offset/) 進度跟 [consumer lag](/backend/knowledge-cards/consumer-lag/)。
 
@@ -20,6 +20,6 @@ Consumer group 是事件流跟多服務訂閱的協調模型。分析服務、�
 
 Consumer group 的 rebalance（partition 重新分配）是 Kafka 生態的常見運維議題。Consumer 加入或離開 group 時觸發 rebalance、rebalance 期間 partition 暫時無人消費、造成短暫的處理停頓。Rebalance 時間跟 partition 數量、consumer 數量有關。
 
-## 設計責任
+## 判斷條件與後果
 
 Consumer group 要設計 group 名稱（跟服務名稱對齊、方便辨識）、offset / checkpoint 策略（auto-commit vs manual commit）、rebalance 行為（cooperative vs eager）、[consumer lag](/backend/knowledge-cards/consumer-lag/) 告警閾值與 [replay runbook](/backend/knowledge-cards/replay-runbook/) 權限。不同 group 的失敗應分開觀測跟處理 — 通知 group 落後不應影響出貨 group 的監控判讀。

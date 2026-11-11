@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/os-login/"]
 
 OS Login 是 GCP Compute Engine 管理 VM 登入權限的機制：VM 在有人登入時，向 Google 查詢這個 Google 帳號的 SSH 公鑰與它在 [IAM](/devops/infra/knowledge-cards/iam/) 裡的角色，依角色決定是否允許登入、是否允許使用 sudo。持有 `roles/compute.osLogin` 的帳號以一般使用者登入，持有 `roles/compute.osAdminLogin` 的帳號另外拿得到 sudo。帳號停用或角色移除之後，下一次登入就會失敗，不必回到每台 VM 刪除公鑰；已經建立的工作階段不受影響，要另外在 VM 上結束（`loginctl terminate-user <username>`），結束已建立工作階段的動作在應用程式的層次叫 [session invalidation](/backend/knowledge-cards/session-invalidation/)。啟用方式是在專案或 VM 的 metadata 設定 `enable-oslogin=TRUE`。
 
-## 概念位置
+## 跟其他概念的關係
 
 OS Login 出現之前，GCP 把 SSH 公鑰交給 VM 的方式是 metadata 金鑰：公鑰寫在專案或 VM 的 metadata 的 `ssh-keys` 欄位，VM 上的 guest agent（GCP 映像預裝、負責把 metadata 套用到作業系統的常駐程式）讀出來寫進對應帳號的 `authorized_keys`。這些公鑰和 Google 帳號沒有連動，帳號停用後公鑰仍然留在 metadata 裡，運作方式等同 [SSH](/devops/infra/knowledge-cards/ssh/) 卡描述的靜態公鑰。
 
@@ -23,7 +23,7 @@ OS Login 常與 GCP 的 [Identity-Aware Proxy（身分感知代理）](/devops/i
 - 登入 VM 之後的使用者名稱是由 Google 帳號位址轉成的名稱（例如 `alice_example_com`），不是管理員自己在 metadata 裡指定的名稱
 - 專案 metadata 的 `ssh-keys` 欄位仍然有公鑰——啟用 OS Login 的 VM 不再讀它，但沒啟用的 VM 仍會讀，盤點時要一起清
 
-## 設計責任
+## 判斷條件與後果
 
 OS Login 啟用後，VM 只認 IAM 角色，metadata 裡的公鑰立即失效，所以啟用前要先把角色與順序排好：
 

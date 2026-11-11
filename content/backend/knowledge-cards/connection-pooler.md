@@ -7,7 +7,7 @@ weight: 354
 
 連線池代理（connection pooler）的核心責任是讓部署在應用層跟資料庫之間的中介層、把多個應用層連線複用到少數 DB backend 連線上。解水平擴展應用層時「100 臺機器 × 每臺 10 連線 = 1000 個 DB 連線、超過 `max_connections` 十倍」這個常見問題。跟 [connection pool](/backend/knowledge-cards/connection-pool/) 是不同層 — 後者在 application instance 內、本卡是跨 instance 共享層。
 
-## 概念位置
+## 跟其他概念的關係
 
 Connection pooler 在 DB topology 中是「應用層跟 DB 之間的 multiplexer 層」、跟 [connection pool](/backend/knowledge-cards/connection-pool/) 是不同層。常見實作：
 
@@ -22,6 +22,6 @@ PgBouncer 的 `pool_mode` 是核心配置：session mode 嚴格說屬 connection
 
 該裝 pooler 的訊號：應用層機器數 ≥ 20、每臺機器連線數 ≥ 10、DB `max_connections` 使用率 ≥ 70%、P99 connection wait time 升高。`pg_stat_activity` 顯示大量 idle 連線是裝 pooler 的明確指標。中型 PostgreSQL 服務裝 PgBouncer 後、DB 連線數常從 1000+ 壓到 50-100。
 
-## 設計責任
+## 判斷條件與後果
 
 選 PgBouncer 自管要付 HA / failover / 監控的運維成本；選 RDS Proxy 換掉運維、付 per vCPU 計價。Transaction mode 配置前要 audit ORM / driver 行為 — JDBC / asyncpg / Go 的 pgx 的 default prepared statement 跟 transaction mode 衝突、要明示配置 protocol-level prepared statement 或改寫成 inline parameter。Pooler 解的是連線數放大、N+1 query 屬另一層議題 — 兩個問題正交、各自要解。

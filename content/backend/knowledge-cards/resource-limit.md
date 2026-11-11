@@ -8,7 +8,7 @@ weight: 135
 
 Resource Limit 的核心概念是「限制一個服務實例可使用多少 CPU、memory 或其他運行資源」。它會直接影響啟動、排程、延遲、穩定性與故障型態，當成單純的部署參數會低估其影響面。 可先對照 [Retention](/backend/knowledge-cards/retention/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Resource Limit 位在 container、runtime、deployment platform 與 scheduler 之間。它決定服務在資源不足時是被 throttling、被拒絕排程，還是因記憶體超限而被終止。 可先對照 [Retention](/backend/knowledge-cards/retention/)。
 
@@ -24,6 +24,6 @@ Resource Limit 位在 container、runtime、deployment platform 與 scheduler �
 
 Kubernetes container limit、單機 systemd service 的 cgroup 限制、worker pool 的 CPU 上限或 memory cap，都屬於 resource limit 的問題。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要區分 request 與 limit、理解 throttling 與 OOM 的差異，並把上限調整和實際流量、cache、啟動成本與重試行為一起看。Resource Limit 的目標是保護系統穩定，而不是只追求把數字填滿。

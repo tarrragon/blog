@@ -9,7 +9,7 @@ aliases: ["/php/knowledge-cards/sapi/"]
 
 SAPI（Server API）是 PHP 核心與外部環境之間的介面層：它把外部環境帶來的請求翻譯成 PHP 認得的形式（填好 `$_SERVER`、`$_GET`，把請求內容交給 `php://input`），再把 PHP 的輸出與回應標頭交回外部環境。同一份 PHP 核心配上不同的 SAPI，就是不同的執行方式。可先對照 [Shared-nothing 請求模型](/programming/php/knowledge-cards/shared-nothing-request/) 與 [PHP-FPM](/programming/php/knowledge-cards/php-fpm/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 SAPI 位在 PHP 核心（Zend 引擎與擴充）與 web 伺服器、命令列之間。它決定 PHP 直譯器在哪個程序裡執行、那個程序活多久，這兩件事又決定 [OPcache](/programming/php/knowledge-cards/opcache/) 有沒有編譯結果可以重用。[mod_php](/programming/php/knowledge-cards/mod-php/) 是 SAPI 的一種（`apache2handler`），PHP-FPM 是另一種（`fpm-fcgi`）。
 
@@ -19,6 +19,6 @@ SAPI 位在 PHP 核心（Zend 引擎與擴充）與 web 伺服器、命令列之
 - **同一支程式、兩種行為**：`php-cgi` 被 web 伺服器以 CGI 啟動時處理一個請求就結束，以 FastCGI 模式啟動時常駐，SAPI 名稱都是 `cgi-fcgi`。
 - **設定檔依 SAPI 分開**：很多發行版把 `php.ini` 分成 `cli/` 與 `fpm/` 兩份，命令列改的設定不影響網頁請求。
 
-## 設計責任
+## 判斷條件與後果
 
 部署時要先知道服務跑的是哪個 SAPI，因為程序壽命、執行帳號、設定檔位置與 `.htaccess` 能不能改 PHP 設定都跟著它變。完整的比較見 [PHP 的請求生命週期與 SAPI](/programming/php/01-server-runtime/request-lifecycle-and-sapi/)。

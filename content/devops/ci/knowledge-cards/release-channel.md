@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/release-channel/"]
 
 Release Channel 的核心概念是「用通道控制版本接觸範圍」。它是 [Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/) 的分發面，常和 [App Signing](/devops/ci/knowledge-cards/app-signing/) 與 update feed 一起設計。
 
-## 概念位置
+## 跟其他概念的關係
 
 Release Channel 位在 [artifact](/devops/ci/knowledge-cards/artifact/) 發布與使用者取得之間，常見通道包含 internal、alpha、beta、stable、enterprise、nightly 與 rollback channel。
 
@@ -23,6 +23,6 @@ Release Channel 位在 [artifact](/devops/ci/knowledge-cards/artifact/) 發布�
 
 桌面 app 先把 signed installer 推到 internal channel，驗證更新成功率後再推 beta channel，最後推 stable channel。若 stable 版本出現 crash，feed 可切回 rollback channel 或暫停更新。
 
-## 設計責任
+## 判斷條件與後果
 
 Release Channel 要定義通道用途、進入條件、artifact 命名、可見範圍、停損條件與回復路徑，讓版本擴散具備控制面。

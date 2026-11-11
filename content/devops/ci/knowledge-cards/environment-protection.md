@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/environment-protection/"]
 
 Environment Protection 的核心概念是「用環境層 gate 控制正式發布」。它把環境風險從 workflow 腳本外顯成可檢查規則，與 [Readiness / Health Check](/devops/ci/knowledge-cards/readiness-health-check/) 共同構成部署放行條件。
 
-## 概念位置
+## 跟其他概念的關係
 
 Environment Protection 位在部署 job 與目標環境之間，包含 reviewer、wait timer、[branch policy](/devops/ci/knowledge-cards/branch-protection/) 與 secret scope。
 
@@ -23,6 +23,6 @@ Environment Protection 位在部署 job 與目標環境之間，包含 reviewer�
 
 GitHub Actions deploy job 指向 `production` environment，需指定 reviewer 批准後才可部署。staging 則採自動放行。
 
-## 設計責任
+## 判斷條件與後果
 
 Environment Protection 要定義環境分層、審核責任、發布時窗與例外流程，讓高風險發布有明確控制面。

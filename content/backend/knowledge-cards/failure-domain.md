@@ -8,7 +8,7 @@ tags: ["backend", "reliability", "observability", "failure-domain"]
 
 失效域（failure domain，也寫作 fault domain、故障域）是一組會因為同一類原因一起停掉的元件：對主機故障而言是同一台主機上的程序，對機房斷電而言是同一個機房裡的主機，對帳號停權而言是同一個雲端帳號底下的資源。Oracle Cloud 把可用區內的一組硬體直接命名為 fault domain，建立主機時可以指定，見 [Fault Domain（故障域）](/devops/infra/knowledge-cards/fault-domain/)。判斷的單位是**共用的依賴**——兩個元件共用一個會失效的依賴（主機、電源、網路、帳號、DNS），對那一類失效就落在同一個失效域，備援與監控是否獨立都以這件事判斷。任何兩台主機都會共用某些依賴，所以「兩者是不是不同的失效域」要指明是對哪一類失效。以為獨立而其實共用觸發點的情形見 [Correlated Failure](/backend/knowledge-cards/correlated-failure/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 失效域是冗餘與監控設計的單位。兩台主機放在同一個機房，機房斷電時一起停，冗餘只防得了單台主機的故障；監控與服務跑在同一台主機，主機停掉時監控跟著停，發不出告警。所以判斷一個備援或一個觀察者有沒有用，先問它與被保護、被觀察的對象共用了哪些依賴。觀察者落在失效域以外時，它送出的訊號稱為 [Out-of-Band Signal](/backend/knowledge-cards/out-of-band-signal/)。失效域與 [Blast Radius](/backend/knowledge-cards/blast-radius/) 看的是同一件事的兩端：失效域問「哪些元件會一起停」，影響範圍問「它們停掉時哪些使用者與功能受影響」。
 
@@ -20,6 +20,6 @@ tags: ["backend", "reliability", "observability", "failure-domain"]
 
 共用的依賴常常藏在設定裡：兩台「分開」的主機掛著同一個網路檔案系統、讀同一份祕密管理服務、用同一個 DNS 業者，三者任一個停掉，兩台一起受影響。狀態頁與主站共用 DNS 是同一種情形（見 [Status Page](/backend/knowledge-cards/status-page/)）。
 
-## 判讀方式
+## 判斷條件與後果
 
 判斷兩個元件的失效域分開到什麼程度，逐項列出它們各自的依賴（主機、網路、電源、雲端帳號與付款方式、DNS、TLS 憑證、部署管線，以及通知管道：寄送通知的服務、收件信箱的網域、推播服務），共用的每一項都是一起停掉的原因。判讀的產出是剩下的共用依賴清單，以及每一項的處置。接不接受依兩件事判斷：這一項失效的頻率，以及兩者一起停掉的代價（停機代價怎麼估見 [高可用的成本](/devops/operations/06-high-availability/ha-cost/)）。處置有三種：接受並寫明理由；把兩者分開；分不開時（例如兩台主機都服務同一個網域），改放一個在那一項以外的觀察者，讓它一起停掉時至少有人知道。列在紙上的依賴不一定完整：共用的依賴常在停掉其中一個元件時才浮現（另一個跟著出錯，或觀察者沒有發出通知），所以分到不同失效域之後的判斷，以實際停掉其中一個的結果為準。小型服務怎麼用兩到三台主機分開失效域，見 [小型服務的兩到三台主機配置](/devops/operations/06-high-availability/small-service-host-layout/)。

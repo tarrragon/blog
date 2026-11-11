@@ -9,7 +9,7 @@ weight: 9
 
 降級的核心概念是「在部分依賴失效或容量不足時，保留最重要的產品能力」。降級設計會預先定義哪些功能可以暫停、改用簡化結果、延後處理或只提供只讀能力，讓系統在壓力下維持可控狀態。 可先對照 [Delivery Mode](/backend/knowledge-cards/delivery-mode/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 降級是可靠性設計的一部分。它和 failover、rate limit、circuit breaker、feature flag、cache fallback、read-only mode 相關，但重點是產品取捨：哪些功能必須保留，哪些功能可以暫時縮小。 可先對照 [Delivery Mode](/backend/knowledge-cards/delivery-mode/)。降級回應的延遲與錯誤率都正常，監控上要另外計數，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)〈降級回應：回應成功而內容縮減〉。
 
@@ -21,6 +21,6 @@ weight: 9
 
 活動期間推薦服務延遲升高。商品頁可以先顯示熱門商品或空推薦，讓使用者仍能瀏覽與下單；若商品頁等待推薦結果才回應，推薦服務的延遲會擴散成整站變慢。
 
-## 設計責任
+## 判斷條件與後果
 
 降級策略要有觸發條件、使用者體驗、資料一致性影響、告警與恢復條件。它也需要演練，因為未演練的降級常在事故中暴露缺少設定、權限、dashboard 或回復流程。

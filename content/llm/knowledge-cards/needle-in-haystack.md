@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "long-context", "evaluation"]
 
 Needle in a Haystack（NIH、大海撈針、Greg Kamradt 2023）的核心概念是「**把一個明確事實（needle）插入長度可變的 context（haystack）的不同位置、測試 LLM 能否在問問題時準確 recall 該事實**」。是評估 [long context](/llm/knowledge-cards/context-window/) 模型實用性的標準 benchmark 之一、跟 [lost-in-the-middle](/llm/knowledge-cards/lost-in-the-middle/) 對應但側重不同。
 
-## 概念位置
+## 跟其他概念的關係
 
 NIH 測試的典型流程：
 
@@ -52,7 +52,7 @@ Variables：
 NIH heatmap 通常全綠（強模型）、但實用任務（reasoning over long context）就會出現中段塌陷
 ```
 
-## 設計責任
+## 判斷條件與後果
 
 讀 long context 模型 release notes 看到「needle in a haystack: 100%」「pass NIH up to 128K」等聲稱、要區分：
 

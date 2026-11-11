@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/fault-domain/"]
 
 故障域（fault domain）在這張卡上指 Oracle Cloud 建立主機時選的那個隔離單位：一個 [Availability Zone（可用區）](/devops/infra/knowledge-cards/availability-zone/) 內部的一組實體硬體與基礎設施。它是 [Failure Domain（失效域）](/backend/knowledge-cards/failure-domain/) 這個一般概念的一種業者實作：失效域是會因同一個原因一起停掉的元件集合，Oracle Cloud 把可用區內的硬體組直接命名為 fault domain。Oracle Cloud 的每個可用區有三個故障域，官方說明它防的是兩種事件：某一組硬體的非預期故障，以及業者對那一組硬體做的計畫性維護。一個故障域受影響時，放在其他故障域的主機不受影響。
 
-## 概念位置
+## 跟其他概念的關係
 
 故障域提供的是反親和性（anti-affinity）：把幾台主機刻意放在不同的實體硬體上，讓一次硬體事件不會讓它們同時停擺。它比[可用區](/devops/infra/knowledge-cards/availability-zone/)小一層——可用區隔離的是整棟資料中心的電力與網路，故障域隔離的是同一棟裡的機櫃與實體主機。
 
@@ -23,7 +23,7 @@ Oracle Cloud 以「故障域」這個名稱讓使用者在建立主機時直接�
 - 同一個服務的兩台主機在主機詳細資訊裡顯示同一個 `FAULT-DOMAIN-<N>`：一次硬體維護可能同時重開兩台
 - `oci iam availability-domain list` 只回傳一筆：這個區域只有一個可用區，跨可用區做不到，故障域是同一個區域內剩下的硬體隔離手段
 
-## 設計責任
+## 判斷條件與後果
 
 - **同一個服務兩台以上的主機**：區域有多個可用區時先分到不同可用區，故障域用在同一個可用區之內；區域只有一個可用區時，分散到不同故障域。Oracle Cloud 允許建立之後再修改故障域
 - **只有一個可用區的區域**：高可用的設計從跨可用區改成跨故障域，並接受整個可用區故障時服務會停的風險，或另外跨區域

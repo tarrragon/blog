@@ -7,7 +7,7 @@ weight: 424
 
 Timing Attack 的核心概念是攻擊者從操作耗時的差異反推出他不該知道的資訊。它成立的條件是處理時間與秘密值相關：比對兩個字串時，多數語言的相等運算在第一個不同的位元組就返回，回應時間因此隨「前面猜對了幾個位元組」而變長，攻擊者逐位元組調整就能把猜測收斂。它針對的是 [Message Authentication](/backend/knowledge-cards/message-authentication/) 的驗證值、[Credential](/backend/knowledge-cards/credential/) 與 token 這類需要逐字比對的秘密。
 
-## 概念位置
+## 跟其他概念的關係
 
 Timing Attack 是實作層的問題。[Message Authentication](/backend/knowledge-cards/message-authentication/) 的機制設計正確、[Key Management](/backend/knowledge-cards/key-management/) 也妥當的系統仍然可能在這一層洩漏，因為問題出在驗證程式碼怎麼寫。這使它在設計評審中容易被跳過：架構圖上看不到，只有讀到比對那一行才會發現。
 
@@ -21,7 +21,7 @@ Timing Attack 是實作層的問題。[Message Authentication](/backend/knowledg
 
 資料庫查詢也會產生同類差異。用秘密值當查詢條件時，索引命中與否的耗時差異可能對應到「這個值存不存在」。
 
-## 設計責任
+## 判斷條件與後果
 
 比對秘密值要用等時比較函式，多數語言的標準函式庫都提供：Node 的 `crypto.timingSafeEqual`、PHP 的 `hash_equals`、Go 的 `crypto/subtle.ConstantTimeCompare`、Python 的 `hmac.compare_digest`。這些函式比對完全部位元組才返回，耗時與內容無關。取用不到時的替代做法（兩側各再 HMAC 一次後比對）與「自己照文件寫才會踩、用對方 SDK 多半不會」的識別動作見 [7.35 簽章對接的驗證收斂](/backend/07-security-data-protection/signature-integration-verification/)。
 

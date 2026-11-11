@@ -17,7 +17,7 @@ slug: "gatling-capacity-probing"
 
 ## 用 open model 的注入步驟寫出逐級加壓
 
-找飽和點時用哪一種注入模型，跟著 production 流量的來源走（判斷的方法在 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈可觀察訊號與例子〉）。面向公眾的服務用 open model；用 closed model 量的話，延遲目標內的到達率會被估高，飽和點找在比實際更高的位置。呼叫端數量固定的服務（固定 worker 數的批次程式、連線池大小固定的內部呼叫方）照同一張卡〈設計責任〉對 closed 型流量的做法：逐級增加同時在線的使用者數（`rampConcurrentUsers`、`incrementConcurrentUsers`），report 的讀法在〈從 report 判讀 knee point〉講 closed model 的那一段。這一節只寫 open model 的寫法，它的注入步驟放在 `injectOpen(...)` 裡，同一條注入鏈只能用 open model 的步驟。
+找飽和點時用哪一種注入模型，跟著 production 流量的來源走（判斷的方法在 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈可觀察訊號與例子〉）。面向公眾的服務用 open model；用 closed model 量的話，延遲目標內的到達率會被估高，飽和點找在比實際更高的位置。呼叫端數量固定的服務（固定 worker 數的批次程式、連線池大小固定的內部呼叫方）照同一張卡〈判斷條件與後果〉對 closed 型流量的做法：逐級增加同時在線的使用者數（`rampConcurrentUsers`、`incrementConcurrentUsers`），report 的讀法在〈從 report 判讀 knee point〉講 closed model 的那一段。這一節只寫 open model 的寫法，它的注入步驟放在 `injectOpen(...)` 裡，同一條注入鏈只能用 open model 的步驟。
 
 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)〈Ramp-up 測試方法〉的 ramp-up 從平常時段的流量起按倍數加壓（1x、2x、4x、8x），每一級維持 5 到 10 分鐘看穩態。Gatling 有兩種寫法對應：
 
@@ -79,7 +79,7 @@ Gatling 的 HTML report 有四張隨時間變化的圖用來判讀 knee point：
 
 9.4〈Ramp-up 測試方法〉把「throughput 從線性成長轉成 sub-linear」列成 knee 的訊號，那是吞吐量隨負載增加的形狀。open model 下，吞吐量在受測服務處理得了的範圍內跟著設定的到達率走，到達率加一倍、成功的回應數也加一倍，所以 sub-linear 在 open model 的 report 上表現成成功的回應數低於每秒請求數，也就是 cliff 那一種，出現在 knee point 之後；在 open model 下，knee point 的訊號是更早出現的 p99 上升。
 
-closed model 的 report 讀法不同：同時在線數是設定值，不會隨服務變慢而上升，要看的是成功的每秒請求數與延遲。逐級增加同時在線數時，成功的每秒請求數跟同時在線數同比例增加、延遲持平是線性區；某一級起成功的每秒請求數的增幅小於同時在線數的增幅、延遲開始上升，那一級是 closed 型服務的 knee：同時在線數固定時，吞吐量等於同時在線數除以一個使用者每輪花的時間（延遲加停頓，[Little's Law](/backend/knowledge-cards/little-law/)），增幅變小代表每個請求在受測服務裡花的時間開始變長。再加同時在線數而成功的每秒請求數不再增加時，已經越過服務的上限，多出來的使用者只是在受測服務裡排隊（[Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈設計責任〉）。容量結論的單位是「同時在線多少個使用者時，每秒成功處理多少個請求、延遲多少」。服務快速回錯誤時，closed model 下總請求數會繼續上升，所以這裡同樣只看成功的那一部分。
+closed model 的 report 讀法不同：同時在線數是設定值，不會隨服務變慢而上升，要看的是成功的每秒請求數與延遲。逐級增加同時在線數時，成功的每秒請求數跟同時在線數同比例增加、延遲持平是線性區；某一級起成功的每秒請求數的增幅小於同時在線數的增幅、延遲開始上升，那一級是 closed 型服務的 knee：同時在線數固定時，吞吐量等於同時在線數除以一個使用者每輪花的時間（延遲加停頓，[Little's Law](/backend/knowledge-cards/little-law/)），增幅變小代表每個請求在受測服務裡花的時間開始變長。再加同時在線數而成功的每秒請求數不再增加時，已經越過服務的上限，多出來的使用者只是在受測服務裡排隊（[Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈判斷條件與後果〉）。容量結論的單位是「同時在線多少個使用者時，每秒成功處理多少個請求、延遲多少」。服務快速回錯誤時，closed model 下總請求數會繼續上升，所以這裡同樣只看成功的那一部分。
 
 knee 落在哪一級之後，同一段時間對照受測服務的資源指標，照 9.4〈Resource saturation 的六個維度〉找出先飽和的資源，定位的流程在 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)；那一項資源才是容量結論裡「要加什麼」的依據。
 
@@ -96,7 +96,7 @@ knee 落在哪一級之後，同一段時間對照受測服務的資源指標，
 - **feeder 依台切分**：一次性的資料（只能用一次的 token、有唯一約束的欄位、同一個帳號不能同時登入兩個 session）在多台共用時會互相衝突；用依序取用（`queue`）的 feeder 時，各台還會同時走同一批 key，快取命中率比 production 高（機制在〈feeder 資料的分佈、脫敏與快取命中率〉）。每台拿到不重疊的一段資料，這兩種問題都避開。
 - **施壓端不共用網路出口**：幾台施壓端走同一個 NAT、或跑在同一台主機上時，來源埠與頻寬仍然共用，台數加了，施壓端的上限沒有跟著加（[Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/) 的確認方法也以這一點為前提）。
 - **各台同時開始、時鐘一致**：各台的 simulation 要同時啟動、系統時鐘要同步，每一級的開始與結束才對得齊；對不齊時，加總之後每一級的穩態被拉平，knee 看不清楚。
-- **哪些數字可以跨台加總**：Users start rate、每秒請求數、每秒回應數與同時在線數是計數，各台相加就是總數；百分位數不能相加或平均（[Percentile](/backend/knowledge-cards/percentile/) 的〈設計責任〉）。所以延遲從受測服務那一端讀，前提是受測服務的延遲指標用 histogram 型、可以跨副本加總之後再算百分位數，而且量測點跟延遲目標的量測點一致（目標訂在入口或用戶端時，就從入口或用戶端量）；受測服務的指標是各副本自己算好的百分位數時，各副本的 p99 平均起來同樣不是整體的 p99，這次探測的延遲結論就不可用。
+- **哪些數字可以跨台加總**：Users start rate、每秒請求數、每秒回應數與同時在線數是計數，各台相加就是總數；百分位數不能相加或平均（[Percentile](/backend/knowledge-cards/percentile/) 的〈判斷條件與後果〉）。所以延遲從受測服務那一端讀，前提是受測服務的延遲指標用 histogram 型、可以跨副本加總之後再算百分位數，而且量測點跟延遲目標的量測點一致（目標訂在入口或用戶端時，就從入口或用戶端量）；受測服務的指標是各副本自己算好的百分位數時，各副本的 p99 平均起來同樣不是整體的 p99，這次探測的延遲結論就不可用。
 
 Gatling Enterprise 預設把 simulation 的注入步驟分配到各台施壓端、把結果合在一起；`noShard` 這個設定關掉分配，讓每台施壓端各自跑完整的注入步驟（官方文件〈Injection〉的 `noShard` 一節）。Enterprise 也能從不同的區域施壓。兩者的取捨在容量探測裡看的是需要的負載量與施壓的位置：單台送得出需要的到達率時 OSS 就夠；台數增加之後，OSS 要自己分配到達率、切分 feeder、對齊時鐘、加總計數、從受測服務那一端讀延遲，每多一台施壓端，這幾件事各多一份要核對的資料；要從幾個區域同時施壓時，OSS 還要在每個區域各自部署施壓端。選 Enterprise 時另有兩個條件：受測環境在私有網路裡時，雲端的施壓端進不去，要另外架設自管的施壓端；測試結果存在廠商的服務上，有資料存放規定的團隊要先確認可不可以。另一個選項是換用 OSS 版本就支援分散施壓的工具（Locust 的 master 與 worker、JMeter 的 remote testing），各工具在一台施壓機的上限怎麼量、分散擴容用什麼方式的比較，在 [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/) 的規模能力那一個選型維度。
 

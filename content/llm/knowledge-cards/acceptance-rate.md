@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "speculative-decoding", "inference"]
 
 Acceptance rate（接受率）的核心概念是「**在 [speculative decoding](/llm/knowledge-cards/speculative-decoding/) 中、[drafter](/llm/knowledge-cards/drafter-model/) 提出的 token 序列被 target model 驗證後接受的比例**」。Acceptance rate 直接決定 speculative decoding 的實際加速倍率：高 acceptance rate（如 0.8）能拉出接近理論上限的加速；低 acceptance rate（如 0.3）可能反而比純 target model 慢。
 
-## 概念位置
+## 跟其他概念的關係
 
 [Speculative decoding](/llm/knowledge-cards/speculative-decoding/) 一個 step 的流程：
 
@@ -37,7 +37,7 @@ Acceptance rate 影響：
 3. **Sampling temperature**：高 temperature 兩邊 sample 分佈都拉平、隨機性增加、acceptance rate 降；T=0（greedy）acceptance rate 最高
 4. **K 設太大**：drafter 越往後預測、累積誤差越大、後半段 token acceptance rate 急降；K 通常設 3-5 為甜蜜點
 
-## 設計責任
+## 判斷條件與後果
 
 讀 speculative decoding 設定 / model card 看到「draft acceptance」「acceptance length」就是這指標。寫 code 場景的判讀：
 

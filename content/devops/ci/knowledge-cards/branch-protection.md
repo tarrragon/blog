@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/branch-protection/"]
 
 Branch Protection 的核心概念是「把主線寫入條件制度化」。它把 [required checks](/devops/ci/knowledge-cards/required-checks/)、review policy 與合併限制集中成 repository gate。
 
-## 概念位置
+## 跟其他概念的關係
 
 Branch Protection 位在 pull request 與主線分支之間，屬於 [CI](/devops/ci/knowledge-cards/ci-pipeline/) workflow 之外的治理層。
 
@@ -23,6 +23,6 @@ Branch Protection 位在 pull request 與主線分支之間，屬於 [CI](/devop
 
 專案要求 `md-check` 與 `Playwright tests` 必須綠燈，且至少一位 reviewer 批准才可合併 `main`。
 
-## 設計責任
+## 判斷條件與後果
 
 Branch Protection 要定義必要 checks、審查規則與例外流程，並和 workflow 命名同步維護。

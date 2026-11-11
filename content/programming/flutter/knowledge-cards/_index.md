@@ -7,7 +7,7 @@ weight: -1
 aliases: ["/flutter/knowledge-cards/"]
 ---
 
-本模組的知識卡片把 Dart 語言機制與 Flutter 生態工具的高密度術語拆成可獨立閱讀的概念索引。work-log 文章遇到語言特有機制時連到對應卡片；卡片先回答概念本質、再放設計責任。本模組的卡片跟 [DDD 知識卡](/software-design/ddd/knowledge-cards/) 有交叉引用——Dart 的語言機制如何影響領域模型設計是兩個模組的交集。
+本模組的知識卡片把 Dart 語言機制與 Flutter 生態工具的高密度術語拆成可獨立閱讀的概念索引。work-log 文章遇到語言特有機制時連到對應卡片；卡片先回答概念本質、再寫判斷條件與後果。本模組的卡片跟 [DDD 知識卡](/software-design/ddd/knowledge-cards/) 有交叉引用——Dart 的語言機制如何影響領域模型設計是兩個模組的交集。
 
 ## Dart 語言機制
 

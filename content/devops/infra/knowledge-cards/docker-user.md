@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/docker-user/"]
 
 DOCKER-USER 是 Docker 在 iptables 的 filter 表裡建的一條自訂鏈：FORWARD 鏈的第一條規則無條件跳到它，Docker 自己不在裡面寫任何規則，啟動與重啟時也不清它的內容，讓使用者在 Docker 放行容器流量之前插入自己的限制。它管的是轉送路徑：Docker 發佈的連接埠經過 [DNAT（目的位址轉換）](/devops/infra/knowledge-cards/dnat/) 改寫成容器位址之後，封包由主機轉送給容器，寫在主機入站規則（ufw 的入站規則、firewalld 的 zone）上的限制碰不到它，DOCKER-USER 是這條路上第一個可以寫規則的位置。
 
-## 概念位置
+## 跟其他概念的關係
 
 FORWARD 鏈的跳轉順序是 DOCKER-USER、Docker 自己的 `DOCKER-FORWARD`、然後才是 ufw 的 `ufw-*` 鏈；`DOCKER-FORWARD` 接受送往發佈連接埠的連線，所以寫在 ufw route 規則裡的限制輪不到這些封包，寫在 DOCKER-USER 的輪得到。封包到這條鏈時目的地已經是容器的位址與連接埠，限制發佈的連接埠要用 [conntrack（連線追蹤）](/devops/infra/knowledge-cards/conntrack/) 記下的原始目的連接埠比對：
 
@@ -27,7 +27,7 @@ iptables -I DOCKER-USER -p tcp -m conntrack --ctstate DNAT --ctorigdstport 443 -
 - **規則加了、從外面量過擋得住，過一陣子又失效**：防火牆重新載入或重開機清掉了它，`iptables -S DOCKER-USER` 只剩 `-N DOCKER-USER` 這一行。
 - **加了限制之後容器呼叫外部 API 逾時**：規則只比對原始目的連接埠，沒有 `--ctstate DNAT`，容器的出站連線也被丟掉。
 
-## 判讀方式
+## 判斷條件與後果
 
 DOCKER-USER 的弱點在規則的存續，用 iptables 指令加的規則只存在執行中的核心裡，各種情形下的結果不同（2026-10-25 到 26 日在 Ubuntu 24.04 的 ufw 0.36.2、Oracle Linux 10.2 的 firewalld 2.4.3 上實測）：
 

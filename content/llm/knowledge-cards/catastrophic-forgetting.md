@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "fine-tuning", "training"]
 
 Catastrophic forgetting（災難遺忘）的核心概念是「**Fine-tune 模型時、新訓練資料的 [gradient](/llm/knowledge-cards/gradient/) 更新破壞了模型原本學到的能力**」。在 LLM fine-tuning 場景特別常見：在自己 domain 資料上 fine-tune、結果模型在原 benchmark / 通用任務上分數大幅下降。
 
-## 概念位置
+## 跟其他概念的關係
 
 Catastrophic forgetting 在 LLM fine-tuning 的典型表現：
 
@@ -56,7 +56,7 @@ After fine-tune（在自己 domain 資料上跑 SFT、3 epochs）：
   - 資料：80% in-domain + 20% 通用 instruction data（保留通用能力）
 ```
 
-## 設計責任
+## 判斷條件與後果
 
 讀 fine-tune paper / 報告看到「forgetting」「retention」「regression」就是這現象。寫 code 場景的判讀：
 

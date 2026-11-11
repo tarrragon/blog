@@ -8,7 +8,7 @@ tags: ["backend", "observability"]
 
 Dashboard 的核心概念是「把多個觀測訊號組成可判讀的服務狀態畫面」。它讓團隊用同一個視角查看 [SLI / SLO](/backend/knowledge-cards/sli-slo/)、latency、error rate、traffic、saturation、[queue depth](/backend/knowledge-cards/queue-depth/)、[consumer lag](/backend/knowledge-cards/consumer-lag/) 與下游依賴狀態。
 
-## 概念位置
+## 跟其他概念的關係
 
 Dashboard 是告警與排障之間的判讀層。[Alert](/backend/knowledge-cards/alert/) 告訴團隊需要注意，dashboard 幫團隊判斷影響範圍、變化趨勢與可能原因，[runbook](/backend/knowledge-cards/runbook/) 則把判讀結果轉成處理步驟。
 
@@ -18,7 +18,7 @@ Dashboard 分層服務不同使用者：service overview 給 [on-call](/backend/
 
 系統需要 dashboard 的訊號是事故中需要快速回答「影響多大、從何時開始、哪個依賴異常」。Dashboard 也是日常巡檢的入口 — on-call 工程師每天先看 service overview 確認服務健康，再處理 alert queue。
 
-## 設計責任
+## 判斷條件與後果
 
 Dashboard 設計要服務具體決策。每個面板應對應一個可回答的問題（「服務現在健康嗎」「延遲瓶頸在哪」「容量還夠嗎」）。高 cardinality、缺少單位或只呈現低層資源的圖表會增加判讀成本而非降低。
 

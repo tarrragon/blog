@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "transformer", "architecture"]
 
 Causal mask（因果遮罩）的核心概念是「在 [self-attention](/llm/knowledge-cards/self-attention/) 計算時、把 token i 看 token j (j > i) 的 attention 分數設成 -∞、[softmax](/llm/knowledge-cards/softmax/) 後機率為 0」。直覺：LLM 是 [autoregressive](/llm/knowledge-cards/autoregressive/) 的、生成 token N 時不能看到 N+1 以後（後面還沒生）、causal mask 強制這個約束、是 decoder-only Transformer 的標誌。
 
-## 概念位置
+## 跟其他概念的關係
 
 Causal mask 在 attention 計算中的位置：
 
@@ -39,6 +39,6 @@ Q_3   [  0     0      0      0 ]
 | Encoder-only（BERT）                    | 不用、可以看雙向 context         |
 | Encoder-decoder（T5）                   | Decoder 部分用、Encoder 部分不用 |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 paper / model card 看到「causal」「decoder-only」「auto-regressive」這幾組詞、就是這個機制。實務上、寫 code 場景的所有主流 LLM 都用 causal mask、所以這個概念是隱式 default、不會主動暴露給使用者；但理解它能解釋為什麼 LLM 是「接龍」、為什麼 [bidirectional context](/llm/knowledge-cards/context-window/) 在 LLM 裡不存在（要 bidirectional 要用 encoder 架構）。

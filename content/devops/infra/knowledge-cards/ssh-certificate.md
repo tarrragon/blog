@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/ssh-certificate/"]
 
 SSH 憑證（SSH certificate）是由一把 SSH CA 私鑰簽過名的 [SSH](/devops/infra/knowledge-cards/ssh/) 使用者公鑰，簽名裡帶著有效期間、允許登入的帳號名稱（principal）與識別字串。主機不再逐一記錄每個人的公鑰，只信任 CA 的公鑰：sshd 設定 `TrustedUserCAKeys` 指向 CA 公鑰之後，任何帶著有效 CA 簽名、而且還在有效期內的憑證都能登入它列出的帳號。OpenSSH 從 5.4 版起內建這個機制，格式是 OpenSSH 自己的，與網站用的 X.509 [憑證](/backend/knowledge-cards/certificate/)不相通。
 
-## 概念位置
+## 跟其他概念的關係
 
 SSH 憑證處理的是登入主機用的金鑰怎麼發、怎麼失效——[伺服器管理通道的設計](/devops/infra/03-network-foundation/management-access-channel/)把這一層叫主機登入驗證。它與另外兩種金鑰發放方式的差別在權限怎麼失效：
 
@@ -25,7 +25,7 @@ SSH 憑證處理的是登入主機用的金鑰怎麼發、怎麼失效——[伺
 - 管理員的 `~/.ssh/` 裡在金鑰對旁邊多了一個同名加 `-cert.pub` 結尾的檔（例如 `id_ed25519-cert.pub`），`ssh` 連線時會自動帶上它；用 `ssh-keygen -L -f <cert-file>` 讀得出它的有效期間與 principal
 - 每天第一次 SSH 之前要先跑一個登入或簽發指令
 
-## 設計責任
+## 判斷條件與後果
 
 CA 私鑰取代了每台主機上的公鑰清單，所以導入 SSH 憑證時的決定都圍繞著 CA 與憑證內容：
 

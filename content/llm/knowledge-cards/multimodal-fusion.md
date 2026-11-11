@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "vlm", "vision", "architecture"]
 
 Multimodal fusion（多模態融合）的核心概念是「**[VLM](/llm/knowledge-cards/vlm/) 把 vision encoder 產出的 [image token](/llm/knowledge-cards/image-token/) 跟 text token 結合進 LLM 的設計方式**」。三條主流路線：early fusion（image token 跟 text token 串成同 sequence）、cross-attention（separate stream、attention 跨流）、native multimodal（單一網路統一處理）。
 
-## 概念位置
+## 跟其他概念的關係
 
 三種 fusion 方式的對比（差異在 [vision encoder](/llm/knowledge-cards/vision-encoder/) 輸出如何進入 LLM）：
 
@@ -63,7 +63,7 @@ text → tokenizer → text tokens
 | Cross-attention   | ~10%           | 推論伺服器支援度差、本地跑選項少                |
 | Native multimodal | < 5%           | 研究階段、現在不適合 production / 本地工作流    |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 VLM paper / blog 看到「early fusion」「LLaVA-style」「Flamingo-style」「cross-attention adapter」就是這分類。寫 code 場景的判讀：
 

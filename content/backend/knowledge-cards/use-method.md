@@ -7,7 +7,7 @@ weight: 224
 
 USE method 的核心概念是「對每個資源（CPU / RAM / disk / network / DB connection）量測 Utilization、Saturation、Errors 三個維度」。第一個出現 saturation 上升的資源、就是 bottleneck。可先對照 [RED Method](/backend/knowledge-cards/red-method/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 USE 是 resource-oriented 的觀察法、跟 request-oriented 的 [RED method](/backend/knowledge-cards/red-method/) 互補。USE 回答「哪個資源先頂不住」、RED 回答「哪個 endpoint 表現變差」。容量規劃通常先看 USE 找瓶頸、再看 RED 看影響面。可先對照 [Saturation Point](/backend/knowledge-cards/saturation-point/)。
 
@@ -17,6 +17,6 @@ USE 三維度的典型訊號：CPU utilization 100% 但 saturation queue 空 →
 
 在虛擬機與容器裡，CPU 的 saturation 另有兩個訊號：被虛擬化層分給別的虛擬機的 [steal 時間](/backend/knowledge-cards/cpu-steal-time/)，與容器碰到 CPU 上限而被暫停的時間；虛擬機裡的 run queue 與 [load average](/backend/knowledge-cards/load-average/) 看不到主機上的排隊，見 [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)〈監控所在層看不到的範圍〉。
 
-## 設計責任
+## 判斷條件與後果
 
 USE method 的關鍵是「不要只看 utilization」。utilization 是「目前用了多少」、saturation 是「排隊有多少在等」 — 後者才是 capacity 真正的領先指標。每個資源都要量三個維度、不能用 average 代替 percentile。

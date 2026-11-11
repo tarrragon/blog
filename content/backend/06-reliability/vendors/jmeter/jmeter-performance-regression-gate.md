@@ -99,7 +99,7 @@ JMeter 有兩個位置可以把統計限定在穩態的區間：dashboard 的 `j
 
 ## thread group 與 timer 的負載模型對前後兩版比較的影響
 
-regression gate 比較前後兩版時，兩次執行要用同一種負載模型與同樣的參數，因為模型決定了這一版變慢時，退化出現在延遲上還是吞吐量上（機制見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈概念位置〉）。JMeter 的負載模型由 thread group 與 timer 的組合決定，下表依官方文件與 jmeter-plugins.org 的說明整理：
+regression gate 比較前後兩版時，兩次執行要用同一種負載模型與同樣的參數，因為模型決定了這一版變慢時，退化出現在延遲上還是吞吐量上（機制見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈跟其他概念的關係〉）。JMeter 的負載模型由 thread group 與 timer 的組合決定，下表依官方文件與 jmeter-plugins.org 的說明整理：
 
 | 元件                               | 來源                       | 固定的變數                                                                                | 受測服務變慢時                                                                                         |
 | ---------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
@@ -112,7 +112,7 @@ regression gate 比較前後兩版時，兩次執行要用同一種負載模型�
 
 Constant Throughput Timer 的目標是每分鐘的 sample 數，計算方式有幾種：this thread only 讓每個執行緒各自維持這個速率，整體的吞吐量跟活躍的執行緒數成正比；all active threads in current thread group 與 all active threads 把目標分給同一個 thread group 或所有 thread group 裡活躍的執行緒，另有依任一執行緒上一次執行的時間排程的 shared 版本。說明寫明受測服務處理不了時吞吐量會低於設定值（官方文件〈Component Reference〉）。設成 this thread only 時，每個執行緒各自依自己上一輪的時間計算停頓，所以受測服務只有尾端少數幾筆變慢、讓少數幾輪超過間隔時，吞吐量就會小幅下降，不必等到全部執行緒都變慢；Precise Throughput Timer 則以整個 thread group 為單位計算。
 
-Precise Throughput Timer 的目標是自訂期間（throughput period）內、整個 thread group 裡受它影響的 sampler 合計的 sample 數；說明寫明它不產生執行緒，受測服務處理不了、或執行緒不夠時，吞吐量同樣會低於設定值，並建議多數情形改用 Open Model Thread Group（官方文件〈Component Reference〉）。上限算的是 timer 作用範圍內的 sample：官方文件建議把它放在一輪流程的第一個元素底下，這時它限制的是一輪 iteration 開始的速率，一輪送出幾個請求，每秒請求數就是那個速率乘以一輪的 sampler 數。這兩個 timer 只能延長停頓，讀起來在指定到達率，模型仍是 closed：吞吐量有了上限，受測服務變慢時跟一般的 closed model 一樣減壓，這種設定稱為 pacing，見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈概念位置〉。
+Precise Throughput Timer 的目標是自訂期間（throughput period）內、整個 thread group 裡受它影響的 sampler 合計的 sample 數；說明寫明它不產生執行緒，受測服務處理不了、或執行緒不夠時，吞吐量同樣會低於設定值，並建議多數情形改用 Open Model Thread Group（官方文件〈Component Reference〉）。上限算的是 timer 作用範圍內的 sample：官方文件建議把它放在一輪流程的第一個元素底下，這時它限制的是一輪 iteration 開始的速率，一輪送出幾個請求，每秒請求數就是那個速率乘以一輪的 sampler 數。這兩個 timer 只能延長停頓，讀起來在指定到達率，模型仍是 closed：吞吐量有了上限，受測服務變慢時跟一般的 closed model 一樣減壓，這種設定稱為 pacing，見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈跟其他概念的關係〉。
 
 Throughput Shaping Timer 的頁面寫明 timer 只能延遲執行緒、限制每秒請求數，要另外提供足夠的執行緒，也可以跟 Concurrency Thread Group 的 `__tstFeedback` 回饋函式搭配、依需要調整執行緒數（jmeter-plugins.org〈Throughput Shaping Timer〉）。所以它屬於哪一種模型看執行緒夠不夠：執行緒給夠、受測服務變慢時還有空閒的執行緒可以送出排程的請求，行為接近 open model；執行緒不夠時送不出排程，跟 pacing 一樣減壓。
 

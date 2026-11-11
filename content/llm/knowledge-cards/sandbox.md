@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "security", "isolation"]
 
 Sandbox 的核心概念是「把程式跑在權限受限的隔離環境、限制檔案存取、網路連線、系統呼叫的範圍」。在 LLM 場景下、sandbox 用來控制 [tool use](/llm/knowledge-cards/tool-use/) 跟 MCP server 的副作用範圍：即使 LLM 被 [prompt injection](/llm/knowledge-cards/prompt-injection/) 誘導跑惡意 tool、sandbox 能限制最壞情況的影響面。
 
-## 概念位置
+## 跟其他概念的關係
 
 常見的 sandbox 技術光譜（依隔離強度跟工程成本）：
 
@@ -27,7 +27,7 @@ Sandbox 在 LLM 場景的常見配置：
 2. **production agent**：每個 user / session 一個 ephemeral container、跑完就 destroy。
 3. **code execution tool**：把 LLM 生成的 code 丟進 sandbox 跑（如 OpenAI Code Interpreter、Anthropic Claude Code Tool）。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 sandbox 後可以解釋兩個現象：為什麼跑第三方 MCP server 前 sandbox 是基本配置（MCP 是可執行程式碼、權限上限是「跑該 server 的 user 的權限」）、為什麼 production 場景的 code execution tool 必定在 ephemeral sandbox 內跑（避免長期 state 跟跨 user 殘留）。
 

@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/vault/"]
 
 HashiCorp Vault 是機密管理系統，集中存放和控制對敏感資料（密碼、API key、[TLS](/devops/infra/knowledge-cards/ssl-tls/) 私鑰、資料庫憑證）的存取。每一次讀取都有稽核紀錄、每一份機密都有存取政策、存取憑證可以設定自動輪替。
 
-## 概念位置
+## 跟其他概念的關係
 
 Vault 在 infra 裡負責「機密值的集中管理」。跟直接把密碼寫在環境變數或設定檔的差別是：Vault 提供存取控制（只有被授權的身分能讀特定 secret）、稽核軌跡（誰在什麼時候讀了什麼）、以及動態 secret（每次請求產生一組臨時憑證、用完即銷毀）。
 
@@ -19,7 +19,7 @@ Vault 在 infra 裡負責「機密值的集中管理」。跟直接把密碼寫�
 
 系統需要 Vault 的訊號是：多個服務共用同一組資料庫密碼且密碼寫在設定檔裡、沒有人知道上次輪替是什麼時候、或是稽核要求「列出誰能存取哪些機密」而答不出來。
 
-## 設計責任
+## 判斷條件與後果
 
 Vault 重新啟動後處於 sealed 狀態，解封之前任何服務都讀不到機密，所以 unseal 方式與 storage backend 決定 Vault 停機後多快能恢復，認證方式與 secret engine 決定哪個身分能取得哪一種機密。要定的是：unseal 方式（連網用 cloud auto-unseal、斷網用 Shamir's secret sharing——需要 N 把 key 中的 M 把才能解鎖）、storage backend（Consul、PostgreSQL、filesystem）、認證方式（人用 LDAP/OIDC、機器用 AppRole）、secret engine 的選擇（KV 存靜態值、PKI 簽發數位憑證、database 動態產生 DB 帳號、SSH 依登入身分簽發短期 SSH 憑證）。
 

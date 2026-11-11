@@ -7,7 +7,7 @@ weight: 437
 
 Problem Details 的核心責任是給 HTTP API 的錯誤回應一個現成的、可演化的形狀。RFC 9457 定義 media type `application/problem+json`，核心成員是 `type`（錯誤種類的 URI）、`title`、`status`、`detail`、`instance` 五個。它跟 [API Contract](/backend/knowledge-cards/api-contract/) 的關係是後者的一個具體切面：錯誤格式一旦被消費者依賴，變更成本跟正常回應完全相同，因此它需要跟成功路徑同等的演化設計。
 
-## 概念位置
+## 跟其他概念的關係
 
 這份標準的定位寫在規範裡：problem details 是**補充** HTTP status code、而非取代。這句話決定了它在錯誤格式光譜上的位置——讀 status 的角色（中介層的 retry 與快取、監控的錯誤率、SDK 的例外轉換）拿到粗分類，讀 body 的角色拿到細節，兩層對同一個錯誤說一致的話。相對地，讓 status 恆定為 200 而把錯誤全放進酬載的做法，會讓前一組角色失明（該取捨見 [錯誤格式之爭](/backend/11-api-design/error-format-debate/)）。錯誤格式跟 [Idempotency Key](/backend/knowledge-cards/idempotency-key/) 有一個具體接點：冪等衝突需要在錯誤模型裡佔一個可程式化分辨的位置，而 `type` URI 正是給它的落點。
 
@@ -19,7 +19,7 @@ Problem Details 的核心責任是給 HTTP API 的錯誤回應一個現成的、
 
 缺這兩個條款的觀察形態各不相同。命名空間缺席時，跨服務的錯誤碼會撞號，且錯誤碼寫成連續數字（`code: 1047`）時 grep 不到語意。演化條款缺席時，每次新增欄位都無法確認既有消費者安不安全，於是格式實際上凍住了——沒有人敢加欄位，錯誤資訊只好塞進 `message` 文字，而消費者開始 parse 那段文字，改字就成為破壞相容的變更。
 
-## 設計責任
+## 判斷條件與後果
 
 採用時要決定的是 `type` URI 的命名空間怎麼分配（按服務、按領域、還是按錯誤族），以及哪些資訊放 extension member。不採用時要承擔的是同樣兩件事的自建版本，並且盡早把「未知欄位請忽略」寫進文件。它保護的是寫下它之後才新增的欄位，因此晚寫不追溯保護已經發出去的那些——而正因為價值在往後，晚寫仍然值得補。
 

@@ -8,7 +8,7 @@ tags: ["dotfile", "linux", "logging", "debugging"]
 
 環狀緩衝區是一塊固定大小的紀錄區，寫到底之後折回開頭覆蓋最舊的內容。核心的訊息（`dmesg` 讀的那一份，[OOM killer 殺掉程序](/linux/dotfile/knowledge-cards/oom-exit-code-137/)的紀錄就寫在那裡）與 Android 的 `logcat` 都用這個結構，理由是它的記憶體用量有上界，不會因為某個服務話多就把磁碟寫滿。
 
-## 概念位置
+## 跟其他概念的關係
 
 相關概念：[systemd OnFailure](/linux/dotfile/knowledge-cards/systemd-onfailure/)（服務失敗時的告警路徑，與事後翻 log 互補）、[OOM Killer 與退出碼 137](/linux/dotfile/knowledge-cards/oom-exit-code-137/)（核心訊息裡最常被回溯的一類事件）。讀取工具與各自的權威來源見[日誌閱讀與診斷工具](/linux/dotfile/07-desktop-maintenance/log-reading-diagnostic-tools/)。
 

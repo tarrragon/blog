@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "training"]
 
 Pre-training（預訓練）的核心概念是「在大量未標註文字上、用 next-token prediction 當目標訓練一個語言模型」。產出的權重稱為 [base model](/llm/knowledge-cards/base-model/)、是後續 [SFT](/llm/knowledge-cards/sft/) / [RLHF](/llm/knowledge-cards/rlhf/) 的起點。Pre-training 是 LLM 三階段訓練流程中**最貴、最耗時、最決定模型上限**的階段。
 
-## 概念位置
+## 跟其他概念的關係
 
 Pre-training 在 LLM 訓練 pipeline 的位置：
 
@@ -33,6 +33,6 @@ Pre-training 的特性：
 | Loss     | [Cross-entropy](/llm/knowledge-cards/cross-entropy/) on next-token                                                    |
 | 結果     | 「會接龍」的 [base model](/llm/knowledge-cards/base-model/)、可用 [perplexity](/llm/knowledge-cards/perplexity/) 評估 |
 
-## 設計責任
+## 判斷條件與後果
 
 理解 pre-training 後可以判讀幾件事：模型的「世界知識」絕大部分在 pre-training 時就決定了、[SFT](/llm/knowledge-cards/sft/) / [RLHF](/llm/knowledge-cards/rlhf/) 只是「教模型怎麼用這些知識回答」、不會大幅增加新知識；模型 cutoff date 就是 pre-training 資料的截止；想做新領域知識引入、[RAG](/llm/knowledge-cards/rag/) 比繼續 fine-tune 划算（pre-training 太貴、且 fine-tune 容易讓既有能力退化）。

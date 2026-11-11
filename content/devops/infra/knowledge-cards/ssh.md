@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/ssh/"]
 
 SSH（Secure Shell）是加密的遠端 shell 連線協定，讓操作者在本地終端機執行遠端伺服器上的指令。連線建立後，操作者看到的是遠端伺服器的命令列——可以跑任何該伺服器上安裝的 CLI 工具。SSH 建立安全連線所依賴的公私鑰機制，跟 [SSL/TLS](/devops/infra/knowledge-cards/ssl-tls/) 以數位憑證驗證伺服器身分同屬非對稱加密的應用。
 
-## 概念位置
+## 跟其他概念的關係
 
 SSH 在接手維運的情境裡是一條關鍵分界線：有 SSH 存取就能用 `mysqldump`、`git`、`systemctl` 等 CLI 工具操作伺服器；沒有 SSH 就只能用 [FTP](/devops/infra/knowledge-cards/ftp/) 傳檔案、用 phpMyAdmin 管資料庫、用 cPanel 改設定。兩種情境的操作流程和可用工具完全不同。
 
@@ -17,7 +17,7 @@ SSH 在接手維運的情境裡是一條關鍵分界線：有 SSH 存取就能�
 
 判斷有沒有 SSH 存取：嘗試 `ssh user@host`。如果連線成功進入命令列就有；如果 timeout 或被拒，可能是主機不開放 SSH（共享主機常見）、或 port 不是預設的 22、或需要 IP 白名單。cPanel 的「終端機」功能有時提供 web-based SSH，但功能受限。
 
-## 設計責任
+## 判斷條件與後果
 
 SSH 的認證方式有兩種：密碼（簡單但不安全，容易被暴力嘗試）和 SSH key pair（公鑰放在 server 的 `~/.ssh/authorized_keys`，私鑰留在 client）。生產環境應該用 key 認證並關閉密碼登入。
 

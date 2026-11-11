@@ -8,7 +8,7 @@ weight: 114
 
 BOPLA 的核心概念是「物件屬性層級的授權缺失」。即使使用者可以存取某個物件，也不代表可以讀取或修改該物件的所有欄位。 可先對照 [Broker](/backend/knowledge-cards/broker/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 BOPLA 是 field-level policy 的安全問題。訂單物件可以讓使用者查看商品與金額，但內部風控欄位、成本、客服註記或權限欄位需要更高權限。 可先對照 [Broker](/backend/knowledge-cards/broker/)。
 
@@ -16,6 +16,6 @@ BOPLA 是 field-level policy 的安全問題。訂單物件可以讓使用者查
 
 系統需要 BOPLA 防護的訊號是 API 回傳完整資料模型，或允許 client 送入任意欄位。使用者更新個人資料時，外部輸入欄位應排除 `role`、`is_admin` 或 `credit_limit`。
 
-## 設計責任
+## 判斷條件與後果
 
 BOPLA 防護要定義欄位分級、輸入白名單、輸出 schema、遮罩與測試。公開 API DTO 應和內部資料模型分開。

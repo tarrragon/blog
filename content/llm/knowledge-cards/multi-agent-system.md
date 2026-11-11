@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "agent", "multi-agent", "architecture"]
 
 Multi-agent system 的核心概念是「**多個 LLM [agent](/llm/knowledge-cards/agent/) 協作完成任務**」。跟 multi-call workflow 的差異**不在 agent 數量多寡、在控制流跟責任邊界**——multi-call 是主程式編排每 step、multi-agent 是 agent 自決下一步並可呼叫其他 agent。屬於 [agent](/llm/knowledge-cards/agent/) 概念的進一步擴展。
 
-## 概念位置
+## 跟其他概念的關係
 
 跟 multi-call 對照：
 
@@ -28,7 +28,7 @@ Multi-agent system 的核心概念是「**多個 LLM [agent](/llm/knowledge-card
 | Hierarchical  | Orchestrator + specialists                                    | 多專業 agent、單一對外介面 |
 | Agent-as-tool | Agent 互通像 tool call（如 [MCP](/llm/knowledge-cards/mcp/)） | 跨組織重用、標準協議       |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 agent framework / paper 看到「multi-agent」「orchestrator」「agent-as-tool」就是這層設計。實作判讀：
 

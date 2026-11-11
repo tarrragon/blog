@@ -7,7 +7,7 @@ weight: 143
 
 Offline catch-up 的核心概念是「接收端離線期間漏掉的事件，如何在重新連線後補齊」。它是即時通道與正式狀態之間的補償設計。 可先對照 [Durable Queue](/backend/knowledge-cards/durable-queue/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Offline catch-up 常出現在 WebSocket、mobile push 與跨區域同步。即時通道只負責在線時低延遲傳遞，離線後的完整性通常由 [durable queue](/backend/knowledge-cards/durable-queue/)、event log 或資料庫狀態查詢提供。
 
@@ -15,6 +15,6 @@ Offline catch-up 常出現在 WebSocket、mobile push 與跨區域同步。即�
 
 例如聊天訊息在使用者離線時不能遺失，重新上線後需要補拉缺失訊息；typing indicator 可以不補送。兩者差異來自事件語意，而不是傳輸通道本身。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義補送範圍、接續標記（cursor）或版本、補送時限與去重規則，並把流程寫入 [runbook](/backend/knowledge-cards/runbook/)。

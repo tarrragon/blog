@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "rag", "retrieval"]
 
 HyDE（Hypothetical Document Embeddings、Gao et al. 2022）是 [RAG](/llm/knowledge-cards/rag/) retrieval 階段的 query 端增強技術。核心觀察：**query 跟 document 在 embedding 空間的距離往往比 document 跟 document 之間更遠**——這是典型 [query-document gap](/llm/knowledge-cards/query-document-gap/)。HyDE 的做法是先用 LLM 對 query 生成「假設的答案文件」、對假文件做 embedding 拿去 retrieve、而不是直接 embed 原 query。
 
-## 概念位置
+## 跟其他概念的關係
 
 HyDE 三步：
 
@@ -27,7 +27,7 @@ User query
 
 為什麼比直接 embed query 好：假文件的 phrasing、長度、結構都更接近真文件的分佈、embedding 距離更可靠。重點是**假文件當 embedding 的代理**、不是當答案——[hallucinate](/llm/knowledge-cards/hallucination/) 出錯誤事實 OK、但語意 / 領域要落對。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 RAG paper 或工具看到「HyDE」「hypothetical document」「query-side augmentation」就是這個機制。實作判讀：
 

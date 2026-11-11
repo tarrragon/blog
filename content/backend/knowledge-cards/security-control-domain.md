@@ -10,7 +10,7 @@ Security control domain 的核心概念是「一條風險的防守責任歸給�
 
 **這個詞與基礎設施的 [control plane](/backend/knowledge-cards/control-plane/) 同名而不同義**，而兩義在同一批內容裡並存：control plane 問的是「策略與配置由哪一層下發」（service mesh、Kubernetes、API gateway 的決策層），是系統的分層；control domain 問的是「這條風險由哪一類防守承接」，是責任的分類。vendor 頁寫「單一 secret 控制面」用的是前者，防守章節寫「入口控制面」用的是後者。判別看句子在問分層還是問歸屬。
 
-## 概念位置
+## 跟其他概念的關係
 
 控制面位在 [threat model](/backend/knowledge-cards/threat-model/) 與具體控制之間：威脅模型列舉風險的位置，控制面決定每個位置的責任歸屬，而 [authentication](/backend/knowledge-cards/authentication/)、[authorization](/backend/knowledge-cards/authorization/)、[data classification](/backend/knowledge-cards/data-classification/) 這些是各面底下的具體手段。它與 [defense in depth](/backend/knowledge-cards/defense-in-depth/) 的關係是同一組控制的兩種讀法——縱深問「同一條路徑上疊了幾層」，控制面問「這一層歸誰維護」。
 
@@ -22,6 +22,6 @@ Security control domain 的核心概念是「一條風險的防守責任歸給�
 
 分類本身不解決風險，它解決的是分派。存取憑證輪替沒做完這件事，判成身分控制面與判成入口控制面會得到不同的主責團隊與不同的驗證方式，而兩種判法都能自圓其說——所以分類的價值在於它被寫下來一次，而不在於它天然正確。
 
-## 設計責任
+## 判斷條件與後果
 
 控制面要交出的是一張對照：每條風險節點歸哪一面、那一面的主責角色是誰、協作角色有哪些。歸屬與角色是兩層，先有歸屬才有角色——順序顛倒的話會先挑到手邊有空的人、再回頭把控制面套上去，而那樣分出來的責任在下一次人員異動時就失效了。分派的結果接 [7.8 的交接模板](/backend/07-security-data-protection/security-routing-from-case-to-service/)：控制面填「承接範圍」那一項，角色填「主責與協作角色」那一項。

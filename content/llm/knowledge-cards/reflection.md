@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "prompting", "workflow"]
 
 Reflection（self-critique）的核心概念是「**模型先生成一個草版、再對自己的草版 critique、再修改**」。屬於推理引導類的 prompting 技術、也是 [workflow pattern](/llm/04-applications/workflow-patterns/) 的基本模式之一。跟 [chain-of-thought](/llm/knowledge-cards/chain-of-thought/) 不同：CoT 是「過程要 explicit」、reflection 是「先寫一版再批評再改」、有明確的兩階段。
 
-## 概念位置
+## 跟其他概念的關係
 
 Reflection 三步：
 
@@ -30,7 +30,7 @@ Reflection 三步：
 | Reflection                                               | Generate → critique → refine       | 一次生成不夠好、需要二次審視 |
 | [Multi-step](/llm/knowledge-cards/multi-step-retrieval/) | Retrieve / decide / retrieve again | 資訊不足、要動態補資料       |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 prompt engineering / agent paper 看到「reflection」「self-critique」「self-refine」「critic」就是這個機制。實作判讀：
 

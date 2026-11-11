@@ -217,7 +217,7 @@ oci compute instance-console-connection list -c <compartment 的 OCID> --instanc
   --query 'data[0]."connection-string"' --raw-output
 ```
 
-這次的序列主控台連線用完就刪，平時不留。序列主控台是救援入口，繞過平時登入主機的控制點，所以照 [Serial Console（序列主控台）](/devops/infra/knowledge-cards/serial-console/)〈設計責任〉的「平時保持關閉、救援時才開啟、用完關回去」：要排查時跑〈被回收之後的重建：怎麼發現、留下與消失的資源、重建腳本〉裡序列主控台連線的重建腳本建一條（這次實跑約 15 秒），排查完用下面這條刪掉（腳本結尾會印出代入了連線 OCID 的同一條）：
+這次的序列主控台連線用完就刪，平時不留。序列主控台是救援入口，繞過平時登入主機的控制點，所以照 [Serial Console（序列主控台）](/devops/infra/knowledge-cards/serial-console/)〈判斷條件與後果〉的「平時保持關閉、救援時才開啟、用完關回去」：要排查時跑〈被回收之後的重建：怎麼發現、留下與消失的資源、重建腳本〉裡序列主控台連線的重建腳本建一條（這次實跑約 15 秒），排查完用下面這條刪掉（腳本結尾會印出代入了連線 OCID 的同一條）：
 
 ```bash
 # 刪掉序列主控台連線（實跑）：--wait-for-state 等的是連線本身的狀態

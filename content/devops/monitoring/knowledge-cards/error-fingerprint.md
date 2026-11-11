@@ -9,7 +9,7 @@ aliases: ["/monitoring/knowledge-cards/error-fingerprint/"]
 
 Error fingerprint 的核心概念是「從 error 事件中提取關鍵欄位計算 hash，相同 hash 的事件歸為同一 error group」。沒有 fingerprint 時，1000 筆同因 error 在 dashboard 上是 1000 行；有 fingerprint 後歸為 1 組，顯示 count / first_seen / last_seen / affected_sessions。可先對照 [redaction](/devops/monitoring/knowledge-cards/redaction/)（事件送出前的資料脫敏）和 [funnel analysis](/devops/monitoring/knowledge-cards/funnel-analysis/)（行為事件的轉換率分析）。
 
-## 概念位置
+## 跟其他概念的關係
 
 Error fingerprint 位在 collector 收到 error 事件之後、寫入 storage 之前。它的輸入是通過 schema validation 的 error 事件，輸出是附加了 `_fingerprint` 欄位的事件和更新後的 error_groups 摘要表。Fingerprint 只作用於 `type: "error"` 的事件 — 其他三類事件（event / metric / lifecycle）不需要去重分群。與 [redaction](/devops/monitoring/knowledge-cards/redaction/) 同樣運作在事件寫入 storage 之前，但目的不同——redaction 處理欄位內容的隱私、fingerprint 處理事件的分群鍵。
 
@@ -17,7 +17,7 @@ Error fingerprint 位在 collector 收到 error 事件之後、寫入 storage �
 
 需要 fingerprint 的訊號是「dashboard 的 error 列表中，同一個 bug 因為 error message 包含動態值（user ID、timestamp、IP）而分裂成多個不同的行」。例如 `"User 12345 not found"` 和 `"User 67890 not found"` 是同一個 bug，但 name-based grouping（`GROUP BY name`）把它們歸為同一行時，丟失了 message 中的動態值資訊；而沒有 normalization 的 message-based grouping 會把它們分裂成兩行。
 
-## 設計責任
+## 判斷條件與後果
 
 Fingerprint 承擔的設計責任是「在 error 的精確識別和分群粒度之間找到平衡」。過粗的 fingerprint（只用 error type）把不同 bug 混在同一組；過細的 fingerprint（用完整 message 含動態值）把同因 error 分裂成多組。
 

@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/deletion-protection/"]
 
 Deletion protection 是雲端平台在資源層級提供的防護機制：開啟後，任何刪除該資源的操作（Console 點按、CLI 指令、[IaC](/devops/infra/knowledge-cards/iac/) 的 destroy）都會被擋下，必須先顯式關閉保護才能執行刪除。這個額外步驟的目的是防止手滑、批次操作誤傷、以及 Terraform plan 裡意外出現的 destroy。
 
-## 概念位置
+## 跟其他概念的關係
 
 Deletion protection 是 [stateful 資源保護](/devops/infra/05-core-services/stateful-protection-dependency/)的第一道防線。運算節點可以隨時重建，資料一旦遺失通常無法重來——這條分界線決定了哪些資源該開保護。對 stateful 資源（資料庫、持久化儲存）來說，這是 day-1 該開的設定，不是「等穩定再開」的選項。
 
@@ -28,7 +28,7 @@ Deletion protection 是 [stateful 資源保護](/devops/infra/05-core-services/s
 
 `terraform plan` 輸出裡出現 `destroy` 或 `forces replacement`（`-/+`）時，deletion protection 是阻擋意外資料遺失的最後一道閘門。有保護的資源在 apply 時會報錯而非直接刪除，讓操作者有機會停下來確認。
 
-## 設計責任
+## 判斷條件與後果
 
 用 [IaC](/devops/infra/knowledge-cards/iac/) 描述 stateful 資源時，把 deletion protection 寫進程式碼而非手動在 Console 開啟——這讓保護策略本身成為可審查、可追蹤的設定。同時搭配 `skip_final_snapshot = false`（RDS）確保刪除前自動做最後一份快照。
 

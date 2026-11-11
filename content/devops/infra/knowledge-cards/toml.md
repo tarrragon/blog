@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/toml/"]
 
 TOML（Tom's Obvious, Minimal Language）是一種給人讀寫的設定檔格式：每一行是 `鍵 = 值`，值的型別由寫法本身決定（字串要加引號、數字與布林值不加），用方括號的表頭把鍵分組，可以寫 `#` 開頭的註解，沒有用縮排表示結構。規格由 toml.io 維護，1.0.0 在 2021 年 1 月發佈，1.1.0 在 2025 年 12 月發佈；Python 的 `pyproject.toml`、Rust 的 `Cargo.toml` 都用這個格式，跟 [HCL](/devops/infra/knowledge-cards/hcl/) 與 [.env](/devops/infra/knowledge-cards/dotenv/) 同樣是描述設定的檔案：比起 HCL，TOML 只描述資料、沒有變數與函式；比起 .env，TOML 有型別、分組與巢狀結構。
 
-## 概念位置
+## 跟其他概念的關係
 
 TOML 在設定檔格式裡的位置介於 JSON 與 YAML 之間：跟 JSON 一樣每個值的型別都由寫法明確決定，跟 YAML 一樣可以寫註解、適合人手動編輯。它只描述資料，需要變數、迴圈與條件來描述基礎設施時用的是 [HCL](/devops/infra/knowledge-cards/hcl/) 這類設定語言。它在本站被用來寫主機的維護清單，選它的理由與實測見 [主機維護清單寫成 TOML：JSON、YAML、TOML 的取捨、TOML 1.0 與 1.1 的版本差異、清單的欄位設計與只讀檢查腳本](/devops/operations/09-host-lifecycle/host-manifest-in-toml/)；Python 打包設定裡的 TOML 用法見 [6.1 pyproject.toml 完整指南](/programming/python/advanced/07-packaging/pyproject-toml/)。
 
@@ -17,7 +17,7 @@ TOML 在設定檔格式裡的位置介於 JSON 與 YAML 之間：跟 JSON 一樣
 
 需要讀懂 TOML 的情境包括：打開一個副檔名是 `.toml` 的設定檔、要判斷某個值會被程式讀成字串還是數字、在 JSON、YAML、TOML 之間選設定檔格式，以及解析器回報 `TOMLDecodeError` 這類錯誤、而同一份檔案在另一台機器上解析得過。
 
-## 設計責任
+## 判斷條件與後果
 
 TOML 的基本結構：
 

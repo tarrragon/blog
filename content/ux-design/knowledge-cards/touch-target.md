@@ -8,7 +8,7 @@ tags: ["ux-design", "knowledge-card", "interaction-feedback", "touch-target", "m
 
 Touch Target 的核心概念是「可點擊區域必須涵蓋視覺上暗示可點的範圍」。視覺設計透過整行反白、箭頭圖示、卡片邊框暗示「這裡可以點」；若實際的 gesture 區域小於視覺暗示的範圍，使用者點了沒反應，體感跟按鈕壞掉相同。它處理的是回饋發生之前的問題 — 點擊沒有落在 gesture 區域內，[三層回饋](/ux-design/06-interaction-feedback/feedback-three-layers/)連第一層都不會啟動。與 [Doherty Threshold](/ux-design/knowledge-cards/doherty-threshold/)（回饋時間門檻）互補：Doherty 管「點擊後多久要有反應」，Touch Target 管「點擊有沒有落在可反應的區域」。
 
-## 概念位置
+## 跟其他概念的關係
 
 Touch Target 處理的是回饋鏈的第零層——點擊有沒有落在可反應的區域。[三層回饋](/ux-design/06-interaction-feedback/feedback-three-layers/)（點擊確認 / 等待指示 / 結果通知）假設點擊已經落在 gesture 區域內；Touch Target 確保這個前提成立。與 [Doherty Threshold](/ux-design/knowledge-cards/doherty-threshold/) 的關係是空間 vs 時間：Doherty 管回饋的時間門檻、Touch Target 管回饋的空間門檻。與 [Screen State Matrix](/ux-design/knowledge-cards/screen-state-matrix/) 無直接關聯——狀態矩陣管畫面層級的轉換、Touch Target 管元件層級的互動。
 
@@ -25,6 +25,6 @@ Touch Target 處理的是回饋鏈的第零層——點擊有沒有落在可反�
 
 範圍錯位的訊號是「使用者點了視覺單元的非 icon 區域而無反應」：實機測試點列表行文字無反應、可用性測試觀察到使用者重複點擊同一行、觸控熱點分析顯示大量落在 gesture 區域外的點擊。程式碼層的訊號是 gesture 只掛在視覺單元的子元件（trailing icon、小圖示）而非整個單元容器。
 
-## 設計責任
+## 判斷條件與後果
 
 Touch Target 的設計責任是讓「看起來可以點的地方」與「實際可以點的地方」一致，且不小於平台底線。列表行的主要操作（展開、進入詳情）以整行為觸控目標；行內若有次要操作（刪除、更多選單），保留為獨立的內層 gesture 區域，兩者互不干擾。設計審查時對每個可互動視覺單元問一句：使用者最直覺點的位置，在 gesture 區域內嗎？

@@ -8,10 +8,10 @@ weight: 163
 
 Facet query 的核心概念是「在搜尋結果上提供可聚合的分類維度」。它讓使用者能快速依品牌、分類、價格區間等條件縮小結果。 可先對照 [Search Index](/backend/knowledge-cards/search-index/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 常與 [search index](/backend/knowledge-cards/search-index/) 與 [full-text search](/backend/knowledge-cards/full-text-search/) 搭配，提升查詢互動性。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義分面欄位、聚合成本與更新策略，避免高成本聚合拖慢查詢。

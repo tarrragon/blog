@@ -8,7 +8,7 @@ tags: ["backend", "database", "connection-pool", "knowledge-card"]
 
 連線洩漏（connection leak）是程式向 [Connection Pool](/backend/knowledge-cards/connection-pool/) 借了一條連線，用完卻沒有還回池裡。那條連線在池的帳上一直是「使用中」，洩漏累積到池的上限之後，之後每一個要用資料庫的請求都排隊等連線，等到逾時為止。資料庫那一端這時負載多半很低：連線開著，上面沒有在執行的查詢。和它症狀相同、成因不同的是連線被長時間合法持有，最常見的是交易開著時去呼叫外部服務（長交易佔住連線的成本見 [Transaction](/backend/knowledge-cards/transaction/)，外部呼叫要不要放進交易見 [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/)）。
 
-## 概念位置
+## 跟其他概念的關係
 
 連線在程式碼上不一定以「連線」的樣子出現，查詢結果的讀取物件（[Cursor](/backend/knowledge-cards/cursor/)）與交易（[Transaction](/backend/knowledge-cards/transaction/)）都各自佔著一條，所以借出的位置常常不明顯。各語言最常見的借出點：
 
@@ -23,6 +23,6 @@ tags: ["backend", "database", "connection-pool", "knowledge-card"]
 - **找出是哪一段程式**：`pg_stat_activity` 的 `query` 欄是那條連線最後執行的語句，`application_name`（連線字串可以設定）標出是哪個服務；停在 `idle in transaction` 或池說使用中的連線，最後一句 SQL 通常就指向借出連線的那段程式。
 - **只在流量高或長時間運行之後才出現**：池的上限越大，洩漏要累積越久才浮現。本機開發把池上限設成 1 或 2，同樣的洩漏在第二個查詢就卡住，最容易重現。
 
-## 設計責任
+## 判斷條件與後果
 
 借出與歸還寫在同一個作用域裡，讓語言的機制保證歸還：Go 在取得 `*sql.Rows` 或 `*sql.Tx` 的下一行寫 `defer Close()` 或 `defer Rollback()`，Python 用 `with`。監控上要能看到池的使用中、閒置與等待次數；測試裡可以在每個測試結束時檢查池的使用中連線數回到 0，讓洩漏在測試階段就失敗。Java 的 HikariCP 這類連線池內建洩漏偵測（連線借出超過設定時間就記錄借出位置的 stack trace），Go 的 `database/sql` 沒有，要靠池的使用中連線數、等待次數，以及測試結束時的連線數檢查。

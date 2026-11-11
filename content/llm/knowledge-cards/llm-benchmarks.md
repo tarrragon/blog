@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "evaluation", "benchmark"]
 
 LLM benchmarks 的核心概念是「**用標準化任務集合衡量 LLM 各維度能力的評估工具**」。不同 benchmark 衡量不同維度（知識、reasoning、code、對話、math 等）、選錯 benchmark 看模型會誤判。本卡列主流 benchmark 跟它們的覆蓋面、失效情境，是判讀 [model card](/llm/knowledge-cards/model-card/) 上 benchmark 數字時的對照表。
 
-## 概念位置
+## 跟其他概念的關係
 
 主流 LLM benchmark 一覽：
 
@@ -36,7 +36,7 @@ LLM benchmarks 的核心概念是「**用標準化任務集合衡量 LLM 各維�
 4. **Single-task overfitting**：模型廠商針對 benchmark 特別 fine-tune、benchmark 高分但通用能力沒提升
 5. **Prompt sensitivity**：同個 benchmark 用不同 prompt format、score 差幾個百分點
 
-## 設計責任
+## 判斷條件與後果
 
 讀 model card / paper 看到 benchmark 數字、判讀框架：
 

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "architecture", "local-llm"]
 
 Three-layer architecture（三層架構）的核心概念是「**把本地 LLM 系統拆成介面層、[inference server](/llm/knowledge-cards/inference-server/) 層、模型層**」。這個分層讓讀者能判斷一個工具是在處理使用者互動、模型 serving，還是權重本身。
 
-## 概念位置
+## 跟其他概念的關係
 
 三層責任分工如下：
 
@@ -24,6 +24,6 @@ Three-layer architecture（三層架構）的核心概念是「**把本地 LLM �
 
 看到 Continue.dev、Open WebUI、aider，通常是在介面層；看到 Ollama、LM Studio server、llama.cpp server、vLLM，通常是在伺服器層；看到 GGUF、Safetensors、MLX 權重，通常是在模型層。LM Studio 這類 all-in-one 工具會跨層，但仍可拆成 UI 與 server 兩種責任。
 
-## 設計責任
+## 判斷條件與後果
 
 排錯或換工具時，先問「問題出在哪一層」。連不上 `localhost` 是伺服器或網路問題；回答品質差多半是模型或 prompt 問題；IDE 操作不順是介面層問題。完整推導見 [0.2 三層架構](/llm/00-foundations/three-layer-architecture/)。

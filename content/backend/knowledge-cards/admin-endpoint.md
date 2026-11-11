@@ -9,7 +9,7 @@ weight: 1
 
 Admin Endpoint 的核心概念是「只給受信任角色使用的高權限入口」。它通常處理管理、調整、匯出或修正資料的操作。 可先對照 [Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Admin Endpoint 位在內部網路、身份驗證與授權層之後，和一般 public API 分開管理。 可先對照 [Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)。
 
@@ -23,6 +23,6 @@ Admin Endpoint 位在內部網路、身份驗證與授權層之後，和一般 p
 
 後台修改使用者角色、停用帳號、調整活動規則、匯出敏感報表，都應透過 admin endpoint 完成，並保留 audit log。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義更嚴格的身份驗證、授權、來源限制、操作追蹤與錯誤回應。Admin Endpoint 的失敗後果通常比 public API 更高。

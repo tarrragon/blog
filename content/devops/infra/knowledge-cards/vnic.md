@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/vnic/"]
 
 VNIC（virtual network interface card，虛擬網路卡）是雲端主機接上虛擬網路的那一張網卡。主機在網路上的身分都掛在它上面：所在的 [Subnet（子網路）](/devops/infra/knowledge-cards/subnet/)、私有 IP、公開 IP（有配發時），以及網卡層的防火牆規則（Oracle Cloud 的 NSG、AWS 的 [Security Group](/devops/infra/knowledge-cards/security-group/)）。各家的名稱不同：Oracle Cloud 叫 VNIC，AWS 叫 ENI（Elastic Network Interface），Google Cloud 叫 network interface。
 
-## 概念位置
+## 跟其他概念的關係
 
 主機與網路設定之間隔著 VNIC 這一層，所以「這台主機的私有 IP 是多少」「這台主機套用了哪些網卡層的防火牆規則（[Security Group](/devops/infra/knowledge-cards/security-group/) 這一類）」查的都是它的 VNIC，不是主機本身。Oracle Cloud 的 CLI 也是這樣分工：`oci compute instance list-vnics` 列出主機的 VNIC 與私有 IP，掛上或拿掉 NSG 用的是 `oci network vnic update --nsg-ids`，而不是主機的指令。
 
@@ -23,7 +23,7 @@ VNIC（virtual network interface card，虛擬網路卡）是雲端主機接上�
 - 剛建好的主機，列出 VNIC 的查詢一時回空值：主機還在建立，VNIC 的掛載紀錄還沒出現
 - 同一個 subnet 裡兩台主機的防火牆行為不同：subnet 層的規則相同，差在各自 VNIC 上掛的 NSG 或 security group
 
-## 設計責任
+## 判斷條件與後果
 
 網卡層的規則只影響掛上它的那幾張 VNIC，subnet 層的規則影響整個 subnet，所以放規則的位置決定了影響範圍；而 VNIC 會隨主機重建而換新，所以：
 

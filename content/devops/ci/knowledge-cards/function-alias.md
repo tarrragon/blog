@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/function-alias/"]
 
 Function Alias 的核心概念是「用穩定名稱指向不可變函式版本」。它讓 [Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/) 可以套用在 serverless function 上，並讓 [Rollback Strategy](/devops/ci/knowledge-cards/rollback-strategy/) 具備快速切換入口。
 
-## 概念位置
+## 跟其他概念的關係
 
 Function Alias 位在 function version、traffic weight、[event source](/devops/ci/knowledge-cards/event-source/) 與 invocation entrypoint 之間，常見於 Lambda alias 或其他 serverless 平台的版本別名。
 
@@ -23,6 +23,6 @@ Function Alias 位在 function version、traffic weight、[event source](/devops
 
 HTTP function 的 `prod` alias 先把 5% 流量導向 version 42。若錯誤率穩定，逐步提高權重；若錯誤率升高，alias 切回 version 41。
 
-## 設計責任
+## 判斷條件與後果
 
 Function Alias 要定義版本命名、流量權重、觀測指標、事件來源綁定與回復條件，讓函式發布具備可控入口。

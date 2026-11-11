@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "architecture", "training"]
 
 Layer normalization（LayerNorm）的核心概念是「對單一 token 的 hidden state 向量做正規化」——把該向量的 mean 移到 0、std 縮到 1、再用兩個可學參數做仿射變換。它是 [Transformer](/llm/knowledge-cards/transformer/) 穩定深層訓練的關鍵元件、跟 batch normalization 的差別是「正規化軸不同」、LayerNorm 對單個 sample 內部做、不依賴 batch 統計。
 
-## 概念位置
+## 跟其他概念的關係
 
 LayerNorm 在 Transformer block 內的位置（現代主流是 pre-norm）：
 
@@ -39,6 +39,6 @@ Pre-norm vs post-norm：
 
 Pre-norm 能撐住幾十層 Transformer、關鍵在於跟 [residual connection](/llm/knowledge-cards/residual-connection/) 搭配、讓梯度能穩定流過每一層。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 LayerNorm 後可以判讀「深層 LLM 為什麼訓得起來」的部分答案：[residual connection](/llm/knowledge-cards/residual-connection/) + LayerNorm 是讓梯度能穩定流過幾十層 Transformer 的兩根支柱。讀 model card 看到「RMSNorm」「pre-norm」等詞、知道對應的設計選擇跟訓練穩定性意涵。

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "training"]
 
 SFT（Supervised Fine-Tuning、指令微調）的核心概念是「在 [base model](/llm/knowledge-cards/base-model/) 上、用人類示範的『指令-回答』成對資料做監督式 fine-tune、讓模型從『接龍』變成『跟指令走』」。SFT 是 [pre-training](/llm/knowledge-cards/pre-training/) 跟 alignment（[RLHF](/llm/knowledge-cards/rlhf/) / [DPO](/llm/knowledge-cards/dpo/)）之間的橋。
 
-## 概念位置
+## 跟其他概念的關係
 
 SFT 在訓練 pipeline 的位置與資料形態：
 
@@ -34,6 +34,6 @@ SFT 後同一個模型行為大改：
 2. **訓練成本相對低**：通常幾百到幾千 GPU-hour、可在單機完成。
 3. **容易過擬合 / 災難遺忘**：SFT 資料太少 / 太特化時、模型可能丟掉 pre-training 學到的能力、見 [LoRA](/llm/knowledge-cards/lora/) 的設計動機。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 model card 看到「instruct」「chat」「-it」「sft」等 suffix、就是經過 SFT 的版本。寫 code 場景用的模型幾乎都是 SFT 後的（base model 對話能力差、實用度低）。Coding-tuned 模型（如 Qwen3-Coder）是 SFT 階段大量加入 code 對話資料的特化版本、跟通用 instruct 模型在 code 任務上有可觀差距。

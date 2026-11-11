@@ -8,7 +8,7 @@ weight: 40
 
 Data masking 的核心概念是「保留資料用途，同時降低敏感內容暴露」。遮罩可以套用在畫面、匯出檔案、log、[客服後台](/backend/knowledge-cards/internal-admin-tool/)、測試資料與分析資料集。 可先對照 [Data Reconciliation](/backend/knowledge-cards/data-reconciliation/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Data masking 是資料分級與最小揭露的實作方式。完整身份證、信用卡、電話、email、地址與 access token 都可能需要依角色、情境與用途做不同遮罩。 可先對照 [Data Reconciliation](/backend/knowledge-cards/data-reconciliation/)。
 
@@ -16,6 +16,6 @@ Data masking 是資料分級與最小揭露的實作方式。完整身份證、�
 
 系統需要 data masking 的訊號是資料會離開原本受控邊界。客服查詢頁可能只顯示部分電話；報表匯出可能需要核准與遮罩；log 應避免記錄完整 token。
 
-## 設計責任
+## 判斷條件與後果
 
 遮罩策略要定義欄位分級、角色權限、匯出規則、測試資料產生與 audit。遮罩 helper 應集中管理，讓不同服務與語言維持一致規則。

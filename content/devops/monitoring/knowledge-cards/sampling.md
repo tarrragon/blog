@@ -9,7 +9,7 @@ aliases: ["/monitoring/knowledge-cards/sampling/"]
 
 取樣（sampling）的通用概念見 [Backend 知識卡：Sampling](/backend/knowledge-cards/sampling/) — 只保留部分觀測資料以控制成本。本卡聚焦監控 SDK 中的具體實作：在事件產生階段按比例丟棄部分事件，降低後續管線（buffer → transport → collector → storage）的負載。取樣是設計內的損失 — 取樣率是明確的 config 參數，損失量可預測。可先對照 [backpressure](/devops/monitoring/knowledge-cards/backpressure/)（觸發動態取樣的訊號來源）和 [rate limiting](/devops/monitoring/knowledge-cards/rate-limiting/)（collector 端的 per-client 限制）。
 
-## 概念位置
+## 跟其他概念的關係
 
 Sampling 位在管線最上游（SDK 產生事件的階段），比 [backpressure](/devops/monitoring/knowledge-cards/backpressure/) 早一步 — backpressure 是下游滿載後回傳的訊號，動態取樣正是 SDK 收到這個訊號後的回應動作。靜態取樣則跟 [rate limiting](/devops/monitoring/knowledge-cards/rate-limiting/) 一樣是主動設定的固定策略，差別在取樣發生在事件產生端、rate limiting 發生在 collector 接收端。
 
@@ -23,7 +23,7 @@ Sampling 位在管線最上游（SDK 產生事件的階段），比 [backpressur
 
 分析時用取樣率還原原始量級。取樣率 0.1 時收到 100 筆事件，推估原始量為 100 / 0.1 = 1000 筆。SDK 端的 `sdk.sampling.rate` 指標記錄當前取樣率，讓下游分析知道如何校正。
 
-## 判讀方式
+## 判斷條件與後果
 
 取樣校正對 funnel 和 cohort 分析有效（趨勢和比例不變），對個別事件追蹤無效（被丟棄的事件無法回復）。取樣承擔的設計責任是「在可觀測性覆蓋率和系統負載之間找到平衡」。Error 類事件不做取樣（每筆都可能是需要修的 bug），metric 類事件適合高比例取樣（丟幾筆不影響趨勢），event 類和 lifecycle 類取決於分析需求。
 

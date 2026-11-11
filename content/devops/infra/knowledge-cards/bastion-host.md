@@ -11,7 +11,7 @@ aliases: ["/infra/knowledge-cards/bastion-host/"]
 
 跳板機處理的是主機以 [SSH](/devops/infra/knowledge-cards/ssh/) 登入管理的情境：每台主機上跑著接受 SSH 連線的服務程式 sshd、預設監聽 22 port。只部署在 PaaS 或 serverless 平台、沒有任何可以 SSH 登入的主機時，平台自己的主控台與 CLI 就是管理入口，用不到跳板機。
 
-## 概念位置
+## 跟其他概念的關係
 
 把管理通道拆成網路可達性、通道授權、主機登入驗證三層時（見[伺服器管理通道的設計](/devops/infra/03-network-foundation/management-access-channel/)），跳板機是網路可達性的做法之一：它把「每台主機都對外開 22 port」收斂成「只有一台對外開」。它同時兼任通道授權——決定誰能打開通往主機的連線——判斷依據是跳板機上的 SSH 金鑰，或跳板機信任的 SSH CA 所簽的憑證；跳板機與目的主機接受同一把金鑰時，一把私鑰外洩就同時通過通道授權與主機登入驗證。
 
@@ -24,7 +24,7 @@ aliases: ["/infra/knowledge-cards/bastion-host/"]
 - private subnet 主機的 security group 只允許來自某一個 security group（或某一台主機）的 22 port
 - 管理員的 `~/.ssh/config` 裡有 `ProxyJump` 設定，或團隊文件寫著「先連 bastion」
 
-## 設計責任
+## 判斷條件與後果
 
 自建跳板機時，整個環境對外的 SSH 暴露都集中在這一台上，所以下面這幾件事的標準比一般主機高：
 

@@ -6,9 +6,9 @@ weight: 473
 tags: ["backend", "observability", "prometheus", "knowledge-card"]
 ---
 
-Relabeling 是 Prometheus 在固定的時間點，依一串規則改寫一組標籤的機制：把一個標籤的值複製或改寫成另一個標籤、刪掉標籤，或者整筆丟掉。同一套規則語法用在幾個時間點，差別在改寫的對象：服務發現找到讀取對象（target）之後、讀取（scrape）之前，改寫的是讀取對象的標籤（`relabel_configs`）；讀到指標之後、寫進資料庫之前，改寫的是每一筆指標（`metric_relabel_configs`）；告警送往 Alertmanager 之前，改寫的是每一則告警的標籤（`alert_relabel_configs`）；遠端寫入之前，改寫的是要送出的每一條序列（`write_relabel_configs`）。另外 `alerting` 設定裡找 Alertmanager 的位址時也有一組 `relabel_configs`，改寫的是 Alertmanager 這個目標。`relabel_configs` 與 `metric_relabel_configs` 最常用，下方〈概念位置〉比較兩者讀得到的標籤，以及丟掉讀取對象或指標各省下什麼。讀取對象從哪裡來，見 [Service Discovery](/backend/knowledge-cards/service-discovery/)；為什麼要丟掉某些標籤或指標，見 [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)。Kubernetes 上的 Prometheus Operator 以 ServiceMonitor 的 `relabelings` 與 `metricRelabelings` 寫同樣的規則，欄位名稱改成 camelCase（`sourceLabels`、`targetLabel`）。下文的例子以 `host` 為主角：它是監控設定自己加在每筆序列上、代表主機的標籤，Prometheus 本身不產生它（Kubernetes 上常改用 `node`），告警與面板依它分組。
+Relabeling 是 Prometheus 在固定的時間點，依一串規則改寫一組標籤的機制：把一個標籤的值複製或改寫成另一個標籤、刪掉標籤，或者整筆丟掉。同一套規則語法用在幾個時間點，差別在改寫的對象：服務發現找到讀取對象（target）之後、讀取（scrape）之前，改寫的是讀取對象的標籤（`relabel_configs`）；讀到指標之後、寫進資料庫之前，改寫的是每一筆指標（`metric_relabel_configs`）；告警送往 Alertmanager 之前，改寫的是每一則告警的標籤（`alert_relabel_configs`）；遠端寫入之前，改寫的是要送出的每一條序列（`write_relabel_configs`）。另外 `alerting` 設定裡找 Alertmanager 的位址時也有一組 `relabel_configs`，改寫的是 Alertmanager 這個目標。`relabel_configs` 與 `metric_relabel_configs` 最常用，下方〈跟其他概念的關係〉比較兩者讀得到的標籤，以及丟掉讀取對象或指標各省下什麼。讀取對象從哪裡來，見 [Service Discovery](/backend/knowledge-cards/service-discovery/)；為什麼要丟掉某些標籤或指標，見 [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)。Kubernetes 上的 Prometheus Operator 以 ServiceMonitor 的 `relabelings` 與 `metricRelabelings` 寫同樣的規則，欄位名稱改成 camelCase（`sourceLabels`、`targetLabel`）。下文的例子以 `host` 為主角：它是監控設定自己加在每筆序列上、代表主機的標籤，Prometheus 本身不產生它（Kubernetes 上常改用 `node`），告警與面板依它分組。
 
-## 概念位置
+## 跟其他概念的關係
 
 | 規則的位置               | 改寫的對象       | 讀得到的標籤                                                                                                                                             | 丟掉之後省下什麼                                   |
 | ------------------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
@@ -32,7 +32,7 @@ Relabeling 是 Prometheus 在固定的時間點，依一串規則改寫一組標
 - **丟掉了指標，讀取時間與 exporter 的負擔卻沒有減少**：`metric_relabel_configs` 在解析之後才丟。Prometheus 替每個讀取對象記錄兩個數字：`scrape_samples_scraped` 是讀到的筆數，`scrape_samples_post_metric_relabeling` 是改寫之後留下的筆數，兩者的差就是被丟掉的筆數（實測丟掉 `go_gc_*` 時是 723 筆讀到、655 筆留下）。讀取時間與 exporter 的負擔不受影響，要省下這兩項得讓 exporter 少輸出，或者用 `relabel_configs` 整個讀取對象不讀。
 - **指標代表的對象不是讀取對象**：外部探測工具（例如 Gatus）輸出的是它探測的端點的結果，讀取對象的 `host` 是探測工具所在的主機，要用 `metric_relabel_configs` 依指標名稱或端點名稱把 `host` 改成端點所在的主機，作法見 [主機過載時的監控告警](/backend/04-observability/host-overload-alerting/) 的〈依原因抑制：主機飽和時壓下各服務變慢〉。
 
-## 設計責任
+## 判斷條件與後果
 
 relabel 規則寫完的完成條件有兩項：在 Service discovery 頁面上，每一個該讀的讀取對象都沒有被標為 dropped、不該讀的都被標為 dropped；以及查詢結果裡每一筆序列都帶著告警與面板要分組的那幾個標籤（`count by (host) (up)` 的結果裡沒有缺 `host` 的那一組）。`up` 是讀取對象層級的序列，只反映 `relabel_configs` 的結果；用 `metric_relabel_configs` 改寫標籤時，改以被改寫的那個指標查，例如 `count by (host) ({__name__=~"gatus_.*"})`。規則會靜默地刪掉標籤或整個讀取對象，所以來源標籤可能不存在時，先寫一條一定有值的規則當預設，再寫覆寫的那一條並把它的 regex 設成 `(.+)`：例如先以 `__meta_ec2_instance_id` 寫 `host`，在 Name tag 每台都不同的環境再以 `__meta_ec2_tag_Name` 覆寫，Name tag 為空時覆寫的規則不符合、不動作，`host` 留著執行個體 ID；覆寫的規則沿用預設的 `(.*)` 的話，空字串也符合，`host` 反而被刪掉。寫成規則是這樣，順序就是執行的順序：
 

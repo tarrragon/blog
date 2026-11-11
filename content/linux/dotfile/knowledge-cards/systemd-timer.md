@@ -8,7 +8,7 @@ tags: ["dotfile", "linux", "systemd", "knowledge-cards"]
 
 systemd timer 是 systemd 的排程機制：一個 `.timer` 檔寫出什麼時候觸發，到時間時 systemd 啟動同名的 `.service`（`logrotate.timer` 啟動 `logrotate.service`），由那個 service 執行實際的工作。跟 [cron](/devops/infra/knowledge-cards/cron/) 一樣是定時執行指令，差別在被執行的工作是一個 systemd 服務：它的輸出進 [journald（systemd-journald）](/linux/dotfile/knowledge-cards/journald/)、失敗時服務進入 failed 狀態，可以接 [systemd OnFailure（失敗觸發鉤子）](/linux/dotfile/knowledge-cards/systemd-onfailure/) 告警，資源限制與相依關係照 service 的寫法設定。
 
-## 概念位置
+## 跟其他概念的關係
 
 timer 在一台長期上線的主機上負責那些不必有人登入、到時間就要做的事：[logrotate](/linux/dotfile/knowledge-cards/logrotate/) 輪替 log、`dnf-automatic` 下載與安裝安全更新、憑證的自動續約。這些工作有沒有在跑，要讀 timer 的狀態，不能只讀設定檔：設定檔寫好而 timer 沒有啟用時，工作一次都不會執行。各條更新管道交給 timer 的方式與檢查方法，見 [長期上線主機的維護項目：會累積的資料、定期讀的 log、對外入口的盤點、安全更新、會到期的設定與檢查間隔的推算](/devops/operations/09-host-lifecycle/long-running-host-maintenance/)〈會老化的軟體：各條更新管道與更新後的重開機〉。
 
@@ -18,7 +18,7 @@ timer 在一台長期上線的主機上負責那些不必有人登入、到時�
 - `LAST` 是空的或很久以前：timer 從來沒觸發過，或觸發的條件從來沒成立。
 - timer 有觸發而工作沒有完成：讀它啟動的 service，`systemctl status <名稱>.service` 與 `journalctl -u <名稱>.service`。
 
-## 設計責任
+## 判斷條件與後果
 
 Oracle Linux 10 的 `logrotate.timer` 是一個完整的例子：
 

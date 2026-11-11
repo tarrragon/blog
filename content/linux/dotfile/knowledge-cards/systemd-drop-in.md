@@ -8,7 +8,7 @@ tags: ["dotfile", "linux", "systemd", "drop-in", "knowledge-cards"]
 
 drop-in 是 systemd 疊加設定的機制：不去改原始的 unit 檔，而是在一個對應的 `.d/` 目錄裡放一小段 `.conf`，systemd 載入時把它疊加或覆寫到原 unit 上。它承擔的語意是「在原檔之外改設定」——套件裝的 unit 檔升級時會被覆蓋，寫在 drop-in 裡的自訂設定不會，因為它是獨立的檔案。這讓「客製套件裝的服務」跟「升級不衝突」兩件事同時成立，例如一次套用 [systemd OnFailure](/linux/dotfile/knowledge-cards/systemd-onfailure/) 告警鉤子到系統上所有服務。
 
-## 概念位置
+## 跟其他概念的關係
 
 相關概念：[systemd OnFailure](/linux/dotfile/knowledge-cards/systemd-onfailure/)（最常用 top-level drop-in 全域套用的指令、以及空賦值清繼承的實例）、[服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)（drop-in 掛全域告警鉤子的完整實作）。
 

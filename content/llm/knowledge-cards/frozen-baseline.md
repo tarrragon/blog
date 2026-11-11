@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "evaluation", "production"]
 
 Frozen baseline 的核心概念是「**把某個特定 prompt + 特定 model 跑 production 一段時間後 freeze、每次新版本都跟它比、定期 refresh 並標明時點**」。Eval 系統的標準作法（常搭配 [LLM-as-judge](/llm/knowledge-cards/llm-as-judge/) 評分）、讓行為漂移可見、避免「永遠跟上一版比、長期累積漂移看不見」的常見失敗。
 
-## 概念位置
+## 跟其他概念的關係
 
 跟其他 eval 概念對照：
 
@@ -31,7 +31,7 @@ Day 14：把當下 prompt + model freeze 成 baseline-v1
 Day 90：baseline-v2、標明 refresh 時點
 ```
 
-## 設計責任
+## 判斷條件與後果
 
 讀 eval / production AI 文章看到「frozen baseline」「baseline drift」「regression set」就是這個機制。實作判讀：
 

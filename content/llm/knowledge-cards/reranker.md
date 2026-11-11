@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "rag", "retrieval"]
 
 Reranker 的核心概念是「**對 [retrieval](/llm/knowledge-cards/rag/) 第一階段拿到的 top-K（如 50）結果、用 cross-encoder 模型重新評分、排出 top-N（如 5）給 LLM**」。是 RAG 第二階段、補 bi-encoder（[embedding model](/llm/knowledge-cards/embedding-model/)）對 [query-document gap](/llm/knowledge-cards/query-document-gap/) 的細粒度匹配不足、品質提升明顯（recall@5 通常 +10-30%）但成本 / latency 增加。
 
-## 概念位置
+## 跟其他概念的關係
 
 Bi-encoder（[embedding model](/llm/knowledge-cards/embedding-model/)）vs cross-encoder 的差別：
 
@@ -34,7 +34,7 @@ Cross-encoder（reranker、retrieval 第二階段）：
 | Voyage rerank-2                    | SaaS API         | 跟 voyage embedding 配對 |
 | ColBERT v2                         | Late interaction | 介於 bi 跟 cross encoder |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 RAG / production retrieval docs 看到「reranker」「cross-encoder」「rerank stage」就是這 framing。寫 code 場景的判讀：
 

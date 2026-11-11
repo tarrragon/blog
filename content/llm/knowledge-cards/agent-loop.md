@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "agent", "tool-use"]
 
 Agent loop 的核心概念是「LLM 在 plan → act → observe → plan 的循環中推進任務、直到任務完成或停止條件觸發」，有別於一次性回答。它讓 LLM 從「單回合工具呼叫」進化成「自主執行多步驟工作」、但同時放大 [prompt injection](/llm/knowledge-cards/prompt-injection/) 的影響面跟 [tool use](/llm/knowledge-cards/tool-use/) 副作用範圍。
 
-## 概念位置
+## 跟其他概念的關係
 
 典型的 [agent](/llm/knowledge-cards/agent/) loop 流程：
 
@@ -28,7 +28,7 @@ Agent loop 的兩個關鍵變數：
 
 常見實作（依框架而異）：LangGraph、AutoGPT、Claude 的 agentic abilities、OpenAI Assistants API 都提供 agent loop 機制。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 agent loop 後可以解釋兩個現象：為什麼 agent 工作流的成本比單次 LLM call 高一個量級（loop 跑很多輪）、為什麼 agent loop 是 [prompt injection](/llm/knowledge-cards/prompt-injection/) 的放大器（loop 中段被 injection 後、後續步驟都被牽動）。
 

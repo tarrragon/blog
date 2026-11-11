@@ -19,6 +19,6 @@ Correlated failure（相關失效 / 共命運失效）指多個以為彼此獨�
 
 [Cascading failure](/backend/knowledge-cards/cascading-failure/) 是「一個壞了、透過重試 / 負載轉移把壓力傳給下一個、逐級放大」—— 有時間先後與因果傳導。Correlated failure 是「同一個觸發器讓多個同時壞」—— 沒有先後、是共享隱藏依賴。兩者常接力出現：一次 correlated failure 打掉多個副本、剩下的承受不了而 cascading。
 
-## 概念位置
+## 跟其他概念的關係
 
 Correlated failure 是冗餘設計的邊界條款：畫 [blast radius](/backend/knowledge-cards/blast-radius/) 與[失效域](/backend/knowledge-cards/failure-domain/)時，要問的不是「有幾份副本」而是「這幾份會不會一起死」。防禦方向是拆開共享觸發器 —— 分批 rollout（不是所有副本同時套變更）、跨獨立失效域部署（不同區 / 不同供應商 / 不同 DNS）、關鍵訊號留 out-of-band 的第二條路。

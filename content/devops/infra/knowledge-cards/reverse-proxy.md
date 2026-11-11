@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/reverse-proxy/"]
 
 Reverse proxy 是一個坐在後端服務前面、代替它接收外部請求的中介層。外部 client 連的是 reverse proxy 的位址，reverse proxy 根據規則把請求轉發到實際處理的內部服務，再把回應傳回給 client。Client 不知道（也不需要知道）後面有幾台服務、跑在哪裡。實務上最常見的實作是 [nginx](/devops/infra/knowledge-cards/nginx/) 或 ALB。
 
-## 概念位置
+## 跟其他概念的關係
 
 nginx 和 [ALB](/devops/infra/knowledge-cards/alb/) 都扮演 reverse proxy 角色。差別在層級：nginx 通常部署在應用層（跟應用伺服器同一台或同一個 VPC 內），ALB 是雲端平台提供的受管服務。兩者的核心功能相同——接收外部流量、轉發到後端、回傳結果。
 
@@ -19,7 +19,7 @@ nginx 和 [ALB](/devops/infra/knowledge-cards/alb/) 都扮演 reverse proxy 角�
 
 接手時如果 server 上跑著 nginx 但應用程式用的是 PHP-FPM 或 Node.js，nginx 多半扮演 reverse proxy——它接 HTTP/HTTPS 請求、轉發給後端的 application server。設定檔裡的 `proxy_pass`（nginx）或 `ProxyPass`（Apache）就是 reverse proxy 的轉發規則，用在講 HTTP 的後端（Node.js、Python 的 gunicorn 這類）。PHP-FPM 只講 FastCGI，nginx 轉給它用的是 `fastcgi_pass`，Apache 用 `mod_proxy_fcgi`；用 `proxy_pass` 指向 PHP-FPM 的埠不會成功，見 [FastCGI](/programming/php/01-server-runtime/fastcgi/)。
 
-## 設計責任
+## 判斷條件與後果
 
 reverse proxy 常承擔的功能：
 

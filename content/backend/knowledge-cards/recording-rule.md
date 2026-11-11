@@ -8,11 +8,11 @@ tags: ["backend", "observability"]
 
 Recording rule 把重複的聚合計算從查詢時推到寫入時。當 dashboard 或 alert 反覆對同一組 raw [metrics](/backend/knowledge-cards/metrics/) 做 rate / sum / histogram_quantile，每次查詢都重新掃描原始資料；recording rule 把計算結果預先寫成新的 time series，查詢時直接讀取結果。
 
-## 概念位置
+## 跟其他概念的關係
 
 Recording rule 是 [metrics](/backend/knowledge-cards/metrics/) 讀取路徑的效能工具。它在 TSDB 層（如 Prometheus、Thanos、Mimir）定期執行 query expression，把結果作為新 series 寫入儲存。概念上類似 OLAP 的 [materialized view](/backend/knowledge-cards/materialized-view/)，但作用在時間序列而非關聯式資料。
 
-## 設計責任
+## 判斷條件與後果
 
 設計 recording rule 時要定義計算表達式、執行間隔、命名慣例與維護責任。命名慣例通常遵循 `level:metric:operations` 格式（如 `job:http_requests_total:rate5m`），讓讀者從名稱判斷來源、粒度與計算方式。
 

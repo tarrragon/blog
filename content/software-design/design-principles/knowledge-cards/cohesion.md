@@ -9,7 +9,7 @@ aliases: ["/design-principles/knowledge-cards/cohesion/"]
 
 Cohesion（內聚）是一個模組內部的元素彼此相關、應該放在一起的程度。這裡的模組泛指任何有對外介面的程式單位：函式、類別、檔案或套件。這個詞由 Larry Constantine 在 1960 年代後期的結構化設計（structured design）裡提出，1974 年 Stevens、Myers 與 Constantine 在 IBM Systems Journal 的〈Structured Design〉一文把它與 [Coupling（耦合）](/software-design/design-principles/knowledge-cards/coupling/) 一起寫成模組設計的兩個衡量標準：內聚量模組內部，耦合量模組之間。內聚與 [Single Responsibility Principle（單一職責原則）](/software-design/design-principles/knowledge-cards/single-responsibility-principle/) 衡量的是同一件事——哪些元素該放在一起——而判斷依據不同：內聚的傳統定義看元素在功能上是否相關，單一職責原則看元素是否因為同一個理由改變。
 
-## 概念位置
+## 跟其他概念的關係
 
 內聚依「這些元素為什麼放在一起」分成幾種。由弱到強的排序依據是放在一起的理由與模組那件工作的關係有多緊：偶然內聚的元素之間完全無關，功能內聚的每個元素都屬於同一件工作。
 
@@ -33,6 +33,6 @@ Robert C. Martin 在《Agile Software Development》的單一職責那一章寫�
 
 反方向的錯誤是把同一件工作拆到好幾個模組，每個模組單獨看都很小，而那件工作的每一次修改都要同時改它們，這是 [Shotgun Surgery（散彈式修改）](/software-design/design-principles/knowledge-cards/shotgun-surgery/)。
 
-## 設計責任
+## 判斷條件與後果
 
 提高內聚的設計責任是讓模組裡的每個元素都因為同一個理由放在這裡，理由指的是改變的理由：它會因為哪一種改動而改變。判斷問句是：逐一寫出模組裡每個元素會被哪一種改動要求修改（那一類改動由哪一個職能決定）；同一種改動的那一群留下，屬於別種改動的、或寫得出的原因只有「沒有別的地方放」的，移到它所屬的模組。移完之後回頭看 [Coupling（耦合）](/software-design/design-principles/knowledge-cards/coupling/)：移出去的元素如果仍然大量讀寫原模組的內部資料、而且每次修改都要和原模組一起改，那個元素與原模組本來就屬於同一個模組，移出去的判斷錯了。

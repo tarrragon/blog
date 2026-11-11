@@ -8,7 +8,7 @@ tags: ["dotfile", "linux", "tty", "terminal"]
 
 PTY（pseudo-terminal）是核心提供的一對虛擬裝置：一端交給要被操作的程式、另一端交給操作它的人或程式，而被操作的那一端以為自己接在一台真實終端機上。[TTY](/linux/dotfile/knowledge-cards/tty/) 是核心直接提供的實體文字終端機，PTY 則讓使用者空間的程式（終端機模擬器、SSH、`adb shell`、`tmux`）自己扮演終端機那一側。
 
-## 概念位置
+## 跟其他概念的關係
 
 相關概念：[TTY](/linux/dotfile/knowledge-cards/tty/)（核心的實體文字終端機）、[SIGHUP](/linux/dotfile/knowledge-cards/sighup-hangup-signal/)（主控端關閉時核心送出的訊號）、[終端 CJK 雙寬字與即時輸入](/linux/dotfile/knowledge-cards/terminal-cjk-input/)（raw 模式與行規則的另一組後果）。
 

@@ -8,7 +8,7 @@ weight: 13
 
 Source of truth 的核心概念是「某個業務事實的正式判斷來源」。同一筆資料可能出現在 [database](/backend/knowledge-cards/database/)、快取、搜尋索引、報表、第三方系統與前端畫面，但只有一個位置應承擔正式狀態判斷。
 
-## 概念位置
+## 跟其他概念的關係
 
 Source of truth 讓系統知道衝突時該相信誰。訂單狀態通常以訂單 database 為準，搜尋索引只是查詢副本；會員權限通常以權限服務或 database 為準，快取只是加速讀取。 可先對照 [Database](/backend/knowledge-cards/database/)。
 
@@ -16,6 +16,6 @@ Source of truth 讓系統知道衝突時該相信誰。訂單狀態通常以訂�
 
 系統需要明確 source of truth 的訊號是不同入口呈現不同結果。客服後台顯示訂單已取消，搜尋頁仍顯示可出貨時，團隊要先知道出貨流程應讀正式訂單資料，而非搜尋索引。
 
-## 設計責任
+## 判斷條件與後果
 
 資料設計要標出正式來源、衍生副本、重建方式與修復順序。[Runbook](/backend/knowledge-cards/runbook/) 應說明資料衝突時如何查正式來源、如何重建副本、如何確認修復完成。

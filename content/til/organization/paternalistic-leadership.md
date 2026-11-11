@@ -10,7 +10,7 @@ tags: ["til", "組織行為學", "領導", "華人組織"]
 
 代表研究以台灣本地企業的部屬為樣本（Cheng、Chou、Wu、Huang 與 Farh, Asian Journal of Social Psychology 7: 89-117, 2004，543 人）。
 
-## 概念位置
+## 跟其他概念的關係
 
 它跟 [權力距離](/books/software-management/topics/cross-cultural-collaboration/) 那類跨國維度的差別在解析度。權力距離量得到階層被接受的程度，量不到「立威」與「照顧」是同一個人同時在做的兩件事——而部屬正是靠這兩件事同時存在，才判斷得出自己此刻該說什麼。要判斷該不該開口，這個結構比單一的階層高低更接近實際依據；開口與否的分型走 [發聲、沉默與階層落差](/books/software-management/topics/voice-and-silence/)。
 

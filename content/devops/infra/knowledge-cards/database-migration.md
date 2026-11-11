@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/database-migration/"]
 
 Database migration 是用版本化的腳本管理資料庫 schema 變更的做法。每次 schema 變更（加欄位、改索引、拆表、改資料型別）寫成一份獨立的 migration 檔案，按順序套用。這讓 schema 的演進跟程式碼一樣有版本歷史、可追蹤、可在新環境重現。在 [RDS](/devops/infra/knowledge-cards/rds/) 等受管資料庫上執行時，schema 變更仍需注意鎖表與停機風險。
 
-## 概念位置
+## 跟其他概念的關係
 
 migration 解決的問題是「資料庫的 schema 怎麼從 A 狀態安全地變成 B 狀態」。沒有 migration 時，schema 變更靠在 [phpMyAdmin](/devops/infra/knowledge-cards/phpmyadmin/) 或 CLI 手動執行 SQL，改了什麼只存在操作者的記憶裡。有 migration 時，每次變更都是 repo 裡的一份檔案，跟程式碼一起 commit、一起 review。
 
@@ -17,7 +17,7 @@ migration 解決的問題是「資料庫的 schema 怎麼從 A 狀態安全地�
 
 接手專案時，如果 repo 裡有 `migrations/` 目錄（或框架特定的路徑如 Laravel 的 `database/migrations/`、Rails 的 `db/migrate/`），代表專案使用 migration。如果 repo 裡只有一份 `schema.sql` 或完全沒有 schema 相關檔案，代表 schema 變更是手動的——這時候建立 migration 紀律是接手後的優先事項之一。
 
-## 設計責任
+## 判斷條件與後果
 
 每份 migration 檔案包含兩個方向：
 

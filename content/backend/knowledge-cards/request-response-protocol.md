@@ -7,7 +7,7 @@ weight: 1
 
 Request/Response Protocol 的核心概念是「client 發出請求，service 回應結果時，雙方如何對齊格式、錯誤與語意」。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Request/Response Protocol 位在 client、[API Gateway](/backend/knowledge-cards/api-gateway/)、service 與 RPC layer 之間。它適用於同步互動的請求/回應模型。
 
@@ -19,6 +19,6 @@ Request/Response Protocol 位在 client、[API Gateway](/backend/knowledge-cards
 
 HTTP API、gRPC method 與內部 RPC call 都屬於 request/response protocol。這類通訊要明確定義 request schema、response schema 與 error shape。
 
-## 設計責任
+## 判斷條件與後果
 
 Request/Response Protocol 要定義欄位名稱、必填欄位、錯誤碼、逾時期待與版本演進方式。它討論的是同步互動的約定，transport 細節在其他層處理。

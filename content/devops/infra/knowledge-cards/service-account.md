@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/service-account/"]
 
 服務帳號（service account）是給程式使用、而不是給人使用的身分。部署在雲端的程式要呼叫雲端的 API（讀寫儲存、發布訊息、修改帳單設定）時，以一個服務帳號的身分送出請求，[IAM](/devops/infra/knowledge-cards/iam/) 依這個身分被授予的角色決定是否允許這個請求。GCP 的服務帳號以 email 形式的位址識別（`<name>@<project-id>.iam.gserviceaccount.com`），在 IAM 綁定裡寫成 `serviceAccount:<位址>`；AWS 對應的是 IAM role 被服務或程式承接（assume，AWS 中文文件寫作「擔任」）的用法。
 
-## 概念位置
+## 跟其他概念的關係
 
 服務帳號在 IAM 裡同時是一個身分、也是一個資源，權限也因此分成兩邊來設：
 
@@ -26,7 +26,7 @@ aliases: ["/infra/knowledge-cards/service-account/"]
 - VM 掛著哪個服務帳號：`gcloud compute instances describe <instance-name> --zone=<zone>` 輸出的 `serviceAccounts[].email`；用主控台預設值建立的 VM 會掛上 Compute Engine 預設服務帳號（`<project-number>-compute@developer.gserviceaccount.com`），instance template 的 `describe` 對它顯示為 `default`
 - 程式的錯誤訊息是 `The caller does not have permission` 或 403，而部署與狀態都顯示正常：服務帳號缺少這個 API 呼叫需要的權限，用 `gcloud iam roles describe <role>` 查它持有的角色裡有沒有那一項；錯誤訊息沒寫權限名稱時，API 參考文件裡那個方法的頁面列出它需要的權限（例如 `projects.getBillingInfo` 需要 `resourcemanager.projects.get`）
 
-## 設計責任
+## 判斷條件與後果
 
 - **一個用途一個服務帳號**：每個程式或每類工作用自己的服務帳號，角色只給它需要的那幾個（[least privilege](/backend/knowledge-cards/least-privilege/)）；共用預設服務帳號時，任何一個程式被入侵都拿得到其他程式的權限
 - **查角色實際包含哪些權限**：角色名稱看起來管的那件事，角色本身不一定涵蓋其中的每一個動作，`gcloud iam roles describe <role>` 列得出它的權限清單；例如 GCP 的 `roles/billing.projectManager` 只能建立與刪除專案的帳單連結，讀取帳單狀態要另外的權限

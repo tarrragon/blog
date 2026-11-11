@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "prompting", "in-context-learning"]
 
 Few-shot prompting 的核心概念是「**在 prompt 內塞幾個 input-output 範例、讓模型透過範例對齊任務**」。Zero-shot 是不給範例直接給任務、few-shot 是給 1-N 個範例、模型從範例推任務分佈。屬於 [in-context learning](/llm/knowledge-cards/in-context-learning/) 的最常見形態、是「對齊任務」這件事的 prompt 層解法、跟 fine-tune 是兩個 endpoint。
 
-## 概念位置
+## 跟其他概念的關係
 
 Zero-shot vs few-shot 對照：
 
@@ -37,7 +37,7 @@ Few-shot 跟 [fine-tune](/llm/knowledge-cards/sft/) 對照：
 | Cost      | 每次 inference 多付 token       | 一次性訓練 cost、之後 inference 不變 |
 | 模型遷移  | 跨模型即時換、prompt 直接搬     | 綁特定 base model、換模型要 retrain  |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 prompt engineering 文章或寫 production prompt 看到「few-shot」「in-context examples」就是這個機制。實作判讀：
 

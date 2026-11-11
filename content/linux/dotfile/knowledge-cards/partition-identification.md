@@ -8,7 +8,7 @@ tags: ["dotfile", "linux", "disk"]
 
 分區識別是 `fstab`（開機時決定哪個分區掛到哪的設定檔）與 [bootloader](/linux/dotfile/knowledge-cards/uefi-boot-chain/) 指涉某個分區時用的名字，它的選擇決定一件事：重開機或重格式化後，系統還找不找得到自己的分區。
 
-## 概念位置
+## 跟其他概念的關係
 
 相關概念：[UEFI 開機鏈](/linux/dotfile/knowledge-cards/uefi-boot-chain/)、[initramfs](/linux/dotfile/knowledge-cards/initramfs/)。安裝時的識別方式選擇，見 [Linux 安裝選項判讀](/linux/install/install-option-decisions/)。
 

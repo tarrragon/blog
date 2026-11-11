@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "training", "optimizer"]
 
 Adam（Adaptive Moment Estimation、Kingma & Ba, 2014）的核心概念是「**對每個參數維護兩個 EMA**（[gradient](/llm/knowledge-cards/gradient/) 的一階矩 = 平均、二階矩 = 變異）、用這兩個值自適應地縮放每個參數的更新步長」。AdamW（Loshchilov & Hutter, 2017）是 Adam 加上「decoupled weight decay」的修正版、是現代 LLM 訓練的標準 optimizer。
 
-## 概念位置
+## 跟其他概念的關係
 
 Adam 更新規則（簡化）：
 
@@ -32,6 +32,6 @@ W -= lr × m_t / (sqrt(v_t) + ε)
 
 關鍵：AdamW 對 weight decay 跟 lr 解耦、修正了 Adam 在「lr × weight_decay」交互上的 bug、是 GPT、Llama、Gemma 等系列訓練的標配。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 LLM training paper / config 看到 `optimizer: AdamW`、`betas: [0.9, 0.95]`、`weight_decay: 0.1` 等就是這個 optimizer 的標準設定。記憶體佔用 = 模型權重 × 3（model + m + v）、加上 [backpropagation](/llm/knowledge-cards/backpropagation/) 的 activation、是訓練 vs 推論記憶體差距的主要來源。

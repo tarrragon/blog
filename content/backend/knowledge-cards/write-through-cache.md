@@ -8,7 +8,7 @@ weight: 94
 
 Write-through cache 的核心概念是「寫入正式來源時同步更新快取」。它讓後續讀取更容易命中新資料，降低讀取路徑遇到舊資料的機率。 可先對照 [Write-Behind Cache](/backend/knowledge-cards/write-behind-cache/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Write-through 是寫入路徑上的快取策略。它適合更新頻率可控、讀取頻繁且資料新鮮度重要的場景；寫入延遲會因同步更新快取而增加。 可先對照 [Write-Behind Cache](/backend/knowledge-cards/write-behind-cache/)。
 
@@ -16,6 +16,6 @@ Write-through 是寫入路徑上的快取策略。它適合更新頻率可控、
 
 系統需要 write-through 的訊號是寫入後立刻讀取很常見。使用者更新個人設定後，下一個 request 通常會立刻讀取設定摘要；同步更新快取可以降低讀到舊資料的機率。
 
-## 設計責任
+## 判斷條件與後果
 
 Write-through 要定義正式來源寫入與快取寫入的錯誤處理。快取寫入失敗時，系統要決定回報失敗、刪除快取、延後修復或讓下一次讀取重建。

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "attention", "performance", "optimization"]
 
 Flash Attention 的核心概念是「重新組織 [Attention](/llm/knowledge-cards/attention/) 計算的順序、把中間結果留在 GPU 高速 cache、減少對 GPU memory 的讀寫往返」。它不改變 attention 的數學定義（輸出跟原始實作在浮點誤差範圍內一致）、但實作層面對長 context 推論吞吐有明顯提升、且是部分 [KV cache 量化](/llm/05-discrete-gpu/kv-cache-quantization-strategy/) 組合在 llama.cpp 上的必要前置。
 
-## 概念位置
+## 跟其他概念的關係
 
 Flash Attention 在推論架構中的角色：
 
@@ -35,7 +35,7 @@ llama-server --flash-attn
 
 > **事實查核註**：Flash Attention 的版本演進快（Flash Attention 1 / 2 / 3）、不同推論引擎的支援度依版本變化。具體限制（如「V cache Q4 量化要 -fa 才能啟用」）依 llama.cpp 版本變動、引用前以 `llama-server --help` 跟 release notes 為準。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 Flash Attention 後可以解釋兩個現象：為什麼啟用 `-fa` 後長 context 推論速度提升明顯（IO bound 變 compute bound）、為什麼部分 KV cache 量化組合（如 V=Q4_0）在 llama.cpp 上需要 flash attention 才能跑（實作層面的耦合）。
 

@@ -7,7 +7,7 @@ weight: -1
 aliases: ["/ddd/knowledge-cards/"]
 ---
 
-本模組的知識卡片把領域建模的高密度術語拆成可獨立閱讀的概念索引。教學章節（[資料袋與領域模型](/software-design/ddd/data-bag-vs-domain-model/)、[entity 與 value object 的判斷標準](/software-design/ddd/entity-vs-value-object/)、[不變式的強制層次](/software-design/ddd/invariant-enforcement-layers/)、[狀態轉換與稽核軌跡](/software-design/ddd/state-transition-and-audit-trail/)、[建構路徑設計](/software-design/ddd/construction-path-design/)、[組裝層的可達性](/software-design/ddd/composition-root-reachability/)、[觀測出口的職責三分](/software-design/ddd/observation-outlet-responsibility-split/)、[讀模型的升級條件](/software-design/ddd/read-model-upgrade-signals/)、[domain event 與狀態流](/software-design/ddd/domain-event-vs-state-stream/)、[domain event 與命令、查詢](/software-design/ddd/domain-event-vs-command-and-query/)）遇到術語時連到對應卡片；卡片先回答概念本質、再放設計責任——讓讀者先知道該概念在領域模型裡承擔什麼責任。
+本模組的知識卡片把領域建模的高密度術語拆成可獨立閱讀的概念索引。教學章節（[資料袋與領域模型](/software-design/ddd/data-bag-vs-domain-model/)、[entity 與 value object 的判斷標準](/software-design/ddd/entity-vs-value-object/)、[不變式的強制層次](/software-design/ddd/invariant-enforcement-layers/)、[狀態轉換與稽核軌跡](/software-design/ddd/state-transition-and-audit-trail/)、[建構路徑設計](/software-design/ddd/construction-path-design/)、[組裝層的可達性](/software-design/ddd/composition-root-reachability/)、[觀測出口的職責三分](/software-design/ddd/observation-outlet-responsibility-split/)、[讀模型的升級條件](/software-design/ddd/read-model-upgrade-signals/)、[domain event 與狀態流](/software-design/ddd/domain-event-vs-state-stream/)、[domain event 與命令、查詢](/software-design/ddd/domain-event-vs-command-and-query/)）遇到術語時連到對應卡片；卡片先回答概念本質、再寫判斷條件與後果——讓讀者先知道這個概念在領域模型裡負責什麼。
 
 ## 術語建卡標準
 

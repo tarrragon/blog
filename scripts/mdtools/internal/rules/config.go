@@ -68,10 +68,10 @@ type FrontMatterRules struct {
 	CardRequired []string // e.g. []string{"title", "date", "description", "weight"}
 	// Roots whose files carry the Tier 3 schema. Kept separate from
 	// Cards.CardsRoot: that one marks the knowledge-card *system* (orphan
-	// and K4 structure checks assume a 概念位置 section), while a folder can
+	// and K4 structure checks assume a 跟其他概念的關係 section), while a folder can
 	// need the card front-matter schema without being part of that system.
 	// content/report/** is the case in point — `weight` orders the list, but
-	// the cards carry no 概念位置 section.
+	// the cards carry no 跟其他概念的關係 section.
 	CardPaths []string // e.g. []string{"content/backend/knowledge-cards", "content/report"}
 	// Fields explicitly disallowed (warn if present).
 	Disallowed []string // e.g. []string{"author", "permalink"}
@@ -171,6 +171,7 @@ func Default() Config {
 				"content/testing/knowledge-cards",
 				"content/ux-design/knowledge-cards",
 				"content/til/audio/knowledge-cards",
+				"content/business/procurement-planning/cards",
 			},
 			Disallowed:     []string{"author", "permalink"},
 		},
@@ -195,6 +196,7 @@ func Default() Config {
 				"content/testing/knowledge-cards",
 				"content/ux-design/knowledge-cards",
 				"content/til/audio/knowledge-cards",
+				"content/business/procurement-planning/cards",
 			},
 			CheckLinkValidity:             true,
 			CheckOrphans:                  true,
@@ -209,7 +211,7 @@ func Default() Config {
 				// and is pinned above the otherwise date-sorted tool posts.
 				"content/linux/tools/cli",
 			},
-			K4ConceptPositionTitle: "概念位置",
+			K4ConceptPositionTitle: "跟其他概念的關係",
 			ContentScope:           "content",
 		},
 		LineLength: LineLengthRules{

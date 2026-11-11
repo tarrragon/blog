@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "embedding", "training"]
 
 Contrastive learning（對比學習）的核心概念是「**訓練模型讓相關樣本的 embedding 在向量空間中靠近、無關樣本遠離**」。是現代 [embedding model](/llm/knowledge-cards/embedding-model/) 的標準訓練 paradigm、跟 LLM pretrain 的 next-token prediction 完全不同的訓練目標。
 
-## 概念位置
+## 跟其他概念的關係
 
 Contrastive learning 的核心訓練形態：
 
@@ -40,7 +40,7 @@ Loss（簡化的 InfoNCE loss）：
 2. **Hard negative mining 是品質關鍵**：隨機選 negative 容易（從 batch 取就行）、找「看似相關但實際無關」的 hard negative 更挑戰、是 embedding quality 提升的關鍵
 3. **不能直接拿 pretrained LLM 用**：LLM 的 hidden state 不是「為 retrieval 優化」的、要再 fine-tune 一輪 contrastive learning 才能當 [embedding model](/llm/knowledge-cards/embedding-model/)
 
-## 設計責任
+## 判斷條件與後果
 
 讀 embedding model paper / 訓練 code 看到「InfoNCE」「triplet」「hard negatives」「mining strategy」就是這 paradigm。寫 code 場景的判讀：
 

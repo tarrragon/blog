@@ -8,7 +8,7 @@ tags: ["testing", "metamorphic-testing", "test-oracle", "verification"]
 
 把輸入依照某條規則改變，輸出應該依照對應的規則改變——metamorphic testing 驗的就是這組對應，而不是任何一次執行的答案。搜尋條件加上一個更嚴格的過濾，結果集應該是原本的子集；把所有商品的價格同乘以二，總價也該同乘以二；在圖片上加一點雜訊，分類結果不該翻轉。這條「輸入怎麼變、輸出就該怎麼變」的對應稱為變形關係，它讓測試在沒有任何一次執行的正確答案可查的情況下仍然成立——這是繞開 [oracle problem](/testing/knowledge-cards/test-oracle/) 最後一層的手段，比[不變量](/testing/knowledge-cards/property-based-testing/)的要求更低。
 
-## 概念位置
+## 跟其他概念的關係
 
 三種判斷標準的要求由強到弱排成一條線：逐例斷言要知道每個輸入的正確輸出，不變量只要知道輸出必須滿足什麼，變形關係連這個都不需要、只要知道輸入變了輸出該怎麼變。變形關係因此是三者裡門檻最低、也是最後一道還寫得下來的判斷標準。完整的退階表與選用程序在[測試判斷標準的形態](/testing/06-agent-authored-code/oracle-beyond-examples/)，來源分類見 [test oracle](/testing/knowledge-cards/test-oracle/)。
 
@@ -20,7 +20,7 @@ tags: ["testing", "metamorphic-testing", "test-oracle", "verification"]
 
 關係的方向要跟著業務語意選。搜尋條件收緊時結果集該縮小是子集關係；商品清單順序打亂時結果集該完全相同是置換不變關係；兩者同時成立，而各自抓的是不同的缺陷——前者抓過濾邏輯，後者抓對輸入順序的隱性依賴。
 
-## 設計責任
+## 判斷條件與後果
 
 變形關係要從需求推導，不是從實作觀察。從實作跑兩次看到某個對應成立就把它寫成斷言，等於把實作現在的行為當成規格，這與[出處不獨立](/testing/knowledge-cards/test-provenance/)的失效是同一件事；正確的來源是業務語意上「本來就該如此」的那些對應。
 

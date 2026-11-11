@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "security", "networking"]
 
 Bind address 的核心概念是「伺服器啟動時決定『監聽哪個網路介面上的請求』」。同一個 port 在不同 bind address 下、能接受的請求來源完全不同；對本地 LLM [推論伺服器](/llm/knowledge-cards/inference-server/)（Ollama / llama-server / LM Studio）來說、bind address 是決定誰能連到模型的最直接設定。
 
-## 概念位置
+## 跟其他概念的關係
 
 三層典型 bind address 的暴露範圍（延伸見 [port and localhost](/llm/knowledge-cards/port-and-localhost/)）：
 
@@ -39,7 +39,7 @@ netstat -an | grep LISTEN | grep <port>
 
 看到 `127.0.0.1:<port>` 是 loopback、`*:<port>` 或 `0.0.0.0:<port>` 是所有介面。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 bind address 後可以解釋兩個現象：為什麼預設安全的伺服器都 bind 到 `127.0.0.1`（避免不小心暴露）、為什麼 Docker `-p 8080:8080` 預設 bind 到 `0.0.0.0`（容器化的便利性、但對個人 dev 是潛在暴露點）。
 

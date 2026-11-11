@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/identity-aware-proxy/"]
 
 身分感知代理（identity-aware proxy）是一個放在網際網路與內部主機之間的 [Reverse Proxy](/devops/infra/knowledge-cards/reverse-proxy/)：它接收外部連線，先向組織的 [Identity Provider](/backend/knowledge-cards/identity-provider/) 確認發起連線的帳號、再依授權規則決定是否替這條連線開到後端。通過的連線送到後端的方式有兩種：由代理從它自己的固定位址段連到主機的內部 IP（GCP 的 IAP），這時主機的防火牆只放行那段代理位址；或經由主機上的代理程式（connector，例如 `cloudflared`）主動往外建立的反向連線送進去（Cloudflare Tunnel、Teleport agent），這時主機不開任何入站 port。兩種方式下主機都不必持有公開 IP。它是 [Zero Trust（零信任）](/backend/knowledge-cards/zero-trust/) 原則在存取入口上的一種實作：放行的依據是每一次連線的身分，網路位置不構成信任的理由。
 
-## 概念位置
+## 跟其他概念的關係
 
 管理通道拆成網路可達性、通道授權、主機登入驗證三層來看時（模型見[伺服器管理通道的設計](/devops/infra/03-network-foundation/management-access-channel/)），身分感知代理同時承擔網路可達性與通道授權：sshd 只對代理可見，而能不能開通道由代理用 IdP 帳號判斷——這個判斷就是通道授權，指的是決定「這個人能不能打開通往主機的連線」，與登入主機時驗證 SSH 金鑰是兩回事。主機登入驗證在多數實作裡仍由主機上的 sshd 負責；Teleport 的節點這類實作用自己內建的 SSH 伺服器與代理簽發的憑證，主機登入驗證跟著換掉。由 sshd 負責時，金鑰的發放方式另見 [OS Login](/devops/infra/knowledge-cards/os-login/) 與 [SSH Certificate（SSH 憑證）](/devops/infra/knowledge-cards/ssh-certificate/)。
 
@@ -31,7 +31,7 @@ aliases: ["/infra/knowledge-cards/identity-aware-proxy/"]
 
 兩種模式共同的樣子是主機沒有公開 IP，管理員仍然用 `ssh` 或廠商 CLI 連得進去。
 
-## 設計責任
+## 判斷條件與後果
 
 導入身分感知代理之後，主機自己不再判斷連線者是誰，下面這些判斷移到代理與 IdP 上：
 

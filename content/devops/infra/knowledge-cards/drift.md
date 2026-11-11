@@ -11,7 +11,7 @@ Drift 指的是 IaC 的 [state](/devops/infra/knowledge-cards/state/) 記錄與�
 
 Drift 的代價會延遲浮現。手動改的當下看起來沒問題——設定改了、服務正常。問題出在後續某次不相關的 `apply`：工具用過時的 state 去比對，把手動改的設定覆蓋掉，服務因此斷線，而且在 PR 裡看不到這件事發生過。Drift 累積越多，每次 `apply` 的不確定性越高，最終團隊會開始害怕跑 `apply`，IaC 名存實亡。
 
-## 概念位置
+## 跟其他概念的關係
 
 Drift 是 Console 唯讀鐵律存在的根本理由。[模組一：Console 唯讀鐵律](/devops/infra/01-minimal-iac/console-readonly-minimal-viable/)用權限機制（人類身分唯讀、寫入權限留給自動化身分，見 [IAM](/devops/infra/knowledge-cards/iam/)）讓「在 Console 改不動」成為預設狀態，從源頭消除 drift 的產生。
 
@@ -21,7 +21,7 @@ Drift 存在的訊號：`terraform plan` 在沒人改過程式碼的情況下顯
 
 偵測 drift 的主動方式是定期跑 `terraform plan` 但不 apply，把 diff 輸出當成 drift 偵測的報告。plan 只比對 state 裡有的資源：有人在主控台另外新增、不在 state 裡的資源（例如寫成獨立資源的一條防火牆規則），plan 照樣回報 `No changes`，範圍見 [多台主機的維護清單：值的分層與合併的位置、用 Ansible 的 inventory 與範本產生每台的清單、由 Terraform 的輸出產生 inventory、跨主機執行的 exit code，以及單台清單的適用範圍](/devops/operations/09-host-lifecycle/multi-host-manifest/)〈清單裡要到主控台確認的項目與 terraform plan 的比對範圍〉（從比對機制推論，沒有實測）。Terraform Cloud 有內建的 drift detection 功能，定期比對 state 與雲端現實。
 
-## 設計責任
+## 判斷條件與後果
 
 Drift 出現之後，團隊先要判斷 Console 上那次手動修改是失誤還是有理由的修正，偵測、修正與預防的設計都從這個判斷出發：
 

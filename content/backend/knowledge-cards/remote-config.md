@@ -8,7 +8,7 @@ tags: ["backend", "mobile", "release", "knowledge-card"]
 
 Remote Config（遠端設定）的核心概念是「已安裝的 App 向服務方讀取一組設定值，服務方改了值，App 不必更新就能讀到」。它是行動 App 在不經商店審核的前提下改變行為的主要通道，常見的產品是 Firebase Remote Config。可先對照 [Feature Flag](/backend/knowledge-cards/feature-flag/) 與 [Runtime Config](/backend/knowledge-cards/runtime-config/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 遠端設定和伺服器端的設定管理是兩件事。[Runtime Config](/backend/knowledge-cards/runtime-config/) 與 [Config Rollout](/backend/knowledge-cards/config-rollout/) 管的是服務實例怎麼讀取設定、新設定怎麼下發到運作中的實例，持有設定的是服務方自己的機器；遠端設定的持有者是使用者的裝置，服務方改值之後，要等每一台裝置下一次讀取並套用才生效。[Feature Flag](/backend/knowledge-cards/feature-flag/) 是放在遠端設定裡最常見的一種值，[Minimum Supported Version](/backend/knowledge-cards/minimum-supported-version/) 是另一種。
 
@@ -22,6 +22,6 @@ Remote Config（遠端設定）的核心概念是「已安裝的 App 向服務�
 
 完整推導見 [11.15 自家行動 App 與後端的 API 契約：版本回報、最低支援版本、商店審核下的上線順序、分階段發布、熱更新與回退手段](/backend/11-api-design/mobile-client-api-contract/)。
 
-## 設計責任
+## 判斷條件與後果
 
 遠端設定的值不是祕密：設定服務的讀取用存取憑證打包在 App 裡，被改過的客戶端也能自己改值，所以它只能控制畫面與行為，權限檢查要放在後端。每個值要寫明用途、預設值方向、依 App 版本的開啟條件與移除時機；讀取間隔要短到出問題時關得掉功能，或整合即時更新。

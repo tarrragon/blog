@@ -8,10 +8,10 @@ weight: 162
 
 Full-text search 的核心概念是「對文本內容做可擴展檢索」。它支援分詞、相關性排序與關鍵字查詢。 可先對照 [Search Index](/backend/knowledge-cards/search-index/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 通常由 [search index](/backend/knowledge-cards/search-index/) 提供，適合文件、商品描述與知識庫查詢。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義語言分析規則、索引更新延遲與查詢範圍，避免搜尋結果與產品預期落差。

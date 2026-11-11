@@ -9,7 +9,7 @@ aliases: ["/design-principles/knowledge-cards/open-closed-principle/"]
 
 開放封閉原則（Open-Closed Principle，OCP）的定義是：軟體實體（類別、模組、函式）應該對擴充開放、對修改封閉——需求改變時，靠新增程式碼擴充模組的行為，不改動已經能運作的程式碼。封閉有範圍：模組只對設計者選定的那幾類變更封閉，下一節說明為什麼不可能對所有變更封閉。這條原則由 Bertrand Meyer 在 1988 年的《Object-Oriented Software Construction》提出。它與 [Single Responsibility Principle（單一職責原則）](/software-design/design-principles/knowledge-cards/single-responsibility-principle/) 常一起使用：單一職責原則決定模組的邊界畫在哪裡，開放封閉原則決定其中哪一類變更要做成擴充點。
 
-## 概念位置
+## 跟其他概念的關係
 
 對擴充開放與對修改封閉看起來互相矛盾：要讓模組有新的行為，通常就得改它。Robert C. Martin 在 1996 年的〈The Open-Closed Principle〉裡給的解法是「抽象是關鍵」：使用端只依賴一個固定的抽象（例如一個介面或抽象類別），新的行為由新的實作提供。使用端依賴的抽象不變，所以使用端不必修改；實作可以一直增加，所以行為可以擴充。用單一職責原則的語言說，單一職責原則畫出模組的邊界，抽象是這條邊界上對外公開的部分，各個實作留在邊界內，其他模組不需要知道。
 
@@ -27,7 +27,7 @@ aliases: ["/design-principles/knowledge-cards/open-closed-principle/"]
 
 各語言的寫法不同：Python 用抽象基類或 Protocol，Go 用 interface，Dart 用 abstract class。Python 的例子在[開放封閉原則與認知負擔](/programming/python/basic/00-philosophy/open-closed-principle/)。
 
-## 設計責任
+## 判斷條件與後果
 
 套用開放封閉原則的設計責任是選對要封閉的變更。判斷問句是：這個擴充點要擋的那一類變更，在過去的修改紀錄裡發生過幾次，三種結果各有處置：
 

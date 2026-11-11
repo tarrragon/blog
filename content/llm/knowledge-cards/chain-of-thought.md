@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "reasoning", "prompting"]
 
 Chain-of-Thought（CoT、思維鏈、Wei et al., 2022）的核心概念是「**讓 LLM 先輸出一連串中間推理步驟、再給最終答案**」、不是直接從問題跳到結論。CoT 是 [reasoning model](/llm/knowledge-cards/reasoning-model/) 的基礎機制；prompting 形式（few-shot 提示）跟訓練形式（reasoning RLHF / RL）兩條路都圍繞它演化。
 
-## 概念位置
+## 跟其他概念的關係
 
 CoT 的兩種觸發方式：
 
@@ -33,7 +33,7 @@ CoT 在 LLM 演化中的兩個階段：
 
 第三階段的特性：模型自己決定「該想多久」（[test-time compute](/llm/knowledge-cards/test-time-compute/) 動態擴展）、推理 trace 可達數千 token、最終答案才是少數 token。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 prompt engineering / paper 看到「CoT」「step by step」「reasoning trace」「thinking」等就是這個機制。寫 code 場景的判讀：
 

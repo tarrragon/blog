@@ -9,7 +9,7 @@ weight: 154
 
 Runtime Config 的核心概念是「服務在執行時需要哪些設定，以及這些設定如何被讀取、預設與覆寫」。它處理的是設定來源與組合規則，不是設定發送流程本身。 可先對照 [Sampling](/backend/knowledge-cards/sampling/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Runtime Config 位在 environment variable、config file、secret injection、feature flag 與 application startup 之間。它決定服務如何取得執行所需的參數與開關。 可先對照 [Sampling](/backend/knowledge-cards/sampling/)。
 
@@ -25,6 +25,6 @@ Runtime Config 位在 environment variable、config file、secret injection、fe
 
 資料庫連線字串、第三方 API base URL、限制值、路由開關與功能旗標，都屬於 runtime config 的一部分。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義設定來源優先序、缺值行為、型別驗證、啟動失敗條件與是否允許動態更新。Runtime Config 應該讓服務在不同環境中保持一致的配置語意。

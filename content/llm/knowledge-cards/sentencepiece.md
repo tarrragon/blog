@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "tokenization"]
 
 SentencePiece（Kudo & Richardson, 2018）的核心概念是「**Google 開源的 tokenization 框架、把『空白也當一個字元』處理、原生支援 [BPE](/llm/knowledge-cards/bpe/) 跟 unigram 兩種演算法**」。Llama、Gemma、Mistral、T5 等模型用 SentencePiece 作為 tokenizer 實作；它的 multilingual 友善度跟「不依賴語言預處理」是被選擇的主因。
 
-## 概念位置
+## 跟其他概念的關係
 
 SentencePiece 跟其他 tokenization 路線的對比：
 
@@ -25,6 +25,6 @@ SentencePiece 跟其他 tokenization 路線的對比：
 2. **不依賴語言預處理**：傳統 NLP 要先做 lowercasing、word segmentation；SentencePiece 直接從 raw bytes 開始學、跨語言通用。
 3. **原生 multilingual**：訓練 corpus 包含多語言時、tokenizer 自動學會跨語言的子詞單元、不需要為每種語言設定不同 tokenizer。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 model card / repo 看到 `tokenizer.model` 檔案（不是 `tokenizer.json` 或 `vocab.txt`）就是 SentencePiece 用的 protobuf 格式。寫 code 場景的意涵：SentencePiece tokenizer 在中文 / 多語言任務上比 WordPiece 友好；換 tokenizer 等於整個 [embedding layer](/llm/knowledge-cards/embedding-layer/) 失效、所以 fine-tune 時不會動 tokenizer。

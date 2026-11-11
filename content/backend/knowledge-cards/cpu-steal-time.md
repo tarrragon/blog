@@ -8,7 +8,7 @@ tags: ["backend", "capacity-planning", "observability", "knowledge-card"]
 
 CPU steal time 是虛擬機想用 CPU、而虛擬化層（hypervisor）把那段時間分給同一台實體機上其他虛擬機的時間。Linux 虛擬機在 `/proc/stat` 的 steal 欄記錄它，`top` 顯示為 `st`，node_exporter 以 `node_cpu_seconds_total{mode="steal"}` 輸出。它是虛擬機裡少數能看到「虛擬機之外的競爭」的訊號，[Noisy Neighbor](/backend/knowledge-cards/noisy-neighbor/) 在雲端虛擬機上的主要證據就是它。
 
-## 概念位置
+## 跟其他概念的關係
 
 `node_cpu_seconds_total{mode="steal"}` 是只增不減的累計秒數，要用 `rate()` 換成一段時間的比例：
 
@@ -27,6 +27,6 @@ avg without (cpu, mode) (rate(node_cpu_seconds_total{mode="steal"}[5m]))
 - **序列存在而值恆為 0**：有些虛擬化環境不提供 steal。macOS 上 OrbStack 的 Linux 虛擬機就是這樣，Mac 被其他程式吃到 load 55 以上時，steal 仍是 0，虛擬機裡沒有指標直接指出這個競爭，見 [4.27 主機過載時的監控告警](/backend/04-observability/host-overload-alerting/)。
 - **可突發型機型**：AWS 的 T 系列在 standard 模式下 CPU 額度用完只剩基準效能，unlimited 模式額度用完會繼續突發並另外計費；額度剩多少要看雲端自己的監控（CloudWatch 的 `CPUCreditBalance`），虛擬機裡看不到，見 [共用主機的資源競爭](/devops/operations/05-capacity-planning/shared-host-contention/)〈容量估算〉。
 
-## 設計責任
+## 判斷條件與後果
 
 部署在雲端虛擬機上的服務，主機飽和的判斷要包含 steal 的比例；先確認環境確實提供它（比例在負載變化時會動，而不是恆為 0）。steal 長期偏高時的處置在虛擬機之外：換非突發型的機型、換主機，或在其他租戶的干擾不可接受時改用專用主機。

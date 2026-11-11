@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/checkpoint/"]
 
 Checkpoint 的核心概念是「保存可接續的處理進度」。它讓 [Backfill](/devops/ci/knowledge-cards/backfill/) 與 [Rerun](/devops/ci/knowledge-cards/rerun/) 可以從明確位置恢復，避免每次都從頭開始。
 
-## 概念位置
+## 跟其他概念的關係
 
 Checkpoint 位在長時間 job、stream processor、batch pipeline 與 [migration](/devops/ci/knowledge-cards/migration/) 任務之間，常以 partition、offset、run id、cursor 或 processed marker 呈現。
 
@@ -23,6 +23,6 @@ Checkpoint 位在長時間 job、stream processor、batch pipeline 與 [migratio
 
 資料回填每次處理一個日期 partition，完成後寫入 `backfill_runs` 表。任務中斷時，下一次從最後成功 partition 的下一段開始。
 
-## 設計責任
+## 判斷條件與後果
 
 Checkpoint 要定義進度格式、提交時機、失敗恢復、重跑覆寫與觀測欄位，讓長時間任務具備可恢復性。

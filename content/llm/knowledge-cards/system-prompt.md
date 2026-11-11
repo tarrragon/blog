@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "application", "prompt-engineering"]
 
 System prompt 的核心概念是「LLM application 中、由開發者預設、放在每次 conversation 最前面、不直接顯示給使用者的指令層」。常見用途包括設定模型角色（如「你是 senior Python engineer」）、規範輸出格式（如「always return JSON」）、加入 safety guideline。Chat-based LLM API（OpenAI、Anthropic 等）通常有專門的 `role: "system"` message type、由 [special tokens](/llm/knowledge-cards/special-tokens/) 標記這段訊息的邊界。
 
-## 概念位置
+## 跟其他概念的關係
 
 LLM API call 的訊息結構：
 
@@ -35,7 +35,7 @@ System prompt 在 application 設計中的角色：
 
 > **事實查核註**：不同 LLM vendor 對 system prompt 的處理機制不同（如部分模型把 system 跟 user 視為相同優先級、部分模型有特殊訓練讓 system 較高優先）、具體行為以該模型的[官方文件](https://platform.openai.com/docs/api-reference/chat)為準。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 system prompt 後可以解釋兩個現象：為什麼同一個模型在不同 LLM 應用中的「個性」差很多（system prompt 不同）、為什麼 [prompt injection](/llm/knowledge-cards/prompt-injection/) 的主要目標是繞過 system prompt 的約束（攻擊者想讓模型不照原本指令走）。
 

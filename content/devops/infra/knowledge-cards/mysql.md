@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/mysql/"]
 
 MySQL 是最廣泛使用的開源關聯式資料庫，多數 PHP 應用、WordPress、以及大量 web 服務的資料層都跑在 MySQL 上，維運上常搭配 [phpMyAdmin](/devops/infra/knowledge-cards/phpmyadmin/) 或 CLI 工具管理。MariaDB 是 MySQL 被 Oracle 收購後社群分支出來的相容實作，多數 Linux 發行版已經把預設的 mysql 套件指向 MariaDB。
 
-## 概念位置
+## 跟其他概念的關係
 
 MySQL 在 infra 裡是典型的 stateful 資源——資料不可重建、備份和刪除保護是 day-1 需求。接手維運時，MySQL 的版本、備份設定、認證方式是第一批要確認的項目。雲端環境裡 MySQL 常以 [RDS](/devops/infra/knowledge-cards/rds/) 形式運行（受管服務、代管備份與 failover）。
 
@@ -39,7 +39,7 @@ MySQL 5.7 → 8.0 的 breaking change 在接手和升級情境裡經常遇到：
 
 `mysqldump` 是備份的核心工具——一行指令把整個資料庫匯出成可還原的 SQL。phpMyAdmin 的匯出功能底層也是類似的邏輯，但受 web server timeout 限制，大資料庫更適合用 CLI。
 
-## 設計責任
+## 判斷條件與後果
 
 MySQL 的資料遺失後只能從備份還原，infra 設計先保護資料、再處理連線與效能：備份頻率和保留天數（RDS 預設 7 天自動備份）、是否開 multi-AZ（failover 保護）、連線池設定（RDS Proxy 或應用層 pool）、慢查詢日誌是否開啟。
 

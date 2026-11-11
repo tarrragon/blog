@@ -8,7 +8,7 @@ tags: ["business", "knowledge-cards", "financial-analysis", "commodity"]
 
 壓榨價差是壓榨廠把一單位黃豆加工成聯產品後、每單位賺到的毛利，等於「聯產品售價 − 原料成本」。它是衡量[commodity business](/business/knowledge-cards/commodity-business/)裡壓榨業獲利的標準指標（源自 CBOT Soybean Crush Spread）：一噸黃豆壓出豆油與豆粕兩種商品，兩者的合計售價減去黃豆採購成本，就是這噸黃豆的毛壓榨價差。
 
-## 概念位置
+## 跟其他概念的關係
 
 壓榨價差解釋了兩個表面矛盾的現象：為什麼豆油零售價可以低於「等比例黃豆成本」（因為 78% 的豆粕已覆蓋大部分原料成本、豆油是被[聯產品](/business/knowledge-cards/co-product/)交叉補貼的那一端），以及為什麼壓榨雙寡頭會在營收下降時獲利上升（黃豆價下行、若聯產品售價跌得較慢，壓榨價差反而走闊）。它是判讀[commodity business](/business/knowledge-cards/commodity-business/)裡壓榨這一段獲利的核心視角。
 

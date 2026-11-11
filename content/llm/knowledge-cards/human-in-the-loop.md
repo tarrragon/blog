@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "human-in-the-loop", "ux", "safety"]
 
 Human-in-the-loop（HITL）的核心概念是「**人類在 LLM 工作流中介入的設計**」、用來在 [fuzzy](/llm/knowledge-cards/deterministic-vs-fuzzy/) AI 行為的關鍵節點插入 deterministic 人類判斷。HITL 不是「有 vs 沒有」的二元、是 spectrum：位置由 risk（副作用範圍 + 失敗代價）跟自動 validator 能力決定。
 
-## 概念位置
+## 跟其他概念的關係
 
 HITL 三種觸發時機：
 
@@ -26,7 +26,7 @@ HITL 三種觸發時機：
 | Tool 副作用範圍                              | 等級 1-2 不需 HITL、等級 4-5 強制 HITL                                  |
 | [Guardrail](/llm/knowledge-cards/guardrail/) | Schema / validator / monitoring 是自動 guardrail、HITL 是人類 guardrail |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 AI 應用設計或 agent paper 看到「HITL」「human-in-the-loop」「approval flow」「appeal」就是這個機制。實作判讀：
 

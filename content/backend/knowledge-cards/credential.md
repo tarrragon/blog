@@ -8,7 +8,7 @@ weight: 1
 
 Credential 的核心概念是「讓主體能證明自己並取得存取權的秘密資料」。常見 credential 包含 password、API key、token、private key、service account secret 與 database credential。中文資料常把 credential 與 certificate 都寫成「憑證」，本站把 credential 寫成存取憑證；由憑證機構簽章、本身可以公開的數位憑證另見 [Certificate（數位憑證）](/backend/knowledge-cards/certificate/)，與數位憑證配對的私鑰屬於存取憑證。 可先對照 [Cutover / Switchover](/backend/knowledge-cards/cutover-switchover/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Credential 位在 authentication、authorization、secret management 與 service-to-service access 的交界。 可先對照 [Cutover / Switchover](/backend/knowledge-cards/cutover-switchover/)。
 
@@ -20,6 +20,6 @@ Credential 位在 authentication、authorization、secret management 與 service
 
 登入用 credential 要有過期與撤銷；database credential 要依服務分離；webhook secret 要能驗證來源；內部服務 credential 要配合 mTLS 或 signed request——這幾種之間怎麼選（秘密送不送得出去、撤銷一次影響誰、要什麼配套）見 [7.34 機器憑證的機制選型](/backend/07-security-data-protection/machine-credential-mechanism-selection/)。
 
-## 設計責任
+## 判斷條件與後果
 
 Credential 設計要包含核發、初次交付、保存方式、權限範圍、輪替、撤銷、稽核與事故回復。原則上應遵守 least privilege，避免單一 credential 擁有過大權限。前兩項各只發生一次、也因此不在日常監控的觀測範圍內：這個交付動作能不能免掉、免不掉時核發與交付各要滿足什麼，見 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)。

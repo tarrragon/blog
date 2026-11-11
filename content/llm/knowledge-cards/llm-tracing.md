@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "observability", "production"]
 
 LLM tracing 的核心概念是「**把 LLM 應用的每次 LLM call / [tool call](/llm/knowledge-cards/tool-use/) / memory op / handoff 編成結構化 span、串成 trace、可在 observability 平台查詢**」。對應的標準是 OpenTelemetry GenAI semantic conventions（2025 stabilizing 中）。代表平台：LangSmith、Phoenix、Braintrust、Langfuse、Datadog APM、Logfire。是 production LLM 應用 debug / cost / latency 監控的事實標準、補 traditional logging 抓不到的「為什麼 agent 跑這條路」。
 
-## 概念位置
+## 跟其他概念的關係
 
 跟 traditional logging 的對比：
 
@@ -32,7 +32,7 @@ LLM tracing 的核心概念是「**把 LLM 應用的每次 LLM call / [tool call
 
 每個 span 標準屬性：`gen_ai.system`（vendor）、`gen_ai.request.model`、`gen_ai.usage.input_tokens` / `output_tokens`、`gen_ai.request.temperature` 等。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 LLM observability docs / OTel spec 看到「span」「trace」「OTel GenAI semconv」就是這 framing。寫 code 場景的判讀：
 

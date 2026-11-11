@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards"]
 
 Vector Database 的核心概念是「**為高維向量設計的儲存系統 + 近似最近鄰 (Approximate Nearest Neighbor, ANN) 檢索引擎**」。是 [RAG](/llm/knowledge-cards/rag/) 系統從 prototype 跨到 production 的關鍵元件——當 [embedding](/llm/knowledge-cards/embedding-model/) index 大到記憶體裝不下、或並發 query 量超過單機處理能力、就要從 pickle / in-memory 升級到 vector DB。
 
-## 概念位置
+## 跟其他概念的關係
 
 Vector DB 跟傳統 SQL / NoSQL database 並列、但專精「向量相似度搜尋」這個操作。它不取代傳統 DB——通常 LLM 應用是兩者並用：傳統 DB 存結構化資料（user / metadata）、vector DB 存 embedding + [chunk](/llm/knowledge-cards/chunking/) text。實作上、近期主流是「向量加進去現有 DB」（如 Postgres 的 pgvector extension）或「專用服務」（如 Pinecone、Weaviate、Qdrant）。
 
@@ -38,7 +38,7 @@ scale 對照（基於 [4.9 production](/llm/04-applications/production-resource-
 | 100K-10M     | Self-host vector DB                                                                             |
 | > 10M        | Hosted SaaS 或分散式 cluster                                                                    |
 
-## 設計責任
+## 判斷條件與後果
 
 選 vector DB 之前回答四個問題：
 

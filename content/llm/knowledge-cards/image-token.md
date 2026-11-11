@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "vlm", "vision", "token"]
 
 Image token（圖片 token）的核心概念是「**[VLM](/llm/knowledge-cards/vlm/) 把圖片過 [vision encoder](/llm/knowledge-cards/vision-encoder/) 後、產出的向量序列、在 Transformer 內跟 text [token](/llm/knowledge-cards/token/) 同質處理**」。理解這個概念能解釋為什麼「一張圖 = 幾百到幾千 token」、為什麼塞圖會吃掉 context budget、為什麼 VLM 推論比純文字 LLM 慢。
 
-## 概念位置
+## 跟其他概念的關係
 
 從圖到 image token 的轉換：
 
@@ -36,7 +36,7 @@ Image tokens: ~500-2500 個（依模型設計）
 
 > **事實查核註**：上述 token 數量級依模型版本、推論配置（如「low / high detail」模式）變化、引用前以對應 model card 跟 API 文件為準。
 
-## 設計責任
+## 判斷條件與後果
 
 讀 VLM API / 推論 log 看到「image tokens used: 1247」「visual tokens: 580」就是這指標。寫 code 場景的判讀：
 

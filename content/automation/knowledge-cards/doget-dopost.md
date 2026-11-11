@@ -8,7 +8,7 @@ tags: ["automation", "apps-script", "doget", "dopost", "knowledge-card"]
 
 `doGet` 與 `doPost` 是 Apps Script web app 的兩個進入點函式：端點收到 GET 請求時平台呼叫 `doGet(e)`，收到 POST 請求時呼叫 `doPost(e)`。它們是 [web app 部署](/automation/knowledge-cards/web-app-deployment/)後對外行為的定義處——寫什麼在裡面，端點被呼叫時就執行什麼。參數 `e` 帶著請求內容：`doGet` 從 `e.parameter` 拿 query string，`doPost` 從 `e.postData.contents` 拿請求主體。
 
-## 概念位置
+## 跟其他概念的關係
 
 事件物件只帶請求的內容，**不帶任何 HTTP 標頭**——`User-Agent` 與來源 IP 在這裡都讀不到。伺服器端常見的 UA 比對與 IP 判斷因此不可用，需要那些資訊時只能由前端蒐集後放進請求主體送來（見[辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)）。
 
@@ -18,6 +18,6 @@ tags: ["automation", "apps-script", "doget", "dopost", "knowledge-card"]
 
 一個影響靜態站的關鍵限制是：Apps Script **沒有** `doOptions`。跨網域請求的 CORS preflight 會送 `OPTIONS`，但它打不到你的程式、平台的預設回應也不帶 CORS 許可標頭，於是 preflight 失敗、真正的請求送不出去。
 
-## 判讀方式
+## 判斷條件與後果
 
 這是「用 `fetch` 送 `application/json` 打 Apps Script 得到 CORS 錯誤」的根因，繞法是讓請求成為不觸發 preflight 的 simple request，見[前端 beacon 與 CORS 障礙](/automation/02-analytics-beacon/frontend-beacon/)。

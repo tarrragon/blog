@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "model-architecture", "moe"]
 
 MoE（Mixture of Experts）的核心概念是「把 transformer block 內的 FFN 層拆成多個專家網路、router 為每個 token 動態挑選少數啟用」。結果是模型總參數可以擴張到很大、但每個 token 實際計算量保持在「[active parameter](/llm/knowledge-cards/active-parameter/)」這個較小的數目；同硬體下 MoE 模型常比同總參數的 Dense 模型跑得快、且能力強於同 active parameter 的 Dense 模型。
 
-## 概念位置
+## 跟其他概念的關係
 
 MoE 在 transformer 架構中的位置：
 
@@ -34,7 +34,7 @@ expert 數量與啟用數的設計、直接影響 [MoE CPU offload](/llm/knowled
 
 代表性 MoE 模型（依公開資訊）：Mixtral 8x7B、DeepSeek V3、Qwen3-30B-A3B、Llama 4 Scout 等。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 MoE 後可以解釋三個現象：為什麼 MoE 模型的「30B 總參數」跟「3B active parameter」是兩個獨立指標（前者影響記憶體需求、後者影響速度）、為什麼 MoE 適合 [CPU 卸載](/llm/knowledge-cards/moe-cpu-offload/)（不活躍的 expert 可以留在系統 RAM）、為什麼 MoE 在多 GPU 場景的並行策略跟 Dense 模型不同（expert 可以分到不同卡）。
 

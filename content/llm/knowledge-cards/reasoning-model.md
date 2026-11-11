@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "reasoning", "model-family"]
 
 Reasoning model 的核心概念是「**透過後訓練（多半是 RL）讓模型自然在回答前產出長 [chain-of-thought](/llm/knowledge-cards/chain-of-thought/) reasoning trace 的 LLM 變體**」。代表是 OpenAI o1 / o3、DeepSeek-R1、Qwen-QwQ、Claude 3.7 Sonnet thinking 等。Reasoning model 是 2024-2026 LLM 的最大 paradigm shift、把 [test-time compute](/llm/knowledge-cards/test-time-compute/) 變成可訓練、可 scale 的維度。
 
-## 概念位置
+## 跟其他概念的關係
 
 Reasoning model 跟一般 instruction-tuned model 的差異：
 
@@ -32,7 +32,7 @@ Reasoning model 跟一般 instruction-tuned model 的差異：
 | Claude 3.7 Sonnet thinking | 商業 API    | extended thinking field          | 不可                                       |
 | Gemini 2.5 Flash thinking  | 商業 API    | thinking field                   | 不可                                       |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 model card / paper 看到「reasoning」「thinking」「test-time compute」「R1-style」就是這個 family。寫 code 場景的判讀：
 

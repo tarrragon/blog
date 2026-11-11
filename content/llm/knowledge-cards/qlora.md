@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "fine-tuning", "quantization"]
 
 QLoRA（Quantized LoRA、Dettmers et al., 2023）的核心概念是「**把 base model 量化到 4-bit（凍住）+ 用 [LoRA](/llm/knowledge-cards/lora/) 訓兩個小矩陣**」。讓消費級 GPU（24GB VRAM）就能 fine-tune 30B-70B 模型、是現代 local fine-tuning 主流。
 
-## 概念位置
+## 跟其他概念的關係
 
 QLoRA vs full fine-tuning vs LoRA 的記憶體需求對比（70B 模型）：
 
@@ -27,7 +27,7 @@ QLoRA 的核心創新（簡化）：
 3. **Paged optimizer**：optimizer state 跑 CPU offload、避免訓練 spike OOM
 4. **LoRA on 4-bit base**：[LoRA](/llm/knowledge-cards/lora/) 訓的 A、B 矩陣仍是 BF16、只有 base 是 4-bit、推論時 dequantize → 加 LoRA → forward
 
-## 設計責任
+## 判斷條件與後果
 
 讀 fine-tuning 教學 / Hugging Face PEFT 文件看到「QLoRA」「bnb-4bit」就是這方法。寫 code 場景的判讀：
 

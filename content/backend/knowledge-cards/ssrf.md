@@ -8,7 +8,7 @@ weight: 123
 
 SSRF 的核心概念是「攻擊者讓伺服器替他發出未授權的網路請求」。如果 API 接收 URL 並由後端抓取內容，攻擊者可能指向內部服務、metadata endpoint（雲端主機的中繼資料服務，見 [Instance Metadata Service](/devops/infra/knowledge-cards/instance-metadata-service/)）或管理介面。 可先對照 [Stakeholder Mapping](/backend/knowledge-cards/stakeholder-mapping/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 SSRF 是伺服器端輸入驗證與網路出口控制問題。它常出現在 webhook 測試、圖片抓取、URL preview、匯入工具、PDF 產生與代理服務。 可先對照 [Stakeholder Mapping](/backend/knowledge-cards/stakeholder-mapping/)。
 
@@ -16,6 +16,6 @@ SSRF 是伺服器端輸入驗證與網路出口控制問題。它常出現在 we
 
 系統需要 SSRF 防護的訊號是使用者可以控制後端要連到的 URL。圖片上傳功能若支援「貼 URL 匯入」，後端必須限制可連線網域、IP range、scheme 與 redirect。
 
-## 設計責任
+## 判斷條件與後果
 
 防護要包含 allowlist、DNS/IP 檢查、禁止內網位址、限制 redirect、timeout、response size limit 與 egress policy。Log 要記錄目標 host 與拒絕原因。

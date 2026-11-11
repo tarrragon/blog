@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "macos", "shell"]
 
 Shell 背景 Process 的核心概念是「terminal 啟動的程式何時跟 shell 綁定、何時可以脫離、被 shell 用什麼方式管理」。本地 LLM 場景中、`ollama serve` 這類常駐 server 需要持續跑、放前景會把 terminal 卡住、放背景才能繼續打其他指令、或關掉 terminal 後讓服務改交給 [launchd service](/llm/knowledge-cards/launchd-service/) 接手。
 
-## 概念位置
+## 跟其他概念的關係
 
 Shell（zsh / bash）執行一個程式時、預設讓程式佔住 terminal、stdin / stdout / stderr 直接連到使用者眼前的視窗、稱為**前景 process**。指令尾巴加 `&` 改成**背景 process**、shell 立刻拿回 prompt 控制權、程式繼續跑但不佔住 terminal。背景 process 仍綁在當前 shell session、關掉 terminal 視窗時通常會被 SIGHUP 終止；要完全脫離 shell 生命週期、得改用 [launchd service](/llm/knowledge-cards/launchd-service/) 或 `nohup` / `disown` 等機制。
 
@@ -36,6 +36,6 @@ shell 控制 process 的關鍵操作：
 
 對 macOS 新手最常遇到的兩個事故：一個是「前景跑 server 後不知道怎麼脫身」、解法是 `Ctrl+Z` 暫停 + `bg` 改背景、或下次改用 `&` 啟動；另一個是「pkill 沒指定夠精確的 pattern、誤殺其他 process」、解法是先用 `ps aux` 加 `grep` 確認 PID 再 kill。
 
-## 設計責任
+## 判斷條件與後果
 
 選前景 vs 背景的判讀：debug 場景前景跑、能直接看到 log；日常使用改 [launchd service](/llm/knowledge-cards/launchd-service/) 跑、跟 shell session 完全脫鉤。`&` 適合「terminal 開著就讓它跑、關掉也沒關係」的臨時場景、不適合需要長期穩定的服務。排錯時養成「先 `lsof` 找誰佔資源、再 `ps` 確認身分、最後才 kill」的順序、避免誤殺。

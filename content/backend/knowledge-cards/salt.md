@@ -8,7 +8,7 @@ weight: 334
 
 Salt 的核心概念是「在雜湊之前混入一段每筆紀錄各不相同的隨機值」。它讓兩個使用者即使設了相同的密碼，存下來的雜湊值也不一樣，因此它保護的是儲存於資料庫的 [credential](/backend/knowledge-cards/credential/) 在整份外洩之後的階段。
 
-## 概念位置
+## 跟其他概念的關係
 
 Salt 與 [at-rest encryption](/backend/knowledge-cards/at-rest-encryption/) 服務的階段不同——後者讓資料在被取得時不可讀，salt 假設資料已經可讀、處理的是逐一破解的成本結構。它與 work factor 則是兩種互補的保護：work factor 決定猜一次要付多少代價，salt 決定攻擊者能不能一次猜完所有人。它不需要保密——salt 與雜湊值存在一起是標準做法，它的作用來自唯一性而非機密性。
 
@@ -18,7 +18,7 @@ Salt 與 [at-rest encryption](/backend/knowledge-cards/at-rest-encryption/) 服�
 
 判斷一套系統有沒有 salt，看的是同一個密碼在不同帳號上存下來的值一不一樣。
 
-## 設計責任
+## 判斷條件與後果
 
 salt 由誰負責取決於用的是哪一層 API，而不是取決於演算法。**高階的密碼雜湊 API**（輸入密碼、輸出一串自描述字串）自己產生與管理 salt，並把它連同演算法識別與參數一起編碼進輸出，驗證時再讀回來——設計責任因此只剩下選對 API。**低階的金鑰衍生 API**（輸入密碼加 salt、輸出裸位元組）不管這件事：salt 要自己產生、儲存格式要自己設計，而參數也不會被寫進輸出，那些系統因此容易把參數寫死在程式碼裡。同一個演算法在同一個語言裡兩種形態都存在，Argon2 與 scrypt 尤其常見。
 

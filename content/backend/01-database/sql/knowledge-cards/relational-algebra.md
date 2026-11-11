@@ -19,7 +19,7 @@ tags: ["sql", "relational-algebra", "relation", "knowledge-card"]
 
 SQL 在代數之上多了幾樣代數本身沒有的：重複的列（代數的關係是集合，SQL 的表允許重複，所以才需要 `DISTINCT`）、[NULL](/backend/01-database/sql/knowledge-cards/null/) 與三值邏輯、以及排序。這幾樣正好是最容易讀錯的幾處，理由是它們不受代數的規則保護。
 
-## 概念位置
+## 跟其他概念的關係
 
 [SQL 這個分類](/backend/01-database/sql/)講語意模型的那幾篇，判斷標準全部收在這一層：子句的先後、連接的左右、條件擺哪一邊、分組的鍵，每一項都是某個運算的組合規則，而不是設計者的偏好。知道規則從代數來，讀不熟的查詢時就有一個可以推的依據，不必靠記憶。
 

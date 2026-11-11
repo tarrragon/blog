@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "numerical-precision", "math"]
 
 Floating point（浮點數）的核心概念是「**用「符號位 + 指數位 + 尾數位」表示實數的二進制格式**」。LLM 訓練跟推論用的精度（fp32 / bf16 / fp16）就是不同的位元分配方案。理解這些差異能解釋為什麼 bf16 是訓練主流、為什麼 [量化](/llm/knowledge-cards/quantization/) 對品質的影響不是「越多 bit 越好」這麼簡單。
 
-## 概念位置
+## 跟其他概念的關係
 
 主流浮點格式的位元分配：
 
@@ -34,6 +34,6 @@ LLM 工作流的精度選擇：
 | 推論（雲端 high-end）  | FP16 / BF16                                                          |
 | 推論（消費級本機）     | Q4_K_M 等量化、見 [quantization](/llm/knowledge-cards/quantization/) |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 paper / config 看到 `mixed_precision: bf16`、`torch_dtype: bfloat16` 就是 BF16 訓練。寫 code 場景的判讀：本機跑 [GGUF](/llm/knowledge-cards/gguf/) Q4_K_M 模型、內部運算的 activation 仍是 fp16 / bf16、只有權重儲存是 4-bit；[KV cache](/llm/knowledge-cards/kv-cache/) 預設也是 fp16、量化 KV cache 是進階優化（K=Q8 / V=Q4）。

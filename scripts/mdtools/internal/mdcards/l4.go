@@ -13,7 +13,7 @@ import (
 // checkL4K4Structure verifies that each knowledge card satisfies the
 // K4 requirement from .codex/briefs/knowledge-cards.md:
 //
-//	"卡片首段與「概念位置」段各至少 1 個相鄰卡片連結"
+//	"首段與「跟其他概念的關係」段至少各有 1 個相鄰卡片連結"
 //
 // Implementation uses the goldmark AST rather than regex because the
 // rule depends on paragraph membership and heading-section scope —
@@ -50,7 +50,7 @@ func checkL4K4Structure(g *Graph, cardsRoot, conceptHeadingTitle string) []repor
 			})
 		}
 
-		// "概念位置" section body.
+		// "跟其他概念的關係" section body.
 		section := headingSection(fn.AST, conceptHeadingTitle, fn.Src)
 		if len(section) == 0 {
 			out = append(out, report.Violation{
@@ -82,7 +82,7 @@ func checkL4K4Structure(g *Graph, cardsRoot, conceptHeadingTitle string) []repor
 // firstBodyParagraph returns the first Paragraph child of the document
 // root that comes before any heading, or nil. A card whose body starts
 // with a heading has no opening paragraph: searching past the heading
-// would return a paragraph from that section (often "概念位置", which
+// would return a paragraph from that section (often "跟其他概念的關係", which
 // carries card links) and let the missing opening pass the check.
 //
 // The parser does not strip YAML front matter: the opening `---` becomes a

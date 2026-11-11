@@ -8,7 +8,7 @@ tags: ["business", "knowledge-cards", "dairy", "policy"]
 
 FMMO（Federal Milk Marketing Orders，聯邦牛奶行銷法令）是美國聯邦政府管理生乳定價的制度。核心機制是分類定價（classified pricing）：依生乳的末端用途分四個等級（Class I 飲用乳最高價、Class IV 奶粉最低價），加工廠按各等級的最低價向酪農付款，再由聯邦指派的市場管理人（market administrator）把全市場的分類收入統合（pooling，跨用途收入池化結算），算出所有酪農統一拿到的混合價（blend price）。目前全美有 11 個 FMMO order，涵蓋約 65% 的生乳產量。FMMO 的 blend price 就是美國酪農的[農場交貨價](/business/knowledge-cards/farmgate-price/)下限。
 
-## 概念位置
+## 跟其他概念的關係
 
 FMMO 最常被誤讀的一點是把它當成補助——FMMO 規範的是市場參與者之間的價格，不動用政府預算。美國乳品政策的定價（FMMO）與補助（DMC，Dairy Margin Coverage）是分開的兩層：FMMO 設價格下限、DMC 在飼料成本擠壓利潤時提供安全網。兩者解決不同問題——FMMO 解決「加工廠對酪農壓價」、DMC 解決「原料成本暴漲吃掉利潤」。
 
@@ -22,6 +22,6 @@ FMMO 的 pooling 機制決定了美國酪農的收入結構特徵：blend price 
 
 2024 年 FMMO 進行了自 2000 年以來最大幅度的修訂，主要調整 Class I 的定價公式——從「高級別加平均」改為「加權平均加固定差」。這個技術性調整影響飲用乳佔比高的地區（如東南部）的酪農收入。
 
-## 判讀方式
+## 判斷條件與後果
 
 FMMO 的分類定價決定了美國乳業加工廠的原料成本底線結構。加工廠（如 Dairy Farmers of America）的原料成本不低於 FMMO 最低價，但可以透過提高高價值產品佔比（Class I 飲用乳、有機乳）來擴大 blend price 之上的加工溢價。判讀時注意：FMMO 的 11 個 order 各自有不同的 blend price（因為各地區的用途組合不同），全國均價只是參考。

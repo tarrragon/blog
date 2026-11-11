@@ -8,7 +8,7 @@ weight: 127
 
 Worker pool 的核心概念是「用固定或可控數量的 worker 處理工作」。它讓系統限制同時執行量，避免每個 request 或 message 都直接建立無界工作。 可先對照 [In-Process Channel](/backend/knowledge-cards/in-process-channel/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Worker pool 是 application 內部的容量控制工具。它常和 [in-process channel](/backend/knowledge-cards/in-process-channel/)、[queue depth](/backend/knowledge-cards/queue-depth/)、[backpressure](/backend/knowledge-cards/backpressure/)、[bulkhead](/backend/knowledge-cards/bulkhead/)、[dependency isolation](/backend/knowledge-cards/dependency-isolation/) 與 [graceful shutdown](/backend/knowledge-cards/graceful-shutdown/) 一起使用。
 
@@ -16,6 +16,6 @@ Worker pool 是 application 內部的容量控制工具。它常和 [in-process 
 
 系統需要 worker pool 的訊號是工作可以排隊，但同時執行量需要受控。圖片縮圖、匯出報表、外部 API 同步與 webhook retry 都可以用 worker pool 限制 CPU、連線或下游 API 壓力。
 
-## 設計責任
+## 判斷條件與後果
 
 Worker pool 要定義 worker 數量、queue 長度、等待期限、錯誤回報、shutdown、重試與觀測欄位。擴大 worker 數前要先確認瓶頸位置：可能在 [connection pool](/backend/knowledge-cards/connection-pool/)、[HTTP client](/backend/knowledge-cards/http-client/) pool 或外部 API quota。

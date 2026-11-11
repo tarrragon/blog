@@ -8,7 +8,7 @@ tags: ["business", "knowledge-cards", "financial-analysis"]
 
 ROE（Return on Equity，股東權益報酬率）＝ 稅後淨利 ÷ 股東權益——股東每投入一元權益資本，一年賺回多少。[毛利率](/business/knowledge-cards/gross-margin/)衡量的是產品經濟學（每一單的加價空間），ROE 衡量的是業主經濟學（資本的複利速度）。兩者可以脫鉤：毛利率 13.69% 的壓榨廠靠高週轉做出 20%+ 的 ROE，毛利率 24% 的加工廠可能因為需求萎縮讓 ROE 崩到 3%。
 
-## 概念位置
+## 跟其他概念的關係
 
 ROE 是價值投資的第一道量化篩選——長期（10 年）ROE 穩定高於 15% 且未依賴升高的槓桿，是「這門生意值得持有資本」的核心證據。跟[毛利率](/business/knowledge-cards/gross-margin/)的關係：毛利率透過淨利率間接影響 ROE。杜邦拆解把 ROE 分解為淨利率 × 資產週轉率 × 權益乘數（槓桿）——利潤驅動和週轉驅動的 ROE 是耐久的，槓桿驅動的 ROE 是脆弱的。跟 [capex](/business/knowledge-cards/capex/) 的關係：高 capex 轉型最終必須反映在 ROE 回升，否則成長在毀滅價值。
 

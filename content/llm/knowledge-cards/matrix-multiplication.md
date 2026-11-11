@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "math", "linear-algebra"]
 
 Matrix multiplication（矩陣乘法、matmul、`@`）的核心概念是「**左矩陣的每個 row 跟右矩陣的每個 column 做 [dot product](/llm/knowledge-cards/dot-product/)、結果填進新矩陣**」。對 `A (m × k)` 跟 `B (k × n)`、結果 `C (m × n)`、其中 `C[i][j] = A 第 i row · B 第 j column`。Matmul 是 LLM 推論最頻繁的運算、整個 [forward pass](/llm/knowledge-cards/forward-pass/) 可以看成幾百次 matmul 串起來。
 
-## 概念位置
+## 跟其他概念的關係
 
 LLM 中 matmul 出現的關鍵位置：
 
@@ -32,6 +32,6 @@ LLM 推論每生一個 token、要把整份模型權重從記憶體讀到處理�
 - [量化](/llm/knowledge-cards/quantization/) 加速主要是「權重變小、每秒能讀過更多次完整模型」
 - [Batching](/llm/knowledge-cards/batching/) / [speculative decoding](/llm/knowledge-cards/speculative-decoding/) 加速主要是「一次讀權重、攤平到多個 token」
 
-## 設計責任
+## 判斷條件與後果
 
 讀 paper / model card 看到模型參數量、可以反推總 matmul 工作量；看到 inference benchmark 看到 tok/s、可以用「模型大小 / memory bandwidth」算理論上限對照。寫 code 場景無需直接寫 matmul、但理解這個運算的成本結構、能看懂量化 / batching / speculative decoding 等加速技巧為什麼有效。

@@ -8,7 +8,7 @@ tags: ["devops", "platform", "methodology", "knowledge-cards"]
 
 Golden Path（也叫 paved road）是一條有主張、可重現、被支援的預設路徑：把「用什麼工具、按什麼順序做、每步長什麼樣」先決定好，讓走的人不必每次重新選型、重查資料、重犯同一個錯。它把重複性的決策成本一次付清，好讓注意力留給真正該想的事。這個概念源自 Spotify 內部的 golden path、Netflix 稱 paved road，兩者都是為了讓工程師在複雜基礎設施上有一條「照著走就對」的預設路線。核心是消除重複決策，而不是限制自由。在 dotfile 脈絡下，這條路徑管的是「怎麼把[環境 as code 的三個尺度](/linux/dotfile/knowledge-cards/environment-as-code-scope/)落地」這個過程本身。
 
-## 概念位置
+## 跟其他概念的關係
 
 **paved road 是路徑、不是圍牆**：它降低的是「決定怎麼走」的成本，不取消走的人對結果負責。它跟「repo 是唯一真實來源」（狀態可重現，見 [環境 as code 的三個尺度](/linux/dotfile/knowledge-cards/environment-as-code-scope/)）、「對齊凍結環境」（見 [Prod Parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/)）是相鄰但不同的原則：那兩者管「狀態長什麼樣」，paved road 管「怎麼一步步把狀態做出來」。
 

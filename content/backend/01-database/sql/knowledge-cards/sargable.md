@@ -53,7 +53,7 @@ date(下單日) = '2024-03-01'    SCAN 訂單
 
 兩者分得開，是因為形狀決定引擎有沒有路可走、統計只決定它想不想走。把條件換成裸欄位的形狀之後計畫跟著變，代表原本擋住的是路；計畫沒變，代表路一直都在而引擎判斷它不划算。
 
-## 概念位置
+## 跟其他概念的關係
 
 [SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/) 的結論是代價由資料與索引決定、不由寫法決定，而這張卡是那個結論有界的例外。邊界很窄：寫法在這裡決定的是引擎**能不能用**那個[索引](/backend/01-database/sql/knowledge-cards/indexing/)，而[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)在幾條可走的路裡挑哪一條仍然由資料與統計決定。
 

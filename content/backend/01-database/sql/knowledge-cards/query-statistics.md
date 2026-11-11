@@ -27,7 +27,7 @@ tags: ["sql", "statistics", "analyze", "query-plan", "knowledge-card"]
 
 [索引](/backend/01-database/sql/knowledge-cards/indexing/)決定引擎有沒有一條快的存取路徑可以走，統計決定它知不知道該走那一條。索引建了而統計沒更新的時候，最佳化器可能估錯而不走它——兩者要一起看。
 
-## 概念位置
+## 跟其他概念的關係
 
 統計資訊是「查詢的文字不足以決定執行方式」這件事的具體內容。查詢說要什麼結果，[query optimizer](/backend/01-database/sql/knowledge-cards/query-optimizer/) 決定怎麼拿，而它決定的依據既不在查詢裡也不在資料裡——它在這一份另外存著的摘要上。
 

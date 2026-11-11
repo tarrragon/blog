@@ -9,7 +9,7 @@ weight: 130
 
 Load balancer 的核心概念是「把進來的流量導到合適的服務實例」。它常處理分流、健康檢查、[draining](/backend/knowledge-cards/draining/)、[sticky session](/backend/knowledge-cards/sticky-session/) 與 [idle timeout](/backend/knowledge-cards/idle-timeout/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Load balancer 位在 client 與 application instances 之間，是服務接流量與停止接流量的入口控制層，常與 [Request Routing](/backend/knowledge-cards/request-routing/) 搭配使用。
 
@@ -21,6 +21,6 @@ Load balancer 位在 client 與 application instances 之間，是服務接流�
 
 [Kubernetes Service](/backend/knowledge-cards/kubernetes-service/)、edge proxy、[API Gateway](/backend/knowledge-cards/api-gateway/) 或雲端 LB 都會把 request 導到健康節點。長連線服務也常依賴 load balancer 做 [draining](/backend/knowledge-cards/draining/)，避免關閉中的 instance 繼續接新流量，也會透過 [idle timeout](/backend/knowledge-cards/idle-timeout/) 回收空閒連線。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義健康條件、移除條件、回切條件與排空時間。Load balancer 本身不處理業務邏輯，但它直接影響可用性、切換速度與連線體驗。

@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/yaml/"]
 
 YAML（YAML Ain't Markup Language）是一種用縮排表示結構的資料格式：`鍵: 值` 組成對應表，`- ` 開頭的行組成清單，子項目往右縮排一層，可以寫 `#` 開頭的註解，不加引號的值由解析器依寫法推測型別。Kubernetes 的 manifest、GitHub Actions 的 workflow、Ansible 的 playbook 與 inventory、Docker Compose 的設定檔都用這個格式（Ansible 的變數檔一樣受下面的隱式型別影響，見 [Configuration Management（組態管理）](/devops/infra/knowledge-cards/configuration-management/)）。同樣是給人手動編輯的設定檔格式，[TOML](/devops/infra/knowledge-cards/toml/) 用表頭分組、型別完全由寫法決定；[HCL](/devops/infra/knowledge-cards/hcl/) 另外有變數與函式，YAML 與 TOML 一樣只描述資料。
 
-## 概念位置
+## 跟其他概念的關係
 
 YAML 在設定檔格式裡的位置是巢狀深、層數多的設定：縮排一層就是一層結構，寫到第五、六層仍然不必重複上層的名字，這是 Kubernetes 與 CI 工具選它的理由，[Helm](/devops/infra/knowledge-cards/helm/) 的 chart 參數檔 `values.yaml` 也是這個格式。付出的代價在型別：不加引號的值是什麼型別，由解析器實作的 YAML 版本決定，而一份檔案自己沒有辦法指定讀它的解析器。它跟 TOML、JSON 逐項比對的需求表與實測，見 [主機維護清單寫成 TOML：JSON、YAML、TOML 的取捨、TOML 1.0 與 1.1 的版本差異、清單的欄位設計與只讀檢查腳本](/devops/operations/09-host-lifecycle/host-manifest-in-toml/)〈主機維護清單對檔案格式的需求：JSON、YAML、TOML 的比對〉。
 
@@ -17,7 +17,7 @@ YAML 在設定檔格式裡的位置是巢狀深、層數多的設定：縮排一
 
 需要讀懂 YAML 的情境包括：打開一個副檔名是 `.yaml` 或 `.yml` 的檔案、程式讀到的值跟檔案上寫的字不一樣（寫 `no` 讀成 `false`、寫 `010` 讀成 8）、同一份檔案在兩個工具裡讀出不同的結果，以及解析器回報 `ScannerError` 或 `found character '\t' that cannot start any token` 這類縮排錯誤。
 
-## 設計責任
+## 判斷條件與後果
 
 YAML 的基本結構：
 

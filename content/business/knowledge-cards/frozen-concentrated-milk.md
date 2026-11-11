@@ -8,7 +8,7 @@ tags: ["business", "knowledge-cards", "supply-chain", "dairy"]
 
 冰磚奶（冷凍濃縮乳）是生乳經巴氏殺菌後脫去 3/4 水分、冷凍成磚狀運輸的乳品原料，屬於[commodity business](/business/knowledge-cards/commodity-business/)的一種原料形態。到達台灣後加回 3-4 倍水還原為液態乳，可依需求調整脂肪含量和風味。超商咖啡機裡標示「咖啡專用乳」的產品通常含冰磚還原成分。
 
-## 概念位置
+## 跟其他概念的關係
 
 冰磚奶是進口乳品替代國產鮮乳的核心載體。它跟國產鮮乳的成本差距（業務用售價 40-50 元/L vs 60-70 元/L）驅動了台灣液態乳自給率從 90% 下滑到 75% 的趨勢。這個替代集中在業務通路（咖啡、手搖飲、烘焙），零售通路因消費者在乎「國產鮮乳」品牌認同而未被大規模滲透。跟 [commodity business](/business/knowledge-cards/commodity-business/) 的關係：冰磚奶讓原本有「新鮮度」差異化的國產鮮乳，在業務通路退化為 commodity 競爭（買方只看價格）。
 

@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "transformer", "architecture"]
 
 Embedding layer（嵌入層）的核心概念是「Transformer 第一層的查表結構：把整數 [token](/llm/knowledge-cards/token/) ID 對應到一個可訓練向量（embedding）」。本質上是 `vocab_size × hidden_dim` 的權重矩陣、每個 token ID 取對應 row 當該 token 的向量表示。後續所有 Transformer block 都對這些向量做運算。
 
-## 概念位置
+## 跟其他概念的關係
 
 Embedding layer 在 [forward pass](/llm/knowledge-cards/forward-pass/) 的位置：
 
@@ -39,6 +39,6 @@ Embedding layer 的大小：
 
 通常跟 output projection（hidden → vocab）相同大小、有些模型 tied（共用權重）、有些 untied。
 
-## 設計責任
+## 判斷條件與後果
 
 讀模型架構圖看到「token embedding」「embed_tokens」就是這一層。實務意涵：模型大小有非小比例來自 embedding（vocab 越大、embedding 越大）；換 tokenizer 等於整個 embedding 重訓、是 fine-tune 時通常不動的部分。

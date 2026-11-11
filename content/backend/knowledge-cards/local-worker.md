@@ -8,7 +8,7 @@ weight: 149
 
 Local worker 的核心概念是「背景工作仍留在同一個 application process」。它可降低 request 等待時間，但不提供跨 process 的持久可靠保證。 可先對照 [In-Process Channel](/backend/knowledge-cards/in-process-channel/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Local worker 常搭配 [in-process channel](/backend/knowledge-cards/in-process-channel/) 與 [worker pool](/backend/knowledge-cards/worker-pool/)；若需求轉向跨節點可靠處理，通常要改用 [durable queue](/backend/knowledge-cards/durable-queue/)。
 
@@ -16,6 +16,6 @@ Local worker 常搭配 [in-process channel](/backend/knowledge-cards/in-process-
 
 例如非關鍵通知、短週期快取刷新、定時清理記憶體資料，可先由 local worker 承擔。
 
-## 設計責任
+## 判斷條件與後果
 
 設計時要定義停止行為、錯誤處理、隊列上限與 shutdown 合約，避免背景任務在重啟時遺失而不可見。

@@ -8,7 +8,7 @@ tags: ["backend", "http-caching", "cache-control", "knowledge-card"]
 
 Cache-Control 是 HTTP 回應（與請求）上的標頭，用一組指令告訴沿路的快取三件事：這份回應能不能保存、保存在哪一種快取、保存之後多久之內可以不問 origin 直接使用。它是 origin 對瀏覽器、CDN 與代理下指令的主要管道，可以直接使用的那段時間就是 [TTL](/backend/knowledge-cards/ttl/)，超過之後是否允許先給舊版，由 [Stale-While-Revalidate](/backend/knowledge-cards/stale-while-revalidate/) 這類擴充指令決定。
 
-## 概念位置
+## 跟其他概念的關係
 
 Cache-Control 位在 HTTP 快取的指令層，常用指令按職責分組：
 
@@ -24,7 +24,7 @@ Cache-Control 位在 HTTP 快取的指令層，常用指令按職責分組：
 
 回應完全沒有 Cache-Control、也沒有 `Expires` 時，它仍可能被保存：狀態碼屬於可啟發式快取的種類（例如 200、301、404）時，各快取依自己的規則估一個期限，同一個 301 在不同瀏覽器與代理上得到的期限可能差到從零到永不過期。
 
-## 判讀方式
+## 判斷條件與後果
 
 讀一個回應的 Cache-Control 時，依序問三件事：它能不能給別人（看 `private`／`public`；請求帶 `Authorization` 時規範禁止共用，但實作不一定遵守，需登入的回應明寫 `private`，見 [12.4 快取鍵與副本共用：Vary、Cookie 與 Authorization](/backend/12-http-caching/cache-key/)）、內容會不會改（看期限指令，沒有期限就是交給各快取自己估）、origin 改了內容之後最慢多久要讓所有人看到（期限加上 stale 窗口，以及上游沒傳 `Age` 時各層期限相加，見 [12.5 已保存副本的更新方式：失效、purge、版本化網址與等待到期](/backend/12-http-caching/updating-stored-responses/)）。
 

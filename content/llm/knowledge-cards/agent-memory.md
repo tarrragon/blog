@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "agent", "memory"]
 
 Agent memory 的核心概念是「**agent 在 [context window](/llm/knowledge-cards/context-window/) 之外管理長期狀態的設計**」、把使用者偏好、過去任務、知識、操作流程等持久化、跨 session 重用。借鑒人類認知科學的五個層次：working memory（context 本身）、short-term（session scratchpad）、long-term episodic（過去事件）、long-term semantic（事實 / 知識）、long-term procedural（流程 / 技能）。
 
-## 概念位置
+## 跟其他概念的關係
 
 五個層次的對比：
 
@@ -29,7 +29,7 @@ Agent memory 的核心概念是「**agent 在 [context window](/llm/knowledge-ca
 | [System prompt](/llm/knowledge-cards/system-prompt/)   | 把 semantic / procedural memory 編碼進 scaffold 的方式         |
 | [Subagent](/llm/knowledge-cards/subagent/)             | 用 subagent 分隔不同 specialty 的 memory                       |
 
-## 設計責任
+## 判斷條件與後果
 
 讀 agent paper / 設計 / framework docs 看到「agent memory」「memory store」「mem0 / Letta」「episodic / semantic memory」就是這 framing。寫 code 場景的判讀：
 

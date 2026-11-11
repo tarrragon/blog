@@ -23,7 +23,7 @@ tags: ["sql", "relational-algebra", "semantics", "knowledge-card"]
 
 模型之外另有幾件事在決定同一段查詢的結果：識別字被摺成什麼樣、引擎接不接受標準禁止的寫法並自己補一個值、送出這段 SQL 的人被允許讀哪些表。識別字在 [SQL.14 識別字的規則：各家的大小寫摺疊、引號與保留字](/backend/01-database/sql/identifier-rules/)，引擎自己補值在 [SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)，權限在 [SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)。這幾項與模型的差別是——模型的規則各家一致，這幾項不一致。
 
-## 概念位置
+## 跟其他概念的關係
 
 **「符合語意模型」與「答案對了」是兩件事。** 模型與[約束](/backend/01-database/sql/knowledge-cards/constraint/)的分工也在這條線上——約束管資料能長成什麼樣，模型管那批資料算出什麼。 模型保證的是這段文字算出哪一批列，而那批列是不是要問的那個問題的答案，模型不管也管不到——問題不在查詢裡（[SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/)）。講語意模型的那幾篇反覆出現的安靜錯誤——列數膨脹、外連接被抵銷、空值比較落空——全部發生在模型算對了的前提下。
 

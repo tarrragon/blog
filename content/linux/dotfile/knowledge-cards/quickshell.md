@@ -8,7 +8,7 @@ tags: ["dotfile", "linux", "quickshell", "qml", "rice", "knowledge-cards"]
 
 Quickshell 是建在 Qt6/QML 上的桌面 shell runtime：一個在 Wayland [compositor](/linux/dotfile/knowledge-cards/compositor/) 之上渲染桌面 UI 元件（狀態列、啟動器、通知、鎖屏）的執行框架。它自己不是一套桌面——它提供 QML 執行環境跟一組系統整合 API（Hyprland IPC、視窗預覽、auto-reload），桌面長什麼樣由使用者（或像 Caelestia 這樣的專案）用 QML 寫出來。
 
-## 概念位置
+## 跟其他概念的關係
 
 相關概念：[Compositor](/linux/dotfile/knowledge-cards/compositor/)（Quickshell 在其上渲染、由它持有畫面）、[Session Lock](/linux/dotfile/knowledge-cards/session-lock/)（Quickshell 持鎖死掉時的失效保護）、[AUR](/linux/dotfile/knowledge-cards/aur/)（`quickshell-git` 的來源與 `-git` 依賴衝突）、[Rice](/linux/dotfile/knowledge-cards/rice/)（它服務的桌面客製文化）。
 

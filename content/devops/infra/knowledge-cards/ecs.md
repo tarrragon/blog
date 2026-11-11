@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/ecs/"]
 
 ECS（Elastic Container Service）的核心職責是把容器映像排程到運算資源上執行，並管理它們的生命週期 — 健康檢查、失敗重啟、滾動更新。它是 AWS 上容器工作負載的預設起點，心智負擔低於 Kubernetes（EKS），但編排彈性也較受限。執行單位可以是自管的 EC2 instance，也可以是免運維的 [Fargate](/devops/infra/knowledge-cards/fargate/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 ECS 在核心服務層裡的角色是「應用程式的執行載體」。它跑在 VPC 的 private subnet 裡，用 IAM task role 存取其他 AWS 資源，前面掛 ALB 接收流量。IaC 描述 ECS 時，重點在「接線」（subnet、security group、IAM role、target group）而非容器映像版本 — 映像版本由 CI/CD 在部署期注入。
 
@@ -23,7 +23,7 @@ ECS 的執行模式分 [EC2](/devops/infra/knowledge-cards/ec2/) launch type（�
 - 部署後新版本遲遲不上線 — rolling update 的 minimum healthy percent 設太高，新 task 啟動空間不足
 - Task 無法拉到 ECR image — 通常是 private subnet 沒有 NAT 或 VPC Endpoint 到 ECR
 
-## 設計責任
+## 判斷條件與後果
 
 ECS 的設計決定多半是在劃責任交界：運算實例歸 AWS 還是團隊管理、權限歸哪個 role、映像版本歸 infra code 還是 CI/CD，最後再依服務的負載型態選擴容指標：
 

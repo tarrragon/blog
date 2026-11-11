@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "moe", "performance"]
 
 Active parameter 的核心概念是「[MoE](/llm/knowledge-cards/moe/) 模型每生成一個 token 實際參與 forward pass 的參數量」。跟模型總參數量是兩個獨立指標：**總參數**影響記憶體需求（要全部載入）、**active parameter** 影響推論速度上限（每 token 走的計算量）。Dense 模型的 active parameter 等於總參數；MoE 模型的 active parameter 通常只有總參數的 10% ~ 20%。
 
-## 概念位置
+## 跟其他概念的關係
 
 模型命名中的 active parameter 線索：
 
@@ -29,7 +29,7 @@ Active parameter 的核心概念是「[MoE](/llm/knowledge-cards/moe/) 模型每
 
 > **事實查核註**：active parameter 跟模型能力的關係是社群常見回報、不是嚴格定理；具體模型在 coding / reasoning / 對話等任務的表現依訓練資料、RLHF、prompt 風格變化、需以 [SWE-bench](/llm/knowledge-cards/swe-bench/) 等公開 benchmark 跟自己工作流校準。
 
-## 設計責任
+## 判斷條件與後果
 
 理解 active parameter 後可以解釋兩個現象：為什麼 30B MoE 跟 30B Dense 在同硬體下生字速度差很多（前者每 token 只走 3B active）、為什麼 MoE 模型能力對應的「等價 Dense 大小」不是簡單線性（社群常見回報接近總參數的 60% ~ 80% 等價 Dense 能力、但 case-by-case）。
 

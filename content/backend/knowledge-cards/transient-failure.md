@@ -8,7 +8,7 @@ weight: 50
 
 Transient failure 的核心概念是「短時間內發生、稍後可能自行恢復的故障」。常見來源包含網路抖動、短暫 timeout、下游重啟、連線重建、rate limit 與 leader 切換。 可先對照 [Tripwire](/backend/knowledge-cards/tripwire/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 暫時性故障適合用 retry、backoff、jitter、timeout 與 fallback 吸收。它和永久性錯誤不同；payload schema 錯、權限拒絕、業務狀態不允許通常需要分類處理，而非持續重試。 可先對照 [Tripwire](/backend/knowledge-cards/tripwire/)。
 
@@ -16,6 +16,6 @@ Transient failure 的核心概念是「短時間內發生、稍後可能自行�
 
 系統需要分辨 transient failure 的訊號是錯誤短暫升高後恢復。Redis failover 期間可能出現短暫連線錯誤；consumer 可以退避重試，但要控制重試量避免擴大故障。
 
-## 設計責任
+## 判斷條件與後果
 
 錯誤分類要標出 temporary、permanent、timeout、rate limited 與 dependency unavailable。Runbook 應說明哪些錯誤可以自動重試，哪些要進入 dead-letter 或人工處理。

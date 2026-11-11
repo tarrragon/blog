@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/scp/"]
 
 Service Control Policy（SCP）是 AWS Organizations 裡套用在 OU 或帳號上的權限上限。SCP 不授予權限——它設定一個天花板，限制該範圍內的 IAM 能做什麼。即使帳號內有 `AdministratorAccess` 的 [IAM](/devops/infra/knowledge-cards/iam/) role，SCP deny 的操作仍然被擋下。
 
-## 概念位置
+## 跟其他概念的關係
 
 SCP 跟 [IAM](/devops/infra/knowledge-cards/iam/) policy 的關係是交集而非覆蓋：一個操作要同時被 SCP 允許且被 IAM policy 允許才會生效。SCP 的設計目的是讓組織管理者設定「即使帳號管理員也做不了」的護欄，常見的 day-1 SCP 包括：禁止關閉 CloudTrail、禁止離開指定 region、禁止刪除 VPC Flow Logs。
 
@@ -19,7 +19,7 @@ SCP 套用在 OU 上時會繼承給 OU 下所有帳號和子 OU。Management acc
 
 當帳號內的 IAM role 執行某個操作時收到 `AccessDeniedException`、但該 role 的 IAM policy 確實允許該操作，SCP 是第一個要檢查的位置。另一個訊號是新帳號加入 OU 後某些原本能用的服務突然不可用——通常是繼承了 OU 的 SCP deny list。
 
-## 設計責任
+## 判斷條件與後果
 
 SCP 會繼承給 OU 底下每個帳號與子 OU，連帳號管理員都越不過，所以策略選錯時整個 OU 的帳號一起受影響；第一個要定的是用 deny-list 策略（預設全開、明確列出禁止項）還是 allow-list 策略（預設全關、明確列出允許項）。Deny-list 較常見也較易維護——只需要管「哪些該禁」。Allow-list 更嚴格但維護成本高——每次有新服務需求都要更新 SCP。
 

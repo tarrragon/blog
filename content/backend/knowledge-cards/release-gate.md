@@ -8,7 +8,7 @@ weight: 254
 
 Release Gate 的核心概念是「在變更進入正式環境前，用明確條件決定能不能放行」。 可先對照 [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Release Gate 位在 migration、schema change、deployment、error budget 與 incident policy 之間。它把驗證結果轉成可執行的放行決策，並常搭配 [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/) 確認放行前後都能回復。
 
@@ -25,6 +25,6 @@ Release Gate 位在 migration、schema change、deployment、error budget 與 in
 
 Schema migration 要先確認相容性與 backfill 結果再放行；高風險設定變更要通過 security review 與 drift check；error budget 快耗盡時，團隊可以暫停高風險變更，直到風險恢復到可接受範圍。
 
-## 設計責任
+## 判斷條件與後果
 
 Release Gate 要定義檢查項、擁有者、通過條件、阻擋條件與例外流程。它是把風險控制流程標準化的機制，單純的批准按鈕無法達到同等效果。

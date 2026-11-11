@@ -7,7 +7,7 @@ weight: 359
 
 Cache tag purge（也稱 surrogate key purge）的核心責任是讓 CDN / cache 批量失效操作可控 — 寫入快取時除了 cache key 還附加多個 tag；purge 時用 tag 觸發、一次失效所有帶該 tag 的資源、用單一 tag 取代逐個 cache key 列舉。是大型內容系統的事實標準 — 比版本化路徑通用、比逐個 purge 可控。跟 [cache invalidation](/backend/knowledge-cards/cache-invalidation/) 是執行手段關係（cache invalidation 規定「何時清」、本卡提供「怎麼批量清」）。
 
-## 概念位置
+## 跟其他概念的關係
 
 Cache tag purge 處於 CDN / cache 失效策略的「批量失效機制」層、是 [cache invalidation](/backend/knowledge-cards/cache-invalidation/) 的執行手段。常見 vendor 實作：Fastly Cache Tag（`Surrogate-Key` header、purge 用 `POST /service/.../purge/<tag>`）、Cloudflare Cache Tag（Enterprise plan、用 `Cache-Tag` header）、Akamai Surrogate Key、Varnish（用 `X-Cache-Tag` header + ban-list）。
 
@@ -17,6 +17,6 @@ CDN 用 cache key（通常是 URL + Vary header）做快取存取。批量失效
 
 電商商品頁、相關搜尋、推薦 widget 都帶 `product:123` tag、商品下架時 purge `product:123` 一次清乾淨；新聞文章 + tag page + author page + RSS 都帶 `article:456` tag、文章更新時批量失效相關頁；CMS 模組更新時、所有 reference 該模組的頁面用 `template:hero-v2` tag 一次清。實測大型內容系統一次 tag purge 可影響數萬 cache entry、比逐個 purge 快數量級。
 
-## 設計責任
+## 判斷條件與後果
 
 Tag 粒度設計要在兩端之間取捨：tag 太粗（所有頁面都帶 `site:main` tag、每次小更新都全站 purge）、tag 太細（每個資源獨立 tag、batch purge 需要 enumerate 所有 tag、退化成逐個 purge）。Vendor 對 tag 數量、tag 長度、purge API rate 都有上限、要事前 audit。跨服務 tag 設計要同步 — 若 CDN 有 tag、應用層快取缺對應機制、CDN purge 後應用層仍 stale、會回填到 CDN。兩層失效要設計成同步協議、視為單一 invalidation pipeline。

@@ -8,7 +8,7 @@ tags: ["business", "knowledge-cards", "electronics", "supply-chain"]
 
 HBM（High Bandwidth Memory）是一種把多層 [DRAM](/business/knowledge-cards/dram/) 晶粒垂直堆疊、再與 GPU 封裝在同一基板上的記憶體技術。核心目的是頻寬：AI 模型的推論和訓練需要在 GPU 和記憶體之間高速搬運大量資料，傳統 DRAM 模組透過主機板上的線路連接，頻寬受限於線路距離和接腳數量。HBM 把記憶體直接疊在晶片旁邊，用數千條微細的矽穿孔（TSV）垂直連接，頻寬比傳統 DDR 模組高一個量級。
 
-## 概念位置
+## 跟其他概念的關係
 
 HBM 的產能瓶頸來自三個環節的交叉限制，是理解 AI 產業[產能擠壓](/business/financial-analysis/capacity-crowding-out/)的關鍵。
 
@@ -26,6 +26,6 @@ HBM 世代演進：HBM2e → HBM3 → HBM3e → HBM4，每代頻寬和容量提�
 
 SK 海力士在 HBM 市場佔約 50-60%，三星約 20-35%（受 HBM3e 良率（合格品比例）波動影響），美光第三且快速成長。HBM 的合約價是傳統 DRAM 的 5-6 倍（以每 GB 計），且供不應求時不像傳統 DRAM 那樣走現貨市場——大客戶（NVIDIA、AMD）用長約鎖量，中小客戶幾乎拿不到貨。
 
-## 判讀方式
+## 判斷條件與後果
 
 HBM 營收佔比是判讀記憶體廠商毛利率走向的關鍵指標。HBM 的 [ASP](/business/knowledge-cards/asp/) 遠高於傳統 DRAM，當廠商把產能轉向 HBM，營收和毛利率會同步上升——但傳統 DRAM 的可用產能下降，可能讓傳統 DRAM 也因為供給減少而漲價。這是產能擠壓的雙向效應。風險面：HBM 的技術疊代快，良率爬坡期的成本高，如果下一代產品良率不如預期（如三星的 HBM3e 良率問題），會直接衝擊毛利率。

@@ -11,7 +11,7 @@ VPC（Virtual Private Cloud）是雲端帳號內的一塊邏輯隔離私有網�
 
 VPC 用 [CIDR](/devops/infra/knowledge-cards/cidr/) 區塊定義地址空間。建立時的 CIDR 大小是一次性決策——事後擴張地址空間在多數雲端平台上是麻煩且容易出錯的操作（AWS 允許追加 secondary CIDR，但追加的網段在 routing 與服務相容性上有限制）。
 
-## 概念位置
+## 跟其他概念的關係
 
 VPC 是[模組三：網路地基](/devops/infra/03-network-foundation/vpc-subnet-security-group/)的最外層邊界。Infra 系列的網路設計從 VPC 開始：先圈定地址空間，再往內切 [subnet](/devops/infra/knowledge-cards/subnet/)、掛 route table、設 security group。環境之間的 VPC 怎麼分（每個環境一個 VPC），屬於[模組四：環境分離](/devops/infra/04-environment-separation/directory-module-parameterization/)的設計決策。
 
@@ -19,7 +19,7 @@ VPC 是[模組三：網路地基](/devops/infra/03-network-foundation/vpc-subnet
 
 VPC 設計需要關注的訊號：CIDR 空間快用完（subnet 切不出新的子網段）、需要跟其他 VPC 或地端互連時發現 CIDR 重疊（peering 無法建立）、服務被放在預設 VPC 裡（預設 VPC 是所有人共享的、CIDR 不可控的、security group 預設全通的）。
 
-## 設計責任
+## 判斷條件與後果
 
 VPC 的地址空間在建立時定下、事後擴張受限，而網段一旦跟其他 VPC 或地端網路重疊，兩邊就無法建立 peering 或互連；規劃時先定的是：
 

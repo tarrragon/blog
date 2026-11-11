@@ -7,7 +7,7 @@ weight: 1
 aliases: ["/ci/knowledge-cards/"]
 ---
 
-CI/CD 知識卡片的核心責任是建立共同語言。流程文章會使用 pipeline、gate、artifact、rollout、rollback、environment protection 等術語；卡片負責定義它們在系統中的位置、可觀察訊號與設計責任。
+CI/CD 知識卡片的核心責任是建立共同語言。流程文章會使用 pipeline、gate、artifact、rollout、rollback、environment protection 等術語；卡片負責定義它們跟其他概念的關係、可觀察訊號，以及判斷條件與後果。
 
 ## 核心術語
 

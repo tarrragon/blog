@@ -8,7 +8,7 @@ weight: 56
 
 Bulkhead 的核心概念是「把服務資源分成彼此隔離的艙室」。某個艙室過載或失效時，其他艙室仍保留處理能力。 可先對照 [Burn Rate](/backend/knowledge-cards/burn-rate/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Bulkhead 是 dependency isolation 的具體模式。它常用在 thread pool、connection pool、queue、worker group、tenant capacity 與不同優先級工作。 可先對照 [Burn Rate](/backend/knowledge-cards/burn-rate/)。
 
@@ -16,6 +16,6 @@ Bulkhead 是 dependency isolation 的具體模式。它常用在 thread pool、c
 
 系統需要 bulkhead 的訊號是單一功能或 tenant 可以拖垮整體服務。大量報表匯出可以放到獨立 worker pool，避免它佔滿處理登入、查詢與付款的資源。
 
-## 設計責任
+## 判斷條件與後果
 
 Bulkhead 設計要定義分艙邊界、容量、排隊策略、拒絕行為與告警。容量切分太細會降低利用率，切分太粗會失去隔離效果。

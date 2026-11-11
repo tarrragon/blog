@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/app-signing/"]
 
 App Signing 的核心概念是「簽章憑證即發布能力」。它決定 [artifact](/devops/ci/knowledge-cards/artifact/) 是否被平台接受與使用者裝置信任。
 
-## 概念位置
+## 跟其他概念的關係
 
 App Signing 位在 app build 與 [release channel](/devops/ci/knowledge-cards/release-channel/) 之間，涉及 certificate、provisioning profile、keystore 與 secret 管理。
 
@@ -23,6 +23,6 @@ App Signing 位在 app build 與 [release channel](/devops/ci/knowledge-cards/re
 
 iOS 發版需匹配正確 certificate 與 provisioning profile，Android 發版需維護 keystore 一致性與安全儲存。
 
-## 設計責任
+## 判斷條件與後果
 
 App Signing 要定義密鑰保存、輪替節奏、權限分離與緊急回復流程，確保發布能力可持續。

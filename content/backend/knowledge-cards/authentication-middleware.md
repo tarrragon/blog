@@ -8,7 +8,7 @@ weight: 1
 
 Authentication Middleware 的核心概念是「在 request 進入業務處理前，先確認呼叫者是誰」。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Authentication Middleware 位在 transport layer 與 handler 之間。它負責把 token、session、signature 或其他存取憑證轉成已驗證的 caller context。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
@@ -20,6 +20,6 @@ Authentication Middleware 位在 transport layer 與 handler 之間。它負責�
 
 [API Gateway](/backend/knowledge-cards/api-gateway/) 驗證 bearer token、內部服務驗證 service token、webhook 驗證簽章，都屬於 authentication middleware 的責任範圍。
 
-## 設計責任
+## 判斷條件與後果
 
 Authentication Middleware 要處理憑證提取、驗證失敗回應、context 寫入與錯誤分類，不應混入業務邏輯。

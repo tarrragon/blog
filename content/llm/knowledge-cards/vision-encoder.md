@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "vlm", "vision", "architecture"]
 
 Vision encoder（視覺編碼器）的核心概念是「**[VLM](/llm/knowledge-cards/vlm/) 內部把圖片轉成向量序列的模組**」。主流做法是「把圖片切成 patch、每個 patch 過 ViT（Vision Transformer）變一個向量」、再進入 LLM 的 Transformer 層。Vision encoder 通常用 [CLIP](/llm/knowledge-cards/clip/) 預訓練的權重起始、再跟 LLM 一起 fine-tune。
 
-## 概念位置
+## 跟其他概念的關係
 
 Vision encoder 在 VLM 中的位置：
 
@@ -39,7 +39,7 @@ Vision encoder 的關鍵設計取捨：
 3. **Pretrain 來源**：用 CLIP / SigLIP 預訓練的權重起始、加上 multimodal fine-tune；少數從頭訓
 4. **跟 LLM 結合方式**：見 [multimodal fusion](/llm/knowledge-cards/multimodal-fusion/) 卡
 
-## 設計責任
+## 判斷條件與後果
 
 讀 VLM model card 看到「vision tower」「ViT backbone」「image encoder」就是 vision encoder。寫 code 場景的判讀：
 

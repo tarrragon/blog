@@ -8,7 +8,7 @@ weight: 1
 
 Boundary Contract 的核心概念是「邊界兩端共同承認的約定」。它描述不同系統、元件或流程在互相協作時，需要遵守的共同規則。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Boundary Contract 位在 client 與 service、service 與 service、程式與平台之間。當兩端都需要依同一份規則運作時，就需要 contract 來避免含糊地帶。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
@@ -20,6 +20,6 @@ Boundary Contract 位在 client 與 service、service 與 service、程式與平
 
 API contract 會定義欄位名稱、必要欄位、錯誤格式與相容版本；deployment contract 會定義 readiness、shutdown、[draining](/backend/knowledge-cards/draining/) 與 [resource limit](/backend/knowledge-cards/resource-limit/)；queue contract 會定義 ack、重試與重複投遞行為；load balancer contract 會定義流量切換、[health check](/backend/knowledge-cards/health-check/) 與排空行為。
 
-## 設計責任
+## 判斷條件與後果
 
 Boundary Contract 設計要清楚定義版本、相容性、破壞性變更、驗證方式與回復流程。若 contract 不穩，應搭配 contract test、[Release Gate](/backend/knowledge-cards/release-gate/) 與文件化規則。

@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/event-source/"]
 
 Event Source 的核心概念是「觸發執行的事件入口」。它決定 serverless function 或 worker 何時執行、如何重試、如何進入 dead-letter，並影響 [Function Alias](/devops/ci/knowledge-cards/function-alias/) 的 rollout 與回復策略。
 
-## 概念位置
+## 跟其他概念的關係
 
 Event Source 位在 queue、topic、HTTP gateway、object storage、scheduler 與 [function](/devops/ci/knowledge-cards/function-alias/) / worker 之間，負責把外部事件轉成執行請求。
 
@@ -23,6 +23,6 @@ Event Source 位在 queue、topic、HTTP gateway、object storage、scheduler �
 
 Queue 觸發的 function 以 batch 方式處理訊息。新版本解析失敗時，訊息進入 dead-letter queue；團隊先停用 trigger，再修復 function 或重放事件。
 
-## 設計責任
+## 判斷條件與後果
 
 Event Source 要定義 trigger 條件、batch size、retry、dead-letter、replay、權限與 schema 契約，讓事件驅動發布具備可觀測回復路徑。

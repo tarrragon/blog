@@ -14,6 +14,6 @@ Hyrum's Law：當一個介面的使用者夠多、介面的**一切可觀察行�
 
 防禦方向是收窄可觀察面、並主動給該依賴的東西：機器分支要用的資訊放進顯式的機器可讀欄位（type / code / reason）、人類可讀欄位明文標示可變動；能加隨機化的地方加（如 Go map 迭代順序刻意隨機、讓「依賴順序」在第一天就壞掉、而不是三年後）。介面的變更紀律（什麼算 breaking）由此擴大：被廣泛依賴的未承諾行為、實務上跟承諾過的一樣貴。
 
-## 概念位置
+## 跟其他概念的關係
 
 它是 [API contract](/backend/knowledge-cards/api-contract/) 的邊界條款：contract 定義你想承諾的、Hyrum's Law 提醒你實際被依賴的比那更多。錯誤回應的機器可讀欄位設計（避免 message 被當契約）是它在錯誤契約上的應用、見 [11.11 Status 與錯誤的雙向契約](/backend/11-api-design/error-bidirectional-contract/)。

@@ -17,7 +17,7 @@ tags: ["sql", "constraint", "null", "ddl", "knowledge-card"]
 
 同一個結構在別處反覆出現：`UNIQUE` 讓「這個連接會不會讓一列配到多列」變成可以事先回答的問題（見 [SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)），`FOREIGN KEY` 讓「這個 `JOIN` 會不會掉列」有一個不必查資料就成立的答案。
 
-## 概念位置
+## 跟其他概念的關係
 
 約束屬於結構那一側，所以它由 [DDL](/backend/01-database/sql/knowledge-cards/ddl-dml/) 建立與修改，而不是由日常的讀寫語句。這條歸屬有兩個後果：加約束的權限跟建表的權限走在一起，不跟常態運行的帳號走；加約束到一張已經有資料的表上會失敗，如果既有資料裡有違反它的那幾列。
 

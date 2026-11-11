@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/required-checks/"]
 
 Required Checks 的核心概念是「把合併條件綁定到檢查結果」。它讓[主線保護](/devops/ci/knowledge-cards/branch-protection/)不依賴人工記憶，而依賴可觀測狀態。
 
-## 概念位置
+## 跟其他概念的關係
 
 Required Checks 位在 repository branch protection，連接 pull request 與 [CI](/devops/ci/knowledge-cards/ci-pipeline/) workflow 結果。
 
@@ -23,6 +23,6 @@ Required Checks 位在 repository branch protection，連接 pull request 與 [C
 
 專案可要求 `md-check` 與 `Playwright tests` 都通過才能合併 `main`。若只跑 workflow 但未設為 required，主線仍可能進入紅燈變更。
 
-## 設計責任
+## 判斷條件與後果
 
 Required Checks 要定義必要檢查集合、擁有者與變更流程，並和 workflow 命名保持一致。

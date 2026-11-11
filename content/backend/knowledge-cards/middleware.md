@@ -8,7 +8,7 @@ weight: 1
 
 Request Middleware 的核心概念是「在 request 進入 handler 前後插入共通處理」。它承接多個 handler 共用的攔截層與前後置處理。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Request Middleware 位在 transport layer 與業務 handler 之間。它處理多個 endpoint 共用的橫切關注，而不是單一業務規則本身。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
@@ -20,6 +20,6 @@ Request Middleware 位在 transport layer 與業務 handler 之間。它處理�
 
 [API Gateway](/backend/knowledge-cards/api-gateway/) middleware 可以先驗證 token；[Admin Endpoint](/backend/knowledge-cards/admin-endpoint/) middleware 可以先做授權與 audit；webhook middleware 可以先驗證 signature 與來源限制。
 
-## 設計責任
+## 判斷條件與後果
 
 Request Middleware 要定義執行順序、短路條件、context 傳遞與副作用界線。安全、觀測與錯誤處理的 middleware 特別需要穩定，不應把業務流程藏在攔截層。

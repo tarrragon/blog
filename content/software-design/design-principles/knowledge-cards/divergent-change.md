@@ -9,7 +9,7 @@ aliases: ["/design-principles/knowledge-cards/divergent-change/"]
 
 Divergent Change（發散式變更，其他中文資料常寫作「發散式變化」）是 Martin Fowler 在《Refactoring》列出的程式碼壞味道：一個模組因為不同的理由、以不同的方式反覆被修改。它是 [Single Responsibility Principle（單一職責原則）](/software-design/design-principles/knowledge-cards/single-responsibility-principle/) 被違反時在修改紀錄上留下的形態——模組有幾個改變的理由，就會被幾種不相干的需求輪流修改。與它方向相反的壞味道是 [Shotgun Surgery（散彈式修改）](/software-design/design-principles/knowledge-cards/shotgun-surgery/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Divergent Change 與 Shotgun Surgery 描述的是同一組對應關係的兩種失衡：改變的理由與模組之間應該一對一。同一個理由的好幾個需求都改同一個模組是正常的[內聚](/software-design/design-principles/knowledge-cards/cohesion/)；屬於不同理由的需求改同一個模組是 Divergent Change，同一個理由的一個需求要改好幾個模組是 [Shotgun Surgery](/software-design/design-principles/knowledge-cards/shotgun-surgery/)。[單一職責原則](/software-design/design-principles/knowledge-cards/single-responsibility-principle/)的兩句指示各自對應一種：「把因不同理由改變的程式碼分開」修的是 Divergent Change，「把因同一個理由改變的程式碼放在一起」修的是 Shotgun Surgery。
 
@@ -23,6 +23,6 @@ Fowler 給的辨識方式是：修改某個模組時，心裡想的是「加一�
 
 站內偵測規則（以方法分組數判斷）與 Extract Class 的操作範例在 [Code Smell 檢查清單](/record/code_smell/)。
 
-## 設計責任
+## 判斷條件與後果
 
 修正 Divergent Change 的方向是依改變的理由把模組切開：先找出每一類需求各自會改的那一群函式與資料，再用 Extract Class（拆出類別）或把模組改成套件、每一群移到一個子模組。切開之前先用測試鎖住現有行為，切開之後確認同一類需求的變更只需要改一個新模組；若同一類需求要同時改好幾個新模組，代表切過頭，產生了 [Shotgun Surgery](/software-design/design-principles/knowledge-cards/shotgun-surgery/)。

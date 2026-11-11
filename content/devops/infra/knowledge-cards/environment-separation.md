@@ -9,7 +9,7 @@ aliases: ["/infra/knowledge-cards/environment-separation/"]
 
 環境分離的核心職責是讓 dev 的實驗、staging 的驗證、production 的真實流量彼此不可見也不可達 — 在 dev 跑壞一個資料庫、套錯一條 [security group](/devops/infra/knowledge-cards/security-group/) 規則時，production 完全無感。
 
-## 概念位置
+## 跟其他概念的關係
 
 環境分離在 infra 成熟度階梯上對應第三階。它建立在宣告式 [IaC](/devops/infra/knowledge-cards/iac/)（第二階）的基礎上 — 有了 state 追蹤和模組化描述之後，才能用「同一份 code、不同參數」的方式複製出多個隔離環境。
 
@@ -23,7 +23,7 @@ aliases: ["/infra/knowledge-cards/environment-separation/"]
 - 某人的 `terraform apply` 把另一個環境的資源改掉了 — workspace 的隱性狀態切換導致打錯環境
 - dev 與 prod 的設定差異散落在 code 裡的 `if env == "prod"` 判斷 — 環境差異沒有集中在參數值裡
 
-## 設計責任
+## 判斷條件與後果
 
 環境分離失效的典型形態是一次 `terraform apply` 改到了另一個環境的資源，以下的設計各自封住一條造成這種失效的路徑：
 

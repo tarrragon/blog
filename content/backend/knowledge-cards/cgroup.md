@@ -8,7 +8,7 @@ tags: ["backend", "capacity-planning", "isolation", "knowledge-card"]
 
 cgroup（control group）是 Linux 核心替一組行程記帳與設限的機制：把行程放進一個群組，核心就會統計這個群組用了多少 CPU、記憶體與磁碟讀寫，並依群組的設定限制或分配它們。容器的資源限制都建立在它上面：Docker 的 `--cpus`、`--memory` 與 Kubernetes 的 requests、limits，最後都寫成某個 cgroup 的控制檔；cAdvisor 讀 cgroup 的統計，輸出每個容器的用量，見 [Prometheus Exporter](/backend/knowledge-cards/prometheus-exporter/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 現在的發行版多半用 cgroup v2（單一階層，控制檔都在 `/sys/fs/cgroup/<群組>/` 下）；舊的 v1 每種資源各有一個階層、檔名不同。v2 的常用控制檔與它們的上層參數：
 
@@ -28,6 +28,6 @@ cgroup（control group）是 Linux 核心替一組行程記帳與設限的機制
 - **延遲升高而主機的 CPU 不滿**：容器碰到 `cpu.max` 被暫停，`container_cpu_cfs_throttled_seconds_total` 升高（它在過載時呈現的週期性停頓見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)）。
 - **容器被結束、退出碼 137**：超過 `memory.max`，見 [OOM killer 與退出碼 137](/linux/dotfile/knowledge-cards/oom-exit-code-137/)。
 
-## 設計責任
+## 判斷條件與後果
 
 設定容器的限制前，先確認主機用的是 cgroup v1 還是 v2（`stat -fc %T /sys/fs/cgroup` 回 `cgroup2fs` 是 v2），文件裡的控制檔名稱與指標依版本不同。限制寫進部署設定，不在主機上手動改控制檔。

@@ -8,7 +8,7 @@ weight: 1
 
 Observability Middleware 的核心概念是「在 request 進入與離開 handler 的過程中，補上可觀測欄位與上下文」。 可先對照 [Offline Catch-up](/backend/knowledge-cards/offline-catchup/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Observability Middleware 位在 transport layer 與業務 handler 之間。它通常負責 request id、trace context、log context 與 timing。 可先對照 [Offline Catch-up](/backend/knowledge-cards/offline-catchup/)。
 
@@ -20,6 +20,6 @@ Observability Middleware 位在 transport layer 與業務 handler 之間。它�
 
 request id 注入、trace context 傳遞、latency 記錄與結束時的操作 log，都屬於 observability middleware 的責任。
 
-## 設計責任
+## 判斷條件與後果
 
 Observability Middleware 要穩定傳遞 context、避免打斷 error chain，並讓後續 log、metric、trace 可以共用欄位。

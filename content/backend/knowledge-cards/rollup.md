@@ -8,11 +8,11 @@ tags: ["backend", "observability"]
 
 Rollup 用降低時間精度換取儲存成本與查詢效能。原始資料以秒級或分鐘級採集，隨時間推移被聚合成更粗的粒度（5 分鐘、1 小時、1 天），舊的高精度資料可以刪除或歸檔。它是 [storage tiering](/backend/knowledge-cards/storage-tiering/) 在時間維度的具體實作，跟 [recording rule](/backend/knowledge-cards/recording-rule/) 分工互補。
 
-## 概念位置
+## 跟其他概念的關係
 
 Rollup 是 [storage tiering](/backend/knowledge-cards/storage-tiering/) 在時間維度的具體實作。它跟 [recording rule](/backend/knowledge-cards/recording-rule/) 的差別在於：recording rule 是降維度（把多個 label 聚合成一條 series），rollup 是降時間精度（把 15 秒的點變成 5 分鐘的點）。兩者經常搭配使用。
 
-## 設計責任
+## 判斷條件與後果
 
 設計 rollup 時要定義每一層的精度、保留期、聚合函數與查詢路由規則。聚合函數的選擇影響查詢語意：對 counter 做 sum 跟對 gauge 做 average 是合理的；但對 histogram 做 average 會失去分布資訊。
 

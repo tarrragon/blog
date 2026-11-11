@@ -9,7 +9,7 @@ aliases: ["/ci/knowledge-cards/infrastructure-drift/"]
 
 Infrastructure Drift 的核心概念是「真實環境狀態與宣告檔分叉」。它會削弱 [Environment Protection](/devops/ci/knowledge-cards/environment-protection/) 與 deployment review 的可信度，並影響下一次 plan / apply 的安全性。
 
-## 概念位置
+## 跟其他概念的關係
 
 Infrastructure Drift 位在 [IaC state](/devops/ci/knowledge-cards/state-lock/)、cloud resource、手動 hotfix 與外部 controller 之間，常由 console edit、事故修復、provider 預設值或自動調整造成。
 
@@ -23,6 +23,6 @@ Infrastructure Drift 位在 [IaC state](/devops/ci/knowledge-cards/state-lock/)�
 
 事故中工程師在雲端 console 手動放寬 security group。服務恢復後，IaC plan 顯示 security group 與宣告檔不同；團隊需要判斷這個變更是短期 hotfix 還是應回寫成正式規則。
 
-## 設計責任
+## 判斷條件與後果
 
 Infrastructure Drift 要定義偵測頻率、owner、修復路由、state repair 與回寫規則，讓平台狀態重新回到可審查流程。

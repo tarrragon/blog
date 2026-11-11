@@ -8,7 +8,7 @@ weight: 92
 
 Cache prefetching 的核心概念是「根據預期需求提前載入資料」。它讓 request 到來時更可能命中快取，降低使用者等待時間。 可先對照 [Cache Stampede](/backend/knowledge-cards/cache-stampede/)。
 
-## 概念位置
+## 跟其他概念的關係
 
 Prefetching 是預測型快取策略。它適合可預期的讀取，例如下一頁資料、熱門商品、使用者登入後常用設定或活動頁資源。 可先對照 [Cache Stampede](/backend/knowledge-cards/cache-stampede/)。
 
@@ -16,6 +16,6 @@ Prefetching 是預測型快取策略。它適合可預期的讀取，例如下�
 
 系統需要 prefetching 的訊號是使用者行為有穩定下一步。影片平台可以在使用者接近播放結束時預載下一集資訊；電商可以在活動頁預載熱門商品摘要。
 
-## 設計責任
+## 判斷條件與後果
 
 Prefetching 要控制準確率、容量成本、資料新鮮度與下游壓力。預載錯誤資料會浪費 cache 空間，預載過多會擠出真正熱門資料。

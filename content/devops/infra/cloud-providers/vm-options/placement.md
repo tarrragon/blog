@@ -39,7 +39,7 @@ aliases: ["/infra/cloud-providers/vm-options/placement/"]
 
 只有一台主機時，故障域沒有選擇的意義：不論放在哪一個，那台主機都只在一組硬體上。建立頁的預設「讓業者選」就是對的選擇，Oracle Cloud 會依當下的容量挑一個（[實測紀錄](/devops/infra/cloud-providers/oracle-cloud/hands-on/launch-instance-walkthrough/)在只有一個可用區的 `ap-batam-1` 就是這樣填的）。手動指定故障域還會縮小可用的容量：指定之後只接受那一個故障域裡的硬體。Oracle Cloud 的 Compute〈Known Issues〉頁對 `Out of host capacity` 列的處置裡，就有一項是不指定 fault domain 再建一次。
 
-故障域的作用在兩台以上。同一個服務的兩台主機，區域有多個可用區時先分到不同可用區，因為可用區隔離的是整棟資料中心的電力與網路，範圍比故障域大（見 [Availability Zone（可用區）](/devops/infra/knowledge-cards/availability-zone/) 的〈設計責任〉）；區域只有一個可用區時，才靠故障域把兩台放在不同的硬體上，一組硬體故障時只停一台。跨可用區的代價是兩台之間的流量多一段距離：AWS 與 Google Cloud 對跨可用區的流量另外計費，兩台之間做同步複製時延遲也比同一個可用區裡高。
+故障域的作用在兩台以上。同一個服務的兩台主機，區域有多個可用區時先分到不同可用區，因為可用區隔離的是整棟資料中心的電力與網路，範圍比故障域大（見 [Availability Zone（可用區）](/devops/infra/knowledge-cards/availability-zone/) 的〈判斷條件與後果〉）；區域只有一個可用區時，才靠故障域把兩台放在不同的硬體上，一組硬體故障時只停一台。跨可用區的代價是兩台之間的流量多一段距離：AWS 與 Google Cloud 對跨可用區的流量另外計費，兩台之間做同步複製時延遲也比同一個可用區裡高。
 
 Oracle Cloud 允許建立之後修改故障域。AWS 與 Google Cloud 沒有故障域這個欄位，對應的功能是放置政策（AWS 的 placement group 用 spread 策略、Google Cloud 的 spread placement policy），作用同樣是讓一組主機分散到不同的實體硬體上。兩家都能套用到既有的主機：AWS 要先停止主機才能把它換進或移出 placement group，Google Cloud 的 spread placement policy 指定了多個 availability domain（官方的說明是彼此隔離、各自不同的一組硬體；它跟 Oracle Cloud 的 availability domain 同名、層級不同，Oracle Cloud 那一層對應的是可用區）時，官方說明可以不停機就套用到既有的主機；套用時 Compute Engine 可能要把主機搬到另一個 availability domain，搬的方式依主機的維護政策，是即時遷移或停止主機。
 

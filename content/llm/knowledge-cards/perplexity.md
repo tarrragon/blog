@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "evaluation", "math"]
 
 Perplexity（困惑度）的核心概念是「[cross-entropy](/llm/knowledge-cards/cross-entropy/) 的指數形式」：`perplexity = exp(cross-entropy)`。直覺意義是「模型在每個位置平均覺得下個 [token](/llm/knowledge-cards/token/) 有多少種候選」。perplexity = 1 表示模型完美預測；perplexity = vocab_size 表示模型純猜（vocab 上的 uniform 分佈）。
 
-## 概念位置
+## 跟其他概念的關係
 
 Perplexity 跟 cross-entropy 的關係：
 
@@ -33,6 +33,6 @@ Perplexity 主要用於：
 - **量化品質衡量**：fp16 vs Q4 vs Q3 模型的 perplexity 差異、看[量化](/llm/knowledge-cards/quantization/)造成多少品質損失。
 - **領域 benchmark**：在特定領域語料（code、math、医學文獻）上算 perplexity、評估模型對該領域的熟悉度。
 
-## 設計責任
+## 判斷條件與後果
 
 Perplexity 是 base model 評估標準、但對 instruction-tuned / chat 模型用處有限（chat 模型輸出風格已偏離 raw text、perplexity 不一定降）。對寫 code 場景的判讀：看到 paper 報 perplexity 是評估 pretrain 品質的訊號、實際聊天 / coding 能力要看 [SWE-bench](/llm/knowledge-cards/swe-bench/)、MMLU、HumanEval 等任務式 benchmark。

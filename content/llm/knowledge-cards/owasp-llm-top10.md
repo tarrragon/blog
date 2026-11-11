@@ -8,7 +8,7 @@ tags: ["llm", "knowledge-cards", "security", "owasp"]
 
 OWASP LLM Top 10 的核心概念是「**Open Worldwide Application Security Project 發布的 LLM 應用最常見 10 大資安風險清單**」。2023 首發、2025 更新版是業界跟企業安全溝通的共同詞彙、是 production LLM 應用做 threat modeling 跟合規溝通的標準入口、涵蓋如 [prompt injection](/llm/knowledge-cards/prompt-injection/) 等風險類別。
 
-## 概念位置
+## 跟其他概念的關係
 
 2025 版的 10 項（簡述）：
 
@@ -40,7 +40,7 @@ OWASP LLM Top 10 的核心概念是「**Open Worldwide Application Security Proj
 | LLM09 Misinformation        | [hallucination](/llm/knowledge-cards/hallucination/) 卡 + [4.21 LLM-as-judge](/llm/04-applications/llm-as-judge/)                                                        | 跨卡 + 應用                                                                         |
 | LLM10 Unbounded Consumption | 部分（[4.18 prompt caching](/llm/04-applications/prompt-caching-engineering/) + [4.16 靜態 RAG 資安 abuse](/llm/04-applications/static-and-serverless-rag-deployment/)） | M6 沒專章、屬 abuse 緩解                                                            |
 
-## 設計責任
+## 判斷條件與後果
 
 讀企業 LLM 安全 / 合規文件 / vendor security audit 看到「OWASP LLM Top 10」就是這 framing。寫 code 場景的判讀：
 
