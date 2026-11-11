@@ -254,6 +254,39 @@ class CommitFiles(Base):
         self.assertEqual(r.returncode, 2)
         self.assertIn("make install-hooks", r.stderr)
 
+    def test_untrack_removes_ignored_file_from_history_and_keeps_it_on_disk(self):
+        write(self.root, "c.pyc", "快取\n")
+        sh(["git", "add", "c.pyc"], self.root)
+        sh(["git", "commit", "-q", "-m", "誤收的快取檔"], self.root)
+        write(self.root, ".gitignore", "*.pyc\n")
+        r = tool("commit-files", "-F", self.msg(), "c.pyc", ".gitignore", cwd=self.root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)  # 列成一般檔案：內容跟 HEAD 相同，做不到解除追蹤
+        r = tool("commit-files", "--untrack", "c.pyc", "-F", self.msg(), ".gitignore", cwd=self.root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertEqual(sorted(self.committed()), [".gitignore", "c.pyc"])
+        self.assertEqual(sh(["git", "ls-files", "c.pyc"], self.root).stdout, "")  # 共用 index 也不再追蹤
+        self.assertTrue(os.path.exists(os.path.join(self.root, "c.pyc")))
+        self.assertEqual(sh(["git", "status", "--short"], self.root).stdout, "")
+
+    def test_untrack_only_and_untracked_path_fails(self):
+        r = tool("commit-files", "--untrack", "nope.md", "-F", self.msg(), cwd=self.root)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("git rm --cached 失敗", r.stderr)
+        r = tool("commit-files", "--untrack", "b.md", "-F", self.msg(), cwd=self.root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertEqual(self.committed(), ["b.md"])
+        r = tool("commit-files", "--untrack", "a.md", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r.returncode, 2)
+        r = tool("commit-files", "-F", self.msg(), cwd=self.root)
+        self.assertEqual(r.returncode, 2)
+
+    def test_untrack_asks_user_in_claude_code(self):
+        r = tool("commit-files", "--untrack", "b.md", "-F", self.msg(), cwd=self.root, env={"CLAUDECODE": "1"})
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("[ASK-USER] b.md", r.stdout)
+        r = tool("commit-files", "--skip-session-check", "--untrack", "b.md", "-F", self.msg(), cwd=self.root, env={"CLAUDECODE": "1"})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
     def test_directory_and_unchanged_file_fail_without_commit(self):
         head = sh(["git", "rev-parse", "HEAD"], self.root).stdout
         os.makedirs(os.path.join(self.root, "d"))

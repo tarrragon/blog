@@ -5,8 +5,11 @@
 可能有別人 staged 的檔案，直接 `git commit` 會把它們一起提交；對方正在跑 git 時，
 `git add` 會因為 index.lock 而失敗。
 
-用法：bin/commit-files [--skip-session-check] -F <訊息檔> <檔案...>
+用法：bin/commit-files [--skip-session-check] [--untrack <檔案>]... -F <訊息檔> [<檔案...>]
   路徑以執行時的目錄起算，列檔案不列目錄；刪除的檔案與改名的新舊兩個路徑都列。
+  --untrack 給的是要移出版本控制、而檔案留在工作樹的路徑（例如補進 .gitignore 的快取檔）：
+  在私有 index 跑 `git rm --cached`，提交裡是刪除，工作樹的檔案不動。這種路徑 `git add -A`
+  做不到（檔案還在，add 只會加回它的內容），所以另開一個參數。每次可以給多個 --untrack。
 
 行為：
 0. repo 有 .githooks/ 而 `core.hooksPath` 不是 `.githooks` 時 exit 2：hook 沒有生效，fmt、lint、
@@ -21,6 +24,9 @@
    不提交、exit 1。`--skip-session-check` 跳過這一步，只在 CLAUDE.md〈提交前對照編輯紀錄〉
    寫的兩種情形用：使用者看過 diff 決定一起提交；或工具 exit 2、照 AGENTS.md〈提交〉逐段對照過了。
    Codex 與其他 agent 的環境沒有這兩個變數，不跑這一步，對照照規則做。
+   --untrack 的路徑不是 Edit 或 Write 的編輯，transcript 對不出來：沒有 `--skip-session-check` 時
+   每一個印成 `[ASK-USER] <路徑>（解除追蹤）`，不提交、exit 1。解除追蹤是從版本控制刪除一個檔案，
+   照 CLAUDE.md〈提交前對照編輯紀錄〉跟刪除一樣交給使用者決定，同意之後加 `--skip-session-check` 重跑。
 3. 提交後讓共用 index 對齊 HEAD：已經跟 HEAD 相同就不動；這幾個檔案只剩提交前的版本時
    （`git diff --cached --name-only <commit>~1 -- <檔案>` 是空的），跑 `git reset -q -- <檔案>`。
    共用 index 被鎖住、或共用 index 裡有這幾個檔案的其他版本（那條 diff 有輸出）時不 reset，
@@ -69,8 +75,11 @@ def main():
     ap = argparse.ArgumentParser(description="只提交列出的檔案，經由私有 index")
     ap.add_argument("-F", dest="msgfile", required=True)
     ap.add_argument("--skip-session-check", action="store_true")
-    ap.add_argument("paths", nargs="+")
+    ap.add_argument("--untrack", action="append", default=[], metavar="PATH")
+    ap.add_argument("paths", nargs="*")
     args = ap.parse_args()
+    if not args.paths and not args.untrack:
+        ap.error("至少要給一個檔案或 --untrack")
 
     top = run(["git", "rev-parse", "--show-toplevel"])
     if top.returncode != 0:
@@ -81,13 +90,17 @@ def main():
         die(f"訊息檔不存在：{args.msgfile}", 2)
     # 路徑以執行時的目錄起算，轉成以 repo 根目錄起算。
     paths = [os.path.relpath(os.path.abspath(p), root) for p in args.paths]
+    untrack = [os.path.relpath(os.path.abspath(p), root) for p in args.untrack]
+    both = sorted(set(paths) & set(untrack))
+    if both:
+        die("同一個路徑不能同時列在檔案與 --untrack：" + " ".join(both), 2)
     os.chdir(root)
 
     hooks = run(["git", "config", "core.hooksPath"]).stdout.strip()
     if hooks != ".githooks" and os.path.isdir(".githooks"):
         die("core.hooksPath 不是 .githooks，pre-commit 的 fmt、lint、cards 不會跑（先跑 make install-hooks）", 2)
 
-    dirs = [p for p in paths if os.path.isdir(p)]
+    dirs = [p for p in paths + untrack if os.path.isdir(p)]
     if dirs:
         die("清單裡有目錄（列檔案，不列目錄）：" + " ".join(dirs), 1)
 
@@ -97,11 +110,16 @@ def main():
         r = run(["git", "read-tree", "HEAD"], env)
         if r.returncode != 0:
             die("git read-tree HEAD 失敗：" + r.stderr.strip(), 1)
-        r = run(["git", "add", "-A", "--", *paths], env)
-        if r.returncode != 0:
-            die("git add 失敗：" + r.stderr.strip(), 1)
+        if paths:
+            r = run(["git", "add", "-A", "--", *paths], env)
+            if r.returncode != 0:
+                die("git add 失敗：" + r.stderr.strip(), 1)
+        if untrack:
+            r = run(["git", "rm", "--cached", "-q", "--", *untrack], env)
+            if r.returncode != 0:
+                die("git rm --cached 失敗（--untrack 的路徑要是 HEAD 裡追蹤中的檔案）：" + r.stderr.strip(), 1)
         staged = set(names(["--cached", "--no-renames"], env))
-        expected = set(paths)
+        expected = set(paths) | set(untrack)
         missing = sorted(expected - staged)
         extra = sorted(staged - expected)
         if missing or extra:
@@ -114,7 +132,11 @@ def main():
                 sys.stderr.write("commit-files: staged 清單多出這些檔案：\n" + "".join(f"  {p}\n" for p in extra))
             die("沒有提交", 1)
         in_claude_code = os.environ.get("CLAUDECODE") or os.environ.get("CLAUDE_CODE_SESSION_ID")
-        if in_claude_code and not args.skip_session_check:
+        if in_claude_code and not args.skip_session_check and untrack:
+            for p in untrack:
+                print(f"[ASK-USER] {p}（解除追蹤：提交裡是刪除，工作樹的檔案留著；transcript 對不出這種改動）")
+            die("沒有提交：--untrack 的路徑要使用者決定（照 AGENTS.md〈要先問使用者的情形〉），同意之後加 --skip-session-check", 1)
+        if in_claude_code and not args.skip_session_check and paths:
             # 比對私有 index 裡要提交的內容，不比對工作樹：檢查與提交之間的改動進不來
             check = os.path.join(os.path.dirname(os.path.abspath(__file__)), "session-edits-check")
             r = subprocess.run([check, "--staged", *paths], env=env)
@@ -130,6 +152,7 @@ def main():
 
     sha = run(["git", "rev-parse", "HEAD"]).stdout.strip()
     print(f"commit-files: committed {sha[:8]}")
+    paths = paths + untrack  # 共用 index 的對齊一樣適用：reset 之後解除追蹤的路徑也離開共用 index
 
     lock = run(["git", "rev-parse", "--git-path", "index.lock"]).stdout.strip()
     quoted = " ".join(shlex.quote(p) for p in paths)
