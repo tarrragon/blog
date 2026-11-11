@@ -7,7 +7,7 @@ description: "讀音響規格表、評測或量測圖時看不懂 dB、頻率響
 tags: ["til", "音響", "dB", "頻率響應", "阻抗", "量測"]
 ---
 
-這篇整理家用音響各篇共用的基礎概念：[dB](/til/audio/knowledge-cards/decibel/) 的三種算法（功率比、電壓比、[音壓](/til/audio/knowledge-cards/sound-pressure-level/)）與聽感對照，以及設備的[底噪](/til/audio/knowledge-cards/noise-floor/)怎麼換算成聆聽位置聽得到的音量；頻率、八度與波長，與各頻段對應的樂器與聽感；[頻率響應](/til/audio/knowledge-cards/frequency-response/)曲線的讀法（電子設備、喇叭、房間與耳機各自的曲線長什麼樣）；阻抗是什麼，[負載阻抗](/til/audio/knowledge-cards/load-impedance/)與線材的特性阻抗的差別；彈簧加質量的[共振](/til/audio/knowledge-cards/resonance/)模型與阻尼，以及這個模型在喇叭單體、箱體、唱臂、電路與房間裡各出現在哪裡；[相位](/til/audio/knowledge-cards/phase/)與兩個聲音疊加時的加強與抵消；比較兩台設備時的音量對齊、[盲聽](/til/audio/knowledge-cards/abx-test/)與 ABX 測試；第三方量測要符合哪些條件才能互相比較、可以去哪裡找。各設備的細節在同一個子分類的其他幾篇：〔[家用音響系統的組成](../home-audio-system-guide/)〕寫各設備的分工、影響量級與花費順序，〔[擴大機的選擇](../amplifier-selection/)〕寫功率與阻抗的推算，〔[房間的聲學與喇叭擺位](../room-acoustics-and-speaker-placement/)〕寫[駐波](/til/audio/knowledge-cards/room-modes/)與擺位，〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕寫挑喇叭的量測規格與配置，〔[數位訊源的構造與選擇](../digital-streaming-source-guide/)〕寫數位格式與介面，〔[黑膠唱盤的構造、選購與安裝調整](../turntable-buying-guide/)〕寫唱盤的構造與調整，〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕寫耳機的電壓推算與組法。
+這篇整理家用音響各篇共用的基礎概念：[dB](/til/audio/knowledge-cards/decibel/) 的三種算法（功率比、電壓比、[音壓](/til/audio/knowledge-cards/sound-pressure-level/)）與聽感對照，以及設備的[底噪](/til/audio/knowledge-cards/noise-floor/)怎麼換算成聆聽位置聽得到的音量；頻率、八度與波長，與各頻段對應的樂器與聽感；[頻率響應](/til/audio/knowledge-cards/frequency-response/)曲線的讀法（電子設備、喇叭、房間與耳機各自的曲線長什麼樣）；阻抗是什麼，[負載阻抗](/til/audio/knowledge-cards/load-impedance/)與線材的特性阻抗的差別；彈簧加質量的[共振](/til/audio/knowledge-cards/resonance/)模型與阻尼，以及這個模型在喇叭單體、箱體、唱臂、電路與房間裡各出現在哪裡；[相位](/til/audio/knowledge-cards/phase/)與兩個聲音疊加時的加強與抵消；比較兩台設備時的音量對齊、[盲聽](/til/audio/knowledge-cards/abx-test/)與 ABX 測試；第三方量測要符合哪些條件才能互相比較、可以去哪裡找。各設備的細節在同一個子分類的其他幾篇：〔[家用音響系統的組成](../home-audio-system-guide/)〕寫各設備的分工、影響量級與花費順序，〔[擴大機的選擇](../amplifier-selection/)〕寫功率與阻抗的推算，〔[房間的聲學與喇叭擺位](../room-acoustics-and-speaker-placement/)〕寫[駐波](/til/audio/knowledge-cards/room-modes/)與擺位，〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕寫挑喇叭的量測規格與配置，〔[數位訊源的構造與選擇](../digital-streaming-source-guide/)〕寫數位格式與介面，〔[黑膠唱盤的構造、選購與安裝調整](../turntable-buying-guide/)〕寫唱盤的構造與調整，〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕寫耳機的電壓推算與組法。
 
 ## dB：功率比、電壓比、音壓與聽感
 
@@ -32,7 +32,7 @@ tags: ["til", "音響", "dB", "頻率響應", "阻抗", "量測"]
 
 **頻率**（frequency）是每秒振動的次數，單位赫茲（Hz）；人耳可聽的範圍約 20 Hz 到 20 kHz，高頻上限隨年齡下降。**八度**（octave）是頻率加倍：100 Hz 到 200 Hz 是一個八度，1 kHz 到 2 kHz 也是一個八度，所以可聽範圍約十個八度，量測圖的橫軸用對數刻度，讓每個八度佔同樣的寬度。**波長**（wavelength）是聲音在空氣中一次振動走過的距離，等於聲速（約每秒 343 公尺）除以頻率：100 Hz 約 3.4 公尺，1 kHz 約 34 公分，10 kHz 約 3.4 公分。
 
-波長跟周圍物體的尺寸比起來是長是短，決定聲音在那個頻段的行為。約 300 Hz 以下的波長在 1 公尺以上，跟房間的長、寬、高同一個量級，所以這一段是房間駐波的頻段（〈共振與阻尼〉最後一項）；喇叭單體的直徑跟某個頻率的波長相當時，聲音開始集中往正前方（〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕的〈單體尺寸、指向性與音路的分工〉）。
+波長跟周圍物體的尺寸比起來是長是短，決定聲音在那個頻段的行為。約 300 Hz 以下的波長在 1 公尺以上，跟房間的長、寬、高同一個量級，所以這一段是房間駐波的頻段（〈共振與阻尼〉最後一項）；喇叭單體的直徑跟某個頻率的波長相當時，聲音開始集中往正前方（〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈單體尺寸、指向性與音路的分工〉）。
 
 下表是各頻段大約的範圍與它在聽感上的角色，界線是常用的約略值，不同資料的切法略有差異：
 
@@ -52,7 +52,7 @@ tags: ["til", "音響", "dB", "頻率響應", "阻抗", "量測"]
 
 讀曲線時看三件事。**整體的傾斜**（tilt）：曲線從低頻往高頻緩緩下降或上升，聽起來整體偏暖或偏亮；寬頻的傾斜在零點幾 dB 就會影響比較時的偏好，一兩 dB 時多數人聽得出來。**局部的峰與谷**（peak、dip）：某一段突起幾 dB，聽起來那一段的聲音特別突出；窄而深的谷比同樣深的峰不容易聽出來。**兩端的衰減點**：曲線在低頻與高頻開始下降的位置，常用比中段低 3 dB 或 6 dB 的頻率標示（−3 dB 點、−6 dB 點），這就是頻寬的上下限。
 
-不同設備的曲線長得不一樣：電子設備（DAC、擴大機）在可聽範圍內多半是一條幾乎水平的線，偏離以零點幾 dB 計；喇叭的起伏以幾 dB 計，還分正前方與各角度的多條曲線，讀法在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕的〈CTA-2034 量測圖的讀法〉；房間裡量到的曲線在低頻常有 10 dB 以上的起伏，原因在〈共振與阻尼〉最後一項與〔[房間的聲學與喇叭擺位](../room-acoustics-and-speaker-placement/)〕；耳機量的是耳膜位置的聲音，人的耳道本身會放大 2 到 5 kHz，所以耳機的目標曲線不是水平線，在〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕的〈耳機的頻率響應與目標曲線〉。
+不同設備的曲線長得不一樣：電子設備（DAC、擴大機）在可聽範圍內多半是一條幾乎水平的線，偏離以零點幾 dB 計；喇叭的起伏以幾 dB 計，還分正前方與各角度的多條曲線，讀法在〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈CTA-2034 量測圖的讀法〉；房間裡量到的曲線在低頻常有 10 dB 以上的起伏，原因在〈共振與阻尼〉最後一項與〔[房間的聲學與喇叭擺位](../room-acoustics-and-speaker-placement/)〕；耳機量的是耳膜位置的聲音，人的耳道本身會放大 2 到 5 kHz，所以耳機的目標曲線不是水平線，在〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕的〈耳機的頻率響應與目標曲線〉。
 
 ## 阻抗：負載阻抗、輸出阻抗與特性阻抗
 
@@ -73,8 +73,8 @@ tags: ["til", "音響", "dB", "頻率響應", "阻抗", "量測"]
 
 這個模型在家用音響裡出現在幾個地方，各篇用的是同一套道理：
 
-- **[喇叭單體](/til/audio/knowledge-cards/dynamic-driver/)**：振膜與音圈是質量，懸邊與彈波是彈簧，它們決定單體的共振頻率（Fs）；喇叭的阻抗曲線在這個頻率附近出現峰值（〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕的〈動圈單體的構造〉）。
-- **密閉式箱體**：箱內的空氣像一個額外的彈簧，讓單體裝進箱體之後的共振頻率升高（〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕的〈箱體〉）。
+- **[喇叭單體](/til/audio/knowledge-cards/dynamic-driver/)**：振膜與音圈是質量，懸邊與彈波是彈簧，它們決定單體的共振頻率（Fs）；喇叭的阻抗曲線在這個頻率附近出現峰值（〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈動圈單體的構造〉）。
+- **密閉式箱體**：箱內的空氣像一個額外的彈簧，讓單體裝進箱體之後的共振頻率升高（〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈箱體〉）。
 - **唱臂與唱頭**：唱臂折算到唱針的有效質量加上唱頭的重量是質量（有效質量跟整支唱臂秤起來的重量是兩個數字），唱頭針桿的懸吊是彈簧，共振頻率要落在 8 到 12 Hz（〔[黑膠唱盤的構造、選購與安裝調整](../turntable-buying-guide/)〕的〈唱臂的有效質量與唱頭順服度的匹配〉）。
 - **電路**：線圈的電感（inductance）對應質量、電容（capacitance）對應順服度，兩者組成同樣形式的共振。[MM 唱頭](/til/audio/knowledge-cards/mm-and-mc-cartridges/)的線圈電感與唱頭放大器的輸入電容，在 10 到 20 kHz 一帶形成一個高頻的峰，峰的位置隨電容移動（〔[黑膠唱盤的構造、選購與安裝調整](../turntable-buying-guide/)〕的〈唱頭放大器的三種位置〉）。
 - **房間**：兩面平行的牆之間的空氣，在牆距等於半波長整數倍的頻率共振，形成**駐波**（room mode），長、寬、高三個方向各有一組，這是房間低頻起伏的成因；駐波頻率的算法與處理方法在〔[房間的聲學與喇叭擺位](../room-acoustics-and-speaker-placement/)〕的〈低頻駐波〉。
@@ -83,7 +83,7 @@ tags: ["til", "音響", "dB", "頻率響應", "阻抗", "量測"]
 
 **相位**（phase）描述一個波形在它的週期裡走到哪一個位置，以角度計，一個完整的週期是 360 度。兩個同頻率的聲音疊加時，相位一致（同相，in phase）就互相加強；相差 180 度（反相，out of phase）就互相抵消。兩個聲音走的距離不同、或經過的電路不同時，到達聆聽位置的相位就會錯開。
 
-這個機制在幾個地方決定聲音：單體背面發出的聲音跟正面反相，所以單體要裝進箱體（〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕的〈箱體〉）；[分音器](/til/audio/knowledge-cards/crossover/)讓兩個單體在交接的頻段有相位差，設計不好時會在分音點附近抵消（同一篇的〈分音器〉）；超低音喇叭與主喇叭到聆聽位置的距離不同，要用相位或延遲設定對齊（同一篇的〈超低音喇叭的設定〉）；房間的反射聲跟直達聲在某些頻率反相，造成凹陷，喇叭後方那面牆造成的叫 [SBIR](/til/audio/knowledge-cards/sbir/)（〔[房間的聲學與喇叭擺位](../room-acoustics-and-speaker-placement/)〕的〈喇叭的擺位〉）；主動降噪耳機用反相的聲音抵消外面的噪音（〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕的〈無線耳機〉）。
+這個機制在幾個地方決定聲音：單體背面發出的聲音跟正面反相，所以單體要裝進箱體（〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈箱體〉）；[分音器](/til/audio/knowledge-cards/crossover/)讓兩個單體在交接的頻段有相位差，設計不好時會在分音點附近抵消（同一篇的〈分音器〉）；超低音喇叭與主喇叭到聆聽位置的距離不同，要用相位或延遲設定對齊（同一篇的〈超低音喇叭的設定〉）；房間的反射聲跟直達聲在某些頻率反相，造成凹陷，喇叭後方那面牆造成的叫 [SBIR](/til/audio/knowledge-cards/sbir/)（〔[房間的聲學與喇叭擺位](../room-acoustics-and-speaker-placement/)〕的〈喇叭的擺位〉）；主動降噪耳機用反相的聲音抵消外面的噪音（〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕的〈無線耳機〉）。
 
 ## 聽感比較的方法：音量對齊、盲聽與 ABX
 

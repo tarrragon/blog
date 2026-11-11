@@ -25,4 +25,4 @@ tags: ["til", "音響", "knowledge-cards"]
 
 一顆動圈單體的規格各自對應到負責的零件：Fs 與箱體決定低頻從哪裡開始衰減，振膜材料與尺寸決定分割振動落在哪個頻率、適合負責哪一段頻率，音圈與磁路決定能承受多少功率與發熱後的功率壓縮。檢查二手喇叭時，懸邊與音圈是最常老化或損壞的兩處，懸邊碎裂與音圈摩擦都直接改變聲音。讀到「動圈」兩個字時，看上下文是喇叭、耳機還是唱頭：前兩者指這張卡的單體，唱頭指 MC。
 
-各零件的構造在〔[喇叭的規格與構造](/til/audio/speaker-components-and-upgrade-path/)〕的〈動圈單體的構造：振膜、懸吊、音圈、磁路與共振頻率〉；耳機的三種單體在〔[耳機與耳機擴大機](/til/audio/headphones-and-headphone-amplifiers/)〕的〈耳機的種類與單體〉；舊喇叭的檢查在〔[家用音響系統的組成](/til/audio/home-audio-system-guide/)〕的〈舊設備與二手設備：老化零件的檢查〉。
+各零件的構造在〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈動圈單體的構造：振膜、懸吊、音圈、磁路與共振頻率〉；耳機的三種單體在〔[耳機與耳機擴大機](/til/audio/headphones-and-headphone-amplifiers/)〕的〈耳機的種類與單體〉；舊喇叭的檢查在〔[家用音響系統的組成](/til/audio/home-audio-system-guide/)〕的〈舊設備與二手設備：老化零件的檢查〉。

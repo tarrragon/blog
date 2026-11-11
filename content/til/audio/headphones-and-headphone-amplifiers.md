@@ -23,9 +23,9 @@ tags: ["til", "音響", "耳機", "耳機擴大機", "DAC", "入耳式耳機"]
 
 耳機裡的單體常見三種：
 
-- **動圈**（dynamic）：跟喇叭的動圈單體同一種原理，音圈在磁場裡推動振膜（〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕的〈動圈單體的構造〉），耳罩式與入耳式都常見。
-- **平衡電樞**（balanced armature，BA）：一個很小的封閉單元，原本用在助聽器，靈敏度高、體積小；單一顆的頻寬窄，入耳式耳機常用好幾顆 BA 加上[被動分音](/til/audio/knowledge-cards/crossover/)（用電感、電容把訊號依頻率分給各單體，機制在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕的〈分音器〉），各負責一段頻率。多顆 BA 的耳機阻抗隨頻率變化大，對耳擴的輸出阻抗敏感（〈耳機擴大機的輸出阻抗〉）。
-- **平面振膜**（planar magnetic）：一片很薄的薄膜上印著導線，夾在兩排磁鐵之間，整片薄膜同時受力，分割振動（振膜各區域各自振動，定義在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕的〈動圈單體的構造〉）少、低頻失真低；多半靈敏度較低，需要較大的電流。
+- **動圈**（dynamic）：跟喇叭的動圈單體同一種原理，音圈在磁場裡推動振膜（〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈動圈單體的構造〉），耳罩式與入耳式都常見。
+- **平衡電樞**（balanced armature，BA）：一個很小的封閉單元，原本用在助聽器，靈敏度高、體積小；單一顆的頻寬窄，入耳式耳機常用好幾顆 BA 加上[被動分音](/til/audio/knowledge-cards/crossover/)（用電感、電容把訊號依頻率分給各單體，機制在〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈分音器〉），各負責一段頻率。多顆 BA 的耳機阻抗隨頻率變化大，對耳擴的輸出阻抗敏感（〈耳機擴大機的輸出阻抗〉）。
+- **平面振膜**（planar magnetic）：一片很薄的薄膜上印著導線，夾在兩排磁鐵之間，整片薄膜同時受力，分割振動（振膜各區域各自振動，定義在〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈動圈單體的構造〉）少、低頻失真低；多半靈敏度較低，需要較大的電流。
 
 另有**靜電式**（electrostatic）耳機，用高電壓驅動薄膜，要搭配專用的靜電耳機擴大機，不能接一般的耳機輸出。
 

@@ -7,7 +7,7 @@ description: "要替一對喇叭挑擴大機、讀擴大機的功率與阻抗規
 tags: ["til", "音響", "擴大機", "功率", "阻抗", "真空管", "D 類"]
 ---
 
-這篇寫挑擴大機時要算與要看的項目：功率怎麼從喇叭的[靈敏度](/til/audio/knowledge-cards/sensitivity/)、[阻抗](/til/audio/knowledge-cards/load-impedance/)、聆聽距離與目標音量推算出來，擴大機的功率規格要對上哪些量測條件；喇叭的最低阻抗與擴大機的電流供應；擴大機的[輸出阻抗](/til/audio/knowledge-cards/output-impedance/)怎麼跟喇叭的阻抗曲線互相作用，反電動勢與阻尼因數；前級與後級、唱頭與[唱頭放大器](/til/audio/knowledge-cards/phono-preamp/)、耳機孔與耳機之間的阻抗搭配；固態 AB 類、[D 類](/til/audio/knowledge-cards/class-d-amplifier/)與真空管擴大機各自的特性，真空管再分單端與推挽；以及把功率、電流供應、輸出阻抗與擴大機的種類合起來看，擴大機之間在哪些條件下聽得出差別。[dB](/til/audio/knowledge-cards/decibel/)、阻抗與[共振](/til/audio/knowledge-cards/resonance/)的定義在〔[家用音響的基礎概念](../audio-fundamentals/)〕；前級、後級與綜合擴大機在整套系統裡的分工與花費順序在〔[家用音響系統的組成](../home-audio-system-guide/)〕的〈訊號流程〉與〈下一筆錢放在哪一個環節〉；喇叭這一端的規格（單體的構造與功率壓縮）在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕；推耳機的擴大機在〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕。
+這篇寫挑擴大機時要算與要看的項目：功率怎麼從喇叭的[靈敏度](/til/audio/knowledge-cards/sensitivity/)、[阻抗](/til/audio/knowledge-cards/load-impedance/)、聆聽距離與目標音量推算出來，擴大機的功率規格要對上哪些量測條件；喇叭的最低阻抗與擴大機的電流供應；擴大機的[輸出阻抗](/til/audio/knowledge-cards/output-impedance/)怎麼跟喇叭的阻抗曲線互相作用，反電動勢與阻尼因數；前級與後級、唱頭與[唱頭放大器](/til/audio/knowledge-cards/phono-preamp/)、耳機孔與耳機之間的阻抗搭配；固態 AB 類、[D 類](/til/audio/knowledge-cards/class-d-amplifier/)與真空管擴大機各自的特性，真空管再分單端與推挽；以及把功率、電流供應、輸出阻抗與擴大機的種類合起來看，擴大機之間在哪些條件下聽得出差別。[dB](/til/audio/knowledge-cards/decibel/)、阻抗與[共振](/til/audio/knowledge-cards/resonance/)的定義在〔[家用音響的基礎概念](../audio-fundamentals/)〕；前級、後級與綜合擴大機在整套系統裡的分工與花費順序在〔[家用音響系統的組成](../home-audio-system-guide/)〕的〈訊號流程〉與〈下一筆錢放在哪一個環節〉；喇叭這一端的規格（單體的構造與功率壓縮）在〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕；推耳機的擴大機在〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕。
 
 ## 功率：先算電壓，再依阻抗換成瓦
 
@@ -20,7 +20,7 @@ tags: ["til", "音響", "擴大機", "功率", "阻抗", "真空管", "D 類"]
 
 例：靈敏度 86 dB（2.83 V）、標稱 8 Ω 的喇叭，聆聽距離 3 公尺。第 1 步是 86 − 9.5，再加上兩顆喇叭與房間反射補回的量；這裡取 3 到 6 dB 的中間值 4 dB，得到約 80 dB。目標峰值 100 dB，差 20 dB，電壓要 28.3 V，換成瓦是 28.3² ÷ 8 ≈ 100 W。同樣條件換成 4 Ω 喇叭，電壓一樣是 28.3 V，功率變成約 200 W（要看擴大機 4 Ω 下的額定功率）。換成靈敏度 92 dB 的 8 Ω 喇叭，差距少 6 dB，只要約 25 W。
 
-讀擴大機的功率規格時，要對上三個條件：標示的是哪一種負載阻抗（8 Ω 或 4 Ω）、在多少失真下量的（1% 與 10% 的數字可以差很多）、是兩個聲道同時驅動還是單聲道。功率不夠時，擴大機在峰值處輸出不到需要的電壓，波形的頂端被削平（**削峰**，clipping），聽到的是刺耳的失真，削峰產生的高頻成分也可能燒毀高音單體。推算出的功率還要對照喇叭的**額定功率**（power handling）；長時間大音量時，喇叭的音圈發熱、電阻上升，實際音量低於推算值，這叫**功率壓縮**（power compression，機制在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕的〈動圈單體的構造〉）。
+讀擴大機的功率規格時，要對上三個條件：標示的是哪一種負載阻抗（8 Ω 或 4 Ω）、在多少失真下量的（1% 與 10% 的數字可以差很多）、是兩個聲道同時驅動還是單聲道。功率不夠時，擴大機在峰值處輸出不到需要的電壓，波形的頂端被削平（**削峰**，clipping），聽到的是刺耳的失真，削峰產生的高頻成分也可能燒毀高音單體。推算出的功率還要對照喇叭的**額定功率**（power handling）；長時間大音量時，喇叭的音圈發熱、電阻上升，實際音量低於推算值，這叫**功率壓縮**（power compression，機制在〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈動圈單體的構造〉）。
 
 喇叭的靈敏度因此決定擴大機的條件。靈敏度高 10 dB（例如 96 dB 以上的號角或全頻單體喇叭），需要的功率變成十分之一，幾瓦的擴大機就夠，小功率的真空管擴大機變得可行；同一個組合下，擴大機與 [DAC](/til/audio/knowledge-cards/dac/) 的[底噪](/til/audio/knowledge-cards/noise-floor/)在聆聽位置也大 10 dB，訊噪比的要求變嚴（換算在〔[家用音響的基礎概念](../audio-fundamentals/)〕的〈底噪〉）。
 

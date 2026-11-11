@@ -37,4 +37,4 @@ DSP 主動分音的喇叭可以把離耳朵較近或較遠的單體的訊號延�
 
 相位旋鈕的設定只對聆聽位置與分頻點附近的頻率成立；換了聆聽位置或分頻點，對齊的結果就要重量一次。
 
-兩個聲音疊加的機制在〔[家用音響的基礎概念](/til/audio/audio-fundamentals/)〕的〈相位：兩個聲音疊加時的加強與抵消〉；超低音的四項設定與順序在〔[喇叭的規格與構造](/til/audio/speaker-components-and-upgrade-path/)〕的〈超低音喇叭的設定：擺位、分頻點、相位與音量〉；SBIR 與離牆距離的取捨在〔[房間的聲學與喇叭擺位](/til/audio/room-acoustics-and-speaker-placement/)〕的〈喇叭的擺位：離牆距離、等邊三角形與 toe-in〉。
+兩個聲音疊加的機制在〔[家用音響的基礎概念](/til/audio/audio-fundamentals/)〕的〈相位：兩個聲音疊加時的加強與抵消〉；超低音的四項設定與順序在〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈超低音喇叭的設定：擺位、分頻點、相位與音量〉；SBIR 與離牆距離的取捨在〔[房間的聲學與喇叭擺位](/til/audio/room-acoustics-and-speaker-placement/)〕的〈喇叭的擺位：離牆距離、等邊三角形與 toe-in〉。

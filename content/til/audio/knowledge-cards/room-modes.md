@@ -34,4 +34,4 @@ tags: ["til", "音響", "knowledge-cards"]
 
 超低音喇叭的位置決定它激發哪些駐波，找位置的方法依據聲學的互易性（reciprocity）：把超低音喇叭暫時放在聆聽位置，人沿著牆邊移動、找低音最平均的位置，再把超低音喇叭放到那裡。
 
-駐波的算法與各種處理方法在〔[房間的聲學與喇叭擺位](/til/audio/room-acoustics-and-speaker-placement/)〕的〈低頻駐波：聆聽位置、房間校正、多顆超低音與低頻吸音〉；超低音的擺位在〔[喇叭的規格與構造](/til/audio/speaker-components-and-upgrade-path/)〕的〈超低音喇叭的設定：擺位、分頻點、相位與音量〉；彈簧加質量的共振模型在〔[家用音響的基礎概念](/til/audio/audio-fundamentals/)〕的〈共振與阻尼：彈簧加質量的模型〉。
+駐波的算法與各種處理方法在〔[房間的聲學與喇叭擺位](/til/audio/room-acoustics-and-speaker-placement/)〕的〈低頻駐波：聆聽位置、房間校正、多顆超低音與低頻吸音〉；超低音的擺位在〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈超低音喇叭的設定：擺位、分頻點、相位與音量〉；彈簧加質量的共振模型在〔[家用音響的基礎概念](/til/audio/audio-fundamentals/)〕的〈共振與阻尼：彈簧加質量的模型〉。

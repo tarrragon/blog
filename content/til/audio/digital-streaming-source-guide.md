@@ -7,7 +7,7 @@ description: "用串流服務、電腦、手機、電視或本機收藏當音響
 tags: ["til", "音響", "串流", "DAC", "藍牙", "Hi-Res", "無損"]
 ---
 
-這篇寫數位訊源這一端：音樂以什麼格式記錄，經過哪些環節送到 [DAC](/til/audio/knowledge-cards/dac/)，DAC 再轉成類比訊號交給擴大機。記錄的部分是[取樣率與位元深度](/til/audio/knowledge-cards/sample-rate-and-bit-depth/)、Hi-Res 跟人耳範圍的關係與[盲聽](/til/audio/knowledge-cards/abx-test/)研究的條件、母帶，以及有損與無損壓縮；傳遞的部分是串流服務的資料從網路到 DAC 之前經過哪些環節（服務端、App 的音量標準化、作業系統的重新取樣、數位音量），USB、光纖、同軸、HDMI ARC 這幾種有線介面與電視送出的音訊格式、影音延遲，線材、[抖動](/til/audio/knowledge-cards/clock-jitter/)與接地雜訊，[藍牙的音訊編碼格式](/til/audio/knowledge-cards/bluetooth-audio-codec/)，以及 AirPlay、Spotify Connect、Google Cast 這類 Wi-Fi 串流協定裡手機扮演的角色；不依賴串流服務的本機收藏怎麼播放；什麼情形需要外接 DAC、DAC 規格裡哪幾項影響聲音；最後是串流內建在主動式喇叭、獨立串流播放器加擴大機、電腦接 DAC、手機有線輸出、電視接 HDMI ARC 這幾種組法各自適合什麼樣的家。DAC 之後的擴大機在〔[擴大機的選擇](../amplifier-selection/)〕，喇叭在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕，房間在〔[房間的聲學與喇叭擺位](../room-acoustics-and-speaker-placement/)〕，數位串流與黑膠在整套系統裡的取捨在〔[家用音響系統的組成](../home-audio-system-guide/)〕；[dB](/til/audio/knowledge-cards/decibel/)、[底噪](/til/audio/knowledge-cards/noise-floor/)、頻率與聽感比較的方法在〔[家用音響的基礎概念](../audio-fundamentals/)〕；類比訊源在〔[黑膠唱盤的構造、選購與安裝調整](../turntable-buying-guide/)〕。各串流服務提供的音質等級與支援的協定會隨時間改變，本篇不列各家服務的現況，以服務的說明頁為準。
+這篇寫數位訊源這一端：音樂以什麼格式記錄，經過哪些環節送到 [DAC](/til/audio/knowledge-cards/dac/)，DAC 再轉成類比訊號交給擴大機。記錄的部分是[取樣率與位元深度](/til/audio/knowledge-cards/sample-rate-and-bit-depth/)、Hi-Res 跟人耳範圍的關係與[盲聽](/til/audio/knowledge-cards/abx-test/)研究的條件、母帶，以及有損與無損壓縮；傳遞的部分是串流服務的資料從網路到 DAC 之前經過哪些環節（服務端、App 的音量標準化、作業系統的重新取樣、數位音量），USB、光纖、同軸、HDMI ARC 這幾種有線介面與電視送出的音訊格式、影音延遲，線材、[抖動](/til/audio/knowledge-cards/clock-jitter/)與接地雜訊，[藍牙的音訊編碼格式](/til/audio/knowledge-cards/bluetooth-audio-codec/)，以及 AirPlay、Spotify Connect、Google Cast 這類 Wi-Fi 串流協定裡手機扮演的角色；不依賴串流服務的本機收藏怎麼播放；什麼情形需要外接 DAC、DAC 規格裡哪幾項影響聲音；最後是串流內建在主動式喇叭、獨立串流播放器加擴大機、電腦接 DAC、手機有線輸出、電視接 HDMI ARC 這幾種組法各自適合什麼樣的家。DAC 之後的擴大機在〔[擴大機的選擇](../amplifier-selection/)〕，喇叭在〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕，房間在〔[房間的聲學與喇叭擺位](../room-acoustics-and-speaker-placement/)〕，數位串流與黑膠在整套系統裡的取捨在〔[家用音響系統的組成](../home-audio-system-guide/)〕；[dB](/til/audio/knowledge-cards/decibel/)、[底噪](/til/audio/knowledge-cards/noise-floor/)、頻率與聽感比較的方法在〔[家用音響的基礎概念](../audio-fundamentals/)〕；類比訊源在〔[黑膠唱盤的構造、選購與安裝調整](../turntable-buying-guide/)〕。各串流服務提供的音質等級與支援的協定會隨時間改變，本篇不列各家服務的現況，以服務的說明頁為準。
 
 ## 數位音訊的記錄方式：PCM 的取樣率與位元深度、DSD
 
@@ -106,7 +106,7 @@ Wi-Fi 串流的頻寬足以傳無損音訊，常見的協定在**由誰去抓音
 
 適用於所有電子設備的項目（[頻率響應](/til/audio/knowledge-cards/frequency-response/)、失真加雜訊、訊噪比與辨識門檻）寫在〔[家用音響系統的組成](../home-audio-system-guide/)〕的〈各環節對聲音的影響量級〉，輸出與輸入阻抗的搭配寫在〔[擴大機的選擇](../amplifier-selection/)〕的〈其他設備之間的阻抗搭配〉，現在多數 DAC 都超過門檻很多。挑 DAC 時，規格上要確認的是下面幾項：
 
-- **訊噪比與動態範圍**：接一般靈敏度的喇叭、在正常聆聽距離時，90 dB 以上的訊噪比已經聽不到底噪。底噪是否聽得到，取決於擴大機的增益與喇叭的靈敏度（喇叭的靈敏度怎麼量、去哪裡查，在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕的〈挑喇叭時看的量測規格〉）：同樣的底噪電壓，接靈敏度高 10 dB 的喇叭就大 10 dB（換算在〔[家用音響的基礎概念](../audio-fundamentals/)〕的〈底噪〉）。所以接靈敏度 95 dB 以上的喇叭、入耳式耳機，或在桌上近距離聽時，訊噪比要更高；現在常見的量測值在 110 dB 以上，在這些組合下也有餘裕。底噪偏高時，歌曲之間的空白處聽得到嘶聲。
+- **訊噪比與動態範圍**：接一般靈敏度的喇叭、在正常聆聽距離時，90 dB 以上的訊噪比已經聽不到底噪。底噪是否聽得到，取決於擴大機的增益與喇叭的靈敏度（喇叭的靈敏度怎麼量、去哪裡查，在〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈挑喇叭時看的量測規格〉）：同樣的底噪電壓，接靈敏度高 10 dB 的喇叭就大 10 dB（換算在〔[家用音響的基礎概念](../audio-fundamentals/)〕的〈底噪〉）。所以接靈敏度 95 dB 以上的喇叭、入耳式耳機，或在桌上近距離聽時，訊噪比要更高；現在常見的量測值在 110 dB 以上，在這些組合下也有餘裕。底噪偏高時，歌曲之間的空白處聽得到嘶聲。
 - **[總諧波失真加雜訊](/til/audio/knowledge-cards/thd-n/)**（THD+N）：0.001% 這個等級已經遠低於聽得出的門檻，數字更小的差別聽不出來。
 - **輸出電壓與介面**：RCA 輸出多在 2 V 左右；XLR 是平衡接頭（balanced），用兩條訊號線傳相反的訊號，輸出電壓較高，長距離接線時較不受雜訊干擾。輸出電壓要跟擴大機的**輸入靈敏度**（input sensitivity：擴大機達到額定功率需要的輸入電壓，規格表常寫在輸入端子的欄位）相配：DAC 的輸出電壓遠高於擴大機的輸入靈敏度時，擴大機的音量旋鈕只用得到開頭一小段。
 - **[輸出阻抗](/til/audio/knowledge-cards/output-impedance/)與耳機輸出**：DAC 的線路輸出阻抗高、接到輸入阻抗低的後級時，頻率響應會衰減（〔[擴大機的選擇](../amplifier-selection/)〕的〈其他設備之間的阻抗搭配〉）；帶耳機輸出的 DAC，耳機輸出的輸出阻抗在〔[耳機與耳機擴大機](../headphones-and-headphone-amplifiers/)〕的〈耳機擴大機的輸出阻抗〉。
@@ -118,7 +118,7 @@ Wi-Fi 串流的頻寬足以傳無損音訊，常見的協定在**由誰去抓音
 
 數位訊源有幾種常見的組法，差別在串流功能、DAC 與擴大機裝在哪幾台設備裡，適合的家也不同：
 
-**串流功能內建在主動式喇叭或綜合擴大機裡**：適合只用手機 App 選歌、客廳一套音響的家。一台設備涵蓋串流、DAC 與擴大，接線最少。串流的軟體跟著那台設備：買的時候硬體正常，規格表也不列軟體會支援幾年；幾年後廠商的 App 不再支援這個型號、或串流服務改了協定時，硬體與聲音都正常，串流功能卻不能用了。這時那台設備有線路或光纖輸入的話，可以外接一台串流播放器繼續用；沒有的話，只剩藍牙或整台更換。所以買這類設備時，確認它另有線路或光纖輸入。喇叭本身的頻寬與配置在〔[喇叭的規格與構造](../speaker-components-and-upgrade-path/)〕的〈各種配置的適用條件〉。
+**串流功能內建在主動式喇叭或綜合擴大機裡**：適合只用手機 App 選歌、客廳一套音響的家。一台設備涵蓋串流、DAC 與擴大，接線最少。串流的軟體跟著那台設備：買的時候硬體正常，規格表也不列軟體會支援幾年；幾年後廠商的 App 不再支援這個型號、或串流服務改了協定時，硬體與聲音都正常，串流功能卻不能用了。這時那台設備有線路或光纖輸入的話，可以外接一台串流播放器繼續用；沒有的話，只剩藍牙或整台更換。所以買這類設備時，確認它另有線路或光纖輸入。喇叭本身的頻寬與配置在〔[喇叭的規格與構造](/til/audio/speaker-specs-and-construction/)〕的〈各種配置的適用條件〉。
 
 **獨立串流播放器加有 DAC 的擴大機（或獨立 DAC）**：適合已經有一台沒有網路功能的擴大機的家。串流播放器只負責從網路取得音樂，經由數位介面送到 DAC。串流功能過時時，只換那一台小設備，DAC、擴大機與喇叭照常使用，等於把變動快的軟體與變動慢的硬體分開；多出來的是一台設備與一條線。
 
