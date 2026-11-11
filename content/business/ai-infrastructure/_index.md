@@ -26,7 +26,7 @@ tags: ["business", "ai-infrastructure", "financing", "semiconductor", "data-cent
 
 〈上市前 Anthropic 的股東與估值〉處理的是這條產業鏈的參與者怎麼持有一家模型公司：大股東與供應商經由本票、特別股與同步私募取得的股份與上限，以及這些持股讓模型公司的損益隨股價變動；同一篇為了交代新股東的處境，也寫了各類股份的權利、稀釋與閉鎖期，這幾節是單一公司的資本結構，放在這裡是因為它們跟大股東與供應商的持股寫在同一張股本表上。員工股權與離職限制是任何上市前公司都適用的制度，放在財務分析模組的[上市前公司的員工股權與離職限制](/business/financial-analysis/pre-ipo-employee-equity-departures/)。用的都是 S-1/A-2 的股東、股本與薪酬揭露。把同一份文件當成評估上市前公司的一般方法，放在財務分析模組的[上市前企業的經營風險與財報可信度](/business/financial-analysis/pre-ipo-risk-and-statement-credibility/)與[產業前景的評估](/business/financial-analysis/industry-outlook-assessment/)，那兩篇以方法為單位，Anthropic 只是案例。
 
-術語卡放在共用的[商業概念知識卡片](/business/knowledge-cards/)：融資相關的卡在〈融資結構〉一節，公允價值卡在〈財報判讀〉一節。
+術語卡放在共用的[商業概念知識卡片](/business/knowledge-cards/)：融資相關的卡在〈融資結構〉一節，特別股、多重股權、稀釋、閉鎖期與員工股權的卡在〈股權與上市〉一節，公允價值、關鍵查核事項、總額與淨額認列、非 GAAP 指標的卡在〈財報判讀〉一節。
 
 ## 寫這個模組的文章時
 

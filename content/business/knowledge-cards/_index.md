@@ -1,7 +1,7 @@
 ---
 title: "商業概念知識卡片"
 date: 2026-05-19
-description: "用原子化卡片整理商業模式、單位經濟、進入市場、競爭護城河、市場動態、資本估值與執行知識的術語"
+description: "用原子化卡片整理商業模式、單位經濟、進入市場、競爭護城河、市場動態、資本估值、融資結構、股權與上市、財報判讀與執行知識的術語"
 weight: -1
 tags: ["business", "knowledge-cards"]
 ---
@@ -157,14 +157,15 @@ weight: 編號
 
 公司價值怎麼被定價、被誰定價、何時崩塌。
 
-| 卡片                                                                      | 核心問題     | 常見出現位置         |
-| ------------------------------------------------------------------------- | ------------ | -------------------- |
-| [VC](/business/knowledge-cards/venture-capital/)                          | 創投         | 種子輪、A 輪、估值   |
-| [PE](/business/knowledge-cards/private-equity/)                           | 私募基金     | 中型企業、被併購     |
-| [Valuation](/business/knowledge-cards/valuation/)                         | 估值         | 融資、退場、毛利     |
-| [Valuation Compression](/business/knowledge-cards/valuation-compression/) | 估值壓縮     | 毛利下降、新創生存   |
-| [Unit Economics](/business/knowledge-cards/unit-economics/)               | 單位經濟     | LTV/CAC、是否賺錢    |
-| [LTV](/business/knowledge-cards/ltv/)                                     | 客戶終身價值 | retention、CAC、毛利 |
+| 卡片                                                                       | 核心問題                       | 常見出現位置                   |
+| -------------------------------------------------------------------------- | ------------------------------ | ------------------------------ |
+| [VC](/business/knowledge-cards/venture-capital/)                           | 創投                           | 種子輪、A 輪、估值             |
+| [PE](/business/knowledge-cards/private-equity/)                            | 私募基金                       | 中型企業、被併購               |
+| [Valuation](/business/knowledge-cards/valuation/)                          | 估值                           | 融資、退場、毛利               |
+| [Valuation Compression](/business/knowledge-cards/valuation-compression/)  | 估值壓縮                       | 毛利下降、新創生存             |
+| [Unit Economics](/business/knowledge-cards/unit-economics/)                | 單位經濟                       | LTV/CAC、是否賺錢              |
+| [LTV](/business/knowledge-cards/ltv/)                                      | 客戶終身價值                   | retention、CAC、毛利           |
+| [TAM（潛在市場規模）](/business/knowledge-cards/total-addressable-market/) | 市場規模數字量的是誰付給誰的錢 | 公開說明書、募資簡報、產業報告 |
 
 ## 融資結構
 
@@ -180,6 +181,21 @@ weight: 編號
 | [Convertible Note（可轉換本票）](/business/knowledge-cards/convertible-note/)                      | 債權可轉股、PIK 利息與轉換折價的稀釋   | S-1、融資條款、公允價值變動          |
 | [Warrant（公司發行的認股權證）](/business/knowledge-cards/warrant/)                                | 公司增發新股換取客戶承諾               | 8-K、客戶激勵、稀釋後 EPS            |
 | [RPO（剩餘履約義務）](/business/knowledge-cards/remaining-performance-obligation/)                 | 已簽約未認列的營收、代表簽約不代表現金 | 10-Q 附註、營收能見度、客戶集中      |
+
+## 股權與上市
+
+上市前後誰持有股份、用什麼價格取得、能投多少票、什麼時候能賣，以及員工股權與離職的限制。
+
+| 卡片                                                                                                  | 核心問題                             | 常見出現位置                         |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------ |
+| [Convertible Preferred Stock（可轉換特別股）](/business/knowledge-cards/convertible-preferred-stock/) | 各輪投資人的權利與換算成普通股的成本 | Series 融資、清算優先權、IPO 轉換    |
+| [Multi-class Share Structure（多重股權結構）](/business/knowledge-cards/multi-class-shares/)          | 經濟權與投票權分給不同的持有人       | Class A/B、受控公司、落日條款        |
+| [Dilution（股權稀釋）](/business/knowledge-cards/dilution/)                                           | 新股讓既有股東的比例與每股價值下降   | 增資、轉股、員工股權、完全稀釋       |
+| [Lock-up Agreement（閉鎖期協議）](/business/knowledge-cards/lock-up-agreement/)                       | 上市後舊股分批進入市場的時間表       | 解禁日、賣壓、限制性證券             |
+| [Restricted Stock Unit（限制型股票單位，RSU）](/business/knowledge-cards/restricted-stock-unit/)      | 條件滿足才交付的股份與雙重觸發       | 員工薪酬、上市當季費用、離職         |
+| [Employee Stock Option（員工認股權）](/business/knowledge-cards/employee-stock-option/)               | 履約價、行使期限與行使的稀釋         | ISO/NSO、離職後 90 天、AMT           |
+| [Share-based Compensation（股份基礎給付）](/business/knowledge-cards/share-based-compensation/)       | 用股票發薪的費用、時點與股東成本     | 非 GAAP 加回、營業現金流、上市補認列 |
+| [Non-compete Agreement（競業禁止條款）](/business/knowledge-cards/non-compete-agreement/)             | 雇傭競業條款在各地的效力與替代工具   | 跳槽、加州 16600、勞基法 9-1         |
 
 ## 財報判讀
 
@@ -227,6 +243,9 @@ weight: 編號
 | [Going Concern（繼續經營假設）](/business/knowledge-cards/going-concern/)                         | 企業能否撐過未來 12 個月                 | 審計意見、供應商信用、流動性     |
 | [Channel Stuffing（通路填塞）](/business/knowledge-cards/channel-stuffing/)                       | 期末壓貨灌水營收的手法                   | 退貨率、side letter、截止測試    |
 | [Cut-off Testing（截止測試）](/business/knowledge-cards/cut-off-testing/)                         | 交易是否認在正確期間                     | 結帳日窗口、控制權移轉證據       |
+| [Critical Audit Matter（關鍵查核事項）](/business/knowledge-cards/critical-audit-matter/)         | 報表裡最依賴判斷的科目                   | 查核報告、CAM/KAM、公允價值      |
+| [Gross vs Net Revenue（總額與淨額認列）](/business/knowledge-cards/gross-vs-net-revenue/)         | 主理人或代理人決定營收放大多少           | 平台、市集、營收倍數             |
+| [Non-GAAP Measure（非 GAAP 指標）](/business/knowledge-cards/non-gaap-measure/)                   | 公司自訂指標加回了什麼                   | Adjusted EBITDA、調節表、SBC     |
 
 ## 執行知識
 
