@@ -29,7 +29,7 @@
 9. **拆 commit**：按 frame 拆 2-3 個 commit（如 commit 1 處理規範 frame finding、commit 2 處理 cadence frame）
 10. **驗證 + commit**：專案 markdown 工具鏈（如 mdtools lint / cards / fmt）跑過、各 commit 帶清楚的修法描述
 
-**本輪到此結束的判定**：finding 修完、每一類掃過、修法生效量測（下一段）跑過，這一輪就結束，下一輪的規劃回 `SKILL.md`；派下一輪之前，先查 `planning-and-stopping.md`〈大綱稽核〉的觸發（審查對象是文章時，任何一輪都可能成立）。整批審查的收尾——共用產物重讀、工具清單、整體通讀——在 `planning-and-stopping.md`〈Round N 規劃判讀〉，只走本檔的人到不了那裡，所以這裡指一次。
+**本輪到此結束的判定**：finding 修完、每一類掃過、修法生效量測（下一段）跑過，這一輪就結束，下一輪的規劃回 `SKILL.md`；派下一輪之前，先查 `planning-and-stopping.md`〈大綱稽核〉的觸發（審查對象是文章時，任何一輪都可能成立；審查對象是規則類文件時查〈設計稽核〉）。整批審查的收尾——共用產物重讀、工具清單、整體通讀——在 `planning-and-stopping.md`〈Round N 規劃判讀〉，只走本檔的人到不了那裡，所以這裡指一次。
 
 ### 驗收改文要往前看一次，不只往回看
 

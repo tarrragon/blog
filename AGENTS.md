@@ -110,6 +110,7 @@ commit 之後直接推送，不另外問使用者：使用者已經授權推送�
 - **推送 blog 時**，`bin/push-main` 印出 `[ASK-USER]`：給它列出的 commit（別的 session 還沒推送的），由使用者決定要不要一起推。
 - **收斂遠端分支時**（`docs/rules/remote.md`〈遠端機器的操作〉）：`bin/converge-branch` 印出 `[ASK-USER]`（merge 衝突、分岔），給它印的兩邊 commit 與衝突的段落；dotfiles 的工作樹有 `??` 的檔案或不是這次自己做的未提交改動，給 `git status --short` 與那幾段 diff；本地 main 有不是這次的未推 commit、或分支只在遠端機器上，給那幾個 commit 或分支名。由使用者決定怎麼處理；不替它 commit、不還原、不在遠端寫入。
 - **同步 skill 時**，`[DIVERGED]` 或 `[CONFLICT]` 的兩邊在共同基底之後改到同一段文字（合併時有衝突）：給兩邊的 `git log` 與衝突的段落（`docs/rules/skills.md`〈同步時的判斷〉）。
+- **多輪審查的大綱稽核或設計稽核在同一批裡第二次成立時**（定義在 `multi-round-review` 的 `references/planning-and-stopping.md`〈Round N 規劃判讀〉開頭）：不重組也不重寫，給兩次稽核的痕跡，由使用者決定方向；不受「Round 3 跑完之前不問」限制。
 - **搬移 `content/` 的資料夾或文章、在 `--apply` 之前**（`content-folder-migration` skill 的「搬移前的檢查：要搬的位置」與「dry-run、基準值與搬移前的檢查：要改寫的檔案」兩步；這次自己的其他改動在搬移之前先提交），下列任一項成立：要搬的資料夾或 dry-run 列出要改寫的檔案，`git status`、其他 worktree 的 `git status` 或其他分支的 `git log main..<分支>` 有輸出（已經在這次搬移的 manifest 裡的檔案不算）；dry-run 的殘留引用列出 `hugo.toml` 的 `[permalinks]` 裡以被搬資料夾為名的鍵（搬走之後那一組頁面的網址格式改變）；dry-run 的「網址改變」頁數少於頁數，而那些頁面不在 `[permalinks]` 有鍵的 section 裡。給 dry-run 的輸出與 skill 那一步檢查指令的輸出，由使用者決定搬不搬、怎麼搬。
 
 ### 沒有使用者明說就不做的動作

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""檢查知識卡的首段與概念位置段各有沒有鄰卡連結。
+"""檢查知識卡的首段與「跟其他概念的關係」段各有沒有鄰卡連結。
 
 用法（路徑照執行時所在的目錄起算；腳本本身寫出它在這支 skill 裡的完整路徑）：
-    python3 <skill 目錄>/scripts/neighbor_link_check.py <卡片目錄> [<卡片> ...] [--heading 概念位置]
+    python3 <skill 目錄>/scripts/neighbor_link_check.py <卡片目錄> [<卡片> ...] [--heading 跟其他概念的關係]
 
 - 不給卡片時，檢查卡片目錄第一層全部的 .md（_index.md 除外）。
 - 給卡片時只檢查那幾張。可以給路徑；不含 `/` 的引數也可以只寫檔名或 slug
@@ -18,12 +18,12 @@
   - 連結形態：行內連結（標題可用雙引號、單引號或括號，目標可用尖括號包住）與參考式連結
     （`[text][ref]`、`[ref][]` 加 `[ref]: 目標` 定義行）。
 - 首段：開頭的 frontmatter（`---` 或 `+++` 包住）之後、第一個 `## ` 段標之前。
-- 概念位置段：第一個內容等於 `## <heading>` 的段標（結尾的 `{#錨點}` 不計）之後、下一個 `## `
+- 「跟其他概念的關係」段：第一個內容等於 `## <heading>` 的段標（結尾的 `{#錨點}` 不計）之後、下一個 `## `
   段標之前。`--heading` 開頭的 `#` 與空白會被去掉，段標用字面比對。code fence 裡的行不當段標。
 
 輸出（stdout，每張卡一行，tab 分欄）：
-    OK       <檔案>  首段:<n> 概念位置:<n>  <算到的鄰卡 slug，逗號分隔>
-    NOLINK   <檔案>  首段:<n> 概念位置:<n>  <算到的鄰卡 slug>
+    OK       <檔案>  首段:<n> 跟其他概念的關係:<n>  <算到的鄰卡 slug，逗號分隔>
+    NOLINK   <檔案>  首段:<n> 跟其他概念的關係:<n>  <算到的鄰卡 slug>
     NOHEAD   <檔案>  首段:<n>
     MISSING  <引數>
 stderr 最後一行：`checked N card(s), M problem(s)`。
@@ -178,7 +178,7 @@ def check(card_dir: Path, files: list[str], heading: str) -> tuple[list[str], in
         status = "OK" if a and b else "NOLINK"
         if status != "OK":
             problems += 1
-        out.append(f"{status}\t{p}\t首段:{len(a)} 概念位置:{len(b)}\t{','.join(a + b)}")
+        out.append(f"{status}\t{p}\t首段:{len(a)} 跟其他概念的關係:{len(b)}\t{','.join(a + b)}")
     return out, problems
 
 
@@ -186,7 +186,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="知識卡的鄰卡連結檢查")
     ap.add_argument("card_dir")
     ap.add_argument("files", nargs="*")
-    ap.add_argument("--heading", default="概念位置")
+    ap.add_argument("--heading", default="跟其他概念的關係")
     args = ap.parse_args(argv)
     card_dir = Path(args.card_dir)
     if not card_dir.is_dir():

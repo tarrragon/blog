@@ -16,7 +16,7 @@
 | URL：裸 URL；顯示文字含 TLD 字樣時 domain 要與 href 一致                                                                      | mdtools lint                                          |
 | 表格對齊、列表與 code block 的空行、有序列表編號、code block 語言標示                                                         | mdtools fmt / lint                                    |
 | Front matter：`title`、`date` 必填；新文章 `description`、`tags` 必填（lint 報在警告層）；卡片層 `description`、`weight` 必填 | mdtools lint / cards                                  |
-| 卡片：相對連結有效、orphan、首段與概念位置段含鄰卡連結（`.codex/briefs/knowledge-cards.md` K4）                               | mdtools cards                                         |
+| 卡片：相對連結有效、orphan、首段與「跟其他概念的關係」段含鄰卡連結（`.codex/briefs/knowledge-cards.md` K4）                   | mdtools cards                                         |
 | 位置引用與數量命名（REF1「見第 N 章」「§N」、REF2「六大原則」），警告層                                                       | mdtools lint                                          |
 | 否定起手（POS-negation-lead「不是 X、而是 Y」「與其 X、不如 Y」），警告層                                                     | mdtools lint                                          |
 | 縮寫術語「判準」（TERM-abbreviation），error 層；討論這個詞本身時加「」或行內程式碼                                           | mdtools lint（`.claude/skills/` 不跑 lint，要手動掃） |

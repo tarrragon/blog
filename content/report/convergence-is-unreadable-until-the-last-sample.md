@@ -46,7 +46,7 @@ slug: "convergence-is-unreadable-until-the-last-sample"
 ## 跟其他原則的關係
 
 - [理解要取樣、不要靠判斷](/report/comprehension-sampled-not-judged/) — 那一張定「一份讀錯就是判決、收斂度只決定證據強度」，本卡補它缺的那個維度：**什麼時候可以開始讀收斂度**。兩者的處置方向相反而不衝突——一份讀錯就要修，而讀「有多容易讀錯」要等齊。
-- [真值住在稿件之外的宣稱，讀多少遍都驗不出來](/report/text-review-cannot-reach-external-truth/) — 同一批審查裡的另一個失誤，形態相反：那一張是動作不對（用讀的驗執行），本卡是時機不對（樣本沒到齊就讀）。
+- [真值在稿件之外的宣稱，讀多少遍都驗不出來](/report/text-review-cannot-reach-external-truth/) — 同一批審查裡的另一個失誤，形態相反：那一張是動作不對（用讀的驗執行），本卡是時機不對（樣本沒到齊就讀）。
 - [稽核者自己的答案也是待測物](/report/auditor-answer-is-under-test-too/) — 同一族的自我校正：那一張說稽核者的答案要進待測物，本卡說稽核者的中間結論要等證據到齊。
 
 ## 判讀徵兆

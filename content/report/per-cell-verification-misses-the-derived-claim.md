@@ -88,4 +88,4 @@ slug: "per-cell-verification-misses-the-derived-claim"
 
 [#311 reviewer 給的數字要用被審對象宣告的口徑重跑一次](/report/reviewer-measurement-needs-the-audited-scope/) 處理量測與被審對象之間的口徑不一致。本卡的口徑一致（查核者驗的確實是那張表），問題在**被驗的清單少了一項**，而少的那一項正好是整段論證的承重句。
 
-[#315 真值住在稿件之外的宣稱，讀多少遍都驗不出來](/report/text-review-cannot-reach-external-truth/) 說驗那一類的動作是執行不是閱讀。本卡是它的延伸邊界：**執行了每一格，仍然沒有執行到那句話**——因為那句話要的是對已取得的結果再做一次運算，而不是對外界的一次查詢。
+[#315 真值在稿件之外的宣稱，讀多少遍都驗不出來](/report/text-review-cannot-reach-external-truth/) 說驗那一類的動作是執行不是閱讀。本卡是它的延伸邊界：**執行了每一格，仍然沒有執行到那句話**——因為那句話要的是對已取得的結果再做一次運算，而不是對外界的一次查詢。

@@ -3,7 +3,7 @@ name: vendor-deep-article
 description: "Vendor 深度技術文章的寫作方法論：從 vendor overview 往下寫單一功能的深度文章。選題標準（3 條 + 反向判斷標準）、6 段結構模板（問題情境 → 概念 → 配置 → 故障演練 → 容量 → 整合）、跟 overview 與 hands-on 實作文章的職責劃分、寫作流程 7 step、批次 cadence variant 規劃。觸發詞：deep article、vendor 深度文章、vendor feature、pgBouncer、Patroni、寫 vendor 文章、sub-tool article、feature deep dive。Trigger when writing vendor-specific deep implementation articles."
 license: MIT
 metadata:
-  version: 1.3.0
+  version: 1.4.0
   category: writing-methodology
 ---
 
@@ -65,7 +65,7 @@ Overview 中 7-15 行的進階主題段、dynamic credential 怎麼 call / lease
 
 ### 跟 `hands-on/` 實作文章的分工
 
-專案把概念文章與讀者照著做的實作文章分開放，實作文章住在 vendor 資料夾底下的 `hands-on/`（例如 `vendors/<vendor>/hands-on/`）。deep article 屬於概念文章：「配置 step-by-step」段寫判讀需要的關鍵 config 與它每個參數的作用，「故障演練 / 邊界 case」段寫徵兆、成因與修法的判讀；從前置條件一路做到完成的完整 lab（整份 compose 檔、逐步的 restore drill、每一步該看到的輸出）放 `hands-on/`，deep article 在對應的段落連過去，連結寫出那一篇做了什麼操作。
+專案把概念文章與讀者照著做的實作文章分開放，實作文章放在 vendor 資料夾底下的 `hands-on/`（例如 `vendors/<vendor>/hands-on/`）。deep article 屬於概念文章：「配置 step-by-step」段寫判讀需要的關鍵 config 與它每個參數的作用，「故障演練 / 邊界 case」段寫徵兆、成因與修法的判讀；從前置條件一路做到完成的完整 lab（整份 compose 檔、逐步的 restore drill、每一步該看到的輸出）放 `hands-on/`，deep article 在對應的段落連過去，連結寫出那一篇做了什麼操作。
 
 判斷某一段該留在 deep article 還是搬進 `hands-on/`：讀者讀這一段是要理解「為什麼這樣配、壞了是什麼樣子」，留在 deep article；讀者讀這一段是要在自己的環境照著打一遍，放 `hands-on/`。`hands-on/` 的落點、寫法與量測值的處置照專案的資料夾規則。
 

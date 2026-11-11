@@ -1,9 +1,9 @@
 ---
 name: knowledge-cards
-description: "Standardizes the full lifecycle of atomic knowledge cards (Zettelkasten term cards) in a content collection: creation criteria, gap detection via the term-role × baseline matrix, card authoring format, registration points (index + tool scope), link backfill, and module-scale audits. Use when creating cards, auditing a module for missing cards, restructuring card directories, or wiring card links into articles. Triggers: 建卡, 知識卡, 缺卡, 術語卡, 卡片 audit, 卡片格式, 概念位置, 鄰卡連結, 回填連結, 卡片目錄, 卡片重構, 詞頻掃描, 基線, 行內解釋, knowledge card, term card, card gap."
+description: "Standardizes the full lifecycle of atomic knowledge cards (Zettelkasten term cards) in a content collection: creation criteria, gap detection via the term-role × baseline matrix, card authoring format, registration points (index + tool scope), link backfill, and module-scale audits. Use when creating cards, auditing a module for missing cards, restructuring card directories, or wiring card links into articles. Triggers: 建卡, 知識卡, 缺卡, 術語卡, 卡片 audit, 卡片格式, 跟其他概念的關係, 概念位置（舊段名）, 判斷條件與後果, 鄰卡連結, 回填連結, 卡片目錄, 卡片重構, 詞頻掃描, 基線, 行內解釋, knowledge card, term card, card gap."
 license: MIT
 metadata:
-  version: 1.9.0
+  version: 2.0.0
   category: content-methodology
 ---
 
@@ -19,8 +19,8 @@ metadata:
 | ------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1 判斷標準  | 這個術語該有卡嗎？     | 教學需求：目標讀者群裡最不熟悉的那端能不能理解；出現頻率只是輔助訊號                                                                                                                                                                          |
 | 1′ 壓力 | 這段內容該搬進卡嗎？   | 內容壓力：文章某段的概念展開會過長、砍掉範例或推導讀者就接不住——跨篇可用就拆卡、見「內容壓力是第二個建卡入口」段                                                                                                                              |
-| 2 落點  | 卡住在哪個目錄？       | 概念的主要領域歸屬；一卡一住址、跨模組用連結不重複建卡。同一個對象已經在兩篇各自被分解過（兩套階段表 / 欄位組）時，卡層通常就是該收斂到的住址——理由是欄位與成員的定義本來就是卡的責任、而卡是可被多篇引用的獨立短頁，章節各自沿用卡的語彙、只保留自己的判讀。**不要用入連數當理由**：入連數量的是整頁被引用幾次，而要選載體的對象是頁裡那組成員，一次實測章節的整頁入連是卡的一倍多、而那些引用沒有一條是為了拿欄位定義 |
-| 3 撰寫  | 卡片長什麼樣？         | 四段結構（定義 / 概念位置 / 訊號與例子 / 判讀方式）＋首段與概念位置段鄰卡連結                                                                                                                                                                 |
+| 2 落點  | 卡放在哪個目錄？       | 概念的主要領域歸屬；一卡一住址、跨模組用連結不重複建卡。同一個對象已經在兩篇各自被分解過（兩套階段表 / 欄位組）時，卡層通常就是該收斂到的住址——理由是欄位與成員的定義本來就是卡的責任、而卡是可被多篇引用的獨立短頁，章節各自沿用卡的語彙、只保留自己的判讀。**不要用入連數當理由**：入連數量的是整頁被引用幾次，而要選載體的對象是頁裡那組成員，一次實測章節的整頁入連是卡的一倍多、而那些引用沒有一條是為了拿欄位定義 |
+| 3 撰寫  | 卡片長什麼樣？         | 四段結構（定義 / 跟其他概念的關係 / 訊號與例子 / 判斷條件與後果）＋首段與「跟其他概念的關係」段鄰卡連結                                                                                                                                                      |
 | 4 登記  | 卡片在哪些地方要現身？ | collection index 分類表＋lint 工具的作用域清單——兩者都是必經註冊點                                                                                                                                                                            |
 | 5 回填  | 文章怎麼接上卡？       | 每篇文章該術語第一次出現處連卡、後續裸用                                                                                                                                                                                                      |
 | 6 Audit | 存量模組的缺口在哪？   | 詞頻掃描 × 缺卡判定矩陣 → 優先序 → 批次建卡                                                                                                                                                                                                   |
@@ -41,7 +41,7 @@ metadata:
 
 教學需求（站 1 判斷標準）從讀者缺口出發；**內容壓力**從寫作現場出發——文章寫到「這個概念展開會讓本段過長、判斷標準裝不進表格格、但砍了讀者接不住」時、這個壓力本身就是建卡訊號。兩個入口指向同一個動作、判斷標準互補。
 
-- **範例是卡片的正當組成**：概念加範例一起住進卡片、文章引用卡片承接論證——範例住在卡裡讓每篇文章自然短、細節搬家而非消失。
+- **範例是卡片的正當組成**：概念與範例一起寫進卡片，文章連到卡片、在正文裡沿用卡片的定義——範例寫在卡裡讓每篇文章自然短、細節搬家而非消失。
 - **拆卡對象限支撐與背景概念**：主線概念（本篇論證繞著它轉）必須行內展開、外部化會讓讀者跳出去讀卡、論證線斷裂——缺卡判定矩陣的主線列優先於內容壓力入口。
 - **壓縮內容遷就容器在出口之外**：判斷標準裁成殘語、範例被砍是違規；出口是延伸段（本篇專屬）或拆卡（跨篇可用）、內容量不是可裁的變數。
 

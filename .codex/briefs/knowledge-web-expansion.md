@@ -63,7 +63,7 @@
 | 步驟 | 動作                        | 示例推導                                                                                    |
 | ---- | --------------------------- | ------------------------------------------------------------------------------------------- |
 | 讀   | 讀完 `backpressure.md` 全文 | 關注四段結構中出現的術語與連結                                                              |
-| 列   | 列出文中提及但未連結的術語  | 例如「in-flight 數量」在「設計責任」段出現但無連結 → 候選缺口                               |
+| 列   | 列出文中提及但未連結的術語  | 例如「in-flight 數量」在「判斷條件與後果」段出現但無連結 → 候選缺口                         |
 | 辨   | 判斷該術語是否值得獨立成卡  | in-flight 是 backpressure 判讀中的核心訊號；讀者不懂就無法判斷排隊與處理中的差異 → 值得獨立 |
 | 查   | 檢查既有卡片是否已存在      | `in-flight-message.md` 偏訊息語境，缺通用版 → 確認缺口                                      |
 | 記   | 記錄缺口 + 所屬層級 + 理由  | L2 機制層，理由：會影響讀者判斷 backpressure 的工作量邊界，且語義獨立                       |
@@ -85,15 +85,15 @@
 
 > 下表示範**如何從推導過程產生缺口清單**。每個候選卡片附「識別理由」說明為何獨立成卡、與相鄰卡片的邊界在哪。實際執行時 Codex 依盤點結果產出自己的清單。
 
-| 候選卡片          | 識別理由（為何值得獨立）                                                                                                                     | 與相鄰卡片的邊界                                                                      |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| concurrency-limit | backpressure 例子段落提到「動態調整 worker 取件速度」，但既有 rate-limit 卡片聚焦進入速度，缺了「活躍量」角度                                | rate-limit 控制「每秒進來多少」；concurrency-limit 控制「同時有多少在跑」。兩者互補   |
-| admission-control | backpressure 設計責任段落提到「排隊上限 / 拒絕策略」，這整個流程（檢查 in-flight → 進處理區或排隊 → queue 滿則拒絕）本身是一個值得獨立的模式 | 上位於 concurrency-limit + bounded-queue + fail-fast 的組合規則                       |
-| bounded-queue     | 既有 queue 卡片說明 queue 是什麼，但「有界 + 拒絕策略」是獨立設計決策                                                                        | queue 講概念；bounded-queue 講「超限如何處理」                                        |
-| hysteresis        | 拉取節奏控制常需要雙水位避免抖動（例如 backpressure 在 Kafka consumer 的 pause/resume），讀者若不懂此模式會難以判斷何時暫停、何時恢復        | 單一概念，與 pause-resume、autoscaling、circuit-breaker 的半開狀態都相關              |
-| pause-resume      | backpressure 在 pull-based 系統的具體落地機制，與 push-based 的「拒絕 / 排隊」策略不同                                                       | backpressure 是抽象概念；pause-resume 是 Kafka consumer / reactive streams 的具體手段 |
-| in-flight-count   | backpressure 需要讀者理解「尚未完成的工作量」這個判讀訊號，既有 in-flight-message 偏訊息語境，缺通用版                                       | in-flight-message 是訊息；in-flight-count 是跨語境的「尚未完成的工作量」              |
-| worker-pool       | 已存在                                                                                                                                       | 確認雙向連結 + 品質是否達薄卡補強標準                                                 |
+| 候選卡片          | 識別理由（為何值得獨立）                                                                                                                                           | 與相鄰卡片的邊界                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| concurrency-limit | backpressure 例子段落提到「動態調整 worker 取件速度」，但既有 rate-limit 卡片聚焦進入速度，缺了「活躍量」角度                                                      | rate-limit 控制「每秒進來多少」；concurrency-limit 控制「同時有多少在跑」。兩者互補   |
+| admission-control | backpressure 判斷段落（當時段名是「設計責任」）提到「排隊上限 / 拒絕策略」，這整個流程（檢查 in-flight → 進處理區或排隊 → queue 滿則拒絕）本身是一個值得獨立的模式 | 上位於 concurrency-limit + bounded-queue + fail-fast 的組合規則                       |
+| bounded-queue     | 既有 queue 卡片說明 queue 是什麼，但「有界 + 拒絕策略」是獨立設計決策                                                                                              | queue 講概念；bounded-queue 講「超限如何處理」                                        |
+| hysteresis        | 拉取節奏控制常需要雙水位避免抖動（例如 backpressure 在 Kafka consumer 的 pause/resume），讀者若不懂此模式會難以判斷何時暫停、何時恢復                              | 單一概念，與 pause-resume、autoscaling、circuit-breaker 的半開狀態都相關              |
+| pause-resume      | backpressure 在 pull-based 系統的具體落地機制，與 push-based 的「拒絕 / 排隊」策略不同                                                                             | backpressure 是抽象概念；pause-resume 是 Kafka consumer / reactive streams 的具體手段 |
+| in-flight-count   | backpressure 需要讀者理解「尚未完成的工作量」這個判讀訊號，既有 in-flight-message 偏訊息語境，缺通用版                                                             | in-flight-message 是訊息；in-flight-count 是跨語境的「尚未完成的工作量」              |
+| worker-pool       | 已存在                                                                                                                                                             | 確認雙向連結 + 品質是否達薄卡補強標準                                                 |
 
 **semaphore 的判定示範**：semaphore 是具體實作手段（一種 concurrency-limit 的機制）。判定是否獨立成 backend 卡片的問題是「讀者若不懂它，是否會誤判後端服務的責任、操作條件或失敗代價」。若文章只是用它示範語言層同步工具，semaphore 更適合放到 `go-advanced/` 或 `python-advanced/`；若文章把它作為服務層 concurrency-limit 的必要判讀前提，才進 backend knowledge-cards。這類判定**由 Codex 在執行時對齊用戶需求決定**。
 
@@ -109,8 +109,6 @@
 ### 3.4 示例拓展優先序（Wave 1 草案）
 
 以下為示範性質的執行順序。實際 Wave 劃分依盤點後的依賴關係調整：
-
-
 
 1. **補強既有薄卡片**：依 Task 1 的「既有卡片補強判定」處理 L1 已存在但薄的卡片
 2. **新增 L2 缺口卡片**：concurrency-limit → admission-control → bounded-queue → hysteresis → pause-resume（依依賴順序）

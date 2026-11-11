@@ -166,7 +166,6 @@ R-URL-1 的觸發條件是一份 TLD 清單，而這份清單有 [#251](/report/
 
 > 本節與其後各節管的是**排版的機械規則**。區塊裡放什麼——註解裝什麼、什麼時候要把兩種用法並列、什麼時候改用參數表——在 [示範指令：程式碼區塊裡放什麼](/skills/compositional-writing/demonstrating-commands/)。
 
-
 由 `mdtools lint` 檢查。未註明語言的 fenced code block 會被報警：
 
 ````markdown
@@ -413,7 +412,7 @@ slug 是 URL 的核心識別、跨多個工具共用（Hugo build、mdtools lint
 | ----------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
 | **L1 連結有效性**                   | 所有相對連結 `[...](/posts/markdown-writing-spec/path)` / `[...](/posts/path)` 的目標檔案必須存在 | AST 抽 Link node → 解析相對路徑 → stat 檔案    |
 | **L2 卡片 orphan 偵測**             | 每張卡片至少被 `content/**` 中一篇非卡片正文引用                                                  | 建反向索引 → 找無 incoming edge 的卡片         |
-| **L4 卡片 K4 結構合規**             | 卡片首段與「概念位置」段各至少 1 個相鄰卡片連結                                                   | AST 定位段落節點 → 統計子樹 Link 數            |
+| **L4 卡片 K4 結構合規**             | 卡片首段與「跟其他概念的關係」段各至少 1 個相鄰卡片連結                                           | AST 定位段落節點 → 統計子樹 Link 數            |
 | **L5 section 的 weight 全有或全無** | 同一 section 的頁面要嘛全部有 weight、要嘛全部沒有；`weight: 0` 算沒有（警告層，可登記豁免）      | 逐 section 統計有效 weight 的頁數              |
 | **L6 卡片目錄登記**                 | 每張卡片被自己所屬 cards root 內的某個 `_index.md` 列出                                           | 取 source 為該 root 內 section index 的 edge   |
 | **L7 Fragment 有效性**              | 連結的 `#fragment` 必須命名目標頁上存在的標題                                                     | 建每頁 heading ID 索引 → 比對 edge 的 fragment |
@@ -489,7 +488,7 @@ L9 另外單獨成條，**採 error 層**，理由有兩個。第一，設 0 想
 
 - **Orphan 卡片**（沒有正文連結進來）會變成知識死角，讀者無法發現。
 - **斷掉的相對連結**（檔案被改名或移動）肉眼難以發現，只有讀者點擊失敗才暴露。
-- **K4 合規**（首段 + 概念位置段要有鄰卡連結）保證卡片間的知識網不會鬆散。
+- **K4 合規**（首段 + 「跟其他概念的關係」段要有鄰卡連結）保證卡片間的知識網不會鬆散。
 
 這些檢查用 regex 做都卡在「段落歸屬怎麼判斷」。AST 天生知道節點的父子結構，做起來自然。
 
@@ -525,7 +524,7 @@ git config core.hooksPath .githooks
 - 寫作時優先遵循本規範。pre-commit / pre-push 報錯時讀訊息修正；**不可用 `git commit --no-verify` 或跳過 hook 的方式繞過檢查**。
 - 新增案例平行章節（例如多個「工具評測」「事件時序」）時不需登記到任何白名單 — siblings_only 自動判讀。
 - 新增 URL 時優先採用裸 URL 轉換段的分級形式；若顯示文字含 TLD 字樣，確認 domain 與 href 完全一致。
-- 新增卡片時確認首段與「概念位置」段各有至少一個相鄰卡片連結（L4 要求）；確認 front matter 含 `title` / `date` / `description` / `weight`（卡片嚴格層）；在該 cards root 的 `_index.md` 補一列（L6 要求）——這一步的動機不來自正在寫的那篇，最容易漏。
+- 新增卡片時確認首段與「跟其他概念的關係」段各有至少一個相鄰卡片連結（L4 要求）；確認 front matter 含 `title` / `date` / `description` / `weight`（卡片嚴格層）；在該 cards root 的 `_index.md` 補一列（L6 要求）——這一步的動機不來自正在寫的那篇，最容易漏。
 - 程式碼區塊養成習慣先寫語言標示再填內容；純文字輸出用 `text`。
 - 改標題文字時，先查有沒有連結指向它的舊 anchor（`rg '#<舊 anchor>' content/`）。L7 會在 commit 前擋下漏改的那些，而先查一次比被擋下來再回頭找便宜。
 
