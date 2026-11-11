@@ -64,7 +64,7 @@ tags: ["til", "音響", "dB", "頻率響應", "阻抗", "量測"]
 
 ## 共振與阻尼：彈簧加質量的模型
 
-一個重物掛在一條彈簧上，往下拉再放開，它會以固定的快慢上下彈跳，這個快慢叫**共振頻率**（resonance frequency）。這個系統叫**彈簧加質量系統**（mass-spring system），決定共振頻率的有兩項：
+一個重物掛在一條彈簧上，往下拉再放開，它會以固定的快慢上下彈跳，這個快慢叫**共振頻率**（resonance frequency）。這個系統叫**彈簧加質量系統**（mass-spring system）。沒有摩擦這類消耗能量的機制時，重物的位移隨時間照正弦曲線來回，這種運動叫**簡諧運動**（simple harmonic motion，SHM）；會做簡諧運動的系統在物理上統稱**諧振子**（harmonic oscillator），彈簧加質量系統是其中最典型的一個。決定共振頻率的有兩項：
 
 - **質量**（mass）：重物有多重，以公克或公斤計。越重，彈得越慢，共振頻率越低。
 - **彈簧有多硬**：用**彈性係數**（spring constant，越大越硬）描述；音響規格常用它的倒數**[順服度](/til/audio/knowledge-cards/effective-mass-and-compliance/)**（compliance，越大越軟）。越軟，彈得越慢，共振頻率越低。
