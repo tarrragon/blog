@@ -7,16 +7,16 @@ weight: 6
 tags: ["til", "音響", "knowledge-cards"]
 ---
 
-一個重物掛在一條彈簧上，往下拉再放開，它會以固定的快慢上下彈跳；這個快慢叫**共振頻率**（resonance frequency），這個系統叫**彈簧加質量系統**（mass-spring system）。外力的節奏剛好等於共振頻率時，振動被放大，這個現象就是共振（resonance）；外力遠低於或遠高於共振頻率時，系統的反應很小。房間的 [駐波](/til/audio/knowledge-cards/room-modes/) 是同一個模型在空氣裡的形式。
+一個重物掛在一條彈簧上，往下拉再放開，它會以固定的快慢上下彈跳；這個快慢叫**自然頻率**（natural frequency，也叫固有頻率），這個系統叫**彈簧加質量系統**（mass-spring system）。外力以接近自然頻率的節奏推動時，振動被放大到最大，這個現象就是共振（resonance），振動最大的那個頻率叫**共振頻率**（resonance frequency）；外力遠低於或遠高於它時，系統的反應很小。音響規格寫的共振頻率（喇叭單體的 Fs、唱臂與唱頭的共振頻率），數字就是自然頻率，兩者在有阻尼時的關係在〔[家用音響的基礎概念](/til/audio/audio-fundamentals/)〕的〈共振與阻尼：彈簧加質量的模型〉。房間的 [駐波](/til/audio/knowledge-cards/room-modes/) 是同一個模型在空氣裡的形式。
 
 決定共振頻率的有兩項：
 
 - **質量**（mass）：越重，彈得越慢，共振頻率越低。
-- **彈簧有多硬**：用**彈性係數**（spring constant，越大越硬）描述；音響規格常用它的倒數**[順服度](/til/audio/knowledge-cards/effective-mass-and-compliance/)**（compliance，越大越軟）。越軟，共振頻率越低。
+- **彈簧有多硬**：用**彈力常數**（spring constant，越大越硬）描述；音響規格常用它的倒數**[順服度](/til/audio/knowledge-cards/effective-mass-and-compliance/)**（compliance，越大越軟）。越軟，共振頻率越低。
 
 共振頻率約等於 1 ÷（2π × √（質量 × 順服度））。
 
-## 概念位置
+## 跟其他概念的關係
 
 **阻尼**（damping）是讓振動能量消耗掉的機制：摩擦、材料內部吸收、電路裡的電阻。阻尼大時共振的峰被壓平、振動停得快；阻尼小時峰高而尖、振動拖得久。共振頻率決定峰在哪裡，阻尼決定峰多尖。
 
@@ -34,7 +34,7 @@ tags: ["til", "音響", "knowledge-cards"]
 - 唱臂加唱頭的共振頻率要在 8 到 12 Hz 之間。
 - [MM 唱頭](/til/audio/knowledge-cards/mm-and-mc-cartridges/)的線圈電感與唱頭放大器的輸入電容，在 10 到 20 kHz 一帶形成一個高頻的峰，峰的位置隨電容移動。
 
-## 判讀方式
+## 判斷條件與後果
 
 看到一個頻率附近反應特別大的峰（阻抗曲線的峰、頻率響應的突起、低頻的轟聲），先找出這個系統裡哪個零件是質量、哪個是彈簧，就知道改哪一項會移動峰的位置：加重或變軟讓峰往低頻移。要壓低峰的高度，改的是阻尼。
 
