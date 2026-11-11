@@ -106,4 +106,5 @@ Broadcom 與 Anthropic 的交易同時有幾類。依 S-1/A-2，Broadcom 在 202
 
 - [Anthropic 的算力融資結構](/business/ai-infrastructure/anthropic-compute-financing/)：Broadcom 機櫃的租約與轉讓、可轉換本票的條款與發行條件、Broadcom 兩份擔保與本票的關係、九千億美元承諾的到期分布。
 - [OpenAI 的算力融資結構](/business/ai-infrastructure/openai-compute-financing/)：Microsoft、Nvidia、AMD、Oracle、SoftBank、CoreWeave 與 Broadcom 各自提供的資金與擔保，以及 OpenAI 的違約風險由哪幾家公司的資產負債表承擔。
+- [AI 大廠的垂直產業鏈與本業以外的業務](/business/ai-infrastructure/value-chain/)：提供這些融資的賣方各自在算力價值鏈的哪一段、各段的利益率與資本密集度，以及大廠對算力交易對手的持股怎麼入帳（非上市股權的入帳方式與損益出現的位置寫在其中的 big-tech-adjacent-businesses）。
 - 術語卡：[融資租賃（finance lease）](/business/knowledge-cards/finance-lease/)、[剩餘履約義務（RPO）](/business/knowledge-cards/remaining-performance-obligation/)、[公允價值（fair value）](/business/knowledge-cards/fair-value/)。

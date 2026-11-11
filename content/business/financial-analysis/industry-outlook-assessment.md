@@ -47,7 +47,7 @@ tags: ["business", "financial-analysis", "industry-analysis", "tam", "ai-infrast
 
 ## 供給端的限制
 
-需求成長時，供給端的瓶頸決定價格與交期，也決定誰在一段期間內拿得到產能。AI 算力的供給依賴幾個擴張速度不同的環節：先進製程與封裝產能、高頻寬記憶體（[HBM](/business/knowledge-cards/hbm/)）、網路設備、資料中心的建置與電力。擴建時間最長的那一個環節決定整條鏈的供給速度；本篇沒有逐一量化每個環節的擴建週期，下面寫的是本站已經有材料的兩個：
+需求成長時，供給端的瓶頸決定價格與交期，也決定誰在一段期間內拿得到產能。AI 算力的供給依賴幾個擴張速度不同的環節：先進製程與封裝產能、高頻寬記憶體（[HBM](/business/knowledge-cards/hbm/)）、網路設備、資料中心的建置與電力。擴建時間最長的那一個環節決定整條鏈的供給速度；各環節代表業者的營業利益率、資本支出與交期，逐環節寫在 [AI 算力價值鏈各環節的經濟特性](/business/ai-infrastructure/value-chain/ai-value-chain-segment-economics/)，本篇不重複，下面只寫兩個環節對前景的影響：
 
 - **記憶體**：記憶體廠把共用的晶圓產能優先分給 HBM，一般 DRAM 的供給因此被排擠，HBM 的出貨量與一般記憶體的價格都受這個分配影響；排擠的成因、記憶體廠的產能紀律與轉折訊號寫在[記憶體缺貨分析](/business/financial-analysis/memory-market-shortage-analysis/)，新產能從決定擴建到量產要多久寫在[產能擴建週期](/business/financial-analysis/capacity-expansion-cycle/)。
 - **資料中心與電力**：Anthropic 揭露部分電力與資料中心安排的初始期是 20 年，含照付不議（[take-or-pay](/business/knowledge-cards/take-or-pay/)）條款、年度調漲與沒有上限的燃料成本轉嫁。另一份合約，Anthropic 向 Broadcom 承租機櫃的五年期設備租約，寫明資料中心延誤時租金可能提前開始支付。兩者都把資料中心建置與供電的時程風險放在承租的模型公司身上。
