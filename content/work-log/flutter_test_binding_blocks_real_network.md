@@ -8,7 +8,7 @@ tags: ["flutter", "dart", "test", "binding", "http", "integration-test", "isolat
 ---
 
 > **核心議題**：`TestWidgetsFlutterBinding.ensureInitialized()` 的副作用之一是把 `HttpClient` 換成一律回 400 的假件（防止 widget test 意外打真實網路）。POS App 要在測試套件裡加一層「對真實後端驗證行為」的測試時，這個副作用成為硬約束。
-> **案例骨幹**：真實後端驗證測試與流程測試住在同一個 `test/integration/` 目錄；前者不可初始化 binding、不可 import 流程測試的 harness（harness 第一行就 `ensureInitialized`）。兩者能共存的原因是 `flutter test` 讓每個測試檔案跑在獨立 isolate——binding 的全域副作用以檔案為邊界。
+> **案例骨幹**：真實後端驗證測試與流程測試放在同一個 `test/integration/` 目錄；前者不可初始化 binding、不可 import 流程測試的 harness（harness 第一行就 `ensureInitialized`）。兩者能共存的原因是 `flutter test` 讓每個測試檔案跑在獨立 isolate——binding 的全域副作用以檔案為邊界。
 
 ---
 

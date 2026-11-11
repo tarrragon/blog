@@ -57,7 +57,7 @@ slug: "review-scope-never-includes-the-instrument"
 - [#298 finding 清單列的是抽樣位置，照著逐處修會留下同一類在沒被點名的地方](/report/fix-the-class-not-the-cited-instances/) — 相鄰。那裡是清單被讀成窮舉，這裡是清單從來沒有涵蓋某幾類；共同點是清單的形式在暗示完整性，而完整性由誰放進清單決定。
 
 - [#347 審查的產出是判定還是歸因要先宣告](/report/verdict-and-attribution-are-different-products/) — 那張卡給本卡第二類項目（審查所用的工具）一個共同成因：器材的每一項設計都預設「只有當前這一批」，而讓它們必須跟著批次成長的是單變數歸因這個目標。推論是這一類缺陷有一大半不必逐項修——放棄逐項歸因之後它們當場消失，起跑前那份清單要顧的東西也跟著少。
-- [#349 量測的前置步驟決定了分母](/report/measurement-preprocessing-decides-the-denominator/) — 本卡在單一工具內部的遞迴。清單列得出「用了哪幾具工具、各是什麼版本」，列不出「每一具的分母是怎麼算的」；打開那具工具之後要問的第一個問題住在那張卡。
+- [#349 量測的前置步驟決定了分母](/report/measurement-preprocessing-decides-the-denominator/) — 本卡在單一工具內部的遞迴。清單列得出「用了哪幾具工具、各是什麼版本」，列不出「每一具的分母是怎麼算的」；打開那具工具之後要問的第一個問題寫在那張卡。
 
 ## 判讀徵兆
 

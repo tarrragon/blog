@@ -13,9 +13,9 @@ Oracle Cloud Infrastructure（OCI）帳號裡的 home region 在申請表送出�
 
 OCI 的帳號叫 **tenancy**（主控台中文介面寫作「租用戶」）。一個 tenancy 對應一個客戶，裡面所有的使用者、群組、政策與資源都屬於它；申請時填的 Cloud Account Name 就是 tenancy 的名稱。Tenancy 與它底下的每一個資源各有一個以 `ocid1.` 開頭的唯一識別碼，叫 OCID（Oracle Cloud ID），CLI 與 API 用它指定要操作的對象；tenancy 的 OCID 在 Tenancy Details 頁，其他資源的在各自的詳細頁上。
 
-**Home region** 是 tenancy 建立時所在的那一個區域。官方文件〈[Managing Regions](https://docs.oracle.com/en-us/iaas/Content/Identity/regions/managingregions.htm)〉說明它存放帳號資訊與身分資源（使用者、群組、政策），而且建立之後不能變更，FAQ 的原文是「No. Oracle assigns your home region and you can't change it.」使用者、群組、政策與 compartment 的定義住在 home region、只能在那裡修改：用 API 改 IAM 資源時要打 home region 的端點，用主控台改時主控台會替使用者把請求送到 home region，改完之後由 IAM 自動傳播到 tenancy 訂閱的其他區域，官方提醒傳播可能要幾分鐘。
+**Home region** 是 tenancy 建立時所在的那一個區域。官方文件〈[Managing Regions](https://docs.oracle.com/en-us/iaas/Content/Identity/regions/managingregions.htm)〉說明它存放帳號資訊與身分資源（使用者、群組、政策），而且建立之後不能變更，FAQ 的原文是「No. Oracle assigns your home region and you can't change it.」使用者、群組、政策與 compartment 的定義存放在 home region、只能在那裡修改：用 API 改 IAM 資源時要打 home region 的端點，用主控台改時主控台會替使用者把請求送到 home region，改完之後由 IAM 自動傳播到 tenancy 訂閱的其他區域，官方提醒傳播可能要幾分鐘。
 
-Tenancy 可以另外訂閱其他區域（region subscription），訂閱之後能在那一區建資源，而帳號與身分資源仍然住在 home region。訂閱改變的是資源能放在哪裡，不改變 home region。訂閱的數量有上限：官方〈Regions and Availability Domains〉寫明試用、Free Tier 與 Pay As You Go 的 tenancy 都只能有一個訂閱區域，也就是 home region 本身；升級成付費帳戶（Pay As You Go）之後可以申請提高這個上限；試用與 Free Tier 的 tenancy 不能申請，訂閱區域就只有 home region 一個。
+Tenancy 可以另外訂閱其他區域（region subscription），訂閱之後能在那一區建資源，而帳號與身分資源仍然存放在 home region。訂閱改變的是資源能放在哪裡，不改變 home region。訂閱的數量有上限：官方〈Regions and Availability Domains〉寫明試用、Free Tier 與 Pay As You Go 的 tenancy 都只能有一個訂閱區域，也就是 home region 本身；升級成付費帳戶（Pay As You Go）之後可以申請提高這個上限；試用與 Free Tier 的 tenancy 不能申請，訂閱區域就只有 home region 一個。
 
 **Compartment** 是 tenancy 底下用來分組資源與套用政策的容器。Tenancy 本身就是最上層的 root compartment，新帳號一開始只有它。實驗用的資源另開一個 compartment 放，清理時刪那一個 compartment 底下的資源就好，不會碰到 root 裡的其他設定。
 

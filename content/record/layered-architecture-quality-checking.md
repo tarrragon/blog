@@ -103,7 +103,7 @@ class BookController {
 }
 ```
 
-「ISBN 必須為 13 碼」是業務規則，住在 `Book` Entity 或 Value Object 裡。Controller 的角色是協調。
+「ISBN 必須為 13 碼」是業務規則，寫在 `Book` Entity 或 Value Object 裡。Controller 的角色是協調。
 
 ### UseCase 依賴具體實作
 

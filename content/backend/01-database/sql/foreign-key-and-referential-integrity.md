@@ -210,7 +210,7 @@ SELECT 姓名 FROM 顧客 WHERE 顧客編號 NOT IN (SELECT 顧客編號 FROM �
 
 有約束的那一邊，兩段查詢都對，而它們的寫法一個字都沒改。**改變的是那兩個判斷的前提從觀察變成了保證**：翻遍現在的訂單表沒有一筆顧客編號是空的，只證明此刻如此；`NOT NULL` 證明的是往後也不會有，而查詢要活得比這一批資料久（[Constraint](/backend/01-database/sql/knowledge-cards/constraint/)）。
 
-這裡有兩條約束在做不同的事，分開記各自買到什麼。**`NOT NULL` 買的是「這一欄有值」**，它管掉上面兩種錯——沒有空缺，內連接就掉不了列，`NOT IN` 也碰不到那個 `NULL`。**外鍵買的是「這個值指得到人」**，它管的是另一批推論：這一欄有值的列，連過去必定配得到一列。子表的每一列都歸屬到某個父列、`JOIN` 與 `LEFT JOIN` 在這個方向上回同一批列，這兩項要兩條約束都在才成立——只有外鍵的時候，顧客編號留空的訂單照樣寫得進去，`LEFT JOIN` 留下它而 `JOIN` 丟掉它。兩條都在的時候，「這個連接會掉列嗎」這個問題不必查資料就答得出來。`UNIQUE` 保證值不重複、`CHECK` 保證值滿足一個自己寫的條件、`PRIMARY KEY` 是 `NOT NULL` 加 `UNIQUE` 再加上「這是辨識一列的依據」，而這幾種約束共用同一條性質——豁免一個判斷的條件必須是一條約束，不能是一次觀察；各自買到什麼、以及它們為什麼住在 [DDL](/backend/01-database/sql/knowledge-cards/ddl-dml/) 那一側，在 [Constraint（約束）](/backend/01-database/sql/knowledge-cards/constraint/)。
+這裡有兩條約束在做不同的事，分開記各自買到什麼。**`NOT NULL` 買的是「這一欄有值」**，它管掉上面兩種錯——沒有空缺，內連接就掉不了列，`NOT IN` 也碰不到那個 `NULL`。**外鍵買的是「這個值指得到人」**，它管的是另一批推論：這一欄有值的列，連過去必定配得到一列。子表的每一列都歸屬到某個父列、`JOIN` 與 `LEFT JOIN` 在這個方向上回同一批列，這兩項要兩條約束都在才成立——只有外鍵的時候，顧客編號留空的訂單照樣寫得進去，`LEFT JOIN` 留下它而 `JOIN` 丟掉它。兩條都在的時候，「這個連接會掉列嗎」這個問題不必查資料就答得出來。`UNIQUE` 保證值不重複、`CHECK` 保證值滿足一個自己寫的條件、`PRIMARY KEY` 是 `NOT NULL` 加 `UNIQUE` 再加上「這是辨識一列的依據」，而這幾種約束共用同一條性質——豁免一個判斷的條件必須是一條約束，不能是一次觀察；各自買到什麼、以及它們為什麼屬於 [DDL](/backend/01-database/sql/knowledge-cards/ddl-dml/) 那一側，在 [Constraint（約束）](/backend/01-database/sql/knowledge-cards/constraint/)。
 
 這些推論的代價落在寫入那一側：每插進一列，資料庫要去父表確認那個值在不在，所以外鍵是拿寫入的工作換讀取的保證。這筆交換要用量測來判，而讀代價的工具在 [SQL.17 查詢的代價](/backend/01-database/sql/cost-lives-in-the-plan/)。要不要加這條外鍵約束，則是設計的決定：它在強制完整性與演進自由度之間取捨：正式的核心資料通常由資料庫強制，換取每一次讀取都能信任的推論；跨系統整合的資料常改由應用層保護，因為上游的結構可能先變，外鍵會讓那一次變動變成寫入失敗——[Schema Design](/backend/01-database/schema-design/) 的「Table 與 Relation」一節寫這個取捨，並提醒宣告與執法要分開看。
 

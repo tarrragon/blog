@@ -67,7 +67,7 @@ TLS 終結指的是責任鏈上由哪一層解開 HTTPS 加密，這個位置決
 
 後端這段也要加密時有兩種不同的安排，差別在入口層有沒有看到明文。透傳到後端（TLS passthrough）是入口層完全不解密，把加密流量原封轉給後端由後端自己終結——它保證中間沒有任何一跳是明文，代價是入口層看不到 HTTP 內容，無法做 path 路由與應用層健康檢查，等於退回 L4。重新加密（TLS re-encryption，又稱 TLS bridging）則是入口層先解密（因此讀得到 HTTP、能做 path 路由與健康檢查），處理完再對後端開一條新的 TLS 連線把流量重新加密送過去。兩者都讓後端這段是密文，但透傳全程不解密、放棄 L7 能力，重新加密在入口解一次、對後端再加一次、L7 路由與端到端加密都保住，代價是入口多付一次加解密成本。合規要求內網也不得明文、但入口又需要依 path 或 host 分流時，選的是重新加密而不是透傳。
 
-判讀的核心是入口到後端這段網路可不可信。多數設計讓入口終結、後端收明文，因為後端住在 [private subnet](/devops/infra/knowledge-cards/subnet/)、只接受來自入口 [security group](/devops/infra/knowledge-cards/security-group/) 的流量，這段內網被視為可信；只有當合規把「這段也必須加密」寫成硬要求時，才付出重新加密或透傳的成本，並在兩者之間按「還需不需要 L7 分流」選擇。這個位置決策本身、以及它和後端信任模型的關係，在[反向代理的職責](/devops/operations/01-load-balancing/reverse-proxy-responsibilities/)的 TLS 終止段有更完整的討論。
+判讀的核心是入口到後端這段網路可不可信。多數設計讓入口終結、後端收明文，因為後端位於 [private subnet](/devops/infra/knowledge-cards/subnet/)、只接受來自入口 [security group](/devops/infra/knowledge-cards/security-group/) 的流量，這段內網被視為可信；只有當合規把「這段也必須加密」寫成硬要求時，才付出重新加密或透傳的成本，並在兩者之間按「還需不需要 L7 分流」選擇。這個位置決策本身、以及它和後端信任模型的關係，在[反向代理的職責](/devops/operations/01-load-balancing/reverse-proxy-responsibilities/)的 TLS 終止段有更完整的討論。
 
 ## 健康檢查與摘除：入口層怎麼知道後端還活著
 

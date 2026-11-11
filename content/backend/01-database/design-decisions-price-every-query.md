@@ -234,7 +234,7 @@ SELECT count(*) FROM 商品窄 WHERE 價格 > 500;
 
 **改回來要付什麼**。把一欄搬到另一張表是一次真正的 schema 遷移：建新表、回填、改寫全部讀那一欄的查詢、再刪舊欄，中間要雙寫。完整流程在 [1.6 資料庫轉換實作：雙寫、回填、切流與回滾](/backend/01-database/database-migration-playbook/)，而它的成本與那一欄被多少段程式讀成正比。
 
-**所以設計當下要問的是**：這一欄在多少比例的查詢裡會被讀到。答案是「很少」而它又很大的時候，它跟同一張表的其他欄位的存取頻率差了一個量級，而**存取頻率差一個量級的欄位不該住在同一張表**。
+**所以設計當下要問的是**：這一欄在多少比例的查詢裡會被讀到。答案是「很少」而它又很大的時候，它跟同一張表的其他欄位的存取頻率差了一個量級，而**存取頻率差一個量級的欄位不該放在同一張表**。
 
 ## 一對多資料的切表方式
 
@@ -373,7 +373,7 @@ ANALYZE 會員2;
 EXPLAIN (ANALYZE, COSTS OFF)
 SELECT 會員編號 FROM 會員 WHERE lower(email) = 'user12345@example.com';
 
--- 欄位 collation：規則住在欄位上，查詢裡沒有任何東西在處理大小寫
+-- 欄位 collation：規則定義在欄位上，查詢裡沒有任何東西在處理大小寫
 EXPLAIN (ANALYZE, COSTS OFF)
 SELECT 會員編號 FROM 會員2 WHERE email = 'user12345@example.com';
 ```
@@ -384,7 +384,7 @@ SELECT 會員編號 FROM 會員2 WHERE email = 'user12345@example.com';
 欄位 collation            Index Scan            0.022 ms      4 個頁面
 ```
 
-兩條修法都快，而**欄位 collation 的查詢裡沒有任何東西在處理大小寫**——規則住在欄位上，每一段查詢自動套用它。函式索引要求每一段查詢都記得寫 `lower()`，漏掉一處就是一次全表掃描加一個不分大小寫失效的比對。
+兩條修法都快，而**欄位 collation 的查詢裡沒有任何東西在處理大小寫**——規則定義在欄位上，每一段查詢自動套用它。函式索引要求每一段查詢都記得寫 `lower()`，漏掉一處就是一次全表掃描加一個不分大小寫失效的比對。
 
 **代價在什麼條件下浮現**。表長到掃描明顯變慢的時候。而這一條還有第二個代價**在單一引擎上完全量不到**：各家的預設比較規則不同，同一句 `WHERE 姓名 = 'anna'` 在 MySQL 8.4 上回四列（`Anna`、`anna`、`ANNA`、`Ánna`——它的預設 collation `utf8mb4_0900_ai_ci` 把大小寫與重音都算成同一個值），而在 SQLite 3.51 與 PostgreSQL 18 上只回逐字相同的那一列（三家的實測在 [SQL.15 字串比較與 collation](/backend/01-database/sql/string-comparison-and-collation/)）。規則沒有寫出來的時候，換一家引擎、換一個資料庫的建立參數，命中的列就變。
 

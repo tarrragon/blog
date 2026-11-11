@@ -26,7 +26,7 @@ tags: ["automation", "beacon", "analytics", "bot-detection", "privacy", "data-qu
 
 ## 欄位變更要同步到接收端
 
-讀者要照著改的程式碼住在 [接收端與試算表表頭的欄位同步：payload 新增欄位的對照、doPost 的改法與重新部署](receiver-field-sync/)，本頁正文不會渲染。
+讀者要照著改的程式碼寫在 [接收端與試算表表頭的欄位同步：payload 新增欄位的對照、doPost 的改法與重新部署](receiver-field-sync/)，本頁正文不會渲染。
 
 ## 讀者旅程
 

@@ -63,7 +63,7 @@ CREATE INDEX ix ON 訂單 (金額);
 OFFSET 0 → 101,102     OFFSET 2 → 103,105     OFFSET 4 → 104
 ```
 
-同一段查詢跑幾次都是這個結果，換計畫也是。**判斷標準是排序鍵的組合在「排序用的那條比較規則下」兩兩可分**，這個性質叫全序：任兩列都比得出先後——「值不重複」還不夠，有兩種形態會讓不重複的鍵仍然排不出先後。一種是空值：一欄掛著 `UNIQUE` 而三列都是 `NULL`，約束成立而 `NULL` 之間比不出高下，SQLite 3.51 上建了索引之後同一段查詢回的順序就翻轉。另一種是比較規則把不同的值判成相等：MySQL 預設的 collation 底下 `Anna`／`anna`／`ANNA`／`Ánna` 四個值 `COUNT(DISTINCT BINARY 姓名)` 是 4 而 `COUNT(DISTINCT 姓名)` 是 1。看起來唯一的字串鍵因此可能不唯一，那條比較規則住在哪一層、各家預設是什麼，在 [SQL.15 字串比較與 collation：相等、排序、LIKE 與索引可用性](/backend/01-database/sql/string-comparison-and-collation/)。
+同一段查詢跑幾次都是這個結果，換計畫也是。**判斷標準是排序鍵的組合在「排序用的那條比較規則下」兩兩可分**，這個性質叫全序：任兩列都比得出先後——「值不重複」還不夠，有兩種形態會讓不重複的鍵仍然排不出先後。一種是空值：一欄掛著 `UNIQUE` 而三列都是 `NULL`，約束成立而 `NULL` 之間比不出高下，SQLite 3.51 上建了索引之後同一段查詢回的順序就翻轉。另一種是比較規則把不同的值判成相等：MySQL 預設的 collation 底下 `Anna`／`anna`／`ANNA`／`Ánna` 四個值 `COUNT(DISTINCT BINARY 姓名)` 是 4 而 `COUNT(DISTINCT 姓名)` 是 1。看起來唯一的字串鍵因此可能不唯一，那條比較規則定義在哪一層、各家預設是什麼，在 [SQL.15 字串比較與 collation：相等、排序、LIKE 與索引可用性](/backend/01-database/sql/string-comparison-and-collation/)。
 
 把主鍵接在排序鍵最後面之所以省事，是因為它同時避開了空值與比較規則這兩種形態——主鍵[約束](/backend/01-database/sql/knowledge-cards/constraint/)保證它不重複也不是 `NULL`，而數值型別的比較規則不會把兩個不同的數判成相等。SQLite 在這裡是例外：只有宣告成 `INTEGER PRIMARY KEY` 的那一欄擋得住 `NULL`，寫成 `INT PRIMARY KEY` 的主鍵照樣收得下好幾個 `NULL`，要當決勝鍵就得另外宣告 `NOT NULL`。所以排序鍵分不分得出高下，多半在寫 `CREATE TABLE` 的那一刻就定了：那一欄有沒有唯一約束、決勝鍵有沒有現成的欄位可用。[backend 1.16 Schema 設計決定的查詢代價](/backend/01-database/design-decisions-price-every-query/) 的「這個鍵唯不唯一」一節走那個決定，並示範補決勝鍵治得好同分的列造成的重複與遺漏、治不好翻頁途中的寫入造成的位移。
 

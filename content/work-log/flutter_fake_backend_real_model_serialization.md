@@ -41,7 +41,7 @@ type '_Map<String, dynamic>' is not a subtype of type 'List<dynamic>'
 
 教訓一句話：**回應形狀的知識只該存在一份**。fixture 或測試裡出現第二份（手寫 JSON、手挖欄位），它與第一份的分岔只是時間問題。
 
-## 3. 狀態演變用 copyWith，行為住在 handler
+## 3. 狀態演變用 copyWith，行為寫在 handler
 
 有狀態假後端與「回放固定回應的 stub」的分水嶺在於它模擬後端動詞的效果。freezed 的 `copyWith` 讓這件事保持宣告式：
 

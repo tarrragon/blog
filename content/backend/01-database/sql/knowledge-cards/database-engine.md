@@ -23,7 +23,7 @@ tags: ["sql", "engine", "portability", "knowledge-card"]
 
 ## 概念位置
 
-**引擎是「文字之外」那幾方裡射程最大的一方**——識別字規則、寬鬆度與設定、[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)都住在它裡面，而權限系統是它另外管的一層（[SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)）。所以「換一家引擎」這句話涵蓋的變動比它聽起來的多。
+**引擎是「文字之外」那幾方裡射程最大的一方**——識別字規則、寬鬆度與設定、[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)都由它定義與實作，而權限系統是它另外管的一層（[SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)）。所以「換一家引擎」這句話涵蓋的變動比它聽起來的多。
 
 引擎不決定的只有一件事：這批列是不是那個問題的答案。那一層沒有機械判定，理由在 [SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/)。
 

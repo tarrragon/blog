@@ -43,7 +43,7 @@ pid=7 opcache_enabled=true cached_scripts=1 hits=3
 
 PID 6 第一次執行時把腳本編譯進快取，PID 7 接下來直接命中——它自己沒有編譯過這個檔案，用的是 PID 6 編譯好的結果。命中次數跨 worker 累加。這帶出兩個推論：
 
-- **worker 被換掉不會清空快取。** [`pm.max_requests`](/programming/php/01-server-runtime/php-fpm/#max_requests定期換掉-worker-以控制記憶體) 換掉的是 worker，快取住在 master 建立的共享記憶體裡，新 worker 一啟動就能用。要清空快取得重啟或 reload 整個 PHP-FPM。
+- **worker 被換掉不會清空快取。** [`pm.max_requests`](/programming/php/01-server-runtime/php-fpm/#max_requests定期換掉-worker-以控制記憶體) 換掉的是 worker，快取存放在 master 建立的共享記憶體裡，新 worker 一啟動就能用。要清空快取得重啟或 reload 整個 PHP-FPM。
 - **同一台機器上的不同 pool 共用同一個 master 時，也共用這塊記憶體。** 所以 `memory_consumption` 要容得下所有 pool 的程式碼。
 
 [mod_php](/programming/php/01-server-runtime/mod-php/) 的情況相同：Apache 的父程序載入 PHP 時建立共享記憶體，子程序繼承它。在 `php:8.5-apache` 上連續請求五次，五個不同的子程序（PID 16 到 20）回報的命中次數依序是 0、1、2、3、4。

@@ -9,7 +9,7 @@ aliases: ["/infra/05-core-services/loadbalancer-alb/"]
 
 ALB（Application Load Balancer）描述流量進入系統的第一站。它在 IaC 裡的接線責任是把三個層次釘清楚：listener 決定監聽哪些 port 與協定、target group 決定流量導向哪些運算後端、health check 決定後端是否健康到可以接流量。ALB 本身是 stateless 的 — 重建不會遺失資料，但會換掉它的 DNS 名稱，所以對外服務通常在它前面再掛一層穩定的 DNS 記錄（Route 53 alias 或 CNAME），讓使用者看到的網域不隨 ALB 重建而改變。
 
-ALB 掛在 public subnet、引用專屬的 security group，security group 的入站通常只開 80 和 443 對 `0.0.0.0/0`（這是少數合理出現全開的位置，因為 ALB 的工作本來就是接收公開流量）。後端運算節點住在 private subnet，它們的 security group 入站只允許來自 ALB security group 的流量 — 這個 group-to-group 引用讓規則跟著成員身分走，不跟著 IP 走（見[模組三：網路地基](/devops/infra/03-network-foundation/)）。
+ALB 掛在 public subnet、引用專屬的 security group，security group 的入站通常只開 80 和 443 對 `0.0.0.0/0`（這是少數合理出現全開的位置，因為 ALB 的工作本來就是接收公開流量）。後端運算節點位於 private subnet，它們的 security group 入站只允許來自 ALB security group 的流量 — 這個 group-to-group 引用讓規則跟著成員身分走，不跟著 IP 走（見[模組三：網路地基](/devops/infra/03-network-foundation/)）。
 
 ## ALB 與 listener 設定
 

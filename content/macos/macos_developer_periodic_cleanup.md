@@ -246,7 +246,7 @@ Homebrew 每個套件只連結一個版本，升級之後舊版的檔案沒有�
 
 ## 容器與虛擬機的虛擬磁碟
 
-OrbStack、Docker Desktop 這類容器工具把整台 Linux 虛擬機的磁碟存成主機上的一個虛擬磁碟檔，容器、image、volume，以及 OrbStack 建立的 Linux 機器，全部住在裡面。這個虛擬磁碟檔是 sparse file（稀疏檔）：`ls -l` 顯示的是它宣告的容量上限，`du` 量到的才是實際寫入的區塊，兩者可以差到數十倍。這個差距造成的誤判在 [macOS 磁碟空間被吃光的診斷流程](../macos_disk_space_diagnosis/) 的〈用實際佔用值找大戶，避開 sparse 假大小〉一節。
+OrbStack、Docker Desktop 這類容器工具把整台 Linux 虛擬機的磁碟存成主機上的一個虛擬磁碟檔，容器、image、volume，以及 OrbStack 建立的 Linux 機器，全部存放在裡面。這個虛擬磁碟檔是 sparse file（稀疏檔）：`ls -l` 顯示的是它宣告的容量上限，`du` 量到的才是實際寫入的區塊，兩者可以差到數十倍。這個差距造成的誤判在 [macOS 磁碟空間被吃光的診斷流程](../macos_disk_space_diagnosis/) 的〈用實際佔用值找大戶，避開 sparse 假大小〉一節。
 
 虛擬磁碟檔屬於狀態資料：刪除它等於刪掉虛擬機裡全部的容器、資料庫與 Linux 機器，沒有任何工具會重建。縮小它要從虛擬機裡面清，下列 `docker` 指令都要先啟動 OrbStack 或 Docker Desktop 才能執行。虛擬機裡的內容同樣依重建者區分：image 與 build cache 是可以重新拉取或重新 build 的快取，停止的容器的可寫層與 volume 是狀態資料：
 

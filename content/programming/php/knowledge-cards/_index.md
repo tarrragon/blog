@@ -15,7 +15,7 @@ PHP 知識卡收錄 PHP 執行模型的術語。每張卡自包含、可獨立�
 | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | [SAPI](/programming/php/knowledge-cards/sapi/)                                      | PHP 核心與外部環境之間的介面，決定 PHP 怎麼被啟動、請求怎麼交進來 |
 | [Shared-nothing 請求模型](/programming/php/knowledge-cards/shared-nothing-request/) | 每個請求結束時清空 PHP 程式碼建立的全部狀態，下一個請求從空白開始 |
-| [mod_php](/programming/php/knowledge-cards/mod-php/)                                | 以 Apache 模組形式載入的 PHP，直譯器住在 Apache 的子程序裡        |
+| [mod_php](/programming/php/knowledge-cards/mod-php/)                                | 以 Apache 模組形式載入的 PHP，直譯器在 Apache 的子程序裡執行      |
 | [ZTS](/programming/php/knowledge-cards/zts/)                                        | Zend Thread Safety，讓 PHP 能在多執行緒的伺服器裡執行的編譯選項   |
 | [PHP-FPM](/programming/php/knowledge-cards/php-fpm/)                                | 管理一群常駐 PHP worker、用 FastCGI 接請求的程序管理器            |
 | [OPcache](/programming/php/knowledge-cards/opcache/)                                | 把 PHP 檔案編譯好的 opcode 存在共享記憶體裡重用的內建擴充         |

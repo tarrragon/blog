@@ -41,7 +41,7 @@ kubectl get events --field-selector involvedObject.kind=ReplicaSet --sort-by=.la
 
 ## 控制平面與節點上的元件
 
-叢集裡的程式分成兩群。**控制平面**（control plane）負責保存期望狀態與做決策，**節點**負責實際跑容器。kind（用 Docker 容器扮演節點的本機叢集工具）建立的單節點叢集裡，兩群都住在同一個節點上。系統元件放在名為 `kube-system` 的 namespace 裡——namespace 是叢集裡劃分物件名稱的範圍，同一個 namespace 裡名稱不能重複，沒指定時用的是 `default`，見 [Namespace](/backend/knowledge-cards/namespace/)。用 `-n` 指定 namespace 列出系統元件：
+叢集裡的程式分成兩群。**控制平面**（control plane）負責保存期望狀態與做決策，**節點**負責實際跑容器。kind（用 Docker 容器扮演節點的本機叢集工具）建立的單節點叢集裡，兩群都跑在同一個節點上。系統元件放在名為 `kube-system` 的 namespace 裡——namespace 是叢集裡劃分物件名稱的範圍，同一個 namespace 裡名稱不能重複，沒指定時用的是 `default`，見 [Namespace](/backend/knowledge-cards/namespace/)。用 `-n` 指定 namespace 列出系統元件：
 
 ```bash
 # 列出 kube-system 這個 namespace 裡的 Pod

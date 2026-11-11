@@ -8,7 +8,7 @@ tags: ["backend", "reliability", "case-study"]
 
 本案例庫以服務為單位、收錄公開 SRE 實踐（SRE Book / 工程部落格 / 演講 / paper）。每個服務一個資料夾，累積該服務的可靠性工程文化、failure mode 與 chaos / DR 案例。
 
-服務分層依 [模組六 _index](/backend/06-reliability/) 的 T1 / T2 / T3 規劃。重複出現於 06 / 08 的服務（stripe / cloudflare / linkedin）資料夾住在主要教學模組、跨模組以連結互通。
+服務分層依 [模組六 _index](/backend/06-reliability/) 的 T1 / T2 / T3 規劃。重複出現於 06 / 08 的服務（stripe / cloudflare / linkedin）資料夾放在主要教學模組、跨模組以連結互通。
 
 ## T1 服務
 

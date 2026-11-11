@@ -7,7 +7,7 @@ tags: ["php", "fastcgi", "nginx", "deployment"]
 aliases: ["/php/01-server-runtime/fastcgi/"]
 ---
 
-這篇說明 FastCGI 這個協定：它怎麼讓 web 伺服器與一個常駐的 PHP 程序溝通，以及這個分工帶來的一個安全邊界。它是 [PHP 的請求生命週期與 SAPI](/programming/php/01-server-runtime/request-lifecycle-and-sapi/) 三個問題的一組答案：PHP 直譯器住在 web 伺服器外面的常駐程序裡。FastCGI 是協定，管理那群 PHP 程序的實作是 [PHP-FPM](/programming/php/01-server-runtime/php-fpm/)，本篇只講協定本身與它的安全面。
+這篇說明 FastCGI 這個協定：它怎麼讓 web 伺服器與一個常駐的 PHP 程序溝通，以及這個分工帶來的一個安全邊界。它是 [PHP 的請求生命週期與 SAPI](/programming/php/01-server-runtime/request-lifecycle-and-sapi/) 三個問題的一組答案：PHP 直譯器在 web 伺服器外面的常駐程序裡執行。FastCGI 是協定，管理那群 PHP 程序的實作是 [PHP-FPM](/programming/php/01-server-runtime/php-fpm/)，本篇只講協定本身與它的安全面。
 
 ## FastCGI 要解決 CGI 的哪一件事
 

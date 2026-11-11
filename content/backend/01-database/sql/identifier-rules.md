@@ -46,7 +46,7 @@ SELECT * FROM MixedCase;            -- 摺成 mixedcase 去找
 
 加引號的效果是關掉「沒加引號就摺成小寫」這道摺疊，要求逐字比對。
 
-這道摺疊只作用在名字上。同一家引擎把 `Orders` 摺成 `orders` 之後，拿 `'Anna'` 去比 `'anna'` 時用的是另一套規則，叫 collation，而 PostgreSQL 預設的 collation 判這兩個值不相等——值的大小寫與名字的大小寫由兩套彼此獨立的規則管。[SQL.15 字串比較與 collation：相等、排序、LIKE 與索引可用性](/backend/01-database/sql/string-comparison-and-collation/) 寫 collation 這套規則住在哪一層，以及索引與條件的規則為什麼要對得上。
+這道摺疊只作用在名字上。同一家引擎把 `Orders` 摺成 `orders` 之後，拿 `'Anna'` 去比 `'anna'` 時用的是另一套規則，叫 collation，而 PostgreSQL 預設的 collation 判這兩個值不相等——值的大小寫與名字的大小寫由兩套彼此獨立的規則管。[SQL.15 字串比較與 collation：相等、排序、LIKE 與索引可用性](/backend/01-database/sql/string-comparison-and-collation/) 寫 collation 這套規則定義在哪一層，以及索引與條件的規則為什麼要對得上。
 
 ## SQLite 與 DuckDB 對識別字大小寫的處理
 

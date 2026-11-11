@@ -10,7 +10,7 @@ Pod 的核心概念是「Kubernetes 排程與執行的最小單位」：一個 P
 
 ## 概念位置
 
-Pod 位在 [Container](/backend/knowledge-cards/container/) 之上、工作負載物件之下。容器是被執行的程式與它的執行環境；Pod 是把幾個必須住在一起的容器包成一個排程單位，給它們一個共用的 IP，讓它們能用 `localhost` 互連、共用掛載的磁碟區。Pod 通常不由使用者直接建立，而是由 ReplicaSet（維持固定數量）或其上層的 Deployment（負責換版本，見 [Rolling Update](/backend/knowledge-cards/rolling-update/)）依 Pod 範本建立。其他服務找到一組 Pod 的方式是 [Kubernetes Service](/backend/knowledge-cards/kubernetes-service/)。
+Pod 位在 [Container](/backend/knowledge-cards/container/) 之上、工作負載物件之下。容器是被執行的程式與它的執行環境；Pod 是把幾個必須放在同一台機器上一起執行的容器包成一個排程單位，給它們一個共用的 IP，讓它們能用 `localhost` 互連、共用掛載的磁碟區。Pod 通常不由使用者直接建立，而是由 ReplicaSet（維持固定數量）或其上層的 Deployment（負責換版本，見 [Rolling Update](/backend/knowledge-cards/rolling-update/)）依 Pod 範本建立。其他服務找到一組 Pod 的方式是 [Kubernetes Service](/backend/knowledge-cards/kubernetes-service/)。
 
 ## 可觀察訊號與例子
 

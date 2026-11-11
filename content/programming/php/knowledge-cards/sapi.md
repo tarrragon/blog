@@ -11,7 +11,7 @@ SAPI（Server API）是 PHP 核心與外部環境之間的介面層：它把外�
 
 ## 概念位置
 
-SAPI 位在 PHP 核心（Zend 引擎與擴充）與 web 伺服器、命令列之間。它決定 PHP 直譯器住在哪個程序、那個程序活多久，這兩件事又決定 [OPcache](/programming/php/knowledge-cards/opcache/) 有沒有編譯結果可以重用。[mod_php](/programming/php/knowledge-cards/mod-php/) 是 SAPI 的一種（`apache2handler`），PHP-FPM 是另一種（`fpm-fcgi`）。
+SAPI 位在 PHP 核心（Zend 引擎與擴充）與 web 伺服器、命令列之間。它決定 PHP 直譯器在哪個程序裡執行、那個程序活多久，這兩件事又決定 [OPcache](/programming/php/knowledge-cards/opcache/) 有沒有編譯結果可以重用。[mod_php](/programming/php/knowledge-cards/mod-php/) 是 SAPI 的一種（`apache2handler`），PHP-FPM 是另一種（`fpm-fcgi`）。
 
 ## 可觀察訊號與例子
 

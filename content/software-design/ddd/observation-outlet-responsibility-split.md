@@ -79,7 +79,7 @@ final watchBooksProvider = StreamProvider<List<Book>>((ref) async* {
 });
 ```
 
-`StreamProvider`、`Ref`、`AsyncValue` 這些框架型別在這層第一次出現、也只在這層出現。組裝層同時吸收「呈現需求」性質的行為——訂閱當下要先看到當前值，是消費端的需要、不是「變更通知」語意的一部分，所以那兩行 `yield` 住在這裡而非 repository 裡。組裝層的其他責任（誰插上誰、插上了沒有的證言）見 [組裝層的可達性](/software-design/ddd/composition-root-reachability/)；本案的 Flutter 實作細節見 [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)。
+`StreamProvider`、`Ref`、`AsyncValue` 這些框架型別在這層第一次出現、也只在這層出現。組裝層同時吸收「呈現需求」性質的行為——訂閱當下要先看到當前值，是消費端的需要、不是「變更通知」語意的一部分，所以那兩行 `yield` 寫在這裡而非 repository 裡。組裝層的其他責任（誰插上誰、插上了沒有的證言）見 [組裝層的可達性](/software-design/ddd/composition-root-reachability/)；本案的 Flutter 實作細節見 [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)。
 
 ## 三分總表
 

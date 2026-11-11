@@ -35,7 +35,7 @@ GitHub 把 issue 與 pull request 的縮寫引用展開成連結（官方稱為 
 
 > Autolinked references are not created in wikis or files in a repository.
 
-同一串字的效果取決於它住在哪個位置。
+同一串字的效果取決於它寫在哪個位置。
 
 | 文字所在位置                          | 解析行為   | 對外效果                                |
 | ------------------------------------- | ---------- | --------------------------------------- |

@@ -34,7 +34,7 @@ tags: ["sql", "database", "query"]
 
 **文字給人讀的那一面問「這段文字對讀它的人說了什麼」。** 宣告式語言把要什麼結果寫成文字，於是同一段文字有兩個讀者：引擎讀行為，人讀宣告。[SQL.20 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/) 問文字說了什麼——選了 `LEFT` 就是宣告預期有配不到的列，而引擎從不查證這件事，宣告落空時查詢仍然回正確答案，代價落在下一個相信那段文字的人身上。[SQL.21 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/) 問文字該為誰而寫——兩個讀者的需求在 SQL 上多數時候指向同一個寫法，而分岔發生時要改的是 schema 而不是查詢。
 
-語意模型與文字之外的決定者答案方向相反，而問的是同一個性質的兩面，所以兩組不是互斥的分類：引擎寬鬆度的實例就住在講語意模型的 [SQL.2 子句的求值順序：每一步可用的欄位、語意模型擋下的寫法與各家引擎放寬的寫法](/backend/01-database/sql/clause-evaluation-order/) 與 [SQL.9 分組鍵的選擇：鍵與一組所代表的對象](/backend/01-database/sql/grouping-key-decides-the-unit/) 裡（同一個寫法 SQLite 接受而 DuckDB 與 MySQL 拒絕）。[SQL.1 宣告式的紅利與代價：書寫、求值與執行順序各自由誰決定](/backend/01-database/sql/declarative-not-procedural/) 是兩組分開的地方——它把書寫順序、求值順序與執行順序分開，書寫順序與求值順序屬語意模型，執行順序屬文字之外的決定者。
+語意模型與文字之外的決定者答案方向相反，而問的是同一個性質的兩面，所以兩組不是互斥的分類：引擎寬鬆度的實例就寫在講語意模型的 [SQL.2 子句的求值順序：每一步可用的欄位、語意模型擋下的寫法與各家引擎放寬的寫法](/backend/01-database/sql/clause-evaluation-order/) 與 [SQL.9 分組鍵的選擇：鍵與一組所代表的對象](/backend/01-database/sql/grouping-key-decides-the-unit/) 裡（同一個寫法 SQLite 接受而 DuckDB 與 MySQL 拒絕）。[SQL.1 宣告式的紅利與代價：書寫、求值與執行順序各自由誰決定](/backend/01-database/sql/declarative-not-procedural/) 是兩組分開的地方——它把書寫順序、求值順序與執行順序分開，書寫順序與求值順序屬語意模型，執行順序屬文字之外的決定者。
 
 **讀文字之外的決定者那幾篇之前，要先讀得出手上這個資料庫的現況**，而查法不在查詢語言裡：名字實際存成什麼查系統目錄——資料庫把自己有哪些表、哪些欄位也存成表，那幾張就是系統目錄（`pg_tables` / `sqlite_master`）、自己有哪些授權查 `information_schema.role_table_grants`、有哪些索引查 `pg_indexes` 或 `PRAGMA index_list`、有沒有統計查 `pg_stats` 或 `sqlite_stat1`、哪些約束宣告了查 `information_schema.table_constraints` 或 `PRAGMA foreign_key_list`、生不生效另外查（SQLite 查連線上的 `PRAGMA foreign_keys`，PostgreSQL 查 `pg_constraint.convalidated`）、字串套哪一條比較規則查 `pg_database.datcollate`、`@@collation_database` 或 `PRAGMA collation_list`。
 
@@ -139,13 +139,13 @@ tags: ["sql", "database", "query"]
 
 ## 各篇共用的範例資料庫
 
-讀者要看的版本住在 [SQL 各篇共用的範例資料庫](/backend/01-database/sql/sample-bookstore-database/)，文章一律連到那一頁，不連本頁的錨點——本頁不在網站上顯示。
+讀者要看的版本寫在 [SQL 各篇共用的範例資料庫](/backend/01-database/sql/sample-bookstore-database/)，文章一律連到那一頁，不連本頁的錨點——本頁不在網站上顯示。
 
 ## 知識卡
 
-語法元素的定義住在 [knowledge-cards](/backend/01-database/sql/knowledge-cards/)。文章預設讀者已經知道那些詞指什麼，卡負責那一層。
+語法元素的定義寫在 [knowledge-cards](/backend/01-database/sql/knowledge-cards/)。文章預設讀者已經知道那些詞指什麼，卡負責那一層。
 
-## 這幾件事不住在這裡
+## 這幾件事不寫在這裡
 
 資料庫工作的幾個主要議題已經有各自的落點，本分類不重寫它們——同一個主題兩套寫法會讓讀者拿到其中一套而不知道另一套存在。
 

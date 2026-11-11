@@ -44,7 +44,7 @@ Keycloak 是 *自管控制面* 的 human identity 與 federation engine、不是
 
 **Client 註冊與 secret**：每個應用是一個 client、confidential client 有 secret、public client（SPA / mobile）走 PKCE 不存 secret。client secret 不存 source code、走 [secret management](/backend/knowledge-cards/secret-management/) 注入。client 數量爆炸時要設 naming convention 跟 ownership 標記、不然 stale client 會堆積。
 
-**User Federation**：把既有 LDAP / Active Directory 接進 Keycloak、user 還是住在原 directory、Keycloak 做 protocol 翻譯（LDAP → OIDC / SAML）。這是 Keycloak 強項之一 — 不需要 user migration、漸進接入。陷阱是 LDAP 連線健康 = IdP 健康、LDAP 慢 = 全公司 login 慢。
+**User Federation**：把既有 LDAP / Active Directory 接進 Keycloak、user 資料還是存放在原 directory、Keycloak 做 protocol 翻譯（LDAP → OIDC / SAML）。這是 Keycloak 強項之一 — 不需要 user migration、漸進接入。陷阱是 LDAP 連線健康 = IdP 健康、LDAP 慢 = 全公司 login 慢。
 
 **Identity Brokering**：把外部 IdP（Google、Microsoft、其他 SAML / OIDC provider）federate 進來、Keycloak 當中介。B2B 合作常見模式 — partner 用自己的 IdP、不在我的 user store 開帳號。決策點是 *trust mapping*：外部 claim 怎麼對應到內部 role、外部 IdP 的 MFA 狀態怎麼信任。
 

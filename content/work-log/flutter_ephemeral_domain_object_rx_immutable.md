@@ -50,7 +50,7 @@ class _CheckoutState {                       // immutable 內核：私有 class
 
 同樣重要的是**沒有開放的東西**：`_state` 私有、`_CheckoutState` 私有，外部拿不到 Rx 也拿不到內核——變更的唯一入口是 `updateInputAmount` 這批語意化方法。對照直接暴露 `Rx<CheckoutState>` 讓呼叫端自己 `.value = ...` 的寫法：那會把「哪些變更是合法的」交還給每個呼叫端。這是把逃生口關掉的狀態管理版。
 
-## 不變式住在內核、錯誤是結構化的
+## 不變式由內核維護、錯誤是結構化的
 
 「能不能結帳」的判斷收在內核的 `canCheckout` / `cannotCheckoutError`，後者回傳的是 enum，而不是布林或字串：
 

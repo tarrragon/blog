@@ -3,7 +3,7 @@ title: "i18n 的責任邊界：Domain 給錯誤碼，ViewModel 給訊息"
 slug: "business-layer-i18n-management-methodology"
 date: 2026-03-04
 draft: false
-description: "要加一種語言卻發現使用者訊息散在 Domain、ViewModel、UI 三層時，用來判定各層對 i18n 各自負責什麼、字串該住在哪一層"
+description: "要加一種語言卻發現使用者訊息散在 Domain、ViewModel、UI 三層時，用來判定各層對 i18n 各自負責什麼、字串該放在哪一層"
 tags: ["i18n", "國際化", "分層架構", "ViewModel", "訊息管理"]
 ---
 

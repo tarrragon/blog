@@ -11,7 +11,7 @@ ZTS（Zend Thread Safety）是 PHP 的編譯選項（`--enable-zts`）：開啟�
 
 ## 概念位置
 
-ZTS 決定 PHP 能不能住在一個多執行緒的程序裡。PHP 跑在獨立程序裡的執行方式（CGI、[PHP-FPM](/programming/php/knowledge-cards/php-fpm/)）不需要它，每個 worker 一次只處理一個請求；PHP 嵌在多執行緒伺服器裡時需要它：mod_php 要搭配 Apache 的 worker 或 event MPM、FrankenPHP 用執行緒當 worker。
+ZTS 決定 PHP 能不能在一個多執行緒的程序裡執行。PHP 跑在獨立程序裡的執行方式（CGI、[PHP-FPM](/programming/php/knowledge-cards/php-fpm/)）不需要它，每個 worker 一次只處理一個請求；PHP 嵌在多執行緒伺服器裡時需要它：mod_php 要搭配 Apache 的 worker 或 event MPM、FrankenPHP 用執行緒當 worker。
 
 ## 可觀察訊號與例子
 

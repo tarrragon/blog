@@ -8,7 +8,7 @@ tags: ["backend", "incident-response", "case-study"]
 
 本案例庫以服務為單位、收錄公開事故報告（post-mortem / status page / 工程部落格）。每個服務一個資料夾，累積該服務的架構脈絡、事故時間線與共通失敗模式。
 
-服務分層依 [模組八 _index](/backend/08-incident-response/) 的 T1 / T2 / T3 規劃。重複出現於 06 / 08 的服務（stripe / cloudflare / linkedin）資料夾住在主要教學模組、跨模組以連結互通。
+服務分層依 [模組八 _index](/backend/08-incident-response/) 的 T1 / T2 / T3 規劃。重複出現於 06 / 08 的服務（stripe / cloudflare / linkedin）資料夾放在主要教學模組、跨模組以連結互通。
 
 ## 完成狀態
 

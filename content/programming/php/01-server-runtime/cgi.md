@@ -7,7 +7,7 @@ tags: ["php", "cgi", "deployment"]
 aliases: ["/php/01-server-runtime/cgi/"]
 ---
 
-這篇說明 CGI（Common Gateway Interface）這種執行模型，以及 PHP 用它執行時的行為與成本。它是 [PHP 的請求生命週期與 SAPI](/programming/php/01-server-runtime/request-lifecycle-and-sapi/) 那組問題的一組答案：PHP 直譯器住在每個請求新啟動的程序裡，程序與應用程式狀態都只活一個請求。
+這篇說明 CGI（Common Gateway Interface）這種執行模型，以及 PHP 用它執行時的行為與成本。它是 [PHP 的請求生命週期與 SAPI](/programming/php/01-server-runtime/request-lifecycle-and-sapi/) 那組問題的一組答案：PHP 直譯器在每個請求新啟動的程序裡執行，程序與應用程式狀態都只活一個請求。
 
 ## CGI 怎麼把請求交給外部程式
 
@@ -76,7 +76,7 @@ CGI 的成本這麼高，它在共享主機上用了很久，理由是隔離。�
 - **檔案權限對得上**：PHP 上傳或產生的檔案屬於站台擁有者，透過 FTP 登入的同一個帳號能修改與刪除它們。
 - **一個請求出錯只影響那一個程序**：記憶體洩漏或當掉都隨程序結束而消失。
 
-這組需求是 [mod_php](/programming/php/01-server-runtime/mod-php/) 在 Apache 官方的 MPM 下做不到的：mod_php 的 PHP 住在 Apache 的程序裡，所有站台都以同一個帳號執行。後來 [PHP-FPM](/programming/php/01-server-runtime/php-fpm/) 用 pool（每個站台一組 worker、各自指定執行帳號）在常駐程序上做到同樣的隔離，共享主機才有理由離開 CGI。
+這組需求是 [mod_php](/programming/php/01-server-runtime/mod-php/) 在 Apache 官方的 MPM 下做不到的：mod_php 的 PHP 在 Apache 的程序裡執行，所有站台都以同一個帳號執行。後來 [PHP-FPM](/programming/php/01-server-runtime/php-fpm/) 用 pool（每個站台一組 worker、各自指定執行帳號）在常駐程序上做到同樣的隔離，共享主機才有理由離開 CGI。
 
 ## 請求資料與程式呼叫參數之間的邊界
 

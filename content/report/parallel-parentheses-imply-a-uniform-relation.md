@@ -53,7 +53,7 @@ slug: "parallel-parentheses-imply-a-uniform-relation"
 
 ## 跟其他原則的關係
 
-- [語句要在它的消費單位內資訊自足](/report/sentence-self-sufficiency-by-consumption-unit/) — 正交。那一張問單句夠不夠讀者復原命題，而這六個括號各自都自足；本卡問的是一組句子有沒有宣告一個不存在的規律，那個缺陷住在句與句之間。
+- [語句要在它的消費單位內資訊自足](/report/sentence-self-sufficiency-by-consumption-unit/) — 正交。那一張問單句夠不夠讀者復原命題，而這六個括號各自都自足；本卡問的是一組句子有沒有宣告一個不存在的規律，那個缺陷出現在句與句之間。
 - [理解要取樣、不要靠判斷](/report/comprehension-sampled-not-judged/) — 偵測方式的來源。這一類只有多份獨立逐項判讀才現形，因為作者與同源 reviewer 都會用意圖補完；探針要被明令逐項回報「這個括號跟前面那個詞是什麼關係」，問「這段清不清楚」問不出來。
 - [軸名要取機制、不要取它的代理](/report/axis-named-by-proxy-not-mechanism/) — 同族：真正在做功的那個關係被放在次要的位置上。那一張是機制留在括號或下一句的理由裡而軸名取了代理，本卡是括號自己不說明它裝的是哪一種關係。
 

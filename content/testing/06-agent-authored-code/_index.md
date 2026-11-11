@@ -24,7 +24,7 @@ tags: ["testing", "ai-generated-code", "test-oracle", "mutation-testing", "accep
 
 ## 這個模組的證據基礎
 
-四章共用的對照實驗、它足以支持與不足以支持的宣稱，寫在 [negative-test-experiment 對照實驗](shared-experiment-scope/)（讀者要看的內容住在文章裡，本頁正文不會渲染）。
+四章共用的對照實驗、它足以支持與不足以支持的宣稱，寫在 [negative-test-experiment 對照實驗](shared-experiment-scope/)（讀者要看的內容寫在文章裡，本頁正文不會渲染）。
 
 ## 判定問題的答案要留下痕跡
 
@@ -36,18 +36,18 @@ tags: ["testing", "ai-generated-code", "test-oracle", "mutation-testing", "accep
 
 ## 資源很少時先做哪一件
 
-授權的降級順序住在 [資源不足時測試作法的降級順序：判斷標準與實作分開產出、維度交叉盤點、性質式測試、突變測試](low-resource-order/)，本頁正文不會渲染。
+授權的降級順序寫在 [資源不足時測試作法的降級順序：判斷標準與實作分開產出、維度交叉盤點、性質式測試、突變測試](low-resource-order/)，本頁正文不會渲染。
 
 ## 本模組回應的案例
 
-| 案例                                                                | 盲區與補位                                                               |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [T.C10](/testing/cases/acceptance-passes-eight-different-programs/) | 同一組驗收放行八個不同的程式，判定順序住在沒有被任何條件碰到的維度交叉裡 |
-| [T.C5](/testing/cases/stale-reference-stub-blindspot/)              | 測試自己餵資料造成的同型盲區——同源問題在 stub 層的形態                   |
+| 案例                                                                | 盲區與補位                                                                       |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| [T.C10](/testing/cases/acceptance-passes-eight-different-programs/) | 同一組驗收放行八個不同的程式，判定順序只在沒有被任何條件碰到的維度交叉裡才有作用 |
+| [T.C5](/testing/cases/stale-reference-stub-blindspot/)              | 測試自己餵資料造成的同型盲區——同源問題在 stub 層的形態                           |
 
 ## 跨分類引用
 
-- → [LLM 模組四 Benchmarking 與評估](/llm/04-applications/benchmarking-and-evaluation/)：被測對象本身是模型、輸出不確定時的評估方法住在那裡；本模組處理的是 agent **產出的程式碼**，兩者的判斷標準形態不同
+- → [LLM 模組四 Benchmarking 與評估](/llm/04-applications/benchmarking-and-evaluation/)：被測對象本身是模型、輸出不確定時的評估方法寫在那裡；本模組處理的是 agent **產出的程式碼**，兩者的判斷標準形態不同
 - → [LLM 4.5 人機協作拓樸](/llm/04-applications/human-ai-collaboration/)：那一章決定「人在什麼時機介入、怎麼介入」，本模組的「人審的位置要跟著移動」是同一個決策在驗證側的落點——自動判斷標準的能力決定介入頻率，而判斷標準能力正是本模組四章處理的對象
 - → [Backend 模組六 可靠性驗證](/backend/06-reliability/)：Release gate 與 fuzz campaign 是伺服器側的閘門設計，本模組的「品質閘門要成對設計」給的是挑選閘門的判斷標準，兩者互補不重疊
 - → [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)：測試邊界該畫在模組還是類別，由邊界畫錯時看得出來的幾個症狀診斷。agent 產出的程式碼該用哪一種風格要求它、以及為什麼 agent 情境下 Sociable 的理由更強，在那篇的「這套判斷標準預設行為已經是對的」一節；本模組承接它留下的下一個問題——行為由誰決定

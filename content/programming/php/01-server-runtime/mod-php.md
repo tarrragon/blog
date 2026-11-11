@@ -7,7 +7,7 @@ tags: ["php", "apache", "mod_php", "deployment"]
 aliases: ["/php/01-server-runtime/mod-php/"]
 ---
 
-這篇說明 mod_php 這種執行模型：PHP 以 Apache 模組的形式載入，直譯器住在 Apache 的子程序裡。用 [PHP 的請求生命週期與 SAPI](/programming/php/01-server-runtime/request-lifecycle-and-sapi/) 的那組問題來看，它的答案是：直譯器住在 web 伺服器的程序裡，程序活過很多請求，應用程式狀態仍然只活一個請求。文中的行為取自官方的 `php:8.5-apache` 映像檔。
+這篇說明 mod_php 這種執行模型：PHP 以 Apache 模組的形式載入，直譯器在 Apache 的子程序裡執行。用 [PHP 的請求生命週期與 SAPI](/programming/php/01-server-runtime/request-lifecycle-and-sapi/) 的那組問題來看，它的答案是：直譯器在 web 伺服器的程序裡執行，程序活過很多請求，應用程式狀態仍然只活一個請求。文中的行為取自官方的 `php:8.5-apache` 映像檔。
 
 ## PHP 以 Apache 模組的形式載入
 

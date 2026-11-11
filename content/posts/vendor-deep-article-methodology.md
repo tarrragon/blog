@@ -63,7 +63,7 @@ PostgreSQL 系列的 5 篇刻意選同質化風險最高的組合：同一個 ve
 
 前兩批的 deep article 都只經過一位 reviewer。理由是 deep article 的焦點窄（單一功能）、跨章重複的風險低、案例引用少（每篇 1 到 2 個對照），一位 reviewer 檢查 config 對不對與敘事順不順就夠；skill 至今仍以「單一 reviewer 即可」作為一般情形的寫法。
 
-本 repo 的審查規則後來把教學模組的新章節列為一定要跑多輪審查（至少三輪）的對象，deep article 住在教學模組裡，所以在本 repo 照多輪審查走。2026-10-27 的 Gatling 兩篇是照多輪審查寫的，跑了四輪，抓到的錯誤裡有三處，一位 reviewer 看 config 與敘事時不容易發現：原頁把 Gatling 的 `atOnceUsers`、`rampUsers` 歸成 closed model，跟官方文件〈Injection〉相反；原頁說開源版可以合併多台施壓端的 report，官方 FAQ 寫的是不支援；審查途中稿件一度改成解析 `simulation.log` 做跨次比較，第四輪的對抗驗證查到官方同樣不支援這種用法。這三處都要拿官方文件逐條核對才找得到，而那是事實核對這一輪的工作，不在「config 對不對、敘事順不順」的範圍裡。
+本 repo 的審查規則後來把教學模組的新章節列為一定要跑多輪審查（至少三輪）的對象，deep article 屬於教學模組，所以在本 repo 照多輪審查走。2026-10-27 的 Gatling 兩篇是照多輪審查寫的，跑了四輪，抓到的錯誤裡有三處，一位 reviewer 看 config 與敘事時不容易發現：原頁把 Gatling 的 `atOnceUsers`、`rampUsers` 歸成 closed model，跟官方文件〈Injection〉相反；原頁說開源版可以合併多台施壓端的 report，官方 FAQ 寫的是不支援；審查途中稿件一度改成解析 `simulation.log` 做跨次比較，第四輪的對抗驗證查到官方同樣不支援這種用法。這三處都要拿官方文件逐條核對才找得到，而那是事實核對這一輪的工作，不在「config 對不對、敘事順不順」的範圍裡。
 
 ## 跟實作文章的分工
 

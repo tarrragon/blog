@@ -55,7 +55,7 @@ DNS 能把域名解析成 IP，本身就證明對外連線是通的（DNS 查詢
 
 ### EFI 分區的掛載點與大小
 
-EFI 系統分區（ESP）放開機載入器與 kernel，掛載點的選擇取決於這台機器是不是單一作業系統。把 ESP 掛在 `/boot`（單系統佈局）讓 kernel 跟開機檔住在同一個分區、維護最單純；把 ESP 掛在 `/efi`、kernel 另放（多系統佈局）是為了多個 OS 共用同一個 ESP 才需要的結構。單系統的機器選多系統佈局，只是憑空多一層目錄。
+EFI 系統分區（ESP）放開機載入器與 kernel，掛載點的選擇取決於這台機器是不是單一作業系統。把 ESP 掛在 `/boot`（單系統佈局）讓 kernel 跟開機檔放在同一個分區、維護最單純；把 ESP 掛在 `/efi`、kernel 另放（多系統佈局）是為了多個 OS 共用同一個 ESP 才需要的結構。單系統的機器選多系統佈局，只是憑空多一層目錄。
 
 ESP 大小在單系統佈局下要算進 kernel 與 [initramfs](/linux/dotfile/knowledge-cards/initramfs/)（開機初期把真正的 root 掛起來之前、用來載入驅動的小型臨時根檔系統）。一個 kernel 加上它的 initramfs（含 fallback）大約一兩百 MB，再加上 FAT32 ESP 約 260 MiB 的實務下限，512 MiB 是在下限之上留餘裕。會需要更大的情境是你要同時保留多個 kernel 版本——但單 kernel 的 VM 用不到，給太大只是浪費。
 

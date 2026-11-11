@@ -68,7 +68,7 @@ App 各位置的聚合一律用 `du -skx` 取實際佔用，而不是 `ls` / `fi
 
 這個 48.2G 是「能歸屬到已安裝 App 的部分」之和，不是 `~/Library` 的全量。[disk-report 那篇](../macos_disk_space_diagnosis/)量到的 `~/Library` 約 70G，差額落在幾類刻意不歸進單一 App 的位置。
 
-最大的一塊是 `~/Library/Developer`（這台約 5.5G，幾乎全是 Xcode 的 DerivedData、CoreSimulator 與 iOS DeviceSupport）。它們是 Xcode 與模擬器產生的共用產物，硬塞給 Xcode 會誇大這顆 App、塞給別人又不對，app-report 比照 Homebrew 把它單獨列成一段（`app-report --dev`）。也因為這樣，上面排行裡的 Xcode 只算到 `.app` 本體，它的建置產物要看 Developer 那段——這也是為什麼 disk-report 會把「Xcode DeviceSupport」列為大戶，而逐 App 排行卻看不到：那筆資料正住在這個不歸單一 App 的位置。
+最大的一塊是 `~/Library/Developer`（這台約 5.5G，幾乎全是 Xcode 的 DerivedData、CoreSimulator 與 iOS DeviceSupport）。它們是 Xcode 與模擬器產生的共用產物，硬塞給 Xcode 會誇大這顆 App、塞給別人又不對，app-report 比照 Homebrew 把它單獨列成一段（`app-report --dev`）。也因為這樣，上面排行裡的 Xcode 只算到 `.app` 本體，它的建置產物要看 Developer 那段——這也是為什麼 disk-report 會把「Xcode DeviceSupport」列為大戶，而逐 App 排行卻看不到：那筆資料正存放在這個不歸單一 App 的位置。
 
 其餘排除的還有 iCloud 與雲端硬碟的本地鏡像（`Mobile Documents`、`CloudStorage`）、已移除 App 留下的孤兒資料夾、以及 `Preferences`。排行掃的是 `/Applications`、`~/Applications`、`/Applications/Utilities` 與 Setapp、Mac App Store 裝的 App；直接從 DMG 跑、沒搬進 Applications 的 App 不會出現在排行，但它的 `~/Library` 資料若命名對得上仍可能部分計入。
 

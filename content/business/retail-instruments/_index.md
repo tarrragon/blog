@@ -65,7 +65,7 @@ tags: ["business", "retail-instruments", "risk", "crypto", "derivatives"]
 
 ## 跟其他模組的關係
 
-[企業財務分析與投資評估](/business/financial-analysis/)處理的是判斷一家公司的體質，這裡處理的是判斷一個交易工具的結構，兩者的分析對象不同——前者看標的、後者看載具。[商業概念知識卡片](/business/knowledge-cards/)承接單一術語的定義，本模組引用它們但不重複定義。認知機制的部分住在 [人的行為概念](/til/behavior/)，其中[處置效應](/til/behavior/disposition-effect/)是本模組多篇會引用的一張。
+[企業財務分析與投資評估](/business/financial-analysis/)處理的是判斷一家公司的體質，這裡處理的是判斷一個交易工具的結構，兩者的分析對象不同——前者看標的、後者看載具。[商業概念知識卡片](/business/knowledge-cards/)承接單一術語的定義，本模組引用它們但不重複定義。認知機制的部分寫在 [人的行為概念](/til/behavior/)，其中[處置效應](/til/behavior/disposition-effect/)是本模組多篇會引用的一張。
 
 ## Backlog
 
