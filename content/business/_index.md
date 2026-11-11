@@ -48,6 +48,7 @@ tags: ["business", "strategy"]
 | [企業財務分析與投資評估](/business/financial-analysis/) | 從損益表識讀到產業供應鏈分析的系統性評估方法：報表判讀、公司定位、產業基準、估值、外部衝擊、真實上市公司批判分析 |
 | [公司退場與員工轉銜](/business/workforce-transition/)   | 公司清算、倒閉、被收購或頂讓時，雇主對員工的法定義務、有序退場時機與轉銜責任                                     |
 | [零售金融工具的結構判讀](/business/retail-instruments/) | 投機工具與加密金融產品的宣稱與實際結構之間的落差：摩擦成本、對手方、清算機制、儲備托管與支付軌道                 |
+| [AI 基礎設施的產業鏈](/business/ai-infrastructure/)     | 模型公司、晶片商、雲端業者與資料中心業者之間的融資、供貨與租賃：供應商融資的形態、Anthropic 與 OpenAI 的交易結構 |
 
 領域專題跟 [商業概念知識卡片](/business/knowledge-cards/) 的差別在於視角：知識卡片是「讀懂別人怎麼談生意」，領域專題是「某個角色自己怎麼把事情做成」。兩者各自獨立，採購 planning 的術語（Risk Buy、斷料、NCNR）自成一套供應鏈語言，不併入 SaaS 分析導向的卡片索引。
 

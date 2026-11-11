@@ -139,4 +139,6 @@ tags: ["business", "financial-analysis"]
 
 本模組跟 [knowledge-cards](/business/knowledge-cards/) 垂直整合——模組文章引用知識卡解釋術語（COGS、Gross Margin、P&L、FCF、CCC、GMV 等），知識卡反向引用模組文章提供實務判讀場景。模組陸續新增知識卡服務分析需求（單位經濟、機會成本、現金流、資本效率、估值判讀相關術語），同時可被其他模組引用。
 
+跟 [AI 基礎設施的產業鏈](/business/ai-infrastructure/) 的分工：那個模組以一筆橫跨幾家公司的交易結構（供應商融資、租賃、擔保）為單位，本模組以單一公司的報表或單一產業的供需為單位；記憶體缺貨等 AI 需求帶動的產業結構篇留在本模組，那個模組連過來。
+
 跟 [案例拆解](/business/case-analyses/) 的分工：案例拆解處理「市場事件的 WRAP 結構分析」（Claude for Legal、FDE 軍備競賽等），本模組處理「企業財務和產業結構的系統性評估方法」。兩者的分析工具互補——案例拆解用 WRAP 做 hypothesis 探索，本模組用財報工具做量化判讀。

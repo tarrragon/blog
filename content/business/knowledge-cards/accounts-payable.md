@@ -1,12 +1,12 @@
 ---
 title: "Accounts Payable（應付帳款）"
 date: 2026-07-22
-description: "應付帳款天數拉長要分辨議價力增強還是現金週轉吃緊，它是跟應收帳款相反的無息供應商融資"
+description: "應付帳款天數拉長要分辨議價力增強還是現金週轉吃緊，它是跟應收帳款相反的無息的供應商帳期"
 weight: 93
 tags: ["business", "knowledge-cards", "financial-analysis"]
 ---
 
-應付帳款是[應收帳款](/business/knowledge-cards/accounts-receivable/)的鏡像——已經收到供應商的貨或服務、但還沒付款的負債。應收是公司把錢暫借給客戶，應付是供應商把資金暫借給公司；因此應付帳款是一種無息的短期融資，付款天數拉得越長、免費佔用供應商資金的時間越久。它在[現金週轉循環](/business/knowledge-cards/cash-conversion-cycle/)裡是唯一的減項。
+應付帳款是[應收帳款](/business/knowledge-cards/accounts-receivable/)的鏡像——已經收到供應商的貨或服務、但還沒付款的負債。應收是公司把錢暫借給客戶，應付是供應商把資金暫借給公司；因此應付帳款是一種無息的短期融資，付款天數拉得越長、免費佔用供應商資金的時間越久。這種由帳期構成的融資跟[供應商融資](/business/knowledge-cards/vendor-financing/)是不同的概念：帳期是買方延後支付已經收到的貨款，供應商融資是賣方用放款、擔保或股權替買方的付款能力出資或擔保。它在[現金週轉循環](/business/knowledge-cards/cash-conversion-cycle/)裡是唯一的減項。
 
 ## 跟其他概念的關係
 

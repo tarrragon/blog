@@ -166,6 +166,21 @@ weight: 編號
 | [Unit Economics](/business/knowledge-cards/unit-economics/)               | 單位經濟     | LTV/CAC、是否賺錢    |
 | [LTV](/business/knowledge-cards/ltv/)                                     | 客戶終身價值 | retention、CAC、毛利 |
 
+## 融資結構
+
+買方的付款能力由誰提供、付不出錢時的損失由誰的資產負債表承擔。
+
+| 卡片                                                                                               | 核心問題                               | 常見出現位置                         |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------ |
+| [Vendor Financing（供應商融資）](/business/knowledge-cards/vendor-financing/)                      | 賣方用自己的信用替買方解決付款能力     | 設備商客戶融資、算力租約、可轉換本票 |
+| [Take-or-Pay（照付不議）](/business/knowledge-cards/take-or-pay/)                                  | 不論用量都要付款、需求風險移到買方     | 電力合約、算力承諾、承諾事項附註     |
+| [Residual Value Guarantee（殘值擔保）](/business/knowledge-cards/residual-value-guarantee/)        | 資產處分價值不足時由擔保方補差額       | 8-K、或有負債、設備租約              |
+| [Special Purpose Vehicle（特殊目的實體，SPV）](/business/knowledge-cards/special-purpose-vehicle/) | 為單一交易設立、隔離資產與債務         | 表外融資、出租方、合併範圍           |
+| [Finance Lease（融資租賃）](/business/knowledge-cards/finance-lease/)                              | 以租金形式借錢取得資產                 | 使用權資產、租賃負債、FCF 調整       |
+| [Convertible Note（可轉換本票）](/business/knowledge-cards/convertible-note/)                      | 債權可轉股、PIK 利息與轉換折價的稀釋   | S-1、融資條款、公允價值變動          |
+| [Warrant（公司發行的認股權證）](/business/knowledge-cards/warrant/)                                | 公司增發新股換取客戶承諾               | 8-K、客戶激勵、稀釋後 EPS            |
+| [RPO（剩餘履約義務）](/business/knowledge-cards/remaining-performance-obligation/)                 | 已簽約未認列的營收、代表簽約不代表現金 | 10-Q 附註、營收能見度、客戶集中      |
+
 ## 財報判讀
 
 讀懂上市櫃公司財報的術語層。服務 [財務分析模組](/business/financial-analysis/) 的案例判讀。
@@ -194,11 +209,12 @@ weight: 編號
 | [Consolidated Financial Statements](/business/knowledge-cards/consolidated-financial-statements/) | 子公司營收獲利全額併入母公司報表         | 合併範圍、非控制權益             |
 | [Non-Controlling Interest](/business/knowledge-cards/non-controlling-interest/)                   | 子公司獲利中屬於外部股東的部分           | 合併報表、歸母淨利               |
 | [Impairment](/business/knowledge-cards/impairment/)                                               | 資產帳面高於可回收金額的強制認列         | 商譽減損、正常化盈餘             |
+| [Fair Value（公允價值）](/business/knowledge-cards/fair-value/)                                   | 每期重估的價格、變動進損益而沒有現金流   | 估值收益、可轉換本票、擔保附註   |
 | [Transfer Pricing](/business/knowledge-cards/transfer-pricing/)                                   | 集團內部交易的定價決策                   | 關係人交易、毛利率扭曲           |
 | [Survivorship Bias（倖存者偏誤）](/business/knowledge-cards/survivorship-bias/)                   | 樣本被結果篩過，失真方向要各自推         | 產業基準、比較組、回測、社群數據 |
 | [Share Pledge](/business/knowledge-cards/share-pledge/)                                           | 控制權建立在槓桿上的治理風險             | 質押比率、平倉壓力               |
 | [Inventory（存貨）](/business/knowledge-cards/inventory/)                                         | 已投入生產但未賣出的資產、拆三形態判方向 | 存貨天數、CCC、跌價損失          |
-| [Accounts Payable（應付帳款）](/business/knowledge-cards/accounts-payable/)                       | 無息的供應商融資、CCC 的減項             | 應付天數、議價力、週轉壓力       |
+| [Accounts Payable（應付帳款）](/business/knowledge-cards/accounts-payable/)                       | 無息的供應商帳期、CCC 的減項             | 應付天數、議價力、週轉壓力       |
 | [Shareholders' Equity（股東權益）](/business/knowledge-cards/shareholders-equity/)                | 淨值的組成與變化來源                     | ROE 分母、負債比率、保留盈餘     |
 | [Current Ratio（流動比率）](/business/knowledge-cards/current-ratio/)                             | 短期償債能力的第一道檢查                 | 速動比率、CCC、流動資產品質      |
 | [Debt Ratio（負債比率）](/business/knowledge-cards/debt-ratio/)                                   | 財務槓桿的總量指標                       | 有息負債、權益乘數、利息保障     |
