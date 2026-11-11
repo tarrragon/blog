@@ -10,6 +10,8 @@ tags: ["business", "knowledge-cards", "unit-economics"]
 
 ## 跟其他概念的關係
 
+經由平台或中間人的銷售，公司要另外判斷自己是主理人還是代理人，決定以總額或淨額認列，這個判斷寫在[總額與淨額認列](/business/knowledge-cards/gross-vs-net-revenue/)。
+
 營收造假的多數手法，回溯到源頭都是認列時點偏離控制權移轉——[通路填塞](/business/knowledge-cards/channel-stuffing/)是把缺乏真實終端需求的出貨提前認列，期末灌水是把次期營收拉進本期。看到營收異常時，回到五步驟的第五步問「控制權移轉了嗎」，比看單張發票的日期更接近判斷標準。發票日期是指向這個問題的線索。
 
 ## 可觀察訊號與例子

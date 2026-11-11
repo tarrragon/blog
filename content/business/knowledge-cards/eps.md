@@ -10,6 +10,8 @@ EPS（Earnings Per Share，每股盈餘）＝[歸母淨利](/business/knowledge-
 
 ## 跟其他概念的關係
 
+股數增加的來源與兩種量法（持股比例、每股價值）寫在[股權稀釋](/business/knowledge-cards/dilution/)。
+
 EPS 是獲利跟股價之間的橋。[淨利](/business/knowledge-cards/parent-attributable-income/)成長率跟 EPS 成長率的差距來自股數變動：現金增資稀釋 EPS、買回庫藏股推高 EPS、股票股利讓股數變多而回溯調整過去年度的 EPS。判讀成長品質時把兩者分開——獲利成長帶動的 EPS 成長可持續、股數操作帶動的成長是一次性的資本結構調整。
 
 ## 可觀察訊號與例子

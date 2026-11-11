@@ -34,7 +34,7 @@ S-1/A-2 把 Anthropic 與 Broadcom 的五年期設備租約合稱「Lease Arrang
 - **用途**：只能用來支付 2026 Lease Arrangement 的季租。
 - **發行條件**：發行權受幾項條件限制：營收成長率的條件（S-1/A-2 寫明這個門檻「遠低於」Anthropic 2025 年與 2026 年迄今各季的實際成長率）、Anthropic 信用協議下的最低流動性要求，以及持續履行租約。這些條件持續不成立時，發行權終止；S-1/A-2 沒有寫「持續」是多長的期間。租約發生特定的未補正違約、租金加速到期時，Anthropic 可能不被允許以發行本票支付這些租金。
 - **利息與營收表現條件**：年息 9%，以實物支付（paid in kind，PIK），利息不付現金、滾入本金。S-1/A-2 另外寫了「某些營收表現條件」（certain revenue performance conditions），在這些條件沒有達成的期間發行的本票，年息是 13%；S-1/A-2 沒有列出這些條件是什麼、幾項沒達成才算。
-- **轉換**：持有人可以選擇把本票轉換成 Anthropic 的 Class N 普通股，轉換價格是 Class A 普通股 30 日成交量加權平均價（volume-weighted average price，VWAP）的 90%；營收表現條件沒有達成的期間發行的本票是 85%。Class A 是 IPO 公開交易的普通股；Class N 是 S-1/A-2 設的另一類普通股，本票轉換、同步私募與公益基金取得的股份都是這一類，各類股票的權利差異寫在 S-1/A-2 的股本說明（Description of Capital Stock）。
+- **轉換**：持有人可以選擇把本票轉換成 Anthropic 的 Class N 普通股，轉換價格是 Class A 普通股 30 日成交量加權平均價（volume-weighted average price，VWAP）的 90%；營收表現條件沒有達成的期間發行的本票是 85%。Class A 是 IPO 公開交易的普通股；Class N 是 S-1/A-2 設的另一類普通股，本票轉換、同步私募與公益基金取得的股份都是這一類，各類股票的權利差異寫在 S-1/A-2 的股本說明（Description of Capital Stock），本模組的整理在[上市前 Anthropic 的股東與估值〈Class A、N、T、F、E 的投票權與經濟權〉](/business/ai-infrastructure/anthropic-pre-ipo-ownership-valuation/)。
 - **擔保與期限**：本票由 Anthropic 的部分子公司保證，並以 2026 Lease Arrangement 的擔保品取得次順位擔保（secured on a junior basis）。到期期限依發行時的累計金額分段計算，都從動用期開始起算：累計前 240 億以內發行的本票 60 個月到期，累計超過 240 億到 320 億之間發行的部分 63 個月，超過 320 億的部分 57 個月。動用期在設備可以提供服務時開始。
 
 這些條款組合起來，本票的成本以下列方式出現在 Anthropic 與它的股東身上：
@@ -92,17 +92,19 @@ S-1/A-2 揭露，截至 2026-09-30 與之後簽訂的採購承諾與租約（含
 
 ## 九個月淨損的組成
 
-S-1/A-2 的風險因素寫著 Anthropic 2026 年前九個月淨損 1,040 億美元（期中報表未經審計）。這個數字的大部分是非現金項目：同期「可轉換本票、衍生負債與未來股權簡單協議（simple agreement for future equity，SAFE）的[公允價值](/business/knowledge-cards/fair-value/)變動」為 943.24 億，成因是 Anthropic 估值上升，讓 Amazon 與 Google 等早期投資人持有、可以轉股的本票與 SAFE 價值跟著上升，這部分在帳上記為損失。
+S-1/A-2 的風險因素寫著 Anthropic 2026 年前九個月淨損 1,040 億美元（期中報表未經審計）。這個數字的大部分是非現金項目：同期「可轉換本票、衍生負債與未來股權簡單協議（simple agreement for future equity，SAFE）的[公允價值](/business/knowledge-cards/fair-value/)變動」為 943.24 億，成因是 Anthropic 估值上升，讓以固定低價轉股的本票（主要是 Amazon 2023 與 2024 年那兩批）、衍生負債與 SAFE 的價值跟著上升，這部分在帳上記為損失；本票轉換價與 IPO 價格的差距怎麼變成這筆損失，以及上市後的延續，寫在[上市前 Anthropic 的股東與估值〈可轉換本票的公允價值變動與損益〉](/business/ai-infrastructure/anthropic-pre-ipo-ownership-valuation/)。
 
-營業層的結果跟淨損的方向不同。2026 年第三季營業損失 5.67 億美元；加回股份基礎給付 10.70 億與以 Class N 股票支付的非現金捐贈 19.60 億之後，Anthropic 自己定義的 Adjusted Operating Income 為正 24.63 億（第二季為正 22.35 億）。讀 Anthropic 的損益時，本票公允價值的損失隨估值波動、不需要付現金；決定它付不付得出租金的是營業層的損益與現金承諾的到期。
+營業層的結果跟淨損的方向不同。2026 年第三季營業損失 5.67 億美元；加回[股份基礎給付](/business/knowledge-cards/share-based-compensation/) 10.70 億與以 Class N 股票支付的非現金捐贈 19.60 億之後，Anthropic 自己定義的 Adjusted Operating Income 為正 24.63 億（第二季為正 22.35 億；這類加回項目的讀法見[非 GAAP 指標](/business/knowledge-cards/non-gaap-measure/)）。讀 Anthropic 的損益時，本票公允價值的損失隨估值波動、不需要付現金；決定它付不付得出租金的是營業層的損益與現金承諾的到期。
 
 ## 供應商入股 Anthropic 的安排
 
 Anthropic 的資本結構裡，GPU、加速器、記憶體、晶圓代工與雲端算力的業者同時是股東，OpenAI 的資本結構也有同樣的安排；兩家各由哪些業者入股、各用什麼工具，逐項對照寫在 [OpenAI 的算力融資結構〈與 Anthropic 結構的逐項對照〉](/business/ai-infrastructure/openai-compute-financing/)。S-1/A-2 揭露的安排如下：
 
 - **IPO 同步私募**：AMD、Broadcom、Google、Micron、Microsoft、NVIDIA，以及 TSMC 的投資子公司 TSMC Partners，同意以 IPO 價格認購合計 260 億美元的 Class N 普通股，其中 Google 的 100 億是它在 2026 年 3 月 Google 2026 NPA 下既有投資承諾的一部分。
-- **Google 與 Amazon 的優先股承諾**：Google 2026 NPA（2026 年 3 月）承諾以每股 259.1364 美元出售 3,860 萬股 Series G-2 優先股給 Google；Amazon 2026 NPA（2026 年 4 月）承諾以同一價格出售 1,930 萬股給 Amazon Web Services。
-- **Amazon 的可轉換本票**：Amazon 2023 與 2024 年的本票受 Amazon 持股上限限制，IPO 前 Anthropic 先把其中一部分轉換成約 2.77 億股，其餘每季轉換；到期仍未轉換的部分，由 Anthropic 以現金償還，或由 Amazon 選擇與 Amazon 依商業協議應付給 Anthropic 的款項抵銷。
+- **Google 與 Amazon 的特別股與後續額度**：兩家在 2026 年各簽一份本票購買協議（NPA），各自包括一筆 Series G-2 特別股的認購承諾與一個跟算力里程碑或營收目標連動的後續出資額度，兩家在 2026 年 5 月也都投入 Series H。
+- **Amazon 的可轉換本票**：Amazon 2023 與 2024 年的本票受 Amazon 持股上限限制，IPO 前 Anthropic 先把其中一部分轉換成約 2.77 億股，其餘換發成每季轉換的本票（換發本票）；到期仍未轉換的部分，由 Anthropic 以現金償還，或由 Amazon 選擇與 Amazon 依商業協議應付給 Anthropic 的款項抵銷。
+
+兩家各自的股數、價格、額度與持股上限，寫在[上市前 Anthropic 的股東與估值〈Amazon 與 Google 的持股上限與轉股安排〉](/business/ai-infrastructure/anthropic-pre-ipo-ownership-valuation/)。
 
 Amazon 本票的抵銷條款讓投資款與商業款項在合約上可以互相沖抵，兩家公司之間的錢同時經由股權與商業兩組合約流動。S-1/A-2 的風險因素寫出這種安排的代價：Anthropic 依賴少數雲端業者（Amazon、Google、Microsoft）與 Broadcom 這類供應商取得算力，而這些雲端業者同時是投資人、合作夥伴與客戶，「可能產生利益衝突，並影響我們取得算力」。供應商入股讓 Anthropic 有錢付它們的帳，供應商也因為持股而在 Anthropic 的經營狀況上押了注，兩邊的利益綁在一起。
 

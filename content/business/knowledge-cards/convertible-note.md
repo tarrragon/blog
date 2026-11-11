@@ -10,6 +10,8 @@ tags: ["business", "knowledge-cards", "financing"]
 
 ## 跟其他概念的關係
 
+可轉換本票與[可轉換特別股](/business/knowledge-cards/convertible-preferred-stock/)的差別在持有人一開始是債權人還是股東；轉換之前，本票的持有人領利息或依本票條款處理，特別股的持有人享有清算優先權。
+
 可轉換本票與[認股權證](/business/knowledge-cards/warrant/)都讓持有人取得新股，差別在持有人先付了什麼：可轉換本票的持有人先借出本金，轉換時用債權換股；認股權證的持有人沒有借錢，行使時另外付行使價買股。
 
 條款裡常見三個變數：
@@ -22,7 +24,7 @@ tags: ["business", "knowledge-cards", "financing"]
 
 ## 可觀察訊號與例子
 
-Anthropic 2026-11-10 提交的 S-1/A-2 揭露 Infrastructure Partner 2026 NPA：2026-03 與 Broadcom 簽訂，發不發行由 Anthropic 選擇（「we may issue, if needed」），最高 420 億美元的可轉換本票發給 Broadcom 或 Broadcom 指定的融資夥伴（designated financial partner），資金只能用來支付 2026 Lease Arrangement 的季租。發行權受幾項條件限制，包括營收成長率條件（S-1 寫明門檻「significantly below our actual revenue growth rates」，指低於 Anthropic 2025 年以來各季的實際成長率）、信用協議下的最低流動性要求，以及持續履行租約；條件持續不成立時發行權終止，租約違約時 Anthropic「may not be permitted」發行。本票由 Anthropic 的子公司保證，並以租約的擔保品取得次順位擔保（secured on a junior basis）。年息 9%、以實物支付（paid in kind，PIK）。持有人可選擇以 Class A 股票 30 日成交量加權平均價（volume-weighted average price，VWAP）的 90% 轉換為 Class N 普通股。決定利率與轉換折價的是另一組條件：另一組沒有揭露內容的營收表現條件（certain revenue performance conditions）沒有達成的期間發行的本票，年息 13%、以 VWAP 的 85% 轉換；這組條件跟決定發行權的成長率條件是兩回事。到期日從動用期開始後起算，依累計發行金額分段：首 240 億為 60 個月、240 億到 320 億之間為 63 個月、超過 320 億的部分為 57 個月。截至 2026-09-30 未發行，IPO 完成前預計不發行。同一份申報顯示，2026 前九個月淨損 1,040 億美元，其中 943.24 億是可轉換本票、衍生負債與未來股權簡單協議（simple agreement for future equity，SAFE）的公允價值變動，主因是企業估值上升；Anthropic 的這些工具以公允價值衡量，所以估值變動直接進了損益表。
+Anthropic 2026-11-10 提交的 S-1/A-2 揭露 Infrastructure Partner 2026 NPA：2026-03 與 Broadcom 簽訂，發不發行由 Anthropic 選擇（「we may issue, if needed」），最高 420 億美元的可轉換本票發給 Broadcom 或 Broadcom 指定的融資夥伴（designated financial partner），資金只能用來支付 2026 Lease Arrangement 的季租。發行權受幾項條件限制，包括營收成長率條件（S-1 寫明門檻「significantly below our actual revenue growth rates」，指低於 Anthropic 2025 年以來各季的實際成長率）、信用協議下的最低流動性要求，以及持續履行租約；條件持續不成立時發行權終止，租約違約時 Anthropic「may not be permitted」發行。本票由 Anthropic 的子公司保證，並以租約的擔保品取得次順位擔保（secured on a junior basis）。年息 9%、以實物支付（paid in kind，PIK）。持有人可選擇以 Class A 股票 30 日成交量加權平均價（volume-weighted average price，VWAP）的 90% 轉換為 Class N 普通股。決定利率與轉換折價的是另一組條件：另一組沒有揭露內容的營收表現條件（certain revenue performance conditions）沒有達成的期間發行的本票，年息 13%、以 VWAP 的 85% 轉換；這組條件跟決定發行權的成長率條件是兩回事。到期日從動用期開始後起算，依累計發行金額分段：首 240 億為 60 個月、240 億到 320 億之間為 63 個月、超過 320 億的部分為 57 個月。截至 2026-09-30 未發行，IPO 完成前預計不發行。同一份申報顯示，2026 前九個月淨損 1,040 億美元，其中 943.24 億是可轉換本票、衍生負債與未來股權簡單協議（simple agreement for future equity，SAFE）的公允價值變動，主因是企業估值上升；Anthropic 的這些工具以公允價值衡量，所以估值變動直接進了損益表。這筆損失來自已經發行、可以轉股的工具（主要是 Amazon 2023 與 2024 年那兩批固定轉換價的本票），跟上一段還沒發行的 Broadcom 本票無關；機制寫在[上市前 Anthropic 的股東與估值〈可轉換本票的公允價值變動與損益〉](/business/ai-infrastructure/anthropic-pre-ipo-ownership-valuation/)。
 
 ## 判斷條件與後果
 

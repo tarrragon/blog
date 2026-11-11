@@ -10,7 +10,7 @@ tags: ["business", "knowledge-cards", "financing"]
 
 ## 跟其他概念的關係
 
-認股權證與[可轉換本票](/business/knowledge-cards/convertible-note/)都會在未來增加股數，差別在持有人先付了什麼：可轉換本票的持有人先借出本金；認股權證的持有人可能什麼都沒付，行使時才付行使價。行使價遠低於市價時，持有人取得的價值幾乎全部來自股價，公司收到的現金很少。
+認股權證與[可轉換本票](/business/knowledge-cards/convertible-note/)都會在未來增加股數，差別在持有人先付了什麼：可轉換本票的持有人先借出本金；認股權證的持有人可能什麼都沒付，行使時才付行使價。行使價遠低於市價時，持有人取得的價值幾乎全部來自股價，公司收到的現金很少。發給員工、跟服務年資綁定的同類權利是[員工認股權](/business/knowledge-cards/employee-stock-option/)。
 
 會計上，發給客戶的認股權證多半視為給客戶的對價，在[營收認列](/business/knowledge-cards/revenue-recognition/)時從營收中扣除，所以發行公司帳上的營收會低於合約的名目金額；計算稀釋後[EPS](/business/knowledge-cards/eps/)時也要把可能行使的股數算進去。
 

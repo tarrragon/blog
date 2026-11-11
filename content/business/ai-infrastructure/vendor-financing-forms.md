@@ -23,7 +23,7 @@ tags: ["business", "ai-infrastructure", "financing", "vendor-financing"]
 | 形態         | 錢的流向                                                     | 賣方承擔的風險             | 在賣方財報上出現的位置                       | 2026 年的實例                                                                         |
 | ------------ | ------------------------------------------------------------ | -------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------- |
 | 直接放款     | 賣方借錢給買方，買方用這筆錢付貨款或租金                     | 買方不還款的信用損失       | 應收款或放款資產、呆帳提列                   | Anthropic 可以選擇發給 Broadcom 最高 420 億美元的可轉換本票（截至 2026-09-30 未發行） |
-| 股權投資     | 賣方買進買方的股份，買方拿這筆現金向賣方買貨                 | 買方股價或估值下跌         | 投資資產、公允價值變動或減損進損益           | Nvidia 投資 OpenAI、七家業者認購 Anthropic 新股                                       |
+| 股權投資     | 賣方買進買方的股份，買方拿這筆現金向賣方買貨                 | 買方股價或估值下跌         | 投資資產、公允價值變動或減損進損益           | Nvidia 投資 OpenAI、晶片與雲端業者認購 Anthropic 新股                                 |
 | 認股權證     | 賣方把用極低價格買自家新股的權利給買方，條件是買滿數量       | 既有股東被稀釋、營收被扣減 | 營收減項、權益                               | AMD 發給 OpenAI 最多 1.6 億股的認股權證                                               |
 | 殘值擔保     | 第三方出錢買設備或蓋場地再出租給買方，賣方擔保回收不足的部分 | 資產處分時賣不到擔保價值   | 附註的最大責任；帳上的公允價值可能判定不重大 | Broadcom 對機櫃出租方、Nvidia 對資料中心出租方                                        |
 | 未售產能承購 | 賣方承諾在買方的產能賣不出去時自己買下                       | 終端需求不足               | 採購承諾                                     | Nvidia 承諾買下 CoreWeave 未售出的算力                                                |
@@ -40,7 +40,7 @@ tags: ["business", "ai-infrastructure", "financing", "vendor-financing"]
 
 股權投資的錢流跟放款相似，賣方承擔的風險換成了估值：賣方買進買方的股份，買方拿這筆現金去買賣方的產品。買方經營順利時，賣方同時賺到貨款與股權增值；買方估值下跌時，賣方帳上的投資跟著[減損（impairment）](/business/knowledge-cards/impairment/)或以公允價值調降，而貨款早已入帳。
 
-2026 年的實例出現在兩家模型公司的資本結構裡。Anthropic 的 S-1/A-2 寫著，AMD、Broadcom、Google、Micron、Microsoft、NVIDIA，以及 TSMC 的投資子公司 TSMC Partners，同意在 IPO 時以 IPO 價格認購合計 260 億美元的新股，名單上是 GPU、加速器、記憶體、晶圓代工與雲端算力的業者。OpenAI 一側，Microsoft 在 2025-10-28 的公告寫明重組後持有 OpenAI 約 27% 股權，同一份公告也寫了 OpenAI 另外承諾購買 2,500 億美元的 Azure 算力。賣方持有的買方股權以[公允價值（fair value）](/business/knowledge-cards/fair-value/)評價時，買方估值的波動會直接進入賣方的損益表，賣方的帳面淨利會跟這個客戶的估值一起漲跌；Alphabet 2026 年第二季淨利裡約 800 億美元來自 Anthropic 估值上升（Bank of America 的估算，Alphabet 沒有逐筆揭露），拆解寫在 [AI 時代的獲利品質判讀：Alphabet 與 Tesla Q2 2026 財報拆解](/business/financial-analysis/case-studies/ai-era-earnings-quality/)。
+2026 年的實例出現在兩家模型公司的資本結構裡。Anthropic 的 S-1/A-2 寫著，AMD、Broadcom、Google、Micron、Microsoft、NVIDIA，以及 TSMC 的投資子公司 TSMC Partners，同意在 IPO 時以 IPO 價格認購合計 260 億美元的新股，名單上是 GPU、加速器、記憶體、晶圓代工與雲端算力的業者（金額固定、不受閉鎖期約束等條款，見[上市前 Anthropic 的股東與估值〈供應商在 IPO 同步認購的條款〉](/business/ai-infrastructure/anthropic-pre-ipo-ownership-valuation/#供應商在-ipo-同步認購的條款)）。OpenAI 一側，Microsoft 在 2025-10-28 的公告寫明重組後持有 OpenAI 約 27% 股權，同一份公告也寫了 OpenAI 另外承諾購買 2,500 億美元的 Azure 算力。賣方持有的買方股權以[公允價值（fair value）](/business/knowledge-cards/fair-value/)評價時，買方估值的波動會直接進入賣方的損益表，賣方的帳面淨利會跟這個客戶的估值一起漲跌；Alphabet 2026 年第二季淨利裡約 800 億美元來自 Anthropic 估值上升（Bank of America 的估算，Alphabet 沒有逐筆揭露），拆解寫在 [AI 時代的獲利品質判讀：Alphabet 與 Tesla Q2 2026 財報拆解](/business/financial-analysis/case-studies/ai-era-earnings-quality/)。
 
 ### 認股權證：賣方用自家股份當折扣
 

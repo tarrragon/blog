@@ -18,7 +18,7 @@ tags: ["business", "knowledge-cards", "financial-analysis"]
 
 ## 可觀察訊號與例子
 
-Anthropic 2026-11-10 提交的 S-1/A-2 顯示，2026 前九個月淨損 1,040 億美元，其中 943.24 億是可轉換本票、衍生負債與未來股權簡單協議（simple agreement for future equity，SAFE）的公允價值變動，成因是 Anthropic 的估值上升；這九個月的期中報表未經審計。同一段估值上升出現在投資人那一側時是收益：Alphabet 2026 年第二季的其他收支淨額 980 億美元，占當季淨利的 87%，Bank of America 估算其中約 800 億來自 Alphabet 持有的約 14% Anthropic 股權的重估，Alphabet 沒有賣出任何持股。[AI 時代的獲利品質判讀：Alphabet 與 Tesla Q2 2026 財報拆解](/business/financial-analysis/case-studies/ai-era-earnings-quality/)拆解了這筆收益在 Alphabet 淨利裡的比重，以及剔除之後的本業每股盈餘。
+Anthropic 2026-11-10 提交的 S-1/A-2 顯示，2026 前九個月淨損 1,040 億美元，其中 943.24 億是可轉換本票、衍生負債與未來股權簡單協議（simple agreement for future equity，SAFE）的公允價值變動，成因是 Anthropic 的估值上升；這九個月的期中報表未經審計。固定轉換價的本票怎麼讓估值上升變成負債增加，寫在[上市前 Anthropic 的股東與估值〈可轉換本票的公允價值變動與損益〉](/business/ai-infrastructure/anthropic-pre-ipo-ownership-valuation/)。同一段估值上升出現在投資人那一側時是收益：Alphabet 2026 年第二季的其他收支淨額 980 億美元，占當季淨利的 87%，Bank of America 估算其中約 800 億來自 Alphabet 持有的約 14% Anthropic 股權的重估，Alphabet 沒有賣出任何持股。[AI 時代的獲利品質判讀：Alphabet 與 Tesla Q2 2026 財報拆解](/business/financial-analysis/case-studies/ai-era-earnings-quality/)拆解了這筆收益在 Alphabet 淨利裡的比重，以及剔除之後的本業每股盈餘。
 
 擔保的例子在 Broadcom 截至 2026-08-02 那一季的 10-Q：它對一家融資夥伴擔保客戶的 AI 機櫃租約，全部機櫃部署之後的最大未折現責任約 290 億美元，而 Broadcom 判定這份擔保的公允價值「not material」（不重大）。
 
