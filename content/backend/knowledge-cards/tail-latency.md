@@ -17,4 +17,4 @@ tail latency 飆升的訊號是「average 還行、用戶卻在抱怨慢」。�
 
 ## 判斷條件與後果
 
-SLO 通常訂在 p99、internal 可訂 p99.9。metrics 必須記 histogram、不是單一 percentile gauge。Java GC pause、Go GC、Node event loop lag 都可能造成 p999 異常、要單獨監控。tail latency 改善通常靠：減少 cross-zone hop、connection pool 預熱、避免 stop-the-world。
+SLO 訂在哪一個 percentile，決定了最慢的多少比例請求不受承諾保護：訂在 p99 時，最慢的 1% 不受承諾保護，所以對外 SLO 通常訂在 p99；內部服務被上游多次呼叫，一個上游請求的延遲取決於它呼叫的那幾次裡最慢的一次，所以內部可以訂到 p99.9。Percentile 從 histogram 算時，多個 instance 的 bucket 可以相加後再算出整體的 p99；每個 instance 自己算好 p99 再回報成 gauge 時，多台的 p99 無法合成整體的 p99，平均之後的值低估了尾端。Java GC pause、Go GC 與 Node event loop lag 只讓停頓期間的那幾個請求變慢，average 與 p50 幾乎不動，異常只出現在 p999，所以這幾種停頓單獨監控，才對得上 p999 的異常。tail latency 的改善方向對應它的成因：cross-zone hop 增加每個請求的網路延遲與變異，connection pool 沒有預熱時第一批請求要先等連線建立，stop-the-world 讓停頓期間的請求全部延後。

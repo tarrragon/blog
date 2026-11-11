@@ -35,9 +35,8 @@ CoT 在 LLM 演化中的兩個階段：
 
 ## 判斷條件與後果
 
-讀 prompt engineering / paper 看到「CoT」「step by step」「reasoning trace」「thinking」等就是這個機制。寫 code 場景的判讀：
+讀 prompt engineering 文章或 paper 看到「CoT」「step by step」「reasoning trace」「thinking」，指的就是這個機制。CoT 帶來的是品質還是浪費，看任務的答案是否依賴中間步驟：
 
-1. **複雜推理任務開 CoT 通常有幫助**（math、debug、algorithm design）— 即使是 instruct model 也能透過 prompting 觸發
-2. **簡單任務 CoT 浪費 token**（autocomplete、單行查詢、純查表）
-3. **Reasoning model 的 CoT 是內建行為**、不需要用 prompt 觸發、但 reasoning trace 會消耗大量 [token](/llm/knowledge-cards/token/)（推論時間、context、API 成本都翻倍）
-4. **本地跑 reasoning model**：DeepSeek-R1 distill 系列、Qwen-QwQ 等可本地跑、但需要較大 [context window](/llm/knowledge-cards/context-window/) 容納 reasoning trace
+- **多步推理的任務**（math、debug、algorithm design）：模型先寫出的中間步驟會成為後面 token 的輸入，最終答案能依據已經算好的部分結果，所以開 CoT 通常有幫助，instruct model 用 prompting 也觸發得了。
+- **單步任務**（autocomplete、單行查詢、純查表）：答案不依賴中間步驟，CoT 多產生的 token 只增加延遲與成本。
+- **Reasoning model**：CoT 是內建行為，不需要 prompt 觸發，但 reasoning trace 會消耗大量 [token](/llm/knowledge-cards/token/)，推論時間、context 用量與 API 成本都隨 trace 長度增加。本地跑 DeepSeek-R1 distill、Qwen-QwQ 這類模型時，[context window](/llm/knowledge-cards/context-window/) 要留得下 trace，留不下時 trace 會被截斷。

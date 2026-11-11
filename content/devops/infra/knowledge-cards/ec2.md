@@ -31,6 +31,8 @@ EC2 是 infra 系列中「運算」面向的基礎單位。容器服務（[ECS](
 
 跟容器（ECS / EKS）的差別：EC2 管整台 VM（含 OS 更新、安全性修補、磁碟管理），容器只管應用程式及其依賴。EC2 的運維負擔較高、但控制粒度也較高。
 
+五個組件在 instance 建立之後的可改程度不同，選錯時付出的代價也不同。Security group 與 IAM role 可以在 instance 執行中修改，改了立即生效，選錯的代價是修改前那段時間的暴露範圍或權限。Instance type 要先停止 instance 才能換，選錯的代價是一次停機。AMI 決定了根磁碟的初始內容，換 AMI 要換掉整顆根磁碟，原本根磁碟上手動裝的軟體與設定要重新做一次，這也是為什麼裝好的機器要另外做成 [AMI](/devops/infra/knowledge-cards/ami/) 快照才重建得出來。跟容器比較時，判斷的條件是團隊是否有人負責 OS 的更新與修補：選 EC2 時這些工作由團隊自己做，沒有人做時 OS 的已知漏洞會一直留在機器上。
+
 ## 鄰卡
 
 - [AMI](/devops/infra/knowledge-cards/ami/)

@@ -16,15 +16,15 @@ Projection 不限於 event sourcing。CDC（Change Data Capture）把資料庫�
 
 ## 判斷條件與後果
 
-設計 projection 時要定義四個面向：
+Projection 的更新策略、重建流程、正確性驗證與 schema evolution，各自決定 read model 在事件寫入、邏輯改版或損壞、程式出錯與事件 schema 改版時的狀態：
 
-**更新策略**：同步（事件寫入時立即更新 read model）或非同步（事件寫入後由背景消費者更新）。同步更新延遲低但耦合寫入路徑的效能；非同步更新解耦但 read model 有 lag。
+**更新策略**：同步（事件寫入時立即更新 read model）時 read model 沒有 lag，代價是 projection 的耗時算進寫入路徑；非同步（事件寫入後由背景消費者更新）時寫入路徑解耦，代價是 read model 落後於事件，讀取端可能讀到舊狀態。
 
-**重建流程**：當 projection 邏輯改變或 read model 損壞時，需要從 event log 重新 replay 建立 read model。重建流程要能離線執行、不影響線上讀取。大量事件的 replay 可能需要數小時，設計時要估算重建時間跟資源需求。
+**重建流程**：projection 邏輯改變或 read model 損壞時，read model 只能從 event log 重新 replay 建立。大量事件的 replay 可能需要數小時，重建無法離線執行時，這段期間的線上讀取跟著受影響；重建時間與資源沒有事先估算時，要到需要重建的那一次才知道它能不能在可接受的時間內完成。
 
-**正確性驗證**：projection 是持續運行的計算，任何 bug 都會讓 read model 靜默偏離真實狀態。需要定期的 reconciliation（拿 projection 結果跟 event log 全量 replay 比較）來偵測漂移。
+**正確性驗證**：projection 是持續運行的計算，任何 bug 都會讓 read model 靜默偏離真實狀態，讀取端不會收到錯誤。沒有定期的 reconciliation（拿 projection 結果跟 event log 全量 replay 比較）時，這種漂移沒有被偵測的管道。
 
-**schema evolution**：當來源事件的 schema 改版，projection 邏輯要能同時處理新舊版本的事件。這跟 [event sourcing](/backend/knowledge-cards/event-sourcing/) 的 upcasting 問題直接相關。
+**schema evolution**：來源事件的 schema 改版之後，event log 裡同時有新舊版本的事件，projection 只處理得了新版時，replay 到舊事件就失敗或算錯。這跟 [event sourcing](/backend/knowledge-cards/event-sourcing/) 的 upcasting 問題直接相關。
 
 ## 使用情境
 

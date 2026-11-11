@@ -18,4 +18,4 @@ Query expansion 位在 [RAG](/llm/knowledge-cards/rag/) 的 query 端增強層�
 
 ## 判斷條件與後果
 
-Query expansion 適合短 query、歧義 query、或同一問題有多種常見說法的場景。設計時要限制變體數量，保留 original query，並用 [retrieval recall](/llm/knowledge-cards/retrieval-recall/) 驗證是否真的提高命中率；變體太發散時應改用澄清問題或 query rewriting。
+Query 太短、有歧義，或同一件事有多種常見說法時，單一路 query 只命中其中一種表述，這是 query expansion 換得到收益的情境。擴出的每個變體各自 retrieve 一次，所以變體數直接乘上 [retrieval cost](/llm/knowledge-cards/retrieval-cost/)。變體偏離原意時（「python deploy」擴成 Docker 部署與 CI/CD 兩種不同的意圖），合併後的結果混進別的意圖的文件，命中數變多而對題的比例下降；保留 original query 那一路，合併結果裡至少有一路對的是使用者原本的說法。擴充是否提高了命中率，要拿同一組 eval query 比對擴充前後的 [retrieval recall](/llm/knowledge-cards/retrieval-recall/) 才看得出來。變體發散到不同意圖時，歧義出在 query 本身，多加變體只擴大混入的範圍，向使用者澄清或改用單一路的 query rewriting 才縮小範圍。

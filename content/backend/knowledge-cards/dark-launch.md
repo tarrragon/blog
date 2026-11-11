@@ -17,4 +17,4 @@ Dark launch 用 feature flag 控制 UI 暴露、後端走 production traffic（�
 
 ## 判斷條件與後果
 
-Dark launch 必須有清楚的 *exit criteria*：穩定多久、誤差多少、可以開放 UI。要 monitor 後端 metric、用戶 metric 還沒意義。Dark launch 期間如果後端有 side effect（DB write、external API call），要算進容量規劃。
+Dark launch 期間後端會寫入 production，而用戶看不到入口，這兩點決定了它的結束條件、觀測對象與容量。沒有 exit criteria（穩定多久、誤差在多少以內就開放 UI）時，沒有一個值代表這個階段可以結束，dark launch 無限延長或憑感覺收尾。流量來自內部 API、cron job 或員工帳號，用戶 metric 量不到真實使用，這段期間判讀的對象是後端 metric。後端有 side effect（DB write、external API call）時，這些寫入與呼叫佔用的是正式容量，沒有算進容量規劃時，正式開放之前資料庫的寫入容量與外部 API 的呼叫額度就已經被 dark launch 用掉一部分。

@@ -18,4 +18,4 @@ Cache serialization migration 位在 [schema migration](/backend/knowledge-cards
 
 ## 判斷條件與後果
 
-安全的序列化遷移用雙軌策略收斂：新格式可編碼就先寫新格式，編碼失敗回落舊格式保留服務可用性，維持一段雙軌期觀測命中率與錯誤率，確認新格式編碼成功率達標後才收斂到單一格式。這個切換要跟 key versioning 分開推進——序列化格式換跟 key 結構換若同時發生，出錯時無法定位是哪個維度造成的，應該分別驗證再疊加。序列化遷移跟 schema migration 同級——需要相容窗口與回退路徑、把它當純技術重構會漏掉這兩樣。完整雙軌策略與收斂節奏見 [Shopify：快取序列化格式遷移](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/)，實作步驟見 [2.9 Cache Migration 與 Stampede Rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/)。
+新 decoder 讀不了舊格式時，切換當下的既有快取資料不是反序列化失敗、被當成 miss 全部回源，就是反序列化成功而語意錯誤。雙軌策略讓兩種格式在一段時間內並存：新格式可編碼就寫新格式，編碼失敗回落舊格式，服務在切換期間保持可用；雙軌期觀測命中率與錯誤率，新格式的編碼成功率達標之後才收斂到單一格式，原因是收斂之後編碼失敗的資料不再有舊格式可以回落。序列化格式與 key 結構在同一次變更裡一起換時，出錯之後無法定位是哪個維度造成的，所以兩者分開驗證再疊加。序列化遷移和 schema migration 一樣需要相容窗口與回退路徑，當成純技術重構時，這兩項都不會被規劃。完整雙軌策略與收斂節奏見 [Shopify：快取序列化格式遷移](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/)，實作步驟見 [2.9 Cache Migration 與 Stampede Rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/)。

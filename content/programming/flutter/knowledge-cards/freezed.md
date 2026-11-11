@@ -15,4 +15,4 @@ freezed 的預設路徑對所有型別一視同仁——它不區分[資料袋](
 
 ## 判斷條件與後果
 
-在 entity 上使用 freezed 時、需要額外措施收窄 copyWith 的開放程度：把 copyWith 改 private、或從參數列移除受約束的欄位。freezed 的 sealed union 在枚舉分層上有正面價值——exhaustive switch 讓「忘記決定新成員歸哪類」在編譯期就走不通。結構細節見 [Freezed 三層結構解剖](/work-log/dart_freezed_anatomy/)。
+freezed 標在有領域方法的 entity 上時，生成的全欄位 public copyWith 讓狀態欄位與稽核欄位都能不經過領域方法覆寫，不變式只剩規範文件在約束，程式碼裡沒有任何檢查擋得下違規的覆寫；所以 entity 上的 copyWith 要收窄，改成 private，或從參數列移除受約束的欄位。freezed 的 sealed union 用在枚舉分層時，生成的程式碼反過來替規範做檢查：exhaustive switch 要求每個成員都有分支，新增成員而沒決定它歸哪一類時編譯就失敗，遺漏在編譯期現形，不會留到 runtime。結構細節見 [Freezed 三層結構解剖](/work-log/dart_freezed_anatomy/)。

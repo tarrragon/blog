@@ -17,4 +17,4 @@ Follower read 出現在 CockroachDB / Spanner 等跨 region distributed SQL、�
 
 ## 判斷條件與後果
 
-設計時要把 follower read 跟 read 業務分流綁在一起 — strong consistency read（餘額查詢、剛寫完的訂單）走 leaseholder 路徑、容忍 stale 的 read（dashboard / reporting / 風控分析）走 follower read。不要把 follower read 當 failover 機制、它不是 — failover 是 fallback read 的責任。配置 non-voting replica 時要評估 storage cost、每多一個 region 多一份 storage。closed timestamp 推進延遲（通常數秒）就是 follower read 的 staleness 上界、要寫進 SLO、不是「快取秒數可調」。
+Follower read 的判斷條件是每一類讀取能容忍多舊的資料。餘額查詢、剛寫完的訂單這類 strong consistency read 走 follower read 時，讀到的是 closed timestamp 之前的快照，使用者看不到自己剛寫進去的值；dashboard、reporting、風控分析這類容忍 stale 的讀取走 follower read，省下每次跨 region 找 leaseholder 的 RTT。staleness 的上界是 closed timestamp 推進的延遲（通常數秒），這個值來自系統推進 closed timestamp 的機制，應用端調整快取秒數改變不了它，所以它寫進 SLO 當成讀取新鮮度的承諾。Follower read 是常態的低延遲路徑，failure 時的降級由 [fallback read](/backend/knowledge-cards/fallback-read/) 負責；每多一個 region 的 non-voting replica 就多一份 storage，replica 配置的成本隨 region 數增加。

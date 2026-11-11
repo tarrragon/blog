@@ -5,7 +5,6 @@ description: "說明下游持續失敗時如何暫停呼叫並保護系統"
 weight: 30
 ---
 
-
 Circuit breaker 的核心概念是「下游持續失敗時，暫時停止呼叫該下游」。它讓 application [fail fast](/backend/knowledge-cards/fail-fast/)、使用 [fallback](/backend/knowledge-cards/fallback/) 或進入 [degradation](/backend/knowledge-cards/degradation/)，降低每個 request 都等待同一個失效依賴的風險。
 
 ## 跟其他概念的關係
@@ -18,4 +17,4 @@ Circuit breaker 是失敗隔離工具。它通常搭配 [timeout](/backend/knowl
 
 ## 判斷條件與後果
 
-Circuit breaker 要定義開啟條件、半開探測、恢復條件、fallback 行為與 [alert](/backend/knowledge-cards/alert/)。設計時要控制短暫波動對可用性的影響，因此門檻與 [metrics](/backend/knowledge-cards/metrics/) 要一起調整。
+Circuit breaker 的每一個狀態轉換都靠一個條件觸發，缺了哪一個，它就停在錯的狀態。開啟門檻低於下游錯誤率平常的波動時，下游健康時 breaker 也會反覆開啟，原本會成功的請求被擋下，可用性反而由 breaker 自己拉低；所以門檻要對照 [metrics](/backend/knowledge-cards/metrics/) 上下游平常的錯誤率來定。沒有半開探測與恢復條件時，breaker 開啟之後無從得知下游是否恢復，只能等固定時間後全部放行，下游若還沒恢復，就同時收到全部被擋下的請求。fallback 行為沒有定義時，breaker 開啟後上游拿到的是錯誤而不是降級的結果；沒有 [alert](/backend/knowledge-cards/alert/) 時，breaker 開著的期間功能已經降級，而沒有任何通知。

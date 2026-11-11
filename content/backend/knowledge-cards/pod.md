@@ -23,4 +23,4 @@ Pod 位在 [Container](/backend/knowledge-cards/container/) 之上、工作負�
 
 ## 判斷條件與後果
 
-服務要能承受 Pod 隨時被替換：狀態存在 Pod 外面（資料庫、快取、物件儲存），啟動時能自己讀到設定，收到終止訊號時把進行中的請求處理完。每個 Pod 範本要寫 `resources.requests`，排程器依此決定 Pod 放在哪個節點，HPA（[Autoscaling](/backend/knowledge-cards/autoscaling/) 在 Kubernetes 裡的實作）的 CPU 使用率百分比也以它為分母。
+Pod 被刪除、驅逐或所在節點故障時，替補的是一個新名字、新 IP 的 Pod，服務能不能跨過這次替換，看三件事。狀態存在 Pod 裡時，替補之後狀態消失；存在 Pod 外面（資料庫、快取、物件儲存）時，新 Pod 接得上。設定依賴某個 Pod 的名稱或 IP 時，新 Pod 對不上；啟動時自己讀設定的服務不受影響。收到終止訊號就立刻結束時，進行中的請求失敗；把它們處理完再結束時，使用者看不到這次替換。Pod 範本沒有寫 `resources.requests` 時，排程器決定 Pod 放在哪個節點時沒有它的用量可算，HPA（[Autoscaling](/backend/knowledge-cards/autoscaling/) 在 Kubernetes 裡的實作）的 CPU 使用率百分比也少了分母，無法依 CPU 使用率擴縮。

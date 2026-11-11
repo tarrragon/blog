@@ -27,4 +27,4 @@ Data quality 位在 [metrics](/backend/knowledge-cards/metrics/)、[trace](/back
 
 ## 判斷條件與後果
 
-Data quality 要標示 completeness、freshness、sampling、masking、retention 與 owner。它要支援 [confidence](/backend/knowledge-cards/confidence/) 判讀，避免 release gate 或 incident decision log 把有限資料誤當成完整事實。
+一份 evidence 能支持到哪個判斷範圍，取決於它的限制是否跟著交接。completeness、freshness、sampling、masking、retention 與 owner 沒有標示時，下游拿到的是一個看起來完整的結論：trace sampling 漏掉的 request path、log pipeline drop 掉的事件、只在 primary 跑過的 query，都不會出現在結論裡。release gate 或 incident decision log 把這種結論當成完整事實時，放行的範圍超過證據實際涵蓋的範圍，例如只驗過 primary 的 migration 連 replica 讀取路徑一起放行。這些限制跟證據一起標示時，下游才能依 [confidence](/backend/knowledge-cards/confidence/) 決定這份證據放行到哪裡。

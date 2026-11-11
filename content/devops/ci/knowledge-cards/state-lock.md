@@ -25,4 +25,4 @@ State Lock 位在 [IaC state](/devops/ci/knowledge-cards/infrastructure-drift/) 
 
 ## 判斷條件與後果
 
-State Lock 要定義 lock backend、timeout、人工解鎖條件、環境隔離與失敗處理，讓 IaC apply 保持序列化。
+State lock 的設定決定兩種失敗情形下 state 處在什麼狀態。兩個 workflow 同時 apply 同一個 workspace、而 backend 不提供鎖定時，兩次變更都寫入 state，後寫的蓋掉先寫的，state 跟實際資源在 partial apply 之後對不上。持有鎖的 apply 中途被中斷、鎖沒有被釋放時，之後的 apply 全部卡在等鎖；這時的處置是人工解鎖，解鎖前先確認原本那次 apply 已經停止，原因是它還在執行時，解鎖等於重新允許併發寫入。不同環境共用同一份 state 與同一把鎖時，staging 的 apply 會擋住 production 的修復。

@@ -22,4 +22,4 @@ Static stability 依賴三個機制：快取最後已知好配置（控制面失
 
 ## 判斷條件與後果
 
-Static stability 的責任是讓 [DR](/backend/knowledge-cards/rto/) 設計不依賴已故障的控制面。它跟 [readiness](/backend/knowledge-cards/readiness/) 的關係是：static stability 是 readiness review 的前置項 — 若資料面沒有控制面失效時的自主能力，readiness 就有結構性缺口。
+判斷的對象是資料面處理每一個請求時，是否需要控制面即時回應。需要的話，控制面重啟或被網路隔離時資料面跟著停止服務，影響從「新配置推不出去」擴大成「現有服務中斷」。[DR](/backend/knowledge-cards/rto/) 計畫把控制面當成可用的前提時，在控制面一起故障的事故裡執行不了，原因是計畫依賴的元件正是故障的那一個。資料面已經快取最後已知的好配置、fallback 路徑在控制面在線時就預先算好的話，控制面失效只讓配置更新停下來，現有的服務照常運作。所以 [readiness](/backend/knowledge-cards/readiness/) review 把資料面的這種自主能力列為前置項：缺了它，其他項目通過之後，控制面一故障服務仍然中斷。

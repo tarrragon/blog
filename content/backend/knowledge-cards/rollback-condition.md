@@ -27,4 +27,4 @@ Rollback condition 位在 [gate decision](/backend/knowledge-cards/gate-decision
 
 ## 判斷條件與後果
 
-Rollback condition 要包含訊號、門檻、觀察窗口、對應動作與 owner。它要連到 [query link](/backend/knowledge-cards/query-link/) 與 [time range](/backend/knowledge-cards/time-range/)，讓決策撤回成為可回放的證據判讀，口頭判斷的準確度和可追溯性都不足。
+Rollback condition 的判斷對象是一筆已做出的決策，在什麼證據出現時撤回。條件缺了門檻或觀察窗口時，「fallback 沒有改善」要靠現場的人各自判斷，等多久才改路線沒有定論；缺了對應動作時，條件成立之後還要再開一次討論；缺了 owner 時，IC handoff 之後沒有人確認條件是否已經成立。條件只存在口頭上時，事後的 PIR 查不回當時看到的數字；連到 [query link](/backend/knowledge-cards/query-link/) 與 [time range](/backend/knowledge-cards/time-range/) 時，撤回的決定可以重新查出當時的訊號，回放成證據。

@@ -35,4 +35,4 @@ LLM 推論性能上、dot product 是「[matrix multiplication](/llm/knowledge-c
 
 ## 判斷條件與後果
 
-讀 attention / RAG 相關內容看到「inner product」「dot product」「QK^T」就是這個運算。寫 code 場景的判讀：用 vector database 時、選 distance metric 看：cosine 適合未 normalized 的 embedding、dot product 適合 L2-normalized 的 embedding（兩者結果同、後者較快）；attention 的 KV cache 量化（K=Q8 / V=Q4）對品質的不對稱影響、根本原因是 K 用於 dot product（誤差累積快）、V 用於加權平均（誤差被平均化）。
+讀 attention / RAG 相關內容看到「inner product」「dot product」「QK^T」就是這個運算。Vector database 的 distance metric 依 embedding 是否做過 L2 normalize 而定：沒有 normalize 時，dot product 的大小混進了向量長度，長度大的向量分數偏高，cosine 先除掉長度，比的只有方向；做過 L2 normalize 時，每個向量的長度都是 1，dot product 與 cosine 算出同樣的結果，而 dot product 省掉除法，算得較快。Attention 的 KV cache 量化（K=Q8 / V=Q4）對品質的影響不對稱，成因是 K 參與 dot product，量化誤差隨逐項相乘再加總而累積到 attention score；V 用於加權平均，誤差被平均掉一部分。

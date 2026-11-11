@@ -20,4 +20,4 @@ Log schema 的穩定性決定了查詢的效率 — 跨服務使用不同的欄�
 
 ## 判斷條件與後果
 
-Log schema 要控制欄位名稱（跨服務統一）、錯誤分類（error type / error code 有界而非 free-form message）、敏感資料遮罩（API key / token / PII 在寫入前 redact）與索引成本（高 cardinality 欄位不全部建索引）。高流量服務還要管理 log level、[sampling](/backend/knowledge-cards/sampling/)、[retention](/backend/knowledge-cards/retention/) 與查詢成本。
+Log schema 的四項欄位約定各自對應一種查詢或成本上的失效。欄位名稱跨服務不統一時，同一個概念（`user_id` 與 `userId`）在查詢裡要窮舉所有寫法，漏掉一個就漏掉那個服務的紀錄。錯誤分類寫成 free-form message、而不是有界的 error type 或 error code 時，同一種錯誤因訊息裡夾帶的 ID 或數值變成無數個不同字串，無法依錯誤類型統計。API key、token 或 PII 沒有在寫入前 redact 時，讀得到 log 的人都讀得到這些值，而且它們依 log 的保存期限一直留著。高 cardinality 欄位全部建索引時，索引的儲存與寫入成本隨欄位值的數量成長。高流量服務的 log level、[sampling](/backend/knowledge-cards/sampling/) 與 [retention](/backend/knowledge-cards/retention/) 直接決定查詢成本：寫入量乘上保存期限就是儲存量，查詢要掃的資料量也隨它放大。

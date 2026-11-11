@@ -27,4 +27,4 @@ Read compatibility 位在 [dual write](/backend/knowledge-cards/dual-write/)、[
 
 ## 判斷條件與後果
 
-Read compatibility 要定義讀取優先順序、fallback read 條件、資料新鮮度限制與停止條件。它要搭配 [validation query](/backend/knowledge-cards/validation-query/) 與 [rollback strategy](/backend/knowledge-cards/rollback-strategy/)，避免 cutover 後才發現舊版本或長尾讀取路徑無法判讀資料。
+過渡期的讀取是否一致，看讀取方遇到缺值、延遲回填或版本混跑時，各路徑是否給出同一個判讀。讀取優先順序與 fallback read 條件沒有定義時，新舊欄位不一致的那幾筆資料在不同路徑上讀出不同的狀態；資料新鮮度限制沒有寫明時，fallback 讀到的舊值多舊還能用沒有依據。停止條件缺席時，相容讀取路徑一直留著，舊語意沒有退場的時間點。有 [validation query](/backend/knowledge-cards/validation-query/) 與 [rollback strategy](/backend/knowledge-cards/rollback-strategy/) 搭配時，cutover 之前就能確認新舊讀取的結果一致、rollback 之後舊版本仍讀得懂資料；缺了它們，舊版本或長尾讀取路徑判讀不了資料的情形在 cutover 之後才出現。

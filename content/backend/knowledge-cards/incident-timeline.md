@@ -20,4 +20,4 @@ Timeline 也是 [incident decision log](/backend/knowledge-cards/incident-decisi
 
 ## 判斷條件與後果
 
-Timeline 要包含時間戳（UTC、精確到分鐘）、訊號來源（哪個 [dashboard](/backend/knowledge-cards/dashboard/) / [alert](/backend/knowledge-cards/alert/) / 人為觀察）、操作內容（restart / rollback / scale）、決策理由與結果驗證。記錄方式應簡潔且可在高壓下維持更新 — 事故中寫 timeline 的成本太高會導致沒人寫。Slack channel pinned message 或事故管理工具的自動 timeline 是常見實作。
+Timeline 的每一筆缺了哪個欄位，復盤時就缺了哪一段因果。時間戳沒有統一成 UTC、精確到分鐘時，多個來源的事件排不出先後；缺訊號來源（哪個 [dashboard](/backend/knowledge-cards/dashboard/)、[alert](/backend/knowledge-cards/alert/) 或人為觀察）時，判斷不了團隊當時是被什麼觸發的；缺操作內容（restart、rollback、scale）與決策理由時，看得到指標改善，卻說不出是哪一個操作帶來的；缺結果驗證時，分不出操作是生效了，還是剛好碰上自然恢復。記錄成本是另一個條件：事故中寫一筆 timeline 的成本太高時，處置中的人不會停下來寫，紀錄出現空窗，所以常見的實作是 Slack channel 的 pinned message，或事故管理工具自動產生的 timeline。

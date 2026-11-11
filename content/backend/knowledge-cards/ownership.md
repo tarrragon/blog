@@ -20,4 +20,4 @@ Ownership 連接 [alert](/backend/knowledge-cards/alert/)（每個 alert rule �
 
 ## 判斷條件與後果
 
-Ownership 需要定義主責角色、協作角色、升級路由與關閉責任。Owner 變動時（離職、轉組）需要交接流程 — orphan alert / dashboard 的定期掃描是治理的一部分。每次服務邊界調整（新服務上線、服務合併）都應同步檢查 ownership 是否仍對齊。
+Ownership 是否完整，看一個訊號或服務出事時，查不查得出誰主責、誰協作、往哪裡升級、誰負責關閉。只定了主責角色時，事件需要另一個團隊協作或升級就沒有路由，同一事件在角色之間反覆轉手；沒有關閉責任時，事件處理完之後，行動項與 runbook 的更新沒有人確認。Owner 離職或轉組而沒有交接時，他名下的 alert 與 dashboard 失去 owner，隨服務演進退化成 noise 與裝飾，而這個狀態本身不會觸發任何告警，所以要靠定期掃描 orphan alert 與 dashboard 才找得到。服務邊界調整時（新服務上線、服務合併），既有的 ownership 對的是舊邊界：新服務的訊號可能沒有 owner，合併後的服務可能有兩個 owner，因此邊界調整的同時要重新對一次 ownership。

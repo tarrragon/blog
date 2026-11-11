@@ -18,4 +18,4 @@ Certificate（數位憑證）是由憑證機構（CA）簽章、把一把公鑰�
 
 ## 判斷條件與後果
 
-數位憑證要列進清單管理：每一張憑證的用途、到期日、私鑰存放的位置與負責續期的人。私鑰與存取憑證一樣屬於秘密管理的範圍，憑證本身則可以公開。網站憑證的簽發、續期與撤銷流程見 [Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/) 與 [7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)。
+數位憑證的清單少了哪一欄，決定那張憑證出事時查不到什麼。到期日不在清單上時，續期要等握手失敗才被發現，而憑證到期是網站中斷的常見原因；私鑰存放的位置不在清單上時，私鑰外洩之後查不出要撤銷哪幾張憑證、換掉哪幾處的金鑰；用途與負責續期的人沒有寫明時，到期提醒送出之後沒有指定的處理者。私鑰與存取憑證一樣屬於秘密管理的範圍，外洩時要撤銷憑證並重新簽發；憑證本身是公開的，單獨外洩不需要處置。網站憑證的簽發、續期與撤銷流程見 [Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/) 與 [7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)。

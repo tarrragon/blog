@@ -42,10 +42,8 @@ Recall accuracy vs 答案位置（典型 10K context）：
 
 ## 判斷條件與後果
 
-讀 long-context paper / benchmark 看到「lost-in-the-middle」「U-shape recall」就是這現象。寫 code 場景的判讀：
+關鍵資訊在 context 裡的位置，決定模型是否抓得到它：開頭與結尾的 recall 最高，中段最低（〈跟其他概念的關係〉裡的 recall 曲線）。system prompt 在開頭、最新指示在結尾時，兩者剛好落在 attention 最強的兩處；關鍵段落夾在一長串文件中間時，模型照樣讀進去了，回答卻可能漏掉它。
 
-1. **把關鍵資訊放開頭或結尾**：system prompt 在開頭、最新指示在結尾（剛好是模型 attention 最強的兩處）
-2. **長 context 不是「塞越多越好」**：超過 effective context（典型 8-16K）後、邊際效用急降
-3. **RAG 比 long context 仍有價值**：把相關片段 retrieve 出來放 prompt 開頭、比把整份文件塞進 100K context 效果更穩定
-4. **驗證自己模型的 effective context**：用 needle-in-haystack 或自製測試、看模型在 8K / 16K / 32K 表現掉到哪
-5. **Reasoning model 的 thinking trace 不會遇到這事故嗎？** — 仍會遇到、但 reasoning 過程會主動重新引用前文、部分緩解；不過 thinking trace 本身會擠壓 context budget、可能反而觸發 degradation
+context 長度超過模型的 effective context（典型 8-16K）之後，多塞進去的內容落進中段，邊際效用急降。所以把整份文件塞進 100K context，常常不如用 [RAG](/llm/knowledge-cards/rag/) 把相關片段 retrieve 出來放在 prompt 開頭穩定。effective context 每個模型不同，宣稱的 context 長度代表不了它，用 [needle-in-haystack](/llm/knowledge-cards/needle-in-haystack/) 或自製測試在 8K、16K、32K 各量一次，才看得到表現從哪個長度開始掉。
+
+reasoning model 同樣有中段遺失：reasoning 過程會主動重新引用前文，部分緩解這個現象；thinking trace 本身也佔 context budget，長任務裡它把 context 推近上限時，反而可能觸發 context degradation。

@@ -27,4 +27,4 @@ Tok/s 量度的是 [autoregressive](/llm/knowledge-cards/autoregressive/) 主要
 
 ## 判斷條件與後果
 
-評估本地 LLM 是否堪用時，tok/s 是核心指標之一。理論上限可用「[memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) ÷ 模型大小」估算，實際值會比理論低 30 ~ 50%。看到「N tok/s」的報告時要追問模型、[量化](/llm/knowledge-cards/quantization/) 等級、硬體，三者缺一個就無法比較。
+評估本地 LLM 的生字速度是否夠用時，tok/s 的理論上限是「[memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) ÷ 模型大小」，原因是每生成一個 token 都要把權重從記憶體讀過一遍；實際值比這個上限低 30 ~ 50%。別人報告的「N tok/s」只在模型、[量化](/llm/knowledge-cards/quantization/)等級與硬體三者都寫明時才能拿來比較：模型大小與量化等級決定每個 token 要讀多少位元組，硬體決定每秒讀得了多少位元組，缺一項時，同一個數字可能來自完全不同的組合。

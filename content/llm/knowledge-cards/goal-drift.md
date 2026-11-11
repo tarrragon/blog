@@ -18,4 +18,4 @@ Goal drift 是 [agent loop](/llm/knowledge-cards/agent-loop/) 的 termination �
 
 ## 判斷條件與後果
 
-緩解方式是把完成條件外部化：test pass、檔案存在、PR 開啟、commit hash 產生、人工批准。不要只靠模型自評完成；高風險任務要用 checklist 與 deterministic gate。
+Goal drift 的判斷看完成條件由誰認定。完成只靠模型自評時，agent 完成一個子任務就可能宣告整體完成，漏掉的測試、提交或回報要到下游才被發現，原因是自評時模型對照的是它當下的目標，而 goal drift 替換掉的正是這個目標。完成條件外部化成可檢查的事實（test pass、檔案存在、PR 開啟、commit hash 產生、人工批准）時，宣告完成要先通過這些檢查，漂移後的子目標通過不了。漏掉一步的代價隨任務的副作用變大，所以高風險任務用 checklist 與 deterministic gate 擋住提早宣告的完成。

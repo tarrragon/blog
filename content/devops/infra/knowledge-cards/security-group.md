@@ -21,13 +21,13 @@ Security group 需要收斂的訊號：入站來源是 `0.0.0.0/0`（允許全�
 
 ## 判斷條件與後果
 
-security group 是封包抵達資源前的最後一道網路檢查：規則寫得太寬會把服務的埠暴露出去，寫成固定位址又會在節點換 IP 時失效。設計時在這兩種失效之間收斂的項目是：
+security group 是封包抵達資源前的最後一道網路檢查，它的規則有兩種失效方向：寫得太寬時服務的埠暴露出去，寫成固定位址時節點換 IP 之後合法的流量被擋下。各項規則設錯時造成哪一種失效，看下面幾個條件：
 
-- 引用方式：用 group 互相引用（推薦）vs 用 CIDR 限定範圍
-- 開放範圍：只開需要的埠與來源，`0.0.0.0/0` 只給對外 LB
-- 管理埠存取：SSH（22）改用 SSM Session Manager 這類不開入站 port 的做法，或只放行[身分感知代理](/devops/infra/knowledge-cards/identity-aware-proxy/)的位址段，從公網清單上拿掉；各種做法的選擇見[伺服器管理通道的設計](/devops/infra/03-network-foundation/management-access-channel/)
-- 與 NACL 的分工：security group 是主力（有狀態、group 引用），NACL 留給少數需要 subnet 層顯式 deny 的情境
-- 規則數上限：一條規則只放一段來源時，放一份外部位址清單（例如只放行 CDN 回源的位址）要「段數 × 連接埠數」條，會撞到每個 group 的規則數上限；AWS 文件寫的預設是入站 60 條、IPv4 與 IPv6 分開算，Oracle Cloud 的 NSG 實測是入站加出站合計 120 條，見 [Cloudflare 回源的實測紀錄：Oracle Cloud NSG 只放行 Cloudflare 位址與規則數上限、回源的來源位址、Authenticated Origin Pulls、Worker 偽造 CF-Connecting-IP 與 Tunnel 的出站連接埠](/devops/infra/03-network-foundation/hands-on/cloudflare-origin-pull-walkthrough/) 的〈公開子網路、只放行 Cloudflare 的 NSG 與它的規則數上限〉
+- 來源寫成 CIDR 時，應用節點隨擴縮換了 IP，新節點的連線被擋下；來源寫成另一個 group 時，規則跟著成員身分走，換 IP 不影響，代價是來源必須也在掛得上 security group 的資源上
+- 入站來源是 `0.0.0.0/0` 而目標埠不是對外負載平衡器的 80 / 443 時，那個埠對全網開放，資料庫埠與管理埠會直接收到掃描流量
+- 管理埠（SSH 的 22）對公網開放時，sshd 本身成了攻擊面；改用 SSM Session Manager 這類不開入站埠的做法，或只放行[身分感知代理](/devops/infra/knowledge-cards/identity-aware-proxy/)的位址段，入站清單上就沒有對公網的管理埠，各種做法的選擇見[伺服器管理通道的設計](/devops/infra/03-network-foundation/management-access-channel/)
+- security group 只有允許規則、沒有拒絕規則；需要在 subnet 層明確拒絕某段來源時，這件事由 NACL 做，其餘的放行由 security group 做，原因是它有狀態而且能引用 group，NACL 兩者都沒有
+- 一條規則只放一段來源時，放一份外部位址清單（例如只放行 CDN 回源的位址）要「段數 × 連接埠數」條，會撞到每個 group 的規則數上限；AWS 文件寫的預設是入站 60 條、IPv4 與 IPv6 分開算，Oracle Cloud 的 NSG 實測是入站加出站合計 120 條，見 [Cloudflare 回源的實測紀錄：Oracle Cloud NSG 只放行 Cloudflare 位址與規則數上限、回源的來源位址、Authenticated Origin Pulls、Worker 偽造 CF-Connecting-IP 與 Tunnel 的出站連接埠](/devops/infra/03-network-foundation/hands-on/cloudflare-origin-pull-walkthrough/) 的〈公開子網路、只放行 Cloudflare 的 NSG 與它的規則數上限〉
 
 ## 鄰卡
 

@@ -19,4 +19,4 @@ aliases: ["/ddd/knowledge-cards/data-bag/"]
 
 ## 判斷條件與後果
 
-資料袋加上領域模型的儀式（工廠、私有建構、變更方法）只會製造沒有規則可守的 boilerplate。判斷準則是「這個型別有沒有需要強制的規則」——沒有就不要建領域模型。完整判斷標準見 [資料袋與領域模型](/software-design/ddd/data-bag-vs-domain-model/)。
+一個型別歸資料袋還是領域模型，看它是否有不允許任意組合的欄位。沒有這種欄位時，每一種欄位組合都是合法狀態，工廠、私有建構子與變更方法沒有規則可以檢查，加上去只多出一層 boilerplate，每改一個欄位都要多經過一個方法。有這種欄位時，public 可寫的欄位與 copyWith 讓呼叫端組得出業務上不該存在的狀態，那條規則要靠領域模型的建構路徑強制，這個型別就是領域模型。完整判斷標準見 [資料袋與領域模型](/software-design/ddd/data-bag-vs-domain-model/)。

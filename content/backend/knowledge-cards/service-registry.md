@@ -6,7 +6,6 @@ description: "說明服務實例如何被註冊、維護與摘除"
 weight: 153
 ---
 
-
 Service Registry 的核心概念是「保存目前可用服務實例的位址、狀態與 metadata，供 discovery、load balancer 或內部呼叫查找」。 可先對照 [Session Invalidation](/backend/knowledge-cards/session-invalidation/)。
 
 ## 跟其他概念的關係
@@ -28,4 +27,4 @@ Kubernetes 會把 pod、labels 與 endpoint 維持成可查找狀態；service m
 
 ## 判斷條件與後果
 
-Service Registry 要定義註冊來源、heartbeat 或 TTL、失效摘除條件、metadata 結構與回復方式。它的重點是讓查找方拿到可信且更新的實例資料。
+查找方拿到的實例資料是否可信，取決於實例怎麼登錄、怎麼被判定失效、怎麼被摘除與回復。註冊來源不明確時（實例自己登錄，或部署平台代為登錄），同一個實例可能被登錄兩次或漏登錄；沒有 heartbeat 或 TTL 時，registry 得不到實例停止回應的訊號，縮容或故障後的舊實例留在清單上，呼叫端連到已下線的節點；heartbeat 間隔或 TTL 設得長時，失效到摘除之間的延遲跟著變長，這段時間的請求送往已失效的實例；metadata 結構沒有約定時，呼叫端依 metadata（版本、區域）挑實例的條件對不上實際的欄位；沒有回復方式時，恢復健康的實例一直停在摘除狀態。

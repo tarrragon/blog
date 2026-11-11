@@ -32,4 +32,4 @@ Lark grammar 的風險是把 parser 格式誤當跨引擎標準。某些 constra
 
 ## 判斷條件與後果
 
-Lark grammar 適合需要清楚描述自訂格式、且工具鏈支援 Lark dialect 的場景。設計時先把合法範圍縮到應用真的需要的語法，再補 validator 處理外部狀態與權限。下一步路由是 [Grammar](/llm/knowledge-cards/grammar/) 與 [DSL](/llm/knowledge-cards/dsl/)。
+Lark grammar 適用的條件有兩個：格式需要寫成清楚的自訂規則，而且目標工具鏈支援 Lark dialect；工具鏈只支援 JSON Schema、regex 或 GBNF 時，Lark 規則搬過去解析不了（上一段）。規則允許的範圍比應用需要的大時，模型可以生成應用處理不了的語法，所以合法範圍縮到應用實際需要的語法；語法合法之外的外部狀態與權限，grammar 判斷不了，由 validator 處理。延伸的概念在 [Grammar](/llm/knowledge-cards/grammar/) 與 [DSL](/llm/knowledge-cards/dsl/)。

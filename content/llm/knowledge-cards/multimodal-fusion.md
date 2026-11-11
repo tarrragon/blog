@@ -65,9 +65,4 @@ text → tokenizer → text tokens
 
 ## 判斷條件與後果
 
-讀 VLM paper / blog 看到「early fusion」「LLaVA-style」「Flamingo-style」「cross-attention adapter」就是這分類。寫 code 場景的判讀：
-
-1. **本地跑 VLM 多半是 early fusion**：選 Qwen2.5-VL / Llama 3.2 Vision / Gemma 3 Vision 都是這條路線、推論伺服器（llama.cpp、Ollama、LM Studio）都支援
-2. **Cross-attention 模型本地跑可能撞牆**：推論伺服器對 Idefics 等 cross-attention 模型支援度差、不一定能跑 GGUF
-3. **理解 fusion 影響 token 估算**：early fusion 下「image token = 真的進 context」、cross-attention 下不算進 context window 主流
-4. **未來 trend 是 unified**：但現在做 production / 本地工作流不必等、用 early fusion 主流模型即可
+在本地跑 VLM 時，模型的 fusion 路線決定兩件事：推論伺服器是否載得起這個模型，以及圖片佔掉多少 context。Qwen2.5-VL、Llama 3.2 Vision、Gemma 3 Vision 都是 early fusion，llama.cpp、Ollama、LM Studio 都支援；Idefics 這類 cross-attention 模型，推論伺服器的支援度差，不一定有能跑的 GGUF，原因是它多出的 cross-attention 層不在一般 LLM 的架構裡。early fusion 下 image token 直接進入 context，多圖或長對話時 context budget 會被圖片吃掉；cross-attention 的 image features 走額外的層注入，不佔 LLM 主流的 context window。native multimodal 仍在研究階段，現在的 production 與本地工作流用 early fusion 的主流模型就有完整的工具支援，不必等它成熟。

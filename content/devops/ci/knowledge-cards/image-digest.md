@@ -25,4 +25,4 @@ CI build image 後推到 registry，scan 報告綁定 digest。Kubernetes manife
 
 ## 判斷條件與後果
 
-Image Digest 要納入 deployment manifest、scan report、release note 與 rollback 記錄，讓 image 發布具備可追溯與可審計能力。
+Image Digest 只在部署鏈的每一份紀錄都用它指涉 image 時，才讓這些紀錄對到同一個產物，原因是 tag 是可以改指向的名字，digest 是內容的雜湊，內容一變它就跟著變。deployment manifest 用 mutable tag 時，同一個 tag 在 staging 與 production 可以指向不同內容，production 實際跑的 image 無法從 manifest 反查；scan report 綁的是 tag 時，掃描過的那一份跟後來部署的那一份可能已經不同；release note 與 rollback 記錄只寫 tag 時，回退到的「上一版」取決於那個 tag 現在指向什麼。

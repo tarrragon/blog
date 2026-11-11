@@ -23,4 +23,4 @@ Growth curve 的核心概念是「用戶 / 流量隨時間成長的形狀分五�
 
 ## 判斷條件與後果
 
-設計容量規劃節奏時、要先判讀 growth curve 形狀、再選 forecast 方法。Linear 適合每月 review；step 適合 *事件前後* review；exponential 適合每週 review；cyclical 適合按 cycle 規劃；S-curve 要規劃 maturation 後容量保持但成長放緩。curve 形狀變了（exponential 變 linear）也是策略訊號。
+容量規劃的 review 節奏與 forecast 方法取決於 growth curve 的形狀，原因是形狀決定了 forecast 的誤差多快累積到超出 headroom。Linear growth 每月的增量相近，每月 review 就看得到偏離；step growth 的增量集中在行銷或活動前後，review 排在事件前後才量得到那一階的跳升；exponential growth 的增量每期放大，線性外推會低估，所以 review 縮到每週；cyclical 的峰值隨週期重複，按 cycle 規劃比按月平均更接近實際峰值；S-curve 在成熟之後成長放緩，規劃的對象從追加容量轉為維持既有容量。形狀本身也會改變（exponential 轉成 linear），這時原本的 review 節奏與 forecast 方法跟著失準，所以形狀的改變也是調整容量策略的訊號。

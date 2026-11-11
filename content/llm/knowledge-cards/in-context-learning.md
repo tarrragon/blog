@@ -18,4 +18,4 @@ ICL 是推論時行為，不是訓練流程。[Few-shot prompting](/llm/knowledg
 
 ## 判斷條件與後果
 
-ICL 適合快速迭代與少量範例；當範例多到吃滿 [context window](/llm/knowledge-cards/context-window/)、每天重複使用且標準穩定時，再考慮 fine-tune。需要穩定輸出格式時，ICL 應搭配 [structured output](/llm/knowledge-cards/structured-output/) 或 validator。
+ICL 跟 fine-tune 之間的選擇看範例量與標準的穩定度。範例少、標準還在調整時，改 context 就改了模型這一次的行為，不必重新訓練，迭代以分鐘計；範例多到佔滿 [context window](/llm/knowledge-cards/context-window/)、每天重複使用而且標準已經穩定時，每次推論都重付同一批範例的 token，把標準一次訓練進權重的 fine-tune 這時才划算。ICL 讓模型照範例模仿格式，不保證每次輸出都合法，所以需要穩定輸出格式時，搭配 [structured output](/llm/knowledge-cards/structured-output/) 或 validator 擋下不合法的輸出。

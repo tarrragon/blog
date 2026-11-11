@@ -17,4 +17,4 @@ Cost per request 是 FinOps 的最小單位。可以對齊業務 metric：cost p
 
 ## 判斷條件與後果
 
-Cost per request 必須包含 *所有 stage*：app compute、DB read/write、cache、network egress、第三方 API。常見漏算：跨 region egress、CloudWatch / Stackdriver / Application Insights metric 成本、log ingest 成本。每月 review、每季 right-sizing。
+Cost per request 的分子漏掉某個 stage 時，算出來的單位成本低於實際，拿它評估遷移或 consolidation 時，會低估被漏掉那一段的份額。分子涵蓋的 stage 是 app compute、DB read/write、cache、network egress 與第三方 API。跨 region egress、監控服務（CloudWatch、Stackdriver、Application Insights）的 metric 費用與 log ingest 費用不會出現在任何一個 endpoint 的成本裡，最常被漏算。這個數字由當月帳單與請求量算出，流量組成或機型改變之後就過期，所以每月重算一次，每季依它做一次 right-sizing。

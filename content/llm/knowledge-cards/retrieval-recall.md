@@ -18,4 +18,4 @@ Retrieval recall 位在 retrieval component eval 層。它跟 [reranker](/llm/kn
 
 ## 判斷條件與後果
 
-設計 retrieval recall eval 時要保存 query、expected source、top-k 結果、score 與失敗分類。不要只看 end-to-end answer correctness；否則 retrieval miss 會被 LLM hallucination、judge 偏差或 prompt 問題掩蓋。
+只看 end-to-end answer correctness 時，答錯的成因混在同一個數字裡：retrieval 沒取回正確文件、LLM 拿到正確 context 仍然 hallucination、judge 判分偏差、prompt 的寫法，在這個指標上都只是一題「答錯」，retrieval miss 因此被其他成因蓋過。retrieval recall eval 逐題存下 query、expected source、top-k 結果、score 與失敗分類，這幾種成因才分得開：expected source 不在 top-k 裡是 retrieval miss；在 top-k 裡而答案仍錯，原因在 generation 或 context packing。

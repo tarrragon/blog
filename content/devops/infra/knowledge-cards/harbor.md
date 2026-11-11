@@ -19,7 +19,12 @@ Harbor 在容器生態裡負責「映像的儲存、分發和安全把關」。�
 
 ## 判斷條件與後果
 
-斷網環境裡每一次 image pull 都從 Harbor 拉，哪些 image 能被部署、誰能推送、舊 image 留多久，都取決於下面這些 Harbor 設定：project 的組織（按團隊、按環境、按產品線）、使用者認證（本地帳號 or LDAP 整合）、漏洞掃描政策（push 時自動掃、block 有 Critical CVE 的 image）、映像保留政策（保留最近 N 個 tag、自動清理舊 image）、以及 storage backend（本地磁碟或 NFS）。
+斷網環境裡每一次 image pull 都從 Harbor 拉，Harbor 的設定因此決定哪些 image 能被部署、誰能推送、舊 image 留多久：
+
+- **project 的組織與使用者認證**：權限以 project 為單位授予，project 依團隊、環境或產品線切開時，一個團隊的推送權限碰不到另一個團隊的 image。用本地帳號時，人員異動要另外在 Harbor 上停用帳號；接 LDAP 時，帳號跟著公司的目錄服務一起停用
+- **漏洞掃描政策**：push 時自動掃描而不阻擋時，有 Critical CVE 的 image 照樣能被拉去部署，掃描結果只是一份報告；設定阻擋這類 image 之後，它們無法被 pull
+- **映像保留政策**：沒有保留政策時，每次 build 推上來的 tag 一直累積，磁碟用量只增不減；保留最近 N 個 tag 時，更舊的版本被清掉，回退只退得到保留範圍內的版本
+- **storage backend**：image 存在 Harbor 主機的本地磁碟時，那顆磁碟故障就帶走全部 image；放在 NFS 時，image 與 Harbor 主機分開保存，pull 的速度改由 NFS 的效能決定
 
 ## 鄰卡
 

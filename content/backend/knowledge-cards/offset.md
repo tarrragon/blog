@@ -22,4 +22,4 @@ Offset 也是 replay 操作的控制參數。「重設 offset 到三天前」意
 
 ## 判斷條件與後果
 
-Offset 提交策略要和業務處理完成條件對齊。Auto-commit（定期自動提交）實作簡單但在 crash 時有遺失風險；manual commit（處理完成後手動提交）更安全但程式碼更複雜。Runbook 應說明如何查 current offset、committed offset、lag、重設 offset 的操作步驟與 replay 對下游的影響。
+Offset 提交的時間點與業務處理完成的時間點之間的落差，決定 consumer crash 之後的結果。Auto-commit（定期自動提交）依固定間隔提交，提交時訊息可能還沒處理完，crash 之後 consumer 從已提交的位置繼續，那些訊息被跳過；manual commit（處理完成後手動提交）時，crash 只讓最後一批已處理而還沒提交的訊息被重新處理，代價是提交邏輯寫進業務程式，而下游要用 [idempotency](/backend/knowledge-cards/idempotency/) 承受這批重複。runbook 沒有寫出怎麼查 current offset、committed offset 與 lag 時，事故當下分不出 consumer 是停住、變慢還是跳過了訊息；沒有寫出重設 offset 的步驟與 replay 對下游的影響時，一次重設讓下游重新處理整段事件，而下游能否承受重複沒有人事先確認。

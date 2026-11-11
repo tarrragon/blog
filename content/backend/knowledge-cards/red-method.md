@@ -17,4 +17,4 @@ RED 三維度的典型訊號：Rate 上升、Errors 維持低、但 Duration p99
 
 ## 判斷條件與後果
 
-每個 service / endpoint 必須有獨立 RED dashboard、不能只看全站 average。Duration 必須記錄分布（histogram）而非單一 percentile、否則無法做 long-tail 分析。RED metrics 通常驅動 SLO；duration 跟 [latency budget](/backend/knowledge-cards/latency-budget/) 對接。
+RED 三個維度判讀得出什麼，取決於量測的粒度。只看全站 average 時，單一 endpoint 的 Duration 惡化被其他 endpoint 平均掉，接近 saturation 的早期警訊（Duration 先變差、Errors 還沒上升）看不出來，所以每個 service / endpoint 各有一組 RED。Duration 只記單一 percentile 時，分布的其他位置事後算不回來，long-tail 分析做不了；記成 histogram 才能事後取 p50 到 p999。RED metrics 通常驅動 SLO，Duration 的目標值跟 [latency budget](/backend/knowledge-cards/latency-budget/) 對接。

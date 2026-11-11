@@ -18,4 +18,4 @@ Protocol integration test 位在 unit test 和 E2E test 之間。Unit test 用 m
 
 ## 判斷條件與後果
 
-Protocol integration test 要決定服務 fixture 的管理方式（Process.start / Docker / testcontainers）、健康檢查策略（port 可達 / HTTP health / 業務操作成功）、和狀態隔離方式（每 test 重啟 / 重設狀態 / 獨立 namespace）。成本判斷依據服務啟動成本和協議複雜度兩個維度。
+這類測試的三個設計選擇，各自決定一類失敗是否出現。服務 fixture 用 Process.start、Docker 或 testcontainers 管理，三者的啟動成本不同，而每次啟動的等待時間乘上啟動次數就是套件的固定成本。健康檢查只看 port 可達時，服務可能還沒完成初始化就接受連線，第一個 test 在服務就緒前執行而失敗；以 HTTP health 或一次業務操作成功當就緒條件，判定的是服務已經能處理請求。狀態隔離用每 test 重啟、重設狀態或獨立 namespace；沒有隔離時，前一個 test 寫進服務的狀態成為下一個 test 的前提，test 的執行順序一變結果就跟著變。這些成本是否值得付，依服務啟動成本和協議複雜度兩個維度判斷。

@@ -29,4 +29,4 @@ Throttle 是近親：固定時間窗內至多執行一次、但持續觸發會�
 
 ## 判斷條件與後果
 
-Debounce 的設計責任是在不犧牲第一次點擊即時性的前提下吸收重複觸發。時間窗常見慣例值是 300ms 上下，依操作型態調整。完整的防連點決策（哪類按鈕用 debounce、哪類用 disabled）見[互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)的兩類按鈕段。
+時間窗的長度與執行時間點，決定 debounce 收斂掉的是哪些觸發。窗太短時，焦慮性連點的第二、三下落到窗外，導航堆疊照樣被 push 兩層；窗太長時，使用者有意的下一次操作也被忽略，按鈕看起來沒反應。常見慣例值是 300ms 上下，依操作型態調整。執行時間點用 trailing-edge 時，每次點擊都要等滿一個窗才生效，超過點擊確認的 100ms 即時門檻；用 leading-edge 時，第一次點擊立即生效，即時性保留下來。完整的防連點決策（哪類按鈕用 debounce、哪類用 disabled）見[互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)的兩類按鈕段。

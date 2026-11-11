@@ -18,4 +18,4 @@ Retrieval cost 橫跨 query 端、retrieval 端、context 組裝端與控制流�
 
 ## 判斷條件與後果
 
-判斷 retrieval cost 要把 accuracy、latency、token budget、服務費用與維運複雜度一起看。低風險聊天可用 [adaptive retrieval](/llm/knowledge-cards/adaptive-retrieval/) 降低不必要檢索；高價值問答可接受 [reranker](/llm/knowledge-cards/reranker/) 或 [multi-step retrieval](/llm/knowledge-cards/multi-step-retrieval/) 的額外成本；即時補完則通常偏向 single-step、cache 或較小 top-k。
+一筆 retrieval cost 是否值得付，取決於答錯的代價，跟多付的 latency、token、服務費用與維運複雜度相比哪一邊大，所以同一個增強手段在不同場景得到不同的判斷。低風險的聊天裡多數訊息不需要外部知識，每一則都 retrieve 就每一則都付 embedding 與 vector DB 的成本，答案卻沒有變好，[adaptive retrieval](/llm/knowledge-cards/adaptive-retrieval/) 只在需要時才查。高價值的問答答錯的代價高，[reranker](/llm/knowledge-cards/reranker/) 或 [multi-step retrieval](/llm/knowledge-cards/multi-step-retrieval/) 多付的計算換來的準確率值得。即時補完對延遲敏感，每多一段檢索都直接加進使用者等待的時間，所以通常停在 single-step、cache 或較小的 top-k。

@@ -27,4 +27,4 @@ Diffusion 跟 Transformer 工具鏈完全不通用：
 
 ## 判斷條件與後果
 
-聽到「換 model 就能產圖」的說法時、回到本卡確認：產圖是另一個領域、要切換到 Diffusion 工具鏈、而非在 Ollama 上下載產圖模型。寫 code 工作流跟產圖工作流分開學、避免兩邊半生不熟。對 Mac 使用者來說、Draw Things（macOS 原生 app）是產圖入門的最低門檻路徑。
+「換 model 就能產圖」這個說法成立的前提，是產圖模型與寫 code 的模型共用同一套工具鏈；上表列的推論伺服器、量化格式與 prompt 寫法兩邊都不同，所以產圖要換成 ComfyUI、Draw Things 這類 Diffusion 工具鏈，不是在 Ollama 上多下載一個模型。兩套工具鏈的知識幾乎不互通，寫 code 的工作流與產圖的工作流可以各自獨立學，學其中一套時不必先懂另一套。Mac 使用者要入門產圖時，Draw Things 是 macOS 原生 app，不必自己架推論環境，是門檻最低的起點。

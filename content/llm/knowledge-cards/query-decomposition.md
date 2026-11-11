@@ -18,4 +18,4 @@ Query decomposition 位在 [RAG](/llm/knowledge-cards/rag/) 的 query 端，跟 
 
 ## 判斷條件與後果
 
-Query decomposition 適合子問題彼此獨立的複合問題。若後一個子 query 需要前一輪結果才能產生，改用 multi-step retrieval；若拆解後子 query 過多，要回到 [retrieval cost](/llm/knowledge-cards/retrieval-cost/) 與 latency budget 評估。
+子問題彼此獨立，也就是每個子 query 不靠其他子 query 的結果就寫得出來，是 query decomposition 能平行 retrieve 的前提。後一個子 query 需要前一個的結果才寫得出來時（先查出某個服務用哪個資料庫，才查得到那個資料庫的備份策略），事先拆好的子 query 缺了那個還不知道的值，retrieve 回來的是泛泛的結果；這種依賴由 [multi-step retrieval](/llm/knowledge-cards/multi-step-retrieval/) 處理，它讀完上一輪的結果才決定下一個 query。子問題獨立而數量多時，每個子 query 各付一次 retrieve 的 latency 與費用，總成本隨子 query 數成長，拆解換到的命中率是否值得，拿 [retrieval cost](/llm/knowledge-cards/retrieval-cost/) 與 latency budget 比較。

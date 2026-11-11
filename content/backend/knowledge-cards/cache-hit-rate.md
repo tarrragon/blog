@@ -5,7 +5,6 @@ description: "說明快取命中比例如何衡量加速效果與下游保護"
 weight: 90
 ---
 
-
 Cache hit rate 的核心概念是「快取命中次數佔總讀取次數的比例」。它用來衡量快取是否真的承擔讀取流量。 可先對照 [Cache Invalidation](/backend/knowledge-cards/cache-invalidation/)。
 
 ## 跟其他概念的關係
@@ -18,4 +17,4 @@ Hit rate 是容量與成本指標。低 hit rate 可能代表快取資料不適�
 
 ## 判斷條件與後果
 
-Hit rate 要搭配 latency、下游 query count、cache size 與資料新鮮度一起看。高 hit rate 也要確認資料正確性，因為過期資料命中仍可能造成產品問題。
+Hit rate 單獨看時，三種不同的狀態都顯示成命中率高。hit rate 高而下游 query count 沒有下降時，命中的是本來就便宜的讀取，成本高的查詢仍然打到資料庫；hit rate 上升伴隨 cache size 持續成長時，命中率是用記憶體換來的，快取的成本跟著上升；TTL 長而失效漏掉時，命中的是過期資料，使用者讀到舊價格或舊庫存。所以 hit rate 和下游 query count、cache size、資料新鮮度一起看，latency 則確認命中是否縮短了回應時間。

@@ -22,4 +22,4 @@ Partition 數量也影響 [offset](/backend/knowledge-cards/offset/) 管理的�
 
 ## 判斷條件與後果
 
-Partition 設計要定義 partition key（通常是業務實體 ID）、partition 數量（建議初期設多一點，Kafka partition 數量只能增加不能減少）、順序需求（同 key 保序 vs 全域保序）與 lag 觀測（per-partition lag 能定位 hot partition）。重新分 partition 可能影響順序、consumer group 配置與 replay 範圍。
+Partition 的 key、數量、順序需求與 lag 觀測各自決定一種後果。Partition key 用業務實體 ID 時（訂單用 order_id），同一實體的事件保留順序；key 的分布不均時（高流量商家的訂單都 hash 到同一個 partition），形成 hot partition。Partition 數量是 consumer group 並行度的上限，而 Kafka 的 partition 數量只能增加不能減少，所以初期設得少時，日後擴展只剩增加 partition 一條路，而重新分 partition 可能影響順序、consumer group 配置與 replay 範圍。順序需求是同 key 保序時，partition key 就足以保證；是全域保序時，跨 partition 的事件沒有順序，並行處理與順序要二選一。Lag 只看總量時，hot partition 被其他 partition 的低 lag 平均掉，per-partition lag 才定位得到它。

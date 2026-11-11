@@ -21,4 +21,4 @@ MPM 是 Apache 的並發模型，跟 [nginx](/devops/infra/knowledge-cards/nginx
 
 ## 判斷條件與後果
 
-從 mod_php 換到 PHP-FPM 時，可以順便把 MPM 換成 event，讓 Apache 用較少的資源處理大量連線。詳見 [mod_php](/programming/php/01-server-runtime/mod-php/)。
+PHP 以 mod_php 執行、而且沒有以 ZTS 編譯時，Apache 只能用 prefork，每個連線（包括閒置的 keep-alive 連線）都佔一個子程序，能同時處理的連線數等於 `MaxRequestWorkers` 的子程序上限。PHP 改由 PHP-FPM 在 Apache 之外執行時，這個限制解除，Apache 可以改用 event，閒置的 keep-alive 連線交給專門的執行緒看管，不再各佔一個子程序；所以從 mod_php 換到 PHP-FPM 時，MPM 可以一起換成 event。詳見 [mod_php](/programming/php/01-server-runtime/mod-php/)。

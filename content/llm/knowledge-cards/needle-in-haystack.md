@@ -28,13 +28,13 @@ Variables：
 
 跟 lost-in-the-middle 的對比：
 
-| 維度       | [Lost in the middle](/llm/knowledge-cards/lost-in-the-middle/) | Needle in haystack                    |
-| ---------- | -------------------------------------------------------------- | ------------------------------------- |
-| 衡量的能力 | 對中段內容的整體 attention                                     | 抓單一事實的 recall                   |
-| 任務       | 抓整段邏輯、做推論                                             | 純 retrieve、不需推論                 |
-| 難度       | 高（需理解整段語意）                                           | 較低（明確 keyword 匹配）             |
-| 模型表現   | 中段顯著差                                                     | 通常各位置都接近 100%（強模型）       |
-| 判讀意義   | 反映「實用 effective context」                                 | 反映「lower bound effective context」 |
+| 維度       | [Lost in the middle](/llm/knowledge-cards/lost-in-the-middle/) | Needle in haystack                            |
+| ---------- | -------------------------------------------------------------- | --------------------------------------------- |
+| 衡量的能力 | 對中段內容的整體 attention                                     | 抓單一事實的 recall                           |
+| 任務       | 抓整段邏輯、做推論                                             | 純 retrieve、不需推論                         |
+| 難度       | 高（需理解整段語意）                                           | 較低（明確 keyword 匹配）                     |
+| 模型表現   | 中段顯著差                                                     | 通常各位置都接近 100%（強模型）               |
+| 判讀意義   | 反映「實用 effective context」                                 | 反映 effective context 的上限（最樂觀的估計） |
 
 ```text
 典型 NIH heatmap（GPT-4 128K 之類）：
@@ -54,9 +54,6 @@ NIH heatmap 通常全綠（強模型）、但實用任務（reasoning over long 
 
 ## 判斷條件與後果
 
-讀 long context 模型 release notes 看到「needle in a haystack: 100%」「pass NIH up to 128K」等聲稱、要區分：
+release notes 宣稱「needle in a haystack: 100%」「pass NIH up to 128K」時，這個數字量到的是單一事實的 retrieve：NIH 是明確的 keyword 匹配，強模型在各位置都接近 100%，同一個模型做需要理解整段語意的 reasoning over long context 時，中段照樣可能塌陷（〈跟其他概念的關係〉的對照表與 heatmap）。所以 NIH pass 的長度是可用長度的上限，實用的 effective context 通常是 NIH pass 長度的 1/2 到 1/4。
 
-1. **NIH 100% 不代表「能用 128K context」**：NIH 只測單一事實 retrieve、實際 reasoning over long context 仍可能崩
-2. **真實任務 benchmark**：[LongBench](https://github.com/THUDM/LongBench)、[RULER](https://github.com/hsiehjackson/RULER) 等是更貼近實用的 long context evaluation、會暴露 lost-in-the-middle 等問題
-3. **本地跑 long context 模型**：先用 NIH 驗證 baseline、再用 RULER / 自己工作流 case 測 effective context
-4. **判讀「我的模型實際能用幾 K」**：NIH pass 的長度是上限、實用 effective context 通常是 NIH pass 長度的 1/2 到 1/4
+要知道模型實際能用幾 K，需要量得到 NIH 量不到的那類退化的測試：[LongBench](https://github.com/THUDM/LongBench)、[RULER](https://github.com/hsiehjackson/RULER) 這類 long context evaluation 更貼近實際任務，會暴露 lost-in-the-middle 這類問題。本地跑 long context 模型時，NIH 確認的是 baseline，RULER 或自己工作流的案例量出的才是 effective context。

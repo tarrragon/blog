@@ -21,7 +21,7 @@ tag 把「哪些 VM 要開這個 port」從防火牆規則裡拆出來，放到 
 
 ## 判斷條件與後果
 
-管理通道用的 tag（例如放行 IAP 來源連 22 port 的那一個）寫進 instance template 或 GKE node pool 的設定，不靠逐台 `add-tags`。改 template 或 node pool 的 tag 時，`--tags` 是整組指定，既有的 tag 要一起列進去。能改 VM tag 的權限等於能改那台 VM 套用哪些防火牆規則，授權時與防火牆規則的管理權一起考慮。
+管理通道用的 tag（例如放行 IAP 來源連 22 port 的那一個）只用 `add-tags` 逐台加上時，MIG 自動重建或新建的 VM 不帶這個 tag，那條防火牆規則套不到它，管理通道就連不上那台 VM；寫進 instance template 或 GKE node pool 的設定，每一台新建的 VM 才會帶著它。`--tags` 是整組指定，改 template 或 node pool 的 tag 時只列新的那一個，既有的 tag 全部被換掉，依那些 tag 套用的防火牆規則也不再作用於這些 VM，所以既有的 tag 要一起列進去。有權限改 VM 的帳號加上一個 tag，那台 VM 就套用了對應的規則，這項權限等同於決定 VM 套用哪些防火牆規則，所以授權時與防火牆規則的管理權一起考慮。
 
 ## 鄰卡
 

@@ -5,7 +5,6 @@ description: "說明服務與部署平台之間的生命週期約定"
 weight: 1
 ---
 
-
 Deployment Contract 的核心概念是「application 與平台對啟動、存活、接流量與停止方式達成一致」。它把服務生命週期變成可預期的協作規則。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
 ## 跟其他概念的關係
@@ -22,4 +21,4 @@ readiness、shutdown、[draining](/backend/knowledge-cards/draining/) 與 [resou
 
 ## 判斷條件與後果
 
-Deployment Contract 要明確定義何時可接流量、何時應停止接流量、資源不足時如何回應，以及變更失敗時如何回復。
+Deployment Contract 少了哪一項約定，平台與 application 在那一段生命週期就各自照自己的假設行動。沒有約定何時可以接流量，平台會在 application 載入完成之前導入 request，第一批請求失敗；沒有約定何時停止接流量，instance 關閉時仍有新請求進來而被中斷；沒有約定資源不足時怎麼回應，呼叫端收到的可能是連線中斷，分不出這次失敗是否可以重試；沒有約定變更失敗時怎麼回復，失敗的發版停在新舊版本混雜的狀態，回復要靠人工判斷。原因是平台只照約定的訊號行動，約定沒寫到的那一段沒有任何一方負責。

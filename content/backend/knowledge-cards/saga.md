@@ -20,4 +20,4 @@ Saga 處於跨服務分散事務的設計層。Saga 解「跨服務事務一致�
 
 ## 判斷條件與後果
 
-補償 transaction 必須是 idempotent — saga 引擎在故障重試時會重放補償。缺 idempotent 設計時、saga 補償會變成新事故來源。Choreography vs orchestration 的選擇要看「業務流程穩定度」— 流程穩定可走 choreography 簡化耦合、流程多變或 audit 要求高選 orchestration 保留 state machine。Saga timeout 跟 step timeout 要明示、確保 saga 推進到終態（成功或補償完成）。
+Saga 的判斷看三件事：補償能否重放、流程集中在哪裡、何時結束。saga 引擎在故障重試時會重放補償 transaction，補償不是 idempotent 時，同一筆退款或庫存回補會執行兩次，補償本身變成新的事故來源。業務流程穩定時，choreography 讓各服務只監聽事件，耦合低；流程常變或 audit 要求高時，orchestration 把 state machine 集中在 orchestrator，每一筆 saga 走到哪一步查得到，代價是 orchestrator 成為單點。saga 與每個 step 的 timeout 沒有明示時，一個 step 沒有回應會讓整筆 saga 停在中間狀態，既沒有成功也沒有補償完成，所以 timeout 要明示，到期時把 saga 推進到終態（成功或補償完成）。

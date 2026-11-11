@@ -5,7 +5,6 @@ description: "說明服務停止前如何排空流量、完成工作與保存狀
 weight: 12
 ---
 
-
 Graceful shutdown 的核心概念是「instance 收到停止訊號後，以可控流程結束服務」。它會先停止接收新工作，再讓正在處理的 request、長連線、consumer 或背景任務在期限內完成、保存狀態或交回 broker。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
 ## 跟其他概念的關係
@@ -22,4 +21,4 @@ Graceful shutdown 是 application 與部署平台的停止合約。平台負責�
 
 ## 判斷條件與後果
 
-Graceful shutdown 要搭配 timeout、[draining](/backend/knowledge-cards/draining/)、[idle timeout](/backend/knowledge-cards/idle-timeout/)、idempotency 與觀測訊號。Runbook 應能看到停止期間的 in-flight request、consumer ack、長連線數、錯誤率與強制終止次數，讓部署問題可以被定位。
+Graceful shutdown 的判斷條件是停止期間每一種進行中的工作是否都有結束的方式。沒有 timeout 時，一個不結束的請求或轉檔讓 instance 停不下來，平台最後強制終止，結果跟沒有 graceful shutdown 相同；沒有先做 [draining](/backend/knowledge-cards/draining/) 時，instance 一邊排空、一邊還收到新請求。consumer 被強制終止時，還沒 ack 的訊息由 broker 重新投遞，處理端沒有 idempotency 就把同一筆訊息處理兩次。長連線不會因為 instance 停止而自己結束，要等 [idle timeout](/backend/knowledge-cards/idle-timeout/) 或停止流程主動關閉，兩者都沒趕在期限之前發生時，期限一到連線被強制切斷，client 看到連線突斷。停止期間的 in-flight request、consumer ack、長連線數、錯誤率與強制終止次數有觀測時，部署中出現的中斷可以定位到是哪一種工作沒有在期限內結束。

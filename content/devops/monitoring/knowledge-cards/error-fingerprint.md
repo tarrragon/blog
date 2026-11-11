@@ -19,7 +19,7 @@ Error fingerprint 位在 collector 收到 error 事件之後、寫入 storage �
 
 ## 判斷條件與後果
 
-Fingerprint 承擔的設計責任是「在 error 的精確識別和分群粒度之間找到平衡」。過粗的 fingerprint（只用 error type）把不同 bug 混在同一組；過細的 fingerprint（用完整 message 含動態值）把同因 error 分裂成多組。
+計算 fingerprint 時取哪些欄位，決定兩筆 error 事件會不會歸成同一組。只用 error type 計算時，fingerprint 過粗，拋出同一種 error type 的不同 bug 混進同一組，這一組的 count 與 affected_sessions 加總了好幾個 bug，修掉其中一個之後這一組照樣持續出現。用含動態值（user ID、timestamp、IP）的完整 message 計算時，fingerprint 過細，同一個 bug 依動態值分裂成多組，列表被同因錯誤佔滿，每一組的 count 都低，看不出這個 bug 影響了多少人。兩種情形的原因相同：hash 只比對輸入的欄位是否逐字相同，欄位裡的動態值每變一次，hash 就變一次；所以 message 先把動態值正規化（`User 12345 not found` 換成 `User <id> not found`）再進 hash。
 
 ## 自架 vs 商業方案
 

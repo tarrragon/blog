@@ -25,4 +25,4 @@ tags: ["backend", "database", "connection-pool", "knowledge-card"]
 
 ## 判斷條件與後果
 
-借出與歸還寫在同一個作用域裡，讓語言的機制保證歸還：Go 在取得 `*sql.Rows` 或 `*sql.Tx` 的下一行寫 `defer Close()` 或 `defer Rollback()`，Python 用 `with`。監控上要能看到池的使用中、閒置與等待次數；測試裡可以在每個測試結束時檢查池的使用中連線數回到 0，讓洩漏在測試階段就失敗。Java 的 HikariCP 這類連線池內建洩漏偵測（連線借出超過設定時間就記錄借出位置的 stack trace），Go 的 `database/sql` 沒有，要靠池的使用中連線數、等待次數，以及測試結束時的連線數檢查。
+借出與歸還分寫在兩處時，任何一條提早離開的路徑（讀到一半就 `return`、錯誤中斷）都會跳過歸還，連線留在池的帳上；寫在同一個作用域裡時，由語言的機制保證歸還：Go 在取得 `*sql.Rows` 或 `*sql.Tx` 的下一行寫 `defer Close()` 或 `defer Rollback()`，Python 用 `with`。洩漏多早被發現，取決於手上有哪些偵測：Java 的 HikariCP 這類連線池內建洩漏偵測（連線借出超過設定時間就記錄借出位置的 stack trace）；Go 的 `database/sql` 沒有，只能從池的使用中連線數、閒置數與等待次數看出來。測試在每個測試結束時檢查池的使用中連線數是否回到 0 時，洩漏在測試階段就讓測試失敗，不必等到上線後流量高時才浮現。

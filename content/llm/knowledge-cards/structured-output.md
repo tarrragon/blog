@@ -26,4 +26,4 @@ Structured output 的成功訊號是合法率、schema 對位率與下游解析�
 
 ## 判斷條件與後果
 
-Structured output 適合「下游要自動執行」的輸出：tool 參數、分類、抽取、workflow 狀態、查詢條件。它的邊界是語意品質：grammar 可以保證格式合法，但不能保證模型填的值正確。下一步路由是：需要理解 token mask 機制讀 [Constrained Decoding](/llm/knowledge-cards/constrained-decoding/)；需要判斷它跟工具呼叫的分工讀 [Function Calling](/llm/knowledge-cards/function-calling/)；需要完整應用層組合讀 [4.6 應用層協議](/llm/04-applications/application-protocols/)。
+輸出由程式直接消費、下游要自動執行時（tool 參數、分類、抽取、workflow 狀態、查詢條件），形狀一旦不符，parser 或 dispatcher 就失敗，中間沒有人重讀自然語言來補救，structured output 在這類輸出上換得到價值。它保證的範圍止於格式：grammar 確保輸出合法，模型填進欄位的值仍可能是錯的，一筆 schema 合法的分類結果照樣可能分錯類，所以語意的正確性另外由 validator 或人工覆核檢查。下一步路由是：需要理解 token mask 機制讀 [Constrained Decoding](/llm/knowledge-cards/constrained-decoding/)；需要判斷它跟工具呼叫的分工讀 [Function Calling](/llm/knowledge-cards/function-calling/)；需要完整應用層組合讀 [4.6 應用層協議](/llm/04-applications/application-protocols/)。

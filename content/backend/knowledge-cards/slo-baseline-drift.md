@@ -17,4 +17,4 @@ SLO drift 來源：structural surge（COVID 類外部衝擊讓 baseline 永久�
 
 ## 判斷條件與後果
 
-SLO 必須每季 review、不是「設定後就忘」。review 流程：拉過去 90 天 SLI 分布、看 percentile 分布是否跟 SLO 對應、看是否需要調整。drift 確認後要更新：alert threshold、autoscaler trigger、performance budget 額度、容量規劃 baseline。對應 [error budget](/backend/knowledge-cards/error-budget/) 跟 [performance budget](/backend/knowledge-cards/performance-budget/)。
+SLO 設定之後沒有再檢視時，它跟實際 SLI 分布之間的差距隨 baseline 移動而擴大，往哪一側擴大決定 SLO 失效的方式。實際表現遠好於 SLO 時（架構升級之後），burn rate 持續低於 baseline，SLO 分不出正常與退化；實際負載結構性上升而 SLO 沒有跟著調整時，burn rate 持續偏高卻沒有對應的 incident，alert 頻繁觸發而沒有事故，失去訊號的作用。所以 SLO 每季 review 一次：拉過去 90 天的 SLI 分布，比對 percentile 分布跟 SLO 是否對應。確認是 drift 之後，以 baseline 為輸入的設定一起過時，包括 alert threshold、autoscaler trigger、[performance budget](/backend/knowledge-cards/performance-budget/) 額度與容量規劃 baseline，只改 SLO 而沒改它們時，這些設定仍依舊的 baseline 觸發；[error budget](/backend/knowledge-cards/error-budget/) 以 SLO 為基準計算，也跟著重算。

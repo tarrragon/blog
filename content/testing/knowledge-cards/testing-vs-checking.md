@@ -22,6 +22,6 @@ Checking 是對一個已經被決定的事實作二元評估：判斷標準事�
 
 ## 判斷條件與後果
 
-Checking 交給機器之後，人的時間要移到 checking 產生不了的地方：判斷標準本身的設計、[出處獨立](/testing/knowledge-cards/test-provenance/)的驗收條件、以及那些沒有被任何斷言涵蓋的問題。把省下來的時間拿去讀機器寫的斷言，等於把人放回機器已經做得比較好的那一側。
+Checking 交給機器之後，人省下來的時間花在 testing 還是 checking 上，決定套件能否長出新的判斷標準。花在 checking 產生不了的地方（判斷標準本身的設計、[出處獨立](/testing/knowledge-cards/test-provenance/)的驗收條件、沒有被任何斷言涵蓋的提問）時，探究的覆蓋面跟著擴大；拿去逐條讀機器寫的斷言時，人做的仍是 checking，而 checking 機器已經做得比較好，探究的覆蓋面維持原狀。
 
 這個分界也給了自動化程度一個誠實的說法。宣稱「測試全自動化」時實際成立的是「checking 全自動化」，而 checking 的完整性由當初那次 testing 決定——沒有人問過的問題不會因為套件變大而被回答。

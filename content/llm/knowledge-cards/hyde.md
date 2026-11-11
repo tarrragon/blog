@@ -29,11 +29,11 @@ User query
 
 ## 判斷條件與後果
 
-讀 RAG paper 或工具看到「HyDE」「hypothetical document」「query-side augmentation」就是這個機制。實作判讀：
+HyDE 的判斷看三個條件：query 與文件的 phrasing 落差、假文件是否偏題，以及延遲預算。
 
-1. **適用 phrasing 落差顯著的場景**：問句 vs 陳述、口語 vs 正式、抽象 vs 技術詞彙。HyDE 原論文跨多領域都有提升、不限技術 / 學術。
-2. **失效在假文件偏離主題**：LLM hallucinate 到別領域、retrieve 拿到完全不相關的東西。緩解：生成多個假文件取平均 embedding、或用 query + 假文件兩個 embedding 合併 retrieve。
-3. **Cost**：每 query 多一個 LLM call（生假文件）、latency 加 500ms-1s，屬於明顯的 [retrieval cost](/llm/knowledge-cards/retrieval-cost/)。對 latency 敏感場景考慮 [query rewriting](/llm/knowledge-cards/query-rewriting/) 等較輕量的替代。
-4. **跟 [hybrid search](/llm/knowledge-cards/hybrid-search/) 互補**：HyDE 解語意 phrasing 落差、hybrid 解語意 / 字面互補、可以同時用。
+1. **query 與文件的 phrasing 落差大時**（問句對陳述、口語對正式、抽象說法對技術詞彙），直接 embed query 得到的距離不可靠，假文件的 phrasing 接近真文件，retrieve 的結果因此改善；HyDE 原論文在多個領域都有提升，不限技術或學術語料。
+2. **LLM 生成的假文件偏到別的領域時**，retrieve 回來的是那個領域的文件，跟原 query 不相關，原因是 retrieve 只看假文件的 embedding；生成多份假文件取平均 embedding，或把 query 與假文件兩個 embedding 合併 retrieve，單一份假文件偏題的影響就被稀釋。
+3. **延遲預算緊時**，HyDE 每個 query 多一次 LLM 呼叫來生假文件，延遲多 500ms 到 1s，是明顯的 [retrieval cost](/llm/knowledge-cards/retrieval-cost/)；這類場景的替代是 [query rewriting](/llm/knowledge-cards/query-rewriting/) 這類較輕量的做法。
+4. **跟 [hybrid search](/llm/knowledge-cards/hybrid-search/) 一起用時**，兩者處理不同的落差：HyDE 縮小 query 與文件的 phrasing 落差，hybrid 讓字面比對與語意比對互補，所以可以疊用。
 
 完整 RAG 檢索增強技術 landscape 見 [4.2 RAG 檢索增強](/llm/04-applications/rag-retrieval-enhancements/)。

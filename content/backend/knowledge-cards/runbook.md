@@ -20,4 +20,4 @@ Runbook 也服務於 [post-incident review](/backend/knowledge-cards/post-incide
 
 ## 判斷條件與後果
 
-Runbook 的有效結構：症狀描述、影響評估、診斷步驟（先看哪個 [dashboard](/backend/knowledge-cards/dashboard/)、查哪些 log）、可能的修復動作（restart / scale / rollback / failover）、升級路徑（15 分鐘內無法解決時通知誰）。維護責任跟 alert 的 owner 一致 — alert rule 改了但 runbook 沒更新是常見的退化。完整設計見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)。
+Runbook 的每一段結構對應事故處理的一個環節，缺了哪一段，處理者就在那個環節退回靠個人經驗。缺症狀描述時，處理者無法確認手上的告警是否屬於這份 runbook 處理的情形；缺影響評估時，無從決定是否升級嚴重度；缺診斷步驟（先看哪個 [dashboard](/backend/knowledge-cards/dashboard/)、查哪些 log）時，每個人從不同的地方開始查；缺修復動作（restart、scale、rollback、failover）時，處置要在現場臨時決定；缺升級路徑（15 分鐘內無法解決時通知誰）時，卡住的事故沒有人接手。runbook 與 alert 由不同的人維護時，alert rule 改了而 runbook 沒有跟著更新，處理者照舊的步驟查錯地方，所以 runbook 的 owner 跟 alert 的 owner 是同一個人。完整設計見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)。

@@ -17,4 +17,4 @@ Session consistency 常出現在多區域資料庫的可調一致性模型，介
 
 ## 判斷條件與後果
 
-採用 session consistency 時，要明確定義 session 邊界、token/連線續存策略與跨裝置行為。若 session 定義模糊，會讓一致性語意在不同入口不一致，反而增加除錯成本。
+Session consistency 的保證只在同一個 session 內成立，所以 session 的邊界畫在哪裡，決定使用者實際拿到多少「讀得到自己寫入」的保證。Session 以連線或 token 為邊界時，連線中斷而 token 沒有續存，重連後就是新的 session，使用者看不到自己剛寫入的資料；同一個使用者從手機與電腦操作時，兩個裝置是兩個 session，手機上的修改在電腦上可能還讀不到；web、app 與 API 各自定義 session 時，同一個操作在一個入口讀得到、在另一個入口讀不到，除錯時要先查出各入口的 session 定義，才分得出這是設計內的行為還是錯誤。跨使用者共享的狀態在這個保證之外，需要的話另外評估全域一致性。

@@ -18,6 +18,6 @@ Read model 的來源可以是 [projection](/backend/knowledge-cards/projection/)
 
 ## 判斷條件與後果
 
-設計 read model 時要定義同步延遲（read model 落後 write model 多久可以接受）、重建流程（read model 損壞或 schema 變更時如何從頭重建）、欄位語意（read model 的欄位定義跟 write model 可能不同）與查詢邊界（這個 read model 能回答什麼問題、不能回答什麼問題）。
+Read model 的同步延遲、重建流程、欄位語意與查詢邊界，各自決定它出錯時的後果。同步延遲沒有約定可接受的上限時，查詢結果落後 write model 多久都沒有判斷依據；重建流程沒有準備時，read model 損壞或 schema 變更之後只剩直接修資料一條路，而那正是下一段說的分岔來源。欄位語意沒有寫明時，同名欄位在兩邊的定義不同，查詢方拿 read model 的值當成 write model 的定義判讀；查詢邊界沒有寫明時，read model 被拿去支援它沒有設計來支援的查詢，回傳的結果不完整。
 
 Read model 是派生狀態，修復方式是「砍掉重建」而非直接修改。把 read model 當正式狀態修改會導致 write model 跟 read model 分岔、後續同步覆蓋修改。

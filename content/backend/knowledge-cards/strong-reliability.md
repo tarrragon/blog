@@ -5,7 +5,6 @@ description: "說明高可靠事件路徑需要的保存、重試、去重與回
 weight: 144
 ---
 
-
 Strong reliability 的核心概念是「關鍵事件在失敗條件下仍可被恢復到可接受狀態」。它不代表絕對零失敗，而是要求可追蹤、可補償、可驗證。 可先對照 [Message Persistence](/backend/knowledge-cards/message-persistence/)。
 
 ## 跟其他概念的關係
@@ -18,4 +17,4 @@ Strong reliability 的核心概念是「關鍵事件在失敗條件下仍可被�
 
 ## 判斷條件與後果
 
-設計時要定義失敗代價、保證等級、觀測指標與驗證流程，並界定 [reliability boundary](/backend/knowledge-cards/reliability-boundary/)。
+一個事件是否需要 strong reliability，看它遺失時的失敗代價：付款成功事件遺失會造成對帳錯誤，typing indicator 遺失不影響核心產品承諾，兩者套同一套保證時，不是付款事件保護不足，就是 typing indicator 付出不必要的保存與補送成本。失敗代價決定保證等級（可補送、可去重、可稽核），保證等級沒有寫出來時，[message persistence](/backend/knowledge-cards/message-persistence/)、[retry policy](/backend/knowledge-cards/retry-policy/) 與 [idempotency](/backend/knowledge-cards/idempotency/) 要做到什麼程度沒有依據。保證等級沒有對應的觀測指標與驗證流程時，「可恢復」停在設計時的宣稱，補送路徑走不通要到事故發生才看得出來。[reliability boundary](/backend/knowledge-cards/reliability-boundary/) 劃出哪些路徑屬於高可靠路徑，沒有劃時，同一條流程裡的高可靠事件與一般事件混用同一套處理，保證等級不一致。

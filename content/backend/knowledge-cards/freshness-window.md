@@ -18,4 +18,4 @@ Freshness window 是 [source of truth](/backend/knowledge-cards/source-of-truth/
 
 ## 判斷條件與後果
 
-Freshness window 要跟 [cache invalidation](/backend/knowledge-cards/cache-invalidation/) 策略對齊：可接受 stale 的資料用 TTL 保底即可，高代價 stale 的資料需要事件驅動失效或版本化 key 加短 TTL 雙重保險。設計時要同時定義超標處置——freshness window 一旦沒有對應的告警與降級策略，就只是團隊口頭承諾，事故發生時無法佐證是否踩線。TTL 只回答了「預設多久過期」——freshness 的完整定義還要回答不同欄位的分級 TTL、以及超過 window 後要不要阻擋讀取或觸發保護動作。分欄位分級表的完整設計與跨區一致性延伸見 [2.7 Cache Copy Boundary 與 Freshness](/backend/02-cache-redis/cache-copy-freshness-boundary/)。
+Freshness window 的判斷條件是資料過期之後的代價。商品描述這類可接受 stale 的資料由 TTL 保底，過期幾分鐘的代價是畫面上的描述舊一點；價格、庫存可售狀態這類被拿來做正式判斷的資料只靠 TTL 時，TTL 到期之前的舊值會被當成交易依據，所以這類資料的 [cache invalidation](/backend/knowledge-cards/cache-invalidation/) 用事件驅動失效，或版本化 key 加短 TTL。TTL 只定義一個預設的過期時間，分欄位的分級 window，以及超過 window 之後是否阻擋讀取或觸發保護動作，TTL 本身都沒有表達。window 沒有對應的告警與降級策略時，超標時沒有任何系統會發現，事故發生之後也拿不出紀錄證明當時是否超過 window。分欄位分級表的完整設計與跨區一致性延伸見 [2.7 Cache Copy Boundary 與 Freshness](/backend/02-cache-redis/cache-copy-freshness-boundary/)。

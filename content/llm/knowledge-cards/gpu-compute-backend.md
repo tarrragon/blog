@@ -30,4 +30,4 @@ GPU compute backend 的核心概念是「推論軟體（如 llama.cpp、PyTorch�
 
 理解 GPU compute backend 後可以解釋三個現象：為什麼下載 llama.cpp release 要選 CUDA / ROCm / Vulkan 版本（每個 build 對應一種 backend）、為什麼同樣硬體 throughput 差很多（backend 不對或 fallback 到 CPU）、為什麼非 NVIDIA GPU 跑 LLM 經驗較少（CUDA 生態太成熟、其他 backend 仍在演進）。
 
-選 PC GPU 跑本地 LLM 時、backend 成熟度是「工具鏈支援度」軸、跟硬體規格軸獨立、選卡時兩軸都要考慮。詳見 [5.6 GPU 廠商差異](/llm/05-discrete-gpu/gpu-vendor-differences/)。
+選 PC GPU 跑本地 LLM 時，backend 成熟度（工具鏈支援度）與硬體規格是兩個獨立的條件：規格高的卡，推論軟體對它的 backend 支援不成熟時，推論可能 fallback 到 CPU 或用不上 GPU 的算力，throughput 遠低於規格的預期，原因是 throughput 由 backend 的實作與硬體一起決定。所以比較兩張卡時，規格與 backend 支援度分開比。詳見 [5.6 GPU 廠商差異](/llm/05-discrete-gpu/gpu-vendor-differences/)。

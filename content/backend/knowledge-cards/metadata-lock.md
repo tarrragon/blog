@@ -17,4 +17,4 @@ Metadata Lock 位在 DDL workflow 與 DML transaction 的交界。MySQL 的 meta
 
 ## 判斷條件與後果
 
-設計 schema 變更要先定義 DDL window、lock wait timeout 與長交易的處理策略。安全做法是在低流量窗口執行、設定 DDL 逾時讓它快速失敗而非無限等待、並先找出與終止 blocker 交易。大表結構變更應改用 [Online Migration](/backend/knowledge-cards/online-migration/) 工具，把一次性鎖換成可控的漸進搬移。runbook 要能快速定位「DDL 在等誰」與「誰被 DDL 擋住」。
+DDL 拿不到 metadata 寫鎖時會排隊，排在它後面的新查詢也一起等，所以一個 ALTER 被長交易擋住的時間，就是整張表停止讀寫的時間。沒有設 lock wait timeout 時，DDL 等到長交易結束為止，這段期間該表的查詢逾時與排隊持續累積；設了逾時，DDL 等不到鎖就失敗退出，排在後面的查詢恢復執行，代價是這次變更要重跑。在低流量窗口執行、執行前找出並結束 blocker 交易，縮短的是同一段等待，以及等待期間受影響的請求數。大表的結構變更要長時間持有鎖時，[Online Migration](/backend/knowledge-cards/online-migration/) 工具把一次性的鎖換成可控的漸進搬移。runbook 沒有寫出怎麼查「DDL 在等誰」與「誰被 DDL 擋住」時，事故當下只看得到查詢大量逾時，找不到要結束的那一個交易。

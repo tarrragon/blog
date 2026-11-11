@@ -36,6 +36,4 @@ Tool use 跟 function calling、MCP 的關係：
 
 ## 判斷條件與後果
 
-理解 tool use 後可以解釋三個現象：為什麼 LLM 「能跑 shell」其實是 client 跑、不是模型跑（職責切分）、為什麼 tool spec 設計直接影響攻擊面（spec 越鬆、injection 後果越大）、為什麼 [agent loop](/llm/knowledge-cards/agent-loop/) 比單次 tool call 危險（多步 tool use 中 injection 累積）。
-
-設計 tool 跟 MCP server 時、權限白名單 + 副作用可逆性 + confirm 機制是基本配置；production 場景見 [LLM Agent Prompt Injection 後果治理](/backend/07-security-data-protection/llm-prompt-injection-in-agent/) 跟 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)。
+Tool use 的風險由執行 tool call 的 process 與 tool spec 的寬窄決定，模型只負責生成 tool call。LLM「能跑 shell」時，實際跑 shell 的是 client，shell 能做什麼取決於 client process 的權限；tool spec 寫得越通用（`run_shell`），一次 injection 能觸發的動作越多，寫得越窄（`read_workspace_file`），能觸發的動作越少；[agent loop](/llm/knowledge-cards/agent-loop/) 把多步 tool use 串在一起，前一步帶進來的 injection 內容會影響後面每一步，所以比單次 tool call 危險。設計 tool 與 MCP server 時，三項配置各自對應一種失效：沒有權限白名單時，被 injection 的模型能呼叫任何註冊的 tool；不區分副作用可不可逆時，誤執行的刪除或對外請求無法還原；沒有 confirm 機制時，高風險的 tool call 在人看到之前就已經執行。production 場景見 [LLM Agent Prompt Injection 後果治理](/backend/07-security-data-protection/llm-prompt-injection-in-agent/) 跟 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)。

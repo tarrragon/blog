@@ -17,4 +17,4 @@ Offline catch-up 常出現在 WebSocket、mobile push 與跨區域同步。即�
 
 ## 判斷條件與後果
 
-設計時要定義補送範圍、接續標記（cursor）或版本、補送時限與去重規則，並把流程寫入 [runbook](/backend/knowledge-cards/runbook/)。
+補送範圍、接續標記、補送時限與去重規則，各自決定接收端重新連線後拿到的結果。補送範圍沒有依事件語意區分時，聊天訊息與 typing indicator 一起補送，重新上線的裝置收到一批早已失效的狀態提示。沒有接續標記（cursor）或版本時，接收端無法告訴伺服器自己收到哪裡，只能全量重拉或自己選一個起點：全量重拉浪費頻寬，自選起點會漏掉事件。沒有補送時限時，離線很久的裝置要求的範圍可能超過 [durable queue](/backend/knowledge-cards/durable-queue/) 或 event log 的保存期限，補送拿不到完整資料，只能改從資料庫的狀態查詢重建。沒有去重規則時，在線期間已經收到的事件在補送時又送一次，接收端重複顯示或重複處理。流程沒有寫進 [runbook](/backend/knowledge-cards/runbook/) 時，補送失敗的當下沒有人知道該從哪個接續標記重來。

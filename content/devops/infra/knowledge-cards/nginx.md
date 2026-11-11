@@ -28,7 +28,7 @@ OS 升級或平台遷移時，如果從 Apache 換成 nginx，所有 `.htaccess`
 
 ## 判斷條件與後果
 
-nginx 把 Apache 分散在各目錄 `.htaccess` 的設定收回同一棵設定樹，每個站台的行為因此都要在這棵樹裡寫明：server block（類似 Apache 的 VirtualHost）怎麼組織、upstream 指向哪個 app server、靜態檔案的 root 路徑、TLS 憑證掛在哪裡、access log 和 error log 的路徑。設定改完跑 `nginx -t` 驗證語法後再 `nginx -s reload`。
+nginx 把 Apache 分散在各目錄 `.htaccess` 的設定收回集中的設定檔，每個站台的行為只由寫在這些設定檔裡的內容決定：server block（類似 Apache 的 VirtualHost）決定哪個域名由哪一段設定處理，upstream 決定動態請求轉給哪個 app server，root 路徑決定靜態檔案從哪裡讀，TLS 憑證的路徑決定 HTTPS 用哪一張憑證，access log 與 error log 的路徑決定出事時去哪裡查。其中一項沒寫或寫錯時，沒有其他檔案替它補上：域名沒有對應的 server block 時，請求由預設的 server block 處理。設定改完要 reload 才生效，而語法有錯的設定檔載入不了，所以先跑 `nginx -t` 驗證語法，再 `nginx -s reload`。
 
 ## 鄰卡
 

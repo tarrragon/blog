@@ -27,4 +27,4 @@ BNF 的限制是它描述語法，不描述語意。它能表示「括號必須�
 
 ## 判斷條件與後果
 
-BNF 適合拿來讀懂 grammar-constrained sampling 的規則形狀。實作時要確認你使用的引擎支援的是標準 BNF、EBNF、GBNF，還是自家 dialect；不同 dialect 的 optional、repeat、token escaping 寫法會不同。下一步路由是 [Grammar](/llm/knowledge-cards/grammar/) 與 [Lark Grammar](/llm/knowledge-cards/lark-grammar/)。
+BNF 的用途是讀懂 grammar-constrained sampling 的規則形狀。各家引擎接受的記法不同，有標準 BNF、EBNF、GBNF 與自家 dialect，optional、repeat、token escaping 的寫法各不相同；照一種記法寫的 grammar 交給只支援另一種的引擎時，引擎無法照預期解析這份規則。所以寫 grammar 之前，先從引擎文件確認它支援哪一種記法。下一步路由是 [Grammar](/llm/knowledge-cards/grammar/) 與 [Lark Grammar](/llm/knowledge-cards/lark-grammar/)。

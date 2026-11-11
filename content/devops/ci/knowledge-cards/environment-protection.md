@@ -25,4 +25,4 @@ GitHub Actions deploy job 指向 `production` environment，需指定 reviewer �
 
 ## 判斷條件與後果
 
-Environment Protection 要定義環境分層、審核責任、發布時窗與例外流程，讓高風險發布有明確控制面。
+Environment Protection 的規則依環境的風險分層時，staging 自動放行，production 等指定的 reviewer 批准，原因是兩個環境出錯的影響範圍不同：staging 壞掉影響內部驗證，production 壞掉影響使用者。所有環境套同一組規則時，結果是兩種之一：staging 也被人工審核拖慢，或 production 跟 staging 一樣自動放行，測試綠燈之後沒有任何關卡擋住高風險發布。審核責任沒有指定到人時，批准請求停在沒人處理的狀態，發布卡在 gate 前面；沒有例外流程時，緊急修復同樣要走完整的審核與 wait timer，修復上線的時間被拉長。

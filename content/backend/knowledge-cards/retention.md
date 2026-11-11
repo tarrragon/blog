@@ -20,4 +20,4 @@ Retention 跟 [storage tiering](/backend/knowledge-cards/storage-tiering/) 搭�
 
 ## 判斷條件與後果
 
-Retention 要同時考慮成本（儲存 × 時間）、法規（合規要求的最短保留期跟 GDPR 要求的最長保留期可能衝突）、資安（高敏感資料保留越久風險越高）、replay 需求（MQ 的 retention 影響 consumer 的 catchup 能力）跟 debug 能力（retention 太短讓事後分析無資料可用）。不同訊號類型用不同 retention 是基本做法 — error log 保留比 debug log 長、audit log 保留比 operational log 長。
+Retention 的長度由幾個方向相反的條件共同決定。保留越長，儲存成本隨資料量乘以時間成長，高敏感資料外洩時暴露的範圍也越大；保留越短，事後分析與 replay 的時間窗口越窄，事故後要回看的資料已經被刪掉，MQ 的 consumer 落後超過保留期時也追不回漏掉的訊息。法規可能同時給出下限與上限（合規要求的最短保留期、GDPR 要求的最長保留期），兩者對同一類資料衝突時，整個系統用一個保留期滿足不了兩邊，所以保留期依資料類型分開設定：error log 保留比 debug log 長，audit log 保留比 operational log 長。

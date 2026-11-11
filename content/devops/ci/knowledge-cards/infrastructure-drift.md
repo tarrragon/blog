@@ -25,4 +25,4 @@ Infrastructure Drift 位在 [IaC state](/devops/ci/knowledge-cards/state-lock/)�
 
 ## 判斷條件與後果
 
-Infrastructure Drift 要定義偵測頻率、owner、修復路由、state repair 與回寫規則，讓平台狀態重新回到可審查流程。
+Infrastructure drift 的處置取決於差異的性質：事故中手動放寬的 security group 是短期 hotfix 時，事故結束後由 apply 蓋回宣告檔的值；它應該成為正式規則時，要回寫進 repository。沒有回寫規則時，下一次 apply 會覆蓋 hotfix，事故的成因可能重新出現，原因是 apply 只依宣告檔決定資源該長什麼樣。偵測只在 apply 前順帶發生時，drift 存在的時間等於兩次 apply 的間隔，這段期間 deployment review 看的宣告檔跟真實環境不符；drift 沒有指定 owner 時，plan 裡的非預期變更持續累積，每一次 plan 都要有人重新分辨哪些變更是這次 PR 帶來的。

@@ -18,4 +18,4 @@ Incident decision log 位在 [on-call](/backend/knowledge-cards/on-call/)、[inc
 
 ## 判斷條件與後果
 
-Incident decision log 要支援 handoff、multi-incident coordination、stakeholder update 與 post-incident review。它的欄位應足夠輕量，讓事故現場能持續更新，同時足夠完整，能把缺口回寫到 [runbook](/backend/knowledge-cards/runbook/)、[steady state](/backend/knowledge-cards/steady-state/) 與 [action item closure](/backend/knowledge-cards/action-item-closure/)。
+Incident decision log 的欄位多寡決定事故現場是否有人持續更新它。欄位多到處置中的人來不及填時，紀錄停在事故開頭，handoff 的接班者與 post-incident review 都拿不到後半段的決策背景。欄位只剩決定本身、缺了證據、owner、預期效果與回退條件時，接班者知道做了什麼，不知道為什麼做、在什麼條件下要改路線；對 stakeholder 更新狀態的人得回頭問執行者；復盤也無法把缺口回寫到 [runbook](/backend/knowledge-cards/runbook/)、[steady state](/backend/knowledge-cards/steady-state/) 與 [action item closure](/backend/knowledge-cards/action-item-closure/)。多起事故同時進行時，每一筆決策寫明它屬於哪一起事故，負責 multi-incident coordination 的人才分得出某次 rollback 是為了哪一起做的。

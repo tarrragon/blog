@@ -17,4 +17,4 @@ Consumer pause 是事故處理的閥門。暫停期間 [consumer lag](/backend/k
 
 ## 判斷條件與後果
 
-設計時讓消費可被快速暫停與恢復，並把 pause、drain、resume 的決策與時點記進 decision log，避免暫停後忘記恢復造成 lag 無聲累積。
+Consumer 暫停之後，事件留在 broker、lag 持續上升，事件只在 [replay window](/backend/knowledge-cards/replay-window/) 內保得住：暫停的時間超過 retention 時，最早的那批事件會被 broker 刪除，恢復後也讀不回來。pause、drain、resume 的決策與時點沒有記進 decision log 時，事故結束後沒有任何紀錄指出這個 consumer 還停著，lag 在沒有人處理的情況下累積到超過 retention。暫停與恢復需要的步驟越多，事故當下止住錯誤副作用的時間越晚，所以暫停與恢復要能用一個操作完成。

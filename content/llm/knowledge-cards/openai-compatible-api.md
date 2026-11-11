@@ -38,4 +38,4 @@ curl http://localhost:11434/v1/chat/completions \
 
 ## 判斷條件與後果
 
-寫程式接 LLM 時、把 OpenAI 相容當預設選擇。多家 SDK（OpenAI Python SDK、Vercel AI SDK 等）都支援設定 `base_url`、改 endpoint 就能接本地。寫 IDE plugin 或 CLI 工具時、優先支援這份 API、能同時跟雲端、Ollama、LM Studio、llama.cpp、oMLX 對接。
+程式對 OpenAI 相容 API 寫一次時，換後端只改 API base、API key 與 model name 三個欄位，同一份程式就能接雲端、Ollama、LM Studio、llama.cpp 或 oMLX；OpenAI Python SDK、Vercel AI SDK 等多家 SDK 都支援設定 `base_url`。程式綁在某一家的專屬 API 上時，換後端要改寫呼叫的程式，IDE plugin 或 CLI 工具能接的後端也只剩那一家，所以這類工具以這份 API 為預設介面。相容只涵蓋 API 形狀：程式依賴 `response_format`、`tool_choice` 這類進階參數時，換到本地後端之後這些參數可能沒有作用，原因是它們在本地伺服器的支援度視模型而定。

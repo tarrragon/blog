@@ -5,7 +5,6 @@ description: "說明服務如何對外暴露可被路由與存取的入口"
 weight: 127
 ---
 
-
 Service Endpoint 的核心概念是「外部請求進入服務的明確位置」。它是網路流量進入應用程式邊界的地址、路徑或命名位置。 可先對照 [Request Routing](/backend/knowledge-cards/request-routing/)。
 
 ## 跟其他概念的關係
@@ -22,4 +21,4 @@ Service Endpoint 位在 client、load balancer、WAF 與 application 之間，�
 
 ## 判斷條件與後果
 
-設計時要先定義 service endpoint 的用途、可達範圍、授權層級與錯誤回應策略。更細的入口語意應拆成專門卡片，而不是把所有 HTTP 路徑都當成同一種入口。
+Service endpoint 的用途、可達範圍、授權層級與錯誤回應策略決定這個入口出錯時的後果。所有 HTTP 路徑都套同一組可達範圍與授權時，管理入口與公開 API 一樣從外網連得到，診斷入口的錯誤回應與公開 API 一樣詳細，原因是設定只有一組，風險最高的入口跟著風險最低的入口開放。按用途分級之後，每一級的流量來源、權限要求與失敗後果各自不同，細節分別在 [Public API Endpoint](/backend/knowledge-cards/public-api-endpoint/)、[Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)、[Diagnostic Endpoint](/backend/knowledge-cards/diagnostic-endpoint/) 與 [Internal Endpoint](/backend/knowledge-cards/internal-endpoint/)。

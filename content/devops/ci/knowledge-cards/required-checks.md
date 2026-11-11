@@ -25,4 +25,4 @@ Required Checks 位在 repository branch protection，連接 pull request 與 [C
 
 ## 判斷條件與後果
 
-Required Checks 要定義必要檢查集合、擁有者與變更流程，並和 workflow 命名保持一致。
+Required Checks 用 check 的名稱比對狀態，所以合併條件列的名稱跟 workflow 實際產出的 check 名稱是否對得上，決定這道關卡是否發揮作用。workflow 改名或拆分之後，branch protection 仍要求舊名稱的 check 時，PR 一直等待一個不會再出現的狀態而無法合併；新增的 workflow 沒有被設為 required 時，它跑出紅燈也不擋合併，主線仍可能進入紅燈變更。必要檢查集合沒有 owner 與變更流程時，這兩種落差要等 PR 卡住或主線變紅之後才被發現。

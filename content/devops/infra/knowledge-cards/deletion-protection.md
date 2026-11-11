@@ -30,7 +30,7 @@ Deletion protection 是 [stateful 資源保護](/devops/infra/05-core-services/s
 
 ## 判斷條件與後果
 
-用 [IaC](/devops/infra/knowledge-cards/iac/) 描述 stateful 資源時，把 deletion protection 寫進程式碼而非手動在 Console 開啟——這讓保護策略本身成為可審查、可追蹤的設定。同時搭配 `skip_final_snapshot = false`（RDS）確保刪除前自動做最後一份快照。
+stateful 資源由 [IaC](/devops/infra/knowledge-cards/iac/) 描述、deletion protection 卻只在 Console 手動開啟時，保護的狀態不在程式碼裡，review 看不到哪些資源有保護，下一次 apply 也可能把它改回宣告檔裡的值；寫進程式碼時，保護策略本身成為可審查、可追蹤的設定。RDS 的 `skip_final_snapshot` 設為 `true` 時，保護被關掉之後的刪除不留快照；設為 `false` 時，刪除前自動做最後一份快照，即使保護被關掉、資源被刪，仍有一份可以還原的資料。
 
 Deletion protection 擋的是刪除操作，不擋資料覆寫或邏輯損壞——一段錯誤的 UPDATE 不會被 deletion protection 攔截。資料層的完整防線還需要備份保留與時間點還原（PITR），跟 deletion protection 正交。
 

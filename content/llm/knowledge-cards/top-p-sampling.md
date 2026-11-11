@@ -40,4 +40,4 @@ Min-P=0.1：max=0.45、閾值=0.045、保留 A、B、C、D（≥ 0.045）
 
 ## 判斷條件與後果
 
-讀 inference config / Continue.dev 設定看到 `top_k`、`top_p`、`min_p`、`temperature` 就是這組參數。寫 code 場景的判讀：嚴謹任務（code generation、structured output）用低 temperature + 緊 Top-P 取「最可能對的少數 token」；創意 / 對話用高 temperature + 寬 Top-P 取多樣性。Min-P 是 2023 後流行的新策略、實務上比 Top-P 更穩、避免「分佈很尖時 Top-P 仍納入長尾低品質 token」的問題。
+Sampling 參數怎麼取值，看任務能容忍多少偏離最高機率的 token。Code generation 與 structured output 這類嚴謹任務，取到一個低機率 token 就可能讓語法或 schema 失效，所以配低 temperature 與較緊的 Top-P，候選集合只留最可能對的少數 token；創意寫作與對話需要多樣性，高 temperature 與寬鬆的 Top-P 讓更多候選留在集合裡，代價是偶爾取到品質較低的 token。Min-P 是 2023 年後流行的策略：它以最高機率的一個比例當門檻，候選集合跟著分佈的尖銳度伸縮。分佈平坦時（例如 temperature 調高之後），Top-P 要累積到門檻得納入一長串低機率 token；Min-P 的門檻隨最高機率縮放，仍排除遠低於最高機率的 token，所以高 temperature 下取到低品質 token 的機會比 Top-P 少。在 inference config 或 Continue.dev 設定裡，`top_k`、`top_p`、`min_p`、`temperature` 就是這一組參數。

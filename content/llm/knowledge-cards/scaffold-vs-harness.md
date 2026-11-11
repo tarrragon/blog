@@ -41,8 +41,9 @@ Harness（runtime、dynamic）：
 
 ## 判斷條件與後果
 
-讀 coding agent paper / blog 看到「scaffold」「harness」「context engineering」就是這 framing。寫 code 場景的判讀：
+Scaffold 在建構時決定，harness 在 runtime 執行，所以比較兩個 coding agent 或修改一個 agent 時，差異發生在哪一層，決定了該讀或該改的是 scaffold 還是 harness：
 
-1. **看新 coding agent 時、分兩層拆解**：scaffold（system prompt、tool list、subagent 結構）是「設計做了什麼」、harness（context 怎麼裁、tool 怎麼 dispatch、安全怎麼擋）是「runtime 怎麼跑」
-2. **修改 / 客製 agent 時、看你動的是哪層**：改 system prompt = 動 scaffold；改 tool 執行邏輯 = 動 harness
-3. **跟 [4.17 coding-agent harness](/llm/04-applications/coding-agent-harness/) 的關係**：本卡是定義、4.12 是 coding 場景的工程實務（context budget、scaffold 模式、harness pattern）
+- **比較兩個 coding agent 時**，scaffold（system prompt、tool list、subagent 結構）的差異是設計上給了模型什麼，harness（context 怎麼裁、tool 怎麼 dispatch、安全怎麼擋）的差異是 runtime 怎麼處理模型的輸出。只比 system prompt，會漏掉 context 剪裁或 error recovery 造成的行為差異。
+- **修改 agent 時**，改 system prompt 或 tool schema 動的是 scaffold，改變模型每一輪看到的內容；改 tool 的執行邏輯、retry 或 permission 檢查動的是 harness，改變模型的輸出怎麼被執行。想擋住某一類危險操作而只改 system prompt 時，模型仍可能發出那個 tool call，原因是執行與攔截都發生在 harness。
+
+本卡是定義，coding 場景的工程實務（context budget、scaffold 模式、harness pattern）在 [4.17 coding-agent harness](/llm/04-applications/coding-agent-harness/)。

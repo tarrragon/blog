@@ -27,4 +27,4 @@ Fail-forward 位在 [rollback window](/backend/knowledge-cards/rollback-window/)
 
 ## 判斷條件與後果
 
-Fail-forward 要定義 containment、修補步驟、預期效果、停止條件與回寫項目。它要搭配 [evidence package](/backend/knowledge-cards/evidence-package/) 與 [action item closure](/backend/knowledge-cards/action-item-closure/)，避免「不能回滾」被誤用成沒有證據的硬推。
+Fail-forward 成立的條件是回退的代價高於前進修復，而前進修復本身要有邊界。沒有 containment 時，修補期間錯誤持續擴散到更多資料與客戶；沒有寫出修補步驟與預期效果時，判斷不了修補是否生效；沒有停止條件時，修補不見效也會一直推下去，原因是 rollback window 已經關閉，沒有另一條路可以退；沒有回寫項目時，修補期間暫停的寫入與補過的資料不會回到正式流程。「不能回滾」只證明了回退的路不通，證明不了前進的路是對的；前進的依據要放進 [evidence package](/backend/knowledge-cards/evidence-package/)，修補後的後續工作經由 [action item closure](/backend/knowledge-cards/action-item-closure/) 收尾。

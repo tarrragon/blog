@@ -25,4 +25,4 @@ Cross-region quorum 的 latency 由 voting replica 之間的網路 RTT 主導、
 
 ## 判斷條件與後果
 
-Cross-region quorum 的 latency 不能 scale away — 設計時要把它當 *結構性 latency*、不是可優化的瓶頸。判讀 instance config 是必要動作：寫密集 + 不需 region survival 的 workload 應該選 regional config、別硬上 multi-region；真的需要跨 region 強一致時、要把 write latency budget 從 single-region 的 10ms 改成跨洲 100-200ms、跟業務協商 SLO。引用 100-200ms 這條 anchor 做 capacity planning 必須先 audit 自家 instance 是哪種 config、不能套用單一基線。RTO=0 / RPO=0 跨 region 不是免費 — 它的 cost 落在 write latency、不是 dollar、要把這條 cost 寫進 sizing 文件。
+Cross-region quorum 的延遲由 voting replica 之間的 RTT 決定，跨洲配置的 100-200ms 是光速給的下界，調 client、cache 或 node size 都壓不下來。選了跨洲 multi-region config，每一次寫入都付這筆延遲，換到的是 region 級故障時 RPO=0，所以 instance config 的選擇決定兩種 workload 的處境。寫入密集而不需要 region survival 的 workload 選 multi-region 時，付了跨洲延遲卻用不到它換來的存活能力，而 regional config 的 quorum RTT 在 5ms 以內。確實需要跨 region 強一致的 workload，write latency budget 從 single-region 的 10ms 等級變成跨洲的 100-200ms，原本的 SLO 守不住，SLO 因此要跟業務重新協商。拿 100-200ms 做 capacity planning 的前提是自家 instance 確實是跨洲 multi-region：dual-region 的 quorum RTT 是 10-30ms，套錯基線時容量估算差到接近一個數量級。RTO=0／RPO=0 的成本記在 write latency 上而不在帳單上，sizing 文件只記費用時看不到這筆成本。

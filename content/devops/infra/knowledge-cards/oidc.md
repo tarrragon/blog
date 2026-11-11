@@ -25,11 +25,11 @@ OIDC 聯合在身分與存取憑證地基裡的角色是「雲外機器身分的
 
 ## 判斷條件與後果
 
-OIDC 聯合拿掉了 CI 環境裡的長期 access key，風險因此移到兩個位置：哪些 token 換得到 role，以及換到之後能做什麼。下面的設定分別收斂這兩個位置：
+OIDC 聯合拿掉了 CI 環境裡的長期 access key，風險因此移到兩個位置：哪些 token 換得到 role，以及換到之後能做什麼。下面三項設定各自決定其中一個位置的範圍：
 
-- **Trust policy 的 claim 收斂**：限定 issuer + audience + 特定 repo + 特定 branch，每個條件都收到最緊
-- **Role 的權限範圍**：OIDC 換到的 role 仍然要遵循最小權限 — 只給 pipeline 需要的 action
-- **Plan 與 apply 分開的 role**：plan 只需要 read 權限、apply 需要 write 權限，用兩個 role 降低 PR 階段的風險
+- **Trust policy 的 claim**：只驗 issuer 時，同一個 CI 平台上任何一個專案的 token 都換得到這個 role；再限定 audience、特定 repo 與特定 branch 之後，只有那個 repo 的那個 branch 換得到。代價是 repo 或 branch 改名時 claim 不再匹配，pipeline 會突然取不到權限
+- **Role 的權限範圍**：短期憑證縮短的是外洩之後能用的時間，能做的事仍由 role 的權限決定；role 給了 pipeline 用不到的 action 時，憑證有效的那幾分鐘裡，被濫用的範圍就是整個 role 的權限
+- **Plan 與 apply 的 role**：plan 只需要 read 權限，apply 需要 write 權限。兩者共用一個有 write 權限的 role 時，PR 階段跑 plan 的 pipeline 也拿著寫入權限，能開 PR 改 workflow 的人就能用它寫入；分成兩個 role 之後，PR 階段只拿得到 read
 
 ## 鄰卡
 

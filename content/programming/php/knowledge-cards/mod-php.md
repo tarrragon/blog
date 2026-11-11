@@ -22,4 +22,4 @@ mod_php 把直譯器放進 web 伺服器的程序裡：省掉 CGI 每請求啟�
 
 ## 判斷條件與後果
 
-從 mod_php 搬到 PHP-FPM 時，`.htaccess` 裡的 `php_value` / `php_flag` 要移到 `.user.ini`（見 [php.ini / .user.ini](/devops/infra/knowledge-cards/php-ini/)）。完整的行為與實測見 [mod_php](/programming/php/01-server-runtime/mod-php/)。
+從 mod_php 搬到 PHP-FPM 時，`.htaccess` 裡的 `php_value` 與 `php_flag` 不再有作用，而且會讓請求失敗：這兩個指令是 mod_php 向 Apache 註冊的，沒載入 mod_php 的 Apache 讀到它們會回 500（`Invalid command 'php_value'`），整個目錄的請求都失敗。PHP-FPM 從 `.user.ini` 讀取目錄層的設定（見 [php.ini / .user.ini](/devops/infra/knowledge-cards/php-ini/)），所以搬移時把這些設定移到 `.user.ini`，並從 `.htaccess` 刪掉。完整的行為與實測見 [mod_php](/programming/php/01-server-runtime/mod-php/)。

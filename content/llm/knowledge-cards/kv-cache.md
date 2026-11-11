@@ -27,4 +27,4 @@ Gemma 4 31B（Q4 量化）的 KV cache 估算：
 
 ## 判斷條件與後果
 
-理解 KV cache 後可以解釋兩個現象：為何長 context 不只 TTFT 高、還會吃爆記憶體；為何 oMLX 的「paged SSD KV cache」對 coding agent 場景很有用（把 cache 推到 SSD，跨 session 復用同前綴的 prefill 結果）。設定本地伺服器時，留意 context 長度與記憶體預算的乘積、避免無意間踩到 swap。
+理解 KV cache 後可以解釋兩個現象：為何長 context 不只 TTFT 高、還會吃爆記憶體；為何 oMLX 的「paged SSD KV cache」對 coding agent 場景很有用（把 cache 推到 SSD，跨 session 復用同前綴的 prefill 結果）。設定本地伺服器時，context 長度決定 KV cache 的大小；KV cache 加上模型權重超過實體記憶體時，系統開始 swap，生成速度大幅下降（上面的表：31B 模型開到 32K tokens 時總和約 34 GB，超過 32GB Mac 的記憶體）。所以 context 長度的上限，依記憶體扣掉權重之後剩下的空間設定。

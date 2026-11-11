@@ -5,7 +5,6 @@ description: "說明 queue 中等待處理的訊息數如何反映 backlog 與�
 weight: 67
 ---
 
-
 Queue depth 的核心概念是「queue 中等待處理的訊息數量」。它是 backlog 的直覺訊號，反映進入速度和處理速度的差距。 可先對照 [Queue](/backend/knowledge-cards/queue/)。
 
 ## 跟其他概念的關係
@@ -18,4 +17,4 @@ Queue depth 是 queue health 的入口指標。Depth 上升可能代表 producer
 
 ## 判斷條件與後果
 
-Queue depth 要和 consumer lag、oldest message age、processing rate、error rate 與 unacked messages 一起看。只看數量容易忽略訊息重要性與處理時間差異。
+Queue depth 上升時，單看數量分不出成因是 producer 變快、consumer 變慢、下游變慢、重試增加還是 consumer 數量不足。和 consumer lag、oldest message age、processing rate、error rate 與 unacked messages 一起看時，成因分得開：processing rate 下降代表 consumer 端變慢，error rate 與重試一起上升代表積壓來自重送。數量也不反映訊息的重要性與處理時間，同樣的 depth 在通知 queue 是信件晚到，在付款入帳 queue 是帳務狀態延後更新，所以告警門檻依各個 queue 延遲的代價分開設定。

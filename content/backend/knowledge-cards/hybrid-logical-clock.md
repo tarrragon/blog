@@ -17,4 +17,4 @@ HLC 出現在 CockroachDB 等不依賴專用硬體的 distributed SQL、跟 [Tru
 
 ## 判斷條件與後果
 
-選擇 HLC 路徑就要把 NTP / chronyd 維運當成 production-critical — 不是「裝了就好」、要監控時鐘漂移、設 alert 在 max-offset 的一半左右觸發。max-offset 配置過寬（例如改 5s 想避免 panic）會在跨節點交易順序判讀上引入錯誤、不是 ops 「彈性」、是把線性化保證打破。對比 TrueTime 路徑、HLC 不需要付 commit-wait latency tax、但 cross-cloud / on-prem 部署彈性是它的主要 trade-off 動機、不要為了「不付 commit-wait」就選 HLC、要為了部署環境選 HLC、commit-wait 不付只是順帶結果。
+HLC 的正確性以節點時鐘偏差保持在 max-offset 之內為前提，所以 NTP 或 chronyd 的時鐘同步是 production-critical 的依賴。節點時鐘飄超過 max-offset 時，CockroachDB 讓那個節點 panic，寫入路徑中斷，代價是可用性，換到的是不發出順序錯誤的 commit；時鐘漂移有監控，alert 設在 max-offset 的一半左右觸發時，漂移在造成 panic 之前就被看到。max-offset 調寬時（例如為了避免 panic 改成 5s），panic 變少，代價是新上限之內的時鐘偏差都被當成可接受，跨節點交易的順序判讀可能出錯，線性化保證不再成立。HLC 與 [TrueTime](/backend/knowledge-cards/truetime/) 之間的選擇依部署環境：cross-cloud 或 on-prem 部署拿不到 GPS 與原子鐘時，HLC 是可行的路徑，省下 commit-wait 的延遲是這個選擇的附帶結果，單為了省下 commit-wait 而選 HLC，換來的是上面那份時鐘維運的依賴。

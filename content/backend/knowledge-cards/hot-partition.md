@@ -17,4 +17,4 @@ hot partition 的訊號是「整體 utilization 低、但 throughput 上不去 +
 
 ## 判斷條件與後果
 
-設計 partition key 時、要主動評估「在最壞場景下、單一 partition 會吃多少流量」。常見手段：composite key（event_id + user_id_hash）、write sharding（event_id + random_suffix）、time-bucket（event_id + minute）。發現 hot partition 後、resharding 通常是高成本工程、要在設計初期避免。
+Partition key 的判斷條件是最壞場景下單一 partition 收到多少流量。key 集中在少數值時（一場演唱會的 event_id），實際的容量上限是單一 partition 的上限，名義上的「每 partition 上限乘 partition 數」到不了。分散的手段各有代價：composite key（event_id + user_id_hash）把同一場活動分到多個 partition，查整場活動時要讀多個 partition；write sharding（event_id + random_suffix）分散寫入，讀取時要把各個 suffix 合併；time-bucket（event_id + minute）依時間分散，同一分鐘內的爆量仍集中在一個 partition。上線之後才發現 hot partition 時，resharding 要搬移既有資料並改寫存取的 key，成本遠高於設計初期就評估最壞場景。

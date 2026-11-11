@@ -34,10 +34,9 @@ Reasoning model 跟一般 instruction-tuned model 的差異：
 
 ## 判斷條件與後果
 
-讀 model card / paper 看到「reasoning」「thinking」「test-time compute」「R1-style」就是這個 family。寫 code 場景的判讀：
+Reasoning model 每次作答前先產出數百到數千 token 的 reasoning trace（model card 寫「reasoning」「thinking」「R1-style」指的就是這類模型），這段 trace 同時帶來它的強項與成本，所以任務怎麼分配，看任務是否需要多步推導、使用者能否等待較長的回應時間：
 
-1. **本地用 distill 版本是合理起點**：DeepSeek-R1-Distill-Qwen-32B、QwQ-32B 等是「正常 32B 模型 + reasoning 後訓練」的產物、跑得起來
-2. **適合的任務**：debug 複雜 bug、算 algorithm complexity、設計 multi-step refactor、解 leetcode hard
-3. **不適合的任務**：autocomplete（reasoning trace 拉長 TTFT、體感變慢）、簡單 docstring 補完、純文字翻譯
-4. **混用策略**：日常用 [instruction-tuned model](/llm/knowledge-cards/instruction-tuned/)（如 Gemma 4 31B、Qwen3-Coder）+ 複雜任務切到本地 reasoning model（如 QwQ-32B）+ 真正困難任務切雲端 o1 / R1 full
-5. **記憶體預算**：reasoning model 本身大小跟對應 instruct model 相當、但要預留更大 [KV cache](/llm/knowledge-cards/kv-cache/) 給長 reasoning trace（context 通常開 32K+）
+- **任務需要多步推導時**（debug 複雜的 bug、算 algorithm complexity、設計 multi-step refactor、解 leetcode hard），trace 讓模型逐步推導再作答，答對率的提升抵得過 5–20 倍的推論成本。
+- **任務要求即時回應、或本身不需要推導時**（autocomplete、簡單的 docstring 補完、純文字翻譯），trace 拉長 TTFT，使用者等得更久，答案卻不會更好。
+- **兩類任務混在同一個工作流裡時**，日常任務交給 [instruction-tuned model](/llm/knowledge-cards/instruction-tuned/)（如 Gemma 4 31B、Qwen3-Coder），複雜任務切到本地的 reasoning model（如 QwQ-32B），本地模型做不出來的再交給雲端的 o1 或 R1 full，推論成本只花在需要推導的任務上。
+- **在本地跑時**，DeepSeek-R1-Distill-Qwen-32B、QwQ-32B 這類 distill 版本是一般的 32B 模型加上 reasoning 後訓練，權重大小跟同級的 instruct 模型相當，24–48GB 的 Mac 放得下；多出來的記憶體需求在長 trace 佔用的 [KV cache](/llm/knowledge-cards/kv-cache/)，context 通常開到 32K 以上，記憶體預算要把這份 KV cache 算進去。

@@ -25,4 +25,4 @@ Branch Protection 位在 pull request 與主線分支之間，屬於 [CI](/devop
 
 ## 判斷條件與後果
 
-Branch Protection 要定義必要 checks、審查規則與例外流程，並和 workflow 命名同步維護。
+Branch Protection 用名稱比對 workflow 回報的 check，所以 workflow 改名而保護規則沒有同步時，規則等待的 check 不會再出現，PR 停在等待狀態而無法合併。審查規則沒有統一時，各 repository 的合併門檻不同，同一類變更在一處要兩人批准、在另一處不用。沒有例外流程時，緊急修復只能用管理員權限繞過保護，繞過的紀錄與理由沒有留下，主線上出現一筆說不出驗證狀態的變更。

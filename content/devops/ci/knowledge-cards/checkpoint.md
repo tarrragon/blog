@@ -25,4 +25,4 @@ Checkpoint 位在長時間 job、stream processor、batch pipeline 與 [migratio
 
 ## 判斷條件與後果
 
-Checkpoint 要定義進度格式、提交時機、失敗恢復、重跑覆寫與觀測欄位，讓長時間任務具備可恢復性。
+Checkpoint 的提交時機排在工作寫入之前還是之後，決定恢復時會漏做還是重做。checkpoint 先提交、任務在寫入完成前中斷時，恢復後從 checkpoint 之後開始，這一段資料漏做；寫入之後才提交時，中斷讓這一段重做，重跑時的寫法（冪等寫入、整個 partition 覆寫）決定重做是否產生重複資料。進度格式記不到精確位置時（只記日期，不記 partition 或 offset），恢復點只能退回較早的位置，重做的範圍變大。沒有觀測欄位時，看不出任務停在哪個 checkpoint、多久沒有前進。

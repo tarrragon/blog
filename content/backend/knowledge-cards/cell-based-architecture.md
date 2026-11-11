@@ -21,4 +21,4 @@ Cell-based architecture 處於系統架構的「失敗隔離」維度、跟 [dat
 
 ## 判斷條件與後果
 
-Cell 路由層（API gateway / DNS / 負載均衡）決定 request 進哪個 cell、路由邏輯限於單 cell 內 — 防範 cell 間隱式依賴。資料邊界硬切：cell A 的資料庫跟 cell B 完全分離、跨 cell 查詢走標準 API。每 cell 獨立 deploy、rollout 一次只動一個 cell、出問題影響範圍可控。常見失敗：某個 shared service（如 user auth）所有 cell 都打、變成跨 cell 故障的單點 — 真正的 cell-based 連 auth 也要每 cell 獨立或設計成 read-only cache。
+Cell 的隔離效果取決於是否有元件跨 cell 共用，每一個跨 cell 共用的元件都是故障越過 cell 邊界的路徑。Cell 路由層（API gateway / DNS / 負載均衡）把 request 送進一個 cell 之後，處理只在那個 cell 裡進行時，cell 之間沒有隱式依賴；cell A 的資料庫和 cell B 完全分離、跨 cell 查詢走標準 API 時，一個 cell 的資料層故障碰不到其他 cell。每個 cell 獨立 deploy、rollout 一次只動一個 cell 時，壞版本最多影響一個 cell 的使用者。所有 cell 都呼叫同一個 shared service（如 user auth）時，它故障就讓全部 cell 一起失效，cell 切分在這一點不再隔離，所以 auth 這類元件也每個 cell 各一份，或設計成 cell 內的 read-only cache。

@@ -21,4 +21,4 @@ ZTS 決定 PHP 能不能在一個多執行緒的程序裡執行。PHP 跑在獨�
 
 ## 判斷條件與後果
 
-選執行模型時，ZTS 是前提條件之一：要讓 Apache 用執行緒、或採用 FrankenPHP，就要拿到 ZTS 版的 PHP 與相容的擴充。不需要執行緒時，NTS 版本較常見、擴充相容性也較好。
+選的執行模型讓 PHP 跑在多執行緒的程序裡時，需要 ZTS 版的 PHP：Apache 用 worker 或 event MPM 跑 mod_php、或採用 FrankenPHP，都屬於這一種。拿 NTS 版跑在這種程序裡，多個執行緒共用同一份全域狀態而互相覆寫，所以 PHP 官方文件規定沒有以 `--enable-zts` 編譯的 mod_php 只能搭配 prefork。PHP 本體開了 ZTS 之後，每個擴充與它依賴的 C 函式庫也要能在執行緒下安全執行，有一個做不到，這個執行模型就用不了那個擴充。PHP 跑在獨立程序裡（PHP-FPM、CGI）時每個 worker 一次只處理一個請求，不需要 ZTS，NTS 版本較常見、擴充相容性也較好。

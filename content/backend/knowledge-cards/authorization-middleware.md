@@ -5,7 +5,6 @@ description: "說明請求進入 handler 前如何完成權限判斷"
 weight: 1
 ---
 
-
 Authorization Middleware 的核心概念是「在 request 進入業務處理前，先確認呼叫者能不能做這件事」。 可先對照 [Authorization](/backend/knowledge-cards/authorization/)。
 
 ## 跟其他概念的關係
@@ -22,4 +21,4 @@ admin 操作、資源 owner 檢查、tenant boundary 檢查與欄位級權限，
 
 ## 判斷條件與後果
 
-Authorization Middleware 要定義決策輸入、拒絕回應、稽核欄位與錯誤分類，不應把 policy 分散到各個 handler。
+Authorization Middleware 把權限決策集中在 handler 之前時，同一條規則只寫一次，每個 handler 套用的是同一個版本；policy 分散在各個 handler 時，新增的 handler 漏寫檢查就是一個越權入口，規則一改也要找出每一份副本。決策輸入（角色、資源、tenant）沒有定義清楚時，middleware 拿不到判斷所需的資料，這類判斷又退回 handler 裡各寫一份。拒絕回應沒有統一時，有的 handler 回 403、有的回 404，呼叫端與監控都無法一致地辨認被拒絕的請求；沒有稽核欄位時，被拒絕的越權嘗試留不下紀錄；錯誤沒有分類時，權限服務本身失效與請求被拒絕混成同一種結果。

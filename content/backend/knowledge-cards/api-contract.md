@@ -21,6 +21,6 @@ API Contract 位在 client、[API Gateway](/backend/knowledge-cards/api-gateway/
 
 ## 判斷條件與後果
 
-API Contract 要定義欄位名稱、必要欄位、預設值、錯誤格式與相容版本。破壞性變更需要受控發布與回復路徑。
+API Contract 沒寫定的項目，client 就依據某一次回應的實際行為寫程式。欄位名稱與必要欄位沒有寫定時，服務端改名或拿掉欄位，client 解析失敗；預設值沒有寫定時，服務端換了預設，client 的行為跟著改變而不出現任何錯誤；錯誤格式沒有寫定時，client 只能逐一比對錯誤字串；相容版本沒有定義時，服務端分不出哪些改動會打斷既有的 client。破壞性變更一上線，依賴舊行為的 client 就已經出錯，沒有受控發布與回復路徑時，只能等修正版上線，所以破壞性變更要經受控發布，並備好回復路徑。
 
 這四件事各自的推導層在 [模組十一](/backend/11-api-design/)：什麼算破壞性變更看 [向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)、錯誤格式的容器選擇看 [錯誤格式之爭](/backend/11-api-design/error-format-debate/)、相容版本怎麼分期看 [版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)。契約已經上線之後才要收緊某個性質時，路徑跟綠地不同，見 [既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)。

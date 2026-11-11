@@ -25,4 +25,4 @@ Release Channel 位在 [artifact](/devops/ci/knowledge-cards/artifact/) 發布�
 
 ## 判斷條件與後果
 
-Release Channel 要定義通道用途、進入條件、artifact 命名、可見範圍、停損條件與回復路徑，讓版本擴散具備控制面。
+Release Channel 限制得住錯誤版本擴散到多少使用者，前提是版本要達到前一個通道的條件才進入下一個。進入條件沒有寫定（例如 internal 的更新成功率達到多少才推 beta）時，推進依時間或個人判斷，有問題的版本照樣到達 stable。停損條件與回復路徑沒有事先設定時，stable 出現 crash 之後，暫停 feed 還是切到 rollback channel 要在事故當下才決定，這段時間裡已經更新的客戶端數量持續增加。各通道的 artifact 沒有可區分的命名時，從 crash 回報看不出它來自哪個通道的哪個版本。

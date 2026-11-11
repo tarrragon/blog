@@ -18,4 +18,4 @@ Guardrail 是一組控制層。常見形式包含 [structured output](/llm/knowl
 
 ## 判斷條件與後果
 
-設計 guardrail 時先判斷失敗代價，再選控制強度。低風險任務用 schema 與 retry 即可；高副作用任務要加 permission boundary、sandbox、審查與 audit log。相關基礎見 [Deterministic vs Fuzzy engineering](/llm/knowledge-cards/deterministic-vs-fuzzy/)。
+Guardrail 的控制強度由失敗代價決定。輸出錯了只影響一次回答、可以重新生成的任務（客服分類），schema 擋下不合法的輸出、retry 重新生成，錯誤的後果停在一次多出來的呼叫；輸出會觸發下游副作用的任務（寫入資料、對外發送、執行指令），錯一次就留下 retry 收不回的結果，而 schema 只檢查格式、不檢查這個動作是否該做，所以這類任務在 schema 之外加 permission boundary、sandbox、審查與 audit log。相關基礎見 [Deterministic vs Fuzzy engineering](/llm/knowledge-cards/deterministic-vs-fuzzy/)。

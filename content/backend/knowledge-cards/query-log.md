@@ -27,4 +27,4 @@ SQL 語句記錄（query log）是把送往資料庫的每一段 SQL 記下來�
 
 ## 判斷條件與後果
 
-開發與測試環境把兩種記錄都打開，審查 ORM 程式碼時對照的是它們，不只是方法呼叫。正式環境的 `log_statement = 'all'` 與應用程式端的逐筆記錄量都很大，而且參數裡有 email、地址這類個人資料，所以正式環境通常只記慢查詢與 DDL，記錄的保存與遮罩比照其他含個資的記錄處理（見 [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)）。追查「這一筆資料被誰改過」用 [Audit Log](/backend/knowledge-cards/audit-log/)（PostgreSQL 端可以用 pgaudit 擴充記錄指定的語句類別）；語句記錄保存期短、正式環境不一定開著，靠不住。
+用 ORM 的程式碼上看不到實際送出的 SQL，零值欄位被跳過、N+1 與交易邊界對不上這幾種情形只在記錄裡看得到；所以開發與測試環境把兩種記錄都打開，審查 ORM 程式碼時拿記錄對照方法呼叫。正式環境的 `log_statement = 'all'` 與應用程式端的逐筆記錄量都很大，而且參數裡有 email、地址這類個人資料，所以正式環境通常只記慢查詢與 DDL，記錄的保存與遮罩比照其他含個資的記錄處理（見 [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)）。追查「這一筆資料被誰改過」用 [Audit Log](/backend/knowledge-cards/audit-log/)（PostgreSQL 端可以用 pgaudit 擴充記錄指定的語句類別）；語句記錄保存期短、正式環境不一定開著，靠不住。

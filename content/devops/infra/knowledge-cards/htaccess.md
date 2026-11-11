@@ -19,15 +19,15 @@ aliases: ["/infra/knowledge-cards/htaccess/"]
 
 ## 判斷條件與後果
 
-`.htaccess` 的規則分散在各目錄的隱藏檔裡、每次請求即時生效，站台的 URL 結構、存取限制與 PHP 設定可能只記錄在這些檔案裡；接手維運時要逐一找出的內容有：
+`.htaccess` 的規則分散在各目錄的隱藏檔裡、每次請求即時生效，站台的 URL 結構、存取限制與 PHP 設定可能只記錄在這些檔案裡。接手維運時漏看其中一類，各有不同的後果：
 
-**URL rewrite 規則**：這些規則決定了站台的 URL 結構。亂改或刪除會讓所有內頁都回 404。修改前先備份原始版本。
+**URL rewrite 規則**：這些規則決定站台的 URL 結構，改錯或刪除時所有內頁都回 404。規則存檔就生效、檔案本身沒有版本紀錄，所以修改前先備份原始版本。
 
-**安全設定**：`Options -Indexes` 禁止目錄列表、`php_flag engine off` 禁止上傳目錄執行 PHP、`Require all denied` 禁止存取 `.env` 等機密檔案。這些設定分散在多個目錄的 `.htaccess` 裡，接手時要全部找出來。
+**安全設定**：`Options -Indexes` 禁止目錄列表、`php_flag engine off` 禁止上傳目錄執行 PHP、`Require all denied` 禁止存取 `.env` 等機密檔案。這些設定分散在多個目錄的 `.htaccess` 裡，搬站或重建時漏掉其中一份，那個目錄就失去對應的保護：上傳目錄裡的 PHP 檔可以被執行，或 `.env` 可以被直接下載。
 
-**PHP 設定覆寫**：部分 PHP 設定（如 `upload_max_filesize`、`max_execution_time`）可以在 `.htaccess` 裡用 `php_value` 或 `php_flag` 指令覆寫。這些覆寫可能不在 `php.ini` 裡，只存在於 `.htaccess`。
+**PHP 設定覆寫**：`upload_max_filesize`、`max_execution_time` 這類設定可以在 `.htaccess` 裡用 `php_value` 或 `php_flag` 覆寫。覆寫只存在於 `.htaccess` 時，只讀 `php.ini` 得到的不是目前生效的值，搬到新主機而漏了這份 `.htaccess` 時，這些設定變回 `php.ini` 的值。
 
-**遷移到 nginx 的影響**：nginx 沒有 `.htaccess` 的對等機制——所有設定都在集中的 nginx 設定檔裡。從 Apache 遷移到 nginx 時，`.htaccess` 裡的每一條規則都要手動轉換成 nginx 語法。
+**遷移到 nginx**：nginx 沒有 `.htaccess` 的對等機制，設定集中在 nginx 設定檔裡，`.htaccess` 裡的每一條規則都要手動轉換成 nginx 語法。沒轉到的規則在 nginx 上不存在：rewrite 規則沒轉，內頁回 404；安全設定沒轉，那個目錄失去保護。
 
 ## 鄰卡
 

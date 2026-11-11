@@ -18,4 +18,4 @@ Stub 驗證的標的是「假設成立時、前端邏輯是否正確」，不是
 
 ## 判斷條件與後果
 
-判斷「stub 夠不夠」的問句是：如果把 stub 換成真實服務，斷言結果會不會改變？只驗證程式碼內部邏輯（狀態機轉換、錯誤處理分支）時，stub 夠用；驗證對象是「對後端行為的假設」本身時，stub 結構上驗證不出來，需要換成持有狀態、行為有實測出處的[語意級假後端](/testing/knowledge-cards/semantic-fake-backend/)。凡是前端持有後端 id 的地方，都要追問後端的哪些操作會讓這個 id 死亡，並把「id 失效」的劇本納入測試範圍——見[凍結參照與活解析](/testing/knowledge-cards/frozen-vs-live-reference/)。
+判斷「stub 夠不夠」的問句是：如果把 stub 換成真實服務，斷言結果會不會改變？只驗證程式碼內部邏輯（狀態機轉換、錯誤處理分支）時，stub 夠用；驗證對象是「對後端行為的假設」本身時，stub 結構上驗證不出來，需要換成持有狀態、行為有實測出處的[語意級假後端](/testing/knowledge-cards/semantic-fake-backend/)。前端持有後端 id 時，後端每一種會讓這個 id 失效的操作都是 stub 測不到的路徑：「id 失效」沒有寫成劇本的話，這個狀態在測試裡不會出現，見[凍結參照與活解析](/testing/knowledge-cards/frozen-vs-live-reference/)。

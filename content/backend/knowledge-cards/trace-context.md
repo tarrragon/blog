@@ -22,6 +22,6 @@ Context 在 HTTP call、gRPC metadata、[queue](/backend/knowledge-cards/queue/)
 
 ## 判斷條件與後果
 
-Trace context 設計要處理四個邊界的傳遞：HTTP / gRPC（SDK auto-instrumentation 自動處理）、queue（需要 instrumented client 注入 message header）、thread pool（需要語言級的 context 傳播機制）、background job（需要在 job 啟動時建立 root span）。
+Trace context 在 HTTP / gRPC、queue、thread pool 與 background job 這幾種邊界上傳遞的方式不同，哪一種沒有接上，trace 就在那裡斷成兩段。HTTP / gRPC 由 SDK auto-instrumentation 自動注入與讀取 header。Queue 的 message header 由 instrumented client 注入，client 沒有 instrumentation 時，consumer 讀不到 context，它建立的 span 開始一條新的 trace。Thread pool 把工作交給另一個執行緒時，語言級的 context 傳播機制沒有接上，工作執行緒上的 span 找不到 parent。Background job 不是由請求觸發，job 啟動時沒有建立 root span 時，它做的工作不屬於任何 trace。
 
 斷鏈的常見原因和修復策略見 [4.3 tracing 與 context link](/backend/04-observability/tracing-context/)。Sampling 決策跟 trace context 的關係見 [4.7 sampling 策略](/backend/04-observability/cardinality-cost-governance/#sampling-策略)。

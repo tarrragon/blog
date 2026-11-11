@@ -20,6 +20,6 @@ Dashboard 分層服務不同使用者：service overview 給 [on-call](/backend/
 
 ## 判斷條件與後果
 
-Dashboard 設計要服務具體決策。每個面板應對應一個可回答的問題（「服務現在健康嗎」「延遲瓶頸在哪」「容量還夠嗎」）。高 cardinality、缺少單位或只呈現低層資源的圖表會增加判讀成本而非降低。
+Dashboard 的面板各自對應一個要做的決定時，才降低判讀成本，例如「服務現在健康嗎」「延遲瓶頸在哪」「容量還夠嗎」。面板只呈現低層資源（單機 CPU、單一磁碟）時，看的人要自己把資源換算成服務狀態；缺少單位時，同一條線可以讀成毫秒也可以讀成秒；高 cardinality 的圖表把大量序列疊在同一個面板，異常的那一條被淹沒。這三種面板放進事故用的 dashboard 時，回答「影響多大、從何時開始」花的時間反而變長。
 
-Dashboard panel 的查詢效能影響使用體驗 — 長時間趨勢 panel 應讀 [recording rule](/backend/knowledge-cards/recording-rule/) 或 [rollup](/backend/knowledge-cards/rollup/) 資料，避免每次刷新都掃描 raw series。Dashboard / alert 的完整設計見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)。
+長時間趨勢的 panel 每次刷新都掃描 raw series 時，查詢時間隨時間範圍拉長，事故中重新整理畫面要等。改讀 [recording rule](/backend/knowledge-cards/recording-rule/) 或 [rollup](/backend/knowledge-cards/rollup/) 預先聚合好的資料時，查詢讀的資料量小得多。Dashboard / alert 的完整設計見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)。

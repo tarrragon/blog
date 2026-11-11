@@ -17,4 +17,4 @@ Exactly-once 是 [delivery semantics](/backend/knowledge-cards/delivery-semantic
 
 ## 判斷條件與後果
 
-設計時先問「重複生效的代價是什麼」：可重建投影的事件重複只增加成本、用 at-least-once 即可；會扣款出貨的事件要靠消費端 idempotency 或唯一約束擋重複，而非寄望 broker 的 exactly-once。只有在跨系統交易必須原子、且願意承擔吞吐與複雜度代價時，才採真正的 exactly-once。
+選哪一種投遞語意，看一則訊息重複生效的代價。事件只更新可重建的投影時，重複處理只多花一次運算，at-least-once 的代價最低。事件會扣款、出貨時，重複生效就是產品事故；這時 broker 層的 exactly-once 也擋不住重複，原因是它只涵蓋 broker、producer 與 consumer 在同一套交易邊界裡的那一段，consumer 呼叫的外部付款或出貨 API 在邊界之外，所以這類事件靠消費端的 idempotency 或唯一約束擋重複。跨系統的交易必須原子完成、而且吞吐與複雜度的代價可以接受時，end-to-end 的 exactly-once 才換得到它的保證。

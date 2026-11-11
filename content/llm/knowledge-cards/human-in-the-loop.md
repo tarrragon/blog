@@ -28,12 +28,12 @@ HITL 三種觸發時機：
 
 ## 判斷條件與後果
 
-讀 AI 應用設計或 agent paper 看到「HITL」「human-in-the-loop」「approval flow」「appeal」就是這個機制。實作判讀：
+HITL 的設計看兩個條件：動作的風險（副作用範圍與失敗代價），以及自動 validator 擋得下多少錯。
 
-1. **位置由 risk 跟 validator 能力決定**：risk 高 + validator 弱、HITL 頻率高；risk 低 + validator 強、HITL 頻率低。
-2. **三時機可組合**：pre-act 擋高代價、mid-stream 處理 agent 不確定性、post-hoc 收回饋。三者各擋不同 risk class、不互斥。
-3. **避免橡皮圖章化的四條件**：分級不同 risk 走不同 gate、approval UI 強制 show diff、reject 有明確 fallback、approval 訊號回饋進系統。任一不滿足、HITL 退化成形式。
-4. **跟 [jagged frontier](/llm/knowledge-cards/jagged-frontier/) 的關係**：frontier 外的任務該強制 HITL、不交給 user 自由心證。
-5. **跟 fuzzy engineering 典範的關係**：HITL 是 fuzzy 行為的 deterministic guardrail 一種、不是預設要有、看 risk 跟自動 validator 能力決定。
+1. **風險高而 validator 弱時**，錯誤只有人看得出來，人工介入的頻率高才擋得住；風險低而 validator 強時，多數錯誤已被 validator 擋下，再加人工審查只多出延遲與人力成本。
+2. **三個時機各自擋一類風險**：pre-act 在動作執行前擋下高代價的動作，mid-stream 在 agent 遇到不確定時交給人決定，post-hoc 在交付之後收集申訴與校正。三者不互斥，同一個系統可以同時有。
+3. **出現下面任一情形時，approval 退化成形式**：所有風險走同一道 gate，高風險請求混在大量低風險請求裡沒有被區分；approval UI 不顯示 diff，審查的人看不到要批准的內容；reject 之後沒有定義的 fallback，拒絕的結果是流程停住；approval 的結果沒有回饋進系統，同一類錯誤下一次照樣送來審。
+4. **任務位於 [jagged frontier](/llm/knowledge-cards/jagged-frontier/) 外時**，模型失敗的機率高，而失敗的輸出看起來一樣合理，交給使用者自行決定是否審查，錯誤是否被擋下取決於使用者是否察覺；所以 frontier 外的任務強制走 HITL。
+5. HITL 是 fuzzy 行為外層的一種 deterministic guardrail，是否需要由第一項的兩個條件決定。
 
 完整 HITL 拓樸設計見 [4.5 人機協作拓樸](/llm/04-applications/human-ai-collaboration/)。

@@ -24,4 +24,4 @@ Topic 命名規則影響長期治理。`orders.payment.completed` 比 `event_1` 
 
 ## 判斷條件與後果
 
-Topic 設計要定義命名規則、事件 schema、相容性策略（schema evolution）、權限控制（誰能 publish / subscribe）、[retention](/backend/knowledge-cards/retention/) 期限、[replay runbook](/backend/knowledge-cards/replay-runbook/) 範圍與 ownership（哪個團隊負責這個 topic）。操作面要能依 topic 查看 publish rate、[consumer lag](/backend/knowledge-cards/consumer-lag/)、錯誤率與 [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) 數量。
+一個 topic 被多個 downstream 訂閱之後，它的每一項設定都影響所有消費者。事件 schema 沒有相容性策略（schema evolution）時，producer 改一個欄位，訂閱它的每個 consumer 都可能解析失敗；權限沒有區分誰能 publish、誰能 subscribe 時，任何服務都能往 topic 寫入，下游無法確認事件的來源。[retention](/backend/knowledge-cards/retention/) 期限決定 [replay runbook](/backend/knowledge-cards/replay-runbook/) 能重放多遠，retention 短於重放需要的範圍時，事故後要重放的事件已經被刪除。沒有 ownership（哪個團隊負責這個 topic）時，schema 變更由誰核准、事故由誰處理都沒有對象。操作面只看 broker 整體時，看得出處理變慢，看不出是哪一類事件；依 topic 查看 publish rate、[consumer lag](/backend/knowledge-cards/consumer-lag/)、錯誤率與 [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) 數量時，異常定位得到是哪一個 topic。

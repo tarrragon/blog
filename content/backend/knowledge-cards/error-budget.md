@@ -20,4 +20,4 @@ Error budget 是 [burn rate](/backend/knowledge-cards/burn-rate/) alerting 的�
 
 ## 判斷條件與後果
 
-Error budget 的 metric 結構需要 rolling window 的 total requests 跟 failed requests（見 [4.6 SLI/SLO 訊號設計](/backend/04-observability/sli-slo-signal/)）。Budget remaining 作為 [dashboard](/backend/knowledge-cards/dashboard/) panel 跟 release gate 的輸入 — 用 [recording rule](/backend/knowledge-cards/recording-rule/) 維護 rolling window 計算，避免每次查詢掃描 30 天的 raw data。
+Budget remaining 是 rolling window 內 failed requests 對 total requests 的比例跟 SLO 允許額度相減的結果，兩項計數少了任一項就算不出來（指標結構見 [4.6 SLI/SLO 訊號設計](/backend/04-observability/sli-slo-signal/)）。它同時是 [dashboard](/backend/knowledge-cards/dashboard/) panel 與 release gate 的輸入時，每一次 panel 重新整理與每一次 gate 檢查都要算一次 30 天的 rolling window；直接從 raw data 算，每次查詢都掃過 30 天的原始資料，查詢成本隨流量增加，gate 檢查也跟著變慢。所以 rolling window 的計算由 [recording rule](/backend/knowledge-cards/recording-rule/) 預先算好，dashboard 與 gate 讀算好的結果。

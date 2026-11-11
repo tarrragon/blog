@@ -25,4 +25,4 @@ TTFT 跟 [tokens per second](/llm/knowledge-cards/tokens-per-second/)（生字�
 
 ## 判斷條件與後果
 
-寫 code 場景的 TTFT 痛點主要出現在 coding agent 模式（塞整個 repo 進 prompt）。對短 prompt 場景，TTFT 1 ~ 3 秒可接受；對長 context 場景，要評估特化伺服器（如 oMLX）的 [KV cache](/llm/knowledge-cards/kv-cache/) 重用方案。判讀 TTFT 報告時，務必確認 prompt 長度、否則數字無從比較。
+TTFT 是否拖慢寫 code 的工作，看 prompt 的長度。短 prompt（< 1K token）時，本地 TTFT 約 1 ~ 3 秒，等待的長度在可接受的範圍；coding agent 把整個 repo 放進 prompt 時，TTFT 由 [prefill](/llm/knowledge-cards/prefill/) 主導、跟 prompt 長度成正比，本地每次都重新 prefill 整段 context，等待可能拉到數十秒。這種長 context 的情境下，特化伺服器（如 oMLX）的 [KV cache](/llm/knowledge-cards/kv-cache/) 重用讓重複的 context 不必每次重算，是縮短 TTFT 的方向。同樣因為 TTFT 跟 prompt 長度成正比，沒寫 prompt 長度的 TTFT 報告無法跟其他報告比較。

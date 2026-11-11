@@ -29,6 +29,6 @@ Sandbox 在 LLM 場景的常見配置：
 
 ## 判斷條件與後果
 
-理解 sandbox 後可以解釋兩個現象：為什麼跑第三方 MCP server 前 sandbox 是基本配置（MCP 是可執行程式碼、權限上限是「跑該 server 的 user 的權限」）、為什麼 production 場景的 code execution tool 必定在 ephemeral sandbox 內跑（避免長期 state 跟跨 user 殘留）。
+MCP server 是可執行的程式碼，權限上限是執行它的那個 OS user 的權限。第三方 MCP server 直接用開發者自己的帳號跑時，被 injection 誘導的 tool 呼叫讀寫得到這個帳號碰得到的所有檔案，所以 sandbox 是跑第三方 MCP server 的基本配置。production 的 code execution tool 若在長期存活的環境裡跑，前一個 user 留下的檔案與 state 會被下一個 user 的程式讀到；ephemeral sandbox 跑完就銷毀，沒有殘留可讀。
 
-設計 LLM application 時、sandbox 跟 [tool use](/llm/knowledge-cards/tool-use/) 的白名單是兩個獨立的防護層、建議都做：白名單擋已知範圍、sandbox 擋未預期的副作用。詳見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)。
+Sandbox 與 [tool use](/llm/knowledge-cards/tool-use/) 白名單攔下的對象不同：白名單限制 LLM 能呼叫哪些 tool，攔下已知範圍以外的呼叫；sandbox 限制被允許的 tool 執行時碰得到什麼，攔下白名單內的 tool 做出的未預期副作用。只有白名單時，被允許的 tool 受誘導之後做的事沒有邊界；只有 sandbox 時，LLM 能呼叫的 tool 種類沒有限制，所以兩層都要有。詳見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)。

@@ -18,4 +18,4 @@ Doherty Threshold 的核心概念是「系統回應時間低於 400ms 時，人�
 
 ## 判斷條件與後果
 
-引用這個門檻的設計責任是對齊延遲的真實分布 — 平均 300ms 不代表每次都在 400ms 內，對表要用 p90 / p95。完整的門檻推導與落地策略見[時間感知與回應策略](/ux-design/06-interaction-feedback/response-time-strategy/)。
+拿 400ms 門檻決定是否省略 loading 指示時，比對對象是延遲的分布。用平均值比對時，平均 300ms 的操作仍可能有請求超過 400ms，這些請求沒有任何 loading 指示，使用者看到的是畫面沒有反應；用 p90 / p95 比對時，看得出有多少比例的請求超過門檻、省略指示的代價由多少請求承受。完整的門檻推導與落地策略見[時間感知與回應策略](/ux-design/06-interaction-feedback/response-time-strategy/)。

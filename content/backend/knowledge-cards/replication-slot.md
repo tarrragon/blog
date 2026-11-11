@@ -17,4 +17,4 @@ Replication Slot 位在來源資料庫與下游 consumer 之間，是一個有�
 
 ## 判斷條件與後果
 
-每個 slot 要有明確 owner、健康 SLO 與 drop condition。設計上要監控每個 slot 的 retained WAL 大小與 confirmed 位置，對 inactive slot 設告警，並定義「consumer 永久退場時誰負責 drop slot」。slot 數量與保留策略要納入來源端的容量規劃，讓複製能力不會反過來成為來源資料庫的可用性風險。
+Slot 的判斷對象是每個 slot 背後的 consumer 是否還在推進 confirmed 位置。consumer 推進時，來源端只保留它還沒確認的 WAL；consumer 離線或永久退場而 slot 還在時，來源端持續保留 WAL，磁碟用量上升到寫滿 primary，原因是 slot 在 consumer 確認之前不讓 WAL 被回收。這個代價跟 offset 的方向相反，由來源資料庫承擔，所以 slot 數量與保留量屬於來源端容量規劃的一部分。retained WAL 大小與 inactive 狀態沒有告警時，這個累積要等磁碟告警才被看到，高寫入服務上那時離寫滿可能只剩數小時。consumer 退場之後由誰 drop slot 沒有指定時，slot 會一直留著，所以 slot 建立時就指定這個 owner。

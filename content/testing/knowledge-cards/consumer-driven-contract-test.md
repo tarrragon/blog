@@ -18,4 +18,4 @@ Consumer-driven contract test 是 [protocol integration test](/testing/knowledge
 
 ## 判斷條件與後果
 
-導入前先確認 provider 團隊是否願意在自己的 CI 裡跑契約驗證——這是這個形態成立的協作前提，前提不成立時契約會變成 client 端單方維護、provider 端行為漂移仍然檢不出來。契約覆蓋的範圍要跟 protocol integration test 一致（request 格式、response 解析、error body 結構），否則契約驗證通過但真實互動仍可能因為契約沒覆蓋到的欄位而失敗。深入的 schema 相容性控制與跨服務契約演進見 [Backend 可靠性：Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)。
+這個形態成立的協作前提，是 provider 團隊願意在自己的 CI 裡跑契約驗證。前提不成立時，契約只剩 client 端單方維護，provider 端的行為漂移仍然檢不出來，原因是契約驗證要在 provider 的實作改動時執行才擋得到漂移。契約覆蓋的範圍決定驗證通過代表什麼：範圍比 protocol integration test 涵蓋的那幾項（request 格式、response 解析、error body 結構）窄時，契約驗證通過，真實互動仍可能因為契約沒覆蓋到的欄位而失敗。深入的 schema 相容性控制與跨服務契約演進見 [Backend 可靠性：Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)。

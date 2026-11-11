@@ -25,4 +25,4 @@ Fowler 給的辨識方式是：修改某個模組時，心裡想的是「加一�
 
 ## 判斷條件與後果
 
-修正 Divergent Change 的方向是依改變的理由把模組切開：先找出每一類需求各自會改的那一群函式與資料，再用 Extract Class（拆出類別）或把模組改成套件、每一群移到一個子模組。切開之前先用測試鎖住現有行為，切開之後確認同一類需求的變更只需要改一個新模組；若同一類需求要同時改好幾個新模組，代表切過頭，產生了 [Shotgun Surgery](/software-design/design-principles/knowledge-cards/shotgun-surgery/)。
+一個模組的函式與資料分成幾群、每一群只被某一類需求修改時，這個模組有幾個改變的理由，卻只有一個模組可改：處理不相干需求的人改同一個檔案，合併衝突與等待重跑測試隨之出現。每一群依它的理由移到自己的子模組（Extract Class（拆出類別），或把模組改成套件）之後，每一類需求只改一個新模組。切開的過程會搬動程式碼，沒有測試鎖住現有行為時，搬動中改壞的行為不會留下任何訊號，所以切開之前先用測試鎖住行為。切開之後同一類需求要同時改好幾個新模組，代表切過頭，產生了 [Shotgun Surgery](/software-design/design-principles/knowledge-cards/shotgun-surgery/)。

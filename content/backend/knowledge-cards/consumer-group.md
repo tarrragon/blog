@@ -22,4 +22,4 @@ Consumer group 的 rebalance（partition 重新分配）是 Kafka 生態的常�
 
 ## 判斷條件與後果
 
-Consumer group 要設計 group 名稱（跟服務名稱對齊、方便辨識）、offset / checkpoint 策略（auto-commit vs manual commit）、rebalance 行為（cooperative vs eager）、[consumer lag](/backend/knowledge-cards/consumer-lag/) 告警閾值與 [replay runbook](/backend/knowledge-cards/replay-runbook/) 權限。不同 group 的失敗應分開觀測跟處理 — 通知 group 落後不應影響出貨 group 的監控判讀。
+Consumer group 的幾項設定各自決定一種失效的形態。group 名稱沒有跟服務名稱對齊時，告警出現時看不出是哪個服務落後。offset 用 auto-commit 時，offset 可能在 handler 處理完之前就提交，consumer 中斷後那幾筆不會再處理；用 manual commit 時，由程式在處理完成後提交，中斷的代價變成重複處理。rebalance 用 eager 時，每次 consumer 加入或離開，group 內全部 partition 都暫停消費；cooperative 只移動需要重新分配的 partition，停頓的範圍較小。每個 group 的延遲代價不同（通知晚到與出貨延誤），共用同一組 [consumer lag](/backend/knowledge-cards/consumer-lag/) 告警閾值與儀表板時，通知 group 的落後會混進出貨 group 的判讀；[replay runbook](/backend/knowledge-cards/replay-runbook/) 的權限依 group 分開時，重放一個 group 的進度不會動到其他 group。

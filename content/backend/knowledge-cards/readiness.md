@@ -6,7 +6,6 @@ description: "說明 instance 何時可以安全接收流量，以及 readiness 
 weight: 11
 ---
 
-
 Readiness 的核心概念是「instance 是否已準備好接收正式流量」。部署平台或 load balancer 會根據 readiness 訊號決定是否把 request 導到該 instance。 可先對照 [Redelivery Loop](/backend/knowledge-cards/redelivery-loop/)。
 
 ## 跟其他概念的關係
@@ -23,4 +22,4 @@ Kubernetes rolling update 建立新 pod 後，若 readiness 太早通過，新 p
 
 ## 判斷條件與後果
 
-Readiness endpoint 要反映接流量所需的最小條件，並且控制下游短暫波動對流量調度的影響。設計時要分清 readiness、liveness 與深度依賴檢查，讓平台能做穩定調度。
+Readiness 通過的時機決定新 instance 何時開始接流量。通過得太早（設定還沒載入、連線池還沒建立）時，新 pod 接到 request 卻處理不了，部署或擴容期間出現短暫錯誤。下游依賴的深度檢查放進 readiness 時，下游一次短暫波動讓所有 instance 同時變成 not ready，平台把流量全部撤走，下游的小波動擴大成整個服務不接流量。liveness 判斷的是 process 是否要重啟，readiness 判斷的是 instance 是否接流量，兩者混用時，暫時不能接流量的 instance 被重啟。所以 readiness 只反映接流量所需的最小條件。

@@ -17,4 +17,4 @@ Read-After-Write 位在一致性保證光譜上、比 eventual consistency 強�
 
 ## 判斷條件與後果
 
-設計時要列出哪些讀取路徑需要 read-after-write 保證，並為它們選實作方式。要明確保證的範圍：是同一 session、跨 session、還是全域。observability 要能量到分流到 replica 的讀取中，有多少落在 lag 窗口內而可能讀到舊資料。
+Read-after-write 的判斷條件是哪些讀取路徑需要它、保證到什麼範圍。下單後看訂單、改設定後回設定頁這類路徑被分流到 replica 時，使用者在 replication lag 窗口內讀到舊狀態，會當成資料遺失回報；寫入後不會立刻被讀的路徑繼續分流到 replica，不必付走 primary 的成本。保證的範圍有同一 session、跨 session 與全域三種，範圍越大，能分流到 replica 的讀取越少，primary 的讀取負載越重。observability 量到分流到 replica 的讀取裡有多少發生在 lag 窗口內，才知道目前的路由讓多少讀取可能讀到舊資料。

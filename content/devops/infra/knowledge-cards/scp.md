@@ -21,9 +21,9 @@ SCP 套用在 OU 上時會繼承給 OU 下所有帳號和子 OU。Management acc
 
 ## 判斷條件與後果
 
-SCP 會繼承給 OU 底下每個帳號與子 OU，連帳號管理員都越不過，所以策略選錯時整個 OU 的帳號一起受影響；第一個要定的是用 deny-list 策略（預設全開、明確列出禁止項）還是 allow-list 策略（預設全關、明確列出允許項）。Deny-list 較常見也較易維護——只需要管「哪些該禁」。Allow-list 更嚴格但維護成本高——每次有新服務需求都要更新 SCP。
+SCP 會繼承給 OU 底下每個帳號與子 OU，連帳號管理員都越不過，所以策略的寫法決定整個 OU 的帳號能做什麼。採 deny-list 策略（預設全開、明確列出禁止項）時，新服務不必改 SCP 就能用，維護量只跟禁止項的數量有關，代價是沒列進去的危險操作一律放行。採 allow-list 策略（預設全關、明確列出允許項）時，沒列到的服務一律被擋，範圍收得最緊，代價是每一次有新服務需求都要改一次 SCP。
 
-套用 SCP 前要確認不會擋到正在運作的服務——先在 sandbox OU 測試，確認既有 workload 不受影響再推到 workload OU。SCP 的變更跟 [IAM](/devops/infra/knowledge-cards/iam/) 一樣要走 PR review。跨帳號策略的完整設計見[跨帳號策略文章](/devops/infra/02-identity-credentials/multi-account-strategy/)。
+一條 SCP 直接套到正在跑 workload 的 OU 時，它擋到的既有操作會在那一刻對 OU 底下的每個帳號同時失敗，錯誤是 `AccessDeniedException`，而那些帳號的 IAM policy 看起來都允許，排查要回頭找到 SCP 才看得出原因；先套在 sandbox OU、確認既有 workload 不受影響，失敗就只發生在 sandbox。SCP 的一行變更影響的帳號數跟 OU 的大小成正比，所以它跟 [IAM](/devops/infra/knowledge-cards/iam/) policy 一樣走 PR review。跨帳號策略的完整設計見[跨帳號策略文章](/devops/infra/02-identity-credentials/multi-account-strategy/)。
 
 ## 鄰卡
 

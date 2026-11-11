@@ -17,4 +17,4 @@ Canary 流量導 1% / 5% / 10% 到新版本、跟 control（舊版本）流量�
 
 ## 判斷條件與後果
 
-Canary perf check 的關鍵是 *跟 control 比、不是跟 baseline 比*。同樣流量同樣時段、不同版本的差才有意義。abort condition 要事前訂、不要事中決定。Canary 流量比例要看 *退化 blast radius* — 1% 流量退化 30%、影響 0.3% 用戶；50% 流量退化 30%、影響 15% 用戶。
+Canary 的效能數字拿去跟 baseline（上週或上一次上線時的數字）比時，兩邊的流量組成與時段不同，差距可能來自流量而不是版本；跟同時段、同流量的 control 比時，兩邊只差在版本，差距才歸因得到新版本。abort condition 在 canary 開始之後才訂時，門檻是看過這一版的數字才決定的，放行標準在每一次上線之間都不一致，所以 abort condition 在 canary 開始前寫定。Canary 的流量比例決定退化的 blast radius：1% 流量退化 30%，影響 0.3% 用戶；50% 流量退化 30%，影響 15% 用戶。

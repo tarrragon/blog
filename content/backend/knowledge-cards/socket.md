@@ -5,7 +5,6 @@ description: "說明 network socket 如何成為 application 與網路之間的�
 weight: 132
 ---
 
-
 Socket 的核心概念是「application 和網路連線之間的資料讀寫端點」。HTTP、database driver、broker client 與自訂 TCP protocol 最後都會透過 socket 讀寫資料，因此 socket 行為會影響 timeout、連線池、buffer 與資源耗盡風險。 可先對照 [HTTP Client](/backend/knowledge-cards/http-client/)。
 
 ## 跟其他概念的關係
@@ -18,4 +17,4 @@ Socket 位在 application runtime、作業系統與網路之間。上層通常�
 
 ## 判斷條件與後果
 
-Socket 相關設計要定義連線數上限、read / write timeout、[idle timeout](/backend/knowledge-cards/idle-timeout/)、[connection pool](/backend/knowledge-cards/connection-pool/)、[buffer](/backend/knowledge-cards/buffer/) 大小與關閉流程。操作上要觀察連線數、timeout、reset、重連次數與下游 latency，避免網路等待耗盡 application 的 worker 或檔案描述符。
+每一個等待網路回應的 socket 都佔著一條連線與一個檔案描述符，同步模型下還佔著一個 worker，所以外部依賴變慢時，socket 的設定決定 application 的資源被佔住多少、多久。沒有連線數上限時，下游越慢，同時開著的連線越多，直到檔案描述符用完；read / write timeout 設得長時，worker 把時間花在等待回應，能處理新請求的 worker 變少；沒有 [idle timeout](/backend/knowledge-cards/idle-timeout/) 時，閒置連線一直佔著資源，或被中間的網路設備單方面切斷，下一次使用時才收到 reset；不用 [connection pool](/backend/knowledge-cards/connection-pool/) 時，每個請求都重新建立連線，握手的耗時加在每一次呼叫上；[buffer](/backend/knowledge-cards/buffer/) 太小時一次回應要分多次讀取，太大時每條連線佔的記憶體乘上連線數；關閉流程漏掉錯誤路徑時，那些 socket 沒有被關閉，檔案描述符隨時間洩漏。連線數、timeout、reset、重連次數與下游 latency 是這幾項設定開始失效時最先變化的觀測值。

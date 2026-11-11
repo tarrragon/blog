@@ -27,4 +27,4 @@ Mapping table 位在 [backfill](/backend/knowledge-cards/backfill/)、[data reco
 
 ## 判斷條件與後果
 
-Mapping table 要保留來源欄位、新欄位、對應理由、例外狀態與 owner。高風險 mapping 要版本化，並進入 [evidence package](/backend/knowledge-cards/evidence-package/)；否則資料漂移時，團隊很難判斷問題出在資料、程式還是規則本身。
+Mapping table 的欄位各自保留一種事後追查要用的資訊。只有來源欄位與新欄位、沒有對應理由時，看得到舊值轉成哪個新值，看不到為什麼這樣轉，規則被質疑時沒有依據可查；沒有例外狀態時，需要人工確認的舊狀態被直接對到某個新狀態；沒有 owner 時，規則要修改時不知道該由誰確認。高風險的 mapping 沒有版本化、也沒有進入 [evidence package](/backend/knowledge-cards/evidence-package/) 時，資料漂移之後，團隊分不出 mismatch 來自資料本身、轉換程式還是當時的對應規則，原因是規則可能在那之後改過，當時的版本沒有留下。

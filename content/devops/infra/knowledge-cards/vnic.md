@@ -25,11 +25,11 @@ VNIC（virtual network interface card，虛擬網路卡）是雲端主機接上�
 
 ## 判斷條件與後果
 
-網卡層的規則只影響掛上它的那幾張 VNIC，subnet 層的規則影響整個 subnet，所以放規則的位置決定了影響範圍；而 VNIC 會隨主機重建而換新，所以：
+網卡層的規則只影響掛上它的那幾張 VNIC，subnet 層的規則影響整個 subnet，而 VNIC 會隨主機重建而換新，所以一條規則放在哪一層、重建時有沒有被重新掛上，決定它實際管到哪些主機：
 
-- **規則放在哪一層**：只給一台主機的放行（例如只有它需要的出站）放在網卡層，掛在它的 VNIC 上；整個 subnet 都需要的放在 subnet 層。兩層怎麼合併見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/devops/infra/cloud-providers/vm-options/networking/)〈防火牆規則的位置與合併方式〉
-- **重建時的重新掛載**：用腳本或 IaC 重建主機時，把「掛上網卡層規則」寫成重建流程的一步，或在建立主機時就指定（Oracle Cloud 的 `instance launch --nsg-ids`），不靠人記得
-- **整份替換**：Oracle Cloud 的 `vnic update --nsg-ids` 用給的清單取代整份 NSG 清單，加一個 NSG 時要把原本掛著的那幾個一起寫進去
+- **只給一台主機的放行放在 subnet 層時**（例如只有它需要的出站），同一個 subnet 的其他主機也一起被放行；放在網卡層、掛在那台主機的 VNIC 上時，範圍只有那一台。整個 subnet 都需要的放行放在網卡層時，每建一台主機都要記得掛一次。兩層怎麼合併見 [網路：subnet、私有 IP、公開 IP 與防火牆規則](/devops/infra/cloud-providers/vm-options/networking/)〈防火牆規則的位置與合併方式〉
+- **主機重建時**：新主機拿到的是新的 VNIC，網卡層的規則沒有掛上，而這個缺漏只表現為某些連線逾時、沒有錯誤訊息；「掛上網卡層規則」寫成重建腳本或 IaC 的一步，或在建立主機時就指定（Oracle Cloud 的 `instance launch --nsg-ids`），重建出來的主機就帶著原本的規則
+- **改一張 VNIC 掛的 NSG 時**：Oracle Cloud 的 `vnic update --nsg-ids` 用給的清單取代整份 NSG 清單，只寫新加的那一個時，原本掛著的幾個會被拿掉；所以加一個 NSG 時，原本掛著的那幾個一起寫進去
 
 ## 鄰卡
 

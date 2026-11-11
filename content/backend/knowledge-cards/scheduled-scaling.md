@@ -17,4 +17,4 @@ Scheduled scaling 適合：年度 / 季度活動（Prime Day、Black Friday、�
 
 ## 判斷條件與後果
 
-Scheduled scaling 必須 *提前足夠時間* 啟動、不是事件當下才擴。pre-warm window 通常 30 分鐘到 2 小時（取決於 instance boot time、cache warmup、connection pool 預熱）。事件結束後也要 *scheduled scale down*、避免長期 over-provision。跟 [predictive scaling](/backend/knowledge-cards/predictive-scaling/) 跟 reactive scaling 三層組合最穩。
+Scheduled scaling 的觸發時間點離事件開始多遠，決定擴出來的容量在峰值到來時是否已經可以處理流量。擴容在事件當下才觸發時，新 instance 還在開機、cache 還沒暖、connection pool 還沒建好，峰值的前段仍由原有容量處理，延遲與錯誤的情形跟沒有排程時相同；所以排程提前一段 pre-warm window 觸發，長度取決於 instance boot time、cache warmup 與 connection pool 預熱的總和，通常 30 分鐘到 2 小時。事件結束後沒有排定 scale down 時，峰值容量一直留著，系統處在長期 over-provision，代價是事件之後每一小時的閒置費用。排程只涵蓋已知時間表上的峰值，時間表外的流量變化由 [predictive scaling](/backend/knowledge-cards/predictive-scaling/) 與 reactive scaling 處理，三者並用時，排程管已知事件，另外兩種處理排程沒有預料到的流量。

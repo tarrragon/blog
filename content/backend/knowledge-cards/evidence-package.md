@@ -18,4 +18,4 @@ Evidence package 位在 [dashboard](/backend/knowledge-cards/dashboard/)、[SLI 
 
 ## 判斷條件與後果
 
-Evidence package 要包含 source、time range、query link、owner、data quality、confidence、known gap 與 retention。它的責任是讓證據可查、可解釋、可重跑，並能交給 [incident decision log](/backend/knowledge-cards/incident-decision-log/)、[steady state](/backend/knowledge-cards/steady-state/) 或 [action item closure](/backend/knowledge-cards/action-item-closure/) 使用。
+Evidence package 的每一個欄位缺席時，接手的人少了一種重建判斷的能力。少了 source、time range 與 query link，下一班 on-call 只看得到截圖裡的圖表形狀，重跑不了同一個查詢；少了 owner，對證據有疑問時找不到可以問的人；少了 data quality 與 confidence，取樣比例或資料延遲造成的偏差看不出來，一張不完整的圖被當成完整的事實；少了 known gap，缺資料的時間段被讀成沒有異常；少了 retention，證據引用的原始資料過期之後，復盤時已經查不回來。這幾項都在時，同一組事實可以直接交給 [incident decision log](/backend/knowledge-cards/incident-decision-log/)、[steady state](/backend/knowledge-cards/steady-state/) 或 [action item closure](/backend/knowledge-cards/action-item-closure/) 使用，不必在交班、release gate 或復盤時重新查證。

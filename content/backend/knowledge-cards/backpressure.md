@@ -24,7 +24,7 @@ Backpressure 與 [rate limit](/backend/knowledge-cards/rate-limit/) 的差別在
 
 ## 判斷條件與後果
 
-Backpressure 導入後，團隊需要定義以下邊界：[buffer](/backend/knowledge-cards/buffer/) 大小、排隊上限、等待期限、拒絕策略、[retry policy](/backend/knowledge-cards/retry-policy/)、[load shedding](/backend/knowledge-cards/load-shedding/) 與對使用者的回饋（429 / 503 / 延後通知）。觀測上應能看到 [queue depth](/backend/knowledge-cards/queue-depth/)、in-flight 數量、處理耗時、drop count、[timeout](/backend/knowledge-cards/timeout/)、下游 error rate，並把關鍵指標放進 [dashboard](/backend/knowledge-cards/dashboard/)。
+Backpressure 的邊界由 [buffer](/backend/knowledge-cards/buffer/) 大小、排隊上限、等待期限、拒絕策略、[retry policy](/backend/knowledge-cards/retry-policy/)、[load shedding](/backend/knowledge-cards/load-shedding/) 與對使用者的回饋（429 / 503 / 延後通知）組成，其中一項沒有定義，壓力就停在那一段，不往上游傳。沒有排隊上限或等待期限時，請求在 buffer 裡持續累積，記憶體與延遲一起上升；沒有拒絕策略與回饋時，上游收不到超載訊號，照原速送出；retry policy 沒有上限時，被拒絕的請求立刻重送，下游的負載反而增加。[queue depth](/backend/knowledge-cards/queue-depth/)、in-flight 數量、處理耗時、drop count、[timeout](/backend/knowledge-cards/timeout/) 與下游 error rate 沒有被觀測時，超載當下分不出壓力卡在處理鏈的哪一段，所以這些指標放進 [dashboard](/backend/knowledge-cards/dashboard/)。
 
 設計取捨的核心是 buffer 尺度：buffer 太小會讓瞬間尖峰被過度拒絕，流失可接受的請求；buffer 太大則延遲失控並可能拖累記憶體。穩定做法是「有限 buffer + 明確拒絕策略」，讓系統在超載時 fail fast，避免把壓力延後累積成更大的雪崩。
 

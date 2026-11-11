@@ -17,4 +17,4 @@ Predictive scaling 用兩類預測：歷史模式（過去幾週同時段、同 
 
 ## 判斷條件與後果
 
-Predictive scaling 預測錯了會浪費錢（預測過高、提前擴沒用到）或失效（預測過低、流量還是衝高）。要 monitor *預測準確度*、超過誤差門檻時 fallback 到 reactive。三層組合最穩：scheduled（已知大事件）+ predictive（daily pattern）+ reactive（unexpected burst）。
+Predictive scaling 的效果取決於預測準確度。預測過高時，提前擴出的容量沒有用到，多付了費用；預測過低時，擴出的容量不足以處理上升的流量，latency 照樣上升，回到導入它之前 reactive 來不及的情形。準確度沒有被監控時，這兩種失準要等帳單或延遲變差才被發現，所以預測誤差超過門檻時退回 reactive scaling。三種擴容方式各自對應一類流量：scheduled 對應已知時間點的大事件，predictive 對應日常的 daily / weekly pattern，reactive 對應預測不到的 burst；只用其中一種時，另外兩類流量沒有對應的擴容方式，所以三者組合使用。

@@ -20,4 +20,4 @@ Queue 跟 [topic](/backend/knowledge-cards/topic/) 的差異：queue 的語意�
 
 ## 判斷條件與後果
 
-Queue 要定義容量上限、排序語意（FIFO / priority / delay）、保存期限（[retention](/backend/knowledge-cards/retention/)）、消費模式（pull vs push）、失敗處理（[retry policy](/backend/knowledge-cards/retry-policy/) + [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/)）、[backpressure](/backend/knowledge-cards/backpressure/) 策略（滿了怎麼辦 — block / drop / reject）與觀測欄位。設計上要區分「等待可以接受」跟「等待會傷害產品結果」— 付款入帳能短暫排隊，互動式 API response 通常需要更短的等待期限與更明確的拒絕策略。
+Queue 的每一項行為沒有定義時，在 queue 滿了或處理失敗的那一刻各有後果。容量上限與 [backpressure](/backend/knowledge-cards/backpressure/) 策略（block / drop / reject）缺席時，進入速度長期高於處理速度，等待區持續增長，直到記憶體或儲存耗盡；排序語意（FIFO / priority / delay）、保存期限（[retention](/backend/knowledge-cards/retention/)）與消費模式（pull / push）沒有寫明時，producer 與 consumer 各自假設，順序與保存的期待對不上。失敗處理（[retry policy](/backend/knowledge-cards/retry-policy/) + [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/)）缺席時，失敗的工作被丟掉或反覆重試；沒有觀測欄位時，等待長度與等待時間看不到，容量壓力在延遲已經影響結果之後才被發現。另一個條件是等待的代價：付款入帳短暫排隊可以接受，互動式 API 的呼叫端正在等回應，所以那類 queue 用更短的等待期限與更明確的拒絕策略。

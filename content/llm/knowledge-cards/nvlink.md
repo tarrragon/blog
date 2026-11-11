@@ -33,4 +33,4 @@ NVLink 比 PCIe 高一個量級、是資料中心多卡推論的關鍵；消費�
 
 理解 NVLink 後可以解釋兩個現象：為什麼資料中心多卡 LLM 推論能線性 scale（NVLink 頻寬足以做 tensor parallel）、為什麼消費級雙卡 RTX 推論縮放比通常低於線性（沒 NVLink、走 PCIe x4 / x8、卡間頻寬限制）。
 
-選消費級 GPU 跑本地 LLM 時、NVLink 不是常見選項；多卡升級的判讀應該基於「能否容忍縮放比低於線性」、而不是預期 NVLink 等級的卡間頻寬。詳見 [5.6 GPU 廠商差異](/llm/05-discrete-gpu/gpu-vendor-differences/)。
+消費級 GPU 多半沒有 NVLink，多卡之間只能走 PCIe，卡間頻寬比 NVLink 低一個量級；tensor parallel 每個 token 都要卡間同步，所以消費級多卡的縮放比低於線性，這是頻寬決定的上限。消費級多卡升級因此成立在工作流能接受低於線性的縮放比時；把升級的效益算成 NVLink 等級的卡間頻寬，會高估加第二張卡換到的速度。詳見 [5.6 GPU 廠商差異](/llm/05-discrete-gpu/gpu-vendor-differences/)。

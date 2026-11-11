@@ -31,7 +31,7 @@ DNS 在 infra 裡扮演「服務的門牌」角色。平台遷移、環境切換
 
 ## 判斷條件與後果
 
-一筆 DNS 記錄從修改到生效要經過兩段：先由有權限的人在負責的 zone 改記錄，再等各地 resolver 快取的舊記錄過期，設計時的決定分別落在這兩段：誰管這個域名的 zone（Route 53 / Cloudflare / 域名商）、子域怎麼委派（dev / staging 用 NS delegation 交給不同 zone）、TTL 設多少（平常 3600 秒夠用、遷移前降到 300）。ACM 的 DNS 驗證也依賴 DNS——建立 TXT 或 CNAME 記錄證明域名歸屬。
+一筆 DNS 記錄從修改到生效經過兩個階段：有權限的人在負責的 zone 改記錄，以及各地 resolver 快取的舊記錄過期。改記錄的權限跟著 zone 走：zone 放在 Route 53、Cloudflare 或域名商，能改記錄的就是那個帳號；dev、staging 這類子域用 NS 記錄委派給另一個 zone 時，子域的記錄由那個 zone 的帳號改，改錯子域不會動到主域的記錄。舊記錄在 resolver 留到 TTL 到期，TTL 3600 秒時，切換之後最慢一小時才全部指到新 IP，這段時間新舊位址同時收到流量；平常 3600 秒夠用，遷移前降到 300，切換時新舊並存的時間縮到五分鐘以內。ACM 用 DNS 驗證域名歸屬時，要在 zone 裡建立 TXT 或 CNAME 記錄，所以憑證能否簽發也取決於誰有那個 zone 的修改權限。
 
 ## 鄰卡
 

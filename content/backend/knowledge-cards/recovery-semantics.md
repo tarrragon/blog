@@ -17,4 +17,4 @@ consumer 處理到一半 crash，重啟後從哪個 offset 接續、會不會重
 
 ## 判斷條件與後果
 
-設計時把 replay 範圍、checkpoint 粒度與補償路徑寫進 runbook，並保留驗證證據（replay 前後的計數與抽樣），讓恢復後能確認狀態正確而非只是「跑完了」。
+恢復之後的狀態是否正確，取決於出錯之前 runbook 裡有沒有 replay 範圍、checkpoint 粒度與補償路徑。checkpoint 粒度粗時，consumer crash 之後從較早的 offset 接續，已完成的副作用被重做一次，要靠補償路徑抵銷；replay 範圍沒有界定時，重放的事件超出受影響的區間，正常的資料也被再處理一次。replay 前後的計數與抽樣沒有保留時，恢復只證明得了程序跑完，證明不了狀態正確。

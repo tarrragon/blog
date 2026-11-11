@@ -18,4 +18,4 @@ tags: ["testing", "integration-test", "naming"]
 
 ## 判斷條件與後果
 
-修正策略分兩步：改名（讓 test 名稱反映真實驗證對象，如 `connection_state_machine_test`）和補寫（如果協議互動是關鍵路徑，補寫對真實服務的 [protocol integration test](/testing/knowledge-cards/protocol-integration-test/)）。在 test 檔案頂部標明被 fake 取代的依賴清單，讓後續讀者快速判斷驗證邊界。
+名義 integration test 的代價來自名稱與驗證對象不一致：名稱寫著 integration 時，團隊把協議層當成已驗證，而沒有任何測試連到真實服務。test 改成反映真實驗證對象的名字（如 `connection_state_machine_test`）之後，協議層沒被覆蓋這件事從名稱上就看得到。協議互動是關鍵路徑時，改名只讓缺口可見，覆蓋它的是對真實服務補寫的 [protocol integration test](/testing/knowledge-cards/protocol-integration-test/)。test 檔案頂部列出被 fake 取代的依賴清單時，後續讀者打開檔案就判斷得出驗證邊界，不必逐行讀 `setUp()`。

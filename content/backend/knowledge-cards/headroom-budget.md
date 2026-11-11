@@ -17,4 +17,4 @@ Headroom 不足的訊號是「peak 期間 utilization 接近 80%、autoscaler �
 
 ## 判斷條件與後果
 
-Headroom 不是越大越好、會推高成本。要算 *under-provisioning 成本*（下事故的機率 × 影響）vs *over-provisioning 成本*（每月多花的錢）、找平衡點。Cost-sensitive 服務可以降 headroom 但加 reactive autoscaling；critical 服務拉高 headroom + pre-provision。每季 review headroom 比例。
+Headroom 比例是兩種成本的比較：under-provisioning 成本是事故的機率乘上影響，over-provisioning 成本是每月多付的資源費用，比例越高，後者越大。Cost-sensitive 的服務降低 headroom 之後，省下的費用換來較高的事故機率，不足的部分由 reactive autoscaling 補上，前提是 autoscaler 反應時間內的流量上升量仍在剩下的 headroom 之內；critical 服務的事故影響高，拉高 headroom 並 pre-provision，換到的是峰值期間不必等 autoscaler 反應。forecast 的準確度與流量的形狀會隨時間改變，比例訂下之後不再檢視時，它對應的是過去的預測誤差，所以 headroom 比例每季 review 一次。

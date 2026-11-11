@@ -17,4 +17,4 @@ Transaction Pooling 位在 application 與資料庫之間的 [Connection Pool](/
 
 ## 判斷條件與後果
 
-設計時要先盤點 application 用到哪些 session 層機制，再決定 pooling 模式。選 transaction pooling 時要把租戶識別、權限變數、時區等設定改用 SET LOCAL 綁在 transaction 內。observability 要看後端連線使用率、client 等待時間，以及和 pooling 模式相關的錯誤。
+Transaction pooling 下，同一個 client 的前後兩個 transaction 可能拿到不同的後端連線，依賴 session 狀態的機制在 transaction 結束後不再對這個 client 成立，或留在連線上被下一個 client 拿到。Application 用到哪些 session 層機制沒有先盤點時，換成 transaction pooling 之後的錯誤是間歇的，只在連線剛好被換掉時出現，所以盤點的結果決定是否能選這個模式。租戶識別、權限變數與時區用 SET 設定時，設定留在連線上漂到下一個 client 的 transaction；改用 SET LOCAL 時，設定的效力只到 transaction 結束，連線還回池子之前已經清除。後端連線使用率與 client 等待時間看得出池子的大小是否夠用；和 pooling 模式相關的錯誤（例如找不到 prepared statement 或暫存表）代表還有 session 狀態沒有改成 transaction-scoped。

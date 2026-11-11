@@ -19,4 +19,4 @@ Redaction 位在 SDK 端的事件產生和 collector 端的事件接收之間。
 
 ## 判斷條件與後果
 
-Redaction 要定義預設規則（哪些欄位名稱自動 redact）、自訂 pattern（正則表達式比對敏感值）、執行時機（event 進入 buffer 前還是 flush 時）、以及 redaction 失敗的處理（丟棄整筆事件 vs 只移除敏感欄位）。這些規則只管得到網站自己 SDK 送出的事件；同一個頁面上的商業追蹤碼由 vendor 的 script 直接送出，遮蔽要用 vendor 提供的設定，見 [Autocapture（自動事件收集）](/devops/monitoring/knowledge-cards/autocapture/)。
+Redaction 的規則決定哪些敏感值在離開 client 之前被處理。只有依欄位名稱比對的預設規則時，寫在一般欄位裡的敏感值（CLI 輸入裡的 `mysql -p'secret'`、含帳密的連線字串）照樣送出，原因是欄位名稱沒有透露它的內容；自訂 pattern 用正則表達式比對值本身，涵蓋這一類，代價是 pattern 寫得太窄會漏、太寬會把正常內容也遮掉。redaction 在 event 進入 buffer 之前執行時，buffer 裡只有處理過的值；到 flush 時才執行，buffer 在這段期間暫存的是原值。redaction 處理失敗時，丟棄整筆事件的結果是少一筆監控資料而沒有外洩；只移除已知的敏感欄位時事件保留下來，代價是沒完成的那一段比對原本要抓的值可能還在事件裡。這些規則只管得到網站自己 SDK 送出的事件；同一個頁面上的商業追蹤碼由 vendor 的 script 直接送出，遮蔽要用 vendor 提供的設定，見 [Autocapture（自動事件收集）](/devops/monitoring/knowledge-cards/autocapture/)。

@@ -34,9 +34,6 @@ LLM tracing 的核心概念是「**把 LLM 應用的每次 LLM call / [tool call
 
 ## 判斷條件與後果
 
-讀 LLM observability docs / OTel spec 看到「span」「trace」「OTel GenAI semconv」就是這 framing。寫 code 場景的判讀：
+tracing 是否值得加，看應用是否已經有個人 demo 以外的使用者與 production 流量。只有自己跑 demo 時，出錯的那一次自己重跑就看得到；有實際使用者之後，agent 在某一次請求裡為什麼走了那條路（呼叫了哪些 tool、讀了哪些 memory）重現不出來，只有當時記下的 span 樹查得到。
 
-1. **何時值得加 tracing**：超過個人 demo、有實際使用者 / production 流量、開始遇到「為什麼 agent 跑這條路」debug 問題
-2. **不該自己寫 logging**：用 OTel GenAI semconv 標準化、未來可換 backend（LangSmith → Phoenix → 自架）
-3. **Trace 不只 debug、也是 eval 來源**：production trace 餵回 [LLM-as-judge](/llm/knowledge-cards/llm-as-judge/) 做品質評估
-4. **跟 [4.20 LLM tracing 章節](/llm/04-applications/llm-tracing-and-observability/) 的關係**：本卡是定義、章節是工程實務（attribute 設計、cost monitoring、failure debug 流程）
+紀錄的格式決定之後是否能換平台：用自訂欄位寫 logging 時，紀錄綁在自己的欄位名稱上，換 observability 平台就要改寫記錄的程式；照 OTel GenAI semconv 的標準屬性記錄，同一份 trace 可以送到 LangSmith、Phoenix 或自架的 backend。trace 留下的 production 輸入與輸出同時是評估資料，餵給 [LLM-as-judge](/llm/knowledge-cards/llm-as-judge/) 定期評分時，品質回歸在真實流量上就會被抓到。attribute 設計、cost monitoring 與 failure debug 流程在 [4.20 LLM tracing 章節](/llm/04-applications/llm-tracing-and-observability/)。

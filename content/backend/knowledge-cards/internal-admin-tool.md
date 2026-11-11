@@ -20,6 +20,6 @@ Internal admin tool（客服後台）是只給公司內部人員使用的網頁�
 
 ## 判斷條件與後果
 
-設計客服後台時要決定讀寫範圍、欄位、查詢的理由與紀錄。讀寫範圍：預設只讀，寫入操作逐項列出並走管理端點的核准流程。欄位：只顯示客服答覆需要的欄位，個人資料與付款資訊做欄位層級的遮罩（見 [Data Masking（資料遮罩）](/backend/knowledge-cards/data-masking/)）。查詢的理由：查詢附上還在處理中的客服單號，結案的單號解不開查詢，每一次查詢因此都有理由與有效期間。紀錄：誰、什麼時間、以哪一張單、查了哪個帳號都寫進 [Audit Log（稽核紀錄）](/backend/knowledge-cards/audit-log/)，並對每個客服帳號的查詢量設告警，查詢量突然升高的帳號可能已經被盜用。客服帳號本身依 [Least Privilege（最小權限）](/backend/knowledge-cards/least-privilege/) 只給它負責的範圍。
+客服後台讀得到全部客戶的資料，所以一個客服帳號被盜用時能造成多大的損害，取決於讀寫範圍、顯示的欄位、查詢的理由與紀錄這幾項怎麼設定。寫入操作沒有限制時，拿到客服帳號的人能停用帳號、退款、改方案；後台預設只讀、寫入操作逐項列出並走管理端點的核准流程時，寫入多了一道盜用者過不了的核准。顯示的欄位超過客服答覆需要時，每一次查詢都暴露個人資料與付款資訊，所以這兩類做欄位層級的遮罩（見 [Data Masking（資料遮罩）](/backend/knowledge-cards/data-masking/)）。查詢不必附理由時，任何帳號都查得到；查詢附上還在處理中的客服單號、結案的單號解不開查詢時，每一次查詢都有理由與有效期間。Mailchimp 與 Okta 兩起事件裡，攻擊者的每一次操作都通過了正常的權限檢查，權限檢查分不出合法的查詢與攻擊者的查詢，所以紀錄是看得出盜用的那一項：誰、什麼時間、以哪一張單、查了哪個帳號都寫進 [Audit Log（稽核紀錄）](/backend/knowledge-cards/audit-log/)，每個客服帳號的查詢量設告警，查詢量突然升高的帳號可能已經被盜用。客服帳號本身依 [Least Privilege（最小權限）](/backend/knowledge-cards/least-privilege/) 只給它負責的範圍。
 
-多租戶平台另外要決定客服後台一次能查幾個租戶：查詢限縮到每次一個租戶、批次匯出要第二人核准，見 [7.44 多租戶平台的隔離層級〈存取層的隔離〉](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/#存取層的隔離建置管線共用運算營運後台內部工具平台資料庫管理備份與其他共用元件的權限範圍)。客服拿查詢結果當場答覆使用者的流程，見 [8.24 客服回報的處理〈客服當場答覆時用的資訊〉](/backend/08-incident-response/support-escalation-and-engineering-reply/#客服當場答覆時用的資訊)。
+多租戶平台上，客服後台一次查得到幾個租戶，決定一個被盜用的客服帳號能波及幾個租戶：查詢限縮到每次一個租戶、批次匯出要第二人核准，見 [7.44 多租戶平台的隔離層級〈存取層的隔離〉](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/#存取層的隔離建置管線共用運算營運後台內部工具平台資料庫管理備份與其他共用元件的權限範圍)。客服拿查詢結果當場答覆使用者的流程，見 [8.24 客服回報的處理〈客服當場答覆時用的資訊〉](/backend/08-incident-response/support-escalation-and-engineering-reply/#客服當場答覆時用的資訊)。

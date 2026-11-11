@@ -31,6 +31,8 @@ reverse proxy 常承擔的功能：
 | 靜態檔案快取 | 圖片、CSS、JS 由 proxy 直接回應、不轉發到後端                |
 | 安全過濾     | 擋掉異常請求、限制請求速率、加安全標頭                       |
 
+接手一台前面有 reverse proxy 的服務時，判斷的對象是表格裡哪幾項功能由 proxy 執行、哪幾項仍由後端執行，以及 proxy 用哪一種協定轉給後端。TLS 在 proxy 終結時，後端收到的是 HTTP 請求，連線的來源位址是 proxy 自己；後端程式依連線判斷請求是否走 HTTPS、或記錄 client IP 時，拿到的是 proxy 到後端那一段連線的協定與位址，原因是 client 的原始連線只存在於 client 與 proxy 之間，後端要讀 proxy 加上的 `X-Forwarded-For`、`X-Forwarded-Proto` 標頭才拿得到。被 proxy 的安全過濾或靜態檔案快取處理掉的請求不會轉到後端，後端的 log 裡沒有這些請求，查這類請求要讀 proxy 的 log。轉發規則與後端講的協定對不上時（用 `proxy_pass` 指向只講 FastCGI 的 PHP-FPM），請求送到了後端的埠，而 nginx 收不到它讀得懂的回應，回給 client 的是 502。
+
 ## 鄰卡
 
 - [ALB](/devops/infra/knowledge-cards/alb/)：雲端的受管 reverse proxy + 負載平衡器

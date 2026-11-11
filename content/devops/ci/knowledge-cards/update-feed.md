@@ -25,4 +25,8 @@ Electron app 啟動時讀取 stable feed，取得最新 signed installer 與 sig
 
 ## 判斷條件與後果
 
-Update Feed 要定義簽章驗證、channel 分流、版本比較、fallback installer、撤版策略與 telemetry，讓已安裝客戶端安全升級。
+Update Feed 指向的版本會被已安裝的客戶端自動下載並執行，所以 feed 的設定決定錯誤或被竄改的版本是否會到達使用者：
+
+- **簽章驗證**：客戶端不驗 signature 與 checksum 時，能改動 feed 或下載 URL 的人就能讓客戶端安裝任意程式。
+- **channel 分流**：beta 與 stable 讀同一個 feed 時，beta 版本直接推給所有使用者。
+- **撤版與 telemetry**：沒有 crash rate 這類回報時，團隊不知道哪個版本該撤；feed 沒有撤版的方式時，錯誤版本持續被還沒更新的使用者取得。

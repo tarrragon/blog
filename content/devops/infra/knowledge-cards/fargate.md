@@ -28,9 +28,9 @@ Fargate Spot 是介於兩者之間的選項：費用約為 on-demand Fargate 的
 
 ## 判斷條件與後果
 
-Fargate 把運算實例交給 AWS 代管之後，團隊能調整的只剩 task 本身的規格與行為，設計集中在：task 的 vCPU / memory 規格（Fargate 只提供固定的幾種 vCPU 與 memory 組合）、是否混用 Spot、以及 health check 的 grace period（Fargate 的 cold start 比 EC2 長，health check 太早判定失敗會讓 task 反覆重啟）。
+Fargate 把運算實例交給 AWS 代管之後，團隊能調整的只剩 task 本身的規格與行為，每一項設錯的後果不同。Fargate 只提供固定的幾種 vCPU 與 memory 組合，需求落在兩個組合之間時只能選大的那一個，多出來的規格照樣計費。health check 的 grace period 短於 task 的啟動時間時，task 還沒啟動完就被判定失敗而重啟，而 Fargate 的 cold start 比 EC2 長，所以 grace period 依 Fargate 的啟動時間來設。混用 Spot 時，Spot 上的 task 可能在中斷通知後被收回，面對使用者的即時 API 被收回就是請求失敗，只有可容忍中斷的工作適合放上去。
 
-task 規格的 rightsizing 靠 CloudWatch Container Insights 的 CPU / memory utilization 決定——p95 使用率低於 30% 代表規格過大、持續高於 80% 代表該升級。
+task 規格是否合身，看 CloudWatch Container Insights 的 CPU 與 memory utilization：p95 使用率低於 30% 時，大半規格閒置卻照樣計費，代表規格過大；持續高於 80% 時，流量一波動就沒有餘裕，代表該升級。
 
 ## 鄰卡
 

@@ -18,4 +18,4 @@ RAG 跟 [fine-tuning](/llm/knowledge-cards/instruction-tuned/) 跟 long context 
 
 ## 判斷條件與後果
 
-設計 RAG 系統前先評估「不做 RAG 會怎樣」：知識量小可用 long context、知識結構化可用 SQL、靜態風格特化可用 fine-tune。需要動態 + 大量 + traceable 才是 RAG 的甜蜜點。詳細展開見 [4.1 RAG 原理](/llm/04-applications/rag-principles/)。
+RAG 的成本（切 chunk 與建 index、維護 retrieval source、每次查詢的 retrieval cost）在知識同時符合三個條件時才換得到回報：會持續更新、量大到放不進 context、答案需要追溯到來源。缺其中一項時有更便宜的做法：知識量小到放得進 context window 時，long context 直接把全部知識放進 prompt，沒有檢索漏掉片段的風險；知識是結構化的資料時，SQL 查詢給的是精確的列，相似度檢索可能取回相近而不相符的片段；要的是固定的風格或格式、而不是新的事實時，fine-tune 把它寫進參數，每次查詢不必再帶 context。詳細展開見 [4.1 RAG 原理](/llm/04-applications/rag-principles/)。

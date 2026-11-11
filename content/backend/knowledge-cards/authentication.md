@@ -6,7 +6,6 @@ description: "說明系統如何確認呼叫者身份"
 weight: 112
 ---
 
-
 Authentication 的核心概念是「確認呼叫者是誰」。它可以透過 password、session、token、OAuth、certificate、API key 或 workload identity 完成。 可先對照 [Authorization](/backend/knowledge-cards/authorization/)。
 
 ## 跟其他概念的關係
@@ -19,6 +18,6 @@ Authentication 是 [authorization](/backend/knowledge-cards/authorization/) 的�
 
 ## 判斷條件與後果
 
-Authentication 要處理 credential 保存、過期、撤銷、輪替、錯誤回應、登入風險與 [audit log](/backend/knowledge-cards/audit-log/)。安全事件後要能追查是哪個身份與 credential 被使用。
+Credential 生命週期的每一段，都可能讓身份確認不再代表持有者本人。保存方式讓 credential 能被讀出時，持有者以外的人也能用那個身份登入；沒有過期時，一次外洩永久有效；沒有撤銷時，發現外洩之後它仍然有效到過期；沒有輪替時，同一個 credential 用得越久，被外洩而沒有察覺的期間越長。錯誤回應把「帳號不存在」與「密碼錯誤」分開回時，攻擊者能列舉出有效的帳號；沒有登入風險的判斷時，異常地點或大量失敗之後的登入照常放行。安全事件之後追查是哪個身份與哪個 credential 被使用，依據是 [audit log](/backend/knowledge-cards/audit-log/)；沒有這份紀錄時，影響範圍只能整批假設。
 
 人類身分這一側的方式選型（自建、委派、或裝置持有的金鑰對）走 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)，其中金鑰對那一種見 [passkey](/backend/knowledge-cards/passkey/)；登入交給外部系統之後的責任分界見 [identity provider](/backend/knowledge-cards/identity-provider/)。

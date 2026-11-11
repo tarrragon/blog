@@ -18,4 +18,4 @@ Startup probe 位在 container 啟動與 [readiness](/backend/knowledge-cards/re
 
 ## 判斷條件與後果
 
-startup probe 的總容忍時間 = `failureThreshold × periodSeconds`。設計時先量測服務在最差情境下的啟動時間（冷啟動 + image pull + 依賴連線），再加 headroom。startup probe 跟 `initialDelaySeconds` 解決同一個問題，但 startup probe 在啟動期間持續探測（能偵測啟動失敗），`initialDelaySeconds` 是盲等（無法觀測啟動進度）。
+startup probe 的總容忍時間 = `failureThreshold × periodSeconds`，它跟服務在最差情境下的啟動時間（冷啟動 + image pull + 依賴連線）的差距，決定服務啟動時的狀態。容忍時間短於最差啟動時間時，startup probe 在初始化完成前判定失敗，container 被重啟，下一次啟動在同樣的位置再次失敗，形成 restart loop；容忍時間只比平常的啟動時間多一點時，平常啟動順利，遇到 image pull 或依賴連線變慢的那一次才被重啟；所以容忍時間以量測到的最差啟動時間再加 headroom 來設。startup probe 跟 `initialDelaySeconds` 處理同一件事，差別在 startup probe 在啟動期間持續探測，初始化一完成就交給 liveness 與 readiness，啟動失敗也偵測得到；`initialDelaySeconds` 是盲等，等待期間觀測不到啟動進度，設短了會重啟還在初始化的服務，設長了會讓啟動後卡住的服務等滿這段時間才被偵測。

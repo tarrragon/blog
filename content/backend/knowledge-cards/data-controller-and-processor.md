@@ -18,4 +18,4 @@ SaaS 平台的資料處理協議（data processing agreement，DPA）裡寫著�
 
 ## 判斷條件與後果
 
-替別人處理個人資料的服務，在簽約前就要寫下自己的角色與通知義務，事故時才不必臨時查。外洩時處理者給控制者的各種通知（歸屬未定時的風險預警、確認通知、結案通知、調查報告）各要交付什麼，見 [8.26 資料外洩時對商家的通知](/backend/08-incident-response/security-incident-customer-notification/)；資料跨組織交換時契約要寫的通報時限與責任鏈見 [7.4 資料保護與遮罩治理〈各節點的收斂動作〉](/backend/07-security-data-protection/data-protection-and-masking-governance/#各節點的收斂動作)。
+替別人處理個人資料的服務，外洩當下第一個判斷是自己在這份契約下是控制者還是處理者，因為通知的對象與時限都由角色決定：處理者先通知控制者，通報主管機關與通知當事人由控制者決定。角色與通知義務沒有在簽約前寫下時，這個判斷要在事故的時限之內臨時查契約與法規，再等法務確認。外洩時處理者給控制者的各種通知（歸屬未定時的風險預警、確認通知、結案通知、調查報告）各要交付什麼，見 [8.26 資料外洩時對商家的通知](/backend/08-incident-response/security-incident-customer-notification/)；資料跨組織交換時契約要寫的通報時限與責任鏈見 [7.4 資料保護與遮罩治理〈各節點的收斂動作〉](/backend/07-security-data-protection/data-protection-and-masking-governance/#各節點的收斂動作)。

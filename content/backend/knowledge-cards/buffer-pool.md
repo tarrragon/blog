@@ -17,4 +17,4 @@ Buffer Pool 位在資料庫的儲存與運算之間。MySQL 的 InnoDB buffer po
 
 ## 判斷條件與後果
 
-設計時要讓 buffer pool 大小和熱資料工作集、機器記憶體與 per-connection 記憶體預算一起規劃。buffer pool 調大會擠壓其他記憶體用途，要留餘裕給連線與作業系統。observability 要看命中率、換頁速率與 dirty page 比例。
+Buffer pool 和 per-connection 記憶體、作業系統共用同一台機器的記憶體。熱資料工作集大於 buffer pool 時，頁面頻繁換進換出，查詢從記憶體退回磁碟 I/O，延遲整體升高；buffer pool 調大到擠壓連線與作業系統的記憶體時，連線數一上升，機器記憶體就不足，代價從查詢變慢換成資料庫程序被終止或作業系統開始 swap。三個指標各自指出一種狀態：命中率下降代表工作集放不下，換頁速率上升代表頁面正在換進換出，dirty page 比例偏高代表還沒落回磁碟的變更在累積，checkpoint 的寫入量會跟著增加。

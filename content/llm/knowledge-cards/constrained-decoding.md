@@ -44,10 +44,10 @@ Constrained decoding（受限解碼）的核心概念是「**推論時用 gramma
 
 ## 判斷條件與後果
 
-讀 sampling / structured output / function calling 進階文件看到「constrained decoding」「grammar mask」「JSON schema enforcement」就是這 framing。寫 code 場景的判讀：
+讀 sampling、structured output 或 function calling 的進階文件看到「constrained decoding」「grammar mask」「JSON schema enforcement」，指的就是這個機制。是否值得用，看輸出的下游怎麼使用它：
 
-1. **何時值得用**：需要 100% 合法 JSON / 特定格式、function calling spec 嚴格、structured output 不可有解析錯誤
-2. **不該用的情況**：自由 / 創意輸出（會限制模型表達）、grammar 太嚴讓模型「該說的話說不出來」（如 enum 不含「unknown」、模型強制選錯）
-3. **跟 function calling 的關係**：function calling 是「模型訓練 + structured output」、constrained decoding 是 sampling 層的工程實作、可獨立組合
-4. **加速 vs 拖慢**：常見誤解是 grammar 拖慢 — 實測 XGrammar 等 pre-compiled 實作反而**加速**生成（跳過 boilerplate token 直接生關鍵 token、節省 forward pass）
+1. **下游 parser 容不下任何格式錯誤時**（function calling spec 嚴格、structured output 直接交給程式解析）：grammar mask 把不合法 token 的機率設成 0，輸出在語法上合法，省掉解析失敗之後的 retry。
+2. **輸出是自由或創意文字時**：grammar 限制了模型能用的 token，也就限制了表達。grammar 寫得太嚴時，模型要表達的內容不在合法集合裡，只能選一個合法而錯誤的值，例如 enum 不含「unknown」時，模型被迫從現有選項挑一個。
+3. **跟 function calling 的關係**：function calling 是「模型訓練 + structured output」，constrained decoding 是 sampling 層的工程實作，兩者可以獨立組合。
+4. **生成速度**：XGrammar 這類 pre-compiled 實作在實測中反而**加速**生成，原因是 grammar 已經確定的 boilerplate token 不必由模型逐一生成，省下 forward pass。
 5. **跟 [3.10 constrained decoding 章節](/llm/03-theoretical-foundations/constrained-decoding-internals/) 的關係**：本卡是定義、章節是內部機制（token mask 計算、CFG 編譯、性能取捨）

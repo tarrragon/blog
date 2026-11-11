@@ -19,4 +19,4 @@ SIE 處於 HTTP cache 失效策略層、是 cache 從「降延遲工具」升級
 
 ## 判斷條件與後果
 
-開啟 SIE 是明示「在 origin 故障期間、業務願意接受 stale data 換 availability」。Freshness-sensitive 場景要走白名單路徑、由 endpoint 個別 opt-in 開啟 SIE。SIE window 通常比 SWR 長（後者是常態、前者是故障 fallback）— 常見組合是 SIE 設一天、SWR 設十分鐘。同時搭配 origin 監控、確保 SIE 期間真實事故仍被察覺。
+開啟 SIE 代表業務接受在 origin 故障期間用 stale data 換取可用性，這個交換對每個 endpoint 的價值不同。商品頁與文章在 origin 出事時回舊版，使用者照樣讀得到內容；交易型 API 與付款流程回舊版時，client 依過期的狀態決定後續的操作，風險比回 5xx 讓 client retry 更高，所以 freshness-sensitive 的 endpoint 預設不開，由 endpoint 個別 opt-in 的白名單決定誰開。SIE 只在 origin 故障時啟用，window 要涵蓋故障的持續時間，SWR 處理的則是每一次正常過期，所以 SIE window 通常比 SWR 長，常見組合是 SIE 設一天、SWR 設十分鐘。SIE 生效期間使用者收到的都是正常回應，origin 的故障在使用者端看不出來，沒有 origin 監控時，故障可以持續整個 window 而不觸發任何告警。

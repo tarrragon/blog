@@ -37,6 +37,4 @@ System prompt 在 application 設計中的角色：
 
 ## 判斷條件與後果
 
-理解 system prompt 後可以解釋兩個現象：為什麼同一個模型在不同 LLM 應用中的「個性」差很多（system prompt 不同）、為什麼 [prompt injection](/llm/knowledge-cards/prompt-injection/) 的主要目標是繞過 system prompt 的約束（攻擊者想讓模型不照原本指令走）。
-
-實務上、設計 LLM application 時、system prompt 是行為約束的第一層、但不是唯一防線（容易被 injection 繞過）；critical 行為應該在 application 層（如 tool call 的權限白名單、輸出驗證）加第二層防護。詳見 [6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)。
+System prompt 約束的是模型讀到的文字，它的效力取決於同一個 context 裡有沒有別的指令跟它競爭。同一個模型配上不同的 system prompt，角色、輸出格式與行為規範都跟著換，所以同一個模型在不同 LLM 應用裡表現出不同的「個性」。使用者輸入或 tool 回傳的內容帶著指令進入 context 時，模型可能照那些指令走，[prompt injection](/llm/knowledge-cards/prompt-injection/) 攻擊的目標就是讓模型不照 system prompt 走。行為出錯會造成損害的 application（模型能呼叫工具、輸出會送到外部系統）只靠 system prompt 時，一次成功的 injection 就直接變成一次有害的動作，原因是 system prompt 之後沒有任何檢查；所以這類行為在 application 層另加一層防護，例如 tool call 的權限白名單與輸出驗證。詳見 [6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)。

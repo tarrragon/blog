@@ -22,4 +22,4 @@ Trace ID 也是 log / metric / trace 三者的關聯樞紐。Log 的結構化欄
 
 ## 判斷條件與後果
 
-Trace ID 要透過 [trace context](/backend/knowledge-cards/trace-context/) 在 HTTP header、queue message header、thread context 上傳遞。Log 層面，trace ID 應作為必要欄位寫入 structured log（見 [4.1 log schema](/backend/04-observability/log-schema/)）。Sampling 策略要確保錯誤與高延遲 trace 有足夠保留率，避免事故時 trace ID 存在於 log 但對應的 trace 資料已被 sampling 丟棄。
+Trace ID 在 HTTP header、queue message header 與 thread context 每一處都經由 [trace context](/backend/knowledge-cards/trace-context/) 傳下去時，散落在各服務的 span 才聚合得成同一條路徑；任一處沒傳，那一處之後的 span 拿到新的 trace ID。Structured log 沒有 trace ID 欄位時，從 error log 跳到 trace、或從 trace 回到 log 的查詢都做不到（欄位定義見 [4.1 log schema](/backend/04-observability/log-schema/)）。Sampling 只依固定比例丟棄 trace 時，錯誤與高延遲的 trace 也按同樣比例被丟掉，事故時 log 裡有 trace ID，tracing 系統裡卻查不到對應的 trace；所以 sampling 策略給錯誤與高延遲 trace 較高的保留率。

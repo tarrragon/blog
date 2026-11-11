@@ -36,4 +36,4 @@ Beam search 在 LLM chat / coding 場景的副作用：
 
 ## 判斷條件與後果
 
-讀 inference framework 看到 `num_beams: 1` 預設值就是用 greedy/sampling、`num_beams: 5` 才會開 beam search。寫 code 場景的判讀：日常用 [top-p sampling](/llm/knowledge-cards/top-p-sampling/) 為主、需要確定性測試用 greedy、需要「在多個候選中挑最好的」用 best-of-N（每個獨立 sample、再選 reward 最高）而非 beam search。Beam search 在現代 LLM chat 場景已經少用、但在 translation / structured output 等「有正確答案」場景仍見。
+Inference framework 的 `num_beams: 1` 預設值代表 greedy 或 sampling，設成 5 這類大於 1 的值才會開 beam search。用哪一種 decoding 看任務要的是變化、重現還是挑選：日常對話與寫 code 要輸出有變化，beam search 的 K 條候選會收斂到同樣的高頻開頭，同一個 prompt 永遠得到同一個輸出，所以這類任務用 [top-p sampling](/llm/knowledge-cards/top-p-sampling/)；確定性測試要同一個輸入得到同一個輸出，greedy 每步只選最大機率的 token 就做得到，不必付 K 倍的計算；要從多個候選挑最好的一個時，best-of-N 讓每個候選獨立 sample、再挑 reward 最高的，候選之間保有差異，beam search 的候選則被同樣的高機率前綴拉在一起。Translation 與 structured output 這類有正確答案的任務不追求多樣性，beam search 在這些場景仍有人用。

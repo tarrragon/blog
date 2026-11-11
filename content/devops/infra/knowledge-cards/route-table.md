@@ -21,7 +21,7 @@ private subnet 的服務突然拉不到外部套件或第三方 API 全部逾時
 
 ## 判斷條件與後果
 
-subnet 是 public 還是 private 由它關聯的 route table 決定，而沒有明確關聯的 subnet 會自動套用 main route table，所以路由設計集中在：每個 subnet 的預設路由指向什麼（Internet Gateway / NAT Gateway / Transit Gateway / 無）、VPC 內部流量是否需要自訂路由（peering、endpoint）、以及 main route table 是否該保持空白以避免新 subnet 意外取得對外路由。每一條路由的目的地網段和目標要在 IaC 裡明確描述，讓 route table 的語意可被 review。
+一個 subnet 的預設路由指向哪裡，決定它的封包能不能出網、外部能不能連進來：指向 Internet Gateway 時它是 public subnet，裡面配了公網 IP 的資源會被外部直接觸及；指向 NAT Gateway 時它只能主動出站；沒有預設路由時它連外部套件來源都連不到。main route table 帶著對外路由時，新建而沒有手動關聯 route table 的 subnet 會自動套用它，在沒有人決定的情況下變成 public，原因是沒有明確關聯的 subnet 一律落回 main route table。VPC 之間的 peering 與服務 endpoint 只有在 route table 裡有對應的目的地網段時才收得到流量，少了那一條時連線逾時而沒有錯誤訊息。路由是在主控台手動加的時，review 的人讀不到某一條路由為什麼存在，所以每一條路由的目的地網段與目標寫進 IaC。
 
 ## 鄰卡
 

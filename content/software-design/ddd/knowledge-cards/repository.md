@@ -19,4 +19,4 @@ repository 介面開始長出 `getMonthlyStatistics()`、`searchWithPagination()
 
 ## 判斷條件與後果
 
-repository 的設計責任是守住 aggregate 一致性邊界的存取入口，不是最佳化每一種讀需求的效能與形狀——後者是 read model 的責任。repository 是否該同時扛下變更通知，判斷標準不是「需求來自誰」而是介面用什麼語言表達，完整推導見 [觀測出口的職責三分](/software-design/ddd/observation-outlet-responsibility-split/)。
+一個方法是否屬於 repository，看它回傳的形狀與它的簽名用什麼語言表達。回傳 aggregate 形狀（entity 或 entity 集合）的方法屬於 repository，它是 aggregate 一致性邊界的存取入口；回傳統計值或反正規化形狀的方法放進來時，repository 同時服務寫側的一致性與讀側的各種形狀，介面隨查詢數增長，這類方法屬於 [read model](/software-design/ddd/knowledge-cards/read-model/)。變更通知的歸屬用同一種判斷：簽名只用語言標準庫與 domain entity 寫得出來的觀測方法，跟 pull 方法一起放在 domain repository 介面；要用到框架型別才寫得出來的部分，歸 adapter 或組裝層。歸屬依各層產出的表達語言決定，提出需求的是哪一個畫面不改變它，完整推導見 [觀測出口的職責三分](/software-design/ddd/observation-outlet-responsibility-split/)。

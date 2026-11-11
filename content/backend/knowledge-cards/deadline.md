@@ -5,7 +5,6 @@ description: "說明整體操作的截止時間如何沿著服務邊界傳遞"
 weight: 45
 ---
 
-
 Deadline 的核心概念是「整體操作必須完成的截止時間」。[Timeout](/backend/knowledge-cards/timeout/) 常是單一步驟的等待上限；deadline 則是整條 request、job 或 workflow 的總時間預算。
 
 ## 跟其他概念的關係
@@ -18,4 +17,4 @@ Deadline 讓多層呼叫共享同一份時間預算。入口 request 若只剩 2
 
 ## 判斷條件與後果
 
-Deadline 要跨服務傳遞，並和 retry policy、fallback、cancellation 與 observability 對齊。[Log](/backend/knowledge-cards/log/) 與 [trace](/backend/knowledge-cards/trace/) 應記錄 deadline exceeded、剩餘時間與造成超時的依賴。
+Deadline 只在入口生效、沒有傳到下游時，入口只剩 200ms，下游仍照自己的 timeout 與 retry policy 執行：使用者已經收到逾時錯誤，後端還在為這個 request 做昂貴的工作。傳到下游之後，retry、fallback 與 cancellation 讀的是同一份剩餘時間時才有效果：retry 不看剩餘時間時，重試次數乘上單次 timeout 超過整體預算；沒有 cancellation 時，入口放棄之後下游的工作照樣跑完。[Log](/backend/knowledge-cards/log/) 與 [trace](/backend/knowledge-cards/trace/) 沒有記錄 deadline exceeded、剩餘時間與造成超時的依賴時，只看得到 request 逾時，看不出時間耗在哪一個下游。

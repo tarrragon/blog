@@ -20,4 +20,4 @@ Status page 位在 [incident communication channel](/backend/knowledge-cards/inc
 
 客服逐一回覆用的內部版本比對外狀態頁多一欄「對客戶的說法」，見 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/#客服當場答覆時用的資訊)。
 
-Status page 要定義更新頻率、發佈責任、嚴重度標示、影響範圍與下一次更新承諾。它是外部信任的最小承諾面，用公關模板的心態維護會失去可信度。它必須放在跟主服務不同的[失效域](/backend/knowledge-cards/failure-domain/)（獨立 domain / infra / DNS），否則主站掛時它一起掛 —— 見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)。
+Status page 的更新頻率、發佈責任、嚴重度標示、影響範圍與下一次更新時間是事故開始之前就訂好的項目，事故當下才決定時，對外的更新會出現這幾種狀態：沒有指定由誰發佈時，更新停在第一則公告；沒有寫出下一次更新時間時，客戶只能反覆刷新頁面或改問客服；嚴重度與影響範圍沒有固定的標示方式時，同一次事故在前後幾則更新裡讀起來輕重不一。這幾項是對外承諾的最小集合，內容照公關稿的標準修飾時，客戶拿自己遇到的故障對照公告，看到兩者對不上，之後的公告也失去可信度。Status page 跟主服務放在同一個[失效域](/backend/knowledge-cards/failure-domain/)（同一個 domain、同一套 infra 或 DNS）時，主站停擺的那一刻狀態頁也連不上，原因是兩者依賴同一組元件，見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)。

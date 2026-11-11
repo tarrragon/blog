@@ -18,4 +18,4 @@ UMA 是 Apple Silicon 在「能跑多大模型」上佔優勢的硬體基礎。3
 
 ## 判斷條件與後果
 
-買 Mac 跑本地 LLM 時、把記憶體當第一順位考量、超過 CPU 規格與儲存空間。32GB 是寫 code 場景的甜蜜點（跑得起 Gemma 4 31B MTP）、48 ~ 64GB 進階配置（跑得起 70B 或同時跑兩個模型）、96GB+ 對寫 code 場景多半過度配置。MLX 等 framework 利用 UMA 的方式跟 Metal backend 略有差異、但對使用者都透明、選伺服器時無需考量 UMA 細節。
+Mac 能跑多大的模型由統一記憶體的容量決定，原因是 GPU 直接讀同一塊記憶體，模型權重不必另外放進 VRAM；CPU 規格與儲存空間不改變這個上限，所以買 Mac 跑本地 LLM 時，記憶體容量排在兩者之前。容量對應的情境：32GB 扣掉留給系統的部分，跑得起 Gemma 4 31B MTP，涵蓋寫 code 的常見需求；48 ~ 64GB 跑得起 70B，或同時跑兩個模型；96GB 以上在寫 code 的情境多半用不滿，多出的容量沒有對應的模型需求。容量只決定跑不跑得動，生字速度由 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 決定。MLX 等 framework 與 Metal backend 利用 UMA 的方式略有差異，但對使用者都透明，選 inference server 時不必比較這一層。

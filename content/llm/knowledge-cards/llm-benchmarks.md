@@ -38,9 +38,6 @@ LLM benchmarks 的核心概念是「**用標準化任務集合衡量 LLM 各維�
 
 ## 判斷條件與後果
 
-讀 model card / paper 看到 benchmark 數字、判讀框架：
+model card 或 paper 上的 benchmark 分數是否能拿來選模型，看三個條件：分數來自幾個 benchmark、benchmark 量的維度是否對得上自己的任務、兩個模型的差距是否大過雜訊。
 
-1. **看 multiple benchmarks、不只一個**：如挑 coding 模型、看 HumanEval + MBPP + SWE-bench、不只看 HumanEval
-2. **跟自己任務對齊的 benchmark 才重要**：你做 RAG 應用、看 retrieval benchmark；你做 chat、看 MT-Bench / Arena
-3. **看「相對」、不只看「絕對」**：「Model A 在 MMLU 比 Model B 高 2%」可能 noise；「A 比 B 高 10%」更可信
-4. **In-house benchmark 是最後檢驗**：自己的真實工作流案例 > 任何公開 benchmark
+只看單一 benchmark 時（挑 coding 模型只看 HumanEval），高分可能來自〈Benchmark 的常見陷阱〉裡的飽和、訓練資料污染或針對那一組題目的 fine-tune，分數反映的是對單一題組的適配；HumanEval、MBPP 與 SWE-bench 都高時，比較可能是 coding 能力本身。benchmark 量的維度跟自己的任務不同時（做 RAG 應用卻看對話的 MT-Bench），分數高低跟自己的應用沒有關係，做 RAG 對照的是 retrieval 類 benchmark，做 chat 對照的是 MT-Bench 或 Arena。兩個模型在同一個 benchmark 只差幾個百分點時（MMLU 差 2%），換一種 prompt format 就可能造成同樣大的差距（prompt sensitivity），這個差距分不出高下；差到 10% 這個量級才比較可信。公開 benchmark 都量不到自己工作流的資料與格式，所以最後的檢驗是用自己真實案例做的 in-house benchmark。

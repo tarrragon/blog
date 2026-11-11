@@ -17,4 +17,4 @@ Logical Replication 位在複製粒度光譜的一端。實體複製複製的是
 
 ## 判斷條件與後果
 
-設計時要決定哪些表進入 logical replication、schema 變更如何在發佈端與訂閱端協調，以及 slot lag 的監控與告警。要明確它和實體複製各自承擔 HA 與資料整合的哪一塊。observability 要看 replication lag、slot 保留量與套用錯誤。
+Logical replication 以表或 publication 為複製範圍，schema 與訂閱端的進度各自是失效的來源。發佈端改了 schema 而訂閱端與下游 consumer 沒有一起改時，事件欄位對不上，訂閱端套用時出錯。訂閱端落後或停止時，[Replication Slot](/backend/knowledge-cards/replication-slot/) 仍保留尚未送出的 [WAL](/backend/knowledge-cards/write-ahead-log/)，主庫的磁碟用量持續上升，原因是 slot 要保證訂閱端回來時還拿得到中間的變更；replication lag、slot 保留量與套用錯誤沒有監控時，這段累積要到磁碟告警才被發現。HA 由實體複製負責、資料整合由 logical replication 負責時，兩邊的失效互不影響；只用 logical replication 做 HA 時，沒有納入 publication 的表在切換之後不在新主庫上。

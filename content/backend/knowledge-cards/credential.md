@@ -5,7 +5,6 @@ description: "整理身分驗證與系統存取用秘密資料"
 weight: 1
 ---
 
-
 Credential 的核心概念是「讓主體能證明自己並取得存取權的秘密資料」。常見 credential 包含 password、API key、token、private key、service account secret 與 database credential。中文資料常把 credential 與 certificate 都寫成「憑證」，本站把 credential 寫成存取憑證；由憑證機構簽章、本身可以公開的數位憑證另見 [Certificate（數位憑證）](/backend/knowledge-cards/certificate/)，與數位憑證配對的私鑰屬於存取憑證。 可先對照 [Cutover / Switchover](/backend/knowledge-cards/cutover-switchover/)。
 
 ## 跟其他概念的關係
@@ -22,4 +21,4 @@ Credential 位在 authentication、authorization、secret management 與 service
 
 ## 判斷條件與後果
 
-Credential 設計要包含核發、初次交付、保存方式、權限範圍、輪替、撤銷、稽核與事故回復。原則上應遵守 least privilege，避免單一 credential 擁有過大權限。前兩項各只發生一次、也因此不在日常監控的觀測範圍內：這個交付動作能不能免掉、免不掉時核發與交付各要滿足什麼，見 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)。
+Credential 的生命週期從核發、初次交付、保存、輪替、撤銷、稽核到事故回復，缺哪一個階段就留下哪一種暴露。保存在原始碼或設定檔的明文裡時，讀得到那份檔案的人都拿得到它。沒有輪替時，一份外洩而沒被發現的 credential 一直有效；沒有撤銷時，發現外洩之後只能等它過期或整組換掉；沒有稽核時，事故之後查不出誰在什麼時候用它做了什麼；沒有事故回復的流程時，換發要臨時找出所有用到它的服務。權限範圍大於用途時，一份 credential 外洩的影響等於它碰得到的全部資源，多個服務共用一個高權限帳號就是這種情形，所以範圍依 least privilege 收到用途所需。核發與初次交付各只發生一次、也因此不在日常監控的觀測範圍內：這個交付動作能不能免掉、免不掉時核發與交付各要滿足什麼，見 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)。

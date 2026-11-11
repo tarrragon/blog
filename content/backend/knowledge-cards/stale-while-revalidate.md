@@ -19,4 +19,4 @@ SWR 處於 HTTP cache 失效策略層、跟 [TTL](/backend/knowledge-cards/ttl/)
 
 ## 判斷條件與後果
 
-選擇 SWR window 要在「origin 壓力」跟「freshness budget」間取捨。Window 越長、origin 壓力越低、stale 容忍度越高；window 越短、freshness 越接近 TTL、但 cache stampede 緩解效果下降。常見組合是 `stale-while-revalidate` 設成 `max-age` 的 5-10 倍。資料新鮮度敏感場景要走白名單路徑、由 endpoint 個別 opt-in 開啟 SWR。
+選擇 SWR window 要在「origin 壓力」跟「freshness budget」間取捨。Window 越長、origin 壓力越低、stale 容忍度越高；window 越短、freshness 越接近 TTL、但 cache stampede 緩解效果下降。常見組合是 `stale-while-revalidate` 設成 `max-age` 的 5-10 倍。SWR 窗口內使用者拿到的版本最舊可到 `max-age + swr` 秒之前，庫存、價格、權限這類資料在這段時間裡可能已經改變，所以這類 endpoint 預設不開，由 endpoint 個別 opt-in 的白名單決定誰開 SWR。

@@ -18,6 +18,6 @@ Rate limit 是容量保護與公平性工具。它可以保護登入、搜尋、
 
 ## 判斷條件與後果
 
-限流設計要定義主體、窗口、配額、超限回應、例外權限與觀測欄位。對外 API 要提供清楚的 retry-after 或配額資訊；內部服務要搭配 [alert](/backend/knowledge-cards/alert/)、[token bucket](/backend/knowledge-cards/token-bucket/) 與容量規劃。完整的實作指南（單機 middleware、Redis 分散式限速、配額設計）見 [Rate Limit 實作](/backend/09-performance-capacity/rate-limit-implementation/)。
+限流設計的每一項沒有定義時各有後果。主體（user、API key、tenant 這類）沒有定義時，限流算不出是誰用了多少，單一 tenant 的批次工作照樣佔滿 connection pool；窗口與配額沒有定義時，沒有可以比較的門檻。超限回應沒有給 retry-after 或配額資訊時，對外的 client 不知道多久之後可以重試，立刻重送的 client 讓被擋的請求量增加。例外權限沒有明確列出時，被放行的流量不受配額限制，也查不到是誰放行的；沒有觀測欄位時，看不出誰被擋、擋了多少。內部服務的限流搭配 [alert](/backend/knowledge-cards/alert/)、[token bucket](/backend/knowledge-cards/token-bucket/) 與容量規劃，被擋的量持續上升時，容量不足才會被看見。完整的實作指南（單機 middleware、Redis 分散式限速、配額設計）見 [Rate Limit 實作](/backend/09-performance-capacity/rate-limit-implementation/)。
 
 監控系統中 per-SDK rate limiting 和偽造流量防護的具體實作見 [監控知識卡：Rate Limiting](/devops/monitoring/knowledge-cards/rate-limiting/)。

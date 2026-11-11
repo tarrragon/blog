@@ -31,9 +31,8 @@ Agent memory 的核心概念是「**agent 在 [context window](/llm/knowledge-ca
 
 ## 判斷條件與後果
 
-讀 agent paper / 設計 / framework docs 看到「agent memory」「memory store」「mem0 / Letta」「episodic / semantic memory」就是這 framing。寫 code 場景的判讀：
+讀 agent paper、設計文件或 framework docs 看到「agent memory」「memory store」「mem0 / Letta」「episodic / semantic memory」，指的就是這個分類。一個 agent 需要哪幾層，看任務的狀態要保留多久：autocomplete 每次請求互不相關，working memory 就夠；對話式 IDE assistant 的狀態在一個 session 內累積，用到 working 與 session；長期 coding agent 要沿用上週的決定與專案慣例，才需要 long-term。多加的每一層都帶來寫入、retrieval 與過期管理的工作，任務用不到那一層時，這些工作只增加成本與出錯的位置。
 
-1. **不是每個 agent 都需要五個層次都用**：autocomplete 只要 working memory；對話 IDE assistant 多用 working + session；長期 coding agent 才需要 long-term
-2. **Long-term memory 的兩條實作路線**：(a) retrieval-on-demand（vector store + similarity search、見 [RAG](/llm/knowledge-cards/rag/)）、(b) injection-on-startup（把關鍵 memory 編進 system prompt、適合小量穩定的 procedural）
-3. **失敗模式**：memory drift（舊 memory 過時但仍被 retrieve）、PII 寫入（user 不知情下被存）、context 污染（不相關 memory 被 inject 進 working）、跟 [hallucination](/llm/knowledge-cards/hallucination/) 互相 boost
-4. **跟 [4.19 agent memory 章節](/llm/04-applications/agent-memory-architecture/) 的關係**：本卡是分類定義、章節是工程實務（寫入時機、retrieval 設計、失敗模式緩解）
+Long-term memory 的兩種實作差在 memory 什麼時候進 context。retrieval-on-demand（vector store + similarity search，見 [RAG](/llm/knowledge-cards/rag/)）每次只取回相關的片段，量大、每次只用到一小部分的 memory 適合它；injection-on-startup 在啟動時把 memory 編進 system prompt，佔掉的 context 隨 memory 量成長，所以只適合小量、穩定的 procedural memory。
+
+長期存放的 memory 有四種失效形態，每一種都讓 agent 依據錯的狀態行動：memory drift（舊 memory 過時而仍被 retrieve，agent 照過期的事實做事）、PII 寫入（使用者不知情時個資被持久化）、context 污染（不相關的 memory 被 inject 進 working memory，佔掉 context 並把模型導向無關的內容）、跟 [hallucination](/llm/knowledge-cards/hallucination/) 互相放大（模型的錯誤輸出被寫成 memory，之後被當成事實 retrieve 回來）。寫入時機、retrieval 設計與這幾種失效的緩解在 [4.19 agent memory 章節](/llm/04-applications/agent-memory-architecture/)，本卡只做分類定義。

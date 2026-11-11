@@ -17,4 +17,4 @@ Fencing token 是 [distributed lock](/backend/knowledge-cards/distributed-lock/)
 
 ## 判斷條件與後果
 
-設計時要確認下游有能力驗證 token（記住最大值並拒絕較小者）。下游若無法條件寫入（例如第三方 API），fencing token 無法成立，這時要把互斥下沉到資料層的唯一約束或條件更新。token 的生成要保證取鎖動作本身嚴格遞增，用原子計數器或鎖服務序號實作。
+Fencing token 成立的條件在下游：下游記得見過的最大 token 並拒絕較小者時，鎖失效期間醒來的舊持鎖者寫不進去。下游無法做條件寫入時（例如第三方 API），舊持鎖者帶舊 token 的寫入照樣被接受，fencing token 在那個下游不起作用，互斥只能改由資料層的唯一約束或條件更新保證。token 的生成是另一個條件：取鎖時發出的編號不嚴格遞增時，兩個持鎖者可能拿到同號或順序顛倒的 token，下游的比較分不出誰是較新的持鎖者，所以編號取自原子計數器或鎖服務的序號（ZooKeeper 的 zxid、etcd 的 revision）。

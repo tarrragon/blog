@@ -17,4 +17,4 @@ Visibility timeout 是 [ack / nack](/backend/knowledge-cards/ack-nack/) 在「�
 
 ## 判斷條件與後果
 
-設計時要把 visibility timeout 對著任務耗時分布校準：明顯長於正常處理時間以避免誤重投，又不能長到讓失效 consumer 的訊息卡住太久。長尾任務用動態延長（heartbeat 式續期），並確認處理是 idempotent，因為 at-least-once 下重複投遞無法完全避免。
+Visibility timeout 與任務耗時分布的相對位置，決定會出現哪一種失誤。timeout 短於部分任務的處理時間時，那些任務還在處理就重新變可見，被另一個 consumer 拿走，同一筆工作做兩次；timeout 遠長於處理時間時，crash 的 consumer 握著的訊息要等整段 timeout 結束才被接手，這段等待直接加進訊息的延遲。耗時長尾很長的任務找不到一個同時避開兩者的固定值，所以用 heartbeat 式續期動態延長。timeout 設成任何值，consumer 仍可能在處理完、刪除訊息之前 crash，at-least-once 下的重複投遞因此無法完全避免，處理要是 idempotent。

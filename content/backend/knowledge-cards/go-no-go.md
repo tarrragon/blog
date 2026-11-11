@@ -33,4 +33,4 @@ Go/no-go 位在 [release gate](/backend/knowledge-cards/release-gate/)、[cutove
 
 ## 判斷條件與後果
 
-Go/no-go 的設計要指定：時點與改期規則、哪些職能各持一票、每張票對應的檢查與 stop condition、以及 no-go 之後的路徑（改期、降範圍、還是取消）。決策結果與各票的依據要進 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 或發布記錄——事後回放「當時誰依什麼放行」是這個制度可稽核的原因。票的分持是制度的核心：主持人可以主持、但不能代投別人的票。
+Go/no-go 的每一項設計缺席時，制度就退回一般的上線會議。時點與改期規則沒有指定時，決策沒有 deadline，同一個 lag 數字可以一路被看成「應該還好吧」直到窗口開始；票沒有分給各職能時，結論由單一主管綜合意見後裁決，DBA 回報的 lag 超標只是一個諮詢意見；票沒有對應事前的檢查與 stop condition 時，no-go 的依據只有表態者當下的判斷，事後沒有任何事前寫好的條件可以對照；no-go 之後的路徑（改期、降範圍或取消）沒有事先決定時，停下之後還要再開一次會，窗口在這段時間內流逝。決策結果與各票的依據記進 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 或發布記錄時，事後回放得出當時誰依什麼放行，這是這個制度可稽核的原因；主持人代投別人的票時，記錄上的票仍然分持，實際上已經回到單人裁決。

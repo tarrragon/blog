@@ -21,12 +21,12 @@ IaC 是 infra 系列的根概念，貫穿所有模組。[成熟度階梯](/devop
 
 ## 判斷條件與後果
 
-IaC 要讓程式碼成為基礎設施的 source of truth，採用時的決定分別處理程式碼用什麼寫、state 放在哪裡、誰還能繞過程式碼直接改、以及哪些資源先納管：
+IaC 要讓程式碼成為基礎設施的 source of truth，這個地位取決於程式碼用什麼寫、state 放在哪裡、誰還能繞過程式碼直接改，以及哪些資源已經納管：
 
-- 工具選型：宣告式 DSL vs 程式語言，取捨在審查透明度 vs 抽象複用能力
-- [State](/devops/infra/knowledge-cards/state/) 的存放：remote backend 的選擇與保護
-- Console 唯讀紀律：所有寫入操作回到程式碼，Console 只作觀察
-- 納管範圍：哪些資源先進 IaC、哪些暫時留在手動
+- **工具選型**：宣告式 DSL 的 diff 直接讀得出資源會怎麼變，審查透明；程式語言的抽象與複用能力較強，代價是 reviewer 要在腦中執行程式碼，才知道會產生哪些資源
+- **[State](/devops/infra/knowledge-cards/state/) 的存放**：state 是工具比對現實的依據。它只存在某個人的本機時，其他人跑的 plan 拿不到它；remote backend 沒有加密與存取控制時，讀得到 state 的人就看得到其中的敏感屬性
+- **Console 的寫入權限**：人類身分在 Console 還能寫入時，手動改動繞過程式碼，產生 [Drift（設定漂移）](/devops/infra/knowledge-cards/drift/)，程式碼不再描述實際的基礎設施；Console 只留觀察用的唯讀權限，寫入才會全部經過程式碼
+- **納管範圍**：還留在手動管理的資源不在程式碼裡，那一部分的變更沒有 review 也沒有紀錄；先納管哪些資源，就決定了 review 與變更紀錄先涵蓋哪些資源
 
 ## 鄰卡
 

@@ -24,4 +24,4 @@ PgBouncer 的 `pool_mode` 是核心配置：session mode 嚴格說屬 connection
 
 ## 判斷條件與後果
 
-選 PgBouncer 自管要付 HA / failover / 監控的運維成本；選 RDS Proxy 換掉運維、付 per vCPU 計價。Transaction mode 配置前要 audit ORM / driver 行為 — JDBC / asyncpg / Go 的 pgx 的 default prepared statement 跟 transaction mode 衝突、要明示配置 protocol-level prepared statement 或改寫成 inline parameter。Pooler 解的是連線數放大、N+1 query 屬另一層議題 — 兩個問題正交、各自要解。
+自管 PgBouncer 與 RDS Proxy 的差別在成本的形態：自管 PgBouncer 付的是 HA、failover 與監控的運維工作；RDS Proxy 把這些運維交給 AWS，付的是依 vCPU 計價的費用。Transaction mode 下，同一個 client 的連續 transaction 可能分配到不同的 backend 連線，JDBC、asyncpg 與 Go 的 pgx 預設使用的 prepared statement 在另一條 backend 連線上不存在，在沒有開啟 `max_prepared_statements` 的 PgBouncer 上，查詢會失敗；所以切到 transaction mode 之前先查 ORM 與 driver 的行為，改成明示配置 protocol-level prepared statement 或 inline parameter。Pooler 減少的是連線數的放大，N+1 query 造成的查詢次數放大不受它影響，兩者是彼此獨立的兩件事。

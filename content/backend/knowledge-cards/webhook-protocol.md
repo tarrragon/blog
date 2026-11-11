@@ -21,4 +21,4 @@ Webhook Protocol 位在 external system、HTTP endpoint 與 service 之間。它
 
 ## 判斷條件與後果
 
-Webhook Protocol 要定義[簽章](/backend/knowledge-cards/message-authentication/)、timestamp、重送、payload schema 與錯誤回應。它應與 public API 分開看待，因為它承擔的是外部推送而不是主動查詢。
+Webhook Protocol 的每一項約定缺席時，接收端各自失去一種判斷能力。沒有[簽章](/backend/knowledge-cards/message-authentication/)時，接收端分不出請求是否來自宣稱的外部系統；沒有 timestamp 時，截下的合法請求在任何時間都能重放；重送規則沒有約定時，呼叫方失敗後送幾次、接收端是否要去重，兩邊各自猜；payload schema 沒有約定時，呼叫方改一個欄位，接收端就在 production 解析失敗；錯誤回應沒有約定時，呼叫方分不出該重送還是放棄。這組約定處理的是外部系統主動推送，方向跟 public API 的主動查詢相反，所以兩者分開設計。

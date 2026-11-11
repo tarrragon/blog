@@ -17,4 +17,4 @@ single writer 仍夠用的訊號是寫入可以用一個 writer 排隊完成、b
 
 ## 判斷條件與後果
 
-設計時要明確指認「誰是 writer」並確保系統真的只有一個。LiteFS 類方案用 primary lease 把 writer 角色集中；應用層要把寫入路徑收斂到單一節點或單一序列化點。容量規劃要把單 writer 吞吐當作硬上限，超過時改走分區或 [Distributed SQL](/backend/knowledge-cards/distributed-sql/)，而不是疊加 writer。
+Single Writer Model 的前提是系統裡只有一個 writer，前提被破壞與寫入量達到上限是兩種不同的狀態。多個 instance 同時寫同一個資料庫檔案時，single writer 假設被破壞，寫入彼此爭搶 lock，busy 錯誤增加；所以 writer 是誰要明確指認並集中，LiteFS 類方案用 primary lease 決定誰持有 writer 角色，應用層把寫入路徑收斂到單一節點或單一序列化點。寫入量超過單一 writer 的吞吐時，請求在佇列裡排隊，busy timeout 從偶發變成常態，這時調大 busy timeout 只讓請求等更久，吞吐上限不變。單一 writer 的吞吐是這個模型的硬上限，增加 writer 在此模型下行不通，容量規劃以它為上限計算，需求超過時改的是架構：分區或 [Distributed SQL](/backend/knowledge-cards/distributed-sql/)。

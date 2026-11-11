@@ -19,4 +19,4 @@ copyWith 在 nullable 欄位上有一個 Dart 型別系統的缺口：`String? i
 
 ## 判斷條件與後果
 
-收窄的方向分三層：value object / DTO / UI state 保留 copyWith；有領域方法的 entity 把 copyWith 改 private 或從參數列移除受約束欄位；測試建構需求不足時修工廠的表達力、不修每一個拼裝點。完整機制見 [copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)、教學層見 [資料袋與領域模型](/software-design/ddd/data-bag-vs-domain-model/)。
+copyWith 開放到什麼程度，看型別有沒有不允許任意組合的欄位。value object、DTO 與 UI state 的欄位組合全部合法，逐欄位覆寫不會產生非法狀態，保留 copyWith 沒有代價。有領域方法的 entity 帶著狀態欄位與稽核欄位，public copyWith 讓呼叫端不經過領域方法就改掉它們，領域方法從唯一路徑降成建議路徑，稽核軌跡出現缺口；所以這類 entity 的 copyWith 改成 private，或從參數列移除受約束的欄位。收窄之後，測試建構物件的路徑也跟著變窄；測試建不出需要的狀態時，缺的是測試工廠的表達力，修工廠一處就補齊，逐一修每個拼裝點等於在每個測試裡重開一個繞過不變式的入口。完整機制見 [copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)、教學層見 [資料袋與領域模型](/software-design/ddd/data-bag-vs-domain-model/)。

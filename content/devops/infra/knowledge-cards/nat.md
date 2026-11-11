@@ -29,9 +29,9 @@ GCP 的對應服務是 Cloud NAT，職責相同，結構不同：它建在 Cloud
 
 zonal 模式下每多放一個 NAT Gateway 就多一筆固定月費，少放一個就讓某些可用區的出站依賴別區的 NAT，而經過 NAT 的每 GB 流量另外計費（這兩種費用是 AWS 的收法；Oracle Cloud 的價目表沒有 NAT gateway 這一項，見 [雲端免費額度與小型主機的收費比較：試用金與固定額度、計費單位、區域限制、試用結束後的處置、出站流量與查價項目](/devops/infra/cloud-providers/pricing-comparison/)〈查付費主機價格時要輸入的項目〉）；下面的決定都在出站可用性與這兩種費用之間取捨：
 
-- **數量**：每個可用區一個（可用性優先）還是全 VPC 共享一個（成本優先）。每個 NAT 固定月費約 $32 加流量費 $0.045/GB
-- **高流量路徑**：對 AWS 自家服務的流量（S3、DynamoDB）改用 Gateway Endpoint 直連，繞過 NAT 省流量費
-- **route table 關聯**：每個 private subnet 的 route table 要明確指向哪個 NAT
+- **數量**：全 VPC 共享一個 NAT 時只付一筆固定月費，代價是那個 NAT 所在的可用區故障時，其他可用區的出站一起中斷；每個可用區各放一個時，出站跟 subnet 的冗餘對齊，每多一個可用區就多一筆固定月費。每個 NAT 的費用是依時數計的固定費加上依處理流量計的費用，金額隨區域與時間變動，以雲端業者的定價頁為準。
+- **高流量路徑**：對 AWS 自家服務（S3、DynamoDB）的大量流量走 NAT 時，每 GB 都付 NAT 的流量費；改用 Gateway Endpoint 直連之後，這些流量不經過 NAT，也就不產生 NAT 的流量費
+- **route table 關聯**：NAT 是否實際生效由 private subnet 的 route table 決定。一個 subnet 的預設路由指向別區的 NAT 時，它的出站依賴那一區，那一區故障時這個 subnet 跟著斷線；沒有指向任何健康的 NAT 時，那個 subnet 的對外連線全部逾時
 
 ## 鄰卡
 

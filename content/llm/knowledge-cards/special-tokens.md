@@ -31,4 +31,4 @@ LLM 中 special tokens 的常見類型：
 
 ## 判斷條件與後果
 
-讀 tokenizer config（`tokenizer_config.json`）看到 `bos_token`、`eos_token`、`chat_template` 等就是這組設定。寫 code 場景的判讀：用 Continue.dev / Ollama 時、伺服器會自動套用模型的 chat template、把使用者輸入轉成正確的 special tokens 格式；自己寫 inference code 時、要呼叫 `tokenizer.apply_chat_template()` 避免格式錯亂導致模型輸出爛。
+Special tokens 的排列由 chat template 決定（`tokenizer_config.json` 裡的 `bos_token`、`eos_token`、`chat_template` 就是這組設定），模型看到訓練時見過的格式，才會照預期分辨角色、找到回答的起點。透過 Continue.dev 或 Ollama 呼叫模型時，伺服器自動套用模型的 chat template，使用者輸入被轉成正確的 special token 格式。自己寫 inference code 而手動拼字串時，少了一個角色標記或套了別的模型的格式，模型分不出哪一段是使用者輸入、從哪裡開始回答，輸出可能接著續寫 prompt、遲遲不發 `<eos>` 或格式錯亂；`tokenizer.apply_chat_template()` 讀的是模型自己的 template，用它組 prompt，格式就跟訓練時一致。

@@ -36,10 +36,10 @@ Cross-encoder（reranker、retrieval 第二階段）：
 
 ## 判斷條件與後果
 
-讀 RAG / production retrieval docs 看到「reranker」「cross-encoder」「rerank stage」就是這 framing。寫 code 場景的判讀：
+Reranker 對每一對 query 與文件各跑一次 cross-encoder 的 forward pass，所以是否加它，看第一階段的排序誤差有多大，以及 latency 預算還剩多少。
 
-1. **何時值得加 reranker**：retrieval 結果有「相關但不精確」問題、top-K hit rate 高但 top-5 hit rate 低、有 latency / cost budget
-2. **何時不需要**：小語料（< 1000 docs、retrieval 已準）、明確 keyword 任務（BM25 已準）、latency 敏感（< 100ms TTFT）
-3. **Pipeline 設計**：bi-encoder retrieve top-50 → reranker rerank → 給 LLM top-5；50/5 是常見起點、看實測調
-4. **跟 [hybrid search](/llm/knowledge-cards/hybrid-search/) 結合**：BM25 + embedding hybrid retrieve top-50 → reranker rerank → LLM、是 production RAG 標配
-5. **跟 [4.1 RAG 章節](/llm/04-applications/rag-principles/) 的關係**：本卡是定義、章節是 retrieval pipeline 設計（含 reranker / hybrid 段）
+**值得加的情形**：top-K（例如 top-50）的 hit rate 高、top-5 的 hit rate 低，代表正確文件已經被取回、只是排得不夠前面，結果呈現「相關但不精確」。bi-encoder 把 query 與文件分開 embed，分不出這種細粒度的差別，cross-encoder 把兩者一起讀，補的正是這一段。latency 與 cost 的預算容得下多一段計算時，常見的組合是 bi-encoder（或 BM25 加 embedding 的 [hybrid search](/llm/knowledge-cards/hybrid-search/)）取回 top-50，reranker 重排後給 LLM top-5；50 與 5 是起點，依實測的命中率與延遲調整。
+
+**不值得加的情形**：語料小（少於 1000 份文件）而 retrieval 已經準確，或任務是明確的 keyword 比對而 BM25 已經準確，這兩種的 top-5 已經包含正確文件，reranker 只增加延遲；TTFT 要求在 100ms 以下時，多一段 cross-encoder 的計算可能就超出預算。
+
+本卡是定義，retrieval pipeline 的設計（含 reranker 與 hybrid 段）在 [4.1 RAG 章節](/llm/04-applications/rag-principles/)。

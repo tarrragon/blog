@@ -17,4 +17,4 @@ Leaseholder 出現在 CockroachDB / Spanner 等 distributed SQL 架構、跟 [Co
 
 ## 判斷條件與後果
 
-設計時要主動把 leaseholder 分布納入 capacity planning — 不是只看 cluster 總 CPU、要看每個節點承擔多少 leaseholder。lease transfer（rebalance、節點 drain、failover）會引發短期 p99 spike、要寫進變更窗口跟 rollback 觀測點。region survival 配置下、voting replica 跨 region 強制提高 write latency、leaseholder placement 跟 locality tag 一致時才能拿到本地 read 紅利、否則跨 region 多跑一趟 RTT。
+Leaseholder 集中在少數節點時，整體 cluster CPU 不高，那幾個節點卻出現 p99 latency 上升與寫入 throughput 停滯，原因是每個 range 的 read 與 write coordination 都經過它的 leaseholder；cluster 總 CPU 看不出這種集中，所以 capacity planning 看的是每個節點承擔多少 leaseholder。lease transfer（rebalance、節點 drain、failover）期間，被轉移的 range 出現短期的 p99 spike；這段 spike 沒有寫進變更窗口與 rollback 觀測點時，執行變更的人分不出它是 lease transfer 的正常代價，還是變更本身出了錯。region survival 配置下 voting replica 跨 region，write latency 固定被拉高；leaseholder 的 placement 跟 locality tag 一致時讀取在本地完成，不一致時每次讀取多一趟跨 region 的 RTT。

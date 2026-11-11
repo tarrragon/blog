@@ -18,4 +18,4 @@ tags: ["backend", "security", "privacy", "data-protection"]
 
 ## 判斷條件與後果
 
-假名化要寫清楚三件事：哪些欄位被換掉、金鑰存在哪裡由誰能讀、自由文字與準識別欄位怎麼處理。跨租戶的資料整合選擇哪一種形態、彙整之後碰得到幾個租戶，見 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)；資料遮罩的治理見 [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)。
+假名化的資料能被誰連回當事人，取決於三個條件。被換掉的欄位沒有列清楚時，下游拿到資料的人判斷不了哪些欄位還是原值。金鑰的保管位置決定誰能串接與還原：金鑰按租戶分開保管時，跨租戶串接不了；一把金鑰跨租戶共用時可以串接，而那把金鑰外流時，全部被串接租戶的代碼都能被窮舉回推。自由文字欄位與郵遞區號、生日這類準識別欄位沒有處理時，代碼本身換不回電話，資料卻仍然認得出個人，原因是殘留在備註裡的原值與欄位之間的組合都不經過金鑰。跨租戶的資料整合選擇哪一種形態、彙整之後碰得到幾個租戶，見 [7.44 多租戶平台的隔離層級](/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/)；資料遮罩的治理見 [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)。

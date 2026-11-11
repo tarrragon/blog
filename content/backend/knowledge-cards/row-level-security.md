@@ -17,4 +17,4 @@ Row-Level Security 位在 application 授權的下游。application 層的 [Auth
 
 ## 判斷條件與後果
 
-設計時要讓 policy 覆蓋 SELECT、INSERT、UPDATE、DELETE 四種操作，並為緊急例外存取留 [Audit Log](/backend/knowledge-cards/audit-log/)。RLS 要有獨立測試，證明跨租戶查詢確實被擋下。它是兜底防線，application 層授權仍要做 — 兩道防線各自承擔不同的失敗模式。
+RLS 的判斷對象是資料庫這道防線實際涵蓋了哪些操作與哪些連線角色。SELECT、INSERT、UPDATE、DELETE 的 policy 各自獨立，只寫了其中幾種時，沒涵蓋的那幾種操作的行為取決於引擎的預設，可能全部被拒絕，也可能不受租戶限制；應用程式用 table owner 或 superuser 連線時，policy 預設不套用在這些角色上。這兩種缺口在正常流量下都不會出錯，沒有獨立測試證明跨租戶查詢被擋下時，要到外洩才看得到。application 層的授權與 RLS 承擔不同的失敗模式：前者管誰能呼叫哪個功能，後者管查詢送到資料庫之後回傳哪些 row，拿掉任一層，另一層的漏洞就直接成為外洩路徑。緊急例外存取需要繞過 RLS 時，沒有 [Audit Log](/backend/knowledge-cards/audit-log/) 就查不到誰在什麼時候看了哪些 row，所以例外存取一律留下紀錄。

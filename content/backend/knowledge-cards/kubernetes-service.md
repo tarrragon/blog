@@ -23,4 +23,4 @@ Service 是 Kubernetes 內建的 [Service Discovery](/backend/knowledge-cards/se
 
 ## 判斷條件與後果
 
-Deployment 範本的標籤與 Service 的 selector 要一起設計、一起改。readiness 檢查要反映「這個 Pod 現在能不能處理請求」，Service 依它決定流量去向。服務之間的連線設定寫 Service 名稱，不寫 IP。
+標籤是 Service 與 Pod 之間唯一的連結：Deployment 範本的標籤改了而 Service 的 selector 沒跟著改時，Service 照樣存在，EndpointSlice 變成空的，從 Ingress 看是 503，所以兩者在同一次變更裡一起改。Service 依 readiness 決定一個 Pod 是否放進流量池；readiness 檢查只確認程序活著、沒有反映「這個 Pod 現在能不能處理請求」時（例如還在載入設定或暖快取），流量被送到處理不了的 Pod，請求失敗。服務之間的連線設定寫 Pod 的 IP 時，Pod 重建之後 IP 改變，連線就斷了；寫 Service 名稱時，名稱與 ClusterIP 不隨 Pod 重建而改變。

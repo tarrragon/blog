@@ -17,4 +17,4 @@ Processing semantics 位在 delivery 與 [recovery semantics](/backend/knowledge
 
 ## 判斷條件與後果
 
-設計時對每個副作用標明能否承受重複、亂序與部分失敗。承受不了的補 idempotency key 或 dedup store，把處理結果穩定在一次。
+每一個副作用能否承受重複、亂序與部分失敗，決定它在 at-least-once 投遞下的業務結果。承受得了的（search index sync 重複寫入同一份文件），重複處理之後狀態不變；承受不了的（寄信、開 invoice），每一次重複投遞都變成一次錯誤的業務結果，而 broker 端看起來一切投遞成功。所以設計時對每個副作用標明它承受得了哪幾種，承受不了的補 [idempotency key](/backend/knowledge-cards/idempotency-key/) 或 dedup store，把處理結果穩定在一次。

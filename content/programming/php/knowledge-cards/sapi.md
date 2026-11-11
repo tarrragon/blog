@@ -21,4 +21,4 @@ SAPI 位在 PHP 核心（Zend 引擎與擴充）與 web 伺服器、命令列之
 
 ## 判斷條件與後果
 
-部署時要先知道服務跑的是哪個 SAPI，因為程序壽命、執行帳號、設定檔位置與 `.htaccess` 能不能改 PHP 設定都跟著它變。完整的比較見 [PHP 的請求生命週期與 SAPI](/programming/php/01-server-runtime/request-lifecycle-and-sapi/)。
+程序壽命、執行帳號、設定檔位置，以及 `.htaccess` 能否改 PHP 設定，都隨服務跑的 SAPI 而變，所以 SAPI 是部署設定的前提。在 mod_php（`apache2handler`）下，PHP 以 Apache 的帳號執行，`.htaccess` 的 `php_value` 有效；在 PHP-FPM（`fpm-fcgi`）下，執行帳號由 pool 指定，`.htaccess` 改不到 PHP 設定；很多發行版把命令列（`cli`）讀的 `php.ini` 跟網頁請求讀的分成兩份，在命令列改的設定不影響網頁。認錯 SAPI 時，改動寫進一份這個 SAPI 不讀的檔案或指令，服務的行為不變。程式裡的 `PHP_SAPI` 或 `php_sapi_name()` 讀得出目前的 SAPI。完整的比較見 [PHP 的請求生命週期與 SAPI](/programming/php/01-server-runtime/request-lifecycle-and-sapi/)。

@@ -32,6 +32,6 @@ tags: ["backend", "deployment", "docker", "container", "knowledge-cards"]
 
 ## 判斷條件與後果
 
-設計時要判斷「什麼是一個職責」。它是「一容器一**職責**」，不是死板的「一容器一 process」——一個主進程帶它自己 fork 出的子進程（php-fpm 的 worker、nginx 的 worker）是正常的，那些是同一個職責的一部分。真正該拆的是「不同服務」：web / app / database / cache 各是一個職責。nginx 與 PHP-FPM 拆成兩個容器時程式碼要兩邊都有、放進同一個容器時要自己做程序監看，兩種切法的做法與陷阱見 [容器裡的 Nginx 與 PHP-FPM](/programming/php/01-server-runtime/nginx-php-fpm-containers/)。
+一個 container 該不該拆，看裡面跑的是一個職責還是幾個服務。一個主進程帶著它自己 fork 出的子進程（php-fpm 的 worker、nginx 的 worker）屬於同一個職責，放在同一個 container 裡，重啟、升級與擴縮的節奏都一致；web、app、database、cache 是不同的服務，各是一個職責，放進同一個 container 時，上面列的獨立生命週期、獨立擴縮與可替換就一起失去。nginx 與 PHP-FPM 拆成兩個容器時程式碼要兩邊都有，放進同一個容器時要自己做程序監看，兩種切法的做法與陷阱見 [容器裡的 Nginx 與 PHP-FPM](/programming/php/01-server-runtime/nginx-php-fpm-containers/)。
 
-邊界：純圖方便，dev 時把全部塞一個 container 也能跑起來，但會失去上面每一條好處、也偏離線上拓樸——這跟 [prod parity](/linux/dotfile/knowledge-cards/prod-parity-principle/) 的取捨一致，值不值得看場景。另有 sidecar 這類「一個主服務 + 一個輔助容器（log 收集、proxy）」的模式，是刻意讓兩個 container 綁同一生命週期，屬進階編排、不違反本原則的精神（各自仍是單一職責）。
+dev 環境把全部塞進一個 container 也跑得起來，代價是失去上面每一條好處，也偏離線上拓樸；這跟 [prod parity](/linux/dotfile/knowledge-cards/prod-parity-principle/) 的取捨一致，是否值得取決於本機與線上的拓樸差異會不會讓問題只在線上出現。sidecar 這類「一個主服務加一個輔助容器（log 收集、proxy）」的模式，刻意讓兩個 container 綁同一個生命週期，屬進階編排；兩個 container 各自仍是單一職責，符合這個原則。

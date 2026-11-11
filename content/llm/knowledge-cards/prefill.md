@@ -24,4 +24,8 @@ Prefill 是 [TTFT](/llm/knowledge-cards/ttft/) 的主要構成部分。Prefill �
 
 ## 判斷條件與後果
 
-判讀「為何本地 LLM 在塞長 context 時這麼慢」要追到 prefill 階段。緩解方法有三條：縮短 prompt（移除不必要 context）、用支援 prefix cache 的伺服器（如 oMLX 的 paged SSD KV cache 可重用之前 prefill 過的結果）、切到雲端旗艦（資料中心 prefill 算力遠高於 Mac）。
+本地 LLM 在塞長 context 時變慢，時間花在 prefill：prefill 要把整段 prompt 跑過模型，是算力 bound，prompt 越長、機器算力越低，等待越久（〈可觀察訊號與例子〉裡 10K+ tokens 要 30 ~ 90 秒）。縮短等待的做法各自對應一個條件：
+
+- **prompt 裡有不必要的 context 時**：縮短 prompt 直接減少 prefill 要算的 token 數。
+- **同一段前綴反覆出現時**（同一份 system prompt、同一批檔案）：支援 prefix cache 的伺服器（如 oMLX 的 paged SSD KV cache）重用之前 prefill 過的結果，不必重算那段前綴。
+- **prompt 本身就長、而且每次都不同時**：前兩種都縮不了，切到雲端旗艦，用資料中心遠高於 Mac 的算力縮短 prefill。

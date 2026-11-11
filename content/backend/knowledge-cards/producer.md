@@ -5,7 +5,6 @@ description: "說明 producer 如何把工作、事件或資料送入後續處�
 weight: 133
 ---
 
-
 Producer 的核心概念是「產生工作、事件或資料並送入後續處理路徑的角色」。它可以是 API handler、排程任務、database change capture、外部 webhook 或任何把資料放進 [queue](/backend/knowledge-cards/queue/)、[broker](/backend/knowledge-cards/broker/) 與 [stream pipeline](/backend/knowledge-cards/stream-pipeline/) 的元件。
 
 ## 跟其他概念的關係
@@ -18,4 +17,4 @@ Producer 位在資料流的上游。它的送入速度、資料品質與錯誤�
 
 ## 判斷條件與後果
 
-Producer 要定義送入條件、資料格式、唯一識別碼、[idempotency](/backend/knowledge-cards/idempotency/)、[retry policy](/backend/knowledge-cards/retry-policy/)、[rate limit](/backend/knowledge-cards/rate-limit/) 與觀測欄位。操作上要能按 producer 來源查看進入速率、錯誤率、payload 大小與被拒絕數量，才能在尖峰或資料異常時定位來源。
+Producer 的送入條件、資料格式、唯一識別碼、[idempotency](/backend/knowledge-cards/idempotency/)、[retry policy](/backend/knowledge-cards/retry-policy/)、[rate limit](/backend/knowledge-cards/rate-limit/) 與觀測欄位缺了任何一項，後果都由下游的 consumer 與 queue 承擔。多個 producer 的資料格式與重試策略不一致時（訂單建立 API、批次匯入工具、第三方 webhook 都送訂單事件），consumer 要逐一判斷每個來源的格式與重複；沒有唯一識別碼與 idempotency 時，producer 重試讓同一筆資料送入兩次，下游分不出是重複還是兩筆；沒有 rate limit 時，單一 producer 的尖峰直接推高 [queue depth](/backend/knowledge-cards/queue-depth/) 與下游成本。觀測欄位沒有帶上 producer 來源時，進入速率、錯誤率、payload 大小與被拒絕數量只看得到總量，尖峰或資料異常時定位不到是哪一個來源。

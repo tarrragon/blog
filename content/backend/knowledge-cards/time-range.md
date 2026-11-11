@@ -27,4 +27,4 @@ Time range 位在 [dashboard](/backend/knowledge-cards/dashboard/)、[query link
 
 ## 判斷條件與後果
 
-Time range 要定義開始時間、結束時間、時區、資料延遲限制與關聯事件。它應進入 [evidence package](/backend/knowledge-cards/evidence-package/) 與 [rollback condition](/backend/knowledge-cards/rollback-condition/)，避免團隊用不同時間窗比較同一個決策。
+Time range 沒有寫明開始時間、結束時間與時區時，同一張圖在不同時間重跑得到不同結果，事中交班與事後復盤讀的不是同一段資料；沒標時區的時間在不同人的畫面上可能對應到不同的時刻。沒有寫資料延遲限制時，剛結束的時間窗裡還有資料沒進來，當下算出的 mismatch 或錯誤率偏低，判斷可能因此放行。沒有關聯事件（哪一次 deploy、哪一批 backfill）時，讀的人知道看的是哪一段時間，卻不知道那段時間裡發生了什麼。Time range 寫進 [evidence package](/backend/knowledge-cards/evidence-package/) 與 [rollback condition](/backend/knowledge-cards/rollback-condition/) 之後，release gate、交班與復盤用同一個時間窗比較同一個決策，結論才對得起來。

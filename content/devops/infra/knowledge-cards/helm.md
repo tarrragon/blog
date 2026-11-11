@@ -21,7 +21,7 @@ Helm 在 K8s 生態裡的角色類似 apt 在 Linux、npm 在 Node.js——把�
 
 ## 判斷條件與後果
 
-chart 的粒度一旦定下，各環境的 values file 與版本號都依附在它上面，事後拆分或合併 chart 要連同這些一起改，所以 Helm 的設計從粒度開始：chart 的粒度（一個 chart = 一個微服務 or 一整個平台）、values 的組織（per-environment values file）、chart 版本管理（chart version vs app version）、以及升級策略（`helm upgrade --atomic` 失敗自動回退）。
+chart 的粒度一旦定下，各環境的 values file 與版本號都依附在它上面，事後拆分或合併 chart 要連同這些一起改，所以 Helm 的設計從粒度開始。一個 chart 包一整個平台時，改其中一個微服務也要升級整個 chart，整個平台一起重新部署；一個 chart 對一個微服務時，各服務各自升級，代價是 chart 數量多，服務之間的版本相容要另外追蹤。values 依環境各放一份 values file 時，環境之間的差異集中在這幾個檔案裡，對照得出來。chart version 記錄部署定義（模板）的版本，app version 記錄裡面那個應用的版本；只維護其中一個時，從版本號分不出這次變更改的是模板還是應用。`helm upgrade --atomic` 在升級失敗時自動回退到上一個 release；不帶它時，失敗的升級留下標成 failed 的 release，已經套用的資源要手動 rollback。
 
 ## 鄰卡
 

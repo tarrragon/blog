@@ -18,4 +18,4 @@ Instruction following 的核心概念是「**模型能否遵守使用者或系�
 
 ## 判斷條件與後果
 
-評估 instruction following 時要做 coverage 測試：格式、長度、拒答、資料不足、衝突指令、跨語言指令都要看。失敗時優先用更清楚的 prompt、few-shot、structured output 或 validator 兜底；長期穩定需求才考慮 fine-tune。
+評估 instruction following 時，判斷的條件是測試涵蓋了哪些約束種類：格式、長度、拒答、資料不足、衝突指令、跨語言指令。只測其中幾種時，沒測到的那幾種失敗要到 production 才出現，原因是模型的表現隨約束種類而不同（上一段：簡單指令穩定的模型，仍可能在衝突指令上漏掉限制）。失敗之後的處置依成本排序：更清楚的 prompt、few-shot、structured output 或 validator 兜底，都不必重新訓練就能換；同一類需求長期穩定、這些做法仍補不了時，fine-tune 的訓練成本才划算。

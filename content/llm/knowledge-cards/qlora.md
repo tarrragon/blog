@@ -29,10 +29,10 @@ QLoRA 的核心創新（簡化）：
 
 ## 判斷條件與後果
 
-讀 fine-tuning 教學 / Hugging Face PEFT 文件看到「QLoRA」「bnb-4bit」就是這方法。寫 code 場景的判讀：
+QLoRA 是否適用，由手上的 VRAM、可接受的品質差距與 fine-tune 之後的推論方式決定（讀 Hugging Face PEFT 文件看到「QLoRA」「bnb-4bit」指的就是這個方法）：
 
-1. **想 fine-tune 大模型在消費級硬體**：QLoRA 是 default 選擇（不用 QLoRA、就只能訓 < 7B）
-2. **記憶體預算估算**：QLoRA 訓 N B 模型約需 `0.6 × N GB` VRAM（30B → ~18GB、70B → ~42GB）
-3. **品質 vs full fine-tune 差距**：QLoRA 後合併權重的模型、實測跟 full fine-tune 接近（差距 < 2-3%）、對多數場景可接受
-4. **跟 [LoRA](/llm/knowledge-cards/lora/) 卡片區分**：純 LoRA 是「base 不量化、訓 LoRA」、QLoRA 是「base 量化 4-bit、訓 LoRA」；QLoRA 是 LoRA 的延伸、不是替代
-5. **推論時的選擇**：QLoRA fine-tuned 模型可以「base 仍 4-bit + 載入 LoRA adapter」推論、記憶體用量低；也可以 merge 後用 GGUF Q4_K_M、跟 base 原相同
+1. **VRAM 只有消費級 GPU 的容量時**，BF16 base 的 LoRA 在 7B 以上就放不下，因為 base 權重本身佔掉大部分記憶體；QLoRA 把 base 壓到 4-bit，同一張 24GB 的卡可以 fine-tune 30B 上下的模型（上表 30–32B 約 20–24GB）。
+2. **估算 VRAM 時**，QLoRA 訓 N B 參數的模型約需 `0.6 × N` GB（30B 約 18GB、70B 約 42GB）。估出來的值超過手上顯卡的容量時，這張卡訓不了這個大小的模型，選項只剩換較小的模型或改用多卡。
+3. **品質要求接近 full fine-tune 時**，QLoRA 合併權重後的模型實測跟 full fine-tune 的差距在 2–3% 以內；能接受這個差距的場景，用不著 full fine-tune 的多卡 H100 成本。
+4. **跟 [LoRA](/llm/knowledge-cards/lora/) 的分界在 base 是否量化**：LoRA 的 base 維持 BF16，QLoRA 的 base 量化到 4-bit，兩者訓的都是 LoRA 的 A、B 矩陣，所以 QLoRA 是 LoRA 的延伸，不是另一種 adapter。
+5. **推論時保留 4-bit base 再載入 LoRA adapter 時**，記憶體用量維持在 4-bit 的水準，每次 forward 都要先 dequantize base；merge 之後轉成 GGUF Q4_K_M 時，模型大小跟 base 的 Q4_K_M 相同，推論時不必另外載入 adapter。

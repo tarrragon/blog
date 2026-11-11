@@ -22,4 +22,4 @@ PHP-FPM 把直譯器放在 web 伺服器外面的常駐程序裡：程序活過�
 
 ## 判斷條件與後果
 
-部署 PHP-FPM 要決定 `max_children`（以最重請求的記憶體峰值估）、`max_requests`、`request_terminate_timeout` 與 `process_control_timeout`，並把 FastCGI 埠限制在信任的網路內。各設定的實測見 [PHP-FPM](/programming/php/01-server-runtime/php-fpm/)。
+部署 PHP-FPM 時，四個程序管理設定與 FastCGI 埠的開放範圍各自對應一種失效。`max_children` 是並發上限：設得比記憶體容得下的多，最重的請求同時執行時記憶體耗盡；設得太少，請求在 listen queue 排隊，所以它以最重請求的記憶體峰值估。`max_requests` 讓 worker 處理到一定次數後重啟，沒有設時，擴充或程式碼的記憶體洩漏在常駐的 worker 裡一直累積。`request_terminate_timeout` 終止執行太久的請求，web 伺服器收到 502 加上「Connection reset by peer」；`process_control_timeout` 預設 0，reload 或停機時不等進行中的請求，同樣產生 502。FastCGI 沒有驗證，任何連得到這個埠的客戶端都能送請求讓 PHP 執行，所以這個埠只開給信任的網路。各設定的實測見 [PHP-FPM](/programming/php/01-server-runtime/php-fpm/)。

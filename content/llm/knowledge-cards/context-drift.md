@@ -18,4 +18,4 @@ Context drift 是 [agent loop](/llm/knowledge-cards/agent-loop/) 的長程失敗
 
 ## 判斷條件與後果
 
-緩解方式是定期重錨原始目標、保留 checklist、設 checkpoint、讓外部 evaluator 比對目前行動與原始任務距離。漂移持續發生時，縮短 loop、改用 single-call pipeline，或提高 human review 頻率。
+Context drift 的成因是原始目標在 context 裡的比重隨步數下降：近期的工具輸出與模型自己的敘述越積越多，原始任務離模型正在讀的位置越來越遠。loop 裡沒有任何機制把原始目標重新放回 context 時（重述目標、對照 checklist、在 checkpoint 停下，或由外部 evaluator 比對目前行動與原始任務的距離），偏移要到結果出來才被發現，中間的步驟都做在偏掉的方向上。這些機制都加了還持續漂移時，代表 loop 的步數超過原始目標能保持主導的範圍；縮短 loop、改用 single-call pipeline 或提高 human review 頻率，都是在減少兩次對照之間累積的步數。

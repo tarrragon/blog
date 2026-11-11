@@ -28,4 +28,10 @@ Sampling 約束的風險是把模型逼到錯誤但合法的輸出。當 grammar
 
 ## 判斷條件與後果
 
-Sampling 約束適合處理格式合法性與候選空間控制，不適合單獨承擔事實正確性。設計時先問三件事：合法 token 集合能否完整表示業務狀態、約束失敗時要 retry 還是回退、下游 validator 如何分辨「格式合法但語意可疑」。下一步路由是 [Structured Output](/llm/knowledge-cards/structured-output/) 與 [Top-K / Top-P / Min-P Sampling](/llm/knowledge-cards/top-p-sampling/)。
+Sampling 約束保證被選出的 token 屬於合法集合，不保證值的事實正確；合法集合畫得不對時，約束反而把模型推向錯誤但合法的輸出。這個風險有多大，看三個條件：
+
+- **合法 token 集合表示不了某個業務狀態時**（enum 只有 `billing`、`technical`、`other`，沒有 `unknown`），模型遇到不屬於任何一類的輸入也只能選其中一個，輸出可以解析，語意卻不可信。
+- **約束失敗時沒有定義處置時**（retry，或回退到人工覆核），解析失敗或可疑的輸出沒有去處，下游只能照單接收，或讓整個請求失敗。
+- **下游 validator 只檢查格式時**，「格式合法但語意可疑」的值跟正確的值看起來一樣，錯誤直接流到執行端；validator 另外看 confidence 或業務規則才分得出來。
+
+下一步路由是 [Structured Output](/llm/knowledge-cards/structured-output/) 與 [Top-K / Top-P / Min-P Sampling](/llm/knowledge-cards/top-p-sampling/)。

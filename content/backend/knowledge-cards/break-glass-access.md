@@ -17,4 +17,4 @@ Break-Glass Access 位在日常權限與緊急需求之間。[Least Privilege](/
 
 ## 判斷條件與後果
 
-設計時要定義誰能啟用、啟用要綁哪種工單、權限的自動回收時限，以及事後審查由誰做。每次 break-glass 啟用都要進 [Audit Log](/backend/knowledge-cards/audit-log/)。break-glass 流程本身要定期演練，確認事故當下真的拿得到、事後真的收得回。
+Break-glass 流程的每一個元素各自擋住一種失控。沒有限定誰能啟用、沒有綁工單時，提權對不回一次具體的事故，事後分不出哪一次啟用是必要的；沒有自動回收時限時，事故結束後權限留在帳號上，break-glass 退化成長期保留的 admin 後門；沒有指定事後審查的人時，啟用紀錄存在，卻沒有人比對它是否合理。啟用沒有寫進 [Audit Log](/backend/knowledge-cards/audit-log/) 時，這個例外無法追溯。流程沒有演練過時，帳號失效或審批人聯絡不到要到事故當下才暴露，所以 break-glass 流程定期演練，確認事故當下拿得到、事後收得回。

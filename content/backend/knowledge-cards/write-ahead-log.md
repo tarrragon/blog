@@ -17,4 +17,4 @@ WAL 位在資料庫的 durability 與 recovery 機制核心。SQLite 的 WAL mod
 
 ## 判斷條件與後果
 
-設計上要決定 WAL 的 checkpoint 頻率、保留長度、磁碟容量餘裕與監控指標。WAL 同時被 crash recovery、replication 與 CDC 三條路徑依賴，保留策略要同時滿足三者：保留太短會讓 replica 或 [Replication Slot](/backend/knowledge-cards/replication-slot/) 追不上，保留太長會占用磁碟。observability 要看 WAL 生成速率、checkpoint lag 與最舊仍被保留的 log 位置。
+WAL 的保留長度同時被 crash recovery、replication 與 CDC 三條路徑依賴，太短與太長各有代價。保留太短時，落後的 replica 或 [Replication Slot](/backend/knowledge-cards/replication-slot/) 需要的 log 已被回收，replica 要整份重建、CDC 漏掉事件；保留太長、或 inactive slot 卡住回收時，WAL 持續佔用磁碟，尖峰寫入下磁碟先到上限，資料庫無法再寫入。checkpoint 頻率決定 crash 後要重放多少 log：間隔越長，crash recovery 越久。所以 observability 看 WAL 生成速率、checkpoint lag 與最舊仍被保留的 log 位置，三項分別對應磁碟成長的速度、recovery 要重放的量，以及回收被誰卡住。

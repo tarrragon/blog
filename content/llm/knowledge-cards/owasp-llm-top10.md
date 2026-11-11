@@ -42,8 +42,4 @@ OWASP LLM Top 10 的核心概念是「**Open Worldwide Application Security Proj
 
 ## 判斷條件與後果
 
-讀企業 LLM 安全 / 合規文件 / vendor security audit 看到「OWASP LLM Top 10」就是這 framing。寫 code 場景的判讀：
-
-1. **跟企業溝通必備**：安全 team / vendor audit 都用 OWASP 編號、能 map 自己應用到 LLM01-LLM10 就能 align 對話
-2. **不是 production 才需要看**：個人 dev 也適用大部分（LLM01 prompt injection、LLM03 supply chain、LLM06 excessive agency 對個人都直接相關）
-3. **跟 [6.6 OWASP 對照章節](/llm/06-security/owasp-llm-top10-mapping/) 的關係**：本卡是定義 + mapping、章節是詳細 mapping + 個人 dev 場景的對應 control
+安全團隊與 vendor security audit 都用 OWASP 的編號指稱風險。自己的應用對得上 LLM01 到 LLM10 時，跟對方溝通可以直接用編號指出哪一項風險、由哪個 control 處理；對不上時，雙方各自描述同一個風險，對話要先花在對齊用詞上。這份清單也涵蓋個人 dev 的情境：用 IDE agent 或本地模型時，LLM01 prompt injection、LLM03 supply chain、LLM06 excessive agency 一樣直接相關，因為 agent 會讀外部內容、下載的是第三方權重、手上有 tool 權限。本卡給定義與 mapping，個人 dev 場景對應的 control 在 [6.6 OWASP 對照章節](/llm/06-security/owasp-llm-top10-mapping/)。

@@ -17,4 +17,4 @@ Etcd / Consul / ZooKeeper 都是 consensus 服務、被 Kubernetes、Vault、Pat
 
 ## 判斷條件與後果
 
-水平擴展 stateful 服務時、若依賴 distributed lock 或 leader election 來協調工作、要把 consensus latency 算進事故時的 RTO。Quorum 大小設計要考慮「容忍 N 節點失效」需要至少 2N+1 節點。跨 region 部署的 consensus 服務、要明示「region 失效時降級為 read-only」的策略 — region 失效時 quorum 可能跨不過、要事先規劃降級路徑。
+水平擴展的 stateful 服務依賴 distributed lock 或 leader election 協調工作時，故障後要等 consensus 選出新 leader 才能恢復寫入，election timeout 與 commit latency 都是 RTO 的一部分，估 RTO 時漏掉這段就會低估。Quorum 的大小決定容忍幾個節點失效：N 個節點失效時剩下的節點仍要構成多數，所以容忍 N 個節點失效需要至少 2N+1 個節點。跨 region 部署的 consensus 服務，一個 region 失效時剩下的節點可能湊不到多數，寫入停止；事先定好「region 失效時降級為 read-only」的策略時，服務在那時仍能提供讀取，沒有定好時，降級要在事故當下臨時決定。

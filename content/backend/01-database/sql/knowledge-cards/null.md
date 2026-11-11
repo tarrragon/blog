@@ -34,7 +34,7 @@ WHERE 訂單.訂單編號 IS NULL    -- 宗翰、雅文
 
 ## 判斷條件與後果
 
-**否定式的成員判斷一律用 `NOT EXISTS`**，除非能保證子查詢那一欄不會有 NULL——而那個保證要來自欄位的[約束](/backend/01-database/sql/knowledge-cards/constraint/)，不是來自習慣。
+**子查詢那一欄沒有 NOT NULL [約束](/backend/01-database/sql/knowledge-cards/constraint/) 時，否定式的成員判斷（「不在這份清單裡」）寫成 `NOT IN` 會在某一天安靜地回零列**：子查詢的結果只要出現一個 NULL，`x NOT IN (…, NULL)` 對每一列的值都是未知而不是真，外層一列都留不下，而引擎不報錯。`NOT EXISTS` 逐列比對相等，NULL 那一列配不上就略過，結果不受影響。習慣上不放 NULL 的欄位不構成保證，下一次寫入就可能放進一個；所以只有約束擋得住 NULL 的欄位才用 `NOT IN`，其餘一律用 `NOT EXISTS`。
 
 **那條約束是建表時的一個決定，而它有代價。** 允許為空讀起來就是事實的形狀（沒有值就是沒有值），不允許則要替「沒有」發明一個實際的值；兩條在設計當下都合理，而選了前者之後每一段碰到這一欄的查詢都要處理三值邏輯。[backend 1.16 Schema 設計決定的查詢代價](/backend/01-database/design-decisions-price-every-query/) 的第一節走這個取捨，並給改回來要付的遷移成本。
 

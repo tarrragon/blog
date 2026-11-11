@@ -20,6 +20,6 @@ Alert 觸發後由 [on-call](/backend/knowledge-cards/on-call/) 工程師承接�
 
 ## 判斷條件與後果
 
-Alert 設計要定義門檻、持續時間（`for` duration）、severity、通知對象、抑制規則、runbook link 與回復條件；通知也可能被人手動設定的靜音壓下，見 [Alert Silence（告警靜音）](/backend/knowledge-cards/alert-silence/)。每個 alert rule 帶 owner metadata — 沒有 owner 的 alert 會在服務演進後退化成 noise 來源，形成 [alert fatigue](/backend/knowledge-cards/alert-fatigue/)。
+一條 alert rule 的每個欄位各對應一種失效。門檻與持續時間（`for` duration）決定誤報與延遲之間的取捨：持續時間太短，短暫的尖峰也發通知；太長，真正的異常要等更久才通知。沒有 severity 時，不需要立刻處理的訊號也 page on-call；沒有通知對象時，告警成立而沒有人收到；沒有抑制規則時，同一個原因引出的一串症狀各發一則；沒有 runbook link 時，收到的人要臨場猜下一步；沒有回復條件時，告警何時算結束沒有定義。通知也可能被人手動設定的靜音壓下，見 [Alert Silence（告警靜音）](/backend/knowledge-cards/alert-silence/)。alert rule 沒有 owner metadata 時，服務演進之後沒有人負責調整它，它退化成 noise 來源，形成 [alert fatigue](/backend/knowledge-cards/alert-fatigue/)，所以每條 rule 帶 owner。
 
 SLO-based alerting 用 [burn rate](/backend/knowledge-cards/burn-rate/) 取代固定閾值，自動適應流量變化。完整的 alert 設計見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)、SLO-based alerting 見 [4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/)。

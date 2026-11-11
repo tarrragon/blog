@@ -17,4 +17,4 @@ Document Store 位在資料模型光譜上、和嚴格關聯式 schema 相對的
 
 ## 判斷條件與後果
 
-設計時要決定哪些資料適合文件、單份文件多大、哪些 JSON 路徑需要 index，以及 schema 演進怎麼做。文件型資料仍需要 [Schema Migration](/backend/knowledge-cards/schema-migration/) 的紀律 — 欄位語意改變時要有版本與相容策略。observability 要看文件大小分佈，以及熱查詢路徑是否有 index 支撐。
+Document store 的彈性在三種情形下轉成成本。資料之間的關係變多、要靠 join 與跨文件一致性時，同一份事實散在多份文件裡，更新要逐份改，原因是文件是讀寫與一致性的單位。單份文件持續長大時，每次讀寫都搬動整份文件；熱查詢以沒有 index 的 JSON 路徑當條件時，查詢要掃過全部文件，延遲隨資料量增加。欄位語意改變而沒有版本與相容策略時，新舊格式的文件並存在同一個集合裡，讀取端要同時處理兩種形狀，原因是 document store 不在寫入時擋下格式不同的文件，所以文件型資料仍需要 [Schema Migration](/backend/knowledge-cards/schema-migration/) 的紀律。文件大小分佈與熱查詢路徑的 index 涵蓋情形，是看得到後兩種情形的觀測訊號。

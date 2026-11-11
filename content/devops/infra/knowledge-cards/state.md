@@ -21,13 +21,13 @@ State 出問題的訊號包括：`terraform plan` 顯示大量非預期的變更
 
 ## 判斷條件與後果
 
-state 的設定裡事後最難改的是分割策略：資源分進不同的 state 之後，要移動就得在兩份 state 之間逐個資源遷移。存放位置、加密、版本保留與鎖機制管的是 state 的安全與復原：防止兩次 apply 同時寫入、限制外洩的範圍、在損壞後回捲到上一個版本：
+state 的設定裡事後最難改的是分割策略：資源分進不同的 state 之後，要移動就得在兩份 state 之間逐個資源遷移。其餘幾項各自對應一種 state 出事的情形：
 
-- 存放位置：S3 + DynamoDB（自管）vs Terraform Cloud（託管），取捨在維運負擔 vs 控制權
-- 加密：state 含敏感值，落地加密（S3 SSE）是底線
-- 版本保留：bucket versioning 讓 state 損壞時能回捲到上一個正確版本
-- 鎖機制：防止兩個人同時 apply 互相覆蓋
-- 分割策略：一個大 state vs 多個小 state，取捨在引用便利性 vs 影響範圍控制
+- 存放位置：放在自管的 S3 + DynamoDB 時，bucket、鎖表與權限由自己維運，換到的是完整的控制權；放在 Terraform Cloud 時這些維運由託管方負責，代價是 state 存在別人的服務上
+- 加密：state 含資料庫初始密碼這類敏感值，沒有落地加密（S3 SSE）時，拿得到 bucket 讀取權的人就讀得到這些值
+- 版本保留：bucket 沒開 versioning 時，state 被寫壞就只剩寫壞的那一份，沒有上一個正確版本可以回捲
+- 鎖機制：沒有鎖時，兩個人同時 apply，後寫入的那一份 state 蓋掉前一份，state 記錄的資源跟雲端的實際狀態對不上
+- 分割策略：一個大 state 時，資源之間互相引用最方便，代價是每一次 apply 的影響範圍都是整個環境；拆成多個小 state 時，一次 apply 只動得到那一份裡的資源，代價是跨 state 的引用要經過 remote state 或輸出值
 
 ## 鄰卡
 

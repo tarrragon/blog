@@ -47,6 +47,8 @@ ALTER TABLE users DROP COLUMN email_verified;
 
 沒有框架時，用日期 + 序號命名 SQL 檔案（`2026-06-26-001-描述.sql`），搭配一張 `migration_log` 表記錄哪些已經套用過，就是最低限度的 migration 系統。
 
+一份 migration 套用到 production 之前，判斷的是它的 DOWN 是否連資料也還原得回來。加欄位、加索引這類變更，DOWN 執行之後資料庫回到變更前的狀態。刪欄位、刪表、把欄位改成較窄的型別這類變更，UP 執行時資料就被丟掉或截斷，DOWN 只能把 schema 建回來，欄位裡原本的值回不來；這類 migration 的回退靠的是執行之前的完整備份（[mysqldump](/devops/infra/knowledge-cards/mysqldump/)），不是 DOWN。另一個條件是表的大小：大表上的 `ALTER TABLE` 可能在執行期間鎖住整張表，讀寫這張表的請求會等到變更完成，所以執行時間要排在能接受這段等待的時段。資料庫裡還有不經 migration、手動執行過的 schema 變更時，migration 檔案描述的狀態跟實際的資料庫不同，用這些檔案在新環境重建出來的 schema 會少掉那幾次手動變更。
+
 ## 鄰卡
 
 - [RDS](/devops/infra/knowledge-cards/rds/)：migration 在 production 資料庫上執行時要格外小心——大表的 ALTER TABLE 可能鎖表

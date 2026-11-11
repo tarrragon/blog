@@ -43,4 +43,4 @@ netstat -an | grep LISTEN | grep <port>
 
 理解 bind address 後可以解釋兩個現象：為什麼預設安全的伺服器都 bind 到 `127.0.0.1`（避免不小心暴露）、為什麼 Docker `-p 8080:8080` 預設 bind 到 `0.0.0.0`（容器化的便利性、但對個人 dev 是潛在暴露點）。
 
-設計本地推論伺服器時、預設 loopback、想分享 LAN 時 bind 到具體 LAN IP（不要直接 `0.0.0.0`）、要對外時加 [reverse proxy](/backend/knowledge-cards/api-gateway/) + auth + TLS。詳見 [6.1 推論伺服器的綁定與暴露範圍](/llm/06-security/inference-server-binding/) 跟 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)。
+本地推論伺服器的 bind address 依要讓誰連到模型而定。只有本機用時 bind loopback，外部請求進不來。要分享給同網段的桌機或筆電時 bind 到具體的 LAN IP，來源限定在那個介面的網段；改 bind `0.0.0.0` 則同時在其他介面上監聽，機器有 public IP 或連上公開 Wi-Fi 時，網路上其他人也連得到模型。要對外提供服務時，連線需要身分驗證與加密，所以在前面加一層 [reverse proxy](/backend/knowledge-cards/api-gateway/) 處理 auth 與 TLS。詳見 [6.1 推論伺服器的綁定與暴露範圍](/llm/06-security/inference-server-binding/) 跟 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)。

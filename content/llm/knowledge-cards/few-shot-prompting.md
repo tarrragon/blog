@@ -39,12 +39,11 @@ Few-shot 跟 [fine-tune](/llm/knowledge-cards/sft/) 對照：
 
 ## 判斷條件與後果
 
-讀 prompt engineering 文章或寫 production prompt 看到「few-shot」「in-context examples」就是這個機制。實作判讀：
+Few-shot 的效果取決於任務的標準跟模型預設的差距。分類邊界、抽取格式、語氣、structured output 的形狀這類由使用者定義的標準，zero-shot 時模型照自己的預設判斷（上面的例子裡 "Fine, but I expected more." 的中性邊界由模型自己決定），給了範例之後模型照範例對齊，原因是模型只能從 prompt 的文字得知使用者的標準，範例把這個標準具體寫了出來。
 
-1. **適用任務有「我的標準跟模型預設不同」**：分類邊界、抽取格式、tone alignment、structured output 形狀。
-2. **失效在範例選不好**：cherry-picked 不代表 distribution、cover 不到 edge case、範例彼此衝突。
-3. **跟 [chain-of-thought](/llm/knowledge-cards/chain-of-thought/) 可疊**（few-shot CoT 是經典組合）、跟 fine-tune 是 endpoint 取捨。
-4. **何時轉 fine-tune**：範例多到撐爆 [context window](/llm/knowledge-cards/context-window/) 又每天都用、才考慮。預設先 few-shot iterate。
-5. **Retrieval-augmented prompting**：把寫死的 few-shot 換成從範例庫即時 retrieve、屬於 [RAG](/llm/knowledge-cards/rag/) 概念延伸。
+- **範例不代表實際輸入的分佈時**（只挑了好看的範例、沒涵蓋 edge case、範例彼此衝突），模型對齊的是範例的偏差，edge case 的輸出照樣不穩，原因是模型只能從給的範例推任務分佈。
+- **任務同時需要推理步驟時**，few-shot 可以跟 [chain-of-thought](/llm/knowledge-cards/chain-of-thought/) 疊用（few-shot CoT）：範例對齊輸出的標準，推理步驟讓模型寫出中間結果，兩者作用在不同的位置。
+- **範例多到佔滿 [context window](/llm/knowledge-cards/context-window/)、而且每天重複使用時**，每次 inference 都重付同一批範例的 token，分鐘級迭代的好處被 context 上限與 token 成本抵掉，fine-tune 的一次性訓練成本這時才划算（上面的對照表）；範例量還在 context 容量內時，改 prompt 的迭代比 retrain 快得多，所以 few-shot 是先試的那一端。
+- **合適的範例隨輸入而變時**，寫死的範例改成從範例庫即時 retrieve 最相近的幾個，這是 [RAG](/llm/knowledge-cards/rag/) 的做法用在範例上：檢索的對象是範例，不是文件。
 
 完整 prompt 技術 landscape 見 [4.0 Prompt 技術光譜](/llm/04-applications/prompt-techniques-landscape/)。

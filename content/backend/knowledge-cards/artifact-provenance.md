@@ -6,7 +6,6 @@ description: "說明交付物的來源、完整性與簽章關聯如何建立信
 weight: 259
 ---
 
-
 Artifact provenance 的核心概念是「證明交付物來源、建置路徑與完整性，讓部署決策有可驗證信任基礎」。它把供應鏈信任從假設改成證據。 可先對照 [CI Pipeline](/backend/knowledge-cards/ci-pipeline/)。
 
 ## 跟其他概念的關係
@@ -28,4 +27,4 @@ Artifact provenance 位在 [CI Pipeline](/backend/knowledge-cards/ci-pipeline/)�
 
 ## 判斷條件與後果
 
-Artifact provenance 要定義來源證據欄位、簽章驗證流程、失敗處理路徑與證據保留策略，並把驗證結果寫入 release governance 與 incident workflow。
+Artifact provenance 的哪一環缺席，部署決策在那一環就回到假設。沒有來源證據欄位（建置紀錄、commit、digest）時，供應鏈事件發生後查不出哪些 artifact 出自受影響的建置流程，影響範圍只能整批假設；有簽章而部署前不驗證時，被替換的 artifact 照樣上線；驗證失敗而沒有處理路徑時，是否放行由當下值班的人臨場決定；證據保留的期間短於稽核與復盤要查的期間時，事後查不回當時的依據。驗證結果沒有寫進 release governance 時，release gate 讀不到它，證據缺口擋不下放行；沒有寫進 incident workflow 時，事故調查要另外重建同一份證據。

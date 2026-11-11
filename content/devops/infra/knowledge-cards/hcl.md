@@ -43,6 +43,8 @@ resource "aws_s3_bucket" "example" {
 
 HCL 的定位在 JSON 和通用語言之間——比 JSON 有表達力（能做迴圈和條件）、比通用語言好 review（diff 直觀、不需要在腦中「執行」程式碼才知道結果）。
 
+review 一份 HCL 的改動時，判斷的是這份 diff 會讓 Terraform 對哪些資源做什麼動作。只改屬性值的 diff，讀 `.tf` 就看得出改了哪個資源的哪個欄位。改到 `count`、`for_each` 或條件式的 diff，資源的數量取決於變數的值，`.tf` 的 diff 看不出會新增或刪除幾個資源，這時讀 plan 的輸出才知道實際的動作。改了資源在程式碼裡的名稱（`"example"` 改成別的名字）時，Terraform 用這個名稱在 [State](/devops/infra/knowledge-cards/state/) 裡找對應的資源，找不到舊名稱就把它當成要刪除、把新名稱當成要建立，plan 會出現一組 destroy 與 create，而那個雲端資源本身沒有任何改變；沒有在程式碼裡宣告這次改名（`moved` block）時，apply 會刪掉這個雲端資源，再建一個新的。
+
 ## 鄰卡
 
 - [IaC](/devops/infra/knowledge-cards/iac/)

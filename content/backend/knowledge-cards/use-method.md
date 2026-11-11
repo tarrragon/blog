@@ -19,4 +19,4 @@ USE 三維度的典型訊號：CPU utilization 100% 但 saturation queue 空 →
 
 ## 判斷條件與後果
 
-USE method 的關鍵是「不要只看 utilization」。utilization 是「目前用了多少」、saturation 是「排隊有多少在等」 — 後者才是 capacity 真正的領先指標。每個資源都要量三個維度、不能用 average 代替 percentile。
+utilization 與 saturation 分開讀，才判斷得出一個資源是否為瓶頸。utilization 高而 saturation 為零，代表資源忙但沒有工作在排隊，還有餘量；utilization 未到上限而 saturation 持續上升，代表已經有工作在等這個資源，延遲開始增加，所以 saturation 是容量的領先指標。errors 不為零時，資源可能在用滿之前就已經在拒絕工作（連線被拒），utilization 看不出來。只看平均值時，短時間的尖峰與排隊被平均掉，資源看起來還有餘量而請求已經在等，所以三個維度都看 percentile 或分布。

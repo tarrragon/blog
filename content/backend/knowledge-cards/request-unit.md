@@ -17,4 +17,4 @@ RU 出現在 Cosmos DB 全產品線、跟 [Cost Per Request](/backend/knowledge-
 
 ## 判斷條件與後果
 
-設計時要把 RU 估算當 *工程動作*、不是 vendor 廣告數字 — 量單一 query 的 `x-ms-request-charge` header、不是看 slow query log；改 index policy 影響 RU、但不改 query 速度、改的是 cost。team 從 CPU + IOPS 思維轉到 RU 思維通常需要 4-6 週、selection 評估時不能只比 monthly bill 就做 ROI 結論、思維遷移成本可能高過 vendor 廣告價差。autoscale 跟 provisioned 的選擇要看 burst 形狀跟 hot partition 風險、壓測通過數字不能直接當 production sizing 上界。
+RU 估算的判斷對象是每個操作實際消耗多少 RU。估算來源是 vendor 的對照數字或 slow query log 時，估出來的值跟實際計費與 throttle 對不上，原因是 RU 隨 document 大小與 index policy 改變，而 slow query log 記的是速度；每個 response 的 `x-ms-request-charge` header 回報這次操作實際的 RU，從它量才對得上。index policy 的改動屬於同一類：它改的是每次寫入的 RU，query 速度可能不變，所以只看延遲的回歸測試抓不到成本上升。團隊從 CPU 與 IOPS 的估法轉到 RU 的估法通常需要 4 到 6 週，選型時只比 monthly bill 而沒算這段遷移成本，ROI 結論會高估，這段成本可能高過 vendor 之間的價差。burst 比 autoscale 擴容快、或流量集中在少數 hot partition 時，總量還沒到上限就先被 throttle，所以 autoscale 與 provisioned 依 burst 形狀與 hot partition 風險選，壓測通過的數字也不直接當成 production sizing 的上界。

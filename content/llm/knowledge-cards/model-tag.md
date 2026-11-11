@@ -28,4 +28,4 @@ Ollama 的 tag 結構：
 
 ## 判斷條件與後果
 
-選 tag 時要看三件事：先看 `size` 確認模型塞得進記憶體（對照[硬體記憶體預算](/llm/00-foundations/hardware-memory-budget/)）、再看 `variant` 確認用途匹配（寫 code 要選 `instruct` / `coding` 變體、避免 base model 的隨機接龍行為）、最後看 `quantization` 決定品質 / 記憶體甜蜜點。完整可用 tag 在各伺服器的 model registry（Ollama 在 [ollama.com/library](https://ollama.com/library)、LM Studio 在 Discover 分頁）。
+tag 的三個欄位各自對應一種選錯的後果。`size` 超過可用記憶體時（對照[硬體記憶體預算](/llm/00-foundations/hardware-memory-budget/)），權重放不進記憶體，其他兩個欄位選得再對也跑不起來，所以它是第一個要對上的欄位。`variant` 選到 base 時，模型只會順著 prompt 往下接龍，不照指令回答，寫 code 這類對話式的任務因此用 `instruct` 或 `coding` 變體。`quantization` 交換的是品質與記憶體：等級越低佔用越小，輸出品質也越往下掉，可選的等級取決於 `size` 放進記憶體之後還剩多少空間。完整可用 tag 在各伺服器的 model registry（Ollama 在 [ollama.com/library](https://ollama.com/library)、LM Studio 在 Discover 分頁）。

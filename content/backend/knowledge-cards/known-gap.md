@@ -27,4 +27,4 @@ Known gap 位在 [confidence](/backend/knowledge-cards/confidence/)、[query lin
 
 ## 判斷條件與後果
 
-Known gap 要描述缺口內容、影響範圍、目前風險、owner 與 follow-up。它要支援 [confidence](/backend/knowledge-cards/confidence/) 分級，避免 evidence package 看起來完整，但實際漏掉高風險路徑。
+Evidence package 沒有列出 known gap 時，它看起來完整，release gate 或 cutover decision 依它放行，實際上可能漏掉高風險路徑（例如還沒抽樣的 manual refund repair path）。Known gap 只寫缺口內容、沒有影響範圍與目前風險時，讀的人判斷不了這個缺口該把 [confidence](/backend/knowledge-cards/confidence/) 降到哪一級。沒有 owner 與 follow-up 時，交班與 PIR 之後沒有人把缺口回寫成 validation query 或 audit log coverage 的改善項，下一次的 evidence package 帶著同一個缺口。

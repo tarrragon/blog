@@ -17,4 +17,4 @@ Global OLTP 是 [transaction boundary](/backend/knowledge-cards/transaction-boun
 
 ## 判斷條件與後果
 
-設計 global OLTP 時要先定義三件事：一致性目標、可接受延遲上限、區域故障下的服務策略。若無法同時滿足三者，就需要調整資料分區、交易範圍或一致性層級，而不是直接加硬體。
+Global OLTP 的一致性目標、可接受延遲上限與區域故障下的服務策略三個條件互相限制：跨 region 的強一致寫入要等 quorum 跨區確認，延遲的下限由區域之間的距離決定；要求區域故障時仍可寫入，quorum 的成員就要分布在更多區域，確認的距離跟著拉長。三者無法同時滿足時，加硬體縮短不了跨區的往返時間，可調的是資料分區（讓多數交易只碰同一區的資料）、交易範圍或一致性層級；業務可接受短暫不一致的資料改用 eventual 或 session consistency，延遲與成本隨之下降。

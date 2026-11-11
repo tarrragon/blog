@@ -18,4 +18,4 @@ CI 建置主機被入侵之後，事故處理團隊從主機外的連線紀錄�
 
 ## 判斷條件與後果
 
-入侵指標要記下來源、取得時間與有效範圍，並在偵測規則裡標明它屬於哪一次事故，事故結束後依規則的生命週期檢討是否保留。告警怎麼併進既有偵測規則見 [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)；根除之後的監看與它的結束條件見 [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)。
+入侵指標比對的是一個已知攻擊者在某段時間留下的具體痕跡，攻擊者換了來源位址或工具就比對不到，所以每一條指標的效力有範圍與期限。指標沒有記下來源、取得時間與有效範圍時，之後的人看到一次命中，判斷不了它是同一個攻擊者再次出現，還是那個位址已經換給別人使用。偵測規則沒有標明它屬於哪一次事故時，事故結束後沒有人知道哪些規則可以退役，過期的規則持續留在偵測系統裡產生誤報；標明之後，事故結束時依規則的生命週期檢討是否保留。告警怎麼併進既有偵測規則見 [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)；根除之後的監看與它的結束條件見 [8.25 建置主機被入侵後的根除與重建](/backend/08-incident-response/compromised-build-host-eradication/)。

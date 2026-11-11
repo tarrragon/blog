@@ -30,7 +30,7 @@ CloudTrail 預設記錄 management event（建立、修改、刪除資源的 API
 - **保留期限**：預設 90 天免費查閱；超過需要建 trail 存到 S3，費用是 S3 儲存成本
 - **事件範圍**：management event 預設開啟；data event（S3 物件讀寫、Lambda invoke）要額外設定，且量大時儲存成本可觀
 - **跨帳號整合**：多帳號架構下，Organization trail 可以把所有帳號的事件集中到一個 S3 bucket
-- **存取控制**：CloudTrail 的 S3 bucket 本身要限制存取 — 能修改稽核日誌等於能掩蓋操作痕跡
+- **存取控制**：能修改或刪除 CloudTrail S3 bucket 內容的身分，也改得掉記錄自己操作的那幾筆紀錄，稽核日誌就不再保持寫入時的原樣；所以這個 bucket 的修改與刪除權限另外收窄
 
 ## 鄰卡
 

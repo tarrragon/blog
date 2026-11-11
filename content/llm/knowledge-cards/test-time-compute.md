@@ -39,9 +39,4 @@ DeepSeek-R1 paper 顯示「reasoning trace 長度跟 benchmark 表現正相關�
 
 ## 判斷條件與後果
 
-讀 paper / benchmark 看到「pass@1 vs pass@10」「budget tokens」「thinking time」等就跟 test-time compute 相關。寫 code 場景的判讀：
-
-1. **Reasoning model 算成本翻倍**：同一個 prompt、reasoning model 生 5000 token thinking + 500 token answer、傳統 model 直接生 500 token answer、推論成本差 ~10 倍
-2. **本地跑 reasoning model 的痛點**：需要長 [context window](/llm/knowledge-cards/context-window/) 容納 thinking trace、生成時間長
-3. **適用任務挑選**：複雜 reasoning（math、debug、long horizon planning）值得花 test-time compute；簡單任務（autocomplete、查詢）不值得
-4. **混用策略**：日常用 instruct model、困難任務切到 reasoning model、是個人 dev 常見模式
+Reasoning model 的推論成本跟著 thinking trace 的長度增加。同一個 prompt，reasoning model 生 5000 token 的 thinking 加 500 token 的答案，傳統 model 直接生 500 token 的答案，推論成本差約 10 倍；在本地跑時，thinking trace 還要佔用 [context window](/llm/knowledge-cards/context-window/)，生成時間也拉長。任務需要多步推理（math、debug、long horizon planning）時，多花的 thinking token 換得到答案品質，原因是模型在 trace 裡逐步推演中間結果；任務是 autocomplete、查詢這類一步就答得出的工作時，多出來的 trace 不改善答案，只增加成本與等待時間。所以個人開發常見的配置是日常用 instruct model，困難任務才切到 reasoning model。讀 paper 或 benchmark 時，「pass@1 vs pass@10」「budget tokens」「thinking time」這些指標比較的都是推論時投入多少計算量。

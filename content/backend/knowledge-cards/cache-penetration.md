@@ -17,4 +17,4 @@ Cache penetration 是快取放大面的攻擊向量，與 [cache stampede](/back
 
 ## 判斷條件與後果
 
-設計時要把不存在的結果也納入快取（negative cache），並對回源路徑加 rate limit 與請求來源限制。判讀時要先區分這是 penetration（不存在的 key 枚舉）還是 stampede（熱門 key 同時失效），兩者防護不同，誤套解法會無效。
+快取只存查得到的結果時，查詢不存在的 key 永遠 miss，每一個請求都打到資料庫。不存在的結果也寫進快取（[negative cache](/backend/knowledge-cards/negative-cache/)）時，同一個不存在的 key 第二次查詢就被快取擋下；攻擊者每次換一個新的 key 時 negative cache 擋不到，回源路徑的 rate limit 與請求來源限制決定資料庫最多承受多少這類查詢。penetration 與 stampede 都表現為回源 QPS 上升，分界在 key：大量不同、不存在的 key 是 penetration，同一個熱門 key 同時失效是 stampede。stampede 的 soft TTL 與 single-flight 套在 penetration 上沒有效果，原因是每個不存在的 key 只被查一次，沒有可以合併的重建或可以延後的過期。

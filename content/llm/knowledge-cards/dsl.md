@@ -28,4 +28,4 @@ DSL 的風險是語法看起來可控，但語意與權限仍然危險。模型�
 
 ## 判斷條件與後果
 
-DSL 適合操作集合固定、需要高可控性、且自然語言到執行之間需要審計紀錄的場景。設計時先定義最小語法、失敗路由與不可表示狀態；需要讓 LLM 穩定產生 DSL 時，用 [grammar](/llm/knowledge-cards/grammar/) 或 JSON Schema 約束輸出。下一步路由是 [Structured Output](/llm/knowledge-cards/structured-output/) 與 [Sampling Constraint](/llm/knowledge-cards/sampling-constraint/)。
+DSL 適合三個條件同時成立的場景：操作集合固定、需要高可控性、自然語言到執行之間需要審計紀錄。操作集合不固定時，語法要跟著不斷擴充，可解析、可檢查的範圍也一起變大，DSL 相對於通用程式碼的可控優勢隨之縮小。設計時沒有先定下的三件事各有後果：語法不是最小集合時，模型能生成的合法輸入變多，validator 與 authorization 要檢查的範圍跟著變大；沒有失敗路由時，parse 或 validate 失敗的輸出沒有預先定好的去處；沒有界定不可表示的狀態時，危險的操作可能寫成合法的語法。需要讓 LLM 穩定產生合法的 DSL 時，用 [grammar](/llm/knowledge-cards/grammar/) 或 JSON Schema 約束輸出，語法不合法的字串在生成階段就被排除。下一步路由是 [Structured Output](/llm/knowledge-cards/structured-output/) 與 [Sampling Constraint](/llm/knowledge-cards/sampling-constraint/)。

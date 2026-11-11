@@ -25,11 +25,11 @@ aliases: ["/infra/knowledge-cards/environment-separation/"]
 
 ## 判斷條件與後果
 
-環境分離失效的典型形態是一次 `terraform apply` 改到了另一個環境的資源，以下的設計各自封住一條造成這種失效的路徑：
+環境分離失效的典型形態是一次 `terraform apply` 改到了另一個環境的資源。下面三項設定各自決定一條通往這種失效的路徑是否存在：
 
-- **隔離層級**：帳號級、目錄級、還是 workspace 級。判斷依據是團隊規模、合規要求、與維運餘裕
-- **參數化邊界**：dev 與 prod 之間的差異全部用參數表達（instance size、multi-AZ、backup retention），module 內部不寫環境判斷
-- **state 位址分離**：每個環境的 state backend 位址獨立，互不交叉
+- **隔離層級**：workspace 級在執行期切換 state，切換不出現在指令上，忘了切就把 dev 的變更套到 prod；目錄級讓每個環境各有目錄與 state，打錯環境要先進錯目錄，路徑寫在指令上看得見；帳號級連憑證都分開，dev 的憑證碰不到 prod 的資源，代價是多個帳號的權限與帳單要分別管理。合規要求環境之間連權限都不能互通時，只有帳號級做得到；團隊人少、維運餘裕小時，目錄級用較低的管理成本換到顯式的邊界
+- **參數化邊界**：dev 與 prod 的差異寫成 module 裡的 `if env == "prod"` 判斷時，差異散在程式碼各處，改一個環境的行為要讀懂每一個分支，漏改一處就讓兩個環境走同一條路；差異全部寫成參數值（instance size、multi-AZ、backup retention）時，兩個環境的差別集中在參數檔，比對參數檔就看得到
+- **state 位址**：兩個環境的 state backend 位址相同時，它們共用同一份 state，任一環境的 apply 都可能改到另一個環境的資源；位址各自獨立時，apply 只看得到自己環境的資源
 
 ## 鄰卡
 

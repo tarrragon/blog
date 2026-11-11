@@ -29,4 +29,4 @@ Model card 的核心概念是「模型發布時附帶的 metadata 文件、列�
 
 理解 model card 後可以解釋兩個現象：為什麼選模型不能只看名字（同個 base model 的不同 fine-tune 版本能力差很多）、為什麼商用前要看 license（Llama Community License、Apache 2.0、MIT 等差異大）。
 
-實務上選模型時、model card 是第一閱讀對象、其他資訊（社群評測、benchmark leaderboard）作為交叉驗證；引用模型時應該明確記下「base model + fine-tune 變體 + 量化版本」三層。詳見 [6.0 模型供應鏈與信任邊界](/llm/06-security/model-supply-chain-trust/) 跟 [LLM Deployment 供應鏈完整性](/backend/07-security-data-protection/llm-deployment-supply-chain/)。
+選模型時，model card 是發布者寫的第一手資料，社群評測與 benchmark leaderboard 是第三方的觀察，拿來交叉驗證 model card 的宣稱。引用模型時只寫模型名稱分不出是哪一份權重：同一個 base model 的不同 fine-tune 變體能力差很多，同一個變體的不同量化版本品質與記憶體需求也不同，所以紀錄寫到 base model、fine-tune 變體與量化版本三層，事後才查得回當初用的是哪一個檔。詳見 [6.0 模型供應鏈與信任邊界](/llm/06-security/model-supply-chain-trust/) 跟 [LLM Deployment 供應鏈完整性](/backend/07-security-data-protection/llm-deployment-supply-chain/)。

@@ -39,12 +39,10 @@ injection → LLM 輸出 → 下游動作（這裡才是真正攻擊面）
 
 ## 判斷條件與後果
 
-理解 prompt injection 後可以解釋兩個現象：為什麼「擋住 injection」對 production LLM application 是不切實際的目標（外部內容會持續引入）、為什麼防禦重點應該放在「下游動作的可逆性 + review checkpoint」（injection 不可完全擋住、但後果可以收斂）。
+Production LLM application 的 context 會持續讀進外部內容（檔案、網頁、tool 回傳），只靠擋住 injection 的防禦，漏掉一次就讓攻擊者的指令走到下游動作。injection 本身不改變任何狀態，改變狀態的是 LLM 輸出之後的那個動作，所以防禦的效果取決於下游動作的範圍是否受到限制、做錯了能否復原。三個防禦層各自缺席時，系統處在的狀態：
 
-防禦設計的層次：
-
-1. **降低觸發率**：明確標記 untrusted 內容、強化模型對齊（vendor 端責任）。
-2. **限制能力上限**：[tool use](/llm/knowledge-cards/tool-use/) 白名單、副作用可逆性、agent loop 步數限制。
-3. **後果可控**：人為 review checkpoint、自動偵測異常（見 [LLM Service 偵測訊號覆蓋](/backend/07-security-data-protection/llm-as-service-detection-coverage/)）。
+1. **沒有降低觸發率的措施時**（不標記哪些內容來自 untrusted 來源、模型的對齊較弱），模型較常照著外部內容裡的指令做，能力上限與後果控制兩層要攔的次數變多。強化對齊是 vendor 端的工作，應用端做得到的是標記 untrusted 內容。
+2. **沒有限制能力上限時**（沒有 [tool use](/llm/knowledge-cards/tool-use/) 白名單、副作用不可逆、agent loop 沒有步數限制），一次成功的 injection 能呼叫任何 tool、做出無法復原的修改，並在 loop 裡連續執行多步，損害的範圍沒有上限。
+3. **沒有後果控制時**（沒有人為 review checkpoint、沒有自動偵測異常，見 [LLM Service 偵測訊號覆蓋](/backend/07-security-data-protection/llm-as-service-detection-coverage/)），越過觸發率與能力上限兩層的動作直接生效，事後也沒有訊號指出哪一步是被誘導的。
 
 詳見 [6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/) 跟 [LLM Agent Prompt Injection 後果治理](/backend/07-security-data-protection/llm-prompt-injection-in-agent/)。

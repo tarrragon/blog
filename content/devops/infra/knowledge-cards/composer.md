@@ -35,6 +35,8 @@ Composer 是 PHP 的套件管理工具，角色等同於 Node.js 的 npm、Pytho
 - `composer audit`：掃描已安裝套件的已知安全漏洞
 - `composer outdated`：列出可更新的套件及其最新版本
 
+部署時用哪一個指令，決定了每台機器上的套件版本是否一致。部署腳本跑 `composer update` 時，每台機器在自己執行的那一刻重新解析 `composer.json` 的版本範圍，範圍內有新版發佈的話，先部署與後部署的機器拿到不同版本，也跟開發時測過的版本不同，而且每台機器各自改寫了自己的 `composer.lock`，事後從 repo 看不出線上實際跑的是哪個版本。跑 `composer install` 時，版本照 repo 裡的 `composer.lock` 安裝，每台機器拿到的是同一組版本。repo 裡沒有 `composer.lock` 時，`composer install` 也只能從版本範圍解析，得到的結果跟 `update` 一樣會隨安裝時間改變。所以升級依賴的 `update` 在開發環境跑，把改寫後的 `composer.lock` 提交進 repo，部署只跑 `install`。
+
 ## 鄰卡
 
 - [.env](/devops/infra/knowledge-cards/dotenv/)：Composer 管套件、.env 管設定值，兩者都是 PHP 專案的基礎設施

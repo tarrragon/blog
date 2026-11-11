@@ -6,7 +6,6 @@ description: "說明同一 client 如何在一段時間內持續命中同一個�
 weight: 131
 ---
 
-
 Sticky Session 的核心概念是「讓同一個 client、session 或 connection 在一段時間內持續命中同一個服務實例」。它是一種負載平衡策略，常用來維持本機狀態、暫存資料或未外部化 session 的可用性。 可先對照 [Stream Pipeline](/backend/knowledge-cards/stream-pipeline/)。
 
 ## 跟其他概念的關係
@@ -27,4 +26,4 @@ Sticky Session 位在 client、load balancer、application instances 與 session
 
 ## 判斷條件與後果
 
-設計時要定義黏著的判斷鍵、有效時間、失效後怎麼重新導向、以及單一 instance 故障時如何處理 session 遷移。Sticky Session 會讓負載分佈變得不均，因此要清楚知道它是權宜策略，不是預設最佳解。
+Sticky session 把同一個 client 固定在一個 instance 上，每台 instance 的負載因此取決於分到的 session 數與這些 session 的活躍程度：重度使用者或長連線集中在某一台時，那一台先到資源上限，其他台還有餘裕。判斷鍵（cookie、session id、來源 IP）決定哪些請求算同一個 client，用來源 IP 當判斷鍵時，同一個 NAT 後面的大量使用者都被分到同一台。有效時間沒有設定時，黏著關係一直保留到 instance 下線，新加入的 instance 分不到既有的 session，擴充之後負載仍集中在舊的那幾台。被黏著的 instance 故障時，存在它本機的 session 狀態跟著消失，使用者被重新導向到別台之後要重新登入或從頭走多步驟流程。這幾種代價都來自狀態留在本機，所以 sticky session 是 session state 移到共享儲存之前的權宜做法。

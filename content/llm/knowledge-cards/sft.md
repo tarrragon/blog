@@ -37,3 +37,5 @@ SFT 後同一個模型行為大改：
 ## 判斷條件與後果
 
 讀 model card 看到「instruct」「chat」「-it」「sft」等 suffix、就是經過 SFT 的版本。寫 code 場景用的模型幾乎都是 SFT 後的（base model 對話能力差、實用度低）。Coding-tuned 模型（如 Qwen3-Coder）是 SFT 階段大量加入 code 對話資料的特化版本、跟通用 instruct 模型在 code 任務上有可觀差距。
+
+挑模型與自己做 SFT 時，判斷各有一個條件。挑模型時，條件是使用方式：拿來對話或下指令時，base model 會把指令當成要接下去的文字，輸出另一串類似的指令而不是答案，所以這類用途選有 instruct 或 chat 標記的版本；base model 適合的用途是拿來自己再做 SFT，原因是它還沒有被某一套指令資料定型。自己做 SFT 時，條件是資料的量與涵蓋範圍：資料量少、只涵蓋一個窄領域時，全參數 fine-tune 會讓模型在這個領域變好，同時在資料沒涵蓋的任務上退步（災難遺忘），原因是所有權重都朝這批資料移動、覆蓋了 pre-training 學到的部分；這是 [LoRA](/llm/knowledge-cards/lora/) 只訓練少量新增參數、凍結原始權重的出發點。

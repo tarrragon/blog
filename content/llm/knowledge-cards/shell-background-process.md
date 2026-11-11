@@ -38,4 +38,10 @@ shell 控制 process 的關鍵操作：
 
 ## 判斷條件與後果
 
-選前景 vs 背景的判讀：debug 場景前景跑、能直接看到 log；日常使用改 [launchd service](/llm/knowledge-cards/launchd-service/) 跑、跟 shell session 完全脫鉤。`&` 適合「terminal 開著就讓它跑、關掉也沒關係」的臨時場景、不適合需要長期穩定的服務。排錯時養成「先 `lsof` 找誰佔資源、再 `ps` 確認身分、最後才 kill」的順序、避免誤殺。
+前景、`&` 背景與 launchd service 的差別在 process 跟 shell session 綁得多緊，選哪一種看這個 server 要跑多久、是否要看到它的輸出：
+
+- **前景跑時**，stdout 直接印在 terminal 上，log 一出來就看得到，適合 debug；代價是 terminal 被佔住。
+- **用 `&` 放到背景時**，shell 拿回 prompt，process 仍綁在這個 shell session 上，關掉 terminal 視窗時通常隨 SIGHUP 終止。這適合只在 terminal 開著時才需要它的臨時場景；需要長期穩定的服務放在 `&` 底下，會在某次關視窗時停掉而沒有任何提示。
+- **交給 [launchd service](/llm/knowledge-cards/launchd-service/) 時**，process 跟 shell session 完全脫鉤，關掉 terminal 不影響它，適合日常使用的常駐服務。
+
+排錯時，`pkill -f` 用 pattern 比對整條命令列，pattern 不夠精確就會連其他 process 一起送 SIGTERM；所以 kill 之前，先用 `lsof` 查出佔著 port 的 process，再用 `ps aux` 加 `grep` 確認它的命令列與 PID。

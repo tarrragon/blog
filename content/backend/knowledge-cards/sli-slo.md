@@ -20,4 +20,4 @@ SLI 的設計起點是使用者旅程（checkout 是否成功、搜尋是否夠�
 
 ## 判斷條件與後果
 
-SLI 需要定義「什麼算 good request」的邊界（5xx 算 bad、4xx 通常不算）。SLO 需要定義目標值、量測窗口（30 天 rolling）跟 owner。SLO 跟 [burn rate](/backend/knowledge-cards/burn-rate/) alerting 搭配使用，讓 [alert](/backend/knowledge-cards/alert/) 反映使用者影響而非基礎設施噪音。完整設計見 [4.6 SLI/SLO 訊號設計](/backend/04-observability/sli-slo-signal/)。
+SLI 與 SLO 的定義缺了某一項時，數字照樣算得出來，卻支持不了決策。SLI 沒有界定什麼算 good request 時，client 送錯參數造成的 4xx 也可能被算成服務失敗，SLI 混進了 client 自己的錯誤，所以常見的界定是 5xx 算 bad、4xx 通常不算；SLO 沒有量測窗口（例如 30 天 rolling）時，同一個目標值換一個時段計算就可能從達標變成不達標；SLO 沒有 owner 時，[error budget](/backend/knowledge-cards/error-budget/) 耗盡之後，暫停發版這個決定沒有指定的決策者。SLO 搭配 [burn rate](/backend/knowledge-cards/burn-rate/) alerting 時，[alert](/backend/knowledge-cards/alert/) 依預算消耗的速度觸發，反映使用者受到的影響；直接對基礎設施指標設門檻時，alert 反映資源的波動，其中包括不影響使用者的波動。完整設計見 [4.6 SLI/SLO 訊號設計](/backend/04-observability/sli-slo-signal/)。

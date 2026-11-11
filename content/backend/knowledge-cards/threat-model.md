@@ -22,4 +22,4 @@ Threat model 位在 [attack surface](/backend/knowledge-cards/attack-surface/)�
 
 ## 判斷條件與後果
 
-Threat model 要交出資產清單、邊界清單、攻擊者能力假設，以及每個假設對應的控制意圖。它的責任是讓風險的位置可列舉、可複查、可在條件變化時重跑；模型本身不提供保證，同一份模型在攻擊者能力假設更新之後就要重新走一次。模型的產出接 [7.21 資安如何成為服務設計輸入](/backend/07-security-data-protection/security-as-service-design-input/) 的設計輸入欄位，濫用情境的細節交給 [abuse case](/backend/knowledge-cards/abuse-case/)。
+Threat model 的產出缺了哪一項，風險的位置就在那一項上無法複查：沒有資產清單時，風險的排序沒有依據；沒有邊界清單時，跨界點的列舉不完整；沒有寫下攻擊者能力假設時，一個控制對準的是哪一種攻擊者無法驗證，爭論又回到「感覺不安全」與「還沒出過事」；假設沒有對應的控制意圖時，列舉出來的風險不知道由哪一個控制處理。模型本身不提供保證，它的結論綁在寫下的攻擊者能力假設上；新增整合對象、資料分級上調或客戶端形態變更讓假設改變時，原本的結論不再成立，所以模型在這些時候重新走一次。模型的產出接 [7.21 資安如何成為服務設計輸入](/backend/07-security-data-protection/security-as-service-design-input/) 的設計輸入欄位，濫用情境的細節交給 [abuse case](/backend/knowledge-cards/abuse-case/)。

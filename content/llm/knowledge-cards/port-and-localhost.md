@@ -63,4 +63,4 @@ curl http://<本機 LAN IP>:11434/api/version # 若 listen 在 0.0.0.0、會通�
 - **`0.0.0.0` 在家用 / 信任 LAN**：把 server 暴露給同網路裝置、便於多裝置共用、風險可接受
 - **`0.0.0.0` 在公共 Wi-Fi / 對 internet**：等於對所有路過裝置開放、Ollama 沒有內建 auth、需要 SSH tunnel 或 reverse proxy + auth 才安全
 
-Port 衝突的處理順序：用 `lsof` 確認佔用方身分 → 若是舊版自己 kill、若是別的服務改自己的 port → 同步更新 IDE plugin 的 `apiBase`。完整資料流判讀見 [0.7 隱私資料流](/llm/00-foundations/privacy-data-flow/)。
+Port 衝突時，處置依佔用方是誰而不同，所以 `lsof` 查出的佔用方身分決定後面的動作。佔用方是自己的舊版 server 時，它本來就要被取代，結束它就釋出 port；佔用方是別的服務時，結束它會讓那個服務停擺，所以改的是自己的 port。自己的 port 改了之後，IDE plugin 的 `apiBase` 仍指著舊 port，介面層連不上 server，所以 `apiBase` 跟著改成新的 port。完整資料流判讀見 [0.7 隱私資料流](/llm/00-foundations/privacy-data-flow/)。

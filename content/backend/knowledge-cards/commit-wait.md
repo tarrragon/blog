@@ -17,4 +17,4 @@ Commit wait 出現在 Spanner 系列產品、是 [TrueTime](/backend/knowledge-c
 
 ## 判斷條件與後果
 
-設計時要把 commit wait 當成「Spanner 寫入路徑的固定 latency 稅」、不是可優化掉的成本。region layout 決策直接影響 commit wait — voting region 散布越廣、ε 上限越高、commit wait 越長。read-only transaction 可用 `exact_staleness` / `bounded_staleness` 避開 commit wait、適合 reporting / analytics；strong consistency read 要付完整 commit wait + quorum cost、要主動分流。把寫入路徑當「等 commit wait → quorum 已 ack」兩段同步來推 SLO、不是只看 quorum latency 就估完。
+Commit wait 是 Spanner 每一筆 read-write transaction 寫入路徑上的固定 latency，長度約 2ε，調校 application 或加機器都不會讓它變短。寫入路徑的 SLO 只用 quorum latency 推估時，估出來的延遲少了 commit wait 這一段；把寫入當成「等 commit wait」與「等 quorum ack」兩段同步的時間相加，推出的才是實際的寫入延遲。ε 隨 region layout 改變：voting region 散布越廣，ε 上限越高，commit wait 越長，所以 region layout 的選擇同時決定了寫入延遲的下限。讀取路徑的成本依一致性要求而不同：read-only transaction 用 `exact_staleness` 或 `bounded_staleness` 讀稍舊的快照時不付 commit wait，適合 reporting 與 analytics；strong read 不付 commit wait（commit wait 是寫入端在回報提交之前的等待），它付的是另一種等待：讀取的時間戳要等副本的 safe time 追上，必要時向 leader 確認之前的寫入都已提交，所以延遲比讀稍舊快照高，只有要求讀到最新寫入的路徑才分流到它。

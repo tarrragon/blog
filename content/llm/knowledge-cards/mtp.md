@@ -27,4 +27,4 @@ MTP 屬於模型推論優化層、跟 [autoregressive](/llm/knowledge-cards/auto
 
 ## 判斷條件與後果
 
-寫 code 場景的多數使用者透過 Ollama 一行啟用 MTP：`ollama run gemma4:31b-coding-mtp-bf16`。看到「N 倍加速」報導時要追問來源與任務：官方 Google 數據是 2 ~ 3 倍；「40%」這類數字常常來源不明、可能是社群文章作者的估算。判讀加速幅度時、回到[本卡](/llm/knowledge-cards/mtp/) 與 [speculative decoding](/llm/knowledge-cards/speculative-decoding/) 的官方來源比對。
+寫 code 場景的多數使用者透過 Ollama 一行啟用 MTP：`ollama run gemma4:31b-coding-mtp-bf16`。MTP 的加速幅度隨任務而變：Google 官方數據是 coding 任務 2 ~ 3 倍，純文字寫作與創意任務約 1.5 ~ 2 倍，原因是寫作與創意文字的 pattern 預測度較低（〈可觀察訊號與例子〉）。報導寫「N 倍加速」而沒有寫來源與任務時，這個數字對不到任何一種任務的條件，無從判斷它是否成立；「40%」這類數字常常來源不明，可能是社群文章作者的估算。所以判讀加速幅度時，拿本卡與 [speculative decoding](/llm/knowledge-cards/speculative-decoding/) 引用的官方來源比對。

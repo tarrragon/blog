@@ -18,4 +18,4 @@ Query rewriting 位在 [RAG](/llm/knowledge-cards/rag/) pipeline 的 query 端�
 
 ## 判斷條件與後果
 
-改寫要保留原始意圖，避免把「診斷原因」改成「優化方案」這類偏移。實務上要保存 original query，retrieve 後再用原始 query 檢查結果是否對題。
+改寫後的查詢偏離原始意圖時（把「診斷原因」改成「優化方案」），retrieve 回來的文件對的是改寫後的題目，回答看起來完整而答非所問，原因是 retriever 只看得到改寫後的文字；所以 original query 要留著，retrieve 之後拿它檢查結果是否對題。

@@ -21,7 +21,7 @@ Vault 在 infra 裡負責「機密值的集中管理」。跟直接把密碼寫�
 
 ## 判斷條件與後果
 
-Vault 重新啟動後處於 sealed 狀態，解封之前任何服務都讀不到機密，所以 unseal 方式與 storage backend 決定 Vault 停機後多快能恢復，認證方式與 secret engine 決定哪個身分能取得哪一種機密。要定的是：unseal 方式（連網用 cloud auto-unseal、斷網用 Shamir's secret sharing——需要 N 把 key 中的 M 把才能解鎖）、storage backend（Consul、PostgreSQL、filesystem）、認證方式（人用 LDAP/OIDC、機器用 AppRole）、secret engine 的選擇（KV 存靜態值、PKI 簽發數位憑證、database 動態產生 DB 帳號、SSH 依登入身分簽發短期 SSH 憑證）。
+Vault 重新啟動後處於 sealed 狀態，解封之前任何服務都讀不到機密，所以 unseal 方式決定 Vault 停機之後多快恢復。環境連得到雲端時，cloud auto-unseal 讓 Vault 啟動後自己解封，恢復時間只剩啟動時間；斷網環境用 Shamir's secret sharing 時，要湊齊 N 把 key 中的 M 把才能解鎖，恢復時間取決於多快找到 M 個持有 key 的人，半夜重啟時所有依賴 Vault 的服務一起等。storage backend（Consul、PostgreSQL、filesystem）存放的是加密後的機密，它停了 Vault 也跟著停，所以 Vault 的可用性不會高於它的 storage backend。認證方式與 secret engine 決定哪個身分能取得哪一種機密：人用 LDAP/OIDC、機器用 AppRole 時，人員離職隨 IdP 收回、機器的身分另外管理；secret engine 選 KV 時存的是靜態值，外洩之後一直有效到有人輪替，選 database 或 SSH 這類動態產生帳號或短期憑證的引擎時，外洩的那一份在租期結束就失效，PKI 則用來簽發數位憑證。
 
 ## 鄰卡
 

@@ -25,4 +25,4 @@ HTTP function 的 `prod` alias 先把 5% 流量導向 version 42。若錯誤率�
 
 ## 判斷條件與後果
 
-Function Alias 要定義版本命名、流量權重、觀測指標、事件來源綁定與回復條件，讓函式發布具備可控入口。
+Function Alias 讓回退只需要改一個指向，前提是呼叫方與 event source 都綁在 alias 上。event source 直接綁在某個 version 時，alias 切回 version 41，那條事件來源仍然觸發 version 42，回退只涵蓋了經由 alias 進來的流量。alias 用流量權重分出 canary 時，錯誤率沒有依版本分開觀測，就分辨不出錯誤來自新版還是舊版；回復條件（錯誤率到多少就切回）沒有事先寫下時，是否切回在事故當下才討論，入口停在壞版本上的時間跟著拉長。

@@ -19,4 +19,4 @@ Spanner 是 interleaved table 的代表 vendor — `CREATE TABLE Order ... INTER
 
 ## 判斷條件與後果
 
-設計 interleaved table 必須在 schema 階段就 audit access pattern — 哪些 parent-child 該 interleave 在資料量小時容易決定、資料量到 10 億 row 後再改是大工程。child PK prefix 限制意味設計時要把「跟誰 co-locate」當 schema 主軸、不只是 logical 關聯。不適合 interleave 的情境：child 對多個 parent 有 N:M 關係、access pattern 跨 parent aggregation（report 跨所有 customer 算 orders 總和）、parent 跟 child 寫入頻率差異極大（hot parent 拖累 cold child storage）。錯用 interleave 會把 parent 的 hot range 問題擴散到 child、反而比獨立表更糟。
+Interleave 的關係建立之後無法用 ALTER 改，要改得 export、重建再 import，資料量小時這個代價低，到 10 億 row 時是一項大工程，所以哪些 parent-child 要 interleave 在 schema 設計階段就依 access pattern 決定。child PK 必須以 parent PK 為 prefix，這個限制讓「child 跟誰 co-locate」成為 schema 的主軸，logical 關聯只是其中一個考量。三種情境下 interleave 換到的是代價：child 對多個 parent 有 N:M 關係時，child 只能存放在其中一個 parent 旁邊，對其他 parent 的 JOIN 照樣跨 split；access pattern 是跨 parent 的 aggregation（報表跨所有 customer 算 orders 總和）時，掃描本來就要走過全部 parent，co-location 省不到跨 split 的成本；parent 寫入頻繁而 child 很少寫時，parent 所在的 hot range 同時涵蓋它的 child，child 跟著承受那個 range 的負載與 split。後一種情形把 parent 的 hot range 擴散到 child，延遲比 child 獨立成表時更差。

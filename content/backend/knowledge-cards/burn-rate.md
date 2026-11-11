@@ -20,4 +20,4 @@ Burn rate alerting 比固定閾值 alert 更能反映使用者影響 — 低流�
 
 ## 判斷條件與後果
 
-Burn rate alerting 用 multi-window 策略：短窗口（5min）抓急性 + 長窗口（1hr）做確認，兩個窗口都超過閾值才觸發。Recording rule 預計算各窗口的 error ratio，讓 alert evaluate 讀預計算結果而非重算 raw series。完整設計見 [4.6 SLI/SLO 訊號設計](/backend/04-observability/sli-slo-signal/)。
+Burn rate alert 只看單一窗口時，窗口長度決定它錯在哪一邊：只看短窗口（5min），幾分鐘的 error 尖峰就觸發，尖峰自行消失後留下一筆不需要處理的告警；只看長窗口（1hr），急性事故要累積到一小時的平均才超過閾值，偵測晚了。multi-window 策略讓兩個窗口都超過閾值才觸發，短窗口提供速度，長窗口確認錯誤是持續的。alert 每次 evaluate 都從 raw series 重算各窗口的 error ratio 時，查詢成本隨窗口長度與 series 數量增加，所以用 recording rule 預計算各窗口的 error ratio，alert 讀預計算的結果。完整設計見 [4.6 SLI/SLO 訊號設計](/backend/04-observability/sli-slo-signal/)。

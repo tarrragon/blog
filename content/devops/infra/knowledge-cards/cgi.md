@@ -21,4 +21,4 @@ CGI 是「web 伺服器負責 HTTP、外部程式負責產生內容」這個分�
 
 ## 判斷條件與後果
 
-接手 CGI 部署時，要知道它的每請求啟動成本與隔離方式；換成 PHP-FPM 時，用 pool 的執行帳號保留原本 suEXEC 提供的隔離。詳見 [CGI](/programming/php/01-server-runtime/cgi/)。
+接手的部署以 CGI 執行 PHP 時，每個請求都啟動一個新程序，啟動成本每個請求付一次，OPcache 也因為程序每次結束而命中不了。共享主機上的 CGI 部署常搭配 suEXEC，讓每個站台以自己的帳號執行，站台之間的檔案隔離就依賴這一層。換成 PHP-FPM 時程序改為常駐，每請求的啟動成本消失，而 suEXEC 不再參與，執行帳號改由 PHP-FPM pool 的設定決定；所有站台共用一個 pool 時，它們以同一個帳號執行，原本的隔離跟著消失，所以每個站台各開一個 pool、各自指定執行帳號。詳見 [CGI](/programming/php/01-server-runtime/cgi/)。

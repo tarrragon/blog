@@ -27,4 +27,4 @@ Hugging Face / Ollama 上 base model 通常會明示：
 
 ## 判斷條件與後果
 
-下載模型前確認是 instruct 還是 base 版本。Ollama registry 預設提供 instruct 版本、但 Hugging Face 上同一個模型常同時有兩種；挑錯版本會以為「這個模型很差」、其實只是用錯類型。想做 fine-tuning 的工程師才需要 base model；其他人優先選 instruct。
+同一個模型在 Hugging Face 上常同時有 base 與 instruct 兩個版本，Ollama registry 則預設提供 instruct 版本。拿 base 版本來對話時，模型把提問當成要續寫的文字，得到的是上面那種文字接龍，看起來像模型能力差，成因是版本用錯：base model 沒有經過 instruction tuning，沒學過「輸入是要回答的指令」這種交互模式。base model 的用途是當自己 fine-tune 的起點；拿模型來對話或寫 code 時，對應的是 instruct 版本，所以下載前從名稱或 model card 確認是哪一種。

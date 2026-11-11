@@ -18,4 +18,4 @@ oMLX 位在 [three-layer architecture](/llm/knowledge-cards/three-layer-architec
 
 ## 判斷條件與後果
 
-評估 oMLX 時，重點是工作流是否真的受長 context 與 [TTFT](/llm/knowledge-cards/ttft/) 影響；短 prompt 對話通常未必需要特化 serving。下一步路由是 [MLX](/llm/knowledge-cards/mlx/)、[KV Cache](/llm/knowledge-cards/kv-cache/) 與 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。
+oMLX 換到的效益取決於工作流的 prompt 長度。工作流常塞長 context、[TTFT](/llm/knowledge-cards/ttft/) 被長 context 的 prefill 拉長時，oMLX 的長 context 與 KV cache 管理縮短的正是這段等待；短 prompt 的對話 prefill 本來就快，特化 serving 能縮短的時間很少，換推論伺服器的成本不一定回收得了。下一步路由是 [MLX](/llm/knowledge-cards/mlx/)、[KV Cache](/llm/knowledge-cards/kv-cache/) 與 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。

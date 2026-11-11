@@ -5,7 +5,6 @@ description: "說明 broker 在訊息傳遞系統中負責保存、路由與交�
 weight: 2
 ---
 
-
 Broker 的核心概念是「位於 [producer](/backend/knowledge-cards/producer/) 與 [consumer](/backend/knowledge-cards/consumer/) 之間的訊息中介」。Producer 把工作或事件交給 broker，broker 依照 [topic](/backend/knowledge-cards/topic/)、[queue](/backend/knowledge-cards/queue/)、[routing rule](/backend/knowledge-cards/routing-rule/) 或 stream position 保存與分派訊息，consumer 再從 broker 取得訊息並處理。
 
 ## 跟其他概念的關係
@@ -22,4 +21,4 @@ Broker 把「送出訊息」與「處理訊息」分開。這個分離讓 reques
 
 ## 判斷條件與後果
 
-Broker 導入後，系統要明確定義訊息格式、投遞保證、[retry policy](/backend/knowledge-cards/retry-policy/)、[dead-letter queue](/backend/knowledge-cards/dead-letter-queue/)、[consumer lag](/backend/knowledge-cards/consumer-lag/) 告警、權限與 [replay runbook](/backend/knowledge-cards/replay-runbook/)。設計焦點是把「訊息送出去」升級成「訊息可追蹤、可恢復、可控制地被處理」。
+Broker 導入後，訊息送出去之後的處理過程能不能被追蹤、恢復與控制，取決於幾項定義是否齊全，每缺一項就有一種失敗沒有人接手。訊息格式沒有定義時，producer 改一個欄位，所有 consumer 在下一次解析時失敗；投遞保證沒有寫明時，consumer 判斷不了是否要處理重複送達的訊息；沒有 [retry policy](/backend/knowledge-cards/retry-policy/) 與 [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) 時，處理失敗的訊息不是反覆重試佔住 consumer，就是被丟棄而沒有紀錄；沒有 [consumer lag](/backend/knowledge-cards/consumer-lag/) 告警時，consumer 落後要等使用者發現通知延遲才被看到；沒有權限控制時，任何服務都能往同一個 topic 寫入或讀出；沒有 [replay runbook](/backend/knowledge-cards/replay-runbook/) 時，consumer 修好之後，從哪個位置重放、重放哪些訊息只能在事故當下臨時決定。

@@ -26,4 +26,4 @@ Kubernetes container limit、單機 systemd service 的 cgroup 限制、worker p
 
 ## 判斷條件與後果
 
-設計時要區分 request 與 limit、理解 throttling 與 OOM 的差異，並把上限調整和實際流量、cache、啟動成本與重試行為一起看。Resource Limit 的目標是保護系統穩定，而不是只追求把數字填滿。
+Resource Limit 的判斷看兩組區分與一組連動。request 是 scheduler 排程時保留的量，limit 是執行時的上限；request 設得低於實際用量時，scheduler 會把超出節點實際容量的 instance 排到同一個節點，資源競爭到執行時才出現。CPU 超過上限時程序被 throttling，表現是延遲上升而程序還活著；memory 超過上限時程序因 OOM 被終止，表現是重啟與進行中的請求失敗，兩種故障的排查方向不同。上限的數值跟實際流量、cache 大小、啟動成本與重試行為連動：啟動時的 CPU 尖峰或 cache 暖機的記憶體成長超過上限時，instance 在啟動階段就被 throttle 或終止，它的流量經由重試轉到剩下的 instance，剩下的 instance 也更接近上限。

@@ -25,4 +25,9 @@ Queue 觸發的 function 以 batch 方式處理訊息。新版本解析失敗時
 
 ## 判斷條件與後果
 
-Event Source 要定義 trigger 條件、batch size、retry、dead-letter、replay、權限與 schema 契約，讓事件驅動發布具備可觀測回復路徑。
+Event Source 的設定決定事件處理失敗之後是否能回復，各項設定沒有處理時的狀態：
+
+- **trigger 條件與權限**：篩選條件寫錯或 function 缺少讀取來源的權限時，function 部署成功，invocation 卻失敗或從未觸發。
+- **retry 與 batch size**：失敗的事件會被重新投遞，處理邏輯不具冪等性時，同一筆資料被處理多次；平台以整批為單位重試時，batch 越大，一筆壞資料連帶重試的正常訊息越多。
+- **dead-letter 與 replay**：沒有 dead-letter 時，重試用盡的事件被丟棄；有 dead-letter 而沒有 replay 的方法時，function 修好之後那些事件仍然沒被處理。
+- **schema 契約**：producer 改了事件格式而 subscriber 沒有跟著更新時，新版本解析失敗。

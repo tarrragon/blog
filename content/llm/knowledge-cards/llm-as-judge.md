@@ -28,12 +28,11 @@ LLM-as-Judge 的核心概念是「**用一個 LLM（judge）對另一個 LLM（t
 
 ## 判斷條件與後果
 
-讀 eval framework / production AI app 看到「LLM as judge」「pairwise eval」「LLM evaluator」就是這 framing。寫 code 場景的判讀：
+LLM-as-Judge 的分數可信到什麼程度，取決於 judge 模型的能力，以及 judge 帶進評分的三種 bias：
 
-1. **Judge 模型選擇**：強模型當 judge（GPT-5 / Claude 4 / Gemini 旗艦）、reasoning model 更穩；judge 跟被測同家可能有 self-preference bias
-2. **三大 bias 緩解**：
-   - **Position bias**：A/B pairwise 換位置跑 2 次取一致 vote
-   - **Verbosity bias**：rubric 加「冗長不加分」明確指示、或長度 normalize
-   - **Self-preference bias**：用 3 個不同 judge model 取多數
-3. **跟 [4.21 LLM-as-judge 章節](/llm/04-applications/llm-as-judge/) 的關係**：本卡是定義、章節是工程實務（rubric design、bias 緩解、calibration、trace 串接）
-4. **不是萬靈丹**：高 stake 任務（醫療、法律、安全）仍需 human eval；judge 的天花板 = judge 模型本身的能力
+- **judge 的能力不及被測模型時**：rubric 的每一項都由 judge 自己判定，所以分數的天花板就是 judge 模型本身的能力，被測輸出裡 judge 看不出的錯誤不會反映在分數上。高 stake 任務（醫療、法律、安全）因此仍保留 human eval 當最終檢查。
+- **pairwise 比較只跑一種排列時**：position bias 讓固定位置的回應多拿偏好，兩個變體的勝負混進了位置效應；A/B 換位置各跑一次、只採兩次一致的判定，位置效應就被抵銷。
+- **rubric 沒有處理回應長度時**：verbosity bias 讓較長的回應拿高分，分數同時反映品質與長度；rubric 寫明冗長不加分，或先把長度 normalize，這一項才從分數裡拿掉。
+- **judge 與被測模型同一家時**：self-preference bias 讓 judge 偏好自家模型的輸出，跨廠牌比較的結果偏向 judge 那一家；改用幾個不同家的 judge 取多數，各家的偏好不再朝同一個方向。
+
+rubric 設計、calibration 與 trace 串接的工程做法在 [4.21 LLM-as-judge 章節](/llm/04-applications/llm-as-judge/)。

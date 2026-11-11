@@ -18,4 +18,4 @@ Read-only file search 可以自動；修改檔案要 checkpoint；刪除資料�
 
 ## 判斷條件與後果
 
-先把工具分成 read、local write、external side effect、irreversible operation，再配置 sandbox、allowlist、confirmation、audit log 與 rollback。高風險工具的預設應是人類批准，而不是 prompt 裡要求模型小心。
+一個工具出錯之後能不能挽回，取決於它的副作用範圍：read、local write、external side effect、irreversible operation 四級。read 工具出錯時沒有狀態被改變，自動執行的代價只是一次錯誤的讀取；local write 出錯時本機檔案被改壞，有 checkpoint 或 rollback 才還原得了；external side effect 與 irreversible operation（push、部署、發送外部訊息、刪除資料）一旦執行，本機的 rollback 碰不到它們。模型只生成 tool call，實際執行的是 client、MCP server 或 shell 的 process，所以 prompt 裡要求模型小心，限制不了那個 process 能做的事；高風險工具因此預設由人類批准，並以 sandbox、allowlist 限制 process 碰得到的範圍，audit log 留下事後追查的紀錄。

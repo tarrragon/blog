@@ -18,4 +18,4 @@ UX fallback 位在 [Gate](/ux-design/knowledge-cards/gate/) 設計的失敗路�
 
 ## 判斷條件與後果
 
-UX fallback 的設計責任是確保 gate 失敗時使用者有路可走。Fallback 的選擇取決於安全需求和使用場景 — 銀行 app 可能不提供低安全等級的 fallback，自用工具可以接受密碼 fallback 因為使用者就是 owner。安全 vs 可用性的取捨應在功能規格中顯式記錄。UX fallback 的存在應反映在[畫面狀態矩陣](/ux-design/knowledge-cards/screen-state-matrix/)的退出路徑欄中。
+提供哪一種 fallback，取決於安全需求和使用場景之間的取捨。安全需求高的場景（銀行 app）提供低安全等級的 fallback 時，強驗證可以被較弱的那一條路繞過，所以這類 app 可能只留重試或返回；自用工具的使用者就是 owner，密碼 fallback 帶來的風險低，換到的是 Face ID 失敗時仍然進得去。這個取捨沒有寫進功能規格時，它由實作時的設定值隱含決定，例如 `biometricOnly: true` 讓 Face ID 失敗後沒有密碼可用。gate 失敗的狀態連同它的 fallback 列進[畫面狀態矩陣](/ux-design/knowledge-cards/screen-state-matrix/)的退出路徑欄時，矩陣檢查得到使用者在 gate 失敗之後是否有出口。

@@ -19,4 +19,4 @@ event 被借用成 UI 刷新訊號時會出現四個判讀訊號：為了讓某�
 
 ## 判斷條件與後果
 
-domain event 記錄業務事實、服務審計與跨 domain 通訊。event 的發布時機由業務語意決定（「這件事值得記錄、有下游需要它」），涵蓋面是業務事實的集合——跟狀態流的涵蓋面（寫入操作的集合，結構性涵蓋）正交。載體選用標準、案例演進與判讀訊號展開在 [domain event 與狀態流](/software-design/ddd/domain-event-vs-state-stream/)；事件對命令與查詢的責任結構分界展開在 [domain event 與命令、查詢](/software-design/ddd/domain-event-vs-command-and-query/)。命名的過去式約定展開在 [Domain Event 命名的過去式](/work-log/domain_event_naming_past_tense/)。
+選 domain event 還是 [狀態流](/software-design/ddd/knowledge-cards/state-stream/) 當載體，看消費者要知道的是「發生了什麼」還是「現在是什麼」。審計、跨 domain 流程這類消費者要的是逐筆事實：event 漏掉一筆，審計就斷檔、下游流程就沒有被觸發，原因是事實只在發生的那一刻被記錄一次。只要資料當前值的消費者（畫面刷新）拿 event 當訊號時，event 的發布點由業務語意決定（「這件事值得記錄、有下游需要它」），涵蓋面是業務事實的集合，跟寫入操作的集合不相等，某個寫入路徑沒有對應的事件，那個畫面就停在舊值；狀態流的 emit 寫在每個寫入方法尾端，涵蓋面等於寫入操作的集合，所以這類消費者的載體是狀態流。載體選用標準、案例演進與判讀訊號展開在 [domain event 與狀態流](/software-design/ddd/domain-event-vs-state-stream/)；事件對命令與查詢的責任結構分界展開在 [domain event 與命令、查詢](/software-design/ddd/domain-event-vs-command-and-query/)。命名的過去式約定展開在 [Domain Event 命名的過去式](/work-log/domain_event_naming_past_tense/)。

@@ -25,4 +25,4 @@ Coverage 的陷阱是只看 happy path。訓練範例如果只有成功呼叫工
 
 ## 判斷條件與後果
 
-評估模型能力時，把支援功能改問成覆蓋範圍：支援哪些 tool schema 複雜度、哪些語言、哪些錯誤路徑、哪些反例。下一步路由是用 eval set 補齊代表性情境；如果 coverage 無法補在模型訓練層，就用 [structured output](/llm/knowledge-cards/structured-output/)、validator、retry 與 fallback 降低失敗成本。
+模型宣稱支援某個功能時，部署後穩不穩定取決於訓練範例覆蓋到哪裡：tool schema 的複雜度、語言、錯誤路徑與反例。部署遇到的情境在覆蓋範圍內時，模型的輸出自然穩定；超出範圍時（多工具、nested object、跨語言 query、工具出錯之後的處理），模型照訓練時的傾向回答，例如每次都呼叫工具，在安全與可靠性的邊界上失敗。「支援」兩個字不帶出範圍，所以範圍要靠一份列進代表性情境的 eval set 量出來，掉分的情境就是 coverage 的缺口。缺口補不進模型訓練層時，模型在那些情境的輸出仍然不穩，失敗的成本改由執行層的 [structured output](/llm/knowledge-cards/structured-output/)、validator、retry 與 fallback 攔下與降低。

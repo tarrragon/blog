@@ -20,4 +20,4 @@ Event log 的讀取面透過 [projection](/backend/knowledge-cards/projection/) 
 
 ## 判斷條件與後果
 
-設計時要定義事件 schema 演進（新版 consumer 要能消費舊版事件）、保留期限（無限保留 vs retention-based 清理）、重播邊界（從哪個 offset 開始 replay）與去重策略（[idempotency](/backend/knowledge-cards/idempotency/) 保證）。Event log 的儲存成長是長期成本 — 高頻寫入的系統需要 snapshot 機制或 retention 策略來控制。
+Event log 的事件寫入之後不再修改，所以每一筆舊事件都要在之後的每一次 replay 裡被讀得懂。新版 consumer 讀不懂舊版事件時，replay 到那一段就失敗，原因是舊事件不會被改寫成新格式。保留期限選無限保留時，event log 可以從頭重建任何時點的狀態，代價是儲存隨寫入量持續成長；選 retention-based 清理時，儲存有上限，代價是清掉的那一段再也 replay 不到，在 event sourcing 架構裡等於失去那段的 [source of truth](/backend/knowledge-cards/source-of-truth/)，所以高頻寫入的系統搭配 snapshot，從 snapshot 之後開始 replay。重播邊界沒有定義時，replay 從哪個 [offset](/backend/knowledge-cards/offset/) 開始要當場判斷，起點太早的那一段事件被處理兩次；consumer 沒有 [idempotency](/backend/knowledge-cards/idempotency/) 時，這些重複處理就變成重複的結果。

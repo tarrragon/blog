@@ -20,7 +20,7 @@ RBAC 位在認證之後：誰在呼叫 API（使用者、群組、service accoun
 
 ## 判斷條件與後果
 
-權限綁給群組而不是個人，人員異動在群組裡處理；ClusterRoleBinding 綁 `cluster-admin` 的對象要逐一列得出來，因為它涵蓋叢集裡的一切。內建的 `edit`、`admin` 這類 ClusterRole 範圍很寬，綁在 namespace 層的 RoleBinding 上可以把範圍收在那個 namespace。service account 的權限常被忽略：跑在 Pod 裡的程式用的就是它，權限過大時，那個 Pod 被入侵等於持有那份權限。
+權限綁給個人時，人員異動要找出那個人在每個 namespace 的每一筆 RoleBinding，漏掉的那一筆就是異動之後還留著的權限；綁給群組時，異動在群組裡處理一次。ClusterRoleBinding 綁 `cluster-admin` 的對象涵蓋叢集裡的一切，這份對象清單列不出來時，回答不了誰能對整個叢集做任何事。內建的 `edit`、`admin` 這類 ClusterRole 範圍很寬，用 ClusterRoleBinding 綁定時作用於所有 namespace，綁在 namespace 層的 RoleBinding 上時範圍收在那個 namespace。service account 是跑在 Pod 裡的程式使用的身分，它的權限過大時，那個 Pod 被入侵等於攻擊者持有那份權限，所以 service account 跟人的帳號一樣照 [Least Privilege](/backend/knowledge-cards/least-privilege/) 給權限。
 
 ## 鄰卡
 

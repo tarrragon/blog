@@ -58,10 +58,11 @@ score = α × BM25_score_normalized + (1-α) × embedding_score_normalized
 
 ## 判斷條件與後果
 
-讀 RAG production / retrieval framework 看到「hybrid search」「BM25 + dense」「RRF」就是這 framing。寫 code 場景的判讀：
+Hybrid search 是否值得加，看查詢裡是否同時出現兩種比對失效的情形。
 
-1. **何時值得加 hybrid**：embedding-only retrieval 漏精確 keyword / 識別碼、BM25-only 漏語意相似、混合補完
-2. **何時不需要**：純語意任務（embedding 已準）、純 keyword 任務（BM25 已準）、極小語料
-3. **跟 [reranker](/llm/knowledge-cards/reranker/) 的組合**：hybrid retrieve top-50（BM25 top-25 + embedding top-25、RRF 合併）→ reranker rerank → LLM top-5
-4. **主流實作**：Elasticsearch / OpenSearch 內建、Weaviate / Qdrant / Pinecone 都支援、Postgres 用 pg_search + pgvector
-5. **跟 [4.1 RAG 章節](/llm/04-applications/rag-principles/) 的關係**：本卡是定義、章節是 retrieval pipeline 設計含 hybrid 段
+1. **查詢同時有精確 keyword（識別碼、product code、API 名）與換了說法的語意查詢時**，embedding-only 漏掉精確 keyword，BM25-only 漏掉同義詞與不同表述，單一路線的 recall 各缺一塊，合併兩條路線補回對方的盲點（上面的盲點表）。
+2. **查詢只有其中一種時**（純語意任務 embedding 已經找得準，純 keyword 任務 BM25 已經找得準），或語料極小時，多跑一條路線增加檢索成本，換不到更多相關文件。
+3. **後面接 [reranker](/llm/knowledge-cards/reranker/) 時**，hybrid 負責把候選撈齊，reranker 負責排序：例如 BM25 與 embedding 各取 top-25、RRF 合併成 top-50，reranker 重排之後取 top-5 給 LLM；reranker 只排序收到的候選，hybrid 漏掉的文件它排不回來。
+4. **主流實作**：Elasticsearch / OpenSearch 內建，Weaviate / Qdrant / Pinecone 都支援，Postgres 用 pg_search 加 pgvector。
+
+Retrieval pipeline 的完整設計（含 hybrid 那一段）在 [4.1 RAG 章節](/llm/04-applications/rag-principles/)。

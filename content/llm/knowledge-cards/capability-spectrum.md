@@ -26,4 +26,4 @@ Function calling 的能力光譜可以用幾個訊號量化：單工具成功率
 
 ## 判斷條件與後果
 
-做模型選型或應用設計時，把「有沒有」改成「到什麼程度可用」。判斷標準要包含成功率、覆蓋範圍、錯誤成本、監控訊號與回退路徑。下一步路由是：能力來自訓練資料時讀 [Training Example Coverage](/llm/knowledge-cards/training-example-coverage/)；能力需要推論階段兜底時讀 [Sampling Constraint](/llm/knowledge-cards/sampling-constraint/)。
+模型選型或應用設計用「有沒有」描述能力時，demo 的成功會被當成生產可用。用「到什麼程度可用」描述時，判斷由五項組成，缺任何一項都留下一個看不到的位置：沒有成功率，看不出 happy path 以外的穩定度；沒有覆蓋範圍，不知道拼字錯、缺欄位、多語言輸入這些情形測過沒有；沒有錯誤成本，判斷不了剩下的失敗率能否接受；沒有監控訊號，上線後能力退化時沒有任何指標反映；沒有回退路徑，模型失敗時應用沒有替代的處理。下一步路由是：能力來自訓練資料時讀 [Training Example Coverage](/llm/knowledge-cards/training-example-coverage/)；能力需要推論階段兜底時讀 [Sampling Constraint](/llm/knowledge-cards/sampling-constraint/)。

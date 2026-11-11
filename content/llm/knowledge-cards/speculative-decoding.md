@@ -22,4 +22,4 @@ Google 為 Gemma 4 釋出官方 [drafter](/llm/knowledge-cards/drafter-model/) �
 
 ## 判斷條件與後果
 
-啟用 speculative decoding 需要 target 模型與 drafter 模型用相同 tokenizer。Gemma 4 31B 配 Gemma 4 E4B 可以工作、跨家族（Gemma 配 Llama 等）沒有相容性。多數使用者透過預先打包好的 model tag（如 Ollama 的 MTP 版本）一行啟用、無需自己挑 drafter。
+Target 模型驗證的是 drafter 猜出的 token ID：兩個模型用同一個 tokenizer 時，同一個 ID 在兩邊指同一段文字，驗證才有意義；tokenizer 不同時，drafter 的 ID 在 target 的 vocab 裡對應的是別的文字，猜測無從比對。所以 Gemma 4 31B 配 Gemma 4 E4B 可以運作，跨家族的組合（Gemma 配 Llama 等）沒有相容性。透過預先打包好的 model tag（如 Ollama 的 MTP 版本）啟用時，drafter 已經跟 target 配好，使用者一行指令啟用，不必自己挑 drafter。

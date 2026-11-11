@@ -17,4 +17,4 @@ GTID 位在複製拓撲的進度標記層。沒有 GTID 時，replica 的進度�
 
 ## 判斷條件與後果
 
-設計時要在拓撲全體一致地啟用 GTID，並讓故障切換、CDC consumer 與備援流程都以 GTID 為位置基準。要監控每個 replica 與 consumer 已套用的 GTID 集合，據此判斷延遲與缺口。observability 要能看到 GTID 落後量與是否有 gap。
+GTID 的判斷條件是拓撲裡記錄複製位置的元件是否都用同一種位置基準。部分節點啟用 GTID、部分仍記 binlog 檔加位移時，故障切換後那些節點的接續點仍要手算，自動續傳只在啟用 GTID 的節點上成立；CDC consumer 或備援流程仍記實體 log 位置時，換一台 primary 之後那個位置失效，consumer 重連時可能漏事件或重複。每個 replica 與 consumer 已套用的 GTID 集合有監控時，延遲用落後幾個交易表達，集合裡出現的 gap 代表有交易沒有套用，原因是集合記錄的是交易識別碼本身，缺了哪一筆在集合裡看得出來。

@@ -25,4 +25,4 @@ CI build 產生靜態網站 artifact，browser test 驗證該 artifact，deploy 
 
 ## 判斷條件與後果
 
-Artifact Handoff 要定義產物格式、保留策略、完整性驗證與追溯欄位，讓測試結果可直接映射到發布結果。
+Artifact Handoff 的保證是測試與部署拿到同一份產物，每一個欄位缺席時，這個保證斷在不同位置。產物格式沒有固定時，下游 job 各自重新打包，打包的差異讓測試結果對不上發布內容；保留期短於事故追查需要的時間時，事故發生後原始 artifact 已被刪除，無法重跑測試比對；沒有完整性驗證（checksum 或 image digest）時，傳遞途中被替換或損壞的產物照樣被部署；沒有追溯欄位時，從線上版本反查不到 build run。

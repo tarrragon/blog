@@ -6,7 +6,6 @@ description: "說明風險決策在條件變化時如何自動回到評估流程
 weight: 255
 ---
 
-
 Tripwire 的核心概念是「用可量測訊號讓風險決策在條件變化時回到評估流程」。它把治理決策從一次性同意，轉成可持續更新的閉環。 可先對照 [Security Exception](/backend/knowledge-cards/security-exception/)。
 
 ## 跟其他概念的關係
@@ -28,4 +27,4 @@ Tripwire 位在 [Security Exception](/backend/knowledge-cards/security-exception
 
 ## 判斷條件與後果
 
-Tripwire 要定義 trigger signal、threshold、escalation owner、decision route 與關閉條件。設計重點是訊號可量測、門檻可稽核、觸發後流程可執行。
+Tripwire 的五個組成各自缺席時，重新決策的閉環斷在不同位置。trigger signal 量不到時，風險條件變了也沒有任何紀錄；threshold 沒有寫下數值時，觸發與否由當下看的人判斷，事後無從稽核；沒有 escalation owner 時，訊號觸發了而沒有人接手重評估；沒有 decision route 時，接手的人不知道該送進哪一個流程（release freeze 重評估或 exception 審查）；沒有關閉條件時，觸發狀態一直掛著，下一次觸發與這一次分不開。五項都在時，一次觸發才成為一筆可追蹤的重新決策。

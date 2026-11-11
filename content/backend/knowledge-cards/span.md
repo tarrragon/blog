@@ -20,6 +20,6 @@ Span 有四種 kind：`CLIENT`（發起呼叫）、`SERVER`（接收呼叫）、
 
 ## 判斷條件與後果
 
-Span 設計要控制名稱粒度、屬性選擇、錯誤狀態與敏感資料。Span 名稱太粗（所有 HTTP call 都叫 `HTTP`）會看不出瓶頸；太細（每個 URL path parameter 都獨立命名）會讓 span 名稱成為無界維度、影響 trace backend 的聚合效能。
+Span 的名稱粒度、錯誤狀態與屬性內容，決定 trace backend 是否聚合得出瓶頸，以及 trace 裡是否留下敏感資料。Span 名稱太粗（所有 HTTP call 都叫 `HTTP`）時，不同依賴的延遲混在同一個名稱底下，看不出瓶頸；太細（每個 URL path parameter 都獨立命名）時，span 名稱成為無界維度，影響 trace backend 的聚合效能。錯誤沒有標在 span 的狀態上時，失敗的步驟在 trace 裡跟成功的步驟看起來一樣，要逐一讀屬性或 log 才找得到。
 
-屬性要帶足夠的診斷資訊但避免敏感資料。`http.url` 帶完整 URL 可能含 query parameter 裡的 token；`db.statement` 帶完整 SQL 可能含使用者資料。需要在 SDK 或 collector 層做 redaction。
+屬性帶的診斷資訊越完整，夾帶敏感資料的機會越大：`http.url` 帶完整 URL 可能含 query parameter 裡的 token；`db.statement` 帶完整 SQL 可能含使用者資料。這些值寫進 trace backend 之後，能讀 trace 的人都讀得到，所以 redaction 在寫進 trace backend 之前、於 SDK 或 collector 層做。

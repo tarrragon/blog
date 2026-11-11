@@ -18,4 +18,11 @@ Retrieval source 位在 ingestion、index 與 runtime retrieval 的交界。它�
 
 ## 判斷條件與後果
 
-設計 retrieval source 時要同時回答四件事：資料來源是否可信、資料是否新鮮、查詢者是否有權限、LLM 回答是否能追溯。高風險來源要保留 source metadata、ingestion timestamp、tenant boundary 與引用標籤；否則 retrieval 命中正確內容，也可能把不該看的資料送進 prompt。
+Retrieval source 的可信度、新鮮度、存取權限與可追溯性，任何一項缺席時，retrieval 命中了內容也不代表回答可用：
+
+- **來源不可信時**（網頁內容、使用者上傳的文件），取回的片段可能夾帶 prompt injection 或錯誤資訊，模型照著它回答。
+- **資料不新鮮時**（index 過期而沒有重建），retrieval 取回改版前的 policy，回答引用的是舊規定。
+- **系統不檢查查詢者的權限時**，retrieval 照相似度命中別的租戶的文件，把不該看的資料送進 prompt，原因是相似度檢索本身不認得租戶邊界。
+- **回答無法追溯時**，答案錯了也查不出它出自哪一份文件，找不到要修的來源。
+
+這四項都要在 retrieve 的當下查得到，所以高風險來源在 ingestion 時就留下 source metadata、ingestion timestamp、tenant boundary 與引用標籤。

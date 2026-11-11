@@ -31,11 +31,11 @@ Chunking 介於 corpus 跟 [embedding model](/llm/knowledge-cards/embedding-mode
 
 ## 判斷條件與後果
 
-Chunking 之前要回答四個問題：
+Chunk 的大小與切法取決於四個條件，判錯任何一個，retrieval 的結果都會變差：
 
-1. **任務類型**：問答 / 摘要 / 探索性搜尋？決定 chunk 大小 baseline。
-2. **文件結構**：純文字 / markdown / code？決定切割 strategy。
-3. **語言混合**：中文跟英文 token 比例不同、char-based heuristic 可能不準。
-4. **Embedding model 能力**：太短 / 太長 chunk 都會降低 embedding 品質。
+1. **任務類型**：精確問答的答案在單句裡，chunk 太大時答案句被周圍文字稀釋，檢索精確度下降；摘要任務需要長段脈絡，chunk 太小時拿到的片段缺前後文。所以任務類型決定 chunk 大小的起點（上表的三種粒度）。
+2. **文件結構**：markdown 與 code 有 heading、section、function 這類現成的邊界，用固定 token 數切會穿過這些邊界，把連貫的資訊切散；純文字沒有這類標記，才需要段落感知或語意 chunking 找邊界。
+3. **語言混合**：中文與英文每個字元對應的 token 數不同，用字元數估 chunk 大小的 heuristic 在混合語料上會偏離實際的 token 數。
+4. **Embedding model 的能力**：chunk 太短時 embedding 拿不到足夠的語意，太長時超出模型處理得好的長度，兩端都會降低 embedding 品質。
 
 寫 code 場景的實作範例見 [RAG demo hands-on](/llm/01-local-llm-services/hands-on/rag-demo/) 的 `slice_markdown` function、設計取捨展開見 [4.1 RAG 原理](/llm/04-applications/rag-principles/) 的「Chunking 的本質取捨」段。

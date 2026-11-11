@@ -17,4 +17,4 @@ USL 解釋「加機器為什麼會失效」。線性擴容是理想、但實際�
 
 ## 判斷條件與後果
 
-設計分散式系統時、要主動識別 α 跟 β 來源、想辦法降低。常見手段：partition 切分（降 β）、sharding（降 α 的範圍）、避免 distributed lock（降 β）、async vs sync（降 α 的關鍵路徑）。USL 是 *選型決策* 的工具、不是 production runtime 的訊號。
+α 與 β 的來源決定加機器之後吞吐怎麼變。α 來自必須序列化的部分（lock、coordinator），它讓吞吐的成長逐漸趨平；β 來自節點之間的協調（cache invalidation、consensus quorum），公式裡這一項隨 N(N-1) 成長，N 超過某一點之後吞吐開始下降，這時加機器讓系統變慢。降低 β 的手段減少節點之間要協調的量：partition 切分、避開 distributed lock；降低 α 的手段縮小序列化的範圍：sharding 讓每個 lock 只管一個分片的資料，改成非同步把序列化步驟移出關鍵路徑。USL 用在選型與擴容規劃，判斷該往哪個方向改架構；production runtime 的告警由即時指標負責。

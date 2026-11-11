@@ -17,4 +17,4 @@ Saturation point 出現的訊號是「pressure 增加 10%、latency 增加 100%�
 
 ## 判斷條件與後果
 
-容量規劃必須先量出 saturation point、再以 headroom 規劃實際 capacity。沒有量過 saturation point 的系統，不知道負載再增加多少就會進入 cliff。每次重大改動後 re-test、確認 knee 沒往不好的方向移。
+容量規劃要知道目前的負載離 saturation point 還有多遠。量過 saturation point 的系統，可以把實際 capacity 設在 knee point 以下、留出 headroom；沒有量過時，團隊不知道負載再增加多少就會進入 cliff，容量數字只是推測。saturation point 會隨架構與資料分布移動，hot partition 這類變化讓它在整體 capacity 還有餘時就提前出現，上一次量到的值因此可能已經不成立，所以每次重大改動後重新壓測，確認 knee 沒有往更低的負載移動。

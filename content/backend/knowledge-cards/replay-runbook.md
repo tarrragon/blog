@@ -5,7 +5,6 @@ description: "說明事件重放前需要控制的範圍、順序、驗證與副
 weight: 5
 ---
 
-
 Replay runbook 的核心概念是「把事件重放變成可控操作」。Replay 會讓歷史訊息再次進入處理流程，因此 [runbook](/backend/knowledge-cards/runbook/) 要定義重放範圍、順序、速率、驗證方式、回滾策略與負責人。
 
 ## 跟其他概念的關係
@@ -22,4 +21,4 @@ Replay 常用在修復資料、補送事件、重建投影、重新產生搜尋�
 
 ## 判斷條件與後果
 
-Replay runbook 應包含 dry run、資料備份、權限核准、[rate limit](/backend/knowledge-cards/rate-limit/)、觀測 [dashboard](/backend/knowledge-cards/dashboard/) 與停止條件。設計重點是讓重放成為可審核、可停止、可驗證的操作，而非臨時手動補資料。
+Replay 是高權限操作，runbook 少了哪一項，重放就少了對應的保護。沒有 dry run 與資料備份時，重放寫錯的結果直接覆蓋現有狀態，回不到重放之前；沒有權限核准時，任何能執行重放的人都能讓一批歷史事件再次觸發通知、扣款或出貨。沒有 [rate limit](/backend/knowledge-cards/rate-limit/) 時，重放的流量和正常流量搶同一批 consumer 與下游；沒有觀測 [dashboard](/backend/knowledge-cards/dashboard/) 與停止條件時，重放出錯也只能等它跑完。這幾項齊備時，重放是可審核、可停止、可驗證的操作，而不是臨時手動補資料。

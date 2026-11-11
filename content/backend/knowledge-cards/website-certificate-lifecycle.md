@@ -5,7 +5,6 @@ description: "說明網站 TLS 憑證從簽發到續期與撤銷的全流程責�
 weight: 146
 ---
 
-
 Website certificate lifecycle 的核心概念是「把網站憑證視為持續運作流程，而非一次性設定」。流程包含簽發、部署、驗證、監控、續期、輪替、撤銷與事故處理。 可先對照 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/)。
 
 ## 跟其他概念的關係
@@ -18,4 +17,4 @@ Website certificate lifecycle 的核心概念是「把網站憑證視為持續�
 
 ## 判斷條件與後果
 
-設計要定義簽發方式、部署邊界、過期門檻 [alert](/backend/knowledge-cards/alert/)、續期演練、撤銷流程、權限分離與 [runbook](/backend/knowledge-cards/runbook/)。高流量站點應把憑證健康納入 [dashboard](/backend/knowledge-cards/dashboard/) 與停機演練。
+憑證生命週期的每一個環節缺席，對應一種中斷或風險。過期門檻沒有 [alert](/backend/knowledge-cards/alert/) 時，自動續期失敗不會通知任何人，到期當下使用者看到瀏覽器安全警示，交易中斷；續期沒有演練時，續期流程壞掉要到過期那天才發現；沒有撤銷流程時，私鑰洩漏後舊憑證仍被信任到原定的到期日；簽發與部署權限沒有分離時，一個帳號外洩同時交出部署與簽發兩種能力；沒有 [runbook](/backend/knowledge-cards/runbook/) 時，鏈錯誤或過期的處置要在事故當下重新摸索。流量越高，每分鐘中斷的損失越大，所以高流量站點把憑證健康放進 [dashboard](/backend/knowledge-cards/dashboard/) 與停機演練。

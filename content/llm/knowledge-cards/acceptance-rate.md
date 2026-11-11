@@ -39,9 +39,4 @@ Acceptance rate 影響：
 
 ## 判斷條件與後果
 
-讀 speculative decoding 設定 / model card 看到「draft acceptance」「acceptance length」就是這指標。寫 code 場景的判讀：
-
-1. **挑 drafter 看 family + 大小**：drafter 跟 target 同 family（如 Gemma 4 31B + Gemma 4 E4B、Qwen3-30B + Qwen3-1.5B）是 acceptance rate 最高的組合
-2. **`llama-bench` 量實際加速比理論 K 倍重要**：理論加速 = K × acceptance rate、實測才知道 drafter 在自己工作流的真實表現
-3. **太低的 acceptance rate 是訊號**：< 0.3 通常表示 drafter / target 不匹配、值得換 drafter；< 0.5 表示甜蜜點以下、可調 K 或 sampling 設定
-4. **MTP（Multi-Token Prediction）**：把 drafter 改成 target 內建多預測 head、acceptance rate 通常更高（因為 head 跟 target 完全同分佈）
+speculative decoding 的設定與 model card 上寫的「draft acceptance」「acceptance length」指的都是這個指標。drafter 跟 target 同 family 時（如 Gemma 4 31B + Gemma 4 E4B、Qwen3-30B + Qwen3-1.5B），兩者的訓練分佈相近，drafter 猜的 token 跟 target 的取樣常常一致，acceptance rate 落在最高的那一段；不同 family 時分佈差得遠，加速接近 1×。理論加速等於 K × acceptance rate，而 acceptance rate 隨任務難度與 sampling temperature 變動，寫 code 這類工作流的實際加速要用 `llama-bench` 在自己的工作負載上量，別處量到的數字換到自己的任務上不一定成立。量到的 acceptance rate 低於 0.3 時，drafter 與 target 多半不匹配，加速接近 1× 甚至比純 target 慢，換 drafter 的效果大於調參數；落在 0.3 到 0.5 之間時，搭配本身可用而還沒到一般搭配的 0.5 ~ 0.7，調 K 或 sampling 設定收得回一部分。MTP（Multi-Token Prediction）把外接的 drafter 換成 target 內建的多預測 head，head 跟 target 同分佈，acceptance rate 通常比外接 drafter 高。

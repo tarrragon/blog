@@ -19,4 +19,4 @@ Composite partition key 在 KV / document DB 的 partition 抽象層運作 — D
 
 ## 判斷條件與後果
 
-設計 composite key 必須先 audit *讀寫比例* — 寫密集 + 讀範圍小（單 user 自己的 timeline）適合 calculated shard、讀寫都跨 logical key（全平台 aggregation）random shard 也吃得消；讀密集 + 跨 logical key fan-out 成本爆炸時要回頭重設 shard 數或加 secondary index。fanout 數量是核心參數：太少（< 10）寫入仍可能集中、太多（> 100）讀放大成本壓垮 RU / WCU 預算。Resharding（改 shard 數）成本極高 — 設計階段就要按最壞峰值估 N、留 buffer、寫進 schema 設計文件而不是只寫 application code。
+兩型 composite key 適合的讀寫比例不同。寫密集、讀的範圍限於單一 user（自己的 timeline）時，calculated shard 讓同一 user 的資料固定在一個 shard，讀不需要 fan-out；讀寫本來就跨 logical key（全平台 aggregation）時，讀本來就要掃多個 partition，random shard 的 fan-out 加不了多少成本。讀密集、而且每次讀都要 fan-out 到全部 N 個 shard 時，讀的成本隨 N 倍增，這時回頭調整 shard 數或改加 secondary index。fanout 數 N 是核心參數：太少（< 10）時，熱 key 的寫入仍集中在少數 partition；太多（> 100）時，讀放大的成本超出 RU / WCU 預算。改 shard 數（resharding）要改寫既有資料的 key，成本極高；N 只寫在 application code 裡時，之後改 schema 的人看不到這個約束，所以 N 在設計階段依最壞峰值估、留餘裕，並寫進 schema 設計文件。

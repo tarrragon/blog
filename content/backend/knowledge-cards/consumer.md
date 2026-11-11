@@ -22,6 +22,6 @@ Consumer 的處理模式影響系統的可靠性保證。[Ack / nack](/backend/k
 
 ## 判斷條件與後果
 
-Consumer 要定義併發數、[ack / nack](/backend/knowledge-cards/ack-nack/) 條件、錯誤分類（暫時性 vs 永久性）、[idempotency](/backend/knowledge-cards/idempotency/)、[retry policy](/backend/knowledge-cards/retry-policy/)、隔離區、[graceful shutdown](/backend/knowledge-cards/graceful-shutdown/) 與觀測欄位。
+Consumer 的每一項處理設定缺席時，故障的形態不同：併發數沒有上限時，consumer 送往下游的請求超過下游容量；[ack / nack](/backend/knowledge-cards/ack-nack/) 在處理完成之前就 ack 時，處理失敗的訊息不會再投遞；錯誤不分暫時性與永久性時，永久失敗的訊息被反覆重試，佔住處理能力；沒有 [idempotency](/backend/knowledge-cards/idempotency/) 時，重複投遞產生重複的副作用；沒有 [retry policy](/backend/knowledge-cards/retry-policy/) 時，重試沒有次數上限與間隔；沒有隔離區時，處理不了的訊息擋住後面的訊息；沒有 [graceful shutdown](/backend/knowledge-cards/graceful-shutdown/) 時，部署時正在處理的訊息被中斷；沒有觀測欄位時，以上任何一種發生了都看不到。
 
-操作面要能觀測：處理速率（messages/sec）、失敗類型分布、oldest unprocessed message age、[consumer lag](/backend/knowledge-cards/consumer-lag/)、[dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) 累積量與下游 dependency latency。Consumer lag 持續增長是容量不足的 leading indicator。
+操作面的觀測欄位各自對應上面的故障：處理速率（messages/sec）與 [consumer lag](/backend/knowledge-cards/consumer-lag/) 反映容量，失敗類型分布反映錯誤分類是否有效，oldest unprocessed message age 與 [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) 累積量反映有沒有訊息卡住，下游 dependency latency 分辨慢在 consumer 還是下游。Consumer lag 持續增長時，代表處理能力低於進入速度，是容量不足的 leading indicator。

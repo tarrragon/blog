@@ -19,4 +19,4 @@ Table Partitioning 位在單機資料庫的表結構層。它和 messaging 的 [
 
 ## 判斷條件與後果
 
-設計時要讓分區鍵和最常見的查詢條件對齊，並規劃分區的建立與卸載流程。time-based 分區要有自動建立未來分區、自動卸載過期分區的機制，並接回 [Retention](/backend/knowledge-cards/retention/)。observability 要看查詢是否命中 pruning，以及 default 分區是否意外累積資料。
+分區鍵和最常見的查詢條件對齊時，規劃器做得到 partition pruning，只掃相關的分區；查詢沒帶分區鍵時退化成掃描全部分區，分區越多代價越高。time-based 分區沒有自動建立未來分區時，時間超過最後一個分區的資料沒有分區可放，有 default 分區時累積在那裡，沒有 default 分區時寫入失敗；沒有自動卸載過期分區時，[Retention](/backend/knowledge-cards/retention/) 的期限只寫在政策上，過期資料仍留在表裡。所以觀測看兩件事：查詢是否命中 pruning，以及 default 分區是否意外累積資料，後者代表未來分區沒有及時建立。

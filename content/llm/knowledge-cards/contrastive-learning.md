@@ -42,8 +42,8 @@ Loss（簡化的 InfoNCE loss）：
 
 ## 判斷條件與後果
 
-讀 embedding model paper / 訓練 code 看到「InfoNCE」「triplet」「hard negatives」「mining strategy」就是這 paradigm。寫 code 場景的判讀：
+讀 embedding model paper 或訓練 code 看到「InfoNCE」「triplet」「hard negatives」「mining strategy」，指的就是這個 paradigm。embedding 的檢索品質來自它用什麼資料做過 contrastive 訓練，下面三種情形都由這一點推出：
 
-1. **挑 embedding model 看訓練資料 domain**：通用 retrieval（如 bge-large、nomic-embed）vs code-specific（如 jina-embeddings-v2-code、CodeT5+）、訓練資料分佈影響大
-2. **不能拿任意 LLM 抽 hidden state 當 embedding**：如「Llama 的 last hidden state 當 embedding」這類做法在 retrieval 上通常顯著輸給專門 contrastive-trained embedding model
-3. **Fine-tune embedding model 通常用 LoRA + contrastive loss**：在自己 domain 資料上 fine-tune、提升 in-domain retrieval；標準 pipeline 是 sentence-transformers + LoRA
+1. **檢索對象跟模型的訓練資料不同 domain 時**：通用 retrieval 模型（如 bge-large、nomic-embed）與 code-specific 模型（如 jina-embeddings-v2-code、CodeT5+）學到的「相關」不同，domain 差得越遠，相似度排序越不可靠。
+2. **拿 LLM 的 hidden state 當 embedding 時**（如 Llama 的 last hidden state）：那個向量是為 next-token prediction 優化的，沒有被訓練成相關的靠近、無關的遠離，retrieval 表現通常明顯輸給專門 contrastive-trained 的 embedding model。
+3. **現成模型的 in-domain retrieval 不夠好時**：模型沒見過這個 domain 的正向對，相關的文件在向量空間裡沒有被拉近。用自己 domain 的資料以 LoRA 加 contrastive loss fine-tune 一輪，補的就是這些正向對，常見的 pipeline 是 sentence-transformers 加 LoRA。

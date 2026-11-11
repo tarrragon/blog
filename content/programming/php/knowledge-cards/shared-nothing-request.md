@@ -21,4 +21,4 @@ Shared-nothing 是 PHP 傳統執行方式（CGI、[mod_php](/programming/php/kno
 
 ## 判斷條件與後果
 
-在 shared-nothing 下，程式可以放心把請求資料放在靜態屬性裡；要換成常駐 worker 之前，這類寫法都要改掉。實測與要避開的寫法見 [常駐 worker 模型](/programming/php/01-server-runtime/long-running-workers/)。
+程式把請求資料放在靜態屬性或 `static` 變數裡時，在 shared-nothing 下不會留到下一個請求：PHP 在請求結束時清空這些狀態，同一個 worker 處理下一個請求時從空白開始，所以這類寫法在 PHP-FPM 與 mod_php 下安全。換成常駐 worker（FrankenPHP 的 worker 模式、Laravel Octane）之後，這些狀態活過請求，上一個請求放進去的資料在下一個請求裡還讀得到，往靜態陣列塞資料的程式讓記憶體隨請求數線性增長；所以換模型之前，這類寫法先改掉。實測與要避開的寫法見 [常駐 worker 模型](/programming/php/01-server-runtime/long-running-workers/)。

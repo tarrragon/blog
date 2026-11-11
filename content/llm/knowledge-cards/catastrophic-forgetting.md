@@ -58,10 +58,10 @@ After fine-tune（在自己 domain 資料上跑 SFT、3 epochs）：
 
 ## 判斷條件與後果
 
-讀 fine-tune paper / 報告看到「forgetting」「retention」「regression」就是這現象。寫 code 場景的判讀：
+讀 fine-tune paper 或報告看到「forgetting」「retention」「regression」，指的就是這個現象。forgetting 是否看得出來、是否會加重，取決於下面幾個條件：
 
-1. **Fine-tune 前先建 baseline benchmark**：把 base model 在通用 benchmark + 自己 domain 都跑一遍、fine-tune 後對比看 regression
-2. **用 LoRA / QLoRA 是 default**：除非有特殊理由要 full fine-tune、不然優先 LoRA
-3. **不要把通用 chat 能力 fine-tune 掉**：如果 fine-tune 後模型不會聊天、只會答自己 domain 問題、就是 forgetting 過頭
-4. **Iterative fine-tune 風險疊加**：在 fine-tuned 模型上再 fine-tune（如 SFT → DPO）、forgetting 風險加倍、要小心評估
-5. **Reasoning 能力特別容易 forget**：reasoning 是後期訓練的、fine-tune 一輪 SFT 容易破壞、reasoning model 不建議再 fine-tune
+1. **fine-tune 前沒有 baseline benchmark 時**：fine-tune 後的通用分數沒有比較對象，上面那種 domain 分數上升、通用分數下降的組合看不出來。所以 base model 先在通用 benchmark 與自己 domain 上各跑一次，fine-tune 後再比。
+2. **選 full fine-tune 時**：所有權重都被新資料的 gradient 更新，是 forgetting 風險最高的配置。LoRA / QLoRA 凍住 base 權重、只訓 adapter，base 學到的能力留在權重裡，這是它成為多數場景預設的原因。
+3. **fine-tune 後模型只答得出自己 domain 的問題、不再能一般對話時**：通用 chat 能力已經被覆蓋，forgetting 過頭了。
+4. **在已經 fine-tune 過的模型上再 fine-tune 時**（如 SFT 之後接 DPO）：每一輪都可能再偏離一次，forgetting 風險疊加，每一輪之後都要重跑 baseline 比對。
+5. **模型的能力來自後期訓練時**：reasoning 是後期訓練出來的，一輪 SFT 就容易破壞它，所以 reasoning model 不建議再 fine-tune。

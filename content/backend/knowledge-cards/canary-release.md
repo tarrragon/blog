@@ -18,4 +18,4 @@ Canary release 位在 [rolling update](/backend/knowledge-cards/rolling-update/)
 
 ## 判斷條件與後果
 
-Canary release 要定義三件事：切換單位（比例 / 區域 / 租戶 / 路由規則）、每批觀察窗口與停損條件、回退路徑（舊版本是否仍能承接回退流量）。效能退化的檢查見 [Canary Perf Check](/backend/knowledge-cards/canary-perf-check/)。Canary 決策的 evidence 格式見 [Evidence Package](/backend/knowledge-cards/evidence-package/)。
+Canary release 的切換單位（比例 / 區域 / 租戶 / 路由規則）決定一批新版本影響哪些使用者：按比例切時，每個使用者都可能碰到新版本；按區域或租戶切時，退化集中在一群使用者身上，比較容易對回成因。每批沒有觀察窗口與停損條件時，擴大與否沒有依據，局部退化要等擴到全量才被看見。回退路徑取決於舊版本是否仍有容量處理回退的流量，舊版本已經縮容時，停損條件觸發了也退不回去。效能退化的檢查見 [Canary Perf Check](/backend/knowledge-cards/canary-perf-check/)。Canary 決策的 evidence 格式見 [Evidence Package](/backend/knowledge-cards/evidence-package/)。

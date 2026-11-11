@@ -21,4 +21,4 @@ Distributed lock 處於分散式協調控制層、底層通常依賴 [consensus 
 
 ## 判斷條件與後果
 
-Fencing token 是必備設計 — 用單調遞增 token 在舊 holder 跟新 holder 並存時、讓資源側拒絕舊 holder 的寫入、防範 clock drift 或 long GC pause 導致的隱性鎖失效。Renew loop 要在 background 確認 renew 成功、若 network 卡住未及時拋錯、process 會自信操作其租約已失效的資源。Lease 期間應縮短 critical section、保持操作時間遠小於 lease timeout。
+Lease 過期而原 holder 還沒察覺時，系統裡同時有兩個 process 認為自己持鎖。舊 holder 遇到 long GC pause 或 clock drift，恢復之後繼續寫入，共享資源被兩邊同時改動，原因是 lease 的過期只記錄在鎖服務上，舊 holder 自己不知道；fencing token 讓鎖服務每次發出單調遞增的 token，資源側拒絕 token 比已見過的更小的寫入，舊 holder 的寫入因此被擋下。Background 的 renew 失敗而沒有拋錯時（network 卡住、renew 請求逾時），process 繼續操作一份租約已經失效的資源，處在同一種雙 holder 狀態。Critical section 的執行時間接近 lease timeout 時，任何一次延遲都可能讓 lease 在操作途中過期，所以 critical section 的時間要遠小於 lease timeout。

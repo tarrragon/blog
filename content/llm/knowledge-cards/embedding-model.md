@@ -26,4 +26,4 @@ Embedding model 跟 chat model 是兩種不同的模型、有各自的權重檔�
 
 ## 判斷條件與後果
 
-Continue.dev 的 `@codebase` 命令依賴 embedding 模型；要先 `ollama pull nomic-embed-text` 並在 config.json 設 `embeddingsProvider`。Embedding 模型對 codebase 搜尋品質有影響、但邊際效益遠小於 chat model；先用預設 `nomic-embed-text`、需求出現再換更大模型。
+Continue.dev 的 `@codebase` 命令查的是 embedding model 建出來的索引，所以 Ollama 上還沒有那個模型（沒有跑過 `ollama pull nomic-embed-text`）或 config.json 的 `embeddingsProvider` 沒有指到它時，`@codebase` 沒有索引可查。是否換成更大的 embedding 模型，看搜尋結果是否對題：換模型要重建整個索引，因為不同模型的向量空間互不相容，而 embedding 模型對 codebase 搜尋品質的影響，比 chat model 對回答品質的影響小得多。所以預設的 `nomic-embed-text` 搜得到相關片段時，換更大的模型付出重建索引與更多記憶體，換到的改善有限；程式碼的註解或文件是中文而搜不到相關片段時，換成 `bge-m3` 這類多語言模型才對得上這個缺口。

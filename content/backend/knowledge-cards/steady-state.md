@@ -18,4 +18,4 @@ Steady state 位在 [error budget](/backend/knowledge-cards/error-budget/)、[bl
 
 ## 判斷條件與後果
 
-Steady state 要包含 success rate、latency、queue lag、data correctness、customer impact 與 recovery complete 門檻。它的責任是支援 [evidence package](/backend/knowledge-cards/evidence-package/)、[incident decision log](/backend/knowledge-cards/incident-decision-log/) 與 [game day](/backend/knowledge-cards/game-day/) 判斷實驗是否通過、事故是否恢復。
+Steady state 的門檻缺了哪一項，實驗或事故的判斷就在那一項上沒有依據。只訂 success rate 與 latency、沒有 queue lag 門檻時，節點關閉後請求照常成功而積壓持續增加，實驗仍判成通過；沒有 data correctness 門檻時，failover 後寫入成功而資料不一致，判斷上看不出來；沒有 customer impact 門檻時，內部指標都在範圍內、client-side error rate 已經偏離，結論仍是正常；沒有 recovery complete 門檻時，事故何時算恢復由當下的人決定，[incident decision log](/backend/knowledge-cards/incident-decision-log/) 記下的恢復時間沒有可以對照的條件。[evidence package](/backend/knowledge-cards/evidence-package/) 與 [game day](/backend/knowledge-cards/game-day/) 判斷實驗是否通過時，都拿這組門檻對照量到的值，所以門檻在實驗或演練開始之前寫下；事後才補的門檻是看過結果之後訂的，判斷不出實驗本身是否通過。

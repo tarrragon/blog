@@ -27,4 +27,4 @@ Gate decision 位在 [confidence](/backend/knowledge-cards/confidence/)、[rollb
 
 ## 判斷條件與後果
 
-Gate decision 要包含決策內容、支撐 checks、stop condition、rollback window 與 owner。它要能被 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 承接，讓放行後出現異常時能回放當時依據。
+Gate decision 的每一個成分缺席時，決策就少了一項事後回放得到的依據。只寫決策內容而沒有支撐的 checks 時，事後看不出當時依哪些結果放行；沒有 stop condition 時，放行之後指標變差也沒有事先約定的停止點；沒有 rollback window 時，發現異常的當下不知道是否還能退回；沒有 owner 時，放行之後出現異常由誰決定下一步沒有定論。這幾項寫在同一筆決策裡，並記進 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 時，放行後出現異常能回放當時的依據，原因是決策與依據寫在同一筆紀錄裡。

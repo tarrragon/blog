@@ -17,4 +17,4 @@ Type Affinity 位在 SQLite 的資料模型核心，和嚴格靜態型別的資�
 
 ## 判斷條件與後果
 
-設計 schema 時要清楚每個欄位的 type affinity、以及值會如何被轉換。需要嚴格型別保證時，要明確選用 STRICT table 或在應用層驗證。測試 fixture 要涵蓋型別邊界，避免「本機測試剛好都存對型別」掩蓋問題。
+欄位的 type affinity 決定存進去的值實際成為哪一種 storage class。值被存成與預期不同的類型時（數字以字串存入），比較與排序照字串規則進行，查詢結果與預期不符而 SQLite 不報錯，原因是 affinity 只是傾向，不拒絕寫入。應用需要型別保證時有兩個位置可以擋：STRICT table 讓 SQLite 拒絕型別不符的值，應用層驗證在寫入前擋下。測試 fixture 只放型別正確的值時，混型別的情形要到 production 才出現，所以 fixture 裡放進型別邊界的值。

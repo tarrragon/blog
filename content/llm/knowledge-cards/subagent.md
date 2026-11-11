@@ -44,9 +44,4 @@ Subagent 架構：
 
 ## 判斷條件與後果
 
-讀 multi-agent / subagent paper / coding agent docs 看到「subagent」「handoff」「Task tool」「specialist agent」就是這 framing。寫 code 場景的判讀：
-
-1. **何時用 subagent**：單一 agent context 不夠用、specialty 邊界清楚（如 search / coding / testing / documentation）、main agent 的 system prompt 已太長
-2. **何時不用**：任務簡單、specialty 邊界模糊（強行拆會增加 handoff overhead）、本地小模型（handoff 機制對小模型不穩）
-3. **跟 [agent loop](/llm/knowledge-cards/agent-loop/) 的關係**：每個 subagent 內部仍是 agent loop（perceive / reason / act / observe / terminate）、只是 loop 範圍縮窄
-4. **跟 [scaffold vs harness](/llm/knowledge-cards/scaffold-vs-harness/) 的關係**：subagent 註冊在 scaffold（建構時）、handoff 在 harness（runtime）執行
+拆不拆成 subagent，看單一 agent 的 context 裝不裝得下任務，以及 specialty 的邊界清不清楚。單一 agent 的 context 要同時放進搜尋、寫 code、跑測試、寫文件各自的 history 與檔案，main agent 的 system prompt 也已經很長時，context 容易超出容量，不同 specialty 的指令互相干擾；這時拆成 subagent，每個 subagent 只讀自己 specialty 的 context，main agent 的 context 只留路由與高階決策。任務簡單，或 specialty 的邊界模糊時，拆出來的 subagent 之間要靠 handoff 傳 context、接 result，這份 handoff overhead 換不到 context 隔離的好處；本地小模型的 handoff 機制不穩，拆開之後多出一個失敗點。拆開之後，每個 subagent 內部仍是一個 [agent loop](/llm/knowledge-cards/agent-loop/)（perceive / reason / act / observe / terminate），只是範圍縮窄；subagent 在 scaffold 建構時註冊，handoff 在 harness 的 runtime 執行（[scaffold vs harness](/llm/knowledge-cards/scaffold-vs-harness/)）。讀 multi-agent paper 或 coding agent 文件時，「subagent」「handoff」「Task tool」「specialist agent」指的都是這種架構。

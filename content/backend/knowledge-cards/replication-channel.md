@@ -17,4 +17,8 @@ Replication Channel 位在多來源複製的拓撲層。單一來源的複製只
 
 ## 判斷條件與後果
 
-設計時要為每條 channel 命名、定義各自的 owner、lag SLO 與錯誤處理策略。監控與告警要做到 per-channel，並讓單一 channel 的故障可以只停那一條、不影響其他來源。observability 要能分開看每條 channel 的位置、延遲與錯誤。
+多來源複製的判斷對象是每條 channel 是否被當成獨立的單位觀測與處理：
+
+- 監控與告警只看整體 replica 時，一條 channel 落後或報錯，整體指標看不出是哪一個來源卡住，匯總庫裡那個來源的資料一直停在舊的狀態；原因是位置、延遲與錯誤都是每條 channel 各自的狀態。
+- channel 沒有各自的 owner 與 lag SLO 時，某一條落後到什麼程度算事故沒有標準，那個來源的錯誤也沒有指定的處理人。
+- 停止複製只能整個 replica 一起停時，一條 channel 的 schema 錯誤會連帶中斷其他正常的來源。

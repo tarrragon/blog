@@ -18,4 +18,4 @@ Unigram 是 subword tokenizer 家族的一員，常由 [SentencePiece](/llm/know
 
 ## 判斷條件與後果
 
-一般應用不會手動選 unigram tokenizer，但理解它能幫助比較模型的多語言支援與 token 效率。判讀時搭配 [Vocabulary Size](/llm/knowledge-cards/vocabulary-size/) 與 [Token](/llm/knowledge-cards/token/)。
+一般應用選的是模型，unigram tokenizer 隨模型的 tokenizer 一起決定，使用者不另外選它。它的影響出現在比較模型的多語言支援與 token 效率時：tokenizer 的切分方式與 [Vocabulary Size](/llm/knowledge-cards/vocabulary-size/) 一起決定某種語言的文字被切得多碎，切得越碎，同一段文字佔的 [Token](/llm/knowledge-cards/token/) 越多，context 用量與 API 費用越高。所以兩個模型在同一種語言上的 token 數差很多時，差別的來源在 tokenizer 這一層，而不在模型的生成能力。

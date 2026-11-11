@@ -18,4 +18,9 @@ Query-document gap 位在 query 端與 embedding / search 端之間。它跟 [hy
 
 ## 判斷條件與後果
 
-處理 query-document gap 時先判斷落差類型：同義詞、口語 vs 正式、問句 vs 陳述、跨語言、domain jargon 或識別碼。輕量修法是 query rewriting；形態落差明顯時可用 HyDE；精確 keyword 與語意都重要時用 hybrid search；仍然 top-k 不準時再加 reranker。
+Query-document gap 有幾種類型，各種修法縮小的是其中不同的落差：
+
+- **落差是同義詞、口語對正式用詞、跨語言或 domain jargon 時**，[query rewriting](/llm/knowledge-cards/query-rewriting/) 把 query 改寫成文件用的詞，代價只多一次 LLM call，是成本最低的修法。
+- **落差在句子形態（query 是問句，文件是陳述或程式碼）時**，改寫後的 query 仍是問句，跟文件的 embedding 分布還有距離；[HyDE](/llm/knowledge-cards/hyde/) 先生成一份假設文件再 embed，比對的兩邊都是文件的形態。
+- **query 帶著識別碼或精確 keyword、同時也需要語意比對時**，只用 embedding 會漏掉要字面相同才算命中的識別碼，只用 BM25 會漏掉換了說法的文件，[hybrid search](/llm/knowledge-cards/hybrid-search/) 讓兩路一起查。
+- **上面的修法讓正確文件進了 top-k、但排在最前面的仍不是它時**，剩下的落差在細粒度的匹配，bi-encoder 的分數分不出來，由 [reranker](/llm/knowledge-cards/reranker/) 用 cross-encoder 重排。

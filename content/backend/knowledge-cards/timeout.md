@@ -6,7 +6,6 @@ description: "說明等待外部操作的時間上限如何保護資源與使用
 weight: 44
 ---
 
-
 Timeout 的核心概念是「為一次等待設定時間上限」。後端服務等待 [database](/backend/knowledge-cards/database/)、cache、[broker](/backend/knowledge-cards/broker/)、[HTTP client](/backend/knowledge-cards/http-client/) 呼叫、檔案系統或下游服務時，timeout 決定這次等待最久可以佔用多少資源。
 
 ## 跟其他概念的關係
@@ -19,4 +18,4 @@ Timeout 是資源保護與失敗分類的基礎。等待時間上限讓 connecti
 
 ## 判斷條件與後果
 
-Timeout 要依呼叫目的分層設定。使用者 request、背景 job、database query、外部 API 與 [graceful shutdown](/backend/knowledge-cards/graceful-shutdown/) cleanup 應有不同時間上限；錯誤回報要標出 timeout 來源，讓 [runbook](/backend/knowledge-cards/runbook/) 能定位是哪個依賴超時。
+Timeout 的上限取決於呼叫目的，因為每一種等待佔住的資源與可以接受的等待時間不同：使用者 request 的上限受使用者願意等多久限制，背景 job 沒有人在等，可以放寬；database query 的上限決定 [connection pool](/backend/knowledge-cards/connection-pool/) 裡的連線被佔住多久；外部 API 的上限太短時正常的付款也被判成失敗，太長時卡住的呼叫佔住 worker；[graceful shutdown](/backend/knowledge-cards/graceful-shutdown/) cleanup 的上限決定程序最久多久才結束。全部用同一個值時，至少有一種呼叫的上限不合它的目的。錯誤回報沒有標出 timeout 發生在哪一個依賴時，上層只看到「逾時」，[runbook](/backend/knowledge-cards/runbook/) 定位不了是哪個依賴變慢。

@@ -28,4 +28,4 @@ Grammar 的邊界是語意與外部狀態。它可以限制語法合法，卻不
 
 ## 判斷條件與後果
 
-需要自訂輸出格式時，先判斷格式是資料結構還是小語言：物件欄位優先用 JSON Schema，小語言或查詢語法才用 grammar。下一步路由是：需要語法表示法讀 [BNF](/llm/knowledge-cards/bnf/) 或 [Lark Grammar](/llm/knowledge-cards/lark-grammar/)；需要應用層自訂語言讀 [DSL](/llm/knowledge-cards/dsl/)。
+自訂輸出格式時，判斷的條件是格式的形狀：資料結構還是小語言。格式是有固定欄位的物件時，JSON Schema 本來就描述得了欄位與限制，改寫成 grammar 多出一套符號規則要維護，換到的約束跟 schema 相同；格式是查詢語法、括號巢狀或自訂語言時，schema 描述不了字串怎麼由符號規則組成，這時 grammar 才是描述得了這個格式的工具。語法的表示法在 [BNF](/llm/knowledge-cards/bnf/) 與 [Lark Grammar](/llm/knowledge-cards/lark-grammar/)；應用層自訂語言的設計在 [DSL](/llm/knowledge-cards/dsl/)。

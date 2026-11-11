@@ -18,4 +18,4 @@ Token 位於介面層送出文字與模型層實際運算之間的轉換點。�
 
 ## 判斷條件與後果
 
-理解 token 後可以做幾件實用判斷：估算 prompt 是否會超過 [context window](/llm/knowledge-cards/context-window/)、估算雲端 API 費用、解讀 benchmark 數字。寫程式時用 OpenAI 的 `tiktoken`、Hugging Face 的 `transformers.AutoTokenizer` 可以精確計算特定模型的 token 數量。
+Prompt 能不能放進 [context window](/llm/knowledge-cards/context-window/)、雲端 API 收多少費用、benchmark 的長度數字，都以 token 計量，所以拿字數或字元數去估，估出來的值會隨語言與 tokenizer 偏移。英文約 4 個字元 1 個 token，中文約 1 到 2 個字 1 個 token；用英文的換算估中文 prompt，會低估 token 數，prompt 實際長度可能超過 context window，費用也比預估高。換模型時，同一段文字切出的 token 數也不同，原因是各模型用不同的 tokenizer，拿 A 模型的 token 數估 B 模型的用量會有誤差。需要精確值時，用該模型的 tokenizer 計算：OpenAI 的 `tiktoken`，或 Hugging Face 的 `transformers.AutoTokenizer`。

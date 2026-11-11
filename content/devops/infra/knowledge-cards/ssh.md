@@ -19,9 +19,9 @@ SSH 在接手維運的情境裡是一條關鍵分界線：有 SSH 存取就能�
 
 ## 判斷條件與後果
 
-SSH 的認證方式有兩種：密碼（簡單但不安全，容易被暴力嘗試）和 SSH key pair（公鑰放在 server 的 `~/.ssh/authorized_keys`，私鑰留在 client）。生產環境應該用 key 認證並關閉密碼登入。
+SSH 的認證方式有兩種：密碼與 SSH key pair（公鑰放在 server 的 `~/.ssh/authorized_keys`，私鑰留在 client）。伺服器開著密碼登入、而且 SSH 埠對外開放時，任何人都能對它反覆猜密碼，帳號的安全只剩密碼的強度；只收 key 時，沒有對應私鑰的連線在認證這一步就被拒絕，所以生產環境關閉密碼登入、只收 key。
 
-接手維運時要確認：SSH 的登入帳號是什麼、用密碼還是 key、key 在哪裡、有沒有其他人也有存取權限。前任維護者的 SSH key 如果還在 `authorized_keys` 裡，離職後應該移除。主機一多，逐台刪除就難以盤點，這時改用隨帳號收回的 [OS Login](/devops/infra/knowledge-cards/os-login/) 或會自動到期的 [SSH Certificate（SSH 憑證）](/devops/infra/knowledge-cards/ssh-certificate/)，選擇條件見[伺服器管理通道的設計](/devops/infra/03-network-foundation/management-access-channel/)的〈主機登入驗證的做法：SSH 金鑰怎麼發、怎麼收回〉。
+接手一台主機時，誰能登入它寫在 `authorized_keys` 與帳號密碼裡，而不在任何一份交接文件裡。前任維護者的公鑰還留在 `authorized_keys` 時，他離職之後仍然登入得了；所以接手時逐一列出登入帳號、認證方式、key 的位置與還有誰持有存取權，不認得的公鑰移除。主機一多，逐台刪除就難以盤點，這時改用隨帳號收回的 [OS Login](/devops/infra/knowledge-cards/os-login/) 或會自動到期的 [SSH Certificate（SSH 憑證）](/devops/infra/knowledge-cards/ssh-certificate/)，選擇條件見[伺服器管理通道的設計](/devops/infra/03-network-foundation/management-access-channel/)的〈主機登入驗證的做法：SSH 金鑰怎麼發、怎麼收回〉。
 
 ```bash
 # 產生 SSH key pair

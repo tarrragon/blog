@@ -20,4 +20,4 @@ Symptom-based alert 是 [4.4 dashboard-alert](/backend/04-observability/dashboar
 
 ## 判斷條件與後果
 
-Symptom-based alert 要連到 [SLI / SLO](/backend/knowledge-cards/sli-slo/)、[runbook](/backend/knowledge-cards/runbook/) 與影響判斷。SLO-based alerting 用 [burn rate](/backend/knowledge-cards/burn-rate/) 量化症狀嚴重度 — 「error budget 消耗速度是允許值的 14 倍」比「error rate > 1%」更能反映使用者影響規模。完整設計見 [4.6 SLI/SLO 訊號設計](/backend/04-observability/sli-slo-signal/)。
+Symptom-based alert 觸發時，on-call 從它判斷使用者受了多大影響、接著從哪裡查。Alert 沒有連到 [SLI / SLO](/backend/knowledge-cards/sli-slo/) 時，門檻是憑經驗訂的數字，觸發不代表對使用者的承諾被違反；沒有連到 [runbook](/backend/knowledge-cards/runbook/) 時，on-call 知道使用者受影響，卻不知道先查哪個原因。用 [burn rate](/backend/knowledge-cards/burn-rate/) 量化症狀嚴重度時，同一個錯誤率放在不同的 SLO 下有不同的份量：「error budget 消耗速度是允許值的 14 倍」說出照這個速度預算多快會用完，「error rate > 1%」只說出錯誤率越過一個固定門檻，不說它對承諾的影響有多大。完整設計見 [4.6 SLI/SLO 訊號設計](/backend/04-observability/sli-slo-signal/)。

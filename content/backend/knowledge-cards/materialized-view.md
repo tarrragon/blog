@@ -14,7 +14,7 @@ Materialized view 是 [read model](/backend/knowledge-cards/read-model/) 的一�
 
 ## 判斷條件與後果
 
-設計 materialized view 時要定義刷新策略（定時 / 觸發 / 手動）、資料新鮮度容忍上限、儲存成本與失效重建流程。刷新頻率決定讀取的 freshness — 每分鐘刷新的 materialized view 最多落後一分鐘，對 dashboard 場景通常足夠，對即席事故診斷可能不夠。
+Materialized view 讀到的是上一次刷新時的快照，所以刷新策略（定時、觸發、手動）決定讀者看到的資料最多落後多久。每分鐘刷新的 materialized view 最多落後一分鐘，對 dashboard 場景通常足夠，對即席的事故診斷可能不夠，原因是事故當下要看的正是最近一分鐘內的變化。消費者能接受的新鮮度上限沒有寫下來時，刷新策略沒有對照的標準，讀者也無法從結果判斷它是否過期。刷新越頻繁，原始資料源被這個複雜查詢佔用的次數越多，而快照本身另外佔一份儲存。刷新失敗或查詢定義改變時，沒有重建流程的 materialized view 持續提供舊的快照。
 
 ## 使用情境
 

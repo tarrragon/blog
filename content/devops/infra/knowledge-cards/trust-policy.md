@@ -23,9 +23,9 @@ Trust policy 的設計要點是 claim 的收斂程度。只驗 issuer 而不驗 
 
 ## 判斷條件與後果
 
-trust policy 只管哪些身分能取得這個 role，取得之後能做什麼由 role 的 IAM policy 另外限制，所以 trust policy 的條件全部圍繞 token 的 claim：允許哪些外部身分 assume（issuer + subject 的精確匹配）、audience 是否需要額外驗證（AWS 預設 `sts.amazonaws.com`）、以及是否把 plan role 和 apply role 分開（plan 只需 read-only、apply 需要 write，用兩個 role 各自設不同 trust condition 來區分 branch 或 environment）。
+trust policy 只管哪些身分能取得這個 role，取得之後能做什麼由 role 的 IAM policy 另外限制，所以 trust policy 的條件都寫在 token 的 claim 上。條件只比對 issuer、沒有精確比對 subject 時，同一個 CI 平台上任何專案簽出的 token 都能 assume 這個 role；subject 精確到某個 repo 的某個 branch 或 environment 時，能 assume 的只剩那一條流水線。audience 沒有驗證時（AWS 的預設值是 `sts.amazonaws.com`），發給別的接收方的 token 也會被接受。plan 與 apply 共用一個 role 時，任何分支跑 plan 都拿得到 write 權限；拆成只有 read-only 的 plan role 與有 write 權限的 apply role、兩者的 trust condition 限定不同的 branch 或 environment 時，沒有合併進主線的分支只拿得到讀取權限。
 
-Trust policy 的變更跟 [IAM](/devops/infra/knowledge-cards/iam/) policy 一樣要走 PR review——因為改寬一個 condition 就等於給更多外部身分開門。設定指南見 [OIDC Trust Policy 設定指南](/devops/infra/02-identity-credentials/oidc-trust-policy-setup/)。
+改寬 trust policy 的一個 condition，能 assume 這個 role 的外部身分就跟著變多，而這個變化在 IAM policy 那一邊看不出來，所以 trust policy 的變更跟 [IAM](/devops/infra/knowledge-cards/iam/) policy 一樣走 PR review。設定指南見 [OIDC Trust Policy 設定指南](/devops/infra/02-identity-credentials/oidc-trust-policy-setup/)。
 
 ## 鄰卡
 

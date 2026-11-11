@@ -23,4 +23,4 @@ Ingress 是 Kubernetes 對 [Request Routing](/backend/knowledge-cards/request-ro
 
 ## 判斷條件與後果
 
-選 controller 時確認它的維護狀態與 Gateway API 支援；路由以外的功能（改寫路徑、限流、驗證）多半寫在 controller 專屬的 annotation（物件 metadata 裡的自由鍵值，由各 controller 自行解讀）裡，換 controller 時要逐條改寫，所以這類設定要記錄它依賴哪一個 controller。
+Ingress controller 結束維護之後（社群的 ingress-nginx 在 2026 年 3 月之後沒有新版本與安全修補），叢集的對外入口跑在不再收到安全修補的軟體上，所以選 controller 時看它的維護狀態；Kubernetes 官方建議新設計改用 Gateway API，選的 controller 不支援它時，之後改用 Gateway API 還要再換一次 controller。路由以外的功能（改寫路徑、限流、驗證）多半寫在 controller 專屬的 annotation（物件 metadata 裡的自由鍵值，由各 controller 自行解讀）裡，換 controller 時新的 controller 只解讀自己的鍵，這些設定要逐條改寫，所以這類設定要記錄它依賴哪一個 controller。

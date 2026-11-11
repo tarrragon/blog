@@ -18,4 +18,8 @@ Context packing 位在 top-k retrieval 結果與 LLM prompt 之間。它跟 [ret
 
 ## 判斷條件與後果
 
-設計 context packing 時要回答：哪些 chunk 真的要進 prompt、順序如何安排、是否保留來源、是否需要 summarization / compression。高追溯場景優先保留 source metadata；長 context 場景要避免把重要 chunk 放在中間；latency 敏感場景要限制 top-k 與 compression call。
+Context packing 的每個決策都在答案品質、token cost 與可追溯性之間取捨，哪一項優先由場景決定：
+
+- **答案要能追溯來源時**（引用、稽核）：chunk 前沒有 source path，答案就指不出依據是哪份文件；保留 metadata 的代價是每段多佔一些 token。
+- **prompt 很長時**：放在中間的 chunk 較容易被模型忽略（[lost-in-the-middle](/llm/knowledge-cards/lost-in-the-middle/)），最相關的 chunk 排在中間時，答案可能沒用到它，所以最相關的內容排在前後。
+- **延遲敏感時**：top-k 越大 prompt 越長，每多一次 summarization 或 compression call 就多一次模型往返，兩者都直接加在回應時間上，所以這類場景的 top-k 與 compression call 數量要設上限。

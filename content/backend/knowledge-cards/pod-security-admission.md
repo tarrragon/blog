@@ -21,7 +21,7 @@ Pod Security Admission 是 Kubernetes 內建的准入控制器（admission contr
 
 ## 判斷條件與後果
 
-一般工作負載的 namespace 至少設 `baseline` 的 `enforce`，能跑 privileged Pod 的 namespace 只留給確實需要的系統元件與維運用途，並用 [Kubernetes RBAC](/backend/knowledge-cards/kubernetes-rbac/) 限制誰能在那裡建 Pod。導入時先設 `warn` 與 `audit` 觀察既有工作負載有哪些會被擋，再切成 `enforce`，否則既有的部署會在下一次重建 Pod 時失敗。
+一般工作負載的 namespace 沒有 `enforce` label、叢集也沒有設預設等級時，它等同 `privileged`，能在那裡建 Pod 的帳號就能建特權 Pod、取得節點的 root 權限；設成 `baseline` 的 `enforce` 時，明顯的提權設定在建立 Pod 時就被拒。這時能跑特權 Pod 的 namespace 是剩下的入口，所以只留給確實需要的系統元件與維運用途，並用 [Kubernetes RBAC](/backend/knowledge-cards/kubernetes-rbac/) 限制誰能在那裡建 Pod。既有的 namespace 直接切成 `enforce` 時，不符合等級的部署在下一次重建 Pod 時被拒而失敗，原因是准入檢查只在 Pod 建立時執行；先設 `warn` 與 `audit`，列出會被擋的工作負載並處理完，再切成 `enforce`。
 
 ## 鄰卡
 

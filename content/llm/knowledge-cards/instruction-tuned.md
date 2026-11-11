@@ -26,4 +26,4 @@ Coding-tuned 是 instruction-tuned 的特化版本，再加上大量 code 訓練
 
 ## 判斷條件與後果
 
-寫 code 場景的預設選擇是 instruction-tuned + coding-specialized 模型。看到 Ollama tag 沒有 `instruct` 字樣（如 `llama3.3:70b-base`）的版本、那是 [base model](/llm/knowledge-cards/base-model/)、跟指令走的能力較差、適合下游微調而非直接對話。
+寫 code 場景要的是照指令回答，所以預設選 instruction-tuned 模型，有 coding-specialized 版本時選那一版。Ollama tag 標著 base 的版本（如 `llama3.3:70b-base`）是 [base model](/llm/knowledge-cards/base-model/)，它做的是文字接龍，直接拿來對話時跟指令走的能力較差，用途是下游微調。有些模型的預設 tag 本身就是 instruct 版而沒有另外標示（上面表裡的 `qwen3-coder:30b`），所以 tag 裡沒有 `instruct` 字樣時，查 model card 才判得出是哪一種。

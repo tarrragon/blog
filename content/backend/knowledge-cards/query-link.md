@@ -27,4 +27,4 @@ Checkout API evidence package 可以保存錯誤率 query、p95 latency query �
 
 ## 判斷條件與後果
 
-Query link 要保留查詢版本、參數、time range、資料來源與 owner。它要搭配 [known gap](/backend/knowledge-cards/known-gap/) 記錄查詢未覆蓋的資料範圍，避免截圖或 dashboard 名稱被誤當成完整證據。
+Query link 能不能當證據，看接手者能否從它重跑出同一個判讀。查詢版本、參數、time range 與資料來源沒有一起保存時，接手者重跑得到的是另一份結果，原因是 dashboard panel 改版或時間區間不同都會改變圖表的語意；沒有 owner 時，查詢定義變動之後找不到人確認原本的判讀。查詢沒涵蓋的資料範圍沒有記成 [known gap](/backend/knowledge-cards/known-gap/) 時，截圖或 dashboard 名稱看起來像完整證據，PIR reviewer 查證時看不出當時的資料限制。

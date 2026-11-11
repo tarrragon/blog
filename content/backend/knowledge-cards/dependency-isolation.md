@@ -5,7 +5,6 @@ description: "說明如何隔離下游依賴，避免單一依賴耗盡共享資
 weight: 55
 ---
 
-
 Dependency isolation 的核心概念是「讓不同下游依賴使用可分開限制的資源」。如果所有依賴共用同一個 worker pool、connection pool 或 queue，單一下游變慢可能耗盡整個服務的處理能力。 可先對照 [Deployment Contract](/backend/knowledge-cards/deployment-contract/)。
 
 ## 跟其他概念的關係
@@ -18,4 +17,4 @@ Dependency isolation 是防止 cascading failure 的結構性設計。它可以�
 
 ## 判斷條件與後果
 
-依賴隔離要先標出核心路徑、輔助路徑與共享資源。觀測上要能按依賴查看 pool 使用量、queue depth、timeout 與錯誤率。
+依賴隔離的前提是分得出服務裡哪些路徑是核心、哪些是輔助，以及兩者共用了哪些資源。核心路徑與輔助路徑共用同一個 worker pool 或 connection pool 時，輔助路徑的下游變慢會佔住 pool 裡的連線，核心路徑拿不到連線而跟著變慢，代價是低優先的報表查詢拖慢了 checkout，原因是 pool 的上限由兩條路徑共用。資源分開之後，pool 使用量、queue depth、timeout 與錯誤率只按整個服務彙總時，看不出是哪一個依賴用完了自己那一份資源；所以這幾項指標按依賴分開記錄。

@@ -22,4 +22,4 @@ OPcache 是程序層的資源，效果取決於執行 PHP 的程序活多久：C
 
 ## 判斷條件與後果
 
-部署要配合 `validate_timestamps` 的設定：程式碼在映像檔裡的容器部署可以關掉檢查，覆寫檔案的部署要留著或在換完程式碼後 reload。`memory_consumption` 與 `max_accelerated_files` 依實際專案跑過主要請求後的統計調整。詳見 [OPcache 與程序壽命](/programming/php/01-server-runtime/opcache/)。
+部署之後頁面跑不跑新程式碼，取決於部署方式與 `validate_timestamps` 的組合。程式碼封在映像檔裡的容器部署，換版是換掉整個容器，檔案在容器的生命週期內不會變，關掉檢查（`validate_timestamps=0`）只省下定期的檔案時間比對，沒有代價；覆寫檔案的部署在同一組程序底下換掉檔案，關掉檢查時 OPcache 繼續執行舊的 opcode，頁面停在舊版直到 reload PHP-FPM，所以這類部署留著檢查，或在換完程式碼後 reload。`memory_consumption` 與 `max_accelerated_files` 設得比專案需要的小時，快取滿了也不報錯，放不進去的檔案每次重新編譯，從外面看只是變慢；所以這兩個值依專案跑過主要請求之後 `free_memory` 與 `num_cached_scripts` 的統計調整。詳見 [OPcache 與程序壽命](/programming/php/01-server-runtime/opcache/)。

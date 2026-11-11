@@ -26,4 +26,4 @@ Kubernetes rolling update 前先讓 instance 進入 draining、load balancer 在
 
 ## 判斷條件與後果
 
-設計時要定義何時開始 draining、draining 多久、超時後怎麼強制終止，以及如何觀察 in-flight request、consumer ack 與長連線狀態。Draining 的目的是把切換風險壓到可接受範圍，無限等待反而製造新風險。
+Draining 的期限在兩種風險之間取捨。沒有期限、一直等到 in-flight 工作做完時，一條不結束的長連線或一個不 ack 的 consumer 讓 instance 一直下不了線，rolling update 與縮容停在半途，原因是 draining 什麼時候結束取決於最慢的那一件工作；期限太短時，正在處理的 request 被強制中斷，又回到 draining 想避免的狀態。Instance 停止接新工作的時點早於 load balancer 停止導流時，新 request 仍被導到這台已經在收尾的 instance 而失敗。超時之後怎麼強制終止沒有定義時，未完成的工作是被交回還是遺失沒有答案。In-flight request 數、consumer ack 與長連線狀態看不到時，分不出 draining 是正常收尾還是卡住了，所以這三項在 draining 期間要觀察得到。

@@ -6,7 +6,6 @@ description: "說明服務如何對外提供可供平台判斷狀態的健康回
 weight: 134
 ---
 
-
 Health Check 的核心概念是「讓平台用一個簡單回應判斷服務是否值得接流量或是否需要介入」。它是狀態判斷的入口語意，不等於 readiness、liveness 或 diagnostic endpoint 本身。可先對照 [Liveness](/backend/knowledge-cards/health-check-liveness/) 與 [Probe](/backend/knowledge-cards/probe/)。
 
 ## 跟其他概念的關係
@@ -23,4 +22,4 @@ Load balancer 以 health check 判斷 instance 能否接新流量；運維工具
 
 ## 判斷條件與後果
 
-設計時要讓 health check 保持簡單、穩定、低成本，並且只反映它被設計要回答的問題。更細的流量條件交給 readiness，更細的存活條件交給 liveness，更完整的操作介面交給 diagnostic endpoint。
+Health check 的判斷條件是讀它的平台拿這個回應做哪一件事。同一個回應同時決定導流與重啟時，下游短暫故障讓它失敗，平台把 instance 移出流量之外還重啟它，原因是一個回應表達不了「暫時不接流量」與「需要重啟」的差別；檢查內容太重或依賴下游時，check 本身的逾時被當成 instance 故障。所以流量條件交給 [readiness](/backend/knowledge-cards/readiness/)，存活條件交給 [liveness](/backend/knowledge-cards/health-check-liveness/)，完整的操作資訊交給 diagnostic endpoint，health check 本身保持簡單、穩定、低成本。

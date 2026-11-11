@@ -32,12 +32,11 @@ Reflection 三步：
 
 ## 判斷條件與後果
 
-讀 prompt engineering / agent paper 看到「reflection」「self-critique」「self-refine」「critic」就是這個機制。實作判讀：
+Reflection 的修改只在 critique 找得到 generator 沒看到的錯誤時才有效，所以判斷看兩件事：critic 跟 generator 的盲點是否重疊，以及迴圈是否有客觀的停止點與比較基準。
 
-1. **適用模型有能力辨識「自己寫的不夠好」**、critique 跟 generator 不會共用同樣 blind spot。
-2. **失敗在 systematic error**：critique 跟 generator 是同個模型、訓練分佈中的盲點不會因為「再想一次」消失。判讀訊號：critique 每次給很像的建議、或修完還是同一類錯——換 critic 用不同 base model、或加外部驗證（test、lint、schema）取代 LLM critique。
-3. **失敗在低能力模型**：critic 能力不足、產不出有用建議、徒增 cost / latency。
-4. **失敗在無限循環**：沒有客觀停止訊號、reflection 一直跑、cost 爆掉。緩解：step cap + 外部 metric（test pass、schema valid）。
-5. **失敗在過度修正**：每次 reflection 都改一點、累積結果變糟（過度 fitting critic 意見）。緩解：保留 baseline、reflection 結果要跟 baseline 比、不一定採用。
+1. **critic 跟 generator 是同一個模型時**，訓練分佈裡的盲點是共用的，「再想一次」不會讓它消失；訊號是 critique 每次給相似的建議，或修完仍是同一類錯。這類 systematic error 要靠一個不共用盲點的檢查者：換成不同 base model 的 critic，或用 test、lint、schema 這類外部驗證取代 LLM 的 critique。
+2. **critic 的能力不足時**，它產不出有用的建議，reflection 只增加 cost 與 latency。
+3. **沒有客觀的停止訊號時**，reflection 一直跑下去，cost 隨輪數持續增加；step cap 加上外部 metric（test pass、schema valid）給出停止點。
+4. **每一輪的修改都直接採用時**，小改動逐輪累積成過度迎合 critic 意見的版本，最終結果可能比初稿差；保留初稿當 baseline，每一輪的結果跟 baseline 比過，沒有變好就不採用。
 
 [Agent loop](/llm/knowledge-cards/agent-loop/) 是 reflection 的延伸特例、進階失敗模式見 [4.4 Agent 架構](/llm/04-applications/agent-architecture/)。完整 workflow pattern 比較見 [4.7 Workflow patterns](/llm/04-applications/workflow-patterns/)。

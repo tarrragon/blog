@@ -22,4 +22,4 @@ Keyset pagination 處於 SQL query 設計的「pagination 策略」維度、跟 
 
 ## 判斷條件與後果
 
-排序欄位若是非 unique（如 `created_at`）、用 `(created_at, id)` 複合條件確保穩定 — 缺 tiebreaker 時、重複值翻頁會跳過或重複資料。接續標記編碼成 opaque token 給 client、避免暴露內部 ID 結構（也方便未來改接續標記內容）。對「插入 / 刪除中翻頁」的行為比 OFFSET 穩定（OFFSET 在這類場景容易跳過或重複）。表小於 10000 行時 OFFSET 也快、保持簡單即可。Google 搜尋結果頁那種「跳到第 N 頁」需求要回到 OFFSET 或考慮重新設計使用者操作。
+排序欄位不是 unique 時（例如 `created_at`），同一個值的幾筆資料跨在頁界上，只用 `created_at > last_seen` 接續會跳過或重複其中幾筆；用 `(created_at, id)` 的複合條件加上 tiebreaker，接續的位置才唯一。接續標記編碼成 opaque token 交給 client 時，client 看不到內部 ID 的結構，之後改變接續標記的內容也不影響 client。翻頁期間有資料插入或刪除時，keyset 比 OFFSET 穩定，原因是 keyset 從上一頁最後一筆的值接下去，OFFSET 依位置計數，前面多一筆或少一筆就跳過或重複。表小於 10000 行時 OFFSET 掃過的行數少，速度也快，維持 OFFSET 比較簡單。介面需要「跳到第 N 頁」時（Google 搜尋結果頁那種），keyset 只能從上一頁接續，這個需求要回到 OFFSET，或重新設計使用者操作。

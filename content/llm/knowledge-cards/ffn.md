@@ -33,4 +33,4 @@ FFN 變體：
 
 ## 判斷條件與後果
 
-理解 FFN 是參數大頭、能解釋幾件事：[MoE](/llm/knowledge-cards/moe/) 為什麼是「把 FFN 換成多個專家、只啟用部分」（因為 FFN 是最值得稀疏化的部分）、[MoE CPU offload](/llm/knowledge-cards/moe-cpu-offload/) 為什麼是「把 expert FFN 卸到 RAM」（FFN 大、卸下來省 VRAM）、為什麼模型大小用「參數量」算（FFN 主導）。LoRA fine-tuning 時、通常選擇對 attention 的 Q/V 投影做 LoRA、不對 FFN 動、因為 FFN 太大、LoRA 收益相對小。
+理解 FFN 是參數大頭、能解釋幾件事：[MoE](/llm/knowledge-cards/moe/) 為什麼是「把 FFN 換成多個專家、只啟用部分」（因為 FFN 是最值得稀疏化的部分）、[MoE CPU offload](/llm/knowledge-cards/moe-cpu-offload/) 為什麼是「把 expert FFN 卸到 RAM」（FFN 大、卸下來省 VRAM）、為什麼模型大小用「參數量」算（FFN 主導）。LoRA 原始論文只在 attention 的 Q、V 投影上加 adapter；QLoRA 之後常見的設定是在所有 linear 層（含 FFN）都加，原因是只加在 attention 時，fine-tune 的品質追不上完整 fine-tune，代價是 adapter 參數與訓練時的記憶體用量增加。

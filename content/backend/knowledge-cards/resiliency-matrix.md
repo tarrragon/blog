@@ -18,4 +18,4 @@ Resiliency matrix 位在 [blast radius](/backend/knowledge-cards/blast-radius/) 
 
 ## 判斷條件與後果
 
-Resiliency matrix 的責任是把 reliability debt 從模糊的「我們知道有缺口」變成可排序、可追蹤的清單。它的維護節奏跟 [6.21 reliability debt backlog](/backend/06-reliability/reliability-debt-backlog/) 對齊 — 每次演練後更新 matrix 的 gap/covered 狀態，每季 review matrix 的完整性。matrix 變成文件而不是工具（超過 6 個月未更新、gap 無 owner）是治理失敗的訊號。
+Resiliency matrix 的判斷對象是每一格的狀態是否還反映現在的系統。每次演練後都更新 gap 與 covered 時，matrix 是一份可排序、可追蹤的 reliability debt 清單，gap 欄直接成為下一次 game day 的題目，維護節奏可以跟 [6.21 reliability debt backlog](/backend/06-reliability/reliability-debt-backlog/) 對齊。超過 6 個月沒有更新、或 gap 沒有 owner 時，標成 covered 的格子可能已經因為架構變動而失效，團隊照 matrix 判斷的是過去的防護狀態，這是治理失敗的訊號。新上線的服務與新發現的失敗模式沒有加進列與欄時，它們的缺口連 gap 都標不出來，所以每季檢查一次 matrix 的完整性。

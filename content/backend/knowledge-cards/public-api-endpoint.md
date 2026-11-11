@@ -5,7 +5,6 @@ description: "說明面向外部 client 的穩定 API 入口如何被管理"
 weight: 1
 ---
 
-
 Public API Endpoint 的核心概念是「外部 client 直接呼叫服務時，所經過的穩定入口」。它承載產品功能對外的 request / response 邊界。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
 ## 跟其他概念的關係
@@ -22,4 +21,4 @@ Public API Endpoint 位在 client、[API Gateway](/backend/knowledge-cards/api-g
 
 ## 判斷條件與後果
 
-設計時要維持 request / response contract、版本相容、錯誤碼穩定與觀測欄位一致。Public API Endpoint 不應混入管理操作或內部調試責任。
+Public API endpoint 的呼叫端是服務方控制不了更新時程的外部 client、合作夥伴與 SDK。request / response contract 或版本相容被改動時，已經發出去的 client 仍照舊格式呼叫，請求失敗；錯誤碼改變時，client 依錯誤碼寫的重試與提示邏輯判錯。觀測欄位在各 endpoint 之間不一致時，跨 endpoint 比較錯誤率要逐一換算欄位。管理操作或內部調試功能混進這個入口時，它們跟著對外暴露，[attack surface](/backend/knowledge-cards/attack-surface/) 擴大到原本只給內部使用的功能，所以這類操作放在另外的入口。

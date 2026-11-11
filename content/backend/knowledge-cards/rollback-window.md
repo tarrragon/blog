@@ -27,4 +27,4 @@ Rollback window 位在 [cutover / switchover](/backend/knowledge-cards/cutover-s
 
 ## 判斷條件與後果
 
-Rollback window 要寫清楚目前階段、可用回退方式、最後可回退時間、資料相容性限制與 owner。它要進入 [release gate](/backend/knowledge-cards/release-gate/) 與 [incident decision log](/backend/knowledge-cards/incident-decision-log/)，避免事故期間把已經關閉的退路當成可用選項。
+Rollback window 的判斷對象是 migration 目前所在的階段還剩哪一種退路。expand 與 backfill 階段的退路是回到舊讀取或暫停重跑；contract 移除舊欄位之後，退路只剩資料修補或 fail-forward，原因是舊版本依賴的欄位已經不存在。窗口沒有寫明目前階段、最後可回退時間與資料相容性限制時，事故期間的決策者可能選了已經關閉的退路，執行到一半才發現走不通；所以每個階段的可用回退方式與 owner 記進 [release gate](/backend/knowledge-cards/release-gate/) 與 [incident decision log](/backend/knowledge-cards/incident-decision-log/)。

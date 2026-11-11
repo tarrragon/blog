@@ -40,9 +40,9 @@ MTEB 的 8 大任務類別：
 
 ## 判斷條件與後果
 
-讀 embedding model 比較看到「MTEB score」就是這 benchmark。寫 code / RAG 場景的判讀：
+MTEB 分數是否能拿來挑 RAG 用的 embedding model，看比的是哪一個分數、評估語料跟自己的 domain 有多接近：
 
-1. **看 Retrieval 子分數、不是 overall**：MTEB overall 含 8 類、跟 RAG 場景關係最大的是 Retrieval 子分；通用 retrieval 分數高、reranking 分數高、就值得試
-2. **跟自己 domain 對齊**：MTEB 多為通用語料、自己 domain（如 code、medical、legal）可能跟 MTEB 落差大；in-domain benchmark 比 MTEB 更重要
-3. **大小 / 速度 / 品質 trade-off**：bge-large（335M）vs nomic-embed（137M）、後者跑得快、適合本地 RAG；前者品質略高、適合雲端或 latency 不敏感場景
-4. **MTEB 高分不代表「適合你」**：高分模型可能是 instruction-tuned embedding（query 需要加特定前綴）、用法跟簡單模型不同、要看 model card
+- **比 overall 分數時**：overall 平均了 8 類任務，跟 RAG 直接相關的只有 Retrieval 與 Reranking 兩類，overall 高的模型在 RAG 裡的表現仍取決於它的 Retrieval 子分；兩個子分都高的模型才是 RAG 的候選。
+- **自己的 domain 離通用語料越遠時**（code、medical、legal）：MTEB 多為通用語料，排名跟自己資料上的檢索品質可能落差很大，這時用自己資料做的 in-domain benchmark 才分得出高下。
+- **在模型大小之間選時**：nomic-embed（137M）跑得快，適合本地 RAG；bge-large（335M）品質略高，適合雲端或 latency 不敏感的場景。
+- **高分模型是 instruction-tuned embedding 時**：query 要加特定前綴，用法跟簡單模型不同，照簡單模型的方式呼叫時拿不到它在 leaderboard 上的表現，前綴的寫法在它的 model card。

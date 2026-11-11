@@ -33,4 +33,4 @@ MoE 卸載屬於「推論時的權重位置管理」、跟 [量化](/llm/knowled
 
 理解 MoE 卸載後、可以解釋三個 PC 場景的現象：16GB VRAM 卡能載入 30B 級 MoE 模型（透過部分卸載而非全載 VRAM）、PC 場景 64GB RAM 相對 32GB 在 MoE 卸載空間上明顯更寬裕（可卸載更多層）、Mac 統一記憶體場景較少需要「卸載」這個概念（VRAM 跟 RAM 共用、不需要在兩個區域之間搬資料）。
 
-設定 PC 推論伺服器時、卸載層數通常跟 KV cache 量化、context 長度、併發數一起調：先估算想開的 context 長度、扣掉 KV cache 體積算出 VRAM 餘量、再選卸載層數讓模型剛好放得進。詳見 [5.0 VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/)。
+PC 推論伺服器上，卸載層數、KV cache 量化、context 長度與併發數共用同一塊 VRAM，其中一項改變，其他幾項的可用空間跟著變。想開的 context 長度決定 KV cache 的體積，VRAM 扣掉它之後的餘量才是放模型權重的空間：卸載層數太少時，權重超出這份餘量，模型載入失敗；卸載層數太多時，模型放得進，生字速度卻照〈可觀察訊號與例子〉那張卸載策略表的方向下降。所以卸載層數取的是讓權重剛好放進餘量的那個值。詳見 [5.0 VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/)。

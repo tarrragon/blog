@@ -26,7 +26,7 @@ AMI 在 infra 系列裡有兩個角色。第一個是接手維運時的保險—
 | 跨 region 複製 AMI   | 災難復原或多 region 部署 | 複製是非同步的、完成後才能在目標 region 使用     |
 | 共享 AMI             | 跨帳號使用同一個映像     | 需要設定 AMI 的 launch permission                |
 
-AMI 包含 EBS snapshot——AMI 的儲存成本就是底層 EBS snapshot 的成本（按儲存量計費）。不再使用的 AMI 要記得 deregister 並刪除對應的 snapshot，否則持續計費。
+AMI 包含 EBS snapshot，AMI 的儲存成本就是底層 EBS snapshot 的成本，按儲存量計費。不再使用的 AMI 只做了 deregister 時，它從 AMI 清單上消失，對應的 snapshot 仍在計費，原因是 deregister 移除的是映像的登記，不刪除它引用的 snapshot；所以清理時兩者一起刪。
 
 跟 container image 的差別：AMI 是整台 VM 的映像（含 OS、kernel、系統套件），container image 只包含應用程式和它的依賴（共用 host OS 的 kernel）。AMI 以 GB 計（通常 8-50 GB），container image 以 MB 計（通常 50-500 MB）。
 

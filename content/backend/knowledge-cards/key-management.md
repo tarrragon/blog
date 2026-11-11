@@ -17,4 +17,4 @@ Key Management 位在加密機制的底層。[At-Rest Encryption](/backend/knowl
 
 ## 判斷條件與後果
 
-設計時要定義金鑰階層、每把金鑰的 owner、輪替週期與撤銷流程，並把金鑰納入 restore 演練。data-encryption key 要和 access secret 分開保存與分開稽核。observability 要能確認金鑰可用性、最近輪替時間與即將到期的金鑰。
+Data-encryption key 遺失時，用它加密的資料永久無法讀取，金鑰管理的每一項設定都從這個後果推出。金鑰沒有 owner 與輪替週期時，輪替與到期沒有人負責，金鑰過期或被刪除之後才被發現。金鑰沒有納入 restore 演練時，備份的 keyring 沒有一起保存的情形要到真正需要還原時才看得到，加密的 backup 變成無法還原的資料。沒有金鑰階層時，輪替或撤銷一把金鑰牽動它保護的全部資料；envelope encryption 把資料金鑰與包裝它的金鑰分開，輪替與撤銷可以分層進行。data-encryption key 與 access secret 放在一起保存與稽核時，兩種失效被混在一起處理：access secret 外洩造成存取邊界失效，要撤銷與替換；data-encryption key 遺失造成資料無法讀取，要確保它不遺失。金鑰可用性、最近輪替時間與即將到期的金鑰沒有被觀測時，以上幾種失效都要到出事時才看到。

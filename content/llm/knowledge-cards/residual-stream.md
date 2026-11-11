@@ -18,4 +18,4 @@ Residual stream 的核心概念是「**[Transformer](/llm/knowledge-cards/transf
 
 ## 判斷條件與後果
 
-一般使用者不用調 residual stream，但理解它能幫助區分 layer、block、hidden state 與 residual connection。進一步閱讀可回到 [Transformer](/llm/knowledge-cards/transformer/) 與 [Residual Connection](/llm/knowledge-cards/residual-connection/)。
+文章寫某一層「write to」或「read from」residual stream、或用 logit lens 讀中間層時，對象是跨所有 block 持續傳遞的那一條 hidden state 通道，各層的輸出在上面逐層累加；寫 skip connection 或 `output = layer(x) + x` 時，對象是單一 block 裡的那一次加法。把整條通道讀成單一 block 的加法，會把「某一層在通道上留下的特徵」讀成「某一個 block 的輸出」，看不出後面的層讀得到前面各層寫入的內容。一般使用者不直接調整 residual stream，這個分辨用在讀 Transformer 架構與 mechanistic interpretability 的文章。進一步閱讀可回到 [Transformer](/llm/knowledge-cards/transformer/) 與 [Residual Connection](/llm/knowledge-cards/residual-connection/)。

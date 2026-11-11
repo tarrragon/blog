@@ -23,11 +23,11 @@ Jagged frontier（鋸齒狀邊界、HBS / UPenn / Wharton BCG 顧問研究、202
 
 ## 判斷條件與後果
 
-讀 AI 應用設計文章看到「jagged frontier」「AI capability boundary」「falling asleep at the wheel」就是這個 framing。設計判讀：
+Jagged frontier 的判斷看一個子任務位於 frontier 內還是外，以及這件事由什麼依據判定。
 
-1. **不要用人類直覺難易推測 AI 能力**：試跑、看結果、不要預判。
-2. **「全自動」是 over-trust 假設**：frontier 鋸齒、總有些子任務落 frontier 外、需要人介入或 tool 補。設計時假設「有部分子任務 AI 會失敗」、不是「都會成功」。
-3. **失敗在 frontier 外加 prompt iteration 通常無效**：那是模型能力邊界問題、不是 prompt 問題。對應 [prompt 技術光譜](/llm/04-applications/prompt-techniques-landscape/) 的 systematic vs random error 診斷。
-4. **Falling asleep at the wheel**：BCG 研究觀察到的人類行為——傾向不分辨任務是否在 frontier 內、對 AI 結果一律低度審查。緩解：對團隊 / user 明確標 frontier、frontier 外任務強制人類審查（HITL）、抽樣審查偵測 frontier 漂移。
+1. **用人類直覺的難易推測 AI 是否做得到時**，推測會在鋸齒處出錯：看起來簡單的精確算術與計數會失敗，看起來複雜的技術翻譯與程式碼生成反而做得好（上面的對照表），所以判定的依據是實際試跑的結果。
+2. **系統設計成全自動、假設每個子任務都會成功時**，位於 frontier 外的子任務失敗了也沒有人或 tool 接手，原因是鋸齒狀分佈下總有子任務在 frontier 外；把「部分子任務會失敗」當成設計前提，那些位置才會預先放好人工介入或 tool。
+3. **失敗的任務位於 frontier 外時**，反覆改 prompt 多半沒有效果，原因是失敗來自模型的能力邊界，prompt 寫法改變不了它；這對應 [prompt 技術光譜](/llm/04-applications/prompt-techniques-landscape/) 裡 systematic error 與 random error 的分辨。
+4. **審查的人不分辨任務是否在 frontier 內、對 AI 結果一律低度審查時**（BCG 研究觀察到的 falling asleep at the wheel），frontier 外的錯誤跟 frontier 內的正確結果一起被放行。對應的做法是對團隊與使用者標出 frontier、frontier 外的任務強制人工審查（[HITL](/llm/knowledge-cards/human-in-the-loop/)），再用抽樣審查偵測 frontier 的移動。
 
 完整人機協作 framing 見 [4.5 人機協作拓樸](/llm/04-applications/human-ai-collaboration/)。

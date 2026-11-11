@@ -17,4 +17,4 @@ Poison-message quarantine 是 [poison message](/backend/knowledge-cards/poison-m
 
 ## 判斷條件與後果
 
-設計時把投遞次數上限設在「足夠容忍暫時性失敗、又不會無限重試」之間，並在隔離時保留原始 payload 與失敗原因，讓後續診斷與 drain 有足夠證據。
+投遞次數上限決定一則訊息失敗幾次之後被移出主處理路徑。上限太低時，遇到暫時性失敗（下游短暫逾時）的訊息還沒等到重試成功就被隔離，本來能處理的訊息進了隔離區，要靠 drain 送回；上限太高或沒有上限時，一則毒訊息反覆重投，卡住整個 partition 或 queue。隔離時只移走訊息、沒有保留原始 payload 與失敗原因時，[DLQ drain](/backend/knowledge-cards/dlq-drain/) 拿不到判斷這則訊息該修復重送還是歸檔的證據。

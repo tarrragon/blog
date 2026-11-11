@@ -26,4 +26,4 @@ WebSocket 連線、HTTP keep-alive、反向代理連線池或 application 內部
 
 ## 判斷條件與後果
 
-設計時要定義閒置判定條件、關閉前通知、重連策略與是否允許不同層級使用不同 timeout。Idle Timeout 應該和 read/write timeout、request timeout 區分開來，避免把不同問題混在一起。
+Idle timeout 的判斷條件是連線路徑上各層的閒置判定是否一致。load balancer、proxy 與 application 各自設 idle timeout 時，最短的那一層先關閉連線，另一端仍以為連線可用，下一個請求送進已關閉的連線而失敗；client 有重連策略時，這次失敗換成一次重連，沒有時直接變成錯誤。關閉之前沒有通知對端時（WebSocket 的 close frame 這類），對端要等下一次讀寫才發現連線斷了。idle timeout 量的是兩次活動之間的空檔，read/write timeout 與 request timeout 量的是單次操作的等待，兩者混用時，為了一種情形調整數值會改到另一種：為了讓慢查詢做完而拉長 idle timeout，閒置連線也跟著佔住資源更久。

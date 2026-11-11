@@ -31,4 +31,4 @@ SwiGLU / GeGLU 是「gated」變體、用兩條線性投影相乘、表達能力
 
 ## 判斷條件與後果
 
-讀 paper / model card 看到 SwiGLU、ReLU、GELU 等詞、知道它們是 FFN 內部的選擇、影響模型表達能力跟訓練穩定性、不影響「模型怎麼用 / 怎麼 inference」這類使用者面議題。寫 code 場景的判讀：模型用什麼 activation 由模型作者決定、使用者通常不用調；但若要 fine-tune 或自己訓模型、activation 選擇是設計決策之一。
+paper 或 model card 上的 SwiGLU、ReLU、GELU 是 FFN 內部的選擇，由模型作者在訓練之前決定，影響的是模型的表達能力與訓練穩定性。只是使用模型、做 inference 時，activation 已經固定在模型裡，部署方式與呼叫方式都不因它而不同，這些詞只用來辨認模型屬於哪一代的設計。自己訓練模型時，activation 是一個設計決策：gated 變體（SwiGLU、GeGLU）用兩條線性投影相乘，表達能力較強，代價是 FFN 多一組權重與對應的計算。fine-tune 時沿用原模型的 activation，原因是預訓練權重是配合那個函數學出來的。

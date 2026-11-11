@@ -18,4 +18,4 @@ Tool result misread（工具結果誤判）的核心概念是「**agent 把 [too
 
 ## 判斷條件與後果
 
-工具回傳要結構化表示 status、exit code、error type、stdout/stderr 與可重試性。Agent loop 要在 error signal 出現時強制 re-read 或 retry，必要時呼叫狀態確認工具，而不是依賴模型記憶。
+工具回傳只有一段自由文字時，error、warning、空集合與 partial failure 混在 log 裡，模型在 observe 階段可能只讀到最後幾行就判成成功，後面的步驟建立在一個沒有發生的結果上（`git push` 失敗後照樣寫 PR description）；原因是 LLM 只讀得到工具回傳的文字，失敗的訊號被截斷或埋在中段時，模型手上沒有別的來源可以對照。回傳把 status、exit code、error type、stdout/stderr 與可重試性分成各自的欄位時，失敗是一個獨立的值，agent loop 拿得到一個可以檢查的訊號。模型記得的先前結果可能已經過時或本來就讀錯，所以 error signal 出現時，agent loop 以 re-read、retry 或呼叫狀態確認工具取得當下的狀態，不沿用模型記憶。

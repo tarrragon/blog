@@ -27,4 +27,4 @@ Stop condition 位在 [migration gate](/backend/knowledge-cards/migration-gate/)
 
 ## 判斷條件與後果
 
-Stop condition 要包含訊號、門檻、觀察窗口、對應動作與 owner。它要進入 [release gate](/backend/knowledge-cards/release-gate/) 和 [incident decision log](/backend/knowledge-cards/incident-decision-log/)，並且要能被 [evidence package](/backend/knowledge-cards/evidence-package/) 支撐。
+Stop condition 由訊號、門檻、觀察窗口、對應動作與 owner 組成，任一項缺席時，現場是否停下又回到當下的感覺：只有訊號沒有門檻，指標變差多少算該停沒有共識；沒有觀察窗口，短暫的抖動與持續的惡化分不開，前者讓 rollout 被誤停，後者被當成抖動放過（`for two consecutive batches` 就是窗口）；沒有對應動作，觸發之後是暫停、回退還是改路線要臨場決定；沒有 owner，條件觸發了也沒有人有權執行。Stop condition 寫進 [release gate](/backend/knowledge-cards/release-gate/) 與 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 時，事後復盤對照得到「當時是否該更早停」；門檻的依據（基準值、過去的事故數據）收進 [evidence package](/backend/knowledge-cards/evidence-package/) 時，門檻被質疑時拿得出它從哪裡來。

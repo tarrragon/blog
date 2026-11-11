@@ -17,4 +17,4 @@ Replica Identity 位在變更事件的 schema 契約層。[Change Data Capture](
 
 ## 判斷條件與後果
 
-設計 CDC 或邏輯複製前，要先盤點每張要輸出變更的表是否有穩定 key。沒有 primary key 的表要補唯一鍵，或接受 full row image 的成本。observability 要能偵測下游套用失敗或被略過的 update / delete 事件。
+一張要輸出變更的表是否有穩定的 key，決定下游是否定位得到 update 與 delete 事件的目標列。表有 primary key 時，事件帶著主鍵值，下游照它找到目標列；沒有 primary key、也沒有補唯一鍵時，insert 照常套用，update 與 delete 卻找不到要改的列，下游的資料慢慢漂移而不報錯，原因是事件裡沒有任何欄位對得上一列。改用 full row image 讓事件帶出整列的舊值來定位，代價是每個事件變大、下游比對的成本上升。這類失敗是靜默的，所以下游套用失敗或被略過的 update / delete 事件要有計數與告警。

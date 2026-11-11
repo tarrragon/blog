@@ -18,4 +18,4 @@ Function calling 是**模型能力**層、跟 [structured output](/llm/knowledge
 
 ## 判斷條件與後果
 
-選擇 function calling 還是 free-form + structured output、依模型規模跟跨 model 可移植需求決定：主流大模型走 function calling 開箱即用、跨 model / 較弱模型走 free-form + [grammar](/llm/knowledge-cards/grammar/) 約束較穩。實務常組合：function calling 「正常情況」、structured output 兜底保證合法、retry + fallback 處理失敗。詳細展開見 [4.3 Tool use 原理](/llm/04-applications/tool-use-principles/) 與 [4.6 應用層協議](/llm/04-applications/application-protocols/)。
+Function calling 跟 free-form 輸出加 structured output 之間的選擇，看模型的 function calling 訓練是否足夠，以及系統是否要在幾個模型之間切換。主流大模型的 SFT 階段有大量呼叫範例，模型自己輸出合法呼叫，直接用 function calling 不需要額外約束；本地小模型的呼叫格式錯、參數亂填比例高（上一段的訊號），要跨模型使用時各模型的呼叫能力也隨訓練而不同，這兩種情形改用 free-form 輸出加 [grammar](/llm/knowledge-cards/grammar/) 約束，格式的合法由 sampling 階段強制，不依賴模型的訓練。兩者也可以疊用：正常情況走 function calling，structured output 兜底保證格式合法，retry 與 fallback 處理格式合法而內容錯的呼叫（選錯工具、參數值錯），原因是 sampling 約束只管形狀，管不到選哪個工具。詳細展開見 [4.3 Tool use 原理](/llm/04-applications/tool-use-principles/) 與 [4.6 應用層協議](/llm/04-applications/application-protocols/)。

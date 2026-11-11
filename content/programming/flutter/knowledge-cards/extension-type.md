@@ -15,4 +15,4 @@ Extension type 是實作 [value object](/software-design/ddd/knowledge-cards/val
 
 ## 判斷條件與後果
 
-Extension type 的 subtype 決策要在設計時做好——它是底層型別的 subtype（寬鬆：可以隱式 upcast 回底層型別）還是獨立型別（嚴格：只能顯式拆封）。前者方便、但封裝邊界弱；後者安全、但每個需要底層型別的銜接點都要顯式拆封。顯式拆封的出口要有語意明確的名字（如 `toDecimal()`），見 [建構路徑設計](/software-design/ddd/construction-path-design/)。Migration 案例見 [Money 三段遷移](/work-log/dart_money_extension_type_migration/)。
+Extension type 宣告時就決定它跟底層型別的關係，兩種選擇的代價不同。宣告成底層型別的 subtype 時，值可以隱式 upcast 回底層型別，銜接既有的 API 很方便，代價是封裝邊界弱：任何接受底層型別的函式都收得下它，限縮過的 API 在那裡被繞過。宣告成獨立型別時，只有顯式拆封才拿得到底層值，封裝邊界完整，代價是每個需要底層型別的銜接點都多一次拆封。這個決定在設計時做，原因是之後改的話，所有銜接點的寫法都要跟著改，Migration 案例見 [Money 三段遷移](/work-log/dart_money_extension_type_migration/)。獨立型別的顯式拆封是離開領域型別的唯一出口，取 `toDecimal()` 這類寫出目標型別的名字時，讀程式的人看得出值在這裡離開了領域型別，見 [建構路徑設計](/software-design/ddd/construction-path-design/)。

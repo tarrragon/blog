@@ -33,4 +33,4 @@ Confidence 位在 [query link](/backend/knowledge-cards/query-link/)、[known ga
 
 ## 判斷條件與後果
 
-Confidence 要定義等級、證據依據、限制與下一步。它要與 [known gap](/backend/knowledge-cards/known-gap/) 和 [rollback condition](/backend/knowledge-cards/rollback-condition/) 一起保存，避免團隊把暫時結論當成穩定事實。
+一筆 confidence 只寫等級時，讀到它的人知道結論是 suspected，卻不知道是哪一份證據支持、缺的是哪一項查證，也就判斷不了它能支持到哪一個決定（繼續 backfill，還是使用者可見的 cutover）。寫出證據依據與限制時，讀的人可以拿自己要做的決定去對照；寫出下一步時，suspected 有一條變成 confirmed 的路徑。confidence 跟 [known gap](/backend/knowledge-cards/known-gap/) 與 [rollback condition](/backend/knowledge-cards/rollback-condition/) 分開保存時，事後讀紀錄的人只看得到當時的結論，看不到它附帶的缺口與回退條件，暫時的結論就被當成穩定的事實沿用。

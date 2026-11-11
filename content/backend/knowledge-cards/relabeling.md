@@ -45,4 +45,4 @@ relabel_configs:
     target_label: host
 ```
 
-為了控制序列數量而丟掉指標時，先問能不能在讀取對象那一層就不讀；`metric_relabel_configs` 適合丟掉少數幾個不需要的指標或標籤，不適合拿來抵銷一個輸出大量指標的 exporter。
+為了控制序列數量而丟掉指標時，兩個位置省下的不同：`metric_relabel_configs` 在解析之後才丟，指標照樣被讀取與解析，只省下儲存；在讀取對象那一層不讀，連線、解析與儲存都省下。所以 `metric_relabel_configs` 適合丟掉少數幾個不需要的指標或標籤；一個輸出大量指標的 exporter，用它丟掉指標省不下讀取時間與 exporter 的負擔，先看能不能在讀取對象那一層就不讀。

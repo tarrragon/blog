@@ -35,10 +35,9 @@ User input
 
 讀 LLM 應用設計文章或開始設計 production AI 系統時、這個 framing 決定每個 step 的工具選擇。實作判讀：
 
-1. **哪段該 deterministic / 哪段該 fuzzy**：規則可窮舉、失敗代價高、需要解釋、需要 byte-exact 重現的 → deterministic；自由文字輸入、生成有風格的輸出、邊界模糊的 → fuzzy。
-2. **典範用錯的反模式**：deterministic 需求硬用 fuzzy（用 LLM 算稅金）、fuzzy 需求硬用 deterministic（regex 解析自由文字）、邊界混（prompt 內塞算術 / code 內塞意圖分類）。
-3. **Fuzzy 邊界的四種 guardrail**：schema validation、output validator、action gating、distribution monitoring。混用、不同 risk class 分擔不同層。
-4. **跟 [HITL](/llm/knowledge-cards/human-in-the-loop/) 的關係**：HITL 是 deterministic guardrail 的一種——把人類判斷當 deterministic check 包 fuzzy LLM 行為。
-5. **失敗的歸因分層**：壞掉時要問「是 prompt / model / context / tool / 還是 deterministic glue 的 bug」。deterministic 軟體歸因單一、fuzzy 軟體要分這幾層查。
+1. **這一步的規則可窮舉、失敗代價高、需要解釋或需要 byte-exact 重現時**：這一步屬於 deterministic，因為模型的輸出是分佈，同一個輸入可能得到不同結果，給不出重現與解釋。輸入是自由文字、輸出要有風格、邊界模糊時屬於 fuzzy，因為規則寫不完這些情形。
+2. **典範用反時**：deterministic 需求交給 LLM（用 LLM 算稅金），得到的是偶爾出錯而無法重現的結果；fuzzy 需求寫成規則（regex 解析自由文字），在規則沒涵蓋的輸入上失效；兩邊混在同一處（prompt 裡做算術、code 裡做意圖分類）時，出錯了分不出是哪一側的責任。
+3. **fuzzy 的輸出交給 deterministic 的步驟時**：邊界上有四種 guardrail，schema validation、output validator、action gating、distribution monitoring，各自攔不同 risk class 的錯誤，通常混合使用。[HITL](/llm/knowledge-cards/human-in-the-loop/) 也是一種 deterministic guardrail：把人類判斷當成檢查點，包住 LLM 的行為。
+4. **系統出錯時**：deterministic 軟體的錯誤歸因到單一的程式碼路徑；fuzzy 系統的錯誤可能來自 prompt、model、context、tool 或 deterministic glue code，要逐層區分才找得到原因。
 
 完整典範討論見 [0.8 Deterministic vs Fuzzy Engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)。

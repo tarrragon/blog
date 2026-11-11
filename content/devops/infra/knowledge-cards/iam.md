@@ -21,12 +21,12 @@ IAM 需要關注的訊號：某個 role 的 policy 有 `*:*` 或 `AdministratorA
 
 ## 判斷條件與後果
 
-IAM 是其他所有資源的閘門，一個權限過寬的 role 等於把它碰得到的資源全部交給持有那份憑證的身分，設計時先劃清身分與權限的邊界，再排定之後收斂的節奏：
+IAM 是其他所有資源的閘門，一個權限過寬的 role 等於把它碰得到的資源全部交給持有那份憑證的身分，下面每一條邊界缺席時，各自打開一條這樣的路徑：
 
-- 身分類型區分：人用 SSO 登入（強制 MFA）、雲上服務用 instance profile / task role、雲外 CI 用 OIDC 聯合
-- 權限分級：admin / operator / viewer 三級，見[團隊權限分級](/devops/infra/02-identity-credentials/team-access-management/)
-- 環境隔離：每個環境的 role 不能存取其他環境的資源
-- 收斂節奏：定期用 Access Analyzer 觀察實際使用的 action，收掉沒用到的權限
+- **身分類型**：人、雲上服務與雲外 CI 都用長期 access key 時，任何一份 key 外洩都長期有效。人用 SSO 登入並強制 MFA，雲上服務用 instance profile 或 task role，雲外 CI 用 OIDC 聯合取得短期憑證，外洩的憑證到期就失效
+- **權限分級**：每個人都拿 admin 時，任何一個帳號被盜，攻擊者就拿到整個雲端帳號的權限；分成 admin、operator、viewer 三級（見[團隊權限分級](/devops/infra/02-identity-credentials/team-access-management/)）之後，日常使用的帳號被盜時，損失限在那一級碰得到的資源
+- **環境隔離**：一個環境的 role 存取得到其他環境的資源時，dev 的 CI 出錯或被入侵，就能改到 production 的資源
+- **收斂節奏**：權限只在建立時設定一次時，授予的 action 隨時間累積，遠多於實際使用的 action；定期用 Access Analyzer 對照實際使用的 action、收掉沒用到的權限，role 的權限才會停在剛好夠用
 
 ## 鄰卡
 

@@ -17,4 +17,4 @@ Bounded staleness 是一致性與延遲取捨的中間層，可搭配 [pacelc](/
 
 ## 判斷條件與後果
 
-採用 bounded staleness 時，必須定義上限值、量測方法與超標處置。沒有 tripwire 的 stale window 只是口頭承諾，無法支撐 release gate 或事故判讀。
+Bounded staleness 的上限要有上限值、量測方法與超標處置三件事才檢查得了。沒有量測方法時，沒有人知道 stale window 目前多大；沒有超標處置時，量到超標也沒有告警或降級接手，舊資料照樣回給使用者。缺其中任何一件，stale window 都是沒有 tripwire 的口頭承諾，不能當成 release gate 或事故判讀的依據，原因是兩者都要拿實際落後量去比對上限。

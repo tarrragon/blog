@@ -17,4 +17,4 @@ Read-Write Split 位在 application 與資料庫拓撲之間的路由層。它�
 
 ## 判斷條件與後果
 
-設計時要定義路由規則、哪些讀取必須走 primary、交易內讀取如何 pin 在同一連線、以及 replica lag 超標時的降級策略。session 一致性要寫清楚：同一使用者的 read-after-write 是否保證。observability 要看 primary 與 replica 的讀寫分佈、replica lag，以及被 lag guard 擋回 primary 的比例。
+Read-write split 的路由規則決定每一種讀取會不會讀到舊資料。交易內的讀取被分到 replica 時，交易裡剛寫入的資料在 replica 上還看不到，原因是 replica 落後 primary，所以交易內讀取 pin 在同一條連線；SELECT ... FOR UPDATE 這類需要強一致的讀取走 primary。同一使用者的 read-after-write 是否保證沒有寫清楚時，寫入後立刻讀的路徑可能分到 replica、讀到舊狀態。replica lag 超過門檻而沒有降級策略時，所有分到 replica 的讀取一起變舊；有 lag guard 時這些讀取被擋回 primary，primary 的負載跟著上升，所以 primary 與 replica 的讀寫分佈、replica lag 與擋回 primary 的比例要一起觀測，才看得出擋回的量是否接近 primary 的容量。

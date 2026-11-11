@@ -20,4 +20,4 @@ Always-on 的核心價值是 baseline — 事故時跟 baseline 做 diff（flame
 
 ## 判斷條件與後果
 
-Overhead 控制是 continuous profiling 可行性的前提 — CPU overhead < 1%、memory overhead < 10MB。eBPF-based profiler（Parca、Pyroscope eBPF）在 kernel 層採集、overhead 最低；language runtime 內建（Go pprof、Java JFR）居中。Profile 資料要帶 service / version / region label，讓跨版本 diff 跟 canary 對照可行。完整設計見 [4.9 continuous profiling](/backend/04-observability/continuous-profiling/)。
+Continuous profiling 能否在 production 常駐，取決於 overhead：CPU overhead 在 1% 以內、memory overhead 在 10MB 以內時，它可以一直開著累積 baseline；超過時，常駐的成本本身就影響服務，profiler 只能在事故時才開，事故時也就沒有 baseline 可以 diff。採集方式決定 overhead 的高低：eBPF-based profiler（Parca、Pyroscope eBPF）在 kernel 層採集，overhead 最低；language runtime 內建的（Go pprof、Java JFR）居中。Profile 資料沒有帶 service、version、region label 時，事故時找不到對應版本的 baseline，跨版本的 flame graph diff 與 canary 對照都做不了。完整設計見 [4.9 continuous profiling](/backend/04-observability/continuous-profiling/)。

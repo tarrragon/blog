@@ -18,4 +18,4 @@ Word2Vec 屬於 LLM 前一代的 static embedding 方法，常見訓練方式是
 
 ## 判斷條件與後果
 
-讀 embedding 章節看到 Word2Vec 時，把它當成「embedding 概念的歷史基線」。實務 RAG 選型通常看現代 embedding model 與 [MTEB](/llm/knowledge-cards/mteb-benchmark/)，不是直接使用 Word2Vec。
+Word2Vec 對同一個詞給固定的向量，多義詞在不同上下文裡拿到同一個向量，所以拿它做 RAG 的 retrieval 時，query 裡的 bank 是銀行還是河岸，檢索端分不出來。現代 [embedding model](/llm/knowledge-cards/embedding-model/) 依上下文產生向量，沒有這個限制，因此 RAG 選型比的是現代 embedding model 在 [MTEB](/llm/knowledge-cards/mteb-benchmark/) 上的表現。在 embedding 章節裡，Word2Vec 的角色是 embedding 概念的歷史基線：`king - man + woman ≈ queen` 這類類比說明向量空間能表示語意方向，靜態向量的限制則說明後來的模型為什麼改成依上下文產生向量。

@@ -22,4 +22,4 @@ Container 位在 build、deploy、runtime 與 platform 之間，是服務交付�
 
 ## 判斷條件與後果
 
-設計時要定義 image 內容（Dockerfile 指令與 layer 怎麼組見 [Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)）、啟動命令、[resource limit](/backend/knowledge-cards/resource-limit/) 與環境變數來源；image 用哪個 tag 凍結成固定形狀見 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/)。Container 是讓服務交付、擴容與回滾更一致的手段，目的在服務層面。一個系統該切成幾個 container（一服務一個、還是全塞一個）見 [一容器一職責](/backend/knowledge-cards/container-per-service/)。
+Container 讓服務的交付、擴容與回滾一致，前提是 image 內容、啟動命令與環境變數來源都固定下來；其中任一項依啟動的環境而變時，同一個 image 在不同環境的行為就不同，回滾到同一個 image 也不保證回到同一個行為。image 內容由 Dockerfile 決定（指令與 layer 怎麼組見 [Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)）；tag 沒有凍結時，同一個 tag 在不同時間指向不同的內容，凍結的方式見 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/)。沒有 [resource limit](/backend/knowledge-cards/resource-limit/) 時，一個 container 可以用掉主機的全部記憶體，同一台主機上的其他 container 跟著受影響。一個系統該切成幾個 container（一服務一個、還是全塞一個）見 [一容器一職責](/backend/knowledge-cards/container-per-service/)。

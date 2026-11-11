@@ -18,4 +18,4 @@ Tensor split 位在 inference server / GPU serving 層，跟 [NVLink](/llm/knowl
 
 ## 判斷條件與後果
 
-只有多 GPU 且需要手動控制分配時才需要它。單卡消費級 PC 通常不用；多卡沒有高速互連時，分割模型可能降低速度，需用實際 benchmark 校準。
+Tensor split 用在多 GPU 推論、而且要手動控制各卡分配比例的時候；單卡的消費級 PC 沒有分配可做。多卡之間沒有高速互連（只走 [PCIe](/llm/knowledge-cards/pcie/)、沒有 [NVLink](/llm/knowledge-cards/nvlink/)）時，分割之後卡與卡之間要傳中間結果，傳輸成本可能抵掉多一張卡的好處，推論反而變慢。分割與否、比例多少都改變這個傳輸成本，所以用實際 benchmark 的速度決定。

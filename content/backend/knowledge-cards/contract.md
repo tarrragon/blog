@@ -5,7 +5,6 @@ description: "說明跨邊界約定如何維持相容與可驗證"
 weight: 1
 ---
 
-
 Boundary Contract 的核心概念是「邊界兩端共同承認的約定」。它描述不同系統、元件或流程在互相協作時，需要遵守的共同規則。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
 ## 跟其他概念的關係
@@ -22,4 +21,4 @@ API contract 會定義欄位名稱、必要欄位、錯誤格式與相容版本�
 
 ## 判斷條件與後果
 
-Boundary Contract 設計要清楚定義版本、相容性、破壞性變更、驗證方式與回復流程。若 contract 不穩，應搭配 contract test、[Release Gate](/backend/knowledge-cards/release-gate/) 與文件化規則。
+Boundary contract 沒有寫清楚的部分，由邊界兩端各自解讀。版本沒有定義時，client 說不出自己依賴的是哪一版行為；相容性與破壞性變更沒有界定時，一端改了欄位，另一端到上線後才發現整合失敗；沒有驗證方式時，實作偏離 contract 也沒有任何檢查會失敗；沒有回復流程時，破壞性變更上線之後只能往前修。contract 經常變動、兩端常對不上時，contract test 與 [Release Gate](/backend/knowledge-cards/release-gate/) 讓偏離在合併或發佈之前就被擋下，文件化的變更規則讓兩端對「什麼算破壞性變更」用同一個標準。

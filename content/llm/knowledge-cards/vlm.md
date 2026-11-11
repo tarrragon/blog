@@ -40,9 +40,4 @@ text token 與 image token 混合進 Transformer 的機制細節、見 [multimod
 
 ## 判斷條件與後果
 
-讀 model card 看到「vision」「VL」「multimodal」「-VL」「visual」就是 VLM。寫 code 場景的判讀：
-
-1. **任務適合用 vision 才用**：純文字描述夠清楚就別塞圖、image token 多、context 跟推論成本上升
-2. **本地跑 VLM 比純文字 LLM 吃資源**：vision encoder 通常 0.3-1B 參數、image 處理階段算力需求大、TTFT 變長
-3. **OCR-heavy 任務不一定要 VLM**：純 OCR（識別截圖中文字）用專門 OCR 工具（Tesseract / PaddleOCR）可能更穩、VLM 強項在「理解圖 + 推理」
-4. **影片不是免費**：「VLM 看影片」本質是抽 frames 變多張圖、token 用量爆炸、效益看任務
+一張圖值不值得送進 VLM，看圖裡有沒有文字描述不出來的資訊。純文字描述就夠清楚時，加一張圖只多出大量 [image token](/llm/knowledge-cards/image-token/)，context 用量與推論成本上升，答案不會因此變好。在本地跑時，VLM 比同級的純文字 LLM 需要更多記憶體與算力：[vision encoder](/llm/knowledge-cards/vision-encoder/) 通常有 0.3-1B 參數，圖片處理階段的算力需求讓 TTFT 變長。任務只是辨識截圖裡的文字時，專門的 OCR 工具（Tesseract、PaddleOCR）可能更穩，VLM 的長處在理解圖之後的推理，例如從截圖判斷 UI 哪裡出錯。影片進 VLM 時是抽出的多張 frame，每一張都換成 image token，token 用量隨 frame 數倍增，所以送不送影片，看任務需要的時間資訊值不值得這份成本。讀 model card 時，「vision」「VL」「multimodal」「-VL」「visual」這些字樣標的都是 VLM。

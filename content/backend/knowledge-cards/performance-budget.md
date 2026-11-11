@@ -17,4 +17,4 @@ Performance budget 訂在 SLO baseline 之上、允許「p99 比 baseline 高 X 
 
 ## 判斷條件與後果
 
-Performance budget 不是越緊越好、會 starve 產品創新。建議從 baseline + 10% headroom 開始、看 burn rate 調整。budget 用 burn rate alert（類似 error budget）、不是用門檻 alert。跟 [latency budget](/backend/knowledge-cards/latency-budget/) 不同層：latency budget 是「每個 stage 多少 latency 配額」、performance budget 是「整體允許退化多少」。
+Performance budget 的鬆緊決定 release 的節奏。額度訂得太緊時，正常的功能迭代也會用完額度，release freeze 頻繁觸發，新功能排不上 release；訂得太鬆時，效能退化逐次累積，沒有任何一次觸發 freeze。起點取 baseline 加 10% headroom，之後依 burn rate 調整。額度是一段時間內允許的退化量，所以告警看的是消耗速度：固定門檻的 alert 在短暫越線時就響、在長期低於門檻的緩慢退化時不響，用 burn rate alert（跟 [error budget](/backend/knowledge-cards/error-budget/) 同一套做法）才對得上額度的定義。跟 [latency budget](/backend/knowledge-cards/latency-budget/) 不同層：latency budget 是「每個 stage 多少 latency 配額」、performance budget 是「整體允許退化多少」。

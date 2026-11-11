@@ -5,7 +5,6 @@ description: "說明 consumer lag 如何反映訊息堆積、處理能力與容�
 weight: 3
 ---
 
-
 Consumer lag 的核心概念是「consumer 已處理位置落後於 broker 最新訊息位置的距離」。這個距離可以用訊息數量、offset 差距或預估處理時間表示，它反映事件進入系統的速度是否高於處理速度。 可先對照 [Consumer](/backend/knowledge-cards/consumer/)。
 
 ## 跟其他概念的關係
@@ -22,4 +21,4 @@ Consumer lag 是訊息系統的容量與健康訊號。Lag 上升代表某個 co
 
 ## 判斷條件與後果
 
-Consumer lag 要搭配 runbook 使用。Runbook 應說明 lag 上升時先看進入量、處理耗時、錯誤率、下游延遲、重試數與 instance 數量；再決定擴容、暫停低優先工作、修復 poison message 或調整下游保護。
+Lag 上升只說明處理速度低於進入速度，原因要從其他訊號分辨，而原因決定哪一種處置有效。進入量上升而處理耗時不變時，是容量不足，擴容有效。處理耗時、下游延遲或重試數上升時，是下游變慢或出錯，擴容只會加重下游的負載，有效的是暫停低優先工作或調整下游保護。錯誤與重試集中在同一批訊息時，指向 poison message，修復或移出那筆訊息之前 lag 不會下降。instance 數量下降時，是 consumer 自己的處理能力減少。runbook 寫出這組訊號與處置的對應時，lag 告警才接得到處置。

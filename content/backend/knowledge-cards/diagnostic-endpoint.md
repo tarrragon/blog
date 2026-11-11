@@ -6,7 +6,6 @@ description: "說明健康檢查、診斷與調試入口如何控制暴露面"
 weight: 1
 ---
 
-
 Diagnostic Endpoint 的核心概念是「讓平台或工程師查詢服務狀態，但不暴露業務資料」。它包含 [health check](/backend/knowledge-cards/health-check/)、readiness、metrics snapshot、debug info 等入口。
 
 ## 跟其他概念的關係
@@ -23,4 +22,4 @@ Diagnostic Endpoint 位在運維系統、負載平衡器、監控工具與 appli
 
 ## 判斷條件與後果
 
-設計時要限制可見資訊、避免透露敏感設定，並把用途與 public API 明確分開。Diagnostic Endpoint 應優先服務平台決策，而不是人手排障的便利性。
+Diagnostic Endpoint 的風險由它回傳的資訊範圍與它跟 public API 的距離決定。回傳內容包含設定值、連線字串或內部位址時，呼叫得到這個 endpoint 的人就拿得到攻擊需要的資訊，原因是負載平衡器與監控工具要能直接呼叫它，它的存取限制常比業務 API 寬。它跟 public API 共用路由與授權時，產品功能的改動會改到平台判斷所依賴的回應，或把診斷資訊經由 public API 開放出去。它服務的是平台的自動判斷（是否可以接流量、是否要重啟），回應的格式與判斷依據要穩定；為了人工排障方便而加進來的細節讓回應變大、暴露的資訊變多，所以回傳內容只留平台判斷用得到的狀態。

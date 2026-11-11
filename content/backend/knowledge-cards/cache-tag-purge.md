@@ -19,4 +19,4 @@ CDN 用 cache key（通常是 URL + Vary header）做快取存取。批量失效
 
 ## 判斷條件與後果
 
-Tag 粒度設計要在兩端之間取捨：tag 太粗（所有頁面都帶 `site:main` tag、每次小更新都全站 purge）、tag 太細（每個資源獨立 tag、batch purge 需要 enumerate 所有 tag、退化成逐個 purge）。Vendor 對 tag 數量、tag 長度、purge API rate 都有上限、要事前 audit。跨服務 tag 設計要同步 — 若 CDN 有 tag、應用層快取缺對應機制、CDN purge 後應用層仍 stale、會回填到 CDN。兩層失效要設計成同步協議、視為單一 invalidation pipeline。
+Tag 的粒度決定一次 purge 清掉多少資源。tag 太粗時（所有頁面都帶 `site:main` tag），每次小更新都清掉全站快取，每次更新之後回源流量大量湧上；tag 太細時（每個資源一個獨立 tag），批量 purge 要列舉所有 tag，退化成逐個 purge。Vendor 對 tag 數量、tag 長度與 purge API 的呼叫頻率都有上限，粒度設計超過上限時，purge 請求被拒絕，失效沒有發生，所以上線前對照 vendor 的限制核對一次。CDN 有 tag 而應用層快取沒有對應的失效機制時，CDN purge 之後回源讀到應用層的舊值，舊值又回填到 CDN，等於沒有清；所以兩層的失效視為同一條 invalidation pipeline，同一次更新同時清兩層。

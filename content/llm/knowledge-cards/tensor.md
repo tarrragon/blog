@@ -29,4 +29,4 @@ LLM 中常見的 tensor 維度：
 
 ## 判斷條件與後果
 
-讀 PyTorch / MLX 推論 / 訓練 code 看到 `torch.Tensor`、`mx.array`、`tf.Tensor` 等就是這個型別、所有 LLM 運算都建在它上面。寫 code 場景的判讀：報錯訊息看到 `shape mismatch` / `size of dimension X` 通常是 tensor 維度配錯；[KV cache](/llm/knowledge-cards/kv-cache/) 內部存的就是 4D tensor `(num_layers, 2, batch, num_kv_heads, seq, head_dim)` 之類的結構、量化 KV cache 就是改這個 tensor 的 dtype。
+讀 PyTorch / MLX 推論 / 訓練 code 看到 `torch.Tensor`、`mx.array`、`tf.Tensor` 等就是這個型別、所有 LLM 運算都建在它上面。寫 code 場景的判讀：報錯訊息看到 `shape mismatch` / `size of dimension X` 通常是 tensor 維度配錯；[KV cache](/llm/knowledge-cards/kv-cache/) 內部每一層存 K、V 兩個 4D tensor `(batch, num_kv_heads, seq, head_dim)`，有些實作把各層與 K、V 疊成一個 6D 結構 `(num_layers, 2, batch, num_kv_heads, seq, head_dim)`、量化 KV cache 就是改這個 tensor 的 dtype。

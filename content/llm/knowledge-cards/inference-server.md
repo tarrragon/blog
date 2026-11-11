@@ -27,4 +27,4 @@ Inference Server（推論伺服器）的核心概念是「常駐在機器上、�
 
 ## 判斷條件與後果
 
-選擇推論伺服器看三件事：是否提供 OpenAI 相容 API（影響能接哪些介面層）、模型格式支援（[GGUF](/llm/knowledge-cards/gguf/)、MLX format）、加速技巧支援（[MTP](/llm/knowledge-cards/mtp/) 等）。寫 code 場景的多數使用者用 Ollama 已足夠；其他選擇是針對特定需求的特化路徑。
+推論伺服器的三個條件各自決定一件事：是否提供 OpenAI 相容 API，決定能接哪些介面層，不提供時，只會呼叫 OpenAI API 的介面層接不上；支援哪些模型格式（[GGUF](/llm/knowledge-cards/gguf/)、MLX format），決定能載入哪些權重檔；支援哪些加速技巧（[MTP](/llm/knowledge-cards/mtp/) 等），決定同一台機器的生成速度是否還能提高。寫 code 場景的多數使用者，Ollama 已經滿足這三項的需要；其他伺服器處理的是特定需求，例如 oMLX 處理長 context 的 coding agent（上面的表）。

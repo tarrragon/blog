@@ -21,4 +21,4 @@ Cardinality explosion 處於 SQL query 設計的「結果集大小判讀」維�
 
 ## 判斷條件與後果
 
-修法方向：拆 query（先拿主資源、再用 IN 條件批次取相關資源、從 join 改成 N+1 但 N 可控）；用 EXISTS / 半連接取代 JOIN（只判斷存在性的場景、`WHERE EXISTS (...)` 比 join 便宜）；明確 LIMIT（大資料量 query 強制加 limit）；重新評估資料模型（頻繁出現代表表關係設計過度正規化）。CI 加 query result size middleware、超過閾值觸發 review 比事後從 slow log 找問題早。
+修法依查詢只需要相關資料是否存在、還是需要相關資料的內容而定。只需要判斷相關資料是否存在時，JOIN 仍把每一筆相關列帶進結果，`WHERE EXISTS (...)` 半連接只回主表的列，結果行數回到主表的量；需要相關資料的內容時，先取主資源、再用 IN 條件批次取相關資源，把一次 join 拆成次數可控的幾次查詢（N+1 但 N 可控），每一次的行數都有上限。大資料量的查詢沒有 LIMIT 時，結果行數隨資料成長一起放大，加上明確的 LIMIT，行數上限才由程式決定。同一類爆量在多個查詢反覆出現時，成因在表關係本身切得過度正規化，只修單一 query 處理不到其他查詢。爆量只在大資料量時出現，從 slow log 找要等到上線之後；CI 的 query result size middleware 在結果超過閾值時觸發 review，問題在合併前就被看到。

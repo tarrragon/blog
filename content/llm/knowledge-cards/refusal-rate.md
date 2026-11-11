@@ -30,6 +30,6 @@ Refusal rate 作為偵測訊號的兩個方向：
 
 ## 判斷條件與後果
 
-理解 refusal rate 後可以解釋兩個現象：為什麼 production LLM 服務監控 refusal rate（變化是異常訊號）、為什麼開源模型的 refusal rate 通常低於商業旗艦（前者 safety RLHF 投入較少）。
+Refusal rate 的突然變化是異常訊號，這是 production LLM 服務監控它的原因；開源模型的 refusal rate 通常低於商業旗艦，因為開源模型投入的 safety RLHF 較少，所以一個模型的 baseline 不能拿來判讀另一個模型。
 
-production 設計時、refusal rate 是 content 層偵測訊號之一、需配合 tool call 序列、token usage、prompt pattern 等其他訊號才能形成完整偵測覆蓋。詳見 [LLM Service 偵測訊號覆蓋](/backend/07-security-data-protection/llm-as-service-detection-coverage/)。
+只監控 refusal rate 時，偵測只看得到 content 層：攻擊沒有改變拒絕的比例時（例如 injection 誘導模型呼叫某個 tool，而模型照常回答），refusal rate 維持平穩，這次異常不會出現在這個訊號上。tool call 序列、token usage、prompt pattern 這類訊號看的是 content 層以外的行為，跟 refusal rate 合起來才形成完整的偵測覆蓋。詳見 [LLM Service 偵測訊號覆蓋](/backend/07-security-data-protection/llm-as-service-detection-coverage/)。

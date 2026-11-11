@@ -25,15 +25,10 @@ Batching 介於 inference engine 內部、跟 [KV cache](/llm/knowledge-cards/kv
 
 ## 判斷條件與後果
 
-選 batching 策略看兩維度：
+Batching 策略由應用能容忍的延遲與 KV cache 的容量兩個條件決定。
 
-1. **應用 latency tolerance**：
-    - 互動式 UI（chatbot、IDE 補完）→ continuous batching、低 latency 優先
-    - 批次處理（夜間 summarization）→ static batching、throughput 優先
-2. **硬體 KV cache 上限**：
-    - GPU memory - model weights = batchable 容量
-    - 預估 max batch size = available_memory / per_user_kv_cache
+互動式 UI（chatbot、IDE 補完）的使用者在等首字。static batching 要湊滿 N 個 request 才跑，request 稀疏的時段首字延遲會被拉長；continuous batching 讓新 request 加入正在跑的 batch，不必等湊滿，所以互動場景用它。夜間 summarization 這類批次處理沒有人在等單一 request，湊滿再跑換到的是每讀一次 weights 處理更多 request，static batching 的 throughput 較高。
 
-Embedding 服務通常 batch 16-128 都 OK（embedding 是純 forward pass、無 KV cache 累積）；chat / generation 服務 batch size 受 KV cache 嚴格限制。
+chat 與 generation 服務的每個 request 都要在 GPU memory 裡放自己的 KV cache，能同時放進 batch 的 request 數大約是（GPU memory − model weights）÷ 每個 request 的 KV cache。batch 超過這個數時，KV cache 跟 model weights 搶記憶體，throughput 反而下降。Embedding 服務只跑一次 forward pass、沒有 KV cache 累積，不受這個上限限制，batch 16-128 都在常見範圍。
 
 詳細跟 production 部署 capacity planning 的對接見 [4.9 Production 資源評估](/llm/04-applications/production-resource-planning/)；跟 [autoregressive](/llm/knowledge-cards/autoregressive/) 推論的單 token 瓶頸對應的優化討論見 [3.2 attention 機制](/llm/03-theoretical-foundations/attention-mechanism/)。

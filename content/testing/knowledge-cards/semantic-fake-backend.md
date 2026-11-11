@@ -18,4 +18,4 @@ tags: ["testing", "fake-backend", "test-double"]
 
 ## 判斷條件與後果
 
-假後端要決定掛載接縫（in-process 假實作或本地假 server）、行為取證方式、與配對慣例——每一條行為假設對應一條真實後端驗證斷言。掛載判斷標準、取證選單與成本量級的推導在[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)章。
+一條行為沒有經過取證就收進假後端時，它回放的是作者的假設，假後端在這一條上退化成 stub，流程測試照樣綠燈。一條行為假設沒有配對的真實後端驗證斷言時，後端改了行為之後假後端仍照舊版回應，流程測試看不到這次漂移；配對慣例讓每一條假設在真實後端驗證測試裡都有一條會變紅的斷言。掛載接縫（in-process 假實作或本地假 server）決定前端服務鏈有多少段走真實的程式路徑：本地假 server 讓請求經過前端真實的網路層，in-process 假實作在網路層之前就接手。掛載判斷標準、取證選單與成本量級的推導在[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)章。

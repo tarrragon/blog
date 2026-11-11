@@ -39,6 +39,4 @@ Prefix Cache 在推論流程中的角色：
 
 ## 判斷條件與後果
 
-理解 prefix cache 後可以解釋兩個現象：為什麼 production LLM 服務的 latency 在啟用 prefix cache 後大幅下降（system prompt 不再每次重算）、為什麼 prefix cache 在多租戶場景是隱私風險（A 租戶的 prefix 可能被 B 看到、見 [llm-multi-tenant-isolation](/backend/07-security-data-protection/llm-multi-tenant-isolation/)）。
-
-production 設計時、prefix cache 應該按 tenant 分桶、同 tenant 內可共用、跨 tenant 必須隔離。隔離邊界對齊 [tenant-boundary](/backend/knowledge-cards/tenant-boundary/) 卡片的設計。
+prefix cache 的效益與風險來自同一個條件：後一個請求的前綴跟前一個相同時，直接重用前一個算好的 KV cache。前綴相同的請求越多（同一份 system prompt、同一組 few-shot、共用的長 RAG context），省下的 prefill 越多，latency 與成本跟著下降；請求之間沒有共用前綴時，cache 不會命中，啟用它沒有效益。多租戶服務裡 cache 跨 tenant 共用時，B 租戶的請求是否命中 A 租戶前綴的 cache，會反映在回應時間上，B 能據此推測 A 送過的前綴內容，所以跨 tenant 共用本身就是隱私洩漏面（攻擊面的細節見 [llm-multi-tenant-isolation](/backend/07-security-data-protection/llm-multi-tenant-isolation/)）；cache 依 tenant 分開時，命中與否只在同一個 tenant 內部可見。所以 production 的 prefix cache 依 tenant 分桶，同一個 tenant 內共用，分桶的邊界對齊 [tenant-boundary](/backend/knowledge-cards/tenant-boundary/) 卡片的設計。

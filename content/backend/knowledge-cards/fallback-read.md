@@ -27,4 +27,4 @@ Fallback read 位在 [cutover / switchover](/backend/knowledge-cards/cutover-swi
 
 ## 判斷條件與後果
 
-Fallback read 要定義觸發條件、讀取優先順序、可維持多久、哪些入口適用，以及何時重新嘗試 cutover。它要與 [validation query](/backend/knowledge-cards/validation-query/) 和 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 對齊，避免讀取回退變成沒有證據的永久分岔。
+Fallback read 的判斷對象是讀取退回舊語意之後的範圍與期限。觸發條件沒有寫明時，是否回退由當班的人臨場決定，同樣的 mismatch 數字在不同班次得到不同處置。讀取優先順序與適用入口沒有寫明時，同一筆訂單在客服後台讀舊 `status`、在報表讀新 `payment_state`，兩個入口給出不同的付款狀態。可維持多久與重新嘗試 cutover 的條件沒有寫明時，回退一直開著，新舊兩條讀取路徑長期並存，原因是回退本身不產生任何關閉它的訊號；重試的條件寫成 [validation query](/backend/knowledge-cards/validation-query/) 的結果、回退的決定與依據記進 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 時，回退的結束點才查得到。

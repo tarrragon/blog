@@ -25,12 +25,12 @@ TLS 終結是 ALB 的標準職責：HTTPS listener 引用 ACM（AWS Certificate 
 
 ## 判斷條件與後果
 
-ALB 位於外部 client 與後端 target group 的交界：對 client 要保證連線加密、入口名稱穩定，對後端要判斷哪些 target 能接請求，設計決定分屬這兩個方向：
+ALB 位於外部 client 與後端 target group 的交界，它的設定分成對後端判斷哪些 target 能接請求、對 client 提供加密與穩定入口兩個方向，各項設定的條件與後果：
 
-- **健康檢查參數**：檢查路徑（用應用層的 health endpoint、不用根路徑）、間隔、閾值。閾值太寬鬆會把壞掉的後端留在輪替裡，太嚴格會在部署瞬間誤判
-- **HTTP → HTTPS redirect**：port 80 的 listener 設定固定回應 301 redirect 到 443，確保所有流量走加密
-- **TLS 憑證**：用 ACM 搭配 DNS 驗證，讓憑證的簽發和續期自動化
-- **穩定 DNS**：ALB 前面掛 Route 53 alias record，對外暴露的是自己的 domain name 而非 ALB 的隨機 hostname
+- **健康檢查參數**：檢查路徑指向根路徑時，web server 有回應就算健康，處理不了實際請求的後端仍留在輪替裡，使用者看到 502；指向應用層的 health endpoint 時，判斷的是後端是否處理得了實際請求。閾值太寬鬆時，壞掉的後端要失敗很多次才被移出；太嚴格時，部署期間新 task 還在啟動就被判定不健康，target group 裡一時沒有健康的後端，使用者看到 503
+- **HTTP → HTTPS redirect**：port 80 的 listener 設定固定回應 301 redirect 到 443 時，所有請求都經過加密的 listener；port 80 直接把請求轉發到後端時，明文流量也進得來
+- **TLS 憑證**：用 ACM 搭配 DNS 驗證時，憑證的簽發與續期自動完成；DNS 驗證記錄被刪掉時，續期失敗，使用者看到憑證過期警告
+- **穩定 DNS**：ALB 重建時 DNS 名稱跟著換，對外直接用 ALB 的 hostname 時，每次重建都要通知使用方改位址；前面掛 Route 53 alias record 時，對外暴露的是自己的 domain name，重建 ALB 不改變它
 
 ## 鄰卡
 

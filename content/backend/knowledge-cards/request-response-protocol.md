@@ -21,4 +21,4 @@ HTTP API、gRPC method 與內部 RPC call 都屬於 request/response protocol。
 
 ## 判斷條件與後果
 
-Request/Response Protocol 要定義欄位名稱、必填欄位、錯誤碼、逾時期待與版本演進方式。它討論的是同步互動的約定，transport 細節在其他層處理。
+Request/Response Protocol 的判斷對象是呼叫方能否只靠約定處理每一種回應。錯誤碼沒有約定時，呼叫方分不出哪些失敗可以重試、哪些要回報使用者；逾時期待沒有約定時，呼叫方的 timeout 可能比 service 的處理時間短，請求在 service 端完成了，呼叫方卻當成失敗；欄位名稱、必填欄位與版本演進方式沒有約定時，新增或改名欄位會讓還沒升級的呼叫方解析失敗。這些都是同步互動的約定，連線與傳輸的細節由 transport 層處理。

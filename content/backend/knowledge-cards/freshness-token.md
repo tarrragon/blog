@@ -17,4 +17,4 @@ Freshness token 出現在「application 在 DB 前面加 cache、但 cache 跟 D
 
 ## 判斷條件與後果
 
-設計時要先區分 token 的 *語意層級* — 是 application 自行管理（如 Coinbase 自建協議、把 version 寫進 token）、還是 SDK 內建（如 Cosmos DB session token 自動跨 service 傳遞）。若同時部署多種 cache 層（CDN / application cache / DB read replica）、token 要能穿透所有層、否則最弱的一層會破壞保證。Token 過期或不可用時的 fallback 行為（bypass cache 直接讀 primary）要明示寫進設計、不能讓 user 在 token 失效時悄悄讀到舊資料。
+Freshness token 的保證取決於 read path 上每一層是否都檢查 token。同時有 CDN、application cache 與 DB read replica 時，任何一層不檢查就回傳舊版本，使用者在那一層讀不到自己剛寫的資料，其他層的檢查也補不回來。token 的語意層級決定檢查由誰實作：application 自行管理時（Coinbase 自建協議、把 version 寫進 token），每一層的檢查由團隊自己寫；SDK 內建時（Cosmos DB 的 session token 自動跨 service 傳遞），傳遞由 SDK 負責，SDK 以外的自建 cache 層仍然沒有檢查。token 過期或不可用時，設計裡沒有寫明 fallback 行為的話，讀取照一般路徑走 cache，使用者在沒有任何訊號的情況下讀到舊資料；寫明為 bypass cache 直接讀 primary 時，代價是那段期間 primary 多出這些讀取的負載。

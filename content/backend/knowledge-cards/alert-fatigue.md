@@ -20,6 +20,6 @@ Alert fatigue 是可觀測性設計的失敗模式，跟 [alert](/backend/knowle
 
 ## 判斷條件與後果
 
-Alert fatigue 的治理包括：追蹤 noise rate（on-call ack 時標記 actionable / noise）、定期審視高 noise 的 alert rule（調整閾值、改 [symptom-based](/backend/knowledge-cards/symptom-based-alert/)、加 [inhibition](/backend/knowledge-cards/alert-inhibition/)（原因的告警成立時壓下它造成的症狀告警）、或刪除）、用 grouping 跟 inhibition 減少同一問題的重複通知。治理節奏跟 [4.8 訊號治理閉環](/backend/04-observability/signal-governance-loop/) 整合。
+Alert fatigue 的治理從量到 noise 開始。on-call 在 ack 時標記這則告警是 actionable 還是 noise，noise rate 才有數字，高 noise 的 alert rule 才排得出處理順序；沒有這個標記時，每一條 rule 看起來同樣重要，治理只能憑印象挑。找出高 noise 的 rule 之後，處置依 noise 的成因而定：閾值設在正常波動範圍內的，調整閾值；偵測內部原因而使用者沒有受影響的，改成 [symptom-based](/backend/knowledge-cards/symptom-based-alert/)；同一個原因引出一串症狀的，加 [inhibition](/backend/knowledge-cards/alert-inhibition/)（原因的告警成立時壓下它造成的症狀告警），或用 grouping 把同一件事的多則通知合成一則；條件已經不適用的 stale alert，刪除。審視沒有固定節奏時，noise 會隨服務演進重新累積，所以這套審視接進 [4.8 訊號治理閉環](/backend/04-observability/signal-governance-loop/) 的節奏。
 
 跨領域詞源與因果鏈（false positive → noise → alert fatigue）見 [TIL 跨領域術語：alert fatigue](/til/terms/alert-fatigue/)。

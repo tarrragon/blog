@@ -5,7 +5,6 @@ description: "說明已知無法完成時快速回應如何保護資源與上游
 weight: 58
 ---
 
-
 Fail fast 的核心概念是「已知當前操作無法成功時，快速回應明確失敗」。它讓上游不用等待到 timeout，也讓系統保留資源給仍可能成功的工作。 可先對照 [Failover](/backend/knowledge-cards/failover/)。
 
 ## 跟其他概念的關係
@@ -18,4 +17,4 @@ Fail fast 常和 circuit breaker、validation、dependency health、rate limit �
 
 ## 判斷條件與後果
 
-Fail fast 要提供清楚錯誤分類與使用者回應。對內錯誤要能區分 validation failure、dependency unavailable、quota exceeded 與 circuit open；對外回應要避免暴露敏感內部細節。
+Fail fast 回應的錯誤分得出種類時，上游才選得了下一步。validation failure、dependency unavailable、quota exceeded 與 circuit open 混成同一個錯誤碼時，上游分不出這次失敗重試是否會成功：validation failure 重試幾次都一樣，circuit open 等一段時間之後可能恢復，quota exceeded 要等額度重置。上游只能一律重試或一律放棄；一律重試對已知中斷的下游持續施壓，一律放棄則丟掉了稍後就能成功的請求。對外的回應帶著內部的依賴名稱或錯誤細節時，呼叫端拿得到服務內部結構的資訊，所以對外回應只寫使用者可以採取的結果（付款暫停、訂單已保留）。

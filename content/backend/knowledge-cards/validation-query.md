@@ -27,4 +27,4 @@ Validation query 位在 [schema migration](/backend/knowledge-cards/schema-migra
 
 ## 判斷條件與後果
 
-Validation query 要保留 query version、time range、資料範圍、mismatch 分類與 owner。它的目標是支援 [rollback window](/backend/knowledge-cards/rollback-window/) 與 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 判讀，讓團隊能知道下一步是繼續、暫停、回退讀取，還是做資料修補。
+Validation query 的結果用來決定下一步是繼續、暫停、回退讀取還是做資料修補，每次執行留下的欄位各自提供這個決定需要的一項資訊。沒有 query version 時，規則改過之後新舊結果無法比較，分不出 mismatch 減少是資料修好了還是查詢改了；沒有 time range 與資料範圍時，看不出 mismatch 集中在哪一批資料，回退讀取只能整批做；沒有 mismatch 分類時，缺值、語意不一致與 replication lag 造成的暫時差異混在同一個數字裡，[rollback window](/backend/knowledge-cards/rollback-window/) 結束前判斷不出是否該停；沒有 owner 時，結果記進 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 之後沒有人接著做決定。

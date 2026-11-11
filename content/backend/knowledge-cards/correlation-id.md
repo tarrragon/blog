@@ -20,4 +20,4 @@ Correlation ID 是 [log schema](/backend/knowledge-cards/log-schema/) 的核心�
 
 ## 判斷條件與後果
 
-Correlation ID 要在入口（API gateway 或 first service）建立或從 upstream 接收，並傳遞到 log、message header、trace context 與外部呼叫。欄位名稱要穩定（跨服務一致，避免 `request_id` vs `req_id` vs `requestId` 的漂移），避免把敏感資料當成 ID。
+Correlation ID 是否串得起一個業務流程，取決於它在哪裡建立、傳到哪裡、欄位名稱是否一致。入口（API gateway 或第一個服務）沒有建立，也沒有接收 upstream 帶來的值時，每個服務各自產生一個 ID，訂單建立、付款事件與出貨 job 的 log 之間沒有共同的值可查。ID 只寫進 log、沒有放進 message header、trace context 與外部呼叫時，流程在跨過 queue 或外部 API 的那一步斷開，原因是非同步的 consumer 只拿得到訊息本身帶的欄位。各服務的欄位名稱漂移成 `request_id`、`req_id`、`requestId` 時，值都在，一條查詢卻找不全，排查的人要先知道每個服務各用哪個名字。這個 ID 會出現在 log、header 與外部呼叫裡，拿 email 或電話這類敏感資料當 ID 時，敏感資料跟著擴散到每一個收得到 ID 的系統。

@@ -17,4 +17,4 @@ Shadow traffic 跟 [shadow read](/backend/knowledge-cards/shadow-read/) 不同 �
 
 ## 判斷條件與後果
 
-Shadow traffic 也消耗 production 下游資源（DB write、API call、external service）— 必須算進容量。如果新版本寫入會影響真實狀態（payment、order），必須設計成 *dry-run* 或寫入 isolated sandbox。Shadow 通常跑 1-7 天看 long-tail 訊號、不是 30 分鐘就下結論。
+送到新版本的 shadow 請求是真實的 production 請求，它們觸發的下游呼叫（DB write、API call、external service）也打在真實的 production 資源上；容量規劃沒有算進這份流量時，下游在 shadow 期間的負載超過預估。新版本的寫入會改變真實狀態時（payment、order），同一筆請求被舊版本與新版本各處理一次，結果是重複扣款或重複建單，所以這類寫入在新版本設計成 *dry-run*，或導向 isolated sandbox。Long-tail 訊號（低頻的錯誤路徑、特定時段才出現的流量型態）在 30 分鐘的 shadow 裡出現的次數太少，判斷不了新版本在它們上面的行為，所以 shadow 通常跑 1-7 天。

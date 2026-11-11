@@ -18,4 +18,4 @@ Agent-as-tool 的核心概念是「**把一個 [agent](/llm/knowledge-cards/agen
 
 ## 判斷條件與後果
 
-Agent-as-tool 要把輸入、輸出、權限、副作用與 timeout 定清楚。否則呼叫方會把它當 deterministic tool，但內部其實是 fuzzy agent，失敗模式會被隱藏。
+呼叫方只看得到 tool interface，看不到背後的 agent，所以介面沒寫出來的部分，呼叫方照一般 deterministic tool 的假設處理：同樣的輸入得到同樣的結果、很快回來、沒有副作用。被封裝的 agent 每次可能走不同的路徑、給出不同的輸出；介面沒寫輸出格式與完成條件時，呼叫方把帶著不確定性的 findings 當成確定的結果用，沒寫權限與副作用時，呼叫方重試一次就讓內部的改檔或對外請求再執行一次，沒寫 timeout 時，內部 agent 卡住，呼叫方跟著一直等。這幾種失敗都發生在介面背後，呼叫方的紀錄裡只有一次 tool 呼叫失敗或結果不對，看不出是哪一步出錯。

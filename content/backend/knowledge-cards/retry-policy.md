@@ -22,4 +22,12 @@ Retry 的判斷分類：暫時性錯誤（5xx、timeout、connection refused）�
 
 ## 判斷條件與後果
 
-Retry policy 要包含最大重試次數、backoff 策略（fixed / exponential / exponential + jitter）、每次 retry 的 timeout、錯誤分類規則（哪些 error code 算暫時性）、觀測欄位（retry count、最終結果）與停止條件（超過 N 次進 DLQ）。高流量系統還要設定 retry budget — 限制 retry 流量佔總流量的比例，避免 retry 自身成為負載來源。
+Retry policy 的每一個成員缺席時，各有對應的失敗形態：
+
+- **錯誤分類規則**（哪些 error code 算暫時性）缺席：永久性錯誤也被重試，每次都消耗 quota，問題被發現的時間也延後。
+- **最大重試次數與停止條件**缺席：失敗的訊息一直重試，永遠不進 DLQ。
+- **backoff 策略**只用 fixed 間隔、沒有 jitter：大量 consumer 在同一時刻重試，形成 retry storm。
+- **每次 retry 的 timeout** 缺席：一次卡住的呼叫佔掉整段重試時間，後面的重試沒有機會發出。
+- **觀測欄位**（retry count、最終結果）缺席：看不出成功是在第幾次重試才達成，重試量上升時也沒有訊號。
+
+高流量系統沒有 retry budget 限制 retry 流量佔總流量的比例時，重試本身會成為下游的負載來源。

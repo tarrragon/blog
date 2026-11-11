@@ -40,15 +40,15 @@ scale 對照（基於 [4.9 production](/llm/04-applications/production-resource-
 
 ## 判斷條件與後果
 
-選 vector DB 之前回答四個問題：
+選 vector DB 時，corpus 規模、update 頻率、latency 目標與 hybrid search 需求各自排除不合用的部署方式或 index：
 
-1. **Corpus 規模**：決定 hosted vs self-host 取捨。
-2. **Update 頻率**：每天一次（適合 batch rebuild）vs 即時（要 incremental update 支援）。
-3. **Latency 目標**：< 50ms 要 in-memory HNSW、可接受 200ms 用 disk-based。
-4. **Hybrid search 需求**：純向量 vs 向量 + filter（如「embedding 相似 + tag = code」），影響 schema 設計。
+1. **Corpus 規模**：規模決定 hosted 與 self-host 的取捨。規模越大，self-host 要自己維運的 index 與機器越多；hosted 服務把這份維運換成費用。
+2. **Update 頻率**：每天更新一次時，batch rebuild 整份 index 就夠；新資料要即時查得到時，DB 必須支援 incremental update，否則新文件要等下一次 rebuild 才進得了 index。
+3. **Latency 目標**：要 50ms 以下時，HNSW index 必須放在記憶體裡；能接受 200ms 時，disk-based 的 index 可用，記憶體需求較低。
+4. **Hybrid search 需求**：查詢除了 embedding 相似，還要加 filter（如 tag = code）時，filter 用的欄位必須在 schema 裡，DB 也要支援向量與 filter 一起查；純向量查詢沒有這兩項限制。
 
-衍生產物管理上、vector DB 屬於 [external 類別](/llm/04-applications/artifact-management/)——index content 不進 git、用 manifest（如 schema definition + ingest script + version tag）描述。Build pipeline 從 source corpus 自動 rebuild。
+Vector DB 的 index 是從 source corpus 生成的衍生產物，屬於 [external 類別](/llm/04-applications/artifact-management/)：index content 隨時可以由 ingest script 從 corpus 重建，所以 git 裡放的是描述它的 manifest（schema definition、ingest script、version tag），build pipeline 從 source corpus 自動 rebuild index。
 
-不適合 vector DB 的情境：knowledge 高度結構化（直接 SQL）、corpus 小（pickle 就好）、單次 retrieval（off-line 跑、不開 server）。
+Knowledge 高度結構化、corpus 很小，或只做一次離線 retrieval 時，vector DB 的 server 與 index 維運換不到好處：結構化資料用 SQL 查得到精確結果，小 corpus 放在 pickle 就夠，離線跑一次的 retrieval 不需要常駐的 server。
 
 Storage 升級判讀（什麼規模該從 in-memory 升級到 vector DB）、index 生命週期、dependency 約束的工程分析見 [4.22 RAG storage 工程](/llm/04-applications/vector-storage-engineering/)。

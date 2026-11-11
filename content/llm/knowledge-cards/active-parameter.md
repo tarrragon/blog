@@ -31,6 +31,4 @@ Active parameter 的核心概念是「[MoE](/llm/knowledge-cards/moe/) 模型每
 
 ## 判斷條件與後果
 
-理解 active parameter 後可以解釋兩個現象：為什麼 30B MoE 跟 30B Dense 在同硬體下生字速度差很多（前者每 token 只走 3B active）、為什麼 MoE 模型能力對應的「等價 Dense 大小」不是簡單線性（社群常見回報接近總參數的 60% ~ 80% 等價 Dense 能力、但 case-by-case）。
-
-選 MoE 模型時、active parameter 是速度判讀軸、總參數是記憶體判讀軸、能力判讀靠自己工作流的 benchmark；不要直接拿「30B」跟 Dense 30B 作能力對等。
+30B MoE 跟 30B Dense 在同一台硬體上生字速度差很多，原因是前者每個 token 只走約 3B active parameter，每個 token 要從記憶體讀的權重少了一個數量級。MoE 模型的能力也不等於同總參數的 Dense 模型：社群常見回報是接近總參數 60% ~ 80% 的 Dense 能力，而且依模型與任務而變。所以比較 MoE 與 Dense 時，三個量各自對應一個判斷：active parameter 對應生字速度上限，總參數對應記憶體需求，能力要靠自己工作流的 benchmark。把「30B」MoE 跟 Dense 30B 當成能力對等時，速度會低估、能力會高估。

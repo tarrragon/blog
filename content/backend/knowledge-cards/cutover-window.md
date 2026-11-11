@@ -27,4 +27,4 @@ Cutover window 位在 [release gate](/backend/knowledge-cards/release-gate/)、[
 
 ## 判斷條件與後果
 
-Cutover window 要定義開始時間、觀察長度、通過條件、[stop condition](/backend/knowledge-cards/stop-condition/) 與 owner。它應進入 [evidence package](/backend/knowledge-cards/evidence-package/) 與 [incident decision log](/backend/knowledge-cards/incident-decision-log/)，讓事後能回放切換當時的訊號。
+Cutover window 的定義缺項時，切換退回成一次按鈕。沒有記錄開始時間時，多個入口分批切換，各批的訊號對不回各自的時間窗。沒有觀察長度與通過條件時，放行使用者可見讀取的時機由現場的感覺決定。沒有 [stop condition](/backend/knowledge-cards/stop-condition/) 與 owner 時，mismatch 上升也沒有一個值、沒有一個人負責喊停，而回退只在切換初期還是低成本，拖過這段時間之後回退的代價變高。窗口的時間、訊號與放行決定沒有寫進 [evidence package](/backend/knowledge-cards/evidence-package/) 與 [incident decision log](/backend/knowledge-cards/incident-decision-log/) 時，事後回放不出切換當時看到了什麼、依據什麼放行。

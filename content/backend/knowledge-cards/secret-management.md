@@ -6,7 +6,6 @@ description: "說明 token、key、password 等存取憑證如何保存、輪替
 weight: 41
 ---
 
-
 Secret management 的核心概念是「用受控流程管理可取得系統權限的秘密資料」。Secret 包含 API key、[database](/backend/knowledge-cards/database/) password、JWT signing key、[TLS](/backend/knowledge-cards/tls-mtls/) private key、webhook secret 與第三方 credential。
 
 ## 跟其他概念的關係
@@ -19,4 +18,4 @@ Secret 是高風險操作能力。它們應集中放在受控系統中，並具�
 
 ## 判斷條件與後果
 
-Secret 管理要包含 [least privilege](/backend/knowledge-cards/least-privilege/)、環境隔離、輪替演練、撤銷、版本管理與部署注入方式。[Runbook](/backend/knowledge-cards/runbook/) 應說明疑似洩漏時如何停用、輪替、追查與恢復。
+一把 secret 洩漏時的影響範圍與收斂時間，由它平常怎麼被管理決定。Secret 的權限超過服務實際需要時（沒有照 [least privilege](/backend/knowledge-cards/least-privilege/) 發），洩漏一把 secret 就交出它能做的全部操作；各環境共用同一把 secret 時，staging 的洩漏就是 production 的洩漏；輪替沒有演練過時，寫死舊值的服務要到真正輪替時才出現，在新值生效的那一刻連線失敗；沒有版本管理時，新舊 secret 無法並存一段過渡期，輪替只能讓所有使用方同時切換；secret 寫進 image 或 repo 來部署時，撤銷之後舊值仍留在那些副本裡。疑似洩漏時的停用、輪替、追查與恢復彼此有先後依賴，事件當下才排順序會拉長暴露時間，所以這個順序事先寫進 [Runbook](/backend/knowledge-cards/runbook/)。

@@ -32,4 +32,4 @@ LLM 訓練幾乎都用 Adam / AdamW、不是純 SGD。但 SGD 仍出現在：
 
 ## 判斷條件與後果
 
-讀 paper / training script 看到 optimizer 選擇、SGD 是基線、其他 optimizer 通常是「對 SGD 的改進」。寫 code 場景的判讀：訓練自己的小模型可以從 SGD + momentum 開始；fine-tune 大 LLM 沒理由不用 AdamW。
+在 paper 與 training script 裡，SGD 是 optimizer 的基線，其他 optimizer 多半寫成對 SGD 的改進。選哪一個看模型規模與對 learning rate 的敏感度：訓練小模型或簡單任務時（例如 fine-tune 小的 vision 模型），SGD + momentum 的更新規則簡單，仍是合理的起點；訓練或 fine-tune 大 LLM 時，純 SGD 對 learning rate 敏感，[Adam / AdamW](/llm/knowledge-cards/adam-adamw/) 替每個參數自適應地調整 learning rate，調參的成本低，這是 LLM 訓練以它為主流的原因。[LoRA](/llm/knowledge-cards/lora/) 或 SFT 偶爾改用 SGD，目的是避免 Adam 的更新讓 base model 改變太多。

@@ -19,4 +19,4 @@ Entity 是領域模型的一種形態——型別先判定為領域模型（有[
 
 ## 判斷條件與後果
 
-Entity 需要決定身份的來源（資料庫序號、外部系統 ID、業務規則產生的識別碼）、生命週期的階段（何時誕生、何時交棒、何時成為歷史事實需要 [snapshot](/software-design/ddd/knowledge-cards/snapshot/)）、以及變更的路徑（領域方法的設計，見 [狀態轉換與稽核軌跡](/software-design/ddd/state-transition-and-audit-trail/)）。判斷標準的完整展開見 [entity 與 value object 的判斷標準](/software-design/ddd/entity-vs-value-object/)。
+一個 entity 的設計包含三個決定，每一個沒做時各有一種可觀察的失效。身份的來源（資料庫序號、外部系統 ID、業務規則產生的識別碼）沒有決定時，取消、改量、退貨只能用內容比對定位對象，同內容的其他實體會被誤中。生命週期的階段（何時誕生、何時交棒、何時成為歷史事實）沒有決定時，概念成為歷史事實之後仍持 live 參照，商品改名或調價會改寫歷史記錄的顯示內容，凍結的時機見 [snapshot](/software-design/ddd/knowledge-cards/snapshot/)。變更的路徑沒有決定時，領域方法與全開放的覆寫工具並存，欄位可以繞過領域方法被改寫，領域方法裡的檢查也跟著被繞過，領域方法的設計見 [狀態轉換與稽核軌跡](/software-design/ddd/state-transition-and-audit-trail/)。判斷標準的完整展開見 [entity 與 value object 的判斷標準](/software-design/ddd/entity-vs-value-object/)。

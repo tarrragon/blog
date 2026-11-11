@@ -22,4 +22,4 @@ Fan-out 降低了 producer 跟 consumer 之間的耦合，但擴大了排障範�
 
 ## 判斷條件與後果
 
-設計 fan-out 時要為每個訂閱者定義可靠性等級跟回復策略。通知服務短暫失敗可以 retry；報表服務落後可以批次追補；但出貨服務的失敗可能需要人工介入。把所有下游綁成同一個失敗域（一個 consumer 卡住就全部暫停）會讓 fan-out 的解耦價值消失。每個 consumer group 應該獨立管理 [consumer lag](/backend/knowledge-cards/consumer-lag/)、[dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) 跟 [replay runbook](/backend/knowledge-cards/replay-runbook/)。
+Fan-out 的判斷對象是每個訂閱者失敗時的代價，而代價依下游而不同：通知服務短暫失敗，retry 之後結果相同；報表服務落後，批次追補之後報表仍然正確；出貨服務失敗時，出貨狀態可能要人工介入才能回復。所有下游綁成同一個失敗域時（一個 consumer 卡住就全部暫停），通知卡住也讓出貨停下，producer 與 consumer 之間省下的耦合換成了 consumer 彼此之間的耦合。每個 consumer group 各自有 [consumer lag](/backend/knowledge-cards/consumer-lag/)、[dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) 與 [replay runbook](/backend/knowledge-cards/replay-runbook/) 時，一個下游的落後與重放只影響它自己的進度，原因是每個 group 各自記錄自己的 offset。

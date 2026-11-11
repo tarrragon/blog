@@ -31,10 +31,10 @@ Prompt cache 的「保留範圍」跟「定價」是商業 LLM 的 product featu
 
 ## 判斷條件與後果
 
-讀 LLM API docs / coding agent 設計 / cost optimization blog 看到「prompt cache」「context caching」「cache_control」就是這機制。寫 code 場景的判讀：
+Prompt cache 的折扣有兩個前提：後續 request 的 prefix 跟寫入 cache 時逐 token 相同，而且兩次 request 的間隔還在 TTL 之內。一個應用是否值得開、prompt 的內容怎麼排，都由這兩個前提推得出來：
 
-1. **誰最值得開**：coding agent（system prompt + tool schema 經常 > 10K token、每 turn 重用）、long-context RAG（檢索 chunks 重用）、long conversation（history 累積）
-2. **設計原則**：把不變的內容（system prompt、tool schema、固定文件）放 prefix；變動的（user query、最新 file content）放後面
-3. **常見 anti-pattern**：在 prefix 插入 timestamp / user-id / request-id → 每次 prefix 不同 → cache 從不命中、付 1.25× write cost 沒得回本
-4. **5 分鐘 TTL 的意涵**：query 之間間隔 > 5 分鐘、cache 已 expire、要 1h ext TTL 才能撐長對話
-5. **跟 [context budget](/llm/knowledge-cards/context-budget/) 的關係**：cache 攤平 scaffold 部分的 cost、所以可以放寬「scaffold ≤ 25%」的成本顧慮、focus 在「不超 context limit」即可
+1. **prefix 很長而且每一輪重複出現時**（coding agent 每一輪都帶 system prompt 與 tool schema，常超過 10K token；long-context RAG 重複帶同一批 chunk；長對話每一輪重送累積的 history），每一輪都省掉這段 prefix 的 prefill，費用與 TTFT 的節省隨 prefix 長度放大。prefix 短的應用付了寫入的成本，讀取省下的量很少。
+2. **變動的內容（user query、最新的 file content）排在不變的內容之前時**，prefix 從變動的那個 token 起就跟上一次不同，排在後面的 system prompt 與 tool schema 也讀不到 cache，原因是 cache 比對的是從開頭起連續相同的 token；所以不變的內容排在前面，變動的排在後面。
+3. **prefix 裡夾著每次都不同的值時**（timestamp、user-id、request-id），每個 request 的 prefix 都不同，cache 一次都不命中；在 Anthropic 這類寫入加價的服務上，每次寫入付 1.25 倍的價格而沒有任何一次讀取回本，總成本比不開 cache 還高。
+4. **兩次 request 的間隔超過 TTL 時**（Anthropic 預設 5 分鐘），cache 已經過期，下一個 request 重新付寫入的成本。使用者常停頓超過 5 分鐘的長對話，用 1 小時的延長 TTL 才讀得到前一輪的 cache。
+5. **scaffold 的 token 大多由 cache 讀取時**，這些 token 的費用降到讀取價，[context budget](/llm/knowledge-cards/context-budget/) 裡「scaffold ≤ 25%」的成本理由跟著變弱，剩下的限制是總長度不超過 context window。

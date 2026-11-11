@@ -17,4 +17,4 @@ Forecast 方法分三層：歷史線性外推（適合 sustained growth）、季
 
 ## 判斷條件與後果
 
-Forecast 必須有 *誤差範圍*、不能單一數字。給上下界（最壞 / 預期 / 最好）、容量規劃才能用 worst-case 訂 baseline。事件型 forecast 要按 tier 分級（regular / major / critical）、不同 tier 對應不同準備強度。Forecast 跟 [headroom budget](/backend/knowledge-cards/headroom-budget/) 一起算才有意義。
+Forecast 只給單一數字時，容量規劃拿不到最壞情況，這個數字一旦偏低，依它算出的容量與 headroom 全部跟著偏低；給出上下界（最壞、預期、最好）時，baseline 用最壞情況訂，實際峰值落在範圍內就不會讓容量不足。事件型 forecast 不分級時，例行活動與重大事件得到同樣的準備強度，前者多付了成本、後者準備不夠；按 tier（regular、major、critical）分級時，準備強度跟著事件的量級調整。Forecast 本身只是峰值的估計，容量是預期峰值乘上 (1 + headroom)，所以它跟 [headroom budget](/backend/knowledge-cards/headroom-budget/) 一起算才得出容量。

@@ -38,10 +38,10 @@ Image tokens: ~500-2500 個（依模型設計）
 
 ## 判斷條件與後果
 
-讀 VLM API / 推論 log 看到「image tokens used: 1247」「visual tokens: 580」就是這指標。寫 code 場景的判讀：
+讀 VLM API 或推論 log 看到「image tokens used: 1247」「visual tokens: 580」就是這個指標。它的判斷看一次請求塞幾張圖、每張圖用哪種解析度模式，以及推論在本地還是走 API：
 
-1. **多張截圖 = context 吃緊**：一張 1500 token、丟 10 張就 15K、加上 prompt 跟回答、long context 模型才能 handle
-2. **同張圖、解析度模式影響成本**：許多 API 提供 low / auto / high detail 模式、low detail 約 1/10 token；OCR 需要高解析、不細節辨識可選 low
-3. **本地 VLM 推論 prefill 慢**：image token 多、prefill 階段（[TTFT](/llm/knowledge-cards/ttft/)）對應變長、第一個字出來要等較久
-4. **API 計費通常 image token 跟 text token 同價**：算成本看實際用了多少 image token、不要假設「一張圖 = 一個 token」
-5. **Image token 是消耗品、不是參數**：跟模型內部權重不同、純粹是「這次 forward pass 的 input」
+1. **一次塞多張截圖時**，context 先被圖片用掉：一張約 1500 token，10 張就是約 15K，加上 prompt 與回答，只有 long context 模型容得下。
+2. **同一張圖選不同解析度模式時**，token 數不同：許多 API 提供 low / auto / high detail 模式，low detail 約用 1/10 的 token；OCR 要讀細字，低解析會讀錯，只辨識大致內容時 low detail 的成本低得多。
+3. **本地 VLM 推論時**，image token 多代表 prefill 要處理的 sequence 長，[TTFT](/llm/knowledge-cards/ttft/) 跟著變長，第一個字出來要等較久。
+4. **走 API 計費時**，image token 通常跟 text token 同價，一張圖的成本是幾百到幾千個 token 的價錢，以「一張圖算一個 token」估成本會嚴重低估。
+5. Image token 是這次 forward pass 的 input，每次請求都計入 context 與費用，跟模型內部的權重參數屬於不同類別。

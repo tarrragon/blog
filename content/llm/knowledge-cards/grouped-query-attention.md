@@ -18,4 +18,4 @@ GQA 是 [multi-head attention](/llm/knowledge-cards/multi-head-attention/) 的�
 
 ## 判斷條件與後果
 
-選模型或估算 serving 成本時，要看 `num_key_value_heads`，而不是只看總參數。GQA 對本地推論特別重要，因為 [context window](/llm/knowledge-cards/context-window/) 與併發數常被 KV cache 卡住。
+選模型或估算 serving 成本時，KV cache 的大小由 `num_key_value_heads` 決定，總參數量反映不出來：層數與 head 維度相同的兩個模型，KV head 數差四倍時，同樣的 context 長度與併發數下 KV cache 也差約四倍。本地推論能開多長的 [context window](/llm/knowledge-cards/context-window/)、同時處理幾個請求，常常由 KV cache 先用完記憶體決定，所以只看總參數會高估 KV head 多的模型能開的 context 與併發數。

@@ -14,9 +14,9 @@ Recording rule 是 [metrics](/backend/knowledge-cards/metrics/) 讀取路徑的�
 
 ## 判斷條件與後果
 
-設計 recording rule 時要定義計算表達式、執行間隔、命名慣例與維護責任。命名慣例通常遵循 `level:metric:operations` 格式（如 `job:http_requests_total:rate5m`），讓讀者從名稱判斷來源、粒度與計算方式。
+Recording rule 的名稱與維護責任，決定讀取端能不能判斷自己讀到的是什麼。名稱照 `level:metric:operations` 的慣例（如 `job:http_requests_total:rate5m`）時，讀者從名稱判斷得出來源、粒度與計算方式；名稱不照慣例時，要回頭查規則定義。沒有指定維護責任時，計算表達式引用的原始指標改名或消失之後，規則產生空結果，依賴它的 dashboard 與 alert 跟著失效，而沒有人負責修正規則。
 
-Recording rule 產生的 series 本身也佔儲存空間與 [cardinality](/backend/knowledge-cards/metric-cardinality/)。規則數量增長時，要監控 rule evaluation duration 跟 rule group lag，避免 rule 跑不完的情況讓 dashboard 看到過期資料。
+Recording rule 產生的 series 本身也佔儲存空間與 [cardinality](/backend/knowledge-cards/metric-cardinality/)。規則數量增長時，一輪規則的 evaluation duration 逐漸接近執行間隔；一輪在下一輪開始前跑不完時，rule group lag 上升，dashboard 讀到的是過期的預計算結果。所以 rule evaluation duration 與 rule group lag 列入監控。
 
 ## 使用情境
 

@@ -25,12 +25,12 @@ ECS 的執行模式分 [EC2](/devops/infra/knowledge-cards/ec2/) launch type（�
 
 ## 判斷條件與後果
 
-ECS 的設計決定多半是在劃責任交界：運算實例歸 AWS 還是團隊管理、權限歸哪個 role、映像版本歸 infra code 還是 CI/CD，最後再依服務的負載型態選擴容指標：
+ECS 的設定多半在劃責任交界：運算實例歸 AWS 還是團隊、權限歸哪個 role、映像版本歸 infra code 還是 CI/CD，以及擴容看哪一個指標。每一條交界劃錯的代價不同：
 
-- **Launch type**：Fargate（低運維、較高成本）還是 EC2（低成本、要管實例）。多數 web API 的初始選擇是 Fargate，流量穩定後再評估 EC2
-- **Task IAM role**：task execution role（拉 image 和寫 log 用）和 task role（應用程式存取其他 AWS 資源用）是兩個不同的 role，不要混用
-- **映像版本解耦**：task definition 裡的 image tag 由 CI/CD 部署期注入，infra code 不寫死版本號
-- **Auto-scaling 指標**：用 CPU / memory 還是 ALB request count，取決於服務是計算密集還是 IO 密集
+- **Launch type**：選 Fargate 時 AMI 與容量由 AWS 管理，代價是同規格的單位成本較高；選 EC2 時單位成本較低，AMI 更新與 capacity provider 回到團隊身上。task 數量少時兩者的成本差額小，所以多數 web API 從 Fargate 起步，流量穩定、task 數量變多之後再評估 EC2
+- **Task IAM role**：task execution role 給 ECS 拉 image 與寫 log，task role 給應用程式存取其他 AWS 資源。兩者合成同一個 role 時，應用程式多拿到拉 image 的權限，ECS 拉 image 時也帶著應用程式的資料權限；這個 role 的憑證不論從哪一個用途外洩，拉 image 與存取資料兩組權限都一起交出去
+- **映像版本**：image tag 寫死在 infra code 時，每次發版都要改 infra code 並跑 apply，部署與基礎設施變更綁在同一個流程；tag 由 CI/CD 在部署期注入時，infra code 只描述接線，發版不動 infra
+- **Auto-scaling 指標**：計算密集的服務先在 CPU 上飽和，CPU 或 memory 的使用率對得上它的瓶頸；IO 密集的服務在等外部回應，CPU 還不高時請求已經在累積，用 CPU 觸發擴容會太晚，ALB request count 比較早反映負載
 
 ## 鄰卡
 

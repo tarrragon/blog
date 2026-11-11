@@ -18,4 +18,4 @@ Adaptive retrieval 位在 [RAG](/llm/knowledge-cards/rag/) 的控制流端。它
 
 ## 判斷條件與後果
 
-判斷器可以是規則、小模型、主模型 self-report 或 confidence signal。風險是模型過度自信而跳過檢索；高風險事實問答應偏向 retrieve 或提供 fallback。
+判斷要不要 retrieve 的元件可以是規則、小模型、主模型的 self-report 或 confidence signal。判斷器判成不需要檢索、而模型不知道答案時，模型照樣用自己的參數知識作答，回答看起來有把握而內容是錯的；原因是過度自信的模型給出的 self-report 與 confidence 都偏高，判斷器分不出它知不知道。這種誤判在閒聊類 query 上的代價是一次較差的回答，在「公司退款政策第 4 條怎麼說」這類事實問答上是一段錯的政策內容，所以高風險的事實問答預設 retrieve，或在判成不檢索之後保留一條改走檢索的 fallback。

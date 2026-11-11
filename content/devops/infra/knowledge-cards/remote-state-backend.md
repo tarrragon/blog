@@ -23,9 +23,14 @@ Remote backend 設定後，如果 `terraform init` 提示 state 遷移確認，�
 
 ## 判斷條件與後果
 
-Remote state backend 同時保管 state 的完整副本與其中的敏感屬性，存取控制或版本保留一旦出錯，受影響的是整個 IaC 工作流程的依據；選擇時要定的是：自管還是託管（取決於團隊規模和維運餘裕）、state bucket 的加密與存取控制（誰能讀 state 等於誰能看到所有資源的敏感屬性）、versioning 是否開啟（是 state 回捲的唯一退路）、以及鎖表的設定（DynamoDB 的表名和 partition key）。
+Remote state backend 同時保管 state 的完整副本與其中的敏感屬性，下面任一項設定出錯時，受影響的都是整個 IaC 工作流程的依據：
 
-State 絕不能進 git——它含明文敏感值，推進版控等於把密碼寫進每個 clone 的歷史裡。Backend 設定本身（bucket name、region、鎖表名稱）寫在 HCL 裡進 git，state 檔本身只存在 backend 裡。
+- **自管或託管**：自管（S3 加 DynamoDB）時，存放、鎖與加密由團隊自己配置與維運；託管服務把三者包在一起，用月費換掉這份維運負擔。團隊規模小、維運餘裕少時，託管換到的比較多
+- **加密與存取控制**：誰能讀 state，誰就看得到所有資源的敏感屬性；bucket 沒有加密或讀取權限開得太寬時，這些敏感值交給了所有讀得到的人
+- **versioning**：state 被一次錯誤的 apply 或手動修改寫壞時，versioning 保留的舊版是 state 回捲的唯一退路；沒有開啟就沒有舊版可回
+- **鎖表**：沒有設定鎖（DynamoDB 的表名與 partition key）時，兩個人同時 apply 會互相覆蓋對方的變更，state 進入不一致狀態
+
+State 檔含明文敏感值，推進 git 等於把密碼寫進每個 clone 的歷史裡，所以 state 檔只存在 backend 裡；backend 設定本身（bucket name、region、鎖表名稱）不含敏感值，寫在 HCL 裡進 git。
 
 ## 鄰卡
 

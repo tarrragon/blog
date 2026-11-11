@@ -25,4 +25,4 @@ Kubernetes liveness 通過只代表 process 存活；readiness 通過才代表�
 
 ## 判斷條件與後果
 
-Readiness / Health Check 要定義檢查內容、容錯窗口與失敗處理，讓 rollout decision 有可信訊號。
+Readiness check 的檢查內容決定 rollout 拿到的訊號是否可信。檢查只確認 process 還活著時，新版本在連線池、依賴服務或必要資料準備好之前就被判定可以接流量，部署後健康檢查綠燈而請求大量失敗。容錯窗口太短時，啟動較慢的實例在準備完成之前就被判定失敗而重啟；太長時，已經故障的實例要等更久才被移出流量。檢查失敗之後 rollout 怎麼走（暫停推進、回退，或只把那個實例移出）沒有事先寫定時，健康檢查變紅也不會改變 rollout 的走向。

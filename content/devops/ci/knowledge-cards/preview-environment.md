@@ -25,4 +25,8 @@ Preview Environment 位在 pull request workflow 與[正式部署流程](/devops
 
 ## 判斷條件與後果
 
-Preview Environment 要定義建立條件、資源上限、可見範圍與清理策略，避免成本與風險失控。
+Preview Environment 的費用與暴露範圍由下面幾項設定決定：
+
+- **建立條件**：每個 PR 都自動建立時，只改文件的 PR 也佔一份環境；只在變更涉及 UI、路由或互動行為時建立，資源用在 reviewer 實際會打開的環境上。
+- **資源上限與清理**：沒有到期清理時，PR 合併或關閉之後環境仍在運作，費用隨開過的 PR 數累積。
+- **可見範圍**：preview URL 公開時，還沒合併、沒經過審查的功能，任何拿到網址的人都打得開。

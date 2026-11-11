@@ -18,4 +18,4 @@ WordPiece 屬於 subword tokenizer 家族，BERT 系列是代表。BPE 偏向合
 
 ## 判斷條件與後果
 
-比較 tokenizer 時，WordPiece 主要作為 BERT/encoder 系統的背景知識。寫 LLM 推論與本地 serving 時更常遇到 BPE、SentencePiece、vocab size 與 special tokens。
+比較 tokenizer 時遇到 WordPiece，對象多半是 BERT 這類 encoder 模型；vocabulary 裡出現 `##ing` 這類 continuation marker 時，手上的 tokenizer 是 WordPiece 風格，拆出來的 subword 要照 marker 接回原詞。寫 LLM 推論與本地 serving 時，模型多半用 [BPE](/llm/knowledge-cards/bpe/) 或 [SentencePiece](/llm/knowledge-cards/sentencepiece/)，影響 context 用量與輸出格式的是 vocab size 與 special tokens，WordPiece 在這個情境是背景知識。

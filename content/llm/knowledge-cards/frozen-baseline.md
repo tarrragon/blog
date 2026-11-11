@@ -33,12 +33,12 @@ Day 90：baseline-v2、標明 refresh 時點
 
 ## 判斷條件與後果
 
-讀 eval / production AI 文章看到「frozen baseline」「baseline drift」「regression set」就是這個機制。實作判讀：
+Frozen baseline 的判斷看三個條件：每一版拿什麼當對照、baseline 在什麼時點凍結與更新，以及 baseline 的 eval set 跟 production 輸入的分佈差多遠。
 
-1. **為什麼必要**：每次 A/B 都跟「最新版本」比、長期累積漂移完全不可見、「整體變好了沒」無從回答。Frozen baseline 是漂移的錨點。
-2. **何時 freeze**：production 跑穩、user 滿意度可接受時 freeze。太早 freeze 鎖到不夠好的版本、太晚 freeze 鎖不到。
-3. **何時 refresh**：定期（每季 / 每半年）、或當 baseline 明顯 obsolete（如 model 升級、產品大改版）。Refresh 後標明時點、舊版本仍可保留當歷史對照。
-4. **跟 frozen baseline 一起的還有**：regression set（failed case 永遠進、防 fix 一個壞一個）、production trace 抽樣補進 eval set（讓 eval set 不脫節）。
-5. **失敗模式**：baseline 跟 production 分佈差太遠（baseline 用 lab case、production 是 wild input）、跑出來分數沒參考價值。緩解：baseline 的 eval set 用 production trace 抽樣建。
+1. **每次 A/B 都跟上一版比時**，單次的差距小到看起來都可以接受，好幾版累積的漂移卻沒有任何一次比較量得到，「整體比三個月前好還是壞」沒有數字可答；frozen baseline 是固定不動的對照點，累積的漂移才量得出來。
+2. **凍結得太早時**（production 還沒跑穩、使用者滿意度還不能接受），之後每一版都跟一個不夠好的版本比，「贏過 baseline」不代表夠好；一直不凍結則回到上一項的處境。
+3. **model 升級或產品大改版之後**，舊 baseline 處理的輸入跟現在的產品不同，跟它比的分數失去對照意義，所以這時更新 baseline（沒有這類事件時也定期更新，例如每季或每半年）；更新時標明時點、留著舊版當歷史對照，漂移的紀錄在更新那一刻才接得上。
+4. **baseline 的 eval set 用實驗室設計的案例、而 production 是使用者的真實輸入時**，兩者分佈不同，分數反映的是實驗室案例上的表現，對 production 沒有參考價值；eval set 從 production trace 抽樣建，分佈才對得上。
+5. **修好的 failed case 沒有收進 regression set 時**，下一次改 prompt 可能把同一個 case 再改壞而沒有任何比較抓得到，所以 regression set 跟 frozen baseline 一起跑。
 
 完整 eval 系統設計見 [4.13 Eval 設計座標系](/llm/04-applications/eval-design-framework/)。

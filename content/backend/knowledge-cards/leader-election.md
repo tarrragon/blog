@@ -17,4 +17,4 @@ Leader election 處於分散式協調控制層、是 [consensus protocol](/backe
 
 ## 判斷條件與後果
 
-Election timeout 太短會誤判（網路抖動觸發多餘的切換）、太長會延遲 failover。Fencing token 是必備設計 — 舊 leader 跟新 leader 並存的 split-brain 期間、用單調遞增 token 讓資源側拒絕舊 leader 的寫入。應用層接 leader election 要明確「在 follower 角色時做什麼」— 通常是 stand-by + 監控 election event、每個操作前主動檢查自己當前是否為 leader。
+Election timeout 的長短是兩種錯誤之間的取捨：太短時，網路抖動就被判成 leader 失效，觸發多餘的切換；太長時，leader 確實失效之後要等更久才選出新 leader，failover 延遲。舊 leader 因為程序暫停或網路分割，還不知道自己已經被取代時，舊 leader 與新 leader 並存（split-brain），沒有 fencing token 的話，資源側會接受兩者的寫入；單調遞增的 token 讓資源側拒絕帶著舊 token 的寫入。應用層沒有定義 follower 角色要做什麼時，失去 leader 身分的節點可能繼續執行獨佔工作，所以 follower 通常是 stand-by 加上監控 election event，每個獨佔操作之前主動檢查自己當前是否為 leader。

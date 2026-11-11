@@ -5,7 +5,6 @@ description: "說明多租戶系統如何隔離不同客戶或組織的資料與
 weight: 119
 ---
 
-
 Tenant boundary 的核心概念是「隔離不同客戶、組織或租戶的資料與資源」。多租戶系統中，使用者身份之外還要判斷他屬於哪個 tenant，以及能否跨 tenant 操作。 可先對照 [Throughput](/backend/knowledge-cards/throughput/)。
 
 ## 跟其他概念的關係
@@ -18,7 +17,7 @@ Tenant boundary 是 authorization、data partition、rate limit、audit 與 bill
 
 ## 判斷條件與後果
 
-Tenant boundary 要在 query、cache key、message、log、audit、rate limit 與測試中保持一致。測試要覆蓋跨 tenant IDOR、資料匯出與背景 job。
+Tenant boundary 在 query、cache key、message、log、audit 與 rate limit 之中，只要有一處沒有帶租戶識別，那一處就是跨租戶的路徑：cache key 沒有租戶時，A 公司查出的結果可能回給 B 公司；rate limit 沒有依租戶分開時，A 公司的大量匯出用掉 B 公司的容量；log 與 audit 沒有租戶時，事後查不出一次存取屬於哪個租戶。跨 tenant 的 IDOR、資料匯出與背景 job 是測試沒覆蓋時最常漏掉的三處，因為匯出與背景 job 常常不走一般請求的授權路徑，背景 job 也沒有發起的使用者可以帶出租戶。
 
 這條邊界成立的前提是「這個請求屬於哪個租戶」判對了，而那個判斷本身怎麼建立、憑什麼可信，見 [7.40 B2B 多租戶的身分接入](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)。
 

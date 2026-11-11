@@ -25,4 +25,4 @@ CD Pipeline 位在 [CI](/devops/ci/knowledge-cards/ci-pipeline/) 驗證之後，
 
 ## 判斷條件與後果
 
-CD Pipeline 要明確定義放行條件、部署順序、例外流程與回復策略，確保發布節奏與風險控制一致。
+CD Pipeline 的放行條件、部署順序、例外流程與回復策略，各自決定一次發布在哪個位置停得下來。放行條件沒有明確定義時，artifact 是否進 production 只取決於有人按下部署；部署順序沒有固定時，production 可能先於 staging 拿到新版本，staging 的驗證結果來不及擋下問題；沒有例外流程時，緊急修復繞過整條 pipeline，那一次部署沒有審核紀錄；沒有回復策略時，發布失敗只能往前修，修復期間服務停在壞版本上。

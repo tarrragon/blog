@@ -25,4 +25,4 @@ Backfill 位在資料 schema、transform logic 或歷史資料修補之後，常
 
 ## 判斷條件與後果
 
-Backfill 要定義補算範圍、批次大小、checkpoint、停損條件與對帳方式，讓歷史資料修補成為可停止、可接續、可驗證的流程。
+Backfill 改寫的是既有資料，每一項控制缺席時，錯誤會寫進原本正確的歷史資料。補算範圍沒有界定時，任務改到不該動的 partition；批次太大時，單批佔滿資料庫或 pipeline 的資源，線上寫入跟著變慢；沒有 [checkpoint](/devops/ci/knowledge-cards/checkpoint/) 時，中斷後只能從頭跑；沒有停損條件時，新邏輯有錯也會一路寫完全部歷史資料；沒有對帳方式（row count、金額總和）時，補完之後無法證明結果正確。

@@ -29,6 +29,8 @@ EBS 是 infra 系列中儲存面向的底層組件。RDS 的資料實際存在 E
 
 跟 instance store 的差別：instance store 是 EC2 實體主機上的臨時磁碟，效能高但 instance 停止資料就消失。EBS 是持久化儲存，instance 停止資料仍在。
 
+表格裡的設定分成建立之後改得了與改不了兩類，判斷的時機因此不同。Size 只能往上加：建立時給得太大，多出來的容量每個月照樣計費，縮小要建一顆較小的 volume 把資料複製過去；給得太小，線上擴容之後還要在作業系統裡擴展檔案系統才用得到新容量。Encryption 建立後不能改：一顆未加密的 volume 遇到要求加密的合規條件時，要經過「建 snapshot、複製成加密的 snapshot、從它建新 volume、換掛到 instance」這一串步驟，換掛的期間 instance 要停機。DeleteOnTermination 決定 instance 終止之後 volume 的去向：根磁碟預設跟著刪除，上面沒做 snapshot 的資料就沒了；附加磁碟預設保留，沒有人回收時成為不掛在任何 instance 上、仍持續計費的 volume。
+
 ## 鄰卡
 
 - [EC2](/devops/infra/knowledge-cards/ec2/)
