@@ -1,13 +1,13 @@
 ---
 title: "SQLite SQL Dialect and Index Limits"
 date: 2026-05-21
-description: "SQLite type affinity、NULL / date handling、constraint、index、query planner 與 PostgreSQL / MySQL 差異"
+description: "SQLite type affinity、NULL / date handling、constraint、index、query planner 與 PostgreSQL / MySQL 差異；SQLite 各構造加入的版本與查實際執行版本的方法、INSERT OR REPLACE 與 ON CONFLICT DO UPDATE、LATERAL／DISTINCT ON／ROLLUP／MERGE 在 SQLite 上的改寫"
 tags: ["backend", "database", "sqlite", "sql", "index"]
 ---
 
 SQLite SQL dialect and index limits 的核心責任是說明 SQLite 和 server SQL 的語意差異。SQLite 可以執行大量 SQL，也支援 transaction、index、trigger、view、window function 與 JSON；但它的 typing、constraint、file-level operation、query planner 與 extension model 會影響測試可信度、migration 成本與 production adapter。
 
-SQLite 測過代表某個 repository contract 在 SQLite 語意下成立，所以本文的範圍是 production target 為 PostgreSQL、MySQL、D1、Turso 或其他 server database 時，type affinity、constraint、transaction 與 index 這幾處 SQLite 語意與 target 的差異，以及測試與 migration 要為這些差異補上哪些 dialect gap evidence。
+SQLite 測過代表某個 repository contract 在 SQLite 語意下成立，所以本文的範圍是 production target 為 PostgreSQL、MySQL、D1、Turso 或其他 server database 時，type affinity、constraint、transaction 與 index 這幾處 SQLite 語意與 target 的差異；SQLite 與 PostgreSQL 之間的方言對照：SQLite 各構造加入的版本與查實際執行版本的方法、彈性型別對照 PostgreSQL 的型別檢查、拼法不同的寫法、拼法相同或名字相近而結果不同的寫法（含 `INSERT OR REPLACE`）、PostgreSQL 有而 SQLite 不收的查詢構造在同一份資料上的改寫；以及測試與 migration 要為這些差異補上哪些 dialect gap evidence。PostgreSQL 有而 SQLite 沒有、從部署形態推得出來的構造（列鎖、排除約束、建議鎖、角色）各自服務哪一種需求，在 [SQL.20 引擎的部署形態與 SQL 構造：SQLite 與 PostgreSQL 在並行寫入、連線協調與身分上的差異](/backend/01-database/sql/deployment-shape-and-sql-constructs/)。
 
 ## Type Affinity
 
@@ -32,6 +32,18 @@ CREATE TABLE orders (
 ```
 
 這段 schema 用 `STRICT`、`NOT NULL` 與 `CHECK` 讓 fixture 更接近正式資料合約。Production target 仍要跑 PostgreSQL / MySQL container test，確認 timestamp、integer range 與 constraint error mapping。
+
+### 同一組值在 SQLite 一般表與 PostgreSQL 上的結果
+
+SQLite 一般表的欄位型別是傾向而不是限制，這是 SQLite 官方文件寫明的設計選擇（彈性型別，flexible typing）；函式庫同樣是所有寫入的必經之路，`STRICT` 表證明它檢查得了型別。同一組值與運算在 SQLite 3.53.0 與 PostgreSQL 16.2 上的實測：
+
+| 送進去的值或運算            | SQLite（一般表）                     | PostgreSQL                                    |
+| --------------------------- | ------------------------------------ | --------------------------------------------- |
+| `'abc'` 寫進 `INTEGER` 欄位 | 收下，`typeof` 回 `text`             | 拒絕：`invalid input syntax for type integer` |
+| 日期 `'2026-02-30'`         | `date('2026-02-30')` 回 `2026-03-02` | 拒絕：`date/time field value out of range`    |
+| `0.1 + 0.2 = 0.3`           | 假（浮點數，`0.30000000000000004`）  | 真（小數常值的型別是 `numeric`）              |
+
+`STRICT` 表同樣寫 `'abc'` 得到 `cannot store TEXT value in INTEGER column`。SQLite 的 `date()` 遇到 29 到 31 日而那個月沒有那一天時往後進位，月份或日期超出格式範圍時（`2026-13-01`、`2026-01-32`）回 `NULL`，兩種都不報錯。PostgreSQL 另有使用者定義型別：`CREATE DOMAIN` 是帶檢查條件的既有型別，`CREATE TYPE … AS ENUM` 是列舉值，陣列與區間是內建型別；SQLite 沒有這幾種語法，限制欄位值改用 `CHECK`，條件要在每一張用到這個格式的表上各寫一次，而 `DOMAIN` 定義一次、各表引用，檢查也作用在型別轉換與函式參數上。SQLite 收下的不合格值複製到 PostgreSQL 時在寫入那一步被拒絕，所以搬遷前先用 `typeof()` 與日期函式掃一次既有資料。
 
 ## Constraint Behavior
 
@@ -126,6 +138,73 @@ Dialect gap 的核心責任是把 SQLite 與 target database 的差異寫成 mat
 | Generated column | expression、storage、index           | migration dry run                                                                                 |
 | Window function  | target DB 支援與 planner             | query compatibility suite                                                                         |
 | Extension        | FTS、vector、custom function         | vendor extension policy                                                                           |
+
+### SQLite 與 PostgreSQL 的寫法對照：拼法不同而結果相同、拼法相同而結果不同
+
+搬遷時最大量的改動是拼法不同的寫法，改寫之後結果相同，測試套件跑得出改漏的地方。下表在 SQLite 3.53.0 與 PostgreSQL 16.2 上各執行過一次：
+
+| 用途           | SQLite                                | PostgreSQL                                    | 兩家都收的寫法                  |
+| -------------- | ------------------------------------- | --------------------------------------------- | ------------------------------- |
+| 參數佔位       | `?`、`?1`、`:name`                    | `$1`（驅動程式可能另外轉換）                  | 由驅動程式決定                  |
+| 自動遞增的主鍵 | `INTEGER PRIMARY KEY [AUTOINCREMENT]` | `GENERATED ALWAYS AS IDENTITY`                | 無，各寫各的                    |
+| 型別轉換       | `CAST(x AS INTEGER)`                  | `x::int` 或 `CAST`                            | `CAST`                          |
+| 空值替代       | `IFNULL(a, b)`                        | `COALESCE(a, b)`                              | `COALESCE`                      |
+| 字串串接聚合   | `group_concat(x, ',')`                | `string_agg(x, ',')`                          | `string_agg`（SQLite 3.44 起）  |
+| 取月初         | `strftime('%Y-%m-01', t)`             | `date_trunc('month', t)`                      | 無                              |
+| 現在時間       | `datetime('now')`                     | `now()`                                       | `CURRENT_TIMESTAMP`，見下一張表 |
+| 取前幾列       | `LIMIT n OFFSET m`                    | `LIMIT n OFFSET m`、`FETCH FIRST n ROWS ONLY` | `LIMIT … OFFSET`                |
+
+拼法相同而結果不同的寫法沒有報錯，要靠比對兩家的輸出才找得到：
+
+| 寫法                | SQLite                           | PostgreSQL                                      |
+| ------------------- | -------------------------------- | ----------------------------------------------- |
+| `'a' LIKE 'A'`      | 真：ASCII 字母預設不分大小寫     | 假；不分大小寫要寫 `ILIKE`，SQLite 不收 `ILIKE` |
+| `SELECT TRUE`       | `1`：布林值就是整數              | `true`：獨立的 `boolean` 型別                   |
+| `CURRENT_TIMESTAMP` | UTC 的文字 `2026-11-11 20:19:52` | 帶時區的 `timestamptz`，依連線的時區顯示        |
+
+名字相近而語意不同的一組是 SQLite 的 `INSERT OR REPLACE` 與兩家都有的 `ON CONFLICT DO UPDATE`（SQLite 3.24 起）。`INSERT OR REPLACE` 是 SQLite 在有 `ON CONFLICT` 之前處理唯一鍵衝突的寫法，遇到衝突時刪掉衝突的那一列、再插入一列新的；`ON CONFLICT DO UPDATE` 就地更新原列，PostgreSQL 只收後者。在空表上依序執行：
+
+```sql
+CREATE TABLE punch (id INTEGER PRIMARY KEY, emp_id INT, day TEXT, at TEXT, note TEXT DEFAULT '');
+CREATE UNIQUE INDEX one_per_day ON punch (emp_id, day);
+INSERT INTO punch (emp_id, day, at, note) VALUES (1, '2026-11-10', '09:01', 'a');     -- id 1
+INSERT INTO punch (emp_id, day, at, note) VALUES (1, '2026-11-11', '08:55', '補登');  -- id 2
+
+INSERT OR REPLACE INTO punch (emp_id, day, at) VALUES (1, '2026-11-11', '10:00') RETURNING id;
+-- 回 3；表裡剩 (1, …, 'a') 與 (3, 1, '2026-11-11', '10:00', '')：id 2 那一列被刪掉，note 回到預設值
+```
+
+衝突出在主鍵以外的唯一鍵（這裡是 `(emp_id, day)`）而語句沒有給主鍵時，主鍵換成新配的值；不論衝突在哪個鍵上，語句沒寫到的欄位都回到預設值。有別的表以外鍵指向被刪的那一列時，結果看外鍵檢查有沒有開：`PRAGMA foreign_keys` 開著，整句以外鍵錯誤失敗、原列保留；關著，替換成功，子表那一列仍然指著已經不存在的 `id`。
+
+`LIKE` 的大小寫規則與 collation 的關係在 [SQL.15 字串比較與 collation：相等、排序、LIKE 與索引可用性](/backend/01-database/sql/string-comparison-and-collation/)。
+
+### SQLite 各構造的加入版本與實際執行版本的查法
+
+SQLite 的 SQL 構造隨版本增加，所以某個構造能不能用，要看實際執行的那一份 SQLite 是哪一版。下表的版本號取自 SQLite 的版本紀錄（release log）；這裡只在 3.53.0 上確認這些構造都能執行，沒有在各版本的邊界上測：
+
+| 構造                                          | SQLite 加入的版本 |
+| --------------------------------------------- | ----------------- |
+| `INSERT … ON CONFLICT DO NOTHING / DO UPDATE` | 3.24              |
+| 視窗函數（`OVER (PARTITION BY …)`）           | 3.25              |
+| 生成欄位（`GENERATED ALWAYS AS … STORED`）    | 3.31              |
+| `UPDATE … FROM`                               | 3.33              |
+| `RETURNING`、`ALTER TABLE … DROP COLUMN`      | 3.35              |
+| `STRICT` 表                                   | 3.37              |
+| `RIGHT JOIN`、`FULL JOIN`                     | 3.39              |
+| `string_agg`                                  | 3.44              |
+| JSONB（`jsonb()` 與二進位 JSON 儲存）         | 3.45              |
+
+版本號要在使用它的那個程式裡查：`SELECT sqlite_version();`。同一台機器上可能有好幾份 SQLite——作業系統附的 `sqlite3` 命令列工具、程式語言自帶的、驅動程式靜態連結的——版本各不相同。撰寫時同一台 macOS 上的 `sqlite3` 命令列工具是 3.43.2，Python 3 自帶的是 3.53.0：在命令列工具上試 `string_agg` 得到 `no such function`，Python 程式裡同一句可以執行。
+
+### PostgreSQL 有而 SQLite 不收的查詢構造：同一份資料上的改寫與代價
+
+下面這些構造兩家都算得出同一個結果，PostgreSQL 多提供了一種寫法。SQLite 3.53.0 對它們都回錯誤（`ROLLUP` 是 `no such function`，其餘是語法錯誤），對應的改寫在同一份資料上跑得出相同的列；資料是上面那張打卡表 `punch` 加一張員工表 `emp (id, name, dept)`：
+
+- **每位員工最近一次打卡**：PostgreSQL 可以寫 `DISTINCT ON (emp_id) … ORDER BY emp_id, day DESC`，或用 `CROSS JOIN LATERAL` 讓子查詢引用外層的員工、每位各取一筆（寫成 `LEFT JOIN LATERAL … ON true` 時，沒有打卡的員工也會留下一列）。SQLite 用視窗函數 `row_number() OVER (PARTITION BY emp_id ORDER BY day DESC)` 再取等於 1 的列。排序鍵有同值時（例如打卡表沒有 `one_per_day` 這個唯一索引、同一位員工同一天有兩筆），這幾種寫法挑出的列可能不同，要在 `ORDER BY` 補上分得出先後的欄位（`at`）。SQLite 另有一個自己的寫法：`SELECT emp_id, max(day), at FROM punch GROUP BY emp_id` 會讓 `at` 取自 `max(day)` 那一列，條件是同一個 `SELECT` 裡只有一個 `min()` 或 `max()`；PostgreSQL 拒絕這段查詢，這個特例的邊界在 [SQL.2 子句的求值順序：每一步可用的欄位、語意模型擋下的寫法與各家引擎放寬的寫法](/backend/01-database/sql/clause-evaluation-order/)。
+- **各部門人數加上總計**：PostgreSQL 寫 `GROUP BY ROLLUP(dept)` 或 `GROUPING SETS`，在同一段查詢裡產出各組與總計。SQLite 用 `UNION ALL` 接一段不分組的查詢，結果相同，同一張表在兩段查詢裡各讀一次。
+- **依來源資料新增、更新或刪除**：PostgreSQL 15 起有 `MERGE`。「來源沒有的就刪除」要 PostgreSQL 17 起的 `WHEN NOT MATCHED BY SOURCE`，16.2 回語法錯誤，所以在 15、16 上與 SQLite 一樣要另寫一段 `DELETE`。SQLite 的 `INSERT … ON CONFLICT DO UPDATE` 涵蓋「有就更新、沒有就新增」：它要求衝突的欄位上有唯一約束或唯一索引，`DELETE` 要跟它放在同一個交易裡才一次完成；這是資料模型與交易設計的改動，不只改查詢文字（這一項的改寫沒有實跑）。
+
+改寫之後的代價差異（多讀一次表、多一層子查詢）要在目標引擎上看執行計畫才知道，原因在 [SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)。
 
 Dialect matrix 要以 query contract 為單位。每個 repository method 至少列出 SQL feature、SQLite behavior、production behavior、test layer 與 fallback strategy。
 

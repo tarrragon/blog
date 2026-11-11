@@ -17,7 +17,7 @@ tags: ["sql", "engine", "portability", "knowledge-card"]
 
 **名字指向哪個物件。** 沒加引號的識別字被摺成什麼樣由引擎決定，各家的規則不同（[SQL.14 識別字的規則：各家的大小寫摺疊、引號與保留字](/backend/01-database/sql/identifier-rules/)）。
 
-**要花多久。** 這由[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)決定，而它受一個約束：輸出的列集合要與語意模型算出來的一致。所以換引擎會換掉代價，不換掉答案（[SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)）。
+**要花多久。** 這由[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)決定，而它受一個約束：輸出的列集合要與語意模型算出來的一致。所以一段查詢在固定的資料上執行時，換引擎會換掉代價，不換掉答案（[SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)）。好幾個交易同時執行時，各交易看得到哪些別的交易的寫入，由引擎的並行控制決定，同一段 `UPDATE` 在兩家引擎上可能認領到不同的列（[SQL.20 引擎的部署形態與 SQL 構造：SQLite 與 PostgreSQL 在並行寫入、連線協調與身分上的差異](/backend/01-database/sql/deployment-shape-and-sql-constructs/)）。
 
 **回哪一批列。** 這一項由[關聯代數](/backend/01-database/sql/knowledge-cards/relational-algebra/)的組合規則定死，各家一致。三值邏輯、外連接補 `NULL`、`NOT IN` 的展開方式都在這一層，所以那幾類錯誤換引擎不會消失（[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
 

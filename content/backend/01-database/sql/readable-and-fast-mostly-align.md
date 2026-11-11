@@ -1,19 +1,19 @@
 ---
-title: "SQL.21 可讀性與執行代價：兩者一致與分岔的情形"
+title: "SQL.22 可讀性與執行代價：兩者一致與分岔的情形"
 date: 2026-09-01
 description: "寫法差異在什麼情形下免費、什麼情形下分岔，以及分岔時該動查詢還是動 schema"
 aliases: ["/sql/readable-and-fast-mostly-align/"]
-weight: 22
+weight: 23
 tags: ["sql", "readability", "performance", "index", "cte"]
 ---
 
 一段 SQL 同時要給引擎執行與給人維護，而這兩個需求在 SQL 上多數時候指向同一個寫法。理由落在這個語言的性質上：**引擎執行的是計畫，不是那段文字**（[SQL.1 宣告式的紅利與代價：書寫、求值與執行順序各自由誰決定](/backend/01-database/sql/declarative-not-procedural/)），所以文字裡為了讓人看懂而多出來的結構，只要最佳化器攤得平就在計畫上留不下痕跡。決定執行次數的結構是例外——相關子查詢與 CTE 都屬於這一類，後面那一節量的正是它。
 
-這一篇與 [SQL.20 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/) 都問文字寫給誰。那一篇問文字對讀的人說了什麼——宣告落空的幾種形態與查證它的動作——這一篇問文字該為誰而寫。兩篇底下還有一層是答案本身對不對，引擎對那一層沒有回報的管道，好讀與否也碰不到它，[SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/) 寫它為什麼不報錯。
+這一篇與 [SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/) 都問文字寫給誰。那一篇問文字對讀的人說了什麼——宣告落空的幾種形態與查證它的動作——這一篇問文字該為誰而寫。兩篇底下還有一層是答案本身對不對，引擎對那一層沒有回報的管道，好讀與否也碰不到它，[SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/) 寫它為什麼不報錯。
 
 ## 計畫相同或語意相同的寫法差異
 
-同一批列的兩種寫法送進[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)之後常常收斂成同一個計畫。`CROSS JOIN` 加等值條件與 `JOIN ... ON` 寫同一個條件，計畫逐字相同（[SQL.20 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/) 有並排的輸出）。[SQL.8 IN、EXISTS 與 JOIN：列數、可取用的欄位與 NULL 的處理](/backend/01-database/sql/in-exists-join/) 從另一條路走到同一個處置：肯定式的 `IN` 與 `EXISTS` 語意相同，所以選哪一個按可讀性挑。它的依據是語意而非計畫：這兩種寫法在 SQLite 上各自走不同的計畫，而語意相同已經足以讓選擇落在可讀性上。
+同一批列的兩種寫法送進[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)之後常常收斂成同一個計畫。`CROSS JOIN` 加等值條件與 `JOIN ... ON` 寫同一個條件，計畫逐字相同（[SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/) 有並排的輸出）。[SQL.8 IN、EXISTS 與 JOIN：列數、可取用的欄位與 NULL 的處理](/backend/01-database/sql/in-exists-join/) 從另一條路走到同一個處置：肯定式的 `IN` 與 `EXISTS` 語意相同，所以選哪一個按可讀性挑。它的依據是語意而非計畫：這兩種寫法在 SQLite 上各自走不同的計畫，而語意相同已經足以讓選擇落在可讀性上。
 
 ```sql
 -- 共用資料：下過單的顧客，兩段都回 佳穎

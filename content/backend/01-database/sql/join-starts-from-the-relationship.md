@@ -23,7 +23,7 @@ FROM 顧客 CROSS JOIN 訂單
 WHERE 訂單.顧客編號 = 顧客.顧客編號;
 ```
 
-它讀起來自然是有來由的——每一種配對先擺出來，再挑走不要的。而它是**語意層的定義**：代數用它說明連接的結果集是什麼，沒有規定寫法要照這個順序展開。引擎也沒有照著做，這一段的計畫與 `JOIN ... ON` 寫同一個條件逐字相同（[SQL.20 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/)）。
+它讀起來自然是有來由的——每一種配對先擺出來，再挑走不要的。而它是**語意層的定義**：代數用它說明連接的結果集是什麼，沒有規定寫法要照這個順序展開。引擎也沒有照著做，這一段的計畫與 `JOIN ... ON` 寫同一個條件逐字相同（[SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/)）。
 
 這個起手式在內連接底下一直行得通，因為條件放 `ON` 與放 `WHERE` 在內連接底下回同一批列。行得通的經驗會累積，直到問題需要保留配不到的列。
 
@@ -69,7 +69,7 @@ FROM 顧客 LEFT JOIN 訂單
 
 還有第三種情形：只問配不配得到，右表的欄位一個都不輸出。那時要的運算是半連接——配起來之後只帶走左邊那一份，右邊只當條件（[Semi-join 與 Anti-join](/backend/01-database/sql/knowledge-cards/semi-join-and-anti-join/)）。寫成 `JOIN` 會讓配得到多列的那些左列重複出現，[SQL.8 IN、EXISTS 與 JOIN](/backend/01-database/sql/in-exists-join/) 寫這三種寫法在列數上的差別，以及選哪一種的判斷標準。
 
-**配不到的列要不要保護，這個決定由問題決定，不由現有資料決定。** 「翻遍現在的訂單表，每一列都配得到顧客」只證明此刻如此，而查詢要活得比這一批資料久。反過來說，資料保證配得到的時候寫 `LEFT` 也有代價——它宣告了一個從未發生的情況，下一個讀的人會以為那些列存在（[SQL.20 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/)）。要判斷配對有沒有保證，去看[約束](/backend/01-database/sql/knowledge-cards/constraint/)，而那條保證要真的生效才算數（[SQL.18 外鍵與參照完整性：宣告、生效與查詢得到的保證](/backend/01-database/sql/foreign-key-and-referential-integrity/)）。
+**配不到的列要不要保護，這個決定由問題決定，不由現有資料決定。** 「翻遍現在的訂單表，每一列都配得到顧客」只證明此刻如此，而查詢要活得比這一批資料久。反過來說，資料保證配得到的時候寫 `LEFT` 也有代價——它宣告了一個從未發生的情況，下一個讀的人會以為那些列存在（[SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/)）。要判斷配對有沒有保證，去看[約束](/backend/01-database/sql/knowledge-cards/constraint/)，而那條保證要真的生效才算數（[SQL.18 外鍵與參照完整性：宣告、生效與查詢得到的保證](/backend/01-database/sql/foreign-key-and-referential-integrity/)）。
 
 ## 業務描述對應到查詢的位置：ON、連接種類與 WHERE
 
@@ -81,7 +81,7 @@ FROM 顧客 LEFT JOIN 訂單
 
 **成品裡再篩什麼。** 這句話沒有再提條件，所以 `WHERE` 是空的。業務描述裡沒有針對顧客那一側的限制時，空的 `WHERE` 是一個合理的結果。
 
-順序反過來走也能檢查已經寫好的查詢：`WHERE` 裡引用右表欄位的條件，回頭問它描述的是配對，還是成品——多數形態上它描述的是配對，而它待在那裡正在抵銷某個保護。**有一個形態剛好相反**：`WHERE 右表.某欄 IS NULL` 挑的正是外連接補上 `NULL` 的那些列，它描述的是成品，待在 `WHERE` 是對的位置（[SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責](/backend/01-database/sql/on-describes-where-filters/) 有完整的判定表，[SQL.20 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/) 用它示範查孤兒訂單）。
+順序反過來走也能檢查已經寫好的查詢：`WHERE` 裡引用右表欄位的條件，回頭問它描述的是配對，還是成品——多數形態上它描述的是配對，而它待在那裡正在抵銷某個保護。**有一個形態剛好相反**：`WHERE 右表.某欄 IS NULL` 挑的正是外連接補上 `NULL` 的那些列，它描述的是成品，待在 `WHERE` 是對的位置（[SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責](/backend/01-database/sql/on-describes-where-filters/) 有完整的判定表，[SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/) 用它示範查孤兒訂單）。
 
 ## 只提到被保護的表的條件該放的位置
 

@@ -123,6 +123,8 @@ SQLite 3.53.0 實測，經由 Python 3.14 的 `sqlite3` 模組，同一個 proce
 
 Go 的 `database/sql` 由 driver 決定 `BeginTx` 送出哪一種 `BEGIN`。mattn/go-sqlite3 與 modernc.org/sqlite 都接受 DSN 參數 `_txlock=immediate`，帶上之後這個連線池開的每一個交易都以 `BEGIN IMMEDIATE` 開始，只讀的交易也一樣，所以這個參數只放在上文〈寫入連線池上限一條〉的寫入池 DSN，讀取池不帶。在多條連線的池上直接 `db.Exec("BEGIN IMMEDIATE")`，之後的陳述式可能拿到別的連線、不在那個交易裡。Go 1.27.3 搭 mattn/go-sqlite3 v1.14.53 與 modernc.org/sqlite v1.62.0 實測（每種各跑一次）：帶 `_txlock=immediate` 時，第二個交易的 `BeginTx` 等到第一個提交（約 1.05 到 1.09 秒）才開始，讀到第一個寫入的那一列，資料表留下一列。錯誤訊息也依 driver 而不同：mattn 只印 `database is locked`，modernc 印成 `database is locked (517)`，517 就是 `SQLITE_BUSY_SNAPSHOT` 的數值。其他 driver 送出哪一種 `BEGIN`，打開 driver 或 ORM 的 SQL log 看交易開始那一行與它前後的查詢，或在它的文件找交易模式的設定。
 
+同一段先讀後寫搬到 PostgreSQL 的預設隔離等級 `READ COMMITTED` 之後，寫入不再排隊，兩個交易都讀到對方寫入之前的狀態；兩家的並行實測與 PostgreSQL 上改寫成約束、列鎖或 `SERIALIZABLE` 的條件，在 [SQL.20 引擎的部署形態與 SQL 構造：SQLite 與 PostgreSQL 在並行寫入、連線協調與身分上的差異](/backend/01-database/sql/deployment-shape-and-sql-constructs/) 的〈多個交易同時先讀後寫：工作佇列的認領與班表不重疊〉。
+
 ## Checkpoint strategy：WAL growth 是操作訊號
 
 Checkpoint 的核心責任是把 WAL 中的 committed frames 合併回 main database file。SQLite 預設會在 WAL file 達到約 1000 pages 後自動 checkpoint；這個預設適合多數小型場景，但 production 服務要把 checkpoint 視為獨立操作。

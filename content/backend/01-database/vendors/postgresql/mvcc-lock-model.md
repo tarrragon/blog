@@ -117,7 +117,7 @@ COMMIT;
 跟 MySQL gap lock 不同：
 
 - MySQL gap lock：*pre-lock*、防 phantom 在 query 期間
-- PG predicate lock：*post-detect*、commit 時偵測 anomaly、退回 transaction
+- PG predicate lock：*post-detect*、讀寫過程中或 commit 時偵測 anomaly（任何一句都可能回 40001）、退回 transaction
 
 PG SSI 對 *寫入吞吐影響低*（不 pre-lock）、但 *transaction rollback 機率高*（要 application retry）。
 
@@ -130,7 +130,7 @@ PG 預設 READ COMMITTED、跟 MySQL InnoDB 預設 REPEATABLE READ 不同：
 | READ UNCOMMITTED | PG 視為 READ COMMITTED（不真的支援 dirty read）   | MySQL 真支援                                                                                                                                   |
 | READ COMMITTED   | 每 statement 看當下 committed snapshot（PG 預設） | 一致                                                                                                                                           |
 | REPEATABLE READ  | Transaction 內 fixed snapshot（純 MVCC）          | MVCC snapshot + gap lock 防 phantom（兩者都 MVCC、差在 phantom 防護機制：PG 靠 snapshot version visibility、InnoDB 加 gap lock pre-lock 範圍） |
-| SERIALIZABLE     | SSI、commit 時偵測 anomaly                        | 強 lock + gap                                                                                                                                  |
+| SERIALIZABLE     | SSI、讀寫中或 commit 時偵測 anomaly               | 強 lock + gap                                                                                                                                  |
 
 **對 application code 含意**：
 
@@ -139,6 +139,8 @@ PG 預設 READ COMMITTED、跟 MySQL InnoDB 預設 REPEATABLE READ 不同：
 - Deadlock 機率比 MySQL 低數量級
 
 實務 PG production：用預設 READ COMMITTED 即可、SERIALIZABLE 留給 *strict consistency 需求*（金融 / 訂單）但接受 retry。
+
+在 SQLite 上靠單一寫入者排隊而正確的先讀後寫，搬到 READ COMMITTED 之後會在並行時重複認領或寫出重疊的資料；同一段 SQL 在兩家上的實測，以及改寫成約束、帶條件的單句 `UPDATE`、`FOR UPDATE SKIP LOCKED` 或 SERIALIZABLE 各自的條件，在 [SQL.20 引擎的部署形態與 SQL 構造：SQLite 與 PostgreSQL 在並行寫入、連線協調與身分上的差異](/backend/01-database/sql/deployment-shape-and-sql-constructs/)。
 
 ## Production 踩雷
 

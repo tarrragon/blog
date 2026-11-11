@@ -37,7 +37,7 @@ Debug 查詢是偶發的突增負載。開發者在排查問題時，可能用 s
 
 **I/O 頻寬**：聚合查詢需要掃描大量資料（sequential scan 或 index scan + heap access），跟 INSERT 的隨機寫入搶磁碟 I/O。在 HDD 或低階 SSD 上，一個 heavy 聚合查詢可以讓同時進行的 INSERT latency 從毫秒跳到十毫秒。
 
-**鎖競爭**：PostgreSQL 的 MVCC 讓 SELECT 跟 INSERT 不互相阻塞（reader 不等 writer），但 Downsample 的 INSERT OR REPLACE 跟 ingestion 的 INSERT 可能在同一張表上競爭 row-level lock。長時間的 aggregation query 也可能觸發 `idle in transaction` 問題，佔住連線不釋放。
+**鎖競爭**：PostgreSQL 的 MVCC 讓 SELECT 跟 INSERT 不互相阻塞（reader 不等 writer），但 Downsample 的 `INSERT … ON CONFLICT DO UPDATE`（PostgreSQL 不收 SQLite 的 `INSERT OR REPLACE`）跟 ingestion 的 INSERT 寫到同一張表時，可能競爭 row-level lock。長時間的 aggregation query 也可能觸發 `idle in transaction` 問題，佔住連線不釋放。
 
 ## 辨識訊號
 

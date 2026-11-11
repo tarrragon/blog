@@ -9,7 +9,7 @@ tags: ["sql", "privilege", "grant", "role", "least-privilege", "postgresql"]
 
 `GRANT` 與 `REVOKE` 是 SQL 的一部分，與 `SELECT` 一樣由標準定義。它們管的是誰被允許對哪個物件做哪件事，而預設是什麼都不允許——權限是一項一項加上去的，不是先給再收回來。這個預設之下，一個帳號能做什麼等於它被授予過什麼，兩者之間沒有隱含的推導。
 
-以下的輸出來自 PostgreSQL 18。SQLite 沒有使用者的概念，整個檔案的存取由檔案系統決定，所以本篇談的授權這一層在 SQLite 上不存在。
+以下的輸出來自 PostgreSQL 18。SQLite 沒有使用者的概念，整個檔案的存取由檔案系統決定，所以本篇談的授權這一層在 SQLite 上不存在。原因（嵌在應用程式裡的函式庫沒有伺服器程序驗證連線的身分），以及同一個部署形態的差別讓兩家各自有、各自沒有的其他構造，在 [SQL.20 引擎的部署形態與 SQL 構造：SQLite 與 PostgreSQL 在並行寫入、連線協調與身分上的差異](/backend/01-database/sql/deployment-shape-and-sql-constructs/)。
 
 ## 新建角色的預設權限
 

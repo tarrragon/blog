@@ -1,9 +1,9 @@
 ---
-title: "SQL.22 查詢設計的完整示範：把「哪幾天氣溫比前一天高」從需求做到上線"
+title: "SQL.23 查詢設計的完整示範：把「哪幾天氣溫比前一天高」從需求做到上線"
 date: 2026-09-22
 description: "以「哪幾天氣溫比前一天高」為例，把一句業務的話追問成可驗收的資料問題，比較自連接、視窗函數與相關子查詢各自押的前提與實測代價，以及需求沒說而資料會有的重複紀錄、時區與補登"
 aliases: ["/sql/requirement-to-shipped-query/"]
-weight: 23
+weight: 24
 tags: ["sql", "requirement", "query-design", "cost", "boundary"]
 ---
 

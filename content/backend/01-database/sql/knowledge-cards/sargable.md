@@ -30,7 +30,7 @@ date(下單日) = '2024-03-01'    SCAN 訂單
 
 所以形狀是排除法的一步，答案仍然要向引擎要計畫。**要不到計畫的時候，看條件的形狀是僅剩能做的那一步**——它只看條件的文字，不需要連線、不需要看資料，也不需要建立任何物件的權限（[SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)）。
 
-被包住與本來就裸著這兩種命中，能動的位置不同。**被包住的**（函式包住、運算搬得動）改寫條件本身就能讓它走索引，下一節那三條解決的都是同一件事——把索引欄位還原成裸的，或者換一個索引來配合它。三條的代價並不相同：拆成範圍要讀的人自己拼邊界，運算搬邊與運算式索引不動原本的讀法，而運算式索引把代價換到寫入端（哪一條先試在 [SQL.21 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/)）。
+被包住與本來就裸著這兩種命中，能動的位置不同。**被包住的**（函式包住、運算搬得動）改寫條件本身就能讓它走索引，下一節那三條解決的都是同一件事——把索引欄位還原成裸的，或者換一個索引來配合它。三條的代價並不相同：拆成範圍要讀的人自己拼邊界，運算搬邊與運算式索引不動原本的讀法，而運算式索引把代價換到寫入端（哪一條先試在 [SQL.22 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/)）。
 
 **本來就裸著**而仍然掃全表的，差別在那個條件描不描得出索引上的一段連續區間。前綴比對描得出，所以它換成範圍之後走得了；萬用字元開頭要比對的值散在索引的各處，`OR` 接無索引欄則有一半根本不在索引裡。這兩種改寫條件本身幫不上忙，剩下的變數在統計與選擇性上。
 
@@ -59,4 +59,4 @@ date(下單日) = '2024-03-01'    SCAN 訂單
 
 ## 往下走
 
-索引本身是什麼、代價為什麼落在寫入端，在 [Index（索引）](/backend/01-database/sql/knowledge-cards/indexing/)。`SCAN` 與 `SEARCH` 這些字怎麼讀，在 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/)。同一段查詢的排名隨索引與資料分布重排的實測，在 [SQL.17 查詢的代價](/backend/01-database/sql/cost-lives-in-the-plan/)。好讀的寫法與走得了索引的寫法分岔時該動哪一層，在 [SQL.21 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/)。
+索引本身是什麼、代價為什麼落在寫入端，在 [Index（索引）](/backend/01-database/sql/knowledge-cards/indexing/)。`SCAN` 與 `SEARCH` 這些字怎麼讀，在 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/)。同一段查詢的排名隨索引與資料分布重排的實測，在 [SQL.17 查詢的代價](/backend/01-database/sql/cost-lives-in-the-plan/)。好讀的寫法與走得了索引的寫法分岔時該動哪一層，在 [SQL.22 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/)。

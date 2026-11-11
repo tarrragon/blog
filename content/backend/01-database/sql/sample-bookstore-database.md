@@ -3,7 +3,7 @@ title: "SQL 各篇共用的範例資料庫：一家小書店的顧客、訂單�
 date: 2026-09-24
 description: "SQL 各篇共用的顧客、訂單與評價表的建表語句與初始資料，以及各篇輸出所用的引擎版本、錯誤訊息與列序的閱讀約定"
 aliases: ["/sql/sample-bookstore-database/"]
-weight: 24
+weight: 25
 tags: ["sql", "sample-data", "reference"]
 ---
 

@@ -1,9 +1,9 @@
 ---
-title: "SQL.20 關鍵字的宣告與引擎的行為：宣告落空的形態與查證"
+title: "SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證"
 date: 2026-09-01
 description: "LEFT JOIN、CROSS JOIN、DISTINCT、COALESCE 與表的別名各自對讀的人宣告了什麼、宣告落空時下一個修改的人付出什麼代價，以及把關鍵字換成最弱的版本再跑一次的查證動作"
 aliases: ["/sql/declared-intent-vs-behaviour/"]
-weight: 21
+weight: 22
 tags: ["sql", "join", "distinct", "intent", "maintenance"]
 ---
 
@@ -159,4 +159,4 @@ SELECT DISTINCT 姓名, 金額 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 
 
 配對已有保證時的 `LEFT`（〈配對已有保證時的 LEFT JOIN〉那一節）是換掉關鍵字再跑一次這個動作測不出來的：配對由外鍵保證的時候，`LEFT` 與 `JOIN` 在現有資料上結果相同，而換掉之後仍然看不出宣告當初有沒有意義。那一種要去查[約束](/backend/01-database/sql/knowledge-cards/constraint/)，判斷標準是資料庫有沒有替這個配對背書——而約束寫進 schema 也不一定生效，各家在哪一步把寫下與生效分開，在 [SQL.18 外鍵與參照完整性：宣告、生效與查詢得到的保證](/backend/01-database/sql/foreign-key-and-referential-integrity/)。
 
-對讀別人查詢的人來說，這個寫下與生效是否一致的差別回答的是「我可以相信這段文字說的話嗎」——而那個問題在讀的當下沒有別的入口。文字該先為哪一個讀者而寫——人還是引擎——是 [SQL.21 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/) 的題目。
+對讀別人查詢的人來說，這個寫下與生效是否一致的差別回答的是「我可以相信這段文字說的話嗎」——而那個問題在讀的當下沒有別的入口。文字該先為哪一個讀者而寫——人還是引擎——是 [SQL.22 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/) 的題目。

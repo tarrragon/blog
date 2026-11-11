@@ -3,13 +3,14 @@ title: "Serialization Failure"
 date: 2026-05-27
 description: "SERIALIZABLE isolation 衝突偵測後 abort 的協議、SQL state 40001、application 必須包 retry loop"
 weight: 368
+tags: ["backend", "database", "transaction", "concurrency", "knowledge-card"]
 ---
 
 Serialization failure 的核心概念是「SERIALIZABLE isolation 偵測到並行 transaction 衝突、把後到的 transaction abort、回傳 SQL state `40001`、要求 application 包 retry loop 重跑」。它是 serializable 跟弱 isolation 行為差異的關鍵介面、跟 [Isolation Level](/backend/knowledge-cards/isolation-level/) 共軸、retry 設計沒做好會升級成 [Retry Storm](/backend/knowledge-cards/retry-storm/)。
 
 ## 跟其他概念的關係
 
-Serialization failure 是跨 vendor 共通協議、不是單一資料庫的機制。CockroachDB（預設 SERIALIZABLE）、Spanner（read-write transaction）、PostgreSQL SSI（opt-in SERIALIZABLE）、Aurora DSQL 都會在偵測衝突時丟 `40001`。差別在 *衝突偵測時機*：PostgreSQL SSI 用 predicate lock 在 commit 階段偵測、CockroachDB 用 timestamp ordering + write intent 在衝突當下就 abort、Spanner 用 strict 2PL 在讀寫過程中 detect。對 application 來說、不管哪家、看到的都是同一個 error code、處理方式一致：rollback、backoff、重跑。
+Serialization failure 是跨 vendor 共通協議、不是單一資料庫的機制。CockroachDB（預設 SERIALIZABLE）、Spanner（read-write transaction）、PostgreSQL SSI（opt-in SERIALIZABLE）、Aurora DSQL 都會在偵測衝突時丟 `40001`。差別在 *衝突偵測時機*：PostgreSQL SSI 用 predicate lock 在讀寫過程中或 commit 時偵測（交易裡任何一句都可能回 `40001`，所以 retry 要包整個交易）、CockroachDB 用 timestamp ordering + write intent 在衝突當下就 abort、Spanner 用 strict 2PL 在讀寫過程中 detect。對 application 來說、不管哪家、看到的都是同一個 error code、處理方式一致：rollback、backoff、重跑。
 
 跟 [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/) 一起設計 — transaction body 必須是 *冪等可重跑*、不能含「呼叫外部 API 扣款」這類無法重做的副作用。
 
