@@ -1,13 +1,13 @@
 ---
 title: "SQLite D1 / Turso / libSQL Comparison"
 date: 2026-05-21
-description: "Cloudflare D1、Turso、libSQL 與 local SQLite 在 edge、replication、consistency、migration 與 vendor boundary 的比較"
+description: "Cloudflare D1、Turso、libSQL 與 local SQLite 在 edge、replication、consistency、migration 與 vendor boundary 的比較，以及 Workers 經由 Hyperdrive 保留 PostgreSQL / MySQL 的路線"
 tags: ["backend", "database", "sqlite", "edge", "d1", "turso"]
 ---
 
 D1 / Turso / libSQL comparison 的核心責任是把 SQLite-compatible edge products 和 local SQLite 分開判讀。它們共享 SQLite 的 SQL 語法與開發入口，但它們承擔的服務責任不同：Cloudflare D1 把 SQLite-like database 放進 Workers 生態與 managed edge platform；Turso / libSQL 把 SQLite family 延伸到 remote primary、embedded replica 與同步模型；local SQLite 則是 application process 直接管理單一 database file。
 
-本文比較 Cloudflare D1、Turso / libSQL 與 local SQLite 在 SQL 語法相容之外要另外審查的服務責任：write authority、read freshness、migration limit、backup evidence、observability、cost 與 vendor exit，範圍從採用 edge SQLite 之前的審查開始，到需求何時該改走 server SQL 或 distributed OLTP 為止。
+本文比較 Cloudflare D1、Turso / libSQL 與 local SQLite 在 SQL 語法相容之外要另外審查的服務責任：write authority、read freshness、migration limit、backup evidence、observability、cost 與 vendor exit，範圍從採用 edge SQLite 之前的審查開始，到需求何時該改走 server SQL 或 distributed OLTP 為止。Decision Route 另外整理 application 部署在 Workers、經由 Hyperdrive 保留 PostgreSQL / MySQL 的路線，以及它與 D1 的分界。
 
 ## Product Boundary
 
@@ -82,6 +82,7 @@ Decision route 的核心責任是把需求送到相符的資料模型。D1 / Tur
 | 需求訊號                                  | 優先路由                                                                                                 |
 | ----------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | Workers app 需要小型 relational data      | Cloudflare D1 + explicit limits review                                                                   |
+| Workers app 要沿用 PostgreSQL / MySQL     | 既有的 PostgreSQL / MySQL + Hyperdrive（下方 Hyperdrive 路線的採用條件）                                 |
 | App 需要 local read latency + remote sync | Turso / libSQL + freshness contract                                                                      |
 | Single-node app 只需要備份與恢復          | Local SQLite + [Litestream / LiteFS](/backend/01-database/vendors/sqlite/litestream-litefs-replication/) |
 | 多 tenant、central audit、DB role         | [PostgreSQL](/backend/01-database/vendors/postgresql/)                                                   |
@@ -90,6 +91,10 @@ Decision route 的核心責任是把需求送到相符的資料模型。D1 / Tur
 D1 的採用條件是 edge runtime 本身就是主平台。若 application 已在 Workers 上、資料量可控、query pattern 清楚、migration 可 batch，D1 可以把 database operation 融入 deployment workflow。
 
 Turso / libSQL 的採用條件是 local read value 高於同步複雜度。若產品可明確定義 stale read window、write path 與 conflict policy，embedded replica 可以降低 latency；若使用者需要立即看見跨裝置變更，就要先設計 freshness evidence。
+
+Hyperdrive 路線的採用條件是 application 部署在 Workers、資料要留在既有的 PostgreSQL 或 MySQL。Hyperdrive 是 Cloudflare 讓 Workers 連到既有資料庫的連線池與查詢快取服務，走這條路時 schema 與 query 不必改寫成 SQLite 方言，備份、時間點還原（PITR）與 DB role 這些維運工作留在 PostgreSQL / MySQL 那一端。它的 transaction pooling 對 `SET` 與 advisory lock 的影響、預設開啟的查詢快取、延遲與方案限制，寫在 [PostgreSQL Connection Pooler Comparison](/backend/01-database/vendors/postgresql/connection-pooler-comparison/) 的 Hyperdrive 一節。
+
+D1 與 Hyperdrive 之間的分界是資料庫由誰維運。D1 把資料庫交給 Cloudflare 平台，換到的是不必維運資料庫主機，付出的是 SQLite 方言、平台 limit 與遷移成本；從 PostgreSQL 改寫到 SQLite 要處理的型別與功能差異，見 [PostgreSQL to SQLite Simplification](/backend/01-database/vendors/sqlite/migrate-from-postgresql-simplification/)。Hyperdrive 保留 PostgreSQL / MySQL，換到的是 schema 與 query 不動，付出的是另外維運一個資料庫、transaction pooling 與快取帶來的行為差異，以及沒命中快取的查詢仍要往返資料庫所在區域的延遲。
 
 ## Production Tripwires
 

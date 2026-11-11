@@ -51,3 +51,11 @@ Backend 教「服務怎麼設計」，運行期維運教「設計好的服務怎
 
 - **接手別人的環境、要先搞懂現況**：先盤點單點與依賴（[模組六：單點故障盤點](/devops/operations/06-high-availability/spof-inventory/) 的 pre-mortem 反推現有部署哪裡會壞）、再從真實流量抽出模型看它現在承受什麼（[模組五：流量模型建立](/devops/operations/05-capacity-planning/traffic-model/)）、以及盤點花在哪（[模組八：成本監控與告警](/devops/operations/08-cost-management/cost-monitoring/) 的歸因）。這三篇合起來是「盤點既有」的入口。
 - **半夜被叫起來救火、事後要正規化**：事故當下依類型分流——過載進 [模組三 流量管控](/devops/operations/03-traffic-management/)、服務死活進 [模組四 服務探活](/devops/operations/04-service-health/)、節點掛了進 [模組六 高可用](/devops/operations/06-high-availability/)；事後正規化把臨時救火變成常態防線，回 [模組四](/devops/operations/04-service-health/)（把探活與自動告警建起來）與 [模組六：Disaster recovery 策略](/devops/operations/06-high-availability/disaster-recovery/)（把「有計畫沒演練」的 DR 補上演練）。
+
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                                                                                                                                                                                                                                                                                       | 類型 | 前置條件 | 規模 |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | -------- | ---- |
+| `02-horizontal-scaling/scaling-triggers.md` 與 `07-burst-traffic/scale-tier-response.md` 拿 `database is locked` 的頻率當換 PostgreSQL 的訊號，補上限定：先讀後寫的交易不經過 busy timeout，0 ms 就回傳同一個訊息，修法是改交易模式而不是換資料庫；升級訊號限定為等待超過 busy timeout 的那一種，連到 backend 的 wal-concurrency-locking〈先讀後寫的交易〉 | 教學 | 無       | 小   |

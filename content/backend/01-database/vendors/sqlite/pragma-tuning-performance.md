@@ -1,13 +1,13 @@
 ---
 title: "SQLite PRAGMA Tuning and Performance"
 date: 2026-05-21
-description: "SQLite journal_mode、synchronous、busy_timeout、wal_autocheckpoint、cache_size、mmap_size、auto_vacuum 與 performance evidence 的操作判斷標準"
+description: "SQLite journal_mode、synchronous、busy_timeout、wal_autocheckpoint、cache_size、mmap_size、auto_vacuum 與 performance evidence 的操作判斷標準，以及各 PRAGMA 的作用範圍（資料庫檔或單一連線）與連線池新開連線的初始化"
 tags: ["backend", "database", "sqlite", "performance", "pragma", "deep-article"]
 ---
 
 SQLite PRAGMA tuning 的核心責任是把單檔資料庫的行為固定成可重複、可觀測、可回退的操作契約。SQLite 的許多重要行為由 connection-level 或 database-level PRAGMA 控制；這些設定看起來像小開關，實際上會影響 crash recovery、commit latency、reader / writer 衝突、檔案大小與測試一致性。
 
-本文的範圍是 `journal_mode`、`synchronous`、`busy_timeout`、`wal_autocheckpoint`、`cache_size`、`mmap_size` 與 `auto_vacuum` 這幾個 PRAGMA 各自在 durability、latency 與 maintenance 之間的取捨，以及 production runbook 要為每一個記錄的設定值、設定時機、驗證 query 與回退條件——這份記錄讓不同 process、test runner 與 migration tool 用同一組 SQLite 行為。
+本文的範圍是 `journal_mode`、`synchronous`、`busy_timeout`、`wal_autocheckpoint`、`cache_size`、`mmap_size` 與 `auto_vacuum` 這幾個 PRAGMA 各自在 durability、latency 與 maintenance 之間的取捨，各自的作用範圍（寫進資料庫檔或只對單一連線生效）與連線池新開連線時的初始化，以及 production runbook 要為每一個記錄的設定值、設定時機、驗證 query 與回退條件——這份記錄讓不同 process、test runner 與 migration tool 用同一組 SQLite 行為。
 
 ## Baseline PRAGMA
 
@@ -21,15 +21,30 @@ PRAGMA busy_timeout = 5000;
 PRAGMA wal_autocheckpoint = 1000;
 ```
 
-| 設定                 | 服務責任                            | 驗證方式                                  |
-| -------------------- | ----------------------------------- | ----------------------------------------- |
-| `journal_mode=WAL`   | 降低 reader / writer 衝突           | 回傳值為 `wal`，觀察 `-wal` file          |
-| `synchronous=NORMAL` | 平衡 fsync cost 與 crash durability | 查 `PRAGMA synchronous`，跑 restore drill |
-| `foreign_keys=ON`    | 啟用 FK enforcement                 | `PRAGMA foreign_key_check`                |
-| `busy_timeout`       | 吸收短暫 writer queue               | 記錄 busy wait 與 timeout rate            |
-| `wal_autocheckpoint` | 控制 WAL growth cadence             | 觀察 WAL size 與 checkpoint duration      |
+| 設定                 | 服務責任                            | 作用範圍                               | 驗證方式                                  |
+| -------------------- | ----------------------------------- | -------------------------------------- | ----------------------------------------- |
+| `journal_mode=WAL`   | 降低 reader / writer 衝突           | 資料庫檔：寫進檔案，之後的連線都是 WAL | 回傳值為 `wal`，觀察 `-wal` file          |
+| `synchronous=NORMAL` | 平衡 fsync cost 與 crash durability | 執行它的那一條連線                     | 查 `PRAGMA synchronous`，跑 restore drill |
+| `foreign_keys=ON`    | 啟用 FK enforcement                 | 執行它的那一條連線                     | `PRAGMA foreign_key_check`                |
+| `busy_timeout`       | 吸收短暫 writer queue               | 執行它的那一條連線                     | 記錄 busy wait 與 timeout rate            |
+| `wal_autocheckpoint` | 控制 WAL growth cadence             | 執行它的那一條連線                     | 觀察 WAL size 與 checkpoint duration      |
 
 這張表的重點是把設定與 evidence 綁在一起。若某個 PRAGMA 缺少成功訊號與失敗訊號，就先維持保守預設；盲目追求「最快」通常會把風險推到 power loss、restore 或長尾 latency。
+
+PRAGMA 的作用範圍分成資料庫檔與單一連線。`journal_mode=WAL` 寫進資料庫檔，任何一條連線設過一次，之後打開這個檔的連線都在 WAL mode；表裡其餘的 PRAGMA 只對執行它的那一條連線生效，新開的連線拿到預設值。預設值有兩個來源：SQLite 本身的預設值，以及 driver 開連線時自己執行的設定。以 busy timeout 為例，SQLite 本身是 0；Python 的 `sqlite3` 模組由 `connect()` 的 `timeout` 參數設定（單位是秒，預設 5.0，所以開出來的連線是 5000 ms），Go 的 mattn/go-sqlite3 開連線時也設成 5000 ms；modernc.org/sqlite 在連線字串（DSN）沒有指定時不設。mattn 與 modernc 的值是在 mattn/go-sqlite3 v1.14.53、modernc.org/sqlite v1.62.0（Go 1.27.3）上查到的，Python 的值在 Python 3.14 上查到。driver 的預設值會隨版本改變，手上這個 driver 實際設了什麼，在新開的連線上查一次 `PRAGMA busy_timeout` 就知道，下面的實測用的就是這個查法。
+
+SQLite 3.53.0 實測，經由 Python 3.14 的 `sqlite3` 模組、以 `timeout=0` 開連線（讓 driver 不設 busy timeout）。一條連線執行 `PRAGMA busy_timeout = 5000`、`foreign_keys = ON`、`synchronous = NORMAL`、`wal_autocheckpoint = 500`（取 500 是為了跟預設值 1000 分得開）之後，對同一個檔新開另一條連線，逐一查詢：
+
+```sql
+-- 在新開的那條連線上查詢；註解是回傳值，括號裡是設定過的那條連線的回傳值
+PRAGMA journal_mode;        -- wal（wal）
+PRAGMA busy_timeout;        -- 0（5000）
+PRAGMA foreign_keys;        -- 0，外鍵檢查關閉（1）
+PRAGMA synchronous;         -- 2，FULL（1，NORMAL）
+PRAGMA wal_autocheckpoint;  -- 1000（500）
+```
+
+`synchronous` 新連線的預設值由 SQLite 編譯時的選項決定，`2` 是這次那個 SQLite build 的值，系統內建或發行版套件的 SQLite 可能查到別的值；busy timeout 的 0 不受編譯選項影響。所以連線範圍的 PRAGMA 要寫在每一條連線建立時都會走過的程式路徑上。
 
 ## `journal_mode` 與 WAL boundary
 
@@ -92,7 +107,15 @@ Vacuum 設定的核心責任是控制 delete 後的空間回收。SQLite delete 
 
 Connection-level PRAGMA 的核心風險是不同程式路徑行為不一致。Application 啟動時設了 `foreign_keys=ON`，migration tool 或 test runner 沒設，同一個資料庫在 production、migration 與 test 三條路徑上就有不同的 foreign key 行為：application 的 connection 會拒絕違反 FK 的寫入，另外兩條路徑照收。
 
-修正方向是把 baseline PRAGMA 放進 shared DB open path，並在 startup health check 印出設定值。Migration CLI、background worker、test fixture 都要共用同一份 connection initialization。
+修正方向是把 baseline PRAGMA 放進 shared DB open path，並在 startup health check 印出設定值。Migration CLI、background worker、test fixture 都要共用同一份 connection initialization。程式透過連線池開連線時，這份初始化要放在連線池建立每一條連線都會走的位置，只在開檔之後執行一次不夠，〈連線池新開的連線沒有執行 baseline PRAGMA〉寫的就是這個情形。
+
+### 連線池新開的連線沒有執行 baseline PRAGMA，外鍵檢查與 busy timeout 只在部分連線生效
+
+連線池漏掉 PRAGMA 初始化的核心風險是同一段程式的結果取決於請求拿到哪一條連線，同一條程式路徑有時正常、有時出錯。〈PRAGMA 只在某個 connection 設定〉寫的是不同程式路徑各用各的初始化；這裡是同一條路徑上，連線池裡的連線各自帶著不同的 PRAGMA。SQLite 是嵌在應用程式 process 裡的函式庫，連線池（[connection pool](/backend/knowledge-cards/connection-pool/)）由應用程式那一端的程式庫維護，例如 Go 的 `database/sql`，它依負載開新連線、關掉閒置的連線。
+
+應用程式只在啟動時對拿到的第一條連線執行 `PRAGMA foreign_keys = ON` 的話，連線池之後新開的連線外鍵檢查是關閉的，違反外鍵的寫入在那些連線上照常提交，不回傳 `FOREIGN KEY constraint failed`。`busy_timeout` 也一樣，新開的連線拿到的是 driver 的預設值；driver 不設時是 SQLite 本身的 0，那條連線碰到寫入鎖被佔住就立刻回傳 `SQLITE_BUSY`。
+
+修正方向是讓 PRAGMA 跟著連線建立執行。driver 支援時寫進連線字串（DSN）的參數，例如 mattn/go-sqlite3 的 `file:app.db?_foreign_keys=1&_busy_timeout=5000`，modernc.org/sqlite 的 `file:app.db?_pragma=foreign_keys(1)&_pragma=busy_timeout(5000)`；`app.db` 換成實際的檔案路徑。driver 不支援時，用連線建立時會呼叫的初始化函式：Go 的 `database/sql` 本身沒有這個 hook，要在 driver 那一層掛（mattn/go-sqlite3 註冊自訂 driver 時的 `ConnectHook`）；SQLAlchemy 用 `connect` 事件。驗證時，連線池會把剛歸還的閒置連線再交出來，一次取一條、查完歸還，量到的一直是同一條；要看到每一條，就同時從連線池取出多條、全部持有不歸還，再逐條查 `PRAGMA busy_timeout` 與 `PRAGMA foreign_keys`。Go 1.27.3 搭 mattn/go-sqlite3 v1.14.53 與 modernc.org/sqlite v1.62.0 實測：同時持有三條連線逐條查，帶上面 mattn 與 modernc 的 DSN 參數時三條都回傳設定值；DSN 不帶參數、只在啟動時執行一次 `PRAGMA foreign_keys = ON` 時，只有第一條是 1，另外兩條是 0。`ConnectHook` 與 SQLAlchemy 的 `connect` 事件依各自的文件，這次沒有實跑。
 
 ### `synchronous=OFF` 從測試環境流到正式資料，損失只在 OS crash 或斷電後出現
 
@@ -116,7 +139,7 @@ Vacuum 的核心風險是把 maintenance I/O 放到使用者路徑。檔案縮�
 
 SQLite PRAGMA runbook 至少要記錄：
 
-1. 所有 connection 初始化時執行的 baseline PRAGMA。
+1. 所有 connection 初始化時執行的 baseline PRAGMA，以及連線池新開連線時執行它的位置（DSN 參數或初始化 hook）。
 2. `journal_mode` 實際回傳值與 sidecar file 位置。
 3. `synchronous` profile 與資料風險接受者。
 4. `busy_timeout` 值、busy wait metric、timeout threshold。

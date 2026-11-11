@@ -324,3 +324,12 @@ PostgreSQL 沒有直接的 09 case（多數 09 case 用 managed vendor）、但�
 - 下游：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)（PostgreSQL 不適用時的替代）/ [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)（PostgreSQL 不夠用時的升級路徑）
 - 跨模組：[9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/) — connection / replication lag / vacuum 都是 PostgreSQL 常見 bottleneck 源
 - 官方：[PostgreSQL Documentation](https://www.postgresql.org/docs/)
+
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                                                                                                                                                                                                                                  | 類型   | 前置條件                             | 規模 |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------ | ---- |
+| connection-pooler-comparison〈Cloudflare Hyperdrive〉補網路可達性這個採用條件：資料庫只在私有網路裡時 Hyperdrive 怎麼連到（Cloudflare Tunnel 或官方列的其他方式），連到 05-deployment-platform 的 outbound-tunnel-entry                                                                               | vendor | 查證 Hyperdrive 私有資料庫的官方文件 | 小   |
+| 本頁的章節表把 connection-pooler-comparison 寫成「PgBouncer vs Pgcat vs Odyssey 細部對比」，改成寫出成員（含 RDS Proxy、Hyperdrive）；「Neon / serverless PG」那一列連到 Hyperdrive 一節；connection-scaling 的「Cloud-managed proxy」列與 managed-pg-comparison 的 Connection 列補 Hyperdrive 的連結 | vendor | 無                                   | 小   |

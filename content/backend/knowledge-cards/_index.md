@@ -585,3 +585,17 @@ weight: -1
 知識卡片是章節引用單位。選型文章遇到術語時，應連到對應卡片；服務實體章節需要更深入時，再從卡片延伸到具體工具操作。
 
 卡片先回答概念本質，再放例子與提醒。這個順序讓讀者先知道該概念在系統裡承擔什麼責任，再理解 RabbitMQ、Redis、Kubernetes 或 observability 平台中的具體名稱。
+
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                                                                                                                                                                                                                                              | 類型   | 前置條件                                                      | 規模         |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------- | ------------ |
+| transaction-pooling 卡的〈判斷條件與後果〉補條件：pooler 在連線歸還時是否重設 session 狀態，決定 `SET` 是留給下一個 client（PgBouncer transaction 模式預設不重設）還是在下一個交易消失（Cloudflare Hyperdrive 會重設）；postgresql 的 connection-pooler-comparison〈Cloudflare Hyperdrive〉已寫 Hyperdrive 那一邊 | 知識卡 | 查證 PgBouncer `server_reset_query` 在 transaction 模式的行為 | 小           |
+| single-writer-model 卡的〈判斷條件與後果〉補條件：等待時間接近 0 的 busy 錯誤，成因是先讀後寫的交易，不是吞吐到頂；「收斂到單一序列化點」那一句連到 sqlite 的 wal-concurrency-locking〈寫入連線池上限一條〉與〈先讀後寫的交易〉                                                                                   | 知識卡 | 無                                                            | 小           |
+| serialization-failure 卡的 vendor 清單補 SQLite 的 `SQLITE_BUSY_SNAPSHOT`（同一種協議，錯誤碼不是 40001）                                                                                                                                                                                                         | 知識卡 | 無                                                            | 小           |
+| 新卡 Snapshot Isolation（快照隔離）：transaction-boundary、mvcc-lock-model 等文章與 sqlite 的 wal-concurrency-locking 都用到，站上沒有卡；卡內註明跟備份的 snapshot 是不同的所指，isolation-level 卡補 SQLite WAL 這個實例                                                                                        | 知識卡 | 無                                                            | 1 張卡（小） |
+| connection-pooler 卡的實作清單補 Cloudflare Hyperdrive，可觀察訊號補「執行環境隨請求出現與消失、留不住應用層連線池」；serverless 卡的邊界段連過來                                                                                                                                                                 | 知識卡 | 無                                                            | 小           |
+| 候選：「狀態屬於單一連線」（SQLite 的連線範圍 PRAGMA、PostgreSQL 的 `SET`、prepared statement、session 層級 advisory lock）在多篇出現而沒有名字；先用術語探針確認標準名稱，再決定建卡或併進 connection-pool 卡                                                                                                    | 知識卡 | 術語探針                                                      | 小           |
+| connection-pool 卡補嵌入式資料庫的情形：每條連線各自帶 PRAGMA 設定，池上限設成 1 時寫入在池裡排隊；目前判斷段只寫伺服器的 `max_connections`                                                                                                                                                                       | 知識卡 | 無                                                            | 小           |
