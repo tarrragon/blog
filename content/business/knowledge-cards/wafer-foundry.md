@@ -20,6 +20,8 @@ tags: ["business", "knowledge-cards", "electronics", "supply-chain"]
 
 [HBM](/business/knowledge-cards/hbm/) 的先進封裝（CoWoS，台積電的晶片級封裝技術）也是台積電的產能，HBM 跟 GPU 搶同一條封裝產線——這是[產能擠壓](/business/financial-analysis/capacity-crowding-out/)的另一個節點。
 
+晶圓代工同時有高利益率與高資本支出：台積電 2026 年第三季營業利益率 58.7%，2025 年全年資本支出新台幣 1.27 兆、佔營收 33.4%。AI 大廠都把晶片設計留在自己手上、把製造與封裝外購，進入這一段的代價就是這個量級的資本支出加上製程技術；[AI 算力價值鏈各環節的經濟特性](/business/ai-infrastructure/value-chain/ai-value-chain-segment-economics/)把這一段跟加速器設計、HBM、伺服器組裝的利益率與資本支出佔營收並排比較。
+
 ## 判斷條件與後果
 
 「用哪家代工廠」和「用什麼製程節點」決定了一家晶片公司的成本結構和產能受限程度。使用台積電先進製程的公司（NVIDIA、Apple、AMD）在產能吃緊時面臨交期延長和代工費上漲；使用成熟製程的公司（車用晶片、工控 IC）在 2020-2021 年曾因產能被先進製程排擠而嚴重缺貨。判讀時要區分「設計能力瓶頸」和「代工產能瓶頸」——同一家晶片公司可能設計能力很強但因為排不到台積電的產線而無法出貨。

@@ -50,7 +50,7 @@ HBM 的市場由 SK Hynix 主導（2025 年約 53-63% 市佔）,Samsung 居次�
 
 這個訊號已經在 2026 年 Q1 出現。DDR5 64GB RDIMM（Registered DIMM,伺服器用記憶體模組）的每片晶圓營收和利潤率超越了 HBM3E——因為 DDR5 合約價暴漲 90-95%,而 HBM 被年度合約鎖住無法同步調漲。SK 集團會長崔泰源指出 HBM 毛利率約 60%,一般記憶體已達約 80%。
 
-SK Hynix 的反應已經可觀察:放慢 HBM4 的轉產速度,把原定轉換為 HBM4 的 HBM3E 產線回撥給 DDR5 生產。這是[產能排擠的自修正機制](/business/financial-analysis/capacity-crowding-out/)的實際運作——利潤反轉觸發產能回流。但回流的規模受限:廠商可能在 2027 年的 HBM 合約中大幅提高 HBM 價格（目前已有報導）,重新拉開價差。所以利潤反轉可能是短暫的,需要持續觀察每季的每晶圓利潤比較。
+SK Hynix 的反應已經可觀察:放慢 HBM4 的轉產速度,把原定轉換為 HBM4 的 HBM3E 產線回撥給 DDR5 生產。這是[產能排擠的自修正機制](/business/financial-analysis/capacity-crowding-out/)的實際運作——利潤反轉觸發產能回流。但回流的規模受限:廠商可能在 2027 年的 HBM 合約中大幅提高 HBM 價格（目前已有報導）,重新拉開價差。所以利潤反轉可能是短暫的,需要持續觀察每季的每晶圓利潤比較。申報文件裡看得到的對照是 Micron 的事業部數字:含全部 HBM 的 Cloud Memory 事業部 2026 會計年度營業利益率 72%,以手機與 PC 為主的事業部 80%,方向跟這個訊號一致;兩個事業部的範圍與 HBM 長約鎖定的產能比例,整理在[AI 算力價值鏈各環節的經濟特性](/business/ai-infrastructure/value-chain/ai-value-chain-segment-economics/)〈HBM：Micron 與 SK hynix 的利益率與長期供貨協議〉。
 
 ### 訊號二:新晶圓廠投產
 

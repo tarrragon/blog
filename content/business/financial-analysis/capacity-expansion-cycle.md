@@ -38,7 +38,7 @@ DUV 曝光機（ArF immersion）的交期約 6-12 個月,瓶頸相對低。成�
 
 HBM 的良率問題更嚴重,因為堆疊製程讓不良率以指數累積。單層 DRAM die 良率 95% 時,8 層堆疊的複合良率降到約 66%,12 層堆疊降到約 54%。堆疊完成後無法拆解,單一壞 die 報廢整個封裝。SK Hynix 在 HBM3E 上達到接近 80% 的良率（2024 年 5 月）,但 Samsung 的 HBM3E 良率問題持續超過 18 個月,市佔率從 2024 年 Q2 的 41% 暴跌到 2025 年 Q2 的 17%。
 
-先進封裝（CoWoS,Chip-on-Wafer-on-Substrate,TSMC 的晶片級封裝技術）的良率和交期是另一個瓶頸。TSMC 的 CoWoS 產能從 2024 年底的約 3.5 萬片/月擴充到 2026 年底目標 13 萬片/月（近 4 倍）,但 NVIDIA 佔走 60% 以上。2024 年 CoWoS 交期超過 50 週。
+先進封裝（CoWoS,Chip-on-Wafer-on-Substrate,TSMC 的晶片級封裝技術）的良率和交期是另一個瓶頸。TSMC 的 CoWoS 產能從 2024 年底的約 3.5 萬片/月擴充到 2026 年底目標 13 萬片/月（近 4 倍）,但 NVIDIA 佔走 60% 以上。2024 年 CoWoS 交期超過 50 週。TSMC 在這一輪擴產期間的利益率與資本支出佔營收,以及 Nvidia 用供應與產能承諾鎖定產能的金額,整理在[AI 算力價值鏈各環節的經濟特性](/business/ai-infrastructure/value-chain/ai-value-chain-segment-economics/)〈晶圓代工與先進封裝：TSMC 的利益率、資本支出與 CoWoS 產能〉。
 
 ## 產能紀律:寡占廠商為什麼不在景氣高峰全力擴產
 

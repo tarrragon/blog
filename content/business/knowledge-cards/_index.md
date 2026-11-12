@@ -171,16 +171,17 @@ weight: 編號
 
 買方的付款能力由誰提供、付不出錢時的損失由誰的資產負債表承擔。
 
-| 卡片                                                                                               | 核心問題                               | 常見出現位置                         |
-| -------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------ |
-| [Vendor Financing（供應商融資）](/business/knowledge-cards/vendor-financing/)                      | 賣方用自己的信用替買方解決付款能力     | 設備商客戶融資、算力租約、可轉換本票 |
-| [Take-or-Pay（照付不議）](/business/knowledge-cards/take-or-pay/)                                  | 不論用量都要付款、需求風險移到買方     | 電力合約、算力承諾、承諾事項附註     |
-| [Residual Value Guarantee（殘值擔保）](/business/knowledge-cards/residual-value-guarantee/)        | 資產處分價值不足時由擔保方補差額       | 8-K、或有負債、設備租約              |
-| [Special Purpose Vehicle（特殊目的實體，SPV）](/business/knowledge-cards/special-purpose-vehicle/) | 為單一交易設立、隔離資產與債務         | 表外融資、出租方、合併範圍           |
-| [Finance Lease（融資租賃）](/business/knowledge-cards/finance-lease/)                              | 以租金形式借錢取得資產                 | 使用權資產、租賃負債、FCF 調整       |
-| [Convertible Note（可轉換本票）](/business/knowledge-cards/convertible-note/)                      | 債權可轉股、PIK 利息與轉換折價的稀釋   | S-1、融資條款、公允價值變動          |
-| [Warrant（公司發行的認股權證）](/business/knowledge-cards/warrant/)                                | 公司增發新股換取客戶承諾               | 8-K、客戶激勵、稀釋後 EPS            |
-| [RPO（剩餘履約義務）](/business/knowledge-cards/remaining-performance-obligation/)                 | 已簽約未認列的營收、代表簽約不代表現金 | 10-Q 附註、營收能見度、客戶集中      |
+| 卡片                                                                                                  | 核心問題                               | 常見出現位置                         |
+| ----------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------ |
+| [Vendor Financing（供應商融資）](/business/knowledge-cards/vendor-financing/)                         | 賣方用自己的信用替買方解決付款能力     | 設備商客戶融資、算力租約、可轉換本票 |
+| [Take-or-Pay（照付不議）](/business/knowledge-cards/take-or-pay/)                                     | 不論用量都要付款、需求風險移到買方     | 電力合約、算力承諾、承諾事項附註     |
+| [Residual Value Guarantee（殘值擔保）](/business/knowledge-cards/residual-value-guarantee/)           | 資產處分價值不足時由擔保方補差額       | 8-K、或有負債、設備租約              |
+| [Special Purpose Vehicle（特殊目的實體，SPV）](/business/knowledge-cards/special-purpose-vehicle/)    | 為單一交易設立、隔離資產與債務         | 表外融資、出租方、合併範圍           |
+| [Finance Lease（融資租賃）](/business/knowledge-cards/finance-lease/)                                 | 以租金形式借錢取得資產                 | 使用權資產、租賃負債、FCF 調整       |
+| [Convertible Note（可轉換本票）](/business/knowledge-cards/convertible-note/)                         | 債權可轉股、PIK 利息與轉換折價的稀釋   | S-1、融資條款、公允價值變動          |
+| [Warrant（公司發行的認股權證）](/business/knowledge-cards/warrant/)                                   | 公司增發新股換取客戶承諾               | 8-K、客戶激勵、稀釋後 EPS            |
+| [RPO（剩餘履約義務）](/business/knowledge-cards/remaining-performance-obligation/)                    | 已簽約未認列的營收、代表簽約不代表現金 | 10-Q 附註、營收能見度、客戶集中      |
+| [Off-Balance-Sheet Arrangement（表外安排）](/business/knowledge-cards/off-balance-sheet-arrangement/) | 已承擔而還沒列成負債的付款與損失       | 尚未開始的租約、擔保、未併表合資     |
 
 ## 股權與上市
 
@@ -246,6 +247,8 @@ weight: 編號
 | [Critical Audit Matter（關鍵查核事項）](/business/knowledge-cards/critical-audit-matter/)         | 報表裡最依賴判斷的科目                   | 查核報告、CAM/KAM、公允價值      |
 | [Gross vs Net Revenue（總額與淨額認列）](/business/knowledge-cards/gross-vs-net-revenue/)         | 主理人或代理人決定營收放大多少           | 平台、市集、營收倍數             |
 | [Non-GAAP Measure（非 GAAP 指標）](/business/knowledge-cards/non-gaap-measure/)                   | 公司自訂指標加回了什麼                   | Adjusted EBITDA、調節表、SBC     |
+| [Equity Method（權益法）](/business/knowledge-cards/equity-method/)                               | 有重大影響力的持股只認列分得的損益       | 關聯企業、合資、HLBV             |
+| [Segment Reporting（分部報告）](/business/knowledge-cards/segment-reporting/)                     | 分部損益扣了哪些費用、能不能並排         | 未分攤項目、重編、CODM           |
 
 ## 執行知識
 
