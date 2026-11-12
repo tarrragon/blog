@@ -6,7 +6,7 @@ weight: 24
 tags: ["backend", "database", "postgresql", "lock", "mvcc", "concurrency", "deep-article"]
 ---
 
-本文的範圍是 PostgreSQL 的並行控制：MVCC 每次更新新增 tuple 的做法，row-level、table-level、advisory 與 predicate lock，預設的 READ COMMITTED isolation，production 踩雷與觀測 metric，以及跟 MySQL lock-based 模型的對比。
+本文的範圍是 PostgreSQL 的並行控制：[MVCC（多版本並行控制）](/backend/knowledge-cards/mvcc/) 每次更新新增 tuple 的做法，row-level（[Row Lock（列鎖）](/backend/knowledge-cards/row-lock/)）、table-level、advisory 與 predicate lock，預設的 READ COMMITTED isolation，production 踩雷與觀測 metric，以及跟 MySQL lock-based 模型的對比。
 
 ---
 

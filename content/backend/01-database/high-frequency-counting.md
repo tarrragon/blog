@@ -18,7 +18,7 @@ tags: ["backend", "database", "postgresql", "lock", "aggregation", "idempotency"
 UPDATE link_counters SET clicks = clicks + 1 WHERE link_id = 1;
 ```
 
-`UPDATE` 要先取得那一列的列鎖，**列鎖一直持有到交易提交為止**；另一個要更新同一列的交易只能等前一個提交完。所以同一列上的更新是一個接一個進行的，而每一次提交要等交易紀錄（WAL）寫進磁碟才算完成。這一列每秒能承受的更新次數，上限大約是「一秒除以一次提交寫盤的時間」，加開連線也提高不了。這種所有寫入都集中在同一列上的情形叫熱點列（hot row），找出它的查詢與其他分散它的做法見 [1.1 高併發下的 SQL 讀寫邊界](/backend/01-database/high-concurrency-access/)。
+`UPDATE` 要先取得那一列的[列鎖](/backend/knowledge-cards/row-lock/)，**列鎖一直持有到交易提交為止**；另一個要更新同一列的交易只能等前一個提交完。所以同一列上的更新是一個接一個進行的，而每一次提交要等交易紀錄（WAL）寫進磁碟才算完成。這一列每秒能承受的更新次數，上限大約是「一秒除以一次提交寫盤的時間」，加開連線也提高不了。這種所有寫入都集中在同一列上的情形叫熱點列（hot row），找出它的查詢與其他分散它的做法見 [1.1 高併發下的 SQL 讀寫邊界](/backend/01-database/high-concurrency-access/)。
 
 用 PostgreSQL 附的壓測工具 pgbench 比較同一列更新、拆成多列、新增事件三種寫法；同一列更新另外量了單一連線與關掉同步提交的版本。量測環境是筆電上的 Docker、沒有寫入快取的磁碟，絕對值隨寫盤延遲變動；表中每一行是三輪、每輪 15 秒的範圍：
 

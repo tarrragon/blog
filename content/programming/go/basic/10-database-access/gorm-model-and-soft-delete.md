@@ -269,7 +269,7 @@ UPDATE "customers" SET ...,"name"='宗翰 A',"email"='zonghan@example.com' WHERE
 UPDATE "customers" SET ...,"name"='宗翰（改）',"email"='zonghan.b@example.com' WHERE "customers"."deleted_at" IS NULL AND "id" = 2
 ```
 
-再讀一次這位顧客，名字是「宗翰（改）」：`p` 改的名字被 `q` 帶著的舊名字蓋掉了，兩個呼叫都沒有錯誤。這種情形叫遺失更新（lost update），Django 的 `save()` 預設也是寫回全部欄位（對照見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈ORM 寫回哪些欄位：變更追蹤、全部欄位與零值〉）。只改幾個欄位時，用 `Updates` 傳 map，或 `Select` 指定欄位，讓 `UPDATE` 只寫那幾個欄位；同一個欄位也可能被兩個請求同時改時，要另外加樂觀鎖（optimistic locking：`UPDATE` 的條件多帶一個讀出時的版本值，影響零列就代表被別人改過；它和悲觀鎖的取捨見 [1.3 Transaction 與一致性邊界](/backend/01-database/transaction-boundary/)〈Optimistic vs Pessimistic Locking〉）。另一個做法是把讀出與寫回放進 repeatable read 的交易：兩個交易時間重疊、改到同一列時，後寫入的那一個在它的 `UPDATE` 上失敗（`could not serialize access due to concurrent update`，SQLSTATE `40001`），程式重試，而不是默默蓋掉。
+再讀一次這位顧客，名字是「宗翰（改）」：`p` 改的名字被 `q` 帶著的舊名字蓋掉了，兩個呼叫都沒有錯誤。這種情形叫[遺失更新](/backend/knowledge-cards/lost-update/)（lost update），Django 的 `save()` 預設也是寫回全部欄位（對照見 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)〈ORM 寫回哪些欄位：變更追蹤、全部欄位與零值〉）。只改幾個欄位時，用 `Updates` 傳 map，或 `Select` 指定欄位，讓 `UPDATE` 只寫那幾個欄位；同一個欄位也可能被兩個請求同時改時，要另外加樂觀鎖（optimistic locking：`UPDATE` 的條件多帶一個讀出時的版本值，影響零列就代表被別人改過；它和悲觀鎖的取捨見 [1.3 Transaction 與一致性邊界](/backend/01-database/transaction-boundary/)〈Optimistic vs Pessimistic Locking〉）。另一個做法是把讀出與寫回放進 repeatable read 的交易：兩個交易時間重疊、改到同一列時，後寫入的那一個在它的 `UPDATE` 上失敗（`could not serialize access due to concurrent update`，SQLSTATE `40001`），程式重試，而不是默默蓋掉。
 
 ### 找不到主鍵時改成 upsert
 

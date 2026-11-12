@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "wal", "locking", "deep-article"]
 
 SQLite WAL concurrency 的核心責任是讓 reader / writer 衝突下降，同時保留單檔案資料庫的寫入邊界。[WAL mode](/backend/knowledge-cards/write-ahead-log/) 把寫入 append 到 `-wal` sidecar file，reader 可以從 main database file 加 WAL snapshot 讀取一致視圖；這讓 read-heavy workload 能比 rollback journal mode 更順。但 SQLite 仍遵循 [single writer model](/backend/knowledge-cards/single-writer-model/)、只有一條 writer path，長交易、背景 migration、慢 disk 或多 process 寫入都會在這條 path 上排隊。
 
-本文的範圍是 WAL mode 下的 locking model、`SQLITE_BUSY` 與 busy timeout、在應用程式端排隊寫入的單一寫入連線池、busy timeout 不會等待的先讀後寫交易、checkpoint strategy 與 checkpoint starvation，以及 filesystem 與部署方式對 WAL 的限制。服務看到 `SQLITE_BUSY`、WAL file 持續變大、checkpoint duration 變長或偶發 commit latency spike 時，各節依序對到的成因是 transaction duration、先讀後寫的交易用 `BEGIN`（DEFERRED）開始、checkpoint cadence、filesystem lock 與 process ownership。
+本文的範圍是 WAL mode 下的 locking model、`SQLITE_BUSY` 與 busy timeout、在應用程式端排隊寫入的單一寫入連線池、busy timeout 不會等待的先讀後寫交易（[Check-then-act（先讀後寫）](/backend/knowledge-cards/check-then-act/)）、checkpoint strategy 與 checkpoint starvation，以及 filesystem 與部署方式對 WAL 的限制。服務看到 `SQLITE_BUSY`、WAL file 持續變大、checkpoint duration 變長或偶發 commit latency spike 時，各節依序對到的成因是 transaction duration、先讀後寫的交易用 `BEGIN`（DEFERRED）開始、checkpoint cadence、filesystem lock 與 process ownership。
 
 ## WAL mode 的服務責任
 

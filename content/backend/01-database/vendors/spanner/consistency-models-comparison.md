@@ -22,7 +22,7 @@ tags: ["backend", "database", "spanner", "global-sql", "consistency", "external-
 
 ### Serializability
 
-transaction 的執行結果等同於 *某個* 序列順序執行；不要求順序跟 real-time 一致。PostgreSQL SERIALIZABLE isolation level（SSI 實作）給的就是這個保證。它解決的問題是 *concurrent transaction 之間互相干擾的 anomaly*（dirty read / lost update / write skew / G2-item）、不解決「跨 transaction 的 wall-clock 順序」。
+transaction 的執行結果等同於 *某個* 序列順序執行；不要求順序跟 real-time 一致。PostgreSQL SERIALIZABLE isolation level（SSI 實作）給的就是這個保證。它解決的問題是 *concurrent transaction 之間互相干擾的 anomaly*（dirty read / [lost update](/backend/knowledge-cards/lost-update/) / [write skew](/backend/knowledge-cards/write-skew/) / G2-item）、不解決「跨 transaction 的 wall-clock 順序」。
 
 範例：A 在 10:00:00 commit T1（餘額 +100）、B 在 10:00:01 commit T2（查餘額）。serializable 允許系統把 T2 排在 T1 之前、B 看到舊餘額 — 兩 transaction 都成功、isolation 沒被破壞、但用戶體感違反順序。
 
