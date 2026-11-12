@@ -7,7 +7,7 @@ description: "手上有一台 Mac、幾台 iPad 與藍牙喇叭，想讓 iPad �
 tags: ["til", "音響", "macOS", "iPad", "Airfoil", "AirPlay", "藍牙"]
 ---
 
-這篇寫手上有一台 Mac、幾台 iPad 與藍牙喇叭時，把 iPad 加進聆聽配置的做法：iPad 不在 macOS 的輸出清單裡、進不了多重輸出裝置的原因；用第三方軟體 Airfoil 與 Airfoil Satellite 把 iPad 當成 Mac 的喇叭，它怎麼讓 Mac、iPad 與藍牙喇叭同步發聲、付出什麼；反方向把 iPad 上 App 的聲音送進 Mac，分成經由 Wi-Fi 的 AirPlay 接收器與經由傳輸線的 USB 音訊輸入；不經過 Mac、各台 iPad 各自播放（藍牙喇叭配給其中一台）適合的條件；最後是依「要不要同步」「聲音從哪一台出發」選做法的條件。macOS 內建的多重輸出裝置（建立步驟、主要裝置、偏移修正、延遲差造成的回音）在〔[macOS 的多重輸出裝置](/til/audio/macos-multi-output-device/)〕，本篇沿用那一篇的延遲與回音的說明。本篇的功能與步驟取自 Rogue Amoeba 與 Apple 的官方文件，介面文字取自 macOS 15.3.1 的繁體中文介面；寫作時沒有在 iPad 上實跑，每一處沒有實測的地方都標明。各軟體的版本、價格與支援的系統會改變，以官方頁面為準。
+這篇寫手上有一台 Mac、幾台 iPad 與藍牙喇叭時，把 iPad 加進聆聽配置的做法：iPad 不在 macOS 的輸出清單裡、進不了多重輸出裝置的原因；用第三方軟體 Airfoil 與 Airfoil Satellite 把 iPad 當成 Mac 的喇叭，它怎麼讓 Mac、iPad 與藍牙喇叭同步發聲、付出什麼；反方向把 iPad 上 App 的聲音送進 Mac，分成經由 Wi-Fi 的 AirPlay 接收器與經由傳輸線的 USB 音訊輸入；不經過 Mac、各台 iPad 各自播放（藍牙喇叭配給其中一台）適合的條件；最後是依「要不要同步」「聲音從哪一台出發」選做法的條件。macOS 內建的多重輸出裝置（建立步驟、主要裝置、偏移修正、延遲差造成的回音）在〔[macOS 的多重輸出裝置](/til/audio/macos-multi-output-device/)〕，本篇沿用那一篇的延遲與回音的說明。本篇的功能與步驟取自 Rogue Amoeba 與 Apple 的官方文件，介面文字取自 macOS 15.3.1 的繁體中文介面；AirPlay 接收器播放到多重輸出裝置的那一項在一台 Mac 上實測過一次（條件寫在那一節），其餘 iPad 端的行為沒有實跑，每一處沒有實測的地方都標明。各軟體的版本、價格與支援的系統會改變，以官方頁面為準。
 
 ## iPad 不在 macOS 輸出清單裡的原因：iPadOS 沒有 AirPlay 接收器
 
@@ -55,7 +55,7 @@ Mac 從 macOS Monterey 起可以當 AirPlay 的接收端，Apple 支援文件 10
 
 設定位置在 Mac 的「系統設定」>「一般」>「AirDrop與接力」，打開「AirPlay接收器」。下方的「允許AirPlay」選單決定誰看得到這台 Mac：只允許目前的使用者時，只有登入同一個「Apple帳號」的裝置看得到；選「相同網路」或「所有人」時，網路上或附近的其他人的 iPhone、iPad 也會在 AirPlay 清單裡看到這台 Mac，可以另外打開「需要密碼」。iPad 都登入跟這台 Mac 相同的 Apple 帳號時，只允許目前的使用者就夠了；家人的 iPad 用別的帳號時，要選相同網路，並考慮設密碼。
 
-打開之後，在 iPad 的音樂 App 或控制中心點 AirPlay 圖像，選這台 Mac，iPad 的聲音就從 Mac 播放。Apple 的說明寫這讓 Mac「像喇叭一樣使用」。Mac 用哪一個輸出裝置播放收到的 AirPlay 聲音，Apple 的文件沒有寫，本篇也沒有實測。如果它跟著 macOS 目前選的聲音輸出，那麼把輸出選成〔[macOS 的多重輸出裝置](/til/audio/macos-multi-output-device/)〕裡建好的多重輸出裝置，iPad 的聲音就會同時從 Mac 的幾個輸出出來；要確認時，播放之後看聲音從哪幾台出來。
+打開之後，在 iPad 的音樂 App 或控制中心點 AirPlay 圖像，選這台 Mac，iPad 的聲音就從 Mac 播放。Apple 的說明寫這讓 Mac「像喇叭一樣使用」。Mac 用哪一個輸出裝置播放收到的 AirPlay 聲音，Apple 的文件沒有寫。2026 年 11 月在一台 Mac mini（Apple M4，macOS 15.3.1）上實測：這台 Mac 的聲音輸出選的是〔[macOS 的多重輸出裝置](/til/audio/macos-multi-output-device/)〕裡建好、由內建揚聲器與一台藍牙喇叭組成的多重輸出裝置，從 iPad 用 AirPlay 送音樂到這台 Mac，聲音從多重輸出裝置裡的每一台同時播出。所以 AirPlay 接收的聲音跟著 macOS 目前選的聲音輸出，iPad 的一路聲音可以經由 Mac 分到幾個輸出。多重輸出裝置的限制同樣適用於 AirPlay 收到的聲音：各裝置之間的延遲差沒有被對齊，內建揚聲器與藍牙喇叭都聽得到的位置會聽到回音，擺放的條件照那一篇〈適用與不適用的擺放〉。這次只測了這一種組合，沒有換成其他輸出裝置再測。
 
 這條路沒有線，iPad 可以在房間裡任何位置操作；代價是一次只有一台 iPad 能送到這台 Mac，而 AirPlay 的緩衝讓聲音晚於 iPad 上的操作，延遲的大小 Apple 沒有寫。
 
@@ -83,7 +83,7 @@ Mac 從 macOS Monterey 起可以當 AirPlay 的接收端，Apple 支援文件 10
 選哪一種做法，看兩個條件：幾個房間要不要同步播放同一首歌，以及聲音從哪一台裝置出發。
 
 - **要同步，聲音從 Mac 出發**：用 Airfoil，iPad 裝 Satellite，藍牙喇叭與 Mac 自己的喇叭一起加入。本篇寫到的做法裡，Mac、藍牙喇叭與 iPad 同時發聲而沒有回音的只有這一種，代價是付費授權、整套延遲等於最慢的那一台、依賴 Wi-Fi。只用 Mac 的有線輸出與藍牙喇叭、不需要 iPad 時，多重輸出裝置免費，而兩台都聽得到的位置會有回音。
-- **聲音從 iPad 出發，要經由 Mac 的喇叭播放**：要無線、iPad 在房間裡移動時，用 Mac 的 AirPlay 接收器；要錄音、或不想依賴 Wi-Fi 時，用傳輸線接 USB 音訊輸入，另外用一個 App 把輸入送到輸出。
+- **聲音從 iPad 出發，要經由 Mac 的喇叭播放**：要無線、iPad 在房間裡移動時，用 Mac 的 AirPlay 接收器，Mac 的輸出選成多重輸出裝置時，iPad 的聲音會同時從其中每一台出來；要錄音、或不想依賴 Wi-Fi 時，用傳輸線接 USB 音訊輸入，另外用一個 App 把輸入送到輸出。
 - **不需要同步**：各台 iPad 獨立播放，藍牙喇叭配給最常聽的那個房間的 iPad。
 
 幾台 iPad 加一台藍牙喇叭、還不確定需不需要同步時，從各台 iPad 獨立播放開始不必花錢，也不必改 Mac 的設定。之後要讓幾個房間同時播同一首歌時，再試用 Airfoil：試用版傳送十分鐘之後才降低音質，這段時間足夠確認每台 iPad 是否出現在 Airfoil 的輸出清單、各房間的聲音是否對齊。
