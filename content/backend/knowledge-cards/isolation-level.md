@@ -3,13 +3,14 @@ title: "Isolation Level"
 date: 2026-04-23
 description: "說明資料庫交易隔離級別如何影響並發讀寫結果"
 weight: 17
+tags: ["backend", "database", "transaction", "concurrency", "knowledge-card"]
 ---
 
 Isolation level 的核心概念是「交易彼此看見資料變更的規則」。隔離級別越高，越能降低並發異常；同時也可能增加鎖競爭、等待與重試成本。 可先對照 [Jitter](/backend/knowledge-cards/jitter/)。
 
 ## 跟其他概念的關係
 
-隔離級別處理的是同一份資料被多個交易同時讀寫時的行為。常見問題包括 dirty read、non-repeatable read、phantom read、lost update 與 write skew。不同資料庫的預設隔離與實作細節不同。 可先對照 [Jitter](/backend/knowledge-cards/jitter/)。
+隔離級別處理的是同一份資料被多個交易同時讀寫時的行為。常見問題包括 dirty read、non-repeatable read、phantom read、[Lost Update（遺失更新）](/backend/knowledge-cards/lost-update/) 與 [Write Skew（寫入偏斜）](/backend/knowledge-cards/write-skew/)；後兩者都出自[先讀後寫](/backend/knowledge-cards/check-then-act/)的交易，各隔離等級擋不擋得住它們寫在各自的卡上。不同資料庫的預設隔離與實作細節不同。 可先對照 [Jitter](/backend/knowledge-cards/jitter/)。
 
 ## 可觀察訊號與例子
 

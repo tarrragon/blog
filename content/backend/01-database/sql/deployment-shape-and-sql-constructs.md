@@ -20,7 +20,7 @@ SQLite 與 PostgreSQL 支援的 SQL 構造不同，其中一部分差異可以�
 
 **SQLite 是一個函式庫**：應用程式把它連結進自己的程序，資料庫是磁碟上的一個檔案，讀寫由那個程序呼叫函式庫直接對檔案做（[Embedded Database](/backend/knowledge-cards/embedded-database/)）。多條連線可以同時讀；寫入要先取得整個資料庫檔案的寫入鎖，所以同一時間只有一個交易在寫，其餘的寫入者等待或收到 `SQLITE_BUSY`（[Single Writer Model](/backend/knowledge-cards/single-writer-model/)）。同一台機器、本地磁碟上的幾個程序可以開同一個檔案，這把寫入鎖在程序之間同樣有效。對檔案的讀寫沒有經過另一個程序轉手，所以也沒有「登入」這個動作：作業系統允許哪個程序讀寫這個檔案，那個程序就讀寫得了全部資料。
 
-**PostgreSQL 是一個伺服器程序**：應用程式經由網路連線送出 SQL，每一條連線由伺服器的一個後端程序服務。多個交易可以同時寫不同的列，伺服器用多版本並行控制（MVCC）與**列鎖**（row lock）讓它們互不干擾。MVCC 讓每一列保留多個版本，每個讀取依一份快照（某一刻已提交的資料）挑出它看得到的版本；預設的 `READ COMMITTED` 隔離等級下，快照在每一句開始時取。列鎖是交易修改某一列時替那一列上的鎖，其他要修改同一列的交易等它結束。機制在 [PostgreSQL MVCC + Lock Model：為什麼 PG 比 MySQL 少 deadlock、但 vacuum 是別的代價](/backend/01-database/vendors/postgresql/mvcc-lock-model/)。連線要先以某個角色登入，伺服器依角色決定這條連線能做什麼。
+**PostgreSQL 是一個伺服器程序**：應用程式經由網路連線送出 SQL，每一條連線由伺服器的一個後端程序服務。多個交易可以同時寫不同的列，伺服器用[多版本並行控制](/backend/knowledge-cards/mvcc/)（MVCC）與**[列鎖](/backend/knowledge-cards/row-lock/)**（row lock）讓它們互不干擾。MVCC 讓每一列保留多個版本，每個讀取依一份快照（某一刻已提交的資料）挑出它看得到的版本；預設的 `READ COMMITTED` 隔離等級下，快照在每一句開始時取。列鎖是交易修改某一列時替那一列上的鎖，其他要修改同一列的交易等它結束。機制在 [PostgreSQL MVCC + Lock Model：為什麼 PG 比 MySQL 少 deadlock、但 vacuum 是別的代價](/backend/01-database/vendors/postgresql/mvcc-lock-model/)。連線要先以某個角色登入，伺服器依角色決定這條連線能做什麼。
 
 部署形態的差別推出 PostgreSQL 有、SQLite 沒有對應情形的需求，各自的構造在後面幾節：
 
@@ -30,7 +30,7 @@ SQLite 與 PostgreSQL 支援的 SQL 構造不同，其中一部分差異可以�
 
 ## 多個交易同時先讀後寫：工作佇列的認領與班表不重疊
 
-工作佇列與班表不重疊這兩個需求，交易都**先讀後寫**（check-then-act）：先讀資料，依讀到的內容決定要寫什麼。兩個交易交錯執行時，各自讀到的可能都是對方寫入之前的狀態；兩個交易依同一份舊狀態各自寫入同一筆資料、後寫的蓋掉先寫的，叫遺失更新（lost update），工作佇列的同一筆工作被認領兩次屬於這一種；兩個交易各自讀過條件、寫入不同的列，每一筆單獨看都合法，合起來違反條件，叫 write skew，班表的兩段班重疊屬於這一種。兩者在各隔離等級下會不會發生，在 [Isolation Level](/backend/knowledge-cards/isolation-level/)。
+工作佇列與班表不重疊這兩個需求，交易都**先讀後寫**（check-then-act）：先讀資料，依讀到的內容決定要寫什麼（[Check-then-act（先讀後寫）](/backend/knowledge-cards/check-then-act/)）。兩個交易交錯執行時，各自讀到的可能都是對方寫入之前的狀態；兩個交易依同一份舊狀態各自寫入同一筆資料、後寫的蓋掉先寫的，叫[遺失更新](/backend/knowledge-cards/lost-update/)（lost update），工作佇列的同一筆工作被認領兩次屬於這一種；兩個交易各自讀過條件、寫入不同的列，每一筆單獨看都合法，合起來違反條件，叫[寫入偏斜](/backend/knowledge-cards/write-skew/)（write skew），班表的兩段班重疊屬於這一種。兩者在各隔離等級下會不會發生，在 [Isolation Level](/backend/knowledge-cards/isolation-level/)。
 
 下面兩組實測的交錯順序相同：第一條連線執行完它的寫入語句、還沒提交時，第二條連線送出同樣的 SQL（工作佇列是同一句 `UPDATE`，班表是同一句 `INSERT`）；第一條連線在 1 秒之後提交。SQLite 這一側的設定：
 
@@ -94,7 +94,7 @@ SQLite 這一列的結果有前提：交易的第一句就是寫入（觸發器�
 在 PostgreSQL 上，讓資料庫自己保證「同一位員工的班不重疊」的做法有 `SERIALIZABLE` 與排除約束：
 
 - **`SERIALIZABLE`**：伺服器追蹤交易之間的讀寫相依，偵測到兩個交易各自讀了對方要寫的範圍時，讓其中一個失敗，SQLSTATE 是 `40001`（[Serialization Failure](/backend/knowledge-cards/serialization-failure/)；機制在 [PostgreSQL MVCC + Lock Model：為什麼 PG 比 MySQL 少 deadlock、但 vacuum 是別的代價](/backend/01-database/vendors/postgresql/mvcc-lock-model/) 的〈Predicate lock — SERIALIZABLE isolation 才用〉）。觸發器不必改。失敗可能發生在交易裡的任何一句，也可能在提交時；本篇兩種提交順序各跑一次，都是先提交的成功、後提交的在 `COMMIT` 失敗。所以應用程式要把整個交易包在重試裡，只包 `COMMIT` 會漏接語句階段的失敗。
-- **排除約束**（exclusion constraint）：把「兩列不能同時成立」寫成約束。約束由幾組「欄位與比較運算子」組成（班表是 `emp_id` 配 `=`、`during` 配 `&&`），新的一列跟既有的某一列在每一組上的比較都成立時，拒絕新的那一列。唯一鍵是它的特例：每一組的運算子都是 `=`。約束由 GiST 索引執行（GiST 是支援「重疊」這類比較的索引），整數欄位要放進 GiST 索引，需要 `btree_gist` 擴充。下面是有 `btree_gist` 時的寫法，本篇沒有在有這個擴充的建置上實跑：
+- **[排除約束](/backend/01-database/sql/knowledge-cards/exclusion-constraint/)**（exclusion constraint）：把「兩列不能同時成立」寫成約束。約束由幾組「欄位與比較運算子」組成（班表是 `emp_id` 配 `=`、`during` 配 `&&`），新的一列跟既有的某一列在每一組上的比較都成立時，拒絕新的那一列。唯一鍵是它的特例：每一組的運算子都是 `=`。約束由 GiST 索引執行（GiST 是支援「重疊」這類比較的索引），整數欄位要放進 GiST 索引，需要 `btree_gist` 擴充。下面是有 `btree_gist` 時的寫法，本篇沒有在有這個擴充的建置上實跑：
 
 ```sql
 CREATE EXTENSION btree_gist;
@@ -145,7 +145,7 @@ SQLite 的語法不收 `CREATE ROLE`、`GRANT`、`CREATE POLICY`。SQLite 沒有
 - **並行寫入**：這一項的前提是 PostgreSQL 這一側有兩條以上的連線同時寫入（連線池大於 1，或有多個服務實例）。搬過去之後仍然只用一條連線依序寫入、或所有寫入都經過應用程式裡單一的寫入者（一個 goroutine、一個 actor）時，寫入照樣一個接一個執行，原本的先讀後寫照樣正確，寫入量的上限改由那一條連線決定。讓先讀後寫正確的是寫入者被排成一個接一個，SQLite 的寫入鎖是做到這件事的一種方式。SQLite 上的先讀後寫交易依開始的方式分成三種：
   - 以 `BEGIN IMMEDIATE` 開始、或第一句就寫入的：在 SQLite 上正確，搬到 PostgreSQL 之後要改寫。
   - 以預設的 `BEGIN` 開始、先讀再寫的：在 SQLite 上碰到並行時不等待，立刻回 `database is locked`（`SQLITE_BUSY`），資料不會錯，錯誤由應用程式重試；搬到 PostgreSQL 之後不再報錯，變成遺失更新，同樣要改寫。同一台機器上幾支程序共用一個檔、常看到 `database is locked` 的系統，要先查交易裡有沒有這一種。
-  - 讀與寫分在兩個交易或兩個自動提交的語句時（Python `sqlite3` 的預設；設成 `isolation_level="IMMEDIATE"` 時 `SELECT` 也仍在交易之外）：SQLite 上已經有同樣的遺失更新或 write skew，搬過去之前就要改寫。
+  - 讀與寫分在兩個交易或兩個自動提交的語句時（Python `sqlite3` 的預設；設成 `isolation_level="IMMEDIATE"` 時 `SELECT` 也仍在交易之外）：SQLite 上已經有同樣的遺失更新或寫入偏斜，搬過去之前就要改寫。
 
   改寫的方式依條件的形狀選：
   - 條件能寫成「某幾欄的組合不能同時成立」時（重複打卡、班表重疊），唯一鍵或排除約束把它交給資料庫：衝突在第二筆寫入時被拒絕，並行的時序不影響結果，應用程式要處理的是約束錯誤。已經用唯一鍵加 `ON CONFLICT DO NOTHING`／`DO UPDATE` 寫入的段落搬過去不必改：後到的交易等前一個提交之後寫入 0 列或改成更新，不回錯誤。

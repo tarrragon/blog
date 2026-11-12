@@ -27,7 +27,8 @@ tags: ["sql", "knowledge-card"]
 | [Constraint（約束）](/backend/01-database/sql/knowledge-cards/constraint/)                                          | 由資料庫在每次寫入時檢查的規則，判斷標準的豁免條件從這裡來  |
 | [Sargable（可走索引的條件形狀）](/backend/01-database/sql/knowledge-cards/sargable/)                                | 條件能不能翻成索引上的一次查找；欄位被包住就走不了          |
 | [Cartesian Product（笛卡兒積）](/backend/01-database/sql/knowledge-cards/cartesian-product/)                        | 每一列與每一列各配一次；條件缺席時連接回到的起點            |
-| [Database Engine（資料庫引擎）](/backend/01-database/sql/knowledge-cards/database-engine/)                          | 收下查詢並算出結果的軟體；它的四種決定換家之後後果不同      |
+| [Database Engine（資料庫引擎）](/backend/01-database/sql/knowledge-cards/database-engine/)                          | 收下查詢並算出結果的軟體；它做的決定換家之後後果不同        |
 | [Semantic Model（語意模型）](/backend/01-database/sql/knowledge-cards/semantic-model/)                              | 文字算出哪一批列的那套規則；各家一致，與執行方式分開        |
 | [Cardinality 與 Selectivity（基數與選擇率）](/backend/01-database/sql/knowledge-cards/cardinality-and-selectivity/) | 集合有幾個成員、條件留下多少比例；最佳化器走不走索引的依據  |
 | [Semi-join 與 Anti-join（半連接與反連接）](/backend/01-database/sql/knowledge-cards/semi-join-and-anti-join/)       | 配起來只帶走左邊那一份；`EXISTS` 與 `NOT EXISTS` 底下的運算 |
+| [Exclusion Constraint（排除約束）](/backend/01-database/sql/knowledge-cards/exclusion-constraint/)                  | 兩列在指定比較下不能同時成立；唯一鍵的推廣                  |

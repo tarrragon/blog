@@ -9,7 +9,7 @@ tags: ["sql", "constraint", "null", "ddl", "knowledge-card"]
 
 約束是掛在表或欄位上的一條規則，由資料庫在每一次寫入 [relation](/backend/01-database/sql/knowledge-cards/relation/) 的時候檢查——寫入違反它就失敗，所以一個有約束的欄位，它的內容在整張表的範圍內都成立。它與應用程式裡的檢查差在生效的位置：應用程式的檢查只涵蓋走過那段程式碼的寫入，約束涵蓋每一次寫入，包含手動改的、遷移腳本改的、以及另一個服務改的。
 
-常見的幾種各自保證不同的事。`NOT NULL` 保證這一欄永遠有值；`UNIQUE` 保證這一欄的值不重複；`PRIMARY KEY` 是前兩者合起來再加上「這是本表辨識一列的依據」；`FOREIGN KEY` 保證這一欄的值在另一張表裡找得到對應的那一列；`CHECK` 保證這一欄滿足一個自己寫的條件（例如金額不為負）。
+常見的幾種各自保證不同的事。`NOT NULL` 保證這一欄永遠有值；`UNIQUE` 保證這一欄的值不重複；`PRIMARY KEY` 是前兩者合起來再加上「這是本表辨識一列的依據」；`FOREIGN KEY` 保證這一欄的值在另一張表裡找得到對應的那一列；`CHECK` 保證這一欄滿足一個自己寫的條件（例如金額不為負）。PostgreSQL 另有 [Exclusion Constraint（排除約束）](/backend/01-database/sql/knowledge-cards/exclusion-constraint/)，保證任兩列在指定的比較下不同時成立（例如兩段時間不重疊），`UNIQUE` 是它的運算子全為相等時的特例。
 
 ## 它決定哪些推論可以做
 
