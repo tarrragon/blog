@@ -105,13 +105,13 @@ producer.commitTransaction()      // 全部原子提交；失敗則 abortTransac
 Transaction 除了 producer 端的 `transactional.id`，還要 consumer 端配合設定：`isolation.level=read_committed`。預設的 `read_uncommitted` 會讀到尚未 commit、甚至最終被 abort 的 transactional 訊息。設成 `read_committed` 後、consumer 只會看到已 commit 的 transactional 訊息、abort 的訊息對它不可見、未 commit 的訊息會被擋在 last stable offset（LSO）之前等待。
 
 ```bash
-# consumer 以 read_committed 隔離級別讀取、只看已 commit 的 transactional 訊息
+# consumer 以 read_committed 隔離等級讀取、只看已 commit 的 transactional 訊息
 kafka-console-consumer.sh --topic repl-demo --from-beginning \
   --isolation-level read_committed \
   --bootstrap-server kafka1:9092
 ```
 
-需要注意：對非 transactional 的普通訊息、read_committed 跟 read_uncommitted 行為相同 — 普通訊息一律可見。隔離級別只對 transactional 訊息產生差異。這也是為什麼若上游沒有任何 transactional producer、把 consumer 改成 read_committed 不會有任何可觀察的效果。
+需要注意：對非 transactional 的普通訊息、read_committed 跟 read_uncommitted 行為相同 — 普通訊息一律可見。隔離等級只對 transactional 訊息產生差異。這也是為什麼若上游沒有任何 transactional producer、把 consumer 改成 read_committed 不會有任何可觀察的效果。
 
 ## 端到端 exactly-once 的邊界與成本
 
@@ -191,7 +191,7 @@ Topic: repl-demo  Partition: 0  Leader: 2  Replicas: 2,3,1  Isr: 1,2,3
 
 **判讀**：read_committed 的 consumer 看不到被 abort 的訊息 — 中途失敗的 transaction 對它等於沒發生過、不會讀到「處理一半的髒資料」。read_uncommitted 的 consumer 則會讀到這些最終被 abort 的訊息、若據此處理就產生了不該發生的副作用。這是 transaction 隔離的核心價值：把「transaction 失敗」的可見性控制在 commit 邊界內。
 
-> 本段的 abort 行為依官方 transaction 語義描述。本地以 `kafka-console-consumer.sh --isolation-level read_committed` 驗證了隔離級別參數可用、且對已 commit 的普通訊息 read_committed 與 read_uncommitted 輸出一致（普通訊息一律可見、隔離級別只對 transactional 訊息產生差異）；完整的 begin/abort transaction 生命週期需 client code、未用 console 工具跑通。
+> 本段的 abort 行為依官方 transaction 語義描述。本地以 `kafka-console-consumer.sh --isolation-level read_committed` 驗證了隔離等級參數可用、且對已 commit 的普通訊息 read_committed 與 read_uncommitted 輸出一致（普通訊息一律可見、隔離等級只對 transactional 訊息產生差異）；完整的 begin/abort transaction 生命週期需 client code、未用 console 工具跑通。
 
 ## Capacity / cost
 

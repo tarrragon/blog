@@ -148,7 +148,7 @@ InnoDB 4 個 isolation level、lock 行為完全不同：
 **對比 PostgreSQL**：
 
 - PG 預設 isolation 是 *READ COMMITTED*（不是 RR）
-- PG 的 RR 用 *snapshot isolation*（不靠 gap lock）、deadlock 少
+- PG 的 RR 用 *[snapshot isolation](/backend/knowledge-cards/snapshot-isolation/)*（不靠 gap lock）、deadlock 少
 - 這是 MySQL 跟 PG 在 *並行控制 model* 的根本差異 — MySQL 用 lock-based、PG 用 MVCC-heavy
 
 ## 用 SHOW ENGINE INNODB STATUS 讀 lock 狀態

@@ -95,7 +95,7 @@ SELECT pg_try_advisory_lock(12345);  -- 試取、不阻塞、返回 false
 
 ### Predicate lock — SERIALIZABLE isolation 才用
 
-PG SERIALIZABLE 用 *Serializable Snapshot Isolation (SSI)*、追蹤 *predicate*（query 條件）而不是 *row*：
+PG SERIALIZABLE 用 *Serializable Snapshot Isolation (SSI)*（建在 [Snapshot Isolation（快照隔離）](/backend/knowledge-cards/snapshot-isolation/) 上）、追蹤 *predicate*（query 條件）而不是 *row*：
 
 ```sql
 -- 兩個 session 照同一條規則下單：先數 pending 訂單，再新增一張 pending 訂單

@@ -53,7 +53,7 @@ ROLLBACK;
 **Serializable（SQL 標準裡最強的一級）**：
 
 - 看起來像所有 transaction 序列執行
-- 兩種實作：strict 2PL（lock-based、MySQL）vs SSI（snapshot isolation + 衝突檢測、PostgreSQL）
+- 兩種實作：strict 2PL（lock-based、MySQL）vs SSI（[snapshot isolation](/backend/knowledge-cards/snapshot-isolation/) + 衝突檢測、PostgreSQL）
 - 衝突時會 serialization failure、應用層必須 retry
 - 適合：金融交易、ticketing inventory、需要絕對正確
 

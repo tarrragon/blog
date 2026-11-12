@@ -8,7 +8,7 @@ tags: ["backend", "database", "aurora", "aurora-dsql", "distributed-sql", "decis
 
 本篇回答 standard Aurora（Aurora PostgreSQL / MySQL，single-region managed SQL）什麼時候夠用、什麼條件下要跨到 Aurora DSQL（active-active distributed SQL）。決定跨過去之後怎麼從 PostgreSQL 遷到 DSQL，在 [migrate-to-aurora-dsql](/backend/01-database/vendors/postgresql/migrate-to-aurora-dsql/)；DSQL、Spanner 與 CockroachDB 之間怎麼選，在 [aurora-dsql-spanner-decision-tree](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/)。
 
-多數團隊不需要 Aurora DSQL。Aurora PostgreSQL / MySQL 已經是 managed SQL、storage / compute 分離、跨 AZ 高可用、read replica 擴讀——絕大多數 OLTP workload 在這層就解決了。Aurora DSQL 是 2024-12 re:Invent preview、2025-05 GA 的 *不同 paradigm* 產品：PG wire-compatible 但底層是 active-active distributed、OCC + snapshot isolation、multi-region strong consistency。它解的是 standard Aurora *解不了* 的特定問題，代價是 SQL 相容性縮成 PG 子集（多數 extension 缺位）、交易改成 OCC 而衝突要由 application retry。要不要跨過去，看 workload 是否真的撞到 standard Aurora 的結構上限。
+多數團隊不需要 Aurora DSQL。Aurora PostgreSQL / MySQL 已經是 managed SQL、storage / compute 分離、跨 AZ 高可用、read replica 擴讀——絕大多數 OLTP workload 在這層就解決了。Aurora DSQL 是 2024-12 re:Invent preview、2025-05 GA 的 *不同 paradigm* 產品：PG wire-compatible 但底層是 active-active distributed、OCC + [snapshot isolation](/backend/knowledge-cards/snapshot-isolation/)、multi-region strong consistency。它解的是 standard Aurora *解不了* 的特定問題，代價是 SQL 相容性縮成 PG 子集（多數 extension 缺位）、交易改成 OCC 而衝突要由 application retry。要不要跨過去，看 workload 是否真的撞到 standard Aurora 的結構上限。
 
 > **時間錨點**：Aurora DSQL 2024-12 preview、2025-05 GA。vendor 能力持續演進、實際決策前以 AWS docs 當前狀態為準。
 

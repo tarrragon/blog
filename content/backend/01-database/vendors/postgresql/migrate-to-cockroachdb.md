@@ -18,7 +18,7 @@ tags: ["backend", "database", "postgresql", "cockroachdb", "migration", "multi-a
 | Number of components   | 同 1 個 DB cluster                                                                                                       | Low      |
 | Application change     | Transaction retry pattern 必須改、ORM 可能需 patch                                                                       | Medium   |
 
-schema、operational 與 paradigm 三個面向的差異都大。其中 paradigm 從單機 transaction 換成分散式 Serializable Snapshot Isolation 是根本的轉變；operational 的差異多半是它的下游：Raft consensus、自動 rebalance、沒有 single primary，都來自分散式架構。
+schema、operational 與 paradigm 三個面向的差異都大。其中 paradigm 從單機 transaction 換成分散式 Serializable Snapshot Isolation（建在 [Snapshot Isolation（快照隔離）](/backend/knowledge-cards/snapshot-isolation/) 上）是根本的轉變；operational 的差異多半是它的下游：Raft consensus、自動 rebalance、沒有 single primary，都來自分散式架構。
 
 ## Paradigm shift（主導）
 

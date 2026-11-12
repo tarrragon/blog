@@ -43,7 +43,7 @@ DSQL 是 PG wire-compatible（用 `psql` 連得上）、但內部是 *distribute
 
 **Paradigm shift 的核心**：
 
-1. **Transaction semantic**：DSQL 用 OCC（Optimistic Concurrency Control）+ strong snapshot isolation、跟 PG 預設 read committed / repeatable read snapshot 不同 — 同 row 有 concurrent write 時、commit 階段才偵測衝突 + abort、application 要 handle `40001` serialization_failure
+1. **Transaction semantic**：DSQL 用 OCC（Optimistic Concurrency Control）+ strong [snapshot isolation](/backend/knowledge-cards/snapshot-isolation/)、跟 PG 預設 read committed / repeatable read snapshot 不同 — 同 row 有 concurrent write 時、commit 階段才偵測衝突 + abort、application 要 handle `40001` serialization_failure
 2. **No extension**：PostGIS / pgvector / TimescaleDB / pg_partman 都不能用、依賴這些 feature 的 application 要拆出去
 3. **No connection pool stateful**：DSQL 內建 connection pool、application 不能依賴 session state（temp table / prepared statement / advisory lock）
 

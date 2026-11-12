@@ -140,7 +140,7 @@ SELECT alter_distributed_table('events', distribution_column := 'event_id');
 
 ### 把它跟核心 Cosmos DB 當同一產品選
 
-選型時把「Cosmos DB for PostgreSQL」當成「核心 Cosmos DB 的 PostgreSQL 介面」、規劃用 RU/s、找 consistency level 設定、結果整套 mental model 對不上 — 因為它是分散式 PostgreSQL、用 node 規格計費、用 PostgreSQL 的交易隔離級別。修法是選型第一步就確認「這是分散式 SQL、不是 NoSQL」、規劃按 PostgreSQL + Citus 的模型走、不要套核心 Cosmos DB 的概念。
+選型時把「Cosmos DB for PostgreSQL」當成「核心 Cosmos DB 的 PostgreSQL 介面」、規劃用 RU/s、找 consistency level 設定、結果整套 mental model 對不上 — 因為它是分散式 PostgreSQL、用 node 規格計費、用 PostgreSQL 的交易隔離等級。修法是選型第一步就確認「這是分散式 SQL、不是 NoSQL」、規劃按 PostgreSQL + Citus 的模型走、不要套核心 Cosmos DB 的概念。
 
 ### 沒有好的 distribution column 硬上分散式
 
