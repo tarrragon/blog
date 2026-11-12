@@ -53,6 +53,8 @@ Add PgBouncer 的核心責任是把 client connection 與 server connection 拆�
       - "64329:5432"
 ```
 
+compose 裡的 `AUTH_TYPE` 與 `ADMIN_USERS` 改了 image 的預設值。`AUTH_TYPE` 對應 PgBouncer 的 `auth_type`，決定 PgBouncer 怎麼驗證使用者；[PgBouncer 的設定文件](https://www.pgbouncer.org/config.html) 寫 md5 是預設的驗證方式，這個 image 的 `entrypoint.sh` 在沒有提供 `pgbouncer.ini` 時寫入 `auth_type = ${AUTH_TYPE:-md5}`。md5 這個預設對應的是以 md5 儲存密碼的資料庫：[PostgreSQL 14 的 release notes](https://www.postgresql.org/docs/release/14.0/) 把 `password_encryption` 的預設改成 scram-sha-256（「Previously it was md5」），這個 lab 的 PostgreSQL 16 以 SCRAM 儲存新建的密碼，留 md5 時 PgBouncer 連 backend 回 `wrong password type`（compose 註解記下的現象），所以改成 `scram-sha-256`。`ADMIN_USERS` 決定哪些 user 能連 `pgbouncer` 這個虛擬 database 下 `SHOW POOLS`；`entrypoint.sh` 的預設是 `${ADMIN_USERS:-postgres}`，服務的是以 postgres 當管理帳號的部署，這個 lab 的 backend 使用者是 `lab_admin`，所以改成它。`latest` 指向的 PgBouncer 版本會隨時間移動，Docker Hub 頁面沒有寫它目前對應哪一版；上面兩個預設值取自 2026-11-12 查到的 `entrypoint.sh`（GitHub 的 master 分支）。要固定這些行為時，把 image 換成 Docker Hub 列的 `1.X.Y-pZ` 格式版本 tag；本篇沒有用版本 tag 重跑。
+
 啟動後設定 pooler URL：
 
 ```bash
