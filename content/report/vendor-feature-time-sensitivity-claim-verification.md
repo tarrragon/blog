@@ -138,7 +138,7 @@ LLM 寫 vendor CLI command 容易 hallucinate（例如 `pscale database promote-
 
 - [Sibling Coverage Asymmetry Blindspot in Priority](../sibling-coverage-asymmetry-blindspot-in-priority/)：本卡是 *claim 時間敏感性*、那卡是 *coverage 對稱性*、不同 axis
 - [Data Topology as Audit Dimension](../data-topology-as-audit-dimension/)：本卡是 *寫作 audit 應加時間維度*、那卡是 *content audit 應加 topology 維度*
-- [引用一份評價時，它評的時間點要對得上讀者要判斷的時間點](../cited-evaluation-carries-the-date-it-judged/)：本卡管的是寫作者可以重新查證的事實（功能是否支援）；那張卡補的是引用別人的評價（樂評、評測、量測）時的時間差：評價不能重新查證，只能比對它評的時間點，對不上就拿掉評語，來源裡不帶判斷的紀錄另外留
+- [引用一份評價時，留意它評的是對象在什麼時候的狀態](../cited-evaluation-carries-the-date-it-judged/)：本卡管的是寫作者可以重新查證的事實（功能是否支援）；那張卡補的是引用別人的評價（樂評、評測、量測）時的時間差：量測這類可以重做的評價先重做；那一晚的演出這類無法重做的評價，寫作者依被評的對象這段時間改變了多少判斷它還能不能用，沒有通用的年數；來源裡不帶判斷的紀錄另外留，拿舊紀錄說明現況時照本卡重新查證
 
 ## 反向驗證
 

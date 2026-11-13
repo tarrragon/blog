@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 1.57.0
+  version: 1.58.0
   category: writing-methodology
 ---
 
@@ -91,30 +91,31 @@ metadata:
 
 審查一份剛寫好的稿件時，第一步是依體裁開下表對應的 reference，逐項跑它的檢查項；接著開 `references/keyword-bank.md` 逐類跑字句層 grep；最後依原則 6 換 frame 重讀。
 
-| 觸發情境                                                                       | 讀哪份                                                                    | 涵蓋章節                                                                |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| 寫或改程式碼註解 / doc comment                                                 | `references/writing-code-comments.md`                                     |                                                                         |
-| 起草 / 改寫文件（worklog、spec、README）                                       | `references/writing-documents.md`                                         |                                                                         |
-| 設計 log / 錯誤訊息 / 結構化輸出                                               | `references/writing-logs.md`                                              |                                                                         |
-| 撰寫給 AI 的 prompt / Agent 派發 / Ticket Context Bundle                       | `references/writing-prompts.md`（`ai-communication-rules.md` 的詳細版庫） |                                                                         |
-| 撰寫長篇技術文章（blog、post-mortem、架構決策、除錯復盤）                      | `references/writing-articles.md`                                          |                                                                         |
-| 外部分析 / 經驗談（含使用者貼來的論壇說法、問答、AI 回答）轉成教學型分析文章   | `references/source-to-teaching-analysis.md`                               |                                                                         |
-| 翻譯 / 轉譯、檢查譯名與超譯                                                    | `references/translation-review.md`                                        |                                                                         |
-| 句子與用詞層的受控寫作：一事一名、一詞一義、情態詞只用可以／會／必須、句長門檻 | `asd-ste100` skill（正體中文讀它的 zh-TW pack：句子規則與詞庫）           | 本 skill 不重寫這組規則；篇章結構仍由本 skill 負責                      |
-| 管理多篇文章的結構（系列、MOC、跨篇引用、同一對象在兩個集合各有一頁）          | `references/managing-article-collections.md`                              |                                                                         |
-| 結構決策（拆篇、擴充點、依賴方向、讀者分流）、拆成多檔後查交界                 | `references/structuring-with-solid.md`                                    |                                                                         |
-| 對高 stakes 內容做 reviewer-style audit                                        | `references/auditing-articles.md`                                         |                                                                         |
-| 寫或檢查判讀 / 選型 / 決策類內容                                               | `references/judgment-content-needs-scenarios.md`                          |                                                                         |
-| 並排比較幾種做法（比較表的欄、跨篇零件並排）                                   | `/report/comparison-axis-comes-from-the-readers-decision/`                |                                                                         |
-| 示範指令（區塊內容、註解分工、並列兩條、參數表）                               | `references/demonstrating-commands.md`                                    | 示範指令的引數另有一條檢查（程式碼區塊適用）                            |
-| 設計 ticket 欄位 / schema frontmatter / 表單欄位                               | `references/designing-fields.md`                                          |                                                                         |
-| 驗證寫作品質（認知負擔、獨立理解率）                                           | `references/meta-metrics.md`                                              |                                                                         |
-| 新增或修改 Skill reference                                                     | `references/reference-authoring-standards.md`                             |                                                                         |
-| 驗收 Skill 發布品質（Phase 2 dry-run）                                         | `references/dry-run-guide.md`                                             |                                                                         |
-| 字句層審查、多輪審查的 Round 1-A、batch review、寫作 audit                     | `references/keyword-bank.md`（本站字句層檢查的唯一權威清單）              | 字句層 keyword bank（完整清單）                                         |
-| 多輪 re-read 的輪次設計、譯名檢查、批量 sibling 寫作                           | `/report/writing-multi-pass-review/`                                      | 原則 6；批量 sibling 寫作的生成端輪替；譯名不用讀者會先想到別的東西的詞 |
-| 查原則 1 至 5 的論證與實證、定位的裝置清單、與跨章節教學模組流程的分工         | `references/core-principles.md`                                           | 原則 1-5 全文；動手之前先定這一份的定位；跟特化寫作流程的分工           |
-| 查生成端規格的三種變體與名詞所屬的探針                                         | `/report/noun-without-its-owner-passes-the-slot-check/`                   | 每一句先填槽位再成句（生成端規格）全文                                  |
+| 觸發情境                                                                                                                     | 讀哪份                                                                    | 涵蓋章節                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| 寫或改程式碼註解 / doc comment                                                                                               | `references/writing-code-comments.md`                                     |                                                                         |
+| 起草 / 改寫文件（worklog、spec、README）                                                                                     | `references/writing-documents.md`                                         |                                                                         |
+| 設計 log / 錯誤訊息 / 結構化輸出                                                                                             | `references/writing-logs.md`                                              |                                                                         |
+| 撰寫給 AI 的 prompt / Agent 派發 / Ticket Context Bundle                                                                     | `references/writing-prompts.md`（`ai-communication-rules.md` 的詳細版庫） |                                                                         |
+| 撰寫長篇技術文章（blog、post-mortem、架構決策、除錯復盤）                                                                    | `references/writing-articles.md`                                          |                                                                         |
+| 外部分析 / 經驗談（含使用者貼來的論壇說法、問答、AI 回答）轉成教學型分析文章                                                 | `references/source-to-teaching-analysis.md`                               |                                                                         |
+| 文章引用樂評、評測、使用心得或量測，或引用同時帶著評語的來源（任何體裁；不論引用的目的是佐證現況、佐證紀錄還是滿足收錄條件） | `references/source-to-teaching-analysis.md`                               | 引用評價時留意它評的時間點                                              |
+| 翻譯 / 轉譯、檢查譯名與超譯                                                                                                  | `references/translation-review.md`                                        |                                                                         |
+| 句子與用詞層的受控寫作：一事一名、一詞一義、情態詞只用可以／會／必須、句長門檻                                               | `asd-ste100` skill（正體中文讀它的 zh-TW pack：句子規則與詞庫）           | 本 skill 不重寫這組規則；篇章結構仍由本 skill 負責                      |
+| 管理多篇文章的結構（系列、MOC、跨篇引用、同一對象在兩個集合各有一頁）                                                        | `references/managing-article-collections.md`                              |                                                                         |
+| 結構決策（拆篇、擴充點、依賴方向、讀者分流）、拆成多檔後查交界                                                               | `references/structuring-with-solid.md`                                    |                                                                         |
+| 對高 stakes 內容做 reviewer-style audit                                                                                      | `references/auditing-articles.md`                                         |                                                                         |
+| 寫或檢查判讀 / 選型 / 決策類內容                                                                                             | `references/judgment-content-needs-scenarios.md`                          |                                                                         |
+| 並排比較幾種做法（比較表的欄、跨篇零件並排）                                                                                 | `/report/comparison-axis-comes-from-the-readers-decision/`                |                                                                         |
+| 示範指令（區塊內容、註解分工、並列兩條、參數表）                                                                             | `references/demonstrating-commands.md`                                    | 示範指令的引數另有一條檢查（程式碼區塊適用）                            |
+| 設計 ticket 欄位 / schema frontmatter / 表單欄位                                                                             | `references/designing-fields.md`                                          |                                                                         |
+| 驗證寫作品質（認知負擔、獨立理解率）                                                                                         | `references/meta-metrics.md`                                              |                                                                         |
+| 新增或修改 Skill reference                                                                                                   | `references/reference-authoring-standards.md`                             |                                                                         |
+| 驗收 Skill 發布品質（Phase 2 dry-run）                                                                                       | `references/dry-run-guide.md`                                             |                                                                         |
+| 字句層審查、多輪審查的 Round 1-A、batch review、寫作 audit                                                                   | `references/keyword-bank.md`（本站字句層檢查的唯一權威清單）              | 字句層 keyword bank（完整清單）                                         |
+| 多輪 re-read 的輪次設計、譯名檢查、批量 sibling 寫作                                                                         | `/report/writing-multi-pass-review/`                                      | 原則 6；批量 sibling 寫作的生成端輪替；譯名不用讀者會先想到別的東西的詞 |
+| 查原則 1 至 5 的論證與實證、定位的裝置清單、與跨章節教學模組流程的分工                                                       | `references/core-principles.md`                                           | 原則 1-5 全文；動手之前先定這一份的定位；跟特化寫作流程的分工           |
+| 查生成端規格的三種變體與名詞所屬的探針                                                                                       | `/report/noun-without-its-owner-passes-the-slot-check/`                   | 每一句先填槽位再成句（生成端規格）全文                                  |
 
 每份 reference 自包含：以該情境為核心，把核心原則翻譯成可直接套用的檢查項與範例。`references/` 底下另有 `principles/` 支撐型原則卡與 `designing-fields-ticket-6w.md`（六欄位詳細範例，按需讀取）。
 
