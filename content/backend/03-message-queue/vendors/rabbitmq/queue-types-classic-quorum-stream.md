@@ -124,7 +124,7 @@ Quorum queue 用 Raft 共識取代 mirroring。差異在「同步多少 replica 
 
 Classic queue 的歷史包袱是訊息傾向常駐記憶體、queue 堆積時記憶體壓力大（lazy queue 模式可緩解、但仍是 classic 的調校負擔）。Quorum queue 預設 on-disk 為主、記憶體只放 index 與近期訊息、堆積時記憶體曲線比 classic 平緩。Stream 是 append-only log、寫入是順序磁碟 I/O、讀取靠 OS page cache、是三者中記憶體效率最高、throughput 最高的 — 順序寫與批次讀讓它在高吞吐事件流場景接近 Kafka 的量級。
 
-throughput 排序大致是 stream > classic ≈ quorum（quorum 因 Raft round-trip 略低於單節點 classic、但換得一致性）。選型時 throughput 不該是唯一軸：stream throughput 高但語意是 log、用它跑任務隊列會錯配；quorum throughput 中但提供 classic 給不了的高可用。
+throughput 排序大致是 stream > classic ≈ quorum（quorum 因 Raft round-trip 略低於單節點 classic、但換得一致性）。選型時 throughput 不該是唯一軸：stream throughput 高但語意是 log、用它跑任務隊列會錯配；quorum throughput 中，但佇列的資料以 Raft 複製到多個節點，有單節點的 classic 沒有的高可用。
 
 ## 故障演練
 

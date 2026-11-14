@@ -124,7 +124,7 @@ Book completeEnrichment() {
 
 回到最初的測試 bug。為什麼有人會寫 `Book.createForTest(id: 'tmp').bookTags`？
 
-因為 `Book.createForTest` 只接受 `id` / `title` / `author` / `isbn` 四個參數，**不接受 `bookTags`**。測試想表達「預設 tags 再加三個自訂 tag」，工廠給不了這個表達力，於是 copyWith 成了唯一的出路——而在用 copyWith 拼裝的當下，順手建個臨時物件撈預設值，就是最短路徑。
+因為 `Book.createForTest` 只接受 `id` / `title` / `author` / `isbn` 四個參數，**不接受 `bookTags`**。測試想表達「預設 tags 再加三個自訂 tag」，工廠方法沒有可以傳入 tags 的參數，於是 copyWith 成了唯一的出路——而在用 copyWith 拼裝的當下，順手建個臨時物件撈預設值，就是最短路徑。
 
 這就是 copyWith 作為逃生口的危險之處：**它總是有辦法讓你把物件拼出來，所以你永遠不會被迫去修那個表達力不足的工廠。** 建構路徑的缺陷被逃生口吸收掉，然後以語意錯誤的形式在別處復發——這個專案復發了兩次。
 

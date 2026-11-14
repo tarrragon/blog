@@ -67,7 +67,7 @@ Daniel Kahneman 的《Thinking, Fast and Slow》提供的是規劃謬誤的心�
 
 **Open Yale PHIL 181 Philosophy and the Science of Human Nature** 涵蓋樂觀偏誤那一層的一手研究，不涵蓋逐條查閱偏誤目錄的用途。Tamar Gendler（哲學與認知科學）主講、2011 年春季、26 講。它不是偏誤目錄課——全課的骨架是幸福、道德與政治正當性三個哲學問題——但它的指定閱讀直接是《Thinking, Fast and Slow》的一手來源：Kahneman 的〈Mapping Bounded Rationality〉與諾貝爾講座、Ariely 的《Predictably Irrational》全本、Evans 的雙系統推理、Sunstein 的道德捷思。讀 Thinking, Fast and Slow 拿到的是 Kahneman 整理過的版本，上這門課拿到的是原始論文加一個哲學家的追問。門檻也在那裡：英語授課，而指定閱讀是一手論文而非科普，投入的份量比 ECON 159 與台大的兩門重。它跟 ECON 159 一樣是 Open Yale Courses 的課，該站的標準供給含英文逐字稿，讀得慢而聽不動的讀者靠那份稿子搭橋。
 
-PHIL 181 不涵蓋的面向是逐一查閱整批偏誤——[《Thinking, Fast and Slow》](#thinking-fast-and-slow想理解偏誤的來源時的選讀) 的用途之一是當長期參考的偏誤目錄，而課程這個載體給不了那個功能：目錄要能隨時翻回某一條，講次只能線性播。
+PHIL 181 不涵蓋的面向是逐一查閱整批偏誤——[《Thinking, Fast and Slow》](#thinking-fast-and-slow想理解偏誤的來源時的選讀) 的用途之一是當長期參考的偏誤目錄：讀者要能隨時翻回某一條偏誤，而課程的講次只能依序播放。
 
 三門課教的都是推導而非當期材料，時效因此不隨年代改變；ECON 159 錄於 2007 年，它舉的產業例子（外包、教育訊號）屬於當時的情境，推導本身不依賴那些例子。台大那兩門的取得限制寫在本節的 Coursera 那一段。軟體管理與組織書單整體的公開課供給狀況寫在 [主題書單的公開課段](../courses-not-found/)。
 

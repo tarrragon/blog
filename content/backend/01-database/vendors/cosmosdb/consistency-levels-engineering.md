@@ -196,7 +196,7 @@ K 與 T 設得遠大於業務能接受的延遲時，Bounded staleness 的上限
 
 修：
 
-- 根據業務 read-after-write SLA 設 T，並先確認這個 SLA 高於 account 的 T 下限；multi-region account 要求 300 秒以內的 read-after-write 時，Bounded staleness 給不了，改用 Session token 或 Strong
+- 根據業務 read-after-write SLA 設 T，並先確認這個 SLA 高於 account 的 T 下限；multi-region account 要求 300 秒以內的 read-after-write 時，要求低於 Bounded staleness 可設定的下限，改用 Session token 或 Strong
 - K 通常設成「peak QPS × T」的合理倍數
 - 量測：production 觀察實際 staleness 分布、調整 K/T
 
