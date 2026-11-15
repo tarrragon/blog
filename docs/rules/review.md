@@ -41,6 +41,6 @@
 
 **術語探針判成「本批無結論」的詞**（測試詞寫在探針讀得到的系統提示裡，而探針複述了那份定義）：在本 repo 裡重派探針也讀得到同一份系統提示，重測量到的仍是詞頻。在 commit message 登記這個詞「待驗」與原因，寫進給使用者的最後一則總結；要結論時，交給讀不到本 repo 規範檔的讀者判讀（使用者本人，或另一個目錄裡、不載入這些規則檔的 session）。
 
-探針的其他用途（重點涵蓋度、閱讀負擔、翻譯探針、術語探針、類型探針、集合探針）、各自的設計條件、處置門檻與判讀方式，以 `multi-round-review` 的 `references/round-2-probes.md` 為準。Codex 沒有派發子 agent 的工具時，探針那一項的紀錄寫「未跑」與原因，不拿自己的閱讀代替探針。
+探針的其他用途（重點涵蓋度、閱讀負擔、翻譯探針、術語探針、類型探針、集合探針、主謂抽取探針；主謂抽取探針的產出是候選清單，判定由主 session 做，不走本節的三類歸因）、各自的設計條件、處置門檻與判讀方式，以 `multi-round-review` 的 `references/round-2-probes.md` 為準。Codex 沒有派發子 agent 的工具時，探針那一項的紀錄寫「未跑」與原因，不拿自己的閱讀代替探針。
 
 依據：[理解檢查用低階 model 取樣讀者的實際理解，不靠單一 reviewer 的判斷](/report/comprehension-sampled-not-judged/)、[翻譯探針：中文可以不決定的，英文強制決定，多份譯本的分歧就是歧義的位置](/report/translation-forces-disambiguation/)、[譯者拿得到作者的意圖時，最該被偵測的那一類歧義會被安靜譯對](/report/probe-independence-is-not-transferable/)、[術語探針讀得到定義那個詞的規範檔時，收斂度量到的是詞頻](/report/probe-reads-the-prompt-that-defines-the-term/)、[探針的收斂度分不出無主的詞與已經有主人的詞，要讀有把握那幾份給的定義](/report/term-already-owned-inside-the-domain/)、[逐段審查量讀者學不學得會，指稱解不解得開要問沒讀過前文的讀者](/report/reviewer-holds-the-map-readers-land-without-it/)。
