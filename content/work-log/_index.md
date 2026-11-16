@@ -16,7 +16,7 @@ tags: ["work-log", "debug", "工具"]
 - [commit message 引用外部 issue 會在對方 repo 留下事件——檔案內容裡的同一串字不會](github-cross-reference-from-commit-message/)
 - [停止開發的專案封存：未提交修改、被忽略檔案、倉庫依賴、分支的收斂與遠端搬遷、還原驗證](project_archive_before_cleanup/)
 
-**Build 工具與框架** — Gradle / Flutter / Dart 的錯誤、行為、設計觀念。例：
+**Build 工具與框架** — Gradle / Flutter / Dart / Node 的錯誤、行為、設計觀念與量測。例：
 
 - `gradle_jvm_target_asymmetry` — Kotlin/Java target 不一致導致 build 失敗
 - `gradle_evaluation_order_traps` — Gradle configuration phase 時序陷阱
@@ -24,6 +24,7 @@ tags: ["work-log", "debug", "工具"]
 - `flutter_repaint_heartbeat` — 畫面落後邏輯狀態（重繪訊號沒進 frame 排程）的排查與心跳做法
 - `flutter_schedule_frame` — `scheduleFrame()` 的設計意義：按需 render 的最底層「要一個 frame」原語
 - `flutter_audio_volume_control` — per-player 音量 vs 系統音量、為何多數不該從 App 改系統音量
+- [量終端機動畫程式的 CPU](terminal-animation-cpu-measurement/) — 用 pty 執行、認出 tsx 實際執行程式的程序、停掉之後檢查殘留、固定種子比較兩個版本，以及百分比不跟著工作量下降的讀法
 
 **環境、設定與架構觀念** — 開發環境一次性設定、與後端協作時整理出的設計觀念等。例：
 

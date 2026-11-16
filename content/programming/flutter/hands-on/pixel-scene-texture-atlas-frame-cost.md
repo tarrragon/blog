@@ -303,7 +303,7 @@ flutter test test/atlas_compare_test.dart
 
 這次兩個姿勢的兩張圖都完全相同。這個比對是在 `flutter test` 裡做的，`flutter test` 的執行環境沒有 GPU（推論，這次沒有查證）。`dart:ui` 文件寫 `toImageSync` 在沒有 GPU 的環境改用 CPU 柵格化，這涵蓋圖集與背景圖；比對的兩張圖由 `toImage` 產生，它的文件沒有寫用 CPU 還是 GPU，在測試裡同樣走 CPU 是推論。所以比對的是 CPU 柵格化的結果（推論）；macOS app 視窗裡用 GPU 畫出的畫面，沒有逐像素比對過。
 
-這個比對第一次跑時報出 388,320 個位元組不同：當時 `_paintAtlas` 沒有 `save()` 與 `restore()`，`BackPainter` 呼叫的 `canvas.scale(4)` 留在 Canvas 上，`LeavesPainter` 在同一張 Canvas 上再放大一次，葉叢被放大成 16 倍。app 裡兩個 painter 各自有一張 `Canvas`，不會這樣；測試裡補上 `save()` 與 `restore()` 之後比對通過。這次失敗也顯示兩張圖不同時這個比對會報錯，所以它通過代表兩張圖逐位元組相同。
+這個比對第一次跑時報出 388,320 個位元組不同：當時 `_paintAtlas` 沒有 `save()` 與 `restore()`，`BackPainter` 呼叫的 `canvas.scale(4)` 留在 Canvas 上，`LeavesPainter` 在同一張 Canvas 上再放大一次，葉叢被放大成 16 倍。app 裡兩個 painter 各自有一張 `Canvas`，不會這樣；測試裡補上 `save()` 與 `restore()` 之後比對通過。這次失敗也顯示兩張圖不同時這個比對會報錯，所以它通過代表兩張圖逐位元組相同。這次的改動只為了變快，所以參照是舊畫法；同一次改動也改了畫面時參照要換成什麼，寫在〔[效能最佳化的正確性要拿一份產生同樣畫面的參照實作逐格比](/report/optimization-equivalence-needs-a-reference-of-the-same-behavior/)〕。
 
 比對只涵蓋取整的位移。smooth 的位移不取整，最近鄰取樣在非整數位置的樣子，這次沒有跟基準的畫法比對，也沒有開視窗用眼睛看過。
 

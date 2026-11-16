@@ -39,6 +39,8 @@ tags: ["report", "事後檢討", "Performance", "CSS", "工程方法論"]
 
 優先用 DevTools Performance 量、有具體數字後再決定是否優化。
 
+候選不只一項時，要決定先改哪一項的人先把每一項暫時拿掉各量一次，用差額排順序；`performance.measure` 這類只量自家函式的數字，看不到落在瀏覽器 GPU 程序的成本。這兩點的實例與推導在 [#399 效能最佳化的先後順序要等量完再排](/report/optimization-order-comes-from-removal-measurements/)。
+
 ---
 
 ## 搜尋頁的具體風險點

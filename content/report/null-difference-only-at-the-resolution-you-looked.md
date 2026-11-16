@@ -44,6 +44,7 @@ slug: "null-difference-only-at-the-resolution-you-looked"
 - [#318 每一格都驗過，不代表由格子導出的那句話驗過了](../per-cell-verification-misses-the-derived-claim/)：兩張卡都是「驗了而沒驗到」，軸不同——那裡是層級（往上少一層），這裡是解析度（往下少一層）。
 - [#291 壞掉的掃描回報一個像樣的數字](../broken-scan-reports-a-plausible-number/)：那張卡的機制表列的是掃描本身壞掉的成因，本卡的工具沒有壞，它只是解析度不夠。兩者在報告上長得一樣，處置不同——那裡修工具，這裡換工具。
 - [#321 從名字出發的術語檢查抓不到無名概念](../concept-used-but-never-named/)：同一批工作抽出的姊妹卡，軸不同——那裡是檢查走不到對象，這裡是檢查走到了但看不清。
+- [#398 效能最佳化的正確性要拿一份產生同樣畫面的參照實作逐格比](../optimization-equivalence-needs-a-reference-of-the-same-behavior/)：本卡管零差異的粒度，那張卡管比對要拿哪一份實作當參照：最佳化同時改了行為時，跟舊版比出的差異混著刻意的改變，零差異要對著同一個新行為的不最佳化版本才有意義。
 
 ## 判讀徵兆
 
