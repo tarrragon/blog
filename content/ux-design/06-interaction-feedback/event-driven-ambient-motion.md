@@ -40,7 +40,7 @@ SpriteCook 在〈[Pixel art trees in the wind](https://www.spritecook.ai/blog/pi
 
 ## 重繪成本與動畫驅動器的排幀頻率
 
-**渲染管線**指 App 從「有內容要更新」到「新的一幀（frame）出現在螢幕上」這一整串工作：重新計算版面、繪製、合成圖層、交給 GPU 柵格化（raster）。**動畫驅動器**指定時叫 App 算出下一個姿勢、並要求渲染管線排下一幀的機制，例如每一幀的回呼或計時器。Flutter、瀏覽器、iOS 的 UIKit 都是[按需重繪](/ux-design/knowledge-cards/on-demand-rendering/)的 UI 框架：畫面沒有內容要更新、也沒有驅動器要求下一幀時，不產生新的一幀。動畫驅動器每要求一幀，App 就要跑一次渲染管線，所以裝飾性動畫的成本先看驅動器多常要求下一幀，再看每一幀花多久。渲染管線是整個畫面共用的：同一個畫面上只要有一個驅動器在每個 vsync 要求下一幀，整個畫面就每個 vsync 跑一次。
+**渲染管線**指 App 從「有內容要更新」到「新的一幀（frame）出現在螢幕上」這一整串工作：重新計算版面、繪製、合成圖層、交給 GPU 柵格化（raster，把圖形轉成螢幕上的像素；其他中文資料常寫作光柵化）。**動畫驅動器**指定時叫 App 算出下一個姿勢、並要求渲染管線排下一幀的機制，例如每一幀的回呼或計時器。Flutter、瀏覽器、iOS 的 UIKit 都是[按需重繪](/ux-design/knowledge-cards/on-demand-rendering/)的 UI 框架：畫面沒有內容要更新、也沒有驅動器要求下一幀時，不產生新的一幀。動畫驅動器每要求一幀，App 就要跑一次渲染管線，所以裝飾性動畫的成本先看驅動器多常要求下一幀，再看每一幀花多久。渲染管線是整個畫面共用的：同一個畫面上只要有一個驅動器在每個 vsync 要求下一幀，整個畫面就每個 vsync 跑一次。
 
 各平台讓動畫的回呼在每一幀被呼叫一次的機制都綁在螢幕的[垂直同步（vsync）](/ux-design/knowledge-cards/vsync/)上：Flutter 的 `Ticker`、Web 的 `requestAnimationFrame`、iOS 的 `CADisplayLink`、Android 的 `Choreographer`。這些機制的預設行為是螢幕每刷新一次就呼叫一次，螢幕是 60 Hz 就一秒 60 次，是 120 Hz 或 144 Hz 就一秒 120 或 144 次。iPhone 的 ProMotion 螢幕是例外：開發者沒有在 App 的 Info.plist 設 `CADisableMinimumFrameDurationOnPhone` 時，`CADisplayLink` 最高只到 60 Hz（Apple〈Optimizing ProMotion refresh rates for iPhone 13 Pro and iPad Pro〉）。這個預設服務的情境是要平滑的動畫：每一幀都算出新的位置，動作才不會一格一格跳。
 

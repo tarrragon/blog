@@ -16,3 +16,12 @@ aliases: ["/flutter/knowledge-cards/"]
 | [copyWith](/programming/flutter/knowledge-cards/copywith/)             | 逐欄位覆寫方法——對資料袋正確、對 entity 是逃生口      |
 | [freezed](/programming/flutter/knowledge-cards/freezed/)               | immutable data class 生成器——把 copyWith 推成預設路徑 |
 | [Extension Type](/programming/flutter/knowledge-cards/extension-type/) | Dart 3 零成本包裝型別——語意封閉的實作載體             |
+
+## Flutter 渲染與效能量測
+
+| 卡片                                                                               | 核心問題                                                        |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [FrameTiming](/programming/flutter/knowledge-cards/frame-timing/)                  | 每一幀的 build 與柵格化時間——掉幀看哪兩個值、預算依螢幕更新率算 |
+| [Flutter Thread Model](/programming/flutter/knowledge-cards/flutter-thread-model/) | UI、raster 與平台執行緒——耗時的工作落在哪一條、合併執行緒的影響 |
+| [Picture](/programming/flutter/knowledge-cards/picture/)                           | 錄好的繪圖指令——重播省下的是 UI 執行緒，柵格化照做              |
+| [RepaintBoundary](/programming/flutter/knowledge-cards/repaint-boundary/)          | 子樹獨立的繪圖紀錄——隔開重畫，不減少排幀次數                    |

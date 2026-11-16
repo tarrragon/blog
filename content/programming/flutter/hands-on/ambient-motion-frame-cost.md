@@ -8,7 +8,7 @@ tags: ["flutter", "animation", "rendering", "performance", "hands-on"]
 
 2026-11-16 在一台 macOS 15（Darwin 24.3）的 Mac 上做的量測：Flutter 3.41.3（Dart 3.11.1），以 profile 模式跑 macOS 桌面版，app 視窗開在一台更新率 144 Hz 的外接螢幕上。當時在驗證一個預期：把像素遊戲裡「樹被風吹動」的做法搬進 App 時，姿勢一秒只換 10 次能不能讓渲染管線也一秒只跑 10 次。同一天換了兩個場景各量一輪，每一輪用同一份程式跑兩次自動量測：簡化樹那一輪用一棵 48 × 56 格、14 叢葉子的樹，畫面 288 × 336 邏輯點，每一幀逐格畫方塊；橡樹與松樹那一輪把場景換成造型接近原文截圖的一棵橡樹與一棵松樹，畫面放大到 672 × 400 邏輯點，繪製改成重播啟動時錄好的 `Picture`。兩輪的驅動方式、運動模型與計數的程式相同。下文的「輪」指場景，「次」指同一個場景重跑。每一輪的第二次，`flutter run` 印出 `Failed to foreground app; open returned 1`，app 視窗沒有被帶到最前面；兩次的幀數與每幀柵格化時間相近。
 
-這篇是一次可以重做的量測：用程式畫出一棵拆成葉叢的橡樹與一棵拆成枝層的松樹，讓五種驅動方式共用同一個運動模型，分別是不動（static）、`AnimationController` 每個 [vsync](/ux-design/knowledge-cards/vsync/) 都算（smooth）、`Ticker` 每個 vsync 醒而姿勢 100 ms 才換（tickerStepped）、`Timer` 每 100 ms 算一次（timerStepped）、事件來了才起 `Timer`（eventDriven）；app 用 `addPersistentFrameCallback`、`addTimingsCallback` 與 `CustomPainter.paint` 的計數量每一種方式一秒跑幾次 framework frame、raster frame 與繪製，另外每秒取樣一次行程的 CPU 使用率；接著是兩次實測的結果與量測前預測的對照、跟簡化樹那一輪的對照（兩輪之間場景的造型、畫面大小與繪製方式同時改變，各種驅動方式的每幀 build、柵格化時間與 CPU 取樣各自怎麼變），以及 tickerStepped 為什麼繪製次數降了、柵格化次數沒有降；完整的 `lib/main.dart` 附在文末。運動模型本身的設計（事件觸發、位置相位、中心穩邊緣鬆）與這個結果在 App 設計上的意義，寫在〔[App 裡的裝飾性動畫：事件觸發的運動模型與重繪成本](/ux-design/06-interaction-feedback/event-driven-ambient-motion/)〕。
+這篇是一次可以重做的量測：用程式畫出一棵拆成葉叢（clump：樹冠拆成一團一團、各自位移的葉子圖塊）的橡樹與一棵拆成枝層的松樹，讓五種驅動方式共用同一個運動模型，分別是不動（static）、`AnimationController` 每個 [vsync](/ux-design/knowledge-cards/vsync/) 都算（smooth）、`Ticker` 每個 vsync 醒而姿勢 100 ms 才換（tickerStepped）、`Timer` 每 100 ms 算一次（timerStepped）、事件來了才起 `Timer`（eventDriven）；app 用 `addPersistentFrameCallback`、`addTimingsCallback` 與 `CustomPainter.paint` 的計數量每一種方式一秒跑幾次 framework frame、raster frame 與繪製，另外每秒取樣一次行程的 CPU 使用率；接著是兩次實測的結果與量測前預測的對照、跟簡化樹那一輪的對照（兩輪之間場景的造型、畫面大小與繪製方式同時改變，各種驅動方式的每幀 build、柵格化時間與 CPU 取樣各自怎麼變），以及 tickerStepped 為什麼繪製次數降了、柵格化次數沒有降；完整的 `lib/main.dart` 附在文末。運動模型本身的設計（事件觸發、位置相位、中心穩邊緣鬆）與這個結果在 App 設計上的意義，寫在〔[App 裡的裝飾性動畫：事件觸發的運動模型與重繪成本](/ux-design/06-interaction-feedback/event-driven-ambient-motion/)〕。
 
 ## 量測需要的環境：Flutter SDK、Mac 與螢幕更新率
 
@@ -61,7 +61,7 @@ void main() {
 ```
 
 - **framework frame**：`addPersistentFrameCallback` 註冊的回呼在每一次 `drawFrame` 都會被呼叫一次，所以它數的是 framework 端跑了幾次版面、繪製與合成。
-- **raster frame**：`addTimingsCallback` 收到的每一筆 `FrameTiming` 代表 engine 柵格化並送出了一幀。engine 會批次回報，`SchedulerBinding.addTimingsCallback` 的文件寫的間隔是 profile 與 debug 模式大約 100 ms 一批、release 模式大約 1 秒一批，所以這個數字只拿來算一段時間的總數，不拿來對齊單一幀。`rasterDuration` 與 `buildDuration` 累加起來，除以幀數就是平均每幀的柵格化與 build 時間。
+- **raster frame**：`addTimingsCallback` 收到的每一筆 [`FrameTiming`](/programming/flutter/knowledge-cards/frame-timing/) 代表 engine 柵格化並送出了一幀。engine 會批次回報，`SchedulerBinding.addTimingsCallback` 的文件寫的間隔是 profile 與 debug 模式大約 100 ms 一批、release 模式大約 1 秒一批，所以這個數字只拿來算一段時間的總數，不拿來對齊單一幀。`rasterDuration` 與 `buildDuration` 累加起來，除以幀數就是平均每幀的柵格化與 build 時間。
 - **paint**：在場景的 `CustomPainter.paint` 第一行把計數加一，數的是場景這一層真正重畫了幾次。
 
 `WidgetsFlutterBinding.ensureInitialized()` 要在 `install()` 之前：`SchedulerBinding.instance` 在 binding 建立之前是 null，少了這一行，app 一啟動就在 `Stats.install` 拋出 `Null check operator used on a null value`。這次第一次啟動量測時就停在這個錯誤上。
@@ -75,7 +75,7 @@ void main() {
 - **橡樹**：樹冠由 32 叢葉子組成，七排由上往下排成扁寬的半球，上排先畫、下排後畫，下排疊在上排前面。每一叢是圓形加上三個不同頻率的正弦起伏，邊緣再加每格的雜訊；光從左上來，每叢左上亮、右下暗，右緣與下緣畫最暗的輪廓；色相依整棵樹的左右位置從黃綠漸變到藍綠。內層是整個樹冠往內縮兩格、顏色乘 0.45 的暗色版本，葉叢之間的縫與葉叢移開時露出來（原文是內縮 2 像素、顏色乘 0.55）。樹幹往下漸寬、底部撐開成根，在樹冠下方分岔成枝幹。
 - **松樹**：9 層往下垂的枝層，越往下越寬；每一層上亮下暗，下緣是一束束垂下的針葉。下層先畫、上層後畫，上層的下緣蓋在下層上面，上面幾層之間露出樹幹。原文用 shader 把松樹幹逐列平移，做出彎曲；這裡樹幹不動，只讓枝層擺動。
 
-每一叢（每一層）在啟動時錄成一張 `ui.Picture`，相當於原文「每一叢一張 sprite」；樹幹、內層與草錄成一張背景的 `Picture`。每一幀的繪製是重播一次背景的 `Picture`，再把 41 張葉叢與枝層的 `Picture` 各自依位移平移後重播，不重新計算每一格的顏色。這 41 張 `Picture` 都畫進同一個 `CustomPainter`，所以整個場景在圖層樹裡只有一個圖層。
+每一叢（每一層）在啟動時錄成一張 [`ui.Picture`](/programming/flutter/knowledge-cards/picture/)，相當於原文「每一叢一張 sprite」；樹幹、內層與草錄成一張背景的 `Picture`。每一幀的繪製是重播一次背景的 `Picture`，再把 41 張葉叢與枝層的 `Picture` 各自依位移平移後重播，不重新計算每一格的顏色。這 41 張 `Picture` 都畫進同一個 `CustomPainter`，所以整個場景在圖層樹裡只有一個圖層。
 
 每一叢帶一個權重：橡樹是 0.35 + 0.65 × (葉叢中心到樹冠中心的距離 ÷ 34 格)，上限 1.0，中心穩、邊緣鬆；34 格是這次取的正規化距離，大約是樹冠中心到外圈葉叢的距離，再外面的葉叢權重都是 1.0；松樹是 0.35 + 0.65 × 這一層的相對高度，越高的層擺得越多，用來模擬原文樹幹上段彎曲、枝層跟著移動的效果。原文只寫了橡樹的權重從中心的 0.35 線性增加到邊緣的 1.0。位移的公式取自原文：
 
@@ -122,7 +122,7 @@ class Spring {
 
 `settled` 的門檻 0.05 是這次取的值，沒有比較其他值；它比取整的門檻 0.5 小一個數量級，程式判定彈簧靜止時，取整之後的位移一定已經是 0。
 
-`CustomPainter.shouldRepaint` 比較新舊兩組位移，完全相同就回 false：姿勢沒變時，framework 即使跑了一幀也不會重畫這一層。場景包在 `RepaintBoundary` 裡，場景這一層重畫時不會連帶重畫畫面上的其他元件。
+`CustomPainter.shouldRepaint` 比較新舊兩組位移，完全相同就回 false：姿勢沒變時，framework 即使跑了一幀也不會重畫這一層。場景包在 [`RepaintBoundary`](/programming/flutter/knowledge-cards/repaint-boundary/) 裡，場景這一層重畫時不會連帶重畫畫面上的其他元件。
 
 ## 驅動方式：static、smooth、tickerStepped、timerStepped、eventDriven
 
@@ -270,7 +270,7 @@ tickerStepped 跟 smooth 每一幀做的工作，差在姿勢計算、rebuild �
 - **60 Hz 螢幕上的差距**：smooth 與 tickerStepped 的幀數會降到每秒 60 次左右，timerStepped 與 eventDriven 不受螢幕更新率影響，所以前兩種與 timerStepped 的幀數比會從 144 ÷ 10.1 ≈ 14 倍縮小到 60 ÷ 10.1 ≈ 6 倍（從機制推論，這次沒有在 60 Hz 螢幕上跑）。CPU 的差距會比幀數比小，原因同〈跟簡化樹那一輪的對照〉裡低幀率時每幀柵格化比較長那一條（推論）。
 - **合成器動畫**：Flutter 的動畫由 framework 在 Dart 端每幀驅動，沒有交給平台合成器的路徑，所以這次沒有對照 CSS `transform` 動畫或 Core Animation 的版本。
 - **減少動態的設定**：這個 demo 沒有讀減少動態的設定；實際的 App 在 `MediaQuery.disableAnimationsOf(context)` 為 true 時，不起陣風，或只換顏色（〔[App 裡的裝飾性動畫：事件觸發的運動模型與重繪成本](/ux-design/06-interaction-feedback/event-driven-ambient-motion/)〕的〈減少動態的系統設定與 WCAG 2.2.2〉）。
-- **macOS 的 merged thread**：這次的 Flutter 在 macOS 上預設把 UI 執行緒與平台執行緒合併（啟動 log 印出 `Running with merged UI and platform thread. Experimental.`），合併之後，Dart 的 build 與平台的事件處理跑在同一條執行緒上，柵格化在另一條 raster 執行緒上（從 log 的訊息與 Flutter 的執行緒模型推論）；`ps` 量到的是整個行程的 CPU，不分執行緒。要分清 build 與柵格化各自用掉多少 CPU，要用 DevTools 的 timeline 或 Xcode Instruments，這次沒有做。
+- **macOS 的 merged thread**：這次的 Flutter 在 macOS 上預設把 UI 執行緒與平台執行緒合併（各執行緒負責什麼見 [Flutter Thread Model](/programming/flutter/knowledge-cards/flutter-thread-model/)）（啟動 log 印出 `Running with merged UI and platform thread. Experimental.`），合併之後，Dart 的 build 與平台的事件處理跑在同一條執行緒上，柵格化在另一條 raster 執行緒上（從 log 的訊息與 Flutter 的執行緒模型推論）；`ps` 量到的是整個行程的 CPU，不分執行緒。要分清 build 與柵格化各自用掉多少 CPU，要用 DevTools 的 timeline 或 Xcode Instruments，這次沒有做。
 
 ## 附錄：完整的 `lib/main.dart`
 
