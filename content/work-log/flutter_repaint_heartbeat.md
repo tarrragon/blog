@@ -160,7 +160,7 @@ class _FramePumpState extends State<FramePump> {
 
 - **驅動的是 tick、不是顏色**：`setState(() => _tick++)` 讓 widget dirty、排一個 frame，`shouldRepaint` 比對 tick（每次必變）觸發 paint。上面兩個 `const` 顏色交替其實可省——`shouldRepaint` 根本沒看顏色，而且 present 出去的是整張重新合成的 frame，引擎不會因為某層像素相同就跳過呈現。要更精簡就用前面的 `scheduleFrame` 版、連 CustomPaint 都不需要。
 - **要隱形**：1px、alpha 只有 `0x01`（近乎全透明），肉眼看不出。
-- **頻率**：200ms（約 5fps）通常就夠讓內容變化即時呈現，不必 60fps 狂刷。
+- **頻率**：200ms（約 5fps）通常就夠讓內容變化即時呈現，不必 60fps 狂刷。`Timer` 每 100 ms 排一幀時，整條渲染管線一秒跑 10 次左右，同一類驅動器的幀數與 CPU 實測見[Flutter 裝飾性動畫的驅動方式比較：AnimationController、Ticker、Timer 與事件觸發的 frame 數與 CPU 量測](/programming/flutter/hands-on/ambient-motion-frame-cost/)的 timerStepped。
 - **`IgnorePointer`**：避免這層攔截觸控。
 - **背景不排 frame**：`scheduleFrame` 受 `framesEnabled` 約束，app 進背景時不會排——前景播放的情境沒問題，若真要不論可見性都推 frame 才需 `scheduleForcedFrame()`。
 

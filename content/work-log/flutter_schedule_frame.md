@@ -32,7 +32,7 @@ tags: ["flutter", "rendering"]
 
 - `setState` / `markNeedsBuild` → `ensureVisualUpdate` → `scheduleFrame`
 - `markNeedsLayout` / `markNeedsPaint` → 同上
-- `Ticker`（動畫）每個 vsync → `scheduleFrameCallback` → `scheduleFrame`
+- `Ticker`（動畫）每個 vsync → `scheduleFrameCallback` → `scheduleFrame`；回呼裡沒有呼叫 `setState` 也照樣每個 vsync 排一幀、柵格化一次，144 Hz 螢幕上的實測在[Flutter 裝飾性動畫的驅動方式比較：AnimationController、Ticker、Timer 與事件觸發的 frame 數與 CPU 量測](/programming/flutter/hands-on/ambient-motion-frame-cost/)
 
 所以 `scheduleFrame()` 是「我有內容要畫」與「平台 vsync 驅動的 frame 生產」之間的橋樑，是最原始那顆按鈕。上層那些 dirty-marking API 只是替你在對的時機按它。
 

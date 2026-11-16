@@ -32,7 +32,7 @@ tags: ["ux-design", "interaction-feedback", "response-time", "perceived-performa
 
 原始研究發現：當電腦回應時間低於 400ms 時，使用者的操作效率大幅提升 — 人機互動進入一種「流暢循環」，雙方都不需要等對方。超過 400ms，這個循環被打斷。
 
-**設計策略**：400ms 以內完成的操作可省略 loading indicator — 把生產力門檻讀成回饋門檻是 Laws of UX 等現代整理的轉譯、本篇沿用。可以用動畫過渡（fade in、slide）讓結果「出現」而非「替換」，利用動畫時間掩蓋等待感。
+**設計策略**：400ms 以內完成的操作可省略 loading indicator — 把生產力門檻讀成回饋門檻是 Laws of UX 等現代整理的轉譯、本篇沿用。可以用動畫過渡（fade in、slide）讓結果「出現」而非「替換」，利用動畫時間掩蓋等待感。過渡動畫跑完要停下驅動器，減少動態的系統設定開著時改成直接顯示，成本與處置見[App 裡的裝飾性動畫：事件觸發的運動模型與重繪成本](../event-driven-ambient-motion/)。
 
 **適用**：快速 API 回應、本地資料庫查詢、簡單計算。
 
