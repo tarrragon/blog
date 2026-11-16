@@ -40,13 +40,15 @@ SpriteCook 在〈[Pixel art trees in the wind](https://www.spritecook.ai/blog/pi
 
 ## 重繪成本與動畫驅動器的排幀頻率
 
-**渲染管線**指 App 從「有內容要更新」到「新的一幀（frame）出現在螢幕上」這一整串工作：重新計算版面、繪製、合成圖層、交給 GPU 柵格化（raster）。**動畫驅動器**指定時叫 App 算出下一個姿勢、並要求渲染管線排下一幀的機制，例如每一幀的回呼或計時器。Flutter、瀏覽器、iOS 的 UIKit 都是按需重繪的 UI 框架：畫面沒有東西要更新、也沒有驅動器要求下一幀時，不產生新的一幀。動畫驅動器每要求一幀，App 就要跑一次渲染管線，所以裝飾性動畫的成本主要看驅動器多常要求下一幀。渲染管線是整個畫面共用的：同一個畫面上只要有一個驅動器在每個 vsync 要求下一幀，整個畫面就每個 vsync 跑一次。
+**渲染管線**指 App 從「有內容要更新」到「新的一幀（frame）出現在螢幕上」這一整串工作：重新計算版面、繪製、合成圖層、交給 GPU 柵格化（raster）。**動畫驅動器**指定時叫 App 算出下一個姿勢、並要求渲染管線排下一幀的機制，例如每一幀的回呼或計時器。Flutter、瀏覽器、iOS 的 UIKit 都是按需重繪的 UI 框架：畫面沒有內容要更新、也沒有驅動器要求下一幀時，不產生新的一幀。動畫驅動器每要求一幀，App 就要跑一次渲染管線，所以裝飾性動畫的成本先看驅動器多常要求下一幀，再看每一幀花多久。渲染管線是整個畫面共用的：同一個畫面上只要有一個驅動器在每個 vsync 要求下一幀，整個畫面就每個 vsync 跑一次。
 
 各平台讓動畫的回呼在每一幀被呼叫一次的機制都綁在螢幕的垂直同步（vsync）上：Flutter 的 `Ticker`、Web 的 `requestAnimationFrame`、iOS 的 `CADisplayLink`、Android 的 `Choreographer`。這些機制的預設行為是螢幕每刷新一次就呼叫一次，螢幕是 60 Hz 就一秒 60 次，是 120 Hz 或 144 Hz 就一秒 120 或 144 次。iPhone 的 ProMotion 螢幕是例外：開發者沒有在 App 的 Info.plist 設 `CADisableMinimumFrameDurationOnPhone` 時，`CADisplayLink` 最高只到 60 Hz（Apple〈Optimizing ProMotion refresh rates for iPhone 13 Pro and iPad Pro〉）。這個預設服務的情境是要平滑的動畫：每一幀都算出新的位置，動作才不會一格一格跳。
 
 原文把姿勢降到一秒換 10 次，省掉的是繪製：葉叢的圖層一秒只重畫 10 次。彈簧「每一幀都更新」這一條則需要一個每個 vsync 都觸發的驅動器。以 Flutter 為例，啟動中的 `Ticker` 每個 vsync 都排一幀，而 framework 每跑一幀，不論內容有沒有改變，都會把圖層樹合成並送去柵格化，所以照原文的寫法搬進 Flutter，繪製次數降到每秒 10 次，合成與柵格化仍然跟著螢幕更新率跑。這兩段行為在 Flutter 原始碼裡的位置，以及量測的程式碼，寫在〔[Flutter 裝飾性動畫的驅動方式比較](/programming/flutter/hands-on/ambient-motion-frame-cost/)〕的〈讀法：tickerStepped 的繪製次數與柵格化次數〉。
 
-作者在那一篇用 macOS 桌面版的 profile 模式、144 Hz 的螢幕量到下面這組數字。每個 vsync 都算的 `AnimationController` 版本，繪製與柵格化都是每秒約 144 次；`Ticker` 驅動、姿勢 100 ms 才換一次的版本，繪製降到每秒 9.2 次，柵格化仍是每秒約 144 次；改成 `Timer` 每 100 ms 算一次姿勢、姿勢有變才要求重繪，繪製與柵格化都降到每秒 10 次左右。CPU 取樣（`ps` 對整個行程取的衰減平均，只用來比大小）在前兩種是 30% 到 68% 之間、範圍互相重疊，`Timer` 版本是 3% 到 6%。所以在這台 144 Hz 的桌面上，減少驅動器要求下一幀的次數，CPU 降了一個數量級；只減少繪製次數，CPU 的差別落在取樣的雜訊範圍內。這個場景每次繪製只有幾百個方塊，繪製本身很便宜；繪製成本高的插圖（大量 path、模糊、shader），減少繪製省下的時間會比這裡多，這次沒有量。60 Hz 的螢幕上，兩種驅動器的幀數差距從機制推論會縮到約 6 倍；手機的耗電沒有量。
+〔[Flutter 裝飾性動畫的驅動方式比較](/programming/flutter/hands-on/ambient-motion-frame-cost/)〕在 macOS 桌面版的 profile 模式、144 Hz 的螢幕，用一棵橡樹與一棵松樹的像素場景量到下面這組數字。每個 vsync 都算的 `AnimationController` 版本，繪製與柵格化都是每秒約 144 次；`Ticker` 驅動、姿勢 100 ms 才換一次的版本，繪製降到每秒 9.7 次，柵格化仍是每秒約 144 次；改成 `Timer` 每 100 ms 算一次姿勢、姿勢有變才要求重繪，繪製與柵格化都降到每秒 10 次左右。CPU 取樣（`ps` 對整個行程取的衰減平均，只用來比大小）在前兩種都是 58% 到 68% 之間，`Timer` 版本是 11% 到 16%。所以在這台 144 Hz 的桌面上，減少驅動器要求下一幀的次數，CPU 取樣的平均從約 63% 降到約 13%，約五分之一，比幀數降的比例（約十四分之一）小；只減少繪製次數，CPU 的差別落在取樣的雜訊範圍內。60 Hz 的螢幕上，每個 vsync 都排幀的驅動器跟 `Timer` 的幀數差距，從機制推論會縮到約 6 倍；手機的耗電沒有量。
+
+省下的比例依場景而變：〔[Flutter 裝飾性動畫的驅動方式比較](/programming/flutter/hands-on/ambient-motion-frame-cost/)〕另外用畫面較小、每一幀逐格畫方塊的簡化樹量了一輪，`Timer` 版本的 CPU 降到約十三分之一。兩輪之間場景的造型、畫面大小與繪製方式同時改變，比例差在哪裡、每一幀的 build 與柵格化時間怎麼變，寫在那一篇的〈跟簡化樹那一輪的對照〉。繪製時要即時計算大量 path、模糊或 shader 的插圖，減少繪製省下的時間會比這兩個場景多，這次沒有量。
 
 依驅動器要求下一幀的頻率，可以分出下面這幾種驅動方式與它們的成本：
 
@@ -105,4 +107,4 @@ WCAG 2.2 的成功準則 2.2.2（Pause, Stop, Hide）寫的是 Web 內容；W3C 
 - **平台有合成器動畫**（Web 的 CSS `transform` 與 Web Animations API、iOS 的 Core Animation）時，開發者可以把持續的平滑動作交給合成器，主執行緒的負擔低；Flutter 沒有這條路，持續的平滑動作就是每個 vsync 都跑一次渲染管線。
 - **元件在 App 畫面內**時，開發者可以自己選驅動器。在系統桌面小工具上，App 自己畫的部分只剩換畫面那一刻的轉場，時鐘與倒數交給系統元件。
 
-量成本時，判讀的對象是渲染管線一秒跑幾次（Flutter 的 `FrameTiming`，取法在〔[Flutter 裝飾性動畫的驅動方式比較](/programming/flutter/hands-on/ambient-motion-frame-cost/)〕；Chrome Performance 面板的 frame 列；Xcode Instruments 的動畫相關工具），繪製次數只反映其中一段。原文的「每秒換 10 次姿勢」只保證了繪製次數，柵格化次數取決於驅動器是哪一種。
+量成本時，判讀的對象是渲染管線一秒跑幾次，以及每一次花多久（Flutter 的 `FrameTiming` 的 `buildDuration` 與 `rasterDuration`，取法在〔[Flutter 裝飾性動畫的驅動方式比較](/programming/flutter/hands-on/ambient-motion-frame-cost/)〕；Chrome Performance 面板的 frame 列；Xcode Instruments 的動畫相關工具），繪製次數只反映其中一段。成本降的比例可能比幀數降的比例小：那一篇的橡樹與松樹場景裡，`Timer` 版本的幀數約是每個 vsync 排幀版本的十四分之一，CPU 取樣約是五分之一，因為低幀率時平均每一幀的柵格化時間比較長。原文的「每秒換 10 次姿勢」只保證了繪製次數，柵格化次數取決於驅動器是哪一種。
