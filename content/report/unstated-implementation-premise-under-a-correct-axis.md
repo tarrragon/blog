@@ -66,3 +66,4 @@ slug: "unstated-implementation-premise-under-a-correct-axis"
 - [#248 推翻假說之後，替補解釋不會自動繼承嚴格度](../hypothesis-replacement-inherits-no-scrutiny/)：前提顯形並被換掉之後，新的實作形態同樣沒有被檢驗過，適用該卡的處理。
 - [#241 判讀內容要給情境與後果](../judgment-content-needs-triggering-scenarios/)：未顯形的前提會讓判讀內容的適用邊界說不清楚——讀者無法判斷自己的情境在不在射程內，因為射程由一個他看不到的假設劃定。
 - [#297 判斷標準只收表徵，把產生表徵的那個條件從輸入端折疊掉](../criteria-fold-away-the-condition-that-produces-the-symptom/)：那張卡的「處置預設了某一種執行環境」是本卡所說前提的一個實例，而它補上了本卡缺的偵測入口——數判斷標準的分支數與正文列出的種類數，落差直接指出有前提沒被寫出來，比等 steelman 想到去質疑一個沒說出口的東西便宜。
+- [#397 判斷標準的條件只寫元件自己的屬性，漏掉元件被放進去的環境](../criteria-describe-the-component-and-miss-its-environment/)：前提是「元件獨佔它的環境」時，那個前提不在正文裡，數分支找不到它；那張卡給出往共用的資源、並排的鄰居、宿主的路徑三個方向問的偵測入口。

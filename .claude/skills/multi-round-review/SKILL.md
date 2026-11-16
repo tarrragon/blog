@@ -4,7 +4,7 @@ description: "寫多篇章節後做多輪 agent reviewer audit 的標準流程�
 license: MIT
 metadata:
   portable: true
-  version: 2.44.0
+  version: 2.45.0
   category: writing-methodology
 ---
 
@@ -124,7 +124,7 @@ Round 1-3 是硬底線，但每一輪裡的 frame 不是全部都跑。主 sessi
 | 3-D Persona / 3-E Search landing       | 對象是教材或模組                                           | 單篇不適用                                                                                                           |
 | 3-F 誤用梯度                           | 審查對象是規則 / 協議 / 規範 / 流程                        | 對象本身要被別人照著執行就跑                                                                                         |
 | 3-G 共同前提                           | 一批三篇以上                                               | 單篇不適用                                                                                                           |
-| 3-H 個案實跑                           | 內容含判斷標準（判定序、分類法、選型三問）                 | 判斷標準型必跑                                                                                                       |
+| 3-H 個案實跑                           | 內容含判斷標準（判定序、分類法、選型三問）                 | 判斷標準型必跑；派發前另照 3-H 裡「判斷標準以單一元件（或並排比較的幾個候選）為主角時」那一段的留意項判一次，判成是時請 3-H reviewer 寫環境個案 |
 | 3-I 規則類文件的職責稽核               | 審查對象是會持續累積的規則檔（規範、agent 指令、skill 檔） | 看對象有沒有版本歷史、是不是一直有人加條目；一次性的規則文件不跑                                                     |
 
 ## 每個 reviewer 的 prompt 都要指定的事
