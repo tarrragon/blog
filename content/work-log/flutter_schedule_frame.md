@@ -11,11 +11,11 @@ tags: ["flutter", "rendering"]
 
 ## Flutter 是「按需 render」
 
-一個關鍵前提：**Flutter 預設按需 render——畫面靜止時根本不產生新的 frame**（省 CPU/GPU/電），不是持續 60fps 在畫。那「什麼時候該畫」怎麼決定？就靠 `scheduleFrame()`。
+一個關鍵前提：**Flutter 預設按需 render——畫面靜止時根本不產生新的 frame**（省 CPU/GPU/電；概念見 [On-demand Rendering（按需重繪）](/ux-design/knowledge-cards/on-demand-rendering/)），不是持續 60fps 在畫。那「什麼時候該畫」怎麼決定？就靠 `scheduleFrame()`。
 
 `WidgetsBinding.instance.scheduleFrame()` 是 `SchedulerBinding`（被 mixin 進 `WidgetsBinding`）上的**底層原語**，語意是：
 
-> 跟引擎登記——請在下一個 vsync 回叫我一次，我要產生一個 frame。
+> 跟引擎登記——請在下一個 [vsync](/ux-design/knowledge-cards/vsync/) 回叫我一次，我要產生一個 frame。
 
 流程：
 

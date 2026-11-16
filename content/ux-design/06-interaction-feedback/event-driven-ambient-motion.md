@@ -40,9 +40,9 @@ SpriteCook 在〈[Pixel art trees in the wind](https://www.spritecook.ai/blog/pi
 
 ## 重繪成本與動畫驅動器的排幀頻率
 
-**渲染管線**指 App 從「有內容要更新」到「新的一幀（frame）出現在螢幕上」這一整串工作：重新計算版面、繪製、合成圖層、交給 GPU 柵格化（raster）。**動畫驅動器**指定時叫 App 算出下一個姿勢、並要求渲染管線排下一幀的機制，例如每一幀的回呼或計時器。Flutter、瀏覽器、iOS 的 UIKit 都是按需重繪的 UI 框架：畫面沒有內容要更新、也沒有驅動器要求下一幀時，不產生新的一幀。動畫驅動器每要求一幀，App 就要跑一次渲染管線，所以裝飾性動畫的成本先看驅動器多常要求下一幀，再看每一幀花多久。渲染管線是整個畫面共用的：同一個畫面上只要有一個驅動器在每個 vsync 要求下一幀，整個畫面就每個 vsync 跑一次。
+**渲染管線**指 App 從「有內容要更新」到「新的一幀（frame）出現在螢幕上」這一整串工作：重新計算版面、繪製、合成圖層、交給 GPU 柵格化（raster）。**動畫驅動器**指定時叫 App 算出下一個姿勢、並要求渲染管線排下一幀的機制，例如每一幀的回呼或計時器。Flutter、瀏覽器、iOS 的 UIKit 都是[按需重繪](/ux-design/knowledge-cards/on-demand-rendering/)的 UI 框架：畫面沒有內容要更新、也沒有驅動器要求下一幀時，不產生新的一幀。動畫驅動器每要求一幀，App 就要跑一次渲染管線，所以裝飾性動畫的成本先看驅動器多常要求下一幀，再看每一幀花多久。渲染管線是整個畫面共用的：同一個畫面上只要有一個驅動器在每個 vsync 要求下一幀，整個畫面就每個 vsync 跑一次。
 
-各平台讓動畫的回呼在每一幀被呼叫一次的機制都綁在螢幕的垂直同步（vsync）上：Flutter 的 `Ticker`、Web 的 `requestAnimationFrame`、iOS 的 `CADisplayLink`、Android 的 `Choreographer`。這些機制的預設行為是螢幕每刷新一次就呼叫一次，螢幕是 60 Hz 就一秒 60 次，是 120 Hz 或 144 Hz 就一秒 120 或 144 次。iPhone 的 ProMotion 螢幕是例外：開發者沒有在 App 的 Info.plist 設 `CADisableMinimumFrameDurationOnPhone` 時，`CADisplayLink` 最高只到 60 Hz（Apple〈Optimizing ProMotion refresh rates for iPhone 13 Pro and iPad Pro〉）。這個預設服務的情境是要平滑的動畫：每一幀都算出新的位置，動作才不會一格一格跳。
+各平台讓動畫的回呼在每一幀被呼叫一次的機制都綁在螢幕的[垂直同步（vsync）](/ux-design/knowledge-cards/vsync/)上：Flutter 的 `Ticker`、Web 的 `requestAnimationFrame`、iOS 的 `CADisplayLink`、Android 的 `Choreographer`。這些機制的預設行為是螢幕每刷新一次就呼叫一次，螢幕是 60 Hz 就一秒 60 次，是 120 Hz 或 144 Hz 就一秒 120 或 144 次。iPhone 的 ProMotion 螢幕是例外：開發者沒有在 App 的 Info.plist 設 `CADisableMinimumFrameDurationOnPhone` 時，`CADisplayLink` 最高只到 60 Hz（Apple〈Optimizing ProMotion refresh rates for iPhone 13 Pro and iPad Pro〉）。這個預設服務的情境是要平滑的動畫：每一幀都算出新的位置，動作才不會一格一格跳。
 
 原文把姿勢降到一秒換 10 次，省掉的是繪製：葉叢的圖層一秒只重畫 10 次。彈簧「每一幀都更新」這一條則需要一個每個 vsync 都觸發的驅動器。以 Flutter 為例，啟動中的 `Ticker` 每個 vsync 都排一幀，而 framework 每跑一幀，不論內容有沒有改變，都會把圖層樹合成並送去柵格化，所以照原文的寫法搬進 Flutter，繪製次數降到每秒 10 次，合成與柵格化仍然跟著螢幕更新率跑。這兩段行為在 Flutter 原始碼裡的位置，以及量測的程式碼，寫在〔[Flutter 裝飾性動畫的驅動方式比較](/programming/flutter/hands-on/ambient-motion-frame-cost/)〕的〈讀法：tickerStepped 的繪製次數與柵格化次數〉。
 

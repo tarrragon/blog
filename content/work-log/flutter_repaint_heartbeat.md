@@ -15,7 +15,7 @@ tags: ["flutter", "rendering", "platform-view"]
 
 ## 原因
 
-Flutter 是**按需重繪**：有內容要求時才排下一個 frame 去 build → paint → 合成 → 呈現（排 frame 的底層原語是 `scheduleFrame()`，設計意義見 [scheduleFrame()：按需 render 的最底層原語](../flutter_schedule_frame/)）。會要求排 frame 的來源有好幾種——widget 被標記 dirty（`setState`、動畫、依賴變更）、animation ticker 的每個 vsync、以及**外部 `Texture` 產生新影格時引擎自動排 frame**（Android 端 `SurfaceTexture` 的 frame-available 會通知引擎 `scheduleFrame`）。所以正常情況下，影片 / texture 這類平台端內容更新，是會驅動重繪的。
+Flutter 是[**按需重繪**](/ux-design/knowledge-cards/on-demand-rendering/)：有內容要求時才排下一個 frame 去 build → paint → 合成 → 呈現（排 frame 的底層原語是 `scheduleFrame()`，設計意義見 [scheduleFrame()：按需 render 的最底層原語](../flutter_schedule_frame/)）。會要求排 frame 的來源有好幾種——widget 被標記 dirty（`setState`、動畫、依賴變更）、animation ticker 的每個 [vsync](/ux-design/knowledge-cards/vsync/)、以及**外部 `Texture` 產生新影格時引擎自動排 frame**（Android 端 `SurfaceTexture` 的 frame-available 會通知引擎 `scheduleFrame`）。所以正常情況下，影片 / texture 這類平台端內容更新，是會驅動重繪的。
 
 畫面落後邏輯狀態，發生在「該更新」這個訊號**沒有傳到 Flutter 的 frame 排程**。實際根因通常是這兩類，而不是「平台內容一律不驅動重繪」：
 

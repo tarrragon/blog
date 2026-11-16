@@ -8,7 +8,7 @@ tags: ["flutter", "animation", "rendering", "performance", "hands-on"]
 
 2026-11-16 在一台 macOS 15（Darwin 24.3）的 Mac 上做的量測：Flutter 3.41.3（Dart 3.11.1），以 profile 模式跑 macOS 桌面版，app 視窗開在一台更新率 144 Hz 的外接螢幕上。當時在驗證一個預期：把像素遊戲裡「樹被風吹動」的做法搬進 App 時，姿勢一秒只換 10 次能不能讓渲染管線也一秒只跑 10 次。同一天換了兩個場景各量一輪，每一輪用同一份程式跑兩次自動量測：簡化樹那一輪用一棵 48 × 56 格、14 叢葉子的樹，畫面 288 × 336 邏輯點，每一幀逐格畫方塊；橡樹與松樹那一輪把場景換成造型接近原文截圖的一棵橡樹與一棵松樹，畫面放大到 672 × 400 邏輯點，繪製改成重播啟動時錄好的 `Picture`。兩輪的驅動方式、運動模型與計數的程式相同。下文的「輪」指場景，「次」指同一個場景重跑。每一輪的第二次，`flutter run` 印出 `Failed to foreground app; open returned 1`，app 視窗沒有被帶到最前面；兩次的幀數與每幀柵格化時間相近。
 
-這篇是一次可以重做的量測：用程式畫出一棵拆成葉叢的橡樹與一棵拆成枝層的松樹，讓五種驅動方式共用同一個運動模型，分別是不動（static）、`AnimationController` 每個 vsync 都算（smooth）、`Ticker` 每個 vsync 醒而姿勢 100 ms 才換（tickerStepped）、`Timer` 每 100 ms 算一次（timerStepped）、事件來了才起 `Timer`（eventDriven）；app 用 `addPersistentFrameCallback`、`addTimingsCallback` 與 `CustomPainter.paint` 的計數量每一種方式一秒跑幾次 framework frame、raster frame 與繪製，另外每秒取樣一次行程的 CPU 使用率；接著是兩次實測的結果與量測前預測的對照、跟簡化樹那一輪的對照（兩輪之間場景的造型、畫面大小與繪製方式同時改變，各種驅動方式的每幀 build、柵格化時間與 CPU 取樣各自怎麼變），以及 tickerStepped 為什麼繪製次數降了、柵格化次數沒有降；完整的 `lib/main.dart` 附在文末。運動模型本身的設計（事件觸發、位置相位、中心穩邊緣鬆）與這個結果在 App 設計上的意義，寫在〔[App 裡的裝飾性動畫：事件觸發的運動模型與重繪成本](/ux-design/06-interaction-feedback/event-driven-ambient-motion/)〕。
+這篇是一次可以重做的量測：用程式畫出一棵拆成葉叢的橡樹與一棵拆成枝層的松樹，讓五種驅動方式共用同一個運動模型，分別是不動（static）、`AnimationController` 每個 [vsync](/ux-design/knowledge-cards/vsync/) 都算（smooth）、`Ticker` 每個 vsync 醒而姿勢 100 ms 才換（tickerStepped）、`Timer` 每 100 ms 算一次（timerStepped）、事件來了才起 `Timer`（eventDriven）；app 用 `addPersistentFrameCallback`、`addTimingsCallback` 與 `CustomPainter.paint` 的計數量每一種方式一秒跑幾次 framework frame、raster frame 與繪製，另外每秒取樣一次行程的 CPU 使用率；接著是兩次實測的結果與量測前預測的對照、跟簡化樹那一輪的對照（兩輪之間場景的造型、畫面大小與繪製方式同時改變，各種驅動方式的每幀 build、柵格化時間與 CPU 取樣各自怎麼變），以及 tickerStepped 為什麼繪製次數降了、柵格化次數沒有降；完整的 `lib/main.dart` 附在文末。運動模型本身的設計（事件觸發、位置相位、中心穩邊緣鬆）與這個結果在 App 設計上的意義，寫在〔[App 裡的裝飾性動畫：事件觸發的運動模型與重繪成本](/ux-design/06-interaction-feedback/event-driven-ambient-motion/)〕。
 
 ## 量測需要的環境：Flutter SDK、Mac 與螢幕更新率
 
@@ -262,7 +262,7 @@ tickerStepped 的繪製降到每秒 9.7 次，framework frame 與 raster frame �
 
 tickerStepped 跟 smooth 每一幀做的工作，差在姿勢計算、rebuild 與繪製：smooth 每個 vsync 都做這三件事；tickerStepped 的 `Ticker` 回呼每個 vsync 也會執行一次，但距離上次換姿勢不到 100 ms 時直接返回，所以場景這一層一秒只重畫 9 到 10 次，整個畫面的合成與柵格化仍然一秒 144 次。兩者每一幀柵格化的是結構相同的圖層樹，平均每幀的柵格化時間也相近（tickerStepped 3.89 與 3.99 ms，smooth 3.73 與 3.71 ms）。CPU 取樣的範圍互相重疊（smooth 58% 到 65%，tickerStepped 58% 到 68%），所以在橡樹與松樹的場景裡，只減少繪製次數，CPU 的差別落在取樣的雜訊範圍內。這個場景的繪製是重播啟動時錄好的 `Picture`，錄製的成本在啟動時就付掉了：smooth 每幀的 build 是 0.38 ms，只佔每幀時間的一小段；3.7 ms 的柵格化是牆鐘時間，含等 GPU 排程的時間，CPU 花在哪一段要分執行緒量（見〈未量測的範圍〉）；繪製時要即時計算大量 path、模糊或 shader 的插圖，減少繪製省下的時間會比這裡多，這次沒有量。
 
-把驅動器換成 `Timer`（timerStepped）之後，沒有任何驅動器在每個 vsync 排幀，三個計數一起降到每秒 10 次左右，在橡樹與松樹的場景，CPU 取樣降到約五分之一（簡化樹那一輪約十三分之一，兩輪的差別在〈跟簡化樹那一輪的對照〉）。事件觸發的版本再把事件之間的那幾秒也降到 0。低頻驅動省下渲染管線次數的這個結果，對照遊戲引擎與按需重繪的 UI 框架的差別，寫在〔[App 裡的裝飾性動畫：事件觸發的運動模型與重繪成本](/ux-design/06-interaction-feedback/event-driven-ambient-motion/)〕的〈重繪成本與動畫驅動器的排幀頻率〉。
+把驅動器換成 `Timer`（timerStepped）之後，沒有任何驅動器在每個 vsync 排幀，三個計數一起降到每秒 10 次左右，在橡樹與松樹的場景，CPU 取樣降到約五分之一（簡化樹那一輪約十三分之一，兩輪的差別在〈跟簡化樹那一輪的對照〉）。事件觸發的版本再把事件之間的那幾秒也降到 0。低頻驅動省下渲染管線次數的這個結果，對照遊戲引擎與[按需重繪](/ux-design/knowledge-cards/on-demand-rendering/)的 UI 框架的差別，寫在〔[App 裡的裝飾性動畫：事件觸發的運動模型與重繪成本](/ux-design/06-interaction-feedback/event-driven-ambient-motion/)〕的〈重繪成本與動畫驅動器的排幀頻率〉。
 
 ## 未量測的範圍：手機耗電、60 Hz 螢幕、合成器動畫、執行緒拆分
 
