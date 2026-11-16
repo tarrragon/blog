@@ -23,5 +23,5 @@ Dart 程式做一段耗時的同步計算時，UI 執行緒被佔住，`buildDur
 ## 判斷條件與後果
 
 - **`buildDuration` 超過預算時**，耗時的工作在 UI 執行緒上（rebuild 的範圍太大、同步計算、paint 裡即時算 path），把計算移到 isolate、縮小 rebuild 範圍或把繪圖指令事先錄成 [Picture](/programming/flutter/knowledge-cards/picture/)，減少的是這一段。
-- **`rasterDuration` 超過預算而 `buildDuration` 正常時**，耗時的工作在柵格化，Dart 端的最佳化不影響它；要減少的是每一幀要柵格化的內容（模糊、陰影、大量 path），或排幀的次數。[RepaintBoundary](/programming/flutter/knowledge-cards/repaint-boundary/) 減少的是 UI 執行緒的重畫，柵格化照整個畫面計，它對 `rasterDuration` 的影響要看 engine 有沒有把那個圖層快取起來。
+- **`rasterDuration` 超過預算而 `buildDuration` 正常時**，耗時的工作在柵格化，Dart 端的最佳化不影響它；要減少的是每一幀要柵格化的內容（模糊、陰影、大量 path、很多小圖塊各自重播的繪圖指令），或排幀的次數；內容固定的小圖塊可以預先畫成點陣圖、拼成 [Texture Atlas](/programming/flutter/knowledge-cards/texture-atlas/)。[RepaintBoundary](/programming/flutter/knowledge-cards/repaint-boundary/) 減少的是 UI 執行緒的重畫，柵格化照整個畫面計，它對 `rasterDuration` 的影響要看 engine 有沒有把那個圖層快取起來。
 - **在合併執行緒的平台上**，Dart 端的耗時工作同時延遲平台的事件處理，平台 API 的呼叫回應變慢，跟掉幀一起出現。

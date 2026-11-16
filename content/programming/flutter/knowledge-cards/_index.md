@@ -25,3 +25,4 @@ aliases: ["/flutter/knowledge-cards/"]
 | [Flutter Thread Model](/programming/flutter/knowledge-cards/flutter-thread-model/) | UI、raster 與平台執行緒——耗時的工作落在哪一條、合併執行緒的影響 |
 | [Picture](/programming/flutter/knowledge-cards/picture/)                           | 錄好的繪圖指令——重播省下的是 UI 執行緒，柵格化照做              |
 | [RepaintBoundary](/programming/flutter/knowledge-cards/repaint-boundary/)          | 子樹獨立的繪圖紀錄——隔開重畫，不減少排幀次數                    |
+| [Texture Atlas](/programming/flutter/knowledge-cards/texture-atlas/)               | 一批小圖拼成一張大圖——每一幀的柵格化只剩取樣與貼上              |

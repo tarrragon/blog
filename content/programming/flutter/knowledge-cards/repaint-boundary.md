@@ -25,4 +25,4 @@ Flutter 的 `RenderRepaintBoundary` 文件舉的例子是郵件 App：未讀數�
 
 - **子樹重畫的時機跟周圍不同時**（一個一直在轉的圖示放在靜止的頁面上、一塊每秒更新的數字旁邊是大量靜態內容），包一層邊界，周圍不必跟著重錄，省下的是 UI 執行緒的 paint 時間。
 - **子樹跟周圍總是一起重畫時**，邊界兩邊每一次都要重錄，省不到時間，多出一個圖層的管理成本與記憶體；`debugDumpRenderTree()` 印出的比例裡，沒省下的次數佔多數就是這種情形。
-- **瓶頸在排幀次數或柵格化時**，`RepaintBoundary` 不減少畫面產生幾幀，也不保證減少柵格化的工作；要省這兩項，得讓驅動器少排幀，或減少每一幀要柵格化的內容（[Flutter Thread Model（Flutter 的執行緒模型）](/programming/flutter/knowledge-cards/flutter-thread-model/)）。
+- **瓶頸在排幀次數或柵格化時**，`RepaintBoundary` 不減少畫面產生幾幀，也不保證減少柵格化的工作；要省這兩項，得讓驅動器少排幀，或減少每一幀要柵格化的內容（[Flutter Thread Model（Flutter 的執行緒模型）](/programming/flutter/knowledge-cards/flutter-thread-model/)）；很多個內容固定的小圖塊，可以預先畫成點陣圖、拼成 [Texture Atlas](/programming/flutter/knowledge-cards/texture-atlas/)。

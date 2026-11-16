@@ -12,7 +12,7 @@ App 用 `SchedulerBinding.instance.addTimingsCallback` 註冊回呼取得這些�
 
 ## 跟其他概念的關係
 
-`FrameTiming` 量的是渲染管線每一段花的牆鐘時間，管線的兩段各自對應一個執行緒：`buildDuration` 包含 widget 的 rebuild、layout 與繪製（paint 把繪圖指令錄成 [Picture](/programming/flutter/knowledge-cards/picture/)），`rasterDuration` 是 raster 執行緒把圖層樹柵格化並送出畫面的時間。
+`FrameTiming` 量的是渲染管線每一段花的牆鐘時間，管線的兩段各自對應一個執行緒：`buildDuration` 是 UI 執行緒處理這一幀的時間，從 framework 開始處理這一幀算到它呼叫 `FlutterView.render` 把圖層樹交給 engine 為止（`dart:ui` 文件寫 build 在 `FlutterView.render` 被呼叫時結束），包含動畫的回呼、widget 的 rebuild、layout、繪製（paint 把繪圖指令錄成 [Picture](/programming/flutter/knowledge-cards/picture/)），以及 framework 把各圖層組成圖層樹的那一步；`rasterDuration` 是 raster 執行緒把圖層樹柵格化並送出畫面的時間。
 
 三個常被混用的長度各自回答不同的事：
 
@@ -22,7 +22,7 @@ App 用 `SchedulerBinding.instance.addTimingsCallback` 註冊回呼取得這些�
 
 ## 可觀察訊號與例子
 
-`rasterDuration` 是牆鐘時間，不等於 CPU 時間：Flutter 3.41.3 的 engine 把整個繪製到 surface 的過程算進柵格化的起訖，macOS 版送出畫面時還會等 Metal 的 command buffer 排進 GPU（`rasterizer.cc` 的 `DrawToSurfaceUnsafe`、`FlutterSurfaceManager.mm` 的 `waitUntilScheduled`）。2026 年在 macOS 桌面版的一次量測裡，同一個場景每秒排 144 幀時平均每幀柵格化約 4 ms，每秒只排 10 幀時約 10 ms（〔[Flutter 裝飾性動畫的驅動方式比較](/programming/flutter/hands-on/ambient-motion-frame-cost/)〕）。
+`rasterDuration` 是牆鐘時間，不等於 CPU 時間：Flutter 3.41.3 的 engine 把整個繪製到 surface 的過程算進柵格化的起訖，macOS 版送出畫面時還會等 Metal 的 command buffer 排進 GPU（`rasterizer.cc` 的 `DrawToSurfaceUnsafe`、`FlutterSurfaceManager.mm` 的 `waitUntilScheduled`）。2026 年在 macOS 桌面版的一次量測裡，同一個場景每秒排 144 幀時平均每幀柵格化約 4 ms，每秒只排 10 幀時約 10 ms（〔[Flutter 裝飾性動畫的驅動方式比較](/programming/flutter/hands-on/ambient-motion-frame-cost/)〕）。同一個場景改成預先畫好的點陣圖與 [Texture Atlas](/programming/flutter/knowledge-cards/texture-atlas/)、每一幀要柵格化的工作變少之後（同時改了另外幾處繪製方式，一起量），兩者縮到約 0.6 到 0.8 ms 對 0.7 到 0.9 ms（〔[Flutter 像素場景的每幀柵格化成本](/programming/flutter/hands-on/pixel-scene-texture-atlas-frame-cost/)〕）。
 
 ## 判斷條件與後果
 

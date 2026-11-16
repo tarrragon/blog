@@ -19,7 +19,7 @@ aliases: ["/flutter/"]
 | [流程測試基礎設施](/programming/flutter/flow-test-infrastructure/)               | Dart 生態的四個實作限制：headless 控制器、binding 互斥、輸出雜訊、假後端序列化             | binding + headless + noise + fake-backend 四篇 |
 | [值物件的 Dart 實作路徑](/programming/flutter/value-object-dart-implementation/) | 領域值升級成值物件後選哪種載體——手寫 class、freezed、extension type 的成本結構與遷移安全網 | copyWith + freezed + Money 遷移 + VO 封裝擺盪  |
 
-[實作紀錄](/programming/flutter/hands-on/)收照著做就能重做的量測與操作：[Flutter 裝飾性動畫的驅動方式比較：AnimationController、Ticker、Timer 與事件觸發的 frame 數與 CPU 量測](/programming/flutter/hands-on/ambient-motion-frame-cost/)。
+[實作紀錄](/programming/flutter/hands-on/)收照著做就能重做的量測與操作：[Flutter 裝飾性動畫的驅動方式比較：AnimationController、Ticker、Timer 與事件觸發的 frame 數與 CPU 量測](/programming/flutter/hands-on/ambient-motion-frame-cost/)、[Flutter 像素場景的每幀柵格化成本：紋理圖集、背景點陣圖、獨立圖層與不 rebuild 的改法與量測](/programming/flutter/hands-on/pixel-scene-texture-atlas-frame-cost/)。
 
 ## 章節大綱（backlog）
 
@@ -46,18 +46,18 @@ aliases: ["/flutter/"]
 
 ### 狀態與渲染
 
-| 主題                                         | 既有 case                                                                                                                                                                                                              |
-| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 重繪訊號、按需 render 與動畫驅動器的排幀次數 | [重繪訊號排查與心跳做法](/work-log/flutter_repaint_heartbeat/)、[scheduleFrame()](/work-log/flutter_schedule_frame/)、[裝飾性動畫的驅動方式比較](/programming/flutter/hands-on/ambient-motion-frame-cost/)（實作紀錄） |
-| 命中測試                                     | [HitTestBehavior 三種模式](/work-log/flutter_hit_test_behavior/)                                                                                                                                                       |
-| 系統資源邊界                                 | [App 音量 vs 系統音量](/work-log/flutter_audio_volume_control/)                                                                                                                                                        |
-| Riverpod 容器與狀態作用域                    | [雙容器狀態脫節：App 永遠卡在載入畫面](/work-log/flutter_riverpod_dual_container_state_desync/)                                                                                                                        |
-| Riverpod 的 reactive 邊界                    | [加書後統計不刷新：ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)                                                                                                |
-| StreamProvider 包 repository stream          | [broadcast、初始值、dispose 實作點](/work-log/flutter_streamprovider_wraps_repository_watch/)                                                                                                                          |
-| ephemeral 流程狀態                           | [只活在結帳流程裡的領域物件](/work-log/flutter_ephemeral_domain_object_rx_immutable/)                                                                                                                                  |
-| async gap 與 ref 生命週期                    | [await 回來的時候、頁面已經關了](/work-log/flutter_unmounted_ref_async_gap/)                                                                                                                                           |
-| Notifier 的依賴注入與清理掛法                | [手寫 dispose() 沒有呼叫者](/work-log/flutter_notifier_lifecycle_ref_ondispose/)                                                                                                                                       |
-| 版面約束與溢出預防                           | [溢出 714px、22 個測試同時紅](/work-log/flutter_renderflex_overflow_prevention_spec/)                                                                                                                                  |
+| 主題                                         | 既有 case                                                                                                                                                                                                                                                                                                               |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 重繪訊號、按需 render 與動畫驅動器的排幀次數 | [重繪訊號排查與心跳做法](/work-log/flutter_repaint_heartbeat/)、[scheduleFrame()](/work-log/flutter_schedule_frame/)、[裝飾性動畫的驅動方式比較](/programming/flutter/hands-on/ambient-motion-frame-cost/)、[像素場景的每幀柵格化成本](/programming/flutter/hands-on/pixel-scene-texture-atlas-frame-cost/)（實作紀錄） |
+| 命中測試                                     | [HitTestBehavior 三種模式](/work-log/flutter_hit_test_behavior/)                                                                                                                                                                                                                                                        |
+| 系統資源邊界                                 | [App 音量 vs 系統音量](/work-log/flutter_audio_volume_control/)                                                                                                                                                                                                                                                         |
+| Riverpod 容器與狀態作用域                    | [雙容器狀態脫節：App 永遠卡在載入畫面](/work-log/flutter_riverpod_dual_container_state_desync/)                                                                                                                                                                                                                         |
+| Riverpod 的 reactive 邊界                    | [加書後統計不刷新：ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)                                                                                                                                                                                                 |
+| StreamProvider 包 repository stream          | [broadcast、初始值、dispose 實作點](/work-log/flutter_streamprovider_wraps_repository_watch/)                                                                                                                                                                                                                           |
+| ephemeral 流程狀態                           | [只活在結帳流程裡的領域物件](/work-log/flutter_ephemeral_domain_object_rx_immutable/)                                                                                                                                                                                                                                   |
+| async gap 與 ref 生命週期                    | [await 回來的時候、頁面已經關了](/work-log/flutter_unmounted_ref_async_gap/)                                                                                                                                                                                                                                            |
+| Notifier 的依賴注入與清理掛法                | [手寫 dispose() 沒有呼叫者](/work-log/flutter_notifier_lifecycle_ref_ondispose/)                                                                                                                                                                                                                                        |
+| 版面約束與溢出預防                           | [溢出 714px、22 個測試同時紅](/work-log/flutter_renderflex_overflow_prevention_spec/)                                                                                                                                                                                                                                   |
 
 ### 測試
 
@@ -108,3 +108,9 @@ aliases: ["/flutter/"]
 ## Case 回補
 
 case 先進 [work-log](/work-log/)、模組章節再引用——這條管道讓專案裡處理掉的問題有固定的沉澱路徑。回補來源是專案的開發記錄與 ticket；章節從 case 聚類長出來，不從大綱硬生。
+
+## Backlog
+
+| 項目                                                                                                                                                                                                                           | 類型   | 前置條件 | 規模 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | -------- | ---- |
+| 知識卡〈Widget、Element 與 RenderObject〉：rebuild、layout、paint 各自標記哪一層，`setState` 與 `CustomPainter(repaint:)` 走的路徑差在哪；建好之後回填〈Flutter 像素場景的每幀柵格化成本〉的〈背景獨立圖層與換姿勢不 rebuild〉 | 知識卡 | 無       | 小   |

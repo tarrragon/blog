@@ -23,5 +23,5 @@ weight: 6
 ## 判斷條件與後果
 
 - **一段繪圖的內容固定、每一幀只改位置或透明度時**，錄成 `Picture` 重播，省下 UI 執行緒每一幀重新算圖形的時間；內容每一幀都變時，每一幀都得重錄，錄製的成本照付。
-- **瓶頸在 `rasterDuration` 時**，錄成 `Picture` 不改變柵格化的工作量，這時省得到時間的是 `toImage()` 換成點陣圖，或讓 engine 的快取把圖層存成點陣圖，代價是記憶體與縮放時的模糊。
+- **瓶頸在 `rasterDuration` 時**，錄成 `Picture` 不改變柵格化的工作量，這時省得到時間的是 `toImage()` 換成點陣圖，或讓 engine 的快取把圖層存成點陣圖（只有 Skia 後端有這個快取，Impeller 沒有，見 [Texture Atlas（紋理圖集）](/programming/flutter/knowledge-cards/texture-atlas/) 卡的渲染後端那一條），代價是記憶體，以及放大時的失真（取樣方式決定是變糊還是變成方塊，見 [Texture Atlas（紋理圖集）](/programming/flutter/knowledge-cards/texture-atlas/)）。要畫的是很多個各自位移的小圖塊時，可以把柵格化好的點陣圖拼成一張紋理圖集，每一幀用一次 `drawAtlas` 畫完；〈可觀察訊號與例子〉那個像素樹場景改成這樣、同時把背景也畫成點陣圖並放進自己的圖層、換姿勢時不 rebuild 之後，每幀柵格化從約 3.7 ms 降到約 0.6 ms（這幾處改動沒有拆開量，量測在〔[Flutter 像素場景的每幀柵格化成本](/programming/flutter/hands-on/pixel-scene-texture-atlas-frame-cost/)〕）。
 - **`Picture` 與 `ui.Image` 持有 engine 端的資源**，不再用時呼叫 `dispose()`；一直重錄而不釋放時，engine 端的記憶體跟著增加。
