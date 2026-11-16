@@ -19,10 +19,11 @@ aliases: ["/flutter/knowledge-cards/"]
 
 ## Flutter 渲染與效能量測
 
-| 卡片                                                                               | 核心問題                                                        |
-| ---------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| [FrameTiming](/programming/flutter/knowledge-cards/frame-timing/)                  | 每一幀的 build 與柵格化時間——掉幀看哪兩個值、預算依螢幕更新率算 |
-| [Flutter Thread Model](/programming/flutter/knowledge-cards/flutter-thread-model/) | UI、raster 與平台執行緒——耗時的工作落在哪一條、合併執行緒的影響 |
-| [Picture](/programming/flutter/knowledge-cards/picture/)                           | 錄好的繪圖指令——重播省下的是 UI 執行緒，柵格化照做              |
-| [RepaintBoundary](/programming/flutter/knowledge-cards/repaint-boundary/)          | 子樹獨立的繪圖紀錄——隔開重畫，不減少排幀次數                    |
-| [Texture Atlas](/programming/flutter/knowledge-cards/texture-atlas/)               | 一批小圖拼成一張大圖——每一幀的柵格化只剩取樣與貼上              |
+| 卡片                                                                                                 | 核心問題                                                          |
+| ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| [FrameTiming](/programming/flutter/knowledge-cards/frame-timing/)                                    | 每一幀的 build 與柵格化時間——掉幀看哪兩個值、預算依螢幕更新率算   |
+| [Flutter Thread Model](/programming/flutter/knowledge-cards/flutter-thread-model/)                   | UI、raster 與平台執行緒——耗時的工作落在哪一條、合併執行緒的影響   |
+| [Picture](/programming/flutter/knowledge-cards/picture/)                                             | 錄好的繪圖指令——重播省下的是 UI 執行緒，柵格化照做                |
+| [RepaintBoundary](/programming/flutter/knowledge-cards/repaint-boundary/)                            | 子樹獨立的繪圖紀錄——隔開重畫，不減少排幀次數                      |
+| [Texture Atlas](/programming/flutter/knowledge-cards/texture-atlas/)                                 | 一批小圖拼成一張大圖——每一幀的柵格化只剩取樣與貼上                |
+| [Widget、Element 與 RenderObject](/programming/flutter/knowledge-cards/widget-element-renderobject/) | 畫面的設定、實例與繪製三層——rebuild、layout、paint 各自標記哪一層 |

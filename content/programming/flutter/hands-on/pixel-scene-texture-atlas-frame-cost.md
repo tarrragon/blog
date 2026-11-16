@@ -185,7 +185,7 @@ paint 的次數照驅動方式比較那一篇的計數，數的是場景那一�
 
 ## 背景獨立圖層與換姿勢不 rebuild：`RepaintBoundary` 與 `ValueNotifier`
 
-Flutter 的畫面分成兩層物件：widget 描述畫面該長什麼樣，每次 rebuild 都重新建一份；render object 是實際做 layout 與繪製的那一層，在 rebuild 之間保留下來。附錄的 `SwayTreeState` 把姿勢存在一個 `List<Offset>` 欄位，每次換姿勢呼叫 `setState`：framework 把這個 widget 標成要 rebuild，下一幀重建 `GestureDetector`、`RepaintBoundary`、`CustomPaint` 與一個新的 `TreePainter`，`shouldRepaint` 比較新舊兩組位移之後才決定要不要重畫。姿勢改成放在 `ValueNotifier` 裡、交給 `CustomPainter` 建構子的 `repaint` 參數之後，`ValueNotifier` 的值一改，framework 直接把 `CustomPaint` 底下的 render object 標成要重畫，跳過 rebuild。`CustomPainter` 的文件寫的是同時跳過 build 與 layout，不過這個場景省下的只有 rebuild：附錄那一版 rebuild 之後，`CustomPaint` 的大小沒變，framework 換上新的 painter 時本來就只把 render object 標成要重畫，不重新 layout。
+Flutter 的畫面分成兩層物件：widget 描述畫面該長什麼樣，每次 rebuild 都重新建一份；render object 是實際做 layout 與繪製的那一層，在 rebuild 之間保留下來（兩層之間還有保留 `State` 的 element；三者的分工，以及 rebuild、layout、paint 各自怎麼被標記，見 [Widget、Element 與 RenderObject（Flutter 的三棵樹）](/programming/flutter/knowledge-cards/widget-element-renderobject/)）。附錄的 `SwayTreeState` 把姿勢存在一個 `List<Offset>` 欄位，每次換姿勢呼叫 `setState`：framework 把這個 widget 標成要 rebuild，下一幀重建 `GestureDetector`、`RepaintBoundary`、`CustomPaint` 與一個新的 `TreePainter`，`shouldRepaint` 比較新舊兩組位移之後才決定要不要重畫。姿勢改成放在 `ValueNotifier` 裡、交給 `CustomPainter` 建構子的 `repaint` 參數之後，`ValueNotifier` 的值一改，framework 直接把 `CustomPaint` 底下的 render object 標成要重畫，跳過 rebuild。`CustomPainter` 的文件寫的是同時跳過 build 與 layout，不過這個場景省下的只有 rebuild：附錄那一版 rebuild 之後，`CustomPaint` 的大小沒變，framework 換上新的 painter 時本來就只把 render object 標成要重畫，不重新 layout。
 
 ```dart
 // SwayTreeState 的欄位：取代附錄的 `late List<Offset> pose = ...` 那一行。
