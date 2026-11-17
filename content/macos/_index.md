@@ -23,6 +23,12 @@ macOS 的系統架構、磁碟空間管理、程序資源配額、開發環境�
 
 - [殭屍程序與使用者程序上限](macos_process_limit_zombie_reaping/) — 兩道 fork 關卡與一道 setrlimit 天花板、exit 與 wait 兩階段、reparenting 一次回收，附指認堆積父程序的三步診斷
 
+## 系統介面程序
+
+`ControlCenter`、`SystemUIServer` 這類由 launchd 看管、畫出選單列圖示與控制中心的程序卡住時的判讀與重啟：
+
+- [選單列的控制中心沒有回應](macos_control_center_unresponsive/) — 依位置查出選單列圖示的擁有程序、等待游標代表的狀態、從 ps 的 STAT 與 %CPU 分辨空轉與等待、launchd 的 KeepAlive 讓 killall 等於重啟（Dock、Finder、SystemUIServer 同一套設定）、重啟後用 launchctl print 與 top 確認、系統診斷報告與 sample 的呼叫堆疊讀法、重啟單一程序與登出、重新開機的取捨
+
 ## 磁碟空間管理
 
 建立在系統架構上的排查與操作：
@@ -38,6 +44,12 @@ macOS 的系統架構、磁碟空間管理、程序資源配額、開發環境�
 - [新機基礎建設](macos_new_machine_setup/) — 一台新 Mac 從開箱到能開發的設定流程
 - [BSD userland 與 GNU 的差異](macos_bsd_userland_vs_gnu/) — 為何 GNU 習慣（timeout、sed -i、readlink -f、bash 語法）在 macOS 會撞、怎麼繞
 - [多桌面快捷鍵](macos_muti_spaces/) — Mission Control 的桌面切換設定
+
+## Backlog
+
+| 項目                                                                                                                                                       | 類型 | 前置條件                                  | 規模 |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ----------------------------------------- | ---- |
+| `WindowServer` 本身高 CPU 的判讀：〈選單列的控制中心沒有回應〉量到 `WindowServer` 在 `ControlCenter` 重啟前後都在 40% 以上，來源沒有追查，站內沒有文章寫它 | 主章 | 需要一次可重現的量測（逐一關掉 App 對照） | 中   |
 
 ---
 
