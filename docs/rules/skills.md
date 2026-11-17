@@ -151,6 +151,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 下列 skill 是 blog 專屬的，刻意不推上共用 skill 庫（`skill-sync pull` 對它們印 `[SKIP]` … no remote entry），改了它們只提交 blog repo：
 
+- `bibliography-verification`
 - `blogsearch-lifecycle`
 - `content-folder-migration`
 - `vendor-deep-article`
