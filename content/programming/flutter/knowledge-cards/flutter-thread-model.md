@@ -6,7 +6,7 @@ description: "判斷一段 Dart 程式、一個平台呼叫或柵格化跑在哪
 weight: 5
 ---
 
-Flutter 的 engine 把一個 App 的工作分給幾條執行緒（engine 叫它們 task runner）：**平台執行緒**（platform）是作業系統給 App 的主執行緒，處理系統事件與平台 API 的呼叫；**UI 執行緒**執行 Dart 程式，widget 的 build、layout、paint 都在這裡，產出一棵圖層樹；**raster 執行緒**把圖層樹柵格化，交給 GPU 並送到螢幕；**IO 執行緒**處理圖片解碼這類耗時的讀取。一幀在 UI 執行緒的那一段與在 raster 執行緒的那一段，分別記在 [FrameTiming](/programming/flutter/knowledge-cards/frame-timing/) 的 `buildDuration` 與 `rasterDuration`。
+Flutter 的 engine 把一個 App 的工作分給幾條執行緒（engine 叫它們 task runner）：**平台執行緒**（platform）是作業系統給 App 的主執行緒，處理系統事件與平台 API 的呼叫；**UI 執行緒**執行 Dart 程式，widget 的 build、layout、paint 都在這裡，產出一棵圖層樹；**raster 執行緒**把圖層樹[柵格化](/ux-design/knowledge-cards/rasterization/)，交給 GPU 並送到螢幕；**IO 執行緒**處理圖片解碼這類耗時的讀取。一幀在 UI 執行緒的那一段與在 raster 執行緒的那一段，分別記在 [FrameTiming](/programming/flutter/knowledge-cards/frame-timing/) 的 `buildDuration` 與 `rasterDuration`。
 
 ## 跟其他概念的關係
 

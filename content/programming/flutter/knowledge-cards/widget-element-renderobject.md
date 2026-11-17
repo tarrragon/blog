@@ -12,7 +12,7 @@ rebuild 時，element 拿新的 widget 跟上一次的比：同一個物件時�
 
 ## 跟其他概念的關係
 
-一幀裡 UI 執行緒依序做 build、layout、paint 與合成圖層樹，四段都記在 [FrameTiming](/programming/flutter/knowledge-cards/frame-timing/) 的 `buildDuration`，做完之後交給 raster 執行緒柵格化（[Flutter Thread Model（Flutter 的執行緒模型）](/programming/flutter/knowledge-cards/flutter-thread-model/)）。三段各有自己的標記，標記之後都會要求排下一幀：
+一幀裡 UI 執行緒依序做 build、layout、paint 與合成圖層樹，四段都記在 [FrameTiming](/programming/flutter/knowledge-cards/frame-timing/) 的 `buildDuration`，做完之後交給 raster 執行緒[柵格化](/ux-design/knowledge-cards/rasterization/)（[Flutter Thread Model（Flutter 的執行緒模型）](/programming/flutter/knowledge-cards/flutter-thread-model/)）。三段各有自己的標記，標記之後都會要求排下一幀：
 
 - **要 rebuild**：`setState` 把那個 `State` 所屬的 element 標成要 rebuild（`markNeedsBuild`）。下一幀的 build 重新執行它的 `build` 方法，再依上面的比對規則往下更新整棵子樹。
 - **要重新 layout**：render object 的大小或排版相關的欄位改變時呼叫 `markNeedsLayout`，下一幀從最近的 relayout boundary 往下重算大小與位置。relayout boundary 是父節點的 layout 不依賴它大小的那個 render object（例如收到的限制是固定大小時）。

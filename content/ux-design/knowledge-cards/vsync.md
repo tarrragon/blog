@@ -33,4 +33,4 @@ iPhone 的 ProMotion 螢幕最高 120 Hz，App 沒有在 Info.plist 設 `CADisab
 - **驅動器不綁 vsync 時**（計時器每 100 ms 觸發一次），每秒的幀數由計時器的間隔決定，跟螢幕更新率無關；計時器要求的那一幀仍然排到下一個 vsync 才產生，所以畫面更新的時間點會落在最近的一個刷新點上。
 - **驅動器每個 vsync 都被叫醒、沒到間隔就返回時**（瀏覽器的 `requestAnimationFrame` 迴圈加上每秒 30 次的重畫上限），回呼本身每個 vsync 仍執行一次，跳過的那幾次只比對一次時間；重畫只發生在距離上次重畫超過間隔的那個 vsync，所以實際的重畫次數是螢幕更新率除以一個整數。144 Hz 上門檻設成 1/30 秒減 2 ms 時，4 次刷新（27.8 ms）不到門檻、5 次（34.7 ms）超過，每 5 次刷新畫一次，約每秒 29 次；這個做法下回呼每個 vsync 都在執行，快速物體出現時，下一個 vsync 的回呼就能解除上限；代價是回呼一直沒停，跳過的那幾次瀏覽器還會不會產生新的一幀，要用 Performance 面板確認（量到的 CPU 與這一項還沒確認的部分，寫在〔[瀏覽器 canvas 像素動畫的 CPU 量測與重畫上限](/ux-design/06-interaction-feedback/hands-on/canvas-ambient-frame-cap/)〕）。
 
-不同驅動器的成本差多少、為什麼繪製次數降了而柵格化次數沒有降，寫在〔[App 裡的裝飾性動畫：事件觸發的運動模型與重繪成本](/ux-design/06-interaction-feedback/event-driven-ambient-motion/)〕。
+不同驅動器的成本差多少、為什麼繪製次數降了而[柵格化](/ux-design/knowledge-cards/rasterization/)次數沒有降，寫在〔[App 裡的裝飾性動畫：事件觸發的運動模型與重繪成本](/ux-design/06-interaction-feedback/event-driven-ambient-motion/)〕。

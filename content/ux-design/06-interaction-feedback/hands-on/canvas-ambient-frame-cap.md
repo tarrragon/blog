@@ -81,7 +81,7 @@ async (page) => {
 
 回呼間隔 6.9 ms 就是 144 Hz 的一個刷新週期：`requestAnimationFrame` 的預設行為是螢幕每刷新一次就呼叫一次，這個場景的回呼每一次都把整個場景畫一遍，所以每秒畫 144 次。這個預設服務的情境是要平滑的動畫，每一次刷新都算出新的位置（從機制推論；MDN 的〈Window: requestAnimationFrame() method〉寫回呼的次數通常跟螢幕的更新率相符，沒有寫這個預設的用意。[VSync](/ux-design/knowledge-cards/vsync/) 卡寫了各平台的同一套機制）。
 
-每幀的 JavaScript 只花 0.7 到 1.0 ms，離 6.9 ms 的幀預算很遠。只看這個數字會判定這個場景沒有什麼好改；〈用 top 加總 Chrome 各程序的 CPU〉量的結果顯示成本落在別處。JS 時間量到的是回呼裡下達繪圖指令的時間，指令交給 GPU 程序之後的合成與柵格化不在這段時間裡。
+每幀的 JavaScript 只花 0.7 到 1.0 ms，離 6.9 ms 的幀預算很遠。只看這個數字會判定這個場景沒有什麼好改；〈用 top 加總 Chrome 各程序的 CPU〉量的結果顯示成本落在別處。JS 時間量到的是回呼裡下達繪圖指令的時間，指令交給 GPU 程序之後的合成與[柵格化](/ux-design/knowledge-cards/rasterization/)不在這段時間裡。
 
 ## 用 top 加總 Chrome 各程序的 CPU
 

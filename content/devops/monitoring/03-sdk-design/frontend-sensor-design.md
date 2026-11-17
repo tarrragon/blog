@@ -135,7 +135,7 @@ SchedulerBinding.instance.addTimingsCallback((timings) {
 });
 ```
 
-單幀預算是一個 [vsync](/ux-design/knowledge-cards/vsync/) 間隔，隨 App 所在螢幕的更新率而變，寫死 16 ms 時，120 Hz 的手機上花了 8.3 到 16 ms 的幀已經超過預算，卻不會被記下來。Flutter 的 build 在 UI 執行緒、柵格化在 raster 執行緒，兩段可以跟前後幀重疊，所以 `dart:ui` 的 [`FrameTiming`](/programming/flutter/knowledge-cards/frame-timing/) 文件把掉幀的判斷放在 `buildDuration` 與 `rasterDuration` 各自有沒有超過預算；`totalSpan`（從 vsync 到柵格化結束）量的是這一幀的延遲，超過預算不一定掉幀，範例把它當成附帶的欄位記下來。
+單幀預算是一個 [vsync](/ux-design/knowledge-cards/vsync/) 間隔，隨 App 所在螢幕的更新率而變，寫死 16 ms 時，120 Hz 的手機上花了 8.3 到 16 ms 的幀已經超過預算，卻不會被記下來。Flutter 的 build 在 UI 執行緒、[柵格化](/ux-design/knowledge-cards/rasterization/)在 raster 執行緒，兩段可以跟前後幀重疊，所以 `dart:ui` 的 [`FrameTiming`](/programming/flutter/knowledge-cards/frame-timing/) 文件把掉幀的判斷放在 `buildDuration` 與 `rasterDuration` 各自有沒有超過預算；`totalSpan`（從 vsync 到柵格化結束）量的是這一幀的延遲，超過預算不一定掉幀，範例把它當成附帶的欄位記下來。
 
 `rasterDuration` 是 raster 執行緒的牆鐘時間，含等 GPU 排程的時間，不等於 CPU 時間；動畫只排低頻幀時，平均每一幀的柵格化時間也可能比每個 vsync 都排幀時長。在 macOS 桌面版量到的例子是每秒 10 幀時每幀約 10 ms、每秒 144 幀時約 4 ms，量測與原始碼出處在〔[Flutter 裝飾性動畫的驅動方式比較](/programming/flutter/hands-on/ambient-motion-frame-cost/)〕的〈跟簡化樹那一輪的對照〉。所以拿 `rasterDuration` 判掉幀時，要對照同一幀的幀率看：每秒只排 10 幀的畫面，單幀 10 ms 的柵格化不會讓使用者看到掉幀。
 

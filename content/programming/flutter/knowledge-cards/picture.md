@@ -6,7 +6,7 @@ description: "考慮把一段固定的繪圖事先錄起來、每一幀只重播
 weight: 6
 ---
 
-`ui.Picture` 是一串錄好的繪圖指令：先用 `PictureRecorder` 開一個 `Canvas`，對它呼叫 `drawRect`、`drawPath` 這類方法，再呼叫 `recorder.endRecording()`，得到的 `Picture` 記下了這些指令，之後不能再修改。之後要畫同樣的內容時，對任何一個 `Canvas` 呼叫 `drawPicture(picture)` 重播這串指令，不必重新計算每一個圖形。Flutter 的 paint 階段本身也是在錄 `Picture`：每一個 `CustomPainter.paint` 收到的 `Canvas`，背後就是 framework 開的錄製器，錄好的 `Picture` 放進圖層樹，交給 raster 執行緒柵格化（[Flutter Thread Model（Flutter 的執行緒模型）](/programming/flutter/knowledge-cards/flutter-thread-model/)）。
+`ui.Picture` 是一串錄好的繪圖指令：先用 `PictureRecorder` 開一個 `Canvas`，對它呼叫 `drawRect`、`drawPath` 這類方法，再呼叫 `recorder.endRecording()`，得到的 `Picture` 記下了這些指令，之後不能再修改。之後要畫同樣的內容時，對任何一個 `Canvas` 呼叫 `drawPicture(picture)` 重播這串指令，不必重新計算每一個圖形。Flutter 的 paint 階段本身也是在錄 `Picture`：每一個 `CustomPainter.paint` 收到的 `Canvas`，背後就是 framework 開的錄製器，錄好的 `Picture` 放進圖層樹，交給 raster 執行緒[柵格化](/ux-design/knowledge-cards/rasterization/)（[Flutter Thread Model（Flutter 的執行緒模型）](/programming/flutter/knowledge-cards/flutter-thread-model/)）。
 
 ## 跟其他概念的關係
 

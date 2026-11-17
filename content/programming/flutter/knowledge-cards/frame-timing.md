@@ -6,7 +6,7 @@ description: "用 addTimingsCallback 量掉幀、量每一幀的 build 與柵格
 weight: 4
 ---
 
-`FrameTiming` 是 Flutter 的 `dart:ui` 替每一幀記下的時間戳記組：engine 收到 vsync 的時間（`vsyncStart`）、UI 執行緒開始與結束 build 的時間（`buildStart`、`buildFinish`）、raster 執行緒開始與結束柵格化的時間（`rasterStart`、`rasterFinish`）。從這些時間點算出四個長度：`buildDuration`（build 結束減開始）、`rasterDuration`（柵格化結束減開始）、`vsyncOverhead`（收到 vsync 到開始 build）、`totalSpan`（收到 vsync 到柵格化結束）。build 與柵格化分別跑在哪個執行緒，寫在 [Flutter Thread Model（Flutter 的執行緒模型）](/programming/flutter/knowledge-cards/flutter-thread-model/)。
+`FrameTiming` 是 Flutter 的 `dart:ui` 替每一幀記下的時間戳記組：engine 收到 vsync 的時間（`vsyncStart`）、UI 執行緒開始與結束 build 的時間（`buildStart`、`buildFinish`）、raster 執行緒開始與結束[柵格化](/ux-design/knowledge-cards/rasterization/)的時間（`rasterStart`、`rasterFinish`）。從這些時間點算出四個長度：`buildDuration`（build 結束減開始）、`rasterDuration`（柵格化結束減開始）、`vsyncOverhead`（收到 vsync 到開始 build）、`totalSpan`（收到 vsync 到柵格化結束）。build 與柵格化分別跑在哪個執行緒，寫在 [Flutter Thread Model（Flutter 的執行緒模型）](/programming/flutter/knowledge-cards/flutter-thread-model/)。
 
 App 用 `SchedulerBinding.instance.addTimingsCallback` 註冊回呼取得這些紀錄。engine 把紀錄成批送來：release 模式約每秒一批，debug 與 profile 模式約每 100 ms 一批，第一幀不等批次直接送（`scheduler/binding.dart` 的 `addTimingsCallback` 文件註解，Flutter 3.41.3）。
 

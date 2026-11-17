@@ -10,7 +10,7 @@ weight: 7
 
 ## 跟其他概念的關係
 
-`RepaintBoundary` 隔開的是 paint 這一段，也就是 UI 執行緒上錄繪圖指令的工作，記在 [FrameTiming](/programming/flutter/knowledge-cards/frame-timing/) 的 `buildDuration`。包了它，畫面要不要排一幀照舊由驅動器與重建的要求決定：子樹裡一個每個 vsync 都觸發的動畫，照樣讓整個畫面每個 vsync 產生一幀，合成與柵格化照整個畫面計（[按需重繪](/ux-design/knowledge-cards/on-demand-rendering/)）。
+`RepaintBoundary` 隔開的是 paint 這一段，也就是 UI 執行緒上錄繪圖指令的工作，記在 [FrameTiming](/programming/flutter/knowledge-cards/frame-timing/) 的 `buildDuration`。包了它，畫面要不要排一幀照舊由驅動器與重建的要求決定：子樹裡一個每個 vsync 都觸發的動畫，照樣讓整個畫面每個 vsync 產生一幀，合成與[柵格化](/ux-design/knowledge-cards/rasterization/)照整個畫面計（[按需重繪](/ux-design/knowledge-cards/on-demand-rendering/)）。
 
 - **`RepaintBoundary`** 指 framework 自動替子樹保留上一次的繪圖紀錄，子樹沒變就沿用。
 - **手動錄 [Picture](/programming/flutter/knowledge-cards/picture/)** 指開發者自己決定錄哪一段、什麼時候重錄，子樹每一幀都變位置時也能重播同一份內容。
