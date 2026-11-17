@@ -58,7 +58,7 @@ cat /proc/<compositor-pid>/environ | tr '\0' '\n' | grep -E 'WAYLAND_DISPLAY|XDG
 
 繞法是回到那台機器的實體圖形終端機去啟動 compositor，但「回到 VT」這件事也可以從 SSH 遠端做：
 
-- `sudo chvt <N>` 從 SSH 切換那台機器目前顯示的虛擬終端機到第 N 個，比在虛擬機視窗裡跟宿主的 `Ctrl+Alt+Fn` 快捷鍵搏鬥穩定。
+- `sudo chvt <N>` 從 SSH 切換那台機器目前顯示的虛擬主控台（virtual console，[TTY](/linux/dotfile/knowledge-cards/tty/) 卡寫的核心文字終端機）到第 N 個，比在虛擬機視窗裡跟宿主的 `Ctrl+Alt+Fn` 快捷鍵搏鬥穩定。
 - 切過去卻是空白、沒有登入提示，通常是那個 VT 上沒有 getty 在跑：`sudo systemctl start getty@tty<N>`（開機時 `enabled` 但 `inactive` 是常見狀態，logind 的 autovt 沒觸發）。
 - `sudo fgconsole` 確認目前是哪個 VT 在前景。
 

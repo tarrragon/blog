@@ -34,7 +34,7 @@ done
 
 迴圈的成員取自 `adb devices` 的輸出：`awk` 的 `NR>1` 跳過 `List of devices attached` 這行標頭，`$2=="device"` 只留下狀態欄是 `device` 的列（`offline` 與 `unauthorized` 的機器接不上、要排掉），`{print $1}` 印出第一欄的 transport 名稱。
 
-腳本裡每一行 `getprop` 的結尾都接了 `tr -d '\r'`，作用是去掉輸出裡的歸位字元（`\r`）。adb 送輸出回來時若配置了 [pty](/linux/dotfile/knowledge-cards/pty/)（pseudo-terminal，虛擬終端機），而作業系統核心的 pty 行規則會把每個 `0x0A`（換行）補成 `0x0D 0x0A`（歸位加換行）。補進來的 `0x0D` 肉眼看不見，但它會讓 shell 的字串比對失敗——`"$model" = "<型號字串>"` 這種比較永遠回假，因為 `$model` 的值尾端多了一個 `\r`。沒有配置 pty 時 `tr -d '\r'` 是空操作，加上去沒有副作用。
+腳本裡每一行 `getprop` 的結尾都接了 `tr -d '\r'`，作用是去掉輸出裡的歸位字元（`\r`）。adb 送輸出回來時若配置了 [pty](/linux/dotfile/knowledge-cards/pty/)（pseudo-terminal，偽終端機），而作業系統核心的 pty 行規則會把每個 `0x0A`（換行）補成 `0x0D 0x0A`（歸位加換行）。補進來的 `0x0D` 肉眼看不見，但它會讓 shell 的字串比對失敗——`"$model" = "<型號字串>"` 這種比較永遠回假，因為 `$model` 的值尾端多了一個 `\r`。沒有配置 pty 時 `tr -d '\r'` 是空操作，加上去沒有副作用。
 
 ## 遠端擷圖
 

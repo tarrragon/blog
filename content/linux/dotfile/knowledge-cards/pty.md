@@ -1,12 +1,12 @@
 ---
-title: "PTY（Pseudo-Terminal，虛擬終端機）"
+title: "PTY（Pseudo-Terminal，偽終端機）"
 date: 2026-09-21
-description: "二進位資料經過某條通道之後壞掉、或程式在管線裡與在終端機裡行為不同時讀 — 核心提供的一對虛擬終端機裝置"
+description: "二進位資料經過某條通道之後壞掉、或程式在管線裡與在終端機裡行為不同時讀 — 核心提供的一對模擬終端機的裝置"
 weight: 21
 tags: ["dotfile", "linux", "tty", "terminal"]
 ---
 
-PTY（pseudo-terminal）是核心提供的一對虛擬裝置：一端交給要被操作的程式、另一端交給操作它的人或程式，而被操作的那一端以為自己接在一台真實終端機上。[TTY](/linux/dotfile/knowledge-cards/tty/) 是核心直接提供的實體文字終端機，PTY 則讓使用者空間的程式（終端機模擬器、SSH、`adb shell`、`tmux`）自己扮演終端機那一側。
+PTY（pseudo-terminal，偽終端機）是核心提供的一對虛擬裝置：一端交給要被操作的程式、另一端交給操作它的人或程式，而被操作的那一端以為自己接在一台真實終端機上。[TTY](/linux/dotfile/knowledge-cards/tty/) 是核心直接提供的實體文字終端機，PTY 則讓使用者空間的程式（終端機模擬器、SSH、`adb shell`、`tmux`）自己扮演終端機那一側。其他中文資料常寫作「虛擬終端機」，而這個詞也用來指 Linux 用 `Ctrl+Alt+F1` 到 `F6` 切換的虛擬主控台（virtual console，`/dev/tty1` 這類裝置，屬於 TTY 那一側）與終端機模擬器本身，所以本站用「偽終端機」。
 
 ## 跟其他概念的關係
 

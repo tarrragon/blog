@@ -100,7 +100,7 @@ List<Offset> computePose(Tree tree, double t, double breeze, double gust, double
 - `gust` 是這一刻的陣風強度，0 到 1。`breeze` 在原文是陣風周圍那一圈較弱的風場，陣風走遠之後也落回 0，所以原文的樹在陣風之間是靜止的。這次為了量「一直在動」的成本，smooth、tickerStepped、timerStepped 三種方式把 `breeze` 固定在 0.8、`gust` 固定為 0；`breeze` 不落回 0 這一點跟原文不同。0.8 是這次取的值，沒有比較其他值。它決定擺幅，擺幅再決定取整之後的姿勢多常改變：擺幅大到每 100 ms 幾乎都有一叢跨過整數格時，姿勢每次都變，paint 接近每秒 10 次；擺幅調小時，取整之後不變的次數變多，paint 會低於 10，framework frame 與 raster frame 不受影響。eventDriven 用 `breeze = 0`、`gust` 由事件決定，比較接近原文。
 - `lean` 是樹身彈簧的傾斜量，單位是格；`quantize` 為 true 時位移取整數格，也就是原文的整數像素跳格。
 
-樹身的彈簧用原文橡樹的參數（推力 2.2、週期 2.2 秒、阻尼比 0.35）：
+樹身的彈簧用原文橡樹的參數（推力 2.2、週期 2.2 秒、阻尼比 0.35；阻尼比與週期各決定什麼，寫在 [Damped Spring（阻尼彈簧）](/ux-design/knowledge-cards/damped-spring/)）：
 
 ```dart
 class Spring {

@@ -10,7 +10,7 @@ Characterization test（特徵測試）的斷言對象是現狀本身：預期�
 
 ## 跟其他概念的關係
 
-當依賴纏結到必須先拆解才能寫正確性測試、而拆解本身就可能改壞行為時，characterization test 補上這段真空期的回饋——這原本是它唯一的存在理由。程式碼交給 agent 大幅改寫成為常態之後另有一種進入條件，那個推導在 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)。拆分一個模組之前鎖住對外行為也是它的用途，拆分時的用法在[從修改紀錄畫模組邊界](/software-design/design-principles/module-boundary-from-change-history/)的〈拆分時與語言無關的做法〉。依賴纏結的典型樣貌是[mock 遮蔽](/testing/knowledge-cards/mock-masking/)描述的那種處境：程式碼直接呼叫外部服務、沒有可注入的介面。這個處境在 [legacy 專案的起步順序](/testing/01-test-strategy-layers/legacy-test-bootstrap/)的「遷移安全網」段有完整的操作判斷標準——包含三種起步路徑各自何時需要它。
+當依賴纏結到必須先拆解才能寫正確性測試、而拆解本身就可能改壞行為時，characterization test 補上這段真空期的回饋——這原本是它唯一的存在理由。程式碼交給 agent 大幅改寫成為常態之後另有一種進入條件，那個推導在 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)。拆分一個模組之前鎖住對外行為也是它的用途，拆分時的用法在[從修改紀錄畫模組邊界](/software-design/design-principles/module-boundary-from-change-history/)的〈拆分時與語言無關的做法〉。依賴纏結的典型樣貌是[mock 遮蔽](/testing/knowledge-cards/mock-masking/)描述的那種處境：程式碼直接呼叫外部服務、沒有可注入的介面。這個處境在 [legacy 專案的起步順序](/testing/01-test-strategy-layers/legacy-test-bootstrap/)的「遷移安全網」段有完整的操作判斷標準——包含三種起步路徑各自何時需要它。效能最佳化宣稱輸出不變時，拿改之前的版本逐格比對新版的輸出，是同一種「現狀就是答案」的斷言；同一次改動刻意改了輸出時，現狀不再是答案，參照要換成同一個新行為、關掉最佳化的版本，推導在〔[效能最佳化的正確性要拿一份產生同樣畫面的參照實作逐格比](/report/optimization-equivalence-needs-a-reference-of-the-same-behavior/)〕。
 
 ## 可觀察訊號與例子
 

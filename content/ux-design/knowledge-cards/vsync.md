@@ -10,7 +10,7 @@ VSync（vertical synchronization，垂直同步）指螢幕每開始一次刷新
 
 ## 跟其他概念的關係
 
-vsync 是時間的刻度，[按需重繪](/ux-design/knowledge-cards/on-demand-rendering/)決定這個刻度上的哪幾格實際產生一幀：每個 vsync 都要求下一幀的動畫驅動器（Flutter 的 `Ticker`、`requestAnimationFrame` 迴圈），每秒的幀數等於螢幕更新率；只在事件來時才要求的驅動器，大部分 vsync 都不產生幀。
+vsync 是時間的刻度，[按需重繪](/ux-design/knowledge-cards/on-demand-rendering/)決定這個刻度上的哪幾格實際產生一幀：每個 vsync 都要求下一幀的動畫驅動器（Flutter 的 `Ticker`、`requestAnimationFrame` 迴圈），每秒的幀數等於螢幕更新率；只在事件來時才要求的驅動器，大部分 vsync 都不產生幀；每個 vsync 都被叫醒、但自己比對距離上次重畫的時間、沒到間隔就直接返回的驅動器，重畫的次數由它設的間隔決定，被叫醒的次數仍等於螢幕更新率。
 
 這個詞在不同脈絡指三種對象：
 
@@ -31,5 +31,6 @@ iPhone 的 ProMotion 螢幕最高 120 Hz，App 沒有在 Info.plist 設 `CADisab
 - **動畫的驅動器每個 vsync 都觸發時**，每秒的幀數由 App 視窗所在的那台螢幕決定，同一份程式在 144 Hz 的螢幕上產生的幀數是 60 Hz 的 2.4 倍。估成本或比較量測數字時，要先寫出螢幕的更新率，否則兩次量測的幀數對不起來。
 - **每一幀的時間預算是一個 vsync 間隔**：60 Hz 是 16.7 ms，144 Hz 是 6.9 ms。在 60 Hz 下做得完的一幀，換到高更新率的螢幕上可能超過預算而掉幀，原因是預算縮短了，每一幀的工作量沒有變。
 - **驅動器不綁 vsync 時**（計時器每 100 ms 觸發一次），每秒的幀數由計時器的間隔決定，跟螢幕更新率無關；計時器要求的那一幀仍然排到下一個 vsync 才產生，所以畫面更新的時間點會落在最近的一個刷新點上。
+- **驅動器每個 vsync 都被叫醒、沒到間隔就返回時**（瀏覽器的 `requestAnimationFrame` 迴圈加上每秒 30 次的重畫上限），回呼本身每個 vsync 仍執行一次，跳過的那幾次只比對一次時間；重畫只發生在距離上次重畫超過間隔的那個 vsync，所以實際的重畫次數是螢幕更新率除以一個整數。144 Hz 上門檻設成 1/30 秒減 2 ms 時，4 次刷新（27.8 ms）不到門檻、5 次（34.7 ms）超過，每 5 次刷新畫一次，約每秒 29 次；這個做法下回呼每個 vsync 都在執行，快速物體出現時，下一個 vsync 的回呼就能解除上限；代價是回呼一直沒停，跳過的那幾次瀏覽器還會不會產生新的一幀，要用 Performance 面板確認（量到的 CPU 與這一項還沒確認的部分，寫在〔[瀏覽器 canvas 像素動畫的 CPU 量測與重畫上限](/ux-design/06-interaction-feedback/hands-on/canvas-ambient-frame-cap/)〕）。
 
 不同驅動器的成本差多少、為什麼繪製次數降了而柵格化次數沒有降，寫在〔[App 裡的裝飾性動畫：事件觸發的運動模型與重繪成本](/ux-design/06-interaction-feedback/event-driven-ambient-motion/)〕。

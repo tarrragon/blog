@@ -12,7 +12,7 @@ tags: ["ux-design", "interaction-feedback", "animation", "performance", "renderi
 
 SpriteCook 在〈[Pixel art trees in the wind](https://www.spritecook.ai/blog/pixel-art-trees-wind-animation)〉（2026-11-10）裡用 Godot 做出一片樹在風裡擺動的場景，每棵樹沒有任何一格逐格動畫。常見的做法是用 shader 把整張圖逐列往旁邊滑，原文的松樹幹就用這個做法；橡樹不用，因為整個樹冠會像草一樣一起傾斜。橡樹的做法是先用離線腳本把一張樹的靜態圖拆成三層：樹幹、內層，以及一叢一叢的葉子，下文把每一叢叫做**葉叢**（clump）。橡樹拆成 14 叢。內層是樹冠輪廓往內縮 2 像素、顏色乘 0.55 的暗色版本，葉叢移開時從縫裡露出來，看起來像樹冠深處的陰影。
 
-畫面上的動作全部來自程式：程式依一條公式算出每一叢葉子在這一刻的位移，位移只取整數像素，姿勢一秒換 10 次；作者另外用一個阻尼彈簧模擬樹身受風傾斜，彈簧每一幀都更新。姿勢一秒只換 10 次是美術上的選擇：原文說每一幀都換姿勢，看起來像剪紙。作者沒有附任何效能數據，「這個做法省效能」只能從「沒有逐格圖、一秒只換 10 次姿勢」推出來；下文〈重繪成本與動畫驅動器的排幀頻率〉說明這個推論對繪製次數成立，對合成與柵格化（把圖層畫成螢幕像素的步驟）的次數不一定成立。
+畫面上的動作全部來自程式：程式依一條公式算出每一叢葉子在這一刻的位移，位移只取整數像素，姿勢一秒換 10 次；作者另外用一個[阻尼彈簧](/ux-design/knowledge-cards/damped-spring/)模擬樹身受風傾斜，彈簧每一幀都更新。姿勢一秒只換 10 次是美術上的選擇：原文說每一幀都換姿勢，看起來像剪紙。作者沒有附任何效能數據，「這個做法省效能」只能從「沒有逐格圖、一秒只換 10 次姿勢」推出來；下文〈重繪成本與動畫驅動器的排幀頻率〉說明這個推論對繪製次數成立，對合成與[柵格化](/ux-design/knowledge-cards/rasterization/)（把圖層畫成螢幕像素的步驟）的次數不一定成立。
 
 ## 運動模型：事件觸發、位置決定延遲、中心穩邊緣鬆
 
@@ -40,7 +40,7 @@ SpriteCook 在〈[Pixel art trees in the wind](https://www.spritecook.ai/blog/pi
 
 ## 重繪成本與動畫驅動器的排幀頻率
 
-**渲染管線**指 App 從「有內容要更新」到「新的一幀（frame）出現在螢幕上」這一整串工作：重新計算版面、繪製、合成圖層、交給 GPU 柵格化（raster，把圖形轉成螢幕上的像素；其他中文資料常寫作光柵化）。**動畫驅動器**指定時叫 App 算出下一個姿勢、並要求渲染管線排下一幀的機制，例如每一幀的回呼或計時器。Flutter、瀏覽器、iOS 的 UIKit 都是[按需重繪](/ux-design/knowledge-cards/on-demand-rendering/)的 UI 框架：畫面沒有內容要更新、也沒有驅動器要求下一幀時，不產生新的一幀。動畫驅動器每要求一幀，App 就要跑一次渲染管線，所以裝飾性動畫的成本先看驅動器多常要求下一幀，再看每一幀花多久。渲染管線是整個畫面共用的：同一個畫面上只要有一個驅動器在每個 vsync 要求下一幀，整個畫面就每個 vsync 跑一次。
+**渲染管線**指 App 從「有內容要更新」到「新的一幀（frame）出現在螢幕上」這一整串工作：重新計算版面、繪製、合成圖層、交給 GPU 柵格化（rasterization，把圖形轉成螢幕上的像素；其他中文資料常寫作光柵化）。**動畫驅動器**指定時叫 App 算出下一個姿勢、並要求渲染管線排下一幀的機制，例如每一幀的回呼或計時器。Flutter、瀏覽器、iOS 的 UIKit 都是[按需重繪](/ux-design/knowledge-cards/on-demand-rendering/)的 UI 框架：畫面沒有內容要更新、也沒有驅動器要求下一幀時，不產生新的一幀。動畫驅動器每要求一幀，App 就要跑一次渲染管線，所以裝飾性動畫的成本先看驅動器多常要求下一幀，再看每一幀花多久。渲染管線是整個畫面共用的：同一個畫面上只要有一個驅動器在每個 vsync 要求下一幀，整個畫面就每個 vsync 跑一次。
 
 各平台讓動畫的回呼在每一幀被呼叫一次的機制都綁在螢幕的[垂直同步（vsync）](/ux-design/knowledge-cards/vsync/)上：Flutter 的 `Ticker`、Web 的 `requestAnimationFrame`、iOS 的 `CADisplayLink`、Android 的 `Choreographer`。這些機制的預設行為是螢幕每刷新一次就呼叫一次，螢幕是 60 Hz 就一秒 60 次，是 120 Hz 或 144 Hz 就一秒 120 或 144 次。iPhone 的 ProMotion 螢幕是例外：開發者沒有在 App 的 Info.plist 設 `CADisableMinimumFrameDurationOnPhone` 時，`CADisplayLink` 最高只到 60 Hz（Apple〈Optimizing ProMotion refresh rates for iPhone 13 Pro and iPad Pro〉）。這個預設服務的情境是要平滑的動畫：每一幀都算出新的位置，動作才不會一格一格跳。
 

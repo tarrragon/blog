@@ -206,12 +206,13 @@ audit 時、看註解就知道：
 
 ## 跟其他原則的關係
 
-| 篇                                                                 | 關係                                                                      |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| [#29 MutationObserver 範圍與觸發頻率](../mutation-observer-scope/) | 互補 — #29 是設計指引（怎麼寫 observer）、本篇是 audit 視角（怎麼找問題） |
-| [#14 Selector 精準度](../dom-selector-precision/)                  | 跟 observer 範圍同源 — selector 起點就是 observer root 的選擇基礎         |
-| [#34 Runtime 計算成本](../runtime-iteration-and-regex-cost/)       | 互補 — 本篇看「觸發次數」、#34 看「單次 callback 成本」                   |
-| [#43 最小必要範圍](../minimum-necessary-scope-is-sanity-defense/)  | 「縮監聽範圍」是「最小必要範圍」原則的應用                                |
+| 篇                                                                                              | 關係                                                                                                                                             |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [#29 MutationObserver 範圍與觸發頻率](../mutation-observer-scope/)                              | 互補 — #29 是設計指引（怎麼寫 observer）、本篇是 audit 視角（怎麼找問題）                                                                        |
+| [#14 Selector 精準度](../dom-selector-precision/)                                               | 跟 observer 範圍同源 — selector 起點就是 observer root 的選擇基礎                                                                                |
+| [#34 Runtime 計算成本](../runtime-iteration-and-regex-cost/)                                    | 互補 — 本篇看「觸發次數」、#34 看「單次 callback 成本」                                                                                          |
+| [#43 最小必要範圍](../minimum-necessary-scope-is-sanity-defense/)                               | 「縮監聽範圍」是「最小必要範圍」原則的應用                                                                                                       |
+| [#399 效能最佳化的先後順序要等量完再排](../optimization-order-comes-from-removal-measurements/) | 盤點表的 `requestAnimationFrame` 迴圈那一列找出「持續跑」之後，降多少頻率、先改哪一段要拿掉或降頻實際量；#399 的個案是一個 canvas 夜空的重畫上限 |
 
 ---
 

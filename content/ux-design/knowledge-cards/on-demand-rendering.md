@@ -6,7 +6,7 @@ weight: 12
 tags: ["ux-design", "knowledge-card", "interaction-feedback", "rendering"]
 ---
 
-On-demand rendering（按需重繪）是 UI 框架產生畫面的方式：只有某個元件要求下一幀時，框架才在下一個 [VSync（垂直同步）](/ux-design/knowledge-cards/vsync/)跑一次渲染管線（重新計算版面、繪製、合成圖層、柵格化），畫面沒有內容要更新時就不產生新的一幀，螢幕重複顯示上一幀。Flutter、瀏覽器、iOS 的 UIKit 與 Android 的 View 系統都是這樣運作。Flutter 裡發出要求的最底層呼叫是 `scheduleFrame()`，`setState`、動畫的 `Ticker` 與 `markNeedsPaint` 最後都走到它（〔[Flutter scheduleFrame()：按需 render 的最底層原語](/work-log/flutter_schedule_frame/)〕）。
+On-demand rendering（按需重繪）是 UI 框架產生畫面的方式：只有某個元件要求下一幀時，框架才在下一個 [VSync（垂直同步）](/ux-design/knowledge-cards/vsync/)跑一次渲染管線（重新計算版面、繪製、合成圖層、[柵格化](/ux-design/knowledge-cards/rasterization/)），畫面沒有內容要更新時就不產生新的一幀，螢幕重複顯示上一幀。Flutter、瀏覽器、iOS 的 UIKit 與 Android 的 View 系統都是這樣運作。Flutter 裡發出要求的最底層呼叫是 `scheduleFrame()`，`setState`、動畫的 `Ticker` 與 `markNeedsPaint` 最後都走到它（〔[Flutter scheduleFrame()：按需 render 的最底層原語](/work-log/flutter_schedule_frame/)〕）。
 
 ## 跟其他概念的關係
 
