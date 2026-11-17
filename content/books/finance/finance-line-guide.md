@@ -6,7 +6,7 @@ weight: 1
 tags: ["books", "finance", "reading"]
 ---
 
-這個書單討論的是**資本與現金流怎麼配置**。它跟其他書單的分界在各書單討論的主題放在什麼對象上：[軟體管理與組織](/books/software-management/) 書單討論的主題放在人與制度上，[工程技藝](/books/craft/) 書單放在產物上，[媒介與輿論](/books/media-public-opinion/) 書單放在讀者對世界的判斷上，這個書單放在錢上。多數情況那是讀者自己的錢，而 [依資本責任選書](/books/finance/positions/) 列的四個位置裡有兩個不是（對他人的資產負責、對一門生意的損益負責），所以分界畫在討論的對象上，而不是那筆錢歸誰所有。各書單為什麼按這個軸分開，說明在 [書單推薦怎麼用](/books/reading-this-list/)。
+這個書單討論的是**資本與現金流怎麼配置**。它跟其他書單的分界在各書單討論的主題放在什麼對象上：[軟體管理與組織](/books/software-management/) 書單討論的主題放在人與制度上，[工程技藝](/books/craft/) 書單放在產物上，[媒介與輿論](/books/media-public-opinion/) 書單放在讀者對世界的判斷上，[研究方法與統計推論](/books/research-methods/) 書單放在讀者從資料推出的結論上，這個書單放在錢上。多數情況那是讀者自己的錢，而 [依資本責任選書](/books/finance/positions/) 列的四個位置裡有兩個不是（對他人的資產負責、對一門生意的損益負責），所以分界畫在討論的對象上，而不是那筆錢歸誰所有。各書單為什麼按這個軸分開，說明在 [書單推薦怎麼用](/books/reading-this-list/)。
 
 書的描述沿用同一套維度（[證據來源](/books/knowledge-cards/evidence-provenance/)、時效狀態、[處境相容性](/books/knowledge-cards/context-compatibility/)、讀得出價值的前提），定義與這些判定的來源說明在 [書單怎麼描述一本書](/books/describing-a-book/)。起點書判斷標準的第一層跟其他書單相同（涵蓋面優先），完整的三層寫在 [起點書的選擇標準：涵蓋面、證據與可操作性的優先序](/books/software-management/topics/starting-book-selection/#起點書的選擇標準涵蓋面證據與可操作性的優先序)。後兩層在這個書單會隨主題調整，依據是下面那張表的最後一欄——這個主題要求讀者做什麼，決定「可操作性」算不算加分。
 
