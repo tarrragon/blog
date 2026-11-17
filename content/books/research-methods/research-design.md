@@ -81,10 +81,11 @@ Judea Pearl 與 Dana Mackenzie 的《The Book of Why》是 Pearl 為一般讀者
 
 讀得出價值的前提是讀者聽過「相關不等於因果」，而想知道在什麼條件下相關可以等於因果；或遇過一次加入一個控制變數之後結論反轉的分析。沒有這類經驗的讀者，會把這本書讀成一部統計思想史。
 
-繁體中文版《因果革命：人工智慧的大未來》（甘錫安譯，行路，2019）；這一輪在三民只查到簡體版、在天瓏沒看到商品頁網址，連結用博客來。簡體中文版《为什么：关于因果关系的新科学》（江生、于华译，中信出版集团，2019），這一筆取自豆瓣。Amazon 另列有一個 2026 年 10 月的英文修訂版，描述寫加了新序與近年進展的摘要；這一輪沒有在出版社的頁面看到它，書末那一章的時效判定是否因此改變，等核對過修訂版再判。
+繁體中文版《因果革命：人工智慧的大未來》（甘錫安譯，行路，2019）；這一輪在三民只查到簡體版、在天瓏沒看到商品頁網址，連結用博客來。簡體中文版《为什么：关于因果关系的新科学》（江生、于华译，中信出版集团，2019），這一筆取自豆瓣。英文版 2026 年 10 月出了修訂版（Basic Books，448 頁），Amazon 商品頁的簡介寫它加了一篇新序與近年進展的摘要；上面那一則時效判定是對 2018 年初版與 2020 年平裝寫的，修訂版有沒有改寫書末那一章，這一輪只讀到商品頁的簡介，沒有讀到內文。
 
 - [博客來（因果革命：人工智慧的大未來，甘錫安譯，行路，2019）](https://www.books.com.tw/products/0010825178)
 - [Amazon（The Book of Why: The New Science of Cause and Effect，Basic Books，2020 平裝）](https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/1541698967)
+- [Amazon（The Book of Why: The New Science of Cause and Effect，Revised Edition，Basic Books，2026）](https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/1541608984)
 
 ## 《Guide to Methods for Students of Political Science》：個案研究證據的分級
 
