@@ -6,9 +6,9 @@ weight: 20
 tags: ["books", "reading", "research-methods", "causal-inference", "experiments"]
 ---
 
-這一篇收的書討論資料用什麼方式產生，觀察到的關聯才能解讀成因果。兩個變數一起變動，可能是其中一個影響另一個，也可能是第三個變數同時影響兩者，或是資料只收進了某一種人；只看 [統計推論與迴歸的選讀書目](/books/research-methods/inference-and-regression/) 收的那些計算的結果，研究者分辨不出是這幾種情形的哪一種，分辨的依據是設計。四本各自討論設計的一個面向：Joshua Angrist 與 Jörn-Steffen Pischke 的《Mastering 'Metrics》以隨機分派、迴歸、工具變數、迴歸不連續設計（regression discontinuity design，其他中文資料常寫作斷點迴歸）、差異中的差異五種工具組織全書，討論研究者控制得了與控制不了分派時各用什麼設計；Ron Kohavi、Diane Tang 與 Ya Xu 的《Trustworthy Online Controlled Experiments》討論在網站與 App 上跑線上實驗（A/B 測試）時，實驗結果在哪些環節會失真；Gary King、Robert Keohane 與 Sidney Verba 的《Designing Social Inquiry》從政治學出發，主張質性與量化研究共用同一套推論邏輯；Judea Pearl 與 Dana Mackenzie 的《The Book of Why》用因果圖寫出「這個關聯在什麼假設下是因果」。
+這一篇收的書討論資料用什麼方式產生，觀察到的關聯才能解讀成因果。兩個變數一起變動，可能是其中一個影響另一個，也可能是第三個變數同時影響兩者，或是資料只收進了某一種人；只看 [統計推論與迴歸的選讀書目](/books/research-methods/inference-and-regression/) 收的那些計算的結果，研究者分辨不出是這幾種情形的哪一種，分辨的依據是設計。這一篇收的書各自討論設計的一個面向：Joshua Angrist 與 Jörn-Steffen Pischke 的《Mastering 'Metrics》以隨機分派、迴歸、工具變數、迴歸不連續設計（regression discontinuity design，其他中文資料常寫作斷點迴歸）、差異中的差異五種工具組織全書，討論研究者控制得了與控制不了分派時各用什麼設計；Ron Kohavi、Diane Tang 與 Ya Xu 的《Trustworthy Online Controlled Experiments》討論在網站與 App 上跑線上實驗（A/B 測試）時，實驗結果在哪些環節會失真；Gary King、Robert Keohane 與 Sidney Verba 的《Designing Social Inquiry》從政治學出發，主張質性與量化研究共用同一套推論邏輯；Stephen Van Evera 的《Guide to Methods for Students of Political Science》把個案研究裡的證據依它能不能推翻、能不能確立一個假設分級，讓讀者判斷一本以幾個案例論證的書，證據有多強；Judea Pearl 與 Dana Mackenzie 的《The Book of Why》用因果圖寫出「這個關聯在什麼假設下是因果」。
 
-先讀哪一本，看讀者手上的資料怎麼來。資料是觀察來的（研究者決定不了誰接受處理），從《Mastering 'Metrics》開始。要在自己的產品上跑實驗、或要判斷一份 A/B 測試報告可不可信，讀《Trustworthy Online Controlled Experiments》。研究對象只有少數幾個案例（幾個國家、幾家公司、幾次選舉），讀《Designing Social Inquiry》。要把「我認為哪些變數影響哪些變數」畫出來、再判斷該控制哪些變數，讀《The Book of Why》。不確定時從《Mastering 'Metrics》開始：它的第一章就是隨機實驗，後面四章是隨機實驗做不到時的替代設計。
+先讀哪一本，看讀者手上的資料怎麼來。資料是觀察來的（研究者決定不了誰接受處理），從《Mastering 'Metrics》開始。要在自己的產品上跑實驗、或要判斷一份 A/B 測試報告可不可信，讀《Trustworthy Online Controlled Experiments》。研究對象只有少數幾個案例（幾個國家、幾家公司、幾次選舉），讀《Designing Social Inquiry》；已經讀完它、手上正在讀一本以案例論證的書，要判斷書中每一項證據的分量，讀 Van Evera 那本的前兩章。要把「我認為哪些變數影響哪些變數」畫出來、再判斷該控制哪些變數，讀《The Book of Why》。不確定時從《Mastering 'Metrics》開始：它的第一章就是隨機實驗，後面四章是隨機實驗做不到時的替代設計。
 
 ## 起點書：Mastering 'Metrics
 
@@ -86,9 +86,27 @@ Judea Pearl 與 Dana Mackenzie 的《The Book of Why》是 Pearl 為一般讀者
 - [博客來（因果革命：人工智慧的大未來，甘錫安譯，行路，2019）](https://www.books.com.tw/products/0010825178)
 - [Amazon（The Book of Why: The New Science of Cause and Effect，Basic Books，2020 平裝）](https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/1541698967)
 
+## 《Guide to Methods for Students of Political Science》：個案研究證據的分級
+
+Stephen Van Evera 的《Guide to Methods for Students of Political Science》是一本寫給政治學研究生的短書，作者是麻省理工學院政治系的榮譽教授。前兩章談方法：第一章說明假設、理論與檢驗，第二章說明怎麼用個案研究檢驗與建立理論、怎麼挑案例，介紹控制比較（controlled comparison）、一致性程序（congruence procedure）與過程追蹤三種用個案檢驗理論的做法；後面幾章是寫學位論文的建議。書中把用來檢驗一個假設的證據依兩個問題分級：這項證據沒出現時，假設是否就被推翻；這項證據出現時，假設是否就被確立。兩個答案組合出四種檢驗，後來的過程追蹤文獻沿用 Van Evera 給的英文名字，中文資料沒有固定的譯名：沒出現就推翻、出現也不足以確立的叫 hoop test（假設必須跳過的一道圈）；出現就足以確立、沒出現也推翻不了的叫 smoking-gun test（確鑿的證據）；兩者都成立的叫 doubly decisive test；兩者都不成立的叫 straw-in-the-wind test（只看得出風向）。
+
+這本書在這一篇的用途，是給讀者一組分辨證據分量的問題。一般讀者讀到的政治學專書多數以幾個國家或幾段歷史論證，KKV 提醒的是案例怎麼挑、有沒有對照；這本書補的是案例內部的證據：作者引用的那一段史料，如果不存在，他的論點會不會倒；如果存在，能不能排除其他解釋。只屬於 straw-in-the-wind 那一級的證據，讀起來再生動，也只是讓假設的可信度高一點。
+
+[證據來源](/books/knowledge-cards/evidence-provenance/)是理論建構：作者把政治學個案研究的做法整理成一套檢驗的分類，範例取自國際關係的研究。
+
+時效上，**過時的前提是過程追蹤的方法發展**：這本書出版於 1997 年，過程追蹤（process tracing：在一個案例內部，逐步檢查因果機制每一環的證據）在那之後發展成一套有專書的方法，研究者也用機率推理把四種檢驗寫得更精確。書中的四種檢驗是那些發展的起點，讀者要的是判讀時的問題，這兩章就夠；要自己做過程追蹤研究，要讀後來的專書。
+
+處境相容性上，這本書預設讀者是寫學位論文的政治學研究生，後半的論文寫作建議對一般讀者沒有對象，只讀前兩章即可。前兩章的檢驗分類不依賴特定的國家或資料來源。
+
+讀得出價值的前提是讀者正在讀、或讀過一本以少數案例論證的書，對它的某一段證據有過懷疑。沒有這樣一本書在手上時，四種檢驗讀起來是抽象的分類。
+
+簡體中文版《政治学研究方法指南》（陈琪譯，北京大學出版社，2006），這一筆取自豆瓣；這一輪用「Van Evera Guide to Methods 繁體中文 譯本 政治學方法論 研究方法」查不到繁體中文版。Amazon 有一筆列表標示這本缺貨。
+
+- [Amazon（Guide to Methods for Students of Political Science，Cornell University Press，1997 平裝）](https://www.amazon.com/Guide-Methods-Students-Political-Science/dp/080148457X)
+
 ## 研究設計與因果推論各書的分工與沒收錄的實地實驗專書
 
-這四本各自討論設計的不同面向：《Mastering 'Metrics》討論做不了隨機實驗時的替代設計，《Trustworthy Online Controlled Experiments》討論做得了隨機實驗時結果在哪裡失真，《Designing Social Inquiry》討論只有少數案例時的推論規範，《The Book of Why》討論怎麼把設計依賴的假設寫成圖。《Mastering 'Metrics》與線上實驗那本跟工程師的處境最近，KKV 與《The Book of Why》跟政治學方法論課的處境最近。
+這幾本各自討論設計的不同面向：《Mastering 'Metrics》討論做不了隨機實驗時的替代設計，《Trustworthy Online Controlled Experiments》討論做得了隨機實驗時結果在哪裡失真，《Designing Social Inquiry》討論只有少數案例時的推論規範，Van Evera 那本討論個案研究裡每一項證據的分量，《The Book of Why》討論怎麼把設計依賴的假設寫成圖。《Mastering 'Metrics》與線上實驗那本跟工程師的處境最近，KKV、Van Evera 與《The Book of Why》跟政治學方法論課的處境最近。KKV 與 Van Evera 兩本收的都是判讀個案研究所需的部分，質性研究怎麼做（訪談、田野觀察、資料編碼）不在這一篇的範圍，記在 [研究方法與統計推論書單](/books/research-methods/) 的 Backlog 段。
 
 Alan Gerber 與 Donald Green 的《Field Experiments: Design, Analysis, and Interpretation》（2012）是政治學實地實驗的教科書，討論不遵從分派、樣本流失與干擾這些實驗在現場會遇到的狀況。本書單未評估它的角色歸屬：它跟《Mastering 'Metrics》的隨機分派章、線上實驗那本都在討論隨機實驗，要比對章節才判得出它的角色跟那兩本是否不同，這一項記在 [研究方法與統計推論書單](/books/research-methods/) 的 Backlog 段。
 

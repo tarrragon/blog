@@ -71,3 +71,5 @@ Daniel Kahneman 的《快思慢想》在這一篇的用途，是替李普曼描�
 媒介怎麼影響人認為什麼重要——可得性捷思在媒介層級的對應——由 [新聞如何建構現實的選讀書目](/books/media-public-opinion/news-construction/) 收的《議題設定》討論。
 
 Mercier 的論證預設讀者接觸得到多個來源，那個前提在個人化的平台上變成什麼，討論這件事的書收在 [平台與演算法時代資訊環境的選讀書目](/books/media-public-opinion/platform-era/)。
+
+《Democracy for Realists》的論證建立在選舉調查資料上，而讀者平常讀到的輿論數字多半來自民調；一則民調在抽樣誤差以外還可能從哪裡失準（名單沒涵蓋到的人、被抽到而沒有回覆的人、題目的問法），判讀方法的書收在研究方法與統計推論書單的 [調查抽樣與民調判讀的選讀書目](/books/research-methods/survey-and-polls/)。同一組結論被另一批研究者換一組資料重做而結果不同，這類爭議怎麼判讀，收在那個書單的 [研究設計與因果推論的選讀書目](/books/research-methods/research-design/)。
