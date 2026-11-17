@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: wrap-decision
 license: MIT
 metadata:
-  version: 2.16.1
+  version: 2.17.0
   category: writing-methodology
 ---
 
@@ -95,9 +95,7 @@ metadata:
 
 > 各專案可建立個人化建議的三層機制（識別 / 分級 / 誠實）。
 
-### 與 requirement-protocol 的分工邊界
-
-Step 0、premortem context 閘門、`requirement-protocol` 都做「資訊不足先補齊」但問法不同：Step 0 問決策諮詢的**當事人條件**；premortem context 閘門問**計畫輪廓**（見 `references/premortem-workflow.md` 步驟 0）；requirement-protocol 問使用者**指令**是否明確。三者皆「一次一問、問到門檻即停」，互為前置不重複問：卡在「要什麼」用 requirement-protocol，「當事人條件」用 Step 0，「計畫輪廓」用 premortem context 閘門。
+> 分不清該用 Step 0、premortem context 閘門還是 `requirement-protocol` 時，讀 `references/detailed-techniques.md`「與 requirement-protocol 的分工邊界」。
 
 ---
 
@@ -242,34 +240,21 @@ WRAP 每階段之間是切割點，強迫問「是否繼續」：Step 0 完成�
 
 ---
 
-## 與其他決策類 Skill 的關係
-
-| Skill 類型                            | 分工                                                                                                                                    |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| 技術方案比較                          | 比較用專用 skill；認知偏誤防護用 WRAP                                                                                                   |
-| Bug 證據驅動修復                      | 明確 bug 用證據驅動修復 skill；被困住用 WRAP                                                                                            |
-| 任務認知負擔評估                      | 拆分用專用 skill；決策品質用 WRAP                                                                                                       |
-| 決策格式模板（5W1H）                  | 格式負責「怎麼寫」；WRAP 負責「怎麼想」                                                                                                 |
-| 學習捕捉                              | WRAP 正面絆腳索串接學習捕捉 skill                                                                                                       |
-| 系統設計的範圍與時機（system-design） | system-design 決定這一版要做哪些決定、哪些延後；WRAP 處理其中個別的決定。system-design 的延後項目附帶的觸發指標，就是 WRAP 絆腳索的輸入 |
-
----
-
 ## 參考文件
 
 ### 通用（可跨專案複用）
 
-| 文件                                | 內容                                                                 |
-| ----------------------------------- | -------------------------------------------------------------------- |
-| `references/detailed-techniques.md` | 每階段詳細操作+範例+引用；含 Step 0 詳細操作、二元處置取捨論證與實證 |
-| `references/pm-checklist.md`        | 快速/完整模式檢查清單 + 決策品質自測                                 |
-| `references/tripwire-catalog.md`    | 絆腳索完整目錄、自動駕駛失敗模式、切割機制、命名效應                 |
-| `references/iterative-research.md`  | 4 輪迭代查詢方法論 + 反向驗證 8 種類型範本                           |
-| `references/anti-paternalism.md`    | 悖論識別檢查清單 + 自我暴露偏好實踐                                  |
-| `references/claim-quick-wrap.md`    | 任務啟動簡化三問、快速模式壓縮版                                     |
-| `references/premortem-workflow.md`  | 完整 premortem 五步流程，P 階段高成本決策展開版                      |
-| `references/pseudo-widen-guard.md`  | 假設層級多元性規格：偽 Widen 判別、三層質疑、PC-063 案例             |
-| `references/source-verification.md` | 清單答案來源核對規格：幻覺模式分類、逐項核對流程                     |
+| 文件                                | 內容                                                                                                                                |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `references/detailed-techniques.md` | 每階段詳細操作+範例+引用；含 Step 0 詳細操作、與 requirement-protocol 的分工邊界、二元處置取捨論證與實證、與其他決策類 Skill 的關係 |
+| `references/pm-checklist.md`        | 快速/完整模式檢查清單 + 決策品質自測                                                                                                |
+| `references/tripwire-catalog.md`    | 絆腳索完整目錄、自動駕駛失敗模式、切割機制、命名效應                                                                                |
+| `references/iterative-research.md`  | 4 輪迭代查詢方法論 + 反向驗證 8 種類型範本                                                                                          |
+| `references/anti-paternalism.md`    | 悖論識別檢查清單 + 自我暴露偏好實踐                                                                                                 |
+| `references/claim-quick-wrap.md`    | 任務啟動簡化三問、快速模式壓縮版                                                                                                    |
+| `references/premortem-workflow.md`  | 完整 premortem 五步流程，P 階段高成本決策展開版                                                                                     |
+| `references/pseudo-widen-guard.md`  | 假設層級多元性規格：偽 Widen 判別、三層質疑、PC-063 案例                                                                            |
+| `references/source-verification.md` | 清單答案來源核對規格：幻覺模式分類、逐項核對流程                                                                                    |
 
 ---
 
