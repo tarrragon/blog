@@ -12,7 +12,7 @@
 用法：
   scripts/books-structure-count.py          印出計數，並比對 content/books/_index.md 維護區記錄的數字
   scripts/books-structure-count.py --list   另外列出每一個被計入的小節
-記錄的數字寫在 _index.md 的一行：`<!-- books-structure: 小節=N 管理=a 技藝=b 財務=c 媒介=d -->`。
+記錄的數字寫在 _index.md 的一行：`<!-- books-structure: 小節=N 管理=a 技藝=b 財務=c 媒介=d 方法=e -->`。
 對不上時 exit 1：新增或移除書之後，同一次改動要把那一行與引用這些數字的地方一起改。
 """
 import glob
@@ -22,8 +22,9 @@ import sys
 
 ROOT = "content/books"
 LINES = {"管理": "software-management/topics", "技藝": "craft", "財務": "finance",
-         "媒介": "media-public-opinion"}
-NON_TOPIC = {"craft-line-guide.md", "finance-line-guide.md", "media-line-guide.md", "positions.md",
+         "媒介": "media-public-opinion", "方法": "research-methods"}
+NON_TOPIC = {"craft-line-guide.md", "finance-line-guide.md", "media-line-guide.md",
+             "research-methods-line-guide.md", "positions.md",
              "starting-book-selection.md", "courses-not-found.md"}
 JUDGMENT_PAGES = {"voice-and-silence.md"}
 # 段名看不出是課程段的，逐條列在這裡（新增課程段時段名帶「課」字就不必登記）
