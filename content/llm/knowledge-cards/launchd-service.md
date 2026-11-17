@@ -35,7 +35,7 @@ launchctl list | grep ollama
 tail -f /opt/homebrew/var/log/ollama.log
 ```
 
-plist 內常見的鍵：`ProgramArguments`（要跑哪個指令）、`RunAtLoad`（開機就啟動）、`KeepAlive`（決定程序結束之後 launchd 是否重新啟動它。預設 false，只在有需求時啟動；設成 true 時不論程序怎麼結束都重新啟動，`brew services` 產生的 plist 就是設成 true；設成字典時依條件判斷，例如 `SuccessfulExit` 設成 false 代表結束碼不是 0 時才重新啟動，定義在 `man launchd.plist`，macOS 自己的 `ControlCenter` 用的就是這種寫法，實例見[選單列的控制中心沒有回應：ControlCenter 程序的判讀與重啟](/macos/macos_control_center_unresponsive/)）、`StandardOutPath` / `StandardErrorPath`（log 路徑）。出問題時先看 log 路徑指向的檔案、能直接看到 service 的 stdout / stderr。
+plist 內常見的鍵：`ProgramArguments`（要跑哪個指令）、`RunAtLoad`（launchd 載入這份 plist 時就啟動一次，預設 false；載入的時機依 plist 放的位置而定，見上表的「何時觸發」，`~/Library/LaunchAgents/` 的 agent 是使用者登入時，`/Library/LaunchDaemons/` 的 daemon 是開機時）、`KeepAlive`（決定程序結束之後 launchd 是否重新啟動它。預設 false，只在有需求時啟動；設成 true 時不論程序怎麼結束都重新啟動，`brew services` 產生的 plist 就是設成 true；設成字典時依條件判斷，例如 `SuccessfulExit` 設成 false 代表結束碼不是 0 時才重新啟動，定義在 `man launchd.plist`，macOS 自己的 `ControlCenter` 用的就是這種寫法，實例見[選單列的控制中心沒有回應：ControlCenter 程序的判讀與重啟](/macos/macos_control_center_unresponsive/)）、`StandardOutPath` / `StandardErrorPath`（log 路徑）。出問題時先看 log 路徑指向的檔案、能直接看到 service 的 stdout / stderr。
 
 服務管理常用指令：
 
