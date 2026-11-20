@@ -120,7 +120,7 @@ WAN 暴露的進一步後果：
 | Tailscale / WireGuard | mesh VPN、端到端加密                                    | 設備加入 mesh 後互信、設備本身被入侵會直接拿到 LLM                    |
 | nginx / caddy + 反代  | 自己跑反代、自己加 TLS / auth                           | 反代設定錯誤、TLS 證書管理失誤都會把 server 直接曝光                  |
 
-進階防護見 [Backend 7.3 入口治理](/backend/07-security-data-protection/entrypoint-and-server-protection/) 跟 [Backend 7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)。個人 dev 場景的判讀：
+進階防護見 [Backend 7.3 入口治理](/backend/07-security-data-protection/entrypoint-and-server-protection/) 跟 [Backend 7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)。Cloudflare Tunnel 那一列的 prompt 經過 Cloudflare，是因為 TLS 在 Cloudflare 終結、Cloudflare 解密之後才轉送到本機；這一項連同上傳大小上限，以及不經 Cloudflare 代理的替代路徑（DNS only 紀錄、mesh VPN、Tailscale Funnel）各自的前提，見 [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/) 的〈經過 Cloudflare 代理時家用主機要接受的限制：TLS 終結、上傳大小上限、影片與大型檔案的條款，以及 Tunnel 連 HTTP 以外協定的方式〉。個人 dev 場景的判讀：
 
 1. **預設不要上 WAN**：若沒有具體需求（如多裝置工作流、跨地點協作）、保持 LAN 或 loopback。
 2. **要上 WAN 時優先用 Tailscale-like mesh**：可以保持「私網」感覺、不暴露在公開 internet 上。

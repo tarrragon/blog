@@ -8,7 +8,7 @@ tags: ["backend", "deployment", "tunnel"]
 
 outbound tunnel 是一種入口形態：本機的程序主動往外連到 tunnel 服務商的邊緣節點（edge）並維持這條連線，外部的請求經由這條連線送回本機，路由器不必開任何入站的連接埠。它跟 load balancer 入口的差別在連線方向：LB 入口的前提是 instance 有對外可達的位址、流量從外網路由進來；tunnel 由本機往外連，所以主機沒有固定 IP、或架設的人不想或不能在路由器開連接埠時，家用主機與個人自架工具常用它。這篇整理的內容是：選這種入口的前提；家用主機要對外提供網站時，接上 Cloudflare 的兩種方式（Proxied 紀錄指向主機的公開 IP，以及 Cloudflare Tunnel）各自要求的網路條件，以及兩種方式下訪客的請求經過 Cloudflare 的路徑；經過 Cloudflare 代理時家用主機要接受的限制，與 Tunnel 連 HTTP 以外協定的方式；同一台主機的公開網站與管理服務分給 Tunnel 與 mesh VPN 的取捨、VPN 與救援入口的差別、給少數認識的人用的服務依連線方的形態接在哪一種入口，以及分開之後 `cloudflared` 與兩家帳號留下的風險；tunnel 入口的連線、就緒、啟停順序與認證合約；隧道的穩態、重連與多連線冗餘；故障的分層判讀；認證疊在 tunnel 之後的做法與常見誤區。源站在 CDN 後面時防火牆怎麼只放行 CDN 的位址，寫在 [CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/devops/infra/03-network-foundation/origin-host-firewall/)；單人遠端操作自己主機的 shell 時 Tailscale 與 Cloudflare Tunnel 的比較，寫在 [7.C11 選型：單人遠端 Shell — Tailscale vs Cloudflare Tunnel](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)。
 
-## 適用判斷
+## 選 outbound tunnel 當入口的前提與典型場景
 
 選 outbound tunnel 的前提是「要被外部觸及、但不想暴露公網入口」。典型場景：手機遠端操作自有主機、家庭網路內的服務對外、開發環境臨時對外驗證。服務本身值不值得自建、見 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/) 的個人自架工具段;這裡只處理「入口形態選了 tunnel 之後」的部署合約。
 
@@ -25,7 +25,7 @@ cloudflared（綁 Cloudflare 邊緣與網域）、Tailscale（綁私有網路 / 
 
 Proxied 紀錄要求源站從網際網路連得進來；Tunnel 要求的是主機連得出去，而且出站要能連到 Cloudflare 的 7844 連接埠（UDP 給預設的 QUIC，TCP 給 http2；只放行 TCP 時要把 `cloudflared` 的協定指定成 http2，實測在 [Cloudflare 回源的實測紀錄：Oracle Cloud NSG 只放行 Cloudflare 位址與規則數上限、回源的來源位址、Authenticated Origin Pulls、Worker 偽造 CF-Connecting-IP 與 Tunnel 的出站連接埠](/devops/infra/03-network-foundation/hands-on/cloudflare-origin-pull-walkthrough/)）。下面依家用網路的條件，寫出兩種方式各自接不接得上：
 
-- **電信業者級 NAT（carrier-grade NAT，CGNAT：電信業者讓多戶共用同一個公開 IPv4 位址）**：家裡的路由器拿到的是電信業者內部的位址，網際網路上沒有一個 IPv4 位址連得到這台主機，A 紀錄沒有可填的值。在家裡的路由器設連接埠轉送（port forwarding）也沒有作用：入站的封包到了電信業者的 NAT，因為那裡沒有對應這台主機的轉送規則而被丟棄。Tunnel 不受影響。家用網路同時有 IPv6 時，主機可能有一個連得進來的 IPv6 位址、可以填進 AAAA 紀錄；這是依 IPv6 不經 NAT 的機制推論，沒有實跑。
+- **電信業者級 NAT（carrier-grade NAT，CGNAT：電信業者讓多戶共用同一個公開 IPv4 位址，判讀方式見 [CGNAT](/devops/infra/knowledge-cards/cgnat/) 卡）**：家裡的路由器拿到的是電信業者內部的位址，網際網路上沒有一個 IPv4 位址連得到這台主機，A 紀錄沒有可填的值。在家裡的路由器設連接埠轉送（port forwarding）也沒有作用：入站的封包到了電信業者的 NAT，因為那裡沒有對應這台主機的轉送規則而被丟棄。Tunnel 不受影響。家用網路同時有 IPv6 時，主機可能有一個連得進來的 IPv6 位址、可以填進 AAAA 紀錄；這是依 IPv6 不經 NAT 的機制推論，沒有實跑。
 - **浮動的公開 IP**：電信業者重新分配位址之後，A 紀錄還指著舊位址，要另外跑動態 DNS（dynamic DNS）的程式在位址改變時更新紀錄，更新之前訪客的請求送不到源站。Tunnel 的 CNAME 指向 tunnel 的識別碼，紀錄裡沒有源站的位址，位址改變之後 `cloudflared` 重新連上 Cloudflare，訪客的請求又送得到源站。
 - **電信業者不讓住宅方案在 80 與 443 接受入站連線**：這類限制依電信業者與方案而不同，查法是讀方案的服務條款，或從家裡以外的網路對自己的公開 IP 連一次這兩個連接埠。這兩個連接埠的入站連線被擋時，用 Proxied 紀錄的管理者可以讓源站改聽一個沒被擋的連接埠，再用 Cloudflare 的 Origin Rules 覆寫回源的目的連接埠，訪客照樣連 443、網址不必改（依 Cloudflare〈Origin Rules〉的說明，沒有實跑）；不用 Origin Rules 時，源站要改聽代理清單裡的其他連接埠，訪客的網址也要帶上那個連接埠。Tunnel 不受影響。
 - **路由器已設連接埠轉送（公開 IP 固定，或浮動而靠動態 DNS 更新）**：兩種方式都接得上。用 Proxied 紀錄時，源站留著一條直連路徑（origin bypass，[CDN](/devops/infra/knowledge-cards/cdn/) 卡寫了這個概念）：知道源站位址的人可以跳過 Cloudflare 直接連進來，Cloudflare 上的 [WAF](/backend/knowledge-cards/waf/) 規則對這條路徑不起作用。管理者要靠源站的防火牆只放行 Cloudflare 的位址，並用 Authenticated Origin Pulls（Cloudflare 回源時出示用戶端憑證，源站只接受帶憑證的連線）驗證請求是 Cloudflare 替這個網站的網域送來的、不是別的 Cloudflare 帳號經由同一批位址送來的。Authenticated Origin Pulls 用 Cloudflare 共用憑證的版本有實測，只證明請求來自 Cloudflare 的網路；自己上傳憑證、分辨得出網域的版本沒有實跑；做法在 [CDN 後面的源站主機防火牆](/devops/infra/03-network-foundation/origin-host-firewall/)。
@@ -49,7 +49,7 @@ Proxied 紀錄要求源站從網際網路連得進來；Tunnel 要求的是主�
 一台家用主機常同時有兩類要從外面連進來的服務：給任何訪客用的公開網站，以及只有管理者自己用的管理服務（SSH、NAS 的管理介面、資料庫、監控儀表板，屬於 [Management Plane](/backend/knowledge-cards/management-plane/) 的那一類入口）。管理者連到管理服務的那條路，站上稱為管理通道（[伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證三層的做法與選擇，以及救援入口](/devops/infra/03-network-foundation/management-access-channel/)）。兩類服務的使用者不同，對入口的要求也不同：
 
 - **公開網站**的訪客是任何人，一般的瀏覽器要能直接連到入口，入口前面要有擋攻擊的元件。經由 Tunnel 接上 Cloudflare 時，訪客不必另外安裝軟體，請求經過 Cloudflare 的 WAF 與快取，主機不開入站的連接埠。
-- **管理服務**的使用者是管理者自己，他從自己的幾台裝置連線，可以在每台裝上用戶端。mesh VPN（每台裝置裝用戶端、裝置之間以私有位址加密互連的 VPN，Tailscale 是一例）在每台裝置上建立一個 VPN 的網路介面；管理者讓管理服務只接受這個介面上的連線之後，公開網路上沒有任何位址連得到它們。做法有兩種：把服務的監聽位址設成這個介面的位址（Tailscale 在 Linux 上建立的介面是 `tailscale0`，位址是它分配的那一個），這時服務要排在 `tailscaled` 之後啟動，否則開機時綁不上那個位址而啟動失敗（依 bind 的行為推論，沒有實跑），用 systemd 時在服務的 unit 裡設定啟動順序；或讓服務照樣聽所有位址，在主機防火牆上只放行來自 `tailscale0` 的連線。SSH、SMB 這些 HTTP 以外的協定直接可用；裝置之間的流量由兩端的 WireGuard 金鑰加密，Tailscale 的〈DERP servers〉寫明經由它的 DERP 中繼轉送時，中繼伺服器也解不開。Tailscale 的連線同樣由裝置主動往外建立，但管理服務仍然在 VPN 介面上接受入站連線，所以本篇照 [伺服器管理通道的設計](/devops/infra/03-network-foundation/management-access-channel/) 的歸類把 Tailscale 當成 VPN，跟 Cloudflare Tunnel 對照。Tailscale 在 CGNAT 與浮動 IP 之下怎麼維持裝置之間的連線，見 [Tailscale 深入：tailnet、MagicDNS、直連與 DERP 中繼](/linux/tools/remote/tailscale-tailnet-and-relay/)。
+- **管理服務**的使用者是管理者自己，他從自己的幾台裝置連線，可以在每台裝上用戶端。mesh VPN（每台裝置裝用戶端、裝置之間以私有位址加密互連的 VPN，Tailscale 是一例；它跟集中式 VPN 的差別見 [Mesh VPN](/devops/infra/knowledge-cards/mesh-vpn/) 卡）在每台裝置上建立一個 VPN 的網路介面；管理者讓管理服務只接受這個介面上的連線之後，公開網路上沒有任何位址連得到它們。做法有兩種：把服務的監聽位址設成這個介面的位址（Tailscale 在 Linux 上建立的介面是 `tailscale0`，位址是它分配的那一個），這時服務要排在 `tailscaled` 之後啟動，否則開機時綁不上那個位址而啟動失敗（依 bind 的行為推論，沒有實跑），用 systemd 時在服務的 unit 裡設定啟動順序；或讓服務照樣聽所有位址，在主機防火牆上只放行來自 `tailscale0` 的連線。SSH、SMB 這些 HTTP 以外的協定直接可用；裝置之間的流量由兩端的 WireGuard 金鑰加密，Tailscale 的〈DERP servers〉寫明經由它的 DERP 中繼轉送時，中繼伺服器也解不開。Tailscale 的連線同樣由裝置主動往外建立，但管理服務仍然在 VPN 介面上接受入站連線，所以本篇照 [伺服器管理通道的設計](/devops/infra/03-network-foundation/management-access-channel/) 的歸類把 Tailscale 當成 VPN，跟 Cloudflare Tunnel 對照。Tailscale 在 CGNAT 與浮動 IP 之下怎麼維持裝置之間的連線，見 [Tailscale 深入：tailnet、MagicDNS、直連與 DERP 中繼](/linux/tools/remote/tailscale-tailnet-and-relay/)。
 
 管理服務的入口有兩種做法：走 mesh VPN；或也走 Tunnel，再用 Cloudflare Access 限定只有管理者連得到。Cloudflare Zero Trust 方案裡的 Access 只負責驗證身分，管理服務接上 Cloudflare 的連線仍然靠 Tunnel（兩者的關係見 [Zero Trust（零信任）](/backend/knowledge-cards/zero-trust/)）。兩種做法的差別：
 
@@ -126,7 +126,7 @@ tunnel 把後端的可達性開到了外部、但它不認證。隧道網址可�
 
 常見的疊法是邊緣與本機各一層：邊緣層（cloudflared 配 Cloudflare Access service token、Tailscale 配 ACL）讓未授權流量在邊緣就被擋、根本到不了本機;本機層（反向代理驗共享密鑰 / basic auth）作為邊緣萬一失效的縱深。入口威脅建模見 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/);單人自用工具的裝置綁定認證見 [7.2 單人裝置認證模型](/backend/07-security-data-protection/identity-access-boundary/#單人裝置認證模型)。
 
-## 判讀訊號
+## tunnel 入口的判讀訊號：外部連不進來、啟動後的 502、頻繁重連、網址被直接連用、530 與部署切換時的中斷
 
 | 訊號                            | 判讀重點                              | 對應動作                                                              |
 | ------------------------------- | ------------------------------------- | --------------------------------------------------------------------- |
@@ -139,7 +139,7 @@ tunnel 把後端的可達性開到了外部、但它不認證。隧道網址可�
 
 「外部拿到 530」那一列是 quick tunnel 的實測：出站擋掉 UDP 7844、TCP 7844 開著時，cloudflared 一直重試 QUIC 而沒有自動改用 http2，以 `--protocol http2` 啟動之後改走 TCP 7844 連上，見 [Cloudflare 回源的實測紀錄：Oracle Cloud NSG 只放行 Cloudflare 位址與規則數上限、回源的來源位址、Authenticated Origin Pulls、Worker 偽造 CF-Connecting-IP 與 Tunnel 的出站連接埠](/devops/infra/03-network-foundation/hands-on/cloudflare-origin-pull-walkthrough/) 的〈Cloudflare Tunnel：源站不開入站，以及出站要放行的連接埠〉；具名的 tunnel 預設的協定選擇沒有測。
 
-## 常見誤區
+## tunnel 入口的常見誤區：網址當密碼、後端健康當外部可達、常駐入口與供應商不停機的假設
 
 把 tunnel 網址當密碼、是最常見也最危險的誤判。網址不好猜不代表是祕密、它會從各種地方外洩、認證要靠 tunnel 之後的閘道、不是靠網址難猜。
 
@@ -149,13 +149,16 @@ tunnel 把後端的可達性開到了外部、但它不認證。隧道網址可�
 
 把 tunnel 供應商視為零停機、不設本機降級預案。tunnel 依賴外部供應商的邊緣網路與協調伺服器，供應商事故期間本機服務完全健康但外部無法觸及。有降級需求的場景要準備替代入口路徑，路徑依網路條件而定：主機有連得進來的公開 IP 時，可以臨時開 port + 反向代理；在 CGNAT 後面時開 port 沒有作用，管理用的替代路徑改用 mesh VPN（〈家用主機對外提供網站時接上 Cloudflare 的兩種方式〉的 CGNAT 那一項），或接受供應商 SLA 決定自身可用性。
 
-## 跨模組路由
+## 跨模組路由：生命週期合約、入口威脅建模、隧道憑證、隧道監控、管理通道與 mesh VPN 的帳號防護
 
 1. 與 [5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/) 的交接：tunnel 的 startup / readiness / drain 對齊生命週期合約、只是 drain 對象換成隧道收斂。
 2. 與 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/) 的交接：tunnel 作為對外入口的威脅建模與認證疊法。
 3. 與 [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 的交接：tunnel 存取憑證與認證閘道密鑰的保管與輪替。
 4. 與 [4 觀測](/backend/04-observability/) 的交接：隧道連線狀態與重連次數要進監控、否則 network 層故障無訊號。
+5. 與 [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證三層的做法與選擇，以及救援入口](/devops/infra/03-network-foundation/management-access-channel/) 的交接：管理服務不走 Tunnel 時，管理者連進主機的通道怎麼分成網路可達性、通道授權與主機登入驗證三層設計，以及通道全部斷掉時的救援入口。
+6. 與 [Tailscale 深入：tailnet、MagicDNS、直連與 DERP 中繼](/linux/tools/remote/tailscale-tailnet-and-relay/) 的交接：管理服務走 mesh VPN 時，裝置在 CGNAT 與浮動 IP 之下怎麼維持固定的位址，以及直接連線打不通時改經 DERP 中繼的判讀。
+7. 與 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/) 的交接：mesh VPN 預設互通時存取規則怎麼收窄，以及 Tailscale 管理帳號與協調伺服器被盜或作惡時 Tailnet Lock 擋得住什麼。
 
-## 下一步路由
+## 延伸閱讀：生命週期合約、認證閘道與交付形態選型
 
 要把 tunnel 入口放進整體生命週期、接著讀 [5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/)。要把 tunnel 之後的認證做紮實、接著讀 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/) 與 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)。判斷服務是否屬於個人自架工具形態、回 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/)。

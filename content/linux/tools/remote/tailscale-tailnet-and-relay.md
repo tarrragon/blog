@@ -12,7 +12,7 @@ Tailscale 承擔的是可達性：給每台加入的裝置一個私網內固定�
 
 加入同一個帳號的裝置組成一個 tailnet（你的私有網路）。Tailscale 給每台裝置分配一個 `100.x.y.z` 的私網位址（CGNAT 保留段），這個位址在裝置的整個生命週期內固定、跟它當下接的是家用 Wi-Fi、行動網路還是咖啡廳網路無關。裝置實際的網路位置變了，由它自己向 Tailscale 的協調伺服器回報、連線在底層自動重建，上層看到的 tailnet 位址不變。
 
-這把「定位」跟「公網 IP」解耦：家裡 IP 重撥、手機切網路、機器躲在電信業者級 NAT（CGNAT，多戶共用一個公網 IP、對外開 port 這條路直接消失）後面，裝置之間用 tailnet 位址一樣連得到。tailnet 位址穩定這個性質，也是為什麼走 tailnet 的 TCP 連線有機會撐過一次實體換網（見 [TCP 連線與漫遊](/linux/dotfile/knowledge-cards/tcp-connection-roaming/) 的邊界段）。
+這把「定位」跟「公網 IP」解耦：家裡 IP 重撥、手機切網路、機器躲在電信業者級 NAT（[CGNAT](/devops/infra/knowledge-cards/cgnat/)，多戶共用一個公網 IP、對外開 port 這條路直接消失）後面，裝置之間用 tailnet 位址一樣連得到。tailnet 位址穩定這個性質，也是為什麼走 tailnet 的 TCP 連線有機會撐過一次實體換網（見 [TCP 連線與漫遊](/linux/dotfile/knowledge-cards/tcp-connection-roaming/) 的邊界段）。
 
 ## MagicDNS：用主機名而非 IP
 
@@ -59,6 +59,8 @@ sudo tailscale up --hostname=my-vm         # 印出授權 URL
 ## 跟連線層疊加、關掉公網入口
 
 Tailscale 是網路層、跟連線層（SSH / mosh）是疊加關係：先有可達性、上面才談連線手感。這個疊加還帶來一個安全性質——服務可以只綁 tailnet 介面、公網防火牆全關：SSH / ttyd 這類只在私網位址上聽，對外沒有任何開放 port，公網入口縮到零。比「開公網 port 再堆 fail2ban」的維護成本低得多。連得到私網位址本身就代表通過了 tailnet 認證，定位與授權在這一層合一。
+
+同一台主機另外要對外提供公開網站時，公開網站可以經由 Cloudflare Tunnel 接上 Cloudflare，管理服務照這一段只聽 tailnet 介面。兩者這樣分開換到什麼、付出什麼，給家人或朋友用的服務依連線方的形態接在哪一種入口，以及主機上的 `cloudflared` 仍然連得到只聽 tailnet 介面的服務這一類留下的風險，見 [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/) 的〈同一台家用主機的公開網站與管理服務：分給 Tunnel 與 mesh VPN 的取捨，與分開之後仍然存在的風險〉。
 
 ## 取捨與邊界
 

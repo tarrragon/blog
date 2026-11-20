@@ -291,7 +291,7 @@ Worker 連 `api.ipify.org` 走的是 IPv6，出站位址 `2a06:98c0:3600::103` �
 
 ## Cloudflare Tunnel：源站不開入站，以及出站要放行的連接埠
 
-Tunnel 由源站上的 cloudflared 主動往外連到 Cloudflare，請求經由這條連線送進來。quick tunnel 不需要帳號：cloudflared 向 Cloudflare 要一個隨機的 `*.trycloudflare.com` 網址，把它接到本機的一個服務。後端只聽本機位址：
+Tunnel 由源站上的 cloudflared 主動往外連到 Cloudflare，請求經由這條連線送進來。Tunnel 跟 Proxied 紀錄這兩種接上 Cloudflare 的方式，在 CGNAT、浮動 IP、電信業者擋 80 與 443 這幾種家用網路條件下各自接不接得上，寫在 [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/) 的〈家用主機對外提供網站時接上 Cloudflare 的兩種方式：Proxied 紀錄指向公開 IP 與 Cloudflare Tunnel〉；這一節實測的是 Tunnel 不開入站時源站的狀態，以及出站要放行的連接埠。quick tunnel 不需要帳號：cloudflared 向 Cloudflare 要一個隨機的 `*.trycloudflare.com` 網址，把它接到本機的一個服務。後端只聽本機位址：
 
 ```bash
 dnf -y install https://github.com/cloudflare/cloudflared/releases/download/2026.10.3/cloudflared-linux-aarch64.rpm

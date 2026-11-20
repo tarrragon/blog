@@ -93,3 +93,5 @@ PHP 執行模型的術語（SAPI、mod_php、PHP-FPM、OPcache）在 [PHP 知識
 | [YAML](/devops/infra/knowledge-cards/yaml/)                                                               | 用縮排表示結構的資料格式，不加引號的值由解析器依 YAML 1.1 或 1.2 的規則推測型別             |
 | [Configuration Management（組態管理）](/devops/infra/knowledge-cards/configuration-management/)           | 把一群主機內部的套件、設定檔與服務寫成宣告再套用；inventory 的分層與合併規則、跟 IaC 的分界 |
 | [VNIC（虛擬網路卡）](/devops/infra/knowledge-cards/vnic/)                                                 | 主機接上虛擬網路的網卡，私有 IP 與網卡層的防火牆規則掛在它上面，主機重建時跟著換新          |
+| [CGNAT（電信業者級 NAT）](/devops/infra/knowledge-cards/cgnat/)                                           | 電信業者讓多戶共用一個公開 IPv4 位址的位址轉換，家用主機在它後面時連接埠轉送沒有作用        |
+| [Mesh VPN（網狀 VPN）](/devops/infra/knowledge-cards/mesh-vpn/)                                           | 每台裝置裝用戶端、裝置之間各自加密互連的 VPN，加入網路之後預設全部互通                      |
