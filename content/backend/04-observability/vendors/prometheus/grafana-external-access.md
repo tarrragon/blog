@@ -33,7 +33,7 @@ ssh -N -L 3000:127.0.0.1:3000 monitor-1
 
 通道開著時，瀏覽器開自己電腦上的 `http://127.0.0.1:3000`，SSH 把這個連線轉到監控主機上的 Grafana。`-L` 中間那一段的 `127.0.0.1` 由遠端主機解讀，指的是監控主機自己，所以 Grafana 不必改綁其他介面；自己電腦上的 3000 已被占用時，改前面那一段的本機連接埠（例如 `-L 13000:127.0.0.1:3000`），瀏覽器改開 13000。這條指令是 SSH 的標準用法，這裡沒有實際從另一台電腦連過監控主機。
 
-VPN（例如 Tailscale、WireGuard）是另一種沒有對外連接埠的做法：Grafana 改綁在 VPN 介面的位址上（compose 的 `ports` 寫成 `"<VPN 位址>:3000:3000"`），VPN 裡的人直接開那個位址。團隊已經有 VPN 時，每個人不必各自開通道。
+VPN（例如 Tailscale、WireGuard）是另一種沒有對外連接埠的做法：Grafana 改綁在 VPN 介面的位址上（compose 的 `ports` 寫成 `"<VPN 位址>:3000:3000"`），VPN 裡的人直接開那個位址。團隊已經有 VPN 時，每個人不必各自開通道。用 Tailscale 時，Grafana 也可以照樣只綁 `127.0.0.1:3000`，由 `tailscale serve` 在 tailnet 上接收連線再轉給它；這種做法的實測、Grafana 收到的來源位址與 serve 加上的身分標頭，以及同一台主機上的程式偽造得了那些標頭的風險，見 [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/) 的〈用 tailscale serve 讓只聽本機的 HTTP 服務給 tailnet 連：實測、限制與 HTTPS 模式的代價〉。
 
 ## 經由應用入口 Nginx 轉送的做法：多台主機時入口起不來，與入口出事時監控一起看不到
 

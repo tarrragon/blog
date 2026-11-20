@@ -16,7 +16,7 @@ Tailscale 承擔的是可達性：給每台加入的裝置一個私網內固定�
 
 ## MagicDNS：用主機名而非 IP
 
-記 `100.x.y.z` 不如記名字。MagicDNS 讓你用裝置的主機名連線——`ssh user@my-vm` 而不是 `ssh user@100.68.144.88`。主機名比位址更該當作連線座標寫進設定：位址雖然在 tailnet 內固定，但重裝、換帳號都可能拿到新位址，主機名則跟著機器的身分走。要把連線座標記進版控或腳本時，用主機名、留位址當備援。
+記 `100.x.y.z` 不如記名字。MagicDNS 讓你用裝置的主機名連線——`ssh user@my-vm` 而不是 `ssh user@100.68.144.88`。主機名比位址更該當作連線座標寫進設定：位址雖然在 tailnet 內固定，但重裝、換帳號都可能拿到新位址，主機名則跟著機器的身分走。要把連線座標記進版控或腳本時，用主機名、留位址當備援。有些功能只認名稱：經由 `tailscale serve` 轉送的服務用 `100.x` 位址連會拿到 404，因為 serve 用請求裡的主機名查轉送設定，實測見 [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/) 的〈用 tailscale serve 讓只聽本機的 HTTP 服務給 tailnet 連：實測、限制與 HTTPS 模式的代價〉。
 
 這個能力的代價要一起知道：開啟後（`accept-dns`）Tailscale 會把 `100.100.100.100` 這個跑在本機的 resolver 設成系統第一順位，tailnet 以外的域名由它轉發給上游，於是它進入每一次名字查詢的路徑。它短暫失聯時，整台機器的域名解析會跟著失效——症狀是直連 IP 通、任何用域名的操作卻回 `Could not resolve host`。定位方式與 `--accept-dns=false` 的取捨見 [本機 DNS proxy 插在第一順位時的放大效應](/work-log/vpn_local_dns_proxy_amplifies_outage/)。
 

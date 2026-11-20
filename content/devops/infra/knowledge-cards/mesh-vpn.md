@@ -24,7 +24,7 @@ Mesh VPN（網狀 VPN）是每一台裝置都裝用戶端、裝置之間各自�
 
 ## 判斷條件與後果
 
-- **連線方是自己或少數認識的人，每台裝置都裝得了用戶端**：服務只聽 VPN 介面的位址（或主機防火牆只放行 VPN 介面），而且主機沒有其他公開入口時，服務在公開網路上沒有任何位址，網際網路上的掃描連登入頁都碰不到，SSH、SMB 這些 HTTP 以外的協定直接可用，流量也不經第三方解密。代價是每一台裝置都要裝用戶端、加入網路，所以連線方是不特定的訪客時這個做法用不了，公開服務改用 Outbound Tunnel 或公開的入口。同一台主機上公開網站與管理服務怎麼分給這兩種入口，見 [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/) 的〈同一台家用主機的公開網站與管理服務：分給 Tunnel 與 mesh VPN 的取捨，與分開之後仍然存在的風險〉。
+- **連線方是自己或少數認識的人，每台裝置都裝得了用戶端**：服務只聽 VPN 介面的位址（或主機防火牆只放行 VPN 介面，或服務只聽本機、由 VPN 的用戶端轉送，Tailscale 的做法見 [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/) 的〈用 tailscale serve 讓只聽本機的 HTTP 服務給 tailnet 連：實測、限制與 HTTPS 模式的代價〉），而且主機沒有其他公開入口時，服務在公開網路上沒有任何位址，網際網路上的掃描連登入頁都碰不到，SSH、SMB 這些 HTTP 以外的協定直接可用，流量也不經第三方解密。代價是每一台裝置都要裝用戶端、加入網路，所以連線方是不特定的訪客時這個做法用不了，公開服務改用 Outbound Tunnel 或公開的入口。同一台主機上公開網站與管理服務怎麼分給這兩種入口，見 [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/) 的〈同一台家用主機的公開網站與管理服務：分給 Tunnel 與 mesh VPN 的取捨，與分開之後仍然存在的風險〉。
 - **網路裡有不只一種角色的裝置**（伺服器與個人裝置、管理者與家人）：預設互通時，任何一台被入侵或交給別人用的裝置都在信任範圍內，連得到其他每一台的每一個連接埠，原因是加入網路就是預設唯一的一道檢查。要限制哪一台連得到哪一台的哪個連接埠，靠 VPN 自己的存取規則（Tailscale 的 ACL）或每台主機的防火牆；服務與它的管理介面是同一個程式、同一個連接埠時，存取規則用連接埠分不開兩者。
 - **用的是服務商營運協調伺服器的產品**：服務商的管理帳號改得到誰能加入網路與存取規則，這個帳號被別人拿到時，對方可以改存取規則，沒有開 Tailnet Lock 時還可以把自己的裝置加進來，直接連到只聽 VPN 介面的服務；自建 WireGuard 時沒有這個帳號，金鑰的分發與撤銷回到管理者手上。兩種情形的信任錨與防護見 [7.43 兩個網路之間的連線安全](/backend/07-security-data-protection/cross-network-connection-security/) 的〈WireGuard 與 Tailscale 的金鑰與控制平面〉。
 - **VPN 本身壞掉**：主機的網路設定或 VPN 的程式出問題時，經由 VPN 也連不進主機，所以 mesh VPN 是一條管理通道，不是救援入口；救援入口要不經過主機作業系統的網路設定，見 [伺服器管理通道的設計：網路可達性、通道授權、主機登入驗證三層的做法與選擇，以及救援入口](/devops/infra/03-network-foundation/management-access-channel/)。
