@@ -213,7 +213,7 @@ TOOLS = {
 
 **為什麼這樣設計**：
 
-- **為什麼 description 要具體**：LLM 看 description 決定 call 時機。「search the blog」對 LLM 來說太模糊（搜什麼？找什麼？）、改成「Semantic search over blog content. Returns top-K relevant chunks with source paths.」明確描述輸入跟輸出形狀、LLM 能判讀「使用者問技術問題時該 call 這個」。
+- **為什麼 description 要具體**：LLM 看 description 決定 call 時機。「search the blog」對 LLM 來說太模糊（搜什麼？找什麼？）、改成「Semantic search over blog content. Returns top-K relevant chunks with source paths.」明確描述輸入跟輸出形狀、LLM 能判讀「使用者問技術問題時該 call 這個」。client 對工具做延遲載入時，description 另外是工具搜尋比對的對象：模型用使用者描述任務的字詞去搜，description 裡沒有那些字詞，這支工具就搜不到、模型不知道它存在；Claude Code 比對 description 時只讀開頭一段，所以搜尋會用到的字詞放在開頭（[4.24〈延遲載入的機制與它的代價〉](/llm/04-applications/mcp-tool-surface-design/)）。
 - **為什麼 schema 用 JSON Schema、不是自訂格式**：JSON Schema 是 web 標準、所有 LLM application 都認識、跨 framework 可移植。也是 [function calling](/llm/knowledge-cards/function-calling/) 跟 [Tool use 原理](/llm/04-applications/tool-use-principles/) 的 schema 描述語言。
 - **為什麼 `required` 跟 `default` 兩個機制**：對 LLM 看的 prompt 越清楚越好。`required` 告訴 LLM「不傳這個會錯」、`default` 告訴 LLM「可不傳、預設值是 X」。沒分清的話、LLM 可能總是傳所有參數、雜訊多。
 - **為什麼 `fn` 用 lambda 包**：實際 tool function 是 positional args、但 client 送的是 dict。lambda 把 dict 拆成 function call 的 args。也方便將來如果 tool function signature 變、只要改 lambda 不用改 dispatcher。
@@ -318,7 +318,7 @@ Server 回兩個 tool 的完整 schema：
 }
 ```
 
-**Protocol 意義**：這個輸出就是 LLM application 會塞給 LLM 的 tool 描述。LLM application 把這份 schema 用 [function calling](/llm/knowledge-cards/function-calling/) 機制給模型看、模型決定何時呼叫、傳什麼參數。Server 跟模型之間靠這層 schema 對齊、模型不直接呼叫 server、是經 application 中介。
+**Protocol 意義**：這個輸出就是 LLM application 會塞給 LLM 的 tool 描述。LLM application 把這份 schema 用 [function calling](/llm/knowledge-cards/function-calling/) 機制給模型看、模型決定何時呼叫、傳什麼參數。Server 跟模型之間靠這層 schema 對齊、模型不直接呼叫 server、是經 application 中介。這個 demo 只有兩個 tool，application 把整份清單放進每一次呼叫；接上的 server 合計有幾十到上百支工具時，有些 client（例如 Claude Code）預設只把工具名稱放進 context，模型先搜尋、命中之後才放進完整 schema，也就是 `tools/list` 回傳的內容不一定整份進到模型的 context。這種延遲載入的做法與代價，在 [4.24 MCP 工具數量多時工具定義怎麼交給模型](/llm/04-applications/mcp-tool-surface-design/)。
 
 ### 3. tools/call: search_blog
 

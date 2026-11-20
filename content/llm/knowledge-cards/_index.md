@@ -164,13 +164,14 @@ weight: -1
 
 ### Coding Agent 工程
 
-| 卡片                                                             | 核心問題                                                      |
-| ---------------------------------------------------------------- | ------------------------------------------------------------- |
-| [Scaffold vs Harness](/llm/knowledge-cards/scaffold-vs-harness/) | Coding agent 的兩個工程層次：建構時靜態 vs runtime 動態       |
-| [Context Budget](/llm/knowledge-cards/context-budget/)           | Coding agent context window 拆分配額、25% 規則                |
-| [Subagent](/llm/knowledge-cards/subagent/)                       | 把特定責任拆給專門子 agent、各自獨立 context、用 handoff 調度 |
-| [Prompt Cache](/llm/knowledge-cards/prompt-cache/)               | 重複 prefix 的 KV cache 服務端持久化、90% cost 折扣           |
-| [Agent Memory](/llm/knowledge-cards/agent-memory/)               | Working / session / episodic / semantic / procedural 四層     |
+| 卡片                                                                             | 核心問題                                                      |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| [Scaffold vs Harness](/llm/knowledge-cards/scaffold-vs-harness/)                 | Coding agent 的兩個工程層次：建構時靜態 vs runtime 動態       |
+| [Context Budget](/llm/knowledge-cards/context-budget/)                           | Coding agent context window 拆分配額、25% 規則                |
+| [Subagent](/llm/knowledge-cards/subagent/)                                       | 把特定責任拆給專門子 agent、各自獨立 context、用 handoff 調度 |
+| [Prompt Cache](/llm/knowledge-cards/prompt-cache/)                               | 重複 prefix 的 KV cache 服務端持久化、90% cost 折扣           |
+| [Deferred Tool Loading（延遲載入）](/llm/knowledge-cards/deferred-tool-loading/) | 工具定義用到才放進 context：搜尋的往返、搜尋落空與常駐集合    |
+| [Agent Memory](/llm/knowledge-cards/agent-memory/)                               | Working / session / episodic / semantic / procedural 四層     |
 
 ### Production / Observability
 

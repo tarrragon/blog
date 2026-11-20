@@ -50,5 +50,6 @@ API 規範治理處理的問題在文件之外：規範寫得出來、讓幾十�
 ## 下一步路由
 
 - 相容性檢查的工具細節：[11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)
+- 規範裡的說明欄位對 LLM agent 是執行時讀的契約與搜尋資料：[11.17 LLM agent 作為 API 的呼叫方](/backend/11-api-design/llm-agent-as-api-caller/)
 - 各章判斷標準是治理的內容物：從 [11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/) 依序讀
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

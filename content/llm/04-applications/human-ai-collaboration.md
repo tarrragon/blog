@@ -162,7 +162,7 @@ HITL 要真的擋住失敗、不退化成 rubber-stamp approval、設計上要�
 
 高 risk 動作（push、deploy、production change）強制 step-by-step approval；中等 risk（檔案寫入、本機 commit）每 N 步 checkpoint；低 risk（read-only、本機 sandbox）full auto。對應 [4.3 tool use 副作用範圍](/llm/04-applications/tool-use-principles/) 的等級分類。
 
-對應反例：每個 tool call 都要 approve、不分高低代價、user 每天按 100 次 approve、按到下意識、根本沒看內容。
+對應反例：每個 tool call 都要 approve、不分高低代價、user 每天按 100 次 approve、按到下意識、根本沒看內容。MCP server 把所有寫入收進同一支分派工具（以參數指定操作的工具）時，client 依工具名稱只能整體放行或整體確認，分級就做不出來；分派工具依讀取、寫入與破壞性操作切開的做法，在 [4.25 MCP 工具的核准規則與執行風險](/llm/04-applications/mcp-tool-approval-and-risk/) 的〈分派工具的切分〉。
 
 ### 條件二：approval UI 強制 show diff
 

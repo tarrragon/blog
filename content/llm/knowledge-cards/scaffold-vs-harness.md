@@ -45,5 +45,6 @@ Scaffold 在建構時決定，harness 在 runtime 執行，所以比較兩個 co
 
 - **比較兩個 coding agent 時**，scaffold（system prompt、tool list、subagent 結構）的差異是設計上給了模型什麼，harness（context 怎麼裁、tool 怎麼 dispatch、安全怎麼擋）的差異是 runtime 怎麼處理模型的輸出。只比 system prompt，會漏掉 context 剪裁或 error recovery 造成的行為差異。
 - **修改 agent 時**，改 system prompt 或 tool schema 動的是 scaffold，改變模型每一輪看到的內容；改 tool 的執行邏輯、retry 或 permission 檢查動的是 harness，改變模型的輸出怎麼被執行。想擋住某一類危險操作而只改 system prompt 時，模型仍可能發出那個 tool call，原因是執行與攔截都發生在 harness。
+- **工具很多、改成延遲載入時**，tool schema 仍然在 scaffold 註冊，但哪些工具定義進這一次的 context 改由 harness 在 runtime 決定（Claude Code 的 `ToolSearch` 讓模型先搜尋、命中的定義才放進 context）；context 佔用與每一輪的候選工具因此隨對話變動。這裡 harness 的 tool dispatch 指執行模型發出的 tool call，跟 MCP server 把許多 API 操作收進一支、以參數指定操作的分派工具是不同層的機制；兩者與延遲載入的取捨在 [4.24 MCP 工具數量多時工具定義怎麼交給模型](/llm/04-applications/mcp-tool-surface-design/)。
 
 本卡是定義，coding 場景的工程實務（context budget、scaffold 模式、harness pattern）在 [4.17 coding-agent harness](/llm/04-applications/coding-agent-harness/)。

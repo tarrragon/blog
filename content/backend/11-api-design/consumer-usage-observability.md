@@ -108,3 +108,4 @@ cardinality 的控制手段、sampling 策略與保留階梯的完整操作面�
 - 分頁參數分布怎麼用來決定換不換機制：[分頁之爭](/backend/11-api-design/pagination-debate/)
 - 冪等衝突率與消費者重試行為：[Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)
 - 承諾成本結構的上游框架：[11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/)
+- LLM agent 不回報、卻要在影響評估與說明改動後的成功率上分出來，專用憑證與 MCP 的 client 資訊各歸哪一層：[11.17 LLM agent 作為 API 的呼叫方](/backend/11-api-design/llm-agent-as-api-caller/)

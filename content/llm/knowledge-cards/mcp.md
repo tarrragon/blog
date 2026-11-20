@@ -18,4 +18,4 @@ MCP 涵蓋 server 該提供什麼：tool 註冊、tool schema、tool 呼叫協�
 
 ## 判斷條件與後果
 
-需不需要用 MCP 看應用規模：小型 in-process 應用（直接 Python function）用 function calling + 簡單 dispatcher 就夠、不需 MCP。要跨 application 共用 tool、或想接入既有 MCP server 生態（如標準化的 git / filesystem tools）才需要 MCP。詳細展開見 [4.6 應用層協議](/llm/04-applications/application-protocols/)。
+需不需要用 MCP 看應用規模：小型 in-process 應用（直接 Python function）用 function calling + 簡單 dispatcher 就夠、不需 MCP。要跨 application 共用 tool、或想接入既有 MCP server 生態（如標準化的 git / filesystem tools）才需要 MCP。詳細展開見 [4.6 應用層協議](/llm/04-applications/application-protocols/)。接上的 MCP server 暴露幾十到上百支工具時，工具定義全部放進 context 會佔用大量 context 預算並讓模型在相近的工具之間選錯；[延遲載入](/llm/knowledge-cards/deferred-tool-loading/)、啟動時靜態篩選與讓模型寫程式碼呼叫 API 這幾種做法各自付出的代價，見 [4.24 MCP 工具數量多時工具定義怎麼交給模型](/llm/04-applications/mcp-tool-surface-design/)；client 的核准規則以工具名稱、參數還是 hook 為單位，工具收進分派工具時規則分得出哪些操作，以及 server 端確認與唯讀模式，見 [4.25 MCP 工具的核准規則與執行風險](/llm/04-applications/mcp-tool-approval-and-risk/)。

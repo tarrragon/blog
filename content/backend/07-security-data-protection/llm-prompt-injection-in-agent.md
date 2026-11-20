@@ -126,4 +126,5 @@ LLM agent prompt injection 的公開案例累積中、值得追蹤的方向：
 - log / PII 治理：[llm-log-and-pii-governance](/backend/07-security-data-protection/llm-log-and-pii-governance/)
 - 事件案例工作流：[7.10 incident-case-to-control-workflow](/backend/07-security-data-protection/incident-case-to-control-workflow/)
 - workload identity：[7.7 workload-identity-and-federated-trust](/backend/07-security-data-protection/workload-identity-and-federated-trust/)
+- API 提供者這一側（agent 專用憑證、授權範圍照讀寫切開、依 method 分讀寫的前提）：[11.17 LLM agent 作為 API 的呼叫方](/backend/11-api-design/llm-agent-as-api-caller/)
 - 可靠性：`06-reliability`

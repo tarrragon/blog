@@ -46,6 +46,7 @@ API 層冪等處理一個無法迴避的物理事實：網路請求會在結果�
 - 冪等衝突的錯誤表達：[11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)
 - retry 節奏與限流的互動：[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/)
 - 對外冪等的一個實際場景（webhook at-least-once 投遞、用 event ID header 去重）：[webhook 對外承諾](/backend/11-api-design/styles/realtime/realtime-webhook-contract/)
+- 消費者是 LLM agent 時，key 交給模型填不可靠、由 MCP server 在一次工具呼叫裡產生，以及它擋不住的重送：[11.17 LLM agent 作為 API 的呼叫方](/backend/11-api-design/llm-agent-as-api-caller/)
 - 何時該重送的消費端合判（status、method、key 三者合判）：[接收方的重試決策](/backend/11-api-design/consumer-retry-decision/)
 - 內部交付語意（at-least-once 下的去重處理與驗證）：[3.4 consumer 設計](/backend/03-message-queue/consumer-design/)、[6.12 冪等與重放驗證](/backend/06-reliability/idempotency-replay/)、[Processing Semantics 知識卡](/backend/knowledge-cards/processing-semantics/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

@@ -34,7 +34,7 @@ weight: 5
 
 - 規劃能力（把目標拆成可執行的子步驟）。
 - 自我評估能力（判斷子步驟做對了沒）。
-- 工具選擇能力（多個工具中挑對的）。
+- 工具選擇能力（多個工具中挑對的；可選的工具越多、名稱與描述越相近，挑錯的機會越高，接上幾十到上百支 MCP 工具時怎麼控制模型看到的工具，在 [4.24 MCP 工具數量多時工具定義怎麼交給模型](/llm/04-applications/mcp-tool-surface-design/)）。
 - 上下文管理能力（哪些 context 該帶下去、哪些可以丟）。
 
 這幾項能力是雲端旗艦模型的明顯強項、也是本地小模型的明顯弱項。理解這個能力差距、能解釋為什麼「本地寫 code 用 Continue.dev 還行、本地跑 agent 經常失敗」：成因在模型能力的 baseline，而不在工具——背後牽涉 [function calling](/llm/knowledge-cards/function-calling/) 訓練深度、long context [prefill](/llm/knowledge-cards/prefill/) 痛點、規劃能力差距。

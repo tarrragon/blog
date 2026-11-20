@@ -100,7 +100,7 @@ Structured output 解這個問題：把 LLM 的輸出約束到預定義的結構
 
 緩解策略：
 
-- **限制 tool 數量**：把可用 tool 控制在 3-5 個內、小模型較能 handle。
+- **限制 tool 數量**：把可用 tool 控制在 3-5 個內、小模型較能 handle。接上的 MCP server 暴露的工具遠多於這個範圍、而事先不知道任務會用到哪幾支時，靜態篩選、延遲載入與程式碼執行各自怎麼控制進 context 的工具定義、各付出什麼代價，在 [4.24 MCP 工具數量多時工具定義怎麼交給模型](/llm/04-applications/mcp-tool-surface-design/)。
 - **詳細 prompt 描述每個 tool**：補模型訓練的不足。
 - **強 structured output 約束**：用 grammar 強制輸出合法、把不合法輸出的機率在 sampling 階段壓到零。
 - **重試 + fallback**：第一次失敗的話、加 error feedback 重試；多次失敗 fallback 到「不用 tool」的 free-form。
@@ -128,7 +128,7 @@ Structured output 解這個問題：把 LLM 的輸出約束到預定義的結構
 - 「query DB」分成「SELECT」（等級 1）+「INSERT / UPDATE」（等級 4）、前者自動、後者強制確認。
 - 「run shell command」是 spectrum 上分佈最廣的工具——讓 LLM 自由跑 shell 等於開放等級 1-5 全部、是常見的 over-permissioned 設計。
 
-這個 framing 跟 OS 的權限模型同概念：least privilege 套用到 LLM tool use。每個工具設計時、先問「最差情況是什麼」、再決定該不該全自動。個人 dev 場景跑本地 LLM 的 tool use / MCP server 權限判讀（檔案系統 / shell / 網路存取邊界、第三方 MCP 信任）見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)。
+這個 framing 跟 OS 的權限模型同概念：least privilege 套用到 LLM tool use。每個工具設計時、先問「最差情況是什麼」、再決定該不該全自動。MCP server 把許多 API 操作收進少數幾支分派工具（以參數指定要做哪個操作的工具）時，同一個切法要套在分派工具上，client 依工具名稱設定的核准規則才分得出讀取、寫入與破壞性操作；這組切法跟本節分級的對應，以及 server 端確認、唯讀模式的做法，在 [4.25 MCP 工具的核准規則與執行風險](/llm/04-applications/mcp-tool-approval-and-risk/)。個人 dev 場景跑本地 LLM 的 tool use / MCP server 權限判讀（檔案系統 / shell / 網路存取邊界、第三方 MCP 信任）見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)。
 
 ## 結構化輸出的失敗模式
 

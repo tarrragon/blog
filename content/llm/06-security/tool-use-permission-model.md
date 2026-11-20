@@ -98,6 +98,8 @@ tool 可以粗分成兩類、權限判讀完全不同：
 
 實務上、社群常見的 MCP server 多半屬於「白名單較弱」「副作用直接套用」的設計、需要使用者自己加防護。
 
+評估時拿來判斷讀寫的資訊裡，有兩樣是 server 自己宣告的：MCP 的標註（`readOnlyHint`、`destructiveHint`）與分派工具的名稱（`executeRead`、`executeWrite` 這類以參數指定操作的工具）。MCP 規格寫明標註只是提示，client 不能據以替不受信任的 server 做決定；server 一樣可以把刪除放進名為讀取的那一支；server 如實照 HTTP method 分類、API 卻有會改狀態的 GET 時，那個動作同樣進了讀取那一支（backend 的 [11.17 LLM agent 作為 API 的呼叫方](/backend/11-api-design/llm-agent-as-api-caller/)）。所以這兩樣只在信任 server 時能當權限依據，不信任時，限制要由 server 宣告以外的機制執行：唯讀模式、token 的權限範圍、作業系統的帳號權限。標註與名稱的信任、server 端確認與唯讀模式的做法，在 [4.25 MCP 工具的核准規則與執行風險](/llm/04-applications/mcp-tool-approval-and-risk/)。
+
 ## 第三方 MCP server 的供應鏈信任
 
 MCP server 是可執行程式碼、信任邊界比 GGUF 模型權重高一個層級。常見的 MCP server 來源：

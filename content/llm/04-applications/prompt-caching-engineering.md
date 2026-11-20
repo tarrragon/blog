@@ -82,6 +82,8 @@ breakpoint 4（最晚）：[+ recent stable context] → 短期 cache
 
 每個 breakpoint 各自命中 / miss、layered cache 讓「加新 skill」只 invalidate breakpoint 3 之後、不影響 breakpoint 1-2。
 
+上圖 tool schema 的「除非加新 tool」，在接了很多 MCP server 的 agent 上常常發生：對話中途接上一個 server、或 server 送出工具清單變動的通知時，工具定義改變。Anthropic API 實際比對前綴的順序是 `tools`、`system`、`messages`，工具定義一改，後面全部重算（Anthropic〈Prompt caching〉的〈What invalidates the cache〉）。工具改成延遲載入時，搜尋命中的定義以 `tool_reference` 區塊加在對話歷史的尾端，前綴不動，既有的快取保留（Anthropic〈Tool use with prompt caching〉）。延遲載入在 context 佔用、往返與搜尋落空上的取捨，在 [4.24 MCP 工具數量多時工具定義怎麼交給模型](/llm/04-applications/mcp-tool-surface-design/) 的〈延遲載入的機制與它的代價〉。
+
 ## 場景 1：Coding agent
 
 Coding agent 是 prompt cache 命中區 — system prompt + tool schema 動輒 10K-30K token、每個 user turn 都重用。

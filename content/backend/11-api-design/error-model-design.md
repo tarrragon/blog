@@ -41,5 +41,6 @@ Stripe 的錯誤物件早於這個標準自成一格、分層思路可以直接�
 
 - 可重試錯誤的消費端行為設計：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)、[6.12 冪等與重放驗證](/backend/06-reliability/idempotency-replay/)
 - 限流錯誤（429）的完整語意：[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/)
+- 消費者是 LLM agent、由模型讀錯誤訊息決定重試或改參數時，可重試與終態各要寫出什麼：[11.17 LLM agent 作為 API 的呼叫方](/backend/11-api-design/llm-agent-as-api-caller/)
 - 錯誤碼出現在終端使用者畫面上、由客服查對照表答覆時的設計：[11.16 面向終端使用者的錯誤碼與請求編號](/backend/11-api-design/end-user-error-code-and-reference-id/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

@@ -31,4 +31,5 @@ OpenAPI 成為 API 描述的事實標準、走的是一條跟 OData 相反的路
 - 採標準 vs 自建的治理層判斷標準：[11.10 API 規範治理](/backend/11-api-design/api-governance/)
 - response 格式的採用選擇：[採現成標準還是自建規範](/backend/11-api-design/styles/standards/standards-adopt-or-build/)
 - event 側的能力與交接：[03 訊息佇列](/backend/03-message-queue/)
+- OpenAPI 的 `summary` 與 `description` 被 LLM agent 當成搜尋 endpoint 的資料時，哪幾種寫法會讓搜尋落空：[11.17 LLM agent 作為 API 的呼叫方](/backend/11-api-design/llm-agent-as-api-caller/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

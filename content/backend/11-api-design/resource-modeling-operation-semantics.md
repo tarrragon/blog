@@ -54,5 +54,6 @@ Richardson 成熟度模型可以當這個決策的定位工具：Level 1（資�
 - 資料層的結構設計：[1.2 Schema 設計](/backend/01-database/schema-design/)（資源表徵與資料表是兩層、交接處看這篇）
 - 風格還沒定、先回：[11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)
 - 承諾框架：[11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/)
+- GET 的安全語意被 MCP server 拿來分讀寫入口時，有副作用的 GET 讓 agent 的核准規則失效：[11.17 LLM agent 作為 API 的呼叫方](/backend/11-api-design/llm-agent-as-api-caller/)
 - 名詞層：[Request-Response Protocol](/backend/knowledge-cards/request-response-protocol/)、[API Contract](/backend/knowledge-cards/api-contract/) 知識卡
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

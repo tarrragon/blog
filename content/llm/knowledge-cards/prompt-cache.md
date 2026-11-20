@@ -37,4 +37,5 @@ Prompt cache 的折扣有兩個前提：後續 request 的 prefix 跟寫入 cach
 2. **變動的內容（user query、最新的 file content）排在不變的內容之前時**，prefix 從變動的那個 token 起就跟上一次不同，排在後面的 system prompt 與 tool schema 也讀不到 cache，原因是 cache 比對的是從開頭起連續相同的 token；所以不變的內容排在前面，變動的排在後面。
 3. **prefix 裡夾著每次都不同的值時**（timestamp、user-id、request-id），每個 request 的 prefix 都不同，cache 一次都不命中；在 Anthropic 這類寫入加價的服務上，每次寫入付 1.25 倍的價格而沒有任何一次讀取回本，總成本比不開 cache 還高。
 4. **兩次 request 的間隔超過 TTL 時**（Anthropic 預設 5 分鐘），cache 已經過期，下一個 request 重新付寫入的成本。使用者常停頓超過 5 分鐘的長對話，用 1 小時的延長 TTL 才讀得到前一輪的 cache。
-5. **scaffold 的 token 大多由 cache 讀取時**，這些 token 的費用降到讀取價，[context budget](/llm/knowledge-cards/context-budget/) 裡「scaffold ≤ 25%」的成本理由跟著變弱，剩下的限制是總長度不超過 context window。
+5. **工具定義在對話中途改變時**（接上或斷開一個 MCP server、server 通知工具清單變動），Anthropic API 照 `tools`、`system`、`messages` 的順序比對前綴，工具定義一改，後面整段重新寫入。工具改成延遲載入時，搜尋命中的定義加在對話歷史的尾端，前綴不動，既有的 cache 保留；延遲載入在 context 與往返上的取捨在 [4.24 MCP 工具數量多時工具定義怎麼交給模型](/llm/04-applications/mcp-tool-surface-design/)。
+6. **scaffold 的 token 大多由 cache 讀取時**，這些 token 的費用降到讀取價，[context budget](/llm/knowledge-cards/context-budget/) 裡「scaffold ≤ 25%」的成本理由跟著變弱，剩下的限制是總長度不超過 context window。

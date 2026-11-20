@@ -21,7 +21,7 @@ tags: ["backend", "api-design", "contract"]
 | 執行期回饋    | 第一次踩到時         | 條件性行為                 | 冪等衝突回 `409`、接續標記過期回明確錯誤       |
 | 文件          | 主動去讀時           | 為什麼、未來會怎樣、承諾   | 支援窗口、保存期的理由、未知欄位請忽略         |
 
-選手段之前要先確認消費者是不是「會讀東西的人」。proxy、快取層、負載平衡器、監控系統、泛型 HTTP client 這類非人格中介讀不到上面任何一層——型別、執行期回饋、推播與文件對它們一律為零，只有機制層與 transport 層的語意（status、標準 header）成立。而錯誤格式與 status 語意的決策，主要受害者正是這一類（形態分野見 [API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/)）。
+選手段之前要先確認消費者是不是「會讀東西的人」。proxy、快取層、負載平衡器、監控系統、泛型 HTTP client 這類非人格中介讀不到上面任何一層——型別、執行期回饋、推播與文件對它們一律為零，只有機制層與 transport 層的語意（status、標準 header）成立。而錯誤格式與 status 語意的決策，主要受害者正是這一類（形態分野見 [API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/)）。LLM agent 則相反：它在執行期每一次對話都讀工具的 description 與 schema，文件層對它的觸及率跟其他消費者不同，見 [11.17 LLM agent 作為 API 的呼叫方](/backend/11-api-design/llm-agent-as-api-caller/)。
 
 **機制層**嚴格說是讓送達變得不必要，而不是送達。接續標記綁定呼叫者之後，拿別人的接續標記續翻直接失敗，這件事不需要任何人讀到任何句子。能推到這一層的條款有一個共同特徵：它保護的性質可以由服務端單方面保證，不需要消費者配合。這一層的容量比多數人以為的大，而它常被略過，因為想到「這要寫進文件」比想到「這可以做成做不到」自然。
 

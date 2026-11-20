@@ -107,7 +107,7 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 
 - **主章節**：[6.2 tool use 權限](/llm/06-security/tool-use-permission-model/) + [4.4 Agent 跟人類審查協作](/llm/04-applications/agent-architecture/)
 - **覆蓋**：sandbox / 白名單 / 副作用可逆性、agent 人類審查 spectrum、coding agent 的 permission boundary（[hands-on](/llm/01-local-llm-services/hands-on/permission-boundary/)）
-- **補充**：[4.17 coding agent harness](/llm/04-applications/coding-agent-harness/) 的 permission boundary 設計
+- **補充**：[4.17 coding agent harness](/llm/04-applications/coding-agent-harness/) 的 permission boundary 設計；MCP 工具收進分派工具或程式碼執行工具之後，client 依名稱的核准規則分得出哪些操作、server 端確認與唯讀模式怎麼限制 agent 能做的事，在 [4.25 MCP 工具的核准規則與執行風險](/llm/04-applications/mcp-tool-approval-and-risk/)
 
 **個人 dev 場景的最低 control**：副作用 tool 加 confirm、agent max steps、production-level tool 不放在 dev agent 可達範圍
 

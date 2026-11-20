@@ -48,6 +48,6 @@ Context budget 的核心概念是「**把 [context window](/llm/knowledge-cards/
 讀 coding agent 設計文件或 harness paper 看到「context budget」「context engineering」「token budgeting」，指的就是這個 framing。budget 超了沒有、該怎麼分，看下面幾個條件：
 
 1. **context 用量超出 budget 時**：模型開始忽略 system prompt、回答跟前文重複、tool call 重複過去的步驟、reasoning trace 被截斷。這些行為代表關鍵指令被大量內容稀釋，或 generation 撞上了 context 上限。
-2. **budget 吃緊時**：各區塊的省法代價不同。[prompt cache](/llm/knowledge-cards/prompt-cache/) 讓固定的 system prompt 與 tool schema 不必每次重算，省的是延遲與費用，佔用的 context 不變；grep 取代整檔讀取、tool result 限制長度（如 `head -100`）省下 context，代價是沒取到的內容模型看不到；定期 summarize history 省下歷史區，代價是細節在摘要時遺失。
+2. **budget 吃緊時**：各區塊的省法代價不同。[prompt cache](/llm/knowledge-cards/prompt-cache/) 讓固定的 system prompt 與 tool schema 不必每次重算，省的是延遲與費用，佔用的 context 不變；grep 取代整檔讀取、tool result 限制長度（如 `head -100`）省下 context，代價是沒取到的內容模型看不到；定期 summarize history 省下歷史區，代價是細節在摘要時遺失；tool schema 隨接上的 MCP server 增加時，[延遲載入](/llm/knowledge-cards/deferred-tool-loading/)讓用不到的工具定義不進 context，代價是每用到一支就多一段搜尋，而搜尋沒有回傳的工具，模型不知道它存在（[4.24 MCP 工具數量多時工具定義怎麼交給模型](/llm/04-applications/mcp-tool-surface-design/)）。
 3. **context 用得越多時**：中段內容的 recall 越差（[lost-in-the-middle](/llm/knowledge-cards/lost-in-the-middle/)），所以 20K 解得了的任務塞到 100K，換到的是更差的 recall 與更高的成本；200K 的上限是容量，不是目標用量。
 4. **任務類型不同時**：budget 的大小跟著變。autocomplete 的 budget 小，system prompt 加最近 50 行 code 就夠；refactor 要讀多個檔案，budget 大；agent loop 每一步都可能增加 tool result 與 history，budget 隨步數成長。

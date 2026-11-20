@@ -162,8 +162,8 @@ main agent 拿到 summary、繼續推進
 ### Claude Code
 
 **Scaffold**：CLAUDE.md（system prompt 入口）、Skills registry、SubagentTypes、tool schema
-**Harness**：context budget management、Task tool（dispatch subagent）、permission system、trace
-**特色**：完整 scaffold-harness 分層、強 subagent system、explicit context budget
+**Harness**：context budget management、Task tool（dispatch subagent）、permission system、trace、`ToolSearch`（MCP 工具預設延遲載入：session 開始時只放工具名稱，模型搜尋之後才把那幾支的完整定義放進 context）
+**特色**：完整 scaffold-harness 分層、強 subagent system、explicit context budget；tool schema 雖然屬於 scaffold，哪些工具定義進這一次的 context 由 harness 在 runtime 決定，取捨在 [4.24 MCP 工具數量多時工具定義怎麼交給模型](/llm/04-applications/mcp-tool-surface-design/)
 
 ### Cursor
 
