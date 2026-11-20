@@ -91,6 +91,7 @@ zsh
 - **多人但仍小規模**（2-5 人）：Tailscale ACL（存取控制清單，定義哪些裝置可存取哪些服務）足以控制；超過此規模再評估 CF Access 或 Teleport
 - **需要 session recording**：兩者都沒有一流方案——Tailscale 需 Enterprise tier，CF Access 只記 metadata 不錄 keystroke。重 audit 走 [Teleport](/backend/07-security-data-protection/vendors/teleport/)
 - **需要從固定 IP 出網**：Tailscale Exit Node 可做但不是設計核心；CF 有更成熟的方案
+- **同一台主機另外要對外提供公開網站**：兩個方案並用，各負責一種入口。公開網站經由 Cloudflare Tunnel 接上 Cloudflare，訪客不必另外安裝軟體、請求經過 WAF 與快取；shell 與其他管理服務留在 Tailscale，公開網路上沒有它們的網址，`cloudflared` 或 Cloudflare 出事時，管理者仍然從 Tailscale 連得進主機去修。這樣分開換到什麼、付出什麼，以及 `cloudflared` 跟管理服務在同一台主機時分開之後仍然存在的風險，見 [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/) 的〈同一台家用主機的公開網站與管理服務：分給 Tunnel 與 mesh VPN 的取捨，與分開之後仍然存在的風險〉
 
 ## Tailscale 採用後的安全底線
 
@@ -109,7 +110,7 @@ zsh
 | 訊號                       | 觸發後重評                                                                                                           |
 | -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | 從單人變多人               | Tailscale ACL 是否足夠，或需升級為 Teleport / CF Access                                                              |
-| 需要對外暴露服務           | Tailscale Funnel 不適合 production hardened ingress，改走 CF                                                         |
+| 需要對外暴露服務           | Tailscale Funnel 不適合 production hardened ingress，對外的服務改走 CF，shell 可以留在 Tailscale（見〈邊界情境〉）   |
 | 需要合規 session recording | Tailscale Enterprise 或改走 Teleport                                                                                 |
 | 需要 WAF / bot protection  | Tailscale 沒有應用層防護，改走 CF                                                                                    |
 | Tailscale key 即將到期     | 確認 key expiry 政策（預設 180 天）、設提醒避免裝置靜默掉線；以 tag 認證或關掉到期的裝置金鑰永久有效，要記進金鑰紀錄 |

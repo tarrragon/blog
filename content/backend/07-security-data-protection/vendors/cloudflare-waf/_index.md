@@ -31,7 +31,7 @@ Cloudflare WAF 的核心定位是 *把攻擊擋在 origin 之前的一站式 edg
 
 - **誰能改 WAF 規則**：Cloudflare account 的 admin / member role 配置、API token scope（不要用 Global API Key、用 scoped API token + 限定 zone / 限定 permission）、Audit Log 是否同步到 SIEM
 - **規則覆蓋面**：Managed Ruleset（OWASP Core Ruleset + Cloudflare Managed Ruleset + Exposed Credentials Check）是否開、Sensitivity（Low / Medium / High）對應的 FP rate 是否監控、Custom Rule 是否進版控（Terraform provider）
-- **入口暴露**：origin IP 是否曝光（DNS 直查 / 歷史 SAN cert / 子域名）、Argo Tunnel / Authenticated Origin Pull 是否強制、繞過 Cloudflare 直連 origin 的路徑是否封住
+- **入口暴露**：origin IP 是否曝光（DNS 直查 / 歷史 SAN cert / 子域名）、Cloudflare Tunnel / Authenticated Origin Pull 是否強制、繞過 Cloudflare 直連 origin 的路徑是否封住
 - **證據可回查**：Security Events Log 是否同步到 SIEM（Logpush 推到 R2 / S3 / Splunk）、Page Shield 偵測異常 script 是否 alert、API token 異常操作（特別 zone settings 變更）是否 alert
 
 四件事任一缺失、就是 [Audit Log](/backend/knowledge-cards/audit-log/) 與 [Entry Point Protection](/backend/07-security-data-protection/entrypoint-and-server-protection/) 邊界的待補項目。
@@ -50,7 +50,7 @@ Cloudflare WAF 的核心定位是 *把攻擊擋在 origin 之前的一站式 edg
 
 **API Shield**：用 OpenAPI schema validation、auto-discovery API endpoint、mTLS 驗證、JWT validation。對於有 schema 的 API、可以擋掉 *schema 不符的請求*（多餘欄位、型別錯誤、缺必要欄位）— 比 generic WAF rule 精準。
 
-**Origin 暴露面收緊**：Cloudflare 唯一有效的前提是 *流量必須經過 Cloudflare*。如果攻擊者拿到 origin 真實 IP（DNS 歷史記錄、漏洞披露網站、SSL cert SAN）、可以繞過 Cloudflare 直打 origin。控制方法有三種，擋的範圍不同、通常組合使用：origin firewall 只允許 Cloudflare IP range 入站，擋得住不經 Cloudflare 的直連，擋不住從 Cloudflare 位址送來、卻不是替這個網域轉送的請求（任何帳號的 Worker 都從 Cloudflare 的位址送出，還能自己寫 `CF-Connecting-IP`）；Authenticated Origin Pull 用 Cloudflare 共用的憑證時只證明請求來自 Cloudflare 的網路，上傳自己的用戶端憑證（zone 層級或每個主機名稱）才分辨得出是自己的網域；Cloudflare Tunnel（舊名 Argo Tunnel，origin 主動建 outbound 連線到 Cloudflare、不開任何入站 port）讓 origin 沒有入站路徑。實測與三者各自擋得住什麼見 [CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/devops/infra/03-network-foundation/origin-host-firewall/) 的〈限制放在哪一層：雲端防火牆、主機防火牆與 CDN 端的驗證〉。
+**Origin 暴露面收緊**：Cloudflare 唯一有效的前提是 *流量必須經過 Cloudflare*。如果攻擊者拿到 origin 真實 IP（DNS 歷史記錄、漏洞披露網站、SSL cert SAN）、可以繞過 Cloudflare 直打 origin。控制方法有三種，擋的範圍不同、通常組合使用：origin firewall 只允許 Cloudflare IP range 入站，擋得住不經 Cloudflare 的直連，擋不住從 Cloudflare 位址送來、卻不是替這個網域轉送的請求（任何帳號的 Worker 都從 Cloudflare 的位址送出，還能自己寫 `CF-Connecting-IP`）；Authenticated Origin Pull 用 Cloudflare 共用的憑證時只證明請求來自 Cloudflare 的網路，上傳自己的用戶端憑證（zone 層級或每個主機名稱）才分辨得出是自己的網域；Cloudflare Tunnel（舊名 Argo Tunnel，origin 主動建 outbound 連線到 Cloudflare）讓 origin 不必再收入站連線，而直連路徑要等管理者關掉雲端防火牆、主機防火牆與路由器上 80、443 的入站放行，網站容器也不發佈連接埠（或只發佈在本機位址）之後才不存在。實測與三者各自擋得住什麼見 [CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/devops/infra/03-network-foundation/origin-host-firewall/) 的〈限制放在哪一層：雲端防火牆、主機防火牆與 CDN 端的驗證〉。
 
 **API token 治理**：避免 Global API Key（全帳號 root token）、改用 *scoped API token*（限 zone + 限 permission + 限 IP + 限 TTL）。token 進 [Secret Management](/backend/knowledge-cards/secret-management/) / [Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/)、定期 rotate。對應 [Cloudflare control plane token 2023](/backend/07-security-data-protection/cases/cloudflare-control-plane-token-2023/) 揭示的 lesson：Cloudflare 自己也踩過 token 治理不足、客戶側不能假設 vendor 完美。
 

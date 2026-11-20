@@ -12,6 +12,8 @@ tags: ["backend", "security", "network", "zero-trust"]
 
 零信任把 [Trust Boundary](/backend/knowledge-cards/trust-boundary/) 從網路邊界移到每一個服務前面：信任在每一次連線重新建立，不沿用「封包來自內網」這個前提。它與 [Least Privilege](/backend/knowledge-cards/least-privilege/) 回答同一個存取決定裡的兩個問題：零信任問每一次連線有沒有被驗證，最小權限問驗證通過之後給了多少。VPN 在這個框架裡仍有用處，它負責加密與確認對方持有金鑰，只是它的結果不再直接等於授權。
 
+Cloudflare Zero Trust 是 Cloudflare 一組產品的方案名稱，跟本卡的原則同名。這組產品屬於 Cloudflare One 平台，Cloudflare 的文件把 [Cloudflare Access](/backend/07-security-data-protection/vendors/cloudflare-access/)（依身分與裝置狀態決定能不能進某個應用程式）與 Cloudflare Tunnel（源站上的 `cloudflared` 主動往外連到 Cloudflare，一種 [Outbound Tunnel](/backend/knowledge-cards/outbound-tunnel/)）都列為這個平台的元件。在同一條存取路徑上，Tunnel 把沒有開入站連接埠的源站接上 Cloudflare，Access 依管理者設定的規則，檢查連到那個網址的人的身分與裝置狀態。只設 Tunnel、沒有替那個網址設 Access 規則時，任何人都連得到，這是一個對外公開的服務；替網址加上要求身分的 Access 規則之後，同一條 Tunnel 才成為只給特定身分使用的內部入口；Access 的 Bypass 規則不執行身分檢查，設了 Bypass 的路徑仍然是公開的。所以用了 Tunnel 的部署，也可以同時用 Cloudflare Zero Trust 的 Access 收窄存取。產品方案跟本卡的原則同名，判斷一個部署是否符合原則，仍照〈判斷條件與後果〉逐條連線問發起的是哪一台機器、以什麼身分、連到哪一個服務。
+
 ## 可觀察訊號與例子
 
 整套導入的形態是每個服務前面都有一個依身分與裝置狀態決定放不放行的代理（[身分感知代理](/devops/infra/knowledge-cards/identity-aware-proxy/)），Google 公開過的 BeyondCorp 是常被引用的例子；這需要身分提供者（identity provider）、裝置管理與代理層，建置與維運的成本對兩三台主機的小型服務高於它擋下的風險。小規模取用的是它的問法：exporter、心跳監看程式、Prometheus 的介面在 VPN 裡預設沒有認證，零信任的問法是「VPN 裡任何一台被入侵時，擋在這個服務前面的是什麼」，答案是「沒有」時，就要在服務前面加認證，或把 VPN 裡連得到它的機器收到只剩需要的那一台。
