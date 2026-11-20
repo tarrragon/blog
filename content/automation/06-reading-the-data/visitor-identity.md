@@ -83,7 +83,7 @@ var visitorId = stableId(localStorage, "blog_visitor_id");
 var sessionId = stableId(sessionStorage, "blog_session_id");
 ```
 
-三個實作細節各自對應一種會實際發生的狀況。**存取包在 try/catch 裡**，因為 Safari 的私密瀏覽把配額壓到接近零、`setItem` 會丟 `QuotaExceededError`，而封鎖網站資料的設定會丟 `SecurityError`；統計失敗不該讓頁面的其他 JS 一起中斷。**`crypto.randomUUID` 有 fallback**，因為它需要安全連線環境（secure context，HTTPS 或 localhost），在少數環境下不存在。**寫入後再讀一次確認**，因為 `safeSet` 把例外吞掉了——寫入成功與否在這個結構下只能靠讀回來判斷。讀不回來時回傳空字串、彙總時歸為不可識別，比回傳一個「下次就不見了」的值誠實：假的識別碼會讓每次瀏覽看起來都是新訪客。
+三個實作細節各自對應一種會實際發生的狀況。**存取包在 try/catch 裡**，因為 Safari 的私密瀏覽把配額壓到接近零、`setItem` 會丟 `QuotaExceededError`，而封鎖網站資料的設定會丟 `SecurityError`；統計失敗不該讓頁面的其他 JS 一起中斷。**`crypto.randomUUID` 有 fallback**，因為它需要安全連線環境（[secure context](/backend/knowledge-cards/secure-context/)，HTTPS 或 localhost），在少數環境下不存在。**寫入後再讀一次確認**，因為 `safeSet` 把例外吞掉了——寫入成功與否在這個結構下只能靠讀回來判斷。讀不回來時回傳空字串、彙總時歸為不可識別，比回傳一個「下次就不見了」的值誠實：假的識別碼會讓每次瀏覽看起來都是新訪客。
 
 這裡有一個附帶的觀察能力：自動化抓取工具每次都在全新的瀏覽器環境執行，所以**每一列都帶著不同的訪客識別碼、而且每個 session 只有一列**。這個模式不需要額外偵測就會自己浮現。
 

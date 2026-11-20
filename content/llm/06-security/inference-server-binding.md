@@ -123,7 +123,7 @@ WAN 暴露的進一步後果：
 進階防護見 [Backend 7.3 入口治理](/backend/07-security-data-protection/entrypoint-and-server-protection/) 跟 [Backend 7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)。Cloudflare Tunnel 那一列的 prompt 經過 Cloudflare，是因為 TLS 在 Cloudflare 終結、Cloudflare 解密之後才轉送到本機；這一項連同上傳大小上限，以及不經 Cloudflare 代理的替代路徑（DNS only 紀錄、mesh VPN、Tailscale Funnel）各自的前提，見 [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/) 的〈經過 Cloudflare 代理時家用主機要接受的限制：TLS 終結、上傳大小上限、影片與大型檔案的條款，以及 Tunnel 連 HTTP 以外協定的方式〉。個人 dev 場景的判讀：
 
 1. **預設不要上 WAN**：若沒有具體需求（如多裝置工作流、跨地點協作）、保持 LAN 或 loopback。
-2. **要上 WAN 時優先用 Tailscale-like mesh**：可以保持「私網」感覺、不暴露在公開 internet 上。
+2. **要上 WAN 時優先用 Tailscale-like mesh**：可以保持「私網」感覺、不暴露在公開 internet 上。推論伺服器可以照樣只綁 `127.0.0.1`，由 `tailscale serve` 只轉給 tailnet 裡的裝置，伺服器收到的每個請求都帶著 serve 加上的連線方位址與登入使用者；這種做法的實測，以及同一台主機上的其他程式偽造得了那些身分標頭的風險，見 [5.10 Outbound Tunnel 入口與生命週期](/backend/05-deployment-platform/outbound-tunnel-entry/) 的〈用 tailscale serve 讓只聽本機的 HTTP 服務給 tailnet 連：實測、限制與 HTTPS 模式的代價〉。
 3. **真的要公開（如做給朋友試用的 demo）**：上反代、做 auth、明確跟使用者說會 log 什麼。
 
 ## 給讀者的綁定判讀流程
