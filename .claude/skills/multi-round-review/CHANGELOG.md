@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.47.0 — `references/round-1-compliance.md` 1-A〈讀者會先想到別的東西的譯名〉列譯名的 rg 只認「中文（original term）」；補第二條 `rg -o "[A-Za-z][A-Za-z0-9 ./-]*（[一-龥][^）]*）"`，列出英文寫在前面的術語卡標題與連結文字，譯名取括號裡那一段。與 compositional-writing 1.66.0 的 keyword bank 同步。
+
 **Version**: 2.46.0 — `references/planning-and-stopping.md`〈設計稽核〉第 4 步：結構事實第一次成立而重寫之後、派 Round 1 之前，拿重寫的版本對照要求這一批改動的那幾則指示（含停點上的決定）的原話一次（取哪一份、怎麼逐字列出，照第 5 步「理解」那一層的取法），做完不停下；痕跡逐處寫出重寫的版本裡這一批改到的文字對到原話或個案裡的哪幾個詞或標成原話沒有要求，標成沒有要求的留或拿掉由執行者判斷並寫理由。理由段補上 2.45.0 那一批與 compositional-writing 1.65.0 那一批的經過、同源自查還沒量過；「已知還沒寫的邊角」加上原話取法的三項；「重寫的處置還沒有實測過」改成指向三批的經過，「反省放在停點」補上重寫之後的那一問。審查經過：初稿把「原話沒要求的不搬」「拿掉之後怎麼走」寫成條件，三輪必修 11 則集中在條件邊界與原話取法，第三輪設計稽核停下，使用者選擇縮成一問加痕跡；縮後的版本從 Round 1 重審，第一輪把對照從重寫之前移到重寫之後。
 
 **Version**: 2.45.0 — `references/round-3-self-application.md`〈3-H 個案實跑〉加一段：判斷標準以單一元件為主角時，個案要帶著元件所在的環境，寫成留意項：什麼時候判斷（判斷標準大多在描述同一個元件或並排的候選，主 session 判，結果與依據寫進審查紀錄）、判成是時 3-H reviewer 為共用的資源、並排的鄰居、宿主的路徑三個方向各寫至少一個環境（prompt 不附作者說明與主 session 想到的環境），環境個案留下走完的答案、真實行為與來源位置，對不上照 finding，來源查不到的照 finding 列出並標來源未確認。這類維度不在正文裡，數分支與盤點正文組織維度都找不到。審查經過：原稿三輪後設計稽核觸發而重寫，重寫版三輪後第二次結構事實成立而停下，使用者選擇把逐方向觸發、第五欄與待驗計帳等分支拿掉，縮成留意項。`reviewer-prompt.md` 的個案表格式與 `SKILL.md` frame 表的 3-H 列同步。新增 principle 卡 `criteria-describe-the-component-and-miss-its-environment`，`criteria-fold-away-the-condition-that-produces-the-symptom` 與 `unstated-implementation-premise-under-a-correct-axis` 的關係段補反向指標。
