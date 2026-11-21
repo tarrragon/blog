@@ -9,7 +9,7 @@ slug: "goose-migration-lab"
 
 實測日期是 2026-11-21，環境是 macOS 15 的筆電，Go 1.27.3、goose v3.30.1、pgx v5.13.0，PostgreSQL 17.12（Homebrew 的 `postgresql@17`，另外建一個只給這次用的資料庫 cluster；這次跟 [Alembic 那一篇](/programming/python/hands-on/alembic-autogenerate-lab/) 的實測共用同一個 cluster，各用自己的資料庫）；文中的時間戳是這次 `goose create` 產生的值，讀者那邊會不同；這次的操作是用 goose 的 CLI 從建表開始逐份寫 SQL migration、套用，刻意製造改過已套用的檔案、縮窄型別、不能放進交易的語句、時間戳順序顛倒的合併，最後把 migration 嵌進 Go 程式，用 Provider API 讓兩個程序同時套用。
 
-這篇記錄用 goose 管理 PostgreSQL schema 的完整操作：建一個只給這次用的 PostgreSQL；只編入 PostgreSQL 驅動的 goose CLI 與它的環境變數；`goose create` 產生的檔案、`up` 與 `status`、歷史表 `goose_db_version` 記了什麼；修改已經套用過的 migration 時 goose 的反應；改名加縮窄型別的 migration 遇到過長資料時整份退回；`CREATE INDEX CONCURRENTLY` 與 `-- +goose NO TRANSACTION`；不包交易的 migration 中途失敗之後留下的狀態與重跑的寫法；一筆沒結束的長交易讓排隊的 `ALTER` 擋住一般查詢，以及設了 `lock_timeout` 之後的等待時間；兩個分支的 migration 時間戳先後顛倒時的 `found missing migrations` 與 `-allow-missing`，以及之後 `down` 撤回的是哪一份；`goose fix` 用在已經套用的檔案上的結果；用 `embed` 把 migration 編進執行檔、用 Provider 在程式裡套用，兩個程序同時啟動時不開鎖與開 session 鎖的結果；最後是清理。四種 schema 變更做法的比較、表鎖與 `lock_timeout` 的機制、啟動時套用與獨立部署步驟的取捨，寫在 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)；GORM 的 `AutoMigrate` 在同一個改名與縮窄情境的行為，見 [10.5 GORM 的〈AutoMigrate 在正式環境的限制〉](/programming/go/basic/10-database-access/gorm/)；從 model 產生 migration 的工具在同樣情境的樣子，見 [Alembic autogenerate 的實測紀錄](/programming/python/hands-on/alembic-autogenerate-lab/)。Go 寫的 migration（`.go` 檔）、MySQL 與 goose 的 table-based locker 不在這次的實測裡。
+這篇記錄用 goose 管理 PostgreSQL schema 的完整操作：建一個只給這次用的 PostgreSQL；只編入 PostgreSQL 驅動的 goose CLI 與它的環境變數；`goose create` 產生的檔案、`up` 與 `status`、歷史表 `goose_db_version` 記了什麼；修改已經套用過的 migration 時 goose 的反應；改名加縮窄型別的 migration 遇到過長資料時整份隨交易回滾（transaction rollback，資料庫撤銷交易裡做過的變更）；`CREATE INDEX CONCURRENTLY` 與 `-- +goose NO TRANSACTION`；不包交易的 migration 中途失敗之後留下的狀態與重跑的寫法；一筆沒結束的長交易讓排隊的 `ALTER` 擋住一般查詢，以及設了 `lock_timeout` 之後的等待時間；兩個分支的 migration 時間戳先後顛倒時的 `found missing migrations` 與 `-allow-missing`，以及之後 `down` 撤回的是哪一份；`goose fix` 用在已經套用的檔案上的結果；用 `embed` 把 migration 編進執行檔、用 Provider 在程式裡套用，兩個程序同時啟動時不開鎖與開 session 鎖的結果；最後是清理。四種 schema 變更做法的比較、表鎖與 `lock_timeout` 的機制、啟動時套用與獨立部署步驟的取捨，寫在 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)；GORM 的 `AutoMigrate` 在同一個改名與縮窄情境的行為，見 [10.5 GORM 的〈AutoMigrate 在正式環境的限制〉](/programming/go/basic/10-database-access/gorm/)；從 model 產生 migration 的工具在同樣情境的樣子，見 [Alembic autogenerate 的實測紀錄](/programming/python/hands-on/alembic-autogenerate-lab/)。Go 寫的 migration（`.go` 檔）、MySQL 與 goose 的 table-based locker 不在這次的實測裡。
 
 ## 只給這次用的 PostgreSQL
 
@@ -50,7 +50,7 @@ export GOOSE_MIGRATION_DIR=./migrations
 mkdir migrations
 ```
 
-`GOOSE_DBSTRING` 換成讀者自己的連線字串。`sslmode` 控制連線要不要用 TLS，pgx 與 libpq 的預設是 `prefer`：伺服器支援 TLS 就用，不支援時退回明文，讓同一個連線字串在有沒有 TLS 的伺服器上都連得上。這次的本機 cluster 沒有開 TLS，帶 `disable` 是讓連線不先嘗試 TLS；連到有 TLS 的資料庫時拿掉它，或改成 `verify-full` 驗證伺服器憑證，照抄 `disable` 的話連線會走明文。`GOOSE_MIGRATION_DIR` 不設時預設是目前目錄。
+`GOOSE_DBSTRING` 換成讀者自己的連線字串。`sslmode` 控制連線要不要用 TLS，pgx 與 libpq 的預設是 `prefer`：伺服器支援 TLS 就用，不支援時改用明文，讓同一個連線字串在有沒有 TLS 的伺服器上都連得上。這次的本機 cluster 沒有開 TLS，帶 `disable` 是讓連線不先嘗試 TLS；連到有 TLS 的資料庫時拿掉它，或改成 `verify-full` 驗證伺服器憑證，照抄 `disable` 的話連線會走明文。`GOOSE_MIGRATION_DIR` 不設時預設是目前目錄。
 
 ## 第一份 migration 與歷史表 goose_db_version
 
@@ -119,7 +119,7 @@ validate exit=0
 
 資料庫的 `code` 仍是 50，goose 沒有任何訊息。它判斷要不要套用只看版本號在不在歷史表裡；`validate` 檢查的是檔案能不能解析（註記與語句的格式），不比對內容有沒有變。用同一批檔案建一個新環境時，新環境的 `code` 會是 80，跟這個資料庫不同。Flyway 在歷史表存每份檔案的 checksum、內容變了 `validate` 就失敗，goose 沒有這一層，所以已經合併、已經套用的 migration 不再修改，要改就新增一份。實測完把 `varchar(80)` 改回 50。
 
-## 改名加縮窄型別的 migration 與交易退回
+## 改名加縮窄型別的 migration 與交易回滾
 
 ```bash
 ./bin/goose create rename_rate_shorten_code sql
@@ -148,7 +148,7 @@ exit=1
 goose: version 20261120192656
 ```
 
-goose 預設把每一份 migration 包在一個交易裡，第二句失敗時第一句的改名一起退回，欄位仍是 `id, code, rate`，版本也沒有前進。這裡沒有 `USING`，PostgreSQL 用會檢查長度的轉型而拒絕；GORM 送出的 `USING code::varchar(20)` 是明確轉型，會把超出的字元截掉而成功。
+goose 預設把每一份 migration 包在一個交易裡，第二句失敗時第一句的改名一起隨交易回滾，欄位仍是 `id, code, rate`，版本也沒有前進。這裡沒有 `USING`，PostgreSQL 用會檢查長度的轉型而拒絕；GORM 送出的 `USING code::varchar(20)` 是明確轉型，會把超出的字元截掉而成功。
 
 過長的那一列要變成什麼是業務的決定，這次改成較短的代碼再套用：
 

@@ -41,7 +41,7 @@ weight: -1
 | [Connection Leak（連線洩漏）](/backend/knowledge-cards/connection-leak/)                 | 借了連線沒有還時池怎麼被佔滿                     | connection pool、rows、idle in transaction |
 | [Transaction Propagation（交易傳遞）](/backend/knowledge-cards/transaction-propagation/) | 交易物件怎麼傳到每個資料存取呼叫                 | repository、savepoint、unit of work        |
 | [Query Log（SQL 語句記錄）](/backend/knowledge-cards/query-log/)                         | 應用程式端與資料庫端的語句記錄各記到什麼         | ORM、log_statement、N+1                    |
-| [Transaction](/backend/knowledge-cards/transaction/)                                     | 一組資料變更如何一起成功或一起回復               | database、commit、rollback                 |
+| [Transaction（交易）](/backend/knowledge-cards/transaction/)                             | 一組資料變更如何一起成功或一起撤銷（交易回滾）   | database、commit、rollback                 |
 | [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/)                   | 哪些變更要一起成功或回復                         | database、unit of work                     |
 | [Migration](/backend/knowledge-cards/migration/)                                         | 系統如何從舊狀態受控移到新狀態                   | release、cutover、backfill                 |
 | [Schema Migration](/backend/knowledge-cards/schema-migration/)                           | 資料庫結構如何隨版本安全演進                     | release、rollback、migration               |
@@ -494,7 +494,7 @@ weight: -1
 | [Steady State](/backend/knowledge-cards/steady-state/)                                     | 實驗與事故恢復如何定義成功狀態                 | chaos、DR、recovery                  |
 | [Blast Radius](/backend/knowledge-cards/blast-radius/)                                     | 故障影響面如何估算與隔離                       | dependency、shared resource          |
 | [Noisy Neighbor（共用資源的鄰居干擾）](/backend/knowledge-cards/noisy-neighbor/)           | 共用同一份硬體的工作負載如何互相拖慢           | 共用主機、虛擬機、steal              |
-| [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)                           | 事故期間何時回滾與回切                         | deployment、release gate             |
+| [Rollback Strategy（回滾策略）](/backend/knowledge-cards/rollback-strategy/)               | 事故期間何時部署回滾與回切                     | deployment、release gate             |
 | [Post-Incident Review](/backend/knowledge-cards/post-incident-review/)                     | 事故後如何形成改進閉環                         | retrospective、action items          |
 | [RCA](/backend/knowledge-cards/rca/)                                                       | 根因分析如何從證據推導改進                     | timeline、control gap                |
 | [RTO](/backend/knowledge-cards/rto/)                                                       | 服務回復時間目標如何定義                       | SLA/SLO、DR                          |

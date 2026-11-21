@@ -1,5 +1,5 @@
 ---
-title: "Alembic autogenerate 的實測紀錄：改名與縮窄型別產生的 migration、交易退回、alembic check、兩個 head 的合併與並行套用的建議鎖"
+title: "Alembic autogenerate 的實測紀錄：改名與縮窄型別產生的 migration、交易回滾、alembic check、兩個 head 的合併與並行套用的建議鎖"
 date: 2026-11-21
 description: "要用 Alembic 從 SQLAlchemy model 產生 PostgreSQL 的 migration，想先知道它在欄位改名、縮窄型別、資料庫被手動改過、兩個分支各自新增 migration，以及多個程序同時套用時怎麼反應、要怎麼改寫時讀"
 weight: 1
@@ -9,7 +9,7 @@ slug: "alembic-autogenerate-lab"
 
 實測日期是 2026-11-21，環境是 macOS 15 的筆電，PostgreSQL 17.12（Homebrew 的 `postgresql@17`，在專案目錄裡另外建一個只給這次用的資料庫 cluster），Python 3.14.4、SQLAlchemy 2.1.9、Alembic 1.20.1、psycopg 3.3.9，套件以 uv 安裝；這次的操作是從一張優惠券資料表開始，依序改 model、產生 migration、套用，並刻意製造改名、縮窄型別、手動變更、分支合併與並行套用的情形。
 
-這篇記錄用 Alembic 從 SQLAlchemy 的 model 產生 migration 的完整操作：建一個只給這次用的 PostgreSQL；`alembic init` 產生的檔案與 `env.py` 裡要指定的 model；第一份 migration 建表；把欄位 `rate` 改名成 `discount`、把 `code` 從 `varchar(50)` 縮成 `varchar(20)` 時 autogenerate 產生了什麼、`--sql` 印出的 SQL、原樣套用時的失敗與另一種會默默丟資料的情形；把產生的 migration 改寫成改名之後，縮窄型別遇到過長的資料時整份退回；`alembic check` 偵測 model 與資料庫的差異，以及它比對與不比對的項目；兩個分支各自新增 migration 之後的兩個 head 與 `alembic merge`；兩個程序同時 `alembic upgrade head` 的結果，以及在 `env.py` 加上 PostgreSQL 建議鎖之後的結果；最後是清理。四種 schema 變更做法的比較、為什麼比對 model 推不出改名與資料轉換、表鎖與 `lock_timeout` 的機制，寫在 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)；同樣的情形在手寫 migration 的工具上的樣子，見 [goose 管理 PostgreSQL migration 的實測紀錄](/programming/go/basic/10-database-access/hands-on/goose-migration-lab/)。Django 的 `makemigrations`、Alembic 的 branch label 與多資料庫設定不在這次的實測裡。
+這篇記錄用 Alembic 從 SQLAlchemy 的 model 產生 migration 的完整操作：建一個只給這次用的 PostgreSQL；`alembic init` 產生的檔案與 `env.py` 裡要指定的 model；第一份 migration 建表；把欄位 `rate` 改名成 `discount`、把 `code` 從 `varchar(50)` 縮成 `varchar(20)` 時 autogenerate 產生了什麼、`--sql` 印出的 SQL、原樣套用時的失敗與另一種會默默丟資料的情形；把產生的 migration 改寫成改名之後，縮窄型別遇到過長的資料時整份隨交易回滾（transaction rollback，資料庫撤銷交易裡做過的變更）；`alembic check` 偵測 model 與資料庫的差異，以及它比對與不比對的項目；兩個分支各自新增 migration 之後的兩個 head 與 `alembic merge`；兩個程序同時 `alembic upgrade head` 的結果，以及在 `env.py` 加上 PostgreSQL 建議鎖之後的結果；最後是清理。四種 schema 變更做法的比較、為什麼比對 model 推不出改名與資料轉換、表鎖與 `lock_timeout` 的機制，寫在 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)；同樣的情形在手寫 migration 的工具上的樣子，見 [goose 管理 PostgreSQL migration 的實測紀錄](/programming/go/basic/10-database-access/hands-on/goose-migration-lab/)。Django 的 `makemigrations`、Alembic 的 branch label 與多資料庫設定不在這次的實測裡。
 
 ## 只給這次用的 PostgreSQL
 
@@ -145,9 +145,9 @@ uv run alembic upgrade head
 psycopg.errors.NotNullViolation: column "discount" of relation "coupons" contains null values
 ```
 
-`ADD COLUMN discount INTEGER NOT NULL` 沒有預設值，既有的兩列在新欄位上是 NULL，違反 `NOT NULL`。交易退回，`alembic_version` 仍是 `899a0e09dbf7`，`coupons` 的欄位仍是 `id, code, rate`。
+`ADD COLUMN discount INTEGER NOT NULL` 沒有預設值，既有的兩列在新欄位上是 NULL，違反 `NOT NULL`。交易回滾，`alembic_version` 仍是 `899a0e09dbf7`，`coupons` 的欄位仍是 `id, code, rate`。
 
-這次是 `NOT NULL` 剛好擋下來。新欄位可以為空時（model 寫成 `Mapped[int | None]`），同樣的新增加刪除會成功。在交易裡跑一次再退回，看結果：
+這次是 `NOT NULL` 剛好擋下來。新欄位可以為空時（model 寫成 `Mapped[int | None]`），同樣的新增加刪除會成功。在交易裡跑一次、最後 `ROLLBACK`，看結果：
 
 ```bash
 LANG=C $P/psql -h 127.0.0.1 -p 55432 -U postgres shop \
@@ -197,9 +197,9 @@ uv run alembic upgrade head
 sqlalchemy.exc.DataError: (psycopg.errors.StringDataRightTruncation) value too long for type character varying(20)
 ```
 
-第二列的 `code` 有 27 個字元。這一句失敗時，同一個交易裡已經做完的 `RENAME` 一起退回：`alembic_version` 仍是 `899a0e09dbf7`，欄位仍是 `id, code, rate`。
+第二列的 `code` 有 27 個字元。這一句失敗時，同一個交易裡已經做完的 `RENAME` 一起隨交易回滾：`alembic_version` 仍是 `899a0e09dbf7`，欄位仍是 `id, code, rate`。
 
-同一個型別變更加上明確的轉型時，結果不同。在交易裡試一次再退回：
+同一個型別變更加上明確的轉型時，結果不同。在交易裡試一次、最後 `ROLLBACK`：
 
 ```bash
 LANG=C $P/psql -h 127.0.0.1 -p 55432 -U postgres shop -c 'BEGIN' \
@@ -289,7 +289,7 @@ INFO  [alembic.runtime.migration] Running upgrade 2243a713ab81, b09ee421ee9c -> 
 
 ## 兩個程序同時套用與 env.py 的建議鎖
 
-多個應用程式實例在啟動時各自跑 `alembic upgrade head` 時，Alembic 本身沒有鎖。這次先 `uv run alembic downgrade base` 退回空的資料庫，再在第一份 migration 的 `upgrade()` 開頭暫時加一行 `op.execute("SELECT pg_sleep(3)")`，讓兩個程序的套用時間重疊，然後同時啟動兩個：
+多個應用程式實例在啟動時各自跑 `alembic upgrade head` 時，Alembic 本身沒有鎖。這次先用 `uv run alembic downgrade base` 把資料庫降回沒有套用任何 migration 的狀態，再在第一份 migration 的 `upgrade()` 開頭暫時加一行 `op.execute("SELECT pg_sleep(3)")`，讓兩個程序的套用時間重疊，然後同時啟動兩個：
 
 ```bash
 uv run alembic upgrade head > a1.log 2>&1 &
@@ -305,7 +305,7 @@ psycopg.errors.UniqueViolation: duplicate key value violates unique constraint "
 DETAIL:  Key (relname, relnamespace)=(coupons_id_seq, 2200) already exists.
 ```
 
-兩個程序都讀到「目前沒有版本」，都去建 `coupons`；PostgreSQL 的系統目錄 `pg_class` 對同一個 schema 裡的關聯名稱（表、sequence、index 都算）有唯一約束，第二個程序的 `CREATE TABLE` 等第一個提交之後撞上這個約束。DETAIL 指出先撞上的是 `coupons_id_seq`：`id` 是整數主鍵，SQLAlchemy 在 PostgreSQL 上把它建成 `SERIAL`，建表時先建這個 sequence，所以撞名發生在 sequence，而不是表名本身。`2200` 是 `public` 這個 schema 的 OID。它的交易退回，資料庫裡沒有留下建了一半的表，結果是那個程序以錯誤結束；在應用程式啟動時套用 migration 的話，就是那個實例啟動失敗。
+兩個程序都讀到「目前沒有版本」，都去建 `coupons`；PostgreSQL 的系統目錄 `pg_class` 對同一個 schema 裡的關聯名稱（表、sequence、index 都算）有唯一約束，第二個程序的 `CREATE TABLE` 等第一個提交之後撞上這個約束。DETAIL 指出先撞上的是 `coupons_id_seq`：`id` 是整數主鍵，SQLAlchemy 在 PostgreSQL 上把它建成 `SERIAL`，建表時先建這個 sequence，所以撞名發生在 sequence，而不是表名本身。`2200` 是 `public` 這個 schema 的 OID。它的交易回滾，資料庫裡沒有留下建了一半的表，結果是那個程序以錯誤結束；在應用程式啟動時套用 migration 的話，就是那個實例啟動失敗。
 
 在 `env.py` 的 `run_migrations_online()` 裡，套用之前先取一個交易層級的[建議鎖（advisory lock）](/backend/knowledge-cards/advisory-lock/)：
 
@@ -320,9 +320,9 @@ from sqlalchemy import pool, text
             context.run_migrations()
 ```
 
-`pg_advisory_xact_lock` 取得的鎖在交易提交或退回時自動釋放。鎖的鍵用兩個整數，`726` 是這次取的應用程式代號、`1` 是「套用 migration」這個功能的代號；照 Advisory Lock 卡的建議，自訂的鍵用兩個 int 的形式，跟 migration 工具這類套件常用的單一 bigint 鍵分開（goose、golang-migrate 的鎖用的是單一鍵），同一個應用程式的排程要用建議鎖時換另一個功能代號。PostgreSQL 另外兩個寫法的結果不同：`pg_try_advisory_xact_lock` 拿不到鎖時立刻回 false、不等待，程序要自己決定重試或結束；session 層級的 `pg_advisory_lock` 不隨交易結束釋放，要另外呼叫 `pg_advisory_unlock`（照 PostgreSQL 的〈Advisory Lock Functions〉文件，這兩種這次沒有實跑）。這次要的是「等前一個做完」，所以用會等待、隨交易釋放的 `pg_advisory_xact_lock`。拿不到鎖的程序在這一行等，等到前一個提交之後，`run_migrations()` 才讀 `alembic_version`，讀到的已經是最新版。鎖要取在 `begin_transaction()` 裡面：Alembic 預設把整批 migration 放在同一個交易，鎖跟著這個交易一直持有到全部套用完。`env.py` 裡 `context.configure` 設了 `transaction_per_migration=True` 時，每一份 migration 各自提交，這個寫法的鎖只持有到第一份結束，這次沒有實測那種設定。
+`pg_advisory_xact_lock` 取得的鎖在交易提交或回滾時自動釋放。鎖的鍵用兩個整數，`726` 是這次取的應用程式代號、`1` 是「套用 migration」這個功能的代號；照 Advisory Lock 卡的建議，自訂的鍵用兩個 int 的形式，跟 migration 工具這類套件常用的單一 bigint 鍵分開（goose、golang-migrate 的鎖用的是單一鍵），同一個應用程式的排程要用建議鎖時換另一個功能代號。PostgreSQL 另外兩個寫法的結果不同：`pg_try_advisory_xact_lock` 拿不到鎖時立刻回 false、不等待，程序要自己決定重試或結束；session 層級的 `pg_advisory_lock` 不隨交易結束釋放，要另外呼叫 `pg_advisory_unlock`（照 PostgreSQL 的〈Advisory Lock Functions〉文件，這兩種這次沒有實跑）。這次要的是「等前一個做完」，所以用會等待、隨交易釋放的 `pg_advisory_xact_lock`。拿不到鎖的程序在這一行等，等到前一個提交之後，`run_migrations()` 才讀 `alembic_version`，讀到的已經是最新版。鎖要取在 `begin_transaction()` 裡面：Alembic 預設把整批 migration 放在同一個交易，鎖跟著這個交易一直持有到全部套用完。`env.py` 裡 `context.configure` 設了 `transaction_per_migration=True` 時，每一份 migration 各自提交，這個寫法的鎖只持有到第一份結束，這次沒有實測那種設定。
 
-再退回空的資料庫，一樣同時啟動兩個：
+再把資料庫降回沒有套用任何 migration 的狀態，一樣同時啟動兩個：
 
 ```bash
 uv run alembic downgrade base
