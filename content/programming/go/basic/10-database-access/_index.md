@@ -62,5 +62,4 @@ aliases: ["/go/10-database-access/"]
 | Query Builder（squirrel、goqu）專篇                                                                                                                                  | 主章 | 讀者回饋顯示 10.7 的簡介不夠 | 小   |
 | ent 專篇（schema 寫成 Go 程式碼的另一種 ORM）                                                                                                                        | 主章 | 同上                         | 中   |
 | 資料庫整合測試（testcontainers 與交易回滾）                                                                                                                          | 主章 | 無                           | 中   |
-| 10.5〈AutoMigrate 在正式環境的限制〉與 10.7 用「退回」指撤回 migration；1.20 用「退回」只指交易的 ROLLBACK、「回滾」指部署之後撤回，兩篇的這幾句對齊                 | 主章 | 無                           | 小   |
 | GORM 的樂觀鎖外掛（`gorm.io/plugin/optimisticlock`）與 `Save` 搭配時的行為、關聯一併軟刪除（`Select("Orders").Delete`）、`gorm.io/plugin/soft_delete` 的旗標式軟刪除 | 主章 | 先實測                       | 小   |
