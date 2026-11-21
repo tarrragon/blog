@@ -1,7 +1,8 @@
 # mdtools
 
 Blog-internal markdown toolchain. Implements the rule contract defined in
-`content/posts/markdown-writing-spec.md` using Go + goldmark AST.
+`content/posts/markdown-writing-spec.md` using Go + goldmark AST, plus one
+post-build pass (`autolink-html`) over the HTML and RSS hugo generates.
 
 ## Build
 
@@ -18,11 +19,12 @@ mdtools fmt [--fix|--check] [paths...]    Format normalization
 mdtools lint [paths...]                   Structural + schema checks
 mdtools cards [paths...]                  Cross-file card completeness
 mdtools autolink-gaps <paths...>          Card names a page mentions that the site will not auto-link
+mdtools autolink-html <public-dir>        Write the card auto-links into a built site (after hugo)
 mdtools help                              Show usage
 mdtools version                           Print version
 ```
 
-When no paths are given, defaults to `content/**` (`autolink-gaps` requires paths and runs from the repo root, since it reads `data/autolink_terms.json`).
+When no paths are given, defaults to `content/**` (`autolink-gaps` requires paths and runs from the repo root, since it reads `data/autolink_terms.json`; `autolink-html` takes exactly one built-site directory).
 
 `lint` and `cards` share two flags:
 
@@ -33,14 +35,43 @@ When no paths are given, defaults to `content/**` (`autolink-gaps` requires path
   `make check` without it to see every warning. The flag is ignored under
   `-warn-as-error`, where the warnings decide the exit code.
 
+`autolink-html` rewrites the HTML and RSS files hugo wrote, in place: it
+links the knowledge-card names in every page that loads the autolink script
+and marks that script `data-static`, so the page script
+(`assets/js/autolink.js`) skips its own linking. The Makefile's `postbuild`
+target runs it between `hugo --minify` and pagefind, and both `make site` and
+the deploy workflow (`.github/workflows/deploy.yml`) run that target; `hugo
+server` does not, and the page script links in local preview.
+The matching rules are listed once, in the header of `assets/js/autolink.js`,
+and implemented twice, there and in `internal/autolinkhtml`; a rule change goes
+into both programs, into the Go tests, and into `internal/mdcards/autolink.go`,
+the markdown approximation that the L2 orphan-card check and `autolink-gaps` use.
+`internal/autolinkhtml/jsparity_test.go` fails when the script's SKIP list and
+`skipTags` differ; no tool catches a drift in the other rules.
+Only `.article-body` of pages whose section is in the `scopes` of
+`data/autolink.toml` is linked, and in each RSS item only `content:encoded`, by
+the scope of the page at the item's link; feed links carry the card title in
+`title` and leave out the tooltip attributes, which only the site's CSS uses.
+The dictionary is read from the built
+site (the JSON the page script loads), so the argument must be a site hugo has
+already written. It prints one line to stderr (pages scanned and linked, links,
+pages already linked; feeds, items, links) and exits 2 when the directory, a
+page or the dictionary cannot be read or written, or when the directory holds
+no .html file.
+A second run changes nothing: pages already marked `data-static` are skipped,
+and in the feeds the names already inside a link are left alone. To check a
+build, `make site && make test` runs `tests/autolink-static.spec.ts`, which
+reads a page and a feed with JavaScript off.
+
 ## Package layout
 
 ```text
 scripts/mdtools/
 ├── main.go                 subcommand dispatcher
-├── cmd/                    subcommand entry points (Fmt, Lint, Cards)
+├── cmd/                    subcommand entry points (one file per subcommand)
 ├── internal/
 │   ├── astutil/            goldmark wrapper + walker helpers
+│   ├── autolinkhtml/       card auto-links written into the built HTML and RSS
 │   ├── rules/              toggle-able rule config mirroring spec §1-§7
 │   └── report/             Violation type and stable output formatter
 └── README.md

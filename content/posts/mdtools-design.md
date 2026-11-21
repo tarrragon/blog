@@ -266,7 +266,7 @@ Rule config 在 `internal/rules/config.go`，spec 文件在 `content/posts/markd
 當前覆蓋 22 條 rule-config 條目。接下來加規則的收益會遞減 — 大部分重要的基礎格式 + 結構 + 跨文件檢查都已在內。未來新增應該集中在：
 
 - 新內容類型帶來的 schema 擴充（例如做 podcast 或者 video posts）。
-- 特定格式的新檢查。原本列在這裡的 **L3 術語覆蓋**（正文首次出現術語連到卡片）沒有做成 mdtools 的規則，改由網站在瀏覽器端的自動連結處理，範圍與規則見 [Markdown 寫作規範〈卡片雙向完整性〉表格下的 L3 段](/posts/markdown-writing-spec/)。
+- 特定格式的新檢查。原本列在這裡的 **L3 術語覆蓋**（正文首次出現術語連到卡片）沒有做成 mdtools 的規則，改由網站的自動連結處理（部署時 `mdtools autolink-html` 在 hugo 輸出頁面之後把連結寫進 HTML 與 RSS），範圍與規則見 [Markdown 寫作規範〈卡片雙向完整性〉表格下 L3 起的三段](/posts/markdown-writing-spec/)。這是 mdtools 唯一處理建站輸出的子命令：它改寫的是 hugo 輸出的 HTML 與 RSS，所以用 HTML tokenizer（`golang.org/x/net/html`），不用 goldmark。
 - 特定領域的品質檢查（例如紅隊教材「每個案例必須有 3 來源」）。
 
 基礎 markdownlint 規則能加的都加完了，再追規則就是在吸邊際收益極低的條目，不值得。

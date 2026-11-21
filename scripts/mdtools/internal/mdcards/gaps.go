@@ -44,14 +44,14 @@ func GapReasons() []string {
 }
 
 // AutolinkGaps lists, for each given page, the card names in its prose that
-// the page script will not link and that the page does not already link to
+// the site will not auto-link and that the page does not already link to
 // by hand. Matching follows autolinkedCards: case-insensitive, Latin edges on
 // word boundaries, whitespace folded, and an occurrence inside a longer name
 // the page links belongs to the longer name (on a page without auto-linking,
 // any longer card name). A name is not listed when its card is already linked
 // on the page, by hand or by the site through another of its names (one link
-// to a card per page is enough), nor on the card's own page (the page script
-// never links a card to itself). Section index pages other than the home page
+// to a card per page is enough), nor on the card's own page (the site never
+// auto-links a card to itself). Section index pages other than the home page
 // are skipped: readers never see their body. One line per page and name.
 func AutolinkGaps(paths []string) ([]Gap, int, error) {
 	d := loadAutolinkDict()

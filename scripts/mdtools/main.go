@@ -28,6 +28,8 @@ func main() {
 		exitCode = cmd.Migrate(args)
 	case "autolink-gaps":
 		exitCode = cmd.AutolinkGaps(args)
+	case "autolink-html":
+		exitCode = cmd.AutolinkHTML(args)
 	case "-h", "--help", "help":
 		usage()
 	case "version":
@@ -53,6 +55,7 @@ Subcommands:
   cards                Cross-file card completeness checks
   migrate <sub>        One-off content migration tools (e.g. fix-links)
   autolink-gaps        Card names in a page that the site will not auto-link
+  autolink-html <dir>  Link card names in the built site's pages and RSS (after hugo)
   version              Print version
   help                 Show this help
 

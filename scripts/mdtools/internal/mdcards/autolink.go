@@ -13,7 +13,8 @@ import (
 
 // autolinkDictPath is the dictionary bin/autolink-dict generates from the
 // card titles. The site marks every mention of these names in article prose
-// as a link to the card (assets/js/autolink.js), so a card mentioned by name
+// as a link to the card (internal/autolinkhtml writes the links into the
+// built site; assets/js/autolink.js adds them in local preview), so a card mentioned by name
 // is reachable from that article even without a markdown link. mdtools runs
 // from the repo root (the pre-commit hook cds there), hence the relative path.
 const autolinkDictPath = "data/autolink_terms.json"
@@ -77,7 +78,7 @@ func contentModule(p string) string {
 
 // autolinkedCards returns the card files (as "content/<card>.md") among
 // `wanted` that the site would auto-link from at least one non-card file.
-// It mirrors the page-side rules in assets/js/autolink.js: the page's module
+// It mirrors the page-side rules in internal/autolinkhtml and assets/js/autolink.js: the page's module
 // picks the scope; a name owned by cards in several allowed modules resolves
 // to the page's own module or is skipped; matching is case-insensitive and a
 // Latin edge must sit on a word boundary; whitespace runs count as one space;

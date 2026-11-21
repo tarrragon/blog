@@ -43,10 +43,11 @@ tags: ["Markdown", "AI協作心得", "blog心得", "lint", "goldmark"]
 | `mdtools lint`                 | 結構檢查（標題、反釣魚、code block 語言、front matter schema） | 否           | pre-commit、pre-push、CI                          |
 | `mdtools cards`                | 跨文件完整性（連結、fragment、orphan、K4、目錄登記）           | 否           | pre-commit、pre-push、CI                          |
 | `mdtools autolink-gaps`        | 列出正文裡網站不會自動連結的卡片名稱（手寫連結的候選）         | 否           | 寫完文章草稿時手動執行                            |
+| `mdtools autolink-html <目錄>` | 把卡片名稱的自動連結寫進建好的網站（HTML 與 RSS）              | 改建站輸出   | `make site` 與部署，在 `hugo` 之後、pagefind 之前 |
 
 工具原始碼在 `scripts/mdtools/`，binary build 到 `bin/mdtools`（已 gitignore）。
 
-作用範圍是 `content/**/*.md`。`public/`、`themes/`、`node_modules/` 等輸出或第三方資源不檢查。
+檢查類子命令的作用範圍是 `content/**/*.md`，`public/`、`themes/`、`node_modules/` 等輸出或第三方資源不檢查；`autolink-html` 只改寫 hugo 輸出到 `public/` 的 HTML 與 RSS。
 
 ---
 
@@ -420,7 +421,11 @@ slug 是 URL 的核心識別、跨多個工具共用（Hugo build、mdtools lint
 | **L8 slug 與檔名對齊**              | 頁面若有 `slug`，值必須等於檔名 stem（`_index.md` 豁免）                                                | 取 front matter 的 `slug` → 比對 filename stem                                                                 |
 | **L9 weight 0 等於未設**            | 頁面與 `_index.md` 都不得設 `weight: 0`                                                                 | 取 front matter 的 `weight` → 值為零即報 error                                                                 |
 
-L3（正文首次出現術語必須連結到卡片）不做成 mdtools 的檢查。網站另外在瀏覽器端做自動連結：一篇文章所在的第一層資料夾（`content/<資料夾>/`）列在 `data/autolink.toml` 的 `scopes` 時，正文裡每一次出現的卡片名稱（卡片標題的英文名或中文名，任一個都算，不分大小寫；標題寫成 `SLI / SLO`、`Infrastructure as Code (IaC)` 這類正文不會逐字寫出的形狀時，另外拆出 `SLI`、`IaC` 這樣的名字）都標成連到那張卡的連結；`scopes` 同時規定這篇文章連得到哪些第一層資料夾的卡（programming 的文章連得到 programming 與 backend 的卡）。一兩個字的中文名、排除清單裡的名字、同一個資料夾裡同名的卡與設了 `autolink: false` 的卡不連；名字的取法與排除條件寫在 `bin/autolink-dict` 的檔頭，比對規則寫在 `assets/js/autolink.js` 的檔頭。列在 `data/autolink.toml` 的 `unlisted` 的資料夾（report、work-log、posts 這類）不做自動連結；每個第一層資料夾要登記在哪一處、怎麼判斷，寫在 `docs/rules/markdown.md`〈工具會擋的類別與要自己跑的類別〉。自動連結只出現在網頁上，markdown 原文與 RSS 裡沒有這些連結。文章裡要手寫哪些連到卡的連結，照 `docs/rules/sentences.md`〈術語的解釋方式〉，`./bin/mdtools autolink-gaps` 列出候選；L4 要求的鄰卡連結是 markdown 連結，自動連結不算。L2 用同一份詞典 `data/autolink_terms.json` 與同一組 `scopes` 判斷一張卡有沒有被自動連結。
+L3（正文首次出現術語必須連結到卡片）不做成 mdtools 的檢查。網站另外做自動連結：一篇文章所在的第一層資料夾（`content/<資料夾>/`）列在 `data/autolink.toml` 的 `scopes` 時，正文裡每一次出現的卡片名稱（卡片標題的英文名或中文名，任一個都算，不分大小寫；標題寫成 `SLI / SLO`、`Infrastructure as Code (IaC)` 這類正文不會逐字寫出的形狀時，另外拆出 `SLI`、`IaC` 這樣的名字）都標成連到那張卡的連結；`scopes` 同時規定這篇文章連得到哪些第一層資料夾的卡（programming 的文章連得到 programming 與 backend 的卡）。太短的名字（不含拉丁字母而只有一兩個漢字、含拉丁字母而去掉空白之後只有一兩個字元，門檻在 `data/autolink.toml` 的 `[min_length]`）、`data/autolink.toml` 的 `names.exclude` 列出的名字、同一個資料夾裡同名的卡與設了 `autolink: false` 的卡不連。列在 `data/autolink.toml` 的 `unlisted` 的資料夾（report、work-log、posts 這類）不做自動連結；每個第一層資料夾要登記在哪一處、怎麼判斷，寫在 `docs/rules/markdown.md`〈自動連結的資料夾登記〉。
+
+自動連結出現在網頁與 RSS 的全文裡，markdown 原文裡沒有這些連結：`make site` 與部署流程（`.github/workflows/deploy.yml`）在 `hugo` 輸出頁面之後執行 `./bin/mdtools autolink-html public`，這個子命令把連結寫進建好的 HTML 與 RSS 每個 item 的全文（RSS 閱讀器不載入網站的樣式，所以 RSS 裡的連結只帶卡片標題，不帶網頁提示框用的屬性）；本機用 `hugo server` 預覽時沒有那一步，連結由 `assets/js/autolink.js` 在瀏覽器端加。名字的取法與排除條件寫在 `bin/autolink-dict` 的檔頭；比對規則，以及改了任何一份比對程式時要一起改的另外兩份（`scripts/mdtools/internal/autolinkhtml` 與 L2、`autolink-gaps` 用的 `scripts/mdtools/internal/mdcards/autolink.go`），列在 `assets/js/autolink.js` 的檔頭。
+
+文章裡要手寫哪些連到卡的連結，照 `docs/rules/sentences.md`〈術語的解釋方式〉，`./bin/mdtools autolink-gaps` 列出候選；L4 要求的鄰卡連結是 markdown 連結，自動連結不算。L2 用同一份詞典 `data/autolink_terms.json` 與同一組 `scopes` 判斷一張卡有沒有被自動連結。
 
 ### L2 與 L6 問的是兩個不同問題
 
@@ -517,6 +522,10 @@ git config core.hooksPath .githooks
 ### CI（`.github/workflows/md-check.yml`）
 
 三個子命令都跑 `--check` / 嚴格模式，任何違規 fail CI。
+
+### 建站（`make site` 與 `.github/workflows/deploy.yml`）
+
+`hugo --minify` 輸出頁面之後，兩者都跑 Makefile 的 `postbuild` target：`mdtools autolink-html public` 把卡片名稱的自動連結寫進 HTML 與 RSS，接著產生三份 Pagefind 索引。步驟只定義在 `postbuild` 一處，所以 `.github/workflows/playwright.yml` 用 `make site` 建站時，`tests/autolink-static.spec.ts` 關掉 JavaScript 讀頁面與 RSS，量到的是部署用的步驟。
 
 ---
 

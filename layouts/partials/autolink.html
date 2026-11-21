@@ -1,5 +1,10 @@
 {{- /*
   自動連結：在文章頁載入 assets/js/autolink.js，把正文裡出現的知識卡名稱標成連到那張卡的連結。
+  部署時 `mdtools autolink-html public` 在 hugo 之後讀這個 <script> 的 data 屬性，把連結直接寫進 HTML
+  與 RSS，並加上 data-static，<script> 帶著它時腳本就不再連結；`hugo server` 的本機預覽沒有那一步，由腳本連結。
+  所以這裡的 data 屬性名稱與格式改了，scripts/mdtools/internal/autolinkhtml 要一起改；正文容器
+  （layouts/_default/single.html 的 <div class="article-body">）的標籤或 class 改了也一樣，Go 找不到它時
+  不加 data-static、留給腳本連結，並在 stderr 印出警告。
   比對範圍取 data/autolink.toml 的 scopes：鍵是這一頁所在的第一層資料夾（.Section），沒有列在
   那裡的資料夾不載入腳本。詞典由 bin/autolink-dict 產生（data/autolink_terms.json），
   autolink-dict.html 轉成瀏覽器用的 JSON。

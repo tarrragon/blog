@@ -48,7 +48,14 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
 
-      # Build site with three pagefind indexes (Makefile site target)
+      # make site builds bin/mdtools for the card auto-link step
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: scripts/mdtools/go.mod
+          cache-dependency-path: scripts/mdtools/go.sum
+
+      # Build site with card auto-links and three pagefind indexes (Makefile site target)
       - name: Build Hugo + Pagefind indexes
         run: make site
 

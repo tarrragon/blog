@@ -99,3 +99,9 @@ summaryLength = 200  # 摘要字數限制
   work-log = "/work-log/:slug/"
   record = "/record/:slug/"
   other = "/other/:slug/"
+
+# hugo --minify 保留結束標籤（Hugo 的預設值，寫出來是因為有程式依賴它）：
+# mdtools autolink-html 在建站之後改寫 public/ 的 HTML，用結束標籤判斷隱藏元素、mermaid 區塊這些
+# 不加自動連結的元素在哪裡結束；<p hidden> 的 </p> 被省略時，它後面的正文也會被當成要跳過的範圍。
+[minify.tdewolff.html]
+  keepEndTags = true

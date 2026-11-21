@@ -56,13 +56,19 @@ jobs:
           echo "Retrying Hugo build after Claude fix..."
           hugo --minify
 
-      # 3.3 產生 Pagefind 搜尋索引（三份、對應 search 頁的 scope filter）
-      # 對齊 Makefile site target — 三份 index 各自是該 mode 的全集（#65 multi-index）
-      - name: Build Pagefind search indexes
-        run: |
-          npx -y pagefind --site public --root-selector main
-          npx -y pagefind --site public --root-selector "article.article-content > h1" --output-subdir pagefind-title
-          npx -y pagefind --site public --root-selector ".article-body" --output-subdir pagefind-content
+      # 3.3 hugo 之後的步驟：把知識卡名稱的自動連結寫進建好的頁面與 RSS（mdtools autolink-html），
+      # 再產生三份 Pagefind 搜尋索引（對應 search 頁的 scope filter，#65 multi-index）。
+      # 部署的網站不靠頁面腳本加連結：不跑 JavaScript 的讀者看到的頁面、爬蟲讀到的 HTML，以及 RSS 每個 item 的全文（content:encoded；摘要 description 沒有）都有連結。
+      # 步驟定義在 Makefile 的 postbuild target，`make site` 也跑同一個 target，
+      # 所以 playwright.yml 用 `make site` 建站時測到的就是部署用的步驟。
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: scripts/mdtools/go.mod
+          cache-dependency-path: scripts/mdtools/go.sum
+
+      - name: Card auto-links and Pagefind indexes
+        run: make postbuild
 
       # 4. 上傳編譯好的檔案
       - name: Upload artifact

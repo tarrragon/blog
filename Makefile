@@ -11,7 +11,7 @@ MDTOOLS_BIN := bin/mdtools
 # -warn-summary so the standing warning backlog collapses to one line per rule.
 CHECK_FLAGS ?=
 
-.PHONY: build check fix lint cards install-hooks hooks-status clean help site test verify-red-green
+.PHONY: build check fix lint cards install-hooks hooks-status clean help site postbuild test verify-red-green
 
 help:
 	@echo "Blog mdtools targets:"
@@ -24,7 +24,8 @@ help:
 	@echo "  make cards           Run cards on content/**"
 	@echo "  make install-hooks   Point git at .githooks/ for pre-commit + pre-push"
 	@echo "  make hooks-status    Show current git hooksPath"
-	@echo "  make site            Build Hugo + Pagefind search index into public/"
+	@echo "  make site            Build Hugo + card auto-links + Pagefind search index into public/"
+	@echo "  make postbuild       Card auto-links + Pagefind on an existing public/ (deploy runs this)"
 	@echo "  make test            Run Playwright tests (requires make site first)"
 	@echo "  make verify-red-green Verify a test catches the bug it claims to (#69)"
 	@echo "  make clean           Remove bin/"
@@ -64,15 +65,25 @@ clean:
 	@rm -rf bin/
 	@echo "removed bin/"
 
-# Full site build: Hugo output + Pagefind search indexes.
+# Full site build: Hugo output + card auto-links + Pagefind search indexes.
+# mdtools autolink-html writes the knowledge-card auto-links into the built
+# pages and RSS (the deployed site does not depend on the page script for
+# them); it runs before pagefind so the indexes read the final HTML.
 # Three indexes for the search page's scope filter (#55-#66 strategy C):
 #   pagefind/         — full content (main); default index, scope=all
 #   pagefind-title/   — title-only (article > h1); scope=title
 #   pagefind-content/ — body-only (.article-body); scope=content
 # Each scope is the full set under that mode — no view-layer post-filter.
-site:
+# The steps after hugo are the postbuild target, which the deploy workflow
+# (.github/workflows/deploy.yml) also runs, so the Playwright CI that builds
+# with `make site` tests the same steps the deployed site goes through.
+site: build
 	@rm -rf public
 	@hugo --minify
+	@$(MAKE) --no-print-directory postbuild
+
+postbuild: build
+	@./$(MDTOOLS_BIN) autolink-html public
 	@npx -y pagefind --site public --root-selector main
 	@npx -y pagefind --site public --root-selector "article.article-content > h1" --output-subdir pagefind-title
 	@npx -y pagefind --site public --root-selector ".article-body" --output-subdir pagefind-content

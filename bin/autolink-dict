@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """從知識卡的標題產生自動連結的詞典 data/autolink_terms.json，並列出不做自動連結的名字。
 
-用途：網站在瀏覽器端把正文裡出現的卡片名稱標成連到那張卡的連結（layouts/partials/autolink.html
-與 assets/js/autolink.js）。比對用的名字從卡片標題機械地取出，作者不必為了讓讀者查到卡而在每一處
+用途：網站把正文裡出現的卡片名稱標成連到那張卡的連結（部署時由 `mdtools autolink-html` 在 hugo
+之後寫進 HTML 與 RSS，本機預覽由 layouts/partials/autolink.html 載入的 assets/js/autolink.js 在瀏覽器端加）。比對用的名字從卡片標題機械地取出，作者不必為了讓讀者查到卡而在每一處
 手寫連結；哪些名字不做自動連結也由這支工具依 data/autolink.toml 決定。Hugo 與 mdtools 都讀它產生
 的 data/autolink_terms.json，名字的取法與排除條件只寫在這裡一份。
 
