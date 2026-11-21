@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """派術語探針之前，數每個測試詞在 subagent 的系統提示來源裡出現的行數。
 
-用途：CLAUDE.md〈術語探針與系統提示〉。在本 repo 底下派出的 subagent，系統提示裡已經有規則檔、
-memory 索引、skill 的說明與最近的 commit 標題；測試詞寫在其中任何一處時，探針回報「有把握」可能
-只是複述了那份定義。
+用途：docs/rules/claude-code.md〈術語探針與系統提示〉。在本 repo 底下派出的 subagent，系統提示裡已經有
+AGENTS.md、CLAUDE.md、memory 索引、skill 的說明與最近的 commit 標題，它讀過的分冊也進 context；
+測試詞寫在其中任何一處時，探針回報「有把握」可能只是複述了那份定義。
 
 用法：bin/term-prompt-count <詞...>
   在 repo 裡任何目錄執行都可以（以 repo 根目錄為準）。含空白的詞加引號（'test oracle'），
   不然會被拆成兩個詞各數一次。英文不分大小寫。
 
-數的來源（每個詞各數一次，印出非零的來源與合計）：
+數的來源（每個詞各數一次，印出非零的來源與合計；合計分成「系統提示」與「只在分冊」兩欄，
+docs/rules/*.md 不在系統提示裡，探針讀過那一份才算進它的 context）：
 - repo 根目錄的 AGENTS.md、CLAUDE.md 與 docs/rules/*.md
 - ~/.claude/CLAUDE.md
 - memory 索引 ~/.claude/projects/<repo 根目錄的絕對路徑，每個非英數字元換成 -> /memory/MEMORY.md
@@ -18,7 +19,7 @@ memory 索引、skill 的說明與最近的 commit 標題；測試詞寫在其�
 - `git log -20 --format=%s` 的 commit 標題
 數的是含這個詞的行數，不是出現次數；判斷「是不是零」時兩者沒有差別。
 plugin 的 skill、agent 類型與 MCP server 的說明沒有固定的檔案位置，這支工具數不到；輸出的最後
-一行會提醒（要怎麼處理寫在 CLAUDE.md）。
+一行會提醒（要怎麼處理寫在 docs/rules/claude-code.md）。
 
 為什麼寫成工具：手打的 grep 在 zsh 裡碰到沒有匹配的 glob（`~/.claude/skills/*/SKILL.md`）會讓整條
 指令不執行，專案自己的 skill 也一起被算成 0；`grep -c` 對多個檔案的輸出又要人工加總。
@@ -122,7 +123,8 @@ def main():
         hits = [(name, sum(key in line.lower() for line in lines)) for name, lines in srcs]
         hits = [(n, c) for n, c in hits if c]
         total = sum(c for _, c in hits)
-        print(f"{term}：{total} 行")
+        only_rules = sum(c for n, c in hits if os.sep + os.path.join("docs", "rules") + os.sep in n)
+        print(f"{term}：{total} 行（系統提示 {total - only_rules}、只在分冊 {only_rules}）")
         for name, c in hits:
             shown = os.path.relpath(name, root) if name.startswith(root + os.sep) else name.replace(home, "~", 1)
             print(f"  {c}  {shown}")

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """印出指定檔案相對於 HEAD 的新增行，或判定這次改動的級別。
 
-用途：字句層掃描的輸入（AGENTS.md〈寫作類 skill 的叫用〉）與改動級別的判定
+用途：字句層掃描的輸入（docs/rules/writing-process.md〈字句層掃描的檔案集〉）與改動級別的判定
 （AGENTS.md〈改動的級別〉）。
 
 用法：

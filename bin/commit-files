@@ -21,12 +21,12 @@
 2a. 在 Claude Code 裡（環境有 CLAUDECODE 或 CLAUDE_CODE_SESSION_ID）對私有 index 跑
    `bin/session-edits-check --staged <檔案>`：比對的是要提交的內容，同一份清單、同一刻，
    檢查之後才進工作樹的改動不會被提交。它印出 `[ASK-USER]`（exit 3）或沒跑成（其他非零 exit）時
-   不提交、exit 1。`--skip-session-check` 跳過這一步，只在 CLAUDE.md〈提交前對照編輯紀錄〉
-   寫的兩種情形用：使用者看過 diff 決定一起提交；或工具 exit 2、照 AGENTS.md〈提交〉逐段對照過了。
+   不提交、exit 1。`--skip-session-check` 跳過這一步，只在 docs/rules/claude-code.md〈提交前對照編輯紀錄〉
+   寫的兩種情形用：使用者看過 diff 決定一起提交；或工具 exit 2、照 docs/rules/commit-push.md〈提交〉逐段對照過了。
    Codex 與其他 agent 的環境沒有這兩個變數，不跑這一步，對照照規則做。
    --untrack 的路徑不是 Edit 或 Write 的編輯，transcript 對不出來：沒有 `--skip-session-check` 時
    每一個印成 `[ASK-USER] <路徑>（解除追蹤）`，不提交、exit 1。解除追蹤是從版本控制刪除一個檔案，
-   照 CLAUDE.md〈提交前對照編輯紀錄〉跟刪除一樣交給使用者決定，同意之後加 `--skip-session-check` 重跑。
+   照 docs/rules/claude-code.md〈提交前對照編輯紀錄〉跟刪除一樣交給使用者決定，同意之後加 `--skip-session-check` 重跑。
 3. 提交後讓共用 index 對齊 HEAD：已經跟 HEAD 相同就不動；這幾個檔案只剩提交前的版本時
    （`git diff --cached --name-only <commit>~1 -- <檔案>` 是空的），跑 `git reset -q -- <檔案>`。
    共用 index 被鎖住、或共用 index 裡有這幾個檔案的其他版本（那條 diff 有輸出）時不 reset，
@@ -143,7 +143,7 @@ def main():
             if r.returncode == 3:
                 die("沒有提交：有檔案印了 [ASK-USER]（照 AGENTS.md〈要先問使用者的情形〉）", 1)
             if r.returncode != 0:
-                die(f"沒有提交：session-edits-check exit {r.returncode}（照 CLAUDE.md〈提交前對照編輯紀錄〉）", 1)
+                die(f"沒有提交：session-edits-check exit {r.returncode}（照 docs/rules/claude-code.md〈提交前對照編輯紀錄〉）", 1)
         r = subprocess.run(["git", "commit", "-q", "-F", msgfile], env=env)
         if r.returncode != 0:
             die("git commit 失敗（讀上面的 hook 訊息修正；不用 --no-verify）", 1)

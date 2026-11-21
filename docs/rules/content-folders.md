@@ -78,7 +78,7 @@
 - **寫 `hands-on/` 實作文章之前**：用這次操作的工具名或業者名掃同一個模組（定義在〈概念文章與實作文章：`hands-on/` 子資料夾〉的「放哪一個 `hands-on/`」那一項）裡的全部 `hands-on/`（`rg -il '<工具名>' content/<模組>/ -g '**/hands-on/**'`），確認沒有既有的實作文章已經涵蓋同一個操作。同一個操作指的是既有那一篇標題寫的操作目標：補的是同一個目標（上一次沒走通的步驟）就補進原文；目標不同（同一台主機建好之後裝軟體、接監控）另寫一篇，兩篇互相連結。
 - **寫或改 vendor 或工具頁之前**：用工具名找同一個工具在別的模組或章節資料夾有沒有頁面：`rg --files content | rg -i '<工具名>' | rg -v '^content/(report|skills)/'`（`<工具名>` 填工具的英文名，例如 `gatling`、`nginx`；工具頁不一定在 `vendors/` 底下，nginx 在 backend、devops 與 php 各有一頁）。列出的清單裡應該有這一頁自己，沒有代表工具名打錯，修正之後重跑；新頁還沒建檔時，先用同一個章節資料夾裡已經存在的另一個工具名跑一次，確認指令有命中。逐一讀命中的頁面，是同一個工具而且在別的模組或章節資料夾時，照〈教學模組之間的主題邊界〉的「同一個工具或元件在兩個模組各有一頁時」那一項寫。同一家業者的不同產品（`elastic-security` 與 `elastic-stack`）不做逐段並排，只問一件事：有沒有業者層的共通事實（同一支 agent、授權與計費、帳號結構）要寫成知識卡；找這類頁面用業者名掃一次：`rg --files content | rg -i '/vendors/<業者名>'`（`<業者名>` 取資料夾名裡業者那一段，`elastic-security` 取 `elastic`）。
 - **任何資料夾**：frontmatter 的 `slug` 與檔名一致（見 `content/posts/markdown-writing-spec.md` §6.5）。
-- **新增頂層資料夾或大分類底下的教學模組時**：新增頂層 `content/<module>/` 資料夾時，在 `content/_index.md` 對應的分類段加上入口，並在 `data/autolink.toml` 決定這個資料夾做不做自動連結（沒登記時 `bin/autolink-dict` exit 2 並印出要改的位置，寫法見 `markdown.md`〈工具會擋的類別與要自己跑的類別〉）。在大分類底下新增教學模組時，入口登記在大分類 `_index.md` 列教學模組的那張表，以及 `content/_index.md` 裡那個大分類底下的子項。在模組底下新增系列子資料夾時（定義在〈概念文章與實作文章：`hands-on/` 子資料夾〉的「放哪一個 `hands-on/`」那一項），登記在三處：模組 `_index.md` 的系列表、大分類 `_index.md` 列模組那張表裡那個模組的收錄欄，以及 `content/_index.md` 裡那個模組那一列的系列行內連結。依據：[新增頂層 content 資料夾要同步首頁 _index.md 入口](/report/top-level-content-folder-needs-homepage-entry/)。
+- **新增頂層資料夾或大分類底下的教學模組時**：新增頂層 `content/<module>/` 資料夾時，在 `content/_index.md` 對應的分類段加上入口，並在 `data/autolink.toml` 決定這個資料夾做不做自動連結（沒登記時 `bin/autolink-dict` exit 2 並印出要改的位置，寫法見 `markdown.md`〈自動連結的資料夾登記〉）。在大分類底下新增教學模組時，入口登記在大分類 `_index.md` 列教學模組的那張表，以及 `content/_index.md` 裡那個大分類底下的子項。在模組底下新增系列子資料夾時（定義在〈概念文章與實作文章：`hands-on/` 子資料夾〉的「放哪一個 `hands-on/`」那一項），登記在三處：模組 `_index.md` 的系列表、大分類 `_index.md` 列模組那張表裡那個模組的收錄欄，以及 `content/_index.md` 裡那個模組那一列的系列行內連結。依據：[新增頂層 content 資料夾要同步首頁 _index.md 入口](/report/top-level-content-folder-needs-homepage-entry/)。
 
 ### 目錄頁 `_index.md` 與文章檔的分工
 
@@ -89,7 +89,7 @@
 | `_index.md` | 模組目錄頁 | frontmatter、簡介（1 到 3 段）、章節文章表格、跨分類引用、Backlog     | 20 到 90 行，加上 Backlog 段 |
 | `<slug>.md` | 獨立文章   | 完整的教學內容，frontmatter 有 title、date、description、weight、tags | 50 到 300 行                 |
 
-內容量的參考值來自本站早期模組的實際行數，是經驗值，沒有量過它跟讀者負擔的關係。所以行數只用來決定要不要多看一眼：`_index.md` 遠超過時，看它的正文裡有沒有寫給讀者看的推導或範例（有就是把文章內容寫進了目錄頁，讀者看不到，要搬到文章）；分類的工作底稿（`content/report/_index.md` 的場景導讀、`content/backend/_index.md` 的 Backlog 總覽）本來就長，不因行數搬家。文章超過參考量時，照 `writing.md`〈推導過重時拆篇，不壓縮成一句話的結論〉判斷要不要拆。
+內容量的參考值來自本站早期模組的實際行數，是經驗值，沒有量過它跟讀者負擔的關係。所以行數只用來決定要不要多看一眼：`_index.md` 遠超過時，看它的正文裡有沒有寫給讀者看的推導或範例（有就是把文章內容寫進了目錄頁，讀者看不到，要搬到文章）；分類的工作底稿（`content/report/_index.md` 的場景導讀、`content/backend/_index.md` 的 Backlog 總覽）本來就長，不因行數搬家。文章超過參考量時，照 `sentences.md`〈推導過重時拆篇，不壓縮成一句話的結論〉判斷要不要拆。
 
 建新的教學模組時，先建 `_index.md` 寫模組簡介與文章表格，再建各篇獨立文章；文章內容寫進 `_index.md` 的話，Hugo 不會把它渲染成單篇頁面。既有模組的結構可以參考 `content/devops/infra/00-infra-mindset/`。
 

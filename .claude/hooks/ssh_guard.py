@@ -41,6 +41,8 @@ def main():
             "ssh 的 ProxyCommand / LocalCommand 會在本機執行任意命令、"
             "被 ssh_guard hook 攔截。ssh 權限只開放給遠端唯讀診斷、"
             "不得用來在這台開發機執行本機命令。"
+            "要把這些字串寫進檔案時改用 Write 或 Edit，"
+            "見 docs/rules/claude-code.md〈SSH 的權限與 ssh_guard hook〉。"
         )
         print(json.dumps({
             "hookSpecificOutput": {

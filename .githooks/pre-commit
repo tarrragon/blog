@@ -21,6 +21,18 @@ MDTOOLS_BIN="bin/mdtools"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
+# --- Rule entry checks (docs/rules/rule-authoring.md) -----------------------
+# Reads the index, so another session's unstaged edits cannot block this commit.
+# Here-string instead of a pipe: under pipefail, grep -q exiting early makes git
+# die on SIGPIPE when many files are staged, and the check would be skipped.
+staged_rule_check=$(git diff --cached --name-only)
+if [[ -x bin/rule-route ]] && grep -qE '^(AGENTS\.md|bin/rule-route|docs/rules/)' <<< "$staged_rule_check"; then
+    if ! bin/rule-route --check-staged; then
+        echo "[pre-commit] rule entry check failed" >&2
+        exit 1
+    fi
+fi
+
 # --- 0. Test-First (#69) reminder when test files are staged ---------------
 # This is a #72 L3 structural trigger: the act of committing a test triggers
 # a question. Goal: "did you see RED on buggy code, or are you committing

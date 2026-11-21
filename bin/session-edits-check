@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """用這次 Claude Code session 的編輯紀錄重建 diff，確認要提交的改動都是這個 session 做的。
 
-用途：AGENTS.md〈提交〉的「確認 `git diff HEAD` 的每一段都是這次自己做的編輯」那一步。Claude Code
-裡 `bin/commit-files` 在提交前自己用 `--staged` 呼叫這支工具（CLAUDE.md〈提交前對照編輯紀錄〉）；
+用途：docs/rules/commit-push.md〈提交〉的「確認 `git diff HEAD` 的每一段都是這次自己做的編輯」那一步。Claude Code
+裡 `bin/commit-files` 在提交前自己用 `--staged` 呼叫這支工具（docs/rules/claude-code.md〈提交前對照編輯紀錄〉）；
 單獨跑是用來在提交前先看結果。context 被壓縮之後，編輯紀錄不在 context 裡，憑印象對照等於沒有
 對照；transcript 裡 Edit 與 Write 的結果都還在，所以由工具重建。
 

@@ -1,0 +1,168 @@
+#!/usr/bin/env python3
+"""列出改某個路徑之前要讀的規則分冊。
+
+路由表是下面的 ROUTES；AGENTS.md〈怎麼讀分冊〉的路徑表是它的副本，pre-commit 用 `--check-staged` 比對
+兩邊，改一邊時另一邊同一次改。
+
+用途：AGENTS.md〈怎麼讀分冊〉。動手改檔或審查之前跑一次，把列出的分冊每一份整份讀完。Claude Code
+的 `.claude/hooks/rule_read_guard.py` 用同一張表，在 Write 與 Edit 之前確認這些分冊讀過。
+
+用法：
+  bin/rule-route <這次要改的路徑...>         每行印一份分冊的路徑（以 repo 根目錄起算）
+  bin/rule-route --json <路徑...>            印 JSON 陣列，給 hook 用
+  bin/rule-route --check-staged              pre-commit 用：比對 index 裡的 AGENTS.md 路徑表與 ROUTES，
+                                             檢查 ROUTES 指到的分冊都在 index 裡，並檢查入口小於
+                                             14 KiB、每份分冊小於 60 KiB（超過時 Read 會回傳截斷的
+                                             內容，hook 分辨不出來）。讀的是 index，工作樹裡另一個
+                                             session 還沒提交的改動不影響結果。
+  引數的路徑以執行時的目錄起算，也可以給絕對路徑；檔案還不存在也可以（新建的檔案照路徑對表）。
+  引數是資料夾時，列出這個資料夾底下會對到的全部分冊。比對不分大小寫（macOS 的檔案系統也不分）。
+  經由 symlink 的路徑（`.agents/skills/`、`.codex/skills/`）解析成實際的路徑再對表。
+  路徑在這個 repo 的 worktree 裡時，以那個 worktree 的根目錄對表。
+
+輸出：幾個路徑共用的分冊只印一次，順序照路由表。結尾在 stderr 印
+`rule-route: N path(s), M rule file(s)`。N 要等於給的路徑數。M 是 0 代表這些路徑沒有對到分冊，
+先確認路徑拼對；由動作決定的分冊（提交、SSH、派 agent）照 AGENTS.md〈怎麼讀分冊〉的動作清單，不在這裡。
+`--check-staged` 結尾印 `rule-route: checked N rule file(s), M problem(s)`，問題逐行印在 stderr。
+
+exit：0 正常（含 M 是 0）；1 `--check-staged` 查到問題；2 用法錯誤（沒有給路徑），原因印在 stderr。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import ast
+import json
+import os
+import re
+import subprocess
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+ENTRY_LIMIT = 14336
+RULE_FILE_LIMIT = 60 * 1024
+
+# 每一列：路徑前綴（結尾是 / 的比對資料夾，其餘比對完整路徑）、要讀的分冊。
+ROUTES = (
+    (("content/",), ("content-folders", "writing", "sentences", "writing-process", "review", "markdown")),
+    ((".claude/skills/",), ("skills", "sentences", "writing-process", "review")),
+    (("AGENTS.md", "CLAUDE.md", "docs/rules/", "bin/rule-route"), ("rule-authoring", "sentences", "writing-process", "review")),
+    (("scripts/mdtools/", ".githooks/", "hugo.toml"), ("markdown",)),
+    (("data/autolink.toml", "bin/autolink-dict"), ("markdown",)),
+    (("bin/skill-mirror", "scripts/principle-mirror-check.py"), ("skills",)),
+    (("bin/",), ("rule-authoring",)),
+    ((".claude/hooks/", ".claude/settings.json", ".claude/settings.local.json"), ("rule-authoring", "claude-code")),
+)
+
+
+def git_toplevel(full):
+    """目標路徑所在的 git 根目錄；檔案還不存在時從最近一層存在的資料夾查。"""
+    d = full
+    while not os.path.isdir(d) and d != os.path.dirname(d):
+        d = os.path.dirname(d)
+    try:
+        r = subprocess.run(["git", "-C", d, "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    except OSError:
+        return None
+    return os.path.realpath(r.stdout.strip()) if r.returncode == 0 else None
+
+
+def relative(path):
+    """回傳以 repo（或它的 worktree）根目錄起算的路徑，根目錄本身是 `.`；不在其中時回傳 None。"""
+    full = os.path.realpath(os.path.abspath(path))
+    for top in (git_toplevel(full), ROOT):
+        if top and (full == top or full.startswith(top + os.sep)) and os.path.isdir(os.path.join(top, "docs", "rules")):
+            return os.path.relpath(full, top).replace(os.sep, "/")
+    return None
+
+
+def matches(rel, prefix):
+    """rel 是這一列的檔案、在這一列的資料夾底下，或是包含這一列的資料夾。"""
+    rel, prefix = rel.casefold().rstrip("/"), prefix.casefold()
+    bare = prefix.rstrip("/")
+    return rel == "." or rel == bare or bare.startswith(rel + "/") or (prefix.endswith("/") and rel.startswith(prefix))
+
+
+def route(paths):
+    names = []
+    for rel in filter(None, map(relative, paths)):
+        for prefixes, files in ROUTES:
+            if any(matches(rel, p) for p in prefixes):
+                names += [n for n in files if n not in names]
+    return [f"docs/rules/{n}.md" for n in names]
+
+
+def entry_rows(text):
+    """AGENTS.md〈怎麼讀分冊〉路徑表的每一列：(路徑前綴, 分冊)。"""
+    start = text.find("路徑表（")
+    rows = []
+    if start < 0:
+        return rows
+    for line in text[start:].splitlines()[1:]:
+        if rows and not line.startswith("- "):
+            break
+        if line.startswith("- ") and "：" in line:
+            left, right = line[2:].split("：", 1)
+            rows.append((tuple(re.findall(r"`([^`]+)`", left)), tuple(re.findall(r"`([^`]+)`", right))))
+    return rows
+
+
+def routes_in(source):
+    """從原始碼取出 ROUTES 的值，不執行它。"""
+    for node in ast.parse(source).body:
+        if isinstance(node, ast.Assign) and getattr(node.targets[0], "id", "") == "ROUTES":
+            return ast.literal_eval(node.value)
+    raise ValueError("找不到 ROUTES")
+
+
+def staged(path):
+    r = subprocess.run(["git", "show", f":{path}"], capture_output=True)
+    return r.stdout.decode("utf-8", "replace") if r.returncode == 0 else None
+
+
+def check_staged():
+    problems = []
+    listed = subprocess.run(["git", "ls-files", "--", "docs/rules"], capture_output=True, text=True).stdout.split()
+    files = [f for f in listed if f.endswith(".md")]
+    entry, tool = staged("AGENTS.md"), staged("bin/rule-route")
+    if entry is None or tool is None:
+        problems.append("index 裡沒有 AGENTS.md 或 bin/rule-route")
+    else:
+        size = len(entry.encode("utf-8"))
+        if size >= ENTRY_LIMIT:
+            problems.append(f"AGENTS.md 是 {size} bytes，上限 {ENTRY_LIMIT}：把內容移到分冊（docs/rules/rule-authoring.md）")
+        routes = routes_in(tool)
+        if entry_rows(entry) != [(tuple(p), tuple(f)) for p, f in routes]:
+            problems.append("AGENTS.md〈怎麼讀分冊〉的路徑表跟 bin/rule-route 的 ROUTES 不一致，兩邊同一次改")
+        for name in sorted({n for _, names in routes for n in names}):
+            if f"docs/rules/{name}.md" not in files:
+                problems.append(f"ROUTES 指到的 docs/rules/{name}.md 不在 index 裡：補上這份分冊，或改路由表")
+    for f in files:
+        text = staged(f)
+        if text is not None and len(text.encode("utf-8")) >= RULE_FILE_LIMIT:
+            problems.append(f"{f} 超過 {RULE_FILE_LIMIT} bytes：Read 會回傳截斷的內容，拆成兩份")
+    for p in problems:
+        sys.stderr.write(f"rule-route: {p}\n")
+    sys.stderr.write(f"rule-route: checked {len(files)} rule file(s), {len(problems)} problem(s)\n")
+    return 1 if problems else 0
+
+
+def main(argv):
+    if argv == ["--check-staged"]:
+        return check_staged()
+    as_json = "--json" in argv
+    paths = [a for a in argv if a != "--json"]
+    if not paths:
+        sys.stderr.write("rule-route: 用法：bin/rule-route [--json] <路徑...>\n")
+        return 2
+    files = route(paths)
+    if as_json:
+        print(json.dumps(files))
+    else:
+        for f in files:
+            print(f)
+    sys.stderr.write(f"rule-route: {len(paths)} path(s), {len(files)} rule file(s)\n")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

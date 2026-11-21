@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """只回報這次改動新增的 mdtools lint 問題，把既有的分開計數。
 
-用途：AGENTS.md〈提交〉的 lint 那一步。全量 lint（`bin/mdtools lint content/`）只用來看
+用途：docs/rules/commit-push.md〈提交〉的 lint 那一項。全量 lint（`bin/mdtools lint content/`）只用來看
 歷史基線；這次的品質看這支的輸出。
 
 用法：bin/lint-delta [--renames <檔案>] <這次的檔案...>

@@ -1,6 +1,6 @@
 # 審查與理解探針
 
-這份分冊管：什麼時候跑多輪審查、跑的時候守哪些底線與嚴重度、審查規則類文件時的限制，以及理解探針讀回報時的歸因與術語探針「本批無結論」的去處。frame（審查視角：一輪審查裡每位 reviewer 負責檢查的那一個面向，例如冷讀、事實核對、自審）的選擇、reviewer 的產出契約、探針的派發條件寫在 `multi-round-review` skill；Claude Code 的派發參數在 CLAUDE.md。
+這份分冊管：什麼時候跑多輪審查、跑的時候守哪些底線與嚴重度、審查規則類文件時的限制，以及理解探針讀回報時的歸因與術語探針「本批無結論」的去處。frame（審查視角：一輪審查裡每位 reviewer 負責檢查的那一個面向，例如冷讀、事實核對、自審）的選擇、reviewer 的產出契約、探針的派發條件寫在 `multi-round-review` skill；Claude Code 的派發參數在 `claude-code.md`〈Agent tool 的派發〉。
 
 ## 審查與理解探針
 
@@ -16,11 +16,11 @@
 
 ### 審查規則類文件時
 
-審查對象是 AGENTS.md、`docs/rules/` 的分冊或 CLAUDE.md 時，在本 repo 裡派出的 reviewer 與探針，系統提示裡都已經有受審文本的全文，而且可能是 session 開始時的舊版。系統提示裡已經有受審全文的情形，對任何會自動載入這些檔案的 agent 都成立：
+審查對象是 AGENTS.md、`docs/rules/` 的分冊或 CLAUDE.md 時，在本 repo 裡派出的 reviewer 與探針，系統提示裡已經有 AGENTS.md 與 CLAUDE.md 的全文，而且可能是 session 開始時的舊版；reviewer 照 `AGENTS.md`〈怎麼讀分冊〉讀過的分冊也進它的 context，那一份是工作樹的版本，不一定是受審的版本。這兩種情形對任何會載入這些檔案的 agent 都成立：
 
 - **prompt 裡寫死受審版本的 commit hash**，要求以 `git show <hash>:<檔名>` 讀到的版本為準。不用 `HEAD`：審查期間別的 session 提交時 HEAD 會移動，各份讀到的版本就不同。受審內容還沒提交時，把檔案複製到暫存目錄，prompt 給那個路徑；不為了取得 hash 先提交草稿。
 - **探針回報讀錯的位置可以採信；回報讀懂的位置不能當成通過**，因為它可能是用系統提示補完的。reviewer 判定「讀得懂」時同樣適用。
-- **翻譯探針不跑**：它的設計條件是譯者只拿得到文字，這裡結構上做不到。
+- **審 AGENTS.md、CLAUDE.md，以及入口已經寫了規則或摘要的分冊段落時翻譯探針不跑**：它的設計條件是譯者只拿得到文字，這些內容在系統提示裡，結構上做不到。審其他分冊段落時可以跑，prompt 只給受審片段，並寫明不讀其他規則檔。
 - **修完拿任務重走一次，再派下一輪**：照 finding 修完之後、派下一輪探針或 reviewer 之前，主 session 把探針用的任務與這一輪 finding 的案例逐一走過修改後的規則，寫出每一步經過哪幾條規則、各自給什麼處置；同一步出現兩種處置，或某一步沒有任何規則管，派發之前先修。修法以句子為單位驗收，看不到兩條規則套在同一個案例上的結果，而探針拿任務走，正好看得到。做法在 `multi-round-review` 的 `references/integrating-findings.md`〈修完拿任務重走一次，再派下一輪〉。走過的案例與結果寫進 commit message。依據：[規則的修法逐句驗證會通過、套到案例上才互撞：改完才查得到的事實管不了動手之前的步驟，修完要拿任務重走](/report/rule-fixes-pass-per-sentence-and-collide-per-case/)。
 
 ### 理解探針

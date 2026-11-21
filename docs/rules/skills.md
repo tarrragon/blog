@@ -6,7 +6,7 @@
 
 ### Skill 與文章是兩個 surface
 
-`.claude/skills/` 與 `content/` 在體例、格式與依賴上的規則互斥：寫 skill 時不套教學體例、Hugo frontmatter 與 mdtools lint，寫文章時不套操作手冊的體例與 skill 的可攜性限制。兩邊的讀者見`writing.md`〈三種書面產出的體例〉。句子層的規則兩邊共用：`sentences.md`〈句子與命名〉底下各節、`sentences.md`〈譯名避開介面上已有的同名元素〉、`writing.md`〈推導過重時拆篇，不壓縮成一句話的結論〉。
+`.claude/skills/` 與 `content/` 在體例、格式與依賴上的規則互斥：寫 skill 時不套教學體例、Hugo frontmatter 與 mdtools lint，寫文章時不套操作手冊的體例與 skill 的可攜性限制。兩邊的讀者見`writing.md`〈三種書面產出的體例〉。句子層的規則兩邊共用：`sentences.md`〈句子與命名〉底下各節（含〈推導過重時拆篇，不壓縮成一句話的結論〉）、`sentences.md`〈譯名避開介面上已有的同名元素〉。
 
 |        | `.claude/skills/`（skill）                                                                          | `content/`（文章）                       |
 | ------ | --------------------------------------------------------------------------------------------------- | ---------------------------------------- |
@@ -117,7 +117,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 5. **更新版號**：照〈版號〉，跑 `bin/skill-version-check <name>`。
 6. **同步鏡像**：`content/skills/<name>/` 存在時才做這一步；不存在代表這支 skill 沒有公開鏡像，跳過（`bin/skill-mirror` 對它會印 `content/skills/<name> not found (create it first)`，這個訊息不代表要建目錄，建不建鏡像見〈Skill 與文章是兩個 surface〉）。跑 `bin/skill-mirror <name>`，它處理 Hugo frontmatter、H1 轉 H2、連結轉換與 fmt，產生 `content/skills/<name>/` 底下的 `skill.md` 與各 reference 的鏡像。新增的 reference 第一次不會被鏡像：鏡像保留自己為 blog 讀者寫的 frontmatter，工具只對已存在的鏡像填正文。先手動放一份只有 frontmatter 的 `content/skills/<name>/<ref>.md` 再重跑；工具會把沒有鏡像的檔名印在 stderr。讀 stderr 的兩種訊息（見這一節末尾「principle 連結沒有對應時的訊號」那一段），不只看結尾那一行。
 7. **commit 到 blog repo**：這次動過的檔案在同一個 commit 提交。用 `git status --short` 對照前面每一步改過的檔案，至少包括 `.claude/skills/<name>/`、`content/skills/<name>/`（有鏡像時）、新卡與 `content/report/_index.md`、補了反向指標的舊卡、改過的 `bin/skill-mirror`。pre-commit 的 skill mirror 檢查要求 `.claude/skills/<name>/` 與 `content/skills/<name>/` 一起 staged，只 staged 一邊會警告。
-8. **推送**：照 `AGENTS.md`〈推送〉直接推送：blog repo 推 `main`，skill 照〈推送前的檢查〉推上共用 skill 庫。
+8. **推送**：照 `commit-push.md`〈推送〉直接推送：blog repo 推 `main`，skill 照〈推送前的檢查〉推上共用 skill 庫。
 
 **principle 連結沒有對應時的訊號**：「登記對應」那一步漏了時，`bin/skill-mirror` 依連結寫在哪裡給出兩種結果。連結寫在 SKILL.md 時，鏡像把它降成不能點的純文字，stderr 印 `WARN: no report card for <slug> — hyperlink degraded to inert path`，cards 不會擋，結尾還是印 `All principle links resolved to /report/`；連結寫在 reference 檔時，鏡像原樣保留相對連結，stderr 印 `WARN: <ref> 引用的 <slug> 沒有對應 report 卡 — 原樣保留`，之後 commit 時 pre-commit 的 cards 以 broken link 擋下。兩種都回頭補對應，重跑同步鏡像那一步。
 
@@ -139,7 +139,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 `skill-sync pull`（不帶參數）的分類與預設處置以 skill-sync SKILL.md〈Report categories and non-interactive use〉為準。本 repo 加的規則：
 
-- **`[SKIP]` 遠端沒有這個條目**：在〈只留在本 repo 的 skill〉清單裡的不推；不在清單裡的照 `AGENTS.md`〈推送〉推上去。
+- **`[SKIP]` 遠端沒有這個條目**：在〈只留在本 repo 的 skill〉清單裡的不推；不在清單裡的照 `commit-push.md`〈推送〉推上去。
 - **`[DIVERGED]` 與 `[CONFLICT]`**：比對兩邊的歷史（共用庫 clone 裡那個 skill 路徑的 `git log`，對本 repo 的 `git log -- .claude/skills/<name>`），把兩邊各自改了什麼寫進 commit message，合併之後推。兩邊在共同基底之後改到同一段文字（合併時有衝突）時，照 `AGENTS.md`〈要先問使用者的情形〉把兩邊的 log 與衝突的段落給使用者。
 - **`[SUSPECT REVERT]`**：不拉。查是誰把舊版推上共用庫，把較新的那一份推回去。
 - 遠端有新增的檔案（原則卡、hooks）時，用 `skill-sync pull <name>` 取到本地，再推合併版回遠端。

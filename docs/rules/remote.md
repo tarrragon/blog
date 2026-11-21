@@ -1,13 +1,13 @@
 # 遠端機器的操作
 
-這份分冊管在 VM 或本專案管理的遠端機器上驗證與部署時的規則：狀態的改動經由 dotfiles repo、SSH 的用途與禁用的選項、dotfiles 的部署工具，以及各類檔案的部署方式。推送照 `AGENTS.md`〈推送〉，dotfiles 也一樣直接推送。
+這份分冊管在 VM 或本專案管理的遠端機器上驗證與部署時的規則：狀態的改動經由 dotfiles repo、SSH 的用途與禁用的選項、dotfiles 的部署工具，以及各類檔案的部署方式。推送照 `commit-push.md`〈推送〉，dotfiles 也一樣直接推送。
 
 ## 遠端機器的操作
 
 在 VM 或任何本專案管理的遠端機器上做驗證或部署時，狀態的改動一律經由 [dotfiles repo](https://github.com/tarrragon/dotfiles) 與 git 同步，不經由 SSH 手動放置持久的檔案或設定。機器的狀態要能從 repo 重現，手放的檔案下次重裝就消失，也沒有人記得它存在。
 
 - **SSH 只用來做唯讀診斷與觸發**：`hyprctl`、`systemctl status`、讀 log、`pgrep`、執行 repo 內的部署腳本。
-- **ssh 指令不帶 `-o ProxyCommand=…`、`-o LocalCommand=…` 與 `PermitLocalCommand=yes`**：這幾個選項會在本機這台開發機執行任意命令，而「遠端環境壞了可以重建」這個前提保護不到本機。Claude Code 另有 hook 攔下這幾個選項（見 CLAUDE.md），其他 agent 沒有，靠這一條。
+- **ssh 指令不帶 `-o ProxyCommand=…`、`-o LocalCommand=…` 與 `PermitLocalCommand=yes`**：這幾個選項會在本機這台開發機執行任意命令，而「遠端環境壞了可以重建」這個前提保護不到本機。Claude Code 另有 hook 攔下這幾個選項（見 `claude-code.md`〈SSH 的權限與 ssh_guard hook〉），其他 agent 沒有，靠這一條。
 - **該持久存在的檔案**（腳本、systemd unit、設定檔、cron、drop-in）先寫進 dotfiles repo、commit 與 push，再由遠端 `git pull` 加冪等的 deploy 部署。不用 scp、不用 heredoc 寫進 /tmp、不手動 `tee` 到 /etc。
 - **一次性驗證用的暫時檔**（探測腳本、測試用的 systemd unit）可以臨時放，名稱一律用 `verify-` 開頭，測完清掉（清理的指令照 `AGENTS.md`〈破壞性指令的目標寫在指令文字裡，檢查與刪除分成兩次執行〉寫：字面的絕對路徑，跟收尾的檢查分成兩次執行），正式版收回 repo。腳本放在 `/tmp/verify-…`；unit 檔放不進 `/tmp`（systemd 只從 `/etc/systemd/system/`、`~/.config/systemd/user/` 這類目錄載入，`systemctl link` 也會在那裡留下 symlink），所以只用名稱的前綴標記。收尾時跑一條檢查，有任何一行輸出就是還沒清的暫時檔：`ssh <host> 'find /tmp -maxdepth 1 -name "verify-*"; systemctl list-unit-files "verify-*" --no-legend; systemctl --user list-unit-files "verify-*" --no-legend'`（`find` 不用 `ls -d /tmp/verify-*`：遠端的預設 shell 是 zsh，沒有匹配時 zsh 自己印 `no matches found`，清乾淨了反而有輸出）；清不掉的照 `AGENTS.md`〈延到工作結束之後的動作〉寫進最後一則總結。固定的前綴讓「暫時」是一個查得到的事實，不是放置者自己的標籤。
 
