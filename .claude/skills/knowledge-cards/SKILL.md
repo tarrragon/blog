@@ -3,7 +3,7 @@ name: knowledge-cards
 description: "Standardizes the full lifecycle of atomic knowledge cards (Zettelkasten term cards) in a content collection: creation criteria, gap detection via the term-role × baseline matrix, card authoring format, registration points (index + tool scope), link backfill, and module-scale audits. Use when creating cards, auditing a module for missing cards, restructuring card directories, or wiring card links into articles. Triggers: 建卡, 知識卡, 缺卡, 術語卡, 卡片 audit, 卡片格式, 跟其他概念的關係, 概念位置（舊段名）, 判斷條件與後果, 鄰卡連結, 回填連結, 卡片標題, 卡片命名, 同名卡, 限定詞, 連結文字, 卡片目錄, 卡片重構, 詞頻掃描, 基線, 行內解釋, knowledge card, term card, card gap."
 license: MIT
 metadata:
-  version: 2.3.0
+  version: 2.4.0
   category: content-methodology
 ---
 
