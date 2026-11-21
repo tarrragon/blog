@@ -50,7 +50,7 @@ SQL
 # ROLLBACK 之後再查：0 rows
 ```
 
-`AccessExclusiveLock` 擋住 `accounts` 上所有讀寫，包括單純的 `SELECT`；migration 的 transaction 開多久，這些查詢就等多久。
+`AccessExclusiveLock` 擋住 `accounts` 上所有讀寫，包括單純的 `SELECT`；migration 的 transaction 開多久，這些查詢就等多久。ALTER 還沒拿到這把鎖、在佇列裡等一筆長交易時，之後的 `SELECT` 也排在它後面（[Lock Queue](/backend/knowledge-cards/lock-queue/)）；兩列的表上量到的等待時間與設 `lock_timeout` 之後的差別，寫在 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)〈同一個 ALTER 在大表上的代價〉。
 
 Release gate 要保存 lock mode、duration、blocked session 與 application impact。高風險 DDL 要先改成 expand / backfill / contract。
 

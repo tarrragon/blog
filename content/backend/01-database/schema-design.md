@@ -216,7 +216,7 @@ schema 從 day 1 就要為演進設計、不能假設「以後不會改」。
 2. **避免大表 ALTER TABLE**：用 [Expand / Contract](/backend/knowledge-cards/expand-contract/) 模式
 3. **predict breaking changes**：訂版本、跟 application code 同步演進
 4. **schema version column**：每 row 帶 version、應用層按版本處理
-5. **migration 工具版本控**：Flyway / Liquibase / Atlas / golang-migrate 必須有
+5. **migration 工具版本控**：Flyway / Liquibase / Atlas / golang-migrate 必須有；這類手寫的版本化 migration 跟 ORM 依 model 自動改 schema、從 model 產生 migration 的分工，以及多個實例同時套用時的鎖與已套用檔案的完整性檢查，比較在 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)
 
 詳見 [1.6 Database Migration Playbook](/backend/01-database/database-migration-playbook/) 跟 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)。
 

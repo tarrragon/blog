@@ -17,6 +17,7 @@ tags: ["backend", "reliability"]
 - 跟 [6.10 contract testing](/backend/06-reliability/contract-testing/) 的整合：schema 契約驗證
 - 跟 [6.8 release gate](/backend/06-reliability/release-gate/) 的整合：migration 可逆性作為 gate 條件
 - 反模式：schema change 跟 code deploy 同 PR、rollback 變不可能；大表 ALTER 直接打、production 鎖表；新欄位 NOT NULL 無 default
+- migration 由 ORM 依 model 產生還是手寫、在應用程式啟動時還是獨立的部署步驟套用、多個實例同時套用時各工具有沒有鎖：[1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)
 
 ## 概念定位
 

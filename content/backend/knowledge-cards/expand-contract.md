@@ -3,13 +3,14 @@ title: "Expand / Contract"
 date: 2026-04-24
 description: "說明先擴充相容面、再收斂舊路徑的遷移做法"
 weight: 140
+tags: ["backend", "database", "schema migration", "knowledge-card"]
 ---
 
 Expand / Contract 的核心概念是「先把新結構或新路徑加進去，確認相容後，再移除舊結構或舊路徑」。 可先對照 [Exponential Backoff](/backend/knowledge-cards/exponential-backoff/)。
 
 ## 跟其他概念的關係
 
-Expand / Contract 位在 schema migration、online migration、deployment 與 release gate 之間。它是降低變更風險的遷移順序，不是單一工具。 可先對照 [Exponential Backoff](/backend/knowledge-cards/exponential-backoff/)。
+Expand / Contract 位在 schema migration、online migration、deployment 與 release gate 之間。它是降低變更風險的遷移順序，不是單一工具；從 model 比對出 migration 的工具只看得到終點，拆成幾份、每份配哪一版程式要由人寫，見 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)。 可先對照 [Exponential Backoff](/backend/knowledge-cards/exponential-backoff/)。
 
 ## 可觀察訊號
 

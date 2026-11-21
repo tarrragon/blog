@@ -313,4 +313,5 @@ Patroni promote 新 primary 之後，pg_repack extension 已經隨 streaming rep
 - [PG Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/)（HA 跟 pg_repack 整合）
 - [MySQL Online Schema Change Tools](/backend/01-database/vendors/mysql/online-schema-change-tools/)（sibling、tool ecosystem 不同）
 - [Expand / Contract 卡片](/backend/knowledge-cards/expand-contract/)（schema migration 設計原則）
+- [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)（ALTER 排在長交易後面時擋住讀取的量測與 `lock_timeout`、migration 工具在啟動時或獨立步驟套用、多個實例同時套用時的鎖）
 - 官方：[ALTER TABLE](https://www.postgresql.org/docs/current/sql-altertable.html) / [pg_repack GitHub](https://github.com/reorg/pg_repack) / [pg-osc GitHub](https://github.com/shayonj/pg-osc)

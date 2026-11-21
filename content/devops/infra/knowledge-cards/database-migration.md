@@ -36,14 +36,18 @@ ALTER TABLE users DROP COLUMN email_verified;
 
 常用的 migration 工具：
 
-| 工具              | 語言 / 框架                       |
-| ----------------- | --------------------------------- |
-| Laravel Migration | PHP / Laravel                     |
-| Rails Migration   | Ruby / Rails                      |
-| Flyway            | Java / 跨語言（純 SQL）           |
-| Liquibase         | Java / 跨語言（XML / YAML / SQL） |
-| golang-migrate    | Go                                |
-| 手動 SQL 檔案     | 無框架時的最低限度方案            |
+| 工具              | 語言 / 框架                        |
+| ----------------- | ---------------------------------- |
+| Laravel Migration | PHP / Laravel                      |
+| Rails Migration   | Ruby / Rails                       |
+| Flyway            | Java / 跨語言（純 SQL）            |
+| Liquibase         | Java / 跨語言（XML / YAML / SQL）  |
+| golang-migrate    | Go                                 |
+| goose             | Go（SQL 檔或 Go 程式）             |
+| Atlas             | 跨語言（宣告目標 schema 或版本化） |
+| 手動 SQL 檔案     | 無框架時的最低限度方案             |
+
+這些工具在多個實例同時套用時有沒有鎖、已經套用的檔案被改過時會不會察覺，以及跟 ORM 依 model 自動改 schema 的差別，比較在 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)。
 
 沒有框架時，用日期 + 序號命名 SQL 檔案（`2026-06-26-001-描述.sql`），搭配一張 `migration_log` 表記錄哪些已經套用過，就是最低限度的 migration 系統。
 

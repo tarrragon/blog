@@ -75,6 +75,8 @@ transaction 的核心用途是把一組資料庫操作綁成單一一致性單�
 
 這樣做的目的，是避免應用版本與資料庫版本在 rolling deploy 時互相踩到。
 
+這幾步要寫成幾份各自的 migration、隔著程式部署分次套用；GORM 的 `AutoMigrate` 這類依 model 自動改 schema 的做法只看得到終點，沒有位置寫這些步驟。各種做法的分工、多個 Go 實例同時啟動時 goose Provider 的 session 鎖，比較在 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)。
+
 ## 【判讀】constraint、validation 與 isolation level 各管不同風險
 
 這三者的責任應清楚分工：

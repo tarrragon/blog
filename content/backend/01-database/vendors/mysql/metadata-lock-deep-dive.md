@@ -112,4 +112,4 @@ MDL 是 MySQL schema governance 的核心議題。每個 production DDL 都要�
 
 ## 下一步路由
 
-Metadata lock deep dive 完成後，schema change 工具讀 [Online Schema Change Tools](../online-schema-change-tools/)；lock 行為讀 [Lock Contention](../lock-contention/)；操作演練讀 [Online Schema Change Lab](../hands-on/online-schema-change-lab/)。
+Metadata lock deep dive 完成後，schema change 工具讀 [Online Schema Change Tools](../online-schema-change-tools/)；lock 行為讀 [Lock Contention](../lock-contention/)；操作演練讀 [Online Schema Change Lab](../hands-on/online-schema-change-lab/)；同一個排隊行為在 PostgreSQL 的量測、`lock_wait_timeout` 與 `lock_timeout` 的預設值對照，以及 migration 工具在哪裡套用，讀 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)。

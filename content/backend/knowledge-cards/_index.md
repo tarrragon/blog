@@ -46,6 +46,8 @@ weight: -1
 | [Migration](/backend/knowledge-cards/migration/)                                         | 系統如何從舊狀態受控移到新狀態                   | release、cutover、backfill                 |
 | [Schema Migration](/backend/knowledge-cards/schema-migration/)                           | 資料庫結構如何隨版本安全演進                     | release、rollback、migration               |
 | [Expand / Contract](/backend/knowledge-cards/expand-contract/)                           | 先擴充相容面再收斂舊路徑的遷移做法               | schema migration、online migration         |
+| [Schema Drift](/backend/knowledge-cards/schema-drift/)                                   | 資料庫實際 schema 跟 migration 歷史不一致        | hotfix、alembic check、migrate dev         |
+| [Transactional DDL](/backend/knowledge-cards/transactional-ddl/)                         | DDL 能不能在交易裡跟寫入一起退回                 | migration 失敗、PostgreSQL、MySQL          |
 | [Migration Gate](/backend/knowledge-cards/migration-gate/)                               | 遷移流程如何決定能否進入下一階段                 | backfill、correctness check                |
 | [Mapping Table](/backend/knowledge-cards/mapping-table/)                                 | 舊資料語意如何明確對應到新語意                   | migration、backfill、validation            |
 | [Validation Query](/backend/knowledge-cards/validation-query/)                           | 查詢如何證明資料語意是否一致                     | migration、evidence package                |
@@ -67,6 +69,7 @@ weight: -1
 | [Single Writer Model](/backend/knowledge-cards/single-writer-model/)                     | 寫入如何被序列化成單一路徑                       | SQLite、primary lease、容量上限            |
 | [Embedded Database](/backend/knowledge-cards/embedded-database/)                         | 資料庫如何隨 application process 運作            | SQLite、檔案生命週期、本地儲存             |
 | [Metadata Lock](/backend/knowledge-cards/metadata-lock/)                                 | DDL 與既有交易如何在 schema 層互相阻塞           | ALTER、長交易、DDL window                  |
+| [Lock Queue](/backend/knowledge-cards/lock-queue/)                                       | 等鎖的請求怎麼排隊、DDL 後面的查詢為什麼也要等   | ALTER、lock_timeout、pg_stat_activity      |
 | [Table Partitioning](/backend/knowledge-cards/table-partitioning/)                       | 大表如何在單庫內拆成多個分區                     | range/list/hash、pruning、retention        |
 | [Partial Index（部分索引）](/backend/knowledge-cards/partial-index/)                     | 索引如何只收表裡的一小類列                       | 排除大宗資料、列表查詢、條件推導           |
 | [Table Bloat（表膨脹與 VACUUM）](/backend/knowledge-cards/table-bloat/)                  | 舊版本的列如何累積、清理與縮回                   | autovacuum、VACUUM FULL、大批改寫          |

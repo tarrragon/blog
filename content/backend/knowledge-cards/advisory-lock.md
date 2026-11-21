@@ -19,6 +19,8 @@ PostgreSQL 的建議鎖依持有的範圍分兩種：
 
 應用程式經由 [Connection Pool](/backend/knowledge-cards/connection-pool/) 使用資料庫時，「同一條連線」這個條件不由程式控制：取鎖與解鎖是兩次呼叫，池可能交給它兩條不同的連線。應用程式和資料庫之間還有交易模式的連線池代理（PgBouncer；每個交易結束就把資料庫連線收回，下一個交易可能換一條）時，即使應用程式固定使用同一條連線，代理每個交易仍可能換一條資料庫連線，session 層級的鎖一樣落在不同的連線上（見 [PostgreSQL pgBouncer 配置 + 連線池治理](/backend/01-database/vendors/postgresql/pgbouncer-config/)）。MySQL 對應的 `GET_LOCK` 與 `RELEASE_LOCK` 也綁在連線上，而且沒有交易層級的版本。
 
+[Schema Migration](/backend/knowledge-cards/schema-migration/) 工具用建議鎖讓多個實例同時啟動時只有一個程序在套用（Flyway、golang-migrate、Prisma，goose 的 Provider 要另外開啟）；各工具用哪一種鎖、等多久、拿不到時是等待還是結束，比較在 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)〈套用的時機〉。
+
 ## 可觀察訊號與例子
 
 - **排程每一輪都跳過**：session 層級的鎖在一條連線上取得、在另一條連線上解鎖時，解鎖回傳 `false`，PostgreSQL 的伺服器日誌（server log）出現 `WARNING: you don't own a lock of type ExclusiveLock`，鎖仍然由還回池裡的那條連線持有；之後只有剛好拿到那條連線的輪次會執行，其餘都跳過，直到那條連線被關掉。實測與三種語言的寫法見 [1.18 高頻計數的寫入與彙總：熱點列的鎖、只新增的事件、可以重跑的彙總與重送的事件](/backend/01-database/high-frequency-counting/)〈同一時間只讓一個實例彙總：建議鎖與連線池〉。

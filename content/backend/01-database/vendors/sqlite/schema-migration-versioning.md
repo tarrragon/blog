@@ -105,7 +105,7 @@ Migration evidence 的責任是證明 schema 變更已完成且資料仍可用�
 
 Startup migration 的核心風險是把長時間 table rebuild 放在使用者啟動路徑。小表新增 column 可能很快；大表 rebuild、index 重建或 vacuum 類操作會讓 app 啟動、CLI command 或 API cold start 變慢。
 
-修正方向是先估資料量。短 migration 可在 startup；長 migration 要有 explicit command、progress、backup 與 rollback route。
+修正方向是先估資料量。短 migration 可在 startup；長 migration 要有 explicit command、progress、backup 與 rollback route。在啟動時套用與另外執行一個指令，兩者在啟動時間、需要的權限、多個程序同時套用與失敗後的重啟循環上的差別，比較在 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)〈套用的時機〉。
 
 ### Fixture schema 與 production database 的 dialect 與 constraint 不一致
 

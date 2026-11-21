@@ -293,4 +293,5 @@ gh-ost workflow 的 sibling 路由是 [PostgreSQL Online Schema Change](/backend
 - [PlanetScale](https://planetscale.com/)（branch-based 不用 ghost table）
 - [1.6 Database Migration Playbook](/backend/01-database/database-migration-playbook/)（schema migration 治理）
 - [Expand / Contract 卡片](/backend/knowledge-cards/expand-contract/)（schema migration 設計原則）
+- [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)（INSTANT／INPLACE／COPY 與 `lock_wait_timeout` 在 migration 工具裡的位置、線上變更工具跟版本化 migration 的接法、DDL 隱式提交時失敗留下的狀態）
 - 官方：[gh-ost](https://github.com/github/gh-ost) / [pt-online-schema-change](https://docs.percona.com/percona-toolkit/pt-online-schema-change.html)

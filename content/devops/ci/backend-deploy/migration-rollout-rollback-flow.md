@@ -72,4 +72,5 @@ Rollout 判讀要同時看技術指標與業務副作用。服務能啟動不代
 
 - 後端部署總覽：回 [後端部署 CI/CD](/devops/ci/backend-deploy/)。
 - Migration 術語：讀 [Migration](/devops/ci/knowledge-cards/migration/)。
+- migration 放在應用程式啟動時還是獨立的部署步驟套用、多個實例同時套用時的鎖與失敗後資料庫的狀態：讀 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)。
 - Gate 原理：讀 [CI gate 與 workflow 邊界](/devops/ci/ci-gate-workflow-boundary/)。
