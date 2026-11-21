@@ -17,11 +17,12 @@ Binary output is `bin/mdtools` at the repo root (gitignored).
 mdtools fmt [--fix|--check] [paths...]    Format normalization
 mdtools lint [paths...]                   Structural + schema checks
 mdtools cards [paths...]                  Cross-file card completeness
+mdtools autolink-gaps <paths...>          Card names a page mentions that the site will not auto-link
 mdtools help                              Show usage
 mdtools version                           Print version
 ```
 
-When no paths are given, defaults to `content/**`.
+When no paths are given, defaults to `content/**` (`autolink-gaps` requires paths and runs from the repo root, since it reads `data/autolink_terms.json`).
 
 `lint` and `cards` share two flags:
 

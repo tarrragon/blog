@@ -113,7 +113,7 @@
 1. **補強既有薄卡片**：依 Task 1 的「既有卡片補強判定」處理 L1 已存在但薄的卡片
 2. **新增 L2 缺口卡片**：concurrency-limit → admission-control → bounded-queue → hysteresis → pause-resume（依依賴順序）
 3. **回填雙向連結**：L1/L2 所有鄰居補上「→ backpressure」反向連結
-4. **回填中心卡片**：若 backpressure.md 提及新建立的 L2 節點卻未連結，補連結
+4. **回填中心卡片**：若 backpressure.md 提及新建立的 L2 節點卻未連結，補連結（首段與「跟其他概念的關係」段照 K4 手寫；其餘位置照 `docs/rules/sentences.md`〈術語的解釋方式〉，網站會自動連結的不手寫）
 
 ---
 

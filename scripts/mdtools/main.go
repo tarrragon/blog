@@ -26,6 +26,8 @@ func main() {
 		exitCode = cmd.Cards(args)
 	case "migrate":
 		exitCode = cmd.Migrate(args)
+	case "autolink-gaps":
+		exitCode = cmd.AutolinkGaps(args)
 	case "-h", "--help", "help":
 		usage()
 	case "version":
@@ -50,6 +52,7 @@ Subcommands:
   lint                 Structural and schema checks
   cards                Cross-file card completeness checks
   migrate <sub>        One-off content migration tools (e.g. fix-links)
+  autolink-gaps        Card names in a page that the site will not auto-link
   version              Print version
   help                 Show this help
 

@@ -54,6 +54,11 @@
    "module": "devops"
   },
   {
+   "name": ".user.ini",
+   "card": "devops/infra/knowledge-cards/php-ini",
+   "module": "devops"
+  },
+  {
    "name": "400ms 門檻",
    "card": "ux-design/knowledge-cards/doherty-threshold",
    "module": "ux-design"
@@ -115,6 +120,11 @@
   },
   {
    "name": "Adam / AdamW",
+   "card": "llm/knowledge-cards/adam-adamw",
+   "module": "llm"
+  },
+  {
+   "name": "AdamW",
    "card": "llm/knowledge-cards/adam-adamw",
    "module": "llm"
   },
@@ -354,6 +364,11 @@
    "module": "devops"
   },
   {
+   "name": "Average Selling Price",
+   "card": "business/knowledge-cards/asp",
+   "module": "business"
+  },
+  {
    "name": "Average Selling Price，平均單價",
    "card": "business/knowledge-cards/asp",
    "module": "business"
@@ -439,6 +454,11 @@
    "module": "llm"
   },
   {
+   "name": "BF16",
+   "card": "llm/knowledge-cards/floating-point",
+   "module": "llm"
+  },
+  {
    "name": "BFF",
    "card": "backend/knowledge-cards/bff",
    "module": "backend"
@@ -464,6 +484,11 @@
    "module": "backend"
   },
   {
+   "name": "Blue Ocean",
+   "card": "business/knowledge-cards/red-ocean-blue-ocean",
+   "module": "business"
+  },
+  {
    "name": "Bluetooth Audio Codec",
    "card": "til/audio/knowledge-cards/bluetooth-audio-codec",
    "module": "til"
@@ -472,6 +497,11 @@
    "name": "BNF",
    "card": "llm/knowledge-cards/bnf",
    "module": "llm"
+  },
+  {
+   "name": "BOLA",
+   "card": "backend/knowledge-cards/bola-idor",
+   "module": "backend"
   },
   {
    "name": "BOLA / IDOR",
@@ -571,6 +601,11 @@
   {
    "name": "Cache Aside",
    "card": "backend/knowledge-cards/cache-aside",
+   "module": "backend"
+  },
+  {
+   "name": "Cache Hit",
+   "card": "backend/knowledge-cards/cache-hit-miss",
    "module": "backend"
   },
   {
@@ -837,6 +872,11 @@
    "name": "Classless Inter-Domain Routing",
    "card": "devops/infra/knowledge-cards/cidr",
    "module": "devops"
+  },
+  {
+   "name": "Client-Side LLM",
+   "card": "llm/knowledge-cards/client-side-llm",
+   "module": "llm"
   },
   {
    "name": "Client-Side LLM / Embedding",
@@ -1254,6 +1294,11 @@
    "module": "devops"
   },
   {
+   "name": "Cross Margin",
+   "card": "business/retail-instruments/knowledge-cards/cross-and-isolated-margin",
+   "module": "business"
+  },
+  {
    "name": "Cross Margin / Isolated Margin",
    "card": "business/retail-instruments/knowledge-cards/cross-and-isolated-margin",
    "module": "business"
@@ -1624,6 +1669,11 @@
    "module": "backend"
   },
   {
+   "name": "doGet",
+   "card": "automation/knowledge-cards/doget-dopost",
+   "module": "automation"
+  },
+  {
    "name": "doGet / doPost",
    "card": "automation/knowledge-cards/doget-dopost",
    "module": "automation"
@@ -1647,6 +1697,11 @@
    "name": "Don't Repeat Yourself",
    "card": "software-design/design-principles/knowledge-cards/dry-principle",
    "module": "software-design"
+  },
+  {
+   "name": "doPost",
+   "card": "automation/knowledge-cards/doget-dopost",
+   "module": "automation"
   },
   {
    "name": "Dot Product",
@@ -1717,6 +1772,11 @@
    "name": "Dwell Time",
    "card": "backend/knowledge-cards/dwell-time",
    "module": "backend"
+  },
+  {
+   "name": "Dynamic Content Separation",
+   "card": "devops/infra/knowledge-cards/static-dynamic-separation",
+   "module": "devops"
   },
   {
    "name": "Dynamic Driver",
@@ -1797,6 +1857,11 @@
    "name": "Environment Separation",
    "card": "devops/infra/knowledge-cards/environment-separation",
    "module": "devops"
+  },
+  {
+   "name": "EOL",
+   "card": "business/procurement-planning/cards/lifecycle-status",
+   "module": "business"
   },
   {
    "name": "EPS",
@@ -2014,7 +2079,17 @@
    "module": "programming"
   },
   {
+   "name": "Fat Data",
+   "card": "business/knowledge-cards/fat-data-fat-skill",
+   "module": "business"
+  },
+  {
    "name": "Fat Data / Fat Skill",
+   "card": "business/knowledge-cards/fat-data-fat-skill",
+   "module": "business"
+  },
+  {
+   "name": "Fat Skill",
    "card": "business/knowledge-cards/fat-data-fat-skill",
    "module": "business"
   },
@@ -2022,6 +2097,11 @@
    "name": "Fault Domain",
    "card": "devops/infra/knowledge-cards/fault-domain",
    "module": "devops"
+  },
+  {
+   "name": "FCST",
+   "card": "business/procurement-planning/cards/forecast",
+   "module": "business"
   },
   {
    "name": "FDE",
@@ -2032,6 +2112,11 @@
    "name": "Feature Flag",
    "card": "backend/knowledge-cards/feature-flag",
    "module": "backend"
+  },
+  {
+   "name": "Federal Milk Marketing Orders",
+   "card": "business/knowledge-cards/fmmo",
+   "module": "business"
   },
   {
    "name": "Federal Milk Marketing Orders，聯邦牛奶行銷法令",
@@ -2174,6 +2259,16 @@
    "module": "testing"
   },
   {
+   "name": "FP16",
+   "card": "llm/knowledge-cards/floating-point",
+   "module": "llm"
+  },
+  {
+   "name": "FP32",
+   "card": "llm/knowledge-cards/floating-point",
+   "module": "llm"
+  },
+  {
    "name": "FP32 / FP16 / BF16",
    "card": "llm/knowledge-cards/floating-point",
    "module": "llm"
@@ -2227,6 +2322,11 @@
    "name": "Frozen vs Live Reference",
    "card": "testing/knowledge-cards/frozen-vs-live-reference",
    "module": "testing"
+  },
+  {
+   "name": "FSUUID",
+   "card": "linux/dotfile/knowledge-cards/partition-identification",
+   "module": "linux"
   },
   {
    "name": "FTP",
@@ -2344,6 +2444,11 @@
    "module": "business"
   },
   {
+   "name": "Golden Path",
+   "card": "linux/dotfile/knowledge-cards/paved-road-golden-path",
+   "module": "linux"
+  },
+  {
    "name": "Golden Path / paved road",
    "card": "linux/dotfile/knowledge-cards/paved-road-golden-path",
    "module": "linux"
@@ -2361,6 +2466,11 @@
   {
    "name": "Gradient",
    "card": "llm/knowledge-cards/gradient",
+   "module": "llm"
+  },
+  {
+   "name": "Gradient Explosion",
+   "card": "llm/knowledge-cards/gradient-explosion-vanishing",
    "module": "llm"
   },
   {
@@ -2484,6 +2594,11 @@
    "module": "backend"
   },
   {
+   "name": "High Bandwidth Memory",
+   "card": "business/knowledge-cards/hbm",
+   "module": "business"
+  },
+  {
    "name": "High Bandwidth Memory，高頻寬記憶體",
    "card": "business/knowledge-cards/hbm",
    "module": "business"
@@ -2544,6 +2659,11 @@
    "module": "llm"
   },
   {
+   "name": "HumanEval",
+   "card": "llm/knowledge-cards/llm-benchmarks",
+   "module": "llm"
+  },
+  {
    "name": "Hybrid Logical Clock",
    "card": "backend/knowledge-cards/hybrid-logical-clock",
    "module": "backend"
@@ -2567,6 +2687,11 @@
    "name": "Hyrum's Law",
    "card": "backend/knowledge-cards/hyrums-law",
    "module": "backend"
+  },
+  {
+   "name": "IaC",
+   "card": "devops/infra/knowledge-cards/iac",
+   "module": "devops"
   },
   {
    "name": "IaC 狀態檔",
@@ -2611,6 +2736,11 @@
   {
    "name": "Idle Timeout",
    "card": "backend/knowledge-cards/idle-timeout",
+   "module": "backend"
+  },
+  {
+   "name": "IDOR",
+   "card": "backend/knowledge-cards/bola-idor",
    "module": "backend"
   },
   {
@@ -2704,6 +2834,11 @@
    "module": "llm"
   },
   {
+   "name": "Infrastructure as Code",
+   "card": "devops/infra/knowledge-cards/iac",
+   "module": "devops"
+  },
+  {
    "name": "Infrastructure as Code (IaC)",
    "card": "devops/infra/knowledge-cards/iac",
    "module": "devops"
@@ -2776,6 +2911,11 @@
   {
    "name": "Inventory",
    "card": "business/knowledge-cards/inventory",
+   "module": "business"
+  },
+  {
+   "name": "Isolated Margin",
+   "card": "business/retail-instruments/knowledge-cards/cross-and-isolated-margin",
    "module": "business"
   },
   {
@@ -3099,6 +3239,11 @@
    "module": "backend"
   },
   {
+   "name": "LTB",
+   "card": "business/procurement-planning/cards/lifecycle-status",
+   "module": "business"
+  },
+  {
    "name": "LTV",
    "card": "business/knowledge-cards/ltv",
    "module": "business"
@@ -3117,6 +3262,11 @@
    "name": "Management Plane",
    "card": "backend/knowledge-cards/management-plane",
    "module": "backend"
+  },
+  {
+   "name": "Mandatory Access Control",
+   "card": "linux/dotfile/knowledge-cards/mandatory-access-control",
+   "module": "linux"
   },
   {
    "name": "Mandatory Access Control（強制存取控制）：SELinux 與 AppArmor",
@@ -3229,6 +3379,11 @@
    "module": "backend"
   },
   {
+   "name": "MIG",
+   "card": "devops/infra/knowledge-cards/managed-instance-group",
+   "module": "devops"
+  },
+  {
    "name": "Migration",
    "card": "backend/knowledge-cards/migration",
    "module": "backend"
@@ -3249,9 +3404,19 @@
    "module": "devops"
   },
   {
+   "name": "Min-P Sampling",
+   "card": "llm/knowledge-cards/top-p-sampling",
+   "module": "llm"
+  },
+  {
    "name": "Minimum Supported Version",
    "card": "backend/knowledge-cards/minimum-supported-version",
    "module": "backend"
+  },
+  {
+   "name": "Mixture of Experts",
+   "card": "llm/knowledge-cards/moe",
+   "module": "llm"
   },
   {
    "name": "Mixture of Experts (MoE)",
@@ -3272,6 +3437,11 @@
    "name": "MM and MC Cartridges",
    "card": "til/audio/knowledge-cards/mm-and-mc-cartridges",
    "module": "til"
+  },
+  {
+   "name": "MMLU",
+   "card": "llm/knowledge-cards/llm-benchmarks",
+   "module": "llm"
   },
   {
    "name": "MMLU / HumanEval / SWE-bench 等",
@@ -3324,6 +3494,11 @@
    "module": "backend"
   },
   {
+   "name": "MoE",
+   "card": "llm/knowledge-cards/moe",
+   "module": "llm"
+  },
+  {
    "name": "MoE CPU Offload",
    "card": "llm/knowledge-cards/moe-cpu-offload",
    "module": "llm"
@@ -3346,6 +3521,16 @@
   {
    "name": "MTEB",
    "card": "llm/knowledge-cards/mteb-benchmark",
+   "module": "llm"
+  },
+  {
+   "name": "mTLS",
+   "card": "backend/knowledge-cards/tls-mtls",
+   "module": "backend"
+  },
+  {
+   "name": "MTP",
+   "card": "llm/knowledge-cards/mtp",
    "module": "llm"
   },
   {
@@ -3376,6 +3561,11 @@
   {
    "name": "Multi-Step Retrieval",
    "card": "llm/knowledge-cards/multi-step-retrieval",
+   "module": "llm"
+  },
+  {
+   "name": "Multi-Token Prediction",
+   "card": "llm/knowledge-cards/mtp",
    "module": "llm"
   },
   {
@@ -3506,6 +3696,11 @@
   {
    "name": "NPI",
    "card": "business/procurement-planning/cards/npi",
+   "module": "business"
+  },
+  {
+   "name": "NRND",
+   "card": "business/procurement-planning/cards/lifecycle-status",
    "module": "business"
   },
   {
@@ -3769,9 +3964,19 @@
    "module": "linux"
   },
   {
+   "name": "PARTUUID",
+   "card": "linux/dotfile/knowledge-cards/partition-identification",
+   "module": "linux"
+  },
+  {
    "name": "Passkey",
    "card": "backend/knowledge-cards/passkey",
    "module": "backend"
+  },
+  {
+   "name": "paved road",
+   "card": "linux/dotfile/knowledge-cards/paved-road-golden-path",
+   "module": "linux"
   },
   {
    "name": "Payout Ratio",
@@ -3832,6 +4037,11 @@
    "name": "PHP-FPM",
    "card": "programming/php/knowledge-cards/php-fpm",
    "module": "programming"
+  },
+  {
+   "name": "php.ini",
+   "card": "devops/infra/knowledge-cards/php-ini",
+   "module": "devops"
   },
   {
    "name": "php.ini / .user.ini",
@@ -3964,6 +4174,11 @@
    "module": "devops"
   },
   {
+   "name": "Private Equity",
+   "card": "business/knowledge-cards/private-equity",
+   "module": "business"
+  },
+  {
    "name": "Private Equity (PE)",
    "card": "business/knowledge-cards/private-equity",
    "module": "business"
@@ -4052,6 +4267,11 @@
    "name": "Provider Adapter",
    "card": "backend/knowledge-cards/provider-adapter",
    "module": "backend"
+  },
+  {
+   "name": "Pseudo-Terminal",
+   "card": "linux/dotfile/knowledge-cards/pty",
+   "module": "linux"
   },
   {
    "name": "Pseudo-Terminal，偽終端機",
@@ -4264,6 +4484,11 @@
    "module": "devops"
   },
   {
+   "name": "Readiness Check",
+   "card": "devops/ci/knowledge-cards/readiness-health-check",
+   "module": "devops"
+  },
+  {
    "name": "Real-Backend Verification Test",
    "card": "testing/knowledge-cards/real-backend-verification-test",
    "module": "testing"
@@ -4287,6 +4512,11 @@
    "name": "RED Method",
    "card": "backend/knowledge-cards/red-method",
    "module": "backend"
+  },
+  {
+   "name": "Red Ocean",
+   "card": "business/knowledge-cards/red-ocean-blue-ocean",
+   "module": "business"
   },
   {
    "name": "Red Ocean / Blue Ocean",
@@ -4367,6 +4597,11 @@
    "name": "Reliability Boundary",
    "card": "backend/knowledge-cards/reliability-boundary",
    "module": "backend"
+  },
+  {
+   "name": "Remaining Performance Obligations",
+   "card": "business/knowledge-cards/remaining-performance-obligation",
+   "module": "business"
   },
   {
    "name": "Remaining Performance Obligations，剩餘履約義務",
@@ -4699,6 +4934,11 @@
    "module": "business"
   },
   {
+   "name": "RSU",
+   "card": "business/knowledge-cards/restricted-stock-unit",
+   "module": "business"
+  },
+  {
    "name": "RTO",
    "card": "backend/knowledge-cards/rto",
    "module": "backend"
@@ -4899,6 +5139,11 @@
    "module": "llm"
   },
   {
+   "name": "Self-critique",
+   "card": "llm/knowledge-cards/reflection",
+   "module": "llm"
+  },
+  {
    "name": "Semantic Fake Backend",
    "card": "testing/knowledge-cards/semantic-fake-backend",
    "module": "testing"
@@ -4939,6 +5184,11 @@
    "module": "programming"
   },
   {
+   "name": "Server-Sent Events",
+   "card": "backend/knowledge-cards/sse",
+   "module": "backend"
+  },
+  {
    "name": "Server-Sent Events (SSE)",
    "card": "backend/knowledge-cards/sse",
    "module": "backend"
@@ -4951,6 +5201,11 @@
   {
    "name": "Service Account",
    "card": "devops/infra/knowledge-cards/service-account",
+   "module": "devops"
+  },
+  {
+   "name": "Service Control Policy",
+   "card": "devops/infra/knowledge-cards/scp",
    "module": "devops"
   },
   {
@@ -5079,7 +5334,17 @@
    "module": "testing"
   },
   {
+   "name": "SLI",
+   "card": "backend/knowledge-cards/sli-slo",
+   "module": "backend"
+  },
+  {
    "name": "SLI / SLO",
+   "card": "backend/knowledge-cards/sli-slo",
+   "module": "backend"
+  },
+  {
+   "name": "SLO",
    "card": "backend/knowledge-cards/sli-slo",
    "module": "backend"
   },
@@ -5159,6 +5424,16 @@
    "module": "llm"
   },
   {
+   "name": "SPL",
+   "card": "til/audio/knowledge-cards/sound-pressure-level",
+   "module": "til"
+  },
+  {
+   "name": "SPV",
+   "card": "business/knowledge-cards/special-purpose-vehicle",
+   "module": "business"
+  },
+  {
    "name": "SQL Injection",
    "card": "backend/knowledge-cards/sql-injection",
    "module": "backend"
@@ -5202,6 +5477,11 @@
    "name": "SSH 金鑰儲放與 authorized_keys",
    "card": "linux/dotfile/knowledge-cards/ssh-key-storage",
    "module": "linux"
+  },
+  {
+   "name": "SSL",
+   "card": "devops/infra/knowledge-cards/ssl-tls",
+   "module": "devops"
   },
   {
    "name": "SSL / TLS",
@@ -5255,6 +5535,11 @@
   },
   {
    "name": "Static / Dynamic Content Separation",
+   "card": "devops/infra/knowledge-cards/static-dynamic-separation",
+   "module": "devops"
+  },
+  {
+   "name": "Static Content Separation",
    "card": "devops/infra/knowledge-cards/static-dynamic-separation",
    "module": "devops"
   },
@@ -5464,6 +5749,11 @@
    "module": "linux"
   },
   {
+   "name": "terraform plan",
+   "card": "devops/infra/knowledge-cards/terraform-plan-apply",
+   "module": "devops"
+  },
+  {
    "name": "terraform plan / apply",
    "card": "devops/infra/knowledge-cards/terraform-plan-apply",
    "module": "devops"
@@ -5564,6 +5854,16 @@
    "module": "backend"
   },
   {
+   "name": "TLS",
+   "card": "backend/knowledge-cards/tls-mtls",
+   "module": "backend"
+  },
+  {
+   "name": "TLS",
+   "card": "devops/infra/knowledge-cards/ssl-tls",
+   "module": "devops"
+  },
+  {
    "name": "TLS / mTLS",
    "card": "backend/knowledge-cards/tls-mtls",
    "module": "backend"
@@ -5624,7 +5924,27 @@
    "module": "llm"
   },
   {
+   "name": "Top-K",
+   "card": "llm/knowledge-cards/top-p-sampling",
+   "module": "llm"
+  },
+  {
    "name": "Top-K / Top-P / Min-P Sampling",
+   "card": "llm/knowledge-cards/top-p-sampling",
+   "module": "llm"
+  },
+  {
+   "name": "Top-K Sampling",
+   "card": "llm/knowledge-cards/top-p-sampling",
+   "module": "llm"
+  },
+  {
+   "name": "Top-P",
+   "card": "llm/knowledge-cards/top-p-sampling",
+   "module": "llm"
+  },
+  {
+   "name": "Top-P Sampling",
    "card": "llm/knowledge-cards/top-p-sampling",
    "module": "llm"
   },
@@ -5632,6 +5952,11 @@
    "name": "Topic",
    "card": "backend/knowledge-cards/topic",
    "module": "backend"
+  },
+  {
+   "name": "Total Addressable Market",
+   "card": "business/knowledge-cards/total-addressable-market",
+   "module": "business"
   },
   {
    "name": "Total Addressable Market，潛在市場規模",
@@ -5784,6 +6109,11 @@
    "module": "business"
   },
   {
+   "name": "Universal Scalability Law",
+   "card": "backend/knowledge-cards/universal-scalability-law",
+   "module": "backend"
+  },
+  {
    "name": "Universal Scalability Law (USL)",
    "card": "backend/knowledge-cards/universal-scalability-law",
    "module": "backend"
@@ -5817,6 +6147,11 @@
    "name": "Userland Proxy",
    "card": "devops/infra/knowledge-cards/userland-proxy",
    "module": "devops"
+  },
+  {
+   "name": "USL",
+   "card": "backend/knowledge-cards/universal-scalability-law",
+   "module": "backend"
   },
   {
    "name": "Validation Middleware",
@@ -5877,6 +6212,11 @@
    "name": "Vendor Lock-In",
    "card": "backend/knowledge-cards/vendor-lock-in",
    "module": "backend"
+  },
+  {
+   "name": "Venture Capital",
+   "card": "business/knowledge-cards/venture-capital",
+   "module": "business"
   },
   {
    "name": "Venture Capital (VC)",
@@ -6174,6 +6514,11 @@
    "module": "business"
   },
   {
+   "name": "代管執行個體群組",
+   "card": "devops/infra/knowledge-cards/managed-instance-group",
+   "module": "devops"
+  },
+  {
    "name": "估值帶",
    "card": "business/knowledge-cards/valuation-band",
    "module": "business"
@@ -6204,6 +6549,11 @@
    "module": "backend"
   },
   {
+   "name": "偽終端機",
+   "card": "linux/dotfile/knowledge-cards/pty",
+   "module": "linux"
+  },
+  {
    "name": "價值鏈涵蓋段",
    "card": "business/knowledge-cards/value-chain-span",
    "module": "business"
@@ -6231,6 +6581,11 @@
   {
    "name": "公允價值",
    "card": "business/knowledge-cards/fair-value",
+   "module": "business"
+  },
+  {
+   "name": "公司公開程度",
+   "card": "business/knowledge-cards/company-public-disclosure-levels",
    "module": "business"
   },
   {
@@ -6279,6 +6634,11 @@
    "module": "testing"
   },
   {
+   "name": "分區識別",
+   "card": "linux/dotfile/knowledge-cards/partition-identification",
+   "module": "linux"
+  },
+  {
    "name": "分區識別，PARTUUID / FSUUID",
    "card": "linux/dotfile/knowledge-cards/partition-identification",
    "module": "linux"
@@ -6319,6 +6679,11 @@
    "module": "business"
   },
   {
+   "name": "剩餘履約義務",
+   "card": "business/knowledge-cards/remaining-performance-obligation",
+   "module": "business"
+  },
+  {
    "name": "動圈單體",
    "card": "til/audio/knowledge-cards/dynamic-driver",
    "module": "til"
@@ -6331,6 +6696,11 @@
   {
    "name": "動磁式與動圈式唱頭",
    "card": "til/audio/knowledge-cards/mm-and-mc-cartridges",
+   "module": "til"
+  },
+  {
+   "name": "動鐵式唱頭",
+   "card": "til/audio/knowledge-cards/moving-iron-cartridge",
    "module": "til"
   },
   {
@@ -6357,6 +6727,11 @@
    "name": "協作形態",
    "card": "books/knowledge-cards/collaboration-mode",
    "module": "books"
+  },
+  {
+   "name": "原始設備製造商",
+   "card": "business/knowledge-cards/oem",
+   "module": "business"
   },
   {
    "name": "原始設備製造商 / 品牌商",
@@ -6569,6 +6944,11 @@
    "module": "business"
   },
   {
+   "name": "契約養殖",
+   "card": "business/knowledge-cards/contract-farming",
+   "module": "business"
+  },
+  {
    "name": "契約養殖 / 契作",
    "card": "business/knowledge-cards/contract-farming",
    "module": "business"
@@ -6649,6 +7029,11 @@
    "module": "backend"
   },
   {
+   "name": "平均單價",
+   "card": "business/knowledge-cards/asp",
+   "module": "business"
+  },
+  {
    "name": "年均複合成長率",
    "card": "business/knowledge-cards/cagr",
    "module": "business"
@@ -6667,6 +7052,11 @@
    "name": "建議鎖",
    "card": "backend/knowledge-cards/advisory-lock",
    "module": "backend"
+  },
+  {
+   "name": "強制存取控制",
+   "card": "linux/dotfile/knowledge-cards/mandatory-access-control",
+   "module": "linux"
   },
   {
    "name": "循軌力",
@@ -7059,6 +7449,11 @@
    "module": "ux-design"
   },
   {
+   "name": "潛在市場規模",
+   "card": "business/knowledge-cards/total-addressable-market",
+   "module": "business"
+  },
+  {
    "name": "瀏覽器指紋",
    "card": "automation/knowledge-cards/browser-fingerprint",
    "module": "automation"
@@ -7114,6 +7509,11 @@
    "module": "backend"
   },
   {
+   "name": "特殊目的實體",
+   "card": "business/knowledge-cards/special-purpose-vehicle",
+   "module": "business"
+  },
+  {
    "name": "特殊目的實體，SPV",
    "card": "business/knowledge-cards/special-purpose-vehicle",
    "module": "business"
@@ -7147,6 +7547,11 @@
    "name": "環狀緩衝區",
    "card": "linux/dotfile/knowledge-cards/ring-buffer-log",
    "module": "linux"
+  },
+  {
+   "name": "生乳收購價",
+   "card": "business/knowledge-cards/farmgate-price",
+   "module": "business"
   },
   {
    "name": "生產環境對等原則",
@@ -7286,6 +7691,11 @@
   {
    "name": "聯產品",
    "card": "business/knowledge-cards/co-product",
+   "module": "business"
+  },
+  {
+   "name": "聯邦牛奶行銷法令",
+   "card": "business/knowledge-cards/fmmo",
    "module": "business"
   },
   {
@@ -7514,6 +7924,11 @@
    "module": "til"
   },
   {
+   "name": "農場交貨價",
+   "card": "business/knowledge-cards/farmgate-price",
+   "module": "business"
+  },
+  {
    "name": "農場交貨價 / 生乳收購價",
    "card": "business/knowledge-cards/farmgate-price",
    "module": "business"
@@ -7629,6 +8044,11 @@
    "module": "ux-design"
   },
   {
+   "name": "限制型股票單位",
+   "card": "business/knowledge-cards/restricted-stock-unit",
+   "module": "business"
+  },
+  {
    "name": "限制型股票單位，RSU",
    "card": "business/knowledge-cards/restricted-stock-unit",
    "module": "business"
@@ -7656,6 +8076,11 @@
   {
    "name": "電子專業製造服務",
    "card": "business/knowledge-cards/ems",
+   "module": "business"
+  },
+  {
+   "name": "需求預測",
+   "card": "business/procurement-planning/cards/forecast",
    "module": "business"
   },
   {
@@ -7707,15 +8132,83 @@
    "name": "馬丁格爾加碼",
    "card": "business/retail-instruments/knowledge-cards/martingale",
    "module": "business"
+  },
+  {
+   "name": "高頻寬記憶體",
+   "card": "business/knowledge-cards/hbm",
+   "module": "business"
   }
  ],
  "excluded": [
+  {
+   "name": "Ack",
+   "cards": [
+    "backend/knowledge-cards/ack-nack"
+   ],
+   "reason": "derived-word"
+  },
+  {
+   "name": "Adam",
+   "cards": [
+    "llm/knowledge-cards/adam-adamw"
+   ],
+   "reason": "derived-word"
+  },
+  {
+   "name": "apply",
+   "cards": [
+    "devops/infra/knowledge-cards/terraform-plan-apply"
+   ],
+   "reason": "derived-word"
+  },
+  {
+   "name": "Contract",
+   "cards": [
+    "backend/knowledge-cards/expand-contract"
+   ],
+   "reason": "derived-word"
+  },
   {
    "name": "Cursor",
    "cards": [
     "backend/knowledge-cards/cursor"
    ],
    "reason": "config"
+  },
+  {
+   "name": "Cutover",
+   "cards": [
+    "backend/knowledge-cards/cutover-switchover"
+   ],
+   "reason": "derived-word"
+  },
+  {
+   "name": "dB",
+   "cards": [
+    "til/audio/knowledge-cards/decibel"
+   ],
+   "reason": "short-latin"
+  },
+  {
+   "name": "Downsampling",
+   "cards": [
+    "backend/knowledge-cards/rollup"
+   ],
+   "reason": "derived-word"
+  },
+  {
+   "name": "Embedding",
+   "cards": [
+    "llm/knowledge-cards/client-side-llm"
+   ],
+   "reason": "derived-word"
+  },
+  {
+   "name": "Expand",
+   "cards": [
+    "backend/knowledge-cards/expand-contract"
+   ],
+   "reason": "derived-word"
   },
   {
    "name": "Index",
@@ -7732,6 +8225,34 @@
    "reason": "short-latin"
   },
   {
+   "name": "LT",
+   "cards": [
+    "business/procurement-planning/cards/lead-time"
+   ],
+   "reason": "short-latin"
+  },
+  {
+   "name": "MI",
+   "cards": [
+    "til/audio/knowledge-cards/moving-iron-cartridge"
+   ],
+   "reason": "short-latin"
+  },
+  {
+   "name": "Miss",
+   "cards": [
+    "backend/knowledge-cards/cache-hit-miss"
+   ],
+   "reason": "derived-word"
+  },
+  {
+   "name": "Nack",
+   "cards": [
+    "backend/knowledge-cards/ack-nack"
+   ],
+   "reason": "derived-word"
+  },
+  {
    "name": "Namespace",
    "cards": [
     "backend/knowledge-cards/namespace"
@@ -7744,6 +8265,34 @@
     "backend/knowledge-cards/ownership"
    ],
    "reason": "config"
+  },
+  {
+   "name": "PE",
+   "cards": [
+    "business/knowledge-cards/private-equity"
+   ],
+   "reason": "short-latin"
+  },
+  {
+   "name": "Readiness",
+   "cards": [
+    "devops/ci/knowledge-cards/readiness-health-check"
+   ],
+   "reason": "derived-word"
+  },
+  {
+   "name": "Reflection",
+   "cards": [
+    "llm/knowledge-cards/reflection"
+   ],
+   "reason": "derived-word"
+  },
+  {
+   "name": "Rollup",
+   "cards": [
+    "backend/knowledge-cards/rollup"
+   ],
+   "reason": "derived-word"
   },
   {
    "name": "S3",
@@ -7760,11 +8309,39 @@
    "reason": "config"
   },
   {
+   "name": "SCP",
+   "cards": [
+    "devops/infra/knowledge-cards/scp"
+   ],
+   "reason": "config"
+  },
+  {
+   "name": "SSE",
+   "cards": [
+    "backend/knowledge-cards/sse"
+   ],
+   "reason": "config"
+  },
+  {
    "name": "State",
    "cards": [
     "devops/infra/knowledge-cards/state"
    ],
    "reason": "config"
+  },
+  {
+   "name": "Static",
+   "cards": [
+    "devops/infra/knowledge-cards/static-dynamic-separation"
+   ],
+   "reason": "derived-word"
+  },
+  {
+   "name": "Switchover",
+   "cards": [
+    "backend/knowledge-cards/cutover-switchover"
+   ],
+   "reason": "derived-word"
   },
   {
    "name": "UX",
@@ -7775,9 +8352,30 @@
    "reason": "short-latin"
   },
   {
+   "name": "Vanishing",
+   "cards": [
+    "llm/knowledge-cards/gradient-explosion-vanishing"
+   ],
+   "reason": "derived-word"
+  },
+  {
+   "name": "VC",
+   "cards": [
+    "business/knowledge-cards/venture-capital"
+   ],
+   "reason": "short-latin"
+  },
+  {
    "name": "交易",
    "cards": [
     "backend/knowledge-cards/transaction"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "交期",
+   "cards": [
+    "business/procurement-planning/cards/lead-time"
    ],
    "reason": "short-han"
   },
@@ -7803,6 +8401,13 @@
    "reason": "short-han"
   },
   {
+   "name": "分貝",
+   "cards": [
+    "til/audio/knowledge-cards/decibel"
+   ],
+   "reason": "short-han"
+  },
+  {
    "name": "列鎖",
    "cards": [
     "backend/knowledge-cards/row-lock"
@@ -7810,9 +8415,23 @@
    "reason": "short-han"
   },
   {
+   "name": "品牌商",
+   "cards": [
+    "business/knowledge-cards/oem"
+   ],
+   "reason": "config"
+  },
+  {
    "name": "基差",
    "cards": [
     "business/retail-instruments/knowledge-cards/basis"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "契作",
+   "cards": [
+    "business/knowledge-cards/contract-farming"
    ],
    "reason": "short-han"
   },
@@ -7953,6 +8572,13 @@
    "name": "電宰",
    "cards": [
     "business/knowledge-cards/mechanized-slaughter"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "音壓",
+   "cards": [
+    "til/audio/knowledge-cards/sound-pressure-level"
    ],
    "reason": "short-han"
   },

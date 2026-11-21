@@ -3,7 +3,7 @@ name: knowledge-cards
 description: "Standardizes the full lifecycle of atomic knowledge cards (Zettelkasten term cards) in a content collection: creation criteria, gap detection via the term-role × baseline matrix, card authoring format, registration points (index + tool scope), link backfill, and module-scale audits. Use when creating cards, auditing a module for missing cards, restructuring card directories, or wiring card links into articles. Triggers: 建卡, 知識卡, 缺卡, 術語卡, 卡片 audit, 卡片格式, 跟其他概念的關係, 概念位置（舊段名）, 判斷條件與後果, 鄰卡連結, 回填連結, 卡片標題, 卡片命名, 同名卡, 限定詞, 連結文字, 卡片目錄, 卡片重構, 詞頻掃描, 基線, 行內解釋, knowledge card, term card, card gap."
 license: MIT
 metadata:
-  version: 2.2.0
+  version: 2.3.0
   category: content-methodology
 ---
 
@@ -22,7 +22,7 @@ metadata:
 | 2 落點  | 卡放在哪個目錄？       | 概念的主要領域歸屬；一卡一住址、跨模組用連結不重複建卡。同一個對象已經在兩篇各自被分解過（兩套階段表 / 欄位組）時，卡層通常就是該收斂到的住址——理由是欄位與成員的定義本來就是卡的責任、而卡是可被多篇引用的獨立短頁，章節各自沿用卡的語彙、只保留自己的判讀。**不要用入連數當理由**：入連數量的是整頁被引用幾次，而要選載體的對象是頁裡那組成員，一次實測章節的整頁入連是卡的一倍多、而那些引用沒有一條是為了拿欄位定義 |
 | 3 撰寫  | 卡片長什麼樣？         | 四段結構（定義 / 跟其他概念的關係 / 訊號與例子 / 判斷條件與後果）＋首段與「跟其他概念的關係」段鄰卡連結                                                                                                                                                      |
 | 4 登記  | 卡片在哪些地方要現身？ | collection index 分類表＋lint 工具的作用域清單——兩者都是必經註冊點                                                                                                                                                                            |
-| 5 回填  | 文章怎麼接上卡？       | 每篇文章該術語第一次出現處連卡、後續裸用；連結文字寫成卡的標題（`references/card-authoring.md`〈命名：原文與譯名成對〉）                                                                                                                                                                                                      |
+| 5 回填  | 文章怎麼接上卡？       | 每篇文章該術語第一次出現處連卡、後續裸用；連結文字寫成卡的標題（`references/card-authoring.md`〈命名：原文與譯名成對〉）。專案的網站會依詞典把正文裡的卡名自動標成連結時，回填只補自動連結不涵蓋的名字與頁面（見 `references/gap-audit-and-backfill.md` 的回填連結那一步）                                                                                                                                                                                                      |
 | 6 Audit | 存量模組的缺口在哪？   | 詞頻掃描 × 缺卡判定矩陣 → 優先序 → 批次建卡                                                                                                                                                                                                   |
 
 ## 缺卡判定矩陣（速查）

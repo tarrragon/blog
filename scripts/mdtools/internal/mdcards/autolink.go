@@ -24,9 +24,18 @@ type autolinkTerm struct {
 	Module string `json:"module"` // first directory under content/
 }
 
+// autolinkExcluded is a name bin/autolink-dict keeps out of the terms, with
+// the reason (short-han, short-latin, config, card-off, ambiguous).
+type autolinkExcluded struct {
+	Name   string   `json:"name"`
+	Cards  []string `json:"cards"`
+	Reason string   `json:"reason"`
+}
+
 type autolinkDict struct {
-	Scopes map[string][]string `json:"scopes"`
-	Terms  []autolinkTerm      `json:"terms"`
+	Scopes   map[string][]string `json:"scopes"`
+	Terms    []autolinkTerm      `json:"terms"`
+	Excluded []autolinkExcluded  `json:"excluded"`
 }
 
 var (

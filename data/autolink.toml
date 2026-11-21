@@ -1,14 +1,14 @@
 # 自動連結的設定：bin/autolink-dict 讀這份檔產生 data/autolink_terms.json（檔名跟這份不同，Hugo 的 site.Data 依檔名取鍵），
 # layouts/partials/autolink.html 讀 scopes 決定一頁要套哪些模組的卡。
-# 改了這份檔之後跑 `bin/autolink-dict` 重產生詞典，兩個檔在同一個 commit 提交。
+# 改了這份檔之後跑 `bin/autolink-dict --with <這次要提交的全部檔案>` 重產生詞典，兩個檔在同一個 commit
+# 提交（做法與提交時的對照見 docs/rules/markdown.md 表裡詞典那一列）。
 
 # 比對範圍：鍵是文章所在的第一層資料夾（content/<鍵>/...），值是這一頁可以自動連到的
-# 卡片所在的第一層資料夾。沒有列在這裡的資料夾不做自動連結，目前刻意不列的是：report 與 skills
-# （寫作方法論，技術名詞多半是在舉例）、work-log、posts、record、other（跨主題的雜項文章，卡片名稱
-# 多半不是指那張卡）、macos 與 neurodiversity（還沒有評估過，macos 的文章可能用到 linux 的卡）。
+# 卡片所在的第一層資料夾。不做自動連結的資料夾列在下面的 [unlisted]，附理由。
 # 同一個名字在範圍內對到兩張卡時，取跟這一頁同一個第一層資料夾的那一張；仍然分不出來就不連。
-# content/ 的第一層資料夾新增、改名或被收進大分類時改這裡（鍵與值都是第一層資料夾的名字），
-# 再跑 bin/autolink-dict；沒列進來的資料夾整批不做自動連結，沒有任何警告。
+# content/ 第一層每個有 .md 的資料夾都要列在 [scopes] 或 [unlisted] 其中一處（鍵與值都是第一層
+# 資料夾的名字）：資料夾新增、改名或被收進大分類之後沒有改這份檔時，bin/autolink-dict 印出要改的
+# 資料夾、exit 2；pre-commit 在 content/ 底下或這份檔有變動時擋下這次提交。
 [scopes]
 backend = ["backend"]
 devops = ["devops", "backend"]
@@ -22,6 +22,18 @@ ux-design = ["ux-design"]
 business = ["business"]
 books = ["books", "business"]
 til = ["til"]
+
+# 不做自動連結的第一層資料夾：鍵是資料夾名，值是不做的理由。理由是設定時的判斷，沒有逐篇量過；
+# 要改成做自動連結時，判斷照 docs/rules/markdown.md 表裡資料夾登記那一列。
+[unlisted]
+report = "寫作方法論，技術名詞常是舉例用"
+skills = "skill 的公開鏡像，寫作方法論，技術名詞常是舉例用"
+work-log = "跨主題的事件紀錄，卡片名稱可能指別的東西"
+posts = "blog 本身的規範與設定，卡片名稱可能指別的東西"
+record = "跨主題的方法論，卡片名稱可能指別的東西"
+other = "跨主題的雜項筆記，卡片名稱可能指別的東西"
+macos = "還沒有評估過；文章可能用到 linux 的卡"
+neurodiversity = "還沒有評估過"
 
 # 名字的最短長度：不含拉丁字母的名字，漢字數少於等於 han 時不做自動連結；含拉丁字母的名字，
 # 去掉空白之後的字元數少於等於 latin 時不做（「索引」「關係」「CI」這類在一般句子裡太常見，
@@ -38,6 +50,9 @@ exclude = [
   "Index",      # programming 的文章多半指陣列索引，不是資料庫索引
   "Namespace",  # programming 的文章多半指程式語言的命名空間，不是 Kubernetes 的 namespace
   "Ownership",  # programming 的文章多半指 Rust 的所有權，不是資料的擁有者
+  "品牌商",     # OEM 卡的標題拆出來的名字；business 的文章也用它指一般的品牌公司，不一定是代工關係的那一方
+  "SCP",        # SCP (Service Control Policy) 卡拆出來的縮寫；devops 的 ftp 卡用它指 secure copy
   "Schema",     # SQL 卡片集的 Schema 卡講命名空間，文章裡的 schema 多半指資料表結構
+  "SSE",        # Server-Sent Events (SSE) 卡拆出來的縮寫；backend 的 AWS 頁面有 SSE-KMS（伺服器端加密），連字號不算單字邊界
   "State",      # devops 的文章多半指一般的狀態，不是 Terraform 的 state 檔
 ]

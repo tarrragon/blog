@@ -22,15 +22,26 @@
    `git log -1 --format=%ct -- <檔案>` 與 transcript 每一行的 timestamp），依時間重播：Edit 把
    old_string 換成 new_string（replace_all 時換全部，否則 old_string 要剛好出現一次）；覆寫既有
    檔案的 Write 套它的 structuredPatch，不拿全文（全文會把寫之前別人改的段落一起帶進來）；建立
-   新檔的 Write 用全文。紀錄留著編輯前的全文（originalFile）時，先確認它跟重播的內容相同。
+   新檔的 Write 用全文。紀錄留著編輯前的全文（originalFile）時，先確認它跟重播的內容相同；確認過、
+   而 structuredPatch 套不上時（transcript 把 tab 記成空白，Go 這類用 tab 縮排的檔），改用 Write 的
+   全文：寫入之前的檔案就是重播的內容，全文不會帶進別人的改動。
 3. 重播的結果跟要提交的內容（工作樹，或 --staged 時的 index）逐字相同，印 `ok:`；否則印
    `[ASK-USER]`、原因、能定位外來改動時的 unified diff（`+` 的那幾行是 transcript 解釋不了的
    內容），以及這個檔案要提交的整份改動（`git diff HEAD`）。transcript 解釋不了的改動有：另一個
    session 的編輯、Edit 與 Write 以外的寫檔方式（Bash 的 sed、heredoc、rm、git mv、git checkout，
-   NotebookEdit、MCP 的寫檔工具）、生成器產生的檔案、commit 與編輯落在同一秒而被重播兩次的那一筆。
-   工具不判斷是哪一種，交給 AGENTS.md〈要先問使用者的情形〉。
+   NotebookEdit、MCP 的寫檔工具）、生成器產生的檔案（登記在 GENERATED 的除外，見下面〈生成檔〉）、
+   commit 與編輯落在同一秒而被重播兩次的那一筆。工具不判斷是哪一種，交給 AGENTS.md〈要先問使用者的情形〉。
 檔案模式變了、是 symlink、不是 UTF-8、HEAD 與要提交的內容裡都沒有這個檔案時，不重播，直接印
 `[ASK-USER]`。工作樹裡被 Write 整份蓋掉的別人改動，在工作樹與 HEAD 裡都已經不在，這支工具看不到。
+
+〈生成檔〉登記在 GENERATED 的檔案不重播，改由它的生成器檢查：生成器從要提交的輸入（--staged 時是
+index；否則是 HEAD 加上這次給的檔案）重算一次，結果跟要提交的內容相同就印 `ok:`，不同就印
+`[ASK-USER]`、生成器的訊息與整份改動。生成檔的內容完全由輸入決定，而輸入（卡片、設定）是這次
+清單裡的檔案、各自經過重播，或是 HEAD 裡已經提交的內容，所以重算相同時，這個檔案裡沒有別人的改動。
+生成器本身也是輸入：用的是工作樹裡的生成器，它跟 HEAD 不同而不在這次的清單裡時（另一個 session
+改了它還沒提交），不重算，直接印 `[ASK-USER]`。
+目前登記的是 data/autolink_terms.json（bin/autolink-dict）。新的生成器要登記時，它要有一個只比對
+不寫檔、能讀 index 或「HEAD 加上指定檔案」的檢查模式。
 
 結尾在 stderr 印 `session-edits-check: N file(s) checked, M ask-user (K edit(s) from J transcript(s))`；
 N 是給的檔案數。transcript 裡有 Edit 或 Write 的呼叫、卻一筆結果都解析不出來時 exit 2：transcript
@@ -95,7 +106,7 @@ def load_ops(path):
     """主 session 與 subagent 成功的 Edit 與 Write，依時間排序：(realpath, timestamp, op)。
 
     op 是 ("edit", old, new, replace_all, originalFile)、("create", content)
-    或 ("update", structuredPatch, originalFile)；originalFile 沒有記下來時是 None。
+    或 ("update", structuredPatch, 寫入的全文, originalFile)；originalFile 與全文沒有記下來時是 None。
     """
     sid = os.environ.get("CLAUDE_CODE_SESSION_ID")
     files = transcript_files(path)
@@ -121,7 +132,8 @@ def load_ops(path):
                 elif r.get("type") == "create" and isinstance(r.get("content"), str):
                     op = ("create", r["content"])
                 elif r.get("type") == "update" and isinstance(r.get("structuredPatch"), list):
-                    op = ("update", r["structuredPatch"], orig)
+                    content = r.get("content") if isinstance(r.get("content"), str) else None
+                    op = ("update", r["structuredPatch"], content, orig)
                 else:
                     continue
                 ops.append((os.path.realpath(r["filePath"]), parse_ts(o["timestamp"]), op))
@@ -201,6 +213,29 @@ class Target:
         return git(*self.diff_args(rel), root=self.root).stdout.decode(errors="replace")
 
 
+GENERATED = {
+    # 路徑 → 由 (staged, 這次全部的檔案) 組出生成器的檢查指令；argv[0] 是生成器在 repo 裡的路徑，
+    # 在 repo 根目錄執行，exit 0 代表相同
+    "data/autolink_terms.json": lambda staged, rels: (
+        ["bin/autolink-dict", "--check", "--staged"] if staged else ["bin/autolink-dict", "--check", "--with", *rels]
+    ),
+}
+
+
+def check_generated(rel, target, rels):
+    """生成檔：(ok, 訊息, 生成器的輸出或 None)。--staged 時子行程繼承 GIT_INDEX_FILE，讀的是同一份 index。"""
+    argv = GENERATED[rel](target.staged, rels)
+    gen = argv[0]
+    # 生成器本身也是輸入：工作樹裡的生成器跟 HEAD 不同、又不在這次的清單裡時，那是別人還沒提交的
+    # 改動，用它重算出來的結果相同也不代表這個檔案裡沒有別人的改動
+    if gen not in rels and git("diff", "--quiet", "HEAD", "--", gen, root=target.root).returncode != 0:
+        return False, f"生成檔：生成器 {gen} 在工作樹裡跟 HEAD 不同、又不在這次的清單裡，重算的結果不能當依據", None
+    r = subprocess.run([os.path.join(target.root, gen), *argv[1:]], cwd=target.root, capture_output=True, text=True)
+    if r.returncode == 0:
+        return True, f"生成檔：{os.path.basename(argv[0])} 從要提交的輸入重算的結果跟要提交的內容相同", None
+    return False, f"生成檔：{os.path.basename(argv[0])} {' '.join(argv[1:3])} exit {r.returncode}，重算的結果跟要提交的內容不同或生成器失敗", r.stderr
+
+
 def check(rel, target, ops):
     """回傳 (ok, 訊息, 定位外來改動的 diff 或 None)。"""
     root = target.root
@@ -241,6 +276,11 @@ def check(rel, target, ops):
             return False, f"第 {i} 筆編輯時，重播的內容裡沒有這個檔案", None
         if kind == "update":
             patched = apply_patch(state, op[1])
+            if patched is None and orig is not None and op[2] is not None:
+                # transcript 的 structuredPatch 把 tab 記成空白，Go 這類用 tab 縮排的檔套不上。
+                # 上面已確認寫入之前的全文（orig）就是重播的內容，沒有別人的改動，
+                # 所以 Write 的全文只帶進這一筆自己寫的內容
+                patched = op[2]
             if patched is None:
                 return False, f"第 {i} 筆 Write 的改動對不上重播的內容", None
             state = patched
@@ -277,16 +317,19 @@ def main():
     ops, nfiles = load_ops(transcript)
     target = Target(root, a.staged)
     asks = 0
-    for path in a.files:
-        rel = repo_path(path, root)
-        ok, msg, located = check(rel, target, ops)
+    rels = [repo_path(p, root) for p in a.files]
+    for path, rel in zip(a.files, rels):
+        if rel in GENERATED:
+            ok, msg, located = check_generated(rel, target, rels)
+        else:
+            ok, msg, located = check(rel, target, ops)
         if ok:
             print(f"ok: {path}：{msg}")
             continue
         asks += 1
         print(f"[ASK-USER] {path}：{msg}")
         if located:
-            print("transcript 解釋不了的內容（+ 的那幾行）：")
+            print("生成器的訊息：" if rel in GENERATED else "transcript 解釋不了的內容（+ 的那幾行）：")
             sys.stdout.write(located)
         print(f"這個檔案要提交的整份改動（git {' '.join(target.diff_args(rel)[:-2])}）：")
         sys.stdout.write(target.diff(rel))

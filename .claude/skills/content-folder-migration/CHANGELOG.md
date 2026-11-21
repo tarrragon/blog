@@ -1,5 +1,7 @@
 # CHANGELOG
 
+**Version**: 1.4.0 — 驗證表的 `bin/autolink-dict` 那一列改寫：第一層資料夾沒有登記在 `data/autolink.toml` 的 `[scopes]` 或 `[unlisted]` 時，工具印出要改的資料夾並 exit 2（原本沒列進去的資料夾不做自動連結而沒有警告）；詞典的編輯紀錄對照改由生成器重算，不再每次交給使用者決定。
+
 **Version**: 1.3.0 — 驗證表加一列 `bin/autolink-dict`（排在 `mdtools cards` 之前，cards 的孤兒卡檢查讀這份詞典）：自動連結的詞典 `data/autolink_terms.json` 記的是卡片路徑與第一層資料夾，搬了知識卡之後要重產生並一起提交；第一層資料夾新增、改名或被收進大分類時，先改 `data/autolink.toml` 的 `[scopes]`，否則那些資料夾整批不做自動連結而沒有警告。pre-commit 的 `bin/autolink-dict --check --staged` 只擋詞典過期，擋不到 `[scopes]` 漏改。
 
 **Version**: 1.2.0 — 「涵蓋的搬移」加一條路：幾個模組合成大分類底下一個模組的系列子資料夾。來源是 2026-11-03 把 python 與 python-advanced 收進 `content/programming/python/` 的 `basic/` 與 `advanced/`（go 同樣）的那一次搬移（commit 86677bbd）：資料夾那條路缺四件事，模組 `_index.md` 的建立與正文（以「系列」為欄名的表、`## Backlog`）、系列的 weight 與 `breadcrumb`、首頁的系列行內連結、規則檔列出系列的那一句；系列的 weight 照使用者給的順序，原本各模組 Backlog 裡牽涉對方的項目重判落點（多輪審查 Round 2 走查補上）。「其他搬移」補上在系列子資料夾之間搬。範例段刪掉兩句歷史敘述（殘留掃描當時看不到的位置已記在 1.0.0、`devops/` 原本是空 section），把 SKILL.md 壓回 5k tokens 以內。

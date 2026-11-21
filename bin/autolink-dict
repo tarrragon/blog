@@ -9,16 +9,23 @@
 用法：
   bin/autolink-dict                     重產生 data/autolink_terms.json（內容沒變時不改檔）
   bin/autolink-dict --check             只比對：data/autolink_terms.json 跟工作樹的卡片與設定對不上時 exit 1
-  bin/autolink-dict --check --staged    同上，但卡片、設定與詞典都讀 git index（pre-commit 用這個：
-                                        另一個 session 在工作樹裡還沒 staged 的卡不影響這次的提交）
+  bin/autolink-dict --check --staged    同上，但卡片、設定與詞典都讀 git index（pre-commit 與
+                                        bin/session-edits-check --staged 用這個：另一個 session 在工作樹裡
+                                        還沒 staged 的卡不影響這次的提交）
+  bin/autolink-dict --check --with <路徑...>
+                                        同上，但以 HEAD 加上列出的路徑為準（列出的路徑要包含
+                                        data/autolink_terms.json 才比得到這次的詞典；bin/session-edits-check
+                                        不帶 --staged 時用這個）
   bin/autolink-dict --with <路徑...>    重產生，但以 HEAD 為底，只疊上列出的路徑在工作樹裡的版本
-                                        （列出而工作樹沒有的檔當成刪除）。工作樹裡有不屬於這次提交的卡
-                                        時用這個：路徑列這次要提交的卡片與 data/autolink.toml，產生的
+                                        （列出而工作樹沒有、HEAD 有的檔當成刪除；兩邊都沒有時 exit 2）。
+                                        工作樹裡有不屬於這次提交的卡
+                                        時用這個：路徑列這次要提交的全部檔案（新資料夾的檔案也要列，
+                                        資料夾的登記檢查只看得到 HEAD 加上列出的路徑），產生的
                                         詞典跟 bin/commit-files 的私有 index（HEAD 加上這次的檔案）對得上，
                                         pre-commit 的 --check --staged 才會通過。路徑以 repo 根目錄起算
   bin/autolink-dict --report            重產生之後，另外在 stdout 列出不做自動連結的名字與原因、
-                                        跨模組同名的名字，以及只有一個英文單字的名字（候選，供人工判斷
-                                        要不要加進排除清單）
+                                        跨模組同名的名字、只有一個英文單字的名字（候選，供人工判斷
+                                        要不要加進排除清單），以及從標題拆出與不收的名字
   在 repo 裡任何目錄執行都可以（以 repo 根目錄為準）。
 
 卡片：content/ 底下資料夾名為 knowledge-cards 或 cards 的 .md（不含 _index.md 與 content/skills/），
@@ -27,6 +34,19 @@
 名字的取法：
   - 標題寫成「英文（中文）」（全形括號在結尾）時，括號前的英文與括號裡的中文各是一個名字。
   - 其他標題整個當一個名字。
+  以上兩種與下面的 autolink_terms 別名是正式名字。標題的形狀讓正式名字不會在正文裡逐字出現時（SLI / SLO、Infrastructure as Code
+  (IaC)），另外拆出衍生名字：取全形冒號「：」之前的部分（之後是副標，例如「：SELinux 與 AppArmor」）
+  再照「英文（中文）」拆一次；去掉結尾的「等」；依全形逗號「，」、結尾的半形括號「X (Y)」、
+  前後有空白的斜線「 / 」拆開。沒有空白的斜線（Pub/Sub、P/E Ratio）是名字本身的一部分，不拆。
+  拆出來的部分是一個沒有空白的英文字、而它不含數字、連字號、句點，也沒有第二個字元之後的大寫字母
+  （Miss、Expand、Adam 這類一般英文單字）時不收：這類字在正文裡可能是一般意思（沒有逐一量過），
+  收了會連錯；SLI、AdamW、
+  Top-K、FP32 這類收。「 / 」前面每一段都是單一個字、最後一段有好幾個字時，當成共用字尾
+  （Readiness / Health Check、Top-K / Top-P / Min-P Sampling），前面每一段另外接上最後一段第一個字
+  之後的部分（Readiness Check、Top-K Sampling）。衍生名字跟任何一張卡的正式名字同名時不收，不分
+  資料夾：頁面在範圍內遇到同名時取本資料夾的卡，衍生名字會把範圍內另一個資料夾的正式名字蓋掉。
+  不收的部分列在 --report 的「從標題拆名字」，要連的照下一項補 autolink_terms。衍生的全大寫縮寫
+  （SCP、SSE）比完整名字更常另有意思，--report 另列一節，逐個判斷要不要加進 names.exclude。
   - frontmatter 的 `autolink_terms: ["別名", ...]`（單行陣列）另外加名字。加別名之前，別名照
     docs/rules/sentences.md〈譯名避開介面上已有的同名元素〉的判斷問句過一次，並問它在比對範圍內的
     文章裡是不是常指別的東西：別名在範圍內每一次出現都會連到這張卡，也會讓 mdtools 的孤兒卡警告
@@ -39,6 +59,8 @@
   config      名字在 names.exclude 裡（不分大小寫）
   card-off    卡片的 frontmatter 寫了 autolink: false
   ambiguous   同一個名字（不分大小寫）在同一個第一層資料夾裡對到兩張以上的卡
+  derived-word 從標題拆出來、而是一般英文單字所以不收的部分（Ack、Cutover）；同一個資料夾裡已經
+              有同名的名字時不列。列進 excluded 是讓 mdtools autolink-gaps 把它們當成網站不會連的名字列出
 跨第一層資料夾的同名（backend 與 business 各有一張 Retention）留在 terms 裡，由頁面依比對範圍
 與所在資料夾決定（規則寫在 data/autolink.toml 的 scopes 註解）；--report 列在「跨模組同名」。
 
@@ -47,12 +69,19 @@
 "cards", "reason"}, ...]}，依名字排序，`card` 是 content/ 底下去掉 .md 的路徑（Hugo 的 GetPage
 用 "/" 加上它找頁面）。scopes 照抄進來，是讓 mdtools 不必另外解析 TOML。
 
-成功時在 stderr 印 `autolink-dict: T term(s), E excluded name(s) from C card(s)`；C 是掃到的卡片檔數
-（含 draft，不含 _index.md 與 content/skills/）。
+exit 0 與 exit 1（詞典過期）時在 stderr 印 `autolink-dict: T term(s), E excluded name(s) from C card(s)`；
+C 是掃到的卡片檔數（含 draft，不含 _index.md 與 content/skills/）。exit 2 不印。HEAD 的詞典（HEAD 沒有
+這個檔時用被比對的那一份）的 terms 裡有、新算出的沒有的名字，另外印一行
+`autolink-dict: 不再自動連結的名字：A、B`；正文寫到它們的頁面要重新判斷手寫連結。
+
+資料夾的登記：content/ 第一層每個有 .md 的資料夾，要列在 data/autolink.toml 的 scopes（做自動
+連結）或 unlisted（不做，附理由）其中一處；scopes 的鍵與值、unlisted 的鍵都要是存在的資料夾。
+對不上時印出要改的資料夾、exit 2。新增、改名或收進大分類的資料夾因此在下一次產生或檢查時被
+擋下，不靠作者記得改設定；pre-commit 在 content/ 底下有變動時就跑檢查。
 
 exit：0 完成（--check 時代表詞典是新的）；1 只在 --check 發現詞典過期時；2 其餘的失敗：用法錯誤、
-不在 git repo 裡、找不到 data/autolink.toml、設定格式不對、一張卡都沒找到、讀卡失敗（原因印在
-stderr，不印計數）。
+不在 git repo 裡、找不到 data/autolink.toml、設定格式不對、資料夾的登記對不上、一張卡都沒找到、
+讀卡失敗（原因印在 stderr，不印計數）。
 
 為什麼寫成工具：名字的取法與排除條件要同時給 Hugo（產生頁面上的詞典）與 mdtools（判斷一張卡
 有沒有文章連到它）用，各寫一份會分歧；寫成一支產生 JSON 的工具，兩邊讀同一份結果。
@@ -97,6 +126,16 @@ def repo_root():
     return r.stdout.strip()
 
 
+def top_folders(paths):
+    """content/ 第一層裡有 .md 的資料夾。"""
+    out = set()
+    for p in paths:
+        parts = p.split("/")
+        if len(parts) >= 3 and parts[0] == "content" and parts[-1].endswith(".md"):
+            out.add(parts[1])
+    return out
+
+
 def is_card(rel):
     parts = rel.split("/")
     return (
@@ -115,14 +154,18 @@ class WorktreeSource:
     def __init__(self, root):
         self.root = root
 
-    def cards(self):
+    def paths(self):
         out = []
         for dirpath, dirnames, filenames in os.walk(os.path.join(self.root, "content")):
             for fn in filenames:
-                rel = os.path.relpath(os.path.join(dirpath, fn), self.root).replace(os.sep, "/")
-                if is_card(rel):
-                    out.append(rel)
-        return sorted(out)
+                out.append(os.path.relpath(os.path.join(dirpath, fn), self.root).replace(os.sep, "/"))
+        return out
+
+    def cards(self):
+        return sorted(p for p in self.paths() if is_card(p))
+
+    def folders(self):
+        return top_folders(self.paths())
 
     def read(self, rel):
         path = os.path.join(self.root, rel)
@@ -144,8 +187,14 @@ class IndexSource:
             meta, path = entry.split(b"\t", 1)
             self.blobs[path.decode()] = meta.split()[1].decode()
 
+    def paths(self):
+        return list(self.blobs)
+
     def cards(self):
-        return sorted(p for p in self.blobs if is_card(p))
+        return sorted(p for p in self.paths() if is_card(p))
+
+    def folders(self):
+        return top_folders(self.paths())
 
     def read(self, rel):
         sha = self.blobs.get(rel)
@@ -178,18 +227,21 @@ class HeadOverlaySource(IndexSource):
             self.blobs[path.decode()] = meta.split()[2].decode()
         self.overlay = {}
         for p in paths:
-            rel = os.path.relpath(os.path.abspath(p), root).replace(os.sep, "/") if os.path.isabs(p) else p
+            rel = (os.path.relpath(p, root) if os.path.isabs(p) else os.path.normpath(p)).replace(os.sep, "/")
             full = os.path.join(root, rel)
             if os.path.exists(full):
                 with open(full, "rb") as f:
                     self.overlay[rel] = f.read()
-            else:
+            elif rel in self.blobs:
                 self.overlay[rel] = None
+            else:
+                # 打錯的路徑、或 shell 沒有把清單切成多個參數：當成刪除會默默算錯
+                raise Failure(f"--with 的 {p} 在 HEAD 與工作樹裡都不存在（路徑打錯，或整份清單被當成一個參數？）")
 
-    def cards(self):
+    def paths(self):
         names = set(self.blobs) | {p for p, v in self.overlay.items() if v is not None}
         names -= {p for p, v in self.overlay.items() if v is None}
-        return sorted(p for p in names if is_card(p))
+        return list(names)
 
     def read(self, rel):
         if rel in self.overlay:
@@ -226,11 +278,40 @@ def frontmatter(text):
     return fm
 
 
-def names_of(title):
-    m = PAIR_TITLE.match(title.strip())
+def pair_or_whole(title):
+    m = PAIR_TITLE.match(title)
     if m:
         return [m.group("en").strip(), m.group("zh").strip()]
-    return [title.strip()]
+    return [title]
+
+
+def plain_word(part):
+    """一個沒有空白的英文字、而不含數字、連字號、句點，也沒有第二個字元之後的大寫字母。"""
+    return bool(re.fullmatch(r"[A-Za-z]+", part)) and not re.search(r"[A-Z]", part[1:])
+
+
+def names_of(title):
+    """(正式名字, 衍生名字, 拆出來而不收的一般英文單字)；取法寫在檔頭。"""
+    title = title.strip()
+    primary = pair_or_whole(title)
+    pieces = []
+    for p in pair_or_whole(title.split("：", 1)[0].strip()) if "：" in title else primary:
+        p = re.sub(r"\s*等$", "", p)
+        for q in p.split("，"):
+            m = re.fullmatch(r"(?P<a>.*?\S)\s*\((?P<b>[^()]+)\)", q.strip())
+            for r in [m.group("a"), m.group("b")] if m else [q]:
+                parts = [x.strip() for x in r.split(" / ")]
+                head, last = parts[:-1], parts[-1].split(" ", 1)
+                if head and len(last) == 2 and all(" " not in x for x in head):
+                    # 共用字尾：Readiness / Health Check 的 Readiness 是 Readiness Check
+                    parts += [f"{x} {last[1]}" for x in head]
+                pieces.extend(parts)
+    derived, dropped = [], []
+    for p in (x.strip() for x in pieces):
+        if not p or p in primary or p in derived or p in dropped:
+            continue
+        (dropped if plain_word(p) else derived).append(p)
+    return primary, derived, dropped
 
 
 def too_short(name, min_len):
@@ -250,19 +331,37 @@ def load_config(source):
         min_len = {"han": int(cfg["min_length"]["han"]), "latin": int(cfg["min_length"]["latin"])}
         excluded = {n.lower() for n in cfg.get("names", {}).get("exclude", [])}
         scopes = {k: [str(m) for m in v] for k, v in sorted(cfg["scopes"].items())}
+        unlisted = {str(k) for k in cfg.get("unlisted", {})}
     except (tomllib.TOMLDecodeError, UnicodeDecodeError, KeyError, TypeError, ValueError, AttributeError) as e:
         raise Failure(f"{CONFIG} 格式不對：{e}")
-    return min_len, excluded, scopes
+    return min_len, excluded, scopes, unlisted
+
+
+def check_folders(folders, scopes, unlisted):
+    """第一層資料夾的登記：每個資料夾列在 scopes 或 unlisted 其中一處，列出的都存在。"""
+    problems = []
+    listed = set(scopes) | unlisted
+    for f in sorted(folders - listed):
+        problems.append(f"content/{f}/ 沒有登記：加進 {CONFIG} 的 [scopes]（做自動連結，值寫可以連到的卡片資料夾）或 [unlisted]（不做，寫理由）")
+    for f in sorted(set(scopes) & unlisted):
+        problems.append(f"{f} 同時列在 [scopes] 與 [unlisted]，留一處")
+    named = listed | {m for v in scopes.values() for m in v}
+    for f in sorted(named - folders):
+        problems.append(f"{CONFIG} 寫到的 {f} 在 content/ 第一層找不到（改名、搬走或收進大分類了？改成現在的資料夾名或刪掉）")
+    if problems:
+        raise Failure("資料夾的登記對不上：\n  " + "\n  ".join(problems))
 
 
 def build(source):
-    min_len, excluded_cfg, scopes = load_config(source)
+    min_len, excluded_cfg, scopes, unlisted = load_config(source)
+    check_folders(source.folders(), scopes, unlisted)
     paths = source.cards()
     if not paths:
         raise Failure("content/ 底下一張卡都沒找到")
     contents = source.read_many(paths) if hasattr(source, "read_many") else {p: source.read(p) for p in paths}
 
-    entries = []  # (name, card, module, off)
+    entries = []  # (name, card, module, off, primary)
+    splits = []  # (card, 衍生名字, 不收的單字)：--report 用
     for p in paths:
         try:
             fm = frontmatter(contents[p].decode("utf-8"))
@@ -273,22 +372,36 @@ def build(source):
         card = p[len("content/") : -len(".md")]
         module = card.split("/", 1)[0]
         off = fm.get("autolink") == "false"
+        primary, derived, dropped = names_of(fm["title"])
+        if derived or dropped:
+            splits.append((card, derived, dropped))
         seen = set()
-        for n in names_of(fm["title"]) + fm.get("autolink_terms", []):
+        for n, is_primary in [(n, True) for n in primary + fm.get("autolink_terms", [])] + [(n, False) for n in derived]:
             if n and n.lower() not in seen:
                 seen.add(n.lower())
-                entries.append((n, card, module, off))
+                entries.append((n, card, module, off, is_primary))
 
     by_key = {}
-    for n, card, module, off in entries:
-        by_key.setdefault((n.lower(), module), []).append((n, card, off))
+    for n, card, module, off, is_primary in entries:
+        by_key.setdefault((n.lower(), module), []).append((n, card, off, is_primary))
+    # 衍生名字跟任何一張卡的正式名字同名時不收（不分資料夾：頁面在範圍內同名時取本資料夾的卡，
+    # 衍生名字會蓋過範圍內另一個資料夾的正式名字）
+    primary_keys = {n.lower() for n, _, _, _, pr in entries if pr}
+    shadowed = []
+    for key in list(by_key):
+        items = by_key[key]
+        if key[0] in primary_keys and not all(pr for *_, pr in items):
+            shadowed.extend((n, card) for n, card, _, pr in items if not pr)
+            by_key[key] = [it for it in items if it[3]]
+            if not by_key[key]:
+                del by_key[key]
 
     terms, excluded = [], []
     for (key, module), items in sorted(by_key.items()):
-        cards = sorted({c for _, c, _ in items})
+        cards = sorted({c for _, c, _, _ in items})
         name = items[0][0]
         reason = None
-        if any(off for _, _, off in items):
+        if any(off for _, _, off, _ in items):
             reason = "card-off"
         elif key in excluded_cfg:
             reason = "config"
@@ -301,16 +414,35 @@ def build(source):
         else:
             terms.append({"name": name, "card": cards[0], "module": module})
 
+    words = {}
+    for card, _, dropped in splits:
+        module = card.split("/", 1)[0]
+        for w in dropped:
+            if (w.lower(), module) not in by_key:
+                words.setdefault((w.lower(), module), (w, []))[1].append(card)
+    for (_, module), (w, cards) in sorted(words.items()):
+        excluded.append({"name": w, "cards": sorted(cards), "reason": "derived-word"})
+
     terms.sort(key=lambda t: (t["name"].lower(), t["card"]))
     excluded.sort(key=lambda t: (t["name"].lower(), t["cards"]))
-    return {"scopes": scopes, "terms": terms, "excluded": excluded}, len(paths)
+    return {"scopes": scopes, "terms": terms, "excluded": excluded}, len(paths), (splits, sorted(shadowed))
 
 
 def dump(data):
     return json.dumps(data, ensure_ascii=False, indent=1) + "\n"
 
 
-def report(data):
+def removed_names(current, data):
+    """舊詞典的 terms 裡有、新的沒有的名字（不分大小寫）；舊詞典讀不到時是空的。"""
+    try:
+        old = {t["name"].lower(): t["name"] for t in json.loads(current)["terms"]} if current else {}
+    except (ValueError, KeyError, TypeError):
+        return []
+    new = {t["name"].lower() for t in data["terms"]}
+    return sorted(v for k, v in old.items() if k not in new)
+
+
+def report(data, extra):
     out = sys.stdout
     out.write("## 不做自動連結的名字\n")
     for e in data["excluded"]:
@@ -326,10 +458,19 @@ def report(data):
     for t in data["terms"]:
         if re.fullmatch(r"[A-Za-z][a-z]+", t["name"]):
             out.write(f"{t['name']}\t{t['card']}\n")
-    out.write("\n## 正文不太會逐字寫出的名字（含半形括號、斜線、冒號、逗號或以「等」結尾；這張卡等於不做自動連結，候選：改標題或補 autolink_terms）\n")
-    for t in data["terms"]:
-        if re.search(r"[()/：:，,]|等$", t["name"]):
-            out.write(f"{t['name']}\t{t['card']}\n")
+    splits, shadowed = extra
+    out.write("\n## 從標題拆名字（卡片、收進詞典的衍生名字、不收的一般英文單字；要連的單字補進那張卡的 autolink_terms）\n")
+    for card, derived, dropped in splits:
+        out.write(f"{card}\t{' | '.join(derived) or '-'}\t{' | '.join(dropped) or '-'}\n")
+    out.write("\n## 衍生名字跟另一張卡的正式名字同名而不收\n")
+    for name, card in shadowed:
+        out.write(f"{name}\t{card}\n")
+    out.write("\n## 收進詞典的衍生縮寫（候選：在範圍內另有常見意思的加進 names.exclude）\n")
+    kept = {(t["name"], t["card"]) for t in data["terms"]}
+    for card, derived, _ in splits:
+        for n in derived:
+            if re.fullmatch(r"[A-Z][A-Z0-9]+", n) and (n, card) in kept:
+                out.write(f"{n}\t{card}\n")
 
 
 def run(args):
@@ -343,31 +484,47 @@ def run(args):
         any(a not in valid for a in args)
         or ("--check" in args and "--report" in args)
         or ("--staged" in args and "--check" not in args)
-        or (with_given and (not with_paths or "--check" in args or "--staged" in args))
+        or (with_given and (not with_paths or "--staged" in args))
     ):
         print(__doc__.split("\n\n")[2], file=sys.stderr)
         return 2
     root = repo_root()
     if with_paths:
         source = HeadOverlaySource(root, with_paths)
+        if "--check" in args and OUTPUT not in source.overlay:
+            # 沒列詞典時拿 HEAD 的詞典比對，會誤判成過期
+            raise Failure(f"--check --with 的清單要含 {OUTPUT}（要比對的是這次要提交的詞典）")
     elif "--staged" in args:
         source = IndexSource(root)
     else:
         source = WorktreeSource(root)
-    data, ncards = build(source)
+    try:
+        data, ncards, extra = build(source)
+    except Failure as e:
+        if with_paths and str(e).startswith("資料夾的登記") and CONFIG not in source.overlay:
+            raise Failure(f"{e}\n  （讀的是 HEAD 的 {CONFIG}：它沒有列在 --with 裡）")
+        raise
     text = dump(data)
     current = source.read(OUTPUT)
     current = current.decode("utf-8", errors="replace") if current is not None else None
+    # 跟 HEAD 的詞典比：重產生幾次、清單含不含詞典，印出的都是這次提交會讓哪些名字消失
+    head = subprocess.run(["git", "show", f"HEAD:{OUTPUT}"], cwd=root, capture_output=True)
+    removed = removed_names(head.stdout.decode("utf-8", errors="replace") if head.returncode == 0 else current, data)
+    if removed:
+        # 這些名字在正文裡不再被自動連結：寫到它們的頁面要重新判斷手寫連結（docs/rules/markdown.md 詞典那一列）
+        print("autolink-dict: 不再自動連結的名字：" + "、".join(removed), file=sys.stderr)
     if "--check" in args:
         if current != text:
-            where = "git index 裡的" if "--staged" in args else ""
-            print(f"autolink-dict: {where}{OUTPUT} 過期，跑 bin/autolink-dict 重產生", file=sys.stderr)
+            where = "git index 裡的" if "--staged" in args else "HEAD 加上列出的檔案裡的" if with_paths else ""
+            how = "bin/autolink-dict --with <這次要提交的全部檔案>" if ("--staged" in args or with_paths) else "bin/autolink-dict"
+            print(f"autolink-dict: {where}{OUTPUT} 過期，跑 {how} 重產生", file=sys.stderr)
+            print(f"autolink-dict: {len(data['terms'])} term(s), {len(data['excluded'])} excluded name(s) from {ncards} card(s)", file=sys.stderr)
             return 1
     elif current != text:
         with open(os.path.join(root, OUTPUT), "w", encoding="utf-8") as f:
             f.write(text)
     if "--report" in args:
-        report(data)
+        report(data, extra)
     print(f"autolink-dict: {len(data['terms'])} term(s), {len(data['excluded'])} excluded name(s) from {ncards} card(s)", file=sys.stderr)
     return 0
 

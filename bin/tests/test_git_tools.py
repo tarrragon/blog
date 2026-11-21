@@ -586,6 +586,24 @@ class SessionEditsCheck(Base):
         self.assertEqual(r.returncode, 3)
         self.assertIn("+別人加的行", r.stdout)
 
+    def test_tab_indented_overwrite_falls_back_to_full_content_only_when_original_matches(self):
+        # transcript 的 structuredPatch 把 tab 記成四個空白：Go 檔的 hunk 套不上
+        write(self.root, "g.go", "func f() {\n\treturn 1\n}\n")
+        sh(["git", "add", "g.go"], self.root)
+        sh(["git", "commit", "-q", "-m", "go"], self.root)
+        write(self.root, "g.go", "func f() {\n\treturn 2\n}\n")
+        hunk = {"oldStart": 1, "oldLines": 3, "newStart": 1, "newLines": 3, "lines": [" func f() {", "-    return 1", "+    return 2", " }"]}
+        u = self.update("g.go", [hunk], original="func f() {\n\treturn 1\n}\n")
+        u["content"] = "func f() {\n\treturn 2\n}\n"
+        r = self.run_check(self.transcript((AFTER, u)), "g.go")
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        # originalFile 沒有記下來時不採用全文
+        u2 = self.update("g.go", [hunk], original=None)
+        u2["content"] = "func f() {\n\treturn 2\n}\n"
+        r = self.run_check(self.transcript((AFTER, u2)), "g.go")
+        self.assertEqual(r.returncode, 3)
+        self.assertIn("Write 的改動對不上", r.stdout)
+
     def test_original_file_differing_from_replay_asks_user(self):
         write(self.root, "a.md", "別人改的\n第二行\n改\n")
         e = self.edit("a.md", "第二行\n", "第二行\n改\n")
@@ -629,6 +647,55 @@ class SessionEditsCheck(Base):
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         r = tool("session-edits-check", "--transcript", t, "a.md", cwd=self.root)
         self.assertEqual(r.returncode, 3)
+
+    def autolink_site(self):
+        """HEAD 有一張卡、設定與詞典；回傳 (卡片路徑, 詞典路徑)。"""
+        write(self.root, "data/autolink.toml", '[scopes]\nbackend = ["backend"]\n\n[min_length]\nhan = 2\nlatin = 2\n')
+        write(self.root, "content/backend/knowledge-cards/a.md", '---\ntitle: "Alpha Card"\n---\n')
+        # session-edits-check 跑的是 repo 裡的生成器：複製一份進來一起提交
+        os.makedirs(os.path.join(self.root, "bin"))
+        shutil.copy2(os.path.join(BIN, "autolink-dict"), os.path.join(self.root, "bin", "autolink-dict"))
+        sh([os.path.join(BIN, "autolink-dict")], self.root)
+        sh(["git", "add", "."], self.root)
+        sh(["git", "commit", "-q", "-m", "cards"], self.root)
+        return "content/backend/knowledge-cards/b.md", "data/autolink_terms.json"
+
+    def test_generated_dictionary_is_checked_by_its_generator(self):
+        new, dic = self.autolink_site()
+        write(self.root, new, '---\ntitle: "Beta Card"\n---\n')
+        write(self.root, "content/backend/knowledge-cards/other.md", '---\ntitle: "Other Session Card"\n---\n')  # 別人的卡
+        sh([os.path.join(BIN, "autolink-dict"), "--with", new], self.root)
+        t = self.transcript((AFTER, {"filePath": os.path.join(self.root, new), "type": "create", "content": '---\ntitle: "Beta Card"\n---\n'}))
+        r = self.run_check(t, new, dic)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn(f"ok: {dic}：生成檔", r.stdout)
+        # --staged：讀 commit-files 那樣的私有 index
+        idx = os.path.join(self.base, "idx")
+        env = {"GIT_INDEX_FILE": idx}
+        sh(["git", "read-tree", "HEAD"], self.root, env=env)
+        sh(["git", "add", new, dic], self.root, env=env)
+        r = tool("session-edits-check", "--staged", "--transcript", t, new, dic, cwd=self.root, env=env)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        # 詞典混進別人的卡（不用 --with 重產生）：ASK-USER，附生成器的訊息
+        sh([os.path.join(BIN, "autolink-dict")], self.root)
+        r = self.run_check(t, new, dic)
+        self.assertEqual(r.returncode, 3)
+        self.assertIn(f"[ASK-USER] {dic}：生成檔", r.stdout)
+        self.assertIn("生成器的訊息：", r.stdout)
+        self.assertIn("1 ask-user", r.stderr)
+
+    def test_generator_changed_by_someone_else_is_not_trusted(self):
+        new, dic = self.autolink_site()
+        write(self.root, new, '---\ntitle: "Beta Card"\n---\n')
+        sh([os.path.join(BIN, "autolink-dict"), "--with", new], self.root)
+        t = self.transcript((AFTER, {"filePath": os.path.join(self.root, new), "type": "create", "content": '---\ntitle: "Beta Card"\n---\n'}))
+        self.assertEqual(self.run_check(t, new, dic).returncode, 0)
+        # 另一個 session 在工作樹裡改了生成器、還沒提交
+        with open(os.path.join(self.root, "bin", "autolink-dict"), "a", encoding="utf-8") as f:
+            f.write("\n# 別人的改動\n")
+        r = self.run_check(t, new, dic)
+        self.assertEqual(r.returncode, 3, r.stdout)
+        self.assertIn("生成器 bin/autolink-dict 在工作樹裡跟 HEAD 不同", r.stdout)
 
     def test_commit_files_runs_the_check_in_claude_code(self):
         msg = os.path.join(self.base, "msg")
