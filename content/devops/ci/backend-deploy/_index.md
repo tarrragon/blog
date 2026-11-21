@@ -13,13 +13,13 @@ aliases: ["/ci/backend-deploy/"]
 
 後端部署的主要風險來自有狀態依賴與長時間執行。API、worker、scheduler 與 consumer 會連到資料庫、queue、cache 與第三方服務；部署流程需要確認程式、資料與流量切換順序。
 
-| 面向                                                                            | 後端部署常見責任                               | 判讀訊號                    |
-| ------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------- |
-| Build                                                                           | binary、package、container image               | build 是否可重現            |
-| Test                                                                            | unit、integration、contract、migration         | 是否覆蓋跨服務契約          |
-| [Migration](/devops/ci/knowledge-cards/migration/)                              | schema change、backfill、rollback path         | 是否可漸進、可停止、可驗證  |
-| [Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/)                | rolling、canary、blue-green                    | health / readiness 是否可信 |
-| [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) | app rollback、migration rollback / forward fix | 回復路徑是否演練            |
+| 面向                                                                           | 後端部署常見責任                               | 判讀訊號                    |
+| ------------------------------------------------------------------------------ | ---------------------------------------------- | --------------------------- |
+| Build                                                                          | binary、package、container image               | build 是否可重現            |
+| Test                                                                           | unit、integration、contract、migration         | 是否覆蓋跨服務契約          |
+| [Migration](/devops/ci/knowledge-cards/migration/)                             | schema change、backfill、rollback path         | 是否可漸進、可停止、可驗證  |
+| [Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/)               | rolling、canary、blue-green                    | health / readiness 是否可信 |
+| [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/release-rollback/) | app rollback、migration rollback / forward fix | 回復路徑是否演練            |
 
 Build 階段負責產生可部署服務。後端 build 常見形式是 binary、package 或 container image；判讀重點是版本是否能追到 commit、依賴是否固定、產物是否能在乾淨環境重建。
 
@@ -29,7 +29,7 @@ Test 階段負責驗證服務契約。單元測試只能覆蓋局部邏輯，int
 
 [Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/) 階段負責把流量安全導向新版本。Rolling、canary 與 blue-green 都需要可靠的 health、readiness、metrics 與 log；若 readiness 只檢查 process alive，流量仍可能被送到尚未準備好的服務。
 
-[Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) 階段負責在新版本失效時縮小影響範圍。後端 rollback 要同時考慮程式、資料、queue message、外部 side effect 與 config；只回退 image tag，通常不足以處理已寫入的資料變化。
+[Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/release-rollback/) 階段負責在新版本失效時縮小影響範圍。後端 rollback 要同時考慮程式、資料、queue message、外部 side effect 與 config；只回退 image tag，通常不足以處理已寫入的資料變化。
 
 ## 常見注意事項
 

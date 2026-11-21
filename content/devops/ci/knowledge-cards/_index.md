@@ -28,7 +28,7 @@ CI/CD 知識卡片的核心責任是建立共同語言。流程文章會使用 p
 | [Environment Protection](/devops/ci/knowledge-cards/environment-protection/)       | 目標環境如何設置審核與發布保護       | production、staging、review gate            |
 | [Preview Environment](/devops/ci/knowledge-cards/preview-environment/)             | PR 變更如何在隔離環境中被提前驗證    | frontend preview URL、review app            |
 | [Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/)                   | 新版本如何分批推進以控制風險         | rolling、canary、phased rollout             |
-| [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/)    | 各種發布物如何撤回前一版             | deploy rollback、hotfix、forward fix        |
+| [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/release-rollback/)     | 各種發布物如何撤回前一版             | deploy rollback、hotfix、forward fix        |
 | [Deployment Dry Run](/devops/ci/knowledge-cards/deployment-dry-run/)               | 發布前如何先驗證流程條件與權限       | preflight check、artifact check、permission |
 | [Backfill](/devops/ci/knowledge-cards/backfill/)                                   | 歷史資料如何受控補算                 | migration、data pipeline、repair            |
 | [Checkpoint](/devops/ci/knowledge-cards/checkpoint/)                               | 長時間任務如何保存接續位置           | backfill、stream processor、rerun           |

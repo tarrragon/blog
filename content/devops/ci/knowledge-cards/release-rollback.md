@@ -4,7 +4,7 @@ date: 2026-05-06
 description: "設計部署流程時，要決定靜態站、後端服務與 App 各自怎麼撤回前一版、哪些步驟要跟回滾一起做"
 tags: ["CD", "rollback", "發布物回滾", "knowledge-card"]
 weight: 8
-aliases: ["/ci/knowledge-cards/rollback-strategy/"]
+aliases: ["/ci/knowledge-cards/rollback-strategy/", "/devops/ci/knowledge-cards/rollback-strategy/"]
 ---
 
 Release Rollback 在部署流程裡指的是把每一種發布物（靜態站的 artifact、後端服務的 image、App 的版本與遠端設定）撤回前一版的做法，以及回滾時要一起做的步驟，是新版本推出的方式（[Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/)）失敗時的對應動作，要在發布之前設計好。這張卡的回滾指部署回滾（deployment rollback）：把已上線的發布物撤回前一版；資料庫撤銷交易裡變更的 `ROLLBACK` 是交易回滾（transaction rollback），是另一件事，寫在 backend 的 [Transaction（交易）](/backend/knowledge-cards/transaction/) 卡。事故當下判斷要不要回滾（回滾能不能比其他做法更快降低影響、新舊版本的資料相容、停止條件與回滾後的驗證）寫在 backend 的 [Rollback Strategy（回滾策略）](/backend/knowledge-cards/rollback-strategy/) 卡，本卡寫判斷成立之後，部署流程拿什麼撤回；兩張卡講的是同一件部署回滾的兩個面向，名稱分開是為了讓連結文字指得出是哪一張。

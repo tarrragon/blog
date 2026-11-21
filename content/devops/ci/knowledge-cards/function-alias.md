@@ -7,7 +7,7 @@ weight: 25
 aliases: ["/ci/knowledge-cards/function-alias/"]
 ---
 
-Function Alias 的核心概念是「用穩定名稱指向不可變函式版本」。它讓 [Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/) 可以套用在 serverless function 上，並讓 [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) 具備快速切換入口。
+Function Alias 的核心概念是「用穩定名稱指向不可變函式版本」。它讓 [Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/) 可以套用在 serverless function 上，並讓 [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/release-rollback/) 具備快速切換入口。
 
 ## 跟其他概念的關係
 

@@ -10,11 +10,11 @@ aliases: ["/ci/"]
 
 CI/CD 教學的核心目標是把「變更如何被驗證、建置、交付」寫成可重播流程。[CI Pipeline](/devops/ci/knowledge-cards/ci-pipeline/) 負責驗證變更是否可信，[CD Pipeline](/devops/ci/knowledge-cards/cd-pipeline/) 負責把可信 [artifact](/devops/ci/knowledge-cards/artifact/) 交付到目標環境；兩者共享 gate、artifact、環境與回復路徑，但不同部署場域的細節差異很大。
 
-CI/CD 的責任是提供一致的判讀入口。當 workflow 顯示失敗時，團隊需要能快速判斷是 lint、test、build、package、[Artifact Handoff](/devops/ci/knowledge-cards/artifact-handoff/)、deploy 還是 [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) 階段出問題，並知道下一步該回到本機重現、修正、重新提交，還是暫停發布。
+CI/CD 的責任是提供一致的判讀入口。當 workflow 顯示失敗時，團隊需要能快速判斷是 lint、test、build、package、[Artifact Handoff](/devops/ci/knowledge-cards/artifact-handoff/)、deploy 還是 [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/release-rollback/) 階段出問題，並知道下一步該回到本機重現、修正、重新提交，還是暫停發布。
 
 ### [前置知識卡片](/devops/ci/knowledge-cards/)
 
-用原子化卡片整理 [Artifact](/devops/ci/knowledge-cards/artifact/)、[Required Checks](/devops/ci/knowledge-cards/required-checks/)、[Artifact Handoff](/devops/ci/knowledge-cards/artifact-handoff/)、[Environment Protection](/devops/ci/knowledge-cards/environment-protection/)、[Preview Environment](/devops/ci/knowledge-cards/preview-environment/)、[Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/)、[Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/)、[Migration](/devops/ci/knowledge-cards/migration/)、[Backfill](/devops/ci/knowledge-cards/backfill/)、[Image Digest](/devops/ci/knowledge-cards/image-digest/)、[Release Channel](/devops/ci/knowledge-cards/release-channel/)、[Infrastructure Drift](/devops/ci/knowledge-cards/infrastructure-drift/)、[Function Alias](/devops/ci/knowledge-cards/function-alias/) 與 [Flaky Test](/devops/ci/knowledge-cards/flaky-test/) 等核心術語。流程文章專注情境判讀與決策順序，術語背景交由卡片維持一致。
+用原子化卡片整理 [Artifact](/devops/ci/knowledge-cards/artifact/)、[Required Checks](/devops/ci/knowledge-cards/required-checks/)、[Artifact Handoff](/devops/ci/knowledge-cards/artifact-handoff/)、[Environment Protection](/devops/ci/knowledge-cards/environment-protection/)、[Preview Environment](/devops/ci/knowledge-cards/preview-environment/)、[Rollout Strategy](/devops/ci/knowledge-cards/rollout-strategy/)、[Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/release-rollback/)、[Migration](/devops/ci/knowledge-cards/migration/)、[Backfill](/devops/ci/knowledge-cards/backfill/)、[Image Digest](/devops/ci/knowledge-cards/image-digest/)、[Release Channel](/devops/ci/knowledge-cards/release-channel/)、[Infrastructure Drift](/devops/ci/knowledge-cards/infrastructure-drift/)、[Function Alias](/devops/ci/knowledge-cards/function-alias/) 與 [Flaky Test](/devops/ci/knowledge-cards/flaky-test/) 等核心術語。流程文章專注情境判讀與決策順序，術語背景交由卡片維持一致。
 
 ## 學習路線
 

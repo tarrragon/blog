@@ -13,13 +13,13 @@ App 部署 CI/CD 的核心責任是把可安裝的 client [artifact](/devops/ci/
 
 App 部署的風險集中在 artifact 不可變、簽章憑證、store review 與版本分佈。後端可以快速 rollback，前端靜態站可以重新部署，但已安裝的 App 需要靠更新、[feature flag](/backend/knowledge-cards/feature-flag/) 或服務端相容性管理。
 
-| 面向                                                                            | App 部署常見責任                   | 判讀訊號                        |
-| ------------------------------------------------------------------------------- | ---------------------------------- | ------------------------------- |
-| Build                                                                           | IPA、APK、AAB、desktop package     | build number / version 是否遞增 |
-| Signing                                                                         | certificate、profile、keystore     | secret 是否安全、是否可輪替     |
-| Test                                                                            | unit、UI、device matrix            | 是否覆蓋目標 OS 與裝置          |
-| Release                                                                         | store review、phased rollout       | 審核狀態與 rollout 百分比       |
-| [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) | hotfix、remote config、kill switch | 是否能處理已安裝舊版            |
+| 面向                                                                           | App 部署常見責任                   | 判讀訊號                        |
+| ------------------------------------------------------------------------------ | ---------------------------------- | ------------------------------- |
+| Build                                                                          | IPA、APK、AAB、desktop package     | build number / version 是否遞增 |
+| Signing                                                                        | certificate、profile、keystore     | secret 是否安全、是否可輪替     |
+| Test                                                                           | unit、UI、device matrix            | 是否覆蓋目標 OS 與裝置          |
+| Release                                                                        | store review、phased rollout       | 審核狀態與 rollout 百分比       |
+| [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/release-rollback/) | hotfix、remote config、kill switch | 是否能處理已安裝舊版            |
 
 Build 階段負責產生可安裝 artifact。Mobile 常見產物是 IPA、APK 或 AAB，desktop 則可能是 installer 或 signed package；版本號、build number 與 commit 對應關係會決定後續除錯與回報能否追溯。
 
@@ -29,7 +29,7 @@ Test 階段負責驗證不同裝置與作業系統組合。App 測試常見風�
 
 Release 階段負責把 artifact 送進發行通道。Store review、phased rollout、internal testing、beta track 與 production track 都是 gate；發布節奏要把審核時間與分批比例納入 [rollout strategy](/devops/ci/knowledge-cards/rollout-strategy/) 的風險控制（backend 延伸見 [Config Rollout](/backend/knowledge-cards/config-rollout/)）。
 
-[Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) 階段負責處理已安裝版本。App 發布後會長期存在多個使用者版本，因此 hotfix、remote config、kill switch 與後端相容性要一起設計（相容治理延伸見 [API Contract](/backend/knowledge-cards/api-contract/)）。
+[Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/release-rollback/) 階段負責處理已安裝版本。App 發布後會長期存在多個使用者版本，因此 hotfix、remote config、kill switch 與後端相容性要一起設計（相容治理延伸見 [API Contract](/backend/knowledge-cards/api-contract/)）。
 
 ## 常見注意事項
 

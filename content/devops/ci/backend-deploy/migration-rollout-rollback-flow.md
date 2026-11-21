@@ -13,13 +13,13 @@ aliases: ["/ci/backend-deploy/migration-rollout-rollback-flow/"]
 
 後端部署的主要風險是有狀態依賴。前端 artifact 可以直接回退上一份靜態檔，後端服務一旦寫入新資料、消費 queue message 或呼叫外部 side effect，rollback 就不再只是換回舊 image。發布流程要先定義新舊版本如何短暫共存，再決定 migration 與流量切換順序。
 
-| 階段                                                                            | 責任                          | 判讀訊號                                |
-| ------------------------------------------------------------------------------- | ----------------------------- | --------------------------------------- |
-| Build                                                                           | 產生 binary、package 或 image | 版本是否可追到 commit                   |
-| Contract test                                                                   | 驗證 API、queue、DB 相容性    | 新舊 schema / message 是否可共存        |
-| [Migration](/devops/ci/knowledge-cards/migration/)                              | 推進資料結構與資料狀態        | 是否可漸進、可重試、可停止              |
-| [Rollout strategy](/devops/ci/knowledge-cards/rollout-strategy/)                | 分批接流量                    | readiness、error rate、latency 是否可信 |
-| [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) | 縮小錯誤版本影響              | 程式、資料、queue 與 config 是否可回復  |
+| 階段                                                                           | 責任                          | 判讀訊號                                |
+| ------------------------------------------------------------------------------ | ----------------------------- | --------------------------------------- |
+| Build                                                                          | 產生 binary、package 或 image | 版本是否可追到 commit                   |
+| Contract test                                                                  | 驗證 API、queue、DB 相容性    | 新舊 schema / message 是否可共存        |
+| [Migration](/devops/ci/knowledge-cards/migration/)                             | 推進資料結構與資料狀態        | 是否可漸進、可重試、可停止              |
+| [Rollout strategy](/devops/ci/knowledge-cards/rollout-strategy/)               | 分批接流量                    | readiness、error rate、latency 是否可信 |
+| [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/release-rollback/) | 縮小錯誤版本影響              | 程式、資料、queue 與 config 是否可回復  |
 
 Build 階段負責產生可部署服務。服務版本要能從 runtime 反查 commit、workflow run、image digest 與 migration 版本，讓事故時能快速定位哪一次變更進入環境。
 
@@ -29,7 +29,7 @@ Contract test 階段負責驗證跨邊界相容。API response、database schema
 
 [Rollout strategy](/devops/ci/knowledge-cards/rollout-strategy/) 階段負責控制新版本接到的流量。Rolling、canary 與 blue-green 都需要可信 readiness；readiness 應檢查服務能否接流量，而不只是 process alive。
 
-[Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) 階段負責定義失敗時的處理路由。後端 rollback 常見做法是 app rollback、config rollback、traffic rollback 或 forward fix；資料已被新程式寫入時，forward fix 往往比直接資料回滾安全。
+[Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/release-rollback/) 階段負責定義失敗時的處理路由。後端 rollback 常見做法是 app rollback、config rollback、traffic rollback 或 forward fix；資料已被新程式寫入時，forward fix 往往比直接資料回滾安全。
 
 ## Migration 順序
 
