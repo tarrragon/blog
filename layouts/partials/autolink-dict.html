@@ -1,0 +1,26 @@
+{{- /*
+  自動連結的詞典資源：把 bin/autolink-dict 產生的 data/autolink_terms.json 轉成瀏覽器用的 JSON，
+  回傳它的網址（fingerprint 過，內容變了網址就變）。每一頁都用同一份，所以用 partialCached 呼叫。
+
+  輸出格式：{"cards": {"<card>": {"u": 網址, "t": 標題, "d": description}},
+             "terms": [{"n": 名字, "c": "<card>", "m": 第一層資料夾}, ...]}
+  （詞條用 dict 不用 slice：Hugo 的 append 會把內層的 slice 攤平成一層）
+  <card> 是 content/ 底下去掉 .md 的路徑；找不到頁面的卡（draft、被刪掉而詞典還沒重產生）不收。
+*/ -}}
+{{- $s := newScratch -}}
+{{- $terms := slice -}}
+{{- with site.Data.autolink_terms -}}
+  {{- range .terms -}}
+    {{- $card := .card -}}
+    {{- $name := .name -}}
+    {{- $module := .module -}}
+    {{- with site.GetPage (printf "/%s" $card) -}}
+      {{- /* SetInMap 原地寫入；merge 每次複製整張 map，一千多張卡會複製幾十萬次 */ -}}
+      {{- $s.SetInMap "cards" $card (dict "u" .RelPermalink "t" .Title "d" (.Params.description | default "")) -}}
+      {{- $terms = $terms | append (dict "n" $name "c" $card "m" $module) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $json := dict "cards" ($s.Get "cards" | default dict) "terms" $terms | jsonify -}}
+{{- $res := resources.FromString "js/autolink-terms.json" $json | fingerprint -}}
+{{- return $res.RelPermalink -}}

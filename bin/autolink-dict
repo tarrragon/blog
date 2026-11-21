@@ -1,0 +1,388 @@
+#!/usr/bin/env python3
+"""從知識卡的標題產生自動連結的詞典 data/autolink_terms.json，並列出不做自動連結的名字。
+
+用途：網站在瀏覽器端把正文裡出現的卡片名稱標成連到那張卡的連結（layouts/partials/autolink.html
+與 assets/js/autolink.js）。比對用的名字從卡片標題機械地取出，作者不必為了讓讀者查到卡而在每一處
+手寫連結；哪些名字不做自動連結也由這支工具依 data/autolink.toml 決定。Hugo 與 mdtools 都讀它產生
+的 data/autolink_terms.json，名字的取法與排除條件只寫在這裡一份。
+
+用法：
+  bin/autolink-dict                     重產生 data/autolink_terms.json（內容沒變時不改檔）
+  bin/autolink-dict --check             只比對：data/autolink_terms.json 跟工作樹的卡片與設定對不上時 exit 1
+  bin/autolink-dict --check --staged    同上，但卡片、設定與詞典都讀 git index（pre-commit 用這個：
+                                        另一個 session 在工作樹裡還沒 staged 的卡不影響這次的提交）
+  bin/autolink-dict --with <路徑...>    重產生，但以 HEAD 為底，只疊上列出的路徑在工作樹裡的版本
+                                        （列出而工作樹沒有的檔當成刪除）。工作樹裡有不屬於這次提交的卡
+                                        時用這個：路徑列這次要提交的卡片與 data/autolink.toml，產生的
+                                        詞典跟 bin/commit-files 的私有 index（HEAD 加上這次的檔案）對得上，
+                                        pre-commit 的 --check --staged 才會通過。路徑以 repo 根目錄起算
+  bin/autolink-dict --report            重產生之後，另外在 stdout 列出不做自動連結的名字與原因、
+                                        跨模組同名的名字，以及只有一個英文單字的名字（候選，供人工判斷
+                                        要不要加進排除清單）
+  在 repo 裡任何目錄執行都可以（以 repo 根目錄為準）。
+
+卡片：content/ 底下資料夾名為 knowledge-cards 或 cards 的 .md（不含 _index.md 與 content/skills/），
+跟 docs/rules/sentences.md〈建卡原則〉的定義相同。frontmatter 有 `draft: true` 的不收。
+
+名字的取法：
+  - 標題寫成「英文（中文）」（全形括號在結尾）時，括號前的英文與括號裡的中文各是一個名字。
+  - 其他標題整個當一個名字。
+  - frontmatter 的 `autolink_terms: ["別名", ...]`（單行陣列）另外加名字。加別名之前，別名照
+    docs/rules/sentences.md〈譯名避開介面上已有的同名元素〉的判斷問句過一次，並問它在比對範圍內的
+    文章裡是不是常指別的東西：別名在範圍內每一次出現都會連到這張卡，也會讓 mdtools 的孤兒卡警告
+    消失。加了之後跑 --report，commit message 寫出別名與判斷。
+  - frontmatter 的 `autolink: false` 讓這張卡的名字都不做自動連結。
+
+排除的原因（排除的名字不進 terms，列在 excluded）：
+  short-han   名字不含拉丁字母、而漢字數少於等於 min_length.han
+  short-latin 名字含拉丁字母、而去掉空白之後少於等於 min_length.latin 個字元
+  config      名字在 names.exclude 裡（不分大小寫）
+  card-off    卡片的 frontmatter 寫了 autolink: false
+  ambiguous   同一個名字（不分大小寫）在同一個第一層資料夾裡對到兩張以上的卡
+跨第一層資料夾的同名（backend 與 business 各有一張 Retention）留在 terms 裡，由頁面依比對範圍
+與所在資料夾決定（規則寫在 data/autolink.toml 的 scopes 註解）；--report 列在「跨模組同名」。
+
+輸出格式：{"scopes": data/autolink.toml 的 scopes 原樣照抄, "terms": [{"name": 名字,
+"card": "backend/knowledge-cards/transaction", "module": "backend"}, ...], "excluded": [{"name",
+"cards", "reason"}, ...]}，依名字排序，`card` 是 content/ 底下去掉 .md 的路徑（Hugo 的 GetPage
+用 "/" 加上它找頁面）。scopes 照抄進來，是讓 mdtools 不必另外解析 TOML。
+
+成功時在 stderr 印 `autolink-dict: T term(s), E excluded name(s) from C card(s)`；C 是掃到的卡片檔數
+（含 draft，不含 _index.md 與 content/skills/）。
+
+exit：0 完成（--check 時代表詞典是新的）；1 只在 --check 發現詞典過期時；2 其餘的失敗：用法錯誤、
+不在 git repo 裡、找不到 data/autolink.toml、設定格式不對、一張卡都沒找到、讀卡失敗（原因印在
+stderr，不印計數）。
+
+為什麼寫成工具：名字的取法與排除條件要同時給 Hugo（產生頁面上的詞典）與 mdtools（判斷一張卡
+有沒有文章連到它）用，各寫一份會分歧；寫成一支產生 JSON 的工具，兩邊讀同一份結果。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import json
+import os
+import re
+import subprocess
+import sys
+
+try:
+    import tomllib
+except ImportError:  # Python 3.10 以前沒有 tomllib
+    tomllib = None
+
+CARD_DIRS = ("knowledge-cards", "cards")
+CONFIG = "data/autolink.toml"
+OUTPUT = "data/autolink_terms.json"
+PAIR_TITLE = re.compile(r"^(?P<en>.*?\S)\s*（(?P<zh>[^（）]+)）$")
+HAN = re.compile(r"[㐀-鿿]")
+LATIN = re.compile(r"[A-Za-z]")
+
+
+class Failure(Exception):
+    pass
+
+
+def git(root, *args, input_bytes=None):
+    r = subprocess.run(["git", *args], cwd=root, input=input_bytes, capture_output=True)
+    if r.returncode != 0:
+        raise Failure(f"git {' '.join(args)} 失敗：{r.stderr.decode(errors='replace').strip()}")
+    return r.stdout
+
+
+def repo_root():
+    r = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    if r.returncode != 0:
+        raise Failure("不在 git repo 裡")
+    return r.stdout.strip()
+
+
+def is_card(rel):
+    parts = rel.split("/")
+    return (
+        len(parts) >= 3
+        and parts[0] == "content"
+        and parts[1] != "skills"
+        and parts[-2] in CARD_DIRS
+        and parts[-1].endswith(".md")
+        and parts[-1] != "_index.md"
+    )
+
+
+class WorktreeSource:
+    """讀工作樹的檔案。"""
+
+    def __init__(self, root):
+        self.root = root
+
+    def cards(self):
+        out = []
+        for dirpath, dirnames, filenames in os.walk(os.path.join(self.root, "content")):
+            for fn in filenames:
+                rel = os.path.relpath(os.path.join(dirpath, fn), self.root).replace(os.sep, "/")
+                if is_card(rel):
+                    out.append(rel)
+        return sorted(out)
+
+    def read(self, rel):
+        path = os.path.join(self.root, rel)
+        if not os.path.exists(path):
+            return None
+        with open(path, "rb") as f:
+            return f.read()
+
+
+class IndexSource:
+    """讀 git index（staged 的版本）。"""
+
+    def __init__(self, root):
+        self.root = root
+        self.blobs = {}
+        for entry in git(root, "ls-files", "-s", "-z").split(b"\0"):
+            if not entry:
+                continue
+            meta, path = entry.split(b"\t", 1)
+            self.blobs[path.decode()] = meta.split()[1].decode()
+
+    def cards(self):
+        return sorted(p for p in self.blobs if is_card(p))
+
+    def read(self, rel):
+        sha = self.blobs.get(rel)
+        if sha is None:
+            return None
+        return git(self.root, "cat-file", "blob", sha)
+
+    def read_many(self, rels):
+        shas = [self.blobs[r] for r in rels]
+        data = git(self.root, "cat-file", "--batch", input_bytes=("\n".join(shas) + "\n").encode())
+        out, pos = {}, 0
+        for rel in rels:
+            nl = data.index(b"\n", pos)
+            size = int(data[pos:nl].split()[2])
+            out[rel] = data[nl + 1 : nl + 1 + size]
+            pos = nl + 1 + size + 1
+        return out
+
+
+class HeadOverlaySource(IndexSource):
+    """讀 HEAD，再疊上指定路徑在工作樹裡的版本。"""
+
+    def __init__(self, root, paths):
+        self.root = root
+        self.blobs = {}
+        for entry in git(root, "ls-tree", "-r", "-z", "HEAD").split(b"\0"):
+            if not entry:
+                continue
+            meta, path = entry.split(b"\t", 1)
+            self.blobs[path.decode()] = meta.split()[2].decode()
+        self.overlay = {}
+        for p in paths:
+            rel = os.path.relpath(os.path.abspath(p), root).replace(os.sep, "/") if os.path.isabs(p) else p
+            full = os.path.join(root, rel)
+            if os.path.exists(full):
+                with open(full, "rb") as f:
+                    self.overlay[rel] = f.read()
+            else:
+                self.overlay[rel] = None
+
+    def cards(self):
+        names = set(self.blobs) | {p for p, v in self.overlay.items() if v is not None}
+        names -= {p for p, v in self.overlay.items() if v is None}
+        return sorted(p for p in names if is_card(p))
+
+    def read(self, rel):
+        if rel in self.overlay:
+            return self.overlay[rel]
+        return super().read(rel)
+
+    def read_many(self, rels):
+        from_head = [r for r in rels if r not in self.overlay]
+        out = super().read_many(from_head) if from_head else {}
+        out.update({r: self.overlay[r] for r in rels if r in self.overlay})
+        return out
+
+
+def frontmatter(text):
+    if not text.startswith("---"):
+        return {}
+    end = text.find("\n---", 3)
+    if end < 0:
+        return {}
+    fm = {}
+    for line in text[3:end].splitlines():
+        m = re.match(r"^([A-Za-z_]+):\s*(.*?)\s*$", line)
+        if not m:
+            continue
+        key, val = m.group(1), m.group(2)
+        if key == "title":
+            if len(val) >= 2 and val[0] == val[-1] and val[0] in "\"'":
+                val = val[1:-1]
+            fm[key] = val
+        elif key in ("draft", "autolink"):
+            fm[key] = val.lower()
+        elif key == "autolink_terms":
+            fm[key] = [t for pair in re.findall(r'"([^"]+)"|\'([^\']+)\'', val) for t in pair if t]
+    return fm
+
+
+def names_of(title):
+    m = PAIR_TITLE.match(title.strip())
+    if m:
+        return [m.group("en").strip(), m.group("zh").strip()]
+    return [title.strip()]
+
+
+def too_short(name, min_len):
+    if LATIN.search(name):
+        return len(re.sub(r"\s", "", name)) <= min_len["latin"]
+    return len(HAN.findall(name)) <= min_len["han"]
+
+
+def load_config(source):
+    raw = source.read(CONFIG)
+    if raw is None:
+        raise Failure(f"找不到 {CONFIG}")
+    if tomllib is None:
+        raise Failure("這個 Python 沒有 tomllib（要 3.11 以上）")
+    try:
+        cfg = tomllib.loads(raw.decode("utf-8"))
+        min_len = {"han": int(cfg["min_length"]["han"]), "latin": int(cfg["min_length"]["latin"])}
+        excluded = {n.lower() for n in cfg.get("names", {}).get("exclude", [])}
+        scopes = {k: [str(m) for m in v] for k, v in sorted(cfg["scopes"].items())}
+    except (tomllib.TOMLDecodeError, UnicodeDecodeError, KeyError, TypeError, ValueError, AttributeError) as e:
+        raise Failure(f"{CONFIG} 格式不對：{e}")
+    return min_len, excluded, scopes
+
+
+def build(source):
+    min_len, excluded_cfg, scopes = load_config(source)
+    paths = source.cards()
+    if not paths:
+        raise Failure("content/ 底下一張卡都沒找到")
+    contents = source.read_many(paths) if hasattr(source, "read_many") else {p: source.read(p) for p in paths}
+
+    entries = []  # (name, card, module, off)
+    for p in paths:
+        try:
+            fm = frontmatter(contents[p].decode("utf-8"))
+        except UnicodeDecodeError as e:
+            raise Failure(f"{p} 不是 UTF-8：{e}")
+        if fm.get("draft") == "true" or not fm.get("title"):
+            continue
+        card = p[len("content/") : -len(".md")]
+        module = card.split("/", 1)[0]
+        off = fm.get("autolink") == "false"
+        seen = set()
+        for n in names_of(fm["title"]) + fm.get("autolink_terms", []):
+            if n and n.lower() not in seen:
+                seen.add(n.lower())
+                entries.append((n, card, module, off))
+
+    by_key = {}
+    for n, card, module, off in entries:
+        by_key.setdefault((n.lower(), module), []).append((n, card, off))
+
+    terms, excluded = [], []
+    for (key, module), items in sorted(by_key.items()):
+        cards = sorted({c for _, c, _ in items})
+        name = items[0][0]
+        reason = None
+        if any(off for _, _, off in items):
+            reason = "card-off"
+        elif key in excluded_cfg:
+            reason = "config"
+        elif too_short(name, min_len):
+            reason = "short-latin" if LATIN.search(name) else "short-han"
+        elif len(cards) > 1:
+            reason = "ambiguous"
+        if reason:
+            excluded.append({"name": name, "cards": cards, "reason": reason})
+        else:
+            terms.append({"name": name, "card": cards[0], "module": module})
+
+    terms.sort(key=lambda t: (t["name"].lower(), t["card"]))
+    excluded.sort(key=lambda t: (t["name"].lower(), t["cards"]))
+    return {"scopes": scopes, "terms": terms, "excluded": excluded}, len(paths)
+
+
+def dump(data):
+    return json.dumps(data, ensure_ascii=False, indent=1) + "\n"
+
+
+def report(data):
+    out = sys.stdout
+    out.write("## 不做自動連結的名字\n")
+    for e in data["excluded"]:
+        out.write(f"{e['reason']}\t{e['name']}\t{' '.join(e['cards'])}\n")
+    out.write("\n## 跨模組同名（依頁面所在的資料夾決定連哪一張）\n")
+    groups = {}
+    for t in data["terms"]:
+        groups.setdefault(t["name"].lower(), []).append(t)
+    for key, ts in sorted(groups.items()):
+        if len(ts) > 1:
+            out.write(f"{ts[0]['name']}\t{' '.join(t['card'] for t in ts)}\n")
+    out.write("\n## 只有一個英文單字的名字（候選：是日常詞就加進 names.exclude）\n")
+    for t in data["terms"]:
+        if re.fullmatch(r"[A-Za-z][a-z]+", t["name"]):
+            out.write(f"{t['name']}\t{t['card']}\n")
+    out.write("\n## 正文不太會逐字寫出的名字（含半形括號、斜線、冒號、逗號或以「等」結尾；這張卡等於不做自動連結，候選：改標題或補 autolink_terms）\n")
+    for t in data["terms"]:
+        if re.search(r"[()/：:，,]|等$", t["name"]):
+            out.write(f"{t['name']}\t{t['card']}\n")
+
+
+def run(args):
+    with_given = "--with" in args
+    with_paths = []
+    if with_given:
+        i = args.index("--with")
+        args, with_paths = args[:i], args[i + 1 :]
+    valid = {"--check", "--report", "--staged"}
+    if (
+        any(a not in valid for a in args)
+        or ("--check" in args and "--report" in args)
+        or ("--staged" in args and "--check" not in args)
+        or (with_given and (not with_paths or "--check" in args or "--staged" in args))
+    ):
+        print(__doc__.split("\n\n")[2], file=sys.stderr)
+        return 2
+    root = repo_root()
+    if with_paths:
+        source = HeadOverlaySource(root, with_paths)
+    elif "--staged" in args:
+        source = IndexSource(root)
+    else:
+        source = WorktreeSource(root)
+    data, ncards = build(source)
+    text = dump(data)
+    current = source.read(OUTPUT)
+    current = current.decode("utf-8", errors="replace") if current is not None else None
+    if "--check" in args:
+        if current != text:
+            where = "git index 裡的" if "--staged" in args else ""
+            print(f"autolink-dict: {where}{OUTPUT} 過期，跑 bin/autolink-dict 重產生", file=sys.stderr)
+            return 1
+    elif current != text:
+        with open(os.path.join(root, OUTPUT), "w", encoding="utf-8") as f:
+            f.write(text)
+    if "--report" in args:
+        report(data)
+    print(f"autolink-dict: {len(data['terms'])} term(s), {len(data['excluded'])} excluded name(s) from {ncards} card(s)", file=sys.stderr)
+    return 0
+
+
+def main(argv):
+    try:
+        code = run(argv[1:])
+    except Failure as e:
+        print(f"autolink-dict: {e}", file=sys.stderr)
+        code = 2
+    except Exception as e:  # 讀檔失敗這類沒預料到的錯誤也要是 2，不能跟「詞典過期」的 1 混在一起
+        print(f"autolink-dict: {type(e).__name__}: {e}", file=sys.stderr)
+        code = 2
+    sys.exit(code)
+
+
+if __name__ == "__main__":
+    main(sys.argv)

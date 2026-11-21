@@ -19,7 +19,15 @@ import (
 // Reported at warn level — orphans are a content-coverage signal,
 // not a formatting failure, and Task 2 (knowledge-web-expansion) is
 // explicitly still filling these in.
+//
+// A card the site auto-links (its name appears in the prose of a non-card
+// page whose module may link to it, per data/autolink_terms.json) also
+// counts as reachable; see autolink.go.
 func checkL2Orphans(g *Graph, cardsRoot string) []report.Violation {
+	return checkL2OrphansWith(g, cardsRoot, loadAutolinkDict())
+}
+
+func checkL2OrphansWith(g *Graph, cardsRoot string, dict *autolinkDict) []report.Violation {
 	if cardsRoot == "" {
 		return nil
 	}
@@ -40,12 +48,21 @@ func checkL2Orphans(g *Graph, cardsRoot string) []report.Violation {
 		}
 	}
 
-	var out []report.Violation
+	candidates := map[string]bool{}
 	for _, fn := range g.Files {
 		if !isCardPath(fn.Path, cardsRoot) || isSectionIndex(fn.Path) {
 			continue
 		}
-		if inboundNonCard[fn.Path] > 0 {
+		if inboundNonCard[fn.Path] == 0 {
+			candidates[filepath.ToSlash(fn.Path)] = true
+		}
+	}
+	autolinked := autolinkedCards(g, dict, cardsRoot, candidates)
+
+	var out []report.Violation
+	for _, fn := range g.Files {
+		p := filepath.ToSlash(fn.Path)
+		if !candidates[p] || autolinked[p] {
 			continue
 		}
 		out = append(out, report.Violation{
@@ -53,7 +70,7 @@ func checkL2Orphans(g *Graph, cardsRoot string) []report.Violation {
 			Line:    0,
 			Rule:    "L2-orphan-card",
 			Level:   report.LevelWarn,
-			Message: "card has no inbound link from non-card content; add at least one reference from a teaching article",
+			Message: "card has no inbound link from non-card content and its name is not auto-linked from any article; add at least one reference from a teaching article",
 		})
 	}
 	return out

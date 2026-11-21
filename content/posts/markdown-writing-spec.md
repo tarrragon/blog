@@ -408,18 +408,18 @@ slug 是 URL 的核心識別、跨多個工具共用（Hugo build、mdtools lint
 
 作用範圍：`content/**/*.md`，重點關注 `content/backend/knowledge-cards/`。
 
-| 層級                                | 規則                                                                                              | 實作                                           |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| **L1 連結有效性**                   | 所有相對連結 `[...](/posts/markdown-writing-spec/path)` / `[...](/posts/path)` 的目標檔案必須存在 | AST 抽 Link node → 解析相對路徑 → stat 檔案    |
-| **L2 卡片 orphan 偵測**             | 每張卡片至少被 `content/**` 中一篇非卡片正文引用                                                  | 建反向索引 → 找無 incoming edge 的卡片         |
-| **L4 卡片 K4 結構合規**             | 卡片首段與「跟其他概念的關係」段各至少 1 個相鄰卡片連結                                           | AST 定位段落節點 → 統計子樹 Link 數            |
-| **L5 section 的 weight 全有或全無** | 同一 section 的頁面要嘛全部有 weight、要嘛全部沒有；`weight: 0` 算沒有（警告層，可登記豁免）      | 逐 section 統計有效 weight 的頁數              |
-| **L6 卡片目錄登記**                 | 每張卡片被自己所屬 cards root 內的某個 `_index.md` 列出                                           | 取 source 為該 root 內 section index 的 edge   |
-| **L7 Fragment 有效性**              | 連結的 `#fragment` 必須命名目標頁上存在的標題                                                     | 建每頁 heading ID 索引 → 比對 edge 的 fragment |
-| **L8 slug 與檔名對齊**              | 頁面若有 `slug`，值必須等於檔名 stem（`_index.md` 豁免）                                          | 取 front matter 的 `slug` → 比對 filename stem |
-| **L9 weight 0 等於未設**            | 頁面與 `_index.md` 都不得設 `weight: 0`                                                           | 取 front matter 的 `weight` → 值為零即報 error |
+| 層級                                | 規則                                                                                                    | 實作                                                                                                           |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **L1 連結有效性**                   | 所有相對連結 `[...](/posts/markdown-writing-spec/path)` / `[...](/posts/path)` 的目標檔案必須存在       | AST 抽 Link node → 解析相對路徑 → stat 檔案                                                                    |
+| **L2 卡片 orphan 偵測**             | 每張卡片至少被 `content/**` 中一篇非卡片正文引用：markdown 連結，或卡片名稱出現在網站會自動連結的正文裡 | 建反向索引 → 沒有 incoming edge 的卡片，再查它在 `data/autolink_terms.json` 的名字有沒有出現在比對範圍內的正文 |
+| **L4 卡片 K4 結構合規**             | 卡片首段與「跟其他概念的關係」段各至少 1 個相鄰卡片連結                                                 | AST 定位段落節點 → 統計子樹 Link 數                                                                            |
+| **L5 section 的 weight 全有或全無** | 同一 section 的頁面要嘛全部有 weight、要嘛全部沒有；`weight: 0` 算沒有（警告層，可登記豁免）            | 逐 section 統計有效 weight 的頁數                                                                              |
+| **L6 卡片目錄登記**                 | 每張卡片被自己所屬 cards root 內的某個 `_index.md` 列出                                                 | 取 source 為該 root 內 section index 的 edge                                                                   |
+| **L7 Fragment 有效性**              | 連結的 `#fragment` 必須命名目標頁上存在的標題                                                           | 建每頁 heading ID 索引 → 比對 edge 的 fragment                                                                 |
+| **L8 slug 與檔名對齊**              | 頁面若有 `slug`，值必須等於檔名 stem（`_index.md` 豁免）                                                | 取 front matter 的 `slug` → 比對 filename stem                                                                 |
+| **L9 weight 0 等於未設**            | 頁面與 `_index.md` 都不得設 `weight: 0`                                                                 | 取 front matter 的 `weight` → 值為零即報 error                                                                 |
 
-L3（正文首次出現術語必須連結到卡片）暫不納入，待術語字典（`.codex/briefs/knowledge-web-expansion.md`）啟動後再開。
+L3（正文首次出現術語必須連結到卡片）不做成 mdtools 的檢查。網站另外在瀏覽器端做自動連結：一篇文章所在的第一層資料夾（`content/<資料夾>/`）列在 `data/autolink.toml` 的 `scopes` 時，正文裡每一次出現的卡片名稱（卡片標題的英文名或中文名，任一個都算，不分大小寫）都標成連到那張卡的連結；`scopes` 同時規定這篇文章連得到哪些第一層資料夾的卡（programming 的文章連得到 programming 與 backend 的卡）。一兩個字的中文名、排除清單裡的名字、同一個資料夾裡同名的卡與設了 `autolink: false` 的卡不連；名字的取法與排除條件寫在 `bin/autolink-dict` 的檔頭，比對規則寫在 `assets/js/autolink.js` 的檔頭。不在 `scopes` 的資料夾（report、work-log、posts 這類）不做自動連結。文章裡要不要手寫連到卡的連結，照 `docs/rules/sentences.md`〈術語的解釋方式〉；L4 要求的鄰卡連結是 markdown 連結，自動連結不算。L2 用同一份詞典 `data/autolink_terms.json` 與同一組 `scopes` 判斷一張卡有沒有被自動連結。
 
 ### L2 與 L6 問的是兩個不同問題
 

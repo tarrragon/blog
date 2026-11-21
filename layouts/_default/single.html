@@ -34,7 +34,8 @@
     <span hidden data-pagefind-meta="title">{{ .Title }}</span>
     {{ .Content }}
   </div>
-  
+  {{ partial "autolink.html" . }}
+
   <p>
     {{ range (.GetTerms "tags") }}
       <a class="blog-tags" href="{{ .RelPermalink }}">#{{ lower .LinkTitle }}</a>

@@ -1,0 +1,24 @@
+{{- /*
+  自動連結：在文章頁載入 assets/js/autolink.js，把正文裡出現的知識卡名稱標成連到那張卡的連結。
+  比對範圍取 data/autolink.toml 的 scopes：鍵是這一頁所在的第一層資料夾（.Section），沒有列在
+  那裡的資料夾不載入腳本。詞典由 bin/autolink-dict 產生（data/autolink_terms.json），
+  autolink-dict.html 轉成瀏覽器用的 JSON。
+
+  傳給腳本的 data 屬性：
+    data-terms   詞典 JSON 的網址
+    data-scope   這一頁可以連到的卡片所在的第一層資料夾（JSON 陣列）
+    data-module  這一頁所在的第一層資料夾；同一個名字在範圍內對到兩張卡時，取這個資料夾的那一張
+    data-self    這一頁本身是知識卡時，它在詞典裡的路徑（不連到自己）
+*/ -}}
+{{- with site.Data.autolink -}}
+  {{- with index .scopes $.Section -}}
+    {{- $scope := . -}}
+    {{- $dict := partialCached "autolink-dict.html" "autolink" -}}
+    {{- $self := "" -}}
+    {{- with $.File -}}
+      {{- $self = strings.TrimSuffix ".md" (replace .Path "\\" "/") -}}
+    {{- end -}}
+    {{- $js := resources.Get "js/autolink.js" | minify | fingerprint -}}
+<script src="{{ $js.RelPermalink }}" data-terms="{{ $dict }}" data-scope="{{ $scope | jsonify }}" data-module="{{ $.Section }}" data-self="{{ $self }}" defer></script>
+  {{- end -}}
+{{- end -}}

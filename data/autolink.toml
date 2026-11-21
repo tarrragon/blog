@@ -1,0 +1,43 @@
+# 自動連結的設定：bin/autolink-dict 讀這份檔產生 data/autolink_terms.json（檔名跟這份不同，Hugo 的 site.Data 依檔名取鍵），
+# layouts/partials/autolink.html 讀 scopes 決定一頁要套哪些模組的卡。
+# 改了這份檔之後跑 `bin/autolink-dict` 重產生詞典，兩個檔在同一個 commit 提交。
+
+# 比對範圍：鍵是文章所在的第一層資料夾（content/<鍵>/...），值是這一頁可以自動連到的
+# 卡片所在的第一層資料夾。沒有列在這裡的資料夾不做自動連結，目前刻意不列的是：report 與 skills
+# （寫作方法論，技術名詞多半是在舉例）、work-log、posts、record、other（跨主題的雜項文章，卡片名稱
+# 多半不是指那張卡）、macos 與 neurodiversity（還沒有評估過，macos 的文章可能用到 linux 的卡）。
+# 同一個名字在範圍內對到兩張卡時，取跟這一頁同一個第一層資料夾的那一張；仍然分不出來就不連。
+# content/ 的第一層資料夾新增、改名或被收進大分類時改這裡（鍵與值都是第一層資料夾的名字），
+# 再跑 bin/autolink-dict；沒列進來的資料夾整批不做自動連結，沒有任何警告。
+[scopes]
+backend = ["backend"]
+devops = ["devops", "backend"]
+programming = ["programming", "backend"]
+software-design = ["software-design", "backend"]
+testing = ["testing", "backend"]
+linux = ["linux"]
+llm = ["llm"]
+automation = ["automation"]
+ux-design = ["ux-design"]
+business = ["business"]
+books = ["books", "business"]
+til = ["til"]
+
+# 名字的最短長度：不含拉丁字母的名字，漢字數少於等於 han 時不做自動連結；含拉丁字母的名字，
+# 去掉空白之後的字元數少於等於 latin 時不做（「索引」「關係」「CI」這類在一般句子裡太常見，
+# 誤配的機率高）。判法寫在 bin/autolink-dict 的檔頭。
+[min_length]
+han = 2
+latin = 2
+
+# 不做自動連結的名字（比對不分大小寫）：同時是日常詞、或在比對範圍內另有常見意思的卡名。
+# 只影響自動連結，作者手寫的連結照常。加進來的理由寫在同一行的註解。
+[names]
+exclude = [
+  "Cursor",     # 分頁的接續標記與資料庫的讀取物件是兩個意思，backend 的卡只講其中一個
+  "Index",      # programming 的文章多半指陣列索引，不是資料庫索引
+  "Namespace",  # programming 的文章多半指程式語言的命名空間，不是 Kubernetes 的 namespace
+  "Ownership",  # programming 的文章多半指 Rust 的所有權，不是資料的擁有者
+  "Schema",     # SQL 卡片集的 Schema 卡講命名空間，文章裡的 schema 多半指資料表結構
+  "State",      # devops 的文章多半指一般的狀態，不是 Terraform 的 state 檔
+]

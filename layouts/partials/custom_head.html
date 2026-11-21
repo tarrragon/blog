@@ -454,35 +454,71 @@
 
   /* 站內連結 hover tooltip：render-link.html 會在任何站內 page 的連結注入
      data-link-title / data-link-desc（目標頁面的 title 與 front-matter description），
-     這裡用純 CSS 在 hover 時顯示卡片式 tooltip。 */
-  @media (hover: hover) {
-    a[data-link-desc] {
-      position: relative;
-    }
+     這裡用純 CSS 在 hover 時顯示卡片式 tooltip。
+     沒有滑鼠的裝置由 assets/js/autolink.js 在第一下點擊時替自動連結加上 kc-open，
+     提示框改成貼在畫面底部，第二下點擊才跳頁。 */
+  a[data-link-desc] {
+    position: relative;
+  }
 
+  a[data-link-desc]::after {
+    display: none;
+    content: attr(data-link-title) "\A\A" attr(data-link-desc);
+    white-space: pre-line;
+    position: absolute;
+    left: 0;
+    top: calc(100% + 2rem);
+    width: 420px;
+    max-width: calc(100vw - 2rem);
+    padding: 0.65rem 0.85rem;
+    background: rgba(20, 20, 28, 0.97);
+    color: #f5f5f5;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    font-size: 1.1rem;
+    line-height: 1.55;
+    text-align: left;
+    text-decoration: none;
+    z-index: 2000;
+    pointer-events: none;
+    animation: kc-tip-in 0.15s ease 0.3s both;
+  }
+
+  @media (hover: hover) {
     a[data-link-desc]:hover::after,
     a[data-link-desc]:focus-visible::after {
-      content: attr(data-link-title) "\A\A" attr(data-link-desc);
-      white-space: pre-line;
-      position: absolute;
-      left: 0;
-      top: calc(100% + 2rem);
-      width: 420px;
-      max-width: calc(100vw - 2rem);
-      padding: 0.65rem 0.85rem;
-      background: rgba(20, 20, 28, 0.97);
-      color: #f5f5f5;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-      font-size: 1.1rem;
-      line-height: 1.55;
-      text-align: left;
-      text-decoration: none;
-      z-index: 2000;
-      pointer-events: none;
-      animation: kc-tip-in 0.15s ease 0.3s both;
+      display: block;
     }
+  }
+
+  a[data-link-desc].kc-open::after {
+    display: block;
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    top: auto;
+    bottom: 1rem;
+    width: auto;
+    max-width: none;
+    animation-delay: 0s;
+  }
+
+  /* 自動連結（assets/js/autolink.js 產生）：文字顏色不變，只加淡色點線底線，
+     讀者照常讀正文，要查卡片時才停上去或點下去。assets/custom.css 的 a 用 !important
+     設了連結色、拿掉 text-decoration，這裡要蓋過它也得用 !important；漸層底線一併拿掉。 */
+  .article-body a.kc-auto,
+  .article-body a.kc-auto:visited {
+    color: inherit !important;
+    text-decoration: underline dotted rgba(160, 160, 160, 0.6) !important;
+    text-decoration-thickness: 1px !important;
+    text-underline-offset: 0.25em;
+    background: none !important;
+  }
+
+  .article-body a.kc-auto:hover,
+  .article-body a.kc-auto.kc-open {
+    text-decoration-color: #9dc4e8 !important;
   }
 
   @keyframes kc-tip-in {

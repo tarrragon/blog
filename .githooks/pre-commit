@@ -4,6 +4,7 @@
 #
 # Pipeline:
 #   0. Test-First reminder if .spec.ts is staged (#69 / #72 L3 trigger).
+#   0.5 bin/autolink-dict --check --staged when cards or data/autolink.* are staged; abort if stale.
 #   1. fmt --fix on each staged .md (root files and docs/rules/ included: it re-aligns their
 #      tables too); re-stage if changed.
 #   2. lint on staged content/**/*.md only; abort commit on error. Root AGENTS.md, CLAUDE.md,
@@ -41,6 +42,27 @@ if [[ -n "$staged_tests" && "${COMMIT_SKIP_TEST_FIRST:-0}" != "1" && -t 0 ]]; th
     read -r -p "  Continue commit? [y/N] " response < /dev/tty
     if [[ ! "$response" =~ ^[Yy]$ ]]; then
         echo "[pre-commit] commit aborted by Test-First reminder" >&2
+        exit 1
+    fi
+fi
+
+# --- 0.5 自動連結的詞典 ----------------------------------------------------
+# data/autolink_terms.json 是 bin/autolink-dict 從卡片標題產生的；新增卡片、改標題或改
+# data/autolink.toml 之後沒有重產生，網站上新卡的名字就不會被自動連結，而且沒有任何訊號。
+# 排在「沒有 .md 就結束」之前：只改 data/autolink.toml 時也要查。--staged 讀 git index，
+# 另一個 session 在工作樹裡還沒 staged 的卡不會擋下這次的提交。exit 1 是詞典過期，2 是工具失敗。
+staged_all=$(git diff --cached --name-only)
+if grep -qE '^content/.*/(knowledge-cards|cards)/[^/]+\.md$|^data/autolink(\.toml|_terms\.json)$' <<< "$staged_all"; then
+    echo "[pre-commit] autolink-dict --check --staged"
+    set +e
+    bin/autolink-dict --check --staged
+    autolink_rc=$?
+    set -e
+    if [[ "$autolink_rc" -eq 1 ]]; then
+        echo "[pre-commit] data/autolink_terms.json 過期：跑 bin/autolink-dict --with <這次要提交的卡片與 data/autolink.toml>，把它跟這次的卡片一起提交" >&2
+        exit 1
+    elif [[ "$autolink_rc" -ne 0 ]]; then
+        echo "[pre-commit] bin/autolink-dict 執行失敗（原因見上方）" >&2
         exit 1
     fi
 fi

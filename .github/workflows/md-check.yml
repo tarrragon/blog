@@ -53,6 +53,11 @@ jobs:
       - name: mdtools lint
         run: ./bin/mdtools lint content/
 
+      # cards 的孤兒卡檢查讀 data/autolink_terms.json；詞典過期時 L2 與網站都用舊詞典，
+      # 本機的 pre-commit 沒跑時只有這一步擋得到。
+      - name: autolink dictionary up to date
+        run: bin/autolink-dict --check
+
       - name: mdtools cards
         run: ./bin/mdtools cards content/
 

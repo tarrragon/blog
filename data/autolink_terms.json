@@ -1,0 +1,7967 @@
+{
+ "scopes": {
+  "automation": [
+   "automation"
+  ],
+  "backend": [
+   "backend"
+  ],
+  "books": [
+   "books",
+   "business"
+  ],
+  "business": [
+   "business"
+  ],
+  "devops": [
+   "devops",
+   "backend"
+  ],
+  "linux": [
+   "linux"
+  ],
+  "llm": [
+   "llm"
+  ],
+  "programming": [
+   "programming",
+   "backend"
+  ],
+  "software-design": [
+   "software-design",
+   "backend"
+  ],
+  "testing": [
+   "testing",
+   "backend"
+  ],
+  "til": [
+   "til"
+  ],
+  "ux-design": [
+   "ux-design"
+  ]
+ },
+ "terms": [
+  {
+   "name": ".env",
+   "card": "devops/infra/knowledge-cards/dotenv",
+   "module": "devops"
+  },
+  {
+   "name": ".htaccess",
+   "card": "devops/infra/knowledge-cards/htaccess",
+   "module": "devops"
+  },
+  {
+   "name": "400ms 門檻",
+   "card": "ux-design/knowledge-cards/doherty-threshold",
+   "module": "ux-design"
+  },
+  {
+   "name": "Abuse Case",
+   "card": "backend/knowledge-cards/abuse-case",
+   "module": "backend"
+  },
+  {
+   "name": "ABX Test",
+   "card": "til/audio/knowledge-cards/abx-test",
+   "module": "til"
+  },
+  {
+   "name": "ABX 測試",
+   "card": "til/audio/knowledge-cards/abx-test",
+   "module": "til"
+  },
+  {
+   "name": "Acceptance Rate",
+   "card": "llm/knowledge-cards/acceptance-rate",
+   "module": "llm"
+  },
+  {
+   "name": "Accounts Payable",
+   "card": "business/knowledge-cards/accounts-payable",
+   "module": "business"
+  },
+  {
+   "name": "Accounts Receivable",
+   "card": "business/knowledge-cards/accounts-receivable",
+   "module": "business"
+  },
+  {
+   "name": "Ack / Nack",
+   "card": "backend/knowledge-cards/ack-nack",
+   "module": "backend"
+  },
+  {
+   "name": "ACME Automation",
+   "card": "backend/knowledge-cards/acme-automation",
+   "module": "backend"
+  },
+  {
+   "name": "Action Item Closure",
+   "card": "backend/knowledge-cards/action-item-closure",
+   "module": "backend"
+  },
+  {
+   "name": "Activation Function",
+   "card": "llm/knowledge-cards/activation-function",
+   "module": "llm"
+  },
+  {
+   "name": "Active Parameter",
+   "card": "llm/knowledge-cards/active-parameter",
+   "module": "llm"
+  },
+  {
+   "name": "Adam / AdamW",
+   "card": "llm/knowledge-cards/adam-adamw",
+   "module": "llm"
+  },
+  {
+   "name": "Adapter",
+   "card": "software-design/ddd/knowledge-cards/adapter",
+   "module": "software-design"
+  },
+  {
+   "name": "Adaptive Retrieval",
+   "card": "llm/knowledge-cards/adaptive-retrieval",
+   "module": "llm"
+  },
+  {
+   "name": "Admin Endpoint",
+   "card": "backend/knowledge-cards/admin-endpoint",
+   "module": "backend"
+  },
+  {
+   "name": "Admission Control",
+   "card": "backend/knowledge-cards/admission-control",
+   "module": "backend"
+  },
+  {
+   "name": "Advisory Lock",
+   "card": "backend/knowledge-cards/advisory-lock",
+   "module": "backend"
+  },
+  {
+   "name": "Affordance",
+   "card": "ux-design/knowledge-cards/affordance",
+   "module": "ux-design"
+  },
+  {
+   "name": "Agent Loop",
+   "card": "llm/knowledge-cards/agent-loop",
+   "module": "llm"
+  },
+  {
+   "name": "Agent Memory",
+   "card": "llm/knowledge-cards/agent-memory",
+   "module": "llm"
+  },
+  {
+   "name": "Agent-as-Tool",
+   "card": "llm/knowledge-cards/agent-as-tool",
+   "module": "llm"
+  },
+  {
+   "name": "Aggregate Function",
+   "card": "backend/01-database/sql/knowledge-cards/aggregate-function",
+   "module": "backend"
+  },
+  {
+   "name": "Aggregate Root",
+   "card": "software-design/ddd/knowledge-cards/aggregate-root",
+   "module": "software-design"
+  },
+  {
+   "name": "ALB",
+   "card": "devops/infra/knowledge-cards/alb",
+   "module": "devops"
+  },
+  {
+   "name": "Alert",
+   "card": "backend/knowledge-cards/alert",
+   "module": "backend"
+  },
+  {
+   "name": "Alert Fatigue",
+   "card": "backend/knowledge-cards/alert-fatigue",
+   "module": "backend"
+  },
+  {
+   "name": "Alert Inhibition",
+   "card": "backend/knowledge-cards/alert-inhibition",
+   "module": "backend"
+  },
+  {
+   "name": "Alert Runbook",
+   "card": "backend/knowledge-cards/alert-runbook",
+   "module": "backend"
+  },
+  {
+   "name": "Alert Silence",
+   "card": "backend/knowledge-cards/alert-silence",
+   "module": "backend"
+  },
+  {
+   "name": "Allocation",
+   "card": "business/procurement-planning/cards/allocation",
+   "module": "business"
+  },
+  {
+   "name": "Allowlist",
+   "card": "backend/knowledge-cards/allowlist",
+   "module": "backend"
+  },
+  {
+   "name": "Alternate Part",
+   "card": "business/procurement-planning/cards/alternate-part",
+   "module": "business"
+  },
+  {
+   "name": "AMI",
+   "card": "devops/infra/knowledge-cards/ami",
+   "module": "devops"
+  },
+  {
+   "name": "Apache MPM",
+   "card": "devops/infra/knowledge-cards/apache-mpm",
+   "module": "devops"
+  },
+  {
+   "name": "API Consumer Shape",
+   "card": "backend/knowledge-cards/api-consumer-shape",
+   "module": "backend"
+  },
+  {
+   "name": "API Contract",
+   "card": "backend/knowledge-cards/api-contract",
+   "module": "backend"
+  },
+  {
+   "name": "API Gateway",
+   "card": "backend/knowledge-cards/api-gateway",
+   "module": "backend"
+  },
+  {
+   "name": "App Signing",
+   "card": "devops/ci/knowledge-cards/app-signing",
+   "module": "devops"
+  },
+  {
+   "name": "apt 安裝的交易原子性",
+   "card": "linux/dotfile/knowledge-cards/apt-transaction-atomicity",
+   "module": "linux"
+  },
+  {
+   "name": "Arch User Repository",
+   "card": "linux/dotfile/knowledge-cards/aur",
+   "module": "linux"
+  },
+  {
+   "name": "Artifact",
+   "card": "devops/ci/knowledge-cards/artifact",
+   "module": "devops"
+  },
+  {
+   "name": "Artifact Handoff",
+   "card": "devops/ci/knowledge-cards/artifact-handoff",
+   "module": "devops"
+  },
+  {
+   "name": "Artifact Provenance",
+   "card": "backend/knowledge-cards/artifact-provenance",
+   "module": "backend"
+  },
+  {
+   "name": "ASP",
+   "card": "business/knowledge-cards/asp",
+   "module": "business"
+  },
+  {
+   "name": "At-Rest Encryption",
+   "card": "backend/knowledge-cards/at-rest-encryption",
+   "module": "backend"
+  },
+  {
+   "name": "Attack Surface",
+   "card": "backend/knowledge-cards/attack-surface",
+   "module": "backend"
+  },
+  {
+   "name": "Attention",
+   "card": "llm/knowledge-cards/attention",
+   "module": "llm"
+  },
+  {
+   "name": "Audibility Threshold",
+   "card": "til/audio/knowledge-cards/audibility-threshold",
+   "module": "til"
+  },
+  {
+   "name": "Audit Log",
+   "card": "backend/knowledge-cards/audit-log",
+   "module": "backend"
+  },
+  {
+   "name": "AUR",
+   "card": "linux/dotfile/knowledge-cards/aur",
+   "module": "linux"
+  },
+  {
+   "name": "Authentication",
+   "card": "backend/knowledge-cards/authentication",
+   "module": "backend"
+  },
+  {
+   "name": "Authentication Middleware",
+   "card": "backend/knowledge-cards/authentication-middleware",
+   "module": "backend"
+  },
+  {
+   "name": "Authorization",
+   "card": "backend/knowledge-cards/authorization",
+   "module": "backend"
+  },
+  {
+   "name": "Authorization Middleware",
+   "card": "backend/knowledge-cards/authorization-middleware",
+   "module": "backend"
+  },
+  {
+   "name": "Authorization Scope",
+   "card": "backend/knowledge-cards/authorization-scope",
+   "module": "backend"
+  },
+  {
+   "name": "Autocapture",
+   "card": "devops/monitoring/knowledge-cards/autocapture",
+   "module": "devops"
+  },
+  {
+   "name": "Autoregressive",
+   "card": "llm/knowledge-cards/autoregressive",
+   "module": "llm"
+  },
+  {
+   "name": "Autoscaling",
+   "card": "backend/knowledge-cards/autoscaling",
+   "module": "backend"
+  },
+  {
+   "name": "Availability Zone",
+   "card": "devops/infra/knowledge-cards/availability-zone",
+   "module": "devops"
+  },
+  {
+   "name": "Average Selling Price，平均單價",
+   "card": "business/knowledge-cards/asp",
+   "module": "business"
+  },
+  {
+   "name": "Averaging Down",
+   "card": "business/retail-instruments/knowledge-cards/averaging-down",
+   "module": "business"
+  },
+  {
+   "name": "AVL",
+   "card": "business/procurement-planning/cards/avl",
+   "module": "business"
+  },
+  {
+   "name": "BaaS",
+   "card": "backend/knowledge-cards/baas",
+   "module": "backend"
+  },
+  {
+   "name": "Backend as a Service",
+   "card": "backend/knowledge-cards/baas",
+   "module": "backend"
+  },
+  {
+   "name": "Backfill",
+   "card": "backend/knowledge-cards/backfill",
+   "module": "backend"
+  },
+  {
+   "name": "Backfill",
+   "card": "devops/ci/knowledge-cards/backfill",
+   "module": "devops"
+  },
+  {
+   "name": "Backpressure",
+   "card": "backend/knowledge-cards/backpressure",
+   "module": "backend"
+  },
+  {
+   "name": "Backpressure",
+   "card": "devops/monitoring/knowledge-cards/backpressure",
+   "module": "devops"
+  },
+  {
+   "name": "Backpropagation",
+   "card": "llm/knowledge-cards/backpropagation",
+   "module": "llm"
+  },
+  {
+   "name": "Backus-Naur Form",
+   "card": "llm/knowledge-cards/bnf",
+   "module": "llm"
+  },
+  {
+   "name": "Base Model",
+   "card": "llm/knowledge-cards/base-model",
+   "module": "llm"
+  },
+  {
+   "name": "Basis",
+   "card": "business/retail-instruments/knowledge-cards/basis",
+   "module": "business"
+  },
+  {
+   "name": "Bastion Host",
+   "card": "devops/infra/knowledge-cards/bastion-host",
+   "module": "devops"
+  },
+  {
+   "name": "Batching",
+   "card": "llm/knowledge-cards/batching",
+   "module": "llm"
+  },
+  {
+   "name": "Beacon",
+   "card": "automation/knowledge-cards/beacon",
+   "module": "automation"
+  },
+  {
+   "name": "Beam Search",
+   "card": "llm/knowledge-cards/beam-search",
+   "module": "llm"
+  },
+  {
+   "name": "BFF",
+   "card": "backend/knowledge-cards/bff",
+   "module": "backend"
+  },
+  {
+   "name": "Bind Address",
+   "card": "llm/knowledge-cards/bind-address",
+   "module": "llm"
+  },
+  {
+   "name": "Binomial proportion confidence interval",
+   "card": "llm/knowledge-cards/binomial-proportion-confidence-interval",
+   "module": "llm"
+  },
+  {
+   "name": "Blanket Order 與 Flex Fence",
+   "card": "business/procurement-planning/cards/order-flexibility",
+   "module": "business"
+  },
+  {
+   "name": "Blast Radius",
+   "card": "backend/knowledge-cards/blast-radius",
+   "module": "backend"
+  },
+  {
+   "name": "Bluetooth Audio Codec",
+   "card": "til/audio/knowledge-cards/bluetooth-audio-codec",
+   "module": "til"
+  },
+  {
+   "name": "BNF",
+   "card": "llm/knowledge-cards/bnf",
+   "module": "llm"
+  },
+  {
+   "name": "BOLA / IDOR",
+   "card": "backend/knowledge-cards/bola-idor",
+   "module": "backend"
+  },
+  {
+   "name": "BOPLA",
+   "card": "backend/knowledge-cards/bopla",
+   "module": "backend"
+  },
+  {
+   "name": "Boundary Contract",
+   "card": "backend/knowledge-cards/contract",
+   "module": "backend"
+  },
+  {
+   "name": "Bounded Context",
+   "card": "software-design/ddd/knowledge-cards/bounded-context",
+   "module": "software-design"
+  },
+  {
+   "name": "Bounded Staleness",
+   "card": "backend/knowledge-cards/bounded-staleness",
+   "module": "backend"
+  },
+  {
+   "name": "BPE",
+   "card": "llm/knowledge-cards/bpe",
+   "module": "llm"
+  },
+  {
+   "name": "Branch Protection",
+   "card": "devops/ci/knowledge-cards/branch-protection",
+   "module": "devops"
+  },
+  {
+   "name": "Break-Glass Access",
+   "card": "backend/knowledge-cards/break-glass-access",
+   "module": "backend"
+  },
+  {
+   "name": "Broker",
+   "card": "backend/knowledge-cards/broker",
+   "module": "backend"
+  },
+  {
+   "name": "Browser Fingerprint",
+   "card": "automation/knowledge-cards/browser-fingerprint",
+   "module": "automation"
+  },
+  {
+   "name": "Bucket",
+   "card": "backend/knowledge-cards/bucket",
+   "module": "backend"
+  },
+  {
+   "name": "Buffer",
+   "card": "backend/knowledge-cards/buffer",
+   "module": "backend"
+  },
+  {
+   "name": "Buffer Pool",
+   "card": "backend/knowledge-cards/buffer-pool",
+   "module": "backend"
+  },
+  {
+   "name": "Bulkhead",
+   "card": "backend/knowledge-cards/bulkhead",
+   "module": "backend"
+  },
+  {
+   "name": "Bullwhip Effect",
+   "card": "business/knowledge-cards/bullwhip-effect",
+   "module": "business"
+  },
+  {
+   "name": "Burn Rate",
+   "card": "backend/knowledge-cards/burn-rate",
+   "module": "backend"
+  },
+  {
+   "name": "Burn Rate",
+   "card": "business/knowledge-cards/burn-rate",
+   "module": "business"
+  },
+  {
+   "name": "Byte-Pair Encoding",
+   "card": "llm/knowledge-cards/bpe",
+   "module": "llm"
+  },
+  {
+   "name": "CAC",
+   "card": "business/knowledge-cards/cac",
+   "module": "business"
+  },
+  {
+   "name": "Cache Aside",
+   "card": "backend/knowledge-cards/cache-aside",
+   "module": "backend"
+  },
+  {
+   "name": "Cache Hit / Miss",
+   "card": "backend/knowledge-cards/cache-hit-miss",
+   "module": "backend"
+  },
+  {
+   "name": "Cache Hit Rate",
+   "card": "backend/knowledge-cards/cache-hit-rate",
+   "module": "backend"
+  },
+  {
+   "name": "Cache Invalidation",
+   "card": "backend/knowledge-cards/cache-invalidation",
+   "module": "backend"
+  },
+  {
+   "name": "Cache Key Versioning",
+   "card": "backend/knowledge-cards/cache-key-versioning",
+   "module": "backend"
+  },
+  {
+   "name": "Cache Penetration",
+   "card": "backend/knowledge-cards/cache-penetration",
+   "module": "backend"
+  },
+  {
+   "name": "Cache Prefetching",
+   "card": "backend/knowledge-cards/cache-prefetching",
+   "module": "backend"
+  },
+  {
+   "name": "Cache Serialization Migration",
+   "card": "backend/knowledge-cards/cache-serialization-migration",
+   "module": "backend"
+  },
+  {
+   "name": "Cache Stampede",
+   "card": "backend/knowledge-cards/cache-stampede",
+   "module": "backend"
+  },
+  {
+   "name": "Cache Tag Purge",
+   "card": "backend/knowledge-cards/cache-tag-purge",
+   "module": "backend"
+  },
+  {
+   "name": "Cache Warmup",
+   "card": "backend/knowledge-cards/cache-warmup",
+   "module": "backend"
+  },
+  {
+   "name": "Cache-Control",
+   "card": "backend/knowledge-cards/cache-control",
+   "module": "backend"
+  },
+  {
+   "name": "CAGR",
+   "card": "business/knowledge-cards/cagr",
+   "module": "business"
+  },
+  {
+   "name": "Canary Perf Check",
+   "card": "backend/knowledge-cards/canary-perf-check",
+   "module": "backend"
+  },
+  {
+   "name": "Canary Release",
+   "card": "backend/knowledge-cards/canary-release",
+   "module": "backend"
+  },
+  {
+   "name": "CAP Theorem",
+   "card": "backend/knowledge-cards/cap",
+   "module": "backend"
+  },
+  {
+   "name": "Capability Outsourcing Depth",
+   "card": "backend/knowledge-cards/capability-outsourcing-depth",
+   "module": "backend"
+  },
+  {
+   "name": "Capability Spectrum",
+   "card": "llm/knowledge-cards/capability-spectrum",
+   "module": "llm"
+  },
+  {
+   "name": "Capex",
+   "card": "business/knowledge-cards/capex",
+   "module": "business"
+  },
+  {
+   "name": "Cardinality 與 Selectivity",
+   "card": "backend/01-database/sql/knowledge-cards/cardinality-and-selectivity",
+   "module": "backend"
+  },
+  {
+   "name": "Cartesian Product",
+   "card": "backend/01-database/sql/knowledge-cards/cartesian-product",
+   "module": "backend"
+  },
+  {
+   "name": "Cascading Failure",
+   "card": "backend/knowledge-cards/cascading-failure",
+   "module": "backend"
+  },
+  {
+   "name": "Cash and Cash Equivalents",
+   "card": "business/knowledge-cards/cash-and-equivalents",
+   "module": "business"
+  },
+  {
+   "name": "Cash Conversion Cycle",
+   "card": "business/knowledge-cards/cash-conversion-cycle",
+   "module": "business"
+  },
+  {
+   "name": "Cash Flow Statement",
+   "card": "business/knowledge-cards/cash-flow-statement",
+   "module": "business"
+  },
+  {
+   "name": "Catastrophic Forgetting",
+   "card": "llm/knowledge-cards/catastrophic-forgetting",
+   "module": "llm"
+  },
+  {
+   "name": "Causal Mask",
+   "card": "llm/knowledge-cards/causal-mask",
+   "module": "llm"
+  },
+  {
+   "name": "CD Pipeline",
+   "card": "devops/ci/knowledge-cards/cd-pipeline",
+   "module": "devops"
+  },
+  {
+   "name": "CDN",
+   "card": "devops/infra/knowledge-cards/cdn",
+   "module": "devops"
+  },
+  {
+   "name": "CDP",
+   "card": "business/knowledge-cards/cdp",
+   "module": "business"
+  },
+  {
+   "name": "Cell-Based Architecture",
+   "card": "backend/knowledge-cards/cell-based-architecture",
+   "module": "backend"
+  },
+  {
+   "name": "Certificate",
+   "card": "backend/knowledge-cards/certificate",
+   "module": "backend"
+  },
+  {
+   "name": "Certificate Chain and Trust Root",
+   "card": "backend/knowledge-cards/certificate-chain-trust",
+   "module": "backend"
+  },
+  {
+   "name": "Certificate Revocation",
+   "card": "backend/knowledge-cards/certificate-revocation",
+   "module": "backend"
+  },
+  {
+   "name": "Certificate Rotation and Renewal",
+   "card": "backend/knowledge-cards/certificate-rotation-renewal",
+   "module": "backend"
+  },
+  {
+   "name": "CGI",
+   "card": "devops/infra/knowledge-cards/cgi",
+   "module": "devops"
+  },
+  {
+   "name": "CGNAT",
+   "card": "devops/infra/knowledge-cards/cgnat",
+   "module": "devops"
+  },
+  {
+   "name": "cgroup",
+   "card": "backend/knowledge-cards/cgroup",
+   "module": "backend"
+  },
+  {
+   "name": "Chain-of-Thought",
+   "card": "llm/knowledge-cards/chain-of-thought",
+   "module": "llm"
+  },
+  {
+   "name": "Change Data Capture",
+   "card": "backend/knowledge-cards/change-data-capture",
+   "module": "backend"
+  },
+  {
+   "name": "Channel Stuffing",
+   "card": "business/knowledge-cards/channel-stuffing",
+   "module": "business"
+  },
+  {
+   "name": "Chaos Test",
+   "card": "backend/knowledge-cards/chaos-test",
+   "module": "backend"
+  },
+  {
+   "name": "Characterization Test",
+   "card": "testing/knowledge-cards/characterization-test",
+   "module": "testing"
+  },
+  {
+   "name": "Check-then-act",
+   "card": "backend/knowledge-cards/check-then-act",
+   "module": "backend"
+  },
+  {
+   "name": "checkov",
+   "card": "devops/infra/knowledge-cards/checkov",
+   "module": "devops"
+  },
+  {
+   "name": "Checkpoint",
+   "card": "backend/knowledge-cards/checkpoint",
+   "module": "backend"
+  },
+  {
+   "name": "Checkpoint",
+   "card": "devops/ci/knowledge-cards/checkpoint",
+   "module": "devops"
+  },
+  {
+   "name": "Chunking",
+   "card": "llm/knowledge-cards/chunking",
+   "module": "llm"
+  },
+  {
+   "name": "CI Pipeline",
+   "card": "backend/knowledge-cards/ci-pipeline",
+   "module": "backend"
+  },
+  {
+   "name": "CI Pipeline",
+   "card": "devops/ci/knowledge-cards/ci-pipeline",
+   "module": "devops"
+  },
+  {
+   "name": "CIDR",
+   "card": "devops/infra/knowledge-cards/cidr",
+   "module": "devops"
+  },
+  {
+   "name": "Circuit Breaker",
+   "card": "backend/knowledge-cards/circuit-breaker",
+   "module": "backend"
+  },
+  {
+   "name": "Class D Amplifier",
+   "card": "til/audio/knowledge-cards/class-d-amplifier",
+   "module": "til"
+  },
+  {
+   "name": "Classless Inter-Domain Routing",
+   "card": "devops/infra/knowledge-cards/cidr",
+   "module": "devops"
+  },
+  {
+   "name": "Client-Side LLM / Embedding",
+   "card": "llm/knowledge-cards/client-side-llm",
+   "module": "llm"
+  },
+  {
+   "name": "CLIP",
+   "card": "llm/knowledge-cards/clip",
+   "module": "llm"
+  },
+  {
+   "name": "Clock Jitter",
+   "card": "til/audio/knowledge-cards/clock-jitter",
+   "module": "til"
+  },
+  {
+   "name": "Clock Skew",
+   "card": "backend/knowledge-cards/clock-skew",
+   "module": "backend"
+  },
+  {
+   "name": "CloudTrail",
+   "card": "devops/infra/knowledge-cards/cloudtrail",
+   "module": "devops"
+  },
+  {
+   "name": "Co-product",
+   "card": "business/knowledge-cards/co-product",
+   "module": "business"
+  },
+  {
+   "name": "COGS",
+   "card": "business/knowledge-cards/cogs",
+   "module": "business"
+  },
+  {
+   "name": "Cohesion",
+   "card": "software-design/design-principles/knowledge-cards/cohesion",
+   "module": "software-design"
+  },
+  {
+   "name": "Cohort",
+   "card": "backend/knowledge-cards/cohort",
+   "module": "backend"
+  },
+  {
+   "name": "Cohort Analysis",
+   "card": "devops/monitoring/knowledge-cards/cohort-analysis",
+   "module": "devops"
+  },
+  {
+   "name": "Cold Start",
+   "card": "backend/knowledge-cards/cold-start",
+   "module": "backend"
+  },
+  {
+   "name": "collaboration mode",
+   "card": "books/knowledge-cards/collaboration-mode",
+   "module": "books"
+  },
+  {
+   "name": "Commit Wait",
+   "card": "backend/knowledge-cards/commit-wait",
+   "module": "backend"
+  },
+  {
+   "name": "Commodity Business",
+   "card": "business/knowledge-cards/commodity-business",
+   "module": "business"
+  },
+  {
+   "name": "Common Gateway Interface",
+   "card": "devops/infra/knowledge-cards/cgi",
+   "module": "devops"
+  },
+  {
+   "name": "Communication Protocol",
+   "card": "backend/knowledge-cards/protocol",
+   "module": "backend"
+  },
+  {
+   "name": "Competing Consumers",
+   "card": "backend/knowledge-cards/competing-consumers",
+   "module": "backend"
+  },
+  {
+   "name": "Composer",
+   "card": "devops/infra/knowledge-cards/composer",
+   "module": "devops"
+  },
+  {
+   "name": "Composite Partition Key",
+   "card": "backend/knowledge-cards/composite-partition-key",
+   "module": "backend"
+  },
+  {
+   "name": "Composition Root",
+   "card": "software-design/ddd/knowledge-cards/composition-root",
+   "module": "software-design"
+  },
+  {
+   "name": "Compositor",
+   "card": "linux/dotfile/knowledge-cards/compositor",
+   "module": "linux"
+  },
+  {
+   "name": "Confidence",
+   "card": "backend/knowledge-cards/confidence",
+   "module": "backend"
+  },
+  {
+   "name": "Config Rollout",
+   "card": "backend/knowledge-cards/config-rollout",
+   "module": "backend"
+  },
+  {
+   "name": "Configuration Management",
+   "card": "devops/infra/knowledge-cards/configuration-management",
+   "module": "devops"
+  },
+  {
+   "name": "Conflict Resolution",
+   "card": "backend/knowledge-cards/conflict-resolution",
+   "module": "backend"
+  },
+  {
+   "name": "Connection Leak",
+   "card": "backend/knowledge-cards/connection-leak",
+   "module": "backend"
+  },
+  {
+   "name": "Connection Pool",
+   "card": "backend/knowledge-cards/connection-pool",
+   "module": "backend"
+  },
+  {
+   "name": "Connection Pooler",
+   "card": "backend/knowledge-cards/connection-pooler",
+   "module": "backend"
+  },
+  {
+   "name": "Connection Refused vs. Timeout",
+   "card": "linux/dotfile/knowledge-cards/connection-refused-vs-timeout",
+   "module": "linux"
+  },
+  {
+   "name": "Connector",
+   "card": "business/knowledge-cards/connector",
+   "module": "business"
+  },
+  {
+   "name": "conntrack",
+   "card": "devops/infra/knowledge-cards/conntrack",
+   "module": "devops"
+  },
+  {
+   "name": "Consensus Protocol",
+   "card": "backend/knowledge-cards/consensus-protocol",
+   "module": "backend"
+  },
+  {
+   "name": "Consignment",
+   "card": "business/procurement-planning/cards/consignment",
+   "module": "business"
+  },
+  {
+   "name": "Consistency Level",
+   "card": "backend/knowledge-cards/consistency-level",
+   "module": "backend"
+  },
+  {
+   "name": "Consolidated Financial Statements",
+   "card": "business/knowledge-cards/consolidated-financial-statements",
+   "module": "business"
+  },
+  {
+   "name": "Consolidation Cycle",
+   "card": "business/knowledge-cards/consolidation-cycle",
+   "module": "business"
+  },
+  {
+   "name": "Constrained Decoding",
+   "card": "llm/knowledge-cards/constrained-decoding",
+   "module": "llm"
+  },
+  {
+   "name": "Constraint",
+   "card": "backend/01-database/sql/knowledge-cards/constraint",
+   "module": "backend"
+  },
+  {
+   "name": "Consumer",
+   "card": "backend/knowledge-cards/consumer",
+   "module": "backend"
+  },
+  {
+   "name": "Consumer Capacity",
+   "card": "backend/knowledge-cards/consumer-capacity",
+   "module": "backend"
+  },
+  {
+   "name": "Consumer Coordinability",
+   "card": "backend/knowledge-cards/consumer-coordinability",
+   "module": "backend"
+  },
+  {
+   "name": "Consumer Group",
+   "card": "backend/knowledge-cards/consumer-group",
+   "module": "backend"
+  },
+  {
+   "name": "Consumer Lag",
+   "card": "backend/knowledge-cards/consumer-lag",
+   "module": "backend"
+  },
+  {
+   "name": "Consumer Pause",
+   "card": "backend/knowledge-cards/consumer-pause",
+   "module": "backend"
+  },
+  {
+   "name": "Consumer-Driven Contract Test",
+   "card": "testing/knowledge-cards/consumer-driven-contract-test",
+   "module": "testing"
+  },
+  {
+   "name": "Container",
+   "card": "backend/knowledge-cards/container",
+   "module": "backend"
+  },
+  {
+   "name": "Container Registry",
+   "card": "devops/ci/knowledge-cards/container-registry",
+   "module": "devops"
+  },
+  {
+   "name": "Container-per-Service",
+   "card": "backend/knowledge-cards/container-per-service",
+   "module": "backend"
+  },
+  {
+   "name": "Containment",
+   "card": "backend/knowledge-cards/containment",
+   "module": "backend"
+  },
+  {
+   "name": "Content Security Policy",
+   "card": "backend/knowledge-cards/content-security-policy",
+   "module": "backend"
+  },
+  {
+   "name": "Context Budget",
+   "card": "llm/knowledge-cards/context-budget",
+   "module": "llm"
+  },
+  {
+   "name": "context compatibility",
+   "card": "books/knowledge-cards/context-compatibility",
+   "module": "books"
+  },
+  {
+   "name": "Context Drift",
+   "card": "llm/knowledge-cards/context-drift",
+   "module": "llm"
+  },
+  {
+   "name": "Context Packing",
+   "card": "llm/knowledge-cards/context-packing",
+   "module": "llm"
+  },
+  {
+   "name": "Context Window",
+   "card": "llm/knowledge-cards/context-window",
+   "module": "llm"
+  },
+  {
+   "name": "Continuous Profiling",
+   "card": "backend/knowledge-cards/continuous-profiling",
+   "module": "backend"
+  },
+  {
+   "name": "Contract Farming",
+   "card": "business/knowledge-cards/contract-farming",
+   "module": "business"
+  },
+  {
+   "name": "Contract Multiplier",
+   "card": "business/retail-instruments/knowledge-cards/contract-multiplier",
+   "module": "business"
+  },
+  {
+   "name": "Contrastive Learning",
+   "card": "llm/knowledge-cards/contrastive-learning",
+   "module": "llm"
+  },
+  {
+   "name": "Contribution Margin",
+   "card": "business/knowledge-cards/contribution-margin",
+   "module": "business"
+  },
+  {
+   "name": "Control Loop",
+   "card": "backend/knowledge-cards/control-loop",
+   "module": "backend"
+  },
+  {
+   "name": "Control Plane",
+   "card": "backend/knowledge-cards/control-plane",
+   "module": "backend"
+  },
+  {
+   "name": "Convertible Note",
+   "card": "business/knowledge-cards/convertible-note",
+   "module": "business"
+  },
+  {
+   "name": "Convertible Preferred Stock",
+   "card": "business/knowledge-cards/convertible-preferred-stock",
+   "module": "business"
+  },
+  {
+   "name": "Copy Trading",
+   "card": "business/retail-instruments/knowledge-cards/copy-trading",
+   "module": "business"
+  },
+  {
+   "name": "copyWith",
+   "card": "programming/flutter/knowledge-cards/copywith",
+   "module": "programming"
+  },
+  {
+   "name": "Correctness Check",
+   "card": "backend/knowledge-cards/correctness-check",
+   "module": "backend"
+  },
+  {
+   "name": "Correlated Failure",
+   "card": "backend/knowledge-cards/correlated-failure",
+   "module": "backend"
+  },
+  {
+   "name": "Correlation ID",
+   "card": "backend/knowledge-cards/correlation-id",
+   "module": "backend"
+  },
+  {
+   "name": "Corruption Recovery",
+   "card": "backend/knowledge-cards/corruption-recovery",
+   "module": "backend"
+  },
+  {
+   "name": "Cost Per Request",
+   "card": "backend/knowledge-cards/cost-per-request",
+   "module": "backend"
+  },
+  {
+   "name": "CoT",
+   "card": "llm/knowledge-cards/chain-of-thought",
+   "module": "llm"
+  },
+  {
+   "name": "Coupling",
+   "card": "software-design/design-principles/knowledge-cards/coupling",
+   "module": "software-design"
+  },
+  {
+   "name": "Coverage vs Completion Rate",
+   "card": "backend/knowledge-cards/coverage-vs-completion-rate",
+   "module": "backend"
+  },
+  {
+   "name": "cPanel",
+   "card": "devops/infra/knowledge-cards/cpanel",
+   "module": "devops"
+  },
+  {
+   "name": "CPU Steal Time",
+   "card": "backend/knowledge-cards/cpu-steal-time",
+   "module": "backend"
+  },
+  {
+   "name": "CPU 卸載",
+   "card": "llm/knowledge-cards/moe-cpu-offload",
+   "module": "llm"
+  },
+  {
+   "name": "CQRS",
+   "card": "backend/knowledge-cards/cqrs",
+   "module": "backend"
+  },
+  {
+   "name": "CQRS",
+   "card": "software-design/ddd/knowledge-cards/cqrs",
+   "module": "software-design"
+  },
+  {
+   "name": "Credential",
+   "card": "backend/knowledge-cards/credential",
+   "module": "backend"
+  },
+  {
+   "name": "Credential Stuffing",
+   "card": "backend/knowledge-cards/credential-stuffing",
+   "module": "backend"
+  },
+  {
+   "name": "Critical Audit Matter",
+   "card": "business/knowledge-cards/critical-audit-matter",
+   "module": "business"
+  },
+  {
+   "name": "cron",
+   "card": "devops/infra/knowledge-cards/cron",
+   "module": "devops"
+  },
+  {
+   "name": "Cross Margin / Isolated Margin",
+   "card": "business/retail-instruments/knowledge-cards/cross-and-isolated-margin",
+   "module": "business"
+  },
+  {
+   "name": "Cross-Entropy",
+   "card": "llm/knowledge-cards/cross-entropy",
+   "module": "llm"
+  },
+  {
+   "name": "Cross-Region Quorum",
+   "card": "backend/knowledge-cards/cross-region-quorum",
+   "module": "backend"
+  },
+  {
+   "name": "Cross-Site Request Forgery",
+   "card": "backend/knowledge-cards/cross-site-request-forgery",
+   "module": "backend"
+  },
+  {
+   "name": "Cross-Site Scripting",
+   "card": "backend/knowledge-cards/cross-site-scripting",
+   "module": "backend"
+  },
+  {
+   "name": "Crossover",
+   "card": "til/audio/knowledge-cards/crossover",
+   "module": "til"
+  },
+  {
+   "name": "Crush Margin",
+   "card": "business/knowledge-cards/crush-margin",
+   "module": "business"
+  },
+  {
+   "name": "Current Ratio",
+   "card": "business/knowledge-cards/current-ratio",
+   "module": "business"
+  },
+  {
+   "name": "Cut-off Testing",
+   "card": "business/knowledge-cards/cut-off-testing",
+   "module": "business"
+  },
+  {
+   "name": "Cutover / Switchover",
+   "card": "backend/knowledge-cards/cutover-switchover",
+   "module": "backend"
+  },
+  {
+   "name": "Cutover Window",
+   "card": "backend/knowledge-cards/cutover-window",
+   "module": "backend"
+  },
+  {
+   "name": "Cyclomatic Complexity",
+   "card": "testing/knowledge-cards/cyclomatic-complexity",
+   "module": "testing"
+  },
+  {
+   "name": "D 類擴大機",
+   "card": "til/audio/knowledge-cards/class-d-amplifier",
+   "module": "til"
+  },
+  {
+   "name": "DAC",
+   "card": "til/audio/knowledge-cards/dac",
+   "module": "til"
+  },
+  {
+   "name": "Damped Spring",
+   "card": "ux-design/knowledge-cards/damped-spring",
+   "module": "ux-design"
+  },
+  {
+   "name": "Dark Launch",
+   "card": "backend/knowledge-cards/dark-launch",
+   "module": "backend"
+  },
+  {
+   "name": "Dashboard",
+   "card": "backend/knowledge-cards/dashboard",
+   "module": "backend"
+  },
+  {
+   "name": "Data Bag",
+   "card": "software-design/ddd/knowledge-cards/data-bag",
+   "module": "software-design"
+  },
+  {
+   "name": "Data Classification",
+   "card": "backend/knowledge-cards/data-classification",
+   "module": "backend"
+  },
+  {
+   "name": "Data Completeness",
+   "card": "backend/knowledge-cards/data-completeness",
+   "module": "backend"
+  },
+  {
+   "name": "Data Controller and Data Processor",
+   "card": "backend/knowledge-cards/data-controller-and-processor",
+   "module": "backend"
+  },
+  {
+   "name": "Data Gravity",
+   "card": "business/knowledge-cards/data-gravity",
+   "module": "business"
+  },
+  {
+   "name": "Data Inconsistency",
+   "card": "backend/knowledge-cards/data-inconsistency",
+   "module": "backend"
+  },
+  {
+   "name": "Data Lifecycle",
+   "card": "backend/knowledge-cards/data-lifecycle",
+   "module": "backend"
+  },
+  {
+   "name": "Data Masking",
+   "card": "backend/knowledge-cards/data-masking",
+   "module": "backend"
+  },
+  {
+   "name": "Data Quality",
+   "card": "backend/knowledge-cards/data-quality",
+   "module": "backend"
+  },
+  {
+   "name": "Data Reconciliation",
+   "card": "backend/knowledge-cards/data-reconciliation",
+   "module": "backend"
+  },
+  {
+   "name": "Data Repair",
+   "card": "backend/knowledge-cards/data-repair",
+   "module": "backend"
+  },
+  {
+   "name": "Data Residency",
+   "card": "backend/knowledge-cards/data-residency",
+   "module": "backend"
+  },
+  {
+   "name": "Database",
+   "card": "backend/knowledge-cards/database",
+   "module": "backend"
+  },
+  {
+   "name": "Database Engine",
+   "card": "backend/01-database/sql/knowledge-cards/database-engine",
+   "module": "backend"
+  },
+  {
+   "name": "Database Migration",
+   "card": "devops/infra/knowledge-cards/database-migration",
+   "module": "devops"
+  },
+  {
+   "name": "Database Sharding",
+   "card": "backend/knowledge-cards/database-sharding",
+   "module": "backend"
+  },
+  {
+   "name": "DataFrame",
+   "card": "backend/01-database/sql/knowledge-cards/dataframe",
+   "module": "backend"
+  },
+  {
+   "name": "DDL 與 DML",
+   "card": "backend/01-database/sql/knowledge-cards/ddl-dml",
+   "module": "backend"
+  },
+  {
+   "name": "Dead Man's Switch",
+   "card": "backend/knowledge-cards/dead-mans-switch",
+   "module": "backend"
+  },
+  {
+   "name": "Dead-Letter Queue",
+   "card": "backend/knowledge-cards/dead-letter-queue",
+   "module": "backend"
+  },
+  {
+   "name": "Deadline",
+   "card": "backend/knowledge-cards/deadline",
+   "module": "backend"
+  },
+  {
+   "name": "Debounce",
+   "card": "ux-design/knowledge-cards/debounce",
+   "module": "ux-design"
+  },
+  {
+   "name": "Debt Ratio",
+   "card": "business/knowledge-cards/debt-ratio",
+   "module": "business"
+  },
+  {
+   "name": "Decibel",
+   "card": "til/audio/knowledge-cards/decibel",
+   "module": "til"
+  },
+  {
+   "name": "Defense in Depth",
+   "card": "backend/knowledge-cards/defense-in-depth",
+   "module": "backend"
+  },
+  {
+   "name": "Deferred Tool Loading",
+   "card": "llm/knowledge-cards/deferred-tool-loading",
+   "module": "llm"
+  },
+  {
+   "name": "Degradation",
+   "card": "backend/knowledge-cards/degradation",
+   "module": "backend"
+  },
+  {
+   "name": "Deletion Protection",
+   "card": "devops/infra/knowledge-cards/deletion-protection",
+   "module": "devops"
+  },
+  {
+   "name": "Delivery Mode",
+   "card": "backend/knowledge-cards/delivery-mode",
+   "module": "backend"
+  },
+  {
+   "name": "Delivery Semantics",
+   "card": "backend/knowledge-cards/delivery-semantics",
+   "module": "backend"
+  },
+  {
+   "name": "Dependency Injection",
+   "card": "software-design/ddd/knowledge-cards/dependency-injection",
+   "module": "software-design"
+  },
+  {
+   "name": "Dependency Isolation",
+   "card": "backend/knowledge-cards/dependency-isolation",
+   "module": "backend"
+  },
+  {
+   "name": "Deployment Contract",
+   "card": "backend/knowledge-cards/deployment-contract",
+   "module": "backend"
+  },
+  {
+   "name": "Deployment Dry Run",
+   "card": "devops/ci/knowledge-cards/deployment-dry-run",
+   "module": "devops"
+  },
+  {
+   "name": "Deprecation Lifecycle",
+   "card": "backend/knowledge-cards/deprecation-lifecycle",
+   "module": "backend"
+  },
+  {
+   "name": "Depreciation & Amortization",
+   "card": "business/knowledge-cards/depreciation-amortization",
+   "module": "business"
+  },
+  {
+   "name": "Design Win",
+   "card": "business/procurement-planning/cards/design-win",
+   "module": "business"
+  },
+  {
+   "name": "Deterministic vs Fuzzy engineering",
+   "card": "llm/knowledge-cards/deterministic-vs-fuzzy",
+   "module": "llm"
+  },
+  {
+   "name": "Diagnostic Endpoint",
+   "card": "backend/knowledge-cards/diagnostic-endpoint",
+   "module": "backend"
+  },
+  {
+   "name": "Diffusion",
+   "card": "llm/knowledge-cards/diffusion",
+   "module": "llm"
+  },
+  {
+   "name": "Digital Amplifier",
+   "card": "til/audio/knowledge-cards/digital-amplifier",
+   "module": "til"
+  },
+  {
+   "name": "Digital Forensics",
+   "card": "backend/knowledge-cards/digital-forensics",
+   "module": "backend"
+  },
+  {
+   "name": "Dilution",
+   "card": "business/knowledge-cards/dilution",
+   "module": "business"
+  },
+  {
+   "name": "Direct Preference Optimization",
+   "card": "llm/knowledge-cards/dpo",
+   "module": "llm"
+  },
+  {
+   "name": "Directivity",
+   "card": "til/audio/knowledge-cards/directivity",
+   "module": "til"
+  },
+  {
+   "name": "Distributed Lock",
+   "card": "backend/knowledge-cards/distributed-lock",
+   "module": "backend"
+  },
+  {
+   "name": "Distributed SQL",
+   "card": "backend/knowledge-cards/distributed-sql",
+   "module": "backend"
+  },
+  {
+   "name": "Distribution",
+   "card": "business/knowledge-cards/distribution",
+   "module": "business"
+  },
+  {
+   "name": "Divergent Change",
+   "card": "software-design/design-principles/knowledge-cards/divergent-change",
+   "module": "software-design"
+  },
+  {
+   "name": "Dividend Yield",
+   "card": "business/knowledge-cards/dividend-yield",
+   "module": "business"
+  },
+  {
+   "name": "DLQ Drain",
+   "card": "backend/knowledge-cards/dlq-drain",
+   "module": "backend"
+  },
+  {
+   "name": "DNAT",
+   "card": "devops/infra/knowledge-cards/dnat",
+   "module": "devops"
+  },
+  {
+   "name": "DNS",
+   "card": "devops/infra/knowledge-cards/dns",
+   "module": "devops"
+  },
+  {
+   "name": "Docker Named Volume Ownership",
+   "card": "linux/dotfile/knowledge-cards/docker-named-volume-ownership",
+   "module": "linux"
+  },
+  {
+   "name": "Docker 留給使用者的轉送規則鏈",
+   "card": "devops/infra/knowledge-cards/docker-user",
+   "module": "devops"
+  },
+  {
+   "name": "DOCKER-USER",
+   "card": "devops/infra/knowledge-cards/docker-user",
+   "module": "devops"
+  },
+  {
+   "name": "Document Store",
+   "card": "backend/knowledge-cards/document-store",
+   "module": "backend"
+  },
+  {
+   "name": "doGet / doPost",
+   "card": "automation/knowledge-cards/doget-dopost",
+   "module": "automation"
+  },
+  {
+   "name": "Doherty Threshold",
+   "card": "ux-design/knowledge-cards/doherty-threshold",
+   "module": "ux-design"
+  },
+  {
+   "name": "Domain Event",
+   "card": "software-design/ddd/knowledge-cards/domain-event",
+   "module": "software-design"
+  },
+  {
+   "name": "Domain-Specific Language",
+   "card": "llm/knowledge-cards/dsl",
+   "module": "llm"
+  },
+  {
+   "name": "Don't Repeat Yourself",
+   "card": "software-design/design-principles/knowledge-cards/dry-principle",
+   "module": "software-design"
+  },
+  {
+   "name": "Dot Product",
+   "card": "llm/knowledge-cards/dot-product",
+   "module": "llm"
+  },
+  {
+   "name": "Downtime",
+   "card": "backend/knowledge-cards/downtime",
+   "module": "backend"
+  },
+  {
+   "name": "DPO",
+   "card": "llm/knowledge-cards/dpo",
+   "module": "llm"
+  },
+  {
+   "name": "Drafter Model",
+   "card": "llm/knowledge-cards/drafter-model",
+   "module": "llm"
+  },
+  {
+   "name": "Draining",
+   "card": "backend/knowledge-cards/draining",
+   "module": "backend"
+  },
+  {
+   "name": "DRAM",
+   "card": "business/knowledge-cards/dram",
+   "module": "business"
+  },
+  {
+   "name": "Drift",
+   "card": "devops/infra/knowledge-cards/drift",
+   "module": "devops"
+  },
+  {
+   "name": "DRY",
+   "card": "software-design/design-principles/knowledge-cards/dry-principle",
+   "module": "software-design"
+  },
+  {
+   "name": "DSL",
+   "card": "llm/knowledge-cards/dsl",
+   "module": "llm"
+  },
+  {
+   "name": "Dual Write",
+   "card": "backend/knowledge-cards/dual-write",
+   "module": "backend"
+  },
+  {
+   "name": "Duplicate Delivery",
+   "card": "backend/knowledge-cards/duplicate-delivery",
+   "module": "backend"
+  },
+  {
+   "name": "DuPont Analysis",
+   "card": "business/knowledge-cards/dupont-analysis",
+   "module": "business"
+  },
+  {
+   "name": "Durable Queue",
+   "card": "backend/knowledge-cards/durable-queue",
+   "module": "backend"
+  },
+  {
+   "name": "Dwell Time",
+   "card": "backend/knowledge-cards/dwell-time",
+   "module": "backend"
+  },
+  {
+   "name": "Dynamic Driver",
+   "card": "til/audio/knowledge-cards/dynamic-driver",
+   "module": "til"
+  },
+  {
+   "name": "Early Reflections",
+   "card": "til/audio/knowledge-cards/early-reflections",
+   "module": "til"
+  },
+  {
+   "name": "EBS",
+   "card": "devops/infra/knowledge-cards/ebs",
+   "module": "devops"
+  },
+  {
+   "name": "EC2",
+   "card": "devops/infra/knowledge-cards/ec2",
+   "module": "devops"
+  },
+  {
+   "name": "ECS",
+   "card": "devops/infra/knowledge-cards/ecs",
+   "module": "devops"
+  },
+  {
+   "name": "Effective Mass and Compliance",
+   "card": "til/audio/knowledge-cards/effective-mass-and-compliance",
+   "module": "til"
+  },
+  {
+   "name": "Embedded Database",
+   "card": "backend/knowledge-cards/embedded-database",
+   "module": "backend"
+  },
+  {
+   "name": "Embedding Layer",
+   "card": "llm/knowledge-cards/embedding-layer",
+   "module": "llm"
+  },
+  {
+   "name": "Embedding Model",
+   "card": "llm/knowledge-cards/embedding-model",
+   "module": "llm"
+  },
+  {
+   "name": "Employee Stock Option",
+   "card": "business/knowledge-cards/employee-stock-option",
+   "module": "business"
+  },
+  {
+   "name": "EMS",
+   "card": "business/knowledge-cards/ems",
+   "module": "business"
+  },
+  {
+   "name": "Enterprise License",
+   "card": "business/knowledge-cards/enterprise-license",
+   "module": "business"
+  },
+  {
+   "name": "Entity",
+   "card": "software-design/ddd/knowledge-cards/entity",
+   "module": "software-design"
+  },
+  {
+   "name": "Entropy",
+   "card": "llm/knowledge-cards/entropy",
+   "module": "llm"
+  },
+  {
+   "name": "Environment Protection",
+   "card": "devops/ci/knowledge-cards/environment-protection",
+   "module": "devops"
+  },
+  {
+   "name": "Environment Separation",
+   "card": "devops/infra/knowledge-cards/environment-separation",
+   "module": "devops"
+  },
+  {
+   "name": "EPS",
+   "card": "business/knowledge-cards/eps",
+   "module": "business"
+  },
+  {
+   "name": "Equity Method",
+   "card": "business/knowledge-cards/equity-method",
+   "module": "business"
+  },
+  {
+   "name": "Eradication",
+   "card": "backend/knowledge-cards/eradication",
+   "module": "backend"
+  },
+  {
+   "name": "Error Budget",
+   "card": "backend/knowledge-cards/error-budget",
+   "module": "backend"
+  },
+  {
+   "name": "Error Fingerprint",
+   "card": "devops/monitoring/knowledge-cards/error-fingerprint",
+   "module": "devops"
+  },
+  {
+   "name": "Escalation Policy",
+   "card": "backend/knowledge-cards/escalation-policy",
+   "module": "backend"
+  },
+  {
+   "name": "Evaluation Set",
+   "card": "business/knowledge-cards/evaluation-set",
+   "module": "business"
+  },
+  {
+   "name": "Event Log",
+   "card": "backend/knowledge-cards/event-log",
+   "module": "backend"
+  },
+  {
+   "name": "Event Schema Compatibility",
+   "card": "backend/knowledge-cards/event-schema-compatibility",
+   "module": "backend"
+  },
+  {
+   "name": "Event Source",
+   "card": "devops/ci/knowledge-cards/event-source",
+   "module": "devops"
+  },
+  {
+   "name": "Event Sourcing",
+   "card": "backend/knowledge-cards/event-sourcing",
+   "module": "backend"
+  },
+  {
+   "name": "Event-Carried State Transfer",
+   "card": "software-design/ddd/knowledge-cards/event-carried-state-transfer",
+   "module": "software-design"
+  },
+  {
+   "name": "EventBus",
+   "card": "software-design/ddd/knowledge-cards/event-bus",
+   "module": "software-design"
+  },
+  {
+   "name": "Eventual Consistency",
+   "card": "backend/knowledge-cards/eventual-consistency",
+   "module": "backend"
+  },
+  {
+   "name": "Eviction",
+   "card": "backend/knowledge-cards/eviction",
+   "module": "backend"
+  },
+  {
+   "name": "Evidence Package",
+   "card": "backend/knowledge-cards/evidence-package",
+   "module": "backend"
+  },
+  {
+   "name": "evidence provenance",
+   "card": "books/knowledge-cards/evidence-provenance",
+   "module": "books"
+  },
+  {
+   "name": "Exactly-Once",
+   "card": "backend/knowledge-cards/exactly-once",
+   "module": "backend"
+  },
+  {
+   "name": "Excessive Data Exposure",
+   "card": "backend/knowledge-cards/excessive-data-exposure",
+   "module": "backend"
+  },
+  {
+   "name": "Exclusion Constraint",
+   "card": "backend/01-database/sql/knowledge-cards/exclusion-constraint",
+   "module": "backend"
+  },
+  {
+   "name": "Execution Quota",
+   "card": "automation/knowledge-cards/execution-quota",
+   "module": "automation"
+  },
+  {
+   "name": "Executions",
+   "card": "automation/knowledge-cards/executions-page",
+   "module": "automation"
+  },
+  {
+   "name": "Expand / Contract",
+   "card": "backend/knowledge-cards/expand-contract",
+   "module": "backend"
+  },
+  {
+   "name": "Expediting",
+   "card": "business/procurement-planning/cards/expediting",
+   "module": "business"
+  },
+  {
+   "name": "Exponential Backoff",
+   "card": "backend/knowledge-cards/exponential-backoff",
+   "module": "backend"
+  },
+  {
+   "name": "Extension Type",
+   "card": "programming/flutter/knowledge-cards/extension-type",
+   "module": "programming"
+  },
+  {
+   "name": "External Consistency",
+   "card": "backend/knowledge-cards/external-consistency",
+   "module": "backend"
+  },
+  {
+   "name": "Facet Query",
+   "card": "backend/knowledge-cards/facet-query",
+   "module": "backend"
+  },
+  {
+   "name": "Fail Fast",
+   "card": "backend/knowledge-cards/fail-fast",
+   "module": "backend"
+  },
+  {
+   "name": "Fail-forward",
+   "card": "backend/knowledge-cards/fail-forward",
+   "module": "backend"
+  },
+  {
+   "name": "Fail-Safe Default",
+   "card": "ux-design/knowledge-cards/fail-safe-default",
+   "module": "ux-design"
+  },
+  {
+   "name": "Failover",
+   "card": "backend/knowledge-cards/failover",
+   "module": "backend"
+  },
+  {
+   "name": "Failure Domain",
+   "card": "backend/knowledge-cards/failure-domain",
+   "module": "backend"
+  },
+  {
+   "name": "Failure Injection Testing",
+   "card": "backend/knowledge-cards/fit-failure-injection-testing",
+   "module": "backend"
+  },
+  {
+   "name": "Fair Value",
+   "card": "business/knowledge-cards/fair-value",
+   "module": "business"
+  },
+  {
+   "name": "Fallback",
+   "card": "backend/knowledge-cards/fallback",
+   "module": "backend"
+  },
+  {
+   "name": "Fallback",
+   "card": "ux-design/knowledge-cards/ux-fallback",
+   "module": "ux-design"
+  },
+  {
+   "name": "Fallback Plan",
+   "card": "backend/knowledge-cards/fallback-plan",
+   "module": "backend"
+  },
+  {
+   "name": "Fallback Read",
+   "card": "backend/knowledge-cards/fallback-read",
+   "module": "backend"
+  },
+  {
+   "name": "Fan-out",
+   "card": "backend/knowledge-cards/fan-out",
+   "module": "backend"
+  },
+  {
+   "name": "Fargate",
+   "card": "devops/infra/knowledge-cards/fargate",
+   "module": "devops"
+  },
+  {
+   "name": "Farmgate Price",
+   "card": "business/knowledge-cards/farmgate-price",
+   "module": "business"
+  },
+  {
+   "name": "FastCGI Process Manager",
+   "card": "programming/php/knowledge-cards/php-fpm",
+   "module": "programming"
+  },
+  {
+   "name": "Fat Data / Fat Skill",
+   "card": "business/knowledge-cards/fat-data-fat-skill",
+   "module": "business"
+  },
+  {
+   "name": "Fault Domain",
+   "card": "devops/infra/knowledge-cards/fault-domain",
+   "module": "devops"
+  },
+  {
+   "name": "FDE",
+   "card": "business/knowledge-cards/fde",
+   "module": "business"
+  },
+  {
+   "name": "Feature Flag",
+   "card": "backend/knowledge-cards/feature-flag",
+   "module": "backend"
+  },
+  {
+   "name": "Federal Milk Marketing Orders，聯邦牛奶行銷法令",
+   "card": "business/knowledge-cards/fmmo",
+   "module": "business"
+  },
+  {
+   "name": "Federation",
+   "card": "backend/knowledge-cards/federation",
+   "module": "backend"
+  },
+  {
+   "name": "Feed-Forward Network",
+   "card": "llm/knowledge-cards/ffn",
+   "module": "llm"
+  },
+  {
+   "name": "Fencing Token",
+   "card": "backend/knowledge-cards/fencing-token",
+   "module": "backend"
+  },
+  {
+   "name": "Few-shot prompting",
+   "card": "llm/knowledge-cards/few-shot-prompting",
+   "module": "llm"
+  },
+  {
+   "name": "FFN",
+   "card": "llm/knowledge-cards/ffn",
+   "module": "llm"
+  },
+  {
+   "name": "FileZilla",
+   "card": "devops/infra/knowledge-cards/filezilla",
+   "module": "devops"
+  },
+  {
+   "name": "Filterless Class D",
+   "card": "til/audio/knowledge-cards/filterless-class-d",
+   "module": "til"
+  },
+  {
+   "name": "Finance Lease",
+   "card": "business/knowledge-cards/finance-lease",
+   "module": "business"
+  },
+  {
+   "name": "Fire-and-Forget Orchestration",
+   "card": "testing/knowledge-cards/fire-and-forget-orchestration",
+   "module": "testing"
+  },
+  {
+   "name": "First-party Cookie",
+   "card": "devops/monitoring/knowledge-cards/first-party-cookie",
+   "module": "devops"
+  },
+  {
+   "name": "FIT",
+   "card": "backend/knowledge-cards/fit-failure-injection-testing",
+   "module": "backend"
+  },
+  {
+   "name": "Flaky Test",
+   "card": "devops/ci/knowledge-cards/flaky-test",
+   "module": "devops"
+  },
+  {
+   "name": "Flame Graph",
+   "card": "backend/knowledge-cards/flame-graph",
+   "module": "backend"
+  },
+  {
+   "name": "Flash Attention",
+   "card": "llm/knowledge-cards/flash-attention",
+   "module": "llm"
+  },
+  {
+   "name": "Floating Point",
+   "card": "llm/knowledge-cards/floating-point",
+   "module": "llm"
+  },
+  {
+   "name": "Flow Test",
+   "card": "testing/knowledge-cards/flow-test",
+   "module": "testing"
+  },
+  {
+   "name": "Flutter Thread Model",
+   "card": "programming/flutter/knowledge-cards/flutter-thread-model",
+   "module": "programming"
+  },
+  {
+   "name": "Flutter 每一幀的時間紀錄",
+   "card": "programming/flutter/knowledge-cards/frame-timing",
+   "module": "programming"
+  },
+  {
+   "name": "Flutter 的三棵樹",
+   "card": "programming/flutter/knowledge-cards/widget-element-renderobject",
+   "module": "programming"
+  },
+  {
+   "name": "Flutter 的執行緒模型",
+   "card": "programming/flutter/knowledge-cards/flutter-thread-model",
+   "module": "programming"
+  },
+  {
+   "name": "FMMO",
+   "card": "business/knowledge-cards/fmmo",
+   "module": "business"
+  },
+  {
+   "name": "Follow-through and Overlapping Action",
+   "card": "ux-design/knowledge-cards/follow-through-overlapping-action",
+   "module": "ux-design"
+  },
+  {
+   "name": "Follower Read",
+   "card": "backend/knowledge-cards/follower-read",
+   "module": "backend"
+  },
+  {
+   "name": "fontconfig — 字型搜尋、匹配與 fallback 服務",
+   "card": "linux/dotfile/knowledge-cards/fontconfig",
+   "module": "linux"
+  },
+  {
+   "name": "Forecast",
+   "card": "business/procurement-planning/cards/forecast",
+   "module": "business"
+  },
+  {
+   "name": "Forward Pass",
+   "card": "llm/knowledge-cards/forward-pass",
+   "module": "llm"
+  },
+  {
+   "name": "Fowler 分類",
+   "card": "testing/knowledge-cards/test-double-taxonomy",
+   "module": "testing"
+  },
+  {
+   "name": "FP32 / FP16 / BF16",
+   "card": "llm/knowledge-cards/floating-point",
+   "module": "llm"
+  },
+  {
+   "name": "FrameTiming",
+   "card": "programming/flutter/knowledge-cards/frame-timing",
+   "module": "programming"
+  },
+  {
+   "name": "Free Cash Flow",
+   "card": "business/knowledge-cards/free-cash-flow",
+   "module": "business"
+  },
+  {
+   "name": "Free Float",
+   "card": "business/retail-instruments/knowledge-cards/free-float",
+   "module": "business"
+  },
+  {
+   "name": "freezed",
+   "card": "programming/flutter/knowledge-cards/freezed",
+   "module": "programming"
+  },
+  {
+   "name": "Frequency Response",
+   "card": "til/audio/knowledge-cards/frequency-response",
+   "module": "til"
+  },
+  {
+   "name": "Freshness Token",
+   "card": "backend/knowledge-cards/freshness-token",
+   "module": "backend"
+  },
+  {
+   "name": "Freshness Window",
+   "card": "backend/knowledge-cards/freshness-window",
+   "module": "backend"
+  },
+  {
+   "name": "Frontier Capability",
+   "card": "business/knowledge-cards/frontier-capability",
+   "module": "business"
+  },
+  {
+   "name": "Frozen baseline",
+   "card": "llm/knowledge-cards/frozen-baseline",
+   "module": "llm"
+  },
+  {
+   "name": "Frozen vs Live Reference",
+   "card": "testing/knowledge-cards/frozen-vs-live-reference",
+   "module": "testing"
+  },
+  {
+   "name": "FTP",
+   "card": "devops/infra/knowledge-cards/ftp",
+   "module": "devops"
+  },
+  {
+   "name": "Full-Text Search",
+   "card": "backend/knowledge-cards/full-text-search",
+   "module": "backend"
+  },
+  {
+   "name": "Function Alias",
+   "card": "devops/ci/knowledge-cards/function-alias",
+   "module": "devops"
+  },
+  {
+   "name": "Function Calling",
+   "card": "llm/knowledge-cards/function-calling",
+   "module": "llm"
+  },
+  {
+   "name": "Function-Level Authorization",
+   "card": "backend/knowledge-cards/function-level-authorization",
+   "module": "backend"
+  },
+  {
+   "name": "Funding Rate",
+   "card": "business/retail-instruments/knowledge-cards/funding-rate",
+   "module": "business"
+  },
+  {
+   "name": "Funnel Analysis",
+   "card": "devops/monitoring/knowledge-cards/funnel-analysis",
+   "module": "devops"
+  },
+  {
+   "name": "Fuzz Test",
+   "card": "backend/knowledge-cards/fuzz-test",
+   "module": "backend"
+  },
+  {
+   "name": "Game Day",
+   "card": "backend/knowledge-cards/game-day",
+   "module": "backend"
+  },
+  {
+   "name": "Gate",
+   "card": "ux-design/knowledge-cards/gate",
+   "module": "ux-design"
+  },
+  {
+   "name": "Gate Decision",
+   "card": "backend/knowledge-cards/gate-decision",
+   "module": "backend"
+  },
+  {
+   "name": "GCP 網路標籤",
+   "card": "devops/infra/knowledge-cards/network-tag",
+   "module": "devops"
+  },
+  {
+   "name": "Gevent Monkey Patching",
+   "card": "backend/knowledge-cards/gevent-monkey-patching",
+   "module": "backend"
+  },
+  {
+   "name": "gevent 的猴子補丁",
+   "card": "backend/knowledge-cards/gevent-monkey-patching",
+   "module": "backend"
+  },
+  {
+   "name": "GGUF",
+   "card": "llm/knowledge-cards/gguf",
+   "module": "llm"
+  },
+  {
+   "name": "git credential helper",
+   "card": "linux/dotfile/knowledge-cards/git-credential-helper",
+   "module": "linux"
+  },
+  {
+   "name": "glibc 與 musl",
+   "card": "linux/dotfile/knowledge-cards/glibc-vs-musl",
+   "module": "linux"
+  },
+  {
+   "name": "Global OLTP",
+   "card": "backend/knowledge-cards/global-oltp",
+   "module": "backend"
+  },
+  {
+   "name": "GMV",
+   "card": "business/knowledge-cards/gmv",
+   "module": "business"
+  },
+  {
+   "name": "GNU Stow",
+   "card": "linux/dotfile/knowledge-cards/gnu-stow",
+   "module": "linux"
+  },
+  {
+   "name": "Go/No-Go",
+   "card": "backend/knowledge-cards/go-no-go",
+   "module": "backend"
+  },
+  {
+   "name": "Goal Drift",
+   "card": "llm/knowledge-cards/goal-drift",
+   "module": "llm"
+  },
+  {
+   "name": "Going Concern",
+   "card": "business/knowledge-cards/going-concern",
+   "module": "business"
+  },
+  {
+   "name": "Golden Path / paved road",
+   "card": "linux/dotfile/knowledge-cards/paved-road-golden-path",
+   "module": "linux"
+  },
+  {
+   "name": "GPU Compute Backend",
+   "card": "llm/knowledge-cards/gpu-compute-backend",
+   "module": "llm"
+  },
+  {
+   "name": "Graceful Shutdown",
+   "card": "backend/knowledge-cards/graceful-shutdown",
+   "module": "backend"
+  },
+  {
+   "name": "Gradient",
+   "card": "llm/knowledge-cards/gradient",
+   "module": "llm"
+  },
+  {
+   "name": "Gradient Explosion / Vanishing",
+   "card": "llm/knowledge-cards/gradient-explosion-vanishing",
+   "module": "llm"
+  },
+  {
+   "name": "Grafana",
+   "card": "devops/infra/knowledge-cards/grafana",
+   "module": "devops"
+  },
+  {
+   "name": "Grammar",
+   "card": "llm/knowledge-cards/grammar",
+   "module": "llm"
+  },
+  {
+   "name": "Gross Margin",
+   "card": "business/knowledge-cards/gross-margin",
+   "module": "business"
+  },
+  {
+   "name": "Gross vs Net Revenue",
+   "card": "business/knowledge-cards/gross-vs-net-revenue",
+   "module": "business"
+  },
+  {
+   "name": "Ground Loop",
+   "card": "til/audio/knowledge-cards/ground-loop",
+   "module": "til"
+  },
+  {
+   "name": "Grouped-Query Attention",
+   "card": "llm/knowledge-cards/grouped-query-attention",
+   "module": "llm"
+  },
+  {
+   "name": "Growth Curve",
+   "card": "backend/knowledge-cards/growth-curve",
+   "module": "backend"
+  },
+  {
+   "name": "GTID",
+   "card": "backend/knowledge-cards/gtid",
+   "module": "backend"
+  },
+  {
+   "name": "GTM",
+   "card": "business/knowledge-cards/gtm",
+   "module": "business"
+  },
+  {
+   "name": "Guardrail",
+   "card": "llm/knowledge-cards/guardrail",
+   "module": "llm"
+  },
+  {
+   "name": "Hallucination",
+   "card": "llm/knowledge-cards/hallucination",
+   "module": "llm"
+  },
+  {
+   "name": "Handover Protocol",
+   "card": "backend/knowledge-cards/handover-protocol",
+   "module": "backend"
+  },
+  {
+   "name": "Harbor",
+   "card": "devops/infra/knowledge-cards/harbor",
+   "module": "devops"
+  },
+  {
+   "name": "Hardware Security Module",
+   "card": "backend/knowledge-cards/hsm",
+   "module": "backend"
+  },
+  {
+   "name": "HashiCorp Vault",
+   "card": "devops/infra/knowledge-cards/vault",
+   "module": "devops"
+  },
+  {
+   "name": "HBM",
+   "card": "business/knowledge-cards/hbm",
+   "module": "business"
+  },
+  {
+   "name": "HCL",
+   "card": "devops/infra/knowledge-cards/hcl",
+   "module": "devops"
+  },
+  {
+   "name": "Headless Browser",
+   "card": "devops/monitoring/knowledge-cards/headless-browser",
+   "module": "devops"
+  },
+  {
+   "name": "Headroom Budget",
+   "card": "backend/knowledge-cards/headroom-budget",
+   "module": "backend"
+  },
+  {
+   "name": "Headshell",
+   "card": "til/audio/knowledge-cards/headshell",
+   "module": "til"
+  },
+  {
+   "name": "Health Check",
+   "card": "backend/knowledge-cards/health-check",
+   "module": "backend"
+  },
+  {
+   "name": "Helm",
+   "card": "devops/infra/knowledge-cards/helm",
+   "module": "devops"
+  },
+  {
+   "name": "Heuristic Freshness",
+   "card": "backend/knowledge-cards/heuristic-freshness",
+   "module": "backend"
+  },
+  {
+   "name": "High Bandwidth Memory，高頻寬記憶體",
+   "card": "business/knowledge-cards/hbm",
+   "module": "business"
+  },
+  {
+   "name": "High Stickiness",
+   "card": "business/knowledge-cards/high-stickiness",
+   "module": "business"
+  },
+  {
+   "name": "Histogram",
+   "card": "backend/knowledge-cards/histogram",
+   "module": "backend"
+  },
+  {
+   "name": "HITL",
+   "card": "llm/knowledge-cards/human-in-the-loop",
+   "module": "llm"
+  },
+  {
+   "name": "Homebrew",
+   "card": "llm/knowledge-cards/homebrew",
+   "module": "llm"
+  },
+  {
+   "name": "Horizontal SaaS",
+   "card": "business/knowledge-cards/horizontal-saas",
+   "module": "business"
+  },
+  {
+   "name": "Hot Key",
+   "card": "backend/knowledge-cards/hot-key",
+   "module": "backend"
+  },
+  {
+   "name": "Hot Partition",
+   "card": "backend/knowledge-cards/hot-partition",
+   "module": "backend"
+  },
+  {
+   "name": "HSM",
+   "card": "backend/knowledge-cards/hsm",
+   "module": "backend"
+  },
+  {
+   "name": "HTTP Client",
+   "card": "backend/knowledge-cards/http-client",
+   "module": "backend"
+  },
+  {
+   "name": "Human Capital",
+   "card": "business/knowledge-cards/human-capital",
+   "module": "business"
+  },
+  {
+   "name": "Human-in-the-loop",
+   "card": "llm/knowledge-cards/human-in-the-loop",
+   "module": "llm"
+  },
+  {
+   "name": "Hybrid Logical Clock",
+   "card": "backend/knowledge-cards/hybrid-logical-clock",
+   "module": "backend"
+  },
+  {
+   "name": "Hybrid Search",
+   "card": "llm/knowledge-cards/hybrid-search",
+   "module": "llm"
+  },
+  {
+   "name": "HyDE",
+   "card": "llm/knowledge-cards/hyde",
+   "module": "llm"
+  },
+  {
+   "name": "Hypothetical Document Embeddings",
+   "card": "llm/knowledge-cards/hyde",
+   "module": "llm"
+  },
+  {
+   "name": "Hyrum's Law",
+   "card": "backend/knowledge-cards/hyrums-law",
+   "module": "backend"
+  },
+  {
+   "name": "IaC 狀態檔",
+   "card": "devops/infra/knowledge-cards/state",
+   "module": "devops"
+  },
+  {
+   "name": "IAM",
+   "card": "backend/knowledge-cards/iam",
+   "module": "backend"
+  },
+  {
+   "name": "IAM",
+   "card": "devops/infra/knowledge-cards/iam",
+   "module": "devops"
+  },
+  {
+   "name": "Idempotency",
+   "card": "backend/knowledge-cards/idempotency",
+   "module": "backend"
+  },
+  {
+   "name": "Idempotency Key",
+   "card": "backend/knowledge-cards/idempotency-key",
+   "module": "backend"
+  },
+  {
+   "name": "Identity and Access Management",
+   "card": "devops/infra/knowledge-cards/iam",
+   "module": "devops"
+  },
+  {
+   "name": "Identity Provider",
+   "card": "backend/knowledge-cards/identity-provider",
+   "module": "backend"
+  },
+  {
+   "name": "Identity-Aware Proxy",
+   "card": "devops/infra/knowledge-cards/identity-aware-proxy",
+   "module": "devops"
+  },
+  {
+   "name": "Idle Timeout",
+   "card": "backend/knowledge-cards/idle-timeout",
+   "module": "backend"
+  },
+  {
+   "name": "Image Digest",
+   "card": "devops/ci/knowledge-cards/image-digest",
+   "module": "devops"
+  },
+  {
+   "name": "Image Tag Pinning",
+   "card": "linux/dotfile/knowledge-cards/image-tag-pinning",
+   "module": "linux"
+  },
+  {
+   "name": "Image Token",
+   "card": "llm/knowledge-cards/image-token",
+   "module": "llm"
+  },
+  {
+   "name": "Immutable Image",
+   "card": "backend/knowledge-cards/immutable-image",
+   "module": "backend"
+  },
+  {
+   "name": "Impact Scope",
+   "card": "backend/knowledge-cards/impact-scope",
+   "module": "backend"
+  },
+  {
+   "name": "Impairment",
+   "card": "business/knowledge-cards/impairment",
+   "module": "business"
+  },
+  {
+   "name": "Implied Volatility",
+   "card": "business/retail-instruments/knowledge-cards/implied-volatility",
+   "module": "business"
+  },
+  {
+   "name": "In-Context Learning",
+   "card": "llm/knowledge-cards/in-context-learning",
+   "module": "llm"
+  },
+  {
+   "name": "In-Flight Message",
+   "card": "backend/knowledge-cards/in-flight-message",
+   "module": "backend"
+  },
+  {
+   "name": "In-Flight Work",
+   "card": "backend/knowledge-cards/in-flight",
+   "module": "backend"
+  },
+  {
+   "name": "In-Process Channel",
+   "card": "backend/knowledge-cards/in-process-channel",
+   "module": "backend"
+  },
+  {
+   "name": "Incident Command System",
+   "card": "backend/knowledge-cards/incident-command-system",
+   "module": "backend"
+  },
+  {
+   "name": "Incident Communication Channel",
+   "card": "backend/knowledge-cards/incident-communication-channel",
+   "module": "backend"
+  },
+  {
+   "name": "Incident Decision Log",
+   "card": "backend/knowledge-cards/incident-decision-log",
+   "module": "backend"
+  },
+  {
+   "name": "Incident Severity",
+   "card": "backend/knowledge-cards/incident-severity",
+   "module": "backend"
+  },
+  {
+   "name": "Incident Timeline",
+   "card": "backend/knowledge-cards/incident-timeline",
+   "module": "backend"
+  },
+  {
+   "name": "Indicator of Compromise",
+   "card": "backend/knowledge-cards/indicator-of-compromise",
+   "module": "backend"
+  },
+  {
+   "name": "Inference Server",
+   "card": "llm/knowledge-cards/inference-server",
+   "module": "llm"
+  },
+  {
+   "name": "Infrastructure as Code (IaC)",
+   "card": "devops/infra/knowledge-cards/iac",
+   "module": "devops"
+  },
+  {
+   "name": "Infrastructure Drift",
+   "card": "devops/ci/knowledge-cards/infrastructure-drift",
+   "module": "devops"
+  },
+  {
+   "name": "Ingress",
+   "card": "backend/knowledge-cards/ingress",
+   "module": "backend"
+  },
+  {
+   "name": "initramfs",
+   "card": "linux/dotfile/knowledge-cards/initramfs",
+   "module": "linux"
+  },
+  {
+   "name": "Input Validation",
+   "card": "backend/knowledge-cards/input-validation",
+   "module": "backend"
+  },
+  {
+   "name": "Instance Metadata Service",
+   "card": "devops/infra/knowledge-cards/instance-metadata-service",
+   "module": "devops"
+  },
+  {
+   "name": "Instruction Following",
+   "card": "llm/knowledge-cards/instruction-following",
+   "module": "llm"
+  },
+  {
+   "name": "Instruction-Tuned Model",
+   "card": "llm/knowledge-cards/instruction-tuned",
+   "module": "llm"
+  },
+  {
+   "name": "Integration Adapter",
+   "card": "backend/knowledge-cards/adapter",
+   "module": "backend"
+  },
+  {
+   "name": "Interest Coverage Ratio",
+   "card": "business/knowledge-cards/interest-coverage",
+   "module": "business"
+  },
+  {
+   "name": "Interleaved Table",
+   "card": "backend/knowledge-cards/interleaved-table",
+   "module": "backend"
+  },
+  {
+   "name": "Internal Admin Tool",
+   "card": "backend/knowledge-cards/internal-admin-tool",
+   "module": "backend"
+  },
+  {
+   "name": "Internal Endpoint",
+   "card": "backend/knowledge-cards/internal-endpoint",
+   "module": "backend"
+  },
+  {
+   "name": "Invariant",
+   "card": "software-design/ddd/knowledge-cards/invariant",
+   "module": "software-design"
+  },
+  {
+   "name": "Inventory",
+   "card": "business/knowledge-cards/inventory",
+   "module": "business"
+  },
+  {
+   "name": "Isolation Level",
+   "card": "backend/knowledge-cards/isolation-level",
+   "module": "backend"
+  },
+  {
+   "name": "Jagged frontier",
+   "card": "llm/knowledge-cards/jagged-frontier",
+   "module": "llm"
+  },
+  {
+   "name": "Jitter",
+   "card": "backend/knowledge-cards/jitter",
+   "module": "backend"
+  },
+  {
+   "name": "journald",
+   "card": "linux/dotfile/knowledge-cards/journald",
+   "module": "linux"
+  },
+  {
+   "name": "Judgment Stake",
+   "card": "business/knowledge-cards/judgment-stake",
+   "module": "business"
+  },
+  {
+   "name": "Junior Buffer",
+   "card": "business/knowledge-cards/junior-buffer",
+   "module": "business"
+  },
+  {
+   "name": "KCS",
+   "card": "backend/knowledge-cards/knowledge-centered-service",
+   "module": "backend"
+  },
+  {
+   "name": "Key Management",
+   "card": "backend/knowledge-cards/key-management",
+   "module": "backend"
+  },
+  {
+   "name": "Keyset Pagination",
+   "card": "backend/knowledge-cards/keyset-pagination",
+   "module": "backend"
+  },
+  {
+   "name": "KL Divergence",
+   "card": "llm/knowledge-cards/kl-divergence",
+   "module": "llm"
+  },
+  {
+   "name": "Knowledge-Centered Service",
+   "card": "backend/knowledge-cards/knowledge-centered-service",
+   "module": "backend"
+  },
+  {
+   "name": "Known Error",
+   "card": "backend/knowledge-cards/known-error",
+   "module": "backend"
+  },
+  {
+   "name": "Known Gap",
+   "card": "backend/knowledge-cards/known-gap",
+   "module": "backend"
+  },
+  {
+   "name": "Kubernetes RBAC",
+   "card": "backend/knowledge-cards/kubernetes-rbac",
+   "module": "backend"
+  },
+  {
+   "name": "Kubernetes Service",
+   "card": "backend/knowledge-cards/kubernetes-service",
+   "module": "backend"
+  },
+  {
+   "name": "KV Cache",
+   "card": "llm/knowledge-cards/kv-cache",
+   "module": "llm"
+  },
+  {
+   "name": "Lambda Architecture",
+   "card": "backend/knowledge-cards/lambda-architecture",
+   "module": "backend"
+  },
+  {
+   "name": "Lark Grammar",
+   "card": "llm/knowledge-cards/lark-grammar",
+   "module": "llm"
+  },
+  {
+   "name": "Latency Budget",
+   "card": "backend/knowledge-cards/latency-budget",
+   "module": "backend"
+  },
+  {
+   "name": "Lateral Movement",
+   "card": "backend/knowledge-cards/lateral-movement",
+   "module": "backend"
+  },
+  {
+   "name": "launchd Service",
+   "card": "llm/knowledge-cards/launchd-service",
+   "module": "llm"
+  },
+  {
+   "name": "Layer Normalization",
+   "card": "llm/knowledge-cards/layer-normalization",
+   "module": "llm"
+  },
+  {
+   "name": "LE Audio and LC3",
+   "card": "til/audio/knowledge-cards/le-audio-lc3",
+   "module": "til"
+  },
+  {
+   "name": "Lead Time",
+   "card": "business/procurement-planning/cards/lead-time",
+   "module": "business"
+  },
+  {
+   "name": "Leader Election",
+   "card": "backend/knowledge-cards/leader-election",
+   "module": "backend"
+  },
+  {
+   "name": "Learning Rate",
+   "card": "llm/knowledge-cards/learning-rate",
+   "module": "llm"
+  },
+  {
+   "name": "Leaseholder",
+   "card": "backend/knowledge-cards/leaseholder",
+   "module": "backend"
+  },
+  {
+   "name": "Least Privilege",
+   "card": "backend/knowledge-cards/least-privilege",
+   "module": "backend"
+  },
+  {
+   "name": "Leveraged Token",
+   "card": "business/retail-instruments/knowledge-cards/leveraged-token",
+   "module": "business"
+  },
+  {
+   "name": "LHDC",
+   "card": "til/audio/knowledge-cards/lhdc",
+   "module": "til"
+  },
+  {
+   "name": "Line Level",
+   "card": "til/audio/knowledge-cards/line-level",
+   "module": "til"
+  },
+  {
+   "name": "Linearizability",
+   "card": "backend/knowledge-cards/linearizability",
+   "module": "backend"
+  },
+  {
+   "name": "Liquidation Price",
+   "card": "business/retail-instruments/knowledge-cards/liquidation-price",
+   "module": "business"
+  },
+  {
+   "name": "Little's Law",
+   "card": "backend/knowledge-cards/little-law",
+   "module": "backend"
+  },
+  {
+   "name": "Liveness",
+   "card": "backend/knowledge-cards/health-check-liveness",
+   "module": "backend"
+  },
+  {
+   "name": "llama.cpp Tensor Split",
+   "card": "llm/knowledge-cards/llama-cpp-tensor-split",
+   "module": "llm"
+  },
+  {
+   "name": "LLM Agent",
+   "card": "llm/knowledge-cards/agent",
+   "module": "llm"
+  },
+  {
+   "name": "LLM Benchmarks",
+   "card": "llm/knowledge-cards/llm-benchmarks",
+   "module": "llm"
+  },
+  {
+   "name": "LLM Tracing",
+   "card": "llm/knowledge-cards/llm-tracing",
+   "module": "llm"
+  },
+  {
+   "name": "LLM-as-Judge",
+   "card": "llm/knowledge-cards/llm-as-judge",
+   "module": "llm"
+  },
+  {
+   "name": "Load Average",
+   "card": "backend/knowledge-cards/load-average",
+   "module": "backend"
+  },
+  {
+   "name": "Load Balancer",
+   "card": "backend/knowledge-cards/load-balancer",
+   "module": "backend"
+  },
+  {
+   "name": "Load Balancer Contract",
+   "card": "backend/knowledge-cards/load-balancer-contract",
+   "module": "backend"
+  },
+  {
+   "name": "Load Generator Saturation",
+   "card": "backend/knowledge-cards/load-generator-saturation",
+   "module": "backend"
+  },
+  {
+   "name": "Load Impedance",
+   "card": "til/audio/knowledge-cards/load-impedance",
+   "module": "til"
+  },
+  {
+   "name": "Load Shedding",
+   "card": "backend/knowledge-cards/load-shedding",
+   "module": "backend"
+  },
+  {
+   "name": "Load Test",
+   "card": "backend/knowledge-cards/load-test",
+   "module": "backend"
+  },
+  {
+   "name": "Local vs Cloud LLM",
+   "card": "llm/knowledge-cards/local-vs-cloud",
+   "module": "llm"
+  },
+  {
+   "name": "Local Worker",
+   "card": "backend/knowledge-cards/local-worker",
+   "module": "backend"
+  },
+  {
+   "name": "Local-First",
+   "card": "backend/knowledge-cards/local-first",
+   "module": "backend"
+  },
+  {
+   "name": "Lock Queue",
+   "card": "backend/knowledge-cards/lock-queue",
+   "module": "backend"
+  },
+  {
+   "name": "Lock-in",
+   "card": "business/knowledge-cards/lock-in",
+   "module": "business"
+  },
+  {
+   "name": "Lock-up Agreement",
+   "card": "business/knowledge-cards/lock-up-agreement",
+   "module": "business"
+  },
+  {
+   "name": "Locked Position",
+   "card": "business/retail-instruments/knowledge-cards/locked-position",
+   "module": "business"
+  },
+  {
+   "name": "Log",
+   "card": "backend/knowledge-cards/log",
+   "module": "backend"
+  },
+  {
+   "name": "Log Schema",
+   "card": "backend/knowledge-cards/log-schema",
+   "module": "backend"
+  },
+  {
+   "name": "Logical Replication",
+   "card": "backend/knowledge-cards/logical-replication",
+   "module": "backend"
+  },
+  {
+   "name": "logind Session 與 Seat",
+   "card": "linux/dotfile/knowledge-cards/logind-session-seat",
+   "module": "linux"
+  },
+  {
+   "name": "Logit",
+   "card": "llm/knowledge-cards/logit",
+   "module": "llm"
+  },
+  {
+   "name": "logrotate",
+   "card": "linux/dotfile/knowledge-cards/logrotate",
+   "module": "linux"
+  },
+  {
+   "name": "LoRA",
+   "card": "llm/knowledge-cards/lora",
+   "module": "llm"
+  },
+  {
+   "name": "Loss Function",
+   "card": "llm/knowledge-cards/loss-function",
+   "module": "llm"
+  },
+  {
+   "name": "Lost in the Middle",
+   "card": "llm/knowledge-cards/lost-in-the-middle",
+   "module": "llm"
+  },
+  {
+   "name": "Lost Update",
+   "card": "backend/knowledge-cards/lost-update",
+   "module": "backend"
+  },
+  {
+   "name": "LTV",
+   "card": "business/knowledge-cards/ltv",
+   "module": "business"
+  },
+  {
+   "name": "Lua Scripting Language",
+   "card": "linux/dotfile/knowledge-cards/lua-scripting-language",
+   "module": "linux"
+  },
+  {
+   "name": "Managed Instance Group",
+   "card": "devops/infra/knowledge-cards/managed-instance-group",
+   "module": "devops"
+  },
+  {
+   "name": "Management Plane",
+   "card": "backend/knowledge-cards/management-plane",
+   "module": "backend"
+  },
+  {
+   "name": "Mandatory Access Control（強制存取控制）：SELinux 與 AppArmor",
+   "card": "linux/dotfile/knowledge-cards/mandatory-access-control",
+   "module": "linux"
+  },
+  {
+   "name": "Mapping Table",
+   "card": "backend/knowledge-cards/mapping-table",
+   "module": "backend"
+  },
+  {
+   "name": "Margin Financing",
+   "card": "business/retail-instruments/knowledge-cards/margin-financing",
+   "module": "business"
+  },
+  {
+   "name": "Marginal Cost",
+   "card": "business/knowledge-cards/marginal-cost",
+   "module": "business"
+  },
+  {
+   "name": "Market Cap",
+   "card": "business/knowledge-cards/market-cap",
+   "module": "business"
+  },
+  {
+   "name": "Martingale",
+   "card": "business/retail-instruments/knowledge-cards/martingale",
+   "module": "business"
+  },
+  {
+   "name": "Mass Assignment",
+   "card": "backend/knowledge-cards/mass-assignment",
+   "module": "backend"
+  },
+  {
+   "name": "Materialized View",
+   "card": "backend/knowledge-cards/materialized-view",
+   "module": "backend"
+  },
+  {
+   "name": "Matrix Multiplication",
+   "card": "llm/knowledge-cards/matrix-multiplication",
+   "module": "llm"
+  },
+  {
+   "name": "MCP",
+   "card": "llm/knowledge-cards/mcp",
+   "module": "llm"
+  },
+  {
+   "name": "Mechanized Slaughter",
+   "card": "business/knowledge-cards/mechanized-slaughter",
+   "module": "business"
+  },
+  {
+   "name": "Memory Bandwidth",
+   "card": "llm/knowledge-cards/memory-bandwidth",
+   "module": "llm"
+  },
+  {
+   "name": "Memory-Hard Function",
+   "card": "backend/knowledge-cards/memory-hard-function",
+   "module": "backend"
+  },
+  {
+   "name": "Mesh VPN",
+   "card": "devops/infra/knowledge-cards/mesh-vpn",
+   "module": "devops"
+  },
+  {
+   "name": "Message Authentication",
+   "card": "backend/knowledge-cards/message-authentication",
+   "module": "backend"
+  },
+  {
+   "name": "Message Persistence",
+   "card": "backend/knowledge-cards/message-persistence",
+   "module": "backend"
+  },
+  {
+   "name": "Message Protocol",
+   "card": "backend/knowledge-cards/message-protocol",
+   "module": "backend"
+  },
+  {
+   "name": "Metadata Lock",
+   "card": "backend/knowledge-cards/metadata-lock",
+   "module": "backend"
+  },
+  {
+   "name": "Metamorphic Testing",
+   "card": "testing/knowledge-cards/metamorphic-testing",
+   "module": "testing"
+  },
+  {
+   "name": "Metastable Failure",
+   "card": "backend/knowledge-cards/metastable-failure",
+   "module": "backend"
+  },
+  {
+   "name": "Metric Cardinality",
+   "card": "backend/knowledge-cards/metric-cardinality",
+   "module": "backend"
+  },
+  {
+   "name": "Metrics",
+   "card": "backend/knowledge-cards/metrics",
+   "module": "backend"
+  },
+  {
+   "name": "Migration",
+   "card": "backend/knowledge-cards/migration",
+   "module": "backend"
+  },
+  {
+   "name": "Migration",
+   "card": "devops/ci/knowledge-cards/migration",
+   "module": "devops"
+  },
+  {
+   "name": "Migration Gate",
+   "card": "backend/knowledge-cards/migration-gate",
+   "module": "backend"
+  },
+  {
+   "name": "MIG，代管執行個體群組",
+   "card": "devops/infra/knowledge-cards/managed-instance-group",
+   "module": "devops"
+  },
+  {
+   "name": "Minimum Supported Version",
+   "card": "backend/knowledge-cards/minimum-supported-version",
+   "module": "backend"
+  },
+  {
+   "name": "Mixture of Experts (MoE)",
+   "card": "llm/knowledge-cards/moe",
+   "module": "llm"
+  },
+  {
+   "name": "MLCC",
+   "card": "business/knowledge-cards/mlcc",
+   "module": "business"
+  },
+  {
+   "name": "MLX",
+   "card": "llm/knowledge-cards/mlx",
+   "module": "llm"
+  },
+  {
+   "name": "MM and MC Cartridges",
+   "card": "til/audio/knowledge-cards/mm-and-mc-cartridges",
+   "module": "til"
+  },
+  {
+   "name": "MMLU / HumanEval / SWE-bench 等",
+   "card": "llm/knowledge-cards/llm-benchmarks",
+   "module": "llm"
+  },
+  {
+   "name": "Mock Masking",
+   "card": "testing/knowledge-cards/mock-masking",
+   "module": "testing"
+  },
+  {
+   "name": "Mock 遮蔽",
+   "card": "testing/knowledge-cards/mock-masking",
+   "module": "testing"
+  },
+  {
+   "name": "mod_php",
+   "card": "programming/php/knowledge-cards/mod-php",
+   "module": "programming"
+  },
+  {
+   "name": "Modal",
+   "card": "ux-design/knowledge-cards/modal",
+   "module": "ux-design"
+  },
+  {
+   "name": "Model Card",
+   "card": "llm/knowledge-cards/model-card",
+   "module": "llm"
+  },
+  {
+   "name": "Model Context Protocol",
+   "card": "llm/knowledge-cards/mcp",
+   "module": "llm"
+  },
+  {
+   "name": "Model Supply-Chain Trust",
+   "card": "llm/knowledge-cards/model-supply-chain-trust",
+   "module": "llm"
+  },
+  {
+   "name": "Model Tag",
+   "card": "llm/knowledge-cards/model-tag",
+   "module": "llm"
+  },
+  {
+   "name": "Modular Monolith",
+   "card": "backend/knowledge-cards/modular-monolith",
+   "module": "backend"
+  },
+  {
+   "name": "MoE CPU Offload",
+   "card": "llm/knowledge-cards/moe-cpu-offload",
+   "module": "llm"
+  },
+  {
+   "name": "monkeypatch",
+   "card": "programming/python/basic/knowledge-cards/monkeypatch",
+   "module": "programming"
+  },
+  {
+   "name": "Mosh Local Echo Prediction",
+   "card": "linux/dotfile/knowledge-cards/mosh-local-echo-prediction",
+   "module": "linux"
+  },
+  {
+   "name": "Moving Iron Cartridge",
+   "card": "til/audio/knowledge-cards/moving-iron-cartridge",
+   "module": "til"
+  },
+  {
+   "name": "MTEB",
+   "card": "llm/knowledge-cards/mteb-benchmark",
+   "module": "llm"
+  },
+  {
+   "name": "MTTR",
+   "card": "backend/knowledge-cards/mttr",
+   "module": "backend"
+  },
+  {
+   "name": "Multi-agent system",
+   "card": "llm/knowledge-cards/multi-agent-system",
+   "module": "llm"
+  },
+  {
+   "name": "Multi-class Share Structure",
+   "card": "business/knowledge-cards/multi-class-shares",
+   "module": "business"
+  },
+  {
+   "name": "Multi-Head Attention",
+   "card": "llm/knowledge-cards/multi-head-attention",
+   "module": "llm"
+  },
+  {
+   "name": "Multi-Processing Module",
+   "card": "devops/infra/knowledge-cards/apache-mpm",
+   "module": "devops"
+  },
+  {
+   "name": "Multi-Step Retrieval",
+   "card": "llm/knowledge-cards/multi-step-retrieval",
+   "module": "llm"
+  },
+  {
+   "name": "Multi-Token Prediction (MTP)",
+   "card": "llm/knowledge-cards/mtp",
+   "module": "llm"
+  },
+  {
+   "name": "Multimodal Fusion",
+   "card": "llm/knowledge-cards/multimodal-fusion",
+   "module": "llm"
+  },
+  {
+   "name": "Mutation Testing",
+   "card": "testing/knowledge-cards/mutation-testing",
+   "module": "testing"
+  },
+  {
+   "name": "MVCC",
+   "card": "backend/knowledge-cards/mvcc",
+   "module": "backend"
+  },
+  {
+   "name": "MySQL",
+   "card": "devops/infra/knowledge-cards/mysql",
+   "module": "devops"
+  },
+  {
+   "name": "mysqldump",
+   "card": "devops/infra/knowledge-cards/mysqldump",
+   "module": "devops"
+  },
+  {
+   "name": "NAT Gateway",
+   "card": "devops/infra/knowledge-cards/nat",
+   "module": "devops"
+  },
+  {
+   "name": "NCNR",
+   "card": "business/procurement-planning/cards/ncnr",
+   "module": "business"
+  },
+  {
+   "name": "Needle in a Haystack",
+   "card": "llm/knowledge-cards/needle-in-haystack",
+   "module": "llm"
+  },
+  {
+   "name": "Negative Cache",
+   "card": "backend/knowledge-cards/negative-cache",
+   "module": "backend"
+  },
+  {
+   "name": "Net Margin",
+   "card": "business/knowledge-cards/net-margin",
+   "module": "business"
+  },
+  {
+   "name": "Network Namespace",
+   "card": "devops/infra/knowledge-cards/network-namespace",
+   "module": "devops"
+  },
+  {
+   "name": "Network Tag",
+   "card": "devops/infra/knowledge-cards/network-tag",
+   "module": "devops"
+  },
+  {
+   "name": "nginx",
+   "card": "devops/infra/knowledge-cards/nginx",
+   "module": "devops"
+  },
+  {
+   "name": "Niche Market",
+   "card": "business/knowledge-cards/niche-market",
+   "module": "business"
+  },
+  {
+   "name": "No-Versioning",
+   "card": "backend/knowledge-cards/no-versioning",
+   "module": "backend"
+  },
+  {
+   "name": "Noise Floor",
+   "card": "til/audio/knowledge-cards/noise-floor",
+   "module": "til"
+  },
+  {
+   "name": "Noisy Neighbor",
+   "card": "backend/knowledge-cards/noisy-neighbor",
+   "module": "backend"
+  },
+  {
+   "name": "Nominal Integration Test",
+   "card": "testing/knowledge-cards/nominal-integration-test",
+   "module": "testing"
+  },
+  {
+   "name": "Non-compete Agreement",
+   "card": "business/knowledge-cards/non-compete-agreement",
+   "module": "business"
+  },
+  {
+   "name": "Non-Controlling Interest",
+   "card": "business/knowledge-cards/non-controlling-interest",
+   "module": "business"
+  },
+  {
+   "name": "Non-GAAP Measure",
+   "card": "business/knowledge-cards/non-gaap-measure",
+   "module": "business"
+  },
+  {
+   "name": "Non-repudiation",
+   "card": "backend/knowledge-cards/non-repudiation",
+   "module": "backend"
+  },
+  {
+   "name": "Normalized Earnings",
+   "card": "business/knowledge-cards/normalized-earnings",
+   "module": "business"
+  },
+  {
+   "name": "Notification Adapter",
+   "card": "backend/knowledge-cards/notification-adapter",
+   "module": "backend"
+  },
+  {
+   "name": "NPI",
+   "card": "business/procurement-planning/cards/npi",
+   "module": "business"
+  },
+  {
+   "name": "NRND / EOL / LTB",
+   "card": "business/procurement-planning/cards/lifecycle-status",
+   "module": "business"
+  },
+  {
+   "name": "NULL",
+   "card": "backend/01-database/sql/knowledge-cards/null",
+   "module": "backend"
+  },
+  {
+   "name": "NVLink",
+   "card": "llm/knowledge-cards/nvlink",
+   "module": "llm"
+  },
+  {
+   "name": "Obfuscation",
+   "card": "backend/knowledge-cards/obfuscation",
+   "module": "backend"
+  },
+  {
+   "name": "Object Storage",
+   "card": "backend/knowledge-cards/object-storage",
+   "module": "backend"
+  },
+  {
+   "name": "Object-Relational Mapping",
+   "card": "backend/knowledge-cards/orm",
+   "module": "backend"
+  },
+  {
+   "name": "Observability Middleware",
+   "card": "backend/knowledge-cards/observability-middleware",
+   "module": "backend"
+  },
+  {
+   "name": "Observation Outlet",
+   "card": "software-design/ddd/knowledge-cards/observation-outlet",
+   "module": "software-design"
+  },
+  {
+   "name": "ODM",
+   "card": "business/knowledge-cards/odm",
+   "module": "business"
+  },
+  {
+   "name": "OEM",
+   "card": "business/knowledge-cards/oem",
+   "module": "business"
+  },
+  {
+   "name": "Off-Balance-Sheet Arrangement",
+   "card": "business/knowledge-cards/off-balance-sheet-arrangement",
+   "module": "business"
+  },
+  {
+   "name": "Offline Catch-up",
+   "card": "backend/knowledge-cards/offline-catchup",
+   "module": "backend"
+  },
+  {
+   "name": "Offset",
+   "card": "backend/knowledge-cards/offset",
+   "module": "backend"
+  },
+  {
+   "name": "OIDC Federation",
+   "card": "devops/infra/knowledge-cards/oidc",
+   "module": "devops"
+  },
+  {
+   "name": "OIDC 聯合",
+   "card": "devops/infra/knowledge-cards/oidc",
+   "module": "devops"
+  },
+  {
+   "name": "OLAP Offload",
+   "card": "backend/knowledge-cards/olap-offload",
+   "module": "backend"
+  },
+  {
+   "name": "oMLX",
+   "card": "llm/knowledge-cards/omlx",
+   "module": "llm"
+  },
+  {
+   "name": "On-Call",
+   "card": "backend/knowledge-cards/on-call",
+   "module": "backend"
+  },
+  {
+   "name": "On-demand Rendering",
+   "card": "ux-design/knowledge-cards/on-demand-rendering",
+   "module": "ux-design"
+  },
+  {
+   "name": "Online Migration",
+   "card": "backend/knowledge-cards/online-migration",
+   "module": "backend"
+  },
+  {
+   "name": "OOM Killer and Exit Code 137",
+   "card": "linux/dotfile/knowledge-cards/oom-exit-code-137",
+   "module": "linux"
+  },
+  {
+   "name": "OOM killer 與退出碼 137",
+   "card": "linux/dotfile/knowledge-cards/oom-exit-code-137",
+   "module": "linux"
+  },
+  {
+   "name": "OPcache",
+   "card": "programming/php/knowledge-cards/opcache",
+   "module": "programming"
+  },
+  {
+   "name": "Open and Closed Workload Model",
+   "card": "backend/knowledge-cards/open-closed-workload-model",
+   "module": "backend"
+  },
+  {
+   "name": "Open-Closed Principle",
+   "card": "software-design/design-principles/knowledge-cards/open-closed-principle",
+   "module": "software-design"
+  },
+  {
+   "name": "OpenAI 相容 API",
+   "card": "llm/knowledge-cards/openai-compatible-api",
+   "module": "llm"
+  },
+  {
+   "name": "OpenAI-Compatible API",
+   "card": "llm/knowledge-cards/openai-compatible-api",
+   "module": "llm"
+  },
+  {
+   "name": "Operating Expense",
+   "card": "business/knowledge-cards/operating-expense",
+   "module": "business"
+  },
+  {
+   "name": "Operating Leverage",
+   "card": "business/knowledge-cards/operating-leverage",
+   "module": "business"
+  },
+  {
+   "name": "Operating Margin",
+   "card": "business/knowledge-cards/operating-margin",
+   "module": "business"
+  },
+  {
+   "name": "Opportunity Cost",
+   "card": "business/knowledge-cards/opportunity-cost",
+   "module": "business"
+  },
+  {
+   "name": "Origin Protection",
+   "card": "backend/knowledge-cards/origin-protection",
+   "module": "backend"
+  },
+  {
+   "name": "ORM",
+   "card": "backend/knowledge-cards/orm",
+   "module": "backend"
+  },
+  {
+   "name": "Orphaned Resource",
+   "card": "devops/infra/knowledge-cards/orphaned-resource",
+   "module": "devops"
+  },
+  {
+   "name": "OS Login",
+   "card": "devops/infra/knowledge-cards/os-login",
+   "module": "devops"
+  },
+  {
+   "name": "Out-of-Band Signal",
+   "card": "backend/knowledge-cards/out-of-band-signal",
+   "module": "backend"
+  },
+  {
+   "name": "Outbound Tunnel",
+   "card": "backend/knowledge-cards/outbound-tunnel",
+   "module": "backend"
+  },
+  {
+   "name": "Outbox Pattern",
+   "card": "backend/knowledge-cards/outbox-pattern",
+   "module": "backend"
+  },
+  {
+   "name": "Outer Join",
+   "card": "backend/01-database/sql/knowledge-cards/outer-join",
+   "module": "backend"
+  },
+  {
+   "name": "Output Impedance",
+   "card": "til/audio/knowledge-cards/output-impedance",
+   "module": "til"
+  },
+  {
+   "name": "OWASP LLM Top 10",
+   "card": "llm/knowledge-cards/owasp-llm-top10",
+   "module": "llm"
+  },
+  {
+   "name": "P&L",
+   "card": "business/knowledge-cards/pnl",
+   "module": "business"
+  },
+  {
+   "name": "P/E Ratio",
+   "card": "business/knowledge-cards/pe-ratio",
+   "module": "business"
+  },
+  {
+   "name": "PACELC",
+   "card": "backend/knowledge-cards/pacelc",
+   "module": "backend"
+  },
+  {
+   "name": "Package Manager 抽象層",
+   "card": "linux/dotfile/knowledge-cards/package-manager-abstraction",
+   "module": "linux"
+  },
+  {
+   "name": "Pagination Cursor",
+   "card": "backend/knowledge-cards/pagination-cursor",
+   "module": "backend"
+  },
+  {
+   "name": "Parallel Run",
+   "card": "backend/knowledge-cards/parallel-run",
+   "module": "backend"
+  },
+  {
+   "name": "Parent-Attributable Income",
+   "card": "business/knowledge-cards/parent-attributable-income",
+   "module": "business"
+  },
+  {
+   "name": "Partial Failure",
+   "card": "backend/knowledge-cards/partial-failure",
+   "module": "backend"
+  },
+  {
+   "name": "Partial Index",
+   "card": "backend/knowledge-cards/partial-index",
+   "module": "backend"
+  },
+  {
+   "name": "Partition",
+   "card": "backend/knowledge-cards/partition",
+   "module": "backend"
+  },
+  {
+   "name": "Partition Identification",
+   "card": "linux/dotfile/knowledge-cards/partition-identification",
+   "module": "linux"
+  },
+  {
+   "name": "Passkey",
+   "card": "backend/knowledge-cards/passkey",
+   "module": "backend"
+  },
+  {
+   "name": "Payout Ratio",
+   "card": "business/knowledge-cards/payout-ratio",
+   "module": "business"
+  },
+  {
+   "name": "PCIe",
+   "card": "llm/knowledge-cards/pcie",
+   "module": "llm"
+  },
+  {
+   "name": "PCN",
+   "card": "business/procurement-planning/cards/pcn",
+   "module": "business"
+  },
+  {
+   "name": "Peak Forecast",
+   "card": "backend/knowledge-cards/peak-forecast",
+   "module": "backend"
+  },
+  {
+   "name": "Pepper",
+   "card": "backend/knowledge-cards/pepper",
+   "module": "backend"
+  },
+  {
+   "name": "Per-Connection Memory",
+   "card": "backend/knowledge-cards/per-connection-memory",
+   "module": "backend"
+  },
+  {
+   "name": "Percentile",
+   "card": "backend/knowledge-cards/percentile",
+   "module": "backend"
+  },
+  {
+   "name": "Performance Budget",
+   "card": "backend/knowledge-cards/performance-budget",
+   "module": "backend"
+  },
+  {
+   "name": "Perplexity",
+   "card": "llm/knowledge-cards/perplexity",
+   "module": "llm"
+  },
+  {
+   "name": "Phase",
+   "card": "til/audio/knowledge-cards/phase",
+   "module": "til"
+  },
+  {
+   "name": "Phono Preamp",
+   "card": "til/audio/knowledge-cards/phono-preamp",
+   "module": "til"
+  },
+  {
+   "name": "PHP-FPM",
+   "card": "programming/php/knowledge-cards/php-fpm",
+   "module": "programming"
+  },
+  {
+   "name": "php.ini / .user.ini",
+   "card": "devops/infra/knowledge-cards/php-ini",
+   "module": "devops"
+  },
+  {
+   "name": "phpMyAdmin",
+   "card": "devops/infra/knowledge-cards/phpmyadmin",
+   "module": "devops"
+  },
+  {
+   "name": "Picture",
+   "card": "programming/flutter/knowledge-cards/picture",
+   "module": "programming"
+  },
+  {
+   "name": "PII",
+   "card": "backend/knowledge-cards/pii",
+   "module": "backend"
+  },
+  {
+   "name": "Placeholder",
+   "card": "software-design/ddd/knowledge-cards/placeholder",
+   "module": "software-design"
+  },
+  {
+   "name": "Playbook",
+   "card": "backend/knowledge-cards/playbook",
+   "module": "backend"
+  },
+  {
+   "name": "PLG",
+   "card": "business/knowledge-cards/plg",
+   "module": "business"
+  },
+  {
+   "name": "Pod",
+   "card": "backend/knowledge-cards/pod",
+   "module": "backend"
+  },
+  {
+   "name": "Pod Security Admission",
+   "card": "backend/knowledge-cards/pod-security-admission",
+   "module": "backend"
+  },
+  {
+   "name": "Pod 安全准入",
+   "card": "backend/knowledge-cards/pod-security-admission",
+   "module": "backend"
+  },
+  {
+   "name": "Point-in-Time Recovery",
+   "card": "backend/knowledge-cards/point-in-time-recovery",
+   "module": "backend"
+  },
+  {
+   "name": "Poison Message",
+   "card": "backend/knowledge-cards/poison-message",
+   "module": "backend"
+  },
+  {
+   "name": "Poison-Message Quarantine",
+   "card": "backend/knowledge-cards/poison-message-quarantine",
+   "module": "backend"
+  },
+  {
+   "name": "Port",
+   "card": "software-design/ddd/knowledge-cards/port",
+   "module": "software-design"
+  },
+  {
+   "name": "Port 與 Localhost",
+   "card": "llm/knowledge-cards/port-and-localhost",
+   "module": "llm"
+  },
+  {
+   "name": "Positional Encoding",
+   "card": "llm/knowledge-cards/positional-encoding",
+   "module": "llm"
+  },
+  {
+   "name": "Post-Incident Review",
+   "card": "backend/knowledge-cards/post-incident-review",
+   "module": "backend"
+  },
+  {
+   "name": "PPAP 與首件檢驗",
+   "card": "business/procurement-planning/cards/ppap",
+   "module": "business"
+  },
+  {
+   "name": "PRD",
+   "card": "business/knowledge-cards/prd",
+   "module": "business"
+  },
+  {
+   "name": "Pre-training",
+   "card": "llm/knowledge-cards/pre-training",
+   "module": "llm"
+  },
+  {
+   "name": "Predictive Scaling",
+   "card": "backend/knowledge-cards/predictive-scaling",
+   "module": "backend"
+  },
+  {
+   "name": "Prefetch",
+   "card": "backend/knowledge-cards/prefetch",
+   "module": "backend"
+  },
+  {
+   "name": "Prefill",
+   "card": "llm/knowledge-cards/prefill",
+   "module": "llm"
+  },
+  {
+   "name": "Prefix Cache",
+   "card": "llm/knowledge-cards/prefix-cache",
+   "module": "llm"
+  },
+  {
+   "name": "Prepared Statement",
+   "card": "backend/knowledge-cards/prepared-statement",
+   "module": "backend"
+  },
+  {
+   "name": "Preview Environment",
+   "card": "devops/ci/knowledge-cards/preview-environment",
+   "module": "devops"
+  },
+  {
+   "name": "Private Equity (PE)",
+   "card": "business/knowledge-cards/private-equity",
+   "module": "business"
+  },
+  {
+   "name": "Privileged Container",
+   "card": "backend/knowledge-cards/privileged-container",
+   "module": "backend"
+  },
+  {
+   "name": "Probability calibration",
+   "card": "llm/knowledge-cards/probability-calibration",
+   "module": "llm"
+  },
+  {
+   "name": "Probe",
+   "card": "backend/knowledge-cards/probe",
+   "module": "backend"
+  },
+  {
+   "name": "Problem Details",
+   "card": "backend/knowledge-cards/problem-details",
+   "module": "backend"
+  },
+  {
+   "name": "Processing Semantics",
+   "card": "backend/knowledge-cards/processing-semantics",
+   "module": "backend"
+  },
+  {
+   "name": "Prod Parity Principle",
+   "card": "linux/dotfile/knowledge-cards/prod-parity-principle",
+   "module": "linux"
+  },
+  {
+   "name": "Producer",
+   "card": "backend/knowledge-cards/producer",
+   "module": "backend"
+  },
+  {
+   "name": "Profile Diff",
+   "card": "backend/knowledge-cards/profile-diff",
+   "module": "backend"
+  },
+  {
+   "name": "Progressive Disclosure",
+   "card": "ux-design/knowledge-cards/progressive-disclosure",
+   "module": "ux-design"
+  },
+  {
+   "name": "Projection",
+   "card": "backend/knowledge-cards/projection",
+   "module": "backend"
+  },
+  {
+   "name": "Prometheus",
+   "card": "devops/infra/knowledge-cards/prometheus",
+   "module": "devops"
+  },
+  {
+   "name": "Prometheus Exporter",
+   "card": "backend/knowledge-cards/prometheus-exporter",
+   "module": "backend"
+  },
+  {
+   "name": "Prompt Cache",
+   "card": "llm/knowledge-cards/prompt-cache",
+   "module": "llm"
+  },
+  {
+   "name": "Prompt Injection",
+   "card": "llm/knowledge-cards/prompt-injection",
+   "module": "llm"
+  },
+  {
+   "name": "Property-Based Testing",
+   "card": "testing/knowledge-cards/property-based-testing",
+   "module": "testing"
+  },
+  {
+   "name": "Protocol Integration Test",
+   "card": "testing/knowledge-cards/protocol-integration-test",
+   "module": "testing"
+  },
+  {
+   "name": "Provider Adapter",
+   "card": "backend/knowledge-cards/provider-adapter",
+   "module": "backend"
+  },
+  {
+   "name": "Pseudo-Terminal，偽終端機",
+   "card": "linux/dotfile/knowledge-cards/pty",
+   "module": "linux"
+  },
+  {
+   "name": "Pseudonymization",
+   "card": "backend/knowledge-cards/pseudonymization",
+   "module": "backend"
+  },
+  {
+   "name": "PTY",
+   "card": "linux/dotfile/knowledge-cards/pty",
+   "module": "linux"
+  },
+  {
+   "name": "Pub/Sub",
+   "card": "backend/knowledge-cards/pub-sub",
+   "module": "backend"
+  },
+  {
+   "name": "Public API Endpoint",
+   "card": "backend/knowledge-cards/public-api-endpoint",
+   "module": "backend"
+  },
+  {
+   "name": "Publisher Confirm",
+   "card": "backend/knowledge-cards/publisher-confirm",
+   "module": "backend"
+  },
+  {
+   "name": "pytest fixture",
+   "card": "programming/python/basic/knowledge-cards/pytest-fixture",
+   "module": "programming"
+  },
+  {
+   "name": "QEMU binfmt Emulation",
+   "card": "backend/knowledge-cards/qemu-binfmt-emulation",
+   "module": "backend"
+  },
+  {
+   "name": "QLoRA",
+   "card": "llm/knowledge-cards/qlora",
+   "module": "llm"
+  },
+  {
+   "name": "QML 桌面 shell runtime",
+   "card": "linux/dotfile/knowledge-cards/quickshell",
+   "module": "linux"
+  },
+  {
+   "name": "Quantization",
+   "card": "llm/knowledge-cards/quantization",
+   "module": "llm"
+  },
+  {
+   "name": "Quarantine",
+   "card": "testing/knowledge-cards/quarantine",
+   "module": "testing"
+  },
+  {
+   "name": "Query Cardinality Explosion",
+   "card": "backend/knowledge-cards/cardinality-explosion",
+   "module": "backend"
+  },
+  {
+   "name": "Query Decomposition",
+   "card": "llm/knowledge-cards/query-decomposition",
+   "module": "llm"
+  },
+  {
+   "name": "Query Expansion",
+   "card": "llm/knowledge-cards/query-expansion",
+   "module": "llm"
+  },
+  {
+   "name": "Query Link",
+   "card": "backend/knowledge-cards/query-link",
+   "module": "backend"
+  },
+  {
+   "name": "Query Log",
+   "card": "backend/knowledge-cards/query-log",
+   "module": "backend"
+  },
+  {
+   "name": "Query Optimizer",
+   "card": "backend/01-database/sql/knowledge-cards/query-optimizer",
+   "module": "backend"
+  },
+  {
+   "name": "Query Plan",
+   "card": "backend/01-database/sql/knowledge-cards/query-plan",
+   "module": "backend"
+  },
+  {
+   "name": "Query Rewriting",
+   "card": "llm/knowledge-cards/query-rewriting",
+   "module": "llm"
+  },
+  {
+   "name": "Query Statistics",
+   "card": "backend/01-database/sql/knowledge-cards/query-statistics",
+   "module": "backend"
+  },
+  {
+   "name": "Query-Document Gap",
+   "card": "llm/knowledge-cards/query-document-gap",
+   "module": "llm"
+  },
+  {
+   "name": "Queue",
+   "card": "backend/knowledge-cards/queue",
+   "module": "backend"
+  },
+  {
+   "name": "Queue Contract",
+   "card": "backend/knowledge-cards/queue-contract",
+   "module": "backend"
+  },
+  {
+   "name": "Queue Depth",
+   "card": "backend/knowledge-cards/queue-depth",
+   "module": "backend"
+  },
+  {
+   "name": "Quickshell",
+   "card": "linux/dotfile/knowledge-cards/quickshell",
+   "module": "linux"
+  },
+  {
+   "name": "Quorum",
+   "card": "backend/knowledge-cards/quorum",
+   "module": "backend"
+  },
+  {
+   "name": "RAG",
+   "card": "llm/knowledge-cards/rag",
+   "module": "llm"
+  },
+  {
+   "name": "Range Sharding",
+   "card": "backend/knowledge-cards/range-sharding",
+   "module": "backend"
+  },
+  {
+   "name": "Rasterization",
+   "card": "ux-design/knowledge-cards/rasterization",
+   "module": "ux-design"
+  },
+  {
+   "name": "Rate Limit",
+   "card": "backend/knowledge-cards/rate-limit",
+   "module": "backend"
+  },
+  {
+   "name": "Rate Limit Contract",
+   "card": "backend/knowledge-cards/rate-limit-contract",
+   "module": "backend"
+  },
+  {
+   "name": "Rate Limiting",
+   "card": "devops/monitoring/knowledge-cards/rate-limiting",
+   "module": "devops"
+  },
+  {
+   "name": "RCA",
+   "card": "backend/knowledge-cards/rca",
+   "module": "backend"
+  },
+  {
+   "name": "RDS",
+   "card": "devops/infra/knowledge-cards/rds",
+   "module": "devops"
+  },
+  {
+   "name": "Read Compatibility",
+   "card": "backend/knowledge-cards/read-compatibility",
+   "module": "backend"
+  },
+  {
+   "name": "Read Model",
+   "card": "backend/knowledge-cards/read-model",
+   "module": "backend"
+  },
+  {
+   "name": "Read Model",
+   "card": "software-design/ddd/knowledge-cards/read-model",
+   "module": "software-design"
+  },
+  {
+   "name": "Read-After-Write Consistency",
+   "card": "backend/knowledge-cards/read-after-write",
+   "module": "backend"
+  },
+  {
+   "name": "Read-Write Split",
+   "card": "backend/knowledge-cards/read-write-split",
+   "module": "backend"
+  },
+  {
+   "name": "Readiness",
+   "card": "backend/knowledge-cards/readiness",
+   "module": "backend"
+  },
+  {
+   "name": "Readiness / Health Check",
+   "card": "devops/ci/knowledge-cards/readiness-health-check",
+   "module": "devops"
+  },
+  {
+   "name": "Real-Backend Verification Test",
+   "card": "testing/knowledge-cards/real-backend-verification-test",
+   "module": "testing"
+  },
+  {
+   "name": "Reasoning Model",
+   "card": "llm/knowledge-cards/reasoning-model",
+   "module": "llm"
+  },
+  {
+   "name": "Recording Rule",
+   "card": "backend/knowledge-cards/recording-rule",
+   "module": "backend"
+  },
+  {
+   "name": "Recovery Semantics",
+   "card": "backend/knowledge-cards/recovery-semantics",
+   "module": "backend"
+  },
+  {
+   "name": "RED Method",
+   "card": "backend/knowledge-cards/red-method",
+   "module": "backend"
+  },
+  {
+   "name": "Red Ocean / Blue Ocean",
+   "card": "business/knowledge-cards/red-ocean-blue-ocean",
+   "module": "business"
+  },
+  {
+   "name": "Redaction",
+   "card": "devops/monitoring/knowledge-cards/redaction",
+   "module": "devops"
+  },
+  {
+   "name": "Redelivery",
+   "card": "backend/knowledge-cards/redelivery",
+   "module": "backend"
+  },
+  {
+   "name": "Redelivery Loop",
+   "card": "backend/knowledge-cards/redelivery-loop",
+   "module": "backend"
+  },
+  {
+   "name": "Reflection / Self-critique",
+   "card": "llm/knowledge-cards/reflection",
+   "module": "llm"
+  },
+  {
+   "name": "Refusal Rate",
+   "card": "llm/knowledge-cards/refusal-rate",
+   "module": "llm"
+  },
+  {
+   "name": "Registrable Domain",
+   "card": "backend/knowledge-cards/registrable-domain",
+   "module": "backend"
+  },
+  {
+   "name": "Relabeling",
+   "card": "backend/knowledge-cards/relabeling",
+   "module": "backend"
+  },
+  {
+   "name": "Related-Party Transaction",
+   "card": "business/knowledge-cards/related-party-transaction",
+   "module": "business"
+  },
+  {
+   "name": "Relation",
+   "card": "backend/01-database/sql/knowledge-cards/relation",
+   "module": "backend"
+  },
+  {
+   "name": "Relational Algebra",
+   "card": "backend/01-database/sql/knowledge-cards/relational-algebra",
+   "module": "backend"
+  },
+  {
+   "name": "Release Channel",
+   "card": "devops/ci/knowledge-cards/release-channel",
+   "module": "devops"
+  },
+  {
+   "name": "Release Freeze",
+   "card": "backend/knowledge-cards/release-freeze",
+   "module": "backend"
+  },
+  {
+   "name": "Release Gate",
+   "card": "backend/knowledge-cards/release-gate",
+   "module": "backend"
+  },
+  {
+   "name": "Release Rollback",
+   "card": "devops/ci/knowledge-cards/release-rollback",
+   "module": "devops"
+  },
+  {
+   "name": "Reliability Boundary",
+   "card": "backend/knowledge-cards/reliability-boundary",
+   "module": "backend"
+  },
+  {
+   "name": "Remaining Performance Obligations，剩餘履約義務",
+   "card": "business/knowledge-cards/remaining-performance-obligation",
+   "module": "business"
+  },
+  {
+   "name": "Remote Config",
+   "card": "backend/knowledge-cards/remote-config",
+   "module": "backend"
+  },
+  {
+   "name": "Remote State Backend",
+   "card": "devops/infra/knowledge-cards/remote-state-backend",
+   "module": "devops"
+  },
+  {
+   "name": "RepaintBoundary",
+   "card": "programming/flutter/knowledge-cards/repaint-boundary",
+   "module": "programming"
+  },
+  {
+   "name": "Replay Attack",
+   "card": "backend/knowledge-cards/replay-attack",
+   "module": "backend"
+  },
+  {
+   "name": "Replay Runbook",
+   "card": "backend/knowledge-cards/replay-runbook",
+   "module": "backend"
+  },
+  {
+   "name": "Replay Window",
+   "card": "backend/knowledge-cards/replay-window",
+   "module": "backend"
+  },
+  {
+   "name": "Replica Identity",
+   "card": "backend/knowledge-cards/replica-identity",
+   "module": "backend"
+  },
+  {
+   "name": "Replication Channel",
+   "card": "backend/knowledge-cards/replication-channel",
+   "module": "backend"
+  },
+  {
+   "name": "Replication Lag",
+   "card": "backend/knowledge-cards/replication-lag",
+   "module": "backend"
+  },
+  {
+   "name": "Replication Slot",
+   "card": "backend/knowledge-cards/replication-slot",
+   "module": "backend"
+  },
+  {
+   "name": "Repository",
+   "card": "software-design/ddd/knowledge-cards/repository",
+   "module": "software-design"
+  },
+  {
+   "name": "Repository Adapter",
+   "card": "backend/knowledge-cards/repository-adapter",
+   "module": "backend"
+  },
+  {
+   "name": "Reproducible Build",
+   "card": "devops/ci/knowledge-cards/reproducible-build",
+   "module": "devops"
+  },
+  {
+   "name": "Request ID",
+   "card": "backend/knowledge-cards/request-id",
+   "module": "backend"
+  },
+  {
+   "name": "Request Middleware",
+   "card": "backend/knowledge-cards/middleware",
+   "module": "backend"
+  },
+  {
+   "name": "Request Routing",
+   "card": "backend/knowledge-cards/request-routing",
+   "module": "backend"
+  },
+  {
+   "name": "Request Unit",
+   "card": "backend/knowledge-cards/request-unit",
+   "module": "backend"
+  },
+  {
+   "name": "Request/Response Protocol",
+   "card": "backend/knowledge-cards/request-response-protocol",
+   "module": "backend"
+  },
+  {
+   "name": "Requeue",
+   "card": "backend/knowledge-cards/requeue",
+   "module": "backend"
+  },
+  {
+   "name": "Required Checks",
+   "card": "devops/ci/knowledge-cards/required-checks",
+   "module": "devops"
+  },
+  {
+   "name": "Reranker",
+   "card": "llm/knowledge-cards/reranker",
+   "module": "llm"
+  },
+  {
+   "name": "Rerun",
+   "card": "devops/ci/knowledge-cards/rerun",
+   "module": "devops"
+  },
+  {
+   "name": "Residual Connection",
+   "card": "llm/knowledge-cards/residual-connection",
+   "module": "llm"
+  },
+  {
+   "name": "Residual Stream",
+   "card": "llm/knowledge-cards/residual-stream",
+   "module": "llm"
+  },
+  {
+   "name": "Residual Value Guarantee",
+   "card": "business/knowledge-cards/residual-value-guarantee",
+   "module": "business"
+  },
+  {
+   "name": "Resiliency Matrix",
+   "card": "backend/knowledge-cards/resiliency-matrix",
+   "module": "backend"
+  },
+  {
+   "name": "Resonance",
+   "card": "til/audio/knowledge-cards/resonance",
+   "module": "til"
+  },
+  {
+   "name": "Resource Limit",
+   "card": "backend/knowledge-cards/resource-limit",
+   "module": "backend"
+  },
+  {
+   "name": "Restricted Stock Unit",
+   "card": "business/knowledge-cards/restricted-stock-unit",
+   "module": "business"
+  },
+  {
+   "name": "Retention",
+   "card": "backend/knowledge-cards/retention",
+   "module": "backend"
+  },
+  {
+   "name": "Retention",
+   "card": "business/knowledge-cards/retention",
+   "module": "business"
+  },
+  {
+   "name": "Retrieval Cost",
+   "card": "llm/knowledge-cards/retrieval-cost",
+   "module": "llm"
+  },
+  {
+   "name": "Retrieval Recall",
+   "card": "llm/knowledge-cards/retrieval-recall",
+   "module": "llm"
+  },
+  {
+   "name": "Retrieval Source",
+   "card": "llm/knowledge-cards/retrieval-source",
+   "module": "llm"
+  },
+  {
+   "name": "Retry Budget",
+   "card": "backend/knowledge-cards/retry-budget",
+   "module": "backend"
+  },
+  {
+   "name": "Retry Policy",
+   "card": "backend/knowledge-cards/retry-policy",
+   "module": "backend"
+  },
+  {
+   "name": "Retry Storm",
+   "card": "backend/knowledge-cards/retry-storm",
+   "module": "backend"
+  },
+  {
+   "name": "Revenue",
+   "card": "business/knowledge-cards/revenue",
+   "module": "business"
+  },
+  {
+   "name": "Revenue Recognition",
+   "card": "business/knowledge-cards/revenue-recognition",
+   "module": "business"
+  },
+  {
+   "name": "Reverse Proxy",
+   "card": "devops/infra/knowledge-cards/reverse-proxy",
+   "module": "devops"
+  },
+  {
+   "name": "RFC 9457",
+   "card": "backend/knowledge-cards/problem-details",
+   "module": "backend"
+  },
+  {
+   "name": "RFM",
+   "card": "devops/monitoring/knowledge-cards/rfm",
+   "module": "devops"
+  },
+  {
+   "name": "Rice",
+   "card": "linux/dotfile/knowledge-cards/rice",
+   "module": "linux"
+  },
+  {
+   "name": "Rigid Demand",
+   "card": "business/knowledge-cards/rigid-demand",
+   "module": "business"
+  },
+  {
+   "name": "Ring Buffer",
+   "card": "linux/dotfile/knowledge-cards/ring-buffer-log",
+   "module": "linux"
+  },
+  {
+   "name": "Risk Buy",
+   "card": "business/procurement-planning/cards/risk-buy",
+   "module": "business"
+  },
+  {
+   "name": "RLHF",
+   "card": "llm/knowledge-cards/rlhf",
+   "module": "llm"
+  },
+  {
+   "name": "ROE",
+   "card": "business/knowledge-cards/roe",
+   "module": "business"
+  },
+  {
+   "name": "Rollback Condition",
+   "card": "backend/knowledge-cards/rollback-condition",
+   "module": "backend"
+  },
+  {
+   "name": "Rollback Rehearsal",
+   "card": "backend/knowledge-cards/rollback-rehearsal",
+   "module": "backend"
+  },
+  {
+   "name": "Rollback Strategy",
+   "card": "backend/knowledge-cards/rollback-strategy",
+   "module": "backend"
+  },
+  {
+   "name": "Rollback Window",
+   "card": "backend/knowledge-cards/rollback-window",
+   "module": "backend"
+  },
+  {
+   "name": "Rolling Update",
+   "card": "backend/knowledge-cards/rolling-update",
+   "module": "backend"
+  },
+  {
+   "name": "Rollout Strategy",
+   "card": "devops/ci/knowledge-cards/rollout-strategy",
+   "module": "devops"
+  },
+  {
+   "name": "Rollup / Downsampling",
+   "card": "backend/knowledge-cards/rollup",
+   "module": "backend"
+  },
+  {
+   "name": "Room Correction",
+   "card": "til/audio/knowledge-cards/room-correction",
+   "module": "til"
+  },
+  {
+   "name": "Room Modes",
+   "card": "til/audio/knowledge-cards/room-modes",
+   "module": "til"
+  },
+  {
+   "name": "RoPE",
+   "card": "llm/knowledge-cards/rope",
+   "module": "llm"
+  },
+  {
+   "name": "Rotary Position Embedding",
+   "card": "llm/knowledge-cards/rope",
+   "module": "llm"
+  },
+  {
+   "name": "Route Table",
+   "card": "devops/infra/knowledge-cards/route-table",
+   "module": "devops"
+  },
+  {
+   "name": "Routing Rule",
+   "card": "backend/knowledge-cards/routing-rule",
+   "module": "backend"
+  },
+  {
+   "name": "Row Lock",
+   "card": "backend/knowledge-cards/row-lock",
+   "module": "backend"
+  },
+  {
+   "name": "Row-Level Security",
+   "card": "backend/knowledge-cards/row-level-security",
+   "module": "backend"
+  },
+  {
+   "name": "RPO",
+   "card": "backend/knowledge-cards/rpo",
+   "module": "backend"
+  },
+  {
+   "name": "RPO",
+   "card": "business/knowledge-cards/remaining-performance-obligation",
+   "module": "business"
+  },
+  {
+   "name": "RTO",
+   "card": "backend/knowledge-cards/rto",
+   "module": "backend"
+  },
+  {
+   "name": "Runbook",
+   "card": "backend/knowledge-cards/runbook",
+   "module": "backend"
+  },
+  {
+   "name": "Runbook Link",
+   "card": "backend/knowledge-cards/runbook-link",
+   "module": "backend"
+  },
+  {
+   "name": "Runtime Config",
+   "card": "backend/knowledge-cards/runtime-config",
+   "module": "backend"
+  },
+  {
+   "name": "Runtime Secret Injection",
+   "card": "linux/dotfile/knowledge-cards/runtime-secret-injection",
+   "module": "linux"
+  },
+  {
+   "name": "Runway",
+   "card": "business/knowledge-cards/runway",
+   "module": "business"
+  },
+  {
+   "name": "SaaS",
+   "card": "business/knowledge-cards/saas",
+   "module": "business"
+  },
+  {
+   "name": "Safety Stock",
+   "card": "business/procurement-planning/cards/safety-stock",
+   "module": "business"
+  },
+  {
+   "name": "Saga",
+   "card": "backend/knowledge-cards/saga",
+   "module": "backend"
+  },
+  {
+   "name": "Salt",
+   "card": "backend/knowledge-cards/salt",
+   "module": "backend"
+  },
+  {
+   "name": "Same-Origin Policy",
+   "card": "backend/knowledge-cards/same-origin-policy",
+   "module": "backend"
+  },
+  {
+   "name": "Same-Store Sales",
+   "card": "business/knowledge-cards/same-store-sales",
+   "module": "business"
+  },
+  {
+   "name": "Sample Rate and Bit Depth",
+   "card": "til/audio/knowledge-cards/sample-rate-and-bit-depth",
+   "module": "til"
+  },
+  {
+   "name": "Sampling",
+   "card": "backend/knowledge-cards/sampling",
+   "module": "backend"
+  },
+  {
+   "name": "Sampling",
+   "card": "devops/monitoring/knowledge-cards/sampling",
+   "module": "devops"
+  },
+  {
+   "name": "Sampling Constraint",
+   "card": "llm/knowledge-cards/sampling-constraint",
+   "module": "llm"
+  },
+  {
+   "name": "Sandbox",
+   "card": "llm/knowledge-cards/sandbox",
+   "module": "llm"
+  },
+  {
+   "name": "SAPI",
+   "card": "programming/php/knowledge-cards/sapi",
+   "module": "programming"
+  },
+  {
+   "name": "Sargable",
+   "card": "backend/01-database/sql/knowledge-cards/sargable",
+   "module": "backend"
+  },
+  {
+   "name": "Saturation Point",
+   "card": "backend/knowledge-cards/saturation-point",
+   "module": "backend"
+  },
+  {
+   "name": "SBIR",
+   "card": "til/audio/knowledge-cards/sbir",
+   "module": "til"
+  },
+  {
+   "name": "SBOM",
+   "card": "devops/ci/knowledge-cards/sbom",
+   "module": "devops"
+  },
+  {
+   "name": "Scaffold vs Harness",
+   "card": "llm/knowledge-cards/scaffold-vs-harness",
+   "module": "llm"
+  },
+  {
+   "name": "Scheduled Scaling",
+   "card": "backend/knowledge-cards/scheduled-scaling",
+   "module": "backend"
+  },
+  {
+   "name": "Schema Drift",
+   "card": "backend/knowledge-cards/schema-drift",
+   "module": "backend"
+  },
+  {
+   "name": "Schema Migration",
+   "card": "backend/knowledge-cards/schema-migration",
+   "module": "backend"
+  },
+  {
+   "name": "SCP (Service Control Policy)",
+   "card": "devops/infra/knowledge-cards/scp",
+   "module": "devops"
+  },
+  {
+   "name": "Screen State Matrix",
+   "card": "ux-design/knowledge-cards/screen-state-matrix",
+   "module": "ux-design"
+  },
+  {
+   "name": "Screen State Test",
+   "card": "testing/knowledge-cards/screen-state-test",
+   "module": "testing"
+  },
+  {
+   "name": "Search Index",
+   "card": "backend/knowledge-cards/search-index",
+   "module": "backend"
+  },
+  {
+   "name": "Second Source",
+   "card": "business/procurement-planning/cards/second-source",
+   "module": "business"
+  },
+  {
+   "name": "Secret Management",
+   "card": "backend/knowledge-cards/secret-management",
+   "module": "backend"
+  },
+  {
+   "name": "Secure Context",
+   "card": "backend/knowledge-cards/secure-context",
+   "module": "backend"
+  },
+  {
+   "name": "Security Control Domain",
+   "card": "backend/knowledge-cards/security-control-domain",
+   "module": "backend"
+  },
+  {
+   "name": "Security Exception",
+   "card": "backend/knowledge-cards/security-exception",
+   "module": "backend"
+  },
+  {
+   "name": "Security Group",
+   "card": "devops/infra/knowledge-cards/security-group",
+   "module": "devops"
+  },
+  {
+   "name": "Security Middleware",
+   "card": "backend/knowledge-cards/security-middleware",
+   "module": "backend"
+  },
+  {
+   "name": "Security Misconfiguration",
+   "card": "backend/knowledge-cards/security-misconfiguration",
+   "module": "backend"
+  },
+  {
+   "name": "Segment Reporting",
+   "card": "business/knowledge-cards/segment-reporting",
+   "module": "business"
+  },
+  {
+   "name": "Self-Attention",
+   "card": "llm/knowledge-cards/self-attention",
+   "module": "llm"
+  },
+  {
+   "name": "Semantic Fake Backend",
+   "card": "testing/knowledge-cards/semantic-fake-backend",
+   "module": "testing"
+  },
+  {
+   "name": "Semantic Model",
+   "card": "backend/01-database/sql/knowledge-cards/semantic-model",
+   "module": "backend"
+  },
+  {
+   "name": "Semi-join 與 Anti-join",
+   "card": "backend/01-database/sql/knowledge-cards/semi-join-and-anti-join",
+   "module": "backend"
+  },
+  {
+   "name": "Sensitivity",
+   "card": "til/audio/knowledge-cards/sensitivity",
+   "module": "til"
+  },
+  {
+   "name": "SentencePiece",
+   "card": "llm/knowledge-cards/sentencepiece",
+   "module": "llm"
+  },
+  {
+   "name": "Serial Console",
+   "card": "devops/infra/knowledge-cards/serial-console",
+   "module": "devops"
+  },
+  {
+   "name": "Serialization Failure",
+   "card": "backend/knowledge-cards/serialization-failure",
+   "module": "backend"
+  },
+  {
+   "name": "Server API",
+   "card": "programming/php/knowledge-cards/sapi",
+   "module": "programming"
+  },
+  {
+   "name": "Server-Sent Events (SSE)",
+   "card": "backend/knowledge-cards/sse",
+   "module": "backend"
+  },
+  {
+   "name": "Serverless",
+   "card": "backend/knowledge-cards/serverless",
+   "module": "backend"
+  },
+  {
+   "name": "Service Account",
+   "card": "devops/infra/knowledge-cards/service-account",
+   "module": "devops"
+  },
+  {
+   "name": "Service Discovery",
+   "card": "backend/knowledge-cards/service-discovery",
+   "module": "backend"
+  },
+  {
+   "name": "Service Endpoint",
+   "card": "backend/knowledge-cards/endpoint",
+   "module": "backend"
+  },
+  {
+   "name": "Service Registry",
+   "card": "backend/knowledge-cards/service-registry",
+   "module": "backend"
+  },
+  {
+   "name": "Session Consistency",
+   "card": "backend/knowledge-cards/session-consistency",
+   "module": "backend"
+  },
+  {
+   "name": "Session Invalidation",
+   "card": "backend/knowledge-cards/session-invalidation",
+   "module": "backend"
+  },
+  {
+   "name": "Set-of-Mark prompting",
+   "card": "llm/knowledge-cards/set-of-mark-prompting",
+   "module": "llm"
+  },
+  {
+   "name": "SFT",
+   "card": "llm/knowledge-cards/sft",
+   "module": "llm"
+  },
+  {
+   "name": "SGD",
+   "card": "llm/knowledge-cards/sgd",
+   "module": "llm"
+  },
+  {
+   "name": "Shadow Read",
+   "card": "backend/knowledge-cards/shadow-read",
+   "module": "backend"
+  },
+  {
+   "name": "Shadow Traffic",
+   "card": "backend/knowledge-cards/shadow-traffic",
+   "module": "backend"
+  },
+  {
+   "name": "Share Pledge",
+   "card": "business/knowledge-cards/share-pledge",
+   "module": "business"
+  },
+  {
+   "name": "Share-based Compensation",
+   "card": "business/knowledge-cards/share-based-compensation",
+   "module": "business"
+  },
+  {
+   "name": "Shared Mutable State",
+   "card": "software-design/ddd/knowledge-cards/shared-mutable-state",
+   "module": "software-design"
+  },
+  {
+   "name": "Shared Responsibility Model",
+   "card": "backend/knowledge-cards/shared-responsibility-model",
+   "module": "backend"
+  },
+  {
+   "name": "Shared-nothing 請求模型",
+   "card": "programming/php/knowledge-cards/shared-nothing-request",
+   "module": "programming"
+  },
+  {
+   "name": "Shareholders' Equity",
+   "card": "business/knowledge-cards/shareholders-equity",
+   "module": "business"
+  },
+  {
+   "name": "Shell Background Process",
+   "card": "llm/knowledge-cards/shell-background-process",
+   "module": "llm"
+  },
+  {
+   "name": "Shell 背景行程",
+   "card": "llm/knowledge-cards/shell-background-process",
+   "module": "llm"
+  },
+  {
+   "name": "Ship and Debit",
+   "card": "business/procurement-planning/cards/ship-and-debit",
+   "module": "business"
+  },
+  {
+   "name": "Shotgun Surgery",
+   "card": "software-design/design-principles/knowledge-cards/shotgun-surgery",
+   "module": "software-design"
+  },
+  {
+   "name": "SIGHUP",
+   "card": "linux/dotfile/knowledge-cards/sighup-hangup-signal",
+   "module": "linux"
+  },
+  {
+   "name": "Single Responsibility Principle",
+   "card": "software-design/design-principles/knowledge-cards/single-responsibility-principle",
+   "module": "software-design"
+  },
+  {
+   "name": "Single Writer Model",
+   "card": "backend/knowledge-cards/single-writer-model",
+   "module": "backend"
+  },
+  {
+   "name": "Singleflight",
+   "card": "backend/knowledge-cards/singleflight",
+   "module": "backend"
+  },
+  {
+   "name": "Skip vs Fail Semantics",
+   "card": "testing/knowledge-cards/skip-vs-fail-semantics",
+   "module": "testing"
+  },
+  {
+   "name": "SLI / SLO",
+   "card": "backend/knowledge-cards/sli-slo",
+   "module": "backend"
+  },
+  {
+   "name": "SLO Baseline Drift",
+   "card": "backend/knowledge-cards/slo-baseline-drift",
+   "module": "backend"
+  },
+  {
+   "name": "Smoke Test",
+   "card": "testing/knowledge-cards/smoke-test",
+   "module": "testing"
+  },
+  {
+   "name": "Snapshot",
+   "card": "software-design/ddd/knowledge-cards/snapshot",
+   "module": "software-design"
+  },
+  {
+   "name": "Snapshot Isolation",
+   "card": "backend/knowledge-cards/snapshot-isolation",
+   "module": "backend"
+  },
+  {
+   "name": "Sociable vs Solitary Unit Test",
+   "card": "testing/knowledge-cards/unit-definition-two-schools",
+   "module": "testing"
+  },
+  {
+   "name": "Socket",
+   "card": "backend/knowledge-cards/socket",
+   "module": "backend"
+  },
+  {
+   "name": "Soft Delete",
+   "card": "backend/knowledge-cards/soft-delete",
+   "module": "backend"
+  },
+  {
+   "name": "Soft TTL",
+   "card": "backend/knowledge-cards/soft-ttl",
+   "module": "backend"
+  },
+  {
+   "name": "Softmax",
+   "card": "llm/knowledge-cards/softmax",
+   "module": "llm"
+  },
+  {
+   "name": "Sound Pressure Level",
+   "card": "til/audio/knowledge-cards/sound-pressure-level",
+   "module": "til"
+  },
+  {
+   "name": "Source of Truth",
+   "card": "backend/knowledge-cards/source-of-truth",
+   "module": "backend"
+  },
+  {
+   "name": "Span",
+   "card": "backend/knowledge-cards/span",
+   "module": "backend"
+  },
+  {
+   "name": "Special Purpose Vehicle",
+   "card": "business/knowledge-cards/special-purpose-vehicle",
+   "module": "business"
+  },
+  {
+   "name": "Special Tokens",
+   "card": "llm/knowledge-cards/special-tokens",
+   "module": "llm"
+  },
+  {
+   "name": "Speculative Decoding",
+   "card": "llm/knowledge-cards/speculative-decoding",
+   "module": "llm"
+  },
+  {
+   "name": "SQL Injection",
+   "card": "backend/knowledge-cards/sql-injection",
+   "module": "backend"
+  },
+  {
+   "name": "SQL 注入",
+   "card": "backend/knowledge-cards/sql-injection",
+   "module": "backend"
+  },
+  {
+   "name": "SQL 語句記錄",
+   "card": "backend/knowledge-cards/query-log",
+   "module": "backend"
+  },
+  {
+   "name": "SSH",
+   "card": "devops/infra/knowledge-cards/ssh",
+   "module": "devops"
+  },
+  {
+   "name": "SSH Certificate",
+   "card": "devops/infra/knowledge-cards/ssh-certificate",
+   "module": "devops"
+  },
+  {
+   "name": "SSH Host Key 與 known_hosts",
+   "card": "devops/infra/knowledge-cards/ssh-host-key",
+   "module": "devops"
+  },
+  {
+   "name": "SSH Key Storage",
+   "card": "linux/dotfile/knowledge-cards/ssh-key-storage",
+   "module": "linux"
+  },
+  {
+   "name": "SSH 憑證",
+   "card": "devops/infra/knowledge-cards/ssh-certificate",
+   "module": "devops"
+  },
+  {
+   "name": "SSH 金鑰儲放與 authorized_keys",
+   "card": "linux/dotfile/knowledge-cards/ssh-key-storage",
+   "module": "linux"
+  },
+  {
+   "name": "SSL / TLS",
+   "card": "devops/infra/knowledge-cards/ssl-tls",
+   "module": "devops"
+  },
+  {
+   "name": "SSRF",
+   "card": "backend/knowledge-cards/ssrf",
+   "module": "backend"
+  },
+  {
+   "name": "Stakeholder Mapping",
+   "card": "backend/knowledge-cards/stakeholder-mapping",
+   "module": "backend"
+  },
+  {
+   "name": "Stale Data",
+   "card": "backend/knowledge-cards/stale-data",
+   "module": "backend"
+  },
+  {
+   "name": "Stale Read",
+   "card": "backend/knowledge-cards/stale-read",
+   "module": "backend"
+  },
+  {
+   "name": "Stale-If-Error",
+   "card": "backend/knowledge-cards/stale-if-error",
+   "module": "backend"
+  },
+  {
+   "name": "Stale-While-Revalidate",
+   "card": "backend/knowledge-cards/stale-while-revalidate",
+   "module": "backend"
+  },
+  {
+   "name": "Startup Probe",
+   "card": "backend/knowledge-cards/startup-probe",
+   "module": "backend"
+  },
+  {
+   "name": "State Lock",
+   "card": "devops/ci/knowledge-cards/state-lock",
+   "module": "devops"
+  },
+  {
+   "name": "State Stream",
+   "card": "software-design/ddd/knowledge-cards/state-stream",
+   "module": "software-design"
+  },
+  {
+   "name": "Static / Dynamic Content Separation",
+   "card": "devops/infra/knowledge-cards/static-dynamic-separation",
+   "module": "devops"
+  },
+  {
+   "name": "Static Stability",
+   "card": "backend/knowledge-cards/static-stability",
+   "module": "backend"
+  },
+  {
+   "name": "Status Page",
+   "card": "backend/knowledge-cards/status-page",
+   "module": "backend"
+  },
+  {
+   "name": "Steady State",
+   "card": "backend/knowledge-cards/steady-state",
+   "module": "backend"
+  },
+  {
+   "name": "Step Change",
+   "card": "backend/knowledge-cards/step-change",
+   "module": "backend"
+  },
+  {
+   "name": "Step-Up Authentication",
+   "card": "backend/knowledge-cards/step-up-authentication",
+   "module": "backend"
+  },
+  {
+   "name": "Sticky Session",
+   "card": "backend/knowledge-cards/sticky-session",
+   "module": "backend"
+  },
+  {
+   "name": "Stockout",
+   "card": "business/procurement-planning/cards/stockout",
+   "module": "business"
+  },
+  {
+   "name": "Stop Condition",
+   "card": "backend/knowledge-cards/stop-condition",
+   "module": "backend"
+  },
+  {
+   "name": "Storage Tiering",
+   "card": "backend/knowledge-cards/storage-tiering",
+   "module": "backend"
+  },
+  {
+   "name": "Strangler Fig Pattern",
+   "card": "backend/knowledge-cards/strangler-fig",
+   "module": "backend"
+  },
+  {
+   "name": "Stream Pipeline",
+   "card": "backend/knowledge-cards/stream-pipeline",
+   "module": "backend"
+  },
+  {
+   "name": "Strong Reliability",
+   "card": "backend/knowledge-cards/strong-reliability",
+   "module": "backend"
+  },
+  {
+   "name": "Structured Output",
+   "card": "llm/knowledge-cards/structured-output",
+   "module": "llm"
+  },
+  {
+   "name": "Stub",
+   "card": "testing/knowledge-cards/stub",
+   "module": "testing"
+  },
+  {
+   "name": "Sub-processor",
+   "card": "backend/knowledge-cards/sub-processor",
+   "module": "backend"
+  },
+  {
+   "name": "Subagent",
+   "card": "llm/knowledge-cards/subagent",
+   "module": "llm"
+  },
+  {
+   "name": "Subnet",
+   "card": "devops/infra/knowledge-cards/subnet",
+   "module": "devops"
+  },
+  {
+   "name": "Subquery",
+   "card": "backend/01-database/sql/knowledge-cards/subquery",
+   "module": "backend"
+  },
+  {
+   "name": "Sunk Cost",
+   "card": "business/knowledge-cards/sunk-cost",
+   "module": "business"
+  },
+  {
+   "name": "Supervised Fine-Tuning",
+   "card": "llm/knowledge-cards/sft",
+   "module": "llm"
+  },
+  {
+   "name": "Survivorship Bias",
+   "card": "business/knowledge-cards/survivorship-bias",
+   "module": "business"
+  },
+  {
+   "name": "SWE-bench",
+   "card": "llm/knowledge-cards/swe-bench",
+   "module": "llm"
+  },
+  {
+   "name": "Switching Cost",
+   "card": "business/knowledge-cards/switching-cost",
+   "module": "business"
+  },
+  {
+   "name": "Symptom-Based Alert",
+   "card": "backend/knowledge-cards/symptom-based-alert",
+   "module": "backend"
+  },
+  {
+   "name": "Synthetic Monitoring",
+   "card": "backend/knowledge-cards/synthetic-monitoring",
+   "module": "backend"
+  },
+  {
+   "name": "System Prompt",
+   "card": "llm/knowledge-cards/system-prompt",
+   "module": "llm"
+  },
+  {
+   "name": "systemd drop-in",
+   "card": "linux/dotfile/knowledge-cards/systemd-drop-in",
+   "module": "linux"
+  },
+  {
+   "name": "systemd OnFailure",
+   "card": "linux/dotfile/knowledge-cards/systemd-onfailure",
+   "module": "linux"
+  },
+  {
+   "name": "systemd timer",
+   "card": "linux/dotfile/knowledge-cards/systemd-timer",
+   "module": "linux"
+  },
+  {
+   "name": "systemd-journald",
+   "card": "linux/dotfile/knowledge-cards/journald",
+   "module": "linux"
+  },
+  {
+   "name": "Table Bloat",
+   "card": "backend/knowledge-cards/table-bloat",
+   "module": "backend"
+  },
+  {
+   "name": "Table Partitioning",
+   "card": "backend/knowledge-cards/table-partitioning",
+   "module": "backend"
+  },
+  {
+   "name": "Tacit Knowledge",
+   "card": "business/knowledge-cards/tacit-knowledge",
+   "module": "business"
+  },
+  {
+   "name": "Tail Latency",
+   "card": "backend/knowledge-cards/tail-latency",
+   "module": "backend"
+  },
+  {
+   "name": "Taint 與 Toleration",
+   "card": "backend/knowledge-cards/taint-and-toleration",
+   "module": "backend"
+  },
+  {
+   "name": "Take-or-Pay",
+   "card": "business/knowledge-cards/take-or-pay",
+   "module": "business"
+  },
+  {
+   "name": "TAM",
+   "card": "business/knowledge-cards/total-addressable-market",
+   "module": "business"
+  },
+  {
+   "name": "TCP Connection Roaming",
+   "card": "linux/dotfile/knowledge-cards/tcp-connection-roaming",
+   "module": "linux"
+  },
+  {
+   "name": "Tenant Boundary",
+   "card": "backend/knowledge-cards/tenant-boundary",
+   "module": "backend"
+  },
+  {
+   "name": "Tensor",
+   "card": "llm/knowledge-cards/tensor",
+   "module": "llm"
+  },
+  {
+   "name": "Terminal CJK Input",
+   "card": "linux/dotfile/knowledge-cards/terminal-cjk-input",
+   "module": "linux"
+  },
+  {
+   "name": "terraform plan / apply",
+   "card": "devops/infra/knowledge-cards/terraform-plan-apply",
+   "module": "devops"
+  },
+  {
+   "name": "Test Double Taxonomy",
+   "card": "testing/knowledge-cards/test-double-taxonomy",
+   "module": "testing"
+  },
+  {
+   "name": "Test Environment Identification",
+   "card": "testing/knowledge-cards/environment-identification",
+   "module": "testing"
+  },
+  {
+   "name": "Test Oracle",
+   "card": "testing/knowledge-cards/test-oracle",
+   "module": "testing"
+  },
+  {
+   "name": "Test Provenance",
+   "card": "testing/knowledge-cards/test-provenance",
+   "module": "testing"
+  },
+  {
+   "name": "Test Seam",
+   "card": "software-design/ddd/knowledge-cards/test-seam",
+   "module": "software-design"
+  },
+  {
+   "name": "Test-Time Compute",
+   "card": "llm/knowledge-cards/test-time-compute",
+   "module": "llm"
+  },
+  {
+   "name": "Testing vs Checking",
+   "card": "testing/knowledge-cards/testing-vs-checking",
+   "module": "testing"
+  },
+  {
+   "name": "Texture Atlas（紋理圖集）與 Canvas.drawAtlas",
+   "card": "programming/flutter/knowledge-cards/texture-atlas",
+   "module": "programming"
+  },
+  {
+   "name": "THD+N",
+   "card": "til/audio/knowledge-cards/thd-n",
+   "module": "til"
+  },
+  {
+   "name": "Thin Wrapper",
+   "card": "business/knowledge-cards/thin-wrapper",
+   "module": "business"
+  },
+  {
+   "name": "Threat Model",
+   "card": "backend/knowledge-cards/threat-model",
+   "module": "backend"
+  },
+  {
+   "name": "Three-Layer Architecture",
+   "card": "llm/knowledge-cards/three-layer-architecture",
+   "module": "llm"
+  },
+  {
+   "name": "Throughput",
+   "card": "backend/knowledge-cards/throughput",
+   "module": "backend"
+  },
+  {
+   "name": "Thundering Herd",
+   "card": "backend/knowledge-cards/thundering-herd",
+   "module": "backend"
+  },
+  {
+   "name": "Tiered Support",
+   "card": "backend/knowledge-cards/tiered-support",
+   "module": "backend"
+  },
+  {
+   "name": "Time Range",
+   "card": "backend/knowledge-cards/time-range",
+   "module": "backend"
+  },
+  {
+   "name": "Time-Driven Trigger",
+   "card": "automation/knowledge-cards/time-driven-trigger",
+   "module": "automation"
+  },
+  {
+   "name": "Timeout",
+   "card": "backend/knowledge-cards/timeout",
+   "module": "backend"
+  },
+  {
+   "name": "Timing Attack",
+   "card": "backend/knowledge-cards/timing-attack",
+   "module": "backend"
+  },
+  {
+   "name": "TLS / mTLS",
+   "card": "backend/knowledge-cards/tls-mtls",
+   "module": "backend"
+  },
+  {
+   "name": "TLS Handshake（TLS 握手）的成本與連線重用",
+   "card": "backend/knowledge-cards/tls-handshake-cost",
+   "module": "backend"
+  },
+  {
+   "name": "Toil",
+   "card": "backend/knowledge-cards/toil",
+   "module": "backend"
+  },
+  {
+   "name": "Token",
+   "card": "llm/knowledge-cards/token",
+   "module": "llm"
+  },
+  {
+   "name": "Token Bucket",
+   "card": "backend/knowledge-cards/token-bucket",
+   "module": "backend"
+  },
+  {
+   "name": "Token Revocation",
+   "card": "backend/knowledge-cards/token-revocation",
+   "module": "backend"
+  },
+  {
+   "name": "Tokens Per Second",
+   "card": "llm/knowledge-cards/tokens-per-second",
+   "module": "llm"
+  },
+  {
+   "name": "Tombstone",
+   "card": "backend/knowledge-cards/tombstone",
+   "module": "backend"
+  },
+  {
+   "name": "TOML",
+   "card": "devops/infra/knowledge-cards/toml",
+   "module": "devops"
+  },
+  {
+   "name": "Tool Result Misread",
+   "card": "llm/knowledge-cards/tool-result-misread",
+   "module": "llm"
+  },
+  {
+   "name": "Tool Use",
+   "card": "llm/knowledge-cards/tool-use",
+   "module": "llm"
+  },
+  {
+   "name": "Tool-Use Permission Model",
+   "card": "llm/knowledge-cards/tool-use-permission-model",
+   "module": "llm"
+  },
+  {
+   "name": "Top-K / Top-P / Min-P Sampling",
+   "card": "llm/knowledge-cards/top-p-sampling",
+   "module": "llm"
+  },
+  {
+   "name": "Topic",
+   "card": "backend/knowledge-cards/topic",
+   "module": "backend"
+  },
+  {
+   "name": "Total Addressable Market，潛在市場規模",
+   "card": "business/knowledge-cards/total-addressable-market",
+   "module": "business"
+  },
+  {
+   "name": "Touch Target",
+   "card": "ux-design/knowledge-cards/touch-target",
+   "module": "ux-design"
+  },
+  {
+   "name": "Trace",
+   "card": "backend/knowledge-cards/trace",
+   "module": "backend"
+  },
+  {
+   "name": "Trace Context",
+   "card": "backend/knowledge-cards/trace-context",
+   "module": "backend"
+  },
+  {
+   "name": "Trace ID",
+   "card": "backend/knowledge-cards/trace-id",
+   "module": "backend"
+  },
+  {
+   "name": "Tracking Force",
+   "card": "til/audio/knowledge-cards/tracking-force",
+   "module": "til"
+  },
+  {
+   "name": "Trained Listener",
+   "card": "til/audio/knowledge-cards/trained-listener",
+   "module": "til"
+  },
+  {
+   "name": "Training Example Coverage",
+   "card": "llm/knowledge-cards/training-example-coverage",
+   "module": "llm"
+  },
+  {
+   "name": "Transaction",
+   "card": "backend/knowledge-cards/transaction",
+   "module": "backend"
+  },
+  {
+   "name": "Transaction Boundary",
+   "card": "backend/knowledge-cards/transaction-boundary",
+   "module": "backend"
+  },
+  {
+   "name": "Transaction Pooling",
+   "card": "backend/knowledge-cards/transaction-pooling",
+   "module": "backend"
+  },
+  {
+   "name": "Transaction Propagation",
+   "card": "backend/knowledge-cards/transaction-propagation",
+   "module": "backend"
+  },
+  {
+   "name": "Transactional DDL",
+   "card": "backend/knowledge-cards/transactional-ddl",
+   "module": "backend"
+  },
+  {
+   "name": "Transfer Pricing",
+   "card": "business/knowledge-cards/transfer-pricing",
+   "module": "business"
+  },
+  {
+   "name": "Transformer",
+   "card": "llm/knowledge-cards/transformer",
+   "module": "llm"
+  },
+  {
+   "name": "Transient Failure",
+   "card": "backend/knowledge-cards/transient-failure",
+   "module": "backend"
+  },
+  {
+   "name": "Tripwire",
+   "card": "backend/knowledge-cards/tripwire",
+   "module": "backend"
+  },
+  {
+   "name": "TrueTime",
+   "card": "backend/knowledge-cards/truetime",
+   "module": "backend"
+  },
+  {
+   "name": "Trust Boundary",
+   "card": "backend/knowledge-cards/trust-boundary",
+   "module": "backend"
+  },
+  {
+   "name": "Trust Policy",
+   "card": "devops/infra/knowledge-cards/trust-policy",
+   "module": "devops"
+  },
+  {
+   "name": "TTFT",
+   "card": "llm/knowledge-cards/ttft",
+   "module": "llm"
+  },
+  {
+   "name": "TTL",
+   "card": "backend/knowledge-cards/ttl",
+   "module": "backend"
+  },
+  {
+   "name": "TTY",
+   "card": "linux/dotfile/knowledge-cards/tty",
+   "module": "linux"
+  },
+  {
+   "name": "Type Affinity",
+   "card": "backend/knowledge-cards/type-affinity",
+   "module": "backend"
+  },
+  {
+   "name": "UEFI Boot Chain",
+   "card": "linux/dotfile/knowledge-cards/uefi-boot-chain",
+   "module": "linux"
+  },
+  {
+   "name": "ui.Picture 與 PictureRecorder",
+   "card": "programming/flutter/knowledge-cards/picture",
+   "module": "programming"
+  },
+  {
+   "name": "Unacked Message",
+   "card": "backend/knowledge-cards/unacked-message",
+   "module": "backend"
+  },
+  {
+   "name": "Unified Memory Architecture",
+   "card": "llm/knowledge-cards/unified-memory",
+   "module": "llm"
+  },
+  {
+   "name": "Unigram Tokenizer",
+   "card": "llm/knowledge-cards/unigram-tokenizer",
+   "module": "llm"
+  },
+  {
+   "name": "Unit Economics",
+   "card": "business/knowledge-cards/unit-economics",
+   "module": "business"
+  },
+  {
+   "name": "Universal Scalability Law (USL)",
+   "card": "backend/knowledge-cards/universal-scalability-law",
+   "module": "backend"
+  },
+  {
+   "name": "Unrestricted Resource Consumption",
+   "card": "backend/knowledge-cards/unrestricted-resource-consumption",
+   "module": "backend"
+  },
+  {
+   "name": "Update Feed",
+   "card": "devops/ci/knowledge-cards/update-feed",
+   "module": "devops"
+  },
+  {
+   "name": "USB-C PD 供電",
+   "card": "til/audio/knowledge-cards/usb-c-power-delivery",
+   "module": "til"
+  },
+  {
+   "name": "USB-C Power Delivery",
+   "card": "til/audio/knowledge-cards/usb-c-power-delivery",
+   "module": "til"
+  },
+  {
+   "name": "USE Method",
+   "card": "backend/knowledge-cards/use-method",
+   "module": "backend"
+  },
+  {
+   "name": "Userland Proxy",
+   "card": "devops/infra/knowledge-cards/userland-proxy",
+   "module": "devops"
+  },
+  {
+   "name": "Validation Middleware",
+   "card": "backend/knowledge-cards/validation-middleware",
+   "module": "backend"
+  },
+  {
+   "name": "Validation Query",
+   "card": "backend/knowledge-cards/validation-query",
+   "module": "backend"
+  },
+  {
+   "name": "Valuation",
+   "card": "business/knowledge-cards/valuation",
+   "module": "business"
+  },
+  {
+   "name": "Valuation Band",
+   "card": "business/knowledge-cards/valuation-band",
+   "module": "business"
+  },
+  {
+   "name": "Valuation Compression",
+   "card": "business/knowledge-cards/valuation-compression",
+   "module": "business"
+  },
+  {
+   "name": "Value Object",
+   "card": "software-design/ddd/knowledge-cards/value-object",
+   "module": "software-design"
+  },
+  {
+   "name": "Value-Chain Span",
+   "card": "business/knowledge-cards/value-chain-span",
+   "module": "business"
+  },
+  {
+   "name": "Vary",
+   "card": "backend/knowledge-cards/vary",
+   "module": "backend"
+  },
+  {
+   "name": "Vector Database",
+   "card": "llm/knowledge-cards/vector-database",
+   "module": "llm"
+  },
+  {
+   "name": "Vector Norm",
+   "card": "llm/knowledge-cards/vector-norm",
+   "module": "llm"
+  },
+  {
+   "name": "Vendor Financing",
+   "card": "business/knowledge-cards/vendor-financing",
+   "module": "business"
+  },
+  {
+   "name": "Vendor Lock-In",
+   "card": "backend/knowledge-cards/vendor-lock-in",
+   "module": "backend"
+  },
+  {
+   "name": "Venture Capital (VC)",
+   "card": "business/knowledge-cards/venture-capital",
+   "module": "business"
+  },
+  {
+   "name": "Vertical Integration",
+   "card": "business/knowledge-cards/vertical-integration",
+   "module": "business"
+  },
+  {
+   "name": "Vertical SaaS",
+   "card": "business/knowledge-cards/vertical-saas",
+   "module": "business"
+  },
+  {
+   "name": "Vibe Code",
+   "card": "business/knowledge-cards/vibe-code",
+   "module": "business"
+  },
+  {
+   "name": "Virtual Private Cloud",
+   "card": "devops/infra/knowledge-cards/vpc",
+   "module": "devops"
+  },
+  {
+   "name": "Visibility Timeout",
+   "card": "backend/knowledge-cards/visibility-timeout",
+   "module": "backend"
+  },
+  {
+   "name": "Vision Encoder",
+   "card": "llm/knowledge-cards/vision-encoder",
+   "module": "llm"
+  },
+  {
+   "name": "Vision-Language Model",
+   "card": "llm/knowledge-cards/vlm",
+   "module": "llm"
+  },
+  {
+   "name": "VLM",
+   "card": "llm/knowledge-cards/vlm",
+   "module": "llm"
+  },
+  {
+   "name": "VNIC",
+   "card": "devops/infra/knowledge-cards/vnic",
+   "module": "devops"
+  },
+  {
+   "name": "Vocabulary Size",
+   "card": "llm/knowledge-cards/vocabulary-size",
+   "module": "llm"
+  },
+  {
+   "name": "VPC",
+   "card": "devops/infra/knowledge-cards/vpc",
+   "module": "devops"
+  },
+  {
+   "name": "VRAM",
+   "card": "llm/knowledge-cards/vram",
+   "module": "llm"
+  },
+  {
+   "name": "VSync",
+   "card": "ux-design/knowledge-cards/vsync",
+   "module": "ux-design"
+  },
+  {
+   "name": "VT 與輸入權的持有者",
+   "card": "linux/dotfile/knowledge-cards/logind-session-seat",
+   "module": "linux"
+  },
+  {
+   "name": "WAF",
+   "card": "backend/knowledge-cards/waf",
+   "module": "backend"
+  },
+  {
+   "name": "Wafer Foundry",
+   "card": "business/knowledge-cards/wafer-foundry",
+   "module": "business"
+  },
+  {
+   "name": "Warrant",
+   "card": "business/knowledge-cards/warrant",
+   "module": "business"
+  },
+  {
+   "name": "Wash Trading",
+   "card": "business/retail-instruments/knowledge-cards/wash-trading",
+   "module": "business"
+  },
+  {
+   "name": "Wayland Session Lock",
+   "card": "linux/dotfile/knowledge-cards/session-lock",
+   "module": "linux"
+  },
+  {
+   "name": "Web App Deployment",
+   "card": "automation/knowledge-cards/web-app-deployment",
+   "module": "automation"
+  },
+  {
+   "name": "Web App 部署",
+   "card": "automation/knowledge-cards/web-app-deployment",
+   "module": "automation"
+  },
+  {
+   "name": "Webhook",
+   "card": "backend/knowledge-cards/webhook",
+   "module": "backend"
+  },
+  {
+   "name": "Webhook Protocol",
+   "card": "backend/knowledge-cards/webhook-protocol",
+   "module": "backend"
+  },
+  {
+   "name": "Website Certificate Lifecycle",
+   "card": "backend/knowledge-cards/website-certificate-lifecycle",
+   "module": "backend"
+  },
+  {
+   "name": "WebSocket",
+   "card": "backend/knowledge-cards/websocket",
+   "module": "backend"
+  },
+  {
+   "name": "White-box and Black-box Monitoring",
+   "card": "backend/knowledge-cards/white-box-black-box-monitoring",
+   "module": "backend"
+  },
+  {
+   "name": "Widget、Element 與 RenderObject",
+   "card": "programming/flutter/knowledge-cards/widget-element-renderobject",
+   "module": "programming"
+  },
+  {
+   "name": "Wireframe",
+   "card": "business/knowledge-cards/wireframe",
+   "module": "business"
+  },
+  {
+   "name": "Wiring Test",
+   "card": "software-design/ddd/knowledge-cards/wiring-test",
+   "module": "software-design"
+  },
+  {
+   "name": "Word2Vec",
+   "card": "llm/knowledge-cards/word2vec",
+   "module": "llm"
+  },
+  {
+   "name": "WordPiece",
+   "card": "llm/knowledge-cards/wordpiece",
+   "module": "llm"
+  },
+  {
+   "name": "Worker Pool",
+   "card": "backend/knowledge-cards/worker-pool",
+   "module": "backend"
+  },
+  {
+   "name": "Workload Identity",
+   "card": "backend/knowledge-cards/workload-identity",
+   "module": "backend"
+  },
+  {
+   "name": "Workload Model",
+   "card": "backend/knowledge-cards/workload-model",
+   "module": "backend"
+  },
+  {
+   "name": "WORM Storage",
+   "card": "backend/knowledge-cards/worm-storage",
+   "module": "backend"
+  },
+  {
+   "name": "Write Skew",
+   "card": "backend/knowledge-cards/write-skew",
+   "module": "backend"
+  },
+  {
+   "name": "Write-Ahead Log",
+   "card": "backend/knowledge-cards/write-ahead-log",
+   "module": "backend"
+  },
+  {
+   "name": "Write-Behind Cache",
+   "card": "backend/knowledge-cards/write-behind-cache",
+   "module": "backend"
+  },
+  {
+   "name": "Write-Through Cache",
+   "card": "backend/knowledge-cards/write-through-cache",
+   "module": "backend"
+  },
+  {
+   "name": "YAML",
+   "card": "devops/infra/knowledge-cards/yaml",
+   "module": "devops"
+  },
+  {
+   "name": "Zend Thread Safety",
+   "card": "programming/php/knowledge-cards/zts",
+   "module": "programming"
+  },
+  {
+   "name": "Zero Trust",
+   "card": "backend/knowledge-cards/zero-trust",
+   "module": "backend"
+  },
+  {
+   "name": "ZTS",
+   "card": "programming/php/knowledge-cards/zts",
+   "module": "programming"
+  },
+  {
+   "name": "一容器一職責",
+   "card": "backend/knowledge-cards/container-per-service",
+   "module": "backend"
+  },
+  {
+   "name": "不做版本",
+   "card": "backend/knowledge-cards/no-versioning",
+   "module": "backend"
+  },
+  {
+   "name": "不可取消不可退",
+   "card": "business/procurement-planning/cards/ncnr",
+   "module": "business"
+  },
+  {
+   "name": "不可能三角",
+   "card": "business/procurement-planning/cards/impossible-triangle",
+   "module": "business"
+  },
+  {
+   "name": "不可變儲存",
+   "card": "backend/knowledge-cards/worm-storage",
+   "module": "backend"
+  },
+  {
+   "name": "不可變映像",
+   "card": "backend/knowledge-cards/immutable-image",
+   "module": "backend"
+  },
+  {
+   "name": "不改原檔的設定疊加",
+   "card": "linux/dotfile/knowledge-cards/systemd-drop-in",
+   "module": "linux"
+  },
+  {
+   "name": "並行期",
+   "card": "backend/knowledge-cards/parallel-run",
+   "module": "backend"
+  },
+  {
+   "name": "主機金鑰",
+   "card": "devops/infra/knowledge-cards/ssh-host-key",
+   "module": "devops"
+  },
+  {
+   "name": "二項比例信賴區間",
+   "card": "llm/knowledge-cards/binomial-proportion-confidence-interval",
+   "module": "llm"
+  },
+  {
+   "name": "交易傳遞",
+   "card": "backend/knowledge-cards/transaction-propagation",
+   "module": "backend"
+  },
+  {
+   "name": "交易性 DDL",
+   "card": "backend/knowledge-cards/transactional-ddl",
+   "module": "backend"
+  },
+  {
+   "name": "交期、價格、品質",
+   "card": "business/procurement-planning/cards/impossible-triangle",
+   "module": "business"
+  },
+  {
+   "name": "交期，LT",
+   "card": "business/procurement-planning/cards/lead-time",
+   "module": "business"
+  },
+  {
+   "name": "人力資本",
+   "card": "business/knowledge-cards/human-capital",
+   "module": "business"
+  },
+  {
+   "name": "估值帶",
+   "card": "business/knowledge-cards/valuation-band",
+   "module": "business"
+  },
+  {
+   "name": "低功耗藍牙音訊與 LC3 編碼",
+   "card": "til/audio/knowledge-cards/le-audio-lc3",
+   "module": "til"
+  },
+  {
+   "name": "使用者空間的連接埠轉送程式",
+   "card": "devops/infra/knowledge-cards/userland-proxy",
+   "module": "devops"
+  },
+  {
+   "name": "供應商融資",
+   "card": "business/knowledge-cards/vendor-financing",
+   "module": "business"
+  },
+  {
+   "name": "倖存者偏誤",
+   "card": "business/knowledge-cards/survivorship-bias",
+   "module": "business"
+  },
+  {
+   "name": "假名化",
+   "card": "backend/knowledge-cards/pseudonymization",
+   "module": "backend"
+  },
+  {
+   "name": "價值鏈涵蓋段",
+   "card": "business/knowledge-cards/value-chain-span",
+   "module": "business"
+  },
+  {
+   "name": "先讀後寫",
+   "card": "backend/knowledge-cards/check-then-act",
+   "module": "backend"
+  },
+  {
+   "name": "入侵指標",
+   "card": "backend/knowledge-cards/indicator-of-compromise",
+   "module": "backend"
+  },
+  {
+   "name": "內容遞送網路",
+   "card": "devops/infra/knowledge-cards/cdn",
+   "module": "devops"
+  },
+  {
+   "name": "全倉與逐倉",
+   "card": "business/retail-instruments/knowledge-cards/cross-and-isolated-margin",
+   "module": "business"
+  },
+  {
+   "name": "公允價值",
+   "card": "business/knowledge-cards/fair-value",
+   "module": "business"
+  },
+  {
+   "name": "公司公開程度：上市 / 上櫃 / 公開發行未上市 / 未公開發行",
+   "card": "business/knowledge-cards/company-public-disclosure-levels",
+   "module": "business"
+  },
+  {
+   "name": "公司發行的認股權證",
+   "card": "business/knowledge-cards/warrant",
+   "module": "business"
+  },
+  {
+   "name": "共享可變狀態",
+   "card": "software-design/ddd/knowledge-cards/shared-mutable-state",
+   "module": "software-design"
+  },
+  {
+   "name": "共用資源的鄰居干擾",
+   "card": "backend/knowledge-cards/noisy-neighbor",
+   "module": "backend"
+  },
+  {
+   "name": "冒煙測試",
+   "card": "testing/knowledge-cards/smoke-test",
+   "module": "testing"
+  },
+  {
+   "name": "冪等鍵",
+   "card": "backend/knowledge-cards/idempotency-key",
+   "module": "backend"
+  },
+  {
+   "name": "冰磚奶",
+   "card": "business/knowledge-cards/frozen-concentrated-milk",
+   "module": "business"
+  },
+  {
+   "name": "准入控制",
+   "card": "backend/knowledge-cards/admission-control",
+   "module": "backend"
+  },
+  {
+   "name": "凍結參照與活解析",
+   "card": "testing/knowledge-cards/frozen-vs-live-reference",
+   "module": "testing"
+  },
+  {
+   "name": "分區識別，PARTUUID / FSUUID",
+   "card": "linux/dotfile/knowledge-cards/partition-identification",
+   "module": "linux"
+  },
+  {
+   "name": "分層支援",
+   "card": "backend/knowledge-cards/tiered-support",
+   "module": "backend"
+  },
+  {
+   "name": "分組子集",
+   "card": "backend/knowledge-cards/cohort",
+   "module": "backend"
+  },
+  {
+   "name": "分貝，dB",
+   "card": "til/audio/knowledge-cards/decibel",
+   "module": "til"
+  },
+  {
+   "name": "分部報告",
+   "card": "business/knowledge-cards/segment-reporting",
+   "module": "business"
+  },
+  {
+   "name": "分音器",
+   "card": "til/audio/knowledge-cards/crossover",
+   "module": "til"
+  },
+  {
+   "name": "分頁接續標記",
+   "card": "backend/knowledge-cards/pagination-cursor",
+   "module": "backend"
+  },
+  {
+   "name": "利息保障倍數",
+   "card": "business/knowledge-cards/interest-coverage",
+   "module": "business"
+  },
+  {
+   "name": "動圈單體",
+   "card": "til/audio/knowledge-cards/dynamic-driver",
+   "module": "til"
+  },
+  {
+   "name": "動態隨機存取記憶體",
+   "card": "business/knowledge-cards/dram",
+   "module": "business"
+  },
+  {
+   "name": "動磁式與動圈式唱頭",
+   "card": "til/audio/knowledge-cards/mm-and-mc-cartridges",
+   "module": "til"
+  },
+  {
+   "name": "動鐵式唱頭，MI",
+   "card": "til/audio/knowledge-cards/moving-iron-cartridge",
+   "module": "til"
+  },
+  {
+   "name": "動靜分離",
+   "card": "devops/infra/knowledge-cards/static-dynamic-separation",
+   "module": "devops"
+  },
+  {
+   "name": "升階驗證",
+   "card": "backend/knowledge-cards/step-up-authentication",
+   "module": "backend"
+  },
+  {
+   "name": "半連接與反連接",
+   "card": "backend/01-database/sql/knowledge-cards/semi-join-and-anti-join",
+   "module": "backend"
+  },
+  {
+   "name": "協作形態",
+   "card": "books/knowledge-cards/collaboration-mode",
+   "module": "books"
+  },
+  {
+   "name": "原始設備製造商 / 品牌商",
+   "card": "business/knowledge-cards/oem",
+   "module": "business"
+  },
+  {
+   "name": "原始設計製造商",
+   "card": "business/knowledge-cards/odm",
+   "module": "business"
+  },
+  {
+   "name": "取樣率與位元深度",
+   "card": "til/audio/knowledge-cards/sample-rate-and-bit-depth",
+   "module": "til"
+  },
+  {
+   "name": "受過訓練的聽者",
+   "card": "til/audio/knowledge-cards/trained-listener",
+   "module": "til"
+  },
+  {
+   "name": "可用區",
+   "card": "devops/infra/knowledge-cards/availability-zone",
+   "module": "devops"
+  },
+  {
+   "name": "可走索引的條件形狀",
+   "card": "backend/01-database/sql/knowledge-cards/sargable",
+   "module": "backend"
+  },
+  {
+   "name": "可轉換本票",
+   "card": "business/knowledge-cards/convertible-note",
+   "module": "business"
+  },
+  {
+   "name": "可轉換特別股",
+   "card": "business/knowledge-cards/convertible-preferred-stock",
+   "module": "business"
+  },
+  {
+   "name": "可重現建置",
+   "card": "devops/ci/knowledge-cards/reproducible-build",
+   "module": "devops"
+  },
+  {
+   "name": "合併報表",
+   "card": "business/knowledge-cards/consolidated-financial-statements",
+   "module": "business"
+  },
+  {
+   "name": "合成器",
+   "card": "linux/dotfile/knowledge-cards/compositor",
+   "module": "linux"
+  },
+  {
+   "name": "合成監控",
+   "card": "backend/knowledge-cards/synthetic-monitoring",
+   "module": "backend"
+  },
+  {
+   "name": "合格供應商與料件清單",
+   "card": "business/procurement-planning/cards/avl",
+   "module": "business"
+  },
+  {
+   "name": "同店銷售",
+   "card": "business/knowledge-cards/same-store-sales",
+   "module": "business"
+  },
+  {
+   "name": "名義整合測試",
+   "card": "testing/knowledge-cards/nominal-integration-test",
+   "module": "testing"
+  },
+  {
+   "name": "告警抑制",
+   "card": "backend/knowledge-cards/alert-inhibition",
+   "module": "backend"
+  },
+  {
+   "name": "告警靜音",
+   "card": "backend/knowledge-cards/alert-silence",
+   "module": "backend"
+  },
+  {
+   "name": "命名空間",
+   "card": "backend/knowledge-cards/namespace",
+   "module": "backend"
+  },
+  {
+   "name": "命名空間義",
+   "card": "backend/01-database/sql/knowledge-cards/schema-namespace",
+   "module": "backend"
+  },
+  {
+   "name": "員工認股權",
+   "card": "business/knowledge-cards/employee-stock-option",
+   "module": "business"
+  },
+  {
+   "name": "唱頭放大器",
+   "card": "til/audio/knowledge-cards/phono-preamp",
+   "module": "til"
+  },
+  {
+   "name": "唱頭殼",
+   "card": "til/audio/knowledge-cards/headshell",
+   "module": "til"
+  },
+  {
+   "name": "啟發式新鮮度期限",
+   "card": "backend/knowledge-cards/heuristic-freshness",
+   "module": "backend"
+  },
+  {
+   "name": "喇叭與邊界的干涉",
+   "card": "til/audio/knowledge-cards/sbir",
+   "module": "til"
+  },
+  {
+   "name": "單一職責原則",
+   "card": "software-design/design-principles/knowledge-cards/single-responsibility-principle",
+   "module": "software-design"
+  },
+  {
+   "name": "單元的兩種定義",
+   "card": "testing/knowledge-cards/unit-definition-two-schools",
+   "module": "testing"
+  },
+  {
+   "name": "回滾策略",
+   "card": "backend/knowledge-cards/rollback-strategy",
+   "module": "backend"
+  },
+  {
+   "name": "圈複雜度",
+   "card": "testing/knowledge-cards/cyclomatic-complexity",
+   "module": "testing"
+  },
+  {
+   "name": "垂直同步",
+   "card": "ux-design/knowledge-cards/vsync",
+   "module": "ux-design"
+  },
+  {
+   "name": "垂直整合",
+   "card": "business/knowledge-cards/vertical-integration",
+   "module": "business"
+  },
+  {
+   "name": "執行計畫",
+   "card": "backend/01-database/sql/knowledge-cards/query-plan",
+   "module": "backend"
+  },
+  {
+   "name": "執行配額",
+   "card": "automation/knowledge-cards/execution-quota",
+   "module": "automation"
+  },
+  {
+   "name": "執行項目",
+   "card": "automation/knowledge-cards/executions-page",
+   "module": "automation"
+  },
+  {
+   "name": "基數與選擇率",
+   "card": "backend/01-database/sql/knowledge-cards/cardinality-and-selectivity",
+   "module": "backend"
+  },
+  {
+   "name": "壓榨價差",
+   "card": "business/knowledge-cards/crush-margin",
+   "module": "business"
+  },
+  {
+   "name": "外包深度",
+   "card": "backend/knowledge-cards/capability-outsourcing-depth",
+   "module": "backend"
+  },
+  {
+   "name": "外連接",
+   "card": "backend/01-database/sql/knowledge-cards/outer-join",
+   "module": "backend"
+  },
+  {
+   "name": "多版本並行控制",
+   "card": "backend/knowledge-cards/mvcc",
+   "module": "backend"
+  },
+  {
+   "name": "多重股權結構",
+   "card": "business/knowledge-cards/multi-class-shares",
+   "module": "business"
+  },
+  {
+   "name": "失效域",
+   "card": "backend/knowledge-cards/failure-domain",
+   "module": "backend"
+  },
+  {
+   "name": "失敗觸發鉤子",
+   "card": "linux/dotfile/knowledge-cards/systemd-onfailure",
+   "module": "linux"
+  },
+  {
+   "name": "契約乘數",
+   "card": "business/retail-instruments/knowledge-cards/contract-multiplier",
+   "module": "business"
+  },
+  {
+   "name": "契約養殖 / 契作",
+   "card": "business/knowledge-cards/contract-farming",
+   "module": "business"
+  },
+  {
+   "name": "子查詢",
+   "card": "backend/01-database/sql/knowledge-cards/subquery",
+   "module": "backend"
+  },
+  {
+   "name": "子網路",
+   "card": "devops/infra/knowledge-cards/subnet",
+   "module": "devops"
+  },
+  {
+   "name": "子處理者",
+   "card": "backend/knowledge-cards/sub-processor",
+   "module": "backend"
+  },
+  {
+   "name": "字型的可用集合在 process 啟動時決定",
+   "card": "linux/dotfile/knowledge-cards/font-availability-at-startup",
+   "module": "linux"
+  },
+  {
+   "name": "存取憑證",
+   "card": "backend/knowledge-cards/credential",
+   "module": "backend"
+  },
+  {
+   "name": "孤兒資源",
+   "card": "devops/infra/knowledge-cards/orphaned-resource",
+   "module": "devops"
+  },
+  {
+   "name": "安全來源",
+   "card": "backend/knowledge-cards/secure-context",
+   "module": "backend"
+  },
+  {
+   "name": "安全庫存",
+   "card": "business/procurement-planning/cards/safety-stock",
+   "module": "business"
+  },
+  {
+   "name": "安全預設",
+   "card": "ux-design/knowledge-cards/fail-safe-default",
+   "module": "ux-design"
+  },
+  {
+   "name": "定義結構與動資料",
+   "card": "backend/01-database/sql/knowledge-cards/ddl-dml",
+   "module": "backend"
+  },
+  {
+   "name": "客服後台",
+   "card": "backend/knowledge-cards/internal-admin-tool",
+   "module": "backend"
+  },
+  {
+   "name": "實例中繼資料服務",
+   "card": "devops/infra/knowledge-cards/instance-metadata-service",
+   "module": "devops"
+  },
+  {
+   "name": "寫入偏斜",
+   "card": "backend/knowledge-cards/write-skew",
+   "module": "backend"
+  },
+  {
+   "name": "射後不理編排",
+   "card": "testing/knowledge-cards/fire-and-forget-orchestration",
+   "module": "testing"
+  },
+  {
+   "name": "已知錯誤",
+   "card": "backend/knowledge-cards/known-error",
+   "module": "backend"
+  },
+  {
+   "name": "年均複合成長率",
+   "card": "business/knowledge-cards/cagr",
+   "module": "business"
+  },
+  {
+   "name": "序列主控台",
+   "card": "devops/infra/knowledge-cards/serial-console",
+   "module": "devops"
+  },
+  {
+   "name": "延遲載入",
+   "card": "llm/knowledge-cards/deferred-tool-loading",
+   "module": "llm"
+  },
+  {
+   "name": "建議鎖",
+   "card": "backend/knowledge-cards/advisory-lock",
+   "module": "backend"
+  },
+  {
+   "name": "循軌力",
+   "card": "til/audio/knowledge-cards/tracking-force",
+   "module": "til"
+  },
+  {
+   "name": "心跳監看",
+   "card": "backend/knowledge-cards/dead-mans-switch",
+   "module": "backend"
+  },
+  {
+   "name": "快取控制標頭",
+   "card": "backend/knowledge-cards/cache-control",
+   "module": "backend"
+  },
+  {
+   "name": "快取鍵變體標頭",
+   "card": "backend/knowledge-cards/vary",
+   "module": "backend"
+  },
+  {
+   "name": "快照隔離",
+   "card": "backend/knowledge-cards/snapshot-isolation",
+   "module": "backend"
+  },
+  {
+   "name": "性質式測試",
+   "card": "testing/knowledge-cards/property-based-testing",
+   "module": "testing"
+  },
+  {
+   "name": "憑證填充",
+   "card": "backend/knowledge-cards/credential-stuffing",
+   "module": "backend"
+  },
+  {
+   "name": "應付帳款",
+   "card": "business/knowledge-cards/accounts-payable",
+   "module": "business"
+  },
+  {
+   "name": "應收帳款",
+   "card": "business/knowledge-cards/accounts-receivable",
+   "module": "business"
+  },
+  {
+   "name": "截止測試",
+   "card": "business/knowledge-cards/cut-off-testing",
+   "module": "business"
+  },
+  {
+   "name": "房間校正",
+   "card": "til/audio/knowledge-cards/room-correction",
+   "module": "til"
+  },
+  {
+   "name": "批次層與即時層",
+   "card": "backend/knowledge-cards/lambda-architecture",
+   "module": "backend"
+  },
+  {
+   "name": "折舊與攤提",
+   "card": "business/knowledge-cards/depreciation-amortization",
+   "module": "business"
+  },
+  {
+   "name": "指向性",
+   "card": "til/audio/knowledge-cards/directivity",
+   "module": "til"
+  },
+  {
+   "name": "指標轉接程式",
+   "card": "backend/knowledge-cards/prometheus-exporter",
+   "module": "backend"
+  },
+  {
+   "name": "按需重繪",
+   "card": "ux-design/knowledge-cards/on-demand-rendering",
+   "module": "ux-design"
+  },
+  {
+   "name": "授權範圍",
+   "card": "backend/knowledge-cards/authorization-scope",
+   "module": "backend"
+  },
+  {
+   "name": "排除約束",
+   "card": "backend/01-database/sql/knowledge-cards/exclusion-constraint",
+   "module": "backend"
+  },
+  {
+   "name": "掛載點擁有者",
+   "card": "linux/dotfile/knowledge-cards/docker-named-volume-ownership",
+   "module": "linux"
+  },
+  {
+   "name": "探究與檢查",
+   "card": "testing/knowledge-cards/testing-vs-checking",
+   "module": "testing"
+  },
+  {
+   "name": "接地迴路",
+   "card": "til/audio/knowledge-cards/ground-loop",
+   "module": "til"
+  },
+  {
+   "name": "控制群組",
+   "card": "backend/knowledge-cards/cgroup",
+   "module": "backend"
+  },
+  {
+   "name": "控制者與處理者",
+   "card": "backend/knowledge-cards/data-controller-and-processor",
+   "module": "backend"
+  },
+  {
+   "name": "控制迴圈",
+   "card": "backend/knowledge-cards/control-loop",
+   "module": "backend"
+  },
+  {
+   "name": "操作暗示",
+   "card": "ux-design/knowledge-cards/affordance",
+   "module": "ux-design"
+  },
+  {
+   "name": "收入認列",
+   "card": "business/knowledge-cards/revenue-recognition",
+   "module": "business"
+  },
+  {
+   "name": "攻擊者駐留時間",
+   "card": "backend/knowledge-cards/dwell-time",
+   "module": "backend"
+  },
+  {
+   "name": "故障域",
+   "card": "devops/infra/knowledge-cards/fault-domain",
+   "module": "devops"
+  },
+  {
+   "name": "散彈式修改",
+   "card": "software-design/design-principles/knowledge-cards/shotgun-surgery",
+   "module": "software-design"
+  },
+  {
+   "name": "數位憑證",
+   "card": "backend/knowledge-cards/certificate",
+   "module": "backend"
+  },
+  {
+   "name": "數位擴大機",
+   "card": "til/audio/knowledge-cards/digital-amplifier",
+   "module": "til"
+  },
+  {
+   "name": "數位鑑識",
+   "card": "backend/knowledge-cards/digital-forensics",
+   "module": "backend"
+  },
+  {
+   "name": "數位類比轉換器",
+   "card": "til/audio/knowledge-cards/dac",
+   "module": "til"
+  },
+  {
+   "name": "料件生命週期",
+   "card": "business/procurement-planning/cards/lifecycle-status",
+   "module": "business"
+  },
+  {
+   "name": "新品導入",
+   "card": "business/procurement-planning/cards/npi",
+   "module": "business"
+  },
+  {
+   "name": "斷線即死訊號",
+   "card": "linux/dotfile/knowledge-cards/sighup-hangup-signal",
+   "module": "linux"
+  },
+  {
+   "name": "施壓端飽和",
+   "card": "backend/knowledge-cards/load-generator-saturation",
+   "module": "backend"
+  },
+  {
+   "name": "早期反射",
+   "card": "til/audio/knowledge-cards/early-reflections",
+   "module": "til"
+  },
+  {
+   "name": "時脈抖動",
+   "card": "til/audio/knowledge-cards/clock-jitter",
+   "module": "til"
+  },
+  {
+   "name": "時間觸發器",
+   "card": "automation/knowledge-cards/time-driven-trigger",
+   "module": "automation"
+  },
+  {
+   "name": "晶圓代工",
+   "card": "business/knowledge-cards/wafer-foundry",
+   "module": "business"
+  },
+  {
+   "name": "替代料",
+   "card": "business/procurement-planning/cards/alternate-part",
+   "module": "business"
+  },
+  {
+   "name": "最低支援版本",
+   "card": "backend/knowledge-cards/minimum-supported-version",
+   "module": "backend"
+  },
+  {
+   "name": "有效質量與順服度",
+   "card": "til/audio/knowledge-cards/effective-mass-and-compliance",
+   "module": "til"
+  },
+  {
+   "name": "服務帳號",
+   "card": "devops/infra/knowledge-cards/service-account",
+   "module": "devops"
+  },
+  {
+   "name": "本地回顯預測",
+   "card": "linux/dotfile/knowledge-cards/mosh-local-echo-prediction",
+   "module": "linux"
+  },
+  {
+   "name": "本益比",
+   "card": "business/knowledge-cards/pe-ratio",
+   "module": "business"
+  },
+  {
+   "name": "杜邦拆解",
+   "card": "business/knowledge-cards/dupont-analysis",
+   "module": "business"
+  },
+  {
+   "name": "查詢最佳化器",
+   "card": "backend/01-database/sql/knowledge-cards/query-optimizer",
+   "module": "backend"
+  },
+  {
+   "name": "柵格化",
+   "card": "ux-design/knowledge-cards/rasterization",
+   "module": "ux-design"
+  },
+  {
+   "name": "桌面視覺客製化",
+   "card": "linux/dotfile/knowledge-cards/rice",
+   "module": "linux"
+  },
+  {
+   "name": "棄用生命週期",
+   "card": "backend/knowledge-cards/deprecation-lifecycle",
+   "module": "backend"
+  },
+  {
+   "name": "槓桿代幣",
+   "card": "business/retail-instruments/knowledge-cards/leveraged-token",
+   "module": "business"
+  },
+  {
+   "name": "標籤改寫",
+   "card": "backend/knowledge-cards/relabeling",
+   "module": "backend"
+  },
+  {
+   "name": "機密注入",
+   "card": "linux/dotfile/knowledge-cards/runtime-secret-injection",
+   "module": "linux"
+  },
+  {
+   "name": "機率校準",
+   "card": "llm/knowledge-cards/probability-calibration",
+   "module": "llm"
+  },
+  {
+   "name": "橫向移動",
+   "card": "backend/knowledge-cards/lateral-movement",
+   "module": "backend"
+  },
+  {
+   "name": "權益法",
+   "card": "business/knowledge-cards/equity-method",
+   "module": "business"
+  },
+  {
+   "name": "正常化盈餘",
+   "card": "business/knowledge-cards/normalized-earnings",
+   "module": "business"
+  },
+  {
+   "name": "步階變化",
+   "card": "backend/knowledge-cards/step-change",
+   "module": "backend"
+  },
+  {
+   "name": "歸母淨利",
+   "card": "business/knowledge-cards/parent-attributable-income",
+   "module": "business"
+  },
+  {
+   "name": "殖利率",
+   "card": "business/knowledge-cards/dividend-yield",
+   "module": "business"
+  },
+  {
+   "name": "殘值擔保",
+   "card": "business/knowledge-cards/residual-value-guarantee",
+   "module": "business"
+  },
+  {
+   "name": "每股盈餘",
+   "card": "business/knowledge-cards/eps",
+   "module": "business"
+  },
+  {
+   "name": "沖洗交易",
+   "card": "business/retail-instruments/knowledge-cards/wash-trading",
+   "module": "business"
+  },
+  {
+   "name": "流動比率",
+   "card": "business/knowledge-cards/current-ratio",
+   "module": "business"
+  },
+  {
+   "name": "流程測試",
+   "card": "testing/knowledge-cards/flow-test",
+   "module": "testing"
+  },
+  {
+   "name": "流通量",
+   "card": "business/retail-instruments/knowledge-cards/free-float",
+   "module": "business"
+  },
+  {
+   "name": "消費者可協調度",
+   "card": "backend/knowledge-cards/consumer-coordinability",
+   "module": "backend"
+  },
+  {
+   "name": "消費者形態",
+   "card": "backend/knowledge-cards/api-consumer-shape",
+   "module": "backend"
+  },
+  {
+   "name": "淨利率",
+   "card": "business/knowledge-cards/net-margin",
+   "module": "business"
+  },
+  {
+   "name": "清算價",
+   "card": "business/retail-instruments/knowledge-cards/liquidation-price",
+   "module": "business"
+  },
+  {
+   "name": "測試出處",
+   "card": "testing/knowledge-cards/test-provenance",
+   "module": "testing"
+  },
+  {
+   "name": "測試夾具",
+   "card": "programming/python/basic/knowledge-cards/pytest-fixture",
+   "module": "programming"
+  },
+  {
+   "name": "測試期間的替換",
+   "card": "programming/python/basic/knowledge-cards/monkeypatch",
+   "module": "programming"
+  },
+  {
+   "name": "測試環境判定",
+   "card": "testing/knowledge-cards/environment-identification",
+   "module": "testing"
+  },
+  {
+   "name": "游標、查詢結果的讀取物件、接續標記",
+   "card": "backend/knowledge-cards/cursor",
+   "module": "backend"
+  },
+  {
+   "name": "漸進式揭露",
+   "card": "ux-design/knowledge-cards/progressive-disclosure",
+   "module": "ux-design"
+  },
+  {
+   "name": "瀏覽器指紋",
+   "card": "automation/knowledge-cards/browser-fingerprint",
+   "module": "automation"
+  },
+  {
+   "name": "火焰圖",
+   "card": "backend/knowledge-cards/flame-graph",
+   "module": "backend"
+  },
+  {
+   "name": "無濾波器 D 類",
+   "card": "til/audio/knowledge-cards/filterless-class-d",
+   "module": "til"
+  },
+  {
+   "name": "無頭瀏覽器",
+   "card": "devops/monitoring/knowledge-cards/headless-browser",
+   "module": "devops"
+  },
+  {
+   "name": "照付不議",
+   "card": "business/knowledge-cards/take-or-pay",
+   "module": "business"
+  },
+  {
+   "name": "營業利益率",
+   "card": "business/knowledge-cards/operating-margin",
+   "module": "business"
+  },
+  {
+   "name": "營業收入",
+   "card": "business/knowledge-cards/revenue",
+   "module": "business"
+  },
+  {
+   "name": "營業槓桿",
+   "card": "business/knowledge-cards/operating-leverage",
+   "module": "business"
+  },
+  {
+   "name": "營業費用",
+   "card": "business/knowledge-cards/operating-expense",
+   "module": "business"
+  },
+  {
+   "name": "牛鞭效應",
+   "card": "business/knowledge-cards/bullwhip-effect",
+   "module": "business"
+  },
+  {
+   "name": "特權容器",
+   "card": "backend/knowledge-cards/privileged-container",
+   "module": "backend"
+  },
+  {
+   "name": "特殊目的實體，SPV",
+   "card": "business/knowledge-cards/special-purpose-vehicle",
+   "module": "business"
+  },
+  {
+   "name": "狀態流",
+   "card": "software-design/ddd/knowledge-cards/state-stream",
+   "module": "software-design"
+  },
+  {
+   "name": "現金及約當現金",
+   "card": "business/knowledge-cards/cash-and-equivalents",
+   "module": "business"
+  },
+  {
+   "name": "現金流量表",
+   "card": "business/knowledge-cards/cash-flow-statement",
+   "module": "business"
+  },
+  {
+   "name": "環境 as code 的三個尺度",
+   "card": "linux/dotfile/knowledge-cards/environment-as-code-scope",
+   "module": "linux"
+  },
+  {
+   "name": "環境分離",
+   "card": "devops/infra/knowledge-cards/environment-separation",
+   "module": "devops"
+  },
+  {
+   "name": "環狀緩衝區",
+   "card": "linux/dotfile/knowledge-cards/ring-buffer-log",
+   "module": "linux"
+  },
+  {
+   "name": "生產環境對等原則",
+   "card": "linux/dotfile/knowledge-cards/prod-parity-principle",
+   "module": "linux"
+  },
+  {
+   "name": "產品變更通知",
+   "card": "business/procurement-planning/cards/pcn",
+   "module": "business"
+  },
+  {
+   "name": "產能配給",
+   "card": "business/procurement-planning/cards/allocation",
+   "module": "business"
+  },
+  {
+   "name": "畫面狀態矩陣",
+   "card": "ux-design/knowledge-cards/screen-state-matrix",
+   "module": "ux-design"
+  },
+  {
+   "name": "發布物回滾",
+   "card": "devops/ci/knowledge-cards/release-rollback",
+   "module": "devops"
+  },
+  {
+   "name": "發散式變更",
+   "card": "software-design/design-principles/knowledge-cards/divergent-change",
+   "module": "software-design"
+  },
+  {
+   "name": "發行版打包粒度",
+   "card": "linux/dotfile/knowledge-cards/distro-package-granularity",
+   "module": "linux"
+  },
+  {
+   "name": "白箱與黑箱監控",
+   "card": "backend/knowledge-cards/white-box-black-box-monitoring",
+   "module": "backend"
+  },
+  {
+   "name": "目的位址轉換",
+   "card": "devops/infra/knowledge-cards/dnat",
+   "module": "devops"
+  },
+  {
+   "name": "真實後端驗證測試",
+   "card": "testing/knowledge-cards/real-backend-verification-test",
+   "module": "testing"
+  },
+  {
+   "name": "積層陶瓷電容",
+   "card": "business/knowledge-cards/mlcc",
+   "module": "business"
+  },
+  {
+   "name": "突變測試",
+   "card": "testing/knowledge-cards/mutation-testing",
+   "module": "testing"
+  },
+  {
+   "name": "競業禁止條款",
+   "card": "business/knowledge-cards/non-compete-agreement",
+   "module": "business"
+  },
+  {
+   "name": "笛卡兒積",
+   "card": "backend/01-database/sql/knowledge-cards/cartesian-product",
+   "module": "backend"
+  },
+  {
+   "name": "第一方 cookie",
+   "card": "devops/monitoring/knowledge-cards/first-party-cookie",
+   "module": "devops"
+  },
+  {
+   "name": "第二供應商",
+   "card": "business/procurement-planning/cards/second-source",
+   "module": "business"
+  },
+  {
+   "name": "終端 CJK 雙寬字與即時輸入",
+   "card": "linux/dotfile/knowledge-cards/terminal-cjk-input",
+   "module": "linux"
+  },
+  {
+   "name": "組態管理",
+   "card": "devops/infra/knowledge-cards/configuration-management",
+   "module": "devops"
+  },
+  {
+   "name": "統計資訊",
+   "card": "backend/01-database/sql/knowledge-cards/query-statistics",
+   "module": "backend"
+  },
+  {
+   "name": "網狀 VPN",
+   "card": "devops/infra/knowledge-cards/mesh-vpn",
+   "module": "devops"
+  },
+  {
+   "name": "網路命名空間",
+   "card": "devops/infra/knowledge-cards/network-namespace",
+   "module": "devops"
+  },
+  {
+   "name": "線路電平",
+   "card": "til/audio/knowledge-cards/line-level",
+   "module": "til"
+  },
+  {
+   "name": "編號標記提示",
+   "card": "llm/knowledge-cards/set-of-mark-prompting",
+   "module": "llm"
+  },
+  {
+   "name": "總諧波失真加雜訊",
+   "card": "til/audio/knowledge-cards/thd-n",
+   "module": "til"
+  },
+  {
+   "name": "總額與淨額認列",
+   "card": "business/knowledge-cards/gross-vs-net-revenue",
+   "module": "business"
+  },
+  {
+   "name": "繼續經營假設",
+   "card": "business/knowledge-cards/going-concern",
+   "module": "business"
+  },
+  {
+   "name": "聚合函數",
+   "card": "backend/01-database/sql/knowledge-cards/aggregate-function",
+   "module": "backend"
+  },
+  {
+   "name": "聯產品",
+   "card": "business/knowledge-cards/co-product",
+   "module": "business"
+  },
+  {
+   "name": "股份基礎給付",
+   "card": "business/knowledge-cards/share-based-compensation",
+   "module": "business"
+  },
+  {
+   "name": "股東權益",
+   "card": "business/knowledge-cards/shareholders-equity",
+   "module": "business"
+  },
+  {
+   "name": "股權稀釋",
+   "card": "business/knowledge-cards/dilution",
+   "module": "business"
+  },
+  {
+   "name": "股票質押",
+   "card": "business/knowledge-cards/share-pledge",
+   "module": "business"
+  },
+  {
+   "name": "腳本語言",
+   "card": "linux/dotfile/knowledge-cards/lua-scripting-language",
+   "module": "linux"
+  },
+  {
+   "name": "自動事件收集",
+   "card": "devops/monitoring/knowledge-cards/autocapture",
+   "module": "devops"
+  },
+  {
+   "name": "藍牙的音訊編碼格式",
+   "card": "til/audio/knowledge-cards/bluetooth-audio-codec",
+   "module": "til"
+  },
+  {
+   "name": "藍牙高解析編碼格式",
+   "card": "til/audio/knowledge-cards/lhdc",
+   "module": "til"
+  },
+  {
+   "name": "處境相容性",
+   "card": "books/knowledge-cards/context-compatibility",
+   "module": "books"
+  },
+  {
+   "name": "虛擬網路卡",
+   "card": "devops/infra/knowledge-cards/vnic",
+   "module": "devops"
+  },
+  {
+   "name": "融資租賃",
+   "card": "business/knowledge-cards/finance-lease",
+   "module": "business"
+  },
+  {
+   "name": "表外安排",
+   "card": "business/knowledge-cards/off-balance-sheet-arrangement",
+   "module": "business"
+  },
+  {
+   "name": "表膨脹與 VACUUM",
+   "card": "backend/knowledge-cards/table-bloat",
+   "module": "backend"
+  },
+  {
+   "name": "被虛擬化層拿走的 CPU 時間",
+   "card": "backend/knowledge-cards/cpu-steal-time",
+   "module": "backend"
+  },
+  {
+   "name": "覆蓋率與完成率",
+   "card": "backend/knowledge-cards/coverage-vs-completion-rate",
+   "module": "backend"
+  },
+  {
+   "name": "觀測出口",
+   "card": "software-design/ddd/knowledge-cards/observation-outlet",
+   "module": "software-design"
+  },
+  {
+   "name": "角色型存取控制",
+   "card": "backend/knowledge-cards/kubernetes-rbac",
+   "module": "backend"
+  },
+  {
+   "name": "觸控目標",
+   "card": "ux-design/knowledge-cards/touch-target",
+   "module": "ux-design"
+  },
+  {
+   "name": "訂單彈性機制",
+   "card": "business/procurement-planning/cards/order-flexibility",
+   "module": "business"
+  },
+  {
+   "name": "設定漂移",
+   "card": "devops/infra/knowledge-cards/drift",
+   "module": "devops"
+  },
+  {
+   "name": "語意模型",
+   "card": "backend/01-database/sql/knowledge-cards/semantic-model",
+   "module": "backend"
+  },
+  {
+   "name": "語意級假後端",
+   "card": "testing/knowledge-cards/semantic-fake-backend",
+   "module": "testing"
+  },
+  {
+   "name": "證據來源分類",
+   "card": "books/knowledge-cards/evidence-provenance",
+   "module": "books"
+  },
+  {
+   "name": "變形測試",
+   "card": "testing/knowledge-cards/metamorphic-testing",
+   "module": "testing"
+  },
+  {
+   "name": "負債比率",
+   "card": "business/knowledge-cards/debt-ratio",
+   "module": "business"
+  },
+  {
+   "name": "負載平均",
+   "card": "backend/knowledge-cards/load-average",
+   "module": "backend"
+  },
+  {
+   "name": "負載退去後仍停在失效狀態",
+   "card": "backend/knowledge-cards/metastable-failure",
+   "module": "backend"
+  },
+  {
+   "name": "負載阻抗",
+   "card": "til/audio/knowledge-cards/load-impedance",
+   "module": "til"
+  },
+  {
+   "name": "責任分擔模型",
+   "card": "backend/knowledge-cards/shared-responsibility-model",
+   "module": "backend"
+  },
+  {
+   "name": "資安控制面",
+   "card": "backend/knowledge-cards/security-control-domain",
+   "module": "backend"
+  },
+  {
+   "name": "資料庫 schema 跟 migration 歷史的漂移",
+   "card": "backend/knowledge-cards/schema-drift",
+   "module": "backend"
+  },
+  {
+   "name": "資料庫引擎",
+   "card": "backend/01-database/sql/knowledge-cards/database-engine",
+   "module": "backend"
+  },
+  {
+   "name": "資料框",
+   "card": "backend/01-database/sql/knowledge-cards/dataframe",
+   "module": "backend"
+  },
+  {
+   "name": "資料重力",
+   "card": "business/knowledge-cards/data-gravity",
+   "module": "business"
+  },
+  {
+   "name": "資金費率",
+   "card": "business/retail-instruments/knowledge-cards/funding-rate",
+   "module": "business"
+  },
+  {
+   "name": "跟單交易",
+   "card": "business/retail-instruments/knowledge-cards/copy-trading",
+   "module": "business"
+  },
+  {
+   "name": "跟隨動作與重疊動作",
+   "card": "ux-design/knowledge-cards/follow-through-overlapping-action",
+   "module": "ux-design"
+  },
+  {
+   "name": "跨架構模擬",
+   "card": "backend/knowledge-cards/qemu-binfmt-emulation",
+   "module": "backend"
+  },
+  {
+   "name": "跳板機",
+   "card": "devops/infra/knowledge-cards/bastion-host",
+   "module": "devops"
+  },
+  {
+   "name": "跳過與失敗的語意",
+   "card": "testing/knowledge-cards/skip-vs-fail-semantics",
+   "module": "testing"
+  },
+  {
+   "name": "身分感知代理",
+   "card": "devops/infra/knowledge-cards/identity-aware-proxy",
+   "module": "devops"
+  },
+  {
+   "name": "軟刪除",
+   "card": "backend/knowledge-cards/soft-delete",
+   "module": "backend"
+  },
+  {
+   "name": "輸出阻抗",
+   "card": "til/audio/knowledge-cards/output-impedance",
+   "module": "til"
+  },
+  {
+   "name": "轉移定價",
+   "card": "business/knowledge-cards/transfer-pricing",
+   "module": "business"
+  },
+  {
+   "name": "辨識門檻",
+   "card": "til/audio/knowledge-cards/audibility-threshold",
+   "module": "til"
+  },
+  {
+   "name": "農場交貨價 / 生乳收購價",
+   "card": "business/knowledge-cards/farmgate-price",
+   "module": "business"
+  },
+  {
+   "name": "通路填塞",
+   "card": "business/knowledge-cards/channel-stuffing",
+   "module": "business"
+  },
+  {
+   "name": "連線洩漏",
+   "card": "backend/knowledge-cards/connection-leak",
+   "module": "backend"
+  },
+  {
+   "name": "連線與漫遊",
+   "card": "linux/dotfile/knowledge-cards/tcp-connection-roaming",
+   "module": "linux"
+  },
+  {
+   "name": "連線被拒與逾時",
+   "card": "linux/dotfile/knowledge-cards/connection-refused-vs-timeout",
+   "module": "linux"
+  },
+  {
+   "name": "連線追蹤",
+   "card": "devops/infra/knowledge-cards/conntrack",
+   "module": "devops"
+  },
+  {
+   "name": "遠端設定",
+   "card": "backend/knowledge-cards/remote-config",
+   "module": "backend"
+  },
+  {
+   "name": "遺失更新",
+   "card": "backend/knowledge-cards/lost-update",
+   "module": "backend"
+  },
+  {
+   "name": "部分索引",
+   "card": "backend/knowledge-cards/partial-index",
+   "module": "backend"
+  },
+  {
+   "name": "配息率",
+   "card": "business/knowledge-cards/payout-ratio",
+   "module": "business"
+  },
+  {
+   "name": "重畫邊界",
+   "card": "programming/flutter/knowledge-cards/repaint-boundary",
+   "module": "programming"
+  },
+  {
+   "name": "量產核准",
+   "card": "business/procurement-planning/cards/ppap",
+   "module": "business"
+  },
+  {
+   "name": "鎖屏安全狀態",
+   "card": "linux/dotfile/knowledge-cards/session-lock",
+   "module": "linux"
+  },
+  {
+   "name": "鎖的等待佇列",
+   "card": "backend/knowledge-cards/lock-queue",
+   "module": "backend"
+  },
+  {
+   "name": "閉鎖期協議",
+   "card": "business/knowledge-cards/lock-up-agreement",
+   "module": "business"
+  },
+  {
+   "name": "開放封閉原則",
+   "card": "software-design/design-principles/knowledge-cards/open-closed-principle",
+   "module": "software-design"
+  },
+  {
+   "name": "開放與封閉負載模型",
+   "card": "backend/knowledge-cards/open-closed-workload-model",
+   "module": "backend"
+  },
+  {
+   "name": "開機鏈",
+   "card": "linux/dotfile/knowledge-cards/uefi-boot-chain",
+   "module": "linux"
+  },
+  {
+   "name": "關係人交易",
+   "card": "business/knowledge-cards/related-party-transaction",
+   "module": "business"
+  },
+  {
+   "name": "關聯代數",
+   "card": "backend/01-database/sql/knowledge-cards/relational-algebra",
+   "module": "backend"
+  },
+  {
+   "name": "關鍵查核事項",
+   "card": "business/knowledge-cards/critical-audit-matter",
+   "module": "business"
+  },
+  {
+   "name": "防連點",
+   "card": "ux-design/knowledge-cards/debounce",
+   "module": "ux-design"
+  },
+  {
+   "name": "阻尼彈簧",
+   "card": "ux-design/knowledge-cards/damped-spring",
+   "module": "ux-design"
+  },
+  {
+   "name": "限制型股票單位，RSU",
+   "card": "business/knowledge-cards/restricted-stock-unit",
+   "module": "business"
+  },
+  {
+   "name": "限流對外契約",
+   "card": "backend/knowledge-cards/rate-limit-contract",
+   "module": "backend"
+  },
+  {
+   "name": "隱含波動率",
+   "card": "business/retail-instruments/knowledge-cards/implied-volatility",
+   "module": "business"
+  },
+  {
+   "name": "零信任",
+   "card": "backend/knowledge-cards/zero-trust",
+   "module": "backend"
+  },
+  {
+   "name": "電信業者級 NAT",
+   "card": "devops/infra/knowledge-cards/cgnat",
+   "module": "devops"
+  },
+  {
+   "name": "電子專業製造服務",
+   "card": "business/knowledge-cards/ems",
+   "module": "business"
+  },
+  {
+   "name": "需求預測，FCST",
+   "card": "business/procurement-planning/cards/forecast",
+   "module": "business"
+  },
+  {
+   "name": "靈敏度",
+   "card": "til/audio/knowledge-cards/sensitivity",
+   "module": "til"
+  },
+  {
+   "name": "非 GAAP 指標",
+   "card": "business/knowledge-cards/non-gaap-measure",
+   "module": "business"
+  },
+  {
+   "name": "非控制權益",
+   "card": "business/knowledge-cards/non-controlling-interest",
+   "module": "business"
+  },
+  {
+   "name": "音壓，SPL",
+   "card": "til/audio/knowledge-cards/sound-pressure-level",
+   "module": "til"
+  },
+  {
+   "name": "預先解析的查詢",
+   "card": "backend/knowledge-cards/prepared-statement",
+   "module": "backend"
+  },
+  {
+   "name": "頻外訊號",
+   "card": "backend/knowledge-cards/out-of-band-signal",
+   "module": "backend"
+  },
+  {
+   "name": "頻率響應",
+   "card": "til/audio/knowledge-cards/frequency-response",
+   "module": "til"
+  },
+  {
+   "name": "風險備料",
+   "card": "business/procurement-planning/cards/risk-buy",
+   "module": "business"
+  },
+  {
+   "name": "馬丁格爾加碼",
+   "card": "business/retail-instruments/knowledge-cards/martingale",
+   "module": "business"
+  }
+ ],
+ "excluded": [
+  {
+   "name": "Cursor",
+   "cards": [
+    "backend/knowledge-cards/cursor"
+   ],
+   "reason": "config"
+  },
+  {
+   "name": "Index",
+   "cards": [
+    "backend/01-database/sql/knowledge-cards/indexing"
+   ],
+   "reason": "config"
+  },
+  {
+   "name": "JV",
+   "cards": [
+    "business/knowledge-cards/jv"
+   ],
+   "reason": "short-latin"
+  },
+  {
+   "name": "Namespace",
+   "cards": [
+    "backend/knowledge-cards/namespace"
+   ],
+   "reason": "config"
+  },
+  {
+   "name": "Ownership",
+   "cards": [
+    "backend/knowledge-cards/ownership"
+   ],
+   "reason": "config"
+  },
+  {
+   "name": "S3",
+   "cards": [
+    "devops/infra/knowledge-cards/s3"
+   ],
+   "reason": "short-latin"
+  },
+  {
+   "name": "Schema",
+   "cards": [
+    "backend/01-database/sql/knowledge-cards/schema-namespace"
+   ],
+   "reason": "config"
+  },
+  {
+   "name": "State",
+   "cards": [
+    "devops/infra/knowledge-cards/state"
+   ],
+   "reason": "config"
+  },
+  {
+   "name": "UX",
+   "cards": [
+    "ux-design/knowledge-cards/gate",
+    "ux-design/knowledge-cards/ux-fallback"
+   ],
+   "reason": "short-latin"
+  },
+  {
+   "name": "交易",
+   "cards": [
+    "backend/knowledge-cards/transaction"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "內聚",
+   "cards": [
+    "software-design/design-principles/knowledge-cards/cohesion"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "共振",
+   "cards": [
+    "til/audio/knowledge-cards/resonance"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "凹單",
+   "cards": [
+    "business/retail-instruments/knowledge-cards/letting-losses-run"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "列鎖",
+   "cards": [
+    "backend/knowledge-cards/row-lock"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "基差",
+   "cards": [
+    "business/retail-instruments/knowledge-cards/basis"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "存貨",
+   "cards": [
+    "business/knowledge-cards/inventory"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "寄售",
+   "cards": [
+    "business/procurement-planning/cards/consignment"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "對鎖",
+   "cards": [
+    "business/retail-instruments/knowledge-cards/locked-position"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "市值",
+   "cards": [
+    "business/knowledge-cards/market-cap"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "底噪",
+   "cards": [
+    "til/audio/knowledge-cards/noise-floor"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "攤平",
+   "cards": [
+    "business/retail-instruments/knowledge-cards/averaging-down"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "斷料",
+   "cards": [
+    "business/procurement-planning/cards/stockout"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "根除",
+   "cards": [
+    "backend/knowledge-cards/eradication"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "模態",
+   "cards": [
+    "ux-design/knowledge-cards/modal"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "減損",
+   "cards": [
+    "business/knowledge-cards/impairment"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "相位",
+   "cards": [
+    "til/audio/knowledge-cards/phase"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "空值",
+   "cards": [
+    "backend/01-database/sql/knowledge-cards/null"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "約束",
+   "cards": [
+    "backend/01-database/sql/knowledge-cards/constraint"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "索引",
+   "cards": [
+    "backend/01-database/sql/knowledge-cards/indexing"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "耦合",
+   "cards": [
+    "software-design/design-principles/knowledge-cards/coupling"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "融資",
+   "cards": [
+    "business/retail-instruments/knowledge-cards/margin-financing"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "追料",
+   "cards": [
+    "business/procurement-planning/cards/expediting"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "關係",
+   "cards": [
+    "backend/01-database/sql/knowledge-cards/relation"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "隔離",
+   "cards": [
+    "testing/knowledge-cards/quarantine"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "電宰",
+   "cards": [
+    "business/knowledge-cards/mechanized-slaughter"
+   ],
+   "reason": "short-han"
+  },
+  {
+   "name": "駐波",
+   "cards": [
+    "til/audio/knowledge-cards/room-modes"
+   ],
+   "reason": "short-han"
+  }
+ ]
+}
