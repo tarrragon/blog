@@ -8,7 +8,9 @@
 // 改了這支腳本、Go 或 mdcards 任何一份的比對程式碼（含下面的 SKIP），另外兩份與 Go 的測試（autolinkhtml_test.go）
 // 要一起改；scripts/mdtools/internal/mdcards/autolink.go 在 markdown 原文上照這組規則做近似的比對（L2 的孤兒卡檢查
 // 與 mdtools autolink-gaps 用它）。這支腳本沒有自己的測試；SKIP 與 Go 的 skipTags 不一致時，
-// autolinkhtml 的 jsparity_test.go 會失敗，其他規則的分歧沒有工具偵測。
+// autolinkhtml 的 jsparity_test.go 會失敗；其他規則的分歧由 tests/autolink-parity.spec.ts 抓（Playwright CI 在
+// make site 建好的網站上抽 30 段、每段一頁，各跑一次這支腳本與 Go 的輸出，比對連結清單與正文文字）。
+// mdcards 與另外兩份的分歧沒有工具偵測。
 //
 // 比對規則：
 // - 同一處有好幾個名字可以配時取最長的那一個（「交易隔離等級」優先於「交易」）：正規表示式的
@@ -48,6 +50,10 @@
     .catch(function () {
       // 詞典讀不到、或瀏覽器不支援 lookbehind（Safari 16.4 以前）而 new RegExp 失敗時，
       // 錯誤發生在動到 DOM 之前，正文照原樣顯示
+    })
+    .then(function () {
+      // 連結做完（或放棄）之後標記，tests/autolink-parity.spec.ts 等這個屬性再讀連結
+      script.setAttribute("data-done", "");
     });
 
   function escapeRe(s) {

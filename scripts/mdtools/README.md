@@ -47,7 +47,10 @@ and implemented twice, there and in `internal/autolinkhtml`; a rule change goes
 into both programs, into the Go tests, and into `internal/mdcards/autolink.go`,
 the markdown approximation that the L2 orphan-card check and `autolink-gaps` use.
 `internal/autolinkhtml/jsparity_test.go` fails when the script's SKIP list and
-`skipTags` differ; no tool catches a drift in the other rules.
+`skipTags` differ; `tests/autolink-parity.spec.ts` (Playwright CI) runs the
+script and reads this command's output on the same sampled pages of the built
+site and fails when the links or the body text differ. No tool compares
+`internal/mdcards/autolink.go` with the other two.
 Only `.article-body` of pages whose section is in the `scopes` of
 `data/autolink.toml` is linked, and in each RSS item only `content:encoded`, by
 the scope of the page at the item's link; feed links carry the card title in
