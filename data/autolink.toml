@@ -22,6 +22,8 @@ ux-design = ["ux-design"]
 business = ["business"]
 books = ["books", "business"]
 til = ["til"]
+macos = ["macos", "llm"]
+neurodiversity = ["neurodiversity", "llm"]
 
 # 不做自動連結的第一層資料夾：鍵是資料夾名，值是不做的理由。理由是設定時的判斷，沒有逐篇量過；
 # 要改成做自動連結時，判斷照 docs/rules/markdown.md 表裡資料夾登記那一列。
@@ -32,8 +34,6 @@ work-log = "跨主題的事件紀錄，卡片名稱可能指別的東西"
 posts = "blog 本身的規範與設定，卡片名稱可能指別的東西"
 record = "跨主題的方法論，卡片名稱可能指別的東西"
 other = "跨主題的雜項筆記，卡片名稱可能指別的東西"
-macos = "還沒有評估過；文章可能用到 linux 的卡"
-neurodiversity = "還沒有評估過"
 
 # 名字的最短長度：不含拉丁字母的名字，漢字數少於等於 han 時不做自動連結；含拉丁字母的名字，
 # 去掉空白之後的字元數少於等於 latin 時不做（「索引」「關係」「CI」這類在一般句子裡太常見，

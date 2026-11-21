@@ -23,6 +23,14 @@
   "llm": [
    "llm"
   ],
+  "macos": [
+   "macos",
+   "llm"
+  ],
+  "neurodiversity": [
+   "neurodiversity",
+   "llm"
+  ],
   "programming": [
    "programming",
    "backend"
