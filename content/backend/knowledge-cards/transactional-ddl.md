@@ -6,7 +6,7 @@ weight: 509
 tags: ["backend", "database", "postgresql", "mysql", "transaction", "schema migration", "knowledge-card"]
 ---
 
-Transactional DDL（交易性 DDL）指資料庫允許 `CREATE`、`ALTER`、`DROP` 這類 [DDL](/backend/01-database/sql/knowledge-cards/ddl-dml/) 跟一般的寫入放在同一個 [Transaction](/backend/knowledge-cards/transaction/) 裡：交易提交時一起生效，交易回滾（transaction rollback，`ROLLBACK`）時一起撤銷。PostgreSQL 支援，所以一份 [Schema Migration](/backend/knowledge-cards/schema-migration/) 在第三句失敗時，前兩句的改名與加欄也隨交易回滾，資料庫停在套用之前的狀態；MySQL 不支援，DDL 執行時會先把目前的交易提交（implicit commit），失敗時已經執行的那幾句留在資料庫裡。
+Transactional DDL（交易性 DDL）指資料庫允許 `CREATE`、`ALTER`、`DROP` 這類 [DDL](/backend/01-database/sql/knowledge-cards/ddl-dml/) 跟一般的寫入放在同一個 [Transaction（交易）](/backend/knowledge-cards/transaction/) 裡：交易提交時一起生效，交易回滾（transaction rollback，`ROLLBACK`）時一起撤銷。PostgreSQL 支援，所以一份 [Schema Migration](/backend/knowledge-cards/schema-migration/) 在第三句失敗時，前兩句的改名與加欄也隨交易回滾，資料庫停在套用之前的狀態；MySQL 不支援，DDL 執行時會先把目前的交易提交（implicit commit），失敗時已經執行的那幾句留在資料庫裡。
 
 ## 跟其他概念的關係
 
