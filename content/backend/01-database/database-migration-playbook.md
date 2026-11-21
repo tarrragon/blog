@@ -165,7 +165,7 @@ ALTER TABLE orders VALIDATE CONSTRAINT fk_orders_user;
 - `CREATE INDEX CONCURRENTLY`（內建）
 - `pg_repack`（vacuum + reindex without lock）
 - `pgroll`（zero-downtime migration）
-- Atlas（schema-as-code）
+- Atlas（schema-as-code）：管理 schema 的版本與差異，本身不做不鎖表的資料搬移，它在 schema 變更管理裡的位置見 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)
 
 **MySQL**：
 
@@ -272,6 +272,7 @@ backfill 是 migration 中最 *容易出錯* 的環節 — 大量寫、影響 pr
 - 交易邊界與副作用切分回到 [transaction boundary](/backend/01-database/transaction-boundary/)。
 - production rollout 證據實作 — [Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)。
 - 跨 DB 引擎遷移 — [大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)。
+- 每一個階段的 migration 由誰寫出、何時套用：ORM 依 model 自動改 schema 寫不出改名與分步，多個實例在啟動時同時套用時要有鎖，大表上的 `ALTER` 要逐句控制 `lock_timeout` 與 `CONCURRENTLY` — [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)。
 - validation query 與一致性證據進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
 - 放行與停損條件進入 [Migration Safety](/backend/06-reliability/migration-safety/) 與 [Release Gate](/backend/06-reliability/release-gate/)。
 - pause、rollback、[fail-forward](/backend/knowledge-cards/fail-forward/) 決策記錄到 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。

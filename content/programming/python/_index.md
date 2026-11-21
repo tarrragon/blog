@@ -15,6 +15,8 @@ tags: ["python"]
 
 進階系列的目標讀者是讀完入門系列的工程師，所以入門排在前面。
 
+兩個系列之外，[`hands-on/`](/programming/python/hands-on/)（weight 3）收讀者照著做的實作文章：目前是 Alembic 從 SQLAlchemy model 產生 migration 的實測，它連回的概念文章在 backend 模組，Python 模組裡沒有對應的章節，所以放在模組根目錄。
+
 ## Backlog
 
 目前沒有待辦項。

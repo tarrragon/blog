@@ -101,7 +101,7 @@ Dual-write 失敗時的回退：寫舊欄位成功、寫新欄位失敗時，不
 
 ### 線上 DDL 的 vendor 差異
 
-Expand 階段加欄位 / 加索引、不同資料庫的 *阻塞行為* 差異極大、選錯時機會直接讓 production 鎖表。
+Expand 階段加欄位 / 加索引、不同資料庫的 *阻塞行為* 差異極大、選錯時機會直接讓 production 鎖表。只改 catalog、本身瞬間完成的 `ALTER` 也會在有長交易時排進鎖的佇列、擋住後面的一般查詢，量測與 `lock_timeout` 的效果見 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/) 的〈同一個 ALTER 在大表上的代價〉。
 
 - **PostgreSQL**：`ALTER TABLE ADD COLUMN ... NULL` 是 metadata-only、不重寫 table。`ADD COLUMN ... NOT NULL DEFAULT ...` 在 PG 11+ 才是 metadata-only，而且只限預設值是常數或 `now()` 這類非 volatile 的運算式；預設值是 `clock_timestamp()` 這類 volatile 函式時仍會重寫整張表。`CREATE INDEX CONCURRENTLY` 不阻塞寫入、但更慢、且 transaction 中不能用。`ALTER TABLE ALTER COLUMN TYPE` 通常會重寫整張表、要先評估規模。
 - **MySQL / Aurora MySQL**：`ALTER TABLE ... ALGORITHM=INSTANT` 是 8.0+ 的 metadata-only、5.7 則靠 `ALGORITHM=INPLACE` / `LOCK=NONE`。Aurora MySQL 還有 fast DDL（部分變更秒級完成、不重寫）。判讀重點是 *explicitly 指定 ALGORITHM*、不要讓 MySQL 自己選（可能掉回 COPY 算法、整張表複製）。

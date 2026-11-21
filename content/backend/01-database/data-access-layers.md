@@ -89,7 +89,7 @@ ORM 要決定 `UPDATE` 要寫哪幾個欄位，常見的規則有三種：
 
 #### schema 的權威在 model 還是 migration
 
-有的 ORM 從 model 產生 schema（Django 的 `makemigrations`、GORM 的 `AutoMigrate`），有的 model 與 schema 分開定義（Laravel 的 migration 與 Eloquent model 是兩份檔案）。從 model 產生時，欄位改名最容易出錯：GORM 的 `AutoMigrate` 把它當成新增一欄、舊欄留著；Django 的 `makemigrations` 會詢問是不是改名，回答否就產生刪除舊欄加新增一欄的 migration，舊欄的資料跟著刪掉。產生出來的 migration 要逐份讀過。
+有的 ORM 從 model 產生 schema（Django 的 `makemigrations`、GORM 的 `AutoMigrate`），有的 model 與 schema 分開定義（Laravel 的 migration 與 Eloquent model 是兩份檔案）。從 model 產生時，欄位改名最容易出錯：GORM 的 `AutoMigrate` 把它當成新增一欄、舊欄留著；Django 的 `makemigrations` 會詢問是不是改名，回答否就產生刪除舊欄加新增一欄的 migration，舊欄的資料跟著刪掉。產生出來的 migration 要逐份讀過。啟動時依 model 直接改 schema、從 model 產生 migration、手寫版本化 migration 在改名、資料轉換、大表的鎖與多個實例同時套用上的差別，見 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)。
 
 這四類看不見的行為各有看得到它的地方：送出幾次查詢與寫回哪些欄位，看 ORM 的 SQL 記錄（應用程式端印出它送出的語句，兩種記錄的開啟方式與差別見 [Query Log](/backend/knowledge-cards/query-log/)）；交易邊界看資料庫端的語句記錄（PostgreSQL 的 `log_statement`），因為有的 ORM（GORM）的 SQL 記錄不印 `begin` 與 `commit`；schema 的那一類看的是產生出來的 migration 檔。程式碼審查時看的是 ORM 的 SQL 記錄、資料庫的語句記錄與 migration 檔，而不只是方法呼叫。
 

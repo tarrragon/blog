@@ -1,0 +1,156 @@
+---
+title: "1.20 Schema 變更由誰寫出、何時套用：應用程式啟動時依 model 改 schema、從 model 差異產生 migration 檔、宣告目標 schema 與手寫版本化 migration"
+date: 2026-11-21
+description: "ORM 依 model 自動改 schema（GORM AutoMigrate、Hibernate ddl-auto）、從 model 差異產生 migration 檔、宣告目標 schema 讓工具算差異、手寫版本化 migration（Flyway、Liquibase、goose 這類工具）各自的分工；比對 model 推不出的改名、資料轉換與變更順序，同一個 ALTER 在大表上的重寫、鎖等待與 lock_timeout，讀取副本上的衝突，應用程式啟動時套用與獨立部署步驟的差別（多個實例同時套用與建議鎖、失敗後的狀態），migration 檔的完整性檢查、分支合併後的順序與 schema 漂移的偵測"
+weight: 20
+tags: ["backend", "database", "migration", "orm", "schema"]
+slug: "schema-change-management"
+---
+
+這篇比較資料庫 [schema migration](/backend/knowledge-cards/schema-migration/) 的四種管理方式，與語言無關：應用程式啟動時由 ORM 比對 model 直接改 schema（GORM 的 `AutoMigrate`、Hibernate 的 `hibernate.hbm2ddl.auto=update`，在 Spring Boot 裡是 `spring.jpa.hibernate.ddl-auto`）、從 model 的差異產生 migration 檔再套用（Django、Alembic、Prisma、EF Core）、宣告目標 schema 由工具算出差異（Atlas、sqldef），以及手寫、依版本順序套用的 migration 檔（Flyway、goose、golang-migrate、Liquibase）。內容依序是四種做法各由誰寫出變更、在什麼時機套用；比對 model 與資料庫推不出的三件事（欄位改名、既有資料的轉換、變更與程式部署的先後）；同一個 `ALTER TABLE` 在大表上的代價，也就是哪些操作要重寫整張表、表鎖在佇列裡怎麼擋住其他查詢、`lock_timeout` 換到什麼、讀取副本上的衝突；在應用程式啟動時套用與另外一個部署步驟套用的差別，包括多個實例同時啟動、migration 中途失敗後資料庫停在什麼狀態；版本化的 migration 檔換到什麼、付出什麼（審查、完整性檢查、兩個分支各自新增 migration 之後的順序、schema 漂移的偵測）；最後是依服務的條件判斷用哪一種。
+
+expand-contract 的分段流程、回填與切流寫在 [1.6 資料庫轉換實作：雙寫、回填、切流與回滾](/backend/01-database/database-migration-playbook/)，這篇只寫它對 migration 的寫法提出什麼要求；migration 進入正式環境之前的 release gate 與回滾路徑在 [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/)，DOWN migration 救不回被刪掉的資料這一點在 [Database Migration 卡](/devops/infra/knowledge-cards/database-migration/) 的〈判斷條件與後果〉。ORM 本身怎麼決定 schema 的權威放在 model 還是 migration，是 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/) 的〈schema 的權威在 model 還是 migration〉那一段，這篇從那一段往下展開。資料庫的行為以 PostgreSQL 17 為主，MySQL 的差異寫在鎖與重寫那一節；文中寫「實測」的輸出來自 PostgreSQL 17.12，步驟在兩篇實作文章（文末延伸閱讀）。這篇用「退回」指交易的 ROLLBACK（資料庫撤銷交易裡做過的變更），用「回滾」指部署之後把程式或 schema 撤回前一版。各工具的行為取自 2026-11 的官方文件與原始碼，版本寫在提到它的地方。這篇的對象是團隊自己部署的服務。桌面與行動 App 的本機資料庫沒有部署流程可以插入一步，套用通常在程式啟動或 App 升級後第一次開啟時做，寫法見 [SQLite Schema Migration and Versioning](/backend/01-database/vendors/sqlite/schema-migration-versioning/)；交給客戶自架的產品，套用可以放進安裝或升級的指令裡。
+
+## 四種做法：變更由誰寫出、在什麼時機套用
+
+schema 的一次變更有兩件事要決定：變更的 SQL 由誰寫出，以及這段 SQL 在什麼時機、由哪個程序送到資料庫。四種做法在這兩件事上的分工不同：
+
+| 做法                        | 變更的 SQL 由誰寫出                                 | 留下的產物                         | 套用的時機與程序                     | 代表工具                                                                                                                                                 |
+| --------------------------- | --------------------------------------------------- | ---------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 啟動時依 model 改 schema    | ORM 在執行時比對 model 與資料庫，當場產生並送出     | 沒有檔案，只有資料庫的現狀         | 應用程式啟動時，每個實例各跑一次     | GORM `AutoMigrate`、Hibernate `hbm2ddl.auto=update`、Sequelize `sync({ alter: true })`                                                                   |
+| 從 model 差異產生 migration | 工具比對 model 與上一版，產生草稿，開發者審過再提交 | 版本化的 migration 檔              | 部署時另外執行一個指令，或啟動時執行 | Django `makemigrations`、Alembic autogenerate、Prisma Migrate、EF Core migrations                                                                        |
+| 宣告目標 schema             | 開發者寫完整的目標 schema，工具算出現狀到目標的差異 | 目標 schema 檔（可以另外產生差異） | 部署時執行比對與套用                 | Atlas `schema apply`、sqldef                                                                                                                             |
+| 手寫版本化 migration        | 開發者逐份手寫 SQL（或程式）                        | 版本化的 migration 檔              | 部署時另外執行一個指令，或啟動時執行 | Flyway、goose、golang-migrate、Liquibase、Rails 與 Laravel 的 migration（產生器依 migration 名稱與參數預填表名或欄位的骨架，不比對 model，其餘內容手寫） |
+
+啟動時依 model 改 schema 與從 model 差異產生 migration 都從 model 出發，差別在比對的結果有沒有先變成一份檔案、讓人在套用之前讀過。宣告目標 schema 與手寫 migration 的出發點是 schema 本身：宣告式寫的是終點，手寫 migration 寫的是每一步。Prisma 另有一個 `db push`（Prisma ORM 7 的名稱）：依 schema 檔直接改資料庫、不留 migration 檔，官方文件把它定位在原型開發，要保留資料的環境用 migration；它的性質（沒有審查的位置、沒有歷史）跟啟動時依 model 改 schema 相同，差別在由人手動執行。表格裡 Atlas 列在宣告式，指的是它的 `schema apply`；Atlas 另外有一種版本化的用法（`atlas migrate diff` 從目標 schema 產生 migration 檔，再由 `atlas migrate apply` 依序套用），這種用法的流程跟「從 model 差異產生 migration」相同（比對、產生檔案、審查、套用），只是比對的來源換成了 schema 檔而不是 ORM 的 model。
+
+版本化 migration 的工具都在資料庫裡建一張歷史表（Flyway 的 `flyway_schema_history`、goose 的 `goose_db_version`、Alembic 的 `alembic_version`、Django 的 `django_migrations`），記下目前套用到哪裡（Flyway、goose、Django 逐筆記錄每一份；Alembic 只記目前所在的版本）；下一次執行時，工具讀這張表，只送出還沒套用的那幾份。啟動時依 model 改 schema 的做法沒有這張表，每一次執行都重新比對現狀。
+
+啟動時依 model 改 schema 的工具，官方文件對正式環境的寫法：Hibernate 7.0 的使用手冊寫 `update` 「not suitable for a production environment」；Sequelize v6 寫 `sync({ alter: true })` 可能是破壞性的操作、不建議用在正式環境；GORM 的文件寫 `AutoMigrate` 在多數情況可用，「at some point you may need to switch to a versioned migrations strategy」。Spring Boot 4.2 的 `ddl-auto` 只在偵測到嵌入式資料庫（H2、HSQLDB、Derby）而且沒有 Flyway 或 Liquibase 時預設 `create-drop`，其他情況預設 `none`，也就是正式環境預設不讓 Hibernate 改 schema。下面幾節寫這些立場背後的機制。
+
+## 比對 model 與資料庫推不出的三件事：改名、資料轉換、變更順序
+
+比對狀態的工具（啟動時依 model 改 schema、從 model 差異產生 migration、宣告目標 schema）拿到的是兩個狀態：現在的 schema 與想要的 schema。開發者的意圖不在這兩個狀態裡，有三件事因此推不出來。下面用一張優惠券資料表 `coupons`（欄位 `code varchar(50)`、`rate integer`）當例子：把 `rate` 改名成 `discount`、把 `code` 縮成 `varchar(20)`，實測的步驟在 [Alembic autogenerate 的實測紀錄](/programming/python/hands-on/alembic-autogenerate-lab/) 與 [goose 管理 PostgreSQL migration 的實測紀錄](/programming/go/basic/10-database-access/hands-on/goose-migration-lab/)。
+
+**欄位改名**：model 裡的 `rate` 改成 `discount`，比對的結果是「少了 `rate`、多了 `discount`」，同一個結果可以來自改名，也可以來自刪掉一欄、另外加一欄。各工具的處理：
+
+- GORM `AutoMigrate` 只新增、不刪欄位（文件寫「It WON'T delete unused columns to protect your data」），所以結果是多出空的 `discount`，舊的 `rate` 連同資料留著；實測見 [10.5 GORM 的〈AutoMigrate 在正式環境的限制〉](/programming/go/basic/10-database-access/gorm/)。程式之後讀寫的是 `discount`，原本的值沒有搬過去。
+- Alembic 1.20 的 autogenerate（比對 model 與資料庫、產生 migration 檔的功能）產生新增 `discount`、刪除 `rate` 兩個操作，文件把改名列在偵測不到的項目：「detected as a column add/drop pair, which is not at all the same as a name change」。Prisma ORM 7 與 EF Core 的文件寫的也是同一件事：照產生的 migration 套用，舊欄的資料會被刪掉。
+- Django 5.2 的 `makemigrations` 在互動模式下發現可能的改名時會詢問 `Was coupon.rate renamed to coupon.discount (a IntegerField)? [y/N]`（原始碼的格式，模型名、欄位名與型別依實際的 model 填入），回答是才產生改名；非互動模式（CI 裡）預設回答否。
+- sqldef 讓開發者在目標 schema 裡用 `-- @renamed from=rate` 標註改名。
+
+產生出來的「新增加刪除」不一定會失敗。實測時把 Alembic 產生的 migration 原樣套用在有資料的表上：新欄位宣告為 `NOT NULL` 而沒有預設值，PostgreSQL 回 `column "discount" of relation "coupons" contains null values`，整份 migration 退回；同樣的兩個操作換成可以為空的欄位時，兩個 `ALTER` 都成功，`rate` 的值隨著欄位一起刪掉，`discount` 全是 NULL，沒有任何錯誤。所以失敗與否取決於新欄位剛好有沒有 `NOT NULL`，而不是工具認出了改名。
+
+**既有資料的轉換**：model 把 `code` 從 `varchar(50)` 改成 `varchar(20)`，比對得出型別變了，推不出長度超過 20 的那幾列該怎麼辦（截斷、改值、拒絕變更）。工具產生的 SQL 依它選的轉型方式得到不同結果：GORM 送出 `ALTER ... TYPE varchar(20) USING code::varchar(20)`（`USING` 指定舊值怎麼算成新型別的值），`code::varchar(20)` 是寫在語句裡、指定要轉成哪個型別的轉換（explicit cast），PostgreSQL 規定用 explicit cast 轉成較短的 `varchar` 時把超出的字元截掉，所以指令成功；Alembic 產生的 `ALTER TABLE coupons ALTER COLUMN code TYPE VARCHAR(20)` 沒有 `USING`，PostgreSQL 改用賦值時的轉型，這種轉型遇到過長的值會報錯，回 `value too long for type character varying(20)` 並退回。同一個 model 變更，一種寫法默默丟資料，另一種拒絕執行，兩種都沒有讓開發者決定那幾列該怎麼處理。資料要怎麼轉換是業務的決定，只能由人寫進 migration（先更新那幾列、或在 migration 裡檢查並中止）。
+
+**變更與程式部署的先後**：比對的結果是一個終點，而服務在部署期間會同時有舊版與新版的程式在跑。以欄位改名為例，新舊程式要同時讀寫得到資料，變更要拆成幾次部署：先加新欄並讓程式兩邊都寫、回填舊資料、讀取切到新欄、最後刪舊欄（[Expand-Contract](/backend/knowledge-cards/expand-contract/)，每一步的做法與驗證在 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/) 的〈Expand-Contract 模式〉）。每一步各是一次 migration，彼此之間隔著一次程式部署。從 model 比對出來的只有「現在的 model 長什麼樣」，拆成幾步、每一步配哪一版程式，要由開發者自己決定並寫成幾份 migration；啟動時依 model 改 schema 的做法沒有這個位置可以寫，變更跟著那一版程式一起生效。
+
+比對的範圍也限制了工具看得到哪些變更：比對只涵蓋 model 描述得到的物件；資料庫裡由人另外建的物件（手動加的 index、trigger、權限），各工具的處理不同：GORM 只新增，不碰它們；Alembic 的 `alembic check` 實測把一個手動建的 index 報成 `remove_index`，下一次 autogenerate 會產生刪掉它的操作；欄位的預設值（server default）Alembic 預設不比對（`compare_server_default` 預設關閉，型別比較 `compare_type` 則從 1.12 起預設開啟），model 加上預設值時實測 `alembic check` 回報沒有變更。比對結果裡多出的刪除與漏掉的變更，都要靠審查產生出來的檔案才看得到。
+
+## 同一個 ALTER 在大表上的代價：重寫整張表與表鎖的佇列
+
+一個 `ALTER` 在大表上會不會擋住服務，看它需不需要重寫或掃描整張表、它要拿的鎖會擋住哪些查詢、等鎖與持鎖的時間有多長。表的大小影響重寫與掃描花多久，也就是拿到鎖之後持有多久；拿到鎖之前排隊等多久，取決於表上有沒有還沒結束的交易，跟表的大小無關，下面的實測用一張兩列的表也量得到。
+
+**哪些操作重寫整張表**（PostgreSQL 17 的 `ALTER TABLE` 文件）：
+
+- 改欄位名（`RENAME COLUMN`）只改 catalog（PostgreSQL 記錄表與欄位定義的系統目錄），不重寫也不掃描，但同樣要拿 `ACCESS EXCLUSIVE`，所以會遇到下面〈表鎖的佇列〉那種排隊。
+- 加欄位帶非 volatile 的預設值（常數，或 `now()` 這種在同一個語句裡值不變的函式）時，預設值在執行 `ALTER` 的當下算好、寫進 catalog，不重寫表（PostgreSQL 11 起）；預設值是 volatile 的（`random()`、`clock_timestamp()`，每一列算出的值不同）時要重寫。
+- 改欄位型別要重寫整張表與它的 index，例外是舊型別可以直接當成新型別讀（binary coercible），例如 `varchar` 加長或拿掉長度限制（PostgreSQL 9.2 起不重寫）。重寫期間舊表與新表同時存在，最多要佔用約這張表加上它的 index 兩倍的磁碟空間。
+- 加 `CHECK` 或外鍵約束不重寫，但要掃描整張表確認既有的列都符合；加 `CHECK` 持有 `ACCESS EXCLUSIVE`，讀寫都擋，加外鍵持有 `SHARE ROW EXCLUSIVE`（被參照的表也是），擋寫入、不擋讀取；先用 `NOT VALID` 加約束（只對之後寫入的列生效，不掃描）、之後再 `VALIDATE CONSTRAINT`，驗證那一步只拿較弱的鎖（`SHARE UPDATE EXCLUSIVE`），不擋一般的讀寫。
+- `SET NOT NULL` 同樣不重寫而要掃描整張表，掃描期間持有 `ACCESS EXCLUSIVE`；PostgreSQL 17 的 `NOT NULL` 沒有 `NOT VALID` 的寫法。文件寫的避開方式是先有一個已經驗證過、證明欄位沒有 NULL 的 `CHECK` 約束：先 `ADD CONSTRAINT ... CHECK (col IS NOT NULL) NOT VALID`、再 `VALIDATE`，之後的 `SET NOT NULL` 就略過掃描。
+
+上面這幾條是本篇論證要用的部分；各家資料庫（含 Spanner、DynamoDB 這類沒有傳統 `ALTER` 的服務）在線上 DDL 的差異，寫在 [1.7 的〈線上 DDL 的 vendor 差異〉](/backend/01-database/schema-migration-rollout-evidence/)，PostgreSQL 每一種 `ALTER` 會不會重寫、拿什麼鎖的完整分類在 [PostgreSQL Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/) 的〈PG ALTER TABLE 的 fast / slow 分類〉。
+
+MySQL 8.0 以後的 InnoDB 分成三種演算法：`INSTANT` 只改 metadata（8.0.29 起新增欄位可以放在任何位置）；`INPLACE` 不經過複製表，多數操作允許同時寫入，會不會重建表依操作而定；`COPY` 複製整張表而且不允許同時寫入。改欄位型別多半要 `COPY`；`VARCHAR` 加長在 `INPLACE` 內完成，但從 255 位元組以內加長到 256 位元組以上時要 `COPY`（長度欄位從一個位元組變成兩個）。
+
+**表鎖的佇列**：PostgreSQL 的 `ALTER TABLE` 預設拿 `ACCESS EXCLUSIVE`，它跟所有鎖衝突，連一般的 `SELECT` 拿的 `ACCESS SHARE` 也是。`ALTER` 在佇列裡等前面的交易結束時，排在它後面的查詢也要等它拿到鎖、做完、放掉，才輪得到，即使那些查詢跟前面那筆交易本身並不衝突。實測用三條連線：一筆交易讀過 `coupons` 之後停 6 秒不結束；接著送一個只改 catalog、本身瞬間完成的加欄位 `ALTER`；再送一個普通的 `SELECT count(*) FROM coupons`。`pg_stat_activity` 顯示 `ALTER` 與 `SELECT` 都在等 `Lock / relation`，`ALTER` 等了 4,974 ms、`SELECT` 等了 3,958 ms（另一次實測是 4,978 ms 與 3,971 ms）。表只有兩列，擋住讀取的是一筆沒結束的長交易加上排隊的 `ALTER`，與資料量無關。MySQL 的文件對 metadata lock 寫的是同一件事：線上 DDL 等待中的 exclusive metadata lock 會擋住之後對這張表的交易（見 [Metadata Lock](/backend/knowledge-cards/metadata-lock/)，MySQL 的排查與實例在 [MySQL Metadata Lock Deep Dive](/backend/01-database/vendors/mysql/metadata-lock-deep-dive/)）。重現這兩組量測的三個連線與指令，寫在 goose 實作文章的〈長交易、排隊的 ALTER 與 lock_timeout〉。
+
+**`lock_timeout` 換到什麼**：同樣的情境，`ALTER` 之前先 `SET lock_timeout = '1s'`，`ALTER` 等滿 1 秒就以 `canceling statement due to lock timeout` 失敗，後面的 `SELECT` 等了 678 ms 就拿到結果（沒有設 `lock_timeout` 時是 3,958 ms）。換到的是排隊的時間有上限，付出的是 migration 會失敗、要排在流量低或長交易結束的時候重試。PostgreSQL 的 `lock_timeout` 預設是 0（不限時），所以沒有設的 migration 會一直排下去。預設 0 讓一般的查詢等到鎖為止、不因為短暫的鎖衝突而失敗（從預設值的行為推論，文件沒有寫這個預設值的意圖）；PostgreSQL 17 的〈Client Connection Defaults〉文件寫明不建議把它設在 `postgresql.conf`，因為那會影響所有 session，所以只在套用 migration 的那個 session 裡 `SET`。MySQL 對應的是 `lock_wait_timeout`（等 metadata lock 的上限，單位是秒），預設值是 31536000，也就是一年，同樣等於不限時；這一點取自 MySQL 8.4 的系統變數文件，這次沒有在 MySQL 上實跑。
+
+**讀取副本上的衝突**：有讀取副本（PostgreSQL 的 hot standby）時，`lock_timeout` 只限制主庫上的等待。PostgreSQL 17 的〈Hot Standby〉文件寫明，主庫上 DDL 取的 `ACCESS EXCLUSIVE` 會隨 WAL 送到副本，副本重做時同樣要取這把鎖，跟副本上正在跑的查詢衝突；衝突時副本先暫停重做，等超過 `max_standby_streaming_delay`（預設 30 秒）就取消副本上的那些查詢。所以主庫上一瞬間完成的 `ALTER`，在副本上可能讓整台副本落後最多 30 秒，或讓副本上的長查詢被取消。重寫整張表與建 index 產生的 WAL 量跟表的大小相當（從重寫與建 index 要寫出整份資料推論），也會讓副本落後。有副本的服務在套用 migration 時要另外看副本的延遲，分批回填的節奏也依副本延遲調整；PostgreSQL 處理副本延遲的做法寫在 [PostgreSQL Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/)。
+
+重寫、鎖與等待時間都要在 migration 的 SQL 裡逐句控制，手段包括設 `lock_timeout`、建 index 用 `CREATE INDEX CONCURRENTLY`（不擋寫入，但不能放在交易裡執行）、約束先 `NOT VALID` 再驗證、大量的回填分批做。啟動時依 model 改 schema 的工具送出的是它自己組出來的 `ALTER`，這些位置都沒有地方寫；產生 migration 檔的工具可以讓人在審查時改寫產生出來的檔案；手寫的 migration 本來就由人逐句決定；用宣告式工具時，這類控制寫在工具的設定裡，例如 Skeema（MySQL 的宣告式工具）的 `alter-wrapper` 把 `ALTER` 交給 gh-ost 或 pt-online-schema-change 執行。重寫或 `INPLACE` 重建要花的時間超過服務能停止寫入的時間（例如維護時段的長度）時，改用不鎖表的線上變更工具（MySQL 的 gh-ost、pt-online-schema-change，PostgreSQL 的 pg-osc、pgroll）：機制概要在 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/) 的〈Online Schema Change 工具〉，各工具的深度比較在 [MySQL Online Schema Change：gh-ost 跟 pt-online-schema-change 兩條完全不同的 ghost table 路徑](/backend/01-database/vendors/mysql/online-schema-change-tools/) 與 [PostgreSQL Online Schema Change：先用 ALTER 內建特性、不能解才 pg_repack / pg-osc](/backend/01-database/vendors/postgresql/online-schema-change/)。線上變更工具一跑可能數小時，還要另外監控進度與切換；放進啟動時跑的 migration，整段時間都算進啟動時間，所以需要它的那一步放在獨立的部署步驟。本篇建議的版本歷史接法是先跑線上變更工具，再讓 migration 工具記下對應的版本（例如一份只檢查欄位已經存在的 migration）。
+
+## 套用的時機：應用程式啟動時與獨立的部署步驟
+
+migration 可以在應用程式啟動時套用（程式一啟動先跑 migration，再開始接請求），也可以當成部署流程裡的獨立步驟（CI/CD 在部署新版程式之前執行一次 migration 指令，或用 Kubernetes 的 Job 在新版上線前跑一次；Helm 的 pre-install 與 pre-upgrade hook、Argo CD 的 PreSync hook、Heroku 的 release phase 是平台內建的同一類機制）。CI/CD 裡 migration 與程式部署的先後怎麼排，見 [後端 migration、rollout 與 rollback 流程](/devops/ci/backend-deploy/migration-rollout-rollback-flow/)。Kubernetes 的 init container 看起來像獨立步驟，但它在每個 pod 啟動前各跑一次，三個實例就跑三次，並行的情形跟在應用程式啟動時套用相同。兩者的差別出現在多個實例同時啟動、套用的權限與時間、失敗之後的狀態這幾種情形。
+
+**多個實例同時啟動**：滾動部署（[rolling update](/backend/knowledge-cards/rolling-update/)，新版實例分批取代舊版）或自動擴展（[autoscaling](/backend/knowledge-cards/autoscaling/)）時，好幾個實例會在同一段時間啟動，各自去套用同一批 migration。沒有鎖的工具在這時候，後到的程序會在建表這類語句以錯誤結束。實測兩個程序同時跑 Alembic 的 `alembic upgrade head`（第一份 migration 刻意先停 3 秒）：一個成功，另一個在建表時撞上 `duplicate key value violates unique constraint "pg_class_relname_nsp_index"` 而失敗退出（DETAIL 指出撞名的是主鍵欄位自動建的 sequence `coupons_id_seq`，也就是產生流水號的物件）；goose 的 Provider 不開鎖時也一樣，第二個程序回 `relation "coupons" already exists`。在應用程式啟動時套用，這個失敗就是那個實例啟動失敗。避免互撞的做法是讓套用的程序先取一把鎖，有內建鎖的工具多半用資料庫的建議鎖（[advisory lock](/backend/knowledge-cards/advisory-lock/)：由應用程式自訂鍵值、資料庫只負責互斥的鎖）。各工具的鎖：
+
+| 工具                | 多個程序同時套用時                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GORM `AutoMigrate`  | 沒有鎖（文件沒有提到，`migrator.go` 原始碼裡沒有）                                                                                                                                                                                                                                                                                                                                                       |
+| Django `migrate`    | 沒有跨程序的鎖（文件沒有提到，`executor.py`、`recorder.py` 原始碼裡沒有）                                                                                                                                                                                                                                                                                                                                |
+| Alembic             | 沒有鎖；可以在 `env.py` 的交易裡自己取 PostgreSQL 的建議鎖（實作文章有寫法與實測）                                                                                                                                                                                                                                                                                                                       |
+| goose               | CLI 沒有鎖；Go 程式裡的 Provider API（v3.16.0 起）用 `WithSessionLocker` 開啟 PostgreSQL 的 session 建議鎖，預設不開，而且套用之前的版本檢查不在鎖內（見表下的實測）；session 層級的鎖要求 migration 的連線直連資料庫，或走 session 模式的連線池代理（例如 PgBouncer 的 session pooling；[交易模式](/backend/knowledge-cards/transaction-pooling/)下每個交易可能分到不同的後端連線，鎖沒有固定的持有者） |
+| golang-migrate      | PostgreSQL 驅動用 `pg_advisory_lock`、MySQL 驅動用 `GET_LOCK`                                                                                                                                                                                                                                                                                                                                            |
+| Flyway              | PostgreSQL 上用建議鎖（原始碼的 `PostgreSQLAdvisoryLockTemplate`）、MySQL 上用 `GET_LOCK`（`MySQLNamedLockTemplate`，每次 `GET_LOCK` 最多等 10 秒，拿不到就每 100 ms 重試，不設總上限）；文件頁沒有寫                                                                                                                                                                                                    |
+| Rails               | 預設用建議鎖，`database.yml` 的 `advisory_locks: false` 關掉（ActiveRecord 原始碼）；拿不到鎖時不等待，立刻以 `ConcurrentMigrationError` 結束                                                                                                                                                                                                                                                            |
+| Laravel             | `artisan migrate` 預設沒有鎖；加 `--isolated` 時取 cache 的 atomic lock，所有實例要共用同一個支援 lock 的 cache store；拿不到鎖的程序不執行 migration，以成功的 exit code 結束，不等前一個做完                                                                                                                                                                                                           |
+| Liquibase           | `DATABASECHANGELOGLOCK` 表；程序沒有正常結束時鎖會留在表裡，要用 `liquibase release-locks` 清掉                                                                                                                                                                                                                                                                                                          |
+| Prisma ORM 7、Atlas | 建議鎖；Prisma 的等待上限固定 10 秒；Atlas 的版本化 `migrate apply` 預設 10 秒（`--lock-timeout`），宣告式 `schema apply` 的文件沒有寫鎖                                                                                                                                                                                                                                                                 |
+| EF Core             | 9 起 `Migrate()` 先取資料庫層級的鎖；9 之前多個實例同時套用可能失敗或損毀資料（官方文件的說法）                                                                                                                                                                                                                                                                                                          |
+
+會等鎖的工具（Flyway、golang-migrate、Prisma、Atlas 的 `migrate apply`、開了鎖的 goose Provider）讓同一時間只有一個程序在套用，後到的程序等前一個做完，再讀歷史表發現已經是最新版而什麼都不做。Rails 與 Laravel 拿不到鎖時不等：Rails 以錯誤結束，Laravel 直接略過；用在啟動時套用時，後到的實例分別是啟動失敗，或在 schema 還沒更新完時就開始接請求。實測 goose 的 session 鎖：第一個程序套用五份 migration，第二個程序 6 秒後印出 `0 applied`。goose 有一個限制：歷史表第一次建立的那一步在取鎖之前，不受 session 鎖保護，多個實例仍會撞名，由 goose 自己重試；6 秒怎麼拆成兩段重試，寫在 goose 實作文章的〈在 Go 程式裡套用：embed、Provider 與 session 鎖〉。
+
+**套用的權限與時間**：在啟動時套用，程序就要持有能改 schema 的帳號，也就是能執行 `CREATE`、`ALTER`、`DROP` 這類 [DDL](/backend/01-database/sql/knowledge-cards/ddl-dml/)（定義 schema 的 SQL）；EF Core 的文件把這一點列為這種做法的缺點之一。有的框架允許 migration 用另一組帳號、連線池用低權限帳號（Spring Boot 的 `spring.flyway.user`），但那組憑證仍然在同一個程序的設定或環境變數裡，程式被入侵時一樣拿得到；獨立的部署步驟可以讓 DDL 帳號只存在於部署流程，應用程式本身只拿讀寫資料的權限（[least privilege](/backend/knowledge-cards/least-privilege/)）。migration 的執行時間也算進啟動時間：一份要跑幾分鐘的 migration 會讓實例遲遲不開始接請求，健康檢查的寬限時間（[startup probe](/backend/knowledge-cards/startup-probe/)）比它短時，平台會把實例判成啟動失敗而重啟，重啟又重新排隊等鎖（從啟動流程推論，沒有實測）。
+
+**失敗之後資料庫停在什麼狀態**：PostgreSQL 的 DDL 可以放在交易裡。goose、Flyway、Django 預設把每一份 migration 包成一個交易，中途失敗時那一份整份退回，歷史表也不記錄，修正之後重跑即可；Alembic 預設把一次 `upgrade` 的整批 migration 放在同一個交易，失敗時前面已經跑完的幾份也一起退回；實測 Alembic 與 goose 的改名加縮窄型別在縮窄那一句失敗時，前一句的改名也一起退回。下列情形例外：
+
+- MySQL 的 DDL 會隱式提交（implicit commit，執行時先把目前的交易提交），不能放進交易。Django 的文件寫明 MySQL 上 migration 失敗時要手動把已經做的部分復原，才能重試。
+- PostgreSQL 上不能放進交易的語句（`CREATE INDEX CONCURRENTLY`）要讓那一份 migration 不包交易（goose 是 `-- +goose NO TRANSACTION`，Django 是 `atomic = False`）。實測一份不包交易、建兩個 index 的 goose migration，第二句失敗時第一個 index 已經建好，歷史表沒有記錄這份 migration；修正第二句之後重跑，第一句反而以 `relation ... already exists` 失敗。這類 migration 一份只放一句，或每一句寫成重跑也成立的形式（`IF NOT EXISTS`）。
+- golang-migrate 在每份 migration 開始前，把版本表上的 dirty 旗標設起來、做完再清掉，失敗時停在 dirty 狀態、拒絕再往下套用。`migrate force <版本>` 只改版本紀錄、不執行任何 SQL，所以要標成哪一版，取決於失敗的那份 migration 實際做到哪一句；查出實際的狀態之後，才知道該 force 到哪一版。
+
+兩種套用時機在失敗時的差別，在於失敗之後誰停下來。在啟動時套用，migration 失敗就是實例啟動失敗，平台重啟實例，每次重啟都重跑同一份失敗的 migration，新版的實例一個都起不來；在 MySQL 或不包交易的 migration 上，每次重跑還可能多留下一部分變更（從啟動流程推論，沒有實測）。獨立步驟失敗時，部署在新版程式上線之前停下，舊版繼續服務，由人查清資料庫的狀態再重跑。獨立步驟的成本是 migration 的執行要跟這次的程式版本綁在同一條 pipeline（同一個映像檔、Helm hook 或 CI 的步驟順序）；少跑或跑錯版本時，程式會在不相符的 schema 上啟動，本機開發與測試環境也要另外記得跑。
+
+Flyway 的文件寫 migrate「should preferably be executed on application startup」，理由是避免資料庫與程式預期的 schema 不一致（「to avoid any incompatibilities between the database and the expectations of the code」），也就是上一段獨立步驟的那項成本，跟本節多實例同時套用、權限與啟動時間這幾項缺點的方向相反。本篇的判斷是：在 PostgreSQL 上，Flyway 有鎖（上表，依原始碼），每一份 migration 又都照 expand-contract 拆成新舊程式都能運作的步驟時，啟動時套用的風險只剩執行時間、權限與失敗時的重啟循環；在 MySQL 上，DDL 隱式提交，失敗會留下部分變更，要人先復原、再用 `flyway repair` 移除歷史表裡失敗的那一筆，才能重跑；這段期間每次重啟都卡在那筆失敗紀錄上，重啟循環的代價比 PostgreSQL 大。[6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/) 把「schema 變更跟程式部署放在同一個 PR」列為反模式，理由是 rollback 變得不可能；expand-contract 拆好的每一份 migration 都相容於它之前剛部署的那一版程式，程式回滾到那一版時不必撤回 schema；最後刪舊欄的那一份，排在所有還在用舊欄的程式版本都下線之後，回滾的目標版本本來就不讀舊欄。這兩點成立時，那條反模式描述的情形就不會發生。前提不成立的服務（沒有鎖的工具、需要線上變更工具的變更、要跟程式部署錯開的步驟），把 migration 放在獨立的部署步驟。
+
+## 版本化 migration 檔換到什麼、付出什麼
+
+前面幾節的控制（改名寫成改名、資料轉換、拆成幾步、`lock_timeout`、`CONCURRENTLY`）都要一個讓人在套用前寫下與讀過的位置，版本化的 migration 檔就是那個位置。它讓變更可以審查、讓每個環境依同一份歷史重現；也帶來要處理的情形：已經套用的檔案被改掉、兩個分支各自新增 migration 之後的順序，以及 schema 漂移。
+
+**審查與重現**：每一次變更是一份檔案，跟程式一起走 code review；同一批檔案依序在測試環境、上線前驗證用的環境（staging）、正式環境套用，每個環境的 schema 由同一份歷史推出來。從 model 產生檔案的工具，產生出來的是草稿，Alembic 的文件寫「It is always necessary to manually review and correct the candidate migrations」。除了 migration 檔本身（Alembic 與 Django 的是 Python），也要讀它實際送出的 SQL：`alembic upgrade --sql`、Django 的 `sqlmigrate` 把它印出來，審查的人看得到 `DROP COLUMN` 與沒有 `USING` 的型別變更。版本化的工具多半讓每一份 migration 帶一段撤回用的 DOWN（套用的那一段叫 UP，DOWN 寫的是把 UP 反做回去的 SQL），它還原的是 schema：刪欄位、縮窄型別這類變更執行之後，DOWN 把欄位建回來，原本的值回不來，這類 migration 的回滾靠的是執行之前的備份，見 [Database Migration 卡](/devops/infra/knowledge-cards/database-migration/)。人工審查之外，已知會重寫或長時間鎖表的語句（建 index 沒有 `CONCURRENTLY`、沒有 `lock_timeout`、直接 `SET NOT NULL`）可以交給 CI 裡的 migration linter 擋下，例如 PostgreSQL 的 squawk、Rails 的 strong_migrations、Atlas 的 `migrate lint`（v0.38 起要 Atlas Pro）。各工具涵蓋的語句不同：strong_migrations 在執行 migration 時檢查，不檢查缺少 `lock_timeout`，改成由它自己設定；linter 只認得已知的語句形態，資料要怎麼轉換、要拆成幾步，仍然要人判斷。
+
+**完整性檢查：已經套用的檔案被改掉時**：一份 migration 套用之後，檔案內容再被修改，資料庫不會跟著變，而新環境會照新內容建出不同的 schema。Flyway 在歷史表存每份檔案的 checksum，`flyway validate` 在內容不一致時失敗；Liquibase 在 `DATABASECHANGELOG` 的 `MD5SUM` 欄存每個 changeset 的 checksum，changeset 改過時下一次執行就停下並報錯；Atlas 用 `atlas.sum` 記下整個目錄的雜湊，改過的檔案在下一次指令就報 checksum 不符。goose、golang-migrate、Alembic、Django 沒有這一層：實測把 goose 已經套用的 migration 裡的 `varchar(50)` 改成 `varchar(80)`，`goose up` 回 `no migrations to run`、`goose validate` 也通過（它只檢查檔案格式）。用這幾個工具時，「已經合併進主幹（main branch）的 migration 不再修改，要改就新增一份」要寫成團隊的規則，或在 CI 比對已合併檔案的差異。
+
+**兩個分支各自新增 migration 之後的順序**：兩位開發者從同一個版本各自新增一份 migration，先後合併進主幹。各工具的反應：
+
+- Alembic 每份 migration 有一個 revision id，並記著前一份的 revision id，串成一條鏈；鏈的末端叫 head。兩份都指向同一個前一份時，合併之後有兩個 head，`alembic upgrade head` 回 `Multiple head revisions are present`；`alembic merge heads` 產生一份把兩個 head 接起來的 migration 之後才能套用。這個錯誤在合併後第一次套用時出現，順序由人決定。
+- goose 用時間戳當版本，較早建立、較晚合併的那一份，時間戳比已經套用的最新一份小。實測 `goose up` 回 `found 1 missing migrations before current version`；加上 `-allow-missing` 才套用。套用之後 goose 以最後套用的那一筆當目前版本，`goose down` 撤回的是剛補上的那一份，而不是時間戳最大的那一份。
+- Flyway 的 `outOfOrder` 預設是 false，版本號比已套用的最新版小的新 migration 被歸成 ignored；`validateOnMigrate` 預設開啟、`ignoreMigrationPatterns` 預設只放過 future 類，所以 `migrate` 會在套用之前的驗證失敗而中止（從設定的預設值推論，這次沒有實跑 Flyway）。`outOfOrder` 設成 true 時才補套用。
+- goose 的 `goose fix` 把時間戳檔名改成連續序號、保留原本的先後，官方 README 建議在 CI pipeline 裡執行。它只能用在還沒套用到任何環境的檔案：實測對已經套用的檔案執行之後，資料庫裡記的是時間戳、檔名換成了序號，`goose status` 把五份全列成 Pending，`goose up` 回 missing migrations。
+
+- 宣告式工具沒有版本序：兩個分支改的是同一份目標 schema 檔，改到同一段時 git 合併會出現文字衝突，改到不同段時 git 自動合併，工具對合併後的終點重新算差異（從宣告式的運作方式推論）。
+
+兩份 migration 改到同一張表時，先後順序會改變結果（一份加欄、一份依舊的欄位清單重建 view），所以不論用哪一種工具，合併之後都要由人確認兩份的順序，再讓工具套用。
+
+**schema 漂移的偵測**：有人直接在正式環境改了 schema（緊急加的 index、hotfix 的欄位），資料庫的現狀就跟 migration 歷史推出來的不一樣，這篇稱為 schema 漂移（schema drift；log 與 telemetry 領域也用 schema drift 指事件欄位的變化，是另一件事）。漂移會讓之後的 migration 在某個環境失敗，或讓新環境少了那幾次手動變更。偵測方法依做法而不同，各工具比對的兩方也不一樣：
+
+- **Alembic 的 `alembic check`**：比對 model 與已經套用到最新版的資料庫，有差異時以非零的 exit code 結束，所以同時抓得到漂移與忘了產生的 migration。實測回報了手動建的 index 與 model 新增的欄位；資料庫還沒套用到最新版時，它直接以 `Target database is not up to date` 失敗。
+- **Django 的 `makemigrations --check`**：比對 model 與 migration 檔，抓的是 model 改了而沒有產生 migration，不看資料庫的現狀，所以抓不到漂移。
+- **Prisma ORM 7**：`migrate dev` 偵測到漂移時會要求 reset 資料庫（刪掉重建，資料全失），只能對開發用的資料庫跑；正式環境用的 `migrate deploy` 不檢查漂移。
+- **Atlas 宣告式的 `schema apply`**：每次都從現狀算差異，漂移會直接出現在它要送出的變更裡。
+- **手寫 migration 的工具**：本身不比對 model，要另外拿資料庫的 schema dump 與從 migration 重建出的 schema 比對。
+
+手寫 migration 而程式又用 ORM 時，付出的是兩份定義。ORM 的 model 與 migration 檔都描述同一張表，手寫 migration 時兩邊要各改一次，對不上的時候 ORM 的查詢在執行時才報錯；從 SQL 產生程式碼的工具（sqlc、jOOQ）讓 migration 成為唯一的定義、程式碼從它產生，這是 [1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/) 把 schema 的權威放在 migration 的那個選項。另外，手寫的 SQL migration（Flyway、goose、golang-migrate 的 `.sql` 檔）要寫資料庫的方言，換資料庫時要重寫；Liquibase 的 XML、YAML change type 由 Liquibase 依資料庫產生 SQL，不綁在一種方言上；goose 的 Go migration 是一段 Go 程式，用不綁方言的寫法（例如 query builder）時才能沿用。從 model 產生的工具各不相同：Django 與 Alembic 的 migration 是 Python 寫的操作，由執行時的資料庫方言轉成 SQL，換資料庫時多半沿用；Prisma 與 EF Core 產生的是特定資料庫的 SQL 或 provider 專屬的 migration，Prisma 的文件寫換 provider 要重新開始 migration 歷史。
+
+## 判斷條件：依資料、部署形態與表的大小選做法
+
+下面每一個條件獨立判斷；服務符合幾個條件，就要同時滿足那幾個條件的要求，各條件的要求是疊加的。
+
+- **資料可以丟、只有一個實例**（原型、開發機、每次重建的測試資料庫）：啟動時依 model 改 schema 省下寫 migration 的工作，而它的缺點（改名留下空欄、縮窄時截斷、沒有紀錄）造成的損失只是重建一次資料庫。這也是 Spring Boot 只在嵌入式資料庫預設 `create-drop` 的情境。
+- **資料不能丟**：每一次變更都要有一份套用前讀得到的產物，讓改名、型別縮窄與資料轉換由人決定。符合的產物有三種：從 model 產生、逐份審查過（含它印出的 SQL）的 migration 檔；手寫的 migration；宣告式工具在送出前列出、要求核准的變更（Atlas 的 `schema apply` 預設如此）。啟動時直接改 schema 的做法在這個條件下沒有審查的位置。只有一個實例時，在啟動時套用沒有並行的問題，剩下的代價是應用程式的帳號要有 DDL 權限、migration 的時間算進啟動時間，以及失敗時的重啟循環（本篇〈套用的時機：應用程式啟動時與獨立的部署步驟〉）。
+- **多個實例、滾動部署**：變更要能跟新舊兩版程式並存，所以要照 expand-contract 拆成幾份 migration、隔著程式部署分次套用；套用要有鎖，或放在只跑一次的獨立部署步驟（CI/CD 的步驟、Kubernetes 的 Job；init container 每個 pod 各跑一次，不算）。宣告式工具沒有 migration 檔可以拆，改成逐次部署修改目標 schema，每次只往前推 expand-contract 的一步；Atlas 的 `schema apply` 沒有文件記載的鎖，多實例時放在獨立步驟。沒有鎖的工具（GORM、Django、Alembic、goose CLI）在啟動時套用時，後到的實例會在建表這類語句以錯誤結束、啟動失敗。
+- **表大、有長交易、或要求不中斷寫入**：每一句 `ALTER` 都要控制鎖與時間（PostgreSQL 是 `lock_timeout`、`CONCURRENTLY` 與不包交易、`NOT VALID`；MySQL 是 `lock_wait_timeout` 與指定 `ALGORITHM=INSTANT` 或 `INPLACE`；兩者都要分批回填，有讀取副本時依副本延遲調整節奏），這些要寫在 migration 的 SQL 裡（所以要手寫、或改寫產生出來的檔案），或寫在宣告式工具的設定裡；重寫整張表要花的時間超過服務能停止寫入的時間時，改用線上變更工具。這個條件跟資料量的關係是間接的：資料量決定重寫與掃描花多久，而長交易讓一個瞬間完成的 `ALTER` 也能擋住所有讀取。
+- **schema 由別的服務擁有、或多個服務共用一個資料庫**：多個服務共用時，先指定一個擁有 schema 的位置（其中一個服務的 migration，或一個獨立的 migration repo），只有那裡套用變更，上面幾條判斷套在那個位置上；其他服務不改 schema，照擁有者的 migration 更新自己的 model 或產生的程式碼（Go 的寫法見 [10.7 Go 專案的資料庫存取工具選型](/programming/go/basic/10-database-access/choosing-data-access/)）。
+- **同一份 migration 要套用到很多個 schema 或資料庫**（每個租戶一個 schema 的多租戶服務）：總執行時間是單一 schema 的 N 倍，在啟動時套用不可行；部分租戶失敗、部分已經套用的期間，程式要同時相容新舊兩版 schema；每個 schema 各自要有歷史紀錄，漂移也要逐個 schema 偵測（model 只描述一份 schema，`alembic check` 要對每個租戶 schema 各跑一次，例如逐一切換 `search_path`）。上面幾條的要求照樣疊加在每一個 schema 上。
+
+依上面各條件判出的需求選工具：需要的是審查與分步時，從 model 產生 migration 的工具（Django、Alembic、Prisma、EF Core）與手寫的工具（Flyway、goose、golang-migrate、Liquibase）都做得到，差別在初稿由誰寫、有沒有 checksum、多實例時有沒有內建的鎖、ORM 的 model 是不是 schema 的權威。團隊已經用 ORM、model 是權威時，產生 migration 再審查少寫一份定義；schema 由 SQL 定義、程式從它產生時（sqlc 這一類），手寫 migration 是唯一的定義。
+
+## 延伸閱讀：Alembic 與 goose 的實測步驟、expand-contract 流程與 migration 的 release gate
+
+- 從 model 產生 migration 的實測步驟：[Alembic autogenerate 的實測紀錄](/programming/python/hands-on/alembic-autogenerate-lab/)，涵蓋改名被產生成刪除加新增、縮窄型別時 PostgreSQL 的拒絕與交易退回、`--sql` 印出的 SQL、`alembic check` 偵測漂移、兩個 head 的合併，以及在 `env.py` 加建議鎖之前與之後的並行套用。
+- 手寫版本化 migration 的實測步驟：[goose 管理 PostgreSQL migration 的實測紀錄](/programming/go/basic/10-database-access/hands-on/goose-migration-lab/)，涵蓋 SQL migration 與歷史表、改過已套用的檔案不被察覺、`NO TRANSACTION` 與 `CREATE INDEX CONCURRENTLY`、中途失敗留下的部分狀態、長交易與排隊的 `ALTER` 加上 `lock_timeout` 前後的等待時間、時間戳與 `-allow-missing`、`goose fix`，以及在 Go 程式裡用 Provider 加 session 鎖之前與之後的並行套用。
+- 一次變更拆成 expand、回填、切流、contract 的流程與回填的設計：[1.6 資料庫轉換實作：雙寫、回填、切流與回滾](/backend/01-database/database-migration-playbook/)。
+- migration 各階段要產出的證據與 release gate：[1.7 Schema Migration Rollout 證據實作示範](/backend/01-database/schema-migration-rollout-evidence/)、[6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/)。
+- schema 的權威放在 model 或 migration 時，ORM 與從 SQL 產生程式碼的取捨：[1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)。

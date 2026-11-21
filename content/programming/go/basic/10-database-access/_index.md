@@ -41,6 +41,8 @@ aliases: ["/go/10-database-access/"]
 | [10.6 GORM 的 gorm.Model、軟刪除與 Save：慣例欄位加上的查詢條件與整列寫回](/programming/go/basic/10-database-access/gorm-model-and-soft-delete/) | `gorm.Model` 的四個欄位、軟刪除替查詢加的條件與它涵蓋不到的路徑、唯一約束與部分索引、`Save` 寫回全部欄位與找不到主鍵時的 upsert |
 | [10.7 Go 專案的資料庫存取工具選型：GORM、sqlc 與 pgx 的組合](/programming/go/basic/10-database-access/choosing-data-access/)                     | 把 1.17 的選型軸套到 Go 的工具上、Go 專案常見的混用組合，以及用 dbresolver 做讀寫分離時的路由                                   |
 
+實作文章放在 [`hands-on/`](/programming/go/basic/10-database-access/hands-on/)：目前是 [goose 管理 PostgreSQL migration 的實測紀錄](/programming/go/basic/10-database-access/hands-on/goose-migration-lab/)，接在 10.5 的 `AutoMigrate` 那一節之後，語言無關的取捨在 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)。
+
 ## 跨分類引用
 
 - 語言無關的分層、選型軸與 PHP、Python 的對應工具：[1.17 應用程式存取資料庫的工具分層](/backend/01-database/data-access-layers/)
@@ -51,7 +53,7 @@ aliases: ["/go/10-database-access/"]
 
 ## 驗證環境
 
-各篇的輸出在 Go 1.25、PostgreSQL 17、pgx v5.11.0、sqlx v1.4.0、sqlc v1.31.1、GORM v1.31.2（PostgreSQL 方言套件 v1.6.3）、GORM dbresolver v1.6.2 上實際跑過。
+各篇的輸出在 Go 1.25、PostgreSQL 17、pgx v5.11.0、sqlx v1.4.0、sqlc v1.31.1、GORM v1.31.2（PostgreSQL 方言套件 v1.6.3）、GORM dbresolver v1.6.2 上實際跑過；`hands-on/` 的 goose 實測用的是 Go 1.27.3、goose v3.30.1、pgx v5.13.0、PostgreSQL 17.12。
 
 ## Backlog
 
@@ -60,4 +62,5 @@ aliases: ["/go/10-database-access/"]
 | Query Builder（squirrel、goqu）專篇                                                                                                                                  | 主章 | 讀者回饋顯示 10.7 的簡介不夠 | 小   |
 | ent 專篇（schema 寫成 Go 程式碼的另一種 ORM）                                                                                                                        | 主章 | 同上                         | 中   |
 | 資料庫整合測試（testcontainers 與交易回滾）                                                                                                                          | 主章 | 無                           | 中   |
+| 10.5〈AutoMigrate 在正式環境的限制〉與 10.7 用「退回」指撤回 migration；1.20 用「退回」只指交易的 ROLLBACK、「回滾」指部署之後撤回，兩篇的這幾句對齊                 | 主章 | 無                           | 小   |
 | GORM 的樂觀鎖外掛（`gorm.io/plugin/optimisticlock`）與 `Save` 搭配時的行為、關聯一併軟刪除（`Select("Orders").Delete`）、`gorm.io/plugin/soft_delete` 的旗標式軟刪除 | 主章 | 先實測                       | 小   |

@@ -216,7 +216,7 @@ db.AutoMigrate(&CouponV2{})
 
 改名被當成新增一個欄位 `discount`，舊的 `rate` 和它的資料都留著；`code` 的型別直接被改成 `varchar(20)`。GORM 送出的是 `ALTER ... TYPE varchar(20) USING code::varchar(20)`，PostgreSQL 的明確轉型會把超過 20 個字元的值直接截斷，所以表裡已經有較長的資料時，這一步照樣成功、不報錯，被截掉的資料就此遺失。整個過程沒有一份檔案記錄它做了什麼，也沒有退回的方法。
 
-所以正式環境的 schema 交給版本化的 migration 工具（golang-migrate、goose、Atlas）：每一次改動是一份可以審查的檔案，依序套用，可以在測試環境先跑過。GORM 只負責讀寫，model 跟著 migration 改。版本化 migration 的流程與相容性規則見 [資料庫 transaction 與 schema migration](/programming/go/advanced/07-distributed-operations/database-transactions/)。
+所以正式環境的 schema 交給版本化的 migration 工具（golang-migrate、goose、Atlas）：每一次改動是一份可以審查的檔案，依序套用，可以在測試環境先跑過。GORM 只負責讀寫，model 跟著 migration 改。同一個改名與縮窄寫成 goose 的 migration 時，改名保留資料、縮窄遇到過長的值時整份退回，步驟見 [goose 管理 PostgreSQL migration 的實測紀錄](/programming/go/basic/10-database-access/hands-on/goose-migration-lab/)；跟語言無關的取捨（改名與資料轉換、大表的鎖、多個實例同時套用）見 [1.20 Schema 變更由誰寫出、何時套用](/backend/01-database/schema-change-management/)。版本化 migration 的流程與相容性規則見 [資料庫 transaction 與 schema migration](/programming/go/advanced/07-distributed-operations/database-transactions/)。
 
 ## GORM 的慣例：主鍵、零值、CreatedAt 與預設交易
 
