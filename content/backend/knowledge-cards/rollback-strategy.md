@@ -10,7 +10,7 @@ Rollback strategy 的核心概念是「在事故期間用可驗證條件決定�
 
 ## 跟其他概念的關係
 
-回滾策略連接 [incident severity](/backend/knowledge-cards/incident-severity/)、[blast radius](/backend/knowledge-cards/blast-radius/)、[cutover / switchover](/backend/knowledge-cards/cutover-switchover/) 與 [fallback plan](/backend/knowledge-cards/fallback-plan/)；是否放行變更則會受 [Release Gate](/backend/knowledge-cards/release-gate/) 影響，而實際可行性則應由 [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/) 驗證。
+回滾策略連接 [incident severity](/backend/knowledge-cards/incident-severity/)、[blast radius](/backend/knowledge-cards/blast-radius/)、[cutover / switchover](/backend/knowledge-cards/cutover-switchover/) 與 [fallback plan](/backend/knowledge-cards/fallback-plan/)；是否放行變更則會受 [Release Gate](/backend/knowledge-cards/release-gate/) 影響，而實際可行性則應由 [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/) 驗證。判斷要回滾之後，靜態站、後端服務與 App 各自拿什麼撤回前一版，寫在 devops 的 [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) 卡。
 
 ## 可觀察訊號與例子
 

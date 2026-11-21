@@ -11,7 +11,7 @@ Migration 的核心概念是「把舊狀態受控推進到新狀態」。它不�
 
 ## 跟其他概念的關係
 
-Migration 位在 build 之後、deploy 與 rollout 之前後的關鍵路徑，常與 release gate、[rollback strategy](/devops/ci/knowledge-cards/rollback-strategy/) 一起設計。
+Migration 位在 build 之後、deploy 與 rollout 之前後的關鍵路徑，常與 release gate、[Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) 一起設計。
 
 ## 可觀察訊號
 

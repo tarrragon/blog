@@ -13,13 +13,13 @@ aliases: ["/ci/frontend-deploy/"]
 
 前端部署和後端部署的差異在於 runtime 責任位置。前端產物通常在 build time 完成大部分工作，發布後由 browser、CDN 或 static hosting 提供服務；後端服務則要在 runtime 處理連線、資料庫、migration、狀態與 rollback。
 
-| 面向                                                               | 前端部署常見責任                      | 判讀訊號                          |
-| ------------------------------------------------------------------ | ------------------------------------- | --------------------------------- |
-| Build                                                              | bundle、static site、asset hashing    | build 是否可重現                  |
-| Test                                                               | browser regression、a11y、layout      | Playwright / visual diff 是否通過 |
-| [Artifact](/devops/ci/knowledge-cards/artifact/)                   | static files、search index、sourcemap | 測試與發布是否同一份產物          |
-| Deploy                                                             | hosting、CDN、Pages、preview URL      | cache invalidation 與路由是否正確 |
-| [Rollback Strategy](/devops/ci/knowledge-cards/rollback-strategy/) | 回退前一版 static artifact            | 是否保留可回復版本                |
+| 面向                                                                            | 前端部署常見責任                      | 判讀訊號                          |
+| ------------------------------------------------------------------------------- | ------------------------------------- | --------------------------------- |
+| Build                                                                           | bundle、static site、asset hashing    | build 是否可重現                  |
+| Test                                                                            | browser regression、a11y、layout      | Playwright / visual diff 是否通過 |
+| [Artifact](/devops/ci/knowledge-cards/artifact/)                                | static files、search index、sourcemap | 測試與發布是否同一份產物          |
+| Deploy                                                                          | hosting、CDN、Pages、preview URL      | cache invalidation 與路由是否正確 |
+| [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) | 回退前一版 static artifact            | 是否保留可回復版本                |
 
 Build 階段負責產生 browser 實際會執行的內容。真實服務常見訊號是 bundle size、asset hash、base URL、環境變數與 static route 是否穩定；若 build 只能在開發機成功，CI 就要把 Node 版本、package lock、build command 與環境變數收斂成固定入口。
 
@@ -29,7 +29,7 @@ Test 階段負責驗證使用者可見行為。前端常見測試包含 componen
 
 Deploy 階段負責把 artifact 放到 hosting 或 CDN。真實風險通常集中在 HTML cache、asset cache、SPA fallback、preview URL 與 production domain 是否對齊。
 
-[Rollback Strategy](/devops/ci/knowledge-cards/rollback-strategy/) 階段負責讓上一個可用 artifact 能重新服務使用者。前端 rollback 通常比後端快，但若 build time 環境變數、資料 schema 或 CDN cache 已變更，回退仍需要驗證頁面路由與 API 相容性。
+[Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) 階段負責讓上一個可用 artifact 能重新服務使用者。前端 rollback 通常比後端快，但若 build time 環境變數、資料 schema 或 CDN cache 已變更，回退仍需要驗證頁面路由與 API 相容性。
 
 ## 常見注意事項
 

@@ -13,13 +13,13 @@ aliases: ["/ci/frontend-deploy/static-artifact-preview-flow/"]
 
 前端部署的風險集中在 build time。後端服務可以在 runtime 讀取設定、檢查資料庫與逐步接流量；前端靜態產物多半在 build 階段就把 route、asset path、環境變數與 feature flag 預先寫入 bundle。CI/CD 的判讀重點因此是「被部署的 artifact 是否就是已驗證的那一份」。
 
-| 階段                                                                   | 責任                                 | 判讀訊號                               |
-| ---------------------------------------------------------------------- | ------------------------------------ | -------------------------------------- |
-| Build                                                                  | 產生 production-like static artifact | lockfile、Node 版本、base URL 是否固定 |
-| Browser test                                                           | 驗證使用者可見行為                   | 測試是否跑在 build 後 artifact         |
-| [Preview environment](/devops/ci/knowledge-cards/preview-environment/) | 讓 PR 變更可被 reviewer 實際操作     | preview URL 是否對應 commit / PR       |
-| Deploy                                                                 | 推進到 hosting、Pages 或 CDN         | HTML cache、asset cache、SPA fallback  |
-| [Rollback strategy](/devops/ci/knowledge-cards/rollback-strategy/)     | 重新服務上一份已知可用 artifact      | 舊 artifact、cache purge 與 API 相容性 |
+| 階段                                                                            | 責任                                 | 判讀訊號                               |
+| ------------------------------------------------------------------------------- | ------------------------------------ | -------------------------------------- |
+| Build                                                                           | 產生 production-like static artifact | lockfile、Node 版本、base URL 是否固定 |
+| Browser test                                                                    | 驗證使用者可見行為                   | 測試是否跑在 build 後 artifact         |
+| [Preview environment](/devops/ci/knowledge-cards/preview-environment/)          | 讓 PR 變更可被 reviewer 實際操作     | preview URL 是否對應 commit / PR       |
+| Deploy                                                                          | 推進到 hosting、Pages 或 CDN         | HTML cache、asset cache、SPA fallback  |
+| [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) | 重新服務上一份已知可用 artifact      | 舊 artifact、cache purge 與 API 相容性 |
 
 Build 階段負責建立可驗證產物。真實服務裡，`npm run dev` 成功不代表 production build 能成功；CI 應固定 Node 版本、package manager、lockfile、build command 與必要環境變數，讓 artifact 可以從乾淨環境重建。
 
@@ -29,7 +29,7 @@ Browser test 階段負責驗證使用者實際會看到的頁面。Playwright、
 
 Deploy 階段負責把 artifact 放到 hosting 或 CDN。前端部署失敗常出現在 cache policy、SPA fallback、base URL、static route 與 sourcemap 權限；deploy 成功只代表檔案上傳完成，仍需要檢查入口頁、核心路由與 asset 是否能從公開網址載入。
 
-[Rollback strategy](/devops/ci/knowledge-cards/rollback-strategy/) 階段負責恢復上一份可用靜態產物。前端 rollback 表面上只是切回舊檔案，但若 API schema、build time config 或 CDN cache 已經變動，舊頁面仍可能呼叫不相容的後端，因此 rollback 要搭配 smoke test 與 cache purge。
+[Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) 階段負責恢復上一份可用靜態產物。前端 rollback 表面上只是切回舊檔案，但若 API schema、build time config 或 CDN cache 已經變動，舊頁面仍可能呼叫不相容的後端，因此 rollback 要搭配 smoke test 與 cache purge。
 
 ## 常見失敗路由
 

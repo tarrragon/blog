@@ -7,7 +7,7 @@ weight: 7
 aliases: ["/ci/knowledge-cards/rollout-strategy/"]
 ---
 
-Rollout Strategy 的核心概念是「用分批推進控制發布風險」，並在異常時交由 [Rollback Strategy](/devops/ci/knowledge-cards/rollback-strategy/) 收斂。它讓變更從小範圍驗證逐步擴大到全量。
+Rollout Strategy 的核心概念是「用分批推進控制發布風險」，並在異常時交由 [Release Rollback（發布物回滾）](/devops/ci/knowledge-cards/rollback-strategy/) 收斂。它讓變更從小範圍驗證逐步擴大到全量。
 
 ## 跟其他概念的關係
 
