@@ -4,9 +4,21 @@
 
 ## 寫作流程與紀錄
 
+### 規則的三個時機
+
+`writing.md`、`sentences.md`、`writing-process.md`、`review.md` 每一節規則開頭的**時機**標出這一節要做動作的階段；適用條件與檢查方法寫在那一節的正文。其他分冊沒有這個標籤，照正文的條件適用。
+
+- **動筆**：寫之前的查核、讀範本、決定體例與大綱，以及寫或改書面產出的文字的當下。補 `description` 與 `tags`、修 lint、補卡與照審查意見改稿都算。
+- **審查**：檢查已經寫好的稿件時，包括跑掃描、照清單逐項確認、派 reviewer 或探針。這次要提交的稿件，在補完 `commit-push.md`〈提交〉的欄位、修完 lint 之後做。
+- **收尾**：審查跑完之後、跑 `bin/commit-files` 之前，做檢討，並把各節正文要求的紀錄寫進 commit message，判成不跑或不適用的項目也寫。
+
+一節標了兩個時機時，兩個時機都用。審查或收尾時又改了書面產出的文字，改到的部分回到動筆與審查；是否再派 reviewer 或探針，照 `review.md`〈多輪審查〉判斷。審查一份稿件時，依據是這份稿件適用的全部規則，只標動筆的節也在內；標了審查的節，正文另外寫了審查時要做的掃描或判定。
+
 ### 文章產出流程
 
-新寫文章，或這次改寫一整節以上時，走這幾步；比這小的措辭級改動只跑〈字句層掃描的檔案集〉：
+**時機**：動筆、審查、收尾。
+
+新寫文章，或這次改寫一整節以上時，走這幾步；比這小的措辭級改動，這幾步裡只跑〈字句層掃描的檔案集〉，其他節的規則照它們的時機與適用條件用：
 
 1. **更新模組大綱**：文章屬於有模組結構的分類時，更新文章所在資料夾的 `_index.md`，以及往上各層裡清單會因這篇文章改變的 `_index.md`（逐篇列出文章的、列出子資料夾的；`content/programming/python/basic/_index.md` 逐篇列出各章的文章，在 `06-practical/` 加一篇時兩份都改）。未完成的工作記進哪一份目錄頁的 `## Backlog`，照 `content-folders.md`〈模組的 Backlog〉判定。沒有模組結構的目錄沒有模組大綱：`report/` 卡在 `content/report/_index.md` 加條目，位置照 `content-folders.md`〈寫之前要做的查核〉的登記那一條；`work-log/` 的文章更新 `content/work-log/_index.md` 裡人工維護的分組清單，把新文章放進它所屬的那一組；`til/`、`posts/`、`record/`、`other/`、`books/` 跳過這一步。
 2. **依大綱寫草稿**。
@@ -21,23 +33,31 @@
 
 ### 字句層掃描的檔案集
 
+**時機**：審查。
+
 不是排版級的改動（措辭級與規則級，定義在 `AGENTS.md`〈改動的級別〉），跑一次 `compositional-writing` 的 keyword bank，掃描對象是這次的新增行：
 
 ```bash
 bin/changed-lines <這次的檔案...> > <暫存目錄>/added.txt   # 新增行，不帶 diff 的 + 前綴；新檔整份都算
 ```
 
-它涵蓋已經 staged、還沒 staged 的改動與還沒 add 的新檔，不寫 git index；路徑以執行時的目錄起算。stderr 的 `changed-lines: N added line(s) from M file(s)` 裡，N 是 0 而這次的改動有新增文字時，代表給的檔案不對，修正之後重跑；這次只刪除文字時 N 是 0，沒有新增行可掃，逐類表寫「只刪除，沒有新增行」。N 不是 0 時照 bank 對 `added.txt` 跑。逐類表照〈掃描與探針的紀錄寫進 repo〉留下。
+它涵蓋已經 staged、還沒 staged 的改動與還沒 add 的新檔，不寫 git index；路徑以執行時的目錄起算。stderr 的 `changed-lines: N added line(s) from M file(s)` 裡，N 是 0 而這次的改動有新增文字時，代表給的檔案不對，修正之後重跑；這次只刪除文字時 N 是 0，沒有新增行可掃，逐類表寫「只刪除，沒有新增行」。N 不是 0 時照 bank 對 `added.txt` 跑。逐類表照〈掃描與探針的紀錄寫進 repo〉留下。prompt 要求審查一篇這次沒有改動的稿件時，掃描對象是整份稿件，不跑 `bin/changed-lines`。
 
 ### 掃描工具的計數
+
+**時機**：動筆、審查、收尾。
 
 `bin/changed-lines`、`bin/lint-delta`、`bin/session-edits-check`、`bin/skill-version-check`、`bin/term-prompt-count`、`bin/report-weight`、`bin/content-move`、`bin/empty-sections`、`bin/alias-check`、`bin/autolink-dict`、`bin/rule-route` 在結尾印計數，格式寫在各工具的檔頭。交給它檔案清單的工具，計數要對得上交給它的數量；自己找檔案的工具（`bin/term-prompt-count`、`bin/report-weight`、`bin/content-move`、`bin/empty-sections`、`bin/alias-check`、`bin/autolink-dict`），代表掃描範圍的那一個計數是 0、或 stderr 列出讀不到的來源時，檔案集不對；那一個計數是 `content-move` 的 `page(s) moved`、`empty-sections` 的 `section(s) scanned`、`alias-check` 的 `page(s)`、`autolink-dict` 的 `card(s)`，同一行的其他計數（`collision(s)`、`empty`）是 0 代表通過（`autolink-dict` 沒有這種計數，看 exit）。
 
 ### 教學模組的產出流程
 
+**時機**：動筆、審查。
+
 寫跨五章以上、有現成案例庫、品質優先於速度的教學模組時，用 `case-first-module-workflow` skill 的流程：完整讀案例庫抽出 findings、依 findings 寫稿、派多個專責 reviewer 平行審查。單篇短文、沒有案例庫的新主題、快速迭代的原型不用這個流程。方法論與實作數據見 [Case-First + Agent Team Review：教學內容的生產流程](/posts/case-first-agent-team-review-workflow/)，新模組第一次套用時先讀完那一篇。
 
 ### 掃描與探針的紀錄寫進 repo
+
+**時機**：收尾。
 
 **判成「不需要後續動作」的結論要留下判定的痕跡。** 規則要求判定的地方（掃描、查核、驗證、歸因、適用與否），最省力的結論都是不產生任何產物的那一個：零命中、沒有缺卡、路由驗過了、不適用、模型誤讀、只改了措辭。認真做過與完全沒做，在產物上看起來一樣，所以這一類結論在 commit message 寫出三件事：判定的對象、結論、依據。依據是第三方在這個 commit 上重跑得出同樣結果的材料：指令原文與掃描的檔案集，或原文的行號。只寫「已檢查」「不適用」等於沒有判定。
 
@@ -53,6 +73,8 @@ bin/changed-lines <這次的檔案...> > <暫存目錄>/added.txt   # 新增行�
 - **完稿檢查清單裡判成不適用的項目**：寫出項目與構成不適用的段落。
 
 ### 教學文章的脈絡
+
+**時機**：動筆、審查。
 
 寫或改任何一篇教材之前，先讀 [教學文章的脈絡](/record/teaching-article-context-method/)。那一篇是方法的單一真實來源，本節列它的三項支柱與各自的檢查：
 
@@ -70,19 +92,23 @@ bin/changed-lines <這次的檔案...> > <暫存目錄>/added.txt   # 新增行�
 
 ### 寫完之後的檢討
 
+**時機**：動筆、收尾。
+
 一篇文章寫完後，下列任一條件成立時做一次檢討：同一類 finding 在兩輪以上的審查裡出現；`git log -L` 顯示同一段在這次工作裡改過兩次以上；發生了這次的計畫沒有預期到的事件（工具回報了沒想到的錯誤、使用者否決了已經提交的做法、審查推翻了某個前提）。
 
 1. **辨識議題的層次**：視覺、語意、邏輯哪一層（見 `compositional-writing` 的 `references/writing-articles.md`〈層次意識〉）。
 2. **抽出抽象原則**：問下一個類似情境會不會出同樣的事。會、而且既有的卡沒有涵蓋時，寫成 `report/` 卡；會、而既有的卡已經涵蓋時，在 commit message 寫出那張卡的 slug；不會時，在 commit message 寫出判斷的理由（這次的成因只屬於這個情境的哪一點）。
 3. **連結既有原則**：新卡在關係段（段名用 `## 跟其他抽象層原則的關係`，這是卡號（`weight`）360 以後的卡一律使用的寫法；舊卡另有 `## 跟其他原則的關係`、`## 跟其他卡的關係` 等寫法，不回頭改）列至少三張既有 `report/` 卡的關係。新卡限定了既有卡的適用邊界、或補了它留下的空白時，在舊卡的關係段補一條反向指標，否則舊卡的讀者不會知道自己拿到的規則不完整。
-4. **更新規範**：議題揭露既有規範缺失時，補規範；判成不需要補時，在 commit message 寫出理由。
-5. **更新 `content/report/_index.md` 的〈場景導讀〉**：給之後遇到同類情境的讀者一條閱讀路徑。
+4. **更新規範**：這次的議題在現行的規則類文件（`AGENTS.md`〈改動的級別〉）裡查不到對應的條目、或照對應的條目做會出錯時，補規範；判成不需要補時，在 commit message 寫出理由。
+5. **更新 `content/report/_index.md` 的〈場景導讀〉**：這次新建的卡適合某一條閱讀路徑時，照 `content-folders.md`〈寫之前要做的查核〉的登記那一條，把卡號加進那條路徑。
 
 commit message 寫出這次檢討判定的層次，以及新卡的 slug 或已涵蓋它的既有卡 slug。
 
 議題同時要記在 `content/` 與 skill 兩處時，各寫一份、各自用那個 surface 的語境寫。skill 那一份不連 `content/`，因為 skill 要能複製到別的專案運作（見 `skills.md`〈Skill 的依賴邊界〉）；`content/` 那一份不連 `.claude/skills/` 的源檔，因為讀者讀的是網站，要連就連 `content/skills/` 的公開鏡像。
 
 ## 完稿檢查清單
+
+**時機**：審查、收尾。
 
 新寫的文章，或這次改寫一整節以上時，提交前逐項確認，每一項連到它的規則。清單涵蓋 `content/` 文章最常漏掉的檢查，不是全部規則的索引；寫 skill 時另照 `skills.md`〈Skill 的撰寫規則〉的完稿檢查。判成不適用的項目，照〈掃描與探針的紀錄寫進 repo〉在 commit message 寫出項目與構成不適用的段落。
 
