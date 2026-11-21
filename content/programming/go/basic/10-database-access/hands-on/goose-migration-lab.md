@@ -148,7 +148,7 @@ exit=1
 goose: version 20261120192656
 ```
 
-goose 預設把每一份 migration 包在一個交易裡，第二句失敗時第一句的改名一起隨交易回滾，欄位仍是 `id, code, rate`，版本也沒有前進。這裡沒有 `USING`，PostgreSQL 用會檢查長度的轉型而拒絕；GORM 送出的 `USING code::varchar(20)` 是明確轉型，會把超出的字元截掉而成功。
+goose 預設把每一份 migration 包在一個交易裡，第二句失敗時第一句的改名一起隨交易回滾，欄位仍是 `id, code, rate`，版本也沒有前進。這裡沒有 `USING`，PostgreSQL 用會檢查長度的轉型而拒絕；GORM 送出的 `USING code::varchar(20)` 是寫在語句裡、指定要轉成哪個型別的轉換（explicit cast），PostgreSQL 用 explicit cast 轉成較短的 `varchar` 時把超出的字元截掉，所以成功。
 
 過長的那一列要變成什麼是業務的決定，這次改成較短的代碼再套用：
 
