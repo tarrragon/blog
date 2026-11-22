@@ -53,7 +53,7 @@ bin/changed-lines <這次的檔案...> > <暫存目錄>/added.txt   # 新增行�
 
 **時機**：動筆、審查。
 
-寫跨五章以上、有現成案例庫、品質優先於速度的教學模組時，用 `case-first-module-workflow` skill 的流程：完整讀案例庫抽出 findings、依 findings 寫稿、派多個專責 reviewer 平行審查。單篇短文、沒有案例庫的新主題、快速迭代的原型不用這個流程。方法論與實作數據見 [Case-First + Agent Team Review：教學內容的生產流程](/posts/case-first-agent-team-review-workflow/)，新模組第一次套用時先讀完那一篇。
+寫跨五章以上、有現成案例庫的教學模組時，用 `case-first-module-workflow` skill 的流程：完整讀案例庫抽出 findings、依 findings 寫稿、派多個專責 reviewer 平行審查。單篇短文、沒有案例庫的新主題，以及使用者這次把速度排在品質之前的模組（快速迭代的原型屬於這一種）不用這個流程。執行者依使用者這次的指示判斷速度是否排在品質之前：「先出一版看方向，之後可能整個丟掉」算（依的是使用者接受這一版的品質之後再補或整版換掉）；「內容要寫完整，只是這週要交」不算（依的是使用者要的品質沒有降，趕的只是時程）。使用者沒有下這類指示時不算，因為執行者當下省力的選項就是不跑流程；判成速度優先時，commit message 逐字引用使用者說的那一句。方法論與實作數據見 [Case-First + Agent Team Review：教學內容的生產流程](/posts/case-first-agent-team-review-workflow/)，新模組第一次套用時先讀完那一篇。
 
 ### 掃描與探針的紀錄寫進 repo
 
