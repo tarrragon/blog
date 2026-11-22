@@ -96,7 +96,7 @@ ps -Ao pid,ppid,stat,%cpu,%mem,etime,comm | egrep -i 'ControlCenter|SystemUIServ
 - **`ELAPSED`**：程序從啟動到現在的時間，格式是 `天-時:分:秒`，不滿一天時省略天，不滿一小時時再省略時（`00:02` 是兩秒）。`11-00:58:11` 是十一天；`sysctl kern.boottime` 印出這次開機的時間（這台是 11 月 6 日），兩者對得上，代表 `ControlCenter` 從登入起就沒有重啟過。
 - **`%MEM`**：佔實體記憶體的百分比。同一份輸出裡同樣執行了十一天的 `SystemUIServer` 是 0.1，`ControlCenter` 是 4.4。重啟之後新的 `ControlCenter` 是 0.3（見〈重啟 ControlCenter 與確認恢復〉的輸出）。這兩個時間點分不出 4.4 是十一天慢慢長出來的，還是卡住期間才長出來的，這次沒有在卡住之前量過。
 
-同一份輸出裡 `WindowServer` 的 `%CPU` 也偏高（42.3）；`ControlCenter` 重啟之後它的用量是否跟著下降，是判斷它與這次卡住是否有關的依據。這次重啟之後幾秒，用同一條 `ps` 指令讀到的 `WindowServer` 是 41.6，之後用 `top` 讀當下的用量是 45.6，都沒有跟著降，所以 `WindowServer` 的用量不是 `ControlCenter` 造成的；它是其他 App 的繪製、還是 `WindowServer` 自己的畫面合成造成的，這次沒有追查。同一張快照裡兩個程序的數字都偏高，看不出誰是源頭；重啟其中一個之後看另一個有沒有跟著降，才分得出來。處置的對象因此只有 `ControlCenter`。`WindowServer` 結束會讓整個登入工作階段一起結束，所有 App 都會被關掉。
+同一份輸出裡 `WindowServer` 的 `%CPU` 也偏高（42.3）；`ControlCenter` 重啟之後 `WindowServer` 的用量是否跟著下降，是判斷 `WindowServer` 與這次卡住是否有關的依據。這次重啟之後幾秒，用同一條 `ps` 指令讀到的 `WindowServer` 是 41.6，之後用 `top` 讀當下的用量是 45.6，都沒有跟著降，所以 `WindowServer` 的用量不是 `ControlCenter` 造成的；它是其他 App 的繪製、還是 `WindowServer` 自己的畫面合成造成的，這次沒有追查。同一張快照裡兩個程序的數字都偏高，看不出誰是源頭；重啟其中一個之後看另一個有沒有跟著降，才分得出來。處置的對象因此只有 `ControlCenter`。`WindowServer` 結束會讓整個登入工作階段一起結束，所有 App 都會被關掉。
 
 要確認卡住的程序只有這一個，`ps -Ao %cpu,%mem,pid,comm -r | head -8` 依 CPU 用量由高到低列出前七名（`-r` 是依 CPU 排序，`head -8` 多留一行給表頭）。這次 `ControlCenter` 排第一、`WindowServer` 第二，其餘程序都在 35% 以下：CPU 用量異常的系統程序只有 `ControlCenter`，跟等待游標只出現在控制中心圖示上的觀察一致。
 
