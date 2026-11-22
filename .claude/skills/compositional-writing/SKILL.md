@@ -1,10 +1,10 @@
 ---
 name: compositional-writing
-description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Also supplies the keyword bank for multi-round review / batch review / 寫作 audit (〈字句層 keyword bank（完整清單）〉). Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, post-mortem, 欄位設計, 多輪審查, multi-round review, 寫作 audit, 字句層 grep, 示範指令, 解法比較, 文章拆分."
+description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Also supplies the keyword bank for multi-round review / batch review / 寫作 audit (〈字句層 keyword bank（完整清單）〉). Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, post-mortem, 欄位設計, 多輪審查, multi-round review, 寫作 audit, 字句層 grep, 示範指令, 解法比較, 文章拆分, 兩岸用語, 中國用語, 台灣用語."
 license: MIT
 metadata:
   portable: true
-  version: 1.71.0
+  version: 1.72.0
   category: writing-methodology
 ---
 
@@ -110,6 +110,7 @@ metadata:
 | 外部分析 / 經驗談（含使用者貼來的論壇說法、問答、AI 回答）轉成教學型分析文章 | `references/source-to-teaching-analysis.md`                                 |                                                                  |
 | 文章引用樂評、評測、使用心得、量測、考證或鑑定的結論、排名這類相對比較，或引用同時帶著評語的來源（任何體裁；不論引用的目的是佐證現況、佐證紀錄還是滿足收錄條件） | `references/source-to-teaching-analysis.md`                                 | 引用評價時留意它評的時間點                                       |
 | 翻譯 / 轉譯、檢查譯名與超譯                                              | `references/translation-review.md`                                          |                                                                  |
+| 給台灣讀者的稿件出現中國大陸慣用詞（優化、視頻、運營）：決定是否換詞、換成哪個詞 | `references/cross-strait-terms.md`                                          | 換詞之前先翻成英文的理由；判斷步驟；詞庫                         |
 | 句子與用詞層的受控寫作：一事一名、一詞一義、情態詞只用可以／會／必須、句長門檻 | `asd-ste100` skill（正體中文讀它的 zh-TW pack：句子規則與詞庫）                 | 本 skill 不重寫這組規則；篇章結構仍由本 skill 負責               |
 | 管理多篇文章的結構（系列、MOC、跨篇引用、同一對象在兩個集合各有一頁）    | `references/managing-article-collections.md`                                |                                                                  |
 | 結構決策（拆篇、擴充點、依賴方向、讀者分流）、拆成多檔後查交界           | `references/structuring-with-solid.md`                                      |                                                                  |

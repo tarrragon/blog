@@ -43,6 +43,7 @@ tags: ["寫作方法論", "Zettelkasten", "技術寫作", "compositional-writing
 | 對既有文章跑寫作 audit                              | [auditing-articles](/skills/compositional-writing/auditing-articles/)                               |
 | 用 SOLID 決定文章拆分與結構                         | [structuring-with-solid](/skills/compositional-writing/structuring-with-solid/)                     |
 | 檢查翻譯 / 轉譯文章的術語錯位                       | [translation-review](/skills/compositional-writing/translation-review/)                             |
+| 給台灣讀者的稿件出現中國大陸慣用詞，決定換成哪個詞  | [cross-strait-terms](/skills/compositional-writing/cross-strait-terms/)                             |
 
 每份 reference 自包含：讀任一份不需要回頭讀其他 reference。
 

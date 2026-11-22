@@ -17,7 +17,7 @@
 - **字句層 grep（必跑）**——**下面是摘要、不是完整清單**。完整的一份在 `compositional-writing` 的「字句層 keyword bank（完整清單）」節，類別清單以那一節為準，這裡不列「還缺哪幾類」（那份清單每加一類就過期）。派 reviewer 時把它導去那一節逐類跑，不要只跑這裡列到的：
   - 正向陳述優先：`rg "不[行可是要能該支對符夠必]|無法|沒[做有]|而非|而不是" <files>` — 不主導段落的少量負向（反例對照）可保留、主要敘述要正向
   - 口語修辭（`compositional-writing` 的 colloquial-rhetoric 卡）：`rg "其實|實務上|真的|碰巧|立刻撞牆|沒事" <files>`
-  - 地區用語（`compositional-writing` 的 regional-terminology 卡）：單詞層 `rg "集群|默認|質量|視頻|函數|文件夾|接口" <files>`；慣用語層 `rg "拍腦袋|拍板|靠譜|給力|接地氣|一波|死磕|躺平|內卷" <files>`（已知個案、**非窮舉**——慣用語是開放集合、同源 reviewer 對這層有結構盲區、回報「clean」不可當真、新個案要靠目標地區讀者冷讀；見 compositional-writing 的 `regional-idioms-evade-keyword-bank` principle）
+  - 地區用語（`compositional-writing` 的 regional-terminology 卡）：單詞層跑 `compositional-writing` bank〈地區用語 grep〉的 rg，命中照 bank 連到的詞庫 reference 判；慣用語層 `rg "拍腦袋|拍板|靠譜|給力|接地氣|一波|死磕|躺平|內卷" <files>`（已知個案、**非窮舉**——慣用語是開放集合、同源 reviewer 對這層有結構盲區、回報「clean」不可當真、新個案要靠目標地區讀者冷讀；見 compositional-writing 的 `regional-idioms-evade-keyword-bank` principle）
   - 廢話前綴：`rg "值得注意的是|需要說明的是|實際上|基本上|事實上" <files>`
   - 裝飾符號：`rg "✅|❌|⚠️|🚨|🟡|🟢|⭐|📌|✓|✗" <files>`
   - 對讀者喊話：`rg "很多人|大家|不少人|你的|你在|你把|你天天|你會|你可能|先讀懂|先釐清|別搞混|別被" <files>` — 教材中性陳述、不安撫 / 不第二人稱 / 不祈使（hook / narrative 輕度第二人稱可留）；裸所有格 / 主詞（你的 X / 你在 X）也算、grep 對裸『你』非窮舉、register 類真防線是異源冷讀
