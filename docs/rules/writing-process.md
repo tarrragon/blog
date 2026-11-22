@@ -18,7 +18,7 @@
 
 **時機**：動筆。
 
-新寫文章，或這次改寫一整節以上時，執行者動筆之前先讀文章所在資料夾與往上各層 `_index.md` 的 `## 教學寫作方向`（沒有這一段的略過），以及 `writing.md`〈案例與歷史是判斷的證據，查證過程不進正文〉。`content/backend/11-api-design/styles/graphql/` 的文章要查 `graphql/`、`styles/`、`11-api-design/` 與 `backend/` 這幾層。
+新寫文章，或這次改寫一整節以上時，執行者動筆之前先讀文章所在資料夾與往上各層 `_index.md` 寫給作者的段落（`## 教學寫作方向`、`## 寫這個模組的文章時`、`## 寫這個章節的文章時`、`## 寫作模板與語域`，沒有的略過），以及 `writing.md`〈案例與歷史是判斷的證據，查證過程不進正文〉。`content/backend/11-api-design/styles/graphql/` 的文章要查 `graphql/`、`styles/`、`11-api-design/` 與 `backend/` 這幾層。
 
 ### 新文章動筆前對齊方向
 

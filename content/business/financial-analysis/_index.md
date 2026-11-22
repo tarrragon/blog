@@ -103,6 +103,8 @@ tags: ["business", "financial-analysis"]
 
 這六條的事後版本是 `multi-round-review` 的 Round 1-F 七維度審查，兩者查的是同一組東西。已上線內容的存量缺口記在下方 Backlog。
 
+另外兩項管跨文章的數字與歸納。同一筆數據已寫在另一篇驗證過的文章時，新文章對齊那一篇；查到不同的數字時，先查哪一邊錯，確認之後兩篇一起改。從已分析的案例歸納出的規律，寫明它是樣本內的觀察；要當通則用之前，先套到一個還沒分析過的產業檢驗。
+
 ## Backlog
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
@@ -123,6 +125,7 @@ tags: ["business", "financial-analysis"]
 | 反向連結補齊：sme-listed〈查核意見〉、cash-flow-statement-deep-dive 的股份基礎給付、ai-infrastructure/value-chain 的 Amazon 本票段、value-chain 的總額認列段，連到上市前公司這幾篇與新卡；business 模組「查核」與「審計」用詞統一                                                            | 主章 | value-chain 由另一個 session 提交後再補                      | 小   |
 | 員工股權那一篇的離職條款：Anthropic 員工認股權的離職後行使期限與 RSU 授予協議對離職者的條款（S-1/A-2 沒有揭露，授予協議範本若列為註冊文件附件可以補上）、上市後高階主管離任的 8-K                                                                                                            | 主章 | 讀 S-1/A-2 附件清單裡的股權激勵計畫與授予協議範本            | 小   |
 | 上市前企業與產業前景兩篇的案例更新：Anthropic 上市後第一份經查核的年報出來時，更新營收、算力費用比例、應收帳款天數與現金收益率；補上同期美國短期國庫券利率的比對（目前只算出年化約 4.1%）；雲端市集分潤比例若有揭露，算出淨額認列的營收                                                      | 主章 | Anthropic 第一份 10-K；同期國庫券利率的公開資料              | 小   |
+| `value-investing-retrospective` 的資料補強：逐年讀年報的資本支出附註，拆出維持性與成長性 capex 算業主盈餘；計入股利再投資與除權息時點算總報酬；質押比率改用 MOPS 的原始揭露                                                                                                                  | 主章 | 無                                                           | 中   |
 
 ### 期間標示缺口的判讀方式
 
