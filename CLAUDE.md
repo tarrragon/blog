@@ -16,6 +16,10 @@ Claude Code 依 `.claude/skills/<name>/SKILL.md` frontmatter 的 `description` �
 
 寫作類 skill 不等自動觸發、由 agent 主動叫用的規則，寫在 `AGENTS.md`〈寫作類 skill 的叫用〉。
 
+## Memory 與規則檔的分工
+
+寫 memory 之前，照 `docs/rules/claude-code.md`〈Memory 只記 repo 與文章以外的事〉判斷這筆內容寫在哪裡。agent 要照做的做法，包括使用者對寫法或工作方式的回饋，即使系統提示把它列為 memory 的一種，也寫進 repo，不寫進 memory。
+
 ## 規則分冊的讀取檢查
 
 `.claude/hooks/rule_read_guard.py` 在寫入 repo 內的檔案、`bin/commit-files`、`bin/push-main` 與 `ssh` 之前查這個 agent 的 transcript，對應的分冊有還沒讀的就拒絕這次工具呼叫，拒絕理由列出要讀的檔案。用 Read 整份讀完（不帶 offset 與 limit）之後，照分冊檢查這次的內容或動作，不合規的先改再重送；subagent 要自己讀，context 被壓縮之後要重讀。
