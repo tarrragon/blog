@@ -54,7 +54,7 @@ value object 的第二個價值獨立於同一性判定（也獨立於容器型�
 - 一個領域概念以裸的通用型別跨模組流通（金額是 double、識別碼是 string）、而它的合法運算遠少於底層型別——語意封閉的價值已成立，包 domain type。
 - 枚舉的行為謂詞大量重複、或某一類長出「有些成員例外」的註解：粒度或軸的選擇跟消費者需求不合，先列消費者清單再決定分層或拆軸。
 
-函數式生態（Haskell、Elixir、F#）的對應形態不同但判斷標準相同：entity 的同一性用 opaque type handle + 函數操作替代 mutable state + method，value object 用 newtype / smart constructor 確保合法值只能從受控管道建出。載體從 class 換成 module visibility 和 type wrapper，「操作需不需要 identity-based 定位」這條判斷標準不變。
+函式程式設計語言（Haskell、Elixir、F#）的對應形態不同但判斷標準相同：entity 的同一性用 opaque type handle + 函式操作替代 mutable state + method，value object 用 newtype / smart constructor 確保合法值只能從受控管道建出。載體從 class 換成 module visibility 和 type wrapper，「操作需不需要 identity-based 定位」這條判斷標準不變。
 
 ## 下一步
 
