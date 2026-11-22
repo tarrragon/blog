@@ -3,7 +3,7 @@ name: case-first-module-workflow
 description: "Case-first + Agent team review 五階段流程、寫跨多章節教學模組（5+ 章、有 case 庫）時用。觸發詞：教學模組、case-first、case-driven、stage 1/2/3/4/5、agent team review、polish pass、fact vs derive、reviewer prompt、SSoT 對應、frame 重複、skeleton case vs rich case、case fidelity、自掃描 regex、模組擴章。Trigger when writing teaching modules across multiple chapters with an existing case library."
 license: MIT
 metadata:
-  version: 1.8.0
+  version: 1.9.0
   category: writing-methodology
 ---
 
@@ -17,14 +17,14 @@ Stage 0 是後加入的階段、來自 backend/03-message-queue 模組的 6 vend
 
 - **長期累積的教學模組**：5+ 章、跨章引用密集、規範遵循重要
 - **有現成 case 庫**：案例庫含 rich case（具體數字 / 設計細節）跟 / 或 skeleton case（方向骨架）
-- **品質高於速度**：完整五階段約 4-6 小時 / 模組、適合長期累積的內容、不適合 one-off 文章
+- **品質排在速度之前（使用者沒有另外指示時的預設）**：完整五階段約 4-6 小時 / 模組、適合長期累積的內容、不適合 one-off 文章
 - **主 context 容量敏感**：reviewer 平行 background 是節省 context 的關鍵設計
 
 不適用：
 
 - **新主題沒案例庫**：要先建案例庫、不能直接套這流程
 - **單篇短文**：流程的固定成本（讀案例 + 跑 reviewer）對短文 ROI 低
-- **快速迭代原型**：流程偏向 *寫一次寫好*、不是 *快速修改*
+- **使用者這次把速度排在品質之前的模組**（快速迭代的原型屬於這一種）：「先出一版看方向，之後可能整個丟掉」算（使用者接受這一版的品質，之後再補或整版換掉）；「內容要寫完整，只是這週要交」不算（使用者要的品質沒有降，趕的只是時程）；使用者沒有下這類指示時不算
 - **Routing layer / 導讀性質章節**：已含完整 threat scope + 引用標準 + 問題節點表、case 庫不對應或缺位、應跳過本流程、用標準引用 + 通用工程知識補充承接
 - **Standard framework 比 case 庫成熟的領域**（07 LLM 章節驗證）：當該領域的 *標準框架*（如 OWASP LLM Top 10 / NIST AI RMF / MITRE ATLAS）已涵蓋 threat 分類、且 case 維護半衰期短於 standard（領域演進快、6 個月可能過時）、章節應 *用 standard-driven 取代 case-driven*、加 `Last reviewed: YYYY-MM-DD` cadence。Standard-driven 跟 case-driven 是平行選項、沒有退化 / 進階關係。詳見 [standard-driven 取代 case-driven](#standard-driven-vs-case-driven) 段。
 
