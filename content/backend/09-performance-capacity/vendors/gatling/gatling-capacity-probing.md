@@ -79,7 +79,7 @@ Gatling 的 HTML report 有四張隨時間變化的圖用來判讀 knee point：
 
 9.4〈Ramp-up 測試方法〉把「throughput 從線性成長轉成 sub-linear」列成 knee 的訊號，那是吞吐量隨負載增加的形狀。open model 下，吞吐量在受測服務處理得了的範圍內跟著設定的到達率走，到達率加一倍、成功的回應數也加一倍，所以 sub-linear 在 open model 的 report 上表現成成功的回應數低於每秒請求數，也就是 cliff 那一種，出現在 knee point 之後；在 open model 下，knee point 的訊號是更早出現的 p99 上升。
 
-closed model 的 report 讀法不同：同時在線數是設定值，不會隨服務變慢而上升，要看的是成功的每秒請求數與延遲。逐級增加同時在線數時，成功的每秒請求數跟同時在線數同比例增加、延遲持平是線性區；某一級起成功的每秒請求數的增幅小於同時在線數的增幅、延遲開始上升，那一級是 closed 型服務的 knee：同時在線數固定時，吞吐量等於同時在線數除以一個使用者每輪花的時間（延遲加停頓，[Little's Law](/backend/knowledge-cards/little-law/)），增幅變小代表每個請求在受測服務裡花的時間開始變長。再加同時在線數而成功的每秒請求數不再增加時，已經越過服務的上限，多出來的使用者只是在受測服務裡排隊（[Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈判斷條件與後果〉）。容量結論的單位是「同時在線多少個使用者時，每秒成功處理多少個請求、延遲多少」。服務快速回錯誤時，closed model 下總請求數會繼續上升，所以這裡同樣只看成功的那一部分。
+closed model 的 report 讀法不同：成功的每秒請求數與延遲是判讀的對象，同時在線數是設定值，不會隨服務變慢而上升。逐級增加同時在線數時，成功的每秒請求數跟同時在線數同比例增加、延遲持平是線性區；某一級起成功的每秒請求數的增幅小於同時在線數的增幅、延遲開始上升，那一級是 closed 型服務的 knee：同時在線數固定時，吞吐量等於同時在線數除以一個使用者每輪花的時間（延遲加停頓，[Little's Law](/backend/knowledge-cards/little-law/)），增幅變小代表每個請求在受測服務裡花的時間開始變長。再加同時在線數而成功的每秒請求數不再增加時，已經越過服務的上限，多出來的使用者只是在受測服務裡排隊（[Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈判斷條件與後果〉）。容量結論的單位是「同時在線多少個使用者時，每秒成功處理多少個請求、延遲多少」。服務快速回錯誤時，closed model 下總請求數會繼續上升，所以這裡同樣只看成功的那一部分。
 
 knee 落在哪一級之後，同一段時間對照受測服務的資源指標，照 9.4〈Resource saturation 的六個維度〉找出先飽和的資源，定位的流程在 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)；那一項資源才是容量結論裡「要加什麼」的依據。
 

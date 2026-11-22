@@ -21,4 +21,4 @@ CDN 排在請求路徑的最前面，在源站的 [Reverse Proxy](/devops/infra/
 
 ## 判斷條件與後果
 
-判斷一條請求經不經過 CDN，看的是使用者解析網域拿到的位址，而不是網站有沒有開 CDN：子網域沒有設成代理、或舊記錄還在快取裡時，那些請求直接到源站，CDN 上的規則管不到它們。CDN 的位址由所有客戶共用，只放行 CDN 位址擋得住不經過 CDN 的直連，擋不住別人用自己的 CDN 帳號指向這台源站；要分得出，要用 CDN 端的回源驗證（Cloudflare 的 Authenticated Origin Pulls 用自己上傳的憑證，或 Tunnel）。源站防火牆的位置、套用時機與 Docker 的陷阱見 [CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/devops/infra/03-network-foundation/origin-host-firewall/)。「origin protection」在快取的語境裡指的是快取未命中時保護源站的負載，見 [Origin Protection](/backend/knowledge-cards/origin-protection/)，跟這裡的源站安全是兩件事。
+使用者解析網域拿到的位址，是判斷一條請求經不經過 CDN 的依據；網站開了 CDN 不代表每條請求都經過它：子網域沒有設成代理、或舊記錄還在快取裡時，那些請求直接到源站，CDN 上的規則管不到它們。CDN 的位址由所有客戶共用，只放行 CDN 位址擋得住不經過 CDN 的直連，擋不住別人用自己的 CDN 帳號指向這台源站；要分得出，要用 CDN 端的回源驗證（Cloudflare 的 Authenticated Origin Pulls 用自己上傳的憑證，或 Tunnel）。源站防火牆的位置、套用時機與 Docker 的陷阱見 [CDN 後面的源站主機防火牆：只放行 CDN 來源的位置與套用時機、Docker 發佈連接埠的封包路徑、出站 DNS 的限制與地理封鎖](/devops/infra/03-network-foundation/origin-host-firewall/)。「origin protection」在快取的語境裡指的是快取未命中時保護源站的負載，見 [Origin Protection](/backend/knowledge-cards/origin-protection/)，跟這裡的源站安全是兩件事。

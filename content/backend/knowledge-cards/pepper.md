@@ -10,7 +10,7 @@ Pepper 是密碼雜湊過程裡額外混入的一把金鑰，而它**不存在�
 
 ## 跟其他概念的關係
 
-它的保護是條件性的，範圍要先講清楚：**只在資料庫與金鑰分開淪陷時成立**。資料隱碼攻擊取走整張表、備份檔案外流、唯讀副本被存取，這幾種是它擋得住的形態；整台伺服器被拿下或應用程式的執行權限被取得時，金鑰跟著走，這一層歸零。要不要加，看的是威脅模型裡前一類路徑的權重，判讀走 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。它與 [memory-hard function](/backend/knowledge-cards/memory-hard-function/) 是兩條獨立的軸：後者讓猜測變貴，這一層讓猜測開始不了。
+它的保護是條件性的，範圍要先講清楚：**只在資料庫與金鑰分開淪陷時成立**。資料隱碼攻擊取走整張表、備份檔案外流、唯讀副本被存取，這幾種是它擋得住的形態；整台伺服器被拿下或應用程式的執行權限被取得時，金鑰跟著走，這一層歸零。威脅模型裡前一類路徑的權重，是判斷要不要加這一層的依據，判讀寫在 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。它與 [memory-hard function](/backend/knowledge-cards/memory-hard-function/) 是兩條獨立的軸：後者讓猜測變貴，這一層讓猜測開始不了。
 
 它與 work factor 解的是不同的問題。Work factor 讓每一次猜測變貴，攻擊者仍然猜得動；pepper 讓攻擊者連猜都開始不了，前提是他沒有拿到那把金鑰。前者的強度隨硬體變快而下降，後者不會——但後者的成立條件比較窄。
 

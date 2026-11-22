@@ -43,7 +43,7 @@ logrotate 自己不常駐，由排程觸發：Oracle Linux 10 由 `logrotate.tim
 - **`copytruncate`**：給收不了訊號、不會重新開檔的程式用。logrotate 先複製一份、再把原檔截成零長度，程式繼續寫同一個檔案；代價是複製與截斷之間寫進來的幾行會遺失。
 - **大小條件**（`size`、`maxsize`）：只在 logrotate 被觸發時檢查，觸發的間隔仍然是排程決定的。
 
-logrotate 把每份 log 上一次輪替的時間記在狀態檔（Oracle Linux 是 `/var/lib/logrotate/logrotate.status`）。第一次看到一份 log 時，它只記下時間、不輪替，等週期到了才輪替；新加的設定要不要等一個週期才生效，看的是這個狀態檔。改完設定之後用 `logrotate -d /etc/logrotate.d/<設定檔>` 試跑：`-d` 只印出它會做什麼、不改任何檔案，輸出裡的 `log does not need rotating` 與 `rotating pattern` 那幾行寫出它對每份 log 的判斷。
+logrotate 把每份 log 上一次輪替的時間記在狀態檔（Oracle Linux 是 `/var/lib/logrotate/logrotate.status`）。第一次看到一份 log 時，它只記下時間、不輪替，等週期到了才輪替；logrotate 依這個狀態檔判斷新加的設定要不要等一個週期才生效。改完設定之後用 `logrotate -d /etc/logrotate.d/<設定檔>` 試跑：`-d` 只印出它會做什麼、不改任何檔案，輸出裡的 `log does not need rotating` 與 `rotating pattern` 那幾行寫出它對每份 log 的判斷。
 
 ## 鄰卡
 

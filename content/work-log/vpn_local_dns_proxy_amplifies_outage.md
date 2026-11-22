@@ -72,7 +72,7 @@ resolver #1
 
 - **第一順位是誰**。`100.100.100.100`（Tailscale）、`127.0.0.53`（systemd-resolved）、`127.0.0.1` 這類本機或保留位址出現在這裡，就代表有一個本機 proxy 站在路徑上。
 - **有沒有獨立於它的第二條路**。`resolver #1` 底下多一行 `nameserver[1]` 未必是退路——接管 DNS 的元件常常整組替換這份清單，兩行可能是同一個 proxy 的 v4 與 v6 位址。要看的是第二順位屬不屬於另一個元件。即使是，`man 5 resolver` 描述的順序嘗試是**逾時才換下一台**，所以退路的表現是每次查詢都先卡掉一個逾時、全機變慢，而不是透明接手。
-- **失敗的名字歸哪個 resolver 管**。帶 `domain :` 的 resolver 只服務該網域。內網域名解析不出來時，要看的是那條 scoped resolver，而不是 `resolver #1`——公司 VPN 的 split DNS 客戶端多半只加 scoped resolver、不動預設那條。
+- **失敗的名字歸哪個 resolver 管**。帶 `domain :` 的 resolver 只服務該網域。那條 scoped resolver 是內網域名解析不出來時要查的對象：公司 VPN 的 split DNS 客戶端多半只加 scoped resolver、不動預設的 `resolver #1`。
 
 Linux 上的對應動作是看 `/etc/resolv.conf` 指向哪裡與 `resolvectl status` 的 `resolv.conf mode`：值是 `stub` 就代表查詢先進 `systemd-resolved` 的本機 stub，各介面實際用的上游列在下面的 Link 區塊。Windows 上是 `Get-DnsClientServerAddress`。WSL2 是雙層——WSL 內的 `/etc/resolv.conf` 指向 Windows 虛擬網卡，真正的 proxy 在 Windows 那一側，處置也要在那一側做。這是預設形態，新版的 DNS tunneling 與 mirrored 網路模式下 nameserver 不長這樣，先確認自己在哪一種。
 

@@ -36,7 +36,7 @@ M/M/c 系統的平均 queue length 跟 utilization 之間是非線性關係。�
 
 多 server 模型（M/M/c）比單 server（M/M/1）有顯著容量優勢：c 個 server 的有效容量遠超 1 個 server 容量 × c。這也解釋了為什麼水平擴容（多開幾個 instance）通常比垂直擴容（單機加 CPU）划算 — 不只是規模、是 queue 行為的本質差異。
 
-對應案例：[GR8 Tech 25ms p95](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 把 p95 維持在 25ms 同時處理 54K TPS、靠的是 *永遠不讓系統進入 knee*、AI 預測讓擴容窗口縮短到 reaction time 內。
+對應案例：[GR8 Tech 25ms p95](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 用 AI 預測把擴容窗口縮短到 reaction time 內，*永遠不讓系統進入 knee*，因此在處理 54K TPS 時把 p95 維持在 25ms。
 
 ## Universal Scalability Law：擴容會邊際失效
 

@@ -34,7 +34,7 @@ tags: ["books", "management", "reading"]
 
 有三種處境這張表判不出來：好幾個位置同時成立、還沒被指派而想先評估要移動過去的那個位置、以及團隊人數不到一個團隊。三種各自的處方寫在 [位置的判斷標準與它失準的組織](/books/software-management/roles/which-position/#位置的判斷標準與它失準的組織)。
 
-想往上或往旁邊移動時，預習的方向跟當下的問題不同。純個人貢獻者想走管理，第一站是 [角色轉換與職涯路徑的選讀書目](/books/software-management/topics/role-transitions/)：那裡的書逐層寫出管理位置整天在處理什麼，而「值不值得走過去」得先看得到那個。決定要走之後才輪到 [留任、動機與工作環境的選讀書目](/books/software-management/topics/retention-motivation/) 與 [組織文化與心理安全感的選讀書目](/books/software-management/topics/culture-safety/)——這兩塊在只對自己負責的位置上完全用不到，因此也最沒有機會自然累積。想走 Staff+ 技術路線的人，預習的是 [困難對話與無權限影響力的選讀書目](/books/software-management/topics/influence-conversation/) 與 [組織結構與團隊設計的選讀書目](/books/software-management/topics/team-design/)，因為技術決策要能推得動，靠的是能不能把方案講進別人的約束裡，職權在這條路線上幫不上忙。
+想往上或往旁邊移動時，預習的方向跟當下的問題不同。純個人貢獻者想走管理，第一站是 [角色轉換與職涯路徑的選讀書目](/books/software-management/topics/role-transitions/)：那裡的書逐層寫出管理位置整天在處理什麼，而「值不值得走過去」得先看得到那個。決定要走之後才輪到 [留任、動機與工作環境的選讀書目](/books/software-management/topics/retention-motivation/) 與 [組織文化與心理安全感的選讀書目](/books/software-management/topics/culture-safety/)——這兩塊在只對自己負責的位置上完全用不到，因此也最沒有機會自然累積。想走 Staff+ 技術路線的人，預習的是 [困難對話與無權限影響力的選讀書目](/books/software-management/topics/influence-conversation/) 與 [組織結構與團隊設計的選讀書目](/books/software-management/topics/team-design/)，因為職權在這條路線上幫不上忙，工程師要把方案講進別人的約束裡，技術決策才推得動。
 
 ## 依主題選書
 

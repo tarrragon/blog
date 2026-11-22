@@ -218,4 +218,4 @@ sqlc 把 SQL 的錯誤提前到產生時，代價是多了一個產生步驟：
 - CI 裡跑一次產生，再確認工作目錄沒有差異，可以擋下「改了 SQL 卻忘了重新產生」的提交。
 - 產生的程式碼不手動修改；要改行為就改 SQL、設定檔，或在產生的函式外面再包一層。
 
-不想要這個步驟、而查詢以單表增刪查改為主的專案，看的是 [10.5 GORM：model、關聯載入與 ORM 送出的 SQL](/programming/go/basic/10-database-access/gorm/)。
+[10.5 GORM：model、關聯載入與 ORM 送出的 SQL](/programming/go/basic/10-database-access/gorm/) 介紹不需要這個步驟的做法，適合查詢以單表增刪查改為主的專案。

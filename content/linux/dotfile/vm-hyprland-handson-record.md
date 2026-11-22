@@ -629,7 +629,7 @@ quickshell log 給了關鍵證據：`@modules/lock/center/ProfilePic.qml`（lock
 - **`pgrep` 找不到 lock 行程**：鎖屏由 quickshell **行程內**畫，沒有獨立的 lock 可執行檔可抓。
 - **看起來時有時無**：成因是我剛好在 3 分鐘 idle 邊界附近截圖、加上截圖前的 IPC 活動偶爾把 idle resume 掉，鎖本身的行為是穩定的。
 
-教訓：判斷 Wayland session 有沒有被鎖，看的是**合成器的 session-lock 狀態**（有鎖時 Hyprland 的特定行為、或直接看 lock client 在不在），不是 `loginctl LockedHint`，也不是畫面上有沒有密碼框——現代 shell 這兩個訊號都靠不住。用肉眼判 UI 狀態誤判了兩次，是讀 shell 自己的 log 才定案，呼應可除錯 bootstrap 的原則：找程式自己的 log，別盯著畫面猜。
+教訓：**合成器的 session-lock 狀態**（有鎖時 Hyprland 的特定行為、或直接看 lock client 在不在）是判斷 Wayland session 有沒有被鎖的依據；`loginctl LockedHint` 與畫面上的密碼框這兩個訊號，在現代 shell 上都靠不住。用肉眼判 UI 狀態誤判了兩次，是讀 shell 自己的 log 才定案，呼應可除錯 bootstrap 的原則：找程式自己的 log，別盯著畫面猜。
 
 ##### lock-died 事故 + 復原（正是無人值守踩過的雷）
 

@@ -39,7 +39,7 @@ Multi-region 跟同 region 冗餘的關鍵差異在資料同步。同 region 的
 
 ## 冗餘要靠 drill 驗證
 
-冗餘設計「宣稱有效」不等於「實測有效」。一個 multi-AZ 切換窗口寫在文件上說「秒級」，跟它在真實故障下確實秒級切換，是兩回事——中間可能卡在應用沒重連、監控誤報、或 failover 腳本的某個前提在 production 不成立。驗證的手段是 chaos drill：用基礎設施層的故障注入（AZ failure、region failure，雲端的 chaos 工具支援）真的打掉一個可用區，看冗餘有沒有按預期接手、切換窗口是不是真的在承諾內。冗餘設計要從紙面轉成證據，靠的是演練，這條延伸到 [disaster recovery](/devops/operations/06-high-availability/disaster-recovery/) 的演練節奏。
+冗餘設計「宣稱有效」不等於「實測有效」。一個 multi-AZ 切換窗口寫在文件上說「秒級」，跟它在真實故障下確實秒級切換，是兩回事——中間可能卡在應用沒重連、監控誤報、或 failover 腳本的某個前提在 production 不成立。驗證的手段是 chaos drill：用基礎設施層的故障注入（AZ failure、region failure，雲端的 chaos 工具支援）真的打掉一個可用區，看冗餘有沒有按預期接手、切換窗口是不是真的在承諾內。團隊用演練把冗餘設計從紙面轉成證據，演練的節奏寫在 [disaster recovery](/devops/operations/06-high-availability/disaster-recovery/)。
 
 ## 下一步路由
 

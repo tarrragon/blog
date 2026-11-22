@@ -118,7 +118,7 @@ open model 下判讀用到的圖與換算：
 
 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)〈Ramp-up 測試方法〉列成 knee 訊號的「throughput 從線性成長轉成 sub-linear」，在 open model 下對應的是 cliff。open model 下吞吐量在受測服務處理得了的範圍內跟著設定的到達率走，到達率加一倍、每秒完成的請求也加一倍；sub-linear 在 dashboard 上表現成每秒完成的請求低於換算值，那已經是 cliff 那一種狀態。所以 open model 下 knee 的訊號是更早出現的 p99 上升。
 
-closed model（Thread Group、Concurrency Thread Group）的讀法不同：Active Threads Over Time 是設定值，不會隨服務變慢而上升，要看的是成功的每秒請求數（Total Transactions Per Second 的成功那一條）與延遲。逐級增加同時在線數時，成功的每秒請求數與同時在線數以相同的比例增加、延遲持平是線性區；成功的每秒請求數仍在增加、但增幅小於同時在線數的增幅，p99 開始上升的那一級是 knee，那一級的同時在線數是 closed 型服務的飽和點；成功的每秒請求數不再隨同時在線數增加時，已經越過處理得了的上限，多出來的同時在線數只是在受測服務裡排隊，延遲隨之上升（9.4〈Ramp-up 測試方法〉的 sub-linear 訊號在 closed model 下就是這個增幅的落差）。
+closed model（Thread Group、Concurrency Thread Group）的讀法不同：成功的每秒請求數（Total Transactions Per Second 的成功那一條）與延遲是判讀的對象，Active Threads Over Time 是設定值，不會隨服務變慢而上升。逐級增加同時在線數時，成功的每秒請求數與同時在線數以相同的比例增加、延遲持平是線性區；成功的每秒請求數仍在增加、但增幅小於同時在線數的增幅，p99 開始上升的那一級是 knee，那一級的同時在線數是 closed 型服務的飽和點；成功的每秒請求數不再隨同時在線數增加時，已經越過處理得了的上限，多出來的同時在線數只是在受測服務裡排隊，延遲隨之上升（9.4〈Ramp-up 測試方法〉的 sub-linear 訊號在 closed model 下就是這個增幅的落差）。
 
 dashboard 與 GUI 的 Aggregate Report 算百分位數的公式不同，官方文件寫明分佈很散或 sample 很少時兩者的差距最明顯，要兩邊一致時把 `backend_metrics_percentile_estimator` 設成 `R_3`。容量探測的各級要用同一種算法比較，結論裡記下用的是哪一種。
 

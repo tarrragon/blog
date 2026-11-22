@@ -112,7 +112,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 **跨系統對應順序未定義**時，代價落在排障路由上。身分映射若在首次呼叫時隱式建立，缺映射的錯誤會以認證失敗的形式出現，讓排查方向指向憑證而非資料。
 
-第三方授權範圍與對應順序這兩個節點的判讀訊號需要主動收集才看得到。授權範圍是否過寬要比對授予的權限清單與實際呼叫過的端點，量法與顆粒由誰決定見 [authorization scope](/backend/knowledge-cards/authorization-scope/)。對應順序是否隱式，看的是身分映射的寫入點：映射由明確的開通動作（provisioning）建立時順序是定義好的，由業務端點在找不到映射時順帶建立則屬於隱式，判別方式是查該資料表的寫入來源有幾處。
+第三方授權範圍與對應順序這兩個節點的判讀訊號需要主動收集才看得到。授權範圍是否過寬要比對授予的權限清單與實際呼叫過的端點，量法與顆粒由誰決定見 [authorization scope](/backend/knowledge-cards/authorization-scope/)。身分映射的寫入點是判斷對應順序是否隱式的依據：映射由明確的開通動作（provisioning）建立時順序是定義好的，由業務端點在找不到映射時順帶建立則屬於隱式，判別方式是查該資料表的寫入來源有幾處。
 
 [GitHub OAuth 2022](../red-team/cases/supply-chain/github-oauth-2022-token-supply-chain/) 展示授予範圍如何決定暴露面：整合持有的 token 權限過寬，第三方事件因此直接通往下游客戶的資產。[Okta 與 Cloudflare 2023](../red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/) 展示同一層的另一條傳導路徑 —— 承載身分材料的是支援流程本身，收斂點落在資料分級與供應商事件觸發的輪替，而非授權當下給了多少權限。
 

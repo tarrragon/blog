@@ -19,7 +19,7 @@ tags: ["dotfile", "prod-parity", "docker"]
 
 ## ergonomics 層自己也要可攜
 
-runtime 的 base 是 Debian，但你的 dotfile 是照 Arch 或 macOS 寫的。ergonomics 安裝腳本要能在 Debian container 裡跑，靠的是 package manager detection——同一支腳本用 `command -v apt-get / pacman / apk` 分支，適配當下所在的環境。原理見 [Package Manager 抽象層](/linux/dotfile/knowledge-cards/package-manager-abstraction/)。
+runtime 的 base 是 Debian，但你的 dotfile 是照 Arch 或 macOS 寫的。package manager detection 讓 ergonomics 安裝腳本能在 Debian container 裡跑：同一支腳本用 `command -v apt-get / pacman / apk` 分支，適配當下所在的環境。原理見 [Package Manager 抽象層](/linux/dotfile/knowledge-cards/package-manager-abstraction/)。
 
 跟工作站的入口 detection 不同，container 內只裝少數幾個工具、不值得拆多檔，適合行內 detection：一支腳本內分支、共用同一份工具清單。dotfiles repo 的 `runtimes/php72-mysql57/ergonomics/setup.sh` 就是這個形態。
 

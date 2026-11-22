@@ -9,7 +9,6 @@ tags: ["backend", "performance", "capacity", "surge", "load-shedding"]
 
 這篇整理沒有準備窗口的瞬時大流量：流量已經進來、或實際需求遠超過預測時，系統還能用什麼機制承接。排得出日期的開賣與發布，需求遠超過預測時，承接的也是這些機制。能排出準備時程、而且需求在預測範圍之內的峰值見 [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)。依呼叫者分配配額的限流實作見 [Rate Limit 實作](/backend/09-performance-capacity/rate-limit-implementation/)。流量已經進來時，當下還能做哪些決定見本篇〈事前建好的機制與當下能做的決定〉，事故的止血見 [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)；流量不回落、基準線永久上移時，要重做的是容量規劃，見 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)。
 
-
 ## 流量來源的辨識：真人需求、應用層的濫用流量、體積型攻擊
 
 瞬時大流量的處置方式由流量的來源決定，所以第一個判斷是這些請求從哪裡來。來源可以分成三種，各自要用不同的機制處理。
@@ -20,7 +19,7 @@ tags: ["backend", "performance", "capacity", "surge", "load-shedding"]
 
 **體積型攻擊**（volumetric DDoS）是非人為流量直接塞滿入口頻寬，請求本身不需要被服務。SYN flood 這類協定層攻擊耗盡的是伺服器的連線狀態而不是頻寬；規模在 SYN cookies 與負載平衡器能吸收的範圍內時可以在本地處理，超過時同樣要交給邊緣網路。GitHub 在 2018 年 2 月 28 日遭受 memcached 反射放大攻擊，峰值 1.35 Tbps、每秒 1.269 億個封包，來源分散在上千個自治系統（ASN，網際網路上各自管理路由的獨立網路）的數萬個端點（[GitHub, 2018](https://github.blog/news-insights/company-news/ddos-incident-report/)）。攻擊者偽造來源位址，向開放的 memcached 伺服器送出小請求，伺服器把大得多的回應送往目標，「overwhelming its resources - most typically the network itself」（[Cloudflare, 2018](https://blog.cloudflare.com/memcrashed-major-amplification-attacks-from-port-11211/)）。
 
-三種來源光看總量分不出來，要看流量的形狀。GitHub 偵測到攻擊，靠的是監控系統發現「an anomaly in the ratio of ingress to egress traffic」：正常的網站回應比請求大，所以平常出站流量多於入站；這時入站流量反而遠超過出站，表示湧進來的不是正常請求。依這三種來源的產生方式推論，它們的形狀通常不同：真人需求分布在平常就會被造訪的路徑上，來源跟著使用者的地理分布；應用層的濫用流量常集中在少數高價值端點，請求的間隔與參數比真人規律，不針對特定端點的 HTTP flood 則要看來源分布與請求間隔的規律性，而合法的 API 客戶流量同樣集中而規律，所以這個訊號要和「有沒有帶有效憑證」一起看；體積型攻擊集中在少數協定與埠號，或是像 GitHub 這次一樣，是根本沒有對應請求的回應封包。偵測訊號要在事前就照形狀設計（基準線與異常偵測見 [4.14 Anomaly Detection](/backend/04-observability/anomaly-detection/)，告警的設計見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)），因為流量進來的當下，只有既有的儀表板可以看。
+三種來源光看總量分不出來，要看流量的形狀。GitHub 的監控系統發現「an anomaly in the ratio of ingress to egress traffic」，偵測到這次攻擊：正常的網站回應比請求大，所以平常出站流量多於入站；這時入站流量反而遠超過出站，表示湧進來的不是正常請求。依這三種來源的產生方式推論，它們的形狀通常不同：真人需求分布在平常就會被造訪的路徑上，來源跟著使用者的地理分布；應用層的濫用流量常集中在少數高價值端點，請求的間隔與參數比真人規律，不針對特定端點的 HTTP flood 則要看來源分布與請求間隔的規律性，而合法的 API 客戶流量同樣集中而規律，所以這個訊號要和「有沒有帶有效憑證」一起看；體積型攻擊集中在少數協定與埠號，或是像 GitHub 這次一樣，是根本沒有對應請求的回應封包。偵測訊號要在事前就照形狀設計（基準線與異常偵測見 [4.14 Anomaly Detection](/backend/04-observability/anomaly-detection/)，告警的設計見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)），因為流量進來的當下，只有既有的儀表板可以看。
 
 ## 自動擴展（autoscaling）的反應時間與緩衝
 
@@ -70,7 +69,7 @@ GitHub 那次事件的處置順序是：17:21 偵測到入站與出站流量的�
 
 擴展與卸除都可能來不及，退路是事前建好、在這時接手的一組機制，目標是讓系統從無回應（請求等不到結果）退到變慢或請求失敗（使用者拿到一個慢的回應，或很快拿到一個錯誤），各種結果的判斷標準見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)。
 
-Slack 2021 年 1 月那次事故從不可用（down）退到降級（degraded），靠的是三個事前就存在的機制。負載平衡器有一個「panic mode」，大部分主機的健康檢查都失敗時，它不再只送給健康的主機，而是平均分配到所有主機；加上重試與 circuit breaker（下游服務持續失敗時暫停呼叫那個下游，避免把失敗擴散開來），到太平洋時間早上 9:15 左右，「Slack was slower than normal and error rates were higher, but by around 9:15am PST Slack was degraded, not down」（Slack 原文的 degraded 指變慢且錯誤率升高，在 [9.16](/backend/09-performance-capacity/overload-outcomes/) 的分類裡是變慢與請求失敗，不是內容縮減的降級回應）。人工做的是停掉自動縮容、保住現有的服務容量，同時修復 provision-service、清掉沒建好的機器，讓可服務的主機數回到足夠的數量；panic mode 生效的前提，正是 web tier 還有足夠數量的正常主機。panic mode 保住的是有回應，不是每個請求都成功：在多數主機不健康時仍然送流量給它們，換來的是一部分請求失敗而不是全部請求被拒絕。Circuit breaker 的設計見 [Circuit Breaker](/backend/knowledge-cards/circuit-breaker/)。
+三個事前就存在的機制，讓 Slack 2021 年 1 月那次事故從不可用（down）退到降級（degraded）。負載平衡器有一個「panic mode」，大部分主機的健康檢查都失敗時，它不再只送給健康的主機，而是平均分配到所有主機；加上重試與 circuit breaker（下游服務持續失敗時暫停呼叫那個下游，避免把失敗擴散開來），到太平洋時間早上 9:15 左右，「Slack was slower than normal and error rates were higher, but by around 9:15am PST Slack was degraded, not down」（Slack 原文的 degraded 指變慢且錯誤率升高，在 [9.16](/backend/09-performance-capacity/overload-outcomes/) 的分類裡是變慢與請求失敗，不是內容縮減的降級回應）。人工做的是停掉自動縮容、保住現有的服務容量，同時修復 provision-service、清掉沒建好的機器，讓可服務的主機數回到足夠的數量；panic mode 生效的前提，正是 web tier 還有足夠數量的正常主機。panic mode 保住的是有回應，不是每個請求都成功：在多數主機不健康時仍然送流量給它們，換來的是一部分請求失敗而不是全部請求被拒絕。Circuit breaker 的設計見 [Circuit Breaker](/backend/knowledge-cards/circuit-breaker/)。
 
 佇列是另一個要事先決定的退路，決定的是過量的請求要排隊還是立刻失敗。Amazon 建議負載平衡器用 spillover 的設定，「which fast-fails instead of queueing excess requests」，超過容量的請求直接回失敗、不排隊（[Fail Fast](/backend/knowledge-cards/fail-fast/)），並限制請求在任何佇列裡停留的時間，過舊的請求直接丟掉（[Deadline](/backend/knowledge-cards/deadline/)）：客戶端早就逾時了，處理它只是浪費容量。和上游的回饋機制見 [Backpressure](/backend/knowledge-cards/backpressure/)。
 

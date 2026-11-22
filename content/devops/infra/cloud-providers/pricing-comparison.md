@@ -15,9 +15,9 @@ aliases: ["/infra/cloud-providers/pricing-comparison/"]
 
 **試用金**（free trial credits）是一筆有期限的金額，可以花在大部分付費服務上。有了它，試用期限內可以試用較大的機型或付費服務；期限一到、或金額用完，額度就結束。
 
-**固定額度**是每個月重置、沒有期限的用量上限，只適用於指定的機型與服務。一台小主機要長期免費開著，靠的是這一種額度。各家對固定額度的稱呼不同：Oracle Cloud 叫 Always Free，Google Cloud 叫 Free Tier，AWS 叫 Always free services。
+**固定額度**是每個月重置、沒有期限的用量上限，只適用於指定的機型與服務。這一種額度讓一台小主機能長期免費開著。各家對固定額度的稱呼不同：Oracle Cloud 叫 Always Free，Google Cloud 叫 Free Tier，AWS 叫 Always free services。
 
-要長期跑一台小主機時，看的是固定額度；試用金只影響開頭那一段期限（Oracle Cloud 30 天、Google Cloud 90 天、AWS 6 個月，見比較表）。AWS 目前的 Free plan 沒有 EC2 的固定額度，長期跑主機要升級成付費帳戶，見下一節。
+固定額度是長期跑一台小主機時的比較依據；試用金只影響開頭那一段期限（Oracle Cloud 30 天、Google Cloud 90 天、AWS 6 個月，見比較表）。AWS 目前的 Free plan 沒有 EC2 的固定額度，長期跑主機要升級成付費帳戶，見下一節。
 
 ## 計費單位的換算：OCPU、vCPU 與機型配額
 

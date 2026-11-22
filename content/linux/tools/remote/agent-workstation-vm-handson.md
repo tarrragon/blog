@@ -390,7 +390,7 @@ $ cat ~/agent-workstation/testproj/hello.txt
 
 - container 砍掉重建後、Claude Code 免重新登入直接可用
 
-這個模型下「免重登」不靠 volume 裡的登入態、靠的是 env 檔：`--rm` 砍掉 container、下次 `docker run` 一樣 `--env-file` 注入同一顆 token 即認證，image 重建（Step 6 改 Dockerfile 那幾次）也不影響——認證跟 image、container 生命週期完全解耦。
+這個模型下，「免重登」由 env 檔達成，跟 volume 裡的登入態無關：`--rm` 砍掉 container、下次 `docker run` 一樣 `--env-file` 注入同一顆 token 即認證，image 重建（Step 6 改 Dockerfile 那幾次）也不影響——認證跟 image、container 生命週期完全解耦。
 
 ### 除錯判讀
 

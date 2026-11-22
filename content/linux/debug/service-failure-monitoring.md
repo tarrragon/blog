@@ -98,7 +98,7 @@ StartLimitIntervalSec=60   # 60 秒內都失敗才進 failed（start-limit-hit�
 
 **這裡有個實測踩到、跟直覺相反的意外**：`OnFailure` 不是「放棄才觸發」，而是**每一次失敗都觸發**——包含 `Restart=on-failure` 的每次 auto-restart 中途。實測一個反覆 crash 的服務（重試 3 次後放棄）觸發了 **4 次** `OnFailure`（3 次 auto-restart + 1 次最終 `start-limit-hit`）。所以只靠 `Restart=` + `StartLimit=` 這段 config，每次瞬斷都會發一則告警、把信箱洗爆。（這個觸發次數是特定 systemd 版本的實測行為；`OnFailure` 與 `Restart=` 的互動跨版本調整過，換一個版本可能量到不同次數，照抄前先在自己的版本上驗一次。）
 
-真正做到「只在放棄才吵」，靠的是上面送出腳本開頭那道 gate：`systemctl show <unit> -p ActiveState` 在 auto-restart 中途是 `activating`、撞上限進 failed 才是 `failed`，腳本只在 `failed` 才送。加上 gate 後同一個 crash 測試從 4 次告警降到 1 次（只剩最終放棄那次）。config 負責「重試幾次」，handler 的 gate 負責「只在終局告警」——兩段合起來才是完整的「先重啟、放棄才吵」。
+上面送出腳本開頭那道 gate 做到了「只在放棄才吵」：`systemctl show <unit> -p ActiveState` 在 auto-restart 中途是 `activating`、撞上限進 failed 才是 `failed`，腳本只在 `failed` 才送。加上 gate 後同一個 crash 測試從 4 次告警降到 1 次（只剩最終放棄那次）。config 負責「重試幾次」，handler 的 gate 負責「只在終局告警」——兩段合起來才是完整的「先重啟、放棄才吵」。
 
 ### 抓「進程活著但沒在做事」：外部健康探針
 

@@ -39,7 +39,7 @@ tags: ["backend", "http-caching", "browser", "bfcache"]
 
 > Chrome now has a simplified reload behavior to only validate the main resource and continue with a regular page load.（Chromium Blog，2017-01-26）
 
-一般重新整理與強制重新整理兩列的差別，對 origin 有直接的影響：使用者回報「重新整理也沒看到新版」時，新鮮期間內的子資源在一般重新整理下不會被重新抓取，只有強制重新整理、或等副本過期之後，瀏覽器才會重新向 origin 取得。要讓瀏覽器立刻取得改版後的子資源，靠的是 [12.5 已保存副本的更新方式：失效、purge、版本化網址與等待到期](/backend/12-http-caching/updating-stored-responses/) 的版本化網址，不能靠請使用者重新整理。
+一般重新整理與強制重新整理兩列的差別，對 origin 有直接的影響：使用者回報「重新整理也沒看到新版」時，新鮮期間內的子資源在一般重新整理下不會被重新抓取，只有強制重新整理、或等副本過期之後，瀏覽器才會重新向 origin 取得。後端用 [12.5 已保存副本的更新方式：失效、purge、版本化網址與等待到期](/backend/12-http-caching/updating-stored-responses/) 的版本化網址，讓瀏覽器立刻取得改版後的子資源，不依賴使用者重新整理。
 
 `/page` 在「再次前往」時也送到了 origin，原因是它沒有快取標頭，也沒有 `Last-Modified`；依 [12.2 新鮮度期限的計算：max-age、s-maxage、Expires 與啟發式期限](/backend/12-http-caching/freshness-lifetime/) 整理的 Chromium 啟發式規則，這種回應的期限是 0。反過來，同一個頁面如果帶 `Last-Modified`，Chromium 會用 `Date` 與 `Last-Modified` 間隔的 10% 當期限，期間內再次前往時直接使用舊的 HTML；舊 HTML 引用的仍是舊的資源網址，改版就看不到。HTML 頁面因此要明寫 `no-cache`，理由見 [12.5 已保存副本的更新方式：失效、purge、版本化網址與等待到期](/backend/12-http-caching/updating-stored-responses/) 的〈版本化網址與 immutable〉。
 
@@ -65,4 +65,4 @@ bfcache 還原的是記憶體裡的整個頁面狀態，包括網頁程式的變
 
 ## 記憶體快取與磁碟快取
 
-瀏覽器的開發者工具常把來自快取的回應分成「memory cache」與「disk cache」。這是瀏覽器內部的儲存位置，HTTP 規範沒有這個區分。規範只提到瀏覽器可能另有頁面內的資源快取，而且這類快取「may or may not honor HTTP caching semantics」（RFC 9111 §6）。實測時用網頁的 performance API 只能看出回應來自快取（`deliveryType` 為 `cache`、`transferSize` 為 0），分不出是哪一種；判斷後端行為時，看的是請求有沒有送到 origin，不是這份回應落在哪一種儲存。
+瀏覽器的開發者工具常把來自快取的回應分成「memory cache」與「disk cache」。這是瀏覽器內部的儲存位置，HTTP 規範沒有這個區分。規範只提到瀏覽器可能另有頁面內的資源快取，而且這類快取「may or may not honor HTTP caching semantics」（RFC 9111 §6）。實測時用網頁的 performance API 只能看出回應來自快取（`deliveryType` 為 `cache`、`transferSize` 為 0），分不出是哪一種；請求是否送到 origin 是判斷後端行為的依據，這份回應存在哪一種儲存不影響這個判斷。

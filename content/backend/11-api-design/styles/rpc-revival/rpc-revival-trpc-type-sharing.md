@@ -10,7 +10,7 @@ tRPC 的選型位置是「前後端同倉、且都是 TypeScript」這個消費�
 
 ## 前提：同倉 TS-only
 
-型別推導能當契約、靠的是 client 與 server 在同一個 TypeScript 專案裡一起編譯 —— 這是 tRPC 官方 FAQ 自己標明的前提。脫離 monorepo、client 就失去「跟 server 型別一起運作」的保證；唯一的替代是把 backend 型別發成 private npm package 讓 client 依賴。這條前提直接鎖死兩個維度：語言鎖定 TypeScript（型別推導不跨語言）、部署形態鎖定同倉或私有套件。官方也自列一個能力邊界：動態型別輸出做不到、因為它需要 higher-kinded types（型別的型別、TypeScript 型別系統目前還沒到的能力上限）。
+client 與 server 在同一個 TypeScript 專案裡一起編譯，型別推導才能當契約 —— 這是 tRPC 官方 FAQ 自己標明的前提。脫離 monorepo、client 就失去「跟 server 型別一起運作」的保證；唯一的替代是把 backend 型別發成 private npm package 讓 client 依賴。這條前提直接鎖死兩個維度：語言鎖定 TypeScript（型別推導不跨語言）、部署形態鎖定同倉或私有套件。官方也自列一個能力邊界：動態型別輸出做不到、因為它需要 higher-kinded types（型別的型別、TypeScript 型別系統目前還沒到的能力上限）。
 
 落到操作、判斷很乾脆：消費者是不是你自己團隊、跟 server 共用同一個 TS 倉。是 —— tRPC 的零 codegen 是真優勢；不是 —— 前提不成立、優勢歸零。作者社群把這條邊界說得很白：tRPC 無法有效服務公開的第三方 API（見 [Echobind：從 GraphQL 撤到 tRPC 的量化帳（反例）](/backend/11-api-design/cases/graphql-echobind-trpc-retreat/) 作者自列）。公開 API 的消費者是你控制不了的匿名開發者、他們沒有你的型別、也不會為了呼叫你裝一個 TS 專案 —— 這個形狀要把答案推回 HTTP+JSON。
 

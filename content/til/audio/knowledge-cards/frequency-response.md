@@ -7,7 +7,7 @@ weight: 4
 tags: ["til", "音響", "knowledge-cards"]
 ---
 
-比較兩台設備的音色平衡、判斷一台設備改變了哪些頻段的音量時，看的是它的頻率響應（frequency response）：設備在各頻率的輸出大小畫成的一條曲線，橫軸是頻率（對數刻度，20 Hz 到 20 kHz，每個八度（octave：頻率加倍）佔同樣的寬度），縱軸是音量（[dB](/til/audio/knowledge-cards/decibel/)）。規格表常寫成「20 Hz–20 kHz ±0.5 dB」，意思是在這個範圍內，曲線上下偏離不超過 0.5 dB。
+頻率響應（frequency response）是設備在各頻率的輸出大小畫成的一條曲線，用來比較兩台設備的音色平衡、判斷一台設備改變了哪些頻段的音量；橫軸是頻率（對數刻度，20 Hz 到 20 kHz，每個八度（octave：頻率加倍）佔同樣的寬度），縱軸是音量（[dB](/til/audio/knowledge-cards/decibel/)）。規格表常寫成「20 Hz–20 kHz ±0.5 dB」，意思是在這個範圍內，曲線上下偏離不超過 0.5 dB。
 
 ## 跟其他概念的關係
 

@@ -44,7 +44,7 @@ mysql -u user -p dbname < dump-20260626.sql
 
 mysqldump 產出的是邏輯備份（SQL 語句），還原速度取決於資料量——幾百 MB 以內分鐘級，數 GB 可能要半小時以上。需要更快的備份/還原（物理備份），要用 Percona XtraBackup 或 MySQL Enterprise Backup。
 
-判斷一份 mysqldump 備份是否還原得出可運作的服務，看的是 dump 還原之後的資料庫，dump 檔存在只是前提。資料庫裡有 stored procedure 或 function、而 dump 沒帶 `--routines` 時，還原出來的資料庫有表與資料，而呼叫那些 procedure 的程式會報錯，原因是 routines 不在預設的匯出範圍裡；trigger 預設會匯出，被 `--skip-triggers` 關掉時，原本由 trigger 寫入的資料在還原後不再產生。資料庫裡有 MyISAM 表時，`--single-transaction` 的一致性快照只涵蓋 InnoDB 表，MyISAM 表的內容可能跟其他表對不上某一個時間點。還原時間超過服務能接受的停機時間時，邏輯備份在資料遺失之後仍然還原得出來，但要停機到 SQL 全部重新執行完，這時物理備份才換得到較短的還原時間。這幾個條件都要實際還原一次才確認得了，所以備份流程裡要定期把 dump 還原到另一個資料庫驗證。
+dump 還原之後的資料庫，是判斷一份 mysqldump 備份是否還原得出可運作服務的依據，dump 檔存在只是前提。資料庫裡有 stored procedure 或 function、而 dump 沒帶 `--routines` 時，還原出來的資料庫有表與資料，而呼叫那些 procedure 的程式會報錯，原因是 routines 不在預設的匯出範圍裡；trigger 預設會匯出，被 `--skip-triggers` 關掉時，原本由 trigger 寫入的資料在還原後不再產生。資料庫裡有 MyISAM 表時，`--single-transaction` 的一致性快照只涵蓋 InnoDB 表，MyISAM 表的內容可能跟其他表對不上某一個時間點。還原時間超過服務能接受的停機時間時，邏輯備份在資料遺失之後仍然還原得出來，但要停機到 SQL 全部重新執行完，這時物理備份才換得到較短的還原時間。這幾個條件都要實際還原一次才確認得了，所以備份流程裡要定期把 dump 還原到另一個資料庫驗證。
 
 ## 鄰卡
 

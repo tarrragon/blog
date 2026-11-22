@@ -134,7 +134,7 @@ min by (device, fstype) (
 
 - **讀得到 exporter，而 exporter 連不上它監控的服務**：Prometheus 的 `up` 只代表 Prometheus 連得到 exporter，postgres_exporter 連不上 PostgreSQL 時 `up` 照樣是 1；exporter 自己輸出的連線狀態（`pg_up`、`redis_up`、`nginx_up`）才是 0。
 - **讀得到而缺分辨對象的標籤**：前面 cAdvisor 的例子。`count by (container_label_com_docker_compose_service) (container_memory_working_set_bytes)` 列出實際有哪些服務，一個服務一列；另有一列不帶服務標籤，是 root cgroup 與 compose 以外的容器。
-- **讀得到，而部分 collector 失敗**：node_exporter 有一部分 collector 在某些環境讀不到資料，`up` 照樣是 1；`node_scrape_collector_success == 0` 列出失敗的那幾個。OrbStack 上列出 18 個，多數是這台機器本來就沒有的硬體或檔案系統（zfs、infiniband、nvme），要看的是預期會有資料的那幾個：這裡的 pressure（PSI）也在失敗之列，所以這個環境用不了 PSI。
+- **讀得到，而部分 collector 失敗**：node_exporter 有一部分 collector 在某些環境讀不到資料，`up` 照樣是 1；`node_scrape_collector_success == 0` 列出失敗的那幾個。OrbStack 上列出 18 個，多數是這台機器本來就沒有的硬體或檔案系統（zfs、infiniband、nvme），預期會有資料的那幾個才需要處理：這裡的 pressure（PSI）也在失敗之列，所以這個環境用不了 PSI。
 - **讀得到也有標籤，而數字對狀況沒有反應**：只有刻意製造一次它該看到的狀況（[故障注入](/backend/knowledge-cards/chaos-test/)）才看得出來。告警規則引用了不存在的指標時運算結果是空的、規則永遠不成立，`promtool` 照樣檢查通過，所以告警規則也要用故障注入確認會成立。
 
 同一個短網址服務第一次接上時，刻意製造狀況的實測（`pg_sleep` 的 90 秒要長過查詢的 1 分鐘時間窗加一個讀取間隔）：

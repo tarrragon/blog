@@ -23,7 +23,7 @@ cookie 的到期時間由寫入它的 script 設定，再受瀏覽器的規則�
 
 ## 判斷條件與後果
 
-一個 cookie 受哪些限制，取決於兩個屬性：它寫在哪個網域，以及它由 JavaScript 寫入還是由伺服器回應的 `Set-Cookie` 標頭寫入。寫入方式可以在 Network 面板分辨：某個回應的 `Set-Cookie` 標頭帶著這個名稱，就是伺服器寫的；所有回應都沒有、而它在 script 執行之後出現，就是 JavaScript 寫的。網域決定瀏覽器的第三方 cookie 封鎖管不管得到它，封鎖第三方 cookie 不影響第一方 cookie；寫入方式（連同回應來自誰的伺服器）決定 ITP 的哪一條限制管得到它，JavaScript 寫入的第一方 cookie 仍然受 ITP 限制，所以同一個人隔一週以上沒有互動、或從廣告點進來隔天才回來時，可能被追蹤碼當成另一個瀏覽器。用 Network 面板分辨寫入方式時，要用無痕視窗或先清掉這個網站的 cookie、在載入頁面之前就打開面板，否則前一次造訪留下的 cookie 會被誤判成 JavaScript 寫的。在歐盟 ePrivacy 指令下（第 5(3) 條，本站的解讀見[配額、濫用防護、隱私與遷移訊號](/automation/05-deploy-quota-security/quota-abuse-privacy/)的〈隱私與 PII 邊界〉），判斷是否要取得使用者同意時，看的是「在使用者的裝置上儲存或讀取資訊」這個動作，第一方或第三方都在範圍內；把識別碼寫成第一方 cookie 改變的是瀏覽器的限制，改變不了這條同意的要求。
+一個 cookie 受哪些限制，取決於兩個屬性：它寫在哪個網域，以及它由 JavaScript 寫入還是由伺服器回應的 `Set-Cookie` 標頭寫入。寫入方式可以在 Network 面板分辨：某個回應的 `Set-Cookie` 標頭帶著這個名稱，就是伺服器寫的；所有回應都沒有、而它在 script 執行之後出現，就是 JavaScript 寫的。網域決定瀏覽器的第三方 cookie 封鎖管不管得到它，封鎖第三方 cookie 不影響第一方 cookie；寫入方式（連同回應來自誰的伺服器）決定 ITP 的哪一條限制管得到它，JavaScript 寫入的第一方 cookie 仍然受 ITP 限制，所以同一個人隔一週以上沒有互動、或從廣告點進來隔天才回來時，可能被追蹤碼當成另一個瀏覽器。用 Network 面板分辨寫入方式時，要用無痕視窗或先清掉這個網站的 cookie、在載入頁面之前就打開面板，否則前一次造訪留下的 cookie 會被誤判成 JavaScript 寫的。歐盟 ePrivacy 指令（第 5(3) 條，本站的解讀見[配額、濫用防護、隱私與遷移訊號](/automation/05-deploy-quota-security/quota-abuse-privacy/)的〈隱私與 PII 邊界〉）以「在使用者的裝置上儲存或讀取資訊」這個動作作為是否要取得使用者同意的依據，第一方或第三方都在範圍內；把識別碼寫成第一方 cookie 改變的是瀏覽器的限制，改變不了這條同意的要求。
 
 ## 完整章節
 

@@ -1,7 +1,7 @@
 ---
 title: "Open-Closed Principle（開放封閉原則）"
 date: 2026-10-19
-description: "要在新增一種格式、一種類型或一種規則時不必改動既有程式碼，或要判斷一個擴充點值不值得先做時：模組對選定的那一類變更封閉，靠的是使用端只依賴一個固定的抽象"
+description: "要在新增一種格式、一種類型或一種規則時不必改動既有程式碼，或要判斷一個擴充點值不值得先做時：使用端只依賴一個固定的抽象，模組因此對選定的那一類變更封閉"
 weight: 4
 tags: ["design-principles", "knowledge-card", "ocp", "solid"]
 aliases: ["/design-principles/knowledge-cards/open-closed-principle/"]

@@ -10,7 +10,7 @@ Single Writer Model 的核心概念是同一個邏輯資料庫在任一時間只
 
 ## 跟其他概念的關係
 
-Single Writer Model 位在並發模型的一端 — 寫入併發度上限為一。它和「多 reader 並行」可以共存：SQLite WAL mode 允許多個 reader 與一個 writer 同時運作。要擴展寫入時，靠的是改變架構（例如分區、分庫或換成 [Distributed SQL](/backend/knowledge-cards/distributed-sql/)），增加 writer 在此模型下行不通。
+Single Writer Model 位在並發模型的一端 — 寫入併發度上限為一。它和「多 reader 並行」可以共存：SQLite WAL mode 允許多個 reader 與一個 writer 同時運作。擴展寫入要改變架構（例如分區、分庫或換成 [Distributed SQL](/backend/knowledge-cards/distributed-sql/)），增加 writer 在此模型下行不通。
 
 ## 可觀察訊號與例子
 

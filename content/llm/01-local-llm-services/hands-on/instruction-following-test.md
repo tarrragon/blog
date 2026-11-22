@@ -6,7 +6,7 @@ tags: ["llm", "hands-on", "ollama", "gemma", "qwen", "instruction-following"]
 weight: 8
 ---
 
-本篇是個讓本地 LLM 在「**讀兩個資料夾、學風格、寫新章節**」任務上自我評估的實驗。任務本身內容無關緊要（隨便挑了一份私人創作資料夾）、要看的是**不同模型在 [instruction following](/llm/knowledge-cards/instruction-following/) / format consistency / 篇幅控制三個維度的差距**。
+本篇是個讓本地 LLM 在「**讀兩個資料夾、學風格、寫新章節**」任務上自我評估的實驗。本篇比較**不同模型在 [instruction following](/llm/knowledge-cards/instruction-following/) / format consistency / 篇幅控制三個維度的差距**，任務本身的內容無關緊要（隨便挑了一份私人創作資料夾）。
 
 實驗跑了四個本地模型對比：
 

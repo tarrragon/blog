@@ -153,7 +153,7 @@ JOIN counts ON o.customer_id = counts.customer_id
 WHERE counts.order_count > 10;
 ```
 
-這段查詢慢的時候，要看的是 materialize 本身的成本（derived table 掃了多少列）與外層 join 走不走 index，而不是 derived table 有沒有被 materialize。改用 temporary table 做的是同一個 materialize 動作，差別在暫存表由 application 建立與清除，可以在多段查詢之間重用：
+materialize 本身的成本（derived table 掃了多少列）與外層 join 是否使用 index，是這段查詢慢的時候要查的項目；光知道 derived table 是否被 materialize，判斷不出慢在哪裡。改用 temporary table 做的是同一個 materialize 動作，差別在暫存表由 application 建立與清除，可以在多段查詢之間重用：
 
 ```sql
 CREATE TEMPORARY TABLE counts AS
