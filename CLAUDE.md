@@ -26,4 +26,4 @@ Claude Code 依 `.claude/skills/<name>/SKILL.md` frontmatter 的 `description` �
 
 ## 提交前對照編輯紀錄
 
-`bin/commit-files` 提交前自己跑 `bin/session-edits-check --staged`，拿 transcript 重播的結果比對要提交的內容，確認 diff 都是這個 session 的編輯。工具只重播 Edit 與 Write，所以要提交的檔案的內容用 Edit 或 Write 改；用其他方式改的檔案，工具會印 `[ASK-USER]`。`bin/commit-files` 印出 `[ASK-USER]` 或 `session-edits-check exit` 時，照 `docs/rules/claude-code.md`〈提交前對照編輯紀錄〉處置；其餘的失敗照 `docs/rules/commit-push.md`〈提交〉。
+`bin/commit-files` 提交前自己跑 `bin/session-edits-check --staged`，拿 transcript 重播的結果比對要提交的內容，確認 diff 都是這個 session 的編輯。工具只重播 Edit 與 Write，所以要提交的檔案的內容用 Edit 或 Write 改；用其他方式改的檔案，工具會印 `[ASK-USER]`。所以提交前不手動跑 `./bin/mdtools fmt -fix`（pre-commit 會自己跑），要看格式問題時只跑 `-check`。`bin/commit-files` 印出 `[ASK-USER]` 或 `session-edits-check exit` 時，照 `docs/rules/claude-code.md`〈提交前對照編輯紀錄〉處置；其餘的失敗照 `docs/rules/commit-push.md`〈提交〉。

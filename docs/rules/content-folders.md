@@ -82,7 +82,7 @@
 
 ### 目錄頁 `_index.md` 與文章檔的分工
 
-`content/` 底下的 `_index.md` 是 Hugo 的 section list page（模組的目錄頁）。`layouts/_default/list.html` 只列出子資料夾與文章、不輸出 `.Content`，所以 `_index.md` 的正文不會出現在網站上，讀者看不到。例外是首頁 `content/_index.md`：首頁用 theme 的 `index.html`，它輸出 `.Content`，所以那一頁的正文就是讀者看到的首頁，照文章的體例寫。其餘 `_index.md` 的使用者是寫作者與維護這個分類的 agent，內容是這個分類的工作底稿：推導源頭、章節表、問題落點表、場景導讀（讀者依情境走的閱讀路徑）、Backlog。
+`content/` 底下的 `_index.md` 是 Hugo 的 section list page（模組的目錄頁）。`layouts/_default/list.html` 只列出子資料夾與文章、不輸出 `.Content`，所以 `_index.md` 的正文不會出現在網站上，讀者看不到。例外是首頁 `content/_index.md`：首頁用 theme 的 `index.html`，它輸出 `.Content`，所以那一頁的正文就是讀者看到的首頁，照文章的體例寫。其餘 `_index.md` 的使用者是寫作者與維護這個分類的 agent，內容是這個分類的工作底稿：推導源頭、章節表、問題落點表、場景導讀（讀者依情境走的閱讀路徑）、教學寫作方向、Backlog。
 
 | 檔案        | 用途       | 內容                                                                  | 內容量的參考                 |
 | ----------- | ---------- | --------------------------------------------------------------------- | ---------------------------- |
