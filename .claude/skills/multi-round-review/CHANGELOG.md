@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.49.0 — `references/round-1-compliance.md` 1-A 的前導詞清單改成連到 compositional-writing bank〈正反問句當名詞〉，與 compositional-writing 1.71.0 同步。
+
 **Version**: 2.48.0 — `references/round-1-compliance.md` 1-A 與 `borrowed-everyday-word-as-translated-term` 的譯名問句補上拆開來就是這個概念的動作（動詞加受詞）的譯名合規（pagination 譯成「分頁」），判定表加一欄，與 compositional-writing 1.69.0 同步。
 
 **Version**: 2.47.0 — `references/round-1-compliance.md` 1-A〈讀者會先想到別的東西的譯名〉列譯名的 rg 只認「中文（original term）」；補第二條 `rg -o "[A-Za-z][A-Za-z0-9 ./-]*（[一-龥][^）]*）"`，列出英文寫在前面的術語卡標題與連結文字，譯名取括號裡那一段。與 compositional-writing 1.66.0 的 keyword bank 同步。
