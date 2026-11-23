@@ -10,7 +10,7 @@
 | `domains/cloud-academy/`   | 領域乙：雲課堂（10 表）   | `schema.sql`、`seed.sql`、`seed_scale.sql`（含 5 萬帳單與 1,500 筆 Webhook 重送風暴）                                          |
 | `domains/swift-logistics/` | 領域丙：捷配物流（9 表）  | `schema.sql`、`seed.sql`、`seed_scale.sql`（含 5 萬運單 35% 客戶傾斜與 3 萬筆高比例 `completed` 任務）                         |
 | `benchmarks/`              | 基準快照 JSON             | `sqlite-scale-snapshots.json`（實跑生成）、`postgres-and-concurrency-reference.json`（PG／多連線／分區參考快照）               |
-| `questions/`               | 結構化題庫 JSON           | `manifest.json` 與七階段＋跨概念複合陷阱共 8 份題庫（首批 41 題、涵蓋 3 領域與 CRUD 多表路徑輪替）                             |
+| `questions/`               | 結構化題庫 JSON           | `manifest.json` 與八階段（含資安與權限）＋跨概念複合陷阱共 9 份題庫（首批 47 題、涵蓋 3 領域與 CRUD 多表路徑輪替）             |
 | `verify_domains.py`        | 資料庫底座驗證            | 載入三套基礎與壓測資料庫，驗外鍵、完整性、反例與執行計畫分岔                                                                   |
 | `generate_benchmarks.py`   | 實測基準快照產生器        | 在三套壓測資料庫實跑關鍵查詢，輸出 `EXPLAIN QUERY PLAN` 與中位數耗時倍率                                                       |
 | `verify_questions.py`      | 題庫自動化驗收            | 驗證 JSON 欄位、站內文章連結、基準參照，並在獨立記憶體 SQLite 實跑全部可執行選項與斷言                                         |
@@ -24,7 +24,7 @@ python3 scripts/sql-practice/verify_domains.py
 # 2. 重新實跑並更新 SQLite 規模基準快照 JSON
 python3 scripts/sql-practice/generate_benchmarks.py
 
-# 3. 驗證全部題庫 JSON 結構、站內連結與 118 個 SQLite 實跑選項
+# 3. 驗證全部題庫 JSON 結構、站內連結與可執行 SQLite 選項
 python3 scripts/sql-practice/verify_questions.py
 ```
 

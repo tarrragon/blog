@@ -37,7 +37,8 @@
     { "stage": 5, "name": "效能瓶頸、執行計畫、資料分布與宣告一致性", "file": "stage5-performance-intent.json" },
     { "stage": 6, "name": "跨引擎遷移、高並行寫入與從需求到上線", "file": "stage6-migration-concurrency-shipping.json" },
     { "stage": 7, "name": "資料庫 Schema 設計與讀寫頻率／效能權衡", "file": "stage7-schema-design.json" },
-    { "stage": 8, "name": "跨概念複合陷阱挑戰", "file": "composite-traps.json" }
+    { "stage": 8, "name": "資料庫資安、權限邊界與防禦設計", "file": "stage8-security-permissions.json" },
+    { "stage": 9, "name": "跨概念複合陷阱挑戰", "file": "composite-traps.json" }
   ],
   "masteryRules": {
     "minDistinctDomainsOrPaths": 2,

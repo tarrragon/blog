@@ -1,0 +1,480 @@
+[
+  {
+    "conceptId": "S8-01",
+    "variantId": "S8-01-bookstore-sqli-allowlist-01",
+    "domain": "bookstore",
+    "stage": 8,
+    "tablePath": ["books"],
+    "perspective": "tradeoff-design",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": "sql-injection-and-allowlist",
+    "traps": ["string-concat-sqli", "placeholder-cannot-bind-identifier", "blacklist-filter-bypass"],
+    "title": "SEC01：動態搜尋與動態排序 API——參數化邊界與識別字白名單",
+    "businessRequirement": "紙頁書店搜尋 API 接受使用者輸入的書名關鍵字 keyword、排序欄位 sort_by（price 或 book_id）與排序方向 sort_dir（ASC 或 DESC）。工程師發現參數化佔位符 ? 無法拿來綁定 ORDER BY 欄位名，該如何安全組裝查詢？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "公開搜尋 API、暴露於網際網路",
+      "readWriteRatio": "500:1",
+      "indexes": ["PRIMARY KEY (book_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_concat_all",
+        "sql": "-- 直接把使用者輸入拼接成字串：\"SELECT book_id, title, price FROM books WHERE title LIKE '%\" + keyword + \"%' ORDER BY \" + sort_by + \" \" + sort_dir",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "正常輸入時看似可執行",
+        "edgeCaseResult": "攻擊者送出特製 keyword 或 sort_by（如 CASE WHEN 盲注、UNION SELECT 拖庫）直接觸發 SQL Injection",
+        "pros": ["無"],
+        "cons": ["嚴重 SQL Injection 漏洞，可竊取全庫資料"],
+        "validWhen": "無",
+        "failsWhen": "所有接收外部輸入的查詢"
+      },
+      {
+        "key": "opt_param_plus_allowlist",
+        "sql": "SELECT book_id, title, price FROM books WHERE is_active = 1 AND title LIKE '%SQL%' ESCAPE '\\' ORDER BY price DESC, book_id ASC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "值一律走參數化佔位符（並轉義使用者輸入的 % 與 _ 萬用字元），sort_by 與 sort_dir 透過程式端固定字典白名單對應為常數 SQL 片段（不直接拼接原始輸入）",
+        "edgeCaseResult": "即使攻擊者送出任意注入字串，值只會被當成純文字比對，非白名單的 sort_by 會直接拒絕或回退預設排序",
+        "pros": ["徹底阻斷值與識別字兩側的 SQL Injection", "轉義 LIKE 萬用字元避免非預期全表匹配"],
+        "cons": ["新增可排序欄位時須在白名單映射表補一條"],
+        "validWhen": "所有同時含動態篩選值與動態排序／欄位的 API",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_bind_order_by_param",
+        "sql": "SELECT book_id, title, price FROM books WHERE is_active = 1 ORDER BY 'price' DESC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "語法不報錯，但 ORDER BY 收到的是常數字串 'price' 而非欄位 price，整段排序完全失效！",
+        "edgeCaseResult": "參數化只能綁定「資料值」，綁定在 ORDER BY 會被當常數，導致所有列排序鍵相同而靜默不排序",
+        "pros": ["無注入風險"],
+        "cons": ["排序功能靜默失效，結果順序完全沒有依 price 排"],
+        "validWhen": "無",
+        "failsWhen": "動態指定欄位名、表名或關鍵字時"
+      },
+      {
+        "key": "opt_blacklist_strip",
+        "sql": "-- 仍用字串拼接，但先用正規表達式刪掉分號 ;、註解 -- 與單引號 '",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "看似擋掉最粗暴的堆疊查詢",
+        "edgeCaseResult": "在 ORDER BY 位置不需分號或引號即可用布林／時間盲注（如 CASE WHEN (...) THEN price ELSE book_id END）完整竊取資料",
+        "pros": ["無"],
+        "cons": ["黑名單永遠有繞過手段，無法取代參數化與白名單"],
+        "validWhen": "無",
+        "failsWhen": "所有安全防護場景"
+      }
+    ],
+    "recommendedKeys": ["opt_param_plus_allowlist"],
+    "alternativeNote": "參數化處理「值（data）」、固定白名單映射處理「結構（欄位名、表名、ASC/DESC）」，兩條防線缺一不可",
+    "relatedDocs": [
+      "/backend/01-database/red-team-data-layer/",
+      "/backend/01-database/sql/identifier-rules/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_param_plus_allowlist": [202, 208],
+        "opt_bind_order_by_param": [201, 202, 203, 204, 205, 207, 208]
+      }
+    }
+  },
+  {
+    "conceptId": "S8-02",
+    "variantId": "S8-02-logistics-bola-rls-01",
+    "domain": "swift-logistics",
+    "stage": 8,
+    "tablePath": ["shipments", "merchants"],
+    "perspective": "choose-query",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "tenant-isolation-and-rls",
+    "traps": ["bola-idor-missing-tenant-predicate", "uuid-is-not-authorization", "rls-owner-bypass"],
+    "title": "SEC02：多租戶運單詳情查詢——防 BOLA／IDOR 越權與 PostgreSQL RLS 縱深防禦",
+    "businessRequirement": "捷配物流商家後台 `GET /shipments/:id` 目前登入者是商家 1002（山丘選物），他把網址參數改成 `7001`（屬於大客戶商家 1001 星海電商的運單）。哪一個查詢與權限設計能確實擋住跨租戶資料外洩？",
+    "workloadProfile": {
+      "engine": "SQLite / PostgreSQL 18（多租戶 SaaS）",
+      "scale": "上千家合作商家共用同一套資料表",
+      "readWriteRatio": "100:1",
+      "indexes": ["PRIMARY KEY (shipment_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_id_only_bola",
+        "sql": "SELECT shipment_id, merchant_id, fee_cents, status FROM shipments WHERE shipment_id = 7001;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "直接把大客戶 1001 的運單 7001 回傳給登入中的商家 1002！",
+        "edgeCaseResult": "典型 BOLA / IDOR 越權漏洞：只驗「已登入」，未驗「該列屬於目前租戶」",
+        "pros": ["少寫一個條件"],
+        "cons": ["任意登入商家只要遍歷 shipment_id 即可拖光所有競爭對手運單"],
+        "validWhen": "內部全權客服管理員且經過角色授權與稽核紀錄的專屬後台",
+        "failsWhen": "面向一般租戶／使用者的資源讀取 API"
+      },
+      {
+        "key": "opt_tenant_scoped_plus_rls",
+        "sql": "SELECT shipment_id, merchant_id, fee_cents, status FROM shipments WHERE shipment_id = 7001 AND merchant_id = 1002;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳 0 列（擋下商家 1002 越權讀取 1001 的運單）；在 PostgreSQL 上再疊加 RLS 政策（ENABLE + FORCE ROW LEVEL SECURITY，且應用帳號不具 BYPASSRLS）作為最後防線",
+        "edgeCaseResult": "即便某條新開發的報表查詢忘記寫 AND merchant_id = :ctx_merchant，資料庫 RLS 仍會自動過濾掉其他租戶資料列",
+        "pros": ["查詢層顯式綁定登入上下文的 merchant_id（不信任前端傳入的 merchant_id）", "搭配 PostgreSQL RLS 形成縱深防禦，防單點漏寫條件"],
+        "cons": ["使用連線池時須確保每筆請求在交易內用 SET LOCAL 設定租戶上下文，避免跨請求殘留"],
+        "validWhen": "所有多租戶共用資料表的查詢與報表介面",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_uuid_without_authz",
+        "sql": "-- 把 shipment_id 從自增整數換成 UUIDv4，查詢仍只寫 WHERE shipment_id = :id 不驗 merchant_id",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "攻擊者無法輕易 +1 猜測下一個 ID",
+        "edgeCaseResult": "一旦 UUID 從日誌、轉寄連結、Referer 標頭或報表外洩，任何登入者都能直接讀走他人的運單（隱蔽性不等於授權）",
+        "pros": ["降低盲目枚舉風險（可作為輔助措施）"],
+        "cons": ["未執行真正的所有權驗證，仍屬 BOLA 漏洞"],
+        "validWhen": "作為授權檢查之外的額外防枚舉層",
+        "failsWhen": "拿來取代租戶與所有權檢查時"
+      },
+      {
+        "key": "opt_trust_client_merchant_param",
+        "sql": "-- 查詢寫 WHERE shipment_id = :id AND merchant_id = :req_query_merchant_id，但 merchant_id 直接取自前端請求參數而非伺服器驗證過的 session/token",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "SQL 看起來有兩個條件",
+        "edgeCaseResult": "攻擊者只要把請求參數一併改成 merchant_id=1001 即可照樣越權讀取",
+        "pros": ["無"],
+        "cons": ["把授權依據交給不可信的用戶端輸入"],
+        "validWhen": "無",
+        "failsWhen": "所有安全授權檢查"
+      }
+    ],
+    "recommendedKeys": ["opt_tenant_scoped_plus_rls"],
+    "alternativeNote": "授權主體 ID（merchant_id / user_id）永遠必須從伺服器端已驗證的 session 或簽章 token 取得，不可取自請求 body 或 query string",
+    "relatedDocs": [
+      "/backend/01-database/red-team-data-layer/",
+      "/backend/01-database/sql/deployment-shape-and-sql-constructs/",
+      "/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_id_only_bola": 1,
+        "opt_tenant_scoped_plus_rls": 0
+      }
+    }
+  },
+  {
+    "conceptId": "S8-03",
+    "variantId": "S8-03-cloud-role-least-privilege-01",
+    "domain": "cloud-academy",
+    "stage": 8,
+    "tablePath": ["users", "subscriptions", "invoices"],
+    "perspective": "tradeoff-design",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": "role-and-grant-separation",
+    "traps": ["shared-db-owner-account", "grant-on-wrong-object-level", "missing-default-privileges"],
+    "title": "SEC03：雲課堂正式環境角色切分——Web 應用、BI 唯讀與 Migration 最小權限",
+    "businessRequirement": "雲課堂 PostgreSQL 18 正式庫同時有 Web API、BI 分析師與 CI Schema Migration 三類存取方。哪一組角色與 GRANT 設計能將入侵或誤操作的爆炸半徑壓到最小？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "多服務共享正式資料庫",
+      "readWriteRatio": "100:1",
+      "indexes": ["權限與角色治理"]
+    },
+    "options": [
+      {
+        "key": "opt_shared_owner",
+        "sql": "-- Web API、BI 與 Migration 共用同一個資料表擁有者（owner）帳號，省去維護多組密碼",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "部署與連線設定最省事",
+        "edgeCaseResult": "Web API 出現弱點時攻擊者可直接 DROP TABLE 或停用 RLS；BI 手動誤下 UPDATE 直接改壞正式帳單",
+        "pros": ["初期設定快"],
+        "cons": ["任何單一入口失守即全庫淪陷，且失去操作歸責能力"],
+        "validWhen": "本機單人一次性實驗環境",
+        "failsWhen": "任何正式或含真實使用者資料的環境"
+      },
+      {
+        "key": "opt_three_separated_roles",
+        "sql": "-- 切分三角色：migrator 持有物件擁有權與 DDL（僅 CI 部署管線使用）；app_role 僅拿業務表 SELECT/INSERT/UPDATE/DELETE（無 CREATE/DROP/ALTER、無 BYPASSRLS）；bi_readonly 僅拿去識別化檢視表 SELECT；並設 ALTER DEFAULT PRIVILEGES 避免新表漏授權",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "資料庫強制隔離讀寫與結構變更邊界，新角色預設零權限",
+        "edgeCaseResult": "即便 Web API 被攻破也無法改表或讀寫未授權稽核表；BI 帳號物理上無法修改任何列",
+        "pros": ["最小權限切開爆炸半徑", "稽核日誌可直接依資料庫角色分辨來源"],
+        "cons": ["須管理三組獨立憑證與輪替流程，新建資料表須透過遷移腳本或 DEFAULT PRIVILEGES 維持授權同步"],
+        "validWhen": "所有正式環境關聯式資料庫",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_grant_select_on_database",
+        "sql": "-- GRANT SELECT ON DATABASE cloud_academy TO bi_readonly;",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "語法錯誤：PostgreSQL 的 SELECT 權限落在資料表／檢視表層級，不在 DATABASE 層級",
+        "edgeCaseResult": "無法完成授權，誤解了 SQL 權限模型的授權單位",
+        "pros": ["無"],
+        "cons": ["授權單位錯誤，資料庫直接拒絕"],
+        "validWhen": "無",
+        "failsWhen": "PostgreSQL 環境"
+      },
+      {
+        "key": "opt_app_superuser_with_code_review",
+        "sql": "-- 給 app_role SUPERUSER 權限，但靠 PR code review 約定工程師不寫 DROP TABLE",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "開發期不碰權限報錯",
+        "edgeCaseResult": "人工審查擋不住第三方套件漏洞、SQLi、ORM 誤跑 auto-migrate 或憑證外洩",
+        "pros": ["無"],
+        "cons": ["用人工紀律取代系統強制邊界，防禦無效"],
+        "validWhen": "無",
+        "failsWhen": "所有正式環境"
+      }
+    ],
+    "recommendedKeys": ["opt_three_separated_roles"],
+    "alternativeNote": "SQLite 嵌入式引擎無登入角色模型，多服務存取或權限隔離需求本身就是遷往伺服器端引擎（如 PostgreSQL）的結構性動機",
+    "relatedDocs": [
+      "/backend/01-database/sql/privilege-model/",
+      "/backend/01-database/red-team-data-layer/",
+      "/backend/07-security-data-protection/identity-access-boundary/"
+    ]
+  },
+  {
+    "conceptId": "S8-04",
+    "variantId": "S8-04-bookstore-pii-masking-view-01",
+    "domain": "bookstore",
+    "stage": 8,
+    "tablePath": ["customers", "orders"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": "pii-masking-and-views",
+    "traps": ["granting-raw-pii-table", "unsalted-md5-email-reversible", "ui-only-column-hiding"],
+    "title": "SEC04：個資遮罩與分析報表邊界——受控檢視表（View）與欄位級隔離",
+    "businessRequirement": "紙頁書店分析師需要依居住城市統計已付款訂單總額，但依個資治理規範不可讀取顧客原始 email 與姓名。該如何透過 SQL 視圖與權限隔離提供查詢能力？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "50 萬顧客含 PII 個資",
+      "readWriteRatio": "100:1",
+      "indexes": ["idx_orders_customer_date"]
+    },
+    "options": [
+      {
+        "key": "opt_grant_raw_table",
+        "sql": "SELECT c.customer_id, c.name, c.email, c.city, SUM(o.total_amount) AS paid_total FROM customers c JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'paid' GROUP BY c.customer_id, c.name, c.email, c.city;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "直接暴露全部顧客真實姓名與 email 明文",
+        "edgeCaseResult": "違反個資最小揭露原則，一旦報表匯出 CSV 外洩即造成大規模個資事故",
+        "pros": ["無"],
+        "cons": ["過度揭露 PII 欄位"],
+        "validWhen": "僅限經授權的法遵／客服單筆個案查詢",
+        "failsWhen": "一般商業統計分析報表"
+      },
+      {
+        "key": "opt_masked_view_grant",
+        "sql": "SELECT COALESCE(c.city, '(未填寫)') AS city_bucket, COUNT(DISTINCT c.customer_id) AS buyers, SUM(o.total_amount) AS paid_total FROM customers c JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'paid' GROUP BY COALESCE(c.city, '(未填寫)') ORDER BY paid_total DESC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "不授與 bi_readonly 基表 customers 權限，改建僅含非 PII 欄位（或遮罩後去識別化鍵）的受控檢視表並只授與該 View 的 SELECT 權限；分析查詢不接觸真實 email 與姓名",
+        "edgeCaseResult": "分析師即使手寫 SELECT * FROM v_customer_analytics 也完全拿不到 email 明文",
+        "pros": ["資料庫層強制切斷個資欄位存取，不靠口頭規範或前端隱藏", "完整保留城市消費統計分析能力"],
+        "cons": ["須維護檢視表定義與欄位授權，並留意單一族群只有 1 人時的間接再識別風險"],
+        "validWhen": "開放 BI、分析師或外部報表工具查詢含個資的業務庫時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_hide_in_bi_ui_only",
+        "sql": "-- 授與分析師整張 customers 表的 SELECT 權限，只在 BI 儀表板介面勾選隱藏 email 欄位",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "儀表板畫面上看不到 email",
+        "edgeCaseResult": "任何拿得到 BI 連線憑證的人直接進 SQL 編輯器寫 SELECT email FROM customers 照樣全部匯出",
+        "pros": ["設定快"],
+        "cons": ["介面隱藏不是權限控制，繞過 UI 即完全失效"],
+        "validWhen": "無",
+        "failsWhen": "所有合規與個資隔離要求"
+      },
+      {
+        "key": "opt_unsalted_md5_email",
+        "sql": "-- 給分析師查詢無鹽 MD5(LOWER(email))，宣稱已經完全匿名不可逆",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "表面上是 32 字元雜湊字串",
+        "edgeCaseResult": "攻擊者拿常見名單或外洩 email 庫跑一次無鹽 MD5 即可直接反查比對出特定個人身分",
+        "pros": ["可跨表串接同一個 email"],
+        "cons": ["無鹽雜湊極易遭字典比對反查，不可當成真正匿名化（跨表關聯改用系統內部代理主鍵 customer_id 或加秘密金鑰 HMAC）"],
+        "validWhen": "無",
+        "failsWhen": "需要真正防反查的 PII 保護場景"
+      }
+    ],
+    "recommendedKeys": ["opt_masked_view_grant"],
+    "alternativeNote": "若分析師確實需要跨表關聯同一顧客，給無業務含意的代理鍵 customer_id 即可，完全不需要暴露 email 或無鹽雜湊",
+    "relatedDocs": [
+      "/backend/07-security-data-protection/data-protection-and-masking-governance/",
+      "/backend/01-database/sql/privilege-model/",
+      "/backend/01-database/red-team-data-layer/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_masked_view_grant": 3
+      }
+    }
+  },
+  {
+    "conceptId": "S8-05",
+    "variantId": "S8-05-cloud-query-dos-defense-01",
+    "domain": "cloud-academy",
+    "stage": 8,
+    "tablePath": ["courses", "invoices", "lesson_progress"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "resource-exhaustion-defense",
+    "traps": ["unbounded-limit-offset-dos", "bigger-pool-amplifies-db-dos", "param-alone-does-not-prevent-dos"],
+    "title": "SEC05：SQL 層 DoS 與資源耗盡防禦——無上限查詢、萬用字元放大與逾時護欄",
+    "businessRequirement": "雲課堂的搜尋與對帳 API 允許傳入 limit、page 與模糊搜尋關鍵字，已全數使用參數化查詢。上線後卻遭惡意請求送入 `limit=1000000`、`page=50000` 與 `%a%b%c%d%` 把主資料庫 CPU 打滿。哪一組防禦最有效？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "對外公開 API 與後台報表共用主庫",
+      "readWriteRatio": "100:1",
+      "indexes": ["需同時保護 OLTP 主庫穩定性"]
+    },
+    "options": [
+      {
+        "key": "opt_param_is_enough",
+        "sql": "-- 既然已經使用參數化查詢防止 SQL Injection，這不是資安問題，不需修改資料庫與查詢限制",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "沒有資料外洩，但全站結帳與登入全面逾時中斷",
+        "edgeCaseResult": "資源耗盡（Availability DoS）同樣屬資料庫攻擊面，參數化擋不住合法語法組出的極慢查詢",
+        "pros": ["無"],
+        "cons": ["忽略可用性攻擊面，輕易被單一惡意客戶端打掛主庫"],
+        "validWhen": "無",
+        "failsWhen": "所有對外服務"
+      },
+      {
+        "key": "opt_layered_guardrails",
+        "sql": "-- 伺服端強制 LIMIT 上限（如 <= 100）並改用 Keyset 分頁；轉義 LIKE 萬用字元並限制查詢條件；在資料庫角色層設定 statement_timeout 與 lock_timeout 自動中止失控查詢；重報表導向唯讀副本與獨立連線池",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "單一異常請求被迅速限縮或超時斬斷，無法拖垮核心交易主庫與連線池",
+        "edgeCaseResult": "同時從應用層查詢預算、資料庫層執行時限與拓樸隔離三道防線控管爆炸半徑",
+        "pros": ["防住深頁 OFFSET、巨量回傳與慢查詢佔死連線池", "重報表與核心 OLTP 隔離互不拖累"],
+        "cons": ["須為超時請求設計友善降級訊息，並依業務調整不同角色的 statement_timeout（API 短、批次報表長）"],
+        "validWhen": "所有公開 API 與混合分析／交易的正式系統",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_increase_connection_pool",
+        "sql": "-- 把應用層資料庫連線池上限從 30 調高到 500，避免連線被慢查詢佔滿",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "讓更多惡意慢查詢同時湧進資料庫搶 CPU 與記憶體",
+        "edgeCaseResult": "加速主庫 CPU 100% 過載甚至 OOM 崩潰",
+        "pros": ["無"],
+        "cons": ["放大 DoS 傷害而非阻擋"],
+        "validWhen": "無",
+        "failsWhen": "面對慢查詢或惡意請求洪峰時"
+      },
+      {
+        "key": "opt_hide_error_only",
+        "sql": "-- 維持原查詢與無上限參數，只把 500 錯誤訊息隱藏起來",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "資料庫照樣被慢查詢吃光所有資源",
+        "edgeCaseResult": "未減少任何資料庫運算量",
+        "pros": ["不洩漏內部堆疊（屬基礎安全習慣，但解不了 DoS）"],
+        "cons": ["對資源耗盡完全無效"],
+        "validWhen": "無",
+        "failsWhen": "防禦 DoS 資源耗盡時"
+      }
+    ],
+    "recommendedKeys": ["opt_layered_guardrails"],
+    "alternativeNote": "在 PostgreSQL 可針對不同角色設不同逾時：ALTER ROLE app_role SET statement_timeout = '3s'；ALTER ROLE bi_readonly SET statement_timeout = '30s'",
+    "relatedDocs": [
+      "/backend/01-database/red-team-data-layer/",
+      "/backend/01-database/query-anti-patterns/",
+      "/backend/01-database/sql/pagination-needs-a-total-order/"
+    ]
+  },
+  {
+    "conceptId": "S8-06",
+    "variantId": "S8-06-logistics-audit-backup-isolation-01",
+    "domain": "swift-logistics",
+    "stage": 8,
+    "tablePath": ["billing_statements", "shipments"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "audit-trail-and-backup-isolation",
+    "traps": ["single-updated-by-overwrites-history", "app-can-delete-audit-log", "shared-prod-and-backup-credentials"],
+    "title": "SEC06：帳單變更稽核軌跡與備份權限隔離——防竄改日誌與勒索防護",
+    "businessRequirement": "捷配物流的月結帳單 billing_statements 曾被異常改成 settled 卻追不出操作紀錄；同時須確保即使線上應用憑證外洩，攻擊者也無法竄改歷史稽核紀錄或刪除資料庫備份。該如何設計表結構與權限？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18 + 雲端物件儲存備份",
+      "scale": "財務結算敏感表與每日備份",
+      "readWriteRatio": "10:1",
+      "indexes": ["稽核軌跡與憑證隔離"]
+    },
+    "options": [
+      {
+        "key": "opt_updated_by_only",
+        "sql": "-- 只在 billing_statements 加 updated_by 與 updated_at 兩欄",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "只看得到最後一次修改者",
+        "edgeCaseResult": "一旦有人再更新一次，前一次異常修改的來源、時間與變更前金額全部被覆蓋銷毀",
+        "pros": ["改動最小"],
+        "cons": ["無法重建完整變更歷史，易被二次覆寫滅證"],
+        "validWhen": "非關鍵資料的簡易最後修改註記",
+        "failsWhen": "需要可追溯與防抵賴的財務／權限變更稽核"
+      },
+      {
+        "key": "opt_append_only_audit_and_isolated_backup",
+        "sql": "-- 建獨立稽核表 billing_audit_logs（記操作者、角色、時間、變更前後值），對 app_role 只授 INSERT/SELECT、明確不授 UPDATE/DELETE（並可定期外送不可變日誌庫）；資料庫備份使用獨立帳號憑證與不可變保留鎖（Object Lock），與線上應用憑證完全隔離",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "每次狀態異動皆留下不可覆寫的完整軌跡，且線上帳號失守時無法刪改稽核紀錄或銷毀備份",
+        "edgeCaseResult": "事後調查拿得到完整證據鏈，遭遇勒索或惡意刪庫仍握有乾淨可還原備份",
+        "pros": ["唯附寫稽核權限擋下入侵後滅證", "正式環境與備份權限分離守住最後復原底線"],
+        "cons": ["多一張持續成長的稽核表（須搭配分區與歸檔），且備份憑證須獨立治理與定期還原演練"],
+        "validWhen": "涉及金流、帳務、權限變更與合規稽核的正式系統",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_app_full_crud_on_audit",
+        "sql": "-- 建獨立稽核表，但 app_role 擁有該表全部 SELECT/INSERT/UPDATE/DELETE 權限，且正式主機同時掛載可讀寫備份儲存桶的同一把金鑰",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "平常看得到多筆歷史紀錄",
+        "edgeCaseResult": "攻擊者取得應用主機權限後，順手 DELETE 稽核表並清空備份桶，事後無證可查且無法復原",
+        "pros": ["無"],
+        "cons": ["稽核表與備份都落在同一個失效半徑內"],
+        "validWhen": "無",
+        "failsWhen": "防禦憑證外洩、內部竄改與勒索攻擊"
+      },
+      {
+        "key": "opt_console_print_only",
+        "sql": "-- 不寫資料庫稽核表，只在應用程式標準輸出印一行文字日誌",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "本機開發看得到訊息",
+        "edgeCaseResult": "日誌輪轉後遺失、無法與交易原子綁定（交易回滾仍印成功或程序當機漏印），且繞過應用直連資料庫的修改完全無紀錄",
+        "pros": ["零資料庫開銷"],
+        "cons": ["非交易一致、容易漏記且抓不到直連資料庫操作"],
+        "validWhen": "一般除錯診斷訊息",
+        "failsWhen": "財務與權限變更稽核"
+      }
+    ],
+    "recommendedKeys": ["opt_append_only_audit_and_isolated_backup"],
+    "alternativeNote": "對極高敏感表，除了應用層寫入稽核表外，亦可搭配資料庫觸發器（trigger）或 PostgreSQL pgaudit 確保連 DBA 直連修改也留痕",
+    "relatedDocs": [
+      "/backend/01-database/red-team-data-layer/",
+      "/backend/07-security-data-protection/audit-trail-and-accountability-boundary/",
+      "/backend/07-security-data-protection/backup-encryption-password-and-master-key/"
+    ]
+  }
+]
