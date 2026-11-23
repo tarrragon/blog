@@ -1,0 +1,336 @@
+[
+  {
+    "conceptId": "S5-01",
+    "variantId": "S5-01-bookstore-sargable-01",
+    "domain": "bookstore",
+    "stage": 5,
+    "tablePath": ["orders"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "requiresScale": true,
+    "benchmarkRef": "bm-bookstore-sargable-range",
+    "traps": ["function-wraps-indexed-column", "between-drops-last-day-timestamps", "leading-wildcard-like"],
+    "title": "單月訂單區間查詢：Sargable 條件形狀與月底邊界",
+    "businessRequirement": "orders 表有 5 萬至數百萬筆資料並在 ordered_at 建有索引（格式 YYYY-MM-DD HH:MM:SS）。要查 2026 年 3 月全部訂單（含 03-31 22:30:00 的訂單 107），哪個寫法既走索引又不漏月底？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "50,009 orders（壓測層實測）",
+      "readWriteRatio": "100:1",
+      "indexes": ["idx_orders_ordered_id (ordered_at DESC, order_id DESC)"]
+    },
+    "options": [
+      {
+        "key": "opt_substr",
+        "sql": "SELECT COUNT(*) FROM orders WHERE substr(ordered_at, 1, 7) = '2026-03';",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "結果正確但執行計畫為全表 SCAN，在 50,009 列壓測下慢了數十倍",
+        "edgeCaseResult": "函式包住索引欄使普通 B-tree 索引失效（non-sargable）",
+        "pros": ["文字簡短"],
+        "cons": ["放棄 B-tree 索引，隨表成長線性退化"],
+        "validWhen": "另建運算式索引 CREATE INDEX ON orders(substr(ordered_at, 1, 7)) 時",
+        "failsWhen": "只有一般 ordered_at 索引的大表"
+      },
+      {
+        "key": "opt_between_date",
+        "sql": "SELECT COUNT(*) FROM orders WHERE ordered_at BETWEEN '2026-03-01' AND '2026-03-31';",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "漏掉 2026-03-31 22:30:00 的訂單 107！",
+        "edgeCaseResult": "字串 '2026-03-31 22:30:00' 大於 '2026-03-31'，月底整天全數消失",
+        "pros": ["能命中索引"],
+        "cons": ["靜默遺失 3 月 31 日所有帶時間戳記的訂單"],
+        "validWhen": "欄位純粹是 DATE（無時分秒）時",
+        "failsWhen": "欄位含時分秒 TIMESTAMP／DATETIME 時"
+      },
+      {
+        "key": "opt_half_open",
+        "sql": "SELECT COUNT(*) FROM orders WHERE ordered_at >= '2026-03-01 00:00:00' AND ordered_at < '2026-04-01 00:00:00';",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "完整包含 107 且直擊索引範圍掃描（實測快數十倍）",
+        "edgeCaseResult": "半開區間 [3/1, 4/1) 覆蓋最後一微秒且免算大小月與閏年",
+        "pros": ["裸欄比較命中索引範圍掃描", "無月底／微秒邊界漏洞"],
+        "cons": ["比 substr 多寫兩個端點"],
+        "validWhen": "所有時間區間查詢",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_like_wildcard",
+        "sql": "SELECT COUNT(*) FROM orders WHERE ordered_at LIKE '%2026-03%';",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "結果對但前導萬用字元 % 使 B-tree 索引完全失效",
+        "edgeCaseResult": "強制全表掃描",
+        "pros": ["無"],
+        "cons": ["前導 % 無法利用 B-tree 前綴定位"],
+        "validWhen": "無",
+        "failsWhen": "任何需要走索引的時間查詢"
+      }
+    ],
+    "recommendedKeys": ["opt_half_open"],
+    "alternativeNote": "對照 benchmarks/sqlite-scale-snapshots.json 的 bm-bookstore-sargable-range 實測計畫",
+    "relatedDocs": [
+      "/backend/01-database/sql/knowledge-cards/sargable/",
+      "/backend/01-database/sql/cost-lives-in-the-plan/",
+      "/backend/01-database/sql/readable-and-fast-mostly-align/"
+    ],
+    "sqliteAssertions": {
+      "optionExplainMustContain": {
+        "opt_substr": "SCAN orders",
+        "opt_half_open": "SEARCH orders USING"
+      }
+    }
+  },
+  {
+    "conceptId": "S5-02",
+    "variantId": "S5-02-bookstore-skew-01",
+    "domain": "bookstore",
+    "stage": 5,
+    "tablePath": ["customers"],
+    "perspective": "diagnose-plan",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "requiresScale": true,
+    "benchmarkRef": "bm-bookstore-duplicate-email-skew",
+    "traps": ["self-join-quadratic-blowup-on-hot-key", "correlated-exists-without-index"],
+    "title": "熱點重複 Email 稽核：資料分布傾斜改寫效能排名",
+    "businessRequirement": "壓測版 customers 有 7,007 列，其中單一熱點信箱 hot@bookstore.tw 重複出現 2,000 次且 email 目前無索引。哪種寫法不會因熱點重複而平方爆炸？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "7,007 customers（單一熱點重複 2,000 次）",
+      "readWriteRatio": "10:1",
+      "indexes": ["email 無索引"]
+    },
+    "options": [
+      {
+        "key": "opt_group_by",
+        "sql": "SELECT email FROM customers GROUP BY email HAVING COUNT(*) > 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "單次掃描分組即找出 hot@bookstore.tw，實測快自連接數十倍",
+        "edgeCaseResult": "重複 2 次或 2,000 次時間幾乎不動，無配對展開",
+        "pros": ["不展開配對、對熱點重複次數免疫", "有無索引皆維持穩定線性級成本"],
+        "cons": ["若還要同時顯示每一筆重複列的 customer_id 須改用視窗函式或子查詢"],
+        "validWhen": "找出重複鍵值清單（不依賴索引也不怕熱點傾斜）",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_self_join",
+        "sql": "SELECT DISTINCT c1.email FROM customers c1 JOIN customers c2 ON c1.email = c2.email AND c1.customer_id <> c2.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "結果同上，但為 hot@bookstore.tw 展開 2000 * 1999 = 3,998,000 對再靠 DISTINCT 丟掉",
+        "edgeCaseResult": "時間隨單一熱點重複次數呈 n 平方暴漲",
+        "pros": ["重複極少時看似尚可"],
+        "cons": ["結構性平方膨脹，加了索引仍擋不住 400 萬次配對"],
+        "validWhen": "確定每個鍵最多只重複 2–3 次且需並排兩列欄位比較時",
+        "failsWhen": "存在高重複熱點鍵時"
+      },
+      {
+        "key": "opt_exists_no_idx",
+        "sql": "SELECT DISTINCT c1.email FROM customers c1 WHERE EXISTS (SELECT 1 FROM customers c2 WHERE c2.email = c1.email AND c2.customer_id <> c1.customer_id);",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "email 有索引時與分組接近；無索引時在 SQLite 退化為逐列全表掃描（最慢）",
+        "edgeCaseResult": "有無索引可差到三個量級",
+        "pros": ["有 email 覆蓋索引時效率極佳且不展開全部配對"],
+        "cons": ["缺少索引時在逐列引擎上耗時最差"],
+        "validWhen": "確定 email 建有索引時",
+        "failsWhen": "無索引或無法確定索引存在時"
+      },
+      {
+        "key": "opt_app_n2_loop",
+        "sql": "-- 將全表撈回應用程式記憶體以雙層迴圈比對 email",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "浪費網路傳輸、記憶體與雙層迴圈 CPU",
+        "edgeCaseResult": "在 50 萬列時應用程式直接 OOM 或逾時",
+        "pros": ["無"],
+        "cons": ["把資料庫擅長的聚合搬進應用層變成更慢的 O(N^2)"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      }
+    ],
+    "recommendedKeys": ["opt_group_by"],
+    "alternativeNote": "本題對應 benchmarks/sqlite-scale-snapshots.json 的 bm-bookstore-duplicate-email-skew 實測數據",
+    "relatedDocs": [
+      "/backend/01-database/sql/cost-lives-in-the-plan/",
+      "/backend/01-database/sql/knowledge-cards/query-plan/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_group_by": [["hot@bookstore.tw"]],
+        "opt_self_join": [["hot@bookstore.tw"]]
+      }
+    }
+  },
+  {
+    "conceptId": "S5-03",
+    "variantId": "S5-03-bookstore-cte-window-01",
+    "domain": "bookstore",
+    "stage": 5,
+    "tablePath": ["books"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["repeated-correlated-subquery", "invalid-group-by-detail"],
+    "title": "高於所屬分類均價的書籍：相關子查詢、CTE 與視窗函式",
+    "businessRequirement": "找出各分類中定價高於該分類平均定價的上架書（is_active = 1），同時顯示 book_id、price 與該分類平均價 avg_price。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "20 萬書籍、500 分類",
+      "readWriteRatio": "100:1",
+      "indexes": ["PRIMARY KEY (book_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_correlated_twice",
+        "sql": "SELECT b.book_id, b.price, (SELECT AVG(b2.price) FROM books b2 WHERE b2.category_id = b.category_id AND b2.is_active = 1) AS avg_price FROM books b WHERE b.is_active = 1 AND b.price > (SELECT AVG(b2.price) FROM books b2 WHERE b2.category_id = b.category_id AND b2.is_active = 1) ORDER BY b.book_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "結果正確（201、205），但相關子查詢寫了兩次且大表在 SQLite 上隨列數超線性變慢",
+        "edgeCaseResult": "20 萬列在不會自動去相關的引擎上耗時失控",
+        "pros": ["直譯中文需求"],
+        "cons": ["重複計算且相關子查詢易退化為 O(N^2)"],
+        "validWhen": "幾百列極小表",
+        "failsWhen": "上萬列以上分析查詢"
+      },
+      {
+        "key": "opt_cte_join",
+        "sql": "WITH cat_avg AS (SELECT category_id, AVG(price) AS avg_price FROM books WHERE is_active = 1 GROUP BY category_id) SELECT b.book_id, b.price, ca.avg_price FROM books b JOIN cat_avg ca ON ca.category_id = b.category_id WHERE b.is_active = 1 AND b.price > ca.avg_price ORDER BY b.book_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳書號 201（580 > 520）與 205（600 > 520），時間呈線性成長",
+        "edgeCaseResult": "各分類均價只算一次，跨引擎效能平穩",
+        "pros": ["線性成長、跨引擎穩定", "分類數遠少於書本數時可省整表排序"],
+        "cons": ["books 表須讀兩次"],
+        "validWhen": "分類數少且要兼顧所有主流引擎效能時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_window_avg",
+        "sql": "WITH ranked AS (SELECT book_id, price, AVG(price) OVER (PARTITION BY category_id) AS avg_price FROM books WHERE is_active = 1) SELECT book_id, price, avg_price FROM ranked WHERE price > avg_price ORDER BY book_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳書號 201 與 205，只需掃描一次 books 表",
+        "edgeCaseResult": "後續擴充「分類內價格排名」只需多加一個視窗欄位",
+        "pros": ["單次掃表、可讀性高、易擴充多個組內統計指標"],
+        "cons": ["須按 category_id 對整批結果做視窗排序"],
+        "validWhen": "支援視窗函式且要保留明細同時算多組統計時",
+        "failsWhen": "記憶體極受限且分類數極少時可對照 opt_cte_join"
+      },
+      {
+        "key": "opt_bad_group_by",
+        "sql": "SELECT book_id, price, AVG(price) AS avg_price FROM books WHERE is_active = 1 GROUP BY category_id HAVING price > AVG(price);",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "每分類只剩 1 列，在 SQLite 隨意抽一筆 book_id 比較，直接漏掉另一本達標書！",
+        "edgeCaseResult": "PostgreSQL 報錯，SQLite 靜默漏資料",
+        "pros": ["無"],
+        "cons": ["GROUP BY 壓扁明細且非分組欄位語意錯誤"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      }
+    ],
+    "recommendedKeys": ["opt_cte_join", "opt_window_avg"],
+    "alternativeNote": "opt_cte_join 與 opt_window_avg 皆正確且線性成長，實際選用可於目標引擎用 EXPLAIN 比對排序與掃表成本",
+    "relatedDocs": [
+      "/backend/01-database/sql/readable-and-fast-mostly-align/",
+      "/backend/01-database/sql/window-keeps-rows-grouping-collapses/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_cte_join": [201, 205],
+        "opt_window_avg": [201, 205]
+      }
+    }
+  },
+  {
+    "conceptId": "S5-04",
+    "variantId": "S5-04-bookstore-intent-01",
+    "domain": "bookstore",
+    "stage": 5,
+    "tablePath": ["customers", "orders"],
+    "perspective": "diagnose-plan",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["hollow-left-join-declaration", "distinct-hides-join-duplication"],
+    "title": "Code Review 抓出宣告落空：LEFT JOIN + WHERE 與多餘 DISTINCT",
+    "businessRequirement": "舊報表寫成 `SELECT DISTINCT c.customer_id, c.name FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'paid';`，答案雖然正確（回傳 4 位顧客），審查時該如何改寫？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "10 萬顧客、100 萬訂單",
+      "readWriteRatio": "50:1",
+      "indexes": ["idx_orders_customer_date"]
+    },
+    "options": [
+      {
+        "key": "opt_keep_as_is",
+        "sql": "SELECT DISTINCT c.customer_id, c.name FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'paid' ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "輸出 4 位顧客，但 LEFT JOIN 宣告與實際行為矛盾",
+        "edgeCaseResult": "下一個維護者以為要保留未下單顧客，加條件時引入嚴重錯誤",
+        "pros": ["當下不用改動"],
+        "cons": ["留下誤導後續維護者的虛假關鍵字宣告"],
+        "validWhen": "無",
+        "failsWhen": "長期維護的團隊程式碼"
+      },
+      {
+        "key": "opt_rewrite_exists",
+        "sql": "SELECT c.customer_id, c.name FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id AND o.status = 'paid') ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "輸出完全相同的 4 位顧客（1, 4, 5, 7），無虛假 LEFT JOIN 也無掩飾用的 DISTINCT",
+        "edgeCaseResult": "文字宣告與引擎行為完全一致，且避免展開多單再 DISTINCT",
+        "pros": ["拿掉失效的 LEFT JOIN 與掩蓋重複的 DISTINCT", "直接表達存在性語意"],
+        "cons": ["須跑回歸比對確認輸出一致"],
+        "validWhen": "查證宣告落空後的標準重構",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_drop_distinct_only",
+        "sql": "SELECT c.customer_id, c.name FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'paid' ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "顧客 1 有兩張 paid 訂單，立刻變成重複 5 列！",
+        "edgeCaseResult": "破壞原本答案的唯一性",
+        "pros": ["無"],
+        "cons": ["出現重複顧客列"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      },
+      {
+        "key": "opt_move_to_on",
+        "sql": "SELECT DISTINCT c.customer_id, c.name FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id AND o.status = 'paid' ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "變成回傳全部 7 位顧客，直接改壞原本報表業務語意！",
+        "edgeCaseResult": "把未付款與沒下單的顧客全塞進「已付款顧客」名單",
+        "pros": ["無"],
+        "cons": ["未確認需求就把內連接語意改成外連接，直接改錯答案"],
+        "validWhen": "需求原本就要求保留未付款顧客時",
+        "failsWhen": "僅做語意對齊重構時"
+      }
+    ],
+    "recommendedKeys": ["opt_rewrite_exists"],
+    "alternativeNote": "查證宣告落空的通用招式：把關鍵字換成最弱版本（LEFT 換 INNER）跑一次，輸出不變即證明原關鍵字落空",
+    "relatedDocs": [
+      "/backend/01-database/sql/declared-intent-vs-behaviour/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_keep_as_is": [1, 4, 5, 7],
+        "opt_rewrite_exists": [1, 4, 5, 7],
+        "opt_drop_distinct_only": [1, 1, 4, 5, 7],
+        "opt_move_to_on": [1, 2, 3, 4, 5, 6, 7]
+      }
+    }
+  }
+]

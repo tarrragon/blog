@@ -1,0 +1,417 @@
+[
+  {
+    "conceptId": "S2-01",
+    "variantId": "S2-01-bookstore-items-01",
+    "domain": "bookstore",
+    "stage": 2,
+    "tablePath": ["order_items"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["select-alias-in-where", "engine-leniency"],
+    "title": "別名在 WHERE 與 ORDER BY 的可用範圍：求值順序與跨引擎可攜",
+    "businessRequirement": "計算 order_items 每筆小計 quantity * unit_price AS line_total，只保留大於 500 元的明細並由大到小排序，須在 SQLite、PostgreSQL 與 MySQL 皆通過。",
+    "workloadProfile": {
+      "engine": "SQLite / PostgreSQL / MySQL",
+      "scale": "100 萬訂單明細",
+      "readWriteRatio": "80:1",
+      "indexes": ["PRIMARY KEY (order_item_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_alias_in_where",
+        "sql": "SELECT order_item_id, quantity * unit_price AS line_total FROM order_items WHERE line_total > 500 ORDER BY line_total DESC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "SQLite 寬鬆放行，但 PostgreSQL 與 MySQL 當場報欄名不存在",
+        "edgeCaseResult": "搬到 PostgreSQL 上線時立刻報錯",
+        "pros": ["公式只寫一次"],
+        "cons": ["違反求值順序（WHERE 早於 SELECT），跨引擎失敗"],
+        "validWhen": "僅限定單一寬鬆引擎（如 DuckDB）的內部腳本",
+        "failsWhen": "須相容 PostgreSQL 或 MySQL 時"
+      },
+      {
+        "key": "opt_repeat_expr",
+        "sql": "SELECT order_item_id, quantity * unit_price AS line_total FROM order_items WHERE quantity * unit_price > 500 ORDER BY line_total DESC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 3 筆（600, 580, 550），三家引擎皆通過",
+        "edgeCaseResult": "完全符合標準求值順序（ORDER BY 晚於 SELECT 可用別名）",
+        "pros": ["簡潔且全引擎相容", "不需多包一層子查詢"],
+        "cons": ["算式極長時重複撰寫有維護不同步風險"],
+        "validWhen": "算式簡短的跨引擎查詢",
+        "failsWhen": "算式非常複雜時可改用衍生表或 CTE（opt_subquery）"
+      },
+      {
+        "key": "opt_fake_group_by",
+        "sql": "SELECT order_item_id, quantity * unit_price AS line_total FROM order_items GROUP BY order_item_id HAVING line_total > 500 ORDER BY line_total DESC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "SQLite 通過，但 PostgreSQL 的 HAVING 仍不收 SELECT 別名",
+        "edgeCaseResult": "引入不必要的分組算子且依然無法跨引擎",
+        "pros": ["無"],
+        "cons": ["在 PostgreSQL 依然報錯，且徒增 GROUP BY 成本"],
+        "validWhen": "無",
+        "failsWhen": "PostgreSQL 環境與大表效能要求"
+      },
+      {
+        "key": "opt_subquery",
+        "sql": "SELECT order_item_id, line_total FROM (SELECT order_item_id, quantity * unit_price AS line_total FROM order_items) t WHERE t.line_total > 500 ORDER BY t.line_total DESC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 3 筆（600, 580, 550），全引擎相容",
+        "edgeCaseResult": "公式只寫一次且 100% 跨引擎可攜",
+        "pros": ["消除公式重複撰寫", "現代最佳化器會展開簡單子查詢無額外成本"],
+        "cons": ["對簡短算式略顯冗長"],
+        "validWhen": "計算公式複雜、不想在 WHERE 與 SELECT 重複寫時",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_repeat_expr", "opt_subquery"],
+    "alternativeNote": "短算式用 opt_repeat_expr，長算式用 opt_subquery 或 CTE",
+    "relatedDocs": [
+      "/backend/01-database/sql/clause-evaluation-order/",
+      "/backend/01-database/sql/engine-leniency-and-portability/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_repeat_expr": [[1009, 600], [1006, 580], [1001, 550]],
+        "opt_subquery": [[1009, 600], [1006, 580], [1001, 550]]
+      }
+    }
+  },
+  {
+    "conceptId": "S2-02",
+    "variantId": "S2-02-bookstore-customers-orders-01",
+    "domain": "bookstore",
+    "stage": 2,
+    "tablePath": ["customers", "orders"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["inner-join-drops-unmatched", "count-star-counts-null-complemented-row"],
+    "title": "統計所有會員的下單次數：LEFT JOIN 與 COUNT(*) 陷阱",
+    "businessRequirement": "列出全部註冊顧客（含從未下單的雅文 id=3）的 customer_id、name 與訂單張數，未下單者顯示 0。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "10 萬顧客、100 萬訂單",
+      "readWriteRatio": "50:1",
+      "indexes": ["idx_orders_customer_date"]
+    },
+    "options": [
+      {
+        "key": "opt_inner_join",
+        "sql": "SELECT c.customer_id, c.name, COUNT(o.order_id) AS order_cnt FROM customers c INNER JOIN orders o ON o.customer_id = c.customer_id GROUP BY c.customer_id, c.name ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 6 位有下單顧客，雅文（id=3）消失",
+        "edgeCaseResult": "漏掉所有零訂單顧客",
+        "pros": ["只查有消費顧客時最簡潔"],
+        "cons": ["INNER JOIN 直接排除沒配到訂單的顧客"],
+        "validWhen": "需求明確限定「至少下過一單的顧客」時",
+        "failsWhen": "需要保留未下單顧客顯示 0 時"
+      },
+      {
+        "key": "opt_left_count_star",
+        "sql": "SELECT c.customer_id, c.name, COUNT(*) AS order_cnt FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id GROUP BY c.customer_id, c.name ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7 位，但未下單的雅文（id=3）顯示 order_cnt = 1",
+        "edgeCaseResult": "COUNT(*) 把外連接補出來的 NULL 列也算成 1 筆訂單",
+        "pros": ["保留了所有顧客"],
+        "cons": ["所有零訂單顧客全部被靜默多算成 1 張訂單"],
+        "validWhen": "無",
+        "failsWhen": "LEFT JOIN 之後計數右表筆數"
+      },
+      {
+        "key": "opt_left_count_col",
+        "sql": "SELECT c.customer_id, c.name, COUNT(o.order_id) AS order_cnt FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id GROUP BY c.customer_id, c.name ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7 位，雅文（id=3）正確顯示 0",
+        "edgeCaseResult": "COUNT(o.order_id) 略過補出來的 NULL，精確計數",
+        "pros": ["保留全部顧客且正確顯示 0", "單次連接與聚合效率穩定"],
+        "cons": ["若未來再串接另一張一對多表（如 reviews）須防列數膨脹"],
+        "validWhen": "單組一對多外連接彙總",
+        "failsWhen": "同查詢再串第二張一對多表時應改先分別聚合"
+      },
+      {
+        "key": "opt_scalar_subquery",
+        "sql": "SELECT c.customer_id, c.name, (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.customer_id) AS order_cnt FROM customers c ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7 位，雅文（id=3）正確顯示 0",
+        "edgeCaseResult": "無列數膨脹風險，但無索引或全表掃描時逐列子查詢較慢",
+        "pros": ["不受多表連接膨脹影響", "只查少數顧客且有索引時極快"],
+        "cons": ["全表十萬顧客彙總時相關子查詢開銷高於一次 JOIN 聚合"],
+        "validWhen": "外層只篩出少量顧客（如單一頁 20 位）且子查詢有索引時",
+        "failsWhen": "全表大報表彙總"
+      }
+    ],
+    "recommendedKeys": ["opt_left_count_col"],
+    "alternativeNote": "若查詢外層有 LIMIT 20 並搭配 idx_orders_customer_date，opt_scalar_subquery 也是極佳解",
+    "relatedDocs": [
+      "/backend/01-database/sql/join-starts-from-the-relationship/",
+      "/backend/01-database/sql/join-changes-rows-and-nulls/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_inner_join": 6,
+        "opt_left_count_star": 7,
+        "opt_left_count_col": 7,
+        "opt_scalar_subquery": 7
+      }
+    }
+  },
+  {
+    "conceptId": "S2-03",
+    "variantId": "S2-03-bookstore-orders-01",
+    "domain": "bookstore",
+    "stage": 2,
+    "tablePath": ["customers", "orders"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["outer-join-where-nullifies-protection", "partial-null-or-miss"],
+    "title": "所有顧客與 2026 年 3 月已付款訂單：ON 與 WHERE 的職責分岔",
+    "businessRequirement": "報表列出每一位顧客，旁邊顯示他在 2026 年 3 月的已付款（paid）訂單總額；3 月沒有付款訂單的顧客（包含 2 月有下單但 3 月沒下單的志明 id=4）仍須列在報表上顯示 0。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "10 萬顧客、100 萬訂單",
+      "readWriteRatio": "50:1",
+      "indexes": ["idx_orders_customer_date"]
+    },
+    "options": [
+      {
+        "key": "opt_where_filter",
+        "sql": "SELECT c.customer_id, COALESCE(SUM(o.total_amount), 0) AS mar_spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'paid' AND o.ordered_at >= '2026-03-01' AND o.ordered_at < '2026-04-01' GROUP BY c.customer_id ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 3 位在 3 月有 paid 訂單的顧客",
+        "edgeCaseResult": "WHERE 把所有補 NULL 的列濾掉，LEFT JOIN 實質退化成 INNER JOIN",
+        "pros": ["無"],
+        "cons": ["撤銷了外連接保護，遺失 4 位顧客"],
+        "validWhen": "只看 3 月有付款顧客時（且應改寫 INNER JOIN）",
+        "failsWhen": "要保留 3 月未付款顧客時"
+      },
+      {
+        "key": "opt_on_filter",
+        "sql": "SELECT c.customer_id, COALESCE(SUM(o.total_amount), 0) AS mar_spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id AND o.status = 'paid' AND o.ordered_at >= '2026-03-01' AND o.ordered_at < '2026-04-01' GROUP BY c.customer_id ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳全部 7 位顧客（id=3 與 id=4 皆顯示 0）",
+        "edgeCaseResult": "只把 3 月已付款訂單納入配對，未配到者自然保留並轉 0",
+        "pros": ["語意精準區分「配對條件」與「篩選條件」", "可先限縮右表 orders 參與配對的範圍"],
+        "cons": ["若同一報表需同時顯示 2 月與 3 月兩欄總額時，改用條件聚合更合適"],
+        "validWhen": "單一時間／狀態條件的外連接統計",
+        "failsWhen": "同一查詢要輸出多個不同切片欄位時"
+      },
+      {
+        "key": "opt_where_or_null",
+        "sql": "SELECT c.customer_id, COALESCE(SUM(o.total_amount), 0) AS mar_spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE (o.status = 'paid' AND o.ordered_at >= '2026-03-01' AND o.ordered_at < '2026-04-01') OR o.order_id IS NULL GROUP BY c.customer_id ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 4 位顧客（保住從未下單的 id=3，但 2 月有單的 id=4 消失！）",
+        "edgeCaseResult": "最隱蔽的錯誤：id=4 有 2 月訂單所以 o.order_id 不為 NULL，又不符 3 月條件，於是整個人從報表消失",
+        "pros": ["騙過了只有「有單 vs 完全沒單」的簡單測試資料"],
+        "cons": ["歷史曾有其他月份／狀態訂單的顧客全部靜默漏掉"],
+        "validWhen": "無",
+        "failsWhen": "顧客存在非目標期間或非目標狀態訂單時"
+      },
+      {
+        "key": "opt_cond_agg",
+        "sql": "SELECT c.customer_id, COALESCE(SUM(CASE WHEN o.status = 'paid' AND o.ordered_at >= '2026-03-01' AND o.ordered_at < '2026-04-01' THEN o.total_amount END), 0) AS mar_spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id GROUP BY c.customer_id ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳全部 7 位顧客（結果與 opt_on_filter 完全相同）",
+        "edgeCaseResult": "正確，但會先連接該顧客歷年全部訂單",
+        "pros": ["結果正確", "同一報表要同時算出多月份／多狀態欄時一次掃描即可完成"],
+        "cons": ["只需單月報表卻掃過數年歷史訂單，I/O 成本高於 opt_on_filter"],
+        "validWhen": "同一查詢要同時算多個月份或多種狀態切片時",
+        "failsWhen": "表累積數年歷史且只查單一短期切片時"
+      }
+    ],
+    "recommendedKeys": ["opt_on_filter"],
+    "alternativeNote": "若同一查詢要同時算 2 月與 3 月兩欄總額，改選 opt_cond_agg",
+    "relatedDocs": [
+      "/backend/01-database/sql/on-describes-where-filters/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_where_filter": 3,
+        "opt_on_filter": 7,
+        "opt_where_or_null": 4,
+        "opt_cond_agg": 7
+      }
+    }
+  },
+  {
+    "conceptId": "S2-05",
+    "variantId": "S2-05-bookstore-orders-reviews-01",
+    "domain": "bookstore",
+    "stage": 2,
+    "tablePath": ["customers", "orders", "reviews"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["fanout-sum-inflation", "sum-distinct-under-counts"],
+    "title": "同時算總消費金額與評價則數：一對多連接列數膨脹",
+    "businessRequirement": "算出顧客 1（佳穎）的訂單總金額（101=900, 102=500, 104=500，合計 1900）與評價總則數（訂單 101 有兩則評價，共 2 則）。哪個寫法不膨脹且不少算？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "10 萬顧客、100 萬訂單、200 萬評價",
+      "readWriteRatio": "40:1",
+      "indexes": ["idx_orders_customer_date"]
+    },
+    "options": [
+      {
+        "key": "opt_direct_join",
+        "sql": "SELECT c.customer_id, COALESCE(SUM(o.total_amount), 0) AS spent, COUNT(r.review_id) AS review_cnt FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id LEFT JOIN reviews r ON r.order_id = o.order_id WHERE c.customer_id = 1 GROUP BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 spent = 2800（多算了一次 900！）, review_cnt = 2",
+        "edgeCaseResult": "訂單 101 配到 2 則評價變成 2 列，900 元被重複加兩次",
+        "pros": ["SQL 簡短"],
+        "cons": ["靜默把多評價訂單金額成倍放大"],
+        "validWhen": "確定一筆訂單最多只能有一則評價（UNIQUE(order_id)）時",
+        "failsWhen": "一筆訂單允許多則評價時"
+      },
+      {
+        "key": "opt_sum_distinct",
+        "sql": "SELECT c.customer_id, COALESCE(SUM(DISTINCT o.total_amount), 0) AS spent, COUNT(DISTINCT r.review_id) AS review_cnt FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id LEFT JOIN reviews r ON r.order_id = o.order_id WHERE c.customer_id = 1 GROUP BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 spent = 1400（少算了一筆 500 元！）, review_cnt = 2",
+        "edgeCaseResult": "顧客 1 的訂單 102 與 104 剛好都是 500 元，SUM(DISTINCT) 把兩筆不同訂單合併只算一次",
+        "pros": ["看起來消除了膨脹"],
+        "cons": ["同金額的不同訂單會被靜默吞掉，永遠不可用 SUM(DISTINCT 金額)"],
+        "validWhen": "無",
+        "failsWhen": "任何金額加總"
+      },
+      {
+        "key": "opt_pre_aggregate_cte",
+        "sql": "WITH order_agg AS (SELECT customer_id, SUM(total_amount) AS spent FROM orders GROUP BY customer_id), review_agg AS (SELECT o.customer_id, COUNT(r.review_id) AS review_cnt FROM orders o JOIN reviews r ON r.order_id = o.order_id GROUP BY o.customer_id) SELECT c.customer_id, COALESCE(oa.spent, 0) AS spent, COALESCE(ra.review_cnt, 0) AS review_cnt FROM customers c LEFT JOIN order_agg oa ON oa.customer_id = c.customer_id LEFT JOIN review_agg ra ON ra.customer_id = c.customer_id WHERE c.customer_id = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳 spent = 1900, review_cnt = 2",
+        "edgeCaseResult": "兩側各自先聚合到 customer_id 唯一粒度再連接，完全免疫列數膨脹",
+        "pros": ["語意與結果在任何資料分布下皆正確", "適合全表多顧客彙總報表"],
+        "cons": ["SQL 篇幅較長"],
+        "validWhen": "需要同時彙總兩張以上獨立一對多子表時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_correlated_single",
+        "sql": "SELECT c.customer_id, (SELECT COALESCE(SUM(o.total_amount), 0) FROM orders o WHERE o.customer_id = c.customer_id) AS spent, (SELECT COUNT(r.review_id) FROM orders o JOIN reviews r ON r.order_id = o.order_id WHERE o.customer_id = c.customer_id) AS review_cnt FROM customers c WHERE c.customer_id = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳 spent = 1900, review_cnt = 2",
+        "edgeCaseResult": "查單一顧客時搭配索引極快且無膨脹風險",
+        "pros": ["單一顧客查詢直接命中索引、不必全表預聚合"],
+        "cons": ["拿來查全表十萬顧客時相關子查詢效能劣於 opt_pre_aggregate_cte"],
+        "validWhen": "只查單一或少數幾位顧客且外鍵有索引時",
+        "failsWhen": "全表報表掃描"
+      }
+    ],
+    "recommendedKeys": ["opt_pre_aggregate_cte", "opt_correlated_single"],
+    "alternativeNote": "全表報表選 opt_pre_aggregate_cte；只查單一顧客 id=1 時 opt_correlated_single 更省全表預聚合成本",
+    "relatedDocs": [
+      "/backend/01-database/sql/join-changes-rows-and-nulls/",
+      "/backend/01-database/sql/well-formed-is-not-correct/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_direct_join": [[1, 2800, 2]],
+        "opt_sum_distinct": [[1, 1400, 2]],
+        "opt_pre_aggregate_cte": [[1, 1900, 2]],
+        "opt_correlated_single": [[1, 1900, 2]]
+      }
+    }
+  },
+  {
+    "conceptId": "S2-06",
+    "variantId": "S2-06-logistics-warehouses-01",
+    "domain": "swift-logistics",
+    "stage": 2,
+    "tablePath": ["warehouses"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["self-join-missing-alias", "self-join-reversed-direction", "inner-join-drops-root"],
+    "title": "衛星倉與所屬主轉運中心：自連接別名與方向（領域丙變體）",
+    "businessRequirement": "捷配物流後台要列出所有倉庫代碼（code）與其所屬主轉運中心代碼（parent_hub_code）；頂層總倉（parent_hub_id IS NULL）須保留且父倉代碼顯示 NULL。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "200 個倉庫",
+      "readWriteRatio": "200:1",
+      "indexes": ["PRIMARY KEY (warehouse_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_no_alias",
+        "sql": "SELECT warehouses.code, warehouses.code FROM warehouses LEFT JOIN warehouses ON warehouses.parent_hub_id = warehouses.warehouse_id;",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "引擎報錯：ambiguous column name / duplicate table name",
+        "edgeCaseResult": "同表出現兩次未取別名當場拒絕",
+        "pros": ["無"],
+        "cons": ["語法不合法"],
+        "validWhen": "無",
+        "failsWhen": "所有 SQL 引擎"
+      },
+      {
+        "key": "opt_inner_self",
+        "sql": "SELECT sat.code AS warehouse_code, hub.code AS parent_hub_code FROM warehouses sat INNER JOIN warehouses hub ON sat.parent_hub_id = hub.warehouse_id ORDER BY sat.warehouse_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 3 個衛星倉，兩個頂層總倉 TW-N-HUB 與 TW-C-HUB 消失",
+        "edgeCaseResult": "違反保留頂層總倉需求",
+        "pros": ["角色別名 sat/hub 清楚"],
+        "cons": ["INNER JOIN 濾掉所有頂層總倉"],
+        "validWhen": "只需列出有上層總倉的衛星倉時",
+        "failsWhen": "須保留頂層總倉時"
+      },
+      {
+        "key": "opt_left_role_alias",
+        "sql": "SELECT sat.code AS warehouse_code, hub.code AS parent_hub_code FROM warehouses sat LEFT JOIN warehouses hub ON sat.parent_hub_id = hub.warehouse_id ORDER BY sat.warehouse_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳全部 5 個倉庫，兩座總倉 parent_hub_code 為 NULL",
+        "edgeCaseResult": "方向與角色命名皆精準",
+        "pros": ["以角色命名別名（sat/hub）防寫反", "LEFT JOIN 保留頂層總倉"],
+        "cons": ["僅展開單層父子；多層祖先需遞迴 CTE"],
+        "validWhen": "展開一層上下層級關係",
+        "failsWhen": "需展開不固定深度的多層路徑時"
+      },
+      {
+        "key": "opt_reversed_join",
+        "sql": "SELECT w1.code AS warehouse_code, w2.code AS parent_hub_code FROM warehouses w1 LEFT JOIN warehouses w2 ON w1.warehouse_id = w2.parent_hub_id ORDER BY w1.warehouse_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 6 列且把子倉當成父倉（TW-N-HUB 出現兩次！）",
+        "edgeCaseResult": "方向寫反導致父子顛倒與列數膨脹",
+        "pros": ["無"],
+        "cons": ["無意義編號 w1/w2 掩蓋了寫反的連接條件"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      }
+    ],
+    "recommendedKeys": ["opt_left_role_alias"],
+    "alternativeNote": "本題為 S2-06 在捷配物流領域的輪替變體",
+    "relatedDocs": [
+      "/backend/01-database/sql/table-occurrence-and-alias/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_inner_self": 3,
+        "opt_left_role_alias": 5,
+        "opt_reversed_join": 6
+      }
+    }
+  }
+]

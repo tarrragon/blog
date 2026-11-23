@@ -1,0 +1,467 @@
+[
+  {
+    "conceptId": "S7-01",
+    "variantId": "S7-01-bookstore-denorm-ratio-01",
+    "domain": "bookstore",
+    "stage": 7,
+    "tablePath": ["books", "reviews"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "read-write-ratio-denormalization",
+    "traps": ["live-agg-at-high-read-qps", "storing-avg-instead-of-sum-and-count"],
+    "title": "D01：商品列表顯示平均星等與評價數——讀寫比 400:1 的正規化與反正規化取捨",
+    "businessRequirement": "紙頁書店首頁與分類頁每秒 800 次讀取（每頁顯示 20 本書的平均星等與評價數），評價表每秒僅 2 次寫入（讀寫比 400:1），reviews 已累積 600 萬列。哪個 Schema 設計最匹配這個負載？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "1 萬 books、600 萬 reviews",
+      "readWriteRatio": "400:1（800 讀 QPS / 2 寫 QPS）",
+      "indexes": ["待定 Schema 設計"]
+    },
+    "options": [
+      {
+        "key": "opt_live_join_agg",
+        "sql": "-- 維持嚴格第三正規化，每次列表頁即時 books LEFT JOIN reviews GROUP BY book_id 算 AVG/COUNT",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "永遠單一真實來源、無同步漂移風險",
+        "edgeCaseResult": "800 QPS 每次翻頁都跨表聚合 600 萬列評價，資料庫 CPU 迅速飽和",
+        "pros": ["寫入最簡單、無一致性漂移"],
+        "cons": ["極高讀寫比下重複做昂貴聚合"],
+        "validWhen": "冷門後台報表或讀寫比反轉為寫遠大於讀時",
+        "failsWhen": "讀寫比 400:1 的高流量前台列表"
+      },
+      {
+        "key": "opt_counter_sum_cache_cols",
+        "sql": "-- 在 books 增設 review_count 與 rating_sum 兩欄，評價異動時同交易增量更新並搭配每日對帳；列表只讀 books 單表",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "800 QPS 列表頁退化為單表索引查詢；存 sum+count 讓新增與刪除評價皆可 O(1) 增量加減",
+        "edgeCaseResult": "將 400 次讀成本轉移到 1 次輕量寫入，並由每日對帳兜底修正漂移",
+        "pros": ["大幅降低高頻讀 CPU 與 I/O", "存 rating_sum+review_count 比只存 avg 支援 O(1) 刪改"],
+        "cons": ["寫入路徑變長，同一熱門書高並行寫評價會有短暫列鎖爭用，需維護對帳腳本"],
+        "validWhen": "讀遠大於寫（如 100:1 以上）且彙總值出現在核心列表頁時",
+        "failsWhen": "同一列每秒數百次寫評價造成熱點鎖爭用時（改背景批次彙總）"
+      },
+      {
+        "key": "opt_embed_json_reviews",
+        "sql": "-- 把所有評價塞進 books.reviews_json 陣列，應用層反序列化算平均",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "熱門書累積數千則評價後單列暴漲數百 KB",
+        "edgeCaseResult": "每次寫評價都要重寫整包大 JSON 造成嚴重寫入放大，且喪失評價分頁與外鍵",
+        "pros": ["單本書查詢一次讀出"],
+        "cons": ["嚴重寫入放大、無法對評價篩選分頁"],
+        "validWhen": "無",
+        "failsWhen": "評價筆數無上限成長的系統"
+      },
+      {
+        "key": "opt_index_every_col",
+        "sql": "-- 維持即時聚合，但把 reviews 每一個欄位各建單欄索引",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "多餘單欄索引無法免除跨表彙總，反而拖慢寫入",
+        "edgeCaseResult": "讀未變快、寫入變慢、磁碟暴增",
+        "pros": ["無"],
+        "cons": ["盲目加索引無助於高 QPS 即時全量聚合"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      }
+    ],
+    "recommendedKeys": ["opt_counter_sum_cache_cols"],
+    "alternativeNote": "前提翻轉：若此指標只在每月一次的營運月報出現（讀寫比 1:1000），則應堅持 opt_live_join_agg 不引入反正規化維護債",
+    "relatedDocs": [
+      "/backend/01-database/schema-design/",
+      "/backend/01-database/design-decisions-price-every-query/"
+    ]
+  },
+  {
+    "conceptId": "S7-02",
+    "variantId": "S7-02-cloud-vertical-split-01",
+    "domain": "cloud-academy",
+    "stage": 7,
+    "tablePath": ["courses", "course_contents"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "vertical-partitioning-table-width",
+    "traps": ["wide-row-dilutes-buffer-pool", "over-normalization-ten-joins"],
+    "title": "D02：熱冷欄位分離——單張寬表 vs 1:1 垂直拆表（courses 與 course_contents）",
+    "businessRequirement": "雲課堂 courses 表有 30 萬筆，列表與搜尋高頻掃描 120 bytes 核心欄（course_id, title, track, monthly_fee_tier, is_published），每門課另附 25KB 課綱全文 syllabus_md（僅詳情頁讀）。該放同表還是垂直拆表？",
+    "workloadProfile": {
+      "engine": "SQLite / MySQL InnoDB / PostgreSQL 18",
+      "scale": "30 萬課程（每筆 25KB 冷文本 = ~7.5 GB）",
+      "readWriteRatio": "300:1",
+      "indexes": ["PRIMARY KEY (course_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_single_wide_table",
+        "sql": "-- 全部塞進 courses 寬表並繼續 SELECT *",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "詳情頁少一次主鍵 JOIN",
+        "edgeCaseResult": "單頁可容納列數暴減，掃描列表把大量 25KB 冷資料拉進 Buffer Pool 稀釋快取，改 is_published 也易放大寫入",
+        "pros": ["詳情頁單表直查"],
+        "cons": ["表寬拖慢列表掃描與熱欄位更新、浪費記憶體緩衝池"],
+        "validWhen": "表只有幾百列或幾乎每次查詢都要讀全文時",
+        "failsWhen": "高頻掃描窄欄位、偶爾讀大文字欄的中大型表"
+      },
+      {
+        "key": "opt_vertical_split",
+        "sql": "-- 高頻小欄位留 courses；25KB 的 syllabus_md 與 metadata_json 拆到 1:1 附屬表 course_contents（course_id PK+FK）；列表只讀 courses，詳情頁才主鍵 JOIN",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "courses 主表保持極窄（30 萬筆僅數十 MB 可整張常駐記憶體），詳情頁靠主鍵精準撈一筆冷內容",
+        "edgeCaseResult": "更新熱欄位完全不碰冷文字頁，跨 SQLite / MySQL / PostgreSQL 皆有效益",
+        "pros": ["大幅提高 Buffer Pool 命中率與掃描速度", "隔離熱欄位寫入與冷大文字儲存"],
+        "cons": ["詳情頁多一次 1:1 主鍵 JOIN，新增課程須同交易寫兩張表"],
+        "validWhen": "明顯存在「高頻窄欄位＋低頻大文字／大 JSON 欄位」存取分層時",
+        "failsWhen": "每次讀取都一定同時需要全部欄位時"
+      },
+      {
+        "key": "opt_split_every_col",
+        "sql": "-- 把 courses 每個欄位各拆成一張獨立小表",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "每次列表查詢須做十張表隨機 I/O 連接",
+        "edgeCaseResult": "效能反而遠遜於單表",
+        "pros": ["無"],
+        "cons": ["過度拆散一起讀取的熱欄位"],
+        "validWhen": "無",
+        "failsWhen": "OLTP 列表系統"
+      },
+      {
+        "key": "opt_five_varchar_cols",
+        "sql": "-- 留同表但把 syllabus_md 切成五欄 VARCHAR(5000)",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "表寬完全沒變小，應用層還得自己拼接",
+        "edgeCaseResult": "零效益還徒增程式複雜度",
+        "pros": ["無"],
+        "cons": ["未減少頁寬且破壞欄位語意"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      }
+    ],
+    "recommendedKeys": ["opt_vertical_split"],
+    "alternativeNote": "PostgreSQL 雖有 TOAST 自動外移 >2KB 欄位，但垂直拆表在跨引擎、防 SELECT * 誤讀與降低更新寫入放大上仍具顯著價值",
+    "relatedDocs": [
+      "/backend/01-database/design-decisions-price-every-query/",
+      "/backend/01-database/table-growth-query-cost/"
+    ]
+  },
+  {
+    "conceptId": "S7-03",
+    "variantId": "S7-03-bookstore-hot-counter-01",
+    "domain": "bookstore",
+    "stage": 7,
+    "tablePath": ["books", "book_view_events"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "high-frequency-counting",
+    "benchmarkRef": "ref-pg-hot-row-counter-contention",
+    "traps": ["hot-row-lock-contention", "bigger-pool-worsens-lock-queue"],
+    "title": "D03：高頻熱門商品瀏覽計數——熱點列鎖競爭 vs 只新增事件與分桶計數",
+    "businessRequirement": "雙十一特賣熱門書（book_id = 201）每秒湧入 1,500 次瀏覽。在 PostgreSQL 上直接寫 `UPDATE books SET view_count = view_count + 1 WHERE book_id = 201` 會出現嚴重延遲，應如何改設計？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "單一熱點書 1,500 寫入 QPS",
+      "readWriteRatio": "1:10",
+      "indexes": ["PRIMARY KEY (book_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_bigger_pool",
+        "sql": "-- 維持單列 UPDATE view_count + 1，把連線池從 20 調大到 500",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "500 條連線全部塞在同一列的列鎖排隊，吞吐量不升反降",
+        "edgeCaseResult": "產生巨量 MVCC dead tuple 拖慢 VACUUM 並拖垮同庫其他請求",
+        "pros": ["低流量（如 5 QPS）時最簡單"],
+        "cons": ["熱點列鎖串行化下調大連線池只會加劇排隊與上下文切換"],
+        "validWhen": "全站極低流量、無單點熱點時",
+        "failsWhen": "單列數百至上千寫入 QPS 的熱點場景"
+      },
+      {
+        "key": "opt_append_or_bucket",
+        "sql": "-- 改為只新增事件表 INSERT INTO book_view_events 或分桶計數表 book_view_buckets(book_id, bucket_id 0..31, cnt)，搭配背景可重跑彙總（或快取層批次沖刷）",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "消除單列列鎖排隊，分桶將爭用稀釋 32 倍、只新增事件完全無列鎖爭用",
+        "edgeCaseResult": "背景排程定期彙總回讀端，重跑不重複計算",
+        "pros": ["徹底解除熱點列鎖瓶頸", "吞吐量可隨連線水平提升"],
+        "cons": ["讀端看到秒級或分鐘級最終一致數字", "多出彙總排程與事件表保留期清理"],
+        "validWhen": "單一熱點高頻寫入且讀端容許秒級最終一致時",
+        "failsWhen": "需要零延遲強一致扣減（如限量庫存 1 本）時"
+      },
+      {
+        "key": "opt_serializable",
+        "sql": "-- 維持單列 UPDATE 但將隔離等級調高到 SERIALIZABLE",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "觸發大量序列化衝突回滾",
+        "edgeCaseResult": "有效寫入吞吐量大幅下降",
+        "pros": ["無"],
+        "cons": ["加劇衝突而不解決鎖爭用"],
+        "validWhen": "無",
+        "failsWhen": "高頻熱點計數"
+      },
+      {
+        "key": "opt_app_read_add_write",
+        "sql": "-- 改為 SELECT view_count 讀回應用層 +1 再寫回",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "嚴重 lost update 導致大量瀏覽數遺失",
+        "edgeCaseResult": "既慢又錯",
+        "pros": ["無"],
+        "cons": ["導入 lost update 競態"],
+        "validWhen": "無",
+        "failsWhen": "所有並行系統"
+      }
+    ],
+    "recommendedKeys": ["opt_append_or_bucket"],
+    "alternativeNote": "對應 benchmarks/postgres-and-concurrency-reference.json 的 ref-pg-hot-row-counter-contention",
+    "relatedDocs": [
+      "/backend/01-database/high-frequency-counting/"
+    ]
+  },
+  {
+    "conceptId": "S7-04",
+    "variantId": "S7-04-logistics-partial-index-01",
+    "domain": "swift-logistics",
+    "stage": 7,
+    "tablePath": ["dispatch_tasks"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "partial-index-write-amplification",
+    "requiresScale": true,
+    "benchmarkRef": "bm-logistics-partial-index-queue",
+    "traps": ["over-indexing-write-amplification", "full-index-bloated-by-cold-rows"],
+    "title": "D04：99.96% 已完成任務表的輪詢索引——全表索引與部分索引（Partial Index）",
+    "businessRequirement": "捷配物流 dispatch_tasks 有 3,000 萬列歷史任務（本壓測縮尺為 30,016 列），99.96% 皆為 completed，任何時刻只有少量 queued。worker 高頻跑 `WHERE status = 'queued' ORDER BY priority DESC, created_at ASC LIMIT 1`，應如何建索引？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "30,016（壓測縮尺）～ 3,000 萬列、1,000 寫 QPS / 200 輪詢 QPS",
+      "readWriteRatio": "1:5",
+      "indexes": ["idx_dispatch_queued (priority DESC, created_at ASC) WHERE status = 'queued'"]
+    },
+    "options": [
+      {
+        "key": "opt_eight_indexes",
+        "sql": "-- 五個欄位各建單欄索引，外加三張複合索引",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "每次 INSERT 與狀態 UPDATE 都須維護 8 棵 B-tree",
+        "edgeCaseResult": "寫入放大與 WAL 體積暴增，拖慢整個任務表寫入吞吐",
+        "pros": ["無"],
+        "cons": ["寫入放大嚴重、磁碟與快取浪費"],
+        "validWhen": "無",
+        "failsWhen": "高寫入事件／任務表"
+      },
+      {
+        "key": "opt_full_composite_index",
+        "sql": "-- CREATE INDEX idx_all ON dispatch_tasks(status, priority DESC, created_at ASC);",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "查詢可走索引，但索引把 3,000 萬筆已完成的冷任務全部收進去",
+        "edgeCaseResult": "索引高達數 GB 佔滿記憶體，且每次任務變 completed 仍留在龐大索引中",
+        "pros": ["MySQL 等不支援部分索引的引擎也能用"],
+        "cons": ["索引體積隨歷史任務無限膨脹"],
+        "validWhen": "目標引擎不支援部分索引（如 MySQL）且搭配定期歸檔舊列時",
+        "failsWhen": "PostgreSQL / SQLite 上長期保留歷史列的高比例冷熱表"
+      },
+      {
+        "key": "opt_partial_index",
+        "sql": "SELECT task_id FROM dispatch_tasks WHERE status = 'queued' ORDER BY priority DESC, created_at ASC LIMIT 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "直擊部分索引 idx_dispatch_queued（僅涵蓋 12 筆 queued），壓測實測快全掃數百倍",
+        "edgeCaseResult": "任務一轉 completed 即自動移出該索引，體積永遠維持幾 KB 常駐記憶體",
+        "pros": ["索引體積極小常駐記憶體", "任務完成即離樹、寫入維護成本極低"],
+        "cons": ["查詢 WHERE 必須精確含 status = 'queued' 才會命中", "不服務 completed 歷史查詢"],
+        "validWhen": "PostgreSQL / SQLite 上少數活躍列混在大量歷史完成列中",
+        "failsWhen": "MySQL（改用全表複合索引＋定期歸檔）"
+      },
+      {
+        "key": "opt_no_index",
+        "sql": "SELECT task_id FROM dispatch_tasks WHERE +status = 'queued' ORDER BY priority DESC, created_at ASC LIMIT 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "每次輪詢全掃整張表，壓測慢數百倍",
+        "edgeCaseResult": "3,000 萬列下每秒 200 次輪詢瞬間卡死資料庫",
+        "pros": ["零索引寫入成本"],
+        "cons": ["讀取端全表掃描完全不可用"],
+        "validWhen": "永遠不會被查詢的純寫入歸檔表",
+        "failsWhen": "高頻輪詢任務佇列"
+      }
+    ],
+    "recommendedKeys": ["opt_partial_index"],
+    "alternativeNote": "對照 benchmarks/sqlite-scale-snapshots.json 的 bm-logistics-partial-index-queue 實測倍率",
+    "relatedDocs": [
+      "/backend/01-database/table-growth-query-cost/",
+      "/backend/01-database/sql/knowledge-cards/indexing/"
+    ],
+    "sqliteAssertions": {
+      "optionExplainMustContain": {
+        "opt_partial_index": "idx_dispatch_queued",
+        "opt_no_index": "SCAN dispatch_tasks"
+      }
+    }
+  },
+  {
+    "conceptId": "S7-05",
+    "variantId": "S7-05-logistics-partition-unique-01",
+    "domain": "swift-logistics",
+    "stage": 7,
+    "tablePath": ["shipment_events"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "partitioning-and-retention",
+    "benchmarkRef": "ref-pg-partition-drop-vs-delete",
+    "traps": ["bulk-delete-vacuum-bloat", "partition-unique-must-include-partition-key"],
+    "title": "D05：上億列事件表保留期清理——DELETE 膨脹、按月時間分區與唯一約束衝突",
+    "businessRequirement": "捷配物流 shipment_events 日增 300 萬筆、須保留 180 天並清理過期資料，原本表上有全域 UNIQUE(scanner_tx_id) 防重送。若改 PostgreSQL 按月時間分區（Range Partitioning），必須誠實面對什麼設計取捨？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "180 天約 5.4 億列事件",
+      "readWriteRatio": "1:20",
+      "indexes": ["依 recorded_at 按月分區"]
+    },
+    "options": [
+      {
+        "key": "opt_daily_bulk_delete",
+        "sql": "-- 維持單表不分割，每天凌晨跑 DELETE FROM shipment_events WHERE recorded_at < NOW() - INTERVAL '180 days'",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "不改結構、保留全域 UNIQUE(scanner_tx_id)",
+        "edgeCaseResult": "日刪 300 萬列引發巨量 WAL 與 autovacuum I/O 風暴，且實體檔案空間不會自動歸還作業系統",
+        "pros": ["全域唯一約束不受限制"],
+        "cons": ["嚴重寫入放大、長鎖與表膨脹"],
+        "validWhen": "每日僅刪除幾千列的低量表",
+        "failsWhen": "每日刪除數百萬列的上億列事件表"
+      },
+      {
+        "key": "opt_monthly_range_partition",
+        "sql": "-- 依 recorded_at 按月 Range Partitioning，過期改用毫秒級 DROP TABLE 子分區；並將 UNIQUE 改為包含分區鍵 (scanner_tx_id, recorded_at)，跨月重送另由去重表或重送時間窗口約束處理",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "過期清理縮為毫秒級 metadata 操作並享分區裁剪，且正面處理 PG 分區表 UNIQUE 必須含分區鍵的硬限制",
+        "edgeCaseResult": "不靠假設跨月不會撞號，明確定義去重窗口與補充機制",
+        "pros": ["毫秒級釋放磁碟且無 VACUUM 風暴", "時間條件查詢享分區裁剪"],
+        "cons": ["PostgreSQL 無法在分區表上建不含分區鍵的全域 UNIQUE 索引，跨月去重須另行設計"],
+        "validWhen": "有明確保留期的上億列時間序列／事件表",
+        "failsWhen": "表總量不到數百萬列（過度設計）"
+      },
+      {
+        "key": "opt_hash_partition",
+        "sql": "-- 依 event_id 做 Hash Partitioning 企圖兼顧全域 UNIQUE 與快刪舊資料",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "180 天前資料分散在所有雜湊分區內，完全無法 DROP PARTITION 清理",
+        "edgeCaseResult": "既無法快刪舊資料，雜湊鍵也不含 scanner_tx_id 仍不能建全域 UNIQUE",
+        "pros": ["無"],
+        "cons": ["同時踩空兩個目標"],
+        "validWhen": "無",
+        "failsWhen": "時間保留期清理需求"
+      },
+      {
+        "key": "opt_never_delete",
+        "sql": "-- 永遠不刪資料也不分區，只持續擴充磁碟",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "短期免開發",
+        "edgeCaseResult": "備份還原時間、索引深度、Buffer Pool 命中率與 Schema Migration 風險持續惡化且違反法規保留期",
+        "pros": ["初期零工時"],
+        "cons": ["違反法規且運維成本無上限惡化"],
+        "validWhen": "無",
+        "failsWhen": "有法規保留期與持續高成長的系統"
+      }
+    ],
+    "recommendedKeys": ["opt_monthly_range_partition"],
+    "alternativeNote": "對應 benchmarks/postgres-and-concurrency-reference.json 的 ref-pg-partition-drop-vs-delete",
+    "relatedDocs": [
+      "/backend/01-database/table-growth-query-cost/",
+      "/backend/01-database/schema-change-management/"
+    ]
+  },
+  {
+    "conceptId": "S7-06",
+    "variantId": "S7-06-bookstore-hybrid-jsonb-01",
+    "domain": "bookstore",
+    "stage": 7,
+    "tablePath": ["books", "book_details"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "structured-vs-semi-structured",
+    "traps": ["sparse-40-nullable-columns", "eav-anti-pattern", "json-only-loses-fk-and-indexes"],
+    "title": "D06：多品類變動規格建模——強型別固定欄位、JSONB 與 EAV 取捨",
+    "businessRequirement": "紙頁書店擴展至實體書、電子書與文具：側邊欄只依分類、價格、庫存與品類做篩選排序；頁數、裝幀、DRM、材質等稀疏規格只在詳情頁純展示。該如何建模？",
+    "workloadProfile": {
+      "engine": "SQLite / PostgreSQL 18",
+      "scale": "10 萬商品、持續新增新品類",
+      "readWriteRatio": "500:1",
+      "indexes": ["核心篩選欄建複合索引"]
+    },
+    "options": [
+      {
+        "key": "opt_40_nullable_cols",
+        "sql": "-- 把所有品類 40 種屬性全做成 books 主表 nullable 欄位",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "每列留 35 個 NULL，每開新品類都要 ALTER TABLE",
+        "edgeCaseResult": "表寬膨脹且頻繁改表",
+        "pros": ["每欄具原生型別"],
+        "cons": ["極高稀疏度與高頻 Schema 變更成本"],
+        "validWhen": "屬性總數少於 5 個且幾乎所有品類共用時",
+        "failsWhen": "數十種高度異質品類的稀疏展示欄位"
+      },
+      {
+        "key": "opt_hybrid_fixed_and_json",
+        "sql": "-- 參與篩選、排序與約束的核心欄位（category_id, price, stock）放 books 強型別固定欄；純展示的稀疏規格放 book_details.specs_json（PG 用 JSONB）；日後某規格升格為高頻篩選再補運算式索引或升格固定欄",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "核心篩選享強型別、外鍵與複合索引效能；新品類展示規格零 migration 擴充",
+        "edgeCaseResult": "同時避開寬表膨脹、EAV 多次自連接與全 JSON 失去關聯保證",
+        "pros": ["切清「查詢約束核心」與「稀疏展示負載」邊界", "演進平滑可隨需求把單一 JSON 鍵升格加索引"],
+        "cons": ["JSON 內部須由應用層 schema 驗證或 CHECK 約束把關型別"],
+        "validWhen": "核心篩選欄位穩定、長尾展示屬性多變的電商／內容平台",
+        "failsWhen": "所有長尾屬性都必須做多維任意組合數值區間篩選時（改配專屬搜尋引擎）"
+      },
+      {
+        "key": "opt_eav_table",
+        "sql": "-- 連價格與分類全塞進 EAV 三欄表 (item_id, attr_name, attr_value)",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "所有數值轉字串、查三個條件要做三次自連接",
+        "edgeCaseResult": "失去外鍵、數值型別與範圍索引能力，查詢既慢又難寫",
+        "pros": ["不需改表"],
+        "cons": ["典型 EAV 反模式，破壞關聯式資料庫核心優勢"],
+        "validWhen": "無",
+        "failsWhen": "有穩定核心篩選欄位的系統"
+      },
+      {
+        "key": "opt_json_only",
+        "sql": "-- 整張表只留 book_id 與單一 data_json 欄位，取消所有外鍵與固定欄位",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "連庫存原子扣減與分類外鍵都喪失",
+        "edgeCaseResult": "放棄關聯式強項卻留著關聯式成本",
+        "pros": ["寫入不需定義 schema"],
+        "cons": ["喪失外鍵、CHECK 約束與高效率索引排序"],
+        "validWhen": "純原始外部報文歸檔表（如 shipment_payloads 附屬表）",
+        "failsWhen": "核心交易與商品主表"
+      }
+    ],
+    "recommendedKeys": ["opt_hybrid_fixed_and_json"],
+    "alternativeNote": "本題對應三套領域皆採用的主表＋冷資料 JSON 附屬表設計（book_details / course_contents / shipment_payloads）",
+    "relatedDocs": [
+      "/backend/01-database/schema-design/",
+      "/backend/01-database/design-decisions-price-every-query/"
+    ]
+  }
+]

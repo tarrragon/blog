@@ -1,0 +1,404 @@
+[
+  {
+    "conceptId": "S4-01",
+    "variantId": "S4-01-bookstore-orders-01",
+    "domain": "bookstore",
+    "stage": 4,
+    "tablePath": ["orders"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["update-missing-status-guard", "hard-delete-breaks-audit"],
+    "title": "批次取消逾時未付款訂單：UPDATE 條件邊界與 RETURNING（紙頁書店 CRUD 路徑一）",
+    "businessRequirement": "排程要把 2026-03-05 前仍為 pending 的訂單改為 cancelled，並精確取回這次真正被取消的 order_id 以便歸還庫存。",
+    "workloadProfile": {
+      "engine": "SQLite 3.35+ / PostgreSQL 18",
+      "scale": "每日排程批次更新數百至數千筆",
+      "readWriteRatio": "10:1",
+      "indexes": ["idx_orders_ordered_id"]
+    },
+    "options": [
+      {
+        "key": "opt_missing_status",
+        "sql": "UPDATE orders SET status = 'cancelled' WHERE ordered_at < '2026-03-05 00:00:00' RETURNING order_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "誤改 3 筆（連已付款的 101 與 105 都被改成 cancelled！）",
+        "edgeCaseResult": "漏掉 status = 'pending' 保護條件造成災難性誤寫",
+        "pros": ["無"],
+        "cons": ["覆蓋已付款歷史訂單"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      },
+      {
+        "key": "opt_guarded_returning",
+        "sql": "UPDATE orders SET status = 'cancelled' WHERE status = 'pending' AND ordered_at < '2026-03-05 00:00:00' RETURNING order_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "精確只修改並回傳 1 筆逾時未付訂單 106",
+        "edgeCaseResult": "原子檢查狀態並回傳本次異動鍵值，避免把剛付款訂單蓋掉",
+        "pros": ["原子狀態轉換防競態覆蓋", "RETURNING 精準給出要還庫存的清單"],
+        "cons": ["單批積壓數十萬列時須加分批上限防長鎖"],
+        "validWhen": "狀態機轉換並需後續聯動處理時",
+        "failsWhen": "不支援 RETURNING 的極舊版引擎"
+      },
+      {
+        "key": "opt_hard_delete",
+        "sql": "DELETE FROM orders WHERE status = 'pending' AND ordered_at < '2026-03-05 00:00:00';",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "因 order_items 存在外鍵參照 106，開啟外鍵時當場被拒絕（FOREIGN KEY constraint failed）",
+        "edgeCaseResult": "直接刪單違反參照完整性並破壞稽核軌跡",
+        "pros": ["無"],
+        "cons": ["觸發外鍵錯誤且破壞訂單歷史紀錄"],
+        "validWhen": "無",
+        "failsWhen": "交易表有子明細與對帳需求時"
+      },
+      {
+        "key": "opt_wrong_status",
+        "sql": "UPDATE orders SET status = 'cancelled' WHERE status = 'paid' AND ordered_at < '2026-03-05 00:00:00' RETURNING order_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "誤把 2 筆已付款訂單 101、105 改成取消",
+        "edgeCaseResult": "狀態條件寫錯對象",
+        "pros": ["無"],
+        "cons": ["鎖定到已付款訂單而非未付款訂單"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      }
+    ],
+    "recommendedKeys": ["opt_guarded_returning"],
+    "alternativeNote": "若同時歸還庫存，須把這句 UPDATE 與庫存回補包在同一交易內",
+    "relatedDocs": [
+      "/backend/01-database/sql/knowledge-cards/ddl-dml/",
+      "/backend/01-database/transaction-boundary/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_guarded_returning": [[106]],
+        "opt_missing_status": [[101], [105], [106]]
+      }
+    }
+  },
+  {
+    "conceptId": "S4-01",
+    "variantId": "S4-01-bookstore-coupons-02",
+    "domain": "bookstore",
+    "stage": 4,
+    "tablePath": ["coupons", "order_coupons"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["delete-referenced-master-row", "update-without-active-guard"],
+    "title": "停用已過期優惠券並保留歷史關聯（同領域 CRUD 多表路徑輪替）",
+    "businessRequirement": "把到期日早於 2026-01-01 且目前仍啟用（is_active = 1）的優惠券停用，不能破壞 order_coupons 歷史紀錄，並回傳被停用的 coupon_id。",
+    "workloadProfile": {
+      "engine": "SQLite 3.35+ / PostgreSQL 18",
+      "scale": "數千張優惠券",
+      "readWriteRatio": "100:1",
+      "indexes": ["PRIMARY KEY (coupon_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_delete_coupon",
+        "sql": "DELETE FROM coupons WHERE expires_at < '2026-01-01 00:00:00';",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "因 order_coupons 參照了 303，外鍵保護當場報錯",
+        "edgeCaseResult": "刪除主檔破壞歷史訂單折扣稽核",
+        "pros": ["無"],
+        "cons": ["違反外鍵約束且遺失歷史用券紀錄"],
+        "validWhen": "無",
+        "failsWhen": "優惠券曾被歷史訂單使用時"
+      },
+      {
+        "key": "opt_soft_deactivate",
+        "sql": "UPDATE coupons SET is_active = 0 WHERE is_active = 1 AND expires_at < '2026-01-01 00:00:00' RETURNING coupon_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "精確停用並回傳 303（OLD2025），歷史 order_coupons 完整保留",
+        "edgeCaseResult": "重複執行具冪等性（第二次改 0 列）",
+        "pros": ["軟停用保留歷史參照", "加上 is_active = 1 避免重複更新已停用列"],
+        "cons": ["查詢可用券時須一律帶 is_active = 1"],
+        "validWhen": "主檔存在歷史交易參照時的生命週期結束",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_update_all",
+        "sql": "UPDATE coupons SET is_active = 0 RETURNING coupon_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "把尚未過期的 301 與 302 也全停用（3 列全改）",
+        "edgeCaseResult": "漏寫 WHERE 造成全表誤改",
+        "pros": ["無"],
+        "cons": ["全站有效活動瞬間失效"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      },
+      {
+        "key": "opt_wrong_dir",
+        "sql": "UPDATE coupons SET is_active = 0 WHERE is_active = 1 AND expires_at > '2026-01-01 00:00:00' RETURNING coupon_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "把 2026 年仍在效期內的 301、302 停用，反而留下 2025 過期券 303",
+        "edgeCaseResult": "日期比較方向寫反",
+        "pros": ["無"],
+        "cons": ["條件反向"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      }
+    ],
+    "recommendedKeys": ["opt_soft_deactivate"],
+    "alternativeNote": "同一個能力節點 S4-01 在紙頁書店內可切換 orders 與 coupons 兩條表路徑練習 CRUD 寫入安全",
+    "relatedDocs": [
+      "/backend/01-database/sql/foreign-key-and-referential-integrity/",
+      "/backend/01-database/sql/knowledge-cards/ddl-dml/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_soft_deactivate": [[303]],
+        "opt_update_all": [[301], [302], [303]]
+      }
+    }
+  },
+  {
+    "conceptId": "S4-01",
+    "variantId": "S4-01-cloud-subscriptions-03",
+    "domain": "cloud-academy",
+    "stage": 4,
+    "tablePath": ["subscriptions"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["state-transition-missing-guard"],
+    "title": "到期試用訂閱轉逾期狀態（領域乙 CRUD 變體）",
+    "businessRequirement": "把開始於 2026-02-25 前且仍處於 trialing 的試用訂閱批次轉為 past_due，回傳本次被轉換的 sub_id 以觸發催繳信。",
+    "workloadProfile": {
+      "engine": "SQLite 3.35+ / PostgreSQL 18",
+      "scale": "10 萬訂閱",
+      "readWriteRatio": "20:1",
+      "indexes": ["PRIMARY KEY (sub_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_trial_guard",
+        "sql": "UPDATE subscriptions SET status = 'past_due' WHERE status = 'trialing' AND started_at < '2026-02-25 00:00:00' RETURNING sub_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "精確轉換並回傳 1 筆 2004",
+        "edgeCaseResult": "不影響已付費 active 或已取消 canceled 的訂閱",
+        "pros": ["鎖定原狀態 trialing 避免把剛轉正的 active 訂閱打回逾期"],
+        "cons": ["大批量須分批避免長交易鎖"],
+        "validWhen": "狀態機批次遷移",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_no_status_guard",
+        "sql": "UPDATE subscriptions SET status = 'past_due' WHERE started_at < '2026-02-25 00:00:00' RETURNING sub_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "誤改 5 筆（含已正常付費的 2002、2005 與已取消的 2001）",
+        "edgeCaseResult": "付費會員全數被誤停權並收到催繳信",
+        "pros": ["無"],
+        "cons": ["漏掉狀態機前置狀態檢查"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      },
+      {
+        "key": "opt_include_active",
+        "sql": "UPDATE subscriptions SET status = 'past_due' WHERE status IN ('trialing', 'active') AND started_at < '2026-02-25 00:00:00' RETURNING sub_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "誤把正常付費訂閱 2002、2005 轉逾期",
+        "edgeCaseResult": "條件納入錯誤狀態",
+        "pros": ["無"],
+        "cons": ["誤傷正常活躍會員"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      },
+      {
+        "key": "opt_delete_trial",
+        "sql": "DELETE FROM subscriptions WHERE status = 'trialing' AND started_at < '2026-02-25 00:00:00' RETURNING sub_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "直接刪除了 2004，失去試用紀錄無法追蹤轉換率也無法通知催繳",
+        "edgeCaseResult": "硬刪破壞生命週期歷史",
+        "pros": ["無"],
+        "cons": ["遺失試用紀錄，違反業務轉 past_due 需求"],
+        "validWhen": "無",
+        "failsWhen": "須保留狀態流轉與催繳追蹤時"
+      }
+    ],
+    "recommendedKeys": ["opt_trial_guard"],
+    "alternativeNote": "本題為 S4-01 在雲課堂領域的輪替變體",
+    "relatedDocs": [
+      "/backend/01-database/sql/knowledge-cards/ddl-dml/",
+      "/backend/01-database/transaction-boundary/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_trial_guard": [[2004]],
+        "opt_no_status_guard": [[2001], [2002], [2004], [2005], [2006]]
+      }
+    }
+  },
+  {
+    "conceptId": "S4-02",
+    "variantId": "S4-02-bookstore-fk-01",
+    "domain": "bookstore",
+    "stage": 4,
+    "tablePath": ["books", "order_items"],
+    "perspective": "tradeoff-design",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": "referential-integrity",
+    "traps": ["cascade-destroys-history", "sqlite-fk-off-by-default"],
+    "title": "書籍下架與歷史訂單保留：外鍵 ON DELETE 與 SQLite 生效檢查",
+    "businessRequirement": "書籍下架時歷史 order_items 必須保留以供對帳，同時禁止寫入不存在的 book_id。開發用 SQLite、正式環境用 PostgreSQL，應選哪個設計？",
+    "workloadProfile": {
+      "engine": "SQLite（開發） / PostgreSQL 18（正式）",
+      "scale": "1 萬書籍、500 萬訂單明細",
+      "readWriteRatio": "100:1",
+      "indexes": ["PRIMARY KEY (book_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_cascade",
+        "sql": "-- FOREIGN KEY (book_id) REFERENCES books(book_id) ON DELETE CASCADE",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "刪書時連同歷史訂單明細一併清空",
+        "edgeCaseResult": "歷史財務對帳金額瞬間少算",
+        "pros": ["不殘留孤兒列"],
+        "cons": ["刪主檔會毀掉財務交易明細"],
+        "validWhen": "子列純屬主檔附屬暫存資料（如購物車項目）時",
+        "failsWhen": "子列是不可刪的財務或稽核紀錄時"
+      },
+      {
+        "key": "opt_restrict_soft_and_pragma",
+        "sql": "-- FOREIGN KEY (book_id) REFERENCES books(book_id) ON DELETE RESTRICT + 下架改設 is_active = 0 + SQLite 每條連線執行 PRAGMA foreign_keys = ON",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "防止誤刪有交易紀錄的書、保留對帳歷史，且開發期即強制執法",
+        "edgeCaseResult": "SQLite 與 PostgreSQL 外鍵行為對齊，不讓壞資料留到上線才爆",
+        "pros": ["保護歷史交易完整", "消除 SQLite 預設不執法導致的開發／正式落差"],
+        "cons": ["須在連線池建立每條 SQLite 連線時統一注入 PRAGMA foreign_keys = ON"],
+        "validWhen": "交易系統跨 SQLite 開發與 PostgreSQL 正式環境",
+        "failsWhen": "跨庫分片無法建資料庫外鍵時"
+      },
+      {
+        "key": "opt_declare_only",
+        "sql": "-- 僅在 CREATE TABLE 宣告 REFERENCES books(book_id)，不設定 SQLite 連線 PRAGMA",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "SQLite 測試期間宣告存在但未生效",
+        "edgeCaseResult": "孤兒列在開發期全數放行，上線 PostgreSQL 立刻失敗",
+        "pros": ["少寫一行連線初始化"],
+        "cons": ["宣告與生效分離，測試形同虛設"],
+        "validWhen": "無",
+        "failsWhen": "SQLite 作為開發或測試引擎時"
+      },
+      {
+        "key": "opt_app_check_only",
+        "sql": "-- 不建外鍵，應用層 INSERT 前先 SELECT 1 FROM books WHERE book_id = ?",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "單線程正常路徑看似可行",
+        "edgeCaseResult": "並行請求或維運腳本直寫資料庫可直接繞過檢查產生孤兒列",
+        "pros": ["分庫分表時唯一可行手段"],
+        "cons": ["單庫環境下放棄資料庫層原子保證，仍有競態窗口"],
+        "validWhen": "跨資料庫實例分片時",
+        "failsWhen": "單庫關聯式資料庫內"
+      }
+    ],
+    "recommendedKeys": ["opt_restrict_soft_and_pragma"],
+    "alternativeNote": "SQLite 的 PRAGMA foreign_keys 是連線級設定，連線池新開的每一條連線都要設定",
+    "relatedDocs": [
+      "/backend/01-database/sql/foreign-key-and-referential-integrity/"
+    ]
+  },
+  {
+    "conceptId": "S4-04",
+    "variantId": "S4-04-bookstore-collation-01",
+    "domain": "bookstore",
+    "stage": 4,
+    "tablePath": ["customers"],
+    "perspective": "tradeoff-design",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": "collation-and-index",
+    "traps": ["lower-breaks-btree-index", "like-case-sensitivity-differs-by-engine"],
+    "title": "會員 Email 不分大小寫登入比對：Collation、運算式索引與正規化",
+    "businessRequirement": "搬到 PostgreSQL 後須支援不分大小寫查詢 50 萬會員的 email（Alice@Example.com 與 alice@example.com 視為同一帳號），且每次登入都必須走索引。",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "50 萬顧客、高頻登入查詢",
+      "readWriteRatio": "200:1",
+      "indexes": ["待規劃 email 索引"]
+    },
+    "options": [
+      {
+        "key": "opt_lower_no_expr_idx",
+        "sql": "SELECT customer_id FROM customers WHERE LOWER(email) = LOWER('Alice@Example.com'); -- 僅在原 email 欄建普通索引",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "結果涵蓋 1 與 5，但原 email 索引失效而觸發全表掃描",
+        "edgeCaseResult": "50 萬列每次登入全表掃描",
+        "pros": ["改動最小"],
+        "cons": ["LOWER(email) 使普通 B-tree 索引無法命中"],
+        "validWhen": "幾百列極小表",
+        "failsWhen": "50 萬列高頻登入查詢"
+      },
+      {
+        "key": "opt_expr_unique_or_norm",
+        "sql": "-- 方案：寫入前統一轉小寫 + CHECK (email = LOWER(email)) + UNIQUE(email)；若須保留原始大小寫則建 CREATE UNIQUE INDEX idx_lower_email ON customers (LOWER(email))",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "登入查詢 O(log N) 命中索引，同時在寫入層擋下同信箱大小寫重複註冊",
+        "edgeCaseResult": "唯一約束與查詢比較規則在同一層對齊",
+        "pros": ["兼顧索引效能與唯一性保證", "不影響其他需要區分大小寫的欄位"],
+        "cons": ["運算式索引要求查詢寫法與索引表達式形狀完全一致"],
+        "validWhen": "所有 PostgreSQL 帳號信箱系統",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_use_like",
+        "sql": "SELECT customer_id FROM customers WHERE email LIKE 'alice@example.com';",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "SQLite 僅對 ASCII 不分大小寫，PostgreSQL 的 LIKE 則區分大小寫",
+        "edgeCaseResult": "跨引擎結果不一致，且底線 _ 與 % 會被當萬用字元觸發安全漏洞",
+        "pros": ["無"],
+        "cons": ["誤以為 LIKE 永遠不分大小寫且引入萬用字元注入風險"],
+        "validWhen": "無",
+        "failsWhen": "精確帳號比對"
+      },
+      {
+        "key": "opt_db_wide_ci",
+        "sql": "-- 將整個資料庫預設 collation 改成不分大小寫",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "全庫所有文字欄位都變不分大小寫",
+        "edgeCaseResult": "波及原本需要區分大小寫的權杖、短網址與代碼欄位",
+        "pros": ["不用改單一查詢"],
+        "cons": ["爆炸半徑過大，破壞全庫其餘字串語意"],
+        "validWhen": "全庫確認無任何區分大小寫需求時",
+        "failsWhen": "含 token、代碼或跨語系規則的系統"
+      }
+    ],
+    "recommendedKeys": ["opt_expr_unique_or_norm"],
+    "alternativeNote": "比較規則的索引形狀與查詢形狀必須對齊，詳見 SQL.15 與 SQL.22",
+    "relatedDocs": [
+      "/backend/01-database/sql/string-comparison-and-collation/",
+      "/backend/01-database/sql/readable-and-fast-mostly-align/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_lower_no_expr_idx": 2
+      }
+    }
+  }
+]

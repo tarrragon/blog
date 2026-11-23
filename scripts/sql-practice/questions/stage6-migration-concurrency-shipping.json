@@ -1,0 +1,317 @@
+[
+  {
+    "conceptId": "S6-01",
+    "variantId": "S6-01-bookstore-migration-01",
+    "domain": "bookstore",
+    "stage": 6,
+    "tablePath": ["reviews", "customers"],
+    "perspective": "diagnose-plan",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "cross-engine-portability",
+    "traps": ["silent-different-output-across-engines"],
+    "title": "從 SQLite 遷移到 PostgreSQL：哪一類差異最容易靜默出錯",
+    "businessRequirement": "紙頁書店準備從 SQLite 遷到 PostgreSQL。以下四類舊查詢寫法中，哪一類最危險——整合測試不報錯卻可能在上線後悄悄交付錯誤結果？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ -> PostgreSQL 18",
+      "scale": "全站 200+ 條查詢遷移",
+      "readWriteRatio": "50:1",
+      "indexes": ["跨引擎遷移稽核"]
+    },
+    "options": [
+      {
+        "key": "opt_alias_where",
+        "sql": "-- 差異類型：WHERE 引用 SELECT 別名（PostgreSQL 解析期當場報錯）",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "遷移測試第一輪立即報錯曝光",
+        "edgeCaseResult": "不會靜默通過",
+        "pros": ["容易由自動化測試攔截"],
+        "cons": ["非最隱蔽風險"],
+        "validWhen": "屬當場報錯等級",
+        "failsWhen": "題目問最易靜默算錯的等級"
+      },
+      {
+        "key": "opt_null_sort_and_collation",
+        "sql": "-- 差異類型：ORDER BY DESC 未顯式寫 NULLS LAST/FIRST，與依賴引擎預設字串 collation",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "兩家引擎皆合法執行不報錯，但 NULL 排在最前還是最後、大小寫比對命中的列不同",
+        "edgeCaseResult": "開發測試資料缺少 NULL 或大小寫混排時全綠通過，上線後靜默交付錯排序與錯登入結果",
+        "pros": ["精準抓出「靜默而輸出不同」最高風險分級"],
+        "cons": ["須透過靜態稽核與顯式宣告（NULLS LAST、明確比較規則）主動防範"],
+        "validWhen": "跨引擎遷移時優先排進靜態規範與邊界反例測試",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_sqlite_date_fn",
+        "sql": "-- 差異類型：使用 SQLite 專屬函式 date(ordered_at, '-1 day')",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "PostgreSQL 執行當場報 function does not exist",
+        "edgeCaseResult": "屬當場報錯等級",
+        "pros": ["容易攔截"],
+        "cons": ["非靜默風險"],
+        "validWhen": "當場報錯等級",
+        "failsWhen": "題目問靜默風險"
+      },
+      {
+        "key": "opt_group_by_missing_col",
+        "sql": "-- 差異類型：GROUP BY 漏列非分組欄位",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "PostgreSQL 規劃期當場報錯",
+        "edgeCaseResult": "屬當場報錯等級",
+        "pros": ["容易攔截"],
+        "cons": ["非靜默風險"],
+        "validWhen": "當場報錯等級",
+        "failsWhen": "題目問靜默風險"
+      }
+    ],
+    "recommendedKeys": ["opt_null_sort_and_collation"],
+    "alternativeNote": "跨引擎差異分四級：當場報錯、等資料才報錯、靜默而輸出不同、靜默且輸出相同；「靜默而輸出不同」要在寫的當下就顯式宣告",
+    "relatedDocs": [
+      "/backend/01-database/sql/engine-leniency-and-portability/",
+      "/backend/01-database/sql/relations-have-no-order/"
+    ]
+  },
+  {
+    "conceptId": "S6-02",
+    "variantId": "S6-02-bookstore-stock-race-01",
+    "domain": "bookstore",
+    "stage": 6,
+    "tablePath": ["books"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "concurrency-control",
+    "traps": ["read-then-write-race", "table-lock-kills-throughput"],
+    "title": "限量簽名書搶購扣庫存：PostgreSQL 多連線先讀後寫競態",
+    "businessRequirement": "書籍 205 只剩 stock = 1，PostgreSQL 18 預設 READ COMMITTED 下兩個結帳請求同毫秒抵達。哪個做法防超賣且鎖競爭最小？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18（多連線併行）",
+      "scale": "搶購尖峰 200 RPS 打同一本書",
+      "readWriteRatio": "1:5",
+      "indexes": ["PRIMARY KEY (book_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_app_select_then_update",
+        "sql": "-- 應用層先 SELECT stock FROM books WHERE book_id = 205，檢查 >= 1 再 UPDATE stock = stock - 1",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "單連線看似正常",
+        "edgeCaseResult": "兩連線同時讀到 stock = 1 雙雙通過檢查，扣成 -1 超賣",
+        "pros": ["無"],
+        "cons": ["典型 TOCTOU 先讀後寫競態，必定超賣"],
+        "validWhen": "無",
+        "failsWhen": "多連線伺服器"
+      },
+      {
+        "key": "opt_conditional_update",
+        "sql": "UPDATE books SET stock = stock - 1 WHERE book_id = 205 AND stock >= 1 RETURNING stock;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "單句原子扣減並回傳新庫存 0；第二個併發請求等列鎖釋放後重估 WHERE stock >= 1 得 0 列受影響，配合 CHECK(stock >= 0) 雙重防線",
+        "edgeCaseResult": "不超賣且鎖持有時間最短",
+        "pros": ["原子檢查與扣減，無多餘往返", "搭配 CHECK (stock >= 0) 形成資料庫底線"],
+        "cons": ["一次扣多本書須固定依 book_id 升冪防死鎖；複雜跨表計價仍需 FOR UPDATE"],
+        "validWhen": "單純條件扣減庫存或餘額時",
+        "failsWhen": "交易內還須依該列其他欄位做多步商業計算再決定是否扣減時（改用 FOR UPDATE）"
+      },
+      {
+        "key": "opt_lock_whole_table",
+        "sql": "-- LOCK TABLE books IN EXCLUSIVE MODE",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "不會超賣，但買別本書的所有顧客全被擋住",
+        "edgeCaseResult": "全站結帳吞吐量崩潰",
+        "pros": ["無超賣"],
+        "cons": ["表級鎖把無關商品全部串行化"],
+        "validWhen": "無",
+        "failsWhen": "線上多商品電商"
+      },
+      {
+        "key": "opt_select_for_update",
+        "sql": "-- BEGIN; SELECT stock FROM books WHERE book_id = 205 FOR UPDATE; ... UPDATE books SET stock = stock - 1 WHERE book_id = 205; COMMIT;",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "同樣防超賣，且可在更新前檢查促銷與限購條件",
+        "edgeCaseResult": "比單句 UPDATE 多一次往返且鎖持有時間較長，不可在鎖內呼叫外部金流 API",
+        "pros": ["防超賣並支援複雜前置驗證"],
+        "cons": ["鎖持有期間比單句 UPDATE 長"],
+        "validWhen": "需要讀出多欄做複雜商業驗證後才決定是否更新時",
+        "failsWhen": "單純一步扣庫存時單句 UPDATE 更簡潔"
+      }
+    ],
+    "recommendedKeys": ["opt_conditional_update"],
+    "alternativeNote": "若須在扣庫存前依同一列做複雜檢查，則選 opt_select_for_update（並嚴禁在交易鎖內呼叫外部 API）",
+    "relatedDocs": [
+      "/backend/01-database/sql/deployment-shape-and-sql-constructs/",
+      "/backend/01-database/high-frequency-counting/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_conditional_update": [[0]]
+      }
+    }
+  },
+  {
+    "conceptId": "S6-03",
+    "variantId": "S6-03-bookstore-queue-skip-locked-01",
+    "domain": "bookstore",
+    "stage": 6,
+    "tablePath": ["export_jobs"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "queue-concurrency",
+    "benchmarkRef": "ref-pg-skip-locked-queue",
+    "traps": ["worker-duplicate-claim", "for-update-serializes-workers"],
+    "title": "多 Worker 並行認領匯出佇列：FOR UPDATE SKIP LOCKED 取捨",
+    "businessRequirement": "4 台 worker 在 PostgreSQL 上同時輪詢 export_jobs 認領 status = 'queued' 的任務，要求不重複認領且不被別台正在領的列阻塞。",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "4 台 worker 高頻輪詢、20,000+ 任務列",
+      "readWriteRatio": "1:1",
+      "indexes": ["idx_export_jobs_queued (created_at ASC) WHERE status = 'queued'"]
+    },
+    "options": [
+      {
+        "key": "opt_plain_select",
+        "sql": "-- SELECT job_id FROM export_jobs WHERE status = 'queued' ORDER BY created_at LIMIT 1; 再 UPDATE",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "多台 worker 同時領到同一筆 job_id 重複跑報表",
+        "edgeCaseResult": "重複執行造成資源浪費與資料錯亂",
+        "pros": ["無"],
+        "cons": ["完全無並行認領保護"],
+        "validWhen": "確定永遠只有單一 worker 實例時",
+        "failsWhen": "多 worker 並行時"
+      },
+      {
+        "key": "opt_for_update_wait",
+        "sql": "-- SELECT job_id FROM export_jobs WHERE status = 'queued' ORDER BY created_at LIMIT 1 FOR UPDATE; 再 UPDATE",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "不重複認領，但 worker 2/3/4 全部堵在第一筆已鎖列上排隊",
+        "edgeCaseResult": "開 4 台 worker 實際吞吐量退化成 1 台",
+        "pros": ["不重複認領"],
+        "cons": ["多台 worker 互相阻塞串行化"],
+        "validWhen": "強制嚴格依序單筆處理且不追求並行吞吐時",
+        "failsWhen": "多 worker 並行消費佇列"
+      },
+      {
+        "key": "opt_skip_locked",
+        "sql": "-- WITH picked AS (SELECT job_id FROM export_jobs WHERE status = 'queued' ORDER BY created_at LIMIT 1 FOR UPDATE SKIP LOCKED) UPDATE export_jobs j SET status = 'running', claimed_by = :w FROM picked WHERE j.job_id = picked.job_id RETURNING j.*;",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "各 worker 自動跳過已被鎖定的列直接認領下一筆，兼顧不重複與高並行",
+        "edgeCaseResult": "搭配部分索引 idx_export_jobs_queued 毫秒級定位待辦列",
+        "pros": ["不重複認領且互不阻塞", "單句 CTE + UPDATE 立刻釋鎖"],
+        "cons": ["屬 PG / MySQL 8+ 專用構造（SQLite 無對應語法）", "若先領者回滾不保證嚴格 FIFO"],
+        "validWhen": "多連線 PostgreSQL / MySQL 8+ 實作資料庫任務佇列",
+        "failsWhen": "SQLite 單寫入者環境或需要嚴格全域順序 FIFO 時"
+      },
+      {
+        "key": "opt_serializable",
+        "sql": "-- SET TRANSACTION ISOLATION LEVEL SERIALIZABLE 不加鎖子句",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "高併行下大量觸發 serialization failure 被迫重試",
+        "edgeCaseResult": "重試風暴效率遠低於 SKIP LOCKED",
+        "pros": ["能擋重複認領"],
+        "cons": ["衝突重試率高、寫入延遲不穩"],
+        "validWhen": "需要跨列邏輯約束防重疊（如無 GiST 排除約束時的班表）",
+        "failsWhen": "高頻工作佇列認領"
+      }
+    ],
+    "recommendedKeys": ["opt_skip_locked"],
+    "alternativeNote": "若換成「班表防重疊」這類無法鎖住尚未存在列的場景，則須用 PostgreSQL EXCLUDE USING gist（見 ref-pg-exclusion-constraint-shifts）",
+    "relatedDocs": [
+      "/backend/01-database/sql/deployment-shape-and-sql-constructs/"
+    ]
+  },
+  {
+    "conceptId": "S6-04",
+    "variantId": "S6-04-bookstore-price-snapshot-01",
+    "domain": "bookstore",
+    "stage": 6,
+    "tablePath": ["order_items", "books"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "copy-vs-reference",
+    "traps": ["referencing-mutable-price-corrupts-history", "json-items-breaks-analytics"],
+    "title": "訂單成交價該複製還是外鍵引用：建表決定替未來查詢定價",
+    "businessRequirement": "書號 201 在訂單 101 下單當時成交價為 550 元，後來 books.price 調漲為 580 元。設計 order_items 時該怎麼存商品單價？",
+    "workloadProfile": {
+      "engine": "SQLite / PostgreSQL",
+      "scale": "500 萬訂單明細、書籍定期調價",
+      "readWriteRatio": "50:1",
+      "indexes": ["PRIMARY KEY (order_item_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_ref_only",
+        "sql": "SELECT oi.order_id, oi.quantity * b.price AS calc_amount FROM order_items oi JOIN books b ON b.book_id = oi.book_id WHERE oi.order_item_id = 1001;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "算成 580 元（覆寫了當時實際成交的 550 元！）",
+        "edgeCaseResult": "每次調價都會把全歷史訂單營收報表改寫一遍，會計對帳全毀",
+        "pros": ["省下一個整數欄位"],
+        "cons": ["無法保存歷史成交事實"],
+        "validWhen": "刻意要查「依最新市價重估現值」時",
+        "failsWhen": "保存歷史交易成交金額時"
+      },
+      {
+        "key": "opt_copy_unit_price",
+        "sql": "SELECT oi.order_id, oi.quantity * oi.unit_price AS calc_amount FROM order_items oi WHERE oi.order_item_id = 1001;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "穩定回傳當時成交價 550 元，免 JOIN books 即可算歷史營收",
+        "edgeCaseResult": "商品改價完全不影響歷史對帳與部分退貨金額計算",
+        "pros": ["鎖住不可變歷史事實", "算歷史營收少一次 JOIN books"],
+        "cons": ["多一個欄位，開發者須分清成交價與現價"],
+        "validWhen": "所有交易明細與財務紀錄",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_json_in_orders",
+        "sql": "-- 不建 order_items 表，明細直接存成 JSON 塞進 orders",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "單張訂單讀取不用 JOIN",
+        "edgeCaseResult": "要查每本書本週銷量、哪個分類賣最好時被迫全表解析 JSON 且失去外鍵",
+        "pros": ["單筆訂單詳情讀寫快"],
+        "cons": ["商品層聚合、庫存對帳與外鍵保護全面喪失"],
+        "validWhen": "完全不需要依明細商品查詢彙總的純歸檔文件",
+        "failsWhen": "電商銷量分析與退換貨系統"
+      },
+      {
+        "key": "opt_new_book_id_per_price",
+        "sql": "-- 每次調價都建新 book_id，舊 book_id 永不改價",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "歷史價格不動，但同一本書被裂解成數十個 book_id",
+        "edgeCaseResult": "查該書總銷量、總評價與搜尋去重全面複雜化",
+        "pros": ["歷史價格不可變"],
+        "cons": ["破壞商品主鍵穩定性，大幅複雜化所有商品查詢"],
+        "validWhen": "改用獨立 price_version_id 表而非拆裂 book_id 時才合理",
+        "failsWhen": "直接複製 book_id 時"
+      }
+    ],
+    "recommendedKeys": ["opt_copy_unit_price"],
+    "alternativeNote": "若合約／費率系統還需要稽核完整價格調整沿革，可在複製成交價之外另建價格版本表",
+    "relatedDocs": [
+      "/backend/01-database/sql/decisions-from-requirement-to-shipping/",
+      "/backend/01-database/design-decisions-price-every-query/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_ref_only": [[101, 580]],
+        "opt_copy_unit_price": [[101, 550]]
+      }
+    }
+  }
+]

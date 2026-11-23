@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "measurementSource": "documented-reference",
+  "note": "本檔收錄無法在瀏覽器單執行緒 SQLite WASM 模擬的 PostgreSQL／多連線並行／上億列分區基準參考，數據與結論皆直接回溯本站已驗證文章，未偽造未實跑之耗時數字；未來可在 Docker PostgreSQL 環境透過同結構重跑並升級為 live-postgres-measured。",
+  "reproducibleVia": "docker-postgres",
+  "benchmarks": [
+    {
+      "benchmarkId": "ref-pg-skip-locked-queue",
+      "domain": "bookstore",
+      "conceptIds": ["S6-03", "C05"],
+      "engine": "PostgreSQL 18",
+      "title": "多 Worker 並行認領任務佇列：無鎖 SELECT vs FOR UPDATE vs FOR UPDATE SKIP LOCKED",
+      "workload": "多連線同時輪詢 queued 任務並更新為 running",
+      "variants": {
+        "plain_select_then_update": {
+          "mechanism": "多個交易在 READ COMMITTED 下同時讀到同一筆 queued 列",
+          "outcome": "重複認領同一任務，違反唯一執行語意"
+        },
+        "select_for_update": {
+          "mechanism": "第一個 worker 鎖住該列，其餘 worker 在同一列上阻塞等待直到前一個交易提交",
+          "outcome": "不重複認領，但多台 worker 退化為串行排隊"
+        },
+        "select_for_update_skip_locked": {
+          "mechanism": "其他 worker 直接跳過已上鎖列，立即鎖定下一筆未認領列",
+          "outcome": "不重複認領且維持多 worker 並行吞吐，但不保證嚴格 FIFO"
+        }
+      },
+      "sourceDoc": "/backend/01-database/sql/deployment-shape-and-sql-constructs/"
+    },
+    {
+      "benchmarkId": "ref-pg-exclusion-constraint-shifts",
+      "domain": "swift-logistics",
+      "conceptIds": ["S6-03"],
+      "engine": "PostgreSQL 18",
+      "title": "班表時間區間防重疊：應用層先查後寫 vs EXCLUDE USING gist vs SERIALIZABLE",
+      "workload": "兩個並行交易為同一司機寫入時間重疊的班表列",
+      "variants": {
+        "app_select_then_insert": {
+          "mechanism": "READ COMMITTED 下兩邊都看不到對方尚未提交的新列，無法鎖住尚未存在的列",
+          "outcome": "雙雙插入成功，產生重疊班表"
+        },
+        "exclude_using_gist": {
+          "mechanism": "資料庫層透過 GiST 區間索引在寫入當下檢查範圍交集並原子拒絕衝突列",
+          "outcome": "由約束保證任何連線都無法寫入重疊時段，無須切換全域隔離等級"
+        },
+        "serializable_isolation": {
+          "mechanism": "SIREAD predicate lock 偵測讀寫依賴環並中止其中一個交易",
+          "outcome": "擋下重疊，但應用層必須實作 serialization failure 重試迴圈"
+        }
+      },
+      "sourceDoc": "/backend/01-database/sql/deployment-shape-and-sql-constructs/"
+    },
+    {
+      "benchmarkId": "ref-pg-hot-row-counter-contention",
+      "domain": "bookstore",
+      "conceptIds": ["S7-03"],
+      "engine": "PostgreSQL 18",
+      "title": "高頻熱點列計數：就地 UPDATE 單列 vs 只新增事件／分桶計數",
+      "workload": "高並行連線同時累加同一熱門商品的計數欄",
+      "variants": {
+        "in_place_update_single_row": {
+          "mechanism": "所有連線排隊競爭同一列的列鎖並持續產生 MVCC dead tuple",
+          "outcome": "吞吐量隨並行連線數增加反而下降，並加重 VACUUM 負擔"
+        },
+        "append_only_or_bucketed_counter": {
+          "mechanism": "寫入分散至獨立事件列或多個 bucket 槽位，背景定期可重跑彙總",
+          "outcome": "消除單列鎖排隊，代價是讀取端為秒級或分鐘級最終一致"
+        }
+      },
+      "sourceDoc": "/backend/01-database/high-frequency-counting/"
+    },
+    {
+      "benchmarkId": "ref-pg-partition-drop-vs-delete",
+      "domain": "swift-logistics",
+      "conceptIds": ["S7-05"],
+      "engine": "PostgreSQL 18",
+      "title": "上億列事件表過期清理：大批量 DELETE vs 按月時間分區 DROP PARTITION",
+      "workload": "每日新增數百萬事件、保留 180 天並清理過期資料",
+      "variants": {
+        "batch_delete": {
+          "mechanism": "逐列標記死列、產生大量 WAL 與 autovacuum 負擔，不立即縮檔歸還作業系統",
+          "outcome": "清理期間引發顯著 I/O 壓力，但全域 UNIQUE 約束不受分區鍵限制"
+        },
+        "range_partition_drop": {
+          "mechanism": "直接移除整月子表檔案並結合分區裁剪跳過舊月份掃描",
+          "outcome": "過期清理為毫秒級 metadata 操作；代價是分區表 UNIQUE 約束必須包含分區鍵"
+        }
+      },
+      "sourceDoc": "/backend/01-database/table-growth-query-cost/"
+    }
+  ]
+}

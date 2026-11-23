@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "1.0",
+  "engine": "SQLite 3.53.0",
+  "runtime": "Python 3.14.4 (Darwin arm64)",
+  "generatedAt": "2026-11-23T17:59:43Z",
+  "note": "時間絕對值隨硬體與版本改變，教學判讀重點為同一組資料上的執行計畫結構與相對量級差。",
+  "benchmarks": [
+    {
+      "benchmarkId": "bm-bookstore-sargable-range",
+      "domain": "bookstore",
+      "conceptIds": [
+        "S5-01"
+      ],
+      "measurementSource": "live-sqlite-measured",
+      "datasetScale": "50,009 orders（含 idx_orders_ordered_id 索引）",
+      "title": "單月訂單區間查詢：substr 包欄位 vs 半開區間",
+      "variants": {
+        "non_sargable_substr": {
+          "sql": "SELECT COUNT(*) FROM orders WHERE substr(ordered_at, 1, 7) = '2025-06';",
+          "rowCount": 1,
+          "explainPlan": [
+            "SCAN orders USING COVERING INDEX idx_orders_ordered_id"
+          ],
+          "minMs": 1.83,
+          "medianMs": 2.683
+        },
+        "sargable_half_open": {
+          "sql": "SELECT COUNT(*) FROM orders WHERE ordered_at >= '2025-06-01 00:00:00' AND ordered_at < '2025-07-01 00:00:00';",
+          "rowCount": 1,
+          "explainPlan": [
+            "SEARCH orders USING COVERING INDEX idx_orders_ordered_id (ordered_at>? AND ordered_at<?)"
+          ],
+          "minMs": 0.045,
+          "medianMs": 0.047
+        }
+      },
+      "speedupRatio": "57.1x（半開區間相對 substr）"
+    },
+    {
+      "benchmarkId": "bm-bookstore-duplicate-email-skew",
+      "domain": "bookstore",
+      "conceptIds": [
+        "S5-02"
+      ],
+      "measurementSource": "live-sqlite-measured",
+      "datasetScale": "7,007 customers（單一熱點重複 2,000 次，email 無索引）",
+      "title": "熱點重複 Email 稽核：GROUP BY HAVING vs 自連接配對展開",
+      "variants": {
+        "group_by_having": {
+          "sql": "SELECT email FROM customers GROUP BY email HAVING COUNT(*) > 1;",
+          "rowCount": 1,
+          "explainPlan": [
+            "SCAN customers",
+            "USE TEMP B-TREE FOR GROUP BY"
+          ],
+          "minMs": 1.52,
+          "medianMs": 2.45
+        },
+        "self_join_distinct": {
+          "sql": "SELECT DISTINCT c1.email FROM customers c1 JOIN customers c2 ON c1.email = c2.email AND c1.customer_id <> c2.customer_id;",
+          "rowCount": 1,
+          "explainPlan": [
+            "SCAN c1",
+            "SEARCH c2 USING AUTOMATIC COVERING INDEX (email=?)",
+            "USE TEMP B-TREE FOR DISTINCT"
+          ],
+          "minMs": 174.137,
+          "medianMs": 199.888
+        }
+      },
+      "speedupRatio": "81.6x（GROUP BY 相對自連接）"
+    },
+    {
+      "benchmarkId": "bm-bookstore-offset-vs-keyset",
+      "domain": "bookstore",
+      "conceptIds": [
+        "S3-05"
+      ],
+      "measurementSource": "live-sqlite-measured",
+      "datasetScale": "50,009 orders（含 idx_orders_ordered_id 索引，回表取 5 欄）",
+      "title": "訂單深頁分頁：OFFSET 25000 vs Keyset 接續標記",
+      "variants": {
+        "deep_offset_25000": {
+          "sql": "SELECT order_id, customer_id, status, total_amount, ordered_at FROM orders ORDER BY ordered_at DESC, order_id DESC LIMIT 20 OFFSET 25000;",
+          "rowCount": 20,
+          "explainPlan": [
+            "SCAN orders USING INDEX idx_orders_ordered_id"
+          ],
+          "minMs": 0.295,
+          "medianMs": 0.307
+        },
+        "keyset_cursor": {
+          "sql": "SELECT order_id, customer_id, status, total_amount, ordered_at FROM orders WHERE (ordered_at, order_id) < ('2025-08-01 00:00:00', 150000) ORDER BY ordered_at DESC, order_id DESC LIMIT 20;",
+          "rowCount": 20,
+          "explainPlan": [
+            "SEARCH orders USING INDEX idx_orders_ordered_id (ordered_at<?)"
+          ],
+          "minMs": 0.011,
+          "medianMs": 0.011
+        }
+      },
+      "speedupRatio": "27.9x（Keyset 相對 OFFSET 25000）"
+    },
+    {
+      "benchmarkId": "bm-logistics-partial-index-queue",
+      "domain": "swift-logistics",
+      "conceptIds": [
+        "S7-04"
+      ],
+      "measurementSource": "live-sqlite-measured",
+      "datasetScale": "30,016 dispatch_tasks（99.96% completed，僅 12 筆 queued）",
+      "title": "高比例已完成任務表輪詢：無索引全掃 vs 部分索引 WHERE status = 'queued'",
+      "variants": {
+        "full_scan_bypass_index": {
+          "sql": "SELECT task_id FROM dispatch_tasks WHERE +status = 'queued' ORDER BY priority DESC, created_at ASC LIMIT 1;",
+          "rowCount": 1,
+          "explainPlan": [
+            "SCAN dispatch_tasks",
+            "USE TEMP B-TREE FOR ORDER BY"
+          ],
+          "minMs": 0.539,
+          "medianMs": 0.562
+        },
+        "partial_index_queued": {
+          "sql": "SELECT task_id FROM dispatch_tasks WHERE status = 'queued' ORDER BY priority DESC, created_at ASC LIMIT 1;",
+          "rowCount": 1,
+          "explainPlan": [
+            "SCAN dispatch_tasks USING COVERING INDEX idx_dispatch_queued"
+          ],
+          "minMs": 0.001,
+          "medianMs": 0.001
+        }
+      },
+      "speedupRatio": "562.0x（部分索引相對全表掃描）"
+    },
+    {
+      "benchmarkId": "bm-academy-webhook-storm",
+      "domain": "cloud-academy",
+      "conceptIds": [
+        "S5-02",
+        "S7-04"
+      ],
+      "measurementSource": "live-sqlite-measured",
+      "datasetScale": "20,015 webhook_events（含 1,500 筆 evt_storm_hot 重送與 12 筆 pending）",
+      "title": "Webhook 重送稽核與待處理佇列部分索引定位",
+      "variants": {
+        "group_by_having": {
+          "sql": "SELECT provider, external_id FROM webhook_events GROUP BY provider, external_id HAVING COUNT(*) > 1;",
+          "rowCount": 3,
+          "explainPlan": [
+            "SCAN webhook_events",
+            "USE TEMP B-TREE FOR GROUP BY"
+          ],
+          "minMs": 6.52,
+          "medianMs": 6.749
+        },
+        "partial_index_pending": {
+          "sql": "SELECT event_id FROM webhook_events WHERE status = 'pending' ORDER BY received_at ASC LIMIT 5;",
+          "rowCount": 5,
+          "explainPlan": [
+            "SCAN webhook_events USING COVERING INDEX idx_webhook_pending"
+          ],
+          "minMs": 0.001,
+          "medianMs": 0.001
+        }
+      },
+      "speedupRatio": "見各變體執行計畫與中位數耗時"
+    }
+  ]
+}

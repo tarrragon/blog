@@ -1,0 +1,496 @@
+[
+  {
+    "conceptId": "S1-01",
+    "variantId": "S1-01-bookstore-books-01",
+    "domain": "bookstore",
+    "stage": 1,
+    "tablePath": ["books"],
+    "perspective": "choose-query",
+    "difficulty": 1,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["select-star-schema-evolution", "missing-active-filter", "redundant-distinct"],
+    "title": "書籍列表 API 欄位挑選：指定欄位與 SELECT * 的取捨",
+    "businessRequirement": "書店首頁列表只需要顯示上架書籍（is_active = 1）的 book_id、title 與 price；未來 books 表預計擴充大型欄位。哪一種查詢最適合寫進正式 API？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "1 萬書籍、高頻列表讀取",
+      "readWriteRatio": "500:1",
+      "indexes": ["PRIMARY KEY (book_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_explicit_cols",
+        "sql": "SELECT book_id, title, price FROM books WHERE is_active = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7 筆上架書籍的 3 個指定欄位",
+        "edgeCaseResult": "自動排除已下架書籍 206，且不受未來長欄位影響",
+        "pros": ["只傳輸必要欄位，有機會走覆蓋索引", "未來表新增大欄位時不拉高網路與記憶體成本"],
+        "cons": ["前端新增顯示欄位時須同步修改 SQL"],
+        "validWhen": "所有正式 API 與高頻列表查詢",
+        "failsWhen": "需要回傳動態未知欄位的臨時探勘腳本"
+      },
+      {
+        "key": "opt_select_star",
+        "sql": "SELECT * FROM books WHERE is_active = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7 筆上架書籍的全部 6 欄",
+        "edgeCaseResult": "未來新增大文字欄會連帶回傳，拉高延遲與網路流量",
+        "pros": ["臨時人工排查時少打字"],
+        "cons": ["schema 擴充時無聲增加 I/O 與網路傳輸", "無法利用只涵蓋少數欄位的覆蓋索引"],
+        "validWhen": "本機一次性資料探勘",
+        "failsWhen": "正式線上 API 與寬表列表"
+      },
+      {
+        "key": "opt_missing_where",
+        "sql": "SELECT book_id, title, price AS sale_price FROM books;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 8 筆（誤含下架書 206）",
+        "edgeCaseResult": "前台暴露已停售商品",
+        "pros": ["示範合法的欄位別名 AS 語法"],
+        "cons": ["漏掉 is_active = 1 篩選條件"],
+        "validWhen": "後台需要查看包含下架書的全量清單時",
+        "failsWhen": "前台只顯示上架書籍的需求"
+      },
+      {
+        "key": "opt_redundant_distinct",
+        "sql": "SELECT DISTINCT * FROM books WHERE is_active = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7 筆（與 opt_select_star 相同）",
+        "edgeCaseResult": "多做一次無意義去重排序，並對後續維護者釋出錯誤宣告",
+        "pros": ["語法合法"],
+        "cons": ["主鍵 book_id 已保證唯一，DISTINCT 徒增排序成本與宣告落空"],
+        "validWhen": "結果集確實可能因連接或投影出現重複列時",
+        "failsWhen": "已包含主鍵的單表查詢"
+      }
+    ],
+    "recommendedKeys": ["opt_explicit_cols"],
+    "alternativeNote": "若查詢欄位與表結構皆極小且僅為一次性除錯腳本，才可臨時使用 SELECT *",
+    "relatedDocs": [
+      "/backend/01-database/sql/declared-intent-vs-behaviour/",
+      "/backend/01-database/query-anti-patterns/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_explicit_cols": 7,
+        "opt_missing_where": 8
+      }
+    }
+  },
+  {
+    "conceptId": "S1-01",
+    "variantId": "S1-01-cloud-courses-02",
+    "domain": "cloud-academy",
+    "stage": 1,
+    "tablePath": ["courses"],
+    "perspective": "choose-query",
+    "difficulty": 1,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["select-star-schema-evolution", "missing-published-filter"],
+    "title": "課程目錄頁欄位挑選：排除草稿課與避免 SELECT *",
+    "businessRequirement": "雲課堂首頁只呈現已發布（is_published = 1）的課程卡片，需要 course_id、title 與 track 三欄。哪個查詢最恰當？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "5,000 門課程、高頻首頁讀取",
+      "readWriteRatio": "1000:1",
+      "indexes": ["PRIMARY KEY (course_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_explicit_published",
+        "sql": "SELECT course_id, title, track FROM courses WHERE is_published = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 5 門已發布課程",
+        "edgeCaseResult": "正確排除草稿課 105",
+        "pros": ["只取卡片所需三欄，且明確過濾草稿狀態"],
+        "cons": ["新增卡片欄位時須更新查詢"],
+        "validWhen": "公開課程列表 API",
+        "failsWhen": "講師後台需檢視草稿課程時"
+      },
+      {
+        "key": "opt_all_cols",
+        "sql": "SELECT * FROM courses WHERE is_published = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 5 門已發布課程的全部欄位",
+        "edgeCaseResult": "多回傳前端不使用的欄位，且未來新增欄位會直接外洩或放大負載",
+        "pros": ["撰寫較短"],
+        "cons": ["與表結構強耦合，無聲傳回未預期欄位"],
+        "validWhen": "臨時手動查表",
+        "failsWhen": "正式對外 API"
+      },
+      {
+        "key": "opt_no_filter",
+        "sql": "SELECT course_id, title, track FROM courses;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 6 門（誤含草稿課 105）",
+        "edgeCaseResult": "未發布草稿課曝光給一般訪客",
+        "pros": ["欄位精簡"],
+        "cons": ["漏掉 is_published = 1 過濾條件"],
+        "validWhen": "內容管理後台清單",
+        "failsWhen": "前台公開目錄"
+      },
+      {
+        "key": "opt_wrong_flag",
+        "sql": "SELECT course_id, title, track FROM courses WHERE is_published = 0;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "僅回傳 1 門草稿課 105",
+        "edgeCaseResult": "篩選條件完全相反",
+        "pros": ["語法合法"],
+        "cons": ["布林旗標寫反，只撈出草稿"],
+        "validWhen": "後台「待審核草稿」分頁",
+        "failsWhen": "前台公開課程目錄"
+      }
+    ],
+    "recommendedKeys": ["opt_explicit_published"],
+    "alternativeNote": "本題為 S1-01 在雲課堂領域的輪替變體，核心判斷與紙頁書店一致",
+    "relatedDocs": [
+      "/backend/01-database/sql/declared-intent-vs-behaviour/",
+      "/backend/01-database/query-anti-patterns/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_explicit_published": 5,
+        "opt_no_filter": 6,
+        "opt_wrong_flag": 1
+      }
+    }
+  },
+  {
+    "conceptId": "S1-02",
+    "variantId": "S1-02-bookstore-books-01",
+    "domain": "bookstore",
+    "stage": 1,
+    "tablePath": ["books"],
+    "perspective": "choose-query",
+    "difficulty": 1,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["and-or-precedence", "between-endpoints"],
+    "title": "促銷書單複合篩選：AND 與 OR 優先順序、IN 與 BETWEEN",
+    "businessRequirement": "找出上架（is_active = 1）、屬於分類 2 或分類 3、定價介於 300 到 600 元（含端點）的書籍。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "1 萬書籍",
+      "readWriteRatio": "300:1",
+      "indexes": ["PRIMARY KEY (book_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_no_parens",
+        "sql": "SELECT book_id, title FROM books WHERE is_active = 1 AND category_id = 2 OR category_id = 3 AND price BETWEEN 300 AND 600;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "因 AND 優先於 OR，分類 2 未受價格條件限制",
+        "edgeCaseResult": "一旦分類 2 出現 800 元書籍或分類 3 出現下架書，皆會錯誤命中",
+        "pros": ["無"],
+        "cons": ["AND 優先順序高於 OR，導致條件分組錯誤"],
+        "validWhen": "不符合本需求",
+        "failsWhen": "混合 AND 與 OR 卻省略括號時"
+      },
+      {
+        "key": "opt_in_between",
+        "sql": "SELECT book_id, title FROM books WHERE is_active = 1 AND category_id IN (2, 3) AND price BETWEEN 300 AND 600;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳書號 203（600 元）與 204（300 元）共 2 筆",
+        "edgeCaseResult": "端點 300 與 600 皆包含，且排除分類 2 的下架書 206",
+        "pros": ["IN 消除 OR 優先順序風險", "BETWEEN 清楚表達閉區間整數價格"],
+        "cons": ["若換成日期時間戳記欄位，BETWEEN 易漏最後一天時間部分"],
+        "validWhen": "離散多值條件配整數閉區間",
+        "failsWhen": "日期時間欄位改用半開區間 >= 與 < 更安全"
+      },
+      {
+        "key": "opt_strict_lt_gt",
+        "sql": "SELECT book_id, title FROM books WHERE is_active = 1 AND category_id IN (2, 3) AND price > 300 AND price < 600;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 0 筆（把 300 元與 600 元端點都排掉了）",
+        "edgeCaseResult": "需求明訂含端點，直接漏掉 203 與 204",
+        "pros": ["語意明確"],
+        "cons": ["嚴格大於／小於排除兩個端點"],
+        "validWhen": "需求明確要求「不含端點」時",
+        "failsWhen": "需求含端點時"
+      },
+      {
+        "key": "opt_explicit_parens",
+        "sql": "SELECT book_id, title FROM books WHERE is_active = 1 AND (category_id = 2 OR category_id = 3) AND price >= 300 AND price <= 600;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 2 筆（與 opt_in_between 結果相同）",
+        "edgeCaseResult": "結果完全正確",
+        "pros": ["顯式括號與 >=/<= 語意無歧義"],
+        "cons": ["分類多於兩個時重複寫欄位名不如 IN 簡潔"],
+        "validWhen": "只有兩個條件或混合不同欄位 OR 時",
+        "failsWhen": "單欄比對大量候選值時可讀性低於 IN"
+      }
+    ],
+    "recommendedKeys": ["opt_in_between", "opt_explicit_parens"],
+    "alternativeNote": "opt_in_between 與 opt_explicit_parens 語意等價，單欄多值優先用 IN",
+    "relatedDocs": [
+      "/backend/01-database/sql/well-formed-is-not-correct/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_in_between": 2,
+        "opt_explicit_parens": 2,
+        "opt_strict_lt_gt": 0
+      }
+    }
+  },
+  {
+    "conceptId": "S1-03",
+    "variantId": "S1-03-bookstore-customers-01",
+    "domain": "bookstore",
+    "stage": 1,
+    "tablePath": ["customers"],
+    "perspective": "choose-query",
+    "difficulty": 1,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["null-equals-null", "null-vs-empty-string", "non-sargable-coalesce"],
+    "title": "找出未填寫城市的會員：= NULL、IS NULL 與 COALESCE",
+    "businessRequirement": "行銷團隊要列出所有尚未填寫居住城市（city 欄位為 NULL）的顧客。已知歷史表內除 NULL（顧客 5）外，也混入一筆空字串 ''（顧客 6）。若規格只抓 NULL，應選哪一個？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "50 萬顧客",
+      "readWriteRatio": "100:1",
+      "indexes": ["預期未來在 city 建索引"]
+    },
+    "options": [
+      {
+        "key": "opt_eq_null",
+        "sql": "SELECT customer_id, name FROM customers WHERE city = NULL;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "永遠回傳 0 筆",
+        "edgeCaseResult": "不報語法錯，但 NULL = NULL 結果為 UNKNOWN",
+        "pros": ["無"],
+        "cons": ["三值邏輯下永遠不為真，靜默回空"],
+        "validWhen": "任何情境都不應使用",
+        "failsWhen": "所有情況"
+      },
+      {
+        "key": "opt_is_null",
+        "sql": "SELECT customer_id, name FROM customers WHERE city IS NULL;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳顧客 5（怡君）共 1 筆",
+        "edgeCaseResult": "精確命中 NULL 且可利用 B-tree 索引",
+        "pros": ["標準 NULL 判斷語法", "維持 sargable 條件可走索引"],
+        "cons": ["不包含歷史髒資料中的空字串 ''（顧客 6）"],
+        "validWhen": "資料模型嚴格只用 NULL 表示缺值時",
+        "failsWhen": "同時需要涵蓋空字串 '' 的未清理舊表"
+      },
+      {
+        "key": "opt_empty_str",
+        "sql": "SELECT customer_id, name FROM customers WHERE city = '';",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "僅回傳顧客 6（冠宇），漏掉 NULL 的顧客 5",
+        "edgeCaseResult": "漏抓真正的 NULL 缺值",
+        "pros": ["可抓出誤寫的空字串髒資料"],
+        "cons": ["完全抓不到 NULL"],
+        "validWhen": "專門清理空字串髒資料時",
+        "failsWhen": "查詢 NULL 缺值時"
+      },
+      {
+        "key": "opt_coalesce_empty",
+        "sql": "SELECT customer_id, name FROM customers WHERE COALESCE(city, '') = '';",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳顧客 5 與顧客 6 共 2 筆",
+        "edgeCaseResult": "同時撈出 NULL 與空字串，但包函式會讓一般索引失效",
+        "pros": ["一次涵蓋 NULL 與空字串兩種缺漏表示"],
+        "cons": ["COALESCE 包住欄位會使一般索引失效（改寫為 city IS NULL OR city = '' 更友善）"],
+        "validWhen": "資料表同時混用 NULL 與空字串且表量小時",
+        "failsWhen": "大表需要走索引或僅查詢 NULL 時"
+      }
+    ],
+    "recommendedKeys": ["opt_is_null"],
+    "alternativeNote": "若業務要同時涵蓋 NULL 與空字串且保留索引能力，寫成 WHERE city IS NULL OR city = '' 優於 COALESCE(city, '') = ''",
+    "relatedDocs": [
+      "/backend/01-database/sql/knowledge-cards/null/",
+      "/backend/01-database/sql/join-changes-rows-and-nulls/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_eq_null": 0,
+        "opt_is_null": 1,
+        "opt_empty_str": 1,
+        "opt_coalesce_empty": 2
+      }
+    }
+  },
+  {
+    "conceptId": "S1-04",
+    "variantId": "S1-04-bookstore-books-01",
+    "domain": "bookstore",
+    "stage": 1,
+    "tablePath": ["books"],
+    "perspective": "choose-query",
+    "difficulty": 1,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["non-deterministic-tie-order", "clause-syntax-order", "desc-applies-per-column"],
+    "title": "高價書籍排行榜：ORDER BY 方向、平手破局鍵與 LIMIT 位置",
+    "businessRequirement": "從上架書籍（is_active = 1）取出定價最高的前 5 本；同價時依 book_id 由小到大排序。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "1 萬書籍",
+      "readWriteRatio": "500:1",
+      "indexes": ["PRIMARY KEY (book_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_no_tiebreak",
+        "sql": "SELECT book_id, title, price FROM books WHERE is_active = 1 ORDER BY price DESC LIMIT 5;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 5 筆，但同為 600 元的 203/205 與同為 450 元的 202/208 順序未定義",
+        "edgeCaseResult": "建索引或表重組後同價書籍先後順序會漂移",
+        "pros": ["寫法簡短"],
+        "cons": ["缺少唯一破局鍵，違反同價依 book_id 升冪需求"],
+        "validWhen": "完全不在意同分列順序的粗略檢視",
+        "failsWhen": "需要穩定排序與可重現分頁時"
+      },
+      {
+        "key": "opt_deterministic",
+        "sql": "SELECT book_id, title, price FROM books WHERE is_active = 1 ORDER BY price DESC, book_id ASC LIMIT 5;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "穩定回傳 203, 205, 201, 202, 208",
+        "edgeCaseResult": "每次執行順序完全決定性一致",
+        "pros": ["明確對 price 降冪、對主鍵 book_id 升冪打破平手"],
+        "cons": ["比單欄排序多一欄鍵值，實務成本極低"],
+        "validWhen": "所有排行榜與確定性前 N 名查詢",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_limit_before_order",
+        "sql": "SELECT book_id, title, price FROM books WHERE is_active = 1 LIMIT 5 ORDER BY price DESC;",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "語法錯誤（syntax error near ORDER）",
+        "edgeCaseResult": "當場被引擎拒絕",
+        "pros": ["無"],
+        "cons": ["LIMIT 必須寫在 ORDER BY 之後"],
+        "validWhen": "無",
+        "failsWhen": "所有 SQL 引擎"
+      },
+      {
+        "key": "opt_missing_desc_first",
+        "sql": "SELECT book_id, title, price FROM books WHERE is_active = 1 ORDER BY price, book_id DESC LIMIT 5;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "從最便宜的 207（280 元）開始排，結果完全顛倒",
+        "edgeCaseResult": "DESC 只作用在緊鄰的 book_id 上，price 維持預設 ASC",
+        "pros": ["語法合法"],
+        "cons": ["誤以為 DESC 套用整條 ORDER BY 清單，撈成最便宜前 5 名"],
+        "validWhen": "要找最便宜前 5 名且同價依大 ID 優先時",
+        "failsWhen": "要找最高價前 5 名時"
+      }
+    ],
+    "recommendedKeys": ["opt_deterministic"],
+    "alternativeNote": "排序方向 ASC/DESC 是逐欄指定的，寫多欄排序時建議每一欄都顯式標出方向",
+    "relatedDocs": [
+      "/backend/01-database/sql/relations-have-no-order/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_deterministic": [203, 205, 201, 202, 208],
+        "opt_missing_desc_first": [207, 204, 208, 202, 201]
+      }
+    }
+  },
+  {
+    "conceptId": "S1-05",
+    "variantId": "S1-05-bookstore-orders-01",
+    "domain": "bookstore",
+    "stage": 1,
+    "tablePath": ["orders"],
+    "perspective": "choose-query",
+    "difficulty": 1,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["aggregate-in-where", "row-filter-in-having"],
+    "title": "高消費顧客彙總：WHERE 與 HAVING 的職責分工",
+    "businessRequirement": "統計每位顧客狀態為 paid 或 shipped 的訂單數與總消費金額，只保留總消費金額大於 1000 元的顧客。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "50 萬訂單",
+      "readWriteRatio": "100:1",
+      "indexes": ["idx_orders_customer_date"]
+    },
+    "options": [
+      {
+        "key": "opt_agg_in_where",
+        "sql": "SELECT customer_id, COUNT(*) AS order_cnt, SUM(total_amount) AS spent FROM orders WHERE status IN ('paid', 'shipped') AND SUM(total_amount) > 1000 GROUP BY customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "引擎報錯：misuse of aggregate: SUM()",
+        "edgeCaseResult": "違反語意模型求值順序，所有主流引擎皆拒絕",
+        "pros": ["無"],
+        "cons": ["WHERE 執行時尚未分組，不可放聚合函式"],
+        "validWhen": "無",
+        "failsWhen": "所有 SQL 引擎"
+      },
+      {
+        "key": "opt_where_then_having",
+        "sql": "SELECT customer_id, COUNT(*) AS order_cnt, SUM(total_amount) AS spent FROM orders WHERE status IN ('paid', 'shipped') GROUP BY customer_id HAVING SUM(total_amount) > 1000;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳顧客 1（2 單，1400 元）",
+        "edgeCaseResult": "排除顧客 1 的 refunded 訂單 104，且在分組前先縮減列數",
+        "pros": ["單列條件放 WHERE 提早過濾，組聚合條件放 HAVING", "標準 SQL 全引擎相容"],
+        "cons": ["無"],
+        "validWhen": "所有需要同時篩列與篩分組聚合結果的查詢",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_status_in_having",
+        "sql": "SELECT customer_id, COUNT(*) AS order_cnt, SUM(total_amount) AS spent FROM orders GROUP BY customer_id HAVING status IN ('paid', 'shipped') AND SUM(total_amount) > 1000;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "在 SQLite 上會把 refunded 訂單 104 也加進 SUM（變 1900 元）且不報錯",
+        "edgeCaseResult": "PostgreSQL 當場報錯；SQLite 放寬規則反而算出錯誤金額 1900",
+        "pros": ["無"],
+        "cons": ["status 非分組鍵，跨引擎失敗且在 SQLite 靜默算錯總額"],
+        "validWhen": "無",
+        "failsWhen": "所有正確性要求下"
+      },
+      {
+        "key": "opt_wrong_having",
+        "sql": "SELECT customer_id, COUNT(order_id) AS order_cnt, SUM(total_amount) AS spent FROM orders WHERE status IN ('paid', 'shipped') GROUP BY customer_id HAVING COUNT(*) > 0;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 5 位顧客（未過濾金額 > 1000）",
+        "edgeCaseResult": "漏掉核心金額門檻條件",
+        "pros": ["語法合法"],
+        "cons": ["HAVING COUNT(*) > 0 恆真，未套用總消費 > 1000 門檻"],
+        "validWhen": "不篩選金額門檻時（此時連 HAVING 都多餘）",
+        "failsWhen": "需要篩選總額門檻時"
+      }
+    ],
+    "recommendedKeys": ["opt_where_then_having"],
+    "alternativeNote": "對照 SQLite 與 PostgreSQL 在 opt_status_in_having 的表現，是理解引擎寬鬆度最直接的入口",
+    "relatedDocs": [
+      "/backend/01-database/sql/declarative-not-procedural/",
+      "/backend/01-database/sql/clause-evaluation-order/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_where_then_having": [[1, 2, 1400]],
+        "opt_status_in_having": [[1, 3, 1900]]
+      }
+    }
+  }
+]

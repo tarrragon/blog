@@ -1,0 +1,505 @@
+[
+  {
+    "conceptId": "C01",
+    "variantId": "C01-cloud-not-in-plan-01",
+    "domain": "cloud-academy",
+    "stage": 8,
+    "tablePath": ["subscriptions", "invoices"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": true,
+    "designDimension": null,
+    "traps": ["not-in-null-poisoning", "left-join-neq-wrong-question", "anti-join-plan"],
+    "title": "C01（複合陷阱）：雲課堂未開帳訂閱稽核——NULL 毒化、錯誤否定與 Anti-Join 計畫",
+    "businessRequirement": "找出從未產生過任何 paid 帳單的 active 訂閱（雲課堂基準資料中應為 2003 與 2005；2002 同時有 paid 與 void 帳單，3005 為 sub_id IS NULL 的歷史補單）。哪個寫法同時兼顧正確性與 PostgreSQL 大表計畫？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "20 萬 subscriptions、400 萬 invoices",
+      "readWriteRatio": "20:1",
+      "indexes": ["idx_invoices_sub_status (sub_id, status)"]
+    },
+    "options": [
+      {
+        "key": "opt_not_in_raw",
+        "sql": "SELECT s.sub_id FROM subscriptions s WHERE s.status = 'active' AND s.sub_id NOT IN (SELECT i.sub_id FROM invoices i WHERE i.status = 'paid') ORDER BY s.sub_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "因 3005 的 sub_id 為 NULL 且 status='paid'，靜默回傳 0 列！",
+        "edgeCaseResult": "單一 NULL 補單讓整個稽核報表空白",
+        "pros": ["無"],
+        "cons": ["三值邏輯毒化回空"],
+        "validWhen": "無",
+        "failsWhen": "子查詢欄位允許 NULL 時"
+      },
+      {
+        "key": "opt_not_in_filtered",
+        "sql": "SELECT s.sub_id FROM subscriptions s WHERE s.status = 'active' AND s.sub_id NOT IN (SELECT i.sub_id FROM invoices i WHERE i.status = 'paid' AND i.sub_id IS NOT NULL) ORDER BY s.sub_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳正確 2003、2005，但在 PostgreSQL 上仍不易轉成最佳 Anti-Join",
+        "edgeCaseResult": "修掉 NULL 但效能與日後維護風險不如 NOT EXISTS",
+        "pros": ["結果正確"],
+        "cons": ["PostgreSQL 對 NOT IN 仍須顧及外層 NULL 語意，大表計畫常劣於 NOT EXISTS"],
+        "validWhen": "子查詢結果極小且確定非空時",
+        "failsWhen": "400 萬列 PostgreSQL 反連接查詢"
+      },
+      {
+        "key": "opt_not_exists",
+        "sql": "SELECT s.sub_id FROM subscriptions s WHERE s.status = 'active' AND NOT EXISTS (SELECT 1 FROM invoices i WHERE i.sub_id = s.sub_id AND i.status = 'paid') ORDER BY s.sub_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "精確回傳 2003、2005，對 NULL 免疫且直接走 Anti-Join 命中 idx_invoices_sub_status",
+        "edgeCaseResult": "正確排除同時擁有 paid 與 void 的訂閱 2002",
+        "pros": ["對 NULL 免疫", "PostgreSQL / SQLite 皆能善用複合索引走反連接"],
+        "cons": ["多寫一行關聯條件 i.sub_id = s.sub_id"],
+        "validWhen": "所有否定存在性大表查詢",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_left_neq_paid",
+        "sql": "SELECT DISTINCT s.sub_id FROM subscriptions s LEFT JOIN invoices i ON i.sub_id = s.sub_id WHERE s.status = 'active' AND (i.status <> 'paid' OR i.invoice_id IS NULL) ORDER BY s.sub_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "錯誤把已有兩筆 paid 帳單的 2002 也列出來（因為 2002 另有一筆 void 帳單 3003）！",
+        "edgeCaseResult": "問錯問題成「至少有一筆非 paid 或無帳單」",
+        "pros": ["無"],
+        "cons": ["把付過錢的訂閱誤判為未付費"],
+        "validWhen": "無",
+        "failsWhen": "單筆訂閱有多期不同狀態帳單時"
+      }
+    ],
+    "recommendedKeys": ["opt_not_exists"],
+    "alternativeNote": "即使未來為 invoices.sub_id 補上 NOT NULL，opt_not_exists 在 PostgreSQL 計畫與可讀性上仍勝過 NOT IN",
+    "relatedDocs": [
+      "/backend/01-database/sql/in-exists-join/",
+      "/backend/01-database/sql/well-formed-is-not-correct/",
+      "/backend/01-database/sql/cost-lives-in-the-plan/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_not_in_raw": [],
+        "opt_not_in_filtered": [2003, 2005],
+        "opt_not_exists": [2003, 2005],
+        "opt_left_neq_paid": [2002, 2003, 2005]
+      }
+    }
+  },
+  {
+    "conceptId": "C02",
+    "variantId": "C02-bookstore-multi-timeline-fanout-01",
+    "domain": "bookstore",
+    "stage": 8,
+    "tablePath": ["customers", "orders", "reviews"],
+    "perspective": "choose-query",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["fanout-sum-inflation", "chained-join-drops-cross-month-review", "left-table-filter-in-on"],
+    "title": "C02（複合陷阱）：台北顧客 3 月消費與 3 月五星評價——跨月時間軸＋列數膨脹＋左表條件位置",
+    "businessRequirement": "列出所有台北顧客（city = 'Taipei'：1 佳穎、3 雅文、4 志明），顯示 2026 年 3 月已付款（paid）訂單總額，以及 2026 年 3 月送出的五星評價則數（注意：志明 id=4 是 2 月下單 105、3 月才送五星評價 9003！）。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "10 萬顧客、100 萬訂單、200 萬評價",
+      "readWriteRatio": "30:1",
+      "indexes": ["idx_orders_customer_date"]
+    },
+    "options": [
+      {
+        "key": "opt_chained_left",
+        "sql": "SELECT c.customer_id, COALESCE(SUM(o.total_amount), 0) AS spent, COUNT(r.review_id) AS five_star_cnt FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id AND o.status = 'paid' AND o.ordered_at >= '2026-03-01' AND o.ordered_at < '2026-04-01' LEFT JOIN reviews r ON r.order_id = o.order_id AND r.rating = 5 AND r.created_at >= '2026-03-01' AND r.created_at < '2026-04-01' WHERE c.city = 'Taipei' GROUP BY c.customer_id ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "志明（id=4）的 3 月五星評價 9003 變成 0 則（因為它屬於 2 月訂單 105）！且若訂單 101 有兩則 3 月五星評價金額會加倍",
+        "edgeCaseResult": "雙重陷阱：串接在 3 月訂單後漏算跨月評價，又無法防多評膨脹",
+        "pros": ["保留了所有台北顧客"],
+        "cons": ["漏算 2 月下單 3 月評價，且具列數膨脹風險"],
+        "validWhen": "需求嚴格限定「3 月訂單在 3 月收到的評價」且一單最多一評時",
+        "failsWhen": "兩個統計指標各自有獨立時間軸時"
+      },
+      {
+        "key": "opt_split_cte_agg",
+        "sql": "WITH mar_orders AS (SELECT customer_id, SUM(total_amount) AS spent FROM orders WHERE status = 'paid' AND ordered_at >= '2026-03-01' AND ordered_at < '2026-04-01' GROUP BY customer_id), mar_reviews AS (SELECT o.customer_id, COUNT(*) AS five_star_cnt FROM reviews r JOIN orders o ON o.order_id = r.order_id WHERE r.rating = 5 AND r.created_at >= '2026-03-01' AND r.created_at < '2026-04-01' GROUP BY o.customer_id) SELECT c.customer_id, COALESCE(mo.spent, 0) AS spent, COALESCE(mr.five_star_cnt, 0) AS five_star_cnt FROM customers c LEFT JOIN mar_orders mo ON mo.customer_id = c.customer_id LEFT JOIN mar_reviews mr ON mr.customer_id = c.customer_id WHERE c.city = 'Taipei' ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳 [1, 1400, 1]、[3, 0, 0]、[4, 0, 1]",
+        "edgeCaseResult": "同時根除列數膨脹、保留零消費台北顧客，並正確計入志明 2 月下單 3 月送出的五星評價",
+        "pros": ["兩條時間軸獨立聚合到 customer_id 粒度，完全無膨脹也無跨月漏算"],
+        "cons": ["篇幅較長"],
+        "validWhen": "多條獨立業務時間軸彙總到同一主體時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_left_filter_in_on",
+        "sql": "WITH mar_orders AS (SELECT customer_id, SUM(total_amount) AS spent FROM orders WHERE status = 'paid' AND ordered_at >= '2026-03-01' AND ordered_at < '2026-04-01' GROUP BY customer_id) SELECT c.customer_id, COALESCE(mo.spent, 0) AS spent FROM customers c LEFT JOIN mar_orders mo ON mo.customer_id = c.customer_id AND c.city = 'Taipei' ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳全部 7 位顧客（台中與高雄顧客混入報表顯示 0！）",
+        "edgeCaseResult": "把受保護左表 customers 的條件寫進 ON，LEFT JOIN 依然保留非台北顧客",
+        "pros": ["無"],
+        "cons": ["左表篩選條件誤放 ON 導致名單汙染"],
+        "validWhen": "無",
+        "failsWhen": "篩選受保護主表對象時"
+      },
+      {
+        "key": "opt_sum_distinct_broken",
+        "sql": "SELECT c.customer_id, COALESCE(SUM(DISTINCT o.total_amount), 0) AS spent, COUNT(DISTINCT r.review_id) AS five_star_cnt FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id AND o.status = 'paid' AND o.ordered_at >= '2026-03-01' AND o.ordered_at < '2026-04-01' LEFT JOIN reviews r ON r.order_id = o.order_id AND r.rating = 5 AND r.created_at >= '2026-03-01' AND r.created_at < '2026-04-01' WHERE c.city = 'Taipei' GROUP BY c.customer_id ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "仍漏算志明（id=4）的跨月評價 9003，且遇同金額多單時 SUM(DISTINCT) 會少算",
+        "edgeCaseResult": "兩大缺陷並存",
+        "pros": ["無"],
+        "cons": ["SUM(DISTINCT) 吞掉同金額訂單且跨月評價仍為 0"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      }
+    ],
+    "recommendedKeys": ["opt_split_cte_agg"],
+    "alternativeNote": "只要同一報表有兩個獨立一對多來源或不同時間軸，先拆 CTE 各自聚合到同一主鍵粒度再 LEFT JOIN 是最穩骨架",
+    "relatedDocs": [
+      "/backend/01-database/sql/join-starts-from-the-relationship/",
+      "/backend/01-database/sql/on-describes-where-filters/",
+      "/backend/01-database/sql/join-changes-rows-and-nulls/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_chained_left": [[1, 1400, 1], [3, 0, 0], [4, 0, 0]],
+        "opt_split_cte_agg": [[1, 1400, 1], [3, 0, 0], [4, 0, 1]]
+      },
+      "optionRowCounts": {
+        "opt_left_filter_in_on": 7
+      }
+    }
+  },
+  {
+    "conceptId": "C03",
+    "variantId": "C03-logistics-window-null-order-01",
+    "domain": "swift-logistics",
+    "stage": 8,
+    "tablePath": ["shipment_events"],
+    "perspective": "pick-counterexample",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["null-order-differs-sqlite-vs-pg", "window-tie-without-secondary-key"],
+    "title": "C03（反例擊破視角）：取每張運單最新掃描事件——SQLite 正常、搬到 PostgreSQL 狀態倒退的反例",
+    "businessRequirement": "分析師寫了 `ROW_NUMBER() OVER (PARTITION BY shipment_id ORDER BY recorded_at DESC)` 取 `rn = 1` 當最新事件。運單 7002 同時有一筆 ('signed', '2026-03-10 18:00:00') 與一筆 ('exception', NULL)。比較以下兩組排序寫法，哪個修法能保證跨引擎行為一致？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ -> PostgreSQL 18",
+      "scale": "1 億掃描事件",
+      "readWriteRatio": "10:1",
+      "indexes": ["idx_events_shipment_recorded"]
+    },
+    "options": [
+      {
+        "key": "opt_no_nulls_clause",
+        "sql": "SELECT event_type FROM (SELECT event_type, ROW_NUMBER() OVER (PARTITION BY shipment_id ORDER BY recorded_at DESC) AS rn FROM shipment_events WHERE shipment_id = 7002) WHERE rn = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "SQLite 回 signed（預設 NULL 最後），但完全相同的 SQL 在 PostgreSQL 預設 NULL 最前會回 exception！",
+        "edgeCaseResult": "跨引擎靜默反轉客戶看到的包裹狀態",
+        "pros": ["無"],
+        "cons": ["依賴各家引擎相反的 NULL 預設排位"],
+        "validWhen": "recorded_at 確定 NOT NULL 且已補次排序鍵時",
+        "failsWhen": "recorded_at 允許 NULL 且跨引擎時"
+      },
+      {
+        "key": "opt_pg_default_sim",
+        "sql": "SELECT event_type FROM (SELECT event_type, ROW_NUMBER() OVER (PARTITION BY shipment_id ORDER BY recorded_at DESC NULLS FIRST) AS rn FROM shipment_events WHERE shipment_id = 7002) WHERE rn = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 exception（模擬 PostgreSQL 未寫 NULLS LAST 時的錯誤結果）",
+        "edgeCaseResult": "把時間遺失的舊異常事件當成最新狀態蓋過已簽收",
+        "pros": ["精準示範 PostgreSQL 預設行為"],
+        "cons": ["得到錯誤的業務最新狀態"],
+        "validWhen": "刻意把缺時間的異常列置頂稽核時",
+        "failsWhen": "顯示運單最新簽收狀態時"
+      },
+      {
+        "key": "opt_explicit_nulls_last_tiebreak",
+        "sql": "SELECT event_type FROM (SELECT event_type, ROW_NUMBER() OVER (PARTITION BY shipment_id ORDER BY recorded_at DESC NULLS LAST, event_id DESC) AS rn FROM shipment_events WHERE shipment_id = 7002) WHERE rn = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "SQLite 與 PostgreSQL 一致穩定回傳 signed",
+        "edgeCaseResult": "同時鎖定 NULL 置底與同秒 event_id 破局，跨引擎零分歧",
+        "pros": ["顯式 NULLS LAST 消除跨引擎靜默差異", "補上 event_id DESC 處理同秒多事件平手"],
+        "cons": ["需確認索引排序亦搭配 NULLS LAST 以免額外排序"],
+        "validWhen": "所有跨引擎且可能含 NULL 或同秒平手的最新一筆查詢",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_drop_partition",
+        "sql": "SELECT event_type FROM (SELECT event_type, ROW_NUMBER() OVER (ORDER BY recorded_at DESC NULLS LAST) AS rn FROM shipment_events) WHERE rn = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "全表只回傳 1 筆事件，失去「每張運單」分區",
+        "edgeCaseResult": "漏掉 PARTITION BY shipment_id",
+        "pros": ["無"],
+        "cons": ["整張表只剩最新一筆事件而非每運單各一筆"],
+        "validWhen": "無",
+        "failsWhen": "每運單取最新狀態時"
+      }
+    ],
+    "recommendedKeys": ["opt_explicit_nulls_last_tiebreak"],
+    "alternativeNote": "SQLite 3.30+ 與 PostgreSQL 皆支援標準 SQL 的 NULLS FIRST / NULLS LAST 語法",
+    "relatedDocs": [
+      "/backend/01-database/sql/window-keeps-rows-grouping-collapses/",
+      "/backend/01-database/sql/relations-have-no-order/",
+      "/backend/01-database/sql/engine-leniency-and-portability/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_no_nulls_clause": [["signed"]],
+        "opt_pg_default_sim": [["exception"]],
+        "opt_explicit_nulls_last_tiebreak": [["signed"]]
+      }
+    }
+  },
+  {
+    "conceptId": "C04",
+    "variantId": "C04-logistics-mixed-keyset-01",
+    "domain": "swift-logistics",
+    "stage": 8,
+    "tablePath": ["shipments"],
+    "perspective": "diagnose-plan",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["mixed-direction-tuple-comparison-drops-rows", "composite-index-column-order"],
+    "title": "C04（複合陷阱）：混合升降冪 Keyset 分頁漏列＋複合索引前導欄順序",
+    "businessRequirement": "篩選 warehouse_id = 11 且 status = 'in_transit'，按 created_at DESC, shipment_id ASC 翻頁。已知 2026-03-15 14:00:00 同秒有 7005、7006、7007 三筆，上一頁末尾是 ('2026-03-15 14:00:00', 7005)。哪個下一頁條件不會漏掉 7006、7007 且能命中複合索引 (warehouse_id, status, created_at DESC, shipment_id ASC)？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "800 萬 shipments",
+      "readWriteRatio": "50:1",
+      "indexes": ["idx_shipments_wh_status_created (warehouse_id, status, created_at DESC, shipment_id ASC)"]
+    },
+    "options": [
+      {
+        "key": "opt_tuple_lt_bug",
+        "sql": "SELECT shipment_id FROM shipments WHERE warehouse_id = 11 AND status = 'in_transit' AND (created_at, shipment_id) < ('2026-03-15 14:00:00', 7005) ORDER BY created_at DESC, shipment_id ASC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 7008，同秒的 7006 與 7007 憑空蒸發！",
+        "edgeCaseResult": "列值比較 < 等價於雙欄皆降冪，與 shipment_id ASC 方向矛盾",
+        "pros": ["語法短"],
+        "cons": ["混合排序方向誤用列值比較會靜默遺漏同秒較大 ID 的所有列"],
+        "validWhen": "兩欄排序方向完全相同（雙降或雙升）時",
+        "failsWhen": "排序方向一降一升時"
+      },
+      {
+        "key": "opt_expanded_mixed",
+        "sql": "SELECT shipment_id FROM shipments WHERE warehouse_id = 11 AND status = 'in_transit' AND (created_at < '2026-03-15 14:00:00' OR (created_at = '2026-03-15 14:00:00' AND shipment_id > 7005)) ORDER BY created_at DESC, shipment_id ASC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "精確依序回傳 7006、7007、7008，一筆不漏！",
+        "edgeCaseResult": "展開式精確表達「時間更早，或同時間但 ID 更大」，並搭配等值前導欄複合索引",
+        "pros": ["完全修復混合方向翻頁漏列", "前導等值欄 (warehouse_id, status) 縮小掃描範圍"],
+        "cons": ["帶 OR 條件在某些引擎上不如同向雙降列值比較容易走單段範圍掃描；若產品允許建議改同向雙降"],
+        "validWhen": "業務硬性規定時間降冪且同秒 ID 升冪時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_tuple_lte_dup",
+        "sql": "SELECT shipment_id FROM shipments WHERE warehouse_id = 11 AND status = 'in_transit' AND (created_at, shipment_id) <= ('2026-03-15 14:00:00', 7005) ORDER BY created_at DESC, shipment_id ASC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7005（重複！）與 7008，仍然漏掉 7006 與 7007",
+        "edgeCaseResult": "同時重複又漏列",
+        "pros": ["無"],
+        "cons": ["沒修方向矛盾還多出邊界重複"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      },
+      {
+        "key": "opt_offset_regression",
+        "sql": "SELECT shipment_id FROM shipments WHERE warehouse_id = 11 AND status = 'in_transit' ORDER BY created_at DESC LIMIT 3 OFFSET 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "800 萬列深頁退化且拿掉 shipment_id 喪失全序",
+        "edgeCaseResult": "回到最慢且最不穩定的舊方案",
+        "pros": ["無"],
+        "cons": ["深頁 OFFSET 慢且無全序"],
+        "validWhen": "無",
+        "failsWhen": "百萬級翻頁"
+      }
+    ],
+    "recommendedKeys": ["opt_expanded_mixed"],
+    "alternativeNote": "若與前端協商可把排序改成同向 (created_at DESC, shipment_id DESC)，就能安全使用 (created_at, shipment_id) < (...) 並獲得最優單段索引掃描",
+    "relatedDocs": [
+      "/backend/01-database/sql/pagination-needs-a-total-order/",
+      "/backend/01-database/sql/cost-lives-in-the-plan/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_tuple_lt_bug": [7008],
+        "opt_expanded_mixed": [7006, 7007, 7008],
+        "opt_tuple_lte_dup": [7005, 7008]
+      }
+    }
+  },
+  {
+    "conceptId": "C05",
+    "variantId": "C05-cloud-webhook-pipeline-01",
+    "domain": "cloud-academy",
+    "stage": 8,
+    "tablePath": ["webhook_events"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "queue-idempotency-tx-boundary",
+    "benchmarkRef": "ref-pg-skip-locked-queue",
+    "traps": ["external-http-inside-db-tx", "missing-unique-dedup", "for-update-without-skip-locked"],
+    "title": "C05（複合陷阱）：金流 Webhook 處理管線——SKIP LOCKED＋唯一約束冪等＋交易外外部呼叫",
+    "businessRequirement": "PostgreSQL 上有 6 台 worker 處理 webhook_events；金流商會重送同 (provider, external_id) 事件，且每筆處理須呼叫耗時 800ms 的外部寄信 API。該如何設計約束、認領語句與交易邊界？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "6 台 worker、重送風暴 1,500 次同事件",
+      "readWriteRatio": "1:2",
+      "indexes": ["UNIQUE (provider, external_id)", "idx_webhook_pending"]
+    },
+    "options": [
+      {
+        "key": "opt_http_inside_tx",
+        "sql": "-- 開大交易 SELECT ... FOR UPDATE LIMIT 1，交易內等 800ms 寄信 API，成功再 UPDATE status='done' COMMIT",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "6 台 worker 互等成單一執行緒，且每筆鎖連線 800ms 迅速塞爆連線池",
+        "edgeCaseResult": "寄信成功但 COMMIT 失敗仍重寄，外部 API 變慢直接拖垮資料庫",
+        "pros": ["失敗回滾簡單"],
+        "cons": ["三個並行地雷全踩：無 SKIP LOCKED、長交易包外部 HTTP、連線池耗盡"],
+        "validWhen": "無",
+        "failsWhen": "含外部網路呼叫的生產佇列"
+      },
+      {
+        "key": "opt_unique_skip_locked_short_tx",
+        "sql": "-- 建 UNIQUE(provider, external_id) + INSERT ... ON CONFLICT DO NOTHING 擋重送；短交易 FOR UPDATE SKIP LOCKED 改 status='processing' 即 COMMIT 釋鎖；交易外呼叫外部 API（帶冪等鍵）；完成後短交易改 'done' 並設逾時回收",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "寫入層原子攔截重送、6 台 worker 並行認領互不擋路、資料庫交易維持毫秒級",
+        "edgeCaseResult": "外部 API 延遲抖動完全不會鎖住資料庫連線池",
+        "pros": ["同時解決冪等寫入、多 worker 並行認領與短交易連線保護"],
+        "cons": ["多出 processing 中介態，須實作卡死逾時回收機制與外部 API 冪等鍵"],
+        "validWhen": "資料庫驅動的非同步外部呼叫處理管線",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_app_count_dedup",
+        "sql": "-- 不建唯一約束，收到時先 SELECT COUNT(*) 檢查是否重複再 INSERT，worker 用普通 SELECT LIMIT 1",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "同時到達的重送事件雙雙通過 COUNT(*)=0 並雙重寫入，且 worker 重複認領",
+        "edgeCaseResult": "重送風暴下客戶收到重複開通與重複寄信",
+        "pros": ["無"],
+        "cons": ["寫入去重與消費認領兩端皆有競態"],
+        "validWhen": "無",
+        "failsWhen": "所有並行系統"
+      },
+      {
+        "key": "opt_global_serializable",
+        "sql": "-- 全庫調成 SERIALIZABLE 不改任何查詢",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "無法取代 SKIP LOCKED 且不縮短交易內外部 HTTP 佔用連線的時間",
+        "edgeCaseResult": "大量序列化衝突重試疊加連線池耗盡",
+        "pros": ["無"],
+        "cons": ["錯用隔離等級治不了外部呼叫持鎖與佇列阻塞"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      }
+    ],
+    "recommendedKeys": ["opt_unique_skip_locked_short_tx"],
+    "alternativeNote": "對應 benchmarks/postgres-and-concurrency-reference.json 的 ref-pg-skip-locked-queue",
+    "relatedDocs": [
+      "/backend/01-database/sql/deployment-shape-and-sql-constructs/",
+      "/backend/01-database/transaction-boundary/"
+    ]
+  },
+  {
+    "conceptId": "C06",
+    "variantId": "C06-bookstore-int-div-audit-01",
+    "domain": "bookstore",
+    "stage": 8,
+    "tablePath": ["orders", "order_items", "books"],
+    "perspective": "diagnose-plan",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["sqlite-integer-division", "hollow-left-join", "item-granularity-distortion", "unpaid-orders-in-denominator"],
+    "title": "C06（複合陷阱）：退款率預警報表永遠回傳 0 筆——整數除法＋宣告落空＋粒度失真＋分母定義",
+    "businessRequirement": "紙頁書店退款率預警查詢用 `COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) / COUNT(*) > 0.1`（接 `orders LEFT JOIN order_items JOIN books`），在 SQLite 上線後永遠回傳 0 筆。哪一組診斷與改寫同時點出全部缺陷？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "100 萬訂單、250 萬明細",
+      "readWriteRatio": "20:1",
+      "indexes": ["PRIMARY KEY (order_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_broken_int_div",
+        "sql": "SELECT b.category_id, COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) / COUNT(*) AS refund_rate FROM orders o LEFT JOIN order_items oi ON oi.order_id = o.order_id JOIN books b ON b.book_id = oi.book_id GROUP BY b.category_id HAVING COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) / COUNT(*) > 0.1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "永遠回傳 0 列！因為整數除以整數小於 1 一律無條件捨去成 0",
+        "edgeCaseResult": "還同時夾帶宣告落空（LEFT JOIN 被後段 JOIN 撤銷）、明細行數權重失真與分母混入 pending/cancelled 訂單",
+        "pros": ["無"],
+        "cons": ["四層缺陷同時存在"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      },
+      {
+        "key": "opt_fixed_four_defects",
+        "sql": "SELECT b.category_id, COUNT(DISTINCT CASE WHEN o.status = 'refunded' THEN o.order_id END) * 1.0 / COUNT(DISTINCT o.order_id) AS refund_order_rate FROM orders o INNER JOIN order_items oi ON oi.order_id = o.order_id INNER JOIN books b ON b.book_id = oi.book_id WHERE o.status IN ('paid', 'shipped', 'refunded') GROUP BY b.category_id HAVING COUNT(DISTINCT CASE WHEN o.status = 'refunded' THEN o.order_id END) * 10 > COUNT(DISTINCT o.order_id) ORDER BY b.category_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確抓出分類 5（資料庫系統，退款單比率 1/5 = 0.2 > 0.1）",
+        "edgeCaseResult": "同時修掉整數除法（* 1.0 與交叉相乘 * 10）、撤除虛假 LEFT JOIN、以 DISTINCT order_id 對齊訂單粒度，並排除未付款 pending/cancelled 訂單",
+        "pros": ["一次對齊語法層、宣告層、模型粒度層與業務分母定義"],
+        "cons": ["上線前仍須與營運主管確認退款率按「訂單數」「本數」還是「金額」定義"],
+        "validWhen": "完成需求確認後的可上線預警查詢",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_float_only_keep_flaws",
+        "sql": "SELECT b.category_id, COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) * 1.0 / COUNT(*) AS refund_rate FROM orders o LEFT JOIN order_items oi ON oi.order_id = o.order_id JOIN books b ON b.book_id = oi.book_id GROUP BY b.category_id HAVING COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) * 1.0 / COUNT(*) > 0.1 ORDER BY b.category_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "算出分類 5 比率 1/7 = 0.1428（被未付款單 106 與同單雙明細 101 稀釋了！）",
+        "edgeCaseResult": "只修了整數除法，沒修未付款分母與明細行數膨脹",
+        "pros": ["不再回傳 0 列"],
+        "cons": ["分母混入未付款訂單且一單買多書權重被放大，比例數字依然失真"],
+        "validWhen": "無",
+        "failsWhen": "精確財務／營運預警指標"
+      },
+      {
+        "key": "opt_right_join_distinct",
+        "sql": "SELECT DISTINCT b.category_id, COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) / COUNT(*) AS refund_rate FROM orders o RIGHT JOIN order_items oi ON oi.order_id = o.order_id JOIN books b ON b.book_id = oi.book_id GROUP BY b.category_id HAVING COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) / COUNT(*) > 0.1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "仍然回傳 0 列",
+        "edgeCaseResult": "整數除法、分母與粒度全沒修",
+        "pros": ["無"],
+        "cons": ["四項根因皆未解決"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      }
+    ],
+    "recommendedKeys": ["opt_fixed_four_defects"],
+    "alternativeNote": "用交叉相乘 refund_cnt * 10 > total_cnt 不只避開整數除法，也天然避開分母為 0 的除以零風險",
+    "relatedDocs": [
+      "/backend/01-database/sql/decisions-from-requirement-to-shipping/",
+      "/backend/01-database/sql/join-left-operand-accumulates/",
+      "/backend/01-database/sql/join-changes-rows-and-nulls/",
+      "/backend/01-database/sql/declared-intent-vs-behaviour/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_broken_int_div": 0,
+        "opt_fixed_four_defects": 1,
+        "opt_right_join_distinct": 0
+      },
+      "optionFirstColumnOrder": {
+        "opt_fixed_four_defects": [5]
+      }
+    }
+  }
+]

@@ -1,0 +1,415 @@
+[
+  {
+    "conceptId": "S3-01",
+    "variantId": "S3-01-bookstore-exists-01",
+    "domain": "bookstore",
+    "stage": 3,
+    "tablePath": ["customers", "orders", "order_items", "books"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["join-duplicate-rows", "distinct-masks-fanout"],
+    "title": "曾購買資料庫分類書籍的顧客名單：IN、EXISTS 與 JOIN",
+    "businessRequirement": "撈出買過分類 5（資料庫系統）書籍的顧客 customer_id 與 name，不需要書名，每位顧客只出現一次。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "10 萬顧客、200 萬訂單明細",
+      "readWriteRatio": "100:1",
+      "indexes": ["idx_orders_customer_date"]
+    },
+    "options": [
+      {
+        "key": "opt_plain_join",
+        "sql": "SELECT c.customer_id, c.name FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN books b ON b.book_id = oi.book_id WHERE b.category_id = 5 ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 6 列（顧客 1 重複出現 3 次、顧客 2 重複 2 次）",
+        "edgeCaseResult": "違反「每位顧客只出現一次」需求",
+        "pros": ["若要同時顯示書名與明細欄位時必用 JOIN"],
+        "cons": ["一對多連接產生大量重複顧客列"],
+        "validWhen": "需要輸出每筆購買明細時",
+        "failsWhen": "只需要不重複顧客名單時"
+      },
+      {
+        "key": "opt_distinct_join",
+        "sql": "SELECT DISTINCT c.customer_id, c.name FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN books b ON b.book_id = oi.book_id WHERE b.category_id = 5 ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 3 位顧客（1, 2, 4）",
+        "edgeCaseResult": "結果對，但先展開所有明細再靠 DISTINCT 排序去重",
+        "pros": ["結果正確"],
+        "cons": ["多做中間列展開與去重，且對維護者造成宣告模糊"],
+        "validWhen": "極小表臨時查詢",
+        "failsWhen": "追求清楚存在性宣告與避免大表膨脹去重時"
+      },
+      {
+        "key": "opt_exists",
+        "sql": "SELECT c.customer_id, c.name FROM customers c WHERE EXISTS (SELECT 1 FROM orders o JOIN order_items oi ON oi.order_id = o.order_id JOIN books b ON b.book_id = oi.book_id WHERE o.customer_id = c.customer_id AND b.category_id = 5) ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 3 位顧客（1, 2, 4），列數天然不膨脹",
+        "edgeCaseResult": "找到第一筆符合的明細即短路停止，且改否定式只需加 NOT",
+        "pros": ["半連接語意最精確", "列數上限鎖死在 customers、不用 DISTINCT"],
+        "cons": ["無法在外層 SELECT 取出 books 欄位"],
+        "validWhen": "只判斷存在性、不需被比對表欄位時",
+        "failsWhen": "需求改成要同時顯示所購書名時"
+      },
+      {
+        "key": "opt_in_subquery",
+        "sql": "SELECT c.customer_id, c.name FROM customers c WHERE c.customer_id IN (SELECT o.customer_id FROM orders o JOIN order_items oi ON oi.order_id = o.order_id JOIN books b ON b.book_id = oi.book_id WHERE b.category_id = 5) ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 3 位顧客（1, 2, 4）",
+        "edgeCaseResult": "正向 IN 正確，但日後若反轉成 NOT IN 遇 NULL 風險高",
+        "pros": ["同樣不膨脹列數，子查詢結果集很小時效率高"],
+        "cons": ["無法直接安全翻轉成否定式（NOT IN 遇 NULL 失效）"],
+        "validWhen": "正向存在性判斷且子查詢命中集合極小",
+        "failsWhen": "否定式判斷且子查詢欄位可能含 NULL 時"
+      }
+    ],
+    "recommendedKeys": ["opt_exists", "opt_in_subquery"],
+    "alternativeNote": "正向存在性 opt_exists 與 opt_in_subquery 皆可，但養成用 EXISTS 的習慣在切到否定式時不會踩 NULL 地雷",
+    "relatedDocs": [
+      "/backend/01-database/sql/in-exists-join/",
+      "/backend/01-database/sql/knowledge-cards/semi-join-and-anti-join/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_plain_join": 6,
+        "opt_distinct_join": 3,
+        "opt_exists": 3,
+        "opt_in_subquery": 3
+      }
+    }
+  },
+  {
+    "conceptId": "S3-02",
+    "variantId": "S3-02-bookstore-reviews-01",
+    "domain": "bookstore",
+    "stage": 3,
+    "tablePath": ["orders", "reviews"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["not-in-null-poisoning", "neq-on-left-join-wrong-question", "missing-rating-condition"],
+    "title": "找出沒有五星評價的訂單：四種否定存在性寫法對決",
+    "businessRequirement": "列出所有「沒有收到任何五星評價」的訂單（包含完全沒評價的訂單，以及只有非五星評價的訂單 103）。已知 reviews.order_id 允許 NULL。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "100 萬訂單、200 萬評價",
+      "readWriteRatio": "50:1",
+      "indexes": ["PRIMARY KEY (order_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_left_neq5",
+        "sql": "SELECT o.order_id FROM orders o LEFT JOIN reviews r ON r.order_id = o.order_id WHERE r.rating <> 5 ORDER BY o.order_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 101（它有五星也有三星！）與 103，且漏掉所有沒評價的訂單",
+        "edgeCaseResult": "雙重錯誤：濾掉沒評價訂單，又把同時有 5 星與 3 星的 101 錯列進來",
+        "pros": ["無"],
+        "cons": ["問成「至少有一則非五星評價」，完全答錯題"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      },
+      {
+        "key": "opt_not_in",
+        "sql": "SELECT o.order_id FROM orders o WHERE o.order_id NOT IN (SELECT r.order_id FROM reviews r WHERE r.rating = 5) ORDER BY o.order_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "因評價 9004 的 order_id 為 NULL，靜默回傳 0 筆",
+        "edgeCaseResult": "一筆 NULL 直接毒死整個 NOT IN 條件",
+        "pros": ["無 NULL 資料時看似正確"],
+        "cons": ["三值邏輯下只要子查詢含任一 NULL 即回傳 0 列"],
+        "validWhen": "子查詢欄位確定 NOT NULL 且目標引擎能轉 Anti-Join（仍不如 NOT EXISTS 穩）",
+        "failsWhen": "子查詢欄位允許 NULL 時"
+      },
+      {
+        "key": "opt_left_no_rating",
+        "sql": "SELECT o.order_id FROM orders o LEFT JOIN reviews r ON r.order_id = o.order_id WHERE r.review_id IS NULL ORDER BY o.order_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 6 筆，漏掉只有四星評價的訂單 103",
+        "edgeCaseResult": "問成「完全沒評價的訂單」而非「沒有五星評價的訂單」",
+        "pros": ["語法合法"],
+        "cons": ["把只有 1–4 星評價的訂單漏掉"],
+        "validWhen": "只找完全無評價訂單時",
+        "failsWhen": "要包含僅有非五星評價的訂單時"
+      },
+      {
+        "key": "opt_not_exists",
+        "sql": "SELECT o.order_id FROM orders o WHERE NOT EXISTS (SELECT 1 FROM reviews r WHERE r.order_id = o.order_id AND r.rating = 5) ORDER BY o.order_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳 7 筆（排除 101 與 105，保留 102、103、104、106、107、108、109）",
+        "edgeCaseResult": "對 NULL 免疫、一單多評不膨脹、保留無評價與僅四星評價訂單",
+        "pros": ["對 NULL 免疫", "語意與反連接執行計畫最穩"],
+        "cons": ["大表須在 reviews(order_id, rating) 建索引"],
+        "validWhen": "所有否定存在性查詢",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_not_exists"],
+    "alternativeNote": "若用 LEFT JOIN 寫法，須將 r.rating = 5 寫進 ON 再搭 WHERE r.review_id IS NULL 才與 NOT EXISTS 等價",
+    "relatedDocs": [
+      "/backend/01-database/sql/well-formed-is-not-correct/",
+      "/backend/01-database/sql/in-exists-join/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_left_neq5": [101, 103],
+        "opt_not_in": [],
+        "opt_left_no_rating": [102, 104, 106, 107, 108, 109],
+        "opt_not_exists": [102, 103, 104, 106, 107, 108, 109]
+      }
+    }
+  },
+  {
+    "conceptId": "S3-03",
+    "variantId": "S3-03-bookstore-groupkey-01",
+    "domain": "bookstore",
+    "stage": 3,
+    "tablePath": ["customers", "orders"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["group-by-right-table-key", "group-by-non-unique-name", "only-full-group-by"],
+    "title": "依顧客統計訂單數：分組鍵選左表主鍵與同名合併陷阱",
+    "businessRequirement": "統計全部顧客的訂單數並輸出 customer_id、name 與 order_cnt，須跨 SQLite、PostgreSQL、MySQL 8 與 DuckDB 皆通過且不錯併同名顧客（顧客 2 與顧客 7 都叫宗翰）。",
+    "workloadProfile": {
+      "engine": "SQLite / PostgreSQL / MySQL 8 / DuckDB",
+      "scale": "10 萬顧客",
+      "readWriteRatio": "100:1",
+      "indexes": ["idx_orders_customer_date"]
+    },
+    "options": [
+      {
+        "key": "opt_group_right_key",
+        "sql": "SELECT c.customer_id, c.name, COUNT(o.order_id) AS order_cnt FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id GROUP BY o.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "拿右表 o.customer_id 分組：所有沒下單的顧客全是 NULL 會併成同一組，PostgreSQL 當場報錯",
+        "edgeCaseResult": "多個無訂單顧客被靜默合併成隨機一個人的名字",
+        "pros": ["無"],
+        "cons": ["外連接後拿右表欄位分組是經典災難"],
+        "validWhen": "無",
+        "failsWhen": "任何外連接分組"
+      },
+      {
+        "key": "opt_group_pk_only",
+        "sql": "SELECT c.customer_id, c.name, COUNT(o.order_id) AS order_cnt FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id GROUP BY c.customer_id ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "在 SQLite、PostgreSQL 與 MySQL 8 通過（依主鍵函數相依），但 DuckDB 會報錯",
+        "edgeCaseResult": "一旦來源換成失去主鍵資訊的 CTE／View，PostgreSQL 也會拒絕",
+        "pros": ["在單表主鍵明確的 PG/MySQL 8 寫法較短"],
+        "cons": ["不跨 DuckDB，重構成子查詢後易失敗"],
+        "validWhen": "鎖定 PG/MySQL 8 且直接查帶主鍵基表時",
+        "failsWhen": "須跨引擎或來源為子查詢時"
+      },
+      {
+        "key": "opt_group_pk_and_name",
+        "sql": "SELECT c.customer_id, c.name, COUNT(o.order_id) AS order_cnt FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id GROUP BY c.customer_id, c.name ORDER BY c.customer_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳全部 7 位顧客（2 位宗翰各自獨立統計）",
+        "edgeCaseResult": "四家引擎 100% 一致通過",
+        "pros": ["左表主鍵區分同名顧客", "顯式列出所有非聚合輸出欄，完全跨引擎"],
+        "cons": ["增加輸出欄時須同步補進 GROUP BY"],
+        "validWhen": "所有需要跨引擎穩定的分組查詢",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_group_name_only",
+        "sql": "SELECT c.name, COUNT(o.order_id) AS order_cnt FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id GROUP BY c.name ORDER BY c.name;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 6 列（兩位叫「宗翰」的顧客 2 與 7 被錯誤合併成 3 筆訂單）",
+        "edgeCaseResult": "同名不同人被靜默併組",
+        "pros": ["無"],
+        "cons": ["拿非唯一姓名當分組鍵破壞統計對象粒度"],
+        "validWhen": "刻意依姓名統計同名人數分佈時",
+        "failsWhen": "依個別顧客統計時"
+      }
+    ],
+    "recommendedKeys": ["opt_group_pk_and_name"],
+    "alternativeNote": "判斷分組鍵先問「結果的一列代表哪個業務對象」，一律放該對象的主鍵",
+    "relatedDocs": [
+      "/backend/01-database/sql/grouping-key-decides-the-unit/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_group_pk_and_name": 7,
+        "opt_group_name_only": 6
+      }
+    }
+  },
+  {
+    "conceptId": "S3-04",
+    "variantId": "S3-04-bookstore-window-lag-01",
+    "domain": "bookstore",
+    "stage": 3,
+    "tablePath": ["daily_sales_snapshots"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["missing-partition-by", "lag-ignores-missing-calendar-day"],
+    "title": "比較各門市「前一個日曆天」日營收：視窗分區與缺測日檢查",
+    "businessRequirement": "從 daily_sales_snapshots 找出「哪幾天該門市日營收高於前一個日曆天」。表內有 TPE-01 與 TXG-01 兩家門市，且 TPE-01 在 2026-03-03 公休無資料列。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+（PostgreSQL 換用日期減法 INTERVAL '1 day'）",
+      "scale": "100 家門市 × 3 年（~10 萬列）",
+      "readWriteRatio": "50:1",
+      "indexes": ["PRIMARY KEY (snapshot_date, store_code)"]
+    },
+    "options": [
+      {
+        "key": "opt_no_partition",
+        "sql": "SELECT snapshot_date, store_code FROM (SELECT snapshot_date, store_code, revenue, LAG(revenue) OVER (ORDER BY snapshot_date, store_code) AS prev_rev FROM daily_sales_snapshots) t WHERE revenue > prev_rev ORDER BY store_code, snapshot_date;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "把台北店跟台中店混在同一條序列互比，多出錯誤列",
+        "edgeCaseResult": "漏掉 PARTITION BY store_code 造成跨門市串比",
+        "pros": ["無"],
+        "cons": ["跨分區比較完全無業務意義"],
+        "validWhen": "整張表確定只有單一門市時",
+        "failsWhen": "多門市共用表時"
+      },
+      {
+        "key": "opt_partition_no_gap",
+        "sql": "SELECT snapshot_date, store_code FROM (SELECT snapshot_date, store_code, revenue, LAG(revenue) OVER (PARTITION BY store_code ORDER BY snapshot_date) AS prev_rev FROM daily_sales_snapshots) t WHERE revenue > prev_rev ORDER BY store_code, snapshot_date;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 TPE-01 03-02、03-04 與 TXG-01 03-03 共 3 筆",
+        "edgeCaseResult": "把 TPE-01 公休後的 03-04 拿去跟 03-02 比，不符「前一個日曆天」定義",
+        "pros": ["若需求定義是「上一個有營業的日子」則此寫法最簡潔"],
+        "cons": ["排序相鄰不等於日曆相鄰，跳過公休日會誤報 03-04"],
+        "validWhen": "需求確認為「跟上一個營業日比較」時",
+        "failsWhen": "需求為「前一個日曆天」且存在缺測公休日時"
+      },
+      {
+        "key": "opt_partition_and_gap",
+        "sql": "SELECT snapshot_date, store_code FROM (SELECT snapshot_date, store_code, revenue, LAG(revenue) OVER (PARTITION BY store_code ORDER BY snapshot_date) AS prev_rev, LAG(snapshot_date) OVER (PARTITION BY store_code ORDER BY snapshot_date) AS prev_date FROM daily_sales_snapshots) t WHERE prev_date = date(snapshot_date, '-1 day') AND revenue > prev_rev ORDER BY store_code, snapshot_date;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "正確回傳 TPE-01 03-02 與 TXG-01 03-03 共 2 筆",
+        "edgeCaseResult": "同一次視窗排序同時檢查日期差恰好 1 天，排除 TPE-01 公休後的 03-04",
+        "pros": ["精確符合日曆前一天定義", "單次分區排序掃描 O(N log N)"],
+        "cons": ["日期減法函式因引擎而異（PG 須改為 snapshot_date - INTERVAL '1 day'）"],
+        "validWhen": "存在缺測日期的日曆相鄰比較",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_group_by_wrong",
+        "sql": "SELECT store_code, MAX(revenue) FROM daily_sales_snapshots GROUP BY store_code HAVING MAX(revenue) > MIN(revenue);",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "每門市只剩一列，完全失去「哪幾天」明細粒度",
+        "edgeCaseResult": "GROUP BY 壓扁了日期列",
+        "pros": ["無"],
+        "cons": ["無法輸出個別達標日期"],
+        "validWhen": "只看每門市最高最低值時",
+        "failsWhen": "需保留逐日明細時"
+      }
+    ],
+    "recommendedKeys": ["opt_partition_and_gap"],
+    "alternativeNote": "若與需求方追問後確認「前一天」指上一個營業日，則改選 opt_partition_no_gap",
+    "relatedDocs": [
+      "/backend/01-database/sql/window-keeps-rows-grouping-collapses/",
+      "/backend/01-database/sql/requirement-to-shipped-query/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_partition_no_gap": [["2026-03-02", "TPE-01"], ["2026-03-04", "TPE-01"], ["2026-03-03", "TXG-01"]],
+        "opt_partition_and_gap": [["2026-03-02", "TPE-01"], ["2026-03-03", "TXG-01"]]
+      }
+    }
+  },
+  {
+    "conceptId": "S3-05",
+    "variantId": "S3-05-bookstore-pagination-01",
+    "domain": "bookstore",
+    "stage": 3,
+    "tablePath": ["orders"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["non-unique-sort-key", "deep-offset-cost", "strict-lt-drops-same-second-rows"],
+    "title": "百萬訂單無限捲動分頁：OFFSET、缺全序與 Keyset 接續標記",
+    "businessRequirement": "訂單列表按 ordered_at DESC 翻頁（2026-03-09 10:00:00 有 102、103、104 同秒三筆訂單）。目前第一頁末尾拿到 ('2026-03-09 10:00:00', 104)，要穩定撈下一頁且不遺漏 103、102，同時避免百萬列深頁 OFFSET 變慢。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "200 萬訂單、每秒持續寫入",
+      "readWriteRatio": "20:1",
+      "indexes": ["idx_orders_ordered_id (ordered_at DESC, order_id DESC)"]
+    },
+    "benchmarkRef": "bm-bookstore-offset-vs-keyset",
+    "options": [
+      {
+        "key": "opt_offset_no_tiebreak",
+        "sql": "SELECT order_id, ordered_at FROM orders ORDER BY ordered_at DESC LIMIT 3 OFFSET 3;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "同秒 102/103/104 順序無保證，新單寫入頂部會造成翻頁重複",
+        "edgeCaseResult": "深頁 OFFSET 須掃丟前 N 列，耗時隨頁數線性增長",
+        "pros": ["實作最簡單"],
+        "cons": ["無全序、寫入偏移重複、深頁慢"],
+        "validWhen": "幾百列靜態小表",
+        "failsWhen": "百萬級持續寫入列表"
+      },
+      {
+        "key": "opt_offset_total_order",
+        "sql": "SELECT order_id, ordered_at FROM orders ORDER BY ordered_at DESC, order_id DESC LIMIT 3 OFFSET 3;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "同秒排序穩定，但新單插入頂部仍會推移 OFFSET 且深頁越翻越慢",
+        "edgeCaseResult": "補了全序仍躲不掉 OFFSET 丟棄前列的代價",
+        "pros": ["支援直接跳轉指定頁碼「第 N 頁」"],
+        "cons": ["深頁耗時高、即時寫入時跨頁仍重複"],
+        "validWhen": "頁數淺且業務強制要求任意頁碼跳轉時",
+        "failsWhen": "百萬列無限捲動或深頁瀏覽"
+      },
+      {
+        "key": "opt_keyset_total_order",
+        "sql": "SELECT order_id, ordered_at FROM orders WHERE (ordered_at, order_id) < ('2026-03-09 10:00:00', 104) ORDER BY ordered_at DESC, order_id DESC LIMIT 3;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "穩定接續回傳 103、102、101，且直擊複合索引常數時間定位",
+        "edgeCaseResult": "同秒 103 與 102 完整保留，頂部寫入新單完全不干擾翻頁邊界",
+        "pros": ["翻到第 10,000 頁仍是 O(log N) 索引定位", "同秒不漏不重、新單寫入不漂移"],
+        "cons": ["不支援跳轉任意指定頁碼", "兩欄排序方向一升一降時須改寫展開式（見 C04）"],
+        "validWhen": "無限捲動、上一頁／下一頁與高成長交易表",
+        "failsWhen": "業務強需求任意跳轉頁碼且無法改 UI 時"
+      },
+      {
+        "key": "opt_keyset_no_id",
+        "sql": "SELECT order_id, ordered_at FROM orders WHERE ordered_at < '2026-03-09 10:00:00' ORDER BY ordered_at DESC LIMIT 3;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "直接跳過同秒的 103 與 102，從 101 開始回傳！",
+        "edgeCaseResult": "嚴格 < 丟失同秒剩餘訂單 103 與 102",
+        "pros": ["同樣快"],
+        "cons": ["同時間戳記跨頁時靜默漏資料"],
+        "validWhen": "排序鍵本身具有 UNIQUE 約束時",
+        "failsWhen": "時間戳記允許重複時"
+      }
+    ],
+    "recommendedKeys": ["opt_keyset_total_order"],
+    "alternativeNote": "見基準快照 bm-bookstore-offset-vs-keyset 的 50,000 列實測計畫與耗時對照",
+    "relatedDocs": [
+      "/backend/01-database/sql/pagination-needs-a-total-order/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_keyset_total_order": [103, 102, 101],
+        "opt_keyset_no_id": [101, 106, 105]
+      }
+    }
+  }
+]

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0",
+  "title": "SQL 漸進式選擇題練習題庫",
+  "specDoc": "/backend/01-database/sql/practice/",
+  "domains": [
+    {
+      "id": "bookstore",
+      "name": "紙頁書店（線上書城與門市系統）",
+      "schemaPath": "domains/bookstore/schema.sql",
+      "seedPath": "domains/bookstore/seed.sql",
+      "scaleSeedPath": "domains/bookstore/seed_scale.sql"
+    },
+    {
+      "id": "cloud-academy",
+      "name": "雲課堂（SaaS 訂閱制教學平台）",
+      "schemaPath": "domains/cloud-academy/schema.sql",
+      "seedPath": "domains/cloud-academy/seed.sql",
+      "scaleSeedPath": "domains/cloud-academy/seed_scale.sql"
+    },
+    {
+      "id": "swift-logistics",
+      "name": "捷配物流（B2B 倉儲與配送調度平台）",
+      "schemaPath": "domains/swift-logistics/schema.sql",
+      "seedPath": "domains/swift-logistics/seed.sql",
+      "scaleSeedPath": "domains/swift-logistics/seed_scale.sql"
+    }
+  ],
+  "benchmarks": [
+    "benchmarks/sqlite-scale-snapshots.json",
+    "benchmarks/postgres-and-concurrency-reference.json"
+  ],
+  "stages": [
+    { "stage": 1, "name": "單表查詢與基礎語法", "file": "stage1-basics.json" },
+    { "stage": 2, "name": "多表連接與語意模型核心", "file": "stage2-joins.json" },
+    { "stage": 3, "name": "存在性判斷、分組、視窗函式與分頁", "file": "stage3-subqueries-window-pagination.json" },
+    { "stage": 4, "name": "資料寫入（CRUD）、約束、識別字、字串與權限", "file": "stage4-dml-constraints-env.json" },
+    { "stage": 5, "name": "效能瓶頸、執行計畫、資料分布與宣告一致性", "file": "stage5-performance-intent.json" },
+    { "stage": 6, "name": "跨引擎遷移、高並行寫入與從需求到上線", "file": "stage6-migration-concurrency-shipping.json" },
+    { "stage": 7, "name": "資料庫 Schema 設計與讀寫頻率／效能權衡", "file": "stage7-schema-design.json" },
+    { "stage": 8, "name": "跨概念複合陷阱挑戰", "file": "composite-traps.json" }
+  ],
+  "masteryRules": {
+    "minDistinctDomainsOrPaths": 2,
+    "requireNonChooseQueryPerspective": true,
+    "requireBlindModePass": true
+  }
+}
