@@ -42,7 +42,7 @@ bindsym $mod+2 workspace number 2
 
 ## 拼裝式桌面的代價
 
-Linux tiling WM 的桌面是你自己拼出來的：compositor（Hyprland/sway）負責視窗管理、狀態列（waybar）負責頂部資訊條、啟動器（rofi/wofi）負責 app 搜尋啟動、通知（mako/dunst）負責通知彈窗、鎖屏另外裝。每一塊是不同專案、不同作者。
+Linux tiling WM 的桌面是你自己拼出來的：compositor（Hyprland/sway）負責視窗管理、狀態列（waybar）負責頂部資訊條、啟動器（rofi/wofi）負責 app 搜尋啟動、通知（mako/dunst）負責通知彈窗、螢幕鎖定程式另外裝。每一塊是不同專案、不同作者。
 
 好處是每一塊都可以換。壞處是當某件事壞了，你要自己判斷是哪一層的問題。藍牙選單不能點？可能是狀態列的 module 設定錯、可能是 blueman 沒跑、可能是 D-Bus session 有問題。完整桌面環境（KDE/GNOME）幫你整合測試過了，拼裝式桌面沒有這層保障。
 

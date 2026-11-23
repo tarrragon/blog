@@ -51,7 +51,7 @@ Unix 系統用檔名開頭的 `.` 標記隱藏檔。shell 配置（`.bashrc`、`
 ### 桌面層：Linux 桌面環境才需要
 
 - **Window manager**：Hyprland（`~/.config/hypr/`）、i3（`~/.config/i3/`）、sway 的配置。
-- **桌面元件**：狀態列（waybar）、應用程式啟動器（rofi / wofi）、通知服務（mako / dunst）、鎖屏（swaylock / hyprlock）。
+- **桌面元件**：狀態列（waybar）、應用程式啟動器（rofi / wofi）、通知服務（mako / dunst）、螢幕鎖定（swaylock / hyprlock）。
 - **主題與配色**：GTK / Qt 主題設定、游標主題、字型配置。
 
 ### 判讀準則

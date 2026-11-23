@@ -55,7 +55,7 @@ Shell 不會因為裝了就自動啟動——Hyprland 開機只執行 config 裡
 exec-once = caelestia shell -d
 ```
 
-Caelestia 自帶 bar、通知、鎖屏與 launcher，跟獨立的 waybar / mako 互斥：通知的 D-Bus name（`org.freedesktop.Notifications`）同一時間只有一個擁有者、bar 會疊兩條。設 Caelestia 為主 shell 時，把 waybar / mako 從 `exec-once` 移除（註解掉可留作停用 Caelestia 時的 fallback）。
+Caelestia 自帶 bar、通知、螢幕鎖定與 launcher，跟獨立的 waybar / mako 互斥：通知的 D-Bus name（`org.freedesktop.Notifications`）同一時間只有一個擁有者、bar 會疊兩條。設 Caelestia 為主 shell 時，把 waybar / mako 從 `exec-once` 移除（註解掉可留作停用 Caelestia 時的 fallback）。
 
 ## AUR 套件一覽
 

@@ -187,8 +187,8 @@ sudo pacman -S \
 | 截圖     | `grim` + `slurp`                              | 截圖工具 + 選區工具                       |
 | 剪貼簿   | `wl-clipboard` + `cliphist`                   | 剪貼簿存取 + 歷史記錄                     |
 | 桌布     | `hyprpaper`                                   | 靜態桌布                                  |
-| 鎖屏     | `hyprlock`                                    | Hyprland 配套鎖屏                         |
-| Idle     | `hypridle`                                    | 閒置偵測（觸發鎖屏/休眠）                 |
+| 螢幕鎖定 | `hyprlock`                                    | Hyprland 配套螢幕鎖定程式                 |
+| Idle     | `hypridle`                                    | 閒置偵測（觸發螢幕鎖定/休眠）             |
 | 音訊     | `pipewire` + `wireplumber` + `pipewire-pulse` | 音訊 server（取代 PulseAudio）            |
 | 音量控制 | `pamixer`（CLI）+ `pavucontrol`（GUI）        | 音量調整                                  |
 | 亮度     | `brightnessctl`                               | 螢幕亮度（筆電）                          |

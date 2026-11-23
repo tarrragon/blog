@@ -43,9 +43,9 @@
 | 待優化 | to be improved / needs improvement / room for improvement | 待改善 / 需要改進 / 有改進空間 | 表格的狀態欄寫「待改善」；句子裡寫出要改進哪一項 |
 | 缺省 | default | 預設 | |
 | 默認 | default | 預設 | 指 de facto standard 時寫「事實標準」；「默認了這件事」的 tacit acceptance 台灣也這樣寫，指這個意思時這個詞留著 |
-| 激活 | activate | 啟用 | 神經網路的 activation function 台灣譯名不統一（活化函數、激勵函數、激活函數）：沿用來源或專案已有的譯名，第一次出現附英文 |
+| 激活 | activate | 啟用 | 神經網路的 activation function 寫「激勵函數」，第一次出現附英文；轉述的台灣來源或廠商的繁體中文官方文件寫「活化函式」「活化函數」或「激勵函數」時照來源，這時不套函數列；來源或專案寫「激活函數」都不算依據，換成「激勵函數」 |
 | 激活碼 | activation code | 啟動序號 | |
-| 補丁 | patch（軟體發布）/ patch（比喻的臨時處置） | 更新檔 / 修補 | 資安公告的 security patch 也寫「安全性更新」或「修補程式」；原始碼的 patch 與 monkey patching 沿用專案已有的譯名，第一次出現附英文 |
+| 補丁 | patch（軟體發布）/ patch（比喻的臨時處置） | 更新檔 / 修補 | 資安公告的 security patch 也寫「安全性更新」或「修補程式」；指程式碼變更本身寫「修補（patch）」，以檔案交換時寫「修補檔（patch）」，monkey patching 保留英文；專案裡已有的「補丁」不算依據 |
 | 運營 | operations | 營運 | |
 | 運維 | operations and maintenance（O&M） | 維運 | |
 | 渠道 | payment / sales / marketing / notification / transmission channel | 支付管道 / 銷售通路 / 行銷管道 / 通知管道 / 傳導途徑 | 金流寫「支付管道」，販售寫「銷售通路」，投放與歸因寫「行銷管道」，訊息送達寫「通知管道」，經濟影響的傳遞寫「傳導途徑」；遊戲儲值見〈遊戲營運〉 |
@@ -53,7 +53,7 @@
 | 銷售 | salesperson / sales department | 業務 | 指銷售這個活動時（銷售額、同店銷售），這個詞留著 |
 | 在線 | online | 線上 / 在線上 / 上線 | 修飾名詞時寫「線上」（線上客服）；處於線上的狀態寫「在線上」，開始提供服務寫「上線」；「同時在線人數」寫「同時線上人數」；指 concurrency 時寫「同時執行」（同時執行的 thread） |
 | 質量 | quality | 品質 | 物理的 mass 台灣也寫「質量」，指這個意思時這個詞留著 |
-| 函數 | function（程式單位） | 函式 | 程式裡定義與呼叫的 function 換成「函式」（回呼函式、使用者定義函式、純函式、高階函式、建構函式），SQL 與查詢語言內建、不是視窗也不是聚合的 function 也寫「函式」（`lower()`、`ST_Distance()`），functional programming 寫「函式程式設計」；數學與計算關係留著「函數」（數學的函數、SQL 與查詢語言的視窗函數與聚合函數、損失函數、神經網路的 activation function）；拿不準的（hash function）沿用官方文件或專案已有的譯名 |
+| 函數 | function（程式單位） | 函式 | 程式裡定義與呼叫的 function 換成「函式」（回呼函式、使用者定義函式、純函式、高階函式、建構函式），SQL 與查詢語言內建、不是視窗也不是聚合的 function 也寫「函式」（`lower()`、`ST_Distance()`），functional programming 寫「函式程式設計」；數學與計算關係留著「函數」（數學的函數、SQL 與查詢語言的視窗函數與聚合函數、損失函數、神經網路的 activation function）；拿不準的（hash function）沿用官方文件或專案已有的譯名，已有的譯名本身是中國用語時（哈希函數）不算依據 |
 | 文件 | file | 檔案 | document 台灣也寫「文件」，指這個意思時這個詞留著 |
 | 文件夾 | folder | 資料夾 | |
 | 接口 | interface / port / endpoint | 介面 / 連接埠 / 端點 | 軟體的 interface 寫「介面」，硬體的 port 寫「連接埠」，HTTP 路徑這類 endpoint 寫「端點」 |
@@ -65,6 +65,8 @@
 | 內存 | memory | 記憶體 | 手機規格的機身內存指 storage，寫「儲存空間」；運行內存指 RAM，寫「記憶體」 |
 | 屏幕 | screen | 螢幕 | |
 | 副屏 | secondary display | 副螢幕 | |
+| 鎖屏 | lock screen / screen lock / screen locker / session lock | 鎖定畫面 / 螢幕鎖定 / 螢幕鎖定程式 / 工作階段鎖定 | 指顯示出來的畫面寫「鎖定畫面」，指鎖定螢幕的功能寫「螢幕鎖定」，當動詞寫「鎖定螢幕」，指 Hyprlock 這類程式寫「螢幕鎖定程式」，指 Wayland 的 session lock 狀態寫「工作階段鎖定」並附英文，跟 logind 的鎖對照時寫出 Wayland 與 logind |
+| 大屏 | large display / real-time dashboard | 大螢幕 / 看板 | 指實體顯示器寫「大螢幕」，指集中顯示指標的畫面寫「看板」，所在模組已用 dashboard 時寫 dashboard |
 | 變量 | variable（程式、一般論述）/ variable（數學與統計）/ variate（統計）/ variable（心理學與社會學） | 變數 / 變數 / 變量 / 變項 | 程式與一般論述寫「變數」（環境變數、影響結果的主要變數）；統計的 variable 寫「變數」、variate 寫「變量」，兩者不互換（random variable 是隨機變數，random variate 是隨機變量）；數學與統計的寫法以台灣的來源為準，中國來源不當依據；「控制變量」先問這個量被固定或被操作：被固定寫「控制變數」（心理學與社會學寫「控制變項」），被操作時寫出操作的對象或方式；複合詞不變量（invariant）、多變量（multivariate）、單變量（univariate）、二變量與雙變量（bivariate）、共變量（covariate）留著 |
 | 網盤 | cloud drive | 雲端硬碟 | 產品名照原文（百度網盤） |
 | U 盤 | USB flash drive | 隨身碟 | |

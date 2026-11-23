@@ -92,7 +92,7 @@ Schema > Paradigm > Operational > Topology > Components
 | 6 維 audit 只看 schema                   | 忽略 operational / paradigm / components / topology 維度    |
 | 多軸 High 強塞單一 type 標籤             | 5 種 type 內容差異被壓平、跨篇連讀預期化                    |
 | 沒列「結構 differentiator」段             | 讀者不知道為什麼這篇結構跟其他 migration playbook 不同      |
-| Audit 維度只看「是否變動」、不看「是否變動有獨立工作量」 | 把 connectivity 等 *衍生變量* 當獨立軸                    |
+| Audit 維度只看「是否變動」、不看「是否變動有獨立工作量」 | 把 connectivity 等 *衍生變數* 當獨立軸                    |
 
 ## 跟其他原則的關係
 

@@ -17,7 +17,7 @@ description: >
   linux install, linux debug, systemd, authoritative state.
 license: MIT
 metadata:
-  version: 1.20.4
+  version: 1.21.0
   category: ops-diagnostics
 ---
 
@@ -35,7 +35,7 @@ metadata:
 
 **表象會騙人。** 畫面上的現象、終端機捲過的輸出、一個視窗長什麼樣，都是表象；能定案的是系統裡記錄這件事的權威來源 — 程式自己的 log、服務註冊表、核心 / systemd 的狀態、資源用量。
 
-實測反例（真實踩過）：一個桌面 shell 的除錯裡，畫面出現密碼框 → 判「鎖了」；接著 `loginctl` 沒 `LockedHint`、`pgrep` 找不到鎖屏程式 → 「更正」成「不是鎖」；兩個判斷都錯。讀那個 shell 自己的 log 才定案：它是走合成器層協議的真鎖，`loginctl`（logind 層）本來就查不到、鎖屏由主程式行程內畫所以沒獨立 process。**肉眼加讀錯層，猜錯兩次；讀對權威來源，一次定案。**
+實測反例（真實踩過）：一個桌面 shell 的除錯裡，畫面出現密碼框 → 判「鎖了」；接著 `loginctl` 沒 `LockedHint`、`pgrep` 找不到螢幕鎖定程式 → 「更正」成「不是鎖」；兩個判斷都錯。讀那個 shell 自己的 log 才定案：它是走合成器層協議的真鎖，`loginctl`（logind 層）本來就查不到、鎖定畫面由主程式行程內畫所以沒獨立 process。**肉眼加讀錯層，猜錯兩次；讀對權威來源，一次定案。**
 
 詳見 [讀權威狀態不靠肉眼](references/principles/read-authoritative-state-not-eyeball.md) 與 [讀程式自己的 log](references/principles/read-the-programs-own-log.md)。
 

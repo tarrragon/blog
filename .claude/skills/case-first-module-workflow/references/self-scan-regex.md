@@ -110,11 +110,11 @@ rg -n "^[0-9]\. " <file>
 
 ### 6. 用語不一
 
-模組級 grep、確認術語統一：
+模組級 grep 列出候選位置，逐處確認每個詞指的對象。instance、node、replica、pod 的定義不同，不因字面相近就合併；寫錯對象的改成那個對象的詞。同一台機器當雲端資源時寫 instance、當叢集成員時寫 node，兩個詞依句子談的那一層各自留著；談同一層時才用同一個詞：
 
 ```bash
-# K8s 場景：instance / node / replica / pod 混用
-rg -n "實例|節點|副本|pod" <module-paths>
+# K8s 場景：確認實例、節點、副本、pod 各自指對了對象
+rg -n -i "實例|節點|副本|\b(instance|node|replica|pod)s?\b" <module-paths>
 
 # 繁簡用語：生命周期 vs 生命週期
 rg -n "生命周期" <module-paths>

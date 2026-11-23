@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.51.0 — `review-seven-axes` 與 `multi-pass-frame-granularity` 的「主要變量」改成台灣用語「主要變數」。
+
 **Version**: 2.50.0 — `references/round-1-compliance.md` 1-A 的地區用語單詞層原本抄了一份 rg，改成連到 compositional-writing bank〈地區用語 grep〉，與 compositional-writing 1.72.0 同步：bank 的 pattern 擴充成台灣少見與台灣也常用，並排除字面相同的台灣用法。
 
 **Version**: 2.49.0 — `references/round-1-compliance.md` 1-A 的前導詞清單改成連到 compositional-writing bank〈正反問句當名詞〉，與 compositional-writing 1.71.0 同步。

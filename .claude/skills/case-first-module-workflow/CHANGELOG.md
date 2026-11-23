@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.10.0 — `self-scan-regex`〈用語不一〉與 `stage-5-polish-pass` 拿掉「術語統一」：grep 列出位置後逐處確認所指，instance、node、replica、pod 定義不同，不因字面相近就合併，同一台機器依句子談雲端資源或叢集成員各用 instance 或 node，談同一層時才用同一個詞；grep 補上英文與大小寫。
+
 **Version**: 1.9.0 — 適用情境改成看使用者有沒有把速度排在品質之前，並寫出兩個方向的例子；Reviewer A 的〈系統層的概念寫在案例之前〉補上操作段落、實作文章與 work-log 的順序例外，〈不預設讀者熟悉特定專案〉改成論證用到的事實要寫在文內，跟寫作規範現行的判斷一致。
 
 **Version**: 1.8.0 — Reviewer A 的〈標題與段標寫主旨〉維度補上適用範圍：知識卡不適用這一條，卡片的標題與段落結構照建卡規範，跟寫作規範同一條的範圍一致

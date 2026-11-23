@@ -325,7 +325,7 @@ UTM-on-Mac 上，Hyprland 的 `$mainMod = SUPER` 對應 Mac 的 Cmd 鍵，但 Cm
 
 ### 第二步：rice（waybar / wofi / mako / hyprlock）
 
-第一步證明 Hyprland 在 virtio-gpu 上能 render 後，第二步把桌面 shell 拼上去：狀態列、啟動器、通知、鎖屏。做法是照 dotfile 慣例每個元件一個 stow package，配色統一 Catppuccin Mocha，字型對齊「VM 實際裝進來的字族」。產出五個 package：`waybar/` `wofi/` `mako/` `hyprlock/`，外加一個不屬於任何單一工具的 `themes/`（集中配色 `colors.conf`）。
+第一步證明 Hyprland 在 virtio-gpu 上能 render 後，第二步把桌面 shell 拼上去：狀態列、啟動器、通知、螢幕鎖定。做法是照 dotfile 慣例每個元件一個 stow package，配色統一 Catppuccin Mocha，字型對齊「VM 實際裝進來的字族」。產出五個 package：`waybar/` `wofi/` `mako/` `hyprlock/`，外加一個不屬於任何單一工具的 `themes/`（集中配色 `colors.conf`）。
 
 #### 配色與字型的兩個對齊點
 
@@ -419,7 +419,7 @@ fc-match ":lang=zh-tw"
 # AdwaitaMono-Regular.ttf  ← 不含中文，等於沒有可用的 zh-tw 字
 ```
 
-任何中文（通知、視窗標題、應用程式名、本地化的鎖屏日期）都會變豆腐。修法是裝 `noto-fonts-cjk` 當 fallback：
+任何中文（通知、視窗標題、應用程式名、本地化的鎖定畫面日期）都會變豆腐。修法是裝 `noto-fonts-cjk` 當 fallback：
 
 ```bash
 sudo pacman -S --needed noto-fonts-cjk
@@ -451,7 +451,7 @@ Hyprlock config 渲染結果確認（`shot4.png`）：`path = screenshot` 截當
 
 但測試 hyprlock 踩到這趟最嚴重的意外，根因很有教材價值：
 
-`pkill hyprlock` 的實際效果是讓 compositor 掉進**鎖屏失效保護畫面**——client 死了、鎖還在 compositor 手上。
+`pkill hyprlock` 的實際效果是讓 compositor 掉進**螢幕鎖定失效保護畫面**——client 死了、鎖還在 compositor 手上。
 
 測完想解鎖（我沒有密碼），直覺 `pkill hyprlock`。process 是沒了，但畫面變成 Hyprland 的失效保護（`shot6.png`）：
 
@@ -462,7 +462,7 @@ If you want to unlock your screen, go into another tty ... and run:
   hyprctl --instance 0 'dispatch exec hyprlock'
 ```
 
-關鍵理解：Wayland 的 `ext-session-lock-v1` 協議下，鎖屏 client（hyprlock）一旦 lock，session 的「安全鎖定」狀態是由 **compositor** 持有的；**只有 lock client 通過認證後呼叫 `unlock_and_destroy` 才能解**。`pkill` 是直接砍掉 client、沒走解鎖流程，compositor 仍保持鎖定、只好顯示這個失效保護畫面。最容易誤判的是**兩層鎖是不同的東西**：
+關鍵理解：Wayland 的 `ext-session-lock-v1` 協議下，螢幕鎖定 client（hyprlock）一旦 lock，session 的「安全鎖定」狀態是由 **compositor** 持有的；**只有 lock client 通過認證後呼叫 `unlock_and_destroy` 才能解**。`pkill` 是直接砍掉 client、沒走解鎖流程，compositor 仍保持鎖定、只好顯示這個失效保護畫面。最容易誤判的是**兩層鎖是不同的東西**：
 
 ```bash
 loginctl show-session ... -p LockedHint
@@ -476,11 +476,11 @@ pgrep hyprlock
 
 ##### 正確的測試與恢復做法
 
-- **別用砍 process 的方式測 hyprlock**。要結束鎖屏就走認證解鎖；自動化測試裡要嘛別碰 hyprlock、要嘛接受它會把畫面鎖住。
-- 已經掉進失效保護時，照畫面指示：`hyprctl keyword misc:allow_session_lock_restore 1` 允許新的 hyprlock 接管既有鎖，再 `hyprctl dispatch exec hyprlock` 重新拉一個**乾淨的鎖屏 prompt**（`shot7.png`），使用者用密碼正常解鎖。
+- **別用砍 process 的方式測 hyprlock**。要結束螢幕鎖定就走認證解鎖；自動化測試裡要嘛別碰 hyprlock、要嘛接受它會把畫面鎖住。
+- 已經掉進失效保護時，照畫面指示：`hyprctl keyword misc:allow_session_lock_restore 1` 允許新的 hyprlock 接管既有鎖，再 `hyprctl dispatch exec hyprlock` 重新拉一個**乾淨的鎖定畫面 prompt**（`shot7.png`），使用者用密碼正常解鎖。
 - **沒有使用者密碼就無法完整解鎖**——這是設計、不是 bug。所以在這台 VM 上，這個測試的代價是畫面留在鎖定狀態，得由知道密碼的人解。`waybar` / `mako` / `foot` 等 process 都還活著，解鎖後桌面照舊。
 
-**回寫教材**：這是「在 VM / 自動化環境裡測鎖屏」的安全守則，值得獨立成卡或進 `color-system-theming.md` 的 hyprlock 段：鎖屏一旦啟動，唯一的正常出口是認證；測試前先想好怎麼回得來（知道密碼、或準備好走 restore 路徑），別用 `pkill` 當「關掉」。
+**回寫教材**：這是「在 VM / 自動化環境裡測螢幕鎖定」的安全守則，值得獨立成卡或進 `color-system-theming.md` 的 hyprlock 段：螢幕鎖定一旦啟動，唯一的正常出口是認證；測試前先想好怎麼回得來（知道密碼、或準備好走 restore 路徑），別用 `pkill` 當「關掉」。
 
 #### 截圖剪貼簿的型別誤判
 
@@ -504,7 +504,7 @@ keybind 已改成帶 `--type image/png`（全螢幕與 slurp 框選兩條都改�
 
 #### 第二步小結
 
-`waybar` / `wofi` / `mako` / `hyprlock` 四個元件都在 VM 的 live instance 上實際 render 成功、各有截圖佐證。挖到的缺口集中在「最小安裝缺的相依」與「VM／自動化環境特有的測試陷阱」，不是配置本身寫錯：字族名要對齊實裝字型、CJK 與通知產生各缺一個套件、剪貼簿型別要明指、鎖屏不能用砍 process 測。這些都比「桌面好不好看」更該被學起來，收斂在下一節「回寫教材的實測發現」與 `~/step2/REPORT.md` 的待審清單。
+`waybar` / `wofi` / `mako` / `hyprlock` 四個元件都在 VM 的 live instance 上實際 render 成功、各有截圖佐證。挖到的缺口集中在「最小安裝缺的相依」與「VM／自動化環境特有的測試陷阱」，不是配置本身寫錯：字族名要對齊實裝字型、CJK 與通知產生各缺一個套件、剪貼簿型別要明指、螢幕鎖定不能用砍 process 測。這些都比「桌面好不好看」更該被學起來，收斂在下一節「回寫教材的實測發現」與 `~/step2/REPORT.md` 的待審清單。
 
 ### 第三步：Caelestia + Quickshell 進階桌面 shell（執行中：階段 A go/no-go 已通過）
 
@@ -594,9 +594,9 @@ ps -o comm= -p "$pid"
 
 停 mako 前擁有者是 mako 的連線、停掉後換成 `qs`（Caelestia 的 quickshell），就確認接管成功。畫面有沒有跳通知會受 idle／專注模式影響，D-Bus 擁有者才是 ground truth。
 
-**附帶觀察（session lock——一段被更正兩次的判斷）**：shotC 畫面中央的 `Enter your password` 覆蓋層，初判為 caelestia 鎖屏；接著我一度「更正」成「不是鎖、是 session/dashboard drawer」，依據是無 lock 行程、`loginctl` 無 `LockedHint`、`caelestia` 無 lock 子指令。這個更正本身是錯的——後來讀 quickshell log、又意外實際觸發了鎖屏 client 死亡事故，才確認初判才對：它是走 Wayland `ext-session-lock` 協議的真鎖屏。完整機制、兩次誤判的根因、以及鎖屏 client 死亡的復原流程，見下方階段 C-2。
+**附帶觀察（session lock——一段被更正兩次的判斷）**：shotC 畫面中央的 `Enter your password` 覆蓋層，初判為 caelestia 鎖定畫面；接著我一度「更正」成「不是鎖、是 session/dashboard drawer」，依據是無 lock 行程、`loginctl` 無 `LockedHint`、`caelestia` 無 lock 子指令。這個更正本身是錯的——後來讀 quickshell log、又意外實際觸發了螢幕鎖定 client 死亡事故，才確認初判才對：它是走 Wayland `ext-session-lock` 協議的真正工作階段鎖定（session lock）。完整機制、兩次誤判的根因、以及螢幕鎖定 client 死亡的復原流程，見下方階段 C-2。
 
-#### 實測執行記錄：階段 C 之二（配色切換 + 鎖屏機制 + lock-died 事故）——通過，含兩次誤判更正
+#### 實測執行記錄：階段 C 之二（配色切換 + 螢幕鎖定機制 + lock-died 事故）——通過，含兩次誤判更正
 
 ##### 配色切換（scheme）
 
@@ -615,33 +615,33 @@ caelestia scheme get
 Read of .../scheme.json failed: File does not exist
 ```
 
-第一次 `scheme set` 才建出這個檔。所以行為是「開機讀不到配色檔 → 用 fallback 色；之後 CLI 改了狀態、跑著的 shell 這一輪沒重讀套用」。要讓配色確定生效，最穩的順序是先 `scheme set` 建好 state 檔、再（重）啟 shell 讓它開機就讀。（後續補確認：解鎖後趕在鎖屏重新觸發前搶到一張乾淨桌面截圖 `shotG-desktop-scheme-check.png`——整個 UI 確實換成 gruvbox light 的暖奶油色，bar／dock／foot 終端機底色全變淺、文字轉為 gruvbox 的橄欖／黃／紅，配色確定生效。所以「scheme set 後沒變色」的根因收斂成啟動時機問題：在 scheme.json 存在之前啟動的 shell 實例讀不到、也不會為一次 CLI 變更熱重繪；在 state 檔就緒後啟動的 shell 實例開機讀取就正確上色。進一步驗證（換 tokyonight dark，`shotH-tokyonight-dark-hot-reload.png`）發現這個開機就載入 scheme.json 的實例，對檔案有 file watcher，之後 `scheme set` 會**即時熱套用、不必重啟**——UI 一秒內就變色。所以精確結論是：熱重繪能不能生效，取決於 shell 啟動時 scheme.json 在不在。啟動時檔已存在 → watcher 建成 → 之後改配色即時生效；啟動時檔不存在（首次安裝、沒 set 過）→ 那個實例讀不到、watcher 沒建，得先 `scheme set` 建檔再重啟 shell 一次，之後同一實例才會熱套用。）
+第一次 `scheme set` 才建出這個檔。所以行為是「開機讀不到配色檔 → 用 fallback 色；之後 CLI 改了狀態、跑著的 shell 這一輪沒重讀套用」。要讓配色確定生效，最穩的順序是先 `scheme set` 建好 state 檔、再（重）啟 shell 讓它開機就讀。（後續補確認：解鎖後趕在螢幕鎖定重新觸發前搶到一張乾淨桌面截圖 `shotG-desktop-scheme-check.png`——整個 UI 確實換成 gruvbox light 的暖奶油色，bar／dock／foot 終端機底色全變淺、文字轉為 gruvbox 的橄欖／黃／紅，配色確定生效。所以「scheme set 後沒變色」的根因收斂成啟動時機問題：在 scheme.json 存在之前啟動的 shell 實例讀不到、也不會為一次 CLI 變更熱重繪；在 state 檔就緒後啟動的 shell 實例開機讀取就正確上色。進一步驗證（換 tokyonight dark，`shotH-tokyonight-dark-hot-reload.png`）發現這個開機就載入 scheme.json 的實例，對檔案有 file watcher，之後 `scheme set` 會**即時熱套用、不必重啟**——UI 一秒內就變色。所以精確結論是：熱重繪能不能生效，取決於 shell 啟動時 scheme.json 在不在。啟動時檔已存在 → watcher 建成 → 之後改配色即時生效；啟動時檔不存在（首次安裝、沒 set 過）→ 那個實例讀不到、watcher 沒建，得先 `scheme set` 建檔再重啟 shell 一次，之後同一實例才會熱套用。）
 
-##### 鎖屏機制：一個判斷被更正兩次
+##### 螢幕鎖定機制：一個判斷被更正兩次
 
-shotC 那個帶 `Enter your password` 的覆蓋層，判讀走了三步：初判是 caelestia 鎖屏（idle 觸發）；一度「更正」成「不是鎖、是 drawer」；最後靠 log 加實際觸發定案——它是**真的 session lock**，走 Wayland `ext-session-lock` 協議、idle 觸發。第二步的更正錯了。
+shotC 那個帶 `Enter your password` 的覆蓋層，判讀走了三步：初判是 caelestia 鎖定畫面（idle 觸發）；一度「更正」成「不是鎖、是 drawer」；最後靠 log 加實際觸發定案——它是**真的 session lock**，走 Wayland `ext-session-lock` 協議、idle 觸發。第二步的更正錯了。
 
-quickshell log 給了關鍵證據：`@modules/lock/center/ProfilePic.qml`（lock 模組）、三個 `idle_notify` 計時器 timeout `180000／300000／600000` ms（3／5／10 分鐘，`respects inhibitors: true`）。對照行為就是 3 分鐘 idle 鎖屏、10 分鐘 `dispatch dpms off` 關螢幕。
+quickshell log 給了關鍵證據：`@modules/lock/center/ProfilePic.qml`（lock 模組）、三個 `idle_notify` 計時器 timeout `180000／300000／600000` ms（3／5／10 分鐘，`respects inhibitors: true`）。對照行為就是 3 分鐘 idle 鎖定螢幕、10 分鐘 `dispatch dpms off` 關螢幕。
 
 前一次為什麼會誤判成「不是鎖」，根因值得記，因為三個訊號都在騙人：
 
 - **`loginctl` 無 `LockedHint`**：`ext-session-lock` 是 **Wayland 合成器層**的鎖，跟 **logind 的 session 鎖**是兩套獨立機制。查 `LockedHint` 查的是 logind 那套，對 Wayland 協議鎖本來就查不到——是查錯層，不是沒鎖。
-- **`pgrep` 找不到 lock 行程**：鎖屏由 quickshell **行程內**畫，沒有獨立的 lock 可執行檔可抓。
+- **`pgrep` 找不到 lock 行程**：鎖定畫面由 quickshell **行程內**畫，沒有獨立的 lock 可執行檔可抓。
 - **看起來時有時無**：成因是我剛好在 3 分鐘 idle 邊界附近截圖、加上截圖前的 IPC 活動偶爾把 idle resume 掉，鎖本身的行為是穩定的。
 
 教訓：**合成器的 session-lock 狀態**（有鎖時 Hyprland 的特定行為、或直接看 lock client 在不在）是判斷 Wayland session 有沒有被鎖的依據；`loginctl LockedHint` 與畫面上的密碼框這兩個訊號，在現代 shell 上都靠不住。用肉眼判 UI 狀態誤判了兩次，是讀 shell 自己的 log 才定案，呼應可除錯 bootstrap 的原則：找程式自己的 log，別盯著畫面猜。
 
 ##### lock-died 事故 + 復原（正是無人值守踩過的雷）
 
-為了測配色，我 `caelestia shell -k` 殺掉 shell 重啟——當下 shell 正握著那個 idle 觸發的 session lock。持鎖 client 一死，Hyprland 跳出安全畫面：`Oopsie daisy, it looks like you locked your screen but the lockscreen app died`。這是 `ext-session-lock` 的**故意設計**：持鎖 client 崩潰時，合成器**保持鎖定**而不解鎖——否則「殺掉鎖屏程式就能解鎖」會變成繞過鎖的漏洞。這正是無人值守那晚撞到的畫面，根因就是「鎖屏 client 在持鎖狀態下死亡」。
+為了測配色，我 `caelestia shell -k` 殺掉 shell 重啟——當下 shell 正握著那個 idle 觸發的 session lock。持鎖 client 一死，Hyprland 跳出安全畫面：`Oopsie daisy, it looks like you locked your screen but the lockscreen app died`。這是 `ext-session-lock` 的**故意設計**：持鎖 client 崩潰時，合成器**保持鎖定**而不解鎖——否則「殺掉螢幕鎖定程式就能解鎖」會變成繞過鎖的漏洞。這正是無人值守那晚撞到的畫面，根因就是「螢幕鎖定 client 在持鎖狀態下死亡」。
 
 復原流程（從另一個 tty 或 SSH 用 hyprctl 做，Hyprland 的 died screen 本身也把指令寫在畫面上）：
 
 1. `hyprctl keyword misc:allow_session_lock_restore 1`——允許新的 lock client 接管這個孤兒鎖（預設不允許，同樣是安全設計）。
-2. 起一個 lock client 接管：`hyprctl dispatch exec hyprlock`。caelestia 的鎖只在 idle 觸發、沒有「立刻鎖」的指令可以隨手叫出來接管，所以改用 step 2 已裝的 hyprlock（`shotF-hyprlock.png`：hyprlock 的鎖屏蓋上，died screen 模糊在後）。
-3. 在鎖屏輸入密碼解鎖，回到桌面。
+2. 起一個 lock client 接管：`hyprctl dispatch exec hyprlock`。caelestia 的鎖只在 idle 觸發、沒有「立刻鎖」的指令可以隨手叫出來接管，所以改用 step 2 已裝的 hyprlock（`shotF-hyprlock.png`：hyprlock 的鎖定畫面蓋上，died screen 模糊在後）。
+3. 在鎖定畫面輸入密碼解鎖，回到桌面。
 
-對無人值守的啟示：跑長任務的圖形 session 若會 idle 鎖屏，鎖屏 client（quickshell／hyprlock）一旦崩潰就會把整個 session 卡在 died screen，SSH 進去用 hyprctl 復原是唯一活路——這也是為什麼無人值守一定要留 SSH 這條帶外通道，不能只靠圖形 session 自救。更根本的做法是無人值守的 session 直接關掉 idle 鎖（改 `hypridle`／shell 的 idle config 或設 inhibitor），從源頭避免長任務跑到一半被鎖。
+對無人值守的啟示：跑長任務的圖形 session 若會 idle 鎖定螢幕，螢幕鎖定 client（quickshell／hyprlock）一旦崩潰就會把整個 session 卡在 died screen，SSH 進去用 hyprctl 復原是唯一活路——這也是為什麼無人值守一定要留 SSH 這條帶外通道，不能只靠圖形 session 自救。更根本的做法是無人值守的 session 直接關掉 idle 鎖（改 `hypridle`／shell 的 idle config 或設 inhibitor），從源頭避免長任務跑到一半被鎖。
 
 #### 實測執行記錄：階段 C 之三（動態桌布 + Material-You 動態取色）——通過
 
@@ -662,13 +662,13 @@ caelestia 的招牌功能是 `dynamic` 配色：**從當前桌布圖片即時抽
 
 因為 step 2 手動拼裝（waybar+wofi+mako+hyprlock）跟 step 3 caelestia 都在同一台 VM 上跑過，這階段不需要新的操作，是把兩者的實測數據拉出來對照。原始量測：
 
-| 軸         | caelestia                                                        | 手動拼裝                                                                        |
-| ---------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| 安裝大小   | ~230 MB（quickshell 佔 213 MB）                                  | ~4.5 MB（waybar 3MB + KB 級其餘）                                               |
-| 記憶體 RSS | `qs` 單行程 ~400 MB                                              | waybar ~53 MB（+ 小型通知/啟動器）                                              |
-| config     | 集中一個 `shell.json`（~24 行）                                  | 散在 waybar/wofi/mako/hypr 多檔多格式                                           |
-| 配色一致   | 原生 dynamic 一套 scheme 全套用                                  | GTK CSS 讀不到 Hyprland `$` 變數、step 2 得手抄 hex；要一致得外掛 matugen/pywal |
-| 失敗半徑   | quickshell 崩 → bar+通知+鎖屏一起沒（+ 實測到的 lock-died 死局） | 各元件獨立、mako 崩 ≠ bar 倒                                                    |
+| 軸         | caelestia                                                            | 手動拼裝                                                                        |
+| ---------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| 安裝大小   | ~230 MB（quickshell 佔 213 MB）                                      | ~4.5 MB（waybar 3MB + KB 級其餘）                                               |
+| 記憶體 RSS | `qs` 單行程 ~400 MB                                                  | waybar ~53 MB（+ 小型通知/啟動器）                                              |
+| config     | 集中一個 `shell.json`（~24 行）                                      | 散在 waybar/wofi/mako/hypr 多檔多格式                                           |
+| 配色一致   | 原生 dynamic 一套 scheme 全套用                                      | GTK CSS 讀不到 Hyprland `$` 變數、step 2 得手抄 hex；要一致得外掛 matugen/pywal |
+| 失敗半徑   | quickshell 崩 → bar+通知+鎖定畫面一起沒（+ 實測到的 lock-died 死局） | 各元件獨立、mako 崩 ≠ bar 倒                                                    |
 
 關鍵洞察是配色一致性那軸：手動拼裝的痛點（step 2 的 waybar `style.css` 註解白紙黑字寫「GTK CSS 吃不到 Hyprland `$` 變數、色碼得手抄」）正是 matugen/pywal 這類 template 工具、或 caelestia 內建 dynamic 要解的問題——影片裡看到的 `matugen/templates/rofi-colors.rasi` 就是手動棧自己搭 templating pipeline 的樣子。
 
@@ -885,11 +885,11 @@ Hyprland 復現通過後接著把 step 3 的 Caelestia 在新 VM 重走一次。
 
 step 3 的配色切換 / 桌布 / 動態取色在新 VM 全部重現，包括「scheme 熱套用取決於啟動時 scheme.json 在不在」那條精確結論：第一個 shell 實例（啟動時無 scheme.json）對 `scheme set -n gruvbox -m light` 無反應、state 檔已寫入但 UI 不變；真重啟後 gruvbox light 完整上色；之後同一實例 `scheme set -n tokyonight -m dark` 秒切（同 pid 驗證）；暖色漸層桌布 + `dynamic` 抽色讓整套 UI 換成鮭魚粉暖色盤。
 
-過程中踩到一個值得獨立記的**假重啟事件**：`caelestia shell -k` 靜默失敗（沒殺掉 shell、錯誤又被 `2>/dev/null` 吃掉），接著 `hyprctl dispatch exec` 起的新實例偵測到舊實例存在就自行退出——兩次「重啟」都沒發生，pid 從頭到尾是同一個。這造成兩次誤判（把 idle 鎖屏當成重啟後的行為、把 config watcher 的改寫當成重啟後的載入），直到 `ps -o pid,lstart` 比對 process 起始時間才拆穿。教訓進 skill：**驗證重啟看 pid + start time，不是看指令沒報錯**；殺 caelestia shell 的可靠做法是 `pkill -x qs`。
+過程中踩到一個值得獨立記的**假重啟事件**：`caelestia shell -k` 靜默失敗（沒殺掉 shell、錯誤又被 `2>/dev/null` 吃掉），接著 `hyprctl dispatch exec` 起的新實例偵測到舊實例存在就自行退出——兩次「重啟」都沒發生，pid 從頭到尾是同一個。這造成兩次誤判（把 idle 螢幕鎖定當成重啟後的行為、把 config watcher 的改寫當成重啟後的載入），直到 `ps -o pid,lstart` 比對 process 起始時間才拆穿。教訓進 skill：**驗證重啟看 pid + start time，不是看指令沒報錯**；殺 caelestia shell 的可靠做法是 `pkill -x qs`。
 
 假重啟拆穿後反而分離出一個乾淨的發現：**config 熱重載與 scheme 熱套用是兩個獨立的 watcher**——shell.json 的 file watcher 永遠有效（跑著的實例吃到 git pull 進來的 `general.idle.timeouts`、驗證接受後重排序列化回檔案），scheme.json 的 watcher 只在啟動時檔案存在才建。
 
-**Idle 鎖屏 2 小時設定進 repo**：前一天在舊 VM 把鎖定延長到 2 小時的改動是機器本機改的、沒回寫 dotfiles，新 VM 復現不出來——dotfile 漂移的教科書案例。已把 `general.idle.timeouts: [{timeout: 7200, idleAction: "lock"}]` 寫進 repo 的 shell.json（key 名從安裝的 `caelestia-config.qmltypes` schema 讀出、由 shell 改寫行為驗證接受）。
+**Idle 螢幕鎖定 2 小時設定進 repo**：前一天在舊 VM 把鎖定延長到 2 小時的改動是機器本機改的、沒回寫 dotfiles，新 VM 復現不出來——dotfile 漂移的教科書案例。已把 `general.idle.timeouts: [{timeout: 7200, idleAction: "lock"}]` 寫進 repo 的 shell.json（key 名從安裝的 `caelestia-config.qmltypes` schema 讀出、由 shell 改寫行為驗證接受）。
 
 ### VT 的三層判讀（kmscon 事件）
 

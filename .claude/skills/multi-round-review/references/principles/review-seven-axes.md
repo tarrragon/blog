@@ -55,5 +55,5 @@ Surface 軸的 report card 這一格標「不適用」（審查對象是 skill�
 ## 反模式
 
 - 「再來一輪」沒指定軸切換、把多輪當成單軸加深
-- 把 instance 當主要變量（換一個 reviewer agent 跑同 frame）、忽略 frame / surface 才是主要 catch 維度
+- 把 instance 當主要變數（換一個 reviewer agent 跑同 frame）、忽略 frame / surface 才是主要 catch 維度
 - 把七軸當 checklist 填空、不檢查每軸是否真的有 substantive 切換

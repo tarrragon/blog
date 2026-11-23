@@ -59,7 +59,7 @@ output = activation(W @ x + b)
 
 ## Activation Function：引入非線性
 
-Activation function（激活函式）的核心責任是「在每個 layer 後引入非線性、讓網路能表達複雜函式」。沒有它、N 個線性 layer 等同於一個線性 layer。
+Activation function（激勵函數）的核心責任是「在每個 layer 後引入非線性、讓網路能表達複雜函式」。沒有它、N 個線性 layer 等同於一個線性 layer。
 
 主流 activation function：
 

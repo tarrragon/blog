@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.76.0 — `cross-strait-terms` 收進鎖屏與大屏，`keyword-bank`〈地區用語 grep〉的「台灣少見」同步加上這兩個詞；激活與補丁兩列拿掉「沿用專案已有的譯名」：activation function 寫激勵函數，程式碼變更寫修補，以檔案交換時寫修補檔，monkey patching 保留英文，來源或專案裡的激活函數與專案裡的補丁不算依據。函數列的 hash function 仍沿用官方文件或專案已有的譯名，已有的譯名本身是中國用語時不算依據。
+
 **Version**: 1.75.0 — `cross-strait-terms` 收進副屏、視屏、變量、網盤、U 盤、光盤；`keyword-bank`〈地區用語 grep〉的「台灣少見」加上副屏、視屏、網盤、U 盤、光盤，「台灣也常用」加上變量（統計的 variate 這樣寫），排除不變量、多變量這類台灣也這樣寫的詞，以及全網盤點這類字面相同的詞。`compressed-chinese-terms-need-head-noun`、`terminology-keeps-original-anchor`、`translation-review` 拿掉「選一個 canonical、全篇替換」：先確認每一處的所指，指同一個概念的才用同一個詞，英文詞依所指分成兩個中文譯名時，每一處依它指的概念選譯名（function 的函式與函數）。`cross-strait-terms` 的 function 規則補上 SQL 與查詢語言內建、不是視窗也不是聚合的 function 寫函式；變量列依程式、數學與統計、心理學與社會學分開，統計的 variable 與 variate 不互換，「控制變量」先問這個量被固定或被操作。`regional-terminology-alignment`〈核心原則〉的硬體 / 顯示列與〈訊號 2〉不再用字數區分兩地用詞，〈訊號 2〉的修法連到〈判斷步驟〉。
 
 **Version**: 1.74.0 — `cross-strait-terms` 收進導流、引流：台灣也這樣寫，中文留著，指流量時句子寫出被帶走的對象與去向，英文沒有一對一的詞，依動作選 drive traffic、referral traffic、cross-promotion、steering 或 traffic routing，水利與醫學的本義留著。買量的英文改成 paid user acquisition，導量的英文改成最接近的總稱 user acquisition；這兩個詞在遊戲與行銷業界也這樣寫，第一次出現寫出動作，之後可以用原詞。〈判斷步驟〉第 4 步加上只在特定業界通行的詞：第一次出現寫出動作或對象並附英文，之後可以用原詞。`keyword-bank`〈地區用語 grep〉的「台灣也常用」加上導流、引流，排除引導流量、吸引流量、索引流程這類字面相同的詞。

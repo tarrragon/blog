@@ -76,20 +76,20 @@ ps -o comm= -p "$pid"
 
 ## session 鎖沒鎖：認清是哪一層的鎖
 
-畫面有密碼框 ≠ 鎖了（可能是內嵌鎖屏樣式 widget 的儀表板）。鎖分層、查錯層得誤導答案：
+畫面有密碼框 ≠ 鎖了（可能是內嵌鎖定畫面樣式 widget 的儀表板）。鎖分層、查錯層得誤導答案：
 
 - **logind 層**：`loginctl show-session <id> -p LockedHint`。
-- **Wayland 合成器層（`ext-session-lock`）**：跟 logind 獨立，`loginctl` 的 `LockedHint` **查不到**（不是沒鎖，是查錯層）。權威來源是 compositor 的 session-lock 狀態 / 那個 shell 自己的 log（有沒有載入鎖屏模組、idle 計時器有沒有觸發）。
+- **Wayland 合成器層（`ext-session-lock`）**：跟 logind 獨立，`loginctl` 的 `LockedHint` **查不到**（不是沒鎖，是查錯層）。權威來源是 compositor 的 session-lock 狀態 / 那個 shell 自己的 log（有沒有載入螢幕鎖定模組、idle 計時器有沒有觸發）。
 
-「`loginctl` 沒 LockedHint + `pgrep` 找不到鎖屏程式」不足以斷定沒鎖：合成器層鎖不歸 logind、鎖屏可能由主程式行程內畫（無獨立 process）。
+「`loginctl` 沒 LockedHint + `pgrep` 找不到螢幕鎖定程式」不足以斷定沒鎖：合成器層鎖不歸 logind、鎖定畫面可能由主程式行程內畫（無獨立 process）。
 
-**鎖屏程式死掉的死局 + 復原**：`ext-session-lock` 安全設計 —— 持鎖程式崩潰 / 被殺時 compositor **保持鎖定**（否則殺鎖屏 = 繞過鎖漏洞）。畫面卡在「lockscreen app died」提示。復原（Hyprland）：
+**螢幕鎖定程式死掉的死局 + 復原**：`ext-session-lock` 安全設計 —— 持鎖程式崩潰 / 被殺時 compositor **保持鎖定**（否則殺螢幕鎖定程式 = 繞過鎖漏洞）。畫面卡在「lockscreen app died」提示。復原（Hyprland）：
 
 1. `hyprctl keyword misc:allow_session_lock_restore 1`（允許新 client 接管孤兒鎖）。
-2. `hyprctl dispatch exec hyprlock`（起新鎖屏接管）。
+2. `hyprctl dispatch exec hyprlock`（起新螢幕鎖定程式接管）。
 3. 輸密碼解鎖。
 
-紀律：測鎖屏 / `pkill` 持鎖程式時預期它把 session 卡在鎖定 —— 是安全設計不是 bug。無人值守流程避免在持鎖狀態殺鎖屏程式。
+紀律：測螢幕鎖定 / `pkill` 持鎖程式時預期它把 session 卡在鎖定 —— 是安全設計不是 bug。無人值守流程避免在持鎖狀態殺螢幕鎖定程式。
 
 ## 應用無聲：sink 在不在、stream 有沒有 active
 
@@ -165,7 +165,7 @@ load average 計的是正在跑加上排隊等待的執行緒。Linux 把等磁�
 | 進程活著但沒運作             | 程式自己的 log（專屬指令 `<shell> -l`、不在 journalctl）+ IPC 回真實狀態；別信 `pgrep` |
 | 服務歸誰                     | `busctl` GetNameOwner→PID→comm / `ss -lntp`                                            |
 | 鎖沒鎖                       | logind：`loginctl LockedHint`；合成器層：compositor / shell log                        |
-| 鎖屏死局                     | `allow_session_lock_restore 1` + 起新鎖屏接管                                          |
+| 螢幕鎖定死局                 | `allow_session_lock_restore 1` + 起新螢幕鎖定程式接管                                  |
 | session 存活                 | `zellij ls` / `tmux ls`；先保產出再清                                                  |
 | 某個使用者的工作階段結束了沒 | `pgrep -u <user> -a` 為空；`loginctl` 的回傳值不算數，殘留用 `pkill -KILL -u`          |
 | 卡住原因                     | `df -h` / `free` 先排資源，再懷疑相容                                                  |

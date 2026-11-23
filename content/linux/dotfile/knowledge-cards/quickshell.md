@@ -6,7 +6,7 @@ weight: 17
 tags: ["dotfile", "linux", "quickshell", "qml", "rice", "knowledge-cards"]
 ---
 
-Quickshell 是建在 Qt6/QML 上的桌面 shell runtime：一個在 Wayland [compositor](/linux/dotfile/knowledge-cards/compositor/) 之上渲染桌面 UI 元件（狀態列、啟動器、通知、鎖屏）的執行框架。它自己不是一套桌面——它提供 QML 執行環境跟一組系統整合 API（Hyprland IPC、視窗預覽、auto-reload），桌面長什麼樣由使用者（或像 Caelestia 這樣的專案）用 QML 寫出來。
+Quickshell 是建在 Qt6/QML 上的桌面 shell runtime：一個在 Wayland [compositor](/linux/dotfile/knowledge-cards/compositor/) 之上渲染桌面 UI 元件（狀態列、啟動器、通知、螢幕鎖定）的執行框架。它自己不是一套桌面——它提供 QML 執行環境跟一組系統整合 API（Hyprland IPC、視窗預覽、auto-reload），桌面長什麼樣由使用者（或像 Caelestia 這樣的專案）用 QML 寫出來。
 
 ## 跟其他概念的關係
 
@@ -21,4 +21,4 @@ Quickshell 是建在 Qt6/QML 上的桌面 shell runtime：一個在 Wayland [com
 - **行程名是 `qs` 不是 `quickshell`**：可執行檔叫 `quickshell`，但透過 `/usr/bin/qs` 這個 symlink 啟動時行程表裡的 comm 是 `qs`——`pgrep quickshell` 跟 `pgrep caelestia` 都落空，容易誤判成掛了。判程式活著的通用紀律見[程序、服務與狀態怎麼判](/linux/debug/process-service-state-diagnosis/)。
 - **畫得出來不等於還活著**：QML scene 裡某個物件初始化失敗變 null 時，進程還在、bar 還停在最後一幀，但互動接線已死。這類「進程活著、內部子系統死了」的故障與復原見[常見故障場景與恢復操作](/linux/dotfile/07-desktop-maintenance/common-failures-recovery/)。
 
-同源架構也放大了故障的連帶範圍：Caelestia 的鎖屏由 Quickshell 主程式畫，主程式死掉時 compositor 依 ext-session-lock 維持鎖定進入失效保護——狀態列、通知、鎖屏一起消失，復原路徑見 [Session Lock](/linux/dotfile/knowledge-cards/session-lock/)。
+同源架構也放大了故障的連帶範圍：Caelestia 的鎖定畫面由 Quickshell 主程式畫，主程式死掉時 compositor 依 ext-session-lock 維持鎖定進入失效保護——狀態列、通知、鎖定畫面一起消失，復原路徑見 [Session Lock](/linux/dotfile/knowledge-cards/session-lock/)。

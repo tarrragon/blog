@@ -140,14 +140,14 @@ keybind 由「修飾鍵 + 按鍵」組成，Hyprland 配置裡最常當主修飾
 
 Hyprland 提供多種 bind 函式，處理不同互動模式：
 
-| 函式          | 行為           | 適用場景                             |
-| ------------- | -------------- | ------------------------------------ |
-| `hl.bind()`   | 按一次觸發     | 多數快捷鍵                           |
-| `hl.binde()`  | 長按連續觸發   | 調整視窗大小、音量                   |
-| `hl.bindm()`  | 滑鼠綁定       | 拖曳移動 / 調整視窗                  |
-| `hl.bindr()`  | 放開時觸發     | 切換模式                             |
-| `hl.bindl()`  | 輸入鎖定也觸發 | 合蓋開關、鎖屏時的媒體鍵             |
-| `hl.bindel()` | 連續 + 鎖定    | 鎖屏時的音量鍵（長按連續、鎖定可用） |
+| 函式          | 行為           | 適用場景                                 |
+| ------------- | -------------- | ---------------------------------------- |
+| `hl.bind()`   | 按一次觸發     | 多數快捷鍵                               |
+| `hl.binde()`  | 長按連續觸發   | 調整視窗大小、音量                       |
+| `hl.bindm()`  | 滑鼠綁定       | 拖曳移動 / 調整視窗                      |
+| `hl.bindr()`  | 放開時觸發     | 切換模式                                 |
+| `hl.bindl()`  | 輸入鎖定也觸發 | 合蓋開關、螢幕鎖定時的媒體鍵             |
+| `hl.bindel()` | 連續 + 鎖定    | 螢幕鎖定時的音量鍵（長按連續、鎖定可用） |
 
 > **[VM 可測試]** 所有 keybind 邏輯和配置語法。
 
@@ -243,7 +243,7 @@ hl.submap("reset")
 ### 媒體鍵與硬體鍵
 
 ```lua
--- 音量（鎖屏時也能用、長按連續觸發）
+-- 音量（螢幕鎖定時也能用、長按連續觸發）
 hl.bindel("", "XF86AudioRaiseVolume", "exec", "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")
 hl.bindel("", "XF86AudioLowerVolume", "exec", "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")
 hl.bindl("", "XF86AudioMute", "exec", "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")

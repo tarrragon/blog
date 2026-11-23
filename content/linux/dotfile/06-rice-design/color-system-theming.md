@@ -1,14 +1,14 @@
 ---
-title: "配色系統、鎖屏與 GTK 主題"
+title: "配色系統、鎖定畫面與 GTK 主題"
 date: 2026-06-29
 description: "桌面配色散亂看起來雜、或要換主題不知道該改哪些檔案時回來讀"
 weight: 2
 tags: ["dotfile", "rice", "hyprlock", "catppuccin", "gtk", "linux"]
 ---
 
-## Hyprlock：鎖屏
+## Hyprlock：鎖定畫面
 
-Hyprlock 是 Hyprland 配套的鎖屏工具，支援模糊背景、自定義佈局：
+Hyprlock 是 Hyprland 配套的螢幕鎖定工具，支援模糊背景、自定義佈局：
 
 ```bash
 # ~/.config/hypr/hyprlock.conf
@@ -46,7 +46,7 @@ label {
 }
 ```
 
-鎖屏一旦啟動，桌面的「鎖定」狀態由 compositor 透過 Wayland 的 ext-session-lock 協議持有，殺掉鎖屏 process 不等於解鎖。鎖屏的安全模型與測試時的注意事項見 [Session Lock](/linux/dotfile/knowledge-cards/session-lock/)。
+螢幕鎖定工具一旦啟動，桌面的「鎖定」狀態由 compositor 透過 Wayland 的 ext-session-lock 協議持有，殺掉螢幕鎖定 process 不等於解鎖。螢幕鎖定的安全模型與測試時的注意事項見 [Session Lock](/linux/dotfile/knowledge-cards/session-lock/)。
 
 ## 配色系統的統一管理
 

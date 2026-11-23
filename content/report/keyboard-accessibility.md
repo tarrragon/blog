@@ -2,7 +2,7 @@
 title: "鍵盤可達性：focus indicator、tab 順序、escape 路徑"
 date: 2026-04-25
 weight: 52
-description: "鍵盤使用者用 tab / shift+tab 導航、enter / space 激活、esc 退出。三件事決定可不可用：focus 是否可見、tab 順序是否合理、modal / overlay 有沒有 escape 路徑。本文盤點搜尋頁的鍵盤 a11y 風險點。"
+description: "鍵盤使用者用 tab / shift+tab 導航、enter / space 啟用、esc 退出。三件事決定可不可用：focus 是否可見、tab 順序是否合理、modal / overlay 有沒有 escape 路徑。本文盤點搜尋頁的鍵盤 a11y 風險點。"
 tags: ["report", "事後檢討", "Accessibility", "Keyboard", "工程方法論"]
 ---
 
@@ -52,7 +52,7 @@ tags: ["report", "事後檢討", "Accessibility", "Keyboard", "工程方法論"]
 - 某些 theme 用 `outline: 0` 移除 — 鍵盤使用者迷失
 - 自訂 outline 要對比足夠（WCAG 2.4.7、AA 3:1 對比 + 至少 2px 寬）
 
-**症狀**：鍵盤使用者 tab 過去看不到 focus 在哪、不知道下一個 enter 會激活誰。
+**症狀**：鍵盤使用者 tab 過去看不到 focus 在哪、不知道下一個 enter 會啟用哪個元素。
 
 **第一個該查的**：用 keyboard tab 過所有互動元素、確認每個都有可見 focus。
 

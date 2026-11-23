@@ -194,7 +194,7 @@ A/B 測試動機驅動的事件是商業動機的延伸 — 實驗期間收集�
 | DevOps | 規則命中          | rule.matched                 | Collector 內部 | 開發期起     | alert 歷史       | 原始 30d     |
 | 中台   | 使用者首次出現    | user.first_seen              | Collector 計算 | 上線後       | cohort 分群      | 天聚合 365d  |
 | 中台   | 通路歸因          | attribution.install_source   | SDK 首次啟動   | 上線後       | 歸因報表         | 原始 90d     |
-| 中台   | 即時在線          | session.active.count         | Collector 計算 | 上線後       | 即時大屏         | 小時聚合 90d |
+| 中台   | 同時線上人數      | session.active.count         | Collector 計算 | 上線後       | 即時 dashboard   | 小時聚合 90d |
 
 ## 下一步路由
 

@@ -47,7 +47,7 @@ shell.json 的 top-level section 對應桌面 shell 的各個元件和全域設�
 | `background` | 桌布設定、桌面時鐘、音訊視覺化                                   |
 | `dashboard`  | 媒體播放器、效能指標（CPU/GPU/RAM）、天氣                        |
 | `launcher`   | 應用程式搜尋、動作列表、桌布選擇                                 |
-| `lock`       | 鎖屏：指紋認證開關、logo 重新配色                                |
+| `lock`       | 螢幕鎖定：指紋認證開關、logo 重新配色                            |
 | `notifs`     | 通知：過期時間、分組邏輯                                         |
 | `osd`        | 音量 / 亮度變更的螢幕顯示                                        |
 | `session`    | 登出 / 關機 / 重啟選單                                           |
@@ -86,7 +86,7 @@ shell.json 的 top-level section 對應桌面 shell 的各個元件和全域設�
 
 **Key 要對著實際版本驗**：caelestia-shell 啟動時會改寫 shell.json、丟掉 schema 不認得的 key、只留有效子集（VM 實測 2.1.0：某次測試輸入裡 `bar.clock.format`、`notifs.expiration`、`services.*` 被丟掉；`bar.persistent`、`workspaces.shown`、`sidebar`、`general.idle` 屬有效 key 而留下——留下的集合視你寫進去的 key 而定、不是固定兩個）。寫覆寫檔後啟動 shell、再回頭看檔案剩什麼，就是這個版本的有效 schema——被丟掉的 key 代表該功能在這版不存在或搬了位置，去 token 或別的 section 找。schema 的權威來源是安裝進來的 `/usr/lib/qt6/qml/Caelestia/Config/caelestia-config.qmltypes`（config 編在 C++ plugin 裡、QML 原始碼查不到）。
 
-一個經 2.1.0 驗證的實用例——idle 鎖屏時間（預設 3 分鐘鎖、10 分鐘關螢幕）延長到 2 小時：
+一個經 2.1.0 驗證的實用例——idle 螢幕鎖定時間（預設 3 分鐘鎖、10 分鐘關螢幕）延長到 2 小時：
 
 ```json
 {

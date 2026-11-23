@@ -47,20 +47,20 @@ ps -o comm= -p "$pid"
 
 ## 桌面 session 有沒有被鎖：認清是哪一層的鎖
 
-判斷一個圖形 session 有沒有被鎖，最容易被畫面帶偏，因為「畫面上有密碼框」很有說服力、卻不等於 session 真的被鎖（現代桌面 shell 的儀表板常內嵌鎖屏樣式的 widget）。而且鎖有不同層，查錯層會得到誤導的答案。
+判斷一個圖形 session 有沒有被鎖，最容易被畫面帶偏，因為「畫面上有密碼框」很有說服力、卻不等於 session 真的被鎖（現代桌面 shell 的儀表板常內嵌鎖定畫面樣式的 widget）。而且鎖有不同層，查錯層會得到誤導的答案。
 
 關鍵是分清兩種鎖：
 
 - **[logind](/linux/dotfile/knowledge-cards/logind-session-seat/) 層的鎖**：systemd 登入管理的 session 鎖，權威狀態是 `loginctl show-session <id> -p LockedHint`。
-- **Wayland 合成器層的鎖**：走 `ext-session-lock` 協議、由**[合成器](/linux/dotfile/knowledge-cards/compositor/)**（compositor，Wayland 下負責把各視窗合成到螢幕、管輸入輸出的核心程式，約當 X11 時代的視窗管理器加顯示伺服器；Hyprland、Sway 等都是）管的鎖，跟 logind 是獨立機制。這種鎖 `loginctl` 的 `LockedHint` **查不到**——鎖確實存在，`LockedHint` 查的是另一層。（用 GNOME / KDE 的鎖屏走的機制不同，以下的 `ext-session-lock` 判法與復原針對 wlroots 系的 Wayland 合成器。）
+- **Wayland 合成器層的鎖**：走 `ext-session-lock` 協議、由**[合成器](/linux/dotfile/knowledge-cards/compositor/)**（compositor，Wayland 下負責把各視窗合成到螢幕、管輸入輸出的核心程式，約當 X11 時代的視窗管理器加顯示伺服器；Hyprland、Sway 等都是）管的鎖，跟 logind 是獨立機制。這種鎖 `loginctl` 的 `LockedHint` **查不到**——鎖確實存在，`LockedHint` 查的是另一層。（用 GNOME / KDE 的螢幕鎖定走的機制不同，以下的 `ext-session-lock` 判法與復原針對 wlroots 系的 Wayland 合成器。）
 
-所以「`loginctl` 沒有 `LockedHint`、`pgrep` 找不到獨立鎖屏程式」不足以斷定「沒鎖」：合成器層的鎖不歸 logind、而鎖屏畫面可能由 shell 主程式在自己行程內畫（沒有獨立可執行檔可抓）。這種情況真正的權威來源是那個 shell 自己的 log（有沒有載入鎖屏模組、idle 計時器有沒有觸發鎖定），或直接看 compositor 的 session-lock 狀態。判鎖看合成器 / shell 的 log，不是 `loginctl`、更不是畫面有沒有密碼框。
+所以「`loginctl` 沒有 `LockedHint`、`pgrep` 找不到獨立螢幕鎖定程式」不足以斷定「沒鎖」：合成器層的鎖不歸 logind、而鎖定畫面可能由 shell 主程式在自己行程內畫（沒有獨立可執行檔可抓）。這種情況真正的權威來源是那個 shell 自己的 log（有沒有載入螢幕鎖定模組、idle 計時器有沒有觸發鎖定），或直接看 compositor 的 session-lock 狀態。判鎖看合成器 / shell 的 log，不是 `loginctl`、更不是畫面有沒有密碼框。
 
-### 鎖屏程式死掉造成的死局與復原
+### 螢幕鎖定程式死掉造成的死局與復原
 
-`ext-session-lock` 有一個安全設計：持鎖的鎖屏程式若在鎖定狀態下崩潰 / 被中止，compositor **會保持鎖定**、不會因為鎖屏程式沒了就解鎖（否則殺掉鎖屏程式就成了繞過鎖的漏洞）。表現是畫面卡在「鎖屏程式已死」的安全提示。復原要從另一個 VT 或 SSH 用 `hyprctl keyword misc:allow_session_lock_restore 1` 允許新鎖屏 client 接管、再 `hyprctl dispatch exec hyprlock` 起一個接管後輸密碼解鎖。完整機制、兩層鎖的關係、各 compositor 的差異，見 [Wayland Session Lock 卡](/linux/dotfile/knowledge-cards/session-lock/)。
+`ext-session-lock` 有一個安全設計：持鎖的螢幕鎖定程式若在鎖定狀態下崩潰 / 被中止，compositor **會保持鎖定**、不會因為螢幕鎖定程式沒了就解鎖（否則殺掉螢幕鎖定程式就成了繞過鎖的漏洞）。表現是畫面卡在「lockscreen app died」的安全提示。復原要從另一個 VT 或 SSH 用 `hyprctl keyword misc:allow_session_lock_restore 1` 允許新螢幕鎖定 client 接管、再 `hyprctl dispatch exec hyprlock` 起一個接管後輸密碼解鎖。完整機制、兩層鎖的關係、各 compositor 的差異，見 [Wayland Session Lock 卡](/linux/dotfile/knowledge-cards/session-lock/)。
 
-診斷紀律：**測鎖屏、或 `pkill` 一個持鎖的鎖屏程式時，要預期它把 session 卡在鎖定——這是協議的安全設計，不是 bug。** 自動化 / 無人值守流程尤其要避免在持鎖狀態下殺鎖屏程式。
+診斷紀律：**測螢幕鎖定、或 `pkill` 一個持鎖的螢幕鎖定程式時，要預期它把 session 卡在鎖定——這是協議的安全設計，不是 bug。** 自動化 / 無人值守流程尤其要避免在持鎖狀態下殺螢幕鎖定程式。
 
 ## 終端機多工器的 session 還在不在
 
@@ -74,7 +74,7 @@ ps -o comm= -p "$pid"
 - 判進程活著但「有沒有在運作」→ 讀程式自己的 log（可能要用它專屬的 log 指令、不在 journalctl）+ 它的 IPC 回不回真實狀態，不是看 `pgrep` 有輸出就當正常。
 - 判服務歸誰 → `busctl` 查 D-Bus name 擁有者 → 換算 PID → comm，不看畫面反應。
 - 判 session 鎖沒鎖 → 分清 logind 層（`loginctl LockedHint`）vs 合成器層（`ext-session-lock`，看 compositor / shell log），不看畫面有沒有密碼框。
-- 鎖屏程式死掉卡住 → `allow_session_lock_restore` + 重起鎖屏程式接管解鎖。
+- 螢幕鎖定程式死掉卡住 → `allow_session_lock_restore` + 重起螢幕鎖定程式接管解鎖。
 - 判多工器 session 存活 → `zellij ls` / `tmux ls`；可能已死且有在意的產出時，先確認產出已保存 / 已推送再清 session。
 
 判不準時，[診斷心法](../diagnosis-read-authoritative-state/) 的四步（描述症狀、定位權威來源、用對工具讀、矛盾時信權威）是通用的回退。

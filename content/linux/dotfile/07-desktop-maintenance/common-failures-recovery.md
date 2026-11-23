@@ -85,38 +85,38 @@ pgrep mako    # 沒輸出 = 沒在跑
 
 **預防**：改 config 後重啟對應的工具確認語法正確。Waybar 的 config 是 JSON 格式，語法錯誤會導致它無法啟動——改完後先用 `waybar` 前台跑一次看有沒有錯誤訊息。
 
-## 場景二點五：鎖屏卡死（hyprlock 異常結束）
+## 場景二點五：螢幕鎖定卡死（hyprlock 異常結束）
 
-**症狀**：鎖屏畫面消失但桌面沒回來，螢幕顯示 Hyprland 的失效保護訊息（「it looks like you locked your screen but the lockscreen app died」），或畫面全黑但系統有回應（SSH 能連、TTY 可能切得到也可能切不到）。
+**症狀**：鎖定畫面消失但桌面沒回來，螢幕顯示 Hyprland 的失效保護訊息（「it looks like you locked your screen but the lockscreen app died」），或畫面全黑但系統有回應（SSH 能連、TTY 可能切得到也可能切不到）。
 
-**原因**：鎖屏工具（Hyprlock、Swaylock）透過 Wayland 的 ext-session-lock 協議向 compositor 請求鎖定。鎖定狀態由 compositor 持有，唯一正常解鎖動作是鎖屏 client 通過認證後呼叫 unlock_and_destroy。如果鎖屏 client 在持鎖狀態下被殺（`pkill`、crash），compositor 沒收到認證信號，會維持鎖定並顯示失效保護畫面。這跟殺 waybar/mako 不同——那些是普通 process，殺了重啟就好；鎖屏 client 持有安全狀態，殺了反而卡住。
+**原因**：螢幕鎖定工具（Hyprlock、Swaylock）透過 Wayland 的 ext-session-lock 協議向 compositor 請求鎖定。鎖定狀態由 compositor 持有，唯一正常解鎖動作是螢幕鎖定 client 通過認證後呼叫 unlock_and_destroy。如果螢幕鎖定 client 在持鎖狀態下被殺（`pkill`、crash），compositor 沒收到認證信號，會維持鎖定並顯示失效保護畫面。這跟殺 waybar/mako 不同——那些是普通 process，殺了重啟就好；螢幕鎖定 client 持有安全狀態，殺了反而卡住。
 
 **恢復步驟**：
 
 1. 嘗試切到另一個 TTY（`Ctrl+Alt+F2`）。注意：ext-session-lock 的安全語意允許 compositor 攔截 VT 切換快捷鍵，此時 TTY 切不過去，改用 SSH 從另一台機器連入
-2. 允許新的鎖屏 client 接管既有的鎖：
+2. 允許新的螢幕鎖定 client 接管既有的鎖：
 
 ```bash
 hyprctl --instance 0 'keyword misc:allow_session_lock_restore 1'
 ```
 
-3. 重新拉一個鎖屏 client：
+3. 重新拉一個螢幕鎖定 client：
 
 ```bash
 hyprctl --instance 0 'dispatch exec hyprlock'
 ```
 
-4. 回到鎖屏畫面，用密碼正常解鎖
+4. 回到鎖定畫面，用密碼正常解鎖
 
 **判讀**：`loginctl show-session <id> -p LockedHint` 可能顯示 `LockedHint=no`（logind 層認為沒鎖），但畫面仍進不去——因為擋住畫面的是 compositor 的 ext-session-lock，跟 logind 的提示是獨立的兩層。判斷畫面鎖定狀態看 compositor 層，不看 logind。
 
-**預防**：測試鎖屏時備好恢復路徑（知道密碼、或預先開 SSH）。不要用殺 process 的方式結束鎖屏——要結束就走認證解鎖。自動化流程若會啟動鎖屏，把「需要人工解鎖」算進代價。鎖屏安全模型的完整說明見 [Session Lock](/linux/dotfile/knowledge-cards/session-lock/)。
+**預防**：測試螢幕鎖定時備好恢復路徑（知道密碼、或預先開 SSH）。不要用殺 process 的方式結束螢幕鎖定——要結束就走認證解鎖。自動化流程若會啟動螢幕鎖定，把「需要人工解鎖」算進代價。螢幕鎖定安全模型的完整說明見 [Session Lock](/linux/dotfile/knowledge-cards/session-lock/)。
 
 ## 場景二點六：桌面 shell 畫得出來但互動死掉（進程活著卻 wedged）
 
 **症狀**：bar / 狀態列還在螢幕上、看起來一切正常，但點它的按鈕（工作區切換、系統匣圖示）沒反應，keybind 叫不出啟動器（wofi / 內建 launcher）。同時焦點視窗（例如終端機）打字完全正常——鍵盤到得了應用程式，只是桌面 shell 的互動死了。
 
-**原因**：這是跟場景二（工具掛了）不同的一類故障，關鍵差別在**進程還活著**。場景二是 process 崩潰退出（`pgrep` 沒輸出），殺了重啟就好；這裡的桌面 shell（如 caelestia / [Quickshell](/linux/dotfile/knowledge-cards/quickshell/)）進程還在跑（`pgrep` 找得到、STAT 是正常的 `S`、在 `poll` 等事件、CPU 不高），但它內部的某個子系統初始化失敗了——常見是 QML scene 的某個物件因為上游錯誤沒建起來、變成 null，於是負責「keybind → 開抽屜」「bar 按鈕互動」的模組對 null 讀屬性、整條互動接線死掉。bar 之所以還畫得出來，是它還停在初始化失敗前那一幀的畫面：**畫得出來不等於還活著**，跟鎖屏那課（畫面有密碼框不等於真的在鎖）是同一個陷阱。
+**原因**：這是跟場景二（工具掛了）不同的一類故障，關鍵差別在**進程還活著**。場景二是 process 崩潰退出（`pgrep` 沒輸出），殺了重啟就好；這裡的桌面 shell（如 caelestia / [Quickshell](/linux/dotfile/knowledge-cards/quickshell/)）進程還在跑（`pgrep` 找得到、STAT 是正常的 `S`、在 `poll` 等事件、CPU 不高），但它內部的某個子系統初始化失敗了——常見是 QML scene 的某個物件因為上游錯誤沒建起來、變成 null，於是負責「keybind → 開抽屜」「bar 按鈕互動」的模組對 null 讀屬性、整條互動接線死掉。bar 之所以還畫得出來，是它還停在初始化失敗前那一幀的畫面：**畫得出來不等於還活著**，跟螢幕鎖定那課（畫面有密碼框不等於真的在鎖）是同一個陷阱。
 
 上游觸發常是渲染層。實測案例：VM 的 GPU 只提供到 GLSL 1.20，而 shell 的 shader 需要 GLES 100/300/330，pipeline 建不起來（log 狂噴 `Failed to build graphics pipeline state`），這次渲染失敗把 scene 初始化打斷，drawers 狀態物件變 null。
 

@@ -7032,6 +7032,11 @@
    "module": "testing"
   },
   {
+   "name": "工作階段鎖定",
+   "card": "linux/dotfile/knowledge-cards/session-lock",
+   "module": "linux"
+  },
+  {
    "name": "已知錯誤",
    "card": "backend/knowledge-cards/known-error",
    "module": "backend"
@@ -7995,11 +8000,6 @@
    "name": "量產核准",
    "card": "business/procurement-planning/cards/ppap",
    "module": "business"
-  },
-  {
-   "name": "鎖屏安全狀態",
-   "card": "linux/dotfile/knowledge-cards/session-lock",
-   "module": "linux"
   },
   {
    "name": "鎖的等待佇列",

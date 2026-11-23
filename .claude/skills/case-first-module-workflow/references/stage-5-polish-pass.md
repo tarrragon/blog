@@ -78,10 +78,10 @@ Reviewer C 報告的所有 cross-link 缺漏一次補完、用同一個批次跑
 - 應有 link 但缺
 - ownership 邊界路由（A 章設邊界但 B 章 SSoT 不接）
 
-### 6. 用語不一統一 + 失效 link 修正
+### 6. 用語所指校正 + 失效 link 修正
 
 - 簡轉繁（例：「生命周期」→「生命週期」）
-- 術語層級統一（例：instance vs node vs replica 在 K8s 章節）
+- 術語所指校正（例：K8s 章節的 instance、node、replica 定義不同，不因字面相近就合併；逐處確認所指，寫錯對象的改成那個對象的詞；同一台機器當雲端資源時寫 instance、當叢集成員時寫 node，談同一層時才用同一個詞）
 - `/knowledge-cards/` vs `/section/` URL 統一
 - 失效 link 改規劃中或正確路徑
 

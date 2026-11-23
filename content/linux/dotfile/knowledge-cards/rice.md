@@ -26,7 +26,7 @@ Rice 涵蓋的元件多半跑在某個 [Compositor](/linux/dotfile/knowledge-car
 - **狀態列**：Waybar、Eww 的模組設計和 CSS 外觀
 - **啟動器**：Wofi、Rofi 的搜尋框外觀
 - **通知**：Mako、Dunst 的通知氣泡樣式
-- **鎖屏**：Hyprlock 的登入畫面設計
+- **鎖定畫面**：Hyprlock 的畫面設計
 - **桌布**：靜態桌布或動態桌布（Swww）
 - **終端機配色**：Alacritty / Kitty / Foot 的 ANSI 色碼
 - **字型**：Nerd Font 的 icon glyph

@@ -35,7 +35,7 @@
 | Performance optimization driver                 | 同上、是 driver 不是 axis                                                       |
 | Single feature enhancement                      | 不在 migration playbook scope、用 deep article methodology                      |
 
-關鍵 heuristic：**獨立性 ≠ 軸性**。Backup encryption key、connection pool config、tenant isolation 都可獨立發生、但沒人開「encryption axis / pool axis / tenant axis」— 這些是 *衍生變量*、不是 *獨立軸*。
+關鍵 heuristic：**獨立性 ≠ 軸性**。Backup encryption key、connection pool config、tenant isolation 都可獨立發生、但沒人開「encryption axis / pool axis / tenant axis」— 這些是 *衍生變數*、不是 *獨立軸*。
 
 ## Reviewer D 對 3 個候選軸的質疑（未解）
 

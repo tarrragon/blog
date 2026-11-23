@@ -99,7 +99,7 @@ Funnel 需要 session 級 JOIN — 「同一個 session 完成了步驟 1 到步
 | -------------------------- | --------- | -------------- | --------------- | ------------------------------------------------- |
 | user.first_seen            | lifecycle | Collector 計算 | Cohort 分群依據 | 原始事件設計聚焦 SDK 端，衍生計算事件不在設計範圍 |
 | attribution.install_source | event     | SDK 首次啟動   | 通路歸因        | 只在首次啟動送一次的事件沒有被操作盤點覆蓋        |
-| session.active.count       | metric    | Collector 計算 | 即時在線大屏    | 即時統計是 collector 端的衍生 metric              |
+| session.active.count       | metric    | Collector 計算 | 同時線上人數    | 即時統計是 collector 端的衍生 metric              |
 
 這三個事件的共同特徵：前兩個是「只發生一次」的事件（首次出現、首次安裝），第三個是 collector 端的即時計算結果。操作盤點和四類補齊檢查聚焦在「反覆發生的使用者操作」，容易遺漏「只發生一次」的生命週期轉折點和 collector 端的衍生計算。
 

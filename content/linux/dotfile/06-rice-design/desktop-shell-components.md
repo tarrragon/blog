@@ -13,7 +13,7 @@ tags: ["dotfile", "rice", "waybar", "wofi", "mako", "hyprland", "linux"]
 | 狀態列   | Waybar, Eww, AGS             | JSON/JSONC, Yuck, JS |
 | 啟動器   | Wofi, Rofi (wayland), Fuzzel | CSS + 設定檔         |
 | 通知     | Mako, Dunst, SwayNC          | INI/TOML             |
-| 鎖屏     | Hyprlock, Swaylock           | 自定義格式           |
+| 螢幕鎖定 | Hyprlock, Swaylock           | 自定義格式           |
 | 桌布     | Hyprpaper, Swww, Mpvpaper    | 自定義格式           |
 | 剪貼簿   | wl-clipboard + Cliphist      | CLI                  |
 | 螢幕截圖 | Grimblast, Grim + Slurp      | CLI                  |

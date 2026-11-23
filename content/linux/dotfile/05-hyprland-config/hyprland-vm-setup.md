@@ -108,7 +108,7 @@ Sway 比 Hyprland 輕量（基於 wlroots、沒有華麗動畫），如果 Sway 
 | Waybar 模組配置    | JSON config + CSS styling 是否正確顯示                 |
 | Wofi/Rofi 主題     | 啟動器的功能和外觀設定                                 |
 | Mako 通知樣式      | 通知的位置、配色、timeout                              |
-| Hyprlock 佈局      | 鎖屏的輸入框位置和文字配置                             |
+| Hyprlock 佈局      | 鎖定畫面的輸入框位置和文字配置                         |
 | Autostart 順序     | exec-once 的程式是否正確啟動                           |
 | 環境變數           | XDG、Qt、GTK 等環境變數是否正確設定                    |
 | Stow 部署          | dotfile repo 的 stow 是否正確建立 symlink              |
