@@ -44,7 +44,7 @@ draft: true
 
 ## 三套貫穿式商業網站情境與 Schema（題目組合的共用底座）
 
-實作順序採取**先定表、再長題**：先把三大商業領域的完整資料表建立成可執行的 SQLite 基準資料庫（內含正常資料、邊界反例列與可量測代價的資料分片）。三套 Schema 在關聯形狀上刻意保持對稱——各自具備**核心主檔表、1:N 交易與明細表、N:M 標籤／關聯表、自連接階層表、高頻事件流水表、1:1 冷資料附屬表、狀態快照表與並行任務／排班表**——確保每個領域都能支撐多表路徑輪替（含 CRUD 變化）以及階段七的讀寫頻率與 Schema 設計討論。
+實作順序採取**先定表、再長題**：三大商業領域的可執行 SQLite Schema、邊界反例 seed 腳本與自動化驗證腳本已建立於 `scripts/sql-practice/`（透過 `python3 scripts/sql-practice/verify_domains.py` 驗證外鍵完整性與各類反例觸發）。三套 Schema 在關聯形狀上刻意保持對稱——各自具備**核心主檔表、1:N 交易與明細表、N:M 標籤／關聯表、自連接階層表、高頻事件流水表、1:1 冷資料附屬表、狀態快照表與並行任務／排班表**——確保每個領域都能支撐多表路徑輪替（含 CRUD 變化）以及階段七的讀寫頻率與 Schema 設計討論。
 
 ### 領域甲（`bookstore`）：「紙頁書店」線上書城與門市系統
 
@@ -112,7 +112,9 @@ CREATE TABLE coupons (
   coupon_id     INTEGER PRIMARY KEY,
   code          TEXT NOT NULL,
   discount_type TEXT NOT NULL, -- 'fixed' | 'percent'
-  discount_val  INTEGER NOT NULL
+  discount_val  INTEGER NOT NULL,
+  expires_at    TEXT NOT NULL,
+  is_active     INTEGER NOT NULL DEFAULT 1
 );
 
 CREATE TABLE order_coupons (
@@ -291,7 +293,7 @@ CREATE TABLE shipment_events (
   event_id    INTEGER PRIMARY KEY,
   shipment_id INTEGER REFERENCES shipments(shipment_id), -- 允許 NULL 模擬掃碼槍異常孤兒事件
   event_type  TEXT NOT NULL, -- 'picked' | 'hub_in' | 'out_for_delivery' | 'signed' | 'exception'
-  recorded_at TEXT NOT NULL
+  recorded_at TEXT -- 允許 NULL 模擬離線同步時間缺漏
 );
 
 CREATE TABLE driver_shifts (
@@ -1332,12 +1334,11 @@ HAVING COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) / COUNT(*) > 0.1;
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                                | 類型 | 前置條件                 | 規模 |
-| ------------------------------------------------------------------------------------------------------------------- | ---- | ------------------------ | ---- |
-| 優先建立三大商業領域（紙頁書店、雲課堂、捷配物流）的可執行 SQLite Schema 與完整邊界反例 seed 腳本，作為題庫共用底座 | 實作 | 本檔 Schema 定義確認     | 中   |
-| 在三套領域資料庫底座上，展開領域乙（雲課堂）、領域丙（捷配物流）與同領域多表路徑輪替（含 CRUD 變化）的完整題庫 JSON | 內容 | 三套領域 SQLite 底座完成 | 大   |
-| 補齊階段七（`S7-01`–`S7-06`）在雲課堂與捷配物流的完整四選項設計題與不同讀寫比前提翻轉變體                           | 內容 | 三套領域 SQLite 底座完成 | 中   |
-| 建立自動化題庫驗收腳本：對每題選項在對應領域資料庫與邊界資料上實跑，驗證實際輸出與 `EXPLAIN QUERY PLAN` 描述一致    | 實作 | 題庫 JSON 產出           | 中   |
-| 實作純靜態選擇題練習網站（學習／盲測雙模式、反記憶多表路徑抽題、選項洗牌、Schema 抽屜、負載前提卡與困惑匯出）       | 實作 | 題庫 JSON 與底座定案     | 中   |
-| 決定網站與 Hugo 的整合落點（獨立 `static/` 頁面＋`sql/` 列表入口，或 Hugo shortcode 內嵌）                          | 規格 | 無                       | 小   |
-| 第二期擴充：接入 SQLite WASM 依領域載入記憶體資料庫，支援網頁內實跑選項與 `EXPLAIN QUERY PLAN`                      | 實作 | 第一期練習網站完成       | 中   |
+| 項目                                                                                                                | 類型 | 前置條件             | 規模 |
+| ------------------------------------------------------------------------------------------------------------------- | ---- | -------------------- | ---- |
+| 在三套領域資料庫底座上，展開領域乙（雲課堂）、領域丙（捷配物流）與同領域多表路徑輪替（含 CRUD 變化）的完整題庫 JSON | 內容 | 無（底座已建置驗證） | 大   |
+| 補齊階段七（`S7-01`–`S7-06`）在雲課堂與捷配物流的完整四選項設計題與不同讀寫比前提翻轉變體                           | 內容 | 無（底座已建置驗證） | 中   |
+| 建立自動化題庫驗收腳本：對每題選項在對應領域資料庫與邊界資料上實跑，驗證實際輸出與 `EXPLAIN QUERY PLAN` 描述一致    | 實作 | 題庫 JSON 產出       | 中   |
+| 實作純靜態選擇題練習網站（學習／盲測雙模式、反記憶多表路徑抽題、選項洗牌、Schema 抽屜、負載前提卡與困惑匯出）       | 實作 | 題庫 JSON 與底座定案 | 中   |
+| 決定網站與 Hugo 的整合落點（獨立 `static/` 頁面＋`sql/` 列表入口，或 Hugo shortcode 內嵌）                          | 規格 | 無                   | 小   |
+| 第二期擴充：接入 SQLite WASM 依領域載入記憶體資料庫，支援網頁內實跑選項與 `EXPLAIN QUERY PLAN`                      | 實作 | 第一期練習網站完成   | 中   |
