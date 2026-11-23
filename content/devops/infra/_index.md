@@ -21,12 +21,12 @@ infra 的責任、風險、成本與決策是理解它的必要框架，這套�
 | [服務上線地基](/devops/going-live/) | 第一次把服務上線的 vendor 中立入門           | 這套 IaC 治理預設你已懂上線地基；沒部署過先走 going-live 再回來    |
 | [Backend](/backend/)                | 服務內部設計（資料庫、快取、佇列、可觀測）   | Backend 的部署平台與 secret / TLS 能力跑在 Infra 的地基上          |
 | [DevOps 全景](/devops/)             | 交付生命週期三階段導覽（地基 → 管線 → 維運） | Infra 是這條生命週期的地基階段、這頁給全景與跨階段路由             |
-| [運行期維運](/devops/operations/)   | 運行期維運（負載、擴展、容量、成本）         | Infra 把地基鋪好，運維管這些地基上的服務怎麼活下來                 |
+| [運行期維運](/devops/operations/)   | 運行期維運（負載、擴展、容量、成本）         | Infra 把地基鋪好，維運管這些地基上的服務怎麼活下來                 |
 | [CI/CD](/devops/ci/)                | 驗證、建置、發布 gate                        | Infra 變更走 PR 流程時，用的是 CI/CD 管線                          |
 | [Monitoring](/devops/monitoring/)   | 客戶端監控體系（SDK、Collector）             | Infra 的 log / metric / alarm 是 observability 的底層              |
 | [Dotfile](/linux/dotfile/)          | 個人工作環境配置管理                         | Infra 是組織的環境 as code，Dotfile 是個人的環境 as code，思想平行 |
 
-Backend 教「服務怎麼設計」、運維教「設計好的服務怎麼營運」，Infra 教「這些服務跑在什麼樣的地基上、這套地基怎麼從零長出來」。模組九同時處理 infra 的組織面 — 怎麼向非技術決策者說明地基的價值、怎麼在信任不足的環境裡推動採用。
+Backend 教「服務怎麼設計」、維運教「設計好的服務怎麼營運」，Infra 教「這些服務跑在什麼樣的地基上、這套地基怎麼從零長出來」。模組九同時處理 infra 的組織面 — 怎麼向非技術決策者說明地基的價值、怎麼在信任不足的環境裡推動採用。
 
 ## 教學模組
 

@@ -122,7 +122,7 @@ aliases: ["/monitoring/"]
 
 職責鏈：收（HTTP endpoint）→ 驗（JSON Schema）→ 存（JSONL 檔案）→ 查（CLI 查詢）→ 觸發（rule engine）。
 
-自用場景的 collector 跟 production 級 observability 平台的差異：沒有 dashboard（用 grep / jq）、沒有 alerting（用 rule engine + 腳本）、沒有 HA（單機就夠）。這些是刻意的設計選擇——零依賴、零運維、grep 友好。
+自用場景的 collector 跟 production 級 observability 平台的差異：沒有 dashboard（用 grep / jq）、沒有 alerting（用 rule engine + 腳本）、沒有 HA（單機就夠）。這些是刻意的設計選擇——零依賴、零維運、grep 友好。
 
 從 SDK 到 storage 的每個環節都有丟失事件的可能。[端到端資料完整性](/devops/monitoring/04-collector/data-integrity/)整理了整條鏈路的損失地圖、控制策略、完整性指標，以及被自己 SDK DDoS 時的防護方式。[Error Fingerprint 與去重分群](/devops/monitoring/04-collector/error-fingerprint/)把相同根因的 error 歸組，讓 dashboard 從逐筆列表演進到可管理的 issue 列表。
 

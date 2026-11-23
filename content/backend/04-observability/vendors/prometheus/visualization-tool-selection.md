@@ -45,7 +45,7 @@ Grafana 是開源的視覺化平台，本身不收集資料，向外部的資料
 
 規則放在 Prometheus 與放在 Grafana，平常看不出差別，差別出現在 Grafana 停掉的期間。規則寫在 Prometheus 的規則檔時，Grafana 重啟、升級或記憶體不足被停掉，告警照常發出；規則檔放在 repo 裡，可以用 `promtool check rules` 檢查語法、用 `promtool test rules` 寫單元測試。規則寫在 Grafana 時，Grafana 就進入了告警的路徑：它自己停掉的期間沒有告警，告警路徑多了一個會單獨失效的元件（Grafana 的告警可以跑多個實例做高可用，代價是共用的資料庫、實例之間的同步連線（gossip 或 Redis），以及每個實例都評估全部規則而倍增的查詢量；多個實例和服務在同一台主機上時，主機層的失效照樣一起發生）；Grafana 與服務共用主機時，主機過載會讓服務與告警一起停擺，這是觀測系統與被觀測系統一起失效的一種形態（見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)）。規則放在 Grafana 換到的是不寫 YAML 的人也能在介面上建規則，以及能對 Prometheus 以外的資料來源告警。〈單機 Compose 的最小監控堆疊〉把規則寫在 Prometheus：告警全部在 Prometheus 與 Alertmanager，Grafana 只負責畫面。
 
-**多種資料來源**：Loki（log）、Tempo（trace）、Elasticsearch、PostgreSQL、MySQL 等都能加成資料來源，同一頁可以把一段時間的錯誤率曲線與那段時間的 log 並排。Grafana 自家的 log 與 trace 後端怎麼搭配，見 [LGTM Stack 組合運維](/backend/04-observability/vendors/grafana-stack/lgtm-stack-operations/)。
+**多種資料來源**：Loki（log）、Tempo（trace）、Elasticsearch、PostgreSQL、MySQL 等都能加成資料來源，同一頁可以把一段時間的錯誤率曲線與那段時間的 log 並排。Grafana 自家的 log 與 trace 後端怎麼搭配，見 [LGTM Stack 組合維運](/backend/04-observability/vendors/grafana-stack/lgtm-stack-operations/)。
 
 **現成的儀表板**：Prometheus 生態系裡的現成儀表板多半是 Grafana 的 JSON——許多 exporter 隨附 monitoring mixin（一組以程式產生的儀表板與告警規則樣板），它產生的就是 Grafana 儀表板，Kubernetes 上常見的 kube-prometheus-stack 也附帶 Grafana。接上一個新的 exporter 時，從它的 mixin 或社群儀表板匯入，再依自己的標籤調整，比從零畫起快得多。
 

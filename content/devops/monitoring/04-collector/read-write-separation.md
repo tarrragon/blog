@@ -105,7 +105,7 @@ Debug 即席查詢的 lag 問題是 read-after-write 一致性 — 開發者從 
 
 Read replica 的引入時機是「辨識訊號」段列出的讀寫競爭訊號持續出現，而且已經做過基本最佳化（索引補齊、dashboard 改讀 summary 表、downsample job 調整執行時段避開高峰）仍然不夠。
 
-引入 read replica 的成本是多一台 PostgreSQL 實例（或 managed service 的 read replica 選項）和 replication 設定。Monitor 的 PostgreSQL 層已經承擔外部 DB 的運維成本，加 replica 是增量而非從零開始。
+引入 read replica 的成本是多一台 PostgreSQL 實例（或 managed service 的 read replica 選項）和 replication 設定。Monitor 的 PostgreSQL 層已經承擔外部 DB 的維運成本，加 replica 是增量而非從零開始。
 
 ## 預聚合作為讀取面的第一道防線
 

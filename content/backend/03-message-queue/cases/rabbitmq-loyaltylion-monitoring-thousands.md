@@ -18,7 +18,7 @@ LoyaltyLion 跑數千個 RabbitMQ queue、用 rabbitmqctl 跑 recurring script �
 
 ## 對應大綱
 
-RabbitMQ 進階主題：Prefetch + consumer 併發（大規模 queue topology 的監控議題）/ RabbitMQ Cluster Operator（運維邊界）。
+RabbitMQ 進階主題：Prefetch + consumer 併發（大規模 queue topology 的監控議題）/ RabbitMQ Cluster Operator（維運邊界）。
 
 ## 下一步路由
 

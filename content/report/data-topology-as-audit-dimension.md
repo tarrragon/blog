@@ -13,13 +13,13 @@ Process content 的 [diff dimension audit](../content-structure-by-max-diff-dime
 | 維度               | 處理對象                                   | 對 topology 的關係                    |
 | ------------------ | ------------------------------------------ | ------------------------------------- |
 | Schema / API       | 資料結構（column / type / index）          | 不同層、schema 不變 topology 可能變   |
-| Operational model  | 運維 stack（HA / backup / monitoring）     | topology 可能影響 ops、但不是同一概念 |
+| Operational model  | 維運 stack（HA / backup / monitoring）     | topology 可能影響 ops、但不是同一概念 |
 | Paradigm           | 核心抽象（OLTP / log / pub-sub）           | 同 paradigm 內 topology 可變          |
 | Components         | 元件數量（1 vs N）                         | 同 component 數可有不同 topology      |
 | Application change | application code 改動量                    | topology 變不必然 application 改      |
 | **Data topology**  | **slot / shard / partition / region 分佈** | **本卡新增的第 6 維**                 |
 
-**Data topology 是 *資料分佈* 層級的概念** — 跟資料結構（schema）、運維機制（operational）、抽象模型（paradigm）、組件數量（components）、application code 改動量（application change）並列為第 6 軸；topology 變動時其他 5 維可能完全不變、但 *資料在 cluster / partition / region 之間的擺放方式* 改變、需要獨立的結構處理。
+**Data topology 是 *資料分佈* 層級的概念** — 跟資料結構（schema）、維運機制（operational）、抽象模型（paradigm）、組件數量（components）、application code 改動量（application change）並列為第 6 軸；topology 變動時其他 5 維可能完全不變、但 *資料在 cluster / partition / region 之間的擺放方式* 改變、需要獨立的結構處理。
 
 擴 audit 到 6 維、新增 [Type F「Topology re-layout」](../content-structure-by-max-diff-dimension/) 結構對映 *topology 高差異* 的 process content。
 

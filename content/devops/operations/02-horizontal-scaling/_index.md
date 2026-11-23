@@ -21,8 +21,8 @@ aliases: ["/operations/02-horizontal-scaling/"]
 
 ## 跨分類引用
 
-- ← [運維 模組一 負載平衡](/devops/operations/01-load-balancing/)：LB 是水平擴展的前提
-- → [運維 模組六 高可用](/devops/operations/06-high-availability/)：「規模成長」路線下一站——多實例之上再加冗餘與 failover
+- ← [維運 模組一 負載平衡](/devops/operations/01-load-balancing/)：LB 是水平擴展的前提
+- → [維運 模組六 高可用](/devops/operations/06-high-availability/)：「規模成長」路線下一站——多實例之上再加冗餘與 failover
 - → [monitoring 模組四 Collector](/devops/monitoring/04-collector/)：Collector 的 stateless 設計讓多實例可行
 - → [backend 資料庫](/backend/01-database/)：Shared storage 的 DB 選型
 - → [backend 擴展軸](/backend/09-performance-capacity/scaling-axes/)：垂直 / 水平取捨與 AKF Scale Cube 的完整拆解

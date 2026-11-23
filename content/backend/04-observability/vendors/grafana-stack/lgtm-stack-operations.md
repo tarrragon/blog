@@ -1,5 +1,5 @@
 ---
-title: "LGTM Stack 組合運維：Loki + Grafana + Tempo + Mimir"
+title: "LGTM Stack 組合維運：Loki + Grafana + Tempo + Mimir"
 date: 2026-06-22
 description: "說明 Grafana Stack 四個元件的責任分工、部署模式、常見故障與 dashboard provisioning"
 weight: 10

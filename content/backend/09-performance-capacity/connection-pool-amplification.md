@@ -38,7 +38,7 @@ PgBouncer 的核心參數是 `pool_mode`：
 
 Transaction mode 是多數場景的 default。但要注意：應用層的 ORM / driver 可能預設用 prepared statement、跟 transaction mode 衝突。PgBouncer 1.21 起可以在 transaction mode 追蹤 protocol-level prepared statement（`max_prepared_statements`，1.24 起預設開啟），與 PostgreSQL 的版本無關；更早的 PgBouncer 要在 JDBC / asyncpg / pgx 等驅動端另外配置（見 [Prepared Statement](/backend/knowledge-cards/prepared-statement/)）。
 
-### AWS RDS Proxy — managed 換掉運維
+### AWS RDS Proxy — managed 換掉維運
 
 RDS Proxy 是 PgBouncer / ProxySQL 同類功能的 managed 版本：AWS 負責部署、HA、failover、IAM 整合。應用層連到 RDS Proxy endpoint、Proxy 在背後維持跟 RDS / Aurora 的連線池。
 
@@ -60,7 +60,7 @@ ProxySQL 是 MySQL 生態的 connection pooler、但比 PgBouncer 更全功能�
 - **Query rewriting**：可以攔截 query 改寫（debug / 漸進遷移 schema）
 - **Auto failover**：監控 backend 健康、自動切流
 
-ProxySQL 的代價是學習曲線跟運維成本 — 規則設計需要對 query pattern 跟 DB topology 有掌控、設錯規則會把 query 導去錯誤 backend、debug 困難。
+ProxySQL 的代價是學習曲線跟維運成本 — 規則設計需要對 query pattern 跟 DB topology 有掌控、設錯規則會把 query 導去錯誤 backend、debug 困難。
 
 ## 選型對照
 

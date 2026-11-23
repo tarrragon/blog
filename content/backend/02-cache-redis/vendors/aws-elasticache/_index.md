@@ -6,7 +6,7 @@ weight: 5
 tags: ["backend", "cache", "vendor"]
 ---
 
-AWS ElastiCache 是 AWS managed cache 服務、承擔三個責任：託管 Redis / Valkey / Memcached engine（無需自管 broker）、自動 failover + 跨 AZ 複製、AWS 生態原生整合（IAM / VPC / CloudWatch / KMS）。設計取捨偏向「把運維責任轉給 AWS、付 managed premium 換可預測 SLA」、AWS 生態下的 cache 預設選擇。2024 起 default engine 從 Redis 改為 Valkey（成本約低 20%）。
+AWS ElastiCache 是 AWS managed cache 服務、承擔三個責任：託管 Redis / Valkey / Memcached engine（無需自管 broker）、自動 failover + 跨 AZ 複製、AWS 生態原生整合（IAM / VPC / CloudWatch / KMS）。設計取捨偏向「把維運責任轉給 AWS、付 managed premium 換可預測 SLA」、AWS 生態下的 cache 預設選擇。2024 起 default engine 從 Redis 改為 Valkey（成本約低 20%）。
 
 對「AWS 生態服務需要 cache、不想自管 Redis cluster、跨 AZ 高可用」這條路徑、ElastiCache 是首選。本頁先給最短路徑、再展開日常 cluster 管理跟 engine 選擇、最後進階治理（Serverless、MemoryDB 對照）跟排錯。
 

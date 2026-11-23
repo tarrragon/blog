@@ -28,7 +28,7 @@ Global Tables 是 *業務性質* 決定的工程投資，而不是預設選擇�
 
 **客服平台類** 99.999% 是極端可用性目標、年停機 5.26 分鐘、Genesys 撐 8000+ orgs 的客服平台、客戶停線損失極大、跨 15 region 的 active-active 是合理投資。但 *業務性質決定下限*，並非每個 SaaS 都該追 99.999%。
 
-**成本對比**（Genesys 案例揭露）：15 region 成本約 = 1 region 的 15x（base table cost）+ 跨 region replication WCU。每多一個 9、容量規劃跟運維成本指數成長。
+**成本對比**（Genesys 案例揭露）：15 region 成本約 = 1 region 的 15x（base table cost）+ 跨 region replication WCU。每多一個 9、容量規劃跟維運成本指數成長。
 
 > **Scope warning（指標口徑紀律）**：99.999% 是「12 個月滾動歷史值、不代表未來持續達成」（Genesys 案例頁的警示段）。可用性是滾動指標、不是恆久承諾。引用 Genesys 99.999% 數字時要明示口徑（滾動 / customer-facing），不要寫成「DynamoDB 保證 99.999%」。
 

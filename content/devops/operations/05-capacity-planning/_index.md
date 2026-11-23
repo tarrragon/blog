@@ -24,10 +24,10 @@ aliases: ["/operations/05-capacity-planning/"]
 
 ## 跨分類引用
 
-- → [運維 模組二 水平擴展](/devops/operations/02-horizontal-scaling/)：「規模成長」路線下一站——算出要多少容量後，怎麼靠加實例把容量長出來
+- → [維運 模組二 水平擴展](/devops/operations/02-horizontal-scaling/)：「規模成長」路線下一站——算出要多少容量後，怎麼靠加實例把容量長出來
 - → [backend 效能容量](/backend/09-performance-capacity/)：Backend 的效能基準和容量估算
 - → [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)：預知活動從 T-90 到 T-0 的準備時程、預先擴容的做法、值班與事後回顧；擴容的規格與預算怎麼算在本模組 [預知的大流量要加多大、編多少預算：從業務預估到擴容規格與費用區間的換算鏈、給決策者與會計的數字，以及每次活動之後的校準](/devops/operations/05-capacity-planning/planned-peak-sizing-and-budget/)
-- → [運維 模組七 突發流量](/devops/operations/07-burst-traffic/)：突發流量的容量預備
+- → [維運 模組七 突發流量](/devops/operations/07-burst-traffic/)：突發流量的容量預備
 
 ## Backlog
 

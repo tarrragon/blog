@@ -59,7 +59,7 @@ CloudHSM 的核心定位是 *把 cryptographic root of trust 放回客戶手上*
 | AWS / 雲廠持 key？ | 不持（CU credential 客戶獨有）                  | 持（managed key custody）              | 不持（HSM admin 客戶獨有）            | 不持 plaintext key material                  |
 | 整合介面           | PKCS#11 / JCE / OpenSSL                         | AWS SDK / CLI / KMS API                | Key Vault SDK / REST                  | Cloud KMS API                                |
 | Quorum 多人簽核    | 內建（M-of-N）                                  | 透過 IAM policy + organization SCP     | RBAC + Privileged Identity Management | IAM Condition + organization policy          |
-| 運維成本           | 高 — 自管 CU credential / patch / topology      | 低                                     | 中                                    | 低                                           |
+| 維運成本           | 高 — 自管 CU credential / patch / topology      | 低                                     | 中                                    | 低                                           |
 | 合規憑證           | FIPS 140-2 L3 + PCI HSM + Common Criteria       | FIPS 140-2 L3 + PCI DSS                | FIPS 140-2 L3 + Common Criteria       | FIPS 140-2 L3                                |
 | 適合場景           | 金融 / 政府 / 醫療、需要物理隔離 + AWS 不持 key | 一般 AWS-heavy workload、需要 IAM 整合 | Azure-heavy + 合規壓力                | GCP-heavy + 合規壓力                         |
 | 退場成本           | 中 — backup 跨廠不可移植、key 不能 export       | 中                                     | 中                                    | 中                                           |

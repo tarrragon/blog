@@ -117,7 +117,7 @@ PK 設計的**主要價值在安全可預測性**、效能差距在多數場景�
 
 ### 威脅模型：DB 被攻陷
 
-Token 是 capability credential — 持有即授權。如果 DB 直接存 plaintext token、任何能讀取 DB 的人（SQL injection、備份外流、運維 dump 不小心 push 到 GitHub）都能直接拿 token 假冒使用者發 request。
+Token 是 capability credential — 持有即授權。如果 DB 直接存 plaintext token、任何能讀取 DB 的人（SQL injection、備份外流、維運 dump 不小心 push 到 GitHub）都能直接拿 token 假冒使用者發 request。
 
 Sanctum 的做法：
 
@@ -349,4 +349,4 @@ Sanctum 的 `{PK}|{secret}` 是一個**特定情境下的設計取捨**，不是
 
 - [API 認證的三層信任邊界](/work-log/api_auth_trust_boundaries/) — 本文的主篇、Sanctum 在「Layer 1 使用者層」的位置
 - [Shared Secret 安全輪替設計](/work-log/shared_secret_rotation/) — Layer 2 系統間 secret 的輪替議題
-- [mTLS 實際怎麼設定與運維](/work-log/mtls_setup_and_operations/) — Layer 2 進階方案的部署細節
+- [mTLS 實際怎麼設定與維運](/work-log/mtls_setup_and_operations/) — Layer 2 進階方案的部署細節

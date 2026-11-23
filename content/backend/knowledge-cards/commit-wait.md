@@ -9,7 +9,7 @@ Commit wait 的核心概念是「read-write transaction 拿到 commit timestamp 
 
 ## 跟其他概念的關係
 
-Commit wait 出現在 Spanner 系列產品、是 [TrueTime](/backend/knowledge-cards/truetime/) API 跟 [External Consistency](/backend/knowledge-cards/external-consistency/) 之間的橋接機制 — TrueTime 給帶 ε 不確定區間的時間 API、commit wait 是 *用它撐 external consistency 的具體實作*。跟 [Latency Budget](/backend/knowledge-cards/latency-budget/) 互補：commit wait 是無法 scale away 的固定 latency 支出、要當設計初期就寫進預算、不是運維後才補。
+Commit wait 出現在 Spanner 系列產品、是 [TrueTime](/backend/knowledge-cards/truetime/) API 跟 [External Consistency](/backend/knowledge-cards/external-consistency/) 之間的橋接機制 — TrueTime 給帶 ε 不確定區間的時間 API、commit wait 是 *用它撐 external consistency 的具體實作*。跟 [Latency Budget](/backend/knowledge-cards/latency-budget/) 互補：commit wait 是無法 scale away 的固定 latency 支出、要當設計初期就寫進預算、不是維運後才補。
 
 ## 可觀察訊號與例子
 

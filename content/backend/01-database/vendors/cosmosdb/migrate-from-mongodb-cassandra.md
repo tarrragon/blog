@@ -41,7 +41,7 @@ source（MongoDB / Cassandra）與 target（Cosmos DB）的差異按 6 維度盤
 - protocol-compat 路徑 — 最大差異是 operational 與 data topology、paradigm 維持 Low、是 wire-compat 的 drop-in 但有相容 gap。對應 **Type B drop-in（partial）**：driver 不換、但每個 query pattern 要驗證相容性、不是無腦切換。
 - native API 路徑 — paradigm High + application High、是 **Type E paradigm shift**：不只搬資料、要重寫 application 的整個 data access layer。
 
-判讀句：protocol-compat 是「換底層儲存與運維、保留 query 介面」、native API 是「連 query 範式一起換」。多數遷移先走 protocol-compat 把資料與 ops 搬過去、native API 是後續若要拿完整 Cosmos feature（Change Feed、stored procedure 原生支援、SQL API query）才考慮的二次遷移 — 一次到位 native API 的工程複雜度與風險顯著更高。
+判讀句：protocol-compat 是「換底層儲存與維運、保留 query 介面」、native API 是「連 query 範式一起換」。多數遷移先走 protocol-compat 把資料與 ops 搬過去、native API 是後續若要拿完整 Cosmos feature（Change Feed、stored procedure 原生支援、SQL API query）才考慮的二次遷移 — 一次到位 native API 的工程複雜度與風險顯著更高。
 
 ### Cassandra 路徑的專屬差異
 

@@ -6,7 +6,7 @@ weight: 3
 tags: ["backend", "message-queue", "vendor"]
 ---
 
-NATS 是 lightweight high-performance messaging system、承擔三個責任：subject-based routing（hierarchical wildcards）、low-latency messaging（Core NATS、fire-and-forget）、選擇性持久化（JetStream、streams + KV + Object Store）。設計取捨偏向「協議極簡、運維輕、必要時才開持久化」、適合微服務通訊跟 edge 場景。
+NATS 是 lightweight high-performance messaging system、承擔三個責任：subject-based routing（hierarchical wildcards）、low-latency messaging（Core NATS、fire-and-forget）、選擇性持久化（JetStream、streams + KV + Object Store）。設計取捨偏向「協議極簡、維運輕、必要時才開持久化」、適合微服務通訊跟 edge 場景。
 
 對「微服務 messaging、IoT/edge、Request/Reply、需要 messaging + KV 一體」這條路徑、NATS 是輕量首選。本頁先給最短路徑、再展開日常 publish / subscribe 與 subject 設計、最後進階治理（JetStream、supercluster、leaf node）跟排錯。
 

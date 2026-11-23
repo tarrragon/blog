@@ -6,7 +6,7 @@ weight: 43
 tags: ["backend", "message-queue", "case-study", "redis-streams"]
 ---
 
-Arcjet 用 Redis Streams 取代 Kafka 的案例揭露了中小規模場景下「Kafka 的 managed 成本 vs Redis Streams 的運維成本」的具體取捨 — 省下六位數年費的代價是自寫 retention 治理跟監控工具。
+Arcjet 用 Redis Streams 取代 Kafka 的案例揭露了中小規模場景下「Kafka 的 managed 成本 vs Redis Streams 的維運成本」的具體取捨 — 省下六位數年費的代價是自寫 retention 治理跟監控工具。
 
 ## 業務背景
 
@@ -59,7 +59,7 @@ Janitor 的執行頻率根據實際處理速度（~100 msgs/min）設定 — 不
 | Consumer group | 原生支援、offset commit 自動   | 原生支援、但 trim 要手動協調    |
 | 生態工具       | Kafka Connect、Schema Registry | 無（自建）                      |
 | 擴展性         | Partition 水平擴展             | 單 Redis 受限、Cluster 模式複雜 |
-| 運維知識       | Kafka 運維（或交給 managed）   | Redis 運維 + 自建 Janitor 維護  |
+| 維運知識       | Kafka 維運（或交給 managed）   | Redis 維運 + 自建 Janitor 維護  |
 
 ### 適用邊界
 

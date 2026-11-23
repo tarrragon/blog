@@ -154,7 +154,7 @@ redis-cli XPENDING mystream mygroup
 
 ## 不在本頁內的主題
 
-- Redis 本體運維（見 [02 cache 模組 redis vendor](/backend/02-cache-redis/vendors/redis/)）
+- Redis 本體維運（見 [02 cache 模組 redis vendor](/backend/02-cache-redis/vendors/redis/)）
 - 各語言 Redis client 完整 API
 - Redis Pub/Sub 細節（不是 Streams、語意不同）
 

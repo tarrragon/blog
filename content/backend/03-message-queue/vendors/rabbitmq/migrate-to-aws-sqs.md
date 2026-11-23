@@ -6,21 +6,21 @@ weight: 12
 tags: ["backend", "message-queue", "rabbitmq", "aws-sqs", "migration", "managed"]
 ---
 
-> 本文是跨 vendor migration playbook、cross-link 到 [RabbitMQ](/backend/03-message-queue/vendors/rabbitmq/) 跟 [AWS SQS](/backend/03-message-queue/vendors/aws-sqs/)。對照 [Kafka ↔ NATS](/backend/03-message-queue/vendors/kafka/migrate-from-to-nats/) 的 paradigm shift、本篇主導差異維度是 *operational model*：source 跟 target 都是任務隊列、能力大致對得上、但運維責任從「自管 broker 叢集」整批交給 AWS managed 服務。
+> 本文是跨 vendor migration playbook、cross-link 到 [RabbitMQ](/backend/03-message-queue/vendors/rabbitmq/) 跟 [AWS SQS](/backend/03-message-queue/vendors/aws-sqs/)。對照 [Kafka ↔ NATS](/backend/03-message-queue/vendors/kafka/migrate-from-to-nats/) 的 paradigm shift、本篇主導差異維度是 *operational model*：source 跟 target 都是任務隊列、能力大致對得上、但維運責任從「自管 broker 叢集」整批交給 AWS managed 服務。
 
-RabbitMQ → AWS SQS 的核心是把 broker 運維責任轉移給 managed 服務、同時接受 SQS 沒有 exchange routing 這個事實、把路由邏輯收斂回 application 或改用 SNS fan-out。這個遷移不是 protocol drop-in（AMQP client 不能直接連 SQS）、application 端需要改 delivery 控制機制（manual ack → visibility timeout + delete）；但它也不是 paradigm shift（兩端都是 at-least-once 任務隊列、DLQ / 重試 / 解耦的語意一致）。主導差異落在 operational 維度、所以本文走 Type C operational redesign hybrid 結構。
+RabbitMQ → AWS SQS 的核心是把 broker 維運責任轉移給 managed 服務、同時接受 SQS 沒有 exchange routing 這個事實、把路由邏輯收斂回 application 或改用 SNS fan-out。這個遷移不是 protocol drop-in（AMQP client 不能直接連 SQS）、application 端需要改 delivery 控制機制（manual ack → visibility timeout + delete）；但它也不是 paradigm shift（兩端都是 at-least-once 任務隊列、DLQ / 重試 / 解耦的語意一致）。主導差異落在 operational 維度、所以本文走 Type C operational redesign hybrid 結構。
 
 ## 為什麼遷：不想再養 RabbitMQ 叢集
 
-觸發評估 SQS 的最常見壓力是 broker 維運成本、不是功能缺口。自管 RabbitMQ 叢集要承擔的運維責任包含 Erlang cluster 拓樸維護、network partition（腦裂）處理、quorum queue 的 Raft 一致性調校、disk / memory alarm 的容量規劃、版本升級的 rolling restart。這些責任需要至少 0.5-1 FTE 的持續投入、且在 [network partition](/backend/03-message-queue/vendors/rabbitmq/) 這類事故發生時需要熟悉 Erlang runtime 的人即時介入。
+觸發評估 SQS 的最常見壓力是 broker 維運成本、不是功能缺口。自管 RabbitMQ 叢集要承擔的維運責任包含 Erlang cluster 拓樸維護、network partition（腦裂）處理、quorum queue 的 Raft 一致性調校、disk / memory alarm 的容量規劃、版本升級的 rolling restart。這些責任需要至少 0.5-1 FTE 的持續投入、且在 [network partition](/backend/03-message-queue/vendors/rabbitmq/) 這類事故發生時需要熟悉 Erlang runtime 的人即時介入。
 
 SQS 把這整層責任移除。沒有 broker 實例、沒有 cluster 拓樸、沒有 disk / memory watermark、沒有版本升級。換來的代價是 routing 能力消失（SQS 沒有 exchange）、application 要改 delivery 控制機制、以及 AWS 生態綁定。這個交換在三種情境下成立：
 
-第一種是 AWS 生態原生服務。若 producer / consumer 已經跑在 Lambda、ECS、EKS 上、SQS 的 event source mapping 跟 IAM 整合讓 application 不必自管連線池跟認證。RabbitMQ 在 AWS 上要嘛自管 EC2 叢集、要嘛用 Amazon MQ（仍是 broker 模型、運維責任只是部分轉移）、都不如 SQS 的 serverless 整合直接。
+第一種是 AWS 生態原生服務。若 producer / consumer 已經跑在 Lambda、ECS、EKS 上、SQS 的 event source mapping 跟 IAM 整合讓 application 不必自管連線池跟認證。RabbitMQ 在 AWS 上要嘛自管 EC2 叢集、要嘛用 Amazon MQ（仍是 broker 模型、維運責任只是部分轉移）、都不如 SQS 的 serverless 整合直接。
 
 第二種是 routing 邏輯本來就簡單。若 RabbitMQ 的用法是 direct exchange + 少數固定 routing key、或單純 worker pool 消費單一 queue、那 exchange 的靈活性本來就沒被用到、遷到 SQS 不損失能力。Airbnb 的 Dynein 分散式延遲任務系統就是這個形狀：用 SQS at-least-once + DLQ 取代原本受限於單 Redis 的 Resque、每 scheduler instance 達約 1000 QPS、水平擴展（見 [Airbnb Dynein](/backend/03-message-queue/cases/sqs-airbnb-dynein-delayed-jobs/)）。任務排程對「不丟資料」的需求 at-least-once 足夠、不需要 broker 級 routing。
 
-第三種是團隊規模不支撐 broker 專業。小團隊養一套 RabbitMQ 叢集、真正用到的是「可靠的任務隊列 + DLQ」、但要付出整套 Erlang 運維學習曲線。把這層交給 SQS、團隊把精力放回 application 邏輯。
+第三種是團隊規模不支撐 broker 專業。小團隊養一套 RabbitMQ 叢集、真正用到的是「可靠的任務隊列 + DLQ」、但要付出整套 Erlang 維運學習曲線。把這層交給 SQS、團隊把精力放回 application 邏輯。
 
 ## 6 維 diff dimension audit
 
@@ -35,15 +35,15 @@ SQS 把這整層責任移除。沒有 broker 實例、沒有 cluster 拓樸、�
 | Application change     | manual ack / nack、prefetch、AMQP client | visibility timeout + delete、batch、SDK | 中高 |
 | Data topology          | 單叢集 / federation 拓樸                 | region-scoped queue、無拓樸概念         | 低   |
 
-**主導維度是 operational（高）**：遷移的核心價值跟核心風險都在「broker 運維責任整批轉移」。Application change 維度評中高、因為 delivery 控制機制要改、但這是受控的 SDK 層改寫、不是 paradigm 重設計。Components 維度評中、因為 exchange routing 在 SQS 沒有對等物、要靠 SNS fan-out 或多 queue 補回來。其餘三維度低或中。
+**主導維度是 operational（高）**：遷移的核心價值跟核心風險都在「broker 維運責任整批轉移」。Application change 維度評中高、因為 delivery 控制機制要改、但這是受控的 SDK 層改寫、不是 paradigm 重設計。Components 維度評中、因為 exchange routing 在 SQS 沒有對等物、要靠 SNS fan-out 或多 queue 補回來。其餘三維度低或中。
 
-主導維度落在 operational、所以主結構走 Type C：以 operational redesign 對位開頭、phased 執行、故障演練聚焦在「以為對等其實不對等」的運維陷阱。Application change 跟 Components 兩個次高維度不硬塞進主結構、各自抽出獨立段（下面「application 改寫」跟「routing 收斂」兩段）。
+主導維度落在 operational、所以主結構走 Type C：以 operational redesign 對位開頭、phased 執行、故障演練聚焦在「以為對等其實不對等」的維運陷阱。Application change 跟 Components 兩個次高維度不硬塞進主結構、各自抽出獨立段（下面「application 改寫」跟「routing 收斂」兩段）。
 
 ### Operational redesign 對位
 
 Operational 維度差異最大、先逐項對位「原本自己做的事、現在誰做、怎麼做」：
 
-| 運維責任      | RabbitMQ（自己做）                       | SQS（managed / application）            |
+| 維運責任      | RabbitMQ（自己做）                       | SQS（managed / application）            |
 | ------------- | ---------------------------------------- | --------------------------------------- |
 | 高可用        | quorum queue + cluster + partition 處理  | AWS 跨 AZ 自動冗餘、無需配置            |
 | 容量規劃      | disk / memory watermark、queue length 限 | 自動擴展、無實例容量概念                |
@@ -120,7 +120,7 @@ Components 維度的核心是 SQS 沒有 exchange、RabbitMQ 的 routing 能力�
 判讀：
 
 - **Direct exchange + 少數固定 key**：最容易遷。routing 邏輯本來就是「key X 進 queue X」、改成 producer 直接 `send_message` 到對應 queue url。routing 從 broker 收斂進 application、程式碼多幾行 if/else 或 map 查表。
-- **Fanout（一條訊息給多個 downstream）**：用 SNS-to-SQS。SNS topic 當 fan-out 點、每個 downstream 訂閱一個自己的 SQS queue。Twitch EventSub 就是這個形狀（見 [Twitch EventSub](/backend/03-message-queue/cases/sqs-twitch-eventsub-fanout/)）：SNS fan-out 到多個 SQS、各 consumer 獨立消費。這比 RabbitMQ fanout exchange 多一層 SNS、但換來 managed 運維。
+- **Fanout（一條訊息給多個 downstream）**：用 SNS-to-SQS。SNS topic 當 fan-out 點、每個 downstream 訂閱一個自己的 SQS queue。Twitch EventSub 就是這個形狀（見 [Twitch EventSub](/backend/03-message-queue/cases/sqs-twitch-eventsub-fanout/)）：SNS fan-out 到多個 SQS、各 consumer 獨立消費。這比 RabbitMQ fanout exchange 多一層 SNS、但換來 managed 維運。
 - **Topic exchange（複雜層級匹配）**：SNS 的 subscription filter policy 能做 attribute-based 過濾、但表達力不如 AMQP topic 的 `*` / `#` 通配。複雜 topic routing 是「不該遷」的訊號（見下節）。
 
 關鍵取捨：SQS + SNS 把 RabbitMQ 的單一 broker（routing 內建）拆成兩個 managed 服務（SQS 排隊 + SNS 分流）。好處是各自 managed、壞處是 routing 從宣告式 binding 變成要管 SNS topic + subscription + filter policy 的組合、跨服務除錯多一層。
@@ -215,7 +215,7 @@ operational redesign 的 cutover 走 dual-run、按 queue（不是按整個叢�
 | 維度          | RabbitMQ（self-managed EC2）           | AWS SQS（managed）                            |
 | ------------- | -------------------------------------- | --------------------------------------------- |
 | 叢集 baseline | 3 broker（HA）+ EBS                    | 無實例                                        |
-| 運維 FTE      | 0.5-1 FTE                              | ~0.1 FTE（IAM / alarm 配置）                  |
+| 維運 FTE      | 0.5-1 FTE                              | ~0.1 FTE（IAM / alarm 配置）                  |
 | 計費模型      | EC2 instance hour + EBS + 流量         | per-request（每百萬 request）+ 跨 region 流量 |
 | 吞吐上限      | 受 broker 規格 / 網路限制              | standard 近乎無限、FIFO 3000 msg/sec          |
 | Ordering      | 單 queue 有序、consistent hash per-key | standard 無、FIFO per-group                   |
@@ -223,7 +223,7 @@ operational redesign 的 cutover 走 dual-run、按 queue（不是按整個叢�
 | 訊息大小上限  | 受 frame_max / memory（MB 級可行）     | 256KB（超過用 S3 claim-check）                |
 | 監控延遲      | 即時（Management UI）                  | CloudWatch approximate、分鐘級                |
 
-**判讀**：低到中吞吐、簡單 routing、AWS 生態的 task queue、SQS 在運維成本上顯著划算（FTE 從 0.5-1 降到約 0.1）。高吞吐 + 嚴格 ordering、或重度 exchange routing 的 workload、SQS 的 per-request 成本跟能力限制可能讓 RabbitMQ（或 Kafka）反而合適。SQS 的 cost 是用量驅動、流量大時 per-request 費用要納入評估、對照 [0.6 成本取捨](/backend/00-service-selection/cost-risk-tradeoffs/)。
+**判讀**：低到中吞吐、簡單 routing、AWS 生態的 task queue、SQS 在維運成本上顯著划算（FTE 從 0.5-1 降到約 0.1）。高吞吐 + 嚴格 ordering、或重度 exchange routing 的 workload、SQS 的 per-request 成本跟能力限制可能讓 RabbitMQ（或 Kafka）反而合適。SQS 的 cost 是用量驅動、流量大時 per-request 費用要納入評估、對照 [0.6 成本取捨](/backend/00-service-selection/cost-risk-tradeoffs/)。
 
 ## 整合 / 下一步
 
@@ -242,7 +242,7 @@ operational redesign 的 cutover 走 dual-run、按 queue（不是按整個叢�
 
 ### 跟 RabbitMQ → Kafka 的對照
 
-RabbitMQ 還有另一條遷移路徑是 [RabbitMQ → Kafka](/backend/03-message-queue/vendors/kafka/)（work queue → event streaming）。兩條路的差異：遷 SQS 是 *交出運維、能力對等簡化*（仍是 task queue）；遷 Kafka 是 *換 paradigm、要 replay / 高吞吐 streaming*（從任務隊列變 event log）。選哪條看的是「想擺脫運維」還是「需要 streaming 能力」、不是同一個決策。
+RabbitMQ 還有另一條遷移路徑是 [RabbitMQ → Kafka](/backend/03-message-queue/vendors/kafka/)（work queue → event streaming）。兩條路的差異：遷 SQS 是 *交出維運、能力對等簡化*（仍是 task queue）；遷 Kafka 是 *換 paradigm、要 replay / 高吞吐 streaming*（從任務隊列變 event log）。選哪條看的是「想擺脫維運」還是「需要 streaming 能力」、不是同一個決策。
 
 ### 跟前面 migration playbook 的結構對照
 
@@ -251,7 +251,7 @@ RabbitMQ 還有另一條遷移路徑是 [RabbitMQ → Kafka](/backend/03-message
 | Kafka ↔ NATS           | Paradigm（高）    | partial + 混合            |
 | RabbitMQ → SQS（本篇） | Operational（高） | Type C operational hybrid |
 
-**結論**：兩篇都是 message queue 跨 vendor、但主導差異維度不同 — Kafka ↔ NATS 卡在 paradigm（不同抽象層）、RabbitMQ → SQS 卡在 operational（運維責任轉移）。結構由主導維度決定、不是 universal phased playbook。
+**結論**：兩篇都是 message queue 跨 vendor、但主導差異維度不同 — Kafka ↔ NATS 卡在 paradigm（不同抽象層）、RabbitMQ → SQS 卡在 operational（維運責任轉移）。結構由主導維度決定、不是 universal phased playbook。
 
 ## 相關連結
 

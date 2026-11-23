@@ -72,7 +72,7 @@ KMS 是 AWS 上的 *預設選擇*、CloudHSM 是合規 / 自管要求才上的 *
 
 ## 進階主題
 
-**KMS Custom Key Store + CloudHSM 整合**：Custom Key Store 把 KMS 的 *控制面*（API、Key Policy、CloudTrail、IAM 整合）保留、但 *key material 存在自己的 CloudHSM cluster*。組織需要 FIPS 140-2 Level 3 single-tenant 但又不想放棄 KMS 的 service 整合（S3 SSE-KMS / EBS encryption）時用。代價是 CloudHSM cluster 的運維成本（cluster HA、user 管理、backup）。
+**KMS Custom Key Store + CloudHSM 整合**：Custom Key Store 把 KMS 的 *控制面*（API、Key Policy、CloudTrail、IAM 整合）保留、但 *key material 存在自己的 CloudHSM cluster*。組織需要 FIPS 140-2 Level 3 single-tenant 但又不想放棄 KMS 的 service 整合（S3 SSE-KMS / EBS encryption）時用。代價是 CloudHSM cluster 的維運成本（cluster HA、user 管理、backup）。
 
 **External Key Store (XKS)**：更激進的形態 — key material 完全在 AWS 之外（on-prem HSM 或第三方 HSM）、AWS 透過 XKS proxy 呼叫外部 HSM 做 cryptographic operation。用於 *資料主權* 場景（金融 / 政府 / 跨境合規要求 key 不出組織邊界）、代價是 latency 跟 availability 完全綁外部 HSM、AWS service 整合面要算清楚。
 
@@ -113,7 +113,7 @@ KMS 是 AWS 上的 *預設選擇*、CloudHSM 是合規 / 自管要求才上的 *
 - KMS 完整 API reference 跟 SDK 範例
 - 各 AWS service（S3 SSE-KMS、EBS encryption、RDS encryption、DynamoDB encryption）的詳盡設定步驟
 - 跟 AWS Organizations / SCPs 的 cross-account KMS sharing 完整治理流程
-- CloudHSM cluster 的完整運維（高可用、user 管理、backup）— 看 [CloudHSM](/backend/07-security-data-protection/vendors/cloudhsm/)
+- CloudHSM cluster 的完整維運（高可用、user 管理、backup）— 看 [CloudHSM](/backend/07-security-data-protection/vendors/cloudhsm/)
 - 各種 cryptographic algorithm 的數學原理跟選型細節
 
 ## 案例回寫

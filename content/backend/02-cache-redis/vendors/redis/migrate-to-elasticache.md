@@ -1,20 +1,20 @@
 ---
-title: "自管 Redis / Valkey → AWS ElastiCache：engine 不變、變的是誰運維"
+title: "自管 Redis / Valkey → AWS ElastiCache：engine 不變、變的是誰維運"
 date: 2026-06-16
-description: "自管 Redis/Valkey 遷到 ElastiCache 的特殊之處：engine 沒變（Redis 還是 Redis）、data model 沒變、API 沒變——變的只有運維責任歸屬。本文跑 6 維 diff audit 對映 Type C operational hybrid、展開 VPC/安全/cutover 的實際工作、以及『把 failover/patching 交出去、同時交出哪些控制權』的責任邊界，5 個 production 踩坑"
+description: "自管 Redis/Valkey 遷到 ElastiCache 的特殊之處：engine 沒變（Redis 還是 Redis）、data model 沒變、API 沒變——變的只有維運責任歸屬。本文跑 6 維 diff audit 對映 Type C operational hybrid、展開 VPC/安全/cutover 的實際工作、以及『把 failover/patching 交出去、同時交出哪些控制權』的責任邊界，5 個 production 踩坑"
 weight: 22
 tags: ["backend", "cache", "redis", "aws-elasticache", "migration", "managed", "type-c"]
 ---
 
 > 本文是跨 vendor migration playbook、cross-link [Redis](/backend/02-cache-redis/vendors/redis/) / [Valkey](/backend/02-cache-redis/vendors/valkey/)（source、自管）跟 [AWS ElastiCache](/backend/02-cache-redis/vendors/aws-elasticache/)（target、managed）。跑 [migration-playbook-methodology 6 維 audit](/posts/migration-playbook-methodology/) 對映 **Operational model = High（自管 → managed）、其他 Low → Type C operational hybrid**。ElastiCache 是 managed SaaS、AWS 操作依官方文件（未本機驗證、引數以官方為準）、最後檢查日 2026-06-16。
 
-## engine 不變、變的是誰運維
+## engine 不變、變的是誰維運
 
 多數 vendor 遷移會換掉某個本質的東西——協定、data model、paradigm。自管 Redis/Valkey → ElastiCache 一個都沒換：ElastiCache 跑的就是 Redis 或 Valkey engine，同樣的 RESP 協定、同樣的 data types、同樣的 client library、同樣的命令。application code 幾乎不用動。
 
-那遷的是什麼？**運維責任的歸屬**。自管時要自己部署、自己打 patch、自己設 replication、自己半夜處理 failover。ElastiCache 把這些接走——AWS 做 failover、patching、snapshot、跨 AZ 複製。這個遷移的全部工作量集中在「把運維交出去」這件事上：網路（VPC）、安全（IAM / Security Group）、cutover 的資料連續性，以及想清楚**交出運維的同時、交出了哪些控制權**（不再能 SSH 進機器、不能改任意 config、parameter group 限定可調項）。
+那遷的是什麼？**維運責任的歸屬**。自管時要自己部署、自己打 patch、自己設 replication、自己半夜處理 failover。ElastiCache 把這些接走——AWS 做 failover、patching、snapshot、跨 AZ 複製。這個遷移的全部工作量集中在「把維運交出去」這件事上：網路（VPC）、安全（IAM / Security Group）、cutover 的資料連續性，以及想清楚**交出維運的同時、交出了哪些控制權**（不再能 SSH 進機器、不能改任意 config、parameter group 限定可調項）。
 
-這對映 [migration 方法論](/posts/migration-playbook-methodology/) 的 Type C operational hybrid——operational model 是唯一的 High 維度，其他全 Low。本文展開這個「engine 不變、運維轉移」遷移的實際工作與責任邊界。
+這對映 [migration 方法論](/posts/migration-playbook-methodology/) 的 Type C operational hybrid——operational model 是唯一的 High 維度，其他全 Low。本文展開這個「engine 不變、維運轉移」遷移的實際工作與責任邊界。
 
 ## 6 維 diff dimension audit
 
@@ -31,7 +31,7 @@ tags: ["backend", "cache", "redis", "aws-elasticache", "migration", "managed", "
 
 ## operational audit：cutover 前要盤點的
 
-ElastiCache 把運維接走，但也劃下新的邊界。cutover 前必盤：
+ElastiCache 把維運接走，但也劃下新的邊界。cutover 前必盤：
 
 | 面向         | 自管時的負責項           | ElastiCache 後                                      |
 | ------------ | ------------------------ | --------------------------------------------------- |
@@ -127,32 +127,32 @@ ElastiCache 把運維接走，但也劃下新的邊界。cutover 前必盤：
 
 **徵兆**：遷到 ElastiCache 後仍然 OOM、cache stampede、熱 key 打爆單 shard。
 
-**根因**：ElastiCache 接走的是運維（failover/patch/snapshot），不是 cache 使用方式的問題。記憶體淘汰、stampede、熱 key、key 設計仍是 application 端的責任——managed 不等於 hands-off。
+**根因**：ElastiCache 接走的是維運（failover/patch/snapshot），不是 cache 使用方式的問題。記憶體淘汰、stampede、熱 key、key 設計仍是 application 端的責任——managed 不等於 hands-off。
 
 **修法**：
 
 1. 記憶體 / eviction 調校仍要做（透過 parameter group 設 maxmemory-policy），見 [記憶體調校](/backend/02-cache-redis/vendors/redis/memory-eviction-tuning/)
 2. stampede / 熱 key 的 application 端防護（jitter / [singleflight](/backend/knowledge-cards/singleflight/) / 兩層 cache）照舊
 3. 釐清 managed 的責任邊界——左欄 AWS 管、右欄 application 端管，見 [責任邊界 deep article](/backend/02-cache-redis/vendors/aws-elasticache/managed-responsibility-boundary/)
-4. 遷 managed 是減運維、不是免設計
+4. 遷 managed 是減維運、不是免設計
 
 ## Capacity / cost 對照
 
 | 維度          | 自管 Redis / Valkey             | ElastiCache（managed）              |
 | ------------- | ------------------------------- | ----------------------------------- |
 | engine / API  | 同（Redis / Valkey）            | 同（Redis / Valkey engine）         |
-| 運維責任      | 全部自己負責                    | failover / patch / snapshot 交 AWS  |
+| 維運責任      | 全部自己負責                    | failover / patch / snapshot 交 AWS  |
 | config 自由度 | 任意 redis.conf                 | parameter group 開放項（部分鎖死）  |
 | failover      | 自設 Sentinel / Cluster         | Multi-AZ 自動（client 要會重連）    |
-| 成本          | 機器 + 人力運維                 | node 費 + managed premium（省人力） |
+| 成本          | 機器 + 人力維運                 | node 費 + managed premium（省人力） |
 | 控制權        | 完全                            | 受 AWS 邊界限制                     |
-| 適合          | 要極致控制 / 跨雲 / 特殊 config | AWS 生態 / 要減運維 / 可預測 SLA    |
+| 適合          | 要極致控制 / 跨雲 / 特殊 config | AWS 生態 / 要減維運 / 可預測 SLA    |
 
-**判讀**：在 AWS 生態、要把運維交出去、能接受 config 自由度收窄 → 遷 ElastiCache（engine 不變、Type C 低風險）；要極致控制 / 跨雲 / 依賴特殊 config → 留自管。engine 選 Valkey 省約 20%。
+**判讀**：在 AWS 生態、要把維運交出去、能接受 config 自由度收窄 → 遷 ElastiCache（engine 不變、Type C 低風險）；要極致控制 / 跨雲 / 依賴特殊 config → 留自管。engine 選 Valkey 省約 20%。
 
 ## 整合 / 下一步
 
-self-managed → ElastiCache 是運維轉移，它跟 managed 邊界與 engine 調校交織：
+self-managed → ElastiCache 是維運轉移，它跟 managed 邊界與 engine 調校交織：
 
 - **跟 [ElastiCache 責任邊界 deep article](/backend/02-cache-redis/vendors/aws-elasticache/managed-responsibility-boundary/)**：遷過去後哪些 AWS 管、哪些仍 application 端管，是這個遷移的核心後果。
 - **跟 [Redis Sentinel failover](/backend/02-cache-redis/vendors/redis/sentinel-ha-failover/)**：自管 failover（Sentinel）→ managed failover（Multi-AZ），client 重連邏輯要重驗。

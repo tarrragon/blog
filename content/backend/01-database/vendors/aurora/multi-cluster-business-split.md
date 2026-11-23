@@ -1,14 +1,14 @@
 ---
 title: "Aurora 多 cluster 按業務切分：微服務私有 store、blast radius 隔離與 fleet 治理"
 date: 2026-06-02
-description: "把所有服務塞進一個大 Aurora cluster 會讓單一服務的查詢拖垮全部；本文展開按業務 / 微服務切 cluster 的判斷維度、blast radius 隔離、共用 vs 分離的成本與運維 surface 權衡，以及多 cluster fleet 的治理一致性，含 Netflix Aurora consolidation 對照"
+description: "把所有服務塞進一個大 Aurora cluster 會讓單一服務的查詢拖垮全部；本文展開按業務 / 微服務切 cluster 的判斷維度、blast radius 隔離、共用 vs 分離的成本與維運 surface 權衡，以及多 cluster fleet 的治理一致性，含 Netflix Aurora consolidation 對照"
 weight: 32
 tags: ["backend", "database", "aurora", "multi-cluster", "blast-radius", "fleet", "deep-article"]
 ---
 
 這篇整理 Aurora 按業務切成多個 cluster 時的判斷：哪些業務該各自獨立 cluster、哪些可以共用、切分後多個 cluster 組成的 fleet 怎麼維持治理一致。Aurora 的服務定位與適用場景在 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)。
 
-所有服務的資料放在同一個大 Aurora cluster 時，平時運維最省事，而不相關的業務之間沒有隔離：報表服務跑一個沒索引的聚合 query、佔滿 connection 與 IOPS，結帳服務就跟著變慢、整個平台一起卡。那個 query 只是觸發點，成因是不相關的業務共用同一個 cluster。
+所有服務的資料放在同一個大 Aurora cluster 時，平時維運最省事，而不相關的業務之間沒有隔離：報表服務跑一個沒索引的聚合 query、佔滿 connection 與 IOPS，結帳服務就跟著變慢、整個平台一起卡。那個 query 只是觸發點，成因是不相關的業務共用同一個 cluster。
 
 ## 共用大 cluster 的根本問題：blast radius
 
@@ -23,7 +23,7 @@ tags: ["backend", "database", "aurora", "multi-cluster", "blast-radius", "fleet"
 
 ## 切分判斷維度
 
-不是「每個服務都該有自己的 cluster」（那會走向另一個極端：cluster 數爆炸、運維 surface 失控）。切分依以下維度判斷：
+不是「每個服務都該有自己的 cluster」（那會走向另一個極端：cluster 數爆炸、維運 surface 失控）。切分依以下維度判斷：
 
 | 維度            | 傾向獨立 cluster                 | 可共用 cluster               |
 | --------------- | -------------------------------- | ---------------------------- |
@@ -33,7 +33,7 @@ tags: ["backend", "database", "aurora", "multi-cluster", "blast-radius", "fleet"
 | schema 變更頻率 | 高頻 migration、不想牽制別人     | 低頻、變更少                 |
 | 合規邊界        | 資料需獨立隔離（PCI / 個資分艙） | 無特殊合規隔離需求           |
 
-Netflix 是這個判斷的 case anchor：Netflix 把過往多套不同 *種類* 的關聯式 DB（PostgreSQL / MySQL / Oracle）整合到 Aurora、效能提升最高 75%、成本下降 28%；但整合的是「DB 種類 / 運維 surface」，*不是* 把所有資料塞進一個 cluster——Netflix 的微服務各自擁有自己的 Aurora cluster、彼此不共用。兩件事同時成立：減少 DB *技術種類* 降低運維知識負擔、同時維持 *per-service cluster* 隔離 blast radius。
+Netflix 是這個判斷的 case anchor：Netflix 把過往多套不同 *種類* 的關聯式 DB（PostgreSQL / MySQL / Oracle）整合到 Aurora、效能提升最高 75%、成本下降 28%；但整合的是「DB 種類 / 維運 surface」，*不是* 把所有資料塞進一個 cluster——Netflix 的微服務各自擁有自己的 Aurora cluster、彼此不共用。兩件事同時成立：減少 DB *技術種類* 降低維運知識負擔、同時維持 *per-service cluster* 隔離 blast radius。
 
 > **Scope warning**：Netflix 的「+75% 效能 / -28% 成本」是跨多 workload 的最大改善幅度、非每個 workload 都 +75%（case 原文已標明）；且 Netflix 數據層遠不止 Aurora（還有 Cassandra / EVCache / Iceberg），Aurora 承擔的是需要 ACID 的 OLTP。引用時不可外推成「整合到 Aurora 就 +75%」。
 
@@ -42,13 +42,13 @@ Netflix 是這個判斷的 case anchor：Netflix 把過往多套不同 *種類* 
 大規模平台的 cluster 切分沒有單一正解，光譜兩端各有代表：
 
 - **per-service 私有 store（Netflix 式）**：每個微服務一個 Aurora cluster、容量規劃變成「每個服務各自規劃」、跨服務 contention 變成 *網路議題* 而非 *DB lock 議題*
-- **高度 consolidation**：少數大 cluster 承載多業務、運維實例少、但 blast radius 大
+- **高度 consolidation**：少數大 cluster 承載多業務、維運實例少、但 blast radius 大
 
 實務多落在中間：核心 / 高關鍵 / 合規敏感業務各自獨立 cluster，低關鍵性的內部服務可數個共用一個 cluster。判斷的是「這群業務能不能接受共命運」。
 
 ## Fleet 治理：切分後的一致性
 
-切成多 cluster 後，運維 surface 從「一個 cluster」變成「N 個 cluster」。若沒有治理一致性，N 個 cluster 各自飄移會比一個大 cluster 更難維護。fleet 治理要把以下標準化：
+切成多 cluster 後，維運 surface 從「一個 cluster」變成「N 個 cluster」。若沒有治理一致性，N 個 cluster 各自飄移會比一個大 cluster 更難維護。fleet 治理要把以下標準化：
 
 - **配置一致**：engine 版本、parameter group、backup 策略、加密設定用 IaC 統一管理，避免逐個手調漂移
 - **監控一致**：每個 cluster 同一套 CloudWatch alarm 基線（connection / replication lag / CPU / IOPS），不是只盯總量
@@ -65,7 +65,7 @@ production 常見的踩雷：
 
 分析 / 報表 workload 跟核心交易共用 cluster、一個重 query 佔滿資源、交易延遲飆高。修法：分析類 workload 切到獨立 cluster 或獨立 read replica；核心交易的 cluster 不混入不可控的分析查詢。
 
-#### cluster 切太細、運維 surface 爆炸
+#### cluster 切太細、維運 surface 爆炸
 
 矯枉過正、每個小服務都獨立 cluster、結果幾十個 cluster 各自飄移、升級與監控成本失控。修法：低關鍵性、負載相近、可共命運的服務合併共用 cluster；切分以「blast radius 需求」為準，不是「每個服務都要」。
 

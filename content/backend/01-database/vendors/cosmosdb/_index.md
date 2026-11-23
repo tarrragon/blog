@@ -232,7 +232,7 @@ Migration playbook：
 
 ## 後續擴充（仍待補）
 
-- Hierarchical partition key 與 partition split / merge 運維
+- Hierarchical partition key 與 partition split / merge 維運
 - Autoscale vs serverless 的成本切換決策樹
 - Hands-on lab 入口（對齊 PostgreSQL / MySQL / SQLite hands-on 形態）
 - Backup / PITR 與 continuous backup tier 選擇

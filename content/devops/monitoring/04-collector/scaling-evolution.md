@@ -198,7 +198,7 @@ Collector 選擇聚合摘要——捨棄逐筆細節，換取準確計數。降�
 
 ## PostgreSQL Backend（分析觸發）
 
-PostgreSQL 是獨立的資料庫 server，提供多連線並行寫入、進階索引（GIN for JSONB、partial index）和完整的 SQL 分析能力。切換到 PostgreSQL 意味著 collector 從「零依賴單一 binary」變成「binary + 外部 DB」，運維複雜度上升。
+PostgreSQL 是獨立的資料庫 server，提供多連線並行寫入、進階索引（GIN for JSONB、partial index）和完整的 SQL 分析能力。切換到 PostgreSQL 意味著 collector 從「零依賴單一 binary」變成「binary + 外部 DB」，維運複雜度上升。
 
 ### 觸發條件
 
@@ -251,7 +251,7 @@ JSONL 匯出也是備份和遷移的中介格式 — SQLite 損壞時從 JSONL �
 
 **切換是 config change**。Storage interface 確保切換 backend 時 collector 的其他邏輯（ingestion、query API、rule engine、dashboard）不需要改動。切換的成本是資料遷移，不是程式碼重寫。
 
-**SQLite 是安全的起點**。多數開源使用者會停留在 SQLite backend — 單日萬筆以下、索引查詢毫秒級、零依賴部署。只有明確的效能瓶頸才值得引入外部 DB 的運維成本。
+**SQLite 是安全的起點**。多數開源使用者會停留在 SQLite backend — 單日萬筆以下、索引查詢毫秒級、零依賴部署。只有明確的效能瓶頸才值得引入外部 DB 的維運成本。
 
 ## 下一步路由
 

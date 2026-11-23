@@ -220,7 +220,7 @@ Leaf node 是輕量 NATS server、跑在邊緣（工廠、店面、IoT gateway�
 
 [MachineMetrics](/backend/03-message-queue/cases/nats-machinemetrics-edge-to-cloud/) 是 Leaf node 邊緣到雲端的完整案例：跨數百客戶廠區、數千機台、單機最高 1000Hz 採樣、工廠網路斷斷續續、Kinesis 等 cloud-only 工具無法跑在資源受限 edge。MachineMetrics 用 Leaf node 做 hub-and-spoke、edge 端用 JetStream 做本地持久化抵抗斷線。這個案例揭露的判讀是：broker 的功能集合（messaging + 本地持久化 + KV + Object Store + auth）決定它能不能取代邊緣的多套工具。
 
-[i-flow](/backend/03-message-queue/cases/nats-iflow-ot-it-integration/) 是多工廠 leaf node 拓樸的另一證據：每日 4 億筆 data operation、200+ OT/IT connector、用 leaf node hub-and-spoke 把多工廠接到 central、而不是每工廠自管一套 cluster。判讀：多工廠場景的運維成本由「每個邊緣點是不是要獨立維運一套 cluster」決定、leaf node 把邊緣端壓到單一 server。
+[i-flow](/backend/03-message-queue/cases/nats-iflow-ot-it-integration/) 是多工廠 leaf node 拓樸的另一證據：每日 4 億筆 data operation、200+ OT/IT connector、用 leaf node hub-and-spoke 把多工廠接到 central、而不是每工廠自管一套 cluster。判讀：多工廠場景的維運成本由「每個邊緣點是不是要獨立維運一套 cluster」決定、leaf node 把邊緣端壓到單一 server。
 
 ## Subject-based ACL 與多租戶
 
@@ -323,13 +323,13 @@ JetStream 的配置在不同規模下適用性不同、超出範圍要換拓樸�
 | ------------------------------------ | ------------------------------------ | ------------------------------------------------------- |
 | 單區、中等吞吐、需要 HA              | 單 Cluster R3                        | 單區頻寬 / 節點數撐不住 → 加節點 reshard 或拆 stream    |
 | 跨 region / 跨雲、訂閱者分散各區     | Supercluster（多 Cluster + gateway） | 需要邊緣本地持久化 → 疊加 Leaf node                     |
-| 大量邊緣點、網路不穩、邊緣要本地能力 | Leaf node hub-and-spoke              | 邊緣點 > 數百、每點要獨立運維 → 評估 managed（Synadia） |
+| 大量邊緣點、網路不穩、邊緣要本地能力 | Leaf node hub-and-spoke              | 邊緣點 > 數百、每點要獨立維運 → 評估 managed（Synadia） |
 
-**單 Cluster R3** 是多數中等規模服務的起點：單區內高可用、JetStream Raft 處理節點故障、運維只有一套 cluster。撞到天花板的訊號是單區頻寬或單節點 disk / CPU 到上限、此時先評估加節點重分配或把熱 stream 拆出去、而不是急著上 supercluster。
+**單 Cluster R3** 是多數中等規模服務的起點：單區內高可用、JetStream Raft 處理節點故障、維運只有一套 cluster。撞到天花板的訊號是單區頻寬或單節點 disk / CPU 到上限、此時先評估加節點重分配或把熱 stream 拆出去、而不是急著上 supercluster。
 
-**Supercluster** 在訂閱者地理分散、或要求單區整個掛掉仍能服務時才值得引入。它的成本是跨區 gateway 的運維複雜度與跨區頻寬、不該為了「以後可能要跨區」提前鋪。Form3 的判讀是硬 SLA（500ms、region 全掛仍可用）逼出來的、不是預設架構。
+**Supercluster** 在訂閱者地理分散、或要求單區整個掛掉仍能服務時才值得引入。它的成本是跨區 gateway 的維運複雜度與跨區頻寬、不該為了「以後可能要跨區」提前鋪。Form3 的判讀是硬 SLA（500ms、region 全掛仍可用）逼出來的、不是預設架構。
 
-**Leaf node hub-and-spoke** 在邊緣點多、邊緣網路不穩、邊緣要本地持久化 / KV / 計算能力時適用。當邊緣點數量大到每點獨立運維成本不可接受、評估走 managed NATS（Synadia Cloud）把運維外包、而不是自建更大的 hub。
+**Leaf node hub-and-spoke** 在邊緣點多、邊緣網路不穩、邊緣要本地持久化 / KV / 計算能力時適用。當邊緣點數量大到每點獨立維運成本不可接受、評估走 managed NATS（Synadia Cloud）把維運外包、而不是自建更大的 hub。
 
 ## 整合與下一步
 
@@ -345,7 +345,7 @@ JetStream 的配置在不同規模下適用性不同、超出範圍要換拓樸�
 
 - [Form3](/backend/03-message-queue/cases/nats-form3-multi-cloud-payments/)——Supercluster + Leaf node 跨雲低延遲支付、硬 SLA 驅動拓樸
 - [MachineMetrics](/backend/03-message-queue/cases/nats-machinemetrics-edge-to-cloud/)——Leaf node + edge JetStream + KV + Object Store + 多租戶 auth 的完整邊緣案例
-- [i-flow](/backend/03-message-queue/cases/nats-iflow-ot-it-integration/)——多工廠 leaf node hub-and-spoke、運維成本驅動拓樸選型
+- [i-flow](/backend/03-message-queue/cases/nats-iflow-ot-it-integration/)——多工廠 leaf node hub-and-spoke、維運成本驅動拓樸選型
 
 ### 後續可深入的議題
 

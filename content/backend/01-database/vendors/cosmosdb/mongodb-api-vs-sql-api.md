@@ -64,7 +64,7 @@ Cosmos DB 的差異化價值不是「比 Atlas 更會跑 MongoDB」、是 *單�
 - GCP：Firestore（document）+ Bigtable（KV）+ Spanner（SQL）— 各 use case 一個產品
 - Azure Cosmos DB：5 個 API 在 *同一個服務* 內、partition + RU + region 治理共用
 
-對 selection 的意義：若團隊預期同一系統會用 document + KV + graph 混合、Cosmos DB 的 multi-model 是 *運維單一服務* 的 unique value、不是只看「MongoDB 替代品」就能 ROI 評估。但 anti-pattern 也明確：*若團隊只用 MongoDB API、不會用其他 4 個 API*、multi-model 差異化價值對該團隊 *不成立*、不該變成 selection 理由。
+對 selection 的意義：若團隊預期同一系統會用 document + KV + graph 混合、Cosmos DB 的 multi-model 是 *維運單一服務* 的 unique value、不是只看「MongoDB 替代品」就能 ROI 評估。但 anti-pattern 也明確：*若團隊只用 MongoDB API、不會用其他 4 個 API*、multi-model 差異化價值對該團隊 *不成立*、不該變成 selection 理由。
 
 判讀時要把 multi-model 當「條件性價值」、不是「普遍優勢」 — 條件是「現在或可預見未來會用到第二個 API」。Microsoft 365 case 策略段直接揭露「Multi-model 是 Cosmos DB 的差異化價值」、但這個價值對「只用 MongoDB API」的團隊不成立、不能套到所有讀者。
 

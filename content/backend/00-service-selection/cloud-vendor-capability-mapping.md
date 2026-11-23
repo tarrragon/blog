@@ -156,8 +156,8 @@ AWS SQS + Lambda 整合非常成熟、有 native trigger；GCP Pub/Sub + Cloud F
 
 - [0.14 企業選型案例圖譜](/backend/00-service-selection/enterprise-selection-case-atlas/) — 0.14 收錄不同產業、不同規模階段企業的雲端選型決策；對照本章「跨雲遷移的判讀重點」段：合規、計價、IAM 整合是三家雲決策的主要分歧軸。
 - [Zomato：TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 把 SQL 介面（TiDB）換成 KV 介面（DynamoDB）、用一致性語意差異換取 4 倍吞吐 + 50% 成本；對照本章「對應 ≠ 等價」段中的一致性模型差異子段。
-- [Netflix：Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 案例是 AWS 內 DB 種類整併（多 RDB → Aurora），可對照本章「對應 ≠ 等價」段中的計價模型與整合成熟度差異。雖然不涉及跨雲，但在同一家雲廠商內整併服務、跟跨雲整併共用同一條決策邏輯：權衡 vendor lock-in 代價 vs 運維碎片化代價。
-- [Tradeshift：self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) — Tradeshift 從自管 K8s control plane 遷到 EKS managed control plane、運維責任邊界從「整套 cluster」收斂到「workload + worker node」。對照本章「容器執行平台」對照行：managed 程度是同一能力分類下的主要分歧軸。
+- [Netflix：Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 案例是 AWS 內 DB 種類整併（多 RDB → Aurora），可對照本章「對應 ≠ 等價」段中的計價模型與整合成熟度差異。雖然不涉及跨雲，但在同一家雲廠商內整併服務、跟跨雲整併共用同一條決策邏輯：權衡 vendor lock-in 代價 vs 維運碎片化代價。
+- [Tradeshift：self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) — Tradeshift 從自管 K8s control plane 遷到 EKS managed control plane、維運責任邊界從「整套 cluster」收斂到「workload + worker node」。對照本章「容器執行平台」對照行：managed 程度是同一能力分類下的主要分歧軸。
 
 這些案例回答的是不同問題、不是同一個問題的不同切面。對照表本身只回答「叫什麼名字」；Zomato / Tradeshift 補「換掉名字後實際差多少」（介面 / 計價 / 一致性差異）；Netflix Aurora 補「同一雲內怎麼收斂」；0.14 補「真實企業在什麼壓力下選什麼」。讀者按手邊的問題進入對應案例、不需要也不適合串成同一條 narrative。
 
@@ -165,7 +165,7 @@ AWS SQS + Lambda 整合非常成熟、有 native trigger；GCP Pub/Sub + Cloud F
 
 1. 與 [0.1 後端服務能力地圖](/backend/00-service-selection/service-capability-map/) 的交接：先確認能力分類，再用本章找 vendor 對應。
 2. 與 [0.6 成本、風險與選型取捨](/backend/00-service-selection/cost-risk-tradeoffs/) 的交接：cost model 是 vendor 選型的關鍵維度。
-3. 與各模組的 `vendors/` 目錄的交接：對照表只給名稱、deep article 給配置與運維。
+3. 與各模組的 `vendors/` 目錄的交接：對照表只給名稱、deep article 給配置與維運。
 4. 與 [01 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/) 的交接：跨 vendor 遷移的具體流程。
 
 ## 下一步路由

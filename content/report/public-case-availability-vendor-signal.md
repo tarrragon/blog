@@ -13,7 +13,7 @@ weight: 129
 - 社群活躍度（用戶數 + 用戶寫 blog 文化）
 - Vendor 自身的 customer success / DevRel 投入
 - Feature 成熟度（新 feature 公開 case 通常稀薄）
-- 議題公開度（內部運維議題公司不常寫、incident / migration 容易寫）
+- 議題公開度（內部維運議題公司不常寫、incident / migration 容易寫）
 
 選型時、公開 case 量值得作為信號之一、但要跟「該 vendor 是否仍積極開發」「文檔品質」「社群 issue 回應速度」等其他信號合併判讀。
 

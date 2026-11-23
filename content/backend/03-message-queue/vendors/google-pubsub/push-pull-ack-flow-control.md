@@ -130,7 +130,7 @@ gcloud pubsub subscriptions create orders-worker \
 
 ## Capacity / cost 邊界
 
-Pub/Sub 的容量判讀（managed、無 broker 運維）：
+Pub/Sub 的容量判讀（managed、無 broker 維運）：
 
 | 訊號                                             | 健康區間               | 警戒與動作                                                |
 | ------------------------------------------------ | ---------------------- | --------------------------------------------------------- |

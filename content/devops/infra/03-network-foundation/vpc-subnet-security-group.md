@@ -83,7 +83,7 @@ resource "aws_subnet" "private" {
 
 `cidrsubnet` 函式自動切分子網段，避免手動計算 CIDR。第二個參數 `4` 表示在 `/16` 基礎上加 4 bit 得到 `/20`，第三個參數是序號。public 與 private 各佔不同序號區間，保證不重疊。
 
-對外入口怎麼把流量分到跨可用區的 private 後端，是 運維層負載平衡的範圍。這裡只要確保 subnet 的地圖在多 AZ 下對稱。
+對外入口怎麼把流量分到跨可用區的 private 後端，是 維運層負載平衡的範圍。這裡只要確保 subnet 的地圖在多 AZ 下對稱。
 
 ## route table 與 NAT：流量的進出路徑
 
@@ -153,7 +153,7 @@ resource "aws_vpc_endpoint" "s3" {
 }
 ```
 
-NAT 的數量取捨與出站成本的更完整討論在 [運維 模組八：成本管理](/devops/operations/08-cost-management/)。route table 與 NAT 只管「能不能出去、走哪條路」，至於某個埠允不允許連，是 security group 的職責。
+NAT 的數量取捨與出站成本的更完整討論在 [維運 模組八：成本管理](/devops/operations/08-cost-management/)。route table 與 NAT 只管「能不能出去、走哪條路」，至於某個埠允不允許連，是 security group 的職責。
 
 ## security group 設計：最小開放
 
@@ -246,5 +246,5 @@ NACL 的特點是無狀態與支援顯式 deny。無狀態意味著放行了入�
 - → [模組四：環境分離與模組化](/devops/infra/04-environment-separation/)：環境之間的 VPC 怎麼分
 - → [模組五：核心服務上 IaC](/devops/infra/05-core-services/)：核心服務怎麼落進規劃好的 subnet
 - → [模組七：infra 走 PR 流程](/devops/infra/07-infra-as-pr/)：tfsec / checkov 自動攔截 security group 全開
-- → [運維 模組八：成本管理](/devops/operations/08-cost-management/)：NAT 與出站流量的成本取捨
+- → [維運 模組八：成本管理](/devops/operations/08-cost-management/)：NAT 與出站流量的成本取捨
 - → [Security Group 稽核與清理](/devops/infra/03-network-foundation/security-group-audit-cleanup/)：SG 規則盤點、未使用 SG 識別、清理工作流

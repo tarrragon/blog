@@ -85,7 +85,7 @@ LLM 服務偵測相對一般 service 偵測的特殊性：
 1. **訊號是非結構化的**：prompt / response 是自由文字、不是 status code 跟 endpoint name；偵測 pipeline 需要 NLP / embedding 等手段、不只是 grep / regex。
 2. **baseline 漂移**：使用者行為跟 LLM 使用模式持續演進、baseline 比一般 service 更需要 rolling window 更新。
 3. **「正常」prompt 跟「injection」prompt 的邊界模糊**：教 LLM 寫 prompt injection 教材的使用者、prompt 內容跟攻擊者的測試 prompt 形式上類似；偵測需要結合 intent 跟 context。
-4. **cost-based detection 是 LLM 特有的 strong signal**：傳統 service 的「cost」對應 infra、容易被視為運維議題；LLM service 的 token cost 直接連結到 abuse、cost 異常本身是強訊號。
+4. **cost-based detection 是 LLM 特有的 strong signal**：傳統 service 的「cost」對應 infra、容易被視為維運議題；LLM service 的 token cost 直接連結到 abuse、cost 異常本身是強訊號。
 5. **跨 tenant 相關性分析**：協同攻擊跟 botnet 在 LLM 服務上、可能用相同 prompt 在不同帳號試探；跨 tenant pattern 分析比一般 service 更有用。
 6. **模型 vendor 是 third-party 失敗點**：vendor 端的模型更新、API 限流、政策變更會直接影響服務行為；需要 vendor-side 訊號（status page、release notes）納入偵測範圍。
 

@@ -31,9 +31,9 @@ EKS 的控制平面是受管的 Kubernetes，IaC 描述的是 cluster 本身與 
 
 ### Fargate vs EC2 launch type
 
-ECS 的執行模式再分 EC2 launch type 和 Fargate launch type。EC2 launch type 需要自己管理 EC2 instance 組成的 capacity provider — [AMI](/devops/infra/knowledge-cards/ami/) 更新、instance 擴縮、OS 層安全修補都是團隊的責任。Fargate 由 AWS 代管運算實例，不需要配 capacity provider、不需要管 AMI，進一步降低運維面。
+ECS 的執行模式再分 EC2 launch type 和 Fargate launch type。EC2 launch type 需要自己管理 EC2 instance 組成的 capacity provider — [AMI](/devops/infra/knowledge-cards/ami/) 更新、instance 擴縮、OS 層安全修補都是團隊的責任。Fargate 由 AWS 代管運算實例，不需要配 capacity provider、不需要管 AMI，進一步降低維運面。
 
-Fargate 的代價是三個面向：單位成本較高（同規格的 vCPU/記憶體比 EC2 貴約 20-40%）、不支援 GPU workload、啟動延遲稍長（cold start 約 30-60 秒，EC2 已有 instance 時近乎即時）。多數 web API 和非 GPU 的背景工作的初始選擇是 Fargate — 省掉的運維時間通常抵得過溢價。流量穩定且需要成本最佳化時再切回 EC2 launch type，屆時增加的是 capacity provider 的設定與 instance 管理。量級參考：一個持續運行 2 vCPU / 4GB 的 Fargate task 月費約 $70，同規格 EC2 t3.medium 約 $30。月費差距在服務數量少時不顯著，當 task 數量超過 10-20 個且流量穩定時，切回 EC2 launch type 的節省量才值得投入切換工程。
+Fargate 的代價是三個面向：單位成本較高（同規格的 vCPU/記憶體比 EC2 貴約 20-40%）、不支援 GPU workload、啟動延遲稍長（cold start 約 30-60 秒，EC2 已有 instance 時近乎即時）。多數 web API 和非 GPU 的背景工作的初始選擇是 Fargate — 省掉的維運時間通常抵得過溢價。流量穩定且需要成本最佳化時再切回 EC2 launch type，屆時增加的是 capacity provider 的設定與 instance 管理。量級參考：一個持續運行 2 vCPU / 4GB 的 Fargate task 月費約 $70，同規格 EC2 t3.medium 約 $30。月費差距在服務數量少時不顯著，當 task 數量超過 10-20 個且流量穩定時，切回 EC2 launch type 的節省量才值得投入切換工程。
 
 後續 HCL 範例以 ECS Fargate 示意，EKS 的接線骨架（subnet、IAM、target group）相近，差異落在編排層的資源類型。
 
@@ -204,7 +204,7 @@ resource "aws_appautoscaling_policy" "api_cpu" {
 
 設了 auto-scaling 後要定期看 scaling activity log 確認它在正確的時機擴縮。從來沒觸發過有兩種可能：`min_capacity` 已經高於實際需求（資源浪費），或 target value 設太高（來不及擴）。
 
-`max_capacity` 是成本護欄 — 設一個你能接受的上限，避免異常流量（爬蟲、攻擊、上游重試風暴）把 task 數推到遠超預期的帳單。運行期的成本優化在 [運維 模組八：成本管理](/devops/operations/08-cost-management/) 展開。
+`max_capacity` 是成本護欄 — 設一個你能接受的上限，避免異常流量（爬蟲、攻擊、上游重試風暴）把 task 數推到遠超預期的帳單。運行期的成本優化在 [維運 模組八：成本管理](/devops/operations/08-cost-management/) 展開。
 
 規模放大後，auto-scaling 的行為模式會改變。[Pokémon GO 上線時實際流量達預估的 50 倍](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/)，這類突發不是 auto-scaling 能事前規劃的——50 倍的 headroom 會讓平日成本不合理。Niantic 的 infra 層前提是 GKE 把容器啟動時間降到秒級，讓 surge 反應成為可能；同時依賴 Google CRE 即時補 node 容量。[Zoom COVID 期間的 30 倍突發](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/) 則是結構性成長——日活從 1000 萬升到 3 億後不會回落，容量規劃的 baseline 需要永久重新校準。兩個案例的共同教訓是：auto-scaling 的 `max_capacity` 設定要預留突發空間，但極端突發的處理靠的是平台能力（容器化的快速啟動）和 vendor 支援（managed service 的彈性），不是 IaC 配置能獨立解決的。
 
@@ -215,4 +215,4 @@ resource "aws_appautoscaling_policy" "api_cpu" {
 - → [模組二：身分與存取憑證地基](/devops/infra/02-identity-credentials/)：execution role 與 task role 的最小權限設計
 - → [模組三：網路地基](/devops/infra/03-network-foundation/)：運算放在 private subnet、security group 接線
 - → [模組六：可觀測性與 log](/devops/infra/06-observability-logging/)：log group 與 task definition 同生命週期
-- → [運維 模組八：成本管理](/devops/operations/08-cost-management/)：auto-scaling 的成本護欄與 spot/Fargate Spot 混用
+- → [維運 模組八：成本管理](/devops/operations/08-cost-management/)：auto-scaling 的成本護欄與 spot/Fargate Spot 混用

@@ -20,7 +20,7 @@ description: "建立資安與可靠性共同控制面的交集，整合 rollback
 | Rollback       | 回退高風險變更     | 恢復服務穩定狀態   |
 | Degradation    | 保留核心服務能力   | 降低系統壓力與損耗 |
 | Evidence chain | 保留回查與審計資料 | 保留故障與修復證據 |
-| Runbook        | 固定安全處置步驟   | 固定運維處置步驟   |
+| Runbook        | 固定安全處置步驟   | 固定維運處置步驟   |
 
 ## 控制欄位對齊
 

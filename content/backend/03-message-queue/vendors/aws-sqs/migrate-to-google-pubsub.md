@@ -6,7 +6,7 @@ weight: 11
 tags: ["backend", "message-queue", "aws-sqs", "google-pubsub", "migration", "cross-cloud"]
 ---
 
-> 本文是跨 vendor migration playbook、cross-link 到 [AWS SQS](/backend/03-message-queue/vendors/aws-sqs/) 跟 [Google Pub/Sub](/backend/03-message-queue/vendors/google-pubsub/)。這是一個 *跨雲 managed-to-managed* 遷移：兩端都是 cloud-managed、運維負擔都低、但 *資料拓樸* 跟 *消費抽象* 不同 — SQS 是 region-scoped 的單一 pull queue、Pub/Sub 是 global topic + 多個 first-class subscription。主結構走 operational redesign hybrid（Type C）、額外為 components / data topology 兩個高維度抽獨立段。
+> 本文是跨 vendor migration playbook、cross-link 到 [AWS SQS](/backend/03-message-queue/vendors/aws-sqs/) 跟 [Google Pub/Sub](/backend/03-message-queue/vendors/google-pubsub/)。這是一個 *跨雲 managed-to-managed* 遷移：兩端都是 cloud-managed、維運負擔都低、但 *資料拓樸* 跟 *消費抽象* 不同 — SQS 是 region-scoped 的單一 pull queue、Pub/Sub 是 global topic + 多個 first-class subscription。主結構走 operational redesign hybrid（Type C）、額外為 components / data topology 兩個高維度抽獨立段。
 
 ## SQS 跟 Pub/Sub 不是同一種訊息抽象
 

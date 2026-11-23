@@ -118,7 +118,7 @@ Redis command 執行至今仍 single-threaded、單實例 command 吞吐受 CPU 
 
 **3. [KeyDB](/backend/02-cache-redis/vendors/keydb/) / [Dragonfly](/backend/02-cache-redis/vendors/dragonflydb/)（multi-threaded fork）**：command 執行也 multi-threaded。對應 [Snap KeyDB](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/) — Snap 採用 KeyDB 在 GCP 上替代原生 Redis、Snap 判讀段提出「單實例 throughput 提升 5-10x」（屬案例 derived 推論、實測倍數依 workload）。適合「單 key 極熱、cluster 切不開、需要單實例多執行緒撐單 partition」的壓力。代價是 vendor lock-in、fork 治理走向不確定（KeyDB 公司被收購後策略未明）。
 
-**4. Memcached（multi-threaded、功能少）**：純 KV 不支援複雜資料結構（hash / sorted set / stream）、適合「資料形狀單純、要 multi-threaded」的 cache-only 場景。如果 application 不需要 Redis 的進階資料結構、Memcached 通常單實例吞吐更高、運維更簡單。
+**4. Memcached（multi-threaded、功能少）**：純 KV 不支援複雜資料結構（hash / sorted set / stream）、適合「資料形狀單純、要 multi-threaded」的 cache-only 場景。如果 application 不需要 Redis 的進階資料結構、Memcached 通常單實例吞吐更高、維運更簡單。
 
 **規模化常用組合**：ElastiCache for Redis 7.1 在 r7g.4xlarge 上的 [AWS 公布上限](https://aws.amazon.com/blogs/database/achieve-over-500-million-requests-per-second-per-cluster-with-amazon-elasticache-for-redis-7-1/)（單節點百萬級 RPS、單 cluster 5 億 RPS）+ Cluster 模式 + 應用層 connection multiplexing。實際配置依工作量跟成本邊界決定、不是「規模化必然全配滿」。對應 [Tinder](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) 的設計方向。
 

@@ -18,7 +18,7 @@ Monolith 用「同一個程式碼庫、同一個部署單位、同一個資料�
 | 事務一致性 | 本地 transaction 就解決      | 跨服務需要 [saga](/backend/knowledge-cards/saga/)、[outbox](/backend/knowledge-cards/outbox-pattern/) 或最終一致性 |
 | 故障隔離   | 單點失敗會整個服務掛掉       | 一個服務掛了，其他可能還能服務                                                                                     |
 | 部署單位   | 整個應用一次部署             | 各服務獨立部署，發布節奏不互相阻擋                                                                                 |
-| 運維複雜度 | 一組基礎設施                 | N 組基礎設施 + 服務間通訊監控                                                                                      |
+| 維運複雜度 | 一組基礎設施                 | N 組基礎設施 + 服務間通訊監控                                                                                      |
 | Debug 路徑 | 同一個 stack trace 看到底    | 跨服務 trace context、log 聚合不可省                                                                               |
 | 適合規模   | 早期、單一團隊、業務尚未分化 | 多團隊、業務已分化、可獨立演進                                                                                     |
 
@@ -96,12 +96,12 @@ Monolith 用「同一個程式碼庫、同一個部署單位、同一個資料�
 
 ## 拆分代價與回退路徑
 
-拆分不是免費操作。每多一個服務，就多一份運維成本、跨服務 trace 成本、契約治理成本。讀者要在拆分前認知這些代價，而不是事後才發現。
+拆分不是免費操作。每多一個服務，就多一份維運成本、跨服務 trace 成本、契約治理成本。讀者要在拆分前認知這些代價，而不是事後才發現。
 
 | 代價類型     | 具體表現                                          | 緩解方向                                                                                                       |
 | ------------ | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | 分散事務     | 一筆業務動作跨多個服務、需要 saga 或最終一致性    | [03 message queue](/backend/03-message-queue/) 的 outbox、[idempotency](/backend/knowledge-cards/idempotency/) |
-| 運維複雜度   | N 個服務 × M 個環境 × K 個版本，組合爆炸          | 收斂部署平台、用 [5.2 K8s 部署策略](/backend/05-deployment-platform/kubernetes-deployment/) 統一管理           |
+| 維運複雜度   | N 個服務 × M 個環境 × K 個版本，組合爆炸          | 收斂部署平台、用 [5.2 K8s 部署策略](/backend/05-deployment-platform/kubernetes-deployment/) 統一管理           |
 | 跨服務 debug | 一個請求跨多個服務、不知道在哪一段失敗            | [04 trace context](/backend/knowledge-cards/trace-context/)、結構化 log 聚合                                   |
 | 契約治理     | 服務 A 的 API 改動會影響服務 B、C、D              | [contract test](/backend/knowledge-cards/contract/)、版本化 API                                                |
 | 資料一致性   | 各服務 DB 獨立，跨服務查詢需要 join 或 read model | CQRS、event-driven projection、reconciliation                                                                  |
@@ -146,7 +146,7 @@ Monolith 用「同一個程式碼庫、同一個部署單位、同一個資料�
 
 把「technical debt」當成拆分理由。Monolith 程式碼髒亂的解法是重構，不是拆服務。拆服務只是把髒亂從單庫變成跨服務契約混亂，問題並沒有消失。
 
-把「跟風 microservice」當成決策。沒有業務壓力、團隊規模不到位、運維能力不夠的情況下拆服務，新的協作成本會壓垮整個團隊，這比 monolith 的痛苦更大。
+把「跟風 microservice」當成決策。沒有業務壓力、團隊規模不到位、維運能力不夠的情況下拆服務，新的協作成本會壓垮整個團隊，這比 monolith 的痛苦更大。
 
 把拆分當成單向操作。沒有設計回退路徑、沒有保留合併選項，拆錯了就只能硬撐。成熟的服務演進策略要把「拆」跟「合」當成雙向可逆操作。
 
@@ -163,11 +163,11 @@ Monolith 用「同一個程式碼庫、同一個部署單位、同一個資料�
 
 服務拆分判讀可用以下案例回寫：
 
-- [Netflix：把關聯式 DB 統一到 Aurora、效能 +75%、成本 -28%](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 反例方向：原本各 microservice 各自 DB 造成運維碎片化、最後做 consolidation；對照本章「拆分過度的收回」段。
-- [Condé Nast：EKS 平台整併與標準化](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/) — Condé Nast 把多 brand 各自的 K8s cluster 整併到統一 EKS 控制面、降低跨團隊運維分歧。對照本章「拆分代價 / 運維複雜度」段：拆出去快、合回來慢、設計時就要評估這種非對稱性。
+- [Netflix：把關聯式 DB 統一到 Aurora、效能 +75%、成本 -28%](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 反例方向：原本各 microservice 各自 DB 造成維運碎片化、最後做 consolidation；對照本章「拆分過度的收回」段。
+- [Condé Nast：EKS 平台整併與標準化](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/) — Condé Nast 把多 brand 各自的 K8s cluster 整併到統一 EKS 控制面、降低跨團隊維運分歧。對照本章「拆分代價 / 維運複雜度」段：拆出去快、合回來慢、設計時就要評估這種非對稱性。
 - [Riot Games：246 個 EKS cluster 的多遊戲多地區治理](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) — Riot 的拆分軸是「遊戲 × 地區 × 環境」三維交集、246 個 cluster 是這三軸的笛卡兒積取一個 subset。對照本章「拆分軸 / 部署邊界」段：實務上的拆分常常是多軸交集、不是單軸推進。
 
-Netflix Aurora consolidation 是反例最有教學價值的一筆 — 它證明「拆 microservice 各自 DB → consolidation 回 Aurora」是 valid endgame、拆服務不是單向操作。Condé Nast 跟 Riot Games 補充另兩條維度：碎片化的運維代價、多軸交集的設計複雜度。把這三筆放回「拆分時機判讀」框架的不同節點上、能看出拆分決策的本質是「沿哪幾條軸 + 接受哪些代價」的組合。
+Netflix Aurora consolidation 是反例最有教學價值的一筆 — 它證明「拆 microservice 各自 DB → consolidation 回 Aurora」是 valid endgame、拆服務不是單向操作。Condé Nast 跟 Riot Games 補充另兩條維度：碎片化的維運代價、多軸交集的設計複雜度。把這三筆放回「拆分時機判讀」框架的不同節點上、能看出拆分決策的本質是「沿哪幾條軸 + 接受哪些代價」的組合。
 
 ## 跨模組路由
 

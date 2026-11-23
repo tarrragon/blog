@@ -24,11 +24,11 @@ aliases: ["/operations/04-service-health/"]
 ## 跨分類引用
 
 - → [4.26 單機容器服務的流量與資源監控](/backend/04-observability/host-traffic-resource-monitoring/)：本模組回答服務活著嗎；服務活著而變慢、資源快滿時看哪些指標
-- → [運維 模組三 流量管控](/devops/operations/03-traffic-management/)：「單服務營運」路線下一站——服務活著之後，流量超過處理能力怎麼防過載
-- → [運維 模組六 高可用](/devops/operations/06-high-availability/)：failover 的觸發條件是探活，本模組是它的前提
-- → [運維 模組一 負載平衡](/devops/operations/01-load-balancing/)：LB 怎麼用 health check 決定路由，是本模組 endpoint 的消費側
+- → [維運 模組三 流量管控](/devops/operations/03-traffic-management/)：「單服務營運」路線下一站——服務活著之後，流量超過處理能力怎麼防過載
+- → [維運 模組六 高可用](/devops/operations/06-high-availability/)：failover 的觸發條件是探活，本模組是它的前提
+- → [維運 模組一 負載平衡](/devops/operations/01-load-balancing/)：LB 怎麼用 health check 決定路由，是本模組 endpoint 的消費側
 - → [monitoring 模組四 Dashboard DevOps](/devops/monitoring/04-collector/dashboard-devops/)：DevOps dashboard 的服務狀態卡依賴 health check
 - → [backend 部署平台生命週期契約](/backend/05-deployment-platform/platform-lifecycle-contract/)：startup / readiness / liveness / drain 的平台端契約
 - → [Linux 除錯：服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)：本模組的概念（探活、WatchdogSec、Restart=on-failure）在單機 systemd 層的具體實作——`OnFailure=` 鉤子 + 推播、canary 驗證管線
-- → [運維 模組九 單台主機的長期維護、服務暫停與恢復上線](/devops/operations/09-host-lifecycle/)：程序正常而主機狀態漂移的那一類（磁碟累積、待裝的安全更新、到期的設定）；更新後自動重開機時「服務會不會自己回來」跟本模組的自動重啟是同一個前提
+- → [維運 模組九 單台主機的長期維護、服務暫停與恢復上線](/devops/operations/09-host-lifecycle/)：程序正常而主機狀態漂移的那一類（磁碟累積、待裝的安全更新、到期的設定）；更新後自動重開機時「服務會不會自己回來」跟本模組的自動重啟是同一個前提
 - → [Linux 除錯：ntfy 推送通知](/linux/debug/ntfy-push-notification-service/)：把服務失效告警推到手機的最小可用通道

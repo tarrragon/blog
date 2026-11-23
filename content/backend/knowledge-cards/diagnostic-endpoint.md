@@ -10,7 +10,7 @@ Diagnostic Endpoint 的核心概念是「讓平台或工程師查詢服務狀態
 
 ## 跟其他概念的關係
 
-Diagnostic Endpoint 位在運維系統、負載平衡器、監控工具與 application 之間。它通常不承擔產品功能，而是承擔操作判斷。 可先對照 [Health Check](/backend/knowledge-cards/health-check/)。
+Diagnostic Endpoint 位在維運系統、負載平衡器、監控工具與 application 之間。它通常不承擔產品功能，而是承擔操作判斷。 可先對照 [Health Check](/backend/knowledge-cards/health-check/)。
 
 ## 可觀察訊號
 

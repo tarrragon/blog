@@ -8,7 +8,7 @@ tags: ["backend", "cache", "vendor"]
 
 Momento 是 serverless cache 服務、承擔三個責任：把 cache 變成一個按用量計費的 API（沒有 node、沒有 cluster、不規劃容量）、自動隨流量 scale（尖峰自動擴、閒置不付固定費）、提供原生 SDK 與 Redis / Memcached 相容介面（既有 client 可遷）。設計取捨偏向「把 cache 的容量規劃與維運完全消除、用計費換掉 sizing」、是不想養 cache 叢集又要彈性的選項。
 
-對「流量不可預測、不想規劃容量與 sizing、團隊沒有 cache 運維資源」這條路徑、Momento 是 serverless 方向的代表。它跟自管 Redis、managed cache 的上層取捨（自管 vs managed vs serverless vs BaaS bundle）見 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/)。
+對「流量不可預測、不想規劃容量與 sizing、團隊沒有 cache 維運資源」這條路徑、Momento 是 serverless 方向的代表。它跟自管 Redis、managed cache 的上層取捨（自管 vs managed vs serverless vs BaaS bundle）見 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/)。
 
 > 本頁的計費、limit 與功能宣稱以 [Momento 官方文件](https://docs.momentohq.com/) 與 [Momento 定價](https://www.gomomento.com/pricing/) 為準、最後檢查日 2026-06-16。Momento 是 SaaS、需帳號與 API key、無法本機 docker 驗證、指令為依官方文件的範例。
 

@@ -91,7 +91,7 @@ replay window 要能被明確描述與回放，不可用「重播昨天全部」
 
 不同規模服務的 job queue 治理問題差異大、SSoT 在本章。對應 [對照：規模差異下的佇列模型](/backend/03-message-queue/cases/contrast-queue-model-by-scale/)：
 
-- **小型服務**：優先用 managed queue（SQS / Pub/Sub）、運維成本最低。最容易忽略的是語意邊界（重試次數、死信規則、重播責任）、規模一上來會出現資料重複與漏處理。**升級訊號**：team 數超 3-5 個、各自寫 consumer 開始出現 idempotency 不一致、進中型階段
+- **小型服務**：優先用 managed queue（SQS / Pub/Sub）、維運成本最低。最容易忽略的是語意邊界（重試次數、死信規則、重播責任）、規模一上來會出現資料重複與漏處理。**升級訊號**：team 數超 3-5 個、各自寫 consumer 開始出現 idempotency 不一致、進中型階段
 - **中型服務**：常見問題是 lag 與 DLQ 長期累積。原因是 consumer idempotency + 重播流程 + 下游承載能力沒一起設計。對應前段 Job queue 拓樸分工。**升級訊號**：DLQ 累積速度高於排空速度連續 7 天、單一 tenant 流量尖峰拖垮其他 tenant、進大型階段
 - **大型服務**：需要處理跨租戶跟跨區壓力。單叢集思維會讓任何一類流量尖峰拖垮整體。對應 [LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/) 跟 [3.1 broker-basics 分層治理平台](/backend/03-message-queue/broker-basics/)、重點從「怎麼送訊息」轉成「怎麼隔離失敗」
 

@@ -158,7 +158,7 @@ Worker 從 queue 消費、寫入 PostgreSQL。Worker 按自己的速度處理 �
 
 | Queue          | 適合場景                               | 代價                               |
 | -------------- | -------------------------------------- | ---------------------------------- |
-| Kafka          | 高吞吐（百萬 events/sec）、需要 replay | 運維重（ZooKeeper / KRaft）        |
+| Kafka          | 高吞吐（百萬 events/sec）、需要 replay | 維運重（ZooKeeper / KRaft）        |
 | NATS JetStream | 輕量、Go 原生、足夠的持久化            | 生態較小                           |
 | Redis Streams  | 簡單、如果已有 Redis                   | 不是專門的 queue、持久化設定需注意 |
 

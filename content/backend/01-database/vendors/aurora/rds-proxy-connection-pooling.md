@@ -150,10 +150,10 @@ CloudWatch metric：
 
 兩者都是 connection pooler，責任切分在「managed vs 自管」：
 
-- **RDS Proxy**：AWS managed、跟 Aurora / IAM / Secrets Manager 整合、零運維、含 failover 加速；綁 AWS
-- **自管 pgbouncer / pgcat**：自己部署運維、pooling 模式（session / transaction / statement）可細調、跨雲可攜；運維責任自負
+- **RDS Proxy**：AWS managed、跟 Aurora / IAM / Secrets Manager 整合、零維運、含 failover 加速；綁 AWS
+- **自管 pgbouncer / pgcat**：自己部署維運、pooling 模式（session / transaction / statement）可細調、跨雲可攜；維運責任自負
 
-PostgreSQL 的通用連線池機制與 pgbouncer 細節主寫於 [pgbouncer-config](/backend/01-database/vendors/postgresql/pgbouncer-config/) 與 [connection-pooler-comparison](/backend/01-database/vendors/postgresql/connection-pooler-comparison/)；本篇聚焦 RDS Proxy 這個 AWS managed 方案的機制與 pinning 陷阱。要細調 pooling 模式、或需要跨雲可攜 → 評估自管 pooler；要零運維 + Aurora 原生整合 + failover 加速 → RDS Proxy。
+PostgreSQL 的通用連線池機制與 pgbouncer 細節主寫於 [pgbouncer-config](/backend/01-database/vendors/postgresql/pgbouncer-config/) 與 [connection-pooler-comparison](/backend/01-database/vendors/postgresql/connection-pooler-comparison/)；本篇聚焦 RDS Proxy 這個 AWS managed 方案的機制與 pinning 陷阱。要細調 pooling 模式、或需要跨雲可攜 → 評估自管 pooler；要零維運 + Aurora 原生整合 + failover 加速 → RDS Proxy。
 
 ### Sibling 與 cross-link
 

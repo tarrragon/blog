@@ -139,7 +139,7 @@ rabbit@rmq3    follower     voter
 
 Partition 切斷 Raft 群組時、行為完全由 Raft 的 majority 規則決定、不需要 `cluster_partition_handling` 介入：
 
-含 majority 副本的那一側選出（或維持）leader、繼續接受讀寫；不含 majority 的那一側無法 commit 任何寫入、自動進入唯讀或拒絕狀態。因為 commit 需要 majority 確認、少數派永遠湊不到 majority、所以少數派 *物理上不可能* 接受新寫入並確認——腦裂在協議層被排除、不靠運維設定。
+含 majority 副本的那一側選出（或維持）leader、繼續接受讀寫；不含 majority 的那一側無法 commit 任何寫入、自動進入唯讀或拒絕狀態。因為 commit 需要 majority 確認、少數派永遠湊不到 majority、所以少數派 *物理上不可能* 接受新寫入並確認——腦裂在協議層被排除、不靠維運設定。
 
 實機演練最關鍵的一段：把 rmq2 與 rmq3 *同時* disconnect、讓 quorum queue 的 leader（在 rmq1）只剩自己一個副本、3 副本只剩 1 副本、失去 majority（1/3 < 2/3）。此時 `quorum_status` 顯示其他兩個節點變 `timeout` 狀態：
 
@@ -170,7 +170,7 @@ Classic queue 立即接受寫入。它沒有 Raft、leader 節點獨自決定、
 
 把兩邊 disconnect 的節點重新 connect、quorum 恢復、`quorum_status` 三個節點回到 leader + 2 follower、原本被阻塞的 publish 路徑恢復、新 publish 立即成功。Quorum queue 的恢復是協議自動完成的、不需要人工 reset 任何節點。
 
-這就是 classic queue 加 `cluster_partition_handling` 與 quorum queue 的根本差異：前者是 *用運維策略事後補救* 一個本身會腦裂的資料結構、後者是 *用共識協議從設計上排除* 腦裂。現代 RabbitMQ 對需要跨節點一致性的 queue、官方建議直接用 quorum queue、把 partition 一致性交給 Raft、而不是依賴 `cluster_partition_handling` 的 classic queue 補救。Classic / quorum / stream 的完整選型判讀見 [Queue Type 選型](/backend/03-message-queue/vendors/rabbitmq/queue-types-classic-quorum-stream/)。
+這就是 classic queue 加 `cluster_partition_handling` 與 quorum queue 的根本差異：前者是 *用維運策略事後補救* 一個本身會腦裂的資料結構、後者是 *用共識協議從設計上排除* 腦裂。現代 RabbitMQ 對需要跨節點一致性的 queue、官方建議直接用 quorum queue、把 partition 一致性交給 Raft、而不是依賴 `cluster_partition_handling` 的 classic queue 補救。Classic / quorum / stream 的完整選型判讀見 [Queue Type 選型](/backend/03-message-queue/vendors/rabbitmq/queue-types-classic-quorum-stream/)。
 
 ## 真實 cluster 治理：以 Zalando 為例
 
@@ -210,7 +210,7 @@ queue 類型的選擇直接決定 partition 行為。Classic queue 靠 `cluster_
 
 partition 恢復的核心是恢復語義、不是連線恢復。Broker 重新連上不等於狀態一致——這正是 [3.6 processing semantics 與 recovery semantics](/backend/03-message-queue/processing-recovery-semantics/) 區分投遞、處理、恢復三層的價值。Partition 後的 reconciliation 要對照這三層判斷。
 
-雲端 cluster 治理的歷史脈絡見 [Zalando AWS master selection](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/)——理解外部協調者怎麼被 Raft 內化、有助於判斷現代部署該把多少責任交給 broker、多少留給運維。
+雲端 cluster 治理的歷史脈絡見 [Zalando AWS master selection](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/)——理解外部協調者怎麼被 Raft 內化、有助於判斷現代部署該把多少責任交給 broker、多少留給維運。
 
 語義誤配在 partition 恢復時的具體告警條件見 [Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)——下游同時出現重複與遺漏、是 partition 恢復處置出錯的典型訊號。
 

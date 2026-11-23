@@ -6,9 +6,9 @@ weight: 3
 tags: ["backend", "cache", "vendor"]
 ---
 
-Memcached 是純粹的 in-memory key-value cache、承擔三個責任：簡單 string KV cache、多執行緒高吞吐、嚴格的 cache 邊界（無持久化 / 無 data types / 無 lock）。設計取捨偏向「越簡單越好」— 沒有 Redis 的 data types / Streams / Pub/Sub、也沒有持久化 / 複製 / cluster mode。極輕量、運維成本低、適合 strict cache 場景。
+Memcached 是純粹的 in-memory key-value cache、承擔三個責任：簡單 string KV cache、多執行緒高吞吐、嚴格的 cache 邊界（無持久化 / 無 data types / 無 lock）。設計取捨偏向「越簡單越好」— 沒有 Redis 的 data types / Streams / Pub/Sub、也沒有持久化 / 複製 / cluster mode。極輕量、維運成本低、適合 strict cache 場景。
 
-對「純 cache、避免誤用為 source-of-truth、需要多執行緒高 throughput、極簡運維」這條路徑、Memcached 是首選。從 LiveJournal 2003 年開源至今、是業界最久經考驗的 cache。
+對「純 cache、避免誤用為 source-of-truth、需要多執行緒高 throughput、極簡維運」這條路徑、Memcached 是首選。從 LiveJournal 2003 年開源至今、是業界最久經考驗的 cache。
 
 ## 本章目標
 

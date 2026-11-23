@@ -121,7 +121,7 @@ docker exec kafka /opt/kafka/bin/kafka-console-consumer.sh --topic demo \
 
 子議題：
 
-- KRaft mode 取代 ZooKeeper（運維簡化、metadata 治理）
+- KRaft mode 取代 ZooKeeper（維運簡化、metadata 治理）
 - Schema Registry（Confluent / Apicurio）與 Avro / Protobuf
 - Schema 演進策略（forward / backward / full compatibility）
 

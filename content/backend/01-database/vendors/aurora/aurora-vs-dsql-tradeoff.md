@@ -23,7 +23,7 @@ tags: ["backend", "database", "aurora", "aurora-dsql", "distributed-sql", "decis
 | SQL 相容 | 完整 PostgreSQL / MySQL                  | PG wire-compatible *子集*、無多數 extension |
 | 交易模型 | 標準 PG/MySQL transaction、長交易        | OCC + snapshot isolation、需處理 retry      |
 | 寫入擴展 | 受 single writer instance 上限約束       | 水平擴展、無 single writer 瓶頸             |
-| 運維     | managed、但仍要管 instance / failover    | serverless、zero-touch、無 instance 概念    |
+| 維運     | managed、但仍要管 instance / failover    | serverless、zero-touch、無 instance 概念    |
 
 standard Aurora 的 storage 層雖然分散，*compute 寫入仍是 single writer*——這是它的結構上限。DSQL 把寫入也分散，代價是 SQL 相容性縮窄（PG 子集、extension 缺位）與交易語意改變（OCC，衝突要 application retry）。
 

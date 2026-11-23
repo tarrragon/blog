@@ -24,9 +24,9 @@ Netlify 需要一個中介層 — 各服務把 metrics / logs 推到中介層，
 
 Netlify 評估了 RabbitMQ 跟 NATS。RabbitMQ 在功能上更完整（持久化 queue、DLQ、ack 機制），但 Netlify 的觀測資料場景有三個特性讓 NATS 更合適：
 
-- **資料可丟**：metrics 跟 logs 是 best-effort 的觀測資料，遺失幾秒的資料不影響業務 — 持久化保證帶來的運維成本大於收益
+- **資料可丟**：metrics 跟 logs 是 best-effort 的觀測資料，遺失幾秒的資料不影響業務 — 持久化保證帶來的維運成本大於收益
 - **Fan-out 是主要模式**：同一份資料要被多個消費者訂閱（Elasticsearch、即時 tail、告警），NATS 的 subject-based pub/sub 天然支援，RabbitMQ 需要設 exchange + 多個 binding
-- **部署極簡**：NATS server 是單一 binary、零依賴、幾秒鐘啟動，跨四個雲部署時每個雲跑一個 NATS node 的運維成本遠低於 RabbitMQ cluster
+- **部署極簡**：NATS server 是單一 binary、零依賴、幾秒鐘啟動，跨四個雲部署時每個雲跑一個 NATS node 的維運成本遠低於 RabbitMQ cluster
 
 ## 解法與取捨
 
@@ -61,7 +61,7 @@ Core NATS 的 fire-and-forget 語意在觀測資料場景是有意的選擇 — 
 讀者在自己的系統看到以下訊號時，應該回讀本案例：
 
 - 觀測資料（metrics / logs）需要跨多個雲或多個 datacenter 收集到中央系統
-- 現有的 broker（RabbitMQ / Kafka）在觀測資料場景的運維成本跟資料價值不成比例
+- 現有的 broker（RabbitMQ / Kafka）在觀測資料場景的維運成本跟資料價值不成比例
 - Fan-out 是主要消費模式 — 同一份資料需要被多個下游系統訂閱
 - 對 message delivery 的可靠性要求是 best-effort 而非 at-least-once
 

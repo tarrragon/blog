@@ -32,7 +32,7 @@ Forbes 遷移到 MongoDB Atlas on Google Cloud 的關鍵數字（引自 [Google 
 
 Forbes 的遷移選擇揭露三個「自管 → managed」路徑的判讀重點。
 
-1. **同 DB 換託管模式比換 DB 種類風險低、但 ROI 也較窄**：Forbes 6 個月完成遷移、保留同 document model、schema 不動、application 改動只在 connection string 跟運維邊界。這跟 [Zomato 從 TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 對照、後者要重新設計 access pattern、ROI 大但風險高。對應 [01 資料庫模組](/backend/01-database/) 的 schema migration playbook：「換 DB」跟「換託管」是兩個不同議題、不要混為一談。
+1. **同 DB 換託管模式比換 DB 種類風險低、但 ROI 也較窄**：Forbes 6 個月完成遷移、保留同 document model、schema 不動、application 改動只在 connection string 跟維運邊界。這跟 [Zomato 從 TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 對照、後者要重新設計 access pattern、ROI 大但風險高。對應 [01 資料庫模組](/backend/01-database/) 的 schema migration playbook：「換 DB」跟「換託管」是兩個不同議題、不要混為一談。
 2. **跨雲彈性的價值在規避未來鎖定、不是當下省成本**：Atlas 提供 AWS / GCP / Azure 跨雲部署。Forbes 選 GCP 是當下決策、但 Atlas 的跨雲能力讓未來雲商選型不再綁定特定 vendor。這跟 DynamoDB（AWS only）、Cosmos DB（Azure only）、Spanner（GCP only）的單雲鎖定形成對照。對應 [00 服務選型模組](/backend/00-service-selection/) 的 vendor lock-in 評估。
 3. **Build 時間 25 → 9 分鐘 = 開發者效率改善、不是 DB 性能改善**：Build 時間下降主因是 ephemeral test environment 用 Atlas API spin-up、不是 MongoDB query 變快。CMS 系統的 production read latency Atlas 跟自管 MongoDB 差距通常在 ±20% 內、真正贏的是「開發 / 部署 cycle 變短」。讀案例時要區分「開發者體驗 metric」跟「production 性能 metric」、兩者改善的杠桿完全不同。
 

@@ -184,7 +184,7 @@ Sentinel 的容量判讀，圍繞 failover 時間與資料遺失窗口：
 撞牆後的路由判斷：
 
 - **單 master 容量不夠（記憶體 / 吞吐超過單機）**：Sentinel 解 HA 不解容量。要橫向擴容走 [Redis Cluster](/backend/02-cache-redis/vendors/redis/cluster-resharding/)，它自帶 sharding 與 per-shard failover。
-- **不想自己運維 Sentinel 與 failover 演練**：[ElastiCache](/backend/02-cache-redis/vendors/aws-elasticache/) 的 Multi-AZ 自動 failover 把這條時序鏈託管，failover ~30 秒到幾分鐘，省掉 Sentinel 部署與調參，代價是 managed premium。
+- **不想自己維運 Sentinel 與 failover 演練**：[ElastiCache](/backend/02-cache-redis/vendors/aws-elasticache/) 的 Multi-AZ 自動 failover 把這條時序鏈託管，failover ~30 秒到幾分鐘，省掉 Sentinel 部署與調參，代價是 managed premium。
 - **需要零資料遺失的強持久性**：Sentinel 的非同步複製在 failover 時會丟未複製的寫入。要強一致走 [MemoryDB](/backend/02-cache-redis/vendors/aws-elasticache/) 的 multi-AZ transaction log。
 
 ## 整合 / 下一步

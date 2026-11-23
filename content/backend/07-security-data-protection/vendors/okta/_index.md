@@ -54,8 +54,8 @@ Okta 是 *人類身份的控制面*、不是 cloud resource permission engine。
 | -------------- | ---------------------------------------------- | ---------------------------------------- | --------------------------------------- |
 | 控制面責任     | Okta 託管 issuer / signing / support           | 自己跑 issuer、key rotation、HA、support | AWS 託管、限 AWS 帳號 + 已整合 SAML app |
 | Integration    | 7000+ SaaS app 預建                            | OIDC / SAML 通用、specific app 要自己接  | AWS 帳號 + 中等規模 SaaS                |
-| 第三方信任成本 | 高 — Okta 出事客戶被動受害（2022 / 2023 多起） | 低 — 自管、自己承擔運維                  | 中 — 綁 AWS 信任邊界                    |
-| 運維成本       | 低 — SaaS                                      | 高 — HA、DR、cert、DB、upgrade 都要顧    | 低 — AWS managed                        |
+| 第三方信任成本 | 高 — Okta 出事客戶被動受害（2022 / 2023 多起） | 低 — 自管、自己承擔維運                  | 中 — 綁 AWS 信任邊界                    |
+| 維運成本       | 低 — SaaS                                      | 高 — HA、DR、cert、DB、upgrade 都要顧    | 低 — AWS managed                        |
 | 適合場景       | 多雲、大量 SaaS、需要 lifecycle 自動化         | 預算 / 主權 / 自管要求、不接受 SaaS IdP  | AWS-heavy、員工數中等、SaaS 少          |
 | 退場成本       | 高 — SAML / SCIM 接線分散在數百 app            | 中 — 自己掌握資料                        | 中 — AWS 內部換                         |
 

@@ -17,7 +17,7 @@ Broker 是訊息分發的具體實作產品（RabbitMQ、Kafka、NATS、EMQX）�
 - 一個 broker 可實作多個 protocol：RabbitMQ 主走 AMQP、透過 plugin 也支援 MQTT 跟 STOMP；NATS 主走自家 protocol、JetStream 額外提供 KV 與 Object Store API
 - 一個 protocol 可被多個 broker 實作：MQTT 由 EMQX / HiveMQ / Mosquitto / RabbitMQ MQTT plugin 各自實作；AMQP 主要是 RabbitMQ 跟 Apache Qpid
 
-選型討論時要分清「我需要的是 protocol（如 device 端要 MQTT 因為輕量 / IoT 標準）」還是「broker 產品（如 RabbitMQ vs EMQX 的運維 / 生態取捨）」。當 protocol 跟 broker 都需要、會出現 protocol 橋接場景 — 例：device 端透過 MQTT 連 RabbitMQ MQTT plugin、broker 內部把 MQTT topic 自動映射成 AMQP routing key、AMQP-side consumer 用 routing key 訂閱。
+選型討論時要分清「我需要的是 protocol（如 device 端要 MQTT 因為輕量 / IoT 標準）」還是「broker 產品（如 RabbitMQ vs EMQX 的維運 / 生態取捨）」。當 protocol 跟 broker 都需要、會出現 protocol 橋接場景 — 例：device 端透過 MQTT 連 RabbitMQ MQTT plugin、broker 內部把 MQTT topic 自動映射成 AMQP routing key、AMQP-side consumer 用 routing key 訂閱。
 
 這層分離也影響故障判讀：device 連不上是 protocol 層問題、broker 之間 routing 錯是 broker 內部 plugin / mapping 問題、consumer 收不到是 AMQP binding 問題 — 三層各自獨立、不能混為一談。
 
@@ -110,7 +110,7 @@ Broker 在規模化服務承擔的責任從「單隊列工具」轉到「平台�
 **規模化的三個角色階段**（依據 Uber / LinkedIn / 早期服務對照、整理出三個典型階段）：
 
 - **單隊列工具**（規模尚小階段）：一個 Kafka cluster、所有 service 共用、broker 擴容是主要工作、團隊各自管理自己的 topic
-- **多租戶平台**（中大型階段）：跨團隊共用 cluster、平台 team 設定 quota、topic 命名規範、容量配額、觀測標準。Uber 描述 Uber 在這階段「標準化 topic 治理與故障處理流程」、把跨團隊運維責任收斂到平台層
+- **多租戶平台**（中大型階段）：跨團隊共用 cluster、平台 team 設定 quota、topic 命名規範、容量配額、觀測標準。Uber 描述 Uber 在這階段「標準化 topic 治理與故障處理流程」、把跨團隊維運責任收斂到平台層
 - **分層治理平台**（規模化階段）：不同業務特性走不同 cluster（critical / standard / experimental）、跨 cluster 路由跟治理變主要工作。LinkedIn 描述 LinkedIn「依流量與可靠性需求分層」、高優先 workload 提供獨立保護
 
 判讀含義：當 broker incident 影響多個 team 不相關業務、屬於該分層的訊號。規模化後焦點要轉向跨 team 隔離跟跨 cluster 治理、單純擴 broker 處理不了多租戶共擠的結構性問題。攻擊面跟控制面見 [3.5 紅隊章 Multi-tenant broker 隔離邊界](/backend/03-message-queue/red-team-delivery-layer/)。

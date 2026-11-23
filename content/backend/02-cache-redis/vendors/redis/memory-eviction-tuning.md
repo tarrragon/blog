@@ -189,7 +189,7 @@ Redis 的 LRU/LFU 都是近似演算法，不掃全 keyspace，而是每次取�
 
 ## 整合 / 下一步
 
-記憶體與淘汰是 Redis 運維的第一層旋鈕，但它跟其他子系統耦合：
+記憶體與淘汰是 Redis 維運的第一層旋鈕，但它跟其他子系統耦合：
 
 - **跟 [persistence / fork latency](/backend/02-cache-redis/vendors/redis/persistence-fork-latency/)**：fork 期間的 copy-on-write 是 maxmemory headroom 的主要消耗者，記憶體調校跟持久化調校必須一起看。
 - **跟 [TTL 與 eviction 概念](/backend/02-cache-redis/ttl-eviction/)**：TTL 設計決定哪些 key 帶過期時間，直接影響 `volatile-*` policy 的淘汰範圍。

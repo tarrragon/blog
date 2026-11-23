@@ -12,7 +12,7 @@ Google Secret Manager（GSM）是 GCP 原生的 *static secret 集中保管* 服
 
 GSM 的定位是 *GCP-native 的 secret 集中點*、解決三件事：把 secret 從 environment variable / Cloud Build substitution / GitHub secret 收回單一受控位置；用 [Google Cloud IAM](/backend/07-security-data-protection/vendors/google-cloud-iam/) 的 *role binding on secret resource* 控制誰能讀；走 [Workload Identity Federation](/backend/07-security-data-protection/vendors/google-cloud-iam/) 讓 GKE / Cloud Run / 外部 workload（GitHub Actions / AWS / Azure）安全取用、避免長期 service account key 散落。
 
-跟 [Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/) 比、GSM 沒有 dynamic credential engine、沒有 transit / PKI engine、沒有跨雲統一介面 — 但運維成本接近於零、跟 GCP IAM / KMS / Cloud Logging 的整合是 first-class。跟 [AWS Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/) 比、GSM 把 rotation orchestration 推給應用層、自由度高但代價是 *rotation 流程要自己設計*；跟 [Azure Key Vault](/backend/07-security-data-protection/vendors/azure-key-vault/) 比、兩者 mindset 相近（單雲、IAM-driven、CMEK 整合）、各自綁雲。
+跟 [Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/) 比、GSM 沒有 dynamic credential engine、沒有 transit / PKI engine、沒有跨雲統一介面 — 但維運成本接近於零、跟 GCP IAM / KMS / Cloud Logging 的整合是 first-class。跟 [AWS Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/) 比、GSM 把 rotation orchestration 推給應用層、自由度高但代價是 *rotation 流程要自己設計*；跟 [Azure Key Vault](/backend/07-security-data-protection/vendors/azure-key-vault/) 比、兩者 mindset 相近（單雲、IAM-driven、CMEK 整合）、各自綁雲。
 
 ## 本章目標
 
@@ -60,7 +60,7 @@ GSM 的定位是 *GCP-native 的 secret 集中點*、解決三件事：把 secre
 | Dynamic credential | 無（靠 IAM impersonation 替代）                                                                           | DB / cloud / SSH engine 完整                | RDS rotation 有、cloud STS 較弱                                      | 較弱（依靠 Managed Identity）           |
 | Encryption key     | Google-managed default / [Cloud KMS](/backend/07-security-data-protection/vendors/google-cloud-kms/) CMEK | 自管 / KMS auto-unseal                      | [AWS KMS](/backend/07-security-data-protection/vendors/aws-kms/) CMK | Azure Key Vault key                     |
 | External workload  | Workload Identity Federation（成熟）                                                                      | AppRole / Kubernetes / OIDC auth            | IAM Roles Anywhere（較新）                                           | Managed Identity / Workload Identity    |
-| 運維成本           | 低                                                                                                        | 高 — HA、upgrade、replication 自己顧        | 低                                                                   | 低                                      |
+| 維運成本           | 低                                                                                                        | 高 — HA、upgrade、replication 自己顧        | 低                                                                   | 低                                      |
 | 適合場景           | GCP-heavy + WIF 已主導 + static secret 為主                                                               | 跨雲、dynamic credential、內部 PKI          | AWS-heavy + 需要 built-in rotation 收斂                              | Azure-heavy + Managed Identity 已主導   |
 | 退場成本           | 低                                                                                                        | 中 — dynamic engine 接線多                  | 低                                                                   | 低                                      |
 

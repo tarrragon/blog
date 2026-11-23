@@ -12,7 +12,7 @@ Google 是 SRE 概念的原始來源、SRE Book 與 Workbook 是領域 canonical
 
 - SLI / SLO / Error Budget：可靠性目標的量化方法、為何選 SLO 而非 100%
 - Postmortem 文化：blameless / action items / 行動追蹤的閉環設計
-- Toil 量化：把運維工作變成可預算的工程資產
+- Toil 量化：把維運工作變成可預算的工程資產
 - [on-call](/backend/knowledge-cards/on-call/) 與 burnout：值班輪值、shadow / primary 結構、心理安全
 - [readiness](/backend/knowledge-cards/readiness/) review：服務上線前的 SRE 接管門檻
 
@@ -32,7 +32,7 @@ Google 是 SRE 概念的原始來源、SRE Book 與 Workbook 是領域 canonical
 | ---------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------ |
 | [G1](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/)       | Error Budget 與 Release Gating | 把 SLO 消耗量轉成放行、限速與凍結決策      |
 | [G2](/backend/06-reliability/cases/google/postmortem-action-item-closure-governance/)    | Postmortem Closure 治理        | 把事故改進項變成可追蹤、可驗證的治理節奏   |
-| [G3](/backend/06-reliability/cases/google/toil-budget-and-automation-investment-policy/) | Toil Budget 投資政策           | 把手動運維工作轉成可預算、可回寫的工程投資 |
+| [G3](/backend/06-reliability/cases/google/toil-budget-and-automation-investment-policy/) | Toil Budget 投資政策           | 把手動維運工作轉成可預算、可回寫的工程投資 |
 
 ## 案例定位
 

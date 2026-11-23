@@ -28,7 +28,7 @@ Genesys Cloud 在 DynamoDB 的關鍵數字（引自 [Genesys DynamoDB Case Study
 
 Genesys 案例揭露三個 B2B SaaS 平台容量規劃重點。
 
-1. **B2B 可用性目標跟 C2C 不同**：B2C 大型網站可能接受 99.9%（年停機 8.76 小時）、B2B SaaS 經常合約規定 99.95% 或 99.99%、客服平台類甚至要 99.999%（年停機 5 分鐘）。每多一個 9、容量規劃跟運維成本指數成長。對應 [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) 的 SLO 等級設計。
+1. **B2B 可用性目標跟 C2C 不同**：B2C 大型網站可能接受 99.9%（年停機 8.76 小時）、B2B SaaS 經常合約規定 99.95% 或 99.99%、客服平台類甚至要 99.999%（年停機 5 分鐘）。每多一個 9、容量規劃跟維運成本指數成長。對應 [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) 的 SLO 等級設計。
 2. **「DynamoDB 為預設、用其他要 justify」是規模化平台的工程治理**：跟 [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 整合到 Aurora 是同樣訴求、不同實作 — Genesys 選 DynamoDB 為基準是因為「Multi-region active-active」+「自動 scaling」+「99.999% SLA」的組合最容易達成 5 個 9 目標。對應 [01 資料庫模組](/backend/01-database/) 的 DB 預設選型。
 3. **15 主 region + 5 衛星 region = 全球客戶就近接入**：客戶服務有強烈延遲敏感（agent 操作介面卡 1 秒、客服效率掉一半）、必須在客戶所在地有 region。跟 [Riot Games 246 cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 的延遲驅動 region 部署同類思維。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 的地理分散規劃。
 

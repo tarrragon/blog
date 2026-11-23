@@ -126,7 +126,7 @@ FROM citus_tables ORDER BY table_name;
 
 ### Rollback boundary
 
-Cosmos DB for PostgreSQL 是叢集級服務、scale worker 是運維操作、可逆（縮回去）。distribution column 可以改，但代價是整張表重寫一次：Citus 的 `alter_distributed_table` 會建一張新表、把資料全部搬過去、再刪掉舊表，資料量越大越久。核心 Cosmos DB 的 partition key 則要自己建新 container 搬資料（見 [partition-key-design](../partition-key-design/)）。兩者都讓選錯的代價跟資料量成正比，所以 distribution column 仍要在建表時選對。
+Cosmos DB for PostgreSQL 是叢集級服務、scale worker 是維運操作、可逆（縮回去）。distribution column 可以改，但代價是整張表重寫一次：Citus 的 `alter_distributed_table` 會建一張新表、把資料全部搬過去、再刪掉舊表，資料量越大越久。核心 Cosmos DB 的 partition key 則要自己建新 container 搬資料（見 [partition-key-design](../partition-key-design/)）。兩者都讓選錯的代價跟資料量成正比，所以 distribution column 仍要在建表時選對。
 
 ```sql
 SELECT alter_distributed_table('events', distribution_column := 'event_id');
@@ -156,7 +156,7 @@ document / KV、固定 access pattern、不需要 JOIN 的 workload 選了 Cosmo
 
 ### Anti-recommendation：single-node PG 沒到上限不要上
 
-分散式 PostgreSQL 帶來 distribution column 設計、co-location 規劃、跨 shard query 成本、rebalance 運維。single-node managed PostgreSQL 加 vertical scaling 與 read replica 能撐的 OLTP baseline 比多數團隊以為的大。沒有觸及 single-node 真實上限（write throughput 飽和、單表大到 maintenance 困難、資料量超出單機）就上分散式、是用複雜度換不存在的容量需求。
+分散式 PostgreSQL 帶來 distribution column 設計、co-location 規劃、跨 shard query 成本、rebalance 維運。single-node managed PostgreSQL 加 vertical scaling 與 read replica 能撐的 OLTP baseline 比多數團隊以為的大。沒有觸及 single-node 真實上限（write throughput 飽和、單表大到 maintenance 困難、資料量超出單機）就上分散式、是用複雜度換不存在的容量需求。
 
 ## 容量與觀測
 

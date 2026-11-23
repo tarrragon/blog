@@ -14,7 +14,7 @@ tags: ["backend", "cache", "redis", "dragonflydb", "migration", "drop-in"]
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | **Memory cost**              | Redis 6.x cluster 跑 1-10 TB 時、機器成本爆；DragonflyDB 記憶體效率提升 ~30%、相同 dataset 少 30% RAM                          |
 | **Single-thread bottleneck** | Redis 主執行緒在單一 hot key 寫入時是瓶頸、scale-up 受限；DragonflyDB 多執行緒 + shared-nothing 設計、單機 throughput 號稱 25x |
-| **Multi-tenancy**            | Redis Cluster 多 namespace 需要 cluster-per-tenant、運維成本爆；DragonflyDB 設計上 namespace 隔離成本低                        |
+| **Multi-tenancy**            | Redis Cluster 多 namespace 需要 cluster-per-tenant、維運成本爆；DragonflyDB 設計上 namespace 隔離成本低                        |
 
 反向 driver（DragonflyDB → Redis）也存在 — 主要是 *Redis Modules 依賴*（RedisJSON / RedisSearch / RedisGraph）DragonflyDB 不支援、或 *Lua script 用了 redis.call 進階 API*。
 

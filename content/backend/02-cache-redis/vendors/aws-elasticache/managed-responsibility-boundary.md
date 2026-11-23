@@ -10,7 +10,7 @@ tags: ["backend", "cache", "aws-elasticache", "managed", "failover", "deep-artic
 
 ## managed 不等於 hands-off
 
-把 cache 換成 ElastiCache 之後，最危險的心態是「現在 AWS 全包了」。AWS 確實接走了一大塊運維——它幫你做 failover、patching、snapshot、跨 AZ 複製，你不用再自己部署 Sentinel、不用半夜起來手動切 master。但有一類問題 ElastiCache 一個都沒幫你解，而且因為「以為 AWS 會處理」，這些問題在 managed 環境反而更容易被忽略到上線才爆。
+把 cache 換成 ElastiCache 之後，最危險的心態是「現在 AWS 全包了」。AWS 確實接走了一大塊維運——它幫你做 failover、patching、snapshot、跨 AZ 複製，你不用再自己部署 Sentinel、不用半夜起來手動切 master。但有一類問題 ElastiCache 一個都沒幫你解，而且因為「以為 AWS 會處理」，這些問題在 managed 環境反而更容易被忽略到上線才爆。
 
 [Tinder 的配對引擎](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/)跑在 ElastiCache for Valkey 上、4700 萬月活、sub-millisecond 延遲——這證明 managed 撐得起極大規模，但 Tinder 仍要自己設計 key、處理 cache miss、控制 client 行為。ElastiCache for Redis 7.1 在 r7g.4xlarge 上單 node 可達約 100 萬 RPS、單 cluster 約 5 億 RPS（引自 [AWS Database Blog](https://aws.amazon.com/blogs/database/achieve-over-500-million-requests-per-second-per-cluster-with-amazon-elasticache-for-redis-7-1/)）——這個吞吐是 AWS 給的，但用不用得好取決於你的 key 分布與 client 設計。
 
@@ -31,7 +31,7 @@ ElastiCache 的責任劃分可以列成一張清楚的表，這張表是判讀�
 | key 設計 / hot key   | 不管                       | key 分布、hot key 兩層 cache 自己處理                                              |
 | 連線管理             | 提供 endpoint              | 連線池、socket timeout 自己設                                                      |
 
-左欄是用 managed 換到的，右欄是用 managed 換不掉的。[cache stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 的雪崩、[連線風暴](/backend/02-cache-redis/vendors/redis/connection-pipeline-latency/)、[eviction 選錯](/backend/02-cache-redis/vendors/redis/memory-eviction-tuning/) 在 ElastiCache 上跟自管 Redis 一模一樣會發生——因為這些是 cache 使用方式的問題，不是運維的問題。
+左欄是用 managed 換到的，右欄是用 managed 換不掉的。[cache stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 的雪崩、[連線風暴](/backend/02-cache-redis/vendors/redis/connection-pipeline-latency/)、[eviction 選錯](/backend/02-cache-redis/vendors/redis/memory-eviction-tuning/) 在 ElastiCache 上跟自管 Redis 一模一樣會發生——因為這些是 cache 使用方式的問題，不是維運的問題。
 
 ### engine 選擇與 cluster mode
 

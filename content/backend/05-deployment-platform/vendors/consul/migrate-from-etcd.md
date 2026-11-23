@@ -254,7 +254,7 @@ Production setup 第一步就 bootstrap ACL、不可以延後。
 | ---------------- | --------------------- | --------------------------------------------- |
 | Cluster baseline | 3-5 node Raft cluster | 3-5 server + N agent (per host)               |
 | Memory per node  | 2-8GB                 | 4-16GB（含 agent）                            |
-| Operational FTE  | 0.2-0.5               | 0.5-1.0（多 features 多運維）                 |
+| Operational FTE  | 0.2-0.5               | 0.5-1.0（多 features 多維運）                 |
 | Feature surface  | Pure KV               | KV + service mesh + multi-DC + ACL            |
 | Setup complexity | Low                   | Medium-High                                   |
 | Multi-DC support | 不支援                | Built-in WAN federation                       |

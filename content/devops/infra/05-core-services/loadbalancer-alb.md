@@ -224,7 +224,7 @@ resource "aws_route53_record" "api" {
 }
 ```
 
-`evaluate_target_health = true` 讓 Route 53 在 ALB 所有 target 都不健康時把這條記錄標為不健康。如果有多個 region 的 ALB 做了 failover routing，這個設定能讓 DNS 層自動切換到健康的 region — 屬於跨區域容災的地基，在 運維 模組展開。
+`evaluate_target_health = true` 讓 Route 53 在 ALB 所有 target 都不健康時把這條記錄標為不健康。如果有多個 region 的 ALB 做了 failover routing，這個設定能讓 DNS 層自動切換到健康的 region — 屬於跨區域容災的地基，在 維運 模組展開。
 
 ## WAF 與下一步
 
@@ -237,5 +237,5 @@ ALB 支援掛載 AWS WAF（Web Application Firewall），在流量進到應用�
 - → [模組三：網路地基](/devops/infra/03-network-foundation/)：ALB 的 security group 設計，group-to-group 引用
 - → [模組三：流量入口層](/devops/infra/03-network-foundation/traffic-entry-layer/)：ALB 作為 L7 入口在請求責任鏈的位置、跟單機 nginx 的選擇條件（本篇 IaC 是那個決策落地的一端）
 - → [模組五：stateful 資源的保護策略](/devops/infra/05-core-services/stateful-protection-dependency/)：ALB 是 stateless，但它引用的 ACM 憑證和 DNS 記錄有自己的生命週期考量
-- → [運維 模組一：負載平衡](/devops/operations/01-load-balancing/)：ALB 的運行期調校 — 跨 AZ 流量分配、connection draining、sticky session
+- → [維運 模組一：負載平衡](/devops/operations/01-load-balancing/)：ALB 的運行期調校 — 跨 AZ 流量分配、connection draining、sticky session
 - → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：WAF 規則設計

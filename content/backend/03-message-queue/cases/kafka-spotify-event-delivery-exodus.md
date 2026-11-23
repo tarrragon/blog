@@ -24,7 +24,7 @@ Kafka 0.7 的跨 datacenter replication 工具 MirrorMaker 在 best-effort mode 
 
 ### Broker restart 後 producer 無法自動恢復
 
-Kafka 0.7 的 producer 在 broker restart 後可能進入無法自動恢復的狀態 — 需要人工重啟 producer process。在 5 個 datacenter、數百個 producer instance 的規模下，每次 broker 維護操作都需要人工介入恢復 producer，運維成本跟 broker 數量成正比。
+Kafka 0.7 的 producer 在 broker restart 後可能進入無法自動恢復的狀態 — 需要人工重啟 producer process。在 5 個 datacenter、數百個 producer instance 的規模下，每次 broker 維護操作都需要人工介入恢復 producer，維運成本跟 broker 數量成正比。
 
 ### 為什麼不升級到 Kafka 0.8+
 
@@ -32,16 +32,16 @@ Kafka 0.8 引入了 replication、新的 consumer API 跟更可靠的 producer�
 
 - Kafka 0.7 到 0.8 的 wire protocol 不相容，需要全量遷移而非滾動升級
 - 所有 producer / consumer 的 client library 都要更換
-- Spotify 同時在向 GCP 遷移基礎設施，Kafka 的自管運維模式跟 GCP 的託管方向不一致
+- Spotify 同時在向 GCP 遷移基礎設施，Kafka 的自管維運模式跟 GCP 的託管方向不一致
 
-相比之下，GCP Pub/Sub 提供了託管的 exactly-once 語意、跨 region replication、零運維。遷移成本跟升級 Kafka 版本的成本相當，但遷移後的長期運維成本低得多。
+相比之下，GCP Pub/Sub 提供了託管的 exactly-once 語意、跨 region replication、零維運。遷移成本跟升級 Kafka 版本的成本相當，但遷移後的長期維運成本低得多。
 
 ## 解法與取捨
 
 | 面向                  | 留在 Kafka（升級 0.8+）      | 遷到 GCP Pub/Sub            |
 | --------------------- | ---------------------------- | --------------------------- |
 | 一次性遷移成本        | 中（全量遷移、不可滾動升級） | 中（同樣需要改所有 client） |
-| 長期運維成本          | 高（自管 broker × 5 DC）     | 低（託管、零 broker 維護）  |
+| 長期維運成本          | 高（自管 broker × 5 DC）     | 低（託管、零 broker 維護）  |
 | 可靠性保證            | 0.8+ 有 replication、改善大  | Pub/Sub 原生 exactly-once   |
 | 跨 region replication | 需要自建 MirrorMaker 2.0     | 原生支援                    |
 | 生態鎖定              | Kafka 生態成熟               | GCP 鎖定、跨雲成本高        |
@@ -60,7 +60,7 @@ Spotify 的判斷是：在同時進行 GCP 遷移的背景下，維護自管 Kaf
 讀者在自己的系統看到以下訊號時，應該回讀本案例：
 
 - 使用舊版 Kafka（< 2.0）且跨 region replication 的資料完整性無法驗證
-- Broker restart 後需要人工重啟 producer、運維成本跟 broker 數量成正比
+- Broker restart 後需要人工重啟 producer、維運成本跟 broker 數量成正比
 - 組織正在做基礎設施遷移（on-prem → cloud），考慮是否同步切換 MQ
 - 評估「升級現有系統 vs 遷移到新系統」的決策框架
 

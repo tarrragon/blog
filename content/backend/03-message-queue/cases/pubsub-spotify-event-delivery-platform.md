@@ -46,14 +46,14 @@ Dedup store 的挑戰是大小跟 TTL — 要記住多久以前的 event ID 才�
 
 | 面向                  | Pub/Sub + 自建 dedup         | 自管 Kafka 0.8+                   |
 | --------------------- | ---------------------------- | --------------------------------- |
-| 運維成本              | 低（Pub/Sub 全託管）         | 高（自管 broker × 多 region）     |
+| 維運成本              | 低（Pub/Sub 全託管）         | 高（自管 broker × 多 region）     |
 | 語意保證              | At-least-once + 應用層 dedup | At-least-once（idempotent 0.11+） |
 | 跨 region replication | 原生支援                     | 需要 MirrorMaker 或自建           |
 | 流控精細度            | Pull subscription 可控       | Consumer group 自動分配           |
 | Topic 治理            | 需要自建平台層               | Kafka 生態工具（Confluent 等）    |
 | Dedup 成本            | 額外的 cache / store 成本    | Idempotent producer 減少需求      |
 
-自建 dedup 的成本是 Spotify 選 Pub/Sub 的額外付出。這個代價在託管方案的運維節省面前被接受 — 維護一個 dedup cache 的成本遠低於維護跨 5 個 datacenter 的 Kafka broker fleet。
+自建 dedup 的成本是 Spotify 選 Pub/Sub 的額外付出。這個代價在託管方案的維運節省面前被接受 — 維護一個 dedup cache 的成本遠低於維護跨 5 個 datacenter 的 Kafka broker fleet。
 
 ## 回寫教材的連結
 

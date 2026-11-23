@@ -67,7 +67,7 @@ Spanner 用 Paxos + TrueTime 把 coordinator 變成「拓樸感知的多 leader�
 - **CockroachDB**：用 HLC（Hybrid Logical Clock）+ Raft、可在通用硬體上跑、但 cross-region linearizability 需要 OCC retry。
 - **TiDB**：用 TSO（Timestamp Oracle）服務發 global timestamp、TSO 本身是 single point、可用性要靠 TSO failover 設計。
 
-TrueTime 是 *專屬硬體投資*、Aurora DSQL、CockroachDB、TiDB 是 *軟體 only*，硬體與軟體兩條路線的一致性保證等級類似、但運維成本跟認證難度差很大。可複製性低的 TrueTime 是 Google 的競爭優勢、不是普遍 best practice。
+TrueTime 是 *專屬硬體投資*、Aurora DSQL、CockroachDB、TiDB 是 *軟體 only*，硬體與軟體兩條路線的一致性保證等級類似、但維運成本跟認證難度差很大。可複製性低的 TrueTime 是 Google 的競爭優勢、不是普遍 best practice。
 
 **容量規劃**：
 
@@ -319,7 +319,7 @@ distributed SQL 跟 single-cluster SQL 之間還有一層：**多個獨立 clust
 
 - **微服務各自 OLTP**（Netflix Aurora consolidation）：每個微服務有自己的 Aurora cluster、跨服務一致性靠 application 層 saga / outbox。適合服務間業務 *天然解耦*（用戶服務、訂單服務、商品服務各自 owned data）。Query path 上、跨服務查詢必須走 API 而非 SQL JOIN、要接受查多個服務多次往返；一致性 path 上、跨服務 transaction 用 saga + compensation、容忍中間態。
 - **微服務共用 OLTP**（Clearent Hyperscale）：所有微服務共用一個大 cluster、跨服務一致性靠 DB transaction。適合業務 *天然耦合*（payment 跟 refund 跟 chargeback 必須在同一 transaction）。Query path 上、可以用 SQL JOIN 直接查跨服務資料、簡單；一致性 path 上、所有微服務共享一個 schema 演進邊界、schema migration 影響所有服務、要協調。
-- **Sharding by tenant**（B2B SaaS）：每個 enterprise tenant 自己 cluster、適合 tenant 之間完全隔離、大客戶可能要求專屬 cluster。Query path 上、跨 tenant 查詢（例如平台級報表）要走 federated query 或 ETL 聚合、不能直接 join；運維 path 上、每個 tenant cluster 的容量規劃、backup、upgrade 都獨立、運維工時隨 tenant 數量線性成長。
+- **Sharding by tenant**（B2B SaaS）：每個 enterprise tenant 自己 cluster、適合 tenant 之間完全隔離、大客戶可能要求專屬 cluster。Query path 上、跨 tenant 查詢（例如平台級報表）要走 federated query 或 ETL 聚合、不能直接 join；維運 path 上、每個 tenant cluster 的容量規劃、backup、upgrade 都獨立、維運工時隨 tenant 數量線性成長。
 - **Sharding by region**（受監管產業）：每個合規市場自己 cluster、合規驅動、不是性能驅動。對應 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個市場各自獨立。
 
 判讀重點：sharding 不是「擴容到不夠才做」、是「業務模型決定的初始設計」。等到 single cluster 撐不住才開始 shard、會踩進「跨 shard 一致性」的工程地雷區、修改成本遠高於初期設計成本。Managed DB（Aurora、Hyperscale）的容量上限是 *已知* 的、設計時就該知道未來何時觸發 sharding。對應 [1.1 高併發資料存取](/backend/01-database/high-concurrency-access/) 的 storage 層 replication 段 — Hyperscale / Aurora 同類設計的容量上限同樣是 sharding 觸發點。

@@ -88,7 +88,7 @@ Splunk 的核心定位是 *任意 log source 的統一查詢平台*、SIEM 是�
 - **SPL search 慢 / 卡 search head**：full-fidelity search on 1TB raw event、沒用 data model acceleration — 改用 accelerated data model、限定 time range、用 `tstats` 而非 `stats`
 - **Correlation rule false positive 多**：rule 寫得太寬、env-specific noise 沒 tune — staging tenant 跑 1 週統計 FP、tune threshold、加 lookup table 排除已知合法 source
 - **SOAR playbook 黑箱 fire-and-forget**：自動 disable account 結果誤殺 CEO — playbook 走 *approval gate* for high-impact action、defaults to *containment* not *deletion*
-- **Splunk admin 太多 / 沒 break-glass**：日常運維用 admin token、admin compromise blast radius 太大 — 收 admin 角色、改 power user + 特定 capability、break-glass 走 [Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/)
+- **Splunk admin 太多 / 沒 break-glass**：日常維運用 admin token、admin compromise blast radius 太大 — 收 admin 角色、改 power user + 特定 capability、break-glass 走 [Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/)
 
 ## 何時改走其他服務
 

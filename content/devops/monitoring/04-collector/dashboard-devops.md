@@ -7,7 +7,7 @@ tags: ["monitoring", "collector", "dashboard", "devops", "health", "alerting"]
 aliases: ["/monitoring/04-collector/dashboard-devops/"]
 ---
 
-DevOps dashboard 的消費者是維護 collector 的人 — 可能是開發者自己、可能是開源使用者的運維人員。這個 dashboard 不看被監控 app 的業務邏輯，只看 collector 這個基礎設施本身是否健康、各 SDK 實例是否正常回報。
+DevOps dashboard 的消費者是維護 collector 的人 — 可能是開發者自己、可能是開源使用者的維運人員。這個 dashboard 不看被監控 app 的業務邏輯，只看 collector 這個基礎設施本身是否健康、各 SDK 實例是否正常回報。
 
 使用模式是混合型：平時靠告警被動通知，收到通知後到 dashboard 查看細節。日常監控視圖提供「一眼確認系統正常」的能力，告警觸發視圖提供「出事了去哪裡查」的排障路徑。
 

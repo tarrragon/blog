@@ -75,7 +75,7 @@ CREATE CHANGE STREAM orders_stream
 
 ### 選消費路徑 — Dataflow connector 為預設
 
-消費 change stream 有三條路徑、對應不同的下游能力與運維成本：
+消費 change stream 有三條路徑、對應不同的下游能力與維運成本：
 
 | 路徑                                       | partition 管理           | 適合場景                                       |
 | ------------------------------------------ | ------------------------ | ---------------------------------------------- |
@@ -158,7 +158,7 @@ Change Streams 跟 DynamoDB Streams 都是 managed CDC、但 partition 模型、
 
 ### 何時不用 change streams
 
-單純需要「下游讀到最新狀態、不在意中間每筆變更」、且主庫變更率低、定期 batch export 反而更簡單、不必引入 change stream + Dataflow 的運維成本。低頻、ad-hoc 的分析、走 [BigQuery federation](../bigquery-federation/) 直接查 Spanner 比建 CDC 管線更省。Anti-recommendation 的判斷標準是：若下游不需要「每一筆變更的順序」、只需要「定期最新快照」、CDC 是過度工程。
+單純需要「下游讀到最新狀態、不在意中間每筆變更」、且主庫變更率低、定期 batch export 反而更簡單、不必引入 change stream + Dataflow 的維運成本。低頻、ad-hoc 的分析、走 [BigQuery federation](../bigquery-federation/) 直接查 Spanner 比建 CDC 管線更省。Anti-recommendation 的判斷標準是：若下游不需要「每一筆變更的順序」、只需要「定期最新快照」、CDC 是過度工程。
 
 ### 相關的 Spanner 文章
 

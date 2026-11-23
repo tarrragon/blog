@@ -66,4 +66,4 @@ paved road 的重點是預設路徑好走，不是禁止離開。這條路每一
 - 概念本身、組織尺度與個人尺度的界線：[Golden Path / paved road](/linux/dotfile/knowledge-cards/paved-road-golden-path/)
 - 這條路的第一步（形態選型）：[遠端 agent 工作機選型](../agent-workstation-home-vs-vps/)
 - 整條路的端到端實作驗證：[遠端 agent 工作機實作記錄](../agent-workstation-vm-handson/)
-- 若想理解這條路在更大交付脈絡的位置（Infra / CI/CD / 運維三階段）：[DevOps 全景](/devops/)
+- 若想理解這條路在更大交付脈絡的位置（Infra / CI/CD / 維運三階段）：[DevOps 全景](/devops/)

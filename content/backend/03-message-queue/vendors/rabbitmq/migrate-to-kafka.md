@@ -21,7 +21,7 @@ RabbitMQ 跟 Kafka 都被歸在「message queue」這個傘狀詞下、但兩者
 | 維度                 | 落差   | 說明                                                                                               |
 | -------------------- | ------ | -------------------------------------------------------------------------------------------------- |
 | Schema / API         | 中     | AMQP client → Kafka client、wire protocol 全換、但都是 publish / consume 心智模型                  |
-| Operational model    | 中     | 單 broker + management UI → multi-broker + KRaft / Schema Registry / Connect、運維資產變重         |
+| Operational model    | 中     | 單 broker + management UI → multi-broker + KRaft / Schema Registry / Connect、維運資產變重         |
 | Abstraction/paradigm | **高** | work queue「處理即承諾、ack 後即刪」→ event log「寫入即承諾、offset replay」、責任模型整個不同     |
 | Number of components | 低     | 兩端都是單一 messaging system、不是一站式拆多工具                                                  |
 | Application change   | **高** | consumer 要重設計（ack → offset commit）、producer 要重設計（exchange routing → partition key）    |
@@ -202,13 +202,13 @@ cutover 是 per-workload 的：某個 workload shadow 驗證通過、就把它�
 | RAM / node baseline | 4-16GB                           | 16-64GB                                     |
 | Storage 模型        | 未消費訊息量（ack 即刪）         | retention 期內全部訊息（與消費無關）        |
 | Operational FTE     | 0.2-0.5 FTE                      | 0.5-2 FTE                                   |
-| 額外運維元件        | 通常無                           | Schema Registry / Connect / 監控 lag        |
+| 額外維運元件        | 通常無                           | Schema Registry / Connect / 監控 lag        |
 | Throughput / node   | 數萬到數十萬 msg/s               | 100K-1M+ msg/s                              |
 | Replay 能力         | 無（ack 即刪）                   | retention 期內任意 offset                   |
 | 複雜 routing        | 強（exchange + binding）         | 弱（producer 端決定、broker 不路由）        |
-| 學習與運維成本      | 低                               | 高（partition / offset / rebalance 都要懂） |
+| 學習與維運成本      | 低                               | 高（partition / offset / rebalance 都要懂） |
 
-判讀：純 work queue 場景 RabbitMQ 的運維成本顯著低、Kafka 的 storage 跟運維是為了 replay 與高吞吐付的價。如果 workload 用不到 replay 跟跨 consumer group fan-out、遷到 Kafka 是用更高的成本換用不到的能力。
+判讀：純 work queue 場景 RabbitMQ 的維運成本顯著低、Kafka 的 storage 跟維運是為了 replay 與高吞吐付的價。如果 workload 用不到 replay 跟跨 consumer group fan-out、遷到 Kafka 是用更高的成本換用不到的能力。
 
 ## 整合 / 下一步
 

@@ -113,13 +113,13 @@ Load test 提供 performance regression evidence。差異主要在語言生態�
 
 ### Chaos engineering（Chaos Mesh / LitmusChaos / Gremlin / Toxiproxy）
 
-Chaos 工具按 scope 跟運維模式分四類：**Chaos Mesh** K8s-native CRD-driven 多 fault types；**LitmusChaos** K8s + ChaosHub experiment 庫；**Gremlin** 商業 SaaS / 跨平台 / GameDay；**Toxiproxy** TCP-level / integration test 用。
+Chaos 工具按 scope 跟維運模式分四類：**Chaos Mesh** K8s-native CRD-driven 多 fault types；**LitmusChaos** K8s + ChaosHub experiment 庫；**Gremlin** 商業 SaaS / 跨平台 / GameDay；**Toxiproxy** TCP-level / integration test 用。
 
 選型判讀：K8s production + OSS → Chaos Mesh / Litmus；跨平台 + 商業 → Gremlin；CI integration test → Toxiproxy。對應 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/) 的 blast radius 設計。
 
 ### SLO governance（Nobl9 / Sloth）
 
-SLO 工具按 source 跟運維模式分兩類：**Nobl9** 商業 SaaS / multi-source / OpenSLO 主導 / 企業 governance；**Sloth** OSS / Prometheus-only / 產生 Prometheus rules。
+SLO 工具按 source 跟維運模式分兩類：**Nobl9** 商業 SaaS / multi-source / OpenSLO 主導 / 企業 governance；**Sloth** OSS / Prometheus-only / 產生 Prometheus rules。
 
 選型判讀：multi-source / SaaS / governance → Nobl9；Prometheus-only / OSS → Sloth / Pyrra；vendor 內建夠 → Datadog SLO / Grafana SLO / Honeycomb SLO。對應 [knowledge cards burn-rate](/backend/knowledge-cards/burn-rate/)。
 

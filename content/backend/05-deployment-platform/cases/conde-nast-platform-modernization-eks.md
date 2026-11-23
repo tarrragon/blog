@@ -28,7 +28,7 @@ kube2iam → IRSA 的切換是這個案例中安全基線提升最顯著的一�
 
 1. **盤點既有叢集的差異維度**：Kubernetes 版本、CNI、ingress controller、credential 管理方式、部署流程、監控工具。差異清單是遷移計畫的輸入。
 2. **定義統一平台基線**：選定 EKS + Bottlerocket + VPC CNI + IRSA 作為所有叢集的共通配置。基線要涵蓋安全（pod 唯讀 filesystem、禁 root）、資源（quotas、limits）、網路（CNI、LB controller）。
-3. **用 namespace multi-tenancy 取代獨立叢集**：每個團隊一個 namespace，resource quotas 限制資源用量。這比一個團隊一個叢集的運維成本低，但需要在 namespace 層級做好隔離（NetworkPolicy、ResourceQuota、RBAC scope）。
+3. **用 namespace multi-tenancy 取代獨立叢集**：每個團隊一個 namespace，resource quotas 限制資源用量。這比一個團隊一個叢集的維運成本低，但需要在 namespace 層級做好隔離（NetworkPolicy、ResourceQuota、RBAC scope）。
 4. **漸進切換業務流量**：按 region / 市場分批遷移，每批遷移後驗證 latency 與 error rate。搭配 CloudFront 做 edge 層的流量管理。
 
 ## 可回寫的章節段落

@@ -83,7 +83,7 @@ freeze 與 exception 的關係是：exception 定義風險接受，freeze 定義
 | 判讀訊號                                                                                                                      | 代表風險                         | 下一步路由                                |
 | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | ----------------------------------------- |
 | [Security exception](/backend/knowledge-cards/security-exception/) 項目沒有到期日                                             | 風險接受狀態失去關閉機制         | 回到 7.14 補 expiry 與 exit criteria      |
-| [Release freeze](/backend/knowledge-cards/release-freeze/) 已啟動但沒有 [allowlist](/backend/knowledge-cards/allowlist/) 契約 | 關鍵修復與運維操作被一併阻斷     | 補 freeze scope 與 allowlist              |
+| [Release freeze](/backend/knowledge-cards/release-freeze/) 已啟動但沒有 [allowlist](/backend/knowledge-cards/allowlist/) 契約 | 關鍵修復與維運操作被一併阻斷     | 補 freeze scope 與 allowlist              |
 | 有 [Tripwire](/backend/knowledge-cards/tripwire/) 名稱但沒有量化門檻                                                          | 觸發條件不可驗證，決策回收不穩定 | 補 threshold 與 escalation owner          |
 | [Security exception](/backend/knowledge-cards/security-exception/) 關閉後沒有回寫                                             | 同類風險下次仍靠人工記憶         | 回寫到 problem cards 與 incident workflow |
 

@@ -171,7 +171,7 @@ postgresql:
 
 **徵兆**：舊 leader 恢復後、Patroni log 顯示 `pg_rewind failed`、舊 leader 一直 STARTING、無法重接 cluster；SRE 手動跑 pg_basebackup 才恢復。
 
-**根因**：`remove_data_directory_on_rewind_failure: false`（預設）— rewind 失敗時 Patroni 不主動清 data dir、需要 SRE 手動處理；運維沒 runbook、卡在這步幾小時。
+**根因**：`remove_data_directory_on_rewind_failure: false`（預設）— rewind 失敗時 Patroni 不主動清 data dir、需要 SRE 手動處理；維運沒 runbook、卡在這步幾小時。
 
 **修法**：
 

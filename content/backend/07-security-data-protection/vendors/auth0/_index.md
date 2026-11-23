@@ -60,7 +60,7 @@ Auth0 是 *customer identity 的控制面*、不是員工 SSO（員工走 [Okta 
 | Social connection | 預建數十種、UI / token broker 完整                   | 主要 OIDC / SAML、social 要自己接          | Google / Apple / Facebook 預建、其他要自接 | OIDC / SAML 通用、specific provider 要自配 |
 | 客製化能力        | Action JS hook 強、Universal Login 高度客製          | Lambda Trigger、UI 客製有限                | Cloud Function Trigger、UI 客製中等        | 任何 — 自己掌握程式碼                      |
 | 計費模型          | 月活躍 user（MAU）+ B2B Organizations + 進階功能加價 | MAU 階梯、AWS 內部其他資源費用             | MAU + 簡訊 / phone auth 另計               | 自管基礎設施成本                           |
-| 成本陡升點        | 大量 MAU、credential stuffing、Adaptive MFA 加價     | Cognito Identity Pool federation 複雜場景  | 通常便宜、但 phone auth 成本明顯           | 規模化後運維成本（HA、DR、cert、upgrade）  |
+| 成本陡升點        | 大量 MAU、credential stuffing、Adaptive MFA 加價     | Cognito Identity Pool federation 複雜場景  | 通常便宜、但 phone auth 成本明顯           | 規模化後維運成本（HA、DR、cert、upgrade）  |
 | 適合場景          | B2C / B2B SaaS、要 social login、developer-first     | AWS-heavy 後端、不要求 social 廣度         | mobile-first、Firebase 生態內              | 主權 / 自管要求、不接受 SaaS IdP           |
 | 退場成本          | 中高 — user / password hash 可匯出、Action 要重寫    | 中 — Cognito user pool 可匯出、policy 重寫 | 中 — Firebase user 可匯出                  | 低 — 自己掌握                              |
 

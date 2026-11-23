@@ -25,7 +25,7 @@ Aurora「最多 15 read replica」是文件數字，而實際 production 部署�
 
 [FanDuel](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 揭露事件型容量分級：平日 baseline → 季後賽 2-3x → 季冠軍賽 4-5x → Super Bowl 5-10x。容量規劃要按事件級別分段、不是一律 10x。
 
-對 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 這種受監管金融、不能用單一巨型 cluster — 7 個受監管市場 = 7 個獨立 cluster、合規 boundary 比運維成本優先。
+對 [Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 這種受監管金融、不能用單一巨型 cluster — 7 個受監管市場 = 7 個獨立 cluster、合規 boundary 比維運成本優先。
 
 ## 核心機制：15 replica 上限、共享 storage、reader endpoint
 
@@ -304,7 +304,7 @@ Standard Chartered 7 個受監管市場 = 7 個獨立 cluster。[Data Residency]
 **容易誤判的邊界**：
 
 - Fleet 治理本身有 ops surface area 成本（parameter group / backup / IAM / observability fan-out × N cluster）— 不是免費；driver 不夠強時不該拆
-- 「fleet 看起來大」不是 driver — driver 是業務本身有 boundary、不是運維美觀
+- 「fleet 看起來大」不是 driver — driver 是業務本身有 boundary、不是維運美觀
 - 拆 cluster 後再合併比拆更難（資料遷移成本高）— driver 不確定時先加 replica
 
 ## 容量與觀測

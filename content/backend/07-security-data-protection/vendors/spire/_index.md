@@ -58,7 +58,7 @@ SPIRE 的核心定位是 *attestation-first 的 workload identity 控制面*、�
 | Cert TTL          | 分鐘級短期、Workload API 自動 rotate                   | 天 / 月級、cert-manager 排程 renew          | Token TTL（projected: 短）      | Token TTL（lease 治理）          |
 | Workload 改動     | 需走 SPIFFE Workload API SDK 或 sidecar                | Mount file 即可                             | Mount file 即可                 | 拉 secret_id + 換 token          |
 | 跨組織 federation | 強 — 交換 trust bundle 即可                            | 弱 — 需共用 CA 或 ACME                      | 不支援                          | 弱 — 需共用 Vault 或 OIDC bridge |
-| 運維成本          | 高 — Server HA + Agent rollout + Entry 治理            | 低 — Operator 模式                          | 內建                            | 中 — Vault 自管                  |
+| 維運成本          | 高 — Server HA + Agent rollout + Entry 治理            | 低 — Operator 模式                          | 內建                            | 中 — Vault 自管                  |
 | 適合場景          | Zero-trust mesh、跨 cluster / 跨組織、需要 attestation | K8s app cert lifecycle、ACME / Vault issuer | Cluster-internal 簡單 app       | 不在雲 metadata 內的 workload    |
 
 選 SPIRE 的核心訴求：*需要 attested workload identity*（不只是「有 cert 就信」）+ *跨 cluster 或跨組織*（單 cluster 內 ServiceAccount 已夠）+ *workload 能整合 SPIFFE SDK 或 sidecar*。三個條件缺一就先用 cert-manager + ServiceAccount 組合、別硬上 SPIRE。

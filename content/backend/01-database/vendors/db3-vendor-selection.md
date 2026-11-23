@@ -171,7 +171,7 @@ DynamoDB 在 surge 場景能吸收 nearly infinitely 的寫入，是 *系統架�
 
 **Consistency model**：三家機制設計哲學不同。MongoDB read concern 是 *per-operation* 選擇（同一 client connection 可以混用）；DynamoDB strong vs eventual 是 *per-read* 選項（write 端統一強一致）；Cosmos DB 5 個 level 是 *account-level default + per-request override*、且 Strong 跟 multi-region write 互斥（CAP 硬約束）。設計上 MongoDB 最 flexible、Cosmos DB 最 explicit、DynamoDB 介於中間。延伸機制細節見 [Cosmos DB consistency levels engineering](/backend/01-database/vendors/cosmosdb/consistency-levels-engineering/)、[Cosmos DB multi-region write conflict](/backend/01-database/vendors/cosmosdb/multi-region-write-conflict/)（Strong 與 multi-region write 互斥的機制）。
 
-**Multi-model 差異化**：Cosmos DB 是 *唯一單一服務支援 5 API* 的雲商 DB（SQL / MongoDB / Cassandra / Gremlin / Table）— 對照 AWS 走多產品覆蓋（DynamoDB KV + DocumentDB MongoDB-compat + Neptune graph + Keyspaces Cassandra-compat）、GCP 走多產品覆蓋（Firestore + Spanner + Bigtable）。multi-model 的差異化價值是 *減少多 DB 並存運維* — 一個產品團隊只養一個 service、一套 IAM、一套 backup / DR、一套 monitoring。但 *是否真用上 multi-model* 要看團隊實際 workload — 多數團隊只用 1-2 個 API、單一 model 的競品（DynamoDB / MongoDB）可能更專注。
+**Multi-model 差異化**：Cosmos DB 是 *唯一單一服務支援 5 API* 的雲商 DB（SQL / MongoDB / Cassandra / Gremlin / Table）— 對照 AWS 走多產品覆蓋（DynamoDB KV + DocumentDB MongoDB-compat + Neptune graph + Keyspaces Cassandra-compat）、GCP 走多產品覆蓋（Firestore + Spanner + Bigtable）。multi-model 的差異化價值是 *減少多 DB 並存維運* — 一個產品團隊只養一個 service、一套 IAM、一套 backup / DR、一套 monitoring。但 *是否真用上 multi-model* 要看團隊實際 workload — 多數團隊只用 1-2 個 API、單一 model 的競品（DynamoDB / MongoDB）可能更專注。
 
 ## 失敗模式（cross-vendor 反模式）
 

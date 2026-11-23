@@ -55,14 +55,14 @@ Lambda 消費 stream 是 *at-least-once* — 同一筆 record 可能被送兩次
 
 ## 消費模式：Lambda vs Kinesis
 
-兩條主要消費路徑、責任與運維成本不同：
+兩條主要消費路徑、責任與維運成本不同：
 
 | 維度      | Lambda event source mapping                          | Kinesis Data Streams for DynamoDB |
 | --------- | ---------------------------------------------------- | --------------------------------- |
 | 模式      | poll（Lambda 服務輪詢 stream shard 後呼叫 function） | pull（消費端自己拉）              |
 | retention | stream 原生較短                                      | 較長（可重播更久）                |
 | 消費者數  | 適合單一 / 少量消費者                                | 適合多消費者 fan-out              |
-| 運維      | 幾乎零（managed trigger）                            | 要管 Kinesis consumer / KCL       |
+| 維運      | 幾乎零（managed trigger）                            | 要管 Kinesis consumer / KCL       |
 | 重播能力  | 受 stream retention 限制                             | retention 內可重播                |
 
 多數「寫入後觸發一個下游動作」用 Lambda event source mapping 最簡單。需要長 retention、多消費者 fan-out、或要重播歷史變更的、用 Kinesis Data Streams for DynamoDB。
@@ -157,7 +157,7 @@ at-least-once 重送、下游每次都發一筆通知、用戶收到重複推播
 
 為提吞吐把 factor 開 > 1、又依賴 shard 內嚴格順序、兩者矛盾。修法：需要嚴格順序維持 factor = 1；要並行吞吐就接受順序放寬、或把順序敏感的處理移到下游用 PK 分組。
 
-**Anti-recommendation**：只有單一同步下游、且寫路徑延遲容忍度高 → 直接在 application 寫入後同步處理可能更簡單、不必引入 stream 的運維與冪等複雜度。Streams 的價值在「多下游 / 解耦寫路徑 / 低延遲 CDC」。
+**Anti-recommendation**：只有單一同步下游、且寫路徑延遲容忍度高 → 直接在 application 寫入後同步處理可能更簡單、不必引入 stream 的維運與冪等複雜度。Streams 的價值在「多下游 / 解耦寫路徑 / 低延遲 CDC」。
 
 ## 容量與觀測
 

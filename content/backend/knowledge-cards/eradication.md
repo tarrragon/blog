@@ -6,7 +6,7 @@ weight: 487
 tags: ["backend", "security", "incident-response", "eradication"]
 ---
 
-根除（eradication）是資安事故處理中位於止血之後、回復之前的階段：移除攻擊者在環境裡留下的全部**立足點（foothold）**，也就是他取得的憑證、放置的後門、改過的程式與產物，以及寫進資料裡的帳號與設定。止血（[Containment](/backend/knowledge-cards/containment/)）切斷的是已知的存取路徑，攻擊者手上還沒被發現的憑證在止血之後仍然可用，所以資安事故在止血與回復之間多出這一段；運維事故的故障原因不會主動尋找新的路徑，通常沒有這一段。NIST SP 800-61 Rev. 2 把這一段與止血、回復合稱 Containment, Eradication, and Recovery。
+根除（eradication）是資安事故處理中位於止血之後、回復之前的階段：移除攻擊者在環境裡留下的全部**立足點（foothold）**，也就是他取得的憑證、放置的後門、改過的程式與產物，以及寫進資料裡的帳號與設定。止血（[Containment](/backend/knowledge-cards/containment/)）切斷的是已知的存取路徑，攻擊者手上還沒被發現的憑證在止血之後仍然可用，所以資安事故在止血與回復之間多出這一段；維運事故的故障原因不會主動尋找新的路徑，通常沒有這一段。NIST SP 800-61 Rev. 2 把這一段與止血、回復合稱 Containment, Eradication, and Recovery。
 
 ## 跟其他概念的關係
 

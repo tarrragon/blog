@@ -20,7 +20,7 @@ graph database 常被想成「需要單獨的儲存引擎、單獨的資料同�
 
 Graph 能力的價值、在「資料本質是關係網絡、但被迫用 relational JOIN 表達多跳查詢」的壓力下浮現。讀者徵兆：反詐欺團隊要查「跟某個可疑帳號在 3 跳內共用過裝置 / 地址 / 付款方式的所有帳號」、寫成 SQL 是 3-4 層 self-JOIN、query 既難寫又難優化;推薦團隊要查「買過 A 的人也買過什麼」的多跳關聯;權限團隊要查「使用者透過群組 / 角色繼承鏈能存取哪些資源」的傳遞閉包。這些查詢的共同形狀是「沿著關係邊走 N 跳」、用 JOIN 表達時跳數越多 SQL 越複雜、優化器越難處理。
 
-真實壓力場景：金融反詐欺系統把交易、帳號、裝置、地址存在 Spanner、需要即時查可疑帳號的關係網絡;這份資料同時要支援交易的強一致寫入。傳統做法是把資料從 OLTP ETL 到專用 graph DB（Neo4j 等）、付出資料同步延遲 + 兩套系統的運維成本 + graph DB 上的資料不是強一致快照。Spanner Graph 讓「強一致的交易資料」與「圖遍歷查詢」在同一個系統、避開同步管線。
+真實壓力場景：金融反詐欺系統把交易、帳號、裝置、地址存在 Spanner、需要即時查可疑帳號的關係網絡;這份資料同時要支援交易的強一致寫入。傳統做法是把資料從 OLTP ETL 到專用 graph DB（Neo4j 等）、付出資料同步延遲 + 兩套系統的維運成本 + graph DB 上的資料不是強一致快照。Spanner Graph 讓「強一致的交易資料」與「圖遍歷查詢」在同一個系統、避開同步管線。
 
 Case anchor：Google 內部的 [Cloud Spanner planetary scale 案例](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)說明了全球大規模 OLTP 的壓力，但沒有涉及 graph 能力，而且是 Google 內部自用的數據、不是 customer-facing 參考。本文的 graph 物件模型、GQL 語意與 relational 共存機制取自 GCP 官方規格與通用 graph 工程。Spanner Graph 是 2024 推出的較新能力、所有能力 claim 屬時間敏感、實作前查官方文件。
 

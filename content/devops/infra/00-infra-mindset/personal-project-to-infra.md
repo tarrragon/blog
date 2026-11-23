@@ -79,7 +79,7 @@ access key 被推進 git 歷史 — `.env` 檔忘記加進 `.gitignore`，一次
 
 infra 的複雜度隨服務的使用者數量、團隊大小與合規要求遞增，但核心責任在每個規模都相同：讓環境可被理解、可被重建、可被安全地變更。
 
-單人運維時，infra 的最小需求是盤點（知道環境裡有什麼）、描述（能重建）、憑證管理（access key 不外洩）。這三件事不需要 Terraform — 一份手動清單、固定命名規則、把 key 換成短期憑證，就覆蓋了最高代價的風險。做法見[模組負一：還沒有 infra 的環境](/devops/infra/before-infra/)。
+單人維運時，infra 的最小需求是盤點（知道環境裡有什麼）、描述（能重建）、憑證管理（access key 不外洩）。這三件事不需要 Terraform — 一份手動清單、固定命名規則、把 key 換成短期憑證，就覆蓋了最高代價的風險。做法見[模組負一：還沒有 infra 的環境](/devops/infra/before-infra/)。
 
 多人協作時，需要變更可追溯和最小權限。IaC 在這個階段開始產生收益，因為「從程式碼看環境」比「翻 Console」快，而且程式碼可以 review。做法見[模組一](/devops/infra/01-minimal-iac/)。
 

@@ -54,7 +54,7 @@ Purview 的核心 first-class concept 是 *sensitivity label* — 一個 label �
 
 **Insider Risk Management 跟 SIEM 互補**：SIEM 主軸是 *external threat + cross-source correlation*、Insider Risk 主軸是 *single-user 行為 risk score over time* — 離職前 30 天 mass download、異常時段存取 sensitive folder、跨 sensitivity tier 大量 access。Risk score 累積到 threshold 觸發 case、進 Compliance officer review queue。預定義 policy template（departing employee、disgruntled employee、data leak）可快速 onboard、organization-specific pattern 要自己定。
 
-**跟 [Azure RBAC + Entra ID](/backend/07-security-data-protection/vendors/azure-rbac/) 整合**：Purview policy 的 user / group 引用直接吃 Entra ID identity、sensitivity label 的 access restriction 也走 Entra ID group。Compliance / Information Protection admin 是 Entra ID role、應該收緊到少數人 + 走 PIM (Privileged Identity Management) just-in-time elevation。Break-glass account 要單獨設計、不能跟日常運維混。
+**跟 [Azure RBAC + Entra ID](/backend/07-security-data-protection/vendors/azure-rbac/) 整合**：Purview policy 的 user / group 引用直接吃 Entra ID identity、sensitivity label 的 access restriction 也走 Entra ID group。Compliance / Information Protection admin 是 Entra ID role、應該收緊到少數人 + 走 PIM (Privileged Identity Management) just-in-time elevation。Break-glass account 要單獨設計、不能跟日常維運混。
 
 ## 核心取捨表
 

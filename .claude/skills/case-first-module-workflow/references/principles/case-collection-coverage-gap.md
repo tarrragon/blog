@@ -21,7 +21,7 @@
 | ----------------- | ----------------------------------------------------------------------------------------- |
 | Vendor 社群活躍度 | Kafka 社群比 NATS 大、公開 case 更多                                                      |
 | Feature 成熟度    | 新 feature（Kafka KRaft、Redis Streams + Functions）公開 case 稀薄                        |
-| 議題公開度        | 內部運維議題（IAM 配置、Operator 部署）公司不常公開、不像 incident / migration 那樣高觸發 |
+| 議題公開度        | 內部維運議題（IAM 配置、Operator 部署）公司不常公開、不像 incident / migration 那樣高觸發 |
 | 議題教學成本      | 概念偏底層 / 邊緣的議題、blog 文章作者較少寫                                              |
 
 這些因素是結構性的、不會因為「再多找一輪」就改變。採集到邊際遞減（純新議題 < 1 個 / case、重複 frame > 50%）就該停、不強求覆蓋每個章節。
@@ -92,7 +92,7 @@
 | 類型                                                           | 為什麼稀薄                              |
 | -------------------------------------------------------------- | --------------------------------------- |
 | 新 feature / mode（KRaft、Redis 7 Functions、Pulsar new tier） | Feature 成熟度低、公開使用案例累積中    |
-| 內部運維議題（IAM 配置、Operator 部署、ACL 細節）              | 公司不常公開「我們怎麼設 IAM」          |
+| 內部維運議題（IAM 配置、Operator 部署、ACL 細節）              | 公司不常公開「我們怎麼設 IAM」          |
 | 治理 / 流程議題（multi-tenant 配額、命名規範）                 | 通常進公司內部 wiki、不寫成 blog        |
 | 替代 vendor 特定 feature（vendor 自家 plugin 整合）            | Cross-vendor 整合的公開資料偏 marketing |
 

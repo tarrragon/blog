@@ -20,10 +20,10 @@ aliases: ["/operations/07-burst-traffic/"]
 
 ## 跨分類引用
 
-- ← [運維 模組三 流量管控](/devops/operations/03-traffic-management/)：背壓和 rate limit 是突發應對的基礎元件
+- ← [維運 模組三 流量管控](/devops/operations/03-traffic-management/)：背壓和 rate limit 是突發應對的基礎元件
 - → [monitoring 模組四 Collector](/devops/monitoring/04-collector/)：Collector 的 ingestion scaling 是本模組的應用場景
 - → [backend 非同步佇列](/backend/03-message-queue/)：Queue 的選型和操作實務
-- → [運維 模組五 容量規劃](/devops/operations/05-capacity-planning/)：預期突發的容量預備
+- → [維運 模組五 容量規劃](/devops/operations/05-capacity-planning/)：預期突發的容量預備
 - → [端到端資料完整性](/devops/monitoring/04-collector/data-integrity/)：被自己 SDK DDoS 的三種場景
 
 ## Backlog

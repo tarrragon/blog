@@ -152,14 +152,14 @@ outbox 的核心責任是把業務資料寫入和待發事件放進同一個資�
 
 ### 操作複雜度訊號
 
-複雜度評估的核心問題是「團隊願意承擔哪些日常運維」、不是「broker 安裝多難」。安裝跟運維是不同量級工作。
+複雜度評估的核心問題是「團隊願意承擔哪些日常維運」、不是「broker 安裝多難」。安裝跟維運是不同量級工作。
 
 實務量級：
 
 - 低（managed）：SQS、Google Pub/Sub — quota / IAM / DLQ drain 是主要工作
-- 低到中（self-host 但運維輕）：Redis Streams、NATS — 跟 Redis / NATS 本體運維捆綁
-- 中（broker 級運維）：RabbitMQ — Erlang / clustering / mirrored vs quorum / network partition 處理
-- 高（平台級運維）：Kafka self-host — partition rebalance / [consumer lag](/backend/knowledge-cards/consumer-lag/) / KRaft / topic governance / 跨 cluster 路由
+- 低到中（self-host 但維運輕）：Redis Streams、NATS — 跟 Redis / NATS 本體維運捆綁
+- 中（broker 級維運）：RabbitMQ — Erlang / clustering / mirrored vs quorum / network partition 處理
+- 高（平台級維運）：Kafka self-host — partition rebalance / [consumer lag](/backend/knowledge-cards/consumer-lag/) / KRaft / topic governance / 跨 cluster 路由
 
 複雜度的真正成本不在初期 setup、在「事故時誰能讀懂訊號」。挑 broker 時要問「下次 lag 暴增、團隊能在多久內找到原因」、這比 broker 規格表更接近真實業務考慮。
 

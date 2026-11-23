@@ -12,7 +12,7 @@ tags: ["backend", "cache", "elasticache", "redis", "valkey", "migration"]
 
 ElastiCache 遷出的 driver 通常不是 engine 層問題 — 它跑的就是 Redis 或 Valkey。常見遷出原因：
 
-- **成本**：managed premium 在大規模（數百 GB、多叢集）下比自管 + 運維人力更貴，尤其跨帳戶大量叢集時
+- **成本**：managed premium 在大規模（數百 GB、多叢集）下比自管 + 維運人力更貴，尤其跨帳戶大量叢集時
 - **跨雲或混合雲**：業務需要在 GCP、Azure 或 on-prem 同時運行 cache 層，ElastiCache 只在 AWS
 - **功能限制**：ElastiCache 不支援所有 Redis module（RediSearch、RedisJSON 等），或 Valkey 8.x 新功能 ElastiCache 尚未上線
 - **控制權**：自管可以自訂 redis.conf、自選 kernel 參數、自決 upgrade 時機

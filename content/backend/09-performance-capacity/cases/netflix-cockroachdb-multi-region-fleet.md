@@ -23,7 +23,7 @@ Netflix CockroachDB 艦隊的關鍵數字（引自 [Now Streaming: Why Netflix R
 | Production cluster   | 2022 已達 100、近年擴至 160+ |
 | 部署拓樸常態         | 多數 single-region、3 個 AZ  |
 
-服務組合：CockroachDB self-managed（Netflix Database Platform Team 自運維）、跨 AWS region、與 Cassandra / EVCache / RDS 並存（polyglot persistence）。
+服務組合：CockroachDB self-managed（Netflix Database Platform Team 自維運）、跨 AWS region、與 Cassandra / EVCache / RDS 並存（polyglot persistence）。
 
 關鍵 workload：
 

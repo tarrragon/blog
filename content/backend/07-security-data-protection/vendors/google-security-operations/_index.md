@@ -90,7 +90,7 @@ Google Security Operations 的核心定位是 *為超大規模 SOC 設計的雲�
 - **Alert volume 過多**：Curated Detection 全開沒 tune、env-specific noise 沒 disable — 跟 [Splunk](/backend/07-security-data-protection/vendors/splunk/) 一樣走 staging 觀察 false positive curve、tune 或 disable 個別規則
 - **Mandiant threat intel 沒命中**：licensing tier 沒包 Mandiant Advantage、或 enrichment pipeline 沒啟用 — 檢查 tier、確認 Applied Threat Intel 開
 - **Siemplify playbook 黑箱 fire-and-forget**：自動 disable 結果誤殺合法 user — playbook 走 approval gate、預設 containment 不 deletion、定期 dry-run
-- **Cross-tenant admin 太多**：日常運維用 cross-tenant admin、blast radius 太大 — 收 admin、改 tenant-scoped role + 特定 capability、跨 tenant 走 break-glass
+- **Cross-tenant admin 太多**：日常維運用 cross-tenant admin、blast radius 太大 — 收 admin、改 tenant-scoped role + 特定 capability、跨 tenant 走 break-glass
 - **Cost 比預期高**：data tier 選錯（買了 Enterprise Plus 卻只用 Enterprise feature）、retention 設太長 — 看實際 ingestion + retention 用量、tier 跟 retention 一起 review
 
 ## 何時改走其他服務

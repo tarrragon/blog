@@ -48,7 +48,7 @@ duplicate publish 在 outbox 模式下屬於預期現象。消費端需要配合
 
 Broker 選型本質是 long-term TCO 決策、需評估雲端費用 + 工程稅 + 治理負擔三層成本。Self-managed Kafka 的容量規劃 + broker 數量 + 副本因子 + disk + ZooKeeper / KRaft 治理是長期工程 tax、每次擴容是工程專案。
 
-對應 [Spotify Kafka → Pub/Sub Migration](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — Spotify 從自管 Kafka 遷到 Google Cloud Pub/Sub、動機是 *容量規劃的工程成本* 在 sustained growth 下變得不划算、非 Kafka 效能不足。對 7500 萬用戶的事件交付系統、把 broker 容量規劃跟運維負擔卸給 vendor、釋放工程團隊 capacity。
+對應 [Spotify Kafka → Pub/Sub Migration](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — Spotify 從自管 Kafka 遷到 Google Cloud Pub/Sub、動機是 *容量規劃的工程成本* 在 sustained growth 下變得不划算、非 Kafka 效能不足。對 7500 萬用戶的事件交付系統、把 broker 容量規劃跟維運負擔卸給 vendor、釋放工程團隊 capacity。
 
 **TCO 評估的真實成本項**（Spotify case 列前 4 項 + 雲端費用、第 5 項屬跨案例綜合）：
 

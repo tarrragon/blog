@@ -45,7 +45,7 @@ public subnet 放的是必須接收外部入站流量的元件 — 對外的負�
 
 public subnet 的真實樣貌是「薄薄一層」：它通常只住負載平衡器與 NAT 這類入口設施，而不是業務邏輯。常見陷阱是為了 SSH 方便把應用伺服器直接開在 public subnet 並配公網 IP，等於把每一台業務主機的管理埠暴露在掃描流量下。private subnet 的住戶反而是系統的主體 — 資料庫放這裡是因為它一旦能被外網定址，攻擊面就從「打穿入口層」變成「直接連資料庫埠試密碼」。
 
-每個 subnet 綁定單一可用區，所以高可用設計通常是每種角色跨至少兩個可用區各開一個 subnet：兩個 public、兩個 private，讓單一可用區故障時另一區的同類 subnet 還能承接。對外入口怎麼把流量分到跨可用區的 private 後端，是「運維 模組一：負載平衡」的範圍。
+每個 subnet 綁定單一可用區，所以高可用設計通常是每種角色跨至少兩個可用區各開一個 subnet：兩個 public、兩個 private，讓單一可用區故障時另一區的同類 subnet 還能承接。對外入口怎麼把流量分到跨可用區的 private 後端，是「維運 模組一：負載平衡」的範圍。
 
 ## route table 與 NAT：流量的進出路徑
 
@@ -75,7 +75,7 @@ resource "aws_route_table" "private" {
 }
 ```
 
-每個可用區一個 NAT 是可用性優先的版本；若環境對成本敏感、且能接受出站在單一可用區故障時短暫中斷，也可以退回單一 NAT，但要把它當成明示的取捨、而非預設。判讀訊號：private subnet 的服務拉不到外部套件、或第三方 API 全部逾時（逾時指向可達性層、跟「被拒=服務層」「解析失敗=resolver 層」是相反的除錯方向，通用判別見 [連線逾時 vs 連線被拒](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)），先查它關聯的 route table 有沒有指向健康的 NAT；若只有某一個可用區的節點受影響，多半是那一區的 NAT 或其所在 subnet 出狀況。風險與成本在這裡交會 — NAT Gateway 按處理流量計費，把大量出站流量（例如備份上傳、跨區同步）長期走 NAT 會讓帳單可觀，這類流量較划算的做法是改走 VPC Endpoint 直連雲服務、繞過 NAT。NAT 的數量取捨與出站成本在「運維 模組八：成本管理」有更完整的討論。邊界是：route table 與 NAT 只管「能不能出去、走哪條路」，至於某個埠允不允許連，是 security group 的職責。
+每個可用區一個 NAT 是可用性優先的版本；若環境對成本敏感、且能接受出站在單一可用區故障時短暫中斷，也可以退回單一 NAT，但要把它當成明示的取捨、而非預設。判讀訊號：private subnet 的服務拉不到外部套件、或第三方 API 全部逾時（逾時指向可達性層、跟「被拒=服務層」「解析失敗=resolver 層」是相反的除錯方向，通用判別見 [連線逾時 vs 連線被拒](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)），先查它關聯的 route table 有沒有指向健康的 NAT；若只有某一個可用區的節點受影響，多半是那一區的 NAT 或其所在 subnet 出狀況。風險與成本在這裡交會 — NAT Gateway 按處理流量計費，把大量出站流量（例如備份上傳、跨區同步）長期走 NAT 會讓帳單可觀，這類流量較划算的做法是改走 VPC Endpoint 直連雲服務、繞過 NAT。NAT 的數量取捨與出站成本在「維運 模組八：成本管理」有更完整的討論。邊界是：route table 與 NAT 只管「能不能出去、走哪條路」，至於某個埠允不允許連，是 security group 的職責。
 
 ## security group 設計：最小開放
 
@@ -129,8 +129,8 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 
 - → [模組二：身分與存取憑證地基](/devops/infra/02-identity-credentials/)：誰有權改動 security group 與路由表
 - → [模組五：核心服務上 IaC](/devops/infra/05-core-services/)：核心服務怎麼落進規劃好的 subnet
-- → [運維 模組一：負載平衡](/devops/operations/01-load-balancing/)：入口流量怎麼分到 private subnet 的後端
-- → [運維 模組八：成本管理](/devops/operations/08-cost-management/)：NAT 與出站流量的成本取捨
+- → [維運 模組一：負載平衡](/devops/operations/01-load-balancing/)：入口流量怎麼分到 private subnet 的後端
+- → [維運 模組八：成本管理](/devops/operations/08-cost-management/)：NAT 與出站流量的成本取捨
 
 ## Backlog
 

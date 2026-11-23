@@ -206,11 +206,11 @@ PG hard requirement 訊號：application 用 PostgreSQL-specific feature（parti
 
 ### team size 夠不夠自管（Hard Rock + Netflix 揭露）
 
-distributed SQL 的 ops 槓桿來自系統內建 Raft / placement 把「DBA 養單區、跨區 sync 養運維」工作量壓進系統內。
+distributed SQL 的 ops 槓桿來自系統內建 Raft / placement 把「DBA 養單區、跨區 sync 養維運」工作量壓進系統內。
 
 Hard Rock 50 人 tech team 估「若用 PostgreSQL 需多加 10-20 工程師」（case 的〈觀察〉表格與〈策略〉段）。**Case 自帶警示**：「省了 10-20 工程師」是 *機會成本*（沒招那麼多 DBA）、*不是* 節省支出（已 hire 後解雇）。distributed SQL 對小團隊的 ops 槓桿是不必招那麼多 DBA，不是上 CockroachDB 就能裁員或省下既有的人月支出。
 
-Self-managed 規模化的另一極：Netflix 養 380+ cluster 需要 *專屬 Database Platform Team*（含 backup / upgrade / incident response / capacity review）。沒這量級團隊直接 self-host 大規模 cluster，運維負擔會超出團隊能承擔的量，Cockroach Cloud 才是合理路徑。「self-managed cluster 數量 vs 平台團隊規模」的轉折點 case 沒有給出具體閾值，方向是：
+Self-managed 規模化的另一極：Netflix 養 380+ cluster 需要 *專屬 Database Platform Team*（含 backup / upgrade / incident response / capacity review）。沒這量級團隊直接 self-host 大規模 cluster，維運負擔會超出團隊能承擔的量，Cockroach Cloud 才是合理路徑。「self-managed cluster 數量 vs 平台團隊規模」的轉折點 case 沒有給出具體閾值，方向是：
 
 - team size 小（< 100 人 tech team、無專屬 DB platform team）→ Cockroach Cloud / Spanner / DSQL（managed）優先
 - team size 大 + 有專屬 DB platform team → self-managed CockroachDB 可考慮
@@ -239,7 +239,7 @@ Self-managed 規模化的另一極：Netflix 養 380+ cluster 需要 *專屬 Dat
 - 容量規劃可以 per-cluster（每個服務自己估、不需共池）
 - 有專屬 Database Platform Team 養 cluster lifecycle（backup / upgrade / incident response / capacity review）— ops surface area 隨 cluster 數 *線性成長*
 
-代價：ops surface area 大、每個 cluster 都要獨立 upgrade / monitoring / capacity review。沒這量級的平台團隊直接 self-host 380 個 cluster，運維負擔會超出團隊能承擔的量。
+代價：ops surface area 大、每個 cluster 都要獨立 upgrade / monitoring / capacity review。沒這量級的平台團隊直接 self-host 380 個 cluster，維運負擔會超出團隊能承擔的量。
 
 ### 邏輯一個 cluster（Hard Rock 路徑）
 
@@ -327,7 +327,7 @@ Raft / backup / upgrade / monitoring 自管比 PostgreSQL 複雜、DBA bandwidth
 
 ### Team size 誤判
 
-把「省 10-20 工程師」當已 hire 後可裁員的節省支出、實際是 *機會成本*（沒招那麼多 DBA）。上 CockroachDB 不代表可裁掉現有 DBA — 現有 DBA 反而要轉型成 distributed SQL 運維。
+把「省 10-20 工程師」當已 hire 後可裁員的節省支出、實際是 *機會成本*（沒招那麼多 DBA）。上 CockroachDB 不代表可裁掉現有 DBA — 現有 DBA 反而要轉型成 distributed SQL 維運。
 
 ## 容量與觀測
 
@@ -351,7 +351,7 @@ write QPS × replication factor × cross-region latency = required node / capaci
 
 三家定價模式不同、cross-region traffic 對 cost 影響都大：
 
-- CockroachDB self-managed：node × resource、可控但要自運維
+- CockroachDB self-managed：node × resource、可控但要自維運
 - Spanner：100 pu minimum + consumption、適合穩定 workload、中小 burst 不划算
 - Aurora DSQL：consumption-based、burst 友善、長期穩定 workload 累計可能比 Spanner 高
 

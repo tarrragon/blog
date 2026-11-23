@@ -51,7 +51,7 @@ Storage 跟 query 層的失敗多半是漸進式：保留策略誤刪、查詢�
 Buffer 是 pipeline 吸收瞬時尖峰的緩衝，責任是讓 collector 跟 ingest 在後端短暫故障或速率不足時仍保住高價值訊號。
 
 - **In-memory queue**：吸收秒級尖峰、容量小、process 重啟會丟。
-- **Persistent queue**（local disk、Kafka）：吸收分鐘到小時級積壓、有持久性、需要額外運維成本。
+- **Persistent queue**（local disk、Kafka）：吸收分鐘到小時級積壓、有持久性、需要額外維運成本。
 - **Spillover storage**（S3 等冷儲存）：當 hot path 滿載時，把低優先訊號暫存到便宜後端、之後 replay。
 
 Backpressure 策略決定 buffer 滿時的行為。`block` 策略會讓上游採集慢下來、可能影響應用；`drop oldest` 跟 `drop newest` 各自影響 timeline 的開始或結束；`sample-by-priority` 則保留錯誤、長尾與低流量樣本、丟棄一般成功 request。Buffer 跟 backpressure 策略要在容量規劃階段顯式設定、進 release flow、避免事故時臨時拍定。
@@ -175,7 +175,7 @@ Query engine 服務三種查詢模式：alert rule evaluation（系統關鍵、�
 ## 判讀訊號
 
 - 訊號間歇性消失、需要人工判斷是 pipeline 還是 service 問題
-- agent 升版需要 service 重啟、運維成本高
+- agent 升版需要 service 重啟、維運成本高
 - ingest 拒收（429）發生時、應用層無感
 - 切換 vendor 需要改所有 service 的 instrumentation
 - pipeline 自身無 SLI、健康度靠經驗判斷

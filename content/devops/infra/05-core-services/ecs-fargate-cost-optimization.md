@@ -181,4 +181,4 @@ aws ce get-cost-and-usage \
 
 - → [運算平台上 IaC](/devops/infra/05-core-services/compute-ecs-eks/)：ECS vs EKS 選型、Fargate 的定位
 - → [模組八：治理好習慣](/devops/infra/08-governance-habits/)：tagging 與成本可見性的地基
-- → [運維 模組八：成本管理](/devops/operations/08-cost-management/)：運行期的 RI / Spot / rightsizing 策略
+- → [維運 模組八：成本管理](/devops/operations/08-cost-management/)：運行期的 RI / Spot / rightsizing 策略

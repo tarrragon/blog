@@ -128,7 +128,7 @@ throughput 排序大致是 stream > classic ≈ quorum（quorum 因 Raft round-t
 
 ## 故障演練
 
-三種 queue type 的故障形狀完全不同。以下四個場景對應實際遷移與運維會踩的坑。
+三種 queue type 的故障形狀完全不同。以下四個場景對應實際遷移與維運會踩的坑。
 
 ### Mirrored queue 的網路放大成本
 

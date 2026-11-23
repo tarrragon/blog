@@ -6,7 +6,7 @@ weight: 80
 tags: ["backend", "database", "cockroachdb", "distributed-sql", "serverless", "cockroach-cloud", "deep-article"]
 ---
 
-> 本文整理 Cockroach Cloud 的 serverless 與 dedicated 兩種 managed 形態怎麼選：RU 計費結構、scale-to-zero 與冷啟動、何時用 serverless。Self-managed 的運維責任（Netflix Platform Team 養 380+ cluster）與賽季型擴縮（Hard Rock 100 ↔ 33 node）只作為對照引用，不展開 self-host 的運維細節。
+> 本文整理 Cockroach Cloud 的 serverless 與 dedicated 兩種 managed 形態怎麼選：RU 計費結構、scale-to-zero 與冷啟動、何時用 serverless。Self-managed 的維運責任（Netflix Platform Team 養 380+ cluster）與賽季型擴縮（Hard Rock 100 ↔ 33 node）只作為對照引用，不展開 self-host 的維運細節。
 
 ---
 
@@ -16,7 +16,7 @@ tags: ["backend", "database", "cockroachdb", "distributed-sql", "serverless", "c
 
 Cockroach Cloud serverless 是 *把容量決策從「預先 provision 節點」換成「按實際用量計費 + 自動 scale」* 的 managed 形態。它消去了 cluster sizing 這個決策 — 沒有「要開幾個 node」的問題，資源隨 workload 自動伸縮，甚至閒置時 scale 到接近零。代價是計費單位變成抽象的 Request Unit（RU），用量暴衝時成本跟著暴衝，且共享底層資源帶來冷啟動與性能可預測性的取捨。
 
-dedicated 則保留 *固定的 cluster 容量 + 可預測的計費*，由 vendor 代管運維但容量仍是團隊決策。
+dedicated 則保留 *固定的 cluster 容量 + 可預測的計費*，由 vendor 代管維運但容量仍是團隊決策。
 
 讀者進來最常卡的三題：
 
@@ -166,7 +166,7 @@ Aurora DSQL（AWS）以 serverless 為核心形態、AWS-only；Spanner 提供 m
 
 ### 跟 self-managed 對照
 
-self-managed（如 Netflix 380+ cluster、Hard Rock 合規 Outposts）給最大控制權（跨雲 / on-prem / 特定部署位置），代價是專屬 Platform Team 的運維責任。判讀軸：沒有 Platform Team → managed（serverless / dedicated）；有 Platform Team + 需要特定部署位置或跨雲 → self-managed。
+self-managed（如 Netflix 380+ cluster、Hard Rock 合規 Outposts）給最大控制權（跨雲 / on-prem / 特定部署位置），代價是專屬 Platform Team 的維運責任。判讀軸：沒有 Platform Team → managed（serverless / dedicated）；有 Platform Team + 需要特定部署位置或跨雲 → self-managed。
 
 ### 1.x 章節互引
 
@@ -175,7 +175,7 @@ self-managed（如 Netflix 380+ cluster、Hard Rock 合規 Outposts）給最大�
 
 ### 何時不用本文
 
-- 已決定 self-managed（有 Platform Team 或需要 on-prem / 合規 Outposts）→ 本文的 serverless / dedicated 取捨不適用；self-managed 要承擔的運維責任（backup、upgrade、incident response、capacity review）見 [Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)。
+- 已決定 self-managed（有 Platform Team 或需要 on-prem / 合規 Outposts）→ 本文的 serverless / dedicated 取捨不適用；self-managed 要承擔的維運責任（backup、upgrade、incident response、capacity review）見 [Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)。
 - single-region 小 workload 且 PostgreSQL 已夠用 → 先確認是否真需要 distributed SQL：CockroachDB 每筆寫入都經過 Raft 複製、叢集至少要 3 個節點，single-instance PostgreSQL 沒有這兩項成本。
 
 ## 相關連結

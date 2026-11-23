@@ -145,9 +145,9 @@ HA 拓樸三類。**Redis** Sentinel + replication（單 region 多 AZ）/ Clust
 
 ### Managed level
 
-運維責任轉移程度。**Redis / Valkey** 自管或選 managed（ElastiCache / Memorystore / Azure Cache）；**Memcached** 自管或 ElastiCache；**DragonflyDB** 目前只能自管（無 fully managed offering）；**ElastiCache** 完全 managed（auto failover / snapshot / patching）— 付 managed premium。
+維運責任轉移程度。**Redis / Valkey** 自管或選 managed（ElastiCache / Memorystore / Azure Cache）；**Memcached** 自管或 ElastiCache；**DragonflyDB** 目前只能自管（無 fully managed offering）；**ElastiCache** 完全 managed（auto failover / snapshot / patching）— 付 managed premium。
 
-選型判讀：team 沒運維 Redis 經驗 → managed（ElastiCache / Memorystore）；要極致控制 → 自管；DragonflyDB 必自管（無 managed）。
+選型判讀：team 沒維運 Redis 經驗 → managed（ElastiCache / Memorystore）；要極致控制 → 自管；DragonflyDB 必自管（無 managed）。
 
 ## 撰寫批次
 

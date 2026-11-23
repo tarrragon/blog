@@ -69,7 +69,7 @@ Operational = High（其他 Low-Medium）→ **Type C operational redesign hybri
 | Cluster topology    | 自管 placement / rack awareness           | MSK 自動 multi-AZ + rack-aware                   |
 | Tiered storage      | Kafka 3.6+ 自管                           | MSK Tiered Storage（auto-tier 到 S3）            |
 
-每行 operational concept 都需要 migration plan、application code 不變但 *運維知識體系全換*。
+每行 operational concept 都需要 migration plan、application code 不變但 *維運知識體系全換*。
 
 ## 4-phase migration（Type C 標準流程）
 
@@ -280,7 +280,7 @@ MSK + IAM auth + Secrets Manager（連 [Vault → AWS Secrets Manager migration]
 
 ### 下一步議題
 
-- **MSK Connect**：managed Kafka Connect、降 connector 運維、但 plugin ecosystem 比 self-managed Connect 少
+- **MSK Connect**：managed Kafka Connect、降 connector 維運、但 plugin ecosystem 比 self-managed Connect 少
 - **MSK Serverless**：burst workload 適合、steady workload 反而貴
 - **Cost monitoring playbook**：MSK billing 拆解每月跑一次、catch unexpected egress / tiered storage cost
 

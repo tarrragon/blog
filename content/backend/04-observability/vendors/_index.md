@@ -124,9 +124,9 @@ Cardinality 是 observability 成本跟可用性的關鍵。**Prometheus** 受�
 
 ### 部署模式
 
-部署模式決定運維責任歸屬。**OTel** 是 standard、各 backend 各自部署；**Prometheus** OSS self-host；**Grafana Stack** OSS self-host / Grafana Cloud；**Datadog / Honeycomb / Sentry** SaaS（Sentry 有 self-host OSS）；**Elastic** OSS / Elastic Cloud / OpenSearch fork；**CloudWatch / Cloud Ops** 雲原生 managed。
+部署模式決定維運責任歸屬。**OTel** 是 standard、各 backend 各自部署；**Prometheus** OSS self-host；**Grafana Stack** OSS self-host / Grafana Cloud；**Datadog / Honeycomb / Sentry** SaaS（Sentry 有 self-host OSS）；**Elastic** OSS / Elastic Cloud / OpenSearch fork；**CloudWatch / Cloud Ops** 雲原生 managed。
 
-選型判讀：要極致控制 → self-host OSS；不想運維 → SaaS（Datadog / Honeycomb / Sentry）；已在 AWS / GCP → 雲原生 + 補強；混合模式 → OTel 抽象層 + 多 backend。
+選型判讀：要極致控制 → self-host OSS；不想維運 → SaaS（Datadog / Honeycomb / Sentry）；已在 AWS / GCP → 雲原生 + 補強；混合模式 → OTel 抽象層 + 多 backend。
 
 ### 成本模型
 

@@ -10,7 +10,7 @@ tags: ["backend", "observability", "datadog", "cost", "agent"]
 
 ## 定位
 
-Datadog 是全託管觀測平台，涵蓋 metrics、logs、traces、profiling、RUM、synthetic monitoring。託管方案的核心取捨是「零運維但成本跟用量成正比」— 用得越多付得越多，而且計價維度多（host、custom metric、log ingestion、span、indexed span），成本治理需要理解每個維度的計價模型。
+Datadog 是全託管觀測平台，涵蓋 metrics、logs、traces、profiling、RUM、synthetic monitoring。託管方案的核心取捨是「零維運但成本跟用量成正比」— 用得越多付得越多，而且計價維度多（host、custom metric、log ingestion、span、indexed span），成本治理需要理解每個維度的計價模型。
 
 ## 計價模型概覽
 

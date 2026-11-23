@@ -7,7 +7,7 @@ tags: ["infra", "knowledge-cards"]
 aliases: ["/infra/knowledge-cards/rds/"]
 ---
 
-RDS（Relational Database Service）是 AWS 提供的受管關聯式資料庫服務。它在 [EC2](/devops/infra/knowledge-cards/ec2/) instance 上跑資料庫引擎（MySQL、PostgreSQL、MariaDB、Oracle、SQL Server），但把作業系統更新、自動備份、跨可用區 failover、磁碟擴容這些運維工作交給 AWS 代管。使用者操作的是資料庫層級的設定（schema、query、parameter group），不需要 SSH 進機器管 OS。
+RDS（Relational Database Service）是 AWS 提供的受管關聯式資料庫服務。它在 [EC2](/devops/infra/knowledge-cards/ec2/) instance 上跑資料庫引擎（MySQL、PostgreSQL、MariaDB、Oracle、SQL Server），但把作業系統更新、自動備份、跨可用區 failover、磁碟擴容這些維運工作交給 AWS 代管。使用者操作的是資料庫層級的設定（schema、query、parameter group），不需要 SSH 進機器管 OS。
 
 ## 跟其他概念的關係
 
@@ -30,7 +30,7 @@ RDS 持有無法重建的資料，下表的設定設錯時代價依項目不同�
 | parameter group     | 資料庫引擎參數（max_connections 等） | 效能調校                                    |
 | engine version      | 資料庫版本                           | 功能與相容性                                |
 
-跟自建 MySQL on EC2 的取捨：RDS 省去 OS 層運維，但 parameter group 和 option group 的可調整範圍比直接操作 my.cnf 窄。需要完全控制 OS 層（如自訂 plugin、特殊檔案系統）時，自建較合理。
+跟自建 MySQL on EC2 的取捨：RDS 省去 OS 層維運，但 parameter group 和 option group 的可調整範圍比直接操作 my.cnf 窄。需要完全控制 OS 層（如自訂 plugin、特殊檔案系統）時，自建較合理。
 
 ## 鄰卡
 

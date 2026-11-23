@@ -13,7 +13,7 @@ tags: ["backend", "message-queue", "kafka", "google-pubsub", "migration"]
 這個遷移的 driver 通常是平台策略：
 
 - **All-in GCP**：組織決定收斂到 GCP 生態，Kafka 是唯一非 GCP 的 stateful 服務，維運孤島成本高
-- **運維簡化**：自管 Kafka cluster 的 broker、ZooKeeper/KRaft、partition rebalance、retention 管理需要專職團隊；Pub/Sub 是全託管
+- **維運簡化**：自管 Kafka cluster 的 broker、ZooKeeper/KRaft、partition rebalance、retention 管理需要專職團隊；Pub/Sub 是全託管
 - **GCP 整合**：下游是 BigQuery、Dataflow、Cloud Run — Pub/Sub 原生串接，Kafka 要加 connector 層
 - **全球路由**：Pub/Sub topic 是 global（不綁 region），Kafka 需要 MirrorMaker 做跨 region 同步
 

@@ -6,7 +6,7 @@ weight: 5
 tags: ["backend", "message-queue", "vendor"]
 ---
 
-AWS SQS 是 AWS managed queue 服務、承擔三個責任：訊息排隊與重試（visibility timeout + DLQ）、解耦 producer / consumer（無 broker 運維）、AWS 生態原生整合（Lambda / EventBridge / Step Functions）。設計取捨偏向「極簡 API + managed 運維、用 visibility timeout 取代 broker ACK、無原生 ordering（standard queue）」。
+AWS SQS 是 AWS managed queue 服務、承擔三個責任：訊息排隊與重試（visibility timeout + DLQ）、解耦 producer / consumer（無 broker 維運）、AWS 生態原生整合（Lambda / EventBridge / Step Functions）。設計取捨偏向「極簡 API + managed 維運、用 visibility timeout 取代 broker ACK、無原生 ordering（standard queue）」。
 
 對「AWS 生態 task queue、不想自管 broker、配合 Lambda 事件處理」這條路徑、SQS 是首選。本頁先給最短路徑、再展開日常 SendMessage / ReceiveMessage 操作與 visibility timeout 設計、最後進階治理（FIFO、DLQ、IAM、VPC endpoint）跟排錯。
 

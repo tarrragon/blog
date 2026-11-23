@@ -6,11 +6,11 @@ weight: 3
 tags: ["backend", "security", "vendor", "keycloak", "identity", "self-hosted", "open-source"]
 ---
 
-Keycloak 是 open source 自管 Identity Provider、Red Hat 主導維護（商業支援版本為 Red Hat build of Keycloak、前身 Red Hat SSO）。它承擔的責任跟 SaaS IdP 相同 — SSO、MFA、federation、user lifecycle — 但 *整個控制面留在組織自己手上*：issuer signing key、support tooling、底層 PostgreSQL、HA cluster、CVE patch cadence 全部自管。決定上 Keycloak 是組織決定把 SaaS IdP 的「第三方信任成本」換成「自家 SRE 運維成本 + 安全責任」，而不是技術偏好。在 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/) 的光譜上、Keycloak 是認證能力「建」側的 canonical 例子 — 把 feature SaaS（Auth0 / Okta）的第三方信任成本、換成自管控制面的運維成本；什麼訊號該翻到這一側、見 0.22 與 [外包深度](/backend/knowledge-cards/capability-outsourcing-depth/) 卡。
+Keycloak 是 open source 自管 Identity Provider、Red Hat 主導維護（商業支援版本為 Red Hat build of Keycloak、前身 Red Hat SSO）。它承擔的責任跟 SaaS IdP 相同 — SSO、MFA、federation、user lifecycle — 但 *整個控制面留在組織自己手上*：issuer signing key、support tooling、底層 PostgreSQL、HA cluster、CVE patch cadence 全部自管。決定上 Keycloak 是組織決定把 SaaS IdP 的「第三方信任成本」換成「自家 SRE 維運成本 + 安全責任」，而不是技術偏好。在 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/) 的光譜上、Keycloak 是認證能力「建」側的 canonical 例子 — 把 feature SaaS（Auth0 / Okta）的第三方信任成本、換成自管控制面的維運成本；什麼訊號該翻到這一側、見 0.22 與 [外包深度](/backend/knowledge-cards/capability-outsourcing-depth/) 卡。
 
 ## 服務定位
 
-Keycloak 是 *自管控制面* 的 human identity 與 federation engine、不是 cloud resource permission engine。跟 [Okta](/backend/07-security-data-protection/vendors/okta/) / [Auth0](/backend/07-security-data-protection/vendors/auth0/) 的本質差異在於信任邊界落點：SaaS IdP 把 signing key、tenant 隔離、support workflow 都託管出去、客戶承擔「供應商出事我也跟著被打」的風險；Keycloak 把整條控制面收回自家機房或自家 VPC、客戶承擔「signing key 過期 / DB 崩 / Java app CVE 沒跟上」的運維風險。
+Keycloak 是 *自管控制面* 的 human identity 與 federation engine、不是 cloud resource permission engine。跟 [Okta](/backend/07-security-data-protection/vendors/okta/) / [Auth0](/backend/07-security-data-protection/vendors/auth0/) 的本質差異在於信任邊界落點：SaaS IdP 把 signing key、tenant 隔離、support workflow 都託管出去、客戶承擔「供應商出事我也跟著被打」的風險；Keycloak 把整條控制面收回自家機房或自家 VPC、客戶承擔「signing key 過期 / DB 崩 / Java app CVE 沒跟上」的維運風險。
 
 跟 cloud-native SSO（[AWS IAM Identity Center](/backend/07-security-data-protection/vendors/aws-iam-identity-center/)）相比、Keycloak 的核心優勢是 *不綁雲廠 + 可深度客製 authentication flow + 資料不出境*。適合垂直：金融、政府、醫療某些不接受 SaaS IdP 的場景；以及預算敏感、員工數中等、SRE 量能足以接 24/7 on-call 的組織。
 
@@ -19,7 +19,7 @@ Keycloak 是 *自管控制面* 的 human identity 與 federation engine、不是
 讀完本頁、讀者能判斷：
 
 1. Keycloak 該承擔哪一段 identity 控制（SSO / MFA / federation / brokering）、哪一段該交給雲端 IAM 或下游應用
-2. 自管 IdP 的最低運維基線（HA、DB DR、cert / signing key rotation、CVE cadence、SIEM 接點）
+2. 自管 IdP 的最低維運基線（HA、DB DR、cert / signing key rotation、CVE cadence、SIEM 接點）
 3. Realm / Client / User Federation / Identity Broker / Authentication Flow / SPI 各自的決策時機與陷阱
 4. 何時用 Keycloak、何時改走 SaaS（Okta / Auth0）或其他 OSS（Authentik / Zitadel）
 
@@ -62,12 +62,12 @@ Keycloak 是 *自管控制面* 的 human identity 與 federation engine、不是
 | -------------- | ----------------------------------------------- | --------------------------------- | --------------------------------------- | ------------------------------------ |
 | 控制面責任     | 自己跑 issuer / signing / HA / DB / upgrade     | Okta 託管                         | Auth0 託管                              | 自己跑、但社群規模小於 Keycloak      |
 | 客製化深度     | 高 — Authenticator SPI / theme / event listener | 中 — Workflows / Hooks、限定範圍  | 高 — Actions（JS hook）                 | 中 — Authentik flow 視覺化、彈性中等 |
-| 第三方信任成本 | 低 — 自管、自己承擔運維                         | 高 — 供應商事件直接波及           | 高 — 同 Okta（同集團）                  | 低 — 自管                            |
-| 運維成本       | 高 — HA、DR、cert、DB、CVE 都自管               | 低 — SaaS                         | 低 — SaaS                               | 高 — 同 Keycloak、生態系更小         |
+| 第三方信任成本 | 低 — 自管、自己承擔維運                         | 高 — 供應商事件直接波及           | 高 — 同 Okta（同集團）                  | 低 — 自管                            |
+| 維運成本       | 高 — HA、DR、cert、DB、CVE 都自管               | 低 — SaaS                         | 低 — SaaS                               | 高 — 同 Keycloak、生態系更小         |
 | 適合場景       | 資料主權、預算敏感、需深度客製、有 SRE 量能     | 多雲、大量 SaaS、lifecycle 自動化 | B2C、消費者 identity、developer-centric | 規模小、Keycloak 太重、想要更現代 UI |
 | 退場成本       | 中 — 自己掌握資料、protocol 標準可遷移          | 高 — SAML / SCIM 接線散在數百 app | 高 — Actions / Rules 客製綁定深         | 中 — 同 Keycloak                     |
 
-選 Keycloak 的核心訴求：*資料主權 + 預算控制 + 客製 flow 需求*、且有 SRE 團隊能 24/7 on-call、能接受自管的運維重量。團隊小於 50 人沒 SRE 量能、應用主要在 SaaS（pre-built integration 用不上 Keycloak 強項）、需要快速接 7000+ SaaS app — 都該回頭看 Okta / Auth0。
+選 Keycloak 的核心訴求：*資料主權 + 預算控制 + 客製 flow 需求*、且有 SRE 團隊能 24/7 on-call、能接受自管的維運重量。團隊小於 50 人沒 SRE 量能、應用主要在 SaaS（pre-built integration 用不上 Keycloak 強項）、需要快速接 7000+ SaaS app — 都該回頭看 Okta / Auth0。
 
 ## 進階主題
 
@@ -121,7 +121,7 @@ Keycloak 沒有直接的廠商級公開事件（OSS 沒有 vendor incident 的�
 | [Failure: Credential Rotation Without Scope](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) | Keycloak realm signing key rotation 必須分域分批、一次 rotate 全部 realm = 全公司 login 同時失敗                             |
 | [Uber 2022 MFA Fatigue](/backend/07-security-data-protection/red-team/cases/identity-access/uber-2022-mfa-fatigue/)                 | 純 push MFA 抗不過 fatigue、Keycloak 自訂 Authentication Flow 應該強制高風險操作走 phishing-resistant factor                 |
 
-**自管 IdP 特有的失效情境**（沒有對應公開 vendor case、來自自管運維常見事故樣態）：
+**自管 IdP 特有的失效情境**（沒有對應公開 vendor case、來自自管維運常見事故樣態）：
 
 - **Cert 過期讓全公司 SSO 卡死**：Keycloak signing cert / TLS cert / 後端 DB cert 都自己管、任何一張過期 = login 全停。Okta / Auth0 客戶不會遇到這個失效面（vendor 自己 rotate）— 自管組織必須有 cert lifecycle monitoring（Prometheus exporter + alert）+ 季度 rotate rehearsal、不能等 Let's Encrypt / 公司 PKI 發過期通知才動
 - **Major upgrade 卡 DB migration 變數小時 downtime**：Keycloak 每年 major release 帶 schema migration、若 staging 沒 full rehearsal 就 production 升級、可能遇到 migration 比預期慢 5-10 倍、整個維護視窗炸掉。對照 Okta / Auth0：vendor 自己升、客戶感知是 minutes-level、不是 hours-level

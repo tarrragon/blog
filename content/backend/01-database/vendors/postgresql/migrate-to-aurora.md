@@ -53,7 +53,7 @@ Splunk → Elastic 的分階段計畫由 schema 差異驅動；Aurora migration 
 | Custom config         | postgresql.conf 全控                 | Parameter Group（限制）                           |
 | OS / kernel access    | 完全控                               | **無**（fully managed）                           |
 
-每一條 operational concept 都需要 migration plan、application code 不變但 *運維知識體系全換*。
+每一條 operational concept 都需要 migration plan、application code 不變但 *維運知識體系全換*。
 
 ## Migration 流程：operational 準備分階段 + drop-in cutover
 

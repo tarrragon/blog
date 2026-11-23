@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "message-queue", "case-study"]
 ---
 
-這個案例的核心責任是把 broker 遷移拆成平台責任、運維責任與資料責任三層。
+這個案例的核心責任是把 broker 遷移拆成平台責任、維運責任與資料責任三層。
 
 ## 觀察
 

@@ -12,7 +12,7 @@ LinkedIn 是大規模社交平台、capacity planning 與 [on-call](/backend/kno
 
 - Capacity Planning：跨 region / 跨服務的容量預測方法
 - On-call 結構：primary / secondary / SME escalation
-- Operability culture：把可運維性納入服務設計門檻
+- Operability culture：把可維運性納入服務設計門檻
 - Internal tooling：LinkedIn engineering blog 公開的內部工具設計
 
 ## 預計收錄實踐
@@ -66,4 +66,4 @@ LinkedIn 的焦點是把 operability 變成日常流程，這和 Shopify 的峰�
 - [Welcome to the LinkedIn Engineering Blog](https://engineering.linkedin.com/20/welcome-linkedin-engineering-blog)：LinkedIn Engineering Blog 的入口。
 - [Taming Database Replication Latency by Capacity Planning](https://engineering.linkedin.com/performance/taming-database-replication-latency-capacity-planning)：容量規劃與 replication latency 的經典案例。
 - [Eliminating toil with fully automated load testing](https://engineering.linkedin.com/content/engineering/en-us/blog/2019/eliminating-toil-with-fully-automated-load-testing)：自動化壓測與 operability 的實踐。
-- [Scaling the collection of self-service metrics](https://engineering.linkedin.com/metrics/scaling-collection-self-service-metrics)：metrics pipeline 與可運維性基礎。
+- [Scaling the collection of self-service metrics](https://engineering.linkedin.com/metrics/scaling-collection-self-service-metrics)：metrics pipeline 與可維運性基礎。

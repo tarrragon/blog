@@ -121,7 +121,7 @@ KeyDB 跟 Redis I/O threads 的差異是核心賣點。子議題：
 | 要最新 Redis 功能 / 治理穩定 | [Valkey](/backend/02-cache-redis/vendors/valkey/)（Linux Foundation、跟上 Redis）       |
 | 更激進的多核 / 記憶體效率    | [DragonflyDB](/backend/02-cache-redis/vendors/dragonflydb/)（重寫、shared-nothing）     |
 | 需要 Redis Cluster sharding  | [Redis](/backend/02-cache-redis/vendors/redis/) / Valkey Cluster                        |
-| 純 KV、極簡運維              | [Memcached](/backend/02-cache-redis/vendors/memcached/)                                 |
+| 純 KV、極簡維運              | [Memcached](/backend/02-cache-redis/vendors/memcached/)                                 |
 | AWS managed                  | [AWS ElastiCache](/backend/02-cache-redis/vendors/aws-elasticache/)（無 managed KeyDB） |
 | 需要強一致 + durability      | AWS MemoryDB                                                                            |
 

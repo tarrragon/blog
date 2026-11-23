@@ -206,7 +206,7 @@ echo "Failover triggered at $START ms"
 
 - 每市場 cross-AZ failover RTO < 30 秒、滿足當地監管 RTO 要求
 - 跨市場 DR 不靠 Global Database、靠應用層的 *市場切換*（用戶從 A 市場切到 B 市場是業務決策、不是技術 failover）
-- 7 個 cluster 各自獨立、operational surface area × 7（parameter group / backup / IAM / observability fan-out）、但合規要求壓倒運維成本
+- 7 個 cluster 各自獨立、operational surface area × 7（parameter group / backup / IAM / observability fan-out）、但合規要求壓倒維運成本
 
 **Fleet 拓樸**：合規驅動的 fleet 設計（7 個受監管市場 = 7 個獨立 cluster）詳見 [Aurora read replica scaling](../read-replica-scaling/) fleet 治理 SSoT 邊界段。本篇只展開 *單 cluster cross-AZ failover* 流程、不展開跨 cluster 拓樸決策。
 

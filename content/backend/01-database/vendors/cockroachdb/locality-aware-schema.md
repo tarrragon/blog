@@ -176,7 +176,7 @@ Hard Rock 選擇 *邏輯一個 cluster + 物理跨州 Outpost placement* — 合
 
 - 合規顆粒（跨國 vs 跨州 vs 跨 AZ）
 - 跨 boundary 業務邏輯需求強度（強 → CockroachDB locality / 弱 → 拆獨立 cluster 可行）
-- 團隊運維能力（CockroachDB 邏輯一個 cluster vs Aurora 多 cluster fleet 的人月成本）
+- 團隊維運能力（CockroachDB 邏輯一個 cluster vs Aurora 多 cluster fleet 的人月成本）
 
 ### 「Outposts 是 latency 工具」動機誤判
 

@@ -74,7 +74,7 @@ k6 和 Vegeta 的主要差異是場景複雜度。Vegeta 適合簡單 HTTP load�
 | CI 友善度      | 強 — CLI + threshold + JSON / Prometheus | 中 — 需 plugin / Jenkins integration                       | 中 — CLI 友善但 result reporting 較弱                      | 強 — CLI + HTML report + Maven/Gradle plugin                 |
 | Protocol 廣度  | HTTP / gRPC / WebSocket / Browser        | 最廣（JDBC / LDAP / JMS / FTP / SMTP）                     | HTTP 為主、其他靠 custom client                            | HTTP / WebSocket / JMS / MQTT                                |
 | Browser test   | k6 Browser（Playwright-based）           | 無原生（Selenium plugin）                                  | 無原生                                                     | 無原生                                                       |
-| Distributed    | k6 Cloud / k6 Operator on k8s            | Master / Slave（運維重）                                   | Master / Worker                                            | Gatling Enterprise / FrontLine                               |
+| Distributed    | k6 Cloud / k6 Operator on k8s            | Master / Slave（維運重）                                   | Master / Worker                                            | Gatling Enterprise / FrontLine                               |
 | 適合場景       | API-first + CI gate + Grafana ecosystem  | 企業 + protocol 多 + 非工程團隊                            | Python team + custom user behavior                         | JVM team + DSL 表達力                                        |
 
 選 k6 的核心訴求：API-first scenario + CI gate + Grafana / Prometheus ecosystem 已用、且團隊接受 JS DSL。Protocol 廣度需求大、走 JMeter；Python team、走 Locust；JVM-heavy、走 Gatling。

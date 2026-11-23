@@ -103,7 +103,7 @@ Auto scaling 不是萬靈丹。三類問題它無法解決：擴展速度跟不�
 
 純垂直或純水平在實際系統中都罕見。常見的混合模式：
 
-- **小規模垂直、大規模水平**：早期流量在單機的容量之內，先用較大規格降低運維複雜度；流量上來後再轉水平，把每臺機器規格降回中等。
+- **小規模垂直、大規模水平**：早期流量在單機的容量之內，先用較大規格降低維運複雜度；流量上來後再轉水平，把每臺機器規格降回中等。
 - **stateless 水平、stateful 垂直**：API server 水平擴展、資料庫主節點垂直擴展、加 read replica 做讀路徑水平擴展。
 - **熱資料水平 sharding、冷資料保持單庫**：把熱表用 partition key 拆到多個 shard，冷表保留在主庫不動。
 - **核心服務垂直保底、邊緣服務水平彈性**：核心交易服務用更大規格降低事故風險，前端、推薦等服務走 auto scaling。
@@ -146,11 +146,11 @@ Zomato 跟 Netflix 不在這份案例清單裡的原因要先講清楚：擴展�
 
 ## 跨模組路由
 
-1. 與 [9.1 壓測理論與系統行為](/backend/09-performance-capacity/performance-theory/) 的交接：USL 跟 Little's Law 在理論上推導水平擴展的曲線、本章解釋這道牆在運維現場長什麼樣。
+1. 與 [9.1 壓測理論與系統行為](/backend/09-performance-capacity/performance-theory/) 的交接：USL 跟 Little's Law 在理論上推導水平擴展的曲線、本章解釋這道牆在維運現場長什麼樣。
 2. 與 [9.6 容量規劃](/backend/09-performance-capacity/capacity-planning/) 的交接：擴展軸選定後，容量規劃決定具體數字。
 3. 與 [10.1 服務拆分](/backend/10-system-evolution/service-decomposition-boundaries/) 的交接：水平擴展常常是服務拆分的觸發點，反之亦然。
 4. 與 [01 database high-concurrency-access](/backend/01-database/high-concurrency-access/) 的交接：資料層水平擴展（sharding、replica）的具體機制。
-5. 與 devops 的交接：垂直 vs 水平判斷、無狀態設計與擴縮觸發的運維落地在 [運維 模組二：水平擴展](/devops/operations/02-horizontal-scaling/)。
+5. 與 devops 的交接：垂直 vs 水平判斷、無狀態設計與擴縮觸發的維運落地在 [維運 模組二：水平擴展](/devops/operations/02-horizontal-scaling/)。
 
 ## 下一步路由
 

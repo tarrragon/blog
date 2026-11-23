@@ -10,9 +10,9 @@ tags: ["backend", "deployment", "case-study"]
 
 ## 觀察
 
-Miro 從自維運 Kubernetes 遷移到 managed EKS。遷移前的狀態是平台團隊大部分精力花在叢集本身的運維——control plane 升級、node AMI 維護、etcd 備份、安全修補。這些工作是必要的，但它們跟「讓開發者更快交付功能」沒有直接關聯。
+Miro 從自維運 Kubernetes 遷移到 managed EKS。遷移前的狀態是平台團隊大部分精力花在叢集本身的維運——control plane 升級、node AMI 維護、etcd 備份、安全修補。這些工作是必要的，但它們跟「讓開發者更快交付功能」沒有直接關聯。
 
-遷移後 managed EKS 接管了 control plane 運維。平台團隊的工作重心從「維持叢集跑起來」轉向「定義 release flow、observability convention、developer experience」。這個轉變是 managed 平台的組織層面價值，技術層面的價值（省維運、自動升級）反而是次要的。
+遷移後 managed EKS 接管了 control plane 維運。平台團隊的工作重心從「維持叢集跑起來」轉向「定義 release flow、observability convention、developer experience」。這個轉變是 managed 平台的組織層面價值，技術層面的價值（省維運、自動升級）反而是次要的。
 
 ## 判讀
 
@@ -28,7 +28,7 @@ Miro 從自維運 Kubernetes 遷移到 managed EKS。遷移前的狀態是平台
 
 ## 回退判讀
 
-從 managed 回退到 self-managed 的成本極高（要重建 control plane 運維能力），因此這類遷移的回退策略通常是「在 managed 平台內回退」而非「回到 self-managed」。具體做法是保留舊叢集一段時間作為 fallback，但同時接受「回到 self-managed 不是選項」的設計假設。
+從 managed 回退到 self-managed 的成本極高（要重建 control plane 維運能力），因此這類遷移的回退策略通常是「在 managed 平台內回退」而非「回到 self-managed」。具體做法是保留舊叢集一段時間作為 fallback，但同時接受「回到 self-managed 不是選項」的設計假設。
 
 ## 下一步路由
 

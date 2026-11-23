@@ -18,7 +18,7 @@ Consumer group 是事件流跟多服務訂閱的協調模型。分析服務、�
 
 系統需要 consumer group 的訊號是同一事件要被多個系統各自處理。訂單事件同時給出貨、通知與報表 — 三個 consumer group 各自有自己的處理速度、錯誤率跟重放流程。
 
-Consumer group 的 rebalance（partition 重新分配）是 Kafka 生態的常見運維議題。Consumer 加入或離開 group 時觸發 rebalance、rebalance 期間 partition 暫時無人消費、造成短暫的處理停頓。Rebalance 時間跟 partition 數量、consumer 數量有關。
+Consumer group 的 rebalance（partition 重新分配）是 Kafka 生態的常見維運議題。Consumer 加入或離開 group 時觸發 rebalance、rebalance 期間 partition 暫時無人消費、造成短暫的處理停頓。Rebalance 時間跟 partition 數量、consumer 數量有關。
 
 ## 判斷條件與後果
 

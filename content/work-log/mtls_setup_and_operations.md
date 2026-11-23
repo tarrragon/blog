@@ -1,9 +1,9 @@
 ---
-title: "mTLS 實際怎麼設定與運維：CA 階層、憑證生命週期、撤銷機制"
+title: "mTLS 實際怎麼設定與維運：CA 階層、憑證生命週期、撤銷機制"
 slug: "mtls_setup_and_operations"
 date: 2026-05-18
 draft: false
-description: "mTLS 落地的運維決策（CA 階層、數位憑證儲存、撤銷機制）與基礎設施整合（nginx / envoy / service mesh），以及跟 API Key / OAuth 的成本與安全取捨。"
+description: "mTLS 落地的維運決策（CA 階層、數位憑證儲存、撤銷機制）與基礎設施整合（nginx / envoy / service mesh），以及跟 API Key / OAuth 的成本與安全取捨。"
 tags: ["security", "mtls", "tls", "pki", "service-mesh", "operations"]
 ---
 
@@ -15,7 +15,7 @@ mTLS 的核心是把系統身分綁到 X.509 憑證與私鑰，而不是可重�
 - 數位憑證放哪、怎麼 rotate？
 - 怎麼撤銷？CRL 還是 OCSP 還是 short-lived cert？
 - nginx 設定怎麼寫、service mesh 怎麼整合？
-- 跟 API Key、OAuth 比，什麼情境適合承擔 mTLS 的運維成本？
+- 跟 API Key、OAuth 比，什麼情境適合承擔 mTLS 的維運成本？
 
 這些是 mTLS 第一次部署就要處理的基本問題。若只知道「雙向憑證」而沒有 lifecycle 設計，系統會在過期、撤銷或 mesh 升級時失去可預測性。
 
@@ -73,7 +73,7 @@ client ──"我要連 example.com、這是我的憑證"──▶ server
 
 mTLS 的核心優勢是：**client 端的 private key 是 scope-bound、不跨系統共用**。私鑰理論上不離開 client，且驗證憑藉的是 CA 簽章而非可重用字串；相較 shared API Key，一個 client 的私鑰外流通常可被限制在該 client 的憑證與授權範圍內。
 
-代價是：**PKI 基礎建設複雜**、憑證生命週期管理重、運維成本高。
+代價是：**PKI 基礎建設複雜**、憑證生命週期管理重、維運成本高。
 
 ---
 
@@ -405,7 +405,7 @@ spec:
 
 優點：**application 完全不用改 code、不用管 cert、不用管 rotation** — mesh 全包。
 
-缺點：**綁定整套 mesh 架構**、運維 mesh 本身是大事、學習曲線陡。
+缺點：**綁定整套 mesh 架構**、維運 mesh 本身是大事、學習曲線陡。
 
 ### 為 application 直接做 mTLS
 
@@ -449,9 +449,9 @@ resp, err := client.Get("https://api.example.com/data")
 
 ## 跟其他 Layer 2 方案的成本比較
 
-mTLS 在三層信任邊界的 Layer 2 是安全強度高、運維責任也重的選項。是否採用，要看威脅模型、合規要求、私鑰保護能力與自動化成熟度。
+mTLS 在三層信任邊界的 Layer 2 是安全強度高、維運責任也重的選項。是否採用，要看威脅模型、合規要求、私鑰保護能力與自動化成熟度。
 
-| 方案                         | 安全等級 | 運維成本 | 適合                         |
+| 方案                         | 安全等級 | 維運成本 | 適合                         |
 | ---------------------------- | -------- | -------- | ---------------------------- |
 | **Shared Secret**            | 低-中    | 低       | 純內部、低風險               |
 | **API Key + HTTPS**          | 中       | 低       | 一般 SaaS、對外 API          |
@@ -474,7 +474,7 @@ mTLS 在三層信任邊界的 Layer 2 是安全強度高、運維責任也重的
 | 場景                            | 成本偏高的原因                                     |
 | ------------------------------- | -------------------------------------------------- |
 | 對外開放給第三方 SDK            | 第三方管理 cert 的門檻高、API Key + HTTPS 較易落地 |
-| 小規模、運維資源少              | PKI infra 維護成本超過安全增益                     |
+| 小規模、維運資源少              | PKI infra 維護成本超過安全增益                     |
 | 純內部、不需強身分隔離          | Shared secret 已經夠用                             |
 | 大量短連線 client（mobile app） | Cert 散佈跟 rotation 複雜度高                      |
 

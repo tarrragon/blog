@@ -10,9 +10,9 @@ tags: ["backend", "message-queue", "redis-streams", "kafka", "migration", "parad
 
 ## Redis Streams 跟 Kafka 是不同抽象層的東西
 
-Redis Streams 是 Redis 行程內的一個 data structure、Kafka 是一整套獨立的 distributed event streaming platform。這個區別決定整趟遷移的性質：要把 messaging 能力從「既有 Redis 行程的一塊記憶體」搬到「自成一格、要獨立運維的多節點叢集」，遠超過換個相容 broker 的工作量。
+Redis Streams 是 Redis 行程內的一個 data structure、Kafka 是一整套獨立的 distributed event streaming platform。這個區別決定整趟遷移的性質：要把 messaging 能力從「既有 Redis 行程的一塊記憶體」搬到「自成一格、要獨立維運的多節點叢集」，遠超過換個相容 broker 的工作量。
 
-Redis Streams 的責任邊界是「在已經跑著的 Redis 裡多一個 append-only log」。它共用 Redis 的記憶體、持久化（AOF / RDB）、failover（Sentinel / Cluster）跟運維團隊。寫入用 `XADD`、消費用 `XREADGROUP`，consumer group 跟 pending entries list（PEL）都活在同一個 Redis 行程。它的設計取捨偏向「低延遲、低運維增量、跟 Redis 生命週期綁定」。
+Redis Streams 的責任邊界是「在已經跑著的 Redis 裡多一個 append-only log」。它共用 Redis 的記憶體、持久化（AOF / RDB）、failover（Sentinel / Cluster）跟維運團隊。寫入用 `XADD`、消費用 `XREADGROUP`，consumer group 跟 pending entries list（PEL）都活在同一個 Redis 行程。它的設計取捨偏向「低延遲、低維運增量、跟 Redis 生命週期綁定」。
 
 Kafka 的責任邊界是「成為跨系統的事件總線」。它把訊息寫成 partition 化的 log、落在獨立 broker 的磁碟、用 replication 保護、用 consumer group offset 追蹤各 consumer 進度，可長期保留並隨意 replay。它的設計取捨偏向「寫入即承諾、磁碟級長期保留、多 consumer 各自重播、水平擴展吞吐」。
 
@@ -26,17 +26,17 @@ Kafka 的責任邊界是「成為跨系統的事件總線」。它把訊息寫�
 | 失敗接管       | `XCLAIM` / `XAUTOCLAIM`（手動 / 半自動）    | Rebalance protocol（broker 協調自動分配）    |
 | Replay         | 從 entry ID 重讀（受 retention 內資料限制） | 從任意 offset 重讀（受磁碟 retention 限制）  |
 | 延遲           | 亞毫秒（記憶體操作）                        | 5-50ms                                       |
-| 運維增量       | 近乎零（沿用 Redis）                        | 顯著（多養一套叢集 + schema / connect 生態） |
+| 維運增量       | 近乎零（沿用 Redis）                        | 顯著（多養一套叢集 + schema / connect 生態） |
 
 關鍵在「拓樸單位」這列。Redis Streams 的一個 stream key 只能落在單一 shard、沒有 partition 概念，吞吐與資料量受單 shard 的記憶體與單執行緒處理能力封頂。Kafka 的 topic 天然切成多 partition、分散到多 broker，這是兩者在規模上的分水嶺，也是後面所有對位與故障演練的根。
 
 ## 先確認是不是真的該遷：多數中小規模不該遷
 
-決定遷移前先做反向確認：在中小規模、且團隊已熟 Redis 的情境，Redis Streams 往往已經夠用，把它換成 Kafka 多半是引入運維負擔而非解決問題。遷移的正當理由來自規模或保留需求真的超出 Redis Streams 的能力邊界，而不是 Kafka 更主流。
+決定遷移前先做反向確認：在中小規模、且團隊已熟 Redis 的情境，Redis Streams 往往已經夠用，把它換成 Kafka 多半是引入維運負擔而非解決問題。遷移的正當理由來自規模或保留需求真的超出 Redis Streams 的能力邊界，而不是 Kafka 更主流。
 
-[Arcjet](/backend/03-message-queue/cases/redis-streams-arcjet-replace-kafka/) 的方向恰好相反、值得當反向參照。Arcjet 的 security / bot detection 平台需要低延遲請求處理，原本評估 Kafka，發現 managed Kafka 要六位數美元年費、自管運維難度也高；他們把既有的 Redis cache 層升級成 Streams，總成本掉到約一千美元年費。代價是 Redis Streams 沒有自動 retention，他們自寫一個 Janitor process，依約每分鐘一百則的實際處理速度監測 stream 長度跟 consumer group 狀態、selectively trim。
+[Arcjet](/backend/03-message-queue/cases/redis-streams-arcjet-replace-kafka/) 的方向恰好相反、值得當反向參照。Arcjet 的 security / bot detection 平台需要低延遲請求處理，原本評估 Kafka，發現 managed Kafka 要六位數美元年費、自管維運難度也高；他們把既有的 Redis cache 層升級成 Streams，總成本掉到約一千美元年費。代價是 Redis Streams 沒有自動 retention，他們自寫一個 Janitor process，依約每分鐘一百則的實際處理速度監測 stream 長度跟 consumer group 狀態、selectively trim。
 
-Arcjet 的判讀對遷移方向的啟示：當 workload 是低延遲、資料量留在記憶體可承受的範圍、團隊本來就在跑 Redis，Redis Streams 是務實且便宜的選擇；願意自寫 retention 工具就能補上它缺的治理能力。這條路成立時，遷去 Kafka 是用六位數年費跟一整套叢集運維，去換一個現有方案已能覆蓋的需求。
+Arcjet 的判讀對遷移方向的啟示：當 workload 是低延遲、資料量留在記憶體可承受的範圍、團隊本來就在跑 Redis，Redis Streams 是務實且便宜的選擇；願意自寫 retention 工具就能補上它缺的治理能力。這條路成立時，遷去 Kafka 是用六位數年費跟一整套叢集維運，去換一個現有方案已能覆蓋的需求。
 
 [Bitso](/backend/03-message-queue/cases/redis-streams-bitso-reliable-streams/) 是另一個 Redis Streams 適用的高壓案例。Bitso 的撮合引擎微服務要扛每秒上千則訊息、亞毫秒延遲、撐住 BTC 價格暴動的尖峰；他們先後評估 Kafka（延遲不符）跟 SQS（vendor lock-in + 延遲）後選 Redis Streams，自建一層 Reliable Streams 抽象封裝 PEL + retry + DLQ，走 idempotent processing 接受重複勝過遺失。Bitso 揭露 Redis Streams 是「資料結構」而非「broker 系統」，可靠性責任在 application 層；但在亞毫秒延遲是硬指標的撮合場景，這個取捨反而讓 Redis Streams 勝過 Kafka。
 
@@ -130,7 +130,7 @@ Arcjet 的判讀對遷移方向的啟示：當 workload 是低延遲、資料量
 2. **Phase 1：Kafka 叢集與 topic 設計** — 建 broker 叢集、依 Case 3 的 partition key 設計建 topic、依 Case 1 的業務需求設 retention，這時做的是基礎設施準備、還沒碰流量。
 3. **Phase 2：dual-write 並行** — producer 同時寫 Redis Streams 跟 Kafka、新 consumer 接 Kafka 驗證正確性、舊 consumer 持續吃 Redis Streams，這是可逆階段、出問題退回只讀 Redis 即可。
 4. **Phase 3：逐流 cutover** — 逐條 stream 把流量切到 Kafka、確認 consumer 進度（offset）跟 idempotency 都對、再停掉該 stream 的 Redis 端寫入；cutover 以 stream 為單位、不是整批。
-5. **Phase 4：長期混合** — 留在 Redis Streams 的延遲敏感流跟遷到 Kafka 的事件流共存、各自運維；需要時用 bridge（消費 Redis Streams 寫入 Kafka、或反向）同步必要資料。
+5. **Phase 4：長期混合** — 留在 Redis Streams 的延遲敏感流跟遷到 Kafka 的事件流共存、各自維運；需要時用 bridge（消費 Redis Streams 寫入 Kafka、或反向）同步必要資料。
 
 dual-write 階段的可逆性是這個結構的安全邊界：在 Phase 2 之前一切可退回純 Redis、Phase 3 逐流 cutover 把不可逆動作（停 Redis 寫入）切到最小粒度，單條 stream 出問題不影響其他流。
 
@@ -143,11 +143,11 @@ dual-write 階段的可逆性是這個結構的安全邊界：在 Phase 2 之前
 | Retention 上限       | 受 `maxmemory` 限制、實務數小時到數天 | 數週到數月（磁碟）、數年（tiered storage） |
 | 吞吐 / 單邏輯 stream | 受單 shard 封頂                       | 多 partition 水平擴展                      |
 | 延遲                 | 亞毫秒                                | 5-50ms                                     |
-| 運維 FTE 增量        | 近乎零                                | 0.5-2 FTE（含 schema / connect 生態）      |
+| 維運 FTE 增量        | 近乎零                                | 0.5-2 FTE（含 schema / connect 生態）      |
 | Replay 能力          | retention 內重讀（受 RAM 限制）       | 任意 offset 重讀（受磁碟 retention 限制）  |
 | 生態                 | Redis 工具鏈                          | Schema Registry / Connect / Streams        |
 
-**判讀**：成本的核心翻轉在「儲存成本曲線」這列。Redis Streams 把資料壓在最貴的 RAM、retention 越長越貴，所以實務上被迫短保留；Kafka 把資料攤到便宜的磁碟、再分層到 S3，讓長保留變得可負擔。但這個翻轉只在「retention 需求真的長」時成立 — 若 retention 只需數小時、資料量小，Redis Streams 沒有獨立叢集跟 0.5-2 FTE 的運維增量，總成本反而低，這正是 Arcjet 的處境。遷移划不划算取決於 retention 跟規模需求落在這條曲線的哪一段。
+**判讀**：成本的核心翻轉在「儲存成本曲線」這列。Redis Streams 把資料壓在最貴的 RAM、retention 越長越貴，所以實務上被迫短保留；Kafka 把資料攤到便宜的磁碟、再分層到 S3，讓長保留變得可負擔。但這個翻轉只在「retention 需求真的長」時成立 — 若 retention 只需數小時、資料量小，Redis Streams 沒有獨立叢集跟 0.5-2 FTE 的維運增量，總成本反而低，這正是 Arcjet 的處境。遷移划不划算取決於 retention 跟規模需求落在這條曲線的哪一段。
 
 ## 整合 / 下一步
 
@@ -174,7 +174,7 @@ Redis Streams 服務亞毫秒延遲的即時路徑（風控、撮合前置）、
 
 ### 反向確認的 tripwire
 
-遷移後若觀察到：延遲敏感路徑 SLA 破線、Kafka 叢集運維成本超出省下的 RAM 成本、實際 retention 需求遠短於規劃 — 這些是「該遷的訊號其實不成立」的回溯訊號，應重新評估該 stream 是否該退回 Redis Streams，對位 [Arcjet](/backend/03-message-queue/cases/redis-streams-arcjet-replace-kafka/) 的成本判讀。
+遷移後若觀察到：延遲敏感路徑 SLA 破線、Kafka 叢集維運成本超出省下的 RAM 成本、實際 retention 需求遠短於規劃 — 這些是「該遷的訊號其實不成立」的回溯訊號，應重新評估該 stream 是否該退回 Redis Streams，對位 [Arcjet](/backend/03-message-queue/cases/redis-streams-arcjet-replace-kafka/) 的成本判讀。
 
 ## 相關連結
 

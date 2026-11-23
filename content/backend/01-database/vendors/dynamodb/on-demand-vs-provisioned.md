@@ -88,7 +88,7 @@ Disney+（Marvel / Star Wars 首日 metadata 流量 3-5 倍、持續時段較長
 
 Capcom 跟 Lemino 揭露的成本軸：DynamoDB 真實成本不只看 monthly bill。
 
-- Capcom：30% 成本下降的本質是「工程資源從 DB 運維轉到遊戲品質」、Capcom 是遊戲公司不是 IT 公司、把 DBA 時間從 Postgres patching / replication 設定 / backup 排程釋放到遊戲機制設計
+- Capcom：30% 成本下降的本質是「工程資源從 DB 維運轉到遊戲品質」、Capcom 是遊戲公司不是 IT 公司、把 DBA 時間從 Postgres patching / replication 設定 / backup 排程釋放到遊戲機制設計
 - Lemino：90% 工程工時下降（DBA + connection management + capacity planning 統包）
 
 **評估公式**：

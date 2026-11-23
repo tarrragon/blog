@@ -147,12 +147,12 @@ infra 的重要性要翻譯成商業後果才能進入決策者的優先級，�
 
 三種語言混著用、各自對應到正確嚴重度的工作，才能讓決策者建立「這個人的優先級判斷值得信任」的印象，而不是「這個人不分輕重」。
 
-商業語言是用來爭取優先級、不是用來嚇人；爭取到之後，怎麼安全地做仍然回到本系列技術模組的判斷標準。把成本量化的延伸方法，可參考 [運維 模組八：成本管理](/devops/operations/08-cost-management/) 對基礎設施成本的拆解視角。
+商業語言是用來爭取優先級、不是用來嚇人；爭取到之後，怎麼安全地做仍然回到本系列技術模組的判斷標準。把成本量化的延伸方法，可參考 [維運 模組八：成本管理](/devops/operations/08-cost-management/) 對基礎設施成本的拆解視角。
 
 ## 跨分類引用
 
 - → [模組零：infra 是什麼](/devops/infra/00-infra-mindset/)：地基隱形、爆炸時才現形的論證，成熟度階梯與 day 1 鐵律
 - → [模組七：infra 走 PR 流程](/devops/infra/07-infra-as-pr/)：用流程把 infra 知識從個人腦裡搬進 code，PR 作為知識載體
-- → [運維 模組八：成本管理](/devops/operations/08-cost-management/)：把 infra 缺口換算成可標價成本的拆解視角
+- → [維運 模組八：成本管理](/devops/operations/08-cost-management/)：把 infra 缺口換算成可標價成本的拆解視角
 - → [團隊權限分級](/devops/infra/02-identity-credentials/team-access-management/)：權限分級讓知識不集中在 admin 一個人身上
 - → [職務交接設計](/devops/infra/08-governance-habits/handover-design/)：交接的操作清單與結構性降低交接成本的設計

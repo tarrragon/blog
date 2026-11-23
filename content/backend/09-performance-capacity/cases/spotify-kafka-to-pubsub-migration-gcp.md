@@ -20,7 +20,7 @@ Spotify 在 Google Cloud 的遷移敘述（引自 [Spotify's journey to cloud](h
 | 遷入技術   | Google Cloud Pub/Sub                     |
 | 大數據生態 | BigQuery / Dataflow / Dataproc / Pub/Sub |
 
-關鍵動機：「moving event delivery to a managed service」— 卸下 Kafka broker 的容量規劃與運維負擔。
+關鍵動機：「moving event delivery to a managed service」— 卸下 Kafka broker 的容量規劃與維運負擔。
 
 ## 判讀
 
@@ -36,7 +36,7 @@ Spotify 遷移揭露三個 broker 容量規劃的長期工程問題。
 
 可重用的工程做法：
 
-1. **broker 自管 vs managed 是長期 TCO 評估**：算「平日運維 + 容量擴容 + 故障處理 + 升級遷移」的人力成本、不只算「broker 雲端費用」。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/)。
+1. **broker 自管 vs managed 是長期 TCO 評估**：算「平日維運 + 容量擴容 + 故障處理 + 升級遷移」的人力成本、不只算「broker 雲端費用」。對應 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/)。
 2. **遷移分階段：dual write → shadow → cutover**：先寫兩邊、驗證一致性、再切流量。對應 [01.3 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/) 的同類流程。
 3. **業務語意對映是遷移關鍵**：Kafka 的 partition / offset / consumer group 在 Pub/Sub 對映成不同概念（subscription / ordering key / message attribute）、不是 1:1。
 

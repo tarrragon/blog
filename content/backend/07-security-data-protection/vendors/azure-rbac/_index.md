@@ -115,7 +115,7 @@ Azure 雙層體系的取捨要分開看 — 一張表回答 *cloud resource perm
 
 ## 排錯與失敗快速判讀
 
-- **Global Admin 過多**：standing Global Admin 超過 5 個就要警惕 — 上 PIM、把日常運維改用 Privileged Role Administrator + 特定 admin role group
+- **Global Admin 過多**：standing Global Admin 超過 5 個就要警惕 — 上 PIM、把日常維運改用 Privileged Role Administrator + 特定 admin role group
 - **Conditional Access 規則漏 legacy auth**：規則只 cover modern auth、IMAP / POP / SMTP 等 legacy protocol 不走 CA — 用「Block legacy authentication」baseline policy 補
 - **App Registration / Enterprise Application admin consent 沒審查**：使用者自己 consent 把 mail.read 給三方 app、變 consent phishing 入口 — 關閉 user consent、改 admin consent workflow
 - **Service principal client secret 散落**：CI / 服務裡有大量 client secret、rotate 沒節奏 — 改 Managed Identity（內部）或 Workload Identity Federation（跨雲 CI）

@@ -12,7 +12,7 @@ tags: ["backend", "message-queue", "kafka", "multi-tenant", "quota", "acl", "gov
 
 Multi-tenant Kafka 的核心問題是把一個物理叢集切成多個彼此隔離的邏輯空間、讓每個團隊用同一組 broker 卻不互相干擾。當 Kafka 從單一團隊的工具長成全公司的事件總線、叢集承載的不再是一條 pipeline、而是數十到數百個團隊的 producer 跟 consumer。這時叢集的瓶頸從「broker 夠不夠快」轉成「怎麼防止某個團隊的流量、權限、或 topic 失控波及其他所有人」。
 
-[Uber 的 Kafka 平台演進](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/)把這個轉換描述為「從單隊列問題提升到平台治理問題」。當事件平台服務眾多團隊、重點是配額、隔離、觀測與運維標準化、而非只擴 broker。擴 broker 解決的是總容量、解決不了「單一租戶吃光共享資源」這類隔離問題。
+[Uber 的 Kafka 平台演進](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/)把這個轉換描述為「從單隊列問題提升到平台治理問題」。當事件平台服務眾多團隊、重點是配額、隔離、觀測與維運標準化、而非只擴 broker。擴 broker 解決的是總容量、解決不了「單一租戶吃光共享資源」這類隔離問題。
 
 共享叢集的治理分三個獨立的軸、各自處理不同的失控來源：
 
@@ -290,7 +290,7 @@ TopicGC 是 LinkedIn 的內部系統、不是 Kafka 內建指令；它揭示的�
 | Partition 總數         | controller failover 時間、metadata fetch 延遲      | 逼近上限先回收死 topic、再評估分群               |
 | Topic 活躍率           | 有 produce / consume 的 topic 佔比                 | 死 topic 比例高代表缺回收流程、補活躍判斷標準    |
 
-Quota 與 ACL 是 broker-side 即時生效、不需重啟、可隨租戶調整、運維成本低。生命週期治理是持續流程、不是一次性操作 —— 死 topic 會持續產生、回收要常態化。三軸的共同前提是命名規範：沒有可治理的命名、quota 找不到歸屬、ACL 邊界對不齊、回收找不到 owner。多租戶治理的第一步是先把命名規範立起來、再談 quota 與 ACL。
+Quota 與 ACL 是 broker-side 即時生效、不需重啟、可隨租戶調整、維運成本低。生命週期治理是持續流程、不是一次性操作 —— 死 topic 會持續產生、回收要常態化。三軸的共同前提是命名規範：沒有可治理的命名、quota 找不到歸屬、ACL 邊界對不齊、回收找不到 owner。多租戶治理的第一步是先把命名規範立起來、再談 quota 與 ACL。
 
 ## 整合與下一步
 

@@ -51,7 +51,7 @@ DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流�
 **合理動機**：
 
 - **舊系統規模上限**：[Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) TiDB 必須長期 over-provision 應付 spike、成本不划算 → 換 DynamoDB on-demand 後 50% 成本下降
-- **舊系統運維成本**：[Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) 自管 Kafka 工程成本太高 → 換 managed Pub/Sub 釋放 SRE
+- **舊系統維運成本**：[Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) 自管 Kafka 工程成本太高 → 換 managed Pub/Sub 釋放 SRE
 - **舊系統失能**：[Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 多套 RDBMS（PostgreSQL、MySQL、Oracle）DBA 負擔重 → 統一到 Aurora、效能 +75% 成本 -28%
 - **vendor 授權或支援變動**：MongoDB 改授權、Mesos 被棄、Oracle 升級費高
 - **合規要求**：[Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 新市場上線、需要本地合規 cluster
@@ -341,20 +341,20 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 ## 「預設 DB」治理 pattern
 
-大規模平台選 DB 的做法是建立「預設 DB」規則、新團隊用其他要 *justify*、逐案決定在這個規模行不通。這個治理 pattern 簡化 onboarding、降低 DB 種類太多的運維成本。
+大規模平台選 DB 的做法是建立「預設 DB」規則、新團隊用其他要 *justify*、逐案決定在這個規模行不通。這個治理 pattern 簡化 onboarding、降低 DB 種類太多的維運成本。
 
-對應 [Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — Genesys Cloud 的 Chief Architect 明確說「Amazon DynamoDB is our primary data layer by default, and teams have to justify the use of something else」。對應 [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 把多套 RDB 整合到 Aurora、降低 DB 種類就是降低運維 surface area。
+對應 [Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — Genesys Cloud 的 Chief Architect 明確說「Amazon DynamoDB is our primary data layer by default, and teams have to justify the use of something else」。對應 [Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 把多套 RDB 整合到 Aurora、降低 DB 種類就是降低維運 surface area。
 
 **預設 DB 治理的工程含義**：
 
 - 新團隊預設用 X、特殊需求才評估其他、減少 DB 評估的認知負擔
 - DBA / SRE 知識集中、不必養多個 vendor 的專業
-- 監控、backup、compliance 流程統一、運維成本下降
+- 監控、backup、compliance 流程統一、維運成本下降
 - 多個服務的 schema migration / capacity planning 可以共用 tooling
 
 **選擇預設 DB 的判讀條件**：
 
-- 平台規模夠大（10+ 微服務）、運維 surface area 是真實成本
+- 平台規模夠大（10+ 微服務）、維運 surface area 是真實成本
 - 業務需求大部分可以收斂到單一 DB（OLTP 90%、KV 10% 可以選 OLTP 為預設）
 - vendor 提供完整能力組合（managed + multi-region + auto-scaling）
 

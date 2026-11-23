@@ -15,7 +15,7 @@ aliases: ["/operations/"]
 | --------------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------- |
 | [DevOps 全景](/devops/)           | 交付生命週期的三階段導覽（地基 → 管線 → 維運） | 本系列是這條生命週期的運行期階段                                           |
 | [Backend](/backend/)              | 服務內部的設計（資料庫、快取、佇列、可觀測性） | Backend 的部署和可靠性維度在這裡展開                                       |
-| [Infra](/devops/infra/)           | 基礎設施地基（IaC、網路、身分、環境分離）      | 運維管的服務跑在 Infra 鋪好的地基上                                        |
+| [Infra](/devops/infra/)           | 基礎設施地基（IaC、網路、身分、環境分離）      | 維運管的服務跑在 Infra 鋪好的地基上                                        |
 | [Monitoring](/devops/monitoring/) | 客戶端監控體系（SDK、Collector、Dashboard）    | Collector 的 ingestion scaling 是這裡的流量管控應用                        |
 | [CI/CD](/devops/ci/)              | 驗證、建置、發布 gate                          | CI/CD 管線的產出（artifact）是這裡部署的輸入                               |
 | [Testing](/testing/)              | 測試策略與 mock 邊界                           | 服務 fixture 的 health check 和服務探活概念共通                            |
