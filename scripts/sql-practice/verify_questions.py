@@ -68,7 +68,7 @@ def get_domain_tables(domain_id: str) -> set[str]:
         return {
             r[0]
             for r in conn.execute(
-                "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';"
+                "SELECT name FROM sqlite_master WHERE type IN ('table', 'view') AND name NOT LIKE 'sqlite_%';"
             ).fetchall()
         }
     finally:

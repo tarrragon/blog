@@ -4,16 +4,16 @@
 
 ## 目錄結構
 
-| 路徑                       | 用途                      | 說明                                                                                                                           |
-| -------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `domains/bookstore/`       | 領域甲：紙頁書店（13 表） | `schema.sql`、`seed.sql`（手寫反例 `1..9999`）、`seed_scale.sql`（決定性造數 `100001+`，含 5 萬訂單與 2,000 筆熱點重複 email） |
-| `domains/cloud-academy/`   | 領域乙：雲課堂（10 表）   | `schema.sql`、`seed.sql`、`seed_scale.sql`（含 5 萬帳單與 1,500 筆 Webhook 重送風暴）                                          |
-| `domains/swift-logistics/` | 領域丙：捷配物流（9 表）  | `schema.sql`、`seed.sql`、`seed_scale.sql`（含 5 萬運單 35% 客戶傾斜與 3 萬筆高比例 `completed` 任務）                         |
-| `benchmarks/`              | 基準快照 JSON             | `sqlite-scale-snapshots.json`（實跑生成）、`postgres-and-concurrency-reference.json`（PG／多連線／分區參考快照）               |
-| `questions/`               | 結構化題庫 JSON           | `manifest.json` 與八階段（含資安與權限）＋跨概念複合陷阱共 9 份題庫（首批 47 題、涵蓋 3 領域與 CRUD 多表路徑輪替）             |
-| `verify_domains.py`        | 資料庫底座驗證            | 載入三套基礎與壓測資料庫，驗外鍵、完整性、反例與執行計畫分岔                                                                   |
-| `generate_benchmarks.py`   | 實測基準快照產生器        | 在三套壓測資料庫實跑關鍵查詢，輸出 `EXPLAIN QUERY PLAN` 與中位數耗時倍率                                                       |
-| `verify_questions.py`      | 題庫自動化驗收            | 驗證 JSON 欄位、站內文章連結、基準參照，並在獨立記憶體 SQLite 實跑全部可執行選項與斷言                                         |
+| 路徑                       | 用途                      | 說明                                                                                                                                         |
+| -------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `domains/bookstore/`       | 領域甲：紙頁書店（20 表） | `schema.sql`（含 RBAC、軟刪除部分唯一索引、PII 分離、唯附寫稽核與 2 檢視表）、`seed.sql`、`seed_scale.sql`、`security_pg.sql`                |
+| `domains/cloud-academy/`   | 領域乙：雲課堂（18 表）   | `schema.sql`（含企業多租戶組織、憑證／Session 失效、PII 分離、唯附寫稽核與 2 檢視表）、`seed.sql`、`seed_scale.sql`、`security_pg.sql`       |
+| `domains/swift-logistics/` | 領域丙：捷配物流（17 表） | `schema.sql`（含商家帳號、API Key 雜湊撤銷、子表租戶鍵、收件人 PII、唯附寫稽核與 2 檢視表）、`seed.sql`、`seed_scale.sql`、`security_pg.sql` |
+| `benchmarks/`              | 基準快照 JSON             | `sqlite-scale-snapshots.json`（實跑生成）、`postgres-and-concurrency-reference.json`（PG／多連線／分區參考快照）                             |
+| `questions/`               | 結構化題庫 JSON           | `manifest.json` 與八階段（含資安與權限）＋跨概念／資安複合陷阱共 9 份題庫（首批 53 題、涵蓋 3 領域與 CRUD 多表路徑輪替）                     |
+| `verify_domains.py`        | 資料庫底座驗證            | 載入三套基礎與壓測資料庫，驗外鍵、完整性、語意／資安反例、Trigger 防竄改與執行計畫分岔                                                       |
+| `generate_benchmarks.py`   | 實測基準快照產生器        | 在三套壓測資料庫實跑關鍵查詢，輸出 `EXPLAIN QUERY PLAN` 與中位數耗時倍率                                                                     |
+| `verify_questions.py`      | 題庫自動化驗收            | 驗證 JSON 欄位、站內文章連結、基準參照，並在獨立記憶體 SQLite 實跑全部可執行選項與斷言                                                       |
 
 ## 一鍵驗證指令（純 Python 3 標準函式庫，無外部套件）
 

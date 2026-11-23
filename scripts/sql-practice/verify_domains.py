@@ -48,6 +48,7 @@ def verify_bookstore(conn: sqlite3.Connection) -> None:
     }
     expected = {
         "customers",
+        "customer_pii",
         "categories",
         "books",
         "orders",
@@ -56,12 +57,19 @@ def verify_bookstore(conn: sqlite3.Connection) -> None:
         "coupons",
         "order_coupons",
         "daily_sales_snapshots",
+        "staff_accounts",
+        "roles",
+        "permissions",
+        "role_permissions",
+        "staff_roles",
+        "order_audit_logs",
         "export_jobs",
         "store_shifts",
         "book_details",
         "book_view_events",
     }
     assert tables == expected, f"bookstore 表集合不符：{tables ^ expected}"
+    assert (ROOT / "bookstore" / "security_pg.sql").is_file(), "bookstore 缺少 security_pg.sql"
 
     wrong_cnt = conn.execute(
         "SELECT COUNT(*) FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE c.customer_id = 3;"
@@ -162,6 +170,38 @@ def verify_bookstore(conn: sqlite3.Connection) -> None:
     ).fetchall()
     assert zero_rows == [], f"整數除法應回傳 0 列，實得 {zero_rows}"
 
+    # 資安與權限反例斷言：唯附寫稽核表拒絕 UPDATE/DELETE、受控檢視表不含 email、軟刪除部分唯一索引
+    for bad_sql in (
+        "UPDATE order_audit_logs SET reason = 'tampered' WHERE audit_id = 1;",
+        "DELETE FROM order_audit_logs WHERE audit_id = 1;",
+    ):
+        try:
+            conn.execute(bad_sql)
+            raise AssertionError(f"order_audit_logs 應拒絕竄改：{bad_sql}")
+        except sqlite3.DatabaseError as exc:
+            assert "append-only" in str(exc)
+
+    view_cols = [r[1] for r in conn.execute("PRAGMA table_info(v_customer_analytics);").fetchall()]
+    assert "email" not in view_cols and "name" not in view_cols, f"v_customer_analytics 洩漏個資欄：{view_cols}"
+
+    # 離職軟刪除員工信箱允許重註冊，但在職重複信箱（不分大小寫）被拒
+    conn.execute("SAVEPOINT sp_rehire;")
+    conn.execute(
+        "INSERT INTO staff_accounts (staff_id, email, display_name, store_code, status, created_at) "
+        "VALUES (99, 'EX.MGR@bookstore.tw', '復職員工', 'TPE-01', 'active', '2026-03-21 09:00:00');"
+    )
+    try:
+        conn.execute(
+            "INSERT INTO staff_accounts (staff_id, email, display_name, store_code, status, created_at) "
+            "VALUES (100, 'MGR.TPE@bookstore.tw', '重複在職', 'TPE-01', 'active', '2026-03-21 09:00:00');"
+        )
+        raise AssertionError("在職重複 email 應觸發 uq_staff_active_email 失敗")
+    except sqlite3.IntegrityError:
+        pass
+    finally:
+        conn.execute("ROLLBACK TO sp_rehire;")
+        conn.execute("RELEASE sp_rehire;")
+
 
 def verify_bookstore_scale(conn: sqlite3.Connection) -> None:
     order_cnt = conn.execute("SELECT COUNT(*) FROM orders;").fetchone()[0]
@@ -193,6 +233,14 @@ def verify_cloud_academy(conn: sqlite3.Connection) -> None:
     }
     expected = {
         "users",
+        "user_pii",
+        "user_credentials",
+        "user_sessions",
+        "organizations",
+        "org_memberships",
+        "roles",
+        "user_roles",
+        "permission_audit_logs",
         "courses",
         "course_contents",
         "tags",
@@ -204,6 +252,7 @@ def verify_cloud_academy(conn: sqlite3.Connection) -> None:
         "webhook_events",
     }
     assert tables == expected, f"cloud-academy 表集合不符：{tables ^ expected}"
+    assert (ROOT / "cloud-academy" / "security_pg.sql").is_file(), "cloud-academy 缺少 security_pg.sql"
 
     not_in_rows = conn.execute(
         "SELECT sub_id FROM subscriptions WHERE status = 'active' AND sub_id NOT IN (SELECT sub_id FROM invoices WHERE status = 'paid');"
@@ -243,6 +292,21 @@ def verify_cloud_academy(conn: sqlite3.Connection) -> None:
     ).fetchall()
     assert dup_webhooks == [("stripe", "evt_dup_001")]
 
+    # 資安斷言：Session 失效（過期＋撤銷＋帳號鎖定＋密碼變更前舊 session）與稽核防竄改
+    valid_sess = [
+        r[0]
+        for r in conn.execute(
+            "SELECT session_id FROM v_valid_sessions WHERE expires_at > '2026-03-15 10:00:00' ORDER BY session_id;"
+        ).fetchall()
+    ]
+    assert valid_sess == [702], f"有效 session 應僅剩 [702]，實得 {valid_sess}"
+
+    try:
+        conn.execute("DELETE FROM permission_audit_logs WHERE audit_id = 1;")
+        raise AssertionError("permission_audit_logs 應拒絕刪除")
+    except sqlite3.DatabaseError as exc:
+        assert "append-only" in str(exc)
+
 
 def verify_cloud_academy_scale(conn: sqlite3.Connection) -> None:
     inv_cnt = conn.execute("SELECT COUNT(*) FROM invoices;").fetchone()[0]
@@ -268,15 +332,24 @@ def verify_swift_logistics(conn: sqlite3.Connection) -> None:
     expected = {
         "warehouses",
         "merchants",
+        "merchant_users",
+        "merchant_api_keys",
+        "drivers",
+        "roles",
+        "permissions",
+        "role_permissions",
         "shipments",
         "shipment_packages",
         "shipment_payloads",
+        "shipment_recipient_pii",
         "shipment_events",
         "driver_shifts",
         "dispatch_tasks",
         "billing_statements",
+        "billing_audit_logs",
     }
     assert tables == expected, f"swift-logistics 表集合不符：{tables ^ expected}"
+    assert (ROOT / "swift-logistics" / "security_pg.sql").is_file(), "swift-logistics 缺少 security_pg.sql"
 
     sqlite_default_top = conn.execute(
         """
@@ -333,6 +406,39 @@ def verify_swift_logistics(conn: sqlite3.Connection) -> None:
         conn, "SELECT task_id FROM dispatch_tasks WHERE status = 'queued' ORDER BY priority DESC, created_at ASC LIMIT 1;"
     )
     assert "idx_dispatch_queued" in p_partial, f"部分索引未命中：{p_partial}"
+
+    # 資安斷言：API Key AND/OR 優先序繞過反例與 billing_audit_logs 不可刪除
+    bypass_keys = [
+        r[0]
+        for r in conn.execute(
+            """
+            SELECT k.api_key_id FROM merchant_api_keys k
+            JOIN merchants m ON m.merchant_id = k.merchant_id
+            WHERE m.status = 'active' AND k.revoked_at IS NULL AND k.expires_at IS NULL
+               OR k.expires_at > '2026-03-15 10:00:00'
+            ORDER BY k.api_key_id;
+            """
+        ).fetchall()
+    ]
+    safe_keys = [
+        r[0]
+        for r in conn.execute(
+            """
+            SELECT k.api_key_id FROM merchant_api_keys k
+            JOIN merchants m ON m.merchant_id = k.merchant_id
+            WHERE m.status = 'active' AND m.deleted_at IS NULL AND k.revoked_at IS NULL
+              AND (k.expires_at IS NULL OR k.expires_at > '2026-03-15 10:00:00')
+            ORDER BY k.api_key_id;
+            """
+        ).fetchall()
+    ]
+    assert 2 in bypass_keys and safe_keys == [1, 5], f"API Key 反例未觸發：bypass={bypass_keys}, safe={safe_keys}"
+
+    try:
+        conn.execute("DELETE FROM billing_audit_logs WHERE audit_id = 1;")
+        raise AssertionError("billing_audit_logs 應拒絕刪除")
+    except sqlite3.DatabaseError as exc:
+        assert "append-only" in str(exc)
 
 
 def verify_swift_logistics_scale(conn: sqlite3.Connection) -> None:

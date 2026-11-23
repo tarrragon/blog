@@ -1,12 +1,13 @@
--- 領域丙（swift-logistics）：捷配物流基準資料與邊界反例列
+-- 領域丙（swift-logistics）：捷配物流基準資料與邊界反例列（含多租戶子表鍵、API Key 撤銷、收件人 PII 與唯附寫稽核）
 -- 刻意埋設：
 -- 1. 倉庫階層：10（北區總倉）-> 11（桃園衛星倉）、12（新竹衛星倉）；20（中區總倉）-> 21（台中港倉）
--- 2. 商家 1001 貢獻多筆運單模擬資料傾斜；商家 1003 尚未寄出任何運單；商家 1004 tier 為 NULL
+-- 2. 商家 1001 貢獻多筆運單模擬資料傾斜；商家 1003 從未寄件且狀態為 suspended（留有一把未撤銷 API Key 4）；商家 1004 tier 為 NULL
 -- 3. 運單 7001 同時有 2 件包裹與 3 筆掃描事件（雙重一對多膨脹），且同時含 exception 與 signed
 -- 4. 運單 7002 有正常的 signed 事件與一筆 recorded_at IS NULL 的 exception 事件（C03 跨引擎 NULL 排序反例）
 -- 5. 運單 7004 沒有任何掃描事件；事件 8008 的 shipment_id IS NULL 且 event_type = 'exception'（NOT IN 反例）
 -- 6. 2026-03-15 14:00:00 同秒三筆運單（7005、7006、7007）測試混合升降冪 Keyset 分頁
 -- 7. 司機 501 含跨午夜夜班（22:00 到隔日 06:00）；dispatch_tasks 以 completed 為主、少量 queued
+-- 8. 資安反例：merchant_api_keys 含已撤銷但未過期的 Key 2（驗證 AND/OR 優先序繞過）、已過期 Key 3、停權商家 Key 4、永不過期 Key 5；billing_audit_logs 掛載防竄改 Trigger
 
 PRAGMA foreign_keys = ON;
 
@@ -17,11 +18,47 @@ INSERT INTO warehouses (warehouse_id, code, region, parent_hub_id) VALUES
   (20, 'TW-C-HUB', 'central', NULL),
   (21, 'TW-C-TXG', 'central', 20);
 
-INSERT INTO merchants (merchant_id, name, account_key, tier) VALUES
-  (1001, '星海電商', 'TW_STAR_01', 'enterprise'), -- 主力大客戶（資料傾斜來源）
-  (1002, '山丘選物', 'tw_hill_02', 'growth'),     -- 小寫 account_key 測試前綴比對
-  (1003, '晨光烘焙', 'TW_MORN_03', 'starter'),    -- 從未寄件商家
-  (1004, '微風文創', 'TW_WIND_04', NULL);         -- tier IS NULL 新商家
+INSERT INTO merchants (merchant_id, name, account_key, tier, status, deleted_at) VALUES
+  (1001, '星海電商', 'TW_STAR_01', 'enterprise', 'active',    NULL), -- 主力大客戶（資料傾斜來源）
+  (1002, '山丘選物', 'tw_hill_02', 'growth',     'active',    NULL), -- 小寫 account_key 測試前綴比對
+  (1003, '晨光烘焙', 'TW_MORN_03', 'starter',    'suspended', NULL), -- 從未寄件且已停權（測試停權商家金鑰攔截）
+  (1004, '微風文創', 'TW_WIND_04', NULL,         'active',    NULL); -- tier IS NULL 新商家
+
+INSERT INTO merchant_users (merchant_user_id, merchant_id, email, display_name, role_code, status, created_at, deleted_at) VALUES
+  (201, 1001, 'ops@star.tw',      '星海倉管', 'owner',      'active',     '2025-02-01 09:00:00', NULL),
+  (202, 1001, 'fin@star.tw',      '星海財務', 'finance',    'active',     '2025-03-01 09:00:00', NULL),
+  (203, 1002, 'ops@hill.tw',      '山丘調度', 'dispatcher', 'active',     '2025-04-01 09:00:00', NULL),
+  (204, 1002, 'former@hill.tw',   '山丘離職', 'readonly',   'offboarded', '2025-04-10 09:00:00', '2026-03-05 00:00:00');
+
+-- API 金鑰基準檢查時間點：2026-03-15 10:00:00
+INSERT INTO merchant_api_keys (api_key_id, merchant_id, key_prefix, key_hash, scopes, created_at, expires_at, revoked_at, last_used_at) VALUES
+  (1, 1001, 'sw_live_star', 'sha256_key_1_star_valid',   'shipments:read,shipments:write', '2026-01-01 00:00:00', '2026-12-31 23:59:59', NULL,                  '2026-03-15 09:50:00'), -- 有效
+  (2, 1001, 'sw_live_old1', 'sha256_key_2_star_revoked', 'shipments:read,shipments:write', '2025-06-01 00:00:00', '2026-12-31 23:59:59', '2026-03-01 00:00:00', '2026-02-28 23:00:00'), -- 已撤銷但 expires_at 仍在未來（抓 AND/OR 優先序繞過）
+  (3, 1002, 'sw_live_hill', 'sha256_key_3_hill_expired', 'shipments:read',                 '2025-03-01 00:00:00', '2026-03-01 00:00:00', NULL,                  '2026-02-25 12:00:00'), -- 已過期
+  (4, 1003, 'sw_live_morn', 'sha256_key_4_morn_susp',    'shipments:read',                 '2026-01-15 00:00:00', NULL,                  NULL,                  '2026-02-10 10:00:00'), -- 所屬商家 1003 已停權
+  (5, 1002, 'sw_live_h2',   'sha256_key_5_hill_noexp',   'shipments:read,billing:read',    '2026-02-01 00:00:00', NULL,                  NULL,                  '2026-03-14 18:00:00'); -- 有效（expires_at IS NULL 永不過期）
+
+INSERT INTO drivers (driver_id, name, license_tier, home_warehouse_id, status) VALUES
+  (501, '王志強', 'heavy',   11, 'active'),
+  (502, '李建宏', 'regular', 11, 'active');
+
+INSERT INTO roles (role_id, role_code, description) VALUES
+  (1, 'ops_dispatcher',  '排程調度員'),
+  (2, 'warehouse_lead',  '倉儲主管'),
+  (3, 'finance_auditor', '財務稽核員'),
+  (4, 'bi_readonly',     '外部報表唯讀角色');
+
+INSERT INTO permissions (perm_id, perm_code, resource, action) VALUES
+  (1, 'shipments:read', 'shipments', 'read'),
+  (2, 'dispatch:claim', 'dispatch',  'write'),
+  (3, 'billing:audit',  'billing',   'read'),
+  (4, 'pii:read',       'pii',       'read');
+
+INSERT INTO role_permissions (role_id, perm_id) VALUES
+  (1, 1), (1, 2),
+  (2, 1), (2, 2), (2, 4),
+  (3, 1), (3, 3),
+  (4, 1);
 
 INSERT INTO shipments (shipment_id, merchant_id, warehouse_id, status, fee_cents, created_at) VALUES
   (7001, 1001, 11, 'delivered',  18000, '2026-03-10 08:00:00'),
@@ -33,16 +70,16 @@ INSERT INTO shipments (shipment_id, merchant_id, warehouse_id, status, fee_cents
   (7007, 1004, 11, 'in_transit', 21000, '2026-03-15 14:00:00'),
   (7008, 1001, 11, 'in_transit', 11000, '2026-03-14 14:00:00');
 
-INSERT INTO shipment_packages (package_id, shipment_id, weight_grams, fragile) VALUES
-  (7101, 7001, 1200, 0),
-  (7102, 7001, 2400, 1), -- 7001 兩件包裹
-  (7103, 7002,  800, 0),
-  (7104, 7003, 3500, 1),
-  (7105, 7004,  500, 0),
-  (7106, 7005, 1800, 0),
-  (7107, 7006, 1600, 0),
-  (7108, 7007, 2200, 1),
-  (7109, 7008,  950, 0);
+INSERT INTO shipment_packages (package_id, shipment_id, merchant_id, weight_grams, fragile) VALUES
+  (7101, 7001, 1001, 1200, 0),
+  (7102, 7001, 1001, 2400, 1), -- 7001 兩件包裹
+  (7103, 7002, 1001,  800, 0),
+  (7104, 7003, 1001, 3500, 1),
+  (7105, 7004, 1002,  500, 0), -- 商家 1002 第 1 件包裹
+  (7106, 7005, 1001, 1800, 0),
+  (7107, 7006, 1002, 1600, 0), -- 商家 1002 第 2 件包裹
+  (7108, 7007, 1004, 2200, 1),
+  (7109, 7008, 1001,  950, 0);
 
 INSERT INTO shipment_payloads (shipment_id, raw_waybill_json) VALUES
   (7001, '{"carrier":"swift","customs":{"hs_code":"4901.99"},"recipient_note":"警衛室代收"}'),
@@ -53,6 +90,16 @@ INSERT INTO shipment_payloads (shipment_id, raw_waybill_json) VALUES
   (7006, '{"carrier":"swift","temperature":"ambient"}'),
   (7007, '{"carrier":"swift","fragile_seal":true}'),
   (7008, '{"carrier":"swift","temperature":"ambient"}');
+
+INSERT INTO shipment_recipient_pii (shipment_id, merchant_id, recipient_name, recipient_phone, delivery_address, erased_at) VALUES
+  (7001, 1001, '張小華', '+886933000701', '桃園市蘆竹區南崁路 1 號', NULL),
+  (7002, 1001, '陳美玲', '+886933000702', '桃園市中壢區中山路 8 號', NULL),
+  (7003, 1001, '林建國', '+886933000703', '新竹市東區光復路二段 5 號', NULL),
+  (7004, 1002, '劉淑芬', '+886933000704', '台中市梧棲區台灣大道八段 9 號', NULL),
+  (7005, 1001, '黃俊傑', '+886933000705', '桃園市桃園區中正路 20 號', NULL),
+  (7006, 1002, '吳佩珊', '+886933000706', '桃園市八德區介壽路一段 15 號', NULL),
+  (7007, 1004, '蔡明憲', '+886933000707', '桃園市平鎮區延平路 66 號', NULL),
+  (7008, 1001, '鄭雅婷', '+886933000708', '桃園市龜山區復興一路 30 號', NULL);
 
 INSERT INTO shipment_events (event_id, shipment_id, event_type, recorded_at) VALUES
   (8001, 7001, 'picked',    '2026-03-10 08:30:00'),
@@ -80,3 +127,7 @@ INSERT INTO billing_statements (statement_id, merchant_id, period_month, total_c
   (9801, 1001, '2026-02', 420000, 'settled'),
   (9802, 1001, '2026-03',  81000, 'draft'),
   (9803, 1002, '2026-03',  24500, 'issued');
+
+INSERT INTO billing_audit_logs (audit_id, statement_id, merchant_id, actor_type, actor_id, action, before_status, after_status, before_cents, after_cents, created_at) VALUES
+  (1, 9801, 1001, 'system', 0,   'issued',  'draft',  'issued',  420000, 420000, '2026-03-01 00:05:00'),
+  (2, 9801, 1001, 'staff',  301, 'settled', 'issued', 'settled', 420000, 420000, '2026-03-05 14:30:00');

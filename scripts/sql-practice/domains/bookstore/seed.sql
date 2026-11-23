@@ -1,23 +1,33 @@
--- 領域甲（bookstore）：紙頁書店基準資料與邊界反例列
+-- 領域甲（bookstore）：紙頁書店基準資料與邊界反例列（含 RBAC、軟刪除、PII 分離與稽核軌跡）
 -- 刻意埋設：
--- 1. 顧客 3（雅文）從未下單；顧客 4（志明）2 月有單、3 月無單；顧客 5（怡君）city 為 NULL；顧客 6（冠宇）city 為空字串
+-- 1. 顧客 3（雅文）從未下單；顧客 4（志明）2 月有單、3 月無單；顧客 5（怡君）city 為 NULL；顧客 6（冠宇）city 為空字串且已完成個資抹除（erased）
 -- 2. 大小寫混排與重複 email（Alice@Example.com / alice@example.com）
 -- 3. 訂單 101 有兩則評價（5 星 + 3 星），驗證列數膨脹與 <> 5 錯誤；訂單 102 無評價；評價 9004 的 order_id 為 NULL 且 5 星，驗證 NOT IN 回空
 -- 4. 2026-03-09 10:00:00 同秒三筆訂單，驗證排序鍵不唯一與分頁漂移
 -- 5. 訂單 101 同時有 2 筆明細與 2 張優惠券，驗證雙重一對多膨脹
 -- 6. 門市 TPE-01 缺 2026-03-03（公休日），驗證 LAG() 與日曆前一天差異
 -- 7. 書籍 205 stock = 1 模擬搶購限量書；書籍 206 is_active = 0 模擬下架書
+-- 8. 資安反例：員工 10 同時具 store_manager 與 auditor（皆有 orders:export，驗證 RBAC JOIN 重複膨脹）；員工 13 已離職軟刪除卻留有未撤銷角色且發起了排隊匯出任務 505（Confused Deputy）
 
 PRAGMA foreign_keys = ON;
 
-INSERT INTO customers (customer_id, name, email, city, created_at) VALUES
-  (1, '佳穎', 'Alice@Example.com', 'Taipei',   '2026-01-05 09:00:00'),
-  (2, '宗翰', 'bob@example.com',   'Taichung', '2026-01-12 14:30:00'),
-  (3, '雅文', 'yawen@example.com', 'Taipei',   '2026-01-20 11:15:00'),
-  (4, '志明', 'ming@example.com',  'Taipei',   '2026-01-25 16:40:00'),
-  (5, '怡君', 'alice@example.com', NULL,       '2026-02-02 08:20:00'),
-  (6, '冠宇', 'kuanyu@example.com','',         '2026-02-14 19:05:00'),
-  (7, '宗翰', 'bob2@example.com',  'Kaohsiung','2026-02-18 10:00:00'); -- 同名顧客，測試 GROUP BY name 錯併
+INSERT INTO customers (customer_id, name, email, city, status, deleted_at, created_at) VALUES
+  (1, '佳穎', 'Alice@Example.com', 'Taipei',   'active', NULL,                  '2026-01-05 09:00:00'),
+  (2, '宗翰', 'bob@example.com',   'Taichung', 'active', NULL,                  '2026-01-12 14:30:00'),
+  (3, '雅文', 'yawen@example.com', 'Taipei',   'active', NULL,                  '2026-01-20 11:15:00'),
+  (4, '志明', 'ming@example.com',  'Taipei',   'active', NULL,                  '2026-01-25 16:40:00'),
+  (5, '怡君', 'alice@example.com', NULL,       'active', NULL,                  '2026-02-02 08:20:00'),
+  (6, '冠宇', 'kuanyu@example.com','',         'erased', '2026-03-19 00:00:00', '2026-02-14 19:05:00'),
+  (7, '宗翰', 'bob2@example.com',  'Kaohsiung','active', NULL,                  '2026-02-18 10:00:00'); -- 同名顧客，測試 GROUP BY name 錯併
+
+INSERT INTO customer_pii (customer_id, phone_e164, shipping_address, tax_id, updated_at, erased_at) VALUES
+  (1, '+886912000001', '台北市中正區重慶南路一段 10 號', NULL,       '2026-01-05 09:00:00', NULL),
+  (2, '+886912000002', '台中市西區公益路 88 號',         '12345678', '2026-01-12 14:30:00', NULL),
+  (3, '+886912000003', '台北市大安區和平東路二段 5 號',  NULL,       '2026-01-20 11:15:00', NULL),
+  (4, '+886912000004', '台北市信義區松高路 12 號',       NULL,       '2026-01-25 16:40:00', NULL),
+  (5, '+886912000005', NULL,                             NULL,       '2026-02-02 08:20:00', NULL),
+  (6, NULL,            NULL,                             NULL,       '2026-03-19 00:00:00', '2026-03-19 00:00:00'), -- 已完成個資抹除
+  (7, '+886912000007', '高雄市鼓山區美術東二路 3 號',    NULL,       '2026-02-18 10:00:00', NULL);
 
 INSERT INTO categories (category_id, name, parent_id) VALUES
   (1, '技術書籍', NULL),
@@ -87,13 +97,53 @@ INSERT INTO daily_sales_snapshots (snapshot_date, store_code, revenue) VALUES
   ('2026-03-03', 'TXG-01', 11000),
   ('2026-03-04', 'TXG-01', 10500);
 
-INSERT INTO export_jobs (job_id, status, payload, claimed_by, created_at) VALUES
-  (501, 'done',    '{"report":"feb_sales"}', 'worker-1', '2026-03-01 01:00:00'),
-  (502, 'done',    '{"report":"feb_tax"}',   'worker-2', '2026-03-01 01:05:00'),
-  (503, 'running', '{"report":"mar_mid"}',   'worker-1', '2026-03-15 02:00:00'),
-  (504, 'queued',  '{"report":"mar_sales"}', NULL,       '2026-03-20 03:00:00'),
-  (505, 'queued',  '{"report":"mar_audit"}', NULL,       '2026-03-20 03:01:00'),
-  (506, 'failed',  '{"report":"bad_range"}', 'worker-2', '2026-03-19 04:00:00');
+-- 員工、RBAC 角色權限與唯附寫稽核紀錄
+
+INSERT INTO staff_accounts (staff_id, email, display_name, store_code, status, created_at, deleted_at) VALUES
+  (10, 'mgr.tpe@bookstore.tw',     '林店長',   'TPE-01', 'active',     '2025-01-10 09:00:00', NULL),
+  (11, 'clerk.tpe@bookstore.tw',   '陳店員',   'TPE-01', 'active',     '2025-03-01 09:00:00', NULL),
+  (12, 'analyst@bookstore.tw',     '黃分析',   'HQ',     'active',     '2025-06-15 09:00:00', NULL),
+  (13, 'ex.mgr@bookstore.tw',      '周前主管', 'TPE-01', 'offboarded', '2024-05-01 09:00:00', '2026-03-10 00:00:00'), -- 已軟刪除離職員工
+  (14, 'revoked.mgr@bookstore.tw', '許轉調',   'TXG-01', 'active',     '2025-02-01 09:00:00', NULL);
+
+INSERT INTO roles (role_id, role_code, description) VALUES
+  (1, 'store_clerk',   '門市店員：一般訂單查詢'),
+  (2, 'store_manager', '門市主管：訂單匯出與退款核准'),
+  (3, 'analyst',       '數據分析師：去識別化報表與匯出'),
+  (4, 'auditor',       '稽核員：唯讀稽核軌跡與報表匯出');
+
+INSERT INTO permissions (perm_id, perm_code, resource, action) VALUES
+  (1, 'orders:read',   'orders', 'read'),
+  (2, 'orders:export', 'orders', 'export'),
+  (3, 'orders:refund', 'orders', 'refund'),
+  (4, 'pii:read',      'pii',    'read'),
+  (5, 'audit:read',    'audit',  'read');
+
+INSERT INTO role_permissions (role_id, perm_id) VALUES
+  (1, 1),
+  (2, 1), (2, 2), (2, 3), (2, 4),
+  (3, 1), (3, 2),
+  (4, 1), (4, 2), (4, 5);
+
+INSERT INTO staff_roles (staff_id, role_id, store_scope, granted_at, expires_at, revoked_at) VALUES
+  (10, 2, 'TPE-01', '2025-01-10 09:00:00', NULL,                  NULL), -- 員工 10 同時具 store_manager 與 auditor
+  (10, 4, NULL,     '2025-09-01 09:00:00', NULL,                  NULL), -- 雙角色皆有 orders:export（測試 RBAC JOIN 重複膨脹）
+  (11, 1, 'TPE-01', '2025-03-01 09:00:00', NULL,                  NULL), -- 僅有 orders:read
+  (12, 3, NULL,     '2025-06-15 09:00:00', NULL,                  NULL),
+  (13, 2, 'TPE-01', '2024-05-01 09:00:00', NULL,                  NULL), -- 離職後漏撤銷角色列（經典離職治理缺口）
+  (14, 2, 'TXG-01', '2025-02-01 09:00:00', NULL,                  '2026-03-18 00:00:00'); -- 角色已被撤銷
+
+INSERT INTO order_audit_logs (audit_id, order_id, actor_staff_id, actor_role, action, before_status, after_status, before_amount, after_amount, reason, created_at) VALUES
+  (1, 101, 10, 'store_manager', 'status_change',   'pending', 'paid',     900, 900, '門市臨櫃確認入帳', '2026-03-02 10:05:00'),
+  (2, 104, 10, 'store_manager', 'refund_approved', 'paid',    'refunded', 500, 500, '瑕疵退書核准全額退款', '2026-03-10 11:20:00');
+
+INSERT INTO export_jobs (job_id, status, payload, claimed_by, requested_by_staff_id, scope_store_code, created_at) VALUES
+  (501, 'done',    '{"report":"feb_sales"}', 'worker-1', 10, 'TPE-01', '2026-03-01 01:00:00'),
+  (502, 'done',    '{"report":"feb_tax"}',   'worker-2', 12, NULL,     '2026-03-01 01:05:00'),
+  (503, 'running', '{"report":"mar_mid"}',   'worker-1', 10, 'TPE-01', '2026-03-15 02:00:00'),
+  (504, 'queued',  '{"report":"mar_sales"}', NULL,       10, 'TPE-01', '2026-03-20 03:00:00'), -- 合法在職主管（雙角色）請求
+  (505, 'queued',  '{"report":"mar_audit"}', NULL,       13, 'TPE-01', '2026-03-20 03:01:00'), -- 已離職軟刪除員工請求（Confused Deputy 反例）
+  (506, 'failed',  '{"report":"bad_range"}', 'worker-2', 14, 'TXG-01', '2026-03-19 04:00:00'); -- 已撤銷角色員工請求
 
 INSERT INTO store_shifts (shift_id, staff_id, store_code, starts_at, ends_at) VALUES
   (601, 10, 'TPE-01', '2026-03-20 09:00:00', '2026-03-20 17:00:00'),

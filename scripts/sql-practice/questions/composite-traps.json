@@ -501,5 +501,505 @@
         "opt_fixed_four_defects": [5]
       }
     }
+  },
+  {
+    "conceptId": "C07",
+    "variantId": "C07-cloud-session-invalidation-01",
+    "domain": "cloud-academy",
+    "stage": 9,
+    "tablePath": ["users", "user_credentials", "user_sessions"],
+    "perspective": "choose-query",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "session-invalidation-composite",
+    "traps": ["stale-session-after-password-reset", "locked-account-active-session", "missing-revoked-check"],
+    "title": "C07（資安複合陷阱）：Session 驗權漏網——密碼變更前舊憑證 × 鎖定帳號 × 撤銷與過期",
+    "businessRequirement": "雲課堂在 2026-03-15 10:00:00 驗證有效登入 Session。資料中：701 是學員 1 變更密碼前簽發的被盜 Session（尚未過期也未撤銷）、702 是改密碼後簽發的合法 Session、703 已登出撤銷、704 所屬學員 4 帳號已被鎖定（status='locked'）、705 已過期。哪一條查詢只放行真正合法的 702？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "50 萬活躍 Session、每次 API 驗證高頻讀取",
+      "readWriteRatio": "200:1",
+      "indexes": ["idx_sessions_user_active (user_id, expires_at) WHERE revoked_at IS NULL"]
+    },
+    "options": [
+      {
+        "key": "opt_expires_only",
+        "sql": "SELECT session_id FROM user_sessions WHERE expires_at > '2026-03-15 10:00:00' ORDER BY session_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "一口氣放行 701、702、703、704 四個 Session！",
+        "edgeCaseResult": "已登出（703）、鎖定帳號（704）與改密碼前的被盜 Session（701）全部繼續生效",
+        "pros": ["無"],
+        "cons": ["三道身分撤銷機制同時失效"],
+        "validWhen": "無",
+        "failsWhen": "所有正式登入驗權"
+      },
+      {
+        "key": "opt_missing_pwd_and_status",
+        "sql": "SELECT session_id FROM user_sessions WHERE revoked_at IS NULL AND expires_at > '2026-03-15 10:00:00' ORDER BY session_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "放行 701、702、704——只擋掉 703 與 705，漏掉被鎖定帳號 704 與改密碼前舊憑證 701！",
+        "edgeCaseResult": "受害者緊急重設密碼或管理員鎖定帳號後，攻擊者手上的舊 Session 依然能持續操作到自然過期",
+        "pros": ["單表查詢快"],
+        "cons": ["未聯動帳號狀態與密碼變更時間戳"],
+        "validWhen": "重設密碼與鎖定帳號時保證同步原子更新 user_sessions.revoked_at 且有稽核驗收",
+        "failsWhen": "任一路徑漏撤銷舊 Session 時"
+      },
+      {
+        "key": "opt_missing_password_changed_at",
+        "sql": "SELECT s.session_id FROM user_sessions s JOIN users u ON u.user_id = s.user_id WHERE u.status = 'active' AND u.deleted_at IS NULL AND s.revoked_at IS NULL AND s.expires_at > '2026-03-15 10:00:00' ORDER BY s.session_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "擋掉了鎖定帳號 704，但依然放行學員 1 改密碼前被盜的 701！",
+        "edgeCaseResult": "回傳 [701, 702]，攻擊者無須知道新密碼即可繼續劫持帳號",
+        "pros": ["有檢查帳號狀態與軟刪除"],
+        "cons": ["未比對 s.created_at >= c.password_changed_at"],
+        "validWhen": "無",
+        "failsWhen": "使用者重設密碼以踢出舊裝置時"
+      },
+      {
+        "key": "opt_full_session_guard",
+        "sql": "SELECT s.session_id FROM user_sessions s JOIN users u ON u.user_id = s.user_id JOIN user_credentials c ON c.user_id = s.user_id WHERE u.status = 'active' AND u.deleted_at IS NULL AND s.revoked_at IS NULL AND s.expires_at > '2026-03-15 10:00:00' AND s.created_at >= c.password_changed_at ORDER BY s.session_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "精確只放行唯一合法的 702（亦對應檢視表 v_valid_sessions）",
+        "edgeCaseResult": "同時阻斷過期（705）、已撤銷（703）、帳號鎖定（704）與密碼變更前簽發的舊憑證（701）",
+        "pros": ["從資料模型層形成縱深撤銷邊界，即使某段重設密碼程式忘記批次標記 revoked_at 仍即時失效"],
+        "cons": ["每次驗權須聯查 users 與 user_credentials（高併發時常搭配短期 Redis 快取＋變更主動失效事件）"],
+        "validWhen": "高安全等級的 Session 驗證查詢",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_full_session_guard"],
+    "alternativeNote": "實務上應雙管齊下：改密碼／鎖帳號時在同一個交易批次 UPDATE user_sessions SET revoked_at = now()，同時在驗權查詢加上 s.created_at >= c.password_changed_at 作為最後防線",
+    "relatedDocs": [
+      "/backend/07-security-data-protection/identity-access-boundary/",
+      "/backend/01-database/red-team-data-layer/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_expires_only": [701, 702, 703, 704],
+        "opt_missing_pwd_and_status": [701, 702, 704],
+        "opt_missing_password_changed_at": [701, 702],
+        "opt_full_session_guard": [702]
+      }
+    }
+  },
+  {
+    "conceptId": "C08",
+    "variantId": "C08-logistics-left-join-tenant-leak-01",
+    "domain": "swift-logistics",
+    "stage": 9,
+    "tablePath": ["shipment_packages", "shipments"],
+    "perspective": "pick-counterexample",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "multi-tenant-child-join-and-rls",
+    "traps": ["left-join-tenant-filter-in-on-leaks-all-tenants", "missing-child-tenant-index-rls-dos"],
+    "title": "C08（資安複合陷阱）：多租戶子表 LEFT JOIN 租戶條件放錯位置——把全站包裹洩漏給單一商家",
+    "businessRequirement": "捷配物流商家 1002（山丘選物，僅擁有 7105 與 7107 兩件包裹）查詢名下包裹重量清單。工程師為了「防某些舊資料找不到父運單」而改寫成 `shipment_packages LEFT JOIN shipments`，並把 `s.merchant_id = 1002` 塞進 `ON`。這段寫法會發生什麼事故？又該如何同時兼顧防越權與 PostgreSQL 子表 RLS 效能？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18（多租戶 RLS）",
+      "scale": "2,000 萬 shipment_packages、800 萬 shipments",
+      "readWriteRatio": "100:1",
+      "indexes": ["idx_packages_merchant_shipment (merchant_id, shipment_id)", "idx_shipments_merchant_id (merchant_id, shipment_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_left_join_on_leak",
+        "sql": "SELECT p.package_id, p.weight_grams, s.status FROM shipment_packages p LEFT JOIN shipments s ON p.shipment_id = s.shipment_id AND s.merchant_id = 1002 ORDER BY p.package_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "把全平台所有商家的 9 件包裹（含競爭對手星海電商 1001 的 7101–7104、7106、7109 與 1004 的 7108）全部回傳給商家 1002！",
+        "edgeCaseResult": "LEFT JOIN 保護左表 shipment_packages 不被刪列，ON 裡的 s.merchant_id = 1002 只讓非 1002 的右表欄位變 NULL，造成嚴重跨租戶資料洩漏",
+        "pros": ["無"],
+        "cons": ["跨租戶全量資料外洩（典型 SQL 語意誤用直接演變成高危資安事故）"],
+        "validWhen": "無",
+        "failsWhen": "所有多租戶資料隔離查詢"
+      },
+      {
+        "key": "opt_inner_join_plus_child_tenant_key",
+        "sql": "SELECT p.package_id, p.weight_grams, s.status FROM shipment_packages p INNER JOIN shipments s ON p.shipment_id = s.shipment_id AND p.merchant_id = s.merchant_id WHERE p.merchant_id = 1002 ORDER BY p.package_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "精確只回傳屬於商家 1002 的 [7105, 7107] 兩件包裹，且直接命中子表租戶複合索引 idx_packages_merchant_shipment",
+        "edgeCaseResult": "子表帶有冗餘 merchant_id（配合 PostgreSQL 複合外鍵與 FORCE RLS，見 swift-logistics/security_pg.sql），連子表單表查詢也能免 JOIN 直接走索引落實 RLS",
+        "pros": ["徹底阻斷 LEFT JOIN 跨租戶洩漏", "免除子表 RLS 靠相關子查詢回查 shipments 的效能退化"],
+        "cons": ["子表多存一欄 merchant_id，寫入層須透過複合外鍵 FOREIGN KEY (merchant_id, shipment_id) 保證與父表一致"],
+        "validWhen": "大型多租戶系統的子表查詢與 PostgreSQL RLS 設計",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_left_join_or_null",
+        "sql": "SELECT p.package_id, p.weight_grams, s.status FROM shipment_packages p LEFT JOIN shipments s ON p.shipment_id = s.shipment_id WHERE s.merchant_id = 1002 OR s.shipment_id IS NULL ORDER BY p.package_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "在無孤兒列時碰巧回 [7105, 7107]，但一旦存在孤兒包裹列就會把不屬於 1002 的資料暴露給任何商家",
+        "edgeCaseResult": "OR s.shipment_id IS NULL 在多租戶授權邊界上是危險的 fail-open 寫法（授權應永遠 fail-closed）",
+        "pros": ["無"],
+        "cons": ["權限邊界做成 fail-open，孤兒資料會跨租戶洩漏"],
+        "validWhen": "無",
+        "failsWhen": "多租戶權限過濾"
+      },
+      {
+        "key": "opt_no_tenant_filter_limit",
+        "sql": "SELECT p.package_id, p.weight_grams FROM shipment_packages p ORDER BY p.package_id LIMIT 2;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 [7101, 7102]——看似只有 2 筆，但兩筆全是大客戶星海電商 1001 的包裹！",
+        "edgeCaseResult": "列數對了、對象完全錯，屬於高危越權",
+        "pros": ["無"],
+        "cons": ["完全沒有租戶過濾條件"],
+        "validWhen": "無",
+        "failsWhen": "所有情況"
+      }
+    ],
+    "recommendedKeys": ["opt_inner_join_plus_child_tenant_key"],
+    "alternativeNote": "SQL 的 ON 與 WHERE 語意錯誤在單租戶系統可能只是報表數字不準，在多租戶系統會直接升級成全站跨租戶個資洩漏",
+    "relatedDocs": [
+      "/backend/01-database/sql/on-describes-where-filters/",
+      "/backend/01-database/red-team-data-layer/",
+      "/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_left_join_on_leak": 9,
+        "opt_inner_join_plus_child_tenant_key": 2
+      },
+      "optionFirstColumnOrder": {
+        "opt_inner_join_plus_child_tenant_key": [7105, 7107],
+        "opt_no_tenant_filter_limit": [7101, 7102]
+      }
+    }
+  },
+  {
+    "conceptId": "C09",
+    "variantId": "C09-bookstore-confused-deputy-rbac-01",
+    "domain": "bookstore",
+    "stage": 9,
+    "tablePath": ["export_jobs", "staff_accounts", "staff_roles", "role_permissions", "permissions"],
+    "perspective": "choose-query",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "confused-deputy-and-rbac-fanout",
+    "traps": ["confused-deputy-revoked-requester", "offboarded-staff-unrevoked-role", "rbac-multi-role-join-fanout"],
+    "title": "C09（資安複合陷阱）：非同步匯出任務「困惑代理人」× RBAC 多角色列數膨脹",
+    "businessRequirement": "紙頁書店背景 export worker 準備認領 status='queued' 的匯出任務（504 由在職主管 10 發起，10 同時身兼 store_manager 與 auditor 兩個皆具 orders:export 的角色；505 由已離職軟刪除的員工 13 發起，但離職時漏刪了 staff_roles 列！）。哪一條查詢能安全篩出待執行任務，既不執行離職者的 505、也不因雙角色重複認領 504 兩次？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "背景 worker 具高權限存取全庫，替使用者非同步產檔",
+      "readWriteRatio": "10:1",
+      "indexes": ["idx_export_jobs_queued", "idx_staff_roles_active"]
+    },
+    "options": [
+      {
+        "key": "opt_no_recheck_confused_deputy",
+        "sql": "SELECT job_id FROM export_jobs WHERE status = 'queued' ORDER BY job_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 [504, 505]——高權限 worker 幫已經離職的員工 13 匯出機密稽核報表 505！",
+        "edgeCaseResult": "典型 Confused Deputy（困惑代理人）漏洞：只在排隊時驗權，未在實際執行前複查請求者當下是否仍在職與保有權限",
+        "pros": ["快"],
+        "cons": ["替已離職或遭撤權人員執行高權限資料匯出"],
+        "validWhen": "無",
+        "failsWhen": "非同步背景任務涉及敏感資料匯出或權限操作時"
+      },
+      {
+        "key": "opt_join_rbac_fanout_dup",
+        "sql": "SELECT j.job_id FROM export_jobs j JOIN staff_accounts sa ON sa.staff_id = j.requested_by_staff_id JOIN staff_roles sr ON sr.staff_id = sa.staff_id JOIN role_permissions rp ON rp.role_id = sr.role_id JOIN permissions p ON p.perm_id = rp.perm_id WHERE j.status = 'queued' AND sa.status = 'active' AND sa.deleted_at IS NULL AND sr.revoked_at IS NULL AND p.perm_code = 'orders:export' ORDER BY j.job_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "雖擋掉了 505，卻把 504 回傳了兩次 [504, 504]！",
+        "edgeCaseResult": "員工 10 同時持有 store_manager 與 auditor 兩個含 orders:export 的角色，直接 JOIN RBAC 多對多鏈造成任務列數膨脹與重複派發",
+        "pros": ["確實攔下離職員工 13"],
+        "cons": ["RBAC 多角色一對多展開導致任務清單重複"],
+        "validWhen": "無",
+        "failsWhen": "使用者可同時擁有多個角色且權限重疊時"
+      },
+      {
+        "key": "opt_check_role_only_miss_offboarded",
+        "sql": "SELECT j.job_id FROM export_jobs j WHERE j.status = 'queued' AND EXISTS (SELECT 1 FROM staff_roles sr JOIN role_permissions rp ON rp.role_id = sr.role_id JOIN permissions p ON p.perm_id = rp.perm_id WHERE sr.staff_id = j.requested_by_staff_id AND sr.revoked_at IS NULL AND p.perm_code = 'orders:export') ORDER BY j.job_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "仍然回傳 [504, 505]！",
+        "edgeCaseResult": "只查 staff_roles.revoked_at IS NULL、沒檢查主帳號表 staff_accounts.status='active' AND deleted_at IS NULL，踩中離職漏刪角色列的經典漏洞",
+        "pros": ["沒有重複列"],
+        "cons": ["忽略主帳號停權／軟刪除狀態，讓離職員工 13 繞過檢核"],
+        "validWhen": "無",
+        "failsWhen": "帳號狀態與角色指派分開維護時"
+      },
+      {
+        "key": "opt_exists_active_staff_and_perm",
+        "sql": "SELECT j.job_id FROM export_jobs j WHERE j.status = 'queued' AND EXISTS (SELECT 1 FROM staff_accounts sa JOIN staff_roles sr ON sr.staff_id = sa.staff_id JOIN role_permissions rp ON rp.role_id = sr.role_id JOIN permissions p ON p.perm_id = rp.perm_id WHERE sa.staff_id = j.requested_by_staff_id AND sa.status = 'active' AND sa.deleted_at IS NULL AND sr.revoked_at IS NULL AND (sr.expires_at IS NULL OR sr.expires_at > '2026-03-20 03:05:00') AND p.perm_code = 'orders:export' AND (sr.store_scope IS NULL OR sr.store_scope = j.scope_store_code)) ORDER BY j.job_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "精確只回傳 [504]——零重複、擋下離職者 505，同時驗證角色未撤銷、未過期與門市範圍（store_scope）匹配！",
+        "edgeCaseResult": "以 EXISTS 半連接表達「至少存在一條有效授權路徑」，天然免疫多角色重複展開",
+        "pros": ["同時防住 Confused Deputy、離職漏撤角色、過期角色、跨門市越權與 RBAC 多角色列數膨脹"],
+        "cons": ["查詢條件較長，建議封裝為受控檢視表或共用授權函式避免各處手寫漏條件"],
+        "validWhen": "所有非同步高權限任務認領前的即時複權檢查",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_exists_active_staff_and_perm"],
+    "alternativeNote": "權限檢查本質是存在性（半連接 EXISTS）而非展開所有角色；只要把 RBAC 寫成主查詢的 INNER JOIN，多角色使用者就幾乎必然觸發列數膨脹",
+    "relatedDocs": [
+      "/backend/01-database/sql/in-exists-join/",
+      "/backend/01-database/sql/join-changes-rows-and-nulls/",
+      "/backend/07-security-data-protection/identity-access-boundary/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_no_recheck_confused_deputy": [504, 505],
+        "opt_join_rbac_fanout_dup": [504, 504],
+        "opt_check_role_only_miss_offboarded": [504, 505],
+        "opt_exists_active_staff_and_perm": [504]
+      }
+    }
+  },
+  {
+    "conceptId": "C10",
+    "variantId": "C10-logistics-apikey-precedence-bypass-01",
+    "domain": "swift-logistics",
+    "stage": 9,
+    "tablePath": ["merchant_api_keys", "merchants"],
+    "perspective": "pick-counterexample",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "api-key-auth-operator-precedence",
+    "traps": ["and-or-precedence-auth-bypass", "null-expires-dropped-by-gt", "suspended-merchant-key-leak"],
+    "title": "C10（資安複合陷阱）：API Key 認證查詢的 AND／OR 優先序繞過 × 停權商家 × 永不過期 NULL",
+    "businessRequirement": "捷配物流在 2026-03-15 10:00:00 篩選目前合法可用的 API 金鑰（資料中：Key 1 有效、Key 2 已撤銷但 expires_at 仍在年底、Key 3 已過期、Key 4 所屬商家 1003 已停權、Key 5 有效且 expires_at IS NULL 永不過期）。哪一條 SQL 精確放行 [1, 5]，不讓已撤銷的 Key 2 或停權商家的 Key 4 繞過認證？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "API Gateway 每次請求驗證金鑰雜湊",
+      "readWriteRatio": "1000:1",
+      "indexes": ["UNIQUE (key_hash)", "idx_api_keys_prefix"]
+    },
+    "options": [
+      {
+        "key": "opt_and_or_precedence_bypass",
+        "sql": "SELECT k.api_key_id FROM merchant_api_keys k JOIN merchants m ON m.merchant_id = k.merchant_id WHERE m.status = 'active' AND k.revoked_at IS NULL AND k.expires_at IS NULL OR k.expires_at > '2026-03-15 10:00:00' ORDER BY k.api_key_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 [1, 2, 5]——已撤銷的 Key 2 竟直接通過認證！",
+        "edgeCaseResult": "SQL 中 AND 優先序高於 OR，沒加括號等價於 (m.status='active' AND revoked_at IS NULL AND expires_at IS NULL) OR (expires_at > now)，任何到期日在未來的已撤銷金鑰或停權商家金鑰全部直接繞過！",
+        "pros": ["無"],
+        "cons": ["高危認證繞過漏洞：撤銷機制與商家停權在有到期日的金鑰上完全形同虛設"],
+        "validWhen": "無",
+        "failsWhen": "所有含 AND 與 OR 混合的權限條件"
+      },
+      {
+        "key": "opt_drop_null_expires",
+        "sql": "SELECT k.api_key_id FROM merchant_api_keys k JOIN merchants m ON m.merchant_id = k.merchant_id WHERE m.status = 'active' AND m.deleted_at IS NULL AND k.revoked_at IS NULL AND k.expires_at > '2026-03-15 10:00:00' ORDER BY k.api_key_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 [1]，把永不過期的合法金鑰 Key 5（expires_at IS NULL）誤殺斷線！",
+        "edgeCaseResult": "NULL > '2026-03-15 10:00:00' 求值為 UNKNOWN 被 WHERE 濾除",
+        "pros": ["安全側無越權"],
+        "cons": ["三值邏輯誤殺合法未設到期日的正式金鑰，造成線上服務中斷"],
+        "validWhen": "政策強制所有 API Key 必須設 NOT NULL 到期日時",
+        "failsWhen": "expires_at 允許 NULL 代表永不過期時"
+      },
+      {
+        "key": "opt_miss_merchant_status",
+        "sql": "SELECT k.api_key_id FROM merchant_api_keys k WHERE k.revoked_at IS NULL AND (k.expires_at IS NULL OR k.expires_at > '2026-03-15 10:00:00') ORDER BY k.api_key_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 [1, 4, 5]——被停權的商家 1003（晨光烘焙）仍可拿 Key 4 繼續呼叫 API！",
+        "edgeCaseResult": "只驗憑證本身狀態，漏驗租戶主體 merchants.status = 'active' AND deleted_at IS NULL",
+        "pros": ["有正確加括號處理 OR"],
+        "cons": ["停權商家未能即時切斷其下所有 API 金鑰"],
+        "validWhen": "無",
+        "failsWhen": "多租戶商家可被停權或下架時"
+      },
+      {
+        "key": "opt_parenthesized_full_guard",
+        "sql": "SELECT k.api_key_id FROM merchant_api_keys k JOIN merchants m ON m.merchant_id = k.merchant_id WHERE m.status = 'active' AND m.deleted_at IS NULL AND k.revoked_at IS NULL AND (k.expires_at IS NULL OR k.expires_at > '2026-03-15 10:00:00') ORDER BY k.api_key_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "精確回傳 [1, 5]——同時攔下已撤銷（2）、已過期（3）、停權商家（4）並保留合法永不過期金鑰（5）",
+        "edgeCaseResult": "顯式括號鎖死布林優先序，並把金鑰與商家主體狀態綁在同一個認證條件內",
+        "pros": ["同時消除 AND/OR 優先序繞過、NULL 誤殺與停權租戶漏網三項缺陷"],
+        "cons": ["無（搭配 key_hash 唯一索引為常數時間查找）"],
+        "validWhen": "所有 API Key 與憑證認證查詢",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_parenthesized_full_guard"],
+    "alternativeNote": "只要認證或授權 SQL 裡同時出現 AND 與 OR，沒有外層括號幾乎都是高危繞過溫床；應用層另應只存金鑰雜湊（key_hash）並以固定時間比較防時序側通道",
+    "relatedDocs": [
+      "/backend/01-database/sql/well-formed-is-not-correct/",
+      "/backend/01-database/red-team-data-layer/",
+      "/backend/07-security-data-protection/identity-access-boundary/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_and_or_precedence_bypass": [1, 2, 5],
+        "opt_drop_null_expires": [1],
+        "opt_miss_merchant_status": [1, 4, 5],
+        "opt_parenthesized_full_guard": [1, 5]
+      }
+    }
+  },
+  {
+    "conceptId": "C11",
+    "variantId": "C11-bookstore-soft-delete-unique-01",
+    "domain": "bookstore",
+    "stage": 9,
+    "tablePath": ["staff_accounts"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "soft-delete-partial-unique-and-auth",
+    "traps": ["full-unique-blocks-rehire", "dropping-unique-causes-account-collision", "login-missing-deleted-at-guard"],
+    "title": "C11（資安複合陷阱）：軟刪除（deleted_at）× 唯一性約束 × 離職復職重註冊與登入復活",
+    "businessRequirement": "紙頁書店員工表 staff_accounts 採用軟刪除（保留歷史稽核外鍵）：員工 13（ex.mgr@bookstore.tw）已離職且 deleted_at 不為 NULL；員工 10（mgr.tpe@bookstore.tw）仍在職且 deleted_at IS NULL。若要允許離職員工復職沿用原信箱重註冊，同時嚴格阻止在職帳號出現大小寫重複信箱，且防止已離職帳號登入，哪一組模型與寫法正確？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "所有採用軟刪除的帳號與成員表",
+      "readWriteRatio": "100:1",
+      "indexes": ["uq_staff_active_email ON staff_accounts(LOWER(email)) WHERE deleted_at IS NULL"]
+    },
+    "options": [
+      {
+        "key": "opt_rehire_soft_deleted_ok",
+        "sql": "INSERT INTO staff_accounts (staff_id, email, display_name, store_code, status, created_at) VALUES (20, 'EX.MGR@bookstore.tw', '周前主管（復職）', 'TPE-01', 'active', '2026-03-21 09:00:00');",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "在部分唯一索引 uq_staff_active_email (LOWER(email)) WHERE deleted_at IS NULL 保護下成功建立新在職列，同時保留舊離職列 13 的稽核外鍵完整性；登入查詢則必須強制帶 status = 'active' AND deleted_at IS NULL",
+        "edgeCaseResult": "既不阻擋離職復職或刪除帳號後重註冊，又保證任意時間點同一信箱最多只有一個生效帳號",
+        "pros": ["資料庫層原子保證未刪除帳號不分大小寫唯一", "不破壞既有稽核與排班外鍵參照"],
+        "cons": ["所有讀取生效帳號的查詢皆須嚴格帶上 deleted_at IS NULL（漏寫就會讓離職帳號復活）"],
+        "validWhen": "需要軟刪除保留歷史稽核且允許原信箱重新註冊的帳號表",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_dup_active_email_blocked",
+        "sql": "INSERT INTO staff_accounts (staff_id, email, display_name, store_code, status, created_at) VALUES (21, 'MGR.TPE@bookstore.tw', '冒名重複帳號', 'TPE-01', 'active', '2026-03-21 09:00:00');",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "立即被 uq_staff_active_email 拒絕（UNIQUE constraint failed）！若當初為了遷就軟刪除而拆掉 UNIQUE 改靠應用層檢查，併發下就會插入這筆大小寫變體重複帳號，引發帳號混淆與接管風險",
+        "edgeCaseResult": "證明部分唯一索引能同時攔住大小寫變體與併發重複建立",
+        "pros": ["由資料庫原子守門，避免應用層先查後寫競態"],
+        "cons": ["本選項本身是違規重複寫入示範（應被阻擋）"],
+        "validWhen": "作為驗證資料庫約束確實生效的負向測試用例",
+        "failsWhen": "嘗試建立重複在職帳號時"
+      },
+      {
+        "key": "opt_login_without_deleted_guard",
+        "sql": "SELECT staff_id FROM staff_accounts WHERE LOWER(email) = LOWER('EX.MGR@bookstore.tw');",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "撈出已離職的員工 13！若登入驗證只查 email 不過濾 status = 'active' AND deleted_at IS NULL，離職員工可直接登入系統復活",
+        "edgeCaseResult": "軟刪除最常見的資安地雷：任何一條漏寫 deleted_at IS NULL 的查詢都等同放行已刪除帳號",
+        "pros": ["無"],
+        "cons": ["已離職軟刪除帳號未遭阻擋，直接導致未授權存取"],
+        "validWhen": "僅限後台稽核人員回溯歷史離職紀錄時",
+        "failsWhen": "登入驗證與權限判斷查詢"
+      },
+      {
+        "key": "opt_plain_unique_email_no_where",
+        "sql": "-- 直接在整張表建 UNIQUE(email) 且不加 WHERE deleted_at IS NULL 與 LOWER()",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "一方面無法阻止 MGR.TPE@bookstore.tw 與 mgr.tpe@bookstore.tw 同時存在（大小寫區分），另一方面永遠鎖死已軟刪除信箱無法復職重註冊",
+        "edgeCaseResult": "兩邊都沒處理好：防不住大小寫撞名，卻卡死了合法重註冊",
+        "pros": ["語法最短"],
+        "cons": ["同時存在大小寫繞過與軟刪除信箱永久佔用兩大缺陷"],
+        "validWhen": "硬刪除且強制小寫正規化時",
+        "failsWhen": "採軟刪除的帳號表"
+      }
+    ],
+    "recommendedKeys": ["opt_rehire_soft_deleted_ok"],
+    "alternativeNote": "若擔心開發者到處忘記寫 deleted_at IS NULL，可在 PostgreSQL 另建只含生效列的檢視表（或將軟刪除歷史歸檔至獨立表），讓登入與日常業務只查生效視圖",
+    "relatedDocs": [
+      "/backend/01-database/design-decisions-price-every-query/",
+      "/backend/01-database/red-team-data-layer/",
+      "/backend/07-security-data-protection/identity-access-boundary/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_login_without_deleted_guard": [13]
+      }
+    }
+  },
+  {
+    "conceptId": "C12",
+    "variantId": "C12-logistics-immutable-audit-vs-gdpr-01",
+    "domain": "swift-logistics",
+    "stage": 9,
+    "tablePath": ["billing_audit_logs", "shipment_recipient_pii", "billing_statements"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "immutable-audit-vs-pii-erasure",
+    "traps": ["mutable-audit-log-tampering", "pii-dumped-into-immutable-audit-blocks-gdpr", "blind-delete-breaks-financial-chain"],
+    "title": "C12（資安複合陷阱）：唯附寫稽核表防竄改 × 個資遺忘權（GDPR）衝突設計",
+    "businessRequirement": "捷配物流同時須滿足兩項硬性法規：一、財務稽核表 billing_audit_logs 必須不可竄改、禁止 UPDATE／DELETE；二、超過保存期限或收到刪除請求時，必須能徹底抹除 shipment_recipient_pii 中的收件人姓名、電話與地址。哪一個架構與操作能在不破壞不可變稽核鏈的前提下完成個資抹除？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+（防竄改 Trigger 實跑）/ PostgreSQL 18（REVOKE + 分表治理）",
+      "scale": "同時受財務稽核法規與個資法管轄的 B2B 物流平台",
+      "readWriteRatio": "20:1",
+      "indexes": ["idx_billing_audit_stmt", "PRIMARY KEY (shipment_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_separate_pii_erasure_keep_audit",
+        "sql": "UPDATE shipment_recipient_pii SET recipient_name = NULL, recipient_phone = NULL, delivery_address = NULL, erased_at = '2026-03-20 00:00:00' WHERE shipment_id = 7001;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "個資只留在獨立表 shipment_recipient_pii 中按期限抹除明文；billing_audit_logs 從一開始就不存任何收件人 PII，只記 statement_id、merchant_id、actor_id 與狀態／金額差值，全程保持唯附寫不可變！",
+        "edgeCaseResult": "財務稽核鏈 100% 完整不可竄改，個資抹除也 100% 乾淨落實，兩條法規不再互撞",
+        "pros": ["從資料模型邊界化解「稽核不可變」與「個資須可抹除」的根本衝突", "降低稽核日誌外洩時的個資曝險面"],
+        "cons": ["設計稽核事件 schema 時須嚴格白名單欄位，不可偷懶整包 JSON 傾倒原始資料列"],
+        "validWhen": "所有同時有稽核留痕與個資保護要求的正式系統",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_update_immutable_audit_fails",
+        "sql": "UPDATE billing_audit_logs SET before_status = 'redacted' WHERE audit_id = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "直接觸發 'billing_audit_logs is append-only' 失敗！把 PII 塞進唯附寫稽核表後，事後想用 UPDATE 去遮罩會直接撞破不可變邊界",
+        "edgeCaseResult": "若為了事後塗改而把稽核表的 UPDATE 權限打開，等於親手毀掉防篡改保證",
+        "pros": ["驗證了稽核表不可變防線確實運作"],
+        "cons": ["一旦把 PII 寫入不可變日誌，事後要嘛違反個資法、要嘛破壞稽核不可變性"],
+        "validWhen": "無",
+        "failsWhen": "把原始個資傾倒進不可變稽核表時"
+      },
+      {
+        "key": "opt_delete_audit_for_gdpr",
+        "sql": "DELETE FROM billing_audit_logs WHERE merchant_id = 1001;",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "直接被防竄改機制阻擋；若繞過防線刪掉稽核表紀錄，整條財務不可否認證據鏈瞬間斷裂",
+        "edgeCaseResult": "以刪除稽核紀錄換取個資清理是典型合規反模式",
+        "pros": ["無"],
+        "cons": ["破壞法定財務稽核保存義務與事後追責能力"],
+        "validWhen": "無",
+        "failsWhen": "所有財務與安全稽核場景"
+      },
+      {
+        "key": "opt_dump_full_row_json_in_audit",
+        "sql": "-- 為了省事，建立通用的 audit_logs(raw_row_json)，用 Trigger 把包含姓名、電話、地址、密碼雜湊的整列 JSON 全部複製進不可變稽核表",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "開發極快，幾個月後法遵要求刪除某位收件人個資時才發現所有個資被永久焊死在不可變日誌與歷史備份裡",
+        "edgeCaseResult": "同時還可能把 password_hash、API token 等機密一併複製給只該看業務異動的稽核員",
+        "pros": ["初期不用設計稽核欄位"],
+        "cons": ["違反資料最小化、外洩敏感憑證且造成不可解的個資抹除債務"],
+        "validWhen": "無",
+        "failsWhen": "資料表含 PII 或認證機密欄位時"
+      }
+    ],
+    "recommendedKeys": ["opt_separate_pii_erasure_keep_audit"],
+    "alternativeNote": "若特定情境確實必須在歷史留痕中關聯個資，應採 PII 獨立表抹除或以獨立加密金鑰（Crypto-shredding）銷毀金鑰，而非讓明文個資流進不可變日誌",
+    "relatedDocs": [
+      "/backend/07-security-data-protection/data-protection-and-masking-governance/",
+      "/backend/07-security-data-protection/audit-trail-and-accountability-boundary/",
+      "/backend/07-security-data-protection/backup-encryption-password-and-master-key/"
+    ]
   }
 ]
