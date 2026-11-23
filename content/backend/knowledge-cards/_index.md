@@ -437,7 +437,7 @@ weight: -1
 | [CPU Steal Time（被虛擬化層拿走的 CPU 時間）](/backend/knowledge-cards/cpu-steal-time/) | 雲端虛擬機被其他租戶搶走的 CPU 時間            | hypervisor、noisy neighbor、可突發機型   |
 | [cgroup（控制群組）](/backend/knowledge-cards/cgroup/)                                  | 容器的用量統計與資源限制建立在哪裡             | cpu.max、memory.max、cAdvisor            |
 | [Workload Model](/backend/knowledge-cards/workload-model/)                              | production traffic shape 如何量化重播          | load test、capacity、forecast            |
-| [Open / Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)    | 壓測依到達率還是同時在線人數送出請求           | injection、coordinated omission、knee    |
+| [Open / Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)    | 壓測依到達率還是同時線上人數送出請求           | injection、coordinated omission、knee    |
 | [Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/)        | 瓶頸在受測服務還是在施壓端                     | injector、GC、ulimit                     |
 | [TLS Handshake 的成本](/backend/knowledge-cards/tls-handshake-cost/)                    | 建一條新連線的延遲與 CPU 成本、重用攤平多少    | Connect Time、keep-alive、TLS 終結層     |
 | [Gevent Monkey Patching](/backend/knowledge-cards/gevent-monkey-patching/)              | Locust 的 worker 為何被 C 擴充的 I/O 卡住      | greenlet、psycopg2、--processes          |

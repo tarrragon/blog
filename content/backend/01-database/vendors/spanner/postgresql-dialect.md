@@ -77,7 +77,7 @@ psql -h localhost -p 5432 -d my-pg-db
 
 ### rollback boundary
 
-dialect 不可變更、所以 rollback boundary 在「遷移評估階段」、不在「上線後」。決策樹是：相容性 audit 通過率高 + 改寫成本可控 → 選 PG dialect;通過率低 + 大量 Spanner-only 優化需求 → 直接學 GoogleSQL。一旦 database 建好、dialect 就鎖定、rollback 等於重建 database 重遷。
+dialect 不可變更、所以 rollback boundary 在「遷移評估階段」、不在「上線後」。決策樹是：相容性 audit 通過率高 + 改寫成本可控 → 選 PG dialect;通過率低 + 大量 Spanner-only 最佳化需求 → 直接學 GoogleSQL。一旦 database 建好、dialect 就鎖定、rollback 等於重建 database 重遷。
 
 ## 失敗模式：把 PG dialect 當完整 PostgreSQL、與 dialect 鎖定
 
@@ -114,11 +114,11 @@ commit_latencies               → external consistency 的 commit wait、兩 di
 
 ### 選 PG dialect 的條件
 
-既有 PostgreSQL 應用要遷入、SQL / ORM / tooling 深度綁 PostgreSQL、相容性 audit 通過率高、且不需要大量 Spanner-only 原生優化 — 這是 PG dialect 的適用條件。它讓遷移的 application 層改動最小化、保留團隊既有 PostgreSQL 技能。
+既有 PostgreSQL 應用要遷入、SQL / ORM / tooling 深度綁 PostgreSQL、相容性 audit 通過率高、且不需要大量 Spanner-only 原生最佳化 — 這是 PG dialect 的適用條件。它讓遷移的 application 層改動最小化、保留團隊既有 PostgreSQL 技能。
 
 ### 選 GoogleSQL 的條件
 
-全新專案、團隊願意學 Spanner 原生方言、需要深度用 interleaved table、array 型別、Spanner-specific 優化、或想跟 BigQuery 的 GoogleSQL 生態對齊 — 選 GoogleSQL。它是 Spanner 的一等公民方言、新功能通常先在 GoogleSQL 落地。
+全新專案、團隊願意學 Spanner 原生方言、需要深度用 interleaved table、array 型別、Spanner-specific 最佳化、或想跟 BigQuery 的 GoogleSQL 生態對齊 — 選 GoogleSQL。它是 Spanner 的一等公民方言、新功能通常先在 GoogleSQL 落地。
 
 ### 何時兩者都不選（不該升 Spanner）
 

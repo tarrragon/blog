@@ -98,7 +98,7 @@ ls -la Qwen3-30B-A3B-Q4_K_M.gguf
 
 - 想拉 official 模型：優先 Hugging Face official organization、或 Ollama `library/` namespace
 - 想拉熱門量化：bartowski / unsloth 等知名量化者的 HF repo、Ollama 通常也會把熱門模型收進 official library
-- 看到個人 repo 上傳的「特別優化版」：除非有明確來源說明、否則保守看待
+- 看到個人 repo 上傳的「特別改善版」：除非有明確來源說明、否則保守看待
 
 ## 量化版本污染的可能性
 

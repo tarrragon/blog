@@ -207,7 +207,7 @@ brew services restart ollama   # 若用 launchd service 跑
 
 1. 是否引入 breaking API change（IDE plugin 可能要對應更新）
 2. 是否棄用舊 model tag（拉新 tag 取代）
-3. 是否帶來想要的新功能（例如新模型支援、加速優化）
+3. 是否帶來想要的新功能（例如新模型支援、加速改善）
 
 ## 排錯快速判讀
 

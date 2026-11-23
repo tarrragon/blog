@@ -37,7 +37,7 @@ Capacity 與成本邊界是把容量規劃跟成本約束一起看，責任是�
 
 - [Shopify](/backend/06-reliability/cases/shopify/_index.md)：高峰型流量把容量與成本的邊界推得很清楚。
 - [LinkedIn](/backend/06-reliability/cases/linkedin/_index.md)：互動型服務常先在某個依賴層出現瓶頸。
-- [Amazon](/backend/06-reliability/cases/amazon/_index.md)：大規模系統常把成本與可靠性一起做優化。
+- [Amazon](/backend/06-reliability/cases/amazon/_index.md)：大規模系統常把成本與可靠性一起做最佳化。
 
 ## 高峰型容量治理：Game Day + Capacity Planning
 

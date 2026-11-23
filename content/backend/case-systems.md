@@ -34,7 +34,7 @@ tags: ["backend", "case-study", "system-design", "overview"]
 
 **成功請求的總數有上限**：成功的購票總數不會超過票數。十萬個帳號搶五千張票、每個帳號限購一張時（示意），票賣完那一刻，其餘九萬五千人的購票請求結果已經確定是售完（直到付款期限到期、有票被放回為止）。
 
-**規模假設（示意）**：一個場次五千張票，開賣時十萬人同時在線；開賣後第一分鐘各種請求加起來每秒數萬個，其中扣庫存的請求受排隊放行的速率限制。
+**規模假設（示意）**：一個場次五千張票，開賣時十萬人同時在線上；開賣後第一分鐘各種請求加起來每秒數萬個，其中扣庫存的請求受排隊放行的速率限制。
 
 **起點架構**：CDN 與入口、無狀態的 API 服務（可水平擴充）、排隊服務、關聯式資料庫存放每張票一列與訂單、第三方金流處理付款、排程工作處理付款期限。站內的對照案例有 [9.C15 拓元 Tixcraft：售票搶購的瞬間爆量架構](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 與 [9.C16 SeatGeek：DynamoDB + Lambda 打造的虛擬等候室](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)；負載路徑的分析，包括什麼條件下才在扣庫存前面加一道 Redis 閘門，見 [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/)。
 

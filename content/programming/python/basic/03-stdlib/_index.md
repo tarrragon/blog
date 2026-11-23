@@ -20,7 +20,7 @@ Python 的「電池內建」哲學意味著標準庫提供了豐富的工具。�
 | [3.5 logging - 日誌系統](/programming/python/basic/03-stdlib/logging/)                                            | logging - 日誌系統        | 結構化日誌輸出                                 |
 | [3.6 argparse - CLI 介面](/programming/python/basic/03-stdlib/argparse/)                                          | argparse - CLI 介面       | 命令列參數解析                                 |
 | [3.7 並行處理 - threading、multiprocessing、concurrent.futures](/programming/python/basic/03-stdlib/concurrency/) | 並行處理                  | threading、multiprocessing、concurrent.futures |
-| [3.8 效能迷思與優化策略](/programming/python/basic/03-stdlib/performance/)                                        | 效能迷思與優化            | 效能測量、優化策略                             |
+| [3.8 效能迷思與改善策略](/programming/python/basic/03-stdlib/performance/)                                        | 效能迷思與改善            | 效能測量、改善策略                             |
 
 ## 實際範例來源
 
@@ -50,9 +50,9 @@ Python 的「電池內建」哲學意味著標準庫提供了豐富的工具。�
 
 ## 新增章節說明（2026-01）
 
-3.7-3.8 章節涵蓋實用的並行處理與效能優化：
+3.7-3.8 章節涵蓋實用的並行處理與效能改善：
 
 - **並行處理基礎**：傳統的 threading 和 multiprocessing
-- **效能優化**：常見效能迷思與實用優化策略
+- **效能改善**：常見效能迷思與實用改善策略
 
 > **進階內容**：Free-Threading（Python 3.13+ 無 GIL）已移至[進階系列](/programming/python/advanced/04-cpython-internals/free-threading/)

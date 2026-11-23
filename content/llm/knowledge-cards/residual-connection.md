@@ -37,7 +37,7 @@ Transformer block：
 關鍵性質：
 
 1. **Gradient 可以走捷徑**：[Backpropagation](/llm/knowledge-cards/backpropagation/) 時、gradient 能透過 skip connection 直接傳回淺層、避免 chain rule 累積衰減。
-2. **Layer 學「殘差」而不是「完整轉換」**：每層學「該怎麼微調輸入」、不用學「從零生成輸出」、優化更容易。
+2. **Layer 學「殘差」而不是「完整轉換」**：每層學「該怎麼微調輸入」、不用學「從零生成輸出」、最佳化更容易。
 3. **跟 [LayerNorm](/llm/knowledge-cards/layer-normalization/) 配對**：兩者一起是深層 Transformer 訓得起來的基礎。
 
 ## 判斷條件與後果

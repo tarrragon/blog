@@ -8,7 +8,7 @@ tags: ["backend", "cache", "redis", "pub-sub"]
 
 Redis [Pub/Sub](/backend/knowledge-cards/pub-sub/) 的核心責任是把一則訊息即時推送給當下所有訂閱者，讓跨節點的狀態變更可以在同一瞬間擴散。它承擔的是「現在發生的事，立刻讓所有人知道」，正式的可靠投遞與重播責任由 [message queue](/backend/knowledge-cards/queue) 與 [Redis Streams](/backend/03-message-queue/) 承擔。把這條邊界放在最前面，是因為 Pub/Sub 的多數事故都來自把它當成可靠訊息系統使用。
 
-## at-most-once：訊息只送給此刻在線的訂閱者
+## at-most-once：訊息只送給此刻線上的訂閱者
 
 訊息[投遞語意](/backend/knowledge-cards/delivery-semantics/)有三種：at-most-once（最多送一次、可能漏）、at-least-once（至少送一次、可能重複）、[exactly-once](/backend/knowledge-cards/exactly-once/)（剛好一次、最難實作）。Pub/Sub 採 [at-most-once](/backend/knowledge-cards/duplicate-delivery/)，用「可能漏」換取低延遲與無狀態，後兩種語意由 Streams 或 message queue 承擔。具體來說：`PUBLISH` 把訊息送給發布當下已經 `SUBSCRIBE` 該 channel 的連線，沒有訂閱者就直接丟棄，訊息不寫入任何持久結構。訂閱者離線、重連、或處理速度跟不上時，那段時間的訊息不會補送。
 
@@ -22,7 +22,7 @@ Pub/Sub 的典型用途是把一個節點上發生的狀態變更，即時扇出
 
 fan-out 有兩種語意要先分清，因為它們決定能不能用 Pub/Sub。一種是全量 fan-out：每個訂閱者都收到同一則訊息的完整副本，適合「所有節點都要知道這件事」的廣播（presence、cache invalidation、config reload）。另一種是分攤 fan-out：同一則訊息只交給一個 consumer 處理、多個 consumer 之間分攤負載，適合「這件工作只要有一個人做」的任務分派。Pub/Sub 只提供全量 fan-out——`PUBLISH` 把訊息送給所有訂閱者，沒有「只給其中一個」的語意。需要分攤 fan-out 時要轉 Redis Streams 的 consumer group（`XREADGROUP` 讓一則訊息只有一個 consumer 拿到），這條邊界在本章末的升級段展開。
 
-presence 變更廣播是最直接的應用。[2.5 presence store](/backend/02-cache-redis/presence-store/) 的 cross-node query 回答「現在誰在線」，但當某個使用者上線或離線時，其他節點需要被即時通知才能推播給好友列表。presence key 寫入時同步 `PUBLISH` 一則 `user:online` 訊息，訂閱該 channel 的節點立刻更新本地視圖。漏一則的代價是某個好友的線上狀態延遲幾秒，下次狀態同步會補正，落在可接受範圍。
+presence 變更廣播是最直接的應用。[2.5 presence store](/backend/02-cache-redis/presence-store/) 的 cross-node query 回答「現在誰在線上」，但當某個使用者上線或離線時，其他節點需要被即時通知才能推播給好友列表。presence key 寫入時同步 `PUBLISH` 一則 `user:online` 訊息，訂閱該 channel 的節點立刻更新本地視圖。漏一則的代價是某個好友的線上狀態延遲幾秒，下次狀態同步會補正，落在可接受範圍。
 
 cache invalidation 扇出是第二類應用。當一個節點更新了 [source of truth](/backend/knowledge-cards/source-of-truth/) 並失效了自己的本地 cache，其他持有同一份 process-local cache 的節點需要被通知一起失效。`PUBLISH cache:invalidate product:123` 讓所有節點丟棄該 key 的本地副本。這條路徑要跟 [2.2 cache aside](/backend/02-cache-redis/cache-aside/) 的失效策略對齊：Pub/Sub 負責「通知」，實際失效仍由各節點執行，且因為 at-most-once，必須有 TTL 作為兜底，避免廣播漏送讓某節點永久持有 stale 副本。
 
@@ -81,7 +81,7 @@ Redis Streams 是介於 Pub/Sub 與重量級 broker 之間的選項：它持久�
 
 ## 常見誤區
 
-把 Pub/Sub 當成可靠訊息系統，是最常見也代價最大的誤區。Pub/Sub 沒有持久化、沒有 ack、沒有重播，這些是它換取低延遲與簡單模型的設計取捨。需要這些能力時，正確做法是換工具，而不是在 Pub/Sub 外圍補一層補丁去模擬可靠投遞。
+把 Pub/Sub 當成可靠訊息系統，是最常見也代價最大的誤區。Pub/Sub 沒有持久化、沒有 ack、沒有重播，這些是它換取低延遲與簡單模型的設計取捨。需要這些能力時，正確做法是換工具，而不是在 Pub/Sub 外圍補一層修補去模擬可靠投遞。
 
 把訂閱連線跟一般讀寫連線共用，是第二個誤區。訂閱會讓連線進入專用模式，混用會讓 cache 讀寫命令在該連線上失敗或行為異常。訂閱連線要獨立管理。
 

@@ -1,12 +1,12 @@
 ---
-title: "Gevent Monkey Patching（gevent 的猴子補丁）"
+title: "Gevent Monkey Patching（gevent 的monkey patching）"
 date: 2026-10-28
 description: "Locust 的吞吐量從加壓一開始就不隨使用者數增加而 worker 的 CPU 很低、一個 worker 程序的 CPU 到頂，或要判斷某個 Python 函式庫是否會卡住 Locust 的 worker 時讀"
 weight: 500
 tags: ["backend", "performance", "load-test", "python", "knowledge-card"]
 ---
 
-gevent 是 Python 的協程函式庫，它讓一個 Python 程序同時執行很多個 greenlet（輕量的協程）：一個 greenlet 等網路 I/O 時讓出執行權，其他 greenlet 接著跑。猴子補丁（monkey patching）是 gevent 讓既有程式碼也能這樣讓出執行權的做法：在程式執行期間，把標準函式庫裡會阻塞的函式（`socket`、`ssl`、`time.sleep`、`select` 這類）換成 gevent 的版本，換過之後，呼叫這些函式的程式碼不必改寫，等待時就會讓出執行權。Locust 的每個虛擬使用者是一個 greenlet，所以一個 worker 程序跑得了很多個使用者，前提是使用者的 I/O 經過被替換的函式；不成立時，worker 在受測服務還沒到上限之前就先卡住，是 [Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/) 的一種。
+gevent 是 Python 的協程函式庫，它讓一個 Python 程序同時執行很多個 greenlet（輕量的協程）：一個 greenlet 等網路 I/O 時讓出執行權，其他 greenlet 接著跑。monkey patching是 gevent 讓既有程式碼也能這樣讓出執行權的做法：在程式執行期間，把標準函式庫裡會阻塞的函式（`socket`、`ssl`、`time.sleep`、`select` 這類）換成 gevent 的版本，換過之後，呼叫這些函式的程式碼不必改寫，等待時就會讓出執行權。Locust 的每個虛擬使用者是一個 greenlet，所以一個 worker 程序跑得了很多個使用者，前提是使用者的 I/O 經過被替換的函式；不成立時，worker 在受測服務還沒到上限之前就先卡住，是 [Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/) 的一種。
 
 ## 跟其他概念的關係
 

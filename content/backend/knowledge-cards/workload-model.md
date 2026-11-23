@@ -17,4 +17,4 @@ Workload model 至少包含五個維度：平均吞吐、peak/avg ratio、操作
 
 ## 判斷條件與後果
 
-Synthetic load、production traffic replay 與兩者混合，各自換到的貼近程度與付出的代價不同。synthetic load 的形狀完全由模型決定，強度可以調到 production 還沒出現過的程度，代價是模型漏掉的 cohort 或 burst pattern 也不會出現在壓測裡；replay 最貼近真實流量，代價是重播的請求會打到下游、消耗下游資源，而且只重現已經發生過的形狀；混合用 replay 當基底、用 synthetic 補上預期的尖峰。三種做法都要在壓測時同時對照 production metrics：兩邊誤差大時，模型已經過時，壓測通過的結論套不到 production。壓測依到達率還是依同時在線的使用者數送出請求，也是模型的一部分，選法見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)。
+Synthetic load、production traffic replay 與兩者混合，各自換到的貼近程度與付出的代價不同。synthetic load 的形狀完全由模型決定，強度可以調到 production 還沒出現過的程度，代價是模型漏掉的 cohort 或 burst pattern 也不會出現在壓測裡；replay 最貼近真實流量，代價是重播的請求會打到下游、消耗下游資源，而且只重現已經發生過的形狀；混合用 replay 當基底、用 synthetic 補上預期的尖峰。三種做法都要在壓測時同時對照 production metrics：兩邊誤差大時，模型已經過時，壓測通過的結論套不到 production。壓測依到達率還是依同時線上的使用者數送出請求，也是模型的一部分，選法見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)。

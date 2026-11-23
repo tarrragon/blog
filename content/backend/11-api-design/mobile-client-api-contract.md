@@ -6,7 +6,7 @@ weight: 15
 tags: ["backend", "api-design", "mobile", "versioning", "release"]
 ---
 
-這篇整理自家行動 App 呼叫自家後端 API 時，在 [11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/) 之外多出來的契約機制，也收進商店審核、分階段發布與熱更新這幾項發布端的約束，因為它們決定 API 什麼時候上線、舊版要支援多久。範圍是經公開商店（App Store、Google Play）散布、透過自家 API 存取資料的原生或跨平台 App，使用者不論有沒有登入，服務方都沒有一份能逐一通知、要求更新的名單；從最早上架的版本該內建什麼開始，到多個版本同時在線、新版出問題時怎麼回退為止。以 WebView 包網頁的 App、PWA、經企業裝置管理（MDM）派送的 App，以及直接用 SDK 連 BaaS 而沒有自家 API 的 App，前提不同，不在本篇範圍內。公開 API 的版本方案與退場工具在 [11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)，App 的簽章、送審與 CI 流程在 [App 簽章、商店審核與分批發布流程](/devops/ci/app-deploy/signing-store-rollout-flow/)。
+這篇整理自家行動 App 呼叫自家後端 API 時，在 [11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/) 之外多出來的契約機制，也收進商店審核、分階段發布與熱更新這幾項發布端的約束，因為它們決定 API 什麼時候上線、舊版要支援多久。範圍是經公開商店（App Store、Google Play）散布、透過自家 API 存取資料的原生或跨平台 App，使用者不論有沒有登入，服務方都沒有一份能逐一通知、要求更新的名單；從最早上架的版本該內建什麼開始，到多個版本同時在線上、新版出問題時怎麼回退為止。以 WebView 包網頁的 App、PWA、經企業裝置管理（MDM）派送的 App，以及直接用 SDK 連 BaaS 而沒有自家 API 的 App，前提不同，不在本篇範圍內。公開 API 的版本方案與退場工具在 [11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)，App 的簽章、送審與 CI 流程在 [App 簽章、商店審核與分批發布流程](/devops/ci/app-deploy/signing-store-rollout-flow/)。
 
 ## 自家行動 App 在消費者形態裡的位置
 

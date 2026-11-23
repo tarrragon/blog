@@ -59,7 +59,7 @@ Production 場景每個維度都跳一個量級：
 
 ### Key concept：batching
 
-[Batching](/llm/knowledge-cards/batching/) 跟 [KV cache](/llm/knowledge-cards/kv-cache/) 設計讓 GPU 能多 user 的 request 一次 forward pass、是 production [inference server](/llm/knowledge-cards/inference-server/) 的核心優化。但 batching 也帶取捨：
+[Batching](/llm/knowledge-cards/batching/) 跟 [KV cache](/llm/knowledge-cards/kv-cache/) 設計讓 GPU 能多 user 的 request 一次 forward pass、是 production [inference server](/llm/knowledge-cards/inference-server/) 的核心改善。但 batching 也帶取捨：
 
 - **靜態 batching**：等湊滿 N 個 request 才跑、提高 throughput、犧牲首字延遲
 - **連續 batching（continuous batching）**：vLLM / TGI 等用、新 request 動態加入正在跑的 batch、平衡 throughput + latency
@@ -114,7 +114,7 @@ Max concurrent users (steady state)
 | Batching      | 小 batch / continuous               | 大 batch                            |
 | 資源規劃      | 預留 headroom 給 spike              | 跑滿 GPU 利用率                     |
 
-混合應用（如 chat with RAG）有兩段：retrieval（throughput-friendly、可 batch）+ generation（latency-sensitive、要 stream）。兩段獨立優化。
+混合應用（如 chat with RAG）有兩段：retrieval（throughput-friendly、可 batch）+ generation（latency-sensitive、要 stream）。兩段獨立改善。
 
 ### Latency 預算分配
 
@@ -128,8 +128,8 @@ Total p99 = client → API gateway → retrieval → LLM prefill → LLM decode 
 
 如果 p99 budget 是 2 秒、要先確認**最大消耗段是哪個**：
 
-- 通常 LLM generation 是最大、是優化重心
-- Retrieval 在大 corpus 場景可能超過 100 ms、要 index 優化（HNSW、近似 nearest neighbor）
+- 通常 LLM generation 是最大、是改善重心
+- Retrieval 在大 corpus 場景可能超過 100 ms、要 index 最佳化（HNSW、近似 nearest neighbor）
 - API gateway 通常可忽略、超過 50 ms 就有 SRE 議題
 
 各段監控分開、把監控拆到各段才找得到 root cause；只看 total latency 會錯失定位線索。

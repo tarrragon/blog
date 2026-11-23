@@ -24,7 +24,7 @@ RAG / MCP 工作流通常分三階段、各自吃不同資源：
 | **RAG query**  | index 載入 RAM + chat model RAM + GPU    | per-request                 | retrieval index 常駐 |
 | **MCP server** | subprocess 永久跑、tool 呼叫時動態載資源 | session 內常駐              | 是                   |
 
-不同階段的瓶頸不一樣、優化目標也不同。
+不同階段的瓶頸不一樣、改善目標也不同。
 
 ## RAG Ingest 階段：one-shot 但批次密集
 

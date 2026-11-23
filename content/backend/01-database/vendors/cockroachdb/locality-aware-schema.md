@@ -185,7 +185,7 @@ AWS Outposts 主要為「資料留某地理邊界」存在、latency 改善是 *
 若把 Outposts 當跨州 latency 改善工具、會在沒合規驅動的場景過度投資 — Outposts 硬體成本 + 維運複雜度遠高於純 AWS region 部署。實務判讀：
 
 - 有合規驅動（Wire Act / GDPR / 各州博彩牌照）→ Outposts 是合理投資
-- 純 latency 優化 → 用 AWS Local Zones、用 CDN、用 edge cache、不要碰 Outposts
+- 純 latency 改善 → 用 AWS Local Zones、用 CDN、用 edge cache、不要碰 Outposts
 - 兩者並存 → Outposts 投資按 *合規* 計算、latency 改善是 ROI 加分項
 
 ### `GLOBAL` table write 太慢
@@ -301,7 +301,7 @@ Spanner 的 [Interleaved Table](/backend/knowledge-cards/interleaved-table/) 解
 
 - single-region 部署、無 data residency 需求 → 用 default locality 即可
 - 合規邊界 *禁止* 跨境 replica（如 Standard Chartered 模式）→ 拆 cluster-per-市場、不走本文 locality 路徑
-- 純 latency 優化、無合規驅動 → 用 CDN / cache / Local Zones、不必動 schema
+- 純 latency 改善、無合規驅動 → 用 CDN / cache / Local Zones、不必動 schema
 
 ## 相關連結
 

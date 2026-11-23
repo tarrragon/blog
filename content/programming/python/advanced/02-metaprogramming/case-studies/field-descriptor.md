@@ -892,7 +892,7 @@ From nested dict: HookOutput(hook_specific_output=HookSpecificOutput(...), syste
 | ----------- | --------------------- | ------------ |
 | 型別驗證    | 手動實作              | 自動         |
 | JSON Schema | 需額外實作            | 內建         |
-| 效能        | 依實作而定            | 高度優化     |
+| 效能        | 依實作而定            | 高度最佳化   |
 | 學習價值    | 高，理解原理          | 低，直接使用 |
 | 客製化彈性  | 完全控制              | 受框架限制   |
 

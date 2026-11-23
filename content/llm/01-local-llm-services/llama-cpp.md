@@ -45,7 +45,7 @@ Apple Silicon 硬體
 
 ## Ollama 跟 llama.cpp 的關係
 
-Ollama 是 llama.cpp 的下游 wrapper、但 fork 跟 upstream 不是即時同步的關係。Ollama 在自己的 repo 裡放一份 vendored（複製進來、跟隨 Ollama 自家發版節奏管理）的 llama.cpp source、加上他們自己的 patches（補丁修改）；新功能進入 Ollama 的順序通常是：
+Ollama 是 llama.cpp 的下游 wrapper、但 fork 跟 upstream 不是即時同步的關係。Ollama 在自己的 repo 裡放一份 vendored（複製進來、跟隨 Ollama 自家發版節奏管理）的 llama.cpp source、加上他們自己的 patches（修補）；新功能進入 Ollama 的順序通常是：
 
 1. llama.cpp 上游加新功能或修 bug
 2. Ollama 把該 commit cherry-pick（從另一個 branch 單獨挑出一個 commit 套用）進來
@@ -153,15 +153,15 @@ curl http://localhost:8080/v1/chat/completions \
 2. 想在 llama.cpp 直接跑 Gemma 4 MTP，要自己編譯帶上 Ollama 的 patches，或等上游合進來。
 3. 看到「llama.cpp 已整合 Gemma 4 MTP」的網路文章，先去 [llama.cpp 的 PR 列表](https://github.com/ggerganov/llama.cpp/pulls) 確認時間點。
 
-## llama.cpp 對 Apple Silicon 的優化
+## llama.cpp 對 Apple Silicon 的最佳化
 
-llama.cpp 對 Apple Silicon 有針對性優化：
+llama.cpp 對 Apple Silicon 有針對性最佳化：
 
 1. **Metal backend**：在 macOS 上自動啟用 Metal（Apple 的 GPU 加速 API）、把 GPU 算力吃滿。
 2. **NEON / AMX**：CPU 上用 ARM 向量指令集（NEON 是基本 SIMD、AMX 是 Apple 的矩陣加速器）加速 dequantization（把量化權重還原為計算精度的過程）。
 3. **Unified Memory aware**：不像 NVIDIA GPU 要透過 PCIe（連接 GPU 與系統其他元件的高速匯流排）把資料搬進 VRAM、Apple Silicon 直接共用記憶體、省下這趟搬移。
 
-這些優化都「免費」，不用使用者特別設定。但跟 [MLX](/llm/00-foundations/mlx-mtp-omlx/) 比，llama.cpp 用的是 Metal 而不是 MLX framework；兩者效能各有勝負，差距通常 10 ~ 30%，不是「天差地遠」。
+這些最佳化都「免費」，不用使用者特別設定。但跟 [MLX](/llm/00-foundations/mlx-mtp-omlx/) 比，llama.cpp 用的是 Metal 而不是 MLX framework；兩者效能各有勝負，差距通常 10 ~ 30%，不是「天差地遠」。
 
 陷阱是看到「MLX 比 llama.cpp 快 N 倍」這類說法時，要追問：
 

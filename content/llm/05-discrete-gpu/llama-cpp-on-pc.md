@@ -43,7 +43,7 @@ llama.cpp 在 PC 上的取得方式有三條：
 從原始碼編譯適合下面情境：
 
 1. 想用 release 還沒包進去的新功能（如剛 merge 的 PR）。
-2. 想針對特定 CUDA compute capability 編譯、減少 binary 大小或開特定優化。
+2. 想針對特定 CUDA compute capability 編譯、減少 binary 大小或開特定最佳化。
 3. 自己 patch 過 llama.cpp。
 
 CUDA build 的常見編譯指令（以 Linux 為例、Windows 請參考官方文件）：
@@ -236,7 +236,7 @@ llama-bench 的結果是「fixed prompt / 固定生成長度」、跟「實際�
 
 社群常見回報：多卡縮放比通常低於線性、`layer` 模式對長 prompt 的 prefill 提升較明顯、generation 提升相對小。具體效益依工作流跟卡間頻寬、需用 `llama-bench` 校準。
 
-對單人寫 code 場景、多卡的邊際效益通常不如「先升級單卡」或「先優化單卡配置」。
+對單人寫 code 場景、多卡的邊際效益通常不如「先升級單卡」或「先改善單卡配置」。
 
 ## ROCm 與 Vulkan backend 的相對成熟度
 

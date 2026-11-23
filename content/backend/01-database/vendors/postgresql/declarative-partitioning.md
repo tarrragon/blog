@@ -157,7 +157,7 @@ ALTER TABLE events ATTACH PARTITION events_2026_06
 1. **架構**：partition granularity 對應 retention — 不要 daily partition 留 2 年（→ weekly / monthly）
 2. **archive 老 partition**：DETACH 老 partition、轉成 cold storage 表、planner 不再看
 3. **`enable_partition_pruning`** 預設 on、確保啟用
-4. **PG 12+**：planner 對 partition table 的 list 處理優化、planning time 上限拉高、但仍要控
+4. **PG 12+**：planner 對 partition table 的 list 處理改善、planning time 上限拉高、但仍要控
 
 ### DETACH 後磁碟空間沒回收
 

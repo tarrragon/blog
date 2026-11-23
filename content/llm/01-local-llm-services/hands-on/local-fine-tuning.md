@@ -28,7 +28,7 @@ weight: 8
 1. **新增世界知識**：fine-tune 不擅長加新事實、用 [RAG](/llm/04-applications/rag-principles/) 即可
 2. **複雜 reasoning 能力**：fine-tune 一般不會讓模型變更會 reason、reasoning 來自 pre-training + RL
 3. **改善通用對話品質**：通用對話品質取決於 RLHF、fine-tune 多半會 [catastrophic forgetting](/llm/knowledge-cards/catastrophic-forgetting/)
-4. **資料太少（< 500 對）**：fine-tune 收益低、不如優化 prompt + RAG
+4. **資料太少（< 500 對）**：fine-tune 收益低、不如改善 prompt + RAG
 
 ## 整體流程
 
@@ -111,7 +111,7 @@ PC 獨立 GPU：
 
 | 資料量      | 預期效果                                   |
 | ----------- | ------------------------------------------ |
-| < 50 對     | 通常無感、不如優化 prompt + RAG            |
+| < 50 對     | 通常無感、不如改善 prompt + RAG            |
 | 50-500 對   | 開始有 in-domain 效果、但易 forgetting     |
 | 500-5000 對 | 顯著效果、QLoRA fine-tune 甜蜜點           |
 | 5000+ 對    | 邊際收益遞減、開始接近 full fine-tune 效果 |

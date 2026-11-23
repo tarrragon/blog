@@ -8,7 +8,7 @@ tags: ["backend", "performance", "capacity", "improvement"]
 
 ## 概念定位
 
-Improvement loop 的責任是把效能優化從「事件型 hotfix」變成「持續改進的工程流程」。沒有 loop 時、效能問題靠 oncall 觸發、改了又改、改完又退化；有 loop 之後、每次 release 都通過 perf gate、退化在發布前就攔住。
+Improvement loop 的責任是把效能改善從「事件型 hotfix」變成「持續改進的工程流程」。沒有 loop 時、效能問題靠 oncall 觸發、改了又改、改完又退化；有 loop 之後、每次 release 都通過 perf gate、退化在發布前就攔住。
 
 跟 [06.13 perf regression gate](/backend/06-reliability/performance-regression-gate/) 的關係：06.13 是 release gate 的一個環節、9.9 是這個 gate 背後的完整工程閉環。06.13 處理「進 gate 後怎麼判斷」、9.9 處理「進 gate 前怎麼產生比較資料」。
 

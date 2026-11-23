@@ -28,7 +28,7 @@ aliases: ["/go-advanced/06-production-operations/graceful-shutdown/"]
 
 ## 【觀察】直接結束 process 會留下不確定狀態
 
-Shutdown 的核心風險是停止流程不明確。服務可能正在處理 request、WebSocket client 仍在線、worker 正在寫資料、[queue](/backend/knowledge-cards/queue/) message 尚未 [ack](/backend/knowledge-cards/ack-nack/)、diagnostics 還以為服務可接流量。
+Shutdown 的核心風險是停止流程不明確。服務可能正在處理 request、WebSocket client 仍在線上、worker 正在寫資料、[queue](/backend/knowledge-cards/queue/) message 尚未 [ack](/backend/knowledge-cards/ack-nack/)、diagnostics 還以為服務可接流量。
 
 不完整停止常見後果：
 

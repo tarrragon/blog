@@ -1,7 +1,7 @@
 ---
 title: "DynamoDB Strongly Consistent → Eventually Consistent：same protocol, different contract"
 date: 2026-05-19
-description: "DynamoDB consistency model 從 strongly consistent read 改 eventually consistent read 是 50% cost 優化但風險集中在 application contract — 同 vendor / 同 protocol / 同 table / 不同 read consistency；驗證 [#128](/report/data-topology-as-audit-dimension/) self-aware limitation 提出的 consistency axis 候選；涵蓋 read site audit、分階段切換，以及 read-your-write 失效、跨 record 寫入未綁交易、background job 重複處理、成本反升與 strong read 單獨失效這幾種 production 踩雷"
+description: "DynamoDB consistency model 從 strongly consistent read 改 eventually consistent read 是 50% cost 降低但風險集中在 application contract — 同 vendor / 同 protocol / 同 table / 不同 read consistency；驗證 [#128](/report/data-topology-as-audit-dimension/) self-aware limitation 提出的 consistency axis 候選；涵蓋 read site audit、分階段切換，以及 read-your-write 失效、跨 record 寫入未綁交易、background job 重複處理、成本反升與 strong read 單獨失效這幾種 production 踩雷"
 weight: 11
 tags: ["backend", "database", "dynamodb", "consistency", "migration", "axis-candidate"]
 ---

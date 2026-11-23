@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: wrap-decision
 license: MIT
 metadata:
-  version: 2.17.0
+  version: 2.18.0
   category: writing-methodology
 ---
 
@@ -175,7 +175,7 @@ metadata:
 
 ### 前置強制檢查
 
-進入 A 前必完成：框架概括測試（一句話概括所有方案？能 → 多元性不足）、反面框架識別（未列即進 A → 強制停下列出）、相反論述檢視（有力相反論述 → 從 W 重跑）、**工具選擇檢查**（物化/步驟數/目的地/白名單 4 問，觸發於選工具前+步驟數>2+涉及 Write/Bash 組合）；任一觸發即回 W。**違反代價**：方案比較表面周詳實際同類解法，或單步最優化但總步驟盲。完整操作見 `references/detailed-techniques.md`「工具選擇檢查（Tool selection check）詳細技巧」。
+進入 A 前必完成：框架概括測試（一句話概括所有方案？能 → 多元性不足）、反面框架識別（未列即進 A → 強制停下列出）、相反論述檢視（有力相反論述 → 從 W 重跑）、**工具選擇檢查**（物化/步驟數/目的地/白名單 4 問，觸發於選工具前+步驟數>2+涉及 Write/Bash 組合）；任一觸發即回 W。**違反代價**：方案比較表面周詳實際同類解法，或單步最佳化但總步驟盲。完整操作見 `references/detailed-techniques.md`「工具選擇檢查（Tool selection check）詳細技巧」。
 
 ### 機會成本顯性化
 

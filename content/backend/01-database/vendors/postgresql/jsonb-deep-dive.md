@@ -189,7 +189,7 @@ WHERE id = 100;
 - 設計階段確認 *application query pattern*：只用 `@>` 還是會用 `?`
 - 多 query pattern → `jsonb_ops`（預設）
 - 純 containment → `jsonb_path_ops`（省 index size）
-- 不確定先用預設、production 觀察後再優化
+- 不確定先用預設、production 觀察後再改善
 
 ### `jsonb_path_query` 跟 `jsonb_path_exists` 行為差
 

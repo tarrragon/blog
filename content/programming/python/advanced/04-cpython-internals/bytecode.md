@@ -7,7 +7,7 @@ tags: ["python", "python-advanced", "cpython"]
 aliases: ["/python-advanced/04-cpython-internals/bytecode/"]
 ---
 
-Python 先把原始碼編譯成 bytecode，再由虛擬機執行。理解這個過程有助於優化程式碼效能。
+Python 先把原始碼編譯成 bytecode，再由虛擬機執行。理解這個過程有助於改善程式碼效能。
 
 ## 先備知識
 
@@ -20,7 +20,7 @@ Python 先把原始碼編譯成 bytecode，再由虛擬機執行。理解這個�
 1. 理解 Python 的編譯流程
 2. 使用 `dis` 模組分析 bytecode
 3. 從 bytecode 角度理解效能差異
-4. 了解 Python 3.11+ 的效能優化
+4. 了解 Python 3.11+ 的效能改善
 
 ---
 
@@ -275,7 +275,7 @@ def concat_join():
 
 ---
 
-## 【深入】Python 3.11+ 的優化
+## 【深入】Python 3.11+ 的最佳化
 
 ### Specializing Adaptive Interpreter
 

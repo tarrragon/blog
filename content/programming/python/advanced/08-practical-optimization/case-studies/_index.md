@@ -1,14 +1,14 @@
 ---
-title: "案例研究：效能優化實戰"
+title: "案例研究：效能改善實戰"
 date: 2026-01-21
-description: "基於 .claude/lib 的效能優化實戰案例"
+description: "基於 .claude/lib 的效能改善實戰案例"
 weight: 10
 tags: ["python", "python-advanced", "optimization", "case-study"]
 aliases: ["/python-advanced/08-practical-optimization/case-studies/"]
 ---
 
 
-本系列案例基於 `.claude/lib` 的實際程式碼，展示如何用並行處理和效能優化技術改善真實系統。
+本系列案例基於 `.claude/lib` 的實際程式碼，展示如何用並行處理和效能改善技術改善真實系統。
 
 ## 案例列表
 
@@ -68,4 +68,4 @@ python profiling/profile_link_checker.py
 
 ---
 
-返回：[模組八：實戰效能優化](/programming/python/advanced/08-practical-optimization/)
+返回：[模組八：實戰效能改善](/programming/python/advanced/08-practical-optimization/)

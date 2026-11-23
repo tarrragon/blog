@@ -39,7 +39,7 @@ CI step timeout 時、第一個本能是看「step 跑了多久」。15 分鐘 t
 2. step 跑了 `15m 6s`（幾乎等於 timeout 上限）
 3. step 名稱是 `Install Playwright browsers`（要下載 170 MiB）
 
-直覺合成的結論：「cache 缺失 + timeout 太緊」。這結論看起來「應該對」 — 因為這兩個都是「Install Playwright browsers」眾所周知的優化點。修法：加 `actions/cache` + bump timeout 25 min。
+直覺合成的結論：「cache 缺失 + timeout 太緊」。這結論看起來「應該對」 — 因為這兩個都是「Install Playwright browsers」眾所周知的改善點。修法：加 `actions/cache` + bump timeout 25 min。
 
 修完仍 timeout、但這次跑 `25m 6s`（一樣頂到上限）。
 
@@ -165,7 +165,7 @@ Silent hang 預設屬於第二類、應該優先查 issue tracker。
 - **Database migration 卡住** — schema 變更 + 長 transaction 可能 silent hang
 - **任何 process 跑時間接近 timeout 上限被 cancel** — 先檢查是否 silent hang 才提解法
 
-「WRAP R 在第二次 fail 時是 stop 訊號」這條原則不限 CI、適用所有「同方向修法重複 fail」的場景：debug、設定調校、效能優化。
+「WRAP R 在第二次 fail 時是 stop 訊號」這條原則不限 CI、適用所有「同方向修法重複 fail」的場景：debug、設定調校、效能改善。
 
 ---
 

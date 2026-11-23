@@ -480,7 +480,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 {{< /details >}}
 
-## 4. 標題間距優化
+## 4. 標題間距改善
 
 ### 4.1 改善文章可讀性
 
@@ -572,7 +572,7 @@ document.addEventListener('DOMContentLoaded', function() {
 - 智能判斷是否需要滾動
 - 避免微小震盪的閾值保護
 
-### 6.2 效能優化
+### 6.2 效能改善
 
 - 手機版不執行 TOC 相關功能
 - 滾動事件節流處理

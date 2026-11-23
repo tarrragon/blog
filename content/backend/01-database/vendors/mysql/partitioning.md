@@ -399,7 +399,7 @@ PG partitioning 對 *partition-wise join* 處理較好、是 reporting workload 
 
 ### 跟 Vitess
 
-Vitess shard 內部可再 partition、單 shard 對應一個 MySQL instance、partition 是 instance 內優化。Vitess `vtctldclient PartitionTablet` 命令處理 shard-aware partition 操作。詳見 [Vitess sharding](/backend/01-database/vendors/mysql/vitess-sharding/)。
+Vitess shard 內部可再 partition、單 shard 對應一個 MySQL instance、partition 是 instance 內最佳化。Vitess `vtctldclient PartitionTablet` 命令處理 shard-aware partition 操作。詳見 [Vitess sharding](/backend/01-database/vendors/mysql/vitess-sharding/)。
 
 ### 跟 InnoDB Tuning
 

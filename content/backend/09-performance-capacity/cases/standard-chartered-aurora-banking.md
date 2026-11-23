@@ -6,7 +6,7 @@ weight: 14
 tags: ["backend", "performance", "capacity", "case-study", "db-oltp", "aws", "sustained-growth", "regulated"]
 ---
 
-這個案例的核心責任是說明「受監管產業」的容量規劃跟「網路服務」的本質差異。銀行交易系統的容量目標除了處理得了的交易量，還要同時滿足合規（資料駐留、稽核、加密、可恢復性）、跟一般工程性能優化的取捨完全不同。
+這個案例的核心責任是說明「受監管產業」的容量規劃跟「網路服務」的本質差異。銀行交易系統的容量目標除了處理得了的交易量，還要同時滿足合規（資料駐留、稽核、加密、可恢復性）、跟一般工程性能改善的取捨完全不同。
 
 ## 觀察
 
@@ -36,8 +36,8 @@ Standard Chartered 在 Aurora 的關鍵敘述（引自 [AWS search results](http
 
 可重用的工程做法：
 
-1. **資料駐留是容量規劃的硬限制、不是優化選項**：受監管市場必須各自獨立 cluster、不能用「全球單一 cluster」優化。對應 [00.4 traffic data scale](/backend/00-service-selection/traffic-data-scale/) 的合規限制。
-2. **多 AZ + 跨地區複製是合規基線、不是優化**：銀行業務 RPO / RTO 通常由監管要求（不能丟資料、必須 X 小時內恢復）、不是業務 SLA 選項。對應 [06.7 DR rollback rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)。
+1. **資料駐留是容量規劃的硬限制、不是改善選項**：受監管市場必須各自獨立 cluster、不能用「全球單一 cluster」改善。對應 [00.4 traffic data scale](/backend/00-service-selection/traffic-data-scale/) 的合規限制。
+2. **多 AZ + 跨地區複製是合規基線、不是改善**：銀行業務 RPO / RTO 通常由監管要求（不能丟資料、必須 X 小時內恢復）、不是業務 SLA 選項。對應 [06.7 DR rollback rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)。
 3. **遷移時程要算合規 lead time**：每個受監管市場的審查可能 3-12 個月、合計遷移時程是「市場數 × 平均審查月份」、不是「技術遷移月份」。對應 [01.4 database migration playbook](/backend/01-database/database-migration-playbook/)。
 
 跨平台等效：Azure SQL Hyperscale + Azure regions、GCP Cloud SQL / Spanner + regional configurations、各家雲端的受監管雲端方案（AWS GovCloud、Azure Government、GCP Assured Workloads）都是對等候選。差異是各家對特定監管框架（PCI-DSS、ISO27001、各國金融法規）的認證覆蓋。

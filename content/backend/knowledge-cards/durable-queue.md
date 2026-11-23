@@ -13,7 +13,7 @@ Durable queue 是 [queue](/backend/knowledge-cards/queue/) 與 [message persiste
 
 ## 可觀察訊號與例子
 
-當工作可延遲但不可遺失時，durable queue 是常見候選。例如付款後通知、對帳同步、背景轉檔。若僅需在線即時廣播，通常 [pub/sub](/backend/knowledge-cards/pub-sub/) 成本更低。
+當工作可延遲但不可遺失時，durable queue 是常見候選。例如付款後通知、對帳同步、背景轉檔。若僅需線上即時廣播，通常 [pub/sub](/backend/knowledge-cards/pub-sub/) 成本更低。
 
 ## 判斷條件與後果
 

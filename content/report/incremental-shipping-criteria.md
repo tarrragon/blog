@@ -133,7 +133,7 @@ D 滿足「高可見 + 低風險 + 低驗證」、立刻 ship 解眼前混亂。
 | PR diff > 800 行、含多個 feature             | 拆批、各自走 review                                                                 |
 | 「等 X 做完一起 ship」                       | 用三軸檢查 X 是否該獨立 ship                                                        |
 | Feature flag 名稱長期堆積、沒清掉            | 「下輪清掉」沒 trigger、補 [#72 L3-L5 對策](../external-trigger-for-high-roi-work/) |
-| 「這次先這樣、下次再優化」每次都不發生       | 下輪沒 trigger、把它寫進系統                                                        |
+| 「這次先這樣、下次再改善」每次都不發生       | 下輪沒 trigger、把它寫進系統                                                        |
 | 第一批 ship 後 production 出問題、回退範圍大 | 第一批塞太多、檢查為什麼沒分更細                                                    |
 | 使用者抱怨「等很久才有 X」                   | 可能 X 早就可分批 ship、檢查阻塞點                                                  |
 | 推薦「等 B/C 都做完再 ship」                 | 違反三軸、應該 D 先 ship                                                            |

@@ -18,7 +18,7 @@ graph database 常被想成「需要單獨的儲存引擎、單獨的資料同�
 
 ## 問題情境：關係查詢在 SQL 裡變成難以維護的多層 self-JOIN
 
-Graph 能力的價值、在「資料本質是關係網絡、但被迫用 relational JOIN 表達多跳查詢」的壓力下浮現。讀者徵兆：反詐欺團隊要查「跟某個可疑帳號在 3 跳內共用過裝置 / 地址 / 付款方式的所有帳號」、寫成 SQL 是 3-4 層 self-JOIN、query 既難寫又難優化;推薦團隊要查「買過 A 的人也買過什麼」的多跳關聯;權限團隊要查「使用者透過群組 / 角色繼承鏈能存取哪些資源」的傳遞閉包。這些查詢的共同形狀是「沿著關係邊走 N 跳」、用 JOIN 表達時跳數越多 SQL 越複雜、優化器越難處理。
+Graph 能力的價值、在「資料本質是關係網絡、但被迫用 relational JOIN 表達多跳查詢」的壓力下浮現。讀者徵兆：反詐欺團隊要查「跟某個可疑帳號在 3 跳內共用過裝置 / 地址 / 付款方式的所有帳號」、寫成 SQL 是 3-4 層 self-JOIN、query 既難寫又難最佳化;推薦團隊要查「買過 A 的人也買過什麼」的多跳關聯;權限團隊要查「使用者透過群組 / 角色繼承鏈能存取哪些資源」的傳遞閉包。這些查詢的共同形狀是「沿著關係邊走 N 跳」、用 JOIN 表達時跳數越多 SQL 越複雜、最佳化器越難處理。
 
 真實壓力場景：金融反詐欺系統把交易、帳號、裝置、地址存在 Spanner、需要即時查可疑帳號的關係網絡;這份資料同時要支援交易的強一致寫入。傳統做法是把資料從 OLTP ETL 到專用 graph DB（Neo4j 等）、付出資料同步延遲 + 兩套系統的維運成本 + graph DB 上的資料不是強一致快照。Spanner Graph 讓「強一致的交易資料」與「圖遍歷查詢」在同一個系統、避開同步管線。
 
@@ -101,7 +101,7 @@ graph 的核心風險是「資料模型的物理設計錯誤、且代價不可�
 
 代價之所以高、是因為它不在上線時暴露 — 小資料量下 full scan 也快、效能崩塌在資料長到一定規模、流量打到 production 之後才浮現。徵兆是特定遍歷的 latency 隨 edge table 成長而單調惡化、query plan 顯示 full scan 而非 range scan、Spanner CPU 被掃描打滿。
 
-回退路徑的代價是這個失敗的關鍵：edge table 的 PK 不能 in-place 變更、修正需要建一張新的 edge table（正確 PK 方向）、backfill 全部 edge、更新 graph schema 指向新表、驗證遍歷走 range scan、再 drop 舊表。對 100 億 edge 的圖、backfill 是數小時到數天的 long-running operation、期間要管 capacity 升幅、要保證 graph 查詢在切換期間的正確性。修正它要做一次完整的 schema migration，而不是 hotfix。所以這個失敗的真正教訓是「在設計 node / edge table 的階段就把最高頻遍歷方向定死」、而不是「上線後再優化」 — 設計階段花一天想清楚遍歷方向、勝過上線後花一週重建 edge table。
+回退路徑的代價是這個失敗的關鍵：edge table 的 PK 不能 in-place 變更、修正需要建一張新的 edge table（正確 PK 方向）、backfill 全部 edge、更新 graph schema 指向新表、驗證遍歷走 range scan、再 drop 舊表。對 100 億 edge 的圖、backfill 是數小時到數天的 long-running operation、期間要管 capacity 升幅、要保證 graph 查詢在切換期間的正確性。修正它要做一次完整的 schema migration，而不是 hotfix。所以這個失敗的真正教訓是「在設計 node / edge table 的階段就把最高頻遍歷方向定死」、而不是「上線後再改善」 — 設計階段花一天想清楚遍歷方向、勝過上線後花一週重建 edge table。
 
 ### Super node 讓遍歷扇出急遽放大
 

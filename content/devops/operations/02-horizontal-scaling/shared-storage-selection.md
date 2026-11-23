@@ -25,7 +25,7 @@ aliases: ["/operations/02-horizontal-scaling/shared-storage-selection/"]
 
 ## 共享一個資料庫的讀路徑
 
-多實例共享同一個資料庫時，寫入集中在主庫、但讀取可以擴展——這是讀寫分離。寫走主庫（primary），讀走唯讀副本（replica），讀流量超過主庫吞吐時，加副本就能擴讀路徑。副本有複製延遲要納入考量：同一可用區內的串流複製通常低於 100 毫秒，跨可用區到秒級，跨區域可能到秒至分鐘級且不保證 read-after-write——需要剛寫就讀到的查詢要強制走主庫，這正是 [Session 處理](/devops/operations/02-horizontal-scaling/session-handling/) 那條一致性補丁。
+多實例共享同一個資料庫時，寫入集中在主庫、但讀取可以擴展——這是讀寫分離。寫走主庫（primary），讀走唯讀副本（replica），讀流量超過主庫吞吐時，加副本就能擴讀路徑。副本有複製延遲要納入考量：同一可用區內的串流複製通常低於 100 毫秒，跨可用區到秒級，跨區域可能到秒至分鐘級且不保證 read-after-write——需要剛寫就讀到的查詢要強制走主庫，這正是 [Session 處理](/devops/operations/02-horizontal-scaling/session-handling/) 那條一致性修補。
 
 副本不是無限加的。傳統資料庫的副本要自己重放主庫的日誌、吃 CPU 與磁碟，每加一個副本都增加主庫的複製負擔，所以有數量上限（PostgreSQL 通常 3 到 5 個）。運算與儲存分離的架構（如 Aurora）讓副本讀同一份分散式儲存、加副本不增加主庫的寫入負擔、延遲降到毫秒級、上限也高（Aurora 最多 15 個），代價是綁定特定供應商。讀路徑能擴到多寬，是這個架構決定的，選型時要先算清楚。
 

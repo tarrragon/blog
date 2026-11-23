@@ -87,7 +87,7 @@ serverless 的成本風險來自用量浮動，所以建立後第一件事是設
 
 上線後監控 RU 消耗速率，對照選型初判時做的流量形狀預估。
 
-驗證點：RU 消耗速率若遠高於預估，通常是某類 query 的資源消耗被低估（全表掃描、缺索引、N+1 查詢）。這時要回到 query 層優化，而非直接加預算 — serverless 的計費把「低效 query」直接翻譯成「高帳單」，是一個比 dedicated 更直接的成本訊號。
+驗證點：RU 消耗速率若遠高於預估，通常是某類 query 的資源消耗被低估（全表掃描、缺索引、N+1 查詢）。這時要回到 query 層改善，而非直接加預算 — serverless 的計費把「低效 query」直接翻譯成「高帳單」，是一個比 dedicated 更直接的成本訊號。
 
 ### 評估冷啟動對 production 路徑的影響
 
@@ -137,11 +137,11 @@ scale-to-zero 的 serverless cluster 服務面向用戶 production，閒置後�
 - `RU 消耗速率`：serverless 成本的直接訊號，速率異常上升要立刻定位 query 來源。
 - `當期累計消費 vs 上限`：成本封頂的剩餘空間，逼近上限要告警。
 - `冷啟動 / 首請求延遲`：scale-to-zero 對面向用戶路徑的影響。
-- `query 資源消耗分佈`：哪些 query 吃掉最多 RU，是 serverless 成本優化的入口。
+- `query 資源消耗分佈`：哪些 query 吃掉最多 RU，是 serverless 成本改善的入口。
 
 ### 容量與成本判讀
 
-- serverless 月成本 ≈ Σ(各 query RU × 頻率)，所以成本優化等於 query 效率優化 — 缺索引、全表掃描在 serverless 直接體現為帳單。
+- serverless 月成本 ≈ Σ(各 query RU × 頻率)，所以成本改善等於 query 效率改善 — 缺索引、全表掃描在 serverless 直接體現為帳單。
 - serverless / dedicated 成本交叉點 ≈ 「serverless 浮動成本」與「dedicated 固定容量成本」相等的用量水準，逼近交叉點是規劃遷移的訊號。
 - dedicated 的容量規劃回到節點數 × replica × latency budget：Raft quorum 至少要 3 個節點，multi-region 部署常見 9 個以上（3 個 region、每個 region 3 個節點）。
 

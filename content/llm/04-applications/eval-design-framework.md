@@ -123,7 +123,7 @@ Eval 設計的三個正交軸：
 - **第三個該補的**：Objective + Component + Quantitative。對 critical component（retrieval / tool call / parse）加 component-level eval、production 跑。
 - **不該做**：完整 subjective rubric。先把 objective 失敗修了再說。
 
-### 階段 2：要持續優化品質
+### 階段 2：要持續改善品質
 
 問題：objective 部分已經穩、user 抱怨主要在 subjective 層（語氣、helpful 程度、推薦合不合用）。
 
@@ -216,7 +216,7 @@ Production trace 持續抽樣補進 eval set、每季 review eval set 跟 traffi
 - 三軸座標（objective / component / quantitative 三個 binary 軸）。
 - 八象限對應工具的結構分類。
 - 三類軸誤選的識別訊號跟修正。
-- Eval 演化路徑（MVP → user → 優化 → 規模化）。
+- Eval 演化路徑（MVP → user → 改善 → 規模化）。
 - Eval / trace 閉環的設計。
 - 有效 eval 系統的四個設計條件。
 

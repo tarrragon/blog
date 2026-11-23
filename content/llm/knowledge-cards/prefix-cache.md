@@ -1,12 +1,12 @@
 ---
 title: "Prefix Cache"
 date: 2026-05-12
-description: "把多個請求共用的前綴 prompt 的 KV cache 重用、省下重複 prefill 算力的優化、production 多用戶服務的常見設計"
+description: "把多個請求共用的前綴 prompt 的 KV cache 重用、省下重複 prefill 算力的最佳化、production 多用戶服務的常見設計"
 weight: 1
 tags: ["llm", "knowledge-cards", "kv-cache", "optimization", "production"]
 ---
 
-Prefix Cache 的核心概念是「當多個請求共用相同的前綴 prompt（如同一 system prompt、同一 few-shot 範例）、把該前綴的 [KV cache](/llm/knowledge-cards/kv-cache/) 算一次、後續請求共用、省下重複 [prefill](/llm/knowledge-cards/prefill/) 算力」。是 production LLM 服務的常見優化、能大幅降低 latency 跟成本；但在多租戶場景下、跨租戶共用 prefix cache 是直接的隱私洩漏面。
+Prefix Cache 的核心概念是「當多個請求共用相同的前綴 prompt（如同一 system prompt、同一 few-shot 範例）、把該前綴的 [KV cache](/llm/knowledge-cards/kv-cache/) 算一次、後續請求共用、省下重複 [prefill](/llm/knowledge-cards/prefill/) 算力」。是 production LLM 服務的常見最佳化、能大幅降低 latency 跟成本；但在多租戶場景下、跨租戶共用 prefix cache 是直接的隱私洩漏面。
 
 ## 跟其他概念的關係
 

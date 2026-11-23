@@ -64,7 +64,7 @@ Python 標準庫的常用模組，這些都是 Hook 系統中實際使用的工�
 - [logging - 日誌系統](/programming/python/basic/03-stdlib/logging/)
 - [argparse - CLI 介面](/programming/python/basic/03-stdlib/argparse/)
 - [並行處理 - threading、multiprocessing、concurrent.futures](/programming/python/basic/03-stdlib/concurrency/)
-- [效能迷思與優化策略](/programming/python/basic/03-stdlib/performance/)
+- [效能迷思與改善策略](/programming/python/basic/03-stdlib/performance/)
 
 ### [模組四：物件導向設計](/programming/python/basic/04-oop/)
 
@@ -150,4 +150,4 @@ Python 語言與工具鏈特有的術語。語言無關的設計原則（單一�
 
 *文件版本：v0.32.0*
 *最後更新：2026-01-20*
-*新增內容：並行處理、效能優化章節*
+*新增內容：並行處理、效能改善章節*

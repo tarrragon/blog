@@ -10,7 +10,7 @@ tags: ["backend", "observability", "case-study"]
 
 ## 業務背景
 
-一個線上多人遊戲平台，日活躍使用者約 50 萬人。每逢賽季開跑或限時活動，同時在線人數在 30 分鐘內從平日基線暴增 8-10 倍，matchmaking 服務的 request rate 從 5k/s 衝到 50k/s，遊戲伺服器同時運行的 match instance 從數千增到數萬。
+一個線上多人遊戲平台，日活躍使用者約 50 萬人。每逢賽季開跑或限時活動，同時線上人數在 30 分鐘內從平日基線暴增 8-10 倍，matchmaking 服務的 request rate 從 5k/s 衝到 50k/s，遊戲伺服器同時運行的 match instance 從數千增到數萬。
 
 觀測系統在平日運作良好 — Prometheus 單機 scrape 500 萬 active series、Grafana dashboard 查詢秒級回應、告警在 1 分鐘內觸發。但每次活動開跑時，觀測系統本身開始劣化：dashboard 查詢從秒級變成分鐘級、告警延遲 5 分鐘以上才送到、部分 metric 直接消失。值班工程師在最需要觀測的時刻失去了可信訊號。
 

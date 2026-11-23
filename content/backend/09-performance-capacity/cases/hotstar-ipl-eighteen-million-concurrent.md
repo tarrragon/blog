@@ -36,7 +36,7 @@ Hotstar 案例揭露三個全球直播容量重點。
 可重用的工程做法：
 
 1. **CDN 容量規劃按地理區分割**：不要假設「全球 CDN 總量」夠用、要按主要觀眾分布的地區做容量保證。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/)。
-2. **直播的擴展要先量出反應時間、換算成緩衝**：Hotstar 自己的工程文寫道，事前悲觀地把容量擴到預期同時在線人數「was resulting in a heavy infrastructure costs」，所以 2019 年開始試用自建的 autoscaler；文中的估算假設加節點約 90 秒、容器建立與應用啟動約 75 秒，加上收集指標與決策，總延遲約 4 分鐘，「we would have missed about two million people on the platform within these 4 minutes」；直播期間的緩衝因此設為依同時在線人數分階擴展的服務多加 200 萬，依請求數擴展的服務加 30%（[Scaling for tsunami traffic，Wayback](https://web.archive.org/web/20210221203256id_/https://blog.hotstar.com/scaling-for-tsunami-traffic-2ec290c37504)）。對應 [9.11 高峰事件準備](/backend/09-performance-capacity/)。
+2. **直播的擴展要先量出反應時間、換算成緩衝**：Hotstar 自己的工程文寫道，事前悲觀地把容量擴到預期同時線上人數「was resulting in a heavy infrastructure costs」，所以 2019 年開始試用自建的 autoscaler；文中的估算假設加節點約 90 秒、容器建立與應用啟動約 75 秒，加上收集指標與決策，總延遲約 4 分鐘，「we would have missed about two million people on the platform within these 4 minutes」；直播期間的緩衝因此設為依同時線上人數分階擴展的服務多加 200 萬，依請求數擴展的服務加 30%（[Scaling for tsunami traffic，Wayback](https://web.archive.org/web/20210221203256id_/https://blog.hotstar.com/scaling-for-tsunami-traffic-2ec290c37504)）。對應 [9.11 高峰事件準備](/backend/09-performance-capacity/)。
 3. **multi-bitrate / ABR streaming 是容量緩衝**：當網路擁塞、player 自動降 bitrate、總頻寬壓力下降。這層降級是隱性容量緩衝、要在壓測時驗證。對應 [9.4 Saturation Discovery](/backend/09-performance-capacity/) 的 saturation 行為。
 
 跨平台等效：GCP CDN + Media CDN、Azure Front Door + Media Services、Akamai / Cloudflare / Fastly 等 multi-CDN 都是對等候選。差異是 PoP 地理分布跟 manifest 處理能力。

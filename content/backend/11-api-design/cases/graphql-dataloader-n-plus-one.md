@@ -1,7 +1,7 @@
 ---
 title: "11.C24 DataLoader 譜系：N+1 的官方解法變成基礎設施"
 date: 2026-07-03
-description: "resolver-per-field 讓 N+1 從偶發變預設、官方生態把 batching 做成基礎設施而非優化技巧"
+description: "resolver-per-field 讓 N+1 從偶發變預設、官方生態把 batching 做成基礎設施而非改善技巧"
 weight: 24
 tags: ["backend", "api-design", "case-study", "graphql"]
 ---
@@ -14,7 +14,7 @@ DataLoader 把單一執行 frame 內的個別 load 合併成 batch、加 per-req
 
 ## 判讀
 
-N+1 不是 GraphQL 發明的問題、但 resolver-per-field 執行模型讓它從偶發變成預設 — 所以官方生態把 batching 做成基礎設施、不是優化技巧。「連 GitHub day-one 都要帶 graphql-batch」是最直接的教學證據。
+N+1 不是 GraphQL 發明的問題、但 resolver-per-field 執行模型讓它從偶發變成預設 — 所以官方生態把 batching 做成基礎設施、不是改善技巧。「連 GitHub day-one 都要帶 graphql-batch」是最直接的教學證據。
 
 ## 對應大綱
 

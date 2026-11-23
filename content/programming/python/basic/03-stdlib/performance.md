@@ -1,13 +1,13 @@
 ---
-title: "3.8 效能迷思與優化策略"
+title: "3.8 效能迷思與改善策略"
 date: 2026-01-20
-description: "Python 效能的真相、常見誤解與優化方法"
+description: "Python 效能的真相、常見誤解與改善方法"
 weight: 8
 tags: ["python", "stdlib", "performance"]
 aliases: ["/python/03-stdlib/performance/"]
 ---
 
-「Python 很慢」是程式設計社群中最常見的說法之一。本章將探討這個說法的真相、何時效能真的重要，以及如何有效地優化 Python 程式。
+「Python 很慢」是程式設計社群中最常見的說法之一。本章將探討這個說法的真相、何時效能真的重要，以及如何有效地改善 Python 程式。
 
 ## Python「慢」的真相
 
@@ -69,7 +69,7 @@ Python 的設計哲學是「開發速度 > 執行速度」：
 
 ## 瓶頸通常在 I/O、資料庫與演算法
 
-在優化之前，你需要先找出真正的瓶頸。以下是常見的效能瓶頸排名：
+在改善之前，你需要先找出真正的瓶頸。以下是常見的效能瓶頸排名：
 
 ### 1. I/O 操作
 
@@ -140,11 +140,11 @@ def find_duplicates_fast(items):
 5. Python 本身        0.001-1ms
 ```
 
-## 優化方案總覽
+## 改善方案總覽
 
 | 方案               | 適用場景   | 學習成本 | 效果  |
 | ------------------ | ---------- | -------- | ----- |
-| 演算法優化         | 通用       | 中       | 最高  |
+| 演算法改善         | 通用       | 中       | 最高  |
 | NumPy/Pandas       | 數值計算   | 低       | 高    |
 | concurrent.futures | 並行任務   | 低       | 中-高 |
 | Free-threading     | CPU 並行   | 中       | 高    |
@@ -152,7 +152,7 @@ def find_duplicates_fast(items):
 | PyPy               | 通用加速   | 低       | 中    |
 | asyncio            | I/O 並發   | 中       | 中-高 |
 
-### 1. 演算法優化
+### 1. 演算法改善
 
 永遠是第一優先：
 
@@ -261,15 +261,15 @@ gc.collect(1)
 
 詳見 [3.8 Free-Threading](/programming/python/advanced/04-cpython-internals/free-threading/)。
 
-## 先測量再優化、只動瓶頸
+## 先測量再改善、只動瓶頸
 
-### 「過早優化是萬惡之源」
+### 「過早最佳化是萬惡之源」
 
 Donald Knuth 的這句名言經常被誤解。完整的引言是：
 
-> 「程式設計師花費了大量時間思考或擔心程式非關鍵部分的速度，而當考慮到除錯和維護時，這些效率的嘗試實際上會產生強烈的負面影響。我們應該忘記小的效率問題，比如說 97% 的時間：**過早優化是萬惡之源**。然而，我們不應該放棄那關鍵的 3% 的機會。」
+> 「程式設計師花費了大量時間思考或擔心程式非關鍵部分的速度，而當考慮到除錯和維護時，這些效率的嘗試實際上會產生強烈的負面影響。我們應該忘記小的效率問題，比如說 97% 的時間：**過早最佳化是萬惡之源**。然而，我們不應該放棄那關鍵的 3% 的機會。」
 
-### 優化的正確流程
+### 改善的正確流程
 
 ```text
 1. 讓程式正確運作
@@ -290,7 +290,7 @@ Donald Knuth 的這句名言經常被誤解。完整的引言是：
 在大多數程式中：
 
 - 20% 的程式碼佔用 80% 的執行時間
-- 優化錯誤的地方不會有任何效果
+- 改善錯誤的地方不會有任何效果
 
 ## 效能測量工具
 
@@ -392,7 +392,7 @@ def memory_hungry_function():
 
 ## 實際案例
 
-### 案例 1：優化資料處理
+### 案例 1：改善資料處理
 
 ```python
 # 原始版本：慢
@@ -469,7 +469,7 @@ print(f"Set 查找: {time.perf_counter() - start:.6f}s")
 
 ## 思考題
 
-1. 為什麼「過早優化是萬惡之源」？什麼時候優化才是適當的？
+1. 為什麼「過早最佳化是萬惡之源」？什麼時候改善才是適當的？
 2. 在什麼情況下，Python 的「慢」確實是個問題？
 3. NumPy 為什麼比純 Python 迴圈快這麼多？
 
@@ -487,8 +487,8 @@ print(f"Set 查找: {time.perf_counter() - start:.6f}s")
 
 ## 延伸閱讀（進階系列）
 
-- [實戰效能優化](/programming/python/advanced/08-practical-optimization/) - 真實案例的效能調優實戰
-- [CPython 內部機制](/programming/python/advanced/04-cpython-internals/) - 理解 Python 的運作原理以優化效能
+- [實戰效能改善](/programming/python/advanced/08-practical-optimization/) - 真實案例的效能調優實戰
+- [CPython 內部機制](/programming/python/advanced/04-cpython-internals/) - 理解 Python 的運作原理以改善效能
 - [Free-Threading](/programming/python/advanced/04-cpython-internals/free-threading/) - Python 3.13+ 無 GIL 多執行緒
 - [用 C 擴展 Python](/programming/python/advanced/05-c-extensions/) - 使用 ctypes、Cython、pybind11 提升效能
 - [用 Rust 擴展 Python](/programming/python/advanced/06-rust-extensions/) - 使用 PyO3 建立高效能安全的擴展

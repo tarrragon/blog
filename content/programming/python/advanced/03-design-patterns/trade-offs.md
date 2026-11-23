@@ -196,7 +196,7 @@ Python 社群有一句話經常被引用：
 
 > "We should forget about small efficiencies, say about 97% of the time: premature optimization is the root of all evil. **Yet we should not pass up our opportunities in that critical 3%.**"
 
-這段話包含了兩個同樣重要的訊息：**97% 的時候不要優化**，但**那關鍵的 3% 不能錯過**。
+這段話包含了兩個同樣重要的訊息：**97% 的時候不要最佳化**，但**那關鍵的 3% 不能錯過**。
 
 #### Python 的定位
 
@@ -231,9 +231,9 @@ def find_active_premium_users(users: list[User]) -> list[User]:
     return [u for u in users if _is(u.is_active) and _pr(u.plan) and u.last_login > _dt]
 ```
 
-在這個例子中，第一個版本建立了三個中間列表，但最清楚；第二個版本是合理的平衡；第三個版本的微優化在 99% 的場景中毫無意義，卻犧牲了所有可讀性。
+在這個例子中，第一個版本建立了三個中間列表，但最清楚；第二個版本是合理的平衡；第三個版本的微最佳化在 99% 的場景中毫無意義，卻犧牲了所有可讀性。
 
-#### 決策框架：profiling 證實瓶頸才犧牲可讀性優化
+#### 決策框架：profiling 證實瓶頸才犧牲可讀性最佳化
 
 ```python
 # 決策流程（虛擬碼）
@@ -814,7 +814,7 @@ def get_value_eafp(data: dict, key: str) -> str | None:
 
 ### 實用原則
 
-1. 效能優化前先量測，97% 的時候可讀性優先
+1. 效能改善前先量測，97% 的時候可讀性優先
 2. 只有核心競爭力才值得自建
 3. 策略性技術債務需要「償還計畫」和「觸發條件」
 4. 型別提示的嚴格程度應匹配專案的生命週期

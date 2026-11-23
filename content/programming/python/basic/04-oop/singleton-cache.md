@@ -401,7 +401,7 @@ def load_config() -> dict:
 
 - [進階設計模式](/programming/python/advanced/03-design-patterns/) - 更多設計模式的深入探討
 - [快取生命週期管理](/programming/python/advanced/03-design-patterns/case-studies/cache-lifecycle/) - 進階快取策略
-- [實戰效能優化：LRU 快取](/programming/python/advanced/08-practical-optimization/case-studies/lru-cache-branch/) - lru_cache 的實際應用
+- [實戰效能改善：LRU 快取](/programming/python/advanced/08-practical-optimization/case-studies/lru-cache-branch/) - lru_cache 的實際應用
 
 ---
 

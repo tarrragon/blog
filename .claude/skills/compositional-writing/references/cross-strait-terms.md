@@ -43,7 +43,7 @@
 | 待優化 | to be improved / needs improvement / room for improvement | 待改善 / 需要改進 / 有改進空間 | 表格的狀態欄寫「待改善」；句子裡寫出要改進哪一項 |
 | 缺省 | default | 預設 | |
 | 默認 | default | 預設 | 指 de facto standard 時寫「事實標準」；「默認了這件事」的 tacit acceptance 台灣也這樣寫，指這個意思時這個詞留著 |
-| 激活 | activate | 啟用 | 神經網路的 activation function 寫「激勵函數」，第一次出現附英文；轉述的台灣來源或廠商的繁體中文官方文件寫「活化函式」「活化函數」或「激勵函數」時照來源，這時不套函數列；來源或專案寫「激活函數」都不算依據，換成「激勵函數」 |
+| 激活 | activate / activation（數值） | 啟動 / 活躍度 | 動作預設寫「啟動」；「激活值」多半指活躍度，依前後文確認它指的數值；神經網路的 activation function 寫「激勵函數」，第一次出現附英文；轉述的台灣來源或廠商的繁體中文官方文件寫「活化函式」「活化函數」或「激勵函數」時照來源，這時不套函數列；來源或專案寫「激活函數」都不算依據，換成「激勵函數」 |
 | 激活碼 | activation code | 啟動序號 | |
 | 補丁 | patch（軟體發布）/ patch（比喻的臨時處置） | 更新檔 / 修補 | 資安公告的 security patch 也寫「安全性更新」或「修補程式」；指程式碼變更本身寫「修補（patch）」，以檔案交換時寫「修補檔（patch）」，monkey patching 保留英文；專案裡已有的「補丁」不算依據 |
 | 運營 | operations | 營運 | |

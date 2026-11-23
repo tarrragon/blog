@@ -10,7 +10,7 @@ tags: ["backend", "api-design", "graphql", "security"]
 
 ## N+1：從偶發問題變成預設行為
 
-resolver-per-field 的執行模型讓 N+1 從查詢寫壞才發生的偶發問題、變成不做處理就必然發生的預設：列表的每個元素各自觸發子欄位的 resolver、一層巢狀就是一輪 N 次資料庫存取。[DataLoader 譜系：N+1 的官方解法變成基礎設施](/backend/11-api-design/cases/graphql-dataloader-n-plus-one/) 記錄了官方生態的回應方式 — batching 做成基礎設施而非優化技巧：DataLoader 把單一執行 frame 內的個別 load 合併成 batch、概念源自 Facebook 2010 年的內部 Loader API、早於 GraphQL 開源；GitHub 2016 年上線 GraphQL 時、技術棧 day one 就帶著 Shopify 維護的 graphql-batch。判讀：評估 GraphQL 的建置成本時、dataloader 層是基礎配備、不是後期優化項 — 缺少它的 GraphQL 服務、第一個帶列表的巢狀 query 就會對資料庫造成 N 倍讀放大。
+resolver-per-field 的執行模型讓 N+1 從查詢寫壞才發生的偶發問題、變成不做處理就必然發生的預設：列表的每個元素各自觸發子欄位的 resolver、一層巢狀就是一輪 N 次資料庫存取。[DataLoader 譜系：N+1 的官方解法變成基礎設施](/backend/11-api-design/cases/graphql-dataloader-n-plus-one/) 記錄了官方生態的回應方式 — batching 做成基礎設施而非改善技巧：DataLoader 把單一執行 frame 內的個別 load 合併成 batch、概念源自 Facebook 2010 年的內部 Loader API、早於 GraphQL 開源；GitHub 2016 年上線 GraphQL 時、技術棧 day one 就帶著 Shopify 維護的 graphql-batch。判讀：評估 GraphQL 的建置成本時、dataloader 層是基礎配備、不是後期改善項 — 缺少它的 GraphQL 服務、第一個帶列表的巢狀 query 就會對資料庫造成 N 倍讀放大。
 
 ## 成本計點：限流模型的被迫重建
 

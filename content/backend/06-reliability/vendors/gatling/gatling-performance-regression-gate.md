@@ -62,7 +62,7 @@ setUp(scn.injectClosed(constantConcurrentUsers(50).during(600)))
   );
 ```
 
-這段同樣照官方文件〈Assertions〉與〈Injection〉的語法組成，沒有實跑；`50`（同時在線的虛擬使用者數）、`600`（秒）、`110.0` 是佔位值。吞吐量的門檻不能直接設成基準版本量到的值：每秒請求數本身也有雜訊，門檻等於基準值時，大約一半的執行會因為隨機的波動低於它而失敗，所以下限是基準值減去同一個版本重跑時每秒請求數的波動範圍（取法見〈gate 失敗時的排查順序〉的雜訊範圍那一項）。production 流量屬於 open 型的服務（多數面向公眾的 API）用 open model，量到的延遲退化比較接近使用者會遇到的退化；呼叫端數量固定的服務（固定 worker 數的批次程式）用 closed model，量到的吞吐量下降對應的就是批次跑完的時間變長。
+這段同樣照官方文件〈Assertions〉與〈Injection〉的語法組成，沒有實跑；`50`（同時線上的虛擬使用者數）、`600`（秒）、`110.0` 是佔位值。吞吐量的門檻不能直接設成基準版本量到的值：每秒請求數本身也有雜訊，門檻等於基準值時，大約一半的執行會因為隨機的波動低於它而失敗，所以下限是基準值減去同一個版本重跑時每秒請求數的波動範圍（取法見〈gate 失敗時的排查順序〉的雜訊範圍那一項）。production 流量屬於 open 型的服務（多數面向公眾的 API）用 open model，量到的延遲退化比較接近使用者會遇到的退化；呼叫端數量固定的服務（固定 worker 數的批次程式）用 closed model，量到的吞吐量下降對應的就是批次跑完的時間變長。
 
 closed model 用在 production 流量屬於 open 型的服務時，gate 量到的延遲上升小於 production 上同一個退化造成的上升：虛擬使用者等回應時不送下一個請求，production 裡那些照樣會抵達的請求在服務外排隊的時間沒有被量到（coordinated omission，見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈跟其他概念的關係〉）。被壓小的幅度可能落到相對門檻或雜訊範圍以下，gate 的偵測靈敏度因此比門檻的數字看起來低。Gatling 本身有 open model 的注入步驟，這種服務的 gate 改用 `injectOpen`，延遲就不必換算。沿用 closed model 的理由是要跟歷次用 `constantConcurrentUsers` 量的基準比較時，門檻依 production 上要擋的退化幅度、換算成 closed model 下同一個退化量到的幅度再設：在 gate 環境的受測服務裡加進一段會佔用服務資源的固定工作（每個請求多做一段 CPU 計算），用同一份 scenario 的 `injectOpen` 與 `injectClosed` 各量一次 p95 的上升量，兩者的比例就是換算的比例。量法的細節（open model 的到達率怎麼取、比例為什麼隨負載改變、注入的工作為什麼不能是單純的 sleep）寫在 [Locust 在效能 regression gate 的用法](/backend/06-reliability/vendors/locust/locust-performance-regression-gate/) 的〈closed model 下前後兩版的比較：延遲與吞吐量〉；Locust 只有 closed model，那一篇的 open model 那一次要另外借一個工具量，Gatling 在同一個工具裡就量得到兩次。這個量法從兩種模型的機制推出，本篇沒有實跑。
 
@@ -76,7 +76,7 @@ PR 跑的 simulation 負載低於飽和點（[Saturation Point](/backend/knowled
 
 ## HTML report 與執行條件的保存
 
-Gatling 每次執行結束後產生一份 HTML report，內容有延遲的百分位數分佈、每個 request 與 group 的統計，以及隨時間變化的 Users start rate（每秒開始的虛擬使用者數）、同時在線使用者數、每秒請求數與每秒回應數，還有錯誤的明細（官方文件〈Reports〉）。CI 的 job 把這份 report 存成 build artifact，gate 失敗時 reviewer 打開它，找出是哪一個 group、在哪一段時間退化。report 是給人讀的，裡面的統計只有 `gatling.conf` 設定的那幾個百分位數，也不是公開的機器介面；跨次比較的程式讀的是受測服務那一端的 histogram 指標。report 與證據都要存在保留期限不受 CI 控制的位置（物件儲存、測試結果資料庫），受測服務的指標也要保留到下一次比較用得到的時候：CI 平台的 artifact 有保留天數，監控系統的指標也有保留期限，基準版本那一次的資料到期刪掉之後，下一次 gate 就沒有基準版本的結果可比，而這件事不會報錯。
+Gatling 每次執行結束後產生一份 HTML report，內容有延遲的百分位數分佈、每個 request 與 group 的統計，以及隨時間變化的 Users start rate（每秒開始的虛擬使用者數）、同時線上使用者數、每秒請求數與每秒回應數，還有錯誤的明細（官方文件〈Reports〉）。CI 的 job 把這份 report 存成 build artifact，gate 失敗時 reviewer 打開它，找出是哪一個 group、在哪一段時間退化。report 是給人讀的，裡面的統計只有 `gatling.conf` 設定的那幾個百分位數，也不是公開的機器介面；跨次比較的程式讀的是受測服務那一端的 histogram 指標。report 與證據都要存在保留期限不受 CI 控制的位置（物件儲存、測試結果資料庫），受測服務的指標也要保留到下一次比較用得到的時候：CI 平台的 artifact 有保留天數，監控系統的指標也有保留期限，基準版本那一次的資料到期刪掉之後，下一次 gate 就沒有基準版本的結果可比，而這件事不會報錯。
 
 report 只記錄這一次的結果；要讓另一個人判斷兩次結果比不比得了，CI 的 job 在同一份證據裡另外記下三組欄位。一組是 [6.2 load test](/backend/06-reliability/load-testing/)〈Load test 結果的證據留存〉列的最小欄位：workload model 版本、測試環境、saturation point、throughput ceiling、主要瓶頸歸因、headroom ratio、退化模式分類與測試日期，其中 saturation point、throughput ceiling 與 headroom ratio 填最近一次 6.2 load test 量到的值，gate 這一次的執行負載低於飽和點，量不出這三項。一組是這次執行的條件：simulation 的版本（commit）、注入步驟、feeder 的來源與產生日期、Gatling 的版本、施壓端的台數與規格、受測服務的副本數、受測資料庫的資料量（或每次重建時用的 seed 版本）、下游哪些服務是 mock、沒有 mock 的下游各是哪一個版本。一組是比較的另一邊：這次跟哪一次基準執行比（那一次的執行編號或 commit），以及跨次比較的程式或參數化門檻用的基準值檔是哪一個版本。這些欄位跟著 gate 的判定交給下游的方式，照 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) 的〈Handoff 欄位〉。
 

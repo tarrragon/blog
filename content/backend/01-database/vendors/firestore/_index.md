@@ -148,7 +148,7 @@ Firestore 為「已知路徑的 document 讀寫」付成本，不為「任意欄
 **3. index 與寫入成本綁定**：
 
 - 複合查詢要先建 composite index、否則查詢直接失敗
-- 每個 index 增加寫入維護成本，移除用不到的 index 是容量優化的一環
+- 每個 index 增加寫入維護成本，移除用不到的 index 是容量最佳化的一環
 
 **4. 高頻寫入用 distributed counter**：
 

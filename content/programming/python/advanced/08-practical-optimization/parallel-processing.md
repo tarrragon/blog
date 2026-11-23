@@ -17,7 +17,7 @@ aliases: ["/python-advanced/08-practical-optimization/parallel-processing/"]
 2. **應用 ThreadPoolExecutor**：將循序處理改寫為並行版本
 3. **實作進度報告**：使用 `as_completed()` 追蹤任務完成狀態
 4. **處理並行錯誤**：避免單一任務失敗影響整體執行
-5. **測量效能差異**：用數據證明優化效果
+5. **測量效能差異**：用數據證明改善效果
 
 ## 先備知識
 

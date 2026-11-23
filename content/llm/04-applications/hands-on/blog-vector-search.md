@@ -17,7 +17,7 @@ weight: 2
 
 本案例用 Go 重寫了 RAG storage 層，Go 實作細節佔不少篇幅。依你的背景選讀法：
 
-- **Python 開發者、想選自己專案的 storage 方案**：先跳到「通用可複製流程」（語言無關的五步驟）→「四方案 benchmark」→「二次選型評估」（結論/理由/前提三層框架），這三段跨語言可遷移。Go 實作段（架構、效能優化）可 skim。
+- **Python 開發者、想選自己專案的 storage 方案**：先跳到「通用可複製流程」（語言無關的五步驟）→「四方案 benchmark」→「二次選型評估」（結論/理由/前提三層框架），這三段跨語言可遷移。Go 實作段（架構、效能改善）可 skim。
 - **Go 開發者、想做類似工具**：從頭讀，每段都跟你相關。
 - **只想看選型框架、不管實作**：直接跳「二次選型評估」。
 
@@ -98,13 +98,13 @@ scripts/blogsearch/
 
 分離 text 的設計理由：query 時只需要 vectors + metadata 做 cosine search（78 MB），top-K 結果才從 texts.bin 按 offset 讀取 5 筆 text。省掉 19 MB 的 JSON 解析。
 
-## 效能優化歷程
+## 效能改善歷程
 
 ### 初版：9.5 秒
 
 初版用逐 4-byte Read 載入 vectors.bin（17.5M 次 `f.Read(buf)`），加上 27MB 的 index.json（含所有 chunk text）一次 JSON 解析。
 
-### 優化版：0.34 秒（28x）
+### 改善版：0.34 秒（28x）
 
 三項改動：
 
@@ -128,7 +128,7 @@ scripts/blogsearch/
 
 Python 實作同流程只是把第 4 步的 binary 檔換成 pickle / FAISS index / SQLite DB、第 5 步的 cosine 換成 numpy / FAISS / sqlite-vec query。Node.js / Rust 同理。
 
-關鍵優化原則也跨語言：「分離向量與文字、query 時只載入向量、top-K 才載入文字」讓 I/O 量從 ~98MB 降到 ~78MB、JSON parse 從 27MB 降到 7MB。這個原則用什麼語言實作都有效。
+關鍵改善原則也跨語言：「分離向量與文字、query 時只載入向量、top-K 才載入文字」讓 I/O 量從 ~98MB 降到 ~78MB、JSON parse 從 27MB 降到 7MB。這個原則用什麼語言實作都有效。
 
 ## 四方案同 corpus Benchmark
 

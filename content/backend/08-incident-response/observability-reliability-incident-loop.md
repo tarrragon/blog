@@ -78,7 +78,7 @@ tags: ["backend", "incident-response"]
 | 方向    | 健康訊號                                                                                                    | 失能訊號                                                                                                             |
 | ------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | 04 → 08 | 多數 Sev2+ 事故由 alert 觸發、不是客戶通報                                                                  | 客戶通報先於 alert 的比例上升、值班發現 alert 沒人接                                                                 |
-| 08 → 06 | 每次 [post-incident review](/backend/knowledge-cards/post-incident-review/) 至少產出一個事前驗證 action     | [post-incident review](/backend/knowledge-cards/post-incident-review/) action items 都是 runbook 補丁、無事前驗證    |
+| 08 → 06 | 每次 [post-incident review](/backend/knowledge-cards/post-incident-review/) 至少產出一個事前驗證 action     | [post-incident review](/backend/knowledge-cards/post-incident-review/) action items 都是 runbook 修補、無事前驗證    |
 | 06 → 04 | Chaos / SLO 工作會驅動新訊號出現                                                                            | 驗證活動孤立、不會反向擴充 04 訊號集                                                                                 |
 | 08 → 04 | [post-incident review](/backend/knowledge-cards/post-incident-review/) 會具名指出哪個訊號不足、有 follow-up | [post-incident review](/backend/knowledge-cards/post-incident-review/) 提到「訊號不夠」但沒落實到具體 metric / alert |
 

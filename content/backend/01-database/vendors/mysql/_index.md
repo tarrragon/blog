@@ -34,7 +34,7 @@ MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
 **單一 primary 寫吞吐**：
 
 - 標準 InnoDB：10K-30K WPS（依 row size、commit sync、index 數量）
-- 高階 instance + 優化 schema：50K-100K WPS
+- 高階 instance + 最佳化 schema：50K-100K WPS
 - 超過此級別 → [Vitess sharding](vitess-sharding/) 或 PlanetScale
 
 **Connection 上限**：

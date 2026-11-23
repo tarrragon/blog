@@ -216,7 +216,7 @@ kafka-topics.sh --describe --under-replicated-partitions --bootstrap-server loca
 | 案例                                                                                                    | 主討論議題                             |
 | ------------------------------------------------------------------------------------------------------- | -------------------------------------- |
 | [3.C11 Pinterest Tiered Storage](/backend/03-message-queue/cases/kafka-pinterest-tiered-storage/)       | Broker-decoupled tiered storage / S3   |
-| [3.C12 Pinterest Shallow Mirror](/backend/03-message-queue/cases/kafka-pinterest-shallow-mirror/)       | MirrorMaker CPU/memory 優化            |
+| [3.C12 Pinterest Shallow Mirror](/backend/03-message-queue/cases/kafka-pinterest-shallow-mirror/)       | MirrorMaker CPU/memory 最佳化          |
 | [3.C13 Shopify Debezium CDC](/backend/03-message-queue/cases/kafka-shopify-debezium-cdc/)               | Sharded MySQL CDC pipeline             |
 | [3.C14 Yelp Schematizer](/backend/03-message-queue/cases/kafka-yelp-schematizer/)                       | Schema Registry + 強制 compatibility   |
 | [3.C15 Airbnb Spark Streaming](/backend/03-message-queue/cases/kafka-airbnb-spark-streaming-rebalance/) | Partition-task 解耦 / data skew        |

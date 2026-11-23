@@ -12,7 +12,7 @@ tags: ["business", "case-analysis", "labor", "financial-analysis"]
 
 ## 員工是決策約束，不是成本項
 
-把員工當成本項，決策只會問「這項成本能不能砍、要付多少」。[早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)和經營者的下一步在算帳時，員工出現的方式就是成本——「省 1 人約 35,000/月」是成本優化的槓桿、資遣費是退場成本的一項。這個視角下，員工是一個可以調整的數字。
+把員工當成本項，決策只會問「這項成本能不能砍、要付多少」。[早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)和經營者的下一步在算帳時，員工出現的方式就是成本——「省 1 人約 35,000/月」是成本改善的槓桿、資遣費是退場成本的一項。這個視角下，員工是一個可以調整的數字。
 
 把員工當成決策的約束來看，經營者要問的問題不同：這個決策讓員工承擔了什麼、我對這個承擔負什麼責任。員工是有生計、有[人力資本](/business/knowledge-cards/human-capital/)、雇主對其負責任的主體，不是損益表上一個可增減的欄位。這個視角的切換，會改變三件事——續行好處的帳、退場的時機、與資訊揭露的義務。
 

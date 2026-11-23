@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards"]
 ---
 
-KV Cache 的核心概念是「LLM 推論過程中、把已處理過的 [token](/llm/knowledge-cards/token/) 的 attention key / value 暫存起來、後續 token 生成時直接讀」。它讓「已 [prefill](/llm/knowledge-cards/prefill/) 過的 prompt」省下重複計算，是 [autoregressive](/llm/knowledge-cards/autoregressive/) 模型能跑得起來的關鍵優化。
+KV Cache 的核心概念是「LLM 推論過程中、把已處理過的 [token](/llm/knowledge-cards/token/) 的 attention key / value 暫存起來、後續 token 生成時直接讀」。它讓「已 [prefill](/llm/knowledge-cards/prefill/) 過的 prompt」省下重複計算，是 [autoregressive](/llm/knowledge-cards/autoregressive/) 模型能跑得起來的關鍵改善。
 
 ## 跟其他概念的關係
 

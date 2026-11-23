@@ -116,7 +116,7 @@ Conditional pass 適合處理可控缺口。例如某個低風險 batch job 缺�
 
 Block 適合處理核心旅程與資料風險。payment migration 缺少 rollback rehearsal、tenant backfill 缺少校驗、核心 API 缺少 SLO alert，這些缺口會讓事故處理沒有可靠入口。
 
-Defer 適合處理價值與風險不對稱的變更。若本次變更只是次要優化，但會暴露高風險 migration 或 dependency change，延後是合理的 reliability decision。
+Defer 適合處理價值與風險不對稱的變更。若本次變更只是次要改善，但會暴露高風險 migration 或 dependency change，延後是合理的 reliability decision。
 
 ## 常見反模式
 

@@ -134,7 +134,7 @@ kubectl logs <name> --previous        # 看 crash 前一輪的 container log
 
 ### OOMKilled
 
-操作原則：memory limit 太低、container 被殺。判讀：`describe pod` 看 last state reason。修法：raise limit 或優化 application memory。
+操作原則：memory limit 太低、container 被殺。判讀：`describe pod` 看 last state reason。修法：raise limit 或最佳化 application memory。
 
 ### Rolling update stuck
 

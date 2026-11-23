@@ -107,7 +107,7 @@ images:
 
 ## Base Image 更新週期
 
-斷網環境的 base image 不會自動更新——`nginx:1.25-alpine` 搬進去之後就是那個版本，裡面的 Alpine 套件不會收到安全補丁。需要定期用新版 base image 替換舊的。
+斷網環境的 base image 不會自動更新——`nginx:1.25-alpine` 搬進去之後就是那個版本，裡面的 Alpine 套件不會收到安全性更新。需要定期用新版 base image 替換舊的。
 
 ### 更新流程
 

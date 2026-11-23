@@ -79,7 +79,7 @@ production LLM 推論的多租戶隔離依四個層次分析：
 
 LLM 多租戶 isolation 相對一般 multi-tenant 服務的特殊性：
 
-1. **KV cache 是有用但敏感的優化**：shared prefix cache（如多 tenant 用同一 system prompt）能省大量 prefill 算力、但跨 tenant 共用就是洩漏。判讀：可以 share 同 tenant 內的 prefix、不能 share 跨 tenant。
+1. **KV cache 是有用但敏感的改善**：shared prefix cache（如多 tenant 用同一 system prompt）能省大量 prefill 算力、但跨 tenant 共用就是洩漏。判讀：可以 share 同 tenant 內的 prefix、不能 share 跨 tenant。
 2. **prompt log 含豐富使用者意圖**：相比一般 API log 主要記 endpoint / status code、LLM prompt log 記的是「使用者實際在問什麼」、隱私敏感度高得多。
 3. **GPU 是稀缺資源、共用比 CPU 多**：production LLM 服務常多 tenant 共用同卡、isolation 比一般 multi-tenant 服務（每 tenant 跑獨立 pod）更難做、需要更細的 batch 跟 memory 管理。
 4. **fine-tuned 模型本身是 customer asset**：模型訓練成本高、權重是客戶 IP、訪問權混亂直接是 IP 外洩。

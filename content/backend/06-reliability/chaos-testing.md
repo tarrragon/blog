@@ -77,7 +77,7 @@ Request-path injection（如 [FIT](/backend/knowledge-cards/fit-failure-injectio
 
 ### Business hours vs off-peak
 
-在 business hours 執行 chaos 能同時驗證系統韌性與團隊應變能力。人員在線可即時觀測、依賴流量接近真實、通訊鏈條（值班升級、跨團隊協作、內外部狀態更新）被完整測到。off-peak 雖然短期風險低，但測到的多是「工具可執行」，不是「服務在真實壓力下可承受」。
+在 business hours 執行 chaos 能同時驗證系統韌性與團隊應變能力。人員在線上可即時觀測、依賴流量接近真實、通訊鏈條（值班升級、跨團隊協作、內外部狀態更新）被完整測到。off-peak 雖然短期風險低，但測到的多是「工具可執行」，不是「服務在真實壓力下可承受」。
 
 選擇 business hours 執行的前提是 guardrails 到位：時段限制在可支援的工作時間、blast radius 從小範圍開始、abort trigger 連到明確門檻、事後回寫進工程控制面。風險來自 guardrails 的缺失。
 

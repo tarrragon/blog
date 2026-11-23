@@ -250,7 +250,7 @@ mc.incr(key)    # always works after add
 
 兩條路：
 
-- DragonflyDB：保留 Redis paradigm、優化 throughput + memory；application 不用改
+- DragonflyDB：保留 Redis paradigm、最佳化 throughput + memory；application 不用改
 - Memcached：退到 pure cache paradigm、application 必須改、但 ops 簡化
 
 選擇取決於 *是否真的需要 Redis multi-paradigm features*：用得到就 DragonflyDB / Redis、用不到就 Memcached。

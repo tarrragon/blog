@@ -214,7 +214,7 @@ NoSQL / KV DB 也有 sibling 反模式（hot partition、read amplification、sc
 
 ## 案例回寫
 
-09 案例庫的主軸是規模、vendor 與容量壓力，直接以「query 反模式」為主題的案例較少。下列案例可以反向讀：每一個都展示了「在沒有先用 query 反模式優化收回壓力的前提下、團隊直接走 vendor 遷移或 scale-out 路徑」的決策。讀者讀完應追問：這些 case 啟動遷移前、是否有可能用本章的反模式清單先收回一部分容量？
+09 案例庫的主軸是規模、vendor 與容量壓力，直接以「query 反模式」為主題的案例較少。下列案例可以反向讀：每一個都展示了「在沒有先用 query 反模式改善收回壓力的前提下、團隊直接走 vendor 遷移或 scale-out 路徑」的決策。讀者讀完應追問：這些 case 啟動遷移前、是否有可能用本章的反模式清單先收回一部分容量？
 
 - [DoorDash：Aurora Postgres 寫入瓶頸 → CockroachDB](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) — DoorDash 撞到 Aurora single-primary write 天花板（瓶頸在 primary CPU + WAL flush rate）、用 PostgreSQL wire protocol 相容的 CockroachDB 換成多主寫入、ORM 不必重寫。對照本章可問：寫入熱點是否伴隨長 transaction 或熱 row 競爭？這些是 vendor 遷移前可以先用本章「Long-Running Transaction」清單檢查的點。
 - [Zomato：TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 判斷 billing 事件本身可接受 eventually consistent、用一致性語意換取 4 倍吞吐 + 50% 成本。對照本章可問：遷移前每筆業務動作平均發了多少 query、是否有 N+1 或 select \* 在放大壓力？把這條問題擺進「每請求 Query 預算」段一起讀。
@@ -229,7 +229,7 @@ DoorDash 案例是這條反向追問最直接的應用 — 寫入瓶頸的判讀
 3. 與 [04 observability](/backend/04-observability/) 的交接：slow query log、APM、query trace 是判讀反模式的主要訊號來源。
 4. 與 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/) 的交接：先在應用層查反模式，再考慮 DB 配置升級。
 5. 與 [9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/) 的交接：[規模成長路線](/backend/scale-growth-walls/)上、擴展軸選定之後、本章是緊接著的下一站 — 在加機器或加 replica 前、先用本章反模式清單收回單機能撐住的容量。
-6. 與 [10.1 服務拆分](/backend/10-system-evolution/service-decomposition-boundaries/) 的交接：拆服務常被用來「解決 DB 慢」，但本章的反模式優化通常比拆服務 ROI 更高、應該優先嘗試。
+6. 與 [10.1 服務拆分](/backend/10-system-evolution/service-decomposition-boundaries/) 的交接：拆服務常被用來「解決 DB 慢」，但本章的反模式改善通常比拆服務 ROI 更高、應該優先嘗試。
 
 ## 下一步路由
 

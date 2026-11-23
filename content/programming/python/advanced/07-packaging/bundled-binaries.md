@@ -524,4 +524,4 @@ jobs:
 ---
 
 _上一章：[套件維護最佳實踐](/programming/python/advanced/07-packaging/best-practices/)_
-_下一模組：[模組七：實戰效能優化](/programming/python/advanced/08-practical-optimization/)_
+_下一模組：[模組七：實戰效能改善](/programming/python/advanced/08-practical-optimization/)_

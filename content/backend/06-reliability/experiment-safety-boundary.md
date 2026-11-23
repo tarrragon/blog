@@ -146,7 +146,7 @@ Experiment evidence 的責任是讓實驗結果可被重播、比較與回寫。
 
 對應 [N2 Netflix Business-Hours Chaos 與 Guardrails](/backend/06-reliability/cases/netflix/chaos-monkey-business-hours-guardrails/)：揭露「business-hours chaos 跟 off-hours chaos 的選擇」— 工作時間執行能驗證即時應變能力跟通訊鏈條、但要在 guardrails 內（時段限制、實驗範圍限制、明確 abort trigger、事後回寫）。
 
-Business-hours chaos 的核心價值是在 guardrails 內接近真實情境：人員在線可即時應變、依賴流量真實、通訊鏈條被測到。Off-hours 雖然短期風險低、但測到的多是「工具可執行」、不等於「服務可承受」。
+Business-hours chaos 的核心價值是在 guardrails 內接近真實情境：人員在線上可即時應變、依賴流量真實、通訊鏈條被測到。Off-hours 雖然短期風險低、但測到的多是「工具可執行」、不等於「服務可承受」。
 
 對應 [N3 Netflix FIT 證據交接](/backend/06-reliability/cases/netflix/fit-failure-injection-evidence-handoff/)：揭露實驗輸出要結構化成四個決策欄位。四欄位分屬不同 release gate 階段 — rollout 決策類（steady-state impact、dependency drift）回答「能否繼續 rollout / blast radius 是否可接受」、事故處置類（abort trigger record、fallback result）回答「是否進入凍結與回退 / 事故時能否安全止血」。這四欄位讓 [FIT](/backend/knowledge-cards/fit-failure-injection-testing/) 結果直接對應 release gate 的具體決策 — 不再倚賴主觀討論回到放行 / 凍結判斷。詳見 [6.23 verification-evidence-handoff](/backend/06-reliability/verification-evidence-handoff/) 跟 [6.24 rule-rollout-safety-gate](/backend/06-reliability/rule-rollout-safety-gate/)。
 

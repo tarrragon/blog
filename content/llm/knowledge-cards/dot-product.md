@@ -31,7 +31,7 @@ a · b = |a| × |b| × cos(θ)
                   θ 是兩向量夾角
 ```
 
-LLM 推論性能上、dot product 是「[matrix multiplication](/llm/knowledge-cards/matrix-multiplication/) 的基本單元」、整個 forward pass 可以看成大量 dot product 的批次運算；這是為什麼 GPU / Apple Silicon Neural Engine 都針對 dot product 做硬體優化。
+LLM 推論性能上、dot product 是「[matrix multiplication](/llm/knowledge-cards/matrix-multiplication/) 的基本單元」、整個 forward pass 可以看成大量 dot product 的批次運算；這是為什麼 GPU / Apple Silicon Neural Engine 都針對 dot product 做硬體最佳化。
 
 ## 判斷條件與後果
 

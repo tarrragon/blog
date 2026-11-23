@@ -361,7 +361,7 @@ Output：
 | Cache layer       | 否（Netflix 用 EVCache）         | EVCache / Redis / Memcached         |
 | Data warehouse    | 否（Netflix 用 Iceberg）         | Iceberg / Snowflake / Redshift      |
 | Time-series       | 否（性能不適合）                 | InfluxDB / TimescaleDB self-managed |
-| Search            | 否（無 inverted index 優化）     | Elasticsearch / OpenSearch          |
+| Search            | 否（無 inverted index 最佳化）   | Elasticsearch / OpenSearch          |
 
 ### DraftKings：fleet 拓樸 redesign
 

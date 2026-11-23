@@ -36,4 +36,4 @@ LLM 工作流的精度選擇：
 
 ## 判斷條件與後果
 
-讀 paper / config 看到 `mixed_precision: bf16`、`torch_dtype: bfloat16` 就是 BF16 訓練。寫 code 場景的判讀：本機跑 [GGUF](/llm/knowledge-cards/gguf/) Q4_K_M 模型、內部運算的 activation 仍是 fp16 / bf16、只有權重儲存是 4-bit；[KV cache](/llm/knowledge-cards/kv-cache/) 預設也是 fp16、量化 KV cache 是進階優化（K=Q8 / V=Q4）。
+讀 paper / config 看到 `mixed_precision: bf16`、`torch_dtype: bfloat16` 就是 BF16 訓練。寫 code 場景的判讀：本機跑 [GGUF](/llm/knowledge-cards/gguf/) Q4_K_M 模型、內部運算的 activation 仍是 fp16 / bf16、只有權重儲存是 4-bit；[KV cache](/llm/knowledge-cards/kv-cache/) 預設也是 fp16、量化 KV cache 是進階最佳化（K=Q8 / V=Q4）。

@@ -13,7 +13,7 @@ aliases: ["/infra/08-governance-habits/cost-visibility-rhythm/"]
 
 ## 成本可見性：每筆花費都對得到擁有者與用途
 
-成本可見性的目標是讓帳單上的每一筆花費都能回答「這是誰的、為了什麼」。雲帳單預設是一筆按服務類型加總的數字 — EC2 多少、RDS 多少 — 這個視角能告訴你花在哪類資源，卻看不出花在哪個團隊、哪個產品線、哪個功能。當這個問題查不出答案，成本就變成一筆沒人負責的公共支出，沒有人有動機去優化自己看不到的帳。
+成本可見性的目標是讓帳單上的每一筆花費都能回答「這是誰的、為了什麼」。雲帳單預設是一筆按服務類型加總的數字 — EC2 多少、RDS 多少 — 這個視角能告訴你花在哪類資源，卻看不出花在哪個團隊、哪個產品線、哪個功能。當這個問題查不出答案，成本就變成一筆沒人負責的公共支出，沒有人有動機去改善自己看不到的帳。
 
 ### Tag 驅動的成本分攤
 
@@ -35,7 +35,7 @@ aws ce get-cost-and-usage \
 
 ### 成本異常告警
 
-可見性先於優化，這個順序不能反。看不見的成本無法被歸屬，無法歸屬就無法問責，沒有問責就沒有人去做優化。在可見性建立之後，下一步是設一條成本異常告警：
+可見性先於改善，這個順序不能反。看不見的成本無法被歸屬，無法歸屬就無法問責，沒有問責就沒有人去做改善。在可見性建立之後，下一步是設一條成本異常告警：
 
 ```hcl
 resource "aws_ce_anomaly_monitor" "cost" {
@@ -67,7 +67,7 @@ resource "aws_ce_anomaly_subscription" "alert" {
 
 當告警觸發時，因為有 tag，可以立刻定位是哪個團隊的哪類資源在漲，而不是面對一個無法拆解到具體團隊或資源類型的總數。常見的成本異常來源：開發者開了一組大型 instance 測試後忘了關、某個 auto-scaling group 的最大值設太高在流量尖峰長出了大量機器、NAT Gateway 被大量出站流量灌到帳單翻倍。這些情境只要 tag 到位，都能在異常告警觸發後幾分鐘內找到根因。
 
-到了「知道誰花多少、接下來怎麼省」這一步 — reserved instance 的承諾折扣、spot 的可中斷算力、閒置資源的 rightsizing 與排程關機 — 就進入 [維運 模組八：成本管理](/devops/operations/08-cost-management/) 的運行期優化範圍。這一章負責的是讓那些優化「有帳可查、有人可問」。
+到了「知道誰花多少、接下來怎麼省」這一步 — reserved instance 的承諾折扣、spot 的可中斷算力、閒置資源的 rightsizing 與排程關機 — 就進入 [維運 模組八：成本管理](/devops/operations/08-cost-management/) 的運行期改善範圍。這一章負責的是讓那些改善「有帳可查、有人可問」。
 
 成本治理在不同規模下的操作形態差異很大。Netflix 把多套關聯式資料庫統一到 Aurora 後成本下降 28%，核心操作是「把資源種類收斂、讓成本歸因的維度減少」——這在 tagging 已經到位的前提下才做得到，見 [Netflix：Aurora 整併](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)。另一個極端是 Arcjet 用 Redis Streams 取代 managed Kafka，年費從六位數美金降到約 $1k，代價是自行維護 retention 與 consumer group 監控——這個取捨的前提是團隊有能力承擔額外的維運面，見 [Arcjet：Redis Streams 取代 Kafka](/backend/03-message-queue/cases/redis-streams-arcjet-replace-kafka/)。
 
@@ -109,4 +109,4 @@ resource "aws_ce_anomaly_subscription" "alert" {
 
 - → [模組零：infra 是什麼](/devops/infra/00-infra-mindset/)：成熟度階梯的務實節奏思路
 - → [模組七：infra 走 PR 流程](/devops/infra/07-infra-as-pr/)：tag 合規與 secret 掃描整合進 CI pipeline
-- → [維運 模組八：成本管理](/devops/operations/08-cost-management/)：運行期的成本控制與優化手段
+- → [維運 模組八：成本管理](/devops/operations/08-cost-management/)：運行期的成本控制與改善手段

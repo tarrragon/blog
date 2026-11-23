@@ -2,6 +2,8 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
+**Version**: 0.14.0 — 內文的優化、在線、補丁依所指換成台灣用語（最佳化、強化、改善；線上、在線上、同時執行；修補、修補檔、更新檔）。
+
 **Version**: 0.13.5 — decision-timing 兩條與 SKILL.md 分工表的實作指向改成 saas-tech-selection 新拆出的 implementations/ 兩份檔案。
 
 **Version**: 0.13.4 — 多輪審查 Round 4 修正：decision-timing 費用那一條的驗收程序縮成一句並指向 principle 卡與 saas-tech-selection、修正標點；觸發詞收窄成管理通道與支出停損。principle 卡同 saas-tech-selection 1.10.4。

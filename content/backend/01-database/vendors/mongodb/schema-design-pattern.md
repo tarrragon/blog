@@ -155,7 +155,7 @@ db.coll.aggregate([
 
 **Polymorphic 全表掃描**：discriminator 沒進 index、`type: "rare"` 查詢全表 scan。修法用 partial index 把熱類型蓋住、冷類型走全表也只是冷路徑。
 
-**Time-series collection 用錯場景**：把非 timestamp 主導資料塞進 time-series collection、失去 flexibility 又拿不到吞吐紅利。Time-series collection 是專屬優化、不是普適 collection 升級。
+**Time-series collection 用錯場景**：把非 timestamp 主導資料塞進 time-series collection、失去 flexibility 又拿不到吞吐紅利。Time-series collection 是專屬最佳化、不是普適 collection 升級。
 
 Anti-recommendation：
 

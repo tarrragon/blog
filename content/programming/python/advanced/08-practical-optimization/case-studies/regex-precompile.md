@@ -93,7 +93,7 @@ def _matches_pattern(self, content: str, patterns: List[str]) -> bool:
 
 ### Python re 的內部快取
 
-在討論優化之前，我們需要了解 Python `re` 模組的內部機制。
+在討論改善之前，我們需要了解 Python `re` 模組的內部機制。
 
 當你使用 `re.search(pattern, string)` 這樣的函式時，Python 會在內部執行兩個步驟：
 
@@ -314,7 +314,7 @@ def _has_json_output(self, content: str) -> bool:
 
 ### 完整程式碼
 
-以下是完整的優化版本：
+以下是完整的改善版本：
 
 ```python
 #!/usr/bin/env python3

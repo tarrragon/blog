@@ -386,7 +386,7 @@ ComfyUI 用 port 8188、跟 Ollama (11434) / LM Studio (1234) 完全不撞、可
 
 - ComfyUI 主分支 API 短期內穩定（大量社群依賴）。
 - SDXL base 1.0 不會消失、但會被新版本（SDXL 1.1、Flux 等）取代——「下載 .safetensors 放 models/checkpoints/」流程不變。
-- MPS backend 持續優化、效能會提升、但介面不變。
+- MPS backend 持續改善、效能會提升、但介面不變。
 - Python 版本相容性會持續演化、`pip install -r requirements.txt` 偶爾要降版 Python。
 
 讀的時候若 pip install 失敗、看 ComfyUI GitHub issues 跟 PyTorch release notes 對應的 Python 版本。

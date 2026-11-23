@@ -26,7 +26,7 @@ Opsgenie 的核心定位是 *Atlassian 生態內的 on-call 元件*、跟 [Pager
 
 判斷 Opsgenie deployment 是否健康、最少看四件事：
 
-- **誰能 ack alert**：schedule rotation 是否真的有人在線、override 機制是否被濫用（永久 override 掩蓋人力缺口）、escalation policy 的 final step 是否有 fallback team 而非無限循環
+- **誰能 ack alert**：schedule rotation 是否真的有人在線上、override 機制是否被濫用（永久 override 掩蓋人力缺口）、escalation policy 的 final step 是否有 fallback team 而非無限循環
 - **跟 JSM migration plan**：是否已盤點 standalone Opsgenie 跟 JSM on-call 的 feature gap、現有 integration（Datadog / Prometheus webhook、Slack routing、custom API）在 JSM on-call 是否 parity、API token / Terraform config 的轉換路徑
 - **Atlassian Identity 整合**：是否走 Atlassian Access（IdP SSO + SCIM provision + audit log）、還是停留在 Opsgenie 自己的 user store；後者在 migration / offboarding / compliance 都是坑
 - **Slack notification routing**：alert routing 規則是 fan-out 到所有 team channel（吵雜）還是 priority-based（P1 → on-call DM + channel、P3 → channel only）；Slack 是事實上的 incident war room、routing 不對 SOC 就漏接

@@ -346,7 +346,7 @@ JSON column 在 InnoDB 以 binary 格式存、大 JSON 進 off-page storage（`i
 
 ### 跟 Query Optimization
 
-8.0 新 hash join + lateral derived 讓 *EXPLAIN ANALYZE* 結果更複雜。優化複雜 query 需要熟 *新 plan node 類型*。詳見 [Query Optimization](/backend/01-database/vendors/mysql/query-optimization/)。
+8.0 新 hash join + lateral derived 讓 *EXPLAIN ANALYZE* 結果更複雜。最佳化複雜 query 需要熟 *新 plan node 類型*。詳見 [Query Optimization](/backend/01-database/vendors/mysql/query-optimization/)。
 
 ### 跟 Online Schema Change
 

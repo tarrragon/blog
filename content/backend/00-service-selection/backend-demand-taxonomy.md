@@ -57,7 +57,7 @@ tags: ["backend", "service-selection"]
 
 - 活動商品頁在短時間內被大量瀏覽，但商品描述變更頻率低。
 - 每個 API request 都要讀取使用者權限與 [Feature Flag](/backend/knowledge-cards/feature-flag/)。
-- 即時通知服務需要頻繁查詢 [topic](/backend/knowledge-cards/topic/) 的在線訂閱者。
+- 即時通知服務需要頻繁查詢 [topic](/backend/knowledge-cards/topic/) 的線上訂閱者。
 
 這類需求的陷阱是把所有慢查詢都當成快取問題。若查詢慢是因為資料模型、索引、N+1 request、外部 API [timeout](/backend/knowledge-cards/timeout/) 或資料量爆炸，快取只能暫時吸收症狀。讀取壓力要先確認是否有明確 [source of truth](/backend/knowledge-cards/source-of-truth/)、資料能否重建、失效後是否能接受短暫不一致。
 
@@ -79,11 +79,11 @@ tags: ["backend", "service-selection"]
 
 ## 【判讀】即時互動需求要先找狀態補償方式
 
-即時互動需求的核心訊號是「client 持續在線，並期待快速看到變化」。聊天、通知、進度更新、多人協作、presence 與 dashboard 都屬於這類需求。
+即時互動需求的核心訊號是「client 持續在線上，並期待快速看到變化」。聊天、通知、進度更新、多人協作、presence 與 dashboard 都屬於這類需求。
 
 接近真實網路服務的例子包括：
 
-- 客服聊天室需要把新訊息推給在線客服與使用者。
+- 客服聊天室需要把新訊息推給線上客服與使用者。
 - 任務處理頁需要即時顯示轉檔進度。
 - 共同編輯工具需要讓其他使用者看到狀態變化。
 

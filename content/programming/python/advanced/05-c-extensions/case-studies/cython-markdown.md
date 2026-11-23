@@ -112,7 +112,7 @@ class MarkdownLinkChecker:
 
 ## 進階解決方案
 
-### 優化目標
+### 最佳化目標
 
 1. **保持相同的 API**：不改變 `parse_markdown_links()` 的輸入輸出格式
 2. **顯著提升解析速度**：目標 2-5x 加速
@@ -203,9 +203,9 @@ cdef bint is_code_fence(str line):
 - `cdef bint`：使用 C 的布林型別（0 或 1），比 Python 的 `bool` 快
 - `cdef` 函式：只能從 Cython 呼叫，沒有 Python 呼叫開銷
 
-#### 步驟 3：優化迴圈
+#### 步驟 3：最佳化迴圈
 
-使用 Cython 優化主要的解析迴圈：
+使用 Cython 最佳化主要的解析迴圈：
 
 ```cython
 # markdown_parser.pyx (continued)
@@ -801,7 +801,7 @@ Cython:  7.89 ms (+/- 0.312 ms)
 觀察：
 
 - 加速比隨著資料量增加而提高
-- 主要效能提升來自迴圈優化和型別化變數
+- 主要效能提升來自迴圈最佳化和型別化變數
 - 正則表達式仍然是瓶頸（Cython 無法加速 `re` 模組本身）
 
 ## 設計權衡
@@ -816,7 +816,7 @@ Cython:  7.89 ms (+/- 0.312 ms)
 | **IDE 支援**   | 完整                 | 部分（.pyx 支援有限）      |
 | **跨平台**     | 天生跨平台           | 需要為每個平台編譯         |
 
-## 進階優化：使用 C 正則表達式
+## 進階最佳化：使用 C 正則表達式
 
 如果需要更高的效能，可以考慮使用 C 語言的正則表達式庫。以下是使用 PCRE2 的範例：
 
@@ -835,7 +835,7 @@ cdef extern from "pcre2.h":
 # This is an advanced topic, see PCRE2 documentation for details
 ```
 
-不過，對於大多數使用情境，Python 的 `re` 模組配合 Cython 優化的迴圈已經足夠。
+不過，對於大多數使用情境，Python 的 `re` 模組配合 Cython 最佳化的迴圈已經足夠。
 
 ## 適用時機：profiler 確認熱點且程式碼已穩定
 
@@ -947,7 +947,7 @@ def profile_parsers(content: str):
 3. **完整型別宣告**：為所有變數添加型別
 4. **使用 LinkInfo 類別** vs **使用 dict**
 
-記錄每種策略的效能，並分析哪些優化帶來最大效益。
+記錄每種策略的效能，並分析哪些最佳化帶來最大效益。
 
 ## 延伸閱讀
 

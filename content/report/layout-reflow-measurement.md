@@ -2,13 +2,13 @@
 title: "Layout reflow / repaint 的可量化評估"
 date: 2026-04-25
 weight: 35
-description: "Filter slot 切換、CSS 變數寫入、絕對定位重算 — 哪些操作觸發 reflow 而非僅 repaint、用什麼工具量、評估值落在哪個區間值得優化。"
+description: "Filter slot 切換、CSS 變數寫入、絕對定位重算 — 哪些操作觸發 reflow 而非僅 repaint、用什麼工具量、評估值落在哪個區間值得改善。"
 tags: ["report", "事後檢討", "Performance", "CSS", "工程方法論"]
 ---
 
 ## 核心原則
 
-**Reflow 與 repaint 的成本差兩個數量級、用 Performance 面板可以量化判斷哪個發生。** 開發時不需要「全部避開 reflow」、要做的是「知道哪些操作觸發 reflow、規模放大時哪些值得優化」。
+**Reflow 與 repaint 的成本差兩個數量級、用 Performance 面板可以量化判斷哪個發生。** 開發時不需要「全部避開 reflow」、要做的是「知道哪些操作觸發 reflow、規模放大時哪些值得改善」。
 
 ---
 
@@ -37,7 +37,7 @@ tags: ["report", "事後檢討", "Performance", "CSS", "工程方法論"]
 | Performance API（`performance.measure`） | 程式化量自家函式                           |
 | Layout shift (Web Vitals CLS)            | 視覺上的 layout 跳動                       |
 
-優先用 DevTools Performance 量、有具體數字後再決定是否優化。
+優先用 DevTools Performance 量、有具體數字後再決定是否改善。
 
 候選不只一項時，要決定先改哪一項的人先把每一項暫時拿掉各量一次，用差額排順序；`performance.measure` 這類只量自家函式的數字，看不到落在瀏覽器 GPU 程序的成本。這兩點的實例與推導在 [#399 效能最佳化的先後順序要等量完再排](/report/optimization-order-comes-from-removal-measurements/)。
 
@@ -129,7 +129,7 @@ desiredOrder.forEach(function (k) {
 | 改 CSS 變數（簡單 calc）  | 1-5ms    | 頻繁觸發時                      |
 | Forced sync layout        | 5-50ms   | 任何寫後立刻讀的 pattern 都該量 |
 
-預估超過 frame budget（16.67ms）才值得實際量、進一步優化。
+預估超過 frame budget（16.67ms）才值得實際量、進一步改善。
 
 ---
 
@@ -137,10 +137,10 @@ desiredOrder.forEach(function (k) {
 
 四種做法、各自機會成本不同。這個專案選 A（量化評估再決定）當預設、其他做法在特定情境合理。
 
-### A：量化評估、按規模決定優化與否（這個專案的預設）
+### A：量化評估、按規模決定改善與否（這個專案的預設）
 
-- **機制**：用 DevTools Performance 量每個 layout 操作的實際成本、超過 frame budget（16.67ms）才優化
-- **選 A 的理由**：避免過度優化（多數 reflow 成本可接受）、又不漏真正貴的（forced sync layout）
+- **機制**：用 DevTools Performance 量每個 layout 操作的實際成本、超過 frame budget（16.67ms）才改善
+- **選 A 的理由**：避免過度最佳化（多數 reflow 成本可接受）、又不漏真正貴的（forced sync layout）
 - **適合**：所有效能盤點情境
 - **代價**：需要學會用 DevTools Performance、對效能 dispute 要量
 
@@ -173,4 +173,4 @@ desiredOrder.forEach(function (k) {
 | Layout shift 警告                    | 找出觸發 layout 的元素、量穩定性                     |
 | Console 出現「Forced reflow」warning | 找寫後立刻讀的 DOM pattern                           |
 
-**核心原則**：Reflow 是 layout 系統的正常運作、不是要消滅的敵人。盤點時量化看哪些值得優化、哪些可以接受。
+**核心原則**：Reflow 是 layout 系統的正常運作、不是要消滅的敵人。盤點時量化看哪些值得改善、哪些可以接受。

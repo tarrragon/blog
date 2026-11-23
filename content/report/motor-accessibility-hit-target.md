@@ -240,4 +240,4 @@ WCAG 2.5.7（AA）要求 drag 動作有單擊替代 — 例如「拖拽排序」
 | 不可逆操作沒有 confirm         | 加 confirm dialog                    |
 | Filter list 元素緊鄰、容易誤觸 | 加 gap ≥ 8px                         |
 
-**核心原則**：Motor a11y 是「手能否準確點擊」 — 不只給 motor 障礙使用者、行動使用者 / 年長者 / 暫時受限使用者都受益。預設 padding 擴 44px、間距 8px、不可逆操作加 confirm — 這些是基礎、不是優化。
+**核心原則**：Motor a11y 是「手能否準確點擊」 — 不只給 motor 障礙使用者、行動使用者 / 年長者 / 暫時受限使用者都受益。預設 padding 擴 44px、間距 8px、不可逆操作加 confirm — 這些是基礎、不是改善。

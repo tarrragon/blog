@@ -229,7 +229,7 @@ RAG 適用面有邊界、下列情境改用其他方案更划算：
 - Vector database 選型（Pinecone / Weaviate / Chroma / pgvector 等市場格局會變）。Storage layer 的工程判讀（規模驅動升級、dependency 約束、index 生命週期）見 [4.22 RAG storage 工程](/llm/04-applications/vector-storage-engineering/)。
 - Framework API（LangChain / LlamaIndex 的具體呼叫方式半年一變）。
 - 最佳 chunk size 數字（隨 embedding 模型跟 LLM context 能力演化）。
-- Hybrid retrieval / re-ranker 的具體實作（會持續優化）。
+- Hybrid retrieval / re-ranker 的具體實作（會持續改善）。
 
 當這篇文章「過時」的時候、過時的是參考數字跟工具選型；retrieval 本質、失敗模式、跟其他路線的取捨判讀仍會成立。看到新 RAG 工具時、回到本章的 framing：它解的是哪類問題、它的 chunking 策略是什麼、它如何處理五類失敗模式——能很快判斷它解的問題跟你的場景是否對齊。
 

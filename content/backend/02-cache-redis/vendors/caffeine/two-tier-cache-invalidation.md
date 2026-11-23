@@ -168,7 +168,7 @@ redis.subscribe("cache:invalidate", message -> l1.invalidate(message));
 兩層 cache 的工程量集中在跨實例一致性，它跟多個議題交織：
 
 - **跟 [Caffeine overview](/backend/02-cache-redis/vendors/caffeine/)**：overview 點到「跨實例 invalidation 是固有限制」、本文展開 pub/sub 廣播 + TTL 兜底的具體解法。
-- **跟 [Redis connection / pipeline](/backend/02-cache-redis/vendors/redis/connection-pipeline-latency/)**：L1 的價值正是消除 L2 Redis 的 RTT 稅，兩層 cache 是 RTT 優化的極致（L1 命中連網路都省）。
+- **跟 [Redis connection / pipeline](/backend/02-cache-redis/vendors/redis/connection-pipeline-latency/)**：L1 的價值正是消除 L2 Redis 的 RTT 稅，兩層 cache 是 RTT 改善的極致（L1 命中連網路都省）。
 - **跟 [2.6 high concurrency](/backend/02-cache-redis/high-concurrency-access/)**：hot key 的兩層解法（local cache + Redis）就是這個架構，L1 擋掉打在單一熱 key 的洪峰。
 - **跟 [Tinder](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/)**：每次互動查多個 cache 的服務，L1 Caffeine 可擋掉重複讀、降低 L2（ElastiCache）的壓力與 RTT——但 per-user 配對資料重複率低、要判斷哪些放得進 L1。
 

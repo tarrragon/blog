@@ -7,7 +7,7 @@ tags: ["infra", "observability", "logging", "alarm"]
 aliases: ["/infra/06-observability-logging/"]
 ---
 
-可觀測性要跟它監控的資源同生命週期：log group、metric 與 alarm 寫進建立資源的同一套 IaC，資源開出來的那一刻監控就在線，而非等出事才補。少了這條規則的代價很具體：凌晨資料庫 CPU 飆到 100%、API 開始逾時，值班工程師打開 console 想看 log，卻發現那個服務根本沒接 log group、metric 也只有 vendor 預設的幾條粗線，追不到呼叫鏈、查不到錯誤訊息，只能靠重啟賭它恢復。
+可觀測性要跟它監控的資源同生命週期：log group、metric 與 alarm 寫進建立資源的同一套 IaC，資源開出來的那一刻監控就上線，而非等出事才補。少了這條規則的代價很具體：凌晨資料庫 CPU 飆到 100%、API 開始逾時，值班工程師打開 console 想看 log，卻發現那個服務根本沒接 log group、metric 也只有 vendor 預設的幾條粗線，追不到呼叫鏈、查不到錯誤訊息，只能靠重啟賭它恢復。
 
 ## observability 跟 infra 同一套 code、同生命週期
 

@@ -200,7 +200,7 @@ LLM application 把結果塞進 context、回到推論伺服器繼續
 
 - MCP 是 2024-2025 才標準化的協議、未來 5 年可能演化或被新協議補充（協議層更新慢、但會更新）。
 - 各家 function calling spec 的具體格式（OpenAI / Anthropic / 開放標準會持續細化）。
-- Structured output 的具體實作（grammar engines / JSON mode 會持續優化）。
+- Structured output 的具體實作（grammar engines / JSON mode 會持續改善）。
 - 哪些工具有 MCP server 可用（生態 catalog 會擴展）。
 
 看到新協議或新 spec 時、回到本章三層 framing 問：它解的是哪一層？能不能跟既有的另兩層組合？這個問題的答案能很快定位新東西在 stack 中的位置。

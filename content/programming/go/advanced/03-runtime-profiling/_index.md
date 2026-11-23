@@ -24,7 +24,7 @@ Runtime 診斷的核心目標是用資料判斷服務壓力來源。Go 服務長
 | [3.1 GC 與 memory limit](/programming/go/advanced/03-runtime-profiling/gc-memory-limit/)    | GC 與 memory limit         | 理解 heap、GOGC、memory limit 與 runtime [metrics](/backend/knowledge-cards/metrics) 的關係             |
 | [3.2 pprof 基礎診斷流程](/programming/go/advanced/03-runtime-profiling/pprof/)              | pprof 基礎診斷流程         | 用 heap、goroutine、CPU、[trace](/backend/knowledge-cards/trace) profile 定位壓力來源                   |
 | [3.3 goroutine leak 偵測](/programming/go/advanced/03-runtime-profiling/goroutine-leak/)    | goroutine leak 偵測        | 從 stack pattern 回到 context、close、[deadline](/backend/knowledge-cards/deadline) 與 ticker lifecycle |
-| [3.4 資料結構與 allocation 壓力](/programming/go/advanced/03-runtime-profiling/allocation/) | 資料結構與 allocation 壓力 | 區分必要 copy、安全邊界與可優化熱路徑配置                                                               |
+| [3.4 資料結構與 allocation 壓力](/programming/go/advanced/03-runtime-profiling/allocation/) | 資料結構與 allocation 壓力 | 區分必要 copy、安全邊界與可改善熱路徑配置                                                               |
 
 ## 本模組使用的範例主題
 
@@ -49,7 +49,7 @@ Runtime 診斷的核心目標是用資料判斷服務壓力來源。Go 服務長
 2. 什麼情境適合調整 memory limit，什麼情境應該找 leak
 3. heap、goroutine、CPU、trace 各自回答什麼問題
 4. goroutine leak 應回到哪個 lifecycle 邊界修
-5. allocation 優化何時值得做，何時會破壞安全邊界
+5. allocation 改善何時值得做，何時會破壞安全邊界
 
 ## 本模組不處理
 

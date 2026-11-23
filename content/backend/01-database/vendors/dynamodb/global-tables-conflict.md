@@ -38,7 +38,7 @@ Global Tables 不只是 DR / availability、也是正向 access pattern 的工�
 
 **Cross-device sync**（Disney+ 揭露）：用戶在手機看到一半、晚上回家用電視繼續、播放進度跨裝置同步。Global Tables 自然解這個 access pattern — 用戶在不同 region 登入同帳號、寫入自動同步、最終一致性可接受場景。
 
-**Global read（latency 優化）**：跨地域用戶讀取就近 region 副本、latency 從 200ms 降到 < 10ms。read 比 write 多很多倍的 workload（feed / catalog / user profile）受益最大。
+**Global read（latency 改善）**：跨地域用戶讀取就近 region 副本、latency 從 200ms 降到 < 10ms。read 比 write 多很多倍的 workload（feed / catalog / user profile）受益最大。
 
 **DR failover**：region-level outage 時 application 切到 secondary region 繼續服務、RTO 通常 < 5 分鐘（DNS / routing 切換時間、不含 application 端 reconnect）。
 

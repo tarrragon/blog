@@ -59,7 +59,7 @@ Tunnel 形態的入口（cloudflared、Tailscale Funnel）有獨立的弱點盤�
 
 **訊號淹沒**：rollout 本身產生的短暫錯誤（5xx spike、reconnect、auth retry）跟攻擊訊號長得一樣。事故團隊在切流期把所有異常歸因於部署變更，攻擊者剛好利用這個注意力盲區。對策是把切流期 alert 跟安全 alert 分流到不同 channel，安全訊號走獨立通道、由 security on-call 獨立判讀。
 
-**防禦元件版本不一致**：[canary](/backend/knowledge-cards/canary-release/) 期間新舊版本同時在線，WAF 規則、rate limit 設定、auth middleware 版本可能不同。攻擊者可以針對舊版本的已知弱點送流量，利用 canary 期間的路由特性讓流量到達舊版本。對策是把安全元件的更新跟應用版本解耦——WAF 規則、rate limit 是平台層設定，應在所有版本一致生效。
+**防禦元件版本不一致**：[canary](/backend/knowledge-cards/canary-release/) 期間新舊版本同時在線上，WAF 規則、rate limit 設定、auth middleware 版本可能不同。攻擊者可以針對舊版本的已知弱點送流量，利用 canary 期間的路由特性讓流量到達舊版本。對策是把安全元件的更新跟應用版本解耦——WAF 規則、rate limit 是平台層設定，應在所有版本一致生效。
 
 ## 案例對照表（情境 → 判讀 → 注意事項 → 路由章節）
 

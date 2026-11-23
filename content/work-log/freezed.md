@@ -110,7 +110,7 @@ Dart 3.0+ 引入的原生特性可部分替代 freezed：
 
 1. Dart 預設是 **identity equality**（比較記憶體位址）。兩個欄位完全相同的新物件，`==` 仍為 `false`
 2. Riverpod 在 `state = newValue` 時使用 `==` 判斷是否通知 listener rebuild。相同則不通知
-3. Riverpod **本身不做任何額外 equality 優化**，完全依賴物件自身的 `==` 運算子
+3. Riverpod **本身不做任何額外 equality 最佳化**，完全依賴物件自身的 `==` 運算子
 
 ### 此專案的實際影響
 

@@ -152,7 +152,7 @@ main agent 拿到 summary、繼續推進
 | [4.4 Agent 架構](/llm/04-applications/agent-architecture/)              | Agent loop 是 harness 的內部執行迴圈                           |
 | [4.6 應用層協議](/llm/04-applications/application-protocols/)           | Function calling / MCP 是 tool 跟 subagent 之間的協議          |
 | [4.11 Long context](/llm/04-applications/long-context-engineering/)     | Context budget 是 long context 的工程實務面                    |
-| [4.18 Prompt caching](/llm/04-applications/prompt-caching-engineering/) | 是 scaffold 部分（system + tool schema）的 cost / latency 優化 |
+| [4.18 Prompt caching](/llm/04-applications/prompt-caching-engineering/) | 是 scaffold 部分（system + tool schema）的 cost / latency 改善 |
 | [4.19 Agent memory](/llm/04-applications/agent-memory-architecture/)    | History 跟 long-term memory 是 harness 跟 storage 的界面       |
 
 ## 跟具體 coding agent 的 mapping
@@ -169,7 +169,7 @@ main agent 拿到 summary、繼續推進
 
 **Scaffold**：System prompt 較固定、tool list 較簡、Composer mode 是 scaffold variant
 **Harness**：IDE 整合度高、tool dispatch 跨 client / server、streaming response
-**特色**：產品優化重於可客製、scaffold 半開放
+**特色**：產品改善重於可客製、scaffold 半開放
 
 ### Aider
 
@@ -230,4 +230,4 @@ Coding agent 常見失敗：
 
 ## 下一章
 
-下一章：[4.18 Prompt caching 工程實務](/llm/04-applications/prompt-caching-engineering/)、看 scaffold 部分的 cost / latency 優化。
+下一章：[4.18 Prompt caching 工程實務](/llm/04-applications/prompt-caching-engineering/)、看 scaffold 部分的 cost / latency 改善。

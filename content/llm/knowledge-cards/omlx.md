@@ -1,12 +1,12 @@
 ---
 title: "oMLX"
 date: 2026-05-14
-description: "以 MLX 為基礎、針對 Apple Silicon 長 context 與 SSD KV cache 優化的本地推論伺服器路線"
+description: "以 MLX 為基礎、針對 Apple Silicon 長 context 與 SSD KV cache 最佳化的本地推論伺服器路線"
 weight: 1
 tags: ["llm", "knowledge-cards", "mlx", "inference-server"]
 ---
 
-oMLX 的核心概念是「**以 MLX 為基礎、針對 Apple Silicon 長 context 場景優化的推論伺服器路線**」。它不是 [MLX](/llm/knowledge-cards/mlx/) 這個運算框架本身，也不是 [MTP](/llm/knowledge-cards/mtp/) 這類解碼技巧，而是把 MLX serving、長 context 與 KV cache 管理組合成服務層能力。
+oMLX 的核心概念是「**以 MLX 為基礎、針對 Apple Silicon 長 context 場景最佳化的推論伺服器路線**」。它不是 [MLX](/llm/knowledge-cards/mlx/) 這個運算框架本身，也不是 [MTP](/llm/knowledge-cards/mtp/) 這類解碼技巧，而是把 MLX serving、長 context 與 KV cache 管理組合成服務層能力。
 
 ## 跟其他概念的關係
 

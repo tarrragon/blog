@@ -31,12 +31,12 @@ attention(Q, K, V) = softmax(Q · K^T / √d) · V
 
 Attention 的常見變體（影響 KV cache 體積跟推論性能）：
 
-| 變體                               | 描述                                                                    |
-| ---------------------------------- | ----------------------------------------------------------------------- |
-| MHA（Multi-Head Attention）        | 原始 Transformer 設計、每 head 獨立 Q / K / V                           |
-| GQA（Grouped-Query Attention）     | head group 共用 K / V、KV cache 體積減小、推論較快                      |
-| MLA（Multi-head Latent Attention） | DeepSeek 提出、KV cache 壓縮更激進                                      |
-| Flash Attention                    | [演算法層的優化實作](/llm/knowledge-cards/flash-attention/)、跟變體獨立 |
+| 變體                               | 描述                                                                      |
+| ---------------------------------- | ------------------------------------------------------------------------- |
+| MHA（Multi-Head Attention）        | 原始 Transformer 設計、每 head 獨立 Q / K / V                             |
+| GQA（Grouped-Query Attention）     | head group 共用 K / V、KV cache 體積減小、推論較快                        |
+| MLA（Multi-head Latent Attention） | DeepSeek 提出、KV cache 壓縮更激進                                        |
+| Flash Attention                    | [演算法層的最佳化實作](/llm/knowledge-cards/flash-attention/)、跟變體獨立 |
 
 ## 判斷條件與後果
 

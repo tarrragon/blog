@@ -131,7 +131,7 @@ Multi-agent 的核心 trade-off 是**專業化收益跟協調成本的拉鋸**�
 ### Specialization gain：把 agent 拆細的好處
 
 - **單一責任**：每個 agent prompt 短、focus 清楚、debugging 容易。
-- **獨立優化**：每個 agent 可以用不同 model（具體 routing 思路屬於 [4.7 workflow patterns](/llm/04-applications/workflow-patterns/) router 模式）、不同 prompt、獨立 eval。
+- **獨立改善**：每個 agent 可以用不同 model（具體 routing 思路屬於 [4.7 workflow patterns](/llm/04-applications/workflow-patterns/) router 模式）、不同 prompt、獨立 eval。
 - **重用**：同一個 specialist 跨多個系統用、攤平訓練 / 設計成本。
 - **平行**：獨立 agent 可平行跑、latency 降。
 

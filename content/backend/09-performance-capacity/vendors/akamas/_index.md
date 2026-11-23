@@ -37,7 +37,7 @@ Akamas 的核心定位是 *AI-driven autonomous optimization*、不是 monitorin
 
 ## 適用場景
 
-Kubernetes rightsizing 是 Akamas 的主要入口。多服務平台常見問題是 requests / limits、HPA target、replica floor、node pool 與 runtime 參數互相牽動；Akamas 的價值是把這些參數放進同一個優化空間，而非逐項手動調整。
+Kubernetes rightsizing 是 Akamas 的主要入口。多服務平台常見問題是 requests / limits、HPA target、replica floor、node pool 與 runtime 參數互相牽動；Akamas 的價值是把這些參數放進同一個最佳化空間，而非逐項手動調整。
 
 Runtime 與 database tuning 適合需要穩定 SLO 的服務。JVM heap、Go runtime、PostgreSQL、MongoDB、Elasticsearch 或 Spark workload 會同時受配置、資料形狀與流量尖峰影響；optimization tool 可以用可重跑實驗保留調校證據。
 
@@ -45,14 +45,14 @@ FinOps 與 SRE 協作適合用 Akamas 建立共同語言。FinOps 關心浪費�
 
 ## 選型標準
 
-| 判斷標準 | Akamas 的價值                                | 需要補的能力                            |
-| -------- | -------------------------------------------- | --------------------------------------- |
-| 優化目標 | 把 cost、latency、throughput 與 SLO 一起建模 | 明確 business objective 與風險上限      |
-| 參數空間 | 支援 runtime、container、database 與雲端配置 | 服務 owner 對參數語意的審核             |
-| 執行模式 | 支援 human approval、pipeline 與自動化調校   | rollout guardrail、變更紀錄與回退       |
-| 證據保存 | recommendation 可以回寫實驗、約束與預期效益  | production validation 與長期 drift 追蹤 |
+| 判斷標準   | Akamas 的價值                                | 需要補的能力                            |
+| ---------- | -------------------------------------------- | --------------------------------------- |
+| 最佳化目標 | 把 cost、latency、throughput 與 SLO 一起建模 | 明確 business objective 與風險上限      |
+| 參數空間   | 支援 runtime、container、database 與雲端配置 | 服務 owner 對參數語意的審核             |
+| 執行模式   | 支援 human approval、pipeline 與自動化調校   | rollout guardrail、變更紀錄與回退       |
+| 證據保存   | recommendation 可以回寫實驗、約束與預期效益  | production validation 與長期 drift 追蹤 |
 
-優化目標價值來自約束透明。成本降低只有在 latency、availability 與 error budget 邊界內才成立，因此 Akamas 頁面要先問目標函數與 guardrail，再談節省幅度。
+最佳化目標價值來自約束透明。成本降低只有在 latency、availability 與 error budget 邊界內才成立，因此 Akamas 頁面要先問目標函數與 guardrail，再談節省幅度。
 
 參數空間價值來自跨層調校。單看 CPU request 可能會誤判，因為 GC、DB connection、thread pool、replica policy 與 node packing 會一起改變 cost per request。
 
@@ -64,7 +64,7 @@ Akamas 和 Vantage 的主要差異是控制面。Vantage 偏 cost visibility、a
 
 Akamas 和 CloudHealth 的主要差異是操作層級。CloudHealth 偏 enterprise FinOps governance、policy、showback / chargeback 與多雲管理；Akamas 偏 service-level optimization 與工程調校閉環。
 
-Akamas 和 AWS Cost Explorer 的主要差異是範圍與自動化。Cost Explorer 是 AWS-native 成本分析入口；Akamas 可以把成本訊號跟 workload、SLO 與配置實驗接起來，適合需要跨層優化的服務。
+Akamas 和 AWS Cost Explorer 的主要差異是範圍與自動化。Cost Explorer 是 AWS-native 成本分析入口；Akamas 可以把成本訊號跟 workload、SLO 與配置實驗接起來，適合需要跨層最佳化的服務。
 
 ## 操作成本
 
@@ -130,7 +130,7 @@ Evidence package 的核心用途是讓成本調校可以被審查。Akamas recom
 
 Akamas 目前在 09 案例庫中適合作為 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/) 的工具承接點。它可回寫到 [9.C20 Zomato TiDB → DynamoDB 遷移](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 的成本下降 50% 取捨、[9.C12 Riot Games 246 EKS cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 的年省 1000 萬美金的 Kubernetes capacity 調校、[9.C19 Capcom 遊戲後端](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) 的營運成本下降 30%、以及 [9.C2 GR8 Tech 體育博彩](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 的需求降低時成本下降 25% 彈性曲線。
 
-這些案例的重點是優化條件。Akamas 頁引用案例時，應把「某公司節省成本」轉成 workload window、SLO constraint、調整參數、驗證方式與回退條件 — 例如 Zomato 的 4x throughput / 90% latency 改善是同時優化目標、不是只看成本欄位。
+這些案例的重點是改善條件。Akamas 頁引用案例時，應把「某公司節省成本」轉成 workload window、SLO constraint、調整參數、驗證方式與回退條件 — 例如 Zomato 的 4x throughput / 90% latency 改善是同時最佳化目標、不是只看成本欄位。
 
 ## 下一步路由
 

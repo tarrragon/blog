@@ -1,12 +1,12 @@
 ---
 title: "Open and Closed Workload Model（開放與封閉負載模型）"
 date: 2026-10-27
-description: "設計壓測的注入方式、要在固定到達率與固定同時在線人數之間選一種，或壓測量到的延遲低於 production、懷疑負載工具少送了請求時讀"
+description: "設計壓測的注入方式、要在固定到達率與固定同時線上人數之間選一種，或壓測量到的延遲低於 production、懷疑負載工具少送了請求時讀"
 weight: 497
 tags: ["backend", "performance", "load-test", "knowledge-card"]
 ---
 
-Open workload model 與 closed workload model 是負載測試產生請求的兩種方式，差別在新的請求什麼時候送出。open model 依到達率送出：每秒抵達多少個新的虛擬使用者是事先設定的，跟受測服務回應得多快無關；closed model 依同時在線的虛擬使用者數送出：固定數量的虛擬使用者各自送出請求、等到回應、再送下一個，回應沒回來，那個使用者的下一個請求就不會送出。兩種模型各自固定了 [Little's Law](/backend/knowledge-cards/little-law/)（L = λW：L 是同時在系統內的請求數，λ 是到達率，W 是一個請求在系統內停留的時間）裡的一個變數：open model 固定到達率 λ，closed model 固定虛擬使用者的總數 N。虛擬使用者在兩個請求之間沒有停頓（think time）時，N 就是 L；有停頓時，停頓中的使用者不在系統內，L 小於 N。
+Open workload model 與 closed workload model 是負載測試產生請求的兩種方式，差別在新的請求什麼時候送出。open model 依到達率送出：每秒抵達多少個新的虛擬使用者是事先設定的，跟受測服務回應得多快無關；closed model 依同時線上的虛擬使用者數送出：固定數量的虛擬使用者各自送出請求、等到回應、再送下一個，回應沒回來，那個使用者的下一個請求就不會送出。兩種模型各自固定了 [Little's Law](/backend/knowledge-cards/little-law/)（L = λW：L 是同時在系統內的請求數，λ 是到達率，W 是一個請求在系統內停留的時間）裡的一個變數：open model 固定到達率 λ，closed model 固定虛擬使用者的總數 N。虛擬使用者在兩個請求之間沒有停頓（think time）時，N 就是 L；有停頓時，停頓中的使用者不在系統內，L 小於 N。
 
 ## 跟其他概念的關係
 
@@ -28,9 +28,9 @@ Production 流量屬於哪一種模型，看送出請求的一方會不會等回
 
 k6 用 executor 區分：`constant-arrival-rate`、`ramping-arrival-rate` 是 open model，`constant-vus`、`ramping-vus` 是 closed model。
 
-Locust 的使用者數由 `-u`（`--users`，同時在線的使用者數）或 `LoadTestShape` 決定，每個使用者跑完一個 task、等完 `wait_time` 才挑下一個，屬於 closed model；官方文件〈Writing a locustfile〉寫明 wait time 只能限制吞吐量、不會為了達到目標啟動新的使用者。`wait_time` 設成 `constant_throughput` 或 `constant_pacing` 是 pacing；設成 `poisson` 時，官方的說明寫 task 依 Poisson 過程抵達，而停頓仍然加在上一個 task 跑完之後，同樣是 closed model。
+Locust 的使用者數由 `-u`（`--users`，同時線上的使用者數）或 `LoadTestShape` 決定，每個使用者跑完一個 task、等完 `wait_time` 才挑下一個，屬於 closed model；官方文件〈Writing a locustfile〉寫明 wait time 只能限制吞吐量、不會為了達到目標啟動新的使用者。`wait_time` 設成 `constant_throughput` 或 `constant_pacing` 是 pacing；設成 `poisson` 時，官方的說明寫 task 依 Poisson 過程抵達，而停頓仍然加在上一個 task 跑完之後，同樣是 closed model。
 
-JMeter 用 thread group 與 timer 區分：內建的 Thread Group 與 plugin 的 Concurrency Thread Group 固定同時在線的 thread 數，是 closed model；5.5 起內建的 Open Model Thread Group（官方標為 experimental）依排程在每次抵達時建立一個新的 thread、跑完一輪就結束，plugin 的 Arrivals Thread Group 在現有的 thread 都忙時建立新的 thread，兩者都是 open model，Arrivals Thread Group 碰到它的 Concurrency Limit 之後退回 closed；Constant Throughput Timer 與 Precise Throughput Timer 是 pacing。plugin 的 Throughput Shaping Timer 以每秒請求數為目標，但它只能延後 thread、不會多開 thread，thread 數不夠時到不了目標值（jmeter-plugins.org 的說明），所以只有在 thread 數給夠時才接近 open model。
+JMeter 用 thread group 與 timer 區分：內建的 Thread Group 與 plugin 的 Concurrency Thread Group 固定同時執行的 thread 數，是 closed model；5.5 起內建的 Open Model Thread Group（官方標為 experimental）依排程在每次抵達時建立一個新的 thread、跑完一輪就結束，plugin 的 Arrivals Thread Group 在現有的 thread 都忙時建立新的 thread，兩者都是 open model，Arrivals Thread Group 碰到它的 Concurrency Limit 之後退回 closed；Constant Throughput Timer 與 Precise Throughput Timer 是 pacing。plugin 的 Throughput Shaping Timer 以每秒請求數為目標，但它只能延後 thread、不會多開 thread，thread 數不夠時到不了目標值（jmeter-plugins.org 的說明），所以只有在 thread 數給夠時才接近 open model。
 
 ## 判斷條件與後果
 

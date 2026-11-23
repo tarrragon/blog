@@ -15,7 +15,7 @@ aliases: ["/monitoring/knowledge-cards/backpressure/"]
 
 ## 可觀察訊號與例子
 
-需要關注背壓的訊號是 collector 端的 `collector.events.backpressure` 計數器持續上升、或 SDK 端的 `sdk.sampling.rate` 低於 1.0。典型場景：行銷活動導致同時在線使用者暴增 → 所有 SDK 同時 flush → collector channel 瞬間填滿 → 全域 429 → 所有 SDK 動態降採樣。
+需要關注背壓的訊號是 collector 端的 `collector.events.backpressure` 計數器持續上升、或 SDK 端的 `sdk.sampling.rate` 低於 1.0。典型場景：行銷活動導致同時線上使用者暴增 → 所有 SDK 同時 flush → collector channel 瞬間填滿 → 全域 429 → 所有 SDK 動態降採樣。
 
 ## 和 DevOps 背壓的關係
 

@@ -47,7 +47,7 @@ Sticky session 把同一個用戶的 session 綁定到某台實例，session 資
 
 三種途徑之外，session 還有一個一致性問題會在水平擴展、讀寫分離後浮現：剛寫完的資料，馬上讀要讀得到（read-after-write）。當讀路徑走了資料庫的唯讀副本、而副本有複製延遲時，一個用戶剛更新完 session（或剛下單、剛改了餘額），下一個請求若打到副本，可能讀到還沒同步過來的舊資料。
 
-解法是選擇性地路由，而不是把所有讀都無差別送回主庫：用一個 session token 標記「這個 session 剛寫過」，在複製延遲的那個時間窗內（幾秒），把它的讀強制走主庫；過了窗、或本來就容忍稍舊資料的讀（看別人的公開資料、看報表），走副本就好。session 一致性因此是按查詢分類的——不可容忍舊資料的（剛寫完查自己、餘額確認）走主庫，容忍的走副本。這個補丁要花多少工，其實取決於底層的複製延遲有多大，而那是 [Shared storage 選型](/devops/operations/02-horizontal-scaling/shared-storage-selection/) 的 replication 架構決定的。
+解法是選擇性地路由，而不是把所有讀都無差別送回主庫：用一個 session token 標記「這個 session 剛寫過」，在複製延遲的那個時間窗內（幾秒），把它的讀強制走主庫；過了窗、或本來就容忍稍舊資料的讀（看別人的公開資料、看報表），走副本就好。session 一致性因此是按查詢分類的——不可容忍舊資料的（剛寫完查自己、餘額確認）走主庫，容忍的走副本。這個修補要花多少工，其實取決於底層的複製延遲有多大，而那是 [Shared storage 選型](/devops/operations/02-horizontal-scaling/shared-storage-selection/) 的 replication 架構決定的。
 
 ## 下一步路由
 

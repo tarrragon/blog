@@ -43,7 +43,7 @@ Cosmos DB 設計揭露三個全球 KV / document DB 的容量設計重點。
 
 1. **一致性需求分流到不同 collection / table**：同一 application 不同操作有不同一致性需求、用不同 collection 配不同 consistency level、不要一刀切。
 2. **partition key 設計影響容量上限**：跟 DynamoDB 一樣、hot partition 會讓名義容量達不到。Cosmos DB 的特殊性是「synthetic partition key」可以混合多個 field 強制分散。對應 [9.4 Saturation Discovery](/backend/09-performance-capacity/) 的 hot partition 識別。
-3. **RU-based pricing 鼓勵 query 最佳化**：每個 expensive query 都吃 RU、優化 query 直接降成本。對應 [9.9 Performance Improvement Loop](/backend/09-performance-capacity/) 的持續改進迴圈。
+3. **RU-based pricing 鼓勵 query 最佳化**：每個 expensive query 都吃 RU、改善 query 直接降成本。對應 [9.9 Performance Improvement Loop](/backend/09-performance-capacity/) 的持續改進迴圈。
 
 跨平台等效：AWS DynamoDB Global Tables（global KV）、GCP Spanner（global SQL with strong consistency）、ScyllaDB Cloud（自管 Cassandra）都是對等候選。差異是 multi-model 廣度（Cosmos 最廣）vs 一致性深度（Spanner 最強）。
 

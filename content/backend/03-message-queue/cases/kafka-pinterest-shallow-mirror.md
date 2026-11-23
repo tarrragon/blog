@@ -1,5 +1,5 @@
 ---
-title: "3.C12 Pinterest：Shallow Mirror 優化 MirrorMaker"
+title: "3.C12 Pinterest：Shallow Mirror 改善 MirrorMaker"
 date: 2026-05-18
 description: "Pinterest 跨 3 region MirrorMaker、原版解壓+重壓造成 CPU/memory 2-10x spike、改 RecordBatch 層淺迭代。"
 weight: 12

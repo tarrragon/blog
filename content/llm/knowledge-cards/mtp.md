@@ -6,11 +6,11 @@ weight: 1
 tags: ["llm", "knowledge-cards"]
 ---
 
-Multi-Token Prediction（MTP）的核心概念是「[speculative decoding](/llm/knowledge-cards/speculative-decoding/) 的工程化實作」，特指 Google 為 Gemma 4 釋出的官方版本。它包含預訓練好的 [drafter](/llm/knowledge-cards/drafter-model/)、target 模型整合、以及優化過的推論流程。
+Multi-Token Prediction（MTP）的核心概念是「[speculative decoding](/llm/knowledge-cards/speculative-decoding/) 的工程化實作」，特指 Google 為 Gemma 4 釋出的官方版本。它包含預訓練好的 [drafter](/llm/knowledge-cards/drafter-model/)、target 模型整合、以及最佳化過的推論流程。
 
 ## 跟其他概念的關係
 
-MTP 屬於模型推論優化層、跟 [autoregressive](/llm/knowledge-cards/autoregressive/) 基底並列。它是技巧、不是模型架構、也不是 framework；任何推論伺服器都可以選擇實作或忽略 MTP、模型可以選擇有沒有官方 drafter。三件事彼此獨立。
+MTP 屬於模型推論最佳化層、跟 [autoregressive](/llm/knowledge-cards/autoregressive/) 基底並列。它是技巧、不是模型架構、也不是 framework；任何推論伺服器都可以選擇實作或忽略 MTP、模型可以選擇有沒有官方 drafter。三件事彼此獨立。
 
 ## 可觀察訊號與例子
 

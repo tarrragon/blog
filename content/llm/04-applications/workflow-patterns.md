@@ -35,7 +35,7 @@ Multi-call 組合擴展能力範圍、代價是每多一個 call 多一份成本
 - **失敗點**：每個 call 都可能失敗、N 個 call 串起來成功率是個別成功率連乘。
 - **複雜度**：error handling、retry、partial success 處理複雜度爆炸。
 
-「設計 workflow」的核心問題不是「能不能拆成多 call」、是「拆成多 call 的收益值不值得這份成本」。Workflow 設計常見的失敗是過早優化（software engineering idiom：「premature optimization is the root of all evil」、在沒有 profiling 證據前就拆結構、複雜度爆炸但無實質改進）、把簡單問題切成複雜 [DAG（directed acyclic graph、有向無環圖、描述步驟依賴關係的資料結構）](/llm/knowledge-cards/agent/)、最終比 single call 慢、貴、難維護、品質卻沒提升。Single call 在「context 塞得下 + 任務不需要外部 tool + 失敗代價低」的情境下仍是最高 ROI 選項。
+「設計 workflow」的核心問題不是「能不能拆成多 call」、是「拆成多 call 的收益值不值得這份成本」。Workflow 設計常見的失敗是過早最佳化（software engineering idiom：「premature optimization is the root of all evil」、在沒有 profiling 證據前就拆結構、複雜度爆炸但無實質改進）、把簡單問題切成複雜 [DAG（directed acyclic graph、有向無環圖、描述步驟依賴關係的資料結構）](/llm/knowledge-cards/agent/)、最終比 single call 慢、貴、難維護、品質卻沒提升。Single call 在「context 塞得下 + 任務不需要外部 tool + 失敗代價低」的情境下仍是最高 ROI 選項。
 
 四種基本模式各自解不同的「為什麼需要多 call」、下面逐個展開。
 
@@ -73,7 +73,7 @@ Multi-call 組合擴展能力範圍、代價是每多一個 call 多一份成本
 **適合場景**：
 
 - 輸入類型多樣、不同類型需要不同處理（簡單 query 用小模型、複雜 query 用大模型）。
-- Cost 優化（多數簡單請求走便宜 path、少數複雜請求走貴 path）。
+- 降低成本（多數簡單請求走便宜 path、少數複雜請求走貴 path）。
 - 功能分流（query 是 search、summarization、還是 code edit）。
 
 **典型例子**：
@@ -183,7 +183,7 @@ Single call 更適合的訊號：
 - 沒有客觀驗證訊號可用、reflection 沒意義。
 - Latency 敏感、不能接受多次 round trip。
 
-「我先寫個 pipeline」常是過早優化：
+「我先寫個 pipeline」常是過早最佳化：
 
 - 簡單問題切成 5 步、累積誤差大過拆分收益。
 - 為了「靈活性」抽象太多、最終比 single prompt 還難改。

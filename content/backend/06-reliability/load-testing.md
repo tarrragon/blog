@@ -47,7 +47,7 @@ Saturation 的轉折點決定了系統的實際容量上限 — 在什麼負載�
 
 在 inflection point 之後，系統行為會進入幾種退化模式。逐漸退化型的 latency 緩慢爬升，通常來自 queue 堆積或 GC 壓力加重；崩落型的 latency 在某個點突然跳升數倍，通常來自 connection pool 耗盡或 thread pool 飽和。兩種退化的應對策略不同：逐漸退化有 load shedding 的緩衝空間，崩落型需要提早在更低負載觸發限流。越過 inflection point 之後，服務實際呈現的是變慢、請求失敗、無回應還是程序終止，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)。壓測結果需要標註系統屬於哪種退化模式，這個資訊直接影響 [stop condition](/backend/knowledge-cards/stop-condition/) 的門檻設定。
 
-瓶頸定位需要對齊資源層。常見瓶頸包括 CPU saturation、memory pressure、[connection pool](/backend/knowledge-cards/connection-pool) 耗盡、queue depth 堆積與 disk I/O。壓測時需要同步觀測這些資源指標，才能把 latency 劣化歸因到具體 resource。歸因的價值在於讓擴容或優化的投資方向可決策：CPU 瓶頸指向 compute scaling、connection pool 瓶頸指向 pool config 或 connection reuse、queue depth 瓶頸可能指向 consumer 吞吐不足。若只看 latency 劣化但不做歸因，團隊容易直覺式擴容，花了成本卻沒打到真正瓶頸。
+瓶頸定位需要對齊資源層。常見瓶頸包括 CPU saturation、memory pressure、[connection pool](/backend/knowledge-cards/connection-pool) 耗盡、queue depth 堆積與 disk I/O。壓測時需要同步觀測這些資源指標，才能把 latency 劣化歸因到具體 resource。歸因的價值在於讓擴容或改善的投資方向可決策：CPU 瓶頸指向 compute scaling、connection pool 瓶頸指向 pool config 或 connection reuse、queue depth 瓶頸可能指向 consumer 吞吐不足。若只看 latency 劣化但不做歸因，團隊容易直覺式擴容，花了成本卻沒打到真正瓶頸。
 
 Pinterest 的快取可靠性案例揭露一種不直覺的瓶頸類型：cache 命中率崩落時，瓶頸會從 compute 層移到 storage throughput。回源壓力瞬間上升，資料層的 I/O 成為新瓶頸。這種情境在純 compute 壓測中看不到，需要特別設計包含 cache miss 場景的 workload。實務上，cache miss 場景可以用兩種方式模擬：清空 cache 後立即打流量（cold start），或在壓測過程中讓部分 key 過期（partial eviction）。兩者暴露的瓶頸位置可能不同，cold start 偏向 storage 吞吐、partial eviction 偏向 connection pool 與 retry 放大。
 

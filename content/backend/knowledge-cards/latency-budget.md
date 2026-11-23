@@ -17,4 +17,4 @@ Latency budget 是 [Little's Law](/backend/knowledge-cards/little-law/) 的應�
 
 ## 判斷條件與後果
 
-各 stage 的 budget 憑感覺訂、沒有從 SLO 的 end-to-end 上限分下來時，總和可能超過 SLO，每個 stage 都在自己的 budget 內，使用者看到的延遲仍然違反 SLO。某個 stage 的 budget 沒有對應的 current measurement 時，超支的 stage 認不出來，p99 上升時不知道是哪一段用掉了預算。Cross-region call 帶著數十 ms 優化不掉的網路延遲，這段延遲沒有預先算進 budget 時，路徑上其他 stage 的配額實際上已經被它用掉。新增任何 stage（middleware、sidecar、interceptor）都佔用一段延遲，加進去之前沒有從 budget 裡分配時，原本合乎預算的路徑就超支了。
+各 stage 的 budget 憑感覺訂、沒有從 SLO 的 end-to-end 上限分下來時，總和可能超過 SLO，每個 stage 都在自己的 budget 內，使用者看到的延遲仍然違反 SLO。某個 stage 的 budget 沒有對應的 current measurement 時，超支的 stage 認不出來，p99 上升時不知道是哪一段用掉了預算。Cross-region call 帶著數十 ms 最佳化不掉的網路延遲，這段延遲沒有預先算進 budget 時，路徑上其他 stage 的配額實際上已經被它用掉。新增任何 stage（middleware、sidecar、interceptor）都佔用一段延遲，加進去之前沒有從 budget 裡分配時，原本合乎預算的路徑就超支了。

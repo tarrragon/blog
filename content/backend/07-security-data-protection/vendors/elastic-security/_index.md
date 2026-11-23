@@ -32,7 +32,7 @@ Elastic Security 的核心定位是 *Elastic Stack 上的 security solution*、�
 - **誰能改 detection rule**：Elastic Security app 的 rule editor 權限、`detection-rules` repo（Elastic 官方 OSS rule 庫）有沒有 fork 進組織版控、rule change 是否走 PR review + staging space 驗證
 - **採集治理**：Fleet 統一管 Elastic Agent policy / 還是散落 Beats（filebeat / metricbeat / auditbeat / winlogbeat）各自設定、log source 是否分 hot / warm / cold tier、Searchable Snapshots 是否開
 - **Detection content coverage**：Elastic Prebuilt rules + Sigma 社群規則 import 多少 enabled、是否跟 MITRE ATT&CK 對照、EQL sequence 規則覆蓋多少 attack chain pattern
-- **Alert quality / SOC handoff**：alert volume per day、Case 跟 Timeline 是否進入日常 SOC workflow、ML anomaly job 是否在線 + threshold 是否 tuned、跟 [8 incident response](/backend/08-incident-response/) 的 routing 是否定義
+- **Alert quality / SOC handoff**：alert volume per day、Case 跟 Timeline 是否進入日常 SOC workflow、ML anomaly job 是否在線上 + threshold 是否 tuned、跟 [8 incident response](/backend/08-incident-response/) 的 routing 是否定義
 
 四件事任一缺失、就是 [Detection Coverage and Signal Governance](/backend/07-security-data-protection/detection-coverage-and-signal-governance/) 邊界的待補項目。
 

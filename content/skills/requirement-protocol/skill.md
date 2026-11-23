@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: requirement-protocol
 license: MIT
 metadata:
-  version: 0.8.5
+  version: 0.9.0
   category: writing-methodology
 ---
 

@@ -13,8 +13,8 @@ Pub/Sub 常用在即時通知、presence 變更、前端狀態廣播與跨節點
 
 ## 可觀察訊號與例子
 
-當需求是「在線訂閱者盡快收到訊息」時，pub/sub 是常見候選。例如聊天室 typing indicator、任務進度更新、dashboard 即時刷新。若訂閱者離線後仍要補送，通常需要搭配 [offline catch-up](/backend/knowledge-cards/offline-catchup/) 或 durable storage。
+當需求是「線上訂閱者盡快收到訊息」時，pub/sub 是常見候選。例如聊天室 typing indicator、任務進度更新、dashboard 即時刷新。若訂閱者離線後仍要補送，通常需要搭配 [offline catch-up](/backend/knowledge-cards/offline-catchup/) 或 durable storage。
 
 ## 判斷條件與後果
 
-Pub/Sub 適不適用，看訊息遺失的代價。訊息可以遺失時（typing indicator、dashboard 即時刷新），離線的訂閱者錯過的訊息不需要補，pub/sub 的低延遲 fan-out 就滿足需求。訊息需要持久化或重播時，訂閱者離線期間的訊息在它重新連上時已經取不回來，原因是 pub/sub 把事件送給當下在線的訂閱者，通常不保存完整歷史。所以需求轉向高可靠時，關鍵事件改走 [strong reliability](/backend/knowledge-cards/strong-reliability/) 路徑。
+Pub/Sub 適不適用，看訊息遺失的代價。訊息可以遺失時（typing indicator、dashboard 即時刷新），離線的訂閱者錯過的訊息不需要補，pub/sub 的低延遲 fan-out 就滿足需求。訊息需要持久化或重播時，訂閱者離線期間的訊息在它重新連上時已經取不回來，原因是 pub/sub 把事件送給當下線上的訂閱者，通常不保存完整歷史。所以需求轉向高可靠時，關鍵事件改走 [strong reliability](/backend/knowledge-cards/strong-reliability/) 路徑。

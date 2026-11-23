@@ -43,13 +43,13 @@ Toyota Connected 的 MongoDB 選擇揭露三個 IoT / telematics 工程決策的
 
 - 「18 Billion transactions / 月」是 *平台所有服務* 加總、不是 MongoDB 單一 cluster 數字。MongoDB 只承擔其中需要 document storage 的部分、其他走 Lambda 直接處理或寫到 Kinesis。
 - 「3 秒延遲到 agent」包含車載、無線、雲端、UI、agent 操作多個環節。MongoDB 在這個延遲鏈裡通常分到 100-500ms 預算、不是整個 3 秒。
-- MongoDB 6.0+ 有 time series collection 對 IoT 寫入有專屬優化。Toyota 揭露的 20 個 DB 沒明確說有沒有用 time series collection — 對 IoT 案例這是重要區分、但 case study 沒揭露。
+- MongoDB 6.0+ 有 time series collection 對 IoT 寫入有專屬最佳化。Toyota 揭露的 20 個 DB 沒明確說有沒有用 time series collection — 對 IoT 案例這是重要區分、但 case study 沒揭露。
 
 ## 策略
 
 可重用的工程做法：
 
-1. **IoT 高頻 sensor 寫入考慮 MongoDB time series collection（6.0+）**：比 regular collection 寫入吞吐高 3-5x、storage 壓縮率更好。專為 timestamp + metadata + measurement 三段式資料優化。對應 [MongoDB vendor page](/backend/01-database/vendors/mongodb/) 的容量規劃要點段。
+1. **IoT 高頻 sensor 寫入考慮 MongoDB time series collection（6.0+）**：比 regular collection 寫入吞吐高 3-5x、storage 壓縮率更好。專為 timestamp + metadata + measurement 三段式資料最佳化。對應 [MongoDB vendor page](/backend/01-database/vendors/mongodb/) 的容量規劃要點段。
 2. **mission-critical IoT 系統要做 multi-region 跟多供應商備援**：99.99% 不能只靠 MongoDB Atlas 本身、要靠 region 冗餘 + 多條 cellular network + 多個 event bus 路徑。對應 [Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 的 multi-region active-active。
 3. **按 microservice ownership 切 MongoDB cluster、不要單一巨型 cluster**：切分的依據是讓 blast radius 邊界對齊業務邊界，與單一 cluster 的容量上限無關。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/)。
 4. **event-driven 處理 IoT 資料、不用 request-response**：sensor 寫到 Kinesis / Kafka / event bus、microservice 從 stream 消費、寫進 MongoDB。這條 path 避免「sensor 寫不進去 DB 就 retry storm」的問題。對應 [03 訊息佇列模組](/backend/03-message-queue/)。

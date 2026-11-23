@@ -18,4 +18,4 @@ Autoregressive 是 [Transformer](/llm/knowledge-cards/transformer/) 模型用於
 
 ## 判斷條件與後果
 
-理解 autoregressive 後可以判讀幾件事：streaming 只是把已產出的 token 即時顯示、跟生成速度本身無關；回答長度直接影響等待時間；任何「一次生多個 token」的加速技巧（[speculative decoding](/llm/knowledge-cards/speculative-decoding/)、[MTP](/llm/knowledge-cards/mtp/)）都是針對 autoregressive 的優化、而非取代。
+理解 autoregressive 後可以判讀幾件事：streaming 只是把已產出的 token 即時顯示、跟生成速度本身無關；回答長度直接影響等待時間；任何「一次生多個 token」的加速技巧（[speculative decoding](/llm/knowledge-cards/speculative-decoding/)、[MTP](/llm/knowledge-cards/mtp/)）都是針對 autoregressive 的改善、而非取代。

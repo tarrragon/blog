@@ -32,7 +32,7 @@ AWS KMS 的核心定位是 *AWS-only 的 multi-tenant managed key management*，
 - **Multi-Region 與 rotation 策略**：是否啟用 annual automatic rotation（適用 symmetric encryption key）、Multi-Region Key 的 replica 是否跟 DR plan 對齊、asymmetric / signing key 的 manual rotation 流程是否有 runbook
 - **CloudTrail Data Event 必開**：management event 預設記、但 `Encrypt` / `Decrypt` / `GenerateDataKey` 是 data event、預設不記 — 沒這層 forensic 沒著力點、Storm-0558 對照下完全無法回答「誰用哪把 key 簽了什麼 token」
 
-四件事任一缺失、就回到 [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 跟 [Audit Log](/backend/knowledge-cards/audit-log/) 的補丁清單。
+四件事任一缺失、就回到 [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 跟 [Audit Log](/backend/knowledge-cards/audit-log/) 的修補清單。
 
 ## 日常操作與決策形狀
 

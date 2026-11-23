@@ -11,7 +11,7 @@ slug: "locust-performance-regression-gate"
 
 ## Locust 在 regression gate 裡負責的環節：產生負載與內建的 exit code
 
-效能 regression gate 比較這一版與基準版本（baseline）在同一組負載下的延遲、錯誤率與吞吐量，退化超過門檻時擋下 release（[Release Gate](/backend/knowledge-cards/release-gate/)）。Locust 用 Python 寫的 locustfile 描述負載：一個 User class 是一種虛擬使用者，class 裡用 `@task` 標記的方法是它會做的事，task 的權重決定每種事被挑中的比例，`wait_time` 決定做完一個 task 之後停多久；執行時 `-u` 指定同時在線的使用者數上限，`-r` 指定每秒啟動幾個使用者，`-t` 指定執行多久（官方文件〈Configuration〉）。Locust 在 gate 裡做兩件事：照 locustfile 產生負載、記錄每一個請求的延遲與成敗；執行結束時決定 process 的 exit code，CI 依這個 exit code 判斷這一步成功或失敗。
+效能 regression gate 比較這一版與基準版本（baseline）在同一組負載下的延遲、錯誤率與吞吐量，退化超過門檻時擋下 release（[Release Gate](/backend/knowledge-cards/release-gate/)）。Locust 用 Python 寫的 locustfile 描述負載：一個 User class 是一種虛擬使用者，class 裡用 `@task` 標記的方法是它會做的事，task 的權重決定每種事被挑中的比例，`wait_time` 決定做完一個 task 之後停多久；執行時 `-u` 指定同時線上的使用者數上限，`-r` 指定每秒啟動幾個使用者，`-t` 指定執行多久（官方文件〈Configuration〉）。Locust 在 gate 裡做兩件事：照 locustfile 產生負載、記錄每一個請求的延遲與成敗；執行結束時決定 process 的 exit code，CI 依這個 exit code 判斷這一步成功或失敗。
 
 內建的 exit code 只看失敗與例外有沒有發生。官方文件〈Running without the web UI〉寫明，執行中有任何一個失敗的請求時，Locust 以 `--exit-code-on-error` 的值結束（預設 1）；HTTP 回應碼 400 以上算失敗（官方文件〈Writing a locustfile〉的〈Validating responses〉）。Locust 原始碼 `locust/main.py` 的 `shutdown()` 依序判定三件事：有失敗的請求、或 task 裡有未處理的例外（unhandled exception）時，用 `--exit-code-on-error` 的值；兩者都沒有、而 event listener 這類 greenlet（gevent 的輕量協程，Locust 的每個虛擬使用者與事件處理都跑在 greenlet 裡，見 [Gevent Monkey Patching](/backend/knowledge-cards/gevent-monkey-patching/)）裡有未處理的例外時，用 2；三者都沒有時用 0。這個判定沒有門檻：一萬個請求裡失敗一個，exit code 就是 1；全部成功而 p95 延遲變成兩倍，exit code 是 0（有失敗時 1、受測服務變慢而沒有失敗時 0、`--exit-code-on-error` 換值的實測，見 [Locust 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/locust/hands-on/locust-local-lab/) 的〈內建的 exit code：有失敗、沒有失敗但變慢〉）。執行時加了 `--reset-stats`（下文〈預熱與量測區間：--reset-stats 與 on_start 裡的請求〉）時，清空統計的那一刻也清掉已經記下的失敗（`stats.errors`），ramp-up 期間的失敗因此不再影響 exit code；task 例外的紀錄（`runner.exceptions`）不在清空的範圍內。所以 Locust 的 exit code 本身只是一道「零失敗」的檢查，6.13 的三種判讀都要另外寫。
 
@@ -124,7 +124,7 @@ Locust 內建的排除方式是 `--reset-stats`：所有使用者啟動完成時
 
 ## closed model 下前後兩版的比較：延遲與吞吐量
 
-Locust 只有 closed model：同時在線的使用者數由 `-u` 決定，每個使用者做完一個 task、等完 `wait_time` 才挑下一個；官方文件寫明 wait time 只能限制吞吐量，不會為了達到目標啟動新的使用者（官方文件〈Writing a locustfile〉的〈wait_time attribute〉）。受測服務變慢時，每個使用者一輪的時間變長、送出的請求變少，施壓端送出的請求率跟著受測服務的速度下降（機制見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈跟其他概念的關係〉）。所以 regression gate 比較前後兩版時，這一版變慢的時間分成兩處表現：延遲上升，以及每秒請求數下降；只設延遲門檻的 gate 只看得到延遲上升的那一處，延遲還在門檻內、而每秒請求數已經下降的退化會通過；listener 要加上吞吐量的下限，就是上面範例裡 `total_rps_floor` 那一條。
+Locust 只有 closed model：同時線上的使用者數由 `-u` 決定，每個使用者做完一個 task、等完 `wait_time` 才挑下一個；官方文件寫明 wait time 只能限制吞吐量，不會為了達到目標啟動新的使用者（官方文件〈Writing a locustfile〉的〈wait_time attribute〉）。受測服務變慢時，每個使用者一輪的時間變長、送出的請求變少，施壓端送出的請求率跟著受測服務的速度下降（機制見 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈跟其他概念的關係〉）。所以 regression gate 比較前後兩版時，這一版變慢的時間分成兩處表現：延遲上升，以及每秒請求數下降；只設延遲門檻的 gate 只看得到延遲上升的那一處，延遲還在門檻內、而每秒請求數已經下降的退化會通過；listener 要加上吞吐量的下限，就是上面範例裡 `total_rps_floor` 那一條。
 
 退化落在延遲與吞吐量的哪一邊，由 `wait_time` 的設法決定：
 
@@ -158,7 +158,7 @@ locust -f locustfile.py --headless -u 50 -r 5 -t 10m --reset-stats \
   CheckoutUser
 ```
 
-這條指令照官方文件〈Configuration〉的參數組成，沒有實跑。`baseline/checkout.json` 是 CI 從保存證據的位置取回的基準值檔；`-u 50 -r 5 -t 10m`（同時在線 50 個使用者、每秒啟動 5 個、執行 10 分鐘）是佔位值，兩版要用同一組；`<受測環境的位址>` 填這次部署的 staging 位址；`gate-results/run` 是 CSV 檔名的前綴，產出 `run_stats.csv` 這一組檔；最後的 `CheckoutUser` 是 locustfile 裡要執行的 User class，不寫時 Locust 執行檔案裡全部的 User class（`--help` 裡 User classes 那一組參數），nightly 那一份不寫或列出完整的組合。
+這條指令照官方文件〈Configuration〉的參數組成，沒有實跑。`baseline/checkout.json` 是 CI 從保存證據的位置取回的基準值檔；`-u 50 -r 5 -t 10m`（同時線上 50 個使用者、每秒啟動 5 個、執行 10 分鐘）是佔位值，兩版要用同一組；`<受測環境的位址>` 填這次部署的 staging 位址；`gate-results/run` 是 CSV 檔名的前綴，產出 `run_stats.csv` 這一組檔；最後的 `CheckoutUser` 是 locustfile 裡要執行的 User class，不寫時 Locust 執行檔案裡全部的 User class（`--help` 裡 User classes 那一組參數），nightly 那一份不寫或列出完整的組合。
 
 PR 那一份負載低於飽和點（[Saturation Point](/backend/knowledge-cards/saturation-point/)）、只涵蓋關鍵流程，抓的是一次變更造成的明顯延遲退化，用〈quitting listener 的寫法：統計的範圍、百分位數的分桶與回應的驗證〉那段讀基準值檔的 listener 做相對退化的判讀，這是 6.13 定給 slow path 的主要判讀。它抓不到的有兩類。一類是要長時間維持負載才出現的退化：記憶體洩漏、連線池慢慢耗盡、GC 暫停隨堆積的物件變長。另一類是每個請求的資源成本變高：一個請求多用了三成 CPU，請求的延遲主要花在等 I/O 時，低負載下延遲幾乎不變，要到接近飽和時才看得出來；後一類有兩種做法：在 gate 裡另外記錄受測服務每個請求的 CPU 用量、拿它跟基準版本比，或交給 nightly 在接近飽和的負載下量。nightly 那一份時間長、task 組合完整，加上長時間維持負載的 soak 階段，抓的是與時間有關的退化；它也把每一次的 `_stats.csv` 與 `_stats_history.csv` 存下來，替跨次比較的程式累積統計顯著性要的歷次樣本。
 

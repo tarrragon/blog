@@ -1,5 +1,5 @@
 ---
-title: "ECS Fargate 成本分析與優化"
+title: "ECS Fargate 成本分析與改善"
 date: 2026-06-26
 description: "Fargate 的計價模型、與 EC2 launch type 的成本交叉點、Spot 與 Savings Plans 的折扣機制、task 規格的 rightsizing 方法，以及何時該切回 EC2"
 weight: 7
@@ -64,7 +64,7 @@ resource "aws_ecs_service" "api" {
 }
 ```
 
-`base = 2` 確保至少有兩個 on-demand task 在線（不會被回收），`weight` 比例讓後續擴張的 task 優先使用 Spot。中斷發生時 ECS 會自動在 on-demand 上補充，但補充需要時間（task 啟動 + health check 通過），這段期間服務容量會短暫下降。
+`base = 2` 確保至少有兩個 on-demand task 在線上（不會被回收），`weight` 比例讓後續擴張的 task 優先使用 Spot。中斷發生時 ECS 會自動在 on-demand 上補充，但補充需要時間（task 啟動 + health check 通過），這段期間服務容量會短暫下降。
 
 ## Compute Savings Plans
 
@@ -135,13 +135,13 @@ Fargate 的 vCPU 和 memory 不能任意搭配。常用的組合：
 
 切換的判斷不只看成本差額，還要看維運能力。EC2 launch type 需要管理：AMI 更新（安全 patch）、instance draining（rolling update 時把 task 遷走再關 instance）、capacity provider 的擴縮邏輯、instance 的 security group 與 IAM role。
 
-| 判斷維度     | 留在 Fargate        | 切到 EC2                             |
-| ------------ | ------------------- | ------------------------------------ |
-| 月費差額     | < $200              | > $500 且持續 3 個月                 |
-| 團隊維運能力 | 沒有專人管 instance | 有平台工程師或 DevOps                |
-| 流量型態     | 波動大、有明顯離峰  | 穩定、24/7 持續運行                  |
-| GPU 需求     | 不需要              | 需要（Fargate 不支援 GPU）           |
-| 啟動速度     | 可接受 cold start   | 需要 <1s 啟動（EC2 instance 已在線） |
+| 判斷維度     | 留在 Fargate        | 切到 EC2                               |
+| ------------ | ------------------- | -------------------------------------- |
+| 月費差額     | < $200              | > $500 且持續 3 個月                   |
+| 團隊維運能力 | 沒有專人管 instance | 有平台工程師或 DevOps                  |
+| 流量型態     | 波動大、有明顯離峰  | 穩定、24/7 持續運行                    |
+| GPU 需求     | 不需要              | 需要（Fargate 不支援 GPU）             |
+| 啟動速度     | 可接受 cold start   | 需要 <1s 啟動（EC2 instance 已在線上） |
 
 混合部署是常見的中間路線：基線容量用 EC2（成本低、啟動快），尖峰彈性用 Fargate Spot（按需、不需預留）。這需要同時維護兩種 capacity provider，複雜度較高。
 

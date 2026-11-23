@@ -403,7 +403,7 @@ if __name__ == "__main__":
 
 ## 延伸閱讀（進階系列）
 
-- [實戰效能優化：並行處理](/programming/python/advanced/08-practical-optimization/parallel-processing/) - 真實案例的並行化改造
+- [實戰效能改善：並行處理](/programming/python/advanced/08-practical-optimization/parallel-processing/) - 真實案例的並行化改造
 - [asyncio 非同步程式設計](/programming/python/advanced/01-asyncio/) - 學習協程與事件迴圈
 - [GIL 與執行緒模型](/programming/python/advanced/04-cpython-internals/gil-threading/) - 深入理解 GIL 的設計與實現
 - [Free-Threading](/programming/python/advanced/04-cpython-internals/free-threading/) - Python 3.13+ 無 GIL 多執行緒
@@ -411,4 +411,4 @@ if __name__ == "__main__":
 ---
 
 *上一章：[argparse - CLI 介面](/programming/python/basic/03-stdlib/argparse/)*
-*下一章：[效能迷思與優化策略](/programming/python/basic/03-stdlib/performance/)*
+*下一章：[效能迷思與改善策略](/programming/python/basic/03-stdlib/performance/)*

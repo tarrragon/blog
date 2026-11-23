@@ -30,12 +30,12 @@ MySQL 5.7 → 8.0 的 breaking change 在接手和升級情境裡經常遇到：
 
 ## CLI 工具
 
-| 工具          | 功能                    |
-| ------------- | ----------------------- |
-| `mysql`       | 互動式 SQL 查詢         |
-| `mysqldump`   | 匯出資料庫為 SQL 文字檔 |
-| `mysqlcheck`  | 檢查、修復、優化資料表  |
-| `mysqlimport` | 匯入 CSV / TSV 資料     |
+| 工具          | 功能                     |
+| ------------- | ------------------------ |
+| `mysql`       | 互動式 SQL 查詢          |
+| `mysqldump`   | 匯出資料庫為 SQL 文字檔  |
+| `mysqlcheck`  | 檢查、修復、最佳化資料表 |
+| `mysqlimport` | 匯入 CSV / TSV 資料      |
 
 `mysqldump` 是備份的核心工具——一行指令把整個資料庫匯出成可還原的 SQL。phpMyAdmin 的匯出功能底層也是類似的邏輯，但受 web server timeout 限制，大資料庫更適合用 CLI。
 

@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.18.0 — 內文的優化、在線、補丁依所指換成台灣用語（最佳化、強化、改善；線上、在線上、同時執行；修補、修補檔、更新檔）。
+
 **Version**: 2.17.0 — SKILL.md 從約 5,088 tokens 收斂到 5k 以內：「與 requirement-protocol 的分工邊界」與「與其他決策類 Skill 的關係」兩節逐字移到 `references/detailed-techniques.md`，主文各留一行路由（前者在 Step 0 節末，後者在參考文件表的 detailed-techniques 一列）。兩節都只在分不清該用哪個 skill 時才需要。二元處置取捨一節不動，因為它是判斷標準的權威來源
 
 **Version**: 2.16.1 — premortem-workflow 的否定起手句（「不是 X、是 Y」）改成重點先行，核心概念移到句首、被否定的一半留作句尾對照，語意不變

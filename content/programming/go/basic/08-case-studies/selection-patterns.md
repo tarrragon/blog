@@ -26,7 +26,7 @@ Go 選型案例的核心用途是把語言特性對回服務壓力。公司案�
 
 ### 高併發即時服務：先看連線與事件是否長時間存在
 
-高併發即時服務的核心訊號是「server 需要同時管理大量仍然在線的工作」。聊天室、即時通知、直播狀態、代理服務與邊緣網路服務，都可能同時面對大量 connection、[timeout](/backend/knowledge-cards/timeout)、[buffer](/backend/knowledge-cards/buffer)、[backpressure](/backend/knowledge-cards/backpressure) 與 cleanup。Go 的 goroutine、channel、context 與標準網路庫讓這些生命週期可以直接寫在程式裡。
+高併發即時服務的核心訊號是「server 需要同時管理大量仍然在線上的工作」。聊天室、即時通知、直播狀態、代理服務與邊緣網路服務，都可能同時面對大量 connection、[timeout](/backend/knowledge-cards/timeout)、[buffer](/backend/knowledge-cards/buffer)、[backpressure](/backend/knowledge-cards/backpressure) 與 cleanup。Go 的 goroutine、channel、context 與標準網路庫讓這些生命週期可以直接寫在程式裡。
 
 這類案例可以回到 [goroutine：背景工作與服務生命週期](/programming/go/basic/04-concurrency/goroutine/)、[channel：事件流與 backpressure ](/programming/go/basic/04-concurrency/channel/)、[WebSocket 服務架構](/programming/go/advanced/02-networking-websocket/) 對照。
 

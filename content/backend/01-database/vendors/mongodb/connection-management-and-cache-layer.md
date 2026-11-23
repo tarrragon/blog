@@ -186,7 +186,7 @@ Application observability：APM 看 connection acquire latency、cache hit rate 
 - [replica set read preference](../replica-set-read-preference/) — DB 層的 causal consistency session 機制，以及 freshness token 在 DB 與 cache 之間的協議細節
 - [shard key selection](../shard-key-selection/) — cluster 擴容是天級議題、是 scaling layer 的 trigger；單 cluster vs 多 cluster 切分
 - [schema design pattern](../schema-design-pattern/) — app-layer abstraction 跟本文 cache + freshness token 同層協作、contract layer 放在 DB validator、app 層 abstraction 還是兩者並用
-- [aggregation pipeline optimization](../aggregation-pipeline-optimization/) — report dashboard 跑爆 primary 的補位路徑是本文的 cache + read scaling、不是讓 aggregation 自己優化
+- [aggregation pipeline optimization](../aggregation-pipeline-optimization/) — report dashboard 跑爆 primary 的補位路徑是本文的 cache + read scaling、不是讓 aggregation 自己改善
 
 Migration playbook：
 

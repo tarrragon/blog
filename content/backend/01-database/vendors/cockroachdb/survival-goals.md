@@ -15,7 +15,7 @@ tags: ["backend", "database", "cockroachdb", "distributed-sql", "survival-goals"
 multi-region CockroachDB cluster 上線時、團隊最常踩的兩個錯誤期待：
 
 - *「default 配置應該就好、上線後再說」*：default 是 `SURVIVE ZONE FAILURE`，voting replica 全部放在 database 的 primary region，primary region 一失效、這個 database 的寫入就停擺，客訴湧入才發現要重新配
-- *「跨 region 應該會讓全球用戶都更快」*：跨 region quorum 物理上必然 *增* 寫入 latency、把 multi-region 動機誤判成 latency 優化會在 production 撞牆
+- *「跨 region 應該會讓全球用戶都更快」*：跨 region quorum 物理上必然 *增* 寫入 latency、把 multi-region 動機誤判成 latency 改善會在 production 撞牆
 
 讀者進來最常問：
 

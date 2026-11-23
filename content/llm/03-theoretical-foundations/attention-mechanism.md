@@ -117,7 +117,7 @@ masked_scores[i][j] = scores[i][j]   if j ≤ i
 
 ## KV Cache：避免重複計算
 
-[KV Cache](/llm/knowledge-cards/kv-cache/) 是 attention 機制下的關鍵優化。回到 attention 公式：
+[KV Cache](/llm/knowledge-cards/kv-cache/) 是 attention 機制下的關鍵最佳化。回到 attention 公式：
 
 ```text
 Attention(Q, K, V) = softmax(Q @ K^T / sqrt(d_k)) @ V

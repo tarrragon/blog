@@ -323,7 +323,7 @@ void handle(Order o);
 void handlePendingOrder(Order o);
 ```
 
-把 doc 當成命名失敗的補丁有兩個問題：(1)「需要讀 doc 才能用對」的 function 在 IDE 自動補全 / 快速瀏覽時看不到 doc、誤用機率高；(2) 命名其實沒變、別人改 code 時 doc 會跟不上、補丁本身又 outdated。「需要 doc 才能用對」通常是命名沒到位的訊號。
+把 doc 當成命名失敗的修補有兩個問題：(1)「需要讀 doc 才能用對」的 function 在 IDE 自動補全 / 快速瀏覽時看不到 doc、誤用機率高；(2) 命名其實沒變、別人改 code 時 doc 會跟不上、修補本身又 outdated。「需要 doc 才能用對」通常是命名沒到位的訊號。
 
 ### 反模式 2：過度註解
 

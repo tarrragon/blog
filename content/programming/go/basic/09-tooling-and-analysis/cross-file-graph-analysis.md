@@ -276,7 +276,7 @@ func buildSlugIndexes(g *mdcards.Graph) (primary, normalized map[string][]string
 
 ## Parse 成本的實務控制
 
-跨檔分析一次要 parse 幾百個檔案。幾個優化：
+跨檔分析一次要 parse 幾百個檔案。幾個改善：
 
 - **只 parse 一次**：Graph 建好後 L1 / L2 / L4 共用。呼叫端不該重建 Graph。
 - **concurrent parse（選擇性）**：`mdtools` 目前單執行緒 parse ~400 檔案 < 1 秒，沒必要並發。若檔案過萬，用 `golang.org/x/sync/errgroup` + worker pool fan out。

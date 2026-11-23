@@ -188,7 +188,7 @@ test('client 不能竄改 ownerId', async () => {
 
 ## 容量與觀測：`get()` 計費與規則複雜度上限
 
-規則內的每個 `get()` / `exists()` 是一次 document 讀取，計入計費，且單次請求的 document access 有數量上限（以 [官方限制](https://firebase.google.com/docs/firestore/security/rules-conditions) 為準）。高頻讀取路徑若每次都 `get()` 查 membership，成本與延遲都會浮現。優化方向有二：把低頻變動的權限（全域角色）放進 custom claims，從 token 直接讀、零額外 document access；把成員資格設計成可由 document path 直接判斷（例如 membership document 的 ID 就是 uid，用 `exists()` 而非 `get()` 撈整份）。
+規則內的每個 `get()` / `exists()` 是一次 document 讀取，計入計費，且單次請求的 document access 有數量上限（以 [官方限制](https://firebase.google.com/docs/firestore/security/rules-conditions) 為準）。高頻讀取路徑若每次都 `get()` 查 membership，成本與延遲都會浮現。改善方向有二：把低頻變動的權限（全域角色）放進 custom claims，從 token 直接讀、零額外 document access；把成員資格設計成可由 document path 直接判斷（例如 membership document 的 ID 就是 uid，用 `exists()` 而非 `get()` 撈整份）。
 
 觀測上，授權問題不會在規則層留下豐富 log——被拒的請求 client 端收到 `permission-denied`。要把這類錯誤從 client 回報、或在關鍵寫入路徑改走 Cloud Function 以取得 server 端 audit log，接回 [7.7 稽核軌跡](/backend/07-security-data-protection/)。規則本身的變更要進版本控制、每次 deploy 留 diff，授權變更才可回溯。
 

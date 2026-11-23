@@ -128,7 +128,7 @@ ssh -t remote 'TERM=xterm-256color exec zsh -l'
 
 ## 連入、傳輸、安裝的順序
 
-這三件事有一個固定的先後，順序錯了會在中間卡住。先把 sshd 跑起來、從本機連入，取得一個能貼上、可捲動的 session；再把 dotfile 弄進機器（公開 repo 走 HTTPS clone、私有或本地走傳輸）；最後在機器上跑 install.sh 完成安裝。SSH key 是讓「連入」從每次打密碼變成免密碼的優化，可以在任何時候補，不是這條鏈的必要環節、也不是 bootstrap 的前置。
+這三件事有一個固定的先後，順序錯了會在中間卡住。先把 sshd 跑起來、從本機連入，取得一個能貼上、可捲動的 session；再把 dotfile 弄進機器（公開 repo 走 HTTPS clone、私有或本地走傳輸）；最後在機器上跑 install.sh 完成安裝。SSH key 是讓「連入」從每次打密碼變成免密碼的改善，可以在任何時候補，不是這條鏈的必要環節、也不是 bootstrap 的前置。
 
 [模組零的操作順序指引](/linux/dotfile/00-dotfile-mindset/setup-order-guide/) 把「生成 SSH key、部署公鑰」列為標準流程的一環，那是預設你會建 key 的主路徑。這篇補的是它沒展開的另一面：當你手上還沒有 key、或這台機器的 dotfile 根本不需要 key 就能取得時，怎麼一樣把 bootstrap 跑完。
 

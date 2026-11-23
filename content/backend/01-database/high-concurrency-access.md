@@ -282,7 +282,7 @@ Aurora / Cosmos DB / Spanner 的 replication 跟傳統 PostgreSQL streaming repl
 - 加 read replica 不增加 primary 寫入負擔
 - replication lag 從 30 秒級降到 10-30ms（Aurora）
 
-**儲存層與 compute 層 replication 的差異為什麼反映到應用層設計**：compute 層 replication 的 replication lag 通常在秒級、應用層必須處理「剛寫的資料 N 秒內讀不到」的情境 — 常見補丁是 read-after-write consistency（session token 標記「剛寫過」、N 秒內走 primary）、cache invalidation 延遲、或刻意走 primary 的關鍵查詢路徑。Storage 層 replication 的 lag 在毫秒級，cache invalidation 延遲這類補丁可以大幅簡化；lag 仍然不是零，剛寫入就要讀到的查詢（餘額確認）照樣要走 primary 或帶 freshness token。對應 [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 從 30 秒到 10-30ms 不只是「快」、是讓整個應用層 cache invalidation 跟 session routing 邏輯大幅簡化。對應 [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — Aurora 75% performance improvement 主要來自 storage layer 設計、不是 CPU 改善。
+**儲存層與 compute 層 replication 的差異為什麼反映到應用層設計**：compute 層 replication 的 replication lag 通常在秒級、應用層必須處理「剛寫的資料 N 秒內讀不到」的情境 — 常見修補是 read-after-write consistency（session token 標記「剛寫過」、N 秒內走 primary）、cache invalidation 延遲、或刻意走 primary 的關鍵查詢路徑。Storage 層 replication 的 lag 在毫秒級，cache invalidation 延遲這類修補可以大幅簡化；lag 仍然不是零，剛寫入就要讀到的查詢（餘額確認）照樣要走 primary 或帶 freshness token。對應 [DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) — 從 30 秒到 10-30ms 不只是「快」、是讓整個應用層 cache invalidation 跟 session routing 邏輯大幅簡化。對應 [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — Aurora 75% performance improvement 主要來自 storage layer 設計、不是 CPU 改善。
 
 **選型含義**：如果應用層有大量「秒級 stale 會出錯、毫秒級可以接受」的讀取、storage 層 replication 比 compute 層 replication 大幅簡化設計；嚴格的 read-after-write（餘額確認、剛寫的查詢）在兩種設計下都要另外處理。代價是 vendor lock-in 加深、應用層綁定特定雲商。
 

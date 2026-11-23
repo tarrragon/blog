@@ -59,7 +59,7 @@ Standard Chartered 與 DraftKings 是反向佐證：金融帳本 / 博彩這類�
 
 #### 確認 single-writer 是否真的撞牆
 
-當前寫入量 vs 最大 instance class 上限、是否已嘗試過 read/write 分離、是否能用 application 層 sharding。撞牆才考慮 DSQL；沒撞牆是過早優化。
+當前寫入量 vs 最大 instance class 上限、是否已嘗試過 read/write 分離、是否能用 application 層 sharding。撞牆才考慮 DSQL；沒撞牆是過早最佳化。
 
 #### 檢查 DSQL 的相容性代價
 

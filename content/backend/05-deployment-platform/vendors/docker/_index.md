@@ -15,7 +15,7 @@ Docker 是最早 popularize container 的工具、承擔三個責任：container
 讀完本章後、你應該能：
 
 1. 寫 Dockerfile + 跑 docker build / run
-2. 用 multi-stage build / BuildKit 優化 image
+2. 用 multi-stage build / BuildKit 改善 image
 3. 用 Docker Compose 編排 dev 環境
 4. 配置 image registry + scanning + SBOM
 5. 評估 Docker Desktop license 對團隊的影響、選替代（Podman / Rancher Desktop）
@@ -120,7 +120,7 @@ docker push ghcr.io/<org>/myapp:1
 - Docker image 跟 containerd 相容（OCI standard）
 - production 不用 Docker、用 containerd
 
-### Image size 優化
+### Image size 最佳化
 
 子議題：
 

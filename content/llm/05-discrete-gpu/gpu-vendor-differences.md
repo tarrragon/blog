@@ -40,7 +40,7 @@ NVIDIA GPU + CUDA backend 是 2026 年本地 LLM 社群的事實預設。原因�
 
 1. **VRAM 容量決定模型上限**：16GB 起步可跑 30B MoE 卸載、24GB 跑 32B Dense、32GB 跑 70B Dense。
 2. **VRAM 頻寬決定生字速度上限**：同 VRAM 容量下、頻寬接近兩倍的卡（如 5070 Ti 對 5060 Ti）生字速度通常顯著差。
-3. **CUDA compute capability**：影響某些優化能否啟用、新世代卡通常有額外指令支援。
+3. **CUDA compute capability**：影響某些最佳化能否啟用、新世代卡通常有額外指令支援。
 4. **driver 長期支援**：較新世代卡的 driver 支援週期通常較長、適合長時間用。
 
 ## AMD ROCm 與 Radeon

@@ -38,4 +38,4 @@ probability distribution → 挑下一個 token
 
 ## 判斷條件與後果
 
-理解 forward pass 後可以判讀 LLM 的記憶體與速度：每次 forward pass 都要把整份模型權重從記憶體讀到處理器一次、所以 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 是推論瓶頸；[KV cache](/llm/knowledge-cards/kv-cache/) 的存在是為了避免每次 forward pass 重算前面 token 的 K/V；MTP / speculative decoding 都是「一次 forward pass 攤平多個 token 成本」的優化路徑。
+理解 forward pass 後可以判讀 LLM 的記憶體與速度：每次 forward pass 都要把整份模型權重從記憶體讀到處理器一次、所以 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 是推論瓶頸；[KV cache](/llm/knowledge-cards/kv-cache/) 的存在是為了避免每次 forward pass 重算前面 token 的 K/V；MTP / speculative decoding 都是「一次 forward pass 攤平多個 token 成本」的改善路徑。

@@ -309,7 +309,7 @@ weight: -1
 | 卡片                                                                   | 核心問題                                                                  |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | [Batching](/llm/knowledge-cards/batching/)                             | 多 request 一起跑、攤平 memory bandwidth 成本、throughput vs latency 取捨 |
-| [Prefix Cache](/llm/knowledge-cards/prefix-cache/)                     | 多個請求共用前綴的 KV cache 重用優化                                      |
+| [Prefix Cache](/llm/knowledge-cards/prefix-cache/)                     | 多個請求共用前綴的 KV cache 重用最佳化                                    |
 | [MoE](/llm/knowledge-cards/moe/)                                       | Mixture of Experts 架構、總參數大但每 token 計算量小                      |
 | [Active Parameter](/llm/knowledge-cards/active-parameter/)             | MoE 每 token 實際參與計算的參數量                                         |
 | [MoE CPU Offload（CPU 卸載）](/llm/knowledge-cards/moe-cpu-offload/)   | 把 MoE 不活躍專家放系統 RAM、讓有限 VRAM 跑大模型                         |

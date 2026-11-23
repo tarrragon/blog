@@ -11,7 +11,7 @@ aliases: ["/python-advanced/08-practical-optimization/case-studies/lru-cache-bra
 
 ## 先備知識
 
-- [入門系列 3.8 效能優化](/programming/python/basic/03-stdlib/performance/)
+- [入門系列 3.8 效能改善](/programming/python/basic/03-stdlib/performance/)
 - 基本的 Git 分支概念
 
 ## 問題背景

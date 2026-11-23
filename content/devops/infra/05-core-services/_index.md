@@ -105,7 +105,7 @@ data "aws_vpc" "main" {
 | [入口上 IaC — ALB、TLS 與健康檢查](/devops/infra/05-core-services/loadbalancer-alb/)                | listener、target group、健康檢查閾值設計、ACM 憑證與 DNS 別名                            |
 | [Stateful 資源保護與跨服務依賴表達](/devops/infra/05-core-services/stateful-protection-dependency/) | multi-AZ 邊界、備份保留、刪除保護、stateful vs stateless 操作差異、output 與 data source |
 | [ACM 憑證、DNS 與 HTTPS 設定](/devops/infra/05-core-services/acm-tls-dns-setup/)                    | hosted zone、DNS 驗證、TLS listener、HTTP redirect、SAN 憑證、續期監控                   |
-| [ECS Fargate 成本分析與優化](/devops/infra/05-core-services/ecs-fargate-cost-optimization/)         | Fargate vs EC2 成本比較、Fargate Spot、Savings Plans、task rightsizing                   |
+| [ECS Fargate 成本分析與改善](/devops/infra/05-core-services/ecs-fargate-cost-optimization/)         | Fargate vs EC2 成本比較、Fargate Spot、Savings Plans、task rightsizing                   |
 
 ## 跨分類引用
 

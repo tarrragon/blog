@@ -138,7 +138,7 @@ Agent 適用面有邊界、判讀 framework：
 
 實務上常見的「該用但失敗了」「不該用但成功了」灰色帶、列幾個典型情境跟判讀路徑：
 
-- **目標可分解但子步驟驗證不夠客觀**：如「優化這段 code 的可讀性」、可以分成「重構函式 / 加註解 / rename 變數」、但「好不好」沒客觀驗證。Agent 跑完可能改成「自己覺得好」的版本、跟使用者期待差很多。判讀：改用 single-call + 人類審查、或加明確的 lint / formatter 當客觀驗證。
+- **目標可分解但子步驟驗證不夠客觀**：如「改善這段 code 的可讀性」、可以分成「重構函式 / 加註解 / rename 變數」、但「好不好」沒客觀驗證。Agent 跑完可能改成「自己覺得好」的版本、跟使用者期待差很多。判讀：改用 single-call + 人類審查、或加明確的 lint / formatter 當客觀驗證。
 - **失敗代價不對稱**：如 production database migration、子步驟清楚（dump → migrate → verify）、但中間失敗可能毀資料。判讀：用 agent 但強制每步要 human-in-the-loop confirm、或拆成 agent 生 migration script + 人類執行兩階段。
 - **子步驟之間有強依賴**：如「研究某 topic → 寫摘要 → 翻譯」、agent 容易在中間步驟漂掉、累積誤差傳到最後。判讀：強依賴 chain 走 single-call sequential pipeline、不走 agent loop。
 - **任務在訓練分佈邊緣**：如 niche domain（特定 framework、罕見語言）的 multi-step 任務、模型對該 domain 沒看過 multi-step 範例、容易在 step transition 漏 context。判讀：先 small-scale 驗證 agent 在這個 domain 表現、再決定要不要 scale up。

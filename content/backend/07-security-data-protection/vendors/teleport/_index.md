@@ -81,7 +81,7 @@ Teleport 的核心定位是 *infrastructure access plane*、不是 IdP、不是 
 
 **Device Trust — 裝置驗證**：除了 user identity + MFA、Teleport Enterprise 還可以強制 *只有企業 enrolled 裝置可以連 prod*。裝置透過 TPM / Secure Enclave 註冊 hardware-bound key、Teleport login 時驗證裝置 cert。對應 BYOD 風險 — 即使 attacker 拿到 user credential + MFA token、沒有企業裝置就連不進 prod。
 
-**Moderated Session + Session Live View**：高敏 session 設定 *需要第二人在線 moderate*、SOC analyst 即時看 keystroke、可以 `kill session`。對應金融 / 政府的「四眼原則」合規要求。Live View 也可以給 SOC 在 incident 進行中即時看 attacker 操作（如果 attacker 不知道被監聽）。
+**Moderated Session + Session Live View**：高敏 session 設定 *需要第二人在線上 moderate*、SOC analyst 即時看 keystroke、可以 `kill session`。對應金融 / 政府的「四眼原則」合規要求。Live View 也可以給 SOC 在 incident 進行中即時看 attacker 操作（如果 attacker 不知道被監聽）。
 
 **FedRAMP / HIPAA / PCI compliance**：Teleport Enterprise 有 FedRAMP Moderate authorization、Self-hosted 模式可部署 air-gapped 環境、audit log 滿足 HIPAA / PCI 的 access logging 要求。Cloud 版本走 SOC 2 Type II、FedRAMP 版本走 GovCloud 部署。
 

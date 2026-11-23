@@ -7,19 +7,19 @@ tags: ["backend", "performance", "capacity", "vendor", "locust", "load-test"]
 slug: "locust-capacity-probing"
 ---
 
-用 Locust 做容量探測的人，要判斷的是目前的配置在延遲目標內處理得了多少負載、先用完的是哪一項資源、要加什麼。這篇整理這個判斷在 Locust 上的做法：Locust 在 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 的 ramp-up 測試裡負責哪一段；Locust 只提供 closed model（[Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)），所以逐級加壓寫成逐級增加同時在線的使用者數，用 `LoadTestShape` 的 `tick()` 排出倍數加壓與小增量的兩段；從 `--csv` 產生的歷史紀錄裡的使用者數、每秒請求數與延遲百分位數，照 [Little's Law](/backend/knowledge-cards/little-law/) 換算出受測服務處在線性區、knee 還是吞吐量停住的狀態；受測服務的流量屬於到達率型時，closed model 量到的延遲為什麼偏低（coordinated omission），`constant_throughput` 的速率上限在什麼條件下才等於送出的負載；task 的權重怎麼對應 production 的操作分布，以及 closed model 下一個變慢的 endpoint 怎麼拉低其他 endpoint 的負載；執行 Locust 的機器（施壓端，load generator）上 worker 程序要先確認的 CPU、會卡住 gevent 的 client 函式庫、連線池與網卡，worker 的數量怎麼量出來，master 與 `--expect-workers` 的角色；自訂 client 的連線池、逾時與重試怎麼對齊 production；量完要記下哪些條件才寫得成容量結論；延遲上升或吞吐量停住時依序查哪幾件事。飽和的定義、ramp-up 的方法與 CPU、記憶體、磁碟、網路、連線池、外部 API 配額這幾個資源的判讀是 9.4 的內容，本篇只寫它們在 Locust 上的做法。Locust 的安裝、locustfile 的完整語法與 Locust Cloud 在 [Locust 官方文件](https://docs.locust.io/en/stable/)；同一個工具接進 CI、擋下效能退化的寫法在 [Locust 在效能 regression gate 的用法：exit code 與門檻判定、預熱與 on_start 的請求、closed model 下的比較、custom client 回報的請求範圍、PR 與 nightly 的分工、證據保存與 gate 失敗的排查順序](/backend/06-reliability/vendors/locust/locust-performance-regression-gate/)；用 open model 注入的工具做同一件事，寫在 [Gatling 在容量探測的用法：open model 的逐級加壓、knee point 的判讀、施壓端的檢查、feeder 資料的分佈與排查順序](/backend/09-performance-capacity/vendors/gatling/gatling-capacity-probing/)。
+用 Locust 做容量探測的人，要判斷的是目前的配置在延遲目標內處理得了多少負載、先用完的是哪一項資源、要加什麼。這篇整理這個判斷在 Locust 上的做法：Locust 在 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 的 ramp-up 測試裡負責哪一段；Locust 只提供 closed model（[Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)），所以逐級加壓寫成逐級增加同時線上的使用者數，用 `LoadTestShape` 的 `tick()` 排出倍數加壓與小增量的兩段；從 `--csv` 產生的歷史紀錄裡的使用者數、每秒請求數與延遲百分位數，照 [Little's Law](/backend/knowledge-cards/little-law/) 換算出受測服務處在線性區、knee 還是吞吐量停住的狀態；受測服務的流量屬於到達率型時，closed model 量到的延遲為什麼偏低（coordinated omission），`constant_throughput` 的速率上限在什麼條件下才等於送出的負載；task 的權重怎麼對應 production 的操作分布，以及 closed model 下一個變慢的 endpoint 怎麼拉低其他 endpoint 的負載；執行 Locust 的機器（施壓端，load generator）上 worker 程序要先確認的 CPU、會卡住 gevent 的 client 函式庫、連線池與網卡，worker 的數量怎麼量出來，master 與 `--expect-workers` 的角色；自訂 client 的連線池、逾時與重試怎麼對齊 production；量完要記下哪些條件才寫得成容量結論；延遲上升或吞吐量停住時依序查哪幾件事。飽和的定義、ramp-up 的方法與 CPU、記憶體、磁碟、網路、連線池、外部 API 配額這幾個資源的判讀是 9.4 的內容，本篇只寫它們在 Locust 上的做法。Locust 的安裝、locustfile 的完整語法與 Locust Cloud 在 [Locust 官方文件](https://docs.locust.io/en/stable/)；同一個工具接進 CI、擋下效能退化的寫法在 [Locust 在效能 regression gate 的用法：exit code 與門檻判定、預熱與 on_start 的請求、closed model 下的比較、custom client 回報的請求範圍、PR 與 nightly 的分工、證據保存與 gate 失敗的排查順序](/backend/06-reliability/vendors/locust/locust-performance-regression-gate/)；用 open model 注入的工具做同一件事，寫在 [Gatling 在容量探測的用法：open model 的逐級加壓、knee point 的判讀、施壓端的檢查、feeder 資料的分佈與排查順序](/backend/09-performance-capacity/vendors/gatling/gatling-capacity-probing/)。
 
 本篇的程式碼區塊都照官方文件與官方 examples repo 的語法組成，沒有實跑；寫到原始碼行為的地方，以 2026 年 10 月 GitHub 上 locustio/locust 的 master 分支為準（PyPI 上當時的版本是 2.47.0），同樣沒有實跑。
 
 ## Locust 在容量探測裡負責的環節
 
-容量探測要量出受測服務在延遲與錯誤率目標之內處理得了的最大負載（[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)〈概念定位〉；設計容量另以 knee point 為上限，9.4〈Saturation 的精確定義〉），以及到達那個值時哪一項資源先用完（9.4〈Resource saturation 的六個維度〉）。Locust 用這幾個名字區分它執行的內容：User class 是一種虛擬使用者的行為，裡面的 task 是一次要執行的動作（送出一個或幾個請求），`wait_time` 決定一個 task 跑完之後等多久再挑下一個，`LoadTestShape` 決定每一刻同時在線的使用者數。Locust 在這裡做兩件事：照 shape 逐級增加使用者，大約每秒記錄一次當時的使用者數、每秒請求數、每秒失敗數與延遲分佈。
+容量探測要量出受測服務在延遲與錯誤率目標之內處理得了的最大負載（[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)〈概念定位〉；設計容量另以 knee point 為上限，9.4〈Saturation 的精確定義〉），以及到達那個值時哪一項資源先用完（9.4〈Resource saturation 的六個維度〉）。Locust 用這幾個名字區分它執行的內容：User class 是一種虛擬使用者的行為，裡面的 task 是一次要執行的動作（送出一個或幾個請求），`wait_time` 決定一個 task 跑完之後等多久再挑下一個，`LoadTestShape` 決定每一刻同時線上的使用者數。Locust 在這裡做兩件事：照 shape 逐級增加使用者，大約每秒記錄一次當時的使用者數、每秒請求數、每秒失敗數與延遲分佈。
 
 找 knee point（延遲開始隨負載不成比例上升的那一級負載，[Saturation Point](/backend/knowledge-cards/saturation-point/)）要用到兩邊的資料：Locust 的紀錄寫出每一級使用者數下吞吐量與延遲怎麼變，受測服務的資源指標寫出是哪一項資源在排隊。只看 Locust 的紀錄找得到 knee 在哪一級，說不出它為什麼在那裡。`--exit-code-on-error` 在請求有任何失敗時讓 Locust 以非零的 exit code 結束（官方文件〈Configuration〉，預設值是 1）；容量探測本來就要把負載加到 knee 以上，失敗是預期內的結果，所以這個 exit code 在這裡不代表探測失敗。
 
 ## closed model 下的逐級加壓：LoadTestShape 的 tick
 
-Locust 的使用者跑完一個 task、等完 `wait_time` 才挑下一個 task，回應沒回來時那個使用者的下一個請求不會送出，所以 Locust 產生的是 closed model 的負載。官方文件〈Writing a locustfile〉在 `wait_time` 那一節寫明：wait time 只能限制吞吐量，不會為了達到目標啟動新的使用者。逐級加壓因此寫成逐級增加同時在線的使用者數 N。下文的 W 是每一輪 task 從送出第一個請求到收齊回應花的時間：task 只送一個請求時就是那個請求的延遲，其中包含網路往返與 client 這一端的時間。量的是 N 加到多少時 W 開始上升、吞吐量的增幅開始小於 N 的增幅（knee），以及 N 再加時吞吐量不再增加（已經越過上限）。
+Locust 的使用者跑完一個 task、等完 `wait_time` 才挑下一個 task，回應沒回來時那個使用者的下一個請求不會送出，所以 Locust 產生的是 closed model 的負載。官方文件〈Writing a locustfile〉在 `wait_time` 那一節寫明：wait time 只能限制吞吐量，不會為了達到目標啟動新的使用者。逐級加壓因此寫成逐級增加同時線上的使用者數 N。下文的 W 是每一輪 task 從送出第一個請求到收齊回應花的時間：task 只送一個請求時就是那個請求的延遲，其中包含網路往返與 client 這一端的時間。量的是 N 加到多少時 W 開始上升、吞吐量的增幅開始小於 N 的增幅（knee），以及 N 再加時吞吐量不再增加（已經越過上限）。
 
 `LoadTestShape` 是 locustfile 裡的一個 class，Locust 找到它就自動使用；Locust 大約每秒呼叫一次它的 `tick()`，`tick()` 回傳「使用者總數、每秒啟動或停止幾個使用者」的 tuple，回傳 `None` 時結束這次執行（官方文件〈Configuration〉的〈Custom load shapes〉）。[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 的 ramp-up 從平常時段的負載起按倍數加壓、每一級維持 5 到 10 分鐘，寫成 shape 是一張「使用者數、維持秒數」的表：
 
@@ -80,7 +80,7 @@ class FineSteps(LoadTestShape):
 
 `spawn_rate` 決定每一級開頭那一段：從 200 加到 400 個使用者、每秒啟動 20 個，要 10 秒才到齊，這 10 秒的使用者數低於這一級的設定，讀穩態時要略過每一級的開頭。新啟動的使用者先執行一次 `on_start`（User class 有寫的話），再依權重挑 task（官方文件〈Writing a locustfile〉）。登入、取 token 寫在 `on_start` 時，每一級開頭都有認證請求的尖峰，請求數是這一級新增的使用者數，送出的速度是 `spawn_rate`；受測服務的認證元件在每一級開頭出現尖峰、穩態時回落，是這個原因，不是那一級的飽和。登入寫在 `@task` 裡時，認證請求混在每一輪 task 裡，量到的容量裡混著認證元件的處理能力。
 
-closed model 下要模擬瞬間湧入（搶票開賣這類），`tick()` 回傳的使用者數在一兩秒內跳高、`spawn_rate` 設大：這模擬的是同時在線的使用者突增，每個使用者仍然等到回應才送下一個請求，受測服務一變慢，送出的請求就跟著變少，跟到達率突增的 production 流量不同。[9.C16 SeatGeek：DynamoDB + Lambda 打造的虛擬等候室](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 的 Queueing 模式讓受保護區只容納預設的並發人數、其餘依 FIFO 排隊；這種准入控制後面的服務，同時在線的使用者數由准入的上限決定，closed model 的 N 對得上那個上限，是 Locust 量得準的形狀。這一點是依案例描述的機制推論的，案例本身沒有量到。
+closed model 下要模擬瞬間湧入（搶票開賣這類），`tick()` 回傳的使用者數在一兩秒內跳高、`spawn_rate` 設大：這模擬的是同時線上的使用者突增，每個使用者仍然等到回應才送下一個請求，受測服務一變慢，送出的請求就跟著變少，跟到達率突增的 production 流量不同。[9.C16 SeatGeek：DynamoDB + Lambda 打造的虛擬等候室](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 的 Queueing 模式讓受保護區只容納預設的並發人數、其餘依 FIFO 排隊；這種准入控制後面的服務，同時線上的使用者數由准入的上限決定，closed model 的 N 對得上那個上限，是 Locust 量得準的形狀。這一點是依案例描述的機制推論的，案例本身沒有量到。
 
 ## 從每秒請求數與延遲判讀受測服務的狀態
 
@@ -180,7 +180,7 @@ worker 把每個請求的延遲以大約兩位有效數字分桶計數（147 毫
 
 ## 容量結論要記下的條件
 
-容量探測的結論寫成條件句：「在這個配置下、同時在線多少個使用者、平均停頓多少秒、p99 低於多少毫秒的條件下，每秒成功處理多少個請求，先飽和的是哪一項資源，距離飽和點還剩多少餘裕（[Headroom Budget](/backend/knowledge-cards/headroom-budget/)）」（[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)〈概念定位〉、〈Saturation 文件化：容量地圖〉）。條件句裡「每秒成功處理多少個請求」填的是 knee 之前最後一個 p99 持平的級、延遲目標內最後一級與錯誤率目標內最後一級三者中最低的那一級，條件句裡同時寫出錯誤率目標。Locust 的單位是同時在線的使用者數，換算成到達率時，吞吐量的上限可以直接用，延遲目標內的負載照〈到達率型的服務：coordinated omission 與 constant_throughput 的上限〉註明是 closed model 量的、或用 pacing 量到哪一級為止。這個結論是 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) 的輸入，那一章拿 knee 與 headroom 換算成預期的峰值要幾個副本。
+容量探測的結論寫成條件句：「在這個配置下、同時線上多少個使用者、平均停頓多少秒、p99 低於多少毫秒的條件下，每秒成功處理多少個請求，先飽和的是哪一項資源，距離飽和點還剩多少餘裕（[Headroom Budget](/backend/knowledge-cards/headroom-budget/)）」（[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)〈概念定位〉、〈Saturation 文件化：容量地圖〉）。條件句裡「每秒成功處理多少個請求」填的是 knee 之前最後一個 p99 持平的級、延遲目標內最後一級與錯誤率目標內最後一級三者中最低的那一級，條件句裡同時寫出錯誤率目標。Locust 的單位是同時線上的使用者數，換算成到達率時，吞吐量的上限可以直接用，延遲目標內的負載照〈到達率型的服務：coordinated omission 與 constant_throughput 的上限〉註明是 closed model 量的、或用 pacing 量到哪一級為止。這個結論是 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) 的輸入，那一章拿 knee 與 headroom 換算成預期的峰值要幾個副本。
 
 條件句的每一項都要能回溯到這次執行：
 

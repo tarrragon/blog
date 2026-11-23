@@ -99,7 +99,7 @@ aliases: ["/python-advanced/05-c-extensions/when-to-use/"]
 | 包裝現有 C 函式庫（無原始碼） | cffi (ABI)           | 較好的型別支援       |
 | 包裝現有 C 函式庫（有原始碼） | cffi (API) 或 Cython | 效能更好             |
 | 包裝 C++ 函式庫               | pybind11             | C++ 原生支援         |
-| 優化 Python 程式碼瓶頸        | Cython               | 漸進式優化           |
+| 改善 Python 程式碼瓶頸        | Cython               | 漸進式最佳化         |
 | 新專案追求最小二進位          | nanobind             | 現代設計             |
 | 需要跨直譯器支援 (PyPy)       | cffi                 | PyPy 官方推薦        |
 
@@ -521,7 +521,7 @@ nanobind  → 新專案，追求最小化
 
 2. 選擇一個你熟悉的 C 函式庫，分別用 ctypes 和 cffi 包裝，比較開發體驗
 
-3. 將一個 Python 效能瓶頸用 Cython 優化，記錄優化過程和效能提升
+3. 將一個 Python 效能瓶頸用 Cython 最佳化，記錄最佳化過程和效能提升
 
 ## 延伸閱讀
 

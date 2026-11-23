@@ -29,7 +29,7 @@ weight: 13
 | 用法            | Prompt → response                | Text → vector                                                      |
 | Pretrained 起點 | 從 scratch 或繼承 base           | 通常從 base LLM 抽 hidden state 開始                               |
 
-關鍵理解：**不能拿任意 LLM 的最後 hidden state 當 embedding** — LLM hidden state 是為「預測下一個 token」優化、不為「相似度比較」優化。要再經過 contrastive learning fine-tune 才能當 embedding model 用。
+關鍵理解：**不能拿任意 LLM 的最後 hidden state 當 embedding** — LLM hidden state 是為「預測下一個 token」最佳化、不為「相似度比較」最佳化。要再經過 contrastive learning fine-tune 才能當 embedding model 用。
 
 Embedding model 的典型訓練 pipeline：
 

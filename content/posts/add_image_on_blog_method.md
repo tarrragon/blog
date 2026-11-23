@@ -40,6 +40,6 @@ tags: ["Hugo", "Bear Cub", "AI協作心得"]
 
 1.圖片路徑：在 Hugo 中，assets 資料夾的內容會被處理並放在網站根目錄下，所以路徑是 /work-log/flutter_toggle_button/ToggleButtons.png
 
-2.圖片優化：Hugo 會自動處理圖片優化，但你可以透過 shortcode 參數來控制大小和品質
+2.圖片最佳化：Hugo 會自動處理圖片最佳化，但你可以透過 shortcode 參數來控制大小和品質
 
 3.響應式設計：使用 {{< figure >}} shortcode 可以確保圖片在不同裝置上都能正確顯示

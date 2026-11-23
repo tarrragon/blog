@@ -7,11 +7,11 @@ tags: ["python", "python-advanced", "optimization", "case-study"]
 aliases: ["/python-advanced/08-practical-optimization/case-studies/data-structure-choice/"]
 ---
 
-本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何選擇正確的資料結構來優化成員查詢效能。
+本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何選擇正確的資料結構來改善成員查詢效能。
 
 ## 先備知識
 
-- [入門系列 3.8 效能優化](/programming/python/basic/03-stdlib/performance/)
+- [入門系列 3.8 效能改善](/programming/python/basic/03-stdlib/performance/)
 - 基本的時間複雜度概念（O(n)、O(1)）
 
 ## 問題背景
@@ -522,7 +522,7 @@ def deduplicate_ordered(items: list) -> list:
     pass
 ```
 
-2. **優化單字計數器**：以下程式碼檢查一段文字中有多少個「停用詞」，請用 set 優化它
+2. **改善單字計數器**：以下程式碼檢查一段文字中有多少個「停用詞」，請用 set 改善它
 
 ```python
 STOP_WORDS = ["the", "a", "an", "is", "are", "was", "were", "be", "been",
@@ -569,7 +569,7 @@ def compare_directories(dir1: Path, dir2: Path) -> dict:
     pass
 ```
 
-4. **優化 Hook 驗證器**：參考本文的優化方案，為 `HookValidator` 加入以下功能：
+4. **改善 Hook 驗證器**：參考本文的改善方案，為 `HookValidator` 加入以下功能：
 
 - 快取測試檔案列表
 - 支援多個測試目錄

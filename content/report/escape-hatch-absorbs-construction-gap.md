@@ -60,7 +60,7 @@ slug: "escape-hatch-absorbs-construction-gap"
 
 - **[#222 約束要讓違反路徑走不通](../design-intent-needs-enforcement-layer/)**：同 case 抽出的 sibling、分工不同。#222 講意圖的強制層次（文件層意圖擋不住繞過），本卡講缺陷的轉移機制（逃生口讓上游缺陷不痛、在下游復發）。關逃生口（#222 的修法）同時是本卡機制的斷路器——出口關了、表達力缺口才會痛、才會被修。
 - **[#42 2 次門檻：第一次是運氣、第二次是訊號](../two-occurrence-threshold/)**：本卡的觸發條件。同族語意錯誤第一次出現可以當個案修掉、第二次出現就該停止修拼裝點、轉頭找它們共同面對的表達力缺口。case 1 的兩次復發正是這個門檻被跨過的時刻。
-- **[#64 Feature 操作要跟 Source 同層合成](../compose-feature-at-source-layer/)**：同構的修法方向。#64 說 stream 操作要在 source 同層或更上游合成、不在下游補；本卡說物件建構的表達需求要在工廠層滿足、不在呼叫端拼裝。兩者共享「下游補丁會複製、上游修一次」的成本結構。
+- **[#64 Feature 操作要跟 Source 同層合成](../compose-feature-at-source-layer/)**：同構的修法方向。#64 說 stream 操作要在 source 同層或更上游合成、不在下游補；本卡說物件建構的表達需求要在工廠層滿足、不在呼叫端拼裝。兩者共享「下游修補會複製、上游修一次」的成本結構。
 - **[#86 Capability gap 的三層對策階梯](../capability-gap-three-layer-escalation/)**：修工廠表達力是 #86 的 L3（structural rebuild）、修拼裝點是 L1/L2（期望對齊 / 補強）。#86 說不必每次跳 L3，本卡補上「該跳 L3」的訊號：同型缺陷第二次出現（#42）、且 L1/L2 的修法不減少未來復發的機率。
 - **[#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)**：第三步「拼裝現場的最短路徑」是 #67 的實例——臨時物件撈預設值比先存 base 變數再取欄位少一行，便利選項跟正確選項分離時、便利贏。本卡的上游修法讓兩者重合：工廠直接收 `bookTags` 之後、正確寫法就是最短寫法。
 

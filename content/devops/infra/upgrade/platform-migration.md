@@ -232,7 +232,7 @@ aws route53 change-resource-record-sets --hosted-zone-id Z123 --change-batch '{
 
 向管理層溝通時的關鍵訊息：「應用程式碼不變、改的是運行環境。風險集中在資料搬移和 DNS 切換這兩個步驟，兩者都有回退路徑。」
 
-成本變化也要提前說明：共享主機 → VPS 的月費通常持平或略增（$5-30/月）；VPS → 雲端的月費取決於資源用量，初期可能增加 50-200%（換到的是彈性和 managed 服務），但可以透過 reserved instance 和 rightsizing 後續優化。
+成本變化也要提前說明：共享主機 → VPS 的月費通常持平或略增（$5-30/月）；VPS → 雲端的月費取決於資源用量，初期可能增加 50-200%（換到的是彈性和 managed 服務），但可以透過 reserved instance 和 rightsizing 後續改善。
 
 ## 跨分類引用
 

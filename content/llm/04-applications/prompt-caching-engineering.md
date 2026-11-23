@@ -198,7 +198,7 @@ RAG 場景把 retrieved chunks 放 prefix、user query 放後面、可以 cache 
 
 常見差異：timestamp、request id、user id、tool list 順序、retrieved chunks 順序、conversation summary 變動。
 
-## 跟其他 cost 優化技巧的關係
+## 跟其他 降低成本技巧的關係
 
 | 技巧                                                               | 攻擊的 cost / latency 來源         | 跟 prompt cache 的關係                                   |
 | ------------------------------------------------------------------ | ---------------------------------- | -------------------------------------------------------- |

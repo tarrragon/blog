@@ -90,7 +90,7 @@ client 想看自己的訂單，卻訂閱整個 `orders` collection。Security Ru
 
 listener 成本估算的公式是 `初次訂閱 read + Σ(訂閱數 × 每次變動推送的 document 數)`。把它拆開算：高扇出（很多人訂同一資料）× 高變動頻率（資料常變）× 大結果集（每次推很多筆）三者相乘，是成本爆炸的組合；任一維壓低都有效。設計時對每個 listener 問這三維的量級，乘起來對照預算。
 
-連線數也有規模考量：Firestore 對並行連線與 listener 有規模上限（以官方當前限制為準），超大扇出（百萬級同時在線）會撞到連線層的天花板，而不只是計費問題。觀測上要監控 read 用量的來源拆分——哪些 collection 的 read 來自 listener 推送、哪些來自一次性查詢，把 listener 的 re-read 成本獨立出來看，接回 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 與 [9.7 成本邊界](/backend/09-performance-capacity/)。
+連線數也有規模考量：Firestore 對並行連線與 listener 有規模上限（以官方當前限制為準），超大扇出（百萬級同時線上）會撞到連線層的天花板，而不只是計費問題。觀測上要監控 read 用量的來源拆分——哪些 collection 的 read 來自 listener 推送、哪些來自一次性查詢，把 listener 的 re-read 成本獨立出來看，接回 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 與 [9.7 成本邊界](/backend/09-performance-capacity/)。
 
 ## 邊界與整合：即時需求超過 listener 該換推送架構
 

@@ -111,7 +111,7 @@ CFG 是最強表達力、但實作最複雜。SQL / 程式碼 generation 多用 
 
 ## XGrammar 的 pre-compile 機制
 
-XGrammar（Dong et al., 2024）是 2024-2025 主流的高效實作。核心優化：
+XGrammar（Dong et al., 2024）是 2024-2025 主流的高效實作。核心最佳化：
 
 ```text
 Naive 實作（如 outlines 早期版）：

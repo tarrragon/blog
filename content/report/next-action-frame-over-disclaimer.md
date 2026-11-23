@@ -95,7 +95,7 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "原則"]
 
 ### Disclaimer 段反覆陷入字面 surface fix
 
-整段 frame 是「不要 X」、逐句改 positive 後仍是「不要 X」變體。Multi-pass review 會反覆 catch 到負面殘餘、每次只改字面、frame 沒動。跟 [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/) 同骨——字面層補丁不解行為層問題。
+整段 frame 是「不要 X」、逐句改 positive 後仍是「不要 X」變體。Multi-pass review 會反覆 catch 到負面殘餘、每次只改字面、frame 沒動。跟 [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/) 同骨——字面層修補不解行為層問題。
 
 ### Reader 拿到 prohibition、不知道 actionable next step
 
@@ -150,10 +150,10 @@ Disclaimer 給 reader 的 actionable 是「不要做」、但「該做什麼」r
 
 ---
 
-## 對 multi-pass review 的補丁
+## 對 multi-pass review 的修補
 
 [#83 multi-pass review](../writing-multi-pass-review/) 的輪 3「機會成本語氣」目前只跑 grep 抓絕對詞（應該 / 必須 / 不行 / 不可以 / 正確）、catch 不到 frame 議題——disclaimer frame 段落的字面可能全 positive、但整段仍是 prohibition。
 
-補丁：輪 3 加一條 frame 檢查問題：「**段落主體在告訴 reader 該做什麼、還是不該做什麼？**」——告訴不該做 → reframe；告訴該做 → frame OK。
+修補：輪 3 加一條 frame 檢查問題：「**段落主體在告訴 reader 該做什麼、還是不該做什麼？**」——告訴不該做 → reframe；告訴該做 → frame OK。
 
 這條檢查放在輪 3 是因為 frame 議題跟「絕對主義語氣」同軸、都是「告訴 reader 規則 vs 教 reader 思考」的延伸。**Frame 議題的根因檢查在輪 1 生成時更便宜**（生成段落時就問 frame）、輪 3 是 fallback safety net。

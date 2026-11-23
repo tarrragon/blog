@@ -73,7 +73,7 @@ baseline 對齊的判斷標準是跟自己的歷史趨勢比，而非抄業界�
 | 跳過 slow path 測試縮短 lead time | lead time 下降同時 CFR 上升                                                                                   |
 | 壓下同類 incident 不報            | incident recurrence rate 與 [post-incident review](/backend/knowledge-cards/post-incident-review/) 數量不匹配 |
 
-治理原則：指標是診斷工具，用來發現問題方向與引導團隊討論。指標跨團隊強制排名會讓 gaming 成為理性選擇 — 團隊會優化數字而非優化系統。有效做法是把指標用在團隊自身的趨勢追蹤，跨團隊只分享經驗與改善策略。
+治理原則：指標是診斷工具，用來發現問題方向與引導團隊討論。指標跨團隊強制排名會讓 gaming 成為理性選擇 — 團隊會最佳化數字而非改善系統。有效做法是把指標用在團隊自身的趨勢追蹤，跨團隊只分享經驗與改善策略。
 
 ## 跟 SLO 的差異
 

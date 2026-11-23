@@ -9,7 +9,7 @@ slug: "jmeter-capacity-probing"
 
 用 JMeter 做容量探測的人，要判斷的是目前的配置在延遲目標內處理得了多少負載、先用完的是哪一項資源、要加什麼。這篇整理這個判斷在 JMeter 上的做法，分成產生負載、讀結果、排除失真與寫結論幾組。
 
-產生負載的部分：JMeter 在 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 的 ramp-up 測試裡負責哪一段；JMeter 內建與 plugin 提供的幾種 thread group 與 throughput timer，各自固定了 [Little's Law](/backend/knowledge-cards/little-law/) 裡的哪一個變數（同時在線的使用者數、到達率，或每個使用者的速率上限），選的模型跟 production 流量不同時，飽和點會量在哪個方向；用 Open Model Thread Group 的排程寫出 9.4 的倍數加壓與把 knee 附近切細的小增量加壓，呼叫端數量固定的服務改用 Concurrency Thread Group 逐級加同時在線數。
+產生負載的部分：JMeter 在 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 的 ramp-up 測試裡負責哪一段；JMeter 內建與 plugin 提供的幾種 thread group 與 throughput timer，各自固定了 [Little's Law](/backend/knowledge-cards/little-law/) 裡的哪一個變數（同時線上的使用者數、到達率，或每個使用者的速率上限），選的模型跟 production 流量不同時，飽和點會量在哪個方向；用 Open Model Thread Group 的排程寫出 9.4 的倍數加壓與把 knee 附近切細的小增量加壓，呼叫端數量固定的服務改用 Concurrency Thread Group 逐級加同時線上數。
 
 讀結果的部分：從 HTML dashboard 的幾張隨時間變化的圖，換算出受測服務處在延遲平穩的線性區、延遲開始不成比例上升的 knee point，還是回應跟不上抵達的 cliff，以及 dashboard 的 Statistics 表把所有級混在一起時怎麼取出單一級的數字。
 
@@ -30,17 +30,17 @@ slug: "jmeter-capacity-probing"
 | 元件                                                | 來源                                                  | 固定的變數                                                                         |
 | --------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | Thread Group                                        | 內建                                                  | thread 數 N（closed）                                                              |
-| Concurrency Thread Group                            | plugin                                                | 同時在線的 thread 數 N（closed），依排程逐級加，少了就補                           |
+| Concurrency Thread Group                            | plugin                                                | 同時執行的 thread 數 N（closed），依排程逐級加，少了就補                           |
 | Open Model Thread Group                             | 內建（5.5 起，官方標實驗性）                          | 到達率 λ（open），每次抵達建立一個新 thread、跑一輪就結束                          |
 | Arrivals Thread Group                               | plugin                                                | 到達率 λ（open），arrival 定義成一輪 iteration 的開始；Concurrency Limit 是上限    |
 | Throughput Shaping Timer                            | plugin                                                | 每秒請求數的目標，只能延後 thread；thread 給夠時接近 open，不夠時跟著減壓          |
 | Constant Throughput Timer、Precise Throughput Timer | 內建（搭配 Thread Group 或 Concurrency Thread Group） | 在固定的 thread 數上設一段期間內 sample 數的上限（pacing），受測服務變慢時跟著減壓 |
 
-Thread Group 與 Concurrency Thread Group 是 closed model。Concurrency Thread Group 的頁面寫它的用途是維持同時在線的數量，執行中的 thread 不夠時再啟動新的；它控制的是同時在線數 N，不是到達率。受測服務變慢時，每個 thread 送出下一個請求的時間往後延，實際的請求率跟著下降，所以用它壓面向公眾、使用者各自獨立抵達的服務時，延遲目標內的到達率會被估高，飽和點找在比實際更高的位置（推導在 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈可觀察訊號與例子〉）。呼叫端數量固定的服務（固定 worker 數的批次程式、連線池大小固定的內部呼叫方）屬於 closed 型流量，用它量才對得上 production。
+Thread Group 與 Concurrency Thread Group 是 closed model。Concurrency Thread Group 的頁面寫它的用途是維持同時線上的數量，執行中的 thread 不夠時再啟動新的；它控制的是同時線上數 N，不是到達率。受測服務變慢時，每個 thread 送出下一個請求的時間往後延，實際的請求率跟著下降，所以用它壓面向公眾、使用者各自獨立抵達的服務時，延遲目標內的到達率會被估高，飽和點找在比實際更高的位置（推導在 [Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/) 的〈可觀察訊號與例子〉）。呼叫端數量固定的服務（固定 worker 數的批次程式、連線池大小固定的內部呼叫方）屬於 closed 型流量，用它量才對得上 production。
 
 Open Model Thread Group 與 Arrivals Thread Group 是 open model：抵達的時刻由排程決定，現有的 thread 都在等回應時，下一次抵達照樣照時送出；兩者建立 thread 的方式不同。Open Model Thread Group 每一次抵達建立一個新的 thread，那個 thread 跑完一輪 iteration 就結束；原始碼的說明寫明 thread 依需要建立、跑完就結束，而且 thread 的總數沒有上限（`OpenModelThreadGroup.kt`）。Arrivals Thread Group 在所有現有的 thread 都忙著跑 iteration 時才建立新的 thread，有空閒的 thread 就交給它跑下一次抵達（jmeter-plugins.org 的頁面）。
 
-Arrivals Thread Group 的頁面另外提醒，到達率固定而服務變慢時同時在線數會一直增加，所以它有 Concurrency Limit 當上限，避免施壓端的記憶體用完；碰到這個上限之後，新的抵達要等現有的 thread 空出來，負載又變回 closed，排程上的到達率沒有送出去。這個上限的估法照 Little's Law：預期 knee 附近的到達率乘以一輪 iteration 的時間（含 timer 的停頓），再留餘裕給 knee 之後延遲變長的那幾級。餘裕依這次要量到的最高那一級決定：那一級的到達率乘以一輪 iteration 可能拉長到的時間；一輪最長不會超過各 sampler 的逾時設定加總再加上停頓，用這個值算出的是上限，記憶體容得下時就用它。量完要確認 thread 數沒有碰到 Concurrency Limit。Open Model Thread Group 沒有這個上限，服務變慢時 thread 數會一直增加，要靠施壓端的記憶體與 heap 的監看發現。
+Arrivals Thread Group 的頁面另外提醒，到達率固定而服務變慢時同時線上數會一直增加，所以它有 Concurrency Limit 當上限，避免施壓端的記憶體用完；碰到這個上限之後，新的抵達要等現有的 thread 空出來，負載又變回 closed，排程上的到達率沒有送出去。這個上限的估法照 Little's Law：預期 knee 附近的到達率乘以一輪 iteration 的時間（含 timer 的停頓），再留餘裕給 knee 之後延遲變長的那幾級。餘裕依這次要量到的最高那一級決定：那一級的到達率乘以一輪 iteration 可能拉長到的時間；一輪最長不會超過各 sampler 的逾時設定加總再加上停頓，用這個值算出的是上限，記憶體容得下時就用它。量完要確認 thread 數沒有碰到 Concurrency Limit。Open Model Thread Group 沒有這個上限，服務變慢時 thread 數會一直增加，要靠施壓端的記憶體與 heap 的監看發現。
 
 Throughput Shaping Timer 用排程設定每秒請求數，頁面自己的說明是 timer 只能延後 thread，thread 不夠時到不了目標的 RPS；頁面給的 thread 數估法是目標 RPS 乘以最長的回應時間（Little's Law 的 L = λW），並建議搭配 Concurrency Thread Group 與 `__tstFeedback` 函式，讓 thread 數依目標自動補足。thread 數給得夠時它的行為接近 open model；受測服務變慢、需要的 thread 數超過給的數量時，它跟 pacing 一樣減壓：每個 thread 仍然等到回應才送下一個。它匯出的 `<元件名>_cntDelayed` 這個 JMeter 屬性是正在等待的 thread 數，頁面寫明低於 1 代表 thread 不夠、到不了目標的 RPS；頁面寫的讀法是 `__P` 函式或 JSR223 元件裡的 `props.get("<元件名>_cntDelayed")`，例如在流程裡加一個 JSR223 元件，用 `log.info` 把這個值寫進 `jmeter.log`（這個寫法沒有實跑）。不加這個元件時，讀者拿得到的訊號是 dashboard 的 Hits per second：它低於排程的 RPS，代表 thread 不夠。
 
@@ -87,7 +87,7 @@ pause(2 min)
 
 兩次執行之間，受測服務要先回到加壓前的資源基線再跑下一次：倍數加壓多半會越過 cliff，留下積壓的佇列與耗盡的連線池，接著跑的小增量加壓會量到上一次的殘留。
 
-呼叫端數量固定的服務照 closed model 量，用 Concurrency Thread Group：Target Concurrency 是最後一級的同時在線數，Ramp Up Time 與 Ramp-Up Steps Count 把它分成幾級逐級加上去，Hold Target Rate Time 是最後一級的維持時間（欄位名照 jmeter-plugins.org 的頁面）。原始碼（casutg plugin 的 `ConcurrencyThreadStarter`）在開始的那一刻就放進第一級，每一級的長度是 Ramp Up Time 除以 Ramp-Up Steps Count，每一級加 Target Concurrency 除以 Ramp-Up Steps Count 個 thread；Ramp Up Time 的最後一段已經是 Target Concurrency，所以最後一級實際維持「Ramp Up Time 除以 Ramp-Up Steps Count」再加上 Hold Target Rate Time。照 9.4 每一級都維持 5 分鐘時，Ramp Up Time 設成 5 分鐘乘以 Ramp-Up Steps Count，Hold Target Rate Time 設 0；Hold 設成 5 分鐘時，最後一級是 10 分鐘。時間的單位由 Time Unit 欄位決定，設定畫面的預設是 minutes。這個換算讀自原始碼，沒有實跑；跑一次之後在 Active Threads Over Time 上確認每一級的長度與 thread 數。closed model 的讀法在〈從 dashboard 判讀 knee point〉講 closed model 的那一段。
+呼叫端數量固定的服務照 closed model 量，用 Concurrency Thread Group：Target Concurrency 是最後一級的同時線上數，Ramp Up Time 與 Ramp-Up Steps Count 把它分成幾級逐級加上去，Hold Target Rate Time 是最後一級的維持時間（欄位名照 jmeter-plugins.org 的頁面）。原始碼（casutg plugin 的 `ConcurrencyThreadStarter`）在開始的那一刻就放進第一級，每一級的長度是 Ramp Up Time 除以 Ramp-Up Steps Count，每一級加 Target Concurrency 除以 Ramp-Up Steps Count 個 thread；Ramp Up Time 的最後一段已經是 Target Concurrency，所以最後一級實際維持「Ramp Up Time 除以 Ramp-Up Steps Count」再加上 Hold Target Rate Time。照 9.4 每一級都維持 5 分鐘時，Ramp Up Time 設成 5 分鐘乘以 Ramp-Up Steps Count，Hold Target Rate Time 設 0；Hold 設成 5 分鐘時，最後一級是 10 分鐘。時間的單位由 Time Unit 欄位決定，設定畫面的預設是 minutes。這個換算讀自原始碼，沒有實跑；跑一次之後在 Active Threads Over Time 上確認每一級的長度與 thread 數。closed model 的讀法在〈從 dashboard 判讀 knee point〉講 closed model 的那一段。
 
 ## 從 dashboard 判讀 knee point
 
@@ -104,7 +104,7 @@ jmeter -g probe-run.jtl -o report-level-240/ \
 
 open model 下判讀用到的圖與換算：
 
-- **Active Threads Over Time** 是同時在線的 thread 數。照 Little's Law 等於到達率乘以一個 thread 跑完一輪的時間，這段時間包含 timer 的停頓；到達率固定時，停頓的長度不變，同時在線數上升代表請求在受測服務裡花的時間變長了。停頓遠比請求的延遲長時，同時在線數只多一點點，圖上看不出來，所以它只當輔助訊號。
+- **Active Threads Over Time** 是同時執行的 thread 數。照 Little's Law 等於到達率乘以一個 thread 跑完一輪的時間，這段時間包含 timer 的停頓；到達率固定時，停頓的長度不變，同時線上數上升代表請求在受測服務裡花的時間變長了。停頓遠比請求的延遲長時，同時線上數只多一點點，圖上看不出來，所以它只當輔助訊號。
 - **Hits per second** 依每一筆 sample 的開始時間分到每一秒（原始碼 `HitsPerSecondGraphConsumer` 以開始時間取時間桶），所以它是每秒開始的請求數。open model 下它跟著排程走，受測服務變慢時不會下降，只用來確認負載是否照排程送出：穩態下等於到達率乘以一輪的 sampler 數（〈用 Open Model Thread Group 的排程寫出逐級加壓〉確認過的換算）。這個乘積的前提是每一輪都跑完全部 sampler：流程裡有依回應分支的 If Controller，或 sampler 出錯時的動作設成 Start Next Thread Loop 時，受測服務回錯會讓一輪提早結束，Hits per second 跟著下降，而施壓端並沒有少送抵達。子結果同樣讓 Hits per second 高於這個乘積，要另計。確認到達率要比對的是一輪第一個 sampler 的開始次數，這個 sampler 要每一輪都執行、會寫出 sample，而且不是 Flow Control Action 或 Transaction Controller（官方〈Generating Report Dashboard〉寫明 Hits per second 略過 Transaction Controller 的結果）。用 `-Jjmeter.reportgenerator.sample_filter=<第一個 sampler 的 label>` 另外產生一份 dashboard（`sample_filter` 是官方〈Generating Report Dashboard〉的設定，值是一個要跟整個 label 相符的正規表示式，label 裡有 `?`、`.`、`(`、`[` 這類字元時用 `\Q…\E` 包起來；整段相符也順帶排除了那個 sampler 的子結果；這個用法沒有實跑），那一份的 Hits per second 就是每秒開始的 iteration 數，應該等於排程的到達率。
 - **Total Transactions Per Second** 與 **Response codes per second** 依 sample 的結束時間分桶（`TotalTPSGraphConsumer`、`CodesPerSecondGraphConsumer`），是每秒完成的請求數；Total Transactions Per Second 分成功與失敗兩條線，Response codes per second 分每一種回應碼。每秒完成的請求數低於每秒開始的請求數，代表抵達的比處理完的多。
 - **Response times Percentiles Over Time** 只統計成功的回應，失敗的請求不在這張圖裡。
@@ -113,12 +113,12 @@ open model 下判讀用到的圖與換算：
 
 - **線性區**：每秒完成的請求跟得上換算值，錯誤率接近 0，延遲的百分位數在各級之間幾乎不變。
 - **knee**：完成的請求仍然跟得上、錯誤率仍然接近 0，但 p99 的增幅開始遠大於到達率的增幅，p50 還穩。Saturation Point 卡給的量化訊號是「負載增加 10%、延遲增加 100%」；倍數加壓每一級的到達率加一倍，這個比例要在小增量加壓下套用，倍數加壓只用來找出最後一個 p99 持平的級與第一個 p99 明顯上升的級。
-- **cliff**：Total Transactions Per Second 上每秒完成的請求低於換算值（也低於 Hits per second 上每秒開始的請求），Active Threads Over Time 上的同時在線數在同一級之內持續上升，Percentiles Over Time 上的延遲隨時間一直往上走，接著出現逾時與錯誤；之後服務呈現的是變慢、請求失敗、無回應還是程序終止，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)。
+- **cliff**：Total Transactions Per Second 上每秒完成的請求低於換算值（也低於 Hits per second 上每秒開始的請求），Active Threads Over Time 上的同時線上數在同一級之內持續上升，Percentiles Over Time 上的延遲隨時間一直往上走，接著出現逾時與錯誤；之後服務呈現的是變慢、請求失敗、無回應還是程序終止，見 [9.16 負載超過容量時服務的表現](/backend/09-performance-capacity/overload-outcomes/)。
 - **失敗比例上升**：回應數（含失敗）跟得上，但 Response codes per second 上 429、503 這類回應的比例隨級數上升。受測服務在過載時直接拒絕，失敗的回應很快回來，百分位數圖只統計成功的請求，看起來像線性區；判讀看的是失敗的比例。例如結帳 API 從每秒 200 那一級起 503 開始增加，而 Percentiles Over Time 上成功回應的 p99 一直持平，這時 knee 還沒出現，錯誤率卻已經超過目標；容量結論停在錯誤率超標之前的那一級（〈量完之後寫成容量結論要記下的條件〉的取法）。
 
 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)〈Ramp-up 測試方法〉列成 knee 訊號的「throughput 從線性成長轉成 sub-linear」，在 open model 下對應的是 cliff。open model 下吞吐量在受測服務處理得了的範圍內跟著設定的到達率走，到達率加一倍、每秒完成的請求也加一倍；sub-linear 在 dashboard 上表現成每秒完成的請求低於換算值，那已經是 cliff 那一種狀態。所以 open model 下 knee 的訊號是更早出現的 p99 上升。
 
-closed model（Thread Group、Concurrency Thread Group）的讀法不同：成功的每秒請求數（Total Transactions Per Second 的成功那一條）與延遲是判讀的對象，Active Threads Over Time 是設定值，不會隨服務變慢而上升。逐級增加同時在線數時，成功的每秒請求數與同時在線數以相同的比例增加、延遲持平是線性區；成功的每秒請求數仍在增加、但增幅小於同時在線數的增幅，p99 開始上升的那一級是 knee，那一級的同時在線數是 closed 型服務的飽和點；成功的每秒請求數不再隨同時在線數增加時，已經越過處理得了的上限，多出來的同時在線數只是在受測服務裡排隊，延遲隨之上升（9.4〈Ramp-up 測試方法〉的 sub-linear 訊號在 closed model 下就是這個增幅的落差）。
+closed model（Thread Group、Concurrency Thread Group）的讀法不同：成功的每秒請求數（Total Transactions Per Second 的成功那一條）與延遲是判讀的對象，Active Threads Over Time 是設定值，不會隨服務變慢而上升。逐級增加同時線上數時，成功的每秒請求數與同時線上數以相同的比例增加、延遲持平是線性區；成功的每秒請求數仍在增加、但增幅小於同時線上數的增幅，p99 開始上升的那一級是 knee，那一級的同時線上數是 closed 型服務的飽和點；成功的每秒請求數不再隨同時線上數增加時，已經越過處理得了的上限，多出來的同時線上數只是在受測服務裡排隊，延遲隨之上升（9.4〈Ramp-up 測試方法〉的 sub-linear 訊號在 closed model 下就是這個增幅的落差）。
 
 dashboard 與 GUI 的 Aggregate Report 算百分位數的公式不同，官方文件寫明分佈很散或 sample 很少時兩者的差距最明顯，要兩邊一致時把 `backend_metrics_percentile_estimator` 設成 `R_3`。容量探測的各級要用同一種算法比較，結論裡記下用的是哪一種。
 
@@ -130,7 +130,7 @@ knee 落在哪一級之後，同一段時間對照受測服務的資源指標，
 
 - **GUI mode**：官方寫明 GUI mode 只用來建立測試腳本，負載測試要用 CLI mode（`-n`）。GUI 的 View Results Tree 這類 listener 把 sample 留在記憶體裡顯示，〈Best Practices〉要求負載測試時不開，只在寫腳本時除錯用。
 - **listener 與結果檔**：每一個 listener 都要處理每一筆 sample。CLI mode 用 `-l` 寫 JTL 之後，test plan 裡的其他 listener 可以全部停用；〈Best Practices〉另外建議結果檔用 CSV 而不是 XML、只存需要的欄位。
-- **JVM heap 與 GC**：JMeter 預設以 1 GB 的 heap 執行（啟動腳本的 `HEAP`，預設 `-Xms1g -Xmx1g`），預設的 GC 是 G1（`GC_ALGO`；5.6.3 的啟動腳本設 `MaxGCPauseMillis=100`，官方〈Getting Started〉仍寫 250）。open model 的同時在線數隨受測服務變慢而增加，thread 越多、heap 用得越多，GC 暫停也越頻繁，而暫停的時間算進那段時間內每一筆 sample 的延遲。heap 要給多少依 test plan 與 thread 數而定，官方沒有給數字；量法是開 GC log 跑一級，看暫停的頻率與長度在各級之間是否跟著上升。GC log 用 JVM 的 `-Xlog:gc*:file=<路徑>` 開啟（Java 9 以後的寫法），經由啟動腳本的 `JVM_ARGS` 環境變數傳進去，這個寫法沒有實跑。
+- **JVM heap 與 GC**：JMeter 預設以 1 GB 的 heap 執行（啟動腳本的 `HEAP`，預設 `-Xms1g -Xmx1g`），預設的 GC 是 G1（`GC_ALGO`；5.6.3 的啟動腳本設 `MaxGCPauseMillis=100`，官方〈Getting Started〉仍寫 250）。open model 的同時線上數隨受測服務變慢而增加，thread 越多、heap 用得越多，GC 暫停也越頻繁，而暫停的時間算進那段時間內每一筆 sample 的延遲。heap 要給多少依 test plan 與 thread 數而定，官方沒有給數字；量法是開 GC log 跑一級，看暫停的頻率與長度在各級之間是否跟著上升。GC log 用 JVM 的 `-Xlog:gc*:file=<路徑>` 開啟（Java 9 以後的寫法），經由啟動腳本的 `JVM_ARGS` 環境變數傳進去，這個寫法沒有實跑。
 - **連線的重用與 TLS handshake**：thread group 的種類決定每個請求是否要重做 TLS handshake，量到的上限可能因此屬於終結 TLS 的那一層，機制、各 thread group 的行為與判讀寫在清單之後的幾段。
 
 連線與 TLS handshake 的機制：官方 Component Reference 寫明每個 thread 用自己的 SSL context，所以一個 thread 關掉連線的時機，決定了下一個請求是否要重做 TLS handshake。handshake 主要耗用受測端終結 TLS 那一層的 CPU（負載平衡器、反向代理或應用程式本身）。每個請求都重做 handshake 時，探測量到的 knee 可能落在那一層的 CPU 上，而不在應用程式上。握手的延遲與 CPU 成本怎麼來、重用連線攤平多少，以及 k6、Gatling、Locust 各自什麼時候建新連線，見 [TLS Handshake（TLS 握手）的成本與連線重用](/backend/knowledge-cards/tls-handshake-cost/)。
@@ -146,7 +146,7 @@ knee 落在哪一級之後，同一段時間對照受測服務的資源指標，
 
 判讀用 Connect Time Over Time 這張圖：官方〈Glossary〉寫明 Connect Time 包含 SSL handshake 的時間，它隨級數上升、而受測服務入口量到的應用程式延遲沒有跟著上升時，上升的時間花在建立連線上。設定依 production 用戶端的連線方式選：production 的使用者每次都是新連線時（短暫造訪、每次重新登入的流量），Open Model Thread Group 每次抵達一次 handshake 的形狀接近 production；production 的用戶端會長時間重用連線時（內部服務之間的呼叫、App 長時間開著的連線），Open Model Thread Group 量到的 knee 可能落在 TLS 終結那一層，結論寫的是 TLS 終結的上限。這種流量又要用 open model 量時，Open Model Thread Group 給不出這種負載形狀，可以改用 Arrivals Thread Group（連線行為要先實跑確認）或在結論裡寫明這個限制。
 
-施壓端能送出的上限要量，不沿用別的機器量到的數字：讓同一台施壓端用同樣的排程打一個幾乎不做事的 endpoint（[Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/) 的〈可觀察訊號與例子〉），或用官方提到的 JavaTest sampler（不需要網路，可以看出 JMeter 在這台機器上的最大吞吐量），把量到的上限跟這次要送的到達率比較。量到的上限要明顯高於要送的到達率：打真實服務時，每個回應要解析的內容比空 endpoint 多，open model 下同時在線的 thread 也隨受測服務變慢而增加，施壓端的負擔比打空 endpoint 時高。差距要多大沒有通用的數字，所以這個比較只用來排除明顯不夠的施壓端；探測期間仍照同一張卡的方法，持續比對 JMeter 量到的延遲與受測服務入口量到的延遲，差距隨級數變大時施壓端已經在加上自己的時間。
+施壓端能送出的上限要量，不沿用別的機器量到的數字：讓同一台施壓端用同樣的排程打一個幾乎不做事的 endpoint（[Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/) 的〈可觀察訊號與例子〉），或用官方提到的 JavaTest sampler（不需要網路，可以看出 JMeter 在這台機器上的最大吞吐量），把量到的上限跟這次要送的到達率比較。量到的上限要明顯高於要送的到達率：打真實服務時，每個回應要解析的內容比空 endpoint 多，open model 下同時執行的 thread 也隨受測服務變慢而增加，施壓端的負擔比打空 endpoint 時高。差距要多大沒有通用的數字，所以這個比較只用來排除明顯不夠的施壓端；探測期間仍照同一張卡的方法，持續比對 JMeter 量到的延遲與受測服務入口量到的延遲，差距隨級數變大時施壓端已經在加上自己的時間。
 
 ## 分散施壓：remote mode 的結果回傳、Backend Listener 與資料檔
 
@@ -164,15 +164,15 @@ knee 落在哪一級之後，同一段時間對照受測服務的資源指標，
 
 JMeter 的 sampler 涵蓋 HTTP 以外的 JDBC、JMS、TCP 等 protocol，同一份 test plan 可以同時對應用程式與它的依賴施壓。容量結論因此要寫明負載經由哪一條路徑到達每一個依賴：經由應用程式的 HTTP sampler 打到資料庫的負載，帶著應用程式的連線池、查詢模式與快取；JDBC sampler 直接打資料庫的負載，繞過了這些。直接打資料庫的 sampler 量到的是資料庫在這組查詢與連線數下的容量，不能直接寫成應用程式的容量。
 
-JDBC sampler 的連線數由 JDBC Connection Configuration 決定，官方建議的 Max Number of Connections 是 0，代表每個 thread 各有一個只放一條連線的 pool；所以 thread 數就是打到資料庫的連線數，open model 的同時在線數上升時，資料庫的連線數跟著上升。原始碼（`DataSourceElement`）把這種每個 thread 一個的 pool 存在 Java 的 ThreadLocal 裡、測試結束（testEnded）時才關閉；Open Model Thread Group 用一個會重用底層 Java thread 的執行緒池執行每一次抵達，所以連線數會停在同時在線數的峰值附近，同時在線數下降時不跟著釋放（從原始碼推論，沒有實跑）。production 裡應用程式的連線池有固定的上限，資料庫看到的連線數不會隨流量一直增加；兩者對不上時，探測可能先用完資料庫的連線上限或每條連線的記憶體，那是 production 不會出現的瓶頸。JMS sampler 同樣是把訊息直接送進 broker，量到的是 broker 與消費端在這個送入速率下的表現，不包含應用程式產生訊息的那一段。
+JDBC sampler 的連線數由 JDBC Connection Configuration 決定，官方建議的 Max Number of Connections 是 0，代表每個 thread 各有一個只放一條連線的 pool；所以 thread 數就是打到資料庫的連線數，open model 的同時線上數上升時，資料庫的連線數跟著上升。原始碼（`DataSourceElement`）把這種每個 thread 一個的 pool 存在 Java 的 ThreadLocal 裡、測試結束（testEnded）時才關閉；Open Model Thread Group 用一個會重用底層 Java thread 的執行緒池執行每一次抵達，所以連線數會停在同時線上數的峰值附近，同時線上數下降時不跟著釋放（從原始碼推論，沒有實跑）。production 裡應用程式的連線池有固定的上限，資料庫看到的連線數不會隨流量一直增加；兩者對不上時，探測可能先用完資料庫的連線上限或每條連線的記憶體，那是 production 不會出現的瓶頸。JMS sampler 同樣是把訊息直接送進 broker，量到的是 broker 與消費端在這個送入速率下的表現，不包含應用程式產生訊息的那一段。
 
 依賴是共用的時候（同一個資料庫服務好幾個應用程式），直接打依賴的 sampler 適合用來量依賴本身還剩多少餘裕，把結果當成應用程式容量的上界之一；要量應用程式的容量，負載從應用程式的入口送，依賴的指標從依賴那一端讀。資料的分佈同樣影響結果：CSV Data Set Config 預設 Recycle on EOF 是 `true`、所有 thread 共用同一份檔案，檔案裡 key 的種類數少於 production 在同一段時間會請求到的 key 時，同一批 key 被反覆請求，快取命中率比 production 高，容量被估高；資料量與 key 的分佈要從 [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/)〈從 production log 抽 workload model〉取，包括很少被存取的長尾。key 的種類夠多也可能有一部分從來沒被請求到：Throughput Controller 的週期與 CSV 的行數對齊時，固定對到被跳過那一輪的那幾行永遠不送出；這次遇到的情形、從 JTL 數每個 key 筆數的方法與改法，見 [JMeter 在本機跑負載測試的實測紀錄](/backend/06-reliability/vendors/jmeter/hands-on/jmeter-local-lab/) 的〈Throughput Controller 與 CSV Data Set 的週期對齊：某個商品編號沒被請求到的成因與改法〉。
 
 ## 量完之後寫成容量結論要記下的條件
 
-容量探測的結論寫成條件句：「在這個配置下、p99 低於多少毫秒的條件下，處理得了每秒多少個使用者流程，先飽和的是哪一項資源，距離飽和點還剩多少餘裕（[Headroom Budget](/backend/knowledge-cards/headroom-budget/)）」（[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)〈概念定位〉、〈Saturation 文件化：容量地圖〉）；closed 型服務的單位換成同時在線的使用者數。9.4 把 knee point 當成設計容量的上限，所以結論裡的「處理得了」取三者中最低的那一級：knee 之前最後一個 p99 持平的級、p99 還在延遲目標內的最後一級、錯誤率還在錯誤率目標內的最後一級。只看 knee 與延遲時，受測服務在過載時快速回錯誤的情形會被漏掉，因為延遲的百分位數只算成功的回應。這個結論是 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) 的輸入。條件句的每一項都要能回溯到這次執行：
+容量探測的結論寫成條件句：「在這個配置下、p99 低於多少毫秒的條件下，處理得了每秒多少個使用者流程，先飽和的是哪一項資源，距離飽和點還剩多少餘裕（[Headroom Budget](/backend/knowledge-cards/headroom-budget/)）」（[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)〈概念定位〉、〈Saturation 文件化：容量地圖〉）；closed 型服務的單位換成同時線上的使用者數。9.4 把 knee point 當成設計容量的上限，所以結論裡的「處理得了」取三者中最低的那一級：knee 之前最後一個 p99 持平的級、p99 還在延遲目標內的最後一級、錯誤率還在錯誤率目標內的最後一級。只看 knee 與延遲時，受測服務在過載時快速回錯誤的情形會被漏掉，因為延遲的百分位數只算成功的回應。這個結論是 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) 的輸入。條件句的每一項都要能回溯到這次執行：
 
-- **負載模型**：用的是哪一種 thread group 與 timer、排程或逐級的同時在線數、隨機種子、一輪 iteration 的 sampler 數，以及確認到達率有送足的依據（Arrivals Thread Group 沒碰到 Concurrency Limit；Throughput Shaping Timer 的 Hits per second 對得上排程的 RPS，有用 JSR223 元件記下 `cntDelayed` 時，它沒有低於 1）。
+- **負載模型**：用的是哪一種 thread group 與 timer、排程或逐級的同時線上數、隨機種子、一輪 iteration 的 sampler 數，以及確認到達率有送足的依據（Arrivals Thread Group 沒碰到 Concurrency Limit；Throughput Shaping Timer 的 Hits per second 對得上排程的 RPS，有用 JSR223 元件記下 `cntDelayed` 時，它沒有低於 1）。
 - **施壓端**：JMeter、Java 與 plugin 的版本（Open Model Thread Group 標實驗性，版本變了行為可能跟著變）、heap 與 GC 設定、節點數與規格、remote mode 的 `mode` 或改用的取得結果方式、百分位數的算法。
 - **連線與 protocol**：thread group 的種類與 Same user on each iteration 的值（取消勾選時另記 `httpclient.reset_state_on_thread_group_iteration` 的值）、哪些依賴經由應用程式、哪些由 JDBC 或 JMS sampler 直接施壓、JDBC 的連線數設定。
 - **資料**：CSV 的來源、產生日期、key 的種類數、各節點怎麼分。
@@ -185,7 +185,7 @@ JDBC sampler 的連線數由 JDBC Connection Configuration 決定，官方建議
 JMeter 的容量探測量到延遲上升或吞吐量停在某個值時，有幾種成因會讓讀數不能直接當成受測服務的容量：施壓端飽和、負載模型沒有照設定送出、資料過期、連線建立的成本混進延遲。下面的順序依一件事排：前一項沒有排除時，後一項的讀數是否還可用。
 
 1. **施壓端與 client 的資源**：各節點與 remote mode 的 client 的 CPU、heap 與 GC 暫停，test plan 是否留著 GUI listener，施壓端的錯誤訊息是否出現 `Too many open files` 或 `Cannot assign requested address`；比對 JMeter 量到的延遲與受測服務入口量到的延遲，差距隨級數變大代表多出來的時間花在施壓端或網路上。施壓端飽和時，每一個數字都混著施壓端的時間，後面每一項都不能用；closed model 下施壓端飽和的樣子（成功的每秒請求數停住、延遲上升）跟受測服務的飽和點相同，這一項沒排除時，量到的飽和點可能是施壓端的上限。
-2. **負載是否照模型送出**：open model 下比對一輪第一個 sampler（每一輪都執行、會寫出 sample、不是 Flow Control Action 或 Transaction Controller 的那一個）的每秒開始次數與排程的到達率（只保留那個 label 的 dashboard 上的 Hits per second，做法與 label 的寫法在〈從 dashboard 判讀 knee point〉講 Hits per second 的那一項），再看 Active Threads Over Time 是否停在 Concurrency Limit 或 Throughput Shaping Timer 給的 thread 數；停住代表到達率沒有送出去，負載退回 closed model，這段讀數裡的 knee 會被估高。全部 sampler 的 Hits per second 低於換算值、而第一個 sampler 的開始次數對得上排程時，到達率有送出去，少掉的請求來自錯誤讓一輪提早結束，這是受測服務回錯的訊號，交給資料有效性那一項與錯誤率的判讀。closed model 下核對 Active Threads Over Time（或 JTL 的 `allThreads` 欄位）是否達到這一級設定的 thread 數；沒達到時，這一級量到的不是設定的同時在線數。remote mode 下另外確認每個節點的排程填的是總量除以節點數。這一項排在資料與連線之前，因為送出的負載不對時，錯誤比例與連線時間的變化都對不上設定的負載。
+2. **負載是否照模型送出**：open model 下比對一輪第一個 sampler（每一輪都執行、會寫出 sample、不是 Flow Control Action 或 Transaction Controller 的那一個）的每秒開始次數與排程的到達率（只保留那個 label 的 dashboard 上的 Hits per second，做法與 label 的寫法在〈從 dashboard 判讀 knee point〉講 Hits per second 的那一項），再看 Active Threads Over Time 是否停在 Concurrency Limit 或 Throughput Shaping Timer 給的 thread 數；停住代表到達率沒有送出去，負載退回 closed model，這段讀數裡的 knee 會被估高。全部 sampler 的 Hits per second 低於換算值、而第一個 sampler 的開始次數對得上排程時，到達率有送出去，少掉的請求來自錯誤讓一輪提早結束，這是受測服務回錯的訊號，交給資料有效性那一項與錯誤率的判讀。closed model 下核對 Active Threads Over Time（或 JTL 的 `allThreads` 欄位）是否達到這一級設定的 thread 數；沒達到時，這一級量到的不是設定的同時線上數。remote mode 下另外確認每個節點的排程填的是總量除以節點數。這一項排在資料與連線之前，因為送出的負載不對時，錯誤比例與連線時間的變化都對不上設定的負載。
 3. **資料的有效性**：錯誤裡有大量 401、404 時，從加壓的起點那一級起就以大致固定的比例出現的，多半是 CSV 的資料過期；比例隨級數上升的，比較可能是負載造成的（認證服務飽和、replica 的延遲讓剛寫入的資料讀不到），那是容量的訊號。錯誤開始增加的時點對齊某個時鐘時間（token 到期）或 CSV 繞完一圈的時點，成因在資料；對齊級與級的交界，成因在負載。這一項排在連線成本之前，因為過期資料造成的失敗回應很快回來，受測服務沒有做完整的工作，同一級的延遲與資源用量都被壓低，連線時間佔延遲的比例跟著變大，下一項的判讀會偏向連線成本。
 4. **連線建立的成本**：Connect Time Over Time 隨級數上升、而受測服務入口的應用程式延遲持平時，上升的時間花在連線與 TLS handshake；對照 thread group 的種類、Same user on each iteration 的值與 production 用戶端的連線方式（〈施壓端的檢查：GUI、listener、heap 與 TLS handshake〉的連線那一項），判斷這次量到的上限屬於 TLS 終結那一層還是應用程式。
 5. **knee 所在的一級與先飽和的資源**：施壓端、負載模型、資料與連線成本都排除之後，用單一級的 dashboard 或隨時間變化的圖找出 knee 所在的那一級，再對照受測服務的資源指標找出先飽和的資源。knee 之前最後一個 p99 持平的級、延遲目標內的最後一級與錯誤率目標內的最後一級，三者中最低的那一級寫進容量結論（〈量完之後寫成容量結論要記下的條件〉）。

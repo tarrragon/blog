@@ -44,7 +44,7 @@ tags: ["backend", "service-selection", "buy-vs-build", "baas"]
 | feature SaaS（能力即服務） | 外包整塊能力與內部業務邏輯、只消費 API | Auth0、Algolia、Stripe、SendGrid | Ragic、SurveyCake、Airtable、Typeform | 中–高    |
 | 跨能力 BaaS bundle         | 一個 vendor 一次給多塊能力             | —                                | Supabase、Firebase、Amplify           | 高       |
 
-managed 基礎設施是最淺的外包：vendor 接手備份、修補、failover、擴容、跨區複製、但 schema、query、index、資料模型還是你的。遷出時資料是標準格式、架構是自己畫的、換一家 managed PostgreSQL 主要是搬資料與改連線字串。撞牆時你改得動的邊界很寬 — 慢查詢自己優化、index 自己加、只有底層硬體與維運動作在 vendor 手上。不過「邊界很寬」有前提：受限的 serverless 或內嵌型 managed（沒給 superuser、裝不了 extension 的那種）邊界其實更窄、選之前要確認需要的控制權它給不給。
+managed 基礎設施是最淺的外包：vendor 接手備份、修補、failover、擴容、跨區複製、但 schema、query、index、資料模型還是你的。遷出時資料是標準格式、架構是自己畫的、換一家 managed PostgreSQL 主要是搬資料與改連線字串。撞牆時你改得動的邊界很寬 — 慢查詢自己改善、index 自己加、只有底層硬體與維運動作在 vendor 手上。不過「邊界很寬」有前提：受限的 serverless 或內嵌型 managed（沒給 superuser、裝不了 extension 的那種）邊界其實更窄、選之前要確認需要的控制權它給不給。
 
 feature SaaS 把整塊能力連同它的內部業務邏輯一起交出去、你消費的是一組 API 而不是一台機器。買認證這一類要另外算兩筆：交出去之後本地仍然留著一筆使用者紀錄、而它與外部身分是兩條生命週期（[7.38 外部身分與本地紀錄：兩條生命週期在哪裡分岔](/backend/07-security-data-protection/external-identity-local-record-lifecycle/)），以及 B2B 客戶要用自己的 SSO 時該廠商給不給每租戶一組設定（[7.40 B2B 多租戶的身分接入：這個人屬於哪個租戶由誰說了算](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)）。買 Auth0 不只是省下跑一台認證伺服器、是把「密碼雜湊策略、MFA、SSO、social login、session 管理」整套交給 vendor、你只接它的 SDK。代價是你改得動的邊界縮到 vendor 開放的擴展點為止 — 它沒給的客製、你做不到、繞過去就是在 vendor 之外再搭一層。遷出代價中到高、因為資料模型與業務規則都沿 vendor 的特性長出來。
 

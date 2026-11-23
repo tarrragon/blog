@@ -46,7 +46,7 @@ Recovery 階段負責止血。Serverless 常見止血方式是 alias rollback、
 | Object store | 權限或路徑 pattern 錯誤         | 檢查 resource policy 與 filter         |
 | Scheduler    | timezone、重入、上次執行未完成  | 檢查 idempotency 與 lock               |
 
-這張表讓 release failure 能被導向正確 owner。若 event schema 變了，修 function 可能只是表面補丁；真正的 gate 要加在 publisher contract 或 sample event validation。
+這張表讓 release failure 能被導向正確 owner。若 event schema 變了，修 function 可能只是表面修補；真正的 gate 要加在 publisher contract 或 sample event validation。
 
 ## 最小發布 gate
 

@@ -7,7 +7,7 @@ tags: ["python", "python-advanced"]
 aliases: ["/python-advanced/"]
 ---
 
-本系列為已完成入門教學的工程師設計，深入探討 Python 的內部機制、元編程技術、效能優化方案，以及如何用 C/Rust 擴展 Python。
+本系列為已完成入門教學的工程師設計，深入探討 Python 的內部機制、元編程技術、效能改善方案，以及如何用 C/Rust 擴展 Python。
 
 ## 目標讀者
 
@@ -94,13 +94,13 @@ Python 的異步程式設計模型，掌握現代 Web/網路開發的必備技�
 - [套件維護最佳實踐](/programming/python/advanced/07-packaging/best-practices/)
 - [封裝預編譯二進位](/programming/python/advanced/07-packaging/bundled-binaries/) - Python 封裝 Go/Rust/C 二進位的架構模式
 
-### [模組八：實戰效能優化](/programming/python/advanced/08-practical-optimization/)
+### [模組八：實戰效能改善](/programming/python/advanced/08-practical-optimization/)
 
-將入門系列的並行處理與效能優化知識應用到真實系統，基於實際專案程式碼的案例研究。
+將入門系列的並行處理與效能改善知識應用到真實系統，基於實際專案程式碼的案例研究。
 
 - [並行處理實戰](/programming/python/advanced/08-practical-optimization/parallel-processing/) - ThreadPoolExecutor、ProcessPoolExecutor 實際應用
 - [效能調優實戰](/programming/python/advanced/08-practical-optimization/performance-tuning/) - 正則預編譯、LRU 快取、資料結構選擇
-- [案例研究](/programming/python/advanced/08-practical-optimization/case-studies/) - 5 個完整的優化案例與效能測量
+- [案例研究](/programming/python/advanced/08-practical-optimization/case-studies/) - 5 個完整的改善案例與效能測量
 
 ## 學習路徑
 
@@ -126,7 +126,7 @@ Python 的異步程式設計模型，掌握現代 Web/網路開發的必備技�
 模組八（實戰優化）→ 模組四（CPython）→ 模組五（C 擴展）或 模組六（Rust 擴展）
 ```
 
-重點：先用純 Python 優化，再理解瓶頸、用原生語言加速
+重點：先用純 Python 改善，再理解瓶頸、用原生語言加速
 
 ### 路徑 D：完整學習
 
@@ -144,7 +144,7 @@ Python 的異步程式設計模型，掌握現代 Web/網路開發的必備技�
 
 - [模組三：標準庫實戰](/programming/python/basic/03-stdlib/) - 尤其是：
   - [3.7 並行處理](/programming/python/basic/03-stdlib/concurrency/)（threading、multiprocessing、GIL）
-  - [3.8 效能優化](/programming/python/basic/03-stdlib/performance/)（效能測量與優化策略）
+  - [3.8 效能改善](/programming/python/basic/03-stdlib/performance/)（效能測量與改善策略）
 
 ### 推薦先備
 

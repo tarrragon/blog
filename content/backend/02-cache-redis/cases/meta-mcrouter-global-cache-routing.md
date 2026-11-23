@@ -10,7 +10,7 @@ tags: ["backend", "cache", "case-study"]
 
 ## 觀察
 
-mcrouter 被用來統一處理大量 memcached 流量與跨叢集路由，代表快取已從局部優化變成平台層能力。
+mcrouter 被用來統一處理大量 memcached 流量與跨叢集路由，代表快取已從局部改善變成平台層能力。
 
 ## 判讀
 

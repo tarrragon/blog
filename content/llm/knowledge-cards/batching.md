@@ -1,12 +1,12 @@
 ---
 title: "Batching"
 date: 2026-05-12
-description: "多 request 一起跑、攤平 model load 成本：production LLM inference 的核心優化、決定 throughput vs latency 取捨"
+description: "多 request 一起跑、攤平 model load 成本：production LLM inference 的核心最佳化、決定 throughput vs latency 取捨"
 weight: 1
 tags: ["llm", "knowledge-cards"]
 ---
 
-Batching 的核心概念是「**多個 request 在同一個 forward pass 內一起跑、攤平 model weights 從記憶體讀到處理器的成本**」。是 production LLM inference 的核心優化——跟 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 瓶頸對接：讀一次 model weights、能 process N 個 request、單 request 的 effective throughput 上升 N 倍。
+Batching 的核心概念是「**多個 request 在同一個 forward pass 內一起跑、攤平 model weights 從記憶體讀到處理器的成本**」。是 production LLM inference 的核心最佳化——跟 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 瓶頸對接：讀一次 model weights、能 process N 個 request、單 request 的 effective throughput 上升 N 倍。
 
 ## 跟其他概念的關係
 
@@ -19,7 +19,7 @@ Batching 介於 inference engine 內部、跟 [KV cache](/llm/knowledge-cards/kv
 | No batching         | 每 request 獨立 forward pass      | Single-user、極低 latency 要求                            |
 | Static batching     | 等湊滿 N 個 request 才跑          | 高 throughput 批次處理（embedding pipeline、文件 ingest） |
 | Continuous batching | 新 request 動態加入正在跑的 batch | vLLM / TGI / SGLang 等 production inference 主流          |
-| In-flight batching  | 不同 sequence 在不同 step 同時推  | NVIDIA Triton + TensorRT-LLM 等深度優化                   |
+| In-flight batching  | 不同 sequence 在不同 step 同時推  | NVIDIA Triton + TensorRT-LLM 等深度改善                   |
 
 實務觀察：production LLM 服務 throughput 在 batch size 4-32 之間有明顯提升、超過 GPU memory 上限後反而下降（KV cache 跟 model weight 競爭記憶體）。
 
@@ -31,4 +31,4 @@ Batching 策略由應用能容忍的延遲與 KV cache 的容量兩個條件決�
 
 chat 與 generation 服務的每個 request 都要在 GPU memory 裡放自己的 KV cache，能同時放進 batch 的 request 數大約是（GPU memory − model weights）÷ 每個 request 的 KV cache。batch 超過這個數時，KV cache 跟 model weights 搶記憶體，throughput 反而下降。Embedding 服務只跑一次 forward pass、沒有 KV cache 累積，不受這個上限限制，batch 16-128 都在常見範圍。
 
-詳細跟 production 部署 capacity planning 的對接見 [4.9 Production 資源評估](/llm/04-applications/production-resource-planning/)；跟 [autoregressive](/llm/knowledge-cards/autoregressive/) 推論的單 token 瓶頸對應的優化討論見 [3.2 attention 機制](/llm/03-theoretical-foundations/attention-mechanism/)。
+詳細跟 production 部署 capacity planning 的對接見 [4.9 Production 資源評估](/llm/04-applications/production-resource-planning/)；跟 [autoregressive](/llm/knowledge-cards/autoregressive/) 推論的單 token 瓶頸對應的最佳化討論見 [3.2 attention 機制](/llm/03-theoretical-foundations/attention-mechanism/)。

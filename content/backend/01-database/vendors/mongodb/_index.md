@@ -72,7 +72,7 @@ MongoDB 是以 document model 為主體的 DB。PostgreSQL JSONB 適合「SQL �
 
 **4. Time series workload（6.0+）**：
 
-- time series collection 專屬優化
+- time series collection 專屬最佳化
 - 不過 InfluxDB / TimescaleDB 仍是更專業選擇
 
 **5. 已有 MongoDB 生態 + 想轉移操作責任**：

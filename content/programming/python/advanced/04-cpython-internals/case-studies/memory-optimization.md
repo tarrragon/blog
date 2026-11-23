@@ -1,13 +1,13 @@
 ---
-title: "案例：記憶體優化"
+title: "案例：記憶體最佳化"
 date: 2026-01-21
-description: "用 __slots__ 和 weakref 優化快取系統的記憶體使用"
+description: "用 __slots__ 和 weakref 最佳化快取系統的記憶體使用"
 weight: 2
 tags: ["python", "python-advanced", "cpython", "memory", "optimization", "case-study"]
 aliases: ["/python-advanced/04-cpython-internals/case-studies/memory-optimization/"]
 ---
 
-本案例基於 `.claude/lib/config_loader.py` 的實際程式碼，展示如何用 `__slots__` 和 `weakref` 優化記憶體使用。
+本案例基於 `.claude/lib/config_loader.py` 的實際程式碼，展示如何用 `__slots__` 和 `weakref` 最佳化記憶體使用。
 
 ## 先備知識
 
@@ -88,7 +88,7 @@ print(f"__dict__ size: {sys.getsizeof(item.__dict__)} bytes")
 
 ## 進階解決方案
 
-### 優化目標
+### 最佳化目標
 
 1. 減少每個物件的記憶體佔用
 2. 避免快取導致的記憶體洩漏
@@ -486,7 +486,7 @@ benchmark_memory(SlottedDataclass)
 
 ### 完整程式碼
 
-以下是整合所有優化技術的完整實作：
+以下是整合所有最佳化技術的完整實作：
 
 ```python
 """
@@ -917,12 +917,12 @@ print(cache.memory_usage())
 
 ### 不建議使用
 
-- **物件數量很少**：優化效果不明顯
+- **物件數量很少**：最佳化效果不明顯
 - **需要動態新增屬性**：`__slots__` 會限制彈性
-- **過早優化**：先確認是否真的有問題
+- **過早最佳化**：先確認是否真的有問題
 - **程式碼可讀性優先**：標準類別更直觀
 
-### 優化決策流程
+### 最佳化決策流程
 
 ```python
 # Step 1: Profile first!

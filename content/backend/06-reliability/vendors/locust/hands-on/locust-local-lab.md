@@ -163,7 +163,7 @@ echo "exit=$?"
 # exit=1（原因在〈內建的 exit code〉）
 ```
 
-參數的意思：`--headless` 不開 Web UI、直接開始；`-u 20` 是同時在線的使用者數；Locust 照 `-r 5` 每秒啟動 5 個使用者，第一批在第 0 秒啟動，這次 20 個在第 3.1 秒全部啟動；`-t 30s` 是從開始到結束的時間，包含啟動的那 3 秒；`--host` 是受測服務的位址，換成讀者自己的服務；Locust 依 `--csv out/run1` 在工作目錄 `/mnt/locust` 底下的 `out/`（也就是本機的 `locust/out/`，Locust 會自己建這個資料夾）寫出以 `run1` 開頭的幾個 CSV；`--html` 寫一份 HTML 報告；`--only-summary` 只在結束時印一次統計表，不在執行中每幾秒印一次。這次的使用者數、啟動速率與時間是示範用的值，沒有比較其他值；`-u` 與 `-t` 決定這次量的是哪一級負載、樣本有多少，gate 怎麼取見 [Locust 在效能 regression gate 的用法](/backend/06-reliability/vendors/locust/locust-performance-regression-gate/) 的〈PR 與 nightly 兩種執行的分工〉，容量探測怎麼逐級加壓見 [Locust 在容量探測的用法](/backend/09-performance-capacity/vendors/locust/locust-capacity-probing/) 的〈closed model 下的逐級加壓：LoadTestShape 的 tick〉。
+參數的意思：`--headless` 不開 Web UI、直接開始；`-u 20` 是同時線上的使用者數；Locust 照 `-r 5` 每秒啟動 5 個使用者，第一批在第 0 秒啟動，這次 20 個在第 3.1 秒全部啟動；`-t 30s` 是從開始到結束的時間，包含啟動的那 3 秒；`--host` 是受測服務的位址，換成讀者自己的服務；Locust 依 `--csv out/run1` 在工作目錄 `/mnt/locust` 底下的 `out/`（也就是本機的 `locust/out/`，Locust 會自己建這個資料夾）寫出以 `run1` 開頭的幾個 CSV；`--html` 寫一份 HTML 報告；`--only-summary` 只在結束時印一次統計表，不在執行中每幾秒印一次。這次的使用者數、啟動速率與時間是示範用的值，沒有比較其他值；`-u` 與 `-t` 決定這次量的是哪一級負載、樣本有多少，gate 怎麼取見 [Locust 在效能 regression gate 的用法](/backend/06-reliability/vendors/locust/locust-performance-regression-gate/) 的〈PR 與 nightly 兩種執行的分工〉，容量探測怎麼逐級加壓見 [Locust 在容量探測的用法](/backend/09-performance-capacity/vendors/locust/locust-capacity-probing/) 的〈closed model 下的逐級加壓：LoadTestShape 的 tick〉。
 
 結束時終端機印出兩張統計表（這次的輸出，欄寬縮短），有失敗的請求時接著再印一張依錯誤訊息計數的 Error report：
 

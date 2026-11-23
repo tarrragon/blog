@@ -114,7 +114,7 @@ valkey-cli CONFIG GET io-threads
 
 1. `io-threads` 不超過實體核數，留 headroom 給 OS 與其他進程（8 核設 4-6）
 2. 用實際 workload 壓測對比不同 io-threads 值的延遲與吞吐，不要憑感覺調滿
-3. CPU 密集 workload 收益有限，問題可能在命令本身太重（大 collection / 大 Lua），先優化命令
+3. CPU 密集 workload 收益有限，問題可能在命令本身太重（大 collection / 大 Lua），先改善命令
 4. 多執行緒解的是 I/O 平行度，不是單命令執行速度，分清楚瓶頸在哪
 
 ### Case 5：以為換 Valkey 就解決了 Redis 的記憶體 / fork 問題
@@ -140,7 +140,7 @@ Valkey 的容量判讀，多數沿用 Redis（同源），差異集中在執行�
 | `io-threads`                  | 預設 1、可調至接近核數                | 多核 + I/O 密集才有收益、需壓測驗證   |
 | 單實例吞吐                    | 多執行緒下高於 Redis（依 workload）   | 以 valkey.io benchmark 為準、自己壓測 |
 | 授權成本                      | BSD 3-clause、商業使用無限制          | 合規敏感場景的決定性優勢              |
-| managed 成本                  | ElastiCache for Valkey 約低 Redis 20% | AWS 生態的成本優化路徑                |
+| managed 成本                  | ElastiCache for Valkey 約低 Redis 20% | AWS 生態的成本改善路徑                |
 
 撞牆後的路由判斷：
 

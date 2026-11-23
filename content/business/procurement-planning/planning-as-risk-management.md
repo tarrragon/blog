@@ -43,7 +43,7 @@ tags: ["business", "procurement", "planning"]
 
 **寧可過備、不可斷料**。餘裕的定價是期望損失：多備的邊際成本，對比它降低的「斷料機率 × 停線損失」。當停線損失大兩個量級，就算斷料機率只降低幾個百分點，多備也是划算的——這是「絕不斷料」這條底線的推導基礎，而不只是行規。
 
-**每條工作線共用同一份風險預算**。Forecast、供應商佈局、安全庫存、追料、替代料五條看似獨立的工作線，各自對應期望損失式裡的一項：forecast 降低「備錯量」的機率、供應商佈局降低「供給端中斷」的機率、[安全庫存](/business/procurement-planning/cards/safety-stock/) 縮短波動造成的缺口時長、追料提早偵測讓介入選項還在、[替代料](/business/procurement-planning/cards/alternate-part/) 是最後的供貨備援。拆開各自優化會顧此失彼，因為它們共享同一個目標函數——供應商佈局那一項的完整定價（成本對比期望損失），在 [第二來源的經濟學](/business/procurement-planning/multi-source-supplier-strategy/) 展開。
+**每條工作線共用同一份風險預算**。Forecast、供應商佈局、安全庫存、追料、替代料五條看似獨立的工作線，各自對應期望損失式裡的一項：forecast 降低「備錯量」的機率、供應商佈局降低「供給端中斷」的機率、[安全庫存](/business/procurement-planning/cards/safety-stock/) 縮短波動造成的缺口時長、追料提早偵測讓介入選項還在、[替代料](/business/procurement-planning/cards/alternate-part/) 是最後的供貨備援。拆開各自最佳化會顧此失彼，因為它們共享同一個目標函數——供應商佈局那一項的完整定價（成本對比期望損失），在 [第二來源的經濟學](/business/procurement-planning/multi-source-supplier-strategy/) 展開。
 
 **異常應對是常態工作、不是例外**。風險管理的視角下，「會缺的料就是會缺」是輸入條件——工作是讓缺料發生時有路可走（備援已佈好、卡點早發現），而不是追求缺料永不發生。
 

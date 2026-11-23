@@ -11,9 +11,9 @@ Mixpanel 和 Amplitude 是行為分析（product analytics）專用方案。核�
 
 ## 行為分析 vs 通用監控
 
-通用監控方案（Sentry、Crashlytics、Datadog）的主要產出是 error 報告和 performance 數據 — 工程團隊用來修復 bug 和優化效能。
+通用監控方案（Sentry、Crashlytics、Datadog）的主要產出是 error 報告和 performance 數據 — 工程團隊用來修復 bug 和改善效能。
 
-行為分析方案的主要產出是 funnel 和 cohort 數據 — 產品團隊用來決定功能優先順序、評估改版效果、優化使用者體驗。
+行為分析方案的主要產出是 funnel 和 cohort 數據 — 產品團隊用來決定功能優先順序、評估改版效果、改善使用者體驗。
 
 兩類需求可以共存。工程團隊需要 error tracking，產品團隊需要行為分析。一些團隊同時使用 Sentry + Mixpanel，各自服務不同的消費者。
 
@@ -57,7 +57,7 @@ Retention 是產品健康度的核心指標。行為分析方案提供 retention
 
 **使用者數量足夠產生統計意義**：Funnel 和 cohort 分析需要足夠的樣本量。DAU < 100 的產品，分析結果的統計信度低。
 
-**有明確的優化目標**：「提高註冊轉換率」「降低 Day 7 流失率」— 有具體的 metric 目標，行為分析方案能提供追蹤和歸因。
+**有明確的改善目標**：「提高註冊轉換率」「降低 Day 7 流失率」— 有具體的 metric 目標，行為分析方案能提供追蹤和歸因。
 
 自用工具場景下不需要行為分析方案 — 使用者就是開發者本人，行為數據沒有分析價值。
 

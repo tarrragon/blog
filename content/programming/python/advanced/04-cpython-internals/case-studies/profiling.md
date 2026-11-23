@@ -111,7 +111,7 @@ class MarkdownLinkChecker:
 
 1. 找出效能瓶頸所在
 2. 量化各部分的時間消耗
-3. 驗證優化效果
+3. 驗證最佳化效果
 
 ### 實作步驟
 
@@ -533,9 +533,9 @@ def compare_compile_vs_inline():
     print(f"{'Compile in loop':<25} {loop_compile_time:<12.4f} {loop_compile_time/compiled_time:.2f}x")
 ```
 
-#### 步驟 5：優化建議與驗證
+#### 步驟 5：最佳化建議與驗證
 
-根據分析結果，實作優化版本並驗證效果：
+根據分析結果，實作最佳化版本並驗證效果：
 
 ```python
 import re
@@ -962,7 +962,7 @@ Line #      Hits         Time  Per Hit   % Time  Line Contents
 
 - **第 65 行（行內連結匹配）佔 34.4%**：這是最大的瓶頸
 - **第 47 行（split）佔 19.5%**：字串分割是第二大消耗
-- **第 68 行（引用連結匹配）佔 17.3%**：也是重要的優化目標
+- **第 68 行（引用連結匹配）佔 17.3%**：也是重要的最佳化目標
 
 ## 設計權衡
 
@@ -971,7 +971,7 @@ Line #      Hits         Time  Per Hit   % Time  Line Contents
 | 開發時間   | 少       | 中等          | 較多               |
 | 分析粒度   | 無       | 函式級        | 行級               |
 | 效能開銷   | 無       | 低            | 較高               |
-| 適用場景   | 簡單程式 | 一般優化      | 精確定位           |
+| 適用場景   | 簡單程式 | 一般最佳化    | 精確定位           |
 | 學習成本   | 無       | 低            | 中等               |
 | 結果準確度 | -        | 高            | 非常高             |
 
@@ -985,7 +985,7 @@ Line #      Hits         Time  Per Hit   % Time  Line Contents
 - 正則表達式複雜時
 - 有迴圈處理大量項目
 
-不建議過早優化：
+不建議過早最佳化：
 
 - 功能還在開發中
 - 使用頻率很低
@@ -1180,4 +1180,4 @@ if __name__ == "__main__":
 
 ---
 
-下一章：[記憶體優化](/programming/python/advanced/04-cpython-internals/case-studies/memory-optimization/)
+下一章：[記憶體最佳化](/programming/python/advanced/04-cpython-internals/case-studies/memory-optimization/)

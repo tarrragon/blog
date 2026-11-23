@@ -2402,7 +2402,7 @@
    "module": "backend"
   },
   {
-   "name": "gevent 的猴子補丁",
+   "name": "gevent 的monkey patching",
    "card": "backend/knowledge-cards/gevent-monkey-patching",
    "module": "backend"
   },

@@ -2,7 +2,7 @@
 title: "Selector 精準度：讓 query 只命中你想要的元素"
 date: 2026-04-25
 weight: 14
-description: "JS 的 DOM query 是 sanity 防線、不是優化選項。從『起點 / 範圍 / 過濾』三層收斂、避免誤命中、避免未來頁面結構變動讓 query 撈到不該撈的東西。本文是 selector 設計的完整指引。"
+description: "JS 的 DOM query 是 sanity 防線、不是改善選項。從『起點 / 範圍 / 過濾』三層收斂、避免誤命中、避免未來頁面結構變動讓 query 撈到不該撈的東西。本文是 selector 設計的完整指引。"
 tags: ["report", "事後檢討", "JavaScript", "DOM", "工程方法論"]
 ---
 
@@ -18,7 +18,7 @@ tags: ["report", "事後檢討", "JavaScript", "DOM", "工程方法論"]
 
 DOM selector 的範圍越寬、被誤命中的可能性越高。寬泛 selector 像「網撈」 — 當下頁面只有一個目標元素時看不出問題、未來頁面結構變動（加第二個同類元件、加 demo 區塊、加 widget）就壞。
 
-精準度的成本是「寫 selector 時多想一點」、收益是「行為可預測、不會被未來變動打破」。**這是 sanity 防線，而不是優化**。
+精準度的成本是「寫 selector 時多想一點」、收益是「行為可預測、不會被未來變動打破」。**這是 sanity 防線，而不是改善**。
 
 ### 寬泛 selector 的失敗模式
 

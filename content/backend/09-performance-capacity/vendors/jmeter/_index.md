@@ -30,7 +30,7 @@ Legacy 測試資產適合保留 JMeter。既有 `.jmx` 檔案、listener、plugi
 
 判斷 JMeter deployment 是否健康、最少看四件事：
 
-- **Thread group 設計**：thread group 的種類決定負載模型是 open 還是 closed（[Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)）。內建 Thread Group、plugin 的 Stepping 與 Concurrency Thread Group 固定同時在線的 thread 數，是 closed model，受測服務變慢時實際的請求率跟著下降；要固定到達率時用 5.5 起內建的 Open Model Thread Group（官方標為 experimental），或 plugin 的 Arrivals Thread Group（碰到 Concurrency Limit 之後退回 closed）
+- **Thread group 設計**：thread group 的種類決定負載模型是 open 還是 closed（[Open and Closed Workload Model](/backend/knowledge-cards/open-closed-workload-model/)）。內建 Thread Group、plugin 的 Stepping 與 Concurrency Thread Group 固定同時執行的 thread 數，是 closed model，受測服務變慢時實際的請求率跟著下降；要固定到達率時用 5.5 起內建的 Open Model Thread Group（官方標為 experimental），或 plugin 的 Arrivals Thread Group（碰到 Concurrency Limit 之後退回 closed）
 - **Listener 配置**：GUI listener（View Results Tree / Aggregate Report / Graph）只在 design / debug 階段開、正式跑必須改 *Simple Data Writer* 輸出 JTL、結果分析交給離線 HTML report 或外部 Grafana
 - **Distributed mode 設定**：一台施壓機跑得了多少 thread 取決於那台機器的 CPU、heap、網路與 test plan 的內容，要在施壓機上量（[Load Generator Saturation](/backend/knowledge-cards/load-generator-saturation/)）：逐級加 thread，施壓機的 CPU、GC 暫停或網路先到頂的那一級就是這台的上限，超過時改走 remote testing（官方用語是 client／server，舊資料寫成 master／slave）；各台 server 的 plugin、JMeter 版本、JVM 參數要跟 client 一致、否則結果不可信
 - **GUI vs CLI 模式區分**：GUI 是 design / debug only、production load 一律走 `jmeter -n -t plan.jmx -l result.jtl`；GUI 跑大規模測試會把 listener 拉爆記憶體、結果反而失真

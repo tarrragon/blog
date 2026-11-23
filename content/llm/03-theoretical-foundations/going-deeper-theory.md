@@ -117,7 +117,7 @@ Stanford 的 NLP + Deep Learning 旗艦課、由 Chris Manning、Tatsu Hashimoto
 - 大規模分散式訓練
 - 評估方法
 - Alignment（SFT、DPO、RLHF）
-- Inference 優化
+- Inference 最佳化
 - 部署、安全
 
 ### 為什麼這門特別

@@ -76,7 +76,7 @@ stream 的核心責任是保存事件序列，讓 consumer 可以依自己的進
 接近真實網路服務的例子包括：
 
 - [WebSocket](/backend/knowledge-cards/websocket/) server 跨節點廣播 [topic](/backend/knowledge-cards/topic/) update
-- presence 狀態變更通知在線 client
+- presence 狀態變更通知線上 client
 - [dashboard](/backend/knowledge-cards/dashboard/) 即時刷新目前任務進度
 
 這類設計的主要風險是 [reliability boundary](/backend/knowledge-cards/reliability-boundary/)。pub/sub 適合即時 [fan-out](/backend/knowledge-cards/fan-out/)；若訊息需要 [offline catch-up](/backend/knowledge-cards/offline-catchup/)、audit 或 [strong reliability](/backend/knowledge-cards/strong-reliability/)，通常還需要 [durable queue](/backend/knowledge-cards/durable-queue/)、[event log](/backend/knowledge-cards/event-log/) 或資料庫狀態搭配。
@@ -102,7 +102,7 @@ outbox 的核心責任是把業務資料寫入和待發事件放進同一個資�
 - 感測器一秒上報幾百筆、可接受偶發遺失、後端只需即時聚合 → broker 候選是 MQTT broker / NATS、量級訊號 sub-ms 延遲 + 萬到十萬 msg/sec
 - 訂單事件需要多個下游服務各自 replay、保留 7 天以上 → broker 候選是 Kafka / Pulsar、量級訊號 partition 化吞吐 + retention 天 / 週 / 月可設
 - 寄信、轉檔等可重試任務、不要遺失但允許短暫延遲 → broker 候選是 RabbitMQ / SQS、量級訊號萬級 msg/sec + ack/nack + dead-letter
-- 跨節點即時通知在線 client、訂閱者離線可放棄 → broker 候選是 Redis Pub/Sub / NATS、量級訊號 sub-ms + 即時廣播、不保留
+- 跨節點即時通知線上 client、訂閱者離線可放棄 → broker 候選是 Redis Pub/Sub / NATS、量級訊號 sub-ms + 即時廣播、不保留
 
 反推的目的是把「broker 比較」轉成「需求對齊」、避免從 vendor 規格表開始挑工具。下面四個維度是反推時要對齊的量級訊號。
 

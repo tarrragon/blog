@@ -36,7 +36,7 @@ Workload signals 的核心責任是找出 I/O 是否為主要成本與瓶頸。
 | Buffer cache hit ratio 低 | 工作集超過 memory 或 query 掃描過重   |
 | 大量 random read / write  | storage I/O 壓力明顯                  |
 | ETL / backfill 經常跑     | 短期 I/O spike 可能影響帳單與 latency |
-| Index / query 設計已優化  | 成本切換更能反映真實 workload         |
+| Index / query 設計已改善  | 成本切換更能反映真實 workload         |
 
 先做 query 與 index review。若 I/O 來自缺 index、全表掃描、過度 eager loading 或不必要 backfill，直接切 I/O-Optimized 只會把浪費制度化。
 

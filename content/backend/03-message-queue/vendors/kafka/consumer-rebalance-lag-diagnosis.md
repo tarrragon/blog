@@ -133,7 +133,7 @@ STATE 的取值是診斷訊號：`Stable` 代表分配已收斂正常消費；`P
 
 Lag 的分布形狀是診斷的主軸：均勻分布指向消費總能力不足，集中在少數 partition 指向 key 分布或單 partition 的局部問題。同樣是 lag 高，這兩種形狀的修法完全相反，先讀分布再決定方向。
 
-Lag 均勻分布在所有 partition，代表 consumer group 整體消費速度跟不上 producer 寫入速度。根因在消費側的總吞吐：consumer 數量不足、單 consumer 處理慢（CPU / GC / 下游 I/O）、或 producer 突發流量超過 group 設計容量。修法是擴消費能力：加 consumer（上限是 partition 數）、優化單筆處理、或對下游加 batch。如果 lag 隨時間線性成長且各 partition 同步成長，是穩態的容量不足，要重新評估 partition 數與 consumer 數。
+Lag 均勻分布在所有 partition，代表 consumer group 整體消費速度跟不上 producer 寫入速度。根因在消費側的總吞吐：consumer 數量不足、單 consumer 處理慢（CPU / GC / 下游 I/O）、或 producer 突發流量超過 group 設計容量。修法是擴消費能力：加 consumer（上限是 partition 數）、改善單筆處理、或對下游加 batch。如果 lag 隨時間線性成長且各 partition 同步成長，是穩態的容量不足，要重新評估 partition 數與 consumer 數。
 
 Lag 集中在少數 partition、其餘 partition lag 接近零，代表負載不均，根因通常在 key 分布。Producer 用 key 決定 partition（`hash(key) % partition_count`），如果某些 key 是熱點（例如某個大客戶的 id、某個 null key 全落同一 partition），對應 partition 的訊息量遠高於其他，負責它的 consumer 再快也追不上，而其他 consumer 閒著。加 consumer 不解決這個問題，因為瓶頸 partition 仍只能被一個 consumer 消費。修法在 key 設計：拆熱點 key、加 salt 打散、或對熱點走獨立 topic。
 
@@ -141,7 +141,7 @@ Airbnb 的 logging pipeline 遇到的正是 partition 層 skew：event size 從�
 
 | Lag 分布形狀                | 根因方向                 | 修法                                           | 加 consumer 是否有效          |
 | --------------------------- | ------------------------ | ---------------------------------------------- | ----------------------------- |
-| 均勻分布、各 partition 相近 | 消費總能力不足           | 加 consumer、優化處理、batch 下游              | 有效（上限 partition 數）     |
+| 均勻分布、各 partition 相近 | 消費總能力不足           | 加 consumer、改善處理、batch 下游              | 有效（上限 partition 數）     |
 | 集中少數 partition          | key 分布熱點 / data skew | 拆 key、salt、熱點獨立 topic、解耦 parallelism | 無效（瓶頸 partition 仍單線） |
 
 判讀順序固定：先 `--describe` 看分布形狀，再決定往「擴容」還是「重分布」走。跳過分布判讀直接加 consumer，遇到熱點 partition 場景會白花資源還解不了 lag。

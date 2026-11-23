@@ -6,7 +6,7 @@ weight: 14
 tags: ["backend", "observability", "case-study", "cost", "cardinality"]
 ---
 
-觀測成本治理案例來自多家企業的共同經驗：觀測平台帳單每季成長 30%，管理層問「為什麼監控這麼貴」但沒人能歸因。問題的核心不是「花太多」而是「花在哪不知道」— 沒有 per-team cost attribution 的觀測平台，成本優化只能靠全域砍 retention 或降 sampling，兩者都會傷害觀測品質。
+觀測成本治理案例來自多家企業的共同經驗：觀測平台帳單每季成長 30%，管理層問「為什麼監控這麼貴」但沒人能歸因。問題的核心不是「花太多」而是「花在哪不知道」— 沒有 per-team cost attribution 的觀測平台，降低成本只能靠全域砍 retention 或降 sampling，兩者都會傷害觀測品質。
 
 ## 業務背景
 
@@ -24,7 +24,7 @@ tags: ["backend", "observability", "case-study", "cost", "cardinality"]
 
 觀測帳單通常是 organization-level 的一筆支出。SaaS 帳單按 hosts、custom metrics、log volume、APM spans 計費；自建平台按 compute 跟 storage 計費。兩種模式都缺少「這些費用是哪個 team / service 造成的」的歸因。
 
-沒有 attribution 的後果是所有優化都是全域操作 — 砍 retention 從 30 天到 7 天影響所有人，降 sampling 從 100% 到 10% 影響所有服務。需要觀測資料的團隊被平均到成本節省裡，不需要的團隊搭便車。
+沒有 attribution 的後果是所有改善都是全域操作 — 砍 retention 從 30 天到 7 天影響所有人，降 sampling 從 100% 到 10% 影響所有服務。需要觀測資料的團隊被平均到成本節省裡，不需要的團隊搭便車。
 
 ### Cardinality 爆炸
 
@@ -50,7 +50,7 @@ Debug-level log 在開發階段有用，但 production 環境裡通常只在排�
 
 ### Cost attribution by team / service
 
-第一步是讓成本可見，歸因先於優化。
+第一步是讓成本可見，歸因先於降低成本。
 
 SaaS 平台：用 Datadog 的 usage attribution 或 Grafana Cloud 的 usage reporting 把 ingestion 按 service tag / team tag 拆分。每個 team 看到自己的 metric series、log volume 跟 span 數量。
 
@@ -110,6 +110,6 @@ Adaptive sampling 保留了排錯最需要的 trace（error 跟 outlier），砍
 
 - 觀測帳單每季成長 > 20%，但服務的 request volume 成長遠小於此 — cardinality 或 log volume 可能在失控成長
 - 管理層問「監控花多少錢、誰在用」但沒人能回答
-- 曾經做過「全域降 retention」或「全域降 sampling」的成本優化，但幾個月後成本回升
+- 曾經做過「全域降 retention」或「全域降 sampling」的成本改善，但幾個月後成本回升
 - Platform team 花大量時間處理「Prometheus OOM」或「Elasticsearch disk full」而非改善觀測品質
 - 團隊的 debug log level 在 production 預設開著，理由是「不知道什麼時候需要」

@@ -28,7 +28,7 @@ Zomato 遷移揭露三個 DB 選型決策的判讀重點。
 
 1. **NewSQL vs NoSQL 的取捨不只是 schema**：TiDB 提供 SQL 介面跟 ACID、DynamoDB 提供 KV 介面跟最終一致性。Zomato 選 DynamoDB 是判斷「帳單事件本身可以接受 eventually consistent」、用一致性換性能跟成本。對應 [01.5 transaction boundary](/backend/01-database/transaction-boundary/) 的一致性取捨。
 2. **TiDB 必須 over-provision 是分散式 SQL 的常態**：分散式 SQL 為了支援跨節點交易、必須有預留容量、否則峰值會出現 leader election storm 或 follower lag。這跟 [Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) 的「節點數即容量」是同類取捨、Spanner 也必須預先 scale 節點。
-3. **2K → 8K RPM 是 4 倍、但延遲降 90% 才是真關鍵**：吞吐改善可能來自架構優化、延遲改善才是 DB 本質差。從 baseline → 10% 通常代表少了 1-2 個 hop（例如 cross-region replication、coordinator round-trip）。對應 [9.1 壓測理論與系統行為](/backend/09-performance-capacity/) 的 Little's Law。
+3. **2K → 8K RPM 是 4 倍、但延遲降 90% 才是真關鍵**：吞吐改善可能來自架構改善、延遲改善才是 DB 本質差。從 baseline → 10% 通常代表少了 1-2 個 hop（例如 cross-region replication、coordinator round-trip）。對應 [9.1 壓測理論與系統行為](/backend/09-performance-capacity/) 的 Little's Law。
 
 需要警惕：
 

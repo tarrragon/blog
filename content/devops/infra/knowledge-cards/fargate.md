@@ -22,7 +22,7 @@ Fargate 降低的是維運面（不用管 OS patch、不用管 instance 容量�
 
 ## 可觀察訊號
 
-評估是否從 Fargate 切到 EC2 的訊號是月費曲線。Fargate 按 vCPU-hour 和 memory-hour 計費，task 數量少時費用低、管理簡單。當 task 數量穩定在 10-20 個以上且流量模式可預測時，EC2 launch type 搭配 reserved instance 或 Savings Plans 的成本優勢開始顯著——但要承擔 instance 管理的維運負擔。詳細的成本分析見 [ECS Fargate 成本分析與優化](/devops/infra/05-core-services/ecs-fargate-cost-optimization/)。
+評估是否從 Fargate 切到 EC2 的訊號是月費曲線。Fargate 按 vCPU-hour 和 memory-hour 計費，task 數量少時費用低、管理簡單。當 task 數量穩定在 10-20 個以上且流量模式可預測時，EC2 launch type 搭配 reserved instance 或 Savings Plans 的成本優勢開始顯著——但要承擔 instance 管理的維運負擔。詳細的成本分析見 [ECS Fargate 成本分析與改善](/devops/infra/05-core-services/ecs-fargate-cost-optimization/)。
 
 Fargate Spot 是介於兩者之間的選項：費用約為 on-demand Fargate 的 30%，但 AWS 可以隨時中斷 task（提前 2 分鐘通知）。適合可容忍中斷的 workload（批次處理、非即時的資料轉換），不適合面對使用者的即時 API。常見的混合策略是用 on-demand Fargate 跑基線流量、Fargate Spot 跑彈性擴張的部分。
 

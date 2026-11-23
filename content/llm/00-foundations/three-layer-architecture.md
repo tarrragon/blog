@@ -53,7 +53,7 @@ weight: 3
 - **[Ollama](/llm/01-local-llm-services/ollama/)**：最主流的本地推論伺服器、預設聽 [`localhost:11434`](/llm/knowledge-cards/port-and-localhost/)、提供 OpenAI 相容 API 與自己的原生 API。內建 model registry、`ollama pull gemma4:31b` 會自動下載權重檔。
 - **[LM Studio](/llm/01-local-llm-services/lm-studio/)**：GUI 工具、內建模型瀏覽器與本地伺服器。可以在 UI 上開啟 server、預設聽 `localhost:1234`。適合喜歡可視化操作、不熟悉終端機的使用者。
 - **[llama.cpp `server`](/llm/01-local-llm-services/llama-cpp/)**：底層推論引擎附帶的 HTTP server、需要手動編譯與配置。Ollama 內部其實是用 llama.cpp 當推論引擎。
-- **[oMLX](/llm/knowledge-cards/omlx/)**：建在 MLX 之上的特化伺服器、主打 paged SSD KV cache、針對 coding agent 長 context 場景的首字延遲優化。詳見 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。
+- **[oMLX](/llm/knowledge-cards/omlx/)**：建在 MLX 之上的特化伺服器、主打 paged SSD KV cache、針對 coding agent 長 context 場景的首字延遲改善。詳見 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。
 
 伺服器層的選擇影響：
 

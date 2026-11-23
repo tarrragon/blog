@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.14.0 — 內文的優化、在線、補丁依所指換成台灣用語（最佳化、強化、改善；線上、在線上、同時執行；修補、修補檔、更新檔）。
+
 **Version**: 2.13.1（2026-11-14）— `hooks/layer-boundary-validator-hook.py` 移除未使用的 `get_project_root` 匯入。hook 行為與 skill 指令內容不變。
 
 **Version**: 2.13.0 — 各 reference 裡的「住在」換成實際的動詞（寫在、放在、位於），照寫作規範「住在一律換」的判定：`doc-handoff.md`、`portable-design-boundary.md`、`test-object-catalogue.md`、`project-integration/traceability-matrix.md`。

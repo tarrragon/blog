@@ -22,7 +22,7 @@ rolling update 常用來降低單次切換風險。rolling update 的判讀重�
 2. [readiness](/backend/knowledge-cards/readiness/) probe：確認服務可安全接流量。
 3. liveness probe：確認服務仍可維持基本運作，必要時觸發重建。
 
-probe 設計若只回傳固定成功，rollout 期間會出現「容器在線但服務未就緒」的流量抖動。穩定做法是讓 readiness 反映依賴就緒條件，例如資料庫連線池、必要配置、關鍵背景任務狀態。
+probe 設計若只回傳固定成功，rollout 期間會出現「容器在線上但服務未就緒」的流量抖動。穩定做法是讓 readiness 反映依賴就緒條件，例如資料庫連線池、必要配置、關鍵背景任務狀態。
 
 ### Startup probe 設計注意事項
 

@@ -220,7 +220,7 @@ Corpus 規模？
 - **Dependency constraint**（見「工程約束」段）：規模小但工具鏈排除某些 storage（如 Go 專案排除 CGo dependency）→ 從可行選項中選。
 - **Metadata filter 需求**：規模小但高頻需要按 section / tag 過濾 → 跳過 embedded library、直接評估 vector DB 或 code filter。
 
-一個常見的過度工程信號：corpus 只有幾千筆但花時間調 HNSW 的 `ef_construction`。實測數據（24K chunks）：FAISS HNSW query 0.5ms vs flat 1.8ms、每次省 1.3ms，但 HNSW build 要 23.3s。每天查 100 次要 179 天回本 build 成本（23.3s ÷ 0.13s/天）。此規模的 brute-force 絕對延遲已在感知閾值下，HNSW 的優化收益趨近零。
+一個常見的過度工程信號：corpus 只有幾千筆但花時間調 HNSW 的 `ef_construction`。實測數據（24K chunks）：FAISS HNSW query 0.5ms vs flat 1.8ms、每次省 1.3ms，但 HNSW build 要 23.3s。每天查 100 次要 179 天回本 build 成本（23.3s ÷ 0.13s/天）。此規模的 brute-force 絕對延遲已在感知閾值下，HNSW 的最佳化收益趨近零。
 
 判讀流程之外還有一個容易忽略的變數：**實作語言的計算效能差異**。同一個 brute-force cosine，numpy BLAS 做 24K × 768 只要 1.8ms，Go pure cosine 做同樣運算約需 50-80ms（不含 I/O）。選 storage 方案時如果估「brute-force < 10ms」、前提是用了向量化計算的 library；pure Go / pure Python loop 會慢一到兩個數量級。
 
@@ -397,6 +397,6 @@ Storage 選型沒有「最佳方案」— 只有在特定 constraint 下的最�
 
 ## 下一步
 
-本章整理的是跨場景的 storage 工程原則。Running example 的 blog 基於這些原則選了「Go + flat file + brute-force」方案，完整實作過程（選型→重寫→效能優化→四方案 benchmark→二次選型評估）見 [Case Study：Blog 語意搜尋從 pickle 到 production](/llm/04-applications/hands-on/blog-vector-search/)。
+本章整理的是跨場景的 storage 工程原則。Running example 的 blog 基於這些原則選了「Go + flat file + brute-force」方案，完整實作過程（選型→重寫→效能改善→四方案 benchmark→二次選型評估）見 [Case Study：Blog 語意搜尋從 pickle 到 production](/llm/04-applications/hands-on/blog-vector-search/)。
 
 想看 retrieval 品質不夠時的增強手段（query rewriting / HyDE / multi-step），回到 [4.2 RAG 檢索增強](/llm/04-applications/rag-retrieval-enhancements/)。想看 embedding 模型怎麼選（含工程 constraint 如何先砍選項再比品質）、怎麼判讀 MTEB 分數，回到 [4.12 Embedding model 內部](/llm/04-applications/embedding-model-internals/)。

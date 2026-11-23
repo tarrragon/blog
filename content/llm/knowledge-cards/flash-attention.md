@@ -22,7 +22,7 @@ Flash Attention 在推論架構中的角色：
 
 跟 attention 變體的關係：
 
-- Flash Attention 是**實作層**的優化、跟 [MHA / GQA / MLA](/llm/knowledge-cards/attention/) 等**架構層**變體是兩個獨立維度。
+- Flash Attention 是**實作層**的最佳化、跟 [MHA / GQA / MLA](/llm/knowledge-cards/attention/) 等**架構層**變體是兩個獨立維度。
 - 不同變體都能搭配 Flash Attention 的實作技巧。
 
 在 llama.cpp 中的旗標：

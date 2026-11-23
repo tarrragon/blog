@@ -75,7 +75,7 @@ weight: 4
 | ------------------------ | ---------------------- |
 | Layer                    | 層（layer）            |
 | Weight                   | 權重                   |
-| Activation               | 激活值（activation）   |
+| Activation               | 活躍度（activation）   |
 | Embedding                | 嵌入向量（embedding）  |
 | Attention                | 注意力（attention）    |
 | Self-attention           | 自注意力               |

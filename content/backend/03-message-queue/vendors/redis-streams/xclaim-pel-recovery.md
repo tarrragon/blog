@@ -281,7 +281,7 @@ $ redis-cli CLUSTER KEYSLOT '{shard1}:stream:payments'
 
 ## 整合與下一步
 
-接管機制是 [consumer 設計](/backend/03-message-queue/consumer-design/) 在 Redis Streams 上的具體落地——consumer 不只是讀訊息的迴圈、還要承擔「撿前任孤兒」的責任。設計 consumer 時把 `XAUTOCLAIM` 排進處理迴圈、跟 `XREADGROUP '>'` 並列、不是事後補丁。
+接管機制是 [consumer 設計](/backend/03-message-queue/consumer-design/) 在 Redis Streams 上的具體落地——consumer 不只是讀訊息的迴圈、還要承擔「撿前任孤兒」的責任。設計 consumer 時把 `XAUTOCLAIM` 排進處理迴圈、跟 `XREADGROUP '>'` 並列、不是事後修補。
 
 知識卡對位：delivery count 超閾值的訊息對應 [poison message quarantine](/backend/knowledge-cards/poison-message-quarantine/)（Redis Streams 沒原生 DLQ、自建一個 stream 當隔離區）；接管後的去重對應 [recovery semantics](/backend/knowledge-cards/recovery-semantics/) 跟 [idempotency](/backend/knowledge-cards/idempotency/)（at-least-once 的收斂責任在 application）。
 

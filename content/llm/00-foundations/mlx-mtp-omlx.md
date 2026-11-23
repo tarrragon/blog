@@ -25,7 +25,7 @@ MLX、MTP、oMLX 是本地 LLM 生態中最容易被網路文章混為一談的�
 
 1. 在 CPU、GPU、Neural Engine 之間自動排程運算。
 2. 利用統一記憶體（UMA）避免在記憶體層級之間搬資料。
-3. 提供 lazy evaluation（延遲計算、把運算累積成圖再一次優化執行）與 graph optimization（自動合併多個運算、減少記憶體 round-trip）、讓相同的 Python 程式碼在 M1 ~ M4 上都能用上各代硬體優勢。
+3. 提供 lazy evaluation（延遲計算、把運算累積成圖再一次最佳化執行）與 graph optimization（自動合併多個運算、減少記憶體 round-trip）、讓相同的 Python 程式碼在 M1 ~ M4 上都能用上各代硬體優勢。
 4. 提供 `mlx.core`、`mlx.nn` 等 Python API、可以寫訓練 / 推論程式。
 
 MLX 的角色就是「跑神經網路用的底層數值庫」、把 server / 模型 / 加速技巧三個責任都留給上層工具去做。可以類比：
@@ -87,7 +87,7 @@ ollama run gemma4:31b-coding-mtp-bf16
 
 ## oMLX：建在 MLX 上的特化伺服器
 
-**oMLX**（"optimized MLX server" 的縮寫，2024 年由社群釋出）的核心是「建在 MLX 之上、針對 coding agent 長 context 場景優化的推論伺服器」。它的責任是：
+**oMLX**（"optimized MLX server" 的縮寫，2024 年由社群釋出）的核心是「建在 MLX 之上、針對 coding agent 長 context 場景改善的推論伺服器」。它的責任是：
 
 1. 用 MLX 當推論 backend，吃 Apple Silicon 統一記憶體優勢。
 2. 提供 OpenAI 相容 HTTP API。
@@ -102,7 +102,7 @@ oMLX 跟 Ollama 並列同一層（都是推論伺服器），但定位不同：
 | 目標場景       | 通用本地 LLM               | coding agent 長 context       |
 | KV cache 策略  | 記憶體內，session 結束就丟 | paged SSD，跨 session 復用    |
 | 安裝難度       | 一行 brew                  | 較高，要設 Python 環境        |
-| 對 TTFT 的優化 | 一般                       | 主打：30 ~ 90 秒降到 1 ~ 3 秒 |
+| 對 TTFT 的改善 | 一般                       | 主打：30 ~ 90 秒降到 1 ~ 3 秒 |
 | 生態成熟度     | 高，大量 model tag         | 較新，模型支援要自己轉        |
 
 oMLX 解的是 [0.1 為什麼 LLM 生字慢](/llm/00-foundations/why-llm-feels-slow/) 提到的痛點：當你用 aider 或 Cline 這類 [coding agent](/llm/04-applications/agent-architecture/)（用 LLM 自動操作 git / 檔案的 CLI 工具、模組四會展開）、把整個 repo 塞進 prompt 時、本地 LLM 每次都要重新 [prefill](/llm/knowledge-cards/prefill/) 10K+ tokens、等 30 ~ 90 秒。oMLX 的 SSD cache 把同前綴 prompt 的 prefill 結果保存下來、下次只 prefill「新增的部分」、TTFT 從幾十秒降到幾秒。

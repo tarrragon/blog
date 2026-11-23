@@ -6,7 +6,7 @@ tags: ["llm", "expectation", "local-vs-cloud"]
 weight: 6
 ---
 
-本地 LLM 用得順不順、九成取決於「期待對齊現實」。把本地當成「免費、永遠在線的初階 pair programmer」、它的表現會超出預期、變成日常雜事的得力幫手；把它當成 Claude Sonnet / GPT-5 替代品、跨檔案重構失敗、規劃 multi-step 任務（把模糊目標拆成多個可執行步驟依序執行）崩潰、深度 debug 給平庸答案的場景就會接連出現、第一週體感很差。本地 vs 雲端的能力分工背景見 [0.0 本地 vs 雲端 LLM](/llm/00-foundations/local-vs-cloud/)。
+本地 LLM 用得順不順、九成取決於「期待對齊現實」。把本地當成「免費、永遠線上的初階 pair programmer」、它的表現會超出預期、變成日常雜事的得力幫手；把它當成 Claude Sonnet / GPT-5 替代品、跨檔案重構失敗、規劃 multi-step 任務（把模糊目標拆成多個可執行步驟依序執行）崩潰、深度 debug 給平庸答案的場景就會接連出現、第一週體感很差。本地 vs 雲端的能力分工背景見 [0.0 本地 vs 雲端 LLM](/llm/00-foundations/local-vs-cloud/)。
 
 本章把期待校準到現實。讀完後你會清楚知道：哪些任務交本地、哪些交雲端、本地 LLM 一週後該怎麼判斷去留、什麼時候硬體升級才有意義。
 
@@ -118,7 +118,7 @@ Continue.dev 的 chat panel 下方（輸入框上方的下拉選單）有 model 
 
 1. **初階 pair programmer 是有用的**：能寫測試、能解釋程式碼、能補 type、能改 callback。這些事一個 junior 同事每天做得很好。
 2. **初階 pair programmer 有適用範圍**：設計新架構、跨檔案重構、評估技術選型適合交給 senior（雲端旗艦）、跟交給 junior 同事的判斷一致。
-3. **初階 pair programmer 隨時在線、不用付薪水**：這是本地 LLM 比 junior 同事還好的地方。
+3. **初階 pair programmer 隨時在線上、不用付薪水**：這是本地 LLM 比 junior 同事還好的地方。
 4. **初階 pair programmer 跟 senior 互補**：本地處理量、雲端處理難度、兩者組合讓 senior 把時間花在真正困難的部分。
 
 陷阱是把本地當「便宜的 senior」。它的能力等級是 junior；明確這個定位後、你會自然把日常雜事丟給本地、把難題留給雲端。
