@@ -8,7 +8,7 @@ tags: ["sql", "practice", "curriculum", "spec"]
 draft: true
 ---
 
-這份規格書整理 SQL 自我練習網站的設計方案與完整題庫藍圖，負責把[SQL：這個語言為什麼長這樣](/backend/01-database/sql/)的語意模型與設計原則，接回從零開始的語法練習與真實商業決策。網站尚未開始撰寫程式，這個階段先鎖定學習梯度、貫穿式商業網站的資料表演化、各階段選擇題與選項優劣分析，以及把練習困惑回饋到既有 SQL 教材的閉環。
+這份規格書整理 SQL 自我練習網站的設計方案與完整題庫藍圖，負責把[SQL：這個語言為什麼長這樣](/backend/01-database/sql/)的語意模型與設計原則，接回從零開始的語法練習與真實商業決策。網站尚未開始撰寫程式，這個階段先鎖定學習梯度、多商業領域與多題組隨機抽題機制、高複雜度複合陷阱題、各階段選擇題與選項優劣分析，以及把練習困惑回饋到既有 SQL 教材的閉環。
 
 ## 設計動機與現有 SQL 教材的缺口
 
@@ -20,9 +20,34 @@ draft: true
 
 因此本練習系統採用**選擇題為主、全選項優劣分析為核心**的設計：前段透過語法選擇題建立基本讀寫能力，中段透過「都能跑但不報錯」的靜默錯誤題建立語意模型直覺，後段透過商業情境設計題訓練在效能、資料分布、跨引擎與並行寫入之間的工程取捨。
 
-## 貫穿式商業網站情境：「紙頁書店」線上書城與門市系統
+## 反背題與長期鑑別力架構
 
-為讓練習結果直接對應既有 SQL 教材，本練習沿用[SQL 各篇共用的範例資料庫：一家小書店的顧客、訂單與評價表](/backend/01-database/sql/sample-bookstore-database/)的業務背景，將它從剛開張的小書店擴展為隨規模演化的真實電商網站「紙頁書店」。所有練習題統一使用小寫英文識別字（`snake_case`），對照既有教材的中文表名，方便後續直接匯入 SQLite 與 PostgreSQL 執行。
+如果每個考點只綁死同一套題目，練習兩三輪後學習者會記住表名與選項長相（「看到評價表就選 `NOT EXISTS`」），即使觀念沒有真正內化也能拿到滿分，題庫隨即失去鑑別能力。單純把題目裡的常數 `300` 換成 `500` 或只打亂選項字母，學習者仍能靠辨認 SQL 骨架直接猜中答案。
+
+為讓反覆練習持續具備鑑別力並拉高實戰複雜度，本規格把「要檢驗的能力」與「單次呈現的題目」拆開，導入四層結構化變形機制：
+
+| 機制                       | 做法                                                                                                                                                                                                                                 | 防止的失真形態                                                                           |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| 能力節點 × 多題組變體池    | 將 30 個學習目標定義為獨立**能力節點**（`S1-01` 至 `S6-05`），每個節點至少配置 3 套結構相異的變體題（基本題池 90 題起跳，並可持續擴充），每次抽題優先避開近期做過的變體，渲染時同步打亂選項順序                                      | 防止靠記住「Q08 選 B」刷出假進步                                                         |
+| 三大真實商業領域輪替       | 除「紙頁書店」外，另建「雲課堂」線上訂閱制平台與「捷配物流」B2B 配送調度平台兩套獨立 Schema；同一個 SQL 觀念在三個領域換成完全不同的資料表、業務問句與干擾項                                                                         | 防止把觀念綁死在單一表名（如 `reviews`、`orders`），驗證跨情境遷移能力                   |
+| 前提翻轉與多視角出題       | 同一能力節點的變體池輪替四種出題視角：**寫法挑選**、**反例擊破**（給一段會靜默出錯的查詢，選出能讓它算錯的那筆資料）、**執行計畫／事故診斷**、**前提翻轉**（把約束、索引或資料量前提改掉，讓原本較慢或違規的選項成為新前提下的正解） | 防止把條件式取捨背成死口訣（例如無條件排斥 `NOT IN` 或無條件盲選 `EXISTS`）              |
+| 跨概念複合陷阱題與盲測模式 | 在單點題池之外獨立建立**跨概念複合陷阱題池**（每題同時疊加兩個以上陷阱，例如外連接撤銷保護疊加列數膨脹與整數除法截斷），並提供隱藏階段與考點標籤的**盲測鑑別模式**                                                                   | 防止只在「題目已經提示本題考 `ON` 與 `WHERE`」的輔助下答對，真實檢驗面對陌生需求的診斷力 |
+
+### 熟練度判定標準
+
+練習網站評定一個能力節點是否達到「觀念掌握（Mastered）」，不採用單次答對，必須同時滿足三項條件：
+
+1. 在至少**兩個不同商業領域**的變體題作答正確。
+2. 至少通過一次**非寫法挑選視角**（反例擊破、執行計畫診斷或前提翻轉）的題目。
+3. 在**盲測模式**（隱藏階段標題與對應教材提示）下作答正確一次。
+
+## 三套貫穿式商業網站情境與 Schema
+
+三大商業領域各自模擬一套真實營運網站，且都內建專屬的邊界反例資料。領域甲沿用既有 SQL 教材的小書店背景，作為初學起手與對照基準；領域乙與領域丙提供結構不同的關聯形狀（訂閱狀態機、階層課程、時序事件流、多倉派工排班），用於隨機抽題與跨領域鑑別。
+
+### 領域甲（`bookstore`）：「紙頁書店」線上書城與門市系統
+
+為讓練習結果直接對應既有 SQL 教材，領域甲沿用[SQL 各篇共用的範例資料庫：一家小書店的顧客、訂單與評價表](/backend/01-database/sql/sample-bookstore-database/)的業務背景，將它從剛開張的小書店擴展為隨規模演化的電商網站。所有練習題統一使用小寫英文識別字（`snake_case`），方便直接匯入 SQLite 與 PostgreSQL 執行。
 
 ### 資料庫 Schema 的三期演化
 
@@ -133,6 +158,130 @@ CREATE TABLE store_shifts (
 - 大小寫混排的顧客 `email`（例如 `Alice@Example.com` 與 `alice@example.com`），以及單一熱點重複出現上千次的測試資料分片。
 - 某個門市在連續日期中刻意跳過公休日（缺測日期），用來驗證視窗函式 `LAG()` 與日曆「前一天」的差異。
 
+### 領域乙（`cloud-academy`）：「雲課堂」線上訂閱制教學平台
+
+SaaS 訂閱與學習進度系統天然包含「試用期、多筆續約帳單、未開課學員、重複 Webhook、多裝置同時更新進度」等複雜關聯，特別適合出題檢驗狀態篩選、去重、冪等寫入與分組彙總。
+
+```sql
+CREATE TABLE users (
+  user_id      INTEGER PRIMARY KEY,
+  display_name TEXT NOT NULL,
+  email        TEXT NOT NULL,
+  country      TEXT,
+  joined_at    TEXT NOT NULL
+);
+
+CREATE TABLE courses (
+  course_id        INTEGER PRIMARY KEY,
+  title            TEXT NOT NULL,
+  track            TEXT NOT NULL, -- 'backend' | 'data' | 'devops'
+  prerequisite_id  INTEGER REFERENCES courses(course_id),
+  monthly_fee_tier INTEGER NOT NULL,
+  is_published     INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE subscriptions (
+  sub_id     INTEGER PRIMARY KEY,
+  user_id    INTEGER NOT NULL REFERENCES users(user_id),
+  plan_code  TEXT NOT NULL, -- 'free' | 'pro' | 'team'
+  status     TEXT NOT NULL, -- 'trialing' | 'active' | 'past_due' | 'canceled'
+  started_at TEXT NOT NULL,
+  ended_at   TEXT
+);
+
+CREATE TABLE invoices (
+  invoice_id INTEGER PRIMARY KEY,
+  sub_id     INTEGER REFERENCES subscriptions(sub_id), -- 允許 NULL 模擬手動補單匯入缺漏
+  amount     INTEGER NOT NULL,
+  status     TEXT NOT NULL, -- 'open' | 'paid' | 'void' | 'refunded'
+  issued_at  TEXT NOT NULL
+);
+
+CREATE TABLE lesson_progress (
+  progress_id   INTEGER PRIMARY KEY,
+  user_id       INTEGER NOT NULL REFERENCES users(user_id),
+  course_id     INTEGER NOT NULL REFERENCES courses(course_id),
+  lesson_no     INTEGER NOT NULL,
+  completed_at  TEXT,
+  watch_seconds INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE webhook_events (
+  event_id    INTEGER PRIMARY KEY,
+  provider    TEXT NOT NULL, -- 'stripe' | 'newebpay'
+  external_id TEXT NOT NULL,
+  status      TEXT NOT NULL, -- 'pending' | 'processing' | 'done' | 'dead'
+  received_at TEXT NOT NULL
+);
+```
+
+領域乙刻意埋設的邊界資料：
+
+- 註冊了帳號但從未訂閱、以及訂閱過但從未開啟任何課程的學員。
+- 同一位學員先取消方案後又重新訂閱（一人對應多筆 `subscriptions`），以及每筆訂閱對應多期 `invoices` 與多筆 `lesson_progress`（雙重一對多膨脹）。
+- `invoices.sub_id` 為 `NULL` 的歷史人工開立帳單，以及 `lesson_progress.completed_at` 為 `NULL`（看過一半但未完課）的列。
+- 來自金流商重送的重複 `external_id` 與多位 worker 同時輪詢的 `webhook_events` 佇列。
+
+### 領域丙（`swift-logistics`）：「捷配物流」B2B 倉儲與配送調度平台
+
+物流與排班系統天然帶有「一筆托運單多件包裹、跨時區掃描事件流、司機時段防重疊、海量歷史運單分頁與高基數對帳」等壓力，適合出題檢驗視窗函式時間間隔、大表分頁、索引形狀與並行約束。
+
+```sql
+CREATE TABLE warehouses (
+  warehouse_id INTEGER PRIMARY KEY,
+  code         TEXT NOT NULL,
+  region       TEXT NOT NULL,
+  parent_hub_id INTEGER REFERENCES warehouses(warehouse_id)
+);
+
+CREATE TABLE merchants (
+  merchant_id INTEGER PRIMARY KEY,
+  name        TEXT NOT NULL,
+  account_key TEXT NOT NULL,
+  tier        TEXT -- 允許 NULL 代表未分級新客戶
+);
+
+CREATE TABLE shipments (
+  shipment_id  INTEGER PRIMARY KEY,
+  merchant_id  INTEGER NOT NULL REFERENCES merchants(merchant_id),
+  warehouse_id INTEGER NOT NULL REFERENCES warehouses(warehouse_id),
+  status       TEXT NOT NULL, -- 'created' | 'in_transit' | 'delivered' | 'returned'
+  fee_cents    INTEGER NOT NULL,
+  created_at   TEXT NOT NULL
+);
+
+CREATE TABLE shipment_events (
+  event_id    INTEGER PRIMARY KEY,
+  shipment_id INTEGER REFERENCES shipments(shipment_id), -- 允許 NULL 模擬掃碼槍異常孤兒事件
+  event_type  TEXT NOT NULL, -- 'picked' | 'hub_in' | 'out_for_delivery' | 'signed' | 'exception'
+  recorded_at TEXT NOT NULL
+);
+
+CREATE TABLE driver_shifts (
+  shift_id   INTEGER PRIMARY KEY,
+  driver_id  INTEGER NOT NULL,
+  route_code TEXT NOT NULL,
+  starts_at  TEXT NOT NULL,
+  ends_at    TEXT NOT NULL
+);
+
+CREATE TABLE dispatch_tasks (
+  task_id      INTEGER PRIMARY KEY,
+  shipment_id  INTEGER NOT NULL REFERENCES shipments(shipment_id),
+  status       TEXT NOT NULL, -- 'queued' | 'claimed' | 'completed'
+  claimed_by   TEXT,
+  priority     INTEGER NOT NULL,
+  created_at   TEXT NOT NULL
+);
+```
+
+領域丙刻意埋設的邊界資料：
+
+- 尚未寄出任何包裹的簽約商家、沒有任何掃描事件的已建單運單，以及同時有 `exception` 與 `signed` 多筆事件的運單。
+- 掃碼槍離線重傳造成的同秒多筆事件與 `shipment_id IS NULL` 的異常回傳紀錄。
+- 單一大電商客戶貢獻超過全表三成運單的資料傾斜分片（用來驗證熱點重複與索引選擇率）。
+- 同一位司機跨午夜的夜班排程與多調度員同時搶領高優先度 `dispatch_tasks` 的並行情境。
+
 ## 題型體例與作答解析設計
 
 每道題目在網站上都由五個固定區塊組成，避免選完對錯就結束：
@@ -140,31 +289,33 @@ CREATE TABLE store_shifts (
 | 區塊               | 呈現內容                                                                 | 學習作用                                       |
 | ------------------ | ------------------------------------------------------------------------ | ---------------------------------------------- |
 | 商業需求與資料前提 | 產品經理或維運的一句需求、涉及的表結構、當下資料量級與索引狀態、目標引擎 | 養成寫查詢前先看資料量、索引與引擎的習慣       |
-| 選項清單           | 四個 SQL 寫法或設計方案（選項標示 `A`、`B`、`C`、`D`）                   | 聚焦在核心決策點，降低初學者拼字與環境架設摩擦 |
+| 選項清單           | 四個 SQL 寫法或設計方案（渲染時隨機洗牌，避免固定位置記憶）              | 聚焦在核心決策點，降低初學者拼字與環境架設摩擦 |
 | 結果與反例對照     | 選完後呈現各選項在「正常資料」與「邊界反例資料」上的實際輸出或報錯       | 讓學習者親眼看到「小資料全對、加一筆反例就錯」 |
 | 全選項優劣矩陣     | 逐一列出每個選項的優點、缺點、成立前提與失效條件                         | 建立取捨座標，理解為何沒有脫離前提的最佳寫法   |
 | 對應教材與回饋入口 | 連回對應的 `SQL.x` 篇章與知識卡，並提供一鍵記錄「不理解的地方」          | 把練習過程轉成驅動教材迭代的證據               |
 
-本題庫分為三種題型，隨階段遞進：
+本題庫分為四種出題視角與三級難度，隨階段與抽題策略輪替：
 
-- **語法判讀題（基礎）**：選出符合需求且語法合法的寫法，解析重點放在語法作用與常見報錯成因。
-- **靜默錯法與反例題（進階語意）**：多個選項都能執行且在正常資料上輸出相同，選出哪個寫法在邊界資料上保持正確，或選出能擊破錯誤寫法的反例。
-- **情境設計權衡題（工程實務）**：同一需求給出多種合法架構或寫法，依題幹給定的資料量、索引、寫入頻率或引擎部署形態，選出代價可控且風險最小的方案，並完整對照其餘選項在什麼條件下反而該改選。
+- **寫法挑選視角（`choose-query`）**：給出需求與前提，從四個 SQL 中選出正確或代價最可控的寫法。
+- **反例擊破視角（`pick-counterexample`）**：給出一段看起來合法、小資料跑得對的 SQL，從四筆待插入的邊界資料中選出會讓該查詢靜默算錯的一筆。
+- **計畫與事故診斷視角（`diagnose-plan`）**：給出線上查詢與其 `EXPLAIN` 輸出或錯誤現象（翻頁重複、超賣、換引擎錯序），選出根因與最小修法。
+- **前提翻轉與權衡視角（`tradeoff-design`）**：與既有標準題同考點但刻意翻轉前提（補上 `NOT NULL` 約束、補上複合索引、切換單寫入者／多連線引擎），檢驗學習者能否依題幹前提推導，擺脫死背口訣。
 
 ## 學習階段總覽與教材對照
 
-六個階段循序推進，涵蓋從基礎單表語法到上線交付的完整路徑，並標出各階段與既有 `SQL.0` 至 `SQL.23` 的對應關係。
+六個階段對應 30 個核心能力節點（`S1-01` 至 `S6-05`），每個節點至少配置 3 組跨領域變體（基礎題池共 90 題），再加上獨立的跨概念複合陷阱題池（`C01` 起跳）。
 
-| 階段   | 主題定位                                 | 題號範圍    | 題型重心                | 對應既有 SQL 教材與知識卡                                     |
-| ------ | ---------------------------------------- | ----------- | ----------------------- | ------------------------------------------------------------- |
-| 階段一 | 單表查詢與基礎語法（補足站上前置缺口）   | `Q01`–`Q05` | 語法判讀題              | 前置補強；銜接 `SQL.1`、`SQL.2`、`SQL.6`、`SQL.11`            |
-| 階段二 | 多表連接與語意模型核心                   | `Q06`–`Q11` | 語法判讀題 + 靜默錯法題 | `SQL.1`、`SQL.2`、`SQL.3`、`SQL.4`、`SQL.5`、`SQL.6`、`SQL.7` |
-| 階段三 | 存在性判斷、分組、視窗函式與分頁         | `Q12`–`Q16` | 靜默錯法題 + 情境權衡題 | `SQL.8`、`SQL.9`、`SQL.10`、`SQL.11`、`SQL.12`、`SQL.13`      |
-| 階段四 | 資料寫入、約束、識別字、字串比較與權限   | `Q17`–`Q21` | 語法判讀題 + 情境權衡題 | `SQL.14`、`SQL.15`、`SQL.16`、`SQL.18`、`ddl-dml` 卡          |
-| 階段五 | 效能瓶頸、執行計畫、資料分布與宣告一致性 | `Q22`–`Q25` | 情境權衡題              | `SQL.17`、`SQL.21`、`SQL.22`、`sargable` 與 `query-plan` 卡   |
-| 階段六 | 跨引擎遷移、高並行寫入與從需求到上線     | `Q26`–`Q30` | 情境權衡題              | `SQL.0`、`SQL.19`、`SQL.20`、`SQL.23`、`backend 1.16`         |
+| 階段     | 主題定位                                 | 能力節點與基準題                    | 變體池規模       | 對應既有 SQL 教材與知識卡                                     |
+| -------- | ---------------------------------------- | ----------------------------------- | ---------------- | ------------------------------------------------------------- |
+| 階段一   | 單表查詢與基礎語法（補足站上前置缺口）   | `S1-01`–`S1-05`（基準 `Q01`–`Q05`） | 15 題（3 領域）  | 前置補強；銜接 `SQL.1`、`SQL.2`、`SQL.6`、`SQL.11`            |
+| 階段二   | 多表連接與語意模型核心                   | `S2-01`–`S2-06`（基準 `Q06`–`Q11`） | 18 題（3 領域）  | `SQL.1`、`SQL.2`、`SQL.3`、`SQL.4`、`SQL.5`、`SQL.6`、`SQL.7` |
+| 階段三   | 存在性判斷、分組、視窗函式與分頁         | `S3-01`–`S3-05`（基準 `Q12`–`Q16`） | 15 題（3 領域）  | `SQL.8`、`SQL.9`、`SQL.10`、`SQL.11`、`SQL.12`、`SQL.13`      |
+| 階段四   | 資料寫入、約束、識別字、字串比較與權限   | `S4-01`–`S4-05`（基準 `Q17`–`Q21`） | 15 題（3 領域）  | `SQL.14`、`SQL.15`、`SQL.16`、`SQL.18`、`ddl-dml` 卡          |
+| 階段五   | 效能瓶頸、執行計畫、資料分布與宣告一致性 | `S5-01`–`S5-04`（基準 `Q22`–`Q25`） | 12 題（3 領域）  | `SQL.17`、`SQL.21`、`SQL.22`、`sargable` 與 `query-plan` 卡   |
+| 階段六   | 跨引擎遷移、高並行寫入與從需求到上線     | `S6-01`–`S6-05`（基準 `Q26`–`Q30`） | 15 題（3 領域）  | `SQL.0`、`SQL.19`、`SQL.20`、`SQL.23`、`backend 1.16`         |
+| 綜合挑戰 | 跨概念複合陷阱題（雙陷阱與三陷阱疊加）   | `C01`–`C06`（持續擴充）             | 6 題起（跨領域） | 跨章節綜合，對應盲測鑑別模式                                  |
 
-## 完整題庫設計（30 題）
+## 領域甲基準題組（紙頁書店，30 題完整設計）
 
 以下列出各階段所有題目的商業需求、選項設計、正確選擇、各選項優劣分析與對應教材。各題的「推薦選擇」皆建立在題幹給定的前提之上；前提改變時，解析明確指出何時應改選其他選項。
 
@@ -722,6 +873,198 @@ WHERE o.status = 'paid';
   - `D`（優）：查詢單次執行時間短；（缺）：在需求定義還沒對齊前就做寬表最佳化，只是用更快的速度算出錯誤答案，還多出同步維護寬表的工程成本。
 - **對應教材**：[SQL.0 一段查詢從需求到上線的決定：追問需求、設定判斷標準、選寫法、補前提、量代價、對邊界與交付](/backend/01-database/sql/decisions-from-requirement-to-shipping/)、[SQL.23 查詢設計的完整示範：把「哪幾天氣溫比前一天高」從需求做到上線](/backend/01-database/sql/requirement-to-shipped-query/)
 
+## 多題組變體池規格（領域乙與領域丙，共 60 組對應變體）
+
+每個能力節點除了上面的領域甲基準題（`Q01`–`Q30`），在領域乙（雲課堂）與領域丙（捷配物流）各設一組結構相異的變體題，並刻意輪替出題視角與前提翻轉，讓系統在每次隨機抽題時能產出截然不同的測驗卷。
+
+| 能力節點 | 基準題 | 領域乙變體（雲課堂）與出題視角                                                                                                    | 領域丙變體（捷配物流）與出題視角                                                                                                               |
+| -------- | ------ | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `S1-01`  | `Q01`  | `choose-query`：課程卡片 API 挑選欄位（未來將新增長文字 `syllabus_markdown`）                                                     | `diagnose-plan`：運單清單用 `SELECT *` 後新增大 JSON 欄導致延遲暴增與覆蓋索引失效                                                              |
+| `S1-02`  | `Q02`  | `pick-counterexample`：找出會讓未加括號 `AND`/`OR` 混進免費方案的課程列                                                           | `choose-query`：運費與狀態複合條件篩選（含閉區間端點與半開時間區間對照）                                                                       |
+| `S1-03`  | `Q03`  | `choose-query`：找出未完課（`completed_at IS NULL`）且 `country` 未填的學員                                                       | `tradeoff-design`（前提翻轉）：`merchants.tier` 設有 `NOT NULL` 約束時，評估是否還需要 `COALESCE`                                              |
+| `S1-04`  | `Q04`  | `pick-counterexample`：課程觀看秒數排行榜沒加 `course_id` 次排序鍵時的平手漂移反例                                                | `choose-query`：同日多倉高運費運單前十名與 `ORDER BY` 欄位方向陷阱                                                                             |
+| `S1-05`  | `Q05`  | `choose-query`：統計各訂閱方案付費帳單總額，過濾 `status = 'paid'` 與總額門檻                                                     | `diagnose-plan`：把 `status = 'delivered'` 寫進 `HAVING` 在 SQLite 與 PostgreSQL 的分岔                                                        |
+| `S2-01`  | `Q06`  | `choose-query`：計算課程完課率別名並在 `WHERE`／`ORDER BY` 使用的跨引擎寫法                                                       | `diagnose-plan`：把 `fee_cents / 100.0 AS fee_twd` 放進 `WHERE` 在 PostgreSQL 報錯的原因                                                       |
+| `S2-02`  | `Q07`  | `pick-counterexample`：用 `COUNT(*)` 統計全部學員完課數，選出哪一筆學員資料會被多算成 1                                           | `choose-query`：列出全部簽約商家與本月運單數（含零寄件商家）                                                                                   |
+| `S2-03`  | `Q08`  | `tradeoff-design`（前提翻轉）：只需要「本月有付費帳單的學員」時，把誤寫的 `LEFT JOIN` 簡化回 `INNER JOIN`                         | `pick-counterexample`：查所有倉庫與本週異常運單，把 `status = 'returned'` 寫在 `WHERE` 加上 `OR shipment_id IS NULL` 仍漏掉哪種倉庫            |
+| `S2-04`  | `Q09`  | `choose-query`：`users → subscriptions → invoices` 三表串接保留未訂閱學員與未開帳訂閱                                             | `diagnose-plan`：`merchants LEFT JOIN shipments RIGHT JOIN shipment_events` 保護範圍倒轉診斷                                                   |
+| `S2-05`  | `Q10`  | `choose-query`：同時算每位學員「累計付費帳單金額」與「完成單元總數」避免雙表連接膨脹                                              | `pick-counterexample`：算各商家總運費時直接 `JOIN shipment_events`，選出多筆掃描事件導致運費翻倍的反例                                         |
+| `S2-06`  | `Q11`  | `choose-query`：列出每門課程與先修課名稱（`courses.prerequisite_id` 自連接保留無先修課）                                          | `choose-query`：列出每個衛星倉與所屬主轉運中心名稱（`warehouses.parent_hub_id` 自連接）                                                        |
+| `S3-01`  | `Q12`  | `tradeoff-design`（前提翻轉）：需求改成「列出看過後端課程的學員以及他最後觀看的課名」，為何不能再只用 `EXISTS`                    | `choose-query`：找出有寄過退貨運單的商家名單（不重複列，比較 `EXISTS`／`IN`／`DISTINCT JOIN`）                                                 |
+| `S3-02`  | `Q13`  | `pick-counterexample`：找「沒有付費帳單的訂閱」，選出哪一筆 `invoices` 紀錄會讓 `NOT IN` 整段回傳 0 列                            | `tradeoff-design`（前提翻轉）：`shipment_events.shipment_id` 加上 `NOT NULL` 約束後，比較 `NOT IN` 與 `NOT EXISTS` 的安全邊界與維護風險        |
+| `S3-03`  | `Q14`  | `diagnose-plan`：`users LEFT JOIN subscriptions GROUP BY subscriptions.user_id` 把所有免費未訂閱者併成一組                        | `choose-query`：依商家統計運單數並輸出商家名稱，對照 PostgreSQL、MySQL 8 與 DuckDB 規則                                                        |
+| `S3-04`  | `Q15`  | `choose-query`：同時顯示每期帳單金額與該學員歷史累計付款佔比（`SUM() OVER` vs `GROUP BY`）                                        | `pick-counterexample`：計算每張運單相鄰兩次掃描事件間隔時間，漏掉 `PARTITION BY shipment_id` 的錯誤輸出                                        |
+| `S3-05`  | `Q16`  | `tradeoff-design`（前提翻轉）：後台管理頁只有 300 筆訂閱且客服明確要跳轉「第 8 頁」，比較全序 `OFFSET` 與 Keyset                  | `diagnose-plan`：百萬筆 `shipment_events` 用 `(recorded_at DESC, event_id ASC)` 混合方向時誤用列值比較 `(a, b) < (x, y)` 的錯誤結果            |
+| `S4-01`  | `Q17`  | `choose-query`：批次把到期試用 `subscriptions` 轉 `past_due` 並以 `RETURNING` 觸發催繳通知                                        | `choose-query`：批次把超時未簽收 `shipments` 標記異常並防覆蓋剛完成簽收的列                                                                    |
+| `S4-02`  | `Q18`  | `choose-query`：學員請求刪除帳號時，歷史 `invoices` 的外鍵策略與個人資料匿名化取捨                                                | `diagnose-plan`：SQLite 測試環境 `PRAGMA foreign_keys` 未開啟導致孤兒 `shipment_events` 混入的成因                                             |
+| `S4-03`  | `Q19`  | `choose-query`：跨引擎匯入外部 BI 報表表名含大寫與保留字 `user` 時的識別字處理                                                    | `diagnose-plan`：PostgreSQL 建表用雙引號 `"warehouseCode"` 後未引號查詢找不到欄位的排查                                                        |
+| `S4-04`  | `Q20`  | `choose-query`：優惠代碼與帳號 `email` 同時存在區分大小寫與不分大小寫欄位時的 collation 分層                                      | `tradeoff-design`：商家代碼 `account_key` 前綴查詢 `LIKE 'TW%'` 在 PostgreSQL 預設非 C locale 下走不了 B-tree 索引的修法（`text_pattern_ops`） |
+| `S4-05`  | `Q21`  | `choose-query`：客服後台帳號與金流 Webhook 寫入帳號的 PostgreSQL 角色與資料表授權切分                                             | `choose-query`：外部合作商家透過資料列層級政策（RLS）只能讀自己 `merchant_id` 運單的授權設計                                                   |
+| `S5-01`  | `Q22`  | `diagnose-plan`：讀 `EXPLAIN` 抓出 `WHERE EXTRACT(YEAR FROM issued_at) = 2026` 走 `Seq Scan` 的原因與改寫                         | `choose-query`：查單日物流簽收事件，比較 `date(recorded_at) = ...`、半開區間與複合索引 `(event_type, recorded_at)`                             |
+| `S5-02`  | `Q23`  | `diagnose-plan`：百萬筆 `webhook_events` 稽核重複 `external_id`，對照有無索引與單一重送風暴下的計畫變化                           | `tradeoff-design`：大客戶佔全表 35% 運單（低選擇率）時，查該客戶運單為何最佳化器棄索引改掃全表                                                 |
+| `S5-03`  | `Q24`  | `choose-query`：找出各學程中完課秒數高於該學程平均的課程，比較相關子查詢、CTE 與視窗函式                                          | `diagnose-plan`：將相關子查詢改寫成 CTE 後在 SQLite 耗時從秒級降到毫秒級的計畫對照                                                             |
+| `S5-04`  | `Q25`  | `pick-counterexample`：審查含 `LEFT JOIN invoices ... WHERE invoices.status = 'paid'` 的查詢，選出把關鍵字換成最弱版本的查證動作  | `choose-query`：審查 `CROSS JOIN` 配 `WHERE` 等值條件與無效 `COALESCE` 的宣告落空修法                                                          |
+| `S6-01`  | `Q26`  | `choose-query`：將學習進度報表從 MySQL 遷往 PostgreSQL，區分當場報錯與靜默輸出差異                                                | `pick-counterexample`：從 SQLite 遷到 PostgreSQL 後 `ORDER BY completed_at DESC` 空值排位顛倒導致「未完課排最前面」的反例                      |
+| `S6-02`  | `Q27`  | `choose-query`：多裝置同時提交同一單元進度與限量早鳥名額扣減的並行寫入方案比較                                                    | `diagnose-plan`：兩個調度請求同時扣減倉庫剩餘車位出現負數的交易隔離原因與修法                                                                  |
+| `S6-03`  | `Q28`  | `choose-query`：多台 worker 認領 `webhook_events` 並以唯一約束擋下重送事件（`FOR UPDATE SKIP LOCKED` + `ON CONFLICT DO NOTHING`） | `choose-query`：防止同一位司機在 `driver_shifts` 被排進重疊時段（`EXCLUDE USING gist` vs `SERIALIZABLE` vs 應用層先查後寫）                    |
+| `S6-04`  | `Q29`  | `tradeoff-design`：訂閱調整牌價後，歷史 `invoices` 該存結帳當下金額快照還是外鍵引用方案牌價表                                     | `tradeoff-design`：運單費率改版時，評估在 `shipments` 存成交運費與保留費率版本編號的查詢與稽核成本                                             |
+| `S6-05`  | `Q30`  | `tradeoff-design`：主管問「本月流失率比上月惡化的方案有哪些」，從定義流失、造反例到對帳邊界的完整推導                             | `tradeoff-design`：營運問「哪些倉庫本週異常件比例超標」，處理零運單倉庫、跨午夜時區與事後補掃描的完整上線決策                                  |
+
+## 高複雜度示範變體與跨概念複合陷阱挑戰題（`C01`–`C06`）
+
+以下完整展開六道**跨概念複合陷阱題**（每題同時藏入兩到三個彼此互動的 SQL 陷阱，並混用三個商業領域與四種出題視角），作為盲測鑑別模式的高階基準。
+
+### C01（複合陷阱：前提翻轉 + 否定存在性 + 查詢計畫代價）——雲課堂未開帳訂閱稽核
+
+- **領域**：雲課堂（`cloud-academy`）
+- **疊加考點**：`NOT IN` 與 `NOT NULL` 約束（前提翻轉）× 反連接執行計畫 × 外鍵空值邊界
+- **出題視角**：`tradeoff-design`（前提翻轉）
+- **商業需求與前提**：財務對帳要找出「從未產生過任何 `paid` 帳單的 `active` 訂閱」。`subscriptions` 有 20 萬筆、`invoices` 有 400 萬筆；PostgreSQL 18 正式庫上 `invoices.sub_id` **目前允許 `NULL`**（因為有 12 筆歷史人工匯入帳單），且已建索引 `idx_invoices_sub_status ON invoices(sub_id, status)`。同事提出兩個修法：一派主張直接寫 `NOT IN`，另一派主張先加條件排除 `NULL` 或改寫成 `NOT EXISTS`。哪個方案同時滿足正確性與大表效能？
+- **選項**：
+  - `A`：`SELECT s.sub_id FROM subscriptions s WHERE s.status = 'active' AND s.sub_id NOT IN (SELECT i.sub_id FROM invoices i WHERE i.status = 'paid');`
+  - `B`：`SELECT s.sub_id FROM subscriptions s WHERE s.status = 'active' AND s.sub_id NOT IN (SELECT i.sub_id FROM invoices i WHERE i.status = 'paid' AND i.sub_id IS NOT NULL);`
+  - `C`：`SELECT s.sub_id FROM subscriptions s WHERE s.status = 'active' AND NOT EXISTS (SELECT 1 FROM invoices i WHERE i.sub_id = s.sub_id AND i.status = 'paid');`
+  - `D`：`SELECT DISTINCT s.sub_id FROM subscriptions s LEFT JOIN invoices i ON i.sub_id = s.sub_id WHERE s.status = 'active' AND (i.status <> 'paid' OR i.invoice_id IS NULL);`
+- **推薦選擇**：`C`（若 `invoices.sub_id` 未來加上 `NOT NULL` 約束，PostgreSQL 仍可能無法把 `NOT IN` 轉成最佳 Anti-Join，在 PostgreSQL 18 環境下依舊優先 `C`）
+- **各選項優劣分析**：
+  - `A`（優）：語意看似簡短；（缺）：只要那 12 筆人工匯入帳單中有一筆是 `paid` 且 `sub_id IS NULL`，整段查詢靜默回傳 0 列。
+  - `B`（優）：補上 `i.sub_id IS NOT NULL` 後輸出結果與 `C` 相同，修掉了三值邏輯回傳 0 列的問題；（缺）：在 PostgreSQL 上 `NOT IN` 無法像 `NOT EXISTS` 直接轉寫成 Hash/Merge Anti-Join（因為最佳化器仍須防範外層 `s.sub_id` 為 `NULL` 的語意差異），400 萬列上常退化成較慢的 `SubPlan` 或 hashed subplan 耗記憶體。
+  - `C`（優）：對 `NULL` 免疫，PostgreSQL 直接規劃為 Anti-Join 並可善用 `idx_invoices_sub_status`，不會因多筆帳單膨脹列數，維護者未來移除任何過濾條件都不會重新引入 `NOT IN` 陷阱；（缺）：語法比 `IN` 多寫一層關聯條件 `i.sub_id = s.sub_id`。
+  - `D`（優）：看起來處理了 `IS NULL`；（缺）：只要某筆訂閱同時有一期 `paid` 與一期 `void` 帳單，`i.status <> 'paid'` 會在 `void` 那一列成立，把已有付費紀錄的訂閱錯誤算進未付費名單。
+- **對應教材**：[SQL.8 IN、EXISTS 與 JOIN：列數、可取用的欄位與 NULL 的處理](/backend/01-database/sql/in-exists-join/)、[SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/)、[SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)
+
+### C02（複合陷阱：鏈式外連接 + `ON`/`WHERE` 撤銷保護 + 雙重一對多列數膨脹）——紙頁書店顧客毛利與評價月報
+
+- **領域**：紙頁書店（`bookstore`）
+- **疊加考點**：鏈式 `LEFT JOIN` 保護範圍 × `WHERE` 撤銷保護 × 一對多與多對多連接膨脹
+- **出題視角**：`choose-query`
+- **商業需求與前提**：要列出「所有台北顧客（`city = 'Taipei'`）」，顯示他們在 2026 年 3 月的「已付款訂單總金額」與「3 月送出的五星評價則數」。3 月沒下單或沒評價的台北顧客仍要列出來並顯示 `0`。已知一筆訂單可有多則評價，且有些評價沒有對應 3 月訂單（例如 2 月下單、3 月才評）。
+- **選項**：
+  - `A`：`SELECT c.customer_id, COALESCE(SUM(o.total_amount), 0) AS spent, COUNT(r.review_id) AS five_star_cnt FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id AND o.status = 'paid' AND o.ordered_at >= '2026-03-01' AND o.ordered_at < '2026-04-01' LEFT JOIN reviews r ON r.order_id = o.order_id AND r.rating = 5 AND r.created_at >= '2026-03-01' AND r.created_at < '2026-04-01' WHERE c.city = 'Taipei' GROUP BY c.customer_id;`
+  - `B`：`WITH mar_orders AS (SELECT customer_id, SUM(total_amount) AS spent FROM orders WHERE status = 'paid' AND ordered_at >= '2026-03-01' AND ordered_at < '2026-04-01' GROUP BY customer_id), mar_reviews AS (SELECT o.customer_id, COUNT(*) AS five_star_cnt FROM reviews r JOIN orders o ON o.order_id = r.order_id WHERE r.rating = 5 AND r.created_at >= '2026-03-01' AND r.created_at < '2026-04-01' GROUP BY o.customer_id) SELECT c.customer_id, COALESCE(mo.spent, 0) AS spent, COALESCE(mr.five_star_cnt, 0) AS five_star_cnt FROM customers c LEFT JOIN mar_orders mo ON mo.customer_id = c.customer_id LEFT JOIN mar_reviews mr ON mr.customer_id = c.customer_id WHERE c.city = 'Taipei';`
+  - `C`：與 `A` 相同，但把 `SUM(o.total_amount)` 改成 `SUM(DISTINCT o.total_amount)`。
+  - `D`：與 `B` 相同，但把最外層 `WHERE c.city = 'Taipei'` 搬進第一個 `LEFT JOIN` 的 `ON` 條件裡。
+- **推薦選擇**：`B`
+- **各選項優劣分析**：
+  - `A`（優）：把訂單與評價的時間條件放進 `ON`，沒撤銷 `LEFT JOIN` 對台北顧客的保護；（缺）：同時踩中兩個隱蔽錯誤——一筆 3 月訂單若有兩則 3 月五星評價，`SUM(o.total_amount)` 會把訂單金額算兩次；且評價是接在「3 月訂單」後面，2 月下單但 3 月才送出的五星評價全部漏算。
+  - `B`（優）：把兩個不同時間軸的指標各自獨立聚合到 `customer_id` 粒度後再與 `customers` 左連接，同時解決列數膨脹、保留未下單台北顧客，並正確計入「2 月下單、3 月評價」的五星則數；（缺）：寫法較長，須對 `orders(ordered_at, status)` 與 `reviews(created_at, rating)` 建索引才能避免大表全掃。
+  - `C`（優）：無；（缺）：除了仍漏算「2 月下單、3 月評價」，同一顧客在 3 月下兩張同金額訂單時 `SUM(DISTINCT ...)` 會少算一張。
+  - `D`（優）：無；（缺）：把屬於受保護左表 `customers` 的篩選條件 `c.city = 'Taipei'` 放進 `ON` 後，非台北顧客依然會被 `LEFT JOIN` 保留下來（只是金額變成 `0`），名單混入全台灣顧客。
+- **對應教材**：[SQL.3 連接的起手式：配對條件的位置與連接種類的選擇](/backend/01-database/sql/join-starts-from-the-relationship/)、[SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責](/backend/01-database/sql/on-describes-where-filters/)、[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)
+
+### C03（複合陷阱：反例擊破視角——視窗函式 + 分區遺漏 + 跨引擎 `NULL` 排序）——捷配物流異常件追蹤
+
+- **領域**：捷配物流（`swift-logistics`）
+- **疊加考點**：`ROW_NUMBER()` 分區與排序 × `NULL` 在 `ORDER BY DESC` 的跨引擎排位 × 造反例驗證
+- **出題視角**：`pick-counterexample`
+- **商業需求與前提**：分析師在 SQLite 寫了一段查詢，想取出「每張運單最新一筆掃描事件」，準備直接搬去 PostgreSQL 執行：
+
+```sql
+SELECT shipment_id, event_type, recorded_at
+FROM (
+  SELECT shipment_id, event_type, recorded_at,
+         ROW_NUMBER() OVER (PARTITION BY shipment_id ORDER BY recorded_at DESC) AS rn
+  FROM shipment_events
+) t
+WHERE rn = 1;
+```
+
+已知 `shipment_events` 在某次離線同步異常時可能寫入 `recorded_at IS NULL` 或同秒兩筆不同 `event_type` 的資料。以下哪一項資料情境在 SQLite 上回傳正常、搬到 PostgreSQL 後卻會靜默把**錯的事件**當成最新狀態？
+
+- **選項**：
+  - `A`：一張運單只有一筆 `recorded_at = '2026-03-10 09:00:00'` 的 `picked` 事件。
+  - `B`：一張運單有兩筆事件，分別是 `('picked', '2026-03-10 09:00:00')` 與 `('signed', '2026-03-10 18:00:00')`。
+  - `C`：一張運單同時有正常的 `('signed', '2026-03-10 18:00:00')` 以及一筆異常的 `('exception', NULL)`（`recorded_at` 為 `NULL`）。
+  - `D`：兩張不同運單在同一秒各自有一筆 `picked` 事件。
+- **推薦選擇**：`C`（根本修法是補上顯式 `NULLS LAST` 與次排序鍵 `event_id DESC`：`ORDER BY recorded_at DESC NULLS LAST, event_id DESC`）
+- **各選項優劣分析**：
+  - `A`（優）：單筆資料不會觸發排序歧義；（缺）：無法檢出任何跨引擎排序差異。
+  - `B`（優）：兩筆時間相異且皆非 `NULL`；（缺）：在 SQLite 與 PostgreSQL 都會一致選出 `signed`，無法揭露缺陷。
+  - `C`（優）：精準命中跨引擎 `NULL` 排序差異——SQLite 的 `ORDER BY recorded_at DESC` 預設把 `NULL` 排最後（`rn = 1` 是 `signed`）；PostgreSQL 的 `ORDER BY DESC` 預設把 `NULL` 排最前（`rn = 1` 變成時間缺漏的 `exception`），完全不報錯卻讓客戶頁面從「已簽收」倒退成「異常」；（缺）：這組反例只抓到 `NULL` 排序，實務驗收還應額外補一組「同一運單同秒兩筆事件」反例來迫使查詢補上 `event_id DESC`。
+  - `D`（優）：兩張不同運單被 `PARTITION BY shipment_id` 分在不同分區，彼此不影響排名；（缺）：無法擊破查詢。
+- **對應教材**：[SQL.10 分組與視窗函數：各自的產出、選用的依據與 LAG、LEAD 的相鄰列](/backend/01-database/sql/window-keeps-rows-grouping-collapses/)、[SQL.11 查詢結果的列序：沒有 ORDER BY 時的來源與 ORDER BY 的規定範圍](/backend/01-database/sql/relations-have-no-order/)、[SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)
+
+### C04（複合陷阱：混合升降冪 Keyset 分頁 + 複合索引順序 + Sargable）——捷配物流百萬級運單搜尋
+
+- **領域**：捷配物流（`swift-logistics`）
+- **疊加考點**：複合索引前導欄順序 × Keyset 混合排序方向不可用列值比較 × `OFFSET` 退化
+- **出題視角**：`diagnose-plan`
+- **商業需求與前提**：`shipments` 表有 800 萬筆資料，列表頁需求為「篩選特定 `warehouse_id = :wid` 且 `status = 'in_transit'`，依 `created_at DESC, shipment_id ASC` 排序，每次取 30 筆做下一頁翻頁」。團隊寫了以下查詢並建了索引 `CREATE INDEX idx_bad ON shipments(created_at, warehouse_id);`，上線後出現兩個事故：翻到下一頁偶爾漏資料，且查詢耗時 1.8 秒。哪一組診斷與修法同時解決正確性與效能？
+
+```sql
+SELECT shipment_id, merchant_id, fee_cents, created_at
+FROM shipments
+WHERE warehouse_id = :wid
+  AND status = 'in_transit'
+  AND (created_at, shipment_id) < (:last_created_at, :last_id)
+ORDER BY created_at DESC, shipment_id ASC
+LIMIT 30;
+```
+
+- **選項**：
+  - `A`：只要把索引改成 `(created_at DESC, shipment_id ASC)` 即可，查詢語句完全正確。
+  - `B`：把查詢的列值比較改寫成展開式 `(created_at < :last_created_at OR (created_at = :last_created_at AND shipment_id > :last_id))`，並建立複合索引 `(warehouse_id, status, created_at DESC, shipment_id ASC)`（等值過濾欄放前面、排序與範圍欄放後面）。
+  - `C`：把 `ORDER BY` 改成 `ORDER BY created_at DESC LIMIT 30 OFFSET :offset`，捨棄接續標記。
+  - `D`：只把查詢裡的 `<` 改成 `<=`，就能避免漏資料且不需改索引。
+- **推薦選擇**：`B`（若業務允許把排序改成同向 `created_at DESC, shipment_id DESC`，則可用更簡短且更易走單段索引掃描的列值比較 `(created_at, shipment_id) < (:last_created_at, :last_id)`）
+- **各選項優劣分析**：
+  - `A`（優）：修正了索引與排序方向；（缺）：漏掉兩件核心缺陷——等值欄位 `warehouse_id` 與 `status` 沒放索引最前面仍須過濾大量別倉資料；更重要的是 `ORDER BY created_at DESC, shipment_id ASC` 是一降一升，列值比較 `(a, b) < (x, y)` 卻對兩欄都做小於（等價於雙降），遇到同秒多筆運單時第二頁會漏掉 `shipment_id` 較大的列。
+  - `B`（優）：展開式精確對應「時間較早，或同時間但 `shipment_id` 較大」，徹底修復翻頁漏列；索引把高選擇率等值欄 `(warehouse_id, status)` 放前導，再接 `(created_at DESC, shipment_id ASC)`，一次索引範圍定位即取完 30 筆免排序；（缺）：展開式帶 `OR` 時部分引擎的計畫不如雙降列值比較直覺，實作前應跑 `EXPLAIN` 確認索引使用方式；若可協商改為同向雙降則能兼得語法簡潔與最佳索引掃描。
+  - `C`（優）：無；（缺）：800 萬筆下深頁 `OFFSET` 效能更慘，且拿掉 `shipment_id` 後連全序都失去。
+  - `D`（優）：無；（缺）：`<=` 會讓每頁第一筆重複出現上一頁最後一筆，且方向矛盾與索引前導欄問題皆未解決。
+- **對應教材**：[SQL.12 分頁的排序鍵與接續標記：同分的列、全序與 OFFSET 的代價](/backend/01-database/sql/pagination-needs-a-total-order/)、[SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)
+
+### C05（複合陷阱：高並行佇列認領 + 冪等去重 + 外部呼叫持鎖）——雲課堂金流 Webhook 處理管線
+
+- **領域**：雲課堂（`cloud-academy`）
+- **疊加考點**：`FOR UPDATE SKIP LOCKED` × 唯一約束冪等寫入 × 交易邊界不包外部 HTTP 呼叫
+- **出題視角**：`tradeoff-design`
+- **商業需求與前提**：PostgreSQL 上有 6 台 worker 處理金流商送來的 `webhook_events`。同一筆付款事件金流商可能重送兩次（相同 `provider` 與 `external_id`），且 worker 處理每筆事件時需要呼叫外部寄信 API（耗時約 800ms）。團隊該如何切分資料表約束、認領語句與交易邊界？
+- **選項**：
+  - `A`：開一個大交易，先 `SELECT ... FOR UPDATE LIMIT 1` 鎖住事件，在交易內呼叫外部寄信 API，寄信成功後再 `UPDATE status = 'done'` 並 `COMMIT`。
+  - `B`：在 `webhook_events` 建立 `UNIQUE (provider, external_id)`，接收端寫入用 `INSERT ... ON CONFLICT (provider, external_id) DO NOTHING` 擋重送；worker 用短交易執行 `SELECT ... FOR UPDATE SKIP LOCKED LIMIT 1` 並立刻把 `status` 改成 `'processing'` 後 `COMMIT` 釋放列鎖；於交易外呼叫外部寄信 API，完成後再開短交易把 `status` 改成 `'done'`（並設逾時回收卡住的 `'processing'` 任務）。
+  - `C`：不建唯一約束，由應用層收到 Webhook 時先 `SELECT COUNT(*)` 檢查是否重複再 `INSERT`，worker 用 `SELECT ... LIMIT 1` 輪詢。
+  - `D`：把整個資料庫預設隔離等級調成 `SERIALIZABLE`，讓所有 worker 自動排隊且不需改寫任何查詢。
+- **推薦選擇**：`B`
+- **各選項優劣分析**：
+  - `A`（優）：寄信失敗回滾時狀態自動回到原樣；（缺）：踩中三個並行地雷——沒加 `SKIP LOCKED` 讓 6 台 worker 互等成單一執行緒；在資料庫交易內等 800ms 外部 HTTP 呼叫會把連線池與列鎖塞滿；若外部寄信已送出但 `COMMIT` 失敗仍會重複寄信。
+  - `B`（優）：資料庫唯一約束在寫入層原子攔截重複 Webhook、`SKIP LOCKED` 讓 6 台 worker 並行認領互不阻塞、極短交易把連線池與鎖持有時間壓在毫秒級；（缺）：狀態機多了一個中介態 `'processing'`，必須實作逾時心跳或重試回收機制，且外部寄信 API 端仍須帶冪等鍵（idempotency key）防重送。
+  - `C`（優）：開發最快；（缺）：兩次幾乎同時到達的重送 Webhook 都會讀到 `COUNT(*) = 0` 而雙重寫入，且 6 台 worker 會重複認領同一筆事件。
+  - `D`（優）：無；（缺）：`SERIALIZABLE` 無法替代 `SKIP LOCKED` 的非阻塞認領，高並行下會產生大量 serialization failure 迫使不斷重試，且不解決長交易佔用連線池問題。
+- **對應教材**：[SQL.20 引擎的部署形態與 SQL 構造：SQLite 與 PostgreSQL 在並行寫入、連線協調與身分上的差異](/backend/01-database/sql/deployment-shape-and-sql-constructs/)、[backend 1.3 Transaction 與一致性邊界](/backend/01-database/transaction-boundary/)
+
+### C06（複合陷阱：整數除法 + 零分母 + 軟刪除與歷史快照 + 需求模糊）——紙頁書店與雲課堂綜合上線審查
+
+- **領域**：紙頁書店（`bookstore`）
+- **疊加考點**：整數除法截斷 × 分母為零 × 宣告落空 × 歷史價格快照與事後退款對帳
+- **出題視角**：`diagnose-plan`
+- **商業需求與前提**：一位同事在 SQLite 上線了「各分類退款率大於 10% 的預警報表」，SQL 如下，測試環境 20 筆資料沒報錯，上線第一週回傳 0 筆，但客服明明收到大量退款客訴：
+
+```sql
+SELECT b.category_id,
+       COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) / COUNT(*) AS refund_rate
+FROM orders o
+LEFT JOIN order_items oi ON oi.order_id = o.order_id
+JOIN books b ON b.book_id = oi.book_id
+GROUP BY b.category_id
+HAVING COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) / COUNT(*) > 0.1;
+```
+
+這段查詢同時藏了哪些缺陷，哪個診斷清單最完整？
+
+- **選項**：
+  - `A`：只有一個問題——`HAVING` 不能寫計算式，改用別名 `HAVING refund_rate > 0.1` 就會回傳正確結果。
+  - `B`：同時存在四個缺陷——（1）SQLite 整數除以整數會無條件捨去小數，只要退款率低於 100%，商永遠是 `0`，不可能大於 `0.1`（應乘以 `1.0` 或改用交叉相乘 `refund_cnt * 10 > total_cnt`）；（2）`LEFT JOIN order_items` 後面緊接 `JOIN books` 已撤銷外連接保護，屬宣告落空；（3）以 `order_items` 粒度做 `COUNT(*)` 計算的是「被退款的訂單明細行數比例」而非「退款金額比例」或「退款訂單筆數比例」，一筆買 5 本書的訂單權重被放大 5 倍；（4）未過濾 `pending` 與 `cancelled` 訂單，把從未付款的訂單灌進分母稀釋了退款率。
+  - `C`：只要把 `LEFT JOIN` 改成 `RIGHT JOIN`，並加上 `DISTINCT` 就修好了。
+  - `D`：SQLite 不支援 `CASE WHEN` 放進 `COUNT()`，必須拆成兩張暫存表。
+- **推薦選擇**：`B`
+- **各選項優劣分析**：
+  - `A`（優）：無；（缺）：就算改用別名，`refund_rate` 仍是整數除法算出來的 `0`，且完全沒發現分母混入未付款訂單與粒度失真。
+  - `B`（優）：一次點出語法層（整數除法）、宣告層（被後段內連接撤銷的 `LEFT JOIN`）、模型層（明細行數 vs 訂單數 vs 金額粒度）與需求層（分母應只算已完成付款的訂單）四層缺陷，直接對應 `SQL.0` 與 `SQL.13` 的檢查方法；（缺）：修復前須回頭跟營運主管確認退款率分子分母的業務定義（按筆數、本數還是金額）。
+  - `C`（優）：無；（缺）：改方向與加 `DISTINCT` 完全沒處理整數除法、粒度與分母定義。
+  - `D`（優）：無；（缺）：SQLite 與標準 SQL 皆完整支援 `COUNT(CASE WHEN ... THEN 1 END)`（且 SQLite 3.30+ 與 PostgreSQL 還支援更簡潔的 `COUNT(*) FILTER (WHERE ...)`）。
+- **對應教材**：[SQL.0 一段查詢從需求到上線的決定：追問需求、設定判斷標準、選寫法、補前提、量代價、對邊界與交付](/backend/01-database/sql/decisions-from-requirement-to-shipping/)、[SQL.4 鏈式連接的左運算元：累積方式與外連接的保護範圍](/backend/01-database/sql/join-left-operand-accumulates/)、[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)、[SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/)
+
 ## 練習回饋驅動 SQL 教材改進的閉環機制
 
 本練習網站不只是單向測驗工具，也是檢驗[SQL：這個語言為什麼長這樣](/backend/01-database/sql/)可讀性與完整性的探針。學習者在練習過程中遇到的不理解處，依下列分類記錄並回寫到教材。
@@ -747,20 +1090,31 @@ WHERE o.status = 'paid';
 
 ### 核心功能範圍
 
-1. **分階段進度地圖**：以階段一到階段六呈現學習路徑、已完成題數與各題標記的「待釐清」狀態（使用瀏覽器 `localStorage` 保存進度，支援匯出／匯入 JSON）。
-2. **Schema 抽屜與邊界資料預覽**：作答時可隨時展開當前階段解鎖的資料表結構與「紙頁書店」基準資料，不用來回切換分頁。
-3. **作答與全選項優劣展開**：點選選項後顯示該選項與其餘選項在「正常資料」與「邊界反例」上的輸出對照，以及優點、缺點、成立前提、失效條件四欄解析。
-4. **選配的瀏覽器端即時執行（第二期擴充）**：後續可接入 SQLite WASM（`sql.js`），讓學習者不只選選項，還能點「實際跑跑看這四個選項」並自己改條件觀察輸出與 `EXPLAIN QUERY PLAN`。
-5. **一鍵彙出困惑筆記**：在每一題下方提供「記下我不懂的地方」表單，選擇困惑類型並輸入疑問，支援一鍵複製成 Markdown 表格列，直接貼回本檔的〈練習回饋紀錄表〉進行教材改進。
+1. **雙練習模式切換（學習模式 vs 盲測鑑別模式）**：
+   - **分階段學習模式**：依階段一到階段六循序解鎖，顯示能力節點與對應教材提示，適合初學建立體系。
+   - **盲測鑑別模式**：隱藏階段名稱與考點標籤，跨階段、跨三大商業領域隨機組卷（例如每次抽 10 題，混入 2 題跨概念複合陷阱題），專門檢驗觀念在無提示下的真實遷移能力。
+2. **反記憶隨機抽題與選項洗牌**：
+   - 每個能力節點優先抽取「未做過 → 曾答錯 → 不同商業領域 → 不同出題視角 → 最久未作答」的變體題，連續兩輪不重複抽同一個 `variantId`。
+   - 題目渲染時以 Fisher-Yates 洗牌重排選項顯示位置，進度記錄綁定選項原始 `key` 而非畫面位置。
+   - 能力節點進度條區分「尚未練習」「初通（單領域答對）」「待鞏固（盲測或前提翻轉曾答錯）」「已掌握（達跨領域＋多視角＋盲測三條件）」。
+3. **Schema 抽屜與邊界資料預覽**：作答時依目前題目的 `domain` 與 `unlockedTables` 動態展開對應商業網站的表結構與邊界範例資料，不用來回切換分頁。
+4. **作答與全選項優劣展開**：點選選項後顯示該選項與其餘選項在「正常資料」與「邊界反例」上的輸出對照，以及優點、缺點、成立前提、失效條件四欄解析。
+5. **選配的瀏覽器端即時執行（第二期擴充）**：後續可接入 SQLite WASM（`sql.js`），依目前 `domain` 載入對應的記憶體資料庫，讓學習者直接在網頁內跑四個選項、自行插入反例資料並觀察 `EXPLAIN QUERY PLAN`。
+6. **一鍵彙出困惑筆記**：在每一題下方提供「記下我不懂的地方」表單，自動帶入 `conceptId`、`variantId` 與 `domain`，支援一鍵複製成 Markdown 表格列，直接貼回本檔的〈練習回饋紀錄表〉進行教材改進。
 
 ### 題目資料檔結構草案（JSON）
 
 ```json
 {
-  "id": "Q08",
+  "conceptId": "S2-03",
+  "variantId": "S2-03-bookstore-01",
+  "domain": "bookstore",
   "stage": 2,
+  "perspective": "choose-query",
+  "difficulty": 2,
+  "premiseFlip": false,
+  "traps": ["outer-join-where-nullifies-protection", "partial-null-or-miss"],
   "title": "所有顧客與他們 2026 年 3 月的訂單：ON 與 WHERE 的職責分岔",
-  "questionType": "silent-bug",
   "unlockedTables": ["customers", "orders"],
   "businessRequirement": "報表要列出每一位顧客，旁邊顯示他在 2026 年 3 月的已付款訂單總額；3 月沒有付款訂單的顧客仍要顯示 0。",
   "assumptions": {
@@ -770,7 +1124,7 @@ WHERE o.status = 'paid';
   },
   "options": [
     {
-      "key": "A",
+      "key": "opt_where_filter",
       "sql": "...",
       "normalResult": "回傳 3 月有付款的顧客",
       "edgeCaseResult": "2 月有下單、3 月沒下單的顧客整列消失",
@@ -780,8 +1134,8 @@ WHERE o.status = 'paid';
       "failsWhen": "需要保留 3 月未付款顧客時"
     }
   ],
-  "recommendedKeys": ["B"],
-  "alternativeNote": "同一查詢需同時計算多個月份欄位時可改選 D",
+  "recommendedKeys": ["opt_on_filter"],
+  "alternativeNote": "同一查詢需同時計算多個月份欄位時可改選 conditional aggregation",
   "relatedDocs": [
     "/backend/01-database/sql/on-describes-where-filters/"
   ]
@@ -792,10 +1146,11 @@ WHERE o.status = 'paid';
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                       | 類型 | 前置條件           | 規模 |
-| ------------------------------------------------------------------------------------------ | ---- | ------------------ | ---- |
-| 確認 30 題題庫與「紙頁書店」Schema 演化，依使用者回饋增刪或調整難度梯度                    | 規格 | 本檔審閱完成       | 小   |
-| 建立練習網站的 JSON 題庫檔與可重現的 SQLite 基準測試資料腳本（含全部邊界反例列）           | 實作 | 規格定案           | 中   |
-| 實作純靜態選擇題練習網站（分階段導覽、Schema 抽屜、全選項優劣對照、Markdown 困惑匯出）     | 實作 | 題庫 JSON 定案     | 中   |
-| 決定網站與 Hugo 的整合落點（獨立 `static/` 頁面＋`sql/` 列表入口，或 Hugo shortcode 內嵌） | 規格 | 無                 | 小   |
-| 第二期擴充：接入 SQLite WASM 讓學習者在網頁內實跑選項與 `EXPLAIN QUERY PLAN`               | 實作 | 第一期練習網站完成 | 中   |
+| 項目                                                                                                             | 類型 | 前置條件           | 規模 |
+| ---------------------------------------------------------------------------------------------------------------- | ---- | ------------------ | ---- |
+| 審閱三大領域 Schema、30 節點 × 3 變體規劃與 6 題複合陷阱題，調整難度梯度與題池比例                               | 規格 | 本檔審閱完成       | 小   |
+| 補齊領域乙（雲課堂）與領域丙（捷配物流）共 60 題變體的完整四選項 SQL、反例輸出與優劣解析，並擴充複合陷阱題池     | 內容 | 規格定案           | 大   |
+| 建立三套領域的可重現 SQLite 基準測試資料腳本（含全部邊界反例列）並對每題選項跑自動化驗證，確保輸出描述與實跑一致 | 實作 | 題庫 JSON 定案     | 中   |
+| 實作純靜態選擇題練習網站（學習／盲測雙模式、反記憶抽題、選項洗牌、跨領域熟練度追蹤、Schema 抽屜與困惑匯出）      | 實作 | 題庫 JSON 定案     | 中   |
+| 決定網站與 Hugo 的整合落點（獨立 `static/` 頁面＋`sql/` 列表入口，或 Hugo shortcode 內嵌）                       | 規格 | 無                 | 小   |
+| 第二期擴充：接入 SQLite WASM 依領域載入記憶體資料庫，支援網頁內實跑選項與 `EXPLAIN QUERY PLAN`                   | 實作 | 第一期練習網站完成 | 中   |
