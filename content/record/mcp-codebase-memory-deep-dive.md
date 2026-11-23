@@ -123,7 +123,7 @@ cbm 提供的 `query_graph` 是 Cypher 的**真子集**——覆蓋大部分 rea
 - `WITH`（不能多階段 pipeline）
 - `COLLECT`（不能 aggregate 成 list）
 - `OPTIONAL MATCH`（不能 left-join）
-- `labels(n)` / `type(r)` 等函數呼叫
+- `labels(n)` / `type(r)` 等函式呼叫
 - `AS` 別名
 - 任何 mutation（純讀）
 

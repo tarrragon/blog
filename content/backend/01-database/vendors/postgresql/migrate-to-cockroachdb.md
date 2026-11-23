@@ -130,7 +130,7 @@ framework-level：用 CRDB-provided client lib（go-cockroachdb / crdb-jdbc）�
 
 ### Extension 缺位、application feature 整段掉
 
-**徵兆**：cutover 後 application 某個地理計算功能直接報錯、PostGIS 函數不存在；migrate 計畫漏看。
+**徵兆**：cutover 後 application 某個地理計算功能直接報錯、PostGIS 函式不存在；migrate 計畫漏看。
 
 **根因**：CRDB native geo 不同 syntax / API、PostGIS extension 不能直接搬。
 

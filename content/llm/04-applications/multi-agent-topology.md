@@ -27,15 +27,15 @@ Multi-agent 跟 multi-call 不是「agent 數量多寡」的差別、是控制�
 | 維度     | Multi-call workflow                     | Multi-agent system                        |
 | -------- | --------------------------------------- | ----------------------------------------- |
 | 控制流   | 主程式編排、每 call 是 step             | Agent 自己決定下一步、可能呼叫其他 agent  |
-| 角色     | Step 跟 step 之間沒有「身份」、就是函數 | 每個 agent 有 role / 專業 / 工具集        |
+| 角色     | Step 跟 step 之間沒有「身份」、就是函式 | 每個 agent 有 role / 專業 / 工具集        |
 | Context  | 主程式傳 context、step 不擁有 context   | Agent 自帶 memory、有「自己知道的事」     |
-| 重用     | Step 是函數、容易 import 重用           | Agent 是黑盒、跨系統重用要透過協議        |
+| 重用     | Step 是函式、容易 import 重用           | Agent 是黑盒、跨系統重用要透過協議        |
 | 失敗歸屬 | Step 失敗、主程式接                     | Agent 失敗、可能 cascading 影響別的 agent |
 
 判讀「該走 multi-agent」的四條件（**任一不滿足、就留在 multi-call**）：
 
 - **角色差異顯著**：不同 step 要不同 prompt / model / tool / memory。任一條件同質就退回 multi-call、硬拆成多 agent 只是換個名字、orchestration overhead 純增。
-- **跨產品重用**：同一個 agent 要被多團隊 / 多場景使用。單一 user / 單一場景的話、寫成函數比 agent 簡單。
+- **跨產品重用**：同一個 agent 要被多團隊 / 多場景使用。單一 user / 單一場景的話、寫成函式比 agent 簡單。
 - **真正平行 / 動態協作**：多個 agent 各做自己的事最後合併、或哪些 agent 參與是 query-dependent。控制流可寫死、step 順序固定時、multi-call pipeline 已足夠。
 - **團隊熟悉度足**：multi-agent 失敗模式比 multi-call 多、debug 比較難。團隊還在學階段、debug 容易性 > 靈活性、先 stick to multi-call。
 

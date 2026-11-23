@@ -3,7 +3,7 @@ title: "取個原始值有四種寫法 — VO 的 toString 洩漏與 accessor �
 slug: "flutter_vo_tostring_leak_accessor_inconsistency"
 date: 2026-07-10
 draft: false
-description: "value object 家族的取值 accessor 各自為政（displayValue、toString、裸欄位）時，殺傷力會在測試層爆開：自定義 toString 讓裸字串斷言全數過期、四種取法讓修復者自己都寫錯。止血是 helper 函數庫集中取值知識、根治是家族統一 accessor 命名。"
+description: "value object 家族的取值 accessor 各自為政（displayValue、toString、裸欄位）時，殺傷力會在測試層爆開：自定義 toString 讓裸字串斷言全數過期、四種取法讓修復者自己都寫錯。止血是 helper 函式庫集中取值知識、根治是家族統一 accessor 命名。"
 tags: ["flutter", "dart", "value-object", "testing", "api-design", "refactoring"]
 ---
 
@@ -32,9 +32,9 @@ expect(book.title.value, '測試書籍');   // 修復計畫推薦的寫法
 
 這是介面不一致的可測量代價：API 的使用知識無法從一個型別遷移到下一個，每次使用都是一次查閱或一次賭注。而這個混亂不是誰設計出來的——它是 `.value` 存廢擺盪的沉積物：封裝重構移除了 `.value`、留下 `toString()` 跟 `displayValue` 兩個出口、緊急修復又給部分型別加回 `.value`，幾輪下來每個 VO 停在擺盪的不同相位上。
 
-## 止血：helper 函數庫集中取值知識
+## 止血：helper 函式庫集中取值知識
 
-逐個改 100+ 斷言的過程中，策略從「批次改寫」轉向「建輔助函數庫」：
+逐個改 100+ 斷言的過程中，策略從「批次改寫」轉向「建輔助函式庫」：
 
 ```dart
 // test/helpers/value_object_test_helpers.dart
@@ -51,7 +51,7 @@ helper 把「每個 VO 怎麼取原始值」的知識**集中在一個檔案**�
 - 型別升級（String → VO）後測試大量失敗、失敗訊息的期望與實際「差一層包裝」——裸值斷言過期，別逐個修、先決定統一的比較方式
 - 同一家族的型別、取原始值的寫法超過一種——API 知識不可遷移，每個消費者都在重新學
 - 修復計畫裡寫的 accessor 跟實作對不上——不一致已經騙到文件層了，這是「先盤點再動手」的訊號
-- 測試 helper 裡出現 per-type 的比較函數——止血有效，但把「統一 accessor」記進債務清單，別讓 helper 的存在掩蓋根治的必要
+- 測試 helper 裡出現 per-type 的比較函式——止血有效，但把「統一 accessor」記進債務清單，別讓 helper 的存在掩蓋根治的必要
 
 ## 相關閱讀
 

@@ -251,7 +251,7 @@ Production trace + eval result
 
 ### 反射四：Deterministic 行為用 deterministic check
 
-有 ground truth 的行為（抽取對不對、API 參數對不對、JSON schema 合不合）用 Python 函數驗證、判斷成本低、精度高。LLM judge 留給沒 ground truth 的 subjective 行為。對應反例：用 LLM judge 測「step 1 抽取對不對」——cost 翻倍、精度反而不如 deterministic check。對應 [4.13 Eval 設計座標系：三軸、八象限、何時測什麼](/llm/04-applications/eval-design-framework/) 軸誤選一。
+有 ground truth 的行為（抽取對不對、API 參數對不對、JSON schema 合不合）用 Python 函式驗證、判斷成本低、精度高。LLM judge 留給沒 ground truth 的 subjective 行為。對應反例：用 LLM judge 測「step 1 抽取對不對」——cost 翻倍、精度反而不如 deterministic check。對應 [4.13 Eval 設計座標系：三軸、八象限、何時測什麼](/llm/04-applications/eval-design-framework/) 軸誤選一。
 
 ### 反射五：保留 frozen baseline
 

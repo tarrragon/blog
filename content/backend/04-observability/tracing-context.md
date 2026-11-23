@@ -71,7 +71,7 @@ Context propagation 在以下邊界容易斷裂：
 
 **Queue 邊界**：確保 producer 跟 consumer 都使用 instrumented client（OTel SDK 的 messaging instrumentation），而非原生 client。Instrumented client 自動處理 header 注入跟提取。Consumer 端建立的 span 用 `CONSUMER` kind 標記，waterfall view 會顯示 queue 等待時間。
 
-**Thread pool 邊界**：Java 生態用 `Context.wrap()` 包裝提交到 thread pool 的 Runnable/Callable；Go 生態用 `context.Context` 作為第一個函數參數傳遞（這是 Go 的慣例，不需要額外處理）。Auto-instrumentation agent 可以自動處理常見 thread pool（Java 的 ExecutorService、Node.js 的 worker_threads）。
+**Thread pool 邊界**：Java 生態用 `Context.wrap()` 包裝提交到 thread pool 的 Runnable/Callable；Go 生態用 `context.Context` 作為第一個函式參數傳遞（這是 Go 的慣例，不需要額外處理）。Auto-instrumentation agent 可以自動處理常見 thread pool（Java 的 ExecutorService、Node.js 的 worker_threads）。
 
 **跨 vendor 邊界**：在 collector 層（OTel Collector）統一轉換 header 格式。Collector 的 receiver 支援多種格式輸入，exporter 統一輸出 W3C 格式。這層轉換在 [4.11 telemetry pipeline](/backend/04-observability/telemetry-pipeline/) 的 collector 中介段處理。
 

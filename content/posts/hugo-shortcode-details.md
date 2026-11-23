@@ -363,7 +363,7 @@ hugo server -D --disableFastRender
 
 **解決方案**：
 
-確認使用了 `markdownify` 函數：
+確認使用了 `markdownify` 函式：
 
 ```html
 {{ .Inner | markdownify }}

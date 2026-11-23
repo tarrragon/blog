@@ -183,7 +183,7 @@ New Name <new@email.com> Old Name <old@email.com>
 git filter-repo --mailmap .mailmap --force
 ```
 
-#### 使用 callback 函數
+#### 使用 callback 函式
 
 ```bash
 git filter-repo --name-callback '

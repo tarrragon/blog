@@ -29,7 +29,7 @@ Eval 設計的三個正交軸：
 - **Objective**：有明確 ground truth、檢驗可以寫成 deterministic check（金額對不對、SQL 跑得通不通、JSON schema 合不合法）。
 - **Subjective**：沒有單一正確答案、需要評分或比較（語氣好不好、解釋清楚不清楚、推薦的 trip 合不合用戶）。
 
-判讀訊號：「能不能用 Python 函數判定對錯」、能 → objective、不能 → subjective。
+判讀訊號：「能不能用 Python 函式判定對錯」、能 → objective、不能 → subjective。
 
 ### 軸 2：Component ↔ End-to-End
 
@@ -59,7 +59,7 @@ Eval 設計的三個正交軸：
 
 | 象限                                   | 典型問題                                 | 對應工具                                                                                     |
 | -------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Objective + Component + Quantitative   | 這個函數 / tool / RAG 元件對嗎           | Unit test、deterministic check、[retrieval recall@k](/llm/knowledge-cards/retrieval-recall/) |
+| Objective + Component + Quantitative   | 這個函式 / tool / RAG 元件對嗎           | Unit test、deterministic check、[retrieval recall@k](/llm/knowledge-cards/retrieval-recall/) |
 | Objective + Component + Qualitative    | 這個元件失敗 pattern 是什麼              | Error log 分析、trace inspection                                                             |
 | Objective + End-to-end + Quantitative  | 整套系統的 success rate / latency        | E2E test、success metric、latency p95                                                        |
 | Objective + End-to-end + Qualitative   | 整套系統的 catastrophic 失敗 case 是什麼 | Production incident review、抽樣 trace 讀                                                    |

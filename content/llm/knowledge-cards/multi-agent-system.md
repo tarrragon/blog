@@ -15,9 +15,9 @@ Multi-agent system 的核心概念是「**多個 LLM [agent](/llm/knowledge-card
 | 維度     | Multi-call workflow      | Multi-agent system          |
 | -------- | ------------------------ | --------------------------- |
 | 控制流   | 主程式編排               | Agent 自決                  |
-| 角色     | Step 是函數、無「身份」  | 每個 agent 有 role / 工具集 |
+| 角色     | Step 是函式、無「身份」  | 每個 agent 有 role / 工具集 |
 | Context  | 主程式傳 context         | Agent 自帶 memory           |
-| 重用     | Step 是函數、容易 import | Agent 跨系統重用透過協議    |
+| 重用     | Step 是函式、容易 import | Agent 跨系統重用透過協議    |
 | 失敗歸屬 | Step 失敗、主程式接      | Agent 失敗可能 cascading    |
 
 三種主流拓樸：

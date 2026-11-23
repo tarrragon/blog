@@ -68,9 +68,9 @@ path-level threshold 讓 gate 的判讀粒度從「整體效能」細化到「�
 
 ## Scenario 設計
 
-Scenario 的責任是讓壓測的流量結構接近 production。k6 提供五種 scenario executor，選擇取決於要控制什麼變量。
+Scenario 的責任是讓壓測的流量結構接近 production。k6 提供五種 scenario executor，選擇取決於要用什麼方式控制負載。
 
-| Executor              | 控制變量     | 適用場景                      |
+| Executor              | 負載控制方式 | 適用場景                      |
 | --------------------- | ------------ | ----------------------------- |
 | constant-vus          | 並發使用者數 | 簡單 smoke test               |
 | ramping-vus           | 並發使用者數 | 階梯式升壓找 saturation       |
