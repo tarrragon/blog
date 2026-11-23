@@ -26,7 +26,7 @@ tags: ["dart", "flutter", "ddd", "invariant", "state-management", "pos"]
 
 ## 分開的 setter 是不一致中間態的製造機
 
-如果 model 提供獨立的 `setMember()` 跟 `setPaymentMethod()`，正確的切換就要靠每個呼叫端自己記得兩個都呼叫、而且順序對。UI 是響應式的（`Obx` 監聽狀態流、副屏透過 `stateStream` 同步實收找零），兩次分開的狀態更新之間，那個不一致的中間態會真的被渲染出來、也會真的被推到副屏。
+如果 model 提供獨立的 `setMember()` 跟 `setPaymentMethod()`，正確的切換就要靠每個呼叫端自己記得兩個都呼叫、而且順序對。UI 是響應式的（`Obx` 監聽狀態流、副螢幕透過 `stateStream` 同步實收找零），兩次分開的狀態更新之間，那個不一致的中間態會真的被渲染出來、也會真的被推到副螢幕。
 
 這個專案的做法是把切換收成一個方法、強制原子性：
 

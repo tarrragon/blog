@@ -16,7 +16,7 @@
 
 「待優化」照同一個做法處理。英文的表格欄位常見 to be improved，句子常用 needs improvement（需要改進）或 room for improvement（有改進空間）。所以表格的狀態欄寫「待改善」，句子裡寫「需要改進」或「有改進空間」，並寫出要改進的是哪一項。
 
-同一個英文詞在台灣也可能分成兩個詞，這時翻成英文還選不出台灣用語。function 在台灣分成「函式」與「函數」，中國大陸兩者都寫「函數」。寫的人依這個 function 是什麼選詞：程式裡定義與呼叫的 function 寫函式（回呼函式、使用者定義函式、純函式、高階函式、建構函式），數學與計算關係寫函數（數學的函數、SQL 的視窗函數與聚合函數、損失函數、神經網路的 activation function）。選詞不看句子在談它的哪一面，所以「呼叫聚合函數 SUM」仍寫聚合函數，「純函式對相同輸入回傳相同結果」仍寫純函式。
+同一個英文詞在台灣也可能分成兩個詞，這時翻成英文還選不出台灣用語。function 在台灣分成「函式」與「函數」，中國大陸兩者都寫「函數」。寫的人依這個 function 是什麼選詞：程式裡定義與呼叫的 function 寫函式（回呼函式、使用者定義函式、純函式、高階函式、建構函式），SQL 與查詢語言內建、不是視窗也不是聚合的 function 也寫函式（`lower()`、`date()`、PostGIS 的 `ST_Distance()`、Cypher 的 `labels()`），數學與計算關係寫函數（數學的函數、SQL 與查詢語言的視窗函數與聚合函數、損失函數、神經網路的 activation function）。選詞不看句子在談它的哪一面，所以「呼叫聚合函數 SUM」仍寫聚合函數，「純函式對相同輸入回傳相同結果」仍寫純函式。
 
 ## 判斷步驟
 
@@ -53,7 +53,7 @@
 | 銷售 | salesperson / sales department | 業務 | 指銷售這個活動時（銷售額、同店銷售），這個詞留著 |
 | 在線 | online | 線上 / 在線上 / 上線 | 修飾名詞時寫「線上」（線上客服）；處於線上的狀態寫「在線上」，開始提供服務寫「上線」；「同時在線人數」寫「同時線上人數」；指 concurrency 時寫「同時執行」（同時執行的 thread） |
 | 質量 | quality | 品質 | 物理的 mass 台灣也寫「質量」，指這個意思時這個詞留著 |
-| 函數 | function（程式單位） | 函式 | 程式裡定義與呼叫的 function 換成「函式」（回呼函式、使用者定義函式、純函式、高階函式、建構函式），functional programming 寫「函式程式設計」；數學與計算關係留著「函數」（數學的函數、SQL 的視窗函數與聚合函數、損失函數、神經網路的 activation function）；拿不準的（hash function）沿用官方文件或專案已有的譯名 |
+| 函數 | function（程式單位） | 函式 | 程式裡定義與呼叫的 function 換成「函式」（回呼函式、使用者定義函式、純函式、高階函式、建構函式），SQL 與查詢語言內建、不是視窗也不是聚合的 function 也寫「函式」（`lower()`、`ST_Distance()`），functional programming 寫「函式程式設計」；數學與計算關係留著「函數」（數學的函數、SQL 與查詢語言的視窗函數與聚合函數、損失函數、神經網路的 activation function）；拿不準的（hash function）沿用官方文件或專案已有的譯名 |
 | 文件 | file | 檔案 | document 台灣也寫「文件」，指這個意思時這個詞留著 |
 | 文件夾 | folder | 資料夾 | |
 | 接口 | interface / port / endpoint | 介面 / 連接埠 / 端點 | 軟體的 interface 寫「介面」，硬體的 port 寫「連接埠」，HTTP 路徑這類 endpoint 寫「端點」 |
@@ -64,6 +64,11 @@
 | 集群 | cluster | 叢集 | 產業的 industrial cluster 寫「產業聚落」 |
 | 內存 | memory | 記憶體 | 手機規格的機身內存指 storage，寫「儲存空間」；運行內存指 RAM，寫「記憶體」 |
 | 屏幕 | screen | 螢幕 | |
+| 副屏 | secondary display | 副螢幕 | |
+| 變量 | variable（程式、一般論述）/ variable（數學與統計）/ variate（統計）/ variable（心理學與社會學） | 變數 / 變數 / 變量 / 變項 | 程式與一般論述寫「變數」（環境變數、影響結果的主要變數）；統計的 variable 寫「變數」、variate 寫「變量」，兩者不互換（random variable 是隨機變數，random variate 是隨機變量）；數學與統計的寫法以台灣的來源為準，中國來源不當依據；「控制變量」先問這個量被固定或被操作：被固定寫「控制變數」（心理學與社會學寫「控制變項」），被操作時寫出操作的對象或方式；複合詞不變量（invariant）、多變量（multivariate）、單變量（univariate）、二變量與雙變量（bivariate）、共變量（covariate）留著 |
+| 網盤 | cloud drive | 雲端硬碟 | 產品名照原文（百度網盤） |
+| U 盤 | USB flash drive | 隨身碟 | |
+| 光盤 | optical disc | 光碟 | 「吃光盤子」只是字面相連，留著；當動詞指把餐點吃完時寫「吃完」，活動名稱（光盤行動、光盤運動）照原文 |
 
 ### 遊戲營運
 
@@ -82,6 +87,7 @@
 | 中國用語 | 英文概念 | 台灣用語 | 判斷時看什麼 |
 | --- | --- | --- | --- |
 | 視頻 | video / video call / video codec | 影片 / 視訊 / 視訊 | 影片內容與影片檔寫「影片」，視訊會議、視訊通話與視訊編碼寫「視訊」 |
+| 視屏 | screen / video（當「視頻」用） | 螢幕 / 影片、視訊 | 指顯示畫面的裝置寫「螢幕」；當「視頻」用時照視頻那一列判斷 |
 | 視頻流 | video stream | 影片串流 / 影像串流 | 攝影機輸出寫「影像串流」，廠商寫「視訊串流」時照廠商 |
 | 攝像頭 | surveillance camera / IP camera / webcam | 監視器 / IP 攝影機 / 視訊鏡頭 | 監控現場的設備寫「監視器」，同一篇也寫到顯示設備時寫「監視攝影機」；規格書的 IP camera 寫「IP 攝影機」，電腦的 webcam 寫「視訊鏡頭」 |
 | 識別 | recognition | 辨識 | identification 與 identifier 台灣也寫「識別」（身分識別、識別碼），指這些意思時這個詞留著 |

@@ -70,7 +70,7 @@ Rule engine 是 collector 的主動處理層。事件寫入儲存後，rule engi
 
 定期（每分鐘、每小時）掃描一段時間內的事件，評估聚合類規則。適合基於統計的規則（「過去 5 分鐘 error 數量超過 10」「過去 1 小時某 endpoint 的 P95 回應時間超過 2 秒」）。
 
-批次評估需要時間窗口的概念 — 規則條件中包含時間範圍和聚合函式（count、avg、max、percentile）。
+批次評估需要時間窗口的概念 — 規則條件中包含時間範圍和聚合函數（aggregate function，例如 count、avg、max、percentile）。
 
 ### 混合策略
 

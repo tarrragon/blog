@@ -46,7 +46,7 @@ class _CheckoutState {                       // immutable 內核：私有 class
 }
 ```
 
-分工是：**immutable 內核**保證每次變更是一次原子的整體替換——`_state.value = old.copyWith(...)`，訂閱者永遠看到一致的快照、不會撞見改到一半的狀態（[會員/計價/支付的原子切換](/work-log/pos_member_pricing_payment_atomic_switch/)就是靠這層保證成立的）。**Rx 外殼**提供響應性——UI 用 `Obx(() => Text('應付: ${context.subtotal}'))` 自動跟著變、副屏透過 `stateStream` 訂閱同一個狀態流同步實收與找零。
+分工是：**immutable 內核**保證每次變更是一次原子的整體替換——`_state.value = old.copyWith(...)`，訂閱者永遠看到一致的快照、不會撞見改到一半的狀態（[會員/計價/支付的原子切換](/work-log/pos_member_pricing_payment_atomic_switch/)就是靠這層保證成立的）。**Rx 外殼**提供響應性——UI 用 `Obx(() => Text('應付: ${context.subtotal}'))` 自動跟著變、副螢幕透過 `stateStream` 訂閱同一個狀態流同步實收與找零。
 
 同樣重要的是**沒有開放的東西**：`_state` 私有、`_CheckoutState` 私有，外部拿不到 Rx 也拿不到內核——變更的唯一入口是 `updateInputAmount` 這批語意化方法。對照直接暴露 `Rx<CheckoutState>` 讓呼叫端自己 `.value = ...` 的寫法：那會把「哪些變更是合法的」交還給每個呼叫端。這是把逃生口關掉的狀態管理版。
 

@@ -357,7 +357,7 @@ EXPIRE  clicks:{連結 ID}:{UTC 整點} 7200
 | 兩個鍵的估計值相加                        | 119,321 | +19.3%       |
 | `PFCOUNT 兩個鍵`（或 `PFMERGE` 之後再數） | 100,372 | +0.4%        |
 
-合併後的鍵佔 14,360 bytes（`MEMORY USAGE`）。所以每小時存一個 HyperLogLog，查一天時把 24 個小時的合併再數，就得到跨小時正確去重的估計值；相加則重複計算了跨小時出現的人。代價是它只給估計值、取不出成員，也無法刪掉某一個人的貢獻。HyperLogLog 放在哪裡，照〈計數：INCR 的執行方式與持久化設定〉的分法：要當權威的數字，放在資料庫的彙總表裡跟著重算，PostgreSQL 有同類的擴充套件 `postgresql-hll`（欄位型別 `hll`，查詢時用它的聚合函式合併）；Redis 裡的 HyperLogLog 只當即時數字。Redis Cluster 上，`PFCOUNT` 與 `PFMERGE` 一次操作的多個鍵要落在同一個 slot，鍵名用同一個 hash tag（例如 `uv:{連結 ID}:2026-10-06T09`），否則回 `CROSSSLOT` 錯誤。
+合併後的鍵佔 14,360 bytes（`MEMORY USAGE`）。所以每小時存一個 HyperLogLog，查一天時把 24 個小時的合併再數，就得到跨小時正確去重的估計值；相加則重複計算了跨小時出現的人。代價是它只給估計值、取不出成員，也無法刪掉某一個人的貢獻。HyperLogLog 放在哪裡，照〈計數：INCR 的執行方式與持久化設定〉的分法：要當權威的數字，放在資料庫的彙總表裡跟著重算，PostgreSQL 有同類的擴充套件 `postgresql-hll`（欄位型別 `hll`，查詢時用它的聚合函數（aggregate function）合併）；Redis 裡的 HyperLogLog 只當即時數字。Redis Cluster 上，`PFCOUNT` 與 `PFMERGE` 一次操作的多個鍵要落在同一個 slot，鍵名用同一個 hash tag（例如 `uv:{連結 ID}:2026-10-06T09`），否則回 `CROSSSLOT` 錯誤。
 
 ### 去重：SET NX 的檢查與唯一約束的分工
 

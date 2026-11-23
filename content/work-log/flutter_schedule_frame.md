@@ -7,7 +7,7 @@ description: "手動觸發重繪、或釐清 setState / 動畫 / markNeedsPaint 
 tags: ["flutter", "rendering"]
 ---
 
-排查副屏畫面落後、用 `scheduleFrame()` 當重繪兜底時（見 [畫面落後邏輯狀態的排查與心跳做法](../flutter_repaint_heartbeat/)），回頭釐清這個 API 原本的設計意義。
+排查副螢幕畫面落後、用 `scheduleFrame()` 當重繪兜底時（見 [畫面落後邏輯狀態的排查與心跳做法](../flutter_repaint_heartbeat/)），回頭釐清這個 API 原本的設計意義。
 
 ## Flutter 是「按需 render」
 
@@ -46,7 +46,7 @@ tags: ["flutter", "rendering"]
 
 正常情況你（或框架幫你）呼叫 `scheduleFrame` 是因為「真的有狀態變了要畫」。直接呼叫很少見，通常是：**你改了某個會影響畫面、但沒有走 `setState` / `markNeedsPaint` 的狀態**，框架偵測不到，得手動請一個 frame。
 
-副屏重繪兜底就是這種「借字面效果」的用法：我們沒有狀態變更，是借它「產生並 present 一個 frame」逼合成層重新 present 一次（把 texture 圖層的最新內容一起推上去）。契約上完全合法——`scheduleFrame` 的職責就是「產生一個 frame」，不要求內容有變——只是偏離了「內容改變才排 frame」的常規，所以定位成兜底而非首選。
+副螢幕重繪兜底就是這種「借字面效果」的用法：我們沒有狀態變更，是借它「產生並 present 一個 frame」逼合成層重新 present 一次（把 texture 圖層的最新內容一起推上去）。契約上完全合法——`scheduleFrame` 的職責就是「產生一個 frame」，不要求內容有變——只是偏離了「內容改變才排 frame」的常規，所以定位成兜底而非首選。
 
 ## 小結
 
