@@ -6,6 +6,7 @@
   用 partialCached 呼叫，整次建站只算一次；回傳 dict：
   - bank：bank.json 的 resource（練習頁用 .RelPermalink 下載）
   - byDoc：relatedDocs 的路徑 → 指到它的題數
+  - count：題庫的總題數（練習總覽頁 practice-hub.html 顯示用）
 
   題庫依 manifest.json 的 stages 順序載入，跟 verify_questions.py 讀的是同一份清單。
   relatedDocs 指到不存在的頁面時建站失敗：題目解析裡的文章連結會變成 404，
@@ -65,4 +66,4 @@
   "masteryRules" $manifest.masteryRules
 -}}
 {{- $res := $bank | jsonify | resources.FromString "sql-practice/bank.json" | fingerprint -}}
-{{- return dict "bank" $res "byDoc" $byDoc -}}
+{{- return dict "bank" $res "byDoc" $byDoc "count" (len $questions) -}}

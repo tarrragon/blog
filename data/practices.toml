@@ -1,0 +1,21 @@
+# 練習總覽頁（/practice/，layouts/_default/practice-hub.html）列出的外站練習。
+# 站內的練習頁不登記在這裡：總覽頁從 frontmatter 有 `practice` 的頁面自動列出。
+# 外站的練習在另一個 Hugo 專案、另一個網址，建站時查不到它的頁面，所以手寫在這裡。
+#
+# 欄位：
+#   title       總覽頁上的名稱
+#   url         練習頁的完整網址
+#   site        練習頁所屬的網站名稱（顯示成「另一個網站：<site>」，讀者點之前知道會離開本站）
+#   kw          小磚左側的細體小寫關鍵字（拉丁字母，跟站內練習的 practice.kw 同一個用途）
+#   description 一句話寫練習的形式與對象
+#   modes       練習頁裡可以切換的模式，依練習頁選單的順序
+#   weight      在總覽頁的排序，跟站內練習的 practice.weight 一起比，小的在前
+
+[[external]]
+title = "日文輸入練習"
+url = "https://tarrragon.github.io/japanese_learning_blog/practice/"
+site = "日文學習卡片盒"
+kw = "kana"
+description = "看著日文用羅馬字輸入，邊打邊對照讀音；另有五十音表與手寫"
+modes = ["文章練習", "假名練習", "五十音表", "五十音進階", "五十音手寫"]
+weight = 20

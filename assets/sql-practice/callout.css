@@ -53,6 +53,9 @@ a.sql-practice-callout:visited {
   padding: 10px 20px;
   font-size: 16px;
   line-height: 24px;
+  /* assets/custom.css 的 a { color } 帶 !important，蓋掉上面 a.sql-practice-callout 的白色；
+     內層自己宣告顏色才不受影響 */
+  color: #fff;
 }
 .sql-practice-callout-text b {
   font-weight: 600;

@@ -1,0 +1,84 @@
+/* 練習總覽頁（layouts/_default/practice-hub.html）的清單。位在 blog 的 herman 世界，
+   每一項沿用文章結尾入口（assets/sql-practice/callout.css）的語彙：黑底、左側藍綠方塊裝細體小寫關鍵字，
+   讀者在總覽頁先認得練習頁的樣子。主題把根字級設成 10px，所以這裡用 px。 */
+
+@font-face {
+  font-family: "SQLP Display";
+  font-style: normal;
+  font-weight: 200 300;
+  font-display: swap;
+  src: url("../fonts/noto-sans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+
+.practice-hub {
+  list-style: none;
+  padding: 0;
+  margin: 32px 0;
+  display: grid;
+  gap: 8px;
+}
+.practice-hub li {
+  margin: 0;
+}
+.practice-hub-item {
+  display: flex;
+  align-items: stretch;
+  min-height: 88px;
+  background: #000;
+  transition: background-color 150ms ease-out;
+}
+a.practice-hub-item,
+a.practice-hub-item:visited {
+  color: #fff;
+  text-decoration: none;
+}
+.practice-hub-item:hover {
+  background: #1c1c1c;
+}
+.practice-hub-item:focus-visible {
+  outline: 3px solid #00bde3;
+  outline-offset: 2px;
+}
+/* 關鍵字方塊固定寬度，清單裡每一項的文字欄從同一條線開始 */
+.practice-hub-kw {
+  flex: none;
+  width: 112px;
+  display: flex;
+  align-items: flex-end;
+  padding: 8px 14px 8px;
+  box-sizing: border-box;
+  background: #0b6e8e;
+  color: #fff;
+  font-family: "SQLP Display", "Segoe UI", "Helvetica Neue", sans-serif;
+  font-weight: 200;
+  font-size: 34px;
+  line-height: 36px;
+  letter-spacing: -0.02em;
+}
+.practice-hub-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px 20px;
+  font-size: 16px;
+  line-height: 24px;
+  min-width: 0;
+  /* 顏色寫在內層：assets/custom.css 的 a { color } 帶 !important，連結本身的 color 蓋不過它，
+     內層元素自己宣告的顏色不受影響 */
+  color: #fff;
+}
+.practice-hub-text b {
+  font-size: 18px;
+  font-weight: 600;
+}
+.practice-hub-meta {
+  color: #a3a3a3; /* 對 #000 8.5:1、對 hover 的 #1c1c1c 7.1:1 */
+  font-size: 14px;
+  line-height: 22px;
+}
+@media (max-width: 599px) {
+  .practice-hub-kw { width: 72px; font-size: 24px; line-height: 26px; padding: 8px 10px; }
+  .practice-hub-text { padding: 12px 14px; }
+}

@@ -1,0 +1,61 @@
+{{- /*
+  練習總覽頁（content/practice.md，frontmatter `layout: practice-hub`），頁首選單的「練習」連到這裡。
+  列出兩種來源，合在一起依 weight 排序：
+  - 站內：frontmatter 有 `practice` 的頁面，不論放在哪個分類。`practice` 的欄位：
+      kw      小磚左側的細體小寫關鍵字（拉丁字母）
+      summary 一句話寫練習的形式與對象；頁面的 description 寫成觸發條件，放在清單裡讀起來不像說明，所以另寫
+      weight  排序，小的在前
+      bank    "sql" 時題數取自 sql-practice/bank.html 的 count；沒有題庫的練習不寫
+    分類路徑取上層各 section 的 breadcrumb（沒有就用標題）；draft 的 section（例如 SQL 練習的規格書目錄）
+    在 hugo server 下仍在 .Ancestors 裡，所以明確跳過。
+  - 外站：data/practices.toml 的 [[external]]，欄位寫在那個檔的檔頭。
+  樣式在 assets/practice/hub.css，小磚沿用文章結尾入口（ArticleCallout）的語彙。
+*/ -}}
+{{ define "main" }}
+{{- $css := resources.Get "practice/hub.css" | minify | fingerprint -}}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{- $items := slice -}}
+{{- range where site.RegularPages "Params.practice" "!=" nil -}}
+  {{- $p := .Params.practice -}}
+  {{- $path := slice -}}
+  {{- range .Ancestors.Reverse -}}
+    {{- if and (not .IsHome) (not .Draft) -}}{{- $path = $path | append (.Params.breadcrumb | default .LinkTitle) -}}{{- end -}}
+  {{- end -}}
+  {{- $count := 0 -}}
+  {{- if eq $p.bank "sql" -}}{{- $count = (partialCached "sql-practice/bank.html" .).count -}}{{- end -}}
+  {{- $items = $items | append (dict
+      "title" (.Params.breadcrumb | default .LinkTitle) "url" .RelPermalink "description" ($p.summary | default .Description)
+      "kw" ($p.kw | default "practice") "weight" ($p.weight | default 100)
+      "where" (delimit $path " › ") "count" $count "site" "" "modes" slice) -}}
+{{- end -}}
+{{- range site.Data.practices.external -}}
+  {{- $items = $items | append (dict
+      "title" .title "url" .url "description" .description
+      "kw" (.kw | default "practice") "weight" (.weight | default 100)
+      "where" "" "count" 0 "site" .site "modes" (.modes | default slice)) -}}
+{{- end -}}
+<article class="article-content practice-hub-page">
+  <h1>{{ .Title }}</h1>
+  <div class="article-body" data-pagefind-body>
+    {{ .Content }}
+  </div>
+  <ul class="practice-hub" data-pagefind-ignore>
+    {{- range sort $items "weight" }}
+    <li>
+      <a class="practice-hub-item" href="{{ .url }}">
+        <span class="practice-hub-kw" aria-hidden="true">{{ .kw }}</span>
+        <span class="practice-hub-text">
+          <b>{{ .title }}</b>
+          <span>{{ .description }}</span>
+          {{- with .modes }}<span class="practice-hub-meta">模式：{{ delimit . "、" }}</span>{{ end }}
+          <span class="practice-hub-meta">
+            {{- if .site -}}另一個網站：{{ .site }}
+            {{- else -}}{{ .where }}{{ with .count }}・{{ . }} 題{{ end }}{{- end -}}
+          </span>
+        </span>
+      </a>
+    </li>
+    {{- end }}
+  </ul>
+</article>
+{{ end }}

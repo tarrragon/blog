@@ -6,6 +6,11 @@ description: "讀完 SQL 或資料庫的文章、想用題目確認自己分得�
 weight: 1
 slug: "play"
 layout: "sql-practice"
+practice:
+  kw: "sql"
+  weight: 10
+  bank: "sql"
+  summary: "紙頁書店、雲課堂、捷配物流三個商業系統的 SQL 選擇題，作答後列出每個選項在正常資料與邊界資料上的結果、成立的前提與失效的條件"
 tags: ["sql", "practice", "database"]
 ---
 
