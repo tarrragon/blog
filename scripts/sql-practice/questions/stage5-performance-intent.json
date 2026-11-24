@@ -2,6 +2,7 @@
   {
     "conceptId": "S5-01",
     "variantId": "S5-01-bookstore-sargable-01",
+    "discriminator": ["plan", "data"],
     "domain": "bookstore",
     "stage": 5,
     "tablePath": ["orders"],
@@ -87,6 +88,7 @@
   {
     "conceptId": "S5-02",
     "variantId": "S5-02-bookstore-skew-01",
+    "discriminator": ["plan"],
     "population": "all-records",
     "domain": "bookstore",
     "stage": 5,
@@ -172,6 +174,7 @@
   {
     "conceptId": "S5-03",
     "variantId": "S5-03-bookstore-cte-window-01",
+    "discriminator": ["plan", "data"],
     "domain": "bookstore",
     "stage": 5,
     "tablePath": ["books"],
@@ -254,6 +257,7 @@
   {
     "conceptId": "S5-04",
     "variantId": "S5-04-bookstore-intent-01",
+    "discriminator": ["data"],
     "population": "all-records",
     "domain": "bookstore",
     "stage": 5,

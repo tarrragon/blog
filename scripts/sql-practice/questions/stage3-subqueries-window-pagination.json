@@ -2,6 +2,7 @@
   {
     "conceptId": "S3-01",
     "variantId": "S3-01-bookstore-exists-01",
+    "discriminator": ["data"],
     "population": "all-records",
     "domain": "bookstore",
     "stage": 3,
@@ -87,6 +88,7 @@
   {
     "conceptId": "S3-02",
     "variantId": "S3-02-bookstore-reviews-01",
+    "discriminator": ["data"],
     "domain": "bookstore",
     "stage": 3,
     "tablePath": ["orders", "reviews"],
@@ -171,6 +173,7 @@
   {
     "conceptId": "S3-03",
     "variantId": "S3-03-bookstore-groupkey-01",
+    "discriminator": ["data", "engine"],
     "population": "all-records",
     "domain": "bookstore",
     "stage": 3,
@@ -253,6 +256,7 @@
   {
     "conceptId": "S3-04",
     "variantId": "S3-04-bookstore-window-lag-01",
+    "discriminator": ["data"],
     "domain": "bookstore",
     "stage": 3,
     "tablePath": ["daily_sales_snapshots"],
@@ -335,6 +339,7 @@
   {
     "conceptId": "S3-05",
     "variantId": "S3-05-bookstore-pagination-01",
+    "discriminator": ["data", "plan"],
     "domain": "bookstore",
     "stage": 3,
     "tablePath": ["orders"],

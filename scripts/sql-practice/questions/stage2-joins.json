@@ -2,6 +2,7 @@
   {
     "conceptId": "S2-01",
     "variantId": "S2-01-bookstore-items-01",
+    "discriminator": ["engine"],
     "domain": "bookstore",
     "stage": 2,
     "tablePath": ["order_items"],
@@ -84,6 +85,7 @@
   {
     "conceptId": "S2-02",
     "variantId": "S2-02-bookstore-customers-orders-01",
+    "discriminator": ["data"],
     "population": "all-records",
     "domain": "bookstore",
     "stage": 2,
@@ -169,6 +171,7 @@
   {
     "conceptId": "S2-03",
     "variantId": "S2-03-bookstore-orders-01",
+    "discriminator": ["data"],
     "population": "all-records",
     "domain": "bookstore",
     "stage": 2,
@@ -253,6 +256,7 @@
   {
     "conceptId": "S2-05",
     "variantId": "S2-05-bookstore-orders-reviews-01",
+    "discriminator": ["data"],
     "population": "specific-ids",
     "domain": "bookstore",
     "stage": 2,
@@ -338,6 +342,7 @@
   {
     "conceptId": "S2-06",
     "variantId": "S2-06-logistics-warehouses-01",
+    "discriminator": ["data"],
     "domain": "swift-logistics",
     "stage": 2,
     "tablePath": ["warehouses"],

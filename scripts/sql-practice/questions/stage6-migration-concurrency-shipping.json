@@ -2,6 +2,7 @@
   {
     "conceptId": "S6-01",
     "variantId": "S6-01-bookstore-migration-01",
+    "discriminator": ["engine"],
     "population": "not-applicable",
     "domain": "bookstore",
     "stage": 6,
@@ -79,6 +80,7 @@
   {
     "conceptId": "S6-02",
     "variantId": "S6-02-bookstore-stock-race-01",
+    "discriminator": ["concurrency"],
     "domain": "bookstore",
     "stage": 6,
     "tablePath": ["books"],
@@ -160,6 +162,7 @@
   {
     "conceptId": "S6-03",
     "variantId": "S6-03-bookstore-queue-skip-locked-01",
+    "discriminator": ["concurrency"],
     "domain": "bookstore",
     "stage": 6,
     "tablePath": ["export_jobs"],
@@ -236,6 +239,7 @@
   {
     "conceptId": "S6-04",
     "variantId": "S6-04-bookstore-price-snapshot-01",
+    "discriminator": ["modeling", "data"],
     "domain": "bookstore",
     "stage": 6,
     "tablePath": ["order_items", "books"],

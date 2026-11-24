@@ -2,6 +2,7 @@
   {
     "conceptId": "S7-01",
     "variantId": "S7-01-bookstore-denorm-ratio-01",
+    "discriminator": ["workload"],
     "domain": "bookstore",
     "stage": 7,
     "tablePath": ["books", "reviews"],
@@ -78,6 +79,7 @@
   {
     "conceptId": "S7-02",
     "variantId": "S7-02-cloud-vertical-split-01",
+    "discriminator": ["workload"],
     "domain": "cloud-academy",
     "stage": 7,
     "tablePath": ["courses", "course_contents"],
@@ -154,6 +156,7 @@
   {
     "conceptId": "S7-03",
     "variantId": "S7-03-bookstore-hot-counter-01",
+    "discriminator": ["concurrency", "workload"],
     "domain": "bookstore",
     "stage": 7,
     "tablePath": ["books", "book_view_events"],
@@ -230,6 +233,7 @@
   {
     "conceptId": "S7-04",
     "variantId": "S7-04-logistics-partial-index-01",
+    "discriminator": ["workload", "plan"],
     "domain": "swift-logistics",
     "stage": 7,
     "tablePath": ["dispatch_tasks"],
@@ -314,6 +318,7 @@
   {
     "conceptId": "S7-05",
     "variantId": "S7-05-logistics-partition-unique-01",
+    "discriminator": ["workload", "engine"],
     "domain": "swift-logistics",
     "stage": 7,
     "tablePath": ["shipment_events"],
@@ -391,6 +396,7 @@
   {
     "conceptId": "S7-06",
     "variantId": "S7-06-bookstore-hybrid-jsonb-01",
+    "discriminator": ["modeling"],
     "domain": "bookstore",
     "stage": 7,
     "tablePath": ["books", "book_details"],

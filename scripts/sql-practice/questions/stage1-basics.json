@@ -2,6 +2,7 @@
   {
     "conceptId": "S1-01",
     "variantId": "S1-01-bookstore-books-01",
+    "discriminator": ["data"],
     "domain": "bookstore",
     "stage": 1,
     "tablePath": ["books"],
@@ -84,6 +85,7 @@
   {
     "conceptId": "S1-01",
     "variantId": "S1-01-cloud-courses-02",
+    "discriminator": ["data"],
     "domain": "cloud-academy",
     "stage": 1,
     "tablePath": ["courses"],
@@ -167,6 +169,7 @@
   {
     "conceptId": "S1-02",
     "variantId": "S1-02-bookstore-books-01",
+    "discriminator": ["data"],
     "domain": "bookstore",
     "stage": 1,
     "tablePath": ["books"],
@@ -250,6 +253,7 @@
   {
     "conceptId": "S1-03",
     "variantId": "S1-03-bookstore-customers-01",
+    "discriminator": ["data"],
     "population": "all-records",
     "domain": "bookstore",
     "stage": 1,
@@ -335,6 +339,7 @@
   {
     "conceptId": "S1-04",
     "variantId": "S1-04-bookstore-books-01",
+    "discriminator": ["data"],
     "domain": "bookstore",
     "stage": 1,
     "tablePath": ["books"],
@@ -416,6 +421,7 @@
   {
     "conceptId": "S1-05",
     "variantId": "S1-05-bookstore-orders-01",
+    "discriminator": ["data"],
     "domain": "bookstore",
     "stage": 1,
     "tablePath": ["orders"],

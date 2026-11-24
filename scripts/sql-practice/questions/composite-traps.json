@@ -2,6 +2,7 @@
   {
     "conceptId": "C01",
     "variantId": "C01-cloud-not-in-plan-01",
+    "discriminator": ["data", "plan"],
     "domain": "cloud-academy",
     "stage": 9,
     "tablePath": ["subscriptions", "invoices"],
@@ -87,6 +88,7 @@
   {
     "conceptId": "C02",
     "variantId": "C02-bookstore-multi-timeline-fanout-01",
+    "discriminator": ["data"],
     "population": "all-records",
     "domain": "bookstore",
     "stage": 9,
@@ -174,6 +176,7 @@
   {
     "conceptId": "C03",
     "variantId": "C03-logistics-window-null-order-01",
+    "discriminator": ["data", "engine"],
     "domain": "swift-logistics",
     "stage": 9,
     "tablePath": ["shipment_events"],
@@ -258,6 +261,7 @@
   {
     "conceptId": "C04",
     "variantId": "C04-logistics-mixed-keyset-01",
+    "discriminator": ["data", "plan"],
     "domain": "swift-logistics",
     "stage": 9,
     "tablePath": ["shipments"],
@@ -341,6 +345,7 @@
   {
     "conceptId": "C05",
     "variantId": "C05-cloud-webhook-pipeline-01",
+    "discriminator": ["concurrency"],
     "domain": "cloud-academy",
     "stage": 9,
     "tablePath": ["webhook_events"],
@@ -418,6 +423,7 @@
   {
     "conceptId": "C06",
     "variantId": "C06-bookstore-int-div-audit-01",
+    "discriminator": ["data"],
     "domain": "bookstore",
     "stage": 9,
     "tablePath": ["orders", "order_items", "books"],
@@ -506,6 +512,7 @@
   {
     "conceptId": "C07",
     "variantId": "C07-cloud-session-invalidation-01",
+    "discriminator": ["data", "threat"],
     "population": "active-only",
     "domain": "cloud-academy",
     "stage": 9,
@@ -591,6 +598,7 @@
   {
     "conceptId": "C08",
     "variantId": "C08-logistics-left-join-tenant-leak-01",
+    "discriminator": ["data", "threat"],
     "domain": "swift-logistics",
     "stage": 9,
     "tablePath": ["shipment_packages", "shipments"],
@@ -678,6 +686,7 @@
   {
     "conceptId": "C09",
     "variantId": "C09-bookstore-confused-deputy-rbac-01",
+    "discriminator": ["data", "threat"],
     "population": "active-only",
     "domain": "bookstore",
     "stage": 9,
@@ -764,6 +773,7 @@
   {
     "conceptId": "C10",
     "variantId": "C10-logistics-apikey-precedence-bypass-01",
+    "discriminator": ["data", "threat"],
     "population": "active-only",
     "domain": "swift-logistics",
     "stage": 9,
@@ -850,6 +860,7 @@
   {
     "conceptId": "C11",
     "variantId": "C11-bookstore-soft-delete-unique-01",
+    "discriminator": ["data", "threat"],
     "population": "active-only",
     "domain": "bookstore",
     "stage": 9,
@@ -933,6 +944,7 @@
   {
     "conceptId": "C12",
     "variantId": "C12-logistics-immutable-audit-vs-gdpr-01",
+    "discriminator": ["threat", "data"],
     "domain": "swift-logistics",
     "stage": 9,
     "tablePath": ["billing_audit_logs", "shipment_recipient_pii", "billing_statements"],

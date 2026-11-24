@@ -2,6 +2,7 @@
   {
     "conceptId": "S8-01",
     "variantId": "S8-01-bookstore-sqli-allowlist-01",
+    "discriminator": ["threat", "data"],
     "domain": "bookstore",
     "stage": 8,
     "tablePath": ["books"],
@@ -84,6 +85,7 @@
   {
     "conceptId": "S8-02",
     "variantId": "S8-02-logistics-bola-rls-01",
+    "discriminator": ["threat", "data"],
     "population": "specific-ids",
     "domain": "swift-logistics",
     "stage": 8,
@@ -168,6 +170,7 @@
   {
     "conceptId": "S8-03",
     "variantId": "S8-03-cloud-role-least-privilege-01",
+    "discriminator": ["threat"],
     "population": "not-applicable",
     "domain": "cloud-academy",
     "stage": 8,
@@ -246,6 +249,7 @@
   {
     "conceptId": "S8-04",
     "variantId": "S8-04-bookstore-pii-masking-view-01",
+    "discriminator": ["threat", "data"],
     "population": "all-records",
     "domain": "bookstore",
     "stage": 8,
@@ -329,6 +333,7 @@
   {
     "conceptId": "S8-05",
     "variantId": "S8-05-cloud-query-dos-defense-01",
+    "discriminator": ["threat"],
     "domain": "cloud-academy",
     "stage": 8,
     "tablePath": ["courses", "invoices", "lesson_progress"],
@@ -406,6 +411,7 @@
   {
     "conceptId": "S8-06",
     "variantId": "S8-06-logistics-audit-backup-isolation-01",
+    "discriminator": ["threat", "data"],
     "domain": "swift-logistics",
     "stage": 8,
     "tablePath": ["billing_statements", "billing_audit_logs"],
