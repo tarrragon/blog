@@ -49,7 +49,7 @@ tags: ["ux-design", "navigation", "flutter", "gorouter", "push", "go", "semantic
 - 步驟式流程：步驟 1 → pushReplacement 步驟 2 → pushReplacement 步驟 3。使用者在步驟 3 按 back 回到流程開始前的畫面，不會回到步驟 2 或 1。
 - 結果頁替換搜尋頁：搜尋結果替換搜尋條件頁，使用者按 back 回到搜尋前的畫面。
 
-pushReplacement 的語意是「這一步完成後使用者不需要回到這裡」。用於不可回退的流程步驟。
+pushReplacement 的語意是「這一步完成後使用者不需要回到這裡」。用於不可回退的流程步驟。Web 頁面用 history API 取代瀏覽紀錄時是同一個機制，瀏覽器的上一頁會跳過被取代的那一筆；讀者要回到更早的來源頁時，退出路徑只剩頁面上的按鈕，[U.C21 捲得越深離開越遠 — 退出路徑跟著頁首捲出畫面](/ux-design/cases/exit-path-scrolls-out-of-reach/) 寫的是那顆按鈕跟著頁首捲出畫面的情形。
 
 ## 選擇決策流程
 

@@ -73,8 +73,10 @@
     }
   }
 
-  /* 可折疊程式碼區塊樣式 */
-  details {
+  /* 可折疊程式碼區塊樣式。各條排除 SQL 練習區（#sql-practice 底下的元素）：練習區的展開區
+     有自己的元件規則，details[open] summary 這類選擇器會蓋過它們。:where() 不計入特定性，
+     所以這幾條對其他元素的特定性不變。 */
+  details:where(:not(#sql-practice *)) {
     margin: 1.5rem 0;
     padding: 1rem;
     background: rgba(0, 0, 0, 0.05);
@@ -83,17 +85,17 @@
     transition: all 0.3s ease;
   }
 
-  details:hover {
+  details:where(:not(#sql-practice *)):hover {
     background: rgba(0, 0, 0, 0.08);
     border-color: rgba(0, 0, 0, 0.15);
   }
 
-  details[open] {
+  details[open]:where(:not(#sql-practice *)) {
     background: rgba(0, 0, 0, 0.03);
     border-color: rgba(0, 0, 0, 0.2);
   }
 
-  summary {
+  summary:where(:not(#sql-practice *)) {
     cursor: pointer;
     font-weight: 600;
     font-size: 0.95rem;
@@ -106,11 +108,11 @@
     list-style: none;
   }
 
-  summary::-webkit-details-marker {
+  summary:where(:not(#sql-practice *))::-webkit-details-marker {
     display: none;
   }
 
-  summary::before {
+  summary:where(:not(#sql-practice *))::before {
     content: '▶';
     display: inline-block;
     margin-right: 0.5rem;
@@ -118,26 +120,26 @@
     font-size: 0.8rem;
   }
 
-  details[open] summary::before {
+  details[open] summary:where(:not(#sql-practice *))::before {
     transform: rotate(90deg);
   }
 
-  summary:hover {
+  summary:where(:not(#sql-practice *)):hover {
     background: rgba(0, 0, 0, 0.1);
   }
 
-  details[open] summary {
+  details[open] summary:where(:not(#sql-practice *)) {
     margin-bottom: 1rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px 8px 0 0;
   }
 
   /* 確保 details 內的程式碼區塊樣式正常 */
-  details pre {
+  details pre:where(:not(#sql-practice *)) {
     margin: 1rem 0 0 0;
   }
 
-  details > *:not(summary) {
+  details > *:not(summary):where(:not(#sql-practice *)) {
     animation: fadeIn 0.3s ease;
   }
 

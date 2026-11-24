@@ -92,6 +92,7 @@ tags: ["ux-design", "state-machine", "state-matrix", "navigation"]
 
 - 從 BDD 操作盤點展開到狀態矩陣 → [從 BDD 操作盤點展開到狀態矩陣](/ux-design/01-screen-state-machine/bdd-to-state-matrix/)
 - 路由可達性檢查 → [路由可達性檢查](/ux-design/01-screen-state-machine/route-reachability/)
+- 退出路徑欄填了，長頁面上仍要多走一步才到得了 → [U.C21 捲得越深離開越遠 — 退出路徑跟著頁首捲出畫面](/ux-design/cases/exit-path-scrolls-out-of-reach/)
 - 狀態矩陣轉 widget test case → [testing 模組四 UI 自動化](/testing/04-ui-automation/)
 - 狀態矩陣加「可觀測性」欄位 → [testing 模組二 客戶端可觀測性](/testing/02-client-observability/)
 - 狀態轉換事件作為 funnel 分析原料 → [monitoring 模組八 行為資料的商業利用](/devops/monitoring/08-business-analytics/)

@@ -1,6 +1,6 @@
 // SQL 練習頁的元件庫：每個函式產生一個元件的 DOM，契約在 scripts/sql-practice/ui/components.md。
-// 畫面（assets/js/sql-practice.js）只從這裡選件與排位；元件展示頁（scripts/sql-practice/ui/gallery.html）
-// 也用同一份，所以展示頁看到的就是練習頁畫出來的東西。
+// 元件展示頁（scripts/sql-practice/ui/gallery.html）從這裡取元件；練習頁（assets/js/sql-practice.js）
+// 組畫面時也只從這裡選件與排位（2026-11-24 時練習頁仍是舊版原型，還沒接上，待辦見練習頁模組的 Backlog）。
 // 文字一律用 textContent 寫入，不用 innerHTML。
 import { renderSql, highlightInline } from "./sql-format.js";
 
@@ -100,8 +100,9 @@ export function attachCompactBar(wrap, pivotEl) {
   let pivotGone = false;
   let lastY = window.scrollY;
   let goingUp = false;
+  // 焦點在頂列裡時不收起：收起會設 visibility: hidden，焦點會留在一個看不見的按鈕上
   const update = () => {
-    const show = pivotGone && (!narrow.matches || goingUp);
+    const show = (pivotGone && (!narrow.matches || goingUp)) || bar.contains(document.activeElement);
     if (show) bar.setAttribute("data-shown", "");
     else bar.removeAttribute("data-shown");
   };
@@ -111,9 +112,16 @@ export function attachCompactBar(wrap, pivotEl) {
     const y = window.scrollY;
     if (Math.abs(y - lastY) > 6) { goingUp = y < lastY; lastY = y; update(); }
   };
+  const onFocusOut = () => requestAnimationFrame(update);
   window.addEventListener("scroll", onScroll, { passive: true });
   narrow.addEventListener("change", update);
-  return () => { io.disconnect(); window.removeEventListener("scroll", onScroll); narrow.removeEventListener("change", update); };
+  bar.addEventListener("focusout", onFocusOut);
+  return () => {
+    io.disconnect();
+    window.removeEventListener("scroll", onScroll);
+    narrow.removeEventListener("change", update);
+    bar.removeEventListener("focusout", onFocusOut);
+  };
 }
 
 // 回到頂部：捲回練習區頂端，焦點移到導覽列上目前這一輪（沒有就移到第一項）；減少動態效果時直接跳回

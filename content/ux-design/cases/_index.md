@@ -10,40 +10,42 @@ tags: ["ux-design", "case-study"]
 
 案例來源分兩類：
 
-- **自有案例**：app_tunnel、book_overview_app（Flutter mobile）與 book_overview_v1（Chrome extension）專案的實機測試教訓（first-party，有完整程式碼和 commit 歷史）
+- **自有案例**：app_tunnel、book_overview_app（Flutter mobile）、book_overview_v1（Chrome extension）與本站的 SQL 練習頁（Web）的實機測試教訓（first-party，有完整程式碼和 commit 歷史）
 - **外部案例**：iOS/Android 設計指南中的反模式和社群討論（third-party，引用公開來源）
 
-U.C1-C8 與 U.C15-C20 來自 mobile app、U.C9-C14 來自 Chrome extension — 兩類 surface 的失敗模式互補：mobile 案例集中在狀態機退出路徑、觸控與輸入機制、元件語意與版面（標籤歧義、可點性、對比、layout 擠壓）；extension 案例集中在多 context 的回饋鏈路可靠性、查詢對象生命週期、完成判定誠實度與跨 app 邊界的路由辨識。
+U.C1-C8 與 U.C15-C20 來自 mobile app、U.C9-C14 來自 Chrome extension、U.C21-C22 來自 Web 頁面 — mobile 案例集中在狀態機退出路徑、觸控與輸入機制、元件語意與版面（標籤歧義、可點性、對比、layout 擠壓）；extension 案例集中在多 context 的回饋鏈路可靠性、查詢對象生命週期、完成判定誠實度與跨 app 邊界的路由辨識；Web 案例集中在長頁面的退出路徑到達成本，以及狀態配色的色覺差異與對比。U.C16 另收了 Web 頁面上同一個缺口的第二個實例，寫成〈策略〉之後、〈下一步路由〉之前的一節（段標寫「水平溢出沒有捲動提示的 Web 實例：…」）；之後的卡收第二個實例時照這個位置放。新卡暫時沿用〈觀察〉〈判讀〉〈策略〉〈下一步路由〉這組段名，整個資料夾一起改寫的待辦記在 `content/ux-design/_index.md` 的 `## Backlog`。`web` 這個 tag 同時標在 extension 卡與 Web 頁面的卡上，Web 頁面的卡另外標 `web-page`，用 tag 篩選時分得開這兩類 surface。
 
 ## 案例覆蓋缺口
 
-| 章節                   | 缺口                                         | 備註                                        |
-| ---------------------- | -------------------------------------------- | ------------------------------------------- |
-| 模組三（輸入機制設計） | mobile CLI app 的鍵盤設計案例                | 小眾需求，公開案例稀少                      |
-| 模組五（導航模式）     | GoRouter vs Navigator 2.0 的導航 UX 差異案例 | Flutter 社群有討論但少系統化                |
-| 模組六（互動回饋）     | web 桌面端 hover / focus 專屬的回饋案例      | extension 案例未涉及；候選源是 web app 專案 |
+| 章節                   | 缺口                                         | 備註                                                                                                                                                                          |
+| ---------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 模組三（輸入機制設計） | mobile CLI app 的鍵盤設計案例                | 小眾需求，公開案例稀少                                                                                                                                                        |
+| 模組五（導航模式）     | GoRouter vs Navigator 2.0 的導航 UX 差異案例 | Flutter 社群有討論但少系統化                                                                                                                                                  |
+| 模組六（互動回饋）     | web 桌面端 hover / focus 專屬的回饋案例      | extension 案例未涉及；SQL 練習頁（Web）已收 U.C21、U.C22；U.C21 的策略涉及鍵盤焦點（常駐頂列遮住焦點、頂列收起時焦點的去處），但不是 hover 與焦點的視覺回饋案例，這一格仍然空 |
 
 ## 案例列表
 
-| 案例                                                               | 主題                               | 來源              | 模組      | 缺口類型                                   |
-| ------------------------------------------------------------------ | ---------------------------------- | ----------------- | --------- | ------------------------------------------ |
-| [U.C1](/ux-design/cases/five-states-zero-exits/)                   | 五個狀態零個退出路徑               | app_tunnel        | 模組一    | 狀態機退出路徑未設計                       |
-| [U.C2](/ux-design/cases/biometric-only-no-fallback/)               | biometricOnly=true 無密碼 fallback | app_tunnel        | 模組二    | Gate 無 fallback                           |
-| [U.C3](/ux-design/cases/terminal-input-mechanism-absent/)          | 終端機文字輸入機制未設計           | app_tunnel        | 模組三    | 輸入機制是事後 hotfix                      |
-| [U.C4](/ux-design/cases/missing-enrollment-entry-point/)           | 首頁缺配對入口按鈕                 | app_tunnel        | 模組一    | 導航流未完整列出                           |
-| [U.C5](/ux-design/cases/export-button-zero-feedback/)              | 匯出按鈕按下零回饋                 | book_overview_app | 模組六    | 三層回饋全缺（UI 未接線）                  |
-| [U.C6](/ux-design/cases/back-navigation-stale-statistics/)         | 加書後返回不刷新統計               | book_overview_app | 模組一    | 只設計進入時載入（happy-path-only 資料版） |
-| [U.C7](/ux-design/cases/misleading-no-result-for-product-barcode/) | 商品條碼的誤導性查無結果           | book_overview_app | 模組三/六 | 輸入驗證未前移、錯誤訊息誤導               |
-| [U.C8](/ux-design/cases/tag-row-touch-target-scope/)               | 標籤行只有箭頭可點                 | book_overview_app | 模組六    | 觸控目標小於視覺單元                       |
-| [U.C9](/ux-design/cases/async-listener-false-failure/)             | 提取成功卻誤報失敗                 | book_overview_v1  | 模組六    | 結果通知鏈路被搶通道（誠實度反轉）         |
-| [U.C10](/ux-design/cases/service-worker-cold-start-false-offline/) | Service Worker 冷啟動假離線        | book_overview_v1  | 模組一    | initializing 狀態未建模                    |
-| [U.C11](/ux-design/cases/lazy-load-premature-completion/)          | 抓到 96/928 本就顯示完成           | book_overview_v1  | 模組六    | 完成判定的證據強度不足                     |
-| [U.C12](/ux-design/cases/destructive-import-fail-safe-confirm/)    | 匯入清空書庫的確認與安全預設       | book_overview_v1  | 模組二    | 破壞性操作確認（正面對照）                 |
-| [U.C13](/ux-design/cases/import-error-reload-extension-mismatch/)  | 匯入錯誤配重載擴充功能按鈕         | book_overview_v1  | 模組四    | 錯誤行動與層級不對位                       |
-| [U.C14](/ux-design/cases/hash-spa-route-label-loss/)               | hash SPA 的 pathname 永遠是根路徑  | book_overview_v1  | 模組五    | 路由辨識遺漏 fragment                      |
-| [U.C15](/ux-design/cases/toggle-button-label-state-ambiguity/)     | 切換按鈕標籤被讀成當前狀態         | book_overview_app | 模組六    | 標籤語意歧義（狀態 vs 動作）               |
-| [U.C16](/ux-design/cases/filter-chips-overflow-no-affordance/)     | 篩選列截斷被讀成遮蔽               | book_overview_app | 模組六    | 水平溢出無捲動 affordance                  |
-| [U.C17](/ux-design/cases/selected-chip-contrast-not-paired/)       | 選中態換底色不換文字色             | book_overview_app | 模組六    | 對比未成對設計                             |
-| [U.C18](/ux-design/cases/status-icon-mistaken-for-button/)         | 狀態圖示被當成按鈕點               | book_overview_app | 模組六    | 非互動指示與動作按鈕同形                   |
-| [U.C19](/ux-design/cases/selection-count-layout-starvation/)       | 「已選擇」計數被壓成省略號         | book_overview_app | 模組六    | 回饋死在 layout（寬度競爭）                |
-| [U.C20](/ux-design/cases/management-actions-placeholder-only/)     | 管理模式操作全是佔位               | book_overview_app | 模組六    | 佔位 handler 掩蓋未接線                    |
+| 案例                                                               | 主題                               | 來源                                 | 模組      | 缺口類型                                               |
+| ------------------------------------------------------------------ | ---------------------------------- | ------------------------------------ | --------- | ------------------------------------------------------ |
+| [U.C1](/ux-design/cases/five-states-zero-exits/)                   | 五個狀態零個退出路徑               | app_tunnel                           | 模組一    | 狀態機退出路徑未設計                                   |
+| [U.C2](/ux-design/cases/biometric-only-no-fallback/)               | biometricOnly=true 無密碼 fallback | app_tunnel                           | 模組二    | Gate 無 fallback                                       |
+| [U.C3](/ux-design/cases/terminal-input-mechanism-absent/)          | 終端機文字輸入機制未設計           | app_tunnel                           | 模組三    | 輸入機制是事後 hotfix                                  |
+| [U.C4](/ux-design/cases/missing-enrollment-entry-point/)           | 首頁缺配對入口按鈕                 | app_tunnel                           | 模組一    | 導航流未完整列出                                       |
+| [U.C5](/ux-design/cases/export-button-zero-feedback/)              | 匯出按鈕按下零回饋                 | book_overview_app                    | 模組六    | 三層回饋全缺（UI 未接線）                              |
+| [U.C6](/ux-design/cases/back-navigation-stale-statistics/)         | 加書後返回不刷新統計               | book_overview_app                    | 模組一    | 只設計進入時載入（happy-path-only 資料版）             |
+| [U.C7](/ux-design/cases/misleading-no-result-for-product-barcode/) | 商品條碼的誤導性查無結果           | book_overview_app                    | 模組三/六 | 輸入驗證未前移、錯誤訊息誤導                           |
+| [U.C8](/ux-design/cases/tag-row-touch-target-scope/)               | 標籤行只有箭頭可點                 | book_overview_app                    | 模組六    | 觸控目標小於視覺單元                                   |
+| [U.C9](/ux-design/cases/async-listener-false-failure/)             | 提取成功卻誤報失敗                 | book_overview_v1                     | 模組六    | 結果通知鏈路被搶通道（誠實度反轉）                     |
+| [U.C10](/ux-design/cases/service-worker-cold-start-false-offline/) | Service Worker 冷啟動假離線        | book_overview_v1                     | 模組一    | initializing 狀態未建模                                |
+| [U.C11](/ux-design/cases/lazy-load-premature-completion/)          | 抓到 96/928 本就顯示完成           | book_overview_v1                     | 模組六    | 完成判定的證據強度不足                                 |
+| [U.C12](/ux-design/cases/destructive-import-fail-safe-confirm/)    | 匯入清空書庫的確認與安全預設       | book_overview_v1                     | 模組二    | 破壞性操作確認（正面對照）                             |
+| [U.C13](/ux-design/cases/import-error-reload-extension-mismatch/)  | 匯入錯誤配重載擴充功能按鈕         | book_overview_v1                     | 模組四    | 錯誤行動與層級不對位                                   |
+| [U.C14](/ux-design/cases/hash-spa-route-label-loss/)               | hash SPA 的 pathname 永遠是根路徑  | book_overview_v1                     | 模組五    | 路由辨識遺漏 fragment                                  |
+| [U.C15](/ux-design/cases/toggle-button-label-state-ambiguity/)     | 切換按鈕標籤被讀成當前狀態         | book_overview_app                    | 模組六    | 標籤語意歧義（狀態 vs 動作）                           |
+| [U.C16](/ux-design/cases/filter-chips-overflow-no-affordance/)     | 篩選列截斷被讀成遮蔽               | book_overview_app、SQL 練習頁（Web） | 模組六    | 水平溢出無捲動 affordance                              |
+| [U.C17](/ux-design/cases/selected-chip-contrast-not-paired/)       | 選中態換底色不換文字色             | book_overview_app                    | 模組六    | 對比未成對設計                                         |
+| [U.C18](/ux-design/cases/status-icon-mistaken-for-button/)         | 狀態圖示被當成按鈕點               | book_overview_app                    | 模組六    | 非互動指示與動作按鈕同形                               |
+| [U.C19](/ux-design/cases/selection-count-layout-starvation/)       | 「已選擇」計數被壓成省略號         | book_overview_app                    | 模組六    | 回饋死在 layout（寬度競爭）                            |
+| [U.C20](/ux-design/cases/management-actions-placeholder-only/)     | 管理模式操作全是佔位               | book_overview_app                    | 模組六    | 佔位 handler 掩蓋未接線                                |
+| [U.C21](/ux-design/cases/exit-path-scrolls-out-of-reach/)          | 捲得越深離開越遠                   | SQL 練習頁（Web）                    | 模組一    | 退出路徑的到達成本隨捲動深度與鍵盤路徑增加             |
+| [U.C22](/ux-design/cases/state-colors-red-green-only/)             | 推薦與選錯只用紅綠區分             | SQL 練習頁（Web）                    | 模組六    | 狀態色只靠色相、細標記對背景對比不足、同一畫面一色兩義 |

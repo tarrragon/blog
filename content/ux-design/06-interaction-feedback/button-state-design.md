@@ -123,6 +123,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 - [ ] 切換型按鈕的文字讀起來是動作而非現態（或已拆成狀態顯示 + 動作按鈕）？
 - [ ] 同列的非互動指示與動作按鈕形態可區分、圖示無撞名？
 - [ ] Selected 態的底色與文字色成對設計、對比達 WCAG AA？
+- [ ] 用顏色標示狀態時，色塊對背景與細標記對旁邊的底色也達 3:1、色覺差異下仍分得開，同一個畫面裡按鈕不跟狀態色同色？（[U.C22 推薦與選錯只用紅綠區分 — 色覺差異、色塊與細標記的對比、一個顏色兩種意思](/ux-design/cases/state-colors-red-green-only/)）
 
 ## 參考來源
 

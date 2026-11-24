@@ -46,3 +46,4 @@ W2-001 修復後加入 back 按鈕的狀態：error、disconnected、connecting�
 - 連線類流程每個狀態的回饋與退出路徑 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)的畫面級回饋段
 - 想建 widget test 覆蓋導航 → [模組四：自動化 UI 驗證](/testing/04-ui-automation/)
 - 類似案例（Gate fallback）→ [biometricOnly 無 fallback](/ux-design/cases/biometric-only-no-fallback/)
+- 退出路徑有填、但長頁面上要多走一步才到得了 → [U.C21 捲得越深離開越遠 — 退出路徑跟著頁首捲出畫面](/ux-design/cases/exit-path-scrolls-out-of-reach/)

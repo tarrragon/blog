@@ -33,9 +33,10 @@ main:has(#sql-practice) {
   --sqlp-accent-fill: #0b6e8e;
   --sqlp-accent-fill-hover: #0e5f7a;
   /* 2026-11-24 使用者選定「藍綠／灰」：推薦沿用強調色的藍綠，讀者選了而不推薦用深灰。
-     藍綠因此專指推薦，按鈕改成白框，不用實心藍綠 */
+     藍綠因此在題目畫面專指推薦，按鈕改成白框，不用實心藍綠。
+     深灰取 #5a5a5a：相對亮度 0.102，對黑底 3.0:1、白字 6.9:1；原本的 #4f4f4f 對黑底只有 2.6:1 */
   --sqlp-rec: #0b6e8e;
-  --sqlp-miss: #4f4f4f;
+  --sqlp-miss: #5a5a5a;
   --sqlp-frame-muted: #6b6b6b;
   --sqlp-on-color: #fff;
   --sqlp-rule: #3a3a3a;
@@ -74,18 +75,30 @@ main:has(#sql-practice) {
   #sql-practice { padding-left: var(--sqlp-s4); padding-right: var(--sqlp-s4); }
 }
 
-/* 瀏覽器預設的表面也照這個世界上色 */
-#sql-practice ::selection { background: var(--sqlp-accent-fill); color: var(--sqlp-on-color); }
-#sql-practice * { scrollbar-color: var(--sqlp-rule) transparent; }
-#sql-practice :focus-visible { outline: 3px solid var(--sqlp-accent); outline-offset: 2px; }
+/* 瀏覽器預設的表面也照這個世界上色。範圍包進 :where()：寫成 #sql-practice :focus-visible 時特定性 (1,1,0)，
+   會蓋掉元件自己的焦點與外框宣告。選取色用白底黑字，不用藍綠（藍綠在題目畫面代表推薦，藍綠底上的藍綠選取也看不見） */
+:where(#sql-practice) ::selection { background: var(--sqlp-fg); color: var(--sqlp-bg); }
+:where(#sql-practice) * { scrollbar-color: var(--sqlp-rule) transparent; }
+:where(#sql-practice) :focus-visible { outline: 3px solid var(--sqlp-accent); outline-offset: 2px; }
+/* 精簡頂列常駐時，鍵盤移動焦點或錨點跳轉的目標不停在頂列底下（WCAG 2.2 的 2.4.11）；72px 是 --sqlp-bar-h，
+   根元素讀不到 #sql-practice 上的變數，所以寫字面值 */
+html:has(#sql-practice) { scroll-padding-top: 72px; }
 :where(#sql-practice) a { color: var(--sqlp-fg); text-decoration-color: var(--sqlp-accent); text-decoration-thickness: 2px; text-underline-offset: 4px; }
-:where(#sql-practice) a:hover { color: var(--sqlp-accent); }
-/* 重設主題給標題與段落的外距。包在 :where() 裡讓優先度是 0：寫成 #sql-practice p 的話，
-   id 的優先度會蓋掉每個元件自己用 class 設的外距（解析區與大字的間距曾經因此歸零） */
-:where(#sql-practice) :where(h2, h3, h4) { margin: 0; color: inherit; font-family: var(--sqlp-font); }
-:where(#sql-practice) :where(p, dl, ul, ol) { margin: 0; }
-/* 行內 code（需求文字裡的欄名）；包在 :where() 裡，不蓋掉 SQL 區塊與表格自己設的字級（曾經把 16px 的 SQL 縮成 13.8px） */
-:where(#sql-practice) code { font-family: var(--sqlp-mono); font-size: 0.9em; }
+:where(#sql-practice) a:hover { color: var(--sqlp-accent); text-decoration-thickness: 2px; }
+/* 重設 blog 主題（herman.css）與瀏覽器預設給元素的樣式。範圍用 :where(#sql-practice) 限定、不計優先度，
+   元素留在 :where() 外面，所以每一條的優先度跟主題對應的那一條相同：主題的 h2、li、code 是 (0,0,1)，
+   nav a 與 pre code 是 (0,0,2)。這份 CSS 排在主題之後，同優先度時這裡贏；元件的 class 規則是 (0,1,0)，
+   仍然贏過這裡。寫成 #sql-practice p 會蓋掉元件用 class 設的外距與字級（曾經把 16px 的 SQL 縮成 13.8px）；
+   整條包進 :where() 讓優先度是 0，又贏不過主題。元件展示頁沒有載入主題，主題的影響要在載入主題的頁面上量 */
+:where(#sql-practice) :is(h1, h2, h3, h4) { margin: 0; color: inherit; font-family: var(--sqlp-font); font-size: revert; font-weight: revert; line-height: inherit; }
+:where(#sql-practice) :is(h1, h2, h3, h4) + * { margin-block-start: 0; }
+:where(#sql-practice) :is(p, dl, ul, ol, li) { margin: 0; }
+:where(#sql-practice) :is(ul, ol) { padding-inline-start: revert; }
+:where(#sql-practice) nav a { margin-right: 0; }
+:where(#sql-practice) code { font-family: var(--sqlp-mono); font-size: 0.9em; padding: 0; background-color: transparent; }
+:where(#sql-practice) pre code { display: inline; padding: 0; overflow-x: visible; }
+:where(#sql-practice) :is(table, th, td) { border: revert; border-collapse: revert; padding: revert; }
+:where(#sql-practice) table { width: revert; }
 #sql-practice svg { flex: none; }
 
 /* ---- 樞紐列 PivotBar / PivotItem / ExitLink ---- */
@@ -162,7 +175,7 @@ main:has(#sql-practice) {
 .sqlp-progress-bar i[data-s] { height: 6px; }
 .sqlp-progress-bar i[data-s="current"] { background: var(--sqlp-fg); }
 .sqlp-progress-bar i[data-s="ok"] { background: var(--sqlp-rec); }
-.sqlp-progress-bar i[data-s="miss"] { background: #8a8a8a; } /* #4f4f4f 對黑底只有 2.6:1，細段改用較亮的灰 */
+.sqlp-progress-bar i[data-s="miss"] { background: #8a8a8a; } /* 細段用較亮的灰：大色塊的 #5a5a5a 縮成細段時，對旁邊的底色要另外算 */
 .sqlp-progress-text { flex: none; font-size: 16px; line-height: 24px; color: var(--sqlp-muted); }
 
 /* ---- 樞紐關鍵字 KeywordBanner ---- */
@@ -292,13 +305,13 @@ button.sqlp-tile:active { transform: scale(0.99); }
   .sqlp-tile, button.sqlp-tile:hover, .sqlp-round:hover { transform: none !important; transition: background-color var(--sqlp-ease) linear, color var(--sqlp-ease) linear; }
   .sqlp-tile.is-flipping { animation: none; }
 }
-/* 寬螢幕的 2×2：右欄寬於 1280px 時兩欄並排（每塊至少約 630px，SQL 一行約 68 字元）。
+/* 寬螢幕的 2×2：右欄寬於 1480px 時兩欄並排（每塊至少 734px，SQL 16px 一行約 70 字元；改字級或排版器行寬要重算）。
    每塊磚用 subgrid 共用三列，同一排兩塊的標頭、程式碼區、解析區各自對齊，方便橫向比對 */
 .sqlp-q-main { container-type: inline-size; container-name: sqlp-main; }
 @container sqlp-main (min-width: 1480px) {
   .sqlp-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--sqlp-s3); row-gap: 0; }
-  /* container-type 會加上 layout containment，有 containment 的元素當不了 subgrid；
-     2×2 時每塊都超過 600px，用不到解析區的窄版切換，所以這裡取消 */
+  /* container-type 讓元素建立獨立的格式化脈絡，這樣的元素當不了 subgrid（CSS Grid 2 的退回條件）；
+     2×2 時每塊至少 734px，用不到解析區在 420px 以下的窄版切換，所以這裡設回 normal */
   .sqlp-tiles > li { display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; container-type: normal; }
   .sqlp-tiles > li:nth-child(-n + 2) { margin-bottom: var(--sqlp-s3); }
   .sqlp-tile { grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; }
