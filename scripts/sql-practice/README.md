@@ -34,7 +34,15 @@ python3 scripts/sql-practice/verify_pg.py
 python3 scripts/sql-practice/generate_benchmarks.py
 ```
 
-`verify_pg.py` 目前在 PostgreSQL 17.12 實跑通過；腳本只用到 PostgreSQL 15 以後的語法（`NULLS NOT DISTINCT`、`FORCE ROW LEVEL SECURITY`），預期在 18 版行為相同，但尚未在 18 版實跑。
+`verify_pg.py` 在 PostgreSQL 17.12（本機拋棄式叢集）與 18.7（`postgres:18` 容器）都實跑通過。改連容器時，先啟動一個不帶資料的容器，再把連線參數交給腳本：
+
+```bash
+docker run -d --name sqlpractice-pg18 -e POSTGRES_HOST_AUTH_METHOD=trust -p 127.0.0.1:55432:5432 postgres:18
+python3 scripts/sql-practice/verify_pg.py --dsn-host 127.0.0.1 --dsn-port 55432 --dsn-user postgres
+docker rm -f sqlpractice-pg18
+```
+
+`POSTGRES_HOST_AUTH_METHOD=trust` 讓任何連線免密碼登入，只用在綁定 `127.0.0.1`、驗證完就刪掉的容器；`55432` 是避開本機 5432 的任意空埠，換成別的埠時兩處一起改。腳本會在叢集裡建立三個領域的資料庫與它們的角色，角色是叢集層級的物件，所以每次驗證用一個新的容器。
 
 ## 母體約定（`population`）
 
