@@ -77,3 +77,12 @@ scripts/mcp-demo/__pycache__/
 # `uv run --directory <skill_dir>` 執行，cwd 是 skill 目錄不是 repo 根，
 # 所以 log 實際落在 .claude/skills/<name>/.claude/hook-logs/ 而非上面那個位置。
 .claude/skills/*/.claude/hook-logs/
+
+# impeccable 在設計流程中下載或生成的檔案，不入版控：
+# reference/ 是從 impeccable.style 下載的第三方參考圖；
+# hook.*.json 與 config.local.json 是它的 hook 在本機寫的快取與設定。
+# mocks/、questions/、review/ 各自帶 .gitignore，由 impeccable 自己排除。
+.impeccable/reference/
+.impeccable/hook.cache.json
+.impeccable/hook.pending.json
+.impeccable/config.local.json
