@@ -414,6 +414,7 @@ Long-lived repeatable export artifact 是事故後仍能持續產出資料的工
 - race condition / TOCTOU 的 isolation level 處理：[Transaction Boundary](/backend/01-database/transaction-boundary/)
 - repository adapter 套用 allowlist / parameterized query：[Repository Adapter](/backend/01-database/repository-adapter/)
 - state ownership 決定哪些資料需要嚴格存取控制：[State Ownership](/backend/01-database/state-ownership-query-boundary/)
+- 資安、權限與合規決定的資料表設計與查詢邊界（軟刪除部分唯一索引、多租戶子表 RLS、非同步任務權限複查、存取憑證撤銷、個資拆表與不可變稽核、角色逾時護欄）：[1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)
 - identity / authorization 邊界：[Identity & Access Boundary](/backend/07-security-data-protection/identity-access-boundary/)
 - 資料保護與遮罩：[Data Protection and Masking](/backend/07-security-data-protection/data-protection-and-masking-governance/)
 - audit trail：[Audit Trail and Accountability Boundary](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)

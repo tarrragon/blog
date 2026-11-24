@@ -24,7 +24,7 @@ tags: ["backend", "security", "multi-tenant", "isolation"]
 
 AWS 的多租戶儲存指引（SaaS Storage Strategies 白皮書、Guidance for Multi-Tenant Architectures）用 pool、bridge、silo 三個名字區分資料的放法，本章另外加上把租戶分組的 cell，cell 不在 AWS 這組名字裡。四種放法的差別在**一份資料庫憑證被拿走時，讀得到幾個租戶**，以下依成本由低到高介紹。
 
-**Pool（共用表）**：所有租戶的資料放在同一組表裡，每一列帶一個 `tenant_id` 欄位，應用程式在每一條查詢加上租戶條件。成本最低、維運最簡單、跨租戶統計最方便。它的隔離由應用程式的查詢條件與資料庫的列層級安全性（[Row-Level Security](/backend/knowledge-cards/row-level-security/)）承擔，這兩者擋的是正常請求讀到別人的資料。列層級安全性依每次連線設定的租戶變數過濾資料列，而設定這個變數的正是持有憑證的應用程式；憑證落到攻擊者手上，攻擊者可以逐一換成每個租戶的值來讀，所以憑證外洩時影響範圍是全部租戶。
+**Pool（共用表）**：所有租戶的資料放在同一組表裡，每一列帶一個 `tenant_id` 欄位，應用程式在每一條查詢加上租戶條件。成本最低、維運最簡單、跨租戶統計最方便。它的隔離由應用程式的查詢條件與資料庫的列層級安全性（[Row-Level Security](/backend/knowledge-cards/row-level-security/)）承擔，這兩者擋的是正常請求讀到別人的資料。列層級安全性依每次連線設定的租戶變數過濾資料列，而設定這個變數的正是持有憑證的應用程式；憑證落到攻擊者手上，攻擊者可以逐一換成每個租戶的值來讀，所以憑證外洩時影響範圍是全部租戶。共用資料表在建表與查詢層的具體邊界——包含子表是否冗餘租戶鍵、複合外鍵、外連接條件放進 `ON` 造成的跨租戶外洩，以及 PostgreSQL `FORCE ROW LEVEL SECURITY` 與交易內 `SET LOCAL` 在連線池下的行為——見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)。
 
 **Bridge（共用資料庫伺服器、每租戶一個 schema）**：同一台資料庫伺服器上每個租戶有自己的 schema，可以替每個租戶發不同的資料庫帳號。連線池以一組帳號建立連線，按租戶分帳號就要每個租戶一個連線池，所以常見的實作仍用一個高權限帳號連到所有 schema。判斷 bridge 的實際隔離強度，要查的是應用程式實際用哪一個帳號連線：同一個帳號連到所有 schema 時，影響範圍與 pool 一樣是全部租戶，只是資料看起來分開了。AWS SaaS Lens 的 bridge 另指同一個系統裡不同層分別採用 silo 與 pool，與這裡的儲存放法不同。
 
@@ -132,3 +132,4 @@ LLM 功能是這個取捨最常出現的位置：把多個租戶的資料放進�
 - 管線推送的產物如何被各環境驗證：[7.12 供應鏈完整性與 Artifact 信任](../supply-chain-integrity-and-artifact-trust/)
 - 兩個網路接起來之後各自連得到什麼、被入侵端改不到的限制放在哪裡：[7.43 兩個網路之間的連線安全](../cross-network-connection-security/)
 - 分組結構在可用性上的作用（一個租戶引發的故障同時讓另一個租戶失效的機率），與本章的機密性度量不同：[Amazon：Shuffle Sharding 與 Cell 邊界的失效局部化](/backend/06-reliability/cases/amazon/shuffle-sharding-and-cell-boundary/)
+- 共用資料表（pool 模式）的子表租戶鍵、外連接洩漏與 PostgreSQL `FORCE RLS`／`SET LOCAL` 邊界：[1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)

@@ -10,7 +10,7 @@ tags: ["backend", "database", "schema", "query", "design", "snapshot", "denormal
 
 這幾個決定寫進 `CREATE TABLE` 是同一個動作，花同樣的時間，跑起來同樣成功，而**設計當下看不出哪一種選法比較貴**。每一個決定的兩種選法在設計當下都成立，而其中一種把代價轉給往後的查詢，由每一次查詢分期付。
 
-範圍：這裡談決定與它的查詢代價。那些查詢本身怎麼寫在 [SQL：這個語言為什麼長這樣](/backend/01-database/sql/)；已經寫成那樣的查詢怎麼修在 [1.13 應用層查詢反模式](/backend/01-database/query-anti-patterns/)；改 schema 的動作怎麼分段執行在 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
+範圍：這裡談決定與它的查詢代價。那些查詢本身怎麼寫在 [SQL：這個語言為什麼長這樣](/backend/01-database/sql/)；已經寫成那樣的查詢怎麼修在 [1.13 應用層查詢反模式](/backend/01-database/query-anti-patterns/)；改 schema 的動作怎麼分段執行在 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)；因應帳號軟刪除、多租戶隔離、背景任務授權、存取憑證撤銷與個資合規所做的資料表決定與查詢邊界在 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)。
 
 本篇的輸出都是實際跑出來的，每一段標明引擎。多數量測在 SQLite 3.51.0，複製與引用那一節在 SQLite 3.43.2（那一節只用到基本的連接與聚合，在 3.53.0 上也跑出相同的輸出，3.51.0 沒有實跑）；collation 那一節整節在 PostgreSQL 18.6（索引能不能用要看計畫，而 SQLite 沒有對應的形態），外鍵那一節兩家並排。
 
@@ -562,6 +562,7 @@ SELECT 訂單編號, sum(數量*成交單價) FROM 訂單明細 GROUP BY 訂單�
 - → [1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/)：查詢已經寫成那樣之後怎麼修。本篇的表寬與一對多兩節，是那一篇 `SELECT *` 與 N+1 兩條反模式在 schema 設計上的成因
 - → [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)：各節的「改回來要付什麼」都落在它的分段流程上，可空性那一節對應它的 `Type G：加 NOT NULL constraint`，外鍵那一節對應 `Type I：加約束`
 - → [1.8 State Ownership 與 Query Boundary](/backend/01-database/state-ownership-query-boundary/)：本篇問單一決定的查詢代價，那一篇問哪些資料是正式狀態、哪幾種查詢責任該分開。複製與引用那一節的成交單價是一筆正式狀態，跟那一篇的派生狀態（derived state，從正式狀態推算出來、出錯時可以重算的資料）不同：它在下單那一刻定下來，之後改了商品價格，也無法從商品表重算出它
+- → [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)：本篇檢視建表決定對效能與報表數字的查詢代價，那一篇把相同的「建表決定定價往後每一次查詢」檢視套用到軟刪除唯一約束、多租戶子表與列級安全性、非同步任務權限複查、存取憑證撤銷、個資拆表與不可變稽核，以及角色層預設權限與逾時護欄上
 
 ## 延伸閱讀：各節查詢行為的 SQL 機制篇與 PostgreSQL 查詢計畫判讀
 
