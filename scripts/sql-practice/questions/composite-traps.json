@@ -1018,5 +1018,1032 @@
       "/backend/07-security-data-protection/audit-trail-and-accountability-boundary/",
       "/backend/07-security-data-protection/backup-encryption-password-and-master-key/"
     ]
+  },
+  {
+    "conceptId": "C01",
+    "variantId": "C01-bookstore-paid-orders-no-five-star-02",
+    "discriminator": ["data", "plan"],
+    "domain": "bookstore",
+    "stage": 9,
+    "tablePath": ["orders", "reviews"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["not-in-null-poisoning", "left-join-neq-wrong-question", "anti-join-plan"],
+    "title": "C01（複合陷阱）：已付款卻沒收到五星評價的訂單——NULL 毒化、錯誤否定與 Anti-Join 計畫（紙頁書店變體）",
+    "businessRequirement": "客服要回訪已付款（status = 'paid'）而從來沒有收到五星評價的訂單（基準資料中應為 102、107、109；101 同時有五星與三星評價，評價表裡另有一筆沒有對到訂單的五星評價 9004）。哪個寫法同時兼顧正確性與大表上的執行計畫？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "100 萬訂單、200 萬評價",
+      "readWriteRatio": "50:1",
+      "indexes": ["PRIMARY KEY (order_id)", "預期在 reviews(order_id, rating) 建索引"]
+    },
+    "options": [
+      {
+        "key": "opt_not_in_raw",
+        "sql": "SELECT o.order_id FROM orders o WHERE o.status = 'paid' AND o.order_id NOT IN (SELECT r.order_id FROM reviews r WHERE r.rating = 5) ORDER BY o.order_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 0 列",
+        "edgeCaseResult": "五星評價 9004 的 order_id 是 NULL；子查詢結果含 NULL 時，任何 x NOT IN (…, NULL) 都不是 TRUE，整個結果變成空集合",
+        "pros": ["寫法易讀"],
+        "cons": ["子查詢欄位只要出現一個 NULL 就回傳空集合，引擎不報錯"],
+        "validWhen": "子查詢欄位宣告為 NOT NULL 時",
+        "failsWhen": "子查詢欄位可能是 NULL 時"
+      },
+      {
+        "key": "opt_not_in_filtered",
+        "sql": "SELECT o.order_id FROM orders o WHERE o.status = 'paid' AND o.order_id NOT IN (SELECT r.order_id FROM reviews r WHERE r.rating = 5 AND r.order_id IS NOT NULL) ORDER BY o.order_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 102、107、109，結果正確",
+        "edgeCaseResult": "子查詢排除 NULL 之後結果正確；SQLite 的計畫是先把子查詢做成清單（LIST SUBQUERY）再比對。PostgreSQL 對 NOT IN 的子查詢做雜湊比對，子查詢結果大到放不進 work_mem 時退化成逐列掃描，不會改寫成 anti-join",
+        "pros": ["結果正確"],
+        "cons": ["正確性依賴每個寫查詢的人都記得加 IS NOT NULL", "PostgreSQL 不把 NOT IN 改寫成 anti-join，大表上的計畫比 NOT EXISTS 差"],
+        "validWhen": "子查詢結果小、而且有人能保證 IS NOT NULL 不會被拿掉時",
+        "failsWhen": "子查詢結果很大時"
+      },
+      {
+        "key": "opt_not_exists",
+        "sql": "SELECT o.order_id FROM orders o WHERE o.status = 'paid' AND NOT EXISTS (SELECT 1 FROM reviews r WHERE r.order_id = o.order_id AND r.rating = 5) ORDER BY o.order_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 102、107、109",
+        "edgeCaseResult": "NOT EXISTS 逐筆判斷「有沒有屬於這張訂單的五星評價」，孤兒評價對不到任何訂單，不影響結果；PostgreSQL 把它規劃成 Hash Anti Join 或 Nested Loop Anti Join",
+        "pros": ["不受子查詢 NULL 影響", "PostgreSQL 能規劃成 anti-join，有 reviews(order_id, rating) 索引時每筆訂單只要一次索引查找"],
+        "cons": ["SQLite 的計畫是相關子查詢，沒有索引時每筆訂單都掃一次 reviews"],
+        "validWhen": "否定存在性的需求",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_left_neq_five",
+        "sql": "SELECT DISTINCT o.order_id FROM orders o LEFT JOIN reviews r ON r.order_id = o.order_id WHERE o.status = 'paid' AND (r.rating <> 5 OR r.review_id IS NULL) ORDER BY o.order_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 101、102、107、109，多出 101",
+        "edgeCaseResult": "條件問的是「有沒有一則不是五星的評價或完全沒有評價」：101 有一則三星評價，所以入選，即使它也有五星評價",
+        "pros": ["保住了沒有任何評價的訂單"],
+        "cons": ["把「沒有任何一則是五星」寫成「有一則不是五星」"],
+        "validWhen": "無",
+        "failsWhen": "否定存在性的需求"
+      }
+    ],
+    "recommendedKeys": ["opt_not_exists"],
+    "alternativeNote": "用 LEFT JOIN 寫時，要把 r.rating = 5 寫進 ON，再搭配 WHERE r.review_id IS NULL，結果與計畫才與 NOT EXISTS 相同",
+    "relatedDocs": [
+      "/backend/01-database/sql/in-exists-join/",
+      "/backend/01-database/sql/well-formed-is-not-correct/",
+      "/backend/01-database/sql/cost-lives-in-the-plan/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_not_in_raw": [],
+        "opt_not_in_filtered": [102, 107, 109],
+        "opt_not_exists": [102, 107, 109],
+        "opt_left_neq_five": [101, 102, 107, 109]
+      },
+      "optionExplainMustContain": {
+        "opt_not_in_filtered": "LIST SUBQUERY",
+        "opt_not_exists": "CORRELATED SCALAR SUBQUERY"
+      }
+    }
+  },
+  {
+    "conceptId": "C02",
+    "variantId": "C02-logistics-merchant-fee-packages-02",
+    "discriminator": ["data"],
+    "population": "active-only",
+    "domain": "swift-logistics",
+    "stage": 9,
+    "tablePath": ["merchants", "shipments", "shipment_packages"],
+    "perspective": "choose-query",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["fanout-sum-inflation", "left-table-filter-in-on"],
+    "title": "C02（複合陷阱）：啟用中商家的 3 月運費與包裹件數——一對多列數膨脹＋左表條件位置（捷配物流變體）",
+    "businessRequirement": "月報要列出啟用中（status = 'active' 且 deleted_at IS NULL）的商家，各自 2026 年 3 月建立的運單運費總額與包裹件數；沒有 3 月運單的商家顯示 0。運單 7001 有兩個包裹（7101、7102）。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "3,000 家商家、800 萬運單、2,000 萬包裹",
+      "readWriteRatio": "20:1",
+      "indexes": ["idx_shipments_merchant_id", "idx_packages_merchant_shipment"]
+    },
+    "options": [
+      {
+        "key": "opt_chained_left",
+        "sql": "SELECT m.merchant_id, COALESCE(SUM(s.fee_cents), 0) AS fee_total, COUNT(p.package_id) AS package_cnt FROM merchants m LEFT JOIN shipments s ON s.merchant_id = m.merchant_id AND s.created_at >= '2026-03-01 00:00:00' AND s.created_at < '2026-04-01 00:00:00' LEFT JOIN shipment_packages p ON p.shipment_id = s.shipment_id AND p.merchant_id = s.merchant_id WHERE m.status = 'active' AND m.deleted_at IS NULL GROUP BY m.merchant_id ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "1001 的運費總額變成 99,000（正確是 81,000），包裹件數 6 正確",
+        "edgeCaseResult": "運單連接包裹之後一個包裹一列，7001 的 18,000 運費隨兩個包裹被加了兩次",
+        "pros": ["一個查詢寫完", "包裹件數正確"],
+        "cons": ["運單層級的金額在包裹粒度上加總，有多個包裹的運單被重複計算"],
+        "validWhen": "每張運單剛好一個包裹時",
+        "failsWhen": "一張運單有多個包裹時"
+      },
+      {
+        "key": "opt_split_cte_agg",
+        "sql": "WITH mar_ship AS (SELECT s.merchant_id, SUM(s.fee_cents) AS fee_total FROM shipments s WHERE s.created_at >= '2026-03-01 00:00:00' AND s.created_at < '2026-04-01 00:00:00' GROUP BY s.merchant_id), mar_pkg AS (SELECT p.merchant_id, COUNT(*) AS package_cnt FROM shipment_packages p JOIN shipments s ON s.shipment_id = p.shipment_id AND s.merchant_id = p.merchant_id WHERE s.created_at >= '2026-03-01 00:00:00' AND s.created_at < '2026-04-01 00:00:00' GROUP BY p.merchant_id) SELECT m.merchant_id, COALESCE(ms.fee_total, 0) AS fee_total, COALESCE(mp.package_cnt, 0) AS package_cnt FROM merchants m LEFT JOIN mar_ship ms ON ms.merchant_id = m.merchant_id LEFT JOIN mar_pkg mp ON mp.merchant_id = m.merchant_id WHERE m.status = 'active' AND m.deleted_at IS NULL ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 1001（81,000、6 件）、1002（24,500、2 件）、1004（21,000、1 件）",
+        "edgeCaseResult": "運費在運單粒度先加總、包裹在包裹粒度先計數，各自收成每家商家一列再連回商家；商家條件寫在 WHERE，停權的 1003 不出現",
+        "pros": ["兩個彙總各在自己的粒度計算，互不放大", "左表條件放在 WHERE，母體與需求一致"],
+        "cons": ["包裹的 CTE 要重複寫一次 3 月條件"],
+        "validWhen": "同一列要輸出不同粒度的彙總時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_left_filter_in_on",
+        "sql": "WITH mar_ship AS (SELECT s.merchant_id, SUM(s.fee_cents) AS fee_total FROM shipments s WHERE s.created_at >= '2026-03-01 00:00:00' AND s.created_at < '2026-04-01 00:00:00' GROUP BY s.merchant_id) SELECT m.merchant_id, COALESCE(ms.fee_total, 0) AS fee_total FROM merchants m LEFT JOIN mar_ship ms ON ms.merchant_id = m.merchant_id AND m.status = 'active' AND m.deleted_at IS NULL ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 4 家，停權的晨光烘焙（1003）也出現，運費顯示 0",
+        "edgeCaseResult": "LEFT JOIN 一定保留左表的每一列；寫在 ON 的左表條件只決定右表配不配得上，不會把停權商家濾掉",
+        "pros": ["運費總額沒有被放大"],
+        "cons": ["左表條件寫在 ON，母體多出停權商家", "也漏了包裹件數"],
+        "validWhen": "無",
+        "failsWhen": "要用條件縮小 LEFT JOIN 左表的母體時"
+      },
+      {
+        "key": "opt_count_per_shipment",
+        "sql": "SELECT m.merchant_id, COALESCE(SUM(s.fee_cents), 0) AS fee_total, COALESCE(SUM(pc.n), 0) AS package_cnt FROM merchants m LEFT JOIN shipments s ON s.merchant_id = m.merchant_id AND s.created_at >= '2026-03-01 00:00:00' AND s.created_at < '2026-04-01 00:00:00' LEFT JOIN (SELECT shipment_id, COUNT(*) AS n FROM shipment_packages GROUP BY shipment_id) pc ON pc.shipment_id = s.shipment_id WHERE m.status = 'active' AND m.deleted_at IS NULL GROUP BY m.merchant_id ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳與 opt_split_cte_agg 相同的結果",
+        "edgeCaseResult": "先把包裹收成每張運單一列的件數，再連到運單，連接時是一對一，運費不會被放大",
+        "pros": ["結果正確", "3 月條件只寫一次"],
+        "cons": ["包裹子查詢聚合了全部運單的包裹，不只 3 月"],
+        "validWhen": "包裹表不大、或子查詢能先依日期縮小時",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_split_cte_agg", "opt_count_per_shipment"],
+    "alternativeNote": "先把子表收成父表的粒度再連接，是避免一對多膨脹的通用做法；兩個正解差在包裹的聚合範圍",
+    "relatedDocs": [
+      "/backend/01-database/sql/join-starts-from-the-relationship/",
+      "/backend/01-database/sql/on-describes-where-filters/",
+      "/backend/01-database/sql/join-changes-rows-and-nulls/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_chained_left": [[1001, 99000, 6], [1002, 24500, 2], [1004, 21000, 1]],
+        "opt_split_cte_agg": [[1001, 81000, 6], [1002, 24500, 2], [1004, 21000, 1]],
+        "opt_left_filter_in_on": [[1001, 81000], [1002, 24500], [1003, 0], [1004, 21000]],
+        "opt_count_per_shipment": [[1001, 81000, 6], [1002, 24500, 2], [1004, 21000, 1]]
+      }
+    }
+  },
+  {
+    "conceptId": "C03",
+    "variantId": "C03-cloud-latest-progress-null-order-02",
+    "discriminator": ["data", "engine"],
+    "domain": "cloud-academy",
+    "stage": 9,
+    "tablePath": ["lesson_progress"],
+    "perspective": "pick-counterexample",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["null-order-differs-sqlite-vs-pg", "window-tie-without-secondary-key"],
+    "title": "C03（反例擊破視角）：取每位學員最近完成的課時——SQLite 正常、搬到 PostgreSQL 變成未完課紀錄的反例（雲課堂變體）",
+    "businessRequirement": "分析師用 `ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY completed_at DESC)` 取 `rn = 1` 當每位學員最近完成的課時。學員 1 有 4001（01-06 完成）、4002（01-07 完成）與一筆看到一半、completed_at 為 NULL 的 4003。哪個寫法在 SQLite 與 PostgreSQL 都取到 4002？",
+    "workloadProfile": {
+      "engine": "SQLite（開發） / PostgreSQL 18（正式）",
+      "scale": "30 萬學員、500 萬筆學習紀錄",
+      "readWriteRatio": "50:1",
+      "indexes": ["idx_progress_user_course"]
+    },
+    "options": [
+      {
+        "key": "opt_no_nulls_clause",
+        "sql": "SELECT progress_id FROM (SELECT progress_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY completed_at DESC) AS rn FROM lesson_progress WHERE user_id = 1) WHERE rn = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "SQLite 回傳 4002",
+        "edgeCaseResult": "SQLite 把 NULL 當成最小值，DESC 時排在最後；PostgreSQL 把 NULL 當成最大值，DESC 時排在最前面，同一句在 PostgreSQL 回傳未完課的 4003",
+        "pros": ["在 SQLite 上結果正確"],
+        "cons": ["依賴引擎預設的 NULL 排序位置，換引擎就改變結果"],
+        "validWhen": "排序欄位宣告為 NOT NULL 時",
+        "failsWhen": "排序欄位可能是 NULL、又要跨引擎時"
+      },
+      {
+        "key": "opt_pg_default_sim",
+        "sql": "SELECT progress_id FROM (SELECT progress_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY completed_at DESC NULLS FIRST) AS rn FROM lesson_progress WHERE user_id = 1) WHERE rn = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳未完課的 4003",
+        "edgeCaseResult": "在 SQLite 上加 NULLS FIRST，重現 PostgreSQL 對 DESC 的預設行為：「最近完成」變成「還沒完成」",
+        "pros": ["在開發環境重現正式環境的行為，是找出這類差異的方法"],
+        "cons": ["當成正式查詢時回傳錯誤的紀錄"],
+        "validWhen": "用來驗證跨引擎差異時",
+        "failsWhen": "當成正式查詢時"
+      },
+      {
+        "key": "opt_explicit_nulls_last_tiebreak",
+        "sql": "SELECT progress_id FROM (SELECT progress_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY completed_at DESC NULLS LAST, progress_id DESC) AS rn FROM lesson_progress WHERE user_id = 1) WHERE rn = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 4002，SQLite 與 PostgreSQL 一致",
+        "edgeCaseResult": "NULLS LAST 寫明 NULL 的位置；progress_id DESC 在兩筆同一秒完成時決定誰是最新，ROW_NUMBER 的結果每次相同",
+        "pros": ["跨引擎結果一致", "平手時有確定的順序"],
+        "cons": ["SQLite 3.30 以前不支援 NULLS LAST"],
+        "validWhen": "排序欄位可能是 NULL、或可能平手時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_drop_partition",
+        "sql": "SELECT progress_id FROM (SELECT progress_id, ROW_NUMBER() OVER (ORDER BY completed_at DESC NULLS LAST) AS rn FROM lesson_progress) WHERE rn = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 4004，那是學員 2 的紀錄",
+        "edgeCaseResult": "拿掉 PARTITION BY 之後，排序在全部學員之間進行，rn = 1 是全平台最近完成的一筆",
+        "pros": ["NULL 的位置寫明了"],
+        "cons": ["失去「每位學員」的分組"],
+        "validWhen": "需求是全平台最近完成的一筆時",
+        "failsWhen": "需求是每位學員各一筆時"
+      }
+    ],
+    "recommendedKeys": ["opt_explicit_nulls_last_tiebreak"],
+    "alternativeNote": "排序欄位可能是 NULL 時，寫明 NULLS FIRST 或 NULLS LAST；也可以先用 WHERE completed_at IS NOT NULL 排除未完課的紀錄",
+    "relatedDocs": [
+      "/backend/01-database/sql/window-keeps-rows-grouping-collapses/",
+      "/backend/01-database/sql/relations-have-no-order/",
+      "/backend/01-database/sql/engine-leniency-and-portability/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_no_nulls_clause": [[4002]],
+        "opt_pg_default_sim": [[4003]],
+        "opt_explicit_nulls_last_tiebreak": [[4002]],
+        "opt_drop_partition": [[4004]]
+      }
+    }
+  },
+  {
+    "conceptId": "C04",
+    "variantId": "C04-bookstore-orders-mixed-keyset-02",
+    "discriminator": ["data", "plan"],
+    "domain": "bookstore",
+    "stage": 9,
+    "tablePath": ["orders"],
+    "perspective": "diagnose-plan",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["mixed-direction-tuple-comparison-drops-rows", "composite-index-column-order"],
+    "title": "C04（複合陷阱）：混合升降冪 Keyset 分頁漏列＋索引方向與排序不一致（紙頁書店變體）",
+    "businessRequirement": "後台訂單列表依 ordered_at DESC, order_id ASC 翻頁；2026-03-09 10:00:00 同一秒有 102、103、104 三張訂單。上一頁最後一筆是 ('2026-03-09 10:00:00', 102)，下一頁取 3 筆，不能漏掉 103、104。現有索引是 idx_orders_ordered_id (ordered_at DESC, order_id DESC)。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "200 萬訂單、持續寫入",
+      "readWriteRatio": "50:1",
+      "indexes": ["idx_orders_ordered_id (ordered_at DESC, order_id DESC)"]
+    },
+    "options": [
+      {
+        "key": "opt_tuple_lt_bug",
+        "sql": "SELECT order_id FROM orders WHERE (ordered_at, order_id) < ('2026-03-09 10:00:00', 102) ORDER BY ordered_at DESC, order_id ASC LIMIT 3;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 101、106、105，同一秒的 103、104 被跳過",
+        "edgeCaseResult": "列值比較 (a, b) < (x, y) 代表兩欄都是遞減方向的「之後」；排序是 order_id ASC，同一秒裡「之後」的是 order_id 比 102 大的 103、104，條件卻要求比 102 小",
+        "pros": ["寫法簡短"],
+        "cons": ["列值比較只適用於所有排序欄方向相同時"],
+        "validWhen": "排序欄全部同為 DESC 或同為 ASC 時",
+        "failsWhen": "排序欄方向混合時"
+      },
+      {
+        "key": "opt_expanded_mixed",
+        "sql": "SELECT order_id FROM orders WHERE (ordered_at < '2026-03-09 10:00:00' OR (ordered_at = '2026-03-09 10:00:00' AND order_id > 102)) ORDER BY ordered_at DESC, order_id ASC LIMIT 3;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 103、104、101，結果正確",
+        "edgeCaseResult": "把接續條件展開成「更早的時間，或同一秒而 order_id 更大」，每一欄各用自己的方向；但索引是 (ordered_at DESC, order_id DESC)，執行計畫多出 USE TEMP B-TREE FOR LAST TERM OF ORDER BY，order_id 那一段要另外排序",
+        "pros": ["混合方向的翻頁結果正確"],
+        "cons": ["索引方向與排序方向不一致，每頁都要額外排序；要消除這一步，需要建 (ordered_at DESC, order_id ASC) 的索引"],
+        "validWhen": "排序欄方向混合時",
+        "failsWhen": "無（效能面要搭配方向一致的索引）"
+      },
+      {
+        "key": "opt_tuple_lte_dup",
+        "sql": "SELECT order_id FROM orders WHERE (ordered_at, order_id) <= ('2026-03-09 10:00:00', 102) ORDER BY ordered_at DESC, order_id ASC LIMIT 3;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 102、101、106，102 重複出現，103、104 仍被跳過",
+        "edgeCaseResult": "改成 <= 只是把上一頁最後一筆再收一次，方向問題沒有解決",
+        "pros": ["無"],
+        "cons": ["重複上一頁的最後一筆，也沒有解決漏列"],
+        "validWhen": "無",
+        "failsWhen": "任何情境"
+      },
+      {
+        "key": "opt_offset_regression",
+        "sql": "SELECT order_id FROM orders ORDER BY ordered_at DESC LIMIT 3 OFFSET 4;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "這次回傳 103、102、101；同一秒三張訂單的順序沒有保證，102 可能重複、104 可能遺漏",
+        "edgeCaseResult": "退回 OFFSET 又拿掉了 order_id 排序，翻頁失去全序，深頁也要掃過前面所有列",
+        "pros": ["寫法最簡單"],
+        "cons": ["沒有全序", "OFFSET 隨頁數變慢"],
+        "validWhen": "無",
+        "failsWhen": "排序鍵不唯一或資料量大時"
+      }
+    ],
+    "recommendedKeys": ["opt_expanded_mixed"],
+    "alternativeNote": "混合方向的 Keyset 要展開成 OR 條件，並建方向與排序一致的索引 (ordered_at DESC, order_id ASC)；PostgreSQL 的列值比較同樣只適用於所有欄方向相同時",
+    "relatedDocs": [
+      "/backend/01-database/sql/pagination-needs-a-total-order/",
+      "/backend/01-database/sql/cost-lives-in-the-plan/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_tuple_lt_bug": [101, 106, 105],
+        "opt_expanded_mixed": [103, 104, 101],
+        "opt_tuple_lte_dup": [102, 101, 106]
+      },
+      "optionExplainMustContain": {
+        "opt_expanded_mixed": "USE TEMP B-TREE FOR LAST TERM OF ORDER BY"
+      }
+    }
+  },
+  {
+    "conceptId": "C05",
+    "variantId": "C05-bookstore-export-worker-pipeline-02",
+    "discriminator": ["concurrency"],
+    "domain": "bookstore",
+    "stage": 9,
+    "tablePath": ["export_jobs"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["external-http-inside-db-tx", "missing-unique-dedup", "for-update-without-skip-locked"],
+    "title": "C05（複合陷阱）：報表匯出工作佇列——SKIP LOCKED＋唯一約束冪等＋交易外上傳（紙頁書店變體）",
+    "businessRequirement": "PostgreSQL 上有 4 台 export worker 處理 export_jobs；門市主管連點兩次「匯出」會送出兩筆相同的匯出請求（同一位員工、同一份報表、同一個月份），每份報表產生後要上傳到物件儲存，上傳約需 3 秒。該怎麼設計約束、認領語句與交易邊界？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "每天 2 萬筆匯出請求、尖峰每秒 20 筆",
+      "readWriteRatio": "1:3",
+      "indexes": ["idx_export_jobs_queued（只涵蓋 status = 'queued'）"]
+    },
+    "options": [
+      {
+        "key": "opt_upload_inside_tx",
+        "sql": "-- BEGIN；SELECT ... FROM export_jobs WHERE status = 'queued' ORDER BY created_at LIMIT 1 FOR UPDATE；在交易內產生報表並等 3 秒上傳；成功後 UPDATE status = 'done'；COMMIT",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "單一 worker 時正常",
+        "edgeCaseResult": "每個任務持鎖 3 秒以上，其他 worker 的 FOR UPDATE 排隊等同一列，4 台 worker 實際上一次只處理一筆；上傳逾時時交易長時間不結束，連線池被占滿",
+        "pros": ["流程直覺，失敗時整個交易回滾"],
+        "cons": ["外部呼叫放在交易內，鎖的持有時間取決於外部服務", "沒有 SKIP LOCKED，worker 互相等待"],
+        "validWhen": "無",
+        "failsWhen": "交易內有網路呼叫、或有多台 worker 時"
+      },
+      {
+        "key": "opt_unique_skip_locked_short_tx",
+        "sql": "-- 建 UNIQUE (requested_by_staff_id, report_key, period) 擋重複請求，寫入用 INSERT ... ON CONFLICT DO NOTHING；認領用短交易 SELECT ... FOR UPDATE SKIP LOCKED LIMIT 1，改 status = 'running' 後立刻 COMMIT；交易外產生報表與上傳（物件名稱用 job_id，重試時覆蓋同一個物件）；完成再用短交易改 'done'，並由排程回收逾時的 running 任務",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "重複點擊只留一筆任務；4 台 worker 各自認領不同任務，鎖只持有毫秒級",
+        "edgeCaseResult": "worker 在上傳途中當掉時，任務停在 running，由逾時回收改回 queued；上傳用固定的物件名稱，重做不會產生兩份檔案",
+        "pros": ["資料庫約束保證不重複", "worker 之間不互相等待", "外部呼叫失敗不會占住資料庫鎖"],
+        "cons": ["要多一個逾時回收的排程與 running 狀態的監控"],
+        "validWhen": "多台 worker 處理含外部呼叫的任務時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_app_count_dedup",
+        "sql": "-- 不建唯一約束；建立任務前先 SELECT COUNT(*) 檢查有沒有相同的請求，沒有才 INSERT；worker 用一般 SELECT ... LIMIT 1 取任務",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "連點的間隔較長時可以擋下重複",
+        "edgeCaseResult": "兩次點擊幾乎同時到達時，兩個請求都查到 0 筆、都寫入；兩台 worker 用一般 SELECT 同時取到同一筆任務，同一份報表被產生兩次",
+        "pros": ["不必改 schema"],
+        "cons": ["先查再寫有競態", "一般 SELECT 不鎖列，worker 會重複認領"],
+        "validWhen": "無",
+        "failsWhen": "任何並行情境"
+      },
+      {
+        "key": "opt_global_serializable",
+        "sql": "-- 把整個資料庫的預設隔離等級調成 SERIALIZABLE，查詢不改",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "部分競態會在提交時以序列化失敗（SQLSTATE 40001）報錯",
+        "edgeCaseResult": "應用程式沒有重試邏輯時，失敗的交易直接變成錯誤；認領佇列的熱點列讓序列化失敗頻繁發生；交易內的上傳仍然拉長交易時間",
+        "pros": ["不必逐一修改查詢"],
+        "cons": ["要求所有交易都能重試", "沒有解決交易內的外部呼叫，也沒有擋下重複請求"],
+        "validWhen": "所有交易都短而且都有重試邏輯時",
+        "failsWhen": "沒有重試邏輯、或交易內有外部呼叫時"
+      }
+    ],
+    "recommendedKeys": ["opt_unique_skip_locked_short_tx"],
+    "alternativeNote": "export_jobs 目前沒有 report_key 與 period 欄位，報表種類與月份存在 payload JSON 裡；要建唯一約束時，先把它們拆成欄位，或建運算式唯一索引",
+    "relatedDocs": [
+      "/backend/01-database/sql/deployment-shape-and-sql-constructs/",
+      "/backend/01-database/transaction-boundary/"
+    ]
+  },
+  {
+    "conceptId": "C06",
+    "variantId": "C06-logistics-return-rate-audit-02",
+    "discriminator": ["data"],
+    "population": "all-records",
+    "domain": "swift-logistics",
+    "stage": 9,
+    "tablePath": ["shipments", "shipment_packages", "merchants"],
+    "perspective": "diagnose-plan",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["sqlite-integer-division", "hollow-left-join", "item-granularity-distortion", "undetermined-shipments-in-denominator"],
+    "title": "C06（複合陷阱）：退回率預警報表永遠回傳 0 筆——整數除法＋宣告落空＋粒度失真＋分母定義（捷配物流變體）",
+    "businessRequirement": "退回率預警要在全部商家帳號中（不論帳號狀態）找出退回率超過 25% 的商家。退回率的定義是「已有結果的運單（delivered 或 returned）中，returned 的比例」，以運單為單位；運送中與剛建立的運單還沒有結果，不算進分母。舊查詢寫成 `COUNT(CASE WHEN s.status = 'returned' THEN 1 END) / COUNT(*) > 0.25`，接 `shipments LEFT JOIN shipment_packages JOIN merchants`，在 SQLite 上永遠回傳 0 筆。哪一組改寫同時修正全部缺陷？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "800 萬運單、2,000 萬包裹",
+      "readWriteRatio": "20:1",
+      "indexes": ["idx_shipments_merchant_id"]
+    },
+    "options": [
+      {
+        "key": "opt_broken_int_div",
+        "sql": "SELECT m.merchant_id, COUNT(CASE WHEN s.status = 'returned' THEN 1 END) / COUNT(*) AS return_rate FROM shipments s LEFT JOIN shipment_packages p ON p.shipment_id = s.shipment_id JOIN merchants m ON m.merchant_id = p.merchant_id GROUP BY m.merchant_id HAVING COUNT(CASE WHEN s.status = 'returned' THEN 1 END) / COUNT(*) > 0.25;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 0 列",
+        "edgeCaseResult": "兩個整數相除在 SQLite 與 PostgreSQL 都是整數除法，比例小於 1 時一律得到 0；另外三個缺陷被這一個蓋住",
+        "pros": ["無"],
+        "cons": ["整數除法讓所有比例變成 0", "LEFT JOIN 後面接 INNER JOIN 包裹欄位，宣告落空", "分子分母都以包裹計", "分母含尚未有結果的運單"],
+        "validWhen": "無",
+        "failsWhen": "任何情境"
+      },
+      {
+        "key": "opt_fixed_all_defects",
+        "sql": "SELECT s.merchant_id, COUNT(CASE WHEN s.status = 'returned' THEN 1 END) * 1.0 / COUNT(*) AS return_rate FROM shipments s WHERE s.status IN ('delivered', 'returned') GROUP BY s.merchant_id HAVING COUNT(CASE WHEN s.status = 'returned' THEN 1 END) * 1.0 / COUNT(*) > 0.25 ORDER BY s.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 1001，退回率約 0.333（7001、7002 送達，7003 退回）",
+        "edgeCaseResult": "乘上 1.0 改成浮點除法；以運單為單位，不連包裹；分母只算已有結果的運單；商家編號直接取自運單，不必連商家表",
+        "pros": ["四個缺陷一次修正", "不連子表，粒度就是運單"],
+        "cons": ["無"],
+        "validWhen": "比例以運單為單位時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_float_only_keep_flaws",
+        "sql": "SELECT m.merchant_id, COUNT(CASE WHEN s.status = 'returned' THEN 1 END) * 1.0 / COUNT(*) AS return_rate FROM shipments s LEFT JOIN shipment_packages p ON p.shipment_id = s.shipment_id JOIN merchants m ON m.merchant_id = p.merchant_id GROUP BY m.merchant_id HAVING COUNT(CASE WHEN s.status = 'returned' THEN 1 END) * 1.0 / COUNT(*) > 0.25;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "仍然回傳 0 列；1001 的比例算成 1/6（約 0.167）",
+        "edgeCaseResult": "只修了整數除法：分母以包裹計（1001 的 5 張運單有 6 個包裹），還把運送中的 7005、7008 算進去，比例被稀釋到門檻以下",
+        "pros": ["修正了整數除法"],
+        "cons": ["粒度與分母的缺陷還在，結果一樣是 0 筆，看起來像資料沒有異常"],
+        "validWhen": "無",
+        "failsWhen": "任何情境"
+      },
+      {
+        "key": "opt_right_join_distinct",
+        "sql": "SELECT DISTINCT m.merchant_id, COUNT(CASE WHEN s.status = 'returned' THEN 1 END) / COUNT(*) AS return_rate FROM shipments s RIGHT JOIN shipment_packages p ON p.shipment_id = s.shipment_id JOIN merchants m ON m.merchant_id = p.merchant_id GROUP BY m.merchant_id HAVING COUNT(CASE WHEN s.status = 'returned' THEN 1 END) / COUNT(*) > 0.25;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 0 列",
+        "edgeCaseResult": "改成 RIGHT JOIN 與 DISTINCT 都沒有碰到整數除法；DISTINCT 作用在分組之後的結果上，對比例沒有影響",
+        "pros": ["無"],
+        "cons": ["修改的位置跟缺陷無關"],
+        "validWhen": "無",
+        "failsWhen": "任何情境"
+      }
+    ],
+    "recommendedKeys": ["opt_fixed_all_defects"],
+    "alternativeNote": "診斷「永遠回傳 0 筆」的查詢時，先把 HAVING 拿掉看每一組的比例值；看到全是 0 就是整數除法，看到比例偏低再檢查粒度與分母",
+    "relatedDocs": [
+      "/backend/01-database/sql/decisions-from-requirement-to-shipping/",
+      "/backend/01-database/sql/join-left-operand-accumulates/",
+      "/backend/01-database/sql/join-changes-rows-and-nulls/",
+      "/backend/01-database/sql/declared-intent-vs-behaviour/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_broken_int_div": 0,
+        "opt_float_only_keep_flaws": 0,
+        "opt_right_join_distinct": 0
+      },
+      "optionFirstColumnOrder": {
+        "opt_fixed_all_defects": [1001]
+      }
+    }
+  },
+  {
+    "conceptId": "C07",
+    "variantId": "C07-bookstore-staff-role-validity-02",
+    "discriminator": ["data", "threat"],
+    "population": "active-only",
+    "domain": "bookstore",
+    "stage": 9,
+    "tablePath": ["staff_roles", "roles", "staff_accounts"],
+    "perspective": "choose-query",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["expired-temporary-grant", "offboarded-staff-unrevoked-role", "missing-revoked-check"],
+    "title": "C07（資安複合陷阱）：門市主管權限驗證漏網——過期代理授權 × 離職未撤銷角色 × 撤銷檢查（紙頁書店變體）",
+    "businessRequirement": "退款核准 API 在 2026-03-20 10:00:00 要確認呼叫者目前持有有效的 store_manager 角色。資料中：員工 10 是在職主管；員工 11 的代理主管授權已在 03-14 到期但沒有撤銷；員工 13 已離職軟刪除，角色列沒有撤銷；員工 14 的主管角色已在 03-18 撤銷。哪一條查詢只放行員工 10？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "2,000 名員工，每次 API 呼叫驗證一次",
+      "readWriteRatio": "1000:1",
+      "indexes": ["idx_staff_roles_active（WHERE revoked_at IS NULL）"]
+    },
+    "options": [
+      {
+        "key": "opt_no_guard",
+        "sql": "SELECT sr.staff_id FROM staff_roles sr JOIN roles r ON r.role_id = sr.role_id WHERE r.role_code = 'store_manager' ORDER BY sr.staff_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 10、11、13、14，曾經被授予過這個角色的人全部放行",
+        "edgeCaseResult": "角色指派表保留撤銷與到期的歷史，只查「有沒有這一列」等於查「是否曾經有過這個角色」",
+        "pros": ["無"],
+        "cons": ["撤銷、到期與離職全部沒有檢查"],
+        "validWhen": "無",
+        "failsWhen": "任何授權判斷"
+      },
+      {
+        "key": "opt_revoked_only",
+        "sql": "SELECT sr.staff_id FROM staff_roles sr JOIN roles r ON r.role_id = sr.role_id WHERE r.role_code = 'store_manager' AND sr.revoked_at IS NULL ORDER BY sr.staff_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 10、11、13；擋下已撤銷的 14，但代理授權過期的 11 與離職的 13 仍被放行",
+        "edgeCaseResult": "代理授權到期時沒有人去撤銷，expires_at 是唯一的失效紀錄",
+        "pros": ["擋下明確撤銷的指派"],
+        "cons": ["沒有比對 expires_at，臨時授權到期後仍然有效"],
+        "validWhen": "無",
+        "failsWhen": "有限期授權時"
+      },
+      {
+        "key": "opt_missing_account_status",
+        "sql": "SELECT sr.staff_id FROM staff_roles sr JOIN roles r ON r.role_id = sr.role_id WHERE r.role_code = 'store_manager' AND sr.revoked_at IS NULL AND (sr.expires_at IS NULL OR sr.expires_at > '2026-03-20 10:00:00') ORDER BY sr.staff_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 10、13；離職的 13 仍被放行",
+        "edgeCaseResult": "離職流程軟刪除了帳號，但漏了撤銷角色列；只看角色指派表的查詢看不到帳號已經失效",
+        "pros": ["撤銷與到期都檢查了"],
+        "cons": ["沒有連到帳號表確認在職"],
+        "validWhen": "無",
+        "failsWhen": "離職流程沒有同步撤銷角色時"
+      },
+      {
+        "key": "opt_full_role_guard",
+        "sql": "SELECT sr.staff_id FROM staff_roles sr JOIN roles r ON r.role_id = sr.role_id JOIN staff_accounts sa ON sa.staff_id = sr.staff_id WHERE r.role_code = 'store_manager' AND sa.status = 'active' AND sa.deleted_at IS NULL AND sr.revoked_at IS NULL AND (sr.expires_at IS NULL OR sr.expires_at > '2026-03-20 10:00:00') ORDER BY sr.staff_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 10",
+        "edgeCaseResult": "帳號在職、指派未撤銷、指派未到期三個條件同時成立才放行；任何一個流程漏了同步，其他條件仍然擋得住",
+        "pros": ["縱深檢查，不依賴單一流程正確執行"],
+        "cons": ["每次驗證多連一張帳號表"],
+        "validWhen": "任何授權判斷",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_full_role_guard"],
+    "alternativeNote": "把這組條件寫成一個檢視表時，PostgreSQL 的 now() 不能放在檢視表定義裡固定下來，要讓呼叫端在查詢時比對 expires_at",
+    "relatedDocs": [
+      "/backend/07-security-data-protection/identity-access-boundary/",
+      "/backend/01-database/red-team-data-layer/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_no_guard": [10, 11, 13, 14],
+        "opt_revoked_only": [10, 11, 13],
+        "opt_missing_account_status": [10, 13],
+        "opt_full_role_guard": [10]
+      }
+    }
+  },
+  {
+    "conceptId": "C08",
+    "variantId": "C08-cloud-org-invoice-tenant-leak-02",
+    "discriminator": ["data", "threat"],
+    "domain": "cloud-academy",
+    "stage": 9,
+    "tablePath": ["invoices", "subscriptions"],
+    "perspective": "pick-counterexample",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["left-join-tenant-filter-in-on-leaks-all-tenants", "orphan-row-passes-or-is-null-guard", "child-table-without-tenant-key"],
+    "title": "C08（資安複合陷阱）：企業組織查發票時租戶條件放錯位置——把全平台發票洩漏給單一組織（雲課堂變體）",
+    "businessRequirement": "企業組織 501（艾克米科技）的管理員要查自家的發票清單，正確結果是 3002、3003、3004（都屬於訂閱 2002）。invoices 表本身沒有 org_id，要經由 subscriptions 才知道屬於哪個組織；發票 3005 是沒有對到訂閱的歷史補單（sub_id 為 NULL）。工程師寫成 `invoices LEFT JOIN subscriptions` 並把 `s.org_id = 501` 寫進 ON。這段寫法會發生什麼事？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18（RLS）",
+      "scale": "5,000 個組織、400 萬張發票",
+      "readWriteRatio": "50:1",
+      "indexes": ["idx_invoices_sub_status", "idx_subscriptions_org"]
+    },
+    "options": [
+      {
+        "key": "opt_left_join_on_leak",
+        "sql": "SELECT i.invoice_id, i.amount, s.plan_code FROM invoices i LEFT JOIN subscriptions s ON s.sub_id = i.sub_id AND s.org_id = 501 ORDER BY i.invoice_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳全部 7 張發票，其他組織與個人訂閱的發票金額都在結果裡",
+        "edgeCaseResult": "LEFT JOIN 保留左表 invoices 的每一列，租戶條件寫在 ON 只決定 plan_code 配不配得上；其他人的發票照樣輸出，只是 plan_code 是 NULL",
+        "pros": ["無"],
+        "cons": ["租戶條件放在 ON，對左表完全沒有過濾作用，造成跨租戶資料外洩"],
+        "validWhen": "無",
+        "failsWhen": "任何以租戶條件過濾的查詢"
+      },
+      {
+        "key": "opt_inner_join_tenant_where",
+        "sql": "SELECT i.invoice_id, i.amount, s.plan_code FROM invoices i INNER JOIN subscriptions s ON s.sub_id = i.sub_id WHERE s.org_id = 501 ORDER BY i.invoice_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 3002、3003、3004",
+        "edgeCaseResult": "INNER JOIN 讓沒有訂閱的發票不出現，租戶條件寫在 WHERE 過濾結果；子表沒有租戶鍵，PostgreSQL 的 RLS 政策要寫成 EXISTS 子查詢連到 subscriptions，每一列都多一次查找",
+        "pros": ["只回傳這個組織的發票", "孤兒發票不會出現"],
+        "cons": ["invoices 沒有 org_id，RLS 政策與索引都要經由父表，大表上成本較高；長期做法是在子表冗餘 org_id 並用複合外鍵綁定"],
+        "validWhen": "以父表的租戶欄位過濾子表時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_left_join_or_null",
+        "sql": "SELECT i.invoice_id, i.amount, s.plan_code FROM invoices i LEFT JOIN subscriptions s ON s.sub_id = i.sub_id WHERE s.org_id = 501 OR s.sub_id IS NULL ORDER BY i.invoice_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 3002、3003、3004，另外多出孤兒發票 3005",
+        "edgeCaseResult": "為了「保留找不到訂閱的發票」加上 OR s.sub_id IS NULL，沒有對到任何訂閱的 3005 因此通過了租戶檢查，任何組織查詢都看得到它",
+        "pros": ["比放在 ON 少洩漏"],
+        "cons": ["孤兒列沒有租戶歸屬，OR IS NULL 讓它對每一個租戶都可見"],
+        "validWhen": "無",
+        "failsWhen": "存在沒有父列的子表資料時"
+      },
+      {
+        "key": "opt_no_tenant_filter_limit",
+        "sql": "SELECT i.invoice_id, i.amount FROM invoices i ORDER BY i.invoice_id LIMIT 3;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 3001、3002、3003，其中 3001 屬於學員 1 的個人訂閱",
+        "edgeCaseResult": "LIMIT 只限制筆數，沒有限制範圍；前端分頁的第一頁就混入別人的發票",
+        "pros": ["無"],
+        "cons": ["沒有租戶條件"],
+        "validWhen": "無",
+        "failsWhen": "任何多租戶查詢"
+      }
+    ],
+    "recommendedKeys": ["opt_inner_join_tenant_where"],
+    "alternativeNote": "租戶條件一律寫在 WHERE 或 INNER JOIN；遷移期間的孤兒資料應另外隔離處理，不放進租戶查詢的 OR 分支",
+    "relatedDocs": [
+      "/backend/01-database/sql/on-describes-where-filters/",
+      "/backend/01-database/red-team-data-layer/",
+      "/backend/07-security-data-protection/multi-tenant-platform-isolation-tiers/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_left_join_on_leak": 7
+      },
+      "optionFirstColumnOrder": {
+        "opt_inner_join_tenant_where": [3002, 3003, 3004],
+        "opt_left_join_or_null": [3002, 3003, 3004, 3005],
+        "opt_no_tenant_filter_limit": [3001, 3002, 3003]
+      }
+    }
+  },
+  {
+    "conceptId": "C09",
+    "variantId": "C09-logistics-dispatch-claim-rbac-02",
+    "discriminator": ["data", "threat"],
+    "population": "active-only",
+    "domain": "swift-logistics",
+    "stage": 9,
+    "tablePath": ["staff_accounts", "staff_roles", "role_permissions", "permissions"],
+    "perspective": "choose-query",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["offboarded-staff-unrevoked-role", "rbac-multi-role-join-fanout"],
+    "title": "C09（資安複合陷阱）：可認領調度任務的平台員工——離職未撤銷角色 × RBAC 多角色列數膨脹（捷配物流變體）",
+    "businessRequirement": "調度系統在 2026-03-15 10:00:00 要列出目前可以認領調度任務（擁有 dispatch:claim 權限）的平台員工，每人一列。資料中：員工 302 已離職軟刪除，但倉儲主管角色列沒有撤銷；員工 303 同時在 11 號與 12 號倉各有一列調度員角色。哪一條查詢只回傳一列 303？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "800 名平台員工",
+      "readWriteRatio": "500:1",
+      "indexes": ["PRIMARY KEY (staff_role_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_no_permission_check",
+        "sql": "SELECT sa.staff_id FROM staff_accounts sa ORDER BY sa.staff_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 301、302、303、304 全部員工",
+        "edgeCaseResult": "沒有檢查權限，財務稽核與報表唯讀角色的員工、連離職的 302 都能認領任務",
+        "pros": ["無"],
+        "cons": ["完全沒有授權判斷"],
+        "validWhen": "無",
+        "failsWhen": "任何授權判斷"
+      },
+      {
+        "key": "opt_join_rbac_fanout_dup",
+        "sql": "SELECT sa.staff_id FROM staff_accounts sa JOIN staff_roles sr ON sr.staff_id = sa.staff_id JOIN role_permissions rp ON rp.role_id = sr.role_id JOIN permissions p ON p.perm_id = rp.perm_id WHERE sa.status = 'active' AND sa.deleted_at IS NULL AND sr.revoked_at IS NULL AND (sr.expires_at IS NULL OR sr.expires_at > '2026-03-15 10:00:00') AND p.perm_code = 'dispatch:claim' ORDER BY sa.staff_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 303 兩次",
+        "edgeCaseResult": "303 在兩個倉各有一列角色指派，連接展開成兩列；排程程式照列派工時，同一個人會被派到兩份工作",
+        "pros": ["帳號與角色條件都檢查了"],
+        "cons": ["用 JOIN 做存在判斷，多角色或多範圍的指派造成重複"],
+        "validWhen": "需要列出每一筆角色指派時",
+        "failsWhen": "需求是「每位員工一列」時"
+      },
+      {
+        "key": "opt_check_role_only_miss_offboarded",
+        "sql": "SELECT sa.staff_id FROM staff_accounts sa WHERE EXISTS (SELECT 1 FROM staff_roles sr JOIN role_permissions rp ON rp.role_id = sr.role_id JOIN permissions p ON p.perm_id = rp.perm_id WHERE sr.staff_id = sa.staff_id AND sr.revoked_at IS NULL AND (sr.expires_at IS NULL OR sr.expires_at > '2026-03-15 10:00:00') AND p.perm_code = 'dispatch:claim') ORDER BY sa.staff_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 302、303；離職的 302 被放行",
+        "edgeCaseResult": "EXISTS 解決了重複，但只檢查角色指派；302 的角色列漏了撤銷，帳號狀態沒有被檢查",
+        "pros": ["每人一列"],
+        "cons": ["沒有確認帳號在職"],
+        "validWhen": "無",
+        "failsWhen": "離職流程沒有同步撤銷角色時"
+      },
+      {
+        "key": "opt_exists_active_staff_and_perm",
+        "sql": "SELECT sa.staff_id FROM staff_accounts sa WHERE sa.status = 'active' AND sa.deleted_at IS NULL AND EXISTS (SELECT 1 FROM staff_roles sr JOIN role_permissions rp ON rp.role_id = sr.role_id JOIN permissions p ON p.perm_id = rp.perm_id WHERE sr.staff_id = sa.staff_id AND sr.revoked_at IS NULL AND (sr.expires_at IS NULL OR sr.expires_at > '2026-03-15 10:00:00') AND p.perm_code = 'dispatch:claim') ORDER BY sa.staff_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳一列 303",
+        "edgeCaseResult": "帳號條件寫在外層，權限用 EXISTS 判斷「至少有一筆有效指派」，多角色不會造成重複",
+        "pros": ["每人一列", "帳號狀態與角色有效性都檢查"],
+        "cons": ["要知道員工被授權在哪幾個倉時，要另外查角色指派"],
+        "validWhen": "授權判斷與名單產生",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_exists_active_staff_and_perm"],
+    "alternativeNote": "倉庫範圍（warehouse_scope_id）也要納入判斷時，把範圍條件寫進同一個 EXISTS 子查詢",
+    "relatedDocs": [
+      "/backend/01-database/sql/in-exists-join/",
+      "/backend/01-database/sql/join-changes-rows-and-nulls/",
+      "/backend/07-security-data-protection/identity-access-boundary/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_no_permission_check": [301, 302, 303, 304],
+        "opt_join_rbac_fanout_dup": [303, 303],
+        "opt_check_role_only_miss_offboarded": [302, 303],
+        "opt_exists_active_staff_and_perm": [303]
+      }
+    }
+  },
+  {
+    "conceptId": "C10",
+    "variantId": "C10-cloud-role-precedence-bypass-02",
+    "discriminator": ["data", "threat"],
+    "population": "active-only",
+    "domain": "cloud-academy",
+    "stage": 9,
+    "tablePath": ["users", "user_roles", "role_permissions", "permissions"],
+    "perspective": "pick-counterexample",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["and-or-precedence-auth-bypass", "null-expires-dropped-by-gt", "rbac-multi-role-join-fanout"],
+    "title": "C10（資安複合陷阱）：課程讀取權限查詢的 AND／OR 優先序繞過 × 永不過期 NULL × 多角色重複（雲課堂變體）",
+    "businessRequirement": "在 2026-03-15 10:00:00 列出目前擁有 courses:read 權限的有效使用者，每人一列。資料中：學員 1 有 learner 與 instructor 兩個永不過期（expires_at 為 NULL）的角色；學員 2 的 learner 角色永不過期、instructor 角色已在 03-01 到期；學員 3 只有不含 courses:read 的 bi_analyst 角色；學員 6 的 platform_admin 角色永不過期，但已在 03-10 撤銷。哪一條查詢精確回傳 [1, 2]？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "30 萬使用者，每次 API 呼叫驗證一次",
+      "readWriteRatio": "1000:1",
+      "indexes": ["idx_user_roles_active"]
+    },
+    "options": [
+      {
+        "key": "opt_and_or_precedence_bypass",
+        "sql": "SELECT DISTINCT u.user_id FROM users u JOIN user_roles ur ON ur.user_id = u.user_id JOIN role_permissions rp ON rp.role_id = ur.role_id JOIN permissions p ON p.perm_id = rp.perm_id WHERE p.perm_code = 'courses:read' AND u.status = 'active' AND u.deleted_at IS NULL AND ur.revoked_at IS NULL AND ur.expires_at > '2026-03-15 10:00:00' OR ur.expires_at IS NULL ORDER BY u.user_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 1、2、3、6；沒有 courses:read 的學員 3 與角色已撤銷的學員 6 都被放行",
+        "edgeCaseResult": "AND 先於 OR 結合，條件被拆成「全部檢查都通過且未到期」或「expires_at 是 NULL」；第二個分支沒有權限、帳號與撤銷檢查，任何永不過期的角色列都通過",
+        "pros": ["無"],
+        "cons": ["一個漏掉的括號讓授權判斷的所有條件失效"],
+        "validWhen": "無",
+        "failsWhen": "WHERE 混用 AND 與 OR 而沒有括號時"
+      },
+      {
+        "key": "opt_drop_null_expires",
+        "sql": "SELECT DISTINCT u.user_id FROM users u JOIN user_roles ur ON ur.user_id = u.user_id JOIN role_permissions rp ON rp.role_id = ur.role_id JOIN permissions p ON p.perm_id = rp.perm_id WHERE p.perm_code = 'courses:read' AND u.status = 'active' AND u.deleted_at IS NULL AND ur.revoked_at IS NULL AND ur.expires_at > '2026-03-15 10:00:00' ORDER BY u.user_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 0 列，所有有效使用者都被拒絕",
+        "edgeCaseResult": "NULL > '2026-03-15 10:00:00' 是 UNKNOWN，永不過期的角色被當成已過期",
+        "pros": ["不會放行不該放行的人"],
+        "cons": ["NULL 的語意是「沒有期限」，用 > 比較時被當成「已過期」"],
+        "validWhen": "expires_at 宣告為 NOT NULL 時",
+        "failsWhen": "用 NULL 表示永不過期時"
+      },
+      {
+        "key": "opt_join_without_distinct",
+        "sql": "SELECT u.user_id FROM users u JOIN user_roles ur ON ur.user_id = u.user_id JOIN role_permissions rp ON rp.role_id = ur.role_id JOIN permissions p ON p.perm_id = rp.perm_id WHERE p.perm_code = 'courses:read' AND u.status = 'active' AND u.deleted_at IS NULL AND ur.revoked_at IS NULL AND (ur.expires_at IS NULL OR ur.expires_at > '2026-03-15 10:00:00') ORDER BY u.user_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 1、1、2，學員 1 出現兩次",
+        "edgeCaseResult": "條件都正確，但學員 1 的兩個角色都含 courses:read，連接展開成兩列",
+        "pros": ["授權條件正確"],
+        "cons": ["用 JOIN 做存在判斷造成重複"],
+        "validWhen": "要列出每一筆授權來源時",
+        "failsWhen": "需求是「每人一列」時"
+      },
+      {
+        "key": "opt_exists_full_guard",
+        "sql": "SELECT u.user_id FROM users u WHERE u.status = 'active' AND u.deleted_at IS NULL AND EXISTS (SELECT 1 FROM user_roles ur JOIN role_permissions rp ON rp.role_id = ur.role_id JOIN permissions p ON p.perm_id = rp.perm_id WHERE ur.user_id = u.user_id AND p.perm_code = 'courses:read' AND ur.revoked_at IS NULL AND (ur.expires_at IS NULL OR ur.expires_at > '2026-03-15 10:00:00')) ORDER BY u.user_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 1、2",
+        "edgeCaseResult": "期限條件用括號包住 IS NULL 與 > 兩種情形；EXISTS 讓多角色只輸出一次；帳號條件寫在外層",
+        "pros": ["括號明確", "NULL 期限正確處理", "每人一列"],
+        "cons": ["無"],
+        "validWhen": "任何授權判斷",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_exists_full_guard"],
+    "alternativeNote": "授權條件含 OR 時一律加括號；PostgreSQL 可以把期限寫成 COALESCE(ur.expires_at, 'infinity') > now()，但要確認索引能用上",
+    "relatedDocs": [
+      "/backend/01-database/sql/well-formed-is-not-correct/",
+      "/backend/01-database/red-team-data-layer/",
+      "/backend/07-security-data-protection/identity-access-boundary/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_and_or_precedence_bypass": [1, 2, 3, 6],
+        "opt_drop_null_expires": [],
+        "opt_join_without_distinct": [1, 1, 2],
+        "opt_exists_full_guard": [1, 2]
+      }
+    }
+  },
+  {
+    "conceptId": "C11",
+    "variantId": "C11-logistics-merchant-user-soft-delete-unique-02",
+    "discriminator": ["data", "threat"],
+    "population": "active-only",
+    "domain": "swift-logistics",
+    "stage": 9,
+    "tablePath": ["merchant_users"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["full-unique-blocks-rehire", "dropping-unique-causes-account-collision", "login-missing-deleted-at-guard"],
+    "title": "C11（資安複合陷阱）：商家帳號軟刪除 × 唯一約束 × 離職回任重註冊與登入復活（捷配物流變體）",
+    "businessRequirement": "商家端帳號 merchant_users 採用軟刪除：山丘選物（1002）的 former@hill.tw（204）已離職，deleted_at 不為 NULL；ops@hill.tw（203）仍在職。現有部分唯一索引 uq_merchant_user_active_email ON merchant_users (merchant_id, LOWER(email)) WHERE deleted_at IS NULL。要允許離職者回任時用原信箱重新註冊、阻止同一商家出現大小寫不同的重複在職信箱，並防止離職帳號登入，哪一組寫法正確？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "3,000 家商家、5 萬個商家端帳號",
+      "readWriteRatio": "200:1",
+      "indexes": ["uq_merchant_user_active_email (merchant_id, LOWER(email)) WHERE deleted_at IS NULL"]
+    },
+    "options": [
+      {
+        "key": "opt_rehire_soft_deleted_ok",
+        "sql": "INSERT INTO merchant_users (merchant_user_id, merchant_id, email, display_name, role_code, status, created_at) VALUES (205, 1002, 'FORMER@hill.tw', '山丘回任', 'readonly', 'active', '2026-03-21 09:00:00');",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "寫入成功，回任者得到新的帳號 205，舊帳號 204 保留在歷史裡",
+        "edgeCaseResult": "唯一索引只涵蓋 deleted_at IS NULL 的列，軟刪除的 204 不參與比對；配合登入查詢檢查 status 與 deleted_at，204 也登入不了",
+        "pros": ["保留舊帳號供稽核外鍵引用", "回任不必復原舊帳號"],
+        "cons": ["登入與查詢都要記得排除軟刪除的列"],
+        "validWhen": "軟刪除加上部分唯一索引的設計",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_dup_active_email_blocked",
+        "sql": "INSERT INTO merchant_users (merchant_user_id, merchant_id, email, display_name, role_code, status, created_at) VALUES (206, 1002, 'OPS@hill.tw', '冒名重複帳號', 'dispatcher', 'active', '2026-03-21 09:00:00');",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "SQLite 報 UNIQUE constraint failed: index 'uq_merchant_user_active_email'",
+        "edgeCaseResult": "索引的鍵是 LOWER(email)，OPS@hill.tw 與在職的 ops@hill.tw 對到同一個值，寫入被擋下",
+        "pros": ["資料庫層擋下大小寫不同的冒名帳號"],
+        "cons": ["應用程式要把這個錯誤轉成「信箱已被使用」的訊息"],
+        "validWhen": "示範部分唯一索引的保護",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_login_without_deleted_guard",
+        "sql": "SELECT merchant_user_id FROM merchant_users WHERE merchant_id = 1002 AND LOWER(email) = LOWER('FORMER@hill.tw');",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳已離職的 204",
+        "edgeCaseResult": "登入查詢只比對信箱，軟刪除的帳號仍然查得到；離職者用舊密碼就能登入",
+        "pros": ["大小寫比對正確"],
+        "cons": ["沒有排除 status 與 deleted_at，軟刪除的帳號復活"],
+        "validWhen": "無",
+        "failsWhen": "採用軟刪除的帳號表"
+      },
+      {
+        "key": "opt_plain_unique_email_no_where",
+        "sql": "-- 把部分唯一索引改成整張表的 UNIQUE (merchant_id, email)，不加 WHERE deleted_at IS NULL，也不用 LOWER()",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "離職者回任時用原信箱註冊失敗；大小寫不同的冒名信箱可以寫入",
+        "edgeCaseResult": "整張表的唯一約束把軟刪除的列也算進去，擋下了該放行的回任；沒有 LOWER()，又放行了該擋下的冒名帳號",
+        "pros": ["約束寫法最簡單"],
+        "cons": ["保護的方向剛好與需求相反"],
+        "validWhen": "沒有軟刪除、而且信箱一律正規化成小寫時",
+        "failsWhen": "軟刪除加上不分大小寫的需求"
+      }
+    ],
+    "recommendedKeys": ["opt_rehire_soft_deleted_ok"],
+    "alternativeNote": "部分唯一索引管寫入，登入查詢管讀取；兩邊都要排除軟刪除的列，少一邊都會出事",
+    "relatedDocs": [
+      "/backend/01-database/design-decisions-price-every-query/",
+      "/backend/01-database/red-team-data-layer/",
+      "/backend/07-security-data-protection/identity-access-boundary/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_login_without_deleted_guard": [204]
+      }
+    }
+  },
+  {
+    "conceptId": "C12",
+    "variantId": "C12-cloud-permission-audit-vs-erasure-02",
+    "discriminator": ["threat", "data"],
+    "domain": "cloud-academy",
+    "stage": 9,
+    "tablePath": ["permission_audit_logs", "user_pii"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["mutable-audit-log-tampering", "pii-dumped-into-immutable-audit-blocks-gdpr", "blind-delete-breaks-audit-chain"],
+    "title": "C12（資安複合陷阱）：權限稽核表防竄改 × 學員個資遺忘權衝突設計（雲課堂變體）",
+    "businessRequirement": "雲課堂同時要滿足兩項要求：權限稽核表 permission_audit_logs 不可竄改，禁止 UPDATE 與 DELETE；學員 6 提出刪除個資請求，必須抹除 user_pii 裡的法定姓名、電話與帳單地址。哪一個做法在不破壞稽核軌跡的前提下完成抹除？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "30 萬學員、每年數百萬筆權限稽核事件",
+      "readWriteRatio": "1:20",
+      "indexes": ["PRIMARY KEY (user_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_separate_pii_erasure_keep_audit",
+        "sql": "UPDATE user_pii SET legal_name = NULL, phone_e164 = NULL, billing_address = NULL, erased_at = '2026-03-20 00:00:00' WHERE user_id = 6;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "更新成功，學員 6 的個資明文清空並留下抹除時間",
+        "edgeCaseResult": "稽核表只存 user_id 這類代理鍵、不存姓名與電話，所以抹除只動 user_pii；稽核紀錄完整保留，仍然指得出是哪個帳號做了什麼",
+        "pros": ["個資與稽核分表，兩項要求互不衝突", "CHECK 約束保證標記抹除時明文一定清空"],
+        "cons": ["稽核表的設計要在一開始就排除個資欄位"],
+        "validWhen": "稽核表只存代理鍵時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_update_immutable_audit_fails",
+        "sql": "UPDATE permission_audit_logs SET before_role = 'redacted' WHERE audit_id = 1;",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "SQLite 報 permission_audit_logs is append-only",
+        "edgeCaseResult": "觸發器擋下 UPDATE；為了遮蔽而改寫稽核紀錄，等於提供了竄改紀錄的路徑",
+        "pros": ["觸發器擋住了竄改"],
+        "cons": ["個資若寫進了稽核表，這條路走不通，抹除只能改用破壞稽核鏈的方式"],
+        "validWhen": "示範唯附寫保護",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_delete_audit_for_gdpr",
+        "sql": "DELETE FROM permission_audit_logs WHERE target_user_id = 2;",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "SQLite 報 permission_audit_logs is append-only",
+        "edgeCaseResult": "就算刪除被允許，刪掉稽核紀錄會讓「誰在何時移除了誰的權限」無法追查；個資遺忘權不要求刪除稽核事件本身",
+        "pros": ["無"],
+        "cons": ["破壞稽核鏈，也被唯附寫觸發器擋下"],
+        "validWhen": "無",
+        "failsWhen": "任何情境"
+      },
+      {
+        "key": "opt_dump_full_row_json_in_audit",
+        "sql": "-- 建立通用的 audit_logs(raw_row_json)，用觸發器把含法定姓名、電話、地址與密碼雜湊的整列 JSON 複製進不可變的稽核表",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "每次異動都留下完整的前後內容",
+        "edgeCaseResult": "個資被複製進不可修改的表：收到刪除請求時，要嘛違反不可竄改，要嘛無法完成抹除；密碼雜湊也跟著外洩到稽核讀者手上",
+        "pros": ["實作最省事"],
+        "cons": ["把個資寫進不可變的表，兩項要求從此無法同時成立"],
+        "validWhen": "無",
+        "failsWhen": "有個資刪除義務時"
+      }
+    ],
+    "recommendedKeys": ["opt_separate_pii_erasure_keep_audit"],
+    "alternativeNote": "稽核表需要記下異動內容時，只記代理鍵與業務欄位的前後值；PostgreSQL 上另以 REVOKE UPDATE, DELETE, TRUNCATE 作為主防線，觸發器是補強",
+    "relatedDocs": [
+      "/backend/07-security-data-protection/data-protection-and-masking-governance/",
+      "/backend/07-security-data-protection/audit-trail-and-accountability-boundary/",
+      "/backend/07-security-data-protection/backup-encryption-password-and-master-key/"
+    ]
   }
 ]
