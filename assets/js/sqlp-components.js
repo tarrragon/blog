@@ -1,6 +1,6 @@
 // SQL 練習頁的元件庫：每個函式產生一個元件的 DOM，契約在 scripts/sql-practice/ui/components.md。
 // 元件展示頁（scripts/sql-practice/ui/gallery.html）從這裡取元件；練習頁（assets/js/sql-practice.js）
-// 組畫面時也只從這裡選件與排位（2026-11-24 時練習頁仍是舊版原型，還沒接上，待辦見練習頁模組的 Backlog）。
+// 組畫面時也只從這裡選件與排位。
 // 文字一律用 textContent 寫入，不用 innerHTML。
 import { renderSql, highlightInline } from "./sql-format.js";
 
@@ -290,12 +290,13 @@ export function resultBanner({ ok, recLetters, note }) {
     h("h3", { id: "sqlp-result-h", tabindex: "-1", text: ok ? "答對了" : "這一題推薦的是 " + recLetters }),
     note ? h("p", null, h("strong", { text: "前提改變時：" }), note) : null);
 }
-export function docLinks(docs, id) {
+// 題目畫面用預設的標題與說明；結果畫面傳入自己的（答錯的題目對應的文章，讀完回到的是結果畫面）
+export function docLinks(docs, id, title, note) {
   if (!docs.length) return null;
   return h("section", { class: "sqlp-docs", "aria-labelledby": id || "sqlp-docs-h" },
-    sectionTitle("這一題的觀念在這幾篇", id || "sqlp-docs-h"),
+    sectionTitle(title || "這一題的觀念在這幾篇", id || "sqlp-docs-h"),
     h("ul", null, docs.map((d) => h("li", null, h("a", { href: d.url, text: d.title })))),
-    hint("文章在同一個分頁打開；讀完按瀏覽器的上一頁，會回到這一題。"));
+    hint(note || "文章在同一個分頁打開；讀完按瀏覽器的上一頁，會回到這一題。"));
 }
 
 export const CONFUSION_TYPES = ["基礎語法缺口", "論證斷層", "術語障礙", "現實情境缺口"];

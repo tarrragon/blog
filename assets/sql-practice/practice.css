@@ -72,7 +72,9 @@ main:has(#sql-practice) {
   #sql-practice { --sqlp-hit: 44px; }
 }
 @media (max-width: 599px) {
-  #sql-practice { padding-left: var(--sqlp-s4); padding-right: var(--sqlp-s4); }
+  /* 主題給 body 右側 4rem（根字級 10px，40px）的留白；練習區的黑底延伸到螢幕右緣，
+     讓選項磚與程式碼區在 390 寬多出 40px。左側的 44px 留給固定的分類色帶（custom.css），不動 */
+  #sql-practice { padding-left: var(--sqlp-s4); padding-right: var(--sqlp-s4); margin-right: -4rem; }
 }
 
 /* 瀏覽器預設的表面也照這個世界上色。範圍包進 :where()：寫成 #sql-practice :focus-visible 時特定性 (1,1,0)，

@@ -20,16 +20,19 @@
     {{ .Content }}
   </div>
   {{ partial "autolink.html" . }}
-  <div id="sql-practice"
-       data-pagefind-ignore
-       data-bank="{{ $data.bank.RelPermalink }}"
-       data-fallback="{{ $sqlIndex.RelPermalink }}"
-       data-site-root="{{ site.Home.RelPermalink }}">
-    <p class="sqlp-status" role="status">載入題庫中…</p>
-    <noscript>
-      <p>練習頁要用 JavaScript 出題與記錄作答。瀏覽器停用 JavaScript 時，可以回到 <a href="{{ $sqlIndex.RelPermalink }}">SQL 分類</a> 讀文章。</p>
-    </noscript>
-  </div>
 </article>
+{{- /* 練習區放在 .article-content 外面：文章欄的寬度上限是 800px（custom_head.html），
+       練習區要用 practice.css 放寬後的 main 寬度放兩欄與 2×2 的選項磚 */ -}}
+<section id="sql-practice"
+     aria-label="SQL 練習"
+     data-pagefind-ignore
+     data-bank="{{ $data.bank.RelPermalink }}"
+     data-fallback="{{ $sqlIndex.RelPermalink }}"
+     data-site-root="{{ site.Home.RelPermalink }}">
+  <p class="sqlp-hint" role="status">載入題庫中…</p>
+  <noscript>
+    <p>練習頁要用 JavaScript 出題與記錄作答。瀏覽器停用 JavaScript 時，可以回到 <a href="{{ $sqlIndex.RelPermalink }}">SQL 分類</a> 讀文章。</p>
+  </noscript>
+</section>
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 {{ end }}
