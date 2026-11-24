@@ -133,6 +133,8 @@ MFA fatigue 是身分層擴散風險的代表機制：登入挑戰可被使用�
 
 對應失效樣式 [代理操作濫用](../red-team/problem-cards/delegated-operation-abuse/) 與 [代理會話上下文混層](../red-team/problem-cards/fp-delegated-session-context-bleed/)。完整的授權模型選型（角色邊界與資源邊界的取捨、角色累積之後的收斂路徑）本模組尚無對應章節，已列入 backlog；在那之前，最小權限的判斷標準見 [least-privilege](/backend/knowledge-cards/least-privilege/)，緊急高權限存取的形態見 [break-glass-access](/backend/knowledge-cards/break-glass-access/)。
 
+代理操作的另一種時間差形態是**非同步背景任務的困惑代理人（Confused Deputy）**：使用者在排入批次匯出或高權限背景作業當下具有合法權限，但實際執行的是數分鐘或數小時後以高權限角色連線的背景工作程序（worker）。如果系統只在排入佇列時驗證權限，已離職、遭停權或被撤權的帳號就能透過預先排入的任務取得機密資料。授權治理要求 worker 在實際執行前即時複查請求者當下的帳號狀態、軟刪除標記、角色撤銷與作用範圍，並將未通過複查的任務寫入終止狀態（例如 `denied` 或 `cancelled`）同時留存稽核紀錄——僅略過不執行會使任務滯留於排隊狀態，當帳號日後復權時舊任務會自動復活執行；離職、停權與密碼重設流程亦須同步撤銷尚在排隊中的任務。資料庫層的 RBAC 半連接查詢與任務表建模見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)。
+
 ## 高權限工具的會話收斂節奏
 
 身分被取得後、token 撤銷跟 session kill 的時間窗口直接決定攻擊者可觸及的資產面積、是初始落點橫向擴散的關鍵節流點。這層治理跟登入驗證是兩條獨立 chain，前者管「入場」、後者管「停留」。會話收斂節奏的 canonical 在 [7.5 § 會話重放跟全域失效](../transport-trust-and-certificate-lifecycle/#會話重放跟全域失效canonical)、本節從身分層補 token 撤銷窗口的 specific 訊號。
@@ -140,6 +142,8 @@ MFA fatigue 是身分層擴散風險的代表機制：登入挑戰可被使用�
 對應 [Slack 2022](../red-team/cases/identity-access/slack-2022-token-compromise/)：揭露三層失效控制面 — 員工身分遭濫用後的隔離速度不足、token 範圍與用途邊界定義不夠細緻、程式碼資產存取異常訊號未快速匯流。本段聚焦的會話收斂視角直接對應前兩層、訊號匯流層放 [7.7 audit-trail](../audit-trail-and-accountability-boundary/) 處理。案例「可落地檢查點」列出 mechanism 為「管理 token 分域並限制到最小權限、依用途切 audience」，並標明前提是「token 有 inventory 可查 issuer / scope」。
 
 以下基於通用工程知識補充：token 分域要看可達的 trust boundary、權限等級只是其中一個維度。同樣是「管理 token」、跨多敏感系統的單一 token 跟限定單一 audience 的 token、[blast radius](/backend/knowledge-cards/blast-radius/) 差兩個數量級。日常治理要建立 token inventory（issuer / scope / blast radius 標籤）、事件時可直接按 blast radius 降序撤銷；inventory 缺位時排序退回 ad-hoc 判斷、容易把可用性跟風險同時打斷。
+
+在密碼重設或強制登出場景裡，僅依賴應用程式批次更新每一筆工作階段的撤銷時間，只要任一條舊版端點或客服重設路徑漏跑批次撤銷，攻擊者手上的舊工作階段就會持續有效直到自然過期。於資料層維護帳號層級的失效門檻（例如由資料庫單一時鐘寫入的 `password_changed_at`，或在含 Passkey／SSO 無密碼帳號與任意強制登出場景下改存 `sessions_valid_after` 或單調遞增 `credential_version`），並在驗證查詢中強制比對工作階段建立時間與該門檻，可在某條程式路徑漏撤銷時仍即時攔截舊工作階段；重設流程的完整收尾見 [7.42 密碼重設流程：與登入平行的另一道入口](../password-reset-flow/)，資料表欄位與實測查詢見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)。
 
 ## 第三方身分鏈的內部收斂責任
 

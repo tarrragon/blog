@@ -9,7 +9,7 @@ tags: ["sql", "constraint", "null", "ddl", "knowledge-card"]
 
 約束是掛在表或欄位上的一條規則，由資料庫在每一次寫入 [relation](/backend/01-database/sql/knowledge-cards/relation/) 的時候檢查——寫入違反它就失敗，所以一個有約束的欄位，它的內容在整張表的範圍內都成立。它與應用程式裡的檢查差在生效的位置：應用程式的檢查只涵蓋走過那段程式碼的寫入，約束涵蓋每一次寫入，包含手動改的、遷移腳本改的、以及另一個服務改的。
 
-常見的幾種各自保證不同的事。`NOT NULL` 保證這一欄永遠有值；`UNIQUE` 保證這一欄的值不重複；`PRIMARY KEY` 是前兩者合起來再加上「這是本表辨識一列的依據」；`FOREIGN KEY` 保證這一欄的值在另一張表裡找得到對應的那一列；`CHECK` 保證這一欄滿足一個自己寫的條件（例如金額不為負）。PostgreSQL 另有 [Exclusion Constraint（排除約束）](/backend/01-database/sql/knowledge-cards/exclusion-constraint/)，保證任兩列在指定的比較下不同時成立（例如兩段時間不重疊），`UNIQUE` 是它的運算子全為相等時的特例。
+常見的幾種各自保證不同的事。`NOT NULL` 保證這一欄永遠有值；`UNIQUE` 保證這一欄的值不重複；`PRIMARY KEY` 是前兩者合起來再加上「這是本表辨識一列的依據」；`FOREIGN KEY` 保證這一欄的值在另一張表裡找得到對應的那一列；`CHECK` 保證這一欄滿足一個自己寫的條件（例如金額不為負）。PostgreSQL 另有 [Exclusion Constraint（排除約束）](/backend/01-database/sql/knowledge-cards/exclusion-constraint/)，保證任兩列在指定的比較下不同時成立（例如兩段時間不重疊），`UNIQUE` 是它的運算子全為相等時的特例。若唯一性只需要套用在表的子集合（例如軟刪除帳號表中僅對 `deleted_at IS NULL` 的生效列強制信箱唯一），PostgreSQL 與 SQLite 改以帶 `WHERE` 條件的唯一 [Partial Index（部分索引）](/backend/knowledge-cards/partial-index/) 達成條件式唯一約束；宣告多欄複合外鍵時亦須留意，在 SQL 預設的 `MATCH SIMPLE` 規則下，只要子表複合外鍵任一欄位為 `NULL`，資料庫引擎會直接略過外鍵檢查，因此多租戶複合外鍵的子表租戶鍵須同步設為 `NOT NULL`（見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。
 
 ## 它決定哪些推論可以做
 

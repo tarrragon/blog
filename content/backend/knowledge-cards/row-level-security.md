@@ -3,6 +3,7 @@ title: "Row-Level Security"
 date: 2026-05-22
 description: "說明資料庫如何用 policy 限制同一張表中哪些 row 對某個角色可見或可寫"
 weight: 332
+tags: ["backend", "database", "security", "rls", "knowledge-card"]
 ---
 
 Row-Level Security（RLS）的核心概念是在資料庫層、用 policy 規則限制同一張表裡哪些 row 對某個角色可讀或可寫。它讓資料隔離多一道資料庫強制的防線，而不只依賴 application 的查詢條件。它是 [Tenant Boundary](/backend/knowledge-cards/tenant-boundary/) 的一種落地機制，和 [Authorization](/backend/knowledge-cards/authorization/)、[Least Privilege](/backend/knowledge-cards/least-privilege/) 一起構成防禦縱深。
@@ -18,3 +19,5 @@ Row-Level Security 位在 application 授權的下游。application 層的 [Auth
 ## 判斷條件與後果
 
 RLS 的判斷對象是資料庫這道防線實際涵蓋了哪些操作與哪些連線角色。SELECT、INSERT、UPDATE、DELETE 的 policy 各自獨立，只寫了其中幾種時，沒涵蓋的那幾種操作的行為取決於引擎的預設，可能全部被拒絕，也可能不受租戶限制；應用程式用 table owner 或 superuser 連線時，policy 預設不套用在這些角色上。這兩種缺口在正常流量下都不會出錯，沒有獨立測試證明跨租戶查詢被擋下時，要到外洩才看得到。application 層的授權與 RLS 承擔不同的失敗模式：前者管誰能呼叫哪個功能，後者管查詢送到資料庫之後回傳哪些 row，拿掉任一層，另一層的漏洞就直接成為外洩路徑。緊急例外存取需要繞過 RLS 時，沒有 [Audit Log](/backend/knowledge-cards/audit-log/) 就查不到誰在什麼時候看了哪些 row，所以例外存取一律留下紀錄。
+
+在 PostgreSQL 18 中另須檢查以下設定邊界：其一，`ALTER TABLE ... FORCE ROW LEVEL SECURITY` 雖能取消非 `BYPASSRLS` 資料表擁有者的預設豁免，但對 `SUPERUSER` 與 `BYPASSRLS` 角色依然無效，且預設 `pg_dump` 會執行 `SET row_security = off`——只要備份角色受至少一條 RLS 政策約束便會直接報錯中止（即使補 `USING (true)` 政策仍失敗），因此須規劃專用的 `BYPASSRLS` 唯讀備份角色或傳入 `--enable-row-security`；其二，連線池交易內以 `SET LOCAL` 設定的自訂執行期參數在交易結束後會重設為空字串 `''` 而非 `NULL`，政策轉型數值時須依需求決定以 `NULLIF(current_setting('app.tenant_id', true), '')::integer` 靜默回 0 列，或刻意不包 `NULLIF` 讓漏設租戶上下文的查詢直接報錯（fail-loud）。詳見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)。

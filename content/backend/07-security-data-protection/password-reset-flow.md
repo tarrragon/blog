@@ -52,7 +52,7 @@ tags: ["backend", "security"]
 
 改掉密碼**不會**讓已經發出的會話失效，也不會移除攻擊者留下的持久存取。這兩件事在重設流程裡都要接上，否則使用者拿回的是一個仍然開著的帳號。
 
-**撤銷全部會話**是必要的收尾。撤銷得掉的前提是會話狀態放在自己查得到的地方，見 [Session 處理](/devops/operations/02-horizontal-scaling/session-handling/) 與 [7.37 撤銷會話與重設密碼是兩個動作](../credential-breach-response/#撤銷會話與重設密碼是兩個動作)。
+**撤銷全部會話**是必要的收尾。撤銷得掉的前提是會話狀態放在自己查得到的地方，見 [Session 處理](/devops/operations/02-horizontal-scaling/session-handling/) 與 [7.37 撤銷會話與重設密碼是兩個動作](../credential-breach-response/#撤銷會話與重設密碼是兩個動作)。除了在重設完成後批次標記既有工作階段為已撤銷，資料層另可維護帳號層級的失效門檻（以資料庫單一時鐘寫入 `password_changed_at`，或在包含 Passkey／SSO 無密碼帳號與非改密碼全域登出的系統中改存 `sessions_valid_after` 或單調遞增 `credential_version`），讓每一次工作階段驗證查詢直接比對建立時間與該門檻——即使自助重設、客服重設或舊版端點之中有任一條路徑漏跑批次撤銷，舊工作階段仍會被資料層驗證查詢即時攔截（欄位建模與實測對照見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。
 
 **通知使用者**這件事剛剛發生，並在通知裡給一條「這不是我做的」的路徑。這封信要寄到**變更前**的聯絡方式——寄到變更後的話，收到的是攻擊者。
 

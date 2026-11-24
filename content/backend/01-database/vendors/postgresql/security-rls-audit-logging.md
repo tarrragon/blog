@@ -63,6 +63,8 @@ SELECT id FROM invoices;           -- ERROR: invalid input syntax for type uuid:
 
 資料庫安全是 application auth 的下游防線：這段 policy 用的 `app.tenant_id` 由 application 設定，身份、session、租戶與 workflow 仍由 application 負責；PostgreSQL security layer 在資料邊界補上 least privilege、tenant isolation 與 forensic evidence。
 
+上述範例不包 `NULLIF`，交易結束後自訂參數重設為空字串 `''`，未重設時直接觸發轉型報錯（fail-loud）；若團隊希望漏設上下文時靜默回傳 0 列而非拋錯，政策可改寫為 `NULLIF(current_setting('app.tenant_id', true), '')::uuid`。另須注意表擁有者預設豁免 RLS，加上 `ALTER TABLE ... FORCE ROW LEVEL SECURITY` 可取消非 `BYPASSRLS` 擁有者的豁免，但預設 `pg_dump` 會執行 `SET row_security = off`，只要角色受任一條 RLS 政策約束就會直接報錯中止（即使補 `USING (true)` 亦同），備份須改用專用 `BYPASSRLS` 唯讀角色或 `--enable-row-security`。多租戶子表冗餘租戶鍵、複合外鍵、`FORCE RLS` 與 `SET LOCAL` 連線池邊界詳見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)。
+
 ## Audit Logging
 
 Audit logging 的核心責任是把敏感資料操作轉成可查詢證據。PostgreSQL 原生日誌可以記錄連線、DDL、錯誤與慢查詢；pgAudit 這類 extension 則補強 session / object audit。
@@ -88,7 +90,7 @@ PII and data protection boundary 的核心責任是把 database 權限和資料�
 | Audit log        | append-only storage、retention | SIEM / incident evidence                                                                        |
 | Deletion request | tombstone、cascade review      | retention policy、legal hold                                                                    |
 
-Column-level grant 和 masking view 適合 read-only analyst。Application role 通常需要明文處理 workflow；analyst / support role 則應走 restricted view。
+Column-level grant 和 masking view 適合 read-only analyst。Application role 通常需要明文處理 workflow；analyst / support role 則應走 restricted view。若檢視表同時包含 `WHERE` 列過濾條件，須宣告 `WITH (security_barrier = true)` 防止外層非 `LEAKPROOF` 條件被查詢最佳化器下推而側錄隱藏列；與底表 RLS 搭配 `security_invoker = true` 時，可將 PII 拆入獨立表僅授無 PII 主表 `SELECT`，或對底表授與非個資欄位的欄級 `GRANT SELECT` 以兩者共存（見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。
 
 ## Operational Evidence
 

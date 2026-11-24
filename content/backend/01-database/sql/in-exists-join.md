@@ -89,7 +89,7 @@ SELECT 姓名, (SELECT 金額 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧
 
 **要不要用到被比對的那張表的欄位。** 要用到就得 `JOIN`，因為只有它把那張表帶進 `FROM`。這時候要順帶檢查列數是不是預期內的——後面如果接聚合，`sum` 與 `count` 算的是配對後的列；這個膨脹怎麼發生、可加與不可加的聚合各自怎麼修，在 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/)。
 
-只是判斷有沒有，就用 `IN` 或 `EXISTS`。它們是條件，對每一列只做留或丟，寫出來的意圖比 `JOIN` 加 `DISTINCT` 清楚——而哪一種比較快是另一個問題，答案取決於資料與索引。[SQL.17 查詢的代價](/backend/01-database/sql/cost-lives-in-the-plan/) 用一道重複值的題目量分組、自連接與 `EXISTS` 三種寫法，並示範加一個索引之後排名重排——`EXISTS` 從最慢掉到與分組同一個量級。
+只是判斷有沒有，就用 `IN` 或 `EXISTS`。它們是條件，對每一列只做留或丟，寫出來的意圖比 `JOIN` 加 `DISTINCT` 清楚——而哪一種比較快是另一個問題，答案取決於資料與索引。[SQL.17 查詢的代價](/backend/01-database/sql/cost-lives-in-the-plan/) 用一道重複值的題目量分組、自連接與 `EXISTS` 三種寫法，並示範加一個索引之後排名重排——`EXISTS` 從最慢掉到與分組同一個量級。在多角色權限控制（RBAC）的非同步背景任務認領查詢裡，同一位使用者可能同時擁有多個帶有相同權限的角色，用 `EXISTS` 表達存在性條件可讓結果列數固定受限於任務表而不因重疊角色膨脹（實測對照見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。
 
 ## IN 與 EXISTS 的分岔：子查詢含 NULL 時的否定式
 
