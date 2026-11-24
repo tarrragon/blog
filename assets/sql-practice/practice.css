@@ -1,0 +1,466 @@
+/* SQL 練習頁的元件樣式。元件契約在 scripts/sql-practice/ui/components.md，
+   視覺方向（Metro 字型磚）在 .impeccable/surfaces/layouts-default-sql-practice-html.md。
+   token 只定義在 #sql-practice 底下，不影響 blog 其他頁面；主題把根字級設成 10px，所以這裡一律用 px。 */
+
+@font-face {
+  font-family: "SQLP Display";
+  font-style: normal;
+  font-weight: 200 300;
+  font-display: swap;
+  src: url("../fonts/noto-sans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+
+/* herman 把 main 限在 70ch；練習頁要放兩欄，只在這一頁放寬 */
+main:has(#sql-practice) {
+  max-width: 1360px;
+}
+/* 寬螢幕：主題把 body 限在 1600px，練習頁放寬到 2400px，讓右欄寬到能放 2×2 的選項磚 */
+@media (min-width: 1800px) {
+  body:has(#sql-practice) { max-width: none; }
+  main:has(#sql-practice) { max-width: 2000px; } /* 置中，兩側留白；2000 是 2×2 加左欄放得下的寬度 */
+}
+
+#sql-practice {
+  --sqlp-bg: #000;
+  --sqlp-fg: #fff;
+  --sqlp-muted: #a3a3a3;
+  --sqlp-tile: #1c1c1c;
+  --sqlp-tile-hover: #2a2a2a;
+  /* 亮 cyan 只用在焦點框、細線、小箭頭這類不承載內文的地方；
+     承載內文的色塊用低明度的 fill，上面的文字一律白色（對比都在 5.7:1 以上，色塊對黑底 3:1 以上） */
+  --sqlp-accent: #00bde3;
+  --sqlp-accent-fill: #0b6e8e;
+  --sqlp-accent-fill-hover: #0e5f7a;
+  /* 2026-11-24 使用者選定「藍綠／灰」：推薦沿用強調色的藍綠，讀者選了而不推薦用深灰。
+     藍綠因此專指推薦，按鈕改成白框，不用實心藍綠 */
+  --sqlp-rec: #0b6e8e;
+  --sqlp-miss: #4f4f4f;
+  --sqlp-frame-muted: #6b6b6b;
+  --sqlp-on-color: #fff;
+  --sqlp-rule: #3a3a3a;
+  --sqlp-s1: 4px;
+  --sqlp-s2: 8px;
+  --sqlp-s3: 12px;
+  --sqlp-s4: 16px;
+  --sqlp-s5: 24px;
+  --sqlp-s6: 32px;
+  --sqlp-s7: 48px;
+  --sqlp-s8: 64px;
+  --sqlp-display: "SQLP Display", "Segoe UI", "Helvetica Neue", sans-serif;
+  --sqlp-font: "Segoe UI", "Helvetica Neue", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --sqlp-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --sqlp-hit: 32px;
+  --sqlp-bar-h: 72px; /* 精簡頂列的高度：44px 按鈕 + 上下各 12px + 框線，實測 71px */
+  --sqlp-flip: 200ms;
+  --sqlp-ease: 150ms;
+  --sqlp-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  background: var(--sqlp-bg);
+  color: var(--sqlp-fg);
+  font-family: var(--sqlp-font);
+  font-size: 17px;
+  line-height: 28px;
+  font-weight: 400;
+  padding: var(--sqlp-s5) var(--sqlp-s5) calc(var(--sqlp-s7) + env(safe-area-inset-bottom));
+  margin-top: var(--sqlp-s5);
+  font-variant-numeric: tabular-nums;
+  caret-color: var(--sqlp-accent);
+}
+@media (pointer: coarse) {
+  #sql-practice { --sqlp-hit: 44px; }
+}
+@media (max-width: 599px) {
+  #sql-practice { padding-left: var(--sqlp-s4); padding-right: var(--sqlp-s4); }
+}
+
+/* 瀏覽器預設的表面也照這個世界上色 */
+#sql-practice ::selection { background: var(--sqlp-accent-fill); color: var(--sqlp-on-color); }
+#sql-practice * { scrollbar-color: var(--sqlp-rule) transparent; }
+#sql-practice :focus-visible { outline: 3px solid var(--sqlp-accent); outline-offset: 2px; }
+:where(#sql-practice) a { color: var(--sqlp-fg); text-decoration-color: var(--sqlp-accent); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+:where(#sql-practice) a:hover { color: var(--sqlp-accent); }
+/* 重設主題給標題與段落的外距。包在 :where() 裡讓優先度是 0：寫成 #sql-practice p 的話，
+   id 的優先度會蓋掉每個元件自己用 class 設的外距（解析區與大字的間距曾經因此歸零） */
+:where(#sql-practice) :where(h2, h3, h4) { margin: 0; color: inherit; font-family: var(--sqlp-font); }
+:where(#sql-practice) :where(p, dl, ul, ol) { margin: 0; }
+/* 行內 code（需求文字裡的欄名）；包在 :where() 裡，不蓋掉 SQL 區塊與表格自己設的字級（曾經把 16px 的 SQL 縮成 13.8px） */
+:where(#sql-practice) code { font-family: var(--sqlp-mono); font-size: 0.9em; }
+#sql-practice svg { flex: none; }
+
+/* ---- 樞紐列 PivotBar / PivotItem / ExitLink ---- */
+/* 樞紐列是主要的導覽操作區，字級接近畫面標題 */
+.sqlp-pivot { display: flex; align-items: center; gap: var(--sqlp-s6); margin-bottom: var(--sqlp-s5); padding-bottom: var(--sqlp-s3); border-bottom: 1px solid var(--sqlp-rule); }
+/* 階段清單放不下時水平捲動；兩緣的捲動陰影只在那一側還有項目時出現（跟手機 SQL 程式碼區同一個做法：
+   background-attachment: local 的底色遮罩蓋住 scroll 的漸層，捲到盡頭時遮罩移過來把漸層蓋掉） */
+.sqlp-pivot-items {
+  display: flex; gap: var(--sqlp-s6); overflow-x: auto; flex: 1 1 auto; min-width: 0; list-style: none; padding: 0; scrollbar-width: thin;
+  background:
+    /* 遮罩不透明的部分（28px）至少要跟漸層（28px）一樣寬，沒捲動時才蓋得住漸層 */
+    linear-gradient(to right, var(--sqlp-bg) 28px, transparent) left / 40px 100% no-repeat local,
+    linear-gradient(to left, var(--sqlp-bg) 28px, transparent) right / 40px 100% no-repeat local,
+    linear-gradient(to right, rgba(255, 255, 255, 0.32), transparent) left / 28px 100% no-repeat scroll,
+    linear-gradient(to left, rgba(255, 255, 255, 0.32), transparent) right / 28px 100% no-repeat scroll,
+    var(--sqlp-bg);
+}
+.sqlp-pivot-item { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; font-size: 26px; line-height: 34px; font-weight: 300; color: var(--sqlp-muted); text-decoration: none; }
+/* 手機：階段清單一列（水平捲動）、離開連結另一列，避免離開連結把清單擠到寬度 0 */
+@media (max-width: 599px) {
+  .sqlp-pivot { flex-wrap: wrap; gap: var(--sqlp-s2); }
+  .sqlp-pivot-items { flex: 1 1 100%; gap: var(--sqlp-s5); }
+  .sqlp-pivot-item { font-size: 22px; }
+  .sqlp-exit { max-width: 100%; }
+}
+#sql-practice .sqlp-pivot-item { color: var(--sqlp-muted); text-decoration: none; }
+#sql-practice .sqlp-pivot-item:hover { color: var(--sqlp-fg); }
+/* 目前這一輪：白色、粗體，字級再大一階（26 → 30，跟畫面標題同級），一眼看得出所在位置 */
+#sql-practice .sqlp-pivot-item[aria-current] { color: var(--sqlp-fg); font-weight: 600; font-size: 30px; }
+@media (max-width: 599px) { #sql-practice .sqlp-pivot-item[aria-current] { font-size: 26px; } }
+/* 離開練習：跟次要按鈕同一個造型（灰框、18px、44px 高），文字依去向固定，不截斷 */
+.sqlp-exit {
+  flex: none; display: inline-flex; align-items: center; gap: var(--sqlp-s3); min-height: 44px; padding: 0 var(--sqlp-s5);
+  font-size: 18px; line-height: 26px; white-space: nowrap; border: 1.5px solid var(--sqlp-frame-muted);
+  transition: background-color var(--sqlp-ease) ease-out, color var(--sqlp-ease) ease-out;
+}
+:where(#sql-practice) a.sqlp-exit { color: var(--sqlp-fg); text-decoration: none; }
+:where(#sql-practice) a.sqlp-exit:hover { background: var(--sqlp-fg); color: var(--sqlp-bg); border-color: var(--sqlp-fg); }
+
+/* ---- 精簡頂列 CompactBar ----
+   外框 sticky、高度 0，掛在練習區頂端：不佔版面，寬度跟練習區（含左右內距）對齊，不蓋到 blog 的分類色帶。
+   隱藏時移出畫面並設 visibility: hidden，裡面的按鈕不會被 Tab 走到 */
+.sqlp-compact-wrap { position: sticky; top: 0; height: 0; z-index: 5; margin: 0 calc(-1 * var(--sqlp-s5)); }
+.sqlp-compact {
+  display: flex; align-items: center; gap: var(--sqlp-s4); min-height: var(--sqlp-bar-h); box-sizing: border-box;
+  padding: var(--sqlp-s3) var(--sqlp-s5); background: var(--sqlp-bg); border-bottom: 1px solid var(--sqlp-rule);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  transform: translateY(-100%); visibility: hidden;
+  transition: transform 200ms var(--sqlp-out), visibility 0s linear 200ms;
+}
+.sqlp-compact[data-shown] { transform: none; visibility: visible; transition: transform 200ms var(--sqlp-out), visibility 0s; }
+.sqlp-compact-where { flex: 1 1 auto; min-width: 0; font-size: 20px; line-height: 28px; font-weight: 300; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sqlp-compact-short { display: none; }
+.sqlp-compact-actions { display: flex; gap: var(--sqlp-s3); flex: none; }
+.sqlp-compact .sqlp-btn { min-height: 44px; padding-top: 0; padding-bottom: 0; }
+@media (max-width: 599px) {
+  .sqlp-compact-wrap { margin: 0 calc(-1 * var(--sqlp-s4)); }
+  .sqlp-compact { padding: var(--sqlp-s3) var(--sqlp-s4); gap: var(--sqlp-s3); }
+  .sqlp-compact-long { display: none; }
+  .sqlp-compact-short { display: inline; }
+  .sqlp-compact-where { font-size: 17px; }
+  .sqlp-compact .sqlp-btn, .sqlp-compact .sqlp-exit { padding: 0 var(--sqlp-s3); font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sqlp-compact, .sqlp-compact[data-shown] { transition: none; }
+}
+
+/* ---- 進度段 ProgressStrip ---- */
+.sqlp-progress { display: flex; align-items: center; gap: var(--sqlp-s4); }
+.sqlp-progress-bar { display: flex; gap: 2px; flex: 1 1 auto; min-width: 80px; }
+/* 未作答是細線，作答過與目前這一題是粗段：失效的灰跟未作答的灰相近，靠形狀分開 */
+.sqlp-progress-bar { align-items: center; }
+.sqlp-progress-bar i { flex: 1 1 0; height: 2px; background: var(--sqlp-rule); transition: background-color var(--sqlp-ease) ease-out, height var(--sqlp-ease) ease-out; }
+.sqlp-progress-bar i[data-s] { height: 6px; }
+.sqlp-progress-bar i[data-s="current"] { background: var(--sqlp-fg); }
+.sqlp-progress-bar i[data-s="ok"] { background: var(--sqlp-rec); }
+.sqlp-progress-bar i[data-s="miss"] { background: #8a8a8a; } /* #4f4f4f 對黑底只有 2.6:1，細段改用較亮的灰 */
+.sqlp-progress-text { flex: none; font-size: 16px; line-height: 24px; color: var(--sqlp-muted); }
+
+/* ---- 樞紐關鍵字 KeywordBanner ---- */
+.sqlp-keyword {
+  font-family: var(--sqlp-display); font-weight: 200; font-size: 96px; line-height: 112px; padding-bottom: var(--sqlp-s2);
+  letter-spacing: -0.03em; white-space: nowrap; overflow: hidden; margin: 0 0 var(--sqlp-s5) -0.06em;
+  color: var(--sqlp-fg); user-select: none;
+}
+@media (max-width: 599px) { .sqlp-keyword { font-size: 60px; line-height: 72px; } }
+
+/* ---- 畫面標題 ScreenTitle、區段標題 ---- */
+.sqlp-title { font-size: 30px; line-height: 40px; font-weight: 300; overflow-wrap: anywhere; text-wrap: balance; }
+.sqlp-title:focus { outline: none; }
+.sqlp-title:focus-visible { outline: 3px solid var(--sqlp-accent); }
+@media (max-width: 599px) { .sqlp-title { font-size: 24px; line-height: 32px; } }
+.sqlp-section { font-size: 22px; line-height: 30px; font-weight: 300; margin-bottom: var(--sqlp-s3); }
+
+/* ---- 內文 Requirement、PremiseList、Hint ---- */
+.sqlp-req { font-size: 17px; line-height: 28px; max-width: 40em; overflow-wrap: anywhere; }
+.sqlp-premise { display: grid; grid-template-columns: 4.5em minmax(0, 1fr); gap: var(--sqlp-s2) var(--sqlp-s4); font-size: 16px; line-height: 26px; }
+.sqlp-premise dt { color: var(--sqlp-muted); }
+.sqlp-premise dd { margin: 0; overflow-wrap: anywhere; }
+.sqlp-hint { font-size: 16px; line-height: 24px; color: var(--sqlp-muted); }
+.sqlp-hint-strong { color: var(--sqlp-fg); font-weight: 600; font-size: 17px; line-height: 26px; }
+
+/* ---- 資料表結構 SchemaDisclosure ---- */
+/* 資料表結構放在右欄（寬），每張表一個「欄位、型別、約束、說明」的表格；窄時表格水平捲動 */
+.sqlp-schema { background: var(--sqlp-tile); }
+.sqlp-schema summary { display: flex; align-items: center; gap: var(--sqlp-s3); min-height: 52px; padding: var(--sqlp-s2) var(--sqlp-s4); cursor: pointer; list-style: none; font-size: 18px; line-height: 26px; }
+.sqlp-schema summary::-webkit-details-marker { display: none; }
+.sqlp-schema summary .sqlp-minus { display: none; }
+.sqlp-schema[open] summary .sqlp-plus { display: none; }
+.sqlp-schema[open] summary .sqlp-minus { display: block; }
+.sqlp-schema-names { color: var(--sqlp-muted); font-family: var(--sqlp-mono); font-size: 16px; }
+.sqlp-schema-body { display: grid; gap: var(--sqlp-s5); padding: var(--sqlp-s2) var(--sqlp-s4) var(--sqlp-s5); }
+.sqlp-schema-table h4 { margin: 0 0 var(--sqlp-s2); display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sqlp-s3); font-size: 18px; color: var(--sqlp-fg); }
+.sqlp-schema-table h4 code { font-size: 18px; font-weight: 600; color: #7cc7ff; }
+.sqlp-schema-opt { font-family: var(--sqlp-mono); font-size: 14px; color: var(--sqlp-muted); }
+.sqlp-schema-scroll { overflow-x: auto; background: var(--sqlp-well); }
+.sqlp-schema-table table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 24px; }
+.sqlp-schema-table th, .sqlp-schema-table td { text-align: left; vertical-align: top; padding: var(--sqlp-s2) var(--sqlp-s4); border-top: 1px solid var(--sqlp-rule); }
+.sqlp-schema-table thead th { border-top: 0; font-size: 14px; font-weight: 600; color: var(--sqlp-muted); white-space: nowrap; }
+.sqlp-schema-table tbody th { white-space: nowrap; font-weight: 400; }
+.sqlp-schema-table tbody th code { font-family: var(--sqlp-mono); font-size: 16px; color: var(--sqlp-fg); }
+.sqlp-schema-tc th { color: var(--sqlp-muted); font-size: 14px; }
+.sqlp-schema-note { color: var(--sqlp-muted); min-width: 12em; }
+.sqlp-sql-inline { font-family: var(--sqlp-mono); font-size: 15px; white-space: pre-wrap; }
+.sqlp-sql-inline .sqlp-k-kw { color: #7cc7ff; font-weight: 600; }
+.sqlp-sql-inline .sqlp-k-fn { color: #ffcf70; }
+.sqlp-sql-inline .sqlp-k-str { color: #a8e39a; }
+.sqlp-sql-inline .sqlp-k-num { color: #ffb08a; }
+.sqlp-sql-inline .sqlp-k-op { color: #cfcfcf; }
+@media (max-width: 599px) {
+  .sqlp-schema-body { padding: var(--sqlp-s2) var(--sqlp-s2) var(--sqlp-s4); }
+  .sqlp-schema-table table { min-width: 640px; }
+}
+
+/* ---- SQL 區塊 SqlBlock ----
+   排版與上色由 assets/js/sql-format.js 產生：一行一個完整子句。桌機寬度夠時超長的行軟換行；
+   手機上不換行、整塊水平捲動，讓每一行維持完整子句。語法色只放在深色的程式碼區裡，
+   所以不受磚的狀態色影響（對比在最亮的程式碼區底色上也有 6:1 以上）。 */
+/* 程式碼區的底色依磚的狀態設成不透明色（--sqlp-well），手機的捲動陰影要用同色遮罩 */
+#sql-practice { --sqlp-well: #0d0d0d; }
+.sqlp-tile[data-state="revealed-rec"], .sqlp-tile[data-state="revealed-chosen-rec"] { --sqlp-well: #042c39; }
+.sqlp-tile[data-state="revealed-chosen-miss"] { --sqlp-well: #202020; }
+.sqlp-tile[data-state="revealed-other"] { --sqlp-well: #000; }
+.sqlp-code { background: var(--sqlp-well); padding: var(--sqlp-s3) var(--sqlp-s4); overflow-x: auto; }
+.sqlp-sql { margin: 0; font-family: var(--sqlp-mono); font-size: 16px; line-height: 27px; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--sqlp-fg); background: none; tab-size: 2; }
+.sqlp-sql code { font-size: inherit; font-family: inherit; }
+/* 手機：SQL 不換行、整塊水平捲動。左右兩緣的陰影只在那一側還有內容時出現（background-attachment: local 的捲動陰影） */
+@media (max-width: 599px) {
+  .sqlp-sql { white-space: pre; overflow-wrap: normal; font-size: 15px; line-height: 25px; }
+  .sqlp-code {
+    background:
+      linear-gradient(to right, var(--sqlp-well) 12px, transparent) left / 24px 100% no-repeat local,
+      linear-gradient(to left, var(--sqlp-well) 12px, transparent) right / 24px 100% no-repeat local,
+      linear-gradient(to right, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0)) left / 12px 100% no-repeat scroll,
+      linear-gradient(to left, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0)) right / 12px 100% no-repeat scroll,
+      var(--sqlp-well);
+  }
+}
+.sqlp-sql .sqlp-k-kw { color: #7cc7ff; font-weight: 600; }
+.sqlp-sql .sqlp-k-fn { color: #ffcf70; }
+.sqlp-sql .sqlp-k-str { color: #a8e39a; }
+.sqlp-sql .sqlp-k-num { color: #ffb08a; }
+.sqlp-sql .sqlp-k-param { color: #e0a8ff; }
+.sqlp-sql .sqlp-k-cmt { color: #a0a7ad; font-style: italic; white-space: pre-wrap; }
+.sqlp-sql .sqlp-k-id { color: var(--sqlp-fg); }
+.sqlp-sql .sqlp-k-op { color: #cfcfcf; }
+/* 整段是 -- 註解的選項是文字描述的設計方案，用一般文字排 */
+.sqlp-prose { margin: 0; font-size: 16px; line-height: 27px; overflow-wrap: anywhere; }
+
+/* ---- 磚格 TileGrid / 選項磚 OptionTile ----
+   單欄：每個選項用滿右欄寬，SQL 一行約可放 95 個字元。
+   一塊磚由上而下三層：標頭（字母與狀態，鋪在磚的狀態色上）、程式碼區（最深）、解析區（介於兩者之間）。 */
+.sqlp-tiles { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sqlp-s3); list-style: none; padding: 0; perspective: 1600px; }
+.sqlp-tiles > li { display: flex; container-type: inline-size; }
+.sqlp-tile {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start;
+  width: 100%; padding: 0 0 var(--sqlp-s3);
+  background-color: var(--sqlp-tile); color: var(--sqlp-fg); border: 0; border-radius: 0; text-align: left;
+  font: inherit; transform-origin: 50% 50%;
+  transition: background-color var(--sqlp-ease) ease-out, color var(--sqlp-ease) ease-out, transform var(--sqlp-ease) var(--sqlp-out);
+}
+.sqlp-tile .sqlp-code { margin: 0 var(--sqlp-s3); }
+.sqlp-tile .sqlp-prose { margin: 0 var(--sqlp-s3); padding: var(--sqlp-s3) var(--sqlp-s4); background: var(--sqlp-well); }
+.sqlp-tile-head { display: flex; align-items: center; gap: var(--sqlp-s4); padding: var(--sqlp-s2) var(--sqlp-s4); min-height: 56px; }
+.sqlp-tile-letter { font-family: var(--sqlp-display); font-weight: 200; font-size: 44px; line-height: 44px; width: 1em; }
+.sqlp-tile-state { display: flex; flex-wrap: wrap; gap: var(--sqlp-s3); font-size: 17px; line-height: 24px; font-weight: 600; }
+/* 未作答的磚：標頭鋪 cyan 點陣（參考圖的 dot matrix） */
+button.sqlp-tile { cursor: pointer; }
+button.sqlp-tile .sqlp-tile-head { background-image: radial-gradient(circle at 1px 1px, rgba(0, 189, 227, 0.3) 1px, transparent 1.5px); background-size: 9px 9px; }
+button.sqlp-tile:hover { background-color: var(--sqlp-tile-hover); transform: rotateX(1.5deg); }
+button.sqlp-tile:active { transform: scale(0.99); }
+.sqlp-tile[data-state^="revealed"] { cursor: default; }
+.sqlp-tile[data-state="revealed-rec"], .sqlp-tile[data-state="revealed-chosen-rec"] { background: var(--sqlp-rec); color: var(--sqlp-on-color); }
+.sqlp-tile[data-state="revealed-chosen-miss"] { background: var(--sqlp-miss); color: var(--sqlp-on-color); }
+/* 「不推薦」的磚沒有狀態色：磚 #111、程式碼區純黑、解析區 #1a1a1a，三層仍分得開 */
+.sqlp-tile[data-state="revealed-other"] { background: #111; box-shadow: inset 0 0 0 1.5px var(--sqlp-frame-muted); }
+.sqlp-tile.is-flipping { animation: sqlp-flip var(--sqlp-flip) var(--sqlp-out) both; animation-delay: var(--sqlp-delay, 0ms); }
+@keyframes sqlp-flip {
+  0% { transform: rotateX(0deg); }
+  50% { transform: rotateX(70deg); }
+  100% { transform: rotateX(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sqlp-tile, button.sqlp-tile:hover, .sqlp-round:hover { transform: none !important; transition: background-color var(--sqlp-ease) linear, color var(--sqlp-ease) linear; }
+  .sqlp-tile.is-flipping { animation: none; }
+}
+/* 寬螢幕的 2×2：右欄寬於 1280px 時兩欄並排（每塊至少約 630px，SQL 一行約 68 字元）。
+   每塊磚用 subgrid 共用三列，同一排兩塊的標頭、程式碼區、解析區各自對齊，方便橫向比對 */
+.sqlp-q-main { container-type: inline-size; container-name: sqlp-main; }
+@container sqlp-main (min-width: 1480px) {
+  .sqlp-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--sqlp-s3); row-gap: 0; }
+  /* container-type 會加上 layout containment，有 containment 的元素當不了 subgrid；
+     2×2 時每塊都超過 600px，用不到解析區的窄版切換，所以這裡取消 */
+  .sqlp-tiles > li { display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; container-type: normal; }
+  .sqlp-tiles > li:nth-child(-n + 2) { margin-bottom: var(--sqlp-s3); }
+  .sqlp-tile { grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; }
+}
+@media (max-width: 599px) {
+  .sqlp-tile .sqlp-code, .sqlp-tile .sqlp-prose { margin: 0 var(--sqlp-s2); }
+  .sqlp-tile-head { padding: var(--sqlp-s2) var(--sqlp-s3); }
+}
+
+/* ---- 選項解析 OptionAnalysis ----
+   一張兩欄的表：每一列上方一條分隔線（第一列除外），列距加大。底色介於磚的狀態色與程式碼區之間。 */
+.sqlp-analysis {
+  display: grid; grid-template-columns: 6em minmax(0, 1fr); column-gap: var(--sqlp-s4);
+  margin: var(--sqlp-s3) var(--sqlp-s3) 0; padding: var(--sqlp-s1) var(--sqlp-s4);
+  background: rgba(0, 0, 0, 0.26); font-size: 16px; line-height: 27px;
+}
+.sqlp-analysis dt, .sqlp-analysis dd { padding: var(--sqlp-s3) 0; border-top: 1px solid rgba(255, 255, 255, 0.24); }
+.sqlp-analysis dt:first-of-type, .sqlp-analysis dt:first-of-type + dd { border-top: 0; }
+.sqlp-analysis dt { font-weight: 600; }
+.sqlp-analysis dd { margin: 0; overflow-wrap: anywhere; }
+.sqlp-analysis ul { padding-left: 1.1em; }
+.sqlp-analysis li + li { margin-top: var(--sqlp-s1); }
+.sqlp-tile[data-state="revealed-other"] .sqlp-analysis { background: #1a1a1a; }
+@container (max-width: 420px) {
+  .sqlp-analysis { grid-template-columns: minmax(0, 1fr); margin: var(--sqlp-s3) var(--sqlp-s2) 0; }
+  .sqlp-analysis dd { border-top: 0; padding-top: 0; }
+}
+
+/* ---- 作答結果 ResultBanner ---- */
+.sqlp-result { padding: var(--sqlp-s4) var(--sqlp-s5); color: var(--sqlp-on-color); margin-bottom: var(--sqlp-s4); }
+.sqlp-result[data-v="ok"] { background: var(--sqlp-rec); }
+.sqlp-result[data-v="miss"] { background: var(--sqlp-miss); }
+.sqlp-result h3 { font-size: 26px; line-height: 34px; font-weight: 300; }
+.sqlp-result h3:focus { outline: none; }
+.sqlp-result h3:focus-visible { outline: 3px solid var(--sqlp-on-color); outline-offset: 4px; }
+.sqlp-result p { font-size: 15px; line-height: 24px; margin-top: var(--sqlp-s2); }
+
+/* ---- 文章清單 DocLinks ---- */
+.sqlp-docs ul { list-style: none; padding: 0; display: grid; gap: var(--sqlp-s1); }
+.sqlp-docs li a { display: flex; align-items: center; gap: var(--sqlp-s3); min-height: 44px; padding: var(--sqlp-s2) 0; font-size: 18px; line-height: 28px; }
+#sql-practice .sqlp-docs li a:visited { color: var(--sqlp-muted); }
+
+/* ---- 困惑筆記 ConfusionNote ---- */
+.sqlp-note summary { display: flex; align-items: center; gap: var(--sqlp-s2); min-height: var(--sqlp-hit); cursor: pointer; list-style: none; font-size: 15px; }
+.sqlp-note summary::-webkit-details-marker { display: none; }
+.sqlp-note summary .sqlp-minus { display: none; }
+.sqlp-note[open] summary .sqlp-plus { display: none; }
+.sqlp-note[open] summary .sqlp-minus { display: block; }
+.sqlp-note-body { display: grid; gap: var(--sqlp-s2); padding-top: var(--sqlp-s3); max-width: 40em; }
+.sqlp-note label { font-size: 14px; color: var(--sqlp-muted); }
+.sqlp-note select, .sqlp-note textarea {
+  font: inherit; font-size: 16px; line-height: 24px; color: var(--sqlp-fg); background: var(--sqlp-tile);
+  border: 1.5px solid var(--sqlp-rule); border-radius: 0; padding: var(--sqlp-s2) var(--sqlp-s3); width: 100%; box-sizing: border-box;
+}
+.sqlp-note select:focus, .sqlp-note textarea:focus { border-color: var(--sqlp-accent); outline: none; }
+.sqlp-note textarea::placeholder { color: var(--sqlp-muted); }
+.sqlp-note-out { font-family: var(--sqlp-mono) !important; font-size: 14px !important; }
+
+/* ---- 按鈕 Button ---- */
+.sqlp-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--sqlp-s3);
+  min-height: var(--sqlp-hit); min-width: var(--sqlp-hit); padding: var(--sqlp-s3) var(--sqlp-s5);
+  font: inherit; font-size: 17px; line-height: 24px; font-weight: 400; max-width: 100%; text-align: center;
+  border: 1.5px solid var(--sqlp-frame-muted); border-radius: 0; background: transparent; color: var(--sqlp-fg);
+  cursor: pointer; text-decoration: none;
+  transition: background-color var(--sqlp-ease) ease-out, color var(--sqlp-ease) ease-out, transform 80ms ease-out;
+}
+#sql-practice a.sqlp-btn { color: var(--sqlp-fg); text-decoration: none; }
+.sqlp-btn:hover { background: var(--sqlp-tile-hover); }
+.sqlp-btn:active { transform: translateY(1px); }
+/* 主要按鈕：2px 白框加粗體；次要按鈕是灰框。藍綠留給「推薦」，按鈕不用實心藍綠 */
+.sqlp-btn[data-v="primary"], #sql-practice a.sqlp-btn[data-v="primary"] { border: 2px solid var(--sqlp-fg); font-weight: 600; color: var(--sqlp-fg); }
+.sqlp-btn[data-v="primary"]:hover { background: var(--sqlp-fg); color: var(--sqlp-bg); }
+.sqlp-btn[data-v="danger"] { border-color: var(--sqlp-frame-muted); }
+.sqlp-btn[data-v="danger"][data-armed] { background: var(--sqlp-fg); border-color: var(--sqlp-fg); color: var(--sqlp-bg); font-weight: 600; }
+
+/* ---- 動作列 ActionBar ---- */
+.sqlp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sqlp-s3); margin-top: var(--sqlp-s6); }
+.sqlp-actions .sqlp-progress { flex: 1 1 260px; }
+.sqlp-actions-end { display: flex; flex-wrap: wrap; gap: var(--sqlp-s3); margin-left: auto; }
+@media (max-width: 599px) {
+  .sqlp-actions[data-v="sticky"] {
+    position: sticky; bottom: 0; z-index: 2; margin: var(--sqlp-s5) calc(-1 * var(--sqlp-s4)) 0;
+    padding: var(--sqlp-s3) var(--sqlp-s4) calc(var(--sqlp-s3) + env(safe-area-inset-bottom));
+    background: var(--sqlp-bg); box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.9);
+  }
+  .sqlp-actions[data-v="sticky"] .sqlp-actions-end { width: 100%; }
+  .sqlp-actions[data-v="sticky"] .sqlp-actions-end .sqlp-btn[data-v="primary"] { flex: 1 1 auto; }
+}
+
+/* ---- 題目版面 QuestionLayout ---- */
+/* 桌機：左欄題目 300 到 400px，捲動選項時固定在畫面上（太長時左欄自己捲動）；右欄放選項，一行約 95 字元的 SQL。
+   窄於 900px：單欄，題目區可以摺疊成只剩標題，讓選項上移。 */
+.sqlp-q { display: grid; grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); gap: var(--sqlp-s6); align-items: start; }
+/* 左欄固定在精簡頂列下方（頂列高 --sqlp-bar-h），不被它蓋住 */
+.sqlp-q-side { display: grid; gap: var(--sqlp-s5); position: sticky; top: calc(var(--sqlp-bar-h) + var(--sqlp-s4)); max-height: calc(100vh - var(--sqlp-bar-h) - 2 * var(--sqlp-s4)); overflow-y: auto; padding-right: var(--sqlp-s2); scrollbar-width: thin; }
+.sqlp-q-main { display: grid; gap: var(--sqlp-s5); min-width: 0; }
+.sqlp-q-toggle { display: none; }
+.sqlp-q-body { display: grid; gap: var(--sqlp-s5); }
+@media (max-width: 899px) {
+  .sqlp-q { grid-template-columns: minmax(0, 1fr); gap: var(--sqlp-s5); }
+  .sqlp-q-side { position: static; max-height: none; overflow: visible; padding-right: 0; gap: var(--sqlp-s3); }
+  /* 題目區摺疊鈕：標題右邊，命中區 44px */
+  .sqlp-q-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sqlp-s3); justify-items: start; }
+  .sqlp-q-toggle {
+    display: inline-flex; align-items: center; gap: var(--sqlp-s2); min-height: 44px; padding: 0 var(--sqlp-s3);
+    font: inherit; font-size: 14px; color: var(--sqlp-fg); background: transparent; border: 1.5px solid var(--sqlp-frame-muted); border-radius: 0; cursor: pointer;
+  }
+  .sqlp-q[data-collapsed] .sqlp-q-body { display: none; }
+}
+
+/* ---- 回合磚 RoundTile / RoundGrid ---- */
+.sqlp-rounds { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--sqlp-s2); list-style: none; padding: 0; perspective: 1400px; }
+.sqlp-rounds > li { display: flex; }
+.sqlp-rounds > li[data-wide] { grid-column: span 2; }
+@media (max-width: 599px) { .sqlp-rounds > li[data-wide] { grid-column: auto; } }
+.sqlp-round {
+  display: grid; align-content: space-between; gap: var(--sqlp-s4); width: 100%; min-height: 160px; padding: var(--sqlp-s4) var(--sqlp-s5);
+  background: var(--sqlp-tile); color: var(--sqlp-fg); border: 0; border-radius: 0; font: inherit; text-align: left; cursor: pointer;
+  transition: background-color var(--sqlp-ease) ease-out, transform var(--sqlp-ease) var(--sqlp-out);
+}
+.sqlp-round:hover { background: var(--sqlp-tile-hover); transform: rotateX(2deg) rotateY(-2deg); }
+.sqlp-round[data-v="blind"] { background: var(--sqlp-accent-fill); color: var(--sqlp-on-color); }
+.sqlp-round[data-v="blind"]:hover { background: var(--sqlp-accent-fill-hover); }
+.sqlp-round-kw { font-family: var(--sqlp-display); font-weight: 200; font-size: 40px; line-height: 40px; }
+.sqlp-round-name { font-size: 22px; line-height: 32px; font-weight: 400; }
+.sqlp-round-meta { font-size: 16px; line-height: 24px; opacity: 0.88; }
+.sqlp-round[data-v="blind"] .sqlp-round-meta { opacity: 1; }
+
+/* ---- 結果列 SummaryRow ---- */
+.sqlp-summary-list { list-style: none; padding: 0; display: grid; gap: var(--sqlp-s1); }
+.sqlp-row {
+  display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; align-items: center; gap: var(--sqlp-s4); width: 100%;
+  min-height: 44px; padding: var(--sqlp-s3) var(--sqlp-s4); background: var(--sqlp-tile); color: var(--sqlp-fg);
+  border: 0; border-radius: 0; font: inherit; font-size: 16px; line-height: 24px; text-align: left; cursor: pointer;
+}
+.sqlp-row:hover { background: var(--sqlp-tile-hover); }
+.sqlp-row-mark { width: 14px; height: 14px; box-sizing: border-box; border: 1.5px solid var(--sqlp-frame-muted); }
+.sqlp-row[data-s="ok"] .sqlp-row-mark { background: var(--sqlp-rec); border-color: var(--sqlp-rec); }
+.sqlp-row[data-s="miss"] .sqlp-row-mark { background: #8a8a8a; border-color: #8a8a8a; }
+.sqlp-row-state { font-size: 14px; font-weight: 600; white-space: nowrap; }
+.sqlp-score { font-family: var(--sqlp-display); font-weight: 200; font-size: 60px; line-height: 64px; }
+.sqlp-score small { font-family: var(--sqlp-font); font-size: 17px; font-weight: 400; color: var(--sqlp-muted); margin-left: var(--sqlp-s3); }
+
+/* ---- 提示 Notice、空狀態、錯誤、載入骨架、播報區 ---- */
+.sqlp-notice { display: flex; gap: var(--sqlp-s3); align-items: baseline; border: 1.5px solid var(--sqlp-accent); padding: var(--sqlp-s3) var(--sqlp-s4); font-size: 15px; line-height: 22px; margin-bottom: var(--sqlp-s4); }
+.sqlp-notice b { color: var(--sqlp-accent); flex: none; }
+.sqlp-state { display: grid; gap: var(--sqlp-s4); max-width: 40em; padding: var(--sqlp-s6) 0; }
+.sqlp-skel { display: grid; gap: var(--sqlp-s5); opacity: 0; animation: sqlp-appear 1ms linear 400ms forwards; }
+@keyframes sqlp-appear { to { opacity: 1; } }
+.sqlp-skel i { display: block; background: var(--sqlp-tile); }
+.sqlp-skel-kw { height: 88px; width: 46%; }
+.sqlp-skel-q { display: grid; grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); gap: var(--sqlp-s6); }
+.sqlp-skel-side { display: grid; gap: var(--sqlp-s3); align-content: start; }
+.sqlp-skel-side i { height: 22px; }
+.sqlp-skel-side i:first-child { height: 40px; width: 80%; }
+.sqlp-skel-tiles { display: grid; grid-template-columns: 1fr; gap: var(--sqlp-s3); }
+.sqlp-skel-tiles i { height: 180px; }
+@media (max-width: 899px) { .sqlp-skel-q { grid-template-columns: 1fr; } }
+@media (max-width: 599px) { .sqlp-skel-kw { height: 56px; } }
+.sqlp-vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---- 首頁 ---- */
+.sqlp-home { display: grid; gap: var(--sqlp-s6); }
+.sqlp-record { display: grid; gap: var(--sqlp-s3); max-width: 40em; }

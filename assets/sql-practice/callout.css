@@ -1,0 +1,59 @@
+/* 文章結尾的「SQL 練習：用 N 題檢查這篇的觀念」（layouts/partials/sql-practice/doc-link.html）。
+   位在 blog 的 herman 世界，只借練習頁的兩樣東西讓讀者先認得它：cyan 實心方塊與細體小寫。
+   契約在 scripts/sql-practice/ui/components.md 的 ArticleCallout。 */
+
+@font-face {
+  font-family: "SQLP Display";
+  font-style: normal;
+  font-weight: 200 300;
+  font-display: swap;
+  src: url("../fonts/noto-sans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+
+.sql-practice-callout {
+  display: flex;
+  align-items: stretch;
+  margin: 32px 0;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+  min-height: 64px;
+  transition: background-color 150ms ease-out;
+}
+a.sql-practice-callout,
+a.sql-practice-callout:visited {
+  color: #fff;
+  text-decoration: none;
+}
+.sql-practice-callout:hover {
+  background: #1c1c1c;
+}
+.sql-practice-callout:focus-visible {
+  outline: 3px solid #00bde3;
+  outline-offset: 2px;
+}
+.sql-practice-callout-kw {
+  display: flex;
+  align-items: flex-end;
+  padding: 8px 16px 6px;
+  background: #0b6e8e;
+  color: #fff;
+  font-family: "SQLP Display", "Segoe UI", "Helvetica Neue", sans-serif;
+  font-weight: 200;
+  font-size: 30px;
+  line-height: 32px;
+  letter-spacing: -0.02em;
+}
+.sql-practice-callout-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 10px 20px;
+  font-size: 16px;
+  line-height: 24px;
+}
+.sql-practice-callout-text b {
+  font-weight: 600;
+}

@@ -1,0 +1,68 @@
+{{- /*
+  SQL 練習頁的題庫：讀 hugo.toml 掛進 assets 的 scripts/sql-practice/questions 與
+  domains/<領域>/schema.sql，組成一份 JSON 給練習頁的 script 下載，並算出每篇文章被幾題的
+  relatedDocs 指到（文章結尾的「用 N 題檢查這篇」用它）。
+
+  用 partialCached 呼叫，整次建站只算一次；回傳 dict：
+  - bank：bank.json 的 resource（練習頁用 .RelPermalink 下載）
+  - byDoc：relatedDocs 的路徑 → 指到它的題數
+
+  題庫依 manifest.json 的 stages 順序載入，跟 verify_questions.py 讀的是同一份清單。
+  relatedDocs 指到不存在的頁面時建站失敗：題目解析裡的文章連結會變成 404，
+  文章搬家時要在這裡發現，不是在讀者點下去時。
+*/ -}}
+{{- $manifest := resources.Get "sql-practice/questions/manifest.json" | transform.Unmarshal -}}
+{{- $questions := slice -}}
+{{- range $manifest.stages -}}
+  {{- $file := printf "sql-practice/questions/%s" .file -}}
+  {{- with resources.Get $file -}}
+    {{- range transform.Unmarshal . -}}
+      {{- $questions = $questions | append . -}}
+    {{- end -}}
+  {{- else -}}
+    {{- errorf "sql-practice: manifest 列的 %s 不存在" $file -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $byDoc := dict -}}
+{{- range $questions -}}
+  {{- range .relatedDocs -}}
+    {{- $byDoc = merge $byDoc (dict . (add (index $byDoc . | default 0) 1)) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $docs := dict -}}
+{{- range $path, $_ := $byDoc -}}
+  {{- with site.GetPage (strings.TrimSuffix "/" $path) -}}
+    {{- $docs = merge $docs (dict $path (dict "title" .LinkTitle "url" .RelPermalink)) -}}
+  {{- else -}}
+    {{- errorf "sql-practice: relatedDocs 的 %s 找不到頁面" $path -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $domains := slice -}}
+{{- range $manifest.domains -}}
+  {{- $file := printf "sql-practice/domains/%s/schema.sql" .id -}}
+  {{- $schema := "" -}}
+  {{- with resources.Get $file -}}
+    {{- $schema = .Content -}}
+  {{- else -}}
+    {{- errorf "sql-practice: manifest 列的領域 schema %s 不存在" $file -}}
+  {{- end -}}
+  {{- $domains = $domains | append (dict "id" .id "name" .name "schema" $schema) -}}
+{{- end -}}
+
+{{- $stages := slice -}}
+{{- range $manifest.stages -}}
+  {{- $stages = $stages | append (dict "stage" .stage "name" .name) -}}
+{{- end -}}
+
+{{- $bank := dict
+  "questions" $questions
+  "stages" $stages
+  "domains" $domains
+  "docs" $docs
+  "masteryRules" $manifest.masteryRules
+-}}
+{{- $res := $bank | jsonify | resources.FromString "sql-practice/bank.json" | fingerprint -}}
+{{- return dict "bank" $res "byDoc" $byDoc -}}

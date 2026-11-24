@@ -35,6 +35,7 @@
     {{ .Content }}
   </div>
   {{ partial "autolink.html" . }}
+  {{ partial "sql-practice/doc-link.html" . }}
 
   <p>
     {{ range (.GetTerms "tags") }}

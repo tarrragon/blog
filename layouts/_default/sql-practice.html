@@ -1,0 +1,35 @@
+{{- /*
+  SQL 練習頁（frontmatter `layout: sql-practice`）。頁首、分類色帶與頁尾照 baseof 沿用，
+  讀者隨時能從色帶回到 SQL 分類；練習介面由 assets/js/sql-practice.js 畫在 #sql-practice 裡。
+
+  data 屬性交給 script 的值：
+  - data-bank：題庫 JSON（sql-practice/bank.html 產生）
+  - data-fallback：讀者不是從站內文章進來時，「離開練習」回到的頁面（SQL 分類首頁）
+  - data-site-root：站台的路徑前綴（/blog/），用來判斷 referrer 是不是站內頁面
+*/ -}}
+{{ define "main" }}
+{{- $data := partialCached "sql-practice/bank.html" . -}}
+{{- $sqlIndex := site.GetPage "/backend/01-database/sql" -}}
+{{- $css := resources.Get "sql-practice/practice.css" | minify | fingerprint -}}
+{{- $js := resources.Get "js/sql-practice.js" | js.Build (dict "minify" true "target" "es2019") | fingerprint -}}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+<article class="article-content sql-practice-page">
+  <h1>{{ .Title }}</h1>
+  <div class="article-body" data-pagefind-body>
+    <span hidden data-pagefind-meta="title">{{ .Title }}</span>
+    {{ .Content }}
+  </div>
+  {{ partial "autolink.html" . }}
+  <div id="sql-practice"
+       data-pagefind-ignore
+       data-bank="{{ $data.bank.RelPermalink }}"
+       data-fallback="{{ $sqlIndex.RelPermalink }}"
+       data-site-root="{{ site.Home.RelPermalink }}">
+    <p class="sqlp-status" role="status">載入題庫中…</p>
+    <noscript>
+      <p>練習頁要用 JavaScript 出題與記錄作答。瀏覽器停用 JavaScript 時，可以回到 <a href="{{ $sqlIndex.RelPermalink }}">SQL 分類</a> 讀文章。</p>
+    </noscript>
+  </div>
+</article>
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{ end }}

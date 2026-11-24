@@ -1,0 +1,19 @@
+{{- /*
+  文章結尾的入口「SQL 練習：用 N 題檢查這篇的觀念」：題庫裡有題目的 relatedDocs 指到這一篇時才出現，
+  連到練習頁並帶上 ?doc=<這篇的路徑>，練習頁只出那幾題。
+  N 由 sql-practice/bank.html 從題庫反查；練習頁不存在（例如被改成 draft）時整段不輸出。
+  樣式在 assets/sql-practice/callout.css，只在出現入口的頁面載入。
+*/ -}}
+{{- $key := printf "%s/" .Path -}}
+{{- $data := partialCached "sql-practice/bank.html" . -}}
+{{- with index $data.byDoc $key -}}
+  {{- $count := . -}}
+  {{- with site.GetPage "/backend/01-database/sql/practice/play" -}}
+    {{- $css := resources.Get "sql-practice/callout.css" | minify | fingerprint -}}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+<a class="sql-practice-callout" href="{{ .RelPermalink }}?doc={{ $key | urlquery }}" data-pagefind-ignore>
+  <span class="sql-practice-callout-kw" aria-hidden="true">practice</span>
+  <span class="sql-practice-callout-text"><b>SQL 練習</b>用 {{ $count }} 題檢查這篇的觀念</span>
+</a>
+  {{- end -}}
+{{- end -}}

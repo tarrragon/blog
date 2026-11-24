@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SQL 練習元件展示</title>
+<!-- 元件展示頁：用 assets/js/sqlp-components.js（練習頁用的同一份元件庫）把每個元件、每個狀態排出來，
+     題目內容直接讀 scripts/sql-practice/questions/ 的真實題目，對照 components.md 的契約。
+     ES module 與 fetch 在 file:// 下不能用，要從 repo 根目錄起一個 HTTP 伺服器再開：
+       python3 -m http.server 8765 --bind 127.0.0.1
+       http://127.0.0.1:8765/scripts/sql-practice/ui/gallery.html -->
+<link rel="stylesheet" href="../../../assets/sql-practice/practice.css">
+<link rel="stylesheet" href="../../../assets/sql-practice/callout.css">
+<style>
+  @font-face { font-family: "SQLP Display"; font-weight: 200 300; src: url("../../../static/fonts/noto-sans-latin.woff2") format("woff2"); }
+  body { margin: 0; background: #181a20; color: #fafafa; font-family: system-ui, sans-serif; }
+  .g-wrap { max-width: 1360px; margin: 0 auto; padding: 24px 48px; }
+  @media (min-width: 1800px) { .g-wrap { max-width: 2000px; } } /* 跟練習頁的 main 一樣在寬螢幕放寬，仍然置中 */
+  @media (max-width: 599px) { .g-wrap { padding: 16px 0; } }
+  /* 每個元件一個區段：上方分隔線、區段內上下留白，說明標籤跟元件之間留 16px */
+  .g-sec { padding: 32px 0 40px; border-top: 1px solid #333; }
+  /* 精簡頂列是練習區的第一個子元素，所以用 :first-of-type 找第一個區段，不用 :first-child */
+  .g-sec:first-of-type { border-top: 0; padding-top: 8px; }
+  /* 樞紐列自己有底線，緊接的區段不再畫上邊線，避免兩條線疊在一起 */
+  .g-sec:has(.sqlp-pivot) { padding-bottom: 0; }
+  .g-sec:has(.sqlp-pivot) + .g-sec { border-top: 0; padding-top: 16px; }
+  .g-h { font: 600 16px/24px ui-monospace, Menlo, monospace; color: #00bde3; letter-spacing: 0.02em; margin: 0 0 16px; }
+  .g-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+  .g-callout { padding: 32px 0; border-top: 1px solid #333; }
+</style>
+</head>
+<body>
+<div class="g-wrap">
+  <div id="sql-practice"><p class="sqlp-hint">載入元件與題目中…（要用 HTTP 伺服器開，見檔頭註解）</p></div>
+  <section class="g-callout">
+    <p class="g-h">ArticleCallout（文章頁，herman 世界）</p>
+    <a class="sql-practice-callout" href="#"><span class="sql-practice-callout-kw" aria-hidden="true">practice</span><span class="sql-practice-callout-text"><b>SQL 練習</b>用 6 題檢查這篇的觀念</span></a>
+  </section>
+</div>
+<script type="module">
+import * as C from "../../../assets/js/sqlp-components.js";
+const { h } = C;
+const root = document.getElementById("sql-practice");
+const label = (t) => h("p", { class: "g-h", text: t });
+const announce = (msg) => { const el = document.getElementById("sqlp-live"); if (el) el.textContent = msg; };
+
+const load = (f) => fetch("../questions/" + f).then((r) => r.json());
+const [stage2, stage7] = await Promise.all([load("stage2-joins.json"), load("stage7-schema-design.json")]);
+const q = stage2.find((x) => x.variantId === "S2-03-cloud-courses-progress-02") || stage2[0];
+const proseQ = stage7.find((x) => x.options.some((o) => /^\s*--/.test(o.sql))) || stage7[0];
+const tables = C.parseSchema(await fetch(`../domains/${q.domain}/schema.sql`).then((r) => r.text()));
+// 每個元件放進一個區段：說明標籤＋元件
+const sec = (title, ...nodes) => h("section", { class: "g-sec" }, label(title), nodes);
+const letters = "abcd";
+const rec = q.recommendedKeys;
+const chosenKey = q.options.find((o) => !rec.includes(o.key)).key;
+const stateOf = (o) => o.key === chosenKey ? (rec.includes(o.key) ? "revealed-chosen-rec" : "revealed-chosen-miss")
+  : rec.includes(o.key) ? "revealed-rec" : "revealed-other";
+const recLetters = q.options.map((o, i) => rec.includes(o.key) ? letters[i] : null).filter(Boolean).join("、");
+
+root.textContent = "";
+const exitToArticle = { url: "#", label: "回到文章", detail: "D02：熱冷欄位分離——運單寬表與 1:1 拆出的原始託運單報文" };
+// 實際運作的精簡頂列：往下捲過導覽列就會出現（手機上往上捲才出現）
+const compact = C.compactBar({ label: "階段二・第 3／6 題", shortLabel: "第 3／6 題", exit: exitToArticle, onTop: () => C.scrollToPracticeTop(root) });
+// 不另外排一條靜態的示範：它跟導覽列同時出現在畫面上，看起來像兩條頂列（使用者 2026-11-24 指出）
+root.append(
+  compact,
+  sec("PivotBar · PivotItem（default / current）· ExitLink（固定文字的按鈕）· 往下捲過這一列，頂端會出現 CompactBar（手機上往上捲才出現）",
+    C.pivotBar({
+      items: ["練習首頁", "盲測", "階段一", "階段二", "階段三", "階段四", "階段五", "階段六", "階段七", "階段八", "綜合挑戰"]
+        .map((t) => ({ label: t, href: "#", current: t === "階段二" })),
+      exit: { url: "#", label: "回到文章", detail: "D02：熱冷欄位分離——運單寬表與 1:1 拆出的原始託運單報文" },
+    })),
+
+  sec("KeywordBanner · QuestionLayout（左欄題目，捲動時固定；窄於 900px 可摺疊）· SchemaPanel · 已作答",
+    C.keywordBanner("join"),
+    C.questionLayout({
+      title: C.screenTitle(q.title),
+      side: [
+        C.requirement(q.businessRequirement),
+        C.premiseList(q.workloadProfile),
+        C.hint("在題目給的引擎前提下，選出符合需求、代價最可控的寫法。", true),
+      ],
+      main: [
+        C.schemaPanel(q.tablePath, tables),
+        C.resultBanner({ ok: false, recLetters, note: q.alternativeNote }),
+        C.tileGrid(q.options.map((o, i) => C.optionTile({ letter: letters[i], option: o, state: stateOf(o) }))),
+        C.docLinks([{ title: "SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責", url: "#" }, { title: "SQL.3 連接改變列數與 NULL", url: "#" }]),
+        C.confusionNote({ question: q, announce }),
+      ],
+    }),
+    C.actionBar({
+      sticky: true,
+      start: C.progressStrip(["ok", "miss", "current", null, null, null], "第 3／6 題・答對 1・答錯 1"),
+      buttons: [C.button({ label: "結束這一輪" }), C.button({ label: "下一題", variant: "primary" })],
+    })),
+
+  sec("SchemaPanel 展開（欄位、型別、約束、說明）",
+    (() => { const p = C.schemaPanel(q.tablePath, tables); p.open = true; return p; })()),
+
+  sec("OptionTile idle（未作答：整塊是按鈕，標頭鋪點陣）",
+    C.tileGrid(q.options.slice(0, 2).map((o, i) => C.optionTile({ letter: letters[i], option: o, state: "idle", onAnswer: () => {} })))),
+
+  sec("OptionTile 文字描述的設計方案（整段 -- 註解的選項）· ResultBanner ok",
+    C.resultBanner({ ok: true }),
+    C.tileGrid(proseQ.options.slice(0, 2).map((o, i) => C.optionTile({ letter: letters[i], option: o, state: proseQ.recommendedKeys.includes(o.key) ? "revealed-chosen-rec" : "revealed-other" })))),
+
+  sec("Button：secondary / primary / danger（第一下換成確認）",
+    h("div", { class: "g-row" },
+      C.button({ label: "結束這一輪" }), C.button({ label: "下一題", variant: "primary" }),
+      C.dangerButton({ label: "清除我的作答紀錄", confirmLabel: "再按一次就清除 101 題的紀錄（不能復原）", onConfirm: () => {}, announce }))),
+
+  sec("KeywordBanner「practice」· RoundGrid：blind（寬）+ stage",
+    C.keywordBanner("practice"),
+    C.roundGrid([
+      C.roundTile({ variant: "blind", kw: "blind", wide: true, name: "盲測：不提示階段與考點", meta: "10 題，跨八個階段與綜合挑戰；其中 2 題複合陷阱、1 題 Schema 取捨、1 題資安權限" }),
+      C.roundTile({ variant: "stage", kw: "select", name: "階段一　單表查詢與基礎語法", meta: "5 個觀念・已掌握 2・初通 1・尚未練習 2" }),
+      C.roundTile({ variant: "stage", kw: "update", name: "階段四　資料寫入（CRUD）、約束、識別字、字串與權限", meta: "5 個觀念・尚未練習 5" }),
+    ])),
+
+  sec("SummaryRow：ok / miss / skip",
+    h("p", { class: "sqlp-score" }, "7", h("small", { text: "／10 題答對" })),
+    h("ul", { class: "sqlp-summary-list" },
+      C.summaryRow({ title: "別名在 WHERE 與 ORDER BY 的可用範圍：求值順序與跨引擎可攜", state: "ok" }),
+      C.summaryRow({ title: "D02：熱冷欄位分離——運單寬表與 1:1 拆出的原始託運單報文（shipments 與 shipment_payloads，領域丙變體）", state: "miss" }),
+      C.summaryRow({ title: "統計所有會員的下單次數", state: "skip" }))),
+
+  sec("Notice · EmptyState · ErrorState",
+    C.notice("這個瀏覽器不讓網頁存資料（例如無痕視窗），這次的作答紀錄不會保存。"),
+    h("div", { class: "g-row" },
+      C.stateView({ title: "這篇文章還沒有練習題", text: "可以回到原本的文章，或到練習首頁選別的階段。",
+        actions: [C.exitLink({ url: "#", label: "回到文章", detail: "SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責" }), C.button({ label: "到練習首頁", variant: "primary" })] }),
+      C.stateView({ title: "題庫沒有載入", text: "可能是網路斷了。", alert: true,
+        actions: [C.button({ label: "重試", variant: "primary" }), C.exitLink({ url: "#", label: "回到 SQL 分類" })] }))),
+
+  sec("LoadingSkeleton（400ms 後出現）", C.skeleton()),
+  C.liveRegion(),
+);
+C.attachCompactBar(compact, root.querySelector(".sqlp-pivot"));
+document.documentElement.setAttribute("data-ready", "");
+</script>
+</body>
+</html>
