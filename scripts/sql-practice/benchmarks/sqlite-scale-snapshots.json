@@ -2,7 +2,7 @@
   "schemaVersion": "1.0",
   "engine": "SQLite 3.54.1",
   "runtime": "Python 3.15.2 (Darwin arm64)",
-  "generatedAt": "2026-11-24T07:45:11Z",
+  "generatedAt": "2026-11-24T09:00:06Z",
   "note": "時間絕對值隨硬體與版本改變，教學判讀重點為同一組資料上的執行計畫結構與相對量級差。每個樣本重複執行 loopsPerSample 次再取單次平均，避免微秒級查詢的倍率落在計時器解析度上。多數變體的單次差距在幾毫秒以內，低於使用者感覺得到的約 100 ms，網站呈現時應以執行計畫與倍率為主、時間為輔。",
   "benchmarks": [
     {
@@ -22,8 +22,8 @@
             "SCAN orders USING COVERING INDEX idx_orders_ordered_id"
           ],
           "loopsPerSample": 11,
-          "minMs": 1.5828,
-          "medianMs": 1.6875
+          "minMs": 1.5693,
+          "medianMs": 1.599
         },
         "sargable_half_open": {
           "sql": "SELECT COUNT(*) FROM orders WHERE ordered_at >= '2025-06-01 00:00:00' AND ordered_at < '2025-07-01 00:00:00';",
@@ -31,12 +31,12 @@
           "explainPlan": [
             "SEARCH orders USING COVERING INDEX idx_orders_ordered_id (ordered_at>? AND ordered_at<?)"
           ],
-          "loopsPerSample": 385,
-          "minMs": 0.0407,
-          "medianMs": 0.0413
+          "loopsPerSample": 386,
+          "minMs": 0.0416,
+          "medianMs": 0.0428
         }
       },
-      "speedupRatio": "40.9x（半開區間相對 substr；單次差 1.646 ms）"
+      "speedupRatio": "37.4x（半開區間相對 substr；單次差 1.556 ms）"
     },
     {
       "benchmarkId": "bm-bookstore-duplicate-email-skew",
@@ -56,8 +56,8 @@
             "USE TEMP B-TREE FOR GROUP BY"
           ],
           "loopsPerSample": 17,
-          "minMs": 1.0261,
-          "medianMs": 1.0295
+          "minMs": 1.0333,
+          "medianMs": 1.0462
         },
         "self_join_distinct": {
           "sql": "SELECT DISTINCT c1.email FROM customers c1 JOIN customers c2 ON c1.email = c2.email AND c1.customer_id <> c2.customer_id;",
@@ -69,11 +69,11 @@
             "USE TEMP B-TREE FOR DISTINCT"
           ],
           "loopsPerSample": 1,
-          "minMs": 134.8672,
-          "medianMs": 135.6881
+          "minMs": 137.2822,
+          "medianMs": 140.5904
         }
       },
-      "speedupRatio": "131.8x（GROUP BY 相對自連接；單次差 134.659 ms）"
+      "speedupRatio": "134.4x（GROUP BY 相對自連接；單次差 139.544 ms）"
     },
     {
       "benchmarkId": "bm-bookstore-offset-vs-keyset",
@@ -91,9 +91,9 @@
           "explainPlan": [
             "SCAN orders USING INDEX idx_orders_ordered_id"
           ],
-          "loopsPerSample": 24,
-          "minMs": 0.2892,
-          "medianMs": 0.293
+          "loopsPerSample": 50,
+          "minMs": 0.3007,
+          "medianMs": 0.3054
         },
         "keyset_cursor": {
           "sql": "SELECT order_id, customer_id, status, total_amount, ordered_at FROM orders WHERE (ordered_at, order_id) < ('2025-08-01 00:00:00', 150000) ORDER BY ordered_at DESC, order_id DESC LIMIT 20;",
@@ -101,12 +101,55 @@
           "explainPlan": [
             "SEARCH orders USING INDEX idx_orders_ordered_id (ordered_at<?)"
           ],
-          "loopsPerSample": 907,
-          "minMs": 0.0105,
-          "medianMs": 0.0105
+          "loopsPerSample": 729,
+          "minMs": 0.0107,
+          "medianMs": 0.0109
         }
       },
-      "speedupRatio": "27.9x（Keyset 相對 OFFSET 25000；單次差 0.282 ms）"
+      "speedupRatio": "28.0x（Keyset 相對 OFFSET 25000；單次差 0.294 ms）"
+    },
+    {
+      "benchmarkId": "bm-bookstore-email-lower-index",
+      "domain": "bookstore",
+      "conceptIds": [
+        "S4-04"
+      ],
+      "measurementSource": "live-sqlite-measured",
+      "datasetScale": "7,007 customers；基準內臨時建立 tmp_customers_email (email) 與 tmp_customers_email_lower (LOWER(email))，兩者都不在 schema.sql",
+      "title": "不分大小寫比對 email：一般索引用不上 LOWER(email)，運算式索引用得上",
+      "variants": {
+        "exact_match_plain_index": {
+          "sql": "SELECT customer_id FROM customers WHERE email = 'alice@example.com';",
+          "rowCount": 1,
+          "explainPlan": [
+            "SEARCH customers USING COVERING INDEX tmp_customers_email (email=?)"
+          ],
+          "loopsPerSample": 3721,
+          "minMs": 0.0007,
+          "medianMs": 0.0008
+        },
+        "lower_with_plain_index_only": {
+          "sql": "SELECT customer_id FROM customers WHERE LOWER(email) = LOWER('Alice@Example.com');",
+          "rowCount": 2,
+          "explainPlan": [
+            "SCAN customers USING COVERING INDEX tmp_customers_email"
+          ],
+          "loopsPerSample": 46,
+          "minMs": 0.4073,
+          "medianMs": 0.4131
+        },
+        "lower_with_expression_index": {
+          "sql": "SELECT customer_id FROM customers WHERE LOWER(email) = LOWER('Alice@Example.com');",
+          "rowCount": 2,
+          "explainPlan": [
+            "SEARCH customers USING COVERING INDEX tmp_customers_email_lower (<expr>=?)"
+          ],
+          "loopsPerSample": 2637,
+          "minMs": 0.0011,
+          "medianMs": 0.0011
+        }
+      },
+      "speedupRatio": "375.5x（運算式索引相對只有一般索引；單次差 0.412 ms）"
     },
     {
       "benchmarkId": "bm-logistics-partial-index-queue",
@@ -126,8 +169,8 @@
             "USE TEMP B-TREE FOR ORDER BY"
           ],
           "loopsPerSample": 22,
-          "minMs": 0.8057,
-          "medianMs": 0.808
+          "minMs": 0.8274,
+          "medianMs": 0.8318
         },
         "partial_index_queued": {
           "sql": "SELECT task_id FROM dispatch_tasks WHERE status = 'queued' ORDER BY priority DESC, created_at ASC LIMIT 1;",
@@ -135,12 +178,45 @@
           "explainPlan": [
             "SCAN dispatch_tasks USING COVERING INDEX idx_dispatch_queued"
           ],
-          "loopsPerSample": 1935,
-          "minMs": 0.0006,
-          "medianMs": 0.0006
+          "loopsPerSample": 2243,
+          "minMs": 0.0007,
+          "medianMs": 0.0007
         }
       },
-      "speedupRatio": "1346.7x（部分索引相對全表掃描；單次差 0.807 ms）"
+      "speedupRatio": "1188.3x（部分索引相對全表掃描；單次差 0.831 ms）"
+    },
+    {
+      "benchmarkId": "bm-logistics-offset-vs-keyset",
+      "domain": "swift-logistics",
+      "conceptIds": [
+        "S3-05"
+      ],
+      "measurementSource": "live-sqlite-measured",
+      "datasetScale": "50,008 shipments；基準內臨時建立 tmp_shipments_created_id (created_at DESC, shipment_id DESC)，不在 schema.sql；回表取 5 欄",
+      "title": "運單深頁分頁：OFFSET 25004 vs Keyset 接續標記",
+      "variants": {
+        "deep_offset_25004": {
+          "sql": "SELECT shipment_id, merchant_id, status, fee_cents, created_at FROM shipments ORDER BY created_at DESC, shipment_id DESC LIMIT 20 OFFSET 25004;",
+          "rowCount": 20,
+          "explainPlan": [
+            "SCAN shipments USING INDEX tmp_shipments_created_id"
+          ],
+          "loopsPerSample": 67,
+          "minMs": 0.2885,
+          "medianMs": 0.2945
+        },
+        "keyset_cursor": {
+          "sql": "SELECT shipment_id, merchant_id, status, fee_cents, created_at FROM shipments WHERE (created_at, shipment_id) < ('2025-08-07 13:02:55', 125005) ORDER BY created_at DESC, shipment_id DESC LIMIT 20;",
+          "rowCount": 20,
+          "explainPlan": [
+            "SEARCH shipments USING INDEX tmp_shipments_created_id (created_at<?)"
+          ],
+          "loopsPerSample": 801,
+          "minMs": 0.0104,
+          "medianMs": 0.0105
+        }
+      },
+      "speedupRatio": "28.0x（Keyset 相對 OFFSET 25004；單次差 0.284 ms）"
     },
     {
       "benchmarkId": "bm-academy-webhook-storm",
@@ -160,9 +236,9 @@
             "SCAN webhook_events",
             "USE TEMP B-TREE FOR GROUP BY"
           ],
-          "loopsPerSample": 3,
-          "minMs": 6.3058,
-          "medianMs": 6.3777
+          "loopsPerSample": 2,
+          "minMs": 6.7041,
+          "medianMs": 6.7709
         },
         "partial_index_pending": {
           "sql": "SELECT event_id FROM webhook_events WHERE status = 'pending' ORDER BY received_at ASC LIMIT 5;",
@@ -170,9 +246,9 @@
           "explainPlan": [
             "SCAN webhook_events USING COVERING INDEX idx_webhook_pending"
           ],
-          "loopsPerSample": 2727,
-          "minMs": 0.0011,
-          "medianMs": 0.0011
+          "loopsPerSample": 1875,
+          "minMs": 0.0012,
+          "medianMs": 0.0012
         }
       },
       "speedupRatio": "見各變體執行計畫與中位數耗時"

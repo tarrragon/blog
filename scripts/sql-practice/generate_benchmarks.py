@@ -142,6 +142,43 @@ def run_all_benchmarks() -> dict:
                 ),
             }
         )
+
+        # 6. bookstore：LOWER(email) 與一般索引、運算式索引（S4-04）
+        # schema.sql 刻意不替 customers.email 建索引（S5-02 要量無索引的熱點），這裡在記憶體資料庫裡臨時建立，
+        # 先只建一般索引量兩種寫法，再補運算式索引量第三種；建索引的順序決定每個變體看得到哪些索引。
+        conn.execute("CREATE INDEX tmp_customers_email ON customers(email);")
+        b6_variants = {
+            "exact_match_plain_index": measure_query(
+                conn, "SELECT customer_id FROM customers WHERE email = 'alice@example.com';"
+            ),
+            "lower_with_plain_index_only": measure_query(
+                conn, "SELECT customer_id FROM customers WHERE LOWER(email) = LOWER('Alice@Example.com');"
+            ),
+        }
+        conn.execute("CREATE INDEX tmp_customers_email_lower ON customers(LOWER(email));")
+        b6_variants["lower_with_expression_index"] = measure_query(
+            conn, "SELECT customer_id FROM customers WHERE LOWER(email) = LOWER('Alice@Example.com');"
+        )
+        cust_cnt = conn.execute("SELECT COUNT(*) FROM customers;").fetchone()[0]
+        benchmarks.append(
+            {
+                "benchmarkId": "bm-bookstore-email-lower-index",
+                "domain": "bookstore",
+                "conceptIds": ["S4-04"],
+                "measurementSource": "live-sqlite-measured",
+                "datasetScale": (
+                    f"{cust_cnt:,} customers；基準內臨時建立 tmp_customers_email (email) 與 "
+                    "tmp_customers_email_lower (LOWER(email))，兩者都不在 schema.sql"
+                ),
+                "title": "不分大小寫比對 email：一般索引用不上 LOWER(email)，運算式索引用得上",
+                "variants": b6_variants,
+                "speedupRatio": ratio_text(
+                    b6_variants["lower_with_plain_index_only"],
+                    b6_variants["lower_with_expression_index"],
+                    "運算式索引相對只有一般索引",
+                ),
+            }
+        )
     finally:
         conn.close()
 
@@ -171,6 +208,47 @@ def run_all_benchmarks() -> dict:
                 "variants": b4_variants,
                 "speedupRatio": ratio_text(
                     b4_variants["full_scan_bypass_index"], b4_variants["partial_index_queued"], "部分索引相對全表掃描"
+                ),
+            }
+        )
+
+        # 7. swift-logistics：運單列表深頁 OFFSET vs Keyset（S3-05 物流變體）
+        # schema.sql 沒有以 created_at 開頭的索引，題目寫的是「預期建」的 (created_at DESC, shipment_id DESC)，
+        # 這裡臨時建立後量測；接續標記取 OFFSET 那一頁的前一列，兩個變體回傳同一頁。
+        conn_l.execute("CREATE INDEX tmp_shipments_created_id ON shipments(created_at DESC, shipment_id DESC);")
+        ship_cnt = conn_l.execute("SELECT COUNT(*) FROM shipments;").fetchone()[0]
+        deep = ship_cnt // 2
+        cursor_at, cursor_id = conn_l.execute(
+            "SELECT created_at, shipment_id FROM shipments ORDER BY created_at DESC, shipment_id DESC LIMIT 1 OFFSET ?;",
+            (deep - 1,),
+        ).fetchone()
+        b7_variants = {
+            f"deep_offset_{deep}": measure_query(
+                conn_l,
+                "SELECT shipment_id, merchant_id, status, fee_cents, created_at FROM shipments "
+                f"ORDER BY created_at DESC, shipment_id DESC LIMIT 20 OFFSET {deep};",
+            ),
+            "keyset_cursor": measure_query(
+                conn_l,
+                "SELECT shipment_id, merchant_id, status, fee_cents, created_at FROM shipments "
+                f"WHERE (created_at, shipment_id) < ('{cursor_at}', {cursor_id}) "
+                "ORDER BY created_at DESC, shipment_id DESC LIMIT 20;",
+            ),
+        }
+        benchmarks.append(
+            {
+                "benchmarkId": "bm-logistics-offset-vs-keyset",
+                "domain": "swift-logistics",
+                "conceptIds": ["S3-05"],
+                "measurementSource": "live-sqlite-measured",
+                "datasetScale": (
+                    f"{ship_cnt:,} shipments；基準內臨時建立 tmp_shipments_created_id (created_at DESC, shipment_id DESC)，"
+                    "不在 schema.sql；回表取 5 欄"
+                ),
+                "title": f"運單深頁分頁：OFFSET {deep} vs Keyset 接續標記",
+                "variants": b7_variants,
+                "speedupRatio": ratio_text(
+                    b7_variants[f"deep_offset_{deep}"], b7_variants["keyset_cursor"], f"Keyset 相對 OFFSET {deep}"
                 ),
             }
         )

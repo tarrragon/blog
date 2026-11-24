@@ -82,6 +82,10 @@
         "opt_not_in_filtered": [2003, 2005],
         "opt_not_exists": [2003, 2005],
         "opt_left_neq_paid": [2002, 2003, 2005]
+      },
+      "optionExplainMustContain": {
+        "opt_not_in_filtered": "LIST SUBQUERY",
+        "opt_not_exists": "CORRELATED SCALAR SUBQUERY"
       }
     }
   },
@@ -339,6 +343,9 @@
         "opt_tuple_lt_bug": [7008],
         "opt_expanded_mixed": [7006, 7007, 7008],
         "opt_tuple_lte_dup": [7005, 7008]
+      },
+      "optionExplainMustContain": {
+        "opt_expanded_mixed": "idx_shipments_wh_status_created (warehouse_id=? AND status=? AND created_at<?)"
       }
     }
   },

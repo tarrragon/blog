@@ -763,6 +763,7 @@
   {
     "conceptId": "S3-05",
     "variantId": "S3-05-logistics-shipments-pagination-02",
+    "benchmarkRef": "bm-logistics-offset-vs-keyset",
     "discriminator": ["data", "plan"],
     "domain": "swift-logistics",
     "stage": 3,
@@ -831,7 +832,7 @@
       }
     ],
     "recommendedKeys": ["opt_keyset_total_order"],
-    "alternativeNote": "深頁 OFFSET 與 Keyset 的實測計畫與耗時差距見基準快照 bm-bookstore-offset-vs-keyset（紙頁書店的 orders）；這個領域還沒有對應的實測",
+    "alternativeNote": "深頁 OFFSET 與 Keyset 的實測見基準快照 bm-logistics-offset-vs-keyset：基準在 5 萬筆壓測運單上臨時建立 (created_at DESC, shipment_id DESC) 索引，OFFSET 沿著索引掃過前面的列，Keyset 直接定位起點；本題的基礎資料沒有這個索引，所以題目選項本身的計畫看不出差距",
     "relatedDocs": [
       "/backend/01-database/sql/pagination-needs-a-total-order/"
     ],

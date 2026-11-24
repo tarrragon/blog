@@ -251,6 +251,10 @@
       "optionFirstColumnOrder": {
         "opt_cte_join": [201, 203, 205],
         "opt_window_avg": [201, 203, 205]
+      },
+      "optionExplainMustContain": {
+        "opt_correlated_twice": "CORRELATED SCALAR SUBQUERY 2",
+        "opt_cte_join": "CO-ROUTINE cat_avg"
       }
     }
   },
@@ -603,6 +607,10 @@
       },
       "optionRowCounts": {
         "opt_bad_group_by": 0
+      },
+      "optionExplainMustContain": {
+        "opt_correlated_twice": "CORRELATED SCALAR SUBQUERY 2",
+        "opt_cte_join": "CO-ROUTINE track_avg"
       }
     }
   },

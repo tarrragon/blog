@@ -327,6 +327,7 @@
   {
     "conceptId": "S4-04",
     "variantId": "S4-04-bookstore-collation-01",
+    "benchmarkRef": "bm-bookstore-email-lower-index",
     "discriminator": ["engine", "plan"],
     "population": "not-applicable",
     "domain": "bookstore",
