@@ -71,7 +71,7 @@ docker rm -fv sqlpractice-pg18
 | 10   | 4.12 秒、137.7 MB | 2.54 秒、76.1 MB | 6.50 秒、258.6 MB |
 
   灌資料一律放在 Web Worker；手機建議倍數不超過 3，並只載入目前題目的領域。
-- **版本對齊**：驗證腳本用 Python 內建的 SQLite（目前 3.53.0），sql.js 1.13.0 內建 3.49.1；`EXPLAIN QUERY PLAN` 的字串與執行計畫可能隨版本不同。前端鎖定 WASM 版本後，應在同一個 WASM build 上重跑題庫斷言。
+- **版本對齊**：驗證腳本用 Python 內建的 SQLite（目前 3.54.1），sql.js 1.13.0 內建 3.49.1；`EXPLAIN QUERY PLAN` 的字串與執行計畫可能隨版本不同。前端鎖定 WASM 版本後，應在同一個 WASM build 上重跑題庫斷言。
 - **時間差多半感覺不到**：`benchmarks/sqlite-scale-snapshots.json` 的變體單次差距多在幾毫秒以內（自連接那一題除外），網站應以執行計畫與倍率為主、時間為輔。
 
 `schema.sql`、`seed.sql` 與 `seed_scale.sql` 皆為數 KB 純文字 SQL，零二進位膨脹，可直接推上 GitHub。

@@ -15,29 +15,29 @@
 
 工具鏈（`which` 與 `--version` 實查）：
 
-| 工具                    | 版本                         | 路徑與備註                                                                                                                |
-| ----------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Python                  | 3.14.4                       | `/opt/homebrew/bin/python3`；內建 `sqlite3` 模組連結 SQLite 3.53.0，`verify_*.py` 用的是這一份                            |
-| sqlite3 CLI（系統）     | 3.43.2                       | `/usr/bin/sqlite3`，PATH 上先找到的是這一支                                                                               |
-| sqlite3 CLI（Homebrew） | 3.53.0                       | `/opt/homebrew/opt/sqlite/bin/sqlite3`（keg-only，沒有 link 進 PATH）；要跟驗證腳本同版本時用這一支                       |
-| PostgreSQL              | 17.12                        | `postgresql@17`（keg-only，已 `brew link --force`，所以 `initdb`、`pg_ctl`、`psql` 在 `/opt/homebrew/bin`）；服務沒有常駐 |
-| PostgreSQL 18           | 18.7                         | 只在 `postgres:18` 容器裡，本機沒有裝 18 的執行檔                                                                         |
-| Node.js                 | 24.4.1                       | `/opt/homebrew/bin/node`                                                                                                  |
-| sql.js                  | 1.13.0（內建 SQLite 3.49.1） | 不在 repo 的 `package.json`，用到時裝到 repo 以外的目錄，見〈sql.js 載入量測〉                                            |
-| Hugo                    | 0.151.0 extended             | 建站用                                                                                                                    |
-| Go                      | 1.27.3                       | 編 `bin/mdtools`、`bin/blogsearch`                                                                                        |
-| Ollama                  | 0.23.2                       | `brew services` 常駐，聽 `127.0.0.1:11434`                                                                                |
+| 工具                    | 版本                         | 路徑與備註                                                                                                                                                       |
+| ----------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Python                  | 3.15.2                       | `/opt/homebrew/bin/python3`；內建 `sqlite3` 模組連結 SQLite 3.54.1，`verify_*.py` 用的是這一份。`python@3.14` 留著，`mlx`、`ollama` 依賴它，用 `python3.14` 呼叫 |
+| sqlite3 CLI（系統）     | 3.43.2                       | `/usr/bin/sqlite3`，PATH 上先找到的是這一支                                                                                                                      |
+| sqlite3 CLI（Homebrew） | 3.54.1                       | `/opt/homebrew/opt/sqlite/bin/sqlite3`（keg-only，沒有 link 進 PATH）；要跟驗證腳本同版本時用這一支                                                              |
+| PostgreSQL              | 17.12                        | `postgresql@17`（keg-only，已 `brew link --force`，所以 `initdb`、`pg_ctl`、`psql` 在 `/opt/homebrew/bin`）；服務沒有常駐                                        |
+| PostgreSQL 18           | 18.7                         | 只在 `postgres:18` 容器裡，本機沒有裝 18 的執行檔                                                                                                                |
+| Node.js                 | 24.4.1                       | `/opt/homebrew/bin/node`                                                                                                                                         |
+| sql.js                  | 1.13.0（內建 SQLite 3.49.1） | 不在 repo 的 `package.json`，用到時裝到 repo 以外的目錄，見〈sql.js 載入量測〉                                                                                   |
+| Hugo                    | 0.151.0 extended             | 建站用                                                                                                                                                           |
+| Go                      | 1.27.3                       | 編 `bin/mdtools`、`bin/blogsearch`                                                                                                                               |
+| Ollama                  | 0.23.2                       | `brew services` 常駐，聽 `127.0.0.1:11434`                                                                                                                       |
 
 ## Docker 物件名冊
 
 **本 repo 的實驗物件**：用完即刪，不常駐。命名一律以 `sqlpractice-` 開頭，埠用 `55432`（避開 PostgreSQL 預設的 5432，讓本機的 `postgresql@17` 之後要常駐也不衝突）。
 
-| 物件           | 名稱                                                  | 用途                                                        |
-| -------------- | ----------------------------------------------------- | ----------------------------------------------------------- |
-| 映像           | `postgres:18`（18.7，digest `sha256:f5cbc081c256…`）  | 保留在本機，重開實驗不必重新下載（約 500 MB）               |
-| 容器           | `sqlpractice-pg18`，`127.0.0.1:55432 → 5432`          | 跑 `verify_pg.py` 或開實驗資料庫，用完 `docker rm -fv` 刪掉 |
-| 容器裡的資料庫 | `bookstore`、`cloud_academy`、`swift_logistics`       | 三個領域各一個                                              |
-| 容器裡的角色   | `bookstore_*`、`academy_*`、`logistics_*`（各 10 個） | 由 `security_pg.sql` 建立，角色是整個叢集共用的物件         |
+| 物件           | 名稱                                                                  | 用途                                                        |
+| -------------- | --------------------------------------------------------------------- | ----------------------------------------------------------- |
+| 映像           | `postgres:18`（18.7，digest `sha256:a47637053e65…`，2026-11-24 拉取） | 保留在本機，重開實驗不必重新下載（約 500 MB）               |
+| 容器           | `sqlpractice-pg18`，`127.0.0.1:55432 → 5432`                          | 跑 `verify_pg.py` 或開實驗資料庫，用完 `docker rm -fv` 刪掉 |
+| 容器裡的資料庫 | `bookstore`、`cloud_academy`、`swift_logistics`                       | 三個領域各一個                                              |
+| 容器裡的角色   | `bookstore_*`、`academy_*`、`logistics_*`（各 10 個）                 | 由 `security_pg.sql` 建立，角色是整個叢集共用的物件         |
 
 **別的專案的常駐物件**：不屬於本 repo，清理 Docker 時不要動。
 
@@ -67,7 +67,7 @@ docker network ls
 
 ```bash
 brew install --cask orbstack
-brew install python@3.14 sqlite postgresql@17 node hugo go
+brew install python@3.15 sqlite postgresql@17 node hugo go
 brew link --force postgresql@17   # keg-only，不 link 的話 initdb、pg_ctl、psql 不在 PATH
 docker context use orbstack
 docker pull postgres:18
@@ -91,7 +91,7 @@ python3 scripts/sql-practice/verify_pg.py                     # 用本機的 Pos
 ### SQLite：最快，適合試查詢與執行計畫
 
 ```bash
-SQLITE=/opt/homebrew/opt/sqlite/bin/sqlite3   # 跟驗證腳本同為 3.53.0；用 /usr/bin/sqlite3 也能跑
+SQLITE=/opt/homebrew/opt/sqlite/bin/sqlite3   # 跟驗證腳本同為 3.54.1；用 /usr/bin/sqlite3 也能跑
 D=scripts/sql-practice/domains/bookstore
 mkdir -p ~/sqlpractice
 $SQLITE ~/sqlpractice/bookstore.db \
