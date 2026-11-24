@@ -7,6 +7,8 @@ hugotest/
 # Hugo cache
 .hugo_build.lock
 resources/
+# js.Build 每次執行都會重寫的編輯器路徑設定，建置不讀它
+assets/jsconfig.json
 
 # Go build output in bin/ (mdtools: see scripts/mdtools/README.md; blogsearch: see scripts/blogsearch).
 # The rest of bin/ is tracked tooling (bin/tests/ holds its tests).
