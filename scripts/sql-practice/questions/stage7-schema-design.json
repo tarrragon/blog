@@ -10,6 +10,7 @@
     "difficulty": 3,
     "premiseFlip": false,
     "designDimension": "read-write-ratio-denormalization",
+    "benchmarkRef": "pg-bookstore-review-agg-vs-cache-cols",
     "traps": ["live-agg-at-high-read-qps", "storing-avg-instead-of-sum-and-count"],
     "title": "D01：商品列表顯示平均星等與評價數——讀寫比 400:1 的正規化與反正規化取捨",
     "businessRequirement": "紙頁書店首頁與分類頁每秒 800 次讀取（每頁顯示 20 本書的平均星等與評價數），評價表每秒僅 2 次寫入（讀寫比 400:1），reviews 已累積 600 萬列。哪個 Schema 設計最匹配這個負載？",
@@ -26,7 +27,7 @@
         "execMode": "conceptual",
         "expectedExec": "ok",
         "normalResult": "永遠單一真實來源、無同步漂移風險",
-        "edgeCaseResult": "800 QPS 每次翻頁都跨表聚合 600 萬列評價，資料庫 CPU 迅速飽和",
+        "edgeCaseResult": "每次翻頁都要聚合這一頁 20 本書的全部評價，熱門書那一頁有二十多萬筆；實測 8 條連線的即時聚合每秒只撐得住數百次，達不到 800 QPS",
         "pros": ["寫入最簡單、無一致性漂移"],
         "cons": ["極高讀寫比下重複做昂貴聚合"],
         "validWhen": "冷門後台報表或讀寫比反轉為寫遠大於讀時",
@@ -87,6 +88,7 @@
     "difficulty": 3,
     "premiseFlip": false,
     "designDimension": "vertical-partitioning-table-width",
+    "benchmarkRef": "pg-logistics-wide-table-vs-vertical-split",
     "traps": ["wide-row-dilutes-buffer-pool", "over-normalization-ten-joins"],
     "title": "D02：熱冷欄位分離——單張寬表 vs 1:1 垂直拆表（courses 與 course_contents）",
     "businessRequirement": "雲課堂 courses 表有 30 萬筆，列表與搜尋高頻掃描 120 bytes 核心欄（course_id, title, track, monthly_fee_tier, is_published），每門課另附 25KB 課綱全文 syllabus_md（僅詳情頁讀）。該放同表還是垂直拆表？",
@@ -103,9 +105,9 @@
         "execMode": "conceptual",
         "expectedExec": "ok",
         "normalResult": "詳情頁少一次主鍵 JOIN",
-        "edgeCaseResult": "單頁可容納列數暴減，掃描列表把大量 25KB 冷資料拉進 Buffer Pool 稀釋快取，改 is_published 也易放大寫入",
+        "edgeCaseResult": "PostgreSQL 把超過約 2KB 的 syllabus_md 移到 TOAST，列表只選核心欄時多讀的資料頁不多；但 SELECT * 或 ORM 預設讀整列時，每一列都要從 TOAST 讀回 25KB 課綱。課綱若縮到門檻以下、留在主表，一個資料頁只放得下少數幾列，列表掃描讀進的資料頁成倍增加",
         "pros": ["詳情頁單表直查"],
-        "cons": ["表寬拖慢列表掃描與熱欄位更新、浪費記憶體緩衝池"],
+        "cons": ["SELECT * 會把冷文本讀回來；中型欄位留在主表時拖慢列表掃描"],
         "validWhen": "表只有幾百列或幾乎每次查詢都要讀全文時",
         "failsWhen": "高頻掃描窄欄位、偶爾讀大文字欄的中大型表"
       },
@@ -115,8 +117,8 @@
         "execMode": "conceptual",
         "expectedExec": "ok",
         "normalResult": "courses 主表保持極窄（30 萬筆僅數十 MB 可整張常駐記憶體），詳情頁靠主鍵精準撈一筆冷內容",
-        "edgeCaseResult": "更新熱欄位完全不碰冷文字頁，跨 SQLite / MySQL / PostgreSQL 皆有效益",
-        "pros": ["大幅提高 Buffer Pool 命中率與掃描速度", "隔離熱欄位寫入與冷大文字儲存"],
+        "edgeCaseResult": "核心表的查詢怎麼寫都讀不到課綱，更新熱欄位也只寫核心表；效益不依賴各引擎把大欄位移出主列的門檻",
+        "pros": ["列表掃描與 SELECT * 都不碰冷文本", "隔離熱欄位寫入與冷大文字儲存"],
         "cons": ["詳情頁多一次 1:1 主鍵 JOIN，新增課程須同交易寫兩張表"],
         "validWhen": "明顯存在「高頻窄欄位＋低頻大文字／大 JSON 欄位」存取分層時",
         "failsWhen": "每次讀取都一定同時需要全部欄位時"
@@ -147,7 +149,7 @@
       }
     ],
     "recommendedKeys": ["opt_vertical_split"],
-    "alternativeNote": "PostgreSQL 雖有 TOAST 自動外移 >2KB 欄位，但垂直拆表在跨引擎、防 SELECT * 誤讀與降低更新寫入放大上仍具顯著價值",
+    "alternativeNote": "PostgreSQL 的 TOAST 已經把超過約 2KB 的欄位移出主表，所以在 PostgreSQL 上拆表省下的主要是 SELECT * 讀回的冷文本，以及低於門檻的中型欄位佔掉的主表空間；實測見 benchmarks/postgres-workload-snapshots.json 的 pg-logistics-wide-table-vs-vertical-split",
     "relatedDocs": [
       "/backend/01-database/design-decisions-price-every-query/",
       "/backend/01-database/table-growth-query-cost/"
@@ -164,7 +166,7 @@
     "difficulty": 3,
     "premiseFlip": false,
     "designDimension": "high-frequency-counting",
-    "benchmarkRef": "ref-pg-hot-row-counter-contention",
+    "benchmarkRef": "pg-bookstore-hot-row-counter",
     "traps": ["hot-row-lock-contention", "bigger-pool-worsens-lock-queue"],
     "title": "D03：高頻熱門商品瀏覽計數——熱點列鎖競爭 vs 只新增事件與分桶計數",
     "businessRequirement": "雙十一特賣熱門書（book_id = 201）每秒湧入 1,500 次瀏覽。在 PostgreSQL 上直接寫 `UPDATE books SET view_count = view_count + 1 WHERE book_id = 201` 會出現嚴重延遲，應如何改設計？",
@@ -181,7 +183,7 @@
         "execMode": "conceptual",
         "expectedExec": "ok",
         "normalResult": "500 條連線全部塞在同一列的列鎖排隊，吞吐量不升反降",
-        "edgeCaseResult": "產生巨量 MVCC dead tuple 拖慢 VACUUM 並拖垮同庫其他請求",
+        "edgeCaseResult": "每次 UPDATE 都留下一個舊版本等 VACUUM 回收；實測 32 條連線時每筆的平均延遲是單一連線的數十倍",
         "pros": ["低流量（如 5 QPS）時最簡單"],
         "cons": ["熱點列鎖串行化下調大連線池只會加劇排隊與上下文切換"],
         "validWhen": "全站極低流量、無單點熱點時",
@@ -205,7 +207,7 @@
         "execMode": "conceptual",
         "expectedExec": "ok",
         "normalResult": "觸發大量序列化衝突回滾",
-        "edgeCaseResult": "有效寫入吞吐量大幅下降",
+        "edgeCaseResult": "成功的寫入沒有比 READ COMMITTED 多，大多數交易因序列化失敗被中止，要由應用層重試",
         "pros": ["無"],
         "cons": ["加劇衝突而不解決鎖爭用"],
         "validWhen": "無",
@@ -225,7 +227,7 @@
       }
     ],
     "recommendedKeys": ["opt_append_or_bucket"],
-    "alternativeNote": "對應 benchmarks/postgres-and-concurrency-reference.json 的 ref-pg-hot-row-counter-contention",
+    "alternativeNote": "實測見 benchmarks/postgres-workload-snapshots.json 的 pg-bookstore-hot-row-counter：32 條連線搶同一列時的吞吐量比單一連線還低，分桶與只新增事件列的吞吐量高出一個數量級",
     "relatedDocs": [
       "/backend/01-database/high-frequency-counting/"
     ]
@@ -326,7 +328,7 @@
     "difficulty": 3,
     "premiseFlip": false,
     "designDimension": "partitioning-and-retention",
-    "benchmarkRef": "ref-pg-partition-drop-vs-delete",
+    "benchmarkRef": "pg-logistics-partition-drop-vs-delete",
     "traps": ["bulk-delete-vacuum-bloat", "partition-unique-must-include-partition-key"],
     "title": "D05：上億列事件表保留期清理——DELETE 膨脹、按月時間分區與唯一約束衝突",
     "businessRequirement": "捷配物流 shipment_events 日增 300 萬筆、須保留 180 天並清理過期資料，原本表上有全域 UNIQUE(scanner_tx_id) 防重送。若改 PostgreSQL 按月時間分區（Range Partitioning），必須誠實面對什麼設計取捨？",
@@ -387,7 +389,7 @@
       }
     ],
     "recommendedKeys": ["opt_monthly_range_partition"],
-    "alternativeNote": "對應 benchmarks/postgres-and-concurrency-reference.json 的 ref-pg-partition-drop-vs-delete",
+    "alternativeNote": "實測見 benchmarks/postgres-workload-snapshots.json 的 pg-logistics-partition-drop-vs-delete：清掉一個月時，DROP 分區產生的 WAL 比逐列 DELETE 少兩個數量級以上；在分區表加不含分區鍵的 UNIQUE 會建立失敗",
     "relatedDocs": [
       "/backend/01-database/table-growth-query-cost/",
       "/backend/01-database/schema-change-management/"
@@ -481,6 +483,7 @@
     "difficulty": 3,
     "premiseFlip": false,
     "designDimension": "read-write-ratio-denormalization",
+    "benchmarkRef": "pg-bookstore-review-agg-vs-cache-cols",
     "traps": ["live-agg-at-high-read-qps", "storing-avg-instead-of-sum-and-count"],
     "title": "D01：課程目錄顯示完課人次與平均觀看秒數——讀寫比 60:1 的正規化與反正規化取捨（領域乙變體）",
     "businessRequirement": "雲課堂的課程目錄每秒 1,200 次讀取，每頁顯示 24 門課的完課人次與平均觀看秒數；學習紀錄每秒約 20 次寫入（讀寫比 60:1），lesson_progress 已累積 500 萬列。哪個 Schema 設計最符合這個負載？",
@@ -558,6 +561,7 @@
     "difficulty": 3,
     "premiseFlip": false,
     "designDimension": "vertical-partitioning-table-width",
+    "benchmarkRef": "pg-logistics-wide-table-vs-vertical-split",
     "traps": ["wide-row-dilutes-buffer-pool", "over-normalization-ten-joins"],
     "title": "D02：熱冷欄位分離——運單寬表與 1:1 拆出的原始託運單報文（shipments 與 shipment_payloads，領域丙變體）",
     "businessRequirement": "捷配物流的 shipments 有 800 萬筆，商家後台的列表與篩選高頻讀取約 60 bytes 的核心欄（shipment_id、merchant_id、warehouse_id、status、fee_cents、created_at）；每張運單另有約 8KB 的原始電子託運單 JSON，只在客服調閱單張運單時讀取。該放同一張表還是垂直拆表？",
@@ -574,7 +578,7 @@
         "execMode": "conceptual",
         "expectedExec": "ok",
         "normalResult": "查詢不必連接",
-        "edgeCaseResult": "每一列帶著 8KB 報文，一個資料頁只放得下少數幾列；列表掃描讀進記憶體的大多是用不到的報文，緩衝區被擠掉，熱資料的命中率下降。PostgreSQL 會把超過門檻的欄位移到 TOAST，但 SELECT * 仍然會把它讀回來",
+        "edgeCaseResult": "PostgreSQL 把超過約 2KB 的報文移到 TOAST，列表只選核心欄時，寬表只比拆表多讀少量資料頁；但 SELECT * 或 ORM 預設讀整列時，每一列都要從 TOAST 讀回 8KB 報文。報文若在門檻以下（例如 1KB）就留在主表，一個資料頁只放得下少數幾列，列表掃描讀進的資料頁成倍增加",
         "pros": ["結構最簡單"],
         "cons": ["高頻查詢為低頻欄位付出 I/O 與記憶體成本"],
         "validWhen": "表小、或大欄位幾乎每次都要讀時",
@@ -587,7 +591,7 @@
         "expectedExec": "ok",
         "normalResult": "列表掃描只讀核心欄，資料頁裡塞得下更多列",
         "edgeCaseResult": "冷資料在另一張表，緩衝區留給高頻的核心欄；調閱單張時多一次主鍵查找，成本固定",
-        "pros": ["高頻查詢的 I/O 與記憶體使用量大幅下降", "附屬表沿用複合外鍵，租戶隔離不變"],
+        "pros": ["核心表的查詢怎麼寫都讀不到報文", "附屬表沿用複合外鍵，租戶隔離不變"],
         "cons": ["新增運單要寫兩張表", "調閱詳情多一次連接"],
         "validWhen": "少數大欄位只在低頻情境讀取時",
         "failsWhen": "大欄位每次都要讀時"
@@ -628,7 +632,7 @@
     "conceptId": "S7-03",
     "variantId": "S7-03-cloud-course-view-counter-02",
     "discriminator": ["concurrency", "workload"],
-    "benchmarkRef": "ref-pg-hot-row-counter-contention",
+    "benchmarkRef": "pg-bookstore-hot-row-counter",
     "domain": "cloud-academy",
     "stage": 7,
     "tablePath": ["courses"],
@@ -696,7 +700,7 @@
       }
     ],
     "recommendedKeys": ["opt_append_or_bucket"],
-    "alternativeNote": "熱點列計數在 PostgreSQL 的鎖競爭行為見參考快照 ref-pg-hot-row-counter-contention；SQLite 單一寫入者的模型重現不了這種競爭",
+    "alternativeNote": "熱點列計數在 PostgreSQL 的鎖競爭見實測快照 pg-bookstore-hot-row-counter；SQLite 單一寫入者的模型重現不了這種競爭",
     "relatedDocs": [
       "/backend/01-database/high-frequency-counting/"
     ]
@@ -790,7 +794,7 @@
     "conceptId": "S7-05",
     "variantId": "S7-05-cloud-webhook-partition-unique-02",
     "discriminator": ["workload", "engine"],
-    "benchmarkRef": "ref-pg-partition-drop-vs-delete",
+    "benchmarkRef": "pg-logistics-partition-drop-vs-delete",
     "domain": "cloud-academy",
     "stage": 7,
     "tablePath": ["webhook_events"],
@@ -858,7 +862,7 @@
       }
     ],
     "recommendedKeys": ["opt_monthly_range_partition"],
-    "alternativeNote": "按月分區刪除與逐列 DELETE 的差異見參考快照 ref-pg-partition-drop-vs-delete；分區表的唯一約束必須包含分區鍵是 PostgreSQL 的限制，SQLite 沒有原生分區",
+    "alternativeNote": "按月分區刪除與逐列 DELETE 的差異見實測快照 pg-logistics-partition-drop-vs-delete；分區表的唯一約束必須包含分區鍵是 PostgreSQL 的限制，SQLite 沒有原生分區",
     "relatedDocs": [
       "/backend/01-database/table-growth-query-cost/",
       "/backend/01-database/schema-change-management/"

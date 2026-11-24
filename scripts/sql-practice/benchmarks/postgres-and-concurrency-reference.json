@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "measurementSource": "documented-reference",
-  "note": "本檔收錄無法在瀏覽器單執行緒 SQLite WASM 模擬的 PostgreSQL／多連線並行／上億列分區基準參考，數據與結論皆直接回溯本站已驗證文章，未偽造未實跑之耗時數字；未來可在 Docker PostgreSQL 環境透過同結構重跑並升級為 live-postgres-measured。",
+  "note": "本檔收錄無法在瀏覽器單執行緒 SQLite WASM 模擬的 PostgreSQL／多連線並行／上億列分區基準參考，數據與結論皆直接回溯本站已驗證文章，未偽造未實跑之耗時數字；未來可在 Docker PostgreSQL 環境透過同結構重跑並升級為 live-postgres-measured。熱點列計數與分區刪除兩組已經實測，改收在 postgres-workload-snapshots.json（pg_workload_bench.py 產生）。",
   "reproducibleVia": "docker-postgres",
   "benchmarks": [
     {
@@ -49,44 +49,6 @@
         }
       },
       "sourceDoc": "/backend/01-database/sql/deployment-shape-and-sql-constructs/"
-    },
-    {
-      "benchmarkId": "ref-pg-hot-row-counter-contention",
-      "domain": "bookstore",
-      "conceptIds": ["S7-03"],
-      "engine": "PostgreSQL 18",
-      "title": "高頻熱點列計數：就地 UPDATE 單列 vs 只新增事件／分桶計數",
-      "workload": "高並行連線同時累加同一熱門商品的計數欄",
-      "variants": {
-        "in_place_update_single_row": {
-          "mechanism": "所有連線排隊競爭同一列的列鎖並持續產生 MVCC dead tuple",
-          "outcome": "吞吐量隨並行連線數增加反而下降，並加重 VACUUM 負擔"
-        },
-        "append_only_or_bucketed_counter": {
-          "mechanism": "寫入分散至獨立事件列或多個 bucket 槽位，背景定期可重跑彙總",
-          "outcome": "消除單列鎖排隊，代價是讀取端為秒級或分鐘級最終一致"
-        }
-      },
-      "sourceDoc": "/backend/01-database/high-frequency-counting/"
-    },
-    {
-      "benchmarkId": "ref-pg-partition-drop-vs-delete",
-      "domain": "swift-logistics",
-      "conceptIds": ["S7-05"],
-      "engine": "PostgreSQL 18",
-      "title": "上億列事件表過期清理：大批量 DELETE vs 按月時間分區 DROP PARTITION",
-      "workload": "每日新增數百萬事件、保留 180 天並清理過期資料",
-      "variants": {
-        "batch_delete": {
-          "mechanism": "逐列標記死列、產生大量 WAL 與 autovacuum 負擔，不立即縮檔歸還作業系統",
-          "outcome": "清理期間引發顯著 I/O 壓力，但全域 UNIQUE 約束不受分區鍵限制"
-        },
-        "range_partition_drop": {
-          "mechanism": "直接移除整月子表檔案並結合分區裁剪跳過舊月份掃描",
-          "outcome": "過期清理為毫秒級 metadata 操作；代價是分區表 UNIQUE 約束必須包含分區鍵"
-        }
-      },
-      "sourceDoc": "/backend/01-database/table-growth-query-cost/"
     }
   ]
 }

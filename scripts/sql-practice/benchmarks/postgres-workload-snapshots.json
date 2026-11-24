@@ -1,0 +1,398 @@
+{
+  "schemaVersion": "1.0",
+  "measurementSource": "live-postgres-measured",
+  "generatedBy": "scripts/sql-practice/pg_workload_bench.py",
+  "note": "在拋棄式 PostgreSQL 容器實跑；耗時與 TPS 隨主機負載浮動，資料頁數、WAL 數量級、計數與錯誤訊息可重現。",
+  "environment": {
+    "engine": "PostgreSQL 18.7 (Debian 18.7-1.pgdg13+5) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "sharedBuffers": "512MB",
+    "cpus": 10,
+    "pgbenchClient": "pgbench (PostgreSQL) 17.12 (Homebrew)"
+  },
+  "scaleFactor": 1.0,
+  "benchmarks": [
+    {
+      "benchmarkId": "pg-bookstore-review-agg-vs-cache-cols",
+      "domain": "bookstore",
+      "conceptIds": [
+        "S7-01"
+      ],
+      "title": "列表頁的平均星等與評價數：每次即時聚合 vs 讀 books 的快取欄（rating_sum、review_count）",
+      "workload": "列表頁一次 20 本書；評價依熱門度偏斜分布",
+      "scale": {
+        "books": 10000,
+        "reviews": 6000000,
+        "reviewsOnPage": {
+          "popular_page_1_20": 268117,
+          "long_tail_page_5001_5020": 8433
+        }
+      },
+      "variants": {
+        "live_join_agg": {
+          "popular_page_1_20": {
+            "medianMs": 174.75,
+            "sharedBlocks": 208031,
+            "plan": [
+              "Aggregate",
+              "Nested Loop",
+              "Index Scan on books using books_pkey",
+              "Bitmap Heap Scan on reviews",
+              "Bitmap Index Scan using reviews_book_id"
+            ]
+          },
+          "long_tail_page_5001_5020": {
+            "medianMs": 11.663,
+            "sharedBlocks": 8455,
+            "plan": [
+              "Aggregate",
+              "Nested Loop",
+              "Index Scan on books using books_pkey",
+              "Bitmap Heap Scan on reviews",
+              "Bitmap Index Scan using reviews_book_id"
+            ]
+          },
+          "pgbench_8_clients": {
+            "clients": 8,
+            "seconds": 10,
+            "transactions": 4805,
+            "failedTransactions": 0,
+            "tps": 477.5,
+            "latencyAvgMs": 16.753
+          },
+          "write_pgbench_1_client": {
+            "clients": 1,
+            "seconds": 5,
+            "transactions": 6678,
+            "failedTransactions": 0,
+            "tps": 1285.5,
+            "latencyAvgMs": 0.778
+          }
+        },
+        "live_join_agg_covering_index": {
+          "popular_page_1_20": {
+            "medianMs": 23.921,
+            "sharedBlocks": 835,
+            "plan": [
+              "Aggregate",
+              "Nested Loop",
+              "Index Scan on books using books_pkey",
+              "Index Only Scan on reviews using reviews_book_rating"
+            ]
+          },
+          "long_tail_page_5001_5020": {
+            "medianMs": 0.851,
+            "sharedBlocks": 126,
+            "plan": [
+              "Aggregate",
+              "Nested Loop",
+              "Index Scan on books using books_pkey",
+              "Index Only Scan on reviews using reviews_book_rating"
+            ]
+          }
+        },
+        "counter_sum_cache_cols": {
+          "popular_page_1_20": {
+            "medianMs": 0.029,
+            "sharedBlocks": 3,
+            "plan": [
+              "Index Scan on books using books_pkey"
+            ]
+          },
+          "long_tail_page_5001_5020": {
+            "medianMs": 0.028,
+            "sharedBlocks": 3,
+            "plan": [
+              "Index Scan on books using books_pkey"
+            ]
+          },
+          "pgbench_8_clients": {
+            "clients": 8,
+            "seconds": 10,
+            "transactions": 320555,
+            "failedTransactions": 0,
+            "tps": 32053.6,
+            "latencyAvgMs": 0.25
+          },
+          "write_pgbench_1_client": {
+            "clients": 1,
+            "seconds": 5,
+            "transactions": 6425,
+            "failedTransactions": 0,
+            "tps": 1284.4,
+            "latencyAvgMs": 0.779
+          }
+        }
+      },
+      "findings": [
+        "熱門頁（book_id 1–20，268,117 筆評價）即時聚合 174.75 ms、碰 208,031 個資料頁；補上 (book_id) INCLUDE (rating) 覆蓋索引後 23.921 ms；讀快取欄 0.029 ms、3 個資料頁",
+        "長尾頁（book_id 5001–5020，8,433 筆評價）即時聚合 11.663 ms，快取欄 0.028 ms：即時聚合的成本跟著這一頁的評價數成長，快取欄不會",
+        "8 條連線、每次隨機一頁：即時聚合 477.5 TPS，快取欄 32,053.6 TPS",
+        "寫入路徑：單一連線新增評價 0.778 ms，同交易加上快取欄的 UPDATE 後 0.779 ms；寫入結束後快取欄與實際筆數不一致的書 0 本"
+      ]
+    },
+    {
+      "benchmarkId": "pg-logistics-wide-table-vs-vertical-split",
+      "domain": "swift-logistics",
+      "conceptIds": [
+        "S7-02"
+      ],
+      "title": "運單核心欄與冷報文：同一張寬表（8KB／1KB 報文）vs 垂直拆成 shipments 與 shipment_payloads",
+      "workload": "列表高頻讀核心欄、單張調閱才讀報文；狀態欄常更新",
+      "scale": {
+        "shipments": 50000,
+        "payloadBytes": {
+          "single_wide_table_8kb_payload": 8192,
+          "single_wide_table_1kb_payload": 1024
+        }
+      },
+      "variants": {
+        "single_wide_table_8kb_payload": {
+          "heapBytes": 4661248,
+          "toastBytes": 424304640,
+          "list_scan_group_by_status": {
+            "medianMs": 4.91,
+            "sharedBlocks": 569,
+            "plan": [
+              "Aggregate",
+              "Seq Scan on ship_wide_8k"
+            ]
+          },
+          "list_page_core_columns": {
+            "medianMs": 0.072,
+            "sharedBlocks": 5,
+            "plan": [
+              "Limit",
+              "Index Scan on ship_wide_8k using ship_wide_8k_pkey"
+            ],
+            "serializeBlocks": 0,
+            "serializeKB": 12
+          },
+          "list_page_select_star": {
+            "medianMs": 0.855,
+            "sharedBlocks": 5,
+            "plan": [
+              "Limit",
+              "Index Scan on ship_wide_8k using ship_wide_8k_pkey"
+            ],
+            "serializeBlocks": 1028,
+            "serializeKB": 1616
+          },
+          "update_status_10pct": {
+            "ms": 16.9,
+            "walBytes": 6966008
+          }
+        },
+        "single_wide_table_1kb_payload": {
+          "heapBytes": 58515456,
+          "toastBytes": 0,
+          "list_scan_group_by_status": {
+            "medianMs": 12.413,
+            "sharedBlocks": 7143,
+            "plan": [
+              "Aggregate",
+              "Seq Scan on ship_wide_1k"
+            ]
+          },
+          "list_page_core_columns": {
+            "medianMs": 0.11,
+            "sharedBlocks": 31,
+            "plan": [
+              "Limit",
+              "Index Scan on ship_wide_1k using ship_wide_1k_pkey"
+            ],
+            "serializeBlocks": 0,
+            "serializeKB": 12
+          },
+          "list_page_select_star": {
+            "medianMs": 0.136,
+            "sharedBlocks": 31,
+            "plan": [
+              "Limit",
+              "Index Scan on ship_wide_1k using ship_wide_1k_pkey"
+            ],
+            "serializeBlocks": 0,
+            "serializeKB": 216
+          },
+          "update_status_10pct": {
+            "ms": 71.51,
+            "walBytes": 46859056
+          }
+        },
+        "vertical_split_core": {
+          "heapBytes": 3416064,
+          "toastBytes": 0,
+          "list_scan_group_by_status": {
+            "medianMs": 4.745,
+            "sharedBlocks": 417,
+            "plan": [
+              "Aggregate",
+              "Seq Scan on ship_core"
+            ]
+          },
+          "list_page_core_columns": {
+            "medianMs": 0.067,
+            "sharedBlocks": 4,
+            "plan": [
+              "Limit",
+              "Index Scan on ship_core using ship_core_pkey"
+            ],
+            "serializeBlocks": 0,
+            "serializeKB": 12
+          },
+          "list_page_select_star": {
+            "medianMs": 0.07,
+            "sharedBlocks": 4,
+            "plan": [
+              "Limit",
+              "Index Scan on ship_core using ship_core_pkey"
+            ],
+            "serializeBlocks": 0,
+            "serializeKB": 13
+          },
+          "payloadTable": {
+            "heapBytes": 3014656,
+            "toastBytes": 424304640,
+            "detail_lookup_by_pk": {
+              "medianMs": 0.113,
+              "sharedBlocks": 9,
+              "plan": [
+                "Nested Loop",
+                "Index Scan on ship_core using ship_core_pkey",
+                "Index Scan on ship_payload using ship_payload_pkey"
+              ],
+              "serializeBlocks": 33,
+              "serializeKB": 9
+            }
+          },
+          "update_status_10pct": {
+            "ms": 15.06,
+            "walBytes": 5679496
+          }
+        }
+      },
+      "findings": [
+        "50,000 張運單。8KB 報文超過 TOAST 門檻，被移到 TOAST 表（主表 4,552 KB、TOAST 404 MB）；1KB 報文低於門檻，留在主表（主表 55 MB）；拆表後的核心表 3,336 KB",
+        "列表掃描（GROUP BY status）碰的資料頁：8KB 寬表 569、1KB 寬表 7,143、拆表核心表 417；耗時 4.91 / 12.413 / 4.745 ms",
+        "8KB 寬表上 SELECT * 取 200 列，送出結果時要讀回 TOAST：1,028 個資料頁、輸出 1,616 KB；只選核心欄 0 個資料頁、12 KB",
+        "把 10% 運單的 status 改掉產生的 WAL：8KB 寬表 6,802 KB（TOAST 裡的報文沒有重寫）、1KB 寬表 45,760 KB、拆表核心表 5,546 KB"
+      ]
+    },
+    {
+      "benchmarkId": "pg-bookstore-hot-row-counter",
+      "domain": "bookstore",
+      "conceptIds": [
+        "S7-03"
+      ],
+      "title": "熱門書的瀏覽計數：就地 UPDATE 同一列 vs 32 個分桶 vs 只新增事件列（另測應用層先讀後寫與 SERIALIZABLE）",
+      "workload": "pgbench 每組 10 秒，每筆交易一次計數",
+      "scale": {
+        "hotRows": 1,
+        "buckets": 32
+      },
+      "variants": {
+        "in_place_update_1_client": {
+          "clients": 1,
+          "seconds": 10,
+          "transactions": 10372,
+          "failedTransactions": 0,
+          "tps": 1037.0,
+          "latencyAvgMs": 0.964
+        },
+        "in_place_update_32_clients": {
+          "clients": 32,
+          "seconds": 10,
+          "transactions": 3627,
+          "failedTransactions": 0,
+          "tps": 358.8,
+          "latencyAvgMs": 89.198,
+          "tableBytesBefore": 49152,
+          "tableBytesAfter": 122880
+        },
+        "bucketed_counter_32_slots_32_clients": {
+          "clients": 32,
+          "seconds": 10,
+          "transactions": 54225,
+          "failedTransactions": 0,
+          "tps": 4958.3,
+          "latencyAvgMs": 6.454
+        },
+        "append_only_events_32_clients": {
+          "clients": 32,
+          "seconds": 10,
+          "transactions": 97541,
+          "failedTransactions": 0,
+          "tps": 9762.1,
+          "latencyAvgMs": 3.278
+        },
+        "app_read_then_write_32_clients": {
+          "clients": 32,
+          "seconds": 10,
+          "transactions": 6897,
+          "failedTransactions": 0,
+          "tps": 687.5,
+          "latencyAvgMs": 46.548,
+          "finalCount": 204,
+          "lostIncrements": 6693
+        },
+        "serializable_in_place_update_32_clients": {
+          "clients": 32,
+          "seconds": 10,
+          "transactions": 3048,
+          "failedTransactions": 70677,
+          "tps": 301.1,
+          "latencyAvgMs": 4.394
+        }
+      },
+      "findings": [
+        "就地 UPDATE 同一列：1 條連線 1,037.0 TPS、平均 0.964 ms；32 條連線 358.8 TPS、平均 89.198 ms。連線多了 32 倍，吞吐量是 0.3 倍，每筆的等待時間變長",
+        "32 條連線下：32 個分桶 4,958.3 TPS（平均 6.454 ms），只新增事件列 9,762.1 TPS（平均 3.278 ms）",
+        "計數表（1,000 列，熱點只有 201 號）跑完就地 UPDATE 後從 49,152 bytes 長到 122,880 bytes：每次 UPDATE 留下一個舊版本",
+        "應用層先 SELECT 再 UPDATE：6,897 次交易，計數只增加 204，遺失 6,693 次",
+        "SERIALIZABLE 下就地 UPDATE：3,048 次成功（301.1 TPS，READ COMMITTED 是 358.8 TPS）、70,677 次因序列化失敗被中止（96%）：成功的寫入沒有變多，被中止的要由應用層重試"
+      ]
+    },
+    {
+      "benchmarkId": "pg-logistics-partition-drop-vs-delete",
+      "domain": "swift-logistics",
+      "conceptIds": [
+        "S7-05"
+      ],
+      "title": "事件表過期清理：單表逐列 DELETE vs 按月 Range 分區 DETACH + DROP；分區表的唯一約束",
+      "workload": "6 個月的掃描事件，清掉最舊的一個月",
+      "scale": {
+        "rowsPerMonth": 400000,
+        "months": 6
+      },
+      "variants": {
+        "batch_delete": {
+          "ms": 363.61,
+          "walBytes": 53527088,
+          "rowsDeleted": 400000,
+          "totalBytesBefore": 429432832,
+          "totalBytesAfterDelete": 429432832,
+          "totalBytesAfterVacuum": 429432832,
+          "sameScannerTxIdInTwoMonthsAccepted": false
+        },
+        "range_partition_drop": {
+          "ms": 18.84,
+          "walBytes": 165408,
+          "rowsRemoved": 400000,
+          "totalBytesBefore": 434593792,
+          "totalBytesAfterDrop": 353583104,
+          "partitionsScannedForLast12Days": [
+            "ev_part_2026_10"
+          ],
+          "globalUniqueError": "ERROR:  unique constraint on partitioned table must include all partitioning columns",
+          "sameScannerTxIdInTwoMonthsAccepted": true
+        }
+      },
+      "findings": [
+        "清掉最舊一個月（400,000 列）：逐列 DELETE 363.61 ms、產生 WAL 51 MB；DETACH 加 DROP 分區 18.84 ms、WAL 161 KB",
+        "DELETE 前後表加索引都是 409 MB → 409 MB，跑完一般 VACUUM 仍是 409 MB：空間留給之後的寫入重用，不還給作業系統；DROP 分區後總大小 414 MB → 337 MB",
+        "在分區表加不含分區鍵的 UNIQUE (scanner_tx_id)：ERROR:  unique constraint on partitioned table must include all partitioning columns",
+        "同一個 scanner_tx_id 分別寫進七月與九月：分區表上的 UNIQUE (scanner_tx_id, recorded_at) 兩筆都收下；單表的 UNIQUE (scanner_tx_id) 擋下第二筆",
+        "查最近 12 天的事件，分區裁剪後只掃 ev_part_2026_10"
+      ]
+    }
+  ]
+}

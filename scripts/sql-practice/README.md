@@ -4,18 +4,19 @@
 
 ## 目錄結構
 
-| 路徑                       | 用途                      | 說明                                                                                                                                 |
-| -------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `domains/bookstore/`       | 領域甲：紙頁書店（20 表） | RBAC、軟刪除部分唯一索引、可抹除的顧客個資、匯出任務終態、唯附寫稽核與 2 檢視表                                                      |
-| `domains/cloud-academy/`   | 領域乙：雲課堂（20 表）   | 企業多租戶組織、RBAC（含 permissions）、憑證／Session 失效、可抹除的學員個資、唯附寫稽核與 2 檢視表                                  |
-| `domains/swift-logistics/` | 領域丙：捷配物流（19 表） | 商家帳號、API Key 雜湊撤銷、子表 NOT NULL 租戶鍵與複合外鍵、平台員工 RBAC、收件人 PII、唯附寫稽核與 2 檢視表                         |
-| `benchmarks/`              | 基準快照 JSON             | `sqlite-scale-snapshots.json`（實跑生成）、`postgres-and-concurrency-reference.json`（PG／多連線／分區參考快照）                     |
-| `questions/`               | 結構化題庫 JSON           | `manifest.json` 與八階段（含資安與權限）＋跨概念／資安複合陷阱共 9 份題庫（題數與各值統計以 `verify_questions.py` 的輸出為準）       |
-| `verify_domains.py`        | SQLite 資料庫底座驗證     | 外鍵、完整性、語意／資安反例、約束回歸（STRICT、時間格式、狀態綁定、複合外鍵）、壓測層一致性契約與執行計畫分岔                       |
-| `verify_questions.py`      | 題庫自動化驗收            | JSON 欄位、`population` 母體宣告、`discriminator` 鑑別力來源、站內文章連結、基準參照，並在獨立記憶體 SQLite 實跑全部可執行選項與斷言 |
-| `verify_pg.py`             | PostgreSQL 驗證           | 在拋棄式叢集實跑 `schema_pg.sql` + `seed.sql` + `security_pg.sql`，以各角色身分檢查 RLS、GRANT、唯附寫稽核與跨引擎差異               |
-| `generate_benchmarks.py`   | 實測基準快照產生器        | 在三套壓測資料庫實跑關鍵查詢，輸出 `EXPLAIN QUERY PLAN`、單次耗時（每樣本重複執行後平均）、倍率與絕對差                              |
-| `wasm_load_bench.mjs`      | sql.js 載入量測           | 在 sql.js 灌入三領域 × 倍數 1、3、10 的 `seed_scale.sql`，印耗時、資料庫大小與外鍵違規數（Node，sql.js 裝在 repo 外）                |
+| 路徑                       | 用途                      | 說明                                                                                                                                                                                                         |
+| -------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `domains/bookstore/`       | 領域甲：紙頁書店（20 表） | RBAC、軟刪除部分唯一索引、可抹除的顧客個資、匯出任務終態、唯附寫稽核與 2 檢視表                                                                                                                              |
+| `domains/cloud-academy/`   | 領域乙：雲課堂（20 表）   | 企業多租戶組織、RBAC（含 permissions）、憑證／Session 失效、可抹除的學員個資、唯附寫稽核與 2 檢視表                                                                                                          |
+| `domains/swift-logistics/` | 領域丙：捷配物流（19 表） | 商家帳號、API Key 雜湊撤銷、子表 NOT NULL 租戶鍵與複合外鍵、平台員工 RBAC、收件人 PII、唯附寫稽核與 2 檢視表                                                                                                 |
+| `benchmarks/`              | 基準快照 JSON             | `sqlite-scale-snapshots.json`（SQLite 實跑生成）、`postgres-workload-snapshots.json`（PostgreSQL 實跑生成，階段七的負載題）、`postgres-and-concurrency-reference.json`（還沒實測的 PostgreSQL 並行參考快照） |
+| `questions/`               | 結構化題庫 JSON           | `manifest.json` 與八階段（含資安與權限）＋跨概念／資安複合陷阱共 9 份題庫（題數與各值統計以 `verify_questions.py` 的輸出為準）                                                                               |
+| `verify_domains.py`        | SQLite 資料庫底座驗證     | 外鍵、完整性、語意／資安反例、約束回歸（STRICT、時間格式、狀態綁定、複合外鍵）、壓測層一致性契約與執行計畫分岔                                                                                               |
+| `verify_questions.py`      | 題庫自動化驗收            | JSON 欄位、`population` 母體宣告、`discriminator` 鑑別力來源、站內文章連結、基準參照，並在獨立記憶體 SQLite 實跑全部可執行選項與斷言                                                                         |
+| `verify_pg.py`             | PostgreSQL 驗證           | 在拋棄式叢集實跑 `schema_pg.sql` + `seed.sql` + `security_pg.sql`，以各角色身分檢查 RLS、GRANT、唯附寫稽核與跨引擎差異                                                                                       |
+| `generate_benchmarks.py`   | 實測基準快照產生器        | 在三套壓測資料庫實跑關鍵查詢，輸出 `EXPLAIN QUERY PLAN`、單次耗時（每樣本重複執行後平均）、倍率與絕對差                                                                                                      |
+| `pg_workload_bench.py`     | PostgreSQL 負載實測       | 在拋棄式 PostgreSQL 灌百萬列，量快取欄與即時聚合、TOAST 與垂直拆表、熱點列鎖競爭（pgbench）、分區 DROP 與逐列 DELETE；實測方向不成立時 exit 1                                                                |
+| `wasm_load_bench.mjs`      | sql.js 載入量測           | 在 sql.js 灌入三領域 × 倍數 1、3、10 的 `seed_scale.sql`，印耗時、資料庫大小與外鍵違規數（Node，sql.js 裝在 repo 外）                                                                                        |
 
 每個領域目錄有五份 SQL：`schema.sql`（SQLite，供網站與題庫實跑）、`schema_pg.sql`（同一套模型的 PostgreSQL 版 DDL）、`seed.sql`（兩引擎共用，PostgreSQL 執行時略過 `PRAGMA` 行）、`seed_scale.sql`（只供 SQLite）、`security_pg.sql`（PostgreSQL 角色、GRANT 與 RLS，需先執行 `schema_pg.sql`）。
 
@@ -44,6 +45,17 @@ docker rm -fv sqlpractice-pg18
 ```
 
 `POSTGRES_HOST_AUTH_METHOD=trust` 讓任何連線免密碼登入，只用在綁定 `127.0.0.1`、驗證完就刪掉的容器；`55432` 是避開本機 5432 的任意空埠，換成別的埠時兩處一起改。腳本會在叢集裡建立三個領域的資料庫與它們的角色，角色是叢集層級的物件，所以每次驗證用一個新的容器。`docker rm` 的 `-v` 連同容器的匿名資料 volume 一起刪，少了它 volume 會留在本機。
+
+`pg_workload_bench.py` 也接在一個新開的容器上，它會建立並在結束時刪掉 `workload_bench` 資料庫。跑一次約 3 分鐘，資料與 WAL 在容器裡最多佔約 2 GB，所以容器把 `max_wal_size` 調到 512MB，量完就刪：
+
+```bash
+docker run -d --name sqlpractice-pg18 -e POSTGRES_HOST_AUTH_METHOD=trust -p 127.0.0.1:55432:5432 \
+  postgres:18 -c shared_buffers=512MB -c max_wal_size=512MB
+python3 scripts/sql-practice/pg_workload_bench.py --port 55432 --out <暫存目錄>/postgres-workload-snapshots.json
+docker rm -fv sqlpractice-pg18
+```
+
+腳本對每一組結果檢查題目依賴的方向（例如快取欄比即時聚合快、32 條連線搶同一列時吞吐量比單一連線低），方向不成立時 exit 1、不寫出快照，這時要改的是題目的敘述。資料頁數、WAL 的數量級、計數與錯誤訊息每次相同；耗時與 TPS 隨主機負載浮動。`--scale 0.05 --seconds 2` 可以在半分鐘內試跑一次，確認腳本與連線沒問題。
 
 不跑驗證、只想開一個灌好 seed 的資料庫做實驗時（SQLite 檔或 PostgreSQL 容器），指令、工具版本與本機 Docker 物件的名冊在 [本機實驗環境](../../docs/local-environment.md)。
 

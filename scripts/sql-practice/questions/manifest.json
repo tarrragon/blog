@@ -27,7 +27,8 @@
   ],
   "benchmarks": [
     "benchmarks/sqlite-scale-snapshots.json",
-    "benchmarks/postgres-and-concurrency-reference.json"
+    "benchmarks/postgres-and-concurrency-reference.json",
+    "benchmarks/postgres-workload-snapshots.json"
   ],
   "stages": [
     { "stage": 1, "name": "單表查詢與基礎語法", "file": "stage1-basics.json" },
