@@ -318,5 +318,324 @@
         "opt_copy_unit_price": [[101, 550]]
       }
     }
+  },
+  {
+    "conceptId": "S6-01",
+    "variantId": "S6-01-cloud-migration-02",
+    "discriminator": ["engine"],
+    "population": "not-applicable",
+    "domain": "cloud-academy",
+    "stage": 6,
+    "tablePath": ["lesson_progress", "users"],
+    "perspective": "diagnose-plan",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "cross-engine-portability",
+    "traps": ["silent-different-output-across-engines"],
+    "title": "雲課堂從 SQLite 遷到 PostgreSQL：哪一類差異最容易靜默出錯（領域乙變體）",
+    "businessRequirement": "雲課堂的學習報表原本跑在 SQLite，準備遷到 PostgreSQL。下面四類舊寫法裡，哪一類最危險——整合測試不報錯，上線後卻悄悄交出不同的結果？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ -> PostgreSQL 18",
+      "scale": "學習報表與後台約 120 條查詢",
+      "readWriteRatio": "50:1",
+      "indexes": ["跨引擎遷移稽核"]
+    },
+    "options": [
+      {
+        "key": "opt_alias_where",
+        "sql": "-- 差異類型：WHERE 引用 SELECT 別名，例如 SELECT watch_seconds / 60 AS minutes … WHERE minutes > 10",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "PostgreSQL 在解析階段報 column \"minutes\" does not exist",
+        "edgeCaseResult": "錯誤在第一次執行就出現，整合測試會失敗",
+        "pros": ["會被測試抓到，修法明確"],
+        "cons": ["要逐條改寫"],
+        "validWhen": "無",
+        "failsWhen": "遷移時，但會當場失敗、不會靜默"
+      },
+      {
+        "key": "opt_null_sort_and_collation",
+        "sql": "-- 差異類型：ORDER BY completed_at DESC 沒寫 NULLS LAST／FIRST；email 比對與排序依賴引擎預設的大小寫規則",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "兩個引擎都執行成功，結果不同",
+        "edgeCaseResult": "SQLite 的 DESC 把未完課（completed_at 為 NULL）的紀錄排在最後，PostgreSQL 排在最前；SQLite 的 LIKE 對英文字母不分大小寫，PostgreSQL 區分。查詢不報錯，「最近完成的課」與「信箱搜尋」的答案悄悄改變",
+        "pros": ["無"],
+        "cons": ["不報錯、結果不同，只有拿同一份資料比對兩邊的輸出才發現得了"],
+        "validWhen": "無",
+        "failsWhen": "排序欄可能是 NULL，或依賴字串比較規則時"
+      },
+      {
+        "key": "opt_sqlite_date_fn",
+        "sql": "-- 差異類型：使用 SQLite 專屬的日期函式，例如 date(completed_at, '-1 day')",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "PostgreSQL 報 function date(text, unknown) does not exist",
+        "edgeCaseResult": "函式不存在會當場報錯，改寫成 completed_at - INTERVAL '1 day' 即可",
+        "pros": ["會被測試抓到"],
+        "cons": ["要逐條改寫日期運算"],
+        "validWhen": "無",
+        "failsWhen": "遷移時，但會當場失敗"
+      },
+      {
+        "key": "opt_group_by_missing_col",
+        "sql": "-- 差異類型：GROUP BY u.user_id 卻在 SELECT 放了 lp.course_id 這種不在分組裡、也不函數相依的欄位",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "PostgreSQL 報 column must appear in the GROUP BY clause",
+        "edgeCaseResult": "SQLite 會從組內任選一列的值；PostgreSQL 直接拒絕，錯誤在第一次執行就出現",
+        "pros": ["會被測試抓到"],
+        "cons": ["SQLite 期間的結果本來就不可靠"],
+        "validWhen": "無",
+        "failsWhen": "遷移時，但會當場失敗"
+      }
+    ],
+    "recommendedKeys": ["opt_null_sort_and_collation"],
+    "alternativeNote": "遷移時分兩類處理：會報錯的差異交給整合測試；不報錯而結果不同的差異（NULL 排序、大小寫與 collation），要用同一份資料在兩個引擎各跑一次、比對輸出",
+    "relatedDocs": [
+      "/backend/01-database/sql/engine-leniency-and-portability/",
+      "/backend/01-database/sql/relations-have-no-order/"
+    ]
+  },
+  {
+    "conceptId": "S6-02",
+    "variantId": "S6-02-logistics-billing-settle-race-02",
+    "discriminator": ["concurrency"],
+    "domain": "swift-logistics",
+    "stage": 6,
+    "tablePath": ["billing_statements"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "concurrency-control",
+    "traps": ["read-then-write-race", "table-lock-kills-throughput"],
+    "title": "帳單結清的重複送出：PostgreSQL 多連線先讀後寫競態（領域丙變體）",
+    "businessRequirement": "商家 1002 的 3 月帳單 9803 目前是 issued。商家在付款頁連按兩次「確認付款」，兩個請求在 PostgreSQL 18 預設的 READ COMMITTED 下同時抵達；結清只能成功一次，第二次要回報「已結清」，而且每次結清都要寫一筆稽核。哪個做法正確、鎖競爭又最小？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18（多連線並行）",
+      "scale": "月初結帳尖峰每秒 300 筆付款確認",
+      "readWriteRatio": "1:2",
+      "indexes": ["PRIMARY KEY (statement_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_app_select_then_update",
+        "sql": "-- 應用程式先 SELECT status FROM billing_statements WHERE statement_id = 9803，確認是 issued 再 UPDATE status = 'settled'",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "單一請求時正常",
+        "edgeCaseResult": "兩個請求都在對方 UPDATE 之前讀到 issued，兩個都執行 UPDATE、都寫稽核，帳單被結清兩次",
+        "pros": ["流程直覺"],
+        "cons": ["檢查與寫入之間有競態"],
+        "validWhen": "無",
+        "failsWhen": "有並行請求時"
+      },
+      {
+        "key": "opt_conditional_update",
+        "sql": "UPDATE billing_statements SET status = 'settled' WHERE statement_id = 9803 AND status = 'issued' RETURNING statement_id, status;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "第一次回傳 (9803, 'settled')；同一句再執行一次回傳 0 列",
+        "edgeCaseResult": "狀態檢查寫在 UPDATE 的 WHERE 裡，檢查與寫入是同一個原子操作；後到的請求等前一筆提交之後重新評估 WHERE，看到 settled 就不更新。應用程式依 RETURNING 有沒有回傳列決定要不要寫稽核",
+        "pros": ["一句完成檢查與寫入", "只鎖這一列，鎖的時間就是一個 UPDATE"],
+        "cons": ["要依影響列數判斷成功與否，不能只看有沒有報錯"],
+        "validWhen": "狀態轉換只依賴這一列的現況時",
+        "failsWhen": "轉換條件要讀其他表時（改用 SELECT ... FOR UPDATE）"
+      },
+      {
+        "key": "opt_lock_whole_table",
+        "sql": "-- LOCK TABLE billing_statements IN EXCLUSIVE MODE 之後再檢查與更新",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "不會重複結清",
+        "edgeCaseResult": "所有商家的帳單都要排隊等同一把表鎖，月初尖峰時付款確認互相阻塞",
+        "pros": ["保證不重複"],
+        "cons": ["鎖的範圍是整張表，吞吐量降到一次一筆"],
+        "validWhen": "無",
+        "failsWhen": "有並行流量時"
+      },
+      {
+        "key": "opt_select_for_update",
+        "sql": "-- BEGIN；SELECT status FROM billing_statements WHERE statement_id = 9803 FOR UPDATE；確認是 issued 再 UPDATE；寫稽核；COMMIT",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "不會重複結清",
+        "edgeCaseResult": "第二個請求在 FOR UPDATE 等待第一個提交，之後讀到 settled；鎖只在這一列，但持有時間是整個交易",
+        "pros": ["正確", "轉換條件要讀其他資料時也適用"],
+        "cons": ["比條件式 UPDATE 多一次往返，鎖持有得較久"],
+        "validWhen": "狀態轉換要先讀多個欄位或其他表時",
+        "failsWhen": "交易裡夾著外部呼叫時（持鎖時間不可控）"
+      }
+    ],
+    "recommendedKeys": ["opt_conditional_update"],
+    "alternativeNote": "轉換條件只看這一列時用條件式 UPDATE；要讀其他表才判斷得了時用 SELECT ... FOR UPDATE",
+    "relatedDocs": [
+      "/backend/01-database/sql/deployment-shape-and-sql-constructs/",
+      "/backend/01-database/high-frequency-counting/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_conditional_update": [[9803, "settled"]]
+      }
+    }
+  },
+  {
+    "conceptId": "S6-03",
+    "variantId": "S6-03-logistics-dispatch-skip-locked-02",
+    "discriminator": ["concurrency"],
+    "benchmarkRef": "ref-pg-skip-locked-queue",
+    "domain": "swift-logistics",
+    "stage": 6,
+    "tablePath": ["dispatch_tasks"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "queue-concurrency",
+    "traps": ["worker-duplicate-claim", "for-update-serializes-workers"],
+    "title": "多個調度程式並行認領派送任務：FOR UPDATE SKIP LOCKED 取捨（領域丙變體）",
+    "businessRequirement": "8 個調度程式在 PostgreSQL 上同時輪詢 dispatch_tasks，認領 status = 'queued' 中優先序最高的任務。要求同一筆任務不被兩個調度程式認領，而且不能因為別人正在認領某一列就停下來等。",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "8 個調度程式高頻輪詢、3,000 萬列歷史任務",
+      "readWriteRatio": "1:1",
+      "indexes": ["idx_dispatch_queued (priority DESC, created_at ASC) WHERE status = 'queued'"]
+    },
+    "options": [
+      {
+        "key": "opt_plain_select",
+        "sql": "-- SELECT task_id FROM dispatch_tasks WHERE status = 'queued' ORDER BY priority DESC, created_at LIMIT 1；再 UPDATE 成 claimed",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "單一調度程式時正常",
+        "edgeCaseResult": "一般 SELECT 不鎖列，兩個調度程式同時讀到 9506，兩個都把它改成 claimed，同一筆派送被派給兩組司機",
+        "pros": ["寫法最簡單"],
+        "cons": ["沒有鎖，重複認領"],
+        "validWhen": "只有一個調度程式時",
+        "failsWhen": "多個調度程式並行時"
+      },
+      {
+        "key": "opt_for_update_wait",
+        "sql": "-- SELECT task_id FROM dispatch_tasks WHERE status = 'queued' ORDER BY priority DESC, created_at LIMIT 1 FOR UPDATE；再 UPDATE",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "不會重複認領",
+        "edgeCaseResult": "8 個調度程式都排隊等優先序最高的那一列；第一個提交後，其他人重新檢查發現它已不是 queued，又回頭搶下一列，實際上一次只有一個人在工作",
+        "pros": ["不會重複認領"],
+        "cons": ["所有調度程式互相等待同一列，並行度接近 1"],
+        "validWhen": "調度程式很少、任務處理很快時",
+        "failsWhen": "多個調度程式高頻輪詢時"
+      },
+      {
+        "key": "opt_skip_locked",
+        "sql": "-- WITH picked AS (SELECT task_id FROM dispatch_tasks WHERE status = 'queued' ORDER BY priority DESC, created_at LIMIT 1 FOR UPDATE SKIP LOCKED) UPDATE dispatch_tasks t SET status = 'claimed', claimed_by = :dispatcher FROM picked WHERE t.task_id = picked.task_id RETURNING t.task_id",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "每個調度程式各自認領不同的任務",
+        "edgeCaseResult": "SKIP LOCKED 跳過別人已經鎖住的列，直接拿下一筆；部分索引讓「找下一筆 queued」只掃描少量的列",
+        "pros": ["不重複、不互相等待", "認領與更新在同一句完成"],
+        "cons": ["優先序只是近似：被跳過的高優先任務要等鎖釋放才會被認領"],
+        "validWhen": "多個消費者並行處理工作佇列時",
+        "failsWhen": "要求嚴格依優先序逐筆處理時"
+      },
+      {
+        "key": "opt_serializable",
+        "sql": "-- SET TRANSACTION ISOLATION LEVEL SERIALIZABLE，不加任何鎖子句",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "重複認領的交易之一會在提交時以序列化失敗報錯",
+        "edgeCaseResult": "8 個調度程式搶同一列時大部分交易失敗重試，重試又撞在一起；沒有重試邏輯的程式直接報錯",
+        "pros": ["不必改查詢"],
+        "cons": ["熱點列讓序列化失敗大量發生"],
+        "validWhen": "衝突很少、而且有重試機制時",
+        "failsWhen": "佇列認領這種所有人搶同一列的情境"
+      }
+    ],
+    "recommendedKeys": ["opt_skip_locked"],
+    "alternativeNote": "SKIP LOCKED 的行為與多連線競爭在 SQLite 上重現不了，參考快照 ref-pg-skip-locked-queue 依文件記錄 PostgreSQL 的行為",
+    "relatedDocs": [
+      "/backend/01-database/sql/deployment-shape-and-sql-constructs/"
+    ]
+  },
+  {
+    "conceptId": "S6-04",
+    "variantId": "S6-04-cloud-invoice-amount-snapshot-02",
+    "discriminator": ["modeling"],
+    "domain": "cloud-academy",
+    "stage": 6,
+    "tablePath": ["invoices", "subscriptions"],
+    "perspective": "tradeoff-design",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": "copy-vs-reference",
+    "traps": ["referencing-mutable-price-corrupts-history", "json-items-breaks-analytics"],
+    "title": "發票金額該複製還是引用方案價目：建表決定替未來查詢定價（領域乙變體）",
+    "businessRequirement": "訂閱 2001 的 pro 方案在 2026 年 1 月是每月 990 元，發票 3001 依當時價格開立；之後 pro 方案預計調漲。發票的金額該怎麼存，才能讓三年後的對帳、退款與營收報表仍然正確？",
+    "workloadProfile": {
+      "engine": "SQLite / PostgreSQL 18",
+      "scale": "400 萬張發票、方案每年調價",
+      "readWriteRatio": "30:1",
+      "indexes": ["idx_invoices_sub_status"]
+    },
+    "options": [
+      {
+        "key": "opt_reference_plan_price",
+        "sql": "-- invoices 只存 sub_id，金額在查詢時由 subscriptions.plan_code 連到方案價目表取目前的價格",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "調價前查詢結果正確",
+        "edgeCaseResult": "pro 方案一調價，所有舊發票的金額跟著改變；已開立、已收款的 3001 在報表上變成新價格，對帳與退款金額都錯",
+        "pros": ["不重複存價格"],
+        "cons": ["歷史交易引用了會變動的值"],
+        "validWhen": "值本身不會變動時",
+        "failsWhen": "價格會調整時"
+      },
+      {
+        "key": "opt_copy_amount",
+        "sql": "SELECT invoice_id, sub_id, amount FROM invoices WHERE sub_id = 2001 ORDER BY invoice_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "3001 與 3007 都保留開立當時的 990 元",
+        "edgeCaseResult": "開立時把成交金額複製進 invoices.amount，之後方案怎麼調價都不影響已開立的發票",
+        "pros": ["歷史金額固定", "對帳與報表不必回推當時的價目"],
+        "cons": ["同一個價格存在兩處；要分析「調價前後」時，需另外保存方案價目的歷史"],
+        "validWhen": "交易成立當下的值需要保存時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_json_in_subscriptions",
+        "sql": "-- 不建 invoices 表，把每期帳單存成 subscriptions.invoices_json 陣列",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "讀一份訂閱時拿得到全部帳單",
+        "edgeCaseResult": "要算「3 月已收款總額」時，必須把每一份訂閱的 JSON 讀出來逐筆解析；金額與狀態沒有欄位約束，退款也無法用外鍵連回單張發票",
+        "pros": ["讀單一訂閱時方便"],
+        "cons": ["跨訂閱的彙總與約束都做不到"],
+        "validWhen": "無",
+        "failsWhen": "需要報表或對帳時"
+      },
+      {
+        "key": "opt_new_plan_code_per_price",
+        "sql": "-- 每次調價就建新的 plan_code（pro_2026a、pro_2026b），舊方案代碼永遠不改價",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "舊發票依舊方案代碼查得到當時價格",
+        "edgeCaseResult": "「pro 方案的訂閱數」這類報表要合併一長串代碼；訂閱升降級與續約時，方案代碼的判斷邏輯散落各處",
+        "pros": ["歷史價格可以追溯"],
+        "cons": ["把價格版本混進方案的識別，報表與業務邏輯變複雜"],
+        "validWhen": "方案本身的內容也隨價格改版時",
+        "failsWhen": "只是價格調整、方案內容不變時"
+      }
+    ],
+    "recommendedKeys": ["opt_copy_amount"],
+    "alternativeNote": "要同時保留價目歷史時，另建 plan_prices(plan_code, effective_from, price)；發票仍複製開立當下的金額",
+    "relatedDocs": [
+      "/backend/01-database/sql/decisions-from-requirement-to-shipping/",
+      "/backend/01-database/design-decisions-price-every-query/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_copy_amount": [[3001, 2001, 990], [3007, 2001, 990]]
+      }
+    }
   }
 ]

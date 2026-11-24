@@ -469,5 +469,481 @@
       "/backend/01-database/schema-design/",
       "/backend/01-database/design-decisions-price-every-query/"
     ]
+  },
+  {
+    "conceptId": "S7-01",
+    "variantId": "S7-01-cloud-course-progress-cache-02",
+    "discriminator": ["workload"],
+    "domain": "cloud-academy",
+    "stage": 7,
+    "tablePath": ["courses", "lesson_progress"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "read-write-ratio-denormalization",
+    "traps": ["live-agg-at-high-read-qps", "storing-avg-instead-of-sum-and-count"],
+    "title": "D01：課程目錄顯示完課人次與平均觀看秒數——讀寫比 60:1 的正規化與反正規化取捨（領域乙變體）",
+    "businessRequirement": "雲課堂的課程目錄每秒 1,200 次讀取，每頁顯示 24 門課的完課人次與平均觀看秒數；學習紀錄每秒約 20 次寫入（讀寫比 60:1），lesson_progress 已累積 500 萬列。哪個 Schema 設計最符合這個負載？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "2,000 門課程、500 萬筆學習紀錄",
+      "readWriteRatio": "60:1（1,200 讀 QPS／20 寫 QPS）",
+      "indexes": ["待定 Schema 設計"]
+    },
+    "options": [
+      {
+        "key": "opt_live_join_agg",
+        "sql": "-- 維持正規化，每次目錄頁即時執行 courses LEFT JOIN lesson_progress GROUP BY course_id 計算 COUNT 與 AVG",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "資料永遠即時",
+        "edgeCaseResult": "每秒 1,200 次讀取各自聚合一次相關的學習紀錄；熱門課有數十萬筆紀錄時，每頁都要掃過這些列，CPU 與 I/O 隨紀錄數成長",
+        "pros": ["沒有重複存放的資料", "不必維護一致性"],
+        "cons": ["讀取成本隨學習紀錄數成長，而讀取次數是寫入的 60 倍"],
+        "validWhen": "讀取頻率低、或紀錄數小時",
+        "failsWhen": "高讀取頻率的列表頁"
+      },
+      {
+        "key": "opt_counter_sum_cache_cols",
+        "sql": "-- courses 增設 completed_count 與 watch_seconds_sum、progress_count 三欄；學習紀錄新增或完課時在同一交易增量更新，每日排程對帳；目錄頁只讀 courses",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "目錄頁只讀 courses 一張表",
+        "edgeCaseResult": "平均觀看秒數在讀取時用 watch_seconds_sum / progress_count 算出；存加總與筆數而不是平均值，新增或刪除一筆紀錄時才能用加減法正確更新",
+        "pros": ["讀取成本固定，不隨紀錄數成長", "加總與筆數可以增量維護"],
+        "cons": ["每次寫入多更新一列 courses；熱門課的寫入集中在同一列，寫入量再高時要改成分桶"],
+        "validWhen": "讀遠多於寫、而且聚合值可以增量維護時",
+        "failsWhen": "單一課程的寫入量高到同一列成為熱點時"
+      },
+      {
+        "key": "opt_store_avg_only",
+        "sql": "-- courses 只增設 avg_watch_seconds 一欄，每次寫入後重新計算平均值寫回",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "目錄頁也只讀 courses",
+        "edgeCaseResult": "只存平均值時，新增一筆紀錄無法只靠舊平均算出新平均，每次寫入都要重新聚合全部紀錄；兩筆寫入同時發生時，後寫的人用舊的平均值覆蓋",
+        "pros": ["讀取成本固定"],
+        "cons": ["平均值不能增量更新，寫入成本反而隨紀錄數成長"],
+        "validWhen": "無",
+        "failsWhen": "要增量維護時"
+      },
+      {
+        "key": "opt_index_every_col",
+        "sql": "-- 維持即時聚合，但在 lesson_progress 每一個欄位各建一個單欄索引",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "部分查詢略快",
+        "edgeCaseResult": "聚合仍要讀過每門課的全部紀錄，索引只省下定位的成本；每次寫入要多維護五個索引",
+        "pros": ["不改 Schema"],
+        "cons": ["沒有降低聚合本身的成本，寫入成本卻上升"],
+        "validWhen": "無",
+        "failsWhen": "高讀取頻率的聚合列表"
+      }
+    ],
+    "recommendedKeys": ["opt_counter_sum_cache_cols"],
+    "alternativeNote": "讀寫比下降、或聚合條件常常變動時，改用定期重算的彙總表或物化檢視表，接受幾分鐘的延遲",
+    "relatedDocs": [
+      "/backend/01-database/schema-design/",
+      "/backend/01-database/design-decisions-price-every-query/"
+    ]
+  },
+  {
+    "conceptId": "S7-02",
+    "variantId": "S7-02-logistics-shipment-payload-split-02",
+    "discriminator": ["workload"],
+    "domain": "swift-logistics",
+    "stage": 7,
+    "tablePath": ["shipments", "shipment_payloads"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "vertical-partitioning-table-width",
+    "traps": ["wide-row-dilutes-buffer-pool", "over-normalization-ten-joins"],
+    "title": "D02：熱冷欄位分離——運單寬表與 1:1 拆出的原始託運單報文（shipments 與 shipment_payloads，領域丙變體）",
+    "businessRequirement": "捷配物流的 shipments 有 800 萬筆，商家後台的列表與篩選高頻讀取約 60 bytes 的核心欄（shipment_id、merchant_id、warehouse_id、status、fee_cents、created_at）；每張運單另有約 8KB 的原始電子託運單 JSON，只在客服調閱單張運單時讀取。該放同一張表還是垂直拆表？",
+    "workloadProfile": {
+      "engine": "SQLite / MySQL InnoDB / PostgreSQL 18",
+      "scale": "800 萬運單（每筆 8KB 冷報文，約 64 GB）",
+      "readWriteRatio": "20:1",
+      "indexes": ["PRIMARY KEY (shipment_id)", "idx_shipments_wh_status_created"]
+    },
+    "options": [
+      {
+        "key": "opt_single_wide_table",
+        "sql": "-- 把 raw_waybill_json 放回 shipments，列表繼續 SELECT *",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "查詢不必連接",
+        "edgeCaseResult": "每一列帶著 8KB 報文，一個資料頁只放得下少數幾列；列表掃描讀進記憶體的大多是用不到的報文，緩衝區被擠掉，熱資料的命中率下降。PostgreSQL 會把超過門檻的欄位移到 TOAST，但 SELECT * 仍然會把它讀回來",
+        "pros": ["結構最簡單"],
+        "cons": ["高頻查詢為低頻欄位付出 I/O 與記憶體成本"],
+        "validWhen": "表小、或大欄位幾乎每次都要讀時",
+        "failsWhen": "大欄位只在少數情境讀取時"
+      },
+      {
+        "key": "opt_vertical_split",
+        "sql": "-- 核心欄留在 shipments；raw_waybill_json 拆到 1:1 的 shipment_payloads（主鍵與複合外鍵 (merchant_id, shipment_id) 對回 shipments）；列表只讀 shipments，客服調閱單張運單時才用主鍵連接",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "列表掃描只讀核心欄，資料頁裡塞得下更多列",
+        "edgeCaseResult": "冷資料在另一張表，緩衝區留給高頻的核心欄；調閱單張時多一次主鍵查找，成本固定",
+        "pros": ["高頻查詢的 I/O 與記憶體使用量大幅下降", "附屬表沿用複合外鍵，租戶隔離不變"],
+        "cons": ["新增運單要寫兩張表", "調閱詳情多一次連接"],
+        "validWhen": "少數大欄位只在低頻情境讀取時",
+        "failsWhen": "大欄位每次都要讀時"
+      },
+      {
+        "key": "opt_split_every_col",
+        "sql": "-- 把 shipments 每一個欄位各拆成一張獨立的小表",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "每張表都很窄",
+        "edgeCaseResult": "列表查詢要連接六張表才拼得回一筆運單；每次寫入要插入六張表，約束與索引也分散",
+        "pros": ["無"],
+        "cons": ["把常一起讀的欄位拆開，連接成本取代了掃描成本"],
+        "validWhen": "無",
+        "failsWhen": "任何高頻查詢"
+      },
+      {
+        "key": "opt_chunk_varchar_cols",
+        "sql": "-- 留在同一張表，把報文切成四個 VARCHAR(2000) 欄位",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "每個欄位都短",
+        "edgeCaseResult": "每一列的總寬度沒有變，列表掃描讀進的資料量一樣；應用程式還要負責切開與拼回報文",
+        "pros": ["無"],
+        "cons": ["沒有降低列寬，還多了切割邏輯"],
+        "validWhen": "無",
+        "failsWhen": "任何情境"
+      }
+    ],
+    "recommendedKeys": ["opt_vertical_split"],
+    "alternativeNote": "本領域的 schema 已經採用這個拆法：shipment_payloads 只存不含收件人個資的報文，收件人個資另放在 shipment_recipient_pii",
+    "relatedDocs": [
+      "/backend/01-database/design-decisions-price-every-query/",
+      "/backend/01-database/table-growth-query-cost/"
+    ]
+  },
+  {
+    "conceptId": "S7-03",
+    "variantId": "S7-03-cloud-course-view-counter-02",
+    "discriminator": ["concurrency", "workload"],
+    "benchmarkRef": "ref-pg-hot-row-counter-contention",
+    "domain": "cloud-academy",
+    "stage": 7,
+    "tablePath": ["courses"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "high-frequency-counting",
+    "traps": ["hot-row-lock-contention", "bigger-pool-worsens-lock-queue"],
+    "title": "D03：開課直播的即時觀看計數——熱點列鎖競爭與只新增事件、分桶計數（領域乙變體）",
+    "businessRequirement": "雲課堂替課程 104 舉辦免費直播，每秒有 2,000 次「觀看一次」的計數寫入。工程師直接寫 `UPDATE courses SET view_count = view_count + 1 WHERE course_id = 104`，在 PostgreSQL 上延遲飆高、連線池耗盡。該怎麼改設計？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "單一熱門課程 2,000 寫入 QPS",
+      "readWriteRatio": "1:10",
+      "indexes": ["PRIMARY KEY (course_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_bigger_pool",
+        "sql": "-- 維持單列 UPDATE view_count + 1，把連線池從 30 調到 600",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "短時間內排隊的請求變少",
+        "edgeCaseResult": "所有 UPDATE 都要拿同一列的鎖，一次只有一個能執行；連線變多只讓等鎖的佇列變長，每條連線也佔用資料庫的記憶體，延遲與資源用量一起上升",
+        "pros": ["不改程式"],
+        "cons": ["瓶頸是同一列的鎖，不是連線數"],
+        "validWhen": "無",
+        "failsWhen": "熱點列寫入"
+      },
+      {
+        "key": "opt_append_or_bucket",
+        "sql": "-- 改成只新增事件（INSERT INTO course_view_events）或分桶計數表 course_view_buckets(course_id, bucket_id 0..31, cnt)，每次隨機選一個桶 +1；背景排程定期把桶加總寫回，或先在快取層累積再批次寫入",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "寫入分散到 32 列或只新增的事件表，不再搶同一把鎖",
+        "edgeCaseResult": "顯示的觀看數是幾秒前的彙總值；彙總排程可以重跑，事件表另外保留每一次觀看的明細",
+        "pros": ["寫入並行度隨桶數成長", "計數可以從事件重新計算"],
+        "cons": ["讀取時要加總或接受延遲", "多一個彙總排程要維護"],
+        "validWhen": "單一列的寫入頻率超過一把列鎖撐得起的範圍時",
+        "failsWhen": "需要每次讀到精確即時值時"
+      },
+      {
+        "key": "opt_serializable",
+        "sql": "-- 維持單列 UPDATE，把隔離等級調高到 SERIALIZABLE",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "計數仍然正確",
+        "edgeCaseResult": "同一列的寫入本來就靠列鎖排隊；提高隔離等級增加了衝突偵測的成本與重試，沒有減少鎖競爭",
+        "pros": ["無"],
+        "cons": ["處理的不是這個瓶頸"],
+        "validWhen": "無",
+        "failsWhen": "熱點列寫入"
+      },
+      {
+        "key": "opt_app_read_add_write",
+        "sql": "-- 改成先 SELECT view_count 讀回應用程式，加 1 之後再 UPDATE 寫回",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "沒有並行時正確",
+        "edgeCaseResult": "兩個請求讀到同一個值、各自加 1 寫回，其中一次計數遺失；每秒 2,000 次時大量遺失",
+        "pros": ["無"],
+        "cons": ["先讀後寫造成遺失更新"],
+        "validWhen": "無",
+        "failsWhen": "任何並行情境"
+      }
+    ],
+    "recommendedKeys": ["opt_append_or_bucket"],
+    "alternativeNote": "熱點列計數在 PostgreSQL 的鎖競爭行為見參考快照 ref-pg-hot-row-counter-contention；SQLite 單一寫入者的模型重現不了這種競爭",
+    "relatedDocs": [
+      "/backend/01-database/high-frequency-counting/"
+    ]
+  },
+  {
+    "conceptId": "S7-04",
+    "variantId": "S7-04-cloud-webhook-partial-index-02",
+    "discriminator": ["workload", "plan"],
+    "requiresScale": true,
+    "benchmarkRef": "bm-academy-webhook-storm",
+    "domain": "cloud-academy",
+    "stage": 7,
+    "tablePath": ["webhook_events"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "partial-index-write-amplification",
+    "traps": ["over-indexing-write-amplification", "full-index-bloated-by-cold-rows"],
+    "title": "D04：絕大多數已處理的 Webhook 表——全表索引與部分索引（Partial Index）（領域乙變體）",
+    "businessRequirement": "雲課堂 webhook_events 長期累積上千萬列（本壓測縮尺約 2 萬列），幾乎全部是 done，任何時刻只有少量 pending。處理程序高頻執行 `WHERE status = 'pending' ORDER BY received_at ASC LIMIT 5`，金流商的重送又讓寫入量很高。該怎麼建索引？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "20,015（壓測縮尺）～ 3,000 萬列、500 寫 QPS／100 輪詢 QPS",
+      "readWriteRatio": "1:5",
+      "indexes": ["idx_webhook_pending (received_at ASC) WHERE status = 'pending'"]
+    },
+    "options": [
+      {
+        "key": "opt_index_every_col",
+        "sql": "-- 每一個欄位各建單欄索引，再加兩張複合索引",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "輪詢查詢可能用得到其中一個索引",
+        "edgeCaseResult": "每一筆新 webhook 要寫入八個索引，寫入量高的表被索引維護拖慢；大部分索引沒有任何查詢在用",
+        "pros": ["無"],
+        "cons": ["寫入放大，換來的讀取效益很少"],
+        "validWhen": "無",
+        "failsWhen": "寫入量高的表"
+      },
+      {
+        "key": "opt_full_composite_index",
+        "sql": "-- CREATE INDEX idx_webhook_status_received ON webhook_events (status, received_at)",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "輪詢查詢用得到索引",
+        "edgeCaseResult": "索引涵蓋全部列，幾乎都是不會再被輪詢的 done；索引大小與維護成本跟著整張表成長，處理完一筆時還要在索引裡搬動它的位置",
+        "pros": ["輪詢查詢夠快"],
+        "cons": ["為了少數 pending 列，維護一份涵蓋所有冷資料的索引"],
+        "validWhen": "status 的分布平均、各種狀態都常被查詢時",
+        "failsWhen": "絕大多數列處在查詢不會碰的狀態時"
+      },
+      {
+        "key": "opt_partial_index",
+        "sql": "SELECT event_id FROM webhook_events WHERE status = 'pending' ORDER BY received_at ASC LIMIT 5;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "執行計畫走 idx_webhook_pending，直接依 received_at 順序讀出前 5 筆 pending",
+        "edgeCaseResult": "部分索引只收 status = 'pending' 的列，大小隨待處理量變化，不隨整張表成長；處理完的列離開索引，不再有人維護它",
+        "pros": ["索引小、輪詢快", "寫入 done 的列不必維護這個索引"],
+        "cons": ["查詢條件要跟索引的 WHERE 一致，寫成 status IN ('pending', 'processing') 時就用不上"],
+        "validWhen": "查詢只關心少數狀態的列時",
+        "failsWhen": "查詢條件與部分索引的 WHERE 不一致時"
+      },
+      {
+        "key": "opt_no_index",
+        "sql": "SELECT event_id FROM webhook_events WHERE +status = 'pending' ORDER BY received_at ASC LIMIT 5;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "結果相同，執行計畫是 SCAN webhook_events 再另外排序",
+        "edgeCaseResult": "+status 讓 SQLite 不使用索引，模擬沒有索引的情形：每次輪詢都掃描全表、再排序",
+        "pros": ["寫入沒有額外成本"],
+        "cons": ["輪詢成本隨整張表成長"],
+        "validWhen": "表很小時",
+        "failsWhen": "高頻輪詢的大表"
+      }
+    ],
+    "recommendedKeys": ["opt_partial_index"],
+    "alternativeNote": "部分索引與全表掃描的實測差距見基準快照 bm-academy-webhook-storm 的 partial_index_pending 變體",
+    "relatedDocs": [
+      "/backend/01-database/table-growth-query-cost/",
+      "/backend/01-database/sql/knowledge-cards/indexing/"
+    ],
+    "sqliteAssertions": {
+      "optionExplainMustContain": {
+        "opt_partial_index": "idx_webhook_pending",
+        "opt_no_index": "SCAN webhook_events"
+      }
+    }
+  },
+  {
+    "conceptId": "S7-05",
+    "variantId": "S7-05-cloud-webhook-partition-unique-02",
+    "discriminator": ["workload", "engine"],
+    "benchmarkRef": "ref-pg-partition-drop-vs-delete",
+    "domain": "cloud-academy",
+    "stage": 7,
+    "tablePath": ["webhook_events"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "partitioning-and-retention",
+    "traps": ["bulk-delete-vacuum-bloat", "partition-unique-must-include-partition-key"],
+    "title": "D05：Webhook 事件保留期清理——DELETE 膨脹、按月時間分區與冪等唯一約束衝突（領域乙變體）",
+    "businessRequirement": "雲課堂 webhook_events 每天新增 200 萬筆，只需保留 90 天；為了冪等處理，計畫在表上建 UNIQUE (provider, external_id) 擋下金流商的重送。如果改成 PostgreSQL 依 received_at 按月 Range Partitioning，必須面對什麼設計取捨？",
+    "workloadProfile": {
+      "engine": "PostgreSQL 18",
+      "scale": "90 天約 1.8 億列事件",
+      "readWriteRatio": "1:20",
+      "indexes": ["依 received_at 按月分區"]
+    },
+    "options": [
+      {
+        "key": "opt_daily_bulk_delete",
+        "sql": "-- 維持單表不分區，每天凌晨執行 DELETE FROM webhook_events WHERE received_at < now() - INTERVAL '90 days'",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "保留期限被遵守",
+        "edgeCaseResult": "每天刪除 200 萬列：刪除產生大量 WAL 與死元組，VACUUM 跟不上時表與索引持續膨脹；刪除期間的鎖與 I/O 也影響白天的寫入",
+        "pros": ["不必改表結構"],
+        "cons": ["大量 DELETE 的成本每天重複，而且留下要回收的空間"],
+        "validWhen": "每天要清理的列數很少時",
+        "failsWhen": "每天清理數百萬列時"
+      },
+      {
+        "key": "opt_monthly_range_partition",
+        "sql": "-- 依 received_at 按月 Range Partitioning，過期整個月份用 DROP TABLE 或 DETACH PARTITION 移除；唯一約束改成包含分區鍵的 UNIQUE (provider, external_id, received_at)，跨月份的重送另用冪等鍵表（只保留近 7 天的 external_id）擋下",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "清理一個月份只要毫秒級的中繼資料操作",
+        "edgeCaseResult": "PostgreSQL 的分區表上，唯一約束必須包含分區鍵；(provider, external_id) 單獨的全域唯一無法建立，同一個事件在不同月份重送時，資料庫本身擋不住，要另外設計",
+        "pros": ["清理成本不隨資料量成長", "查詢帶時間條件時只掃描相關分區"],
+        "cons": ["全域唯一性要另外處理", "要預先建好未來月份的分區"],
+        "validWhen": "依時間保留、依時間清理的大量事件",
+        "failsWhen": "強烈依賴不含時間的全域唯一約束時"
+      },
+      {
+        "key": "opt_hash_partition",
+        "sql": "-- 依 external_id 做 Hash Partitioning，想同時保留全域唯一與快速刪舊資料",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "唯一約束可以包含 external_id",
+        "edgeCaseResult": "Hash 分區讓每個分區都混著新舊資料，過期清理還是要在每個分區裡逐列 DELETE；分區沒有解決保留期的問題",
+        "pros": ["寫入分散到多個分區"],
+        "cons": ["分區鍵與清理的維度不一致，失去 DROP 分區的好處"],
+        "validWhen": "目的是分散寫入而不是依時間清理時",
+        "failsWhen": "要依時間清理時"
+      },
+      {
+        "key": "opt_never_delete",
+        "sql": "-- 不刪除、不分區，只持續擴充磁碟",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "短期內沒有清理成本",
+        "edgeCaseResult": "違反 90 天的保留要求；表與索引持續成長，備份、還原與重建索引的時間一起變長",
+        "pros": ["無"],
+        "cons": ["違反保留要求，成本延後而且持續累積"],
+        "validWhen": "無",
+        "failsWhen": "有保留期限時"
+      }
+    ],
+    "recommendedKeys": ["opt_monthly_range_partition"],
+    "alternativeNote": "按月分區刪除與逐列 DELETE 的差異見參考快照 ref-pg-partition-drop-vs-delete；分區表的唯一約束必須包含分區鍵是 PostgreSQL 的限制，SQLite 沒有原生分區",
+    "relatedDocs": [
+      "/backend/01-database/table-growth-query-cost/",
+      "/backend/01-database/schema-change-management/"
+    ]
+  },
+  {
+    "conceptId": "S7-06",
+    "variantId": "S7-06-cloud-course-metadata-jsonb-02",
+    "discriminator": ["modeling"],
+    "domain": "cloud-academy",
+    "stage": 7,
+    "tablePath": ["courses", "course_contents"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": "structured-vs-semi-structured",
+    "traps": ["sparse-40-nullable-columns", "eav-anti-pattern", "json-only-loses-fk-and-indexes"],
+    "title": "D06：多種課程型態的規格建模——強型別固定欄位、JSONB 與 EAV 取捨（領域乙變體）",
+    "businessRequirement": "雲課堂要從錄播課擴展到直播課、工作坊與企業內訓：目錄的篩選與排序只用學程、月費等級與是否上架；課時數、字幕語言、直播時段、場地與講師人數這些規格只在課程詳情頁顯示，而且每種課程型態的欄位不同。該怎麼建模？",
+    "workloadProfile": {
+      "engine": "SQLite / PostgreSQL 18",
+      "scale": "2 萬門課程、持續新增課程型態",
+      "readWriteRatio": "300:1",
+      "indexes": ["核心篩選欄建複合索引"]
+    },
+    "options": [
+      {
+        "key": "opt_40_nullable_cols",
+        "sql": "-- 把所有課程型態的規格全部做成 courses 的 nullable 欄位（約 40 欄）",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "每個規格都是強型別欄位",
+        "edgeCaseResult": "每門課只用到少數欄位，其餘都是 NULL；每新增一種課程型態就要 ALTER TABLE，列寬與遷移成本一起成長",
+        "pros": ["每個欄位都有型別與約束"],
+        "cons": ["稀疏欄位讓主表變寬，新型態要改 Schema"],
+        "validWhen": "規格欄位少而穩定時",
+        "failsWhen": "課程型態持續增加時"
+      },
+      {
+        "key": "opt_hybrid_fixed_and_json",
+        "sql": "SELECT c.course_id, c.title, json_extract(cc.metadata_json, '$.lessons') AS lessons FROM courses c JOIN course_contents cc ON cc.course_id = c.course_id WHERE c.is_published = 1 AND c.track = 'backend' ORDER BY c.monthly_fee_tier, c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 101（12 堂）、102（15 堂）、103（10 堂）",
+        "edgeCaseResult": "參與篩選、排序與約束的欄位（track、monthly_fee_tier、is_published）留在 courses 的強型別欄位；只顯示的規格放在 course_contents.metadata_json（PostgreSQL 用 JSONB），詳情頁才讀取",
+        "pros": ["篩選欄位保有型別、約束與索引", "新增課程型態不必改 Schema"],
+        "cons": ["JSON 欄位裡的值沒有資料庫層的型別檢查；某個規格變成高頻篩選條件時，要補運算式索引或升格成固定欄位"],
+        "validWhen": "篩選欄位穩定、展示規格多變時",
+        "failsWhen": "需要對大量規格做複雜篩選與約束時"
+      },
+      {
+        "key": "opt_eav_table",
+        "sql": "-- 連學程與月費等級都放進 EAV 表 course_attributes (course_id, attr_name, attr_value)",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "新增任何屬性都不必改 Schema",
+        "edgeCaseResult": "篩選「backend 學程、月費等級 2 以上」要把 EAV 表自連接兩次；attr_value 只能是文字，月費等級的數值比較與外鍵約束都做不到",
+        "pros": ["結構最有彈性"],
+        "cons": ["每個篩選條件多一次自連接", "失去型別與約束"],
+        "validWhen": "無",
+        "failsWhen": "屬性要參與篩選或約束時"
+      },
+      {
+        "key": "opt_json_only",
+        "sql": "-- courses 只留 course_id 與一個 data_json 欄位，取消所有外鍵與固定欄位",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "寫入最自由",
+        "edgeCaseResult": "lesson_progress、certificates 無法用外鍵確認課程存在；目錄篩選只能逐列解析 JSON，學程與月費等級的格式錯誤直到查詢時才發現",
+        "pros": ["不必設計 Schema"],
+        "cons": ["失去約束、外鍵與一般索引"],
+        "validWhen": "無",
+        "failsWhen": "有其他表要引用課程、或需要篩選時"
+      }
+    ],
+    "recommendedKeys": ["opt_hybrid_fixed_and_json"],
+    "alternativeNote": "本領域的 schema 已經採用這個做法：courses 放篩選欄位，course_contents 放課綱與 metadata_json",
+    "relatedDocs": [
+      "/backend/01-database/schema-design/",
+      "/backend/01-database/design-decisions-price-every-query/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_hybrid_fixed_and_json": [[101, "SQL 語意模型入門", 12], [102, "PostgreSQL 效能調校", 15], [103, "分散式交易與隔離等級", 10]]
+      }
+    }
   }
 ]
