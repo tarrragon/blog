@@ -430,7 +430,7 @@ function viewQuestion(s, idx, { justAnswered } = {}) {
     content: h("div", { class: "sqlp-question" },
       C.keywordBanner(kw),
       C.questionLayout({
-        title: C.screenTitle(heading, "sqlp-q-h"),
+        title: C.screenTitle(heading, "sqlp-q-h", "label"),
         side: [C.requirement(q.businessRequirement), C.premiseList(q.workloadProfile), C.hint(ask, true)],
         main: [
           C.schemaPanel(q.tablePath, schemaOf[q.domain] || {}),

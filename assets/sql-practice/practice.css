@@ -188,10 +188,14 @@ html:has(#sql-practice) { scroll-padding-top: 72px; }
 .sqlp-title:focus { outline: none; }
 .sqlp-title:focus-visible { outline: 3px solid var(--sqlp-accent); }
 @media (max-width: 599px) { .sqlp-title { font-size: 24px; line-height: 32px; } }
+/* label 變體：題目畫面的標題是考點提示，讀者作答靠的是下面的需求，所以標題退成灰色小字、需求放大 */
+.sqlp-title.sqlp-title--label { font-size: 17px; line-height: 26px; font-weight: 400; color: var(--sqlp-muted); text-wrap: wrap; }
 .sqlp-section { font-size: 22px; line-height: 30px; font-weight: 300; margin-bottom: var(--sqlp-s3); }
 
 /* ---- 內文 Requirement、PremiseList、Hint ---- */
-.sqlp-req { font-size: 17px; line-height: 28px; max-width: 40em; overflow-wrap: anywhere; }
+/* 需求是題目本身，左欄裡最大的字 */
+.sqlp-req { font-size: 22px; line-height: 34px; max-width: 40em; overflow-wrap: anywhere; }
+@media (max-width: 599px) { .sqlp-req { font-size: 20px; line-height: 32px; } }
 .sqlp-premise { display: grid; grid-template-columns: 4.5em minmax(0, 1fr); gap: var(--sqlp-s2) var(--sqlp-s4); font-size: 16px; line-height: 26px; }
 .sqlp-premise dt { color: var(--sqlp-muted); }
 .sqlp-premise dd { margin: 0; overflow-wrap: anywhere; }

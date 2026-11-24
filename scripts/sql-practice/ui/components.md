@@ -48,14 +48,17 @@ token 定義在 `assets/sql-practice/practice.css` 開頭的 `#sql-practice` 選
 | 顏色 | `--sqlp-rule`           | `#3a3a3a`                       | 分隔線                                                      |
 | 間距 | `--sqlp-s1`…`--sqlp-s8` | 4、8、12、16、24、32、48、64 px | 依序遞增                                                    |
 | 字級 | `--sqlp-t-poster`       | 96/112 px（手機 60/72）         | 樞紐關鍵字（行高留出 descender，不貼下方元件）              |
-| 字級 | `--sqlp-t-title`        | 30/40 px（手機 24/32）          | 題目標題、畫面標題                                          |
+| 字級 | `--sqlp-t-title`        | 30/40 px（手機 24/32）          | 畫面標題（題目畫面的標題改用 ScreenTitle 的 label 變體）    |
+| 字級 | `--sqlp-t-lead`         | 22/34 px（手機 20/32）          | 題目需求 Requirement：題目畫面左欄最大的字                  |
 | 字級 | `--sqlp-t-nav`          | 26/34 px（手機 22）             | 樞紐列的階段名稱：主要導覽操作區，接近畫面標題              |
 | 字級 | `--sqlp-t-subtitle`     | 22/30 px                        | 區段標題、回合磚名稱                                        |
-| 字級 | `--sqlp-t-body`         | 16 到 18 px，行高 1.6           | 需求 17、解析 16、文章連結 18、離開連結 18、資料前提 16     |
+| 字級 | `--sqlp-t-body`         | 16 到 18 px，行高 1.6           | 解析 16、文章連結 18、離開連結 18、資料前提 16              |
 | 字級 | `--sqlp-t-code`         | 16/27 px（手機 15/25）          | SQL；表格裡的約束 15                                        |
 | 字級 | `--sqlp-t-caption`      | 16/24 px                        | 說明、進度文字、回合磚說明；中文最小 14（表頭、表約束標籤） |
 
 2026-11-24 使用者回饋字太小：SQL 從 14 放大到 16、樞紐列從 20 放大到 26、離開連結從 14 放大到 18、說明與資料前提從 14 放大到 16。
+
+2026-11-25 使用者回饋題目畫面左欄的字級要照資訊對讀者的重要性排，不照版面的角色排：讀者作答靠的是需求（「哪個查詢最恰當？」那一段），所以需求從 17 放大到 22（手機 20），是左欄最大的字；題目標題只是考點提示，從 30 縮成 17 的灰字（ScreenTitle 的 label 變體）；資料前提維持 16。
 | 字重   | `--sqlp-w-thin` / `--sqlp-w-body` / `--sqlp-w-strong` | 200 / 400 / 600                                                                                 | 大字 / 內文 / 強調 |
 | 字型   | `--sqlp-font`                                         | `"Segoe UI", "Selawik", "Helvetica Neue", "PingFang TC", "Noto Sans TC", system-ui, sans-serif` | 全部文字           |
 | 字型   | `--sqlp-mono`                                         | `ui-monospace, "SF Mono", Menlo, Consolas, monospace`                                           | SQL                |
@@ -207,7 +210,7 @@ token 定義在 `assets/sql-practice/practice.css` 開頭的 `#sql-practice` 選
 | 欄位           | 值                                                                                                                                                                             |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 語意與內容角色 | 標題：命名這個畫面在講什麼（題目標題、「這一輪的結果」「這篇文章還沒有練習題」）。不用來放說明句                                                                               |
-| 變體           | 不適用：不同畫面的標題同一語意與外觀                                                                                                                                           |
+| 變體           | 預設：字級 `--sqlp-t-title`，首頁、結果、空狀態與錯誤畫面用；label：17/26 px、字重 400、`--sqlp-muted`，題目畫面用，因為那裡的標題是考點提示，讀者作答讀的是 Requirement       |
 | 狀態集         | 不適用：盲測作答前顯示「第 N 題」由呼叫端換文字，不是自身狀態                                                                                                                  |
 | 操作機制       | 不適用：純顯示                                                                                                                                                                 |
 | 尺寸契約       | 填滿所在欄寬；字級 `--sqlp-t-title`；最多行數不限                                                                                                                              |
@@ -228,7 +231,7 @@ token 定義在 `assets/sql-practice/practice.css` 開頭的 `#sql-practice` 選
 | 變體           | 不適用                                                                                                       | 不適用                                                                                                                                                                              | 不適用                                                                                                                 |
 | 狀態集         | 不適用                                                                                                       | 不適用：缺值的列不顯示                                                                                                                                                              | 不適用                                                                                                                 |
 | 操作機制       | 不適用                                                                                                       | 不適用                                                                                                                                                                              | 不適用                                                                                                                 |
-| 尺寸契約       | 填滿欄寬；字級 `--sqlp-t-body`                                                                               | 填滿欄寬；兩欄格線，標籤欄 5em                                                                                                                                                      | 填滿欄寬；`--sqlp-t-caption`                                                                                           |
+| 尺寸契約       | 填滿欄寬；字級 `--sqlp-t-lead`（左欄最大的字）                                                               | 填滿欄寬；兩欄格線，標籤欄 5em                                                                                                                                                      | 填滿欄寬；`--sqlp-t-caption`                                                                                           |
 | 內容政策       | 換行、不截斷；最長測試文案 C06-logistics-return-rate-audit-02 的需求（286 字）；行內 `code` 用 `--sqlp-mono` | 值換行、不截斷；最長測試文案「idx_packages_merchant_shipment (merchant_id, shipment_id)；idx_shipments_merchant_id (merchant_id, shipment_id)」，識別字用 `overflow-wrap: anywhere` | 換行；最長測試文案「在題目給的負載與業務前提下，選出最合適的設計。（這一題有不只一個推薦選項，選中其中一個就算對。）」 |
 | slot 契約      | 題目 JSON 的 `businessRequirement`，原文顯示，反引號包住的片段轉成 `<code>`                                  | `workloadProfile` 的四個鍵；`indexes` 陣列以「；」接起                                                                                                                              | 固定字串，依題型 `perspective` 取                                                                                      |
 | 組合規則       | QuestionLayout 左欄                                                                                          | QuestionLayout 左欄                                                                                                                                                                 | QuestionLayout 左欄、ConfusionNote、首頁                                                                               |

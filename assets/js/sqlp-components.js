@@ -137,8 +137,9 @@ export function scrollToPracticeTop(root) {
 export function keywordBanner(text) {
   return h("p", { class: "sqlp-keyword", "aria-hidden": "true", text });
 }
-export function screenTitle(text, id) {
-  return h("h2", { class: "sqlp-title", tabindex: "-1", id: id || null, text });
+// variant "label"：題目畫面用，標題退成提示小字（需求才是主角）
+export function screenTitle(text, id, variant) {
+  return h("h2", { class: variant === "label" ? "sqlp-title sqlp-title--label" : "sqlp-title", tabindex: "-1", id: id || null, text });
 }
 export function sectionTitle(text, id) {
   return h("h3", { class: "sqlp-section", id: id || null, text });
