@@ -31,18 +31,25 @@
   {{- partial "custom_head.html" . -}}
 </head>
 
-<body{{ if eq .Layout "search" }} class="page-search"{{ end }}>
+{{- /* 練習頁（layout: sql-practice）自成一個全視窗的世界：blog 的頁首選單、分類色帶與頁尾不輸出，
+       離開練習的路由練習區自己的導覽列（「回到…」按鈕）與瀏覽器的上一頁承擔（2026-11-25 使用者決定） */ -}}
+{{- $bare := eq .Layout "sql-practice" -}}
+<body{{ if eq .Layout "search" }} class="page-search"{{ else if $bare }} class="page-practice"{{ end }}>
+  {{- if not $bare }}
   <header>
     {{- partial "header.html" . -}}
   </header>
   {{- partial "breadcrumb.html" . -}}
+  {{- end }}
   <main id="main-content">
     {{- partial "pagefind_meta.html" . -}}
     {{- block "main" . }}{{- end }}
   </main>
+  {{- if not $bare }}
   <footer>
     {{- partial "footer.html" . -}}
   </footer>
+  {{- end }}
 
   {{- partial "custom_body.html" . -}}
 </body>

@@ -11,7 +11,7 @@ related_targets: ["assets/js/sql-practice.js","assets/sql-practice/practice.css"
 
 - Visitor mode: Operate。讀者在一輪題目裡作答、讀解析、跳到觀念文章再回來。
 - 畫面：練習首頁（模式與各階段進度）、題目（未作答、已作答）、一輪的結果、篩選後 0 題、載入中、載入失敗、localStorage 不能用的提示。
-- 外框：blog 的頁首、左側分類色帶與頁尾保留；練習區在 #sql-practice 裡自成一個世界。
+- 外框：整頁只有練習區，blog 的頁首、左側分類色帶與頁尾不輸出（2026-11-25 使用者決定，原本保留，文章版型與練習區並排時兩個世界互相衝突）；離開練習的路是樞紐列的離開按鈕與瀏覽器的上一頁。
 - 操作形態（使用者簽核）：桌機指標加鍵盤、手機單手觸控；平板視為觸控的寬版。
 
 ## Audience and task

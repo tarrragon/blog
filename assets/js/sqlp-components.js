@@ -402,6 +402,15 @@ export function summaryRow({ title, state, onClick }) {
     h("span", { class: "sqlp-row-mark", "aria-hidden": "true" }), h("span", { text: title }), h("span", { class: "sqlp-row-state", text: label })));
 }
 
+// ---- AboutPanel：練習首頁的「怎麼使用這個練習」 ----
+// 內容是頁面正文（play.md 的使用說明）搬進來的節點；預設收合，讀者要看時才展開
+export function aboutPanel(nodes) {
+  if (!nodes || !nodes.length) return null;
+  return h("details", { class: "sqlp-note sqlp-about" },
+    h("summary", null, icon("plus", "sqlp-plus"), icon("minus", "sqlp-minus"), "怎麼使用這個練習"),
+    h("div", { class: "sqlp-about-body" }, nodes));
+}
+
 // ---- Notice / EmptyState / ErrorState / LoadingSkeleton / LiveRegion ----
 
 export function notice(text) {

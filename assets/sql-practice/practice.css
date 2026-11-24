@@ -11,15 +11,12 @@
   unicode-range: U+0000-00FF;
 }
 
-/* herman 把 main 限在 70ch；練習頁要放兩欄，只在這一頁放寬 */
-main:has(#sql-practice) {
-  max-width: 1360px;
-}
-/* 寬螢幕：主題把 body 限在 1600px，練習頁放寬到 2400px，讓右欄寬到能放 2×2 的選項磚 */
-@media (min-width: 1800px) {
-  body:has(#sql-practice) { max-width: none; }
-  main:has(#sql-practice) { max-width: 2000px; } /* 置中，兩側留白；2000 是 2×2 加左欄放得下的寬度 */
-}
+/* 整頁只有練習區（baseof 對 sql-practice 這個 layout 不輸出頁首、分類色帶與頁尾）：
+   拿掉主題給 body 的 4rem 內距與 1600px 上限、給 main 的 70ch 上限，黑底鋪滿整個視窗。
+   練習區自己置中，寬度上限 2000px（2×2 的選項磚加左欄放得下的寬度） */
+body.page-practice { margin: 0; padding: 0; max-width: none; background: #000; }
+body.page-practice main { max-width: none; margin: 0; padding: 0; }
+body.page-practice #sql-practice { max-width: 2000px; margin: 0 auto; min-height: 100vh; box-sizing: border-box; }
 
 #sql-practice {
   --sqlp-bg: #000;
@@ -72,9 +69,7 @@ main:has(#sql-practice) {
   #sql-practice { --sqlp-hit: 44px; }
 }
 @media (max-width: 599px) {
-  /* 主題給 body 右側 4rem（根字級 10px，40px）的留白；練習區的黑底延伸到螢幕右緣，
-     讓選項磚與程式碼區在 390 寬多出 40px。左側的 44px 留給固定的分類色帶（custom.css），不動 */
-  #sql-practice { padding-left: var(--sqlp-s4); padding-right: var(--sqlp-s4); margin-right: -4rem; }
+  #sql-practice { padding-left: var(--sqlp-s4); padding-right: var(--sqlp-s4); }
 }
 
 /* 瀏覽器預設的表面也照這個世界上色。範圍包進 :where()：寫成 #sql-practice :focus-visible 時特定性 (1,1,0)，
@@ -478,4 +473,8 @@ button.sqlp-tile:active { transform: scale(0.99); }
 
 /* ---- 首頁 ---- */
 .sqlp-home { display: grid; gap: var(--sqlp-s6); }
+/* 怎麼使用這個練習（AboutPanel）：摘要列沿用 ConfusionNote 的展開區，內文是 play.md 的段落 */
+.sqlp-about summary { font-size: 17px; }
+.sqlp-about-body { display: grid; gap: var(--sqlp-s3); padding-top: var(--sqlp-s3); max-width: 44em; font-size: 16px; line-height: 27px; color: var(--sqlp-muted); }
+.sqlp-about-body code { color: var(--sqlp-fg); }
 .sqlp-record { display: grid; gap: var(--sqlp-s3); max-width: 40em; }

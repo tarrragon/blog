@@ -307,6 +307,13 @@ function scrollToPractice() {
 
 // ---- 畫面：練習首頁 ----
 
+// 頁面正文（play.md 的使用說明）：layout 把它放在 hidden 的 #sqlp-about，首頁複製進 AboutPanel
+function aboutNodes() {
+  const src = document.getElementById("sqlp-about");
+  if (!src) return [];
+  return Array.from(src.children).filter((el) => !el.hasAttribute("data-pagefind-meta")).map((el) => el.cloneNode(true));
+}
+
 function viewHome() {
   const tally = (stage) => {
     const concepts = conceptsWhere((q) => q.stage === stage);
@@ -352,6 +359,7 @@ function viewHome() {
         C.keywordBanner("practice"),
         C.screenTitle("選一輪開始", "sqlp-home-h"),
         C.hint("每一輪每個觀念出一題，再做一次時優先出沒做過與上次答錯的變體。建議照階段順序做，每個階段都能直接開始。")),
+      C.aboutPanel(aboutNodes()),
       C.roundGrid(tiles),
       record),
   });

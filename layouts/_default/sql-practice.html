@@ -1,6 +1,12 @@
 {{- /*
-  SQL 練習頁（frontmatter `layout: sql-practice`）。頁首、分類色帶與頁尾照 baseof 沿用，
-  讀者隨時能從色帶回到 SQL 分類；練習介面由 assets/js/sql-practice.js 畫在 #sql-practice 裡。
+  SQL 練習頁（frontmatter `layout: sql-practice`）。整頁只有練習區：baseof 對這個 layout 不輸出 blog 的
+  頁首選單、分類色帶與頁尾（2026-11-25 使用者決定：文章版型與練習頁的 Metro 世界放在同一頁互相衝突）。
+  離開練習的路是練習區導覽列的「回到…」按鈕與瀏覽器的上一頁。練習介面由 assets/js/sql-practice.js 畫在
+  #sql-practice 裡。
+
+  頁面正文（play.md 的使用說明）不直接顯示：放在 #sqlp-about（hidden），練習首頁把它搬進
+  「怎麼使用這個練習」展開區。留在 HTML 裡讓停用 JavaScript 的讀者與站內搜尋（pagefind）讀得到。
+  頁面標題是視覺隱藏的 h1：畫面上的大字是練習區自己的樞紐關鍵字與畫面標題。
 
   data 屬性交給 script 的值：
   - data-bank：題庫 JSON（sql-practice/bank.html 產生）
@@ -13,16 +19,11 @@
 {{- $css := resources.Get "sql-practice/practice.css" | minify | fingerprint -}}
 {{- $js := resources.Get "js/sql-practice.js" | js.Build (dict "minify" true "target" "es2019") | fingerprint -}}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
-<article class="article-content sql-practice-page">
-  <h1>{{ .Title }}</h1>
-  <div class="article-body" data-pagefind-body>
-    <span hidden data-pagefind-meta="title">{{ .Title }}</span>
-    {{ .Content }}
-  </div>
-  {{ partial "autolink.html" . }}
-</article>
-{{- /* 練習區放在 .article-content 外面：文章欄的寬度上限是 800px（custom_head.html），
-       練習區要用 practice.css 放寬後的 main 寬度放兩欄與 2×2 的選項磚 */ -}}
+<h1 class="sqlp-vh">{{ .Title }}</h1>
+<div id="sqlp-about" hidden data-pagefind-body>
+  <span hidden data-pagefind-meta="title">{{ .Title }}</span>
+  {{ .Content }}
+</div>
 <section id="sql-practice"
      aria-label="SQL 練習"
      data-pagefind-ignore
@@ -32,6 +33,7 @@
   <p class="sqlp-hint" role="status">載入題庫中…</p>
   <noscript>
     <p>練習頁要用 JavaScript 出題與記錄作答。瀏覽器停用 JavaScript 時，可以回到 <a href="{{ $sqlIndex.RelPermalink }}">SQL 分類</a> 讀文章。</p>
+    {{ .Content }}
   </noscript>
 </section>
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
