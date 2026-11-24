@@ -622,7 +622,7 @@
         "sql": "SELECT c.course_id, SUM(lp.watch_seconds) AS total_watch, COUNT(ct.tag_id) AS tag_cnt FROM courses c LEFT JOIN lesson_progress lp ON lp.course_id = c.course_id LEFT JOIN course_tags ct ON ct.course_id = c.course_id WHERE c.is_published = 1 GROUP BY c.course_id ORDER BY c.course_id;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "101 的標籤數變成 3、102 的觀看秒數變成 960，103 的觀看秒數是 NULL",
+        "normalResult": "101 與 106 的標籤數變成 3、102 的觀看秒數變成 960，103 的觀看秒數是 NULL",
         "edgeCaseResult": "兩張一對多的表接在同一門課上，連接結果是學習紀錄數 × 標籤數的組合：101 有 3 筆紀錄、1 個標籤，標籤被重複算 3 次；102 有 1 筆紀錄、2 個標籤，觀看秒數被重複加 2 次",
         "pros": ["一個查詢寫完"],
         "cons": ["兩組一對多同時連接，兩邊的加總與計數互相放大"],
@@ -674,10 +674,176 @@
     ],
     "sqliteAssertions": {
       "optionExactRows": {
-        "opt_direct_join": [[101, 3900, 3], [102, 960, 2], [103, null, 2], [104, 300, 0], [106, 900, 1]],
-        "opt_sum_distinct": [[101, 2700, 1], [102, 480, 2], [103, null, 2], [104, 300, 0], [106, 900, 1]],
-        "opt_pre_aggregate": [[101, 3900, 1], [102, 480, 2], [103, 0, 2], [104, 300, 0], [106, 900, 1]],
-        "opt_correlated_single": [[101, 3900, 1], [102, 480, 2], [103, 0, 2], [104, 300, 0], [106, 900, 1]]
+        "opt_direct_join": [[101, 3900, 3], [102, 960, 2], [103, null, 2], [104, 300, 0], [106, 2500, 3]],
+        "opt_sum_distinct": [[101, 2700, 1], [102, 480, 2], [103, null, 2], [104, 300, 0], [106, 2500, 1]],
+        "opt_pre_aggregate": [[101, 3900, 1], [102, 480, 2], [103, 0, 2], [104, 300, 0], [106, 2500, 1]],
+        "opt_correlated_single": [[101, 3900, 1], [102, 480, 2], [103, 0, 2], [104, 300, 0], [106, 2500, 1]]
+      }
+    }
+  },
+  {
+    "conceptId": "S2-01",
+    "variantId": "S2-01-logistics-packages-02",
+    "discriminator": ["engine"],
+    "domain": "swift-logistics",
+    "stage": 2,
+    "tablePath": ["shipment_packages"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["select-alias-in-where", "engine-leniency"],
+    "title": "包裹重量換算公斤後篩選：別名在 WHERE 與 ORDER BY 的可用範圍（領域丙變體）",
+    "businessRequirement": "計算每個包裹的重量公斤數 weight_grams / 1000.0 AS weight_kg，只保留超過 2 公斤的包裹並由重到輕排序；同一個查詢要在 SQLite、PostgreSQL 與 MySQL 都能執行。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18 / MySQL 8",
+      "scale": "2,000 萬包裹",
+      "readWriteRatio": "10:1",
+      "indexes": ["idx_packages_merchant_shipment"]
+    },
+    "options": [
+      {
+        "key": "opt_alias_in_where",
+        "sql": "SELECT package_id, weight_grams / 1000.0 AS weight_kg FROM shipment_packages WHERE weight_kg > 2 ORDER BY weight_kg DESC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "SQLite 回傳 7104、7102、7108 三筆；PostgreSQL 與 MySQL 報 column \"weight_kg\" does not exist",
+        "edgeCaseResult": "WHERE 在 SELECT 之前求值，標準 SQL 在 WHERE 裡看不到 SELECT 定義的別名；SQLite 額外放寬了這條規則",
+        "pros": ["在 SQLite 上可以執行"],
+        "cons": ["依賴 SQLite 的寬鬆行為，換引擎時當場報錯"],
+        "validWhen": "確定只在 SQLite 上執行時",
+        "failsWhen": "需要跨引擎時"
+      },
+      {
+        "key": "opt_repeat_expr",
+        "sql": "SELECT package_id, weight_grams / 1000.0 AS weight_kg FROM shipment_packages WHERE weight_grams / 1000.0 > 2 ORDER BY weight_kg DESC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7104（3.5）、7102（2.4）、7108（2.2），三個引擎都能執行",
+        "edgeCaseResult": "WHERE 重寫一次運算式；ORDER BY 在 SELECT 之後求值，可以合法使用別名",
+        "pros": ["跨引擎相容", "各子句只用到它求值時看得到的名稱"],
+        "cons": ["運算式寫了兩次，修改時要兩處一起改"],
+        "validWhen": "運算式短的時候",
+        "failsWhen": "運算式很長、或在好幾個條件裡重複時（改用子查詢）"
+      },
+      {
+        "key": "opt_fake_group_by",
+        "sql": "SELECT package_id, weight_grams / 1000.0 AS weight_kg FROM shipment_packages GROUP BY package_id HAVING weight_kg > 2 ORDER BY weight_kg DESC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "SQLite 回傳同樣的三筆；PostgreSQL 的 HAVING 一樣不接受 SELECT 別名",
+        "edgeCaseResult": "為了改用 HAVING 而加上沒有聚合意義的 GROUP BY，問題沒有解決，查詢還多了一次分組",
+        "pros": ["無"],
+        "cons": ["GROUP BY 主鍵等於沒有分組，讀的人會誤以為有聚合", "仍然依賴 SQLite 的別名寬鬆規則"],
+        "validWhen": "無",
+        "failsWhen": "任何需要跨引擎的情境"
+      },
+      {
+        "key": "opt_subquery",
+        "sql": "SELECT package_id, weight_kg FROM (SELECT package_id, weight_grams / 1000.0 AS weight_kg FROM shipment_packages) t WHERE t.weight_kg > 2 ORDER BY t.weight_kg DESC;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7104、7102、7108，三個引擎都能執行",
+        "edgeCaseResult": "內層查詢先把 weight_kg 定義成欄位，外層的 WHERE 看到的是子查詢的欄位，不是別名",
+        "pros": ["運算式只寫一次", "跨引擎相容"],
+        "cons": ["多一層子查詢，比重寫運算式長"],
+        "validWhen": "運算式長、或同一個別名要在好幾個條件裡用時",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_repeat_expr", "opt_subquery"],
+    "alternativeNote": "四個選項在 SQLite 的結果都相同，差別只在 PostgreSQL 與 MySQL 上會不會報錯；這一題要靠引擎差異判斷",
+    "relatedDocs": [
+      "/backend/01-database/sql/clause-evaluation-order/",
+      "/backend/01-database/sql/engine-leniency-and-portability/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_repeat_expr": [[7104, 3.5], [7102, 2.4], [7108, 2.2]],
+        "opt_subquery": [[7104, 3.5], [7102, 2.4], [7108, 2.2]]
+      }
+    }
+  },
+  {
+    "conceptId": "S2-06",
+    "variantId": "S2-06-cloud-courses-prerequisite-02",
+    "discriminator": ["data"],
+    "domain": "cloud-academy",
+    "stage": 2,
+    "tablePath": ["courses"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["self-join-missing-alias", "self-join-reversed-direction", "inner-join-drops-root"],
+    "title": "課程與它的先修課程：自連接的別名與方向（領域乙變體）",
+    "businessRequirement": "課程地圖要列出每一門課程的標題與它的先修課程標題（prerequisite_title）；沒有先修課程的入門課也要列出，先修課程標題顯示 NULL。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "2,000 門課程",
+      "readWriteRatio": "500:1",
+      "indexes": ["PRIMARY KEY (course_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_no_alias",
+        "sql": "SELECT courses.title, courses.title FROM courses LEFT JOIN courses ON courses.prerequisite_id = courses.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "SQLite 報 ambiguous column name: courses.title",
+        "edgeCaseResult": "同一張表在 FROM 出現兩次，沒有別名時引擎分不出 courses.title 指的是哪一次出現",
+        "pros": ["無"],
+        "cons": ["自連接必須替每一次出現取別名"],
+        "validWhen": "無",
+        "failsWhen": "任何引擎"
+      },
+      {
+        "key": "opt_inner_self",
+        "sql": "SELECT c.title AS course_title, pre.title AS prerequisite_title FROM courses c INNER JOIN courses pre ON c.prerequisite_id = pre.course_id ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 102、103、104 三門，沒有先修的 101、105、106 消失",
+        "edgeCaseResult": "入門課的 prerequisite_id 是 NULL，INNER JOIN 配不到先修課程，整門課被排除",
+        "pros": ["只看有先修要求的課程時正確"],
+        "cons": ["課程地圖缺了所有入門課"],
+        "validWhen": "需求只要有先修要求的課程時",
+        "failsWhen": "要保留沒有先修的課程時"
+      },
+      {
+        "key": "opt_left_role_alias",
+        "sql": "SELECT c.title AS course_title, pre.title AS prerequisite_title FROM courses c LEFT JOIN courses pre ON c.prerequisite_id = pre.course_id ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳全部 6 門，101、105、106 的先修課程標題為 NULL",
+        "edgeCaseResult": "別名用角色命名（c 是課程、pre 是先修課程），連接條件讀起來就是「課程的 prerequisite_id 對到先修課程的 course_id」",
+        "pros": ["保留沒有先修的課程", "別名寫出每一次出現的角色，方向不容易寫反"],
+        "cons": ["只查一層；要列出整條先修鏈時要改用遞迴 CTE"],
+        "validWhen": "只需要直接先修課程時",
+        "failsWhen": "需要多層先修鏈時"
+      },
+      {
+        "key": "opt_reversed_join",
+        "sql": "SELECT c1.title AS course_title, c2.title AS prerequisite_title FROM courses c1 LEFT JOIN courses c2 ON c1.course_id = c2.prerequisite_id ORDER BY c1.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7 列，「SQL 語意模型入門」出現兩次，旁邊列的是以它為先修的 102 與 104",
+        "edgeCaseResult": "連接方向反了：條件找的是「以 c1 為先修課程的課程」，第二欄其實是後續課程",
+        "pros": ["要列出每門課的後續課程時，這就是正確寫法"],
+        "cons": ["c1、c2 這種沒有角色的別名讓方向錯誤很難從程式碼看出來"],
+        "validWhen": "需求是「每門課可以接著修哪些課」時",
+        "failsWhen": "需求是先修課程時"
+      }
+    ],
+    "recommendedKeys": ["opt_left_role_alias"],
+    "alternativeNote": "自連接的別名用角色命名（c 與 pre），比 c1、c2 更不容易把方向寫反",
+    "relatedDocs": [
+      "/backend/01-database/sql/table-occurrence-and-alias/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_inner_self": 3,
+        "opt_left_role_alias": 6,
+        "opt_reversed_join": 7
       }
     }
   }

@@ -672,7 +672,174 @@
         "opt_group_name_only": 5
       },
       "optionExactRows": {
-        "opt_group_pk_and_name": [[1, "林欣", 3], [2, "張哲", 2], [3, "陳宇", 0], [4, "周安", 0], [5, "吳琪", 1], [6, "林欣", 0]]
+        "opt_group_pk_and_name": [[1, "林欣", 3], [2, "張哲", 2], [3, "陳宇", 0], [4, "周安", 0], [5, "吳琪", 3], [6, "林欣", 0]]
+      }
+    }
+  },
+  {
+    "conceptId": "S3-04",
+    "variantId": "S3-04-cloud-course-daily-watch-02",
+    "discriminator": ["data"],
+    "domain": "cloud-academy",
+    "stage": 3,
+    "tablePath": ["lesson_progress"],
+    "perspective": "choose-query",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["missing-partition-by", "lag-ignores-missing-calendar-day"],
+    "title": "每門課完課觀看秒數比前一個日曆天高的日子：視窗分區與缺日檢查（領域乙變體）",
+    "businessRequirement": "以完課時間（completed_at 不為 NULL）彙總每門課每天的觀看秒數，找出哪幾天某門課的觀看秒數高於同一門課「前一個日曆天」；前一天沒有完課紀錄的日子不算。課程 106 在 2026-02-22 與 02-23 沒有完課紀錄。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "2,000 門課程 × 2 年（約 140 萬個課程日）",
+      "readWriteRatio": "200:1",
+      "indexes": ["idx_progress_user_course"]
+    },
+    "options": [
+      {
+        "key": "opt_no_partition",
+        "sql": "WITH daily AS (SELECT course_id, date(completed_at) AS d, SUM(watch_seconds) AS secs FROM lesson_progress WHERE completed_at IS NOT NULL GROUP BY course_id, date(completed_at)) SELECT d, course_id FROM (SELECT d, course_id, secs, LAG(secs) OVER (ORDER BY d, course_id) AS prev_secs FROM daily) t WHERE secs > prev_secs ORDER BY course_id, d;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 101 的 01-07、03-02 與 106 的 02-24 共 3 筆",
+        "edgeCaseResult": "沒有 PARTITION BY，所有課程排在同一條序列：101 在 03-02 的值拿去跟 106 在 02-24 的值比",
+        "pros": ["視窗函式保留了每一天的明細"],
+        "cons": ["不同課程的資料互相比較"],
+        "validWhen": "只有一門課的資料時",
+        "failsWhen": "序列裡混著多個分組時"
+      },
+      {
+        "key": "opt_partition_no_gap",
+        "sql": "WITH daily AS (SELECT course_id, date(completed_at) AS d, SUM(watch_seconds) AS secs FROM lesson_progress WHERE completed_at IS NOT NULL GROUP BY course_id, date(completed_at)) SELECT d, course_id FROM (SELECT d, course_id, secs, LAG(secs) OVER (PARTITION BY course_id ORDER BY d) AS prev_secs FROM daily) t WHERE secs > prev_secs ORDER BY course_id, d;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 101 的 01-07 與 106 的 02-24 共 2 筆",
+        "edgeCaseResult": "LAG 取的是「前一列」，不是「前一個日曆天」：106 在 02-24 的前一列是 02-21，中間缺兩天，被當成前一天比較",
+        "pros": ["分區正確，各課程各自比較"],
+        "cons": ["資料有缺日時，前一列跟前一天不是同一件事"],
+        "validWhen": "每個分組每天都保證有一列（例如已經補過零的日曆表）時",
+        "failsWhen": "某些日子沒有資料列時"
+      },
+      {
+        "key": "opt_partition_and_gap",
+        "sql": "WITH daily AS (SELECT course_id, date(completed_at) AS d, SUM(watch_seconds) AS secs FROM lesson_progress WHERE completed_at IS NOT NULL GROUP BY course_id, date(completed_at)) SELECT d, course_id FROM (SELECT d, course_id, secs, LAG(secs) OVER (PARTITION BY course_id ORDER BY d) AS prev_secs, LAG(d) OVER (PARTITION BY course_id ORDER BY d) AS prev_d FROM daily) t WHERE secs > prev_secs AND prev_d = date(d, '-1 day') ORDER BY course_id, d;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 101 的 01-07 一筆",
+        "edgeCaseResult": "同時取前一列的日期，確認它正好是前一個日曆天才比較；106 的 02-24 因為前一列是 02-21 而被排除",
+        "pros": ["分區與缺日都處理到", "只掃描一次彙總結果"],
+        "cons": ["要多寫一個 LAG 取日期"],
+        "validWhen": "資料可能有缺日時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_group_by_wrong",
+        "sql": "SELECT course_id, MAX(watch_seconds) FROM lesson_progress WHERE completed_at IS NOT NULL GROUP BY course_id HAVING MAX(watch_seconds) > MIN(watch_seconds);",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "每門課只剩一列（101 與 106），沒有日期",
+        "edgeCaseResult": "GROUP BY 把每門課收成一列，需求要的「哪幾天」這個粒度不見了",
+        "pros": ["無"],
+        "cons": ["分組讓明細消失，回答不了逐日比較"],
+        "validWhen": "無",
+        "failsWhen": "需要逐日明細時"
+      }
+    ],
+    "recommendedKeys": ["opt_partition_and_gap"],
+    "alternativeNote": "資料常有缺日時，也可以先用遞迴 CTE 產生日曆表並 LEFT JOIN 補零，再用 LAG 比較",
+    "relatedDocs": [
+      "/backend/01-database/sql/window-keeps-rows-grouping-collapses/",
+      "/backend/01-database/sql/requirement-to-shipped-query/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_no_partition": [["2026-01-07", 101], ["2026-03-02", 101], ["2026-02-24", 106]],
+        "opt_partition_no_gap": [["2026-01-07", 101], ["2026-02-24", 106]],
+        "opt_partition_and_gap": [["2026-01-07", 101]]
+      }
+    }
+  },
+  {
+    "conceptId": "S3-05",
+    "variantId": "S3-05-logistics-shipments-pagination-02",
+    "discriminator": ["data", "plan"],
+    "domain": "swift-logistics",
+    "stage": 3,
+    "tablePath": ["shipments"],
+    "perspective": "choose-query",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["non-unique-sort-key", "deep-offset-cost", "strict-lt-drops-same-second-rows"],
+    "title": "運單列表無限捲動：OFFSET、缺全序與 Keyset 接續標記（領域丙變體）",
+    "businessRequirement": "商家後台的運單列表依 created_at DESC 往下捲動，每頁 2 筆以上；2026-03-15 14:00:00 有 7005、7006、7007 三張同時建立的運單。第一頁依 (created_at DESC, shipment_id DESC) 排序，最後一筆是 ('2026-03-15 14:00:00', 7006)。下一頁要接著列出 3 筆，不能漏掉同一秒的 7005，也要避免深頁的 OFFSET 隨頁數變慢。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "800 萬運單、持續寫入",
+      "readWriteRatio": "10:1",
+      "indexes": ["預期建 (created_at DESC, shipment_id DESC) 複合索引"]
+    },
+    "options": [
+      {
+        "key": "opt_offset_no_tiebreak",
+        "sql": "SELECT shipment_id, created_at FROM shipments ORDER BY created_at DESC LIMIT 3 OFFSET 2;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "這次回傳 7007、7008、7004；同一秒的三張運單順序沒有保證，7005 被漏掉、7007 重複出現",
+        "edgeCaseResult": "排序鍵不唯一，第一頁與第二頁各自決定同一秒三張運單的順序，結果可能重複或遺漏",
+        "pros": ["寫法最簡單"],
+        "cons": ["沒有全序，翻頁可能重複或漏列", "OFFSET 要先數過前面所有列，頁數越深越慢"],
+        "validWhen": "排序鍵本身唯一而且資料量小時",
+        "failsWhen": "排序鍵有重複值、或資料持續寫入時"
+      },
+      {
+        "key": "opt_offset_total_order",
+        "sql": "SELECT shipment_id, created_at FROM shipments ORDER BY created_at DESC, shipment_id DESC LIMIT 3 OFFSET 2;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7005、7008、7004",
+        "edgeCaseResult": "加上 shipment_id 之後順序穩定；但第一頁之後有新運單寫入時，OFFSET 會整體位移，已讀過的運單再出現一次",
+        "pros": ["排序有全序", "可以直接跳到第 N 頁"],
+        "cons": ["深頁要掃過前面所有列", "資料持續寫入時頁面會位移"],
+        "validWhen": "資料量小、而且需要跳頁時",
+        "failsWhen": "800 萬列的深頁或持續寫入的列表"
+      },
+      {
+        "key": "opt_keyset_total_order",
+        "sql": "SELECT shipment_id, created_at FROM shipments WHERE (created_at, shipment_id) < ('2026-03-15 14:00:00', 7006) ORDER BY created_at DESC, shipment_id DESC LIMIT 3;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7005、7008、7004",
+        "edgeCaseResult": "以上一頁最後一筆的 (created_at, shipment_id) 當接續標記，同一秒的 7005 因為 shipment_id 較小而排在後面，被下一頁接住",
+        "pros": ["有全序", "新寫入的運單不影響已經翻過的頁", "有複合索引時直接定位起點，不必掃過前面的列"],
+        "cons": ["不能直接跳到第 N 頁"],
+        "validWhen": "無限捲動、或只有上一頁與下一頁的列表",
+        "failsWhen": "需要跳到任意頁碼時"
+      },
+      {
+        "key": "opt_keyset_no_id",
+        "sql": "SELECT shipment_id, created_at FROM shipments WHERE created_at < '2026-03-15 14:00:00' ORDER BY created_at DESC LIMIT 3;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7008、7004、7003，同一秒的 7005 被跳過",
+        "edgeCaseResult": "接續標記只用 created_at，嚴格小於把跟上一頁最後一筆同一秒、還沒讀過的運單排除",
+        "pros": ["避開了 OFFSET"],
+        "cons": ["接續標記不唯一，同一秒的列被跳過"],
+        "validWhen": "created_at 保證唯一時",
+        "failsWhen": "同一秒可能有多筆資料時"
+      }
+    ],
+    "recommendedKeys": ["opt_keyset_total_order"],
+    "alternativeNote": "深頁 OFFSET 與 Keyset 的實測計畫與耗時差距見基準快照 bm-bookstore-offset-vs-keyset（紙頁書店的 orders）；這個領域還沒有對應的實測",
+    "relatedDocs": [
+      "/backend/01-database/sql/pagination-needs-a-total-order/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_offset_total_order": [7005, 7008, 7004],
+        "opt_keyset_total_order": [7005, 7008, 7004],
+        "opt_keyset_no_id": [7008, 7004, 7003]
       }
     }
   }

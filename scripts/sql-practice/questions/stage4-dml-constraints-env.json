@@ -406,5 +406,166 @@
         "opt_lower_no_expr_idx": 2
       }
     }
+  },
+  {
+    "conceptId": "S4-02",
+    "variantId": "S4-02-cloud-fk-02",
+    "discriminator": ["engine", "modeling"],
+    "domain": "cloud-academy",
+    "stage": 4,
+    "tablePath": ["courses", "lesson_progress", "certificates"],
+    "perspective": "tradeoff-design",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["cascade-destroys-history", "sqlite-fk-off-by-default"],
+    "title": "課程下架與學習紀錄、證書的保留：外鍵 ON DELETE 與 SQLite 生效檢查（領域乙變體）",
+    "businessRequirement": "課程下架之後，學員的學習紀錄與已核發的證書必須保留，供雇主查證；同時要禁止寫入不存在的 course_id。開發與測試用 SQLite、正式環境用 PostgreSQL，lesson_progress 與 certificates 對 courses 的外鍵該怎麼設計？",
+    "workloadProfile": {
+      "engine": "SQLite（開發） / PostgreSQL 18（正式）",
+      "scale": "2,000 門課程、500 萬筆學習紀錄、40 萬張證書",
+      "readWriteRatio": "50:1",
+      "indexes": ["PRIMARY KEY (course_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_cascade",
+        "sql": "-- FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE，下架時 DELETE FROM courses",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "刪除課程時，連同全部學習紀錄與證書一起刪除",
+        "edgeCaseResult": "雇主拿證書編號來查證時查不到，學員已完成的學習歷程也消失",
+        "pros": ["不會留下指向不存在課程的資料"],
+        "cons": ["一次刪除連鎖清掉證書這類有法律與商業效力的紀錄"],
+        "validWhen": "子表資料沒有保留價值、跟著父列一起消失才正確時（例如課程的草稿附件）",
+        "failsWhen": "子表是學習歷程、證書、帳務這類要保留的紀錄時"
+      },
+      {
+        "key": "opt_restrict_soft_and_pragma",
+        "sql": "-- FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE RESTRICT；下架改成 UPDATE courses SET is_published = 0；SQLite 的每一條連線開啟時執行 PRAGMA foreign_keys = ON",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "有學習紀錄或證書的課程刪不掉，下架只改狀態，紀錄與證書都保留",
+        "edgeCaseResult": "RESTRICT 擋住誤刪；PRAGMA 讓開發環境的 SQLite 跟 PostgreSQL 一樣在寫入不存在的 course_id 時報錯",
+        "pros": ["歷史紀錄完整", "開發與正式環境的外鍵行為一致，壞資料在開發期就被擋下"],
+        "cons": ["連線池建立每一條 SQLite 連線時都要執行 PRAGMA，漏設一條就失效"],
+        "validWhen": "開發用 SQLite、正式用 PostgreSQL，而且子表要保留歷史時",
+        "failsWhen": "資料分散在不同資料庫、無法建立資料庫層外鍵時"
+      },
+      {
+        "key": "opt_declare_only",
+        "sql": "-- 只在 CREATE TABLE 寫 REFERENCES courses(course_id)，不設定 SQLite 連線的 PRAGMA",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "SQLite 開發與測試期間，寫入不存在的 course_id 也會成功",
+        "edgeCaseResult": "SQLite 新連線的 foreign_keys 預設是 0，外鍵只是宣告；壞資料通過全部測試，上線到 PostgreSQL 才在寫入或遷移資料時報錯",
+        "pros": ["結構描述了關聯"],
+        "cons": ["開發期間外鍵不生效，測試給出錯誤的信心"],
+        "validWhen": "無",
+        "failsWhen": "開發與正式環境使用不同引擎時"
+      },
+      {
+        "key": "opt_app_check_only",
+        "sql": "-- 不建外鍵；應用程式在 INSERT 前先執行 SELECT 1 FROM courses WHERE course_id = ?",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "單一請求的正常路徑看起來可行",
+        "edgeCaseResult": "檢查與寫入之間，另一個連線可以刪掉那門課；批次匯入、資料修正腳本與其他服務繞過這段應用程式碼時完全沒有檢查",
+        "pros": ["不受資料庫外鍵限制"],
+        "cons": ["檢查與寫入之間有競態", "所有寫入路徑都要記得檢查，資料庫本身不保證完整性"],
+        "validWhen": "資料分散在不同資料庫、無法建外鍵，而且另有對帳機制時",
+        "failsWhen": "單一資料庫就能建外鍵時"
+      }
+    ],
+    "recommendedKeys": ["opt_restrict_soft_and_pragma"],
+    "alternativeNote": "SQLite 的 PRAGMA foreign_keys 是連線層級的設定，連線池新開的每一條連線都要設定；在交易內執行不會生效",
+    "relatedDocs": [
+      "/backend/01-database/sql/foreign-key-and-referential-integrity/"
+    ]
+  },
+  {
+    "conceptId": "S4-04",
+    "variantId": "S4-04-cloud-email-case-02",
+    "discriminator": ["modeling", "engine"],
+    "population": "not-applicable",
+    "domain": "cloud-academy",
+    "stage": 4,
+    "tablePath": ["users"],
+    "perspective": "tradeoff-design",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["case-insensitive-login-collides-existing-accounts", "like-case-sensitivity-differs-by-engine"],
+    "title": "學員 Email 改成不分大小寫登入：既有帳號的大小寫衝突、Collation 與正規化（領域乙變體）",
+    "businessRequirement": "雲課堂要把登入改成 email 不分大小寫比對（Xin@Academy.io 與 xin@academy.io 視為同一個信箱），上線後同一個信箱只能對應一個帳號。目前的 users.email 沒有唯一約束，正式環境是 PostgreSQL。",
+    "workloadProfile": {
+      "engine": "SQLite（開發） / PostgreSQL 18（正式）",
+      "scale": "30 萬學員、高頻登入查詢",
+      "readWriteRatio": "200:1",
+      "indexes": ["users.email 目前沒有索引"]
+    },
+    "options": [
+      {
+        "key": "opt_exact_match",
+        "sql": "SELECT user_id FROM users WHERE email = 'xin@academy.io' ORDER BY user_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳吳琪（id=5）；註冊時寫成 Xin@Academy.io 的林欣（id=1）用小寫輸入就登入不了",
+        "edgeCaseResult": "等號比對區分大小寫，沒有做到需求要的不分大小寫",
+        "pros": ["查詢簡單"],
+        "cons": ["沒有改變登入行為"],
+        "validWhen": "信箱一律在寫入前正規化成小寫、而且舊資料也轉換過時",
+        "failsWhen": "資料裡存著大小寫不同的信箱時"
+      },
+      {
+        "key": "opt_lower_both_sides",
+        "sql": "SELECT user_id FROM users WHERE LOWER(email) = LOWER('Xin@Academy.io') ORDER BY user_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳林欣（1）與吳琪（5）兩個帳號",
+        "edgeCaseResult": "比對改成不分大小寫之後，兩個既有帳號落在同一個信箱：登入程式拿到兩列，不知道該讓誰登入；函式包住欄位，也用不上 email 上的一般索引",
+        "pros": ["比對結果確實不分大小寫"],
+        "cons": ["沒有先處理既有的大小寫衝突，登入變成二選一", "沒有唯一約束，之後還會註冊出新的衝突"],
+        "validWhen": "已確認資料裡沒有大小寫衝突、而且另有運算式唯一索引時",
+        "failsWhen": "既有資料有大小寫重複的信箱時"
+      },
+      {
+        "key": "opt_resolve_then_unique_lower",
+        "sql": "-- 先用 SELECT LOWER(email), COUNT(*) FROM users GROUP BY LOWER(email) HAVING COUNT(*) > 1 找出衝突帳號，由客服合併或請學員更換信箱；再建 CREATE UNIQUE INDEX uq_users_email_lower ON users (LOWER(email))，登入查詢寫成 WHERE LOWER(email) = LOWER($1)",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "衝突處理完之後，運算式唯一索引同時擋下新的大小寫重複註冊，登入查詢也用得上這個索引",
+        "edgeCaseResult": "建唯一索引那一步會在還有衝突時失敗，等於強制先處理林欣（1）與吳琪（5）這一組",
+        "pros": ["保留使用者原本輸入的大小寫", "寫入與查詢都由同一個索引保證"],
+        "cons": ["要先人工處理既有衝突，不能只靠 migration 自動完成"],
+        "validWhen": "要保留原始大小寫、又要不分大小寫唯一時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_like_match",
+        "sql": "SELECT user_id FROM users WHERE email LIKE 'xin@academy.io' ORDER BY user_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "SQLite 回傳 1 與 5；PostgreSQL 只回傳 5",
+        "edgeCaseResult": "SQLite 的 LIKE 預設對 ASCII 字母不分大小寫，PostgreSQL 的 LIKE 區分大小寫；同一個查詢換引擎結果就變",
+        "pros": ["在 SQLite 上看起來達成需求"],
+        "cons": ["行為依引擎而變", "_ 與 % 在 LIKE 裡是萬用字元，信箱含底線時會配到別的帳號"],
+        "validWhen": "無",
+        "failsWhen": "跨引擎或信箱含底線時"
+      }
+    ],
+    "recommendedKeys": ["opt_resolve_then_unique_lower"],
+    "alternativeNote": "PostgreSQL 另有 citext 型別與 nondeterministic collation 可以做不分大小寫比對，兩者都要先處理既有的衝突資料才能建唯一約束",
+    "relatedDocs": [
+      "/backend/01-database/sql/string-comparison-and-collation/",
+      "/backend/01-database/sql/readable-and-fast-mostly-align/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_exact_match": [5],
+        "opt_lower_both_sides": [1, 5],
+        "opt_like_match": [1, 5]
+      }
+    }
   }
 ]

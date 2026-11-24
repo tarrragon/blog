@@ -338,5 +338,357 @@
         "opt_move_to_on": [1, 2, 3, 4, 5, 6, 7]
       }
     }
+  },
+  {
+    "conceptId": "S5-01",
+    "variantId": "S5-01-logistics-events-day-02",
+    "discriminator": ["plan", "data"],
+    "domain": "swift-logistics",
+    "stage": 5,
+    "tablePath": ["shipment_events"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["function-wraps-indexed-column", "between-drops-last-day-timestamps"],
+    "title": "單張運單某一天的掃描事件：複合索引第二欄的 Sargable 條件與日界（領域丙變體）",
+    "businessRequirement": "客服要查運單 7001 在 2026-03-10 當天的全部掃描事件（recorded_at 格式為 YYYY-MM-DD HH:MM:SS）。shipment_events 有複合索引 idx_events_shipment_recorded (shipment_id, recorded_at)，哪個寫法讓兩個欄位都用上索引、又不漏掉當天的事件？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "1 億筆掃描事件，熱門運單上千筆事件",
+      "readWriteRatio": "5:1",
+      "indexes": ["idx_events_shipment_recorded (shipment_id, recorded_at)"]
+    },
+    "options": [
+      {
+        "key": "opt_substr",
+        "sql": "SELECT event_id FROM shipment_events WHERE shipment_id = 7001 AND substr(recorded_at, 1, 10) = '2026-03-10' ORDER BY event_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 8001、8002，結果正確",
+        "edgeCaseResult": "執行計畫只用索引的第一欄 (shipment_id=?)；recorded_at 被 substr 包住，引擎要讀出這張運單的全部事件再逐筆比對",
+        "pros": ["結果正確", "寫法直覺"],
+        "cons": ["第二欄被函式包住，索引只用到一半；熱門運單有上千筆事件時全部都要讀"],
+        "validWhen": "每張運單只有少數事件時",
+        "failsWhen": "單一運單的事件很多、又頻繁查詢時"
+      },
+      {
+        "key": "opt_between_date",
+        "sql": "SELECT event_id FROM shipment_events WHERE shipment_id = 7001 AND recorded_at BETWEEN '2026-03-10' AND '2026-03-10' ORDER BY event_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 0 列，當天的 8001（08:30）與 8002（15:00）都不見",
+        "edgeCaseResult": "字串比較時 '2026-03-10 08:30:00' 大於 '2026-03-10'，上界只寫日期等於只收當天 00:00:00 以前的值",
+        "pros": ["條件形狀可以使用索引"],
+        "cons": ["用日期字串當時間戳的上界，當天有時間的資料全部被排除"],
+        "validWhen": "欄位只存日期、沒有時間部分時",
+        "failsWhen": "欄位是時間戳時"
+      },
+      {
+        "key": "opt_half_open",
+        "sql": "SELECT event_id FROM shipment_events WHERE shipment_id = 7001 AND recorded_at >= '2026-03-10 00:00:00' AND recorded_at < '2026-03-11 00:00:00' ORDER BY event_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 8001、8002",
+        "edgeCaseResult": "執行計畫用到 (shipment_id=? AND recorded_at>? AND recorded_at<?)，在這張運單的事件裡直接定位當天的範圍",
+        "pros": ["結果正確", "複合索引的兩欄都用上", "半開區間的上界是隔天 00:00:00，不必處理當天最後一秒"],
+        "cons": ["要算出隔天的日期"],
+        "validWhen": "時間戳欄位的區間查詢",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_date_fn",
+        "sql": "SELECT event_id FROM shipment_events WHERE shipment_id = 7001 AND date(recorded_at) = '2026-03-10' ORDER BY event_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 8001、8002，結果正確",
+        "edgeCaseResult": "跟 substr 一樣，date() 包住欄位，執行計畫只用到 (shipment_id=?)",
+        "pros": ["結果正確", "讀起來最像需求"],
+        "cons": ["函式包住第二欄，索引只用到第一欄"],
+        "validWhen": "另外建了 date(recorded_at) 的運算式索引時",
+        "failsWhen": "只有一般複合索引時"
+      }
+    ],
+    "recommendedKeys": ["opt_half_open"],
+    "alternativeNote": "四個選項有三個結果相同，差別要看執行計畫：只有 opt_half_open 用到複合索引的第二欄",
+    "relatedDocs": [
+      "/backend/01-database/sql/knowledge-cards/sargable/",
+      "/backend/01-database/sql/cost-lives-in-the-plan/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_substr": [8001, 8002],
+        "opt_between_date": [],
+        "opt_half_open": [8001, 8002],
+        "opt_date_fn": [8001, 8002]
+      },
+      "optionExplainMustContain": {
+        "opt_substr": "(shipment_id=?)",
+        "opt_half_open": "(shipment_id=? AND recorded_at>? AND recorded_at<?)",
+        "opt_date_fn": "(shipment_id=?)"
+      }
+    }
+  },
+  {
+    "conceptId": "S5-02",
+    "variantId": "S5-02-cloud-webhook-skew-02",
+    "discriminator": ["plan"],
+    "requiresScale": true,
+    "benchmarkRef": "bm-academy-webhook-storm",
+    "domain": "cloud-academy",
+    "stage": 5,
+    "tablePath": ["webhook_events"],
+    "perspective": "diagnose-plan",
+    "difficulty": 3,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["self-join-quadratic-blowup-on-hot-key"],
+    "title": "Webhook 重送稽核：熱點事件讓自連接平方膨脹（領域乙變體）",
+    "businessRequirement": "壓測版 webhook_events 約 2 萬列，其中金流商重送風暴讓 (stripe, evt_storm_hot) 重複 1,500 次，(provider, external_id) 沒有索引。稽核要列出重複收到的 (provider, external_id)，哪個寫法不會因為熱點重複而平方膨脹？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "20,015 筆 webhook（壓測縮尺），單一熱點重送 1,500 次",
+      "readWriteRatio": "1:5",
+      "indexes": ["idx_webhook_pending（只涵蓋 status = 'pending'）"]
+    },
+    "options": [
+      {
+        "key": "opt_group_by",
+        "sql": "SELECT provider, external_id FROM webhook_events GROUP BY provider, external_id HAVING COUNT(*) > 1 ORDER BY provider, external_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 evt_dup_001 與 evt_storm_hot 兩組",
+        "edgeCaseResult": "掃描一次、依 (provider, external_id) 分組計數；熱點重複 1,500 次只讓那一組的計數變大",
+        "pros": ["一次掃描", "成本與重複次數成線性關係"],
+        "cons": ["只輸出重複的鍵，要看每一筆重送明細時要再連回原表"],
+        "validWhen": "找出重複的鍵",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_self_join",
+        "sql": "SELECT DISTINCT w1.provider, w1.external_id FROM webhook_events w1 JOIN webhook_events w2 ON w1.provider = w2.provider AND w1.external_id = w2.external_id AND w1.event_id <> w2.event_id ORDER BY w1.provider, w1.external_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "結果相同，但熱點那一組展開成 1,500 × 1,499 = 2,248,500 對，再由 DISTINCT 丟掉",
+        "edgeCaseResult": "SQLite 會臨時建自動索引並加 Bloom filter，配對數仍隨熱點重複次數的平方成長",
+        "pros": ["要並排比較兩筆重送的欄位時寫得出來"],
+        "cons": ["配對數是重複次數的平方，熱點越大越慢"],
+        "validWhen": "確定每個鍵最多重複兩三次、又要並排比較時",
+        "failsWhen": "存在高重複的熱點鍵時"
+      },
+      {
+        "key": "opt_window_count",
+        "sql": "SELECT DISTINCT provider, external_id FROM (SELECT provider, external_id, COUNT(*) OVER (PARTITION BY provider, external_id) AS n FROM webhook_events) t WHERE n > 1 ORDER BY provider, external_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "結果相同",
+        "edgeCaseResult": "視窗函式排序一次就替每一列帶上同組筆數，成本是一次排序；保留每一列，所以去掉 DISTINCT 就能拿到每一筆重送明細",
+        "pros": ["成本與重複次數成線性關係", "同時拿得到每一筆重送的明細"],
+        "cons": ["只要鍵時，比 GROUP BY 多一層子查詢與 DISTINCT"],
+        "validWhen": "要列出每一筆重送的明細時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_app_n2_loop",
+        "sql": "-- 把全表讀回應用程式，用雙層迴圈比對 provider 與 external_id",
+        "execMode": "conceptual",
+        "expectedExec": "ok",
+        "normalResult": "結果正確",
+        "edgeCaseResult": "2 萬列全部傳回應用程式，雙層迴圈比對 4 億次",
+        "pros": ["不必寫 SQL"],
+        "cons": ["傳輸全表", "比對次數是列數的平方"],
+        "validWhen": "無",
+        "failsWhen": "任何超過數百列的表"
+      }
+    ],
+    "recommendedKeys": ["opt_group_by", "opt_window_count"],
+    "alternativeNote": "只要重複的鍵選 opt_group_by；要每一筆重送明細選 opt_window_count。GROUP BY 的實測耗時見基準快照 bm-academy-webhook-storm",
+    "relatedDocs": [
+      "/backend/01-database/sql/cost-lives-in-the-plan/",
+      "/backend/01-database/sql/knowledge-cards/query-plan/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_group_by": [["stripe", "evt_dup_001"], ["stripe", "evt_storm_hot"]],
+        "opt_self_join": [["stripe", "evt_dup_001"], ["stripe", "evt_storm_hot"]],
+        "opt_window_count": [["stripe", "evt_dup_001"], ["stripe", "evt_storm_hot"]]
+      },
+      "optionExplainMustContain": {
+        "opt_group_by": "USE TEMP B-TREE FOR GROUP BY",
+        "opt_self_join": "AUTOMATIC COVERING INDEX"
+      }
+    }
+  },
+  {
+    "conceptId": "S5-03",
+    "variantId": "S5-03-cloud-courses-track-avg-02",
+    "discriminator": ["plan", "data"],
+    "domain": "cloud-academy",
+    "stage": 5,
+    "tablePath": ["courses"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["repeated-correlated-subquery", "invalid-group-by-detail"],
+    "title": "月費等級高於學程平均的課程：相關子查詢、CTE 與視窗函式（領域乙變體）",
+    "businessRequirement": "找出已上架課程（is_published = 1）中，月費等級高於同一學程已上架課程平均等級的課程，同時顯示 course_id、monthly_fee_tier 與該學程的平均等級 avg_tier。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "2 萬門課程、40 個學程",
+      "readWriteRatio": "200:1",
+      "indexes": ["PRIMARY KEY (course_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_correlated_twice",
+        "sql": "SELECT c.course_id, c.monthly_fee_tier, (SELECT AVG(c2.monthly_fee_tier) FROM courses c2 WHERE c2.track = c.track AND c2.is_published = 1) AS avg_tier FROM courses c WHERE c.is_published = 1 AND c.monthly_fee_tier > (SELECT AVG(c2.monthly_fee_tier) FROM courses c2 WHERE c2.track = c.track AND c2.is_published = 1) ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 103（等級 3，backend 平均 2.0），結果正確",
+        "edgeCaseResult": "同一個相關子查詢寫了兩次，每一門課各算兩次學程平均；track 沒有索引時每次都是全表掃描",
+        "pros": ["結果正確"],
+        "cons": ["同一段邏輯重複兩次，修改時容易只改一處", "子查詢次數隨課程數成長"],
+        "validWhen": "表很小的一次性查詢",
+        "failsWhen": "2 萬門課程的報表"
+      },
+      {
+        "key": "opt_cte_join",
+        "sql": "WITH track_avg AS (SELECT track, AVG(monthly_fee_tier) AS avg_tier FROM courses WHERE is_published = 1 GROUP BY track) SELECT c.course_id, c.monthly_fee_tier, ta.avg_tier FROM courses c JOIN track_avg ta ON ta.track = c.track WHERE c.is_published = 1 AND c.monthly_fee_tier > ta.avg_tier ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 103（等級 3，backend 平均 2.0）",
+        "edgeCaseResult": "學程平均只算一次，再連回課程比較",
+        "pros": ["平均值只算一次", "CTE 有名字，讀得出每一步在做什麼"],
+        "cons": ["讀了兩次 courses"],
+        "validWhen": "需要把彙總結果連回明細時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_window_avg",
+        "sql": "WITH t AS (SELECT course_id, monthly_fee_tier, AVG(monthly_fee_tier) OVER (PARTITION BY track) AS avg_tier FROM courses WHERE is_published = 1) SELECT course_id, monthly_fee_tier, avg_tier FROM t WHERE monthly_fee_tier > avg_tier ORDER BY course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 103（等級 3，backend 平均 2.0）",
+        "edgeCaseResult": "視窗函式在保留每一列的同時帶上學程平均，courses 只讀一次",
+        "pros": ["只掃描一次 courses", "每一列都保留"],
+        "cons": ["視窗函式的結果不能直接寫在同一層的 WHERE，要多包一層"],
+        "validWhen": "明細與分組彙總要並排時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_bad_group_by",
+        "sql": "SELECT course_id, monthly_fee_tier, AVG(monthly_fee_tier) AS avg_tier FROM courses WHERE is_published = 1 GROUP BY track HAVING monthly_fee_tier > AVG(monthly_fee_tier);",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 0 列，103 不見",
+        "edgeCaseResult": "GROUP BY track 把每個學程收成一列，course_id 與 monthly_fee_tier 是 SQLite 從組內任選的一列，這次挑到的不是 103；PostgreSQL 直接報錯",
+        "pros": ["無"],
+        "cons": ["分組之後就沒有逐門課的明細可以比較"],
+        "validWhen": "無",
+        "failsWhen": "要比較組內每一列與組平均時"
+      }
+    ],
+    "recommendedKeys": ["opt_cte_join", "opt_window_avg"],
+    "alternativeNote": "opt_window_avg 只掃描一次表；要在別的查詢重用學程平均時，opt_cte_join 的 CTE 比較容易抽出來",
+    "relatedDocs": [
+      "/backend/01-database/sql/readable-and-fast-mostly-align/",
+      "/backend/01-database/sql/window-keeps-rows-grouping-collapses/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_correlated_twice": [[103, 3, 2.0]],
+        "opt_cte_join": [[103, 3, 2.0]],
+        "opt_window_avg": [[103, 3, 2.0]]
+      },
+      "optionRowCounts": {
+        "opt_bad_group_by": 0
+      }
+    }
+  },
+  {
+    "conceptId": "S5-04",
+    "variantId": "S5-04-logistics-intent-02",
+    "discriminator": ["data"],
+    "population": "all-records",
+    "domain": "swift-logistics",
+    "stage": 5,
+    "tablePath": ["merchants", "shipments"],
+    "perspective": "diagnose-plan",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["hollow-left-join-declaration", "distinct-hides-join-duplication"],
+    "title": "Code Review 抓出宣告落空：LEFT JOIN + WHERE 與多餘的 DISTINCT（領域丙變體）",
+    "businessRequirement": "舊報表寫成 `SELECT DISTINCT m.merchant_id, m.name FROM merchants m LEFT JOIN shipments s ON s.merchant_id = m.merchant_id WHERE s.status = 'in_transit';`，用途是列出目前有運送中運單的商家，母體是全部商家帳號（不論帳號狀態）。答案正確（回傳 3 家），審查時該怎麼改寫？",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "3,000 家商家、800 萬運單",
+      "readWriteRatio": "20:1",
+      "indexes": ["idx_shipments_merchant_id"]
+    },
+    "options": [
+      {
+        "key": "opt_keep_as_is",
+        "sql": "SELECT DISTINCT m.merchant_id, m.name FROM merchants m LEFT JOIN shipments s ON s.merchant_id = m.merchant_id WHERE s.status = 'in_transit' ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 1001、1002、1004，結果正確",
+        "edgeCaseResult": "WHERE s.status 讓 LEFT JOIN 補出的 NULL 列全部被濾掉，實際行為是 INNER JOIN；DISTINCT 蓋住了 1001 有兩張運送中運單造成的重複",
+        "pros": ["目前的結果正確"],
+        "cons": ["宣告是 LEFT JOIN、行為是 INNER JOIN，讀程式的人會誤判母體", "DISTINCT 掩蓋了連接造成的重複"],
+        "validWhen": "無",
+        "failsWhen": "之後有人照著 LEFT JOIN 的宣告修改這段查詢時"
+      },
+      {
+        "key": "opt_rewrite_exists",
+        "sql": "SELECT m.merchant_id, m.name FROM merchants m WHERE EXISTS (SELECT 1 FROM shipments s WHERE s.merchant_id = m.merchant_id AND s.status = 'in_transit') ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳同樣的 1001、1002、1004",
+        "edgeCaseResult": "需求是「有沒有運送中的運單」，EXISTS 直接寫出這個存在判斷，不展開列，也就不需要 DISTINCT",
+        "pros": ["寫法跟需求的語意一致", "沒有需要被掩蓋的重複"],
+        "cons": ["無"],
+        "validWhen": "篩出有某種子資料的父列時",
+        "failsWhen": "需要輸出子表欄位時"
+      },
+      {
+        "key": "opt_drop_distinct_only",
+        "sql": "SELECT m.merchant_id, m.name FROM merchants m LEFT JOIN shipments s ON s.merchant_id = m.merchant_id WHERE s.status = 'in_transit' ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 4 列，1001 出現兩次",
+        "edgeCaseResult": "1001 有 7005 與 7008 兩張運送中運單，拿掉 DISTINCT 之後連接造成的重複直接露出來",
+        "pros": ["暴露了 DISTINCT 原本在掩蓋什麼"],
+        "cons": ["報表出現重複的商家"],
+        "validWhen": "無",
+        "failsWhen": "任何商家有一張以上運送中運單時"
+      },
+      {
+        "key": "opt_move_to_on",
+        "sql": "SELECT DISTINCT m.merchant_id, m.name FROM merchants m LEFT JOIN shipments s ON s.merchant_id = m.merchant_id AND s.status = 'in_transit' ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳全部 4 家，沒有運送中運單的晨光烘焙（1003）也出現",
+        "edgeCaseResult": "條件移進 ON 之後 LEFT JOIN 真的保留了全部商家，報表的業務語意從「有運送中運單的商家」變成「全部商家」",
+        "pros": ["LEFT JOIN 的宣告與行為一致了"],
+        "cons": ["改變了報表的結果，修宣告時把需求也改掉了"],
+        "validWhen": "需求本來就要列出全部商家、並標示有沒有運送中運單時",
+        "failsWhen": "需求只要有運送中運單的商家時"
+      }
+    ],
+    "recommendedKeys": ["opt_rewrite_exists"],
+    "alternativeNote": "審查宣告與行為不一致的查詢時，先確定需求要的結果，再挑跟需求同語意的寫法；改寫前後的結果要相同",
+    "relatedDocs": [
+      "/backend/01-database/sql/declared-intent-vs-behaviour/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_keep_as_is": [1001, 1002, 1004],
+        "opt_rewrite_exists": [1001, 1002, 1004],
+        "opt_drop_distinct_only": [1001, 1001, 1002, 1004],
+        "opt_move_to_on": [1001, 1002, 1003, 1004]
+      }
+    }
   }
 ]
