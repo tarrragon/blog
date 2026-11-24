@@ -500,5 +500,340 @@
         "opt_status_in_having": [[1, 3, 1900]]
       }
     }
+  },
+  {
+    "conceptId": "S1-02",
+    "variantId": "S1-02-cloud-courses-02",
+    "discriminator": ["data"],
+    "domain": "cloud-academy",
+    "stage": 1,
+    "tablePath": ["courses"],
+    "perspective": "choose-query",
+    "difficulty": 1,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["and-or-precedence", "between-endpoints"],
+    "title": "進階專區課程篩選：AND 與 OR 優先順序、等級區間的兩端（領域乙變體）",
+    "businessRequirement": "課程目錄的進階專區要列出已上架、屬於 backend 或 data 學程、月費等級 2 到 3（含兩端）的課程 course_id 與 title。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "2,000 門課程",
+      "readWriteRatio": "300:1",
+      "indexes": ["PRIMARY KEY (course_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_no_parens",
+        "sql": "SELECT course_id, title FROM courses WHERE is_published = 1 AND track = 'backend' OR track = 'data' AND monthly_fee_tier BETWEEN 2 AND 3 ORDER BY course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 101、102、103、104 共 4 門，多出月費等級 1 的 101",
+        "edgeCaseResult": "AND 先於 OR 結合，條件被拆成「已上架的 backend 課（任何等級）」或「data 課且等級 2 到 3」，等級條件沒有套在 backend 課上",
+        "pros": ["寫法最接近口語的需求順序"],
+        "cons": ["AND 的優先順序高於 OR，等級與上架條件各自只套在其中一邊"],
+        "validWhen": "無",
+        "failsWhen": "同一個 WHERE 混用 AND 與 OR 而沒有括號時"
+      },
+      {
+        "key": "opt_in_between",
+        "sql": "SELECT course_id, title FROM courses WHERE is_published = 1 AND track IN ('backend', 'data') AND monthly_fee_tier BETWEEN 2 AND 3 ORDER BY course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 102、103、104 共 3 門",
+        "edgeCaseResult": "IN 把學程的二選一收成單一條件，三個條件全部以 AND 結合；BETWEEN 包含兩端，等級 3 的 103 留在結果裡",
+        "pros": ["單欄多值用 IN，不必寫括號也不會被優先順序拆開", "BETWEEN 對整數等級含兩端，符合需求"],
+        "cons": ["BETWEEN 用在時間戳欄位時，上界含等號會多算或少算邊界時刻，換到時間欄位要改成半開區間"],
+        "validWhen": "篩選欄位是整數或離散值時",
+        "failsWhen": "把同一個 BETWEEN 寫法搬到時間戳欄位時"
+      },
+      {
+        "key": "opt_half_open_upper",
+        "sql": "SELECT course_id, title FROM courses WHERE is_published = 1 AND track IN ('backend', 'data') AND monthly_fee_tier >= 2 AND monthly_fee_tier < 3 ORDER BY course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 102、104 共 2 門，等級 3 的 103 消失",
+        "edgeCaseResult": "把時間區間習慣用的半開區間套到整數等級上，上界 3 被排除",
+        "pros": ["半開區間是時間欄位的正確寫法"],
+        "cons": ["需求寫「含兩端」，上界用 < 會漏掉等級 3"],
+        "validWhen": "需求的上界不含等號時（例如「等級 2 以上、3 以下不含 3」）",
+        "failsWhen": "需求要求包含上界時"
+      },
+      {
+        "key": "opt_explicit_parens",
+        "sql": "SELECT course_id, title FROM courses WHERE is_published = 1 AND (track = 'backend' OR track = 'data') AND monthly_fee_tier >= 2 AND monthly_fee_tier <= 3 ORDER BY course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 102、103、104 共 3 門",
+        "edgeCaseResult": "括號把 OR 限制在學程條件內，結果與 IN 寫法相同",
+        "pros": ["括號明確標出 OR 的範圍，讀的人不必記優先順序"],
+        "cons": ["學程選項變多時 OR 串會變長，不如 IN 好維護"],
+        "validWhen": "OR 的兩邊是不同欄位、不能收成 IN 時",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_in_between", "opt_explicit_parens"],
+    "alternativeNote": "opt_in_between 與 opt_explicit_parens 語意等價；OR 兩邊是同一欄的多個值時優先用 IN",
+    "relatedDocs": [
+      "/backend/01-database/sql/well-formed-is-not-correct/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_no_parens": [101, 102, 103, 104],
+        "opt_in_between": [102, 103, 104],
+        "opt_half_open_upper": [102, 104],
+        "opt_explicit_parens": [102, 103, 104]
+      }
+    }
+  },
+  {
+    "conceptId": "S1-03",
+    "variantId": "S1-03-cloud-users-02",
+    "discriminator": ["data"],
+    "population": "all-records",
+    "domain": "cloud-academy",
+    "stage": 1,
+    "tablePath": ["users"],
+    "perspective": "choose-query",
+    "difficulty": 1,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["null-equals-null", "non-sargable-coalesce"],
+    "title": "找出未填國家的學員：= NULL、IS NULL 與 COALESCE（領域乙變體）",
+    "businessRequirement": "客服要補齊學員資料：在全部學員帳號中（不論帳號狀態），列出國家欄位未填（country 為 NULL）的 user_id 與 display_name。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "30 萬學員",
+      "readWriteRatio": "100:1",
+      "indexes": ["預期未來在 country 建索引"]
+    },
+    "options": [
+      {
+        "key": "opt_eq_null",
+        "sql": "SELECT user_id, display_name FROM users WHERE country = NULL ORDER BY user_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 0 列，未填國家的吳琪（id=5）沒有出現",
+        "edgeCaseResult": "任何值與 NULL 比較的結果都是 UNKNOWN，WHERE 只留下結果為 TRUE 的列，所以永遠是空集合",
+        "pros": ["語法合法，引擎不報錯"],
+        "cons": ["語法合法而結果恆為空，錯誤不會被引擎發現"],
+        "validWhen": "無",
+        "failsWhen": "用 = 或 <> 判斷 NULL 時"
+      },
+      {
+        "key": "opt_is_null",
+        "sql": "SELECT user_id, display_name FROM users WHERE country IS NULL ORDER BY user_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳吳琪（id=5）1 列",
+        "edgeCaseResult": "IS NULL 是判斷缺值的專用述詞，回傳 TRUE 或 FALSE，不會產生 UNKNOWN",
+        "pros": ["語意精確", "條件形狀保持欄位原樣，日後在 country 建的索引用得上"],
+        "cons": ["若資料另有空字串代表未填，需要另外加 OR country = ''"],
+        "validWhen": "未填一律存成 NULL 時",
+        "failsWhen": "應用程式把未填存成空字串時（此時要補 OR country = ''）"
+      },
+      {
+        "key": "opt_empty_str",
+        "sql": "SELECT user_id, display_name FROM users WHERE country = '' ORDER BY user_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 0 列",
+        "edgeCaseResult": "空字串與 NULL 是兩種不同的值：空字串是有值、長度為 0，NULL 是沒有值",
+        "pros": ["應用程式把未填存成空字串時找得到那些列"],
+        "cons": ["這個資料庫的未填存成 NULL，空字串條件一列都找不到"],
+        "validWhen": "確定未填一律存成空字串時",
+        "failsWhen": "未填存成 NULL 時"
+      },
+      {
+        "key": "opt_coalesce_empty",
+        "sql": "SELECT user_id, display_name FROM users WHERE COALESCE(country, '') = '' ORDER BY user_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳吳琪（id=5）1 列",
+        "edgeCaseResult": "同時涵蓋 NULL 與空字串，但欄位被函式包住，country 上的索引用不上",
+        "pros": ["一個條件同時涵蓋 NULL 與空字串"],
+        "cons": ["函式包住欄位，條件不是 Sargable，全表 30 萬列時只能掃描"],
+        "validWhen": "表很小、或只是一次性的資料清查時",
+        "failsWhen": "高頻查詢而且 country 有索引時"
+      }
+    ],
+    "recommendedKeys": ["opt_is_null"],
+    "alternativeNote": "要同時涵蓋 NULL 與空字串而保留索引能力時，寫成 WHERE country IS NULL OR country = ''，優於 COALESCE(country, '') = ''",
+    "relatedDocs": [
+      "/backend/01-database/sql/knowledge-cards/null/",
+      "/backend/01-database/sql/join-changes-rows-and-nulls/"
+    ],
+    "sqliteAssertions": {
+      "optionRowCounts": {
+        "opt_eq_null": 0,
+        "opt_is_null": 1,
+        "opt_empty_str": 0,
+        "opt_coalesce_empty": 1
+      }
+    }
+  },
+  {
+    "conceptId": "S1-04",
+    "variantId": "S1-04-logistics-shipments-02",
+    "discriminator": ["data"],
+    "domain": "swift-logistics",
+    "stage": 1,
+    "tablePath": ["shipments"],
+    "perspective": "choose-query",
+    "difficulty": 1,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["non-deterministic-tie-order", "clause-syntax-order", "desc-applies-per-column"],
+    "title": "高運費運單排行：ORDER BY 方向、平手破局鍵與 LIMIT 位置（領域丙變體）",
+    "businessRequirement": "營運週報要列出運費最高的 4 張運單（shipment_id、fee_cents），運費相同時 shipment_id 小的排前面，同一份資料每次產出的名單要相同。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "800 萬運單",
+      "readWriteRatio": "20:1",
+      "indexes": ["PRIMARY KEY (shipment_id)"]
+    },
+    "options": [
+      {
+        "key": "opt_deterministic",
+        "sql": "SELECT shipment_id, fee_cents FROM shipments ORDER BY fee_cents DESC, shipment_id ASC LIMIT 4;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 7003、7007、7001、7005；運費同為 15,000 的 7005 與 7006 由 shipment_id 決定，7005 入選",
+        "edgeCaseResult": "排序鍵加上唯一的 shipment_id 之後，第 4 名每次都是同一張運單",
+        "pros": ["結果有確定的全序", "兩個排序方向都顯式寫出"],
+        "cons": ["無"],
+        "validWhen": "排行、分頁、報表這類要求可重現的輸出時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_no_tiebreak",
+        "sql": "SELECT shipment_id, fee_cents FROM shipments ORDER BY fee_cents DESC LIMIT 4;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "在這份資料上剛好也回傳 7003、7007、7001、7005",
+        "edgeCaseResult": "7005 與 7006 運費相同，SQL 沒有規定平手列的順序；換了執行計畫、資料頁配置或引擎，第 4 名可能變成 7006",
+        "pros": ["寫法最短"],
+        "cons": ["平手時的順序由引擎決定，同一份資料兩次查詢的名單可能不同"],
+        "validWhen": "排序鍵本身唯一時",
+        "failsWhen": "排序鍵有重複值、而 LIMIT 的邊界落在平手列之間時"
+      },
+      {
+        "key": "opt_missing_desc_first",
+        "sql": "SELECT shipment_id, fee_cents FROM shipments ORDER BY fee_cents, shipment_id DESC LIMIT 4;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳運費最低的 7004、7008、7002、7006",
+        "edgeCaseResult": "DESC 只套在緊鄰的 shipment_id 上，fee_cents 仍是預設的 ASC，排行變成由低到高",
+        "pros": ["加了破局鍵"],
+        "cons": ["排序方向是逐欄指定的，第一欄漏寫 DESC 就整個反過來"],
+        "validWhen": "無",
+        "failsWhen": "多欄排序只在最後一欄寫方向時"
+      },
+      {
+        "key": "opt_limit_before_order",
+        "sql": "SELECT shipment_id, fee_cents FROM shipments LIMIT 4 ORDER BY fee_cents DESC, shipment_id ASC;",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "SQLite 報 near \"ORDER\": syntax error",
+        "edgeCaseResult": "LIMIT 的語法位置在 ORDER BY 之後，順序寫反時引擎不接受",
+        "pros": ["無"],
+        "cons": ["子句的書寫順序固定，寫反就是語法錯誤"],
+        "validWhen": "無",
+        "failsWhen": "任何引擎"
+      }
+    ],
+    "recommendedKeys": ["opt_deterministic"],
+    "alternativeNote": "排序方向 ASC 與 DESC 逐欄指定，寫多欄排序時每一欄都顯式標出方向",
+    "relatedDocs": [
+      "/backend/01-database/sql/relations-have-no-order/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_deterministic": [7003, 7007, 7001, 7005],
+        "opt_missing_desc_first": [7004, 7008, 7002, 7006]
+      }
+    }
+  },
+  {
+    "conceptId": "S1-05",
+    "variantId": "S1-05-logistics-shipments-02",
+    "discriminator": ["data"],
+    "domain": "swift-logistics",
+    "stage": 1,
+    "tablePath": ["shipments"],
+    "perspective": "choose-query",
+    "difficulty": 1,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["aggregate-in-where", "row-filter-in-having"],
+    "title": "已出貨運費達門檻的商家：WHERE 與 HAVING 的職責分工（領域丙變體）",
+    "businessRequirement": "財務要找出已出貨（status 為 delivered 或 in_transit）運費合計達 20,000 分以上的商家，列出 merchant_id 與已出貨運費合計；退回（returned）與剛建立（created）的運單不算。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "800 萬運單、3,000 家商家",
+      "readWriteRatio": "20:1",
+      "indexes": ["idx_shipments_merchant_id"]
+    },
+    "options": [
+      {
+        "key": "opt_agg_in_where",
+        "sql": "SELECT merchant_id, SUM(fee_cents) AS fee_total FROM shipments WHERE status IN ('delivered', 'in_transit') AND SUM(fee_cents) >= 20000 GROUP BY merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "error",
+        "normalResult": "SQLite 報 misuse of aggregate: SUM()",
+        "edgeCaseResult": "WHERE 在分組之前逐列求值，那時還沒有「每家商家的合計」可以比較",
+        "pros": ["無"],
+        "cons": ["聚合函式不能出現在 WHERE"],
+        "validWhen": "無",
+        "failsWhen": "任何引擎"
+      },
+      {
+        "key": "opt_status_in_having",
+        "sql": "SELECT merchant_id, SUM(fee_cents) AS fee_total FROM shipments GROUP BY merchant_id HAVING status IN ('delivered', 'in_transit') AND SUM(fee_cents) >= 20000 ORDER BY merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 1001 合計 81,000、1004 合計 21,000；1001 多算了退回的 7003（25,000），1002 是否出現取決於引擎挑到哪一列的 status",
+        "edgeCaseResult": "status 不在 GROUP BY 裡，HAVING 讀到的是每組任選一列的值；合計也沒有排除退回與剛建立的運單",
+        "pros": ["SQLite 接受，不報錯"],
+        "cons": ["列條件寫在 HAVING 時沒有先過濾列，合計是全部狀態的總和", "PostgreSQL 會報 column must appear in the GROUP BY clause"],
+        "validWhen": "無",
+        "failsWhen": "把逐列的條件放進 HAVING 時"
+      },
+      {
+        "key": "opt_where_then_having",
+        "sql": "SELECT merchant_id, SUM(fee_cents) AS fee_total FROM shipments WHERE status IN ('delivered', 'in_transit') GROUP BY merchant_id HAVING SUM(fee_cents) >= 20000 ORDER BY merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 1001 合計 56,000、1004 合計 21,000",
+        "edgeCaseResult": "WHERE 先排除退回與剛建立的運單，HAVING 再比較每家商家的合計；1002 的已出貨合計只有 15,000，不到門檻",
+        "pros": ["列條件與組條件各放在它求值的階段", "先過濾列，分組要處理的資料量較小"],
+        "cons": ["無"],
+        "validWhen": "同時有逐列條件與彙總條件時",
+        "failsWhen": "無"
+      },
+      {
+        "key": "opt_wrong_having",
+        "sql": "SELECT merchant_id, SUM(fee_cents) AS fee_total FROM shipments WHERE status IN ('delivered', 'in_transit') GROUP BY merchant_id HAVING COUNT(*) >= 2 ORDER BY merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 1001 合計 56,000，1004 消失",
+        "edgeCaseResult": "門檻寫成運單張數，只有一張高運費運單的 1004 被排除",
+        "pros": ["結構正確"],
+        "cons": ["彙總條件比較的是張數而不是金額，跟需求不同"],
+        "validWhen": "需求是「至少兩張已出貨運單」時",
+        "failsWhen": "需求的門檻是金額時"
+      }
+    ],
+    "recommendedKeys": ["opt_where_then_having"],
+    "alternativeNote": "對照 SQLite 與 PostgreSQL 在 opt_status_in_having 的表現，可以看到 SQLite 對裸欄位的寬鬆處理",
+    "relatedDocs": [
+      "/backend/01-database/sql/declarative-not-procedural/",
+      "/backend/01-database/sql/clause-evaluation-order/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_where_then_having": [[1001, 56000], [1004, 21000]],
+        "opt_wrong_having": [[1001, 56000]]
+      }
+    }
   }
 ]

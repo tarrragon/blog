@@ -10,7 +10,7 @@
 | `domains/cloud-academy/`   | 領域乙：雲課堂（20 表）   | 企業多租戶組織、RBAC（含 permissions）、憑證／Session 失效、可抹除的學員個資、唯附寫稽核與 2 檢視表                                  |
 | `domains/swift-logistics/` | 領域丙：捷配物流（19 表） | 商家帳號、API Key 雜湊撤銷、子表 NOT NULL 租戶鍵與複合外鍵、平台員工 RBAC、收件人 PII、唯附寫稽核與 2 檢視表                         |
 | `benchmarks/`              | 基準快照 JSON             | `sqlite-scale-snapshots.json`（實跑生成）、`postgres-and-concurrency-reference.json`（PG／多連線／分區參考快照）                     |
-| `questions/`               | 結構化題庫 JSON           | `manifest.json` 與八階段（含資安與權限）＋跨概念／資安複合陷阱共 9 份題庫（首批 53 題）                                              |
+| `questions/`               | 結構化題庫 JSON           | `manifest.json` 與八階段（含資安與權限）＋跨概念／資安複合陷阱共 9 份題庫（題數與各值統計以 `verify_questions.py` 的輸出為準）       |
 | `verify_domains.py`        | SQLite 資料庫底座驗證     | 外鍵、完整性、語意／資安反例、約束回歸（STRICT、時間格式、狀態綁定、複合外鍵）、壓測層一致性契約與執行計畫分岔                       |
 | `verify_questions.py`      | 題庫自動化驗收            | JSON 欄位、`population` 母體宣告、`discriminator` 鑑別力來源、站內文章連結、基準參照，並在獨立記憶體 SQLite 實跑全部可執行選項與斷言 |
 | `verify_pg.py`             | PostgreSQL 驗證           | 在拋棄式叢集實跑 `schema_pg.sql` + `seed.sql` + `security_pg.sql`，以各角色身分檢查 RLS、GRANT、唯附寫稽核與跨引擎差異               |

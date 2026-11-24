@@ -421,5 +421,264 @@
         "opt_reversed_join": 6
       }
     }
+  },
+  {
+    "conceptId": "S2-02",
+    "variantId": "S2-02-logistics-merchants-shipments-02",
+    "discriminator": ["data"],
+    "population": "all-records",
+    "domain": "swift-logistics",
+    "stage": 2,
+    "tablePath": ["merchants", "shipments"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["inner-join-drops-unmatched", "count-star-counts-null-complemented-row"],
+    "title": "統計每家商家的運單張數：LEFT JOIN 與 COUNT(*) 陷阱（領域丙變體）",
+    "businessRequirement": "對帳報表要列出全部商家帳號（不論帳號狀態，含停權而且從未建立運單的晨光烘焙 1003）的 merchant_id、name 與運單張數，沒有運單的商家顯示 0。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "3,000 家商家、800 萬運單",
+      "readWriteRatio": "20:1",
+      "indexes": ["idx_shipments_merchant_id"]
+    },
+    "options": [
+      {
+        "key": "opt_inner_join",
+        "sql": "SELECT m.merchant_id, m.name, COUNT(s.shipment_id) AS shipment_cnt FROM merchants m INNER JOIN shipments s ON s.merchant_id = m.merchant_id GROUP BY m.merchant_id, m.name ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 1001、1002、1004 三家，晨光烘焙（1003）消失",
+        "edgeCaseResult": "INNER JOIN 只保留兩邊都配得到的列，沒有運單的商家在連接那一步就被排除",
+        "pros": ["只看有運單的商家時最簡潔"],
+        "cons": ["排除了沒有運單的商家，對帳報表少一列"],
+        "validWhen": "需求明確限定「至少建立過一張運單的商家」時",
+        "failsWhen": "要保留沒有運單的商家並顯示 0 時"
+      },
+      {
+        "key": "opt_left_count_star",
+        "sql": "SELECT m.merchant_id, m.name, COUNT(*) AS shipment_cnt FROM merchants m LEFT JOIN shipments s ON s.merchant_id = m.merchant_id GROUP BY m.merchant_id, m.name ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 4 家，但晨光烘焙（1003）顯示 shipment_cnt = 1",
+        "edgeCaseResult": "LEFT JOIN 替沒有配到的商家補出一列 NULL，COUNT(*) 計算列數，把這一列也算成 1",
+        "pros": ["保留了全部商家"],
+        "cons": ["每一家沒有運單的商家都被多算成 1 張"],
+        "validWhen": "無",
+        "failsWhen": "LEFT JOIN 之後用 COUNT(*) 計算右表筆數時"
+      },
+      {
+        "key": "opt_left_count_col",
+        "sql": "SELECT m.merchant_id, m.name, COUNT(s.shipment_id) AS shipment_cnt FROM merchants m LEFT JOIN shipments s ON s.merchant_id = m.merchant_id GROUP BY m.merchant_id, m.name ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 4 家，晨光烘焙（1003）顯示 0",
+        "edgeCaseResult": "COUNT(s.shipment_id) 只計算非 NULL 的值，補出來那一列的 shipment_id 是 NULL，不被計入",
+        "pros": ["保留全部商家，而且沒有運單的顯示 0", "一次連接加一次聚合"],
+        "cons": ["之後再串第二張一對多的表（例如包裹）時要防列數膨脹"],
+        "validWhen": "只有一組一對多外連接的彙總",
+        "failsWhen": "同一個查詢再串第二張一對多表時，要改成先分別聚合"
+      },
+      {
+        "key": "opt_scalar_subquery",
+        "sql": "SELECT m.merchant_id, m.name, (SELECT COUNT(*) FROM shipments s WHERE s.merchant_id = m.merchant_id) AS shipment_cnt FROM merchants m ORDER BY m.merchant_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 4 家，晨光烘焙（1003）顯示 0",
+        "edgeCaseResult": "子查詢對每一家商家各算一次，沒有運單時 COUNT(*) 回傳 0；沒有連接，也就沒有列數膨脹",
+        "pros": ["不受多表連接的列數膨脹影響", "外層只取少數商家且有 idx_shipments_merchant_id 時很快"],
+        "cons": ["全部 3,000 家商家都要算時，逐列子查詢的成本高於一次連接聚合"],
+        "validWhen": "外層只篩出少數商家（例如單一頁 20 家）且子查詢用得到索引時",
+        "failsWhen": "全部商家的大報表"
+      }
+    ],
+    "recommendedKeys": ["opt_left_count_col"],
+    "alternativeNote": "外層有 LIMIT 20 並且用得到 idx_shipments_merchant_id 時，opt_scalar_subquery 也是好的寫法",
+    "relatedDocs": [
+      "/backend/01-database/sql/join-starts-from-the-relationship/",
+      "/backend/01-database/sql/join-changes-rows-and-nulls/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_left_count_star": [[1001, "星海電商", 5], [1002, "山丘選物", 2], [1003, "晨光烘焙", 1], [1004, "微風文創", 1]],
+        "opt_left_count_col": [[1001, "星海電商", 5], [1002, "山丘選物", 2], [1003, "晨光烘焙", 0], [1004, "微風文創", 1]]
+      },
+      "optionRowCounts": {
+        "opt_inner_join": 3,
+        "opt_scalar_subquery": 4
+      }
+    }
+  },
+  {
+    "conceptId": "S2-03",
+    "variantId": "S2-03-cloud-courses-progress-02",
+    "discriminator": ["data"],
+    "domain": "cloud-academy",
+    "stage": 2,
+    "tablePath": ["courses", "lesson_progress"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["outer-join-where-nullifies-protection", "partial-null-or-miss"],
+    "title": "每門已上架課程的 3 月完課筆數：ON 與 WHERE 的職責分岔（領域乙變體）",
+    "businessRequirement": "教務月報要列出每一門已上架課程的 course_id、title，以及 2026 年 3 月完成的課時筆數；3 月沒有完成紀錄的課程也要列出並顯示 0。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "2,000 門課程、500 萬筆學習紀錄",
+      "readWriteRatio": "30:1",
+      "indexes": ["idx_progress_user_course"]
+    },
+    "options": [
+      {
+        "key": "opt_where_filter",
+        "sql": "SELECT c.course_id, c.title, COUNT(lp.progress_id) AS march_done FROM courses c LEFT JOIN lesson_progress lp ON lp.course_id = c.course_id WHERE c.is_published = 1 AND lp.completed_at >= '2026-03-01 00:00:00' AND lp.completed_at < '2026-04-01 00:00:00' GROUP BY c.course_id, c.title ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "只回傳 101 一門",
+        "edgeCaseResult": "WHERE 在連接之後過濾，lp.completed_at 是 NULL 的補出列與其他月份的列都被丟掉，LEFT JOIN 退化成 INNER JOIN",
+        "pros": ["寫法直覺"],
+        "cons": ["右表條件寫在 WHERE，外連接保留下來的課程又被過濾掉"],
+        "validWhen": "只要 3 月有完課的課程時（此時應直接寫成 INNER JOIN）",
+        "failsWhen": "要保留 3 月沒有完課的課程時"
+      },
+      {
+        "key": "opt_where_or_null",
+        "sql": "SELECT c.course_id, c.title, COUNT(lp.progress_id) AS march_done FROM courses c LEFT JOIN lesson_progress lp ON lp.course_id = c.course_id WHERE c.is_published = 1 AND ((lp.completed_at >= '2026-03-01 00:00:00' AND lp.completed_at < '2026-04-01 00:00:00') OR lp.progress_id IS NULL) GROUP BY c.course_id, c.title ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 101 與 103 兩門；102、104、106 消失",
+        "edgeCaseResult": "OR lp.progress_id IS NULL 只救回「完全沒有學習紀錄」的 103；102、104、106 有其他月份或未完成的紀錄，連接時沒有補出 NULL 列，那些列又不在 3 月，整門課被濾掉",
+        "pros": ["保住了完全沒有紀錄的課程"],
+        "cons": ["有紀錄但不在 3 月的課程仍然消失，錯誤只在部分課程上出現，較難察覺"],
+        "validWhen": "無",
+        "failsWhen": "右表在其他期間有資料的左表列"
+      },
+      {
+        "key": "opt_on_filter",
+        "sql": "SELECT c.course_id, c.title, COUNT(lp.progress_id) AS march_done FROM courses c LEFT JOIN lesson_progress lp ON lp.course_id = c.course_id AND lp.completed_at >= '2026-03-01 00:00:00' AND lp.completed_at < '2026-04-01 00:00:00' WHERE c.is_published = 1 GROUP BY c.course_id, c.title ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 101、102、103、104、106 共 5 門，101 為 1，其餘為 0",
+        "edgeCaseResult": "3 月的條件寫在 ON，決定哪些學習紀錄配得上課程；課程本身是否保留由 LEFT JOIN 決定，上架條件留在 WHERE 過濾左表",
+        "pros": ["右表條件與左表條件各放在職責對應的位置", "一次連接完成"],
+        "cons": ["同一個查詢要算好幾個月份時，要為每個月份各連一次"],
+        "validWhen": "要保留全部左表列、只統計右表某個範圍時",
+        "failsWhen": "同時要算多個月份欄位時（改用條件聚合）"
+      },
+      {
+        "key": "opt_cond_agg",
+        "sql": "SELECT c.course_id, c.title, COALESCE(SUM(CASE WHEN lp.completed_at >= '2026-03-01 00:00:00' AND lp.completed_at < '2026-04-01 00:00:00' THEN 1 ELSE 0 END), 0) AS march_done FROM courses c LEFT JOIN lesson_progress lp ON lp.course_id = c.course_id WHERE c.is_published = 1 GROUP BY c.course_id, c.title ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "回傳 5 門，結果與 opt_on_filter 相同",
+        "edgeCaseResult": "連接全部學習紀錄，再用 CASE 只把 3 月的列計為 1",
+        "pros": ["要同時算 2 月、3 月等多個欄位時只要多寫一個 CASE"],
+        "cons": ["只算一個月份時連接了全部月份的紀錄，處理的列數較多"],
+        "validWhen": "一次輸出多個期間的欄位時",
+        "failsWhen": "無"
+      }
+    ],
+    "recommendedKeys": ["opt_on_filter"],
+    "alternativeNote": "同一個查詢要同時算 2 月與 3 月兩欄時，改選 opt_cond_agg",
+    "relatedDocs": [
+      "/backend/01-database/sql/on-describes-where-filters/"
+    ],
+    "sqliteAssertions": {
+      "optionFirstColumnOrder": {
+        "opt_where_filter": [101],
+        "opt_where_or_null": [101, 103],
+        "opt_on_filter": [101, 102, 103, 104, 106]
+      },
+      "optionExactRows": {
+        "opt_cond_agg": [[101, "SQL 語意模型入門", 1], [102, "PostgreSQL 效能調校", 0], [103, "分散式交易與隔離等級", 0], [104, "分析型查詢與視窗實戰", 0], [106, "容器部署基礎", 0]]
+      }
+    }
+  },
+  {
+    "conceptId": "S2-05",
+    "variantId": "S2-05-cloud-courses-watch-tags-02",
+    "discriminator": ["data"],
+    "domain": "cloud-academy",
+    "stage": 2,
+    "tablePath": ["courses", "lesson_progress", "course_tags"],
+    "perspective": "choose-query",
+    "difficulty": 2,
+    "premiseFlip": false,
+    "designDimension": null,
+    "traps": ["fanout-sum-inflation", "sum-distinct-under-counts"],
+    "title": "同時算課程總觀看秒數與標籤數：一對多連接的列數膨脹（領域乙變體）",
+    "businessRequirement": "課程儀表板要列出每一門已上架課程的 course_id、總觀看秒數（全部學習紀錄的 watch_seconds 加總）與標籤數；沒有學習紀錄的課程觀看秒數顯示 0。",
+    "workloadProfile": {
+      "engine": "SQLite 3.43+ / PostgreSQL 18",
+      "scale": "2,000 門課程、500 萬筆學習紀錄、8,000 筆課程標籤",
+      "readWriteRatio": "40:1",
+      "indexes": ["idx_progress_user_course"]
+    },
+    "options": [
+      {
+        "key": "opt_direct_join",
+        "sql": "SELECT c.course_id, SUM(lp.watch_seconds) AS total_watch, COUNT(ct.tag_id) AS tag_cnt FROM courses c LEFT JOIN lesson_progress lp ON lp.course_id = c.course_id LEFT JOIN course_tags ct ON ct.course_id = c.course_id WHERE c.is_published = 1 GROUP BY c.course_id ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "101 的標籤數變成 3、102 的觀看秒數變成 960，103 的觀看秒數是 NULL",
+        "edgeCaseResult": "兩張一對多的表接在同一門課上，連接結果是學習紀錄數 × 標籤數的組合：101 有 3 筆紀錄、1 個標籤，標籤被重複算 3 次；102 有 1 筆紀錄、2 個標籤，觀看秒數被重複加 2 次",
+        "pros": ["一個查詢寫完"],
+        "cons": ["兩組一對多同時連接，兩邊的加總與計數互相放大"],
+        "validWhen": "只連一張一對多的表時",
+        "failsWhen": "同一個查詢連接兩張以上一對多的表並各自彙總時"
+      },
+      {
+        "key": "opt_sum_distinct",
+        "sql": "SELECT c.course_id, SUM(DISTINCT lp.watch_seconds) AS total_watch, COUNT(DISTINCT ct.tag_id) AS tag_cnt FROM courses c LEFT JOIN lesson_progress lp ON lp.course_id = c.course_id LEFT JOIN course_tags ct ON ct.course_id = c.course_id WHERE c.is_published = 1 GROUP BY c.course_id ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "標籤數正確，但 101 的觀看秒數變成 2,700（少算 1,200）",
+        "edgeCaseResult": "DISTINCT 作用在值上，不是作用在學習紀錄上：101 有兩筆紀錄都看了 1,200 秒，去重之後只加一次",
+        "pros": ["COUNT(DISTINCT tag_id) 對計數修正有效"],
+        "cons": ["SUM(DISTINCT) 把不同紀錄的相同數值合併，金額與秒數這類可以重複的值會少算"],
+        "validWhen": "無",
+        "failsWhen": "加總的欄位可能出現重複的值時"
+      },
+      {
+        "key": "opt_pre_aggregate",
+        "sql": "SELECT c.course_id, COALESCE(w.total_watch, 0) AS total_watch, COALESCE(t.tag_cnt, 0) AS tag_cnt FROM courses c LEFT JOIN (SELECT course_id, SUM(watch_seconds) AS total_watch FROM lesson_progress GROUP BY course_id) w ON w.course_id = c.course_id LEFT JOIN (SELECT course_id, COUNT(*) AS tag_cnt FROM course_tags GROUP BY course_id) t ON t.course_id = c.course_id WHERE c.is_published = 1 ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "101 為 3,900 秒、1 個標籤；102 為 480 秒、2 個標籤；103 為 0 秒、2 個標籤",
+        "edgeCaseResult": "兩張表各自先聚合成每門課一列，再連回課程，連接時兩邊都是一對一，不會互相放大",
+        "pros": ["結果正確", "全部課程的報表一次算完"],
+        "cons": ["只查一門課時也聚合了全部課程"],
+        "validWhen": "全部課程的報表",
+        "failsWhen": "只查單一課程時（改用相關子查詢較省）"
+      },
+      {
+        "key": "opt_correlated_single",
+        "sql": "SELECT c.course_id, (SELECT COALESCE(SUM(lp.watch_seconds), 0) FROM lesson_progress lp WHERE lp.course_id = c.course_id) AS total_watch, (SELECT COUNT(*) FROM course_tags ct WHERE ct.course_id = c.course_id) AS tag_cnt FROM courses c WHERE c.is_published = 1 ORDER BY c.course_id;",
+        "execMode": "sqlite",
+        "expectedExec": "ok",
+        "normalResult": "結果與 opt_pre_aggregate 相同",
+        "edgeCaseResult": "每個彙總值各用一個子查詢計算，彼此不連接",
+        "pros": ["結果正確", "外層只取少數課程時不必聚合全部資料"],
+        "cons": ["全部 2,000 門課都要算時，每門課跑兩個子查詢"],
+        "validWhen": "外層只篩出少數課程時",
+        "failsWhen": "全表報表而子查詢的欄位沒有索引時"
+      }
+    ],
+    "recommendedKeys": ["opt_pre_aggregate", "opt_correlated_single"],
+    "alternativeNote": "全部課程的報表選 opt_pre_aggregate；只查單一課程時 opt_correlated_single 省掉全表的預先聚合",
+    "relatedDocs": [
+      "/backend/01-database/sql/join-changes-rows-and-nulls/",
+      "/backend/01-database/sql/well-formed-is-not-correct/"
+    ],
+    "sqliteAssertions": {
+      "optionExactRows": {
+        "opt_direct_join": [[101, 3900, 3], [102, 960, 2], [103, null, 2], [104, 300, 0], [106, 900, 1]],
+        "opt_sum_distinct": [[101, 2700, 1], [102, 480, 2], [103, null, 2], [104, 300, 0], [106, 900, 1]],
+        "opt_pre_aggregate": [[101, 3900, 1], [102, 480, 2], [103, 0, 2], [104, 300, 0], [106, 900, 1]],
+        "opt_correlated_single": [[101, 3900, 1], [102, 480, 2], [103, 0, 2], [104, 300, 0], [106, 900, 1]]
+      }
+    }
   }
 ]
