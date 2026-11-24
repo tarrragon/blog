@@ -2,8 +2,8 @@
   "schemaVersion": "1.0",
   "engine": "SQLite 3.53.0",
   "runtime": "Python 3.14.4 (Darwin arm64)",
-  "generatedAt": "2026-11-23T17:59:43Z",
-  "note": "時間絕對值隨硬體與版本改變，教學判讀重點為同一組資料上的執行計畫結構與相對量級差。",
+  "generatedAt": "2026-11-24T05:51:20Z",
+  "note": "時間絕對值隨硬體與版本改變，教學判讀重點為同一組資料上的執行計畫結構與相對量級差。每個樣本重複執行 loopsPerSample 次再取單次平均，避免微秒級查詢的倍率落在計時器解析度上。多數變體的單次差距在幾毫秒以內，低於使用者感覺得到的約 100 ms，網站呈現時應以執行計畫與倍率為主、時間為輔。",
   "benchmarks": [
     {
       "benchmarkId": "bm-bookstore-sargable-range",
@@ -21,8 +21,9 @@
           "explainPlan": [
             "SCAN orders USING COVERING INDEX idx_orders_ordered_id"
           ],
-          "minMs": 1.83,
-          "medianMs": 2.683
+          "loopsPerSample": 11,
+          "minMs": 1.6967,
+          "medianMs": 1.7503
         },
         "sargable_half_open": {
           "sql": "SELECT COUNT(*) FROM orders WHERE ordered_at >= '2025-06-01 00:00:00' AND ordered_at < '2025-07-01 00:00:00';",
@@ -30,11 +31,12 @@
           "explainPlan": [
             "SEARCH orders USING COVERING INDEX idx_orders_ordered_id (ordered_at>? AND ordered_at<?)"
           ],
-          "minMs": 0.045,
-          "medianMs": 0.047
+          "loopsPerSample": 353,
+          "minMs": 0.0402,
+          "medianMs": 0.0409
         }
       },
-      "speedupRatio": "57.1x（半開區間相對 substr）"
+      "speedupRatio": "42.8x（半開區間相對 substr；單次差 1.709 ms）"
     },
     {
       "benchmarkId": "bm-bookstore-duplicate-email-skew",
@@ -43,18 +45,19 @@
         "S5-02"
       ],
       "measurementSource": "live-sqlite-measured",
-      "datasetScale": "7,007 customers（單一熱點重複 2,000 次，email 無索引）",
+      "datasetScale": "7,007 customers（單一熱點重複 2,000 次、已抹除顧客 email 為 NULL，email 無索引）",
       "title": "熱點重複 Email 稽核：GROUP BY HAVING vs 自連接配對展開",
       "variants": {
         "group_by_having": {
-          "sql": "SELECT email FROM customers GROUP BY email HAVING COUNT(*) > 1;",
+          "sql": "SELECT email FROM customers WHERE email IS NOT NULL GROUP BY email HAVING COUNT(*) > 1;",
           "rowCount": 1,
           "explainPlan": [
             "SCAN customers",
             "USE TEMP B-TREE FOR GROUP BY"
           ],
-          "minMs": 1.52,
-          "medianMs": 2.45
+          "loopsPerSample": 17,
+          "minMs": 0.9976,
+          "medianMs": 1.0252
         },
         "self_join_distinct": {
           "sql": "SELECT DISTINCT c1.email FROM customers c1 JOIN customers c2 ON c1.email = c2.email AND c1.customer_id <> c2.customer_id;",
@@ -64,11 +67,12 @@
             "SEARCH c2 USING AUTOMATIC COVERING INDEX (email=?)",
             "USE TEMP B-TREE FOR DISTINCT"
           ],
-          "minMs": 174.137,
-          "medianMs": 199.888
+          "loopsPerSample": 1,
+          "minMs": 145.2496,
+          "medianMs": 146.389
         }
       },
-      "speedupRatio": "81.6x（GROUP BY 相對自連接）"
+      "speedupRatio": "142.8x（GROUP BY 相對自連接；單次差 145.364 ms）"
     },
     {
       "benchmarkId": "bm-bookstore-offset-vs-keyset",
@@ -86,8 +90,9 @@
           "explainPlan": [
             "SCAN orders USING INDEX idx_orders_ordered_id"
           ],
-          "minMs": 0.295,
-          "medianMs": 0.307
+          "loopsPerSample": 47,
+          "minMs": 0.2922,
+          "medianMs": 0.2974
         },
         "keyset_cursor": {
           "sql": "SELECT order_id, customer_id, status, total_amount, ordered_at FROM orders WHERE (ordered_at, order_id) < ('2025-08-01 00:00:00', 150000) ORDER BY ordered_at DESC, order_id DESC LIMIT 20;",
@@ -95,11 +100,12 @@
           "explainPlan": [
             "SEARCH orders USING INDEX idx_orders_ordered_id (ordered_at<?)"
           ],
-          "minMs": 0.011,
-          "medianMs": 0.011
+          "loopsPerSample": 792,
+          "minMs": 0.0103,
+          "medianMs": 0.0104
         }
       },
-      "speedupRatio": "27.9x（Keyset 相對 OFFSET 25000）"
+      "speedupRatio": "28.6x（Keyset 相對 OFFSET 25000；單次差 0.287 ms）"
     },
     {
       "benchmarkId": "bm-logistics-partial-index-queue",
@@ -108,7 +114,7 @@
         "S7-04"
       ],
       "measurementSource": "live-sqlite-measured",
-      "datasetScale": "30,016 dispatch_tasks（99.96% completed，僅 12 筆 queued）",
+      "datasetScale": "45,016 dispatch_tasks（僅 12 筆 queued，其餘 completed 或 claimed）",
       "title": "高比例已完成任務表輪詢：無索引全掃 vs 部分索引 WHERE status = 'queued'",
       "variants": {
         "full_scan_bypass_index": {
@@ -118,8 +124,9 @@
             "SCAN dispatch_tasks",
             "USE TEMP B-TREE FOR ORDER BY"
           ],
-          "minMs": 0.539,
-          "medianMs": 0.562
+          "loopsPerSample": 22,
+          "minMs": 0.7926,
+          "medianMs": 0.8095
         },
         "partial_index_queued": {
           "sql": "SELECT task_id FROM dispatch_tasks WHERE status = 'queued' ORDER BY priority DESC, created_at ASC LIMIT 1;",
@@ -127,11 +134,12 @@
           "explainPlan": [
             "SCAN dispatch_tasks USING COVERING INDEX idx_dispatch_queued"
           ],
-          "minMs": 0.001,
-          "medianMs": 0.001
+          "loopsPerSample": 2376,
+          "minMs": 0.0006,
+          "medianMs": 0.0007
         }
       },
-      "speedupRatio": "562.0x（部分索引相對全表掃描）"
+      "speedupRatio": "1156.4x（部分索引相對全表掃描；單次差 0.809 ms）"
     },
     {
       "benchmarkId": "bm-academy-webhook-storm",
@@ -146,13 +154,14 @@
       "variants": {
         "group_by_having": {
           "sql": "SELECT provider, external_id FROM webhook_events GROUP BY provider, external_id HAVING COUNT(*) > 1;",
-          "rowCount": 3,
+          "rowCount": 2,
           "explainPlan": [
             "SCAN webhook_events",
             "USE TEMP B-TREE FOR GROUP BY"
           ],
-          "minMs": 6.52,
-          "medianMs": 6.749
+          "loopsPerSample": 2,
+          "minMs": 6.3722,
+          "medianMs": 6.537
         },
         "partial_index_pending": {
           "sql": "SELECT event_id FROM webhook_events WHERE status = 'pending' ORDER BY received_at ASC LIMIT 5;",
@@ -160,8 +169,9 @@
           "explainPlan": [
             "SCAN webhook_events USING COVERING INDEX idx_webhook_pending"
           ],
-          "minMs": 0.001,
-          "medianMs": 0.001
+          "loopsPerSample": 2352,
+          "minMs": 0.0011,
+          "medianMs": 0.0012
         }
       },
       "speedupRatio": "見各變體執行計畫與中位數耗時"

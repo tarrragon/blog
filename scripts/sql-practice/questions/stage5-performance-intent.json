@@ -87,6 +87,7 @@
   {
     "conceptId": "S5-02",
     "variantId": "S5-02-bookstore-skew-01",
+    "population": "all-records",
     "domain": "bookstore",
     "stage": 5,
     "tablePath": ["customers"],
@@ -98,7 +99,7 @@
     "benchmarkRef": "bm-bookstore-duplicate-email-skew",
     "traps": ["self-join-quadratic-blowup-on-hot-key", "correlated-exists-without-index"],
     "title": "熱點重複 Email 稽核：資料分布傾斜改寫效能排名",
-    "businessRequirement": "壓測版 customers 有 7,007 列，其中單一熱點信箱 hot@bookstore.tw 重複出現 2,000 次且 email 目前無索引。哪種寫法不會因熱點重複而平方爆炸？",
+    "businessRequirement": "壓測版 customers 有 7,007 列，其中單一熱點信箱 hot@bookstore.tw 重複出現 2,000 次且 email 目前無索引；稽核範圍是全部顧客帳號（不論帳號狀態），已抹除顧客的 email 為 NULL，不算重複信箱。哪種寫法不會因熱點重複而平方爆炸？",
     "workloadProfile": {
       "engine": "SQLite 3.43+ / PostgreSQL 18",
       "scale": "7,007 customers（單一熱點重複 2,000 次）",
@@ -108,10 +109,10 @@
     "options": [
       {
         "key": "opt_group_by",
-        "sql": "SELECT email FROM customers GROUP BY email HAVING COUNT(*) > 1;",
+        "sql": "SELECT email FROM customers WHERE email IS NOT NULL GROUP BY email HAVING COUNT(*) > 1;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "單次掃描分組即找出 hot@bookstore.tw，實測快自連接數十倍",
+        "normalResult": "單次掃描分組即找出 hot@bookstore.tw，實測快自連接數十倍；WHERE email IS NOT NULL 排除已抹除顧客（GROUP BY 會把所有 NULL 信箱歸成同一組，漏寫時多出一列 NULL「重複信箱」）",
         "edgeCaseResult": "重複 2 次或 2,000 次時間幾乎不動，無配對展開",
         "pros": ["不展開配對、對熱點重複次數免疫", "有無索引皆維持穩定線性級成本"],
         "cons": ["若還要同時顯示每一筆重複列的 customer_id 須改用視窗函式或子查詢"],
@@ -193,7 +194,7 @@
         "sql": "SELECT b.book_id, b.price, (SELECT AVG(b2.price) FROM books b2 WHERE b2.category_id = b.category_id AND b2.is_active = 1) AS avg_price FROM books b WHERE b.is_active = 1 AND b.price > (SELECT AVG(b2.price) FROM books b2 WHERE b2.category_id = b.category_id AND b2.is_active = 1) ORDER BY b.book_id;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "結果正確（201、205），但相關子查詢寫了兩次且大表在 SQLite 上隨列數超線性變慢",
+        "normalResult": "結果正確（201、203、205），但相關子查詢寫了兩次且大表在 SQLite 上隨列數超線性變慢",
         "edgeCaseResult": "20 萬列在不會自動去相關的引擎上耗時失控",
         "pros": ["直譯中文需求"],
         "cons": ["重複計算且相關子查詢易退化為 O(N^2)"],
@@ -205,7 +206,7 @@
         "sql": "WITH cat_avg AS (SELECT category_id, AVG(price) AS avg_price FROM books WHERE is_active = 1 GROUP BY category_id) SELECT b.book_id, b.price, ca.avg_price FROM books b JOIN cat_avg ca ON ca.category_id = b.category_id WHERE b.is_active = 1 AND b.price > ca.avg_price ORDER BY b.book_id;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "正確回傳書號 201（580 > 520）與 205（600 > 520），時間呈線性成長",
+        "normalResult": "正確回傳書號 201（580 > 520）、203（600 > 425）與 205（600 > 520），時間呈線性成長",
         "edgeCaseResult": "各分類均價只算一次，跨引擎效能平穩",
         "pros": ["線性成長、跨引擎穩定", "分類數遠少於書本數時可省整表排序"],
         "cons": ["books 表須讀兩次"],
@@ -217,7 +218,7 @@
         "sql": "WITH ranked AS (SELECT book_id, price, AVG(price) OVER (PARTITION BY category_id) AS avg_price FROM books WHERE is_active = 1) SELECT book_id, price, avg_price FROM ranked WHERE price > avg_price ORDER BY book_id;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "正確回傳書號 201 與 205，只需掃描一次 books 表",
+        "normalResult": "正確回傳書號 201、203 與 205，只需掃描一次 books 表",
         "edgeCaseResult": "後續擴充「分類內價格排名」只需多加一個視窗欄位",
         "pros": ["單次掃表、可讀性高、易擴充多個組內統計指標"],
         "cons": ["須按 category_id 對整批結果做視窗排序"],
@@ -245,14 +246,15 @@
     ],
     "sqliteAssertions": {
       "optionFirstColumnOrder": {
-        "opt_cte_join": [201, 205],
-        "opt_window_avg": [201, 205]
+        "opt_cte_join": [201, 203, 205],
+        "opt_window_avg": [201, 203, 205]
       }
     }
   },
   {
     "conceptId": "S5-04",
     "variantId": "S5-04-bookstore-intent-01",
+    "population": "all-records",
     "domain": "bookstore",
     "stage": 5,
     "tablePath": ["customers", "orders"],
@@ -262,7 +264,7 @@
     "designDimension": null,
     "traps": ["hollow-left-join-declaration", "distinct-hides-join-duplication"],
     "title": "Code Review 抓出宣告落空：LEFT JOIN + WHERE 與多餘 DISTINCT",
-    "businessRequirement": "舊報表寫成 `SELECT DISTINCT c.customer_id, c.name FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'paid';`，答案雖然正確（回傳 4 位顧客），審查時該如何改寫？",
+    "businessRequirement": "舊報表寫成 `SELECT DISTINCT c.customer_id, c.name FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'paid';`，報表母體是全部顧客帳號（不論帳號狀態），答案雖然正確（回傳 4 位顧客），審查時該如何改寫？",
     "workloadProfile": {
       "engine": "SQLite 3.43+ / PostgreSQL 18",
       "scale": "10 萬顧客、100 萬訂單",

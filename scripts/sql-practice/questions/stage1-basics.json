@@ -24,7 +24,7 @@
         "sql": "SELECT book_id, title, price FROM books WHERE is_active = 1;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "回傳 7 筆上架書籍的 3 個指定欄位",
+        "normalResult": "回傳 8 筆上架書籍的 3 個指定欄位",
         "edgeCaseResult": "自動排除已下架書籍 206，且不受未來長欄位影響",
         "pros": ["只傳輸必要欄位，有機會走覆蓋索引", "未來表新增大欄位時不拉高網路與記憶體成本"],
         "cons": ["前端新增顯示欄位時須同步修改 SQL"],
@@ -36,7 +36,7 @@
         "sql": "SELECT * FROM books WHERE is_active = 1;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "回傳 7 筆上架書籍的全部 6 欄",
+        "normalResult": "回傳 8 筆上架書籍的全部 6 欄",
         "edgeCaseResult": "未來新增大文字欄會連帶回傳，拉高延遲與網路流量",
         "pros": ["臨時人工排查時少打字"],
         "cons": ["schema 擴充時無聲增加 I/O 與網路傳輸", "無法利用只涵蓋少數欄位的覆蓋索引"],
@@ -48,7 +48,7 @@
         "sql": "SELECT book_id, title, price AS sale_price FROM books;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "回傳 8 筆（誤含下架書 206）",
+        "normalResult": "回傳 9 筆（誤含下架書 206）",
         "edgeCaseResult": "前台暴露已停售商品",
         "pros": ["示範合法的欄位別名 AS 語法"],
         "cons": ["漏掉 is_active = 1 篩選條件"],
@@ -60,7 +60,7 @@
         "sql": "SELECT DISTINCT * FROM books WHERE is_active = 1;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "回傳 7 筆（與 opt_select_star 相同）",
+        "normalResult": "回傳 8 筆（與 opt_select_star 相同）",
         "edgeCaseResult": "多做一次無意義去重排序，並對後續維護者釋出錯誤宣告",
         "pros": ["語法合法"],
         "cons": ["主鍵 book_id 已保證唯一，DISTINCT 徒增排序成本與宣告落空"],
@@ -76,8 +76,8 @@
     ],
     "sqliteAssertions": {
       "optionRowCounts": {
-        "opt_explicit_cols": 7,
-        "opt_missing_where": 8
+        "opt_explicit_cols": 8,
+        "opt_missing_where": 9
       }
     }
   },
@@ -189,8 +189,8 @@
         "sql": "SELECT book_id, title FROM books WHERE is_active = 1 AND category_id = 2 OR category_id = 3 AND price BETWEEN 300 AND 600;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "因 AND 優先於 OR，分類 2 未受價格條件限制",
-        "edgeCaseResult": "一旦分類 2 出現 800 元書籍或分類 3 出現下架書，皆會錯誤命中",
+        "normalResult": "回傳 3 筆：因 AND 優先於 OR，分類 2 未受價格條件限制，多撈出 250 元的 209",
+        "edgeCaseResult": "分類 2 的任何上架書不論價格都會命中；分類 3 出現下架書時也會錯誤命中（is_active 只綁在分類 2 那一側）",
         "pros": ["無"],
         "cons": ["AND 優先順序高於 OR，導致條件分組錯誤"],
         "validWhen": "不符合本需求",
@@ -202,7 +202,7 @@
         "execMode": "sqlite",
         "expectedExec": "ok",
         "normalResult": "回傳書號 203（600 元）與 204（300 元）共 2 筆",
-        "edgeCaseResult": "端點 300 與 600 皆包含，且排除分類 2 的下架書 206",
+        "edgeCaseResult": "端點 300 與 600 皆包含，且排除分類 2 的下架書 206 與低於 300 元的 209",
         "pros": ["IN 消除 OR 優先順序風險", "BETWEEN 清楚表達閉區間整數價格"],
         "cons": ["若換成日期時間戳記欄位，BETWEEN 易漏最後一天時間部分"],
         "validWhen": "離散多值條件配整數閉區間",
@@ -242,13 +242,15 @@
       "optionRowCounts": {
         "opt_in_between": 2,
         "opt_explicit_parens": 2,
-        "opt_strict_lt_gt": 0
+        "opt_strict_lt_gt": 0,
+        "opt_no_parens": 3
       }
     }
   },
   {
     "conceptId": "S1-03",
     "variantId": "S1-03-bookstore-customers-01",
+    "population": "all-records",
     "domain": "bookstore",
     "stage": 1,
     "tablePath": ["customers"],
@@ -258,7 +260,7 @@
     "designDimension": null,
     "traps": ["null-equals-null", "null-vs-empty-string", "non-sargable-coalesce"],
     "title": "找出未填寫城市的會員：= NULL、IS NULL 與 COALESCE",
-    "businessRequirement": "行銷團隊要列出所有尚未填寫居住城市（city 欄位為 NULL）的顧客。已知歷史表內除 NULL（顧客 5）外，也混入一筆空字串 ''（顧客 6）。若規格只抓 NULL，應選哪一個？",
+    "businessRequirement": "資料品質盤點要列出所有尚未填寫居住城市（city 欄位為 NULL）的顧客帳號（不論帳號狀態）。已知歷史表內除 NULL（顧客 5）外，也混入一筆空字串 ''（顧客 6）。若規格只抓 NULL，應選哪一個？",
     "workloadProfile": {
       "engine": "SQLite 3.43+ / PostgreSQL 18",
       "scale": "50 萬顧客",
@@ -391,7 +393,7 @@
         "sql": "SELECT book_id, title, price FROM books WHERE is_active = 1 ORDER BY price, book_id DESC LIMIT 5;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "從最便宜的 207（280 元）開始排，結果完全顛倒",
+        "normalResult": "從最便宜的 209（250 元）開始排，結果完全顛倒",
         "edgeCaseResult": "DESC 只作用在緊鄰的 book_id 上，price 維持預設 ASC",
         "pros": ["語法合法"],
         "cons": ["誤以為 DESC 套用整條 ORDER BY 清單，撈成最便宜前 5 名"],
@@ -407,7 +409,7 @@
     "sqliteAssertions": {
       "optionFirstColumnOrder": {
         "opt_deterministic": [203, 205, 201, 202, 208],
-        "opt_missing_desc_first": [207, 204, 208, 202, 201]
+        "opt_missing_desc_first": [209, 207, 204, 208, 202]
       }
     }
   },

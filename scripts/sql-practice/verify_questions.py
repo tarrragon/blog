@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """驗證 scripts/sql-practice/questions/ 全部題庫 JSON：
-1. 結構欄位完整性、variantId 唯一性、tablePath 表名存在於對應領域 schema.sql
+1. 結構欄位完整性、variantId 唯一性、tablePath 表名存在於對應領域 schema.sql，
+   以及碰到生命週期狀態表的題目宣告 population 並與需求文字、推薦查詢一致（check_population）
 2. relatedDocs 路徑實際存在於 content/
 3. benchmarkRef 實際存在於 benchmarks/*.json
 4. 所有 execMode == "sqlite" 的選項在獨立記憶體 SQLite 資料庫實跑驗證：
@@ -55,6 +56,43 @@ REQUIRED_OPT_FIELDS = {
 }
 
 VALID_PERSPECTIVES = {"choose-query", "pick-counterexample", "diagnose-plan", "tradeoff-design"}
+
+# 母體約定（seed.sql 檔頭）：帶生命週期狀態的表同時存放有效列與已註銷／停權／離職列。
+# tablePath 碰到這些表的題目必須宣告 population，讓需求文字與正解對「查誰」的判斷一致：
+# - all-records：母體含任何狀態的列，需求文字必須寫明（ALL_RECORDS_PHRASES 之一）
+# - active-only：只算目前有效的列，推薦的 SELECT 選項必須同時過濾 status 與 deleted_at
+# - specific-ids：需求以明確 ID 指定對象，母體與狀態無關
+# - not-applicable：概念題或設計題，不產生查詢結果集
+LIFECYCLE_TABLES = {
+    "bookstore": {"customers", "staff_accounts"},
+    "cloud-academy": {"users"},
+    "swift-logistics": {"merchants", "merchant_users", "staff_accounts"},
+}
+VALID_POPULATIONS = {"all-records", "active-only", "specific-ids", "not-applicable"}
+ALL_RECORDS_PHRASES = ("不論帳號狀態", "含已註銷", "含已抹除", "含停權", "含已刪除", "含離職")
+
+
+def check_population(q: dict) -> None:
+    vid = q["variantId"]
+    touched = set(q["tablePath"]) & LIFECYCLE_TABLES[q["domain"]]
+    if not touched:
+        return
+    pop = q.get("population")
+    assert pop in VALID_POPULATIONS, f"{vid}: tablePath 含生命週期表 {sorted(touched)}，須宣告 population（{sorted(VALID_POPULATIONS)}），實得 {pop!r}"
+    if pop == "all-records":
+        assert any(p in q["businessRequirement"] for p in ALL_RECORDS_PHRASES), (
+            f"{vid}: population=all-records，需求文字須寫明母體（{'、'.join(ALL_RECORDS_PHRASES)} 之一）"
+        )
+    if pop == "active-only":
+        for o in q["options"]:
+            if o["key"] not in q["recommendedKeys"] or o["execMode"] != "sqlite":
+                continue
+            sql = o["sql"].lstrip().upper()
+            if not sql.startswith(("SELECT", "WITH")):
+                continue
+            assert "STATUS" in sql and "DELETED_AT" in sql, (
+                f"{vid}/{o['key']}: population=active-only，推薦的查詢須同時過濾 status 與 deleted_at"
+            )
 
 
 def doc_path_exists(url_path: str) -> bool:
@@ -129,6 +167,7 @@ def main() -> int:
 
             for tbl in q["tablePath"]:
                 assert tbl in domain_tables[domain], f"{vid}: tablePath '{tbl}' 不存在於領域 {domain}"
+            check_population(q)
 
             for doc in q["relatedDocs"]:
                 assert doc_path_exists(doc), f"{vid}: relatedDocs 路徑不存在於 content/: {doc}"

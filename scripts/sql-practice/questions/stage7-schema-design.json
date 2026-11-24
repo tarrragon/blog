@@ -240,11 +240,11 @@
     "requiresScale": true,
     "benchmarkRef": "bm-logistics-partial-index-queue",
     "traps": ["over-indexing-write-amplification", "full-index-bloated-by-cold-rows"],
-    "title": "D04：99.96% 已完成任務表的輪詢索引——全表索引與部分索引（Partial Index）",
-    "businessRequirement": "捷配物流 dispatch_tasks 有 3,000 萬列歷史任務（本壓測縮尺為 30,016 列），99.96% 皆為 completed，任何時刻只有少量 queued。worker 高頻跑 `WHERE status = 'queued' ORDER BY priority DESC, created_at ASC LIMIT 1`，應如何建索引？",
+    "title": "D04：99.97% 已完成任務表的輪詢索引——全表索引與部分索引（Partial Index）",
+    "businessRequirement": "捷配物流 dispatch_tasks 有 3,000 萬列歷史任務（本壓測縮尺為 45,016 列），99.97% 皆為 completed，任何時刻只有少量 queued。worker 高頻跑 `WHERE status = 'queued' ORDER BY priority DESC, created_at ASC LIMIT 1`，應如何建索引？",
     "workloadProfile": {
       "engine": "SQLite 3.43+ / PostgreSQL 18",
-      "scale": "30,016（壓測縮尺）～ 3,000 萬列、1,000 寫 QPS / 200 輪詢 QPS",
+      "scale": "45,016（壓測縮尺）～ 3,000 萬列、1,000 寫 QPS / 200 輪詢 QPS",
       "readWriteRatio": "1:5",
       "indexes": ["idx_dispatch_queued (priority DESC, created_at ASC) WHERE status = 'queued'"]
     },

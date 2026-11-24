@@ -1,12 +1,13 @@
 -- 領域甲（bookstore）：紙頁書店基準資料與邊界反例列（含 RBAC、軟刪除、PII 分離與稽核軌跡）
 -- 刻意埋設：
--- 1. 顧客 3（雅文）從未下單；顧客 4（志明）2 月有單、3 月無單；顧客 5（怡君）city 為 NULL；顧客 6（冠宇）city 為空字串且已完成個資抹除（erased）
+-- 1. 顧客 3（雅文）從未下單；顧客 4（志明）2 月有單、3 月無單；顧客 5（怡君）city 為 NULL；顧客 6 city 為空字串且已完成個資抹除（erased：name、email 已清為 NULL，訂單 108 保留供對帳）
 -- 2. 大小寫混排與重複 email（Alice@Example.com / alice@example.com）
 -- 3. 訂單 101 有兩則評價（5 星 + 3 星），驗證列數膨脹與 <> 5 錯誤；訂單 102 無評價；評價 9004 的 order_id 為 NULL 且 5 星，驗證 NOT IN 回空
 -- 4. 2026-03-09 10:00:00 同秒三筆訂單，驗證排序鍵不唯一與分頁漂移
 -- 5. 訂單 101 同時有 2 筆明細與 2 張優惠券，驗證雙重一對多膨脹
 -- 6. 門市 TPE-01 缺 2026-03-03（公休日），驗證 LAG() 與日曆前一天差異
--- 7. 書籍 205 stock = 1 模擬搶購限量書；書籍 206 is_active = 0 模擬下架書
+-- 7. 書籍 205 stock = 1 模擬搶購限量書；書籍 206 is_active = 0 模擬下架書；書籍 209 為分類 2 的上架書但定價 250（低於 300），讓漏加括號的 AND/OR 條件多撈出它
+-- 9. 母體約定：customers 含已抹除顧客 6，題目需求須寫明查的是「全部帳號（含已註銷）」還是「目前有效會員」（題目 JSON 的 population 欄位）
 -- 8. 資安反例：員工 10 同時具 store_manager 與 auditor（皆有 orders:export，驗證 RBAC JOIN 重複膨脹）；員工 13 已離職軟刪除卻留有未撤銷角色且發起了排隊匯出任務 505（Confused Deputy）
 
 PRAGMA foreign_keys = ON;
@@ -17,7 +18,7 @@ INSERT INTO customers (customer_id, name, email, city, status, deleted_at, creat
   (3, '雅文', 'yawen@example.com', 'Taipei',   'active', NULL,                  '2026-01-20 11:15:00'),
   (4, '志明', 'ming@example.com',  'Taipei',   'active', NULL,                  '2026-01-25 16:40:00'),
   (5, '怡君', 'alice@example.com', NULL,       'active', NULL,                  '2026-02-02 08:20:00'),
-  (6, '冠宇', 'kuanyu@example.com','',         'erased', '2026-03-19 00:00:00', '2026-02-14 19:05:00'),
+  (6, NULL,   NULL,                '',         'erased', '2026-03-19 00:00:00', '2026-02-14 19:05:00'), -- 已抹除：姓名與信箱清為 NULL
   (7, '宗翰', 'bob2@example.com',  'Kaohsiung','active', NULL,                  '2026-02-18 10:00:00'); -- 同名顧客，測試 GROUP BY name 錯併
 
 INSERT INTO customer_pii (customer_id, phone_e164, shipping_address, tax_id, updated_at, erased_at) VALUES
@@ -44,7 +45,8 @@ INSERT INTO books (book_id, title, category_id, price, stock, is_active) VALUES
   (205, '簽名限量版：索引解剖', 5, 600, 1, 1), -- 同價 600 + 限量庫存 1
   (206, '舊版系統維運手冊', 2, 420, 0, 0),     -- 已下架書籍
   (207, '都市短篇選',       4, 280, 40, 1),
-  (208, 'SQLite 嵌入式實作', 5, 450, 15, 1);   -- 同價 450，供平手排序驗證
+  (208, 'SQLite 嵌入式實作', 5, 450, 15, 1),   -- 同價 450，供平手排序驗證
+  (209, '後端工程入門小冊', 2, 250, 50, 1);    -- 分類 2 上架但低於 300 元，AND/OR 漏括號時被多撈出
 
 INSERT INTO orders (order_id, customer_id, status, total_amount, ordered_at) VALUES
   (101, 1, 'paid',      900,  '2026-03-02 10:00:00'),
@@ -125,13 +127,14 @@ INSERT INTO role_permissions (role_id, perm_id) VALUES
   (3, 1), (3, 2),
   (4, 1), (4, 2), (4, 5);
 
-INSERT INTO staff_roles (staff_id, role_id, store_scope, granted_at, expires_at, revoked_at) VALUES
-  (10, 2, 'TPE-01', '2025-01-10 09:00:00', NULL,                  NULL), -- 員工 10 同時具 store_manager 與 auditor
-  (10, 4, NULL,     '2025-09-01 09:00:00', NULL,                  NULL), -- 雙角色皆有 orders:export（測試 RBAC JOIN 重複膨脹）
-  (11, 1, 'TPE-01', '2025-03-01 09:00:00', NULL,                  NULL), -- 僅有 orders:read
-  (12, 3, NULL,     '2025-06-15 09:00:00', NULL,                  NULL),
-  (13, 2, 'TPE-01', '2024-05-01 09:00:00', NULL,                  NULL), -- 離職後漏撤銷角色列（經典離職治理缺口）
-  (14, 2, 'TXG-01', '2025-02-01 09:00:00', NULL,                  '2026-03-18 00:00:00'); -- 角色已被撤銷
+INSERT INTO staff_roles (staff_role_id, staff_id, role_id, store_scope, granted_at, expires_at, revoked_at) VALUES
+  (1, 10, 2, 'TPE-01', '2025-01-10 09:00:00', NULL,                  NULL), -- 員工 10 同時具 store_manager 與 auditor
+  (2, 10, 4, NULL,     '2025-09-01 09:00:00', NULL,                  NULL), -- 雙角色皆有 orders:export（測試 RBAC JOIN 重複膨脹）
+  (3, 11, 1, 'TPE-01', '2025-03-01 09:00:00', NULL,                  NULL), -- 僅有 orders:read
+  (4, 12, 3, NULL,     '2025-06-15 09:00:00', NULL,                  NULL),
+  (5, 13, 2, 'TPE-01', '2024-05-01 09:00:00', NULL,                  NULL), -- 離職後漏撤銷角色列（經典離職治理缺口）
+  (6, 14, 2, 'TXG-01', '2025-02-01 09:00:00', NULL,                  '2026-03-18 00:00:00'), -- 角色已被撤銷
+  (7, 11, 2, 'TPE-01', '2026-03-01 09:00:00', '2026-03-14 23:59:59', NULL); -- 店員 11 的代理主管授權已到期但未撤銷（v_active_staff_permissions 不濾 expires_at 的反例）
 
 INSERT INTO order_audit_logs (audit_id, order_id, actor_staff_id, actor_role, action, before_status, after_status, before_amount, after_amount, reason, created_at) VALUES
   (1, 101, 10, 'store_manager', 'status_change',   'pending', 'paid',     900, 900, '門市臨櫃確認入帳', '2026-03-02 10:05:00'),
@@ -158,7 +161,8 @@ INSERT INTO book_details (book_id, synopsis_md, specs_json) VALUES
   (205, '限量精裝附索引結構摺頁圖。', '{"pages":296,"binding":"hardcover","limited_edition":true}'),
   (206, '歷史系統維運與舊版工具整理。', '{"pages":320,"binding":"paperback","out_of_print":true}'),
   (207, '十二篇以台北捷運沿線為背景的短篇小說。', '{"pages":240,"binding":"paperback"}'),
-  (208, '嵌入式單機資料庫 WAL 模式與連線池最佳實務。', '{"pages":310,"binding":"epub","drm":"none"}');
+  (208, '嵌入式單機資料庫 WAL 模式與連線池最佳實務。', '{"pages":310,"binding":"epub","drm":"none"}'),
+  (209, 'HTTP、資料庫連線與部署的入門導覽。', '{"pages":96,"binding":"paperback"}');
 
 INSERT INTO book_view_events (view_id, book_id, viewed_at) VALUES
   (8001, 201, '2026-03-20 10:00:01'),

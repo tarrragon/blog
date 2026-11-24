@@ -199,11 +199,11 @@
         "key": "opt_no_status_guard",
         "sql": "UPDATE subscriptions SET status = 'past_due' WHERE started_at < '2026-02-25 00:00:00' RETURNING sub_id;",
         "execMode": "sqlite",
-        "expectedExec": "ok",
-        "normalResult": "誤改 5 筆（含已正常付費的 2002、2005 與已取消的 2001）",
-        "edgeCaseResult": "付費會員全數被誤停權並收到催繳信",
+        "expectedExec": "error",
+        "normalResult": "整句被 CHECK ((status = 'canceled') = (ended_at IS NOT NULL)) 擋下並回滾：條件命中已取消、帶 ended_at 的 2001，改成 past_due 會違反狀態與結束時間的綁定",
+        "edgeCaseResult": "若 schema 沒有這條表級約束，這句會靜默誤改 5 筆（含已正常付費的 2002、2005 與已取消的 2001），付費會員被誤停權並收到催繳信",
         "pros": ["無"],
-        "cons": ["漏掉狀態機前置狀態檢查"],
+        "cons": ["漏掉狀態機前置狀態檢查，只是剛好被資料庫約束攔住"],
         "validWhen": "無",
         "failsWhen": "所有情況"
       },
@@ -241,7 +241,7 @@
     "sqliteAssertions": {
       "optionExactRows": {
         "opt_trial_guard": [[2004]],
-        "opt_no_status_guard": [[2001], [2002], [2004], [2005], [2006]]
+        "opt_include_active": [[2002], [2004], [2005]]
       }
     }
   },
@@ -323,6 +323,7 @@
   {
     "conceptId": "S4-04",
     "variantId": "S4-04-bookstore-collation-01",
+    "population": "not-applicable",
     "domain": "bookstore",
     "stage": 4,
     "tablePath": ["customers"],

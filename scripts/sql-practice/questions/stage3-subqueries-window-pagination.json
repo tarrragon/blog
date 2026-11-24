@@ -2,6 +2,7 @@
   {
     "conceptId": "S3-01",
     "variantId": "S3-01-bookstore-exists-01",
+    "population": "all-records",
     "domain": "bookstore",
     "stage": 3,
     "tablePath": ["customers", "orders", "order_items", "books"],
@@ -11,7 +12,7 @@
     "designDimension": null,
     "traps": ["join-duplicate-rows", "distinct-masks-fanout"],
     "title": "曾購買資料庫分類書籍的顧客名單：IN、EXISTS 與 JOIN",
-    "businessRequirement": "撈出買過分類 5（資料庫系統）書籍的顧客 customer_id 與 name，不需要書名，每位顧客只出現一次。",
+    "businessRequirement": "撈出買過分類 5（資料庫系統）書籍的顧客帳號（不論帳號狀態）customer_id 與 name，不需要書名，每位顧客只出現一次。",
     "workloadProfile": {
       "engine": "SQLite 3.43+ / PostgreSQL 18",
       "scale": "10 萬顧客、200 萬訂單明細",
@@ -170,6 +171,7 @@
   {
     "conceptId": "S3-03",
     "variantId": "S3-03-bookstore-groupkey-01",
+    "population": "all-records",
     "domain": "bookstore",
     "stage": 3,
     "tablePath": ["customers", "orders"],
@@ -179,7 +181,7 @@
     "designDimension": null,
     "traps": ["group-by-right-table-key", "group-by-non-unique-name", "only-full-group-by"],
     "title": "依顧客統計訂單數：分組鍵選左表主鍵與同名合併陷阱",
-    "businessRequirement": "統計全部顧客的訂單數並輸出 customer_id、name 與 order_cnt，須跨 SQLite、PostgreSQL、MySQL 8 與 DuckDB 皆通過且不錯併同名顧客（顧客 2 與顧客 7 都叫宗翰）。",
+    "businessRequirement": "統計全部顧客帳號（不論帳號狀態；已抹除顧客 6 的 name 為 NULL）的訂單數並輸出 customer_id、name 與 order_cnt，須跨 SQLite、PostgreSQL、MySQL 8 與 DuckDB 皆通過且不錯併同名顧客（顧客 2 與顧客 7 都叫宗翰）。",
     "workloadProfile": {
       "engine": "SQLite / PostgreSQL / MySQL 8 / DuckDB",
       "scale": "10 萬顧客",

@@ -87,6 +87,7 @@
   {
     "conceptId": "C02",
     "variantId": "C02-bookstore-multi-timeline-fanout-01",
+    "population": "all-records",
     "domain": "bookstore",
     "stage": 9,
     "tablePath": ["customers", "orders", "reviews"],
@@ -96,7 +97,7 @@
     "designDimension": null,
     "traps": ["fanout-sum-inflation", "chained-join-drops-cross-month-review", "left-table-filter-in-on"],
     "title": "C02（複合陷阱）：台北顧客 3 月消費與 3 月五星評價——跨月時間軸＋列數膨脹＋左表條件位置",
-    "businessRequirement": "列出所有台北顧客（city = 'Taipei'：1 佳穎、3 雅文、4 志明），顯示 2026 年 3 月已付款（paid）訂單總額，以及 2026 年 3 月送出的五星評價則數（注意：志明 id=4 是 2 月下單 105、3 月才送五星評價 9003！）。",
+    "businessRequirement": "列出所有台北顧客帳號（不論帳號狀態；city = 'Taipei'：1 佳穎、3 雅文、4 志明），顯示 2026 年 3 月已付款（paid）訂單總額，以及 2026 年 3 月送出的五星評價則數（注意：志明 id=4 是 2 月下單 105、3 月才送五星評價 9003！）。",
     "workloadProfile": {
       "engine": "SQLite 3.43+ / PostgreSQL 18",
       "scale": "10 萬顧客、100 萬訂單、200 萬評價",
@@ -505,6 +506,7 @@
   {
     "conceptId": "C07",
     "variantId": "C07-cloud-session-invalidation-01",
+    "population": "active-only",
     "domain": "cloud-academy",
     "stage": 9,
     "tablePath": ["users", "user_credentials", "user_sessions"],
@@ -598,7 +600,7 @@
     "designDimension": "multi-tenant-child-join-and-rls",
     "traps": ["left-join-tenant-filter-in-on-leaks-all-tenants", "missing-child-tenant-index-rls-dos"],
     "title": "C08（資安複合陷阱）：多租戶子表 LEFT JOIN 租戶條件放錯位置——把全站包裹洩漏給單一商家",
-    "businessRequirement": "捷配物流商家 1002（山丘選物，僅擁有 7105 與 7107 兩件包裹）查詢名下包裹重量清單。工程師為了「防某些舊資料找不到父運單」而改寫成 `shipment_packages LEFT JOIN shipments`，並把 `s.merchant_id = 1002` 塞進 `ON`。這段寫法會發生什麼事故？又該如何同時兼顧防越權與 PostgreSQL 子表 RLS 效能？",
+    "businessRequirement": "捷配物流商家 1002（山丘選物，僅擁有 7105 與 7107 兩件包裹）查詢名下包裹重量清單。工程師擔心「遷移期間的舊資料可能找不到父運單」（目前 schema 的複合外鍵其實不允許孤兒包裹），而改寫成 `shipment_packages LEFT JOIN shipments`，並把 `s.merchant_id = 1002` 塞進 `ON`。這段寫法會發生什麼事故？又該如何同時兼顧防越權與 PostgreSQL 子表 RLS 效能？",
     "workloadProfile": {
       "engine": "SQLite 3.43+ / PostgreSQL 18（多租戶 RLS）",
       "scale": "2,000 萬 shipment_packages、800 萬 shipments",
@@ -635,8 +637,8 @@
         "sql": "SELECT p.package_id, p.weight_grams, s.status FROM shipment_packages p LEFT JOIN shipments s ON p.shipment_id = s.shipment_id WHERE s.merchant_id = 1002 OR s.shipment_id IS NULL ORDER BY p.package_id;",
         "execMode": "sqlite",
         "expectedExec": "ok",
-        "normalResult": "在無孤兒列時碰巧回 [7105, 7107]，但一旦存在孤兒包裹列就會把不屬於 1002 的資料暴露給任何商家",
-        "edgeCaseResult": "OR s.shipment_id IS NULL 在多租戶授權邊界上是危險的 fail-open 寫法（授權應永遠 fail-closed）",
+        "normalResult": "在本資料庫回 [7105, 7107]，結果與正解相同：shipment_packages 的 (merchant_id, shipment_id) 複合外鍵與 NOT NULL 讓孤兒包裹寫不進去，s.shipment_id IS NULL 永遠不成立",
+        "edgeCaseResult": "同一段寫法搬到沒有外鍵的匯入暫存表、或外鍵被停用的遷移期間，孤兒包裹列會對任何商家放行；OR s.shipment_id IS NULL 在授權邊界上是 fail-open 寫法（授權應永遠 fail-closed），它今天沒出事只是因為 schema 替它擋住了",
         "pros": ["無"],
         "cons": ["權限邊界做成 fail-open，孤兒資料會跨租戶洩漏"],
         "validWhen": "無",
@@ -676,6 +678,7 @@
   {
     "conceptId": "C09",
     "variantId": "C09-bookstore-confused-deputy-rbac-01",
+    "population": "active-only",
     "domain": "bookstore",
     "stage": 9,
     "tablePath": ["export_jobs", "staff_accounts", "staff_roles", "role_permissions", "permissions"],
@@ -761,6 +764,7 @@
   {
     "conceptId": "C10",
     "variantId": "C10-logistics-apikey-precedence-bypass-01",
+    "population": "active-only",
     "domain": "swift-logistics",
     "stage": 9,
     "tablePath": ["merchant_api_keys", "merchants"],
@@ -846,6 +850,7 @@
   {
     "conceptId": "C11",
     "variantId": "C11-bookstore-soft-delete-unique-01",
+    "population": "active-only",
     "domain": "bookstore",
     "stage": 9,
     "tablePath": ["staff_accounts"],

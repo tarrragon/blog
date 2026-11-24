@@ -2,6 +2,7 @@
   {
     "conceptId": "S6-01",
     "variantId": "S6-01-bookstore-migration-01",
+    "population": "not-applicable",
     "domain": "bookstore",
     "stage": 6,
     "tablePath": ["reviews", "customers"],

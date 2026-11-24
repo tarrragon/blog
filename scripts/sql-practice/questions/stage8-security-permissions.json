@@ -77,13 +77,14 @@
     "sqliteAssertions": {
       "optionFirstColumnOrder": {
         "opt_param_plus_allowlist": [202, 208],
-        "opt_bind_order_by_param": [201, 202, 203, 204, 205, 207, 208]
+        "opt_bind_order_by_param": [201, 202, 203, 204, 205, 207, 208, 209]
       }
     }
   },
   {
     "conceptId": "S8-02",
     "variantId": "S8-02-logistics-bola-rls-01",
+    "population": "specific-ids",
     "domain": "swift-logistics",
     "stage": 8,
     "tablePath": ["shipments", "merchants"],
@@ -167,6 +168,7 @@
   {
     "conceptId": "S8-03",
     "variantId": "S8-03-cloud-role-least-privilege-01",
+    "population": "not-applicable",
     "domain": "cloud-academy",
     "stage": 8,
     "tablePath": ["users", "subscriptions", "invoices"],
@@ -198,7 +200,7 @@
       },
       {
         "key": "opt_three_separated_roles",
-        "sql": "-- 切分三角色：migrator 持有物件擁有權與 DDL（僅 CI 部署管線使用）；app_role 僅拿業務表 SELECT/INSERT/UPDATE/DELETE（無 CREATE/DROP/ALTER、無 BYPASSRLS）；bi_readonly 僅拿去識別化檢視表 SELECT；並設 ALTER DEFAULT PRIVILEGES 避免新表漏授權",
+        "sql": "-- 切分三角色：migrator 持有物件擁有權與 DDL（僅 CI 部署管線使用）；app_role 僅拿業務表 SELECT/INSERT/UPDATE/DELETE（無 CREATE/DROP/ALTER、無 BYPASSRLS）；bi_readonly 僅拿假名化檢視表 SELECT；並設 ALTER DEFAULT PRIVILEGES 避免新表漏授權",
         "execMode": "conceptual",
         "expectedExec": "ok",
         "normalResult": "資料庫強制隔離讀寫與結構變更邊界，新角色預設零權限",
@@ -244,6 +246,7 @@
   {
     "conceptId": "S8-04",
     "variantId": "S8-04-bookstore-pii-masking-view-01",
+    "population": "all-records",
     "domain": "bookstore",
     "stage": 8,
     "tablePath": ["v_customer_analytics", "customers", "customer_pii", "orders"],
@@ -253,7 +256,7 @@
     "designDimension": "pii-masking-and-views",
     "traps": ["granting-raw-pii-table", "unsalted-md5-email-reversible", "ui-only-column-hiding"],
     "title": "SEC04：個資遮罩與分析報表邊界——受控檢視表（View）與 PII 分離",
-    "businessRequirement": "紙頁書店分析師需要依居住城市統計已付款訂單總額，但依個資治理規範不可讀取顧客原始 email、姓名與 customer_pii 明文。該如何透過受控檢視表 v_customer_analytics 與權限隔離提供查詢能力？",
+    "businessRequirement": "紙頁書店分析師需要依居住城市統計已付款訂單總額（統計母體為全部顧客帳號，不論帳號狀態），但依個資治理規範不可讀取顧客原始 email、姓名與 customer_pii 明文。該如何透過受控檢視表 v_customer_analytics 與權限隔離提供查詢能力？",
     "workloadProfile": {
       "engine": "SQLite 3.43+ / PostgreSQL 18",
       "scale": "50 萬顧客含獨立 customer_pii 表",

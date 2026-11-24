@@ -16,7 +16,7 @@ INSERT INTO users (user_id, display_name, email, country, status, deleted_at, jo
   (3, '陳宇', 'yu@academy.io',   'TW', 'active', NULL, '2026-01-18 15:00:00'), -- 從未訂閱
   (4, '周安', 'an@academy.io',   'SG', 'locked', NULL, '2026-02-01 08:30:00'), -- 帳號鎖定且留有未過期 session
   (5, '吳琪', 'xin@academy.io',  NULL, 'active', NULL, '2026-02-12 20:00:00'), -- 大小寫相異同信箱 + country IS NULL
-  (6, '林欣', 'xin2@academy.io', 'TW', 'active', NULL, '2026-03-01 10:00:00'); -- 同名學員
+  (6, '林欣', 'xin2@academy.io', 'TW', 'active', NULL, '2026-01-25 10:00:00'); -- 同名學員（加入時間早於訂閱 2006 開始）
 
 INSERT INTO user_pii (user_id, legal_name, phone_e164, billing_address, erased_at) VALUES
   (1, '林欣怡', '+886922000001', '台北市松山區南京東路四段 1 號', NULL),
@@ -55,15 +55,29 @@ INSERT INTO org_memberships (org_id, user_id, org_role, status, joined_at, revok
 INSERT INTO roles (role_id, role_code, description) VALUES
   (1, 'learner',        '一般學員'),
   (2, 'instructor',     '課程講師'),
-  (3, 'bi_analyst',     '數據分析師（僅讀去識別化檢視表）'),
+  (3, 'bi_analyst',     '數據分析師（僅讀假名化檢視表）'),
   (4, 'platform_admin', '平台維運管理員');
 
-INSERT INTO user_roles (user_id, role_id, granted_at, expires_at, revoked_at) VALUES
-  (1, 1, '2026-01-02 09:00:00', NULL, NULL),
-  (1, 2, '2026-02-01 09:00:00', NULL, NULL),
-  (2, 1, '2026-01-10 12:00:00', NULL, NULL),
-  (3, 3, '2026-01-18 15:00:00', NULL, NULL),
-  (6, 4, '2026-03-01 10:00:00', NULL, '2026-03-10 00:00:00'); -- 臨時管理員權限已撤銷
+INSERT INTO permissions (perm_id, perm_code, resource, action) VALUES
+  (1, 'courses:read',    'courses',  'read'),
+  (2, 'courses:publish', 'courses',  'write'),
+  (3, 'analytics:read',  'analytics','read'),
+  (4, 'users:admin',     'users',    'admin'),
+  (5, 'billing:refund',  'billing',  'write');
+
+INSERT INTO role_permissions (role_id, perm_id) VALUES
+  (1, 1),
+  (2, 1), (2, 2),
+  (3, 3),
+  (4, 1), (4, 3), (4, 4), (4, 5);
+
+INSERT INTO user_roles (user_role_id, user_id, role_id, granted_at, expires_at, revoked_at) VALUES
+  (1, 1, 1, '2026-01-02 09:00:00', NULL, NULL),
+  (2, 1, 2, '2026-02-01 09:00:00', NULL, NULL),
+  (3, 2, 1, '2026-01-10 12:00:00', NULL, NULL),
+  (4, 3, 3, '2026-01-18 15:00:00', NULL, NULL),
+  (5, 6, 4, '2026-03-01 10:00:00', NULL, '2026-03-10 00:00:00'), -- 臨時管理員權限已撤銷
+  (6, 2, 2, '2026-02-15 09:00:00', '2026-03-01 00:00:00', NULL); -- 客座講師授權已到期但未撤銷
 
 INSERT INTO permission_audit_logs (audit_id, org_id, actor_user_id, target_user_id, event_action, before_role, after_role, created_at) VALUES
   (1, 501, 1, 2, 'org_member_removed', 'member', NULL, '2026-03-08 00:00:00'),

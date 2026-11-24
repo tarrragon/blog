@@ -84,6 +84,7 @@
   {
     "conceptId": "S2-02",
     "variantId": "S2-02-bookstore-customers-orders-01",
+    "population": "all-records",
     "domain": "bookstore",
     "stage": 2,
     "tablePath": ["customers", "orders"],
@@ -93,7 +94,7 @@
     "designDimension": null,
     "traps": ["inner-join-drops-unmatched", "count-star-counts-null-complemented-row"],
     "title": "統計所有會員的下單次數：LEFT JOIN 與 COUNT(*) 陷阱",
-    "businessRequirement": "列出全部註冊顧客（含從未下單的雅文 id=3）的 customer_id、name 與訂單張數，未下單者顯示 0。",
+    "businessRequirement": "對帳報表要列出全部註冊顧客帳號（不論帳號狀態，含從未下單的雅文 id=3 與已抹除個資的顧客 6）的 customer_id、name 與訂單張數，未下單者顯示 0；已抹除顧客的 name 為 NULL。",
     "workloadProfile": {
       "engine": "SQLite 3.43+ / PostgreSQL 18",
       "scale": "10 萬顧客、100 萬訂單",
@@ -168,6 +169,7 @@
   {
     "conceptId": "S2-03",
     "variantId": "S2-03-bookstore-orders-01",
+    "population": "all-records",
     "domain": "bookstore",
     "stage": 2,
     "tablePath": ["customers", "orders"],
@@ -177,7 +179,7 @@
     "designDimension": null,
     "traps": ["outer-join-where-nullifies-protection", "partial-null-or-miss"],
     "title": "所有顧客與 2026 年 3 月已付款訂單：ON 與 WHERE 的職責分岔",
-    "businessRequirement": "報表列出每一位顧客，旁邊顯示他在 2026 年 3 月的已付款（paid）訂單總額；3 月沒有付款訂單的顧客（包含 2 月有下單但 3 月沒下單的志明 id=4）仍須列在報表上顯示 0。",
+    "businessRequirement": "對帳報表列出每一位顧客帳號（不論帳號狀態），旁邊顯示他在 2026 年 3 月的已付款（paid）訂單總額；3 月沒有付款訂單的顧客（包含 2 月有下單但 3 月沒下單的志明 id=4）仍須列在報表上顯示 0。",
     "workloadProfile": {
       "engine": "SQLite 3.43+ / PostgreSQL 18",
       "scale": "10 萬顧客、100 萬訂單",
@@ -251,6 +253,7 @@
   {
     "conceptId": "S2-05",
     "variantId": "S2-05-bookstore-orders-reviews-01",
+    "population": "specific-ids",
     "domain": "bookstore",
     "stage": 2,
     "tablePath": ["customers", "orders", "reviews"],

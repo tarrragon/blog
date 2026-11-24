@@ -50,8 +50,9 @@ draft: true
 
 為在純靜態網站（GitHub Pages）展現真實的執行計畫與效能差距，同時避免大 `.db` 或大 `.sql` 撐爆 Git 歷史，資料底座採三層分級：
 
-- **語意反例層（`seed.sql`，10–20 列／表，ID 區段 `1..9999`）**：預設載入，讓階段一至四與反例擊破題能以肉眼逐列驗算。
-- **中規模現場造數層（`seed_scale.sql`，每檔約 2 KB 純文字，ID 區段 `100001+`）**：以決定性 `WITH RECURSIVE` 語句在數百毫秒內現場生成 5 萬列交易表、2,000 筆熱點重複 email、35% 單客戶傾斜與 99.96% 已完成任務佇列，供階段五效能題與未來瀏覽器 Web Worker 實跑 `EXPLAIN QUERY PLAN` 與倍率比較。
+- **語意反例層（`seed.sql`，10–20 列／表，ID 區段 `1..9999`）**：預設載入，讓階段一至四與反例擊破題能以肉眼逐列驗算。帶生命週期狀態的表（`customers`、`users`、`merchants`、`staff_accounts`、`merchant_users`）同時存放有效列與已註銷、停權或離職的列，資安反例與基礎題共用同一份資料；出題者在題目 JSON 的 `population` 欄位宣告查的是全部帳號還是只算有效帳號，並在需求文字寫明母體，`verify_questions.py` 檢查兩者一致。
+- **中規模現場造數層（`seed_scale.sql`，每檔數 KB 純文字，ID 區段 `100001+`）**：以決定性 `WITH RECURSIVE` 語句現場生成 5 萬列交易表與它們的子表（訂單明細、包裹、收件人個資、依運單狀態展開的掃描事件）、2,000 筆熱點重複 email、35% 單客戶傾斜與 99.97% 已完成任務佇列，供階段五效能題與未來瀏覽器 Web Worker 實跑 `EXPLAIN QUERY PLAN` 與倍率比較。合成資料的時間線（訂單晚於顧客註冊、帳單落在訂閱期間內、事件晚於運單建立）與子表的完整性由 `verify_domains.py` 檢查。執行前寫入暫存表 `scale_params` 可把列數調成 1 到 10 倍，時間跨度不變；sql.js 在倍數 1 時灌入一個領域約 0.24 到 0.58 秒，各倍數的耗時與記憶體實測寫在 `scripts/sql-practice/README.md`。
+- **PostgreSQL 對照層（`schema_pg.sql`、`security_pg.sql`）**：同一套資料模型的 PostgreSQL DDL，加上角色、`GRANT`、列級安全政策與逾時護欄；`verify_pg.py` 在拋棄式叢集灌入 `seed.sql`，以各角色身分檢查租戶隔離、BI 唯讀邊界、唯附寫稽核，以及題庫宣稱的跨引擎差異（NULL 排序、`SELECT` 別名、非分組欄位）。
 - **超大規模／PostgreSQL 基準快照層（`benchmarks/*.json`）**：收錄實跑產出的 SQLite 計畫與耗時快照（`sqlite-scale-snapshots.json`），以及無法由瀏覽器單執行緒 SQLite 模擬的 PostgreSQL 多連線鎖、`SKIP LOCKED` 與上億列分區參考快照（`postgres-and-concurrency-reference.json`）。
 
 ### 領域甲（`bookstore`）：「紙頁書店」線上書城與門市系統
@@ -1275,7 +1276,7 @@ HAVING COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) / COUNT(*) > 0.1;
 
 ### 正式環境資安資料模型與 SQL × 資安複合陷阱題（`C07`–`C12`）
 
-三套商業領域資料庫皆已依正式環境資安與權限治理規格完成擴充（紙頁書店 20 表、雲課堂 18 表、捷配物流 17 表，各附 2 個去識別化／有效狀態檢視表、唯附寫稽核防竄改 Trigger，以及對應 PostgreSQL 18 角色、最小權限 `GRANT`、登入角色逾時護欄與 `FORCE ROW LEVEL SECURITY` 的 `security_pg.sql`；各資料表設計決定與引擎邊界詳見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。階段一至三作答時只依該題 `tablePath` 顯示相關的 1 至 3 張表，避免增加初學負擔；進入階段八與綜合挑戰時則可直接在真實模型上實跑下列六道資安複合陷阱題（收錄於 `scripts/sql-practice/questions/composite-traps.json`）：
+三套商業領域資料庫皆已依正式環境資安與權限治理規格完成擴充（紙頁書店 20 表、雲課堂 20 表、捷配物流 19 表，各附 2 個假名化（pseudonymization）／有效狀態檢視表、唯附寫稽核防竄改 Trigger，以及對應的 PostgreSQL DDL `schema_pg.sql` 與定義角色、最小權限 `GRANT`、登入角色逾時護欄與 `FORCE ROW LEVEL SECURITY` 的 `security_pg.sql`；各資料表設計決定與引擎邊界詳見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。階段一至三作答時只依該題 `tablePath` 顯示相關的 1 至 3 張表，避免增加初學負擔；進入階段八與綜合挑戰時則可直接在真實模型上實跑下列六道資安複合陷阱題（收錄於 `scripts/sql-practice/questions/composite-traps.json`）：
 
 | 題號  | 商業領域 | 疊加的 SQL × 資安複合陷阱                                                           | 涉及模型元件                                                                      |
 | ----- | -------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
@@ -1369,10 +1370,18 @@ HAVING COUNT(CASE WHEN o.status = 'refunded' THEN 1 END) / COUNT(*) > 0.1;
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                                 | 類型 | 前置條件                   | 規模 |
-| -------------------------------------------------------------------------------------------------------------------- | ---- | -------------------------- | ---- |
-| 持續擴充 `scripts/sql-practice/questions/` 題庫：補齊領域乙（雲課堂）、領域丙（捷配物流）與同領域多表路徑剩餘變體    | 內容 | 首批 53 題與驗收管線已就緒 | 大   |
-| 補齊階段七（`S7-01`–`S7-06`）與階段八（`S8-01`–`S8-06`）在另外兩個商業領域的完整四選項變體題與前提翻轉               | 內容 | 首批 53 題與驗收管線已就緒 | 中   |
-| 實作純靜態選擇題練習網站（讀取 `questions/` 與 `benchmarks/`，支援學習／盲測雙模式、反記憶抽題、選項洗牌與困惑匯出） | 實作 | 決定網站與 Hugo 整合落點   | 中   |
-| 決定網站與 Hugo 的整合落點（獨立 `static/` 頁面＋`sql/` 列表入口，或 Hugo shortcode 內嵌）                           | 規格 | 無                         | 小   |
-| 第二期擴充：接入 SQLite WASM Web Worker，依領域載入 `seed.sql` 與 `seed_scale.sql` 支援網頁內實跑與 `EXPLAIN`        | 實作 | 第一期練習網站完成         | 中   |
+| 項目                                                                                                                                                                                                                                                               | 類型 | 前置條件                    | 規模 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---- | --------------------------- | ---- |
+| 持續擴充 `scripts/sql-practice/questions/` 題庫：補齊領域乙（雲課堂）、領域丙（捷配物流）與同領域多表路徑剩餘變體                                                                                                                                                  | 內容 | 首批 53 題與驗收管線已就緒  | 大   |
+| 補齊階段七（`S7-01`–`S7-06`）與階段八（`S8-01`–`S8-06`）在另外兩個商業領域的完整四選項變體題與前提翻轉                                                                                                                                                             | 內容 | 首批 53 題與驗收管線已就緒  | 中   |
+| 實作純靜態選擇題練習網站（讀取 `questions/` 與 `benchmarks/`，支援學習／盲測雙模式、反記憶抽題、選項洗牌與困惑匯出）                                                                                                                                               | 實作 | 決定網站與 Hugo 整合落點    | 中   |
+| 決定網站與 Hugo 的整合落點（獨立 `static/` 頁面＋`sql/` 列表入口，或 Hugo shortcode 內嵌）                                                                                                                                                                         | 規格 | 無                          | 小   |
+| 第二期擴充：接入 SQLite WASM Web Worker，依領域載入 `seed.sql` 與 `seed_scale.sql` 支援網頁內實跑與 `EXPLAIN`                                                                                                                                                      | 實作 | 第一期練習網站完成          | 中   |
+| 題目 JSON 加 `discriminator` 欄位（鑑別力來自資料、執行計畫、引擎差異或並行），`verify_questions.py` 檢查來自資料的題目至少有一個錯誤選項的結果與正解不同                                                                                                          | 實作 | 無                          | 小   |
+| 題目 JSON 加 `engineExpectations` 欄位（各選項在 SQLite 與 PostgreSQL 的預期：成功、報錯或結果列），由 `verify_pg.py` 在 PostgreSQL 實跑題目選項，前端依它標示「SQLite 實跑」「在 SQLite 模擬 PostgreSQL 行為」「PostgreSQL 依文件推論」                           | 實作 | 無                          | 中   |
+| 每個領域建一份具名實體表（例如「被越權讀取的大客戶商家」對到 `merchant_id = 1001`）與評估時間點參數，題目 SQL 改引用名稱，取代寫死的 ID 與 `'2026-03-15 10:00:00'`                                                                                                 | 實作 | 無                          | 中   |
+| 各選項 `normalResult` 裡的筆數與 ID 改由 `sqliteAssertions` 產生，維護者改 seed 時不必再分別改文字與斷言                                                                                                                                                           | 實作 | 前端題目渲染元件定案        | 中   |
+| 本檔〈三套貫穿式商業網站情境與 Schema（題目組合的共用底座）〉內嵌的 `CREATE TABLE` 已與三份 `schema.sql` 不一致（例如 `warehouses.code` 少了 `UNIQUE`、`merchants` 少了 `status`），改成只描述資料模型並連到 `schema.sql`，前端 Schema 抽屜從 `sqlite_master` 產生 | 內容 | 無                          | 小   |
+| 三套 `seed.sql` 的每張表補到 8 至 15 列（目前 `certificates` 2 列、`coupons` 3 列、`store_shifts` 3 列），並在各領域維護「陷阱 → 資料列 → 使用的題目」對照表，支撐同領域多表路徑輪替                                                                               | 內容 | 無                          | 中   |
+| 在 PostgreSQL 18 實跑 `verify_pg.py`：目前只在 PostgreSQL 17.12 跑過，本機 Docker 的磁碟空間不足以拉取 `postgres:18` 映像                                                                                                                                          | 實作 | 有可用的 PostgreSQL 18 環境 | 小   |
+| 前端鎖定 sql.js 或 `@sqlite.org/sqlite-wasm` 的版本後，寫一支 Node 腳本在同一個 WASM build 上重跑題庫斷言（驗證腳本用的 Python 內建 SQLite 是 3.53.0，sql.js 1.13.0 是 3.49.1，`EXPLAIN QUERY PLAN` 的字串可能不同）                                               | 實作 | 第二期 WASM 接入選定套件    | 小   |
