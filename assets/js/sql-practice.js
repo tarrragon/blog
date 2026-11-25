@@ -302,7 +302,7 @@ function focusEl(selector) {
   if (el) el.focus();
 }
 function scrollToPractice() {
-  window.scrollTo(0, Math.max(0, root.getBoundingClientRect().top + window.scrollY - 16));
+  C.scrollToPractice(root, false);
 }
 
 // ---- 畫面：練習首頁 ----

@@ -4,14 +4,17 @@
 // 3. 色碼與 rgb()／rgba()／hsl()：顏色要用 --sqlp-* 顏色 token
 // 自訂屬性（--sqlp-…: 值）的宣告就是 token 的定義，不檢查。讀不到 token 的位置（例如 #sql-practice 外面的 body）
 // 在同一行加註解 `sqlp-lint: allow`，並在註解裡寫原因。
-// 用法：node scripts/sql-practice/ui/check_css_tokens.mjs [檔案...]（預設 assets/sql-practice/practice.css）
+// 用法：node scripts/sql-practice/ui/check_css_tokens.mjs [檔案...]
+//（預設檢查 assets/sql-practice/ 的 tokens.css、practice.css、callout.css 與 assets/practice/hub.css）
 // 結尾印 `checked N declaration(s), M violation(s)`；M 不是 0 時 exit 1，沒有讀到任何宣告時 exit 2。
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const files = process.argv.slice(2).length ? process.argv.slice(2) : [join(here, "../../../assets/sql-practice/practice.css")];
+const assets = join(here, "../../../assets");
+const files = process.argv.slice(2).length ? process.argv.slice(2)
+  : ["sql-practice/tokens.css", "sql-practice/practice.css", "sql-practice/callout.css", "practice/hub.css"].map((f) => join(assets, f));
 
 let checked = 0;
 const violations = [];

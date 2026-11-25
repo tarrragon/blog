@@ -50,8 +50,10 @@ li.has-desc:hover .list-desc {
    的白字段落裡自己會浮出來。
    a、h4、h5 三組元素規則排除 SQL 練習區（#sql-practice 底下的元素）：練習區有自己的配色與
    元件規則，這幾條的 !important 會蓋掉它的連結、按鈕與資料表標題。:where() 不計入特定性，
-   所以這幾條對其他元素的特定性仍是 (0,0,1)。 */
-a:where(:not(#sql-practice *)) {
+   所以這幾條對其他元素的特定性仍是 (0,0,1)。
+   連結規則另外排除練習總覽頁的清單（.practice-hub 底下）與文章結尾的練習入口（.sql-practice-callout）：
+   兩者是黑底白字的磚，用 assets/sql-practice/tokens.css 的配色。 */
+a:where(:not(#sql-practice *, .practice-hub *, .sql-practice-callout)) {
   color: #9dc4e8 !important;
   text-decoration: none !important;
   background: linear-gradient(to right, var(--color-primary), var(--color-primary)) no-repeat;
@@ -60,7 +62,7 @@ a:where(:not(#sql-practice *)) {
   transition: background-size 0.3s ease;
 }
 
-a:where(:not(#sql-practice *)):hover {
+a:where(:not(#sql-practice *, .practice-hub *, .sql-practice-callout)):hover {
   background-size: 100% 2px;
 }
 

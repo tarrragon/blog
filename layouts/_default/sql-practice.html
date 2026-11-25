@@ -16,7 +16,7 @@
 {{ define "main" }}
 {{- $data := partialCached "sql-practice/bank.html" . -}}
 {{- $sqlIndex := site.GetPage "/backend/01-database/sql" -}}
-{{- $css := resources.Get "sql-practice/practice.css" | minify | fingerprint -}}
+{{- $css := slice (resources.Get "sql-practice/tokens.css") (resources.Get "sql-practice/practice.css") | resources.Concat "sql-practice/practice-bundle.css" | minify | fingerprint -}}
 {{- $js := resources.Get "js/sql-practice.js" | js.Build (dict "minify" true "target" "es2019") | fingerprint -}}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 <h1 class="sqlp-vh">{{ .Title }}</h1>

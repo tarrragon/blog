@@ -9,10 +9,11 @@
     分類路徑取上層各 section 的 breadcrumb（沒有就用標題）；draft 的 section（例如 SQL 練習的規格書目錄）
     在 hugo server 下仍在 .Ancestors 裡，所以明確跳過。
   - 外站：data/practices.toml 的 [[external]]，欄位寫在那個檔的檔頭。
-  樣式在 assets/practice/hub.css，小磚沿用文章結尾入口（ArticleCallout）的語彙。
+  樣式在 assets/practice/hub.css，小磚沿用文章結尾入口（ArticleCallout）的語彙；token 與 Display 字體取自
+  assets/sql-practice/tokens.css，接在 hub.css 前面。
 */ -}}
 {{ define "main" }}
-{{- $css := resources.Get "practice/hub.css" | minify | fingerprint -}}
+{{- $css := slice (resources.Get "sql-practice/tokens.css") (resources.Get "practice/hub.css") | resources.Concat "practice/hub-bundle.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 {{- $items := slice -}}
 {{- range where site.RegularPages "Params.practice" "!=" nil -}}

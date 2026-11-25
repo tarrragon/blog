@@ -93,10 +93,13 @@ export function compactBar({ label, shortLabel, exit, onTop }) {
   return h("div", { class: "sqlp-compact-wrap" }, bar);
 }
 
+// 手機版面的斷點，跟 assets/sql-practice/tokens.css 與 practice.css 的 599px media query 一起改（JS 讀不到 media query）
+const NARROW = "(max-width: 599px)";
+
 // 把精簡頂列接到導覽列：導覽列看不見時顯示；手機上另外依捲動方向收起或出現。回傳解除函式。
 export function attachCompactBar(wrap, pivotEl) {
   const bar = wrap.querySelector(".sqlp-compact");
-  const narrow = window.matchMedia("(max-width: 599px)");
+  const narrow = window.matchMedia(NARROW);
   let pivotGone = false;
   let lastY = window.scrollY;
   let goingUp = false;
@@ -124,10 +127,15 @@ export function attachCompactBar(wrap, pivotEl) {
   };
 }
 
+// 捲到練習區頂端，上方留 --sqlp-s4 的空隙：位移從 CSS 讀，間距階改了這裡跟著變
+export function scrollToPractice(root, smooth) {
+  const gap = parseFloat(getComputedStyle(root).getPropertyValue("--sqlp-s4")) || 0;
+  window.scrollTo({ top: Math.max(0, root.getBoundingClientRect().top + window.scrollY - gap), behavior: smooth ? "smooth" : "auto" });
+}
+
 // 回到頂部：捲回練習區頂端，焦點移到導覽列上目前這一輪（沒有就移到第一項）；減少動態效果時直接跳回
 export function scrollToPracticeTop(root) {
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  window.scrollTo({ top: Math.max(0, root.getBoundingClientRect().top + window.scrollY - 16), behavior: reduce ? "auto" : "smooth" });
+  scrollToPractice(root, !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const target = root.querySelector(".sqlp-pivot-item[aria-current]") || root.querySelector(".sqlp-pivot-item");
   if (target) target.focus({ preventScroll: true });
 }

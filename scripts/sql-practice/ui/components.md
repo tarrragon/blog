@@ -27,7 +27,7 @@
 
 ## 3. Design token
 
-token 定義在 `assets/sql-practice/practice.css` 開頭的 `#sql-practice` 選擇器，前綴 `--sqlp-`。只在練習區生效，不影響 blog 其他頁面。
+token 定義在 `assets/sql-practice/tokens.css`，選擇器是三個元件的根元素：練習頁 `#sql-practice`、練習總覽頁的清單 `.practice-hub`、文章結尾入口 `.sql-practice-callout`，前綴 `--sqlp-`。模板用 `resources.Concat` 把它接在各自的元件樣式（`practice.css`、`assets/practice/hub.css`、`callout.css`）前面；Display 字體的 `@font-face` 也只寫在這一份。只在這三個元件裡生效，不影響 blog 其他頁面。
 
 | 類別   | token                                                                     | 值                                                                    | 用途                                                                                                                                               |
 | ------ | ------------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -54,7 +54,7 @@ token 定義在 `assets/sql-practice/practice.css` 開頭的 `#sql-practice` 選
 | 線寬   | `--sqlp-line` / `--sqlp-frame` / `--sqlp-frame-strong` / `--sqlp-focus-w` | 1 / 1.5 / 2 / 3 px                                                    | 分隔線、外框、主要按鈕的粗框、焦點框                                                                                                               |
 | 命中區 | `--sqlp-hit-lg`                                                           | 44 px                                                                 | 不隨指標裝置切換的命中區：PivotItem、ExitLink、精簡頂列的按鈕、文章連結、結果列、題目摺疊鈕                                                        |
 
-元件規則只透過 token 取值：`scripts/sql-practice/ui/check_css_tokens.mjs` 擋下 `!important`、寫 px／rem／pt 的 `font-size` 與 `line-height`，以及寫死的色碼（`#…`、`rgb()`、`rgba()`、`hsl()`）；token 的定義（`--sqlp-…: 值`）不檢查。pre-commit 在 `practice.css` 有 staged 時跑它。讀不到 token 的位置（`#sql-practice` 外面的 `body`）在同一行註明 `sqlp-lint: allow` 與原因。版面常數（斷點、欄寬、單一元件的最小高）不在檢查範圍：它們各只用一次，寫成 token 不會讓調整變簡單，斷點也不能用自訂屬性。
+元件規則只透過 token 取值：`scripts/sql-practice/ui/check_css_tokens.mjs` 擋下 `!important`、寫 px／rem／pt 的 `font-size` 與 `line-height`，以及寫死的色碼（`#…`、`rgb()`、`rgba()`、`hsl()`）；token 的定義（`--sqlp-…: 值`）不檢查。pre-commit 在 `tokens.css`、`practice.css`、`callout.css` 或 `assets/practice/hub.css` 有 staged 時，對 staged 的那幾份跑它。讀不到 token 的位置（`#sql-practice` 外面的 `body`）在同一行註明 `sqlp-lint: allow` 與原因。版面常數（斷點、欄寬、單一元件的最小高）不在檢查範圍：它們各只用一次，寫成 token 不會讓調整變簡單，斷點也不能用自訂屬性。
 
 配色紀錄（2026-11-24，使用者決定）：第一版的螢光綠 `#a4e600` 與桃紅 `#e6007e` 明度太高，先換成深橄欖綠 `#38701a` 與深莓紅 `#a8295a`；使用者再比較藍／橘、紫／琥珀、藍綠／灰三組之後選了藍綠／灰。藍綠因此在題目畫面專指「推薦」，題目畫面的按鈕不用實心藍綠：主要按鈕是 2px 白框加粗體，次要按鈕是 `--sqlp-frame-muted` 灰框；首頁與文章頁沒有推薦狀態，盲測磚與文章結尾入口沿用同一個藍綠（`--sqlp-accent-fill`）。亮 cyan `#00bde3` 的用途以上表 `--sqlp-accent` 那一列為準。
 | 顏色 | `--sqlp-rule`           | `#3a3a3a`                       | 分隔線   |
@@ -589,7 +589,9 @@ token 定義在 `assets/sql-practice/practice.css` 開頭的 `#sql-practice` 選
 | 測試契約       | 有題目的文章出現、沒有題目的文章不出現                                   |
 | 反例           | 不放在知識卡或目錄頁                                                     |
 
-外觀：一塊黑底小磚，左邊是 `--sqlp-accent` 實心方塊裝著細體小寫「practice」，右邊是文案，讓讀者在文章頁先看到練習頁的語彙。不用左側細邊線（impeccable 的 side-tab 偵測會報）。
+外觀：一塊黑底小磚，左邊是 `--sqlp-accent-fill` 實心方塊裝著細體小寫「practice」（字級 `--sqlp-t-tag`），右邊是文案（`--sqlp-t-body`），讓讀者在文章頁先看到練習頁的語彙。不用左側細邊線（impeccable 的 side-tab 偵測會報）。練習總覽頁的清單（`assets/practice/hub.css`）沿用同一個造型，關鍵字方塊用同一個 `--sqlp-t-tag`；練習名稱是 `--sqlp-t-strong`，分類與題數是 `--sqlp-t-small`。
+
+兩者都在練習頁以外的 blog 頁面，token 取自 `assets/sql-practice/tokens.css`（模板用 `resources.Concat` 接在元件樣式前面）。`assets/custom.css` 的連結規則帶 `!important`，排除範圍包含這兩個元件，所以白字直接寫在連結上，不必在內層的 span 再宣告一次。2026-11-25 使用者同意改用 token 時一併收斂：總覽頁的關鍵字從 34/36（手機 24/26）改成 30/32（手機 26/28），入口的關鍵字手機從 30 改成 26；內距對到間距階（6、10、14、20、2 px 改成 8、12、12、24、4 px）。
 
 ## 7. 畫面狀態表
 

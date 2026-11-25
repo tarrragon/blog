@@ -1,61 +1,46 @@
 /* 文章結尾的「SQL 練習：用 N 題檢查這篇的觀念」（layouts/partials/sql-practice/doc-link.html）。
-   位在 blog 的 herman 世界，只借練習頁的兩樣東西讓讀者先認得它：cyan 實心方塊與細體小寫。
-   契約在 scripts/sql-practice/ui/components.md 的 ArticleCallout。 */
-
-@font-face {
-  font-family: "SQLP Display";
-  font-style: normal;
-  font-weight: 200 300;
-  font-display: swap;
-  src: url("../fonts/noto-sans-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF;
-}
+   位在 blog 的 herman 世界，只借練習頁的兩樣東西讓讀者先認得它：藍綠實心方塊與細體小寫。
+   token 與 Display 字體在 assets/sql-practice/tokens.css（模板接在這份前面）；契約在
+   scripts/sql-practice/ui/components.md 的 ArticleCallout。
+   assets/custom.css 的連結規則帶 !important，它排除了這個元件，所以顏色直接寫在連結上。 */
 
 .sql-practice-callout {
   display: flex;
   align-items: stretch;
-  margin: 32px 0;
-  background: #000;
-  color: #fff;
+  margin: var(--sqlp-s6) 0;
+  background: var(--sqlp-bg);
+  color: var(--sqlp-fg);
   text-decoration: none;
   min-height: 64px;
-  transition: background-color 150ms ease-out;
-}
-a.sql-practice-callout,
-a.sql-practice-callout:visited {
-  color: #fff;
-  text-decoration: none;
+  transition: background-color var(--sqlp-ease) ease-out;
 }
 .sql-practice-callout:hover {
-  background: #1c1c1c;
+  background: var(--sqlp-tile);
 }
 .sql-practice-callout:focus-visible {
-  outline: 3px solid #00bde3;
+  outline: var(--sqlp-focus-w) solid var(--sqlp-accent);
   outline-offset: 2px;
 }
 .sql-practice-callout-kw {
   display: flex;
   align-items: flex-end;
-  padding: 8px 16px 6px;
-  background: #0b6e8e;
-  color: #fff;
-  font-family: "SQLP Display", "Segoe UI", "Helvetica Neue", sans-serif;
+  padding: var(--sqlp-s2) var(--sqlp-s4);
+  background: var(--sqlp-accent-fill);
+  color: var(--sqlp-on-color);
+  font-family: var(--sqlp-display);
   font-weight: 200;
-  font-size: 30px;
-  line-height: 32px;
+  font-size: var(--sqlp-t-tag);
+  line-height: var(--sqlp-lh-tag);
   letter-spacing: -0.02em;
 }
 .sql-practice-callout-text {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2px;
-  padding: 10px 20px;
-  font-size: 16px;
-  line-height: 24px;
-  /* assets/custom.css 的 a { color } 帶 !important，蓋掉上面 a.sql-practice-callout 的白色；
-     內層自己宣告顏色才不受影響 */
-  color: #fff;
+  gap: var(--sqlp-s1);
+  padding: var(--sqlp-s3) var(--sqlp-s5);
+  font-size: var(--sqlp-t-body);
+  line-height: var(--sqlp-lh-body);
 }
 .sql-practice-callout-text b {
   font-weight: 600;

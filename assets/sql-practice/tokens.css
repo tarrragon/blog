@@ -1,0 +1,132 @@
+/* SQL 練習的 design token 與 Display 字體，三個元件共用：
+   - 練習頁 #sql-practice（assets/sql-practice/practice.css）
+   - 練習總覽頁的清單 .practice-hub（assets/practice/hub.css）
+   - 文章結尾的入口 .sql-practice-callout（assets/sql-practice/callout.css）
+   模板用 resources.Concat 把這份放在各自的元件樣式前面。token 只定義在這三個元件的根元素上，前綴 --sqlp-，
+   不影響 blog 其他頁面；主題把根字級設成 10px，所以這裡一律用 px。
+   契約與 token 表在 scripts/sql-practice/ui/components.md〈Design token〉。 */
+
+@font-face {
+  font-family: "SQLP Display";
+  font-style: normal;
+  font-weight: 200 300;
+  font-display: swap;
+  src: url("../fonts/noto-sans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+
+#sql-practice, .practice-hub, .sql-practice-callout {
+  --sqlp-bg: #000;
+  --sqlp-fg: #fff;
+  --sqlp-muted: #a3a3a3;
+  --sqlp-tile: #1c1c1c;
+  --sqlp-tile-hover: #2a2a2a;
+  /* 亮 cyan 只用在焦點框、細線、小箭頭這類不承載內文的地方；
+     承載內文的色塊用低明度的 fill，上面的文字一律白色（對比都在 5.7:1 以上，色塊對黑底 3:1 以上） */
+  --sqlp-accent: #00bde3;
+  --sqlp-accent-fill: #0b6e8e;
+  --sqlp-accent-fill-hover: #0e5f7a;
+  /* 2026-11-24 使用者選定「藍綠／灰」：推薦沿用強調色的藍綠，讀者選了而不推薦用深灰。
+     藍綠因此在題目畫面專指推薦，按鈕改成白框，不用實心藍綠。
+     深灰取 #5a5a5a：相對亮度 0.102，對黑底 3.0:1、白字 6.9:1；原本的 #4f4f4f 對黑底只有 2.6:1 */
+  --sqlp-rec: #0b6e8e;
+  --sqlp-miss: #5a5a5a;
+  --sqlp-frame-muted: #6b6b6b;
+  --sqlp-on-color: #fff;
+  --sqlp-rule: #3a3a3a;
+  /* 細的「答錯」標記（進度段、結果列方塊）用較亮的灰：大色塊的 --sqlp-miss 縮成細段時，對旁邊的底色要另外算 */
+  --sqlp-miss-mark: #8a8a8a;
+  /* 「不推薦」的磚沒有狀態色：磚、解析區各一層灰，程式碼區用純黑，三層仍分得開 */
+  --sqlp-other-tile: #111;
+  --sqlp-other-analysis: #1a1a1a;
+  /* 程式碼區的底色依磚的狀態換成不透明色（手機的捲動陰影要用同色遮罩，所以不能半透明） */
+  --sqlp-well-base: #0d0d0d;
+  --sqlp-well-rec: #042c39;
+  --sqlp-well-miss: #202020;
+  --sqlp-well: var(--sqlp-well-base);
+  /* 解析區：疊在磚的狀態色上，介於磚與程式碼區之間 */
+  --sqlp-analysis-bg: rgba(0, 0, 0, 0.26);
+  --sqlp-analysis-rule: rgba(255, 255, 255, 0.24);
+  /* 水平捲動的提示陰影：樞紐列一組，程式碼區一組（程式碼區較窄，陰影淡一點） */
+  --sqlp-scroll-hint: rgba(255, 255, 255, 0.32);
+  --sqlp-scroll-hint-well: rgba(255, 255, 255, 0.28);
+  --sqlp-dot: rgba(0, 189, 227, 0.3);  /* 未作答磚標頭的點陣 */
+  --sqlp-shadow-bar: 0 8px 24px rgba(0, 0, 0, 0.6);    /* 精簡頂列往下的陰影 */
+  --sqlp-shadow-dock: 0 -8px 24px rgba(0, 0, 0, 0.9);  /* 手機底部動作列往上的陰影 */
+  /* 語法上色：只放在深色的程式碼區裡，對比在最亮的程式碼區底色上也有 6:1 以上 */
+  --sqlp-syn-kw: #7cc7ff;
+  --sqlp-syn-fn: #ffcf70;
+  --sqlp-syn-str: #a8e39a;
+  --sqlp-syn-num: #ffb08a;
+  --sqlp-syn-param: #e0a8ff;
+  --sqlp-syn-cmt: #a0a7ad;
+  --sqlp-syn-op: #cfcfcf;
+  /* 線寬：分隔線、外框、主要按鈕的粗框、焦點框 */
+  --sqlp-line: 1px;
+  --sqlp-frame: 1.5px;
+  --sqlp-frame-strong: 2px;
+  --sqlp-focus-w: 3px;
+  /* 不隨指標裝置切換的 44px 命中區：導覽、離開、頂列按鈕、文章連結、結果列這些在觸控與滑鼠下都常用的元件 */
+  --sqlp-hit-lg: 44px;
+  --sqlp-s1: 4px;
+  --sqlp-s2: 8px;
+  --sqlp-s3: 12px;
+  --sqlp-s4: 16px;
+  --sqlp-s5: 24px;
+  --sqlp-s6: 32px;
+  --sqlp-s7: 48px;
+  --sqlp-s8: 64px;
+  --sqlp-display: "SQLP Display", "Segoe UI", "Helvetica Neue", sans-serif;
+  --sqlp-font: "Segoe UI", "Helvetica Neue", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --sqlp-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* 字級分兩層。尺寸階（--sqlp-size-*）只放數字，元件規則不直接引用；元件規則只引用功能字級（--sqlp-t-* 與成對的
+     --sqlp-lh-*），名字說的是這段文字在畫面上的功能。某個功能的字在畫面上太大或太小時，改它對到哪一階，
+     不在元件規則裡寫數字；同一階的字要整體調大調小時才改尺寸階。手機的對應在下面 599px 的 media query */
+  --sqlp-size-xs: 14px;  /* 中文的下限 */
+  --sqlp-size-sm: 16px;
+  --sqlp-size-md: 18px;
+  --sqlp-size-lg: 22px;
+  --sqlp-size-xl: 26px;
+  --sqlp-size-2xl: 30px;
+  --sqlp-size-d1: 40px;  /* d1 到 d3 是 Display 字體的大字 */
+  --sqlp-size-d2: 60px;
+  --sqlp-size-d3: 96px;
+  --sqlp-t-poster: var(--sqlp-size-d3);      --sqlp-lh-poster: 112px;   /* 樞紐關鍵字；行高留出 descender */
+  --sqlp-t-score: var(--sqlp-size-d2);       --sqlp-lh-score: 64px;     /* 結果畫面的分數 */
+  --sqlp-t-glyph: var(--sqlp-size-d1);       --sqlp-lh-glyph: 40px;     /* 選項字母、回合磚的關鍵字 */
+  --sqlp-t-title: var(--sqlp-size-2xl);      --sqlp-lh-title: 40px;     /* 畫面標題 */
+  --sqlp-t-tag: var(--sqlp-size-2xl);        --sqlp-lh-tag: 32px;       /* 總覽頁與文章結尾入口左側方塊裡的細體關鍵字 */
+  --sqlp-t-nav: var(--sqlp-size-xl);         --sqlp-lh-nav: 34px;       /* 樞紐列的階段名稱 */
+  --sqlp-t-nav-current: var(--sqlp-size-2xl);                           /* 目前所在的階段，比其他階段大一階 */
+  --sqlp-t-heading: var(--sqlp-size-xl);     --sqlp-lh-heading: 34px;   /* 作答結果的標題 */
+  --sqlp-t-subtitle: var(--sqlp-size-lg);    --sqlp-lh-subtitle: 30px;  /* 區段標題、回合磚名稱 */
+  --sqlp-t-lead: var(--sqlp-size-lg);        --sqlp-lh-lead: 34px;      /* 題目需求：題目畫面左欄最大的字 */
+  --sqlp-t-bar: var(--sqlp-size-md);         --sqlp-lh-bar: 26px;       /* 精簡頂列的位置文字與按鈕 */
+  --sqlp-t-control: var(--sqlp-size-md);     --sqlp-lh-control: 26px;   /* 按鈕、離開連結、文章連結、展開列 */
+  --sqlp-t-strong: var(--sqlp-size-md);      --sqlp-lh-strong: 26px;    /* 粗體的作答指示與選項狀態、總覽頁的練習名稱 */
+  --sqlp-t-body: var(--sqlp-size-sm);        --sqlp-lh-body: 26px;      /* 內文、資料前提、解析、表格、總覽頁與入口的說明 */
+  --sqlp-t-label: var(--sqlp-size-sm);       --sqlp-lh-label: 26px;     /* 題目畫面的標題：考點提示 */
+  --sqlp-t-caption: var(--sqlp-size-sm);     --sqlp-lh-caption: 24px;   /* 灰色說明、進度文字、回合磚說明 */
+  --sqlp-t-code: var(--sqlp-size-sm);        --sqlp-lh-code: 27px;      /* SQL 與表格裡的欄位名稱 */
+  --sqlp-t-small: var(--sqlp-size-xs);       --sqlp-lh-small: 22px;     /* 表頭、欄位標籤、狀態小字、總覽頁的分類與題數 */
+  --sqlp-hit: 32px;
+  --sqlp-bar-h: 72px; /* 精簡頂列的高度：44px 按鈕 + 上下各 12px + 框線，實測 71px */
+  --sqlp-flip: 200ms;
+  --sqlp-ease: 150ms;
+  --sqlp-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (pointer: coarse) {
+  #sql-practice, .practice-hub, .sql-practice-callout { --sqlp-hit: 44px; }
+}
+/* 手機：大字各降一階；題目需求不降，它是讀者作答要讀的主角。
+   599px 這個斷點也寫在 assets/js/sqlp-components.js 的 NARROW（JS 讀不到 media query），改的時候一起改 */
+@media (max-width: 599px) {
+  #sql-practice, .practice-hub, .sql-practice-callout {
+    --sqlp-t-poster: var(--sqlp-size-d2);   --sqlp-lh-poster: 72px;
+    --sqlp-t-title: var(--sqlp-size-xl);    --sqlp-lh-title: 34px;
+    --sqlp-t-tag: var(--sqlp-size-xl);      --sqlp-lh-tag: 28px;
+    --sqlp-t-nav: var(--sqlp-size-lg);      --sqlp-lh-nav: 30px;
+    --sqlp-t-nav-current: var(--sqlp-size-xl);
+    --sqlp-t-bar: var(--sqlp-size-sm);      --sqlp-lh-bar: 24px;
+  }
+}

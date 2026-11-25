@@ -6,7 +6,8 @@
 #   0. Test-First reminder if .spec.ts is staged (#69 / #72 L3 trigger).
 #   0.5 bin/autolink-dict --check --staged when anything under content/ or data/autolink.* is staged;
 #       abort if the dictionary is stale or a first-level folder is not registered.
-#   0.6 scripts/sql-practice/ui/check_css_tokens.mjs on the staged practice.css; abort on violations.
+#   0.6 scripts/sql-practice/ui/check_css_tokens.mjs on each staged SQL practice stylesheet
+#       (tokens, practice, callout, practice hub); abort on violations.
 #   1. fmt --fix on each staged .md (root files and docs/rules/ included: it re-aligns their
 #      tables too); re-stage if changed.
 #   2. lint on staged content/**/*.md only; abort commit on error. Root AGENTS.md, CLAUDE.md,
@@ -87,20 +88,23 @@ fi
 # !important、寫死 px 的字級與行高、寫死的色碼會讓下一次調整又要蓋一次規則（scripts/sql-practice/ui/components.md
 # 〈字級：尺寸階與功能字級〉）。檢查的是 staged 的內容（git show :路徑），另一個 session 在工作樹裡還沒 staged
 # 的修改不會擋下這次的提交。exit 1 是有違規（逐行印在上方），2 是沒讀到任何宣告（檔案被清空或腳本壞了）。
-if grep -qx 'assets/sql-practice/practice.css' <<< "$staged_all"; then
-    echo "[pre-commit] check_css_tokens on staged assets/sql-practice/practice.css"
+# 檢查的檔案：練習頁、練習總覽頁的清單、文章結尾入口，以及它們共用的 tokens.css。
+staged_sqlp_css=$(grep -xE 'assets/sql-practice/(tokens|practice|callout)\.css|assets/practice/hub\.css' <<< "$staged_all" || true)
+while IFS= read -r css_path; do
+    [[ -z "$css_path" ]] && continue
+    echo "[pre-commit] check_css_tokens on staged $css_path"
     css_tmp=$(mktemp)
-    git show :assets/sql-practice/practice.css > "$css_tmp"
+    git show ":$css_path" > "$css_tmp"
     set +e
     node scripts/sql-practice/ui/check_css_tokens.mjs "$css_tmp"
     css_rc=$?
     set -e
     rm -f -- "${css_tmp:?}"
     if [[ "$css_rc" -ne 0 ]]; then
-        echo "[pre-commit] practice.css 有沒有透過 token 取值的宣告（exit $css_rc）：改用 --sqlp-* token，讀不到 token 的位置在同一行註明 sqlp-lint: allow 與原因" >&2
+        echo "[pre-commit] $css_path 有沒有透過 token 取值的宣告（exit $css_rc）：改用 --sqlp-* token，讀不到 token 的位置在同一行註明 sqlp-lint: allow 與原因" >&2
         exit 1
     fi
-fi
+done <<< "$staged_sqlp_css"
 
 # Fast exit if no staged .md files.
 staged_md=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.md$' || true)
