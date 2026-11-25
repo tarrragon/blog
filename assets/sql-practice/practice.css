@@ -168,7 +168,7 @@ html:has(#sql-practice) { scroll-padding-top: 72px; }
 :where(#sql-practice) pre code { display: inline; padding: 0; overflow-x: visible; }
 :where(#sql-practice) :is(table, th, td) { border: revert; border-collapse: revert; padding: revert; }
 :where(#sql-practice) table { width: revert; }
-#sql-practice svg { flex: none; }
+:where(#sql-practice) svg { flex: none; }
 
 /* ---- 樞紐列 PivotBar / PivotItem / ExitLink ---- */
 /* 樞紐列是主要的導覽操作區，字級接近畫面標題 */
@@ -192,10 +192,10 @@ html:has(#sql-practice) { scroll-padding-top: 72px; }
   .sqlp-pivot-items { flex: 1 1 100%; gap: var(--sqlp-s5); }
   .sqlp-exit { max-width: 100%; }
 }
-#sql-practice .sqlp-pivot-item { color: var(--sqlp-muted); text-decoration: none; }
-#sql-practice .sqlp-pivot-item:hover { color: var(--sqlp-fg); }
+/* (0,2,0) 贏過上面 :where(#sql-practice) a:hover 的 (0,1,1)，hover 時是白字，不變成連結的藍綠 */
+.sqlp-pivot-item:hover { color: var(--sqlp-fg); }
 /* 目前這一輪：白色、粗體，字級再大一階，一眼看得出所在位置 */
-#sql-practice .sqlp-pivot-item[aria-current] { color: var(--sqlp-fg); font-weight: 600; font-size: var(--sqlp-t-nav-current); }
+.sqlp-pivot-item[aria-current] { color: var(--sqlp-fg); font-weight: 600; font-size: var(--sqlp-t-nav-current); }
 /* 離開練習：跟次要按鈕同一個造型（灰框、按鈕字級、44px 高），文字依去向固定，不截斷 */
 .sqlp-exit {
   flex: none; display: inline-flex; align-items: center; gap: var(--sqlp-s3); min-height: var(--sqlp-hit-lg); padding: 0 var(--sqlp-s5);
@@ -420,7 +420,7 @@ button.sqlp-tile:hover { background-color: var(--sqlp-tile-hover); }
 /* ---- 文章清單 DocLinks ---- */
 .sqlp-docs ul { list-style: none; padding: 0; display: grid; gap: var(--sqlp-s1); }
 .sqlp-docs li a { display: flex; align-items: center; gap: var(--sqlp-s3); min-height: var(--sqlp-hit-lg); padding: var(--sqlp-s2) 0; font-size: var(--sqlp-t-control); line-height: var(--sqlp-lh-control); }
-#sql-practice .sqlp-docs li a:visited { color: var(--sqlp-muted); }
+.sqlp-docs li a:visited { color: var(--sqlp-muted); }
 
 /* ---- 困惑筆記 ConfusionNote ---- */
 .sqlp-note summary { display: flex; align-items: center; gap: var(--sqlp-s2); min-height: var(--sqlp-hit); cursor: pointer; list-style: none; font-size: var(--sqlp-t-body); }
@@ -448,11 +448,13 @@ button.sqlp-tile:hover { background-color: var(--sqlp-tile-hover); }
   cursor: pointer; text-decoration: none;
   transition: background-color var(--sqlp-ease) ease-out, color var(--sqlp-ease) ease-out, transform 80ms ease-out;
 }
-#sql-practice a.sqlp-btn { color: var(--sqlp-fg); text-decoration: none; }
+/* 連結形式的按鈕：(0,1,1) 跟 :where(#sql-practice) a:hover 同級、排在它後面所以贏，
+   又低於下面主要按鈕 hover 的 (0,3,0)，主要按鈕 hover 時的黑字才蓋得過來（曾經用 id 加權，hover 變成白底白字） */
+a.sqlp-btn { color: var(--sqlp-fg); text-decoration: none; }
 .sqlp-btn:hover { background: var(--sqlp-tile-hover); }
 .sqlp-btn:active { transform: translateY(1px); }
 /* 主要按鈕：2px 白框加粗體；次要按鈕是灰框。藍綠留給「推薦」，按鈕不用實心藍綠 */
-.sqlp-btn[data-v="primary"], #sql-practice a.sqlp-btn[data-v="primary"] { border: var(--sqlp-frame-strong) solid var(--sqlp-fg); font-weight: 600; color: var(--sqlp-fg); }
+.sqlp-btn[data-v="primary"] { border: var(--sqlp-frame-strong) solid var(--sqlp-fg); font-weight: 600; color: var(--sqlp-fg); }
 .sqlp-btn[data-v="primary"]:hover { background: var(--sqlp-fg); color: var(--sqlp-bg); }
 .sqlp-btn[data-v="danger"] { border-color: var(--sqlp-frame-muted); }
 .sqlp-btn[data-v="danger"][data-armed] { background: var(--sqlp-fg); border-color: var(--sqlp-fg); color: var(--sqlp-bg); font-weight: 600; }
