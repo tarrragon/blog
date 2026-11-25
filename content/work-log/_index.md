@@ -27,6 +27,7 @@ tags: ["work-log", "debug", "工具"]
 - [量終端機動畫程式的 CPU](terminal-animation-cpu-measurement/) — 用 pty 執行、認出 tsx 實際執行程式的程序、停掉之後檢查殘留、固定種子比較兩個版本，以及百分比不跟著工作量下降的讀法
 - [CSS 規則沒生效時的量測與成因：範圍重設的特定性與宿主樣式、container-type 與 subgrid、捲動陰影的覆蓋漸層](css-silent-override-measurement/) — 用計算後的樣式與 DevTools 的 Styles 面板分出規則是沒套上還是輸了，以及展示頁沒載入宿主樣式時怎麼比較
 - [狀態色塊配色的對比量測：文字對色塊、色塊對背景、細標記對底色，以及紅綠色覺差異](state-color-contrast-and-color-vision/) — 三道對比各自怎麼算、各自擋下哪個顏色，以及只靠紅綠區分時色覺差異的讀者看到什麼
+- [CSS 改用 token 取值的重構與驗證：逐元素比對計算後的樣式、字級分成尺寸階與功能字級（primitive 與 semantic token）、!important 與提高特定性的 id 選擇器的替代寫法](css-token-refactor-verified-by-computed-style-diff/) — 重構前後逐元素比對計算後的樣式並歸類差異（預期內、字串不同而畫面相同、量測時序），字級的兩層 token，改寫選擇器取代 `!important` 與 id 加權、拿掉加權量出它是否還要贏過哪條規則，用檢查腳本擋新的寫死值，grid 子項 `min-width: auto` 的溢出，以及三個元件與 JavaScript 共用 token
 
 **環境、設定與架構觀念** — 開發環境一次性設定、規則檔維護、與後端協作時整理出的設計觀念等。例：
 

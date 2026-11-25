@@ -86,7 +86,7 @@ return {
 
 `revert` 寫上去時，作者寫的宣告全部不算，這個屬性改由使用者樣式或瀏覽器預設決定；那一層也沒有宣告時，會繼承的屬性取父元素的值，不會繼承的取初始值。這裡用在練習頁自己沒有另外設定、只要撤掉主題那一條的屬性。標題的 `line-height` 寫 `inherit` 或 `revert` 結果相同（瀏覽器預設沒有替標題設行高，`revert` 之後同樣繼承練習區的 28px），寫 `inherit` 是讓意圖一眼看得出來。
 
-`custom.css` 的那幾條帶 `!important`，作者來源裡 `!important` 的宣告不論特定性與先後，都贏過一般宣告，重設寫得再精確也輸。宿主樣式也是這個 repo 的檔案，所以處置放在宿主那一邊：`custom.css` 的 `a`、`h4`、`h5` 與 head 內嵌的 `details`、`summary` 各條，選擇器後面加 `:where(:not(#sql-practice *))`，排除練習區裡的元素；`:where()` 不計入特定性，這幾條對其他頁面的元素特定性不變。宿主樣式不由元件庫控制時（嵌進第三方 CMS、元件庫有很多個宿主），這兩種處置都做不到，要改用 Shadow DOM 或 iframe 把元件跟宿主的層疊隔開，這一輪沒有實測。
+`custom.css` 的那幾條帶 `!important`，作者來源裡 `!important` 的宣告不論特定性與先後，都贏過一般宣告，重設寫得再精確也輸。宿主樣式也是這個 repo 的檔案，所以處置放在宿主那一邊：`custom.css` 的 `a`、`h4`、`h5` 與 head 內嵌的 `details`、`summary` 各條，選擇器後面加 `:where(:not(#sql-practice *))`，排除練習區裡的元素；`:where()` 不計入特定性，這幾條對其他頁面的元素特定性不變。宿主樣式不由元件庫控制時（嵌進第三方 CMS、元件庫有很多個宿主），這兩種處置都做不到，要改用 Shadow DOM 或 iframe 把元件跟宿主的層疊隔開，這一輪沒有實測。有了這條排除，練習頁元件規則上原本用來贏過宿主的 id 加權就用不到了，隔天的重構量出這一點之後拿掉 id 加權，同一天另外把這條排除擴大到練習總覽頁的清單與文章結尾的練習入口；怎麼量出 id 加權已經不必要，在 [CSS 改用 token 取值的重構與驗證：逐元素比對計算後的樣式、字級分成尺寸階與功能字級（primitive 與 semantic token）、!important 與提高特定性的 id 選擇器的替代寫法](/work-log/css-token-refactor-verified-by-computed-style-diff/) 的〈提高特定性的 id 選擇器〉。
 
 這一頁沒有用 cascade layer（`@layer`），理由是兩種包法都不合用：把主題包進 layer 要改全站主題的載入方式，影響每一頁；只把練習頁的 CSS 包進 layer，沒分層的主題會一律贏過它（layer 只在一般宣告之間比，帶 `!important` 時順序反過來，分層的 `!important` 贏過沒分層的）。宿主自己願意包進 layer 時，layer 是比對齊特定性更穩的做法，取捨在 [CSS Layers 取代 specificity 戰](/report/css-layers-over-specificity/)；宿主用帶 class 的選擇器（例如 `.post-content li`，(0, 1, 1)）時，重設贏得過它就會一起贏過元件的 class 規則，只靠特定性安排不了，也要改用 layer 或從宿主那一邊排除。
 
