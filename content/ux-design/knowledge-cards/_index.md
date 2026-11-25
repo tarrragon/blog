@@ -28,3 +28,4 @@ UX 設計教學中出現的關鍵術語卡片。每張卡片說明一個語意�
 | [Damped Spring（阻尼彈簧）](/ux-design/knowledge-cards/damped-spring/)                                                       | 被拉向目標、略過頭再回來的數值變化——角頻率與阻尼比各決定什麼、什麼時候停掉驅動器                                   |
 | [Specificity（特定性）](/ux-design/knowledge-cards/specificity/)                                                             | 兩條 CSS 規則搶同一個屬性時比的值——它排在 `!important` 與 cascade layer 之後，只替部分規則加權會打亂元件內部的勝負 |
 | [Design Token（具名設計值）](/ux-design/knowledge-cards/design-token/)                                                       | 替設計決定取名、元件引用名字——數設計決定而不數值，primitive 與 semantic 兩層各管哪一種調整                         |
+| [DTCG Format（具名設計值的交換格式）](/ux-design/knowledge-cards/dtcg-format/)                                               | 在設計工具、轉換工具與程式碼之間交換 token 的 JSON 格式——什麼時候當唯一來源、什麼時候手寫 CSS 自訂屬性就夠         |

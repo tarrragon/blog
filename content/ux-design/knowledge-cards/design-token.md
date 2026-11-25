@@ -6,7 +6,7 @@ weight: 17
 tags: ["ux-design", "knowledge-card", "css", "design-token", "design-system"]
 ---
 
-Design Token（具名設計值）是替一個設計決定取的名字，元件引用名字，不寫值：顏色、字級、行高、間距、線寬、圓角、動畫時長都可以是 token。CSS 裡最常見的載體是自訂屬性（custom property），例如 `--brand-bg: #000` 定義在元件的根元素上，元件規則寫 `background: var(--brand-bg)`；同一份 token 也可以寫成 JSON，再由建置工具產生 CSS、iOS 或 Android 的常數。其他中文資料常寫作「設計令牌」。token 定義在哪個元素上、被誰覆寫，照 CSS 的層疊規則決定，其中選擇器之間的勝負看 [Specificity（特定性）](/ux-design/knowledge-cards/specificity/)。這張卡的 token 跟語言模型切分文字的單位不是同一件事，那個意思在 [Token](/llm/knowledge-cards/token/) 卡。
+Design Token（具名設計值）是替一個設計決定取的名字，元件引用名字，不寫值：顏色、字級、行高、間距、線寬、圓角、動畫時長都可以是 token。CSS 裡最常見的載體是自訂屬性（custom property），例如 `--brand-bg: #000` 定義在元件的根元素上，元件規則寫 `background: var(--brand-bg)`；同一份 token 也可以寫成 JSON，再由建置工具產生 CSS、iOS 或 Android 的常數，交換用的 JSON 格式見 [DTCG Format（具名設計值的交換格式）](/ux-design/knowledge-cards/dtcg-format/) 卡。其他中文資料常寫作「設計令牌」。token 定義在哪個元素上、被誰覆寫，照 CSS 的層疊規則決定，其中選擇器之間的勝負看 [Specificity（特定性）](/ux-design/knowledge-cards/specificity/)。這張卡的 token 跟語言模型切分文字的單位不是同一件事，那個意思在 [Token](/llm/knowledge-cards/token/) 卡。
 
 ## 跟其他概念的關係
 

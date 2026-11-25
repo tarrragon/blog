@@ -1762,6 +1762,11 @@
    "module": "llm"
   },
   {
+   "name": "DTCG Format",
+   "card": "ux-design/knowledge-cards/dtcg-format",
+   "module": "ux-design"
+  },
+  {
    "name": "Dual Write",
    "card": "backend/knowledge-cards/dual-write",
    "module": "backend"
@@ -6634,6 +6639,11 @@
   {
    "name": "具名設計值",
    "card": "ux-design/knowledge-cards/design-token",
+   "module": "ux-design"
+  },
+  {
+   "name": "具名設計值的交換格式",
+   "card": "ux-design/knowledge-cards/dtcg-format",
    "module": "ux-design"
   },
   {
