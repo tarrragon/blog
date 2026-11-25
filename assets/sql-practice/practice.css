@@ -279,6 +279,8 @@ html:has(#sql-practice) { scroll-padding-top: 72px; }
 .sqlp-schema[open] summary .sqlp-minus { display: block; }
 .sqlp-schema-names { color: var(--sqlp-muted); font-family: var(--sqlp-mono); font-size: var(--sqlp-t-code); }
 .sqlp-schema-body { display: grid; gap: var(--sqlp-s5); padding: var(--sqlp-s2) var(--sqlp-s4) var(--sqlp-s5); }
+/* 每張表是 grid 子項：預設 min-width: auto 會被手機上 640px 的表格撐寬，整頁跟著橫向捲動；設 0 讓捲動留在表格外框裡 */
+.sqlp-schema-table { min-width: 0; }
 .sqlp-schema-table h4 { margin: 0 0 var(--sqlp-s2); display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sqlp-s3); font-size: var(--sqlp-t-control); color: var(--sqlp-fg); }
 .sqlp-schema-table h4 code { font-size: var(--sqlp-t-control); font-weight: 600; color: var(--sqlp-syn-kw); }
 .sqlp-schema-opt { font-family: var(--sqlp-mono); font-size: var(--sqlp-t-small); color: var(--sqlp-muted); }
