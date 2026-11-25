@@ -31,4 +31,4 @@ token 也可以用在觸控命中區這類尺寸上：[Touch Target（觸控目�
 
 兩層分開的條件是有整階一起調整的需求、而且用途夠多：用途只有少數幾種、沒有整階調整的需求時，一層用途命名的 token 加一張記錄哪幾種用途同級的表就夠，少一層間接。
 
-寫在取不到自訂屬性的位置時，token 用不上：`var()` 只能寫在屬性值裡，media query 的條件（`@media (max-width: 599px)`）不能引用它，所以斷點通常留著字面值；token 定義在元件根元素上時，根元素外面的元素（例如頁面的 `body`）也取不到它。
+寫在取不到自訂屬性的位置時，token 用不上：`var()` 只能寫在屬性值裡，media query 的條件（`@media (max-width: 599px)`）不能引用它，所以斷點通常留著字面值；token 定義在元件根元素上時，根元素外面的元素（例如頁面的 `body`）也取不到它。一個 token 在某個元素上實際代換成什麼值，讀那個元素的 [Computed Style（計算後的樣式）](/ux-design/knowledge-cards/computed-style/)。

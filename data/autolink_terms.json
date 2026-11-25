@@ -717,6 +717,11 @@
    "module": "backend"
   },
   {
+   "name": "Cascade Layer",
+   "card": "ux-design/knowledge-cards/cascade-layer",
+   "module": "ux-design"
+  },
+  {
    "name": "Cascading Failure",
    "card": "backend/knowledge-cards/cascading-failure",
    "module": "backend"
@@ -990,6 +995,11 @@
    "name": "Compositor",
    "card": "linux/dotfile/knowledge-cards/compositor",
    "module": "linux"
+  },
+  {
+   "name": "Computed Style",
+   "card": "ux-design/knowledge-cards/computed-style",
+   "module": "ux-design"
   },
   {
    "name": "Confidence",
@@ -6102,6 +6112,11 @@
    "module": "linux"
   },
   {
+   "name": "Two Hats",
+   "card": "testing/knowledge-cards/two-hats",
+   "module": "testing"
+  },
+  {
    "name": "Type Affinity",
    "card": "backend/knowledge-cards/type-affinity",
    "module": "backend"
@@ -6607,6 +6622,11 @@
    "module": "business"
   },
   {
+   "name": "兩頂帽子",
+   "card": "testing/knowledge-cards/two-hats",
+   "module": "testing"
+  },
+  {
    "name": "公允價值",
    "card": "business/knowledge-cards/fair-value",
    "module": "business"
@@ -7060,6 +7080,11 @@
    "name": "射後不理編排",
    "card": "testing/knowledge-cards/fire-and-forget-orchestration",
    "module": "testing"
+  },
+  {
+   "name": "層疊分層",
+   "card": "ux-design/knowledge-cards/cascade-layer",
+   "module": "ux-design"
   },
   {
    "name": "工作階段鎖定",
@@ -7845,6 +7870,11 @@
    "name": "訂單彈性機制",
    "card": "business/procurement-planning/cards/order-flexibility",
    "module": "business"
+  },
+  {
+   "name": "計算後的樣式",
+   "card": "ux-design/knowledge-cards/computed-style",
+   "module": "ux-design"
   },
   {
    "name": "設定漂移",

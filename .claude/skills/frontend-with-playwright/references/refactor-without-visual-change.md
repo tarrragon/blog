@@ -63,7 +63,7 @@ walk(document.getElementById("app-root"), "0");
 | 沒放進屬性清單的屬性變了 | 抓不到 | 抓得到 |
 | 兩個版本共有的錯誤（整頁水平溢出） | 抓不到：比對只驗兩版相同 | 截圖尺寸變寬時看得到；另外量 `document.documentElement.scrollWidth` |
 | 字級收斂批次裡，哪些差異是預期的 | 依屬性分組讀得出 | 讀不出 |
-| `display: none` 的子樹（未展開的 `<details>`、未開的對話框）與 transition 時長 | 抓得到 | 看不到 |
+| 不在畫面上的元素（`display: none` 的子樹，例如未開的 `<dialog>`；未展開的 `<details>` 的內容，瀏覽器用 `content-visibility: hidden` 跳過它的繪製）與 transition 時長 | 抓得到計算值；寬高這類排版屬性沒有排版可依，讀到的值不一定是展開後的值，這幾項的差異要在展開的狀態下量 | 看不到 |
 
 **比對的範圍**要寫下來，範圍外的 0 差異是沒有量過：
 

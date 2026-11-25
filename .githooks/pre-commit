@@ -88,20 +88,27 @@ fi
 # !important、寫死 px 的字級與行高、寫死的色碼會讓下一次調整又要蓋一次規則（scripts/sql-practice/ui/components.md
 # 〈字級：尺寸階與功能字級〉）。檢查的是 staged 的內容（git show :路徑），另一個 session 在工作樹裡還沒 staged
 # 的修改不會擋下這次的提交。exit 1 是有違規（逐行印在上方），2 是沒讀到任何宣告（檔案被清空或腳本壞了）。
-# 檢查的檔案：練習頁、練習總覽頁的清單、文章結尾入口，以及它們共用的 tokens.css。
-staged_sqlp_css=$(grep -xE 'assets/sql-practice/(tokens|practice|callout)\.css|assets/practice/hub\.css' <<< "$staged_all" || true)
+# 檢查的檔案：練習頁、練習總覽頁的清單、文章結尾入口，以及它們共用的 tokens.css。新增 CSS 檔時，
+# 同時加進這裡的清單與腳本的預設清單，否則新檔整份沒有檢查。staged 刪除的檔案沒有內容可讀，不檢查。
+staged_sqlp_css=$(git diff --cached --name-only --diff-filter=ACMR | grep -xE 'assets/sql-practice/(tokens|practice|callout)\.css|assets/practice/hub\.css' || true)
 while IFS= read -r css_path; do
     [[ -z "$css_path" ]] && continue
     echo "[pre-commit] check_css_tokens on staged $css_path"
-    css_tmp=$(mktemp)
+    # 暫存檔保留原檔名：腳本靠檔名認出 tokens.css（那一份可以直接引用尺寸階）
+    css_dir=$(mktemp -d)
+    css_tmp="${css_dir:?}/$(basename "$css_path")"
     git show ":$css_path" > "$css_tmp"
     set +e
     node scripts/sql-practice/ui/check_css_tokens.mjs "$css_tmp"
     css_rc=$?
     set -e
     rm -f -- "${css_tmp:?}"
-    if [[ "$css_rc" -ne 0 ]]; then
-        echo "[pre-commit] $css_path 有沒有透過 token 取值的宣告（exit $css_rc）：改用 --sqlp-* token，讀不到 token 的位置在同一行註明 sqlp-lint: allow 與原因" >&2
+    rmdir -- "${css_dir:?}"
+    if [[ "$css_rc" -eq 1 ]]; then
+        echo "[pre-commit] $css_path 有沒有透過 token 取值的宣告（exit 1）：改用 --sqlp-* token，讀不到 token 的位置在同一行註明 sqlp-lint: allow 與原因" >&2
+        exit 1
+    elif [[ "$css_rc" -ne 0 ]]; then
+        echo "[pre-commit] check_css_tokens 沒有讀到 $css_path 的任何宣告，或讀不到檔案（exit $css_rc）：檔案被清空或腳本壞了，原因見上方" >&2
         exit 1
     fi
 done <<< "$staged_sqlp_css"

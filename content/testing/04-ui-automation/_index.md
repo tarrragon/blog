@@ -13,7 +13,7 @@ tags: ["testing", "widget-test", "playwright", "ui-test"]
 - [Widget test 的狀態覆蓋策略](/testing/04-ui-automation/state-coverage-strategy/) — 從畫面狀態矩陣推導 test case
 - [導航路徑 test](/testing/04-ui-automation/navigation-path-test/) — Back 按鈕、route 可達性、go vs push 語意驗證
 - [Playwright 瀏覽器驗證流程](/testing/04-ui-automation/playwright-verification/) — web 版 UI 行為驗證與 widget test 的互補
-- [螢幕截圖比對](/testing/04-ui-automation/visual-regression/) — Visual regression testing 與 baseline 管理
+- [螢幕截圖比對](/testing/04-ui-automation/visual-regression/) — Visual regression testing 與 baseline 管理，以及它跟計算後樣式快照比對的分工
 
 ## 跨分類引用
 

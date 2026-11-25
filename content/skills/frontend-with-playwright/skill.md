@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: frontend-with-playwright
 license: MIT
 metadata:
-  version: 0.6.0
+  version: 0.7.0
   category: writing-methodology
 ---
 

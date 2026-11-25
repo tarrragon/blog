@@ -26,6 +26,7 @@ tags: ["testing", "knowledge-cards"]
 | [Frozen vs Live Reference（凍結參照與活解析）](/testing/knowledge-cards/frozen-vs-live-reference/)             | 測試設計          | 下游持有上游 id 的兩種策略，凍結版在上游重建後失效                         |
 | [Skip vs Fail Semantics](/testing/knowledge-cards/skip-vs-fail-semantics/)                                     | 測試設計          | 跳過與失敗兩種訊號各自對應的成因類別與處置路徑                             |
 | [Characterization Test](/testing/knowledge-cards/characterization-test/)                                       | 重構安全網        | 鎖住現有行為的測試，用於 legacy 重構前的安全網                             |
+| [Two Hats（兩頂帽子）](/testing/knowledge-cards/two-hats/)                                                     | 重構安全網        | 只改結構與改行為分成兩批，每一批的驗收只有一種讀法                         |
 | [Quarantine](/testing/knowledge-cards/quarantine/)                                                             | 團隊治理          | 把已知 flaky 測試隔離觀察、保留回收壓力的機制                              |
 | [Test Environment Identification（測試環境判定）](/testing/knowledge-cards/environment-identification/)        | 測試基礎設施      | 防止自動化測試對生產環境執行的誤擊防護前提                                 |
 | [Positive Control（正對照）](/testing/knowledge-cards/positive-control/)                                       | 檢查的驗證        | 餵一個已知會被抓到的輸入，分開「目標不存在」與「檢查沒有在看」兩種零       |

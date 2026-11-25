@@ -15,7 +15,7 @@
   unicode-range: U+0000-00FF;
 }
 
-#sql-practice, .practice-hub, .sql-practice-callout {
+#sql-practice, .practice-hub, .sql-practice-callout { /* sqlp-lint: allow-id 三個元件的根元素定義 token，只跟同名的 token 定義比，不跟元件規則比特定性 */
   --sqlp-bg: #000;
   --sqlp-fg: #fff;
   --sqlp-muted: #a3a3a3;
@@ -116,12 +116,12 @@
   --sqlp-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 @media (pointer: coarse) {
-  #sql-practice, .practice-hub, .sql-practice-callout { --sqlp-hit: 44px; }
+  #sql-practice, .practice-hub, .sql-practice-callout { --sqlp-hit: 44px; } /* sqlp-lint: allow-id 同一組根元素在觸控裝置上重新對應 token */
 }
 /* 手機：大字各降一階；題目需求不降，它是讀者作答要讀的主角。
    599px 這個斷點也寫在 assets/js/sqlp-components.js 的 NARROW（JS 讀不到 media query），改的時候一起改 */
 @media (max-width: 599px) {
-  #sql-practice, .practice-hub, .sql-practice-callout {
+  #sql-practice, .practice-hub, .sql-practice-callout { /* sqlp-lint: allow-id 同一組根元素在手機寬度下重新對應字級 token */
     --sqlp-t-poster: var(--sqlp-size-d2);   --sqlp-lh-poster: 72px;
     --sqlp-t-title: var(--sqlp-size-xl);    --sqlp-lh-title: 34px;
     --sqlp-t-tag: var(--sqlp-size-xl);      --sqlp-lh-tag: 28px;

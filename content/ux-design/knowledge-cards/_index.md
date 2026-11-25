@@ -29,3 +29,5 @@ UX 設計教學中出現的關鍵術語卡片。每張卡片說明一個語意�
 | [Specificity（特定性）](/ux-design/knowledge-cards/specificity/)                                                             | 兩條 CSS 規則搶同一個屬性時比的值——它排在 `!important` 與 cascade layer 之後，只替部分規則加權會打亂元件內部的勝負 |
 | [Design Token（具名設計值）](/ux-design/knowledge-cards/design-token/)                                                       | 替設計決定取名、元件引用名字——數設計決定而不數值，primitive 與 semantic 兩層各管哪一種調整                         |
 | [DTCG Format（具名設計值的交換格式）](/ux-design/knowledge-cards/dtcg-format/)                                               | 在設計工具、轉換工具與程式碼之間交換 token 的 JSON 格式——什麼時候當唯一來源、什麼時候手寫 CSS 自訂屬性就夠         |
+| [Computed Style（計算後的樣式）](/ux-design/knowledge-cards/computed-style/)                                                 | 瀏覽器處理完層疊與繼承後元素實際套用的值——getComputedStyle 讀到哪一個階段、哪些狀態與元素讀不到                    |
+| [Cascade Layer（層疊分層）](/ux-design/knowledge-cards/cascade-layer/)                                                       | `@layer` 的順序排在特定性之前——把對方的 CSS 放進較低的層何時會贏、自己放進 layer 何時反而會輸                      |

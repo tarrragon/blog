@@ -10,7 +10,7 @@ Specificity（特定性）是瀏覽器在兩條 CSS 宣告搶同一個元素的�
 
 ## 跟其他概念的關係
 
-特定性是 CSS 層疊（cascade）選出勝出宣告時的其中一關，排在它前面的關卡先分出勝負時，特定性不必比。層疊依序比：宣告的來源與重要性（`!important` 的宣告在這一關就勝過一般宣告）、cascade layer 的順序、特定性，最後才是在樣式表裡的先後順序。所以 `!important` 與 cascade layer 都是在特定性之前就決定勝負的機制：帶 `!important` 的宣告不論特定性多低都贏過一般宣告，寫在較高 layer 的規則不論特定性多低都贏過較低 layer 的規則。元素上的 `style` 屬性（行內樣式）在 layer 與特定性之前就勝過樣式表裡的一般宣告，任何選擇器的特定性都贏不過它；樣式表裡帶 `!important` 的宣告才贏得過行內的一般宣告。
+特定性是 CSS 層疊（cascade）選出勝出宣告時的其中一關，排在它前面的關卡先分出勝負時，特定性不必比。層疊依序比：宣告的來源與重要性（`!important` 的宣告在這一關就勝過一般宣告）、cascade layer 的順序（見 [Cascade Layer（層疊分層）](/ux-design/knowledge-cards/cascade-layer/) 卡）、特定性，最後才是在樣式表裡的先後順序。所以 `!important` 與 cascade layer 都是在特定性之前就決定勝負的機制：帶 `!important` 的宣告不論特定性多低都贏過一般宣告，寫在較高 layer 的規則不論特定性多低都贏過較低 layer 的規則。元素上的 `style` 屬性（行內樣式）在 layer 與特定性之前就勝過樣式表裡的一般宣告，任何選擇器的特定性都贏不過它；樣式表裡帶 `!important` 的宣告才贏得過行內的一般宣告。
 
 用 [Design Token（具名設計值）](/ux-design/knowledge-cards/design-token/) 取值的元件，token 通常定義在元件的根元素上，靠繼承傳到子孫；token 的重新定義（例如手機寬度下改字級）同樣要在層疊裡勝出，所以寫在同一個選擇器、同一份檔案的後面。layer 與特定性的取捨在 [CSS Layers 取代 specificity 戰](/report/css-layers-over-specificity/)。
 

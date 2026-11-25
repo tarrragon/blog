@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 3.20.0 — `references/project-integration/README.md` 的「執法工具」那一列改寫（只對本專案成立，這個資料夾不隨同步傳遞，共用的 reference 沒有改）：寫出改了 CSS 之後的第一個動作（提交前跑檢查腳本）與 pre-commit 擋下提交的兩種結束碼；列出擋的寫法，不只寫「那一節列的各項」；允許註解寫在同一行、原因要對到一種例外、豁免的範圍；新擋的「token 檔以外用字面值定義自訂屬性」；擋下的 id 改寫後要重跑快照比對；新增 CSS 檔時要加進檢查清單；宿主樣式比較的對象與展示頁的路徑。缺口：規則讀者探針三份都讀不出色名會不會被擋、允許註解寫在哪裡，以及照這一列的第一個動作。
+
 **Version**: 3.19.0 — 新增兩份隨時可查的 reference：`design-system-token-layer.md`（design system 的組成與前置「design token 層」的判定）與 `web-platform-notes.md`（元件以 HTML／CSS 實作時，填契約與驗收另外要做的事）。權威位置為這兩份檔；`SKILL.md` 的〈全程〉清單、〈起手〉前置表的 design token 層那一列、〈與相鄰資產的交界〉與 description 改成指向它們。
 
 - **缺口一（token 層沒有擁有者）**：〈起手〉把 design token 層列為前置，缺料時交給 `foundation-design`；`foundation-design` 的 UI 維度指向方法論〈地基波 build 順序〉，那一塊只寫了「design token 層（顏色／間距／字體／圓角／陰影）」。token 怎麼判斷齊不齊、哪些值要取名、怎麼分層、來源檔用什麼格式、怎麼擋新的寫死值，沒有任何一份寫到。實例：一個練習題網站的 CSS 混著 `!important`、寫死的 px 字級與色碼，改成全部引用 token 時，要自己決定字級分兩層、斷點留字面值、`body` 取不到根元素上的 token；擋寫死值的檢查腳本第一版沒有印讀到幾個宣告，拿重構前的舊檔當正對照才確認它在讀（123 處違規）。

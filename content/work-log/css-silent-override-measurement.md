@@ -12,7 +12,7 @@ slug: "css-silent-override-measurement"
 
 ## 判斷哪一條 CSS 規則生效：讀計算後的樣式與 Styles 面板
 
-CSS 的層疊（cascade）在兩條宣告衝突時，依序比來源與重要性（`!important`）、cascade layer、特定性（specificity，見 [Specificity（特定性）](/ux-design/knowledge-cards/specificity/) 卡）與先後順序，選一條套用；元素的 `style` 屬性排在同一來源的選擇器規則之前。落選的那一條不產生錯誤、不產生警告，所以「改了沒效果」在畫面上看起來跟改之前差不多。從截圖只看得出「好像還是太小」「好像貼著邊」，看不出實際套用的值是多少、是哪一條宣告決定的。
+CSS 的層疊（cascade）在兩條宣告衝突時，依序比來源與重要性（`!important`）、cascade layer（見 [Cascade Layer（層疊分層）](/ux-design/knowledge-cards/cascade-layer/) 卡）、特定性（specificity，見 [Specificity（特定性）](/ux-design/knowledge-cards/specificity/) 卡）與先後順序，選一條套用；元素的 `style` 屬性排在同一來源的選擇器規則之前。落選的那一條不產生錯誤、不產生警告，所以「改了沒效果」在畫面上看起來跟改之前差不多。從截圖只看得出「好像還是太小」「好像貼著邊」，看不出實際套用的值是多少、是哪一條宣告決定的。
 
 瀏覽器算出來的值是判斷的依據，截圖只用來發現「好像不對」。這一輪的量測用了兩種讀法：
 
@@ -28,7 +28,7 @@ return {
 };
 ```
 
-`getComputedStyle` 回傳層疊決定之後的值（跟版面有關的屬性回傳的是排版之後的使用值），也就是計算後的樣式（computed style）；`getBoundingClientRect` 回傳版面排完之後的位置。算出來的值跟規則寫的不同，代表寫的那一條沒有決定這個值，成因要在 DevTools 的 Styles 面板上分：
+`getComputedStyle` 回傳層疊決定之後的值（跟版面有關的屬性回傳的是排版之後的使用值），也就是計算後的樣式（computed style，見 [Computed Style（計算後的樣式）](/ux-design/knowledge-cards/computed-style/) 卡）；`getBoundingClientRect` 回傳版面排完之後的位置。算出來的值跟規則寫的不同，代表寫的那一條沒有決定這個值，成因要在 DevTools 的 Styles 面板上分：
 
 | Styles 面板上那一條宣告    | 代表                                                                         |
 | -------------------------- | ---------------------------------------------------------------------------- |
