@@ -1572,6 +1572,11 @@
    "module": "business"
   },
   {
+   "name": "Design Token",
+   "card": "ux-design/knowledge-cards/design-token",
+   "module": "ux-design"
+  },
+  {
    "name": "Design Win",
    "card": "business/procurement-planning/cards/design-win",
    "module": "business"
@@ -4132,6 +4137,11 @@
    "module": "llm"
   },
   {
+   "name": "Positive Control",
+   "card": "testing/knowledge-cards/positive-control",
+   "module": "testing"
+  },
+  {
    "name": "Post-Incident Review",
    "card": "backend/knowledge-cards/post-incident-review",
    "module": "backend"
@@ -5427,6 +5437,11 @@
    "module": "llm"
   },
   {
+   "name": "Specificity",
+   "card": "ux-design/knowledge-cards/specificity",
+   "module": "ux-design"
+  },
+  {
    "name": "Speculative Decoding",
    "card": "llm/knowledge-cards/speculative-decoding",
    "module": "llm"
@@ -6617,6 +6632,11 @@
    "module": "backend"
   },
   {
+   "name": "具名設計值",
+   "card": "ux-design/knowledge-cards/design-token",
+   "module": "ux-design"
+  },
+  {
    "name": "冒煙測試",
    "card": "testing/knowledge-cards/smoke-test",
    "module": "testing"
@@ -7362,6 +7382,11 @@
    "module": "business"
   },
   {
+   "name": "正對照",
+   "card": "testing/knowledge-cards/positive-control",
+   "module": "testing"
+  },
+  {
    "name": "正常化盈餘",
    "card": "business/knowledge-cards/normalized-earnings",
    "module": "business"
@@ -7515,6 +7540,11 @@
    "name": "牛鞭效應",
    "card": "business/knowledge-cards/bullwhip-effect",
    "module": "business"
+  },
+  {
+   "name": "特定性",
+   "card": "ux-design/knowledge-cards/specificity",
+   "module": "ux-design"
   },
   {
    "name": "特權容器",

@@ -28,6 +28,7 @@ tags: ["testing", "knowledge-cards"]
 | [Characterization Test](/testing/knowledge-cards/characterization-test/)                                       | 重構安全網        | 鎖住現有行為的測試，用於 legacy 重構前的安全網                             |
 | [Quarantine](/testing/knowledge-cards/quarantine/)                                                             | 團隊治理          | 把已知 flaky 測試隔離觀察、保留回收壓力的機制                              |
 | [Test Environment Identification（測試環境判定）](/testing/knowledge-cards/environment-identification/)        | 測試基礎設施      | 防止自動化測試對生產環境執行的誤擊防護前提                                 |
+| [Positive Control（正對照）](/testing/knowledge-cards/positive-control/)                                       | 檢查的驗證        | 餵一個已知會被抓到的輸入，分開「目標不存在」與「檢查沒有在看」兩種零       |
 | [Test Oracle](/testing/knowledge-cards/test-oracle/)                                                           | 判斷標準與出處    | 測試憑什麼判定通過的四種來源，以及寫不下來時的兩種替代形態                 |
 | [Test Provenance（測試出處）](/testing/knowledge-cards/test-provenance/)                                       | 判斷標準與出處    | 測試與實作同源時 oracle 退化成實作自身的回音                               |
 | [Testing vs Checking（探究與檢查）](/testing/knowledge-cards/testing-vs-checking/)                             | 判斷標準與出處    | 判斷標準的執行交得出去、判斷標準的設計交不出去                             |

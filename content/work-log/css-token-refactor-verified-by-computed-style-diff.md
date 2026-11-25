@@ -8,7 +8,7 @@ slug: "css-token-refactor-verified-by-computed-style-diff"
 
 2026-11-25 在 macOS 15.3.1 上重構本站 SQL 練習頁的樣式。練習頁的 DOM 由 vanilla JavaScript 產生，樣式是幾份手寫的 CSS：練習頁本身的 `practice.css`、練習總覽頁清單的 `hub.css`、文章結尾練習入口的 `callout.css`。這幾個元件嵌在 Hugo 0.151 產生的 blog 頁面裡，下文把這些頁面連同它們載入的 blog 主題樣式與自訂樣式 `custom.css` 稱為宿主。量測用 Playwright 1.59.1 驅動的 Chromium 147.0.7727.15，沒有在 Firefox 與 Safari 上量。
 
-這篇的 token 指用 CSS 自訂屬性（custom property）命名的設計值，例如 `--sqlp-bg: #000`，元件規則以 `var(--sqlp-bg)` 引用它。這篇整理那一次重構裡要量測才判得準的事：重構前後怎麼逐元素比對計算後的樣式（computed style），確認畫面沒變、或只在預期的屬性上變了；`!important` 的成因（減少動態效果的規則要蓋過後寫的 hover 規則、選擇器的特定性算錯）與不提高優先度的替代寫法；字級改成尺寸階與功能字級兩層，以及收斂字級時怎麼分出預期內的差異；顏色、線寬與命中區（可點元件的最小高度，概念見 [Touch Target（觸控目標）](/ux-design/knowledge-cards/touch-target/) 卡）改成 token 時，計算後的字串不同而畫面相同的差異、以及 CSS 改變不了的狀態造成的差異怎麼判；擋住新的寫死值的檢查腳本與它的正對照；怎麼量出帶 id 的選擇器實際要贏過哪一條規則；逐元素比對量不到、要靠截圖尺寸發現的 grid 子項溢出；以及練習頁、總覽頁與文章入口三個元件改從同一份 token 檔取值、JavaScript 讀 token 取代寫死的位移。量計算後的樣式的基本讀法、DevTools 的 Styles 面板怎麼分出規則沒套上還是輸了，在 [CSS 規則沒生效時的量測與成因：範圍重設的特定性與宿主樣式、container-type 與 subgrid、捲動陰影的覆蓋漸層](/work-log/css-silent-override-measurement/)，這篇不重寫；配色本身的對比量測在 [狀態色塊配色的對比量測：文字對色塊、色塊對背景、細標記對底色，以及紅綠色覺差異](/work-log/state-color-contrast-and-color-vision/)。
+這篇的 token 指用 CSS 自訂屬性（custom property）命名的設計值，例如 `--sqlp-bg: #000`，元件規則以 `var(--sqlp-bg)` 引用它（概念見 [Design Token（具名設計值）](/ux-design/knowledge-cards/design-token/) 卡）。這篇整理那一次重構裡要量測才判得準的事：重構前後怎麼逐元素比對計算後的樣式（computed style），確認畫面沒變、或只在預期的屬性上變了；`!important` 的成因（減少動態效果的規則要蓋過後寫的 hover 規則、選擇器的特定性算錯）與不提高優先度的替代寫法；字級改成尺寸階與功能字級兩層，以及收斂字級時怎麼分出預期內的差異；顏色、線寬與命中區（可點元件的最小高度，概念見 [Touch Target（觸控目標）](/ux-design/knowledge-cards/touch-target/) 卡）改成 token 時，計算後的字串不同而畫面相同的差異、以及 CSS 改變不了的狀態造成的差異怎麼判；擋住新的寫死值的檢查腳本與它的正對照；怎麼量出帶 id 的選擇器實際要贏過哪一條規則；逐元素比對量不到、要靠截圖尺寸發現的 grid 子項溢出；以及練習頁、總覽頁與文章入口三個元件改從同一份 token 檔取值、JavaScript 讀 token 取代寫死的位移。量計算後的樣式的基本讀法、DevTools 的 Styles 面板怎麼分出規則沒套上還是輸了，在 [CSS 規則沒生效時的量測與成因：範圍重設的特定性與宿主樣式、container-type 與 subgrid、捲動陰影的覆蓋漸層](/work-log/css-silent-override-measurement/)，這篇不重寫；配色本身的對比量測在 [狀態色塊配色的對比量測：文字對色塊、色塊對背景、細標記對底色，以及紅綠色覺差異](/work-log/state-color-contrast-and-color-vision/)。
 
 文中提到的練習頁元件：
 
@@ -59,7 +59,7 @@ await page.addInitScript(() => {
 
 ## !important 的成因與不提高優先度的替代寫法：減少動態效果的規則、算錯的特定性
 
-兩條宣告衝突時，瀏覽器的層疊（cascade）在同一個來源、沒有用 cascade layer 的情形下，依序比重要性、特定性（specificity，選擇器裡 id、class 與元素各有幾個）與先後順序來選一條；包含來源與 layer 的完整順序在 [CSS 規則沒生效時的量測與成因：範圍重設的特定性與宿主樣式、container-type 與 subgrid、捲動陰影的覆蓋漸層](/work-log/css-silent-override-measurement/) 的〈判斷哪一條 CSS 規則生效〉。宣告帶 `!important` 時，層疊在比特定性之前就先選它，下一次有規則要蓋過它時，只能再寫一條 `!important`。這次練習頁的 CSS 有兩行用了 `!important`（減少動態效果那一行一個宣告，輸出框那一行兩個宣告），成因不同。
+兩條宣告衝突時，瀏覽器的層疊（cascade）在同一個來源、沒有用 cascade layer 的情形下，依序比重要性、特定性（specificity，選擇器裡 id、class 與元素各有幾個；見 [Specificity（特定性）](/ux-design/knowledge-cards/specificity/) 卡）與先後順序來選一條；包含來源與 layer 的完整順序在 [CSS 規則沒生效時的量測與成因：範圍重設的特定性與宿主樣式、container-type 與 subgrid、捲動陰影的覆蓋漸層](/work-log/css-silent-override-measurement/) 的〈判斷哪一條 CSS 規則生效〉。宣告帶 `!important` 時，層疊在比特定性之前就先選它，下一次有規則要蓋過它時，只能再寫一條 `!important`。這次練習頁的 CSS 有兩行用了 `!important`（減少動態效果那一行一個宣告，輸出框那一行兩個宣告），成因不同。
 
 **減少動態效果的規則要蓋過寫在它後面的 hover 規則。** 練習頁的選項磚與回合磚在 hover 時傾斜一點，使用者在系統設定裡要求減少動態效果時（`prefers-reduced-motion: reduce`），傾斜要取消。原本的寫法是在減少動態的 media query 裡寫 `transform: none !important`：回合磚的 `.sqlp-round:hover` 規則寫在那個 media query 之後，兩者特定性相同，不加 `!important` 時後寫的 hover 規則勝出。替代寫法是反過來，只在使用者沒有要求減少動態效果時加上傾斜：
 
@@ -121,7 +121,7 @@ await page.addInitScript(() => {
 
 這支腳本逐行讀原始檔，每一行只把最後一個 `{` 之後的內容當成宣告，所以適用的對象是每行一條規則或一個宣告的手寫 CSS。餵進壓縮成一行的 CSS 時，它只讀到最後一條規則的宣告；餵進 Sass 原始檔時，`color: $brand` 的值裡沒有色碼，`$brand: #123456` 又不是 CSS 宣告，兩行都不會被報出。用 Sass 或其他前處理器的專案，要檢查未壓縮的編譯產物，或改用以 CSS parser 為基礎的工具。腳本只比對上面三種寫法，色名（`white`）、`oklch()`、`hwb()`、`color()` 這幾種色彩函式，以及把字級寫在 `font` 簡寫裡的 `font: 16px/1.5 sans-serif`，都不會被報出。色名沒有擋，因為 `transparent`、`currentColor` 這類關鍵字要放行；其餘幾種寫法練習頁的 CSS 目前沒有用到，這次沒有加進檢查。Stylelint 是以 CSS parser 為基礎的檢查工具，`declaration-no-important`、`color-no-hex`、`color-named` 這些既有規則涵蓋這支腳本的三種寫法與色名，沒有讀到輸入檔時也會報錯；檢查的寫法要增加、或 CSS 不是每行一條規則時，改用它比擴充這支腳本省事。
 
-腳本結尾印出「檢查了幾個宣告、幾處違規」，有違規時 exit 1，一個宣告都沒讀到時 exit 2。讀到 0 個宣告與讀到幾百個宣告而 0 違規，在只看違規清單時看起來一樣，所以分成兩個 exit code。這支腳本的正對照（positive control：餵進已知會違規的輸入，確認檢查確實讀到了要檢查的宣告）用重構前的 `practice.css`：它報出 123 處違規，包括兩行裡的三個 `!important` 宣告；重構完成後，`practice.css` 是 710 個宣告、0 處違規，連同下文的 `tokens.css`、`callout.css`、`hub.css` 四份合計 790 個宣告、0 處違規。pre-commit hook 在 `tokens.css`、`practice.css`、`callout.css` 或 `hub.css` 有 staged 時，用 `git show :<路徑>` 取出 staged 的內容交給腳本檢查，檢查的是這次要提交的版本，不是工作樹裡可能還在改的版本。
+腳本結尾印出「檢查了幾個宣告、幾處違規」，有違規時 exit 1，一個宣告都沒讀到時 exit 2。讀到 0 個宣告與讀到幾百個宣告而 0 違規，在只看違規清單時看起來一樣，所以分成兩個 exit code。這支腳本的正對照（positive control：餵進已知會違規的輸入，確認檢查確實讀到了要檢查的宣告；見 [Positive Control（正對照）](/testing/knowledge-cards/positive-control/) 卡）用重構前的 `practice.css`：它報出 123 處違規，包括兩行裡的三個 `!important` 宣告；重構完成後，`practice.css` 是 710 個宣告、0 處違規，連同下文的 `tokens.css`、`callout.css`、`hub.css` 四份合計 790 個宣告、0 處違規。pre-commit hook 在 `tokens.css`、`practice.css`、`callout.css` 或 `hub.css` 有 staged 時，用 `git show :<路徑>` 取出 staged 的內容交給腳本檢查，檢查的是這次要提交的版本，不是工作樹裡可能還在改的版本。
 
 ## 提高特定性的 id 選擇器：拿掉 id 量出它是否還要贏過某條規則、改寫腳本的過濾條件、七條規則的處置
 
