@@ -48,6 +48,35 @@ body.page-practice #sql-practice { max-width: 2000px; margin: 0 auto; min-height
   --sqlp-display: "SQLP Display", "Segoe UI", "Helvetica Neue", sans-serif;
   --sqlp-font: "Segoe UI", "Helvetica Neue", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
   --sqlp-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* 字級分兩層。尺寸階（--sqlp-size-*）只放數字，元件規則不直接引用；元件規則只引用功能字級（--sqlp-t-* 與成對的
+     --sqlp-lh-*），名字說的是這段文字在畫面上的功能。某個功能的字在畫面上太大或太小時，改它對到哪一階，
+     不在元件規則裡寫數字；同一階的字要整體調大調小時才改尺寸階。手機的對應在下面 599px 的 media query */
+  --sqlp-size-xs: 14px;  /* 中文的下限 */
+  --sqlp-size-sm: 16px;
+  --sqlp-size-md: 18px;
+  --sqlp-size-lg: 22px;
+  --sqlp-size-xl: 26px;
+  --sqlp-size-2xl: 30px;
+  --sqlp-size-d1: 40px;  /* d1 到 d3 是 Display 字體的大字 */
+  --sqlp-size-d2: 60px;
+  --sqlp-size-d3: 96px;
+  --sqlp-t-poster: var(--sqlp-size-d3);      --sqlp-lh-poster: 112px;   /* 樞紐關鍵字；行高留出 descender */
+  --sqlp-t-score: var(--sqlp-size-d2);       --sqlp-lh-score: 64px;     /* 結果畫面的分數 */
+  --sqlp-t-glyph: var(--sqlp-size-d1);       --sqlp-lh-glyph: 40px;     /* 選項字母、回合磚的關鍵字 */
+  --sqlp-t-title: var(--sqlp-size-2xl);      --sqlp-lh-title: 40px;     /* 畫面標題 */
+  --sqlp-t-nav: var(--sqlp-size-xl);         --sqlp-lh-nav: 34px;       /* 樞紐列的階段名稱 */
+  --sqlp-t-nav-current: var(--sqlp-size-2xl);                           /* 目前所在的階段，比其他階段大一階 */
+  --sqlp-t-heading: var(--sqlp-size-xl);     --sqlp-lh-heading: 34px;   /* 作答結果的標題 */
+  --sqlp-t-subtitle: var(--sqlp-size-lg);    --sqlp-lh-subtitle: 30px;  /* 區段標題、回合磚名稱 */
+  --sqlp-t-lead: var(--sqlp-size-lg);        --sqlp-lh-lead: 34px;      /* 題目需求：題目畫面左欄最大的字 */
+  --sqlp-t-bar: var(--sqlp-size-md);         --sqlp-lh-bar: 26px;       /* 精簡頂列的位置文字與按鈕 */
+  --sqlp-t-control: var(--sqlp-size-md);     --sqlp-lh-control: 26px;   /* 按鈕、離開連結、文章連結、展開列 */
+  --sqlp-t-strong: var(--sqlp-size-md);      --sqlp-lh-strong: 26px;    /* 粗體的作答指示與選項狀態 */
+  --sqlp-t-body: var(--sqlp-size-sm);        --sqlp-lh-body: 26px;      /* 內文、資料前提、解析、表格 */
+  --sqlp-t-label: var(--sqlp-size-sm);       --sqlp-lh-label: 26px;     /* 題目畫面的標題：考點提示 */
+  --sqlp-t-caption: var(--sqlp-size-sm);     --sqlp-lh-caption: 24px;   /* 灰色說明、進度文字、回合磚說明 */
+  --sqlp-t-code: var(--sqlp-size-sm);        --sqlp-lh-code: 27px;      /* SQL 與表格裡的欄位名稱 */
+  --sqlp-t-small: var(--sqlp-size-xs);       --sqlp-lh-small: 22px;     /* 表頭、欄位標籤、狀態小字 */
   --sqlp-hit: 32px;
   --sqlp-bar-h: 72px; /* 精簡頂列的高度：44px 按鈕 + 上下各 12px + 框線，實測 71px */
   --sqlp-flip: 200ms;
@@ -57,8 +86,8 @@ body.page-practice #sql-practice { max-width: 2000px; margin: 0 auto; min-height
   background: var(--sqlp-bg);
   color: var(--sqlp-fg);
   font-family: var(--sqlp-font);
-  font-size: 17px;
-  line-height: 28px;
+  font-size: var(--sqlp-t-body);
+  line-height: var(--sqlp-lh-body);
   font-weight: 400;
   padding: var(--sqlp-s5) var(--sqlp-s5) calc(var(--sqlp-s7) + env(safe-area-inset-bottom));
   margin-top: var(--sqlp-s5);
@@ -69,7 +98,15 @@ body.page-practice #sql-practice { max-width: 2000px; margin: 0 auto; min-height
   #sql-practice { --sqlp-hit: 44px; }
 }
 @media (max-width: 599px) {
-  #sql-practice { padding-left: var(--sqlp-s4); padding-right: var(--sqlp-s4); }
+  #sql-practice {
+    padding-left: var(--sqlp-s4); padding-right: var(--sqlp-s4);
+    /* 手機：大字各降一階；題目需求不降，它是讀者作答要讀的主角 */
+    --sqlp-t-poster: var(--sqlp-size-d2);   --sqlp-lh-poster: 72px;
+    --sqlp-t-title: var(--sqlp-size-xl);    --sqlp-lh-title: 34px;
+    --sqlp-t-nav: var(--sqlp-size-lg);      --sqlp-lh-nav: 30px;
+    --sqlp-t-nav-current: var(--sqlp-size-xl);
+    --sqlp-t-bar: var(--sqlp-size-sm);      --sqlp-lh-bar: 24px;
+  }
 }
 
 /* 瀏覽器預設的表面也照這個世界上色。範圍包進 :where()：寫成 #sql-practice :focus-visible 時特定性 (1,1,0)，
@@ -113,23 +150,21 @@ html:has(#sql-practice) { scroll-padding-top: 72px; }
     linear-gradient(to left, rgba(255, 255, 255, 0.32), transparent) right / 28px 100% no-repeat scroll,
     var(--sqlp-bg);
 }
-.sqlp-pivot-item { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; font-size: 26px; line-height: 34px; font-weight: 300; color: var(--sqlp-muted); text-decoration: none; }
+.sqlp-pivot-item { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; font-size: var(--sqlp-t-nav); line-height: var(--sqlp-lh-nav); font-weight: 300; color: var(--sqlp-muted); text-decoration: none; }
 /* 手機：階段清單一列（水平捲動）、離開連結另一列，避免離開連結把清單擠到寬度 0 */
 @media (max-width: 599px) {
   .sqlp-pivot { flex-wrap: wrap; gap: var(--sqlp-s2); }
   .sqlp-pivot-items { flex: 1 1 100%; gap: var(--sqlp-s5); }
-  .sqlp-pivot-item { font-size: 22px; }
   .sqlp-exit { max-width: 100%; }
 }
 #sql-practice .sqlp-pivot-item { color: var(--sqlp-muted); text-decoration: none; }
 #sql-practice .sqlp-pivot-item:hover { color: var(--sqlp-fg); }
-/* 目前這一輪：白色、粗體，字級再大一階（26 → 30，跟畫面標題同級），一眼看得出所在位置 */
-#sql-practice .sqlp-pivot-item[aria-current] { color: var(--sqlp-fg); font-weight: 600; font-size: 30px; }
-@media (max-width: 599px) { #sql-practice .sqlp-pivot-item[aria-current] { font-size: 26px; } }
-/* 離開練習：跟次要按鈕同一個造型（灰框、18px、44px 高），文字依去向固定，不截斷 */
+/* 目前這一輪：白色、粗體，字級再大一階，一眼看得出所在位置 */
+#sql-practice .sqlp-pivot-item[aria-current] { color: var(--sqlp-fg); font-weight: 600; font-size: var(--sqlp-t-nav-current); }
+/* 離開練習：跟次要按鈕同一個造型（灰框、按鈕字級、44px 高），文字依去向固定，不截斷 */
 .sqlp-exit {
   flex: none; display: inline-flex; align-items: center; gap: var(--sqlp-s3); min-height: 44px; padding: 0 var(--sqlp-s5);
-  font-size: 18px; line-height: 26px; white-space: nowrap; border: 1.5px solid var(--sqlp-frame-muted);
+  font-size: var(--sqlp-t-control); line-height: var(--sqlp-lh-control); white-space: nowrap; border: 1.5px solid var(--sqlp-frame-muted);
   transition: background-color var(--sqlp-ease) ease-out, color var(--sqlp-ease) ease-out;
 }
 :where(#sql-practice) a.sqlp-exit { color: var(--sqlp-fg); text-decoration: none; }
@@ -147,17 +182,17 @@ html:has(#sql-practice) { scroll-padding-top: 72px; }
   transition: transform 200ms var(--sqlp-out), visibility 0s linear 200ms;
 }
 .sqlp-compact[data-shown] { transform: none; visibility: visible; transition: transform 200ms var(--sqlp-out), visibility 0s; }
-.sqlp-compact-where { flex: 1 1 auto; min-width: 0; font-size: 20px; line-height: 28px; font-weight: 300; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sqlp-compact-where { flex: 1 1 auto; min-width: 0; font-size: var(--sqlp-t-bar); line-height: var(--sqlp-lh-bar); font-weight: 300; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sqlp-compact-short { display: none; }
 .sqlp-compact-actions { display: flex; gap: var(--sqlp-s3); flex: none; }
 .sqlp-compact .sqlp-btn { min-height: 44px; padding-top: 0; padding-bottom: 0; }
+.sqlp-compact .sqlp-btn, .sqlp-compact .sqlp-exit { font-size: var(--sqlp-t-bar); }
 @media (max-width: 599px) {
   .sqlp-compact-wrap { margin: 0 calc(-1 * var(--sqlp-s4)); }
   .sqlp-compact { padding: var(--sqlp-s3) var(--sqlp-s4); gap: var(--sqlp-s3); }
   .sqlp-compact-long { display: none; }
   .sqlp-compact-short { display: inline; }
-  .sqlp-compact-where { font-size: 17px; }
-  .sqlp-compact .sqlp-btn, .sqlp-compact .sqlp-exit { padding: 0 var(--sqlp-s3); font-size: 16px; }
+  .sqlp-compact .sqlp-btn, .sqlp-compact .sqlp-exit { padding: 0 var(--sqlp-s3); }
 }
 @media (prefers-reduced-motion: reduce) {
   .sqlp-compact, .sqlp-compact[data-shown] { transition: none; }
@@ -173,57 +208,54 @@ html:has(#sql-practice) { scroll-padding-top: 72px; }
 .sqlp-progress-bar i[data-s="current"] { background: var(--sqlp-fg); }
 .sqlp-progress-bar i[data-s="ok"] { background: var(--sqlp-rec); }
 .sqlp-progress-bar i[data-s="miss"] { background: #8a8a8a; } /* 細段用較亮的灰：大色塊的 #5a5a5a 縮成細段時，對旁邊的底色要另外算 */
-.sqlp-progress-text { flex: none; font-size: 16px; line-height: 24px; color: var(--sqlp-muted); }
+.sqlp-progress-text { flex: none; font-size: var(--sqlp-t-caption); line-height: var(--sqlp-lh-caption); color: var(--sqlp-muted); }
 
 /* ---- 樞紐關鍵字 KeywordBanner ---- */
 .sqlp-keyword {
-  font-family: var(--sqlp-display); font-weight: 200; font-size: 96px; line-height: 112px; padding-bottom: var(--sqlp-s2);
+  font-family: var(--sqlp-display); font-weight: 200; font-size: var(--sqlp-t-poster); line-height: var(--sqlp-lh-poster); padding-bottom: var(--sqlp-s2);
   letter-spacing: -0.03em; white-space: nowrap; overflow: hidden; margin: 0 0 var(--sqlp-s5) -0.06em;
   color: var(--sqlp-fg); user-select: none;
 }
-@media (max-width: 599px) { .sqlp-keyword { font-size: 60px; line-height: 72px; } }
 
 /* ---- 畫面標題 ScreenTitle、區段標題 ---- */
-.sqlp-title { font-size: 30px; line-height: 40px; font-weight: 300; overflow-wrap: anywhere; text-wrap: balance; }
+.sqlp-title { font-size: var(--sqlp-t-title); line-height: var(--sqlp-lh-title); font-weight: 300; overflow-wrap: anywhere; text-wrap: balance; }
 .sqlp-title:focus { outline: none; }
 .sqlp-title:focus-visible { outline: 3px solid var(--sqlp-accent); }
-@media (max-width: 599px) { .sqlp-title { font-size: 24px; line-height: 32px; } }
 /* label 變體：題目畫面的標題是考點提示，讀者作答靠的是下面的需求，所以標題退成灰色小字、需求放大 */
-.sqlp-title.sqlp-title--label { font-size: 17px; line-height: 26px; font-weight: 400; color: var(--sqlp-muted); text-wrap: wrap; }
-.sqlp-section { font-size: 22px; line-height: 30px; font-weight: 300; margin-bottom: var(--sqlp-s3); }
+.sqlp-title.sqlp-title--label { font-size: var(--sqlp-t-label); line-height: var(--sqlp-lh-label); font-weight: 400; color: var(--sqlp-muted); text-wrap: wrap; }
+.sqlp-section { font-size: var(--sqlp-t-subtitle); line-height: var(--sqlp-lh-subtitle); font-weight: 300; margin-bottom: var(--sqlp-s3); }
 
 /* ---- 內文 Requirement、PremiseList、Hint ---- */
 /* 需求是題目本身，左欄裡最大的字 */
-.sqlp-req { font-size: 22px; line-height: 34px; max-width: 40em; overflow-wrap: anywhere; }
-@media (max-width: 599px) { .sqlp-req { font-size: 20px; line-height: 32px; } }
-.sqlp-premise { display: grid; grid-template-columns: 4.5em minmax(0, 1fr); gap: var(--sqlp-s2) var(--sqlp-s4); font-size: 16px; line-height: 26px; }
+.sqlp-req { font-size: var(--sqlp-t-lead); line-height: var(--sqlp-lh-lead); max-width: 40em; overflow-wrap: anywhere; }
+.sqlp-premise { display: grid; grid-template-columns: 4.5em minmax(0, 1fr); gap: var(--sqlp-s2) var(--sqlp-s4); font-size: var(--sqlp-t-body); line-height: var(--sqlp-lh-body); }
 .sqlp-premise dt { color: var(--sqlp-muted); }
 .sqlp-premise dd { margin: 0; overflow-wrap: anywhere; }
-.sqlp-hint { font-size: 16px; line-height: 24px; color: var(--sqlp-muted); }
-.sqlp-hint-strong { color: var(--sqlp-fg); font-weight: 600; font-size: 17px; line-height: 26px; }
+.sqlp-hint { font-size: var(--sqlp-t-caption); line-height: var(--sqlp-lh-caption); color: var(--sqlp-muted); }
+.sqlp-hint-strong { color: var(--sqlp-fg); font-weight: 600; font-size: var(--sqlp-t-strong); line-height: var(--sqlp-lh-strong); }
 
 /* ---- 資料表結構 SchemaDisclosure ---- */
 /* 資料表結構放在右欄（寬），每張表一個「欄位、型別、約束、說明」的表格；窄時表格水平捲動 */
 .sqlp-schema { background: var(--sqlp-tile); }
-.sqlp-schema summary { display: flex; align-items: center; gap: var(--sqlp-s3); min-height: 52px; padding: var(--sqlp-s2) var(--sqlp-s4); cursor: pointer; list-style: none; font-size: 18px; line-height: 26px; }
+.sqlp-schema summary { display: flex; align-items: center; gap: var(--sqlp-s3); min-height: 52px; padding: var(--sqlp-s2) var(--sqlp-s4); cursor: pointer; list-style: none; font-size: var(--sqlp-t-control); line-height: var(--sqlp-lh-control); }
 .sqlp-schema summary::-webkit-details-marker { display: none; }
 .sqlp-schema summary .sqlp-minus { display: none; }
 .sqlp-schema[open] summary .sqlp-plus { display: none; }
 .sqlp-schema[open] summary .sqlp-minus { display: block; }
-.sqlp-schema-names { color: var(--sqlp-muted); font-family: var(--sqlp-mono); font-size: 16px; }
+.sqlp-schema-names { color: var(--sqlp-muted); font-family: var(--sqlp-mono); font-size: var(--sqlp-t-code); }
 .sqlp-schema-body { display: grid; gap: var(--sqlp-s5); padding: var(--sqlp-s2) var(--sqlp-s4) var(--sqlp-s5); }
-.sqlp-schema-table h4 { margin: 0 0 var(--sqlp-s2); display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sqlp-s3); font-size: 18px; color: var(--sqlp-fg); }
-.sqlp-schema-table h4 code { font-size: 18px; font-weight: 600; color: #7cc7ff; }
-.sqlp-schema-opt { font-family: var(--sqlp-mono); font-size: 14px; color: var(--sqlp-muted); }
+.sqlp-schema-table h4 { margin: 0 0 var(--sqlp-s2); display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sqlp-s3); font-size: var(--sqlp-t-control); color: var(--sqlp-fg); }
+.sqlp-schema-table h4 code { font-size: var(--sqlp-t-control); font-weight: 600; color: #7cc7ff; }
+.sqlp-schema-opt { font-family: var(--sqlp-mono); font-size: var(--sqlp-t-small); color: var(--sqlp-muted); }
 .sqlp-schema-scroll { overflow-x: auto; background: var(--sqlp-well); }
-.sqlp-schema-table table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 24px; }
+.sqlp-schema-table table { width: 100%; border-collapse: collapse; font-size: var(--sqlp-t-body); line-height: var(--sqlp-lh-body); }
 .sqlp-schema-table th, .sqlp-schema-table td { text-align: left; vertical-align: top; padding: var(--sqlp-s2) var(--sqlp-s4); border-top: 1px solid var(--sqlp-rule); }
-.sqlp-schema-table thead th { border-top: 0; font-size: 14px; font-weight: 600; color: var(--sqlp-muted); white-space: nowrap; }
+.sqlp-schema-table thead th { border-top: 0; font-size: var(--sqlp-t-small); font-weight: 600; color: var(--sqlp-muted); white-space: nowrap; }
 .sqlp-schema-table tbody th { white-space: nowrap; font-weight: 400; }
-.sqlp-schema-table tbody th code { font-family: var(--sqlp-mono); font-size: 16px; color: var(--sqlp-fg); }
-.sqlp-schema-tc th { color: var(--sqlp-muted); font-size: 14px; }
+.sqlp-schema-table tbody th code { font-family: var(--sqlp-mono); font-size: var(--sqlp-t-code); color: var(--sqlp-fg); }
+.sqlp-schema-tc th { color: var(--sqlp-muted); font-size: var(--sqlp-t-small); }
 .sqlp-schema-note { color: var(--sqlp-muted); min-width: 12em; }
-.sqlp-sql-inline { font-family: var(--sqlp-mono); font-size: 15px; white-space: pre-wrap; }
+.sqlp-sql-inline { font-family: var(--sqlp-mono); font-size: var(--sqlp-t-code); white-space: pre-wrap; }
 .sqlp-sql-inline .sqlp-k-kw { color: #7cc7ff; font-weight: 600; }
 .sqlp-sql-inline .sqlp-k-fn { color: #ffcf70; }
 .sqlp-sql-inline .sqlp-k-str { color: #a8e39a; }
@@ -244,11 +276,11 @@ html:has(#sql-practice) { scroll-padding-top: 72px; }
 .sqlp-tile[data-state="revealed-chosen-miss"] { --sqlp-well: #202020; }
 .sqlp-tile[data-state="revealed-other"] { --sqlp-well: #000; }
 .sqlp-code { background: var(--sqlp-well); padding: var(--sqlp-s3) var(--sqlp-s4); overflow-x: auto; }
-.sqlp-sql { margin: 0; font-family: var(--sqlp-mono); font-size: 16px; line-height: 27px; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--sqlp-fg); background: none; tab-size: 2; }
+.sqlp-sql { margin: 0; font-family: var(--sqlp-mono); font-size: var(--sqlp-t-code); line-height: var(--sqlp-lh-code); white-space: pre-wrap; overflow-wrap: anywhere; color: var(--sqlp-fg); background: none; tab-size: 2; }
 .sqlp-sql code { font-size: inherit; font-family: inherit; }
 /* 手機：SQL 不換行、整塊水平捲動。左右兩緣的陰影只在那一側還有內容時出現（background-attachment: local 的捲動陰影） */
 @media (max-width: 599px) {
-  .sqlp-sql { white-space: pre; overflow-wrap: normal; font-size: 15px; line-height: 25px; }
+  .sqlp-sql { white-space: pre; overflow-wrap: normal; }
   .sqlp-code {
     background:
       linear-gradient(to right, var(--sqlp-well) 12px, transparent) left / 24px 100% no-repeat local,
@@ -267,7 +299,7 @@ html:has(#sql-practice) { scroll-padding-top: 72px; }
 .sqlp-sql .sqlp-k-id { color: var(--sqlp-fg); }
 .sqlp-sql .sqlp-k-op { color: #cfcfcf; }
 /* 整段是 -- 註解的選項是文字描述的設計方案，用一般文字排 */
-.sqlp-prose { margin: 0; font-size: 16px; line-height: 27px; overflow-wrap: anywhere; }
+.sqlp-prose { margin: 0; font-size: var(--sqlp-t-body); line-height: var(--sqlp-lh-body); overflow-wrap: anywhere; }
 
 /* ---- 磚格 TileGrid / 選項磚 OptionTile ----
    單欄：每個選項用滿右欄寬，SQL 一行約可放 95 個字元。
@@ -284,8 +316,8 @@ html:has(#sql-practice) { scroll-padding-top: 72px; }
 .sqlp-tile .sqlp-code { margin: 0 var(--sqlp-s3); }
 .sqlp-tile .sqlp-prose { margin: 0 var(--sqlp-s3); padding: var(--sqlp-s3) var(--sqlp-s4); background: var(--sqlp-well); }
 .sqlp-tile-head { display: flex; align-items: center; gap: var(--sqlp-s4); padding: var(--sqlp-s2) var(--sqlp-s4); min-height: 56px; }
-.sqlp-tile-letter { font-family: var(--sqlp-display); font-weight: 200; font-size: 44px; line-height: 44px; width: 1em; }
-.sqlp-tile-state { display: flex; flex-wrap: wrap; gap: var(--sqlp-s3); font-size: 17px; line-height: 24px; font-weight: 600; }
+.sqlp-tile-letter { font-family: var(--sqlp-display); font-weight: 200; font-size: var(--sqlp-t-glyph); line-height: var(--sqlp-lh-glyph); width: 1em; }
+.sqlp-tile-state { display: flex; flex-wrap: wrap; gap: var(--sqlp-s3); font-size: var(--sqlp-t-strong); line-height: var(--sqlp-lh-strong); font-weight: 600; }
 /* 未作答的磚：標頭鋪 cyan 點陣（參考圖的 dot matrix） */
 button.sqlp-tile { cursor: pointer; }
 button.sqlp-tile .sqlp-tile-head { background-image: radial-gradient(circle at 1px 1px, rgba(0, 189, 227, 0.3) 1px, transparent 1.5px); background-size: 9px 9px; }
@@ -331,7 +363,7 @@ button.sqlp-tile:hover { background-color: var(--sqlp-tile-hover); }
 .sqlp-analysis {
   display: grid; grid-template-columns: 6em minmax(0, 1fr); column-gap: var(--sqlp-s4);
   margin: var(--sqlp-s3) var(--sqlp-s3) 0; padding: var(--sqlp-s1) var(--sqlp-s4);
-  background: rgba(0, 0, 0, 0.26); font-size: 16px; line-height: 27px;
+  background: rgba(0, 0, 0, 0.26); font-size: var(--sqlp-t-body); line-height: var(--sqlp-lh-body);
 }
 .sqlp-analysis dt, .sqlp-analysis dd { padding: var(--sqlp-s3) 0; border-top: 1px solid rgba(255, 255, 255, 0.24); }
 .sqlp-analysis dt:first-of-type, .sqlp-analysis dt:first-of-type + dd { border-top: 0; }
@@ -349,38 +381,38 @@ button.sqlp-tile:hover { background-color: var(--sqlp-tile-hover); }
 .sqlp-result { padding: var(--sqlp-s4) var(--sqlp-s5); color: var(--sqlp-on-color); margin-bottom: var(--sqlp-s4); }
 .sqlp-result[data-v="ok"] { background: var(--sqlp-rec); }
 .sqlp-result[data-v="miss"] { background: var(--sqlp-miss); }
-.sqlp-result h3 { font-size: 26px; line-height: 34px; font-weight: 300; }
+.sqlp-result h3 { font-size: var(--sqlp-t-heading); line-height: var(--sqlp-lh-heading); font-weight: 300; }
 .sqlp-result h3:focus { outline: none; }
 .sqlp-result h3:focus-visible { outline: 3px solid var(--sqlp-on-color); outline-offset: 4px; }
-.sqlp-result p { font-size: 15px; line-height: 24px; margin-top: var(--sqlp-s2); }
+.sqlp-result p { font-size: var(--sqlp-t-body); line-height: var(--sqlp-lh-body); margin-top: var(--sqlp-s2); }
 
 /* ---- 文章清單 DocLinks ---- */
 .sqlp-docs ul { list-style: none; padding: 0; display: grid; gap: var(--sqlp-s1); }
-.sqlp-docs li a { display: flex; align-items: center; gap: var(--sqlp-s3); min-height: 44px; padding: var(--sqlp-s2) 0; font-size: 18px; line-height: 28px; }
+.sqlp-docs li a { display: flex; align-items: center; gap: var(--sqlp-s3); min-height: 44px; padding: var(--sqlp-s2) 0; font-size: var(--sqlp-t-control); line-height: var(--sqlp-lh-control); }
 #sql-practice .sqlp-docs li a:visited { color: var(--sqlp-muted); }
 
 /* ---- 困惑筆記 ConfusionNote ---- */
-.sqlp-note summary { display: flex; align-items: center; gap: var(--sqlp-s2); min-height: var(--sqlp-hit); cursor: pointer; list-style: none; font-size: 15px; }
+.sqlp-note summary { display: flex; align-items: center; gap: var(--sqlp-s2); min-height: var(--sqlp-hit); cursor: pointer; list-style: none; font-size: var(--sqlp-t-body); }
 .sqlp-note summary::-webkit-details-marker { display: none; }
 .sqlp-note summary .sqlp-minus { display: none; }
 .sqlp-note[open] summary .sqlp-plus { display: none; }
 .sqlp-note[open] summary .sqlp-minus { display: block; }
 .sqlp-note-body { display: grid; gap: var(--sqlp-s2); padding-top: var(--sqlp-s3); max-width: 40em; }
-.sqlp-note label { font-size: 14px; color: var(--sqlp-muted); }
+.sqlp-note label { font-size: var(--sqlp-t-small); color: var(--sqlp-muted); }
 .sqlp-note select, .sqlp-note textarea {
-  font: inherit; font-size: 16px; line-height: 24px; color: var(--sqlp-fg); background: var(--sqlp-tile);
+  font: inherit; font-size: var(--sqlp-t-body); line-height: var(--sqlp-lh-body); color: var(--sqlp-fg); background: var(--sqlp-tile);
   border: 1.5px solid var(--sqlp-rule); border-radius: 0; padding: var(--sqlp-s2) var(--sqlp-s3); width: 100%; box-sizing: border-box;
 }
 .sqlp-note select:focus, .sqlp-note textarea:focus { border-color: var(--sqlp-accent); outline: none; }
 .sqlp-note textarea::placeholder { color: var(--sqlp-muted); }
 /* 輸出框也是 textarea：選擇器要寫到 (0,2,0)，才贏得過上面 .sqlp-note textarea 的 (0,1,1) */
-.sqlp-note .sqlp-note-out { font-family: var(--sqlp-mono); font-size: 14px; }
+.sqlp-note .sqlp-note-out { font-family: var(--sqlp-mono); font-size: var(--sqlp-t-small); }
 
 /* ---- 按鈕 Button ---- */
 .sqlp-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--sqlp-s3);
   min-height: var(--sqlp-hit); min-width: var(--sqlp-hit); padding: var(--sqlp-s3) var(--sqlp-s5);
-  font: inherit; font-size: 17px; line-height: 24px; font-weight: 400; max-width: 100%; text-align: center;
+  font: inherit; font-size: var(--sqlp-t-control); line-height: var(--sqlp-lh-control); font-weight: 400; max-width: 100%; text-align: center;
   border: 1.5px solid var(--sqlp-frame-muted); border-radius: 0; background: transparent; color: var(--sqlp-fg);
   cursor: pointer; text-decoration: none;
   transition: background-color var(--sqlp-ease) ease-out, color var(--sqlp-ease) ease-out, transform 80ms ease-out;
@@ -424,7 +456,7 @@ button.sqlp-tile:hover { background-color: var(--sqlp-tile-hover); }
   .sqlp-q-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sqlp-s3); justify-items: start; }
   .sqlp-q-toggle {
     display: inline-flex; align-items: center; gap: var(--sqlp-s2); min-height: 44px; padding: 0 var(--sqlp-s3);
-    font: inherit; font-size: 14px; color: var(--sqlp-fg); background: transparent; border: 1.5px solid var(--sqlp-frame-muted); border-radius: 0; cursor: pointer;
+    font: inherit; font-size: var(--sqlp-t-small); color: var(--sqlp-fg); background: transparent; border: 1.5px solid var(--sqlp-frame-muted); border-radius: 0; cursor: pointer;
   }
   .sqlp-q[data-collapsed] .sqlp-q-body { display: none; }
 }
@@ -445,9 +477,9 @@ button.sqlp-tile:hover { background-color: var(--sqlp-tile-hover); }
 }
 .sqlp-round[data-v="blind"] { background: var(--sqlp-accent-fill); color: var(--sqlp-on-color); }
 .sqlp-round[data-v="blind"]:hover { background: var(--sqlp-accent-fill-hover); }
-.sqlp-round-kw { font-family: var(--sqlp-display); font-weight: 200; font-size: 40px; line-height: 40px; }
-.sqlp-round-name { font-size: 22px; line-height: 32px; font-weight: 400; }
-.sqlp-round-meta { font-size: 16px; line-height: 24px; opacity: 0.88; }
+.sqlp-round-kw { font-family: var(--sqlp-display); font-weight: 200; font-size: var(--sqlp-t-glyph); line-height: var(--sqlp-lh-glyph); }
+.sqlp-round-name { font-size: var(--sqlp-t-subtitle); line-height: var(--sqlp-lh-subtitle); font-weight: 400; }
+.sqlp-round-meta { font-size: var(--sqlp-t-caption); line-height: var(--sqlp-lh-caption); opacity: 0.88; }
 .sqlp-round[data-v="blind"] .sqlp-round-meta { opacity: 1; }
 
 /* ---- 結果列 SummaryRow ---- */
@@ -455,18 +487,18 @@ button.sqlp-tile:hover { background-color: var(--sqlp-tile-hover); }
 .sqlp-row {
   display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; align-items: center; gap: var(--sqlp-s4); width: 100%;
   min-height: 44px; padding: var(--sqlp-s3) var(--sqlp-s4); background: var(--sqlp-tile); color: var(--sqlp-fg);
-  border: 0; border-radius: 0; font: inherit; font-size: 16px; line-height: 24px; text-align: left; cursor: pointer;
+  border: 0; border-radius: 0; font: inherit; font-size: var(--sqlp-t-body); line-height: var(--sqlp-lh-body); text-align: left; cursor: pointer;
 }
 .sqlp-row:hover { background: var(--sqlp-tile-hover); }
 .sqlp-row-mark { width: 14px; height: 14px; box-sizing: border-box; border: 1.5px solid var(--sqlp-frame-muted); }
 .sqlp-row[data-s="ok"] .sqlp-row-mark { background: var(--sqlp-rec); border-color: var(--sqlp-rec); }
 .sqlp-row[data-s="miss"] .sqlp-row-mark { background: #8a8a8a; border-color: #8a8a8a; }
-.sqlp-row-state { font-size: 14px; font-weight: 600; white-space: nowrap; }
-.sqlp-score { font-family: var(--sqlp-display); font-weight: 200; font-size: 60px; line-height: 64px; }
-.sqlp-score small { font-family: var(--sqlp-font); font-size: 17px; font-weight: 400; color: var(--sqlp-muted); margin-left: var(--sqlp-s3); }
+.sqlp-row-state { font-size: var(--sqlp-t-small); font-weight: 600; white-space: nowrap; }
+.sqlp-score { font-family: var(--sqlp-display); font-weight: 200; font-size: var(--sqlp-t-score); line-height: var(--sqlp-lh-score); }
+.sqlp-score small { font-family: var(--sqlp-font); font-size: var(--sqlp-t-strong); font-weight: 400; color: var(--sqlp-muted); margin-left: var(--sqlp-s3); }
 
 /* ---- 提示 Notice、空狀態、錯誤、載入骨架、播報區 ---- */
-.sqlp-notice { display: flex; gap: var(--sqlp-s3); align-items: baseline; border: 1.5px solid var(--sqlp-accent); padding: var(--sqlp-s3) var(--sqlp-s4); font-size: 15px; line-height: 22px; margin-bottom: var(--sqlp-s4); }
+.sqlp-notice { display: flex; gap: var(--sqlp-s3); align-items: baseline; border: 1.5px solid var(--sqlp-accent); padding: var(--sqlp-s3) var(--sqlp-s4); font-size: var(--sqlp-t-body); line-height: var(--sqlp-lh-body); margin-bottom: var(--sqlp-s4); }
 .sqlp-notice b { color: var(--sqlp-accent); flex: none; }
 .sqlp-state { display: grid; gap: var(--sqlp-s4); max-width: 40em; padding: var(--sqlp-s6) 0; }
 .sqlp-skel { display: grid; gap: var(--sqlp-s5); opacity: 0; animation: sqlp-appear 1ms linear 400ms forwards; }
@@ -486,7 +518,7 @@ button.sqlp-tile:hover { background-color: var(--sqlp-tile-hover); }
 /* ---- 首頁 ---- */
 .sqlp-home { display: grid; gap: var(--sqlp-s6); }
 /* 怎麼使用這個練習（AboutPanel）：摘要列沿用 ConfusionNote 的展開區，內文是 play.md 的段落 */
-.sqlp-about summary { font-size: 17px; }
-.sqlp-about-body { display: grid; gap: var(--sqlp-s3); padding-top: var(--sqlp-s3); max-width: 44em; font-size: 16px; line-height: 27px; color: var(--sqlp-muted); }
+.sqlp-about summary { font-size: var(--sqlp-t-body); }
+.sqlp-about-body { display: grid; gap: var(--sqlp-s3); padding-top: var(--sqlp-s3); max-width: 44em; font-size: var(--sqlp-t-body); line-height: var(--sqlp-lh-body); color: var(--sqlp-muted); }
 .sqlp-about-body code { color: var(--sqlp-fg); }
 .sqlp-record { display: grid; gap: var(--sqlp-s3); max-width: 40em; }
