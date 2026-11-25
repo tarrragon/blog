@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: frontend-with-playwright
 license: MIT
 metadata:
-  version: 0.4.0
+  version: 0.5.0
   category: writing-methodology
 ---
 
@@ -74,6 +74,10 @@ Polling（`setTimeout` / `setInterval`）有事件可監聽就替換成 Mutation
 **動態 a11y**：JS reparent / hide 時保存並還原 focus；變動內容用 `aria-live="polite"` 廣播給 screen reader。
 **Native > ARIA**：能用 `<button>` / `<fieldset>` / `<dialog>` 就不要自己組 ARIA role — native HTML 自帶 keyboard / focus / a11y tree、ARIA 是補強不是替代。
 
+### 7. 重構 CSS 只換寫法：先做對再整理、比對計算後的值
+
+整理 CSS（改成引用 token、刪重複、拿掉 `!important`）分兩階段：先把畫面做對並提交當基準，再一批只做一種改動，每批開始前寫下預期會改變的屬性。驗收用兩種比對：計算後樣式快照（逐元素、逐屬性，分得出哪些差異是預期的）與截圖（抓得到屬性清單外的變化與兩版共有的溢出）。差異分成 0 差異、都在預期屬性上、預期以外三種；「有差就整批退回」只適用只換寫法的批次。限定改動範圍限定不了層疊的影響，驗收比對整頁，不只目標區塊。
+
 ---
 
 ## When to Consult This Skill（觸發路由）
@@ -84,6 +88,9 @@ Polling（`setTimeout` / `setInterval`）有事件可監聽就替換成 Mutation
 | 不確定 selector 該多寬、命中其他元素                                  | `references/dom-topology-first.md`                               |
 | 不確定值該寫進 CSS 還是 JS、CSS layers / variable / class toggle 取捨 | `references/css-js-boundary.md`                                  |
 | 用 `!important` / inline style 解 specificity                         | `references/css-js-boundary.md`                                  |
+| 整理 CSS（token 化、刪重複、合併 class）而要確認畫面沒變              | `references/refactor-without-visual-change.md`                   |
+| 要拿掉既有的 `!important` 或帶 id 的選擇器、不知道它在贏誰            | `references/refactor-without-visual-change.md`                   |
+| 派 agent 做「只整理、不改外觀」的 CSS 任務                            | `references/refactor-without-visual-change.md`                   |
 | 要用 playwright 驗證 layout / 假設 / 互動                             | `references/playwright-in-loop.md`                               |
 | Layout bug 第 2 次出現、想寫成測試                                    | `references/playwright-in-loop.md`                               |
 | 客製 UI 被 framework 還原、不知道該注入到哪                           | `references/framework-coexistence.md`                            |
@@ -96,7 +103,7 @@ Polling（`setTimeout` / `setInterval`）有事件可監聽就替換成 Mutation
 | 「Load more 後畫面閃但內容沒變」的 silent 缺口                        | `references/data-flow-and-filter-composition.md`（層錯位）       |
 | Backend / 演算法 / map-reduce 的 post-filter 漏項                     | `references/data-flow-and-filter-composition.md`（跨領域同結構） |
 
-每份 reference 自包含：以該情境為核心、把六大原則翻譯成可直接套用的協議步驟與範例。閱讀任一 reference 不需要回來看其他 reference。
+每份 reference 自包含：以該情境為核心、把上方〈Principles（原則速查）〉翻譯成可直接套用的協議步驟與範例。閱讀任一 reference 不需要回來看其他 reference。
 
 ---
 
@@ -113,7 +120,7 @@ Polling（`setTimeout` / `setInterval`）有事件可監聽就替換成 Mutation
 
 ```text
 frontend-with-playwright/
-├── SKILL.md                                    # 本檔：六大原則速查 + 觸發路由
+├── SKILL.md                                    # 本檔：原則速查 + 觸發路由
 └── references/
     ├── dom-topology-first.md                   # 情境 1：寫 CSS 前用 playwright/DevTools 量真實 DOM、selector 設計
     ├── css-js-boundary.md                      # 情境 2：CSS-only vs JS-assisted、class toggle、layers、variable 單一位置、檔案拆分
@@ -121,14 +128,15 @@ frontend-with-playwright/
     ├── framework-coexistence.md                # 情境 4：custom UI 留 framework 邊界外、外部組件四層合作、JS 操作邊界辨識
     ├── reactive-performance.md                 # 情境 5：observer scope、polling→observer、頻率盤點、iteration / regex / reflow
     ├── accessibility-and-focus.md              # 情境 6：focus on DOM move、keyboard 三要素、aria-live、native HTML > ARIA
-    └── data-flow-and-filter-composition.md     # 情境 7：Filter × Source 層錯位 + 五策略 + 跨領域（前端 / 後端 / 演算法 / DB）
+    ├── data-flow-and-filter-composition.md     # 情境 7：Filter × Source 層錯位 + 五策略 + 跨領域（前端 / 後端 / 演算法 / DB）
+    └── refactor-without-visual-change.md       # 情境 8：重構 CSS 而不改外觀、快照與截圖比對、差異歸類、!important 與加權的替代
 ```
 
 ---
 
 ## Reading Order（建議閱讀順序）
 
-1. 第一次接觸 → 從本 SKILL.md 的「三大支柱 + 六大原則」讀起
+1. 第一次接觸 → 從本 SKILL.md 的〈Core Pillars（支柱）〉與〈Principles（原則速查）〉讀起
 2. 進入實際情境 → 依觸發路由讀對應 reference（只讀一份）
 3. 想驗證自己有沒有套用對 → 用該 reference 結尾的 self-check checklist 自評
 
@@ -167,6 +175,6 @@ frontend-with-playwright/
 
 ---
 
-**Last Updated**: 2026-04-26
+**Last Updated**: 2026-11-25
 
 版本紀錄在同目錄的 `CHANGELOG.md`。

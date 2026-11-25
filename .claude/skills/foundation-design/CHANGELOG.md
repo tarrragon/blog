@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 6.9.0 — 〈維度與產物〉表 UI 列的權威來源欄補一句路由：design-system 那一塊建產物的人要交付什麼，見 `component-contract-design` skill 新增的 `references/design-system-token-layer.md`（token 層齊不齊的判定、哪些值取名、分層、來源格式、擋寫死值的檢查）；接手既有專案時萃取 token 的順序仍照本 skill 的接手模式。原本 UI 列只指向方法論〈地基波 build 順序〉，那一塊只列了 token 的類別，填產物欄的人找不到判定。本 skill 不新增判準，判準在被指名的那一份。`references/handoff-mode.md`〈命名與收斂分兩步〉的收斂票驗收從「畫面或特徵測試比對」改成「畫面比對與特徵測試比對」，並寫出收斂是刻意改值、要先寫對應表，Web 端的做法指向 `frontend-with-playwright` 的 `references/refactor-without-visual-change.md`；特徵測試的定義補一句 Web 端的形式（計算後樣式快照）在 `component-contract-design` 的 `references/web-platform-notes.md`。`SKILL.md`〈工作流〉的 code fence 由編輯器的格式化標上 `text`，內容不變。
+
 **Version**: 6.8.0 — 資料庫列的預設產物補 seed，判斷標準指向 `saas-tech-selection` state-storage 新增的〈種子資料與 schema 規格的驗證〉；〈權威缺席時〉「框架內確實無承接者」列移除「資料庫 seed」這個已知的判準層缺口；`examples.md` 中以 seed 為「產物有、判準無」示範的案例改用維度表未列的「資料匯入匯出格式」，示範的判定與驗證問句不變
 
 **Version**: 6.7.2 — 開頭加框架綁定說明：指名依附的框架資產（ticket、doc、version-bootstrap、.claude/rules、.claude/pm-rules），沒裝框架的專案裡這些路徑失效是預期狀態，可只取維度表與判斷方法並走降級模式；原本這件事只寫在檔尾的〈移植前置條件〉

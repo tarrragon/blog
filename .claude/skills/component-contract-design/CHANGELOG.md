@@ -2,6 +2,18 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 3.19.0 — 新增兩份隨時可查的 reference：`design-system-token-layer.md`（design system 的組成與前置「design token 層」的判定）與 `web-platform-notes.md`（元件以 HTML／CSS 實作時，填契約與驗收另外要做的事）。權威位置為這兩份檔；`SKILL.md` 的〈全程〉清單、〈起手〉前置表的 design token 層那一列、〈與相鄰資產的交界〉與 description 改成指向它們。
+
+- **缺口一（token 層沒有擁有者）**：〈起手〉把 design token 層列為前置，缺料時交給 `foundation-design`；`foundation-design` 的 UI 維度指向方法論〈地基波 build 順序〉，那一塊只寫了「design token 層（顏色／間距／字體／圓角／陰影）」。token 怎麼判斷齊不齊、哪些值要取名、怎麼分層、來源檔用什麼格式、怎麼擋新的寫死值，沒有任何一份寫到。實例：一個練習題網站的 CSS 混著 `!important`、寫死的 px 字級與色碼，改成全部引用 token 時，要自己決定字級分兩層、斷點留字面值、`body` 取不到根元素上的 token；擋寫死值的檢查腳本第一版沒有印讀到幾個宣告，拿重構前的舊檔當正對照才確認它在讀（123 處違規）。
+- **判準一**：前置齊不齊分四項（每一類有具名值、名字依用途或階、單一定義位置、有檢查擋新的寫死值），前三者任一不成立擋本規格票，只有「有檢查擋新的寫死值」不成立時建執法工具票、設為遷移票的 blockedBy，不擋本規格票。四項各留判定紀錄（類別與 token 名、查字面值的指令與命中數、檢查與正對照的計數）。哪些值寫成 token 依屬性分四種處置（顏色、字級與行高一律取名，並寫明這是配合依寫法擋的檢查的選擇；間距這類與多處共用的版面尺寸兩處以上取名；只用一次的版面尺寸留字面值；斷點留字面值）。分層照「要開放哪幾種範圍的調整」決定，整階調整、主題切換、一層、元件層各有條件，不預設三層。來源檔依讀取端數量選平台原生寫法或 DTCG 2025.10 檔，寫出 DTCG 的結構、不定義分層、`dimension` 只收 px 與 rem、Resolver 管主題、輸出由轉換工具決定。來源檔有兩種寫入者（設計師與工程師）時寫明以誰為準；DESIGN.md 這類設計說明檔算多一個讀取端。Web 端的限制分成寫不了 `var()` 的位置（只有 media query 條件，用 DTCG 時斷點寫成來源檔的 token）與容易用錯的位置（定義元素外面、覆寫 primitive 要在宣告 semantic token 的元素上、名字相撞、JavaScript 讀值）。檢查寫出擋的寫法（含帶 id 的選擇器，兩層的專案另擋元件引用 primitive）、在哪裡擋（CSS 檔、markup 的 `style`、JavaScript、utility class 字串）、三種工具的限制（Stylelint 印不出讀取數要另包一層、允許註解用工具認得的格式）、既有違規的 baseline、允許註解與預設例外（`[hidden]`、全站減少動態效果重設、media query 斷點，專案 L2 有清單時以 L2 為準）、`position: absolute` 不預設擋而限定在疊層容器、印出讀到的數量並用同一種形式的輸入當正對照、正對照的計數寫進票。prompt 裡的樣式限制不算驗收，驗收看檢查的計數；檢查不涵蓋的間距這類字面值由 agent 列清單、驗收的人對 diff。
+- **缺口二（Web 端契約齊全而畫面不符）**：方法論〈Web/HTML 端 L2 特別判準〉寫了範圍重設、宿主樣式與 subgrid 的判準，本 skill 的 step 3 與驗收沒有對應的動作：測試契約沒有問測試在哪一組 CSS 下執行，展示頁只載入元件自己的 CSS 時量不到宿主造成的衝突。實例：同一個網站的元件在展示頁上量起來正確，在正式頁面上輸給主題的元素規則與帶 `!important` 的自訂樣式；只替七條規則加 id 加權，另外插入 `<a>` 形式的主要按鈕後量到 hover 時變成白底白字。
+- **判準二**：組合規則另寫宿主的 CSS 載入順序、元件規則的勝出方式（cascade layer 只在管得到宿主載入方式時可用）、宿主帶 `!important` 時的處置與範圍重設的特定性；尺寸契約的測試寬度涵蓋每個斷點與容器查詢區段；測試契約另答三問（哪一組 CSS、哪些狀態、哪幾個瀏覽器）；路徑 C 的特徵測試在 Web 端是計算後樣式的快照，元素依 DOM 位置配對、不依 class；元件票另加一條在正式頁面上量計算後值的驗收，範圍是每一種變體乘每一種狀態；派發時改動範圍與影響範圍分開寫，影響範圍以整頁快照比對驗收，並寫出量了哪些狀態與變體。
+- **同步**：`step-3-fill-contract.md` 測試契約列補一句指向 `web-platform-notes.md`；`addresses.md` 執法工具列補 Web 專案；`project-integration/README.md` 的執法工具列改寫成本 repo 現有的檢查腳本與 token 檔（原文寫「本 repo 沒有掃元件裸值的工具」，已過時），並列出那支腳本跟〈檢查〉的落差；〈與相鄰資產的交界〉加 `impeccable` 與 `frontend-with-playwright` 兩列。
+- **順手的措辭改動**：`SKILL.md`〈與相鄰資產的交界〉執法工具列與 `addresses.md` 執法工具列的「由 step-3〈原生元件禁用對照表〉承接」改成「寫在」，`step-3-fill-contract.md` 測試契約列的「由 `foundation-design` 的測試維度承接」改成「定義寫在」，意思不變；`step-2-path-c-code-extraction.md` 的一個 code fence 由編輯器的格式化標上 `text`。
+- **審查**：三輪（寫作規範與跨檔一致、事實核對；冷讀與題目範圍與體例、規則讀者探針、主謂抽取探針；自我套用與 steelman 與反向引用、誤用梯度與個案實跑）的 finding 與處置記在 blog repo 這次的 commit message。
+- **未同步**：方法論〈地基波 build 順序〉的 design-system 那一塊沒有指向齊不齊的判定；方法論屬框架資產，本 skill 不改。
+- **入口**：`step-2-path-c-code-extraction.md` 的特徵測試閘門、`step-4-verify-completeness.md`〈六條都是存在性檢查〉、`step-5-write-tickets.md` 的元件票各補一句指向 `web-platform-notes.md` 對應的段，照步驟檔走的執行者在那一步讀得到 Web 端的動作。
+
 **Version**: 3.18.0 — 補缺口：專案沒有 ticket 系統時，中間產出物與以票承載的待辦寫在哪裡；文字來自資料集時最長測試文案的取法；元件展示頁必須呼叫正式畫面的同一份元件實作。權威位置為 `SKILL.md` 新增的〈專案沒有 ticket 系統時〉一節，與 `step-3-fill-contract.md`〈元件契約欄位填寫問句〉的內容政策列、測試契約列。
 
 - **缺口一（沒有 ticket 系統）**：本規格票的定義只寫「票號未指定時停手回報」，沒有分開「有系統而沒指定」與「專案根本沒有 ticket 系統」。實例：一個靜態網站專案沒有 ticket 系統，執行者只能自己決定把起點判定與候選表寫進規格檔。

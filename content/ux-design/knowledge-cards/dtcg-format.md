@@ -12,9 +12,9 @@ DTCG Format（具名設計值的交換格式）是 W3C 的 Design Tokens Communi
 
 一份 DTCG 檔是巢狀的 JSON 物件。帶 `$value` 的物件是一個 token，不帶 `$value` 的物件是分組（group），token 的完整名稱是它從根往下經過的分組名加上自己的名字（`color.teal.500`）。以 `$` 開頭的欄位是保留字：`$type` 寫型別，寫在分組上時是分組內 token 的預設型別；`$description` 寫說明；`$deprecated` 標記停用；`$extensions` 放各工具自己的資料，工具讀寫時要原樣保留；`$extends` 讓一個分組繼承另一個分組的內容。token 的值可以引用另一個 token，寫成大括號包住完整名稱的 `"{color.teal.500}"`，也可以用 `$ref` 寫成 JSON Pointer；引用可以一層接一層，但不能繞回自己，形成循環時工具要報錯。
 
-規格不定義 primitive token 與 semantic token 這類分層。規格寫明分組的劃分由作者任意決定，工具不能從分組推斷 token 的型別或用途；所以「只放數值的一層」與「用途命名、引用前一層的一層」在 DTCG 檔裡是兩個分組加上引用，分層是專案自己的命名約定，分層的條件與兩層各管哪一種調整在 [Design Token（具名設計值）](/ux-design/knowledge-cards/design-token/) 卡。
+規格不定義 primitive token 與 semantic token 這類分層。規格寫明分組的劃分由作者任意決定，工具不應從分組推斷 token 的型別或用途；所以「只放數值的一層」與「用途命名、引用前一層的一層」在 DTCG 檔裡是兩個分組加上引用，分層是專案自己的命名約定，分層的條件與兩層各管哪一種調整在 [Design Token（具名設計值）](/ux-design/knowledge-cards/design-token/) 卡。
 
-規格也不定義輸出成 CSS 的方式。把 DTCG 檔轉成 CSS 自訂屬性、Sass 變數、iOS 或 Android 常數的是轉換工具（translation tool），規格舉的例子是 Style Dictionary 與 Terrazzo；同一個 token 在 CSS 裡叫什麼名字、引用要輸出成 `var()` 還是解析後的值，由轉換工具的設定決定。CSS 端的勝負規則（token 定義在哪個元素上、被哪一條規則蓋過）照 CSS 的層疊與 [Specificity（特定性）](/ux-design/knowledge-cards/specificity/) 決定，跟 DTCG 檔無關。
+規格也不定義輸出成 CSS 的方式。把 DTCG 檔轉成 CSS 自訂屬性、Sass 變數、iOS 或 Android 常數的是轉換工具（translation tool），規格舉的例子是 Style Dictionary 與 Terrazzo；同一個 token 在 CSS 裡叫什麼名字、引用要輸出成 `var()` 還是解析後的值，依轉換工具而定（Style Dictionary 用 `outputReferences` 設定）。CSS 端的勝負規則（token 定義在哪個元素上、被哪一條規則蓋過）照 CSS 的層疊與 [Specificity（特定性）](/ux-design/knowledge-cards/specificity/) 決定，跟 DTCG 檔無關。
 
 ## 可觀察訊號與例子
 
@@ -40,7 +40,7 @@ DTCG Format（具名設計值的交換格式）是 W3C 的 Design Tokens Communi
 }
 ```
 
-`text.body` 沒有寫 `$type`，它的型別取自它引用的 `size.md`。轉換工具保留引用時，產生的 CSS 類似 `--text-body: var(--size-md)`，執行時改 `--size-md` 會連帶改到 `--text-body`；工具輸出解析後的值時產生 `--text-body: 16px`，兩者之間的關係只留在 JSON 裡。
+`text.body` 沒有寫 `$type`，它的型別取自它引用的 `size.md`。轉換工具保留引用時，產生的 CSS 類似 `--text-body: var(--size-md)`，`var()` 在宣告 `--text-body` 的那個元素上代換成值，所以執行時在同一個元素（通常是 `:root`）上改 `--size-md` 會連帶改到 `--text-body`，在子孫元素上改 `--size-md` 則不會，那一層要連 `--text-body` 一起重新宣告；工具輸出解析後的值時產生 `--text-body: 16px`，兩者之間的關係只留在 JSON 裡。
 
 2025.10 規定 `dimension` 的值是 `value` 與 `unit` 兩個欄位的物件，`unit` 只能是 `px` 或 `rem`；`color` 的值是物件，`colorSpace`（`srgb`、`display-p3`、`oklch` 等十四種）與 `components` 必填，`alpha` 省略時當成 1，`hex` 是選填的六位數色碼，用途是給不支援該色彩空間的工具當備援。穩定版之前的草稿與許多既有的檔案把這兩種值寫成字串（`"#00bde3"`、`"16px"`），讀到字串寫法時，先確認手上的轉換工具支援哪一版的格式。
 

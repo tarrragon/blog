@@ -18,13 +18,14 @@ Playwright 在前端開發循環的三個位置：假設驗證（寫 CSS 前）�
 
 ## 何時參閱本文件
 
-| 訊號                                                | 該做的第一件事                       |
-| --------------------------------------------------- | ------------------------------------ |
-| 即將寫 CSS 規則、想先確認 DOM 結構                  | 位置 1：假設驗證 — 量 ancestor chain |
-| 規則寫完、想確認實際 layout 對                      | 位置 2：行為驗證 — 量 bounding rect  |
-| 想驗證使用者互動後的狀態（filter / search / click） | 位置 3：互動驗證 — dispatch event    |
-| 同個 layout bug 第 2 次出現                         | 寫 layout test、CI 防回歸            |
-| 不確定 server 怎麼起 / 怎麼接 playwright            | 看下方「最低門檻 setup」             |
+| 訊號                                                 | 該做的第一件事                                                         |
+| ---------------------------------------------------- | ---------------------------------------------------------------------- |
+| 即將寫 CSS 規則、想先確認 DOM 結構                   | 位置 1：假設驗證 — 量 ancestor chain                                   |
+| 規則寫完、想確認實際 layout 對                       | 位置 2：行為驗證 — 量 bounding rect                                    |
+| 想驗證使用者互動後的狀態（filter / search / click）  | 位置 3：互動驗證 — dispatch event                                      |
+| 同個 layout bug 第 2 次出現                          | 寫 layout test、CI 防回歸                                              |
+| 整理 CSS（token 化、刪重複、拿掉加權）要確認畫面沒變 | 見 `refactor-without-visual-change.md`：計算後樣式快照與截圖、差異歸類 |
+| 不確定 server 怎麼起 / 怎麼接 playwright             | 看下方「最低門檻 setup」                                               |
 
 ---
 
@@ -331,7 +332,6 @@ debug / 驗證 layout 時：
 - [ ] 推理失敗 ≥ 2 次時、有沒有主動切換到 playwright（不等到第 5 次）？
 
 ---
-
 
 **Last Updated**: 2026-04-26
 **Version**: 0.1.0
