@@ -289,8 +289,12 @@ html:has(#sql-practice) { scroll-padding-top: 72px; }
 /* 未作答的磚：標頭鋪 cyan 點陣（參考圖的 dot matrix） */
 button.sqlp-tile { cursor: pointer; }
 button.sqlp-tile .sqlp-tile-head { background-image: radial-gradient(circle at 1px 1px, rgba(0, 189, 227, 0.3) 1px, transparent 1.5px); background-size: 9px 9px; }
-button.sqlp-tile:hover { background-color: var(--sqlp-tile-hover); transform: rotateX(1.5deg); }
-button.sqlp-tile:active { transform: scale(0.99); }
+button.sqlp-tile:hover { background-color: var(--sqlp-tile-hover); }
+/* 傾斜與按下的位移只在讀者沒有要求減少動態效果時加上，減少動態的規則就不必再提高優先度去蓋掉它們 */
+@media (prefers-reduced-motion: no-preference) {
+  button.sqlp-tile:hover { transform: rotateX(1.5deg); }
+  button.sqlp-tile:active { transform: scale(0.99); }
+}
 .sqlp-tile[data-state^="revealed"] { cursor: default; }
 .sqlp-tile[data-state="revealed-rec"], .sqlp-tile[data-state="revealed-chosen-rec"] { background: var(--sqlp-rec); color: var(--sqlp-on-color); }
 .sqlp-tile[data-state="revealed-chosen-miss"] { background: var(--sqlp-miss); color: var(--sqlp-on-color); }
@@ -303,7 +307,7 @@ button.sqlp-tile:active { transform: scale(0.99); }
   100% { transform: rotateX(0deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sqlp-tile, button.sqlp-tile:hover, .sqlp-round:hover { transform: none !important; transition: background-color var(--sqlp-ease) linear, color var(--sqlp-ease) linear; }
+  .sqlp-tile { transition: background-color var(--sqlp-ease) linear, color var(--sqlp-ease) linear; }
   .sqlp-tile.is-flipping { animation: none; }
 }
 /* 寬螢幕的 2×2：右欄寬於 1480px 時兩欄並排（每塊至少 734px，SQL 16px 一行約 70 字元；改字級或排版器行寬要重算）。
@@ -369,7 +373,8 @@ button.sqlp-tile:active { transform: scale(0.99); }
 }
 .sqlp-note select:focus, .sqlp-note textarea:focus { border-color: var(--sqlp-accent); outline: none; }
 .sqlp-note textarea::placeholder { color: var(--sqlp-muted); }
-.sqlp-note-out { font-family: var(--sqlp-mono) !important; font-size: 14px !important; }
+/* 輸出框也是 textarea：選擇器要寫到 (0,2,0)，才贏得過上面 .sqlp-note textarea 的 (0,1,1) */
+.sqlp-note .sqlp-note-out { font-family: var(--sqlp-mono); font-size: 14px; }
 
 /* ---- 按鈕 Button ---- */
 .sqlp-btn {
@@ -434,7 +439,10 @@ button.sqlp-tile:active { transform: scale(0.99); }
   background: var(--sqlp-tile); color: var(--sqlp-fg); border: 0; border-radius: 0; font: inherit; text-align: left; cursor: pointer;
   transition: background-color var(--sqlp-ease) ease-out, transform var(--sqlp-ease) var(--sqlp-out);
 }
-.sqlp-round:hover { background: var(--sqlp-tile-hover); transform: rotateX(2deg) rotateY(-2deg); }
+.sqlp-round:hover { background: var(--sqlp-tile-hover); }
+@media (prefers-reduced-motion: no-preference) {
+  .sqlp-round:hover { transform: rotateX(2deg) rotateY(-2deg); }
+}
 .sqlp-round[data-v="blind"] { background: var(--sqlp-accent-fill); color: var(--sqlp-on-color); }
 .sqlp-round[data-v="blind"]:hover { background: var(--sqlp-accent-fill-hover); }
 .sqlp-round-kw { font-family: var(--sqlp-display); font-weight: 200; font-size: 40px; line-height: 40px; }
