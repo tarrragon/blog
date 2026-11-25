@@ -1,34 +1,28 @@
 ---
 title: "Index（索引）"
 date: 2026-08-31
-description: "看到執行計畫寫著走索引或建索引、想知道那是什麼時"
+description: "執行計畫顯示走索引或全表掃描，需要確認索引的結構、取捨與設計依據時"
 aliases: ["/sql/knowledge-cards/indexing/"]
 weight: 5
 tags: ["sql", "index", "performance", "knowledge-card"]
 ---
 
-Index 是為了加快查找而額外維護的一份資料結構，內容是某幾個欄位的值與它們對應的列的位置。它與資料本身分開存放，由引擎自動維護，而 [query optimizer](/backend/01-database/sql/knowledge-cards/query-optimizer/) 決定某次查詢要不要用它——用不用的結果寫在 [query plan](/backend/01-database/sql/knowledge-cards/query-plan/) 裡。
+為了避免每次篩選都逐列掃描整張表，資料庫會額外維護一份保存欄位值與列位置的查找結構——index（索引）。索引與資料表本體分開存放並由引擎自動維護；[Query Optimizer（查詢最佳化器）](/backend/01-database/sql/knowledge-cards/query-optimizer/) 決定每次查詢是否採用索引，採用結果顯示在 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/) 中。
 
-沒有索引時，找出某個條件成立的列要把整張表看過一遍。有索引時，引擎先在索引裡定位，再回頭取那些列。
-
-索引建了而引擎不走它有兩個常見的成因。一個是[統計資訊](/backend/01-database/sql/knowledge-cards/query-statistics/)沒更新——索引決定有沒有一條快的路，統計決定引擎知不知道該走那一條。另一個是條件把索引欄位包進了函式或運算裡，那時引擎沒有可以拿去比對的值，[Sargable](/backend/01-database/sql/knowledge-cards/sargable/) 那張卡寫這個形狀怎麼判、怎麼改。
+缺乏索引時，引擎須掃描整張資料表才能找出符合條件的列；在常見的列式儲存與 B-Tree 二級索引結構下，具備索引時引擎會先在索引定位再回主表讀取目標列（叢集索引如 MySQL InnoDB 主鍵或 SQLite `WITHOUT ROWID` 表的主鍵查找則無須額外回表）。建立索引後引擎仍未使用它，常見原因涵蓋以下幾類：[Query Statistics（統計資訊）](/backend/01-database/sql/knowledge-cards/query-statistics/) 過時導致最佳化器估錯成本；查詢條件把索引欄位包進函式、隱式轉型或未命中複合索引前導欄，使引擎無法直接比對索引鍵（見 [Sargable（可走索引的條件形狀）](/backend/01-database/sql/knowledge-cards/sargable/)）；即使統計完全最新，條件命中的列數比例（選擇率）過高而使最佳化器判定順序掃描更便宜（見 [Cardinality 與 Selectivity（基數與選擇率）](/backend/01-database/sql/knowledge-cards/cardinality-and-selectivity/)）；以及索引的比較規則（collation）與查詢條件不一致（見 [SQL.15 字串比較與 collation：相等、排序、LIKE 與索引可用性](/backend/01-database/sql/string-comparison-and-collation/)）。
 
 ## 跟其他概念的關係
 
-索引是查詢代價的主要變數之一，而它不出現在查詢的文字裡。同一段 SQL 在有索引與沒索引的資料庫上執行方式完全不同，結果卻一模一樣——這正是宣告式語言的分工：查詢說要什麼，索引與計畫決定怎麼拿。
+索引是影響查詢代價的關鍵變數，且不會出現在查詢文字裡。同一段 SQL 在有無索引下產出相同結果但耗時可能相差數個量級，體現宣告式語言將結果描述與存取路徑分離的設計。
 
-它的代價落在寫入端。每一次新增、修改或刪除，相關的索引都要跟著更新，所以索引不是加越多越好。同一個 [relation](/backend/01-database/sql/knowledge-cards/relation/) 上建了多個索引，讀取變快而寫入變慢。
+索引的代價由寫入端承擔：每次對 [Relation（關係）](/backend/01-database/sql/knowledge-cards/relation/) 執行 `INSERT`、`UPDATE` 或 `DELETE`，引擎都須同步更新所有受影響的索引，因此在同一張表疊加過多索引會加速讀取卻拖慢寫入。
 
 ## 可觀察訊號與例子
 
-SQLite 的計畫用 `SCAN` 與 `SEARCH` 分開兩種取法：`SCAN 訂單` 表示整張表逐列看過，`SEARCH 顧客 USING AUTOMATIC COVERING INDEX` 表示透過索引定位。
-
-計畫裡那幾個關鍵字（`AUTOMATIC`、`COVERING`、`BLOOM FILTER`）各指什麼，在 [query plan](/backend/01-database/sql/knowledge-cards/query-plan/)。
+SQLite 的執行計畫以 `SCAN` 與 `SEARCH` 區分存取方式：`SCAN 訂單` 代表全表掃描，`SEARCH 顧客 USING AUTOMATIC COVERING INDEX` 代表透過索引定位（`AUTOMATIC`、`COVERING` 與 `BLOOM FILTER` 的意義見 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/)）。
 
 ## 判斷條件與後果
 
-索引由查詢的形狀決定，不由表的形狀決定。要建哪些索引取決於實際會執行哪些查詢，所以它是在知道查詢模式之後才做得準的決定。
+索引欄位與複合索引順序的挑選取決於實際執行的查詢條件與排序形狀，而不只是資料表有哪些欄位。複合索引 `(顧客編號, 下單日)` 支援「依顧客編號」或「依顧客編號加下單日」的查找，對「僅依下單日」的查找則幫助有限。
 
-複合索引的欄位順序有影響：`(顧客編號, 下單日)` 這個索引對「先按顧客再按日期」的查找有用，對「只按日期」的查找幫助有限。順序要對齊查詢的條件形狀。
-
-查詢只關注表的特定子集合（例如僅查未軟刪除的生效列或待處理佇列）時，可建立附帶 `WHERE` 篩選條件的 [Partial Index（部分索引）](/backend/knowledge-cards/partial-index/)，縮小索引體積並搭配 `UNIQUE` 達成條件式唯一約束；查詢固定以正規化函式比對欄位（例如 `LOWER(email)`）時，可針對該運算式建立表達式索引（expression index），讓帶有相同運算式的條件能命中索引查找（實測與軟刪除應用見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。
+針對特定查詢形態，可使用兩種特化索引：查詢只關注資料表特定子集合（例如未軟刪除的生效列或待處理佇列）時，可建立附帶 `WHERE` 條件的 [Partial Index（部分索引）](/backend/knowledge-cards/partial-index/) 縮小體積並結合 `UNIQUE` 實現條件式唯一；查詢固定對欄位套用正規化函式（如 `LOWER(email)`）時，可建立運算式索引（expression index）讓對應條件命中索引查找（實測與軟刪除應用見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。

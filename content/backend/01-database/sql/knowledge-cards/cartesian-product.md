@@ -1,21 +1,19 @@
 ---
 title: "Cartesian Product（笛卡兒積）"
 date: 2026-09-01
-description: "看到 CROSS JOIN、或結果的列數遠多於預期時，查這個運算什麼時候會被展開"
+description: "讀到 CROSS JOIN，或連接查詢回傳列數遠高於預期且呈平方成長時"
 aliases: ["/sql/knowledge-cards/cartesian-product/"]
 weight: 16
 tags: ["sql", "join", "cross-join", "cardinality", "knowledge-card"]
 ---
 
-笛卡兒積把兩個 [relation](/backend/01-database/sql/knowledge-cards/relation/) 的每一列與另一邊的每一列各配一次，得到的關係列數是兩邊列數的乘積。它是[關聯代數](/backend/01-database/sql/knowledge-cards/relational-algebra/)的一個運算，而連接由它與選取組合而成：全部組合先在語意上成立，條件再從裡面挑出要留的那些。
+將兩個 [Relation（關係）](/backend/01-database/sql/knowledge-cards/relation/) 的每一列兩兩配對一次，產出列數等於兩表列數乘積的運算稱為 Cartesian product（笛卡兒積）。在 [Relational Algebra（關聯代數）](/backend/01-database/sql/knowledge-cards/relational-algebra/) 中，連接（join）在語意上由笛卡兒積加上條件選取組合而成；在 SQL 中以 `CROSS JOIN` 或在 `FROM` 以逗號並列兩張表表達。
 
-SQL 寫成 `CROSS JOIN`，也可以在 `FROM` 裡用逗號把兩張表隔開。
+## 配對條件與是否展開的關係
 
-## 條件決定它會不會被展開
+笛卡兒積加選取屬於語意定義，引擎的實際執行方式由 [Query Optimizer（查詢最佳化器）](/backend/01-database/sql/knowledge-cards/query-optimizer/) 依成本決定。當查詢附帶將兩表綁在一起的等值條件時，最佳化器會直接以索引或雜湊查找配對列，不會實際展開全部組合。
 
-代數說連接從積開始，而那是語意層的定義，執行方式由[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)按代價選。條件把兩邊綁起來的時候，它用索引或雜湊直接找出配得上的那些列，全部組合一次都沒有被造出來。
-
-條件缺席的時候展開才會發生。一張逐日的觀測表跟自己做沒有條件的 `CROSS JOIN`：
+唯有缺乏有效配對條件時，完整展開才會發生。以下以逐日氣溫表與自身做無條件 `CROSS JOIN` 實測：
 
 ```sql
 CREATE TABLE Weather (id INTEGER PRIMARY KEY, recordDate TEXT, temperature INT);
@@ -33,28 +31,26 @@ SELECT count(*) FROM Weather a CROSS JOIN Weather b;
 `--SCAN b USING COVERING INDEX ix
 ```
 
-15139881 是 3891 的平方。外層每掃一列，內層就把整張表再走一遍，而這一千五百萬對配對在後面的子句拿到資料之前就要先產生出來。這張表加到 13891 列之後，列數變成 3.6 倍而配對數變成 192959881——**將近十三倍**。成長是平方而非線性，這正是這個運算與其他多出來的列的差別。
+3891 列自做笛卡兒積產出 15,139,881（3891 的平方）對配對；表長增至 13,891 列（3.6 倍）時，配對數增至 192,959,881（近 13 倍），呈平方級成長。
 
-**要看的是條件把不把兩邊綁起來，而不是用了哪個關鍵字。** `CROSS JOIN` 加一個等值條件，與 `JOIN ... ON` 寫同一個條件，對引擎是同一段查詢（[SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/)）；反過來，`JOIN` 寫了而 `ON` 的條件只提到單邊的欄位，展開照樣發生。
+展開與否取決於條件是否約束了兩表之間的對應關係，而非取決於連接關鍵字。`CROSS JOIN` 搭配 `WHERE` 等值條件與 `JOIN ... ON` 寫相同條件對引擎等價（見 [SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/)）；反之，寫成 `JOIN` 但 `ON` 條件只提及單側欄位時，兩表依然完全展開。
 
-## 與列數膨脹是兩種不同的多
+## 與列數膨脹的區別
 
-結果比預期多的時候有兩個成因，分辨它們決定要改什麼。
+查詢結果列數超出預期時，成因分為列數膨脹與笛卡兒積，兩者對應不同修法。
 
-[列數膨脹](/backend/01-database/sql/join-changes-rows-and-nulls/)是條件正確而一列配到了多列，於是它被複製那麼多次——多出來的量由資料的重複程度決定，改法是把展開的那一層先收成一列，或改用不展開的寫法。笛卡兒積是條件從一開始就沒有把兩邊綁住——多出來的量由兩張表各自的大小決定，改法是補上那個條件。
+[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/) 說明的列數膨脹是條件正確、但鍵值一對多導致單列被複製多次，多出的列數取決於重複度，修法是先彙總再連接或改用半連接；笛卡兒積則是條件未有效約束兩表配對，多出的列數隨兩表大小相乘成長，修法是補上正確的配對條件。
 
-分辨的問句落在條件上而非結果上：**這個條件把一列綁到對面幾列。** 綁到常數量級（幾列、幾十列）是配對條件，多出來的量由重複程度決定，那是膨脹；綁到與表的大小同量級，那個條件篩掉了一些列，而每一列對面掛著的對象數仍然隨表一起長，多出來的量由兩張表的大小決定，那是積。
-
-「有沒有同時引用兩邊」不足以分辨。`ON a.v > b.v` 同時引用了兩邊，而它把左邊每一列綁到右邊將近一半——`v` 的值互不相同時，一千列得 499500 對、兩千列得 1999000 對，仍然是平方。低基數的等值鍵同理：`ON a.區域 = b.區域` 只有幾個區域時，一千列對一千列得五十萬對。
-
-這裡刻意不問「這一列是靠哪個條件配起來的」——`JOIN` 寫了而 `ON` 只提單邊欄位的那個形態，讀者答得出「靠那個 `ON` 條件」而它並沒有把兩邊配起來，問句會把積判成膨脹。
+分辨兩者的判斷標準是「條件把左表每一列綁到右表幾列」：綁到常數量級屬於配對條件（超額列數為膨脹）；綁到與表大小同量級則屬於積（即使條件同時引用兩張表亦然）。例如 `ON a.v > b.v` 在值互異的千列表上仍產出 499,500 對、兩千列表產出 1,999,000 對，呈平方成長；低基數等值鍵（如只有少數區域值的 `ON a.區域 = b.區域`）在千列表對千列表同樣產出數十萬對。
 
 ## 跟其他概念的關係
 
-笛卡兒積是連接的下限——條件寫得越少，結果越靠近它，而條件寫滿的時候結果落在兩張表配得上的那些列。所以「連接的結果集會不會整個換一個量級」這個問題等於「條件綁住了多少」，與用了 `JOIN` 還是 `CROSS JOIN` 無關。而條件綁不綁得住，由它引用到幾個[表的出現](/backend/01-database/sql/table-occurrence-and-alias/)決定——與那個分辨問句是同一件事。
+在 [Relational Algebra（關聯代數）](/backend/01-database/sql/knowledge-cards/relational-algebra/) 中，笛卡兒積是連接結果大小的上限：條件越鬆越接近笛卡兒積，漏寫連接條件會使查詢直接退回語意起點，結果集大小躍升一個量級。結果集大小取決於條件約束了幾個表出現（見 [SQL.7 表的出現與別名：表名的指稱、別名的作用範圍與自連接](/backend/01-database/sql/table-occurrence-and-alias/)）以及鍵的選擇率，與關鍵字寫成 `JOIN` 或 `CROSS JOIN` 無關。
 
-它在[關聯代數](/backend/01-database/sql/knowledge-cards/relational-algebra/)裡的位置說明了漏寫連接條件的後果為什麼這麼大：查詢退回它的定義起點，全部組合重新成立。這是結果集大小的整個量級換掉，與逐步變慢是不同的一件事。
+## 延伸閱讀：列數膨脹、半連接與結果集治理
 
-## 往下走
-
-條件正確而列數仍然變多的那一種，在 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/)。同一批配對用自連接與 `EXISTS` 兩種寫法的實測對照，在 [SQL.17 查詢的代價](/backend/01-database/sql/cost-lives-in-the-plan/)。條件只用來判斷存在時結果的上限落在哪裡，在 [Semi-join 與 Anti-join（半連接與反連接）](/backend/01-database/sql/knowledge-cards/semi-join-and-anti-join/)。`CROSS JOIN` 這個關鍵字對讀的人宣告了什麼，在 [SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/)。production 查詢的結果集大小怎麼治理，在 [Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)。
+- 一對多配對造成的列數膨脹與聚合修法：[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)
+- 自連接與 `EXISTS` 的執行代價實測：[SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)
+- 結果列數上限為左表列數的運算：[Semi-join 與 Anti-join（半連接與反連接）](/backend/01-database/sql/knowledge-cards/semi-join-and-anti-join/)
+- `CROSS JOIN` 的關鍵字宣告與執行計畫對照：[SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/)
+- 正式環境結果集大小治理：[Query Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)

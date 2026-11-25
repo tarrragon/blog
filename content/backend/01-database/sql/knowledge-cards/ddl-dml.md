@@ -1,30 +1,29 @@
 ---
 title: "DDL 與 DML（定義結構與動資料）"
 date: 2026-09-01
-description: "看到「這個帳號只需要 DML 權限」或遷移文件把兩者分開講時，查這條界線切在哪裡"
+description: "遇到帳號只需 DML 權限，或遷移規範將結構變更與資料操作分開管理時"
 aliases: ["/sql/knowledge-cards/ddl-dml/"]
 weight: 11
 tags: ["sql", "ddl", "dml", "privilege", "migration", "knowledge-card"]
 ---
 
-SQL 的語句按它改動的對象分成兩類。**DDL**（Data Definition Language）改的是結構——`CREATE`、`ALTER`、`DROP`，它動的是有哪些表、每張表有哪些欄位。**DML**（Data Manipulation Language）改的是結構裡裝的資料——`INSERT`、`UPDATE`、`DELETE`，表還是那張表，變的是裡面有哪些列（列與欄這兩個字在本站的用法見 [relation](/backend/01-database/sql/knowledge-cards/relation/)）。`SELECT` 只讀不改，各家文件有的把它算進 DML、有的另立一類。
+SQL 語句依修改對象分為兩大類：**DDL**（Data Definition Language，資料定義語言）修改資料庫結構，包含 `CREATE`、`ALTER`、`DROP`，決定存在哪些資料表、欄位與 [Constraint（約束）](/backend/01-database/sql/knowledge-cards/constraint/)；**DML**（Data Manipulation Language，資料操作語言）修改資料表內部的列內容，包含 `INSERT`、`UPDATE`、`DELETE`（列與欄的定義見 [Relation（關係）](/backend/01-database/sql/knowledge-cards/relation/)）。唯讀的 `SELECT` 在部分文件中歸入 DML，另一些文件則單獨歸類為 DQL（Data Query Language）。
 
-## 這條線在權限上有實際後果
+## 權限切分與誤操作代價
 
-兩類的[授權](/backend/01-database/sql/privilege-model/)是分開的，而它們在日常運行裡的頻率差很多：應用程式跑起來之後幾乎只做 DML，DDL 只在部署或遷移的時候用一次。這讓最小權限有一個明確的切法——常態運行的帳號不給 DDL，遷移用另一個帳號。
+DDL 與 DML 的授權各自獨立（見 [SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)），且在系統生命週期中的執行頻率懸殊：常態運行的應用程式幾乎只執行 DML，DDL 只出現在部署或資料庫遷移期間。因此最小權限的標準作法是常態應用程式帳號不授予 DDL 權限，由獨立的遷移帳號負責結構變更。
 
-代價的形狀也不同。一句 DML 寫錯影響的是那些列，可以用另一句 DML 補回來；一句 DDL 寫錯（`DROP TABLE` 那一類）拿掉的是結構，補救要靠備份。
+兩類語句誤寫時的補救成本也不同：DML 誤改特定列時常可用反向 DML 或 [Transaction（交易）](/backend/knowledge-cards/transaction/)回滾補救；DDL 誤刪結構（例如 `DROP TABLE`）則須仰賴備份還原。
 
-## 兩類的擋法不在同一層
+## 授權層級的差異
 
-DML 的權限掛在表上——`GRANT SELECT ON 顧客`。DDL 的權限多數掛在更上面一層：能不能建新表由 [schema](/backend/01-database/sql/knowledge-cards/schema-namespace/) 那一層決定，不是由某一張表決定，因為建的時候那張表還不存在。
+DML 權限授於資料表層級（例如 `GRANT SELECT ON 顧客`）；建立新資料表等 DDL 權限則多半授於更上層的 [Schema（命名空間義）](/backend/01-database/sql/knowledge-cards/schema-namespace/) 層級，因為建表當下目標資料表尚未存在。
 
 ## 跟其他概念的關係
 
-這條線切的是語句改動的對象，而 SQL 的其餘概念多數只活在 DML 這一側——[relation](/backend/01-database/sql/knowledge-cards/relation/)、[外連接](/backend/01-database/sql/knowledge-cards/outer-join/)、分組、[子查詢](/backend/01-database/sql/knowledge-cards/subquery/) 全部是在既有結構上取資料的方式。DDL 決定那個結構長什麼樣，它跑完之後才輪到那些概念。
+DDL 先定義出資料表結構，後續在 [Relation（關係）](/backend/01-database/sql/knowledge-cards/relation/) 上執行的 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/)、分組與 [Subquery（子查詢）](/backend/01-database/sql/knowledge-cards/subquery/) 全都運作在該結構之上的 DML 與查詢操作中。由於 DDL 集中在部署階段、DML 持續發生在日常請求中，帳號切分、備份策略與事故復原程序都依這條分界規劃。
 
-兩類在時間上的分布因此完全不同：DDL 集中在部署那幾分鐘，DML 散在系統活著的每一秒。權限、備份策略與事故的補救方式都跟著這條線分。
+## 延伸閱讀：權限模型與資料庫遷移
 
-## 往下走
-
-授權的單位與最小權限的具體切法在 [SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)。DDL 權限實際被用到的場合（雙寫、回填、切流、回滾）在 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
+- 角色授權單位與最小權限實例：[SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)
+- 運用 DDL 執行雙寫、回填、切流與回滾的流程：[1.6 資料庫轉換實作：雙寫、回填、切流與回滾](/backend/01-database/database-migration-playbook/)

@@ -1,36 +1,34 @@
 ---
 title: "Query Optimizer（查詢最佳化器）"
 date: 2026-08-31
-description: "想知道是誰決定了執行順序、或為什麼同一段查詢換個時間變慢時"
+description: "釐清查詢的執行順序由誰決定，或查詢未改動卻突然變慢時"
 aliases: ["/sql/knowledge-cards/query-optimizer/"]
 weight: 3
 tags: ["sql", "optimizer", "performance", "knowledge-card"]
 ---
 
-Query optimizer 是引擎裡負責挑選執行方式的元件。它讀進查詢，產出一個 [query plan](/backend/01-database/sql/knowledge-cards/query-plan/)，而它可以任意重排步驟，只受一個約束：輸出的 [relation](/backend/01-database/sql/knowledge-cards/relation/) 要與語意模型算出來的一致。
+Query optimizer（查詢最佳化器）是資料庫引擎裡負責挑選執行方式的元件。它讀入查詢後產出一份 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/)，並可在不違反唯一一項限制的前提下任意重排執行步驟：最終輸出的 [Relation（關係）](/backend/01-database/sql/knowledge-cards/relation/) 必須與 [Semantic Model（語意模型）](/backend/01-database/sql/knowledge-cards/semantic-model/) 所定義的結果一致。
 
-它比較的依據是另外存著的一份[統計資訊](/backend/01-database/sql/knowledge-cards/query-statistics/)——那份摘要既不在查詢的文字裡也不在資料表裡，而統計多新，它的估計就多準。
+最佳化器估算各個候選計畫代價的依據，是另外儲存的一份 [Query Statistics（統計資訊）](/backend/01-database/sql/knowledge-cards/query-statistics/)。這份摘要既不在查詢文字內，也不直接等於資料表本身；統計越接近目前資料分布，代價估計就越準確。
 
 ## 跟其他概念的關係
 
-最佳化器的存在是 SQL 宣告式性質的直接結果。查詢只描述要什麼結果，所以「怎麼算」這個決定必須有人做，而做這個決定的就是它。
+查詢最佳化器的存在是 SQL 宣告式設計的直接產物。查詢只宣告結果的形狀，不指定執行流程，因此需要由最佳化器替每一次查詢決定掃描與連接順序。
 
-它的選擇依據是估計的代價，而估計來自統計資訊——每張表大概多少列、某個欄位的值大概怎麼分布。所以它的判斷品質取決於那些統計有多新，與查詢寫得多好無關。它的產物是一份 [query plan](/backend/01-database/sql/knowledge-cards/query-plan/)，而樹上每個節點處理的都是一個 [relation](/backend/01-database/sql/knowledge-cards/relation/)。
+最佳化器比較候選方案時依賴估計代價，而估計值來自 [Query Statistics（統計資訊）](/backend/01-database/sql/knowledge-cards/query-statistics/)（每張表的大致列數與各欄值分布）。因此計畫品質取決於統計的新舊程度，與查詢文字的寫法工整度無關。最佳化器的產出是一份 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/)，運算子樹上每個節點的輸入與輸出都是一個 [Relation（關係）](/backend/01-database/sql/knowledge-cards/relation/)。
 
 ## 可觀察訊號與例子
 
+書店資料庫的顧客表有 50 列、訂單表有 200,000 列。同一個連接分別寫成 `FROM 訂單 JOIN 顧客` 與 `FROM 顧客 JOIN 訂單`，在執行過 `ANALYZE` 的資料庫上，SQLite 兩次都產出相同的計畫：掃描 200,000 列的訂單表，並對 50 列的顧客表做索引查找。**書寫位置決定語意，實際執行方式由最佳化器另外決定。**
 
+若資料庫沒有統計資訊，SQLite 會退回依照文字中資料表的出現順序掃描。這組有與沒有統計的完整對照實驗，記錄於 [SQL.1 宣告式的紅利與代價：書寫、求值與執行順序各自由誰決定](/backend/01-database/sql/declarative-not-procedural/)。
 
-書店的顧客表五十列、訂單表二十萬列。同一個連接寫成 `FROM 訂單 JOIN 顧客` 與 `FROM 顧客 JOIN 訂單`，在跑過 `ANALYZE` 的資料庫上 SQLite 兩次回報一模一樣的計畫——都掃二十萬列那張、對五十列那張做查找。**書寫位置決定語意，執行方式由最佳化器另外決定。**
+可用資源改變時，計畫也會隨之更新。替 `訂單(顧客編號)` 建立 [Index（索引）](/backend/01-database/sql/knowledge-cards/indexing/) 後，同一段查詢的計畫從三行縮為兩行：`SCAN 顧客` 接 `SEARCH 訂單 USING COVERING INDEX ix`，引擎不再建立臨時索引。
 
-統計缺席時它只好照文字的順序掃——那一組對照的完整實驗在 [SQL.1 宣告式的紅利與代價：書寫、求值與執行順序各自由誰決定](/backend/01-database/sql/declarative-not-procedural/)。
-
-換掉可用的資源，計畫也會變。建好 `訂單(顧客編號)` 索引之後，同一段查詢從三行縮成兩行——`SCAN 顧客` 接 `SEARCH 訂單 USING COVERING INDEX ix`，臨時索引不必再建。
-
-它也可以做等價變換，例如把某些 [outer join](/backend/01-database/sql/knowledge-cards/outer-join/) 轉成內連接，前提是查詢的其他部分已經讓外連接補的那些列不可能出現在結果裡。
+最佳化器也能執行等價轉換，例如在確認查詢的其他條件已排除外連接補 `NULL` 的列後，將特定的 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/) 轉成內連接。
 
 ## 判斷條件與後果
 
-查詢沒動而某天變慢時，變的是統計而不是查詢——最佳化器照估計值選，估計舊了選擇就跟著舊。所以這種情形的歸因起點是統計資訊的新舊，不是查詢的寫法。
+查詢文字未修改卻在某天變慢時，變動點常是資料分布與統計資訊，而非查詢語句。最佳化器依據估計值挑選計畫，統計陳舊會直接導致計畫退化，因此排查起點應先確認統計是否過期。
 
-反過來，最佳化器選錯而統計是新的時候，才輪到用提示或改寫去引導它，而那些手段會把原本自動適應資料變化的查詢釘死在一個選擇上。
+只有在統計已經最新、但最佳化器仍選錯計畫的情況下，才考慮使用查詢提示（hint）或改寫來引導。這類強制手段會將查詢固定在單一執行方案上，往後資料量或分布變化時將失去自動調整的能力。

@@ -1,29 +1,41 @@
 ---
 title: "SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證"
 date: 2026-09-01
-description: "LEFT JOIN、CROSS JOIN、DISTINCT、COALESCE 與表的別名各自對讀的人宣告了什麼、宣告落空時下一個修改的人付出什麼代價，以及把關鍵字換成最弱的版本再跑一次的查證動作"
+description: "LEFT JOIN、CROSS JOIN、DISTINCT、COALESCE 與表別名各自向閱讀者宣告的預期、宣告落空時後續維護者付出的代價，以及將關鍵字換成最弱版本重跑的查證動作與邊界"
 aliases: ["/sql/declared-intent-vs-behaviour/"]
 weight: 22
 tags: ["sql", "join", "distinct", "intent", "maintenance"]
 ---
 
-一段查詢有兩個讀者。引擎讀的是行為——這段文字要求它算出哪一批列；人讀的是宣告——寫的人選了 `LEFT` 而不選 `INNER`，選了 `CROSS` 而不選 `JOIN ... ON`，每一個選擇都在說明他預期資料長什麼樣。**引擎執行行為，而它從不檢查宣告有沒有兌現。**
+`LEFT JOIN`、`CROSS JOIN`、`DISTINCT`、`COALESCE` 與表別名都會向後續維護者傳達資料形態的預期，但資料庫引擎只執行操作、不查核這些預期是否兌現。本篇涵蓋以下內容：
 
-宣告與行為分岔的時候，查詢照常回正確答案，測試照常通過，[執行計畫](/backend/01-database/sql/knowledge-cards/query-plan/)上也看不出異常。付出代價的是下一個改它的人：他讀到的是宣告，於是他手上的前提從一開始就是錯的。宣告與行為之外，還有一種落差在查詢與要問的問題之間：查詢在語法上完全合法、引擎照實執行，而它回答的不是要問的那一題，那一種在 [SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/)；同一段文字換一家引擎會做什麼，是跨引擎的那一種，在 [SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)。本篇的宣告落空時答案仍然正確，錯的是文字對下一個讀它的人說的話。
+- 各關鍵字的宣告意義與常見的宣告落空形態。
+- 被 `WHERE` 撤銷的 `LEFT JOIN`、帶等值條件的 `CROSS JOIN`、配對已有約束保證時的 `LEFT JOIN`，以及用來壓掉連接重複的 `DISTINCT` 實測案例。
+- 將關鍵字降級為最弱版本重跑的查證動作與適用邊界。
 
-本篇的查詢跑在[共用的範例資料庫](/backend/01-database/sql/sample-bookstore-database/)上：三位顧客佳穎、宗翰、雅文，而只有佳穎下過兩張訂單（101 與 102，金額 300 與 500）。讀這一篇需要先有三件事：`LEFT` 保護了哪些列在 [SQL.4 鏈式連接的左運算元](/backend/01-database/sql/join-left-operand-accumulates/)，它與條件位置的互動在 [SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責](/backend/01-database/sql/on-describes-where-filters/)，連接怎麼把一列變成多列在 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/)。那三篇答的是「這個關鍵字做什麼」，這一篇不重寫那些機制，它問的是同一段查詢對下一個讀它的人說了什麼。
+一段 SQL 同時面對兩個對象：引擎讀取的是操作行為（算出哪批列），維護者讀取的是關鍵字宣告（撰寫者選用 `LEFT`、`CROSS`、`DISTINCT` 或特定別名，代表他對資料形態的預期）。引擎只負責執行操作，從不驗證這些宣告是否兌現。
+
+多數宣告落空不會在查詢輸出或測試裡現形，其中已被約束保證的 `LEFT JOIN` 或壓掉連接重複的 `DISTINCT` 從 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/) 也觀察不到異狀；被 `WHERE` 撤銷的 `LEFT JOIN` 與帶等值條件的 `CROSS JOIN` 則須主動比對執行計畫（例如確認 PostgreSQL 是否已改寫為內連接）才能察覺。付出代價的是後續接手修改的人，他會依錯誤的宣告推導出錯誤的前提。與這類落差相鄰的兩個議題各有專篇：查詢語法合法但未對應業務需求（回傳錯誤答案）見 [SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/)；同一段查詢在不同引擎組態下的行為差異見 [SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)。
+
+以下範例執行於[SQL 各篇共用的範例資料庫：一家小書店的顧客、訂單與評價表](/backend/01-database/sql/sample-bookstore-database/)（顧客為佳穎、宗翰、雅文，僅佳穎有訂單 101 金額 300 與 102 金額 500）。閱讀本篇前應具備以下前置機制：`LEFT JOIN` 的保護範圍見 [SQL.4 鏈式連接的左運算元：累積方式與外連接的保護範圍](/backend/01-database/sql/join-left-operand-accumulates/)，條件放 `ON` 或 `WHERE` 的差異見 [SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責](/backend/01-database/sql/on-describes-where-filters/)，連接造成列數膨脹見 [SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)。
 
 ## 各個關鍵字的宣告與落空的形態
 
-`LEFT JOIN` 說的是「右邊配不到對象的左邊那些列也要留著」。寫的人選它，等於宣告他預期有配不到的列，而且那些列對答案有意義。
+每個關鍵字都向後續閱讀者傳達特定資料預期：`LEFT JOIN` 宣告預期存在右表配不到的左表列且這些列須保留；`CROSS JOIN` 宣告需要兩表所有配對組合；`DISTINCT` 宣告目標欄位本身存在重複值且需去重；`COALESCE` 宣告該欄位可能出現 [NULL（空值）](/backend/01-database/sql/knowledge-cards/null/)；表別名（如 `FROM 訂單 AS 早`）宣告該次出現代表較早的訂單。這些宣告沒有語法成本，引擎也不會查核其真實性。
 
-`CROSS JOIN` 說的是「我要每一種配對」。`DISTINCT` 說的是「這一組值本身會重複，而重複對我沒有意義」。`COALESCE` 說的是「這裡會有空值」。表的別名也是一種宣告：`FROM 訂單 AS 早` 說的是「這一次出現代表較早的那張單」。這些宣告是免費的，寫下去沒有人會查證。
+宣告落空常見於以下形態：
 
-落空的樣子不只一種。宣告可能**被同一段查詢的別的部分撤銷**（`LEFT` 加上一個問右表的 `WHERE`）、可能**描述一個引擎並沒有執行的動作**（`CROSS` 加等值條件）、可能**描述一個從一開始就不存在的情況**（配對已有保證時的 `LEFT`），也可能**指向錯的成因而答案仍然正確**（`DISTINCT` 收掉連接製造的重複），還可能**名字與它代表的那一次出現對調**（叫「早」的別名拿到後來那張單，條件跟著對調，結果不變，這個例子在 [SQL.7 表的出現與別名：表名的指稱、別名的作用範圍與自連接](/backend/01-database/sql/table-occurrence-and-alias/)）。這幾種落空在現有資料上都回正確答案，代價都落在下一個照著宣告動手的人身上：`DISTINCT` 指向錯成因，他多要一個欄位就回出錯的結果；被撤銷的 `LEFT` 讓他改了 `SELECT` 之後仍然少了沒有訂單的顧客，而原因在他沒有動的 `WHERE`；其餘幾種連錯的結果都不會出現，只讓他下錯判斷。
+- **被同段查詢的其他子句撤銷**：例如 `LEFT JOIN` 搭配濾除空值的 `WHERE`。
+- **描述引擎未執行的操作**：例如 `CROSS JOIN` 加上等值條件。
+- **描述約束已排除的資料情形**：例如外鍵與 `NOT NULL` 已保證配對時的 `LEFT JOIN`。
+- **指向錯誤成因但偶然得出正確結果**：例如用 `DISTINCT` 壓掉連接造成的重複列。
+- **別名與條件方向相反**：例如名為 `早` 的別名實際代表較晚訂單（範例見 [SQL.7 表的出現與別名：表名的指稱、別名的作用範圍與自連接](/backend/01-database/sql/table-occurrence-and-alias/)）。
+
+採用這些寫法的查詢在現有資料上皆回傳正確答案，但會誤導後續修改者：加一個輸出欄位就讓 `DISTINCT` 失效，改寫 `SELECT` 時仍因未動到的 `WHERE` 而找不到被保護的顧客，或依錯誤宣告做出錯誤的資料狀態判斷。
 
 ## 被 WHERE 撤銷的 LEFT JOIN
 
-書店想找出下過大單的顧客。查詢寫成這樣：
+當 `WHERE` 對右表欄位施加拒絕 `NULL` 的條件時，`LEFT JOIN` 保留未配對列的宣告會在執行時被撤銷。以書店找出下過超過 200 元訂單的顧客為例，若寫成以下 `LEFT JOIN`：
 
 ```sql
 SELECT 顧客.姓名
@@ -38,11 +50,9 @@ WHERE 訂單.金額 > 200;
 -- 佳穎、佳穎
 ```
 
-`LEFT` 在這裡宣告「沒有訂單的顧客也要留著」。而下一行的 `WHERE` 問了一個右表欄位，宗翰與雅文那兩列右邊全是 `NULL`，`NULL > 200` 答不出真，於是被篩掉，外連接與內連接兩段因此回同樣兩列。
+`LEFT JOIN` 宣告保留沒有訂單的顧客，但 `WHERE 訂單.金額 > 200` 把宗翰與雅文補上 `NULL` 的列全數排除（機制見 [SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責](/backend/01-database/sql/on-describes-where-filters/)），使實際執行結果等同於內連接。
 
-機制在 [SQL.5 ON 與 WHERE：連接條件與篩選條件各自的職責](/backend/01-database/sql/on-describes-where-filters/)：條件放 `ON` 參與配對，放 `WHERE` 篩成品，而外連接補上的那些列過不了成品這一關。這裡要看的是另一件事——**這段查詢的行為是內連接，而它的文字說的是外連接**。
-
-下一個維護的人讀到 `LEFT`，會以為沒下單的顧客在結果裡。他想加一個「顯示零元」的欄位：
+後續維護者讀到 `LEFT JOIN`，以為沒有訂單的顧客也在結果集裡，於是加上 `COALESCE(訂單.金額, 0)` 企圖顯示零元：
 
 ```sql
 SELECT 顧客.姓名, COALESCE(訂單.金額, 0) AS 金額   -- 他加的欄位：沒有訂單的顧客顯示 0
@@ -52,11 +62,11 @@ WHERE 訂單.金額 > 200;                              -- 他沒有動的那一
 -- 佳穎 500
 ```
 
-跑出來仍然只有佳穎，而他找不出原因——因為問題在他沒有動的那一行。
+查詢執行後依然只出現佳穎，宗翰與雅文並未現身，原因隱藏在維護者未曾修改的 `WHERE` 子句裡。
 
 ## CROSS JOIN 加等值條件與內連接的計畫
 
-要比較同一批資料的兩列時，常見的寫法是把表跟自己配對再篩：
+比較同一批資料的兩列時，部分寫法會先寫 `CROSS JOIN` 再於 `WHERE` 補上等值條件：
 
 ```sql
 SELECT 今天.訂單編號
@@ -64,7 +74,7 @@ FROM 訂單 昨天 CROSS JOIN 訂單 今天
 WHERE 今天.顧客編號 = 昨天.顧客編號 AND 今天.金額 > 昨天.金額;
 ```
 
-`CROSS JOIN` 宣告「我要每一種配對」，讀起來像是先造出所有配對再挑。而等值條件寫進去之後，[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)產出的計畫與內連接的計畫一模一樣。改寫成 `JOIN ... ON` 的版本把同一個條件搬進 `ON`：
+`CROSS JOIN` 向閱讀者傳達「展開全部組合」的意圖，但在加入等值條件後，[Query Optimizer（查詢最佳化器）](/backend/01-database/sql/knowledge-cards/query-optimizer/) 產出的執行計畫與標準 `JOIN ... ON` 完全一致：
 
 ```sql
 SELECT 今天.訂單編號
@@ -72,8 +82,6 @@ FROM 訂單 昨天 JOIN 訂單 今天
   ON 今天.顧客編號 = 昨天.顧客編號 AND 今天.金額 > 昨天.金額;
 -- 102（CROSS JOIN 那一段也回 102）
 ```
-
-同一組資料上兩種寫法的計畫逐字相同：
 
 ```text
 -- CROSS JOIN 加 WHERE 等值（SQLite 3.51，共用的範例資料庫，沒有另外建索引）
@@ -87,22 +95,20 @@ FROM 訂單 昨天 JOIN 訂單 今天
 `--SEARCH 今天 USING AUTOMATIC COVERING INDEX (顧客編號=?)
 ```
 
-`AUTOMATIC` 表示這個索引是引擎為了這一次查詢臨時建的——訂單表上沒有 `顧客編號` 的索引，而它判斷建一個比逐列掃描划算。兩段查詢連這個決定都一樣。
+`AUTOMATIC` 代表 SQLite 因訂單表缺少 `顧客編號` [Index（索引）](/backend/01-database/sql/knowledge-cards/indexing/) 而臨時建立覆蓋索引（covering index，索引本身已含查詢所需全部欄位、無須回表），兩段查詢連這項計畫決定都逐字相同。[Cartesian Product（笛卡兒積）](/backend/01-database/sql/knowledge-cards/cartesian-product/) 說明了等值條件存在時引擎不會先展開全部配對。
 
-`CROSS JOIN` 在代數上確實對應[笛卡兒積](/backend/01-database/sql/knowledge-cards/cartesian-product/)，而那張卡寫明展開由條件決定：條件把兩邊綁起來時全部組合一次都沒有被造出來。
-
-`CROSS JOIN` 這個宣告的誤導方向與 `LEFT` 相反。`LEFT` 那一節是宣告承諾了引擎沒做的事，這一節是宣告讓讀的人誤判了代價——看到 `CROSS` 就以為它是列數的平方，於是花力氣改寫一段本來就是內連接的查詢。兩段文字比不出快慢，快慢要向引擎要計畫——[SQL.17 查詢的代價](/backend/01-database/sql/cost-lives-in-the-plan/) 在有無索引的兩種狀態下各量一次；而在這裡要先分清楚：`CROSS JOIN` 加等值條件與 `JOIN ... ON` 是同一段查詢的兩種寫法，換掉它省下的是讀的人的疑慮，不是執行時間。
+這個落空的誤導方向與 `LEFT JOIN` 相反：被撤銷的 `LEFT JOIN` 會向維護者傳達保留未配對列的假訊號，帶等值條件的 `CROSS JOIN` 則會讓維護者以為查詢具平方級複雜度，白費心力改寫一段實質上已是內連接的查詢（效能驗證見 [SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)）。將它改為 `JOIN ... ON` 省下的是維護者的疑慮，而非執行時間。
 
 ## 配對已有保證時的 LEFT JOIN
 
-每一張訂單都帶著一個有效的顧客編號時，這樣寫也會過：
+當表結構已確保每張訂單皆指向有效顧客時，以 `LEFT JOIN` 連接訂單與顧客仍能正常執行：
 
 ```sql
 SELECT 訂單.訂單編號, 顧客.姓名
 FROM 訂單 LEFT JOIN 顧客 ON 顧客.顧客編號 = 訂單.顧客編號;
 ```
 
-`LEFT` 宣告「訂單可能找不到顧客」。而兩列訂單都配到了，這個宣告一次都沒有生效過：
+`LEFT JOIN` 宣告「訂單可能找不到對應顧客」，但每筆訂單皆具備對應顧客，這項宣告從未生效：
 
 ```sql
 SELECT count(*), count(顧客.姓名)   -- count(*) 數列數，count(欄位) 只數那一欄不是 NULL 的列
@@ -110,7 +116,7 @@ FROM 訂單 LEFT JOIN 顧客 ON 顧客.顧客編號 = 訂單.顧客編號;
 -- 2  2：沒有任何一列是 LEFT 補出來的
 ```
 
-它的代價要等到有人相信它才出現。下一個人想查有沒有孤兒訂單（指不到任何顧客的訂單），順手接上這段查詢：
+若後續維護者相信這項宣告，順手沿用該段連接檢查孤兒訂單：
 
 ```sql
 SELECT 訂單.訂單編號
@@ -119,22 +125,20 @@ WHERE 顧客.姓名 IS NULL;            -- 配不到顧客的訂單，姓名會�
 -- 零列
 ```
 
-拿到零列，於是回報「資料乾淨」。零列在這裡有兩種來源：確實沒有孤兒訂單，或者這個宣告本來就沒有內容。這段查詢分不出兩者。
-
-真正保證配對的是[約束](/backend/01-database/sql/knowledge-cards/constraint/)——外鍵存在時每一張訂單都指得到顧客，那時 `LEFT` 描述的是一個資料庫已經排除掉的情況。宣告與約束衝突時，讀的人多半相信宣告，因為它就在眼前，而約束在另一個檔案裡。
+回傳零列有兩種截然不同的成因：資料表確實沒有孤兒訂單，或該 `LEFT` 宣告所設想的情形根本不存在，單看查詢輸出無法區分。真正保證配對必然存在的是已生效的 [Constraint（約束）](/backend/01-database/sql/knowledge-cards/constraint/)（`NOT NULL` 加外鍵）；當查詢關鍵字與表約束互相矛盾時，閱讀者容易只憑眼前的查詢文字做判斷，忽略定義在 schema 檔案裡的約束。
 
 ## 收掉連接重複的 DISTINCT
 
-顧客與訂單連起來之後，佳穎出現兩次，因為她有兩張訂單。要一份「下過單的顧客」名單，加 `DISTINCT` 就對了：
+顧客表與訂單表連接後，佳穎因有兩張訂單而出現兩次。若要取得下過單的顧客名單，加上 `DISTINCT` 可得到正確輸出：
 
 ```sql
 SELECT DISTINCT 姓名 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號;
 -- 佳穎
 ```
 
-`DISTINCT` 宣告「姓名這一欄有重複值」。而顧客表裡佳穎只有一列——重複是連接製造出來的（[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。宣告指向了錯的成因，答案卻是對的。
+`DISTINCT` 宣告的是「`姓名` 欄位本身含有重複值」，但在顧客表裡佳穎只有一列，重複是由連接展開造成的（見 [SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。這項宣告把成因指錯方向，只因恰好去重而回傳正確結果。
 
-這種宣告落空的代價由下一次修改觸發，而觸發它的動作很小——多要一個欄位就夠：
+只要後續需求多加一個訂單欄位，這個修法就會立刻失效：
 
 ```sql
 SELECT DISTINCT 姓名, 金額 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號;
@@ -142,21 +146,21 @@ SELECT DISTINCT 姓名, 金額 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 
 -- 佳穎 500
 ```
 
-`DISTINCT` 作用在整列上，兩列的金額不同，於是它一列都收不掉。上一個人的修法在這裡失效，而失效的理由要回到「重複從哪裡來」這個問題——那個問題當初被 `DISTINCT` 跳過了。
+`DISTINCT` 作用在整個輸出列上，兩列金額不同便不再合併，先前的寫法失去預期效果，維護者必須重新追查重複列的真正來源。
 
 ## 查證宣告的動作：把關鍵字換成最弱的版本再跑一次
 
-文字本身看不出宣告有沒有兌現——`LEFT` 寫在那裡，而它保護下來的列可能一列都不剩。差別要現形，得讓 `LEFT` 這類關鍵字消失一次：**把它換成最弱的版本再跑一次，結果變不變就是它有沒有在做事。** 這個動作在軟體測試裡叫 [mutation testing](/testing/knowledge-cards/mutation-testing/)：在現有資料上結果不變，是那張卡說的突變「存活」；它是不是等價突變（改寫之後行為在任何資料上都相同），要看造不造得出一筆讓改寫前後回不同答案的反例資料（[SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/) 用的名字與造法）。
+單讀查詢文字無法判斷關鍵字宣告是否實際發揮作用。最直接的查證方式是將目標關鍵字降級為最弱版本後重跑查詢，觀察輸出是否改變——在軟體測試領域，這對應於 [Mutation Testing（突變測試）](/testing/knowledge-cards/mutation-testing/)：改寫後在現有資料上結果不變稱為突變「存活」，進一步確認它是否在所有資料上都等價（equivalent mutant），則看能否構造出讓改寫前後輸出不同的反例資料（構造方式見 [SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/)）。
 
-| 宣告                         | 換成                     | 結果不變表示                 |
+| 宣告                         | 降級版本                 | 結果不變代表的意義           |
 | ---------------------------- | ------------------------ | ---------------------------- |
-| `LEFT JOIN` / `RIGHT JOIN`   | `JOIN`                   | 在現有資料上行為是內連接     |
-| `CROSS JOIN` 加 `WHERE` 等值 | `JOIN ... ON` 同一個條件 | 這段本來就是內連接（限等值） |
-| `DISTINCT`                   | 拿掉                     | 這一組值原本就各不相同       |
-| `COALESCE(欄位, 預設值)`     | 直接用該欄位             | 這一欄在現有資料上沒有空值   |
+| `LEFT JOIN` / `RIGHT JOIN`   | `JOIN`                   | 在現有資料上行為等同內連接   |
+| `CROSS JOIN` 加 `WHERE` 等值 | `JOIN ... ON` 同一個條件 | 實質上是內連接（限等值條件） |
+| `DISTINCT`                   | 移除                     | 現有資料中該欄位組原本無重複 |
+| `COALESCE(欄位, 預設值)`     | 直接使用該欄位           | 該欄位在現有資料上不含空值   |
 
-結果變了的時候，換掉關鍵字這個動作只證明被換掉的那個關鍵字在做事，還沒證明宣告是對的。`DISTINCT` 那一格就是這種：拿掉之後結果會變，而變的理由是連接把列複製了，與「這一欄有重複值」無關。所以結果變了之後還要問：**變化的成因與宣告說的是不是同一件事**。
+若降級後結果改變，只代表該關鍵字在目前查詢中確有作用，尚不代表它的宣告指向正確成因——例如移除 `DISTINCT` 後結果變多，原因是連接展開了列數，而非顧客表姓名重複。因此結果改變後仍須確認「變化成因與關鍵字宣告的預期是否一致」。
 
-配對已有保證時的 `LEFT`（〈配對已有保證時的 LEFT JOIN〉那一節）是換掉關鍵字再跑一次這個動作測不出來的：配對由外鍵保證的時候，`LEFT` 與 `JOIN` 在現有資料上結果相同，而換掉之後仍然看不出宣告當初有沒有意義。那一種要去查[約束](/backend/01-database/sql/knowledge-cards/constraint/)，判斷標準是資料庫有沒有替這個配對背書——而約束寫進 schema 也不一定生效，各家在哪一步把寫下與生效分開，在 [SQL.18 外鍵與參照完整性：宣告、生效與查詢得到的保證](/backend/01-database/sql/foreign-key-and-referential-integrity/)。
+對於「配對已有約束保證時的 `LEFT JOIN`」，僅靠降級重跑無法分辨它到底是「目前剛好沒有孤兒訂單」還是「外鍵已永久排除孤兒訂單」。此時須直接查詢系統目錄（資料庫內建用來記錄表、欄、約束與權限定義的系統表）確認 [Constraint（約束）](/backend/01-database/sql/knowledge-cards/constraint/) 是否存在且已生效（查法見 [SQL.18 外鍵與參照完整性：宣告、生效與查詢得到的保證](/backend/01-database/sql/foreign-key-and-referential-integrity/)）。
 
-對讀別人查詢的人來說，這個寫下與生效是否一致的差別回答的是「我可以相信這段文字說的話嗎」——而那個問題在讀的當下沒有別的入口。文字該先為哪一個讀者而寫——人還是引擎——是 [SQL.22 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/) 的題目。
+確認關鍵字宣告與實際行為一致後，撰寫查詢時面對的另一個取捨是可讀性與執行效能的關係，[SQL.22 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/) 實測兩者同向與分岔的情形及對應調整層級。

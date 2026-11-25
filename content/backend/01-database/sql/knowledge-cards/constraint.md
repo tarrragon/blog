@@ -1,30 +1,35 @@
 ---
 title: "Constraint（約束）"
 date: 2026-09-01
-description: "看到「這個保證要來自約束而不是來自習慣」，或想確認某一欄會不會出現 NULL 時，查這一層由誰擋"
+description: "需要確認資料保證應依賴資料庫約束而非資料現況，或確認某一欄是否可能出現 NULL 時"
 aliases: ["/sql/knowledge-cards/constraint/"]
 weight: 14
 tags: ["sql", "constraint", "null", "ddl", "knowledge-card"]
 ---
 
-約束是掛在表或欄位上的一條規則，由資料庫在每一次寫入 [relation](/backend/01-database/sql/knowledge-cards/relation/) 的時候檢查——寫入違反它就失敗，所以一個有約束的欄位，它的內容在整張表的範圍內都成立。它與應用程式裡的檢查差在生效的位置：應用程式的檢查只涵蓋走過那段程式碼的寫入，約束涵蓋每一次寫入，包含手動改的、遷移腳本改的、以及另一個服務改的。
+Constraint（約束）是宣告在資料表或欄位上的規則，由資料庫在每一次寫入 [Relation（關係）](/backend/01-database/sql/knowledge-cards/relation/) 時強制檢查，違反規則的寫入立即失敗。與應用程式層檢查不同，應用層只覆蓋經過該段程式碼的路徑，資料庫約束則涵蓋所有寫入來源，包含手動維護、遷移腳本與其他服務。
 
-常見的幾種各自保證不同的事。`NOT NULL` 保證這一欄永遠有值；`UNIQUE` 保證這一欄的值不重複；`PRIMARY KEY` 是前兩者合起來再加上「這是本表辨識一列的依據」；`FOREIGN KEY` 保證這一欄的值在另一張表裡找得到對應的那一列；`CHECK` 保證這一欄滿足一個自己寫的條件（例如金額不為負）。PostgreSQL 另有 [Exclusion Constraint（排除約束）](/backend/01-database/sql/knowledge-cards/exclusion-constraint/)，保證任兩列在指定的比較下不同時成立（例如兩段時間不重疊），`UNIQUE` 是它的運算子全為相等時的特例。若唯一性只需要套用在表的子集合（例如軟刪除帳號表中僅對 `deleted_at IS NULL` 的生效列強制信箱唯一），PostgreSQL 與 SQLite 改以帶 `WHERE` 條件的唯一 [Partial Index（部分索引）](/backend/knowledge-cards/partial-index/) 達成條件式唯一約束；宣告多欄複合外鍵時亦須留意，在 SQL 預設的 `MATCH SIMPLE` 規則下，只要子表複合外鍵任一欄位為 `NULL`，資料庫引擎會直接略過外鍵檢查，因此多租戶複合外鍵的子表租戶鍵須同步設為 `NOT NULL`（見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。
+基本約束各自提供不同保證：`NOT NULL` 保證欄位不為空；`UNIQUE` 保證欄位值不重複；`PRIMARY KEY` 結合 `NOT NULL` 與 `UNIQUE` 並作為列識別鍵；`FOREIGN KEY` 保證欄位值存在於父表；`CHECK` 保證單列滿足指定布林條件（如金額不為負）。
 
-## 它決定哪些推論可以做
+除了上述單欄或跨表的基本規則，還有三類進階約束形態：PostgreSQL 的 [Exclusion Constraint（排除約束）](/backend/01-database/sql/knowledge-cards/exclusion-constraint/) 保證任兩列在指定比較運算下不可同時成立（例如兩段時間不可重疊，`UNIQUE` 是所有運算子皆為 `=` 的特例）；若唯一性只需套用在資料表的子集合（例如軟刪除帳號表僅對 `deleted_at IS NULL` 的生效列強制信箱唯一），PostgreSQL 與 SQLite 可透過附帶 `WHERE` 條件的唯一 [Partial Index（部分索引）](/backend/knowledge-cards/partial-index/) 達成條件式唯一約束；宣告多欄複合外鍵時，SQL 預設的 `MATCH SIMPLE` 規則只要子表複合外鍵任一欄位為 `NULL` 即略過外鍵檢查，因此多租戶複合外鍵的子表租戶鍵須同步設為 `NOT NULL`（完整設計實例在 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。
 
-一個判斷標準能不能省掉某一步，取決於約束有沒有把那一步的前提固定住。最直接的一例是[空值](/backend/01-database/sql/knowledge-cards/null/)：`NOT IN` 在子查詢那一欄出現 `NULL` 的時候會整個回空集合而不報錯，所以否定式的成員判斷一般用 `NOT EXISTS`。這條規則有一個豁免——那一欄掛了 `NOT NULL`。**豁免的條件是約束而不是觀察**：翻遍現在的資料都沒有 `NULL`，只證明此刻沒有；約束證明的是往後也不會有，而查詢要活得比這一批資料久。
+## 約束與查詢可省略的防禦判斷
 
-同一個結構在別處反覆出現：`UNIQUE` 讓「這個連接會不會讓一列配到多列」變成可以事先回答的問題（見 [SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)），`FOREIGN KEY` 讓「這個 `JOIN` 會不會掉列」有一個不必查資料就成立的答案。
+查詢能否省略某項防禦檢查，取決於約束是否已把前提固定。以 [NULL（空值）](/backend/01-database/sql/knowledge-cards/null/) 為例：子查詢結果若出現 `NULL`，`NOT IN` 會靜默回傳空集合；外層比對欄位若為 `NULL`，`NOT IN` 亦會濾除該列而與 `NOT EXISTS` 分岔，因此否定成員判斷預設使用 `NOT EXISTS`，唯有外層比對欄位與子查詢欄位兩側皆已宣告 `NOT NULL` 約束時才可豁免。豁免依據必須是約束而非單次觀察——目前資料不含空值只證明當下如此，約束才保證未來持續成立。
+
+同理，`UNIQUE` 讓查詢端在寫連接前即可確認鍵值不會觸發一對多列數膨脹（見 [SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)），`FOREIGN KEY` 搭配 `NOT NULL` 則保證內連接不會因孤兒列或空鍵而遺失資料。
 
 ## 跟其他概念的關係
 
-約束屬於結構那一側，所以它由 [DDL](/backend/01-database/sql/knowledge-cards/ddl-dml/) 建立與修改，而不是由日常的讀寫語句。這條歸屬有兩個後果：加約束的權限跟建表的權限走在一起，不跟常態運行的帳號走；加約束到一張已經有資料的表上會失敗，如果既有資料裡有違反它的那幾列。
+約束屬於資料表結構定義，由 [DDL 與 DML（定義結構與動資料）](/backend/01-database/sql/knowledge-cards/ddl-dml/) 中的 DDL 建立與修改。這項歸屬帶來兩個後果：建立約束需要結構變更權限，與常態讀寫帳號分離；對既有資料表補加約束時，若既有列已違反規則，建約束操作會失敗。
 
-它與[索引](/backend/01-database/sql/knowledge-cards/indexing/)在外觀上容易混——`UNIQUE` 在多數引擎底下確實靠一個索引實作，而兩者的責任不同：索引買的是查找速度，約束買的是內容的保證。刪掉一個索引查詢會變慢，刪掉一個約束則是往後的寫入不再被擋。
+約束與 [Index（索引）](/backend/01-database/sql/knowledge-cards/indexing/) 職責不同，儘管多數引擎以索引實作 `UNIQUE`。索引負責加快查找速度，移除索引只影響效能；約束負責保證資料正確性，移除約束會使違法資料得以寫入。
 
-這條分工有一個邊界：約束宣告的內容同時是[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)可用的資訊，所以它買到的有時候多於內容的保證。同一張五千列的表、同一個 `EXISTS` 查詢、`recordDate` 上同樣掛著索引，只把索引從 `UNIQUE` 換成普通索引，SQLite 3.51.0 產出的位元碼就多一圈內層迴圈——唯一的時候引擎知道那次查找至多回一列，不唯一的時候它得準備好再看下一筆。這個差別在 `EXPLAIN QUERY PLAN` 上看不見，兩邊都印同一行 `SEARCH y USING INDEX ix (recordDate=?)`，要 `EXPLAIN` 到位元碼那一層才分得開；而在這組資料上它沒有量出時間差。同一組查詢在 DuckDB 1.5.5 上的計畫與有沒有 `UNIQUE` 無關。所以約束會不會影響代價是各家自己的決定，不是約束本身的性質（[SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)）。
+這條分工有一處延伸：約束資訊有時也會被 [Query Optimizer（查詢最佳化器）](/backend/01-database/sql/knowledge-cards/query-optimizer/) 用於簡化執行步驟。在五千列資料表上執行對 `recordDate` 做等值比對的 `EXISTS` 子查詢（`WHERE EXISTS (SELECT 1 FROM ... WHERE recordDate = ...)`），將 `recordDate` 索引由 `UNIQUE` 改為普通索引後，以 `EXPLAIN`（輸出逐行虛擬機指令，比 `EXPLAIN QUERY PLAN` 更底層）檢視 SQLite 3.51.0 位元碼，會看見多出一層內迴圈以備讀取下一筆。這項差別在 `EXPLAIN QUERY PLAN` 看不出來，在此資料量下也未產生顯著耗時差；同組查詢在 DuckDB 1.5.5 上的執行計畫則與是否有 `UNIQUE` 無關。因此約束是否影響執行計畫取決於各家引擎實作，而非約束本身的保證範圍（跨引擎差異分級在 [SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)）。
 
-## 往下走
+## 延伸閱讀：空值規則、外鍵實作與授權分層
 
-`NULL` 在比較、計數與分組裡各自怎麼表現，以及否定式那條規則的完整推導，在 [NULL（空值）](/backend/01-database/sql/knowledge-cards/null/) 與 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/) 的「子查詢含 NULL 時的 NOT IN 與 NOT EXISTS」一節。約束能在寫入時擋下哪些會讓答案錯掉的資料、為什麼問錯問題的那一類錯它擋不下，在 [SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/)。`FOREIGN KEY` 擋下哪兩個方向的寫入、同一段宣告在各家引擎為什麼未必生效，在 [SQL.18 外鍵與參照完整性：宣告、生效與查詢得到的保證](/backend/01-database/sql/foreign-key-and-referential-integrity/)。約束由誰有權建立、以及它跟常態運行帳號的權限為什麼分開，在 [SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)。
+- `NULL` 的三值邏輯與 `NOT IN` 失效推導：[NULL（空值）](/backend/01-database/sql/knowledge-cards/null/) 與 [SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)
+- 約束能攔截的錯誤類型與邊界：[SQL.13 查詢的合法性與答案的正確性：引擎檢查的範圍、答案錯掉的成因與查證方法](/backend/01-database/sql/well-formed-is-not-correct/)
+- 外鍵宣告與生效分離的位置：[SQL.18 外鍵與參照完整性：宣告、生效與查詢得到的保證](/backend/01-database/sql/foreign-key-and-referential-integrity/)
+- DDL 權限與常態運行帳號的切分：[SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)

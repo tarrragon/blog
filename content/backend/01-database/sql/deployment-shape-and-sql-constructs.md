@@ -1,48 +1,50 @@
 ---
 title: "SQL.20 引擎的部署形態與 SQL 構造：SQLite 與 PostgreSQL 在並行寫入、連線協調與身分上的差異"
 date: 2026-11-12
-description: "SQLite 的嵌入式單一寫入者與 PostgreSQL 的多連線伺服器各自需要哪些 SQL 構造：工作佇列認領與班表不重疊在兩家上的並行實測，列鎖、FOR UPDATE SKIP LOCKED、排除約束與 SERIALIZABLE，建議鎖與 LISTEN/NOTIFY，角色與資料列政策，以及換引擎時哪些交易與並行的設計要跟著改"
+description: "SQLite 的嵌入式單一寫入者與 PostgreSQL 的多連線伺服器各自需要哪些 SQL 構造：工作佇列認領與班表不重疊在兩家上的並行實測，列鎖、FOR UPDATE SKIP LOCKED、排除約束與 SERIALIZABLE，建議鎖與 LISTEN/NOTIFY，角色與資料列政策，以及更換引擎時交易與並行設計的調整方式"
 weight: 21
 tags: ["sql", "sqlite", "postgresql", "concurrency", "portability"]
 ---
 
-SQLite 與 PostgreSQL 支援的 SQL 構造不同，其中一部分差異可以從兩家的**部署形態**推出來：SQLite 是嵌在應用程式程序裡的函式庫，同一時間只讓一個交易寫入；PostgreSQL 是讓多條連線、多個使用者同時讀寫的伺服器。本篇整理從部署形態推得出來的差異：
+SQLite 與 PostgreSQL 支援的 SQL 構造不同，其中許多差異直接源自兩家的**部署形態**：SQLite 是嵌在應用程式行程裡的函式庫，同一時間只允許一個交易寫入；PostgreSQL 是讓多條連線與多個使用者同時讀寫的伺服器。本篇整理從部署形態推導出的差異：
 
-- 嵌入式單一寫入者與多連線伺服器各自的定義，以及它們推出的需求。
+- 嵌入式單一寫入者與多連線伺服器各自的定義，以及它們衍生出的需求。
 - 多個交易同時先讀後寫時，工作佇列認領與班表不重疊在兩家上的實測，以及 PostgreSQL 用來協調寫入者的列鎖、`FOR UPDATE SKIP LOCKED`、排除約束與 `SERIALIZABLE`。
 - 跨連線協調用的建議鎖與 `LISTEN`／`NOTIFY`。
 - 身分與權限：角色、`GRANT` 與資料列層級的政策。
-- 換引擎時，這幾類差異各自要改交易與並行設計的哪些地方。
+- 更換引擎時，這幾類差異各自要改動交易與並行設計的哪些地方。
 
-量測跑在 SQLite 3.53.0（Python 3 自帶的那一份）與 PostgreSQL 16.2 上；本分類其他篇用的是 SQLite 3.51 與 PostgreSQL 18，本篇換版本是為了涵蓋 SQLite 近幾版加入的構造。本篇的 SQLite 指官方發行版；SQLite 的 `BEGIN CONCURRENT` 分支與支援它的衍生引擎讓多個寫入交易同時進行，衝突改在提交時以 `SQLITE_BUSY_SNAPSHOT` 回報、整個交易要重試（依分支文件，本篇沒有實跑）。兩家另有一批跟部署形態無關的差異，是各自的設計選擇與實作範圍，寫在 SQLite 的 vendor 頁 [SQLite SQL Dialect and Index Limits](/backend/01-database/vendors/sqlite/sql-dialect-index-limits/)：SQLite 各構造加入的版本與查實際執行版本的方法、彈性型別與 `STRICT` 表對照 PostgreSQL 的型別檢查、`INSERT OR REPLACE` 與 `ON CONFLICT DO UPDATE` 的語意差異、`LATERAL`／`DISTINCT ON`／`ROLLUP`／`MERGE` 在 SQLite 上的改寫，以及只是拼法不同的寫法。同一個寫法各家是否收下、收下之後替寫的人補上什麼決定，在 [SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)。
+量測執行於 SQLite 3.53.0（Python 3 內建版本）與 PostgreSQL 16.2，涵蓋 SQLite 近幾版加入的構造；本篇的 SQLite 指官方發行版，且 PostgreSQL 討論限定於單一主節點上的多連線並行（讀寫分離與唯讀複本的複製延遲屬跨節點架構議題）。SQLite 的 `BEGIN CONCURRENT` 分支與支援它的衍生引擎允許寫入交易並行，衝突改在提交時以 `SQLITE_BUSY_SNAPSHOT` 回報並由整個交易重試（依分支文件，本篇未實跑）。與部署形態無關的型別與語法差異列在 [SQLite SQL Dialect and Index Limits](/backend/01-database/vendors/sqlite/sql-dialect-index-limits/)，各家對寬鬆寫法的接受程度與分級則詳述於 [SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)。
 
 ## 嵌入式單一寫入者與多連線伺服器：部署形態各自推出的需求
 
-**SQLite 是一個函式庫**：應用程式把它連結進自己的程序，資料庫是磁碟上的一個檔案，讀寫由那個程序呼叫函式庫直接對檔案做（[Embedded Database](/backend/knowledge-cards/embedded-database/)）。多條連線可以同時讀；寫入要先取得整個資料庫檔案的寫入鎖，所以同一時間只有一個交易在寫，其餘的寫入者等待或收到 `SQLITE_BUSY`（[Single Writer Model](/backend/knowledge-cards/single-writer-model/)）。同一台機器、本地磁碟上的幾個程序可以開同一個檔案，這把寫入鎖在程序之間同樣有效。對檔案的讀寫沒有經過另一個程序轉手，所以也沒有「登入」這個動作：作業系統允許哪個程序讀寫這個檔案，那個程序就讀寫得了全部資料。
+對照 SQLite 與 PostgreSQL 時，「部署形態」同時拉開了兩條正交軸：**寫入並行模型**（單一寫入鎖對上多版本列鎖）與**行程／網路邊界**（同機嵌入式函式庫對上獨立網路伺服器）。兩條軸在預設官方發行版上綁在一起，但衍生分支（如 `BEGIN CONCURRENT`）或網路封裝服務（如 Cloudflare D1）會單獨調整其中一條軸。
 
-**PostgreSQL 是一個伺服器程序**：應用程式經由網路連線送出 SQL，每一條連線由伺服器的一個後端程序服務。多個交易可以同時寫不同的列，伺服器用[多版本並行控制](/backend/knowledge-cards/mvcc/)（MVCC）與**[列鎖](/backend/knowledge-cards/row-lock/)**（row lock）讓它們互不干擾。MVCC 讓每一列保留多個版本，每個讀取依一份快照（某一刻已提交的資料）挑出它看得到的版本；預設的 `READ COMMITTED` 隔離等級下，快照在每一句開始時取。列鎖是交易修改某一列時替那一列上的鎖，其他要修改同一列的交易等它結束。機制在 [PostgreSQL MVCC + Lock Model：為什麼 PG 比 MySQL 少 deadlock、但 vacuum 是別的代價](/backend/01-database/vendors/postgresql/mvcc-lock-model/)。連線要先以某個角色登入，伺服器依角色決定這條連線能做什麼。
+**SQLite 是嵌入式函式庫**：應用程式把它連結進自身行程，資料庫是磁碟上的一個檔案，讀寫由該行程呼叫函式庫直接操作檔案（見 [Embedded Database](/backend/knowledge-cards/embedded-database/)）。多條連線可以同時讀取；寫入必須先取得整個資料庫檔案的寫入鎖，因此同一時間只有一個交易能寫入，其餘寫入者等待或收到 `SQLITE_BUSY`（見 [Single Writer Model](/backend/knowledge-cards/single-writer-model/)）。同一台機器本地磁碟上的多個行程可開啟同一個檔案，這把寫入鎖在行程之間同樣生效。讀寫不經過獨立伺服器行程轉手，也沒有登入流程：作業系統允許哪個行程讀寫該檔案，該行程就能讀寫全部資料。
 
-部署形態的差別推出 PostgreSQL 有、SQLite 沒有對應情形的需求，各自的構造在後面幾節：
+**PostgreSQL 是多連線伺服器行程**：應用程式經由網路連線送出 SQL，每條連線由伺服器的後端行程服務。多個交易可以同時修改不同的列，伺服器透過 [MVCC（多版本並行控制）](/backend/knowledge-cards/mvcc/) 與 [Row Lock（列鎖）](/backend/knowledge-cards/row-lock/) 讓並行寫入互不干擾。MVCC 為每一列保留多個版本，每次讀取依快照（某一刻已提交的資料）選出可見版本；預設 `READ COMMITTED` 隔離等級下，快照在每句 SQL 開始時取得。列鎖在交易修改某一列時鎖定該列，其他欲修改同一列的交易須等待其結束（機制見 [PostgreSQL MVCC + Lock Model：為什麼 PG 比 MySQL 少 deadlock、但 vacuum 是別的代價](/backend/01-database/vendors/postgresql/mvcc-lock-model/)）。每條連線皆須以特定角色登入，伺服器依該角色決定存取權限。
 
-- **寫入者之間的協調**：多個交易同時寫，交易之間要有辦法表達「這一列有人在處理」「這兩筆不能同時成立」。SQLite 的寫入交易一個接一個執行；讀取也放在同一個寫入交易裡時（交易以 `BEGIN IMMEDIATE` 開始，或第一句就寫入），這類協調由那把寫入鎖一次做完。PostgreSQL 的構造是列鎖、`FOR UPDATE SKIP LOCKED`、排除約束與 `SERIALIZABLE`。
-- **連線之間的訊號**：分散在不同機器上的服務實例要互斥或互相通知時，它們共用的只有資料庫伺服器，伺服器上的鎖與通知是最近的協調點。SQLite 的寫入者都在同一台機器上：同一個程序裡的執行緒之間，訊號用程式語言的鎖與佇列傳；同一台機器上的幾個程序之間，互斥只剩那把寫入鎖，通知要另外用作業系統的程序間通訊（例如 socket 或 pipe）。PostgreSQL 的構造是建議鎖與 `LISTEN`／`NOTIFY`。
-- **身分**：伺服器要先分辨送出 SQL 的是哪個角色，權限才有檢查的依據。PostgreSQL 的構造是角色、`GRANT` 與資料列層級的政策。
+部署形態的差異衍生出以下 PostgreSQL 具備而 SQLite 沒有對應情境的需求：
+
+- **寫入者之間的協調**：多個交易同時寫入時，必須能在 SQL 層表達「這一列有人正在處理」或「這兩筆資料不能同時成立」。SQLite 的寫入交易依序執行，只要將讀取與寫入放在同一個寫入交易內（以 `BEGIN IMMEDIATE` 開始或首句即寫入），整庫寫入鎖即可保證不交錯；PostgreSQL 則提供列鎖、`FOR UPDATE SKIP LOCKED`、排除約束與 `SERIALIZABLE`。
+- **連線之間的訊號**：分散在不同機器上的服務實例需要互斥或通知時，若未額外引入獨立的協調服務或訊息佇列，各實例現成共用的基礎設施便是資料庫伺服器，PostgreSQL 為此提供建議鎖與 `LISTEN`／`NOTIFY`。SQLite 的寫入者位於同一台機器：同一行程內的執行緒使用程式語言的鎖與佇列；同機多行程之間的互斥仰賴整庫寫入鎖，通知則另用作業系統的跨行程通訊（如 socket 或 pipe）。
+- **身分與權限**：多連線伺服器須先辨識送出 SQL 的角色，才能執行授權檢查，PostgreSQL 因此提供角色、`GRANT` 與資料列層級政策。
 
 ## 多個交易同時先讀後寫：工作佇列的認領與班表不重疊
 
-工作佇列與班表不重疊這兩個需求，交易都**先讀後寫**（check-then-act）：先讀資料，依讀到的內容決定要寫什麼（[Check-then-act（先讀後寫）](/backend/knowledge-cards/check-then-act/)）。兩個交易交錯執行時，各自讀到的可能都是對方寫入之前的狀態；兩個交易依同一份舊狀態各自寫入同一筆資料、後寫的蓋掉先寫的，叫[遺失更新](/backend/knowledge-cards/lost-update/)（lost update），工作佇列的同一筆工作被認領兩次屬於這一種；兩個交易各自讀過條件、寫入不同的列，每一筆單獨看都合法，合起來違反條件，叫[寫入偏斜](/backend/knowledge-cards/write-skew/)（write skew），班表的兩段班重疊屬於這一種。兩者在各隔離等級下會不會發生，在 [Isolation Level](/backend/knowledge-cards/isolation-level/)。
+工作佇列認領與班表不重疊都屬於**先讀後寫**（[Check-then-act（先讀後寫）](/backend/knowledge-cards/check-then-act/)）：先查詢資料，再依讀到的結果決定寫入內容。兩個交易交錯執行時可能讀到對方寫入前的舊狀態：若各自寫入同一筆列且後寫覆蓋先寫，稱為 [Lost Update（遺失更新）](/backend/knowledge-cards/lost-update/)（如工作佇列同一筆工作被認領兩次）；若各自通過條件檢查後寫入不同列、單筆合法但合起來違反不變式，稱為 [Write Skew（寫入偏斜）](/backend/knowledge-cards/write-skew/)（如班表出現兩段重疊時段）。兩者在各隔離等級下的表現見 [Isolation Level](/backend/knowledge-cards/isolation-level/)。
 
-下面兩組實測的交錯順序相同：第一條連線執行完它的寫入語句、還沒提交時，第二條連線送出同樣的 SQL（工作佇列是同一句 `UPDATE`，班表是同一句 `INSERT`）；第一條連線在 1 秒之後提交。SQLite 這一側的設定：
+以下兩組實測採用相同的交錯順序：第一條連線執行完寫入語句但尚未提交時，第二條連線送出相同 SQL（工作佇列為同一句 `UPDATE`，班表為同一句 `INSERT`）；第一條連線在 1 秒後提交。SQLite 端設定如下：
 
-- **WAL 模式**（[write-ahead log](/backend/knowledge-cards/write-ahead-log/)）：寫入先記進另一個日誌檔，寫入進行中，其他連線仍然讀得到已提交的資料。
-- **`BEGIN IMMEDIATE`**：交易在 `BEGIN` 這一句就取得寫入鎖，不等到第一句寫入。
-- **`busy_timeout` 5 秒**：拿不到寫入鎖時最多等 5 秒，才回 `SQLITE_BUSY`；第一條連線 1 秒後就提交，在這個等待時間之內。
+- **WAL 模式**（[Write-Ahead Log](/backend/knowledge-cards/write-ahead-log/)）：寫入先記進預寫日誌檔，寫入進行期間其他連線仍可讀取已提交資料。
+- **`BEGIN IMMEDIATE`**：交易在 `BEGIN` 語句當下即取得寫入鎖，不等到首句寫入。
+- **`busy_timeout` 5 秒**：取不到寫入鎖時最多等待 5 秒才回報 `SQLITE_BUSY`；第一條連線 1 秒後提交，落於等待上限內。
 
-PostgreSQL 用預設的 `READ COMMITTED`。每個情境跑一次，其他日誌模式與交錯順序沒有實跑。
+PostgreSQL 採用預設的 `READ COMMITTED`。每個情境實測一次，其他日誌模式與交錯順序未實跑。
 
 ### 工作佇列：兩個 worker 認領同一張待辦表
 
-一張 `job` 表放待處理的工作，`worker` 欄為 `NULL` 的是還沒有人認領的。worker（從佇列取工作來執行的程序）用一段 `UPDATE` 認領一筆，`'w1'` 是這個 worker 的名字，第二個 worker 送同一段，把它換成 `'w2'`：
+`job` 表存放待處理工作，`worker` 欄為 `NULL` 代表尚未被認領。第一個 worker（`'w1'`）送出以下 `UPDATE` 認領一筆工作，第二個 worker（`'w2'`）將字面值換成 `'w2'` 後送出同一語句：
 
 ```sql
 UPDATE job SET worker = 'w1'
@@ -50,22 +52,37 @@ WHERE id = (SELECT id FROM job WHERE worker IS NULL ORDER BY id LIMIT 1)
 RETURNING id;
 ```
 
-| 寫法與引擎                                    | 第二個 worker 等了沒有 | 兩個 worker 領到的 `id` | 結束後的表                  |
+對照的兩種 PostgreSQL 改寫只在條件或子查詢各加一段子句：
+
+```sql
+-- 改寫一：外層 WHERE 補上條件，重檢最新版本時擋下覆蓋
+UPDATE job SET worker = 'w1'
+WHERE id = (SELECT id FROM job WHERE worker IS NULL ORDER BY id LIMIT 1)
+  AND worker IS NULL
+RETURNING id;
+
+-- 改寫二：子查詢加列鎖並跳過已被鎖住的列
+UPDATE job SET worker = 'w1'
+WHERE id = (SELECT id FROM job WHERE worker IS NULL ORDER BY id LIMIT 1 FOR UPDATE SKIP LOCKED)
+RETURNING id;
+```
+
+| 寫法與引擎                                    | 第二個 worker 是否等待 | 兩個 worker 領到的 `id` | 結束後的表                  |
 | --------------------------------------------- | ---------------------- | ----------------------- | --------------------------- |
-| SQLite，上面那段                              | 等到第一個提交         | 1、2                    | 1 歸 w1、2 歸 w2            |
-| PostgreSQL，上面那段                          | 等到第一個提交         | 1、1                    | 1 歸 w2，w1 的認領被覆蓋    |
+| SQLite，原 `UPDATE` 語句                      | 等到第一個提交         | 1、2                    | 1 歸 w1、2 歸 w2            |
+| PostgreSQL，原 `UPDATE` 語句                  | 等到第一個提交         | 1、1                    | 1 歸 w2，w1 的認領被覆蓋    |
 | PostgreSQL，外層再加 `AND worker IS NULL`     | 等到第一個提交         | 1、無                   | 1 歸 w1，第二個 worker 空手 |
 | PostgreSQL，子查詢加 `FOR UPDATE SKIP LOCKED` | 沒有等                 | 1、2                    | 1 歸 w1、2 歸 w2            |
 
-在 SQLite 上，第二個 worker 卡在 `BEGIN IMMEDIATE` 這一句：第一個提交之前它拿不到寫入鎖。拿到之後它的 `UPDATE` 才開始執行，子查詢看到的是 1 已經有主人的表，所以領到 2。
+在 SQLite 上，第二個 worker 在 `BEGIN IMMEDIATE` 就因寫入鎖而等待；待第一個提交並釋放鎖後，第二個的 `UPDATE` 才執行，子查詢直接看到 `id = 1` 已被認領，因而領到 `2`。
 
-在 PostgreSQL 上，第二個 worker 的 `UPDATE` 直接開始執行，子查詢拿到 1，接著要更新 `id = 1` 那一列時遇到第一個 worker 的列鎖而等待。第一個提交之後，`READ COMMITTED` 拿那一列的最新版本重新檢查外層的 `WHERE`（PostgreSQL 文件〈Transaction Isolation〉的 Read Committed 一節），子查詢不重跑：外層只寫了 `id = 1`，最新版本仍然符合，於是第二個 worker 把 1 再認領一次，兩個 worker 都拿到 1。外層加上 `worker IS NULL` 之後，重新檢查發現這一列已經有主人而不更新，不會重複認領，代價是第二個 worker 等了一輪之後更新 0 列，要再送一次。
+在 PostgreSQL 上，第二個 worker 的 `UPDATE` 直接執行，子查詢選出 `id = 1`，試圖更新該列時遇上第一個 worker 的列鎖而等待。第一個提交後，在 `READ COMMITTED` 下 PostgreSQL 會取該列最新版本重新檢查外層 `WHERE`（PostgreSQL 文件〈Transaction Isolation〉的 Read Committed 一節），但子查詢不會重跑：因為外層只寫 `id = 1`，最新版本仍符合條件，第二個 worker 於是覆蓋並重複認領了 `1`。外層加上 `AND worker IS NULL` 後，重新檢查發現該列已有值便不更新，避免重複認領，但代價是第二個 worker 等待一輪後更新 0 列，須重新查詢。
 
-`FOR UPDATE SKIP LOCKED` 讓子查詢在挑列的同時替它上列鎖，遇到別的交易已經鎖住的列就跳過、挑下一列；PostgreSQL 文件〈The Locking Clause〉把它的用途寫成多個消費者存取類似佇列的表時避免鎖爭用。實測第二個 worker 不等待，直接領到 2。它的作用只在「有其他交易同時持有列鎖」時出現，而 SQLite 沒有列鎖、寫入交易本來就排隊，所以 SQLite 沒有這個構造，語法也不收（`near "FOR": syntax error`）。同一個寫法在售票搶購的認領上怎麼用，在 [9.0.1 售票搶購的負載路徑](/backend/09-performance-capacity/ticketing-load-path/) 的〈扣庫存：資料庫逐張認領與加入 Redis 閘門的條件〉。
+加上 `FOR UPDATE SKIP LOCKED` 後，子查詢選列同時鎖定該列，遇上已被其他交易鎖住的列則直接跳過（PostgreSQL 文件〈The Locking Clause〉）。實測第二個 worker 不必等待即領到 `2`。此構造只在多交易同時持有列鎖時生效，SQLite 沒有列鎖且寫入本來就排隊，因此不支援此語法（回報 `near "FOR": syntax error`）。該寫法在售票搶購情境的應用見 [9.0.1 售票搶購的負載路徑：熱點列與連線池、CDN 合併回源、排隊放行的速率、資料庫認領與加入 Redis 閘門的條件、付款期限的條件更新](/backend/09-performance-capacity/ticketing-load-path/)。
 
 ### 班表不重疊：同一位員工的兩段班不能有時間重疊
 
-排班系統要求同一位員工的兩段班在時間上不能重疊。唯一鍵只表達得了「兩列的某幾欄不能相等」，而重疊是「兩段區間有交集」，所以常見的第一個寫法是觸發器：插入之前查有沒有重疊的班，有就拒絕。SQLite 這一側的表與觸發器（PostgreSQL 用同一個條件寫成 PL/pgSQL 的觸發器函式）：
+排班需求要求同一位員工的兩段班時間不得重疊。唯一鍵只能限制欄位值相等，無法表達區間交集，因此常見作法是以觸發器在插入前查詢是否有重疊時段。SQLite 端的建表與觸發器語句如下（PostgreSQL 以相同條件寫成 PL/pgSQL 觸發器函式）：
 
 ```sql
 CREATE TABLE shift (emp_id INT, start_at TEXT, end_at TEXT);
@@ -78,23 +95,23 @@ BEGIN SELECT RAISE(ABORT, 'overlap'); END;
 -- 這個觸發器只檢查新增；改時段的 UPDATE 要另一個 BEFORE UPDATE 觸發器，條件裡排除自己那一列
 ```
 
-兩條連線照上面的交錯順序插入兩段重疊的班（09:00–18:00 與 13:00–22:00）：
+兩條連線依〈多個交易同時先讀後寫〉開頭的交錯順序（第一條寫入尚未提交時第二條送出，1 秒後第一條提交）插入重疊的兩段班（09:00–18:00 與 13:00–22:00）：
 
-| 做法與引擎                                     | 第二筆等了沒有 | 結果                                                                      |
+| 做法與引擎                                     | 第二筆是否等待 | 結果                                                                      |
 | ---------------------------------------------- | -------------- | ------------------------------------------------------------------------- |
 | SQLite，觸發器先讀後寫，兩邊 `BEGIN IMMEDIATE` | 等到第一筆提交 | 第二筆被觸發器拒絕（`overlap`），表裡 1 列                                |
 | PostgreSQL，同樣的觸發器，`READ COMMITTED`     | 沒有等         | 兩筆都提交，表裡 2 段重疊的班                                             |
-| PostgreSQL，同樣的觸發器，`SERIALIZABLE`       | 沒有等         | 先提交的成功，另一筆提交時回 serialization failure                        |
+| PostgreSQL，同樣的觸發器，`SERIALIZABLE`       | 沒有等         | 先提交的成功，另一筆提交時回報序列化失敗（serialization failure）         |
 | PostgreSQL，排除約束                           | 等到第一筆提交 | 第二筆回 `conflicting key value violates exclusion constraint`，表裡 1 列 |
 
-PostgreSQL 在 `READ COMMITTED` 下讓兩筆插入同時進行：第二筆的觸發器查詢時第一筆還沒提交，那一句的快照裡看不到它，兩邊都判定沒有重疊。觸發器的條件寫得正確；寫觸發器的人另外假設了查詢與寫入之間沒有其他交易提交新的列，而這個假設在 SQLite 上要靠寫入鎖、在 PostgreSQL 上要靠 `SERIALIZABLE` 或約束才成立。SQLite 的第二筆拿到寫入鎖時第一筆已經提交，觸發器看得到它。
+在 PostgreSQL 的 `READ COMMITTED` 下，兩筆插入同時進行：第二筆觸發器查詢時第一筆尚未提交，其快照看不到第一筆，兩邊皆判定無重疊而雙雙提交。觸發器條件本身正確，但隱含假設「查詢與寫入之間沒有其他交易插入新列」；這項假設在 SQLite 靠寫入鎖成立，在 PostgreSQL 則必須靠 `SERIALIZABLE` 或排除約束成立。
 
-SQLite 這一列的結果有前提：交易的第一句就是寫入（觸發器在 `INSERT` 裡讀），或交易以 `BEGIN IMMEDIATE` 開始。另外兩種情形結果不同：交易用預設的 `BEGIN` 開始、先送一句 `SELECT` 再寫入時，這個交易的讀取停在 `SELECT` 那一刻的快照上，等別人提交之後再寫入就是寫在過期的快照上，所以 SQLite 不等待而直接回 `SQLITE_BUSY`；應用程式的驅動程式把 `SELECT` 放在交易之外時（Python 標準庫 `sqlite3` 的預設行為就是），兩個請求都查到沒有重疊、各寫一筆，SQLite 上也留下兩列。這幾種情形的實測與處理在 [SQLite WAL Concurrency and Locking](/backend/01-database/vendors/sqlite/wal-concurrency-locking/) 的〈先讀後寫的交易：busy timeout 不會等待的 `SQLITE_BUSY`〉。
+SQLite 的結果依賴兩項前提：第一，交易首句即寫入（如觸發器在 `INSERT` 內執行讀取），或交易以 `BEGIN IMMEDIATE` 開始——若以預設 `BEGIN` 開始、先送 `SELECT` 再寫入，SQLite 會因過期快照不等待而直接回報 `SQLITE_BUSY`；若驅動程式把 `SELECT` 放在交易外（如 Python 標準庫 `sqlite3` 預設行為），兩個請求都會讀到無重疊並各自寫入，在 SQLite 同樣留下重疊資料（實測與處理見 [SQLite WAL Concurrency and Locking](/backend/01-database/vendors/sqlite/wal-concurrency-locking/)）。第二，因為 `BEGIN IMMEDIATE` 鎖定整個資料庫檔案（連帶阻塞所有不相關資料表的寫入），交易內不可夾帶外部網路呼叫或長時間同步 I/O，否則其他執行緒的寫入會撞上 `SQLITE_BUSY`。
 
-在 PostgreSQL 上，讓資料庫自己保證「同一位員工的班不重疊」的做法有 `SERIALIZABLE` 與排除約束：
+在 PostgreSQL 上讓資料庫層保證班表不重疊有兩種方式：
 
-- **`SERIALIZABLE`**：伺服器追蹤交易之間的讀寫相依，偵測到兩個交易各自讀了對方要寫的範圍時，讓其中一個失敗，SQLSTATE 是 `40001`（[Serialization Failure](/backend/knowledge-cards/serialization-failure/)；機制在 [PostgreSQL MVCC + Lock Model：為什麼 PG 比 MySQL 少 deadlock、但 vacuum 是別的代價](/backend/01-database/vendors/postgresql/mvcc-lock-model/) 的〈Predicate lock — SERIALIZABLE isolation 才用〉）。觸發器不必改。失敗可能發生在交易裡的任何一句，也可能在提交時；本篇兩種提交順序各跑一次，都是先提交的成功、後提交的在 `COMMIT` 失敗。所以應用程式要把整個交易包在重試裡，只包 `COMMIT` 會漏接語句階段的失敗。
-- **[排除約束](/backend/01-database/sql/knowledge-cards/exclusion-constraint/)**（exclusion constraint）：把「兩列不能同時成立」寫成約束。約束由幾組「欄位與比較運算子」組成（班表是 `emp_id` 配 `=`、`during` 配 `&&`），新的一列跟既有的某一列在每一組上的比較都成立時，拒絕新的那一列。唯一鍵是它的特例：每一組的運算子都是 `=`。約束由 GiST 索引執行（GiST 是支援「重疊」這類比較的索引），整數欄位要放進 GiST 索引，需要 `btree_gist` 擴充。下面是有 `btree_gist` 時的寫法，本篇沒有在有這個擴充的建置上實跑：
+- **`SERIALIZABLE`**：伺服器透過可序列化快照隔離（SSI）追蹤交易之間的讀寫相依，偵測到互相寫入對方讀取範圍時中止其中一個交易並回報序列化失敗（SQLSTATE `40001`，見 [Serialization Failure](/backend/knowledge-cards/serialization-failure/) 與 [PostgreSQL MVCC + Lock Model：為什麼 PG 比 MySQL 少 deadlock、但 vacuum 是別的代價](/backend/01-database/vendors/postgresql/mvcc-lock-model/)）。原觸發器無須改寫，但成立前提是**參與寫入同一不變式的所有併發交易皆須採用 `SERIALIZABLE`**——只要有一條後台或匯入路徑仍以預設 `READ COMMITTED` 寫入，SSI 不會偵測跨隔離等級的讀寫環，重疊班表仍會提交；此外，若查詢缺索引走全表掃描，SIREAD 謂詞鎖可能升級為表級鎖而對無關列產生假陽性 `40001`。由於失敗可能發生於交易內任一語句或 `COMMIT` 當下（實測兩種提交順序皆在 `COMMIT` 失敗），應用程式須將整個交易包進重試迴圈。
+- **[Exclusion Constraint（排除約束）](/backend/01-database/sql/knowledge-cards/exclusion-constraint/)**：將「兩列不可同時滿足指定比較運算」寫進表結構（本例為 `emp_id` 配 `=`、`during` 配 `&&`），新列與既有列在所有條件皆成立時即遭拒絕，且在表層強制執法、不受連線隔離等級影響（表內若同時保留已取消或軟刪除的歷史列，可在約束尾端加 `WHERE` 部分條件排除）。唯一鍵是所有運算子皆為 `=` 的特例。排除約束由 GiST 索引（PostgreSQL 支援區間重疊等非等值查詢的索引型別）執行，將整數放進 GiST 索引須安裝 `btree_gist` 擴充（以下寫法需具該擴充，本篇未於含 `btree_gist` 的環境實跑）：
 
 ```sql
 CREATE EXTENSION btree_gist;
@@ -105,15 +122,15 @@ CREATE TABLE shift (
 );
 ```
 
-第二筆插入時要在索引裡登記自己，發現第一筆未提交的重疊列就等它結束，第一筆提交之後拒絕第二筆。實測的建置沒有 `btree_gist`，所以把 `emp_id WITH =` 寫成 `int4range(emp_id, emp_id, '[]') WITH =`（把員工編號包成只含一個值的區間，用區間的相等比較）；`emp_id` 不為 `NULL` 時兩種寫法的結果相同。區間型別與排除約束的其他用法在 [PostgreSQL SQL Features：PG 早就有的、MySQL 8.0 才補的、PG 仍領先的](/backend/01-database/vendors/postgresql/sql-features-baseline/) 的〈Range Types + Exclusion Constraints〉。
+第二筆插入於索引登記時偵測到未提交的重疊列而等待，待第一筆提交後即遭拒絕。本篇實測環境未裝 `btree_gist`，改以 `int4range(emp_id, emp_id, '[]') WITH =` 實測；當 `emp_id` 非 `NULL` 時兩種寫法等價（更多區間型別與排除約束用法見 [PostgreSQL SQL Features：PG 早就有的、MySQL 8.0 才補的、PG 仍領先的](/backend/01-database/vendors/postgresql/sql-features-baseline/) 的〈Range Types + Exclusion Constraints〉一節）。
 
-在工作佇列與班表這兩個需求上，SQLite 用一把資料庫層級的寫入鎖，讓讀取與寫入都在鎖內的交易不會被別的寫入者插進來，代價是同一時間只能有一個寫入者，寫入量的上限由這把鎖決定（容量的判讀在 [SQLite WAL Concurrency and Locking](/backend/01-database/vendors/sqlite/wal-concurrency-locking/)）。PostgreSQL 的預設隔離等級 `READ COMMITTED` 讓寫入者並行，寫的人要把條件明白寫成列鎖、約束或 `SERIALIZABLE`；沒寫出來的，並行的時序決定結果。
+綜上，SQLite 以單一寫入鎖排隊保證先讀後寫不被插隊，代價是寫入吞吐量受限於單一鎖（容量判讀見 [SQLite WAL Concurrency and Locking](/backend/01-database/vendors/sqlite/wal-concurrency-locking/)）；PostgreSQL 的預設 `READ COMMITTED` 允許寫入並行，開發者須將不變式顯式寫成列鎖、約束或 `SERIALIZABLE`，未寫明的部分將由並行時序決定結果。
 
-## 連線之間的協調：建議鎖與 LISTEN／NOTIFY
+## 跨連線協調的建議鎖與 LISTEN／NOTIFY
 
-**建議鎖**（advisory lock，[Advisory Lock（建議鎖）](/backend/knowledge-cards/advisory-lock/)）是一個只有數字、不綁任何表或列的鎖，數字代表什麼由應用程式自己約定。兩條連線各送 `SELECT pg_try_advisory_lock(42)`，實測先送的回 `true`、後送的回 `false`。它讓分散在不同機器上的服務實例協調「這件事同一時間只有一個在做」，例如排程只讓一個實例執行。`pg_try_advisory_lock` 是 session 層級的鎖，持有者是那一條連線；經由連線池取得連線時，加鎖與解鎖可能拿到不同的連線，所以排程互斥多半改用交易層級的 `pg_try_advisory_xact_lock`，交易結束時自動釋放，原因與案例在 Advisory Lock 卡與 [1.18 高頻計數的寫入與彙總](/backend/01-database/high-frequency-counting/) 的〈同一時間只讓一個實例彙總：建議鎖與連線池〉。
+**[Advisory Lock（建議鎖）](/backend/knowledge-cards/advisory-lock/)** 是不綁定任何表或列的整數鎖，數字含義由應用程式約定。實測兩條連線各自執行 `SELECT pg_try_advisory_lock(42)` 時，先送達者回傳 `true`、後送達者回傳 `false`，可用於多台實例間的排程互斥。`pg_try_advisory_lock` 綁定於 session 層級；使用連線池時加鎖與解鎖可能分配到不同連線，因此排程互斥應改用交易結束即自動釋放的 `pg_try_advisory_xact_lock`（案例見 [1.18 高頻計數的寫入與彙總：熱點列的鎖、只新增的事件、可以重跑的彙總與重送的事件](/backend/01-database/high-frequency-counting/) 的〈同一時間只讓一個實例彙總：建議鎖與連線池〉一節）。
 
-**`LISTEN`／`NOTIFY`** 讓一條連線向某個頻道送出通知，其他對同一頻道送過 `LISTEN` 的連線收得到：
+**`LISTEN`／`NOTIFY`** 讓連線向指定頻道發送通知，由訂閱同一頻道的連線接收：
 
 ```sql
 -- 連線 B
@@ -126,40 +143,36 @@ COMMIT;
 -- 提交之後連線 B 收到內容為 'emp 1' 的通知
 ```
 
-通知在送出它的交易提交時才送達，交易回滾時不送。所以「寫入新的打卡紀錄並通知其他服務」放在同一個交易裡，兩件事一起成立或一起取消。`LISTEN` 要一條在整段監聽期間都不換手的連線：PgBouncer 的 transaction pooling 不支援 `LISTEN`（PgBouncer 文件的功能表），監聽的那一條要直連伺服器或走 session pooling。
+通知僅在發送交易 `COMMIT` 時送達，交易回滾則不發送，讓「寫入資料」與「發送通知」具備原子性。`LISTEN` 需要不換手的持久連線，PgBouncer（連線池）的 transaction pooling 模式在每次交易結束即換手連線，因此不支援 `LISTEN`（見 PgBouncer 官方文件功能表），監聽連線須直連伺服器或採 session pooling（連線在整個工作階段期間固定給單一用戶端、不於交易間換手）。
 
-SQLite 兩者都沒有（`no such function: pg_advisory_lock`、`near "LISTEN": syntax error`）。同一個程序裡的執行緒，互斥與通知用程式語言的鎖與佇列；SQLite 的 C API 另有資料變更的回呼 `sqlite3_update_hook`，它註冊在一條連線上，回報這條連線對 rowid 表（沒有宣告 `WITHOUT ROWID` 的一般表）做的新增、修改與刪除，用來在程序內部觸發後續動作（依 SQLite 官方文件，本篇沒有實跑）。同一台機器、本地磁碟上的幾個程序共用同一個檔案時，`BEGIN IMMEDIATE` 拿到的寫入鎖就是一把跨程序的互斥鎖，鎖住的範圍是整個資料庫的寫入；檔案放在網路檔案系統上時，這把鎖的語意不可靠，見 [SQLite WAL Concurrency and Locking](/backend/01-database/vendors/sqlite/wal-concurrency-locking/) 的〈Filesystem 與 deployment boundary〉。
+SQLite 不支援建議鎖與 `LISTEN`／`NOTIFY`（分別回報 `no such function: pg_advisory_lock` 與 `near "LISTEN": syntax error`）。同行程內執行緒使用語言本身的鎖與佇列；C API 的 `sqlite3_update_hook` 可在單條連線上監聽 rowid 表（SQLite 預設每列自帶隱藏整數鍵 `rowid`、未宣告 `WITHOUT ROWID` 的資料表）的變更事件（依 SQLite 官方文件，本篇未實跑）。同機多行程共用本地檔案時，`BEGIN IMMEDIATE` 的寫入鎖可作跨行程互斥，但檔案位於網路檔案系統時該鎖不可靠（見 [SQLite WAL Concurrency and Locking](/backend/01-database/vendors/sqlite/wal-concurrency-locking/) 的〈Filesystem 與 deployment boundary〉一節）。
 
-## 身分與權限：角色、GRANT 與資料列層級的政策
+## 角色、GRANT 與資料列層級政策的身分控制
 
-PostgreSQL 的每條連線以某個角色登入，`GRANT` 決定角色能對哪個物件做什麼，模型與最小權限的做法在 [SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)。資料列層級的政策（row-level security，語法是 `CREATE POLICY`）再決定同一張表裡哪些列對這個角色可見，概念在 [Row-Level Security](/backend/knowledge-cards/row-level-security/)，PostgreSQL 的設定在 [PostgreSQL Security / RLS / Audit Logging](/backend/01-database/vendors/postgresql/security-rls-audit-logging/) 的〈Row Level Security〉；多租戶共用資料表導入列級安全性時的子表冗餘租戶鍵、複合外鍵、`FORCE ROW LEVEL SECURITY`（含對 `pg_dump` 的影響）與交易內 `SET LOCAL` 連線池邊界，見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)。
+PostgreSQL 每條連線以特定角色登入，由 `GRANT` 控制物件權限（模型與最小權限見 [SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)），並可透過資料列層級政策（`CREATE POLICY`）進一步限制該角色可見的列（見 [Row-Level Security](/backend/knowledge-cards/row-level-security/)、[PostgreSQL Security / RLS / Audit Logging](/backend/01-database/vendors/postgresql/security-rls-audit-logging/)，以及多租戶 RLS 與 `SET LOCAL` 連線池邊界 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。
 
-SQLite 的語法不收 `CREATE ROLE`、`GRANT`、`CREATE POLICY`。SQLite 沒有一個伺服器程序居中驗證連線的身分，所以 SQL 層沒有角色與 `GRANT`：作業系統允許某個程序讀寫這個檔案，那個程序就能讀寫全部的表。函式庫提供授權回呼（C API 的 `sqlite3_set_authorizer`，Python 的 `Connection.set_authorizer`），應用程式在每一句 SQL 編譯時決定允不允許讀寫某張表或某個欄位；判斷依據的使用者身分仍由應用程式提供，資料庫只看得到應用程式這一個使用者。要由作業系統擋下寫入，用檔案權限；程式只是要避免自己誤寫時，以 URI 檔名的唯讀模式開啟（`file:app.db?mode=ro`，Python 要加 `uri=True`），這不擋別的程序以讀寫模式開同一個檔案。把 SQLite 包成網路服務的產品（例如 Cloudflare D1，比較在 [SQLite D1 / Turso / libSQL Comparison](/backend/01-database/vendors/sqlite/d1-turso-libsql-comparison/)）在服務層另有帳號與存取權杖的檢查，SQL 層照樣沒有 `GRANT`。
+SQLite 不接受 `CREATE ROLE`、`GRANT` 或 `CREATE POLICY`，因為缺乏驗證連線身分的伺服器行程，檔案存取直接受作業系統權限控制。函式庫層另提供授權回呼（C API 的 `sqlite3_set_authorizer`、Python 的 `Connection.set_authorizer`），讓應用程式在編譯每句 SQL 時決定是否允許讀寫特定表或欄，但使用者身分仍由應用程式自行維護。阻擋外部寫入仰賴檔案系統權限；避免程式自身誤寫則以唯讀 URI 開啟（`file:app.db?mode=ro`，Python 須加 `uri=True`，此模式不阻止其他行程以讀寫模式開啟同一檔案）。將 SQLite 封裝為網路服務的產品（如 Cloudflare D1，其產品定位與服務責任比較見 [SQLite D1 / Turso / libSQL Comparison](/backend/01-database/vendors/sqlite/d1-turso-libsql-comparison/)）在服務層驗證存取權杖，SQL 層同樣不具 `GRANT`。
 
-## 換引擎時的判讀：交易與並行的設計要跟著改的地方
+## 換引擎時的判讀：交易邊界與並行構造的對應關係
 
-並行寫入、連線協調與身分這幾類差異，換引擎時兩個方向發現錯誤的時機不同。從 SQLite 搬到 PostgreSQL 時，資料操作的查詢文字照樣跑得動（交易開頭的 `BEGIN IMMEDIATE` 在 PostgreSQL 回語法錯誤，要改成 `BEGIN`），錯誤要到並行或權限的情境才出現；從 PostgreSQL 搬到 SQLite 時，列鎖、建議鎖、`LISTEN`、`GRANT` 這些構造在 SQLite 上直接回語法錯誤，改寫的對象是交易與並行的設計。跟部署形態無關的型別與查詢寫法差異，改寫的範圍與方法在 [SQLite SQL Dialect and Index Limits](/backend/01-database/vendors/sqlite/sql-dialect-index-limits/) 與 [SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)。
+並行寫入、連線協調與身分這幾類差異，在兩個遷移方向的錯誤發現時機相反。從 SQLite 遷移至 PostgreSQL 時，一般資料操作語句照常執行（僅 `BEGIN IMMEDIATE` 在 PostgreSQL 須改為 `BEGIN`），並行與權限錯誤直到併發流量出現才暴露；從 PostgreSQL 遷移至 SQLite 時，列鎖、建議鎖、`LISTEN` 與 `GRANT` 會在首次剖析直接報語法錯誤，改寫重點在於交易與並行設計。與部署形態無關的語法方言差異詳見 [SQLite SQL Dialect and Index Limits](/backend/01-database/vendors/sqlite/sql-dialect-index-limits/)，各家對寬鬆寫法的接受程度與四級分級則整理在 [SQL.19 引擎寬鬆度與可攜性：各家對同一組寫法的差異、分級與處理時機](/backend/01-database/sql/engine-leniency-and-portability/)。
 
-**從 SQLite 搬到 PostgreSQL**：
+**從 SQLite 遷移至 PostgreSQL 時，原本仰賴整庫寫入鎖序列執行才成立的隱性前提會失效。** 一旦 PostgreSQL 端以多條連線同時寫入，原本在 SQLite 依賴寫入鎖排隊的先讀後寫交易會開始交錯（若寫入路徑仍被收斂在單一連線內序列執行，原邏輯會維持正確，代價是寫入吞吐量上限也鎖在該連線）。SQLite 原有的先讀後寫可依交易開啟方式分為三種狀態：
 
-- **並行寫入**：這一項的前提是 PostgreSQL 這一側有兩條以上的連線同時寫入（連線池大於 1，或有多個服務實例）。搬過去之後仍然只用一條連線依序寫入、或所有寫入都經過應用程式裡單一的寫入者（一個 goroutine、一個 actor）時，寫入照樣一個接一個執行，原本的先讀後寫照樣正確，寫入量的上限改由那一條連線決定。讓先讀後寫正確的是寫入者被排成一個接一個，SQLite 的寫入鎖是做到這件事的一種方式。SQLite 上的先讀後寫交易依開始的方式分成三種：
-  - 以 `BEGIN IMMEDIATE` 開始、或第一句就寫入的：在 SQLite 上正確，搬到 PostgreSQL 之後要改寫。
-  - 以預設的 `BEGIN` 開始、先讀再寫的：在 SQLite 上碰到並行時不等待，立刻回 `database is locked`（`SQLITE_BUSY`），資料不會錯，錯誤由應用程式重試；搬到 PostgreSQL 之後不再報錯，變成遺失更新，同樣要改寫。同一台機器上幾支程序共用一個檔、常看到 `database is locked` 的系統，要先查交易裡有沒有這一種。
-  - 讀與寫分在兩個交易或兩個自動提交的語句時（Python `sqlite3` 的預設；設成 `isolation_level="IMMEDIATE"` 時 `SELECT` 也仍在交易之外）：SQLite 上已經有同樣的遺失更新或寫入偏斜，搬過去之前就要改寫。
+- **以 `BEGIN IMMEDIATE` 開啟或首句即寫入**：在 SQLite 由整庫寫入鎖保證不交錯，遷移至 PostgreSQL 的多連線環境後該保證消失。
+- **以預設 `BEGIN` 開啟並先讀再寫**：在 SQLite 遇並行立即回報 `SQLITE_BUSY` 觸發重試，遷移至 PostgreSQL 後預設隔離等級不再報錯，轉為靜默的遺失更新。
+- **讀寫分落不同交易或自動提交語句**（例如 Python `sqlite3` 預設行為，即使設 `isolation_level="IMMEDIATE"` 時 `SELECT` 仍在交易外）：在 SQLite 原就存在遺失更新或寫入偏斜，不依賴引擎切換就已失守。
 
-  改寫的方式依條件的形狀選：
-  - 條件能寫成「某幾欄的組合不能同時成立」時（重複打卡、班表重疊），唯一鍵或排除約束把它交給資料庫：衝突在第二筆寫入時被拒絕，並行的時序不影響結果，應用程式要處理的是約束錯誤。已經用唯一鍵加 `ON CONFLICT DO NOTHING`／`DO UPDATE` 寫入的段落搬過去不必改：後到的交易等前一個提交之後寫入 0 列或改成更新，不回錯誤。
-  - 讀與寫能合成同一句 `UPDATE` 時（扣點數寫成 `UPDATE account SET balance = balance - 10 WHERE id = ? AND balance >= 10`），`READ COMMITTED` 在等到列鎖之後拿最新版本重新檢查外層條件，不符合就不更新，所以不會扣成負數；代價是後到的交易可能更新 0 列，應用程式要判斷並重送（工作佇列表的外層條件那一列就是這個情形）。應用程式先 `SELECT` 餘額、算好新值再寫入 `SET balance = <算好的值>` 時，重新檢查保護不到。實測餘額 15、兩個交易各扣 10：單句帶條件的寫法，後到的交易更新 0 列，餘額 5；先讀再寫入算好的值，兩個交易都在對方提交之前讀到 15、各自寫入 5，餘額也是 5，其中一次扣減遺失了。判斷邏輯合不進單句時，在讀餘額的 `SELECT` 加 `FOR UPDATE`，後到的交易等前一個提交、讀到扣過的餘額再判斷；或把交易設成 `REPEATABLE READ`，後到的交易回 `40001`，由應用程式重試。
-  - 交易要搶先拿到某一列、再依它的狀態做好幾步時（認領一筆工作之後再寫訂單），`FOR UPDATE` 讓讀到的列在交易結束前只屬於這個交易，`SKIP LOCKED` 讓其他寫入者改拿下一列；鎖只保護被讀到的那幾列，條件涉及還不存在的列（班表裡還沒有的那一段）時保護不到。後續步驟包含外部呼叫或耗時數秒時，交易一直開著會讓列鎖與連線在整段呼叫期間停在 `idle in transaction`；這時認領寫成單句 `UPDATE … WHERE id = (SELECT … FOR UPDATE SKIP LOCKED)` 以自動提交送出，在列上記下認領者與認領時間，呼叫完再用另一個交易寫回結果，worker 中途停止時靠認領時間判斷逾時並收回那筆工作。
-  - 條件跨好幾列、寫不成約束時（同一人一個月的請假合計不能超過 3 天、值班表任何時段至少要有一人在班：每一筆單獨插入或刪除都合法，違反的是幾列的合計或存在與否），`SERIALIZABLE` 讓既有的觸發器與查詢不必改，代價是衝突到某一句或提交時才出現，整個交易要重試，衝突多時重試的成本隨並行度上升。
+在 PostgreSQL 重新建立對應保證時，衝突對象的形狀決定了應採用的 SQL 構造與代價：
 
-  後果依需求不同，只在兩個交易的讀與寫交錯時出現：認領工作與打卡可能寫出重複的列、班表寫出重疊、扣點數或扣庫存遺失其中一次扣減，而每一筆寫入單獨看都合法，所以不報錯。兩條連線各自送完就提交的測試多半跑成一前一後，看不到錯誤；要讓第一條連線寫完之後先不提交、第二條在這時送出同一段 SQL，才重現得出來。
-- **連線協調**：原本靠寫入鎖讓同一台機器上同一時間只有一個程序做某件事的段落（兩個排程程序各自以 `BEGIN IMMEDIATE` 開交易，設了 busy timeout 時後到的那一個等前一個提交後接著執行），在 PostgreSQL 上兩個程序會同時執行。要保持依序執行，改寫成會等待的 `pg_advisory_xact_lock`；同一件工作只要一個實例做時，才用 `pg_try_advisory_xact_lock`，沒拿到鎖就跳過。程序內用 `sqlite3_update_hook` 觸發的後續動作，換成跨程序時改用 `LISTEN`／`NOTIFY`。
-- **身分**：原本由應用程式分辨使用者、資料庫只看到一個使用者的設計，搬過去之後可以照舊用一個角色連線，這個角色照最小權限 `GRANT`（[SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)）；要讓資料庫依使用者限制看得到的列時，才新增資料列政策，這時每個請求要以對應的身分連線或設定 session 變數，屬於連線設計的改動。
+- **多欄靜態條件不可共存**（如重複打卡、班表重疊）：唯一鍵或排除約束在寫入當下拒絕衝突，且不受連線隔離等級影響（含軟刪除或已取消列時加 `WHERE` 部分條件）；原已採唯一鍵搭配 `ON CONFLICT DO NOTHING`／`DO UPDATE`（寫入衝突時略過或改為更新）的段落可維持原寫法。
+- **單列狀態扣減或更新**（如餘額扣款）：讀寫可併入單句條件式 `UPDATE`（如 `UPDATE account SET balance = balance - 10 WHERE id = ? AND balance >= 10`）時，在 `READ COMMITTED` 下 PostgreSQL 等到列鎖後會以最新版本重檢 `WHERE`，避免餘額扣負（代價是後到交易可能更新 0 列）。若改由應用層先 `SELECT` 餘額再寫入 `SET balance = <計算值>`，則保護失效——實測餘額 15 兩筆各扣 10 時，單句條件更新讓後到者更新 0 列、餘額留 5；先讀再算則兩筆各寫入 5，遺失一次扣減。跨請求編輯同一列則可於條件帶入版本號（樂觀鎖 `WHERE id = ? AND version = ?`）；單交易內多步邏輯無法併入單句時，可藉 `SELECT ... FOR UPDATE` 鎖列，或採 `REPEATABLE READ` 搭配 `40001` 重試。
+- **多 worker 認領佇列列**：`FOR UPDATE` 鎖定既有列、`SKIP LOCKED` 讓其他 worker 跳過已鎖列（列鎖不保護尚未插入的列）。由於長交易停在開啟狀態不提交（`idle in transaction`）會持續占住列鎖與連線資源，涉及外部網路呼叫的流程通常改以單句 `UPDATE … WHERE id = (SELECT … FOR UPDATE SKIP LOCKED)` 寫下認領狀態並立即提交，待外部呼叫完成再以獨立交易回寫結果；因為認領提交後列鎖即釋放，必須同步記錄認領時間並配套逾時回收（[Visibility Timeout](/backend/knowledge-cards/visibility-timeout/)），以免 worker 崩潰讓任務永久滯留。
+- **同一父資源下的跨列彙總不變式**（如單人月請假總天數上限）：可在 `READ COMMITTED` 下於交易開頭對父資源主列執行 `SELECT ... FOR UPDATE`，將同一資源的寫入序列化，不必將全域隔離等級升至 `SERIALIZABLE`。
+- **無單一父列可鎖的跨多列不變式**（如班表每時段至少一人）：所有參與寫入該不變式的路徑須一致於交易內採 `BEGIN ISOLATION LEVEL SERIALIZABLE`（避免在連線池上改動 session 預設值）並由呼叫端重試 `40001`；代價是高衝突下重試成本上升，且須確認查詢走索引以降低 SIREAD 鎖升級的假陽性失敗。
 
-**從 PostgreSQL 搬到 SQLite**：
+這類交錯錯誤在兩條連線各自快速提交的測試裡容易序列跑完而不浮現，驗證時須刻意讓第一條連線在寫入後暫停提交，再由第二條送出同段 SQL 才能重現。跨連線協調方面，原本仰賴 SQLite `BEGIN IMMEDIATE` 與 `busy_timeout` 的同機排程序列，在 PostgreSQL 對應為會等待的 `pg_advisory_xact_lock`（只需單一實例執行、其餘直接跳過時對應 `pg_try_advisory_xact_lock`）；跨行程事件通知則從 `sqlite3_update_hook` 對應至 `LISTEN`／`NOTIFY`。身分控制方面，若仍由應用層辨識終端使用者，PostgreSQL 可維持單一依最小權限 `GRANT` 的應用程式角色（詳見 [SQL.16 SQL 的權限模型：角色、GRANT 的授權單位與最小權限](/backend/01-database/sql/privilege-model/)）；需要資料庫層依使用者過濾列時，直連長連線可於連線層設定角色或 session 變數，但經連線池（如 PgBouncer transaction pooling）時必須於每筆交易內以 `SET LOCAL` 設定，否則租戶變數會殘留至下一個重用該連線的請求而造成跨租戶隔離穿透（實測與防線見 [1.21 資安、權限與合規決定的資料表設計：軟刪除與唯一約束、多租戶子表與列級安全性、RBAC 與非同步任務複查、存取憑證撤銷與優先序、個資分離與不可變稽核、角色預設權限與逾時護欄](/backend/01-database/security-and-compliance-schema-decisions/)）。
 
-- **並行寫入**：排除約束、區間型別與 `FOR UPDATE SKIP LOCKED` 在 SQLite 上沒有對應。班表的 `during tstzrange` 要拆成起訖兩個欄位，兩端先換成 UTC、存成同一種格式；「不重疊」改由兩個觸發器檢查，`BEFORE INSERT` 與 `BEFORE UPDATE`（UPDATE 的那一個在條件裡排除自己那一列），因為排除約束對新增與修改都生效，只寫新增的觸發器擋不到改時段；這兩個觸發器只有在交易以 `BEGIN IMMEDIATE` 開始、或第一句就寫入時才可靠。`SKIP LOCKED` 拿掉之後，認領由寫入鎖排隊，worker 不再並行認領。寫入量的上限變成這把鎖的吞吐量，寫入者等不到鎖時收到 `SQLITE_BUSY`：交易要以 `BEGIN IMMEDIATE` 開始並設定 busy timeout，做法在 [SQLite WAL Concurrency and Locking](/backend/01-database/vendors/sqlite/wal-concurrency-locking/)。
-- **連線協調與身分**：用到建議鎖、`LISTEN`／`NOTIFY`、角色與資料列政策的地方，在 SQLite 上沒有對應的構造，那些工作要搬進應用程式。`LISTEN`／`NOTIFY` 搬進應用程式之後，「提交時才送出」不再由資料庫保證：把通知寫成同一個交易裡的一列（outbox 表）由接收端輪詢，或提交成功之後才送程序間通訊，並接受程序在兩步之間停止時那一則通知遺失。原本分散在幾台機器上的服務要搬到同一台機器、存取同一個本地檔案，或改用把 SQLite 包成網路服務的產品；這類產品的交易形態不一定是 `BEGIN IMMEDIATE` 的互動式交易，Cloudflare D1 的文件寫的是自動提交與 `batch()`（一批語句依序、不並行地執行，任一句失敗整批回滾），先讀後寫要放進同一批或同一句才受保護。同一台機器上的幾個程序仍然可以共用這個檔案，寫入由寫入鎖排隊。什麼條件下適合往這個方向走，在 [PostgreSQL to SQLite Simplification](/backend/01-database/vendors/sqlite/migrate-from-postgresql-simplification/)。
+**從 PostgreSQL 遷移至 SQLite 時，資料庫層的並行與通知構造會收斂回整庫寫入鎖與應用層。** 排除約束、區間型別與 `FOR UPDATE SKIP LOCKED` 在 SQLite 皆無對應語法：`during tstzrange` 改拆為統一轉成 UTC 的起訖欄位，重疊檢查改由 `BEFORE INSERT` 與 `BEFORE UPDATE`（排除自身列）觸發器實作，並靠 `BEGIN IMMEDIATE` 或首句寫入維持交易不交錯（同時須避免在寫入交易內夾帶網路 I/O，以免整庫寫鎖阻塞其他表寫入）；認領作業移除 `SKIP LOCKED` 後改由整庫寫入鎖排隊，並藉 `busy_timeout` 控制等待逾時（完整機制與容量邊界在 [SQLite WAL Concurrency and Locking](/backend/01-database/vendors/sqlite/wal-concurrency-locking/)）。建議鎖、`LISTEN`／`NOTIFY`、角色與資料列政策則脫離 SQL 層，改由應用層或作業系統承擔。其中 `LISTEN`／`NOTIFY` 移出資料庫後會失去「提交時才送出」的原子保證，常見替代方式是在同交易寫入 outbox 表（在同一個資料庫交易內記錄待發事件的表）供接收端輪詢，或在提交後另送跨行程通訊（代價是提交與送訊之間若行程崩潰會遺失通知）。多機分散服務轉向 SQLite 時，須收斂至單機共用本地檔，或改用網路封裝版 SQLite（如 Cloudflare D1 提供自動提交與序列執行的 `batch()`，先讀後寫須放進同批或同句）；這類架構簡化的評估基準整理在 [PostgreSQL to SQLite Simplification](/backend/01-database/vendors/sqlite/migrate-from-postgresql-simplification/)。
 
-一段 SQL 搬到另一家時，寬鬆度的差異（同一個寫法各家是否收下、收下之後結果是否相同）要在查詢文字與資料裡找；部署形態的差異（某個構造只有一家有，因為另一家的部署形態沒有它要處理的情形）要在交易與並行的設計裡找。
+總結兩個維度的檢查位置：更換引擎時，寬鬆度差異（語法接受與輸出異同）在查詢文字與資料裡排查；部署形態差異（並行寫入、跨連線協調與身分構造）則在交易邊界與並行架構中調整。上述差異源自引擎的執行環境與並行模型；若在同一引擎上查詢結果正確，但關鍵字向後續維護者傳達的資料預期與實際行為分岔，查證方式見 [SQL.21 關鍵字的宣告與引擎的行為：宣告落空的形態與查證](/backend/01-database/sql/declared-intent-vs-behaviour/)。

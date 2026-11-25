@@ -1,32 +1,34 @@
 ---
 title: "SQL.17 查詢的代價：資料分布、索引與寫法各自的影響"
 date: 2026-08-31
-description: "找重複值的分組、自連接與 EXISTS 在有無索引與不同重複次數下的實測時間與計畫，以及比較查詢快慢時要補上的資料量、分布、索引與統計資訊"
+description: "尋找重複值的分組、自連接與 EXISTS 在有無索引與不同重複次數下的實測耗時與執行計畫、函式包住索引欄的邊界，以及比較查詢快慢前須補齊的條件與計畫查詢方式"
 aliases: ["/sql/cost-lives-in-the-plan/"]
 weight: 18
 tags: ["sql", "cost", "query-plan", "index", "performance"]
 ---
 
-同一段 SQL 的代價由資料分布與可用的索引決定，不由寫法決定。同一組寫法的快慢排名會隨著索引改變而對調，而分組、自連接與 `EXISTS` 三段查詢的文字一個字都沒有動。
+這篇說明決定 SQL 查詢執行代價的因素與驗證方法：先以尋找重複 email 的分組、自連接與 `EXISTS` 寫法在有無索引下實測耗時與執行計畫；再透過提高重複次數實測分組與自連接在演算法結構上的差異；接著界定寫法本身影響代價的邊界（條件把索引欄包進函式導致無法走索引）；最後整理比較查詢快慢時必須補齊的資料庫狀態條件與查閱執行計畫的做法。
+
+同一段 SQL 的執行代價由資料分布與可用索引決定，而不單由查詢寫法決定。建立索引後，分組、自連接與 `EXISTS` 的執行耗時排名會直接重排，即使這三段查詢文字未改動任何一字。
 
 ## 找重複 email 的分組、自連接與 EXISTS 寫法
 
-一張 `Person` 表，欄位是 `id` 與 `email`，要找出重複出現的 email。
+給定一張包含 `id` 與 `email` 欄位的 `Person` 資料表，查詢目標是找出出現超過一次的 email，常見寫法如下。
 
-**用分組。** 把列按 email 收成組，問這一組有幾列：
+**分組**：依 `email` 分組後篩選列數大於一的組：
 
 ```sql
 SELECT email FROM Person GROUP BY email HAVING count(*) > 1;
 ```
 
-**用自連接。** 把表配對，找出 email 相同而 id 不同的兩列（[SQL.7 表的出現與別名：表名的指稱、別名的作用範圍與自連接](/backend/01-database/sql/table-occurrence-and-alias/)）：
+**自連接**：讓資料表出現兩次並配對 `email` 相同但 `id` 不同的列（[SQL.7 表的出現與別名：表名的指稱、別名的作用範圍與自連接](/backend/01-database/sql/table-occurrence-and-alias/) 說明同表出現兩次與別名規則）：
 
 ```sql
 SELECT DISTINCT p1.email FROM Person p1
 JOIN Person p2 ON p1.email = p2.email AND p1.id <> p2.id;
 ```
 
-**用 `EXISTS`。** 對每一列問「有沒有另一列 email 跟我一樣」（[SQL.8 IN、EXISTS 與 JOIN：列數、可取用的欄位與 NULL 的處理](/backend/01-database/sql/in-exists-join/)）：
+**`EXISTS`**：對每一列檢查是否存在另一列具有相同 `email` 且不同 `id`（[SQL.8 IN、EXISTS 與 JOIN：列數、可取用的欄位與 NULL 的處理](/backend/01-database/sql/in-exists-join/) 對照存在性查詢的寫法選擇）：
 
 ```sql
 SELECT DISTINCT email FROM Person p
@@ -35,15 +37,16 @@ WHERE EXISTS (SELECT 1 FROM Person q WHERE q.email = p.email AND q.id <> p.id);
 
 ## 有無索引時分組、自連接與 EXISTS 的實測時間與計畫
 
-分組、自連接、`EXISTS` 三種寫法都給出正確答案。以下的時間都在 SQLite 3.51 上量，資料庫沒有跑過 `ANALYZE`，同一句各跑二十次取最小值。計時器的解析度是一毫秒，量到的時間落在它以下時，下面表格對應的那一格只寫得出「不到 1」。
+這三種寫法回傳相同的結果。以下量測在 SQLite 3.51 上執行，未執行 `ANALYZE`（收集統計資訊的指令），每段查詢各跑二十次取最小值；計時器解析度為 1 毫秒，低於解析度時表格記為「不到 1」。
 
-**這一組數字的形狀依賴引擎的存取路徑**：SQLite 逐列處理、相關子查詢編成逐列的巢狀執行，所以加一個索引能把下面表格裡 `EXISTS` 那一格代表的每次查找成本整個換掉。DuckDB 是向量化的引擎——它一次處理一批列而不是一列一列走——處理同一組查詢的方式與 SQLite 不同，三種寫法在它上面的差距形狀也不同。要看的是「代價由資料與可用的存取路徑決定」這個結論，不是下面表格列出的這幾個絕對值。
+這組量測結果的變化形狀取決於引擎的執行模型：SQLite 採逐列處理並將相關子查詢編譯成逐列巢狀執行，因此加上索引能直接降低 `EXISTS` 每次查找的單價。向量化引擎（例如 DuckDB，一次批次處理多列）採用不同的執行路徑，三種寫法的耗時比例也不同。此外，本篇實測資料量皆可完整常駐記憶體；當工作集超出記憶體容量時，索引隨機回表（random I/O）與全表順序掃描（sequential I/O）的成本切換點會隨之移動。這組量測結果說明的是「執行代價由資料分布與可用存取路徑決定」的機制，在不同硬體或引擎版本上絕對毫秒數會改變，應對照同一欄內的相對倍數。
 
-資料是這樣造的：
+實測資料表共有七千列，其中單一 email（`hot@x.com`）重複兩千次：
 
 ```sql
 CREATE TABLE Person (id INTEGER PRIMARY KEY, email TEXT);
 
+-- 以遞迴 CTE 產生 5,000 列測試資料（加上重複列共 7,000 列）
 WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i+1 FROM n WHERE i < 4999)
 INSERT INTO Person SELECT i, 'u' || i || '@x.com' FROM n;
 
@@ -53,17 +56,15 @@ INSERT INTO Person SELECT 100000 + i, 'hot@x.com' FROM n;
 -- 有索引的那一欄另外跑：CREATE INDEX ix ON Person(email);
 ```
 
-七千列，其中一個 email 重複兩千次。**同一欄之內的相對關係是這張表要讀的內容，同一段查詢在別的機器或別的版本上絕對值會不同。**
-
 | 寫法     | `email` 沒有索引 | `email` 有索引 |
 | -------- | ---------------- | -------------- |
 | 分組     | 1 ms             | 不到 1 ms      |
 | 自連接   | 217 ms           | 186 ms         |
 | `EXISTS` | 1378 ms          | 1 ms           |
 
-沒有索引時最慢的是 `EXISTS`，有索引時它掉到與分組同一個量級——同一段查詢差了三個量級。分組與自連接兩欄之間沒有這種變化：分組本來就貼著計時器的解析度，加了索引之後量不出來；自連接快了百分之十幾（217 對 186 毫秒）。這個差距小到要先排除雜訊，所以另外重建資料重跑了五輪，每一輪照樣各跑二十次取最小值：五輪都是有索引的那一欄較快，而幅度都遠不到一個量級。**三段查詢的文字一個字都沒有改。**
+未建索引時 `EXISTS` 最慢（1378 毫秒），建立索引後耗時降至 1 毫秒，與分組落入同一量級——在查詢文字未動的前提下相差三個量級。分組原本就接近計時器下限；自連接從 217 毫秒降至 186 毫秒（為排除量測雜訊，另行重建資料重測五輪、每輪二十次取最小值，五輪皆是有索引較快，但降幅遠不到一個量級）。
 
-計畫說明了 `EXISTS` 那一格從沒有索引到有索引的時間變化。沒有索引時：
+對照 `EXISTS` 建索引前後的執行計畫即可看清耗時巨變的原因。未建索引時：
 
 ```text
 |--SCAN p
@@ -72,9 +73,9 @@ INSERT INTO Person SELECT 100000 + i, 'hot@x.com' FROM n;
 `--USE TEMP B-TREE FOR DISTINCT
 ```
 
-`CORRELATED` 表示那個子查詢引用了外層的欄位，所以它對外層的每一列各執行一次，而每一次都是 `SCAN q`——掃過整張表。外層那七千列，每一列都讓內層把整張七千列的表掃過一遍。
+`CORRELATED` 表示相關子查詢引用了外層欄位，必須針對外層七千列逐一執行，且每次執行都是全表掃描（`SCAN q`）。
 
-有索引之後同一段查詢：
+建索引之後同一段查詢的計畫變為：
 
 ```text
 |--SCAN p USING COVERING INDEX ix
@@ -82,11 +83,11 @@ INSERT INTO Person SELECT 100000 + i, 'hot@x.com' FROM n;
    `--SEARCH q USING COVERING INDEX ix (email=?)
 ```
 
-子查詢仍然逐列執行，而每一次從 `SCAN`（掃全表）變成 `SEARCH`（透過[索引](/backend/01-database/sql/knowledge-cards/indexing/)定位）。逐列執行這個結構沒變，變的是每一次的單價。`COVERING` 的意思寫在 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/) 那張卡；索引本身的代價落在寫入端，這一點寫在 [Index（索引）](/backend/01-database/sql/knowledge-cards/indexing/) 那張卡。
+子查詢仍逐列執行，但每次操作從全表掃描（`SCAN`）變成透過 [Index（索引）](/backend/01-database/sql/knowledge-cards/indexing/) 定位（`SEARCH`），逐列結構未變，每次查找的單價則大幅下降。`COVERING` 覆蓋索引表示索引本身已涵蓋查詢所需欄位、無須回主表讀取（計畫術語見 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/)，寫入端維護代價見 [Index（索引）](/backend/01-database/sql/knowledge-cards/indexing/)）。
 
 ## 重複次數改變時分組與自連接的實測
 
-另一組量測換一個變數：五萬列資料，其中一個 email 的重複次數從十次加到兩千次，都沒有索引。三份資料各自這樣造（`k` 依序是 10、200、2000）：
+除索引配置外，鍵值的重複度也會使不同演算法結構的耗時分岔。以下重複度實測固定表大小為五萬列且不建索引，只調整單一重複 email 的重複次數 `k`（依序為 10、200、2000）：
 
 ```sql
 CREATE TABLE Person (id INTEGER PRIMARY KEY, email TEXT);
@@ -104,20 +105,18 @@ INSERT INTO Person SELECT 1000000 + i, 'hot@x.com' FROM n;
 | 200      | 39,800    | 8 ms | 32 ms  |
 | 2000     | 3,998,000 | 8 ms | 232 ms |
 
-分組完全不動。自連接則在重複次數兩千那一列漲了七倍多。
+分組的耗時維持在 8 毫秒不變；自連接在重複次數達到 2000 時耗時暴增超過七倍。
 
-**要看的是配對數那一欄。** 自連接把每一對重複的 email 實際配出來再靠 `DISTINCT` 收掉，而配對數是 n(n−1)，隨 n 平方成長——重複次數翻十倍，配對數漲的是一百倍。自連接那一欄的時間沒有跟著漲一百倍，是因為五萬列的掃描本身有一筆固定成本，重複次數還小的時候那筆成本蓋過了配對；等配對數大到四百萬，它才浮上檯面。
+這組量測結果的關鍵在「配對數」欄位。自連接必須把每一對相同 email 的不同列實際配出來再交由 `DISTINCT` 去重，配對數為 n(n−1)，隨重複次數呈平方成長（重複次數放大十倍，配對數放大百倍）。當重複次數較小時，五萬列掃描的固定成本佔主導；當配對數增至近四百萬時，配對展開成本大幅拉高總耗時。分組完全不展開兩兩配對，因此不受重複次數影響。兩者在此的差距源自演算法結構，而非參數調校。
 
-分組那一欄不管重複多少次都是同一個值，因為它從頭到尾沒有展開任何配對。**分組與自連接在這裡的差別是結構上的，不是調校問題。**
+## 寫法阻擋索引的邊界：條件把索引欄包進函式
 
-## 寫法影響代價的邊界：條件把索引欄包進函式
-
-本篇的結論有一個邊界，出現在條件把索引欄包進函式的時候。資料沿用〈有無索引時分組、自連接與 EXISTS 的實測時間與計畫〉那一節有索引的七千列：
+除了展開配對的運算結構差異外，「代價由資料與索引決定」還有另一項前提：查詢條件的形狀必須允許引擎使用索引。沿用含索引 `ix` 的七千列 `Person` 表，比較兩種等值條件：
 
 ```sql
 EXPLAIN QUERY PLAN SELECT * FROM Person WHERE lower(email) = 'hot@x.com';
 -- `--SCAN Person
--- 索引 ix 存的是 email 本身，條件問的是 lower() 算完的結果，
+-- 索引 ix 存的是 email 本身，條件比對的是 lower() 算完的結果，
 -- 引擎在索引上找不到那個值，只能掃全表、逐列算完再比
 
 EXPLAIN QUERY PLAN SELECT * FROM Person WHERE email = 'hot@x.com';
@@ -125,14 +124,14 @@ EXPLAIN QUERY PLAN SELECT * FROM Person WHERE email = 'hot@x.com';
 -- 條件直接比 email，引擎在索引上查找
 ```
 
-兩個條件只在 email 一律以小寫存放時回同一批列——這份資料是，兩段都回兩千列；`lower()` 那一段另外會配到大小寫寫法不同的 email。這時寫法決定的是引擎**能不能用**那個索引，而不是它在幾條可行的存取路徑裡挑哪一條——所以它是本篇結論的前提：哪幾條存取路徑可行由條件的形狀決定，挑哪一條才由資料與索引決定。[Sargable（可走索引的條件形狀）](/backend/01-database/sql/knowledge-cards/sargable/) 給判斷一個條件能不能走索引的標準，以及讓條件走得了索引的改寫方向：把函式條件改寫成範圍（`date(下單日) = X` 寫成 `下單日 >= X AND 下單日 < 次日`）、把運算從索引欄移到比較式的另一個運算元上，或者對運算式本身建索引。
+當資料表的 `email` 皆為小寫時，兩段查詢回傳同一批兩千列（`lower()` 版本另外會命中大小寫混寫的資料）。在此情境下，查詢寫法直接決定索引能否被納入可行路徑——條件形狀先決定哪些存取路徑可行，資料分布與索引再決定最佳化器挑哪一條路徑。判斷條件是否適用索引的標準與改寫方向（把函式條件改寫成範圍比較、將運算移至常數側，或建立運算式索引），見 [Sargable（可走索引的條件形狀）](/backend/01-database/sql/knowledge-cards/sargable/)。
 
 ## 比較兩段查詢的快慢：要補上的條件與向引擎要計畫的做法
 
-補上四項再問：**資料有多大、分布長什麼樣、有哪些索引、引擎有沒有[統計資訊](/backend/01-database/sql/knowledge-cards/query-statistics/)。** 最後一項是 [SQL.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/) 實測過的——同一段查詢在跑過 `ANALYZE` 之前與之後拿到不同的計畫；那一篇也從 SQL 這個語言的性質推了一次，代價為什麼一開始就落在查詢文字之外。
+離開資料表列數、欄位值分布形態、已建立索引與 [Query Statistics（統計資訊）](/backend/01-database/sql/knowledge-cards/query-statistics/)（是否執行過 `ANALYZE`）等資料庫狀態，單獨比較兩段 SQL 的快慢並無固定答案（[SQL.1 宣告式的紅利與代價：書寫、求值與執行順序各自由誰決定](/backend/01-database/sql/declarative-not-procedural/) 示範統計資訊如何改變計畫）。
 
-資料量決定像自連接那筆固定掃描成本這種常數項會不會被放大。分布決定會不會踩到某個寫法的最壞情況——上面的自連接就是被重複程度打敗的。索引決定每一次查找的單價，而加索引前後的那組量測裡，索引的有無讓同一段查詢差了三個量級。
+這四項狀態各自影響不同環節：資料量決定全表掃描等固定成本是否被放大；資料分布決定寫法是否落入最壞複雜度（如同高重複度實測中自連接耗時激增）；索引決定單次查找的成本（如同有無索引實測中加建索引使 `EXISTS` 加速三個量級）；統計資訊決定最佳化器能否正確估算各路徑代價。
 
-資料量、分布與索引都是資料庫當下的狀態，查詢的文字裡讀不到，所以「哪種寫法比較快」是一個要向引擎問的問題，不是比較兩段文字就答得出來的問題。而且要問兩次：一次拿到現在這個狀態下的計畫，一次改動其中一項（加索引、換資料量）之後再拿一次，看它變不變。問一次只拿得到一個狀態下的答案，而加索引前後的那張表證明狀態換了排名就換，重複次數那張表證明分組與自連接的差距會隨資料的分布放大。各家的問法不同，SQLite 是 `EXPLAIN QUERY PLAN`，PostgreSQL 是 `EXPLAIN`。本篇的計畫只有三四行，真實系統的計畫有巢狀節點與估計列數，[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給`EXPLAIN`、`EXPLAIN ANALYZE`、`auto_explain` 三層工具的分工，以及四個計畫選錯的 production case：該走索引而走了全表掃描、該用 hash join 而用了 nested loop、缺少多欄位統計而估錯列數、該平行執行而沒有。
+由於這些狀態皆存在於資料庫而非查詢文字裡，單一狀態下量得的執行計畫只反映當下的排名；當索引調整或資料量放大後，最佳化器可能切換演算法，因此需要再次取得計畫對照前後變化。各引擎查閱計畫的語法不同（SQLite 使用 `EXPLAIN QUERY PLAN`，PostgreSQL 使用 `EXPLAIN`）。真實系統的執行計畫包含巢狀節點與估計列數，[PostgreSQL Query Optimization：EXPLAIN、auto_explain、pg_hint_plan 與 planner 選錯 plan 的 production case](/backend/01-database/vendors/postgresql/query-optimization/) 說明了 `EXPLAIN`、`EXPLAIN ANALYZE` 與 `auto_explain` 工具的分工，以及誤選全表掃描、誤選 nested loop、缺少多欄位統計與未啟用平行執行的實務案例。
 
-代價既然由資料與索引決定，查詢的文字就可以先為讀它的人而寫。[SQL.22 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/) 並排了三組——寫法差異免費的、條件形狀讓兩者分岔的、以及拆開之後在四萬列上快三十多倍的——並給出分岔時該動查詢還是動 schema 的判斷標準。
+因為代價主要由資料與索引決定，撰寫 SQL 時可優先考量可讀性。[SQL.22 可讀性與執行代價：兩者一致與分岔的情形](/backend/01-database/sql/readable-and-fast-mostly-align/) 比較免費的寫法差異、條件形狀造成可讀性與效能分岔，以及將相關子查詢拆成 CTE（`WITH` 具名子查詢）後在四萬列上快逾三十倍的實測，並整理分岔時調整 schema 或調整查詢的判斷標準。

@@ -1,23 +1,23 @@
 ---
 title: "Cardinality 與 Selectivity（基數與選擇率）"
 date: 2026-09-02
-description: "看到「這一欄基數太低、索引沒用」，或想知道最佳化器憑什麼決定要不要走索引時，查這兩個數各自量什麼"
+description: "遇到低基數欄位索引失效，或需要確認最佳化器依什麼指標決定是否使用索引時"
 aliases: ["/sql/knowledge-cards/cardinality-and-selectivity/"]
 weight: 19
 tags: ["sql", "cardinality", "selectivity", "index", "query-optimizer", "knowledge-card"]
 ---
 
-基數是一個集合裡有幾個成員。這個詞在 SQL 裡落在兩個地方：一份 [relation](/backend/01-database/sql/knowledge-cards/relation/) 的基數是它有幾列，一個欄位的基數是它有幾個相異值。兩者是同一個定義用在不同的集合上——欄位的基數就是把那一欄單獨取出來、去掉重複之後的列數。
+Cardinality（基數）指一個集合包含的成員數量。在 SQL 裡這個定義用於兩個對象：一份 [Relation（關係）](/backend/01-database/sql/knowledge-cards/relation/) 的基數是它的總列數，一個欄位的基數是該欄位去掉重複值後的相異值個數。
 
-**「基數」這個譯名在站內還有另外三個所指。** 資料建模那一側說的是兩張表之間的關係屬於一對一、一對多還是多對多；查詢結果那一側說的是一段查詢回幾列（[Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)）；監控那一側說的是一個指標有幾種標籤組合。本卡與最佳化器讀的都是上一段那個計數義，其餘幾個只是共用一個譯名。
+「基數」在站內其他領域另有三種不同指稱：資料建模領域指兩張表之間的關聯比例（一對一、一對多、多對多）；查詢結果層面指一段查詢回傳的列數（見 [Query Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)）；監控領域指一個指標的標籤組合總數。本卡與最佳化器使用的是開頭所列的集合計數定義。
 
-選擇率是一個條件留下多少比例的列。它是條件的屬性而非欄位的屬性：`狀態 = '已完成'` 與 `狀態 = '已取消'` 寫在同一欄上，而兩者的選擇率可以差一個量級以上——下一節那組資料裡是十八倍。
+Selectivity（選擇率）指某個篩選條件保留下來的列佔總列數的比例。選擇率是條件的屬性而非欄位的屬性：寫在同一欄上的 `狀態 = '已完成'` 與 `狀態 = '已取消'`，選擇率可能相差一個量級以上（〈同一索引在不同選擇率下的計畫差異〉實測約十九倍，95% 對 5%）。
 
-兩者在等值條件上有一個關係：值分布均勻的時候，`欄 = 某值` 的選擇率大約是相異值個數的倒數。分布不均勻的時候這個估算失準，而那正是[統計資訊](/backend/01-database/sql/knowledge-cards/query-statistics/)要另外記下最常出現的幾個值的原因。
+在欄位值均勻分布的前提下，等值條件 `欄 = 某值` 的選擇率約等於欄位基數的倒數。資料分布不均時這項估算會失準，這正是 [Query Statistics（統計資訊）](/backend/01-database/sql/knowledge-cards/query-statistics/) 需要額外記錄高頻值出現頻率的原因。
 
-## 同一個索引，最佳化器對不同的值做相反的決定
+## 同一索引在不同選擇率下的計畫差異
 
-二十萬列的訂單表，`狀態` 只有兩個值（已完成佔九成五、已取消佔半成），`顧客編號` 有五萬個值。兩欄各建一個索引，跑過 `ANALYZE`（收集統計的那道指令）之後問同一種等值條件：
+在二十萬列的訂單表上，`狀態` 欄只有兩個相異值（已完成佔 95%、已取消佔 5%），`顧客編號` 欄有五萬個相異值。兩欄各建索引並執行 `ANALYZE` 後，對 PostgreSQL 18 執行三段等值查詢：
 
 ```text
 -- PostgreSQL 18
@@ -26,9 +26,9 @@ SELECT 備註 FROM 訂單 WHERE 狀態 = '已取消';     -- Index Scan using ix
 SELECT 備註 FROM 訂單 WHERE 顧客編號 = 12345;    -- Index Scan using ix顧客
 ```
 
-同一個 `ix狀態`，同一種條件形狀，兩個值得到相反的決定。走索引要先讀索引拿到位置、再回原表取 `備註` 這一欄，每一列付兩次；命中九成五的列時，這筆帳輸給從頭讀一遍。
+同一個 `ix狀態` 索引面對相同形狀的條件，因為選擇率不同而產生相反的執行計畫。走一般索引須先查索引定位再回原表取 `備註` 欄，命中 95% 的列時，大量隨機回主表讀取（回表，table lookup）的成本高於直接順序全表掃描。
 
-引擎的依據寫在統計裡，而那份摘要是看得到的：
+PostgreSQL 最佳化器使用的統計摘要可透過 `pg_stats` 查閱：
 
 ```text
 SELECT attname, n_distinct, most_common_freqs FROM pg_stats WHERE tablename = '訂單';
@@ -36,29 +36,30 @@ SELECT attname, n_distinct, most_common_freqs FROM pg_stats WHERE tablename = '�
  顧客編號 | -0.25113   |
 ```
 
-`n_distinct` 是基數，`most_common_freqs` 是那幾個值各自的選擇率。**這兩欄是抽樣估出來的，每跑一次 `ANALYZE` 都會在小數後幾位變動**——真值是 0.95 與 0.05，而印出來的從來不是整數。`顧客編號` 那一格的負數是另一種寫法——絕對值小於一時代表「相異值個數是總列數的這個比例」，0.25 乘二十萬約等於五萬。
+`n_distinct` 是估計基數，`most_common_freqs` 是各高頻值的估計選擇率。這兩個數字來自抽樣估算，每次執行 `ANALYZE` 都會在小數位微幅變動；`顧客編號` 欄的負數 `-0.25113` 代表相異值個數佔總列數的比例（約 0.25 × 200,000 = 50,000）。由於這些數值是最近一次統計時的估計值，資料分布變動後同一段查詢即使文字未改也可能切換執行計畫（見 [Query Statistics（統計資訊）](/backend/01-database/sql/knowledge-cards/query-statistics/)）。
 
-**這兩個數是估計而不是事實。** 它們來自上一次收集統計的那一刻，所以同一段查詢在資料變動之後可能換一個計畫，而查詢的文字一個字都沒改（[Query Statistics](/backend/01-database/sql/knowledge-cards/query-statistics/)）。
+## 同一份統計在各家引擎的計畫差異
 
-## 同一份統計，各家的取捨不同
-
-上面那組表搬到 SQLite 3.51，`ANALYZE` 跑過之後三段查詢全部走索引，包含命中九成五的那一段。SQLite 的 `sqlite_stat1` 記下的數字與 PostgreSQL 量到的是同一件事：
+將相同的資料表與索引建於 SQLite 3.51 並執行 `ANALYZE` 後，三段查詢全數走索引，包含命中 95% 的條件。SQLite 的 `sqlite_stat1` 記錄的是同一份分布事實：
 
 ```text
 訂單 / ix狀態 → 200000 100000     -- 二十萬列，每個相異值平均十萬列
 訂單 / ix顧客 → 200000 4          -- 二十萬列，每個相異值平均四列
 ```
 
-所以「基數低的欄位上索引沒用」這句話要分兩半聽：低基數確實讓多數值的選擇率變高，而**要不要因此放棄索引是最佳化器的判斷，各家的門檻不同**。可攜的說法是選擇率，不是計畫。
+低基數確實使多數等值條件的選擇率偏高，但選擇率多高才放棄索引由各家最佳化器的成本模型自行決定，不同引擎門檻不同。跨引擎成立的是選擇率高低，而非固定的執行計畫。
 
 ## 跟其他概念的關係
 
-**這兩關的成本模型建在一個前提上：資料按列存放，而索引是另一份按鍵排好的結構，走它要回原表取其餘欄位。** 欄式引擎（DuckDB、以及讀 parquet 這一類）不是這個形狀——它按欄讀、靠區塊的最大最小值跳過整段，沒有逐列回表那筆帳，所以「命中九成五就別走索引」在那裡不成立，對應的手段是資料的排序與分區。下面兩關針對的是前一種。
+以選擇率評估是否走索引的成本模型，建立在列式儲存（row-oriented storage）與獨立索引結構的前提下：走索引需額外回表讀取非索引欄位。欄式儲存引擎（例如 DuckDB 或讀取 Parquet 檔案）按欄讀取並透過區塊最大最小值跳過不符區段，沒有逐列回表成本，對應的效能手段是資料排序與分區。
 
-選擇率與 [sargable](/backend/01-database/sql/knowledge-cards/sargable/) 是索引派不派得上用場的兩個獨立條件。sargable 問的是條件的**形狀**能不能翻成索引上的一次查找——欄位被函式包住就翻不了。**這一關過不了不等於索引沒用**：條件裡用到的欄位都在索引上的時候，引擎仍然可能整個掃過索引再逐列過濾，省下的是回原表那筆帳（PostgreSQL 印成 `Index Only Scan` 加一個 `Filter`，SQLite 印成 `SCAN ... USING COVERING INDEX`）。所以兩關管的是不同的索引用法，而不是同一種用法的兩道閘。選擇率問的是通過查找之後**還剩多少列**——形狀對而留下的列佔了大半，最佳化器仍然會選擇不走它。兩關都過，[索引](/backend/01-database/sql/knowledge-cards/indexing/)才換得到速度。
+在列式引擎裡，選擇率與 [Sargable（可走索引的條件形狀）](/backend/01-database/sql/knowledge-cards/sargable/) 是 [Index（索引）](/backend/01-database/sql/knowledge-cards/indexing/) 查找的兩項獨立條件。Sargable 決定條件形狀是否能轉成索引查找（欄位被函式包住時無法查找，但若查詢所需欄位全在索引中，引擎仍可能以 `Index Only Scan` 或 `SCAN ... USING COVERING INDEX` 掃描索引以避免回表）；選擇率決定查找後保留多少比例的列（即使形狀合規，命中比例過高時最佳化器仍可能改採全表掃描）。兩項條件同時滿足時，索引查找才能帶來速度收益。
 
-基數也決定連接之後的列數。低基數的欄位當連接鍵時，一列會配到對面同一個值的所有列，而那個數量隨表一起長——這是[笛卡兒積](/backend/01-database/sql/knowledge-cards/cartesian-product/)那張卡分辨「積」與「膨脹」時用的同一個量。
+基數也決定連接展開後的列數。以低基數欄位作為連接鍵時，單列會配到對側所有相同鍵值的列，列數隨表長平方成長，這正是 [Cartesian Product（笛卡兒積）](/backend/01-database/sql/knowledge-cards/cartesian-product/) 區分積與列數膨脹的關鍵量。
 
-## 往下走
+## 延伸閱讀：統計收集、執行計畫與結果集治理
 
-這兩個數怎麼被收集、多久失效一次，在 [Query Statistics（統計資訊）](/backend/01-database/sql/knowledge-cards/query-statistics/)。[query optimizer](/backend/01-database/sql/knowledge-cards/query-optimizer/) 拿它們估代價的過程，以及估錯時計畫長什麼樣，在 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/)。同一道題三種寫法的排名怎麼隨索引重排，在 [SQL.17 查詢的代價](/backend/01-database/sql/cost-lives-in-the-plan/)。production 上結果集大小怎麼治理，在 [Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)。
+- 統計資訊的收集指令與過時訊號：[Query Statistics（統計資訊）](/backend/01-database/sql/knowledge-cards/query-statistics/)
+- 最佳化器依統計產出步驟樹的方式：[Query Optimizer（查詢最佳化器）](/backend/01-database/sql/knowledge-cards/query-optimizer/) 與 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/)
+- 索引與資料分布對查詢耗時的實測：[SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)
+- 正式環境結果集列數暴增的治理：[Query Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)

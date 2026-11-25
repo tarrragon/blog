@@ -1,15 +1,15 @@
 ---
 title: "Semi-join 與 Anti-join（半連接與反連接）"
 date: 2026-09-02
-description: "看到 EXISTS 或 NOT EXISTS 時，查它在代數裡對應哪個運算、以及列數上限為什麼是左邊那張表的列數"
+description: "看到 EXISTS 或 NOT EXISTS 時，對照它在關聯代數中的運算定義與列數上限"
 aliases: ["/sql/knowledge-cards/semi-join-and-anti-join/"]
 weight: 20
 tags: ["sql", "join", "exists", "relational-algebra", "semi-join", "anti-join", "knowledge-card"]
 ---
 
-半連接把兩個 [relation](/backend/01-database/sql/knowledge-cards/relation/) 配起來之後只留下左邊那一份：結果的欄位全部來自左邊，而左邊的每一列至多出現一次。留下的是在右邊找得到對象的那些列。反連接留下的是另一半——左邊那些在右邊配不到任何對象的列，結果的欄位同樣只有左邊的。
+Semi-join（半連接）把兩個 [Relation（關係）](/backend/01-database/sql/knowledge-cards/relation/) 依條件配對後，僅輸出左側集合中在右側找得到配對對象的列；結果只包含左側欄位，且左側每一列至多出現一次。Anti-join（反連接）則輸出互補的子集：左側集合中在右側配對不到任何對象的列，結果欄位同樣只來自左側。
 
-SQL 用 `EXISTS` 與 `NOT EXISTS` 表達這兩個運算，語言本身沒有為它們保留關鍵字：
+SQL 沒有為半連接與反連接保留獨立的連接關鍵字，通常改用 `EXISTS` 與 `NOT EXISTS` 表達（子查詢慣例寫成 `SELECT 1`，因為 `EXISTS` 只檢驗子查詢是否產出至少一列、不讀取投影值）：
 
 ```sql
 -- 半連接：下過單的顧客
@@ -21,27 +21,27 @@ SELECT 姓名 FROM 顧客
 WHERE NOT EXISTS (SELECT 1 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧客編號);
 ```
 
-## 名字裡的「半」指結果只帶走一邊
+## 「半」指輸出僅帶出單側欄位
 
-三個運算作用在同一對關係上，差別在結果帶走什麼。
+以下比較三種運算作用在同一對關係上的輸出欄位與列數上限：
 
-| 運算   | 結果的欄位   | 結果的列數         | SQL 寫法       |
-| ------ | ------------ | ------------------ | -------------- |
-| 連接   | 左右兩邊都有 | 可能超過左邊的列數 | `JOIN ... ON`  |
-| 半連接 | 只有左邊的   | 至多左邊的列數     | `EXISTS`、`IN` |
-| 反連接 | 只有左邊的   | 至多左邊的列數     | `NOT EXISTS`   |
+| 運算   | 輸出欄位     | 結果列數         | 常見 SQL 寫法  |
+| ------ | ------------ | ---------------- | -------------- |
+| 連接   | 左右兩側皆有 | 可能超過左側列數 | `JOIN ... ON`  |
+| 半連接 | 僅左側欄位   | 至多等於左側列數 | `EXISTS`、`IN` |
+| 反連接 | 僅左側欄位   | 至多等於左側列數 | `NOT EXISTS`   |
 
-右邊那份資料在這兩個運算裡的角色是條件，它的欄位到不了結果。要把右邊的欄位列出來就得用連接，那條判斷標準在 [SQL.8 IN、EXISTS 與 JOIN：列數、可取用的欄位與 NULL 的處理](/backend/01-database/sql/in-exists-join/)。
+在半連接與反連接中，右側資料表僅作為存在性檢查條件，其欄位無法出現在輸出內。只要查詢需要輸出右側欄位，就必須改用完整連接，選用依據見 [SQL.8 IN、EXISTS 與 JOIN：列數、可取用的欄位與 NULL 的處理](/backend/01-database/sql/in-exists-join/)。
 
-## 列數上限省掉去重這一步
+## 列數上限免除事後去重
 
-半連接問的是配不配得到，所以配到幾筆不影響結果——一位顧客手上有兩張訂單或二十張訂單，`EXISTS` 都只讓她出現一次。同一個問題用連接寫，她會照訂單張數各出現一次，要補 `DISTINCT` 把複製出來的列收掉（[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
+半連接只檢查右側是否存在至少一筆配對，配對筆數不影響結果——不論一位顧客有 2 筆或 20 筆訂單，`EXISTS` 都只讓她出現一次。相同需求若改寫成 `JOIN`，該顧客會依訂單筆數重複出現，必須補上 `DISTINCT` 才能消除膨脹出來的列（見 [SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
 
-需要 `DISTINCT` 因此是一個訊號：這個查詢問的是有沒有，而連接順便做了它不需要的配對。
+因此，查詢必須靠 `DISTINCT` 壓回筆數時往往是一項警訊：需求本身屬於存在性檢查，卻使用了會展開配對的連接運算。
 
-## 反連接有兩條描述路徑
+## 反連接的 SQL 寫法：NOT EXISTS 與外連接加 IS NULL
 
-`NOT EXISTS` 直接說「找不到」。[外連接](/backend/01-database/sql/knowledge-cards/outer-join/)那一版先讓左邊每一列都保留下來，再挑出補了 `NULL` 的那些：
+除了 `NOT EXISTS` 直接表達「找不到配對」之外，也能利用 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/) 先保留左側全部列，再挑出右側補上 `NULL` 的列：
 
 ```sql
 SELECT 顧客.姓名 FROM 顧客
@@ -49,18 +49,21 @@ LEFT JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號
 WHERE 訂單.訂單編號 IS NULL;
 ```
 
-兩段回同一批列，路徑不同——一條由條件直接表達，另一條靠外連接補出來的 `NULL` 當標記。
+兩種寫法回傳同一批列，但機制不同：`NOT EXISTS` 由條件直接判定存在性，`LEFT JOIN ... IS NULL` 則依賴外連接補入的 `NULL` 作為未配對標記（前提是 `WHERE` 檢查的右表欄位在配對成功時必定非空，通常是右表主鍵或非空連接鍵，否則會混入原本該欄即為 `NULL` 的配對列）。
 
-`NOT IN` 的行為與這兩條分岔：子查詢的結果裡出現一個 [NULL](/backend/01-database/sql/knowledge-cards/null/)，整段就回零列且不報錯。反連接的安全寫法因此落在 `NOT EXISTS` 與外連接這兩條上（[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
+`NOT IN` 的行為與上述兩種寫法不同：一旦子查詢回傳的清單內含任何一個 [NULL（空值）](/backend/01-database/sql/knowledge-cards/null/)，整段查詢就會靜默回傳零列且不報錯；外層比對欄位為 `NULL` 時也會被濾除。因此撰寫反連接查詢時，安全寫法為 `NOT EXISTS` 或外連接加 `IS NULL`（推導見 [SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
 
 ## 跟其他概念的關係
 
-半連接與反連接跟連接一樣是導出運算：半連接等於連接之後只投影左邊的欄位再去重，反連接等於左邊減去半連接的結果。[關聯代數](/backend/01-database/sql/knowledge-cards/relational-algebra/)的正典運算清單因此多半只列到連接，而「有沒有對應資料」這一族問題全部落在這兩個運算上——找出下過單的顧客、找出從未下單的顧客、找出比前一天熱的日子，題目與寫法各異而運算只有這兩個。
+半連接與反連接和連接一樣屬於導出運算：半連接等價於連接後僅投影左側欄位再去重，反連接等價於左側關係減去半連接結果。[Relational Algebra（關聯代數）](/backend/01-database/sql/knowledge-cards/relational-algebra/) 的基本運算清單常只列到連接，但在實務查詢裡，所有檢查存在與不存在的需求——例如找出下過單的顧客、找出未下單的顧客、找出沒有五星評價的訂單——底層都歸結到這兩個運算。
 
-計畫上看不看得到這兩個運算的名字，各家不同。DuckDB 1.5.5 把它印成 `Join Type: SEMI`；SQLite 3.51.0 沒有對應的運算子，它把 `EXISTS` 的子查詢編成帶一個 `LIMIT 1` 計數器的迴圈，找到第一筆就跳出去——語意相同，而[執行計畫](/backend/01-database/sql/knowledge-cards/query-plan/)上只看得到一個子查詢節點。
+這兩個運算是否以專屬名稱出現在 [Query Plan（執行計畫）](/backend/01-database/sql/knowledge-cards/query-plan/) 內，隨引擎實作而異。DuckDB 1.5.5 會在計畫中標示 `Join Type: SEMI`；SQLite 3.51.0 沒有對應的獨立運算子，會把 `EXISTS` 子查詢編譯為帶有 `LIMIT 1` 計數器的迴圈，找到第一筆配對即提前跳出——兩者語意等價，但 SQLite 的計畫上只會顯示子查詢節點。
 
-它們與[積](/backend/01-database/sql/knowledge-cards/cartesian-product/)分別是連接結果大小的兩個極端。積是條件缺席時的上限，列數是兩邊相乘；半連接把上限壓到左邊的列數，因為右邊配到幾列都只算一次。中間那一段是連接，結果的大小由配對的重複程度決定。
+半連接與 [Cartesian Product（笛卡兒積）](/backend/01-database/sql/knowledge-cards/cartesian-product/) 分別構成連接結果列數的兩個端點。笛卡兒積是缺少條件時的列數上限，等於兩側列數相乘；半連接將結果上限壓低至左側列數，不受右側重複配對影響；一般連接的結果列數則落在兩者之間，取決於配對鍵的重複程度。
 
-## 往下走
+## 延伸閱讀：存在性選型、自連接與代價實測
 
-`IN`、`EXISTS` 與 `JOIN` 在列數與可取用欄位上的差別、以及選哪一種只問一句話，在 [SQL.8 IN、EXISTS 與 JOIN：列數、可取用的欄位與 NULL 的處理](/backend/01-database/sql/in-exists-join/)。從一句業務描述推到反連接、以及為什麼計數那條路走不通，在 [SQL.9 分組鍵的選擇：鍵與一組所代表的對象](/backend/01-database/sql/grouping-key-decides-the-unit/)。同一張表的兩列互相比較時這兩個運算長什麼樣，在 [SQL.7 表的出現與別名：表名的指稱、別名的作用範圍與自連接](/backend/01-database/sql/table-occurrence-and-alias/)。同一組寫法的快慢隨索引與資料分布重排的實測，在 [SQL.17 查詢的代價](/backend/01-database/sql/cost-lives-in-the-plan/)。
+- `IN`、`EXISTS` 與 `JOIN` 在列數與可取用欄位上的選用依據：[SQL.8 IN、EXISTS 與 JOIN：列數、可取用的欄位與 NULL 的處理](/backend/01-database/sql/in-exists-join/)
+- 從業務敘述推導至反連接與分組計數的差別：[SQL.9 分組鍵的選擇：鍵與一組所代表的對象](/backend/01-database/sql/grouping-key-decides-the-unit/)
+- 同一張表的兩列互相比對時的存在性寫法：[SQL.7 表的出現與別名：表名的指稱、別名的作用範圍與自連接](/backend/01-database/sql/table-occurrence-and-alias/)
+- 不同寫法在索引與資料分布變化下的耗時實測：[SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)

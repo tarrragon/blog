@@ -1,25 +1,23 @@
 ---
 title: "Query Plan（執行計畫）"
 date: 2026-08-31
-description: "想知道一段查詢實際會怎麼被執行、或被要求「先看計畫」時"
+description: "想確認查詢實際的執行步驟，或被要求先檢視執行計畫時"
 aliases: ["/sql/knowledge-cards/query-plan/"]
 weight: 2
 tags: ["sql", "query-plan", "performance", "knowledge-card"]
 ---
 
-Query plan 是引擎為一段查詢決定的執行步驟，內容是一棵運算子樹：哪張表用什麼方式讀、用哪種演算法做連接、中間結果怎麼傳遞。它由 [query optimizer](/backend/01-database/sql/knowledge-cards/query-optimizer/) 產生，而樹上每個節點的輸入與輸出都是一個 [relation](/backend/01-database/sql/knowledge-cards/relation/)。
+Query plan（執行計畫）是資料庫引擎替一段查詢決定的實際執行步驟，結構為一棵運算子樹：包含每張表的讀取方式、連接採用的演算法與中間結果的傳遞路徑。計畫由 [Query Optimizer（查詢最佳化器）](/backend/01-database/sql/knowledge-cards/query-optimizer/) 產生，樹上每個節點的輸入與輸出都是一個 [Relation（關係）](/backend/01-database/sql/knowledge-cards/relation/)。
 
 ## 跟其他概念的關係
 
-計畫是查詢文字與實際代價之間唯一的橋。SQL 只描述要什麼結果，所以掃全表或走索引、雜湊連接或巢狀迴圈這些決定都不在查詢的文字裡，要問引擎才知道。連接的兩種演算法差在做法：巢狀迴圈對左邊的每一列去右邊找一次，雜湊連接先把一邊建成雜湊表再逐列去查它。連接要保護哪一側是查詢說了算（見 [outer join](/backend/01-database/sql/knowledge-cards/outer-join/)），而用什麼演算法達成它由計畫決定。
+執行計畫是查詢文字與實際執行代價之間的核心觀察介面（鎖等待、緩衝區命中與實際 I/O 仍須搭配 `EXPLAIN (ANALYZE, BUFFERS)` 與執行期統計觀測）。SQL 只描述目標結果，因此全表掃描或索引查找、雜湊連接或巢狀迴圈等決定都不會寫在查詢文字內，必須透過引擎輸出計畫才能得知。兩種常見連接演算法的做法不同：巢狀迴圈對左側每一列逐一到右側查找配對，雜湊連接則先將其中一側建成雜湊表，再逐列查詢。連接要保留哪一側未配對的列由查詢語句決定（見 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/)），而用哪種演算法完成連接由執行計畫決定。
 
-同一段查詢的計畫會隨資料量、索引與統計資訊改變，所以計畫是某個時間點某個資料庫狀態下的答案，不是查詢本身的屬性。
+同一段查詢的計畫會隨資料量、[Index（索引）](/backend/01-database/sql/knowledge-cards/indexing/) 與 [Query Statistics（統計資訊）](/backend/01-database/sql/knowledge-cards/query-statistics/) 變動。因此執行計畫反映的是某個時間點、特定資料庫狀態下的結果，而非查詢文字固定的屬性。
 
 ## 可觀察訊號與例子
 
-
-
-書店把顧客與訂單連起來，`EXPLAIN QUERY PLAN` 在 SQLite 上回三行（查的是 `FROM 訂單 JOIN 顧客`，訂單二十萬列、顧客五十列）：
+在書店資料庫將顧客表（50 列）與訂單表（200,000 列）連接，對 `FROM 訂單 JOIN 顧客` 執行 SQLite 的 `EXPLAIN QUERY PLAN`，輸出如下：
 
 ```text
 |--SCAN 訂單
@@ -27,16 +25,16 @@ Query plan 是引擎為一段查詢決定的執行步驟，內容是一棵運算
 `--SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
 ```
 
-`SCAN` 與 `SEARCH` 是兩種取法：`SCAN 訂單` 表示二十萬列的訂單表逐列看過，`SEARCH 顧客` 表示對五十列的顧客表透過索引定位而不逐列看。
+`SCAN` 與 `SEARCH` 代表兩種讀取方式：`SCAN 訂單` 表示逐列掃描 200,000 列的訂單表；`SEARCH 顧客` 表示對 50 列的顧客表使用索引定位，而不逐列掃描。
 
-`AUTOMATIC` 指的是這個索引不存在於資料庫裡，是引擎為了這一次查詢臨時建的——它判斷建索引比全表掃描划算。`COVERING` 指的是索引本身帶著查詢要的欄位，所以定位之後不必再回去讀原本的列。`BLOOM FILTER` 是它加的一道快速排除步驟。
+輸出中的三個標記各有含義：`AUTOMATIC` 表示該索引原本不存在於資料庫，由引擎為這次查詢臨時建立；`COVERING` 表示索引本身已包含查詢所需的全部欄位，定位後無須再回原表取列；`BLOOM FILTER` 表示引擎額外加入一道快速篩除步驟。
 
-**這三行裡沒有一個字出現在原本的查詢裡。** 查詢只說了要把兩張表按顧客編號連起來，其餘全部是引擎的決定——而它們決定了這段查詢要花多久。
+**這三行計畫中的所有執行策略都未寫在原查詢內。** 查詢只指定兩張表以顧客編號連接，其餘讀取與查找步驟全由引擎決定，也直接決定查詢耗時。
 
-**同一段查詢在別的資料庫狀態下會得到別的計畫**——有沒有統計、有沒有索引都會換掉它。上面那三行對書寫順序也敏感：把兩張表對調寫成 `FROM 顧客 JOIN 訂單`，沒有統計的資料庫會改成掃顧客那張，跑過 `ANALYZE` 之後才收斂回上面這一個。所以讀計畫要連同「當時的資料庫是什麼狀態」一起讀，那組對照在 [SQL.1 宣告式的紅利與代價：書寫、求值與執行順序各自由誰決定](/backend/01-database/sql/declarative-not-procedural/) 與 [SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)。
+**同一段查詢在不同的資料庫狀態下會產出不同計畫**，統計與索引的存在與否皆會改變結果。在沒有統計資訊的 SQLite 資料庫中，將兩張表對調寫成 `FROM 顧客 JOIN 訂單` 會改為優先掃描顧客表；執行 `ANALYZE` 後，兩種寫法才會收斂為相同計畫。因此判讀計畫時必須一併記錄當下的資料庫狀態，完整對照見 [SQL.1 宣告式的紅利與代價：書寫、求值與執行順序各自由誰決定](/backend/01-database/sql/declarative-not-procedural/) 與 [SQL.17 查詢的代價：資料分布、索引與寫法各自的影響](/backend/01-database/sql/cost-lives-in-the-plan/)。
 
-DuckDB 的 `EXPLAIN` 換一種呈現，回一棵運算子樹，節點標著 `HASH_JOIN`、`SEQ_SCAN` 這類名稱與估計的列數；`EXPLAIN ANALYZE` 另外附上實際跑出來的列數與耗時。
+DuckDB 的 `EXPLAIN` 採用不同的呈現格式，會輸出一棵運算子樹，節點標註 `HASH_JOIN`、`SEQ_SCAN` 等名稱與估計列數；`EXPLAIN ANALYZE` 則會實際執行並附上真實列數與耗時。
 
 ## 判斷條件與後果
 
-估計值與實際值差很多的時候，先懷疑統計資訊而不是查詢的寫法——最佳化器是照估計值選的，估計錯了選擇就跟著錯。判讀計畫要對照當時的資料量，把在小資料上量到的計畫套到 production 是常見的誤判來源。
+計畫中的估計列數與實際列數落差甚大時，代表最佳化器據以挑選方案的摘要已失真；這類失真源自統計資訊過期，單純改寫查詢文字無法修正估算偏差。此外，判讀計畫必須對應真實規模的資料量，小資料集測得的計畫無法直接類推至正式環境，因為資料量與分布改變後最佳化器會切換演算法。

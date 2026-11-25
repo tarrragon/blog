@@ -1,30 +1,31 @@
 ---
 title: "Relational Algebra（關聯代數）"
 date: 2026-09-01
-description: "看到「子句其實是某個運算」或想知道 SQL 的規則從哪裡來時，查這一層在底下的是什麼"
+description: "看到子句對應特定運算、或想追溯 SQL 語意規則的底層來源時"
 aliases: ["/sql/knowledge-cards/relational-algebra/"]
 weight: 13
 tags: ["sql", "relational-algebra", "relation", "knowledge-card"]
 ---
 
-關聯代數是一組作用在 [relation](/backend/01-database/sql/knowledge-cards/relation/) 上、產出 relation 的運算——relation 指一組欄位固定、由若干列構成的資料集合，資料表是它的一種，查詢途中的中間結果也是。運算有這幾個：挑列（選取）、挑欄（投影）、把兩份的每一列各配一次（[積](/backend/01-database/sql/knowledge-cards/cartesian-product/)）、在積上面加條件挑出要留的（連接）、以及聯集、差集、更名。連接自己就是積加上選取的組合，同一層還有兩個這個分類反覆用到的導出運算——[半連接與反連接](/backend/01-database/sql/knowledge-cards/semi-join-and-anti-join/)，配起來之後只帶走左邊那一份。SQL 的子句是這些運算的一層語法外衣，而不是另一套獨立的規則。
+Relational algebra（關聯代數）是一組作用在 [Relation（關係）](/backend/01-database/sql/knowledge-cards/relation/) 上、並且產出關係的運算集合。核心運算包括選取（挑列）、投影（挑欄）、[Cartesian Product（笛卡兒積）](/backend/01-database/sql/knowledge-cards/cartesian-product/)（兩份資料每列兩兩配對）、連接（在積之上加條件篩選），以及聯集、差集與更名。連接本身是積與選取的組合；同一層還有兩個常用導出運算——[Semi-join 與 Anti-join（半連接與反連接）](/backend/01-database/sql/knowledge-cards/semi-join-and-anti-join/)，配對後僅保留左側資料。SQL 的各個子句即是這組代數運算的語法表層，而非另一套獨立規則。
 
-## 封閉性是它最重要的性質
+## 封閉性與查詢的巢狀組合
 
-每個運算的輸入是關係、輸出還是關係，所以運算可以一個接一個組下去，中間結果與來源表的地位相同。這一條買到兩件事：子查詢可以寫在任何接受關係的位置，而多層查詢的判讀方式是逐層看每一層的欄與列。
+每個關聯代數運算的輸入是關係，輸出仍是關係，這項封閉性讓運算得以連續串接，使中間結果與原始資料表享有相同地位。這項性質帶來兩項直接結果：子查詢可以出現在任何接受關係的位置，閱讀多層查詢時也能逐層檢查每一步的欄位與列數。
 
-它也解釋了為什麼[外連接](/backend/01-database/sql/knowledge-cards/outer-join/)的產物可以繼續當下一個連接的輸入——那份補了 NULL 的東西仍然是一個關係。
+封閉性同時解釋了 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/) 的結果為何能直接進入下一個連接：補上 `NULL` 後的輸出依然是一個合法的關係。
 
-## SQL 與它並非一對一
+## SQL 與關聯代數的差異
 
-SQL 在代數之上多了幾樣代數本身沒有的：重複的列（代數的關係是集合，SQL 的表允許重複，所以才需要 `DISTINCT`）、[NULL](/backend/01-database/sql/knowledge-cards/null/) 與三值邏輯、以及排序。這幾樣正好是最容易讀錯的幾處，理由是它們不受代數的規則保護。
+SQL 在基本關聯代數之上加入了擴充關聯代數（extended relational algebra）的**分組聚合**運算（對應 `GROUP BY` 與聚合函數，並另延伸出保留明細列的視窗函數），並額外引入三項集合代數原本不包含的機制：重複列（代數的關係為集合，SQL 的表為多重集合，因此需要 `DISTINCT`）、[NULL（空值）](/backend/01-database/sql/knowledge-cards/null/) 與三值邏輯，以及列序（排序）。這三處正好是 SQL 最常發生靜默錯誤的位置，因為它們超出了基本集合規則的保護範圍。
 
 ## 跟其他概念的關係
 
-[SQL 這個分類](/backend/01-database/sql/)講語意模型的那幾篇，判斷標準全部收在這一層：子句的先後、連接的左右、條件擺哪一邊、分組的鍵，每一項都是某個運算的組合規則，而不是設計者的偏好。知道規則從代數來，讀不熟的查詢時就有一個可以推的依據，不必靠記憶。
+[SQL：這個語言為什麼長這樣](/backend/01-database/sql/) 中講解 [Semantic Model（語意模型）](/backend/01-database/sql/knowledge-cards/semantic-model/) 的篇章，其判斷標準全部源自關聯代數：子句求值順序、鏈式連接的左運算元、條件放在 `ON` 或 `WHERE`、分組鍵的選取，每項都是運算組合規則的推論，而非語法設計的隨意規定。掌握底層代數後，面對陌生查詢就能逐步推導，不必依賴死記。
 
-同一套代數換一個介面就是 [DataFrame](/backend/01-database/sql/knowledge-cards/dataframe/)，那也是這兩者多數操作對得上的原因。
+同一套運算換成記憶體內程式庫介面，即對應到 [DataFrame（資料框）](/backend/01-database/sql/knowledge-cards/dataframe/)，這也是 SQL 與 pandas 多數操作能互相對映的原因。
 
-## 往下走
+## 延伸閱讀：連接後的關係變化與跨介面對應
 
-連接產出的新關係怎麼改變列數與空缺，在 [SQL.6 連接之後的列數與空缺](/backend/01-database/sql/join-changes-rows-and-nulls/)。同一組操作在 SQL 與 DataFrame 兩個介面上的對應、以及對應斷掉的三個位置，在 [python 模組八 8.4](/programming/python/basic/08-data-analysis/same-relational-algebra/)。
+- 連接產出的新關係如何改變列數與引入空值：[SQL.6 連接之後的列數與空缺：列數膨脹、外連接補的 NULL 與三值邏輯](/backend/01-database/sql/join-changes-rows-and-nulls/)
+- 同一組操作在 SQL 與 DataFrame 兩個介面上的對照與三處斷裂點：[8.4 SQL 子句與 pandas 方法的對應：篩選、連接、分組彙總、視窗函數，以及空值、索引與順序的語意差異](/programming/python/basic/08-data-analysis/same-relational-algebra/)
