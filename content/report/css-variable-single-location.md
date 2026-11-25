@@ -2,13 +2,29 @@
 title: "CSS 變數定義位置統一"
 date: 2026-04-25
 weight: 26
-description: "CSS 變數一次定義在離 root 最近的合適位置、其他地方只引用、不重複宣告。改 token 只動一處、避免散落多處難同步。"
+description: "CSS 變數一次定義在離 root 最近的合適位置、其他地方只引用、不重複宣告，改 token 只動一處、避免散落多處難同步。例外是設計好的第二個定義位置：同一個選擇器在 media query 或主題條件下重新對應、局部主題的子樹、取不到繼承的元素；局部主題覆寫只放值的 token 時，引用它的用途 token 不會跟著變，要一起處理。"
 tags: ["report", "事後檢討", "CSS", "Refactor", "工程方法論"]
 ---
 
 ## 核心原則
 
 **CSS 變數的定義位置只能有一處。** 一次定義在離 root 最近的合適 selector（`:root` 或頁面層級的 body class），其他地方只用 `var()` 引用、不重複宣告。改 token 只動一處、所有引用點自動跟上。
+
+例外是設計好的第二個定義位置，有三種：
+
+- **同一個選擇器在條件下重新對應**：在 media query（手機寬度、`pointer: coarse`）、偏好查詢（`prefers-color-scheme: dark`）或根元素的主題屬性（`html[data-theme="dark"]`）底下，同一個定義 token 的選擇器把一組 token 改成另一組值。本站 SQL 練習頁的 `tokens.css` 在 `@media (max-width: 599px)` 與 `@media (pointer: coarse)` 裡重新定義字級與觸控命中區的 token，就是這一種。
+- **局部主題的子樹**：一個局部主題的 class 掛在定義 token 那個元素的子孫上，只在那個子樹裡改一組 token 的值。
+- **定義元素外面取不到繼承的元素**：掛在 `body` 底下的彈出層這類元素，在它自己身上重新定義要用的 token。
+
+這三種跟重複宣告的分別是：第二處定義的值跟原定義不同、改的是一組 token 而不是替單一元件補一個值，而且規則旁註明它對應哪一組 token、為什麼要第二處。值相同的重新宣告、只為一個元件改值的 class（那是元件的變體或元件層 token），照重複宣告處理。規則旁的註明是本站審查時用來分辨的慣例。
+
+局部主題的子樹有一個不報錯的失效。semantic token（用途命名的那一層）寫成 `--text-body: var(--size-md)`、宣告在定義 token 的祖先元素（例如 `:root`）上時，`var()` 在那個祖先元素上就代換成 `--size-md` 當時的值，子孫繼承的是代換後的結果。所以只在帶局部主題 class 的元素上覆寫 primitive token（只放值的那一層）`--size-md`，`--text-body` 不會跟著變，瀏覽器也不報錯。同一個選擇器在條件下重新對應時，`--text-body` 在同一個元素上重算，沒有這個失效。局部主題有三種寫法：
+
+- **改 semantic token 對到哪一階**：主題 class 上直接寫 `--text-body: var(--size-sm)`，primitive 不動。值不會離開那組階，也沒有上面的失效。
+- **semantic token 宣告在選擇器清單上**：`:root, .theme-compact { --text-body: var(--size-md) }`，每個主題元素各自重算，定義的文字只有一份；代價是每加一個主題要改這份清單。
+- **覆寫 primitive**：主題 class 上改 `--size-md`，引用它的每一個 semantic token 也要在同一條規則裡重新宣告。找出「每一個」要靠搜尋，不靠記憶：在 token 檔搜 `var(--size-md)`，命中的每一個都重新宣告；寫完在主題子樹裡用 `getComputedStyle` 讀這些 semantic token，確認它們跟著變了。這種寫法每加一個主題就多一份引用關係的副本。
+
+這一條來自 2026 年 11 月替本站 SQL 練習頁的 token 重構撰寫元件庫 token 規範時的事實核對，那次重構只用到第一種例外，沒有用到局部主題。primitive 與 semantic 兩層怎麼分，見 [Design Token（具名設計值）](/ux-design/knowledge-cards/design-token/) 卡。
 
 ---
 
@@ -209,14 +225,15 @@ margin-top: calc(var(--search-scope-h, 60px) + 8px);
 
 ## 判讀徵兆
 
-| 訊號                               | Refactor 動作                 |
-| ---------------------------------- | ----------------------------- |
-| 同名變數在多個 selector 定義       | 集中到一個 selector、移除其他 |
-| 改一個 token 要 grep 找定義位置    | 集中 + 分類註解               |
-| Token 命名沒前綴、跟其他組件變數混 | 加範圍前綴（`--page-X-*`）    |
-| JS 寫入變數的位置跟 CSS 定義不同   | 對齊到同一 selector           |
-| 變數值在 cascade 中被另一處覆蓋    | 找出兩處、決定哪一處保留      |
+| 訊號                                                                            | Refactor 動作                                                                                                        |
+| ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 同名變數在多個 selector 定義（〈核心原則〉列的三種例外除外）                    | 集中到一個 selector、移除其他                                                                                        |
+| 改一個 token 要 grep 找定義位置                                                 | 集中 + 分類註解                                                                                                      |
+| Token 命名沒前綴、跟其他組件變數混                                              | 加範圍前綴（`--page-X-*`）                                                                                           |
+| JS 寫入變數的位置跟 CSS 定義不同                                                | 對齊到同一 selector                                                                                                  |
+| 變數值在 cascade 中被另一處覆蓋（〈核心原則〉列的三種例外除外）                 | 找出兩處、決定哪一處保留                                                                                             |
+| 在局部主題 class 上覆寫 primitive token，畫面沒變或只變了一部分、瀏覽器也沒報錯 | 照〈核心原則〉的局部主題寫法處理：改成直接改 semantic token 的對應，或搜出引用它的每一個 semantic token 一起重新宣告 |
 
-**核心原則**：CSS 變數是設計 token 系統的基礎、定義位置就是 token 的「住址」。住址一個就好、不要一物多址。
+**核心原則**：CSS 變數是設計 token 系統的基礎、定義位置就是 token 的「住址」。住址一個就好、不要一物多址；設計好的第二個住址只有〈核心原則〉列的三種，判別條件也寫在那裡。
 
 「就地寫個值」是便利（不用找 token 位置）、「集中定義 + 引用」是對齊 — 同 [#44 SSOT](../single-source-of-truth/) 跟 [#67 便利 vs 對齊反相關](../ease-of-writing-vs-intent-alignment/)。

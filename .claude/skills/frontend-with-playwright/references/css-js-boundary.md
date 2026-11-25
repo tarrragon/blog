@@ -151,7 +151,7 @@ document.documentElement.style.setProperty('--form-height', '...');
 // 而不是 form.style.setProperty(...) 在 form 上設
 ```
 
-例外是刻意的局部覆寫（局部主題的 class 改一組 token）：semantic token 寫成 `--text-body: var(--size-md)` 時，`var()` 在宣告 `--text-body` 的元素上就代換成值，只在子孫元素上覆寫 `--size-md` 不會改到 `--text-body`，要在那個子孫元素上連同 semantic token 一起重新宣告。寫法與理由在 `component-contract-design` skill 的 `references/design-system-token-layer.md`〈Web 端的限制〉。
+例外是設計好的第二個定義位置，有三種：同一個定義 token 的選擇器在 media query、偏好查詢（`prefers-color-scheme`）或根元素的主題屬性底下把一組 token 改成另一組值（手機字級、觸控命中區、暗色主題）；局部主題的 class 掛在子孫元素上、只在那個子樹改一組 token；掛在定義元素外面、取不到繼承的元素（`body` 底下的彈出層）在自己身上重新定義。這三種的值跟原定義不同、改的是一組 token，規則旁註明它對應哪一組與原因；值相同的重新宣告、只為一個元件改值的 class，照重複定義處理。局部主題的子樹有一個不報錯的失效：semantic token 寫成 `--text-body: var(--size-md)` 時，`var()` 在宣告 `--text-body` 的元素上就代換成值，只在子孫元素上覆寫 `--size-md` 不會改到 `--text-body`；改成在主題 class 上直接改 semantic token 對到哪一階，或連同引用它的每一個 semantic token 一起重新宣告。寫法與理由在 `component-contract-design` skill 的 `references/design-system-token-layer.md`〈Web 端的限制〉。
 
 ---
 

@@ -4,7 +4,7 @@ description: "UX / UI 設計的系統性評估：把「使用者被困住」類�
 license: MIT
 metadata:
   portable: true
-  version: 1.11.14
+  version: 1.12.0
   category: ux-design
 ---
 
@@ -14,7 +14,12 @@ UX / UI 設計的系統性評估方法。這個 skill 的出發點是一類反�
 
 本 skill 把 UX 設計從「靠經驗想到」變成「靠方法查到」：每個評估維度都有可機械執行的表格或提問清單，填完表格、空白格自動暴露缺口。適用於任何前端 surface（mobile app、web、桌面），範例以 mobile 為主。
 
-**兩件事不在本 skill，但各有去處**——寫明去處是因為「不涵蓋」若沒有下一句，讀者會停在這裡：視覺風格（品牌色、字型階、間距階）屬 design token 體系，走 `foundation-design` skill 的 UI 維度，其執法層在 Dart 專案是 `dart-style-guardian` skill；使用者研究方法（訪談、可用性測試、問卷）本框架目前無承接者，需自行取用外部方法。**可讀性對比（WCAG）是例外，它屬本 skill 的互動回饋檢查範圍**，不要因為它看起來像視覺風格就轉出去。
+**兩件事不在本 skill，但各有去處**——寫明去處是因為「不涵蓋」若沒有下一句，讀者會停在這裡：
+
+- **視覺風格**（品牌色、字型階、間距階）屬 design token 體系。design-system 這一塊地基要產出什麼、接手既有專案時怎麼盤點萃取 token，走 `foundation-design` skill 的 UI 維度；建 token 層的人要交付什麼（哪些值取名、分層、來源格式、擋寫死值的檢查）寫在 `component-contract-design` skill 的 `references/design-system-token-layer.md`。Dart 與 Web 的執法工具各擋什麼，見本檔〈與相鄰資產的交界〉。
+- **使用者研究方法**（訪談、可用性測試、問卷）：本框架沒有收這類方法的 skill，需自行取用外部方法。
+
+**可讀性對比（WCAG）是例外，它屬本 skill 的互動回饋檢查範圍**，不要因為它看起來像視覺風格就轉出去。
 
 ---
 
@@ -116,6 +121,7 @@ ux-design-evaluation/
 | `component-contract-design` skill | 元件級契約：元件契約欄位表、容器排列不變式 | 本 skill 只到**畫面級狀態**。同一類失效在那邊寫成契約欄位（內容政策、空間不足策略）而非審查項。**本 skill 判定的回饋時間門檻與通知形式，是它填回饋契約時的輸入**——它不重新判斷門檻，所以本 skill 的產出必須是可被引用的具體值，不能只寫「要有回饋」 |
 | `foundation-design` skill | 地基入口與路由；design token 體系是它 UI 維度的產物 | 品牌色、字型階、間距階在那裡定義。本 skill 的 `interaction-feedback-component-semantics.md` 談對比與版面保障時**消費那些階，不新增階**——需要一個不存在的色階或字級時，那是地基缺口，回去建票而不是在畫面設計裡就地決定 |
 | `dart-style-guardian` skill（Dart／Flutter 的執法工具） | 掃裸色碼、裸間距、裸字級、寫死文字 | 它只看程式碼字面。**「按鈕沒有 loading 態」「選中態對比不足」它掃不到**——那些是本 skill 的檢查項，執法工具全綠不代表本 skill 的自檢清單過了 |
+| Web 專案的執法工具（Stylelint 這類 CSS lint、專案自寫的腳本、utility class 框架的設定與 lint） | 照 `component-contract-design` skill 的 `references/design-system-token-layer.md`〈檢查：擋什麼、在哪裡擋、用什麼工具、例外怎麼寫、怎麼確認它在讀〉設定之後，合起來擋 `!important`、字級與行高的字面單位、色碼、色彩函式與色名、帶 id 的選擇器（每一類工具各擋哪幾項見那一節）；不擋間距、圓角、線寬、動畫時長這類「出現兩處以上才取名」的值，照那份 reference〈寫給實作 agent 的樣式限制〉由實作者列出新寫的這類字面值與理由、審查的人對 `git diff` 核對；不管寫死文字，寫死文字照 `component-contract-design` 的元件契約（slot 契約的文字來源）由 i18n 那一塊地基處理，沒有 lint 時在審查時查 | 它同樣只看程式碼字面：「按鈕沒有 loading 態」「選中態對比不足」這類本 skill 的檢查項它掃不到，執法工具全綠不代表本 skill 的自檢清單過了 |
 | `version-bootstrap` skill 地基波 | 編排 i18n → design-system → UX 審查 → 元件庫四塊的順序 | 本 skill 是第 3 塊。**它的輸入是前兩塊（i18n 與 design-system）已完成**——token 與文案 key 還沒有時，本 skill 產出的回饋設計會指向不存在的值 |
 
 ### 三段鏈式範例：本 skill 的產出必須是可被引用的具體值
@@ -124,13 +130,13 @@ ux-design-evaluation/
 
 【輸入】
 
-```
+```text
 SPEC 片段：一個非同步查詢操作，由按鈕觸發，實測延遲 p90 為 600ms
 ```
 
 【產出】
 
-```
+```text
 形態：決策表
 判斷依據                       | 結果
 600ms 落在 `interaction-feedback-waiting-and-notification.md`〈時間門檻與回饋策略〉哪個帶 | 400ms-1s（短暫等待）
@@ -145,7 +151,7 @@ SPEC 片段：一個非同步查詢操作，由按鈕觸發，實測延遲 p90 �
 
 【驗證】
 
-```
+```text
 檢驗問句
 Q 本 skill 產出的「反應欄等待段」是否為封閉列舉中的具體值？
   預期：是——「按鈕 loading 狀態」是 `interaction-feedback-waiting-and-notification.md`〈時間門檻與回饋策略〉表已定義的策略之一，
@@ -157,6 +163,6 @@ Q 產出是否停留在「要有回饋」這類抽象敘述？
 
 ---
 
-**Last Updated**: 2026-09-16
+**Last Updated**: 2026-11-25
 
 版本紀錄在同目錄的 `CHANGELOG.md`。

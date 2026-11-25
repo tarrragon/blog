@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 0.6.0 — `css-js-boundary.md`〈模式 3：CSS Variable 單一定義位置〉的例外從「刻意的局部覆寫」一種擴成三種設計好的第二個定義位置：同一個選擇器在 media query、偏好查詢或根元素主題屬性底下重新對應一組 token；局部主題的子樹；定義元素外面取不到繼承的元素。並寫出跟重複定義的分別（值不同、改的是一組 token、規則旁註明對應哪一組與原因；同值重新宣告與只為一個元件改值的 class 照重複處理），局部主題的失效另給「直接改 semantic token 的對應」這種不會觸發失效的寫法。缺口：0.5.0 只寫了局部主題一種例外，照字面讀，把手機字級與觸控命中區放在 media query 裡重新定義的寫法（`references/design-system-token-layer.md`〈分層〉推薦的手機字級寫法）也會被判成重複定義而刪掉。
+
 **Version**: 0.5.0 — 新增 reference `refactor-without-visual-change.md`（重構 CSS 而不改外觀）與 SKILL.md 原則 7。權威位置為新 reference；SKILL.md 補原則 7、三列觸發路由、目錄索引一列與 description 的觸發詞，`css-js-boundary.md`〈何時參閱本文件〉的 `!important` 那一列補一句指向新 reference。
 
 - **缺口**：skill 寫了量 computed style 的寫法與「`!important` 是訊號」，沒有寫整理既有 CSS 時怎麼確認畫面沒變。常見的做法是先截圖當基準、整理完比對、有差就退回；實測一次把一個練習題網站的 CSS 全部改成引用 token 時，這個做法有三處不夠：截圖分不出字級收斂批次裡哪些差異是預期的；逐元素比對計算後樣式抓得到 2px 的行高差、依屬性分組，卻看不到兩版共有的整頁溢出；「有差就退回」套在刻意改值的批次上每次都會退回。另外，只替七條規則加 id 加權，另外插入 `<a>` 形式的主要按鈕後量到 hover 時變成白底白字，「只改目標元件」的限制擋不住這種跨元件的層疊影響。

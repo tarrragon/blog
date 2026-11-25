@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.12.0 — 開頭〈兩件事不在本 skill，但各有去處〉那一段與〈與相鄰資產的交界〉補上 Web 端的去處。原文只寫 design token 體系走 `foundation-design`、執法層在 Dart 專案是 `dart-style-guardian`，做 Web 專案的讀者找不到 token 層的判定與 Web 的檢查工具；`component-contract-design` 3.19.0 新增了 `references/design-system-token-layer.md`（token 層要交付什麼、擋寫死值的檢查與正對照）。開頭那一段改成兩項清單：視覺風格那一項寫出 `foundation-design` 管什麼（design-system 這塊地基要產出什麼、接手時怎麼盤點萃取 token）、那份 reference 管什麼，執法工具的細節只寫在交界表。交界表另加一列 Web 專案的執法工具（Stylelint 這類 CSS lint、自寫腳本或 utility class 框架的設定），寫出照那份 reference 設定之後合起來擋什麼（`!important`、字級與行高的字面單位、色碼與色名、帶 id 的選擇器）與不擋什麼（間距、圓角、線寬、動畫時長這類兩處以上才取名的值，由實作者列清單、審查的人對 `git diff` 核對；寫死文字照元件契約的文字來源由 i18n 地基處理），Dart 那一列不變：兩種工具擋的範圍不同，放在同一列會讓讀者以為 Web 的 lint 也擋裸間距。同一段的「本框架目前無承接者」改成「本框架沒有收這類方法的 skill」，意思不變。〈三段鏈式範例〉三個 code fence 由編輯器的格式化標上 `text`，內容不變。本 skill 的判斷標準不變。
+
 **Version**: 1.11.14 — 可攜性：九處「見另一個 skill 的某檔的判定規則」改成就地寫出規則本身（執行期行為寫 Given/When/Then、設計產出物寫檢驗問句加預期答案），讀者不必開別的 skill；版本紀錄裡兩處歷史路徑加 portability-allow
 
 **Version**: 1.11.13 — 術語校正：「判準」全數改為「判斷標準」（「停止判準」改「停止條件」）。上一輪全站替換之後這個縮寫又回流，詞面在工程讀者端讀不出來
