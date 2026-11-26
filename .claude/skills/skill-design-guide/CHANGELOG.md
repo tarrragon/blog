@@ -1,6 +1,6 @@
 # skill-design-guide 版本紀錄
 
-新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
+新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見 `references/writing-the-body.md`〈版號規則：合併時才取號〉。
 
 **本檔只記變更本身**：版號、改了什麼、落在哪一節。多輪審查的 finding 分類、逐 frame 敘事、
 被推翻的判定與其推導過程屬設計過程紀錄，依 `writing-the-body.md`〈嚴禁清單〉該列的處置放在
@@ -12,7 +12,12 @@
 前三次的同型缺陷。**這一問是壓縮專用的**：既有的「同一件事寫了幾種形式」對展開有鑑別力，
 對壓縮沒有——壓縮的產物只有一種形式，它只是錯的。
 
-**Version**: 1.25.0 — 把「機械」當修飾語的直譯照原句要講的意思改寫，SKILL.md 與 `chained-examples.md`、`writing-the-body.md`、`splitting-an-existing-skill.md`、`frontmatter-and-description.md`、`patterns-and-troubleshooting.md` 都有：「機械檢查」寫出是 grep、`comm` 或腳本的檢查，「機械消費者」改成「照格式讀取產物的消費者」，「機械判斷標準」改成照步驟就判得出的判斷標準。三個名稱跟著改，引用處一起改：段名〈驗證段機械檢查：依據句可溯性〉改成〈驗證段逐問填表：依據句可溯性〉、「機械複製動作不算整份執行」改成「單純複製檔案不算整份執行」、「機械套用步驟」改成「模擬分歧的步驟」。舊條目裡的同類措辭與段名引用一併改寫（引號裡的舊欄名「可機械執行」照原文保留）。另：本機的 markdown 格式化 hook 在這次編輯時替三個檔案裡沒有語言標示的程式碼柵欄補上 `text` 或 `bash`，內容沒有其他變動。判斷標準與處置沒有改。
+**Version**: 1.26.0 — 跟共用庫的 1.25.0 合併：兩邊在 1.24.0 之後各自改過，這一條照〈版號規則：合併時才取號〉以共用庫的 1.25.0 為基準重新取號，原本在本地也取了 1.25.0。
+
+把「機械」當修飾語的直譯照原句要講的意思改寫，SKILL.md 與 `chained-examples.md`、`writing-the-body.md`、`splitting-an-existing-skill.md`、`frontmatter-and-description.md`、`patterns-and-troubleshooting.md` 都有：「機械檢查」寫出是 grep、`comm` 或腳本的檢查，「機械消費者」改成「照格式讀取產物的消費者」，「機械判斷標準」改成照步驟就判得出的判斷標準。三個名稱跟著改，引用處一起改：段名〈驗證段機械檢查：依據句可溯性〉改成〈驗證段逐問填表：依據句可溯性〉、「機械複製動作不算整份執行」改成「單純複製檔案不算整份執行」、「機械套用步驟」改成「模擬分歧的步驟」。舊條目裡的同類措辭與段名引用一併改寫（引號裡的舊欄名「可機械執行」照原文保留）。另：本機的 markdown 格式化 hook 在這次編輯時替三個檔案裡沒有語言標示的程式碼柵欄補上 `text` 或 `bash`，內容沒有其他變動。判斷標準與處置沒有改。
+
+**Version**: 1.25.0 — `references/writing-the-body.md` 新增〈版號規則：合併時才取號〉：版號順序必須等於內容包含順序；並行修改同一 skill 時不在派發時預留版號，合併前以主線當下版號為基準重新取號，CHANGELOG 條目依合併順序排列；批次合併的重疊處置交給專案的並行派發規則。〈嚴禁清單〉CHANGELOG 列、本檔開頭說明、SKILL.md〈When to Read Which Reference〉該列改為指向本節（原寫「專案的 skill 同步規範」，該處無對應內容）
+- 〈版號規則〉的版號住址改為「一個權威、其餘衍生」：權威是 `metadata.version`，衍生住址（CHANGELOG 首條、pyproject、`__version__`、plugin.json）列表並附三明示，寫明框架測試的真實目錄一致性檢查會在分歧或讀不出版號時紅燈、處置是以 `metadata.version` 為準補齊，以及 sync-pull 自動解版號衝突後同樣會出現分歧。〈嚴禁清單〉的 CHANGELOG 段同步改述。
 
 **Version**: 1.24.0 — `references/splitting-an-existing-skill.md` 的「住在」與「現住」換成實際的動詞，照寫作規範「住在一律換」的判定。
 
