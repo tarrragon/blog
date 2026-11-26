@@ -1,6 +1,6 @@
 # 用假的 chrome API 渲染擴充功能頁的各個狀態
 
-本 reference 給「不靠真實網站與背景服務，把擴充功能自己的頁面切到每一個狀態並截圖」的做法：以 `file://` 開啟建置輸出的頁面 HTML，在頁面載入前注入假的 `chrome` 物件，再呼叫頁面程式掛在 `window` 上的函式，或操作頁面本身，切到要看的狀態。〈假的 chrome 物件〉〈切到每一個狀態〉〈檢查截圖〉以 popup 為例；清單頁、設定頁這類從 storage 讀資料、內容很長的擴充功能頁，另外照〈popup 以外的擴充功能頁〉。用途是改版前後的畫面比對、元素清單比對與版面檢查；這個做法驗證的對象是畫面，不是頁面與背景、content script 之間的真實通訊。
+本 reference 寫的是「不靠真實網站與背景服務，把擴充功能自己的頁面切到每一個狀態並截圖」的做法：以 `file://` 開啟建置輸出的頁面 HTML，在頁面載入前注入假的 `chrome` 物件，再呼叫頁面程式掛在 `window` 上的函式，或操作頁面本身，切到要看的狀態。〈假的 chrome 物件〉〈切到每一個狀態〉〈檢查截圖〉以 popup 為例，〈亮色與暗色模式〉各種擴充功能頁都適用；清單頁、設定頁這類從 storage 讀資料、內容很長的擴充功能頁，另外照〈popup 以外的擴充功能頁〉。用途是改版前後的畫面比對、元素清單比對與版面檢查；這個做法驗證的對象是畫面，不是頁面與背景、content script 之間的真實通訊。
 
 ## 假的 chrome 物件
 
@@ -14,7 +14,7 @@
 
 ## 切到每一個狀態
 
-1. 每個狀態開一個新分頁：`browser.newPage({ viewport: { width: <popup 寬>, height: 600 }, deviceScaleFactor: 2 })`。600 是 Chrome popup 的最大高度，高度超過時截圖看得出要捲動。
+1. 每個狀態開一個新分頁：`browser.newPage({ viewport: { width: <popup 寬>, height: 600 }, deviceScaleFactor: 2 })`。600 是 Chrome popup 的最大高度，高度超過時，從截圖看得出要捲動。要截亮色與暗色兩種時，在這一步的選項裡帶上模式，見〈亮色與暗色模式〉。
 2. 注入假物件、`page.goto('file://<建置輸出>/<popup 路徑>')`，等初始化跑完（約 1 秒）。
 3. 需要時呼叫 popup 程式掛在 `window` 上的函式切狀態（例如更新狀態、顯示錯誤）。popup 程式沒有把要用的函式掛到 `window` 時，在它既有的「供測試使用」區塊補上，不另開一條測試專用的路徑。
 4. 截圖，並記錄可見元素的 id 清單與 `document.documentElement.scrollWidth`、`scrollHeight`：id 清單用來比對改版前後有沒有元素消失，`scrollWidth` 大於視窗寬度代表水平溢出。
@@ -25,6 +25,14 @@
 - 截完先確認每個狀態的情境判斷對了（例如讀 `document.body.dataset` 上的情境屬性），再看畫面。情境全部相同時，通常是假物件沒有回應初始化握手。
 - 多張截圖拼成一張檢視時，先把拼圖用的 HTML 寫成檔案再用 `page.goto('file://…')` 開啟；用 `page.setContent` 載入的頁面讀不到 `file://` 圖片。
 - 改版前後各跑一次同一支腳本，比對 id 清單：改版前有、改版後沒有的 id，要確認程式裡沒有地方再找它。
+
+## 亮色與暗色模式
+
+頁面用 `prefers-color-scheme` 切換主題時（popup 與其他擴充功能頁都一樣），每個狀態亮色與暗色各截一次。切換模式時，在建立分頁時帶上模式，讓整個分頁從頭就是那種模式（〈切到每一個狀態〉第 1 步的 `browser.newPage` 選項加 `colorScheme: 'dark'`；另開 context 時是 `browser.newContext({ colorScheme: 'dark' })`），或在 `page.goto` 之前呼叫 `page.emulateMedia({ colorScheme: 'dark' })`。`goto` 之後才切時，CSS 的 media query 會跟著變，而頁面腳本只在載入時讀一次 `matchMedia`、沒有監聽它的 `change` 事件時，讀到的值停在舊模式，截到的畫面是 CSS 與腳本各在一種模式。頁面的主題由存在 `chrome.storage` 的使用者設定決定、不跟 `prefers-color-scheme` 時，改在假的 storage 資料裡各給一份設定；設定存在 `localStorage` 時，假的 `chrome` 物件管不到它，改用 `page.addInitScript` 在載入前 `setItem`。
+
+截圖之外，用 `getComputedStyle` 讀幾個元素的 `backgroundColor` 與 `color`，分兩邊核對：該換色的元素，暗色下讀到的是暗色值；設計上不隨模式換色的元素（例如固定深色的頂欄），兩種模式讀到的是同一個值。只比截圖時，看的人分不出細微的變色。讀到 `rgba(0, 0, 0, 0)` 時，那個元素是透明的，往上讀最近一個不透明的祖先；不往上讀的話，兩種模式下讀到的都是透明，核對的人看不出底色有沒有變。祖先用漸層、圖片或半透明色當底時，或元素用 `fixed`、`absolute` 脫離文件流時，讀出來的值代表不了看到的底，那一處改看截圖。讀出來的是計算後的格式：十六進位色碼、`hsl()`、`hwb()` 與色名讀回 `rgb(…)`，`oklch()`、`lab()` 讀回原本的寫法，`color-mix()` 讀回 `color(…)`；跟 token 值對照時先換成同一種寫法。
+
+暗色只套在部分範圍的頁面，另外查範圍邊界：範圍內的文字色停在亮色，是它繼承了祖先元素上算好的值；讀範圍元素的底色時，往上讀走出了範圍元素，讀到的是範圍外的亮底，代表範圍元素沒有重新宣告 `background-color`；動態建立的對話框沒帶上範圍屬性（例如 `data-color-scope`）時仍是亮色，所以對話框要打開之後再讀一次；範圍內沒有自訂底色的原生控制項（`<input>`）停在亮色，是帶範圍屬性的那個元素上沒有宣告 `color-scheme`。範圍元素要重新宣告哪些屬性、對話框怎麼標，見 `component-contract-design` skill 的 `references/design-system-token-layer.md`〈Web 端的限制〉的「主題只套一個範圍時」。
 
 ## popup 以外的擴充功能頁
 

@@ -3,7 +3,7 @@ name: foundation-design
 description: "地基工作的單一入口與路由層。逐維度決定「本專案的地基產物是什麼」，權威只提供預設產物，形態不符時改寫產物而非跳過維度。維度含 UI／測試／資料庫／DevOps／可觀測性／事件流仲裁，各指名既有權威並標明權威缺席時的處置。新舊專案一體適用：接手他人專案先盤點萃取再命名固化。觸發詞：地基、地基波、元件庫、design token、fixture、seed、migration、scaffold、鷹架、腳手架、接手老專案。Do NOT use for 環境安裝（用 project-init）。"
 license: MIT
 metadata:
-  version: 6.9.0
+  version: 6.10.0
   category: engineering-workflow
 ---
 
@@ -48,7 +48,7 @@ metadata:
 
 | 維度 | 權威來源（判準在此，本 skill 不複述） | 權威提供的預設產物 | 適用條件 |
 |------|--------------------------------|------------------|---------|
-| **UI** | 元件庫雙向約束方法論的〈地基波 build 順序〉，四塊依序：i18n → design-system → UX 審查 → 元件庫。design-system 那塊建產物的人要交付什麼（token 層齊不齊的判定、哪些值取名、分層、來源格式、擋寫死值的檢查）見 `component-contract-design` skill 的 `references/design-system-token-layer.md`，接手既有專案時萃取 token 的順序照本 skill 的接手模式；UX 審查那塊的執行方法見 `ux-design-evaluation` skill；元件庫那塊實作前的契約程序（元件契約欄位表、容器元件）見 `component-contract-design` skill | 四塊各自的實作票；元件庫 `blockedBy` 前三塊與契約齊全 | 不限（權威非 SaaS 特定） |
+| **UI** | 元件庫雙向約束方法論的〈地基波 build 順序〉，四塊依序：i18n → design-system → UX 審查 → 元件庫。design-system 那塊建產物的人要交付什麼（token 層齊不齊的判定、哪些值取名、分層、加主題與拿掉陰影之前要留意什麼、來源格式、擋寫死值的檢查）見 `component-contract-design` skill 的 `references/design-system-token-layer.md`，接手既有專案時萃取 token 的順序照本 skill 的接手模式；UX 審查那塊的執行方法見 `ux-design-evaluation` skill；元件庫那塊實作前的契約程序（元件契約欄位表、容器元件）見 `component-contract-design` skill | 四塊各自的實作票；元件庫 `blockedBy` 前三塊與契約齊全 | 不限（權威非 SaaS 特定） |
 | **測試** | `tdd` skill 的分層測試策略，以及其 Phase 2 測試設計檢驗 Q9–Q14（資料是否碰巧通過、error path 覆蓋、資料工廠版本、防哪種改壞、斷言是否 flaky、資料代表性） | fixture 策略、分層地基 | 不限（權威非 SaaS 特定） |
 | **資料庫** | `saas-tech-selection` skill 的 state-storage 維度（migration 版本化紀律、多租戶資料模型、**防護底線的自動備份與還原驗證**） | migration baseline、**備份與還原驗證**、seed（判斷標準在同一維度的〈種子資料與 schema 規格的驗證〉） | SaaS/伺服器端專案照預設；非 SaaS 專案見下方處置 |
 | **DevOps** | `saas-tech-selection` skill 的 reliability 維度（CI gate 構成與起始門檻） | CI gate、部署與還原配方 | SaaS/伺服器端專案照預設；非 SaaS 專案見下方處置 |
@@ -107,7 +107,7 @@ metadata:
 
 ## 接手模式
 
-接手的專案常缺可用文件，適用〈與 orchestration 的協作〉表「文件回答不了地基問題的既有實作」列。核心程序「盤點 → 命名 → 固化 → 補文件」、既有 artifact 可信度的四種例外情形、命名前置條件的規模閘門，完整內容見 `references/handoff-mode.md`。
+接手的專案常缺可用文件，適用〈與 orchestration 的協作〉表「文件回答不了地基問題的既有實作」列。核心程序「盤點 → 命名 → 固化 → 補文件」、接手的目標包含主題切換時盤點怎麼分開數、既有 artifact 可信度的四種例外情形、命名前置條件的規模閘門，完整內容見 `references/handoff-mode.md`。
 
 ## 工作流
 
@@ -126,12 +126,12 @@ metadata:
    需結構化評分的多方案取捨委派 .claude/skills/design-decision-framework/SKILL.md
 4 產物落為地基票，功能票 blockedBy 它們
    全部維度皆為「已存在」或「無」時不建票，產出即盤點表本身，本流程完成
-5 機械檢查接入執法載體（CI 或 hook）
+5 自動檢查接入執法載體（CI 或 hook）
 ```
 
 **步驟 4 與 `version-sequencing` 的分界**：本 skill 產出票的**內容**（哪幾張、各自的依賴）；`version-sequencing` 在「版本序列落為提案」那一步決定它們**屬於哪一版**，在「首版開票」那一步把它們開出來。同一批票，不是兩批。規劃波前先跑本 skill 時，票可先建、待版本序列定案後再掛版本。
 
-**步驟 5 的機械檢查目前只有 UI 維度有現成形態**（裸值 grep）。其餘維度的檢查需自行設計，這是本 skill 已知的不完整處。未設計機械檢查的維度，其地基票驗收條件改為指名複核者的人工複核，不留空。
+**步驟 5 的自動檢查目前只有 UI 維度有現成形態**（裸值 grep）。其餘維度的檢查需自行設計，這是本 skill 已知的不完整處。未設計自動檢查的維度，其地基票驗收條件改為指名複核者的人工複核，不留空。
 
 **指名複核者的人工複核，驗收條件須寫三項**：
 
@@ -139,7 +139,7 @@ metadata:
 2. 複核依據——該維度權威原文中最接近的判準條款，供複核者比對。
 3. 複核產出——一句合格／不合格的結論加理由，寫入該張地基票的 Solution。
 
-機械檢查形態本身留給各維度依其權威自行設計，本 skill 不代為規定——權威若本身未提供機械檢查判準，屬〈權威缺席時〉「框架內確實無承接者」的判準層缺口，另標「無判準」建框架缺口票，不在步驟 5 解決。
+自動檢查形態本身留給各維度依其權威自行設計，本 skill 不代為規定——權威若本身未提供自動檢查判準，屬〈權威缺席時〉「框架內確實無承接者」的判準層缺口，另標「無判準」建框架缺口票，不在步驟 5 解決。
 
 **首次接入執法載體必然大量失敗**：設 baseline 凍結既有違規、只擋新增，再逐批收斂。一次要求全綠會導致檢查被停用。**baseline 的表達形式**，依執法工具能力擇一：工具原生支援計數比較時，用違規計數上限（記錄目前違規總數，計數上升才失敗）；工具原生支援排除清單時，用檔案清單白名單（列出現有違規檔案路徑，只掃清單外的新檔案與新增內容）；兩種能力都不支援時，採違規計數上限（不需要在每次收斂後手動維護清單）。
 
@@ -164,7 +164,7 @@ metadata:
 | 什麼時候讀 | 檔案 | 涵蓋 |
 |-----------|------|------|
 | 產物欄填不下去——複合產物、多子樹要不要分列、改寫產物長什麼樣、非 SaaS 專案怎麼轉換、無 UI 框架的元件庫產物 | `references/dimension-product-notes.md` | 〈非 SaaS 專案的形態轉換〉〈填完產物欄仍應翻原文〉〈改寫產物是主路徑〉 |
-| 情境判定命中「文件回答不了地基問題的既有實作」 | `references/handoff-mode.md` | 盤點→命名→固化→補文件四步、既有 artifact 可信度的四種例外、命名前置的規模閘門 |
+| 情境判定命中「文件回答不了地基問題的既有實作」 | `references/handoff-mode.md` | 盤點→命名→固化→補文件四步、主題切換時盤點的分開數、既有 artifact 可信度的四種例外、命名前置的規模閘門 |
 | 做下去發現不對勁，要照症狀查處置 | `references/troubleshooting.md` | 十一種症狀與各自的成因與處置 |
 | 想看別人怎麼填的，或想知道本 skill 在哪些專案形態上實跑過 | `references/examples.md`、`references/examples-process.md` | 維度判斷與流程操作的實測案例；已驗證與未驗證的專案形態 |
 | 不確定該由本 skill 或相鄰資產處理 | `references/adjacent-assets-boundary.md` | 相鄰資產的交界表 |

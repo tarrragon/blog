@@ -1,8 +1,8 @@
 ---
 name: chrome-extension-playwright-testing
-description: 不經使用者瀏覽器，用 Playwright 驗證 Chrome 擴充功能（MV3）：全新載入建置、讓 content script 注入本機頁、讀與停 service worker、用假 chrome API 渲染 popup 與擴充功能頁各狀態、瀏覽器的關閉與殘留。觸發：測擴充功能、popup 或擴充功能頁截圖、content script 驗證。
+description: 不經使用者瀏覽器，用 Playwright 驗證 Chrome 擴充功能（MV3）：全新載入建置、讓 content script 注入本機頁、讀與停 service worker、用假 chrome API 渲染 popup 與擴充功能頁各狀態、瀏覽器的關閉與殘留。觸發：測擴充功能、popup 或擴充功能頁截圖、亮暗模式截圖、content script 驗證。
 metadata:
-  version: 1.1.0
+  version: 1.2.0
   portable: true
 ---
 
@@ -13,7 +13,7 @@ metadata:
 | 要驗的 | 做法 | 讀哪一份 |
 |--------|------|---------|
 | content script 有沒有注入、訊息有沒有往返、service worker 的行為、哪一版程式在跑 | 以 `--load-extension` 全新載入一份建置的副本 | `references/loading-and-markers.md` |
-| popup 與其他擴充功能頁（清單頁、設定頁）在每個狀態長什麼樣、改版前後元素有沒有少、版面有沒有溢出、捲動後的樣子 | `file://` 開啟頁面，注入假的 `chrome` 物件切狀態 | `references/popup-state-rendering.md` |
+| popup 與其他擴充功能頁（清單頁、設定頁）在每個狀態長什麼樣、改版前後元素有沒有少、版面有沒有溢出、捲動後的樣子、亮色與暗色模式各長什麼樣 | `file://` 開啟頁面，注入假的 `chrome` 物件切狀態 | `references/popup-state-rendering.md` |
 
 ## 共通規則
 

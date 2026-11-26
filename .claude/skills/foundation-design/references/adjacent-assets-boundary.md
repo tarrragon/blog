@@ -14,4 +14,4 @@
 | `version-sequencing` skill | 版本序列與首版開票 | 本 skill 產出票的**內容**（哪幾張、依賴），它決定票**屬於哪一版**。同一批票不是兩批 |
 | `ux-design-evaluation` skill | UI 維度第 3 塊（UX 審查）的執行方法 | 本 skill 只界定「UX 審查是地基的一塊」，畫面級狀態矩陣、gate、回饋門檻全在該處 |
 | `component-contract-design` skill | UI 維度第 4 塊（元件庫）實作前的契約程序 | 本 skill 只界定「元件庫是地基的一塊」，元件契約欄位表與容器排列不變式在該處。它的〈契約齊全的定義〉是元件庫實作票的前置 checkpoint |
-| `dart-style-guardian` skill（Dart／Flutter 專案的執法工具實例） | 掃裸色碼、裸間距、裸字級、寫死文字 | 本 skill 工作流步驟 5 說的「機械檢查接入執法載體」，在 Dart 專案就是接它。**其他語言的專案沒有現成實例，需自行設計**——這是步驟 5 已知的不完整處 |
+| `dart-style-guardian` skill（Dart／Flutter 專案的執法工具實例） | 掃裸色碼、裸間距、裸字級、寫死文字 | 本 skill 工作流步驟 5 說的「自動檢查接入執法載體」，在 Dart 專案就是接它。**其他語言的專案沒有現成實例，需自行設計**——這是步驟 5 已知的不完整處 |

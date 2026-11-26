@@ -1,10 +1,10 @@
 ---
 name: component-contract-design
-description: "從規格狀態表、設計畫布或既有程式碼推導元件目錄，逐元件填齊元件契約欄位表（語意、變體、狀態、操作機制、尺寸、內容政策、slot、組合、無障礙、套用時點、回饋契約、測試、反例），盤點容器元件與排列不變式，產出讓畫面票只需選件與排位的元件庫規格；也定義建 design token 層的人要交付什麼才算齊（哪些值取名、primitive 與 semantic 分層、手寫 CSS 或 DTCG 來源檔、擋寫死值的檢查與正對照），以及 Web 端（HTML／CSS）契約齊全而畫面不符時要多寫的組合規則與驗收。觸發詞：元件契約、元件庫設計、元件目錄、容器元件、按鈕重疊、文字溢位、拆解設計稿、接手既有元件庫、design system、design token 分層、DTCG、token 檢查、CSS 元件、宿主樣式。Do NOT use for 接手時的 token 盤點萃取順序（用 foundation-design）或畫面級狀態矩陣（用 ux-design-evaluation）。"
+description: "從規格狀態表、設計畫布或既有程式碼推導元件目錄，逐元件填齊元件契約欄位表（語意、變體、狀態、操作機制、尺寸、內容政策、slot、組合、無障礙、套用時點、回饋契約、測試、反例），盤點容器元件與排列不變式，產出讓畫面票只需選件與排位的元件庫規格；也定義建 design token 層的人要交付什麼才算齊（哪些值取名、primitive 與 semantic 分層、手寫 CSS 或 DTCG 來源檔、擋寫死值的檢查與正對照、加暗色或品牌主題與拿掉陰影之前要留意什麼），以及 Web 端（HTML／CSS）契約齊全而畫面不符時要多寫的組合規則與驗收。觸發詞：元件契約、元件庫設計、元件目錄、容器元件、按鈕重疊、文字溢位、拆解設計稿、接手既有元件庫、design system、design token 分層、DTCG、token 檢查、暗色主題、主題切換、陰影改框線、ThemeExtension、CSS 元件、宿主樣式。Do NOT use for 接手時的 token 盤點萃取順序（用 foundation-design）或畫面級狀態矩陣（用 ux-design-evaluation）。"
 license: MIT
 metadata:
   portable: true
-  version: 3.20.0
+  version: 3.21.0
   category: ui-design
 ---
 
@@ -41,7 +41,7 @@ metadata:
 
 - `references/appendix-examples.md`：各步的範例與正例、卡住時的症狀處置。
 - `references/addresses.md`：正文出現簡稱而不知它在哪。
-- `references/design-system-token-layer.md`：前置「design token 層」齊不齊的判定（每一類都有具名值、名字依用途或階命名、單一定義位置、有檢查擋新的寫死值）、哪些值寫成 token、分層的條件、來源格式（平台原生寫法或 DTCG 檔）、Web 端的限制、擋寫死值的檢查與它的正對照、寫給實作 agent 的樣式限制。
+- `references/design-system-token-layer.md`：前置「design token 層」齊不齊的判定（每一類都有具名值、名字依用途或階命名、單一定義位置、有檢查擋新的寫死值）、哪些值寫成 token、分層的條件、加新主題（暗色、品牌）之前留意同一個 semantic token 在不同位置要不同的值、來源格式（平台原生寫法或 DTCG 檔）、Web 端的限制、Flutter 端的限制（`static const` 色值與 `ThemeExtension`）、拿掉陰影或改用框線表達深度之前留意只靠陰影劃邊界的元件、擋寫死值的檢查與它的正對照、寫給實作 agent 的樣式限制（含批次換色票）。
 - `references/web-platform-notes.md`：元件以 HTML／CSS 實作時，契約齊全而畫面不符的層疊成因（範圍重設的特定性、宿主頁面的樣式、只替部分規則提高優先度、subgrid 與獨立格式化脈絡）、step 3 組合規則與測試契約要多寫的內容、路徑 C 的計算後樣式快照、元件票在正式頁面上的驗收、改動範圍與影響範圍分開寫。
 
 **時序**：本 skill 在 `version-bootstrap` skill 地基波的第 3 塊（UX 審查）之後、第 4 塊（元件庫實作）之前執行，互動反應規格是它的輸入。規劃波前段的 L3 章節得先只含元件清單與禁用對照；契約由本程序補齊，不在規劃波內補。
@@ -161,7 +161,7 @@ metadata:
 
 | 相鄰資產 | 它管什麼 | 交界落在哪 |
 |---------|---------|-----------|
-| `foundation-design` skill | 地基入口與路由：接手模式的 token 盤點→命名→固化順序、特徵測試閘門、測試基座 | 建 token 層的人要交付什麼（齊不齊的判定、分層、來源格式、檢查）寫在本 skill 的 `references/design-system-token-layer.md`，`foundation-design` 的 UI 維度路由到它；從既有程式碼萃取 token 的順序仍照 `foundation-design`。元件契約只引用 token 名，不在契約裡歸納 token 階；step 2 的路徑 C 沿用其接手順序 |
+| `foundation-design` skill | 地基入口與路由：接手模式的 token 盤點→命名→固化順序、特徵測試閘門、測試基座 | 建 token 層的人要交付什麼（齊不齊的判定、分層、加主題與拿掉陰影之前要留意什麼、來源格式、檢查）寫在本 skill 的 `references/design-system-token-layer.md`，`foundation-design` 的 UI 維度路由到它；從既有程式碼萃取 token 的順序仍照 `foundation-design`。元件契約只引用 token 名，不在契約裡歸納 token 階；step 2 的路徑 C 沿用其接手順序 |
 | `impeccable` skill（或其他產生 DESIGN.md 的設計 skill） | 視覺方向：字型、色彩、整體風格與 DESIGN.md | token 的值由視覺方向決定；token 怎麼取名、分層、存在哪一份來源檔、怎麼檢查照本 skill 的 `references/design-system-token-layer.md`。DESIGN.md 帶 token 時算多一個讀取端，照該檔〈來源格式：平台原生寫法或 DTCG 檔〉選一份當來源；兩邊的取名建議衝突時照本 skill，選擇寫進專案的 L2 |
 | `frontend-with-playwright` skill | 前端開發協議：DOM 結構先量再寫 CSS、CSS 與 JS 的分工、Playwright 驗證、重構 CSS 而不改外觀的比對流程 | 本 skill 的 Web 端驗收（`references/web-platform-notes.md`）要求量計算後樣式；快照比對的差異怎麼歸類、什麼時候退回，照它的 `references/refactor-without-visual-change.md` |
 | `ux-design-evaluation` skill | 畫面級：狀態矩陣、gate、輸入、錯誤恢復、導航；回饋的時間門檻與通知形式由它判斷 | 本 skill 只管元件級契約。同一類失效在這裡寫成契約欄位（內容政策、空間不足策略）而非審查項；回饋契約的通道與狀態集來源由規格撰寫者查形態因素矩陣填寫，不重新判斷時間門檻 |

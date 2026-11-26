@@ -11,7 +11,7 @@
 ```text
 1 盤點   grep 既有裸值、既有測試、既有 schema，它們是可觀測的事實
 2 命名   逐一給名字，值不變（看似雜訊的值也不在此步收斂，見〈命名與收斂分兩步〉）
-3 固化   建立單一定義位置 + 機械檢查
+3 固化   建立單一定義位置 + 自動檢查
 4 補文件 此時文件是萃取結果的記錄，不是猜測
 ```
 
@@ -20,6 +20,10 @@
 **盤點測試時，測試檔存在不等於該值被涵蓋。** 一個內容為 `void main() {}` 的檔案會被 grep 命中成測試檔，保護力為零。盤點須記錄「哪些值實際被斷言涵蓋」，否則第 2 步的前提檢查會拿盤點的假陽性當通過。
 
 **盤點表欄位**：值、位置（檔案路徑或符號名，不寫行號）、是否被斷言涵蓋（是／否；「是」附涵蓋它的測試名或路徑，「否」代表第 2 步的前提檢查尚未通過）。三欄缺一即無法支撐第 2 步的前提檢查。
+
+**接手的目標包含主題切換（加暗色主題、換品牌色）時，盤點的人把寫死的值與固定的 token 引用分開數。** 寫死的值是 `Colors.*`、`Color(0x…)`、`Color.fromARGB`、`Color.fromRGBO`，以及 CSS 的色碼、色彩函式與色名（範圍同 `component-contract-design` skill 的 `references/design-system-token-layer.md`〈檢查〉擋的寫法），不含 token 定義檔裡定義 token 的那幾行；固定的 token 引用是引用了 token、但那個 token 的值不隨主題變的位置，判斷看引用的那個 token 在新主題下有沒有被覆寫，不看它用哪一種寫法。例如引用 Flutter `static const` 色值的位置、引用 Sass 或 Less 這類編譯期就換成值的變數的位置、主題只覆寫 semantic 層時直接引用 primitive 自訂屬性（`var(--teal-500)`）的位置，以及 JavaScript 讀一次就快取起來的位置；引用由主題覆寫的 CSS 自訂屬性的位置不算這一類，它的值在定義端換。兩者的工作量不同：寫死的值要先取名，固定的 token 引用已經有名字，要改成從主題取值。合成一個數字時，兩種工作量混在一起，估出來的工作量與票的切法跟著偏。寫死的值先照同一份檔〈寫給實作 agent 的樣式限制〉的批次換色那一項換成 semantic token；換成 semantic token 之後，每一處在新主題下要怎麼處置，照同一份檔的〈加新主題之前〉判斷；各平台 token 不跟主題換的位置見同一份檔的〈Flutter 端的限制〉與〈Web 端的限制〉。
+
+搜尋只是起點，抓不到的寫法很多，所以在盤點紀錄（三欄盤點表以外，另記在表下方）寫出兩個數字各自是用哪幾條指令數的、各命中幾處。數寫死的值時，`rg 'Colors\.'` 會連 `UIColors.` 這類名字結尾也是 `Colors` 的類別一起比對到，改用字邊界 `rg -n '\bColors\.'`；寫好之後拿已知寫死的 `Colors.red` 與已知是 token 引用的 `UIColors.primary` 各跑一次，確認 `Colors.red` 算進去、`UIColors.primary` 不算。字邊界的寫法比對不到 `CupertinoColors.`，要另外搜一次（`rg -n '\bCupertinoColors\.'`）。`CupertinoColors.*` 大多是 `CupertinoDynamicColor`，但只在 Cupertino 元件裡、或呼叫了 `resolveFrom(context)`、`CupertinoDynamicColor.resolve` 時，顏色才跟著亮暗模式換；直接傳給其他 widget 的，以及 `white`、`black` 這類固定的 `Color`，都算寫死。
 
 **既有測試同時是原作者意圖的書面殘留。** 接手情境下它常比文件可靠：一支 22 行的測試可能是全 repo 唯一記下「這五個路由的順序承載語意、不能動」的地方，而該事實在程式碼與 500 行 changelog 裡都看不出來。盤點時把測試當意圖來源讀，不只當覆蓋率數字。
 
