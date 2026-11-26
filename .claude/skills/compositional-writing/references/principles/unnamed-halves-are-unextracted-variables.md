@@ -14,7 +14,7 @@
 >
 > 有一部分判斷標準交得出去。
 >
-> 交不出去的那一半仍然有一個可以機械化的做法。
+> 交不出去的那一半仍然有一個可以寫成腳本的做法。
 
 同一個集合被切了三次，三塊都沒有名字，而三刀的依據各不相同，分散在段落中段的一句話裡（「交得出去的界線落在判斷需要什麼」只解釋了約束那一刀）。讀到「交不出去的那一半」時，讀者要先決定它指的是「這裡仍有一部分」切剩的、還是「有一部分判斷標準交得出去」切剩的。
 
@@ -88,10 +88,8 @@ SQL 以外的分類另有 550 處候選，分十批交給篩選者（判定只�
 
 依據是一次改寫：一篇文章的一節加上 SQL 分類的全掃（68 處候選、20 處改動，判定由主 session 做），以及其餘分類的全掃（550 處候選、96 處改動，篩選者判定、主 session 抽查與核對）。「取名會逼出內容」觀察到四例（最佳化器的外連接化簡、反例接上 equivalent mutant、兩處寫反的論斷），不代表每一次命名都會找到新材料。
 
-
 ## 相關原則
 
 - [ordinal-labels-are-the-authors-index](ordinal-labels-are-the-authors-index.md)——管已經有名字而名字是索引的對象；本卡管還沒被命名、只以切分動作出現的對象，並補上先寫依據這一步。
 - [noun-without-its-owner-passes-the-slot-check](noun-without-its-owner-passes-the-slot-check.md)——一個名詞缺所屬；「一部分」缺的所屬是整個切法。
 - [question-answer-frame-blurs-problem-issue-request](question-answer-frame-blurs-problem-issue-request.md)——自創術語建在譬喻框架上時（「問題盲區」），框架的歧義跟著進了名字；命名時先找業界術語，就是在避開這一種。
-
