@@ -63,7 +63,7 @@ T1 回 ACK
 
 ### 跟通用 linearizability 卡片的差異
 
-[Linearizability](/backend/knowledge-cards/linearizability/) 要求單一物件上的每個操作看起來在它的呼叫與回應之間的某一刻瞬間生效，所以兩個不重疊的操作之間的先後必須跟 real-time 一致；它的單位是單一操作。external consistency 把同一條 real-time 要求套到跨多列、多個 split 的 transaction 上（文獻裡叫 strict serializability）。TrueTime 是把 transaction 層級的 real-time 順序變可實作的關鍵 — 它把跨 datacenter 的「real-time 順序」變成可機械判定的 `TT.after(s)`、不需要全局 coordinator 來決定誰先誰後。對應的概念卡：[external-consistency](/backend/knowledge-cards/external-consistency/)、[linearizability](/backend/knowledge-cards/linearizability/)、[quorum](/backend/knowledge-cards/quorum/)。
+[Linearizability](/backend/knowledge-cards/linearizability/) 要求單一物件上的每個操作看起來在它的呼叫與回應之間的某一刻瞬間生效，所以兩個不重疊的操作之間的先後必須跟 real-time 一致；它的單位是單一操作。external consistency 把同一條 real-time 要求套到跨多列、多個 split 的 transaction 上（文獻裡叫 strict serializability）。TrueTime 是把 transaction 層級的 real-time 順序變可實作的關鍵 — 它把跨 datacenter 的「real-time 順序」變成每個節點呼叫 `TT.after(s)` 就判定得出的條件、不需要全局 coordinator 來決定誰先誰後。對應的概念卡：[external-consistency](/backend/knowledge-cards/external-consistency/)、[linearizability](/backend/knowledge-cards/linearizability/)、[quorum](/backend/knowledge-cards/quorum/)。
 
 ## 操作流程：怎麼觀測 ε 跟調用 TrueTime
 

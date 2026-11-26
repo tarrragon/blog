@@ -130,7 +130,7 @@ slug: "comprehension-sampled-not-judged"
 
 ## 沒這樣做的麻煩
 
-只跑機械檢查時，語意層完全沒有防線：關鍵字清單只收得到違規義項佔多數的詞，而誤解不挑詞。這次被命中的物理借詞「做功」就不在既有的物理化錯配清單裡。
+只跑腳本掃描時，語意層完全沒有防線：關鍵字清單只收得到違規義項佔多數的詞，而誤解不挑詞。這次被命中的物理借詞「做功」就不在既有的物理化錯配清單裡。
 
 只跑高階 reviewer 時，防線的上限是 reviewer 自己的理解力。一篇通過三輪九個 reviewer 的文章仍然有一處被全體讀者誤讀，而那一處的宣稱方向與作者的原意相反。
 
@@ -145,7 +145,7 @@ slug: "comprehension-sampled-not-judged"
 | [#279 句子成分缺失會被讀成脈絡不足](../missing-constituents-read-as-missing-context/)                         | 本卡是它的偵測工具——分歧點多數落在成分缺失的位置，而 #279 提供分歧出現之後的分流（補成分還是補脈絡）                                                                                                            |
 | [#168 多輪審查要有冷讀者 frame](../cold-reader-frame-vs-informed-reviewer/)                                   | 同樣是冷讀，判斷標準來源不同——#168 靠 reviewer 自陳「這裡讀不懂」，本卡靠多份之間的分歧，不依賴任何一份察覺自己卡住                                                                                             |
 | [#267 關鍵字清單只收違規義項佔多數的詞](../keyword-list-needs-dominant-violating-sense/)                      | 補它留下的空白——清單抓不到的部分需要一個不依賴清單的偵測入口，多份分歧正是這個入口                                                                                                                              |
-| [#149 keyword bank 命中是候選不是判決](../keyword-bank-hit-is-candidate-not-verdict/)                         | 同一條分工推到另一端——那裡是機械偵測配人的語意判定，本卡是機械化的分歧統計取代單點判定                                                                                                                          |
+| [#149 keyword bank 命中是候選不是判決](../keyword-bank-hit-is-candidate-not-verdict/)                         | 同一條分工推到另一端——那裡是 grep 偵測配人的語意判定，本卡是照固定方法統計多份讀法的分歧，取代單點判定                                                                                                          |
 | [#114 multi-pass frame 顆粒度盲點](../multi-pass-review-frame-granularity-blindspot/)                         | 補一個新軸——原本的軸是 frame、instance 與 surface，本卡加的是模型層級：同一個 frame 換不同能力的模型跑，暴露的東西不同                                                                                          |
 | [#282 規則要指到一個打得開的東西](../rule-must-point-at-something-openable/)                                  | 本卡的一個具體產出——探針指令裡「照這一節工作我的第一個動作是什麼」那一欄，量到的正是 #282 那一類缺陷；該欄不可省略成「你讀懂了嗎」，讀懂與執行得出來是兩回事                                                    |
 | [#284 文章的連貫靠鞏固形狀](/report/coherence-by-shape-not-reader-memory/)                                    | 同一條偵測原理的寫作端：本卡說能力強的讀者會把作者留下的坑填平，#284 說能力強的讀者會把文章的形狀補完，所以割裂通得過多輪審查。本卡是量測工具、#284 是被量測的那個性質                                          |
@@ -162,7 +162,7 @@ slug: "comprehension-sampled-not-judged"
 
 事實正確性、跨檔一致性與承重論點的反證都要高階 reviewer，低階模型在這些維度上的產出不可信。
 
-大量已知形態的掃描仍然由 grep 承擔，那裡它比派模型便宜好幾個量級。本卡處理的是機械檢查覆蓋不到的那一層，不是取代它。
+大量已知形態的掃描仍然由 grep 承擔，那裡它比派模型便宜好幾個量級。本卡處理的是腳本掃描覆蓋不到的那一層，不是取代它。
 
 零分歧也只證明表達沒有歧義，不證明內容對。這個 frame 與事實查核是兩件事，跑了它不能省掉後者。
 

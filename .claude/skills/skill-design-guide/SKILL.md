@@ -2,7 +2,7 @@
 name: skill-design-guide
 description: "Anthropic skill spec plus this project's conventions: frontmatter, descriptions, loading budgets, and splitting an oversized skill. Use when creating a skill, editing SKILL.md, reviewing skill quality, or moving content into references/."
 metadata:
-  version: 1.24.0
+  version: 1.25.0
 ---
 
 # Skill Design Guide
@@ -109,7 +109,7 @@ wc -l .claude/skills/<name>/SKILL.md   # 官方 500 行，超標即須外移
 | 整份執行 | 全檔分段估算 | 5k tokens——它與 SKILL.md 一樣是整份進 context |
 | 選段查閱 | 最大單節的分段估算 | 5k tokens |
 
-**機械複製動作不算整份執行的判斷依據。** 模板／範本類檔案常見消費方式是複製（如 `cp`）一份到工作目錄後，逐欄位或逐章節查閱填寫——複製本身是一次性機械動作，不等於讀入做整體推理；此類檔案的讀取方式判定為選段查閱，量測其最大單節而非全檔。
+**單純複製檔案不算整份執行的判斷依據。** 模板／範本類檔案常見消費方式是複製（如 `cp`）一份到工作目錄後，逐欄位或逐章節查閱填寫——複製本身是一次性、不讀內容的檔案操作，不等於讀入做整體推理；此類檔案的讀取方式判定為選段查閱，量測其最大單節而非全檔。
 
 **判定條件（三項皆須成立，缺一即仍判整份執行）**：
 
@@ -163,8 +163,8 @@ wc -l .claude/skills/<name>/SKILL.md   # 官方 500 行，超標即須外移
 - [ ] 無「When to Use This Skill」段（觸發資訊只放 description）
 - [ ] 指令具體可操作、含錯誤處理
 - [ ] 含至少 1 個範例
-- [ ] 新增或修改範例的【驗證】段時，`chained-examples.md`〈驗證段機械檢查：依據句可溯性〉的逐問句表由非撰寫者複核「引文位置在範例之外？」與「判定詞逐詞對照」兩欄；撰寫者自檢無鑑別力，不可省略此步驟
-- [ ] 每份 reference 一跳可達（判斷標準與例外見 `references/writing-the-body.md` 的〈Body 寫作〉）。機械檢查如下，每個命中逐一判定——說明用的示意路徑與被討論的對象不算違規，其餘即是
+- [ ] 新增或修改範例的【驗證】段時，`chained-examples.md`〈驗證段逐問填表：依據句可溯性〉的逐問句表由非撰寫者複核「引文位置在範例之外？」與「判定詞逐詞對照」兩欄；撰寫者自檢無鑑別力，不可省略此步驟
+- [ ] 每份 reference 一跳可達（判斷標準與例外見 `references/writing-the-body.md` 的〈Body 寫作〉）。用下面的指令列出候選，每個命中逐一判定——說明用的示意路徑與被討論的對象不算違規，其餘即是
 
 ```bash
 # 在該 skill 的目錄下執行
@@ -175,7 +175,7 @@ LC_ALL=C comm -13 <(grep -o 'references/[a-z-]*\.md' SKILL.md | LC_ALL=C sort -u
 - [ ] 100+ 行**且被選段查閱**的 reference 有 TOC。整份執行者不適用，**SKILL.md 自身也不適用**（它整份進 context，不存在選段查閱情境；理由見 `references/writing-the-body.md` 的〈Body 寫作〉）
 - [ ] 術語一致
 - [ ] 無時間敏感字串
-- [ ] **外部引用以身分指名，不寫檔案路徑**（見 `references/writing-the-body.md` 的〈外部引用：指名身分，不用檔案路徑〉）。機械檢查：`grep -nE '\`\.claude/[^\`]*\`' SKILL.md`，每個命中須屬該節列出的例外之一。**該指令抓不到裸檔名與反引號後非緊接 `.claude/` 的寫法**，這兩類要人工核
+- [ ] **外部引用以身分指名，不寫檔案路徑**（見 `references/writing-the-body.md` 的〈外部引用：指名身分，不用檔案路徑〉）。用 grep 列出候選：`grep -nE '\`\.claude/[^\`]*\`' SKILL.md`，每個命中須屬該節列出的例外之一。**該指令抓不到裸檔名與反引號後非緊接 `.claude/` 的寫法**，這兩類要人工核
 
 ### 讀者可用性（新寫與**改寫**皆須）
 

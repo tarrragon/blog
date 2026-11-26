@@ -223,7 +223,7 @@ Web 文字的語言分佈嚴重不平衡。Common Crawl 跟同類資料源的語
 
 - **Code 補完、語法重構、加 type annotation**：code 本身就跨語言、模型不需要「翻譯」code、中文 prompt 直接寫即可。
 - **短 QA、context-rich prompt**：問題本身就含完整 context（如「這段程式碼做什麼」+ code）、模型不需要做 retrieval、reasoning 深度需求低。
-- **格式 / 結構轉換**：JSON 轉 YAML、Markdown 重排、tabular 整理 — 任務機械化、跟語言關係小。
+- **格式 / 結構轉換**：JSON 轉 YAML、Markdown 重排、tabular 整理 — 照固定規則轉換、跟語言關係小。
 - **單檔 refactor**：選定範圍內的改寫、不需跨檔 retrieval、推理深度受 context 限制而非語言。
 - **commit message / docstring 草稿**：套用 template 性質、模型輸出語言跟 prompt 一致較自然。
 

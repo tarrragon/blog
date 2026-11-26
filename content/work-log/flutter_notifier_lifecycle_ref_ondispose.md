@@ -67,7 +67,7 @@ final isbnScannerViewModelProvider = NotifierProvider<IsbnScannerViewModel, Isbn
 
 這次重構的執行記錄留了兩件跟主題無關、但可轉移的事：
 
-**Pre-existing 失敗要用 baseline 重跑確認**。改完後跑測試、一個多語系版型測試在小螢幕溢位失敗。判定它跟本次改動無關的方式是機械的：`git stash` 還原變更、在 baseline 重跑同一個測試、同樣失敗——確認是既有問題、記錄待追蹤、不混進本次範圍。「看起來無關」是猜測、baseline 重跑是證據。
+**Pre-existing 失敗要用 baseline 重跑確認**。改完後跑測試、一個多語系版型測試在小螢幕溢位失敗。判定它跟本次改動無關的方式是照固定步驟做、不需要判斷：`git stash` 還原變更、在 baseline 重跑同一個測試、同樣失敗——確認是既有問題、記錄待追蹤、不混進本次範圍。「看起來無關」是猜測、baseline 重跑是證據。
 
 **Worktree 的 dart analyze 要先 pub get**。在 git worktree 裡跑 `dart analyze`、它會向上解析到主 repo 的舊版 `package_config` 造成假錯誤；先在 worktree 內 `flutter pub get` 產生本地設定檔才能得到真結果。
 

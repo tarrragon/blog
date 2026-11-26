@@ -82,7 +82,7 @@ tags: ["testing", "case-study", "acceptance-test", "mutation-testing", "ai-gener
 ## 下一步路由
 
 - 這則案例抽出的可重用原則 → [#277 通過關卡不等於通過的是同一個程式](/report/passing-a-gate-does-not-pin-the-program/)
-- 同一份實驗的另一軸（機械約束的代價）→ [#278 機械約束買到被量測的那個數字](/report/mechanical-constraints-buy-the-measured-number/)
+- 同一份實驗的另一軸（自動檢查的品質約束的代價）→ [#278 工具自動檢查的品質約束買到被量測的那個數字](/report/mechanical-constraints-buy-the-measured-number/)
 - 測試與實作同源時 oracle 為什麼退化 → [Test Provenance](/testing/knowledge-cards/test-provenance/)
 - Test oracle 本身有哪幾種、各自抓得到什麼 → [Test Oracle](/testing/knowledge-cards/test-oracle/)
 - 由測試自己餵資料造成同型盲區的自有案例 → [凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)

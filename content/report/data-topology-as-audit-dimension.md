@@ -102,7 +102,7 @@ Topology 是 *獨立的問題軸*、5 維 audit 漏掉時會誤判結構。
 
 跟 Type B 對照、Type F 多了「topology audit」段、Step-by-step 比 Type B 細（per-step 不是 per-cutover）；跟 Type A phased 對照、Type F 多數情境不需要 schema translation / parallel run / cleanup phase（source / target 同 cluster）；但 *multi-region rollout* 子情境例外、仍需 parallel run（兩 region 同跑後切流量）— 此時 Type F + Type A parallel run 段組合應用、見「多重歸類」規則。
 
-注意 anatomy 列 8 row 是 *規範形態*、不是強制機械對映 — 實作上「結構 differentiator」+「pre-layout analysis」段可 inline 到開頭 audit 段（如 [Redis cluster re-sharding](/backend/02-cache-redis/vendors/redis/cluster-resharding/) 的「Source = Target，但 topology 重劃」段內聯處理）、實作 H2 數可能比 anatomy 列 row 少 1-2 個。
+注意 anatomy 列 8 row 是 *規範形態*、不要求每一 row 都對到一個 H2 — 實作上「結構 differentiator」+「pre-layout analysis」段可 inline 到開頭 audit 段（如 [Redis cluster re-sharding](/backend/02-cache-redis/vendors/redis/cluster-resharding/) 的「Source = Target，但 topology 重劃」段內聯處理）、實作 H2 數可能比 anatomy 列 row 少 1-2 個。
 
 ## Production 反模式
 

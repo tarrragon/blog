@@ -50,5 +50,5 @@ slug: "optimization-order-comes-from-removal-measurements"
 
 - [Layout reflow / repaint 的可量化評估](/report/layout-reflow-measurement/)：最接近的既有卡，那張卡在 DOM 的版面重算上主張要量、不憑感覺，並給出各種操作的量法；本卡是它的 sibling，補上兩件事：先後順序用「暫時拿掉」量出的上限來排，以及量法要涵蓋成本實際落在的程序。
 - [比對回報零差異時，那個零只證明這個粒度看不到差異](/report/null-difference-only-at-the-resolution-you-looked/)：JS 計時量到的「每幀不到 1 ms」是同一種形態，那個數字只證明 JS 回呼這一段便宜，GPU 程序那一段它看不到。
-- [機械約束買到被量測的那個數字，代價落在沒被量測的維度](/report/mechanical-constraints-buy-the-measured-number/)：只追繪製次數時，繪製次數降了，成本留在沒被量的合成與柵格化上。
+- [工具自動檢查的品質約束買到被量測的那個數字，代價落在沒被量測的維度](/report/mechanical-constraints-buy-the-measured-number/)：只追繪製次數時，繪製次數降了，成本留在沒被量的合成與柵格化上。
 - [真值在稿件之外的宣稱，讀多少遍都驗不出來](/report/text-review-cannot-reach-external-truth/)：「這一段很貴」是關於執行時的宣稱，讀程式碼讀不出真值，要跑。

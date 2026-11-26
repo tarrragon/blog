@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.19.0 — `premortem-workflow.md` 的「不逐項機械提問」改成「不照清單逐項提問」：原句講的是呆板地照清單問，改寫成實際的做法。流程沒有改。
+
 **Version**: 2.18.0 — 內文的優化、在線、補丁依所指換成台灣用語（最佳化、強化、改善；線上、在線上、同時執行；修補、修補檔、更新檔）。
 
 **Version**: 2.17.1 — `hooks/wrap-skill-yaml-consistency-hook.py` 只保留 AC3（Version 非回退，警告放行）：刪除 AC1 signal orphan、AC2 keyword orphan、AC4 映射檔存在性與解析，以及 `load_alignment`、`ALIGNMENT_REL_PATH`。映射檔位於 project-integration、不隨同步發佈，原 AC1/AC2 在 consumer 從未執行，缺檔分支反而對編輯 SKILL.md 與 wrap-triggers.yaml 輸出無關提示。AC3 檢查呼叫例外時改為 stderr 與 logger.error 後放行

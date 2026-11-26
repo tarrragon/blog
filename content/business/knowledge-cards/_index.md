@@ -219,7 +219,7 @@ weight: 編號
 | [Valuation Band（估值帶）](/business/knowledge-cards/valuation-band/)                             | 對照自身歷史的估值區間                   | P/E、P/B、derating               |
 | [Normalized Earnings（正常化盈餘）](/business/knowledge-cards/normalized-earnings/)               | 剔除一次性損益後的獲利基礎               | 估值分母、獲利品質               |
 | [Dividend Yield](/business/knowledge-cards/dividend-yield/)                                       | 配息相對股價的年化收益率                 | 收益率溢價、配息可持續性         |
-| [Payout Ratio](/business/knowledge-cards/payout-ratio/)                                           | 獲利分給股東的比例                       | 留存盈餘、ROE 機械性推升         |
+| [Payout Ratio](/business/knowledge-cards/payout-ratio/)                                           | 獲利分給股東的比例                       | 留存盈餘、高配息縮小分母推升 ROE |
 | [Operating Leverage](/business/knowledge-cards/operating-leverage/)                               | 固定成本攤提放大或壓縮利潤               | 營業槓桿、擴產初期利潤率         |
 | [Cash Flow Statement](/business/knowledge-cards/cash-flow-statement/)                             | 利潤跟現金落差的三段拆解                 | 間接法、營運資本變動             |
 | [Accounts Receivable](/business/knowledge-cards/accounts-receivable/)                             | 已認列收入未收到現金的資產               | 應收天數、帳齡結構               |

@@ -97,7 +97,7 @@ slug: "attribute-recorded-corrections-before-rewriting-rules"
 ## 跟其他抽象層原則的關係
 
 - [修法要落在缺陷所在的那一層，而看起來做得最多的那個修法通常不在](/report/fix-must-land-on-the-layer-of-the-defect/)：最接近的既有卡。那張卡判斷一處文字的修法動到的是句子成分還是段落；這張卡往上一層，判斷一類失敗該不該動規則文字。
-- [機械約束買到被量測的那個數字，代價落在沒被量測的維度](/report/mechanical-constraints-buy-the-measured-number/)：模糊度普查是同一個機制。普查量的是探針讀得出多少條件，維護者把判斷寫成條件是提高分數最便宜的做法，而條件本身的對錯，普查量不到。
+- [工具自動檢查的品質約束買到被量測的那個數字，代價落在沒被量測的維度](/report/mechanical-constraints-buy-the-measured-number/)：模糊度普查是同一個機制。普查量的是探針讀得出多少條件，維護者把判斷寫成條件是提高分數最便宜的做法，而條件本身的對錯，普查量不到。
 - [要靠判斷的原則寫成留意項：什麼時候判斷、判斷留下什麼寫成查得到的事實，判斷的答案不寫成條件](/report/judgment-rule-fixes-the-trigger-and-trace-not-the-answer/)：那張卡管一條規則確定要改時怎麼寫；這張卡管改之前先查它有沒有出過事。
 - [量測的前置步驟決定了分母，而所有檢查都落在分母之後](/report/measurement-preprocessing-decides-the-denominator/)：這張卡的取單位與對帳照那張卡做。粗分把待辦算成糾正，是分母錯掉而後面的比例都算得正確的實例。
 - [門檻要在派發之前寫死，否則「不處置」會被事後合理化](/report/thresholds-registered-before-dispatch/)：這張卡的事先登記用同一個理由，對象從探針的處置線換成整批工作是否繼續。

@@ -209,7 +209,7 @@ logs/
 三分類是 default framework、實務上有幾類「該不該 commit 的判讀走兩條岔路」的情境、需要特別判讀：
 
 - **Generated client SDK in monorepo**：protobuf / OpenAPI spec 產出的 client code 屬於 derived（從 .proto / .yaml 生）、但 monorepo 場景常 commit 進去、目的是「跨語言版本對齊 + CI 不用每次重生」。判讀：若 .proto / spec 改動頻率低 + 跨語言一致性比 build 速度重要、commit；變動頻繁就回到 derived 路徑。
-- **Jupyter notebook 的 output cell**：技術上是 derived（執行 notebook 產出）、但語意上常被視為 source 的一部分（教學、demo、結果展示）。判讀：教學 / 展示 / 帶 figures 的 notebook 通常 commit 含 output；機械化的 batch run / CI notebook 走 derived、用 nbstripout 清掉 output 再 commit。
+- **Jupyter notebook 的 output cell**：技術上是 derived（執行 notebook 產出）、但語意上常被視為 source 的一部分（教學、demo、結果展示）。判讀：教學 / 展示 / 帶 figures 的 notebook 通常 commit 含 output；排程自動執行的 batch run / CI notebook 走 derived、用 nbstripout 清掉 output 再 commit。
 - **Git LFS / git-annex 介於 commit 跟 manifest 之間**：把大檔案 commit 進 git 但實際 bytes 存 LFS server、worktree 看起來像直接 commit、metadata 卻是 manifest pointer。判讀：適合「需要在 git history 中追蹤大檔案版本、但不想讓 repo 體積爆炸」的場景（如 game asset、訓練資料集 snapshot）。介於 commit 跟 dvc / S3 manifest 之間的折衷選項。
 - **Lockfile vs build artifact 的灰色帶**：`yarn-error.log` 算 log（不 commit）還是 derived 但對 debug 重要（commit）？實務上多數選 .gitignore、但若團隊在 CI 失敗時要 reproduce 環境、保留少量 build log 也合理。
 

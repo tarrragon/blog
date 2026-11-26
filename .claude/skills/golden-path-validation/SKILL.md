@@ -3,7 +3,7 @@ name: golden-path-validation
 description: "驗證一份 setup 指引 / runbook / onboarding / bootstrap 是否「陌生人每次照做都能完整重現」的方法：派無前置知識的冷讀代理人、在可拋棄乾淨環境實際照指引執行，抓文件 fact-check 放過、只有實機跑才現形的硬編假設 / 環境漂移 / verifier 自己的 bug。五階段：完整性稽核 → 自動化 verify → 冷讀代理人實機執行 → 乾淨環境 re-verify → 發現回收。觸發詞：驗證 setup 指引、runbook 驗證、onboarding 測試、bootstrap 測試、golden path / paved road 驗證、每次照做都能重現、冷讀測試、cold-read、陌生人照做、實機執行驗證、setup guide validation、原生非模擬、verifier 也要被驗。Trigger when validating that a follow-along setup/onboarding/bootstrap guide actually works for a newcomer, via cold-read agents executing it in disposable clean environments."
 license: MIT
 metadata:
-  version: 1.3.2
+  version: 1.4.0
   category: engineering-methodology
 ---
 
@@ -40,7 +40,7 @@ metadata:
 
 ### 階段 2:把驗證自動化(若指引還沒有)
 
-指引該有一步「怎麼確認成功了」。做成一支 read-only、可重跑的 verify 腳本,把「跑完到底成不成」變成機械判斷,而不是肉眼猜。**但 verifier 自己也是一隻會讀錯層的眼睛**(見 `references/principles/verify-the-verifier.md`):一個 naive 檢查可能對健康的環境給假陰性。先拿一個「已知正確」的環境跑 verifier、確認它報 pass,再信它的 fail。
+指引該有一步「怎麼確認成功了」。做成一支 read-only、可重跑的 verify 腳本,把「跑完到底成不成」變成腳本自動判斷,而不是肉眼猜。**但 verifier 自己也是一隻會讀錯層的眼睛**(見 `references/principles/verify-the-verifier.md`):一個 naive 檢查可能對健康的環境給假陰性。先拿一個「已知正確」的環境跑 verifier、確認它報 pass,再信它的 fail。
 
 ### 階段 3:冷讀代理人實機執行測試(核心)
 

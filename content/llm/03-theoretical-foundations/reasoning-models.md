@@ -47,7 +47,7 @@ Stage 1: Cold-start SFT
   目標：讓模型學會「該怎麼想」的 format
 
 Stage 2: Reasoning-focused RL
-  Reward：最終答案正確（math / code / logic 等可機械驗證的任務）
+  Reward：最終答案正確（math / code / logic 等程式驗得出對錯的任務）
   Policy：把 reasoning trace 越拉越長、越能正確、reward 越高
   約束：保留語言流暢度（不能 reasoning trace 變成亂碼）
   → 模型自發學會「困難問題想更久」
@@ -62,7 +62,7 @@ Stage 4: Final RLHF / DPO（可選）
 
 關鍵特性：
 
-1. **Stage 2 的 reward 機械可驗證**：math 答案、code unit test、logic 答案 — 不需要 human preference、所以可大量擴展訓練資料
+1. **Stage 2 的 reward 由程式自動驗證**：math 答案、code unit test、logic 答案 — 不需要 human preference、所以可大量擴展訓練資料
 2. **Reasoning trace 是「emerge」出來的**：訓練不直接告訴模型「該怎麼想」、只給「答案對不對」、模型自己摸索出最佳 reasoning strategy
 3. **跨任務 transfer 有限**：reasoning model 在訓練分佈內任務（math、coding）強、跨到開放域對話、提升較小
 
@@ -125,7 +125,7 @@ Reasoning model 的優勢任務有明確 pattern：
 | ------------------------ | -------------------------------- | ------------------------------------------------ |
 | 複雜 algorithm design    | 需要多步推理 + 探索多個解法      | Leetcode hard、設計 sliding window 解法          |
 | 棘手 debug               | 需要排除多種可能、追蹤跨檔案邏輯 | 「為什麼這個 race condition 偶爾出現」           |
-| Math / 量化分析          | 機械可驗證、模型訓練分佈內       | 估算系統 capacity、複雜利率計算                  |
+| Math / 量化分析          | 程式驗得出對錯、模型訓練分佈內   | 估算系統 capacity、複雜利率計算                  |
 | Multi-step refactor 規劃 | 需要看到整體影響、分階段         | 「把這個 service 拆成 3 個 microservice 的步驟」 |
 | 系統設計取捨             | 多 dimension 比較、需要展開論證  | 「DB 該選 Postgres 還是 Cassandra」              |
 | 解 obscure error         | 需要 reason about 多個可能根因   | 「kernel panic 訊息 X 可能來源」                 |
@@ -198,7 +198,7 @@ Continue.dev 的 multi-model config 可同時設多個、UI 下拉切換、不�
 - Test-time compute 作為一個獨立 scaling 維度的概念
 - Reasoning trace 結構（pre-answer reasoning + answer）
 - 「適合 reasoning vs instruct」的判讀框架
-- 「機械可驗證的 reward + RL」是 reasoning training 的核心
+- 「程式自動驗證的 reward + RL」是 reasoning training 的核心
 - Reasoning model + tool use 的設計取捨
 
 **會變的部分**：

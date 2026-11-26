@@ -81,7 +81,7 @@ rg --pcre2 -n '(\p{Han})不\1|有沒有' <檔案>
 ## 跟其他抽象層原則的關係
 
 - [#286 翻譯探針：中文可以不決定的，英文強制決定](/report/translation-forces-disambiguation/)——謂語的判斷標準是英文強制決定、中文允許不決定的語法項之一；本卡把這一項連同它的詞形掃描寫出來，讓它在寫的當下就能被擋下，不必等翻譯探針。
-- [#328 宣稱可機械執行的條文，要先把中文允許不決定的那幾項決定掉](/report/mechanical-rule-must-close-optional-grammar/)——那一張處理規則文件裡的基數與否定轄域；本卡是同一個成因（中文允許不決定）在教材敘述裡的另一個語法項。
+- [#328 宣稱照做不需要判斷的條文，要先把中文允許不決定的那幾項決定掉](/report/mechanical-rule-must-close-optional-grammar/)——那一張處理規則文件裡的基數與否定轄域；本卡是同一個成因（中文允許不決定）在教材敘述裡的另一個語法項。
 - [#366 名詞要求的「誰的、什麼的」也是槽位](/report/noun-without-its-owner-passes-the-slot-check/)——「對」「通」缺的判斷標準與名詞缺的所屬是同一類省略：句子完整、讀者問得出「照什麼」。
 - [#358 技術文章的每一句寫清楚誰對什麼做了什麼事](/report/command-fragment-as-subject-hides-the-actor/)——一句三個「它」指兩個對象，是動作者槽位沒有填實體的形態；正反問句讓讀者的負擔更重，因為讀者已經在處理問句的重新歸類。
 - [#374 「問題」與「回答」當框架詞](/report/question-answer-frame-blurs-problem-issue-request/)——正反問句的上游：應答框架把內容當成問句引出來。

@@ -30,7 +30,7 @@ UC-06 交付時的狀態：`BookLoan` value object 完整（借閱類型、日�
 
 單元測試的這個邊界是結構性的：domain 測試本來就不該碰資料庫。問題出在完成定義——「domain 測試全過」被當成了「功能完成」，而持久化迴圈不在任何 use case 的驗收條件裡。修正時補上的測試正好說明缺的是哪一類：序列化測試（DM-35 到 DM-38、SER-01 到 SER-11）裡最關鍵的是**循環一致性**——`toJson` 再 `fromJson` 回來的物件要跟原物件相等。roundtrip 測試不碰資料庫、成本跟單元測試相同，但它守住「這個物件的完整狀態能離開又回來」。
 
-修正本身是機械的：補 `BookLoan.toJson/fromJson`、`Book` 的 activeLoan 序列化、建 `book_loans` 表加索引、資料庫版本 v4 升 v5 附遷移腳本。機械修正花一個 Phase 0 就完成——成本高在晚了兩個 use case 才發現，修本身不貴。
+修正本身照缺的項目逐一補上，不需要設計判斷：補 `BookLoan.toJson/fromJson`、`Book` 的 activeLoan 序列化、建 `book_loans` 表加索引、資料庫版本 v4 升 v5 附遷移腳本。這些修正花一個 Phase 0 就完成——成本高在晚了兩個 use case 才發現，修本身不貴。
 
 ## Case 2：更陰險的形態——欄位存在、寫入層靜默丟棄
 

@@ -37,7 +37,7 @@ reactive 的全部機制都建立在這張圖上。四個邊界各是圖的一�
 
 ## 時間邊界：節點的生命有兩頭界線
 
-async 函式的每個 `await` 都是一個 gap：等待期間使用者可能離開頁面、Notifier 被 dispose，await 回來再碰 `ref` 就炸 `UnmountedRefException`。修法可機械化——**每個 await 之後、第一次碰 `ref` 之前**檢查 `ref.mounted`；而且刻意不抽成 helper：guard 的價值在「它在哪」，明確的檢查點讓 review 用眼睛掃就能驗證每個 gap 有沒有守。長流程、可離開的頁面（匯入、同步、批次處理）風險最高。完整機制與「評估必跑、可決定不重構」的技術債處置：[await 回來的時候、頁面已經關了](/work-log/flutter_unmounted_ref_async_gap/)。
+async 函式的每個 `await` 都是一個 gap：等待期間使用者可能離開頁面、Notifier 被 dispose，await 回來再碰 `ref` 就炸 `UnmountedRefException`。修法是一條固定的位置規則，照著套不需要判斷——**每個 await 之後、第一次碰 `ref` 之前**檢查 `ref.mounted`；而且刻意不抽成 helper：guard 的價值在「它在哪」，明確的檢查點讓 review 用眼睛掃就能驗證每個 gap 有沒有守。長流程、可離開的頁面（匯入、同步、批次處理）風險最高。完整機制與「評估必跑、可決定不重構」的技術債處置：[await 回來的時候、頁面已經關了](/work-log/flutter_unmounted_ref_async_gap/)。
 
 生命週期的另一頭是 build 期間：widget tree 建置中直接改 provider 狀態同樣是非法時機，觸發點要用 `addPostFrameCallback` 延到首幀之後。`ref` 的合法視窗兩頭都有界——await 之後可能太晚、build 之中太早。
 

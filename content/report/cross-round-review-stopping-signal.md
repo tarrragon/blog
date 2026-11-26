@@ -35,12 +35,12 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Multi-round-revi
 
 實證觀察、跨輪 review 的 finding 內容會走以下 transition：
 
-| 階段       | 主要 frame              | finding 性質                             | 修法成本         |
-| ---------- | ----------------------- | ---------------------------------------- | ---------------- |
-| Surface    | Compliance / fact-check | 編號、連結、案例對應、規範違反           | 低（機械修）     |
-| Cadence    | 字句層 / 模板偵測       | 句型骨架同骨、廢話前綴、地區漂移         | 中（重寫局部）   |
-| Structural | Steelman / 讀者旅程     | enumeration 不窮盡、稻草人、反向引用斷裂 | 高（補實質內容） |
-| Meta       | Self-application        | 規則自審、同義變體、frame 切換規劃       | 中（疊代擴張）   |
+| 階段       | 主要 frame              | finding 性質                             | 修法成本           |
+| ---------- | ----------------------- | ---------------------------------------- | ------------------ |
+| Surface    | Compliance / fact-check | 編號、連結、案例對應、規範違反           | 低（照規範逐項修） |
+| Cadence    | 字句層 / 模板偵測       | 句型骨架同骨、廢話前綴、地區漂移         | 中（重寫局部）     |
+| Structural | Steelman / 讀者旅程     | enumeration 不窮盡、稻草人、反向引用斷裂 | 高（補實質內容）   |
+| Meta       | Self-application        | 規則自審、同義變體、frame 切換規劃       | 中（疊代擴張）     |
 
 實證的階段不一定按此順序、但通常從 surface 開始、隨 frame 切換往深層走。Meta 階段在 surface / cadence / structural 都修完後仍能 surface 新問題 — 因為它檢查的是「修法過程本身」、屬另一個維度。
 

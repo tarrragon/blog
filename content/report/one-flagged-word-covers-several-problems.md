@@ -117,7 +117,7 @@ slug: "one-flagged-word-covers-several-problems"
 - [結構譬喻頂替主詞與動詞](/report/structural-metaphor-replaces-actor-and-verb/)：「跟著一路走」「往哪裡走」跟那張卡是同一組移動動詞。描述內容集合的結構時照那張卡判；這次出現在鑑賞文章裡、描述的是音樂，照擬人那一問判。修法同樣是寫出實際的動作者與動作。
 - [排比句的變動格填了話題自己的定義](/report/parallel-clause-filled-with-the-topics-definition/)：本卡的獨一性斷言用的是那張卡的定義代換測試；那張卡的對象是排比句，這次的對象是一句單獨的斷言。
 - [教學與檢討內容寫給帶問題來的讀者，不是要被吸引的聽眾](/report/write-for-readers-not-audiences/)：獨一性斷言是那張卡說的服務注意力的技巧，從演講換成了文宣。
-- [register 違規：偵測可機械化、判定要靠文體異源的眼睛](/report/register-violation-needs-cross-style-eyes/)：擬人在作者與同源的審查者讀起來是順的，這批文章先前的審查沒有攔下，跟那張卡說的同源自審上限是同一個成因。
+- [register 違規：偵測寫得成腳本、判定要靠文體異源的眼睛](/report/register-violation-needs-cross-style-eyes/)：擬人在作者與同源的審查者讀起來是順的，這批文章先前的審查沒有攔下，跟那張卡說的同源自審上限是同一個成因。
 - [規則的審查走到設計稽核的停點時，先反省寫法、再反省對規則的理解、最後才簡化](/report/rule-nonconvergence-reflect-form-then-understanding/)：把擬人寫成檢查規則時的不收斂與反省，寫在那張卡。
 - [要靠判斷的原則寫成留意項：什麼時候判斷、判斷留下什麼寫成查得到的事實，判斷的答案不寫成條件](/report/judgment-rule-fixes-the-trigger-and-trace-not-the-answer/)：擬人的檢查規則是那張卡的一個實例。第一版把判斷的答案寫成主詞與動詞的分類表，兩次設計稽核都卡在分類的邊界；之後兩版把答案寫成測試（資訊有沒有多、動詞有沒有換），仍然卡在測試的邊界；最後只留一問、正反例與痕跡，答案由執行者寫出理由。
 - [字面攔截 vs 行為精煉：驗證手段跟錯誤層次的對齊](/report/literal-interception-vs-behavioral-refinement/)：rg 攔得住被點名的那個詞，擬人、替代品的對照與獨一性斷言三種缺陷要靠逐句問主詞做不做得了與讀者的用處。

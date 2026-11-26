@@ -3,7 +3,7 @@ title: "BookImported 不能寫成 ImportBook — 事件命名的過去式是語�
 slug: "domain_event_naming_past_tense"
 date: 2026-07-10
 draft: false
-description: "domain event 用過去式命名（BookImported）因為事件是已發生的事實；動詞開頭（ImportBook）是命令的形狀、訂閱者會誤讀成指令。字尾清單的自動檢查抓不住不規則動詞——偵測可機械化、判定要看語意。附一次版本終止：工作日誌宣稱的命名問題實際早已不存在、執行前驗前提省下整輪流程。"
+description: "domain event 用過去式命名（BookImported）因為事件是已發生的事實；動詞開頭（ImportBook）是命令的形狀、訂閱者會誤讀成指令。字尾清單的自動檢查抓不住不規則動詞——偵測寫得成腳本、判定要看語意。附一次版本終止：工作日誌宣稱的命名問題實際早已不存在、執行前驗前提省下整輪流程。"
 tags: ["ddd", "domain-event", "naming", "event-driven", "dart", "flutter"]
 ---
 
@@ -38,7 +38,7 @@ class book extends DomainEvent { }           // 錯：沒有業務語意
 final pastTenseEndings = ['ed', 'ted', 'ned', 'ched', 'ded'];
 ```
 
-這個啟發式的兩面漏洞都很典型：不規則動詞全部漏接（`Sent`、`Built`、`Run` 的過去式形態沒有 ed 字尾）、而碰巧以 ed 結尾的非過去式會被誤放。它能當**候選過濾器**（抓出 `BookImport` 這類明顯缺字尾的）、當不了**判決**——「這個名字是不是過去式的事實陳述」終究是語意判斷。這跟寫作 lint 的 [keyword bank 命中是候選不是判決](/report/keyword-bank-hit-is-candidate-not-verdict/)、跟[函式長度規則是觸發器](/work-log/flutter_function_decomposition_split_vs_keep/)是同一條分界的第三個現場：**可機械化的是偵測、不可機械化的是判定**，把前者當後者用就會又漏又誤。
+這個啟發式的兩面漏洞都很典型：不規則動詞全部漏接（`Sent`、`Built`、`Run` 的過去式形態沒有 ed 字尾）、而碰巧以 ed 結尾的非過去式會被誤放。它能當**候選過濾器**（抓出 `BookImport` 這類明顯缺字尾的）、當不了**判決**——「這個名字是不是過去式的事實陳述」終究是語意判斷。這跟寫作 lint 的 [keyword bank 命中是候選不是判決](/report/keyword-bank-hit-is-candidate-not-verdict/)、跟[函式長度規則是觸發器](/work-log/flutter_function_decomposition_split_vs_keep/)是同一條分界的第三個現場：**寫得成腳本的是偵測、寫不成腳本的是判定**，把前者當後者用就會又漏又誤。
 
 ## 版本的結局：前提不存在、0.3 小時止損
 

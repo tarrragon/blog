@@ -1,10 +1,10 @@
 ---
 name: ux-design-evaluation
-description: "UX / UI 設計的系統性評估：把「使用者被困住」類缺口從實機測試提前到設計階段。六維度各有可機械執行的表格——畫面狀態矩陣、gate fallback、輸入機制、錯誤恢復、導航、互動回饋，空白格即缺口。觸發詞：UX 設計、狀態矩陣、退出路徑、死胡同、gate、IME、錯誤訊息、retry、降級、deep link、back 行為、spinner、SnackBar、選中態、溢出。Do NOT use for 元件級契約（用 component-contract-design）。"
+description: "UX / UI 設計的系統性評估：把「使用者被困住」類缺口從實機測試提前到設計階段。六維度各有照步驟填、不需經驗判斷的表格——畫面狀態矩陣、gate fallback、輸入機制、錯誤恢復、導航、互動回饋，空白格即缺口。觸發詞：UX 設計、狀態矩陣、退出路徑、死胡同、gate、IME、錯誤訊息、retry、降級、deep link、back 行為、spinner、SnackBar、選中態、溢出。Do NOT use for 元件級契約（用 component-contract-design）。"
 license: MIT
 metadata:
   portable: true
-  version: 1.13.0
+  version: 1.14.0
   category: ux-design
 ---
 
@@ -12,7 +12,7 @@ metadata:
 
 UX / UI 設計的系統性評估方法。這個 skill 的出發點是一類反覆出現的事故：功能邏輯完整、實機測試才發現使用者被困在畫面裡出不去、按鈕按了沒有任何回饋、Face ID 失敗後沒有替代路徑。加一顆 back 按鈕是 5 分鐘的事，問題在設計階段沒有工具強制回答「每個狀態怎麼離開、每道關卡失敗怎麼辦、每個動作使用者怎麼知道系統收到了」。
 
-本 skill 把 UX 設計從「靠經驗想到」變成「靠方法查到」：每個評估維度都有可機械執行的表格或提問清單，填完表格、空白格自動暴露缺口。適用於任何前端 surface（mobile app、web、桌面），範例以 mobile 為主。
+本 skill 把 UX 設計從「靠經驗想到」變成「靠方法查到」：每個評估維度都有照步驟就填得完的表格或提問清單，填完表格、空白格自動暴露缺口。適用於任何前端 surface（mobile app、web、桌面），範例以 mobile 為主。
 
 **兩件事不在本 skill，但各有去處**——寫明去處是因為「不涵蓋」若沒有下一句，讀者會停在這裡：
 

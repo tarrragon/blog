@@ -231,7 +231,7 @@ moved {
 
 ### 第二步：參數化
 
-把寫死的值換成 prod 的參數：把現況值搬進 `environments/prod/terraform.tfvars`，module 改吃參數。`plan` 仍須零變更，因為參數值就等於現況值。這一步的驗證方式很機械：每個從字面值改成變數引用的欄位，都能在 tfvars 裡找到完全相同的值。
+把寫死的值換成 prod 的參數：把現況值搬進 `environments/prod/terraform.tfvars`，module 改吃參數。`plan` 仍須零變更，因為參數值就等於現況值。這一步的驗證逐欄比對就做得完，不需要判斷：每個從字面值改成變數引用的欄位，都能在 tfvars 裡找到完全相同的值。
 
 ### 第三步：新增其他環境
 

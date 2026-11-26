@@ -26,7 +26,7 @@ if (!ref.mounted) return;          // await 後、碰 ref 前
 state = state.copyWith(processedBooks: progress.processed);
 ```
 
-檢查點的擺放規則可以機械化：**每個 await 之後、第一次碰 `ref` 之前**。這次修復落了 16 個檢查點——對應這條流程的 16 個 async gap，漏任何一個就留下一條「使用者恰好在那個瞬間離開」的崩潰路徑。
+檢查點的擺放位置可以寫成一條照著套、不需要判斷的規則：**每個 await 之後、第一次碰 `ref` 之前**。這次修復落了 16 個檢查點——對應這條流程的 16 個 async gap，漏任何一個就留下一條「使用者恰好在那個瞬間離開」的崩潰路徑。
 
 ## 刻意不抽象：重複、但每個重複都有座標
 

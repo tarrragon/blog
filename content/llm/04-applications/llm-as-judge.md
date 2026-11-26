@@ -251,7 +251,7 @@ Production users
 
 ## 何時不該用 LLM-as-Judge
 
-1. **可機械驗證**：unit test、exact match、output schema validation — 用 deterministic rule 比 judge 穩
+1. **程式驗得出對錯**：unit test、exact match、output schema validation — 用 deterministic rule 比 judge 穩
 2. **極小 dataset（< 20 items）**：直接 human eval、不必 judge
 3. **判讀需要 domain expertise**：醫療 / 法律 / 安全的 high-stake 判讀、judge 不該替代 expert
 4. **Judge 能力 < test subject**：用 GPT-4o judge 評 o3 輸出、judge 看不懂 reasoning trace

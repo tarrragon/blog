@@ -151,7 +151,7 @@ llama-bench -m target.gguf --draft-model drafter.gguf \
    - 每個任務記錄 (input prompt, expected output 或評分標準)
 
 2. 定義評分機制
-   - Objective（最理想）：unit test、exact match、能機械驗證
+   - Objective（最理想）：unit test、exact match、程式比對得出對錯
    - Semi-objective：rubric 評分、人工或 LLM-as-judge
    - Subjective（最後手段）：人工 A/B 偏好
 

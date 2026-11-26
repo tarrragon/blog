@@ -3,7 +3,7 @@ name: case-first-module-workflow
 description: "Case-first + Agent team review 五階段流程、寫跨多章節教學模組（5+ 章、有 case 庫）時用。觸發詞：教學模組、case-first、case-driven、stage 1/2/3/4/5、agent team review、polish pass、fact vs derive、reviewer prompt、SSoT 對應、frame 重複、skeleton case vs rich case、case fidelity、自掃描 regex、模組擴章。Trigger when writing teaching modules across multiple chapters with an existing case library."
 license: MIT
 metadata:
-  version: 1.11.0
+  version: 1.12.0
   category: writing-methodology
 ---
 
@@ -103,7 +103,7 @@ Standard-driven 章節的寫作策略：
 6. **批量寫作 cadence 抽樣**（07 vendor batch 新發現）：寫 ≥ 5 個同類檔時、第 1-3 篇刻意產出 3 種 framing 變體（pilot phase）、進度 10-20% 跑跨檔抽樣（段首句 / 段末收尾語 / 過渡詞密度）、發現 cadence 同質化立即回頭加變體；不要等 Stage 3 reviewer 才發現連讀預期化、修正成本 N 倍。詳見 [principles/cadence-sampling-in-batch-writing](./references/principles/cadence-sampling-in-batch-writing.md)
 7. **合成章只寫「一句話案例 + link」**（11 模組新發現）：合成型框架章（無專屬 case、從全庫推導）會把 anchor 案例的機制 / 清單 / 時序吸進來當例證、靜默反轉 SSoT map 的主寫方向；合成章引用案例只允許一句話結論 + 數字 + link 主寫章、初稿可最後寫或回頭壓縮。詳見 [principles/ssot-correspondence](./references/principles/ssot-correspondence.md) 的合成章硬規則段
 
-寫完每章後 commit 一次或合併 commit。全部主章完成後、跑一輪 **回填輪**：大綱案例支撐欄、case 檔對應大綱欄、跟正文實際引用三方對照、機械性同步（詳見 [principles/ssot-correspondence](./references/principles/ssot-correspondence.md) 的寫後回填輪段）。
+寫完每章後 commit 一次或合併 commit。全部主章完成後、跑一輪 **回填輪**：大綱案例支撐欄、case 檔對應大綱欄、跟正文實際引用三方對照、照 grep 結果逐欄同步（詳見 [principles/ssot-correspondence](./references/principles/ssot-correspondence.md) 的寫後回填輪段）。
 
 ### Stage 3：Agent team 平行多輪審查
 
@@ -186,7 +186,7 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 14. **Review 設計 collapse 到單軸**（07 vendor batch 新發現）— 「找一個 reviewer 跑就好」「跑一輪就好」「body review 就夠」這類便利選擇會 collapse 掉七軸中的某幾條（Cadence / Timing / Surface / Scope）、對應違規 systematic miss；設計新 reviewer 維度時要 enumerate 七軸覆蓋狀況、不是直接寫 prompt。詳見 [principles/review-multi-axis-completeness](./references/principles/review-multi-axis-completeness.md)
 15. **外部分析文章被誤當 case fact** — analyst article / investor memo / industry commentary 是 source，不是 case 本體。Stage 0 若採集到這類材料，先用 compositional-writing 的 [source-to-teaching-analysis](../compositional-writing/references/source-to-teaching-analysis.md) 拆成事實、原作者判讀、本文推導；只有可驗證事實能進 case findings，原作者判讀只能當 hypothesis prior 或對照 frame。
 16. **合成章的引力**（11 模組新發現）— 合成型框架章把下游主寫章的案例細節吸走、SSoT map 主寫方向被靜默反轉；實測 6 個 High 重複展開 issue 有 4 個同此根因。修法是合成章硬規則（一句話 + link）、詳見 [principles/ssot-correspondence](./references/principles/ssot-correspondence.md)
-17. **預測性索引未回填**（11 模組新發現）— 大綱案例支撐欄與 case 檔對應大綱欄是 stage 0/1 的預測、正文完成後不回填就雙向失真、實測佔一致性 review 近半 issue（22 中 10）。正文完成後跑機械性回填輪、跟 lint 同級、詳見 [principles/ssot-correspondence](./references/principles/ssot-correspondence.md) 的寫後回填輪段
+17. **預測性索引未回填**（11 模組新發現）— 大綱案例支撐欄與 case 檔對應大綱欄是 stage 0/1 的預測、正文完成後不回填就雙向失真、實測佔一致性 review 近半 issue（22 中 10）。正文完成後跑回填輪（照 grep 結果逐欄更新）、跟 lint 同級、詳見 [principles/ssot-correspondence](./references/principles/ssot-correspondence.md) 的寫後回填輪段
 
 ## 跟其他 skill 的關係
 

@@ -33,7 +33,7 @@ RabbitMQ 跟 Kafka 都被歸在「message queue」這個傘狀詞下、但兩者
 
 ### 為什麼 paradigm 是主導、不是 application change
 
-application change 看起來工作量最大（consumer / producer 都要改），直覺會把它當主導維度。但 application change 的方向跟難度是由 paradigm 決定的：如果只是 AMQP client 換 Kafka client、心智模型不變，那 application change 是機械式翻譯、屬於 Schema/API 維度。實際上 consumer 不只是換 SDK、是要把「處理完才 ack、失敗就 nack 重投」的設計改成「拉一批、處理、commit offset、失敗自己重試或寫 DLQ topic」—— 這是責任模型的改變，不是 API 的改變。所以主結構走 paradigm、application change 是它的展開。
+application change 看起來工作量最大（consumer / producer 都要改），直覺會把它當主導維度。但 application change 的方向跟難度是由 paradigm 決定的：如果只是 AMQP client 換 Kafka client、心智模型不變，那 application change 是逐一對照 API 的翻譯、屬於 Schema/API 維度。實際上 consumer 不只是換 SDK、是要把「處理完才 ack、失敗就 nack 重投」的設計改成「拉一批、處理、commit offset、失敗自己重試或寫 DLQ topic」—— 這是責任模型的改變，不是 API 的改變。所以主結構走 paradigm、application change 是它的展開。
 
 ## 什麼 workload 真該遷、什麼不該
 

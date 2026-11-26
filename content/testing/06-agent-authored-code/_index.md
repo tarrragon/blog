@@ -32,7 +32,7 @@ tags: ["testing", "ai-generated-code", "test-oracle", "mutation-testing", "accep
 
 可執行的形式是把答案寫成一列：問了什麼、答案是什麼、依據是哪一條可指認的材料（需求文件的哪一段、可觀察面清單的哪一項、想得到的那個具體錯誤寫法）。**判成不適用、判成暫緩時這一列必填**——遵循會留下測試碼，豁免什麼都不留，所以舉證責任反過來由豁免的一方承擔。
 
-這是本模組把 [#278](/report/mechanical-constraints-buy-the-measured-number/) 套用在自己身上的結果：那張卡說機械約束會被最便宜的路徑滿足，而本模組開出的判定問題就是這種約束——最便宜的滿足方式是心裡想一下然後判它不適用。
+這是本模組把 [#278](/report/mechanical-constraints-buy-the-measured-number/) 套用在自己身上的結果：那張卡說工具自動檢查的品質約束會被最便宜的路徑滿足；本模組開出的判定問題雖然由人或 agent 回答，也是只看有沒有照做的約束，同樣會被最便宜的路徑滿足——最便宜的滿足方式是心裡想一下然後判它不適用。
 
 ## 資源很少時先做哪一件
 
@@ -51,4 +51,4 @@ tags: ["testing", "ai-generated-code", "test-oracle", "mutation-testing", "accep
 - → [LLM 4.5 人機協作拓樸](/llm/04-applications/human-ai-collaboration/)：那一章決定「人在什麼時機介入、怎麼介入」，本模組的「人審的位置要跟著移動」是同一個決策在驗證側的落點——自動判斷標準的能力決定介入頻率，而判斷標準能力正是本模組四章處理的對象
 - → [Backend 模組六 可靠性驗證](/backend/06-reliability/)：Release gate 與 fuzz campaign 是伺服器側的閘門設計，本模組的「品質閘門要成對設計」給的是挑選閘門的判斷標準，兩者互補不重疊
 - → [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)：測試邊界該畫在模組還是類別，由邊界畫錯時看得出來的幾個症狀診斷。agent 產出的程式碼該用哪一種風格要求它、以及為什麼 agent 情境下 Sociable 的理由更強，在那篇的「這套判斷標準預設行為已經是對的」一節；本模組承接它留下的下一個問題——行為由誰決定
-- → [#277 通過關卡不等於通過的是同一個程式](/report/passing-a-gate-does-not-pin-the-program/) 與 [#278 機械約束買到被量測的那個數字](/report/mechanical-constraints-buy-the-measured-number/)：本模組兩條主線抽出的可重用原則
+- → [#277 通過關卡不等於通過的是同一個程式](/report/passing-a-gate-does-not-pin-the-program/) 與 [#278 工具自動檢查的品質約束買到被量測的那個數字](/report/mechanical-constraints-buy-the-measured-number/)：本模組兩條主線抽出的可重用原則

@@ -76,7 +76,7 @@ AND NOT ALARM("scheduled-maintenance-window")
 
 ### 設計原則
 
-Composite Alarm 的設計應該反映事故判讀邏輯，而非機械式組合。三個常見模式：
+Composite Alarm 的設計應該反映事故判讀邏輯，而不是直接把現有的告警湊在一起。三個常見模式：
 
 **Symptom + cause 組合**：外部症狀（latency 高）加上內部原因（DB connection pool 飽和）同時成立才通知。避免 latency 短暫抖動就告警。
 

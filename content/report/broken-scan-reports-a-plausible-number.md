@@ -52,7 +52,7 @@ slug: "broken-scan-reports-a-plausible-number"
 
 **沿用一條在別的資料上有效的指令。** 行數差在幾個檔案上剛好對得起來，就被當成通用判斷標準用到整批上。指令的正確性綁在資料的性質上，換一批資料要重驗。
 
-**在同一批資料上驗證從它歸納出來的指令。** 這與 [#288](/report/keyword-pattern-does-not-transfer-across-genres/) 的第三個反模式同型，差別在那裡的對象是 pattern 的涵蓋範圍，這裡是指令的機械正確性。
+**在同一批資料上驗證從它歸納出來的指令。** 這與 [#288](/report/keyword-pattern-does-not-transfer-across-genres/) 的第三個反模式同型，差別在那裡的對象是 pattern 的涵蓋範圍，這裡的對象是指令本身有沒有寫錯。
 
 ---
 

@@ -7,7 +7,7 @@ tags: ["ddd", "read-model", "cqrs", "repository", "architecture"]
 aliases: ["/ddd/read-model-upgrade-signals/"]
 ---
 
-[讀模型](/software-design/ddd/knowledge-cards/read-model/)（read model）是為讀需求的形狀而建的查詢側模型：它回答「畫面或報表需要什麼形狀的資料」、而 [repository](/software-design/ddd/knowledge-cards/repository/) 回答「[aggregate](/software-design/ddd/knowledge-cards/aggregate-root/) 長什麼形狀」。讀側的設計是一道階梯、不是「要不要 [CQRS](/software-design/ddd/knowledge-cards/cqrs/)」的開關——多數專案的正確位置在階梯低處，升級由訊號驅動。本章給出階梯的四階、升級的五個訊號、以及一句可機械執行的自檢問句：
+[讀模型](/software-design/ddd/knowledge-cards/read-model/)（read model）是為讀需求的形狀而建的查詢側模型：它回答「畫面或報表需要什麼形狀的資料」、而 [repository](/software-design/ddd/knowledge-cards/repository/) 回答「[aggregate](/software-design/ddd/knowledge-cards/aggregate-root/) 長什麼形狀」。讀側的設計是一道階梯、不是「要不要 [CQRS](/software-design/ddd/knowledge-cards/cqrs/)」的開關——多數專案的正確位置在階梯低處，升級由訊號驅動。本章給出階梯的四階、升級的五個訊號、以及一句照著問就得出答案的自檢問句：
 
 > 這個查詢回傳的是**讀的形狀**、還是 **aggregate 的形狀**？
 

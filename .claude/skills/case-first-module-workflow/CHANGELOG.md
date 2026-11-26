@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.12.0 — SKILL.md 與 `ssot-correspondence` 的「機械性同步」「機械性回填」改寫成實際的做法：照 grep 結果逐欄同步或更新。舊條目裡的同類措辭一併改寫。流程與判斷標準沒有改。
+
 **Version**: 1.11.0 — `case-collection-coverage-gap` 的「運維」改成台灣用語「維運」。
 
 **Version**: 1.10.0 — `self-scan-regex`〈用語不一〉與 `stage-5-polish-pass` 拿掉「術語統一」：grep 列出位置後逐處確認所指，instance、node、replica、pod 定義不同，不因字面相近就合併，同一台機器依句子談雲端資源或叢集成員各用 instance 或 node，談同一層時才用同一個詞；grep 補上英文與大小寫。
@@ -29,6 +31,6 @@
 **Version**: 1.5.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
 
 **Version**: 1.5.0 — Stage 2 寫作前加「承重論點先 steelman 再寫」gate：分析 / 合成型模組若架在一個承重論點上（方法論主張、跨 case 合成 frame、核心分類假設），動筆前先對它跑對抗性挑戰當生產閘門、別等 Stage 3 才挑戰（同 cadence 抽樣「別等 reviewer」邏輯、只在 Stage 3 抓＝錯誤已寫進 N 章跨章回改）；承重論點常是全稱 / 唯一性宣稱、別把「還沒找到反例」當「不存在反例」；挑戰交對抗 / 異源。從神經多樣性方法論生產順序事故抽出（對應 report 卡 #236）。
-**Version**: 1.4.0 — 從 backend/11 API 設計模組（10 主章、54 case、3 reviewer 63 issue）retrospective 回流兩個新 pattern：(1) 合成章的引力 — 合成型框架章吸走主寫章案例細節、SSoT map 主寫方向被靜默反轉、加「一句話案例 + link」硬規則（Stage 2 核心條目 7、反覆陷阱 16、ssot-correspondence 新段）；(2) 預測性索引要有寫後回填輪 — 大綱案例支撐欄與 case 檔對應大綱欄是預測、正文完成後跑機械性回填、跟 lint 同級（Stage 2 尾段、反覆陷阱 17、ssot-correspondence 自掃描提示 5-6）。
+**Version**: 1.4.0 — 從 backend/11 API 設計模組（10 主章、54 case、3 reviewer 63 issue）retrospective 回流兩個新 pattern：(1) 合成章的引力 — 合成型框架章吸走主寫章案例細節、SSoT map 主寫方向被靜默反轉、加「一句話案例 + link」硬規則（Stage 2 核心條目 7、反覆陷阱 16、ssot-correspondence 新段）；(2) 預測性索引要有寫後回填輪 — 大綱案例支撐欄與 case 檔對應大綱欄是預測、正文完成後照 grep 結果回填、跟 lint 同級（Stage 2 尾段、反覆陷阱 17、ssot-correspondence 自掃描提示 5-6）。
 
 **Version**: 1.0.0
