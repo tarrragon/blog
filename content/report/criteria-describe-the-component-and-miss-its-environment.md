@@ -60,3 +60,4 @@ slug: "criteria-describe-the-component-and-miss-its-environment"
 - [判斷標準少一條獨立的軸時，它不會停下來，它會篤定地指向錯的答案](/report/missing-axis-yields-a-confident-wrong-answer/)：環境屬性多半是那張卡說的獨立的軸，判斷標準照樣走完並給出錯答案；本卡補上這類軸的一個來源（元件所在的環境）與找它的方向。
 - [軸是對的，而它底下有一個從未被當成選擇的實作前提](/report/unstated-implementation-premise-under-a-correct-axis/)：本卡的實例裡，沒被寫出來的前提是「元件獨佔它的環境」；那張卡的修法是讓前提顯形，本卡給出這一類前提該往哪三個方向問。
 - [真值在稿件之外的宣稱，讀多少遍都驗不出來](/report/text-review-cannot-reach-external-truth/)：渲染管線全畫面共用是平台的事實，稿件裡讀不出來；這一則 finding 由個案實跑帶出、再回平台的原始碼確認，是那張卡「只能用跑的」那一類。
+- [規則替執行者預測平台或元件內部的行為時，個案實跑每一輪都從原始碼找到下一個分支：能量的改寫成量法，修法裡的推導先驗過再寫](/report/rule-predicting-platform-internals-grows-a-branch-per-round/)：本卡讓個案實跑找出漏掉的環境；那張卡處理找到之後作者怎麼收：判斷標準在預測平台行為時，每補一個環境分支，下一輪又找到下一個，修法是把預測改寫成量法。
