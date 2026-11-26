@@ -4,7 +4,7 @@ description: "寫多篇章節後做多輪 agent reviewer audit 的標準流程�
 license: MIT
 metadata:
   portable: true
-  version: 2.55.0
+  version: 2.56.0
   category: writing-methodology
 ---
 
@@ -117,7 +117,7 @@ Round 1-3 是硬底線，但每一輪裡的 frame 不是全部都跑。主 sessi
 | 2-B⁶ 術語探針                          | 有可疑的高頻用詞、口語譬喻，或 1-A 拿不準的譯名            | 沒有可疑詞不跑；同批沒有控制詞的結果不採用；定義在 `references/round-2-probes.md`                                    |
 | 2-B⁷ 類型探針                          | 定位是人類教材、而內容帶操作性材料時                       | 同批沒有兩份控制文件的結果不採用；定義在 `references/round-2-probes.md`                                              |
 | 2-B⁸ 集合探針                          | 審查對象是一份拆成多檔的文件、或一組互相引用的檔案         | 單檔不適用（交界是拆分造出來的）；入口檔要另外跑一批只餵入口檔；定義在 `references/round-2-probes.md`                |
-| 2-B⁹ 主謂抽取探針                      | 稿件有給人讀的散文段落就跑                                 | 看稿件有沒有散文段落；探針只抽取主詞與動詞，判定由主 session 照 compositional-writing SKILL.md〈每一句先填槽位再成句（生成端規格）〉那一問做；定義在 `references/round-2-probes.md` |
+| 2-B⁹ 主謂抽取探針                      | 稿件有給人讀的散文段落就跑                                 | 看稿件有沒有散文段落；探針只抽取主詞與動詞，判定由主 session 照 compositional-writing SKILL.md〈每一句先填槽位再成句（生成端規格）〉那一項檢查做；定義在 `references/round-2-probes.md` |
 | 2-C 題目範圍 + 跨 surface              | 一律跑                                                     | 無條件；標題是寬泛傘狀詞時範圍分不開、先收窄標題；所屬分類的範圍另開一欄判，不併進標題那一欄                         |
 | 2-D 體例與定位一致                     | 一律跑                                                     | 無條件；派發前的定位宣告是它的輸入，缺宣告就跑不了                                                                   |
 | 3-A 自審 / 3-B Steelman / 3-C Outbound | 一律跑                                                     | 無條件                                                                                                               |

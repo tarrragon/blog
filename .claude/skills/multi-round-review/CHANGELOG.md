@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.56.0 — 跟寫作 skill 1.81.0 一起改：分流用的概念改名為「固定的判定條件」（planning-and-stopping〈設計稽核〉第 5 步「寫法」那一層改成「確認它有沒有固定的判定條件」，理由段一起改；rule-nonconvergence 卡的兩處）；主詞規則的「做不做得了這個動作」「做得了這個動詞嗎」改成「能不能執行」（rule-nonconvergence 卡、round-2-probes 主謂抽取探針那一段，「那一問」改成「那一項檢查」）；「照著問就判得出」寫成「一項明確的檢查」並寫出判定要靠哪一種了解（round-1-compliance 物理化錯配那一項與「拿掉之後論證是否還成立」那一項、review-scale-does-not-buy-independent-origin 卡兩處）。round-1-compliance 的「教室形式三形態」改成「教室形式」，並寫出形態四到形態六的 pattern 在 bank；「那一問」改成「那一項檢查」（round-1-compliance、SKILL.md 主謂抽取探針那一列）；planning-and-stopping 理由段「縮成一問」那一句改成「一項檢查」。rule-nonconvergence 卡〈修法〉「把判斷寫成一個問句」與判讀徵兆、關係段跟著改成「檢查項」（〈論述基礎與限制〉裡描述當時必修的「問句帶處置算不算分支」是經過，不改）。
+
 **Version**: 2.55.0 — `planning-and-stopping.md`〈設計稽核〉第 5 步「寫法」那一層與 `rule-nonconvergence-reflect-form-then-understanding` 的兩處（〈論述基礎與限制〉的「寫法」判定句與〈核心原則〉的「寫法先查」分流句），從「照規則就判得出的答案」加就地定義，改成寫作 skill 定名的「只憑問句與輸入就判得出的答案」，不再就地寫定義；第 5 步與那張卡在正文第一次用到的位置（〈論述基礎與限制〉的「寫法」）寫出定義在 compositional-writing `references/reference-authoring-standards.md`〈要靠判斷的條文寫成留意項〉第二段。舊定義以「同一條規則」為對象，寫規則的人先替判斷訂門檻就判得出；新定義以判斷的問句為對象，「有沒有這種答案」本身寫成留意項，寫條文的人在紀錄寫出問句與依據。同一份檔理由段「模型有沒有偏」那一句的「沒有固定的答案」改成同一個名字。
 
 **Version**: 2.54.0 — `planning-and-stopping.md`〈設計稽核〉第 5 步「寫法」那一層與 `rule-nonconvergence-reflect-form-then-understanding`〈核心原則〉「寫法先查」的分流句（同一張卡〈論述基礎與限制〉轉述同一個查法的那一句一起改），從「有沒有固定的答案」改成「有沒有照規則就判得出的答案（兩個執行者拿同一條規則、同一份輸入，會得到同一個判定）」：「固定的答案」會被讀成「有標準答案」，而幾乎每個判斷都有一個對的答案，執行者會一律走「照條件寫」那一支。同一張卡的「兩個有固定答案的選擇」改成「兩個選定之後照做就不需要判斷的選擇」。依據是 compositional-writing〈「機械」當修飾語〉補上的分流句寫法。判斷標準與處置沒有改。
