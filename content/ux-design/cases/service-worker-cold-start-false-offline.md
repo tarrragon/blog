@@ -10,7 +10,7 @@ tags: ["ux-design", "case-study", "state-machine", "chrome-extension", "web", "s
 
 ## 觀察
 
-電子書庫總覽 Chrome 擴充功能（book_overview_v1）的 popup 開啟時向 background service worker 查詢狀態。Manifest V3 的 service worker 是事件驅動、閒置即卸載 — popup 開啟的瞬間 SW 可能正在冷啟動、初始化未完成、不回應 `GET_STATUS`。popup 等待期間顯示「正在檢查狀態...」，2 秒 timeout 後轉為「離線」且不再自動恢復 — 冷啟動偶爾超過 2 秒（極端 I/O、低階裝置，低頻但真實發生過）時，系統實際正常、使用者看到的卻是永久離線（`src/background/background.js:272-284`，ticket 1.1.0-W1-019）。
+電子書庫總覽 Chrome 擴充功能（book_overview_v1）的 popup 開啟時向 background service worker（見 [Extension Service Worker（擴充功能的背景程式）](/ux-design/knowledge-cards/extension-service-worker/) 卡）查詢狀態。Manifest V3 的 service worker 是事件驅動、閒置即卸載 — popup 開啟的瞬間 SW 可能正在冷啟動、初始化未完成、不回應 `GET_STATUS`。popup 等待期間顯示「正在檢查狀態...」，2 秒 timeout 後轉為「離線」且不再自動恢復 — 冷啟動偶爾超過 2 秒（極端 I/O、低階裝置，低頻但真實發生過）時，系統實際正常、使用者看到的卻是永久離線（`src/background/background.js:272-284`，ticket 1.1.0-W1-019）。
 
 修復採雙管：查詢端加握手重試，加上被查詢端在初始化期間就回應 baseline 的 `initializing` 狀態 — popup 據此顯示「初始化中」而非落入 timeout 判離線。
 

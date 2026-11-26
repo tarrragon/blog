@@ -20,7 +20,7 @@ tags: ["ux-design", "case-study", "interaction-feedback", "chrome-extension", "w
 
 ## 判讀
 
-1. **結果通知有一個隱含前提：結果會正確到達 UI**。回饋設計通常聚焦「到達之後怎麼呈現」（訊息形式、通知元件），但 popup / content script / service worker 是三個獨立 context，結果要跨兩次訊息通道才到 UI — 每一跳都是回饋鏈路的一部分，通道語意錯誤等於回饋設計全部白做。
+1. **結果通知有一個隱含前提：結果會正確到達 UI**。回饋設計通常聚焦「到達之後怎麼呈現」（訊息形式、通知元件），但 popup / content script / service worker（見 [Extension Service Worker（擴充功能的背景程式）](/ux-design/knowledge-cards/extension-service-worker/) 卡）是三個獨立 context，結果要跨兩次訊息通道才到 UI — 每一跳都是回饋鏈路的一部分，通道語意錯誤等於回饋設計全部白做。
 
 2. **成功誤報失敗比沒有回饋更糟**。零回饋讓使用者困惑；誠實度反轉讓使用者採取錯誤行動 — 重做一次提取（資料重複）、回報 bug、放棄使用。UI 的宣告與系統實際狀態相反時，使用者對介面的每一個訊息都會失去信任。
 

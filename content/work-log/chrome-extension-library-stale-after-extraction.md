@@ -8,7 +8,7 @@ slug: "chrome-extension-library-stale-after-extraction"
 
 事件說明：2026-11-26，一個 Manifest V3 的 Chrome 擴充功能（未封裝、開發版建置），使用者在書城（Readmoo）的書櫃頁按下提取，書櫃頁首寫著「擁有 1090 本書（封存 21、借出 1）」。這個擴充功能的書目存在 `chrome.storage.local`，最早一批是 2026-03 提取的 96 筆。排查的人改程式、讀程式碼，但沒有使用者瀏覽器的存取權：log 與 storage 的內容由使用者在自己的 DevTools 讀出、貼回給排查的人。
 
-這篇整理一次「提取成功、書庫頁卻停在舊資料」的排查。排查的方法是沿著資料流在每一段取本數，找出第一次對不上的是哪兩段之間；接著整理這次在本數對不上的那幾段找到的成因，popup 預告的本數取自畫面上已載入的元素，而頁首總數的解析規則對不上實際字樣；轉送層把自己的附註寫進事件處理器拿來組 storage key 的欄位，書目寫進一個沒有人讀的 key；同一個書城 ID 在 content script 與事件處理器兩側用了兩種寫法；舊版程式存下的紀錄識別碼取自另一種來源，重新提取時對不上而新增重複。最後是修好程式之後，舊程式寫下的資料怎麼處理。擴充功能的 content script、service worker 與 `chrome.storage` 各自負責什麼、修改之後何時要重新載入，以及 storage 正確而畫面沒有重新讀取（讀取端自己留著舊副本）的成因，這篇沒有處理。
+這篇整理一次「提取成功、書庫頁卻停在舊資料」的排查。排查的方法是沿著資料流在每一段取本數，找出第一次對不上的是哪兩段之間；接著整理這次在本數對不上的那幾段找到的成因，popup 預告的本數取自畫面上已載入的元素，而頁首總數的解析規則對不上實際字樣；轉送層把自己的附註寫進事件處理器拿來組 storage key 的欄位，書目寫進一個沒有人讀的 key；同一個書城 ID 在 content script 與事件處理器兩側用了兩種寫法；舊版程式存下的紀錄識別碼取自另一種來源，重新提取時對不上而新增重複。最後是修好程式之後，舊程式寫下的資料怎麼處理。擴充功能的 content script、service worker 與 `chrome.storage` 各自負責什麼、修改之後何時要重新載入（前兩者見 [Content Script（內容腳本）](/ux-design/knowledge-cards/content-script/) 卡與 [Extension Service Worker（擴充功能的背景程式）](/ux-design/knowledge-cards/extension-service-worker/) 卡），以及 storage 正確而畫面沒有重新讀取（讀取端自己留著舊副本）的成因，這篇沒有處理。
 
 ## 資料流各段的本數從哪裡讀
 

@@ -1142,6 +1142,11 @@
    "module": "backend"
   },
   {
+   "name": "Content Script",
+   "card": "ux-design/knowledge-cards/content-script",
+   "module": "ux-design"
+  },
+  {
    "name": "Content Security Policy",
    "card": "backend/knowledge-cards/content-security-policy",
    "module": "backend"
@@ -2015,6 +2020,11 @@
    "name": "Exponential Backoff",
    "card": "backend/knowledge-cards/exponential-backoff",
    "module": "backend"
+  },
+  {
+   "name": "Extension Service Worker",
+   "card": "ux-design/knowledge-cards/extension-service-worker",
+   "module": "ux-design"
   },
   {
    "name": "Extension Type",
@@ -6612,6 +6622,11 @@
    "module": "backend"
   },
   {
+   "name": "內容腳本",
+   "card": "ux-design/knowledge-cards/content-script",
+   "module": "ux-design"
+  },
+  {
    "name": "內容遞送網路",
    "card": "devops/infra/knowledge-cards/cdn",
    "module": "devops"
@@ -7249,6 +7264,11 @@
   {
    "name": "操作暗示",
    "card": "ux-design/knowledge-cards/affordance",
+   "module": "ux-design"
+  },
+  {
+   "name": "擴充功能的背景程式",
+   "card": "ux-design/knowledge-cards/extension-service-worker",
    "module": "ux-design"
   },
   {

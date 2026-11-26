@@ -11,7 +11,7 @@ slug: "forwarder-annotation-overwrites-downstream-field"
 
 這張卡處理的情形：資料從產生端經過一層以上的轉送才到使用端，轉送層替資料加上自己的附註（從哪裡送來、何時轉送），而使用端拿資料裡的某個欄位決定資料寫到哪裡。
 
-來源是 2026-11-26 一個 Chrome 擴充功能（Manifest V3）的排查。content script 從書城網頁提取書目，經過 service worker 裡的訊息轉送層送到事件處理器，事件處理器再寫進 `chrome.storage`。提取解析出 1068 本、寫入前也是 1068 本，書庫頁讀到的卻是幾個月前的 96 本。寫入的 key 是 `[object Object]_books`：轉送層在事件資料的 `source` 欄位放進轉送資訊物件（`{ type: 'content-script', tabId, url }`），事件處理器原本拿 `source` 當書城 ID，用 `` `${source}_books` `` 組 key。content script 送出的事件本來沒有帶 `source`，事件處理器一直靠預設值得到書城 ID。同一次排查另外發現同一個書城的 ID 在兩層有兩種寫法：content script 寫 `books-com-tw`，事件處理器寫 `books_com_tw`，就算傳到的是字串，博客來的書目也會寫進沒有人讀的 key。完整的排查過程見 [Chrome 擴充功能提取書目之後書庫頁停在舊資料的排查：逐段計數、頁首總數的解析、轉送層覆蓋欄位寫錯 storage key、舊識別碼對不上而新增重複、修好之後的殘留資料](/work-log/chrome-extension-library-stale-after-extraction/)。
+來源是 2026-11-26 一個 Chrome 擴充功能（Manifest V3）的排查。content script（見 [Content Script（內容腳本）](/ux-design/knowledge-cards/content-script/) 卡）從書城網頁提取書目，經過 service worker（見 [Extension Service Worker（擴充功能的背景程式）](/ux-design/knowledge-cards/extension-service-worker/) 卡）裡的訊息轉送層送到事件處理器，事件處理器再寫進 `chrome.storage`。提取解析出 1068 本、寫入前也是 1068 本，書庫頁讀到的卻是幾個月前的 96 本。寫入的 key 是 `[object Object]_books`：轉送層在事件資料的 `source` 欄位放進轉送資訊物件（`{ type: 'content-script', tabId, url }`），事件處理器原本拿 `source` 當書城 ID，用 `` `${source}_books` `` 組 key。content script 送出的事件本來沒有帶 `source`，事件處理器一直靠預設值得到書城 ID。同一次排查另外發現同一個書城的 ID 在兩層有兩種寫法：content script 寫 `books-com-tw`，事件處理器寫 `books_com_tw`，就算傳到的是字串，博客來的書目也會寫進沒有人讀的 key。完整的排查過程見 [Chrome 擴充功能提取書目之後書庫頁停在舊資料的排查：逐段計數、頁首總數的解析、轉送層覆蓋欄位寫錯 storage key、舊識別碼對不上而新增重複、修好之後的殘留資料](/work-log/chrome-extension-library-stale-after-extraction/)。
 
 限制：只有這一次事件，兩個形態都出在同一個專案的同一條資料流上；其他語言與框架裡的對應寫法（物件展開、`Object.assign`、dict 的 `update`、訊息佇列的 middleware）是依同一個機制推得的，沒有在別的專案量過。
 

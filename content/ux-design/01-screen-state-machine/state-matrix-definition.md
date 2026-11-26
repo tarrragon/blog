@@ -68,7 +68,7 @@ tags: ["ux-design", "state-machine", "state-matrix", "navigation"]
 
 ## 容易漏列的狀態：initializing
 
-畫面查詢的對象有自己的生命週期時（browser extension 的 service worker、遠端服務、另一個 process 的常駐程式），畫面開啟瞬間「對方還沒醒、還不知道狀態」是常態而非邊角 — initializing 是一個真實狀態，在矩陣裡需要自己的一行：顯示「初始化中」、退出路徑是收到回應轉入正常態、timeout 後才轉入離線或錯誤。
+畫面查詢的對象有自己的生命週期時（browser extension 的 service worker（見 [Extension Service Worker（擴充功能的背景程式）](/ux-design/knowledge-cards/extension-service-worker/) 卡）、遠端服務、另一個 process 的常駐程式），畫面開啟瞬間「對方還沒醒、還不知道狀態」是常態而非邊角 — initializing 是一個真實狀態，在矩陣裡需要自己的一行：顯示「初始化中」、退出路徑是收到回應轉入正常態、timeout 後才轉入離線或錯誤。
 
 把 initializing 與離線合併的畫面，會把「查詢對象醒得慢」呈現成「離線」。一個 Chrome extension 的 popup 在 service worker 冷啟動超過 2 秒 timeout 時顯示「離線」且不再自動恢復 — 低頻但真實發生，系統實際正常、使用者看到的是永久離線。修法是查詢端加握手重試、被查詢方在初始化期間就回應 baseline 的 initializing 狀態（[Service Worker 冷啟動期間的假離線 — initializing 狀態未建模](/ux-design/cases/service-worker-cold-start-false-offline/)）。列狀態時（第一步）多問一句：查詢對象跟畫面同生命週期嗎？不同就補 initializing。
 

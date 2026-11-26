@@ -31,3 +31,5 @@ UX 設計教學中出現的關鍵術語卡片。每張卡片說明一個語意�
 | [DTCG Format（具名設計值的交換格式）](/ux-design/knowledge-cards/dtcg-format/)                                               | 在設計工具、轉換工具與程式碼之間交換 token 的 JSON 格式——什麼時候當唯一來源、什麼時候手寫 CSS 自訂屬性就夠         |
 | [Computed Style（計算後的樣式）](/ux-design/knowledge-cards/computed-style/)                                                 | 瀏覽器處理完層疊與繼承後元素實際套用的值——getComputedStyle 讀到哪一個階段、哪些狀態與元素讀不到                    |
 | [Cascade Layer（層疊分層）](/ux-design/knowledge-cards/cascade-layer/)                                                       | `@layer` 的順序排在特定性之前——把對方的 CSS 放進較低的層何時會贏、自己放進 layer 何時反而會輸                      |
+| [Extension Service Worker（擴充功能的背景程式）](/ux-design/knowledge-cards/extension-service-worker/)                       | Chrome 擴充功能依事件啟停的背景執行環境——被停掉時全域變數歸零、查詢它的畫面多一個初始化中的狀態                    |
+| [Content Script（內容腳本）](/ux-design/knowledge-cards/content-script/)                                                     | 注入網頁、碰得到 DOM 的那段擴充功能程式——讀不到網頁的變數、改了程式要重新整理網頁才生效                            |
