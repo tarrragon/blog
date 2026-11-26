@@ -17,7 +17,7 @@
 
 請使用者貼 log 時寫明是哪一個分頁的 Console。使用者貼錯 console 是常見情形：貼回來的是 service worker 的啟動 log，而要找的提取結果在網頁那一側。
 
-log 很多時請使用者在 Console 的 Filter 欄輸入一個關鍵字（結構化 log 的訊息代碼欄位、`[SAVE]` 這類前綴），只貼篩出來的幾行。service worker 重啟、網頁重新整理之後舊的 log 就清掉；篩不到時請使用者先開著網頁的 Console 與 service worker 的 Console、Filter 留空，再重做一次操作。
+log 很多時請使用者在 Console 的 Filter 欄輸入一個關鍵字（結構化 log 裡標示訊息種類的欄位值、`[SAVE]` 這類前綴），只貼篩出來的幾行。service worker 重啟、網頁重新整理之後舊的 log 就清掉；篩不到時請使用者先開著網頁的 Console 與 service worker 的 Console、Filter 留空，再重做一次操作。
 
 ## 讀 storage：service worker 的 Console 直接讀得到
 

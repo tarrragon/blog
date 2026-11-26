@@ -25,7 +25,7 @@ slug: "chrome-extension-library-stale-after-extraction"
 
 本數第一次對不上的是哪兩段之間，缺陷就在前一段的輸出或後一段的輸入。照這張表逐段比對本數，前提是每一段都有一個讀得到的數字；有一段讀不到時，錯在它的前面還是後面就分不出來。相鄰兩段之間有已知理由的差額（封存、借出、刻意保留的紀錄）是口徑不同，不是錯，但扣除的規則本身也要拿實際字樣對照過。比對與清理資料的通用做法見 [Data Reconciliation](/backend/knowledge-cards/data-reconciliation/) 卡。
 
-這幾段的 log 各自只出現在各自的 DevTools：書城網頁按 F12；service worker 在 `chrome://extensions` 該擴充功能的「Service Worker」連結；書庫頁在那個分頁按 F12。使用者在 Console 的 Filter 欄輸入 log 的固定前綴或代碼（`SCROLL_LOAD_COMPLETED`、`EXTRACTION_COMPLETED`、`[SAVE]`），就能只把篩出來的那幾行貼回給排查的人。
+這幾段的 log 各自只出現在各自的 DevTools：書城網頁按 F12；service worker 在 `chrome://extensions` 該擴充功能的「Service Worker」連結；書庫頁在那個分頁按 F12。使用者在 Console 的 Filter 欄輸入 log 的固定前綴或訊息種類（`SCROLL_LOAD_COMPLETED`、`EXTRACTION_COMPLETED`、`[SAVE]`），就能只把篩出來的那幾行貼回給排查的人。
 
 storage 裡實際存了什麼，使用者在 service worker 的 Console 跑程式讀。先列出每個 key 與它底下的筆數，因為資料寫進錯的 key 時，只讀預期的 key 看不到它：
 
