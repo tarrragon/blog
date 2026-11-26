@@ -6,7 +6,7 @@
 | --- | --- |
 | `interaction-feedback.md`（入口） | 核心原則／三層回饋模型／按鈕級回饋（按鈕流程與六種按鈕狀態） |
 | `interaction-feedback-waiting-and-notification.md`（本檔） | 時間門檻與回饋策略／畫面級回饋／Spinner vs Skeleton／結果通知的形式選擇 |
-| `interaction-feedback-component-semantics.md` | 元件語意與版面檢查（切換標籤／可點性／選中態／溢出／版面保障） |
+| `interaction-feedback-component-semantics.md` | 元件語意與版面檢查（切換標籤／可點性／選中態／截斷／版面保障） |
 | `interaction-feedback-checklist.md` | 反模式速查／檢查清單／參考來源（三份內容檔共用） |
 
 適用：判斷 loading indicator 的時機與形式（spinner / skeleton / 進度條）；決定非同步操作等待期間的回饋策略（動畫過渡 / spinner / 進度指示 / 取消選項）；連線 / 配對 / 同步類多步驟流程的畫面級回饋；操作結果的通知形式選擇（SnackBar / Dialog / Banner / Bottom Sheet）。

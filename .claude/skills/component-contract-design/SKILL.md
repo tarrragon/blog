@@ -4,7 +4,7 @@ description: "從規格狀態表、設計畫布或既有程式碼推導元件目
 license: MIT
 metadata:
   portable: true
-  version: 3.23.0
+  version: 3.24.0
   category: ui-design
 ---
 
@@ -42,6 +42,7 @@ metadata:
 - `references/appendix-examples.md`：各步的範例與正例、卡住時的症狀處置。
 - `references/addresses.md`：正文出現簡稱而不知它在哪。
 - `references/design-system-token-layer.md`：前置「design token 層」齊不齊的判定（每一類都有具名值、名字依用途或階命名、單一定義位置、有檢查擋新的寫死值）、哪些值寫成 token、分層的條件、加新主題（暗色、品牌）之前留意同一個 semantic token 在不同位置要不同的值、來源格式（平台原生寫法或 DTCG 檔）、Web 端的限制、Flutter 端的限制（`static const` 色值與 `ThemeExtension`）、拿掉陰影或改用框線表達深度之前留意只靠陰影劃邊界的元件、擋寫死值的檢查與它的正對照、寫給實作 agent 的樣式限制（含批次換色票）。
+- `references/mobile-platform-notes.md`：元件在手機 APP（Flutter、iOS、Android）上實作時，該檔的寫法與數字實測時的配置（配置不同時在自己的設備上量），每一個鋪滿螢幕或貼著下緣的容器要寫的系統列樣式（疊加層沒有自己的宣告就沿用下面那一層、沒給值的欄位不會被重設、targetSdk 35 以上的 APP 在 Android 15 以上的裝置上底色欄位不生效、系統列的底色是 APP 畫在底下的顏色）、外觀小於命中區下限時用透明區補足並扣掉容器間距、會換內容的文字固定行高、鍵盤開著時返回鍵的行為、截圖證據在共用層改動之後作廢、模擬器驗不到的狀態與三鍵導覽和手勢導覽各量一次。
 - `references/web-platform-notes.md`：元件以 HTML／CSS 實作時，契約齊全而畫面不符的層疊成因（範圍重設的特定性、宿主頁面的樣式、只替部分規則提高優先度、subgrid 與獨立格式化脈絡）、step 3 組合規則與測試契約要多寫的內容、路徑 C 的計算後樣式快照、元件票在正式頁面上的驗收、改動範圍與影響範圍分開寫。
 
 **時序**：本 skill 在 `version-bootstrap` skill 地基波的第 3 塊（UX 審查）之後、第 4 塊（元件庫實作）之前執行，互動反應規格是它的輸入。規劃波前段的 L3 章節得先只含元件清單與禁用對照；契約由本程序補齊，不在規劃波內補。
@@ -164,6 +165,7 @@ metadata:
 | `foundation-design` skill | 地基入口與路由：接手模式的 token 盤點→命名→固化順序、特徵測試閘門、測試基座 | 建 token 層的人要交付什麼（齊不齊的判定、分層、加主題與拿掉陰影之前要留意什麼、來源格式、檢查）寫在本 skill 的 `references/design-system-token-layer.md`，`foundation-design` 的 UI 維度路由到它；從既有程式碼萃取 token 的順序仍照 `foundation-design`。元件契約只引用 token 名，不在契約裡歸納 token 階；step 2 的路徑 C 沿用其接手順序 |
 | `impeccable` skill（或其他產生 DESIGN.md 的設計 skill） | 視覺方向：字型、色彩、整體風格與 DESIGN.md | token 的值由視覺方向決定；token 怎麼取名、分層、存在哪一份來源檔、怎麼檢查照本 skill 的 `references/design-system-token-layer.md`。DESIGN.md 帶 token 時算多一個讀取端，照該檔〈來源格式：平台原生寫法或 DTCG 檔〉選一份當來源；兩邊的取名建議衝突時照本 skill，選擇寫進專案的 L2 |
 | `frontend-with-playwright` skill | 前端開發協議：DOM 結構先量再寫 CSS、CSS 與 JS 的分工、Playwright 驗證、重構 CSS 而不改外觀的比對流程 | 本 skill 的 Web 端驗收（`references/web-platform-notes.md`）要求量計算後樣式；快照比對的差異怎麼歸類、什麼時候退回，照它的 `references/refactor-without-visual-change.md` |
+| `flutter-device-verification` skill | 在 Android 實機與 iOS 模擬器上操作 Flutter APP 並截圖：腳本換頁與點按、截圖當下記版本、要拍的狀態清單與交付紀錄、設備設定的還原 | 本 skill 的手機 APP 驗收（`references/mobile-platform-notes.md`〈驗收的證據〉）要求截圖帶版本、寫出沒拍到的狀態；拍攝與紀錄格式照它的流程 |
 | `ux-design-evaluation` skill | 畫面級：狀態矩陣、gate、輸入、錯誤恢復、導航；回饋的時間門檻與通知形式由它判斷 | 本 skill 只管元件級契約。同一類失效在這裡寫成契約欄位（內容政策、空間不足策略）而非審查項；回饋契約的通道與狀態集來源由規格撰寫者查形態因素矩陣填寫，不重新判斷時間門檻 |
 | 執法工具（Dart 專案為 `dart-style-guardian` skill；Web 專案為 Stylelint 或專案自寫的檢查，擋的寫法與正對照見 `references/design-system-token-layer.md`〈檢查：擋什麼、在哪裡擋、用什麼工具、例外怎麼寫、怎麼確認它在讀〉） | 抓裸值與寫死文字 | 原生元件直用的定義與判定權威在本 skill，不在執法工具——PostEdit hook 含八個 pattern 攔下新增的原生元件直用，但批次掃描腳本不偵測；判定與清點仍寫在本 skill 的 step-3〈原生元件禁用對照表〉。執法工具掃元件層、不掃組合層，所以它全綠仍可能重疊——容器缺件要靠本 skill 的判別問句抓 |
 | `version-bootstrap` skill 地基波 | 編排 i18n → design-system → UX 審查 → 元件庫四塊的順序 | 本 skill 落在第三塊之後、第四塊之前；第四塊的前置 checkpoint 是〈契約齊全的定義〉 |

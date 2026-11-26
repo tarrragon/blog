@@ -1,0 +1,5 @@
+# flutter-device-verification 版本紀錄
+
+新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
+
+**Version**: 1.0.0 — 初版。來源是一個 Flutter APP 版型改版時，在 Android 實機（Samsung，三鍵與手勢導覽）與 iPhone 16 模擬器上拍了十幾輪審查證據：`scripts/drive.dart` 經由 VM service 在執行中的 APP 裡換頁、點按、長按、拖曳捲動、返回與輸入，並讀出裝置像素比（`dpr`）（在 isolate 的根函式庫裡求值；文字引數先跳脫再嵌入求值的字串，座標引數先驗證）；`scripts/drive.sh` 包住它，負責等待動畫（`WAIT` 可調）、喚醒螢幕、截圖（動作失敗時不截）與在截圖當下把 APP 的 commit 和工作樹雜湊記進 `SHOT_LOG`（APP 不在 git 底下時記成 `no-git` 並警告）；`scripts/montage.sh` 把一組截圖拼成總覽。SKILL.md 寫出前置檢查，以及啟動並寫好 `env.sh`（等待迴圈有上限並印出停下的原因；兩台設備各用一個子目錄放 pid、log 與 `env.sh`）、列出要拍的狀態（`states.md`，一行一個截圖路徑，檔名帶設備、亮暗、字級與導覽方式）並記下設備設定、操作與截圖（`back` 不是系統返回鍵）、熱重啟（偵測編譯錯誤；原生碼與拿掉系統列宣告時改成重新執行；`--dart-define` 與被 gitignore 的設定檔不在雜湊裡，靠改動紀錄分前後；每次改動記一行並照 component-contract-design 標出待重拍的行）、看圖（貼著下緣的狀態裁出導覽列）、還原（每一批開拍前與收尾各拍一次計數畫面比對）、逐行回填交付紀錄（已拍、未驗（模擬器：成因）、未拍（原因）、使用者驗；拍在最後一次改動之前的圖不算已拍）與收尾的流程，前置另寫加 `vm_service` 依賴之前先問使用者、只在 macOS 主機上實測，以及不照做會出的錯；`references/device-pitfalls.md` 收症狀與處置（螢幕鎖上、連線中斷、動作送得太密之後不再換頁、點到暗幕、返回鍵連對話框一起關、type 求值失敗或寫錯輸入框、模擬器預設不出現螢幕鍵盤、模擬器沒有相機、Samsung Edge Panel、熱重啟之後畫面沒變、系統列設定沒有回到預設、Gradle 快取損壞）、會寫入資料的點按，以及設備設定的還原（Android 深色模式、導覽方式與字級，iOS 模擬器外觀與字級）。

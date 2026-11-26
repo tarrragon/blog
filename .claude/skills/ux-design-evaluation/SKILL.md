@@ -4,7 +4,7 @@ description: "UX / UI 設計的系統性評估：把「使用者被困住」類�
 license: MIT
 metadata:
   portable: true
-  version: 1.14.0
+  version: 1.15.0
   category: ux-design
 ---
 
@@ -57,13 +57,13 @@ UX / UI 設計的系統性評估方法。這個 skill 的出發點是一類反�
 
 | 觸發情境 / 症狀                                                                                                                                                                                                 | 讀哪份 reference                     |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| 設計多狀態畫面（連線 / 配對 / 同步）、使用者被困在畫面出不去、畫面剛開啟就顯示離線、審查導航缺口、路由存在但入口找不到、長清單捲到中段找不到搜尋或返回、要不要 sticky 工具列或回到頂部 | `references/screen-state-matrix.md`  |
+| 設計多狀態畫面（連線 / 配對 / 同步）、使用者被困在畫面出不去、畫面剛開啟就顯示離線、審查導航缺口、路由存在但入口找不到、長清單捲到中段找不到搜尋或返回、要不要 sticky 工具列或回到頂部、多選模式沒勾選任何項目也寫「完成」或批次動作列看起來可以按 | `references/screen-state-matrix.md`（多選模式直接讀 `references/screen-state-matrix-selection-prestate.md`） |
 | 設計認證 / 網路 / 權限 / 硬體條件關卡、生物辨識失敗沒退路、權限被拒後的處理、覆蓋 / 清空既有資料的操作確認、模擬器上測不到的 gate                                                                               | `references/gate-fallback.md`        |
 | 設計輸入框 / 表單 / 搜尋框 / CLI 輸入、鍵盤自動校正破壞輸入、密碼或 secret 欄位、驗證時機選擇                                                                                                                   | `references/input-mechanism.md`      |
 | 撰寫錯誤訊息、設計重試機制、使用者卡在錯誤迴圈、錯誤畫面的行動過重（重載 / 重裝）、部分功能不可用的降級呈現                                                                                                     | `references/error-recovery.md`       |
 | 選擇導航模式（stack / tab / drawer）、go vs push 的選擇、back 行為不符預期、hash SPA 的頁面辨識、deep link 設計                                                                                                 | `references/navigation-patterns.md`  |
 | 按鈕按了沒反應、重複提交、佔位 handler 假按鈕、宣告完成但資料不全、按鈕預告的數量跟實際處理的不同、loading 該不該顯示、spinner vs skeleton、通知該用 SnackBar 還是 Dialog、要不要放一句情境提示 | `references/interaction-feedback.md`（按鈕流程與狀態）+ `references/interaction-feedback-waiting-and-notification.md`（時間門檻、spinner/skeleton、通知形式） |
-| 點到的是狀態圖示卻沒反應、切換鈕標籤被讀成現態、選中看不到字、文字被壓成省略號、水平清單溢出無捲動提示 | `references/interaction-feedback-component-semantics.md` |
+| 點到的是狀態圖示卻沒反應、切換鈕標籤被讀成現態、選中看不到字、文字被壓成省略號、按鍵標籤縮短後被讀成篩選條件、清單被截斷卻看不出能捲 | `references/interaction-feedback-component-semantics.md`（按鍵標籤在〈5. 關鍵回饋文字要有版面保障〉的粗體段「按鍵標籤裡說明動作的字不套用『先縮短格式』」） |
 
 每份 reference 自包含：不讀 SKILL.md 與其他 reference 也能獨立套用；`interaction-feedback` 家族四檔互相具名指路，見各檔檔頭。
 
@@ -109,7 +109,7 @@ ux-design-evaluation/
     ├── navigation-patterns.md            # 導航模式分類、go/push/pushReplacement 語意、平台慣例差異、deep link
     ├── interaction-feedback.md           # 回饋三層模型、按鈕級回饋（按鈕流程與狀態）（入口，同組見下）
     ├── interaction-feedback-waiting-and-notification.md  # 時間門檻、畫面級回饋、spinner vs skeleton、通知形式選擇
-    ├── interaction-feedback-component-semantics.md        # 元件語意與版面：切換標籤、可點性、選中態、溢出、版面保障
+    ├── interaction-feedback-component-semantics.md        # 元件語意與版面：切換標籤、可點性、選中態、截斷、版面保障
     └── interaction-feedback-checklist.md                  # 互動回饋反模式速查、檢查清單、參考來源（三檔共用）
 ```
 

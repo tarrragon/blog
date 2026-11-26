@@ -6,7 +6,7 @@
 >
 > **簡稱查地址**：本檔出現的方法論、L2（語言與框架的實作規範）、本規格票（正在填的元件庫規格那一張票）、baseline，地址與定義查 `addresses.md`。
 >
-> **不在本檔**：從既有程式碼萃取 token 的順序（盤點 → 命名 → 固化）照 `foundation-design` skill 的接手模式；元件契約怎麼引用 token 照 step 3。Web 端（HTML／CSS）契約驗收另外要做的事在 `web-platform-notes.md`。
+> **不在本檔**：從既有程式碼萃取 token 的順序（盤點 → 命名 → 固化）照 `foundation-design` skill 的接手模式；元件契約怎麼引用 token 照 step 3。Web 端（HTML／CSS）契約驗收另外要做的事在 `web-platform-notes.md`；手機 APP（Flutter、iOS、Android）的在 `mobile-platform-notes.md`。
 
 ## Design system 由哪幾份產物組成
 

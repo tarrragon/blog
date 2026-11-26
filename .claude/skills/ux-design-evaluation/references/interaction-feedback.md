@@ -6,10 +6,10 @@
 | --- | --- |
 | `interaction-feedback.md`（本檔，入口） | 核心原則／三層回饋模型／按鈕級回饋（按鈕流程與六種按鈕狀態） |
 | `interaction-feedback-waiting-and-notification.md` | 時間門檻與回饋策略／畫面級回饋／Spinner vs Skeleton／結果通知的形式選擇 |
-| `interaction-feedback-component-semantics.md` | 元件語意與版面檢查（切換標籤／可點性／選中態／溢出／版面保障） |
+| `interaction-feedback-component-semantics.md` | 元件語意與版面檢查（切換標籤／可點性／選中態／截斷／版面保障） |
 | `interaction-feedback-checklist.md` | 反模式速查／檢查清單／參考來源（三份內容檔共用） |
 
-適用：審查按鈕回饋完整性；設計非同步操作的按鈕生命週期與防重複提交。判斷 loading indicator 的時機與形式、連線 / 配對 / 同步類多步驟流程的畫面級回饋、操作結果的通知形式選擇，見 `interaction-feedback-waiting-and-notification.md`；元件語意與版面（切換標籤、可點性辨識、選中態對比、溢出 affordance、回饋文字的版面保障），見 `interaction-feedback-component-semantics.md`。
+適用：審查按鈕回饋完整性；設計非同步操作的按鈕生命週期與防重複提交。判斷 loading indicator 的時機與形式、連線 / 配對 / 同步類多步驟流程的畫面級回饋、操作結果的通知形式選擇，見 `interaction-feedback-waiting-and-notification.md`；元件語意與版面（切換標籤、可點性辨識、選中態對比、清單截斷的捲動 affordance、回饋文字的版面保障），見 `interaction-feedback-component-semantics.md`。
 不適用：畫面狀態機的完整設計（狀態矩陣範疇 — 本文的畫面級回饋聚焦「每個狀態給什麼指示」，狀態的枚舉與退出路徑歸狀態矩陣）；錯誤訊息的文案內容（錯誤恢復範疇）。
 
 > **自包含聲明**：本檔（核心原則／三層回饋模型／按鈕級回饋）閱讀不需要先讀其他 reference；三層回饋模型第 2 層的分帶細節與畫面級 / 通知形式的完整規則在 `interaction-feedback-waiting-and-notification.md`，本檔在對應處已具名指路，不需要讀者自行猜測該開哪一檔。
@@ -108,7 +108,7 @@ Q 緩衝時間是否有固定的計算公式（如固定加 5 秒或乘以固定
 
 實作落點在共用 Button 元件層、不是逐顆按鈕 — 平台元件庫已內建前四種，通常只需補 Loading / Disabled 的語意。估工按「元件層一次工 + 各按鈕接狀態來源」，不是「按鈕數 × 狀態數」（後者高估數倍、讓完整狀態設計看起來做不起）。
 
-**元件語意與版面檢查**（切換標籤現態／動作歧義、非互動指示與按鈕形態、選中態對比、水平溢出 affordance、關鍵回饋文字版面保障、版面擠壓診斷分層、同一圖形只承載一個語意、顏色不作為唯一區分依據，共八項判斷標準）獨立為 `interaction-feedback-component-semantics.md` — 狀態清單之外，同一元件在靜態呈現時另有一組容易誤讀的語意落差，見該檔。
+**元件語意與版面檢查**（切換標籤現態／動作歧義、非互動指示與按鈕形態、選中態對比、清單截斷的捲動 affordance、關鍵回饋文字版面保障、版面擠壓診斷分層、同一圖形只承載一個語意、顏色不作為唯一區分依據）獨立為 `interaction-feedback-component-semantics.md` — 狀態清單之外，同一元件在靜態呈現時另有一組容易誤讀的語意落差，見該檔。
 
 ## 參考來源
 
