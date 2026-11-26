@@ -4,7 +4,7 @@ description: "UX / UI 設計的系統性評估：把「使用者被困住」類�
 license: MIT
 metadata:
   portable: true
-  version: 1.12.0
+  version: 1.13.0
   category: ux-design
 ---
 
@@ -57,12 +57,12 @@ UX / UI 設計的系統性評估方法。這個 skill 的出發點是一類反�
 
 | 觸發情境 / 症狀                                                                                                                                                                                                 | 讀哪份 reference                     |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| 設計多狀態畫面（連線 / 配對 / 同步）、使用者被困在畫面出不去、畫面剛開啟就顯示離線、審查導航缺口、路由存在但入口找不到                                                                                          | `references/screen-state-matrix.md`  |
+| 設計多狀態畫面（連線 / 配對 / 同步）、使用者被困在畫面出不去、畫面剛開啟就顯示離線、審查導航缺口、路由存在但入口找不到、長清單捲到中段找不到搜尋或返回、要不要 sticky 工具列或回到頂部 | `references/screen-state-matrix.md`  |
 | 設計認證 / 網路 / 權限 / 硬體條件關卡、生物辨識失敗沒退路、權限被拒後的處理、覆蓋 / 清空既有資料的操作確認、模擬器上測不到的 gate                                                                               | `references/gate-fallback.md`        |
 | 設計輸入框 / 表單 / 搜尋框 / CLI 輸入、鍵盤自動校正破壞輸入、密碼或 secret 欄位、驗證時機選擇                                                                                                                   | `references/input-mechanism.md`      |
 | 撰寫錯誤訊息、設計重試機制、使用者卡在錯誤迴圈、錯誤畫面的行動過重（重載 / 重裝）、部分功能不可用的降級呈現                                                                                                     | `references/error-recovery.md`       |
 | 選擇導航模式（stack / tab / drawer）、go vs push 的選擇、back 行為不符預期、hash SPA 的頁面辨識、deep link 設計                                                                                                 | `references/navigation-patterns.md`  |
-| 按鈕按了沒反應、重複提交、佔位 handler 假按鈕、宣告完成但資料不全、loading 該不該顯示、spinner vs skeleton、通知該用 SnackBar 還是 Dialog | `references/interaction-feedback.md`（按鈕流程與狀態）+ `references/interaction-feedback-waiting-and-notification.md`（時間門檻、spinner/skeleton、通知形式） |
+| 按鈕按了沒反應、重複提交、佔位 handler 假按鈕、宣告完成但資料不全、按鈕預告的數量跟實際處理的不同、loading 該不該顯示、spinner vs skeleton、通知該用 SnackBar 還是 Dialog、要不要放一句情境提示 | `references/interaction-feedback.md`（按鈕流程與狀態）+ `references/interaction-feedback-waiting-and-notification.md`（時間門檻、spinner/skeleton、通知形式） |
 | 點到的是狀態圖示卻沒反應、切換鈕標籤被讀成現態、選中看不到字、文字被壓成省略號、水平清單溢出無捲動提示 | `references/interaction-feedback-component-semantics.md` |
 
 每份 reference 自包含：不讀 SKILL.md 與其他 reference 也能獨立套用；`interaction-feedback` 家族四檔互相具名指路，見各檔檔頭。
@@ -89,6 +89,9 @@ UX / UI 設計的系統性評估方法。這個 skill 的出發點是一類反�
 - [ ] 關鍵回饋文字有版面保障（窄幕驗收）？
 - [ ] 靠顏色區分的語意，顏色之外另有訊號或文字？
 - [ ] 無佔位 handler（dev toast / log-only）殘留？
+- [ ] 長頁面：退出路徑與主要工具（搜尋、排序、篩選）在捲到中段時仍一步到得了？
+- [ ] 描述畫面所在情境（在哪個網站、哪一頁）的常駐說明已經刪掉，改由主要動作的形態表達（離線、降級這類系統狀態照形式表用 Banner）？
+- [ ] 動作前預告的數量跟動作實際處理的範圍同一個口徑（處理全部時是來源總數，只處理已載入的元素時寫明「已載入的 N 筆」，讀不到總數時不寫數字）？
 
 ---
 

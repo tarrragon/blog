@@ -39,3 +39,4 @@ tags: ["ux-design", "case-study", "interaction-feedback", "chrome-extension", "w
 - 結果通知該呈現什麼 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
 - 類似案例（UI 未接線、三層回饋全缺）→ [匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)
 - 完成宣告的證據強度 → [抓到 96/928 本就顯示完成](/ux-design/cases/lazy-load-premature-completion/)
+- 同一條訊息鏈路上的另一個斷點：轉送層的附註佔用了下游組 storage key 的欄位，資料寫進錯的 key → [#402 轉送層把自己的附註寫進下游已經有意義的欄位名：下游照常執行、不報錯，資料完整寫進錯的位置](/report/forwarder-annotation-overwrites-downstream-field/)

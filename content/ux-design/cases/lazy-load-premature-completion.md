@@ -35,3 +35,4 @@ tags: ["ux-design", "case-study", "interaction-feedback", "chrome-extension", "w
 - 進度指示與假進度反模式 → [時間感知與回應策略](/ux-design/06-interaction-feedback/response-time-strategy/)
 - 結果通知的呈現（部分成功的摘要 + 明細）→ [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
 - 類似案例（結果通知鏈路錯誤）→ [提取成功卻誤報失敗](/ux-design/cases/async-listener-false-failure/)
+- 總數對照用的那個總數本身解析錯了（扣除項沒對上頁首字樣），以及 popup 預告的本數與實際處理的本數口徑不同 → [Chrome 擴充功能提取書目之後書庫頁停在舊資料的排查：逐段計數、頁首總數的解析、轉送層覆蓋欄位寫錯 storage key、舊識別碼對不上而新增重複、修好之後的殘留資料](/work-log/chrome-extension-library-stale-after-extraction/)

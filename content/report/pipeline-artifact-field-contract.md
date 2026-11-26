@@ -36,6 +36,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "流程設計", "�
 - [#68 驗收的時間軸：四個 checkpoint](/report/verification-timeline-checkpoints/)：階段交接處是天然的驗收 checkpoint — 逐欄走查就是交接處的驗收動作、在「寫之前」的 checkpoint 跑一次、比執行者在第三階段卡住才回頭便宜。
 - [#44 Single Source of Truth](/report/single-source-of-truth/)：推導規則本身要有單一明文位置 — 沒有明文規則時、規則存在於每個執行者腦中、是 N 份互不一致的隱性源；寫下來不只是溝通、是把規則收斂成單源。
 - [#158 決策表兩列同時命中且結論相反](/report/decision-table-conflict-reveals-missing-dimension/)：同一族的「組合失效」— #158 是規則之間的矛盾、本卡是階段之間的缺口、偵測都要跨單元走查（#158 靠真實案例 dry-run、本卡靠逐欄對照）而不是單元內檢查；兩者常在同一次旅程模擬中被一起抓到。
+- [#402 轉送層把自己的附註寫進下游已經有意義的欄位名](/report/forwarder-annotation-overwrites-downstream-field/)：本卡的逐欄走查確認的是欄位在不在；#402 補上欄位在、而中間層換了它的意思與型別的情形（轉送層在 `source` 欄位放進轉送資訊物件，使用端拿這個欄位組 storage key）。逐欄對照時，同時對照每一欄在每一層的意思與值域。
 
 ## 觸發 case
 

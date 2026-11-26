@@ -21,7 +21,7 @@
    ```
 
    `extDir` 是副本的絕對路徑。`channel: 'chromium'` 用 Playwright 附的 Chromium，它的新版 headless 模式可以載入擴充功能；`launchPersistentContext` 的第一個引數給空字串，代表用暫存的使用者資料目錄。
-3. 測完 `await ctx.close()`。
+3. 測試本體包在 `try { … } finally { await ctx.close() }` 裡，測試失敗或丟錯時也關得到瀏覽器。第一次在一台機器上跑時，在 `try` 區塊裡、`close()` 之前跑一次 SKILL.md〈測試開出的瀏覽器：關閉與殘留〉的 `pgrep` 指令，確認它列得出這個瀏覽器；這是測完那一次「沒有輸出」的正對照，列不出來代表 pattern 對不上這台機器的 profile 目錄名。
 
 ## 讓 content script 注入本機測試頁
 

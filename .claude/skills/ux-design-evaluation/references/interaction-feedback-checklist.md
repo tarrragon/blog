@@ -50,6 +50,7 @@
 - [ ] 非同步：loading + disabled + 完成恢復 + timeout？
 - [ ] 結果有通知（成功 / 失敗 / 空 / 部分成功）？
 - [ ] 同步按鈕有 leading-edge 防連點？
+- [ ] 動作前預告的數量跟動作實際處理的範圍同一個口徑（處理全部時是來源總數，只處理已載入的元素時寫明「已載入的 N 筆」，讀不到總數時不寫數字）？
 
 畫面級（見 `interaction-feedback-waiting-and-notification.md`）：
 
@@ -66,6 +67,7 @@
 - [ ] 批次操作結果有彙整、無 SnackBar 成串 / Dialog 堆疊？
 - [ ] 跨 context（extension / 多 process）的結果通知有端對端驗證？
 - [ ] 批次 / 遍歷操作的完成宣告有窮盡證據（總數對照 / 終止標記）？
+- [ ] 描述畫面所在情境（在哪個網站、哪一頁）的常駐說明已經刪掉，改由主要動作的形態表達（離線、降級這類系統狀態照形式表用 Banner）？
 
 語意與版面（見 `interaction-feedback-component-semantics.md`）：
 

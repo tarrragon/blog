@@ -1,3 +1,5 @@
 # Changelog
 
+**Version**: 1.1.0 — 新增 `references/diagnosing-in-user-browser.md` 與 SKILL.md〈在使用者的瀏覽器上診斷〉：各執行環境的 log 在哪一個 Console、用 Filter 只貼關鍵行；service worker 的 Console 直接讀 `chrome.storage`，先在程式碼裡查資料存在哪一個儲存區；唯讀片段先用 `get(null)` 列出全部 key 與筆數（寫錯 key 的資料只 `get` 預期的 key 看不到），再印計數與樣本、輸出純文字、照提示輸入確認字句（英文介面是 `allow pasting`）；會寫入的片段先列出要動的紀錄、由使用者決定，重複紀錄保留新格式識別碼的那一筆，整份寫錯 key 的資料先確認正確 key 裡有同一批紀錄再刪；沿著資料流逐段計數找出第一次對不上的是哪兩段之間（寫入時同時看 key：組 key 的欄位型別錯時資料寫進 `[object Object]_books`；storage 裡的數量與畫面上的數量分成兩段取）；請使用者做會寫入資料的操作之前，先確認建置包含修正（`git branch --contains` 的通過條件含 worktree 與 detached HEAD、在使用者載入的建置目錄搜修正之前不存在的字串字面值、戳記只代表重新建置過、不通過時的處置）；逐段計數時沒有 log 的那一段要另外取得或標「未取得」；修好程式之後，舊程式寫下的資料分成會被補上、在讀取端推導、不在來源上的使用者資料要保留、只能清掉幾類。description 加觸發詞。來源：一次書庫停在舊資料的排查（提取 1068 本寫進錯的 key、舊紀錄的識別碼對不上），原因靠使用者在兩個 Console 貼回的計數才找到。
+
 **Version**: 1.0.0 — 初版：未封裝擴充功能三個執行位置的改動生效時機（含實驗紀錄與重驗方法）、開發版自動重新載入的設計與通用實作（`scripts/dev-auto-reload.js`）。內容來自一個 MV3 擴充功能專案的實驗：改檔後 popup 重新開啟即為新版，content script 與 service worker（含停掉再喚醒）皆為舊版，全新載入的正對照為新版；自動重新載入在使用者的 Chrome 實測成功（console 戳記與 `onInstalled` 的 `reason: update`）。

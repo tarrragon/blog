@@ -1,8 +1,8 @@
 ---
 name: chrome-extension-dev-loop
-description: 未封裝 Chrome 擴充功能（MV3）的開發迴圈：改哪類檔案之後要重新載入、為什麼 content script 與 service worker 改了不生效、開發版自動重新載入的設計與接入。觸發：擴充功能改了沒生效、要不要重新載入、自動重新載入、hot reload。
+description: 未封裝 Chrome 擴充功能（MV3）的開發迴圈：改哪類檔案之後要重新載入、為什麼 content script 與 service worker 改了不生效、開發版自動重新載入、在使用者瀏覽器上讀 log 與 storage 診斷。觸發：擴充功能改了沒生效、要不要重新載入、自動重新載入、資料沒更新、讀 storage。
 metadata:
-  version: 1.0.0
+  version: 1.1.0
   portable: true
 ---
 
@@ -37,12 +37,25 @@ metadata:
 
 設計理由、接入步驟、驗證方法在 `references/dev-auto-reload.md`。
 
+## 在使用者的瀏覽器上診斷
+
+錯誤只在使用者的瀏覽器重現時（要登入的網站、使用者累積的 storage 資料），請使用者跑指令、貼回輸出，照下面幾項做：
+
+- **寫明是哪一個 Console**：content script、service worker、popup、擴充功能頁的 log 各在各的 DevTools；請使用者用 Filter 篩關鍵字，只貼那幾行。
+- **讀 storage 用唯讀片段**：service worker 的 Console 直接呼叫得到 `chrome.storage.local.get`；先用 `get(null)` 列出全部 key 與筆數，再印計數與少量樣本，輸出純文字。會修改或刪除資料的片段先列出要動的紀錄，由使用者決定要不要跑。
+- **沿著資料流逐段計數**：來源宣稱的總數、載入到 DOM 的數量、解析數、寫入時的數量與 key、storage 裡讀取端那個 key 的數量、畫面上的數量；缺陷在第一次對不上的那兩段之間，前一段的輸出或後一段的輸入。
+- **請使用者做會寫入資料的操作之前，先確認建置裡有修正**：開發版從目前 checkout 的分支建置，修正還在別的分支時，使用者用舊程式操作會寫下錯的資料，修正上線之後那些資料仍然留著。
+- **修好程式之後，舊程式寫下的資料另外判斷**：哪些會被下一次操作補上、哪些在讀取端推導顯示、哪些是不在來源上的使用者資料要保留、哪些只能清掉。
+
+片段的寫法、各 Console 的打開方式與殘留資料的判斷在 `references/diagnosing-in-user-browser.md`。
+
 ## 按需讀取
 
 | 何時讀 | 檔案 |
 |--------|------|
 | 要知道對照表的依據、或在新的瀏覽器版本上重驗 | `references/change-propagation.md` |
 | 要把自動重新載入接進一個專案、或它沒有運作要排查 | `references/dev-auto-reload.md` |
+| 錯誤只在使用者的瀏覽器重現、要請使用者跑指令或讀 storage、資料抓到了畫面沒更新 | `references/diagnosing-in-user-browser.md` |
 | 要在不碰使用者瀏覽器的情況下驗證擴充功能的改動 | `chrome-extension-playwright-testing` skill |
 
 版本紀錄在同目錄的 `CHANGELOG.md`。

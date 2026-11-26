@@ -425,7 +425,7 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ### 路徑 14：寫測試固化 bug fix / feature
 
-`#68 驗收的時間軸（Checkpoint 2/3）` → `#69 Test-First RED-GREEN 順序` → `#15 layout-tests-with-playwright` / `#11 playwright-early-in-loop` — 修 bug 或加 feature 時、測試該怎麼寫才被驗證
+`#68 驗收的時間軸（Checkpoint 2/3）` → `#69 Test-First RED-GREEN 順序` → `#15 layout-tests-with-playwright` / `#11 playwright-early-in-loop` → `#402 轉送層的附註覆蓋下游欄位`（測試輸入要取使用端實際收到的形狀、經過中間層）— 修 bug 或加 feature 時、測試該怎麼寫才被驗證
 
 ### 路徑 15：寫作 / UI 中看到視覺異常、想直接改 CSS / emoji
 
@@ -433,7 +433,7 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ### 路徑 16：跨工具 identifier（slug / route / ID）broken / 不一致
 
-`#93 URL slug 是 fact` → `#44 Single Source of Truth` → `#82 字面攔截 vs 行為精煉` — 多工具各自推導 identifier 是 SSoT 違反、解法是把 identifier 升成 fact（顯式定義）、不要教工具學別人的推導規則；補 lint 規則作為 trigger（[#91](escalation-trigger-quantification/)）防止 debt 累積；引用錨點若是章節 / 階段編號這類位置推導值、同屬此家族、見 [#155](reference-by-semantic-title-not-number/)
+`#93 URL slug 是 fact` → `#44 Single Source of Truth` → `#82 字面攔截 vs 行為精煉` → `#402 轉送層的附註覆蓋下游欄位`（同一個識別值在兩層用兩種寫法，或欄位名在中間層被換了意思）— 多工具各自推導 identifier 是 SSoT 違反、解法是把 identifier 升成 fact（顯式定義）、不要教工具學別人的推導規則；補 lint 規則作為 trigger（[#91](escalation-trigger-quantification/)）防止 debt 累積；引用錨點若是章節 / 階段編號這類位置推導值、同屬此家族、見 [#155](reference-by-semantic-title-not-number/)
 
 ### 路徑 17：寫作 review 要同步檢查 metadata surface
 
@@ -1077,6 +1077,7 @@ Filter × Source 合成三選（從 #59 抽出）：
 - [#399 效能最佳化的先後順序要等量完再排：讀程式碼排出的熱點，暫時拿掉量出來可能是零；量法要看得到成本落在哪一個程序](optimization-order-comes-from-removal-measurements/) — 讀完一段動畫或繪製程式、列出幾個看起來很貴的地方，準備決定先改哪一個時；或量到的單一數字很小，而機器整體的 CPU 很高時
 - [#400 知識卡的所指由英文術語與中文名稱一起決定：兩邊各自都可能一詞多義，文章連到卡時兩個名字一起寫](term-identity-is-the-english-chinese-pair/) — 建知識卡、替一個術語定中文寫法，或文章要連到某張卡時；英文原詞本身也有兩個意思（rollback）、或要拿某一篇文章開場的用詞約定去對齊別篇之前
 - [#401 改規則之前先把使用者的糾正逐則歸因：依讀起來模糊挑出來改的規則，多半不是出過事的那幾條](attribute-recorded-corrections-before-rewriting-rules/) — 規則檔變長或變模糊、準備逐節改寫時；或 agent 反覆被糾正，要決定改規則、補規則還是改工作流程時
+- [#402 轉送層把自己的附註寫進下游已經有意義的欄位名：下游照常執行、不報錯，資料完整寫進錯的位置](forwarder-annotation-overwrites-downstream-field/) — 資料的提取與寫入都成功而讀取端停在舊資料，或依欄位值組出的 key 出現 `[object Object]` 時；或要在訊息轉送、middleware 替資料加附註時
 
 **Last Updated**: 2026-08-27 — 新增 #293，由一次書單分類二十六篇文章的全面重讀抽出。清理分兩次、每次之後用同一組低階模型讀者探針量測（指令與餵入範圍逐字相同，三輪跑在同一個檔案上）。第一次清掉句子層的稽核語，「讀完之後你的第一個動作會是什麼」從 0/3 答得出變成 0/3——零位移，而所有可機械檢查的訊號（grep 命中數、diff 行數、文字緊實度）都回報這一類已經處理完。第二次只改導言的落點與分歧地圖的位置，同一題變成 2/3。同批另量到一個飽和指標：「時間有限你會跳過哪幾節」三輪完全不動，被跳的永遠是尾部那幾節，跟寫法無關——指標不動時要先分辨修法無效與指標無效。本卡把 #201 的區分從 report 卡的單一欄位擴到任何讀者頁面並補上結構層，與 #292 共用「完成訊號來自最容易驗的那一項」。反向指標補在 #201 / #168 / #281 / #254 / #292。
 
@@ -1311,3 +1312,8 @@ Filter × Source 合成三選（從 #59 抽出）：
 **Last Updated**: 2026-11-22 — 新增 #401，由規則檔重組之後的失敗歸因抽出：逐節改寫規則兩批之後，回頭把 20 天紀錄裡 39 則使用者糾正逐則對照當時的規則版本與載入紀錄，27 則失敗裡規則模糊約佔兩成，需求沒對齊最多，而 11 則規則相關失敗裡只有 1 則出在普查挑出來改寫的 7 節。
 
 - 場景導讀「路徑 38：寫下一條規則、想知道它會不會被合規地繞過」開頭加 #401。
+
+**Last Updated**: 2026-11-26 — 新增 #402，由一個 Chrome 擴充功能的書庫排查抽出：提取解析 1068 本、寫入前也是 1068 本，書庫頁卻停在舊的 96 本，原因是 service worker 裡的訊息轉送層在事件資料的 `source` 欄位放進轉送資訊物件，事件處理器拿 `source` 組 storage key，寫進 `[object Object]_books`；同一次排查另有一個書城在兩層用兩種寫法（`books-com-tw` 與 `books_com_tw`）。
+
+- #163 的〈跟其他抽象層原則的關係〉補一條指向 #402 的反向指標：#163 管下游要的欄位上游沒有，#402 管欄位有而中間層換了它的意思。
+- 場景導讀「路徑 16：跨工具 identifier（slug / route / ID）broken / 不一致」在 #82 之後加 #402；「路徑 14：寫測試固化 bug fix / feature」在尾端加 #402（測試輸入取使用端實際收到的形狀）。
