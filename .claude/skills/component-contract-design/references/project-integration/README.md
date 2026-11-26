@@ -4,7 +4,7 @@
 
 | 簡稱 | 在本 repo 的位置 | 備註 |
 | --- | --- | --- |
-| 方法論 | `content/record/component-library-bidirectional-constraint-methodology.md`（網站上的 `/record/component-library-bidirectional-constraint-methodology/`） | 本 repo 的段名把 skill 正文寫的「判準」寫成「判斷標準」：skill 的〈元件契約判準〉〈命名與通用元件判準〉〈Web/HTML 端 L2 特別判準〉，在這一篇是〈元件契約判斷標準〉〈命名與通用元件判斷標準〉〈Web/HTML 端 L2 特別判斷標準〉；〈容器亦為元件〉〈形態因素先決〉兩邊同名。用 skill 的段名搜這一篇時，把「判準」換成「判斷標準」再搜 |
+| 方法論 | `content/record/component-library-bidirectional-constraint-methodology.md`（網站上的 `/record/component-library-bidirectional-constraint-methodology/`） | skill 正文引用的段名（〈元件契約判斷標準〉〈命名與通用元件判斷標準〉〈Web/HTML 端 L2 特別判斷標準〉〈容器亦為元件〉〈形態因素先決〉）跟這一篇同名，直接用段名搜 |
 | 元件庫規格範本 | 本 repo 沒有 `doc` skill 的範本 | 照 `SKILL.md`〈起手〉新建規格檔；先例是 `scripts/sql-practice/ui/components.md`（SQL 練習頁的元件庫規格：起點判定、形態因素矩陣、token、候選表、逐元件契約、畫面狀態表、齊全檢查、實作註記） |
 | 規格檔與 spec 目錄 | 沒有統一的 spec 目錄 | 規格檔放在功能自己的目錄（SQL 練習頁是 `scripts/sql-practice/ui/components.md`） |
 | agent 派發範本 | 本 repo 沒有框架層的派發範本 | 派 agent 時照 `docs/rules/claude-code.md`〈Agent tool 的派發〉 |

@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 6.11.0 — 「判準」一律改寫成「判斷標準」（SKILL.md 與 references 共 9 份，含「無判準」標籤改成「無判斷標準」、「判準層」改成「判斷標準層」，各處一起改，標籤的定義與引用仍然同名）。「判準」是「判斷標準」的縮寫，工程讀者讀不出來。`references/dimension-product-notes.md` 的「判準線」改寫成「判斷的分界」。
+
 **Version**: 6.10.0 — `references/handoff-mode.md` 在〈盤點表欄位〉之後補「接手的目標包含主題切換」兩段：接手的目標包含主題切換時，寫死的值與「引用了 token、但 token 不隨主題變」的位置分開數，兩者的工作量不同；後者看引用的 token 在新主題下有沒有被覆寫，不看寫法（`static const`、Sass／Less 變數、主題只覆寫 semantic 層時直接引用的 primitive 自訂屬性、JavaScript 讀一次就快取的位置都算）；寫死的值的範圍對齊 `component-contract-design` 的〈檢查〉；每一處的處置照 `component-contract-design` 的〈加新主題之前〉判斷；數寫死的值時，前綴相同的類別名會混進來（`Colors\.` 比對到 `UIColors.`），改用字邊界，並拿已知寫死與已知是 token 引用的程式碼各跑一次，`CupertinoColors.` 另外搜；`CupertinoColors.*` 不在 Cupertino 元件裡、也沒經過 `resolveFrom` 或 `CupertinoDynamicColor.resolve` 時算寫死，`white`、`black` 這類固定的 `Color` 一律算寫死；盤點紀錄寫出兩個數字各用了哪幾條指令、命中幾處。平台寫法連到 `component-contract-design` 新增的〈Flutter 端的限制〉，以及〈Web 端的限制〉新增的一條。SKILL.md 的〈接手模式〉摘要、路由表與 UI 維度列補上這幾項；四步流程的「機械檢查」改成「自動檢查」（handoff-mode、SKILL.md 步驟 5，以及引用步驟 5 的 `references/adjacent-assets-boundary.md` 與 `references/examples-process.md` 一起改）。
 
 **Version**: 6.9.0 — 〈維度與產物〉表 UI 列的權威來源欄補一句路由：design-system 那一塊建產物的人要交付什麼，見 `component-contract-design` skill 新增的 `references/design-system-token-layer.md`（token 層齊不齊的判定、哪些值取名、分層、來源格式、擋寫死值的檢查）；接手既有專案時萃取 token 的順序仍照本 skill 的接手模式。原本 UI 列只指向方法論〈地基波 build 順序〉，那一塊只列了 token 的類別，填產物欄的人找不到判定。本 skill 不新增判準，判準在被指名的那一份。`references/handoff-mode.md`〈命名與收斂分兩步〉的收斂票驗收從「畫面或特徵測試比對」改成「畫面比對與特徵測試比對」，並寫出收斂是刻意改值、要先寫對應表，Web 端的做法指向 `frontend-with-playwright` 的 `references/refactor-without-visual-change.md`；特徵測試的定義補一句 Web 端的形式（計算後樣式快照）在 `component-contract-design` 的 `references/web-platform-notes.md`。`SKILL.md`〈工作流〉的 code fence 由編輯器的格式化標上 `text`，內容不變。

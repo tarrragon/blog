@@ -1,12 +1,12 @@
 # 案例集：流程操作
 
-> 何時讀：想確認自己對 `foundation-design` skill 入口檔 `SKILL.md`〈與 orchestration 的協作〉〈工作流〉〈移植前置條件〉相關判準的理解是否正確時讀本檔。維度填答本身（產物欄怎麼填、權威缺席怎麼處置）的案例見 `references/examples.md`。
+> 何時讀：想確認自己對 `foundation-design` skill 入口檔 `SKILL.md`〈與 orchestration 的協作〉〈工作流〉〈移植前置條件〉相關判斷標準的理解是否正確時讀本檔。維度填答本身（產物欄怎麼填、權威缺席怎麼處置）的案例見 `references/examples.md`。
 >
 > 同目錄：維度與產物欄位填法的延伸細則見 `dimension-product-notes.md`；接手他人專案的盤點流程見 `handoff-mode.md`。
 >
 > 格式：每則範例依 `.claude/skills/skill-design-guide/references/chained-examples.md` 三段鏈式格式（【輸入】【產出】【驗證】），本檔內容皆屬「設計產出物」，驗證段一律採檢驗問句形態。
 >
-> 溯源：因 `examples.md` 補入 chained-examples 範例後超出單檔體量門檻，依 `.claude/skills/skill-design-guide/references/splitting-an-existing-skill.md`〈補範例後超標：觸發條件與處置順序〉拆分而成（2026-09-15），承接原檔中流程層面（非維度判斷本身）的判準案例。
+> 溯源：因 `examples.md` 補入 chained-examples 範例後超出單檔體量門檻，依 `.claude/skills/skill-design-guide/references/splitting-an-existing-skill.md`〈補範例後超標：觸發條件與處置順序〉拆分而成（2026-09-15），承接原檔中流程層面（非維度判斷本身）的判斷標準案例。
 
 本檔章節：〈文件回答不了地基問題：任一格即命中〉〈規劃波進行中與之後：地基票不算「該版票已建」〉〈產物落為地基票的粒度〉〈執法載體掃描範圍須涵蓋全部承載值的檔案〉〈降級記錄須記缺項與不成立步驟〉〈人工複核「複核者」欄的判斷順序〉。
 
@@ -55,13 +55,13 @@ Q 判定「文件回答不了地基問題」是否需要維度表六格全數答
 
 ```text
 Q 本 skill 自己前一輪建立的地基票，能否作為「該版票已建」的證據？
-  預期：否——依據句「該版提案的 spec_refs 或 usecase_refs 非空（`version-bootstrap` 的 pipeline 確實跑過），且該版尚未建票」（〈與 orchestration 的協作〉表），括注明示這整條判準問的是 `version-bootstrap` pipeline 自身的產出，地基票是本 skill 的產出，不是該 pipeline 的產出。
+  預期：否——依據句「該版提案的 spec_refs 或 usecase_refs 非空（`version-bootstrap` 的 pipeline 確實跑過），且該版尚未建票」（〈與 orchestration 的協作〉表），括注明示這整條判斷標準問的是 `version-bootstrap` pipeline 自身的產出，地基票是本 skill 的產出，不是該 pipeline 的產出。
 
 Q 本例判定結果是規劃波進行中還是之後？
   預期：規劃波進行中——功能票尚未建立。
 ```
 
-「該版尚未建票」不含本 skill 自身前一輪產出的地基票——上方【驗證】段已明示這整條判準問的是 `version-bootstrap` pipeline 自身的產出，地基票是本 skill 的產出，不是該 pipeline 的產出，故不計入「該版票已建」的判定。
+「該版尚未建票」不含本 skill 自身前一輪產出的地基票——上方【驗證】段已明示這整條判斷標準問的是 `version-bootstrap` pipeline 自身的產出，地基票是本 skill 的產出，不是該 pipeline 的產出，故不計入「該版票已建」的判定。
 
 ## 產物落為地基票的粒度
 
