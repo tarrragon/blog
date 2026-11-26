@@ -10,17 +10,17 @@ tags: ["backend", "security", "red-team"]
 
 ## 判讀分類
 
-| 分類                     | 內容方向                                                              | 承接章節         |
-| ------------------------ | --------------------------------------------------------------------- | ---------------- |
-| Attack surface           | public API、admin route、webhook、diagnostic endpoint、upload         | `7.R1` + `7.3`   |
-| Trust boundary           | auth boundary、tenant boundary、network boundary、internal capability | `7.R1` + `7.2`   |
-| Abuse case               | export abuse、invite abuse、reset abuse、trial abuse                  | `7.R2` + `7.R11` |
-| Data exposure path       | response、log、search index、support tool、backup                     | `7.R3` + `7.4`   |
-| Resource abuse           | rate limit bypass、bot traffic、expensive operation、queue saturation | `7.R4` + `06`    |
-| Misconfiguration surface | debug flag、open CORS、default credential、cloud policy               | `7.R5` + `7.3`   |
-| Control failure pattern  | 邊界、身分、會話、資料、證據鏈控制面失效                              | `7.R8` + `7.8`   |
-| Adversary cost cadence   | 初始成本、維持成本、擴散成本、兌現成本                                | `7.R9` + `7.9`   |
-| Detection evasion        | 覆蓋缺口、關聯缺口、噪音、保留不足與復盤回寫                          | `7.R10` + `7.13` |
+| 分類                     | 內容方向                                                              | 承接章節                                       |
+| ------------------------ | --------------------------------------------------------------------- | ---------------------------------------------- |
+| Attack surface           | public API、admin route、webhook、diagnostic endpoint、upload         | `7.R1` + `7.3`                                 |
+| Trust boundary           | auth boundary、tenant boundary、network boundary、internal capability | `7.R1` + `7.2`                                 |
+| Abuse case               | export abuse、invite abuse、reset abuse、trial abuse                  | `7.R2` + `7.R11`                               |
+| Data exposure path       | response、log、search index、support tool、backup                     | `7.R3` + `7.4`                                 |
+| Resource abuse           | rate limit bypass、bot traffic、expensive operation、queue saturation | `7.R4` + `06`；bot traffic 另見 `7.46`、`7.47` |
+| Misconfiguration surface | debug flag、open CORS、default credential、cloud policy               | `7.R5` + `7.3`                                 |
+| Control failure pattern  | 邊界、身分、會話、資料、證據鏈控制面失效                              | `7.R8` + `7.8`                                 |
+| Adversary cost cadence   | 初始成本、維持成本、擴散成本、兌現成本                                | `7.R9` + `7.9`                                 |
+| Detection evasion        | 覆蓋缺口、關聯缺口、噪音、保留不足與復盤回寫                          | `7.R10` + `7.13`                               |
 
 ## 選型入口
 

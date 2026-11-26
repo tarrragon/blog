@@ -546,6 +546,7 @@ weight: -1
 | [WORM Storage（不可變儲存）](/backend/knowledge-cards/worm-storage/)                                            | 寫入憑證外洩之後備份還刪不刪得掉             | 物件鎖定、版本保留、append-only         |
 | [Abuse Case](/backend/knowledge-cards/abuse-case/)                                                              | 合法功能如何被惡意轉用                       | export、invite、reset                   |
 | [Threat Model](/backend/knowledge-cards/threat-model/)                                                          | 風險的位置如何被逐項列舉                     | 資產、邊界、攻擊者能力假設              |
+| [Bot Management（機器人流量管理）](/backend/knowledge-cards/bot-management/)                                    | 請求是真人操作的瀏覽器還是程式送出           | 搶票、登入、挑戰驗證                    |
 | [WAF](/backend/knowledge-cards/waf/)                                                                            | 入口層如何過濾常見攻擊與濫用                 | edge、bot、attack                       |
 | [Feature Flag](/backend/knowledge-cards/feature-flag/)                                                          | 功能開關如何分離部署與啟用                   | rollout、experiment、rollback           |
 | [Security Exception](/backend/knowledge-cards/security-exception/)                                              | 風險例外如何以期限與關閉條件治理             | risk acceptance、governance             |

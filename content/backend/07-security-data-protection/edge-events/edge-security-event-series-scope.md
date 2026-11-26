@@ -35,4 +35,4 @@ tags: ["backend", "security", "waf", "cdn", "detection", "monitoring"]
 | 從事件回寫規則             | 發現新的請求模式之後，先用 Log 處置觀察再改成擋下；規則放進版本控制；規則的退場；[偵測規則的生命週期](/backend/07-security-data-protection/blue-team/detection-engineering-lifecycle/)在邊緣這一層的做法 | 撰寫中 |
 | Cloudflare 的實測紀錄      | 測試網域經 Cloudflare proxy 指到一台雲端主機、收集數天的自然流量、事件頁的篩選、bot 功能與 AI Labyrinth 的開關、用 API 取出事件、通知設定                                                                | 撰寫中 |
 
-Cloudflare 的實測紀錄發佈之後放在 [Cloudflare WAF](/backend/07-security-data-protection/vendors/cloudflare-waf/) 的資料夾底下，因為那一篇操作的對象是 Cloudflare 這個業者。防護控制本身怎麼選、怎麼配置（流量清洗、速率規則、挑戰驗證、搶購機器人）不在這組文章的範圍；這組文章寫的是那些控制動作留下的紀錄怎麼讀、怎麼排進監控。
+Cloudflare 的實測紀錄發佈之後放在 [Cloudflare WAF](/backend/07-security-data-protection/vendors/cloudflare-waf/) 的資料夾底下，因為那一篇操作的對象是 Cloudflare 這個業者。防護控制本身怎麼選、怎麼配置（流量清洗、速率規則、挑戰驗證、搶購機器人）不在這組文章的範圍。邊緣判斷請求是不是由真人操作的瀏覽器送出的訊號，以及挑戰與擋下的取捨，在 [Bot Management（機器人流量管理）](/backend/knowledge-cards/bot-management/) 卡；搶票與搶購機器人的辨識與處置在 [7.46 搶票與限量搶購機器人的防護](/backend/07-security-data-protection/ticket-bot-defense/)。這組文章寫的是那些控制動作留下的紀錄怎麼讀、怎麼排進監控。
