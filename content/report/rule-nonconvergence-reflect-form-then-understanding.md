@@ -93,3 +93,4 @@ slug: "rule-nonconvergence-reflect-form-then-understanding"
 - [規則檔的修法逐輪製造新歧義](/report/rule-patches-breed-new-ambiguity/)：那張卡的論點是逐輪修補製造新歧義，處置是程序寫成工具、共用概念只定義一次；本卡的情形是概念只定義了一次，但定義用的模型本身偏掉了，所以定義一次也不收斂。
 - [規則的修法逐句驗證會通過、套到案例上才互撞](/report/rule-fixes-pass-per-sentence-and-collide-per-case/)：本卡〈修法〉「把判斷寫成一個問句」那一步拿前幾輪所有個案走一次新的問句，是那張卡「修完拿任務重走」的做法，用在換模型的時候。
 - [被點名的一個詞所在的句子可能同時有幾種寫法缺陷](/report/one-flagged-word-covers-several-problems/)：本卡的個案。那張卡記錄被點名的句子與三種缺陷；本卡記錄把其中一種寫成檢查規則時的不收斂與反省。
+- [寫作審查裡，修法要補原文沒有的概念時，那是內容的問題：拆成另一個題目，不在這一批換詞，停點也要列出這個選項](/report/wording-review-cannot-fix-a-missing-concept/)：本卡的停點給使用者照 finding 修下去與重寫兩種走法；那張卡補上拆成內容題目這一種：那一則 finding 的修法要補原文沒有的內容，不在這一批的範圍內，拆成另一個題目做。

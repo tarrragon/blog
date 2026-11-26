@@ -78,3 +78,4 @@ slug: "review-nonconvergence-points-to-outline"
 - [把一段說法改寫成教學文章時，說法留在正文裡當討論對象](/report/rewritten-claim-kept-as-the-subject/)：同一個批次抽出的卡。那張卡的缺陷（素材的說法決定了大綱）是這個批次在 Round 2 時的大綱缺陷；兩張卡都把修法從句子層移到大綱層。
 - [文章按分析弧拆分、不按來源主題攤平](/report/article-split-by-analysis-arc-not-source-spread/)：拆篇的依據。本卡決定什麼時候該拆，那張卡決定怎麼拆。
 - [規則的審查走到設計稽核的停點時，先反省寫法、再反省對規則的理解、最後才簡化](/report/rule-nonconvergence-reflect-form-then-understanding/)：補上本卡〈修法〉的規則類文件設計稽核沒有檢查的一項：規則的模型。稽核的三項結構事實都是形式，規則的模型偏掉時，照稽核重寫之後仍會再觸發；那張卡寫出設計稽核走到停點時要做的兩層反省，以及「必修集中在分類的邊界」這個訊號。
+- [寫作審查裡，修法要補原文沒有的概念時，那是內容的問題：拆成另一個題目，不在這一批換詞，停點也要列出這個選項](/report/wording-review-cannot-fix-a-missing-concept/)：補上本卡沒有涵蓋的一種形態。一批只換詞的審查不改大綱，句子層仍然不收斂時，缺的可能是一個沒有被命名的概念；處置是拆成內容題目、不必重排，停點交給使用者的選項也要列出這一項。
