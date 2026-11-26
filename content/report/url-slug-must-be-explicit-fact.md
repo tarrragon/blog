@@ -160,14 +160,15 @@ done
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                          | 關係                                                                                                                     |
-| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| [#44 Single Source of Truth](../single-source-of-truth/)                      | **本卡是 #44 在 identifier 維度的具體實例** — slug 散落三處、fact 升級為主修法                                           |
-| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/) | mdtools 是字面 lint、hugo urlize 是 runtime 行為 — 兩層之間的 gap 用「教字面學行為」解 = 規則膨脹、正解是消除 derivation |
-| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)     | 「能 build 就不寫 slug」是便利寫法、「顯式寫 slug」是對齊意圖（不依賴推導）                                              |
-| [#72 高 ROI 無外部觸發](../external-trigger-for-high-roi-work/)               | 「之後系統性補 slug」沒 trigger = 永遠不會做、175 篇累積債就是這條訊號                                                   |
-| [#91 升級 trigger 的量化設計](../escalation-trigger-quantification/)          | 補 lint 規則是 trigger、把「應該補 slug」從紀律升級成結構性檢查                                                          |
-| [#92 視覺手段對齊錯誤層次](../visual-tool-error-layer-alignment/)             | 同骨：工具的 ceiling（mdtools 字面 vs hugo runtime）超出就 false confidence                                              |
+| 原則                                                                                                                                                                                            | 關係                                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#44 Single Source of Truth](../single-source-of-truth/)                                                                                                                                        | **本卡是 #44 在 identifier 維度的具體實例** — slug 散落三處、fact 升級為主修法                                                                                |
+| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)                                                                                                                   | mdtools 是字面 lint、hugo urlize 是 runtime 行為 — 兩層之間的 gap 用「教字面學行為」解 = 規則膨脹、正解是消除 derivation                                      |
+| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)                                                                                                                       | 「能 build 就不寫 slug」是便利寫法、「顯式寫 slug」是對齊意圖（不依賴推導）                                                                                   |
+| [#72 高 ROI 無外部觸發](../external-trigger-for-high-roi-work/)                                                                                                                                 | 「之後系統性補 slug」沒 trigger = 永遠不會做、175 篇累積債就是這條訊號                                                                                        |
+| [#91 升級 trigger 的量化設計](../escalation-trigger-quantification/)                                                                                                                            | 補 lint 規則是 trigger、把「應該補 slug」從紀律升級成結構性檢查                                                                                               |
+| [#92 視覺手段對齊錯誤層次](../visual-tool-error-layer-alignment/)                                                                                                                               | 同骨：工具的 ceiling（mdtools 字面 vs hugo runtime）超出就 false confidence                                                                                   |
+| [#403 紀錄的識別碼由一串後備來源依序推導時，來源拿不拿得到一變識別碼就換了：重新合併時新增成重複，正規化過的後備來源還會撞號](../fallback-derived-id-changes-when-source-availability-changes/) | 本卡管不同工具對同一個 identifier 各自推導；#403 補上同一支程式在不同次執行之間推導出不同 identifier 的情形，以及已經以舊 identifier 存下的紀錄怎麼比對與合併 |
 
 本卡跟 #82 / #92 共同形成「**工具 ceiling pattern 系列**」 — 每個工具都有能擋的層 / 擋不到的層、跨層之間需要「升級 fact」或「換工具」、不是「教工具學別人的規則」。
 
