@@ -1,10 +1,10 @@
 ---
 name: flutter-device-verification
-description: "在 Android 實機與 iOS 模擬器上操作 Flutter APP 並截圖驗證畫面：取得 VM service 位址、用腳本換頁點按捲動、截圖當下記版本、改程式碼後熱重啟並確認、拼圖裁切看圖、逐狀態回填交付紀錄、亮暗字級與導覽方式切換後還原、避免誤點寫入資料、模擬器驗不到的狀態；在實機上以 profile mode 量效能時的資料保全、量測陷阱與還原。觸發：Flutter 截圖、實機驗證、模擬器截圖、熱重啟、重拍、adb、simctl、flutter drive、實機效能量測、integration_test。"
+description: "在 Android 實機與 iOS 模擬器上操作 Flutter APP 並截圖驗證畫面：取得 VM service 位址、用腳本換頁點按捲動、截圖當下記版本、改程式碼後熱重啟並確認、拼圖裁切看圖、逐狀態回填交付紀錄、亮暗字級與導覽方式切換後還原、避免誤點寫入資料、模擬器驗不到的狀態；在實機上以 profile mode 量效能時的資料保全、量測陷阱與還原。觸發：Flutter 截圖、實機驗證、模擬器截圖、熱重啟、重拍、adb、simctl、flutter drive、實機效能量測、integration_test 效能量測。"
 license: MIT
 metadata:
   portable: true
-  version: 1.2.0
+  version: 1.3.0
   category: testing
 ---
 
@@ -13,7 +13,7 @@ metadata:
 改了 Flutter APP 的畫面之後，在 Android 實機與 iOS 模擬器上把要驗的狀態一個一個開出來、截圖、看圖。`scripts/drive.dart` 經由 VM service 在執行中的 APP 裡求值，完成換頁、點按、返回與輸入，不改 APP 的程式碼，也不靠人手點。
 
 適用：審查的人或使用者要截圖證據；同一組畫面要拍亮暗兩版或多台設備；改了共用元件之後要整組重拍。
-在實機上以 profile mode 量效能（`integration_test` 加 `flutter drive --profile`）時，資料保全（`flutter drive` 結束時會解除安裝 APP 連同資料）、手機與主機的狀態、量測本身的陷阱與還原，讀 `references/profile-measurement.md`。
+在 Android 實機上以 profile mode 量效能（`integration_test` 加 `flutter drive --profile`）時，資料保全（`flutter drive` 結束時會解除安裝 APP 連同資料）、手機與主機的狀態、量測本身的陷阱與還原，讀 `references/profile-measurement.md`。這條路不走下面的〈前置〉與流程（那些是截圖驗證用的，例如只能用 debug 模式啟動），只沿用〈前置〉裡 `adb devices` 列出手機狀態是 `device` 那一項檢查。
 
 不適用：版面與狀態能用 widget 測試或 golden 測試驗的（那是自動測試的範圍，寫測試）；相機掃描、震動、輸入法選字與自動校正這類要人實際操作設備才看得到的行為（請使用者在實機上做，在紀錄寫明是使用者驗的）。螢幕鍵盤打開時的畫面可以拍，做法見 `references/device-pitfalls.md`〈症狀與處置〉。
 

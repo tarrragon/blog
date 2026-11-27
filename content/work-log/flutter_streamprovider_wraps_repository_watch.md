@@ -66,6 +66,8 @@ Future<void> _emitCurrentBooks() async {
 1. **委派方法不重複 emit**。介面上的相容性方法（`saveBook` 內部委派 `addBook`、`deleteBookById` 委派 `deleteBook`）走到底層寫入方法時已經 emit 過；在委派層再掛一次會讓一次寫入發兩次通知。emit 的掛載點是「實際執行寫入的方法集合」、不是「介面上所有看起來會寫入的方法」。
 2. **`isClosed` 要查兩次**。`getAllBooks()` 是 async——查詢期間 repository 可能被 close，`add` 前不再確認就會對已關閉的 controller 拋例外，而且是從寫入方法的尾端拋出來、污染寫入本身的成功語意。
 
+這個寫法每一次寫入都用 `getAllBooks()` 讀出全部的書，成本跟書庫的大小成正比；broadcast 串流沒有監聽者時送出的資料會被丟掉，所以畫面改成直接查資料庫之後，這份工作就只剩成本。書庫長到幾萬本時的量測與修法（沒有監聽者時跳過），見 [每一次操作附帶一次全量工作時，成本隨資料量放大而小資料下量不到](/report/hidden-full-scan-per-operation/) 與 [Flutter 書庫 APP 冷啟動時間的排查：把全部的書載入記憶體、資料庫單例的並行開檔與每次啟動的完整性檢查](/work-log/flutter-cold-start-database-open-and-integrity-check/)。
+
 ## 實作點二：初始值——broadcast 不補送歷史
 
 broadcast stream 對「訂閱之前發生的事件」直接丟棄。衍生視圖訂閱 `watchBooks()` 的當下，上一次 emit 早就過去了——不處理初始值，畫面會停在空清單直到下一次寫入才有資料。

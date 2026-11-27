@@ -85,7 +85,7 @@ final watchBooksProvider = StreamProvider<List<Book>>((ref) async* {
 });
 ```
 
-從此「資料變更」是 provider 圖上的一級節點：任何衍生視圖 `ref.watch(watchBooksProvider)` 就取得 reactive 更新，統計頁、書庫清單、待補完列表全部走同一條觀察路徑。涵蓋面從「枚舉入口／枚舉事件」變成「寫入方法的集合」——新增加書路徑時，寫入必然經過 repository 的寫入方法，emit 自動涵蓋，沒有「記得補」這個動作。實作細節（broadcast、初始值、dispose）在 [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)。
+從此「資料變更」是 provider 圖上的一級節點：任何衍生視圖 `ref.watch(watchBooksProvider)` 就取得 reactive 更新，統計頁、書庫清單、待補完列表全部走同一條觀察路徑。涵蓋面從「枚舉入口／枚舉事件」變成「寫入方法的集合」——新增加書路徑時，寫入必然經過 repository 的寫入方法，emit 自動涵蓋，沒有「記得補」這個動作。實作細節（broadcast、初始值、dispose）在 [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)。這條路徑每次寫入都送出一份完整書單，書庫長到幾萬本時，啟動與寫入的成本跟著放大；量測與後來改成直接向資料庫查詢的做法在 [Flutter 書庫 APP 冷啟動時間的排查：把全部的書載入記憶體、資料庫單例的並行開檔與每次啟動的完整性檢查](/work-log/flutter-cold-start-database-open-and-integrity-check/)。
 
 ## 判斷標準：補償刷新是缺口訊號
 

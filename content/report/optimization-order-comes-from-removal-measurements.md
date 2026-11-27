@@ -52,3 +52,4 @@ slug: "optimization-order-comes-from-removal-measurements"
 - [比對回報零差異時，那個零只證明這個粒度看不到差異](/report/null-difference-only-at-the-resolution-you-looked/)：JS 計時量到的「每幀不到 1 ms」是同一種形態，那個數字只證明 JS 回呼這一段便宜，GPU 程序那一段它看不到。
 - [工具自動檢查的品質約束買到被量測的那個數字，代價落在沒被量測的維度](/report/mechanical-constraints-buy-the-measured-number/)：只追繪製次數時，繪製次數降了，成本留在沒被量的合成與柵格化上。
 - [真值在稿件之外的宣稱，讀多少遍都驗不出來](/report/text-review-cannot-reach-external-truth/)：「這一段很貴」是關於執行時的宣稱，讀程式碼讀不出真值，要跑。
+- [效能沒過門檻時，先依時間段拆開量再選修法：直覺的成因被量測推翻兩次，跟資料量無關的成本歸給負責它的那一層](/report/split-the-time-before-choosing-the-fix/)：本卡處理讀程式碼排出的熱點要拿掉量；那張卡補的是端到端指標的情形：沿著跨層的交接依時間段拆開，每個候選成因用小實驗否證，再依成本隨什麼變大決定歸給哪一層。

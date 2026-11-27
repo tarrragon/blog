@@ -74,3 +74,4 @@ slug: "independence-is-what-the-guarded-side-cannot-disable"
 - [#283 替補結構的豁免來自它修掉的清單](/report/replacement-exemption-comes-from-its-fix-list/)：每一輪補上的修法（獨立的通知檢查、「每端各假設一次」）都修掉了被指出的實例，而它們引進的新成員沒有被同一個問題檢驗；這張卡的修法要求對新加入的成員重跑三題。
 - [#337 審查的射程只涵蓋被審查的對象](/report/review-scope-never-includes-the-instrument/)：同構的另一面。審查者不會審查自己用的工具，觀察者的獨立性也常常沒有把「觀察者自己依賴什麼」算進去。
 - [#296 規模買不到異源視角](/report/review-scale-does-not-buy-independent-origin/)：在審查流程上的同一個原則。同一個 session 派出的審查者與作者共用盲區，數量增加不構成獨立；判斷的是兩者共用了什麼，不是有幾個。
+- [非同步初始化的單例寫成「還沒有就 await 開一個」時，第一次開還沒完成前同時取用的呼叫者各開一份：共用同一次進行中的初始化](/report/async-singleton-init-needs-single-flight/)：程式裡的同一件事：單例「只有一份」的保證若依賴呼叫端循序取用，呼叫端一改就失效，保證要放在單例自己的初始化裡。

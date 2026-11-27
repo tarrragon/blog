@@ -102,3 +102,4 @@ slug: "attribute-recorded-corrections-before-rewriting-rules"
 - [量測的前置步驟決定了分母，而所有檢查都落在分母之後](/report/measurement-preprocessing-decides-the-denominator/)：這張卡的取單位與對帳照那張卡做。粗分把待辦算成糾正，是分母錯掉而後面的比例都算得正確的實例。
 - [門檻要在派發之前寫死，否則「不處置」會被事後合理化](/report/thresholds-registered-before-dispatch/)：這張卡的事先登記用同一個理由，對象從探針的處置線換成整批工作是否繼續。
 - [規則的審查走到設計稽核的停點時，先反省寫法、再反省對規則的理解、最後才簡化：理解要對照使用者的原話與既有規則的住址，必修集中在分類的邊界可能是理解偏掉的訊號](/report/rule-nonconvergence-reflect-form-then-understanding/)：那張卡在一批改寫卡住時反省；這張卡排在這一批開始之前，先確認這批改寫對準的是實際發生過的失敗。
+- [給操作建議之前先查專案記錄過的結論：建議清 Gradle 快取騰出磁碟空間，前一天的規格已經寫明清它只會讓下一次建置整個建回來](/report/advice-must-check-recorded-findings/)：這張卡管改規則之前先讀記錄過的糾正；那張卡把同一件事延伸到向使用者提操作建議之前：專案記錄過的量測結論，同樣要在推論之前先讀。
