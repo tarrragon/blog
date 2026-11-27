@@ -9,7 +9,7 @@ WAF 的核心概念是「在流量進入 application 之前，先用規則擋掉
 
 ## 跟其他概念的關係
 
-WAF 位在流量入口與 application 之間。它適合處理 SQL injection（外層過濾；根治在資料存取層一律用佔位符，見 [SQL Injection](/backend/knowledge-cards/sql-injection/)）、XSS、惡意 bot、異常 payload、重放型濫用與明顯不符合路徑語意的 request。 可先對照 [Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)。
+WAF 位在流量入口與 application 之間。它適合處理 SQL injection（外層過濾；根治在資料存取層一律用佔位符，見 [SQL Injection](/backend/knowledge-cards/sql-injection/)）、XSS、已知惡意 bot 的請求特徵（user agent、已知來源清單；判斷客戶端是不是由真人操作的瀏覽器見 [Bot Management（機器人流量管理）](/backend/knowledge-cards/bot-management/)）、異常 payload、重放型濫用與明顯不符合路徑語意的 request。 可先對照 [Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)。
 
 ## 可觀察訊號與例子
 

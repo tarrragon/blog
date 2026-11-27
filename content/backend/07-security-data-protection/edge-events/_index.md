@@ -35,7 +35,7 @@ tags: ["backend", "security", "waf", "cdn", "detection", "monitoring"]
 
 實測紀錄放在 `vendors/cloudflare-waf/hands-on/`（實作文章操作的是 Cloudflare，而模組裡有它的 vendor 資料夾）。
 
-跟模組 Backlog 裡「DDoS 與機器人流量防護的概念主章」的分工：那一列寫的是防護控制怎麼選、怎麼配置（清洗、速率規則、挑戰驗證、搶購機器人）；本系列寫的是那些控制動作之後留下的紀錄怎麼讀、怎麼排進監控。7.E3 寫到各種處置時，處置的選型連到那一章（寫成之後）。
+跟模組 Backlog 裡「DDoS 防護的概念主章」、[7.46 搶票與限量搶購機器人的防護](/backend/07-security-data-protection/ticket-bot-defense/) 與 [Bot Management（機器人流量管理）](/backend/knowledge-cards/bot-management/) 卡的分工：那一列寫體積型攻擊的清洗與 HTTP flood 的速率規則怎麼選、怎麼配置，7.46 寫搶購機器人的辨識與處置，Bot Management 卡寫邊緣判斷客戶端的訊號與挑戰、擋下的取捨；本系列寫的是那些控制動作之後留下的紀錄怎麼讀、怎麼排進監控。7.E3 寫到各種處置時，挑戰與擋下的選型連到 Bot Management 卡與 7.46，清洗與 HTTP flood 的處置連到那一章（寫成之後）。
 
 ## Backlog
 

@@ -522,6 +522,11 @@
    "module": "backend"
   },
   {
+   "name": "Bot Management",
+   "card": "backend/knowledge-cards/bot-management",
+   "module": "backend"
+  },
+  {
    "name": "Boundary Contract",
    "card": "backend/knowledge-cards/contract",
    "module": "backend"
@@ -7414,6 +7419,11 @@
   {
    "name": "標籤改寫",
    "card": "backend/knowledge-cards/relabeling",
+   "module": "backend"
+  },
+  {
+   "name": "機器人流量管理",
+   "card": "backend/knowledge-cards/bot-management",
    "module": "backend"
   },
   {
