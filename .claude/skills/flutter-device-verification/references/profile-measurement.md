@@ -4,7 +4,7 @@
 
 ## 跑之前：資料保全
 
-`flutter drive` 結束時會把 APP 解除安裝，APP 的資料跟著刪掉；量測失敗或被中斷時也一樣。使用者的手機上有真實資料時，下面每一步都要做，做錯的代價是使用者的資料沒了。
+`flutter drive` 跑完時會把 APP 解除安裝，APP 的資料跟著刪掉；測試通過或失敗都一樣（實測中途停掉 `flutter drive` 的那一次，APP 還在，但不要依賴這一點）。使用者的手機上有真實資料時，下面每一步都要做，做錯的代價是使用者的資料沒了。
 
 1. **備份全部資料庫檔**：`adb shell am force-stop <applicationId>`，再用 `adb exec-out run-as <applicationId> cat databases/<檔名>` 逐一拉回主檔與 `-wal`、`-shm`（WAL 模式時最近的寫入可能還在 `-wal` 裡）。記下每個檔的雜湊。
 2. **備份當下產生一份內容清單**：把備份複製一份，用 `sqlite3 -readonly <副本>` 跑一組固定的查詢（主要資料表的主鍵與關鍵欄位、關聯表），存成清單。不要用一般模式的 `sqlite3` 開備份本身：它關檔時會做 checkpoint，把 WAL 併回主檔，備份的雜湊從此對不上。

@@ -29,6 +29,10 @@ tags: ["work-log", "debug", "工具"]
 - [狀態色塊配色的對比量測：文字對色塊、色塊對背景、細標記對底色，以及紅綠色覺差異](state-color-contrast-and-color-vision/) — 三道對比各自怎麼算、各自擋下哪個顏色，以及只靠紅綠區分時色覺差異的讀者看到什麼
 - [CSS 改用 token 取值的重構與驗證：逐元素比對計算後的樣式、字級分成尺寸階與功能字級（primitive 與 semantic token）、!important 與提高特定性的 id 選擇器的替代寫法](css-token-refactor-verified-by-computed-style-diff/) — 重構前後逐元素比對計算後的樣式並歸類差異（預期內、字串不同而畫面相同、量測時序），字級的兩層 token，改寫選擇器取代 `!important` 與 id 加權、拿掉加權量出它是否還要贏過哪條規則，用檢查腳本擋新的寫死值，grid 子項 `min-width: auto` 的溢出，以及三個元件與 JavaScript 共用 token
 - [Chrome 擴充功能提取書目之後書庫頁停在舊資料的排查：逐段計數、頁首總數的解析、轉送層覆蓋欄位寫錯 storage key、舊識別碼對不上而新增重複、修好之後的殘留資料](chrome-extension-library-stale-after-extraction/) — 沿著資料流在每一段取本數找出第一次對不上的位置，轉送層的附註佔用了下游拿來組 key 的欄位名，舊版程式用書名或封面當識別碼而重新提取時對不上，以及修好之後殘留資料的處理
+- [匯入大量書籍時的寫入耗時排查：手機上 SQLite 在背景 isolate 的逐條往返、一次送出的語句記錄器，以及依提交時間調整批次大小](flutter-drift-batch-write-isolate-round-trip/) — 測試裡一千本一秒、手機上一萬本九分半鐘，從每本書的 SQL 條數找到成本在跨 isolate 的往返
+- [Flutter 實機效能量測的排查：integration_test 的打字、無障礙樹、頁面監聽與背景等待，以及 flutter drive 解除安裝 APP 時的資料保全](flutter-integration-test-profile-measurement-pitfalls/) — 每一個缺陷都讓量測照樣產出數字，以及量完 APP 連同資料被刪掉時怎麼備份與還原
+- [書單捲動與換搜尋結果時的慢 frame 拆解：timeline 分段、排版細項、中文字串的排版時間與字型實驗](flutter-list-jank-cjk-text-layout-breakdown/) — 資料層的工作達標之後兩項畫面指標仍然沒過，依時間段拆到文字排版，兩個直覺的成因被量測推翻
+- [書庫 APP 冷啟動時間的排查：把全部的書載入記憶體、資料庫單例的並行開檔與每次啟動的完整性檢查](flutter-cold-start-database-open-and-integrity-check/) — 5 萬本時冷啟動從 7.3 秒到 1.33 秒，三個成因各自的量測與修法
 
 **環境、設定與架構觀念** — 開發環境一次性設定、規則檔維護、與後端協作時整理出的設計觀念等。例：
 

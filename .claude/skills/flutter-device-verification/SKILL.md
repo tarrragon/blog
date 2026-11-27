@@ -4,7 +4,7 @@ description: "在 Android 實機與 iOS 模擬器上操作 Flutter APP 並截圖
 license: MIT
 metadata:
   portable: true
-  version: 1.1.0
+  version: 1.2.0
   category: testing
 ---
 
