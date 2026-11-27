@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 1.81.0
+  version: 1.82.0
   category: writing-methodology
 ---
 
@@ -54,7 +54,7 @@ metadata:
 
 ## 示範指令的引數另有一條檢查（程式碼區塊適用）
 
-句子層檢查走到程式碼區塊會停下。判斷問句：讀者要把這條指令用在自己的環境上，得改哪幾個位置，文章有沒有說過每個位置填的是什麼；掃描入口是區塊裡的字面值、不是佔位符；引數的有無改變行為時，兩條指令並列在同一個區塊。區塊怎麼排、註解裝什麼、何時改用參數表，全文在 `references/demonstrating-commands.md`〈示範指令的引數另有一條檢查（程式碼區塊適用）〉。
+句子層檢查走到程式碼區塊會停下。檢查項：讀者要把這條指令用在自己的環境上時得改的每一個位置，文章是否都說過它填的是什麼；掃描入口是區塊裡的字面值、不是佔位符；引數的有無改變行為時，兩條指令並列在同一個區塊。區塊怎麼排、註解裝什麼、何時改用參數表，全文在 `references/demonstrating-commands.md`〈示範指令的引數另有一條檢查（程式碼區塊適用）〉。
 
 ## Core Pillars（核心支柱）
 

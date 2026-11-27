@@ -79,7 +79,7 @@ ML inference 場景的 feature lookup 是多層 cache 的典型應用。[Tubi fe
 
 ## 實體服務討論承接點
 
-實體快取服務文章要承接本篇的 data shape 與 access pattern。Redis/Valkey 的 hash、set、sorted set、stream 能表達多種資料形狀；Memcached 偏向簡單 key/value blob；CDN 與 local cache 則承擔不同層次的讀取加速。比較服務時要先問 access pattern，再問語法。
+實體快取服務文章要承接本篇的 data shape 與 access pattern。Redis/Valkey 的 hash、set、sorted set、stream 能表達多種資料形狀；Memcached 偏向簡單 key/value blob；CDN 與 local cache 則承擔不同層次的讀取加速。比較服務時先確認 access pattern，再比較語法。
 
 若讀取是單 key 或 blob，後續文章要比較 serialization、value size、TTL 與 eviction。若讀取是集合、排名或計數，後續文章要比較資料結構、原子性與容量行為。若讀取跨多層 cache，後續文章要比較失效傳播、stale 疊加與 observability。
 

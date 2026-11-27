@@ -20,4 +20,4 @@ tags: ["backend", "observability", "monitoring"]
 
 ## 判斷條件與後果
 
-看到一個監控時，先問它是讀內部狀態還是看外部行為，再問它站在哪裡。名字帶 blackbox 的工具跑在服務主機上，是黑箱、但不在失效域以外；雲端業者從虛擬化層讀的指標是白箱、而位置在主機以外。監控分層裡各層各屬哪一種、各自的盲區由誰接手，見 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)；黑箱探測放到失效域以外的做法見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。
+判讀一個監控時，先確認它讀的是內部狀態還是外部行為，再確認它跑在哪裡。名字帶 blackbox 的工具跑在服務主機上，是黑箱、但不在失效域以外；雲端業者從虛擬化層讀的指標是白箱、而位置在主機以外。監控分層裡各層各屬哪一種、各自的盲區由誰接手，見 [4.0 服務端監控的分層](/backend/04-observability/monitoring-layers/)；黑箱探測放到失效域以外的做法見 [4.28 單台主機的監控盲區與失效域以外的觀察者](/backend/04-observability/single-host-monitoring-outside-view/)。

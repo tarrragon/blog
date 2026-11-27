@@ -22,4 +22,4 @@ Tiered support（分層支援）是把處理使用者回報的人分成幾層的
 
 ## 判斷條件與後果
 
-看到回報大量往上轉時，先問上一層這次用了什麼資訊才答出來，再問這份資訊能不能交到下一層手上：能的話補成下一層的工具或知識文章，不能的話（需要改程式、需要讀含個人資料的 log）才是該轉的回報。客服與工程之間的完整流程見 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/)。
+看到回報大量往上轉時，先問上一層這次用了什麼資訊才答出來，再判斷這份資訊能不能交到下一層手上：能的話補成下一層的工具或知識文章，不能的話（需要改程式、需要讀含個人資料的 log）才是該轉的回報。客服與工程之間的完整流程見 [8.24 客服回報的處理](/backend/08-incident-response/support-escalation-and-engineering-reply/)。

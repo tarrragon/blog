@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.20.0 — principle 卡 `evaluation-unit-before-severity` 照本體同步：「先問兩邊評的是不是同一個對象，再問誰對」改成「先確認兩邊評的是不是同一個對象，再判斷哪一邊對」，`detailed-techniques.md` 轉述同一條規則的那一句跟著改成「先確認」。判斷標準與處置沒有改。
+
 **Version**: 2.19.0 — `premortem-workflow.md` 的「不逐項機械提問」改成「不照清單逐項提問」：原句講的是呆板地照清單問，改寫成實際的做法。流程沒有改。
 
 **Version**: 2.18.0 — 內文的優化、在線、補丁依所指換成台灣用語（最佳化、強化、改善；線上、在線上、同時執行；修補、修補檔、更新檔）。

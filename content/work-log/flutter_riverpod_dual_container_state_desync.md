@@ -68,7 +68,7 @@ if (initState.status == AppInitializationStatus.notStarted) {
 
 ## 判讀徵兆
 
-- 「狀態改了但 UI 沒反應」且雙方程式碼各自看都正確——先數容器：全專案搜 `ProviderContainer(`，每一個實例都問「它跟 UI 的 Scope 是同一個嗎」
+- 「狀態改了但 UI 沒反應」且雙方程式碼各自看都正確——先數容器：全專案搜 `ProviderContainer(`，逐一確認每一個實例跟 UI 的 Scope 是不是同一個
 - `main()` 裡出現 `ProviderContainer()` 又出現 `ProviderScope`——幾乎就是本文的 bug 形態
 - provider 狀態「永遠是初始值」——比「狀態錯誤」更指向無人操作這份實例、該查操作方作用在哪個容器
 

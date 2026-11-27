@@ -2,7 +2,7 @@
 name: skill-design-guide
 description: "Anthropic skill spec plus this project's conventions: frontmatter, descriptions, loading budgets, and splitting an oversized skill. Use when creating a skill, editing SKILL.md, reviewing skill quality, or moving content into references/."
 metadata:
-  version: 1.26.0
+  version: 1.27.0
 ---
 
 # Skill Design Guide
@@ -56,7 +56,7 @@ metadata:
 
 **第一問問的是行為差異，不是知識空缺。** 「Claude 知不知道」與「Claude 預設會不會這樣做」是兩個獨立維度——**「知道但預設不會做」的內容要留**（量測指令即屬此類：Claude 會算 token，但不會主動去量）。把兩者當成一條線的兩端，這一格會被誤判成移除。
 
-**Action**：判不準時做刪除測試——把該段拿掉，在乾淨 session 對同一任務重跑，比對兩次產出。這一問可外部驗證，「Claude 知不知道」不能。
+**Action**：判不準時做刪除測試——把該段拿掉，在乾淨 session 對同一任務重跑，比對兩次產出。這一項檢查可外部驗證，「Claude 知不知道」不能。
 
 ### Progressive Disclosure — 三層載入
 
@@ -81,7 +81,7 @@ wc -l .claude/skills/<name>/SKILL.md   # 官方 500 行，超標即須外移
 
 ### 超標了怎麼辦——不是刪，也不是硬搬
 
-第 2 層超標時，**先問這個 skill 是不是在做太多事，再問要搬什麼**。順序反過來會把該分家的內容硬塞進同一個 skill 的 references，換來一份走不完的正文加一堆沒人讀的檔。
+第 2 層超標時，**先判斷這個 skill 是否在做太多事，再決定要搬什麼**。順序反過來會把該分家的內容硬塞進同一個 skill 的 references，換來一份走不完的正文加一堆沒人讀的檔。
 
 | 診斷 | 處置 |
 |------|------|

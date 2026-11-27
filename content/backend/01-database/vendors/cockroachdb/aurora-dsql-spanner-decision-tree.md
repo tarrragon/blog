@@ -265,7 +265,7 @@ Self-managed 規模化的另一極：Netflix 養 380+ cluster 需要 *專屬 Dat
 | 容量規劃顆粒      | Per-cluster 獨立估                    | 集中估、跨服務共池                      |
 | 平台團隊要求      | 高（cluster 數越多越剛性）            | 中（cluster 數少但 placement 複雜度高） |
 
-判讀順序：先問「跨服務 query 需要 transactional 嗎」— Yes 偏邏輯一個 cluster、No 進下一條；再問「服務之間 SLA / compliance 是否硬隔離」— Yes 偏 per-app、No 看 team / ops 槓桿。
+判讀順序：先判斷跨服務 query 是否需要 transactional — 需要時偏邏輯一個 cluster、不需要時進下一條；再判斷服務之間的 SLA / compliance 是否硬隔離 — 硬隔離時偏 per-app、沒有硬隔離時看 team / ops 槓桿。
 
 ### 跟 Aurora fleet 治理的本質差異
 

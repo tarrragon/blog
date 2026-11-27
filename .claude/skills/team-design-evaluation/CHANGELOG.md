@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.4.0 — `lenses.md` 的「拿名冊裡每個 agent 問一次「它需要什麼獨立判斷」，答不出來的就是……」改成「名冊裡每個 agent 逐一寫出它需要的獨立判斷，寫不出任何一項的就是……」：判定看的是寫不寫得出那項判斷，不看執行者自認答不答得出。處置沒有改。
+
 **Version**: 1.3.1 — 版本紀錄搬到同目錄的 `CHANGELOG.md`。skill 是 runtime 整份載入的檔案，而沒有任何規則要求任何人讀版本紀錄，留在 SKILL.md 等於每次叫用都付一次無效讀取。SKILL.md 末尾留一行指過去，版號的兩個住址改成「CHANGELOG.md 最上面那一條 + frontmatter 的 metadata.version」。skill 的指令內容一個字都沒改。
 
 **Version**: 1.3.0 — Round 3 三 reviewer 審查修法（self-application / 修法二拍 / 修法驗收）：「未評」雙義拆開——無證據的判讀改標「證據缺口」並列補證行動、「未評」限定為症狀觸發單 lens 路徑的範圍外標記、整套評估主力三 lens 不得標未評；次要 lens 條件未成立時標不適用（退出訊號即該條件）；歸檔改「評估者主動提案、請使用者核可」並給未核可時的 open item 路徑；checklist 觸發點用詞去擴染（整套觸發點限重組、症狀表是單 lens 監看入口）；單 lens 量級與精簡記錄格式；蒐證表宣告以 lenses.md 為準；lenses 範例數字與實測值錯開（三十改四十）。

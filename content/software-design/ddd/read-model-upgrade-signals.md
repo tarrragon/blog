@@ -7,11 +7,11 @@ tags: ["ddd", "read-model", "cqrs", "repository", "architecture"]
 aliases: ["/ddd/read-model-upgrade-signals/"]
 ---
 
-[讀模型](/software-design/ddd/knowledge-cards/read-model/)（read model）是為讀需求的形狀而建的查詢側模型：它回答「畫面或報表需要什麼形狀的資料」、而 [repository](/software-design/ddd/knowledge-cards/repository/) 回答「[aggregate](/software-design/ddd/knowledge-cards/aggregate-root/) 長什麼形狀」。讀側的設計是一道階梯、不是「要不要 [CQRS](/software-design/ddd/knowledge-cards/cqrs/)」的開關——多數專案的正確位置在階梯低處，升級由訊號驅動。本章給出階梯的四階、升級的五個訊號、以及一句照著問就得出答案的自檢問句：
+[讀模型](/software-design/ddd/knowledge-cards/read-model/)（read model）是為讀需求的形狀而建的查詢側模型：它回答「畫面或報表需要什麼形狀的資料」、而 [repository](/software-design/ddd/knowledge-cards/repository/) 回答「[aggregate](/software-design/ddd/knowledge-cards/aggregate-root/) 長什麼形狀」。讀側的設計是一道階梯、不是「要不要 [CQRS](/software-design/ddd/knowledge-cards/cqrs/)」的開關——多數專案的正確位置在階梯低處，升級由訊號驅動。本章給出階梯的四階、升級的五個訊號，以及新增查詢方法時做的一項自檢：
 
-> 這個查詢回傳的是**讀的形狀**、還是 **aggregate 的形狀**？
+> 判定這個查詢回傳的是**讀的形狀**還是 **aggregate 的形狀**。
 
-回傳 aggregate 形狀（entity 或 entity 集合）的查詢屬於 repository；回傳讀的形狀（統計值、扁平列表、跨 aggregate 拼裝）的查詢是讀模型的候選。問句每次新增查詢方法時問一次，答案累積起來就是五訊號的量測值。
+回傳 aggregate 形狀（entity 或 entity 集合）的查詢屬於 repository；回傳讀的形狀（統計值、扁平列表、跨 aggregate 拼裝）的查詢是讀模型的候選。每次新增查詢方法時做一次這項判定，判定結果累積起來就是五訊號的量測值。
 
 ## 階梯：四階與每階的代價
 

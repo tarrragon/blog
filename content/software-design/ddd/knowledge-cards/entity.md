@@ -11,7 +11,7 @@ Entity 的同一性由身份定義：欄位可以全部改變、只要身份參�
 
 ## 跟其他概念的關係
 
-Entity 是領域模型的一種形態——型別先判定為領域模型（有[不變式](/software-design/ddd/knowledge-cards/invariant/)）、再判定身份語意（entity 或 value object）。判斷標準是「操作需不需要 identity-based 回寫」：取消、改量、退貨這類要精確指到特定實體的操作，需要 entity；內容比對就足夠的操作用 value object。同一個業務概念的身份語意會隨生命週期階段改變——每個轉折點重問一次判斷標準。
+Entity 是領域模型的一種形態——型別先判定為領域模型（有[不變式](/software-design/ddd/knowledge-cards/invariant/)）、再判定身份語意（entity 或 value object）。判斷標準是「操作需不需要 identity-based 回寫」：取消、改量、退貨這類要精確指到特定實體的操作，需要 entity；內容比對就足夠的操作用 value object。同一個業務概念的身份語意會隨生命週期階段改變——每個轉折點重新套用一次判斷標準。
 
 ## 可觀察訊號
 

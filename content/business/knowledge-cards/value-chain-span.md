@@ -14,6 +14,6 @@ tags: ["business", "knowledge-cards", "financial-analysis"]
 
 ## 判讀訊號
 
-- 看到「A 公司毛利率遠高於 B」時，先問兩家涵蓋的價值鏈段是否相同，再問效率。span 不同時，把絕對毛利率當效率比較會系統性誤判。
+- 看到「A 公司毛利率遠高於 B」時，先確認兩家涵蓋的價值鏈段是否相同，再比較效率。span 不同時，把絕對毛利率當效率比較會系統性誤判。
 - 建立同業[基準](/business/financial-analysis/soybean-crush-economics/)時，peer group 要按 span 篩選——全製程 producer 與 reseller、純代工與垂直整合廠不是 margin peer。
 - span 差距可以量化為「多涵蓋的每一段各貢獻幾個百分點的毛利」，把結構差異從效率判斷裡分離出來。

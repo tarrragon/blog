@@ -100,7 +100,7 @@ List<RemoteOrderSnapshotItem> checkedOutItemsFor(String cartId) =>
 
 ## 同一個收尾動作
 
-兩件事表面無關，底下是同一個動作：**結構改動之後，對「還存在的東西」重新問一次「它還需要存在嗎」**。
+兩件事表面無關，底下是同一個動作：**結構改動之後，對「還存在的東西」重新確認它是否還需要存在**。
 
 - 查詢的放置：把 `unsettledView` 從吃 snapshot 改成純從 cart 導出、又把查詢層的空殼 service 拆掉之後，那段 `checkedOutItems` 的舊寫法（inline `Get.find`）就該重新評估——它現在該掛哪一層。
 - 測試的取捨：把舊函式刪掉、參數移除之後，那條鎖住舊 bug 的測試也該重新評估——它守的失敗模式還在不在。

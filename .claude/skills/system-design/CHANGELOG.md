@@ -2,6 +2,8 @@
 
 新到舊。版號的兩個住址是本檔與 `SKILL.md` frontmatter 的 `metadata.version`。
 
+**Version**: 0.15.0 — 把寫成執行者自問的檢查改寫成陳述：`decision-timing.md` 的「要再問一句：……有沒有人需要……？」改成「要再確認一項：……是否有人需要……。」；`release-and-rollout.md` 的「判斷問句是：……接不接得住」改成「檢查項是：目前的容量能不能承受這個變更上線後的尖峰負載」。`requirement-intake.md` 是列給需求方的提問清單，問句保留。判斷標準與處置沒有改。
+
 **Version**: 0.14.0 — 內文的優化、在線、補丁依所指換成台灣用語（最佳化、強化、改善；線上、在線上、同時執行；修補、修補檔、更新檔）。
 
 **Version**: 0.13.5 — decision-timing 兩條與 SKILL.md 分工表的實作指向改成 saas-tech-selection 新拆出的 implementations/ 兩份檔案。

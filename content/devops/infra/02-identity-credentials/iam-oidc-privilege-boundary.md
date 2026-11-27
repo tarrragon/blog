@@ -81,7 +81,7 @@ aws accessanalyzer generate-policy \
   }'
 ```
 
-一個快速的盤點方式：列出所有掛著 `AdministratorAccess`、`PowerUserAccess`、`*FullAccess` 這類寬鬆 managed policy 的 role，每個命中都問一次「這個 role 確實需要這些權限嗎」。CI role 的 policy 裡出現 `*:*` 更是明確的收斂目標。
+一個快速的盤點方式：列出所有掛著 `AdministratorAccess`、`PowerUserAccess`、`*FullAccess` 這類寬鬆 managed policy 的 role，每個命中都逐一確認這個 role 是否確實需要這些權限。CI role 的 policy 裡出現 `*:*` 更是明確的收斂目標。
 
 ## 長期 access key 的風險
 

@@ -74,7 +74,7 @@ Future<List<Book>> getAllBooks() async {
 
 ## 判讀徵兆
 
-- **mapper / 轉換函式的簽名是 `async`**——最便宜的掃描：`rg "Future<\w+> _mapTo" lib/`，每個命中都問它裡面的 await 在等什麼
+- **mapper / 轉換函式的簽名是 `async`**——最便宜的掃描：`rg "Future<\w+> _mapTo" lib/`，每個命中逐一確認它裡面的 await 在等什麼
 - 迴圈或 `Future.wait` 裡呼叫「單筆處理」函式、而該函式含查詢——N+1 的標準組合形
 - 某操作的耗時隨資料量線性惡化、但單筆操作很快——次數問題、不是單次效能問題
 - repository 有分頁 / 批次 API、但 provider / service 層的預設入口全量載入——能力與預設路徑脫節
