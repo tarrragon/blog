@@ -57,3 +57,4 @@
 - [question-answer-frame-blurs-problem-issue-request](question-answer-frame-blurs-problem-issue-request.md)：那張卡處理文章的組織軸寫成「X 回答什麼問題」，系統被寫成應答的一方；本卡處理規則與教材把一項檢查寫成執行者自問自答，被寫成應答的一方是執行者自己。
 - [colloquial-rhetoric-erodes-technical-precision](colloquial-rhetoric-erodes-technical-precision.md)：那張卡處理單一的口語詞在判斷段落裡稀釋精度；本卡處理一組句型，稀釋的是檢查的依據與判定的性質。
 - [judgment-rule-fixes-the-trigger-and-trace-not-the-answer](judgment-rule-fixes-the-trigger-and-trace-not-the-answer.md)：那張卡規定留意項開頭寫出強度；本卡規定強度句的語法寫判定的屬性（「沒有固定的條件」）。
+- [criteria-need-condition-action-mapping](criteria-need-condition-action-mapping.md)：本卡改的是規則檔與 skill 裡寫成執行者自問的檢查；那張卡的決策變數組是教材裡條件列舉不完時的寫法，它較早的「自查問句組」依本卡與 teaching-is-not-lecturing 的形態四改成要查的值與判定規則。

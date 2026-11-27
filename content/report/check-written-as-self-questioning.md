@@ -62,3 +62,4 @@ slug: "check-written-as-self-questioning"
 - [要靠判斷的原則寫成留意項：什麼時候判斷、判斷留下什麼寫成查得到的事實，判斷的答案不寫成條件](/report/judgment-rule-fixes-the-trigger-and-trace-not-the-answer/)：那張卡規定留意項開頭寫出強度；本卡規定強度句的語法寫判定的屬性（「沒有固定的條件」），不寫「這一問沒有固定的答案」。
 - [寫作審查裡，修法要補原文沒有的概念時，那是內容的問題](/report/wording-review-cannot-fix-a-missing-concept/)：那張卡的內容題目替一個概念取了名，名字裡有「問句」與可能補語；本卡是那個名字在語域上的檢討。
 - [教材用中性陳述、不對讀者喊話](/report/teaching-register-states-not-addresses-reader/)：那張卡處理教材對讀者說話的姿態；本卡處理規則對執行者的姿態：寫成要他自問，而不是寫出要他檢查什麼。
+- [判斷標準要寫到條件層：維度清單是判斷標準的空殼](/report/criteria-need-condition-action-mapping/)：本卡改的是規則檔與 skill 裡寫成執行者自問的檢查；那張卡的決策變數組是教材裡條件列舉不完時的寫法，它較早的「自查問句組」依本卡與 #355 形態四改成要查的值與判定規則。
