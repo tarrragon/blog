@@ -1,4 +1,4 @@
-"""bin/changed-lines、bin/commit-files、bin/lint-delta、bin/push-main、bin/session-edits-check 的測試。
+"""bin/changed-lines、bin/commit-files、bin/index-lock-check、bin/lint-delta、bin/push-main、bin/session-edits-check 的測試。
 
 每個測試在拋棄式 git repo 裡跑工具本身（subprocess），不 import。案例取自規則檔多輪審查
 實跑出的錯：新增行留著 `+` 前綴、漏掉 staged 或未 add 的新檔、index.lock 讓 `git add -N`
@@ -201,8 +201,237 @@ class CommitFiles(Base):
         r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
         self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
         self.assertIn("[FOLLOW-UP]", r.stdout)
-        os.remove(lock_path(self.root))
+        self.assertIn("index-lock-check", r.stdout)
         self.assertEqual(self.committed(), ["a.md"])
+        # 「先跑」那一行冒號之後整段原樣貼進 shell 要跑得起來（說明不黏在指令後面）
+        first = [line for line in r.stdout.splitlines() if "先跑" in line]
+        self.assertEqual(len(first), 1, r.stdout)
+        fake = os.path.join(self.base, "fakebin")  # pgrep 比對整台機器的 git 程序：換成沒有命中的假腳本
+        os.makedirs(fake, exist_ok=True)
+        with open(os.path.join(fake, "pgrep"), "w") as f:
+            f.write("#!/bin/sh\nexit 1\n")
+        os.chmod(os.path.join(fake, "pgrep"), 0o755)
+        base_env = {k: v for k, v in os.environ.items() if k not in CLAUDE_ENV}
+        base_env["PATH"] = fake + os.pathsep + base_env["PATH"]
+        rl = subprocess.run(["sh", "-c", first[0].split("：", 1)[1]], cwd=self.base, capture_output=True, text=True, env=base_env)
+        self.assertEqual(rl.returncode, 3, rl.stdout + rl.stderr)  # [STALE]，不是 127
+        self.assertIn("[STALE]", rl.stdout)
+        os.remove(lock_path(self.root))
+        r2 = self.run_printed_align(r.stdout, cwd=self.base)  # 下一次呼叫的 cwd 不同：印的指令照樣指到這個 repo
+        self.assertEqual(r2.returncode, 0, r2.stdout + r2.stderr)
+        self.assertEqual(sh(["git", "status", "--porcelain"], self.root).stdout, "")
+
+    def run_printed_align(self, stdout, cwd):
+        lines = [line.strip() for line in stdout.splitlines() if "跑：" in line and "--align" in line]
+        self.assertEqual(len(lines), 1, stdout)
+        cmd = lines[0].split("跑：", 1)[1]
+        base = {k: v for k, v in os.environ.items() if k not in CLAUDE_ENV}
+        return subprocess.run(["sh", "-c", cmd], cwd=cwd, capture_output=True, text=True, env=base)
+
+    def test_recommit_after_lost_follow_up_prints_align(self):
+        # context 壓縮之後 [FOLLOW-UP] 不在眼前，agent 看到 git status 的 MM 又提交一次：印出讓它對齊的 --align
+        write(self.root, "a.md", "我改的\n")
+        open(lock_path(self.root), "w").close()
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        os.remove(lock_path(self.root))
+        r2 = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r2.returncode, 1, r2.stdout + r2.stderr)
+        self.assertIn("不重新提交", r2.stderr)
+        r3 = self.run_printed_align(r2.stderr, cwd=self.base)
+        self.assertEqual(r3.returncode, 0, r3.stdout + r3.stderr)
+        self.assertEqual(sh(["git", "status", "--porcelain"], self.root).stdout, "")
+
+    def test_recommit_mixed_list_prints_rest_command(self):
+        # 壓縮之後重提交的清單混了已提交的 a.md 與新改的 b.md：整次沒提交，另印拿掉 a.md 之後的重跑指令
+        write(self.root, "a.md", "我改的\n")
+        open(lock_path(self.root), "w").close()
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        os.remove(lock_path(self.root))
+        write(self.root, "b.md", "新改的\n")
+        r2 = tool("commit-files", "-F", self.msg(), "a.md", "b.md", cwd=self.root)
+        self.assertEqual(r2.returncode, 1, r2.stdout + r2.stderr)
+        self.assertEqual(self.run_printed_align(r2.stderr, cwd=self.base).returncode, 0)
+        rest = [line for line in r2.stderr.splitlines() if "重跑提交：" in line]
+        self.assertEqual(len(rest), 1, r2.stderr)
+        base = {k: v for k, v in os.environ.items() if k not in CLAUDE_ENV}
+        r3 = subprocess.run(["sh", "-c", rest[0].split("重跑提交：", 1)[1]], cwd=self.base, capture_output=True, text=True, env=base)
+        self.assertEqual(r3.returncode, 0, r3.stdout + r3.stderr)
+        self.assertEqual(self.committed(), ["b.md"])
+        self.assertEqual(sh(["git", "status", "--porcelain"], self.root).stdout, "")
+
+    def test_second_align_reports_head_when_index_already_matches_it(self):
+        write(self.root, "a.md", "第一次\n")
+        open(lock_path(self.root), "w").close()
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        write(self.root, "a.md", "第二次\n")
+        r2 = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r2.returncode, 3, r2.stdout + r2.stderr)
+        os.remove(lock_path(self.root))
+        self.assertEqual(self.run_printed_align(r2.stdout, cwd=self.base).returncode, 0)  # 後一次先對齊
+        r3 = self.run_printed_align(r.stdout, cwd=self.base)  # 前一次晚到：index 已經是 HEAD 的版本
+        self.assertEqual(r3.returncode, 0, r3.stdout + r3.stderr)
+        head = sh(["git", "rev-parse", "HEAD"], self.root).stdout.strip()
+        self.assertIn(f"already matches HEAD（{head[:8]}", r3.stdout)
+
+    def test_late_align_reports_head_when_a_later_commit_touched_the_file(self):
+        write(self.root, "a.md", "第一次\n")
+        open(lock_path(self.root), "w").close()
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        self.assertIn("不再重跑", r.stdout)  # 鎖住的分支也有停止條件
+        write(self.root, "a.md", "第二次\n")
+        r2 = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r2.returncode, 3, r2.stdout + r2.stderr)
+        os.remove(lock_path(self.root))
+        r3 = self.run_printed_align(r.stdout, cwd=self.base)
+        self.assertEqual(r3.returncode, 0, r3.stdout + r3.stderr)
+        head = sh(["git", "rev-parse", "HEAD"], self.root).stdout.strip()
+        self.assertIn(f"aligned with HEAD（{head[:8]}", r3.stdout)
+        self.assertEqual(sh(["git", "status", "--porcelain"], self.root).stdout, "")
+
+    def test_locked_then_align_resets_own_old_add_only_when_it_is_the_parent_version(self):
+        # 先前 add 的舊版本不是提交前的版本：--align 跟沒鎖時一樣印 [ASK-USER]，不替人 reset
+        write(self.root, "a.md", "先前 add 的舊版本\n")
+        sh(["git", "add", "a.md"], self.root)
+        write(self.root, "a.md", "我改的\n")
+        open(lock_path(self.root), "w").close()
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        self.assertNotIn("worktree", r.stdout)  # 主工作樹不印 worktree 那一行
+        os.remove(lock_path(self.root))
+        r2 = self.run_printed_align(r.stdout, cwd=self.root)
+        self.assertEqual(r2.returncode, 3, r2.stdout + r2.stderr)
+        self.assertIn("[ASK-USER]", r2.stdout)
+        self.assertNotIn("[FOLLOW-UP]", r2.stdout)
+        self.assertIn(f"git -C {self.root}", r2.stdout.replace(os.path.realpath(self.root), self.root))
+
+    def test_align_when_final_version_already_staged(self):
+        # 最終版先 git add 過，再碰上鎖：--align 判成已對齊，不印 [ASK-USER] 拿空 diff 去問使用者
+        write(self.root, "a.md", "我改的\n")
+        sh(["git", "add", "a.md"], self.root)
+        open(lock_path(self.root), "w").close()
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        os.remove(lock_path(self.root))
+        r2 = self.run_printed_align(r.stdout, cwd=self.root)
+        self.assertEqual(r2.returncode, 0, r2.stdout + r2.stderr)
+        self.assertIn("already matches", r2.stdout)
+
+    def test_mixed_list_resets_own_file_and_keeps_others_version(self):
+        write(self.root, "b.md", "別人 staged 的 b\n")
+        sh(["git", "add", "b.md"], self.root)
+        write(self.root, "a.md", "我改的 a\n")
+        write(self.root, "b.md", "我改的 b\n")
+        r = tool("commit-files", "-F", self.msg(), "a.md", "b.md", cwd=self.root)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        self.assertIn("[ASK-USER]", r.stdout)
+        staged = sh(["git", "diff", "--cached", "--name-only"], self.root).stdout.split()
+        self.assertEqual(staged, ["b.md"])  # a.md 照常 reset，只有 b.md 留給使用者決定
+
+    def test_lock_taken_right_before_reset_points_to_index_lock_check(self):
+        # 查鎖與 reset 之間別的程序拿到鎖：印的是同一組指示，不是 git 的「remove the file manually」
+        real_git = shutil.which("git") or "git"
+        fake = os.path.join(self.base, "fakegit")
+        os.makedirs(fake)
+        with open(os.path.join(fake, "git"), "w") as f:
+            f.write(
+                "#!/bin/sh\n"
+                'if [ "$1" = reset ]; then : > "$(' + real_git + ' rev-parse --git-path index.lock)"; fi\n'
+                'exec ' + real_git + ' "$@"\n'
+            )
+        os.chmod(os.path.join(fake, "git"), 0o755)
+        write(self.root, "a.md", "我改的\n")
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root, env={"PATH": fake + os.pathsep + os.environ["PATH"]})
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        self.assertIn("reset 時", r.stdout)
+        self.assertIn("index-lock-check", r.stdout)
+        self.assertNotIn("manually", r.stdout)
+
+    def test_align_after_head_moved_reports_the_given_commit(self):
+        write(self.root, "a.md", "我改的\n")
+        open(lock_path(self.root), "w").close()
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        sha = sh(["git", "rev-parse", "--short=8", "HEAD"], self.root).stdout.strip()
+        os.remove(lock_path(self.root))
+        write(self.root, "b.md", "別人後來提交的\n")
+        sh(["git", "commit", "-q", "-m", "later", "--", "b.md"], self.root)  # HEAD 被別的 commit 推進
+        r2 = self.run_printed_align(r.stdout, cwd=self.root)
+        self.assertEqual(r2.returncode, 0, r2.stdout + r2.stderr)
+        self.assertIn(f"aligned with {sha}", r2.stdout)
+
+    def test_align_after_same_file_committed_again_is_aligned(self):
+        # 鎖住提交 a.md，之後另一個 commit 又改 a.md 並對齊：舊的 --align 不誤報其他版本
+        write(self.root, "a.md", "第一次\n")
+        open(lock_path(self.root), "w").close()
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        os.remove(lock_path(self.root))
+        write(self.root, "a.md", "第二次\n")
+        r2 = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r2.returncode, 0, r2.stdout + r2.stderr)  # 共用 index 停在更早的歷史版本：reset，不問
+        self.assertRegex(r2.stdout, r"reset a\.md（共用 index 停在 [0-9a-f]{8} 的版本")  # 留下撤掉的是哪一版
+        self.assertEqual(sh(["git", "status", "--porcelain"], self.root).stdout, "")
+        r3 = self.run_printed_align(r.stdout, cwd=self.root)
+        self.assertEqual(r3.returncode, 0, r3.stdout + r3.stderr)
+        self.assertIn("already matches", r3.stdout)
+
+    def test_align_rejects_path_outside_the_commit(self):
+        write(self.root, "a.md", "我改的\n")
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        r2 = tool("commit-files", "--align", "HEAD", "--", "b.md", cwd=self.root)
+        self.assertEqual(r2.returncode, 2, r2.stdout + r2.stderr)
+        self.assertIn("沒有改共用 index", r2.stderr)
+
+    def test_align_with_malformed_arguments_prints_next_step(self):
+        r = tool("commit-files", "--align", "HEAD", cwd=self.root)  # 沒給路徑：argparse 的錯誤也要帶下一步
+        self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+        self.assertIn("沒有改共用 index", r.stderr)
+
+    def test_ask_user_in_linked_worktree_says_not_to_remove_it(self):
+        wt = os.path.join(self.base, "wt")
+        sh(["git", "worktree", "add", "-q", "-b", "side", wt], self.root)
+        write(wt, "a.md", "對方的版本\n")
+        sh(["git", "add", "a.md"], wt)
+        write(wt, "a.md", "我的版本\n")
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=wt)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        self.assertIn("[ASK-USER]", r.stdout)
+        self.assertIn("不移除這個 worktree", r.stdout)
+        self.assertIn("最後一則總結", r.stdout)
+
+    def test_locked_in_linked_worktree_says_not_to_remove_it(self):
+        wt = os.path.join(self.base, "wt")
+        sh(["git", "worktree", "add", "-q", "-b", "side", wt], self.root)
+        write(wt, "a.md", "我改的\n")
+        open(lock_path(wt), "w").close()
+        r = tool("commit-files", "-F", self.msg(), "a.md", cwd=wt)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        self.assertIn("不移除這個 worktree", r.stdout)
+        os.remove(lock_path(wt))
+        r2 = self.run_printed_align(r.stdout, cwd=self.root)  # 下一次呼叫的 cwd 在主 repo
+        self.assertEqual(r2.returncode, 0, r2.stdout + r2.stderr)
+        self.assertEqual(sh(["git", "status", "--porcelain"], wt).stdout, "")
+
+    def test_rename_without_git_mv_listing_both_paths_aligns(self):
+        # 沒用 git mv 的改名：比對不帶 --no-renames 時，舊路徑會被併進改名而留下 staged 的刪除
+        os.rename(os.path.join(self.root, "b.md"), os.path.join(self.root, "c.md"))
+        r = tool("commit-files", "-F", self.msg(), "b.md", "c.md", cwd=self.root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertEqual(sh(["git", "status", "--porcelain"], self.root).stdout, "")
+
+    def test_rename_without_git_mv_locked_then_align(self):
+        os.rename(os.path.join(self.root, "b.md"), os.path.join(self.root, "c.md"))
+        open(lock_path(self.root), "w").close()
+        r = tool("commit-files", "-F", self.msg(), "b.md", "c.md", cwd=self.root)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        os.remove(lock_path(self.root))
+        r2 = self.run_printed_align(r.stdout, cwd=self.root)
+        self.assertEqual(r2.returncode, 0, r2.stdout + r2.stderr)
+        self.assertEqual(sh(["git", "status", "--porcelain"], self.root).stdout, "")
 
     def test_other_session_staged_same_file_is_not_reset(self):
         write(self.root, "a.md", "對方的版本\n")
@@ -210,7 +439,7 @@ class CommitFiles(Base):
         write(self.root, "a.md", "我的版本\n")
         r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
         self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
-        self.assertIn("其他版本", r.stdout)
+        self.assertIn("[ASK-USER]", r.stdout)
         staged = sh(["git", "diff", "--cached", "--name-only"], self.root).stdout.split()
         self.assertEqual(staged, ["a.md"])
 
@@ -244,7 +473,7 @@ class CommitFiles(Base):
         write(self.root, "a.md", "v2\n")
         r = tool("commit-files", "-F", self.msg(), "a.md", cwd=self.root)
         self.assertEqual(r.returncode, 3)
-        self.assertIn("git diff --cached HEAD -- a.md", r.stdout)
+        self.assertRegex(r.stdout, r"git -C \S+ diff --cached [0-9a-f]{8} -- a\.md")
 
     def test_hooks_path_not_set_stops(self):
         os.makedirs(os.path.join(self.root, ".githooks"))
@@ -491,6 +720,35 @@ class PushMain(Base):
         self.assertEqual(sh(["git", "rev-parse", "HEAD"], self.root).stdout.strip(), c)
         self.assertIn("[CLEANUP]", r.stdout)
         self.assertIn("worktree remove", r.stdout)
+
+    def test_main_worktree_index_locked_prints_follow_up_not_manual_removal(self):
+        wt = os.path.join(self.base, "wt")
+        sh(["git", "worktree", "add", "-q", "-b", "feat", wt], self.root)
+        c = self.commit(wt, "w.md")
+        open(lock_path(self.root), "w").close()
+        r = tool("push-main", "--mine", c, cwd=wt)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("[FOLLOW-UP]", r.stdout)
+        self.assertNotIn("remove the file manually", r.stdout + r.stderr)
+        self.assertNotEqual(self.remote_head(), c)
+        fake = os.path.join(self.base, "fakebin")  # pgrep 比對整台機器的 git 程序：換成沒有命中的假腳本
+        os.makedirs(fake, exist_ok=True)
+        with open(os.path.join(fake, "pgrep"), "w") as f:
+            f.write("#!/bin/sh\nexit 1\n")
+        os.chmod(os.path.join(fake, "pgrep"), 0o755)
+        env = {k: v for k, v in os.environ.items() if k not in CLAUDE_ENV}
+        env["PATH"] = fake + os.pathsep + env["PATH"]
+        first = [line for line in r.stdout.splitlines() if "先跑" in line]
+        self.assertEqual(len(first), 1, r.stdout)
+        rl = subprocess.run(["sh", "-c", first[0].split("：", 1)[1]], cwd=self.base, capture_output=True, text=True, env=env)
+        self.assertEqual(rl.returncode, 3, rl.stdout + rl.stderr)  # 查的是 main 所在工作樹的鎖：[STALE]
+        self.assertIn(lock_path(self.root), rl.stdout)
+        os.remove(lock_path(self.root))
+        again = [line for line in r.stdout.splitlines() if "重跑：" in line]
+        self.assertEqual(len(again), 1, r.stdout)
+        r2 = subprocess.run(["sh", "-c", again[0].split("重跑：", 1)[1]], cwd=self.base, capture_output=True, text=True, env=env)
+        self.assertEqual(r2.returncode, 0, r2.stdout + r2.stderr)
+        self.assertEqual(self.remote_head(), c)
 
 
 AFTER = "2099-01-01T00:00:00.000Z"  # 晚於測試 repo 的任何 commit
@@ -1047,6 +1305,103 @@ class SessionEditsCheckSources(Base):
         self.assertIn("[ASK-USER] link：檔案模式變了或這是 symlink", r.stdout)
         self.assertIn("[ASK-USER] nosuch.md：HEAD 與要提交的內容裡都沒有", r.stdout)
         self.assertIn("2 file(s) checked, 2 ask-user", r.stderr)
+
+
+class IndexLockCheck(Base):
+    """bin/index-lock-check：鎖的路徑取 --git-path（worktree 不寫死），lsof 與 pgrep 都沒有輸出才印 [STALE] 與 --apply 那一行；--apply 重查之後才刪。
+
+    pgrep 比對整台機器的 git 程序，測試時別的 session 可能正在跑 git，所以 pgrep 換成 PATH 上的假腳本；
+    lsof 用真的，開著鎖檔的那一條是它的正對照。
+    """
+
+    def fake_bin(self, pgrep_out=""):
+        d = os.path.join(self.base, "fakebin")
+        os.makedirs(d, exist_ok=True)
+        p = os.path.join(d, "pgrep")
+        with open(p, "w") as f:
+            f.write("#!/bin/sh\n" + (f"echo '{pgrep_out}'\nexit 0\n" if pgrep_out else "exit 1\n"))
+        os.chmod(p, 0o755)
+        return {"PATH": d + os.pathsep + os.environ["PATH"]}
+
+    def run_printed_apply(self, stdout, env):
+        lines = [line.strip() for line in stdout.splitlines() if line.strip().endswith("--apply")]
+        self.assertEqual(len(lines), 1, stdout)
+        return subprocess.run(["sh", "-c", lines[0]], cwd=self.base, capture_output=True, text=True,
+                              env={**os.environ, **env})
+
+    def test_no_lock_exits_0(self):
+        r = tool("index-lock-check", cwd=self.root, env=self.fake_bin())
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("沒有鎖", r.stdout)
+
+    def test_stale_lock_is_kept_then_removed_by_printed_apply(self):
+        lock = lock_path(self.root)
+        open(lock, "w").close()
+        env = self.fake_bin()
+        r = tool("index-lock-check", cwd=os.path.join(self.root, ".git"), env=env)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        self.assertIn("[STALE]", r.stdout)
+        self.assertTrue(os.path.exists(lock))  # 判斷的那一次不刪
+        r2 = self.run_printed_apply(r.stdout, env)  # 印的指令帶 cd，下一次呼叫的 cwd 不同也刪得到同一把鎖
+        self.assertEqual(r2.returncode, 0, r2.stdout + r2.stderr)
+        self.assertFalse(os.path.exists(lock))
+
+    def test_apply_rechecks_and_keeps_a_lock_that_is_now_in_use(self):
+        lock = lock_path(self.root)
+        open(lock, "w").close()
+        r = tool("index-lock-check", "--apply", cwd=self.root, env=self.fake_bin("123 git"))
+        self.assertEqual(r.returncode, 4, r.stdout + r.stderr)
+        self.assertTrue(os.path.exists(lock))
+
+    def test_git_process_running_waits(self):
+        open(lock_path(self.root), "w").close()
+        r = tool("index-lock-check", cwd=self.root, env=self.fake_bin("123 git"))
+        self.assertEqual(r.returncode, 4, r.stdout + r.stderr)
+        self.assertIn("[WAIT]", r.stdout)
+        self.assertIn("123 git", r.stdout)
+        self.assertIn("不結束", r.stdout)
+        self.assertIn("下一步：工作結束之前再跑一次", r.stdout)
+        self.assertRegex(r.stdout, r"再跑一次.*：cd \S+ && \S+index-lock-check")  # 帶 cd：換了 cwd 查的仍是同一把鎖
+
+    def test_wait_prints_cwd_of_each_git_process(self):
+        # 命令列看不出程序在哪個 repo：pgrep 命中的程序另印 cwd。假 pgrep 回報一個 cwd 已知的活程序
+        open(lock_path(self.root), "w").close()
+        p = subprocess.Popen(["sleep", "30"], cwd=self.base)
+        try:
+            r = tool("index-lock-check", cwd=self.root, env=self.fake_bin(f"{p.pid} git"))
+        finally:
+            p.kill()
+            p.wait()
+        self.assertEqual(r.returncode, 4, r.stdout + r.stderr)
+        self.assertIn(f"cwd：{os.path.realpath(self.base)}", r.stdout)
+
+    def test_open_lock_file_waits(self):
+        lock = lock_path(self.root)
+        with open(lock, "w"):  # 本測試的程序開著鎖檔：lsof 的正對照
+            r = tool("index-lock-check", cwd=self.root, env=self.fake_bin())
+        self.assertEqual(r.returncode, 4, r.stdout + r.stderr)
+        self.assertIn("lsof", r.stdout)
+
+    def test_worktree_lock_is_under_main_git_dir(self):
+        wt = os.path.join(self.base, "wt")
+        sh(["git", "worktree", "add", "-q", "-b", "side", wt], self.root)
+        lock = lock_path(wt)
+        self.assertIn(os.path.join(".git", "worktrees"), lock)
+        open(lock, "w").close()
+        env = self.fake_bin()
+        r = tool("index-lock-check", cwd=wt, env=env)
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        m = re.search(r"（(/[^）]+)）", r.stdout)  # [STALE] 那一行括號裡的鎖路徑
+        self.assertIsNotNone(m, r.stdout)
+        assert m is not None
+        self.assertEqual(os.path.realpath(m.group(1)), os.path.realpath(lock))
+        self.assertEqual(self.run_printed_apply(r.stdout, env).returncode, 0)
+        self.assertFalse(os.path.exists(lock))
+
+    def test_bad_argument_exits_2(self):
+        r = tool("index-lock-check", "--force", cwd=self.root, env=self.fake_bin())
+        self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+        self.assertIn("不刪鎖", r.stderr)
 
 
 if __name__ == "__main__":

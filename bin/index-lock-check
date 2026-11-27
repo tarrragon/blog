@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+"""判斷共用 git index 的鎖（index.lock）還有沒有程序在用；`--apply` 在重查之後刪掉殘留的鎖。
+
+用途：docs/rules/commit-push.md〈提交〉〈推送〉。`bin/commit-files` 印出「共用 index 被鎖住」的
+`[FOLLOW-UP]` 時先跑本工具，它 exit 0 之後才跑 `[FOLLOW-UP]` 印的 `bin/commit-files --align`；
+`[ASK-USER]` 印的那條 reset 因為 index.lock 失敗時，也先跑本工具，exit 0 之後再跑那條 reset。
+`bin/push-main` 因為 main 所在工作樹的 index.lock 印出 `[FOLLOW-UP]` 時，在那個工作樹跑本工具，exit 0 之後重跑 push-main。
+
+用法：bin/index-lock-check            判斷，不刪檔
+      bin/index-lock-check --apply    重做同樣的判斷，仍是殘留的鎖才刪
+  在 repo 或 worktree 裡任何目錄跑都可以；查的是當下工作樹的鎖（`[FOLLOW-UP]` 印的指令先 cd 到那個工作樹）。
+
+行為：
+1. 鎖的路徑取 `git rev-parse --git-path index.lock`，轉成絕對路徑。worktree 的鎖在
+   `<主 repo>/.git/worktrees/<名字>/index.lock`，不在 `<worktree>/.git/index.lock`
+   （worktree 的 `.git` 是一個檔案），所以不寫死路徑。
+2. 鎖檔不在：印 `index-lock-check: 沒有鎖`，exit 0。
+3. 鎖檔在：跑 `lsof <鎖的路徑>`（有程序開著這個檔）與 `pgrep -lx git`（有叫 git 的程序在跑；
+   git 持有鎖時不一定開著那個檔，例如 pre-commit hook 執行期間，所以兩條都要查）。
+   只看 stdout：lsof 對不存在的檔在 stderr 印錯誤與 usage，那不代表有程序在用。
+   - 任一條有輸出：印 `[WAIT]`、那幾行輸出（pgrep 命中的程序另印 `ps -o args=` 的命令列與 lsof 查到的 cwd）與下一步，
+     exit 4，不刪。pgrep 比對的是整台機器的 git 程序（別的 repo、別的 session 也算；長駐的
+     `git fsmonitor--daemon` 也會讓它一直 exit 4），有輸出代表「可能有程序持有鎖」。列出的程序不是要結束的對象。
+   - 兩條都沒有輸出：這台機器上看得到的程序都沒有在用這把鎖（git 正常結束時會自己刪掉鎖，
+     留下來的多半是被中止的程序建的；別的容器或 VM 裡的程序看不到）。沒有 `--apply` 時印 `[STALE]`
+     與下一步要跑的 `--apply` 指令，exit 3，不刪；有 `--apply` 時刪掉鎖，印 `index-lock-check: 刪掉殘留的鎖`，exit 0。
+   - 兩條檢查跑完時鎖檔已經不在：照第 2 步處理（exit 0）。
+   `--apply` 刪之前重做第 3 步，判斷與刪除之間只隔這一次檢查；判斷與刪除照 AGENTS.md
+   〈破壞性指令的目標寫在指令文字裡，檢查與刪除分成兩次執行〉分成兩次呼叫：先跑不帶 `--apply` 的那一次。
+4. 參數不是空的也不是 `--apply`、不在 git repo 裡、或找不到 lsof 或 pgrep：exit 2。
+
+exit：0 沒有鎖（或 `--apply` 刪掉了）；2 用法錯誤或缺工具；3 殘留的鎖，沒有刪；4 可能還有程序在用。
+2、3、4 都在輸出裡印出下一步（exit 2 印在 stderr），照印的做；規則在 docs/rules/commit-push.md〈提交〉〈推送〉。
+
+測試：python3 -m unittest discover -s bin/tests
+"""
+
+import os
+import shlex
+import shutil
+import subprocess
+import sys
+
+
+SUMMARY = "把這幾行與印出本工具那一行的 [FOLLOW-UP] 或 [ASK-USER]（commit-files 或 push-main 印的）寫進給使用者的最後一則總結（AGENTS.md〈延到工作結束之後的動作〉）"
+
+
+RETRY = "照印出本工具的那一行（含 cd）原樣重跑一次；仍是這則錯誤時，"
+
+
+def fail(msg, retry=False):
+    print(f"index-lock-check: {msg}。不刪鎖；{RETRY if retry else ''}{SUMMARY}", file=sys.stderr)
+    sys.exit(2)
+
+
+def main():
+    args = sys.argv[1:]
+    if args not in ([], ["--apply"]):
+        fail("用法：bin/index-lock-check [--apply]", retry=True)
+    apply = args == ["--apply"]
+    r = subprocess.run(["git", "rev-parse", "--git-path", "index.lock"], capture_output=True, text=True)
+    if r.returncode != 0:
+        fail("不在 git repo 裡：" + r.stderr.strip(), retry=True)
+    lock = os.path.abspath(r.stdout.strip())
+    here = os.path.dirname(os.path.abspath(__file__))
+    rerun = f"cd {shlex.quote(os.getcwd())} && {shlex.quote(os.path.join(here, 'index-lock-check'))}"
+    if not os.path.exists(lock):
+        print(f"index-lock-check: 沒有鎖（{lock}）")
+        return
+    for t in ("lsof", "pgrep"):
+        if not shutil.which(t):
+            fail(f"找不到 {t}，判斷不了鎖有沒有程序在用")
+    lsof = subprocess.run(["lsof", lock], capture_output=True, text=True).stdout.strip()
+    pgrep = subprocess.run(["pgrep", "-lx", "git"], capture_output=True, text=True).stdout.strip()
+    if not os.path.exists(lock):
+        print(f"index-lock-check: 沒有鎖（{lock}，檢查期間釋放了）")
+        return
+    if lsof or pgrep:
+        print(f"[WAIT] 鎖可能還有程序在用（{lock}），不刪；列出的程序可能是另一個 session 的 git，不結束它們")
+        if lsof:
+            print("  lsof：")
+            print("".join(f"    {line}\n" for line in lsof.splitlines()), end="")
+        if pgrep:
+            print("  pgrep -lx git（後面是 ps 查到的命令列）：")
+            for line in pgrep.splitlines():
+                pid = line.split()[0] if line.split() else ""
+                cmd = cwd = ""
+                if pid.isdigit():
+                    cmd = subprocess.run(["ps", "-o", "args=", "-p", pid], capture_output=True, text=True).stdout.strip()
+                    # 命令列看不出程序在哪個 repo：印 cwd，讀總結的人才分得出是不是這個工作樹的 git
+                    out = subprocess.run(["lsof", "-a", "-p", pid, "-d", "cwd", "-Fn"], capture_output=True, text=True).stdout
+                    cwd = next((l[1:] for l in out.splitlines() if l.startswith("n")), "")
+                print(f"    {line}" + (f"  {cmd}" if cmd else "") + (f"（cwd：{cwd}）" if cwd else ""))
+        print(f"  下一步：工作結束之前再跑一次（帶 cd，查的才是同一把鎖）：{rerun}")
+        print(f"  仍是 [WAIT] 時，{SUMMARY}。")
+        sys.exit(4)
+    if apply:
+        try:
+            os.remove(lock)
+        except FileNotFoundError:
+            pass  # 重查之後才被釋放：結果一樣是沒有鎖
+        print(f"index-lock-check: 刪掉殘留的鎖（{lock}）")
+        return
+    print(f"[STALE] 這台機器上看得到的程序都沒有在用這把鎖（{lock}），沒有刪。下一次呼叫跑：")
+    print(f"  {rerun} --apply")
+    sys.exit(3)
+
+
+if __name__ == "__main__":
+    main()

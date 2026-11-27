@@ -17,6 +17,9 @@
 3. 目前不在 main 時（分支、worktree 或 detached HEAD），把目前的 commit fast-forward 進 main：
    main 已經 checkout 在某個 worktree 時，在那個 worktree 裡跑 `git merge --ff-only <sha>`（在別的
    worktree 裡不能 checkout main）；沒有被 checkout 時用 `git update-ref`。不能 fast-forward 就 exit 1。
+   `git merge` 因為那個 worktree 的 index.lock 失敗時，不轉印 git「手動刪掉鎖」的提示，改印 `[FOLLOW-UP]`：
+   先在那個 worktree 跑 `bin/index-lock-check`，它 exit 0 之後重跑同一條 push-main；又印出這則
+   `[FOLLOW-UP]` 時不再重跑，寫進總結。鎖可能還有程序在用，判斷交給 index-lock-check。
 4. `git push origin main`；成功後，不在 main 上時印 `[CLEANUP]` 與移除 worktree、刪分支的指令
    （worktree 還在時刪不掉它的分支，所以先移除 worktree）。工具不自己執行它們：執行的目錄可能就是
    要移除的那個 worktree。
@@ -112,6 +115,18 @@ def main():
         else:
             old = git("rev-parse", "main").stdout.strip()
             r = git("update-ref", "refs/heads/main", target, old)
+        if r.returncode != 0 and wt and "index.lock" in r.stderr:
+            here = os.path.dirname(os.path.abspath(__file__))
+            top = git("rev-parse", "--show-toplevel").stdout.strip()
+            rerun = f"cd {shlex.quote(top)} && {shlex.quote(os.path.join(here, 'push-main'))} --mine " + " ".join(
+                shlex.quote(c) for c in args.mine
+            )
+            print(f"[FOLLOW-UP] main 所在的工作樹（{wt}）的 index 被鎖住，main 沒有 fast-forward，沒有推送。不照 git 的提示手動刪鎖。")
+            print("  git 的訊息：" + r.stderr.strip().splitlines()[0])
+            print(f"  先跑（它在每個非零 exit 印出下一步）：cd {shlex.quote(wt)} && {shlex.quote(os.path.join(here, 'index-lock-check'))}")
+            print(f"  它 exit 0 之後重跑：{rerun}")
+            print("  push-main 又印出這則 [FOLLOW-UP] 時不再重跑，把這幾行寫進給使用者的最後一則總結（AGENTS.md〈延到工作結束之後的動作〉）。")
+            sys.exit(1)
         if r.returncode != 0:
             die("fast-forward main 失敗：" + r.stderr.strip(), 1)
         print(f"push-main: fast-forwarded main to {target[:8]}")

@@ -6,7 +6,8 @@
 `git add` 會因為 index.lock 而失敗。
 
 用法：bin/commit-files [--skip-session-check] [--untrack <檔案>]... -F <訊息檔> [<檔案...>]
-  路徑以執行時的目錄起算，列檔案不列目錄；刪除的檔案與改名的新舊兩個路徑都列。
+      bin/commit-files --align <commit> -- <檔案...>   （只重做第 3 步「提交後讓共用 index 對齊」；`[FOLLOW-UP]` 印出整條指令；路徑以工作樹根目錄起算）
+  提交用法（上一行）的路徑以執行時的目錄起算，列檔案不列目錄；刪除的檔案與改名的新舊兩個路徑都列。
   --untrack 給的是要移出版本控制、而檔案留在工作樹的路徑（例如補進 .gitignore 的快取檔）：
   在私有 index 跑 `git rm --cached`，提交裡是刪除，工作樹的檔案不動。這種路徑 `git add -A`
   做不到（檔案還在，add 只會加回它的內容），所以另開一個參數。每次可以給多個 --untrack。
@@ -18,6 +19,8 @@
    pre-commit hook 照常執行（hook 裡的 `git add` 也落在這份私有 index）。
 2. 提交前比對 staged 清單（`--no-renames`，改名列出新舊兩個路徑）與給的清單，不一致就
    不提交、exit 1，並印出是哪一種：清單裡有目錄、檔案內容跟 HEAD 相同、或多出清單以外的檔案。
+   內容跟 HEAD 相同的檔案在共用 index 裡跟 HEAD 不同時（先前一次提交還沒對齊），另印讓它對齊的 `--align` 指令
+   （commit 取最後一個動到它的）；清單裡還有其他檔案時，另印拿掉這幾個之後重跑提交的指令。
 2a. 在 Claude Code 裡（環境有 CLAUDECODE 或 CLAUDE_CODE_SESSION_ID）對私有 index 跑
    `bin/session-edits-check --staged <檔案>`：比對的是要提交的內容，同一份清單、同一刻，
    檢查之後才進工作樹的改動不會被提交。它印出 `[ASK-USER]`（exit 3）或沒跑成（其他非零 exit）時
@@ -27,11 +30,29 @@
    --untrack 的路徑不是 Edit 或 Write 的編輯，transcript 對不出來：沒有 `--skip-session-check` 時
    每一個印成 `[ASK-USER] <路徑>（解除追蹤）`，不提交、exit 1。解除追蹤是從版本控制刪除一個檔案，
    照 docs/rules/claude-code.md〈提交前對照編輯紀錄〉跟刪除一樣交給使用者決定，同意之後加 `--skip-session-check` 重跑。
-3. 提交後讓共用 index 對齊 HEAD：已經跟 HEAD 相同就不動；這幾個檔案只剩提交前的版本時
-   （`git diff --cached --name-only <commit>~1 -- <檔案>` 是空的），跑 `git reset -q -- <檔案>`。
-   共用 index 被鎖住、或共用 index 裡有這幾個檔案的其他版本（那條 diff 有輸出）時不 reset，
-   印出 `[FOLLOW-UP]`、要看的 diff 與判斷之後要跑的指令，exit 3：那個版本可能是另一個 session
-   staged 的，reset 會清掉它；也可能是這次 session 自己先前 `git add` 的舊版本。
+3. 提交後讓共用 index 對齊這個 commit，逐個路徑判（比對都帶 `--no-renames`：沒用 `git mv` 的改名，
+   git 會把舊路徑併進新路徑的改名而不列出舊路徑）：
+   - 共用 index 的版本等於這個 commit 或等於 HEAD（`--align` 在 HEAD 推進之後跑）：不動。
+   - 等於提交前的版本（`<commit>~1`）：`git reset -q`。
+   - 等於這個路徑往前 50 個動到它的 commit 的版本、或最早那一個 commit 之前的版本：`git reset -q`，
+     另印一行 `commit-files: reset <路徑>（共用 index 停在 <commit> 的版本…）`，留下撤掉的是哪一版。
+     這種版本多半是先前一次提交沒對齊留下的，也可能是有人 staged 了舊版本；reset 只撤 staging、
+     不動工作樹，那一版在歷史裡找得回來。
+   - 都不是（其他版本，可能是另一個 session staged 的，reset 會清掉它）：不 reset，印出 `[ASK-USER]`、
+     給使用者看的 diff 與使用者同意之後要跑的 reset，exit 3。不分是不是這次 session 自己 staged 的：
+     共用 index 不記誰 staged，判斷不了。
+   共用 index 被鎖住時（對齊之前就鎖住，或 reset 時才被別的程序鎖住）不動共用 index，印出 `[FOLLOW-UP]`，
+   exit 3：先跑 `bin/index-lock-check`，它 exit 0 之後跑 `bin/commit-files --align <commit> -- <檔案...>`；
+   `--align` 又被鎖住時不再重跑，寫進總結。
+   reset 因為鎖以外的原因失敗時，印 `[FOLLOW-UP]`、失敗訊息與之後要跑的 `--align`，exit 3。
+   `--align` 只重做這一步，判斷跟提交之後那一次走同一段程式，所以不重新提交；`<commit>` 之後的提交
+   又改了這幾個檔案時，對齊的是 HEAD 的版本，訊息寫 `aligned with HEAD`（不必 reset 時寫 `already matches HEAD`）。`[FOLLOW-UP]` 與 `[ASK-USER]`
+   在 linked worktree 裡都另印一行：對齊之前不移除這個 worktree（還沒對齊的 worktree，`git worktree remove`
+   會要求 `--force`，加了會把共用 index 裡那一版 staged 內容一起丟掉）。
+   印出的指令都帶工作樹根目錄（`git rev-parse --show-toplevel`；在 linked worktree 裡是那個 worktree，
+   不是主 repo）的絕對路徑（`cd <工作樹> && …`、`git -C <工作樹>`），下一次呼叫的 cwd 不同也指到同一個工作樹。
+   `[FOLLOW-UP]` 與 `[ASK-USER]` 那幾行各自寫出下一步與做不完時怎麼辦，規則不另寫一份。
+   不在工具裡等鎖或重試：等多久才夠沒有量過，而 `--align` 讓這一步可以之後重跑。
    路徑清單一律用 `-z` 取，非 ASCII 與含空白的路徑原樣比對；印出的指令替路徑加了引號。
 
 私有 index 隔離的是 staging，不隔離工作樹：兩個 session 改了同一個檔案時，對方在工作樹裡
@@ -42,7 +63,9 @@
 下一次呼叫、改名讓 staged 清單比對失敗）。只留一條路徑，測試涵蓋得到全部情形。
 
 exit：0 提交完成且共用 index 已對齊；1 沒有提交（原因印在 stderr；2a 擋下時 stdout 有 `[ASK-USER]` 與 diff）；
-2 用法錯誤或 hook 沒有生效；3 已經提交，但共用 index 要之後處理（照 `[FOLLOW-UP]` 那幾行做）。
+2 用法錯誤或 hook 沒有生效；3 已經提交，但共用 index 要之後處理（照 `[FOLLOW-UP]` 或 `[ASK-USER]` 那幾行做）。
+`--align` 的 exit：0 已對齊；2 用法錯誤（參數格式錯、commit 不存在、commit 沒有父 commit、路徑不在那個 commit 裡），
+不動共用 index，stderr 印出下一步；3 同上。
 
 測試：python3 -m unittest discover -s bin/tests
 """
@@ -72,6 +95,9 @@ def die(msg, code):
 
 
 def main():
+    if "--align" in sys.argv[1:]:
+        align_main(sys.argv[1:])
+        return
     ap = argparse.ArgumentParser(description="只提交列出的檔案，經由私有 index")
     ap.add_argument("-F", dest="msgfile", required=True)
     ap.add_argument("--skip-session-check", action="store_true")
@@ -128,6 +154,26 @@ def main():
                     "commit-files: 這些檔案沒有出現在 staged 清單（內容跟 HEAD 相同，或路徑寫錯）：\n"
                     + "".join(f"  {p}\n" for p in missing)
                 )
+                # 工作樹跟 HEAD 相同而共用 index 不同：多半是先前一次提交還沒對齊（context 壓縮之後 [FOLLOW-UP] 不在眼前）
+                by_commit = {}
+                for p in names(["--cached", "--no-renames", "HEAD", "--", *missing]):
+                    last = run(["git", "log", "-1", "--format=%H", "--", p]).stdout.strip()
+                    if last:
+                        by_commit.setdefault(last, []).append(p)
+                if by_commit:
+                    sys.stderr.write("commit-files: 其中這幾個檔案在共用 index 裡的版本跟 HEAD 不同，內容已經提交過，不重新提交。\n")
+                    for c, ps in by_commit.items():
+                        sys.stderr.write(f"  讓共用 index 對齊跑：{align_command(root, c, ps)}\n")
+                    rest = [p for p in paths if p not in missing]
+                    rest_untrack = [p for p in untrack if p not in missing]
+                    if (rest or rest_untrack) and not extra:
+                        # 清單混了已提交的檔與還沒提交的檔：整次沒提交，其餘的檔案要另外重跑
+                        me = os.path.join(os.path.dirname(os.path.abspath(__file__)), "commit-files")
+                        args_rest = [shlex.quote(p) for p in rest] + [f"--untrack {shlex.quote(p)}" for p in rest_untrack]
+                        sys.stderr.write(
+                            "  清單裡其餘的檔案還沒提交：對齊之後，拿掉上面這幾個檔案重跑提交："
+                            f"cd {shlex.quote(root)} && {shlex.quote(me)} -F {shlex.quote(msgfile)} {' '.join(args_rest)}\n"
+                        )
             if extra:
                 sys.stderr.write("commit-files: staged 清單多出這些檔案：\n" + "".join(f"  {p}\n" for p in extra))
             die("沒有提交", 1)
@@ -152,34 +198,148 @@ def main():
 
     sha = run(["git", "rev-parse", "HEAD"]).stdout.strip()
     print(f"commit-files: committed {sha[:8]}")
-    paths = paths + untrack  # 共用 index 的對齊一樣適用：reset 之後解除追蹤的路徑也離開共用 index
+    align(root, sha, paths + untrack)  # 解除追蹤的路徑一樣要對齊：reset 之後它也離開共用 index
 
-    lock = run(["git", "rev-parse", "--git-path", "index.lock"]).stdout.strip()
+
+def align_command(root, sha, paths):
+    here = os.path.dirname(os.path.abspath(__file__))
     quoted = " ".join(shlex.quote(p) for p in paths)
-    check_cmd = f"git diff --cached --name-only {sha[:8]}~1 -- {quoted}"
-    reset_cmd = f"git reset -q -- {quoted}"
+    return f"cd {shlex.quote(root)} && {shlex.quote(os.path.join(here, 'commit-files'))} --align {sha[:8]} -- {quoted}"
+
+
+def align(root, sha, paths):
+    """第 3 步：讓共用 index 裡這幾個路徑對齊 <sha>。提交之後與 --align 都走這一段，判斷只有一份。
+
+    每個路徑在共用 index 裡的版本：等於 <sha> 或 HEAD（已對齊，不動）、等於 <sha>~1 或 in_history 找得到的版本（reset）、
+    都不是（其他版本，不 reset，印 [ASK-USER]）。印出的指令都帶工作樹根目錄的絕對路徑，換了 cwd 照樣指到同一個工作樹。
+    """
+    here = os.path.dirname(os.path.abspath(__file__))
+    align_cmd = align_command(root, sha, paths)
+    lock_cmd = f"cd {shlex.quote(root)} && {shlex.quote(os.path.join(here, 'index-lock-check'))}"
+    summary = "  工作結束時還沒做完的，把這幾行寫進給使用者的最後一則總結（AGENTS.md〈延到工作結束之後的動作〉）。"
+    git_dir = run(["git", "rev-parse", "--absolute-git-dir"]).stdout.strip()
+    common = os.path.abspath(run(["git", "rev-parse", "--git-common-dir"]).stdout.strip())
+    linked_worktree = os.path.realpath(git_dir) != os.path.realpath(common)
+
+    def keep_worktree(until):
+        if linked_worktree:
+            print(f"  {until}之前不移除這個 worktree：bin/push-main 印的 [CLEANUP] 等到那時再跑，不加 --force。")
+
+    def locked(why):
+        print(f"[FOLLOW-UP] 共用 index 被鎖住（{why}），還沒對齊 {sha[:8]}。提交已經完成：不重新提交，blog 照常推送。")
+        print(f"  先跑（它在每個非零 exit 印出下一步）：{lock_cmd}")
+        print(f"  它 exit 0 之後跑：{align_cmd}")
+        print("  --align 那條又印出這則 [FOLLOW-UP] 時不再重跑，照最後一行寫進總結。")
+        keep_worktree("--align 那條 exit 0 ")
+        print(summary)
+        sys.exit(3)
+
+    lock = os.path.abspath(run(["git", "rev-parse", "--git-path", "index.lock"]).stdout.strip())
     if os.path.exists(lock):
-        print("[FOLLOW-UP] 共用 index 被鎖住，還沒對齊 HEAD。lock 釋放之後跑：")
-        print(f"  {check_cmd}")
-        print(f"  輸出是空的就跑：{reset_cmd}；有輸出就照下一次跑本工具時印的指示判斷")
-        sys.exit(3)
-    if not names(["--cached", "HEAD", "--", *paths]):
-        print("commit-files: shared index already matches HEAD")  # 例如這幾個檔案是用 git mv 或 git add 先 staged 的
+        locked("對齊之前")
+    # --no-renames：沒用 git mv 的改名，git 會把舊路徑併進新路徑的改名，舊路徑不出現在 --name-only 的輸出裡
+    # 等於這個 commit 或等於 HEAD（--align 在 HEAD 推進之後跑）的都已對齊
+    differs = set(names(["--cached", "--no-renames", sha, "--", *paths])) & set(
+        names(["--cached", "--no-renames", "HEAD", "--", *paths])
+    )
+    if not differs:
+        if names(["--no-renames", sha, "HEAD", "--", *paths]):  # <sha> 之後的提交又改了這幾個檔案：等於的是 HEAD 的版本
+            head = run(["git", "rev-parse", "HEAD"]).stdout.strip()
+            print(f"commit-files: shared index already matches HEAD（{head[:8]}；{sha[:8]} 之後還有提交）")
+            return
+        print(f"commit-files: shared index already matches {sha[:8]}")  # 例如這幾個檔案是用 git mv 或 git add 先 staged 的
         return
-    others = names(["--cached", f"{sha}~1", "--", *paths])
+    candidates = differs & set(names(["--cached", "--no-renames", f"{sha}~1", "--", *paths]))
+    older = {p: in_history(sha, p) for p in candidates}
+    others = sorted(p for p in candidates if not older[p])
+    resettable = sorted(differs - set(others))
+    if resettable:
+        r = run(["git", "reset", "-q", "--", *resettable])
+        if r.returncode != 0:
+            if os.path.exists(lock) or "index.lock" in r.stderr:
+                locked("reset 時")  # 查鎖與 reset 之間別的程序拿到了鎖：不照 git 的提示手動刪
+            print("[FOLLOW-UP] git reset 失敗：" + r.stderr.strip())
+            print(f"  排除上面的失敗原因之後跑：{align_cmd}")
+            print("  同一則錯誤再出現時不重試，照最後一行寫進總結。")
+            keep_worktree("--align 那條 exit 0 ")
+            print(summary)
+            sys.exit(3)
+        for p in resettable:
+            if older.get(p):
+                print(f"commit-files: reset {p}（共用 index 停在 {older[p][:8]} 的版本，多半是先前一次提交沒對齊留下的）")
     if others:
-        print("[FOLLOW-UP] 共用 index 裡有這幾個檔案的其他版本（不是提交前的版本，也不是這次提交的版本），沒有 reset：")
+        q = " ".join(shlex.quote(p) for p in others)
+        print(
+            f"[ASK-USER] 共用 index 裡這幾個檔案的版本跟 {sha[:8]}、提交前的版本與近 50 個動到它的 commit 都對不上"
+            "（可能是另一個 session staged 的），沒有 reset。提交已經完成："
+        )
         print("".join(f"  {p}\n" for p in others), end="")
-        print(f"  看那個版本：git diff --cached HEAD -- {' '.join(shlex.quote(p) for p in others)}")
-        print("  那是這次 session 自己先前 git add 的舊版本時，跑：" + f"git reset -q -- {' '.join(shlex.quote(p) for p in others)}")
-        print("  不是（另一個 session staged 的）時不 reset，照 AGENTS.md〈要先問使用者的情形〉處理")
+        print(f"  給使用者看這條的輸出：git -C {shlex.quote(root)} diff --cached {sha[:8]} -- {q}")
+        print(f"  使用者同意 reset 之後跑：git -C {shlex.quote(root)} reset -q -- {q}")
+        print(f"  這條 reset 因為 index.lock 失敗時，不照 git 的提示手動刪鎖，先跑：{lock_cmd}")
+        print("  它 exit 0 之後再跑一次同一條 reset；那條 reset 又因為 index.lock 失敗時不再重跑，照最後一行寫進總結。")
+        print("  等使用者決定的只有這幾個檔案的 reset，其餘的工作照常做。")
+        keep_worktree("使用者決定（同意時跑完 reset）")
+        print("  工作結束時使用者還沒決定的，把這幾行寫進給使用者的最後一則總結（AGENTS.md〈延到工作結束之後的動作〉）。")
         sys.exit(3)
-    r = run(["git", "reset", "-q", "--", *paths])
-    if r.returncode != 0:
-        print("[FOLLOW-UP] git reset 失敗：" + r.stderr.strip())
-        print(f"  之後跑：{check_cmd}，空的就跑 {reset_cmd}")
-        sys.exit(3)
-    print("commit-files: shared index aligned with HEAD")
+    head = run(["git", "rev-parse", "HEAD"]).stdout.strip()
+    if names(["--no-renames", sha, "HEAD", "--", *paths]):  # reset 對齊的是 HEAD：<sha> 之後的提交又改了這幾個檔案
+        print(f"commit-files: shared index aligned with HEAD（{head[:8]}；{sha[:8]} 之後還有提交）")
+        return
+    print(f"commit-files: shared index aligned with {sha[:8]}")
+
+
+def in_history(sha, path, depth=50):
+    """判斷共用 index 裡這個路徑的版本是否等於 <sha>~1 往前 depth 個動到它的 commit、或最早那一個之前的版本；
+    等於時回傳那個 commit，不等於回傳 None。
+
+    這種版本多半是先前某一次提交沒有對齊留下來的（例如那一次被鎖住，之後又有提交改了同一個檔），
+    也可能是有人 staged 了舊版本；reset 只撤 staging、不動工作樹，內容在歷史裡找得回來，所以照提交前的版本處理。
+    """
+    blob = run(["git", "rev-parse", "-q", "--verify", f":{path}"]).stdout.strip()
+    if not blob:
+        return None
+    commits = run(["git", "rev-list", f"-n{depth}", f"{sha}~1", "--", path]).stdout.split()
+    for c in commits:
+        if run(["git", "rev-parse", "-q", "--verify", f"{c}:{path}"]).stdout.strip() == blob:
+            return c
+        if run(["git", "rev-parse", "-q", "--verify", f"{c}~1:{path}"]).stdout.strip() == blob:
+            return run(["git", "rev-parse", f"{c}~1"]).stdout.strip()
+    return None
+
+
+AFTER = "。沒有改共用 index；把這則錯誤與原本的 [FOLLOW-UP] 寫進給使用者的最後一則總結"
+
+
+class AlignParser(argparse.ArgumentParser):
+    """參數格式錯時也印出下一步：argparse 預設只印 usage 與錯誤。"""
+
+    def error(self, message):
+        self.print_usage(sys.stderr)
+        die(f"--align：{message}" + AFTER, 2)
+
+
+def align_main(argv):
+    ap = AlignParser(prog="commit-files", usage="commit-files --align <commit> -- <檔案...>", description="只重做提交後的共用 index 對齊（第 3 步）")
+    ap.add_argument("--align", dest="sha", required=True)
+    ap.add_argument("paths", nargs="+")
+    args = ap.parse_args(argv)
+    after = AFTER
+    top = run(["git", "rev-parse", "--show-toplevel"])
+    if top.returncode != 0:
+        die("不在 git repo 裡" + after, 2)
+    root = top.stdout.strip()
+    os.chdir(root)
+    sha = run(["git", "rev-parse", "--verify", "-q", f"{args.sha}^{{commit}}"]).stdout.strip()
+    if not sha:
+        die(f"--align：找不到這個 commit：{args.sha}" + after, 2)
+    if run(["git", "rev-parse", "--verify", "-q", f"{sha}~1"]).returncode != 0:
+        die(f"--align：{args.sha} 沒有父 commit，沒有提交前的版本可以比對" + after, 2)
+    in_commit = set(run(["git", "show", "--name-only", "--no-renames", "-z", "--format=", sha]).stdout.split("\0"))
+    stray = [p for p in args.paths if p not in in_commit]
+    if stray:
+        die(f"這些路徑不在 {sha[:8]} 這個 commit 裡（路徑以工作樹根目錄起算）：" + " ".join(stray) + after, 2)
+    align(root, sha, args.paths)
 
 
 if __name__ == "__main__":
