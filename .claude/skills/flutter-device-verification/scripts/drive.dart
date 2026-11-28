@@ -8,6 +8,9 @@
 //   ... back               對前序走訪最後找到的 Navigator 呼叫 maybePop()
 //   ... type <text>        把文字寫進目前有焦點的輸入框（取代原內容）
 //   ... dpr                印出裝置像素比（截圖像素 ÷ 這個值 ＝ 邏輯座標）
+//   ... eval <運算式>      在 APP 的函式庫裡求值並印出結果的 toString()；運算式裡可用 ctx（最上層
+//                          Navigator 的 BuildContext）。用來讀狀態（輪詢短暫出現的畫面）或呼叫 APP
+//                          自己的函式（叫出提示列而不寫入資料）；要用的名字不在根函式庫時設 FLUTTER_DRIVE_LIB
 //
 // push、back、type、dpr 要在一個 import 了 Flutter widgets 的 APP 函式庫裡求值。
 // 預設用 isolate 的根函式庫（flutter run 啟動的那一個）；取不到時找第一個 package: 開頭、
@@ -69,7 +72,11 @@ const findNavigator =
 
 Future<void> main(List<String> args) async {
   if (args.length < 2) {
-    stderr.writeln('用法：drive.dart <ws-uri> <push|tap|longpress|drag|back|type|dpr> ...');
+    stderr.writeln('用法：drive.dart <ws-uri> <push|tap|longpress|drag|back|type|dpr|eval> ...');
+    exit(2);
+  }
+  if (args[1] == 'eval' && args.length < 3) {
+    stderr.writeln('eval 要一個運算式，例如 eval "MediaQuery.of(ctx).size"');
     exit(2);
   }
   final pointArgs = {'tap': 2, 'longpress': 2, 'drag': 4}[args[1]];
@@ -119,6 +126,10 @@ Future<void> main(List<String> args) async {
       final text = args.sublist(2).join(' ');
       expr =
           "(() { final f = FocusManager.instance.primaryFocus; EditableTextState? s; void visit(Element e) { if (e is StatefulElement && e.state is EditableTextState && (e.state as EditableTextState).widget.focusNode == f) { s = e.state as EditableTextState; } e.visitChildren(visit); } WidgetsBinding.instance.rootElement!.visitChildren(visit); s!.userUpdateTextEditingValue(TextEditingValue(text: ${dartLiteral(text)}, selection: TextSelection.collapsed(offset: ${text.length})), SelectionChangedCause.keyboard); return 'typed'; })()";
+    case 'eval':
+      // 運算式原樣嵌入（使用者寫的是 Dart，不跳脫）；包成閉包讓 ctx 在運算式裡可用
+      final body = args.sublist(2).join(' ');
+      expr = "(() { $findNavigator final ctx = nav!.context; return ($body).toString(); })()";
     default:
       stderr.writeln('未知的指令：${args[1]}');
       exit(2);

@@ -74,7 +74,7 @@ case "${1:-}" in
     exit $?
     ;;
   "")
-    echo "用法：drive.sh <push|tap|longpress|drag|back|type|dpr|shot|wake> ..." >&2
+    echo "用法：drive.sh <push|tap|longpress|drag|back|type|dpr|eval|shot|wake> ..." >&2
     exit 2
     ;;
 esac
@@ -84,6 +84,7 @@ dart --packages="${FLUTTER_APP_DIR:?}/.dart_tool/package_config.json" "$HERE/dri
 status=${PIPESTATUS[0]}
 WAIT="${WAIT:-0.8}"   # APP 自訂的換頁動畫比 0.8 秒長時，設 WAIT 拉長
 case "${1:-}" in
+  eval) ;;                                 # 只讀狀態或呼叫函式，不換頁；輪詢時不能每次多等
   longpress) sleep 0.7; sleep "$WAIT" ;;   # 放開在 700ms 之後
   drag) sleep 0.35; sleep "$WAIT" ;;       # 拖曳約 300ms
   *) sleep "$WAIT" ;;
