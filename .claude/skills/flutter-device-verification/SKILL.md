@@ -1,10 +1,10 @@
 ---
 name: flutter-device-verification
-description: "在 Android 實機與 iOS 模擬器上操作 Flutter APP 並截圖驗證畫面：取得 VM service 位址、用腳本換頁點按捲動、截圖當下記版本、改程式碼後熱重啟並確認、拼圖裁切看圖、逐狀態回填交付紀錄、亮暗字級與導覽方式切換後還原、避免誤點寫入資料、模擬器驗不到的狀態；在實機上以 profile mode 量效能時的資料保全、量測陷阱與還原。相機掃描的實機驗證（使用者掃、agent 讀 log 的讀取序列與狀態、短暫畫面自動截圖、不寫入資料叫出提示列）。觸發：Flutter 截圖、實機驗證、模擬器截圖、熱重啟、重拍、adb、simctl、flutter drive、實機效能量測、integration_test 效能量測、條碼掃描驗證、相機掃描辨識率。"
+description: "在 Android 實機與 iOS 模擬器上操作 Flutter APP 並截圖驗證畫面：取得 VM service 位址、用腳本換頁點按捲動、截圖當下記版本、改程式碼後熱重啟並確認、拼圖裁切看圖、逐狀態回填交付紀錄、亮暗字級與導覽方式切換後還原、避免誤點寫入資料、模擬器驗不到的狀態、短暫出現的畫面輪詢後自動截圖、不寫入資料叫出寫入之後才出現的提示列；在實機上以 profile mode 量效能時的資料保全、量測陷阱與還原；相機掃描的實機驗證（讀取序列、eval 讀狀態）。觸發：Flutter 截圖、實機驗證、模擬器截圖、熱重啟、重拍、adb、simctl、flutter drive、實機效能量測、integration_test 效能量測、條碼掃描驗證、相機掃描辨識率、SnackBar 截圖、短暫畫面截圖。"
 license: MIT
 metadata:
   portable: true
-  version: 1.4.0
+  version: 1.5.0
   category: testing
 ---
 
@@ -15,9 +15,9 @@ metadata:
 適用：審查的人或使用者要截圖證據；同一組畫面要拍亮暗兩版或多台設備；改了共用元件之後要整組重拍。
 在 Android 實機上以 profile mode 量效能（`integration_test` 加 `flutter drive --profile`）時，資料保全（`flutter drive` 結束時會解除安裝 APP 連同資料）、手機與主機的狀態、量測本身的陷阱與還原，讀 `references/profile-measurement.md`。這條路不走下面的〈前置〉與流程（那些是截圖驗證用的，例如只能用 debug 模式啟動），只沿用〈前置〉裡 `adb devices` 列出手機狀態是 `device` 那一項檢查。
 
-驗相機掃描（條碼、QR code）的辨識率與掃描之後的流程時，對準條碼要由使用者在實機上做；使用者掃、agent 在背景讀 log 的讀取序列、用 `eval` 讀狀態、短暫出現的畫面輪詢之後自動截圖，以及不寫入資料叫出寫入之後才出現的畫面，讀 `references/camera-scanning.md`。
+驗相機掃描（條碼、QR code）的辨識率與掃描之後的流程時，對準條碼要由使用者在實機上做；啟動 APP 之前的使用者資料備份、使用者掃、agent 在背景讀 log 的讀取序列、用 `eval` 讀狀態、短暫出現的畫面輪詢之後自動截圖，以及不寫入資料叫出寫入之後才出現的畫面，讀 `references/camera-scanning.md`。跟相機無關的短暫畫面（只出現一下子的提示）與寫入之後才出現的提示列（SnackBar），也照那一份的〈短暫出現的畫面：輪詢狀態，出現時自動截圖〉與〈不寫入資料，叫出寫入之後才出現的畫面〉做，不為了截圖去寫入資料。
 
-不適用：版面與狀態能用 widget 測試或 golden 測試驗的（那是自動測試的範圍，寫測試）；震動、輸入法選字與自動校正這類只能由人感受或操作、APP 的 log 與狀態也讀不出結果的行為（請使用者在實機上做，在紀錄寫明是使用者驗的）。螢幕鍵盤打開時的畫面可以拍，做法見 `references/device-pitfalls.md`〈症狀與處置〉。
+不適用：版面與狀態能用 widget 測試或 golden 測試驗的（那是自動測試的範圍，寫測試）；結果只顯示在系統元件上、APP 讀不到（輸入法的候選字列、自動校正的提示），或只能由人感受（震動）的行為（請使用者在實機上做，在紀錄寫明是使用者驗的）。螢幕鍵盤打開時的畫面可以拍，做法見 `references/device-pitfalls.md`〈症狀與處置〉。
 
 ## 前置
 
@@ -27,7 +27,7 @@ metadata:
 - APP 專案在 git 底下：`SHOT_LOG` 記的版本取自 APP 專案的 git（commit 與工作樹雜湊）。不在 git 底下時，`drive.sh` 把版本記成 `no-git` 並印警告，截圖分不出版本；開拍前先跟使用者確認版本怎麼記。
 - `drive.dart` 用 APP 專案的 `.dart_tool/package_config.json` 取得 `vm_service` 套件（Flutter 專案經由 `flutter_test` 的依賴通常已經有）。`grep -c '"vm_service"' <APP 專案根目錄>/.dart_tool/package_config.json` 印出「No such file or directory」時，APP 還沒跑過 `flutter pub get`，先在 APP 專案根目錄跑它再查一次。印出 0 時，先問使用者能不能在 APP 專案加這個開發依賴：`flutter pub add --dev vm_service` 會改 APP 的 `pubspec.yaml` 與 `pubspec.lock`，之後每張截圖的工作樹雜湊都含這個改動。使用者同意才跑，交付紀錄寫出加了這個依賴，收尾時問使用者要不要還原這兩個檔。
 - 用 debug 模式啟動（`flutter run` 不加 `--profile`、`--release`）：其他模式沒有求值功能，`drive.dart` 的指令全部失效。
-- `drive.dart` 在 APP 的根函式庫（root library：`flutter run` 啟動的那一個，通常是 `lib/main.dart`）裡對 `push`、`back`、`type`、`dpr` 的運算式求值；根函式庫沒有 import Flutter widgets 時，在 `env.sh` 用 `FLUTTER_DRIVE_LIB` 指定一個有 import 的函式庫 uri（例如 `export FLUTTER_DRIVE_LIB=package:<APP 套件名>/app.dart`，套件名是 APP 的 `pubspec.yaml` 的 `name`）。
+- `drive.dart` 在 APP 的根函式庫（root library：`flutter run` 啟動的那一個，通常是 `lib/main.dart`）裡對 `push`、`back`、`type`、`dpr`、`eval` 的運算式求值；根函式庫沒有 import Flutter widgets 時，在 `env.sh` 用 `FLUTTER_DRIVE_LIB` 指定一個有 import 的函式庫 uri（例如 `export FLUTTER_DRIVE_LIB=package:<APP 套件名>/app.dart`，套件名是 APP 的 `pubspec.yaml` 的 `name`）。
 - `push` 用的是具名路由（`Navigator.pushNamed`）。APP 用宣告式路由（go_router 這類）時，改成點按入口換頁，或在 `drive.dart` 加一個呼叫該路由套件的指令。
 - `drive.dart` 從根元素往下前序走訪 element 樹，`push`、`back` 用最後找到的那一個 Navigator。APP 只有一層 Navigator 時，它就是畫面上那一個，`back` 關得掉面板與對話框。APP 有巢狀 Navigator（分頁殼、`CupertinoTabScaffold`、go_router 的 ShellRoute）時，取到的可能是沒有顯示的分頁、或被蓋住的頁面底下那一個 Navigator，`push` 與 `back` 會改到看不見的狀態，截圖跟預期不同，拍攝的人卻看不出原因。這類 APP 不用 `push` 與 `back`，一律 `tap` 畫面上的入口與返回鍵，每一步截圖確認。
 - APP 有自己的主題設定（存在 APP 裡的淺色、深色、跟隨系統）時，先確認它設在跟隨系統，切換設備的深色模式才會改變畫面；不是的話，在 APP 裡切換屬於會寫入資料的操作，照 `references/device-pitfalls.md`〈會寫入資料的點按〉做。
@@ -39,7 +39,7 @@ metadata:
 
 同一批要拍兩台設備（Android 實機與 iOS 模擬器）時，每台各開一個子目錄 `<暫存目錄>/<設備名>/`（例如 `android/`、`ios/`），放那台的 `flutter.pid`、`flutter.log`、`env.sh`、`device-original.txt`：下面指令裡這四個檔所在的 `<暫存目錄>`，換成那台的子目錄，每次操作哪一台就 `source` 哪一台的 `env.sh`。`states.md`、`shots.log` 與截圖目錄放在 `<暫存目錄>` 本身，兩台共用。
 
-**1. 啟動 APP，取得 VM service 位址，寫好 `env.sh`。** `flutter run` 不會自己結束，要在背景執行，留下 pid 給之後的熱重啟用：
+**1. 啟動 APP，取得 VM service 位址，寫好 `env.sh`。** 驗相機掃描時，這一步之前先照 `references/camera-scanning.md`〈開始之前：使用者的資料〉判斷要不要備份使用者的資料：`flutter run` 安裝失敗、設備上又已經裝了這個 APP 時會先解除安裝，資料跟著刪掉。`flutter run` 不會自己結束，要在背景執行，留下 pid 給之後的熱重啟用：
 
 ```bash
 cd <APP 專案根目錄> && flutter run -d <設備 ID> --pid-file <暫存目錄>/flutter.pid > <暫存目錄>/flutter.log 2>&1
@@ -98,7 +98,7 @@ $D shot $S/sheet.png                # 只截圖：面板或對話框開著時用
 $D back                             # 關掉最上層的頁面、面板或對話框（maybePop）；這不是系統返回鍵，驗系統返回鍵的行為時改送 "${ADB:-adb}" -s "$ANDROID_SERIAL" shell input keyevent KEYCODE_BACK
 $D type '<文字>'                    # 取代目前有焦點的輸入框的內容；先 tap 輸入框讓它取得焦點；文字含空白時加引號
 $D wake                             # 只送喚醒鍵（Android）
-$D eval "<Dart 運算式>"              # 在 APP 的函式庫求值、印出結果；ctx 是最上層 Navigator 的 context；不等動畫。讀狀態與呼叫 APP 的函式用，見 references/camera-scanning.md
+$D eval '<Dart 運算式>'              # 在 APP 的函式庫求值、印出結果（只留最後一行）；ctx 是 back 用的那一個 Navigator 的 context；不等動畫；外層用單引號，bash 才不展開 $。讀狀態與呼叫 APP 的函式用（會寫入資料的函式不用 eval 呼叫，照 device-pitfalls.md〈會寫入資料的點按〉），見 references/camera-scanning.md
 ```
 
 座標是邏輯座標：截圖的像素座標除以 `$D dpr` 印出的裝置像素比。座標從截圖上量，不用猜：看圖的工具可能已經把圖縮小，讀到的位置不是原圖像素，所以先在原圖上畫格線再讀，例如 `ffmpeg -i $S/a.png -vf "drawgrid=w=100:h=100:t=2:c=red@0.6" $S/a-grid.png`（每格 100 像素），或用「看圖」那一步的裁切指令把候選位置周圍裁出來確認。換算之後再點。版面一變（多了一列、字級改了），座標就要重量。
@@ -122,7 +122,7 @@ for i in $(seq 10); do [ "$(grep -c 'Restarted application' $L)" -gt "$n" ] && e
 
 **5. 看圖。** 一組截圖（至少兩張）用 `<skill 目錄>/scripts/montage.sh <輸出> <截圖...>` 拼成總覽（預設每列 7 張、每張縮成 270×585；平板或橫式截圖改環境變數 `COLS`、`W`、`H`，`W:H` 照截圖的寬高比，例如 `COLS=4 W=585 H=270 <skill 目錄>/scripts/montage.sh <輸出> <截圖...>`），先看整體有沒有跑版、狀態對不對：把每張圖對照 `states.md` 那一行要的狀態，以及設計稿或元件契約（有的話）寫的樣子。總覽縮得很小，導覽列、1px 線、按鍵下緣這類細節，回原圖用 `ffmpeg -i <原圖> -vf crop=<寬>:<高>:<x>:<y> <輸出>` 裁出那一塊放大看。貼著螢幕下緣的狀態，每一張都裁出導覽列那一塊，看圖示看不看得清楚、有沒有半透明底、按鍵有沒有蓋住文字：白底面板上的淺色導覽列圖示，在總覽圖上看不出來。
 
-**6. 還原設備設定並確認。** 這一批改過的每一項設定都還原：改回 `device-original.txt` 裡的原值，再用讀原值的同一條指令讀一次，結果要等於原值。改了而檔裡沒有原值的，停下來問使用者原值，不猜。這一批沒改的設定不動。再截一次「列出要拍的狀態」那一步拍過的計數畫面（`$D shot $S/count-after.png`），計數跟開拍前不同時，照 `references/device-pitfalls.md`〈會寫入資料的點按〉的誤寫處置做。
+**6. 還原設備設定並確認。** 這一批改過的每一項設定都還原：改回 `device-original.txt` 裡的原值，再用讀原值的同一條指令讀一次，結果要等於原值。改了而檔裡沒有原值的，停下來問使用者原值，不猜。這一批沒改的設定不動。再截一次「列出要拍的狀態」那一步拍過的計數畫面（`$D shot $S/count-after.png`），計數跟開拍前不同時，照 `references/device-pitfalls.md`〈會寫入資料的點按〉的誤寫處置做；驗相機掃描時，先照 `references/camera-scanning.md`〈開始之前：使用者的資料〉分出是誰寫的，使用者自己寫的不刪。
 
 **7. 交付與收尾。** 把 `states.md` 逐行回填，交給審查的人（使用者，或派來審畫面的 agent），寫在回覆或審查的人要讀的工作紀錄裡。每一行標成下面一種：
 - **已拍**：截圖路徑、`shots.log` 裡那張圖的 commit 與工作樹雜湊（同一路徑重拍過時取最後一行）、看圖結果（符合，或不符的位置；裁切放大看過的位置也寫）。`shots.log` 那一行的時間早於 `states.md` 下方最後一筆列了這個截圖路徑的改動時，不算已拍，標成「未拍（待重拍：<改了什麼>）」。
@@ -132,7 +132,7 @@ for i in $(seq 10); do [ "$(grep -c 'Restarted application' $L)" -gt "$n" ] && e
 
 另外寫出設備、Android 或 iOS 的系統版本、APP 的 targetSdk、系統的亮暗、字級與 Android 導覽方式，「還原設備設定並確認」那一步每一項設定的原值與還原後讀到的值，開拍前與收尾時那兩張計數畫面的路徑與計數，以及前置加過 `vm_service` 依賴時寫出加了它。版本的讀法：Android 系統版本 `"${ADB:-adb}" -s "$ANDROID_SERIAL" shell getprop ro.build.version.release`，APP 的 targetSdk `"${ADB:-adb}" -s "$ANDROID_SERIAL" shell dumpsys package <applicationId> | grep -o 'targetSdk=[0-9]*'`（`applicationId` 在 APP 的 `android/app/build.gradle` 或 `build.gradle.kts`），iOS 模擬器的系統版本看 `xcrun simctl list devices booted` 的 `-- iOS x.y --` 那一行。
 
-交付的紀錄寫完、這一批不再拍之後，結束 APP：`kill $(cat <暫存目錄>/flutter.pid)`。前置加過 `vm_service` 依賴時，把 `git -C <APP 專案根目錄> diff -- pubspec.yaml pubspec.lock` 給使用者，問要不要還原這兩個檔。
+交付的紀錄寫完、這一批不再拍之後，結束 APP：`kill $(cat <暫存目錄>/flutter.pid)`。驗相機掃描時，另照 `references/camera-scanning.md`〈開始之前：使用者的資料〉的收尾兩件事（要不要裝回原版本、清掉手機上的備份副本），以及〈交付紀錄怎麼標〉的標籤。前置加過 `vm_service` 依賴時，把 `git -C <APP 專案根目錄> diff -- pubspec.yaml pubspec.lock` 給使用者，問要不要還原這兩個檔。
 
 ## 不照做會出的錯
 

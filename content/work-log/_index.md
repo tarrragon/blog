@@ -33,7 +33,7 @@ tags: ["work-log", "debug", "工具"]
 - [Flutter 實機效能量測的排查：integration_test 的打字、無障礙樹、頁面監聽與背景等待，以及 flutter drive 解除安裝 APP 時的資料保全](flutter-integration-test-profile-measurement-pitfalls/) — 打字、無障礙樹、頁面監聽、背景等待與 timeline 連線讓量測照樣產出數字或卡住、逾時的缺陷，以及量完 APP 連同資料被刪掉時怎麼備份與還原
 - [Flutter 書單捲動與換搜尋結果時的慢 frame 拆解：timeline 分段、排版細項、中文字串的排版時間與字型實驗](flutter-list-jank-cjk-text-layout-breakdown/) — 資料層的工作達標之後，搜尋套用到書單更新的時間與捲動時的慢 frame 仍然沒過，依時間段拆到文字排版，合成資料的隨機字與找替代字型的推測被量測推翻
 - [Flutter 書庫 APP 冷啟動時間的排查：把全部的書載入記憶體、資料庫單例的並行開檔與每次啟動的完整性檢查](flutter-cold-start-database-open-and-integrity-check/) — 5 萬本時冷啟動從 7.3 秒到 1.33 秒，全書庫載入記憶體、單例並行開檔、每次啟動的完整性檢查各自的量測與修法
-- [Flutter 條碼掃描辨識率低的排查：mobile_scanner 的去重複回報與 APP 的二次確認、通過檢查碼的誤讀、同一格畫面裡的兩條條碼](flutter-barcode-scan-detection-speed-and-read-confirmation/) — 條碼對準了卻常常逾時都沒採用，從實機的讀取序列分出是掃描器沒解出還是採用規則沒成立，用同一份序列模擬採用規則，`noDuplicates` 與「讀到兩次才採用」合起來在最穩的拍攝條件下永遠不成立
+- [Flutter 條碼掃描辨識率低的排查：mobile_scanner 的去重複回報與 APP 的二次確認、通過檢查碼的誤讀、同一格畫面裡的兩條條碼](flutter-barcode-scan-detection-speed-and-read-confirmation/) — 條碼對準了卻常常逾時都沒採用，從實機的讀取序列分出是掃描器沒解出還是採用規則沒成立，用同一份序列模擬採用規則，`noDuplicates` 與「讀到兩次才採用」合起來，在畫面裡只有一條條碼、手穩而沒有誤讀時湊不到第二次讀取
 - [Flutter 掃描頁的相機生命週期與狀態殘留的排查：許可權限、離開頁面、逾時與「繼續掃下一本」](flutter-scan-page-camera-lifecycle-and-stale-state/) — 相機、比頁面活得久的 ViewModel 與頁面三方的狀態在幾個事件之後沒有對齊：許可之後沒開相機、離開頁面沒關相機、逾時之後畫面還在動、上一本的號碼殘留讓查詢被擋掉，以及刻意忽略剛查過的書時怎麼在畫面上說明
 
 **環境、設定與架構觀念** — 開發環境一次性設定、規則檔維護、與後端協作時整理出的設計觀念等。例：

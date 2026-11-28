@@ -61,7 +61,7 @@ final isbnScannerViewModelProvider = NotifierProvider<IsbnScannerViewModel, Isbn
 );
 ```
 
-改完之後的責任分佈：工廠回到 `ViewModel.new` 一行、依賴全部經 provider 圖取得（可 override、可追蹤）、清理掛在容器一定會走的 hook 上。`ref.onDispose` 跟手寫方法的差別就是「誰保證執行」——前者由容器的 dispose 流程保證、後者由一個不存在的呼叫者保證。
+改完之後的責任分佈：工廠回到 `ViewModel.new` 一行、依賴全部經 provider 圖取得（可 override、可追蹤）、清理掛在容器一定會走的 hook 上。`ref.onDispose` 跟手寫方法的差別就是「誰保證執行」——前者由容器的 dispose 流程保證、後者由一個不存在的呼叫者保證。容器保證的是 provider 被銷毀時一定執行，不保證使用者離開頁面時執行：provider 沒有標 `autoDispose` 時，ProviderScope 銷毀之前它不會被銷毀（被 invalidate 或因依賴改變而重建時除外），離開頁面時就要停的資源（相機、計時器）要另外由頁面在 `dispose` 釋放，這個 ViewModel 後來的相機就是這樣處理的，見 [Flutter 掃描頁的相機生命週期與狀態殘留的排查：許可權限、離開頁面、逾時與「繼續掃下一本」](/work-log/flutter-scan-page-camera-lifecycle-and-stale-state/) 的〈離開頁面時相機沒有關〉。
 
 ## 兩個附帶的工程紀律
 
@@ -73,7 +73,7 @@ final isbnScannerViewModelProvider = NotifierProvider<IsbnScannerViewModel, Isbn
 
 ## 判讀徵兆
 
-- Notifier / ViewModel 類別裡有自訂的 `dispose()` 或 `close()` 方法——先找呼叫者，找不到就是本文的形態：清理掛在無人呼叫的方法上、改掛 `ref.onDispose`
+- Notifier / ViewModel 類別裡有自訂的 `dispose()` 或 `close()` 方法——先找呼叫者，找不到就是本文的形態：清理掛在無人呼叫的方法上、改掛 `ref.onDispose`；provider 沒有 `autoDispose` 而資源在離開頁面時就要停時，另由頁面釋放
 - provider 工廠裡出現 `new` 具體類別（`SomeService()`）傳進建構子——依賴脫離 provider 圖、測試 override 失效，改成 `build()` 內 `ref.watch`
 - 工廠寫法不是 `ViewModel.new` 一行——通常代表建構子還揹著依賴
 - 改動後測試失敗、懷疑是既有問題——stash 還原跑 baseline、用同樣失敗證明、不用直覺判定

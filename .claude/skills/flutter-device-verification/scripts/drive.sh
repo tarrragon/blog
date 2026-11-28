@@ -10,13 +10,15 @@
 #   SHOT              有設時，動作成功之後截圖存到這個路徑（會覆寫同名檔）；動作失敗時不截
 #   SHOT_LOG          有設時，每張截圖成功後在這個檔附加一行：日期與時間、截圖路徑、APP 的 commit、
 #                     工作樹狀態（clean，或未提交改動與未追蹤檔內容的雜湊前 8 碼；APP 不在 git 底下時是 no-git）
+#   SHOT_DELAY        截圖前等的秒數，預設 1.2（等喚醒之後的畫面亮起）；輪詢短暫出現的畫面時設 0
 #
 # 用法：
 #   drive.sh push <route> [arg] | tap <x> <y> | longpress <x> <y> | drag <x1> <y1> <x2> <y2> | back | type <text> | dpr
+#   drive.sh eval <運算式>  在 APP 的函式庫求值並印出結果（不等 WAIT；只留輸出的最後一行）
 #   drive.sh shot <path>    只截圖，不操作（面板或對話框開著時用這個，不要點畫面角落觸發）
 #   drive.sh wake           送喚醒鍵（Android；腳本操作不算系統觸控，不會延長螢幕逾時）
 #
-# 每個動作之後等 0.8 秒讓換頁動畫跑完（Flutter 3.41 預設 Material 450ms、Cupertino 500ms），longpress 從放開算起
+# eval 以外的動作之後等 0.8 秒讓換頁動畫跑完（Flutter 3.41 預設 Material 450ms、Cupertino 500ms），longpress 從放開算起
 # 同樣等 0.8 秒；動作送得太密時，實測（Android 16 實機、iPhone 16 模擬器，Flutter 3.41）之後的操作不再換頁。
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -26,13 +28,13 @@ screenshot() {
   local out="${1:?截圖路徑}"
   if [ -n "${ANDROID_SERIAL:-}" ]; then
     "$ADB" -s "$ANDROID_SERIAL" shell input keyevent KEYCODE_WAKEUP
-    sleep 1.2
+    sleep "${SHOT_DELAY:-1.2}"
     # 先寫暫存檔，成功才換成正式檔名：失敗時不把同名的舊圖蓋成空檔
     "$ADB" -s "$ANDROID_SERIAL" exec-out screencap -p > "$out.tmp" || { rm -f "$out.tmp"; return 1; }
     [ -s "$out.tmp" ] || { rm -f "$out.tmp"; echo "drive.sh: 截圖是空的" >&2; return 1; }
     mv "$out.tmp" "$out"
   elif [ -n "${IOS_UDID:-}" ]; then
-    sleep 1.2
+    sleep "${SHOT_DELAY:-1.2}"
     xcrun simctl io "$IOS_UDID" screenshot "$out" >/dev/null || return $?
   else
     echo "drive.sh: 沒有設 ANDROID_SERIAL 或 IOS_UDID，無法截圖" >&2
