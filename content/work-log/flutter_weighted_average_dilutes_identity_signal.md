@@ -33,7 +33,7 @@ tags: ["flutter", "dart", "algorithm", "similarity", "matching", "isbn"]
 
 ## 前置：identity 訊號自己要先正規化
 
-第二個修正堵住 identity 層自己的漏接：同一本書的 ISBN 有兩種合法表示——ISBN-10 跟 ISBN-13（978 前綴加重算校驗碼）。等價檢查沒實作時（重構前它是一條 TODO 註解），一邊是 10 碼一邊是 13 碼的同一本書、在 identity 層比對失敗、跌進 fuzzy 層被當成「標題很像的兩本書」。
+第二個修正堵住 identity 層自己的漏接：同一本書的 ISBN 有兩種合法表示——ISBN-10 跟 ISBN-13（拿掉 ISBN-10 的檢查碼、前面加上 978，再依 EAN-13 的算法重算檢查碼；兩種檢查碼的算法與換算在 [書上的條碼怎麼設計：EAN-13 的前綴與檢查碼、ISBN 的 978 與 979、ISBN 10 碼與 13 碼、雜誌與期刊的 ISSN、台灣商品條碼、日本書的上下兩條條碼、附加碼](/other/book-barcodes-isbn-issn-and-retail-codes/) 的〈ISBN 10 碼與 13 碼〉）。等價檢查沒實作時（重構前它是一條 TODO 註解），一邊是 10 碼一邊是 13 碼的同一本書、在 identity 層比對失敗、跌進 fuzzy 層被當成「標題很像的兩本書」。
 
 原則跟 [Money 與 VO 的相等性](/work-log/dart_money_extension_type_migration/)相通：**同一身分的多種表示、比對前先化到正規形式**。identity 訊號的價值建立在「相等判斷可靠」上，表示層的多樣性沒被吸收掉、identity 層就會系統性漏接——而且漏得很安靜，每一筆都降級成 fuzzy 比對、只是分數低一點。
 

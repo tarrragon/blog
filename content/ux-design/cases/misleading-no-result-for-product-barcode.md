@@ -64,6 +64,8 @@ book_overview_app 的掃描器偵測所有 EAN-13 格式條碼。書籍 ISBN-13 
 
 ## 下一步路由
 
+- 格式驗證在本地、查得到與否在遠端的分工 → [表單 UX 模式](/ux-design/03-input-mechanism/form-ux-pattern/) 的〈混合策略〉
+- 錯誤訊息裡的行動怎麼寫、排除式分類的一則訊息涵蓋幾種下一步 → [錯誤訊息撰寫原則](/ux-design/04-error-recovery/error-message-principles/) 的〈明確列出可執行的下一步〉
 - 輸入機制的四維度決策 → [輸入機制設計](/ux-design/03-input-mechanism/four-dimension-decision/)
 - 結果通知屬於三層回饋的第三層 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
 - 類似案例（回饋缺失）→ [匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)

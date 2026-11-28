@@ -55,4 +55,5 @@ state = state.copyWith(processedBooks: progress.processed);
 
 - 債務清償的下文：[88 行拆成 13 個函式](/work-log/flutter_function_decomposition_split_vs_keep/)——本文識別的 TD-012 在下個版本的清償實錄
 - 同框架的生命週期家族：[雙容器狀態脫節](/work-log/flutter_riverpod_dual_container_state_desync/)——那篇是容器的空間邊界、本文是 Notifier 的時間邊界
+- 同一條檢查點規則用在釋放資源的流程：[Flutter 掃描頁的相機生命週期與狀態殘留的排查：許可權限、離開頁面、逾時與「繼續掃下一本」](/work-log/flutter-scan-page-camera-lifecycle-and-stale-state/) 的〈離開頁面時相機沒有關〉——ViewModel 在等相機關閉的 `await` 之後檢查 `ref.mounted`，ProviderScope 在等待期間銷毀時（widget test 結束）沒有這個檢查就拋出 `UnmountedRefException`；那一篇另外寫到頁面（widget）的 `ref` 在 `dispose` 時已經失效
 - build 階段的對偶：全域錯誤處理器在 widget tree 建置中改 provider 的崩潰（v0.9 的 microtask 延後修法）——await 之後太晚、build 之中太早，`ref` 的合法視窗兩頭都有界
