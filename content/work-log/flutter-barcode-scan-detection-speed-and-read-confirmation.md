@@ -9,7 +9,7 @@ tags: ["flutter", "mobile-scanner", "barcode", "ml-kit", "android", "camera"]
 
 事件發生在 2026 年 11 月 28 日。環境是一個 Flutter 3.41 的書庫 APP，掃描頁用 mobile_scanner 7.1.2（Android 上由 Google ML Kit 解碼），在 Samsung SM-S9010（Android 16）實機上以 debug 版執行。操作是使用者拿自己的書與一般商品，在掃描頁逐一對準條碼。
 
-這篇整理掃描流程裡兩層規則怎麼互相影響：mobile_scanner 依 `DetectionSpeed` 決定什麼時候把解出的條碼回報給 APP，APP 再依自己的採用規則決定要不要拿這個號碼去查書；以實機 log 的讀取序列看誤讀的樣子與它為什麼通過 EAN-13 檢查碼；用同一份讀取序列模擬不同的採用規則；`noDuplicates` 模式的回報條件與它跟「讀到兩次才採用」合在一起的結果；同一格畫面裡有兩條條碼時 ISBN 被丟掉的情形；以及改完之後的實測。採用之後頁面與相機的狀態怎麼殘留、讓下一本卡住，在 [Flutter 掃描頁的相機生命週期與狀態殘留的排查：許可權限、離開頁面、逾時與「繼續掃下一本」](/work-log/flutter-scan-page-camera-lifecycle-and-stale-state/)。
+這篇整理掃描流程裡兩層規則怎麼互相影響：mobile_scanner 依 `DetectionSpeed` 決定什麼時候把解出的條碼回報給 APP，APP 再依自己的採用規則決定要不要拿這個號碼去查書；以實機 log 的讀取序列看誤讀的樣子與它為什麼通過 EAN-13 檢查碼；用同一份讀取序列模擬不同的採用規則；`noDuplicates` 模式的回報條件與它跟「讀到兩次才採用」合在一起的結果；同一格畫面裡有兩條條碼時 ISBN 被丟掉的情形；以及改完之後的實測。書上那幾種條碼（978 與 979 的 ISBN、977 的 ISSN、471 的台灣商品條碼、日本書下段的 192 碼）各自的編號結構在 [書上的條碼怎麼設計：EAN-13 的前綴與檢查碼、ISBN 的 978 與 979、ISBN 10 碼與 13 碼、期刊的 ISSN、台灣商品條碼、日本書的兩段條碼與附加碼](/other/book-barcodes-isbn-issn-and-retail-codes/)；採用之後頁面與相機的狀態怎麼殘留、讓下一本卡住，在 [Flutter 掃描頁的相機生命週期與狀態殘留的排查：許可權限、離開頁面、逾時與「繼續掃下一本」](/work-log/flutter-scan-page-camera-lifecycle-and-stale-state/)。
 
 ## 掃描的兩層規則：套件的回報與 APP 的採用
 
